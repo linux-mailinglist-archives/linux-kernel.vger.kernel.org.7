@@ -1,131 +1,133 @@
-Return-Path: <linux-kernel+bounces-879920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D205C2463D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:17:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83BAAC2467F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:20:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3B9D84E4AC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:17:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 837843AF8C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F9E334C17;
-	Fri, 31 Oct 2025 10:17:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A28F33F8BA
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:17:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B22340263;
+	Fri, 31 Oct 2025 10:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HWq0Skq7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB0C340260
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761905833; cv=none; b=lW7t3I7XBDdRv5Rg63/ZHaftZBiq9dq4b9+MT3jua1cR8iBv4jyLza/6Qq/eC945smnltySPK1Zh6a0To0pOTCvoUwExOjYTZQxRk60qVGn014g9Fi64lB2nHqrw4CRALY0D0cuAD+wy3uDzAfBa3Dl7wCcvrbM0yp30Et7Uo4w=
+	t=1761905864; cv=none; b=WyMJhBgT0KrD1PEsW483CAFlh5gbc+TgonCcdLeoqxxBsqIKdF/SNgXwlwrzRKS2HHZcwfvCoNEqSPEE5XZxWoqm4jVpXa9Q0mQqWe+HBjVSgqfLb/j4JPAlHD8tUIZlI1Y/HXaqMkzDPoaEDqWwo/AUlBhx4KeOoxO1mGKy2ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761905833; c=relaxed/simple;
-	bh=+pis7+ZNnJnbSfB1IZE62P3r6KUIstDnQ3XvjGz/ACg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JtnkUhZTGd2ec+NPdfG3bvNntUz/hiWH9G5/ERnBgMgH42kD7TeBNlMqm4Td+U2qGCt0hyW/Wq39gUetGr5HnYb7UL2paPUst5+ANNfikS18FCx/LU3sQp9GtrulhtIjYWzgJkFwC0FaRp9AV6Rus4vwLr9pFfrI3f5S9pww+hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9FCA21595;
-	Fri, 31 Oct 2025 03:16:56 -0700 (PDT)
-Received: from [10.57.37.29] (unknown [10.57.37.29])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 092CE3F673;
-	Fri, 31 Oct 2025 03:17:01 -0700 (PDT)
-Message-ID: <394a9798-06e4-4e61-b081-eeecbc67a22d@arm.com>
-Date: Fri, 31 Oct 2025 10:17:00 +0000
+	s=arc-20240116; t=1761905864; c=relaxed/simple;
+	bh=FJrE0lSFQZBK043V/LtbxfzjWtZPDRbITX2KjEJ2uAA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hQEJvnuRwRR7hpv09SLUkHnyf8kr30zx05nmNrdFn0GhmDbD0lQ0hCbRrOu2P9Q8xkz5nf0rSqjl8PWOGkHMwVs9DgL/04ibBTa/nNUkE+X+xl++E4dTWXyL2puFe30PK59680tbr6IU7X6tXvcDrULpe3umOM0T2BEyXvI+I88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HWq0Skq7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E66AC19423
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:17:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761905864;
+	bh=FJrE0lSFQZBK043V/LtbxfzjWtZPDRbITX2KjEJ2uAA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=HWq0Skq7Rdp0rFhFtk5XOSD8PRfo2tD53ukMFgpYyV3F5wTbQfDHPdtSarM9g+6XG
+	 UlKUj/oddMtEdJ/NHkPOJQTg7jJaG5I3KKvhGCuthUfJkbXqqeM1KwC4v8YvyFpPSR
+	 Y5IG5yzdbFuLBMnGUDjn/lG91Ee9h6JchomBVixF7tgPkHb5omaL8Jil3t/kojLGQB
+	 P6NHnp8JwSSNk6bZNRTQ7I09xdrh7q1XZZmty1Dx8VWjZcxxcefPwKdFiMi2BYChtS
+	 ifpoD19Ra8mhtJIR/3c7vU8Hx4ksPl0QjGAnYJQXHYw9jm10ymnW6BPf5gQXpElf3H
+	 zTaPlC+sPCXTg==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-592fb5d644bso2425326e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 03:17:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVUX3UJ1jP79y9GxvkjVnQuzJqNm+NlzQq9gxFsMoZc54ipdGF87S3RLKzDGAQf8v1euSp7v9rqeJYsBfw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzg04oGNvaAAHC/vtDO3V+Or4nv5bSzUvGL11CjbDwxBbtqMKTb
+	oJFM3GqD7d4IsryPQUVxwEfkgp1SZvygMuFqG6ypKT5hHPwNLzZy3xQ5X6QjcJZuabOAMSi7zW9
+	IRztxaSLpauhcuZw4ua4ae4TBNb/ZS10=
+X-Google-Smtp-Source: AGHT+IH1ZEHr87j2HoKj1XaUcVDdOsggjsFDOdzdoOlF9lh9gcHn+r8V9f88w7CAvAI41912p57YNIFruHCm8xaE6UY=
+X-Received: by 2002:a05:6512:3ca2:b0:591:ebc3:a682 with SMTP id
+ 2adb3069b0e04-5941d540ba0mr1016268e87.39.1761905862858; Fri, 31 Oct 2025
+ 03:17:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] sched/fair: Prefer cache locality for EAS wakeup
-To: shubhang@os.amperecomputing.com, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Shubhang Kaushik <sh@gentwo.org>,
- Shijie Huang <Shijie.Huang@amperecomputing.com>,
- Frank Wang <zwang@amperecomputing.com>
-Cc: Christopher Lameter <cl@gentwo.org>, Adam Li
- <adam.li@amperecomputing.com>, linux-kernel@vger.kernel.org
-References: <20251030-b4-follow-up-v2-1-19a23c83b837@os.amperecomputing.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <20251030-b4-follow-up-v2-1-19a23c83b837@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251031084101.701159-1-adriana@arista.com> <20251031101009.704759-1-adriana@arista.com>
+In-Reply-To: <20251031101009.704759-1-adriana@arista.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 31 Oct 2025 11:17:31 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXGUyzPQu14SOBs8GSsJ3+ASssNR1vCN5T8OzeEbXdBbBQ@mail.gmail.com>
+X-Gm-Features: AWmQ_bkKjB1tG7deRtSl6aNw5JR9AFyZIvnTZ2CmZSskDiUBWY9B3XT6QmLog1c
+Message-ID: <CAMj1kXGUyzPQu14SOBs8GSsJ3+ASssNR1vCN5T8OzeEbXdBbBQ@mail.gmail.com>
+Subject: Re: [PATCH v4 0/2] DMI: Scan for DMI table from DTS info
+To: adriana <adriana@arista.com>
+Cc: ilias.apalodimas@linaro.org, trini@konsulko.com, robh@kernel.org, 
+	krzk@kernel.org, jdelvare@suse.com, frowand.list@gmail.com, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, vasilykh@arista.com, 
+	arm.ebbr-discuss@arm.com, boot-architecture@lists.linaro.org, 
+	linux-efi@vger.kernel.org, uefi-discuss@lists.uefi.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/30/25 19:19, Shubhang Kaushik via B4 Relay wrote:
-> From: Shubhang Kaushik <shubhang@os.amperecomputing.com>
-> 
-> When Energy Aware Scheduling (EAS) is enabled, a task waking up on a
-> sibling CPU might migrate away from its previous CPU even if that CPU
-> is not overutilized. This sacrifices cache locality and introduces
-> unnecessary migration overhead.
-> 
-> This patch refines the wakeup heuristic in `select_idle_sibling()`. If
-> EAS is active and the task's previous CPU (`prev`) is not overutilized,
-> the scheduler will prioritize waking the task on `prev`, avoiding an
-> unneeded migration and preserving cache-hotness.
-> 
-> ---
-> v2:
-> - Addressed reviewer comments to handle this special condition
->   within the selection logic, prioritizing the
->   previous CPU if not overutilized for EAS.
-> - Link to v1: https://lore.kernel.org/all/20251017-b4-sched-cfs-refactor-propagate-v1-1-1eb0dc5b19b3@os.amperecomputing.com/
-> 
-> Signed-off-by: Shubhang Kaushik <shubhang@os.amperecomputing.com>
-> ---
->  kernel/sched/fair.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 25970dbbb27959bc130d288d5f80677f75f8db8b..ac94463627778f09522fb5420f67b903a694ad4d 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -7847,9 +7847,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
->  	    asym_fits_cpu(task_util, util_min, util_max, target))
->  		return target;
->  
-> -	/*
-> -	 * If the previous CPU is cache affine and idle, don't be stupid:
-> -	 */
-> +	/* Reschedule on an idle, cache-sharing sibling to preserve affinity: */
->  	if (prev != target && cpus_share_cache(prev, target) &&
->  	    (available_idle_cpu(prev) || sched_idle_cpu(prev)) &&
->  	    asym_fits_cpu(task_util, util_min, util_max, prev)) {
-> @@ -7861,6 +7859,14 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
->  		prev_aff = prev;
->  	}
->  
-> +	/*
-> +	 * If the previous CPU is not overutilized, prefer it for cache locality.
-> +	 * This prevents migration away from a cache-hot CPU that can still
-> +	 * handle the task without causing an overload.
-> +	 */
-> +	if (sched_energy_enabled() && !cpu_overutilized(prev))
-> +		return prev;
-> +
->  	/*
->  	 * Allow a per-cpu kthread to stack with the wakee if the
->  	 * kworker thread and the tasks previous CPUs are the same.
-> 
-> ---
-> base-commit: e53642b87a4f4b03a8d7e5f8507fc3cd0c595ea6
-> change-id: 20251030-b4-follow-up-ff03b4533a2d
-> 
-> Best regards,
+On Fri, 31 Oct 2025 at 11:10, adriana <adriana@arista.com> wrote:
+>
+> Some bootloaders like U-boot, particularly for the ARM architecture,
+> provide SMBIOS/DMI tables at a specific memory address. However, these
+> systems often do not boot using a full UEFI environment, which means the
+> kernel's standard EFI DMI scanner cannot find these tables.
+>
+> This series adds support for the kernel to find these tables by
+> reading the associated property from the Device Tree /chosen node. The
+> bootloader can specify the physical addresses using the property
+> "linux,smbios3-entrypoint".
+>
+> The first patch introduces the device tree binding documentation for this
+> new ABI, and the second patch implements the driver logic in dmi_scan.c.
+>
+> Changes in v4:
+>   - Renamed linux,smbios3-table.yaml file, removed mention of ARM/ARM64
+>     (Patch 1/2).
+>   - Drop the second definition of dmi_scan_from_dt() and fold checking
+>     for CONFIG_OF (Patch 2/2).
+>   - Drop unnecessary goto on the success case (Patch 2/2).
+>   - Replace magic number for entrypoint size with SMBIOS3_ENTRY_POINT_SIZE
+>     definition (Patch 2/2).
+>
+> Changes in v3:
+>   - Removed linux,smbios-table property, only keep the SMBIOSv3 property
+>     (Patch 1/2).
+>   - Search DT for linux,smbios3-table only, removed the code searching
+>     for the previous property (Patch 2/2).
+>
+> Changes in v2:
+>   - Add missing Device Tree binding documentation (Patch 1/2).
+>   - Split the original patch into a 2-part series (binding + driver).
+>   - (No functional changes to the driver code in patch 2/2).
+>
+> adriana (2):
+>   dt-bindings: firmware: Add binding for SMBIOS /chosen properties
+>   drivers: firmware: dmi_scan: Add support for reading SMBIOS from DT
+>
 
-So if you're actually targetting EAS I don't get why you would check overutilized (instead
-of asym_fits, what about uclamp?) but also, given that many EAS systems have only one common
-llc I don't quite get why you would want this anyway.
-Do you have a system / workload showing a benefit?
-(I find with EAS heavily relying on wakeups, what we do in the slow path isn't that important
-for most workloads...)
+For the series,
+
+Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+
+I can take the second patch, but bindings need to go in separately IIRC.
+
+Rob?
+
+
+>  .../firmware/linux,smbios3-entrypoint.yaml    | 25 +++++++++
+>  drivers/firmware/dmi_scan.c                   | 54 +++++++++++++++++++
+>  2 files changed, 79 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/firmware/linux,smbios3-entrypoint.yaml
+>
+> --
+> 2.51.0
+>
 
