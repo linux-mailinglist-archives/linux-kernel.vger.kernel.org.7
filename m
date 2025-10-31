@@ -1,133 +1,176 @@
-Return-Path: <linux-kernel+bounces-880266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 834B5C25454
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:30:48 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10521C254B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:42:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AAA574EE7C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:29:58 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 875C4351512
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:42:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31AD834B42D;
-	Fri, 31 Oct 2025 13:29:52 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23FE22A7F9;
+	Fri, 31 Oct 2025 13:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i460M6Ew"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232D7D2FB;
-	Fri, 31 Oct 2025 13:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889AB221D96;
+	Fri, 31 Oct 2025 13:41:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761917391; cv=none; b=CqZHO6n4m3K4+srhvZIk1r2zVszUg4poPNtmJvJe54PIvWVfz2d4RGisJhzC1cZpgvsXf+Z6g3iSiQn27QAW9Gi4PTkI2QoQ8+Jk4avRnUehZD1HD34hQ3etavgiMJSt1TBZ/fjaJbyh0d7JG7Jg47nfC5OSu/K7N69KyRv4hsA=
+	t=1761918113; cv=none; b=Q0dxaosR4+OeVhQ25crenR4CP8TVkvfg3i8PYxwsy4l5cnykduF2dP/DpwBmHWNA6T8k3tX/jQ0FyxkvJnksSIi/z21Evu4yay0rygnmdr2/ZfQOGykcQR2RWH9p5QjJBQDIoaomehRweHs8izZOmCsZlT4+C5LtwYQmaMErFdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761917391; c=relaxed/simple;
-	bh=2+PgWQ9PdjBLHdFl7BQ8/dlijtSQu9Lg/oJLV5+43iY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=neZxDqnNTRCqh1zGXNhZGeUphdTZCZAsIrjAm0OFcW+2ZzHd6z2PFlJvcecqIlNJIcXXPlpUapmP/ySe9bX1QYdvjFtUoO5ymctkUigWPC+NwVbqYs2PQY8Blc8q//GvC7eeSDfS+WtimDVtRnBOZBJHfi5otTQq1v0Hsl/vFKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from [192.168.0.109] (unknown [114.241.85.109])
-	by APP-01 (Coremail) with SMTP id qwCowAAXfWe0uQRpJJbBAA--.7539S2;
-	Fri, 31 Oct 2025 21:29:24 +0800 (CST)
-Message-ID: <729fc508-0682-41b0-8582-b1388f31e08d@iscas.ac.cn>
-Date: Fri, 31 Oct 2025 21:29:23 +0800
+	s=arc-20240116; t=1761918113; c=relaxed/simple;
+	bh=+7JeA8EZr9HLPcHjEwbm5n0PUPh3LAFAtmmlSTL8SOs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MGDRQVz7GchpOClyFQDhvvwMxNvsf+VLf/oxZ9XAz038I3ceLJhvzJocNLgCLr1RxeloJ5lcT3hnislZqkoXj2GCCQ9n8znUzbShhB//V2mzaxY9UmDHvF+h0EmHr0V08tdqwo4psQjO815lQnac2LXOITBxv82S5q4c90iQg+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i460M6Ew; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761918112; x=1793454112;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+7JeA8EZr9HLPcHjEwbm5n0PUPh3LAFAtmmlSTL8SOs=;
+  b=i460M6Ew8i30gT4Q3OxLFHaAS1zdXcQHSWayto1AByxi8E8B7OG4QYJu
+   LwYEUJNl3uHQAfAKNqkRQ/3pEeHHcaMjowq+nwnpxWV+6ZL7yUvsNJqZK
+   wO3T7JCe79NT2iyOZo7ruRCV1NxaRzuhPP/j3u9URtPG6MJlP4/ht4TPG
+   h+NOZ3L1lcsu0Jbg3nclNvFsshbO0f3i39koBnCgOpJtUApCiYzd6VS78
+   8MQvMNaWt5EMH2y4Z/ubTuD9x+b9h7M/CI649NPWGIjRBaERLwopNDVhc
+   4WlIwJ8z709cZvjopTlGdIC8md50yFdyA89QZfcodqU5aXUH1HMc44G6j
+   Q==;
+X-CSE-ConnectionGUID: uRhRC+zTTRC2jKspjh/aHQ==
+X-CSE-MsgGUID: 0IAioraWS8OxfiNgoCBc9g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="75428204"
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="75428204"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 06:41:51 -0700
+X-CSE-ConnectionGUID: qyH/wK3MTgOitXoVX+1LZw==
+X-CSE-MsgGUID: bZuYGIG0TdWFYRB4T80rHQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="185925369"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 31 Oct 2025 06:41:47 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vEpNK-000N9A-1r;
+	Fri, 31 Oct 2025 13:41:27 +0000
+Date: Fri, 31 Oct 2025 21:30:56 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, torvalds@linux-foundation.org,
+	pfalcato@suse.de, Mateusz Guzik <mjguzik@gmail.com>
+Subject: Re: [PATCH v4] fs: hide names_cachep behind runtime access machinery
+Message-ID: <202510312143.SvwwhqVp-lkp@intel.com>
+References: <20251030105242.801528-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: spacemit: Implement emac_set_pauseparam properly
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Yixun Lan <dlan@gentoo.org>,
- Maxime Chevallier <maxime.chevallier@bootlin.com>,
- Vadim Fedorenko <vadim.fedorenko@linux.dev>,
- Troy Mitchell <troy.mitchell@linux.spacemit.com>, netdev@vger.kernel.org,
- linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20251030-k1-ethernet-fix-autoneg-v1-1-baa572607ccc@iscas.ac.cn>
- <2eb5f9fc-d173-4b9e-89a3-87ad17ddd163@lunn.ch>
- <ee49cb12-2116-4f0d-8265-cd1c42b6037b@iscas.ac.cn>
- <c180925d-68fe-4af1-aa4f-57fb2cd1e9ca@lunn.ch>
-Content-Language: en-US
-From: Vivian Wang <wangruikang@iscas.ac.cn>
-In-Reply-To: <c180925d-68fe-4af1-aa4f-57fb2cd1e9ca@lunn.ch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:qwCowAAXfWe0uQRpJJbBAA--.7539S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZFW7Xr13Zw15KF43CFW5GFg_yoW8ur1rpa
-	yaga4vyF1jyr1vyFZ7Zr47Xa4j9395JrsxCFyrKw18Xrn8XFyrCr9rKF47C39xWw1kJr4Y
-	9ws5XF93ArsrAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvmb7Iv0xC_Kw4lb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rw
-	A2F7IY1VAKz4vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xII
-	jxv20xvEc7CjxVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwV
-	C2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7
-	MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r
-	4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF
-	67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2I
-	x0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2
-	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnU
-	UI43ZEXa7IU56yI5UUUUU==
-X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251030105242.801528-1-mjguzik@gmail.com>
 
-On 10/31/25 20:43, Andrew Lunn wrote:
-> On Fri, Oct 31, 2025 at 03:22:56PM +0800, Vivian Wang wrote:
->> On 10/31/25 05:32, Andrew Lunn wrote:
->>>> [...]
->>>>
->>>> -		emac_set_fc(priv, fc);
->>>> -	}
->>>> +	phy_set_asym_pause(dev->phydev, pause->rx_pause, pause->tx_pause);
->>> It is hard to read what this patch is doing, but there are 3 use cases.
->> Yeah, I guess the patch doesn't look great. I'll reorganize it in the
->> next version to make it clearer what the new implementation is and also
->> fix it up per your other comments.
->>
->>> 1) general autoneg for link speed etc, and pause autoneg
->>> 2) general autoneg for link speed etc, and forced pause
->>> 3) forced link speed etc, and forced pause.
->> Thanks for the tip on the different cases. However, there's one bit I
->> don't really understand: Isn't this set_pauseparam thing only for
->> setting pause autoneg / force?
-> Nope. You need to think about how it interacts with generic autoneg.
->
->        ethtool -A|--pause devname [autoneg on|off] [rx on|off] [tx on|off]
->
->        ethtool -s devname [speed N] [lanes N] [duplex half|full]
->               [port tp|aui|bnc|mii] [mdix auto|on|off] [autoneg on|off]
->
-> These autoneg are different things. -s is about generic autoneg,
-> speed, duplex, etc. However pause can also be negotiated, or not,
-> using -A.
->
-> You can only autoneg pause if you are doing generic autoneg. So there
-> are three combinations you need to handle.
+Hi Mateusz,
 
-Oh, that is what I had missed. I hadn't understood this part before. Thanks.
+kernel test robot noticed the following build errors:
 
-> With pause autoneg off, you can set registers in the MAC immediately,
-> but you need to be careful not to overwrite the values when generic
-> autoneg completes and the adjust_link callback is called.
->
-> If you have pause autoneg on, you have to wait for the adjust_link
-> callback to be called with the results of the negotiation, including
-> pause.
->
-> phylink hides all this logic. There is a link_up callback, which tells
-> you how to program the hardware. You just do it, no logic needed.
+[auto build test ERROR on arnd-asm-generic/master]
+[also build test ERROR on linus/master brauner-vfs/vfs.all linux/master v6.18-rc3 next-20251031]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-This makes sense. I'll look into using phylink.
+url:    https://github.com/intel-lab-lkp/linux/commits/Mateusz-Guzik/fs-hide-names_cachep-behind-runtime-access-machinery/20251030-185523
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git master
+patch link:    https://lore.kernel.org/r/20251030105242.801528-1-mjguzik%40gmail.com
+patch subject: [PATCH v4] fs: hide names_cachep behind runtime access machinery
+config: riscv-randconfig-002-20251031 (https://download.01.org/0day-ci/archive/20251031/202510312143.SvwwhqVp-lkp@intel.com/config)
+compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251031/202510312143.SvwwhqVp-lkp@intel.com/reproduce)
 
-Thanks,
-Vivian "dramforever" Wang
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510312143.SvwwhqVp-lkp@intel.com/
 
+All errors (new ones prefixed by >>):
+
+   In file included from arch/riscv/kernel/asm-offsets.c:8:
+   In file included from include/linux/mm.h:1016:
+   In file included from include/linux/huge_mm.h:7:
+   In file included from include/linux/fs.h:53:
+   In file included from arch/riscv/include/asm/runtime-const.h:7:
+>> arch/riscv/include/asm/cacheflush.h:49:6: error: call to undeclared function 'is_vmalloc_or_module_addr'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+      49 |         if (is_vmalloc_or_module_addr((void *)start)) {
+         |             ^
+   In file included from arch/riscv/kernel/asm-offsets.c:8:
+   In file included from include/linux/mm.h:1016:
+   In file included from include/linux/huge_mm.h:7:
+   In file included from include/linux/fs.h:53:
+   In file included from arch/riscv/include/asm/runtime-const.h:9:
+   In file included from include/linux/memory.h:19:
+   In file included from include/linux/node.h:18:
+   In file included from include/linux/device.h:32:
+   In file included from include/linux/device/driver.h:21:
+   In file included from include/linux/module.h:20:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/riscv/include/asm/elf.h:12:
+   In file included from include/linux/compat.h:18:
+   include/uapi/linux/aio_abi.h:79:2: error: unknown type name '__kernel_rwf_t'; did you mean '__kernel_off_t'?
+      79 |         __kernel_rwf_t aio_rw_flags;    /* RWF_* flags */
+         |         ^~~~~~~~~~~~~~
+         |         __kernel_off_t
+   include/uapi/asm-generic/posix_types.h:87:25: note: '__kernel_off_t' declared here
+      87 | typedef __kernel_long_t __kernel_off_t;
+         |                         ^
+   2 errors generated.
+   make[3]: *** [scripts/Makefile.build:182: arch/riscv/kernel/asm-offsets.s] Error 1 shuffle=1341192968
+   make[3]: Target 'prepare' not remade because of errors.
+   make[2]: *** [Makefile:1282: prepare0] Error 2 shuffle=1341192968
+   make[2]: Target 'prepare' not remade because of errors.
+   make[1]: *** [Makefile:248: __sub-make] Error 2 shuffle=1341192968
+   make[1]: Target 'prepare' not remade because of errors.
+   make: *** [Makefile:248: __sub-make] Error 2 shuffle=1341192968
+   make: Target 'prepare' not remade because of errors.
+
+
+vim +/is_vmalloc_or_module_addr +49 arch/riscv/include/asm/cacheflush.h
+
+08f051eda33b51e Andrew Waterman 2017-10-25  42  
+7e3811521dc3934 Alexandre Ghiti 2023-07-25  43  #ifdef CONFIG_64BIT
+503638e0babf364 Alexandre Ghiti 2024-07-17  44  extern u64 new_vmalloc[NR_CPUS / sizeof(u64) + 1];
+503638e0babf364 Alexandre Ghiti 2024-07-17  45  extern char _end[];
+503638e0babf364 Alexandre Ghiti 2024-07-17  46  #define flush_cache_vmap flush_cache_vmap
+503638e0babf364 Alexandre Ghiti 2024-07-17  47  static inline void flush_cache_vmap(unsigned long start, unsigned long end)
+503638e0babf364 Alexandre Ghiti 2024-07-17  48  {
+503638e0babf364 Alexandre Ghiti 2024-07-17 @49  	if (is_vmalloc_or_module_addr((void *)start)) {
+503638e0babf364 Alexandre Ghiti 2024-07-17  50  		int i;
+503638e0babf364 Alexandre Ghiti 2024-07-17  51  
+503638e0babf364 Alexandre Ghiti 2024-07-17  52  		/*
+503638e0babf364 Alexandre Ghiti 2024-07-17  53  		 * We don't care if concurrently a cpu resets this value since
+503638e0babf364 Alexandre Ghiti 2024-07-17  54  		 * the only place this can happen is in handle_exception() where
+503638e0babf364 Alexandre Ghiti 2024-07-17  55  		 * an sfence.vma is emitted.
+503638e0babf364 Alexandre Ghiti 2024-07-17  56  		 */
+503638e0babf364 Alexandre Ghiti 2024-07-17  57  		for (i = 0; i < ARRAY_SIZE(new_vmalloc); ++i)
+503638e0babf364 Alexandre Ghiti 2024-07-17  58  			new_vmalloc[i] = -1ULL;
+503638e0babf364 Alexandre Ghiti 2024-07-17  59  	}
+503638e0babf364 Alexandre Ghiti 2024-07-17  60  }
+7a92fc8b4d20680 Alexandre Ghiti 2023-12-12  61  #define flush_cache_vmap_early(start, end)	local_flush_tlb_kernel_range(start, end)
+7e3811521dc3934 Alexandre Ghiti 2023-07-25  62  #endif
+7e3811521dc3934 Alexandre Ghiti 2023-07-25  63  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
