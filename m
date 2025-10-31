@@ -1,217 +1,129 @@
-Return-Path: <linux-kernel+bounces-879632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BA88C239EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:55:50 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0142DC239E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:55:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7D1744EFC1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:55:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9D0D14EE767
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE0A329C67;
-	Fri, 31 Oct 2025 07:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4218F3203A7;
+	Fri, 31 Oct 2025 07:55:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="HrnEVODp"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jYwss/d/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29422D7D2E;
-	Fri, 31 Oct 2025 07:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020BC2D7D2E;
+	Fri, 31 Oct 2025 07:55:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761897337; cv=none; b=IxLRIyUinKPEkfvNYr86Z5Siirw7YEmIyQHWtvURqB+V+Z3K7j4NN0xgESy/Z5WKN6xxmUJzKgwdEFMm1bjhBNp4NFFZzUBLPr/a+LAn5jkpLbJf7F28AAycOkuaOAJl4agLzRsI1PZoznPtuT8csBVNL3cuikJI+VmjjYZcdXw=
+	t=1761897314; cv=none; b=FwqOc/iTpSfrPl4niRlOJDjOjWHfhdSOTziDUHQ1xOWp7FsySCRFaOjJ4PRtCTSvvXoJhiD5UjdgSOwqyDSO4f2gRRcvFYdiA7AF9TfD2axG1elnj8Kk7v+cSgds5Ni0K3sZXu8wIfEt3JgTXSQGSY+oIx4wuOwS5ZMsP0Do+OI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761897337; c=relaxed/simple;
-	bh=tRaPSB02NSM670yRYpWQLUz0VyeuspHIKjpXseASx7A=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I42Txv8533jAozLwsB8spgVFYL1POVJL8/aMlYMKUUtRFMk8pMSQ0LB0Y2caxbCZ+GBxuPkdmfng1HA2chV0bjM1gk2QHgzCK8OJiibkmN1JziNcDrtYVqs6cm/mMzgfJFQt1kaKTQVi6z3OgV+xCW9JBYg5Vzax1b5E/t2/QLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=HrnEVODp; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1761897314; c=relaxed/simple;
+	bh=/LdxHFxB9biPuzmXKzZj/U1LjDScGIgLG7T5Or72Fdo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ViDQ21XlZl8HjmViOVmY3SErj1xB0ApzLeMtR3WkrMPZFYVCmWNawLlZmXoJ7Z/nlQhJgov7lqLcXLH1+QixiFMKdYAJ6ragAeMD0BnDc8NyK3mxILgrTYFfi/Qf149EDtx0pXOs4M7MJu6t21kKqMpp23kS2kZpqe8WLQ9sOOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jYwss/d/; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1761897336; x=1793433336;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=tRaPSB02NSM670yRYpWQLUz0VyeuspHIKjpXseASx7A=;
-  b=HrnEVODpiGyj3qUEfP3RDLX9FWHGhK9FTo1RcGBJKS4JSvI9CbtEbt0F
-   i/0wqJ1+A4NvxqVocvvuw0j327vWHLssjgtsJDLkBeW1SnHwGgNfjIZqk
-   XHPFiXl8IYklyJxCy294DNiDVJAtQjjY1KYjTx96pqS797UvzNCcsbAqN
-   zstwl2Q8vCQSbF9Syghcijrl1JuZ2sI/G9zx76uyVibQiQdIUFeniJAnI
-   L6lza3H4dSzarQINkaL/7nf7esfWOAk5oMxTUgIDVDP5hF+2KYtENLJzT
-   7i3RAeWFsySsrl3+APT9q6GJhXjD8T9T1PJ4SIKGxXt/2vBe9Pt49PC0t
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761897313; x=1793433313;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=/LdxHFxB9biPuzmXKzZj/U1LjDScGIgLG7T5Or72Fdo=;
+  b=jYwss/d/Iw4ZWfpIEXiuoBx6t3Z+unL87s9TrCY3JcBPsxdkPLJ7D2eb
+   gzOdDYMjAWRyDL0CT1/pWYqgMIZwuimTxfkDqZYUYuL12yfhpX4XPXLam
+   NejFa0RSB+QIyaePoxo52EdeMjqWSM4Or0z49Fu6tfSNjiUQcFS7n71p6
+   vOAfVLNWQdpQhENHuROkgs06C04NY2Hk/sZi1+MhITm6xb/i06E4GhQ5L
+   TQc1ErP2x3DN2lDCbxxy4MfQzm5eMUanIeBRHOOL7FKFsPFFB3vwyMIYE
+   yMxz2g5V/hCWJ9QjEaBsVJSWOZeZlHuzdK8ARtps+8siFAeyq3HFg4Ogn
    Q==;
-X-CSE-ConnectionGUID: 14ruu4AOSFGGHKcwuzeuHA==
-X-CSE-MsgGUID: WagJdeaGSMOTetzvcxJHhg==
+X-CSE-ConnectionGUID: TlMdyBxdRw+LmN5Zkzuhqw==
+X-CSE-MsgGUID: yE3NB7DKR6+wNwAAJNTLvQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="75401290"
 X-IronPort-AV: E=Sophos;i="6.19,268,1754982000"; 
-   d="scan'208";a="48511970"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 00:55:35 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.87.151) by
- chn-vm-ex3.mchp-main.com (10.10.87.32) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.29; Fri, 31 Oct 2025 00:55:29 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Fri, 31 Oct 2025 00:55:29 -0700
-Date: Fri, 31 Oct 2025 08:54:11 +0100
-From: Horatiu Vultur <horatiu.vultur@microchip.com>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-CC: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net v3 1/2] net: phy: micrel: lan8842 errata
-Message-ID: <20251031075411.kcxdfonu42wj5rjh@DEN-DL-M31836.microchip.com>
-References: <20251030074941.611454-1-horatiu.vultur@microchip.com>
- <20251030074941.611454-2-horatiu.vultur@microchip.com>
- <aQM-9u6MQKN_t9fE@shell.armlinux.org.uk>
+   d="scan'208";a="75401290"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 00:55:12 -0700
+X-CSE-ConnectionGUID: YGkk/TC2TmOxS8brpvmrdw==
+X-CSE-MsgGUID: ThopRhHhTkG3MXb/SdtR9w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,268,1754982000"; 
+   d="scan'208";a="185859203"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa007.fm.intel.com with ESMTP; 31 Oct 2025 00:55:10 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id 6972895; Fri, 31 Oct 2025 08:55:10 +0100 (CET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Chris Mason <clm@fb.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v1 1/1] btrfs: Replace const_ilog2() with ilog2()
+Date: Fri, 31 Oct 2025 08:55:09 +0100
+Message-ID: <20251031075509.3969206-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-In-Reply-To: <aQM-9u6MQKN_t9fE@shell.armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-The 10/30/2025 10:33, Russell King (Oracle) wrote:
+const_ilog2() was a workaround of some sparse issue, which was
+never appeared in the C functions. Replace it with ilog2().
 
-Hi Russell,
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ fs/btrfs/volumes.h | 5 ++---
+ fs/btrfs/zoned.c   | 4 ++--
+ 2 files changed, 4 insertions(+), 5 deletions(-)
 
-> 
-> On Thu, Oct 30, 2025 at 08:49:40AM +0100, Horatiu Vultur wrote:
-> > +static int lan8842_erratas(struct phy_device *phydev)
-> > +{
-> > +     int ret;
-> > +
-> > +     /* Magjack center tapped ports */
-> > +     ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-> > +                                 LAN8814_POWER_MGMT_MODE_3_ANEG_MDI,
-> > +                                 LAN8814_POWER_MGMT_VAL1);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-> > +                                 LAN8814_POWER_MGMT_MODE_4_ANEG_MDIX,
-> > +                                 LAN8814_POWER_MGMT_VAL1);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-> > +                                 LAN8814_POWER_MGMT_MODE_5_10BT_MDI,
-> > +                                 LAN8814_POWER_MGMT_VAL1);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-> > +                                 LAN8814_POWER_MGMT_MODE_6_10BT_MDIX,
-> > +                                 LAN8814_POWER_MGMT_VAL1);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-> > +                                 LAN8814_POWER_MGMT_MODE_7_100BT_TRAIN,
-> > +                                 LAN8814_POWER_MGMT_VAL2);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-> > +                                 LAN8814_POWER_MGMT_MODE_8_100BT_MDI,
-> > +                                 LAN8814_POWER_MGMT_VAL3);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-> > +                                 LAN8814_POWER_MGMT_MODE_9_100BT_EEE_MDI_TX,
-> > +                                 LAN8814_POWER_MGMT_VAL3);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-> > +                                 LAN8814_POWER_MGMT_MODE_10_100BT_EEE_MDI_RX,
-> > +                                 LAN8814_POWER_MGMT_VAL4);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-> > +                                 LAN8814_POWER_MGMT_MODE_11_100BT_MDIX,
-> > +                                 LAN8814_POWER_MGMT_VAL5);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-> > +                                 LAN8814_POWER_MGMT_MODE_12_100BT_EEE_MDIX_TX,
-> > +                                 LAN8814_POWER_MGMT_VAL5);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     ret = lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-> > +                                 LAN8814_POWER_MGMT_MODE_13_100BT_EEE_MDIX_RX,
-> > +                                 LAN8814_POWER_MGMT_VAL4);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     return lanphy_write_page_reg(phydev, LAN8814_PAGE_POWER_REGS,
-> > +                                  LAN8814_POWER_MGMT_MODE_14_100BTX_EEE_TX_RX,
-> > +                                  LAN8814_POWER_MGMT_VAL4);
-> 
-> This is a lot of repetition.
-> 
-> Is it worth storing the errata register information in a struct, and
-> then using a loop to write these registers. Something like:
-> 
-> struct lanphy_reg_data {
->         int page;
->         u16 addr;
->         u16 val;
-> ;
-> 
-> static const struct lanphy_reg_data short_centre_tap_errata[] = {
->         ...
-> };
-> 
-> static int lanphy_write_reg_data(struct phy_device *phydev,
->                                  const struct lanphy_reg_data *data,
->                                  size_t num)
-> {
->         int ret = 0;
-> 
->         while (num--) {
->                 ret = lanphy_write_page_reg(phydev, data->page, data->addr,
->                                             data->val);
->                 if (ret)
->                         break;
->         }
-> 
->         return 0;
-> }
-> 
-> static int lan8842_erratas(struct phy_device *phydev)
-> {
->         int ret;
-> 
->         ret = lanphy_write_reg_data(phydev, short_centre_tap_errata,
->                                     ARRAY_SIZE(short_centre_tap_errata));
->         if (ret)
->                 return ret;
-> 
->         return lanphy_write_reg_data(phydev, blah_errata,
->                                      ARRAY_SIZE(blah_errata));
-> }
-> 
-> ?
-
-That is a really good suggestion. I will do that in the next version.
-
-> 
-> --
-> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
-
+diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
+index adbd9e6c09ff..34b854c1a303 100644
+--- a/fs/btrfs/volumes.h
++++ b/fs/btrfs/volumes.h
+@@ -45,7 +45,7 @@ extern struct mutex uuid_mutex;
+ #define BTRFS_STRIPE_LEN_SHIFT		(16)
+ #define BTRFS_STRIPE_LEN_MASK		(BTRFS_STRIPE_LEN - 1)
+ 
+-static_assert(const_ilog2(BTRFS_STRIPE_LEN) == BTRFS_STRIPE_LEN_SHIFT);
++static_assert(ilog2(BTRFS_STRIPE_LEN) == BTRFS_STRIPE_LEN_SHIFT);
+ 
+ /* Used by sanity check for btrfs_raid_types. */
+ #define const_ffs(n) (__builtin_ctzll(n) + 1)
+@@ -58,8 +58,7 @@ static_assert(const_ilog2(BTRFS_STRIPE_LEN) == BTRFS_STRIPE_LEN_SHIFT);
+  */
+ static_assert(const_ffs(BTRFS_BLOCK_GROUP_RAID0) <
+ 	      const_ffs(BTRFS_BLOCK_GROUP_PROFILE_MASK & ~BTRFS_BLOCK_GROUP_RAID0));
+-static_assert(const_ilog2(BTRFS_BLOCK_GROUP_RAID0) >
+-	      ilog2(BTRFS_BLOCK_GROUP_TYPE_MASK));
++static_assert(ilog2(BTRFS_BLOCK_GROUP_RAID0) > ilog2(BTRFS_BLOCK_GROUP_TYPE_MASK));
+ 
+ /* ilog2() can handle both constants and variables */
+ #define BTRFS_BG_FLAG_TO_INDEX(profile)					\
+diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
+index 2e3145c1a102..5e8b0eeeef27 100644
+--- a/fs/btrfs/zoned.c
++++ b/fs/btrfs/zoned.c
+@@ -37,8 +37,8 @@
+ #define BTRFS_SB_LOG_FIRST_OFFSET	(512ULL * SZ_1G)
+ #define BTRFS_SB_LOG_SECOND_OFFSET	(4096ULL * SZ_1G)
+ 
+-#define BTRFS_SB_LOG_FIRST_SHIFT	const_ilog2(BTRFS_SB_LOG_FIRST_OFFSET)
+-#define BTRFS_SB_LOG_SECOND_SHIFT	const_ilog2(BTRFS_SB_LOG_SECOND_OFFSET)
++#define BTRFS_SB_LOG_FIRST_SHIFT	ilog2(BTRFS_SB_LOG_FIRST_OFFSET)
++#define BTRFS_SB_LOG_SECOND_SHIFT	ilog2(BTRFS_SB_LOG_SECOND_OFFSET)
+ 
+ /* Number of superblock log zones */
+ #define BTRFS_NR_SB_LOG_ZONES 2
 -- 
-/Horatiu
+2.50.1
+
 
