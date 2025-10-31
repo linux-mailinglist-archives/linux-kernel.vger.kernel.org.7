@@ -1,209 +1,180 @@
-Return-Path: <linux-kernel+bounces-880625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B88DDC26276
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:39:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07DF8C262DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:43:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 393564E39D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:38:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6018618923CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:39:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEBE9289374;
-	Fri, 31 Oct 2025 16:38:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6239A2F49F0;
+	Fri, 31 Oct 2025 16:38:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E+Vfn4b3"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="hwCBhYZJ"
+Received: from relay11.grserver.gr (relay11.grserver.gr [78.46.171.57])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F742ED141
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 16:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881572F3615
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 16:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.171.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761928698; cv=none; b=TiWtZQOiJveB+idaOgtBTe+tlcB5m821Oxol6OWEowigfzXJDedp8UwRTvQXjP+Oae8jPrqK9KDa0ssaNM20xs2xmQW0UFfLMcEKMtQ6cIlhqoe0gTWmUdYYLrav/F2Z93NuwBOX1uDbKC4F1KJ/JGWXJCKHdPv5ZaurmXtFwqc=
+	t=1761928725; cv=none; b=GC7OM16EXXUBlwbpbDnWOC1eZMw7o7PZjJ1WH1JFNw3F5rp5652UVknsgvaUernf/nzaUWg21IyyDm/Gsrja87yXXAvqbobHXTNhHgAGrdI6ktlIsLtpMfHAbc3yMAXNDJs9qBA47LIlvpX0xfpVU8zEPjXl1iTWjq6OX3wTW8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761928698; c=relaxed/simple;
-	bh=p7vdofTGqu3x6DvvTHZIENYATo0Ig2XlNqgLI2N93SI=;
+	s=arc-20240116; t=1761928725; c=relaxed/simple;
+	bh=NNluwfpdsA26+gPsB5/AnOEGDLqICL27K25ESYNJAnA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V7V6UbDhY5Gm/ZGZ3IFeAt3qXGuzNTTtCNNmNtOx4ZXH/jLF4eMAsAzl+ny9+pfHVsOyJLG097/PEnfjdyrFeqxnROvCfqfHWyVo6yf7qELmMbY6liYPGu9sFOzwLtDFL4zlJqnNXvjcLR/lkzqmkqT90UsxC4cUw9pENi/lulg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E+Vfn4b3; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-429bccca1e8so897683f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:38:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761928687; x=1762533487; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=or8GDDYatTrrl85V6YGHNAw/hbsTDPW4OGinPVZC6ss=;
-        b=E+Vfn4b3ekT+IChBYxiXQHMPwpLOuBGOv43snic5wpcnaepJcV3A0Z3UJMd3CPb/iz
-         juvVlYTGbQ0DepWpWBC0MYFxrVlkJPWwd1VUk/cRScBjW7VauxE3F9ON41BitzWudmRC
-         2sPeYIAf0hK+Y5SOTy3TDk5oXj6sbO06c+UYRROL55fZOLz4U3tDGXI8vckvtraBafFc
-         6/sbzqrU+ntKkf/zRPlm1WL4q82RkMfvCer7OpsDzjcGfOtITZhmFiLgruUaFXAOKRCo
-         mBORYin9v/1N+dTTAECjm+hkTOPDTBXpRSChMht9HbtbnDVmdGOWeVZarumiwB/n0+37
-         R3GQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761928687; x=1762533487;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=or8GDDYatTrrl85V6YGHNAw/hbsTDPW4OGinPVZC6ss=;
-        b=MO3+H5yp/wcnZHznu+fFq1wMHcfoXX5P5T+FiKGG91b+f1r0NPrkz4x2Q2jl9kz5h0
-         upANwTMtLNTK1V6lA70efH3VTrPwRcTyjNm4awuvy9alSrT/qVTdIMZdjMJkplAQNigm
-         uNsDnIPjF7qRTHikdEHfIXxgTgFZCWX2pmSvUSdxrxG+dQrfQCFxb45p2iU61u5oRXUw
-         d6xNu+UgcufP+N/U7SUX+i14/sJbS8a+YBiWFrDmHrdPt2f477TMatoXR6RWzxyEuyov
-         Y6hgdBC6WGZZQ06bcvC4Tn0iVG0dz6nOZO0PwQLdbfMgu2lOVLPV6Ow1Fi+Vs2gVpILF
-         ouLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU2hBpkoRcW4mesndz52tfqFdC5Eh64uoy33qV3EVivF3zYz4mghJ0C3eXlJKDDiX+DE9H7nsiqvGgxu0Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFNN4FpUItvjXcQp0EzOnNnUgrxHnG7ESbEfRrWCBEfJ3oWJJE
-	dLpfjx4orzqS9ukEU+fH/QGayem6lDljjyHogZG11GPZzfcGgkPKbWLLAplsxxKPV4UH6XTeidZ
-	tF00P0DkO2D8LemjxOn1aQZoBK8mc6JQ=
-X-Gm-Gg: ASbGncvwVZdALQMmAlIqHF+zlFloL9GV50FfQNM5e06mCzxWnf1qLTYCFsIqcNooXqb
-	nxv4CSYMzmHpyAefXJHOp/eKqbS+dWJSRXyi3ull+khxRslrkI2vSX4IEORGvgAe6YW7etza4ZQ
-	AGh9w56mP8e3bysl6OxqkZfDn3qGhlXANrkDdpEE+MFkX9migfoM9bwE2p1nAMrFT5HbAxi/u5N
-	n91tQoTKKZvbooNd7XC9WUcYmdknKHQlh1gSnMZKmTkC35FoYzMABv09ddWsiJMALeG6j4d1fJo
-	5uLpROSBYtFalQMhKSOWxSDZlktp
-X-Google-Smtp-Source: AGHT+IFBHh5rk74gwLSZ2LKe1jBxHjLUksqYeKCEGxnQHUNuc86p9MCP6sT8KBMTg23E0aT5bpyGxxtlW+e826OBh3M=
-X-Received: by 2002:a05:6000:178f:b0:429:ba6a:3a86 with SMTP id
- ffacd0b85a97d-429bd6b2196mr3452799f8f.57.1761928687090; Fri, 31 Oct 2025
- 09:38:07 -0700 (PDT)
+	 To:Cc:Content-Type; b=mIlF3g9k4DtyQ4VGyley1jlwHICwuokDl9Vw72i0m0/vmqcSI1JMRT1SnIGyd1g8PDSRSGs2ZD3DuFZhXYMNrIEM0C9pzrHMXwGHG9H4tN4TFvz/jGVW8DylwfCutP85HQgm9hKvUoiKpd373G2Q83O1ZvSVbNiV4eX4QZGMK8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=hwCBhYZJ; arc=none smtp.client-ip=78.46.171.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay11 (localhost.localdomain [127.0.0.1])
+	by relay11.grserver.gr (Proxmox) with ESMTP id 86EF8C61CC
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 18:38:36 +0200 (EET)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay11.grserver.gr (Proxmox) with ESMTPS id CAAC5C6032
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 18:38:35 +0200 (EET)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id BBFB3201B6F
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 18:38:34 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1761928715;
+	bh=vYurqirQve9/a5aO1JzYrhU8itgV0sUSBiyRfLUlTA4=;
+	h=Received:From:Subject:To;
+	b=hwCBhYZJfYckf6kyZRda93k6mfX4BqPzmGHMfnjoD1fZ0FW8hBWHba6YvNC1kODwF
+	 XDO+SV9YGVvaDBLVOcROYBzeX3/uQGW7C8zOY5bPoeHPtNGs+f/7tp2UkTx/CUiuc9
+	 uE7fuuYUmqBupDKPmTfPfVGj9EslTFabqhNd1LE7tJ8WWkY9ngFVkdo/PJG7/E8sz5
+	 jMqnuWhPTcvyerhLrJEEDmyFvXmhGiWL5PDWZh9kAr9KHM7YHnrF2jvChU/eWWcx6z
+	 0XJUYgyKVD7zGJY9KsF5u0tTgja2MYM/Xkosl9uOmksQIxvSPetutEdq9fVnGQcs0F
+	 Q5ieufm2TPhYQ==
+Authentication-Results: linux3247.grserver.gr;
+        spf=pass (sender IP is 209.85.208.180) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f180.google.com
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f180.google.com with SMTP id
+ 38308e7fff4ca-362e291924aso21485221fa.1
+        for <linux-kernel@vger.kernel.org>;
+ Fri, 31 Oct 2025 09:38:34 -0700 (PDT)
+X-Gm-Message-State: AOJu0YwWnpTFuHDiCviernAQV4ODuzzE5S7IRTC1KBwZ8ucWoisyttQO
+	SwjJTl7BfD5+v1Ex5s9umZIqfGOxwisdQ0aO05dBsqErPN2ALY/gqfvc9fqOo6OC8NX//HUXfVG
+	l3Rj5Khlg0qcC0OoOme6PvSyJzRVdtDM=
+X-Google-Smtp-Source: 
+ AGHT+IFfCsCUm1dDa21cbpuFbjCe1k1ojogD+tE28Iv1A5p0JPMdEYf4rV/aPw9ZlxpB7cs3YdzdBVQZxVyb6hRNJro=
+X-Received: by 2002:a05:651c:b2a:b0:36a:6540:3bf7 with SMTP id
+ 38308e7fff4ca-37a18d9b0d2mr16432791fa.18.1761928714107; Fri, 31 Oct 2025
+ 09:38:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251031154107.403054-1-kafai.wan@linux.dev> <20251031154107.403054-2-kafai.wan@linux.dev>
-In-Reply-To: <20251031154107.403054-2-kafai.wan@linux.dev>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 31 Oct 2025 09:37:54 -0700
-X-Gm-Features: AWmQ_bl06Po1W4MOoS1jpCHAUNH8kXBIMxWHPf8qXw0QaexrF09WsuZ1bhbcqWc
-Message-ID: <CAADnVQ+4QoCU4gYEfTR6Ok122zkfG32s8AxRx-irMcCA1jEhvQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3 1/2] bpf: Skip bounds adjustment for
- conditional jumps on same scalar register
-To: KaFai Wan <kafai.wan@linux.dev>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Shuah Khan <shuah@kernel.org>, Paul Chaignon <paul.chaignon@gmail.com>, 
-	Matan Shachnai <m.shachnai@gmail.com>, Henriette Herzog <henriette.herzog@rub.de>, 
-	Luis Gerhorst <luis.gerhorst@fau.de>, 
-	Harishankar Vishwanathan <harishankar.vishwanathan@gmail.com>, colin.i.king@gmail.com, 
-	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Kaiyan Mei <M202472210@hust.edu.cn>, 
-	Yinhao Hu <dddddd@hust.edu.cn>
+References: <20251031163651.1465981-1-lkml@antheas.dev>
+In-Reply-To: <20251031163651.1465981-1-lkml@antheas.dev>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Fri, 31 Oct 2025 17:38:22 +0100
+X-Gmail-Original-Message-ID: 
+ <CAGwozwHk_wrS8zVRb9-QKpY5TrV1pkksxG5uO9-Db36N7RDo6A@mail.gmail.com>
+X-Gm-Features: AWmQ_blnBmAcgxio7jFrhdMKYsqJ1-YkjaR-opcyMQwFHUHh8QiAmlMVUhDRquk
+Message-ID: 
+ <CAGwozwHk_wrS8zVRb9-QKpY5TrV1pkksxG5uO9-Db36N7RDo6A@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] platform/x86: ayaneo-ec: Add Ayaneo Embedded
+ Controller platform driver
+To: platform-driver-x86@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
+	Hans de Goede <hansg@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Derek John Clark <derekjohn.clark@gmail.com>,
+	=?UTF-8?Q?Joaqu=C3=ADn_Ignacio_Aramend=C3=ADa?= <samsagax@gmail.com>,
+	Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-PPP-Message-ID: 
+ <176192871533.3955770.8447345483872397982@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
-On Fri, Oct 31, 2025 at 8:44=E2=80=AFAM KaFai Wan <kafai.wan@linux.dev> wro=
-te:
+On Fri, 31 Oct 2025 at 17:36, Antheas Kapenekakis <lkml@antheas.dev> wrote:
 >
-> When conditional jumps are performed on the same scalar register
-> (e.g., r0 <=3D r0, r0 > r0, r0 < r0), the BPF verifier incorrectly
-> attempts to adjust the register's min/max bounds. This leads to
-> invalid range bounds and triggers a BUG warning.
+> This series introduces a platform driver for Ayaneo devices, ayaneo-ec.
+> This driver provides hwmon support, power management, and module management
+> (for the new Ayaneo 3 device). Module management is done through the new
+> firmware attributes sysfs interface.
+
+I resent this as V3 didnt I. Mmmm
+
 >
-> The problematic BPF program:
->    0: call bpf_get_prandom_u32
->    1: w8 =3D 0x80000000
->    2: r0 &=3D r8
->    3: if r0 > r0 goto <exit>
+> Luckily, all Ayaneo devices with an ACPI mapped EC use the same registers.
+> Older devices also use a memory mapped region for RGB[1], but that is
+> replaced by HID in the new Ayaneo 3. Therefore, this allows for a simple
+> driver design that provides robust future support. The memory mapped region
+> can be upstreamed as a different RGB driver in the future or remain
+> out-of-tree[1].
 >
-> The instruction 3 triggers kernel warning:
->    3: if r0 > r0 goto <exit>
->    true_reg1: range bounds violation u64=3D[0x1, 0x0] s64=3D[0x1, 0x0] u3=
-2=3D[0x1, 0x0] s32=3D[0x1, 0x0] var_off=3D(0x0, 0x0)
->    true_reg2: const tnum out of sync with range bounds u64=3D[0x0, 0xffff=
-ffffffffffff] s64=3D[0x8000000000000000, 0x7fffffffffffffff] var_off=3D(0x0=
-, 0x0)
+> This change also allows cleaning up the oxpec driver, by removing Ayaneo
+> devices from it. In parallel, charge limiting is added for these devices.
 >
-> Comparing a register with itself should not change its bounds and
-> for most comparison operations, comparing a register with itself has
-> a known result (e.g., r0 =3D=3D r0 is always true, r0 < r0 is always fals=
-e).
+> [1] https://github.com/ShadowBlip/ayaneo-platform
 >
-> Fix this by:
-> 1. Enhance is_scalar_branch_taken() to properly handle branch direction
->    computation for same register comparisons across all BPF jump operatio=
-ns
-> 2. Adds early return in reg_set_min_max() to avoid bounds adjustment
->    for unknown branch directions (e.g., BPF_JSET) on the same register
->
-> The fix ensures that unnecessary bounds adjustments are skipped, preventi=
-ng
-> the verifier bug while maintaining correct branch direction analysis.
->
-> Reported-by: Kaiyan Mei <M202472210@hust.edu.cn>
-> Reported-by: Yinhao Hu <dddddd@hust.edu.cn>
-> Closes: https://lore.kernel.org/all/1881f0f5.300df.199f2576a01.Coremail.k=
-aiyanm@hust.edu.cn/
-> Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
 > ---
->  kernel/bpf/verifier.c | 33 +++++++++++++++++++++++++++++++++
->  1 file changed, 33 insertions(+)
 >
-> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> index 542e23fb19c7..a571263f4ebe 100644
-> --- a/kernel/bpf/verifier.c
-> +++ b/kernel/bpf/verifier.c
-> @@ -15995,6 +15995,8 @@ static int is_scalar_branch_taken(struct bpf_reg_=
-state *reg1, struct bpf_reg_sta
+> V3: https://lore.kernel.org/all/20251015084414.1391595-1-lkml@antheas.dev/
+> V2: https://lore.kernel.org/all/20251015084414.1391595-1-lkml@antheas.dev/
+> V1: https://lore.kernel.org/all/20250820160628.99678-1-lkml@antheas.dev/
 >
->         switch (opcode) {
->         case BPF_JEQ:
-> +               if (reg1 =3D=3D reg2)
-> +                       return 1;
->                 /* constants, umin/umax and smin/smax checks would be
->                  * redundant in this case because they all should match
->                  */
-> @@ -16021,6 +16023,8 @@ static int is_scalar_branch_taken(struct bpf_reg_=
-state *reg1, struct bpf_reg_sta
->                 }
->                 break;
->         case BPF_JNE:
-> +               if (reg1 =3D=3D reg2)
-> +                       return 0;
->                 /* constants, umin/umax and smin/smax checks would be
->                  * redundant in this case because they all should match
->                  */
-> @@ -16047,6 +16051,12 @@ static int is_scalar_branch_taken(struct bpf_reg=
-_state *reg1, struct bpf_reg_sta
->                 }
->                 break;
->         case BPF_JSET:
-> +               if (reg1 =3D=3D reg2) {
-> +                       if (tnum_is_const(t1))
-> +                               return t1.value !=3D 0;
-> +                       else
-> +                               return (smin1 <=3D 0 && smax1 >=3D 0) ? -=
-1 : 1;
-> +               }
->                 if (!is_reg_const(reg2, is_jmp32)) {
->                         swap(reg1, reg2);
->                         swap(t1, t2);
-> @@ -16059,48 +16069,64 @@ static int is_scalar_branch_taken(struct bpf_re=
-g_state *reg1, struct bpf_reg_sta
->                         return 0;
->                 break;
->         case BPF_JGT:
-> +               if (reg1 =3D=3D reg2)
-> +                       return 0;
->                 if (umin1 > umax2)
->                         return 1;
->                 else if (umax1 <=3D umin2)
->                         return 0;
->                 break;
->         case BPF_JSGT:
-> +               if (reg1 =3D=3D reg2)
-> +                       return 0;
+> Changes since V3:
+>   - Fix various non-functional nits
+>   - On hibernation restore, use restore instead of thaw, switch to bools,
+>     and restore fan pwm mode, but only after the first pwm write after
+>     hibernation. Also, release pwm when entering hibernation.
+>
+> Changes since V2:
+>   - Remove i counter from suspend hook by hardcoding the index
+>     (we already allocate the maximum size for the cache anyway)
+>   - Rename quirks to end in quirks
+>   - Add missing includes to controller sysfs patch, use switch statement
+>
+> Changes since V1:
+>   - Use plain sysfs attrs for magic module attributes
+>   - Combine quirk for power and modules, so attribute tree is simpler
+>   - Use switch statement in hwmon
+>   - Add hibernation hook for charge bypass in last patch
+>     - Restoring fan speed is a liability so it is omitted, see patch notes
+>       Note that for EC managed fan curves, it would be acceptable
+>     - Regmap comment: Using regmap is unprecedented for ACPI mapped ECs
+>       and overkill for one value (> 100 LOC)
+>   - fixp_linear_interpolate() comment: it requires importing an extra header,
+>     is not used for static parameters in other modules, and expands to the
+>     same equation for parameters used, so it is omitted
+>
+> Antheas Kapenekakis (6):
+>   platform/x86: ayaneo-ec: Add Ayaneo Embedded Controller platform
+>     driver
+>   platform/x86: ayaneo-ec: Add hwmon support
+>   platform/x86: ayaneo-ec: Add charge control support
+>   platform/x86: ayaneo-ec: Add controller power and modules attributes
+>   platform/x86: ayaneo-ec: Move Ayaneo devices from oxpec to ayaneo-ec
+>   platform/x86: ayaneo-ec: Add suspend hook
+>
+>  .../ABI/testing/sysfs-platform-ayaneo-ec      |  19 +
+>  MAINTAINERS                                   |   7 +
+>  drivers/platform/x86/Kconfig                  |  16 +-
+>  drivers/platform/x86/Makefile                 |   3 +
+>  drivers/platform/x86/ayaneo-ec.c              | 582 ++++++++++++++++++
+>  drivers/platform/x86/oxpec.c                  | 115 +---
+>  6 files changed, 625 insertions(+), 117 deletions(-)
+>  create mode 100644 Documentation/ABI/testing/sysfs-platform-ayaneo-ec
+>  create mode 100644 drivers/platform/x86/ayaneo-ec.c
+>
+>
+> base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
+> --
+> 2.51.1
+>
+>
 
-This is uglier than the previous version.
-reg1 =3D=3D reg2 is a syzbot territory.
-We shouldn't uglify the code everywhere because of it.
-
-pw-bot: cr
 
