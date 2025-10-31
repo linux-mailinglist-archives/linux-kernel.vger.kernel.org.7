@@ -1,56 +1,55 @@
-Return-Path: <linux-kernel+bounces-880712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id C38C6C26623
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:35:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B879C26611
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:35:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4C2664F7FB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:32:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D17B8405925
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:33:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464B4350D62;
-	Fri, 31 Oct 2025 17:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C68F354AC5;
+	Fri, 31 Oct 2025 17:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UEe5WHxT"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Gk/w51kC"
 Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F063D350A01
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:28:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC624350A3D;
+	Fri, 31 Oct 2025 17:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761931717; cv=none; b=lHnxkiW2txKyFaaeN7MgwWef/epRXNE0nfhyFiWZWwlCpp0wpOHgqlGXwedDADS5goKpAOpPRYhvGaml3jdgxzHTwSn1VVgcOVA6RPqLAupoYjWHCAwZUwGzTFMrD+dlPkX089JEBF9HoFqK7zzJcpKUzh4w+7OZWuWN4n1N2kI=
+	t=1761931719; cv=none; b=I5jSvvJApBD2AwWm7/KueKZ3k+IcqRWYy2QI2KpmyJT0YVsHv+WaY6BzGknNlGvsFgruC8BJa3vODLtOofp2L51WEXR6XK57SIbsWzgjiidQcJv5C3EIs3Bqpu36gJEoojD3V+T+gI6CzAZSPTem57lw3zR7FAl6t034ERllRRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761931717; c=relaxed/simple;
-	bh=BcT58DCMpYImSfCLXscwx0J/YNnF0Oe9IqpvZNcgQ78=;
+	s=arc-20240116; t=1761931719; c=relaxed/simple;
+	bh=AHYs3uNkFaDan+ksySMGFisaFfq4M/PnZimfFCU0+9c=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=COIwpSOLeaGhq9j/Jk4SYwz4GQVrbFjP0qCOPgspkj1Iyqi4fyL1ZFvPeJQCQAudcVAtq9d6wImh+Z8g2XqHFs7+qBqmWEFsNKcnTBkji325XM05xAqk0ylvVAq6g4WYtCXcFHx0hZdRgSPK1hbOWkN0rkd2ilnKxhKnNIfgGZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UEe5WHxT; arc=none smtp.client-ip=185.246.84.56
+	 In-Reply-To:To:Cc; b=Zv4bN4/TjRW0FlkhD5hMVLvIonprS3o8vaaeeWGMuBET6UmMLnODo/bf43AgfFZ2UNXrHlPJujLZCtxvKOT+O1JrErXkrXIOemt8MDx1IxBB1qCCa1PXm/OZmaLfNn/V4d/+0P3XlI3yQOEGUs3Q8M14Y4yEKbNgweYwrFuumgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Gk/w51kC; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 9D80C1A17C2;
-	Fri, 31 Oct 2025 17:28:34 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 8C8D11A17C3;
+	Fri, 31 Oct 2025 17:28:36 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 7461360704;
-	Fri, 31 Oct 2025 17:28:34 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A938211818466;
-	Fri, 31 Oct 2025 18:28:32 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 64BCE60704;
+	Fri, 31 Oct 2025 17:28:36 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 040A911818007;
+	Fri, 31 Oct 2025 18:28:33 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761931713; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1761931715; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=qLn8pqGpyg4U7OLjWyRrfWQycUAFq+5725pA6nA01gM=;
-	b=UEe5WHxTMWNUU4sVtZJCYJu6Mgx3Z7Fcdlhkt0JsnLfHxQPyeTuP7KXuMD5arq8/mWdo95
-	4/QFu7UYGaPOYcbWh5NYEIOtRY9N76+ZDZw2YIwior6GT6Td4xU4YIhA14Fo5v6Cb73BTT
-	yWms+2/LBhlpVdl8SDCxgYsiRBC3h9QyJh/gYc0xxngoqMw61s3tAMYXxEMrGPl8MwssBT
-	J9uX6M4FZNnA7F7+ndzl2Yk2K7+YlAXa13JnA9JC+sOpoA+vFUHDMEay7yME4roDBsaZy1
-	y52H258HZf+jgJxxEFxstc4pNJ6L+PUQOQkHH94HQaH1HFNwFsF6rzimSfzcEg==
+	bh=5pi4CcvcO27jDmf/e7y4SHnPB/Y88k3Vae3Xm2yNuow=;
+	b=Gk/w51kCU/8d4KkH+9PASySJzs9qCVlS7IgkATDswIySEf3g5XXTHBoIm3aAPcd+KhFtSU
+	n3mJNRowcOMb58j+hXlbBDah4ACTL7v80ILDeN8NZkTHbjMHnlep3h3m1HQRRAIGDRNBxT
+	cbzYcNgqTXu0kGbQ7cSiGv5xCZdittHtcOwnSyBEz6QnbaGJQijElzAIy/QwEGqx7kKtBy
+	B454EXMpQabzAiSQMe9ZJHK4XP6KGXGjOT4saGINarKf/oNYFwunUhA3KEbHk5G6SV5IoH
+	Ea8U76zlUZR/CYl4UrLL3PpgFA2+93IfiJAw13nYvBxwN843pT7cTj0qDF8fZA==
 From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Fri, 31 Oct 2025 18:27:02 +0100
-Subject: [PATCH 18/28] mtd: spinand: winbond: Register W35N vendor specific
- operation
+Date: Fri, 31 Oct 2025 18:27:03 +0100
+Subject: [PATCH 19/28] mtd: spinand: winbond: Fix style
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,7 +58,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251031-winbond-v6-17-rc1-oddr-v1-18-be42de23ebf1@bootlin.com>
+Message-Id: <20251031-winbond-v6-17-rc1-oddr-v1-19-be42de23ebf1@bootlin.com>
 References: <20251031-winbond-v6-17-rc1-oddr-v1-0-be42de23ebf1@bootlin.com>
 In-Reply-To: <20251031-winbond-v6-17-rc1-oddr-v1-0-be42de23ebf1@bootlin.com>
 To: Mark Brown <broonie@kernel.org>, Richard Weinberger <richard@nod.at>, 
@@ -73,52 +72,25 @@ Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
 X-Mailer: b4 0.14.2
 X-Last-TLS-Session-Version: TLSv1.3
 
-Provide the Winbond W35N specific "write VCR register" operation to let
-the core verify it is supported by the controller before using it.
+Add a missing new line in the middle of the driver.
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- drivers/mtd/nand/spi/winbond.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/mtd/nand/spi/winbond.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/mtd/nand/spi/winbond.c b/drivers/mtd/nand/spi/winbond.c
-index 36053f35ee5e84eb355343443a28d274cf7ea5c3..1c13dba08369c48ca26381c634abcea4e7360f30 100644
+index 1c13dba08369c48ca26381c634abcea4e7360f30..7eade2251f7b5b2a96c0a7528ca6d64ba6d8233e 100644
 --- a/drivers/mtd/nand/spi/winbond.c
 +++ b/drivers/mtd/nand/spi/winbond.c
-@@ -93,6 +93,9 @@ static SPINAND_OP_VARIANTS(update_cache_variants,
- 		   SPI_MEM_OP_NO_DUMMY,					\
- 		   SPI_MEM_OP_DATA_OUT(1, buf, 1))
- 
-+static SPINAND_OP_VARIANTS(winbond_w35_ops,
-+		SPINAND_WINBOND_WRITE_VCR_1S_1S_1S(0, NULL));
+@@ -408,6 +408,7 @@ static int w35n0xjw_vcr_cfg(struct spinand_device *spinand)
+ 	default:
+ 		return -EINVAL;
+ 	}
 +
- static struct spi_mem_op
- spinand_fill_winbond_write_vcr_op(struct spinand_device *spinand, u8 reg, void *valptr)
- {
-@@ -469,6 +472,7 @@ static const struct spinand_info winbond_spinand_table[] = {
- 					      &write_cache_octal_variants,
- 					      &update_cache_octal_variants),
- 		     0,
-+		     SPINAND_INFO_VENDOR_OPS(&winbond_w35_ops),
- 		     SPINAND_ECCINFO(&w35n01jw_ooblayout, NULL),
- 		     SPINAND_CONFIGURE_CHIP(w35n0xjw_vcr_cfg)),
- 	SPINAND_INFO("W35N02JW", /* 1.8V */
-@@ -479,6 +483,7 @@ static const struct spinand_info winbond_spinand_table[] = {
- 					      &write_cache_octal_variants,
- 					      &update_cache_octal_variants),
- 		     0,
-+		     SPINAND_INFO_VENDOR_OPS(&winbond_w35_ops),
- 		     SPINAND_ECCINFO(&w35n01jw_ooblayout, NULL),
- 		     SPINAND_CONFIGURE_CHIP(w35n0xjw_vcr_cfg)),
- 	SPINAND_INFO("W35N04JW", /* 1.8V */
-@@ -489,6 +494,7 @@ static const struct spinand_info winbond_spinand_table[] = {
- 					      &write_cache_octal_variants,
- 					      &update_cache_octal_variants),
- 		     0,
-+		     SPINAND_INFO_VENDOR_OPS(&winbond_w35_ops),
- 		     SPINAND_ECCINFO(&w35n01jw_ooblayout, NULL),
- 		     SPINAND_CONFIGURE_CHIP(w35n0xjw_vcr_cfg)),
- 	/* 2G-bit densities */
+ 	ret = w35n0xjw_write_vcr(spinand, W35N01JW_VCR_DUMMY_CLOCK_REG, dummy_cycles);
+ 	if (ret)
+ 		return ret;
 
 -- 
 2.51.0
