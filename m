@@ -1,263 +1,535 @@
-Return-Path: <linux-kernel+bounces-879790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8389C240A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:11:08 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F3E2C24040
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:07:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D2FC44F5010
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:07:43 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 87BA234F08D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:07:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17ADC32ED26;
-	Fri, 31 Oct 2025 09:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2589632ED5B;
+	Fri, 31 Oct 2025 09:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DQiY8rpk"
-Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kis94X00"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EDF432E6AD
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27DAF32ED5A;
+	Fri, 31 Oct 2025 09:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761901629; cv=none; b=Eo711rAxYuTdzlxl5w68UoTEvl0iqOJnqNKMdoICQGf4lz5PbZdh0h8FEte5BL+iIGRZ+8u/mZJv3UPZK/+iqbn/l19tPvZ/Ja4fl9HEr3ER70cAl4V+Ki1mDMyCmXp2mFPUcuE8ITgcURnIOioE80dYe8AmOA2eIBOeo8cxKX0=
+	t=1761901654; cv=none; b=s+AVNt8y2ofg/JC6xnG28+oVfz49u3wv87bl/8l+fjyhoEhWAXGRpcgLXPW/1+txIa1+SIrD9QtucBzBVLAZjn4v8IZbo20Y7gjv/HZOZkeDbWu3U+eatBEQ3HBTx42DCGXScnJ2fcJbyeO5SDikT840by+RqpHAq0U010YiLyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761901629; c=relaxed/simple;
-	bh=rQJ6m5izqAPGX/XkFvXmv2Y6nNiOodtTyPT9ISPslA4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=VxDkUE9IZN/wc8jTaDgrkzyquex99UU7cG0k/HIMSBEkE77K7c6Czm8XfKHRELdL+hpb49BF0xHAwK4A35Ma9gjEngq7umRQvPpNc0MOflWYP3TUmo3VB2ButnPUPvKAOFfdSTOJHAJsHvfl53AsTdnZpw/STHFV5lMA1Diz+w4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DQiY8rpk; arc=none smtp.client-ip=209.85.218.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-b7043504650so332104166b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:07:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761901625; x=1762506425; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=29d2Teid1vY8nWEM/2hMCD7Hus+R2bdLREzpsdHxTuA=;
-        b=DQiY8rpkm4eZ9wBhwjojXGGYeoXR1WqMsoways3QfhHrzqoEVzOpE2FB7QGDWPY3Tp
-         ej/ct9i+6NMreNT3e1WnM2CQ8eMlRHfq6tXE0Fv7gPr950gu5I98clrkUsIlbmFqPxU1
-         Naibh7DukVK7aEmTM74JH28GgURJ+SGcv45ONNXr82qR0AEvG1sSIc8NNIrJmqpt5wcX
-         HKAvLjSvK4G74eCS88rC+3AesK5dvcLOsLyqwVCf1yWaz/YzmSvunbqDy8ZtMqvEkd8b
-         GwaKBiYq3BFrhl31pogaMjxm6FQkGLATtU/CKTsQcmb+SoqER+YK/kYzf7CNNG2XuJ0N
-         DL1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761901625; x=1762506425;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=29d2Teid1vY8nWEM/2hMCD7Hus+R2bdLREzpsdHxTuA=;
-        b=VFGq1FB2/OARSxEjt3VVOBoQ8+/aNULIlkFQj874lJjNIwTWo2XMny1Gq+iO+ApImu
-         wIrrSDSA4ya1cuPubtIRsrQP0Rb/S9Zya2iN/G3cRLbAF0uV0bTwukR36QJx4huW6qsf
-         Y4ZUn1ZPD26ukaJroyxjuzJNpvFTOUjUOlvC6sJoTVtdZwYu2F9O430Q5/JhKhy2Hyia
-         W4QFIpep8Hch6mW81lLOqkmrCjAfW/QE48iPyG/lDZBtMJJD+WYzBPCr7wQubz80DX7Y
-         saeRRuhStbimcddbNlFu0xtnC/mi3N684xa14DiWMRVvy74+V6HeKtILMOpQNrfWdVxk
-         4DXA==
-X-Forwarded-Encrypted: i=1; AJvYcCX11DnALfXQKnXvYhVr55c3hIdHg7slmC1rL2Ib3FPLn9nUpvs3npLTRmyy4tNvoODRHN9PDvAYlzO88Q4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsglnwV78JH2LnNffGs4iZnrW1skbdG66pZrsIT4Oj8FShPaDz
-	O4YbV7+rxUhXH/wwBDSBgjvRFw8TnFtyfEY0PsSG3Xc2LZBEK1eBPEtJdnzH8cwdpm0TAuh2hp8
-	7skQ8Uswi1sq9yYukkw==
-X-Google-Smtp-Source: AGHT+IHQfde77LTsYs+H7ayeimd+wwm/8KMTrV3Sd6Adno8GuLpiuQxfMBuEYeebpFBJheF7ldHY2iKlk8Y3ghY=
-X-Received: from ejac23.prod.google.com ([2002:a17:906:3d7:b0:b6d:6aad:e8ff])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:907:a0c8:b0:b07:87f1:fc42 with SMTP id a640c23a62f3a-b706e54f35cmr331607566b.16.1761901624817;
- Fri, 31 Oct 2025 02:07:04 -0700 (PDT)
-Date: Fri, 31 Oct 2025 09:07:04 +0000
-In-Reply-To: <20251030154842.450518-2-zhiw@nvidia.com>
+	s=arc-20240116; t=1761901654; c=relaxed/simple;
+	bh=31re5kylSUgrK13tyybH72QcZb32oGU/PyNPIpQm1sA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ui6iMSV/T9EdfOydFht6TouGTGisrm7bsZpJfeZiPylefb6+op8WMo3TqbCynaN5Uqv4sHT7CH5zwa7wHEEsxCjmFA6+SGhJAJegfcDZRRwORNCv/nSZx6BSij/P+QAbR0mCc9+KCSzS46ECrdnTaSWYht0a8aX8Y6gqJhMn8Ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=kis94X00; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1761901647;
+	bh=qNpvLF7LOXzi/VFDii0L6C2xXSbUdQzQXVouTw7pdOs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kis94X00dHxldlq3Qd70CBKVz0rI/NZhOASWGX0/efVodcWPHgha48kXV8roW3Dii
+	 sDbvxma9vbfTNbSgriRnDLb/tnS8xVq15xIaYkGaRiEyK6QLdL40pBQI69TpGbklk0
+	 iLtQFFDltaXP/9pN2fZlzNGeyRJ0YH04aR63C8HYcYoP3AbkWqlP6QAissWDEPderh
+	 sDs7QLSq87Bf8w2z0cfKDoU1I0Jlm+aF4AkYdZoav5flDQZbQbC06C/5KH908oETFj
+	 d+zO2iG+r8tLx04qH68FuT2QLkZILe62SzhLAlsNZSHx7i0v2cdYfT9MzyewvpriVL
+	 Ya9PeQF35AnBw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cyZqy17LKz4w93;
+	Fri, 31 Oct 2025 20:07:26 +1100 (AEDT)
+Date: Fri, 31 Oct 2025 20:07:24 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Message-ID: <20251031200724.210a4f0d@canb.auug.org.au>
+In-Reply-To: <20251031123833.1dbd0130@canb.auug.org.au>
+References: <20251031120243.4394e6a8@canb.auug.org.au>
+ <20251031121812.1db72425@canb.auug.org.au>
+ <20251031123833.1dbd0130@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251030154842.450518-1-zhiw@nvidia.com> <20251030154842.450518-2-zhiw@nvidia.com>
-Message-ID: <aQR8OPVnU_fPJTCI@google.com>
-Subject: Re: [PATCH v3 1/5] rust: io: factor common I/O helpers into Io trait
-From: Alice Ryhl <aliceryhl@google.com>
-To: Zhi Wang <zhiw@nvidia.com>
-Cc: rust-for-linux@vger.kernel.org, dakr@kernel.org, bhelgaas@google.com, 
-	kwilczynski@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	lossin@kernel.org, a.hindborg@kernel.org, tmgross@umich.edu, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, cjia@nvidia.com, 
-	smitra@nvidia.com, ankita@nvidia.com, aniketa@nvidia.com, 
-	kwankhede@nvidia.com, targupta@nvidia.com, zhiwang@kernel.org, 
-	acourbot@nvidia.com, joelagnelf@nvidia.com, jhubbard@nvidia.com, 
-	markus.probst@posteo.de, Bjorn Helgaas <helgaas@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/Xyz5DaHN=dI2hk0/fj5UY/b";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Thu, Oct 30, 2025 at 03:48:38PM +0000, Zhi Wang wrote:
-> The previous Io<SIZE> type combined both the generic I/O access helpers
-> and MMIO implementation details in a single struct.
-> 
-> To establish a cleaner layering between the I/O interface and its concrete
-> backends, paving the way for supporting additional I/O mechanisms in the
-> future, Io<SIZE> need to be factored.
-> 
-> Factor the common helpers into a new Io trait, and move the MMIO-specific
-> logic into a dedicated Mmio<SIZE> type implementing that trait. Rename the
-> IoRaw to MmioRaw and update the bus MMIO implementations to use MmioRaw.
-> 
-> No functional change intended.
-> 
-> Cc: Alexandre Courbot <acourbot@nvidia.com>
-> Cc: Bjorn Helgaas <helgaas@kernel.org>
-> Cc: Danilo Krummrich <dakr@kernel.org>
-> Cc: John Hubbard <jhubbard@nvidia.com>
-> Signed-off-by: Zhi Wang <zhiw@nvidia.com>
+--Sig_/Xyz5DaHN=dI2hk0/fj5UY/b
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> +/// Represents a region of I/O space of a fixed size.
-> +///
-> +/// Provides common helpers for offset validation and address
-> +/// calculation on top of a base address and maximum size.
-> +///
-> +/// Types implementing this trait (e.g. MMIO BARs or PCI config
-> +/// regions) can share the same accessors.
-> +pub trait Io<const SIZE: usize> {
+Hi all,
 
-I would consider moving SIZE to an associated constant.
+On Fri, 31 Oct 2025 12:38:33 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Fri, 31 Oct 2025 12:18:12 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >
+> > On Fri, 31 Oct 2025 12:02:43 +1100 Stephen Rothwell <sfr@canb.auug.org.=
+au> wrote: =20
+> > >
+> > > After merging the tip tree, today's linux-next build (arm64 defconfig)
+> > > failed like this:
+> > >=20
+> > > arch/arm64/kernel/entry-common.c: In function 'arm64_exit_to_user_mod=
+e':
+> > > arch/arm64/kernel/entry-common.c:103:9: error: implicit declaration o=
+f function 'exit_to_user_mode_prepare'; did you mean 'arch_exit_to_user_mod=
+e_prepare'? [-Wimplicit-function-declaration]
+> > >   103 |         exit_to_user_mode_prepare(regs);
+> > >       |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+> > >       |         arch_exit_to_user_mode_prepare
+> > > In file included from arch/arm64/include/asm/current.h:5,
+> > >                  from include/linux/sched.h:12,
+> > >                  from include/linux/context_tracking.h:5,
+> > >                  from include/linux/irq-entry-common.h:5,
+> > >                  from kernel/entry/common.c:3:
+> > > kernel/entry/common.c: In function 'exit_to_user_mode_loop':
+> > > kernel/entry/common.c:77:29: error: implicit declaration of function =
+'rseq_exit_to_user_mode_restart'; did you mean 'arch_exit_to_user_mode_prep=
+are'? [-Wimplicit-function-declaration]
+> > >    77 |                 if (likely(!rseq_exit_to_user_mode_restart(re=
+gs, ti_work)))
+> > >       |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > > include/linux/compiler.h:76:45: note: in definition of macro 'likely'
+> > >    76 | # define likely(x)      __builtin_expect(!!(x), 1)
+> > >       |                                             ^
+> > >=20
+> > > Caused by commit
+> > >=20
+> > >   d58930640310 ("entry: Split up exit_to_user_mode_prepare()")
+> > >=20
+> > > and maybe following ones.
+> > >=20
+> > > I have reverted these commits for today:
+> > >=20
+> > >   69c8e3d16105 ("rseq: Switch to TIF_RSEQ if supported")
+> > >   1b3dd1c538a8 ("rseq: Split up rseq_exit_to_user_mode()")
+> > >   d58930640310 ("entry: Split up exit_to_user_mode_prepare()")   =20
+> >=20
+> > I also had to revert
+> >=20
+> >   84eeeb002035 ("rseq: Switch to fast path processing on exit to user")=
+ =20
+>=20
+> And then the sparc64 defconfig build failed like this:
+>=20
+> In file included from io_uring/io_uring.h:6,
+>                  from io_uring/notif.c:8:
+> include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
+> include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rse=
+q_handle_notify_resume' from incompatible pointer type [-Werror=3Dincompati=
+ble-pointer-types]
+>    62 |         rseq_handle_notify_resume(regs);
+>       |                                   ^~~~
+>       |                                   |
+>       |                                   struct pt_regs *
+> In file included from include/linux/resume_user_mode.h:9,
+>                  from io_uring/io_uring.h:6,
+>                  from io_uring/notif.c:8:
+> include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argume=
+nt is of type 'struct pt_regs *'
+>   155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig=
+, struct pt_regs *regs) { }
+>       |                                              ~~~~~~~~~~~~~~~~^~~~
+> In file included from io_uring/io_uring.h:6,
+>                  from io_uring/notif.c:8:
+> include/linux/resume_user_mode.h:62:9: error: too few arguments to functi=
+on 'rseq_handle_notify_resume'
+>    62 |         rseq_handle_notify_resume(regs);
+>       |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+> In file included from include/linux/resume_user_mode.h:9,
+>                  from io_uring/io_uring.h:6,
+>                  from io_uring/notif.c:8:
+> include/linux/rseq.h:155:20: note: declared here
+>   155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig=
+, struct pt_regs *regs) { }
+>       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+> cc1: some warnings being treated as errors
+> make[4]: *** [scripts/Makefile.build:287: io_uring/notif.o] Error 1
+> make[4]: *** Waiting for unfinished jobs....
+> In file included from io_uring/io_uring.h:6,
+>                  from io_uring/opdef.c:12:
+> include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
+> include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rse=
+q_handle_notify_resume' from incompatible pointer type [-Werror=3Dincompati=
+ble-pointer-types]
+>    62 |         rseq_handle_notify_resume(regs);
+>       |                                   ^~~~
+>       |                                   |
+>       |                                   struct pt_regs *
+> In file included from include/linux/resume_user_mode.h:9,
+>                  from io_uring/io_uring.h:6,
+>                  from io_uring/opdef.c:12:
+> include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argume=
+nt is of type 'struct pt_regs *'
+>   155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig=
+, struct pt_regs *regs) { }
+>       |                                              ~~~~~~~~~~~~~~~~^~~~
+> In file included from io_uring/io_uring.h:6,
+>                  from io_uring/opdef.c:12:
+> include/linux/resume_user_mode.h:62:9: error: too few arguments to functi=
+on 'rseq_handle_notify_resume'
+>    62 |         rseq_handle_notify_resume(regs);
+>       |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+> In file included from include/linux/resume_user_mode.h:9,
+>                  from io_uring/io_uring.h:6,
+>                  from io_uring/opdef.c:12:
+> include/linux/rseq.h:155:20: note: declared here
+>   155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig=
+, struct pt_regs *regs) { }
+>       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+> cc1: some warnings being treated as errors
+> make[4]: *** [scripts/Makefile.build:287: io_uring/opdef.o] Error 1
+> In file included from io_uring/io_uring.h:6,
+>                  from io_uring/filetable.c:12:
+> include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
+> include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rse=
+q_handle_notify_resume' from incompatible pointer type [-Werror=3Dincompati=
+ble-pointer-types]
+>    62 |         rseq_handle_notify_resume(regs);
+>       |                                   ^~~~
+>       |                                   |
+>       |                                   struct pt_regs *
+> In file included from include/linux/resume_user_mode.h:9,
+>                  from io_uring/io_uring.h:6,
+>                  from io_uring/filetable.c:12:
+> include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argume=
+nt is of type 'struct pt_regs *'
+>   155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig=
+, struct pt_regs *regs) { }
+>       |                                              ~~~~~~~~~~~~~~~~^~~~
+> In file included from io_uring/io_uring.h:6,
+>                  from io_uring/filetable.c:12:
+> include/linux/resume_user_mode.h:62:9: error: too few arguments to functi=
+on 'rseq_handle_notify_resume'
+>    62 |         rseq_handle_notify_resume(regs);
+>       |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+> In file included from include/linux/resume_user_mode.h:9,
+>                  from io_uring/io_uring.h:6,
+>                  from io_uring/filetable.c:12:
+> include/linux/rseq.h:155:20: note: declared here
+>   155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig=
+, struct pt_regs *regs) { }
+>       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+> cc1: some warnings being treated as errors
+> make[4]: *** [scripts/Makefile.build:287: io_uring/filetable.o] Error 1
+> arch/sparc/vdso/vclock_gettime.c:274:1: warning: no previous prototype fo=
+r '__vdso_clock_gettime' [-Wmissing-prototypes]
+>   274 | __vdso_clock_gettime(clockid_t clock, struct __kernel_old_timespe=
+c *ts)
+>       | ^~~~~~~~~~~~~~~~~~~~
+> arch/sparc/vdso/vclock_gettime.c:302:1: warning: no previous prototype fo=
+r '__vdso_clock_gettime_stick' [-Wmissing-prototypes]
+>   302 | __vdso_clock_gettime_stick(clockid_t clock, struct __kernel_old_t=
+imespec *ts)
+>       | ^~~~~~~~~~~~~~~~~~~~~~~~~~
+> arch/sparc/vdso/vclock_gettime.c:327:1: warning: no previous prototype fo=
+r '__vdso_gettimeofday' [-Wmissing-prototypes]
+>   327 | __vdso_gettimeofday(struct __kernel_old_timeval *tv, struct timez=
+one *tz)
+>       | ^~~~~~~~~~~~~~~~~~~
+> arch/sparc/vdso/vclock_gettime.c:363:1: warning: no previous prototype fo=
+r '__vdso_gettimeofday_stick' [-Wmissing-prototypes]
+>   363 | __vdso_gettimeofday_stick(struct __kernel_old_timeval *tv, struct=
+ timezone *tz)
+>       | ^~~~~~~~~~~~~~~~~~~~~~~~~
+> In file included from io_uring/io_uring.h:6,
+>                  from io_uring/tctx.c:12:
+> include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
+> include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rse=
+q_handle_notify_resume' from incompatible pointer type [-Werror=3Dincompati=
+ble-pointer-types]
+>    62 |         rseq_handle_notify_resume(regs);
+>       |                                   ^~~~
+>       |                                   |
+>       |                                   struct pt_regs *
+> In file included from include/linux/resume_user_mode.h:9,
+>                  from io_uring/io_uring.h:6,
+>                  from io_uring/tctx.c:12:
+> include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argume=
+nt is of type 'struct pt_regs *'
+>   155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig=
+, struct pt_regs *regs) { }
+>       |                                              ~~~~~~~~~~~~~~~~^~~~
+> In file included from io_uring/io_uring.h:6,
+>                  from io_uring/tctx.c:12:
+> include/linux/resume_user_mode.h:62:9: error: too few arguments to functi=
+on 'rseq_handle_notify_resume'
+>    62 |         rseq_handle_notify_resume(regs);
+>       |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+> In file included from include/linux/resume_user_mode.h:9,
+>                  from io_uring/io_uring.h:6,
+>                  from io_uring/tctx.c:12:
+> include/linux/rseq.h:155:20: note: declared here
+>   155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig=
+, struct pt_regs *regs) { }
+>       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+> cc1: some warnings being treated as errors
+> make[4]: *** [scripts/Makefile.build:287: io_uring/tctx.o] Error 1
+> In file included from io_uring/io_uring.h:6,
+>                  from io_uring/kbuf.c:15:
+> include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
+> include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rse=
+q_handle_notify_resume' from incompatible pointer type [-Werror=3Dincompati=
+ble-pointer-types]
+>    62 |         rseq_handle_notify_resume(regs);
+>       |                                   ^~~~
+>       |                                   |
+>       |                                   struct pt_regs *
+> In file included from include/linux/resume_user_mode.h:9,
+>                  from io_uring/io_uring.h:6,
+>                  from io_uring/kbuf.c:15:
+> include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argume=
+nt is of type 'struct pt_regs *'
+>   155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig=
+, struct pt_regs *regs) { }
+>       |                                              ~~~~~~~~~~~~~~~~^~~~
+> In file included from io_uring/io_uring.h:6,
+>                  from io_uring/kbuf.c:15:
+> include/linux/resume_user_mode.h:62:9: error: too few arguments to functi=
+on 'rseq_handle_notify_resume'
+>    62 |         rseq_handle_notify_resume(regs);
+>       |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+> In file included from include/linux/resume_user_mode.h:9,
+>                  from io_uring/io_uring.h:6,
+>                  from io_uring/kbuf.c:15:
+> include/linux/rseq.h:155:20: note: declared here
+>   155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig=
+, struct pt_regs *regs) { }
+>       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+> cc1: some warnings being treated as errors
+> make[4]: *** [scripts/Makefile.build:287: io_uring/kbuf.o] Error 1
+> In file included from io_uring/io_uring.h:6,
+>                  from io_uring/rw.c:19:
+> include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
+> include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rse=
+q_handle_notify_resume' from incompatible pointer type [-Werror=3Dincompati=
+ble-pointer-types]
+>    62 |         rseq_handle_notify_resume(regs);
+>       |                                   ^~~~
+>       |                                   |
+>       |                                   struct pt_regs *
+> In file included from include/linux/resume_user_mode.h:9,
+>                  from io_uring/io_uring.h:6,
+>                  from io_uring/rw.c:19:
+> include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argume=
+nt is of type 'struct pt_regs *'
+>   155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig=
+, struct pt_regs *regs) { }
+>       |                                              ~~~~~~~~~~~~~~~~^~~~
+> In file included from io_uring/io_uring.h:6,
+>                  from io_uring/rw.c:19:
+> include/linux/resume_user_mode.h:62:9: error: too few arguments to functi=
+on 'rseq_handle_notify_resume'
+>    62 |         rseq_handle_notify_resume(regs);
+>       |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+> In file included from include/linux/resume_user_mode.h:9,
+>                  from io_uring/io_uring.h:6,
+>                  from io_uring/rw.c:19:
+> include/linux/rseq.h:155:20: note: declared here
+>   155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig=
+, struct pt_regs *regs) { }
+>       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+> cc1: some warnings being treated as errors
+> make[4]: *** [scripts/Makefile.build:287: io_uring/rw.o] Error 1
+> In file included from io_uring/io_uring.h:6,
+>                  from io_uring/rsrc.c:17:
+> include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
+> include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rse=
+q_handle_notify_resume' from incompatible pointer type [-Werror=3Dincompati=
+ble-pointer-types]
+>    62 |         rseq_handle_notify_resume(regs);
+>       |                                   ^~~~
+>       |                                   |
+>       |                                   struct pt_regs *
+> In file included from include/linux/resume_user_mode.h:9,
+>                  from io_uring/io_uring.h:6,
+>                  from io_uring/rsrc.c:17:
+> include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argume=
+nt is of type 'struct pt_regs *'
+>   155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig=
+, struct pt_regs *regs) { }
+>       |                                              ~~~~~~~~~~~~~~~~^~~~
+> In file included from io_uring/io_uring.h:6,
+>                  from io_uring/rsrc.c:17:
+> include/linux/resume_user_mode.h:62:9: error: too few arguments to functi=
+on 'rseq_handle_notify_resume'
+>    62 |         rseq_handle_notify_resume(regs);
+>       |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+> In file included from include/linux/resume_user_mode.h:9,
+>                  from io_uring/io_uring.h:6,
+>                  from io_uring/rsrc.c:17:
+> include/linux/rseq.h:155:20: note: declared here
+>   155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig=
+, struct pt_regs *regs) { }
+>       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+> cc1: some warnings being treated as errors
+> make[4]: *** [scripts/Makefile.build:287: io_uring/rsrc.o] Error 1
+> In file included from arch/sparc/vdso/vdso32/vclock_gettime.c:22:
+> arch/sparc/vdso/vdso32/../vclock_gettime.c:274:1: warning: no previous pr=
+ototype for '__vdso_clock_gettime' [-Wmissing-prototypes]
+>   274 | __vdso_clock_gettime(clockid_t clock, struct __kernel_old_timespe=
+c *ts)
+>       | ^~~~~~~~~~~~~~~~~~~~
+> arch/sparc/vdso/vdso32/../vclock_gettime.c:302:1: warning: no previous pr=
+ototype for '__vdso_clock_gettime_stick' [-Wmissing-prototypes]
+>   302 | __vdso_clock_gettime_stick(clockid_t clock, struct __kernel_old_t=
+imespec *ts)
+>       | ^~~~~~~~~~~~~~~~~~~~~~~~~~
+> arch/sparc/vdso/vdso32/../vclock_gettime.c:327:1: warning: no previous pr=
+ototype for '__vdso_gettimeofday' [-Wmissing-prototypes]
+>   327 | __vdso_gettimeofday(struct __kernel_old_timeval *tv, struct timez=
+one *tz)
+>       | ^~~~~~~~~~~~~~~~~~~
+> arch/sparc/vdso/vdso32/../vclock_gettime.c:363:1: warning: no previous pr=
+ototype for '__vdso_gettimeofday_stick' [-Wmissing-prototypes]
+>   363 | __vdso_gettimeofday_stick(struct __kernel_old_timeval *tv, struct=
+ timezone *tz)
+>       | ^~~~~~~~~~~~~~~~~~~~~~~~~
+> In file included from io_uring/io_uring.h:6,
+>                  from io_uring/io_uring.c:83:
+> include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
+> include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rse=
+q_handle_notify_resume' from incompatible pointer type [-Werror=3Dincompati=
+ble-pointer-types]
+>    62 |         rseq_handle_notify_resume(regs);
+>       |                                   ^~~~
+>       |                                   |
+>       |                                   struct pt_regs *
+> In file included from include/linux/resume_user_mode.h:9,
+>                  from io_uring/io_uring.h:6,
+>                  from io_uring/io_uring.c:83:
+> include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argume=
+nt is of type 'struct pt_regs *'
+>   155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig=
+, struct pt_regs *regs) { }
+>       |                                              ~~~~~~~~~~~~~~~~^~~~
+> In file included from io_uring/io_uring.h:6,
+>                  from io_uring/io_uring.c:83:
+> include/linux/resume_user_mode.h:62:9: error: too few arguments to functi=
+on 'rseq_handle_notify_resume'
+>    62 |         rseq_handle_notify_resume(regs);
+>       |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+> In file included from include/linux/resume_user_mode.h:9,
+>                  from io_uring/io_uring.h:6,
+>                  from io_uring/io_uring.c:83:
+> include/linux/rseq.h:155:20: note: declared here
+>   155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig=
+, struct pt_regs *regs) { }
+>       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+> cc1: some warnings being treated as errors
+> make[4]: *** [scripts/Makefile.build:287: io_uring/io_uring.o] Error 1
+> make[3]: *** [scripts/Makefile.build:556: io_uring] Error 2
+> make[3]: *** Waiting for unfinished jobs....
+> In file included from arch/sparc/kernel/signal_64.c:18:
+> include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
+> include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rse=
+q_handle_notify_resume' from incompatible pointer type [-Werror=3Dincompati=
+ble-pointer-types]
+>    62 |         rseq_handle_notify_resume(regs);
+>       |                                   ^~~~
+>       |                                   |
+>       |                                   struct pt_regs *
+> In file included from include/linux/resume_user_mode.h:9,
+>                  from arch/sparc/kernel/signal_64.c:18:
+> include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argume=
+nt is of type 'struct pt_regs *'
+>   155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig=
+, struct pt_regs *regs) { }
+>       |                                              ~~~~~~~~~~~~~~~~^~~~
+> In file included from arch/sparc/kernel/signal_64.c:18:
+> include/linux/resume_user_mode.h:62:9: error: too few arguments to functi=
+on 'rseq_handle_notify_resume'
+>    62 |         rseq_handle_notify_resume(regs);
+>       |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+> In file included from include/linux/resume_user_mode.h:9,
+>                  from arch/sparc/kernel/signal_64.c:18:
+> include/linux/rseq.h:155:20: note: declared here
+>   155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig=
+, struct pt_regs *regs) { }
+>       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+> cc1: some warnings being treated as errors
+> make[5]: *** [scripts/Makefile.build:287: arch/sparc/kernel/signal_64.o] =
+Error 1
+> make[5]: *** Waiting for unfinished jobs....
+> make[4]: *** [scripts/Makefile.build:556: arch/sparc/kernel] Error 2
+> make[4]: *** Waiting for unfinished jobs....
+> make[3]: *** [scripts/Makefile.build:556: arch/sparc] Error 2
+> kernel/fork.c: In function '__do_sys_clone3':
+> kernel/fork.c:2898:2: warning: #warning clone3() entry point is missing, =
+please fix [-Wcpp]
+>  2898 | #warning clone3() entry point is missing, please fix
+>       |  ^~~~~~~
+> kernel/fork.c:2898:2: warning: #warning clone3() entry point is missing, =
+please fix [-Wcpp]
+>  2898 | #warning clone3() entry point is missing, please fix
+>       |  ^~~~~~~
+> In file included from kernel/task_work.c:5:
+> include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
+> include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rse=
+q_handle_notify_resume' from incompatible pointer type [-Werror=3Dincompati=
+ble-pointer-types]
+>    62 |         rseq_handle_notify_resume(regs);
+>       |                                   ^~~~
+>       |                                   |
+>       |                                   struct pt_regs *
+> In file included from include/linux/resume_user_mode.h:9,
+>                  from kernel/task_work.c:5:
+> include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argume=
+nt is of type 'struct pt_regs *'
+>   155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig=
+, struct pt_regs *regs) { }
+>       |                                              ~~~~~~~~~~~~~~~~^~~~
+> In file included from kernel/task_work.c:5:
+> include/linux/resume_user_mode.h:62:9: error: too few arguments to functi=
+on 'rseq_handle_notify_resume'
+>    62 |         rseq_handle_notify_resume(regs);
+>       |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+> In file included from include/linux/resume_user_mode.h:9,
+>                  from kernel/task_work.c:5:
+> include/linux/rseq.h:155:20: note: declared here
+>   155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig=
+, struct pt_regs *regs) { }
+>       |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+>=20
+> I will come back to this later today.
 
-	pub trait Io {
-	    const MIN_SIZE: usize;
-	
-	    ...
-	}
+I have decided to use the tip tree from next-20251030 for today.
 
-If it's a generic parameter, then the same type can implement both Io<5>
-and Io<7> at the same time, but I don't think it makes sense for a
-single type to implement Io with different minimum sizes.
+--=20
+Cheers,
+Stephen Rothwell
 
->      /// Returns the base address of this mapping.
-> -    #[inline]
-> -    pub fn addr(&self) -> usize {
-> -        self.0.addr()
-> -    }
-> +    fn addr(&self) -> usize;
->  
->      /// Returns the maximum size of this mapping.
-> -    #[inline]
-> -    pub fn maxsize(&self) -> usize {
-> -        self.0.maxsize()
-> -    }
-> -
-> -    #[inline]
-> -    const fn offset_valid<U>(offset: usize, size: usize) -> bool {
-> -        let type_size = core::mem::size_of::<U>();
-> -        if let Some(end) = offset.checked_add(type_size) {
-> -            end <= size && offset % type_size == 0
-> -        } else {
-> -            false
-> -        }
-> -    }
-> +    fn maxsize(&self) -> usize;
->  
-> +    /// Returns the absolute I/O address for a given `offset`.
-> +    /// Performs runtime bounds checks using [`offset_valid`]
->      #[inline]
->      fn io_addr<U>(&self, offset: usize) -> Result<usize> {
-> -        if !Self::offset_valid::<U>(offset, self.maxsize()) {
-> +        if !offset_valid::<U>(offset, self.maxsize()) {
->              return Err(EINVAL);
->          }
->  
-> @@ -217,50 +215,197 @@ fn io_addr<U>(&self, offset: usize) -> Result<usize> {
->          self.addr().checked_add(offset).ok_or(EINVAL)
->      }
->  
-> +    /// Returns the absolute I/O address for a given `offset`,
-> +    /// performing compile-time bound checks.
->      #[inline]
->      fn io_addr_assert<U>(&self, offset: usize) -> usize {
-> -        build_assert!(Self::offset_valid::<U>(offset, SIZE));
-> +        build_assert!(offset_valid::<U>(offset, SIZE));
->  
->          self.addr() + offset
->      }
->  
-> -    define_read!(read8, try_read8, readb -> u8);
-> -    define_read!(read16, try_read16, readw -> u16);
-> -    define_read!(read32, try_read32, readl -> u32);
-> +    /// Infallible 8-bit read with compile-time bounds check.
-> +    fn read8(&self, _offset: usize) -> u8 {
-> +        !0
-> +    }
-> +
-> +    /// Infallible 16-bit read with compile-time bounds check.
-> +    fn read16(&self, _offset: usize) -> u16 {
-> +        !0
-> +    }
-> +
-> +    /// Infallible 32-bit read with compile-time bounds check.
-> +    fn read32(&self, _offset: usize) -> u32 {
-> +        !0
-> +    }
-> +
-> +    /// Infallible 64-bit read with compile-time bounds check (64-bit only).
-> +    #[cfg(CONFIG_64BIT)]
-> +    fn read64(&self, _offset: usize) -> u64 {
-> +        !0
-> +    }
-> +
-> +    /// Fallible 8-bit read with runtime bounds check.
-> +    fn try_read8(&self, _offset: usize) -> Result<u8> {
-> +        Err(ENOTSUPP)
-> +    }
-> +
-> +    /// Fallible 16-bit read with runtime bounds check.
-> +    fn try_read16(&self, _offset: usize) -> Result<u16> {
-> +        Err(ENOTSUPP)
-> +    }
-> +
-> +    /// Fallible 32-bit read with runtime bounds check.
-> +    fn try_read32(&self, _offset: usize) -> Result<u32> {
-> +        Err(ENOTSUPP)
-> +    }
-> +
-> +    /// Fallible 64-bit read with runtime bounds check (64-bit only).
-> +    #[cfg(CONFIG_64BIT)]
-> +    fn try_read64(&self, _offset: usize) -> Result<u64> {
-> +        Err(ENOTSUPP)
-> +    }
-> +
-> +    /// Infallible 8-bit write with compile-time bounds check.
-> +    fn write8(&self, _value: u8, _offset: usize) {
-> +        ()
-> +    }
-> +
-> +    /// Infallible 16-bit write with compile-time bounds check.
-> +    fn write16(&self, _value: u16, _offset: usize) {
-> +        ()
-> +    }
-> +
-> +    /// Infallible 32-bit write with compile-time bounds check.
-> +    fn write32(&self, _value: u32, _offset: usize) {
-> +        ()
-> +    }
-> +
-> +    /// Infallible 64-bit write with compile-time bounds check (64-bit only).
-> +    #[cfg(CONFIG_64BIT)]
-> +    fn write64(&self, _value: u64, _offset: usize) {
-> +        ()
-> +    }
-> +
-> +    /// Fallible 8-bit write with runtime bounds check.
-> +    fn try_write8(&self, value: u8, offset: usize) -> Result;
-> +
-> +    /// Fallible 16-bit write with runtime bounds check.
-> +    fn try_write16(&self, value: u16, offset: usize) -> Result;
-> +
-> +    /// Fallible 32-bit write with runtime bounds check.
-> +    fn try_write32(&self, value: u32, offset: usize) -> Result;
-> +
-> +    /// Fallible 64-bit write with runtime bounds check (64-bit only).
-> +    #[cfg(CONFIG_64BIT)]
-> +    fn try_write64(&self, _value: u64, _offset: usize) -> Result {
-> +        Err(ENOTSUPP)
-> +    }
+--Sig_/Xyz5DaHN=dI2hk0/fj5UY/b
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Why are there default implementations for all of these trait methods? I
-would suggest not providing any default implementations at all.
+-----BEGIN PGP SIGNATURE-----
 
-Alice
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkEfEwACgkQAVBC80lX
+0GzFdQf+I6S1X+p9bOWK5UL+WoksNgMZwkP8SYmXwA8ajiucw/kZiyeBvK5NVFMB
+Mo3HBoYlipBqmOb8lOfs0jBNXg1OcblmRPjSupTCCYcajqVL9jYnMySuIbMKQyjC
+i5gz8lBuGIv07yztCBDb1sfSuRGNrjEWCRETgafpHomRC+f77M4wxB9hTWhJrwX1
+MR6eJ+dEoPN96H0Rn0DLzUxUpxoKOAYEEJAd+9WDNJkiwq9QBrtbo7qYSZUvOi/V
+eNPMX9OLaiJXdT2pUWUqYj5T0LmvmtwQL0ErYwn2SfSxJhc7kHVHMrKvEKauzmFy
+ga9h+GaCYOkX/YibwOZn8ylXfrkdAw==
+=gvlp
+-----END PGP SIGNATURE-----
+
+--Sig_/Xyz5DaHN=dI2hk0/fj5UY/b--
 
