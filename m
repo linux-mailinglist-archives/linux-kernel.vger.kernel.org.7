@@ -1,92 +1,77 @@
-Return-Path: <linux-kernel+bounces-880591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77D13C262C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:42:48 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D888C26105
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:18:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A45D2584489
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:18:09 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AE2F2344899
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:18:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD3C284883;
-	Fri, 31 Oct 2025 16:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="TsoSUOoI"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391EC28BAAC;
+	Fri, 31 Oct 2025 16:16:36 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104EB25334B;
-	Fri, 31 Oct 2025 16:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B82828D83E
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 16:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761927360; cv=none; b=WS+aGBcZpCOkNEB18HOWbmaBVo8WAygWYAN5UEV0XrC9A5gNKsnT5yTy34kkbbd9jBx8bJON6vhExBSbeuBIpeofjBa6jJe+DcctWAJVhXjXZ9U0fm4YqLr3+YemW2dYjEYOeYiy7SrMnX1el6NFoeYtPNJ4DAm52UA7rfUSgeA=
+	t=1761927395; cv=none; b=kgQBEb5D5lIxB+n3km9bnP1u/kAsLHAtCwOCcOFLHCfq/HUvEgDVzAQEix3lXf0xnfpXEL2ysIivdoDpWn4b65KxV/Z+QjwjxEC9jjw80CFTwS98vhkp7vm3E51IC5FvPp3ncS+tW1bPrXjMDX5wwZKiClIxqVfBkDfFBXzuEig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761927360; c=relaxed/simple;
-	bh=006TMgvcwfIbmOITyVS1NTTJwmxmkCoDyHD8bCI13pc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DyQAFSHq6qN2npAKDDMPa0hRm88ToKc5kt7n5UmeOmYR4b2MsLMHtt1eSLQsBOyi0dgnl5XewVyFa6MSU+SxVq7oETIbeLAO5V3z7+fWyT+RQtF7ekKoluir7VRAnP2O0KbWsMMHC+aTAgWP6KVW+6GNO59G23NtEWZq4smc8Ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=TsoSUOoI; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=GZ1we4raHwUnUtjU8hy3mle/N+CwqLuNQ45wdAbVLNk=; b=TsoSUOoIsv2yrwHS7xiSEVNSNT
-	t+XUvWmL0xM1TiQOM68kY9+J9+/wLYoM0yNKlGLkH4f1weu2Ab8t6SRmiGPOuGynt1dyumSuApiJy
-	YsU3OctViL4sKkcM8DiJ+HkifHPSOW54uCpi35RnxH7Tb0P3IRkP3/r/dlHjP2K4uBsE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1vErn4-00Cc4o-CP; Fri, 31 Oct 2025 17:15:50 +0100
-Date: Fri, 31 Oct 2025 17:15:50 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Simon Horman <horms@kernel.org>,
-	Boon Khai Ng <boon.khai.ng@altera.com>,
-	Alexis =?iso-8859-1?Q?Lothor=E9?= <alexis.lothore@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/4] net: altera-tse: Read core revision before
- registering netdev
-Message-ID: <b72e0572-6000-478a-b125-93f079944ace@lunn.ch>
-References: <20251030102418.114518-1-maxime.chevallier@bootlin.com>
- <20251030102418.114518-3-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1761927395; c=relaxed/simple;
+	bh=M71T/ZJ+3xq/7S9fMBH541aTzoNX8hQXml3aB8Tq6G8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=CXvIh/q+LyDkAhJawex5+oD8LqGW/2dngVCetbebCR6Tx5wubBdkOMCtUlE09/xQtfUKs/2Yp0heirnKxBFg5ZcSD6N+pzP06j4ka9v+NB3QUfjaXC2rxlTnfHp1lia3ky3AZF74vCHVuFuuLTD7w5tbIf6TjD0IchTTRzgoDDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-43300d247e4so25105515ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:16:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761927392; x=1762532192;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=M71T/ZJ+3xq/7S9fMBH541aTzoNX8hQXml3aB8Tq6G8=;
+        b=uwPvHwquI3IB11MzpOlUa6F7DXoOjY3i58JPhlzvVFmuLCiawrN+FYY1pa8NAYY5jY
+         TFTH3iGlikCecDsIbcVeNuE3iBAyNPUU2zvH64cLSDF6dU2YAQQ6S8Ew/zgFHplyHGdR
+         N6+haLDyPRSMMhIPla1MctIfgQE//hz8v/ZM99OhsvYekmALFumPfz3jGWopZ446wqUQ
+         7h9JRDriEG330UCf2Pk8GHBvDB9XGCj3JrL9aPnJYv0AZjngFfcj6bdRf0KweDnodbgB
+         ikkI6PcWA7fGoDjmuGJOWjY2mGgTdiax6BCOCM1SBSyQ5DH5qYu2Y32ITGXWIzX47sOE
+         QXZw==
+X-Gm-Message-State: AOJu0YxczrRJTH7WK63lzV0nVx8r7nf524+UXdbrGksa/d8Cs5J6YymO
+	f4PKsltpNwbH1a5ujvk+RMY+2NwKxpN7F5nvUIdUWIgAzlATzSQPW3RidejIwlmpKjHb+UZ5WEH
+	F515b+1PLABBT+FY0Pt2Phf8bzvK+qaPyIb6vgbjd/17ccP1jCzeQ5WsJdVQ=
+X-Google-Smtp-Source: AGHT+IH6XDQ71pbfzlv0VWESrCNv1Cg0kmbc30GDlvT7n3Hc499VsXyFphfbLiOqtQEg/WYQPRyzMX/38PrjqRKq8KazZLAIggq/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251030102418.114518-3-maxime.chevallier@bootlin.com>
+X-Received: by 2002:a05:6e02:1989:b0:433:d08:3c87 with SMTP id
+ e9e14a558f8ab-4330d222080mr33655305ab.23.1761927392361; Fri, 31 Oct 2025
+ 09:16:32 -0700 (PDT)
+Date: Fri, 31 Oct 2025 09:16:32 -0700
+In-Reply-To: <6889adf3.050a0220.5d226.0002.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6904e0e0.050a0220.e9cb8.0015.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] [netfilter?] WARNING in __nf_unregister_net_hook
+ (9)
+From: syzbot <syzbot+78ac1e46d2966eb70fda@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 30, 2025 at 11:24:15AM +0100, Maxime Chevallier wrote:
-> The core revision is used in .ndo_open(), so we have to populate it
-> before regstering the netdev.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-All that open does is:
+***
 
-	if ((priv->revision < 0xd00) || (priv->revision > 0xe00))
-		netdev_warn(dev, "TSE revision %x\n", priv->revision);
+Subject: Re: [syzbot] [netfilter?] WARNING in __nf_unregister_net_hook (9)
+Author: phil@nwl.cc
 
-So i agree this does not need a Fixes: tag.
-
-But i do wounder why this is in open. The revision has already been
-printed once in probe. Are values < 0xd00 or > 0xe00 significant? Is
-this left over code and some actions that were previously here are now
-gone?
-
-Maybe a better fix is to remove this, and make revision local in
-probe?
-
-      Andrew
+#syz test
 
