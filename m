@@ -1,147 +1,141 @@
-Return-Path: <linux-kernel+bounces-880565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 684C5C260D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:15:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42C21C2629D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:41:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 21E824F9354
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:11:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B031F586CF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACFD338939;
-	Fri, 31 Oct 2025 16:07:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68BBB2FDC25;
+	Fri, 31 Oct 2025 16:08:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="a50+6Kn8"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="a/jZfz3n"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5042EC0A0;
-	Fri, 31 Oct 2025 16:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C7E2F5A2F;
+	Fri, 31 Oct 2025 16:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761926847; cv=none; b=jKxTYxhmWNqSgIDT+N/7CVPK+FV2g6CegsoER3q58iFvaqb3mavH6N2zvTGSvp3lYWL3GZuDrfHDVsMc1clSlvV+BTOk4vBNS799e/ULw+RvVOcMQFB1QR+IY+TwPPBL4xFjr67OLET86vYLp0KjvThBDPkO859W+c+3ozg5EQY=
+	t=1761926907; cv=none; b=rbZnRRY3srnImhrYFSl+jEQ2k1AB8QozekWGCqRaFcO1CONXfOv4WED8pzS38Tu49ZtCthMQYNmIJEs/y3s187YQ4kJO74oVvOqI3jRpZLgxUVRzID+TtIy8Qi2/qBhxqylV5j6q83acLd2gdFCAt3juH7bco75h+9nU+yxAuGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761926847; c=relaxed/simple;
-	bh=Sid6extqHtGjo7osU/YzQ4NKZUZo94HBuAcf5H8rGSA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GqtZ6rwKq0ylWwiOkFHqwObS3TicYnz11Nu3ht8WXnDOHtCPYCGEmQ7ipeVzaHm5VFMH6h6ruL6eVXtjzsIKoXvybdEw+iTuH8pF7knxv/oQgn0iCgggw5Ox0gouoHNn39QneuMU5V3o8Gxr2ci2DgyuR7x3Ueiwsso8nezHa6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=a50+6Kn8; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: aaec6fe6b67311f0b33aeb1e7f16c2b6-20251101
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=ljKWyBNvKLuR6mU7/5ele8h/YLTajBE167qUcVBA1IU=;
-	b=a50+6Kn83jQHrx9cQGrMBO+/T7ehjjY7H7gbgsxSizl0bDk0yv5zC8edhCO5Rue5Y1OK49PoPkfOHOkcgfD9I3HbTpul8Ir3WbN/yMfMU8TzliwXNOxARRydblUmC9/fK8L3UcTwwmrs/PXFrPhtNDj5CZ9uomEl5OwZzAcDD8w=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:eec1d1ec-551a-4ea7-805f-d92102300605,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:a9d874c,CLOUDID:1e4fc818-3399-4579-97ab-008f994989ea,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|836|888|898,TC:-5,Content:
-	0|15|50,EDM:-3,IP:nil,URL:0,File:130,RT:0,Bulk:nil,QS:nil,BEC:nil,COL:0,OS
-	I:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: aaec6fe6b67311f0b33aeb1e7f16c2b6-20251101
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
-	(envelope-from <jason-jh.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1819974303; Sat, 01 Nov 2025 00:07:15 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+	s=arc-20240116; t=1761926907; c=relaxed/simple;
+	bh=mtBPiPadsuplpuBAt4fNU1+W1gRT2iMBqw79oldk53o=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hOjdegPHo7x+o8OhwWV6sof0jFCmYgtgiY1G/Vg1COF3DT3FIj/Jyh8qtHw+qqYvbqjrzHwkko8UeLfA13Z3pD09PHRyjKkjYBycOvpU/TBTl7g071mKbV9JBAh2odL1McZugHGVtwxHwUCGRNBfiz6zq9Ifpq57kbcmy1QI1YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=a/jZfz3n; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59VDvg1x1108539;
+	Fri, 31 Oct 2025 12:08:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=Ua+ji97PiQ5ynhrUnxdzoyocV/1
+	9dvBoIv9057spgt4=; b=a/jZfz3n34NyFnV0lvCNpemEwFFCwrPV6snA3CTMoFG
+	wNgHhEPl70Xj6W2RL+0KsCXuNqgKxEWilc/2AnxOekrJ4rx7NJkRPHl5JKIJhIts
+	8uRzxT3m2vj/IstMXs4HSCidSPY/d5DIXmKD1Wa9fOgyHhsBpifNJNR1wf9k4qIa
+	RJ/+8nd+m1TMrUP+ZBXuBLNflNSqCknGKvIj9gcuk+7dThWlz9zMoOdZ3PAAjCH+
+	bbWucUId0c8ZvKTx4j357NjZhevapGv5tQCYMldW1I6z2wEmM0k6mc76vTLYlkX5
+	2w5BiRvV9KTakeXaZ3PiXcCULKUV4Nh9gepCRTdSkXA==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 4a4p8atwdt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 Oct 2025 12:08:21 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 59VG8KfF064675
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 31 Oct 2025 12:08:20 -0400
+Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
+ ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Sat, 1 Nov 2025 00:07:13 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1748.26 via Frontend Transport; Sat, 1 Nov 2025 00:07:13 +0800
-From: Jason-JH Lin <jason-jh.lin@mediatek.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>
-CC: Matthias Brugger <matthias.bgg@gmail.com>, Nicolas Dufresne
-	<nicolas@ndufresne.ca>, Jason-JH Lin <jason-jh.lin@mediatek.com>, Nancy Lin
-	<nancy.lin@mediatek.com>, Singo Chang <singo.chang@mediatek.com>, Paul-PL
- Chen <paul-pl.chen@mediatek.com>, Moudy Ho <moudy.ho@mediatek.com>, Xiandong
- Wang <xiandong.wang@mediatek.com>, Sirius Wang <sirius.wang@mediatek.com>,
-	Fei Shao <fshao@chromium.org>, Chen-yu Tsai <wenst@chromium.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<dri-devel@lists.freedesktop.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-media@vger.kernel.org>
-Subject: [PATCH 2/2] media: platform: mtk-mdp3: Use cmdq_pkt_jump_rel() without shift_pa
-Date: Sat, 1 Nov 2025 00:06:50 +0800
-Message-ID: <20251031160712.1657810-3-jason-jh.lin@mediatek.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20251031160712.1657810-1-jason-jh.lin@mediatek.com>
-References: <20251031160712.1657810-1-jason-jh.lin@mediatek.com>
+ 15.2.1748.37; Fri, 31 Oct 2025 12:08:20 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
+ ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.37; Fri, 31 Oct 2025 12:08:20 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.1748.37 via Frontend
+ Transport; Fri, 31 Oct 2025 12:08:20 -0400
+Received: from Ubuntu.ad.analog.com ([10.32.15.145])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 59VG89rZ006955;
+	Fri, 31 Oct 2025 12:08:11 -0400
+From: Antoniu Miclaus <antoniu.miclaus@analog.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski
+	<brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-gpio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Subject: [PATCH 0/2] gpio: Add support for ADG1712 quad SPST switch
+Date: Fri, 31 Oct 2025 16:07:03 +0000
+Message-ID: <20251031160710.13343-1-antoniu.miclaus@analog.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Authority-Analysis: v=2.4 cv=R4QO2NRX c=1 sm=1 tr=0 ts=6904def6 cx=c_pps
+ a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=p9Z7yoRph7NKER1LKQcA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: m_za6bgTB4Cvd3FGNRdYwR1FsIVlfmNW
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMxMDE0NSBTYWx0ZWRfX9IsXHg5XbrJc
+ XIJ3MndueIQ1+gcl4ZkobxPXgCRK5hue5teImCut31hn7DbzF8jDONbRuVY9mdjKpZAsMb+4/y1
+ lJYcP4fi21C4WcDr7TWTpVfRzx/0vV9rcdilcphTo90ubnuRrtspbyMbqBVGZr7t0oYNdeqS3ob
+ LOZJ5qgONx2SiZpk0kUUrNgmmzAXYq2tn79PJniGXrEikeNF32eEBZMdXnCTjkHLYDRowfEsmkM
+ epHcE9+oS/gPsD4L1F8nCLusi+0sUWo8mbZPdJd5Y00JQ8OSOBQwMAgeUB/qMRGQNj/hPLSDDm0
+ hAUW5yAUNfKFmANyxf+NIopsU+98NxJAKlo1GLTrz2Uc1PV4edRQSDbEtsKcXrmntmJD/6qG+bd
+ e655EKMRu0N1BH+c44toshWgpPQ6Nw==
+X-Proofpoint-GUID: m_za6bgTB4Cvd3FGNRdYwR1FsIVlfmNW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-31_05,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 adultscore=0 spamscore=0 suspectscore=0 priorityscore=1501
+ clxscore=1011 lowpriorityscore=0 phishscore=0 impostorscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510310145
 
-With the removal of the shift_pa parameter, cmdq_pkt_jump_rel_temp()
-can be replaced by the new cmdq_pkt_jump_rel() without shift_pa.
+This patch series adds support for the Analog Devices ADG1712 quad
+single-pole/single-throw (SPST) switch GPIO driver.
 
-Then, remove the cmdq_shift_pa variable in the mdp_dev structure for
-each mbox client.
+The ADG1712 contains four independent SPST switches and operates with a
+low-voltage single supply range from +1.08V to +5.5V or a low-voltage
+dual supply range from ±1.08V to ±2.75V. Each switch is controlled by
+a dedicated GPIO input pin.
 
-Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c | 2 +-
- drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.c | 2 --
- drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.h | 1 -
- 3 files changed, 1 insertion(+), 4 deletions(-)
+The driver provides a GPIO controller interface where each GPIO line
+controls one of the four independent analog switches on the ADG1712.
+This allows software to dynamically control signal routing through
+the analog switches.
 
-diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
-index 5fc9263ccb78..7da5424d7e62 100644
---- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
-+++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-cmdq.c
-@@ -628,7 +628,7 @@ static struct mdp_cmdq_cmd *mdp_cmdq_prepare(struct mdp_dev *mdp,
- 		goto err_free_path;
- 	}
- 	cmdq_pkt_eoc(&cmd->pkt);
--	cmdq_pkt_jump_rel_temp(&cmd->pkt, CMDQ_INST_SIZE, mdp->cmdq_shift_pa[pp_idx]);
-+	cmdq_pkt_jump_rel(&cmd->pkt, CMDQ_INST_SIZE);
- 
- 	for (i = 0; i < num_comp; i++) {
- 		s32 inner_id = MDP_COMP_NONE;
-diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.c b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.c
-index 6d26d4aa1eef..06dabedfff5e 100644
---- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.c
-+++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.c
-@@ -307,8 +307,6 @@ static int mdp_probe(struct platform_device *pdev)
- 			ret = PTR_ERR(mdp->cmdq_clt[i]);
- 			goto err_mbox_destroy;
- 		}
--
--		mdp->cmdq_shift_pa[i] = cmdq_get_shift_pa(mdp->cmdq_clt[i]->chan);
- 	}
- 
- 	init_waitqueue_head(&mdp->callback_wq);
-diff --git a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.h b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.h
-index 05cade1d098e..430251f63754 100644
---- a/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.h
-+++ b/drivers/media/platform/mediatek/mdp3/mtk-mdp3-core.h
-@@ -126,7 +126,6 @@ struct mdp_dev {
- 	u32					id_count;
- 	struct ida				mdp_ida;
- 	struct cmdq_client			*cmdq_clt[MDP_PP_MAX];
--	u8					cmdq_shift_pa[MDP_PP_MAX];
- 	wait_queue_head_t			callback_wq;
- 
- 	struct v4l2_device			v4l2_dev;
+Patch 1 adds the device tree bindings documentation.
+Patch 2 adds the GPIO driver implementation.
+
+Antoniu Miclaus (2):
+  dt-bindings: gpio: adg1712: add adg1712 support
+  gpio: adg1712: add driver support
+
+ .../devicetree/bindings/gpio/adi,adg1712.yaml |  75 +++++++++
+ drivers/gpio/Kconfig                          |   9 ++
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-adg1712.c                   | 146 ++++++++++++++++++
+ 4 files changed, 231 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/adi,adg1712.yaml
+ create mode 100644 drivers/gpio/gpio-adg1712.c
+
 -- 
 2.43.0
 
