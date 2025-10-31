@@ -1,47 +1,46 @@
-Return-Path: <linux-kernel+bounces-879835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A64C2424B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:27:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 898D3C242E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:34:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6242F1890A44
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:27:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3755C3B0E7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FB1B3321A2;
-	Fri, 31 Oct 2025 09:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C85A3321C6;
+	Fri, 31 Oct 2025 09:29:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ezweDsMM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB2E32E6B3;
-	Fri, 31 Oct 2025 09:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="U1Zopgia"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67801331A6C;
+	Fri, 31 Oct 2025 09:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761902814; cv=none; b=cJRWelUEc3IxRHc/7yyFBI3s3B6aSl19i9rIhesoaoYzceamGRstFVlOxNyWe6bXmESXFwr5Wpd0ezlwAAe+nAk6/ZG1rASlzlp4GRb7S+b+1dA/u6Bw77rMXMwoEzgKD9QQcUpuANI/a5z3wZd5wUYjV8l/jxyoZICTDpmewhY=
+	t=1761902945; cv=none; b=h6zl7Dz7JNeY0XZFBNdrDxFIAhz2S+m2OAwcht7Qk7fAeN9TzyDgvD8oCjSg6A4CIRyIiHsoxUV/Hgh4qTjC33YTogFqAgiv29ztyoqnSE+Qii4342F0jnTM7Zip8QZK4nNq94DebWhojqI0/yhVxComFkDqsOn9+uJAsUxdT/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761902814; c=relaxed/simple;
-	bh=CSh6DLaOHwQald5csCnyTUKYtrZ8rGuIJR8WgQ5r3vg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=LP1W5rXkWYJt8UgUS5IWVO+nvyw0fXo9ZoLQH5h5IAGHnf+Q/yiE40G9BQgHFmuQvSrx/okmEDF9DgDsQ54GubU6v37ffFRDuGyjil1N3nYdpdXK4uEOm+PyHODWeu5XByhjmqUoSt+klOOVcwsy3YmdzB8Z4ZKM/jHpopn9Ho8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ezweDsMM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3A78C4CEF1;
-	Fri, 31 Oct 2025 09:26:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761902813;
-	bh=CSh6DLaOHwQald5csCnyTUKYtrZ8rGuIJR8WgQ5r3vg=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=ezweDsMM12m+/0EnwbgBhzMGl4NG35lgKnZktenVRTiwBBprJ6eRLlK6AeKGG6fKo
-	 MsxxWKT+Er8cIDzgE+gDmivvbJt0ZU4BhYz0nF+M4OckDLFStKQ636oqyC6onpg8rA
-	 erHWhn5b7Fo8gG/H/TJP5iUW3FTsZl1g4fa2zPueiU78EsGzx8amSqCn28Y+JKm12O
-	 0xYVYx23fpzuxqLWxWBH4r+JGe/Po6bDqlWrvjgTjG4f55o2kPSasKN+hyqhE42221
-	 upO8CEy210TjFNUCSmvU2pygpN9HBVezI+n6DhVviIcSnQGXvX8AVqC2HXG1u4l7oF
-	 4uL4RvK2pMqgg==
-Message-ID: <9dd9c4fb-0696-4244-bae5-65730a940b07@kernel.org>
-Date: Fri, 31 Oct 2025 10:26:48 +0100
+	s=arc-20240116; t=1761902945; c=relaxed/simple;
+	bh=fD0vDuTH2JpapIZqdRNnGSAwgq1FL6qHYO5dXSi3d+M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SP862cL+wOzMuLlab+NdYD6yyNrJHGKltNft/1w+Af8Nq+11vQS1ILwXIZy6GQISq1M+/bFmIWayWVsE3Wso9B1skxLDnF/RgNEY2kV4pfDFPXcw8qdfTdIw1/hb0WOgeTBY5M0tsaZ3a2h/NwT0FcDpOfXk7YgJ+EsgPXT9nK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=U1Zopgia; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.95.76.239] (unknown [167.220.238.207])
+	by linux.microsoft.com (Postfix) with ESMTPSA id D5B02201DADF;
+	Fri, 31 Oct 2025 02:28:58 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D5B02201DADF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1761902942;
+	bh=z60NM7qs0T1vkJ2sob5qVgjUXL3lwSCJ4dipne80m0Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=U1ZopgiaF1TfsxrbupgV5OEI8b8r2qpPPhtyHheYAXx9Fw5I0TGqxq5SCY7XrK5g0
+	 jLIbK3v+eHt8AOkp0+TGZn9KZTfXtfm72Z9wdhMcnnp8I14XU15CeR1yiVAjbRNmOT
+	 xRmgpb0dyfIBzK6Z4bxKzK7ppkak++RP/Yx4M6qc=
+Message-ID: <cea9d987-0231-4131-82ac-9ba8c852f963@linux.microsoft.com>
+Date: Fri, 31 Oct 2025 14:58:56 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,77 +48,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: i3c: snps: Add Altera Agilex5 SoC
- compatible
-To: adrianhoyin.ng@altera.com, alexandre.belloni@bootlin.com,
- Frank.Li@nxp.com, wsa+renesas@sang-engineering.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, dinguyen@kernel.org,
- linux-i3c@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1761901158.git.adrianhoyin.ng@altera.com>
- <c55c62f31b63a9aa821501bbf93c6b5e9fb2487b.1761901158.git.adrianhoyin.ng@altera.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] x86/hyperv: Use pointer from memcpy() call for assignment
+ in hv_crash_setup_trampdata()
+To: Markus Elfring <Markus.Elfring@web.de>, linux-hyperv@vger.kernel.org,
+ x86@kernel.org, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Dexuan Cui <decui@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, "K. Y. Srinivasan" <kys@microsoft.com>,
+ Long Li <longli@microsoft.com>, Mukesh Rathor <mrathor@linux.microsoft.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Wei Liu <wei.liu@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Miaoqian Lin <linmq006@gmail.com>
+References: <d209991b-5aee-4222-aec3-cb662ccb7433@web.de>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <c55c62f31b63a9aa821501bbf93c6b5e9fb2487b.1761901158.git.adrianhoyin.ng@altera.com>
-Content-Type: text/plain; charset=UTF-8
+From: Naman Jain <namjain@linux.microsoft.com>
+In-Reply-To: <d209991b-5aee-4222-aec3-cb662ccb7433@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 31/10/2025 10:05, adrianhoyin.ng@altera.com wrote:
-> From: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
+
+
+On 10/31/2025 2:03 PM, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 31 Oct 2025 09:24:31 +0100
 > 
-> Add the "altr,agilex5-dw-i3c-master" compatible string to the
-> Synopsys DesignWare I3C master binding. This allow Agilex5 to
-> use the generic DW I3C master controller while applying any
-> required platform-specific quirks.
+> A pointer was assigned to a variable. The same pointer was used for
+> the destination parameter of a memcpy() call.
+> This function is documented in the way that the same value is returned.
+> Thus convert two separate statements into a direct variable assignment for
+> the return value from a memory copy action.
 > 
-> Signed-off-by: Adrian Ng Ho Yin <adrianhoyin.ng@altera.com>
+> The source code was transformed by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>   arch/x86/hyperv/hv_crash.c | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/hyperv/hv_crash.c b/arch/x86/hyperv/hv_crash.c
+> index c0e22921ace1..745d02066308 100644
+> --- a/arch/x86/hyperv/hv_crash.c
+> +++ b/arch/x86/hyperv/hv_crash.c
+> @@ -464,9 +464,7 @@ static int hv_crash_setup_trampdata(u64 trampoline_va)
+>   		return -1;
+>   	}
+>   
+> -	dest = (void *)trampoline_va;
+> -	memcpy(dest, &hv_crash_asm32, size);
+> -
+> +	dest = memcpy((void *)trampoline_va, &hv_crash_asm32, size);
+>   	dest += size;
+>   	dest = (void *)round_up((ulong)dest, 16);
+>   	tramp = (struct hv_crash_tramp_data *)dest;
 
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+I tried running spatch Coccinelle checks on this file, but could not get 
+it to flag this improvement. Do you mind sharing more details on the 
+issue reproduction please.
 
-Best regards,
-Krzysztof
+I am OK with this change, though it may cost code readability a little 
+bit. But if this is a result of some known standard rule, added as part 
+of these Coccinelle rules, we should be good.
+
+Regards,
+Naman
+
 
