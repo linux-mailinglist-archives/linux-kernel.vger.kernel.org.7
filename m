@@ -1,53 +1,66 @@
-Return-Path: <linux-kernel+bounces-879591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81B48C2387D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:20:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EF6FC2386B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:18:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4D3E84E5CBF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:20:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DD001897F98
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05536329370;
-	Fri, 31 Oct 2025 07:19:59 +0000 (UTC)
-Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C2A329C61;
+	Fri, 31 Oct 2025 07:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="sRmVx62e"
+Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115BAAD4B;
-	Fri, 31 Oct 2025 07:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C0426B2CE;
+	Fri, 31 Oct 2025 07:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761895198; cv=none; b=alaKlmDkZ5XFDyRl9+hwfO2m/IHapVSfSGa87EgRXKE0XRSxRLG6YA6ZoWKjDs2aNKVGZdO/TEvHMe9+/TxMcyKO32wVgWWlJYNm5Krrxj0+Mn0fBr86Yj/+M9hNMYFrO5vbrIDzeq35z4fkU3llqw7X3LFX4wTRttEj6RAI0x4=
+	t=1761895116; cv=none; b=ojZkdkTtap7ib7I15CLvYzEZ5FAYtvzJro8M71UXzTNA2ypXq2tAcddT+6tnOumsvQ3T96b7Kd1u5IQ8bCgaVO+kaf/i9tfefurq5FU3U3YTVMQ4xR3ZOKa+voh1uQO9oYBNOeq6q6MQHgOwPg2GIW4TwpnPZZilS+u8XfCNmig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761895198; c=relaxed/simple;
-	bh=HzsfSmIPMvkYSxvGNg6clmzwnLravppfT8kvOZj7JK8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=M0dMo2yMFivwqt+yQ+igNZj8TFqIsSfSlvkANnPBMIuWLxvjVmW7RlD/8W7dP6S/293l1ctxJwCOU2/qiZH1k1zXW7Fw0NcYZ7PenxfX/Tl2tkABvD7Od/H2ZzmPuK0jyKSUtrEJQ1Ads3oqinPb2CNAtKWAhaa1e5VALbpgbMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from Jtjnmail201614.home.langchao.com
-        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id 202510311519484386;
-        Fri, 31 Oct 2025 15:19:48 +0800
-Received: from jtjnmailAR01.home.langchao.com (10.100.2.42) by
- Jtjnmail201614.home.langchao.com (10.100.2.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Fri, 31 Oct 2025 15:19:47 +0800
-Received: from inspur.com (10.100.2.96) by jtjnmailAR01.home.langchao.com
- (10.100.2.42) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Fri, 31 Oct 2025 15:19:47 +0800
-Received: from localhost.com (unknown [10.94.18.144])
-	by app1 (Coremail) with SMTP id YAJkCsDwdHQSYwRpuDI6AA--.2532S4;
-	Fri, 31 Oct 2025 15:19:46 +0800 (CST)
-From: Chu Guangqing <chuguangqing@inspur.com>
-To: <sth@linux.ibm.com>, <hoeppner@linux.ibm.com>, <axboe@kernel.dk>
-CC: <linux-s390@vger.kernel.org>, <linux-block@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Chu Guangqing <chuguangqing@inspur.com>
-Subject: [PATCH] partitions/ibm: Fix a spelling mistake
-Date: Fri, 31 Oct 2025 15:18:46 +0800
-Message-ID: <20251031071846.3387-1-chuguangqing@inspur.com>
-X-Mailer: git-send-email 2.43.7
+	s=arc-20240116; t=1761895116; c=relaxed/simple;
+	bh=Xd5uxiXG50oCu+kLrTNjXtSylAolIt2j0q3BJlvWUvw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CIhPxKaEVVcFJPk0/XXAPhKp0cZtVaP2caQmBfH9CTejngAVJmmYRNi3/BYBKWtFkRjtoXN3DVlBgmTGgCO8kgfRF5Kjnc4VaqN+vUDT/UC66pPnLqV1k+lurTWwkdEwibBNGFSUKkZWLYN5Ks6VKu+abaFowv5z1ppmlfUemQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=sRmVx62e; arc=none smtp.client-ip=220.130.44.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
+X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
+	s=richtek; t=1761895104;
+	bh=sAr1pUXnqThXQ2AsKalxNuYNCUtUyLIp47NV6VFVxYw=; l=1235;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=sRmVx62ePDbjuLMJWic11iGxGO+CCqqhhHN76xHk3FUd3d9XYDD2kt1ucrOU72zd5
+	 UcJXM4fTEh0qM5K+rBzZfT7J+WkUpqQ5fJcsWmzo0hONZDHIdwn7cvVrgGxop2V82m
+	 UYX0acqT+c+XTl9z3at2nOCnzAPU0exh3gEW6sY4sqFR1qNFbrrMbdLxQGvltX1/AA
+	 j++lAaFw6kOtEzCaeDw/oaEj+ZV2nEZEBArU0umgFZgwaJbZoZjYc6YMhIt3RZ2vtE
+	 5Rs0i92JO2PEdeayK0GpoUsbWR5fIPchoxV1NYmS75ZTstdKWwq8A7VQxJkBZgVxNN
+	 1aGkBHRAYzDiQ==
+Received: from 192.168.10.46
+	by mg.richtek.com with MailGates ESMTPS Server V6.0(3436932:0:AUTH_RELAY)
+	(envelope-from <cy_huang@richtek.com>)
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Fri, 31 Oct 2025 15:18:08 +0800 (CST)
+Received: from ex4.rt.l (192.168.10.47) by ex3.rt.l (192.168.10.46) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.26; Fri, 31 Oct
+ 2025 15:18:08 +0800
+Received: from git-send.richtek.com (192.168.10.154) by ex4.rt.l
+ (192.168.10.45) with Microsoft SMTP Server id 15.2.1748.26 via Frontend
+ Transport; Fri, 31 Oct 2025 15:18:08 +0800
+From: <cy_huang@richtek.com>
+To: Sebastian Reichel <sre@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>
+CC: ob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "ChiYuan
+ Huang" <cy_huang@richtek.com>, <devicetree@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 0/3] Add Richtek RT9756 Smart-Cap divider charger
+Date: Fri, 31 Oct 2025 15:19:32 +0800
+Message-ID: <cover.1761894605.git.cy_huang@richtek.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,55 +68,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: YAJkCsDwdHQSYwRpuDI6AA--.2532S4
-X-Coremail-Antispam: 1UD129KBjvdXoWrZFWftr17tr4kWr4rJrW7XFb_yoWfGwb_Gw
-	1Ika1UXr18Jr92vwnxCF45KrWvvw1UGF1DWFsrKws3XrW8AF4DCrn29rZFgrZxXayUWr13
-	Xr98XF1ayF429jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbcAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_GcCE
-	3s1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
-	1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0
-	cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8Jw
-	ACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_JF0_
-	Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxV
-	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI
-	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
-	1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
-	42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUYCJmUUUUU
-X-CM-SenderInfo: 5fkxw35dqj1xlqj6x0hvsx2hhfrp/
-X-CM-DELIVERINFO: =?B?gMd245RRTeOiUs3aOqHZ50hzsfHKF9Ds6CbXmDm38RucXu3DYXJR7Zlh9zE0nt/Iac
-	D+KWaEjeGlY+z6GeJZ4PnyUbEMtZbmSBC65wHo7y+C+eKhRf/5Nys9v/8ZqnnSdn8Ecwqx
-	cuC+A+VMzGS1ClDofEA=
 Content-Type: text/plain
-tUid: 20251031151948194737514bba3967b8d3802a14985b86
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
 
-The word "formatted" is missing a letter "t" (the incorrect spelling would
- be "formated").
+From: ChiYuan Huang <cy_huang@richtek.com>
 
-Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
----
- block/partitions/ibm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This patch series adds support for RT9756 charger.
 
-diff --git a/block/partitions/ibm.c b/block/partitions/ibm.c
-index 631291fbb356..9a6c84773cca 100644
---- a/block/partitions/ibm.c
-+++ b/block/partitions/ibm.c
-@@ -247,7 +247,7 @@ static int find_lnx1_partitions(struct parsed_partitions *state,
- 		size = label->lnx.formatted_blocks * secperblk;
- 	} else {
- 		/*
--		 * Formated w/o large volume support. If the sanity check
-+		 * Formatted w/o large volume support. If the sanity check
- 		 * 'size based on geo == size based on nr_sectors' is true, then
- 		 * we can safely assume that we know the formatted size of
- 		 * the disk, otherwise we need additional information
+V4
+- Fix sparse error that kernel test robot reported
+
+V3
+- Instead using customized attribute to report battery voltage and
+  current, create a battery psy to report it
+
+RESEND V2
+- Add 'Reviewed-by' tag in dt-binding patch
+
+V2
+- Add reference to 'power-supply.yaml'
+- Remove 'wakeup-source' from required property list
+- Use 'unevaluatedProperties' to replace 'additionalProperties'
+
+ChiYuan Huang (3):
+  dt-bindings: power: supply: Add Richtek RT9756 smart cap divider
+    charger
+  power: supply: rt9756: Add Richtek RT9756 smart cap divider charger
+  Documentation: power: rt9756: Document exported sysfs entries
+
+ .../ABI/testing/sysfs-class-power-rt9756      |  30 +
+ .../bindings/power/supply/richtek,rt9756.yaml |  72 ++
+ drivers/power/supply/Kconfig                  |  15 +
+ drivers/power/supply/Makefile                 |   1 +
+ drivers/power/supply/rt9756.c                 | 955 ++++++++++++++++++
+ 5 files changed, 1073 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-class-power-rt9756
+ create mode 100644 Documentation/devicetree/bindings/power/supply/richtek,rt9756.yaml
+ create mode 100644 drivers/power/supply/rt9756.c
+
 -- 
-2.43.7
+2.34.1
 
 
