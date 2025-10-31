@@ -1,125 +1,200 @@
-Return-Path: <linux-kernel+bounces-880680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E5F0C2652D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:21:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32735C26548
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:27:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CFDB6347CA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:21:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 003F03B80D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:26:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4869305E26;
-	Fri, 31 Oct 2025 17:21:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3CC83054F7;
+	Fri, 31 Oct 2025 17:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IoRNMGQx"
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="U7NkMFPY"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA1F3054C8
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:21:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681592F3C34
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:26:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761931297; cv=none; b=PG/Z9ZEHqbnKmz391vwb7RdFFUeZgbGYQNQcTAx9Uk9mCjD0alTReAbQQNw2tt2FzXeQYX4VEjM61lY2n6q4MB3gVCkXzBDswaZz+EAD5XQ55Pn2LHt2NXSzc3wZn1ZobnqSsydb550uLefEV0VLytEwN4W4W2gRfiJMywMS2NU=
+	t=1761931608; cv=none; b=CoOCDI+h1Mex+yV4zwNJchhHbA7+r1PC18F6FI/PwToPJTKFw/MfTeL8JqwXameWtE2dtIAEWBI0FcHUzJXatnSc1IN1OYr3vlaVan3oShK/ZN7Ey2vx8FdjU6aR61avx9du/XbNt4Q0yVMNWzOhjCcZUi6w+CECGE0BzS4jk6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761931297; c=relaxed/simple;
-	bh=9dIYlCqSuay+P18dQ0M4/XCMXtFDI35HoGfcLtJV++I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lrEaQDW2Ko4t8wrlzxnqIfUfcU4bVY/XSSBp1qUwrXYSjtR5RtRNfKguFGmTp6DUTNxWVG/tXTRCUs2YiEdlFEoGCkatkaGWyHMwRsAbxdiRPXbJ+M6Q02qNoxhPvm3BQC58fIFJTMdFt9UYlUk+vUaLb77xcIPj3W9mIo43xgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IoRNMGQx; arc=none smtp.client-ip=209.85.161.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-65363319bacso1304782eaf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:21:34 -0700 (PDT)
+	s=arc-20240116; t=1761931608; c=relaxed/simple;
+	bh=5jKZQnGfWIPBfEdMU3/GpXnA8AzNlM4kmlbx9UGKjh0=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=JQdIOeZtO7mpPxTRK6ntEynTonJPhxLCiWNhfNbbtOyw1qyCAVfeNAQqQ8TWEB2AQDoT8jSQi0NSudsx/FNU2PEj7Ir0l92DpcSz11ZxDSwNfkqU4HQDYyuERN9NaqsnsFVA5R/mg3+ozvK4wiVpeMsAud1Qy8u3gkj6esiYPfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=U7NkMFPY; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-88f2b29b651so243508285a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:26:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1761931294; x=1762536094; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2arCVoySu4BoT6qvWYZ5TCMKdFyAl6i0QIhKt61vYqE=;
-        b=IoRNMGQxaJE7gCHO6SpA5/PCegsQmApO7UECLD8M3+Y731+VqrxG4PVu5py4rj5chA
-         KVigy7MOCQOGOf3W6bghZB0aYXfYrPwI8X/50Qqzh23070ycIm5D8wu/mtzr0+Wv27zm
-         CeT3OdwVHFx3osRQKoMlIHHh6li3gscz/w344=
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761931604; x=1762536404; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OnjJjq1uXSia2MqKg+bdbADtCIwkFyG1D2hZxLKYUgI=;
+        b=U7NkMFPYLNIl+yW552PdrCJFkCZgsNauXElPOJ3HcESJorGbzkWDLmkZSNvW5ldI8n
+         j8bjOSURw3rztsYCKsjHDuCiLPWtUIkuLSxTGo/kJjsBrRcXsF8FpuntM4RNd1KI7GGu
+         j6yTVEqITk7F0oATRG61DZ0BvmpSK0e6Tv1zdrRHXkepGm1IH1Qcw313lFQsaoJfqvpC
+         skYSaVNT3KsF2FVQ/N1/fVCFRRRRND9zPy5PVLSQ+TBSX7Kh11Z9dutT4kGITBJ1K75/
+         Z3P3IsqNfBgZPG7cF2eO8/6F4w2doRv7MTV/Dr5MtoNTcapWfe8zGlAxCYbXqofFadz0
+         xQ5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761931294; x=1762536094;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2arCVoySu4BoT6qvWYZ5TCMKdFyAl6i0QIhKt61vYqE=;
-        b=sVSmKAgxIllC76h2at5bkHSH3VPC0pSymETLZI8hKDciiG2j8hmysiV01K/sC/pjZz
-         9nRxaPvQYXS2pNh829hgy8ttGFkuNCEgVpC/2RYjDff7tQH80clvjI0fJ84QoPUBipDW
-         oZWgA7sJi2OFzdOcohQGEqI8JhxyWASk/f4l0c+8tyi3U7EtiD95697Gc6RA3Lasn4Dl
-         TDJsj5+L0xb0dGuPuSMxaTfdqP5eBk1TKE3bvJtBb8zW2ejxHlDvuhQgxqajJ1xchGax
-         mcck45wFdRTtlWHSAD2HvoqCSa2InMBXSxOECO9a8SayycZL6ACDYBG7JkOX6wl1o9oE
-         KetA==
-X-Forwarded-Encrypted: i=1; AJvYcCVu+JB6vPeh0twyG9iz0Jlt3zfhXZCkPS5lpMVy4aO36JeMcC6Sd3Fipfcu8/kLj6kvgzQbyxxWMe1WAww=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKaMbgOWCBR6h6EAci++Ft7/iMjCeA4V9JL+jM7A+0c8gbq3tr
-	6Ed4LEBy7DQY1rdmrKoJ/QxNiOnOjst3zxtSYwQ7e86wvhkZxdUe64thHFLZDNRHqkSWN+DTX+l
-	aynQo
-X-Gm-Gg: ASbGncvzm07x0NsVdxnQjhxf+bWVAs4Gf1H/zRPzuwId8ORuGCIkbhSh9LivW/a3E5a
-	Y26oPw8tz0eGR4Xtgfd7mqsyhulujzd/pOTb+xggRSlR7U+PozaylVsktA1E+0MrYVVTc3A+fYA
-	gOWU9btq4qx8Sbq6dqCl2Q8u0PcDAR87DSH0DOS28rhsNaI5FqRLgMYUNu+T54DtlrPQtNAW950
-	j3nyXLF1dpH8FMpO+YKhat7iNIvjRKXCuTcO7oyCfbwPwXmmMb7YCee7d5TSoPSuL4qwDmtOan0
-	+JKQa7IyDXbmVFSd9kUA+1WmJXoTtwTk+St2c9jY6ZpZdL85vap4v3a7BdF3uFa1Ca8597IeoNJ
-	YP/wqt4w1Sf3AAtCfoRAp5thP5URzaC/pFgHSizMNQHI5soz4/TkyY2YC5EO4SXEGcloap0VjLS
-	QbYG0otXVWcwtZ4X5Ss+bGFbQ=
-X-Google-Smtp-Source: AGHT+IFHV5mqBxfVnLGrK24cHPx0N/RAB4xpvKPnhRbNDbS9+AwnDKl1gfiMXkoDBtzu6gX4xQcp0Q==
-X-Received: by 2002:a05:6808:2184:b0:441:8f74:e95 with SMTP id 5614622812f47-44f9601fa1dmr1922372b6e.63.1761931294049;
-        Fri, 31 Oct 2025 10:21:34 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.187.108])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-44f9d9a4cbfsm500332b6e.24.2025.10.31.10.21.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Oct 2025 10:21:33 -0700 (PDT)
-Message-ID: <3a9185ef-c212-41bc-978b-0dea75a86e7b@linuxfoundation.org>
-Date: Fri, 31 Oct 2025 11:21:31 -0600
+        d=1e100.net; s=20230601; t=1761931604; x=1762536404;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OnjJjq1uXSia2MqKg+bdbADtCIwkFyG1D2hZxLKYUgI=;
+        b=iTUOx5LD6cXh4Gf6GWsUuYKzg2QDmruSfu/A84OwUe+dR/Nz8WwfuM71N/1zOKmnf6
+         aWkKXldvMcextmoGkj7E3jhi6cmDu8h1w5SGHkNIiixBsuxbHDgi/VLOQdZVs5NgVQwR
+         V0Wf3n5yml7fGBlUNd4Ji0fGbvZQXaYJqmqgJinqrEpMK+nDJRShpzi3683izIluxloK
+         I1SVsi+kDxUCzYrZFlDR3xin8NDEyxV7cmdEQJeve2y+Fqhcb4iPbdhyTel/tgvD6RnD
+         zuoIN+kxOY+dzpsHFrfpJ1Duj/spbO7+pEYMKD1bUVeR52kqWp7pCS/5YUNToscw5hJF
+         EwFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVMNMzkwrmJU0TrxZOK16LVQx6hK4efqzNisGPqJitFXBPEUzjqJslxRdko4f8OguM4bfwQqVnCZNmTp/8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5kYZs+hVKeNLP2k7TBYfqZx3DAlWkt3BwHI+LDPnJIJO8+TlC
+	ZT4lyhRPScoahROOyE11r5j6dTfcilFyc91yzFzhw97W/p+gv3NvA1lYKhp1hd1S1js=
+X-Gm-Gg: ASbGncvMu5y5sv/DmFBvEaIwL3pznNnK7eJvpbK6GHO0EAEzNayfiQZbMnjj35hlKrE
+	LJlqukJtvvO74VuLXOKePTVrmTZUEGQNW2y1J6IoCIH9XhhOni8hEXy4nDej1D0mJc0wuJxLKt9
+	eeuDwbMos60XngPmXgiP53HjBJQETWbwjJjoEPRfhBB2AldJ3bDCrj67x04ovzEQb9QNRJBDf5E
+	vg4tlaelXvrH4Yac/FPV9tx4h/Ck/l7Fy/19d2mDA0l19CSb/q9Y79aSuD+2ZrX7UAGdvtBSxrL
+	d75c41HBjFkvwmkqyifz+v4cCJAnq6a8GW7aokb6y3RTx7smddKrPjCzfa4V8vRTjMEaw/Tmbqu
+	xzpcc9AmnCzEIc3DcywXLh/RVZKMi9o2iUPAvD+ianUpq7/pE+BB0nzYIwYnPnib+ZAAUpOLlYy
+	H8sOvp+ySKCNR9mhNo8M4yAD/A0V9YSw==
+X-Google-Smtp-Source: AGHT+IEDxP9vwyv7ouxIhibFgZNx+LhZvF97GTT8bElIHceMVNW5ssNQSqUHJbYZg7UAidVl4EZQZw==
+X-Received: by 2002:a05:620a:2913:b0:89a:5b62:d9e9 with SMTP id af79cd13be357-8ab9b59c430mr440378785a.65.1761931603515;
+        Fri, 31 Oct 2025 10:26:43 -0700 (PDT)
+Received: from xanadu (modemcable048.4-80-70.mc.videotron.ca. [70.80.4.48])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-8ac03f4d585sm143968785a.56.2025.10.31.10.26.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Oct 2025 10:26:42 -0700 (PDT)
+Date: Fri, 31 Oct 2025 13:26:41 -0400 (EDT)
+From: Nicolas Pitre <npitre@baylibre.com>
+To: David Laight <david.laight.linux@gmail.com>
+cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
+    u.kleine-koenig@baylibre.com, Oleg Nesterov <oleg@redhat.com>, 
+    Peter Zijlstra <peterz@infradead.org>, 
+    Biju Das <biju.das.jz@bp.renesas.com>, Borislav Petkov <bp@alien8.de>, 
+    Dave Hansen <dave.hansen@linux.intel.com>, 
+    "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, 
+    Thomas Gleixner <tglx@linutronix.de>, Li RongQing <lirongqing@baidu.com>, 
+    Yu Kuai <yukuai3@huawei.com>, Khazhismel Kumykov <khazhy@chromium.org>, 
+    Jens Axboe <axboe@kernel.dk>, x86@kernel.org
+Subject: Re: [PATCH v4 next 3/9] lib: mul_u64_u64_div_u64() simplify check
+ for a 64bit product
+In-Reply-To: <20251031091918.643b0868@pumpkin>
+Message-ID: <689390nn-ssr5-3341-018r-s181qrr81qop@onlyvoer.pbz>
+References: <20251029173828.3682-1-david.laight.linux@gmail.com> <20251029173828.3682-4-david.laight.linux@gmail.com> <26p1nq66-8pq5-3655-r7n5-102o989391s2@onlyvoer.pbz> <20251031091918.643b0868@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: core: prevent double URB enqueue causing list
- corruption
-To: Alan Stern <stern@rowland.harvard.edu>,
- Greg KH <gregkh@linuxfoundation.org>
-Cc: vsshingne <vaibhavshingne66@gmail.com>, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20251031134739.222555-1-vaibhavshingne66@gmail.com>
- <2025103118-smugness-estimator-d5be@gregkh>
- <6c81d455-a4f2-4173-be72-9d77728378c1@rowland.harvard.edu>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <6c81d455-a4f2-4173-be72-9d77728378c1@rowland.harvard.edu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 
-On 10/31/25 08:13, Alan Stern wrote:
-> On Fri, Oct 31, 2025 at 02:59:07PM +0100, Greg KH wrote:
->> On Fri, Oct 31, 2025 at 07:17:39PM +0530, vsshingne wrote:
->>> Prevents the same URB from being enqueued twice on the same endpoint,
->>> which could lead to list corruption detected by list_debug.c.
->>>
->>> This was observed in syzbot reports where URBs were re-submitted
->>> before completion, triggering 'list_add double add' errors.
->>>
->>> Adding a check to return -EEXIST if the URB is already on a queue
->>> prevents this corruption.
->>
->> This text makes no sense at all, it does not describe what this patch
->> does in any way.  Please do not use AI to generate patches.
+On Fri, 31 Oct 2025, David Laight wrote:
+
+> On Wed, 29 Oct 2025 14:11:08 -0400 (EDT)
+> Nicolas Pitre <npitre@baylibre.com> wrote:
 > 
-> In fact, the patch doesn't do _anything_ (except maybe change some
-> whitespace).  And it does not apply to any recent kernel source.
+> > On Wed, 29 Oct 2025, David Laight wrote:
+> > 
+> > > If the product is only 64bits div64_u64() can be used for the divide.
+> > > Replace the pre-multiply check (ilog2(a) + ilog2(b) <= 62) with a
+> > > simple post-multiply check that the high 64bits are zero.
+> > > 
+> > > This has the advantage of being simpler, more accurate and less code.
+> > > It will always be faster when the product is larger than 64bits.
+> > > 
+> > > Most 64bit cpu have a native 64x64=128 bit multiply, this is needed
+> > > (for the low 64bits) even when div64_u64() is called - so the early
+> > > check gains nothing and is just extra code.
+> > > 
+> > > 32bit cpu will need a compare (etc) to generate the 64bit ilog2()
+> > > from two 32bit bit scans - so that is non-trivial.
+> > > (Never mind the mess of x86's 'bsr' and any oddball cpu without
+> > > fast bit-scan instructions.)
+> > > Whereas the additional instructions for the 128bit multiply result
+> > > are pretty much one multiply and two adds (typically the 'adc $0,%reg'
+> > > can be run in parallel with the instruction that follows).
+> > > 
+> > > The only outliers are 64bit systems without 128bit mutiply and
+> > > simple in order 32bit ones with fast bit scan but needing extra
+> > > instructions to get the high bits of the multiply result.
+> > > I doubt it makes much difference to either, the latter is definitely
+> > > not mainstream.
+> > > 
+> > > If anyone is worried about the analysis they can look at the
+> > > generated code for x86 (especially when cmov isn't used).
+> > > 
+> > > Signed-off-by: David Laight <david.laight.linux@gmail.com>  
+> > 
+> > Comment below.
+> > 
+> > 
+> > > ---
+> > > 
+> > > Split from patch 3 for v2, unchanged since.
+> > > 
+> > >  lib/math/div64.c | 6 +++---
+> > >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/lib/math/div64.c b/lib/math/div64.c
+> > > index 1092f41e878e..7158d141b6e9 100644
+> > > --- a/lib/math/div64.c
+> > > +++ b/lib/math/div64.c
+> > > @@ -186,9 +186,6 @@ EXPORT_SYMBOL(iter_div_u64_rem);
+> > >  #ifndef mul_u64_u64_div_u64
+> > >  u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 d)
+> > >  {
+> > > -	if (ilog2(a) + ilog2(b) <= 62)
+> > > -		return div64_u64(a * b, d);
+> > > -
+> > >  #if defined(__SIZEOF_INT128__)
+> > >  
+> > >  	/* native 64x64=128 bits multiplication */
+> > > @@ -224,6 +221,9 @@ u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 d)
+> > >  		return ~0ULL;
+> > >  	}
+> > >  
+> > > +	if (!n_hi)
+> > > +		return div64_u64(n_lo, d);  
+> > 
+> > I'd move this before the overflow test. If this is to be taken then 
+> > you'll save one test. same cost otherwise.
+> > 
 > 
+> I wanted the 'divide by zero' result to be consistent.
 
-Agree - this patch does nothing. Looks like the patch isn't sent
-to right people either.
+It is. div64_u64(x, 0) will produce the same result/behavior.
 
-This person happens to be in the mentorship program - I will make
-sure they won't send such patches in the future.
+> Additionally the change to stop the x86-64 version panicking on
+> overflow also makes it return ~0 for divide by zero.
+> If that is done then this version needs to be consistent and
+> return ~0 for divide by zero - which div64_u64() won't do.
 
-thanks,
--- Shuah
+Well here I disagree. If that is some x86 peculiarity then x86 should 
+deal with it and not impose it on everybody. At least having most other 
+architectures raising SIGFPE when encountering a divide by 0 should 
+provide enough coverage to have such obviously buggy code fixed.
+
+> It is worth remembering that the chance of (a * b + c)/d being ~0
+> is pretty small (for non-test inputs), and any code that might expect
+> such a value is likely to have to handle overflow as well.
+> (Not to mention avoiding overflow of 'a' and 'b'.)
+> So using ~0 for overflow isn't really a problem.
+
+It is not.
+
+To be clear I'm not talking about overflow nor divide by zero here. I'm 
+suggesting that the case where div64_u64() can be used should be tested 
+first as this is a far more prevalent valid occurrence than a zero 
+divisor which is not.
+
+
+Nicolas
 
