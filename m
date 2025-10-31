@@ -1,126 +1,147 @@
-Return-Path: <linux-kernel+bounces-880789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9097DC26900
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 19:30:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC073C2690C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 19:30:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E8F864E9A5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:30:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17FD6420BCF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:30:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430CA355035;
-	Fri, 31 Oct 2025 18:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D92E2D9EE5;
+	Fri, 31 Oct 2025 18:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Llr3y5I+"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LVrDAkeM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82C8351FBE
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 18:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893241DF269;
+	Fri, 31 Oct 2025 18:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761935392; cv=none; b=iIfJvO5I+UVioHz80pNLmNpfn3IBdxGrbJLG8XQ5/8blmfL+6aR284eXmKbG6mGXccGw7qi/ogElYuMCshUNo2Hw/4x5b2Z1SuKVNwEtY08g8eGr/j4QJLXqjXq3lBWCbe2YfSMeaY7NNMKVbAFhbDOTKFihFa5RVYfvPXERqA8=
+	t=1761935421; cv=none; b=RFvqRCmGxJXkbUf91p2zq35tTGJglSv0a7KFXtzlwJXEVlcxY5wyiJqvxAz8XlRlrniGAoT8LyANIqwi2Wehtr0cjwUGbx0gBQsx9TUxPsf9mPYcVCE5H+1+Ke6GOwBQRCSa+Jw636PGC+J+uZqiFSQsyGT+VvJG/hoIA8ZXEuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761935392; c=relaxed/simple;
-	bh=GcWNr8ONcdUk3tv3RdW5BzwUDCvDbBv2CleRoh2qN1A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NFiuzr2YU6r6Jvfu8jzJLvVeolMdpPojBsUjriAWuOGdRpBUzt3/b14XvtW6YH560Iu11XAIygB41bvOyrOO2dnwhZ2rpTrZVLUIm/jAe/+qXbl5SRsOmz+fovPKyzYMyIlswMn5ECZo1oHZJKctQxD57Z+OVeFdADKYVcQDngA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Llr3y5I+; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-294e5852bf6so4204875ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 11:29:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1761935390; x=1762540190; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z55zmfhPZ/JH3r6Axk9zdxLaTNVRfIBYZwVYwYMTc5I=;
-        b=Llr3y5I+97HxllqBCRtK5H4f0aJsmc5PViNZgIIYZiMPpVXG6Y/BxrJFjL7X3Dc2Vi
-         h1cCj6yLOulY66SZyjfXdkCrDxWYQmtLJCZXzlG6OOhYrg4rJRp6MqFH9FS+fpbP6BZ4
-         w98oW87ATaOMb/UaHNM9YpMv0gTbuFkuUhAqeoMyun4zHTiIc3bHA3dhr0qRwtDiIi05
-         8cOegTxHcTAkdfvToqqktqX7wYia7JvYEnPVvaGFDWbXgQN1LyJ2wk+1HlbGU6git7Eg
-         SIk6OxqDYCvJ4mIlsFXF54miGNQiskdLmGleOjgx8baXX20HlAtPahV3vxAo/lBTFxEw
-         C7ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761935390; x=1762540190;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z55zmfhPZ/JH3r6Axk9zdxLaTNVRfIBYZwVYwYMTc5I=;
-        b=FkWKA8SmMAyAnSVUAZzbYfAh7sFNwW4bz6U/Q1cdH0Qm+MNzltRlpyIqtLgpfdoF7E
-         /qoLeFJC3hOCmahcMlZ+6rUvEizbe8vZLTY6aQmfTiu9YnRomdrv5lI0ndR4pF5dg8Fv
-         HLLwEIyTo5Y3SooFKwwgpdHRvhV8UXb6FtoVp2I5VcjJRiMEulR5/vvSlJAgLjUv9p0R
-         5wUNAe3RARtSn6BvIzV4Xf8oOSP7pPObMzGoWz4MtY4FMPcw+5Yx3hIQf6n/6qDHBK5r
-         GtijEN7/rn6C8bhz3L4LN5lpqHIsWW1hQQZ470Avc1dwXyxjIGoAph21nJNxnBnH0lw2
-         igXA==
-X-Forwarded-Encrypted: i=1; AJvYcCXCMgKch1nO/qEdVo/mCTgaC4bgVMYiPRjEaaq3AqEsAcbQdfOQitrvTPnIqPvQQOjjGNGat1PEn6/3eYI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx66UEiQjoKCaTV2HBC7LDby34vlWULjfjiOdrRW+Ke/bf1USF1
-	x6et5BBfyU8D+fxEBth1VcW7V7WYNVIbp3RzSscOKbK4diBqTXr+pauPQyZ3QptDS2vawvqWvAm
-	X74+nLMBbNO5WdUmAo+DFTh6kcCLcoxUrnNwZgiM14w==
-X-Gm-Gg: ASbGncv1RO6z4335RoANu7TxrWPaz+lVEYirqFyAFzawF/T0yIPHb+Z/ET1GXUYNmac
-	ht4qSPgvIYKiHvsqtBnFcuyaAP/kO7U6H80wpYqKIh+7HfGsSroy7sawEX5nI+wLpyTFCrvm7sx
-	p/oPOcumdGCcwIp+uswkwj+VansHbwVmrzILxNVN6ExG70bsLHCCfiV9A7EFIXlEa2gnYzDWBGb
-	S+ZoArJPPu18Wlh6O7Kr8IINdNcMvzcDq3x+yqoaVg6ah5MWMK6ksmHXV0c91xwvnVRe73YZbnV
-	UMeZQHItJrl6iacBrXv9xtIxlUrFMQ==
-X-Google-Smtp-Source: AGHT+IG4bOkdfsFJZblcFZ6qJHvTEYrpwiVlyRYTXktlwfAYyq7KD0P/FbFEhEndkdVv+NprV5snVBt3nCQR/grG0qM=
-X-Received: by 2002:a17:902:ce88:b0:290:aaff:344e with SMTP id
- d9443c01a7336-2951a36c31cmr37241305ad.2.1761935390144; Fri, 31 Oct 2025
- 11:29:50 -0700 (PDT)
+	s=arc-20240116; t=1761935421; c=relaxed/simple;
+	bh=iH3501CDjRZhHJ4lYEDMDBUiVAkByJFY9KcipmE4ao0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tnTII4BuijbDNlAep8tb6R2uhrLiT9oaU/1iCvnXxCvqc047XpZ9lim+l8n1rcaN+D3M3OAA8JtVJwRo4MwTwS9j0Uyd1wElJ2GQ/we49wzPdBCwl8eNENYRUsbu9gl301/ZtbXUiY4Tog/UxNQkKrh+1dULRvRCnrCbFzcF2Tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LVrDAkeM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0B8CC4CEFD;
+	Fri, 31 Oct 2025 18:30:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761935421;
+	bh=iH3501CDjRZhHJ4lYEDMDBUiVAkByJFY9KcipmE4ao0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LVrDAkeMvZUg+GxUROmbRi0HHxFeD4ggUGNCjRVdcTRenUqGzd3BWk96xlAVr4s4y
+	 l3MgMqKPetjdvHSh4k2/Ke0YvdlO0mzRYGC2NOfEfwOV/PmX9AdbSlBynJj4CrpWgC
+	 GiNYZG+WCZx/WAEEG+iO/1OcsudejKRhuz/nlkVLgmlN+3071krhAKT+xV5p6OWOfZ
+	 H0GmeDPTwDYl5XJvZsAfuQFa6OHL194/Doy0kv3KcYz/js88+XnGZRYIqvE7UQ3ZXd
+	 hvxM2mcjLhrj8thGw884hth2dTdJ3He/z4fgnoz0JKcNy7dxqObSneX17WjCVfoG+i
+	 UJAB1L/R4IbFA==
+Date: Fri, 31 Oct 2025 13:30:19 -0500
+From: Rob Herring <robh@kernel.org>
+To: Daniel Golle <daniel@makrotopia.org>
+Cc: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andreas Schirm <andreas.schirm@siemens.com>,
+	Lukas Stockmann <lukas.stockmann@siemens.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Peter Christen <peter.christen@siemens.com>,
+	Avinash Jayaraman <ajayaraman@maxlinear.com>,
+	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
+	Juraj Povazanec <jpovazanec@maxlinear.com>,
+	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
+	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
+	"Livia M. Rosu" <lrosu@maxlinear.com>,
+	John Crispin <john@phrozen.org>
+Subject: Re: [PATCH net-next v5 06/12] dt-bindings: net: dsa: lantiq,gswip:
+ add support for MII delay properties
+Message-ID: <20251031183019.GA1606010-robh@kernel.org>
+References: <cover.1761823194.git.daniel@makrotopia.org>
+ <8025f8c5fcc31adf6c82f78e5cfaf75b0f89397c.1761823194.git.daniel@makrotopia.org>
+ <20251031002924.GA516142-robh@kernel.org>
+ <20251031003704.GA533574-robh@kernel.org>
+ <aQQbCs-zn4PfrS71@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027020302.822544-1-csander@purestorage.com>
- <20251027020302.822544-5-csander@purestorage.com> <20251027075142.GA14661@lst.de>
-In-Reply-To: <20251027075142.GA14661@lst.de>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Fri, 31 Oct 2025 11:29:38 -0700
-X-Gm-Features: AWmQ_bnD9cmB_he1htZLcay_wVtXtWzu-O7fBpjGn-Ny_vwA3iif2bU7bDu7dec
-Message-ID: <CADUfDZq88mkARUOx-RQw72dwkTc2EB+0KiBtC6BL66e4pgiZxw@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] io_uring/uring_cmd: avoid double indirect call in
- task work dispatch
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Miklos Szeredi <miklos@szeredi.hu>, Ming Lei <ming.lei@redhat.com>, 
-	Keith Busch <kbusch@kernel.org>, Sagi Grimberg <sagi@grimberg.me>, Chris Mason <clm@fb.com>, 
-	David Sterba <dsterba@suse.com>, io-uring@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQQbCs-zn4PfrS71@makrotopia.org>
 
-On Mon, Oct 27, 2025 at 12:51=E2=80=AFAM Christoph Hellwig <hch@lst.de> wro=
-te:
->
-> > +static void blk_cmd_complete(struct io_tw_req tw_req, io_tw_token_t tw=
-)
-> >  {
-> > +     unsigned int issue_flags =3D IO_URING_CMD_TASK_WORK_ISSUE_FLAGS;
->
-> In most of these ioctl handlers issue_flags only has a single user,
-> so you might as well pass it directly.
+On Fri, Oct 31, 2025 at 02:12:26AM +0000, Daniel Golle wrote:
+> On Thu, Oct 30, 2025 at 07:37:04PM -0500, Rob Herring wrote:
+> > On Thu, Oct 30, 2025 at 07:29:24PM -0500, Rob Herring wrote:
+> > > On Thu, Oct 30, 2025 at 11:28:35AM +0000, Daniel Golle wrote:
+> > > > Add support for standard tx-internal-delay-ps and rx-internal-delay-ps
+> > > > properties on port nodes to allow fine-tuning of RGMII clock delays.
+> > > > 
+> > > > The GSWIP switch hardware supports delay values in 500 picosecond
+> > > > increments from 0 to 3500 picoseconds, with a post-reset default of 2000
+> > > > picoseconds for both TX and RX delays. The driver currently sets the
+> > > > delay to 0 in case the PHY is setup to carry out the delay by the
+> > > > corresponding interface modes ("rgmii-id", "rgmii-rxid", "rgmii-txid").
+> > > > 
+> > > > This corresponds to the driver changes that allow adjusting MII delays
+> > > > using Device Tree properties instead of relying solely on the PHY
+> > > > interface mode.
+> > > > 
+> > > > Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> > > > ---
+> > > > v4:
+> > > >  * remove misleading defaults
+> > > > 
+> > > > v3:
+> > > >  * redefine ports node so properties are defined actually apply
+> > > >  * RGMII port with 2ps delay is 'rgmii-id' mode
+> > > > 
+> > > >  .../bindings/net/dsa/lantiq,gswip.yaml        | 31 +++++++++++++++++--
+> > > >  1 file changed, 28 insertions(+), 3 deletions(-)
+> > > > 
+> > > > diff --git a/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml b/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
+> > > > index f3154b19af78..8ccbc8942eb3 100644
+> > > > --- a/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
+> > > > +++ b/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
+> > > > @@ -6,8 +6,31 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > >  
+> > > >  title: Lantiq GSWIP Ethernet switches
+> > > >  
+> > > > -allOf:
+> > > > -  - $ref: dsa.yaml#/$defs/ethernet-ports
+> > > 
+> > > I think you can keep this as you aren't adding custom properties.
+> > 
+> > Nevermind, I see the next patch now...
+> 
+> I suppose you mean [08/12] ("dt-bindings: net: dsa: lantiq,gswip: add
+> MaxLinear RMII refclk output property"), right?
+> 
+> The intention to divert from dsa.yaml#/$defs/ethernet-ports
+> already in this patch was to enforce the possible values of
+> {rx,tx}-internal-delay-ps.
+> 
+> Anyway, so you are saying I can keep the change in this patch? Or
+> should I just drop the constraints on the possible values of the
+> delays and only divert from dsa.yaml#/$defs/ethernet-ports once I'm
+> actually adding maxlinear,rmii-refclk-out?
 
-Sure, happy to get rid of the intermediate variable in places where
-issue_flags is only referenced once.
+You can keep it as-is, but strictly speaking, some of what's here is 
+only needed for [08/12]. Perhaps reverse the order of the patches. Then 
+it would be most of the changes here with the maxlinear,rmii-refclk-out 
+added, and then the 2nd patch is constraints on 
+{rx,tx}-internal-delay-ps.
 
->
-> In fact asm most external callers of io_uring_cmd_done pass that, would
-> a helper that just harcodes it make sense and then maybe switch the
-> special cases to use __io_uring_cmd_done directly?
-
-While issue_flags is mainly used to pass to io_uring_cmd_done(), there
-are some other uses too. For example, ublk_cmd_tw_cb() and
-ublk_cmd_list_tw_cb() pass it to io_buffer_register_bvec() via
-ublk_dispatch_req(), ublk_prep_auto_buf_reg(), and
-ublk_auto_buf_reg(). Since uring_cmd implementations can perform
-arbitrary work in task work context, I think it makes sense to keep
-IO_URING_CMD_TASK_WORK_ISSUE_FLAG so it can be used wherever it's
-required.
-
-Best,
-Caleb
+Rob
 
