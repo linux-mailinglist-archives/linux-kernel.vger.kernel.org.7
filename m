@@ -1,124 +1,522 @@
-Return-Path: <linux-kernel+bounces-879582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0493BC2382B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:14:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD6BCC23837
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:15:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D95C44E32C3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:14:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E95D3189E71F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71EFB327205;
-	Fri, 31 Oct 2025 07:14:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193D8327217;
+	Fri, 31 Oct 2025 07:14:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="lVV3yd2J"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="E6cQL2rf";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Q7g1yt6Y"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2000C3271F7
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:14:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D143271FB
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761894858; cv=none; b=fkHJGVnvm3aaKbAbxNVkal+5QsQXewyRr3KrEyLBgIduieXgMERxQi4nDWlOREU1UpjFX0iT4d56ZbVSLqZi+qXcRgbCLikgrzYAaHi/2YTrc8RDsm6RxMxq4n6yF9Spjw2xSPTsnLl7XrjIihMahtqjHQlG37DGnRZCI2ltf/I=
+	t=1761894895; cv=none; b=iUWUgMM9OBKB8kZDZKtRANN92vkS+ppB/VVPzTdv2Wf+gH8FeF7JqLWYJCyk1OFkFZo4gRxjGDyPE2nO7H9Cub3eB7Xxz1pbjg15B7zBTr39OSYZYFXIo6Qcbd1dOf9kxp4skHexr+aCa9OJIvxnH6jcdFBvYBnrUMBmPzhoy/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761894858; c=relaxed/simple;
-	bh=8+WhJyitrbTeGgxZoKEsA3Xi9RoN5HyOhUdLoDNVsaI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gEdIohCup7aZ0f6eNh6Fl/5APxRgHVb2s7Vf0drxOPLB7DNfLewvhazuFmCEzR90uUTEtEQkCHLpr0kKVtLSlhg+12seDMV+mBp4RZdaxa8QBaVTbZ+xretsp6eKAUzmkPYAmZtQf2Hm+k2Z7gu4K+7RSq+h5l5WxUadSFPYi2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=lVV3yd2J; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-429b7ba208eso981955f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 00:14:16 -0700 (PDT)
+	s=arc-20240116; t=1761894895; c=relaxed/simple;
+	bh=ZjFiT163DU8f0vSN+tXKjOELPUt4rwlVM61p1bhcAHY=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=cVDB2rLBkFTn/BDZkF/GpsTkc+NyPYHit6FvMij7eUMdwKpjKzOPzYh3yDmogSvVLp6UiYJtXDpKi17D2D68n8v4Zgu5nkgPoVj72Dz15VyEVq75EZXKo41LfUHX+NiCWzYyJM5rOSJZ+DmriRBbUqJwIcEWuOwzlyQA6Hui2bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=E6cQL2rf; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Q7g1yt6Y; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59V188gq1417233
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:14:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	c3If5XRwUcch6Vq5Jb3/Y5QIOP0LOmjER+KdRVCU5eg=; b=E6cQL2rfBG/rmNVM
+	jtWQRvm0IA88wlS3RgVvE4p3oqDzg4xbHfBEvN7/0lfMJgk7Yyo1JhkMNwav9eY/
+	FTxaPidpc98KFqdg911/TQ9o5o6L6u3g5kNcWZRXFAtbjqByJMkZwiIX5kcHJsct
+	xeWbBBEt2iikmtpccEwDZ4Ejy4y2ghMedQjU2K0H9ze6a++umPQsv76AvlfrCs9m
+	jPP070rrtgyjxmG2JN7mkg6rAHxQhPU2ZP3BMteYRNPV2R27LycWyL2RNxAfpiyU
+	Lyjk+m+wsAad4pz2CLK1bgdneTdvIH2kBM4dvAw+C5wY/w+qUBlqZOiDjAvrM1C5
+	I5WRUg==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a4k69gu18-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:14:52 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-340410b11b8so1787783a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 00:14:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1761894855; x=1762499655; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=F01LUjN81T2gEebzFvJeRYUSPOsICmfNBzp6TVdzeN0=;
-        b=lVV3yd2JyyAbEBkevywl1AinDE47ZC4SaYnmFPu577PBVp7aktF9rXCtMEjm3PphFz
-         G4mIjC4PyJRmwB8VP20Btq2pE9FylDJQ32kng+SWijQltfPu0gF3Dk0sve5+nnPFuMFj
-         TkTf5ARVcDUkV9eup3RCSkvikx9xuAvlrWvlT+U+DrgxM1otiYsMEEX0VXLjhlOy/c10
-         eiYRrnQU3AQH/VHOq88jGD4FCDGeWdWOmmD+iIHC4w8XbfIV5QmDA04HUMVLn7gFvody
-         VOmeDZ8z9uqz52KmS38WpFvActV0cU4PDXeAegYzV7UBuqkgwT2yn7joe/l1RrTJIVhq
-         PUqA==
+        d=oss.qualcomm.com; s=google; t=1761894891; x=1762499691; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=c3If5XRwUcch6Vq5Jb3/Y5QIOP0LOmjER+KdRVCU5eg=;
+        b=Q7g1yt6YlBBEqLKfGVwKG4cMHLKt3XqUQgJ+so/zT+rG0R+fkujeYFQvDPHIwx8k7B
+         LdEPjDMqCg4hIDRK2xuE3bWCYY5QkH6waawrfyvFQWieTcndca+85cEmnesBDwX8Pc4b
+         EtBmhI05Dgrnhmnflpwv2PJ9x59W3wcDgFkvJ7s6faAe6zG3pjHKNl5Z3kA9rdF3n60u
+         /jDX33Q/uFD9YumynDUuZE08e0Tir0csQG0VbiU8Iz436eV3GM6CcVhXgQnXLBew3xlh
+         glmNUl3v6O/rclRVpghlaRt8LhahRl6q9YLsAxac1kFvm+fBVxt8Gmvd/HijrKwwKSbD
+         NJyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761894855; x=1762499655;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1761894891; x=1762499691;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:from:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F01LUjN81T2gEebzFvJeRYUSPOsICmfNBzp6TVdzeN0=;
-        b=ubobwKnUR7VSRK1BinI0NJLdSUXXlhJgFs1xX2Ai58u4FljFvY9h5U5HTSGYtpjZrF
-         rIkiYoM8EcKzffdgWsZso5Qvr6sQ3p7/yvl4tUW14CdLmSwQYQfHXrtKCy9VfqOWDBW2
-         eT/wOxxcnOUy65Bhbp5QHm+g4z2Bdz0gFRj55GbJBR4SLqWgDANbi5d0LlG3S8HCqky1
-         HQGDqkFM7Stif0wRYtxyugCAOlq5mm+gi6b3REljs4OcvO887GrLvx+T33sfiCwbfkdB
-         35MbovoQhzDvXGIO+c35063IhbfHGnVsdEcsOzvlfyeXSuRlO2d6cXHttJa9wY/itOj3
-         8iRw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0/JvMeHq7aV3XYWxTSbPFeBrL5x+5132M8DVNXnLxhPd2KjshOh+sXNIUNAHLCOPNc2bKmGIaXGvdq+U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3OI2x3zVIm0ToX26iNY1yWcbG7CcU0Y6bp9U1BKSOcu9xqGI0
-	zvZ4GLAWHJjgPqcb5WAbX0hPhOq9nR3VQPeDCrbZCTchZuzHVSkWuI4MXybGBZu7OpI=
-X-Gm-Gg: ASbGncvfefCNLif98KuM6eXloMVWCj9Py/cknH2G1KSzsziIGrQ/VzGMCLRhH8bUooI
-	FTm20RdX0DDGfomJDEz7v/BaOlK1X1hvFoxxNysNxIln4dSf/mRRAMe5baYgw/+0pf67omufWUK
-	EV3Ib0rXn15cut7+XYlBib7NL9F0NT5ALWiXCYGrhT/UCuFPf6hD/Im8at4psWkzhKcKHAhYeW3
-	Tl81K9GxAMvH0OVnSzFTK4UN+LwHsxl4x0r2RD1NFaE7RHLZdRPv+lZI6w3U++5ITyevhaOoOP3
-	Xa5w/MnW1GoTPMwopuWS0p9TLpMstyhCs9LEg/mAOD+zRDZyQDnE2jJklHU+t02EoTFez/Fapy2
-	CsUpd6Ki5cSze0iVIje0rH3YjpsOCpMiXSXvHv4Miey+aLUuNMtQb8o3o2BK81hO3mJ1Ny0Kg66
-	ad5dKtRs0=
-X-Google-Smtp-Source: AGHT+IGFXoXIYQM0033JrSO0/egQMm5kDokRkBfCt8uk6iJ6QGivvStg+2qhnCmO5P2IzbdiAPo8og==
-X-Received: by 2002:a05:6000:2288:b0:427:5cf:a284 with SMTP id ffacd0b85a97d-429bd6c2d51mr1752732f8f.60.1761894855232;
-        Fri, 31 Oct 2025 00:14:15 -0700 (PDT)
-Received: from [10.31.13.216] ([82.77.28.160])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c114c944sm1868250f8f.20.2025.10.31.00.14.13
+        bh=c3If5XRwUcch6Vq5Jb3/Y5QIOP0LOmjER+KdRVCU5eg=;
+        b=fVnilhJzcdczwt9zVYKgn1sYsrvpMeMQ5Y2DKSpFIPmDjgFvfZHnmvmPUStDJb8D0U
+         68LXGc2ca5ieXmGWYTt9hruWLyFSNs5zi28guUJMJQcQ1lv4dWnkGQTW1+P6NZEoxFmN
+         d7qod5ohk+iQjIvThSBhzv/63tAC8COSx2wfnwP8bobQ2FonoZGImyf3XkOMZxBnWhxW
+         b1VN8tqDGFigrrbDzN5TJPpaKs78e3g6rdspI14kNucXD635VOgv+MrPpUuMPrRezIee
+         LAf67frFp2HdmM1ivIbMxT+Q0FDgnvHDm/ZjenGkuaqoBa8P2Vmqt82PnixlfRM20KOc
+         UHeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWWNOpoE3w1Jw8n6tCTD3dgyRdKf8inn1NqJ2xRL/4RbAVnhr4pOsARBsVSOk+4BZaPZwaIrEDyWghmCgU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+OObAjJ+yiqSn/QGCDHDlIp4aeGqHC4jd2+Er/KtREVbY/BKC
+	zinKyzyNx1b++6k348kLwzOLk7dURDHuA3Erq7BYxgHuawNECCQr/KqrR3Q4PqNKH6dJ6ZxjbtT
+	E0FNpNCpfV9Ws5Z89i6PMmsYGA53bPVKDTfQtj6C8rFNpvJINmId5LLHUoGEubzOIpZMPTviK87
+	A=
+X-Gm-Gg: ASbGncsSH6hs7U7vRxOAwbpX8lALcDxxA32d56ulbxMBhgZE8yJaILO/mQT0KtsDAIG
+	aIoE4TCLXbm6sjs4ZGtfC/OblvI41ciZ7Zf7TUzoiBQ40++JFe9C8KaYSCRfXKk/Z0X582aC6ub
+	kLaim4QYoMctRc6Wx13sfBiDCp3JSdtlH6FSjcJN9TFry1a9bdAPKfhkY+xW8HnxDu+mfVSlf1E
+	pPPlEq7RGu/1JJfy44/dkU38KcyPJsStZt49cKJoXIwxNhlNh4RAm75y1tGhTgUy12HxJQPQV9C
+	3tYemGbpfPRTAG8HlsY6uosvFmfsQh6DZdgGcLVaersxNM4H27D69n6vsEDEKUcGEd8+uzPxp3d
+	+JFj3K5toI9JF/SEUOkV4Qns9ESfvypk=
+X-Received: by 2002:a17:90b:3e88:b0:33b:b020:596a with SMTP id 98e67ed59e1d1-34082fd9e22mr3162364a91.10.1761894890991;
+        Fri, 31 Oct 2025 00:14:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGxE5d0p7YQ8HrhMd6PO5rEIxewNDCfeak5gUQQuTsaswaLZ4F+BbU9dYiUnhC3kQyw4MWkTg==
+X-Received: by 2002:a17:90b:3e88:b0:33b:b020:596a with SMTP id 98e67ed59e1d1-34082fd9e22mr3162323a91.10.1761894890373;
+        Fri, 31 Oct 2025 00:14:50 -0700 (PDT)
+Received: from [10.0.0.3] ([106.222.229.252])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34050980be1sm4859994a91.2.2025.10.31.00.14.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Oct 2025 00:14:14 -0700 (PDT)
-Message-ID: <62133fe3-cce8-4405-82b9-8ded092c7eea@tuxon.dev>
-Date: Fri, 31 Oct 2025 09:14:13 +0200
+        Fri, 31 Oct 2025 00:14:49 -0700 (PDT)
+Message-ID: <2dd8c1e1-1e05-1c81-cbb9-36ade7de513c@oss.qualcomm.com>
+Date: Fri, 31 Oct 2025 12:44:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/7] clk: microchip: mpfs: use regmap for clocks
-To: Conor Dooley <conor@kernel.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
- Daire McNamara <daire.mcnamara@microchip.com>,
- pierre-henry.moussay@microchip.com, valentina.fernandezalanis@microchip.com,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, linux-riscv@lists.infradead.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251029-chewing-absolve-c4e6acfe0fa4@spud>
- <20251029-surfboard-refocus-ca9b135ab123@spud>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+From: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+Subject: Re: [PATCH v1 2/4] media: qcom: iris: Add rotation support for
+ encoder
+To: Wangao Wang <wangao.wang@oss.qualcomm.com>,
+        vikash.garodia@oss.qualcomm.com, abhinav.kumar@linux.dev,
+        bod@kernel.org, mchehab@kernel.org
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, quic_qiweil@quicinc.com,
+        quic_renjiang@quicinc.com
+References: <20251015092708.3703-1-wangao.wang@oss.qualcomm.com>
+ <20251015092708.3703-3-wangao.wang@oss.qualcomm.com>
 Content-Language: en-US
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20251029-surfboard-refocus-ca9b135ab123@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <20251015092708.3703-3-wangao.wang@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMxMDA2NSBTYWx0ZWRfX9uMcCtVBAD6W
+ iZD+/qXJZ8HTHXBXMRjtzEFoskPNAmqo0SGrj8cmHro1x9k7PIy7ypBNF1ykhj5pupuu13Q0xMt
+ 0OGnZRyNXBysD58xm39OqdiZcraRhU2jqjpYW/WBSvDPSVC+zLvnnxM3sRRevRI9S1JV5oVUWTo
+ NFAuScP0Ce8+b7VR7UBhtGNZRn0gBBjNaGuZZfWF7ZkJW0/dvMQFyMzapJ7GIT1zTOaBqfqSNB+
+ bBetopvPLx7XabIqwBlSrPOjruwRLigFxseQ9i0c7PlcGlcMri+ENDcCfDvFyqWQ/oLaknP9kei
+ 8n0mAp2L/ZNqwnNhraUZc1ayH4UbqfLY/gPr2icdI9uKyXxd7a2AUoF/1mvZEiKSTI+aq6JC6Gb
+ 376KXvsCbF0Sd/B/lLGGH/vCXjfCew==
+X-Authority-Analysis: v=2.4 cv=Bv2QAIX5 c=1 sm=1 tr=0 ts=690461ec cx=c_pps
+ a=0uOsjrqzRL749jD1oC5vDA==:117 a=L4UNg9I9cQSOxNpRiiGXlA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=Qa9o6sTEP_P653HxESMA:9
+ a=QEXdDO2ut3YA:10 a=mQ_c8vxmzFEMiUWkPHU9:22
+X-Proofpoint-GUID: Wao-fQejeltiMrr0fOeaeLlEatOv-yLN
+X-Proofpoint-ORIG-GUID: Wao-fQejeltiMrr0fOeaeLlEatOv-yLN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-31_01,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0 priorityscore=1501
+ adultscore=0 malwarescore=0 spamscore=0 clxscore=1015 impostorscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510310065
 
 
 
-On 10/29/25 18:11, Conor Dooley wrote:
-> From: Conor Dooley<conor.dooley@microchip.com>
+On 10/15/2025 2:57 PM, Wangao Wang wrote:
+> Add rotation control for encoder, enabling V4L2_CID_ROTATE and handling
+>  90/180/270 degree rotation.
 > 
-> Convert the PolarFire SoC clock driver to use regmaps instead of iomem
-> addresses as a preparatory work for supporting the new binding for this
-> device that will only provide the second of the two register regions, and
-> will require the use of syscon regmap to access the "cfg" and "periph"
-> clocks currently supported by the driver.
+> Add VPSS buffer to platform data, which the rotate function requires.
 > 
-> This is effectively a revert of commit 4da2404bb003 ("clk: microchip:
-> mpfs: convert cfg_clk to clk_divider") and commit d815569783e6 ("clk:
-> microchip: mpfs: convert periph_clk to clk_gate") as it resurrects the
-> ops structures removed in those commits, with the readl()s and
-> writel()s replaced by regmap_read()s and regmap_writes()s.
+> Signed-off-by: Wangao Wang <wangao.wang@oss.qualcomm.com>
+> ---
+>  drivers/media/platform/qcom/iris/iris_ctrls.c | 34 ++++++++++++
+>  drivers/media/platform/qcom/iris/iris_ctrls.h |  1 +
+>  .../qcom/iris/iris_hfi_gen2_command.c         | 12 ++++-
+>  .../qcom/iris/iris_hfi_gen2_defines.h         |  9 ++++
+>  .../qcom/iris/iris_hfi_gen2_response.c        |  2 +
+>  .../platform/qcom/iris/iris_platform_common.h |  1 +
+>  .../platform/qcom/iris/iris_platform_gen2.c   | 20 +++++++
+>  drivers/media/platform/qcom/iris/iris_utils.c |  6 +++
+>  drivers/media/platform/qcom/iris/iris_utils.h |  1 +
+>  .../platform/qcom/iris/iris_vpu_buffer.c      | 52 +++++++++++--------
+>  10 files changed, 114 insertions(+), 24 deletions(-)
 > 
-> Signed-off-by: Conor Dooley<conor.dooley@microchip.com>
+> diff --git a/drivers/media/platform/qcom/iris/iris_ctrls.c b/drivers/media/platform/qcom/iris/iris_ctrls.c
+> index 754a5ad718bc..00949c207ddb 100644
+> --- a/drivers/media/platform/qcom/iris/iris_ctrls.c
+> +++ b/drivers/media/platform/qcom/iris/iris_ctrls.c
+> @@ -98,6 +98,8 @@ static enum platform_inst_fw_cap_type iris_get_cap_id(u32 id)
+>  		return B_FRAME_QP_H264;
+>  	case V4L2_CID_MPEG_VIDEO_HEVC_B_FRAME_QP:
+>  		return B_FRAME_QP_HEVC;
+> +	case V4L2_CID_ROTATE:
+> +		return ROTATION;
+>  	default:
+>  		return INST_FW_CAP_MAX;
+>  	}
+> @@ -185,6 +187,8 @@ static u32 iris_get_v4l2_id(enum platform_inst_fw_cap_type cap_id)
+>  		return V4L2_CID_MPEG_VIDEO_H264_B_FRAME_QP;
+>  	case B_FRAME_QP_HEVC:
+>  		return V4L2_CID_MPEG_VIDEO_HEVC_B_FRAME_QP;
+> +	case ROTATION:
+> +		return V4L2_CID_ROTATE;
+>  	default:
+>  		return 0;
+>  	}
+> @@ -883,6 +887,36 @@ int iris_set_qp_range(struct iris_inst *inst, enum platform_inst_fw_cap_type cap
+>  				     &range, sizeof(range));
+>  }
+>  
+> +int iris_set_rotation(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id)
+> +{
+> +	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
+> +	u32 hfi_id = inst->fw_caps[cap_id].hfi_id;
+> +	u32 hfi_val;
+> +
+> +	switch (inst->fw_caps[cap_id].value) {
+> +	case 0:
+> +		hfi_val = HFI_ROTATION_NONE;
+> +		return 0;
+> +	case 90:
+> +		hfi_val = HFI_ROTATION_90;
+> +		break;
+> +	case 180:
+> +		hfi_val = HFI_ROTATION_180;
+> +		break;
+> +	case 270:
+> +		hfi_val = HFI_ROTATION_270;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	return hfi_ops->session_set_property(inst, hfi_id,
+> +					     HFI_HOST_FLAGS_NONE,
+> +					     iris_get_port_info(inst, cap_id),
+> +					     HFI_PAYLOAD_U32,
+> +					     &hfi_val, sizeof(u32));
+> +}
+> +
+>  int iris_set_properties(struct iris_inst *inst, u32 plane)
+>  {
+>  	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
+> diff --git a/drivers/media/platform/qcom/iris/iris_ctrls.h b/drivers/media/platform/qcom/iris/iris_ctrls.h
+> index 30af333cc494..3ea0a00c7587 100644
+> --- a/drivers/media/platform/qcom/iris/iris_ctrls.h
+> +++ b/drivers/media/platform/qcom/iris/iris_ctrls.h
+> @@ -32,6 +32,7 @@ int iris_set_min_qp(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_i
+>  int iris_set_max_qp(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id);
+>  int iris_set_frame_qp(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id);
+>  int iris_set_qp_range(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id);
+> +int iris_set_rotation(struct iris_inst *inst, enum platform_inst_fw_cap_type cap_id);
+>  int iris_set_properties(struct iris_inst *inst, u32 plane);
+>  
+>  #endif
+> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+> index c2258dfb2a8a..15db4f9e85ff 100644
+> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+> @@ -198,8 +198,12 @@ static int iris_hfi_gen2_set_bitstream_resolution(struct iris_inst *inst, u32 pl
+>  		payload_type = HFI_PAYLOAD_U32;
+>  	} else {
+>  		codec_align = inst->codec == V4L2_PIX_FMT_HEVC ? 32 : 16;
+> -		resolution = ALIGN(inst->enc_bitstream_width, codec_align) << 16 |
+> -			ALIGN(inst->enc_bitstream_height, codec_align);
+> +		if (is_rotation_90_or_270(inst))
+> +			resolution = ALIGN(inst->enc_bitstream_height, codec_align) << 16 |
+> +				ALIGN(inst->enc_bitstream_width, codec_align);
+> +		else
+> +			resolution = ALIGN(inst->enc_bitstream_width, codec_align) << 16 |
+> +				ALIGN(inst->enc_bitstream_height, codec_align);
+>  		inst_hfi_gen2->dst_subcr_params.bitstream_resolution = resolution;
+>  		payload_type = HFI_PAYLOAD_32_PACKED;
+>  	}
+> @@ -241,6 +245,10 @@ static int iris_hfi_gen2_set_crop_offsets(struct iris_inst *inst, u32 plane)
+>  		right_offset = (ALIGN(inst->enc_raw_width, codec_align) - inst->enc_raw_width);
+>  		left_offset = inst->crop.left;
+>  		top_offset = inst->crop.top;
+> +		if (inst->fw_caps[ROTATION].value) {
+> +			bottom_offset = 0;
+> +			right_offset = 0;
+> +		}
 
-Reviewed-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+why is this needed?
+
+>  	}
+>  
+>  	payload[0] = FIELD_PREP(GENMASK(31, 16), left_offset) | top_offset;
+> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h b/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
+> index aa1f795f5626..4edcce7faf5e 100644
+> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
+> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
+> @@ -83,6 +83,15 @@ enum hfi_seq_header_mode {
+>  };
+>  
+>  #define HFI_PROP_SEQ_HEADER_MODE		0x03000149
+> +
+> +enum hfi_rotation {
+> +	HFI_ROTATION_NONE = 0x00000000,
+> +	HFI_ROTATION_90   = 0x00000001,
+> +	HFI_ROTATION_180  = 0x00000002,
+> +	HFI_ROTATION_270  = 0x00000003,
+> +};
+> +
+> +#define HFI_PROP_ROTATION			0x0300014b
+>  #define HFI_PROP_SIGNAL_COLOR_INFO		0x03000155
+>  #define HFI_PROP_PICTURE_TYPE			0x03000162
+>  #define HFI_PROP_DEC_DEFAULT_HEADER		0x03000168
+> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c b/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c
+> index 2f1f118eae4f..dc3e606b6ab4 100644
+> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c
+> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c
+> @@ -54,6 +54,8 @@ static u32 iris_hfi_gen2_buf_type_to_driver(struct iris_inst *inst,
+>  			return BUF_SCRATCH_2;
+>  	case HFI_BUFFER_PERSIST:
+>  		return BUF_PERSIST;
+> +	case HFI_BUFFER_VPSS:
+> +		return BUF_VPSS;
+>  	default:
+>  		return 0;
+>  	}
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
+> index 58d05e0a112e..9a4232b1c64e 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
+> @@ -140,6 +140,7 @@ enum platform_inst_fw_cap_type {
+>  	P_FRAME_QP_HEVC,
+>  	B_FRAME_QP_H264,
+>  	B_FRAME_QP_HEVC,
+> +	ROTATION,
+>  	INST_FW_CAP_MAX,
+>  };
+>  
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> index 36d69cc73986..c2cba30be83d 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> @@ -588,6 +588,16 @@ static struct platform_inst_fw_cap inst_fw_cap_sm8550_enc[] = {
+>  		.flags = CAP_FLAG_OUTPUT_PORT,
+>  		.set = iris_set_u32,
+>  	},
+> +	{
+> +		.cap_id = ROTATION,
+> +		.min = 0,
+> +		.max = 270,
+> +		.step_or_mask = 90,
+> +		.value = 0,
+> +		.hfi_id = HFI_PROP_ROTATION,
+> +		.flags = CAP_FLAG_OUTPUT_PORT,
+> +		.set = iris_set_rotation,
+> +	},
+>  };
+>  
+>  static struct platform_inst_caps platform_inst_cap_sm8550 = {
+> @@ -729,6 +739,10 @@ static const u32 sm8550_dec_op_int_buf_tbl[] = {
+>  	BUF_DPB,
+>  };
+>  
+> +static const u32 sm8550_enc_ip_int_buf_tbl[] = {
+> +	BUF_VPSS,
+
+VPSS would be needed for scaling as well, pls add in correct patch.
+
+> +};
+> +
+>  static const u32 sm8550_enc_op_int_buf_tbl[] = {
+>  	BUF_BIN,
+>  	BUF_COMV,
+> @@ -816,6 +830,8 @@ struct iris_platform_data sm8550_data = {
+>  	.dec_op_int_buf_tbl = sm8550_dec_op_int_buf_tbl,
+>  	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_op_int_buf_tbl),
+>  
+> +	.enc_ip_int_buf_tbl = sm8550_enc_ip_int_buf_tbl,
+> +	.enc_ip_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_ip_int_buf_tbl),
+>  	.enc_op_int_buf_tbl = sm8550_enc_op_int_buf_tbl,
+>  	.enc_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_op_int_buf_tbl),
+>  };
+> @@ -908,6 +924,8 @@ struct iris_platform_data sm8650_data = {
+>  	.dec_op_int_buf_tbl = sm8550_dec_op_int_buf_tbl,
+>  	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_op_int_buf_tbl),
+>  
+> +	.enc_ip_int_buf_tbl = sm8550_enc_ip_int_buf_tbl,
+> +	.enc_ip_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_ip_int_buf_tbl),
+>  	.enc_op_int_buf_tbl = sm8550_enc_op_int_buf_tbl,
+>  	.enc_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_op_int_buf_tbl),
+>  };
+> @@ -989,6 +1007,8 @@ struct iris_platform_data sm8750_data = {
+>  	.dec_op_int_buf_tbl = sm8550_dec_op_int_buf_tbl,
+>  	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_op_int_buf_tbl),
+>  
+> +	.enc_ip_int_buf_tbl = sm8550_enc_ip_int_buf_tbl,
+> +	.enc_ip_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_ip_int_buf_tbl),
+>  	.enc_op_int_buf_tbl = sm8550_enc_op_int_buf_tbl,
+>  	.enc_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_enc_op_int_buf_tbl),
+>  };
+> diff --git a/drivers/media/platform/qcom/iris/iris_utils.c b/drivers/media/platform/qcom/iris/iris_utils.c
+> index 85c70a62b1fd..97465dfbdec1 100644
+> --- a/drivers/media/platform/qcom/iris/iris_utils.c
+> +++ b/drivers/media/platform/qcom/iris/iris_utils.c
+> @@ -124,3 +124,9 @@ int iris_check_core_mbps(struct iris_inst *inst)
+>  
+>  	return 0;
+>  }
+> +
+> +bool is_rotation_90_or_270(struct iris_inst *inst)
+> +{
+> +	return inst->fw_caps[ROTATION].value == 90 ||
+> +		inst->fw_caps[ROTATION].value == 270;
+> +}
+> diff --git a/drivers/media/platform/qcom/iris/iris_utils.h b/drivers/media/platform/qcom/iris/iris_utils.h
+> index 75740181122f..b5705d156431 100644
+> --- a/drivers/media/platform/qcom/iris/iris_utils.h
+> +++ b/drivers/media/platform/qcom/iris/iris_utils.h
+> @@ -51,5 +51,6 @@ void iris_helper_buffers_done(struct iris_inst *inst, unsigned int type,
+>  int iris_wait_for_session_response(struct iris_inst *inst, bool is_flush);
+>  int iris_check_core_mbpf(struct iris_inst *inst);
+>  int iris_check_core_mbps(struct iris_inst *inst);
+> +bool is_rotation_90_or_270(struct iris_inst *inst);
+>  
+>  #endif
+> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
+> index 4463be05ce16..749cc3139de2 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
+> @@ -556,6 +556,22 @@ static u32 iris_vpu_dec_scratch1_size(struct iris_inst *inst)
+>  		iris_vpu_dec_line_size(inst);
+>  }
+>  
+> +static inline u32 iris_vpu_enc_get_bitstream_width(struct iris_inst *inst)
+> +{
+> +	if (is_rotation_90_or_270(inst))
+> +		return inst->fmt_dst->fmt.pix_mp.height;
+> +	else
+> +		return inst->fmt_dst->fmt.pix_mp.width;
+> +}
+> +
+> +static inline u32 iris_vpu_enc_get_bitstream_height(struct iris_inst *inst)
+> +{
+> +	if (is_rotation_90_or_270(inst))
+> +		return inst->fmt_dst->fmt.pix_mp.width;
+> +	else
+> +		return inst->fmt_dst->fmt.pix_mp.height;
+> +}
+> +
+>  static inline u32 size_bin_bitstream_enc(u32 width, u32 height,
+>  					 u32 rc_type)
+>  {
+> @@ -638,10 +654,9 @@ static inline u32 hfi_buffer_bin_enc(u32 width, u32 height,
+>  static u32 iris_vpu_enc_bin_size(struct iris_inst *inst)
+>  {
+>  	u32 num_vpp_pipes = inst->core->iris_platform_data->num_vpp_pipe;
+> +	u32 height = iris_vpu_enc_get_bitstream_height(inst);
+> +	u32 width = iris_vpu_enc_get_bitstream_width(inst);
+>  	u32 stage = inst->fw_caps[STAGE].value;
+> -	struct v4l2_format *f = inst->fmt_dst;
+> -	u32 height = f->fmt.pix_mp.height;
+> -	u32 width = f->fmt.pix_mp.width;
+>  	u32 lcu_size;
+>  
+>  	if (inst->codec == V4L2_PIX_FMT_HEVC)
+> @@ -676,9 +691,8 @@ u32 hfi_buffer_comv_enc(u32 frame_width, u32 frame_height, u32 lcu_size,
+>  
+>  static u32 iris_vpu_enc_comv_size(struct iris_inst *inst)
+>  {
+> -	struct v4l2_format *f = inst->fmt_dst;
+> -	u32 height = f->fmt.pix_mp.height;
+> -	u32 width = f->fmt.pix_mp.width;
+> +	u32 height = iris_vpu_enc_get_bitstream_height(inst);
+> +	u32 width = iris_vpu_enc_get_bitstream_width(inst);
+>  	u32 num_recon = 1;
+>  	u32 lcu_size = 16;
+>  
+> @@ -958,9 +972,8 @@ u32 hfi_buffer_non_comv_enc(u32 frame_width, u32 frame_height,
+>  static u32 iris_vpu_enc_non_comv_size(struct iris_inst *inst)
+>  {
+>  	u32 num_vpp_pipes = inst->core->iris_platform_data->num_vpp_pipe;
+> -	struct v4l2_format *f = inst->fmt_dst;
+> -	u32 height = f->fmt.pix_mp.height;
+> -	u32 width = f->fmt.pix_mp.width;
+> +	u32 height = iris_vpu_enc_get_bitstream_height(inst);
+> +	u32 width = iris_vpu_enc_get_bitstream_width(inst);
+>  	u32 lcu_size = 16;
+>  
+>  	if (inst->codec == V4L2_PIX_FMT_HEVC) {
+> @@ -1051,9 +1064,8 @@ u32 hfi_buffer_line_enc_vpu33(u32 frame_width, u32 frame_height, bool is_ten_bit
+>  static u32 iris_vpu_enc_line_size(struct iris_inst *inst)
+>  {
+>  	u32 num_vpp_pipes = inst->core->iris_platform_data->num_vpp_pipe;
+> -	struct v4l2_format *f = inst->fmt_dst;
+> -	u32 height = f->fmt.pix_mp.height;
+> -	u32 width = f->fmt.pix_mp.width;
+> +	u32 height = iris_vpu_enc_get_bitstream_height(inst);
+> +	u32 width = iris_vpu_enc_get_bitstream_width(inst);
+>  	u32 lcu_size = 16;
+>  
+>  	if (inst->codec == V4L2_PIX_FMT_HEVC) {
+> @@ -1131,10 +1143,8 @@ static u32 iris_vpu_enc_arp_size(struct iris_inst *inst)
+>  
+>  inline bool is_scaling_enabled(struct iris_inst *inst)
+>  {
+> -	return inst->crop.left != inst->compose.left ||
+> -		inst->crop.top != inst->compose.top ||
+> -		inst->crop.width != inst->compose.width ||
+> -		inst->crop.height != inst->compose.height;
+> +	return inst->fmt_dst->fmt.pix_mp.width != inst->fmt_src->fmt.pix_mp.width ||
+> +		inst->fmt_dst->fmt.pix_mp.height != inst->fmt_src->fmt.pix_mp.height;
+>  }
+
+this is needed for scaling as well? pls add in correct patch.
+
+Thanks,
+Dikshita
+
+>  
+>  static inline
+> @@ -1291,9 +1301,8 @@ static inline u32 hfi_buffer_scratch1_enc(u32 frame_width, u32 frame_height,
+>  static u32 iris_vpu_enc_scratch1_size(struct iris_inst *inst)
+>  {
+>  	u32 num_vpp_pipes = inst->core->iris_platform_data->num_vpp_pipe;
+> -	struct v4l2_format *f = inst->fmt_dst;
+> -	u32 frame_height = f->fmt.pix_mp.height;
+> -	u32 frame_width = f->fmt.pix_mp.width;
+> +	u32 frame_height = iris_vpu_enc_get_bitstream_height(inst);
+> +	u32 frame_width = iris_vpu_enc_get_bitstream_width(inst);
+>  	u32 num_ref = 1;
+>  	u32 lcu_size;
+>  	bool is_h265;
+> @@ -1389,9 +1398,8 @@ static inline u32 hfi_buffer_scratch2_enc(u32 frame_width, u32 frame_height,
+>  
+>  static u32 iris_vpu_enc_scratch2_size(struct iris_inst *inst)
+>  {
+> -	struct v4l2_format *f = inst->fmt_dst;
+> -	u32 frame_width = f->fmt.pix_mp.width;
+> -	u32 frame_height = f->fmt.pix_mp.height;
+> +	u32 frame_height = iris_vpu_enc_get_bitstream_height(inst);
+> +	u32 frame_width = iris_vpu_enc_get_bitstream_width(inst);
+>  	u32 num_ref = 1;
+>  
+>  	return hfi_buffer_scratch2_enc(frame_width, frame_height, num_ref,
 
