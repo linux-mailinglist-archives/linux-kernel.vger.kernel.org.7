@@ -1,108 +1,133 @@
-Return-Path: <linux-kernel+bounces-879527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DBE9C234F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:54:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51FA3C234F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:55:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E5013B0367
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 05:53:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD23D404A4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 05:55:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541752D8780;
-	Fri, 31 Oct 2025 05:53:50 +0000 (UTC)
-Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B80EA2DC321;
+	Fri, 31 Oct 2025 05:55:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="i3SZiSow"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3240028C854;
-	Fri, 31 Oct 2025 05:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06DC2D0637
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 05:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761890029; cv=none; b=EljH8g1YbIHvV2MGCVLkuw2OO71lwDvrc4iFk8lEyvHBqd4uFyDM2ZV1c3SQdSwhyFeUZvs2KD6Fcdccr9xXGBEGiyR0N+O4kpt3bBMPJ6WmattkQjjOzRXmDF8LXzqClzLtlGRbl/K0wd9a436u/7UVrplkCdvtbWr4ktUqk7k=
+	t=1761890131; cv=none; b=TxtpghijFxjzB7tE4qYcQbjLOnNfyvfm+ec0OaHB0A8DaT/4U06GezTyhxadsqe84T2JYGhPcGR776XEoCbPXbcp1j4LL3oLwgdBTd8SwSjlIjNIBRBGeE3HXmZcyCI7pIOPe+2hkAuemkkZGqX0ijoVdYHtdh/Uy6JrF3wvzqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761890029; c=relaxed/simple;
-	bh=eaRIVQgynbj6uU7XhSXun0qtbjx9gLDY6bCGnkT3/sc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SFS/f6KTZC+fsxLIwxWjWke4xmlFvnFQAIMhNCCueXWaXpjdokfle2vWqMS2j8WoVsk1h+yqoFSh30X91ib1hbGHFR02Hh88upactpYpr3JICTJSuk6KdbiBu1mQWFLXL0pJ9kTLA3jPhaGznWFOrNRFJSVz0Kn5ny/MLs+ggNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from Jtjnmail201618.home.langchao.com
-        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id 202510311353399875;
-        Fri, 31 Oct 2025 13:53:39 +0800
-Received: from jtjnmailAR02.home.langchao.com (10.100.2.43) by
- Jtjnmail201618.home.langchao.com (10.100.2.18) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Fri, 31 Oct 2025 13:53:38 +0800
-Received: from inspur.com (10.100.2.96) by jtjnmailAR02.home.langchao.com
- (10.100.2.43) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Fri, 31 Oct 2025 13:53:38 +0800
-Received: from localhost.com (unknown [10.94.18.144])
-	by app1 (Coremail) with SMTP id YAJkCsDwEnbhTgRpkOY5AA--.2627S4;
-	Fri, 31 Oct 2025 13:53:38 +0800 (CST)
-From: Chu Guangqing <chuguangqing@inspur.com>
-To: <rafael@kernel.org>, <lenb@kernel.org>
-CC: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Chu
- Guangqing <chuguangqing@inspur.com>
-Subject: [PATCH] ACPI: CPPC: Fix a typo error
-Date: Fri, 31 Oct 2025 13:52:40 +0800
-Message-ID: <20251031055240.2791-1-chuguangqing@inspur.com>
-X-Mailer: git-send-email 2.43.7
+	s=arc-20240116; t=1761890131; c=relaxed/simple;
+	bh=fDWAynXxxMM8wnZgiOP8yS88DMzmiyKLjs9SaH6/bks=;
+	h=Mime-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=NBJDt5A4M8v3L79KQrLTunWEmZAqpoc/mM9r7iRqxY73gJ75FBe6iYKCdSKqoUJsHeNGrIsdFXwLB+XOtjj7J4RxZfkZi/dnCKcuqptsUVR6senJlnuPKdtD+66yuemIfgBIsGg/QF+Rmo9bH5mqD4uCN0eoQkQkU7TAZxAJ+ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=i3SZiSow; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-47117f92e32so15486595e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 22:55:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1761890127; x=1762494927; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=2uphxqo8Dq0ahPpyMVVXeMkMU/LtFsk0B3ztz4GQpss=;
+        b=i3SZiSowfa+Dq7nafzt/p5/cYfAOJ1F60Wy8Rdg/HPJkAPieDw7aawMDLglJtFINzK
+         FPI1wQUuj5zIMmUEd3Ovd7aTm4Aec7GXOL9Zu3fDE52rX3/hUKvkozQT55gY088cZE7N
+         fpL8qWu6payBdJayXo0GsNTDIUT7zNJrXlTIA76sIa90yuLPgEfKDbZXlN7M07nzBDrK
+         ZxLezKEWaPRshI/NzWF4K5YMHNlTLb1cYDIndlI+mO18emMuynRZkRDHP8MSub8Z47go
+         Hl8Qm8fC8Diro0aZoLS4791ugtt/q94BCUQlJArd/Iv3YyVk3P/3L3nLKsva/7AbQ9D3
+         IP4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761890127; x=1762494927;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2uphxqo8Dq0ahPpyMVVXeMkMU/LtFsk0B3ztz4GQpss=;
+        b=Bf8At3ZFZ8O2cBXBLQm2/HIzQeTUC5YApf2eBFr7C1Quv7XKFOk3aqFEVl/9D0gZbs
+         TfBWU/zyicudH2ta76kwwHyZozXdSeveU5CcQjqVi6s9Ocw2+PgqDHSW4DMJz6OnPVMY
+         8dyHMCABMOcQTEaMiD3VtRkg5sfYCJOuG4mqniTE8qaCiPJgoyyxw90NQwgGDF2/EZwx
+         VYUNeupi2E2mj8HKdCZe4eLYPUwXkbO3DickoCAqaArLNBl7RAKo3NQ2FGDXSsX2DvNt
+         8XvvSI4dZjiyklAaFQrgGrUH0MPkzypLRP6Q14MhnUVVHrfmwq+NZVdySlX/Mv5Nt6Dq
+         DUjA==
+X-Forwarded-Encrypted: i=1; AJvYcCXi1aiSJK/3woWodU/cHXxpPPQ3KoLpewStXi0zcdhMprjKDQcVA2U7+HAN1RI/F5p+kCTgadWgipeK1hg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxw17tEC4m63OGpQBIlxrnSnRg8/ftSLpizi5msUUxfoyoDg9x7
+	qBw8uzgvsenVxadV30lP536lgAUoBPBvw0NOdQx7oXTsCy8qeXScl2wVbJ+OdY/iDQGpwhNvP1+
+	KBkffx7OWGQrhNVO69WpDlnB0XrVGIcl7BreFYxSctw==
+X-Gm-Gg: ASbGncvJyIE1A9cuONkgi9KVtsBRc0/gV4Kt5hQOfaIhs33SOHMaUAs+yxix3EWq8X0
+	8PpWsfVpBNrqbPAaD92RB8MDj6N2c3ckNa9hsUrR6gToRRb368FOxVJKw2Z2XjsqEPKRKT0vW5q
+	iV8uoD9uZTtOdDiNtDXglQMM4+/jeK0xL11cQBzWglh7O3nUBoRqUrC95YgWcu7P7O/si1Pep2j
+	aegxNTlA1KNvvreDoZA5NRn2fCJ0tvxRs2hwtVS2j5MJ4XSg1/Ol/T8sutGieWod9MspaBpVSOZ
+	HtdQsvhi
+X-Google-Smtp-Source: AGHT+IGDAX1QJAUds5j8mh9BlGLC/RzUnQ2O+/rvAlteja6L2AmrFOaouCasKY8HaV1blDSmNC2uSsBnfY89IV8MWt8=
+X-Received: by 2002:a05:600c:3d93:b0:471:9da:5232 with SMTP id
+ 5b1f17b1804b1-477307c5826mr19478055e9.15.1761890127090; Thu, 30 Oct 2025
+ 22:55:27 -0700 (PDT)
+Received: from 44278815321 named unknown by gmailapi.google.com with HTTPREST;
+ Thu, 30 Oct 2025 22:55:25 -0700
+Received: from 44278815321 named unknown by gmailapi.google.com with HTTPREST;
+ Thu, 30 Oct 2025 22:55:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: YAJkCsDwEnbhTgRpkOY5AA--.2627S4
-X-Coremail-Antispam: 1UD129KBjvdXoW7JF4UWw4DWF1kGF17JFWkWFg_yoW3Gwc_CF
-	yxXF1IqrWvyr1kt3W7GrWa9rWayw17uF4rAFZaqFy3Cr18XFW5XFyq9wn3XrWUGFy0g3Wq
-	vw1Fqr18ur1agjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbcAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_GcCE
-	3s1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
-	1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0
-	cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8Jw
-	ACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_JF0_
-	Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxV
-	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI
-	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
-	1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
-	42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUYCJmUUUUU
-X-CM-SenderInfo: 5fkxw35dqj1xlqj6x0hvsx2hhfrp/
-X-CM-DELIVERINFO: =?B?QlHvl5RRTeOiUs3aOqHZ50hzsfHKF9Ds6CbXmDm38RucXu3DYXJR7Zlh9zE0nt/Iac
-	D+KR0Drn8FO8/5oyKXUg3GQFMvprDKO9EzsCTVpfORBaeF5GSdBd1bx+Cqml6uzF55m6Sd
-	Zq4rKE2MxN2UmPCFOWI=
-Content-Type: text/plain
-tUid: 202510311353391b1a8abd065f8875cdcd3874f909f1a8
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+Mime-Version: 1.0
+From: Songtang Liu <liusongtang@bytedance.com>
+X-Mailer: git-send-email 2.39.5
+X-Original-From: Songtang Liu <liusongtang@bytedance.com>
+Date: Thu, 30 Oct 2025 22:55:25 -0700
+X-Gm-Features: AWmQ_bmT0mQkM9jWP5x80J13JcQ5hhRJh-KzQJq6kRpJ-yLJjjXwcuhaBH2v7Gs
+Message-ID: <CAA=HWd1wtM3QkqLkLC0-GtMNykB22jkd5rSYj=PchKFVT2m+Vg@mail.gmail.com>
+Subject: [PATCH v2] iommu/amd: Fix potential out-of-bounds read in iommu_mmio_show
+To: joro@8bytes.org, will@kernel.org
+Cc: suravee.suthikulpanit@amd.com, robin.murphy@arm.com, vasant.hegde@amd.com, 
+	dheerajkumar.srivastava@amd.com, iommu@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, liusongtang@bytedance.com
+Content-Type: text/plain; charset="UTF-8"
 
-The correct term here should be "package"
-
-Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
+Changes in v2:
+ - Add Reviewed-by and Tested-by tags from Dheeraj Kumar Srivastava
 ---
- drivers/acpi/cppc_acpi.c | 2 +-
+
+In iommu_mmio_write(), it validates the user-provided offset with the
+check: `iommu->dbg_mmio_offset > iommu->mmio_phys_end - 4`.
+This assumes a 4-byte access. However, the corresponding
+show handler, iommu_mmio_show(), uses readq() to perform an 8-byte
+(64-bit) read.
+
+If a user provides an offset equal to `mmio_phys_end - 4`, the check
+passes, and will lead to a 4-byte out-of-bounds read.
+
+Fix this by adjusting the boundary check to use sizeof(u64), which
+corresponds to the size of the readq() operation.
+
+Fixes: 7a4ee419e8c1 ("iommu/amd: Add debugfs support to dump IOMMU
+MMIO registers")
+Signed-off-by: Songtang Liu <liusongtang@bytedance.com>
+Reviewed-by: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
+Tested-by: Dheeraj Kumar Srivastava <dheerajkumar.srivastava@amd.com>
+---
+ drivers/iommu/amd/debugfs.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
-index ab4651205e8a..6c684e54fe01 100644
---- a/drivers/acpi/cppc_acpi.c
-+++ b/drivers/acpi/cppc_acpi.c
-@@ -750,7 +750,7 @@ int acpi_cppc_processor_probe(struct acpi_processor *pr)
- 	}
- 
- 	/*
--	 * Disregard _CPC if the number of entries in the return pachage is not
-+	 * Disregard _CPC if the number of entries in the return package is not
- 	 * as expected, but support future revisions being proper supersets of
- 	 * the v3 and only causing more entries to be returned by _CPC.
- 	 */
--- 
-2.43.7
+diff --git a/drivers/iommu/amd/debugfs.c b/drivers/iommu/amd/debugfs.c
+index 10fa217a71199..20b04996441d6 100644
+--- a/drivers/iommu/amd/debugfs.c
++++ b/drivers/iommu/amd/debugfs.c
+@@ -37,7 +37,7 @@ static ssize_t iommu_mmio_write(struct file *filp,
+const char __user *ubuf,
+ 	if (ret)
+ 		return ret;
 
+-	if (iommu->dbg_mmio_offset > iommu->mmio_phys_end - 4) {
++	if (iommu->dbg_mmio_offset > iommu->mmio_phys_end - sizeof(u64)) {
+ 		iommu->dbg_mmio_offset = -1;
+ 		return  -EINVAL;
+ 	}
+-- 
+2.39.5
 
