@@ -1,311 +1,228 @@
-Return-Path: <linux-kernel+bounces-880146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC86CC24F9B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:23:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 217B6C24FB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:24:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 823904F3E8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:22:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92684402196
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF740347BCF;
-	Fri, 31 Oct 2025 12:22:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7C7348873;
+	Fri, 31 Oct 2025 12:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PoUbVdH+";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GE9FmwtF"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Xu2qDVuS"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75DF02DC766;
-	Fri, 31 Oct 2025 12:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C8AF2E5B0D;
+	Fri, 31 Oct 2025 12:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761913335; cv=none; b=s4+UrFi4WO0P9w7xaMVOOjza7z9lg8DSKpGAqT9sED9hdD1bP69uC4Owk2pfwBQPS4B3vC+V9gVDNfyHnn/YqvvLMwTQU9nnPogSIgk4CnANKrhKkmJJ2SmbAVJ1WmbSZ4tpPulbCJm39g2UM/IgApeWkoU4ZSbS1e8NGNcf+08=
+	t=1761913426; cv=none; b=gxeyPMDkRDF7hpcWc3Sj4ssk7OztMoa2+EdwR4CeoIpe/KviQCRUcQ76NXC9935ejbU3l8ddpYUXmVw6Oltz4Uc7qi3EyVOfLn/Lp3+a7iJcOJechJTUM1+alsoefpawKjzelad3nV6x2IICndMLINiSeeowJyHyzeSOi7gH5jY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761913335; c=relaxed/simple;
-	bh=z0zBi3+7SH/Wnnd0JdF7VJhTCKVDyatMN5djH1jVb3g=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=S3Nmu91FkkBCC+WHPg4w/9xRSWsGcoVAvA9coxPFJnql/LHSehw/LFgH7YBryqS5nv7QrwnAERGDq8tK/FskjPzMPZigvRne4qtgS2pwCFJrBFF9sx3hvsXx4zwposJY4yo0Rgk/P1wN1fyibb08xMzEOh2KOJT8VAgWWfggD9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PoUbVdH+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GE9FmwtF; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 31 Oct 2025 12:22:10 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761913331;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eWyGw1CFs4uK/bZTEE9ZzpWi8Nsn5K/oYIbI3eTSIns=;
-	b=PoUbVdH+QXKSIBLN//enW956KMACy9CDnAVKqiuqacEy7337Ca0Yc4wIBlwphNYmzeTQNi
-	nT69xZAR/hAYYZKzWuGRI6CEzPdg2FHT9L7rvi4ao+jpm9gTxVCW8aa2Lel/S4cS+pEB8I
-	3dFv/RbgdVLR0iw5TeMLgC9yWxKJxB4uXGgls59FM8IcYq2ZgUSGYlUB5RNe2Q/EztJWGN
-	3TP46wNWiznToXNrSDJBEFXXWpWwOl2ELiDiqfEu+6iH+EsZVDPUHx7RA4CTTyJjjc8w5p
-	CFgC62XOZntNAgGwohCu50VXJjCjmokIgMYcjkZwUnFZ73Qkxn9GdJS3ghi7+Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761913331;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eWyGw1CFs4uK/bZTEE9ZzpWi8Nsn5K/oYIbI3eTSIns=;
-	b=GE9FmwtF5Tvgn4j0MNU9sQq0PaREXe6Z5672lN8/NBsQP6CrJiAbjJVjxzr1z52626fIl/
-	uCaa1mmOQipOu7Ag==
-From: "tip-bot2 for John Allen" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/sev] x86/boot: Move boot_*msr helpers to asm/shared/msr.h
-Cc: John Allen <john.allen@amd.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
- Tom Lendacky <thomas.lendacky@amd.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250924200852.4452-2-john.allen@amd.com>
-References: <20250924200852.4452-2-john.allen@amd.com>
+	s=arc-20240116; t=1761913426; c=relaxed/simple;
+	bh=3gLdjc5JTp30T7vJft9FainUwSR8QTAXIC3pIofnYg0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Fh8RrshCHRKoxpBxU+lI7Bvl+5OQPW3i27enHrDZqfCNm7Kz1cUv89SEvSe9nTglEa5+03U6Zrn6LNV1m4mcAAMyG0hdstMvd3bdNTGF4hBY8Ysfv7drGuYDq1BKC2viZ6+CtI/o1i+lyIEsZPWN9LNcKQ6ckmM5NXOKcSB1dow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Xu2qDVuS; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1761913415; h=Message-ID:Date:MIME-Version:Subject:From:To:Content-Type;
+	bh=D494hvmNDIVYmayGdVuzF928FMcaCSSrh1ggtCCkqFs=;
+	b=Xu2qDVuSVJUtK4/omGq86xD5PYVawojk137TipVNM/0UqfPhIsnPEbJwhpiWiVJXwDaeDJlxj3KeRl/HQEAxxL93Gm4EdpELahlNpFKo5FKwcfRZWWuidINBaDyQZ+YKD07G1LIa35RmxyNtEglfdl0C8uKR7NQxmaiSTO9AztY=
+Received: from 30.180.79.37(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WrOw0dB_1761913413 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 31 Oct 2025 20:23:34 +0800
+Message-ID: <ec8b1c76-c211-49a5-a056-6a147faddd3b@linux.alibaba.com>
+Date: Fri, 31 Oct 2025 20:23:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176191333027.2601451.11257491536675159729.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: question about bd_inode hashing against device_add() // Re:
+ [PATCH 03/11] block: call bdev_add later in device_add_disk
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+ Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Luis Chamberlain <mcgrof@kernel.org>, linux-block@vger.kernel.org,
+ Joseph Qi <joseph.qi@linux.alibaba.com>, guanghuifeng@linux.alibaba.com,
+ zongyong.wzy@alibaba-inc.com, zyfjeff@linux.alibaba.com,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
+ linux-kernel@vger.kernel.org
+References: <20210818144542.19305-1-hch@lst.de>
+ <20210818144542.19305-4-hch@lst.de>
+ <43375218-2a80-4a7a-b8bb-465f6419b595@linux.alibaba.com>
+ <20251031090925.GA9379@lst.de>
+ <ae38c5dc-da90-4fb3-bb72-61b66ab5a0d2@linux.alibaba.com>
+ <20251031094552.GA10011@lst.de>
+ <7d0d8480-13a2-449f-a46d-d9b164d44089@linux.alibaba.com>
+ <2025103155-definite-stays-ebfe@gregkh>
+ <2a9ab583-07fc-4147-949e-7c68feda82f2@linux.alibaba.com>
+In-Reply-To: <2a9ab583-07fc-4147-949e-7c68feda82f2@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the x86/sev branch of tip:
 
-Commit-ID:     9249bcdea0c6db4f450a9267aa6da5b4dd4153ca
-Gitweb:        https://git.kernel.org/tip/9249bcdea0c6db4f450a9267aa6da5b4dd4=
-153ca
-Author:        John Allen <john.allen@amd.com>
-AuthorDate:    Wed, 24 Sep 2025 20:08:51=20
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Thu, 30 Oct 2025 16:29:53 +01:00
 
-x86/boot: Move boot_*msr helpers to asm/shared/msr.h
+On 2025/10/31 18:12, Gao Xiang wrote:
+> Hi Greg,
+> 
+> On 2025/10/31 17:58, Greg Kroah-Hartman wrote:
+>> On Fri, Oct 31, 2025 at 05:54:10PM +0800, Gao Xiang wrote:
+>>>
+>>>
+>>> On 2025/10/31 17:45, Christoph Hellwig wrote:
 
-The boot_{rdmsr,wrmsr}() helpers are *just* the barebones MSR access
-functionality, without any tracing or exception handling glue as it is done in
-kernel proper.
+...
 
-Move these helpers to asm/shared/msr.h and rename to raw_{rdmsr,wrmsr}() to
-indicate what they are.
+>>>> But why does the device node
+>>>> get created earlier?  My assumption was that it would only be
+>>>> created by the KOBJ_ADD uevent.  Adding the device model maintainers
+>>>> as my little dig through the core drivers/base/ code doesn't find
+>>>> anything to the contrary, but maybe I don't fully understand it.
+>>>
+>>> AFAIK, device_add() is used to trigger devtmpfs file
+>>> creation, and it can be observed if frequently
+>>> hotpluging device in the VM and mount.  Currently
+>>> I don't have time slot to build an easy reproducer,
+>>> but I think it's a real issue anyway.
+>>
+>> As I say above, that's not normal, and you have to be root to do this,
+I just spent time to reproduce with dynamic loop devices and
+actually it's easy if msleep() is located artificiallly,
+the diff as below:
 
-  [ bp: Correct the reason why those helpers exist. I should've caught that in
-    the original patch that added them:
-      176db622573f ("x86/boot: Introduce helpers for MSR reads/writes"
-    but oh well...
-    - fixup include path delimiters to <> ]
+diff --git a/block/bdev.c b/block/bdev.c
+index 810707cca970..a4273b5ad456 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -821,7 +821,7 @@ struct block_device *blkdev_get_no_open(dev_t dev, bool autoload)
+  	struct inode *inode;
 
-Signed-off-by: John Allen <john.allen@amd.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-Link: https://patch.msgid.link/all/20250924200852.4452-2-john.allen@amd.com
----
- arch/x86/boot/compressed/sev.c    |  7 ++++---
- arch/x86/boot/compressed/sev.h    |  6 +++---
- arch/x86/boot/cpucheck.c          | 16 ++++++++--------
- arch/x86/boot/msr.h               | 26 --------------------------
- arch/x86/include/asm/shared/msr.h | 15 +++++++++++++++
- 5 files changed, 30 insertions(+), 40 deletions(-)
- delete mode 100644 arch/x86/boot/msr.h
+  	inode = ilookup(blockdev_superblock, dev);
+-	if (!inode && autoload && IS_ENABLED(CONFIG_BLOCK_LEGACY_AUTOLOAD)) {
++	if (0) {
+  		blk_request_module(dev);
+  		inode = ilookup(blockdev_superblock, dev);
+  		if (inode)
+diff --git a/block/genhd.c b/block/genhd.c
+index 9bbc38d12792..3c9116fdc1ce 100644
+--- a/block/genhd.c
++++ b/block/genhd.c
+@@ -428,6 +428,8 @@ static void add_disk_final(struct gendisk *disk)
+  	set_bit(GD_ADDED, &disk->state);
+  }
 
-diff --git a/arch/x86/boot/compressed/sev.c b/arch/x86/boot/compressed/sev.c
-index 6e5c32a..c8c1464 100644
---- a/arch/x86/boot/compressed/sev.c
-+++ b/arch/x86/boot/compressed/sev.c
-@@ -14,6 +14,7 @@
-=20
- #include <asm/bootparam.h>
- #include <asm/pgtable_types.h>
-+#include <asm/shared/msr.h>
- #include <asm/sev.h>
- #include <asm/trapnr.h>
- #include <asm/trap_pf.h>
-@@ -397,7 +398,7 @@ void sev_enable(struct boot_params *bp)
- 	}
-=20
- 	/* Set the SME mask if this is an SEV guest. */
--	boot_rdmsr(MSR_AMD64_SEV, &m);
-+	raw_rdmsr(MSR_AMD64_SEV, &m);
- 	sev_status =3D m.q;
- 	if (!(sev_status & MSR_AMD64_SEV_ENABLED))
- 		return;
-@@ -446,7 +447,7 @@ u64 sev_get_status(void)
- 	if (sev_check_cpu_support() < 0)
- 		return 0;
-=20
--	boot_rdmsr(MSR_AMD64_SEV, &m);
-+	raw_rdmsr(MSR_AMD64_SEV, &m);
- 	return m.q;
- }
-=20
-@@ -496,7 +497,7 @@ bool early_is_sevsnp_guest(void)
- 			struct msr m;
-=20
- 			/* Obtain the address of the calling area to use */
--			boot_rdmsr(MSR_SVSM_CAA, &m);
-+			raw_rdmsr(MSR_SVSM_CAA, &m);
- 			boot_svsm_caa_pa =3D m.q;
-=20
- 			/*
-diff --git a/arch/x86/boot/compressed/sev.h b/arch/x86/boot/compressed/sev.h
-index 92f79c2..22637b4 100644
---- a/arch/x86/boot/compressed/sev.h
-+++ b/arch/x86/boot/compressed/sev.h
-@@ -10,7 +10,7 @@
-=20
- #ifdef CONFIG_AMD_MEM_ENCRYPT
-=20
--#include "../msr.h"
-+#include <asm/shared/msr.h>
-=20
- void snp_accept_memory(phys_addr_t start, phys_addr_t end);
- u64 sev_get_status(void);
-@@ -20,7 +20,7 @@ static inline u64 sev_es_rd_ghcb_msr(void)
- {
- 	struct msr m;
-=20
--	boot_rdmsr(MSR_AMD64_SEV_ES_GHCB, &m);
-+	raw_rdmsr(MSR_AMD64_SEV_ES_GHCB, &m);
-=20
- 	return m.q;
- }
-@@ -30,7 +30,7 @@ static inline void sev_es_wr_ghcb_msr(u64 val)
- 	struct msr m;
-=20
- 	m.q =3D val;
--	boot_wrmsr(MSR_AMD64_SEV_ES_GHCB, &m);
-+	raw_wrmsr(MSR_AMD64_SEV_ES_GHCB, &m);
- }
-=20
- #else
-diff --git a/arch/x86/boot/cpucheck.c b/arch/x86/boot/cpucheck.c
-index f82de8d..2e1bb93 100644
---- a/arch/x86/boot/cpucheck.c
-+++ b/arch/x86/boot/cpucheck.c
-@@ -26,9 +26,9 @@
- #include <asm/intel-family.h>
- #include <asm/processor-flags.h>
- #include <asm/msr-index.h>
-+#include <asm/shared/msr.h>
-=20
- #include "string.h"
--#include "msr.h"
-=20
- static u32 err_flags[NCAPINTS];
-=20
-@@ -134,9 +134,9 @@ int check_cpu(int *cpu_level_ptr, int *req_level_ptr, u32=
- **err_flags_ptr)
-=20
- 		struct msr m;
-=20
--		boot_rdmsr(MSR_K7_HWCR, &m);
-+		raw_rdmsr(MSR_K7_HWCR, &m);
- 		m.l &=3D ~(1 << 15);
--		boot_wrmsr(MSR_K7_HWCR, &m);
-+		raw_wrmsr(MSR_K7_HWCR, &m);
-=20
- 		get_cpuflags();	/* Make sure it really did something */
- 		err =3D check_cpuflags();
-@@ -148,9 +148,9 @@ int check_cpu(int *cpu_level_ptr, int *req_level_ptr, u32=
- **err_flags_ptr)
-=20
- 		struct msr m;
-=20
--		boot_rdmsr(MSR_VIA_FCR, &m);
-+		raw_rdmsr(MSR_VIA_FCR, &m);
- 		m.l |=3D (1 << 1) | (1 << 7);
--		boot_wrmsr(MSR_VIA_FCR, &m);
-+		raw_wrmsr(MSR_VIA_FCR, &m);
-=20
- 		set_bit(X86_FEATURE_CX8, cpu.flags);
- 		err =3D check_cpuflags();
-@@ -160,14 +160,14 @@ int check_cpu(int *cpu_level_ptr, int *req_level_ptr, u=
-32 **err_flags_ptr)
- 		struct msr m, m_tmp;
- 		u32 level =3D 1;
-=20
--		boot_rdmsr(0x80860004, &m);
-+		raw_rdmsr(0x80860004, &m);
- 		m_tmp =3D m;
- 		m_tmp.l =3D ~0;
--		boot_wrmsr(0x80860004, &m_tmp);
-+		raw_wrmsr(0x80860004, &m_tmp);
- 		asm("cpuid"
- 		    : "+a" (level), "=3Dd" (cpu.flags[0])
- 		    : : "ecx", "ebx");
--		boot_wrmsr(0x80860004, &m);
-+		raw_wrmsr(0x80860004, &m);
-=20
- 		err =3D check_cpuflags();
- 	} else if (err =3D=3D 0x01 &&
-diff --git a/arch/x86/boot/msr.h b/arch/x86/boot/msr.h
-deleted file mode 100644
-index aed66f7..0000000
---- a/arch/x86/boot/msr.h
-+++ /dev/null
-@@ -1,26 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-only */
--/*
-- * Helpers/definitions related to MSR access.
-- */
--
--#ifndef BOOT_MSR_H
--#define BOOT_MSR_H
--
--#include <asm/shared/msr.h>
--
--/*
-- * The kernel proper already defines rdmsr()/wrmsr(), but they are not for t=
-he
-- * boot kernel since they rely on tracepoint/exception handling infrastructu=
-re
-- * that's not available here.
-- */
--static inline void boot_rdmsr(unsigned int reg, struct msr *m)
--{
--	asm volatile("rdmsr" : "=3Da" (m->l), "=3Dd" (m->h) : "c" (reg));
--}
--
--static inline void boot_wrmsr(unsigned int reg, const struct msr *m)
--{
--	asm volatile("wrmsr" : : "c" (reg), "a"(m->l), "d" (m->h) : "memory");
--}
--
--#endif /* BOOT_MSR_H */
-diff --git a/arch/x86/include/asm/shared/msr.h b/arch/x86/include/asm/shared/=
-msr.h
-index 1e6ec10..a20b1c0 100644
---- a/arch/x86/include/asm/shared/msr.h
-+++ b/arch/x86/include/asm/shared/msr.h
-@@ -12,4 +12,19 @@ struct msr {
- 	};
- };
-=20
-+/*
-+ * The kernel proper already defines rdmsr()/wrmsr(), but they are not for t=
-he
-+ * boot kernel since they rely on tracepoint/exception handling infrastructu=
-re
-+ * that's not available here.
-+ */
-+static inline void raw_rdmsr(unsigned int reg, struct msr *m)
-+{
-+	asm volatile("rdmsr" : "=3Da" (m->l), "=3Dd" (m->h) : "c" (reg));
-+}
++#include <linux/delay.h>
 +
-+static inline void raw_wrmsr(unsigned int reg, const struct msr *m)
-+{
-+	asm volatile("wrmsr" : : "c" (reg), "a"(m->l), "d" (m->h) : "memory");
-+}
+  static int __add_disk(struct device *parent, struct gendisk *disk,
+  		      const struct attribute_group **groups,
+  		      struct fwnode_handle *fwnode)
+@@ -497,6 +499,9 @@ static int __add_disk(struct device *parent, struct gendisk *disk,
+  	if (ret)
+  		goto out_free_ext_minor;
+
++	if (disk->major == LOOP_MAJOR)
++		msleep(2500);           // delay 2.5s for all loops
 +
- #endif /* _ASM_X86_SHARED_MSR_H */
+  	ret = disk_alloc_events(disk);
+  	if (ret)
+  		goto out_device_del;
+
+
+(Note that I masked off CONFIG_BLOCK_LEGACY_AUTOLOAD
+  for cleaner ftrace below.)
+
+and then
+
+# uname -a  (patched 6.18-rc1 kernel)
+
+```
+Linux 7e5b4b5f5181 6.18.0-rc1-dirty #25 SMP PREEMPT_DYNAMIC Fri Oct 31 19:52:10 CST 2025 x86_64 GNU/Linux
+```
+
+# truncate -s 1g test.img; mkfs.ext4 -F test.img;
+# losetup /dev/loop999 test.img & sleep 1; ls -l /dev/loop999; strace mount -t ext4 /dev/loop999 mnt 2>&1 | grep fsconfig
+
+It shows
+
+```
+brw------- 1 root root 7, 999 Oct 31 20:06 /dev/loop999
+fsconfig(3, FSCONFIG_SET_STRING, "source", "/dev/loop999", 0) = 0
+fsconfig(3, FSCONFIG_CMD_CREATE, NULL, NULL, 0) = -1 ENXIO (No such device or address)  // unexpected
+```
+
+then
+
+# losetup /dev/loop996 test.img & sleep 1; stat /dev/loop996; trace-cmd record -p function_graph mount -t ext4 /dev/loop996 mnt &> /dev/null
+
+It shows
+```
+   File: /dev/loop996
+   Size: 0               Blocks: 0          IO Block: 4096   block special file
+Device: 0,6     Inode: 429         Links: 1     Device type: 7,996
+Access: (0600/brw-------)  Uid: (    0/    root)   Gid: (    0/    root)
+Access: 2025-10-31 20:07:54.938474868 +0800
+Modify: 2025-10-31 20:07:54.938474868 +0800
+Change: 2025-10-31 20:07:54.938474868 +0800
+  Birth: 2025-10-31 20:07:54.938474868 +0800
+```
+
+but
+
+# trace-cmd report | grep mount | less
+            mount-561   [007] ...1.   240.180513: funcgraph_entry:                   |                bdev_file_open_by_dev() {
+            mount-561   [007] ...1.   240.180513: funcgraph_entry:                   |                  bdev_permission() {
+            mount-561   [007] ...1.   240.180513: funcgraph_entry:                   |                    devcgroup_check_permission() {
+            mount-561   [007] ...1.   240.180513: funcgraph_entry:                   |                      __rcu_read_lock() {
+            mount-561   [007] ...1.   240.180514: funcgraph_exit:         0.193 us   |                      } (ret=0x1)
+            mount-561   [007] ...1.   240.180514: funcgraph_entry:                   |                      match_exception_partial() {
+            mount-561   [007] ...1.   240.180514: funcgraph_exit:         0.199 us   |                      } (ret=0x0)
+            mount-561   [007] ...1.   240.180514: funcgraph_entry:                   |                      __rcu_read_unlock() {
+            mount-561   [007] ...1.   240.180515: funcgraph_exit:         0.202 us   |                      } (ret=0x0)
+            mount-561   [007] ...1.   240.180515: funcgraph_exit:         1.602 us   |                    } (ret=0x0)
+            mount-561   [007] ...1.   240.180515: funcgraph_exit:         2.100 us   |                  } (ret=0x0)
+            mount-561   [007] ...1.   240.180515: funcgraph_entry:                   |                  ilookup() {
+            mount-561   [007] ...1.   240.180516: funcgraph_entry:                   |                    __cond_resched() {
+            mount-561   [007] ...1.   240.180516: funcgraph_exit:         0.194 us   |                    } (ret=0x0)
+            mount-561   [007] ...1.   240.180516: funcgraph_entry:                   |                    find_inode_fast() {
+            mount-561   [007] ...1.   240.180516: funcgraph_entry:                   |                      __rcu_read_lock() {
+            mount-561   [007] ...1.   240.180516: funcgraph_exit:         0.195 us   |                      } (ret=0x1)
+            mount-561   [007] ...1.   240.180517: funcgraph_entry:                   |                      __rcu_read_unlock() {
+            mount-561   [007] ...1.   240.180517: funcgraph_exit:         0.193 us   |                      } (ret=0x0)
+            mount-561   [007] ...1.   240.180517: funcgraph_exit:         1.060 us   |                    } (ret=0x0)
+            mount-561   [007] ...1.   240.180517: funcgraph_exit:         1.970 us   |                  } (ret=0x0)
+            mount-561   [007] ...1.   240.180518: funcgraph_exit:         4.818 us   |                } (ret=-6)
+
+here -6 (-ENXIO) is unexpected.
+
+Actually the problematic code path I've said is device_add():
+
+upstream code:
+
+loop_control_ioctl
+  loop_add
+    add_disk_fwnode
+      __add_disk
+        devtmpfs_create_node   // here create devtmpfs blkdev file, but racy
+      add_disk_final
+        bdev_add
+          insert_inode_hash    // just seen by bdev_file_open_by_dev()
+        disk_uevent(disk, KOBJ_ADD)
+
+I actually think it's enough to explain the root.
+
+Thanks,
+Gao Xiang
 
