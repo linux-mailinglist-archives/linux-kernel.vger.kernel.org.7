@@ -1,101 +1,215 @@
-Return-Path: <linux-kernel+bounces-880763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F9C6C267DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:54:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCF7AC26818
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 19:00:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB41F18867B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:55:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9B743B2C95
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 998D8329C77;
-	Fri, 31 Oct 2025 17:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278543093C3;
+	Fri, 31 Oct 2025 17:57:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NlpxGiSZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="emqDqYy1"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F074EB640;
-	Fri, 31 Oct 2025 17:54:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCACF2E718F
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761933282; cv=none; b=U+ELipq2mPTO9Wmdxqcqduw66wzdvtQQDlcflXc6kt55WNTHecAz6FhitM/BoEBns5qnlhaoFwpNxlIJn0ccnvO1LcGQhqF9ahvt5TqMJA5t6zDRQFnVRpbzCDkdp9l2qUI39zO5PfWX7dJmKxWud0SYq9rcSuguVDhVeI3xoRc=
+	t=1761933455; cv=none; b=pBnW+89rJQCPTLv0bWJckMi0k1j+106j+7yHw44sGy+XPiXf7vwvwYnG3VFmH7ws90uTUGf6YYUAiY8pbMh6JS9+bTgp+Zc0oRcHXWxHWiAz3bkbVVuIOSGlccT1ETdJd0OTQt4TMvZIecyvAnJnz2vh/5CNxzIvtZVof9Iig+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761933282; c=relaxed/simple;
-	bh=hcIInGVL2gaB3IEcStsAKiIlTSD+K/EVklziL5I++Fg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yv5Ve0k/EVcVMWEbXEd86NBd/cPaxnMDrXTJePoPAIeUcqvq1HfjJHed/hzp4McHelqc/41yDMGKbPIhwCyv/uLXGtwbfGqx59wgI2aLwhIZDgbvu3PavJFUXIhXUw9Dh43OtgsGks8fdRrrZOsWfvlnieL/53dclqd8fXHmVbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NlpxGiSZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B8A9C4CEE7;
-	Fri, 31 Oct 2025 17:54:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761933281;
-	bh=hcIInGVL2gaB3IEcStsAKiIlTSD+K/EVklziL5I++Fg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NlpxGiSZ5MDUMk1Ran4DukG8E0vWDa7GquJwuOUGGW67wNeCiDFJOsEP6EW5hxKFW
-	 xZ1/3oSwXQOkJjJE/C9gbN4HNqGmtXAidvq7GgUMdHummsQ2gCk5mlvEnvtvIUiqZa
-	 UHZaEsZAXp/u31nJriKTZSMVmOfV1la5CPEb3yn4K2aJutA3yvnYT6VZ3MTOJYG4te
-	 Ph/sZCt5LNUrtQ8KIkriOAHuDNnHUueeVuTo5r8K6LtPIUfkirXBnmB/e6qkEvW4FI
-	 vWEv9zzEjkp2HvZ8b7mLYee+OnaxTuVXwgG33S1ff2ufynjhccx6beSne6cu5OoNjE
-	 fvipk7niS3xTA==
-Date: Fri, 31 Oct 2025 17:54:40 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: kriish.sharma2006@gmail.com
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, longli@microsoft.com,
-	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] hv: fix missing kernel-doc description for 'size' in
- request_arr_init()
-Message-ID: <20251031175440.GA2612078@liuwe-devbox-debian-v2.local>
-References: <20251025120707.686825-1-kriish.sharma2006@gmail.com>
+	s=arc-20240116; t=1761933455; c=relaxed/simple;
+	bh=w+l2KnhOSPqcCidvxKmZoV7YhTgpct2Y/GQfmSENZX4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FZVNlNf/YqnwwndRjSdaMj6ecRcidiSpNSfTfg9/EY/dlnsCXU4RL6pAnkHvXv/Vw1jPwSfYuyK68FZsUPffHt+QbQIUekO6flHGlTxCD5yb6IUgjlOwKOiyxRAdiFvQut34WNHwAI3TgIreco1qrSmtd7eLmqYJSB+yyw5CTgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=emqDqYy1; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-27eeafd4882so20325ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:57:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761933453; x=1762538253; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lA5McjZLTPeaIiPTmwBlsqsNvLJ/0YB/eoqpy0U2piE=;
+        b=emqDqYy1KvfBdx8I1JPX/1izjnN23IcEefDts9qdh5wv8wLAt6nVXWq67Y8V9epfKU
+         JoOVgFSy3QHlbgyMkHCsloE9m2GfJjv84VA06v9Em/eMtk7yyHal+88KQpjPPPoZ2qST
+         ROX61hIi1MwDVuuWlScLy/JF6KIr7ahAjNzKgVWRXG57edG410vBmZXEGZ8eCPCEzspm
+         NfmmOl75HIJ9pXY3jpuhaQShm6DVK2lE3iyjD5/pSjDZjks6bwS45mCMHLOcK2Tkf2yi
+         xfp2R+x/VGzVcldimIWd/o/ir4v9z0A1EplLGg8XjOGM+kqKhb5t8socZfxw8h1M5sKr
+         jwwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761933453; x=1762538253;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lA5McjZLTPeaIiPTmwBlsqsNvLJ/0YB/eoqpy0U2piE=;
+        b=FEZ/6P6AZbkx4XfSTd/J/W9t1Nj0Qj7V4yGhMD1tg9W0C3E4DJ5VQPWL/IWl41aZOZ
+         HrLmfUeQXFzt54kWampl9Ek8P+xKZ5QDS7gI6HYCA4JyABjJvqHYt06zfB9Y2ejzq2Re
+         eMJGmNwuv5VG9CkKiJ8k6OToL8ToVoKrRQKAei0XQmxQKV/ScsqxrAbBdQkTZOl6yDC/
+         SjLUs94XhT58XK3NDFbpxoSU6ZRLdOIzff0n38uRdiwEfwrW7fA22mgTd54zIpP7Ob3F
+         ObHQuz5ZHeP+lTmkraJA2nB3H8/y0V8cUtrWxd9Q9W+5HjpZS/kqy87qj3dparX3tIzx
+         JK/w==
+X-Forwarded-Encrypted: i=1; AJvYcCXGsNP5KwEADCz6DFxHIhzFllnWmGEQsDOzYinSFKtOPDxFwnCYVOnhFw95kIMIzeG7Zi6jQ2OhRpODtTA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqopYYKJruhMCakp7RLg7J34bgpb5LpCY9zHbDpz975CfuEn7F
+	mO4MU1L/YgqXH/eeXtYwUVhWSPuVzxefZNcKlwF7nZiRMTDaGYaqPtJOvWZukajCPF4+TMPZsFE
+	gPJB7S5R/bLrWzREUx2MNshkD8xYWpWQtWBoMFUwJ
+X-Gm-Gg: ASbGncs4HeMyjQeSrOuWALht8RE2TYS5AXS3kitLCIOXTcPh5eT0q3I3JSLSQkbqTIC
+	STs2Bymg5h2VBBG2CBJb/Ra7qeWTLp/zrq2ABGQ3Dp8v+b/bvJ+RzOqcxcgWSPfr3foZmYN0uP0
+	5c3F49WGUDxyIdSe86Lc7dgTMhXOF7tVspNEHHF1vdS5syM1JAhvtjIS3qqePIrKggfaex1Lkkn
+	T1MxIY50LGF8uMenMfPHTorhYI32LdEcsTYVifdGD4c5x1xdy58VSigzNAbZMDQDRBexXaNmIli
+	qBgnAA2sOgm7SF2qU8hu25WR6vXQ
+X-Google-Smtp-Source: AGHT+IH52ONiunJDDawQVCijIuSE1WTf+MEIQuJ+bSRpyZ0rrSGKJGCZKm4jtJfrXlgC7tzB7Eax2KkIUaW7cADasEc=
+X-Received: by 2002:a17:903:1ce:b0:292:b6a0:80df with SMTP id
+ d9443c01a7336-29554bb5aaemr335185ad.10.1761933452880; Fri, 31 Oct 2025
+ 10:57:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251025120707.686825-1-kriish.sharma2006@gmail.com>
+References: <20251001025442.427697-1-chao.gao@intel.com> <CAAhR5DF74PhX_YpMebbqnZOJom-sR=1s7xbhrk5WCTS8jn7U7Q@mail.gmail.com>
+In-Reply-To: <CAAhR5DF74PhX_YpMebbqnZOJom-sR=1s7xbhrk5WCTS8jn7U7Q@mail.gmail.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Fri, 31 Oct 2025 10:57:20 -0700
+X-Gm-Features: AWmQ_bldOnJMqaHQe0Ts3A4WPbB0FJ1ezLt9Jpnrpzo2fVxtPV1Mx-JEfS1PIQY
+Message-ID: <CAGtprH9UTqC-wmOhfjr2qNk2X-BDJokmLYjET=Zm+Zu+QHZ6Dw@mail.gmail.com>
+Subject: Re: [PATCH v2 00/21] Runtime TDX Module update support
+To: Sagi Shahar <sagis@google.com>
+Cc: Chao Gao <chao.gao@intel.com>, linux-coco@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, x86@kernel.org, reinette.chatre@intel.com, 
+	ira.weiny@intel.com, kai.huang@intel.com, dan.j.williams@intel.com, 
+	yilun.xu@linux.intel.com, paulmck@kernel.org, nik.borisov@suse.com, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 25, 2025 at 12:07:07PM +0000, kriish.sharma2006@gmail.com wrote:
-> From: Kriish Sharma <kriish.sharma2006@gmail.com>
-> 
-> Add missing kernel-doc entry for the @size parameter in
-> request_arr_init(), fixing the following documentation warning
-> reported by the kernel test robot and detected via kernel-doc:
-> 
-> Warning: drivers/hv/channel.c:595 function parameter 'size' not described in 'request_arr_init'
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202503021934.wH1BERla-lkp@intel.com
-> Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
+On Fri, Oct 31, 2025 at 9:55=E2=80=AFAM Sagi Shahar <sagis@google.com> wrot=
+e:
+>
+> On Tue, Sep 30, 2025 at 9:54=E2=80=AFPM Chao Gao <chao.gao@intel.com> wro=
+te:
+> >
+> > Changelog:
+> > v1->v2:
+> >  - Replace tdx subsystem with a "tdx-host" device implementation
+> >  - Reorder patches to reduce reviewer's mental "list of things to look =
+out for"
+> >  - Replace "TD-Preserving update" with "runtime TDX Module Update"
+> >  - Drop the temporary "td_preserving_ready" flag
+> >  - Move low-level SEAMCALL helpers to its own header file
+> >  - Don't create a new, inferior framework to save/restore VMCS
+> >  - Minor cleanups and changelog improvements for clarity and consistenc=
+y
+> >  - Collect review tags
+> >  - I didn't add Sagi Shahar's Tested-by due to various changes/reorder =
+etc.
+> >  - v1: https://lore.kernel.org/kvm/20250523095322.88774-1-chao.gao@inte=
+l.com/
+> >
+> > Hi Reviewers,
+> >
+> > This series adds support for runtime TDX Module updates that preserve
+> > running TDX guests.
+> >
+> > =3D=3D Background =3D=3D
+> >
+> > Intel TDX isolates Trusted Domains (TDs), or confidential guests, from =
+the
+> > host. A key component of Intel TDX is the TDX Module, which enforces
+> > security policies to protect the memory and CPU states of TDs from the
+> > host. However, the TDX Module is software that require updates.
+> >
+> > =3D=3D Problems =3D=3D
+> >
+> > Currently, the TDX Module is loaded by the BIOS at boot time, and the o=
+nly
+> > way to update it is through a reboot, which results in significant syst=
+em
+> > downtime. Users expect the TDX Module to be updatable at runtime withou=
+t
+> > disrupting TDX guests.
+> >
+> > =3D=3D Solution =3D=3D
+> >
+> > On TDX platforms, P-SEAMLDR[1] is a component within the protected SEAM
+> > range. It is loaded by the BIOS and provides the host with functions to
+> > install a TDX Module at runtime.
+> >
+> > Implement a TDX Module update facility via the fw_upload mechanism. Giv=
+en
+> > that there is variability in which module update to load based on featu=
+res,
+> > fix levels, and potentially reloading the same version for error recove=
+ry
+> > scenarios, the explicit userspace chosen payload flexibility of fw_uplo=
+ad
+> > is attractive.
+> >
+> > This design allows the kernel to accept a bitstream instead of loading =
+a
+> > named file from the filesystem, as the module selection and policy
+> > enforcement for TDX Modules are quite complex (see more in patch 8). By
+> > doing so, much of this complexity is shifted out of the kernel. The ker=
+nel
+> > need to expose information, such as the TDX Module version, to userspac=
+e.
+> > Userspace must understand the TDX Module versioning scheme and update
+> > policy to select the appropriate TDX Module (see "TDX Module Versioning=
+"
+> > below).
+> >
+> > In the unlikely event the update fails, for example userspace picks an
+> > incompatible update image, or the image is otherwise corrupted, all TDs
+> > will experience SEAMCALL failures and be killed. The recovery of TD
+> > operation from that event requires a reboot.
+> >
+> > Given there is no mechanism to quiesce SEAMCALLs, the TDs themselves mu=
+st
+> > pause execution over an update. The most straightforward way to meet th=
+e
+> > 'pause TDs while update executes' constraint is to run the update in
+> > stop_machine() context. All other evaluated solutions export more
+> > complexity to KVM, or exports more fragility to userspace.
+> >
+> > =3D=3D How to test this series =3D=3D
+> >
+> > This series can be tested using the userspace tool that is able to
+> > select the appropriate TDX module and install it via the interfaces
+> > exposed by this series:
+> >
+> >  # git clone https://github.com/intel/tdx-module-binaries
+> >  # cd tdx-module-binaries
+> >  # python version_select_and_load.py --update
+> >
+> > =3D=3D Base commit =3D=3D
+> >
+> > This series is based on:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/devsec/tsm.git/commit/?=
+h=3Dtdx&id=3D9332e088937f
+>
+> Can you clarify which patches are needed from this tree? Is it just
+> "coco/tdx-host: Introduce a "tdx_host" device" or is this series also
+> depends on other patches?
+>
+> More specifically, does this series depend on "Move VMXON/VMXOFF
+> handling from KVM to CPU lifecycle"?
+>
 
-Applied to hyperv-next.
+Hi Chao,
 
-I changed the subject line to match the existing pattern.
+Is this non-RFC series dependent on RFC patches?
 
-> ---
->  drivers/hv/channel.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hv/channel.c b/drivers/hv/channel.c
-> index 88485d255a42..6821f225248b 100644
-> --- a/drivers/hv/channel.c
-> +++ b/drivers/hv/channel.c
-> @@ -590,7 +590,7 @@ EXPORT_SYMBOL_GPL(vmbus_establish_gpadl);
->   * keeps track of the next available slot in the array. Initially, each
->   * slot points to the next one (as in a Linked List). The last slot
->   * does not point to anything, so its value is U64_MAX by default.
-> - * @size The size of the array
-> + * @size: The size of the array
->   */
->  static u64 *request_arr_init(u32 size)
->  {
-> -- 
-> 2.34.1
-> 
+What's the intended order of upstreaming the features and dependencies
+being discussed here?
 
