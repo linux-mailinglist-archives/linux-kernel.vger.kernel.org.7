@@ -1,301 +1,159 @@
-Return-Path: <linux-kernel+bounces-880038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 340BBC24B9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:14:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 075F0C24B60
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:12:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A0BE1A665B3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:13:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 280493B240F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:11:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F7C34678B;
-	Fri, 31 Oct 2025 11:12:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22EA2344040;
+	Fri, 31 Oct 2025 11:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="oj8Z2gvH";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="oj8Z2gvH"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011035.outbound.protection.outlook.com [52.101.70.35])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CKSvxiuX";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="WI9tNwf6"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34573345CA4
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 11:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.35
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761909137; cv=fail; b=nn23v35z+SVgF2f+ytDhh7qH39Jd9+sM1DYjqSt22ZYxRxEySVZ+fYFr6ZAYvc8DMxhbHL+f182/KN2vwh0Q955BS9j4XFzCzGElXRwfpreijw0h+0q06tfdS+Tjby59QqwHu+83lKF/+BB6flX36BdE/1+gTcAFKQFal7K00Ls=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761909137; c=relaxed/simple;
-	bh=lxshdVgiXaDth0ePQwRp69gJof/IDFMERdflJ4mrNdQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=thL3ZSqIsibWYSg/ub/1YijiBAHi/8ZrsBoJdUu9ojQrcnhQxad8GSle3S3YfLBOHByLQoyj/r1+jjWlRpRIi31bVm+nKa14qt8wG0aOS0VLjUf3t9onOCher4vrm/dkfPSaW9bjanh5hiH5bYDOdmtcjbFwoU3f2/GYQov5ky4=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=oj8Z2gvH; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=oj8Z2gvH; arc=fail smtp.client-ip=52.101.70.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=KCTGiyi0M6f3F9TXmrpWtsa7HZJAbxNQ8Y6+rTPFcPjJvRWyp33V/82Mmn6mTOsI6JYLRouo4kXMRlncSZyg0hq9z4jKFGxXh7KL4A1sRewdGrbvJp1HqKKkXnGe9XgCig8MYJ33v2ZdillAsIsTovZnIkm734JMscq0GlXF4TOTUU8dMCTPxLOv8Wa7XPLMUPlSnxJduwmikYIAXtx2WkocSxPa687L5TUMkT7fDcR7CyC2rASyzYBGIm7NkrrZxjgPflRpRV/Hv5pMICSIRp2JeRC+fNt22/bDDoc9urxaAxKenn4+E698qLnoiApsDgYuQMhG7x+HnWLaJ0XFsg==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lxshdVgiXaDth0ePQwRp69gJof/IDFMERdflJ4mrNdQ=;
- b=rPor+PLToYI3NSS4dCgOUze84NvL+mY9CqmWsikamj6rOG5Ch5kHOsNTIUkSmOKMI51s/sjZiUx3l213a3690JpkKvWNs9fEGW40jPr8Il3LEqXrZkNpA4Z8qYWuK34HCwbr5OwZtvrP3L7MX19d6k1UIUCDJV47Gv0K/h2nHMhod//JviU+PayYzdCd/nPbiIBdwEoIckfZEL4tiRgOXEiF3PXjM3onXYsfVjdL4GtfgcTr+LSzLtnrG1eX+fxdAhHsNoY8stHL1eLkS17Ha90jdkSCGHI+qmjtZB9BoqJWU6RL9OgqINqLaeR8UEFzcYvPhU9RGAiiMZ+8sei+Rg==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=kernel.org smtp.mailfrom=arm.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
- (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lxshdVgiXaDth0ePQwRp69gJof/IDFMERdflJ4mrNdQ=;
- b=oj8Z2gvHlkWJanCvMfIxRmuyxG41jRe/64yLPUhYMt87RWuHaCDRzN9C6kPxo2yFv+BXA7labi0WR4ue/ihmupxCyyZh029nqQ3K2Arukn0yz0VIMvl9DJaVyRoOFMVeN2Lq8sB7wAr14zHXILWCCC5CVFqxghnks36vuXlLw0w=
-Received: from DUZPR01CA0120.eurprd01.prod.exchangelabs.com
- (2603:10a6:10:4bc::18) by VI1PR08MB10146.eurprd08.prod.outlook.com
- (2603:10a6:800:1cf::11) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Fri, 31 Oct
- 2025 11:12:06 +0000
-Received: from DU2PEPF00028D0F.eurprd03.prod.outlook.com
- (2603:10a6:10:4bc:cafe::3) by DUZPR01CA0120.outlook.office365.com
- (2603:10a6:10:4bc::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.15 via Frontend Transport; Fri,
- 31 Oct 2025 11:12:17 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- DU2PEPF00028D0F.mail.protection.outlook.com (10.167.242.23) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.10
- via Frontend Transport; Fri, 31 Oct 2025 11:12:04 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=x5Io/EtKrCTAZOQN4mTpL9eH0ACwgEHIkuDKvCUH+UhBf14ScVrJuQTJ9VlhL7YxR2f4Vc5VLnRzDFHUZX3ZEk7SpKeKj2E8fLn3t2RwgocdjFya9UiRKFCnypByQm4lxGptHyuPlz1MNR+axX9uRvjFDh0LAshQSvFzTL/mGPzv0PW6TLRpZnyaIjRbO2HwM4LUemwLKIKIUfoge+Q1L+MVOzKLQ4x/Zm6M2pqW84cIpLqGMSlQzJMWg1q29+COaCS0PCmLh1EYKBInqvAFsdhr1C4qSNKV8VORssdhvjRGlPsZNDGoSDyBQvAX7VW0QpzmC2u2EyQHdGxCou32wQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lxshdVgiXaDth0ePQwRp69gJof/IDFMERdflJ4mrNdQ=;
- b=ugvpPQoW/2u34wqh8/ImXAIG5BIXHOT8w/GmXsPPQrpXD6lmNDqRrrJDrObGJtelvkp2mw3xYLPhpifTg6Jlmn+dhVbyjHCACRvUzS5rHXUr1Ps8EilFSL03znM8miLogu+SWyQv9ljqaaLUz2WtS/mDkdWf/Tkw6uyZ3xkeeZSp/QhVUx0lY4kh7hsQlJH670NqziKKLUZHiCwO8apsRjMEuRV5EiVnlz/42Sth7YtRbuV7jRPOQy3jxBBg9Ma+YbgT0zVdFoFQdfhZ0VvizFfRIU1p3PZm17RF7akFOjtj/U7iGt7OX8GIL27823VL7gisJ+naGsGtxTFjxtzTEQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lxshdVgiXaDth0ePQwRp69gJof/IDFMERdflJ4mrNdQ=;
- b=oj8Z2gvHlkWJanCvMfIxRmuyxG41jRe/64yLPUhYMt87RWuHaCDRzN9C6kPxo2yFv+BXA7labi0WR4ue/ihmupxCyyZh029nqQ3K2Arukn0yz0VIMvl9DJaVyRoOFMVeN2Lq8sB7wAr14zHXILWCCC5CVFqxghnks36vuXlLw0w=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
- (2603:10a6:150:163::20) by DB9PR08MB8459.eurprd08.prod.outlook.com
- (2603:10a6:10:3d5::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Fri, 31 Oct
- 2025 11:11:31 +0000
-Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
- ([fe80::d430:4ef9:b30b:c739]) by GV1PR08MB10521.eurprd08.prod.outlook.com
- ([fe80::d430:4ef9:b30b:c739%3]) with mapi id 15.20.9275.013; Fri, 31 Oct 2025
- 11:11:31 +0000
-Date: Fri, 31 Oct 2025 11:11:28 +0000
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: Sebastian Ene <sebastianene@google.com>, oliver.upton@linux.dev,
-	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org, perlarsen@google.com,
-	ayrton@google.com, linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org,
-	sudeep.holla@arm.com
-Subject: Re: [PATCH 1/2] KVM: arm64: fix FF-A call failure when ff-a driver
- is built-in
-Message-ID: <aQSZYJQfcWCTtIZm@e129823.arm.com>
-References: <20251027191729.1704744-1-yeoreum.yun@arm.com>
- <20251027191729.1704744-2-yeoreum.yun@arm.com>
- <aQRuvu8V3woqnqCV@google.com>
- <aQSKpZDrLzf/bcx7@e129823.arm.com>
- <86ms57v00j.wl-maz@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <86ms57v00j.wl-maz@kernel.org>
-X-ClientProxiedBy: LNXP265CA0003.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:5e::15) To GV1PR08MB10521.eurprd08.prod.outlook.com
- (2603:10a6:150:163::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A202E6CC0
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 11:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761909111; cv=none; b=VyZvcBTZ7fC5J5eVYpqSNqhE3GY0tA3h9zFvxgb89nJPE7OOiHJGooVZKDmHdfsjmG+2xoZ7JY3vMKz+cNsF3ebSAbTABddWiqa2LLPyRUYNvfiW1xYzHZOlpFfTUcTuxoFTYBI/Gfl2CKtwrg7YoJAQl4kybhH0+0JwSiLLvng=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761909111; c=relaxed/simple;
+	bh=IDcTRTACFiYoEA0iAfZy79mZ6MD8hp5U9LyFyCMpZDc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NBMe/RlQY1o2xuQAGXCuyWGO3tDtiA9fq6v5N1nzCfv9aG8MC8vJoIKpvpI1XlX7bLxg4MR2fDP0WoPMYJ1JMomCHNaVh7X6ZZLTcWZNLOv82NKxKMdS2TY444njGKGBlY28BowuqSXxf5bbmZjtpvmA19FT8W/tKJnXATIPeEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CKSvxiuX; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=WI9tNwf6; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59V832fN873870
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 11:11:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=O8jmHsfI7j3mpprPC9vCGVH2KzWiYloucUY
+	A5jACBSU=; b=CKSvxiuX99BiWWBH7sdy/10FT0T00zMIbKRh1hMcjdfwuF3FaGM
+	F0liTDiMwkFD6uV1kC20obvTbWIziQnbTUy3kqBxnsCO/ZoKAyNDF6Qs4+R1j1tA
+	mPx1MB/F2GGKPnZLb+3U44bL08abUrLxYPxMtW7fHoyQs2b4HyRqIXiGEd/t0ltO
+	ZGhs/6Q+MpwEabC7tGdQufUlVRV6sJP+ehzPwVVcVmCKLjDWo0jCyJJHT8wv3zJ8
+	ord/ybLg3FL0oXP+kVOedsamRdvPQO3ewKnaSistx2mQRcqeP0JPRjApfY93YCEM
+	3HZskL7d4sDRhnekcIf2Sv6KulyJH2oWJmA==
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a4fqn1x2a-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 11:11:47 +0000 (GMT)
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b5edecdf94eso4108399a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 04:11:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1761909107; x=1762513907; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=O8jmHsfI7j3mpprPC9vCGVH2KzWiYloucUYA5jACBSU=;
+        b=WI9tNwf67EN4nW2RbVDND/8C0PVDPdFR2aZmeXJntddgpuWMgjamBKQC11InHEh6M4
+         dpma6ikFVaeGgPaC1WY8VJQYE6NdLQIcfUdFumVvP22n+z+wyBbkvoLAiD5Tw0HHjat8
+         5wSEnfcPeV9ZCT08tISsLeNgAEUa6LkMy+Ryi+/kTDWaXDkLTM/0yQQkoxm6Biz9OMbi
+         MQOiAJWkKQcBRh2svUoZ1gg9MyLRVja93k4FqopcgoUOtveC+Xl4G/ncZ+xfArczwmI7
+         PfImZha3m/J347BKUvqFHQn641GDkvY4sKBG5CaSeyPw23eNn5o7CmKGh20WmbkTZt9e
+         7ijg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761909107; x=1762513907;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=O8jmHsfI7j3mpprPC9vCGVH2KzWiYloucUYA5jACBSU=;
+        b=F5ChO7Mw/4re53ix9U21sfmo0+VSmunw2w2ffFPbQXKf7Cxc234X659RRErRBgHJFu
+         Gpd4yKjALzjdiriRx3mNvow/Fr+DDnKzuRB0sxzBSJeWGOtdGw+ez2l2pUqaebi2W8Fl
+         9h4sGRCDO1abz2mIJNstcjC6Hm4SbknH4vfn1vmSG0EZBDwbQXEPtoOOfCIRApnQlkWK
+         lFh2XP8UC8iGAI8gLQDd2TPwhy2y+3gyCLjO7T9EcGymc/HEPei9e268MuaihKbIJu1+
+         kWMWOBVSIy1dAEnDEI9y6XHLUr13X47j9zeKUsQqV/aqMs4PHJbGaOgAtdFXTLT8Y48c
+         FBow==
+X-Forwarded-Encrypted: i=1; AJvYcCVcgRa7IpGd110E09ZaRS2IG61NSOhSDiS2/ql7c6ErQr7PHFGukiG4rbA/ZBzDyUdtXijgXz6ysaCDg2Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzRdpzG+U9yKvkbnzEBqZWSiylJPt8AkcWrqa2fcjNC38MV8Xa
+	Nc0PhUu1Oh4g395rPCVBMDCeIDarTAHL6L7hFVJO9BmlUOsBgtqkNy94p2JriyoXiObLUI2KTPY
+	T05giMKHuruy35xQqdSAMuG2tB8EupqxDNpEYZFRR+dmlVJAglUmcvDzHtGxpWlTF8JA=
+X-Gm-Gg: ASbGncu3olgk/q65+TWawcwJUDBoOcWK8hfzhHbE21cz5okQFCSBb372MrFp/isaP4k
+	y12yPifaqn/vWLm6fGUKt+tuVKHg+/+YJYeqQ5Y3t/lOROdra5P72OC3Bt/JTTBr16EbkigOJxv
+	sxwEZ22r0d2Xticvwg0h7uSz84VjXQES4ZGbDMrUaUNnh0OLcM0Q2wA77vBLBOMGSDN+CZz2+dv
+	pLIfZ12S+19iwLGH/pTX69q4HcldsekCtwHbnqauiiqv3l5pI0r7th0Mx31rt3yuzltZo9Z4od+
+	/uvCUd/MFF1MS8Mf60UA73PZW/BcjmN00YWkVSv1E4Ek9xEpGPD9Snp/wZGJQ47hHM8ILcp4p1r
+	y8LWpRcOLhvVEGvtHS0l+4jyUOfVMaxhgXRGfniONoAqAVRuZEQVp
+X-Received: by 2002:a05:6a20:3d8f:b0:334:8d1f:fa8d with SMTP id adf61e73a8af0-348ca762efamr4261435637.18.1761909106544;
+        Fri, 31 Oct 2025 04:11:46 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF3afHY3dtpovWcwdTrIQcCAO+PFFAWXBTqpskCU1j8Lnzsmy595gMOOo6WBgKFOobKc8G+0Q==
+X-Received: by 2002:a05:6a20:3d8f:b0:334:8d1f:fa8d with SMTP id adf61e73a8af0-348ca762efamr4261385637.18.1761909105915;
+        Fri, 31 Oct 2025 04:11:45 -0700 (PDT)
+Received: from hu-punita-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b93b7e197cdsm1804407a12.4.2025.10.31.04.11.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Oct 2025 04:11:45 -0700 (PDT)
+From: Punit Agrawal <punit.agrawal@oss.qualcomm.com>
+To: catalin.marinas@arm.com, will@kernel.org
+Cc: Punit Agrawal <punita@qti.qualcomm.com>, chenl311@chinatelecom.cn,
+        liuwei09@cestc.cn, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] arm64: acpi: Drop default console log message when using SPCR
+Date: Fri, 31 Oct 2025 11:11:36 +0000
+Message-Id: <20251031111138.1262202-1-punit.agrawal@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	GV1PR08MB10521:EE_|DB9PR08MB8459:EE_|DU2PEPF00028D0F:EE_|VI1PR08MB10146:EE_
-X-MS-Office365-Filtering-Correlation-Id: 32ecca20-a36d-40c3-9a7b-08de186e52db
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted:
- BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info-Original:
- =?utf-8?B?UHhIWDdCcU9iMklLaVFseTlyZ3FOSkpZNkU4ZFg5VWYxUm8zRkZ5VkE2UVhr?=
- =?utf-8?B?ZnV6QVhGUDRRM21nUFAxd3lsNlAxMW9VOVo3Zno0M1BxYnI5d0lHV0lEV0p3?=
- =?utf-8?B?QUNvczlCSjZ2RzlnVnZEcmUxWkZxUTZ3R2VWL2M4bW5TbVMyY05LMkhraGNQ?=
- =?utf-8?B?R25rWXluYmlzSGZXWGxEZC9maXVxRE1BVDYybXhoTk0wcVl5Sk1vcnQ5YkxW?=
- =?utf-8?B?OHkvVkJLNnhWVUVVZURhdThzS0ZWRGtieGJwRUdWd1ZGMWlKODRBMGNRRG4r?=
- =?utf-8?B?b3UwMEhlQUQvRFRXdHRuSWxpanpPYjlldkorMzAyTjRwaWFLbW8wZTVRVy90?=
- =?utf-8?B?Njh3L3Z3ZVNMRlllaWtsTlkreDNaVTQ1Q2dkU0VOakE5WUIyd1RBYUtwYmNG?=
- =?utf-8?B?cmVBSzV5cUh3TW1QN2hDZGNPZTlSTTdqVnRQODZkeFgxaXRrTEU1UWVER01T?=
- =?utf-8?B?SVhpT0o4V256RE11eitIOVVpbnNHRDZ5c2NnSzJzdDB4REJYL2NXamJlWERn?=
- =?utf-8?B?VkdjTnVYSUFaYUV4ZFRHbzJNTTZ3ZGRuMHlPOG1FNFJKZDhMZnVsZXRiMVFs?=
- =?utf-8?B?RWx1QjhHQ3A3SnN2ZFljY3pETTZucS9wWTRld2JtZzVrUW1zeW5XL1phb0FP?=
- =?utf-8?B?bTFiN1BJUjRrekZleWN3R0xKcDU0ZGR3M2NIZGpXSHUrZmpsOHRYcCt4ajgw?=
- =?utf-8?B?UWxOWGNwb2xpbmFnWUpjNmVZTUdOSGxIaFRlMjNLU3JXbWlMSFhaUmUwVFRN?=
- =?utf-8?B?VStUQlN3MnE4TkNleXFJUmhpZUdEOWg5cy9iejhxcEY2bldvQVB0bC9KNEtn?=
- =?utf-8?B?ZXdFMVVQbUxjd3VjSVRrYTc2NlkxcmQ3UVRyUnVGaVFBc3RhTEdwOGFWckxo?=
- =?utf-8?B?cVg1MC9aNzdhV3N0ODJSdUJaMXQ2bVgvRzUxd1h6b2drQTdhTVQwWk1iZC8w?=
- =?utf-8?B?Q3EwNlAxWHRpb1QyR3NoUkYxblVzQTZsWmhkRkFpZU1Bcis3NGRIOTFuMEcw?=
- =?utf-8?B?TSszMERlNzFTdEtJT2JaTUY1SFhzdWpXanZlSjZ2b04xaUZFTXRNeDBuU0dh?=
- =?utf-8?B?QmhBTmZycGRCaEpqZVFUM1UyQlpZU0U2UkJmMkhpYWIwcUtBcVlENVlzYWtJ?=
- =?utf-8?B?M0JFbVNHeElPUU9NdFUzWjNpWUJEdmZwdjIvdk5wNjM0RmVpOWlVNFlVd1JG?=
- =?utf-8?B?RjQ3RTk2eVdXWjJ1QzkvaG1ad2x4cDJNZURTc2JOemFzUUFaRC9jNk51eitD?=
- =?utf-8?B?cFFtWnQwanlrUUs2Wlk3L0N3NnNiWW5BbXJhMVVJOHpwMDJLTWhRQm5pQThy?=
- =?utf-8?B?OWMwZDIrTXVEaExqbjdRM3NwYklBaGcvTXZKbHpTQXdpcTJUazV4VzZuelRI?=
- =?utf-8?B?MTRIeCtsYUdRQUNPMWZ5Slp5T0hoYVo5WWhpR0FIcmNSTWo1UmZpUXdMK3dK?=
- =?utf-8?B?QVpSWm40MXpRakxBbXBrbm5ibS9zTnhORisxeFRFQWhEQ0tOTkpkRjZ6Qm85?=
- =?utf-8?B?TUZIVE96RHR5Ty9EWXFpSFdEdk81Yi9pSnFuYkFKNzFxUzAyUm5IYWJESzJv?=
- =?utf-8?B?QzRXWHVkOFRIdnpuQXp4WENJckNpcm04czVYaVExNGtiT3EvUllRbE1TZ0w1?=
- =?utf-8?B?NUc4R0ZNUmZ0a1pxR2dQL2FzNXFQNmJyM25iVVh5R0ZTNElacWJaUW1wVk5H?=
- =?utf-8?B?OVp5bGg3R3dCbitqKzFnMVgyQWJTZUFKbWVtMXZ4dGUva05QMnVyK1RYamln?=
- =?utf-8?B?WS9DZG0xT3NMK05IVFpvbDJLRS84cUwxRXZucGRyMWtWSGhaS2lidDVsOEkw?=
- =?utf-8?B?RzIvWkJHeGlsK1FHQm82ZnlwN3ZWZzBkdXJkdXArV1F6eUNVZUc1RURTTUE2?=
- =?utf-8?B?SDRoVmNpQ2ZhUWE4Vm5idjdpdFpCT25hc2N0TGNQUloralVIbkhMMVFHc1da?=
- =?utf-8?B?NlVSdUQ4QUYyK2lGVCtjQi92a1Y3QU5tWFJ3QXpXb0hYY2dNRWJDRG1JNXV1?=
- =?utf-8?B?V0c1Ni84eGJBPT0=?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR08MB10521.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR08MB8459
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- DU2PEPF00028D0F.eurprd03.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	aa5dfaf6-3106-49a1-edb0-08de186e3e92
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|35042699022|14060799003|82310400026|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cVhIYXF3UmdNUnFaL0g0RTU5dDNNRWltcE1IQjFQT3FtR2VFSktYdDJ3cXlk?=
- =?utf-8?B?WFVScEdiSytrYXFEeGlMK1VubHVFWk1iOXF0T29SV1cwYkwzSHZxSXR5Z3BY?=
- =?utf-8?B?SVNyK3pkdEgyVFc5Um9mS0FXVXdvNWVTVzBGd3NRaS9QVWxFaE1QOUhLeWRy?=
- =?utf-8?B?ZEJIUm9CREVUQmtwRFl6dnRIcUF1dm13SHR6YmFSWkZMaWl0dkM4ZmRDSWpx?=
- =?utf-8?B?bEg1VWhLVklzYUZCUUVSVFhYZ2lrc0RJcFBUVUZYcVIrZWpFbUVMMlY4M29n?=
- =?utf-8?B?L0l5SHc1Q3lYajgxU3daM2VDenFLQTcwek5PZHVPWCt0L1IzS0JZU0JFN2pj?=
- =?utf-8?B?S1VncURlRndna1R4WmZCY0p5dnZNTWc2aWtJZGVXaFZhdGZGSytYU3JiRXZ4?=
- =?utf-8?B?R1BJQUtwZXhuNUNyckoyNEdLS0hTSTFudlhoNVdsTjNzTEoyZ0ZwT3oxZEhq?=
- =?utf-8?B?a0c2NGJPWUdQZFVjWGhRUFpCZmN5OEk4bFpxZTN0MTZoeFRiV2p3bStON2Nn?=
- =?utf-8?B?QzhJY1plZFZ5TU9XNXJKYWozNXNUdERobnpQT05EdVNQcDB0UnNlTjRIdzVo?=
- =?utf-8?B?NmhrcGsvcGRwTGJ5bG5wN2ZaVVVzcEFlRUpyTHgrR2RyWG5XVjFuem96dkVZ?=
- =?utf-8?B?NHU5ci9IYmF0NzV1WmxyZXpvV2k2blhmbDdkMkM3VDF3aTVkNDNFR1JjL2hV?=
- =?utf-8?B?VFZpWEhRVVJobEJLOE45OXpQSGRKdTk4SnpOV3lBMlQyelMrRzZiYWdHbFZi?=
- =?utf-8?B?ejVtNmtaTFZUSVpSb1FmSXk4NkI1VTdtSVQ2TGM3S1QrbFRIYy9ueExONHdH?=
- =?utf-8?B?WWZXUEp5TzNOZEJwM25jUkJRNHNjemRlNWUwL1dMbTRodml2MTdVQVVPZGxi?=
- =?utf-8?B?Y1p5ZkJidDIyQytDNUxoOWdQY1lPeXZHYlBuRkJoVXo3L01KQk14VHUrZ0M0?=
- =?utf-8?B?eDFKdW9mSDE3N1oyY3FJbCtlL2RKbkppYTFSd3BqTHduWXdwMG1PVnQzSHEw?=
- =?utf-8?B?N3pSYjI0T3hpYzYvZkFjcStmMCtqVjB0SWxnS0JpWXNRRjNWVGJGL3lzeHBF?=
- =?utf-8?B?WExzNUc5RHJtTnZnWkNoMkcvMUVGa2NOZ293RDR1QmZhOEo0Vm54cmlWT3lL?=
- =?utf-8?B?VlgwWUlrOW5pZFlRcGtYeUdESzlpY1E0NU50SklZa0hvakhxRFZscStGaXFB?=
- =?utf-8?B?LzN1VkV0aVpvVm9jalVCNzNGSkRHazFHTnViSk0yY3crUDhWRXdqUkVnYXBm?=
- =?utf-8?B?N0VBRkVUUHJQMVVRcUUwTVAyY0VJQ0hGK2RaVjl1OVdnK012VkNGSGdKb3pn?=
- =?utf-8?B?d3Q5TEh5dUZiN1BsMFhNaFdUSFZCc2pJVW1iZGZMR2puMDVrbVZmc1NvMkl6?=
- =?utf-8?B?WmpzZ0NobE11VkgzdkQ0MlgvaVVIR1JIS0RFQlBqYklqUlYwSUNGL3ZJaUlO?=
- =?utf-8?B?U0s0bGdYUERrUDRzbjU0V2ZOZE41Ky9iSTA1Yk4zMmM4S0k2UkZKNGk1M1Qy?=
- =?utf-8?B?d2lKY2FMSjBuekp3cDViRlBBYWpScnRoVnAzQkVjTGRGNjRBZUlCWkR3VXlO?=
- =?utf-8?B?NEYrOThWaTlOeHJtMU5yUzBaVGFHazBWQWFCV3E0d2luQnZPdjhlSXpNOWxX?=
- =?utf-8?B?MFlxR3BsN3Z3cm04VGN5WnEyUnlBd0VXUkFJekQyeUN4NTZXM1F4VkRCRXZm?=
- =?utf-8?B?Wnc2bDcyWTArbUNNSE5RUk04Y2VFQm5sV3JvaUtNM21TTGIxN21zQnI0Ulhi?=
- =?utf-8?B?RmZ6a2ZaSW8wSzFhbnpnRDVtNHVOaWVTSTl6cGxsUThjaDE3WE14TlJONThB?=
- =?utf-8?B?TXl3dXZnRnVhN2w3TWZRSWI5RTJkenp5OGFpNUFyMVhYZnFLa2ZkYm9ad3F6?=
- =?utf-8?B?SHFlNU9WVTJjTXVmMjh3NzR6ZytWcEdFM3JPVHAyUDZLTFptTElNaU9tblNx?=
- =?utf-8?B?RXRTRXpDM0RyK2RzNVRKTUpJREZZQTdzUkR1TEZNWGhCZE03Z1dZVWJtU0Zn?=
- =?utf-8?B?cEtlbzZ6RzNLWlJFWnpSMmZWeXFrVXNTMUs3T1d3WGY1N1BEVDg3VEV2QTUw?=
- =?utf-8?B?RGs3SXE1Y3VsREhQd240dndYSnorSlZ1YS8xZUh3cjNEVVFnRUFwVEw1VjZC?=
- =?utf-8?Q?Ap78=3D?=
-X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(35042699022)(14060799003)(82310400026)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2025 11:12:04.7775
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 32ecca20-a36d-40c3-9a7b-08de186e52db
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DU2PEPF00028D0F.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB10146
+Content-Transfer-Encoding: 8bit
+X-Authority-Analysis: v=2.4 cv=RL2+3oi+ c=1 sm=1 tr=0 ts=69049973 cx=c_pps
+ a=rz3CxIlbcmazkYymdCej/Q==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=o1th0WQ6fIS9ZaslAAcA:9
+ a=bFCP_H2QrGi7Okbo017w:22 a=HhbK4dLum7pmb74im6QT:22
+X-Proofpoint-ORIG-GUID: hAqA8Ge8k1K8RJGQjScDkT6uwi9MGjIj
+X-Proofpoint-GUID: hAqA8Ge8k1K8RJGQjScDkT6uwi9MGjIj
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMxMDEwMSBTYWx0ZWRfXwCCSBpR/TSAO
+ LYZv5PgCrab4XEi+ZBitV27iX5m0P2HFWGcBl9Yq0MCBbsAfHXvkdNk0+YpCy+ReRXv5OEYXu9O
+ 6U4r49ACZZOqRgkNOnbqxp+1O7BhYAdJhI9pZEvQEr/UCJT/14lygBAqakuwyNK/AwASXtISYb2
+ z4x1SaPXMD+ebOnqsHqRncNluwkrAscCRhM/9/UfiD96rZ+IenuknZkUyDNOArx3yUL2B8gutn0
+ 8erhrT83NzFaN+ReQ7I3OGyawO5dBA8CBXKF46GXmkDfKNxD6fMeww2eEhr2pmE6DA8HhSQ90sD
+ 8IutJPkTZQzRqpx5BXuKOsS9RvO/j42eGA6+f6IKk9Q33UwbntoxEZbWKhidpJfi5VxUZa/TsCX
+ S5wXlIXF7OhOgEjezfOoGU8PgZmR4Q==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-31_03,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 lowpriorityscore=0 malwarescore=0 impostorscore=0
+ phishscore=0 bulkscore=0 adultscore=0 spamscore=0 clxscore=1015
+ suspectscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2510310101
 
-+Sudeep holla
+From: Punit Agrawal <punita@qti.qualcomm.com>
 
-Hi Marc,
+Hi,
 
-> Yeoreum Yun <yeoreum.yun@arm.com> wrote:
-> >
-> > Hi Sebastian,
-> >
-> > > > Until has_version_negotiated is set to true,
-> > > > all FF-A function calls fail except FFA_VERSION.
-> > > > The has_version_negotiated flag is set to true when
-> > > > the first FFA_VERSION call is made after init_hyp_mode().
-> > > >
-> > > > This works fine when the FF-A driver is built as a module,
-> > > > since ffa_init() is invoked after kvm_arm_init(), allowing do_ffa_version()
-> > > > to set has_version_negotiated to true.
-> > > >
-> > > > However, when the FF-A driver is built-in (CONFIG_ARM_FFA_TRANSPORT=y),
-> > > > all FF-A calls fail. This happens because ffa_init() runs before
-> > > > kvm_arm_init() — the init level of ffa_init() is rootfs_initcall.
-> > > > As a result, the hypervisor cannot set has_version_negotiated,
-> > > > since the FFA_VERSION call made in ffa_init() does not trap to the hypervisor
-> > > > (HCR_EL2.TSC is cleared before kvm_arm_init()).
-> > > >
-> > >
-> > > I understand the reason behind the patch but this is problematic to have
-> > > the builtin driver load before pKVM because the hypervisor would be
-> > > un-aware of the host mapped buffers. (eg. the call from ffa_rxtx_map is
-> > > not trapped because it is too early). Essentially, you will end up
-> > > bypassing the hyp FF-A proxy which I think you will want to avoid.
-> >
-> > Ah. I've overlooed the ffa_rxtx_map proxy.
-> > But unfortunately, some of depndency with the driver using arm_ffa
-> > driver, ffa_init() should be called first then other drivers' initcall
-> > (usually, these kind of driver defines its one initcall with
-> > device_initcall()) (i.e) https://lore.kernel.org/all/20250618102302.2379029-1-yeoreum.yun@arm.com/.
-> >
-> > Though I arm_ffa driver provide an API getting mapped rx/tx buffer,
-> > But this seems to reverse dependency -- kvm depends on arm_ffa driver.
->
-> No it doesn't. KVM doesn't give a damn about the kernel FFA driver. It
-> just makes sure that the driver doesn't do anything stupid.
->
-> > I’ve been thinking about some possible solutions,
-> > but in my narrow idea, valid solution is kvm_arm_init() as
-> > subsys_initcall_sync() and call kvm_init() in module_init() like
-> > attached modification.
-> >
-> > Do you have any idea?
->
-> There is no way we can accept such a change. It makes something
-> fragile even more brittle. If anything, make the FFA driver check for
-> KVM being initialised, and make the probing defer if not.
+Based on feedback, I've updated the original patch[0] to instead drop
+the default console message when using SPCR.
 
-The problematic situation is that we couldn't use "defer probe".
-For example, IMA doesn't support the module build
-and if ffa driver and related drivers using ffa driver defered,
-IMA couldn't generated "boot aggregate log" which should be produced
-at that time with PCR values in the TPM using CRB over FF-A.
+The first patch reverts the incorrect assumption about the return
+values of acpi_parse_spcr(). The second drops the logging.
 
-Whatever monitoring KVM being intitialised, unless "defer probe" makes
-a problematic situation, I think it seems meaningless.
+Thanks,
+Punit
 
-@Sudeep. What do you think about it?
+[0] https://lore.kernel.org/all/20251027141941.3089914-1-punit.agrawal@oss.qualcomm.com/
 
+Punit Agrawal (2):
+  Revert "ACPI: Suppress misleading SPCR console message when SPCR table
+    is absent"
+  arm64: acpi: Drop message logging SPCR default console
 
---
-Sincerely,
-Yeoreum Yun
+ arch/arm64/kernel/acpi.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+-- 
+2.34.1
+
 
