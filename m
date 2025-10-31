@@ -1,402 +1,279 @@
-Return-Path: <linux-kernel+bounces-879553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7006C236A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:37:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1658DC236B6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:41:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1482406EA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:32:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 355B93A5D98
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AEDB2F7466;
-	Fri, 31 Oct 2025 06:31:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3692848B4;
+	Fri, 31 Oct 2025 06:37:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PtCfwl6J"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IWgZxD2e"
+Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3AAA30FC15
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 06:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A07325A659
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 06:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761892291; cv=none; b=Togjb74VYZiR+6+MlZqPJGOm0INuG5vV/Dm8Kl1TzViLvzCaZ0reIBjgczU/w1t5Vo2JNkfS2iy/rlmMVyPlJ8Fco7MF3vSSpR7UTT92rf+0IZ0J7ra8Sx4J7PRQw68H3k5ymhHIzUOHe2zhjZcWHUZ31ZQ115LAy/JROPKb3Es=
+	t=1761892639; cv=none; b=rjM68EJHCCfd8k0ZboAk921zY8amQ8C5vieHJKMaJ1cUzkUBU+fxlcJ+YqTU7fhoD+5MZTrvtujfk44VX/I1vvyor3BsA99YbeboWeuqACGfg979RLelFDCJ8x8Itne9HaPUX1pCEV1ATiCFCdIv6kGVzH38QTDyWybnhOS03hM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761892291; c=relaxed/simple;
-	bh=LYoxxD7A9LaJtKznfbw8DA6ubROWoQExBvQKqwzcF+E=;
+	s=arc-20240116; t=1761892639; c=relaxed/simple;
+	bh=vaP9tFVHrd+h3H4hUZXdcXreKNUI8n2Fq+c1yV7Q2Ac=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gr6xZRBX5Fp17FRBotAL4cRFjR5fATzUv8+b5/PDau8zu/pvyl2XjE4FGpHzw2OZjYTV8Trn44kzGLr/dA0bBEflTV5SL7G/MEd2Vt1Jo2bOMV3g453RkzM9qNaTEQB616MwE1zLleZxTYlr5n87TdG866wRURfxNQdCNsZxwbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PtCfwl6J; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761892287;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2KOssj7wkA/xl6jWcLdWThOpLTHiPKSdvNkzYZXdE0U=;
-	b=PtCfwl6JTruTnPbf31JB++wVSJ6DFBU3FbYj/7hlJ8DMNJMEuB0/LK1a6TbUiTXSsSXOf2
-	K7vzgv9Qv9OtuEzD9SzDy7CAB01HT38g0yo1bETsPsQ6r7DxrOCnbh2Tbghypzl/SWJewX
-	ZhJnvAbYLI105lrAwwvyEK69sfNcjsI=
-Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
- [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-673-y22RlLs_NyGROxih365Ojw-1; Fri, 31 Oct 2025 02:31:25 -0400
-X-MC-Unique: y22RlLs_NyGROxih365Ojw-1
-X-Mimecast-MFC-AGG-ID: y22RlLs_NyGROxih365Ojw_1761892285
-Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-7848264ead5so29989287b3.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 23:31:25 -0700 (PDT)
+	 To:Cc:Content-Type; b=WevDn5VFYNVD4FGEps15UDiDB1xEHZ2UiuzHLuDQV2WECNZHQDjvhyNt87jefKLC/N0R9B5CY8IOscKZx9ODtlpsoY1gQdPkZd/NHD/YvyEcPsO+5Xr3DJAEAIuMMeujIcyuthVsCXT4dYdO9jT/cGXFsanR8eWB2NoJqrMJ2cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IWgZxD2e; arc=none smtp.client-ip=209.85.214.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-2907948c1d2so20050775ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 23:37:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761892637; x=1762497437; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sDYWddzEhzy192wOWLvawa5saRjQOm029FdqACvNNZ0=;
+        b=IWgZxD2eGivcA7Ep0azk2qGv2ZQW48r8NdRJQHR+uZNsuIbNPxzFK4+ZheG3oBm2Mb
+         5X7lqgLPOQ1wnMx06hCwTiIcetlDfLowvreowL6sFDgytI3YeOiKfM5m8wmLmDe3VHh3
+         5iug/vDpOR6flztM+rcYk46dBHfe3fBCZAp7mD7k4Cc6SGA57bNhyWQS2FmBBElYX2e5
+         F2KHCMcMOPez2INS8vgHQrAlvWFy+pBXaM8KPSCSeDn2V+iHuyb4+Nzg9hZkjGONjhqN
+         vyvWC/NC6o1KAR2wAJbPgEz04qdgMHTcxG8VbUJnNzdktQCNk2Dh26F3uaME5ltDIsf0
+         rZ6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761892285; x=1762497085;
+        d=1e100.net; s=20230601; t=1761892637; x=1762497437;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2KOssj7wkA/xl6jWcLdWThOpLTHiPKSdvNkzYZXdE0U=;
-        b=Mv8xzxSBSq87RU9oLowVUSfG/Fs/dR4BqKb8ib3/6R+u7THsFCoruj2jrk6CsFE84R
-         9YJaoxIedGSoewBKDrH8S7ReQ8rwxggTDNvHnajMlmdhKHEGVBNv9BHyxtT/6YbytjHb
-         AqZgvZ3a6hges4uCw5n3ANrIb8V+7h4656OPJbIuW4FLFJLS0rVcehhhVcl/saQ5Bh1+
-         LmqrDWb9GbR6JD598B4UzQcKsqdjAATdLzB/lnem02YypDSl4DW8JXavx6nfkUwFvjky
-         9uEIVsl8S1bTbakhyvNqV4FTDFGKvudWiASO5yTfdH8Z/Omh8tQHZ69VTFzYXQkNYGR8
-         VD3w==
-X-Forwarded-Encrypted: i=1; AJvYcCWOlQT0SmoCooLcLgc8XwIsqawcjBD8beVTSvk17wNfQ2DJ/E7HDZhIUBo45GkS7LJjYj499oBeTSnSTFM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0pViV1awFjBC/OL02dvEb7zx4WkEsSrCtLCS/mYmnBr/AFX3z
-	suKX9Y08GRU7d/lvs95NmgXqPJhInQ0qGrVRHwiThNIBYvRA3Eq3vpV/CHfaHrpkUqWu3TaJms4
-	sqzzJCCDU2g/+2jaCOfPIErMkaXH9mKt3/KGU1UV+SXqhzoobwWgjm82Wg85+yEXTLmBXaLJkKF
-	tIG1wdFqejhS9cttzDLfYazCjMHhDLV6pKXDGzBD/s
-X-Gm-Gg: ASbGncuNXHidCoKmCNxSIugIiDxavt3fheK4kVJjl79tnKjGnbmr5Jh1E9MC72pMQT7
-	snULGPxWACrPLAmjdLt+obwoVlEnJBNlduf0bbND7UPivgMyKzrn5j2I5G5Fldvq+cc+zFFPpla
-	ybONZnfNwWgHx1E0D0vaPmicPCcja4uk6Eclq2kuJeX3jM9ciTBpK68gqk86uZDBoRUNghSoBW/
-	l2qRyjuX2cWmKT3I40/BAFOUAAnT0YG7wZGK5bkDjOiKA==
-X-Received: by 2002:a05:690c:4c13:b0:780:f22a:5633 with SMTP id 00721157ae682-786484c348dmr22010717b3.34.1761892285214;
-        Thu, 30 Oct 2025 23:31:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE0pYcVMVFc96qXD6K/Ql1OUWHm6ne7uyRXVYQ20rOyxJK0kOMWBQTxd8VPgJa41heC2gwXU87aR5LL3XdlGRM=
-X-Received: by 2002:a05:690c:4c13:b0:780:f22a:5633 with SMTP id
- 00721157ae682-786484c348dmr22010557b3.34.1761892284818; Thu, 30 Oct 2025
- 23:31:24 -0700 (PDT)
+        bh=sDYWddzEhzy192wOWLvawa5saRjQOm029FdqACvNNZ0=;
+        b=wmKSAOSdZlg4rwnenDMAzMhSl/iCuKWKh5gNNn4496yE4GqOoI9qXg9ikM1kHzXvOn
+         JuQbiP5cSl0rjUSPVUWjRRFmVblO2ouE9SQujnzJ5FEZ0tHeGgq6OVOvS7wMiON7RUrJ
+         Krh7YiNR3RwEEJSl4kESmTTtyDylTPL10J6z2tMX/xHa5rwmcrEI47Cxi2oSyyjRaOll
+         sCGrAq/sd3wISc+r119BWus2A/fXqheYxo7Udzv+53hVIKAu5YZLyZxXMOe1siyAmECk
+         a/eTWy3LtVKLObfkZE9y5ciP6olG+nAI5J2spCjKSkmgSiG2OeDlT0UBxYfhCrlIcOiF
+         w7OQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUsr/TBewOYHEKXD6O9c0XTOQHmw2bLMUBKvGthbZZ+8ppOTBzjCxs2EasjaObrxxD2d0XlVyxnNAs72+E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpHkHa1uxwnmyfwuPvehRuxGOCJEwuBKqmX0EBpP1w/v6cfGKz
+	EjjwHZ04sr9owSCmrtg57HKduUYvb15M30OUc0nydKh+CKQyme61JZyUVowDUUWMdN8PJ7jEgjX
+	WNc506uSDqgyBPyccA+WjsVQ99bkIuXY=
+X-Gm-Gg: ASbGncuhTOx7bACrH6piWZJWJF8O/oqyX9fJzQZ8oL34vRbvJXTxkETtbAU5lz8XN8u
+	7uTTkdqSJzGC0n6vcmIB0qqFyrXhxJFMLKGmHSLiRzfqPFsXgcC+4HiArngPfF985qWmWuhL+1x
+	q8jnJYA7yzUz4/sd1T6e/wFY8j8BF1fWo5YoHDQeRtF+Wh0O7SYizfqFy7WQj0HpRY5miVmtg88
+	LTRUnfLX5ckY/ICwS5yoU6QB5N2WEV+gCzXDblT3Z+P4SoVDXnizcY0FcD96as3EFCZtqw=
+X-Google-Smtp-Source: AGHT+IHKvlwTT+v4lVp0g7UewFcEqQtoC0e/Rzm6EFfiRLL8K/1VBKeXr7TztP+Jn70agztCGIOlvZiTJHMPQ3Dj4hs=
+X-Received: by 2002:a17:903:1ce:b0:27e:ec72:f6d with SMTP id
+ d9443c01a7336-2951a36e6f8mr40862445ad.11.1761892636677; Thu, 30 Oct 2025
+ 23:37:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251030100025.95113-1-eperezma@redhat.com> <20251030100025.95113-6-eperezma@redhat.com>
- <CACycT3sYzQM88dkqHiT-g9eRtfo-8PjW7XcRtZ=5q++=By4RVw@mail.gmail.com>
-In-Reply-To: <CACycT3sYzQM88dkqHiT-g9eRtfo-8PjW7XcRtZ=5q++=By4RVw@mail.gmail.com>
-From: Eugenio Perez Martin <eperezma@redhat.com>
-Date: Fri, 31 Oct 2025 07:30:47 +0100
-X-Gm-Features: AWmQ_bm8WJvnMLLzQzvgkCul3JNIK5iJLUIxcaAGBScA42BuVqe75HotHCNVTtI
-Message-ID: <CAJaqyWexPHJiZjC+RPvVH4J6gS55fCOfPQmKay2eWO-nqrjcRQ@mail.gmail.com>
-Subject: Re: [PATCH v8 5/6] vduse: add vq group asid support
-To: Yongji Xie <xieyongji@bytedance.com>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>, Laurent Vivier <lvivier@redhat.com>, 
-	Maxime Coquelin <mcoqueli@redhat.com>, virtualization@lists.linux.dev, 
-	Stefano Garzarella <sgarzare@redhat.com>, Jason Wang <jasowang@redhat.com>, Cindy Lu <lulu@redhat.com>, 
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, linux-kernel <linux-kernel@vger.kernel.org>
+References: <20251031032627.1414462-2-jianyungao89@gmail.com> <554b5b314ffd7eb00be58d5997d44c7c4986895ad28776a87a9d6a2bf1c0765c@mail.kernel.org>
+In-Reply-To: <554b5b314ffd7eb00be58d5997d44c7c4986895ad28776a87a9d6a2bf1c0765c@mail.kernel.org>
+From: Jianyun Gao <jianyungao89@gmail.com>
+Date: Fri, 31 Oct 2025 14:37:05 +0800
+X-Gm-Features: AWmQ_bkDa-Yulfkw8NVn1sKXKelgLuaoZX3bACDt0cDA73N01wPRBODLyGsfRxI
+Message-ID: <CAHP3+4CWSbZdNjSdoQhsB9Cvc9vp7V3qzJ=EVMO5+By9ZeAr3A@mail.gmail.com>
+Subject: Re: [PATCH 1/5] libbpf: Add doxygen documentation for bpf_map_* APIs
+ in bpf.h
+To: bot+bpf-ci@kernel.org
+Cc: bpf@vger.kernel.org, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
+	daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org, 
+	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
+	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, 
+	linux-kernel@vger.kernel.org, martin.lau@kernel.org, clm@meta.com, 
+	ihor.solodrai@linux.dev
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 30, 2025 at 12:52=E2=80=AFPM Yongji Xie <xieyongji@bytedance.co=
-m> wrote:
->
-> On Thu, Oct 30, 2025 at 6:01=E2=80=AFPM Eugenio P=C3=A9rez <eperezma@redh=
-at.com> wrote:
-> >
-> > Add support for assigning Address Space Identifiers (ASIDs) to each VQ
-> > group.  This enables mapping each group into a distinct memory space.
-> >
-> > Now that the driver can change ASID in the middle of operation, the
-> > domain that each vq address point is also protected by domain_lock.
-> >
-> > Acked-by: Jason Wang <jasowang@redhat.com>
-> > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
-> > ---
-> > v8:
-> > * Revert the mutex to rwlock change, it needs proper profiling to
-> >   justify it.
-> >
-> > v7:
-> > * Take write lock in the error path (Jason).
-> >
-> > v6:
-> > * Make vdpa_dev_add use gotos for error handling (MST).
-> > * s/(dev->api_version < 1) ?/(dev->api_version < VDUSE_API_VERSION_1) ?=
-/
-> >   (MST).
-> > * Fix struct name not matching in the doc.
-> >
-> > v5:
-> > * Properly return errno if copy_to_user returns >0 in VDUSE_IOTLB_GET_F=
-D
-> >   ioctl (Jason).
-> > * Properly set domain bounce size to divide equally between nas (Jason)=
-.
-> > * Exclude "padding" member from the only >V1 members in
-> >   vduse_dev_request.
-> >
-> > v4:
-> > * Divide each domain bounce size between the device bounce size (Jason)=
-.
-> > * revert unneeded addr =3D NULL assignment (Jason)
-> > * Change if (x && (y || z)) return to if (x) { if (y) return; if (z)
-> >   return; } (Jason)
-> > * Change a bad multiline comment, using @ caracter instead of * (Jason)=
-.
-> > * Consider config->nas =3D=3D 0 as a fail (Jason).
-> >
-> > v3:
-> > * Get the vduse domain through the vduse_as in the map functions
-> >   (Jason).
-> > * Squash with the patch creating the vduse_as struct (Jason).
-> > * Create VDUSE_DEV_MAX_AS instead of comparing agains a magic number
-> >   (Jason)
-> >
-> > v2:
-> > * Convert the use of mutex to rwlock.
-> >
-> > RFC v3:
-> > * Increase VDUSE_MAX_VQ_GROUPS to 0xffff (Jason). It was set to a lower
-> >   value to reduce memory consumption, but vqs are already limited to
-> >   that value and userspace VDUSE is able to allocate that many vqs.
-> > * Remove TODO about merging VDUSE_IOTLB_GET_FD ioctl with
-> >   VDUSE_IOTLB_GET_INFO.
-> > * Use of array_index_nospec in VDUSE device ioctls.
-> > * Embed vduse_iotlb_entry into vduse_iotlb_entry_v2.
-> > * Move the umem mutex to asid struct so there is no contention between
-> >   ASIDs.
-> >
-> > RFC v2:
-> > * Make iotlb entry the last one of vduse_iotlb_entry_v2 so the first
-> >   part of the struct is the same.
-> > ---
-> >  drivers/vdpa/vdpa_user/vduse_dev.c | 348 ++++++++++++++++++++---------
-> >  include/uapi/linux/vduse.h         |  53 ++++-
-> >  2 files changed, 292 insertions(+), 109 deletions(-)
-> >
-> > diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa_use=
-r/vduse_dev.c
-> > index 97be04f73fbf..c6909d73d06d 100644
-> > --- a/drivers/vdpa/vdpa_user/vduse_dev.c
-> > +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
-> > @@ -41,6 +41,7 @@
-> >
-> >  #define VDUSE_DEV_MAX (1U << MINORBITS)
-> >  #define VDUSE_DEV_MAX_GROUPS 0xffff
-> > +#define VDUSE_DEV_MAX_AS 0xffff
-> >  #define VDUSE_MAX_BOUNCE_SIZE (1024 * 1024 * 1024)
-> >  #define VDUSE_MIN_BOUNCE_SIZE (1024 * 1024)
-> >  #define VDUSE_BOUNCE_SIZE (64 * 1024 * 1024)
-> > @@ -86,7 +87,14 @@ struct vduse_umem {
-> >         struct mm_struct *mm;
-> >  };
-> >
-> > +struct vduse_as {
-> > +       struct vduse_iova_domain *domain;
-> > +       struct vduse_umem *umem;
-> > +       struct mutex mem_lock;
-> > +};
-> > +
-> >  struct vduse_vq_group {
-> > +       struct vduse_as *as;
-> >         struct vduse_dev *dev;
-> >  };
-> >
-> > @@ -94,7 +102,7 @@ struct vduse_dev {
-> >         struct vduse_vdpa *vdev;
-> >         struct device *dev;
-> >         struct vduse_virtqueue **vqs;
-> > -       struct vduse_iova_domain *domain;
-> > +       struct vduse_as *as;
-> >         char *name;
-> >         struct mutex lock;
-> >         spinlock_t msg_lock;
-> > @@ -122,9 +130,8 @@ struct vduse_dev {
-> >         u32 vq_num;
-> >         u32 vq_align;
-> >         u32 ngroups;
-> > -       struct vduse_umem *umem;
-> > +       u32 nas;
-> >         struct vduse_vq_group *groups;
-> > -       struct mutex mem_lock;
-> >         unsigned int bounce_size;
-> >         struct mutex domain_lock;
-> >  };
-> > @@ -314,7 +321,7 @@ static int vduse_dev_set_status(struct vduse_dev *d=
-ev, u8 status)
-> >         return vduse_dev_msg_sync(dev, &msg);
-> >  }
-> >
-> > -static int vduse_dev_update_iotlb(struct vduse_dev *dev,
-> > +static int vduse_dev_update_iotlb(struct vduse_dev *dev, u32 asid,
-> >                                   u64 start, u64 last)
-> >  {
-> >         struct vduse_dev_msg msg =3D { 0 };
-> > @@ -323,8 +330,14 @@ static int vduse_dev_update_iotlb(struct vduse_dev=
- *dev,
-> >                 return -EINVAL;
-> >
-> >         msg.req.type =3D VDUSE_UPDATE_IOTLB;
-> > -       msg.req.iova.start =3D start;
-> > -       msg.req.iova.last =3D last;
-> > +       if (dev->api_version < VDUSE_API_VERSION_1) {
-> > +               msg.req.iova.start =3D start;
-> > +               msg.req.iova.last =3D last;
-> > +       } else {
-> > +               msg.req.iova_v2.start =3D start;
-> > +               msg.req.iova_v2.last =3D last;
-> > +               msg.req.iova_v2.asid =3D asid;
-> > +       }
-> >
-> >         return vduse_dev_msg_sync(dev, &msg);
-> >  }
-> > @@ -436,14 +449,29 @@ static __poll_t vduse_dev_poll(struct file *file,=
- poll_table *wait)
-> >         return mask;
-> >  }
-> >
-> > +/* Force set the asid to a vq group without a message to the VDUSE dev=
-ice */
-> > +static void vduse_set_group_asid_nomsg(struct vduse_dev *dev,
-> > +                                      unsigned int group, unsigned int=
- asid)
-> > +{
-> > +       mutex_lock(&dev->domain_lock);
-> > +       dev->groups[group].as =3D &dev->as[asid];
-> > +       mutex_unlock(&dev->domain_lock);
-> > +}
-> > +
-> >  static void vduse_dev_reset(struct vduse_dev *dev)
-> >  {
-> >         int i;
-> > -       struct vduse_iova_domain *domain =3D dev->domain;
-> >
-> >         /* The coherent mappings are handled in vduse_dev_free_coherent=
-() */
-> > -       if (domain && domain->bounce_map)
-> > -               vduse_domain_reset_bounce_map(domain);
-> > +       for (i =3D 0; i < dev->nas; i++) {
-> > +               struct vduse_iova_domain *domain =3D dev->as[i].domain;
-> > +
-> > +               if (domain && domain->bounce_map)
-> > +                       vduse_domain_reset_bounce_map(domain);
-> > +       }
-> > +
-> > +       for (i =3D 0; i < dev->ngroups; i++)
-> > +               vduse_set_group_asid_nomsg(dev, i, 0);
-> >
-> >         down_write(&dev->rwsem);
-> >
-> > @@ -623,6 +651,29 @@ static union virtio_map vduse_get_vq_map(struct vd=
-pa_device *vdpa, u16 idx)
-> >         return ret;
-> >  }
-> >
-> > +static int vduse_set_group_asid(struct vdpa_device *vdpa, unsigned int=
- group,
-> > +                               unsigned int asid)
-> > +{
-> > +       struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
-> > +       struct vduse_dev_msg msg =3D { 0 };
-> > +       int r;
-> > +
-> > +       if (dev->api_version < VDUSE_API_VERSION_1 ||
-> > +           group >=3D dev->ngroups || asid >=3D dev->nas)
-> > +               return -EINVAL;
-> > +
-> > +       msg.req.type =3D VDUSE_SET_VQ_GROUP_ASID;
-> > +       msg.req.vq_group_asid.group =3D group;
-> > +       msg.req.vq_group_asid.asid =3D asid;
-> > +
-> > +       r =3D vduse_dev_msg_sync(dev, &msg);
-> > +       if (r < 0)
-> > +               return r;
-> > +
-> > +       vduse_set_group_asid_nomsg(dev, group, asid);
-> > +       return 0;
-> > +}
-> > +
-> >  static int vduse_vdpa_get_vq_state(struct vdpa_device *vdpa, u16 idx,
-> >                                 struct vdpa_vq_state *state)
-> >  {
-> > @@ -794,13 +845,13 @@ static int vduse_vdpa_set_map(struct vdpa_device =
-*vdpa,
-> >         struct vduse_dev *dev =3D vdpa_to_vduse(vdpa);
-> >         int ret;
-> >
-> > -       ret =3D vduse_domain_set_map(dev->domain, iotlb);
-> > +       ret =3D vduse_domain_set_map(dev->as[asid].domain, iotlb);
-> >         if (ret)
-> >                 return ret;
-> >
-> > -       ret =3D vduse_dev_update_iotlb(dev, 0ULL, ULLONG_MAX);
-> > +       ret =3D vduse_dev_update_iotlb(dev, asid, 0ULL, ULLONG_MAX);
-> >         if (ret) {
-> > -               vduse_domain_clear_map(dev->domain, iotlb);
-> > +               vduse_domain_clear_map(dev->as[asid].domain, iotlb);
-> >                 return ret;
-> >         }
-> >
-> > @@ -843,6 +894,7 @@ static const struct vdpa_config_ops vduse_vdpa_conf=
-ig_ops =3D {
-> >         .get_vq_affinity        =3D vduse_vdpa_get_vq_affinity,
-> >         .reset                  =3D vduse_vdpa_reset,
-> >         .set_map                =3D vduse_vdpa_set_map,
-> > +       .set_group_asid         =3D vduse_set_group_asid,
-> >         .get_vq_map             =3D vduse_get_vq_map,
-> >         .free                   =3D vduse_vdpa_free,
-> >  };
-> > @@ -858,9 +910,10 @@ static void vduse_dev_sync_single_for_device(union=
- virtio_map token,
-> >                 return;
-> >
-> >         vdev =3D token.group->dev;
-> > -       domain =3D vdev->domain;
-> > -
-> > +       mutex_lock(&vdev->domain_lock);
-> > +       domain =3D token.group->as->domain;
-> >         vduse_domain_sync_single_for_device(domain, dma_addr, size, dir=
-);
-> > +       mutex_unlock(&vdev->domain_lock);
-> >  }
-> >
-> >  static void vduse_dev_sync_single_for_cpu(union virtio_map token,
-> > @@ -874,9 +927,10 @@ static void vduse_dev_sync_single_for_cpu(union vi=
-rtio_map token,
-> >                 return;
-> >
-> >         vdev =3D token.group->dev;
-> > -       domain =3D vdev->domain;
-> > -
-> > +       mutex_lock(&vdev->domain_lock);
-> > +       domain =3D token.group->as->domain;
-> >         vduse_domain_sync_single_for_cpu(domain, dma_addr, size, dir);
-> > +       mutex_unlock(&vdev->domain_lock);
-> >  }
-> >
-> >  static dma_addr_t vduse_dev_map_page(union virtio_map token, struct pa=
-ge *page,
-> > @@ -886,14 +940,18 @@ static dma_addr_t vduse_dev_map_page(union virtio=
-_map token, struct page *page,
-> >  {
-> >         struct vduse_dev *vdev;
-> >         struct vduse_iova_domain *domain;
-> > +       dma_addr_t r;
-> >
-> >         if (!token.group)
-> >                 return DMA_MAPPING_ERROR;
-> >
-> >         vdev =3D token.group->dev;
-> > -       domain =3D vdev->domain;
-> > +       mutex_lock(&vdev->domain_lock);
->
-> The mutex_lock can't be used here since the dma ops might be called in
-> atomic context. And I think we can just remove it since creation and
-> deletion operations of the iova domain are guaranteed not to execute
-> concurrently with I/O operations.
->
+I will fix it in the next version.
 
-That would be great indeed! Can you expand on this, what protects here
-from the moment the two syscalls are issues from userland?
-
+On Fri, Oct 31, 2025 at 12:01=E2=80=AFPM <bot+bpf-ci@kernel.org> wrote:
+>
+>
+> ```
+> commit 4da02b18e2168885350f3935b5ce2f1f52c850ba
+> Author: Jianyun Gao <jianyungao89@gmail.com>
+>
+> libbpf: Add doxygen documentation for bpf_map_* APIs in bpf.h
+>
+> This commit adds Doxygen documentation for 13 bpf_map_* API functions in
+> the libbpf user-space library header.
+>
+> > diff --git a/tools/lib/bpf/bpf.h b/tools/lib/bpf/bpf.h
+> > index e983a3e40..bcb303d95 100644
+> > --- a/tools/lib/bpf/bpf.h
+> > +++ b/tools/lib/bpf/bpf.h
+>
+> [ ... ]
+>
+> > @@ -151,19 +202,452 @@ struct bpf_btf_load_opts {
+> >  LIBBPF_API int bpf_btf_load(const void *btf_data, size_t btf_size,
+> >                           struct bpf_btf_load_opts *opts);
+> >
+> > +/**
+> > + * @brief Update or insert an element in a BPF map.
+> > + *
+> > + * Attempts to store the value referenced by @p value into the BPF map
+> > + * identified by @p fd under the key referenced by @p key. The semanti=
+cs
+> > + * of the operation are controlled by @p flags:
+>
+> [ ... ]
+>
+> > + * @return 0 on success; -1 on failure with errno set appropriately.
+> > + *
+> > + * Possible errno values include (not exhaustive):
+> > + *   - E2BIG:      Key or value size exceeds map definition.
+> > + *   - EINVAL:     Invalid map fd, flags, or unsupported operation for=
+ map type.
+> > + *   - EBADF:      @p fd is not a valid BPF map descriptor.
+> > + *   - ENOENT:     Key does not exist (with BPF_EXIST).
+> > + *   - EEXIST:     Key already exists (with BPF_NOEXIST).
+> > + *   - ENOMEM:     Kernel memory allocation failure.
+> > + *   - EPERM/EACCES: Insufficient privileges or rejected by security p=
+olicy.
+> > + *   - ENOSPC:     Map at capacity (for maps with a max entries limit)=
+.
+> > + *
+> > + */
+> >  LIBBPF_API int bpf_map_update_elem(int fd, const void *key, const void=
+ *value,
+> >                                  __u64 flags);
+>
+> Is the documented return value correct? The implementation uses
+> libbpf_err_errno() which returns negative errno values directly on
+> failure (e.g., -EINVAL, -ENOENT), not -1 with errno set. Looking at
+> bpf_map_update_elem() in bpf.c:
+>
+>   int bpf_map_update_elem(int fd, const void *key, const void *value,
+>                           __u64 flags)
+>   {
+>       ...
+>       ret =3D sys_bpf(BPF_MAP_UPDATE_ELEM, &attr, attr_sz);
+>       return libbpf_err_errno(ret);
+>   }
+>
+> And libbpf_err_errno() in libbpf_internal.h:
+>
+>   static inline int libbpf_err_errno(int ret)
+>   {
+>       return ret < 0 ? -errno : ret;
+>   }
+>
+> So when syscall() returns -1, libbpf_err_errno() converts this to
+> -errno. Should the documentation state "negative error code on failure"
+> instead of "-1 on failure with errno set"?
+>
+> For comparison, the existing batch operation docs in the same file
+> correctly document: "@return 0, on success; negative error code,
+> otherwise (errno is also set to..."
+>
+> > +/**
+> > + * @brief Look up an element in a BPF map by key.
+>
+> [ ... ]
+>
+> > + * @return 0 on success (value populated),
+> > + *         -1 on failure with errno set appropriately:
+> > + *         - ENOENT: The key does not exist in the map.
+>
+> The same return value documentation issue appears in
+> bpf_map_lookup_elem(). The implementation uses libbpf_err_errno() so it
+> returns negative errno, not -1.
+>
+> > +/**
+> > + * @brief Look up (read) a value stored in a BPF map.
+>
+> [ ... ]
+>
+> > + * @return 0 on success; -1 on failure with errno set appropriately:
+> > + *         - ENOENT: No element with the specified key exists.
+>
+> Same issue in bpf_map_lookup_elem_flags() - should document negative
+> errno return, not -1.
+>
+> > +/**
+> > + * @brief Atomically look up and delete a single element from a BPF ma=
+p.
+>
+> [ ... ]
+>
+> > + * @return 0 on success (value copied and element deleted);
+> > + *         -1 on failure with errno set:
+> > + *         - ENOENT: Key not found in the map.
+>
+> Same issue in bpf_map_lookup_and_delete_elem() - returns negative errno.
+>
+> > +/**
+> > + * @brief Atomically look up and delete an element from a BPF map with=
+ extra flags.
+>
+> [ ... ]
+>
+> > + * @return 0 on success; -1 on failure with errno set:
+> > + *         - ENOENT: Key not found.
+>
+> Same issue in bpf_map_lookup_and_delete_elem_flags().
+>
+> > +/**
+> > + * @brief Delete (remove) a single element from a BPF map.
+>
+> [ ... ]
+>
+> > + * @return 0 on success; -1 on failure with errno set appropriately.
+> > + *
+> > + */
+> >  LIBBPF_API int bpf_map_delete_elem(int fd, const void *key);
+>
+> Same issue in bpf_map_delete_elem().
+>
+> > +/**
+> > + * @brief Delete an element from a BPF map with optional flags.
+>
+> [ ... ]
+>
+> > + * @return 0 on success; -1 on failure with errno set:
+> > + *         - ENOENT: Key not found.
+>
+> Same issue in bpf_map_delete_elem_flags().
+>
+> > +/**
+> > + * @brief Iterate over keys in a BPF map by retrieving the key that fo=
+llows a given key.
+>
+> [ ... ]
+>
+> > + * @return 0 on success (next key stored in @p next_key);
+> > + *         -1 on failure with errno set:
+> > + *           - ENOENT: No further keys (end of iteration) or map is em=
+pty (when @p key is NULL).
+>
+> Same issue in bpf_map_get_next_key().
+>
+> All eight of these functions consistently return negative errno values
+> via libbpf_err_errno(), but the documentation states they return -1 with
+> errno set (the traditional C API pattern). This creates inconsistency
+> with the existing batch operation documentation and could mislead users
+> about proper error handling.
+>
+>
+> ```
+>
+> ---
+> AI reviewed your patch. Please fix the bug or email reply why it's not a =
+bug.
+> See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/READM=
+E.md
+>
+> In-Reply-To-Subject: `libbpf: Add doxygen documentation for bpf_map_* API=
+s in bpf.h`
+> CI run summary: https://github.com/kernel-patches/bpf/actions/runs/189619=
+81609
 
