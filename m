@@ -1,125 +1,229 @@
-Return-Path: <linux-kernel+bounces-879405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19543C23097
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 03:37:24 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6690C23093
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 03:37:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19E1B404D3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:35:46 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2C3C3349C41
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:37:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1F192E0418;
-	Fri, 31 Oct 2025 02:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B95A2F60B4;
+	Fri, 31 Oct 2025 02:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TS4QkoE7"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="wIL0q/7z"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E64622301
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E817B2F363E;
+	Fri, 31 Oct 2025 02:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761878141; cv=none; b=QrDFdyRGMAR6WIl9rZIuXXVyQJJQw5e4ofni/0UodBw8ibhm9QDh5FaSb2uoJJsFiBgQYzQjqMvzFdRrHBBvsX15cyVSi/asn1U07lLZ3zDoB0vT874FpSj6lZLnUmzFkS2NJmT3UoyCUVm4oPQMhlRcqZUUHh5VdKBbrfMNzhQ=
+	t=1761878216; cv=none; b=VarJ4n03hCBm0j5x6XFJCU+7GdxOoPmLRtgfNu4yZ1gVirbdwUjWVj4BZ5ERyZhvYDxiNSOJ0xroXEDDAapRdrFkDWiVRT6ZH5w1a+ln3NPk7I56YUhx5ITJ9dEl4K7ovt53nKevM30lBJWz4NCSZHMkhL/dWWUwLUo9w81Y3tU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761878141; c=relaxed/simple;
-	bh=08DR8ByIVln+RtqS/Cdj4+7tEMme3kgNEHW0emoY5+w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NUE6L/hmDc9WR5amOBHrbeTOZanY5wQF4fO8dgulIEwnddCLWDddAQQS7OhFna8cR030nzwR2TRc9djNVG+ze95HbwEJghyPXa5rxaV16FEm1cbfk4SaEosilY3YxBtQLObG9o5fZTvsK2g2aQb9VMyKnqbLdxCME1Z50Nv7RQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TS4QkoE7; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2698384978dso14393135ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 19:35:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761878138; x=1762482938; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9vvQRtDmKDzAuZGXq3vjR0AUmU7rFcWJ57hWGdXPzcg=;
-        b=TS4QkoE7APzFUVmCahEfnSZWRwR6JQhMDRpxOuAg+MU43vug99Wgik81NH7CoZxcbE
-         1+ype0LJaYumidkwUXo1uz/FEksOOJ5KKqLl8lO8Li/1ficXx7p5eZm2dPOptcN4Oi+v
-         rFDz/IJCrCuLnL9R2hd5H75ddxF8DDda0WiSIU5AaWfBqwuHV1wsfFAJuwiOkgNM1OMG
-         EeohUC2mZ5nj/dtB0f6xewdVvZ9Hy6b6nUG5ta4FZ7OQxZWAzwpU4/oa3kJE8S1rlecU
-         URq0OhTonN+xmH33W4qCrkHMqtJCnOtW8o4JQywZz+kvwPkAeZ6Vv+oT/6NmUNQfyZRZ
-         e2bA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761878138; x=1762482938;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9vvQRtDmKDzAuZGXq3vjR0AUmU7rFcWJ57hWGdXPzcg=;
-        b=Uviut/ZPWwg7WKgzJ+GDiZp2S4k48wAakzU3kvDg1ErLELvn9cFgLiGjRlwQDzQa9B
-         VaCND9NF+Zl6msRDnqCzm6TxVUiLMNTaCvsEbJqd2mdlNnVLzFLL0zYyADYWrI6+4Rho
-         l1/98FAQ0YNzooqRpdIRW0Ii9HLKFmNtW/+jUCRRAh6es3pgjHgaYoU3h/se9Mu3P6+d
-         gayQpfOlbOZ43T2MgDlJy5ep9ha1/YLWRuw4CRHTH//kiT+//OaefM6tBKGnwEbZwg+O
-         QK7fnnodQQGTnfgqe4TQZGFoIu/oZC2iiKJpBEdoyNlA9KvrElpt4ypRzeMHyYcG1RG0
-         q86Q==
-X-Gm-Message-State: AOJu0Yxegy/dinm+jP2IURrLZkXAlSvveGEyzAzFXuYDPtQQQmzpqPEY
-	+iWZHpMl2wNWaasDUTJnDHD10zA10QrEduGrSXXq7dzsawCku8FnMhfc
-X-Gm-Gg: ASbGncujN1yjcSND+1vxd+1oS4muE1nz+B1Y8a5HlVYekAVG7sMebFhMAFNwWs9Y4OH
-	MfULkPOuoVXECrWjCoVWHp/wBWO+eczT9aVs2gCTk/PAO1Q2lSmwF8v9ed4RC4Uu4NQDuIw0Wea
-	ZswawoWrMNa9WIdjzQwOv01hJUCBI4mQfxb1T8lBYTaDkG+bGw8wGcLbjH9brv3RmUalJPeefvR
-	WEJGlzGBP4NCqbKA06QnRdLGeasC0un6eQJV3JGG2yLRI9EMKtlHQt+3Ub9bxjJrhgk8Y32IDcu
-	Hj2uxCPT+7I8oG3ke44Rc1HwwHBr5HA+Ml/9e0fKJJQ3pn/APqK3BQNQBBAbOO0eKCkvmv3eN5N
-	bX06RIMigkU8CQfwkYZwHwKmA6DEpTkFg5/EcZxbxR6coficxB7ePEwbEWjDwUMoX24WDD2oD1r
-	TX
-X-Google-Smtp-Source: AGHT+IEluerJf1Yae3TPbqAUr6I78s2WydyYE9qOcEluGuH9xjTI40DkyWuxTHldqCEahsYNqzQsMA==
-X-Received: by 2002:a17:902:d507:b0:263:3e96:8c1b with SMTP id d9443c01a7336-2951a55d380mr29699905ad.33.1761878138054;
-        Thu, 30 Oct 2025 19:35:38 -0700 (PDT)
-Received: from archie.me ([210.87.74.117])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29526871b31sm4626845ad.8.2025.10.30.19.35.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Oct 2025 19:35:37 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id B11164209E4A; Fri, 31 Oct 2025 09:35:35 +0700 (WIB)
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux DRI Development <dri-devel@lists.freedesktop.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: [PATCH] Documentation: gpu: Limit toctree depth
-Date: Fri, 31 Oct 2025 09:35:21 +0700
-Message-ID: <20251031023521.12391-1-bagasdotme@gmail.com>
-X-Mailer: git-send-email 2.51.1
+	s=arc-20240116; t=1761878216; c=relaxed/simple;
+	bh=NUA053BqgqawXS1Qozx//QoxkeT9MqL31R1qOGEfwBw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EQpGaScj09eS+AJxElpLeorX6EtkY85HeyNSRfwPgr1QlZdqLszYRJbQgyU+AVVFivQl5s6u9a8+NF8Z2dwyr+aX4JRnYQ+E+fsA4mtIsTdDqr/TWujacMbcUe5qI+UvFPgEEXGTEzDKgzLm5feObCgv1dzNZRi+qnI4snsh7pQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=wIL0q/7z; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1761878200; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=PyeoLWnDjTpu6Bq9KrYA09g/UfFxetHtGXnQlFKNsX0=;
+	b=wIL0q/7zMLtxHpx5wliNI3yF9CjFjIreOyY1A7jybBAiV0jdm19YYyS6uK0a0EtDk2BRciFPGn/ljf+WnHDL3pbLnqLj6sRFF5TNP/kjBtpWnZEWeysRKPcqH6vdt/+LBgqAccABO/9HivqSvFub/bAbHl/e3XcocGH04wK0WYY=
+Received: from 30.246.176.102(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WrNSDa1_1761878198 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 31 Oct 2025 10:36:39 +0800
+Message-ID: <5a06462a-697d-47b6-b51e-6438005b6130@linux.alibaba.com>
+Date: Fri, 31 Oct 2025 10:36:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=725; i=bagasdotme@gmail.com; h=from:subject; bh=08DR8ByIVln+RtqS/Cdj4+7tEMme3kgNEHW0emoY5+w=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDJksCgLnLxv9frYxp2KjjuGSCxotjKclP8/XbY+ae1bn+ G3OP3mTO0pZGMS4GGTFFFkmJfI1nd5lJHKhfa0jzBxWJpAhDFycAjCRqCsM/6z35a01+mzFKXTW o+DwgchOj70/2B6+T7gRvVkz3C5juxfDX8Gpd+LFf+vvO32pSHb/Q0E+tqht4rNEeY4xTFRzvfF hEjMA
-X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf record: skip synthesize event when open evsel failed
+To: Ian Rogers <irogers@google.com>
+Cc: alexander.shishkin@linux.intel.com, peterz@infradead.org,
+ james.clark@arm.com, leo.yan@linaro.org, mingo@redhat.com,
+ baolin.wang@linux.alibaba.com, acme@kernel.org, mark.rutland@arm.com,
+ jolsa@kernel.org, namhyung@kernel.org, adrian.hunter@intel.com,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ nathan@kernel.org, bpf@vger.kernel.org
+References: <20251023015043.38868-1-xueshuai@linux.alibaba.com>
+ <CAP-5=fWupb62_QKM3bZO9K9yeJqC2H-bdi6dQNM7zAsLTJoDow@mail.gmail.com>
+ <fc75b170-86c1-49b6-a321-7dca56ad824a@linux.alibaba.com>
+ <eed27aaf-fd0a-4609-a30b-68e7c5c11890@linux.alibaba.com>
+ <CAP-5=fVLGRsn7icH1cgmb==f5_D6Vr2CbzirAv7DY4Afjm4O2A@mail.gmail.com>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <CAP-5=fVLGRsn7icH1cgmb==f5_D6Vr2CbzirAv7DY4Afjm4O2A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Currently, gpu docs toctree lists all headings across the documentation.
-Don't spoil these details by limiting the toctree depth to 2.
 
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
- Documentation/gpu/index.rst | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/gpu/index.rst b/Documentation/gpu/index.rst
-index 7dcb15850afdb2..e6207b31f8dbd9 100644
---- a/Documentation/gpu/index.rst
-+++ b/Documentation/gpu/index.rst
-@@ -3,6 +3,7 @@ GPU Driver Developer's Guide
- ============================
- 
- .. toctree::
-+   :maxdepth: 2
- 
-    introduction
-    drm-internals
+在 2025/10/31 01:32, Ian Rogers 写道:
+> On Wed, Oct 29, 2025 at 5:55 AM Shuai Xue <xueshuai@linux.alibaba.com> wrote:
+>>
+>>
+>>
+>> 在 2025/10/24 10:45, Shuai Xue 写道:
+>>>
+>>>
+>>> 在 2025/10/24 00:08, Ian Rogers 写道:
+>>>> On Wed, Oct 22, 2025 at 6:50 PM Shuai Xue <xueshuai@linux.alibaba.com> wrote:
+>>>>>
+>>>>> When using perf record with the `--overwrite` option, a segmentation fault
+>>>>> occurs if an event fails to open. For example:
+>>>>>
+>>>>>     perf record -e cycles-ct -F 1000 -a --overwrite
+>>>>>     Error:
+>>>>>     cycles-ct:H: PMU Hardware doesn't support sampling/overflow-interrupts. Try 'perf stat'
+>>>>>     perf: Segmentation fault
+>>>>>         #0 0x6466b6 in dump_stack debug.c:366
+>>>>>         #1 0x646729 in sighandler_dump_stack debug.c:378
+>>>>>         #2 0x453fd1 in sigsegv_handler builtin-record.c:722
+>>>>>         #3 0x7f8454e65090 in __restore_rt libc-2.32.so[54090]
+>>>>>         #4 0x6c5671 in __perf_event__synthesize_id_index synthetic-events.c:1862
+>>>>>         #5 0x6c5ac0 in perf_event__synthesize_id_index synthetic-events.c:1943
+>>>>>         #6 0x458090 in record__synthesize builtin-record.c:2075
+>>>>>         #7 0x45a85a in __cmd_record builtin-record.c:2888
+>>>>>         #8 0x45deb6 in cmd_record builtin-record.c:4374
+>>>>>         #9 0x4e5e33 in run_builtin perf.c:349
+>>>>>         #10 0x4e60bf in handle_internal_command perf.c:401
+>>>>>         #11 0x4e6215 in run_argv perf.c:448
+>>>>>         #12 0x4e653a in main perf.c:555
+>>>>>         #13 0x7f8454e4fa72 in __libc_start_main libc-2.32.so[3ea72]
+>>>>>         #14 0x43a3ee in _start ??:0
+>>>>>
+>>>>> The --overwrite option implies --tail-synthesize, which collects non-sample
+>>>>> events reflecting the system status when recording finishes. However, when
+>>>>> evsel opening fails (e.g., unsupported event 'cycles-ct'), session->evlist
+>>>>> is not initialized and remains NULL. The code unconditionally calls
+>>>>> record__synthesize() in the error path, which iterates through the NULL
+>>>>> evlist pointer and causes a segfault.
+>>>>>
+>>>>> To fix it, move the record__synthesize() call inside the error check block, so
+>>>>> it's only called when there was no error during recording, ensuring that evlist
+>>>>> is properly initialized.
+>>>>>
+>>>>> Fixes: 4ea648aec019 ("perf record: Add --tail-synthesize option")
+>>>>> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
+>>>>
+>>>> This looks great! I wonder if we can add a test, perhaps here:
+>>>> https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/perf/tests/shell/record.sh?h=perf-tools-next#n435
+>>>> something like:
+>>>> ```
+>>>> $ perf record -e foobar -F 1000 -a --overwrite -o /dev/null -- sleep 0.1
+>>>> ```
+>>>> in a new test subsection for test_overwrite? foobar would be an event
+>>>> that we could assume isn't present. Could you help with a test
+>>>> covering the problems you've uncovered and perhaps related flags?
+>>>>
+>>>
+>>> Hi, Ian,
+>>>
+>>> Good suggestion, I'd like to add a test. But foobar may not a good case.
+>>>
+>>> Regarding your example:
+>>>
+>>>     perf record -e foobar -a --overwrite -o /dev/null -- sleep 0.1
+>>>     event syntax error: 'foobar'
+>>>                          \___ Bad event name
+>>>
+>>>     Unable to find event on a PMU of 'foobar'
+>>>     Run 'perf list' for a list of valid events
+>>>
+>>>      Usage: perf record [<options>] [<command>]
+>>>         or: perf record [<options>] -- <command> [<options>]
+>>>
+>>>         -e, --event <event>   event selector. use 'perf list' to list available events
+>>>
+>>>
+>>> The issue with using foobar is that it's an invalid event name, and the
+>>> perf parser will reject it much earlier. This means the test would exit
+>>> before reaching the part of the code path we want to verify (where
+>>> record__synthesize() could be called).
+>>>
+>>> A potential alternative could be testing an error case such as EACCES:
+>>>
+>>>     perf record -e cycles -C 0 --overwrite -o /dev/null -- sleep 0.1
+>>>
+>>> This could reproduce the scenario of a failure when attempting to access
+>>> a valid event, such as due to permission restrictions. However, the
+>>> limitation here is that users may override
+>>> /proc/sys/kernel/perf_event_paranoid, which affects whether or not this
+>>> test would succeed in triggering an EACCES error.
+>>>
+>>>
+>>> If you have any other suggestions or ideas for a better way to simulate
+>>> this situation, I'd love to hear them.
+>>>
+>>> Thanks.
+>>> Shuai
+>>
+>> Hi, Ian,
+>>
+>> Gentle ping.
+> 
+> Sorry, for the delay. I was trying to think of a better way given the
+> problems you mention and then got distracted. I wonder if a legacy
+> event that core PMUs never implement would be a good candidate to
+> test. For example, the event "node-prefetch-misses" is for "Local
+> memory prefetch misses" but the memory controller tends to be a
+> separate PMU and this event is never implemented to my knowledge.
+> Running this locally I see:
+> 
+> ```
+> $ perf record -e node-prefetch-misses -a --overwrite -o /dev/null -- sleep 0.1
+> Lowering default frequency rate from 4000 to 1750.
+> Please consider tweaking /proc/sys/kernel/perf_event_max_sample_rate.
+> Error:
+> Failure to open event 'cpu_atom/node-prefetch-misses/' on PMU
+> 'cpu_atom' which will be removed.
+> No fallback found for 'cpu_atom/node-prefetch-misses/' for error 2
+> Error:
+> Failure to open event 'cpu_core/node-prefetch-misses/' on PMU
+> 'cpu_core' which will be removed.
+> No fallback found for 'cpu_core/node-prefetch-misses/' for error 2
+> Error:
+> Failure to open any events for recording.
+> perf: Segmentation fault
+>     #0 0x55a487ad8b87 in dump_stack debug.c:366
+>     #1 0x55a487ad8bfd in sighandler_dump_stack debug.c:378
+>     #2 0x55a4878c6f94 in sigsegv_handler builtin-record.c:722
+>     #3 0x7f72aae49df0 in __restore_rt libc_sigaction.c:0
+>     #4 0x55a487b57ef8 in __perf_event__synthesize_id_index
+> synthetic-events.c:1862
+>     #5 0x55a487b58346 in perf_event__synthesize_id_index synthetic-events.c:1943
+>     #6 0x55a4878cb2a3 in record__synthesize builtin-record.c:2150
+>     #7 0x55a4878cdada in __cmd_record builtin-record.c:2963
+>     #8 0x55a4878d11ca in cmd_record builtin-record.c:4453
+>     #9 0x55a48795b3cc in run_builtin perf.c:349
+>     #10 0x55a48795b664 in handle_internal_command perf.c:401
+>     #11 0x55a48795b7bd in run_argv perf.c:448
+>     #12 0x55a48795bb06 in main perf.c:555
+>     #13 0x7f72aae33ca8 in __libc_start_call_main libc_start_call_main.h:74
+>     #14 0x7f72aae33d65 in __libc_start_main_alias_2 libc-start.c:128
+>     #15 0x55a4878acf41 in _start perf[52f41]
+> Segmentation fault
+> ```
 
-base-commit: 6fb7f298883246e21f60f971065adcb789ae6eba
--- 
-An old man doll... just what I always wanted! - Clara
 
+Hi, Ian，
+
+Is node-prefetch-misses a platform specific event? Running it on ARM Yitian 710
+and Intel SPR platform, I see:
+
+$sudo perf record -e node-prefetch-misses
+Error:
+The node-prefetch-misses event is not supported.
+
+Thanks.
+Shuai
 
