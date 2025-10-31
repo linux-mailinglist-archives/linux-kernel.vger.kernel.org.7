@@ -1,129 +1,155 @@
-Return-Path: <linux-kernel+bounces-879786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F38D9C24068
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:08:55 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 921EBC24079
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:09:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 82FBA4F126D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:06:23 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 853434F4929
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:06:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4B1330B13;
-	Fri, 31 Oct 2025 09:05:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B323314D2;
+	Fri, 31 Oct 2025 09:05:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KPZsEXln"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vun81wAc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555CB32E755
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:05:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27DA6330D42;
+	Fri, 31 Oct 2025 09:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761901544; cv=none; b=lVfw2u/Y81AnonFnXoLZMyUptliDwyO/ZrwmnlsaxIb5PEjaAemwycP1p4C/kNo7lOlC3LSDt/XR8J5R6WAW/SqLjhuko26ARMu/peqHYlNBvJlxjmu6cBvwIJ+v13UhQBSdHWaruXxbgro9+aR0vQoq5wWXunROStOFepV85sQ=
+	t=1761901551; cv=none; b=cjnf4/9PpaafOYWbeHh6SyDTgOpLGW+Tn7O9TVG6a41QYQXAi/lN0QHbhx011reETBODNtXJn5ebFdulPwdO+GjZCta6/Y31vdTK5ge+eYdIHGFPfmCCHVZGmTZncISbePhlC21IYWDAyU+iZQAt4ombXyLImicJVBeRU36aKNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761901544; c=relaxed/simple;
-	bh=3ngI3i1BG0C9azbqBN/4q7nJ2yCSJxmqD7ABvsTPKbo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=i7MEWLwrYIygKgnVL9T4MyJTKAzApszflvMLsUJlIouD27QLQjdRCCpaTaAjfBGD+K9NSDZ6emSsviSjOV+FJick6p690wqwieOcjRHB1UqbvVTo4ddj2wnjaj112beQ0Tm9eo1VVOidfwgjLMDcXNXpLgVS2LfkAO6UT9PdjKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KPZsEXln; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-475ca9237c2so11108095e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:05:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761901541; x=1762506341; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=m97kyP3HTS70kAnw3EPRct0ZUapkHpzYxU+r81cO+AM=;
-        b=KPZsEXlnVmIZuIwDkpzhvf+Nnez81AXn7aDwJVAyvcTzYtE3IjUfgw5IGQbMc1W4p9
-         iVbX/6DOnCKWDbjl64BkreB5ihQVdS7Q2kUh6kx3Hy/gra7RQ2gQ97fAdsxRVFDS20UI
-         p2vcv5a4/xSyIbVWDuS+eW2a7oqtQBCBiX45zaVFfVNi/afiiD8rbSaf8OB7JltOzEtn
-         DzUjsJ3hTrpID4P/qoAk57n+VHagqMlG0Mbkamihcp4QL3bTONzYcxPHH27S8srR6ZUR
-         3jlFPfEPaI5LRNSPR+8q8cFFkC8Pu9Jm2upMZ0Md6Yp1ngtUtjowUZox0LPEGz+YvSkR
-         GTCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761901541; x=1762506341;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m97kyP3HTS70kAnw3EPRct0ZUapkHpzYxU+r81cO+AM=;
-        b=dPW31Zvd5epj7OlgLt0rc2hMB5KbguNoLKbdnrEKWrZOMY5SvJHRfjgPbnZNEb8nxH
-         UNjHghpMGBl8rBKYO47UIUikT002MNtf5ccnppEs9OWancd7unOzB6yunUQ7PrzWlaLm
-         q2GX6s70LXoyiUKPxGPL0oMF8m6XQXub8+04QvqM7jl0F24GyPoZoRr/cZSPivyydaGW
-         KAmfd3M+6ZnMpSESaOWLzVwRe0b9qqfCmLDMHGLEGxFvTvFasVRWASuT8g/68wxPu9cV
-         QyyoyAIZ7t2+0Qx8qXX5FsOUDV4HaUpFO70sRPQXckoBY4z/qWE47fuP0ABznpLqUy4o
-         B0Fw==
-X-Gm-Message-State: AOJu0YwJ/SoZIOxm4A6Qcb6Cr/mKpA8lIoie2p9Yws+MbvgOSTst//7Y
-	3yJbF7i2DciwPvxK0TTWBW9m8CD3ztM349gzBSFKLXoyYsX5CSpD3kHK
-X-Gm-Gg: ASbGncuHFTl8MVMADLIRpJPy5SWx+hDvIqbZ9UXGJmkY8wixgr/eEBpvC1xSGcRbM1Z
-	s3xgKGco7y3nSJpTp2Kv2lE6ePA4S9zrPA35GTnwc7RXud3Cb6E9bUw7QRxOxARJbNHkQOo0d1V
-	iMy9hEzE0kksw4Y97scdSZ19Iucrk341npcFmSFGAq+YomHsVV+dke3IAzajryLQAdS1/OK4XqD
-	i600ajlfxRj4Ku8zcX+WZUFj2V+1g4QLzz9jtLJ69HdcMuNgavJ5l+QJofcblnalwHodJFfDFVx
-	tD+mdZxq5ONbJvhTaeLwV0JY48bLCqtTMhTBDOU+28VfWaCLjUq6SJkFRoJ7aIDauLmgLF1z4tT
-	vTd+pf8KXD259JMAtLUniyeWT1Bn9473mk8sDUnnT/z6UNPWynHqlykmHauB5F8R9RaeBJ+jNxD
-	ZfhnWVUuXDukpkj1NuN5X8kNwyrEeZXaOgzW1iDH6KkNcg5W9sgRYX
-X-Google-Smtp-Source: AGHT+IHaEdfxWwYT2zJAyLRZyUAgi4BdK3quhN7NkvDh1BylxO25NofIDcQ0FfuX8++X59NClzV6hw==
-X-Received: by 2002:a05:600c:1e06:b0:477:1be1:9afe with SMTP id 5b1f17b1804b1-477307b879bmr22506295e9.9.1761901540395;
-        Fri, 31 Oct 2025 02:05:40 -0700 (PDT)
-Received: from ipedrosa-thinkpadx1carbongen12.rmtes.csb ([5.225.139.156])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-477289adaf8sm93454475e9.7.2025.10.31.02.05.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 02:05:39 -0700 (PDT)
-From: Iker Pedrosa <ikerpedrosam@gmail.com>
-Date: Fri, 31 Oct 2025 10:05:19 +0100
-Subject: [PATCH v4 3/3] MAINTAINERS: Add entry for Sitronix ST7920 driver
+	s=arc-20240116; t=1761901551; c=relaxed/simple;
+	bh=qFNmSQUeXMaY7XvP4sAPgKkJ8Ev3XCXyw2q+qbAZDIU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YfCxXx7NTa9CeSPi6WgXJYPemJqGtpSNxjRjV09JT0P7OPrZAoCsd2Frim5Ti3B4pJ/RNsJMvltMlnp84iCi0Lp3FJPvACp1SXhZJthYRzAB1NOkKRnhD7UV7AbhWMuGyqoJ9SI47E7aXPdzebaB8GbxdDrIiQ+2moFMKmvvwyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vun81wAc; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761901550; x=1793437550;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=qFNmSQUeXMaY7XvP4sAPgKkJ8Ev3XCXyw2q+qbAZDIU=;
+  b=Vun81wAcy+RcxGoGoHOb4w/NwL2uJtMlUTm2z1ByhQTSFBItC2aNdrpq
+   92T/FKqpDQvdnvgjxcwIC6YlCgxGoz/emZ7hk6uD2+XjR94RWwxRJ6xU1
+   gsLglw13wJmxN9Df0KMgrS85Svv8VwMB53dNV3/DmL1ZDa101+rWp3Qti
+   gLiR4igQ217qGCDrSY/V40DPCek8EglRr7vR5cFEYMB0eazMRSoxZTa9A
+   RoeD0Rqpz/PHXh7xvH/Vbw2buzuDd9PosvTCCYTYSrOwvyo8qutvw9uU9
+   eDCd+hl1zO5a7vGJ0tBLZvmovR5kZhlFvq08MxGySBA3emcUTzTShXNvN
+   A==;
+X-CSE-ConnectionGUID: 65a9MG8gRdOtC5sbjJs+cQ==
+X-CSE-MsgGUID: I9UlVlnuTOmmmz7S0CnGyg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="74735559"
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="74735559"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 02:05:49 -0700
+X-CSE-ConnectionGUID: 74SstBqUTA+jLaMpUFXqYw==
+X-CSE-MsgGUID: XHQQUxgjRVKQmbMphXDwOA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="186121992"
+Received: from binbinwu-mobl.ccr.corp.intel.com (HELO [10.124.240.28]) ([10.124.240.28])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 02:05:41 -0700
+Message-ID: <18ecf186-c3b9-4027-a54b-7f3e5ba9f484@linux.intel.com>
+Date: Fri, 31 Oct 2025 17:05:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251031-st7920-v4-3-35291f8076b2@gmail.com>
-References: <20251031-st7920-v4-0-35291f8076b2@gmail.com>
-In-Reply-To: <20251031-st7920-v4-0-35291f8076b2@gmail.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Javier Martinez Canillas <javierm@redhat.com>, 
- Iker Pedrosa <ikerpedrosam@gmail.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- devicetree@vger.kernel.org
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 20/28] KVM: TDX: Assert that mmu_lock is held for write
+ when removing S-EPT entries
+To: Sean Christopherson <seanjc@google.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ Tianrui Zhao <zhaotianrui@loongson.cn>, Bibo Mao <maobibo@loongson.cn>,
+ Huacai Chen <chenhuacai@kernel.org>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>, Anup Patel <anup@brainfault.org>,
+ Paul Walmsley <pjw@kernel.org>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+ kvm@vger.kernel.org, loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, kvm-riscv@lists.infradead.org,
+ linux-riscv@lists.infradead.org, x86@kernel.org, linux-coco@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>,
+ Kai Huang <kai.huang@intel.com>, Michael Roth <michael.roth@amd.com>,
+ Yan Zhao <yan.y.zhao@intel.com>, Vishal Annapurve <vannapurve@google.com>,
+ Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ Ackerley Tng <ackerleytng@google.com>
+References: <20251030200951.3402865-1-seanjc@google.com>
+ <20251030200951.3402865-21-seanjc@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <20251030200951.3402865-21-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Add Iker as ST7920 driver maintainer.
 
-Signed-off-by: Iker Pedrosa <ikerpedrosam@gmail.com>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 5ddf37f0acc960039422ef988cadfa7176972fc5..79b8a277e38b55ebcff05450d6c565c0d87c6b51 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7861,6 +7861,13 @@ T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
- F:	Documentation/devicetree/bindings/display/sitronix,st7735r.yaml
- F:	drivers/gpu/drm/sitronix/st7735r.c
- 
-+DRM DRIVER FOR SITRONIX ST7920 LCD DISPLAYS
-+M:	Iker Pedrosa <ikerpedrosam@gmail.com>
-+S:	Maintained
-+T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
-+F:	Documentation/devicetree/bindings/display/sitronix,st7920.yaml
-+F:	drivers/gpu/drm/sitronix/st7920.c
-+
- DRM DRIVER FOR SOLOMON SSD130X OLED DISPLAYS
- M:	Javier Martinez Canillas <javierm@redhat.com>
- S:	Maintained
+On 10/31/2025 4:09 AM, Sean Christopherson wrote:
+> Unconditionally assert that mmu_lock is held for write when removing S-EPT
+> entries, not just when removing S-EPT entries triggers certain conditions,
+> e.g. needs to do TDH_MEM_TRACK or kick vCPUs out of the guest.
+> Conditionally asserting implies that it's safe to hold mmu_lock for read
+> when those paths aren't hit, which is simply not true, as KVM doesn't
+> support removing S-EPT entries under read-lock.
+>
+> Only two paths lead to remove_external_spte(), and both paths asserts that
+                                                                 ^
+                                                               assert
+> mmu_lock is held for write (tdp_mmu_set_spte() via lockdep, and
+> handle_removed_pt() via KVM_BUG_ON()).
+>
+> Deliberately leave lockdep assertions in the "no vCPUs" helpers to document
+> that wait_for_sept_zap is guarded by holding mmu_lock for write, and keep
+> the conditional assert in tdx_track() as well, but with a comment to help
+> explain why holding mmu_lock for write matters (above and beyond why
+> tdx_sept_remove_private_spte()'s requirements).
+>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
--- 
-2.51.0
+Reviewed-by: Binbin Wu <binbin.wu@linux.intel.com>
+
+> ---
+>   arch/x86/kvm/vmx/tdx.c | 7 +++++++
+>   1 file changed, 7 insertions(+)
+>
+> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+> index 63d4609cc3bc..999b519494e9 100644
+> --- a/arch/x86/kvm/vmx/tdx.c
+> +++ b/arch/x86/kvm/vmx/tdx.c
+> @@ -1715,6 +1715,11 @@ static void tdx_track(struct kvm *kvm)
+>   	if (unlikely(kvm_tdx->state != TD_STATE_RUNNABLE))
+>   		return;
+>   
+> +	/*
+> +	 * The full sequence of TDH.MEM.TRACK and forcing vCPUs out of guest
+> +	 * mode must be serialized, as TDH.MEM.TRACK will fail if the previous
+> +	 * tracking epoch hasn't completed.
+> +	 */
+>   	lockdep_assert_held_write(&kvm->mmu_lock);
+>   
+>   	err = tdh_mem_track(&kvm_tdx->td);
+> @@ -1762,6 +1767,8 @@ static void tdx_sept_remove_private_spte(struct kvm *kvm, gfn_t gfn,
+>   	gpa_t gpa = gfn_to_gpa(gfn);
+>   	u64 err, entry, level_state;
+>   
+> +	lockdep_assert_held_write(&kvm->mmu_lock);
+> +
+>   	/*
+>   	 * HKID is released after all private pages have been removed, and set
+>   	 * before any might be populated. Warn if zapping is attempted when
 
 
