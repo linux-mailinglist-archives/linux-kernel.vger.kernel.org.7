@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-880019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4891C24AC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:02:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CEBFC24ABE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:02:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 789F14F2F45
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:01:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 735CA1893E70
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1215D34403B;
-	Fri, 31 Oct 2025 11:01:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF2A3446B4;
+	Fri, 31 Oct 2025 11:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yurGqlK2"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d3yCgYd0"
 Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86CD9334C29
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 11:01:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0D903446B0
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 11:01:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761908478; cv=none; b=h9NWHcDM6nMJLxIjqxu2DbBfvEvP6XQrhixGJBdH/5k0DAl9vGEhcU9SvL7vO22cNuXO1NieHG3O5uRTc8LKMXb9IKGh05sZPZlM5BTqYzvW6nSpjPwMkIYph/FCVFopcK08MkBt/aOa1VuQaosKK25r4JBpaESxo43Z6u+42rg=
+	t=1761908483; cv=none; b=J82bVoJrurzTiAH/3rmNK/eZ9RpogZ4XD6shE6ET0LUI5xka23oI/9L3aG1aJX4b3lNLVKTl7bwaRHrKUGGHZL8zGUVn2SX4rWJPfS2NRW7DRitSJ3TRzDX7ZiP91dE39OXexlyEc0bPK+vkqJzq8ynQLI8vco1I2+bPtXQ07Ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761908478; c=relaxed/simple;
-	bh=vo0fv5TAORpmA4ondFTRITepDO0rRPiPHhnW/tjjfag=;
+	s=arc-20240116; t=1761908483; c=relaxed/simple;
+	bh=3kWXHynU6RKaZXdZvP/SpRNrIqnE/hq3aZgMVd4hc+g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XhtSl0t0So9GAH/odeMGk20YoVK1/q98j2/LZcorbrmMhTHHRYG023YJRrEprmX0KZE+jFq2S2nMvXaruaVy3t+sy3LUHZL9z1pvJehg9CKGJKvrN04v8dHV/oGIbK1F7qwm0eHY692p+WPPLsVqgYhYj0bWVbwEJA/8d7LR7vU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yurGqlK2; arc=none smtp.client-ip=209.85.167.52
+	 MIME-Version; b=u2pmtBdLKE1qpYRakzq0avLaFeZlTNsK2mnVNO5J4AaCfcWVbyWH89/I1r0pQADpDmytaeE2lZ6KgzGN4y9e3lT/D8FEHoJ3XuiL0h6eFjK1nIyMQxhrYJA2qZVnCJ3t6ovp8IHTCdYLQx7pPR9D5Dce8E3o7RPaLDLYBmqHtLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d3yCgYd0; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-592f600acb3so2969272e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 04:01:16 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-592f7e50da2so2722054e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 04:01:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761908475; x=1762513275; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1761908480; x=1762513280; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YGqVXPX174dI1TmkMpyvoDpe58SAFIHrUIhMpLUiKvg=;
-        b=yurGqlK2vO1HSb3RSvLfeNOgoR6zzC6m0eCZMCFIQaGAdtL91hCrCSbD9ve8kXSe8P
-         B/9+3CriDcNV93++G44u2/RF1ewS0xmIW2tp8e0A/UA1jfkPQTVMkklzdaGsjhWRmmKo
-         JHtx4c4+frmOXBYAc7Y3PLtbiFpB0p74+GACNE1VElFmyuS417apDLrbhvLo76CRYBF/
-         /2BmowZvCCivq+HeZRFt7zn3KT1rKdokIs8MCogdA1W/3HsxbZb0wh6d6lKMmsq2roXj
-         mlox+UWZ8ui6B7/Dv1c5d/xSuoX9071lifuABfdBtmHUeuVolXeL98xcAAP5ZVy/Pt5+
-         /RAQ==
+        bh=K9aIatXLlfj49i3F2CejCYzrKCiTw8TnzOpfYBQFqbQ=;
+        b=d3yCgYd0wz58saSE5FncSWeqndNe4gTjNQGMVXL2R+9LE0b7vNBRqiRLBfYpEI0khw
+         Q178Be4RkAj9fCGEo0udMlFnez5P/ZwKCbtR5yyUM7C3c/UXt5fMd7MjtqXyiKi0Xv0f
+         lUoFYqXEq3HWbygfegiSh/I/HMdqG0cT/ST4PiU72V2Y21KM/xOV5kP6372OlTRgMWBY
+         ZfMGkPQGVvQ4GVrK4tYq2m+ZMdOJ7GBG+3gZmPFmEOkOgWPiLAhePHjNVF+Qsi6Tzwgm
+         Pc6h65eKgBVVtnE8opsNh3i0WuiJAcV2K7Qi5k/yVAEBMyfCyVUobQxQIwg3CmN675H0
+         IQMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761908475; x=1762513275;
+        d=1e100.net; s=20230601; t=1761908480; x=1762513280;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YGqVXPX174dI1TmkMpyvoDpe58SAFIHrUIhMpLUiKvg=;
-        b=fbNLLVeWm38FJhd1JjthzucOffGt7ml1aRfS17LCPBKXbi51vKsv1E1AEigHk75zDv
-         B/rcF/w8NM9rS8P8obPcmSJEQVE84QyJpL+2D7SrXl/kKzqe4W+Kk9NrshpKbGP/fe1D
-         2LNw5YCUHAyuuNgB0FwAIZihlRlTLajxEi8KacxU8bzmyanTOKwm5B4UoSRP9Hd1DboW
-         yJnZjnxvbWxJyc59sRXxtV0fjla6wJ4GuyX1stNZijTzGaFKiMBrrB5rXXq5LpQk89bp
-         0QQ3r6Y8gZVcyrxSDWHboJzDSVjZl/ZZb81oEmaDkI7k2soPvvIITdewYJ68Y3BfTMIA
-         S1ZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVX5Wa0eFnOgYW1Tq5ur4TF9mVEpx5+8YUp1bqO1tQZ+6Db3AvThNyyObrOP+6P+p5v425klbrPVr9FbZU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrZQBK/MkR36rVACbNIqi+VWz8JMePZG+H622abgPqvrkBpWVJ
-	8OedQ4ihIDEID+KH1P3gn+TkXpZQTdvXeaUiBegk/gihdXWdwIJNQFmFng0wxX9MqFQ=
-X-Gm-Gg: ASbGncuagZA8zSutHA3WYAVGla/3dyKnhZYiFWaFpXEhlgoTn5iCqFQ0yGd4vCpuu9C
-	hK8ednl33a+sczHU1yG/Hc78wtRjzs+EYyjbl4Tj6IkGR9TGNfzwL1HICPpwPHPM8OMUbJYbDsC
-	CQnlOH3W4CaWTjZE4VSsz9tW9vRnpc6ndpl7iDKRI/ks4hwlUn2d5+jFibkiPiLcu8HTEiCWmzO
-	rSznQlpn4dGza8MXDAMhRlS/7VIY25b+r30N9+n9upTqAP2RfYK0D1uE8bpyiyET3XOoY4QUOca
-	+1xXzyJbZ9UFuhOcpSOxOTNwNHCCtd+bgVdTd7XAXUKmYhjIgQcvBCGxgzZQacX9xcoAYDmDHC7
-	9W2eNd0q/z0E3GdUUvqjh8VL9+ZOI9XkV3itweSLZ+SOlhF6KOeZmb9R09F3qJEiri/eTqjYb6E
-	vcWFgLj4Bn+srpmCqhAGNMIDAusn6x4hxwDnPcEkfV0A1Q/jBj29sPo7I9/4BB
-X-Google-Smtp-Source: AGHT+IEJlHlKeVgDybBDloCVX/b/55G16rZzd9wktKjKbh8UnSTpKxD5S3XdnZkoiLNP4Lmabyt7SQ==
-X-Received: by 2002:a05:6512:3c92:b0:590:6e62:10ca with SMTP id 2adb3069b0e04-5941d57f50fmr1302080e87.57.1761908474417;
-        Fri, 31 Oct 2025 04:01:14 -0700 (PDT)
+        bh=K9aIatXLlfj49i3F2CejCYzrKCiTw8TnzOpfYBQFqbQ=;
+        b=KuvPuytK4LyUh3902nYaHlR/sPQ1pKer4V/bchzm2e2C1uoZD0sOmCa1H1irWPGBbH
+         9euzV/dul0SgA/h1Rwk57r8KNWLYybKdLTt6WENQXaFkgvlDUXMtXfk1YW3MKGst2SNw
+         P1CPQiF57ofT3rulrjeS8xGB3Grk5qpdgzkUBuab1xABSvat6wJzZPs51MkRs5cRsXP+
+         NlfLA2hr+hfm5ytvDpRpkTWd4RCJbpACoRuQPdIagMhWpd7WX6edwdtAah5hgIGkx1Hf
+         NUEzcNhrjqxIHdzuiSowM/2QYtL6b++oyeRF4kHX5HoHT9J00+l4HABWp3m44JGwZvLU
+         vTAg==
+X-Forwarded-Encrypted: i=1; AJvYcCX/jzAeUjMwI9QWAViqC7HyuGllpxmdgiMU1ihlLItXvSjk2FbvL+zGdh6TYD7cAckEmEpKifSi+GFynZ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0OaXfx3hpq1uzf7XxY/lYzA8jqT088rAzv+6W0l0iox1vkcLA
+	qhlKWxxeF/frsTWqbf1ywuRe6FdHL/bNH6/fhTo7LpsY42KFLJygwAwg2g/vZn3WEu4=
+X-Gm-Gg: ASbGncuDOiiD5VxN9tJpvHE8i5i64Ft03yl7AeG8ri34YwtNtLJpHH07fE5ZoZGXz5V
+	/Trt/FrK6LGwMSljeqSot+WwiyHy3XyYQaTnOchXx8LhcX1gGqqxT9R7c8pv/wl54Ua27z3Rv1b
+	dn0KPQMMdvwFAB6ISvZx1YNdidpRkOjyHeWdgaVs7t9KtUr1FZ2irNMil13Q438FQPexNrXdz+6
+	s3HDxMVjivMka4WIdjwC6ccncX7fmUICLWzD5UOvFn1WqZtnxYCTflaNxmYg3yPkDX88fl4M8fS
+	yka3gZQHkqI1WZQubsBgZW3g6lkvMLtRVcj5SebJ2YeE3xJZcmQCWmGsRFOM1lsm/XQ4WYmGggF
+	QDyAIJnvZqi86HuPuTvd/i8pNJVN3Z4+WeQLfxfBzOiYZ7sRM+7GHYYzAq4on8qCjePAmYR+XW9
+	T+Q2pYFPrplPSx4eqNf8qsnQM959TtaeGW0FNClpCIz8/1KWFzbNBOtRglfbHk
+X-Google-Smtp-Source: AGHT+IEvmMm+SHsTsxbA+wx4szbKJtnGkNvIOtF29kV79GhvswIxNRBqKo3y48TrcsBUClr8bRcn2g==
+X-Received: by 2002:a05:6512:b92:b0:592:fc90:f771 with SMTP id 2adb3069b0e04-59416d06f68mr2302670e87.1.1761908477406;
+        Fri, 31 Oct 2025 04:01:17 -0700 (PDT)
 Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5941f5bbaa9sm432721e87.77.2025.10.31.04.01.12
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5941f5bbaa9sm432721e87.77.2025.10.31.04.01.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 04:01:13 -0700 (PDT)
+        Fri, 31 Oct 2025 04:01:15 -0700 (PDT)
 From: Ulf Hansson <ulf.hansson@linaro.org>
 To: "Rafael J . Wysocki" <rafael@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>
@@ -87,9 +87,9 @@ Cc: Mark Rutland <mark.rutland@arm.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [PATCH v3 1/2] smp: Introduce a helper function to check for pending IPIs
-Date: Fri, 31 Oct 2025 12:00:57 +0100
-Message-ID: <20251031110106.62394-2-ulf.hansson@linaro.org>
+Subject: [PATCH v3 2/2] pmdomain: Extend the genpd governor for CPUs to account for IPIs
+Date: Fri, 31 Oct 2025 12:00:58 +0100
+Message-ID: <20251031110106.62394-3-ulf.hansson@linaro.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251031110106.62394-1-ulf.hansson@linaro.org>
 References: <20251031110106.62394-1-ulf.hansson@linaro.org>
@@ -101,92 +101,137 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When governors used during cpuidle try to find the most optimal idle state
-for a CPU or a group of CPUs, they are known to quite often fail. One
-reason for this is, that they are not taking into account whether there has
-been an IPI scheduled for any of the CPUs that are affected by the selected
-idle state.
+When the genpd governor for CPUs, tries to select the most optimal idle
+state for a group of CPUs managed in a PM domain, it fails far too often.
 
-To enable pending IPIs to be taken into account for cpuidle decisions,
-introduce a new helper function, cpus_peek_for_pending_ipi().
+On a Dragonboard 410c, which is an arm64 based platform with 4 CPUs in one
+cluster that is using PSCI OS-initiated mode, we can observe that we often
+fail when trying to enter the selected idle state. This is certainly a
+suboptimal behaviour that leads to many unnecessary requests being sent to
+the PSCI FW.
 
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+A simple dd operation that reads from the eMMC, to generate some IRQs and
+I/O handling helps us to understand the problem, while also monitoring the
+rejected counters in debugfs for the corresponding idle states of the genpd
+in question.
+
+ Menu governor:
+cat /sys/kernel/debug/pm_genpd/power-domain-cluster/idle_states
+State          Time Spent(ms) Usage      Rejected   Above      Below
+S0             1451           437        91         149        0
+S1             65194          558        149        172        0
+dd if=/dev/mmcblk0 of=/dev/null bs=1M count=500
+524288000 bytes (500.0MB) copied, 3.562698 seconds, 140.3MB/s
+cat /sys/kernel/debug/pm_genpd/power-domain-cluster/idle_states
+State          Time Spent(ms) Usage      Rejected   Above      Below
+S0             2694           1073       265        892        1
+S1             74567          829        561        790        0
+
+ The dd completed in ~3.6 seconds and rejects increased with 586.
+
+ Teo governor:
+cat /sys/kernel/debug/pm_genpd/power-domain-cluster/idle_states
+State          Time Spent(ms) Usage      Rejected   Above      Below
+S0             4976           2096       392        1721       2
+S1             160661         1893       1309       1904       0
+dd if=/dev/mmcblk0 of=/dev/null bs=1M count=500
+524288000 bytes (500.0MB) copied, 3.543225 seconds, 141.1MB/s
+cat /sys/kernel/debug/pm_genpd/power-domain-cluster/idle_states
+State          Time Spent(ms) Usage      Rejected   Above      Below
+S0             5192           2194       433        1830       2
+S1             167677         2891       3184       4729       0
+
+ The dd completed in ~3.6 seconds and rejects increased with 1916.
+
+The main reason to the above problem is pending IPIs for one of the CPUs
+that is affected by the idle state that the genpd governor selected. This
+leads to that the PSCI FW refuses to enter it. To improve the behaviour,
+let's start to take into account pending IPIs for CPUs in the genpd
+governor, hence we fallback to use the shallower per CPU idle state.
+
+ Re-testing with this change shows a significant improved behaviour.
+
+ - Menu governor:
+cat /sys/kernel/debug/pm_genpd/power-domain-cluster/idle_states
+State          Time Spent(ms) Usage      Rejected   Above      Below
+S0             2556           878        19         368        1
+S1             69974          596        10         152        0
+dd if=/dev/mmcblk0 of=/dev/null bs=1M count=500
+524288000 bytes (500.0MB) copied, 3.522010 seconds, 142.0MB/s
+cat /sys/kernel/debug/pm_genpd/power-domain-cluster/idle_states
+State          Time Spent(ms) Usage      Rejected   Above      Below
+S0             3360           1320       28         819        1
+S1             70168          710        11         267        0
+
+ The dd completed in ~3.5 seconds and rejects increased with 10.
+
+ - Teo governor
+cat /sys/kernel/debug/pm_genpd/power-domain-cluster/idle_states
+State          Time Spent(ms) Usage      Rejected   Above      Below
+S0             5145           1861       39         938        1
+S1             188887         3117       51         1975       0
+dd if=/dev/mmcblk0 of=/dev/null bs=1M count=500
+524288000 bytes (500.0MB) copied, 3.653100 seconds, 136.9MB/s
+cat /sys/kernel/debug/pm_genpd/power-domain-cluster/idle_states
+State          Time Spent(ms) Usage      Rejected   Above      Below
+S0             5260           1923       42         1002       1
+S1             190849         4033       52         2892       0
+
+ The dd completed in ~3.7 seconds and rejects increased with 4.
+
+Note that, the rejected counters in genpd are also being accumulated in the
+rejected counters that are managed by cpuidle, yet on a per CPU idle states
+basis. Comparing these counters before/after this change, through cpuidle's
+sysfs interface shows the similar improvements.
+
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 ---
 
 Changes in v3:
-	- Renamed the helper function and updated its description.
-	- Updated the commit message.
+	- Use the new name of the helper function.
+	- Minor updates to the commit message.
 
 Changes in v2:
-	- Implemented a common function, rather than making it arch-specific. As
-	suggested by Thomas and Marc.
-	- Renamed the function to indicate that it doesn't provide correctness.
-	- Clarified function description and commit message.
+	- Use the new name of the helper function.
+	- Re-test and update the statistics in the commit message.
 
 ---
- include/linux/smp.h |  5 +++++
- kernel/smp.c        | 24 ++++++++++++++++++++++++
- 2 files changed, 29 insertions(+)
+ drivers/pmdomain/governor.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/smp.h b/include/linux/smp.h
-index 18e9c918325e..91d0ecf3b8d3 100644
---- a/include/linux/smp.h
-+++ b/include/linux/smp.h
-@@ -168,6 +168,7 @@ int smp_call_function_any(const struct cpumask *mask,
+diff --git a/drivers/pmdomain/governor.c b/drivers/pmdomain/governor.c
+index 39359811a930..a46470f2261a 100644
+--- a/drivers/pmdomain/governor.c
++++ b/drivers/pmdomain/governor.c
+@@ -404,15 +404,21 @@ static bool cpu_power_down_ok(struct dev_pm_domain *pd)
+ 		if ((idle_duration_ns >= (genpd->states[i].residency_ns +
+ 		    genpd->states[i].power_off_latency_ns)) &&
+ 		    (global_constraint >= (genpd->states[i].power_on_latency_ns +
+-		    genpd->states[i].power_off_latency_ns))) {
+-			genpd->state_idx = i;
+-			genpd->gd->last_enter = now;
+-			genpd->gd->reflect_residency = true;
+-			return true;
+-		}
++		    genpd->states[i].power_off_latency_ns)))
++			break;
++
+ 	} while (--i >= 0);
  
- void kick_all_cpus_sync(void);
- void wake_up_all_idle_cpus(void);
-+bool cpus_peek_for_pending_ipi(const struct cpumask *mask);
- 
- /*
-  * Generic and arch helpers
-@@ -216,6 +217,10 @@ smp_call_function_any(const struct cpumask *mask, smp_call_func_t func,
- 
- static inline void kick_all_cpus_sync(void) {  }
- static inline void wake_up_all_idle_cpus(void) {  }
-+static inline bool cpus_peek_for_pending_ipi(const struct cpumask *mask)
-+{
-+	return false;
-+}
- 
- #define setup_max_cpus 0
- 
-diff --git a/kernel/smp.c b/kernel/smp.c
-index 02f52291fae4..4533e666152c 100644
---- a/kernel/smp.c
-+++ b/kernel/smp.c
-@@ -1087,6 +1087,30 @@ void wake_up_all_idle_cpus(void)
+-	return false;
++	if (i < 0)
++		return false;
++
++	if (cpus_peek_for_pending_ipi(genpd->cpus))
++		return false;
++
++	genpd->state_idx = i;
++	genpd->gd->last_enter = now;
++	genpd->gd->reflect_residency = true;
++	return true;
  }
- EXPORT_SYMBOL_GPL(wake_up_all_idle_cpus);
  
-+/**
-+ * cpus_peek_for_pending_ipi - Check for pending IPI for CPUs
-+ * @mask: The CPU mask for the CPUs to check.
-+ *
-+ * This function walks through the @mask to check if there are any pending IPIs
-+ * scheduled, for any of the CPUs in the @mask.
-+ *
-+ * It's important for the caller to know that this function does not guarantee
-+ * correctness. It provides a snapshot, while being as lightweight as possible.
-+ *
-+ * Returns true if there is a pending IPI scheduled and false otherwise.
-+ */
-+bool cpus_peek_for_pending_ipi(const struct cpumask *mask)
-+{
-+	unsigned int cpu;
-+
-+	for_each_cpu(cpu, mask) {
-+		if (!llist_empty(per_cpu_ptr(&call_single_queue, cpu)))
-+			return true;
-+	}
-+
-+        return false;
-+}
-+
- /**
-  * struct smp_call_on_cpu_struct - Call a function on a specific CPU
-  * @work: &work_struct
+ struct dev_power_governor pm_domain_cpu_gov = {
 -- 
 2.43.0
 
