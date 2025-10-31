@@ -1,369 +1,257 @@
-Return-Path: <linux-kernel+bounces-880432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC0E3C25BC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:03:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D620C25A94
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:48:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BDE184EB6AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:59:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E26F1B251C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:45:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9348F2FBE0A;
-	Fri, 31 Oct 2025 14:49:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9463B34EEEB;
+	Fri, 31 Oct 2025 14:43:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="o9I0mIXB"
-Received: from smtpout.efficios.com (smtpout.efficios.com [158.69.130.18])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JLPts04a";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="M6/zX40S"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 942ED283FC4;
-	Fri, 31 Oct 2025 14:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.69.130.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 364FB34E762
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 14:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761922150; cv=none; b=CjgsumDnZz8ihmfWgZDis0IartH04qsIOWAp4m0S9LmgnyPbfUfCQUQZlq63H6bfvyoxHFMUHJYtbs6ruIHfTZYOSik7yltykNMetQKlH89DAslbV1mJ63zx7hWkG0ti95qAetYBZyHEdzmXKbJY518RK9fkYXc6ZAiOqVqiex8=
+	t=1761921807; cv=none; b=S1JDL3xALv1zR3vCBG65z0XEpN3iVX4ODc6Z4MILFCChHj6dfvujPi4I8OEyoFZBXS0zCyJDKLIrpy9m797mnhasVsAGHPsl5ll+hRjU64R4dhs7x2spEGLb38JsTU70JVrVhKkiVdcccxInLyFGOBKXMtWu1Zhr/TQm2r2l/a4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761922150; c=relaxed/simple;
-	bh=Sug+9E9Noh2nhrqgz4rYJzj0/TJXKh7jBjctoQjRtOU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DugfWeg5yOKyCg6m5maEhBMigm0pYNgAqiWTc7F/oYgzksyn16sj9Fc/bvmEM81o0bFlX+atfOnC1r2ZKEK7XLrPMYWtQzakJqnC7JNSrvCxC7//ukwMw6rsDoHMb6DxpxloXcto/OLEmo/3dp0iEiEvkHRY4rXs/8itrc48lZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=o9I0mIXB; arc=none smtp.client-ip=158.69.130.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-	s=smtpout1; t=1761921762;
-	bh=qApuJyu4QGoKVJ2zHmgikkLddBCT3UrPtJ79qMUUETk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=o9I0mIXBqRFknaIkfu1blNmJkATK18dekoZ0Rb3+TRz0vSwu8raZgPO17cT7NldR0
-	 /0uNZ28GdkndFyHrE7dB27C8OOF3dxzFzklql4oR2/+HcFAtWv0d/iiXIYDu4YEAVK
-	 XkvI6hRVU2TLApO/JgIiB57EOpCJZ6gqJBy92PXkenJkwO/g3Y96KUIMnoUZwXKJ4t
-	 ZiPC/AT2I2QAGq625z01c6vIV6M8U0mapZvmEt1d4MLezoDNLRQiXT8puAL9uLrxZf
-	 9Zar/vLRVb0+yZSJaF0TfAdBLpcRcKC8Q9ammNH+BTDCk1GKlH6ofIovK7HwKLdxso
-	 ho+HTz/60XHVg==
-Received: from thinkos.internal.efficios.com (mtl.efficios.com [216.120.195.104])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4cykGp0HSgzHZw;
-	Fri, 31 Oct 2025 10:42:42 -0400 (EDT)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Mateusz Guzik <mjguzik@gmail.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Sweet Tea Dorminy <sweettea@google.com>
-Cc: linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Dennis Zhou <dennis@kernel.org>,
-	Tejun Heo <tj@kernel.org>,
-	Christoph Lameter <cl@linux.com>,
-	Martin Liu <liumartin@google.com>,
-	David Rientjes <rientjes@google.com>,
-	christian.koenig@amd.com,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	SeongJae Park <sj@kernel.org>,
-	Michal Hocko <mhocko@suse.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R . Howlett" <liam.howlett@oracle.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Wei Yang <richard.weiyang@gmail.com>,
-	David Hildenbrand <david@redhat.com>,
-	Miaohe Lin <linmiaohe@huawei.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	linux-mm@kvack.org,
-	linux-trace-kernel@vger.kernel.org,
-	Yu Zhao <yuzhao@google.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Matthew Wilcox <willy@infradead.org>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Aboorva Devarajan <aboorvad@linux.ibm.com>
-Subject: [RFC PATCH v7 2/2] mm: Fix OOM killer inaccuracy on large many-core systems
-Date: Fri, 31 Oct 2025 10:42:32 -0400
-Message-Id: <20251031144232.15284-3-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20251031144232.15284-1-mathieu.desnoyers@efficios.com>
-References: <20251031144232.15284-1-mathieu.desnoyers@efficios.com>
+	s=arc-20240116; t=1761921807; c=relaxed/simple;
+	bh=5oX84NUeLGDCVUnoaY8enUgJ9uFVY3Jp6pIvf/RX/b0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LRj5+grdpIjNZTAdhiPJ6ZxJL9WVGAvfMw9Bw5QKbVSuvpaJnvkupslf4IjYf+SUl5MeyyWSsWo6QNTDStMdmPm9QNaPjQM4/IjomNVX9asZLe5QCYr3CSRO2Gvka3+5o7APkwNi5366QMAplvloUFbz3Bu4lzyQ8Ny4TRzesFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JLPts04a; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=M6/zX40S; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59V83amu899094
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 14:43:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=38cZqr818bP3R3sk/R0K+P7k
+	RQE7pffVL4S9mTWl7Ig=; b=JLPts04aopKQrXSmOQTaQkbiDnyAlcJjXeAoyV/D
+	HLe90pWkVoCl6cRbodNkDBjdjlLMJT5ginDM7GQrcBc42yP57u4rlPgBBV9gBD3p
+	+EPoG4C2u30CZcw2uIpoLeJav6RU4T+t3XR+W8ll2f1BYxc24Z35Tb6i1gAPuJhJ
+	n6pJoLw8q6ZeMUZj7gCEE1+GFpqIE7HJgaWWsQfKMctoKnV/Jdxsr95A+vX5qMJU
+	r7WVWGCLvUp1Eegy72tKu1no9SCNg4vzEjwaA6XLcsSbSWzKYXjNLoHcqXfADZNI
+	Ozvpsmjg4SluCDQ9zVhSvRaPhXJLgWEW/fMN9nogpbq8DQ==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a4gb22cuc-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 14:43:25 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4ecf5d3b758so41720661cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:43:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1761921804; x=1762526604; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=38cZqr818bP3R3sk/R0K+P7kRQE7pffVL4S9mTWl7Ig=;
+        b=M6/zX40SgGIujv251GaBH++jr+Nqn22tIlJO/hBJIyhsW+PPwu6VwLlR3Uwx51Q2Yv
+         nYC6qPHQKQFnf7oga/IivG20lwfPpINtREBcvhTLd248SrxCtw0U42P1qvqEztoROXHl
+         cnnKbNJJT+saLnGzYRA3NZllkLGnSUVr+19hqgzntm76VWD6BWbTuTy0tHO31bZ5ThkP
+         Fn/vJyg4yPnYgvsdIqUVrT751H4Gm1B+9P13xEigPqSZjlI6KD23ROZeeW3LS+wuPaR0
+         y3SkV2guotfQE9BHtGWfXNVsWI9Y7Hyow5cJrn/4u3TH9YnOJBaHgKbDQoYqZmfwWnKz
+         53QQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761921804; x=1762526604;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=38cZqr818bP3R3sk/R0K+P7kRQE7pffVL4S9mTWl7Ig=;
+        b=dS2MaxmArgygRklQAfILPeTDiIaCi+NMIcAdZouDFGV06ZpnHLj4oZzLdaqeBPAS1c
+         59rBXt8klmHy8rXJJafbzYuJCyu73ifOHEPLVS0tuxYX6uaevxWbTuIaYM0PepYSXMuZ
+         Ap7WJWOVtDUNhI6bLVl4u516Nfy4ARb/gKZe2CpBP+nU+qU2KQexedT6kQII8/Sv2iaY
+         CGyGTAptcH9BIv6eE8ngbxQGoLVnq5SYDFLd+uSs7eHSyuXoVO2lJRSHgc+GNq6bmepe
+         UAH8vnsyhYM0OH+2RflOZGG0z0h9C7QSyD21NKZrxYsUzQUgQfIM6xwlxcT0dh71HhnJ
+         tTWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXvyVHIWMwt+2ElHQZXNvQvwb9V9JJEvuBHFKOngj8erA+lXQ6etsY+lJX89b2FKrXPs/2Zy1GUj9bHsgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwreWu37pEg6h9ssP4/DuFzXIsAc4YiaheNDvy+An6htyCFoA2r
+	BBicsbtbGZ2olrQHdI4njQ399pxsyUNBwdBwtW2XupC1JWM/wt0gh/OyBojHVRy2keTZoSdwKx4
+	3xdc8dIxx2FU/nuevXAEAn78ihHCFKxg8MixXuLIoyEF4HeElWJX6VOhK3wCoQAHMcKg=
+X-Gm-Gg: ASbGncsq5SACOuDglrf2IvBjM2FGZcL3PMIw3EYSPPb6N43PcoYYs9PdX496ldd7jn9
+	VuXWTz36VU9sEw9LIunsLVM5PZ44GYqAtQudfQ9+h9A3Fx9Pr14kFvowBC2pov3E6Bx50JEo+ii
+	0cgqAW86t8eWlDIMR4sfF3j6z/3Z9FtSJN4qhgGYJdyvSgk8zQlCymzxfyMCvzVV7u1FUiGTmdH
+	YG/DO3jl+fSQI8ktQ/Bp5281NrDEimSA51rWpHwVX7gMYgg+yzeBt4XZHZMZjqMzfdFgxNs2VgX
+	cGisTNmJh4ZgXeOFI/4QkP/QJ+aBSdnzyrn6DqFiJorS++dkGsHDNycSesU8VGjbQBTj4U5AbPI
+	1viC5BoOp+elRxIB2AFHf5l+FDjztCGkSIvsFPOjQE3qbHyALjWUCSQcNNrNTnRTxV6RlH6RD00
+	N1XhPPRgEhNJnl
+X-Received: by 2002:a05:622a:418e:b0:4e7:1eb9:605d with SMTP id d75a77b69052e-4ed30d4ef35mr40414271cf.11.1761921804231;
+        Fri, 31 Oct 2025 07:43:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHRqfymtoA7HV6xrx57dAac6CGoayjsZUzza90k4x8oucfsGlZ9mGgHYLl+rCflp4srP5Ygow==
+X-Received: by 2002:a05:622a:418e:b0:4e7:1eb9:605d with SMTP id d75a77b69052e-4ed30d4ef35mr40413731cf.11.1761921803611;
+        Fri, 31 Oct 2025 07:43:23 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5941f5b5c64sm533601e87.51.2025.10.31.07.43.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Oct 2025 07:43:22 -0700 (PDT)
+Date: Fri, 31 Oct 2025 16:43:21 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Wesley Cheng <wesley.cheng@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+Subject: Re: [PATCH v10 2/3] arm64: dts: qcom: sm8750: Add USB support for
+ SM8750 MTP platform
+Message-ID: <35fup52g3x74fzd3u6irfetikivmuamzcihewaimgdbqnvfz57@56zsehp4sqzq>
+References: <20251031123354.542074-1-krishna.kurapati@oss.qualcomm.com>
+ <20251031123354.542074-3-krishna.kurapati@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251031123354.542074-3-krishna.kurapati@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=efswvrEH c=1 sm=1 tr=0 ts=6904cb0d cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=EUspDBNiAAAA:8 a=3KAOm77SupsxBO3OpsYA:9 a=CjuIK1q_8ugA:10
+ a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMxMDEzMyBTYWx0ZWRfX2BHn8nPEWc5l
+ 5FkMTTOkcEEB9/aJHZJjSknhUQxcShorGF4nRqIC1n57nbguEGgyDFUVYOTx6Jriv+wB0DpKFUP
+ cdQwK0W/BAzbZ+crJRehN7+7kUE/EExWiD2ZaUIanDj9DOjW3Rnx1AtWx8IbaK/c/uoZT3Zsp8Q
+ jIaDzCzVPXTxrD5EBn1qedy80f/cPbYXCsCc513mPCXCiwj5lxDQKnVzRd7QEPPvQsn6BJ+G7uw
+ M0la4Y42EcMU4yy9WdHvDrOXs6vRXnMNzabgMKporqCeEBMbmYQUIxh8/iiegNDLYgzUvTgesGq
+ QcovtUrQal2VYAT4H0QPdgsROp3Evq/xKM+SPMOty3HN886pTTCha5LeCHi/oDuTGchgkpGJcJY
+ LqrLe63w9cvBRpiWHgJuZat+UZCqug==
+X-Proofpoint-GUID: NdwCh-5UjPU2clEPIhU0ysX9JR4MWAdV
+X-Proofpoint-ORIG-GUID: NdwCh-5UjPU2clEPIhU0ysX9JR4MWAdV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-31_04,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 malwarescore=0 phishscore=0 impostorscore=0 lowpriorityscore=0
+ priorityscore=1501 spamscore=0 clxscore=1015 adultscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510310133
 
-Use hierarchical per-cpu counters for rss tracking to fix the per-mm RSS
-tracking which has become too inaccurate for OOM killer purposes on
-large many-core systems.
+On Fri, Oct 31, 2025 at 06:03:53PM +0530, Krishna Kurapati wrote:
+> From: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
+> 
+> Enable USB support on SM8750 MTP variant. Add the PMIC glink node with
+> connector to enable role switch support.
+> 
+> Signed-off-by: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
+> [Konrad: Provided diff to flatten USB node on MTP]
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Co-developed-by: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+> Signed-off-by: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
+> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sm8750-mtp.dts | 73 +++++++++++++++++++++++++
+>  1 file changed, 73 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8750-mtp.dts b/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
+> index 45b5f7581567..932aeee70054 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
+> +++ b/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
+> @@ -191,6 +191,51 @@ platform {
+>  		};
+>  	};
+>  
+> +	pmic-glink {
+> +		compatible = "qcom,sm8750-pmic-glink",
+> +			     "qcom,sm8550-pmic-glink",
+> +			     "qcom,pmic-glink";
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		orientation-gpios = <&tlmm 61 GPIO_ACTIVE_HIGH>;
+> +
+> +		connector@0 {
+> +			compatible = "usb-c-connector";
+> +			reg = <0>;
+> +
+> +			power-role = "dual";
+> +			data-role = "dual";
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					reg = <0>;
+> +
+> +					pmic_glink_hs_in: endpoint {
+> +						remote-endpoint = <&usb_dwc3_hs>;
+> +					};
+> +				};
+> +
+> +				port@1 {
+> +					reg = <1>;
+> +
+> +					pmic_glink_ss_in: endpoint {
+> +						remote-endpoint = <&usb_dp_qmpphy_out>;
+> +					};
+> +				};
+> +
+> +				port@2 {
+> +					reg = <2>;
+> +
+> +					pmic_glink_sbu: endpoint {
+> +					};
+> +				};
+> +			};
+> +		};
+> +	};
+> +
+>  	vph_pwr: vph-pwr-regulator {
+>  		compatible = "regulator-fixed";
+>  
+> @@ -1200,3 +1245,31 @@ &ufs_mem_hc {
+>  
+>  	status = "okay";
+>  };
+> +
+> +&usb {
+> +	status = "okay";
+> +};
+> +
+> +&usb_dwc3_hs {
+> +	remote-endpoint = <&pmic_glink_hs_in>;
+> +};
+> +
+> +&usb_hsphy {
+> +	vdd-supply = <&vreg_l2d_0p88>;
+> +	vdda12-supply = <&vreg_l3g_1p2>;
+> +
+> +	phys = <&pmih0108_eusb2_repeater>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_dp_qmpphy {
+> +	vdda-phy-supply = <&vreg_l3g_1p2>;
+> +	vdda-pll-supply = <&vreg_l2d_0p88>;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&usb_dp_qmpphy_out {
+> +	remote-endpoint = <&pmic_glink_ss_in>;
+> +};
 
-The following rss tracking issues were noted by Sweet Tea Dorminy [1],
-which lead to picking wrong tasks as OOM kill target:
+usb_dp < usb_hsphy.
 
-  Recently, several internal services had an RSS usage regression as part of a
-  kernel upgrade. Previously, they were on a pre-6.2 kernel and were able to
-  read RSS statistics in a backup watchdog process to monitor and decide if
-  they'd overrun their memory budget. Now, however, a representative service
-  with five threads, expected to use about a hundred MB of memory, on a 250-cpu
-  machine had memory usage tens of megabytes different from the expected amount
-  -- this constituted a significant percentage of inaccuracy, causing the
-  watchdog to act.
+> -- 
+> 2.34.1
+> 
 
-  This was a result of f1a7941243c1 ("mm: convert mm's rss stats into
-  percpu_counter") [1].  Previously, the memory error was bounded by
-  64*nr_threads pages, a very livable megabyte. Now, however, as a result of
-  scheduler decisions moving the threads around the CPUs, the memory error could
-  be as large as a gigabyte.
-
-  This is a really tremendous inaccuracy for any few-threaded program on a
-  large machine and impedes monitoring significantly. These stat counters are
-  also used to make OOM killing decisions, so this additional inaccuracy could
-  make a big difference in OOM situations -- either resulting in the wrong
-  process being killed, or in less memory being returned from an OOM-kill than
-  expected.
-
-Here is a (possibly incomplete) list of the prior approaches that were
-used or proposed, along with their downside:
-
-1) Per-thread rss tracking: large error on many-thread processes.
-
-2) Per-CPU counters: up to 12% slower for short-lived processes and 9%
-   increased system time in make test workloads [1]. Moreover, the
-   inaccuracy increases with O(n^2) with the number of CPUs.
-
-3) Per-NUMA-node counters: requires atomics on fast-path (overhead),
-   error is high with systems that have lots of NUMA nodes (32 times
-   the number of NUMA nodes).
-
-The approach proposed here is to replace this by the hierarchical
-per-cpu counters, which bounds the inaccuracy based on the system
-topology with O(N*logN).
-
-commit 82241a83cd15 ("Baolin Wang <baolin.wang@linux.alibaba.com>")
-introduced get_mm_counter_sum() for precise /proc memory status queries.
-Implement it with percpu_counter_tree_precise_sum() since it is not a
-fast path and precision is preferred over speed.
-
-Link: https://lore.kernel.org/lkml/20250331223516.7810-2-sweettea-kernel@dorminy.me/ # [1]
-Link: https://lore.kernel.org/lkml/20250704150226.47980-1-mathieu.desnoyers@efficios.com/
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Dennis Zhou <dennis@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Christoph Lameter <cl@linux.com>
-Cc: Martin Liu <liumartin@google.com>
-Cc: David Rientjes <rientjes@google.com>
-Cc: christian.koenig@amd.com
-Cc: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: SeongJae Park <sj@kernel.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Sweet Tea Dorminy <sweettea@google.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: "Liam R . Howlett" <liam.howlett@oracle.com>
-Cc: Mike Rapoport <rppt@kernel.org>
-Cc: Suren Baghdasaryan <surenb@google.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Wei Yang <richard.weiyang@gmail.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Miaohe Lin <linmiaohe@huawei.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-mm@kvack.org
-Cc: linux-trace-kernel@vger.kernel.org
-Cc: Yu Zhao <yuzhao@google.com>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: Aboorva Devarajan <aboorvad@linux.ibm.com>
----
-Changes since v6:
-- Rebased on v6.18-rc3.
-- Implement get_mm_counter_sum as percpu_counter_tree_precise_sum for
-  /proc virtual files memory state queries.
-
-Changes since v5:
-- Use percpu_counter_tree_approximate_sum_positive.
-
-Change since v4:
-- get_mm_counter needs to return 0 or a positive value.
----
- include/linux/mm.h          | 10 +++++-----
- include/linux/mm_types.h    |  4 ++--
- include/trace/events/kmem.h |  2 +-
- kernel/fork.c               | 32 +++++++++++++++++++++-----------
- 4 files changed, 29 insertions(+), 19 deletions(-)
-
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index d16b33bacc32..4f8f3118cfd3 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2679,33 +2679,33 @@ static inline bool get_user_page_fast_only(unsigned long addr,
-  */
- static inline unsigned long get_mm_counter(struct mm_struct *mm, int member)
- {
--	return percpu_counter_read_positive(&mm->rss_stat[member]);
-+	return percpu_counter_tree_approximate_sum_positive(&mm->rss_stat[member]);
- }
- 
- static inline unsigned long get_mm_counter_sum(struct mm_struct *mm, int member)
- {
--	return percpu_counter_sum_positive(&mm->rss_stat[member]);
-+	return percpu_counter_tree_precise_sum(&mm->rss_stat[member]);
- }
- 
- void mm_trace_rss_stat(struct mm_struct *mm, int member);
- 
- static inline void add_mm_counter(struct mm_struct *mm, int member, long value)
- {
--	percpu_counter_add(&mm->rss_stat[member], value);
-+	percpu_counter_tree_add(&mm->rss_stat[member], value);
- 
- 	mm_trace_rss_stat(mm, member);
- }
- 
- static inline void inc_mm_counter(struct mm_struct *mm, int member)
- {
--	percpu_counter_inc(&mm->rss_stat[member]);
-+	percpu_counter_tree_add(&mm->rss_stat[member], 1);
- 
- 	mm_trace_rss_stat(mm, member);
- }
- 
- static inline void dec_mm_counter(struct mm_struct *mm, int member)
- {
--	percpu_counter_dec(&mm->rss_stat[member]);
-+	percpu_counter_tree_add(&mm->rss_stat[member], -1);
- 
- 	mm_trace_rss_stat(mm, member);
- }
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 90e5790c318f..adb2f227bac7 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -18,7 +18,7 @@
- #include <linux/page-flags-layout.h>
- #include <linux/workqueue.h>
- #include <linux/seqlock.h>
--#include <linux/percpu_counter.h>
-+#include <linux/percpu_counter_tree.h>
- #include <linux/types.h>
- #include <linux/bitmap.h>
- 
-@@ -1119,7 +1119,7 @@ struct mm_struct {
- 		unsigned long saved_e_flags;
- #endif
- 
--		struct percpu_counter rss_stat[NR_MM_COUNTERS];
-+		struct percpu_counter_tree rss_stat[NR_MM_COUNTERS];
- 
- 		struct linux_binfmt *binfmt;
- 
-diff --git a/include/trace/events/kmem.h b/include/trace/events/kmem.h
-index 7f93e754da5c..91c81c44f884 100644
---- a/include/trace/events/kmem.h
-+++ b/include/trace/events/kmem.h
-@@ -442,7 +442,7 @@ TRACE_EVENT(rss_stat,
- 		__entry->mm_id = mm_ptr_to_hash(mm);
- 		__entry->curr = !!(current->mm == mm);
- 		__entry->member = member;
--		__entry->size = (percpu_counter_sum_positive(&mm->rss_stat[member])
-+		__entry->size = (percpu_counter_tree_approximate_sum_positive(&mm->rss_stat[member])
- 							    << PAGE_SHIFT);
- 	),
- 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 3da0f08615a9..e3dd00809cf3 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -133,6 +133,11 @@
-  */
- #define MAX_THREADS FUTEX_TID_MASK
- 
-+/*
-+ * Batch size of rss stat approximation
-+ */
-+#define RSS_STAT_BATCH_SIZE	32
-+
- /*
-  * Protected counters by write_lock_irq(&tasklist_lock)
-  */
-@@ -583,14 +588,12 @@ static void check_mm(struct mm_struct *mm)
- 			 "Please make sure 'struct resident_page_types[]' is updated as well");
- 
- 	for (i = 0; i < NR_MM_COUNTERS; i++) {
--		long x = percpu_counter_sum(&mm->rss_stat[i]);
--
--		if (unlikely(x)) {
--			pr_alert("BUG: Bad rss-counter state mm:%p type:%s val:%ld Comm:%s Pid:%d\n",
--				 mm, resident_page_types[i], x,
-+		if (unlikely(percpu_counter_tree_precise_compare_value(&mm->rss_stat[i], 0) != 0))
-+			pr_alert("BUG: Bad rss-counter state mm:%p type:%s val:%d Comm:%s Pid:%d\n",
-+				 mm, resident_page_types[i],
-+				 percpu_counter_tree_precise_sum(&mm->rss_stat[i]),
- 				 current->comm,
- 				 task_pid_nr(current));
--		}
- 	}
- 
- 	if (mm_pgtables_bytes(mm))
-@@ -673,6 +676,8 @@ static void cleanup_lazy_tlbs(struct mm_struct *mm)
-  */
- void __mmdrop(struct mm_struct *mm)
- {
-+	int i;
-+
- 	BUG_ON(mm == &init_mm);
- 	WARN_ON_ONCE(mm == current->mm);
- 
-@@ -688,8 +693,8 @@ void __mmdrop(struct mm_struct *mm)
- 	put_user_ns(mm->user_ns);
- 	mm_pasid_drop(mm);
- 	mm_destroy_cid(mm);
--	percpu_counter_destroy_many(mm->rss_stat, NR_MM_COUNTERS);
--
-+	for (i = 0; i < NR_MM_COUNTERS; i++)
-+		percpu_counter_tree_destroy(&mm->rss_stat[i]);
- 	free_mm(mm);
- }
- EXPORT_SYMBOL_GPL(__mmdrop);
-@@ -1030,6 +1035,8 @@ static void mmap_init_lock(struct mm_struct *mm)
- static struct mm_struct *mm_init(struct mm_struct *mm, struct task_struct *p,
- 	struct user_namespace *user_ns)
- {
-+	int i;
-+
- 	mt_init_flags(&mm->mm_mt, MM_MT_FLAGS);
- 	mt_set_external_lock(&mm->mm_mt, &mm->mmap_lock);
- 	atomic_set(&mm->mm_users, 1);
-@@ -1083,15 +1090,18 @@ static struct mm_struct *mm_init(struct mm_struct *mm, struct task_struct *p,
- 	if (mm_alloc_cid(mm, p))
- 		goto fail_cid;
- 
--	if (percpu_counter_init_many(mm->rss_stat, 0, GFP_KERNEL_ACCOUNT,
--				     NR_MM_COUNTERS))
--		goto fail_pcpu;
-+	for (i = 0; i < NR_MM_COUNTERS; i++) {
-+		if (percpu_counter_tree_init(&mm->rss_stat[i], RSS_STAT_BATCH_SIZE, GFP_KERNEL_ACCOUNT))
-+			goto fail_pcpu;
-+	}
- 
- 	mm->user_ns = get_user_ns(user_ns);
- 	lru_gen_init_mm(mm);
- 	return mm;
- 
- fail_pcpu:
-+	for (i--; i >= 0; i--)
-+		percpu_counter_tree_destroy(&mm->rss_stat[i]);
- 	mm_destroy_cid(mm);
- fail_cid:
- 	destroy_context(mm);
 -- 
-2.39.5
-
+With best wishes
+Dmitry
 
