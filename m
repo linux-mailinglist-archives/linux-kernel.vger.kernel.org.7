@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-880697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9BD4C265B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:30:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56A40C265BD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:31:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4004A402806
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:30:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F2DD1A65CF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B007A34D4D3;
-	Fri, 31 Oct 2025 17:28:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C36E34DB7A;
+	Fri, 31 Oct 2025 17:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="cHxdNjpc"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="o9te/yYP"
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9023233FA
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D6E34D4E9
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:28:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761931702; cv=none; b=hNqrQpR1BpBxuLAt32mB33ZZ1zfdqarDRZGH1c5Bs/XbFdFfiaiH8gIdr1oV3fm7WhjlgA7PkfgnDg/ba9UYTGwcZ5lTn5IjvbqgZXi+TlutrA7SN/CjNn0f0tlefohXheeyqwe/Hx7RYqfY8JZrsT/c8YkvDEl+nqKK00sPJ14=
+	t=1761931706; cv=none; b=oeF5PEN42RDpYmPo2QuOr7nYlTbXyup98UMuZ+V4B6ixDGTsClh2+GdaeWDz+NWgtrWaxjLgVDBBU7ocuoBWHcVQv+KbEzbjHRkAZhSzrq0HksgBL6l6HNBu4mqtP73fccAXj9B0lrjOjoiA4vA2QHrX1SWEqqO3F9JyjmzS7wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761931702; c=relaxed/simple;
-	bh=Y7nThyvwqpce8nW9iJ0THyTWhnt4FWq/t8yCxViAL2Y=;
+	s=arc-20240116; t=1761931706; c=relaxed/simple;
+	bh=533NYx92g40jb1ADfvwqEdHJ9gcFkilXSs69QufQenU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BKF///q6QnPZlmEViyVpXB0IaciWH39Ft1MYlIhjsnXUFpcrkyNCcX5yAO+k2lDLDG/jfNZcCZ8FsghaR0ZOzCg6kFpfwQoruAEpA+i/gl34tqSRWRc6TRp8BnirhJmzhwRFdtDA3iVdwHIHjuw8htAuaMxTMgTatPZ1oWJF2e8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=cHxdNjpc; arc=none smtp.client-ip=213.167.242.64
+	 In-Reply-To:To:Cc; b=eJ1bapGNE8mCWMea5ElCHuD1GwE3p5w27xoCgHSRA6bjDENkBWwU3YOtNJbu2T35poOThwmrnexyv8Kw5bwshYzej6GsC+jN8nDrSAxS7d8bZyB4Vaw6ygnKpYWElplWz1Lc9N+IiDk+FUHyGU1m1EFqa4NRhm+Q5w0T+Sa0QHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=o9te/yYP; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c69:314e:ee86:ae6e:30:9d13])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6D915446;
-	Fri, 31 Oct 2025 18:26:26 +0100 (CET)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1A325B5;
+	Fri, 31 Oct 2025 18:26:31 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1761931586;
-	bh=Y7nThyvwqpce8nW9iJ0THyTWhnt4FWq/t8yCxViAL2Y=;
+	s=mail; t=1761931592;
+	bh=533NYx92g40jb1ADfvwqEdHJ9gcFkilXSs69QufQenU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=cHxdNjpc+48gBksiqEin9x35j6nCW5JFYXTC+drP23ScYn3cRkJv/+yEZFjzditE6
-	 jvl2lERrRAYaVjqEKqXF8ERhh3TNeLMbQ4ePc6l9wsxy/ZcNZDnMR1LWW3u3Suy5MS
-	 EAtrjHbs1xFV/eRujpjEocRGOYp+gSVLfr57TKHs=
+	b=o9te/yYPtmNzGapb++L7vSxLJEaVhKTyq8ptOegIK/TqOGXg/FDMpmILI7g9jB/nP
+	 ATLXrZeU06CvXJsdCX+PZ/65hlN/Qmi+yUVFR26YRviej9kjMqPkYV0/TdvhaTf7hv
+	 QHoWyC4B4zVfTld899NJuK5cv9cWqkiK9d+aBwzs=
 From: Jai Luthra <jai.luthra@ideasonboard.com>
-Date: Fri, 31 Oct 2025 22:57:22 +0530
-Subject: [PATCH 02/13] platform/raspberrypi: vchiq-mmal: Add support for
- event callbacks.
+Date: Fri, 31 Oct 2025 22:57:23 +0530
+Subject: [PATCH 03/13] platform/raspberrypi: vchiq-mmal: Support sending
+ data to MMAL ports
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251031-b4-vc-sm-cma-v1-2-0dd5c0ec3f5c@ideasonboard.com>
+Message-Id: <20251031-b4-vc-sm-cma-v1-3-0dd5c0ec3f5c@ideasonboard.com>
 References: <20251031-b4-vc-sm-cma-v1-0-0dd5c0ec3f5c@ideasonboard.com>
 In-Reply-To: <20251031-b4-vc-sm-cma-v1-0-0dd5c0ec3f5c@ideasonboard.com>
 To: Florian Fainelli <florian.fainelli@broadcom.com>, 
@@ -68,385 +68,65 @@ Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
  Jai Luthra <jai.luthra@ideasonboard.com>, 
  Dave Stevenson <dave.stevenson@raspberrypi.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13198;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2041;
  i=jai.luthra@ideasonboard.com; h=from:subject:message-id;
- bh=HV7eDw2RJNoFQ/vfTNfIFTlG5/z3KZrEQLJcrzl3JN4=;
- b=owEBbQKS/ZANAwAKAUPekfkkmnFFAcsmYgBpBPGV9RRdyPVpR1rSPOcSsc8358HTjW4XoxmjR
- qv2iGr+wQiJAjMEAAEKAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCaQTxlQAKCRBD3pH5JJpx
- RdDUEACBpm9+lpq2UhTPKAseXCk9mc8L4A4k+6B2mhdG9TIghaH3hWatp6kU+FatqTBJi4DQWyF
- 1LK/2eCq0Lrm/u5yzvwYEklPDpJ1fpnAGz2Gfvrctupmi7wXZktce40R3WhkSpCTbc+VzFoNqK/
- fG+ZoNUdZfxhuft/S6DXHWC8TYWwAQec6v1Kf9xAHJ8eZsSd5eBoRrbpJSjaiNQhFpG/f2SJQZR
- 4O3drUgK5pe7vH+FKtEYfz1+nrDoXlFrxKp3/obQ+xegSqvAZ7q+zAX/Tgw0w9AGMp3ftgAvM9C
- gGz+90AcfJI3eXsu57No5AH+NimrpFinL+wyDaXah7tHxTM9eu9iGejtZN0Md4KE9x9fp6q9VMD
- ghwWljbdPcTpf/Rrnoq6ATFceHzHHwQQkXX57sMEKebRY0tzsPoeOs73WeBVCqa1r7hkWmvX3Wc
- yh0Zc79vp3I+i20cYT5em18vkJYYDEpzJdz2DN+ZAwLWrLTtHDxquZJm+cF9EqRS805fbN0OYCD
- zgGUQyAbUepK04hVXlZBOeh1MKDR4Qu43MS3OyTdlV8LmMwU4/JOOoBQhMPybxjMMYcKoFrsEGV
- 6ac8AfvjGCscZPpFRDdEsgVwTG2M+Q1gehB67ISTtu0Buoir7WukbNJ2NGgadIda5Illh9wyBah
- lSrITtGAlXAsuWQ==
+ bh=GGB5nUrnx+IB8Xu2CwCZTqROE4qS6bk1utWTjQbFuYs=;
+ b=owEBbQKS/ZANAwAKAUPekfkkmnFFAcsmYgBpBPGWd9fNZvo+twIRO1O5q6/cVyUHvPYmTjVQx
+ EcGMVcq3QqJAjMEAAEKAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCaQTxlgAKCRBD3pH5JJpx
+ RWdAD/0VEPbvjctIPCAUaattr3z/NJ9SBxd1hWpz087+/NooVrkuFjCpIlF59I9FJnTQKaY+hLn
+ G/u6PzlmJlOkvDb4+lWI6NZqP9bxc9EiheucJE0C4uSFb4foKtT+9k9zqa+MFNyFhqQ+t+dhsbE
+ zWGhq6jI6F0AX9nkMXoaCBb1dxcTFhRbxIJ2ArGA0UH/IxNA+BvhHlgLLmDccyTWly8vudfeHXS
+ vrg5E0YscM5mzKceg7gWtqBdy6+eo2UiNMIoAk7o+ZOCBg+k5ouy7aQBiOlUbG9VD8/1S+QUCsV
+ D13LwXnYQkwNXatGpZbPmXx4HkzJsbtJAsc/jRsj8tlDgaTTKOCWNWqWlnANjI3mI1ANAaZKsBW
+ 8GPov53HE+X7rnGiUQLk6fEDxyeqWfaRp5WH5ndY+t6o6vEVPyk/zmvhw9flB3O+F7kWkUAs6Zc
+ MFn8bWHnlV/KvxVRTZuJyURyEqiqAg4sjTuBf7XgJVGfsk3AkVZ42iuYRXNbDCCHflRCar84/LP
+ pr7gKdqdMPmd4d7cqAoeXhsYzFUkGB1sgEFs0MDrEcirIfGNJeF8dyGUA8bBq++M7ItgrIvEoff
+ DM621AlXiK8eCTSVol5sFgGSuOSEYOl5xYq0917CM1xDIFct0XjG0dLnLeBTyn5f5h3lZffkBVb
+ kULiK/jfnlUsSOA==
 X-Developer-Key: i=jai.luthra@ideasonboard.com; a=openpgp;
  fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
 
 From: Dave Stevenson <dave.stevenson@raspberrypi.org>
 
-The codec uses the event mechanism to report things such as
-resolution changes. It is signalled by the cmd field of the buffer
-being non-zero.
-
-Add support for passing this information out to the client.
+Add the ability to send data to ports. This only supports
+zero copy mode as the required bulk transfer setup calls
+are not done.
 
 Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.org>
 Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
 ---
- drivers/platform/raspberrypi/vchiq-mmal/mmal-common.h |   1 +
- drivers/platform/raspberrypi/vchiq-mmal/mmal-msg.h    |  35 +++++++++++++++++++++++++
- drivers/platform/raspberrypi/vchiq-mmal/mmal-vchiq.c  | 170 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++----------
- drivers/platform/raspberrypi/vchiq-mmal/mmal-vchiq.h  |   4 +++
- 4 files changed, 196 insertions(+), 14 deletions(-)
+ drivers/platform/raspberrypi/vchiq-mmal/mmal-vchiq.c | 18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/platform/raspberrypi/vchiq-mmal/mmal-common.h b/drivers/platform/raspberrypi/vchiq-mmal/mmal-common.h
-index b33129403a30347fe762d0377cacbda77434c211..0443be8198ea57fcd66d598ef7a46309d82ec7b7 100644
---- a/drivers/platform/raspberrypi/vchiq-mmal/mmal-common.h
-+++ b/drivers/platform/raspberrypi/vchiq-mmal/mmal-common.h
-@@ -50,6 +50,7 @@ struct mmal_buffer {
- 
- 	struct mmal_msg_context *msg_context;
- 
-+	u32 cmd;		/* MMAL command. 0=data. */
- 	unsigned long length;
- 	u32 mmal_flags;
- 	s64 dts;
-diff --git a/drivers/platform/raspberrypi/vchiq-mmal/mmal-msg.h b/drivers/platform/raspberrypi/vchiq-mmal/mmal-msg.h
-index 1889494425eb65e4e2212e0806084a56087dc61d..7cccd5ee9a9e707b26dada6a9506d6a4145de32f 100644
---- a/drivers/platform/raspberrypi/vchiq-mmal/mmal-msg.h
-+++ b/drivers/platform/raspberrypi/vchiq-mmal/mmal-msg.h
-@@ -346,6 +346,41 @@ struct mmal_msg_port_parameter_get_reply {
- /* event messages */
- #define MMAL_WORKER_EVENT_SPACE 256
- 
-+/* Four CC's for events */
-+#define MMAL_FOURCC(a, b, c, d) ((a) | (b << 8) | (c << 16) | (d << 24))
-+
-+#define MMAL_EVENT_ERROR		MMAL_FOURCC('E', 'R', 'R', 'O')
-+#define MMAL_EVENT_EOS			MMAL_FOURCC('E', 'E', 'O', 'S')
-+#define MMAL_EVENT_FORMAT_CHANGED	MMAL_FOURCC('E', 'F', 'C', 'H')
-+#define MMAL_EVENT_PARAMETER_CHANGED	MMAL_FOURCC('E', 'P', 'C', 'H')
-+
-+/* Structs for each of the event message payloads */
-+struct mmal_msg_event_eos {
-+	u32 port_type;	/**< Type of port that received the end of stream */
-+	u32 port_index;	/**< Index of port that received the end of stream */
-+};
-+
-+/** Format changed event data. */
-+struct mmal_msg_event_format_changed {
-+	/* Minimum size of buffers the port requires */
-+	u32 buffer_size_min;
-+	/* Minimum number of buffers the port requires */
-+	u32 buffer_num_min;
-+	/* Size of buffers the port recommends for optimal performance.
-+	 * A value of zero means no special recommendation.
-+	 */
-+	u32 buffer_size_recommended;
-+	/* Number of buffers the port recommends for optimal
-+	 * performance. A value of zero means no special recommendation.
-+	 */
-+	u32 buffer_num_recommended;
-+
-+	u32 es_ptr;
-+	struct mmal_es_format format;
-+	union mmal_es_specific_format es;
-+	u8 extradata[MMAL_FORMAT_EXTRADATA_MAX_SIZE];
-+};
-+
- struct mmal_msg_event_to_host {
- 	u32 client_component;	/* component context */
- 
 diff --git a/drivers/platform/raspberrypi/vchiq-mmal/mmal-vchiq.c b/drivers/platform/raspberrypi/vchiq-mmal/mmal-vchiq.c
-index 82c2c261fd9cf0669cbd2ca7c814e0703317885a..a115a391908da06e101e159905a4403b91e051c6 100644
+index a115a391908da06e101e159905a4403b91e051c6..1ad00bb0a02b482719a75749ed6ca50f43df24b2 100644
 --- a/drivers/platform/raspberrypi/vchiq-mmal/mmal-vchiq.c
 +++ b/drivers/platform/raspberrypi/vchiq-mmal/mmal-vchiq.c
-@@ -145,6 +145,8 @@ struct mmal_msg_context {
- 			/* Presentation and Decode timestamps */
- 			s64 pts;
- 			s64 dts;
-+			/* MMAL buffer command flag */
-+			u32 cmd;
- 
- 			int status;	/* context status */
- 
-@@ -232,18 +234,6 @@ release_msg_context(struct mmal_msg_context *msg_context)
- 	kfree(msg_context);
- }
- 
--/* deals with receipt of event to host message */
--static void event_to_host_cb(struct vchiq_mmal_instance *instance,
--			     struct mmal_msg *msg, u32 msg_len)
--{
--	pr_debug("unhandled event\n");
--	pr_debug("component:%u port type:%d num:%d cmd:0x%x length:%d\n",
--		 msg->u.event_to_host.client_component,
--		 msg->u.event_to_host.port_type,
--		 msg->u.event_to_host.port_num,
--		 msg->u.event_to_host.cmd, msg->u.event_to_host.length);
--}
--
- /* workqueue scheduled callback
-  *
-  * we do this because it is important we do not call any other vchiq
-@@ -265,13 +255,18 @@ static void buffer_work_cb(struct work_struct *work)
- 	buffer->mmal_flags = msg_context->u.bulk.mmal_flags;
- 	buffer->dts = msg_context->u.bulk.dts;
- 	buffer->pts = msg_context->u.bulk.pts;
-+	buffer->cmd = msg_context->u.bulk.cmd;
- 
--	atomic_dec(&msg_context->u.bulk.port->buffers_with_vpu);
-+	if (!buffer->cmd)
-+		atomic_dec(&msg_context->u.bulk.port->buffers_with_vpu);
- 
- 	msg_context->u.bulk.port->buffer_cb(msg_context->u.bulk.instance,
- 					    msg_context->u.bulk.port,
- 					    msg_context->u.bulk.status,
- 					    msg_context->u.bulk.buffer);
-+
-+	if (buffer->cmd)
-+		mutex_unlock(&msg_context->u.bulk.port->event_context_mutex);
- }
- 
- /* workqueue scheduled callback to handle receiving buffers
-@@ -349,6 +344,7 @@ static int bulk_receive(struct vchiq_mmal_instance *instance,
- 	msg_context->u.bulk.buffer_used = rd_len;
- 	msg_context->u.bulk.dts = msg->u.buffer_from_host.buffer_header.dts;
- 	msg_context->u.bulk.pts = msg->u.buffer_from_host.buffer_header.pts;
-+	msg_context->u.bulk.cmd = msg->u.buffer_from_host.buffer_header.cmd;
- 
- 	queue_work(msg_context->instance->bulk_wq,
- 		   &msg_context->u.bulk.buffer_to_host_work);
-@@ -451,6 +447,103 @@ buffer_from_host(struct vchiq_mmal_instance *instance,
- 	return ret;
- }
- 
-+/* deals with receipt of event to host message */
-+static void event_to_host_cb(struct vchiq_mmal_instance *instance,
-+			     struct mmal_msg *msg, u32 msg_len)
-+{
-+	/* FIXME: Not going to work on 64 bit */
-+	struct vchiq_mmal_component *component =
-+		(struct vchiq_mmal_component *)msg->u.event_to_host.client_component;
-+	struct vchiq_mmal_port *port = NULL;
-+	struct mmal_msg_context *msg_context;
-+	u32 port_num = msg->u.event_to_host.port_num;
-+
-+	if (msg->u.buffer_from_host.drvbuf.magic == MMAL_MAGIC) {
-+		pr_err("%s: MMAL_MSG_TYPE_BUFFER_TO_HOST with bad magic\n",
-+		       __func__);
-+		return;
-+	}
-+
-+	switch (msg->u.event_to_host.port_type) {
-+	case MMAL_PORT_TYPE_CONTROL:
-+		if (port_num) {
-+			pr_err("%s: port_num of %u >= number of ports 1",
-+			       __func__, port_num);
-+			return;
-+		}
-+		port = &component->control;
-+		break;
-+	case MMAL_PORT_TYPE_INPUT:
-+		if (port_num >= component->inputs) {
-+			pr_err("%s: port_num of %u >= number of ports %u",
-+			       __func__, port_num,
-+			       port_num >= component->inputs);
-+			return;
-+		}
-+		port = &component->input[port_num];
-+		break;
-+	case MMAL_PORT_TYPE_OUTPUT:
-+		if (port_num >= component->outputs) {
-+			pr_err("%s: port_num of %u >= number of ports %u",
-+			       __func__, port_num,
-+			       port_num >= component->outputs);
-+			return;
-+		}
-+		port = &component->output[port_num];
-+		break;
-+	case MMAL_PORT_TYPE_CLOCK:
-+		if (port_num >= component->clocks) {
-+			pr_err("%s: port_num of %u >= number of ports %u",
-+			       __func__, port_num,
-+			       port_num >= component->clocks);
-+			return;
-+		}
-+		port = &component->clock[port_num];
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	if (!mutex_trylock(&port->event_context_mutex)) {
-+		pr_err("dropping event 0x%x\n", msg->u.event_to_host.cmd);
-+		return;
-+	}
-+	msg_context = port->event_context;
-+
-+	if (msg->h.status != MMAL_MSG_STATUS_SUCCESS) {
-+		/* message reception had an error */
-+		//pr_warn
-+		pr_err("%s: error %d in reply\n", __func__, msg->h.status);
-+
-+		msg_context->u.bulk.status = msg->h.status;
-+	} else if (msg->u.event_to_host.length > MMAL_WORKER_EVENT_SPACE) {
-+		/* data is not in message, queue a bulk receive */
-+		pr_err("%s: payload not in message - bulk receive??! NOT SUPPORTED\n",
-+		       __func__);
-+		msg_context->u.bulk.status = -1;
+@@ -421,11 +421,19 @@ buffer_from_host(struct vchiq_mmal_instance *instance,
+ 	m.u.buffer_from_host.buffer_header.data =
+ 		(u32)(unsigned long)buf->buffer;
+ 	m.u.buffer_from_host.buffer_header.alloc_size = buf->buffer_size;
+-	m.u.buffer_from_host.buffer_header.length = 0;	/* nothing used yet */
+-	m.u.buffer_from_host.buffer_header.offset = 0;	/* no offset */
+-	m.u.buffer_from_host.buffer_header.flags = 0;	/* no flags */
+-	m.u.buffer_from_host.buffer_header.pts = MMAL_TIME_UNKNOWN;
+-	m.u.buffer_from_host.buffer_header.dts = MMAL_TIME_UNKNOWN;
++	if (port->type == MMAL_PORT_TYPE_OUTPUT) {
++		m.u.buffer_from_host.buffer_header.length = 0;
++		m.u.buffer_from_host.buffer_header.offset = 0;
++		m.u.buffer_from_host.buffer_header.flags = 0;
++		m.u.buffer_from_host.buffer_header.pts = MMAL_TIME_UNKNOWN;
++		m.u.buffer_from_host.buffer_header.dts = MMAL_TIME_UNKNOWN;
 +	} else {
-+		memcpy(msg_context->u.bulk.buffer->buffer,
-+		       msg->u.event_to_host.data,
-+		       msg->u.event_to_host.length);
-+
-+		msg_context->u.bulk.buffer_used =
-+		    msg->u.event_to_host.length;
-+
-+		msg_context->u.bulk.mmal_flags = 0;
-+		msg_context->u.bulk.dts = MMAL_TIME_UNKNOWN;
-+		msg_context->u.bulk.pts = MMAL_TIME_UNKNOWN;
-+		msg_context->u.bulk.cmd = msg->u.event_to_host.cmd;
-+
-+		pr_debug("event component:%u port type:%d num:%d cmd:0x%x length:%d\n",
-+			 msg->u.event_to_host.client_component,
-+			 msg->u.event_to_host.port_type,
-+			 msg->u.event_to_host.port_num,
-+			 msg->u.event_to_host.cmd, msg->u.event_to_host.length);
++		m.u.buffer_from_host.buffer_header.length = buf->length;
++		m.u.buffer_from_host.buffer_header.offset = 0;
++		m.u.buffer_from_host.buffer_header.flags = buf->mmal_flags;
++		m.u.buffer_from_host.buffer_header.pts = buf->pts;
++		m.u.buffer_from_host.buffer_header.dts = buf->dts;
 +	}
-+
-+	schedule_work(&msg_context->u.bulk.work);
-+}
-+
- /* deals with receipt of buffer to host message */
- static void buffer_to_host_cb(struct vchiq_mmal_instance *instance,
- 			      struct mmal_msg *msg, u32 msg_len)
-@@ -1333,6 +1426,7 @@ static int port_disable(struct vchiq_mmal_instance *instance,
- 				mmalbuf->mmal_flags = 0;
- 				mmalbuf->dts = MMAL_TIME_UNKNOWN;
- 				mmalbuf->pts = MMAL_TIME_UNKNOWN;
-+				mmalbuf->cmd = 0;
- 				port->buffer_cb(instance,
- 						port, 0, mmalbuf);
- 			}
-@@ -1634,6 +1728,43 @@ int mmal_vchi_buffer_cleanup(struct mmal_buffer *buf)
- }
- EXPORT_SYMBOL_GPL(mmal_vchi_buffer_cleanup);
  
-+static void init_event_context(struct vchiq_mmal_instance *instance,
-+			       struct vchiq_mmal_port *port)
-+{
-+	struct mmal_msg_context *ctx = get_msg_context(instance);
-+
-+	mutex_init(&port->event_context_mutex);
-+
-+	port->event_context = ctx;
-+	ctx->u.bulk.instance = instance;
-+	ctx->u.bulk.port = port;
-+	ctx->u.bulk.buffer =
-+		kzalloc(sizeof(*ctx->u.bulk.buffer), GFP_KERNEL);
-+	if (!ctx->u.bulk.buffer)
-+		goto release_msg_context;
-+	ctx->u.bulk.buffer->buffer = kzalloc(MMAL_WORKER_EVENT_SPACE,
-+					     GFP_KERNEL);
-+	if (!ctx->u.bulk.buffer->buffer)
-+		goto release_buffer;
-+
-+	INIT_WORK(&ctx->u.bulk.work, buffer_work_cb);
-+	return;
-+
-+release_buffer:
-+	kfree(ctx->u.bulk.buffer);
-+release_msg_context:
-+	release_msg_context(ctx);
-+}
-+
-+static void free_event_context(struct vchiq_mmal_port *port)
-+{
-+	struct mmal_msg_context *ctx = port->event_context;
-+
-+	kfree(ctx->u.bulk.buffer->buffer);
-+	kfree(ctx->u.bulk.buffer);
-+	release_msg_context(ctx);
-+}
-+
- /* Initialise a mmal component and its ports
-  *
-  */
-@@ -1683,6 +1814,7 @@ int vchiq_mmal_component_init(struct vchiq_mmal_instance *instance,
- 	ret = port_info_get(instance, &component->control);
- 	if (ret < 0)
- 		goto release_component;
-+	init_event_context(instance, &component->control);
- 
- 	for (idx = 0; idx < component->inputs; idx++) {
- 		component->input[idx].type = MMAL_PORT_TYPE_INPUT;
-@@ -1693,6 +1825,7 @@ int vchiq_mmal_component_init(struct vchiq_mmal_instance *instance,
- 		ret = port_info_get(instance, &component->input[idx]);
- 		if (ret < 0)
- 			goto release_component;
-+		init_event_context(instance, &component->input[idx]);
- 	}
- 
- 	for (idx = 0; idx < component->outputs; idx++) {
-@@ -1704,6 +1837,7 @@ int vchiq_mmal_component_init(struct vchiq_mmal_instance *instance,
- 		ret = port_info_get(instance, &component->output[idx]);
- 		if (ret < 0)
- 			goto release_component;
-+		init_event_context(instance, &component->output[idx]);
- 	}
- 
- 	for (idx = 0; idx < component->clocks; idx++) {
-@@ -1715,6 +1849,7 @@ int vchiq_mmal_component_init(struct vchiq_mmal_instance *instance,
- 		ret = port_info_get(instance, &component->clock[idx]);
- 		if (ret < 0)
- 			goto release_component;
-+		init_event_context(instance, &component->clock[idx]);
- 	}
- 
- 	*component_out = component;
-@@ -1740,7 +1875,7 @@ EXPORT_SYMBOL_GPL(vchiq_mmal_component_init);
- int vchiq_mmal_component_finalise(struct vchiq_mmal_instance *instance,
- 				  struct vchiq_mmal_component *component)
- {
--	int ret;
-+	int ret, idx;
- 
- 	if (mutex_lock_interruptible(&instance->vchiq_mutex))
- 		return -EINTR;
-@@ -1752,6 +1887,13 @@ int vchiq_mmal_component_finalise(struct vchiq_mmal_instance *instance,
- 
- 	component->in_use = false;
- 
-+	for (idx = 0; idx < component->inputs; idx++)
-+		free_event_context(&component->input[idx]);
-+	for (idx = 0; idx < component->outputs; idx++)
-+		free_event_context(&component->output[idx]);
-+	for (idx = 0; idx < component->clocks; idx++)
-+		free_event_context(&component->clock[idx]);
-+
- 	mutex_unlock(&instance->vchiq_mutex);
- 
- 	return ret;
-diff --git a/drivers/platform/raspberrypi/vchiq-mmal/mmal-vchiq.h b/drivers/platform/raspberrypi/vchiq-mmal/mmal-vchiq.h
-index 8c3959f6f97fb21bcaf2f21589ef291e754e7c19..190a0f42bd6b22c7493463da94c094265d85d8fa 100644
---- a/drivers/platform/raspberrypi/vchiq-mmal/mmal-vchiq.h
-+++ b/drivers/platform/raspberrypi/vchiq-mmal/mmal-vchiq.h
-@@ -79,6 +79,10 @@ struct vchiq_mmal_port {
- 	vchiq_mmal_buffer_cb buffer_cb;
- 	/* callback context */
- 	void *cb_ctx;
-+
-+	/* ensure serialised use of the one event context structure */
-+	struct mutex event_context_mutex;
-+	struct mmal_msg_context *event_context;
- };
- 
- struct vchiq_mmal_component {
+ 	/* clear buffer type specific data */
+ 	memset(&m.u.buffer_from_host.buffer_header_type_specific, 0,
 
 -- 
 2.51.0
