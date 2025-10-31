@@ -1,186 +1,135 @@
-Return-Path: <linux-kernel+bounces-880448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D374C25C7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:13:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16ADBC25C81
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:13:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2708C4F5B42
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:04:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 751FF188193A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:07:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9B71FDE31;
-	Fri, 31 Oct 2025 15:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9631EE019;
+	Fri, 31 Oct 2025 15:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FsTz/Cp+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="K0qESczX"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C1485626;
-	Fri, 31 Oct 2025 15:04:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC8031DD543
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 15:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761923090; cv=none; b=Q+ebCM8hoizp4Kuen2gKXbDddJEM9EZkjKajvEGXo7LTCkvzIsgutgHVEQ7fT0VJEC52SCXUfy+2epyEzIVzs3ZrXiv2T7BU0XpdL0kOBVwfKwRlCqkWiurCxhCylTOSJOAsBa2lelBnKB9Nxhkcm8UhROMbef7vQk0vwt47M7w=
+	t=1761923198; cv=none; b=rPqTyZ8S/78l/MWdGAqziDtDts+l+JkGRHNO6YwCo/bXQPie3koRVCgo+/PW6KKV6AePJRPow42i5Px39NlVR7c5uMWuHqogxHvniVXBnNtIqGO8QoWZPfbaKSHF+HYu8TXQRSuBNTaX8v5uhikuiRfIpbnmmbs5FrBhnT47NmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761923090; c=relaxed/simple;
-	bh=abvCv24Xykh2zMnbow02BKPEdSW0lshmPG5OcfXFUUA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C0gIVhB9hw/dvpbrp+acM91PMe8FSg8Crlve/rpruR37Q2dFHoMYfYHUkaqVv2V76p9yR6eGJaqMfHQ8rryXs+UzKQoqvlc3NYIplXrVAJ/Z7o/sWofAy2hoBHePQCryLIqEO74pNR7I9LUCf7n+hoVc0z5anWJG9gz0AFgmIYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FsTz/Cp+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D2A1C4CEFB;
-	Fri, 31 Oct 2025 15:04:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761923089;
-	bh=abvCv24Xykh2zMnbow02BKPEdSW0lshmPG5OcfXFUUA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FsTz/Cp++0swcNCc25qYTvDYYyFsuMx1yzIbuqupV+UMJxOdNxkGL/I1ZNGNwacJ7
-	 rAIisu/ZFnoyzsfS1jNl2MhHYU4JawMAWniVGUFUvBjao73krdR705gmzFsQaiZjGn
-	 vDKXps+a/U1wjkEoYnVwIPOyHZ5c8GtQZ3RXC8hyM/z3/tpuwwh0pbW+70UD+Bz2pL
-	 jqiW/Kqu3tcfSUR/hh54eBLTlpm4nteul4pfH6PCY8gojN/2oneyWCWElbD6Ww4ZNH
-	 9M6Ig+x5gKbkWyyG4gUop6ep19GG64vXkP4A/ywcwjtwKP2Pz4Xp4t18Zm4BkOA3F+
-	 6wsi4YElvDgkw==
-Date: Fri, 31 Oct 2025 15:04:43 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Stanimir Varbanov <svarbanov@suse.de>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	linux-pm@vger.kernel.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Lee Jones <lee@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
-	Willow Cunningham <willow.e.cunningham@gmail.com>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Saenz Julienne <nsaenz@kernel.org>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Phil Elwell <phil@raspberrypi.com>,
-	Jonathan Bell <jonathan@raspberrypi.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH v2 2/4] dt-bindings: soc: bcm: Add bcm2712 compatible
-Message-ID: <20251031-icon-woozy-58061dd3d4b4@spud>
-References: <20251031102423.1150093-1-svarbanov@suse.de>
- <20251031102423.1150093-3-svarbanov@suse.de>
+	s=arc-20240116; t=1761923198; c=relaxed/simple;
+	bh=xyzfl4C3ygHBnCoU4AGi8cbblst62cDCaAHkvc/NX4c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rPHnjBaxg2/BOtbO/lWh1C3uUiitw0GH5muEHqjEYb+oW//+yqne1uuNyrXwlHqewggypP7LHy7s1Y/04M+lPfkCvneKscCZ54NOgNhMooKRx0kG+x2d42rZt93/xMHMnmut7rl1UBw4nPBGjaXDajAg2Bbi8PiMj8fo5qScPTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=K0qESczX; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4711b95226dso29954635e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:06:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761923194; x=1762527994; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vjEbL0bNohIYE2ZQO0FpwBW3VCE74PSDjugxRYid1kM=;
+        b=K0qESczXzoJvJlJAAibo/PvYz6rqsfkeNmjbl4qlRPaJP7UJOzYCcbUDWpRAzaswa6
+         VkQ68mZqvowdGPouzyXe39r0qYAIYBvu7ONEBsuEmCjidGqUzGFzwpiMs4QyuAKtVvZA
+         oV3RwIIkx/jzBAcyqZ9RPIzydiJjAy9MnsFiLT19vuvcd7aIARTVU6n6uJdI/2LrlgoE
+         StnMyCo5tyNx9w9aMHJhDy23PyMtH+yPCZKhwMDCd4rcmd4WafgUIug3KkIsVPuPniEX
+         qrscacvHXhmZ/GoUNAbMPGmMQwei6wWUrW/vIzPo3hi+6b6ryhjoyHtbeKKQu2Hf16bp
+         6b6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761923194; x=1762527994;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vjEbL0bNohIYE2ZQO0FpwBW3VCE74PSDjugxRYid1kM=;
+        b=iy3SGrYQksK1IrPC2oaE1RTHjRkvwI+38rlluyKXslMJsdyy1HvRqdPfCm09ZUb75y
+         EyaWrwWKnQyQ2HwHy6XDqp6Xm0H5hSpPSveOrdJ22Z0WkEkqR7lOjQe7F1bNMouYpyO8
+         6A6D2nVCNfGJh9ZbQbNiLTD9UKorWtGBlG6Dt7haYmPveOq1O0DpzqUEVq/tNdK73Lb/
+         /3gwJGyL29xBnKg94CNCBITyI+kbn8vqvv0g5KBpaU/jXzGM/yJt6Ov8hwV6mPA6JWeZ
+         LzDs0H/e7mcG6YUSIwPj/lGyxM979y/nTFzYNBdMPsC5ZjRihcvOmIlfpOGUin9n64M7
+         GNQA==
+X-Forwarded-Encrypted: i=1; AJvYcCW4p0QwE2D6QOvkVrpdOHT8XbxpOaB+WJn1B1WJidVeRB6BWpcgtQbZ1ws0TzoPa7weQ/hX63j7HNtVbqo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7COGmWiQugXu9tM6Kshya7oryt8kMFpXfFIjcPwzS1WYna6jA
+	mLIe51emMWx7WQAdN1s+u3LlyLofLNeaBim8yDr8seKy9auM1/YOTKWJS7qh/Eq9IM9TyC9hxm2
+	xGhlZ0FkgtA==
+X-Gm-Gg: ASbGncsJ9mAmEx2c+o160C41fUMsTUYNl+slAM7kPd7k0oeslKmprB8t+C/TlTss6BW
+	KRtyCMJIawSqx2BfdIk+rfMUjfLJpDg235lsa9KOIoaaOMl/gPcapj5WPrfmbpmiqCu7Y/LXwa/
+	SWIcnniEW9/Dkag9nqI6pxGBLtabm6HkbUVpaTc0z/8lUGy5FbOQHsQyTake3UK1Z+IDvni9mkU
+	gKOEjnKdD5jRGmIc6khrcsbvzq4Ik0VKuqGxAPwdIxU6PE82V9Xpg1jEnqzykhWczIgRr+hiAVD
+	52QMRLWH4tgVl/p1hKrntU3EDcyBgCJl2r7VGkJIDIyyjtf9iwJOzFvTZ4v3jpjr3TM9I4wdYZl
+	uhhM2Mz8KsOqIoxbdMKjSivknkYejxH8ld3IJLwKToCDSKtZbX31wZHSPrwEr8uJ2rSyu1xNilG
+	EXYQ8m
+X-Google-Smtp-Source: AGHT+IEvPszlrCmD+0AHLDtDLtdRKT+3Y/m1QcskyCCaRvaRtbit5XIg+aCi6RUsOUdQ+xiibEYYhQ==
+X-Received: by 2002:a05:600c:3b1f:b0:45b:47e1:ef6d with SMTP id 5b1f17b1804b1-477308aec7bmr41241675e9.36.1761923193361;
+        Fri, 31 Oct 2025 08:06:33 -0700 (PDT)
+Received: from brgl-uxlite ([2a01:cb1d:dc:7e00:68f9:7cde:26e2:9b52])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c10ff1besm4051411f8f.9.2025.10.31.08.06.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Oct 2025 08:06:32 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] gpiolib: fix invalid pointer access in debugfs
+Date: Fri, 31 Oct 2025 16:06:31 +0100
+Message-ID: <20251031150631.33592-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="eLR4aUssiEfZ2HhD"
-Content-Disposition: inline
-In-Reply-To: <20251031102423.1150093-3-svarbanov@suse.de>
+Content-Transfer-Encoding: 8bit
 
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
---eLR4aUssiEfZ2HhD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+If the memory allocation in gpiolib_seq_start() fails, the s->private
+field remains uninitialized and is later dereferenced without checking
+in gpiolib_seq_stop(). Initialize s->private to NULL before calling
+kzalloc() and check it before dereferencing it.
 
-On Fri, Oct 31, 2025 at 12:24:21PM +0200, Stanimir Varbanov wrote:
-> Add bcm2712-pm compatible and update the bindings to satisfy it's
-> requirements. The PM hardware block inside bcm2712 lacks the "asb"
-> and "rpivid_asb" register ranges and also does not have clocks, update
-> the bindings accordingly.
->=20
-> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
-> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
-> ---
->  .../bindings/soc/bcm/brcm,bcm2835-pm.yaml     | 38 ++++++++++++++++---
->  1 file changed, 32 insertions(+), 6 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.ya=
-ml b/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.yaml
-> index e28ef198a801..ce910802ee9d 100644
-> --- a/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.yaml
-> +++ b/Documentation/devicetree/bindings/soc/bcm/brcm,bcm2835-pm.yaml
-> @@ -13,23 +13,21 @@ description: |
->  maintainers:
->    - Nicolas Saenz Julienne <nsaenz@kernel.org>
-> =20
-> -allOf:
-> -  - $ref: /schemas/watchdog/watchdog.yaml#
-> -
->  properties:
->    compatible:
->      items:
->        - enum:
->            - brcm,bcm2835-pm
->            - brcm,bcm2711-pm
-> +          - brcm,bcm2712-pm
->        - const: brcm,bcm2835-pm-wdt
-> =20
->    reg:
-> -    minItems: 2
-> +    minItems: 1
->      maxItems: 3
-> =20
->    reg-names:
-> -    minItems: 2
-> +    minItems: 1
->      items:
->        - const: pm
->        - const: asb
-> @@ -62,7 +60,35 @@ required:
->    - reg
->    - "#power-domain-cells"
->    - "#reset-cells"
-> -  - clocks
-> +
-> +allOf:
-> +  - $ref: /schemas/watchdog/watchdog.yaml#
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - brcm,bcm2835-pm
-> +              - brcm,bcm2711-pm
-> +    then:
-> +      required:
-> +        - clocks
-> +
-> +      properties:
-> +        reg:
-> +          minItems: 2
-> +
-> +        reg-names:
-> +          minItems: 2
+Fixes: e348544f7994 ("gpio: protect the list of GPIO devices with SRCU")
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+This was brought to my attention by a person under sanctions. This is a
+simplified version of their initial patch.
 
-> +
-> +    else:
-> +      properties:
-> +        reg:
-> +          minItems: 1
-> +
-> +        reg-names:
-> +          minItems: 1
+ drivers/gpio/gpiolib.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-This else has no impact, was it meant to be maxItems?
-pw-bot: changes-requested
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index a81981336b36..fdb6a002dbda 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -5303,6 +5303,8 @@ static void *gpiolib_seq_start(struct seq_file *s, loff_t *pos)
+ 	struct gpio_device *gdev;
+ 	loff_t index = *pos;
+ 
++	s->private = NULL;
++
+ 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+ 		return NULL;
+@@ -5338,6 +5340,9 @@ static void gpiolib_seq_stop(struct seq_file *s, void *v)
+ {
+ 	struct gpiolib_seq_priv *priv = s->private;
+ 
++	if (!priv)
++		return;
++
+ 	srcu_read_unlock(&gpio_devices_srcu, priv->idx);
+ 	kfree(priv);
+ }
+-- 
+2.48.1
 
-> =20
->  additionalProperties: false
-> =20
-> --=20
-> 2.47.0
->=20
-
---eLR4aUssiEfZ2HhD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQTQCwAKCRB4tDGHoIJi
-0u7TAQCmY6ZrffsQeMrCOnwJwR+6+0PBxTS+VmwCXHJmSg55VAEA4E7lbHlwkUcC
-Yp1juErjw5xEnoaFEYM/iaJJlh3erwY=
-=eDwv
------END PGP SIGNATURE-----
-
---eLR4aUssiEfZ2HhD--
 
