@@ -1,76 +1,64 @@
-Return-Path: <linux-kernel+bounces-880784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 404C1C268D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 19:24:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B1FBC268DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 19:26:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 158F74E218C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:24:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7F75189D317
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66819351FC9;
-	Fri, 31 Oct 2025 18:24:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77EB8351FD7;
+	Fri, 31 Oct 2025 18:26:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cbx2sc0b"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SQbns3Ly"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016FE277013
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 18:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A671C2334;
+	Fri, 31 Oct 2025 18:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761935081; cv=none; b=XTHJwAwrhuV7sF2S7fNXfmiRjOLd5EVbFnVd4Pq3fqyAJ8fRHNLD3/R1wXTIBu8JjW3UMwKJZZwA0+IP6HB/yAaHfMbSg3A+hnZk6S2s7fxvua+pkiRMVF51jBRnVsyCDOEGyi04WOFVjusAYoJ3/F9p7Wb2AYd9nbSi4Q/mJ6k=
+	t=1761935179; cv=none; b=ESLQvUNPormD1uStJBQvWgIR7dRMfFWMn5r64hPkJIUC9bscxsQvHYZrCG394RcPSCmPByrK6PO0/7nal0BW3cFMuhckeIF2BhL5QOfKDVE43GEUmMZgJ1VWpG5F1ouZjgDlnl1mmZ/CcKOMaPnP+/7lQ+k4YJDrgKzLCQ5Pk6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761935081; c=relaxed/simple;
-	bh=2espfBKaEXR9ooZJUhynsBbxbOlStZ/Y6Q0tHqQ8/gE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=BUPoPSIYsF3zlQlaxRjITy68p1CN7aBPui7oOK+rXyi9WBw8lQtU+ehTmgz8ClX0NnKBnhMQ64hs+YQCnV05/BjPjN4E/Q+z41EsVb1IHuIhGI+XKDUHwshCzDfCSBe75Kijm/+JsYkIWUTdPNybaoYu2ViD6wxRDIdO4kTgFHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cbx2sc0b; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761935080; x=1793471080;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=2espfBKaEXR9ooZJUhynsBbxbOlStZ/Y6Q0tHqQ8/gE=;
-  b=Cbx2sc0bWvQLzFxfUgMjsrK6ItkEHiMZj4sRjxRWMHJdAgzPIS9QJjtj
-   b0qYcn4NGPY0m5AErhMnBDyxK3Epru27XMMoPQWLBPI0zOJZ72gTxc6qT
-   0SG/mjwVs9TkZuzjhVhui2KO6wgGMBHeHigvGAy754y/0OowQoURw5jqP
-   OfcYntGcPC9o0VVOoVkc4OqS0jW/N26lah5HhbfojvaJX+3amqZw5ec0B
-   EBZMokabfncs0r+OSk0VAnqIvdmuMH7wuY7p6YLCqSg4yix+thLbO5tU/
-   fRpLwje35NHiG/c3tVejuyOHzFTBUZRlhjeZwtkoIW/T111VHbNWdkLGe
-   w==;
-X-CSE-ConnectionGUID: wNs2jm7CRf+Fncz78JxFZw==
-X-CSE-MsgGUID: +vZ+qbsGR+eT5vYX6wo9Vg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="81731997"
-X-IronPort-AV: E=Sophos;i="6.19,270,1754982000"; 
-   d="scan'208";a="81731997"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 11:24:39 -0700
-X-CSE-ConnectionGUID: KvGSivJ/THu0a+YqiyR5sQ==
-X-CSE-MsgGUID: yHB7rlV4TfCiUP/04vgoCA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,270,1754982000"; 
-   d="scan'208";a="185986972"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa007.fm.intel.com with ESMTP; 31 Oct 2025 11:24:38 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vEtnf-000NYW-2a;
-	Fri, 31 Oct 2025 18:24:35 +0000
-Date: Sat, 1 Nov 2025 02:24:24 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: arch/um/include/asm/kasan.h:29:2: error: #error UML does not work in
- KASAN_INLINE mode with STATIC_LINK enabled!
-Message-ID: <202511010249.7L7FB7IA-lkp@intel.com>
+	s=arc-20240116; t=1761935179; c=relaxed/simple;
+	bh=Pk081o57dJZhm1aEaz4NULentX1zhVnZuQypQf/b3nI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JevvlrCOuFTPXSAbId7PfboXRm5iGNRq9u25jrAGBL/jX4ntjUtaU5AjVcCFqDTkfpoa7D8vcsWzbcT6wlPxRcLiox3LwTwUSR6IZboJ5LxVCI5L3VqaxeBldJBm8jbEwfbBNfcKaqsL77HbzQrr426Aa9VhH5cTzJMEmVeWopA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SQbns3Ly; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05C7CC4CEE7;
+	Fri, 31 Oct 2025 18:26:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761935178;
+	bh=Pk081o57dJZhm1aEaz4NULentX1zhVnZuQypQf/b3nI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SQbns3LybnHYygwa7X3hMSFAJI8GLzJvKZBlRFlbbXNmyoCln6c2kjAFEj+SAf8wL
+	 b6IXFCKyfnaYQpVKyreE6n7QhAVRjxcbC2qipklUQVe94d7PvqWYtFKNOycDVIxNSm
+	 C4Bd1yiJxsdPK7pfIXzbBWiBxbAxjU/ufQeBbdvaNZ7uxZJM+x706C2S4XDYQnKuzn
+	 S8vEpii7MCp8Y40Bk5UZ8YAG55hz1wOQlrGpNKj1h74DNEFRXU4gq/X7KOmCUZ4qrI
+	 GPyExMhbEGLj7LOF8twf6Fww8vx35mzgFUvzDRKaP/tVxjlj9wKRvVXn6ecvXrmPWh
+	 R7eHG076VWBIg==
+Date: Fri, 31 Oct 2025 18:26:15 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-hyperv@vger.kernel.org, x86@kernel.org,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Dexuan Cui <decui@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Long Li <longli@microsoft.com>,
+	Mukesh Rathor <mrathor@linux.microsoft.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Wei Liu <wei.liu@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel-janitors@vger.kernel.org, Miaoqian Lin <linmq006@gmail.com>
+Subject: Re: [PATCH] x86/hyperv: Use pointer from memcpy() call for
+ assignment in hv_crash_setup_trampdata()
+Message-ID: <20251031182615.GB2612078@liuwe-devbox-debian-v2.local>
+References: <d209991b-5aee-4222-aec3-cb662ccb7433@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,52 +67,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <d209991b-5aee-4222-aec3-cb662ccb7433@web.de>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   b909d77359b82821e1c6b6a3a8a51b355b06fdb5
-commit: 1e338f4d99e6814ede16bad1db1cc463aad8032c kasan: introduce ARCH_DEFER_KASAN and unify static key across modes
-date:   6 weeks ago
-config: um-randconfig-r052-20251101 (https://download.01.org/0day-ci/archive/20251101/202511010249.7L7FB7IA-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251101/202511010249.7L7FB7IA-lkp@intel.com/reproduce)
+On Fri, Oct 31, 2025 at 09:33:17AM +0100, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 31 Oct 2025 09:24:31 +0100
+> 
+> A pointer was assigned to a variable. The same pointer was used for
+> the destination parameter of a memcpy() call.
+> This function is documented in the way that the same value is returned.
+> Thus convert two separate statements into a direct variable assignment for
+> the return value from a memory copy action.
+> 
+> The source code was transformed by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  arch/x86/hyperv/hv_crash.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/hyperv/hv_crash.c b/arch/x86/hyperv/hv_crash.c
+> index c0e22921ace1..745d02066308 100644
+> --- a/arch/x86/hyperv/hv_crash.c
+> +++ b/arch/x86/hyperv/hv_crash.c
+> @@ -464,9 +464,7 @@ static int hv_crash_setup_trampdata(u64 trampoline_va)
+>  		return -1;
+>  	}
+>  
+> -	dest = (void *)trampoline_va;
+> -	memcpy(dest, &hv_crash_asm32, size);
+> -
+> +	dest = memcpy((void *)trampoline_va, &hv_crash_asm32, size);
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511010249.7L7FB7IA-lkp@intel.com/
+I don't think this change is needed.
 
-All errors (new ones prefixed by >>):
+There aren't that many places in the kernel tree that use this pattern.
+The pattern used by the original code is far more pervasive.
 
-   In file included from include/linux/kasan.h:21,
-                    from include/linux/slab.h:260,
-                    from include/linux/crypto.h:18,
-                    from arch/x86/um/shared/sysdep/kernel-offsets.h:5,
-                    from arch/um/kernel/asm-offsets.c:1:
->> arch/um/include/asm/kasan.h:29:2: error: #error UML does not work in KASAN_INLINE mode with STATIC_LINK enabled!
-      29 | #error UML does not work in KASAN_INLINE mode with STATIC_LINK enabled!
-         |  ^~~~~
-   make[3]: *** [scripts/Makefile.build:182: arch/um/kernel/asm-offsets.s] Error 1
-   make[3]: Target 'prepare' not remade because of errors.
-   make[2]: *** [Makefile:1282: prepare0] Error 2
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:248: __sub-make] Error 2
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:248: __sub-make] Error 2
-   make: Target 'prepare' not remade because of errors.
+Wei
 
-
-vim +29 arch/um/include/asm/kasan.h
-
-    27	
-    28	#if defined(CONFIG_STATIC_LINK) && defined(CONFIG_KASAN_INLINE)
-  > 29	#error UML does not work in KASAN_INLINE mode with STATIC_LINK enabled!
-    30	#endif
-    31	#else
-    32	static inline void kasan_init(void) { }
-    33	#endif /* CONFIG_KASAN */
-    34	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+>  	dest += size;
+>  	dest = (void *)round_up((ulong)dest, 16);
+>  	tramp = (struct hv_crash_tramp_data *)dest;
+> -- 
+> 2.51.1
+> 
 
