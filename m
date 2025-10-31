@@ -1,139 +1,130 @@
-Return-Path: <linux-kernel+bounces-880373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CBB1C25A31
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:43:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D4CFC259E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:40:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 26A8B4E22F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:40:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 369A93B69E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A981034CFAA;
-	Fri, 31 Oct 2025 14:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89EBA34C98A;
+	Fri, 31 Oct 2025 14:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="GGATE9wn"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e2H1QM4R"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6476534C982;
-	Fri, 31 Oct 2025 14:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692BA1F4E59;
+	Fri, 31 Oct 2025 14:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761921629; cv=none; b=gORyOwwLJMg4xuR7WHSArXojXsprJEGUYLVfFJK0Yixi9cEcLqhsjKohncz2nLJ3i7syKSs03jcaJguPKKKZuIryw3muqrT57BAndPw1gP2jujVL7yfgQcwBRyTC+npKUNhH0bY+9FFdVArjyJh+oBhYB2B2HppVK241/Op9Ko4=
+	t=1761921627; cv=none; b=SoNMc7rbDViTDPjFLZCtE1x2EFX2Albxwmn/a4zZcsa0AvovG1olOnlTo3IvtwCBrMAEtMcKNezOl9FfMwAhrUu9o+45q2Rhgbmtfkxs4xYoyF4zVuX//0NvCNAzijO0WOsq2AoQDYmoYmztTPIAgnh3xP0fNq0a2ezWabS4qGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761921629; c=relaxed/simple;
-	bh=0M96qmmyGoLwHojt9tChAbAU0XSTBukdyVXTQb6itBI=;
+	s=arc-20240116; t=1761921627; c=relaxed/simple;
+	bh=qSbAYqRqstmnBAKgQa7cnMRak8yPgfb70/ahldoOtMI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T1vBwJp4HqGROjJRnVuyQvKnt4Rw9VPJC/ypFsr7hDABA7uaNcqjYLwyfZLQ/lcoVs8duO5vdvWjjY/dPKKX7xnJi3DisVC+zSS8QvpdS4q0F2Ai6+wDAoYUQ3YrEI4yC1ukfUPsoDAcvdhDRztGL3ZccYCt4IMxarO18+2lgEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=GGATE9wn; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id ACFCE40E016D;
-	Fri, 31 Oct 2025 14:40:24 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id BldU0NcZGFY6; Fri, 31 Oct 2025 14:40:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1761921620; bh=v3FbwAmSMB2xLLwV/I0FdO1ylxms2ed5Ozm9s2g0aUs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GGATE9wnbBsMZRTA1AIch6lK8ly65+M6A5Q90F8kGJ3xI77jAJZ/MdRz3vYOFuQyB
-	 gIVpCydEu3iXZyi5ZobhN58lQHqb+r5tyjjCUZwv/YHmeA0T/pbmFF8wJFel4Ivg+s
-	 3EzUSLsfKb0sY/2TIAFPOhgW7MjIABR2OAUj+TnUvG7T4dM8ZQrRZxc3YLlD7ktypS
-	 AiCW9Z//9qIbXkcVeEQ5EwnbxfTuQ7+uiIPbpW+3yQKQgi2GleOGDYGVLrhfJu1xJt
-	 xm7aYbqY/dQGVWwa7AlBMfkRxi2sUWPVG2dkYPOYbZQLwZICAYEQCQGnHVvEsoyJmK
-	 2oRdZi3Qqz2cfbtTZ6aYzMWFQiPjunlSu2CNXXLDyBTe3sIuGY5cRyKmhv7rq2XMgc
-	 DP757akIIukfDLKqDveSzUt4hdNquj/RnvHzs2kaGbfLSk5B+dA6/bccGE+eXkY9tS
-	 xotAiwmqgTovFwKi2KWTXY+xIItHlnKrKBLChNyDsOMJg4y5wIGzyZi+sodljRGl3Z
-	 uwx8wC0ht3VTGsoID3DsnBxlMzU6+3PH+ENr7q9QU5EkDTKFhpL8YqoEYkXhEqlzEq
-	 Fip6Qx4wk84pi9Nh1mE6H9yF2OI6KD8BTriikUYEl9It+2V+hbhcbiojMqOodTX1XX
-	 DDN/hSvibRydnah43QcminOU=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 2875B40E0225;
-	Fri, 31 Oct 2025 14:40:03 +0000 (UTC)
-Date: Fri, 31 Oct 2025 15:40:02 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: dwmw@amazon.co.uk, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, ardb@kernel.org, hpa@zytor.com,
-	x86@kernel.org, apopple@nvidia.com, thuth@redhat.com,
-	nik.borisov@suse.com, kas@kernel.org, linux-kernel@vger.kernel.org,
-	linux-efi@vger.kernel.org, kernel-team@meta.com,
-	Michael van der Westhuizen <rmikey@meta.com>,
-	Tobias Fleig <tfleig@meta.com>
-Subject: Re: [PATCH v2 2/2] efi/libstub: Fix page table access in 5-level to
- 4-level paging transition
-Message-ID: <20251031144002.GMaQTKQnpp2u493ZZS@fat_crate.local>
-References: <20251028105637.769470-1-usamaarif642@gmail.com>
- <20251028105637.769470-3-usamaarif642@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LbjPJYTaL4o+KygsGwhR0o/FUG3Jvz1AA8P1+wQF3Veq0ChdOdI657tRJu0ksHiX/Eugi12QZmI7kaMTM/o1XSBiEvbk9SbF7b3wOrWiHsQZGHLy0JPzYeGagCwt26kePyNgvUkNoqqDeq22rhz2/5RUkxbayL0C2qq1E338o6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e2H1QM4R; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761921626; x=1793457626;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qSbAYqRqstmnBAKgQa7cnMRak8yPgfb70/ahldoOtMI=;
+  b=e2H1QM4RA0WKQGdQeW4DRKjIdAGl/GjH5ZYCaenA7IU9p1SfF3j1zj/K
+   DLFmPA3JIky7KJkYjhs+nYAFi3okROEqAoMxRN9Wors1r9UI/t6avhJOx
+   +qRwxorEOBR2/Dw2CffNl6BMx4WyIvfKJ9a8VA1UrU2dBI5NcNwxRqL1U
+   j8bnFcHLtcHd6PMfJdMomgrqRPhj+vfOOV1BaNJCYyIXaBEK0KqyiD5vm
+   TZX5W1lXKSijyMLXl3xfll4/txgEBEaNYvTffb2g2bfZIb34vWjMAZh3l
+   7akve1Ity6GUBXWcxVy0e2440lE7fBeb8iQkpb6ze95V4ouFuh/VhQqLE
+   g==;
+X-CSE-ConnectionGUID: maxzgR5ZS32cqZ5mnHM9pg==
+X-CSE-MsgGUID: uRVXxvKzTqOYPXnFrV8ZEw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="89547095"
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="89547095"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 07:40:25 -0700
+X-CSE-ConnectionGUID: wW36B9w0Th65t8SZqQHQaQ==
+X-CSE-MsgGUID: yXMFoN25Tt2CBnsYM50VDA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="185522737"
+Received: from mgoodin-mobl3.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.66])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 07:40:23 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vEqIb-00000004IWb-2VHb;
+	Fri, 31 Oct 2025 16:40:17 +0200
+Date: Fri, 31 Oct 2025 16:40:16 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: remi.buisson@tdk.com
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] iio: imu: inv_icm45600: Initializes
+ inv_icm45600_buffer_postdisable sleep
+Message-ID: <aQTKUE4Nj77LKfbD@smile.fi.intel.com>
+References: <20251031-icm45600_fix_buffer_sleep_init-v2-1-5cdc04e1bcba@tdk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251028105637.769470-3-usamaarif642@gmail.com>
+In-Reply-To: <20251031-icm45600_fix_buffer_sleep_init-v2-1-5cdc04e1bcba@tdk.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Tue, Oct 28, 2025 at 10:55:57AM +0000, Usama Arif wrote:
-> When transitioning from 5-level to 4-level paging, the existing code
-> incorrectly accesses page table entries by directly dereferencing CR3
-> and applying PAGE_MASK. This approach has several issues:
+On Fri, Oct 31, 2025 at 01:57:06PM +0000, Remi Buisson via B4 Relay wrote:
 > 
-> - __native_read_cr3() returns the raw CR3 register value, which on
->   x86_64 includes not just the physical address but also flags Bits
->   above the physical address width of the system (i.e. above
->   __PHYSICAL_MASK_SHIFT) are also not masked.
-> - The pgd value is masked by PAGE_SIZE which doesn't take into account
->   the higher bits such as _PAGE_BIT_NOPTISHADOW.
-> 
-> Replace this with proper accessor functions:
-> - native_read_cr3_pa(): Uses CR3_ADDR_MASK properly clearing SME encryption
->   bit and extracting only the physical address portion.
-> - mask pgd value with PTE_PFN_MASK instead of PAGE_MASK, accounting for
->   flags above physical address (_PAGE_BIT_NOPTISHADOW in particular).
-> 
-> Fixes: cb1c9e02b0c1 ("x86/efistub: Perform 4/5 level paging switch from the stub")
-> Co-developed-by: Kiryl Shutsemau <kas@kernel.org>
-> Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
-> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-> Reported-by: Michael van der Westhuizen <rmikey@meta.com>
-> Reported-by: Tobias Fleig <tfleig@meta.com>
-> ---
->  drivers/firmware/efi/libstub/x86-5lvl.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> The sleep variable in inv_icm45600_buffer_postdisable could be used without
+> being assigned in case of error. It must be initialized to 0 by default.
 
-allmodconfig build:
+> Fixes: 06674a72cf7a ("iio: imu: inv_icm45600: add buffer support in iio devices")
 
-ld: error: unplaced orphan section `__bug_table' from `drivers/firmware/efi/libstub/x86-5lvl.stub.o'
-ld: error: unplaced orphan section `.altinstructions' from `drivers/firmware/efi/libstub/x86-5lvl.stub.o'
-ld: error: unplaced orphan section `.altinstr_replacement' from `drivers/firmware/efi/libstub/x86-5lvl.stub.o'
-ld: Unexpected GOT/PLT entries detected!
-ld: Unexpected run-time procedure linkages detected!
-ld: Unexpected run-time relocations (.rela) detected!
-ld: drivers/firmware/efi/libstub/x86-5lvl.stub.o: in function `efi_5level_switch':
-x86-5lvl.c:(.text+0x13e): undefined reference to `pv_ops'
-ld: x86-5lvl.c:(.text+0x14d): undefined reference to `pv_ops'
-ld: drivers/firmware/efi/libstub/x86-5lvl.stub.o:(.altinstr_replacement+0x1): undefined reference to `BUG_func'
-ld: arch/x86/boot/compressed/vmlinux: hidden symbol `pv_ops' isn't defined
-ld: final link failed: bad value
-make[3]: *** [arch/x86/boot/compressed/Makefile:116: arch/x86/boot/compressed/vmlinux] Error 1
-make[2]: *** [arch/x86/boot/Makefile:96: arch/x86/boot/compressed/vmlinux] Error 2
-make[1]: *** [arch/x86/Makefile:308: bzImage] Error 2
-make: *** [Makefile:248: __sub-make] Error 2
+This is part of the tag block, needs to go together (on one paragraph, means no
+blank lines in between) with your SoB and other tags, if applicable.
+
+> Smatch static checker warning:
+> 
+> 	drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c:377 inv_icm45600_buffer_postdisable()
+> 	error: uninitialized symbol 'sleep'.
+
+Is there a public message / report on this? If so, use Closes: tag to point to
+it.
+
+> Signed-off-by: Remi Buisson <remi.buisson@tdk.com>
+
+...
+
+>  	struct device *dev = regmap_get_device(st->map);
+>  	unsigned int sensor;
+>  	unsigned int *watermark;
+> -	unsigned int sleep;
+> +	unsigned int sleep = 0;
+
+As I said, the preferred way is to decouple definition and assignment. The best
+place for it is just before scope_guard() call.
+
+	sleep = 0;
+	scoped_guard(mutex, &st->lock)
+		ret = _inv_icm45600_buffer_postdisable(st, sensor, watermark, &sleep);
+
 
 -- 
-Regards/Gruss,
-    Boris.
+With Best Regards,
+Andy Shevchenko
 
-https://people.kernel.org/tglx/notes-about-netiquette
+
 
