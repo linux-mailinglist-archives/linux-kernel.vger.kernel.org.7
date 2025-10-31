@@ -1,133 +1,125 @@
-Return-Path: <linux-kernel+bounces-879537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C941C2353E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:14:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4034C2362C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:25:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75B85423424
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:14:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E4DE188331C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:22:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0491B2E7F38;
-	Fri, 31 Oct 2025 06:14:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DA572F39BF;
+	Fri, 31 Oct 2025 06:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rKCJJoCN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tGP4zMww"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E9EF2EC0AD
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 06:14:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4522E6CDC;
+	Fri, 31 Oct 2025 06:21:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761891277; cv=none; b=jMBY6q5w+sdecSlf6B6i+RMLDYBXG3ftiBVvjHZaqztU1v1EcCoWTewPyIIvIDCBAPoYZ/eU0d5Vm3nf9vnbhy+CqWFAZ4y7fFPBadnY4+EfkpmxzdVZpCVSlJFAkuOmM/gvJ94FEc15F9Hz1wl/9bUyTyVVW+CXe9TFwCC2j+w=
+	t=1761891711; cv=none; b=kfYWmdBMzj98nqaP1Onxj5b+P6/YOdFhXVZi3u/3lhssrc3IL9crFlANVD5kvDPe1Gl/qJ1IaMnpD8tpArgubrWj+3p8B6E/yVezmNLMFVgQRo1A3bhhVwnayfV+CUaC6Q8YCbXbEDkg1r9+/733ZJUeodbHASwrtgUgbV2SUPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761891277; c=relaxed/simple;
-	bh=ulqQ2Efc96Ndv0ALKnZyWiWyzX2vMFMpabUS/C/Sh3Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kCkkfiOzBXRyXmUljR8Xmd4E23O3c5SvrDg0ZJhdOFe+wbbxEvC7K0P7PiXnbyN769HPHiePO/tJQSG/c+Hc5RZyDcM0XtEKJTuI3F7D4QhuNfE8KxtVFYpZO0iPN9gvEl7hF0NNhY55UI9eYyZV0r6RocHo5Ss6YbXJd/EKbxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rKCJJoCN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EF28C19424
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 06:14:37 +0000 (UTC)
+	s=arc-20240116; t=1761891711; c=relaxed/simple;
+	bh=qV6uFxqSSQYthCHvksnPhXB8B47dV+DjfShOnQoDrtU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R4AbromIJE6Y6SY5HmXBpJvaqqXj1uLx3ky0R2MBGm2983Hq0AF4NAkKvER8FRK9UdroFYTuT5BXuLu7Ms4v7/RBQPuXjWtXQux4rqOpsTjGUxLAmbc8goEr6VLRg8BsD1q+5roR0birkhv1MoM0U7TGjodU5Ix/MTwNqA0l/Rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tGP4zMww; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D004C4CEF1;
+	Fri, 31 Oct 2025 06:21:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761891277;
-	bh=ulqQ2Efc96Ndv0ALKnZyWiWyzX2vMFMpabUS/C/Sh3Y=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=rKCJJoCNVl0Q5qtaH1Z+C7B1Oz+Fl08Rl8H0qpFx06zWBR66UY0lqEwb3iTi0T7bZ
-	 iUo9iMhXwDO1C9+a/RSFlW0WTKwANQWJQ8up+KtwVzuAsT0So20658/XXdq0NWtphE
-	 gkxQDiUHsr7C4T3wMDNAw3HFdzQLreVT717xnA/vyNUP8KC0C+zCtguLL8LVOJVhTh
-	 ZtKH+qq8rbVN87I0SYHf2gnCjl8TbdTuDIGUVJSwLcNn6hCe162OTbkUhb0vZ2YZyG
-	 TiXtol0bImMwkIReazkIjp2LKKFWPVssG+caVhcpP5V3ZVba/UK3e9lx3N681S99ct
-	 WyIMCunGgs8qA==
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-7f7835f4478so15333306d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 23:14:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXWnXrNPppX4vqb1jCgX+2UMY2TKQIr3ciVqzC51vJRbeyK2Qgl2ZYlyHpqwBeGLnruQrYRm28L8KYcS4I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxL71+gsuA1Ex0QNFT6vyNQThb1YPx+oHXaK4Q9LWmwqpzB6Id0
-	IYwgKi79oC/wkJLXZbokID6jd+517thNf90gpSCUMNxdMJ6HWCCuNmDtTj4o8okFy7lx7sHko42
-	lZXTMo3t4l8FUV2Lk5AybtDBBuplz17M=
-X-Google-Smtp-Source: AGHT+IERuBxgQd6R3EQpmFyFGBh/OYNUCmHcFdqHl5UpwHFlKQJ7KunNCXQLp2T8SUK1j4VkBMM2BQqqeY80Jp9bKs0=
-X-Received: by 2002:a05:6214:2a8b:b0:87c:a721:42f3 with SMTP id
- 6a1803df08f44-8802f450e57mr23817426d6.41.1761891276053; Thu, 30 Oct 2025
- 23:14:36 -0700 (PDT)
+	s=k20201202; t=1761891710;
+	bh=qV6uFxqSSQYthCHvksnPhXB8B47dV+DjfShOnQoDrtU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tGP4zMww9hNL4QxtqCMsdf1R8Ftkkpg7q/cByv/0FvS8d7I0eidWHaMI70IimwG99
+	 aY6WnMrRpCUqD18sYZEFSgogpia1W1t22OQbEZZSxp8w6zjbF1rTsd4eHIPqZC9XT0
+	 pC3LgxQ45CoXg5yt1a4eUw9IeRGTxaH2dJL5PNC7hSfCTsNqZtip/2/BpgpWSww1v/
+	 A1Gc60K2qNLfnSW1veDmIfrdapFZppXytWL9eSAhqA2kP1+URNcTN8DRpM2NBzawxI
+	 dM0vTVa3O3FtuaJxhdEyqYkxcEJlChQmb0W/yITx24CSSyYTiw5Vzn2EiyX3T+whuB
+	 eTn4/imgBHv4g==
+Date: Fri, 31 Oct 2025 11:51:31 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Shawn Lin <shawn.lin@rock-chips.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, Niklas Cassel <cassel@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	"David E. Box" <david.e.box@linux.intel.com>, Kai-Heng Feng <kai.heng.feng@canonical.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, 
+	Chia-Lin Kao <acelan.kao@canonical.com>, Dragan Simic <dsimic@manjaro.org>, 
+	linux-rockchip@lists.infradead.org, regressions@lists.linux.dev, FUKAUMI Naoki <naoki@radxa.com>
+Subject: Re: [PATCH v2 1/2] PCI/ASPM: Override the ASPM and Clock PM states
+ set by BIOS for devicetree platforms
+Message-ID: <sttsqedadw4cdozfrjkl7jlqk2jtwkaniukczfwm5e7ymdtsh3@jkq3unz2ez2k>
+References: <4pm5tizc2c4c75h23izalhysuljnlfzpxuawhzezmnnqic2tdf@l2rcj24rmru3>
+ <20251017134554.GA1027663@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027231727.472628-1-roman.gushchin@linux.dev>
- <20251027231727.472628-3-roman.gushchin@linux.dev> <CAHzjS_sLqPZFqsGXB+wVzRE=Z9sQ-ZFMjy8T__50D4z44yqctg@mail.gmail.com>
- <87zf98xq20.fsf@linux.dev> <CAHzjS_tnmSPy_cqCUHiLGt8Ouf079wQBQkostqJqfyKcJZPXLA@mail.gmail.com>
- <CAMB2axMkYS1j=KeECZQ9rnupP8kw7dn1LnGV4udxMp=f=qoEQA@mail.gmail.com>
- <877bwcus3h.fsf@linux.dev> <CAADnVQJGiH_yF=AoFSRy4zh20uneJgBfqGshubLM6aVq069Fhg@mail.gmail.com>
- <87bjloht28.fsf@linux.dev>
-In-Reply-To: <87bjloht28.fsf@linux.dev>
-From: Song Liu <song@kernel.org>
-Date: Thu, 30 Oct 2025 23:14:24 -0700
-X-Gmail-Original-Message-ID: <CAHzjS_vRrxTLR0kFJvm4R3kO0s8hyN5Onsr6XfbA3Peyasz+Cg@mail.gmail.com>
-X-Gm-Features: AWmQ_bndcOuOp7qdV3wXaWKIXpuAyFBwWSClkxOKSazNGGK9yzrR9MBHnc604rU
-Message-ID: <CAHzjS_vRrxTLR0kFJvm4R3kO0s8hyN5Onsr6XfbA3Peyasz+Cg@mail.gmail.com>
-Subject: Re: bpf_st_ops and cgroups. Was: [PATCH v2 02/23] bpf: initial
- support for attaching struct ops to cgroups
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Amery Hung <ameryhung@gmail.com>, 
-	Song Liu <song@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@kernel.org>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, JP Kobryn <inwardvessel@gmail.com>, 
-	linux-mm <linux-mm@kvack.org>, 
-	"open list:CONTROL GROUP (CGROUP)" <cgroups@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Martin KaFai Lau <martin.lau@kernel.org>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, Tejun Heo <tj@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251017134554.GA1027663@bhelgaas>
 
-On Thu, Oct 30, 2025 at 4:24=E2=80=AFPM Roman Gushchin <roman.gushchin@linu=
-x.dev> wrote:
->
-> Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
->
-> > On Thu, Oct 30, 2025 at 12:06=E2=80=AFPM Roman Gushchin
-> > <roman.gushchin@linux.dev> wrote:
-> >>
-> >> Ok, let me summarize the options we discussed here:
-> >>
-> >> 1) Make the attachment details (e.g. cgroup_id) the part of struct ops
-> >> itself. The attachment is happening at the reg() time.
-> >>
-> >>   +: It's convenient for complex stateful struct ops'es, because a
-> >>       single entity represents a combination of code and data.
-> >>   -: No way to attach a single struct ops to multiple entities.
-> >>
-> >> This approach is used by Tejun for per-cgroup sched_ext prototype.
-> >
-> > It's wrong. It should adopt bpf_struct_ops_link_create() approach
-> > and use attr->link_create.cgroup.relative_fd to attach.
->
-> This is basically what I have in v2, but Andrii and Song suggested that
-> I should use attr->link_create.target_fd instead.
->
-> I have a slight preference towards attr->link_create.cgroup.relative_fd
-> because it makes it clear that fd is a cgroup fd and potentially opens
-> a possibility to e.g. attach struct_ops to individual tasks and
-> cgroups, but I'm fine with both options.
+On Fri, Oct 17, 2025 at 08:45:54AM -0500, Bjorn Helgaas wrote:
+> On Fri, Oct 17, 2025 at 06:24:26PM +0530, Manivannan Sadhasivam wrote:
+> > On Fri, Oct 17, 2025 at 08:19:11PM +0800, Shawn Lin wrote:
+> > > 在 2025/10/17 星期五 18:04, Manivannan Sadhasivam 写道:
+> > > > On Fri, Oct 17, 2025 at 05:47:44PM +0800, Shawn Lin wrote:
+> > ...
+> 
+> > > > > While we're on the topic of ASPM, may I ask a silly question?
+> > > > > I saw the ASPM would only be configured once the function
+> > > > > driver calling pci_enable_device. So if the modular driver
+> > > > > hasn't been insmoded, the link will be in L0 even though there
+> > > > > is no transcation on-going. What is the intention behind it?
+> > > > 
+> > > > I don't see where ASPM is configured during pci_enable_device().
+> > > > It is currently configured for all devices during
+> > > > pci_scan_slot().
+> > > 
+> > > This is the dump_stack() where I observed. If I compile NVMe
+> > > driver as a module and never insmod it, the link is always in L0,
+> > > namely ASPM Disabled.
+> > 
+> > I guess this comment answers your question:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pci/pcie/aspm.c?h=v6.18-rc1#n1179
+> 
+> The comment is:
+> 
+>    * At this stage drivers haven't had an opportunity to change the
+>    * link policy setting. Enabling ASPM on broken hardware can cripple
+>    * it even before the driver has had a chance to disable ASPM, so
+>    * default to a safe level right now. If we're enabling ASPM beyond
+>    * the BIOS's expectation, we'll do so once pci_enable_device() is
+>    * called.
+> 
+> I don't think relying on a driver to disable ASPM to avoid broken
+> hardware is the right answer.  If the driver is never loaded, we waste
+> power.  And if the user enables ASPM via sysfs, apparently the device
+> may be crippled.
+> 
+> I think it would be better to have an enumeration-time quirk to keep
+> us from enabling ASPM.  We might trip over some of this broken
+> hardware, but I don't think there are very many drivers that fiddle
+> with ASPM, so we should be able to be proactive about it.
+> 
 
-relative_fd and relative_id have specific meaning. When multiple
-programs are attached to the same object (cgroup, socket, etc.),
-relative_fd and relative_id (together with BPF_F_BEFORE and
-BPF_F_AFTER) are used to specify the order of execution.
+There are quite a bit of drivers fiddling with ASPM states:
 
->
-> Also, as Song pointed out, fd=3D=3D0 is in theory a valid target, so inst=
-ead of
-> using the "if (fd) {...}" check we might need a new flag. Idk if it
-> really makes sense to complicate the code for it.
->
-> Can we, please, decide on what's best here?
+git grep -l PCI_EXP_LNKCTL_ASPMC drivers/ | wc -l
 
-How about we add a new attach_type BPF_STRUCT_OPS_CGROUP?
+16
 
-Thanks,
-Song
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
