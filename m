@@ -1,206 +1,137 @@
-Return-Path: <linux-kernel+bounces-880253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B9E2C253BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:20:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F17C1C253D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:21:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D16691888D4A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:20:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B19A3BF027
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13B7E34AB1D;
-	Fri, 31 Oct 2025 13:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18BA234B667;
+	Fri, 31 Oct 2025 13:20:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZWXDynPN";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="K1pjdOwM"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA062283129
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 13:19:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ZWImuyJM"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F351B142D;
+	Fri, 31 Oct 2025 13:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761916794; cv=none; b=ItGoaubro9+ldcfU/cBr0tc6wOnIUmZ1GnjOW6t3SowNK75HQ0JP59PaEpqhMSihRerVGLfU+yUsEFcX9ITq7J1H30n0QwjWxTnPIgVPM3FbDd+3Gsh3sXARRqWaZJNnXPOMK5ZzBbHEvS54Q8NBsR6Y+jsL3kLzC5tptGxh3/k=
+	t=1761916820; cv=none; b=S8UqkmMQz4jjt29aKOHu9OE/Q6sUVr4AoG6h/p2s7Z0oCO1OXbgkFuHfGhLBo96dlEDFFpJxwH9+dPRjadN19irCb0dJ0EDjx7n/OQTS/sUjUYcJgZ4W0vnjh1nfC0BceoRQ3a+8SxO2EGROpTQOlS05OYDjN3uYHQYB9OZicps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761916794; c=relaxed/simple;
-	bh=kKIlQC49+1HvPMZ+KSY6IKOFV0Kf/+b+20LKz34U5yw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kwzsPh14qzUFwze8F/Htd7AWa3PnVhxB+41W4k4B/w4EtcB5TCaqkHWZnqEqZfL7YzW5evNbFGP5BU4T+dWXoDSx+Xcjo5dn8RQCJOUkXrYZM5q5JqklBGrNZ87FHaA7gU57wCUJX7CIH57n9P2wAElRpnDznFwQU0cxJT8wRJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZWXDynPN; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=K1pjdOwM; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59V9jO4q2471151
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 13:19:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=i1q+8kjbF6ZsBZxOZVi0iNgl
-	M800iA6/f1hi233PBSY=; b=ZWXDynPNwl8wiZazuA3y2ocv1d/aLxaGDtl82VqZ
-	EJtTz1fL6bsdzJbYiIqWIE1t1WEnaqsBLM4jIlbwx+DVvIotP/zdEwBmxc0MBiWH
-	2beK8WTOw/gZHacDNqEBkRLhP0vh827gI4xjjHsLYghT5UXV0gOl2mprGb2+VcUK
-	3l1H56sAOQxuCeCsNuOKEX+dntEu6GDfnWRoFcWsDDeV1w7CtdHkF0Xc85wwckKK
-	cQt0GI+bDoA1odYCOjt7l6ifAtK3UwFmViJU1/w34KixwQV5tTy/fQGIxiubqos9
-	2Li5JhKwouut+803Y1zYcoILNaRgKZ8kfYwjTu9jhuaPLQ==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a4trv0h1h-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 13:19:51 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-295395cedafso4690575ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 06:19:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1761916791; x=1762521591; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=i1q+8kjbF6ZsBZxOZVi0iNglM800iA6/f1hi233PBSY=;
-        b=K1pjdOwMQmIt7MXhmjeKr0ZdOz6v2iQ+AQk5lDa8HoyIlTL787GjS8YEZfIssWt+l0
-         agpcljPoYoU2BnHu1qzlX0SieWeFp3MA6Lt82c5LR+ZypqjZ1pIz8/fDQ2m7aHsBcdim
-         IZd6Q0/ZHSVUCdc2aOPncyUGtiAcZxNCbWmhqbIiq6QLZreaztpghxUjLadyQphzAxfW
-         7Kf/bWHNHcXGzWHoL9V8fyntbw+3ezhBUcpwAl1NMne6RMl4IEOh7qk3R6FMzcga9xrH
-         cVwe8wVY9hEL3Jn9a1tK6HVDFq4+KHxf4CkfK4utS+OyUAwwrZUOQbGG6IvZsNTf+oQj
-         4bng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761916791; x=1762521591;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i1q+8kjbF6ZsBZxOZVi0iNglM800iA6/f1hi233PBSY=;
-        b=mul+4cLpDaQGP9Zjce3NzpWj46jpEZko7sCEtGeFwMf2Ntn1oG3ymH0DILKCK0svk/
-         vGoXaGpDU2W7NYk/O9VHPP9pI72fo3Aq1tWDFqp12WnKUBrdpTK4z/aAm3acoeA2jQ+Y
-         jagKsDGGVu0/WqZ1zs6ZZOtx7YRPq229EvkrqkTLYMsUW14E3pvJVeLmuphAtdFDJmze
-         bHdPwJDUwZAtvs+ePKWWLmsejgkYNyUxkOk5mjDpJ04QqO0TT2rg9nNoOg0+DH/4kfUC
-         k5YWCphkpMj+1xwVlVdsGkZcw0uINJMeiVShaAwE/guCrvn/dAFkx2CZV1CszKay8173
-         vCGw==
-X-Forwarded-Encrypted: i=1; AJvYcCXmRQFjH3YYAKKIoaODF83QCVlkio/RmlyMOjcsExoExcRy4b7a/lvBXgsZVJLzQjmKzgV7vxg8RocfAYA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzF0H/Hl701qi0UKE/gRGwwJDSWlbbLlRUF1u8eCadriJDXEUsJ
-	IHEFH7bfzFtgQZStYOmnTIC0SJhj3oM3/kXTsH+p5A5z6tOAEbxZV6nYQG71J+vWqCsSumQtXvQ
-	txXbJrHxAMrABjl/2cAjn1gxS2SQI6rh5Z7xiy0onzxMmNMeqyXOK0eckTn4UtW1zpcU=
-X-Gm-Gg: ASbGncvNRJn6isx3eNsKthiWUzMRpRpc3paUAu6PpbUaaZobLXTF3uL+db04u9h0Flj
-	DfLvMARjVtJNMnG0ePI4D/rXWfE01MId2L2V8ANUYxY3a4C8os+uFsCtqKVn3wxX8xIm529Q8zP
-	OF5xCJMBMdWqyFq9JuoesTUedkjHYfaFJwoSJYb/092QfjSMTZtbp2R7vezjU7uWSMjz2V0koYa
-	QFqnOex7+S1YoAYAh8kBmMreZix/NllaBWg1UVDsU45bcQcy/3yj05vfFROVNR3hNL4atuirJRx
-	S00SlMfX7TmwZuqh00DY6hMWSdd2fB7FqaifEKv6re7hrALrc2wEsuN5RecEcFTFbmhUAMtcj0c
-	vr0CwjOrPtgnsmUCmj0JpS2nDI891O9DW
-X-Received: by 2002:a17:902:f544:b0:290:a70e:6261 with SMTP id d9443c01a7336-2951a361f70mr55559755ad.11.1761916791084;
-        Fri, 31 Oct 2025 06:19:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEWz7WaGspHmY6hwyIZRpl6IwBTpTBuIV69EQKKehTnyEv9Oq+hWYVVrkE1+HxBN8oUAGfLBg==
-X-Received: by 2002:a17:902:f544:b0:290:a70e:6261 with SMTP id d9443c01a7336-2951a361f70mr55559015ad.11.1761916790332;
-        Fri, 31 Oct 2025 06:19:50 -0700 (PDT)
-Received: from hu-pkondeti-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2952696df55sm24405685ad.70.2025.10.31.06.19.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 06:19:50 -0700 (PDT)
-Date: Fri, 31 Oct 2025 18:49:43 +0530
-From: Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>,
-        hrishabh.rajput@oss.qualcomm.com,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Subject: Re: [PATCH v4 2/2] watchdog: Add driver for Gunyah Watchdog
-Message-ID: <51372234-0fd8-4cee-a296-a5e8626b52a8@quicinc.com>
-References: <20251031-gunyah_watchdog-v4-0-7abb1ee11315@oss.qualcomm.com>
- <20251031-gunyah_watchdog-v4-2-7abb1ee11315@oss.qualcomm.com>
- <13d2963d-e931-4e51-b875-a1650b899bb7@kernel.org>
- <09e8485f-f512-4069-be9f-3e94fb142aa3@quicinc.com>
- <68b2b40a-da98-46b8-bf48-ce17fb3b79cd@kernel.org>
+	s=arc-20240116; t=1761916820; c=relaxed/simple;
+	bh=DawxYnhCqvS1VLds39qbkKtQE0BqAIbIQ6H60jxljHM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GhdWeu0uNs/infHT32At1l8T0mPMGvGl1DTbFcV4dYL7eQRoQvl3a8/yA/U7X234cnCgvt3f6/VjzT8j6upTKx8TzmgE8u3pcVhkc84IsyqWNOThGhoEdupWj/9QDMYZPub/U8vewnp7L83LMY/Bt+Nm9+82NzLSuTWz04xfJR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ZWImuyJM; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.1.19] (unknown [103.212.145.71])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 006D4201A7D2;
+	Fri, 31 Oct 2025 06:20:12 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 006D4201A7D2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1761916818;
+	bh=jnAwVyIj69/F/fVSjZqV+IT6X9/j+5+6TPTp7CUgj7A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZWImuyJMsrEdzFUuLTme2SU4Dt/KU4jg59orX5Ppr8PNkuptpnRvW0hpRTeBhRokh
+	 MdYiGUTInWEGFJiPHbbLBV/IOs+zsLRWECBYiy+dy2ip7hf4cgBjGmAfvimQCVI38x
+	 M3uftScXNcDyeR0tJHjHk2O1cy6s1rDrUJY/rdfg=
+Message-ID: <347c723b-d47c-49c2-9a3b-b49d967f875b@linux.microsoft.com>
+Date: Fri, 31 Oct 2025 18:50:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <68b2b40a-da98-46b8-bf48-ce17fb3b79cd@kernel.org>
-X-Proofpoint-ORIG-GUID: dbkZ1GVLL5zafJtvLt4R96wDXEBZBhea
-X-Proofpoint-GUID: dbkZ1GVLL5zafJtvLt4R96wDXEBZBhea
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMxMDExOSBTYWx0ZWRfX+UqulB5Ev+YE
- 6WSeTWx43+2Kiq4sEKRIBw/HelRe/z2PLagSVSMJyLMWulU0UR36IIPUrVSEn3qJDQ8LByKjh0g
- Ddn0yXOT1jTtAWG7VRd3uRA8eUYGLO2oyhmdrRt94vMJEIDrKou9R9zGlk9DckFYblzlDkxuPT9
- +nVPDV1UwhPg85WRSF/QHoo07WEP/5HzQsqZosTCMRQFiPbeXkXbMS1X+m8vuP9+6sghIOel7hW
- 94uitPfs3zqvHRlEWtKwOSBRjmKSa4dpRxO68CC7IlwPUSSXw04kjccnSdH5nevSZ3mVD0G7Ju3
- Vo44cxRWBlThOabWmuHSUq70tzuNyvuMlikArp2kNlTrW1zRfgxeSvHTDd0dOripjVQA+KjbRtC
- ArVF+5oBCzN9NZjGGAtvcI48Cy63Iw==
-X-Authority-Analysis: v=2.4 cv=XoP3+FF9 c=1 sm=1 tr=0 ts=6904b777 cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=1ZP6r6y3UWDVpadotx8A:9
- a=CjuIK1q_8ugA:10 a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-10-31_04,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 impostorscore=0 spamscore=0 lowpriorityscore=0 clxscore=1015
- priorityscore=1501 suspectscore=0 phishscore=0 malwarescore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510310119
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2] net: mana: Handle SKB if TX SGEs exceed
+ hardware limit
+To: Simon Horman <horms@kernel.org>
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+ decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ longli@microsoft.com, kotaranov@microsoft.com,
+ shradhagupta@linux.microsoft.com, ssengar@linux.microsoft.com,
+ ernis@linux.microsoft.com, dipayanroy@linux.microsoft.com,
+ shirazsaleem@microsoft.com, linux-hyperv@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rdma@vger.kernel.org, gargaditya@microsoft.com
+References: <20251029131235.GA3903@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <aQMqLN0FRmNU3_ke@horms.kernel.org>
+Content-Language: en-US
+From: Aditya Garg <gargaditya@linux.microsoft.com>
+In-Reply-To: <aQMqLN0FRmNU3_ke@horms.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 31, 2025 at 01:39:11PM +0100, Krzysztof Kozlowski wrote:
-> On 31/10/2025 13:11, Pavan Kondeti wrote:
-> > On Fri, Oct 31, 2025 at 12:48:18PM +0100, Krzysztof Kozlowski wrote:
-> >> On 31/10/2025 11:18, Hrishabh Rajput via B4 Relay wrote:
-> >>> +
-> >>> +static DEFINE_SIMPLE_DEV_PM_OPS(gunyah_wdt_pm_ops, gunyah_wdt_suspend, gunyah_wdt_resume);
-> >>> +
-> >>> +static struct platform_driver gunyah_wdt_driver = {
-> >>> +	.probe = gunyah_wdt_probe,
-> >>> +	.driver = {
-> >>> +		.name = "gunyah-wdt",
-> >>> +		.pm = pm_sleep_ptr(&gunyah_wdt_pm_ops),
-> >>> +	},
-> >>> +};
-> >>> +
-> >>> +static int __init gunyah_wdt_init(void)
-> >>> +{
-> >>> +	return platform_driver_register(&gunyah_wdt_driver);
-> >>> +}
-> >>> +
-> >>> +module_init(gunyah_wdt_init);
-> >>
-> >>
-> >> Heh, what was my last message? If I see module_init() I will NAK it.
-> >>
-> >> At v3 you really ignored entire feedback and this one here continues the
-> >> pattern.
-> >>
-> >> NAK, please read how Linux driver model is works.
-> > 
-> > You mentioned in your previous reply that
-> > 
-> > ```
-> > If you call any module_init other than module_foo_driver I will keep
-> > NAKing your patch because it is wrong. I explained why wrong already
-> > multiple times in previous threads and other discussions.
-> > ```
-> > 
-> > If you are referring to why module_platform_driver() is not called here,
-> > Hrishabh answered that already previously. Please see
-> > https://lore.kernel.org/all/ndwwddd7vzjpgvzg55whdno4ondfxvyg25p2jbdsvy4lmzsfyy@jnn3wywc7xtp/
-> > 
+On 30-10-2025 14:34, Simon Horman wrote:
+> On Wed, Oct 29, 2025 at 06:12:35AM -0700, Aditya Garg wrote:
+>> The MANA hardware supports a maximum of 30 scatter-gather entries (SGEs)
+>> per TX WQE. Exceeding this limit can cause TX failures.
+>> Add ndo_features_check() callback to validate SKB layout before
+>> transmission. For GSO SKBs that would exceed the hardware SGE limit, clear
+>> NETIF_F_GSO_MASK to enforce software segmentation in the stack.
+>> Add a fallback in mana_start_xmit() to linearize non-GSO SKBs that still
+>> exceed the SGE limit.
+>>
+>> Return NETDEV_TX_BUSY only for -ENOSPC from mana_gd_post_work_request(),
+>> send other errors to free_sgl_ptr to free resources and record the tx
+>> drop.
+>>
+>> Co-developed-by: Dipayaan Roy <dipayanroy@linux.microsoft.com>
+>> Signed-off-by: Dipayaan Roy <dipayanroy@linux.microsoft.com>
+>> Signed-off-by: Aditya Garg <gargaditya@linux.microsoft.com>
 > 
+> ...
 > 
-> Your commit msg does not explain why this cannot be unloaded. What you
-> want - intended to be a persistent module - is not relevant here. I want
-> it to be a proper and regular driver module and I said it last time.
+>> @@ -289,6 +290,21 @@ netdev_tx_t mana_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+>>   	cq = &apc->tx_qp[txq_idx].tx_cq;
+>>   	tx_stats = &txq->stats;
+>>   
+>> +	if (MAX_SKB_FRAGS + 2 > MAX_TX_WQE_SGL_ENTRIES &&
+>> +	    skb_shinfo(skb)->nr_frags + 2 > MAX_TX_WQE_SGL_ENTRIES) {
+>> +		/* GSO skb with Hardware SGE limit exceeded is not expected here
+>> +		 * as they are handled in mana_features_check() callback
+>> +		 */
 > 
-Thanks for the feedback. I am happy that the only concern you have is
-about unloading the module :-) I feel that is the easiest problems so
-far have been pointed out.
+> Hi,
+> 
+> I'm curious to know if we actually need this code.
+> Are there cases where the mana_features_check() doesn't
+> handle things and the kernel will reach this line?
+> 
+>> +		if (skb_is_gso(skb))
+>> +			netdev_warn_once(ndev, "GSO enabled skb exceeds max SGE limit\n");
+>> +		if (skb_linearize(skb)) {
+>> +			netdev_warn_once(ndev, "Failed to linearize skb with nr_frags=%d and is_gso=%d\n",
+>> +					 skb_shinfo(skb)->nr_frags,
+>> +					 skb_is_gso(skb));
+>> +			goto tx_drop_count;
+>> +		}
+>> +	}
+>> +
+>>   	pkg.tx_oob.s_oob.vcq_num = cq->gdma_id;
+>>   	pkg.tx_oob.s_oob.vsq_frame = txq->vsq_frame;
+>>   
+> 
+> ...
 
-Hrishabh, I belive we can disable watchdog via SMC interface. To make a
-proper and regular driver module like Krzysztof is asking, we can make
-it module_platform_driver by implementing remove method.
+Hi Simon,
+As it was previously discussed and agreed on with Eric, this is for 
+Non-GSO skbs which could have possibly nr_frags greater than hardware limit.
 
-Thanks,
-Pavan
+Quoting Eric's comment from v1 thread: 
+https://lore.kernel.org/netdev/CANn89iKwHWdUaeAsdSuZUXG-W8XwyM2oppQL9spKkex0p9-Azw@mail.gmail.com/
+"I think that for non GSO, the linearization attempt is fine.
+
+Note that this is extremely unlikely for non malicious users,
+and MTU being usually small (9K or less),
+the allocation will be much smaller than a GSO packet."
+
+Regards,
+Aditya
 
