@@ -1,279 +1,198 @@
-Return-Path: <linux-kernel+bounces-879554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1658DC236B6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:41:01 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D997C236B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:38:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 355B93A5D98
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:37:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CF9404E57AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3692848B4;
-	Fri, 31 Oct 2025 06:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0984E2FA0C7;
+	Fri, 31 Oct 2025 06:37:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IWgZxD2e"
-Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="btC5pFhw"
+Received: from mail-yx1-f51.google.com (mail-yx1-f51.google.com [74.125.224.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A07325A659
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 06:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992E725A659
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 06:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761892639; cv=none; b=rjM68EJHCCfd8k0ZboAk921zY8amQ8C5vieHJKMaJ1cUzkUBU+fxlcJ+YqTU7fhoD+5MZTrvtujfk44VX/I1vvyor3BsA99YbeboWeuqACGfg979RLelFDCJ8x8Itne9HaPUX1pCEV1ATiCFCdIv6kGVzH38QTDyWybnhOS03hM=
+	t=1761892672; cv=none; b=KDhw8ANRmMhBuPvDCRdVnNr+uZTzv9cCCyMgPGdpTyQhbJUXVUaYiS1XRilEcaNoTcEJ6W70i1Q9DymPNzJsb0yo0TxCuJjfI6JVtveD+bjpwHJHl3YF+uiIMUCHYDmCECtfLW/zJRL9omZ/syeNYFit1mUdEcSvTeoDApZa6t8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761892639; c=relaxed/simple;
-	bh=vaP9tFVHrd+h3H4hUZXdcXreKNUI8n2Fq+c1yV7Q2Ac=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WevDn5VFYNVD4FGEps15UDiDB1xEHZ2UiuzHLuDQV2WECNZHQDjvhyNt87jefKLC/N0R9B5CY8IOscKZx9ODtlpsoY1gQdPkZd/NHD/YvyEcPsO+5Xr3DJAEAIuMMeujIcyuthVsCXT4dYdO9jT/cGXFsanR8eWB2NoJqrMJ2cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IWgZxD2e; arc=none smtp.client-ip=209.85.214.196
+	s=arc-20240116; t=1761892672; c=relaxed/simple;
+	bh=2Ad22H+YKv3fYSdPT9lbgu9VOjM2ntNDuMEpDFLqgtw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cOz24fwRqBhTtlu9KsPZZdkZm622eBY5iif80Bplnc0+DiXHFAX15DiLIMSAoDXkjZmyhWziFRxyEQSwx4/OwbXsdMaik/WmtCLN0w5QGJHKnp09B3KreZRlClz5IZH+6cxveQjo6TAWDMdoTKwqqjMc/kEKksETkvGqp1f6r2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=btC5pFhw; arc=none smtp.client-ip=74.125.224.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-2907948c1d2so20050775ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 23:37:17 -0700 (PDT)
+Received: by mail-yx1-f51.google.com with SMTP id 956f58d0204a3-63bc1aeb427so2144545d50.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 23:37:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761892637; x=1762497437; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sDYWddzEhzy192wOWLvawa5saRjQOm029FdqACvNNZ0=;
-        b=IWgZxD2eGivcA7Ep0azk2qGv2ZQW48r8NdRJQHR+uZNsuIbNPxzFK4+ZheG3oBm2Mb
-         5X7lqgLPOQ1wnMx06hCwTiIcetlDfLowvreowL6sFDgytI3YeOiKfM5m8wmLmDe3VHh3
-         5iug/vDpOR6flztM+rcYk46dBHfe3fBCZAp7mD7k4Cc6SGA57bNhyWQS2FmBBElYX2e5
-         F2KHCMcMOPez2INS8vgHQrAlvWFy+pBXaM8KPSCSeDn2V+iHuyb4+Nzg9hZkjGONjhqN
-         vyvWC/NC6o1KAR2wAJbPgEz04qdgMHTcxG8VbUJnNzdktQCNk2Dh26F3uaME5ltDIsf0
-         rZ6A==
+        d=gmail.com; s=20230601; t=1761892669; x=1762497469; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kS/Ba8wi03ja6q2G16rK+mBdR0oPZku80viIJSVlHq8=;
+        b=btC5pFhw9xkOhNITbRDEeX7IBMIZfwYedGjRscgJPL5mMye3/SMxm9v29/ac19vzwa
+         dfn+IkIVJgQ+WMC3khNXLZ/sAn8v2ZWJzzt4+lYibX0NFt5ohfLfAe88GKdp8C7ATn3h
+         NWXy1qWWHI/aocmoy/uBTMz/tBTNShHJHaXE9sypj30n8Rt5VnOeGtxAV3Z1w1NlCP0P
+         KK9xOks9qIIXQIOdqIi1yYlXq4PNaF9XjaF7KP6j9h+/mI1fdV/f4820a3lPFvwcSNKC
+         TGZ/zLnCd+MF54M+dO8vkYPhQAOr4zg20T+w3VqEnRRvET27VeU137sewizuwgVlnG6y
+         ZBHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761892637; x=1762497437;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sDYWddzEhzy192wOWLvawa5saRjQOm029FdqACvNNZ0=;
-        b=wmKSAOSdZlg4rwnenDMAzMhSl/iCuKWKh5gNNn4496yE4GqOoI9qXg9ikM1kHzXvOn
-         JuQbiP5cSl0rjUSPVUWjRRFmVblO2ouE9SQujnzJ5FEZ0tHeGgq6OVOvS7wMiON7RUrJ
-         Krh7YiNR3RwEEJSl4kESmTTtyDylTPL10J6z2tMX/xHa5rwmcrEI47Cxi2oSyyjRaOll
-         sCGrAq/sd3wISc+r119BWus2A/fXqheYxo7Udzv+53hVIKAu5YZLyZxXMOe1siyAmECk
-         a/eTWy3LtVKLObfkZE9y5ciP6olG+nAI5J2spCjKSkmgSiG2OeDlT0UBxYfhCrlIcOiF
-         w7OQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUsr/TBewOYHEKXD6O9c0XTOQHmw2bLMUBKvGthbZZ+8ppOTBzjCxs2EasjaObrxxD2d0XlVyxnNAs72+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpHkHa1uxwnmyfwuPvehRuxGOCJEwuBKqmX0EBpP1w/v6cfGKz
-	EjjwHZ04sr9owSCmrtg57HKduUYvb15M30OUc0nydKh+CKQyme61JZyUVowDUUWMdN8PJ7jEgjX
-	WNc506uSDqgyBPyccA+WjsVQ99bkIuXY=
-X-Gm-Gg: ASbGncuhTOx7bACrH6piWZJWJF8O/oqyX9fJzQZ8oL34vRbvJXTxkETtbAU5lz8XN8u
-	7uTTkdqSJzGC0n6vcmIB0qqFyrXhxJFMLKGmHSLiRzfqPFsXgcC+4HiArngPfF985qWmWuhL+1x
-	q8jnJYA7yzUz4/sd1T6e/wFY8j8BF1fWo5YoHDQeRtF+Wh0O7SYizfqFy7WQj0HpRY5miVmtg88
-	LTRUnfLX5ckY/ICwS5yoU6QB5N2WEV+gCzXDblT3Z+P4SoVDXnizcY0FcD96as3EFCZtqw=
-X-Google-Smtp-Source: AGHT+IHKvlwTT+v4lVp0g7UewFcEqQtoC0e/Rzm6EFfiRLL8K/1VBKeXr7TztP+Jn70agztCGIOlvZiTJHMPQ3Dj4hs=
-X-Received: by 2002:a17:903:1ce:b0:27e:ec72:f6d with SMTP id
- d9443c01a7336-2951a36e6f8mr40862445ad.11.1761892636677; Thu, 30 Oct 2025
- 23:37:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761892669; x=1762497469;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kS/Ba8wi03ja6q2G16rK+mBdR0oPZku80viIJSVlHq8=;
+        b=e2ugCE1cdGcWh3lXJu8Y5V0ZhAx3hM7xeJd6yqjyc3GELgthU+UhfeSKdntMHrtwf8
+         dEpfb9jP/rcFGw59oqdeW2dbLsVERsxkknB4iB5KMTyf9IGGqajUjJlsxcmhUWu4u2GA
+         PzZKl2B4rK1oklEiclZzv/Nvn/64dRBT9/mfHMVRAdi7mB7/XdJ2ds/j2P9JvtlLLxpl
+         NUhEn+v49+qXsQ2M3sbMPdrgwxCNb7r7lAijrGe5xx7ZOazlrPUGqbKq8Mmc0EbpXoAU
+         iVjcIDZ90a8gaZi4guS0fjH83Y9//te2Q38kAxex1IHNDtnMJuNMjMNIncMGhZNYAP0i
+         scaw==
+X-Forwarded-Encrypted: i=1; AJvYcCXgm4E3dogLczAsNKvcG2bPbpDug7WsfOW1nl7zadgN5u0eHfRm5/egAVr9Bf8G4ArwZ3NqaseoxlloXGM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFLWYrzoFYrucqTR/1mqk3pIEutw9eEGZlCKxnS2B9Fstbnt8x
+	4osn2u46Rpa94MVAoWbM9TX1IsWMOkPH4OmWA1vgcoWQjjxug3TeNu89
+X-Gm-Gg: ASbGncsvg0wW72I4qTRmCaHBBq/NgqLVq2gXAJj2Te8JuJYOjJUHiGQewXG3KrXLjVP
+	R6WPgpC6mVmFxPYyg3xWp0qhY45aY7VOnt1UTaKyRcnft1VzES8FEQgEQ5pnDz/+txrqLg4NZuk
+	tkY4nlEHjNWX4UFngyLJKLMt9JzLFO/907AFflKqkTC5ajo90UAO6AcotrnEG9MITSsetUrVXJW
+	ZUfm/2sCr3hMl9zHFKLfhsu37QGOMdY6abSBPwd/TZ94Yny5k4GxHfU/JbGrwDppQYn7OGGyfPE
+	a84OEq1gOYF/jDV5cOheeJvwpaWFhj54IfGR5yLVzgxkHVVJ4axUEUXLecA98ptX2gF5TuTbR+r
+	W38EEc5SYuRLF0Ty35yemzvODCm0GH4WF8uGczlyyyC5AUDxHQb+GvItI5QvC5lB8HTjU46vM9j
+	+fBOXCwk8N1pWXa19VNQLxXutwCIjJeQS8OOSflVA=
+X-Google-Smtp-Source: AGHT+IE8N0NuNxDPSMdh3gqIxDWFygZpV4mjnnnjXKw/xdAOq6rsstqv2KVKzg0erHaerfWTmEpODA==
+X-Received: by 2002:a05:690e:282:b0:63f:8734:36a0 with SMTP id 956f58d0204a3-63f92272105mr1346690d50.21.1761892669464;
+        Thu, 30 Oct 2025 23:37:49 -0700 (PDT)
+Received: from vegg ([2402:a00:163:2ce9:84ab:c8ef:8e7:edf3])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-7864c667d3dsm2850837b3.42.2025.10.30.23.37.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 23:37:48 -0700 (PDT)
+Date: Fri, 31 Oct 2025 12:07:40 +0530
+From: Brajesh Patil <brajeshpatil11@gmail.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: miklos@szeredi.hu, stefanha@redhat.com, vgoyal@redhat.com,
+	eperezma@redhat.com, virtualization@lists.linux.dev,
+	virtio-fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev, david.hunter.linux@gmail.com,
+	khalid@kernel.org
+Subject: Re: [PATCH] fuse: virtio_fs: add checks for FUSE protocol compliance
+Message-ID: <20251031063740.tyeewgtp7zo2gdi3@vegg>
+References: <20251028200311.40372-1-brajeshpatil11@gmail.com>
+ <20251028200755.GJ6174@frogsfrogsfrogs>
+ <c7zugpb4pzquasx67zypnuk2irxvb7cp5puwuw3rncy6gb5wdn@qigavsewium3>
+ <20251029060108.GR4015566@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251031032627.1414462-2-jianyungao89@gmail.com> <554b5b314ffd7eb00be58d5997d44c7c4986895ad28776a87a9d6a2bf1c0765c@mail.kernel.org>
-In-Reply-To: <554b5b314ffd7eb00be58d5997d44c7c4986895ad28776a87a9d6a2bf1c0765c@mail.kernel.org>
-From: Jianyun Gao <jianyungao89@gmail.com>
-Date: Fri, 31 Oct 2025 14:37:05 +0800
-X-Gm-Features: AWmQ_bkDa-Yulfkw8NVn1sKXKelgLuaoZX3bACDt0cDA73N01wPRBODLyGsfRxI
-Message-ID: <CAHP3+4CWSbZdNjSdoQhsB9Cvc9vp7V3qzJ=EVMO5+By9ZeAr3A@mail.gmail.com>
-Subject: Re: [PATCH 1/5] libbpf: Add doxygen documentation for bpf_map_* APIs
- in bpf.h
-To: bot+bpf-ci@kernel.org
-Cc: bpf@vger.kernel.org, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
-	daniel@iogearbox.net, martin.lau@linux.dev, song@kernel.org, 
-	yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org, 
-	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, 
-	linux-kernel@vger.kernel.org, martin.lau@kernel.org, clm@meta.com, 
-	ihor.solodrai@linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029060108.GR4015566@frogsfrogsfrogs>
 
-I will fix it in the next version.
+On Tue, Oct 28, 2025 at 11:01:08PM -0700, Darrick J. Wong wrote:
+> On Wed, Oct 29, 2025 at 08:58:30AM +0530, Brajesh Patil wrote:
+> > On Tue, Oct 28, 2025 at 01:07:55PM -0700, Darrick J. Wong wrote:
+> > > On Wed, Oct 29, 2025 at 01:33:11AM +0530, Brajesh Patil wrote:
+> > > > Add validation in virtio-fs to ensure the server follows the FUSE
+> > > > protocol for response headers, addressing the existing TODO for
+> > > > verifying protocol compliance.
+> > > > 
+> > > > Add checks for fuse_out_header to verify:
+> > > >  - oh->unique matches req->in.h.unique
+> > > >  - FUSE_INT_REQ_BIT is not set
+> > > >  - error codes are valid
+> > > >  - oh->len does not exceed the expected size
+> > > > 
+> > > > Signed-off-by: Brajesh Patil <brajeshpatil11@gmail.com>
+> > > > ---
+> > > >  fs/fuse/virtio_fs.c | 30 +++++++++++++++++++++++++-----
+> > > >  1 file changed, 25 insertions(+), 5 deletions(-)
+> > > > 
+> > > > diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+> > > > index 6bc7c97b017d..52e8338bf436 100644
+> > > > --- a/fs/fuse/virtio_fs.c
+> > > > +++ b/fs/fuse/virtio_fs.c
+> > > > @@ -764,14 +764,34 @@ static void virtio_fs_request_complete(struct fuse_req *req,
+> > > >  {
+> > > >  	struct fuse_args *args;
+> > > >  	struct fuse_args_pages *ap;
+> > > > -	unsigned int len, i, thislen;
+> > > > +	struct fuse_out_header *oh;
+> > > > +	unsigned int len, i, thislen, expected_len = 0;
+> > > >  	struct folio *folio;
+> > > >  
+> > > > -	/*
+> > > > -	 * TODO verify that server properly follows FUSE protocol
+> > > > -	 * (oh.uniq, oh.len)
+> > > > -	 */
+> > > > +	oh = &req->out.h;
+> > > > +
+> > > > +	if (oh->unique == 0)
+> > > > +		pr_warn_once("notify through fuse-virtio-fs not supported");
+> > > > +
+> > > > +	if ((oh->unique & ~FUSE_INT_REQ_BIT) != req->in.h.unique)
+> > > > +		pr_warn_ratelimited("virtio-fs: unique mismatch, expected: %llu got %llu\n",
+> > > > +				    req->in.h.unique, oh->unique & ~FUSE_INT_REQ_BIT);
+> > > 
+> > > Er... shouldn't these be rejecting the response somehow?  Instead of
+> > > warning that something's amiss but continuing with known bad data?
+> > > 
+> > > --D
+> > >
+> > 
+> > Right, continuing here is unsafe.
+> > 
+> > I plan to update the code so that in case of any header validation
+> > failure (e.g. unique mismatch, invalid error, length mismatch), it
+> > should skip copying data and jump directly to the section that marks
+> > request as complete
+> > 
+> > Does this seem like a feasible approach?
+> 
+> Yeah, I think you can just set req->out.h.error to some errno (EIO?) and
+> jump to fuse_request_end, sort of like what fuse_dev_do_write sort of
+> does.  I think that sends the errno back to whatever code initiated the
+> request.  I don't know if virtiofs should be throwing an error back to
+> the server?
+> 
+> --D
+> 
 
-On Fri, Oct 31, 2025 at 12:01=E2=80=AFPM <bot+bpf-ci@kernel.org> wrote:
->
->
-> ```
-> commit 4da02b18e2168885350f3935b5ce2f1f52c850ba
-> Author: Jianyun Gao <jianyungao89@gmail.com>
->
-> libbpf: Add doxygen documentation for bpf_map_* APIs in bpf.h
->
-> This commit adds Doxygen documentation for 13 bpf_map_* API functions in
-> the libbpf user-space library header.
->
-> > diff --git a/tools/lib/bpf/bpf.h b/tools/lib/bpf/bpf.h
-> > index e983a3e40..bcb303d95 100644
-> > --- a/tools/lib/bpf/bpf.h
-> > +++ b/tools/lib/bpf/bpf.h
->
-> [ ... ]
->
-> > @@ -151,19 +202,452 @@ struct bpf_btf_load_opts {
-> >  LIBBPF_API int bpf_btf_load(const void *btf_data, size_t btf_size,
-> >                           struct bpf_btf_load_opts *opts);
-> >
-> > +/**
-> > + * @brief Update or insert an element in a BPF map.
-> > + *
-> > + * Attempts to store the value referenced by @p value into the BPF map
-> > + * identified by @p fd under the key referenced by @p key. The semanti=
-cs
-> > + * of the operation are controlled by @p flags:
->
-> [ ... ]
->
-> > + * @return 0 on success; -1 on failure with errno set appropriately.
-> > + *
-> > + * Possible errno values include (not exhaustive):
-> > + *   - E2BIG:      Key or value size exceeds map definition.
-> > + *   - EINVAL:     Invalid map fd, flags, or unsupported operation for=
- map type.
-> > + *   - EBADF:      @p fd is not a valid BPF map descriptor.
-> > + *   - ENOENT:     Key does not exist (with BPF_EXIST).
-> > + *   - EEXIST:     Key already exists (with BPF_NOEXIST).
-> > + *   - ENOMEM:     Kernel memory allocation failure.
-> > + *   - EPERM/EACCES: Insufficient privileges or rejected by security p=
-olicy.
-> > + *   - ENOSPC:     Map at capacity (for maps with a max entries limit)=
-.
-> > + *
-> > + */
-> >  LIBBPF_API int bpf_map_update_elem(int fd, const void *key, const void=
- *value,
-> >                                  __u64 flags);
->
-> Is the documented return value correct? The implementation uses
-> libbpf_err_errno() which returns negative errno values directly on
-> failure (e.g., -EINVAL, -ENOENT), not -1 with errno set. Looking at
-> bpf_map_update_elem() in bpf.c:
->
->   int bpf_map_update_elem(int fd, const void *key, const void *value,
->                           __u64 flags)
->   {
->       ...
->       ret =3D sys_bpf(BPF_MAP_UPDATE_ELEM, &attr, attr_sz);
->       return libbpf_err_errno(ret);
->   }
->
-> And libbpf_err_errno() in libbpf_internal.h:
->
->   static inline int libbpf_err_errno(int ret)
->   {
->       return ret < 0 ? -errno : ret;
->   }
->
-> So when syscall() returns -1, libbpf_err_errno() converts this to
-> -errno. Should the documentation state "negative error code on failure"
-> instead of "-1 on failure with errno set"?
->
-> For comparison, the existing batch operation docs in the same file
-> correctly document: "@return 0, on success; negative error code,
-> otherwise (errno is also set to..."
->
-> > +/**
-> > + * @brief Look up an element in a BPF map by key.
->
-> [ ... ]
->
-> > + * @return 0 on success (value populated),
-> > + *         -1 on failure with errno set appropriately:
-> > + *         - ENOENT: The key does not exist in the map.
->
-> The same return value documentation issue appears in
-> bpf_map_lookup_elem(). The implementation uses libbpf_err_errno() so it
-> returns negative errno, not -1.
->
-> > +/**
-> > + * @brief Look up (read) a value stored in a BPF map.
->
-> [ ... ]
->
-> > + * @return 0 on success; -1 on failure with errno set appropriately:
-> > + *         - ENOENT: No element with the specified key exists.
->
-> Same issue in bpf_map_lookup_elem_flags() - should document negative
-> errno return, not -1.
->
-> > +/**
-> > + * @brief Atomically look up and delete a single element from a BPF ma=
-p.
->
-> [ ... ]
->
-> > + * @return 0 on success (value copied and element deleted);
-> > + *         -1 on failure with errno set:
-> > + *         - ENOENT: Key not found in the map.
->
-> Same issue in bpf_map_lookup_and_delete_elem() - returns negative errno.
->
-> > +/**
-> > + * @brief Atomically look up and delete an element from a BPF map with=
- extra flags.
->
-> [ ... ]
->
-> > + * @return 0 on success; -1 on failure with errno set:
-> > + *         - ENOENT: Key not found.
->
-> Same issue in bpf_map_lookup_and_delete_elem_flags().
->
-> > +/**
-> > + * @brief Delete (remove) a single element from a BPF map.
->
-> [ ... ]
->
-> > + * @return 0 on success; -1 on failure with errno set appropriately.
-> > + *
-> > + */
-> >  LIBBPF_API int bpf_map_delete_elem(int fd, const void *key);
->
-> Same issue in bpf_map_delete_elem().
->
-> > +/**
-> > + * @brief Delete an element from a BPF map with optional flags.
->
-> [ ... ]
->
-> > + * @return 0 on success; -1 on failure with errno set:
-> > + *         - ENOENT: Key not found.
->
-> Same issue in bpf_map_delete_elem_flags().
->
-> > +/**
-> > + * @brief Iterate over keys in a BPF map by retrieving the key that fo=
-llows a given key.
->
-> [ ... ]
->
-> > + * @return 0 on success (next key stored in @p next_key);
-> > + *         -1 on failure with errno set:
-> > + *           - ENOENT: No further keys (end of iteration) or map is em=
-pty (when @p key is NULL).
->
-> Same issue in bpf_map_get_next_key().
->
-> All eight of these functions consistently return negative errno values
-> via libbpf_err_errno(), but the documentation states they return -1 with
-> errno set (the traditional C API pattern). This creates inconsistency
-> with the existing batch operation documentation and could mislead users
-> about proper error handling.
->
->
-> ```
->
-> ---
-> AI reviewed your patch. Please fix the bug or email reply why it's not a =
-bug.
-> See: https://github.com/kernel-patches/vmtest/blob/master/ci/claude/READM=
-E.md
->
-> In-Reply-To-Subject: `libbpf: Add doxygen documentation for bpf_map_* API=
-s in bpf.h`
-> CI run summary: https://github.com/kernel-patches/bpf/actions/runs/189619=
-81609
+I think it is okay to set oh.error in fuse_dev_do_write as it is a server side
+reply. But as virtio_fs is on the client side and oh.error has been set by
+virtiofsd, I think so we should not overwrite oh.error. Instead, if we
+encounter an error in any of the if conditions, skip copying arguments and jump
+to the line clear_bit(FR_SENT, &req->flags).
+
+> > > > +
+> > > > +	WARN_ON_ONCE(oh->unique & FUSE_INT_REQ_BIT);
+> > > > +
+> > > > +	if (oh->error <= -ERESTARTSYS || oh->error > 0)
+> > > > +		pr_warn_ratelimited("virtio-fs: invalid error code from server: %d\n",
+> > > > +				    oh->error);
+> > > > +
+> > > >  	args = req->args;
+> > > > +
+> > > > +	for (i = 0; i < args->out_numargs; i++)
+> > > > +		expected_len += args->out_args[i].size;
+> > > > +
+> > > > +	if (oh->len > sizeof(*oh) + expected_len)
+> > > > +		pr_warn("FUSE reply too long! got=%u expected<=%u\n",
+> > > > +			oh->len, (unsigned int)(sizeof(*oh) + expected_len));
+> > > > +
+> > > >  	copy_args_from_argbuf(args, req);
+> > > >  
+> > > >  	if (args->out_pages && args->page_zeroing) {
+> > > > -- 
+> > > > 2.43.0
+> > > > 
+> > > > 
 
