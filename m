@@ -1,76 +1,134 @@
-Return-Path: <linux-kernel+bounces-880262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F95CC2541B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:25:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF5A4C2542D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:27:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BFA44202F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:25:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00DEC1897ECD
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510EE34B187;
-	Fri, 31 Oct 2025 13:25:52 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F1B34B427;
+	Fri, 31 Oct 2025 13:26:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="T3f6WrOs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B0932AAD1
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 13:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5538832D7D1;
+	Fri, 31 Oct 2025 13:26:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761917151; cv=none; b=Ngcakaf0aZGCrp5pAOzkC2Ce+QnYLpDhbuANGCHqk4MJf/wpjK1h0XodBX8K+Zglfxq/87l6KTp7zOgKRooTzrpdeRw4A7UPfR7HPN7H8OojK4jyIZuUUc2nPxNUO+vev/eLyEdWGjDV1jrRvtFeT68CWyvrhI3GZCUlgkKFJA0=
+	t=1761917216; cv=none; b=e35NsNKL+aLiJ5RPc2fyrilsy1fewowJ4SWFbO7AD9lAxCLSYHYXcnwvHrk9PjXpoeBMBQinsa3MimJ6oEUpA7ZZcu029QWoWeTSYLhpEvORM/zlcBxaqm0LSC0iwhR5GfGdFyTtGstb+u2N96WljNIcaQFCH8gheOaBr1o82vA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761917151; c=relaxed/simple;
-	bh=pE8wmq8bULXpVfXNeVtqtkI05jrh4XrKSUyVstTlMKI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=JzWQ9lADJ3JuAtAEHJn00R726f8lkTs5N64O87lr9TTMHQYDaNSljnGGVAT0KZOIjhUpQEA94eHeq8KdVF3E8mZY6tt3NYoQrhnkeN1JSgtFW+SK9Pz1HK03bJu6leid3/uE8B8mMgEOhtz1kYRasA9ut/NB5axFQ45SjuPJR7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-43300f41682so23258985ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 06:25:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761917149; x=1762521949;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pE8wmq8bULXpVfXNeVtqtkI05jrh4XrKSUyVstTlMKI=;
-        b=g4rjeIa9Ed6s4i1z0SjcDekCMVfDJJ2zvvxE2ziFoWWgflnF0UrhFr8HGeXiuANsmJ
-         UjLQHvCYuBXDOOtKFeT+DnuEzOubP4d7al4zRib9e1+ROohmT4iFk78rbFQ6KFEBDBEG
-         lWLqfYADzg/vc5oWXlV95mBcRAgGw/FRoID5aQYYDxHM9i0u+YDwT8GzWUXjvBt1DZP3
-         4cPDgoB3MnOtgG32KMiZTBmtFHSu/gcaRALhmPwZ2IBlWYtxdBuU7PvX/5PH+N+0ovwS
-         Rhhwfx0qFbNU9oNsFAyR3qsOeQa093o0R0X9Y5iZ+17Esfa5Yw8c3InhHVVGAlQPbi78
-         IZUw==
-X-Gm-Message-State: AOJu0Yy3J9GQYszUn0oKdChw887jSAlWfGZJpZRgx8Vkbf33KYY34Gih
-	OffumCx/rKGYdtmgPIO9c5FUtQ8mwL1fbj5DSvM2mQdonPLvqpK1SKyutfwno2Ek22j8oPts1EK
-	SOMO3zkpAsnmf7Fd/uYZeISAFGeBOKLMUk9hETCrTln8dWvY+rdEGKlzUm1w=
-X-Google-Smtp-Source: AGHT+IGgDTNFvqce1iJ2oXB9g0SkY9LJUUDqvIUhmvBxuNoSPbWm4ihDTopcUarKjZM653er4mg+ptbLrESBuL8KGRjhRSL4TVtI
+	s=arc-20240116; t=1761917216; c=relaxed/simple;
+	bh=hkHIbd/2KHBwtbLvW9dmpBJfSBnb3UWSGKN6mKGS77w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ORy2MpEIzoyGn0c2HExUKNHm1i14ftwu1amZ4xqpL92lC1Tket9zneyy6n2ao2u03Zv/sHLWQbV1KbMpUWFMOdLGjWc5Ob3nWRwdEj+jBDS2wiVJHMIhoxJy4SoMdBj6pbvxPtOUOR6ByFLB7pTXF6AeSzbbjE+y1ZvwmP5tefg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=T3f6WrOs; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761917215; x=1793453215;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=hkHIbd/2KHBwtbLvW9dmpBJfSBnb3UWSGKN6mKGS77w=;
+  b=T3f6WrOs/RSKTRmECmhquIinTAHztFAHer5SQcKAKcld16pF81nRHon0
+   kTtqq3mg+JTmY1unIn3tS7ALrD5IGXDNt1AHs+sOYnYnLOpfImWrlhfr8
+   ti7MZWebesh0YeDVIo3Mn4hCWCYuP3ktuX3mMDc6Y7hGv7NvbL1SDQx24
+   43UeTdL8yHn0kMhq/yo0bbE1vfEuUeuSliOqHo4L16toaiXyye+eh1rjQ
+   6IYztjKhBOUe9Yq8f7lZDG2H73SXmYmLRuDCCPSyjXtLsAwufYdBj22oL
+   FLs4pLtWNFFR9FC4LOTzf+8vGzcevX9anWKkpgDCjmlkSLeNW3KZoxo9F
+   Q==;
+X-CSE-ConnectionGUID: O6qEG3pdSSqYr9cq1XmoEQ==
+X-CSE-MsgGUID: YAL1VxxuRQ+O4tTcEP0wcQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="81488562"
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="81488562"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 06:26:54 -0700
+X-CSE-ConnectionGUID: YhdcpFCgQv2ggPyZ/MCr5A==
+X-CSE-MsgGUID: 5yUGvElYQ3i3h5QeBClyOQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="191378438"
+Received: from mgoodin-mobl3.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.66])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 06:26:51 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vEp9T-00000004HHQ-0nVw;
+	Fri, 31 Oct 2025 15:26:47 +0200
+Date: Fri, 31 Oct 2025 15:26:46 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Ilia Lin <ilia.lin@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Raag Jadav <raag.jadav@intel.com>,
+	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] cpufreq: qcom-nvmem: add compatible fallback for
+ ipq806x for no SMEM
+Message-ID: <aQS5FpuOWk1bWnQd@smile.fi.intel.com>
+References: <20251031130835.7953-1-ansuelsmth@gmail.com>
+ <20251031130835.7953-4-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:168d:b0:431:da5b:9ef3 with SMTP id
- e9e14a558f8ab-4330d1cf1a5mr60382885ab.27.1761917149660; Fri, 31 Oct 2025
- 06:25:49 -0700 (PDT)
-Date: Fri, 31 Oct 2025 06:25:49 -0700
-In-Reply-To: <68cb3c25.050a0220.50883.002a.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6904b8dd.050a0220.e9cb8.000f.GAE@google.com>
-Subject: Forwarded: INFO: task hung in bfs_lookup (6)
-From: syzbot <syzbot+e7be6bf3e45b7b463bfa@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251031130835.7953-4-ansuelsmth@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Fri, Oct 31, 2025 at 02:08:34PM +0100, Christian Marangi wrote:
+> On some IPQ806x SoC SMEM might be not initialized by SBL. This is the
+> case for some Google devices (the OnHub family) that can't make use of
+> SMEM to detect the SoC ID.
+> 
+> To handle these specific case, check if the SMEM is not initialized (by
+> checking if the qcom_smem_get_soc_id returns -ENODEV) and fallback to
+> OF machine compatible checking to identify the SoC variant.
+> 
+> Notice that the checking order is important as the machine compatible
+> are normally defined with the specific one following the generic SoC
+> (for example compatible = "qcom,ipq8065", "qcom,ipq8064").
 
-***
+...
 
-Subject: INFO: task hung in bfs_lookup (6)
-Author: zlatistiv@gmail.com
+> +		if (of_machine_is_compatible("qcom,ipq8062"))
+> +			msm_id = QCOM_ID_IPQ8062;
+> +		else if (of_machine_is_compatible("qcom,ipq8065") ||
+> +			 of_machine_is_compatible("qcom,ipq8069"))
+> +			msm_id = QCOM_ID_IPQ8065;
+> +		else if (of_machine_is_compatible("qcom,ipq8064") ||
+> +			 of_machine_is_compatible("qcom,ipq8066") ||
+> +			 of_machine_is_compatible("qcom,ipq8068"))
+> +			msm_id = QCOM_ID_IPQ8064;
 
-#syz test
+A nit-pick (in case you need a new version of the series): I would expect
+the conditionals be sorted by assigned value.
+
+		if (of_machine_is_compatible("qcom,ipq8062"))
+			msm_id = QCOM_ID_IPQ8062;
+		else if (of_machine_is_compatible("qcom,ipq8064") ||
+			 of_machine_is_compatible("qcom,ipq8066") ||
+			 of_machine_is_compatible("qcom,ipq8068"))
+			msm_id = QCOM_ID_IPQ8064;
+		else if (of_machine_is_compatible("qcom,ipq8065") ||
+			 of_machine_is_compatible("qcom,ipq8069"))
+			msm_id = QCOM_ID_IPQ8065;
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
