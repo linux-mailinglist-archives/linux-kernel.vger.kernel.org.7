@@ -1,181 +1,232 @@
-Return-Path: <linux-kernel+bounces-879769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7207CC23FAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:02:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FDD6C23EBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:53:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DA1154EC189
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:01:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A5603B4BF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:52:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CAEA32C93D;
-	Fri, 31 Oct 2025 09:00:52 +0000 (UTC)
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 877D831618F;
+	Fri, 31 Oct 2025 08:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="otPh9ipj"
+Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0741532C305
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B933126C9
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761901251; cv=none; b=KLD1shzSwYYRq+AwYfFB6BbB3a9BZLQNZ0Ph7GIgmskQxdsCl6DZN57zvxqZSE8KypwiO6RGDYZBcJkC9JP6CcNaFaqRES93/kPDEzINAhEZOolhO+TNWOx+PN/dHBmoENMfLObwfBgfQt7RyGimTWuFu3mRnHZFwP49uNpUM1w=
+	t=1761900770; cv=none; b=TqzC0IHTq386shdUR0IvxViWftRoiPCkqBKOXQbtMbA8Sm2Z+tOyw3OscqV/9wqMY+uvng3LNEQTrEDkkF/IT1n2Eejd1vIGeU52c7XqxkxMoFL2kA6o2dY/7TlK/NFK2XT/B+DyKU2AMwrbjSU1LRF0gyBE9zWgVK8dfa0ukR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761901251; c=relaxed/simple;
-	bh=NYbl8HJcgb3R5SVJ9GXGI/Jq2+mOIag8w0HzHBPHPoY=;
+	s=arc-20240116; t=1761900770; c=relaxed/simple;
+	bh=SQA2+UjBZNeC3KmXm0e1JQ2dKcF/4XDLDW7+5Xqb54o=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iH9DKe+r3/krHzIV9iRUoSCvrLMpTWCRlSJQlutNOvyC6lTJfIM/tAHUcU1rSSsOa129fJV7+Xu5yPGC3GzvpxRs7j2NE8rK1mPJL3kTvoDOBXLVHOqGjRUlYvPF3+viU8EKnKRKqjUvxfCxD5EfgjjrLHlaten1xOUdcPYEa3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-89ead335934so201682085a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:00:49 -0700 (PDT)
+	 To:Cc:Content-Type; b=reP3+6rn7ztHuyCum5Zpj231ThLo9NVgBxFAWA1Pg31eEVXpuihP+lMnjHsL9S9znQBXF3zLxEJCeCze2HaHDEqwtyrEr4cFI9Wn8N+4eYZeRqfHgcRYm2AhQwVVEKsgg/OC8nt5Wj61ARMmPeUnPDMggHo9EOK9rxH0SZHyw2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=otPh9ipj; arc=none smtp.client-ip=209.85.210.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-7c67d9577b3so1413565a34.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 01:52:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761900767; x=1762505567; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=UVOOle+AJIIuteMGQoWj0kXyHB826iCzl9rVosT29bw=;
+        b=otPh9ipjLVDvOw5vdWynJ/q5T7Spq2Ir3ASYwTESKFugL3hYe/vczRRP9AR0EqXE6i
+         UZ2HkTuZIu7wCUhJl8Oh4DOIm0O8ic4wBg15sqFoqBmNbEaTC1FOm33UUw4yaPmbpje9
+         P35TN5dJQSwifc+l49IfL+VWIt5GYp1+NNSpH1bKtduodPu4I4WiVZrURD5vgXyw/5jf
+         ShLE2rbFGumGzGyC4AUmWAt7FurBeDOnrR2ZxwkE7QOg+bZ1l7WJNds1HPTLRTnCNGap
+         mg+wsme8hbdeJHD/k8dHIqeM5D8sRdD4jK2mGbYAU1GeRDwbM+5+0+t06cc/2GqKQF3j
+         NCdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761901249; x=1762506049;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lQVVX5c2GB+a2QgL3UYe6DKU+bmVaydohzEFkpxq/1c=;
-        b=rL/Mc5VuByctAeSExWXF5awKqPk0G4JIR0Pk80ade+NfiwFYR1AB/9Z7lKTku4uvUJ
-         7FAqh0aZM027LBg+PQyyM3MhArDQMF821AqKnKGSuToiSrCccc4EV1NjUF5+7ejqyCQ6
-         ZilmW129IteLmb9XdjQqtQH2HtUKiPxLLC5owBCMgolyUwTYKQoFh4ejTJzESKUIAvuj
-         4YVrAbQqMZm8J0VLRb0tfT+juJRCOxDeVAk2fnRZ2misLMWZMIH5pWEkRBVfrdwsk3Vz
-         Ybsrhxxw4xzXSOiNosj8zKcwRUQjE054LvLWszdrA2bkNjgnbfJVFllewRUpBIkSUJnG
-         hBLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU45AOm3w86lnz9NgYZfhIK+8MNjD0i/jfLDkpmZGtQPb4pDVuKMa/0aj7BGZEbcK9q27XUHr8huTmGczs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYTlEbfAeiUmT4yiVQ7CX3li9yuHF2TdW22I0gCRko4LQhMlXT
-	OpDIp5HpcYDDrgcxRpd4LV18hEgjTP84zORQpzBk421tG4pfHmaSoha/qvc2gvkJ
-X-Gm-Gg: ASbGnctIPoaTj0uTWmj/PQTVgB2mwSaqtoEXk6o1Ec5rxp11ErJFjaDC4SndUFlcoLk
-	v6P+P1UmfQEWaQZaxiDg6cxzVbGIziRbMYKX+D/0seOF9RsHgvV7OUVEmLGUc9X7VpcWV2olyWl
-	VgY7KsyqzG3yPGsCqqLllrom3AmBvom6ATHz/3QvYg9FTIoJfvCsJxCdxoZeI2GxYdDLJaIQIp1
-	BJE3J9wpdwPYVSSz6zA7t3aEZL5I45tDmBZzp2LS7KVZ03hLYe0uSHZxTGdTEE65SJrsUSeA0cr
-	F6BauYi06416HcVNbf6TMYk9xwe4zjNctnr2Q456JFKd8R3vaWJdXgyeJ3cdvULS5S5IQBJ2KQu
-	k1NxMyS6SADlTPEehb/biEnAqlLV+Ng7mHFpY3yn8w2BNz2wepes/x6kwGbi7fMHSPqqqe8vCdh
-	ky6l/j7rzwgljdC74NKBoV0Do+6ZzadZ6g8sThJBjAZeaOhHGVkIT0rlqj0/M=
-X-Google-Smtp-Source: AGHT+IEy4dI3g4hqSC7z7tx/EjqSZS2wVyElxBhGDIrPH3XmFTHra/dDJTGKvm92y+hCY1ZO9PJO5w==
-X-Received: by 2002:a05:620a:1906:b0:893:1370:308a with SMTP id af79cd13be357-8ab9bb6e88amr295726985a.87.1761901248449;
-        Fri, 31 Oct 2025 02:00:48 -0700 (PDT)
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com. [209.85.219.43])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8ac00c86313sm76100385a.15.2025.10.31.02.00.48
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Oct 2025 02:00:48 -0700 (PDT)
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-78f30dac856so23116726d6.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:00:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWhv8Nt2jSZMGwunRfgfAH8tdzR4vm7WQ7TvUmKzv74p4jxid62/6kU365Wf9EHCM5hJhtGYbTn3RtRwd0=@vger.kernel.org
-X-Received: by 2002:a05:6102:c13:b0:5d5:f6ae:38c6 with SMTP id
- ada2fe7eead31-5dbb136ecc7mr717064137.37.1761900747573; Fri, 31 Oct 2025
- 01:52:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761900767; x=1762505567;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UVOOle+AJIIuteMGQoWj0kXyHB826iCzl9rVosT29bw=;
+        b=PV24AFC96nV508HPEf8nJ4JabEEFL/sdIKofZ8U+dptANlm1HjlumA3ZyGLHB3JcJL
+         /ANsMxRlNNGzJzKk3guXtQv/bgoqa/QBbRZPLeR2Zp7WcNR9PWG/SAellSJJaovoiwef
+         412JXHgh5UvSTUPmoqVtPqItrgqBDdr4hrs2Mnofo/Z2ImF5aLUal39+o4k+nqeE++Sw
+         kDCHPExbw51krdO2OIRs1wGSHv+6Sqx30Giq83rSBPva6+oGT7SH3ygyVKEhA4WIfgBQ
+         v/j8pvCD7OKYW74wsHizgGU7t4tMA0hbcjAmIBY57SoLy+Ao+0sbGVDkOTLp/ouxvaw5
+         0nng==
+X-Forwarded-Encrypted: i=1; AJvYcCV5iYe/XZB0qrUjk3lg2Ffq3sF7nfthz2ATCOyNoEIDrpXaktE+igMg/JngDQ8EIB5/dJrgnBc3Vsgi5UQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSx99WiHPYMyz2txgMzx/CL0WdsfXAfFYE11o5RirhiWfF8YfV
+	B2EgvI631BX6fgxX8d/whzt0LMn7r6wJi8dXfSWdHXQgrtoQM22Ly2GNESLSw9nUDVFLF4rKcIF
+	j8BNYozVbpr0gd9WBmBlo8skUk1oCWtyLBCAQaTiOCQ==
+X-Gm-Gg: ASbGncsdh0heV+Bo0Ca/x9nMM+NrheTOeYhiqfKQntF+hppwnX40KW4CyMMH+TW6obk
+	lsNg4in0YBHEiv+/wY0tIn1UPX0j29g8SEda/4JHt/gkiD8D+I+yZnE7y3NJRCkRIxPK0sqd0R9
+	3lLzxeQNM+YPRoTzH8LmXVFONoy3Nseh7YUZXsqNVGE7zDzU6gihQCYKOL3Qn2Y3ghR+VkwkBw6
+	olk6k//NnKKx9iVQePCUeOTCLEVckBY+9GyvK1EQunkNr820tm4L+RpQoPDdMQ0NWLqlIDdvsTO
+	MhTYDw==
+X-Google-Smtp-Source: AGHT+IE2vnBdZNasAB1Xy72r9A2Sn2OoZw85wjD6Cd+JaiFG5aHRQrN3+j4NMQ38eKKIVVsK7pOkSngxrziJiWDeO4U=
+X-Received: by 2002:a05:6808:2198:b0:437:dade:463f with SMTP id
+ 5614622812f47-44f95fd5661mr1151443b6e.34.1761900766670; Fri, 31 Oct 2025
+ 01:52:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251015071420.1173068-1-herve.codina@bootlin.com> <20251015071420.1173068-6-herve.codina@bootlin.com>
-In-Reply-To: <20251015071420.1173068-6-herve.codina@bootlin.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 31 Oct 2025 09:52:16 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVnsWMB24BTFKwggEXKOtqJ96GWZh2Xz+ogocQHM+=+6Q@mail.gmail.com>
-X-Gm-Features: AWmQ_bm5vGlc5XXZic8RvnXrZNNcCRnf0-7M9Km7uh4sqx0Aign1FjKoX2MZmow
-Message-ID: <CAMuHMdVnsWMB24BTFKwggEXKOtqJ96GWZh2Xz+ogocQHM+=+6Q@mail.gmail.com>
-Subject: Re: [PATCH v4 05/29] dt-bindings: bus: Add simple-platform-bus
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, 
-	Arnd Bergmann <arnd@arndb.de>, Saravana Kannan <saravanak@google.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Charles Keepax <ckeepax@opensource.cirrus.com>, 
-	Richard Fitzgerald <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, 
-	Mark Brown <broonie@kernel.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Daniel Scally <djrscally@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Len Brown <lenb@kernel.org>, 
-	Davidlohr Bueso <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	Dan Williams <dan.j.williams@intel.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Wolfram Sang <wsa@kernel.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-sound@vger.kernel.org, 
-	patches@opensource.cirrus.com, linux-gpio@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, 
-	Allan Nielsen <allan.nielsen@microchip.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, 
-	Steen Hegelund <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+References: <20250813-phy-notify-pmstate-v3-0-3bda59055dd3@linaro.org>
+ <20250813-phy-notify-pmstate-v3-1-3bda59055dd3@linaro.org>
+ <aKX5C9Xlx2CSJraY@vaman> <CADrjBPpaJdzDSe3kjk=zrODusH3LnwhaBn9-NDCJwEy3ymwvew@mail.gmail.com>
+In-Reply-To: <CADrjBPpaJdzDSe3kjk=zrODusH3LnwhaBn9-NDCJwEy3ymwvew@mail.gmail.com>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Fri, 31 Oct 2025 08:52:35 +0000
+X-Gm-Features: AWmQ_bmf3sDwcFE73Zf2SHIWustpcGeUpWRxOdPU5lAg-c6tgm7mH2rWSEsBY1E
+Message-ID: <CADrjBPqc47TBXA78gO7VENLqYdsodKAGckB528OXv2==EM9MpA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] phy: add new phy_notify_state() api
+To: Vinod Koul <vkoul@kernel.org>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-phy@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, kernel-team@android.com, 
+	William Mcvicker <willmcvicker@google.com>, Manivannan Sadhasivam <mani@kernel.org>, neil.armstrong@linaro.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Herv=C3=A9,
+Hi Vinod,
 
-On Wed, 15 Oct 2025 at 09:17, Herve Codina <herve.codina@bootlin.com> wrote=
-:
-> A Simple Platform Bus is a transparent bus that doesn't need a specific
-> driver to perform operations at bus level.
+On Thu, 11 Sept 2025 at 13:23, Peter Griffin <peter.griffin@linaro.org> wrote:
 >
-> Similar to simple-bus, a Simple Platform Bus allows to automatically
-> instantiate devices connected to this bus.
+> Hi Vinod,
 >
-> Those devices are instantiated only by the Simple Platform Bus probe
-> function itself.
+> Thanks for your review feedback.
 >
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> On Wed, 20 Aug 2025 at 17:34, Vinod Koul <vkoul@kernel.org> wrote:
+> >
+> > On 13-08-25, 16:00, Peter Griffin wrote:
+> > > Add a new phy_notify_state() api that notifies and configures a phy for a
+> > > given state transition.
+> > >
+> > > This is intended to be by phy drivers which need to do some runtime
+> >                     ^^^^^^^^^^
+> > Missing 'used' possibly?
+>
+> Yes your right, good spot, will fix.
+>
+> >
+> > > configuration of parameters that can't be handled by phy_calibrate() or
+> > > phy_power_{on|off}().
+> > >
+> > > The first usage of this API is in the Samsung UFS phy that needs to issue
+> > > some register writes when entering and exiting the hibernate link state.
+> > >
+> > > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> > > ---
+> > >  drivers/phy/phy-core.c  | 25 +++++++++++++++++++++++++
+> > >  include/linux/phy/phy.h | 19 +++++++++++++++++++
+> > >  2 files changed, 44 insertions(+)
+> > >
+> > > diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+> > > index 04a5a34e7a950ae94fae915673c25d476fc071c1..60be8af984bf06649ef00e695d0ed4ced597cdb9 100644
+> > > --- a/drivers/phy/phy-core.c
+> > > +++ b/drivers/phy/phy-core.c
+> > > @@ -520,6 +520,31 @@ int phy_notify_disconnect(struct phy *phy, int port)
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(phy_notify_disconnect);
+> > >
+> > > +/**
+> > > + * phy_notify_state() - phy state notification
+> > > + * @phy: the PHY returned by phy_get()
+> > > + * @state: the PHY state
+> > > + *
+> > > + * Notify the PHY of a state transition. Used to notify and
+> > > + * configure the PHY accordingly.
+> > > + *
+> > > + * Returns: %0 if successful, a negative error code otherwise
+> > > + */
+> > > +int phy_notify_state(struct phy *phy, union phy_notify state)
+> > > +{
+> > > +     int ret;
+> > > +
+> > > +     if (!phy || !phy->ops->notify_phystate)
+> > > +             return 0;
+> > > +
+> > > +     mutex_lock(&phy->mutex);
+> > > +     ret = phy->ops->notify_phystate(phy, state);
+> > > +     mutex_unlock(&phy->mutex);
+> > > +
+> > > +     return ret;
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(phy_notify_state);
+> > > +
+> > >  /**
+> > >   * phy_configure() - Changes the phy parameters
+> > >   * @phy: the phy returned by phy_get()
+> > > diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+> > > index 13add0c2c40721fe9ca3f0350d13c035cd25af45..664d0864c3a5042949cb121e982368fe0a97827f 100644
+> > > --- a/include/linux/phy/phy.h
+> > > +++ b/include/linux/phy/phy.h
+> > > @@ -53,6 +53,15 @@ enum phy_media {
+> > >       PHY_MEDIA_DAC,
+> > >  };
+> > >
+> > > +enum phy_ufs_state {
+> > > +     PHY_UFS_HIBERN8_ENTER,
+> > > +     PHY_UFS_HIBERN8_EXIT,
+> > > +};
+> > > +
+> > > +union phy_notify {
+> > > +     enum phy_ufs_state ufs_state;
+> > > +};
+> > > +
+> > >  /**
+> > >   * union phy_configure_opts - Opaque generic phy configuration
+> > >   *
+> > > @@ -83,6 +92,7 @@ union phy_configure_opts {
+> > >   * @set_speed: set the speed of the phy (optional)
+> > >   * @reset: resetting the phy
+> > >   * @calibrate: calibrate the phy
+> > > + * @notify_phystate: notify and configure the phy for a particular state
+> > >   * @release: ops to be performed while the consumer relinquishes the PHY
+> > >   * @owner: the module owner containing the ops
+> > >   */
+> > > @@ -132,6 +142,7 @@ struct phy_ops {
+> > >       int     (*connect)(struct phy *phy, int port);
+> > >       int     (*disconnect)(struct phy *phy, int port);
+> > >
+> > > +     int     (*notify_phystate)(struct phy *phy, union phy_notify state);
+> > >       void    (*release)(struct phy *phy);
+> > >       struct module *owner;
+> > >  };
+> > > @@ -255,6 +266,7 @@ int phy_reset(struct phy *phy);
+> > >  int phy_calibrate(struct phy *phy);
+> > >  int phy_notify_connect(struct phy *phy, int port);
+> > >  int phy_notify_disconnect(struct phy *phy, int port);
+> > > +int phy_notify_state(struct phy *phy, union phy_notify state);
+> > >  static inline int phy_get_bus_width(struct phy *phy)
+> > >  {
+> > >       return phy->attrs.bus_width;
+> > > @@ -412,6 +424,13 @@ static inline int phy_notify_disconnect(struct phy *phy, int index)
+> > >       return -ENOSYS;
+> > >  }
+> > >
+> > > +static inline int phy_notify_phystate(struct phy *phy, union phy_notify state)
+> > > +{
+> > > +     if (!phy)
+> > > +             return 0;
+> > > +     return -ENOSYS;
+> >
+> > Should be -ENOSYS either way, right?
+>
+> I initially thought the same, but I followed the pattern that is used
+> by many of the other phy API calls like phy_init/exit,
+> phy_power_on/off phy_calibrate, phy_notify_connect in
+> include/linux/phy/phy.h. I can update it if you like, but I was trying
+> to keep it consistent.
+>
+> The only API I can see (that isn't a *phy_get* or *phy_create*) which
+> returns -ENOSYS unconditionally is phy_get_bus_width()
 
-Thanks for your patch!
+Friendly ping about the above ^^^
 
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/bus/simple-platform-bus.yaml
-> @@ -0,0 +1,50 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/bus/simple-platform-bus.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Simple Platform Bus
-> +
-> +maintainers:
-> +  - Herve Codina <herve.codina@bootlin.com>
-> +
-> +description: |
-> +  A Simple Platform Bus is a transparent bus that doesn't need a specifi=
-c
-> +  driver to perform operations at bus level.
-> +
-> +  Similar to simple-bus, a Simple Platform Bus allows to automatically
-> +  instantiate devices connected to this bus. Those devices are instantia=
-ted
-> +  only by the Simple Platform Bus probe function itself.
-
-So what are the differences with simple-bus? That its children are
-instantiated "only by the Simple Platform Bus probe function itself"?
-If that is the case, in which other places are simple-bus children
-instantiated?
-
-Do we need properties related to power-management (clocks, power-domains),
-or will we need a "simple-pm-platform-bus" later? ;-)
-
-FTR, I still think we wouldn't have needed the distinction between
-"simple-bus" and "simple-pm-bus"...
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Peter.
 
