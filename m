@@ -1,212 +1,432 @@
-Return-Path: <linux-kernel+bounces-880486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56CBAC25DED
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:42:37 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25DA8C25DFB
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:42:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A568A34FABF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:42:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 09F734E26C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:42:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAE662E1F06;
-	Fri, 31 Oct 2025 15:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1AF2E62C0;
+	Fri, 31 Oct 2025 15:42:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="BTUs0u7P"
-Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011062.outbound.protection.outlook.com [40.107.208.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kJjpSUV1"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3736B2E03EC;
-	Fri, 31 Oct 2025 15:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761925346; cv=fail; b=T1BaYPDT0fVBi0dhrY7r5HG0Wv5UfLYIZ6Ir53PJeFGKmpYmEKtj72DmX0Q3iPVA9kGuVZx9vKXfqpgGKZTgHe1eN11ZssWpcrdqyr7LqKPuZYVKIQioqCR8pMzwBu9u1gk2H6Tm+myBzYrj35sYVMcRIlALi6tpiYOD8GQ1MMU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761925346; c=relaxed/simple;
-	bh=F3XHTlckErJJ1IoSbQFwbjMSCnIZ4hXgb5ZMJtgBS+Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gKSRaABVP6Qm5yHzk3v654/O8BqOm4Nt9Gg/ODlv71BMk/GdKtO+9H592VUBflSRkdULB/eTlZ25k6dD5eccq8jYPgW35jqvOJdlYzdyH4grBMXScUgNu4PeUNnGL6J2Ix5yhVZ7opaZFELmIftJut6VXIFVKjfZlRy3vICmHWw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=BTUs0u7P; arc=fail smtp.client-ip=40.107.208.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zFno2QcYgtxZ1CokDMDx7rR+U55zAb2LgIMfIhXs7InILwIenhwEyDb1ThClKLsLMzFjla/7+DzOBl6n4NPjype73RjUbDsR19/M2wVFvk0Tx8NLc3nR0BCSNf2Okpkh4dWlbTXbN4Glg7xOQBTdx1JmFB7SdJ2lGUoY7lxp4G3LePyChYHZcTsY9YL9u00F5PTvb3rIMRYCvIlT0pbuMZr/taQoiQGS2FhZzW9CpbywbWH9iHU8nXtZcLwl4Iq9F5PmDMEKjfqffHtdgNSSsGevjYKS56uJs4rgQ2WU4JicczsDIzB7lcpOnaxG/IW7tEO1d93jo24nWs+RiOV1CQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sn1uX4NQLjcde7SH+PGfUJnYc+kHCAHy9AbB3lPCRS0=;
- b=tBeDQxqLrvMrB/ekW/CX2y4T96EGHJQCLr9oVuwgYx3rWCy0+poRuirPklPW6NLXTI1m/gWkzXjaPP6/tZhMfxMljZGm/pPzHf6xNSFgfWqhXCM1kvsCfZRQcGBPmhbpkhmQUK1ocRJlo5h3CIs7D//3/tRr0bNU9oVVhm/g94ACDIyr8KLxe9TobWwE+VqLQJIIA+E2mBDytgG8A6Rx55Vd1xdpDDhUlb5HQxFxYLWrHFI/QoS+E/O33uyC+Mul399PRU1iUi4PpGXrbUatYK7tGul+bLeTQvAkfehyF4tXABBFoyqwq5EJU+spwt8FKGQ8IyGBLZDhP48ExabpvA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sn1uX4NQLjcde7SH+PGfUJnYc+kHCAHy9AbB3lPCRS0=;
- b=BTUs0u7PeJ8DHH5kIfz3o7PTieKeNhgXLMJAvOJGFgp+OBSvMOksK8QAFkm/P/L+80oiOJxsKlQhZ257B4Dj9lZduJqIsXE+vGMoeW0C3ypzoHBGCRUAUezlMTjknRnwSHXkFertCikxg12y/HppUQl/SdKDL8Hcc//61NMVyXbT6iuFqbkHBP3r7SpX9XHRMT1eq96oiAcnz1OUvfSpiLfksLr1jMks4+W5YCIyZB9dSwCTK1PjuQyFKoMjIKU5QU8eWR2V+H2R3aPq5y5F/FMn3qz35hDVH6AnyvqmlTEvhyF+gA92+II7TNDuk3nM5IVnfvBP+TOhoW4LwOSIJA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- CY8PR12MB7730.namprd12.prod.outlook.com (2603:10b6:930:85::17) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.15; Fri, 31 Oct 2025 15:42:21 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.9275.013; Fri, 31 Oct 2025
- 15:42:21 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linmiaohe@huawei.com, david@redhat.com, jane.chu@oracle.com,
- kernel@pankajraghav.com, mcgrof@kernel.org, nao.horiguchi@gmail.com,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Nico Pache <npache@redhat.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Dev Jain <dev.jain@arm.com>,
- Barry Song <baohua@kernel.org>, Lance Yang <lance.yang@linux.dev>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Wei Yang <richard.weiyang@gmail.com>, Yang Shi <shy828301@gmail.com>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-Subject: Re: [PATCH v4 0/3] Optimize folio split in memory failure
-Date: Fri, 31 Oct 2025 11:42:19 -0400
-X-Mailer: MailMate (2.0r6272)
-Message-ID: <2F077EE8-9E34-4EE8-B2BB-90FBE5680C05@nvidia.com>
-In-Reply-To: <20251030204257.13590714dfb2deae8c2f193c@linux-foundation.org>
-References: <20251030014020.475659-1-ziy@nvidia.com>
- <20251030204257.13590714dfb2deae8c2f193c@linux-foundation.org>
-Content-Type: text/plain
-X-ClientProxiedBy: BL0PR1501CA0015.namprd15.prod.outlook.com
- (2603:10b6:207:17::28) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC6B2E11AA
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 15:42:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761925349; cv=none; b=kZ7zEmVp2gAvBjh68GtV84bN7gBncJ5L1IYyXvywO2fnD9Wryg2NQmsZZJ6fI7OUBGBYmUADQICPD1RA8rAbBwixHL9/1q6p+DTKaBEh3wwIGuI1LsxwDT5jJh+Vp3Nz1PsrsTTY/QcEXDNe+kR3XiBnrsM8klghAHpKfeGoMJM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761925349; c=relaxed/simple;
+	bh=DkC3XUMOy5x4fzNHe6722Vv0CXnahuKKD/D1E6lxj4I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bYJRC3vbZEXMJj6YXV5CUfjrd9K6Bq+Xg+S9sm/qW31ULgJeo/OQl0ZIorTWNKEqfH4AMtqj0KZnlIUSgwiMxt7TqdDnPRQRAgca/sIe+NwIYlJnluaSkkTGi0XDwS06GfCGedf6dIt22sZ05vDYzEJUz1PPjsx0rqgMHBmergk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kJjpSUV1; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-339d7c403b6so2353757a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:42:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761925347; x=1762530147; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=DUW12GL783o5v1SNVDp+240/b8eqDDVvpE7KYeAY/BE=;
+        b=kJjpSUV1dPqH/N2jhFnh8YDjZV6SIEacxm4XSDXbkfhsIc/CRzKnZyC6IRsJEncIMB
+         aRg0dBxnT41ZBXWNr4KXrAeUksc4QmSxLAJjC0tvkPILQ2SxV0tMnS49F9vnclwd7BOO
+         WqVTsCj8S0ZR3mjdE6zOhyaRo8FWmgiPWSWiedes4YsRLsm7f+8GOvQgS2Cq9yEsp/1G
+         D2z7GQnczbQxETOak8oXnDZNt1hEW4xwGsn/RVZdKJBW63dc3XZ4ldW9hbCm6TnH8Qz8
+         x76C7JX5/4qEVGPdV+e3kIRbqvYRM+us4AbKFC4Rqpni7k6wzkO6PU2gnCi3dKkGYVc1
+         517A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761925347; x=1762530147;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DUW12GL783o5v1SNVDp+240/b8eqDDVvpE7KYeAY/BE=;
+        b=Aq4cko//IRFhmRkb7FKxhWnOJmW/UA+HJhkQduLjRfkA7m7dbhXe5gnxq4w7no3wtX
+         lqRNvRSJDS1NVpkBVmobFJ1Sdy4H7X62yaLh9XjiIZIBV13vY/7Fm8yurmfJ3i2zd1QN
+         B1D15OnDwcHHWG5OQO9i3yE7mSsibI8bzzPWqfWI1EqG3GzETUi+3ejRkKy9N0p4c10E
+         sslnp7EfRRJ8fLv6tcJhZbGE60KHS0Z0JE1kwb7bFQYgId/MM1KYunjMZOdXXBUptaNp
+         iJdzYlNi9ntFg1DzLGj2bWy3Dzz7AVa2VrYY9cD3QkaSfpqVyWUFgqYSVu03P9j4nMJV
+         6Cuw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTyKBtPFknVkT/DSN/5ujGe/HBr9JzMN19EvCiXfJQZ66XX0e5Nb+Y6O/XACj+oskH3bMuv9JXBx4ltf0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQkYynvERzGpfocTYw09FZzBEc7oh4ya/FmuHUwxbp3/EJB7CC
+	Jz1H0J5/NJyNaUP4OYCwUNDJtqgw2UZYTtJygXCf/jmw3QR7bNXDyo+u
+X-Gm-Gg: ASbGncv13FJwy/jPFMrfkVxFFoPLjpDyuUVOxOQJnNFEodTSNhcn44Tb4QuXHQYmRl0
+	zhQ6J7wn0Ax6hGspu5G/7N+KGI5CCD9bq3w1XfxsIxDvFJKanToPzO6Mm0DwhGTcaPGseJ3ucpG
+	tf1M7AgFjWh6YI56Ob6M6B0NP8kvCJp8vPYy44hju941s3NN8r4/a5AmqlitVKZfodmjq64dq3U
+	y5TTv1Xu0lOg3Hg6ZGn/7Kt83gHKvg1ZtytvoPc2J5ukJgb6ULLhCrW+mNi7Q4TqHIJ6ubo4Qp1
+	IFxG1ec50yf3Mb7QVeqCI6DTcLPCfgXW+kF97DXkngfzZccSwAs/oiQrXfEATf/5WPnrpZcubHo
+	Xodvfx2Y5nbkwez14TisiRL6zR4xUQkGbDAX7Q8bCgO2aH0aFiV+YY1EKvxWP3UWuCxBuSuTOaE
+	NeCqwSB8hq4D25j1znz7H6uskpb2QqHwShRh/gqaPnXi5lxP0q
+X-Google-Smtp-Source: AGHT+IHzRt2IQAq49HtbK6kPh+mT205eusm0v30d77JYLIGZB3Pyg8nionXZOk5b5MIz/yIeIUsVdQ==
+X-Received: by 2002:a17:90a:d450:b0:340:a961:80c5 with SMTP id 98e67ed59e1d1-340a961873emr1202725a91.32.1761925346582;
+        Fri, 31 Oct 2025 08:42:26 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b93bef83380sm2466159a12.31.2025.10.31.08.42.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Oct 2025 08:42:26 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <ba0a378e-ccc3-45be-9c82-43e08b6ac3af@roeck-us.net>
+Date: Fri, 31 Oct 2025 08:42:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|CY8PR12MB7730:EE_
-X-MS-Office365-Filtering-Correlation-Id: a088ea6d-6dd9-4259-dff3-08de189414b3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?fa+hRlBOAY/PsS579R+QP0po3I2I1bZnqHm3vOwUY/8d/J8h1gte4CllAuOP?=
- =?us-ascii?Q?Cf+jWYEq/dUqZSmmsbrYgpO9a6c5HtP0O9V0HzK9TKa4UTnSmWC4K2A4/A3c?=
- =?us-ascii?Q?4ylvnkv0saQzVxadu2V68Pwac48nCWo7db0xjyF2TxZIu9ArRS8wj/JthxqJ?=
- =?us-ascii?Q?BUxvKy69EqX+OkBvOvHQzdYuXNW/v2tTpz1yp54xUDaWE0yzDUSZgLuZlLAC?=
- =?us-ascii?Q?nO5ivjcrA8LO5W4JigvWcEV9UU4IJS5CHpB/i9sxcFS8nugsujH9y8MQsDZl?=
- =?us-ascii?Q?8iEsm0uiKc8/12lk/WxUU5930hwUJ8XlmpeeRPv8If+XxR/XDIj89J3E4xv+?=
- =?us-ascii?Q?m6Q5WOWhxieDSmBhYifNJk1RmclJRWKccnEC5Y9peueABqEtPIaAORDtZO77?=
- =?us-ascii?Q?Do/PPIyj0KVdLMoMHj6Qyvg7I75AipbdWWJnVIRuEaNc/OBuarhKmvOxgG5Q?=
- =?us-ascii?Q?FnOwBkDPL48httRgEPbHo69WWE1PofSN0nYjM6wrfB4O0z6DDX4r2fNhRqMH?=
- =?us-ascii?Q?u6WsRAlSL8ZCThlnfEbly4UR3SIWqw/zAeIMG+gSVhqzTmEVmC4Y309OpzQh?=
- =?us-ascii?Q?977xNhh3KFxINrjeuoIRejHW1bBXKscPZyzjvcEHMQCEBcpLvPWMqwpp94Xv?=
- =?us-ascii?Q?SJamo4UwJX3NysCiG3nh5gmNgwwTn71sHZoj9o7pIHFVhwnLQlggOc8I9/v1?=
- =?us-ascii?Q?owvsS+BuZ+BCYORpnRRh1UkMLXL5SrHPL8KIzJEBDJeiTmQ/xetWLeTOVhDb?=
- =?us-ascii?Q?Sm+LIEABdjGz6sWHRRbgrfSoH3nAr7N7bMRdPYSFT3P4Xm/k94bmpV8kIoI1?=
- =?us-ascii?Q?uNJ4rGmBx/kHYyM79pCRYQwTd4YeOX0/H+TcMF+zeRC+A9fjuJw/1g60qkt/?=
- =?us-ascii?Q?5bvE/Q0+9E/wY2c2CfHDLZ2JA2LTCFAh75k/y7HYnM3QDgkIuBFD9ab3yXxk?=
- =?us-ascii?Q?yd7njpcRUjnM7nHplA21S651dkajimQhaHO9He7uca+1BksZ8JZ9tJuuC+Xt?=
- =?us-ascii?Q?VJ6hcxkPEFm8+BAyw9kGo1UgPQlVo5K9Q16bGf9u6+1NRHjLESqh4LwnxHDV?=
- =?us-ascii?Q?JDIB/9KhotZ0PuivU/XhhPyC/wRe7p5lqONMlytEL+8OrS2I44LdABfo97Ap?=
- =?us-ascii?Q?VGdMnNn5AbwRBLcG6l1TbSUdnnaEK2PVaeYNSfU8imHqQl2uX+bSeAegZ9k/?=
- =?us-ascii?Q?saF+gMRLu0dMU3gHxYLBvooBgya2/gY/j2rSAnBrzrgLer204rfQ7eRxC2y1?=
- =?us-ascii?Q?hlBOvgChJNUYCECVE7FkPov0HJaWjIH9v//mMhYNuKSfY8s6dN2UC4EjGQC2?=
- =?us-ascii?Q?Oe57fZBsnO35f9ateDLb23LwqHmzyV+Bq01dLVUQ0by+muRdqXwY9I7WLbPz?=
- =?us-ascii?Q?cImfHHM6T12h+ELck0l+F1lFTA5gLNHZb2BudaIpg3PhLyQ3rwv/Y2RJaRPT?=
- =?us-ascii?Q?fQJ26vlz1//ogu3mv9m+1ZIMVpph9cPe?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?dwcnOUEaJtk9K3t1lqiTDKhzxNyz/s1UIj8RpFi2Oow6APiMsGZfHiRLybTL?=
- =?us-ascii?Q?+yGZePA/gkggCQyjq4iQKeg8ppZkRsNlH4EuSzdN6o99VAUCpbMkP13anKPs?=
- =?us-ascii?Q?ES4thUfzq2VskeffHDTzrLDMQTqVX0hKc3mrFR61DBW6Su/yHSJP1rcSBKim?=
- =?us-ascii?Q?n3k42/CJ+3LCcxspCHwvwOByQ2TpI0j1fOhARZTDmqoEe6KDzgQCRYjGx8+4?=
- =?us-ascii?Q?eyEqz/k7NP+KnLrjID7pPck/w/C/++GOqR+l6I6D3jFpNlwsZkKWN1FKvjuV?=
- =?us-ascii?Q?m5SzJoiq4Q4yvDsUEvJ7ay0oEZJxQ+blu+AQF9n7cvhfWd4f0jx7NtWXmKEN?=
- =?us-ascii?Q?VEd1rF+MluB16Sy9SzNC0mlc+8TRz2P2C9DdbQZjfhMmnRT+eBMFWnIEZxmK?=
- =?us-ascii?Q?WmYXuT56UjUJnNYVRCU00pee5velrULllaAL5ZhyvGAtnytJid+0Hhf0BOBq?=
- =?us-ascii?Q?D2hXQY70Zom71VO4B3mAVgH8cWUqEJ4Iv+yJ5DDu4Ur9y3Sa2byqW0Atts3A?=
- =?us-ascii?Q?nOay6xrGoCsVomXjRs4z20xJjaS9mBznNNQ/GGKK8TvKo+ume3Gn9FCPbhDf?=
- =?us-ascii?Q?/SCTzWzD/JZUgqFuO8gNQ7ZbVVi5iEA/HlaBvFnxcPc5161awwU0aZhB5E0F?=
- =?us-ascii?Q?NiZcboliZahUR1br+tknXP/bXWma/xbaCdcWcf5Oq3GIaXZ8me7Lo8sC+206?=
- =?us-ascii?Q?dpeDj3N/WHlFBFKszFNNX5y7Z5TfL+Ubn/jfhNnPcyv0ikMEBKB6KwNKwKXq?=
- =?us-ascii?Q?rkbJNJ6UHLWtiBcR35Xp6HaLc9t01p6wIeFFF503U+D5FtTyDQp/UfieNUgc?=
- =?us-ascii?Q?mDp1C0AmBGuoaZPHMcEe9OW5qUeBy6cNlVmAZ/vQWFi11fiItwVFvtgZ1zLo?=
- =?us-ascii?Q?nYo/9G1CFbQTqGwgJQkBb51ARdySLGnPMpQW0VuTONTNbN0NE3HH+Pa1ynD1?=
- =?us-ascii?Q?cvcASKRnAS9YsQXZzfxO7tD8SXeabuFHyW1xubuGj+NH/VaILXp6v9YMZQf2?=
- =?us-ascii?Q?iWC8C4PdVOHfvJCIIWRFA7TCnT5dLwmRZy9ZpXW8t/JPPdpn1yeQTPDG/pgf?=
- =?us-ascii?Q?NI7fqs+yi/3aYZMEdbjJGlf6vR8MDHty2KYXMjU3rLbAerUytUqGc4mtYmZp?=
- =?us-ascii?Q?YNR197niIVEjvkjJ+qz348UPaYb7QW1Yznth/r3IivIpfkmDAwIW4CcvTJsQ?=
- =?us-ascii?Q?ahUvpJrlWTkjCHHpHLEdS73xS14gc7w0xF0I26CXLs/IQrXNWJ1EqmExOgSS?=
- =?us-ascii?Q?i4KjeG9Rl1HGp1uXRF670ol/Joq73+VInFzEAFwvxasR9xNZ5PyRC2ZBu+1P?=
- =?us-ascii?Q?eE1Pq3J1GYW/zXq0AhsUs7VfTfrfTuhUHAI/nKSGsFw/tjjnxrNZD2PNqJ7Q?=
- =?us-ascii?Q?us6mA7zpWoBOw88rdrLWSaafX3c41mJ6Gzz1Jyw2hfH+CbZgn2Yxv9bKvXh7?=
- =?us-ascii?Q?cNeSRzD2YIYkq7uGB2xHJkK68u5LHzgAbzzXKvUzo7J4quGn4l4TWbpaixHb?=
- =?us-ascii?Q?7n6cNM3McxJsOhgfxEjNZqIvo/eTR8dnS3+p7NQjkBfS/g+4/kvvkPi7Ytjb?=
- =?us-ascii?Q?nrZHUR51m0SqAe4XI4jAm2PvEF44SEUat+s3mHQ8?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a088ea6d-6dd9-4259-dff3-08de189414b3
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2025 15:42:21.6095
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: p237PH3K0HakKVyJSC8orepoOuwQZsooEoK3jHuRFksfjh9uZOD37vmZC2xL2udD
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7730
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] watchdog: Add driver for Gunyah Watchdog
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ hrishabh.rajput@oss.qualcomm.com
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Pavan Kondeti
+ <pavan.kondeti@oss.qualcomm.com>, Neil Armstrong <neil.armstrong@linaro.org>
+References: <20251031-gunyah_watchdog-v4-0-7abb1ee11315@oss.qualcomm.com>
+ <20251031-gunyah_watchdog-v4-2-7abb1ee11315@oss.qualcomm.com>
+ <4bxoananq55f7u4kckqjof37or6fflppmbyyc3j6noodzr75nt@vtfxbnhrcgzy>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <4bxoananq55f7u4kckqjof37or6fflppmbyyc3j6noodzr75nt@vtfxbnhrcgzy>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 30 Oct 2025, at 23:42, Andrew Morton wrote:
-
-> On Wed, 29 Oct 2025 21:40:17 -0400 Zi Yan <ziy@nvidia.com> wrote:
->
->> This patchset is a follow-up of "[PATCH v3] mm/huge_memory: do not change
->> split_huge_page*() target order silently."[1] and
->> [PATCH v4] mm/huge_memory: preserve PG_has_hwpoisoned if a folio is split
->> to >0 order[2], since both are separated out as hotfixes. It improves how
->> memory failure code handles large block size(LBS) folios with
->> min_order_for_split() > 0. By splitting a large folio containing HW
->> poisoned pages to min_order_for_split(), the after-split folios without
->> HW poisoned pages could be freed for reuse. To achieve this, folio split
->> code needs to set has_hwpoisoned on after-split folios containing HW
->> poisoned pages and it is done in the hotfix in [2].
+On 10/31/25 07:36, Dmitry Baryshkov wrote:
+> On Fri, Oct 31, 2025 at 10:18:14AM +0000, Hrishabh Rajput via B4 Relay wrote:
+>> From: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
 >>
->> This patchset includes:
->> 1. A patch adds split_huge_page_to_order(),
->> 2. Patch 2 and Patch 3 of "[PATCH v2 0/3] Do not change split folio target
->>    order"[3],
->
-> Sorry, but best I can tell, none of this tells anyone anything about
-> this patchset!
->
-> Could we please have a [0/N] which provides the usual overview of these
-> three patches?
->
-> Please put yourself in the position of someone reading Linus's tree in
-> 2028 wondering "hm, what does this series do".  All this short-term
-> transient patch-timing development-time stuff is of no interest to
-> them and is best placed below the ^---$ separator.
->
+>> On Qualcomm SoCs running under the Gunyah hypervisor, access to watchdog
+>> through MMIO is not available on all platforms. Depending on the
+>> hypervisor configuration, the watchdog is either fully emulated or
+>> exposed via ARM's SMC Calling Conventions (SMCCC) through the Vendor
+>> Specific Hypervisor Service Calls space.
+>>
+>> Add driver to support the SMC-based watchdog provided by the Gunyah
+>> Hypervisor. Device registration is done in the SMEM driver after checks
+>> to restrict the watchdog initialization to Qualcomm devices.
+>> module_exit() is intentionally not implemented as this driver is
+>> intended to be a persistent module.
+>>
+>> Signed-off-by: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
+>> ---
+>>   MAINTAINERS                   |   1 +
+>>   drivers/watchdog/Kconfig      |  14 +++
+>>   drivers/watchdog/Makefile     |   1 +
+>>   drivers/watchdog/gunyah_wdt.c | 249 ++++++++++++++++++++++++++++++++++++++++++
+>>   4 files changed, 265 insertions(+)
+>>
+>> diff --git a/MAINTAINERS b/MAINTAINERS
+>> index c0b444e5fd5a..56dbd0d3e31b 100644
+>> --- a/MAINTAINERS
+>> +++ b/MAINTAINERS
+>> @@ -3083,6 +3083,7 @@ F:	arch/arm64/boot/dts/qcom/
+>>   F:	drivers/bus/qcom*
+>>   F:	drivers/firmware/qcom/
+>>   F:	drivers/soc/qcom/
+>> +F:	drivers/watchdog/gunyah_wdt.c
+>>   F:	include/dt-bindings/arm/qcom,ids.h
+>>   F:	include/dt-bindings/firmware/qcom,scm.h
+>>   F:	include/dt-bindings/soc/qcom*
+>> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+>> index 0c25b2ed44eb..f0dee04b3650 100644
+>> --- a/drivers/watchdog/Kconfig
+>> +++ b/drivers/watchdog/Kconfig
+>> @@ -2343,4 +2343,18 @@ config KEEMBAY_WATCHDOG
+>>   	  To compile this driver as a module, choose M here: the
+>>   	  module will be called keembay_wdt.
+>>   
+>> +config GUNYAH_WATCHDOG
+>> +	tristate "Qualcomm Gunyah Watchdog"
+>> +	depends on ARCH_QCOM || COMPILE_TEST
+>> +	depends on HAVE_ARM_SMCCC
+>> +	depends on OF
+>> +	select WATCHDOG_CORE
+>> +	help
+>> +	  Say Y here to include support for watchdog timer provided by the
+>> +	  Gunyah hypervisor. The driver uses ARM SMC Calling Convention (SMCCC)
+>> +	  to interact with Gunyah Watchdog.
+>> +
+>> +	  To compile this driver as a module, choose M here: the
+>> +	  module will be called gunyah_wdt.
+>> +
+>>   endif # WATCHDOG
+>> diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
+>> index bbd4d62d2cc3..308379782bc3 100644
+>> --- a/drivers/watchdog/Makefile
+>> +++ b/drivers/watchdog/Makefile
+>> @@ -102,6 +102,7 @@ obj-$(CONFIG_MSC313E_WATCHDOG) += msc313e_wdt.o
+>>   obj-$(CONFIG_APPLE_WATCHDOG) += apple_wdt.o
+>>   obj-$(CONFIG_SUNPLUS_WATCHDOG) += sunplus_wdt.o
+>>   obj-$(CONFIG_MARVELL_GTI_WDT) += marvell_gti_wdt.o
+>> +obj-$(CONFIG_GUNYAH_WATCHDOG) += gunyah_wdt.o
+>>   
+>>   # X86 (i386 + ia64 + x86_64) Architecture
+>>   obj-$(CONFIG_ACQUIRE_WDT) += acquirewdt.o
+>> diff --git a/drivers/watchdog/gunyah_wdt.c b/drivers/watchdog/gunyah_wdt.c
+>> new file mode 100644
+>> index 000000000000..bfe8b656d674
+>> --- /dev/null
+>> +++ b/drivers/watchdog/gunyah_wdt.c
+>> @@ -0,0 +1,249 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+>> + */
+>> +
+>> +#include <linux/arm-smccc.h>
+>> +#include <linux/delay.h>
+>> +#include <linux/errno.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of.h>
+> 
+> Is this header used here?
+> 
+>> +#include <linux/platform_device.h>
+>> +#include <linux/watchdog.h>
+>> +
+>> +#define GUNYAH_WDT_SMCCC_CALL_VAL(func_id) \
+>> +	ARM_SMCCC_CALL_VAL(ARM_SMCCC_FAST_CALL, ARM_SMCCC_SMC_32,\
+>> +			   ARM_SMCCC_OWNER_VENDOR_HYP, func_id)
+>> +
+>> +/* SMCCC function IDs for watchdog operations */
+>> +#define GUNYAH_WDT_CONTROL   GUNYAH_WDT_SMCCC_CALL_VAL(0x0005)
+>> +#define GUNYAH_WDT_STATUS    GUNYAH_WDT_SMCCC_CALL_VAL(0x0006)
+>> +#define GUNYAH_WDT_PING      GUNYAH_WDT_SMCCC_CALL_VAL(0x0007)
+>> +#define GUNYAH_WDT_SET_TIME  GUNYAH_WDT_SMCCC_CALL_VAL(0x0008)
+> 
+> What about calls 0-4?
+> 
+>> +
+>> +/*
+>> + * Control values for GUNYAH_WDT_CONTROL.
+>> + * Bit 0 is used to enable or disable the watchdog. If this bit is set,
+>> + * then the watchdog is enabled and vice versa.
+>> + * Bit 1 should always be set to 1 as this bit is reserved in Gunyah and
+>> + * it's expected to be 1.
+>> + */
+>> +#define WDT_CTRL_ENABLE  (BIT(1) | BIT(0))
+>> +#define WDT_CTRL_DISABLE BIT(1)
+>> +
+>> +enum gunyah_error {
+>> +	GUNYAH_ERROR_OK				= 0,
+>> +	GUNYAH_ERROR_UNIMPLEMENTED		= -1,
+>> +	GUNYAH_ERROR_ARG_INVAL			= 1,
+>> +};
+>> +
+>> +/**
+>> + * gunyah_error_remap() - Remap Gunyah hypervisor errors into a Linux error code
+>> + * @gunyah_error: Gunyah hypercall return value
+>> + */
+>> +static inline int gunyah_error_remap(enum gunyah_error gunyah_error)
+>> +{
+>> +	switch (gunyah_error) {
+>> +	case GUNYAH_ERROR_OK:
+>> +		return 0;
+>> +	case GUNYAH_ERROR_UNIMPLEMENTED:
+>> +		return -EOPNOTSUPP;
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+>> +}
+>> +
+>> +static int gunyah_wdt_call(unsigned long func_id, unsigned long arg1,
+>> +			   unsigned long arg2, struct arm_smccc_res *res)
+>> +{
+> 
+> 	struct arm_smccc_res res;
+> 
+> There is no need to pass it through arguments.
+> 
+>> +	arm_smccc_1_1_smc(func_id, arg1, arg2, res);
+>> +	return gunyah_error_remap(res->a0);
+>> +}
+>> +
+>> +static int gunyah_wdt_start(struct watchdog_device *wdd)
+>> +{
+>> +	struct arm_smccc_res res;
+>> +	unsigned int timeout_ms;
+>> +	struct device *dev = wdd->parent;
+>> +	int ret;
+>> +
+>> +	ret = gunyah_wdt_call(GUNYAH_WDT_CONTROL, WDT_CTRL_DISABLE, 0, &res);
+>> +	if (ret && watchdog_active(wdd)) {
+>> +		dev_err(dev, "%s: Failed to stop gunyah wdt %d\n", __func__, ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	timeout_ms = wdd->timeout * 1000;
+>> +	ret = gunyah_wdt_call(GUNYAH_WDT_SET_TIME,
+>> +			      timeout_ms, timeout_ms, &res);
+>> +	if (ret) {
+>> +		dev_err(dev, "%s: Failed to set timeout for gunyah wdt %d\n",
+>> +			__func__, ret);
+>> +		return ret;
+>> +	}
+>> +
+>> +	ret = gunyah_wdt_call(GUNYAH_WDT_CONTROL, WDT_CTRL_ENABLE, 0, &res);
+>> +	if (ret)
+>> +		dev_err(dev, "%s: Failed to start gunyah wdt %d\n", __func__, ret);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +static int gunyah_wdt_stop(struct watchdog_device *wdd)
+>> +{
+>> +	struct arm_smccc_res res;
+>> +
+>> +	return gunyah_wdt_call(GUNYAH_WDT_CONTROL, WDT_CTRL_DISABLE, 0, &res);
+>> +}
+>> +
+>> +static int gunyah_wdt_ping(struct watchdog_device *wdd)
+>> +{
+>> +	struct arm_smccc_res res;
+>> +
+>> +	return gunyah_wdt_call(GUNYAH_WDT_PING, 0, 0, &res);
+>> +}
+>> +
+>> +static int gunyah_wdt_set_timeout(struct watchdog_device *wdd,
+>> +				  unsigned int timeout_sec)
+>> +{
+>> +	wdd->timeout = timeout_sec;
+>> +
+>> +	if (watchdog_active(wdd))
+>> +		return gunyah_wdt_start(wdd);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static unsigned int gunyah_wdt_get_timeleft(struct watchdog_device *wdd)
+>> +{
+>> +	struct arm_smccc_res res;
+>> +	unsigned int seconds_since_last_ping;
+>> +	int ret;
+>> +
+>> +	ret = gunyah_wdt_call(GUNYAH_WDT_STATUS, 0, 0, &res);
+>> +	if (ret)
+>> +		return 0;
+> 
+> This is the only place which passes something back in res. Please wrap
+> it separately and return int value.
+> 
+>> +
+>> +	seconds_since_last_ping = res.a2 / 1000;
+>> +	if (seconds_since_last_ping > wdd->timeout)
+>> +		return 0;
+>> +
+>> +	return wdd->timeout - seconds_since_last_ping;
+>> +}
+>> +
+>> +static int gunyah_wdt_restart(struct watchdog_device *wdd,
+>> +			      unsigned long action, void *data)
+>> +{
+>> +	struct arm_smccc_res res;
+>> +
+>> +	/* Set timeout to 1ms and send a ping */
+>> +	gunyah_wdt_call(GUNYAH_WDT_CONTROL, WDT_CTRL_ENABLE, 0, &res);
+>> +	gunyah_wdt_call(GUNYAH_WDT_SET_TIME, 1, 1, &res);
+>> +	gunyah_wdt_call(GUNYAH_WDT_PING, 0, 0, &res);
+>> +
+>> +	/* Wait to make sure reset occurs */
+>> +	mdelay(100);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static const struct watchdog_info gunyah_wdt_info = {
+>> +	.identity = "Gunyah Watchdog",
+>> +	.firmware_version = 0,
+> 
+> =0 is default and can be omited
+> 
+>> +	.options = WDIOF_SETTIMEOUT
+>> +		 | WDIOF_KEEPALIVEPING
+>> +		 | WDIOF_MAGICCLOSE,
+>> +};
+>> +
+>> +static const struct watchdog_ops gunyah_wdt_ops = {
+>> +	.owner = THIS_MODULE,
+>> +	.start = gunyah_wdt_start,
+>> +	.stop = gunyah_wdt_stop,
+>> +	.ping = gunyah_wdt_ping,
+>> +	.set_timeout = gunyah_wdt_set_timeout,
+>> +	.get_timeleft = gunyah_wdt_get_timeleft,
+>> +	.restart = gunyah_wdt_restart
+>> +};
+>> +
+>> +static int gunyah_wdt_probe(struct platform_device *pdev)
+>> +{
+>> +	struct arm_smccc_res res;
+>> +	struct watchdog_device *wdd;
+>> +	struct device *dev = &pdev->dev;
+>> +	int ret;
+>> +
+>> +	ret = gunyah_wdt_call(GUNYAH_WDT_STATUS, 0, 0, &res);
+>> +	if (ret) {
+>> +		dev_dbg(dev, "Watchdog interface status check failed with %d\n", ret);
+> 
+> dev_err
+> 
 
-How about?
+Then -ENODEV is inappropriate and the actual error should be returned.
 
-The patchset optimizes folio split operations in memory failure code by:
-always splitting a folio to min_order_for_split() to minimize unusable
-pages, even if min_order_for_split() is non zero and memory failure code
-would take the failed path eventually. This means instead of making
-the entire original folio unusable memory failure code would only make
-its after-split folio, with min_order_for_split() and containing the
-page marked as HWPoisoned, unusable. For soft offline case, since the
-original folio is still accessible, do not split it. In addition,
-add split_huge_page_to_order() to improve code readability and fix
-kernel-doc comment format for folio_split() and other related functions.
+Guenter
 
-
---
-Best Regards,
-Yan, Zi
+>> +		return -ENODEV;
 
