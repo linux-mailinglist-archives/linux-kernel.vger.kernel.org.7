@@ -1,68 +1,59 @@
-Return-Path: <linux-kernel+bounces-879518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02BD6C234BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:39:21 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA22FC234C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:41:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CA2384E314C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 05:39:19 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7F50734DCD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 05:41:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E28C2D640F;
-	Fri, 31 Oct 2025 05:39:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B289C2D838F;
+	Fri, 31 Oct 2025 05:41:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pPbFn3Bd"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="0ePt8LYZ"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F562D0C61
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 05:39:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC1B2D6639
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 05:41:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761889154; cv=none; b=Nv+7sjCyfGcMZdLaVbJQ7eYazcrKtpdcNQUK8F5tqdOZg4K0dxHQjAi0ttzxfOyy5ezM80cjDIieVWZrp3CbvF7u6fU3FxVihCPPLSjVCnc8JTQutUcWj0MC5jZ2NFd/CXEp1sYHDh1a3Y7NnPhD+vfqlgP2zgWdmn0euxLMW/I=
+	t=1761889287; cv=none; b=nKxwcwX8U+6Ig2VxI+4oU1gBS1/23OMyGqkmWAoRq86pKoRwnV7/JfWqYMpMUzNRKEcka2tQilsg9KIr/V0biCFn87Ru/W54YBie9bW9h5uNL2F0ktfO6ITYsS2V1le6rtY4FIByc5KzSg6pvsYV2Jouwlz/0dHJExZswwZTGmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761889154; c=relaxed/simple;
-	bh=9bszQUrQ9DRwwrCpz1oQKtQYGkJSUadOEvnFwHsK7Zw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kvMJ/HcLzDpAe3Z1XHcIMpOA/PmgPJaQn+FHEZTaz0gaD1dSfAkc35Ilsiv4nTHMaTcLGAM3mScqDgvS2PuBNM+uuL0Yho94VNYjAOzwa16IV/kPvJy8BNvOGvFk3dhAOCCt+yggjZ4jV2Ui/Ayk/bquYrrKy/AEO4mouLjO4oE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pPbFn3Bd; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761889137;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZRakSqR8o29qH+ZfZvl0HYHw+awOUQTApGgdAWATiro=;
-	b=pPbFn3BdpaTQtjweMtUM5gJa75aqjfasGp97rfDJwqM9JS7Rp1vya6M0q65RLUlBLLqm4V
-	SdqVuMmFa+Drb5O3EalRHXYLfpfQ2raYhoPHO4ISNRuj0fF5D+oEPZ8N+ECHBkxDQzftE3
-	XflZQC7LmckfIQz4ymrTz+GP0O1c5PQ=
-From: Fushuai Wang <fushuai.wang@linux.dev>
-To: bp@alien8.de
-Cc: dave.hansen@linux.intel.com,
-	davydov-max@yandex-team.ru,
-	gpiccoli@igalia.com,
-	hpa@zytor.com,
-	jani.nikula@intel.com,
-	joel.granados@kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	martin.petersen@oracle.com,
-	mingo@redhat.com,
-	peterz@infradead.org,
-	tglx@linutronix.de,
-	wangfushuai@baidu.com,
-	x86@kernel.org,
-	xin@zytor.com
-Subject: Re: [PATCH RESEND] x86/split_lock: Make split lock mitigation sleep duration configurable
-Date: Fri, 31 Oct 2025 13:38:32 +0800
-Message-Id: <20251031053832.99453-1-fushuai.wang@linux.dev>
-In-Reply-To: <20251030191057.GDaQO4QYoZytxdQW_c@fat_crate.local>
-References: <20251030191057.GDaQO4QYoZytxdQW_c@fat_crate.local>
+	s=arc-20240116; t=1761889287; c=relaxed/simple;
+	bh=ptpR3t9yhr/icYn9KOzUfGf3yZw68P61v8s2Z4MoVZQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cFLy5CHsxgFj+UUPUGNmI0zeCMVkgU2fVwZCgCXzLew3acWUwsSX4C/GPaiZx/+842BnuhlocwKuuN9wj7S2m7T2CYGKXZGyvAThnHvJ1SppKVmqXe9VQV8s5SH+FZRQ0JyEuoxlWutzP6MiLe2oNsHcK79QZvxLKRB7bhwmbBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=0ePt8LYZ; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=xxDBOK5+bxiu2IhCreH5O5yOABZ9/mrk1d6bX5zFEFY=; b=0ePt8LYZBtL3MXGmNHU0Y6ouSB
+	L54OW0dZX/sbl1RgYSrACNBOQocozvoeMAqw6Bh0CYraC1COo87y/jqUl4+dG8peuOVFba8PNUt1+
+	k1GglBzhAyUQkmveB0syXY383LqOnMGOFCeXHus+lFu01nQ5OpMRxPoEkTY0hflSLuUSiIJBojltI
+	9pXjGUiC3adLC3Fd4Ug2shw8zDrzW2H9H0qf6PIddTWOK30v8QpL116YaWphSKrTj4o1YjZCrVWb8
+	wiAF9h1AyITibKL8AAfkRh/MooYiYSfbRdolZbdVSfoPBOv4yEPXjix3qx7jbBqYLyGU6oNzQ7QR9
+	squNRKXQ==;
+Received: from [50.53.43.113] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vEht1-00000005Q8w-1Cmn;
+	Fri, 31 Oct 2025 05:41:19 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	linux-mtd@lists.infradead.org
+Subject: [PATCH] mtd: spear_smi: fix kernel-doc warnings <linux/mtd/spear_smi.h>
+Date: Thu, 30 Oct 2025 22:41:18 -0700
+Message-ID: <20251031054118.1402280-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,46 +61,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
->> Commit 727209376f49 ("x86/split_lock: Add sysctl to control the misery
->> mode") introduce a sysctl 'sysctl_sld_mitigate' to control the misery
->> mode for split lock detection (0 to disable, 1 to enable). However,
->> when enabled, the sleep duration for split lockers was fixed at 10 ms.
->> 
->> This patch extands 'sysctl_sld_mitigate' to allow configuring the sleep
->> duration in milliseconds. Now, when 'sysctl_sld_mitigate' is set to
->> N (N > 0), split lockers will sleep for N milliseconds.
->
-> I'm reading this and the only question that pops up in my mind is "why".
-> 
-> Why does the upstream kernel need this?
--------
-Resend. It was not delivered successfully again. :(
--------
+Correct most kernel-doc warnings in include/linux/mtd/spear_smi.h
+by adding a leading '@' to the description of struct members.
+Add a new description for the missing @np member.
 
-Hi Boris,
+Warning: spear_smi.h:48 struct member 'name' not described
+ in 'spear_smi_flash_info'
+Warning: spear_smi.h:48 struct member 'mem_base' not described
+ in 'spear_smi_flash_info'
+Warning: spear_smi.h:48 struct member 'size' not described
+ in 'spear_smi_flash_info'
+Warning: spear_smi.h:48 struct member 'partitions' not described
+ in 'spear_smi_flash_info'
+Warning: spear_smi.h:48 struct member 'nr_partitions' not described
+ in 'spear_smi_flash_info'
+Warning: spear_smi.h:48 struct member 'fast_mode' not described
+ in 'spear_smi_flash_info'
+Warning: spear_smi.h:62 struct member 'clk_rate' not described
+ in 'spear_smi_plat_data'
+Warning: spear_smi.h:62 struct member 'num_flashes' not described
+ in 'spear_smi_plat_data'
+Warning: spear_smi.h:62 struct member 'board_flash_info' not described
+ in 'spear_smi_plat_data'
+Warning: spear_smi.h:62 struct member 'np' not described
+ in 'spear_smi_plat_data'
 
-I think there are two main reasons for making the split lock mitigation
-sleep duration configurable:
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+---
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>
+Cc: linux-mtd@lists.infradead.org
+---
+ include/linux/mtd/spear_smi.h |   19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
-1.Workload Flexibility: Different workloads have varying sensitivity to
-  latency. Some environments may want a longer penalty to strongly discourage
-  split locks, while others may prefer a shorter delay to minimize impact on
-  overall system responsiveness.For example, in cloud environments, we are
-  often more sensitive to split locks because it is important to prevent a
-  single virtual machine from impacting the performance of the entire physical
-  host, so a stricter (longer) penalty may be preferred. In other scenarios,
-  such a strict penalty may not be necessary, and a shorter delay might be
-  sufficient to balance performance and stability. Making the sleep duration
-  configurable allows administrators to adjust the mitigation strategy based
-  on the specific requirements and tolerance levels of different environments.
-
-2.Testing and Tuning: Allowing the sleep duration to be configured makes
-  it easier for system administrators and developers to test the effects of
-  different mitigation levels and to tune the system according to their
-  specific requirements.
-
-Regards,
-Wang.
+--- linux-next-20251029.orig/include/linux/mtd/spear_smi.h
++++ linux-next-20251029/include/linux/mtd/spear_smi.h
+@@ -31,12 +31,12 @@
+  * struct spear_smi_flash_info - platform structure for passing flash
+  * information
+  *
+- * name: name of the serial nor flash for identification
+- * mem_base: the memory base on which the flash is mapped
+- * size: size of the flash in bytes
+- * partitions: parition details
+- * nr_partitions: number of partitions
+- * fast_mode: whether flash supports fast mode
++ * @name: name of the serial nor flash for identification
++ * @mem_base: the memory base on which the flash is mapped
++ * @size: size of the flash in bytes
++ * @partitions: parition details
++ * @nr_partitions: number of partitions
++ * @fast_mode: whether flash supports fast mode
+  */
+ 
+ struct spear_smi_flash_info {
+@@ -51,9 +51,10 @@ struct spear_smi_flash_info {
+ /**
+  * struct spear_smi_plat_data - platform structure for configuring smi
+  *
+- * clk_rate: clk rate at which SMI must operate
+- * num_flashes: number of flashes present on board
+- * board_flash_info: specific details of each flash present on board
++ * @clk_rate: clk rate at which SMI must operate
++ * @num_flashes: number of flashes present on board
++ * @board_flash_info: specific details of each flash present on board
++ * @np: array of DT node pointers for all possible flash chip devices
+  */
+ struct spear_smi_plat_data {
+ 	unsigned long clk_rate;
 
