@@ -1,85 +1,125 @@
-Return-Path: <linux-kernel+bounces-879563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C08F9C2377F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:54:45 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E855C237AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:58:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ACA73B8E29
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:52:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C62054EDBFF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:57:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774D72FD698;
-	Fri, 31 Oct 2025 06:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E8D830596D;
+	Fri, 31 Oct 2025 06:57:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ev8bWVRC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A/JSzDqR"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2DED2EC57B
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 06:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216462FE07B
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 06:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761893544; cv=none; b=qGQXl6eib7pA+9MYa2JjdAHfbMABaL1cZ3TJ//O2F7NxtnyIIN1hnUDKaWyEYC7VEn0uA11nC6tMgd7TdnQhz9GJutp0TV538gI9KdkHP6lurjKuhl4uOP+aNxHke8q7QSP1ProrIvQLPyskk6NLfU3NYTXQWfM3tDQ3ZAmI+dA=
+	t=1761893856; cv=none; b=HeTMTEkYWXuJX8WB6PfiCUFcrMXsP2xi/ZUkijQXqjCNU52uQiXEw1WIIkV1T1y2eb/u0ga5Nit7ljCnty7bGWcS4g7faJu5YFsvi8b81Yuaaa2IxnkriSLg9a90UTrHBJUAxJRtHn3ZmuUf4cqDdyIhXkxDJyhLtZJBe1oIVWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761893544; c=relaxed/simple;
-	bh=ksx4g+Jh2oVtltJZWL+FIC5BrFeq4u4rjwvhozEkK1U=;
+	s=arc-20240116; t=1761893856; c=relaxed/simple;
+	bh=ecDK9SnUGOo0Co29J89ja7/Hfoue5KPLe3vAHCwg4zs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XtPY2sbiZOxO7AqMOuS4y28whcm4lSq4GMLHcGk9vMyr6sT3cvL+afPtiLfQ4RApPZC/S8Ok8pPQ7jE2I52xRL6xnP3WnznuDx5pyoyg/eDDjeYoJgdnjjMWf1UandmGpVB1BGgsmVZZObCaiSz0qdD+a9hg6kJRQSPOYMXEchc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ev8bWVRC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85047C4CEFB
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 06:52:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761893544;
-	bh=ksx4g+Jh2oVtltJZWL+FIC5BrFeq4u4rjwvhozEkK1U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ev8bWVRC1tbtlXw/rhWi9pOl0IDaJ4iq9Kfdw7R+PaAuYXp/MdcoYuZ7mTkrooNNK
-	 N48R+m2bU+huj2o9GITfLGpO17xhbgRaPQKHoVPsaaLTfch0TQCV6mZNBubWGGCSh7
-	 dc5/9uCluvY72tU3dZt42zcfOBp7N9UFBuDwa/c1aikOy+6sdcyy00zgNGTF92+zUi
-	 tVK934J0IB5ndU1tvQOAsqw/Cdzdp1UdD6tKz+tfQxV/l+Nvhd/g0OLzC+puGkqLL0
-	 Tn2EhcLlbYcomRlD2OUeVZj6X0Q4wgZOEQF6yIa0vexIUdlqXamd+6X5EIvpElhbsv
-	 8d9YwWpqB5Jog==
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-59052926cf9so2313794e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 23:52:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUNqJ2x1MKlFndPeLo2t7rqX0+q/6gBe0wuZ6Lb7Ipt5zjzFSwFZRNj1nVK7dL3xeztsnf2G7Rrz/bvT78=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+cemLSF5fAwcwrL1FOuizWGHiABoqTRyXRZql7sycK1y7efox
-	URcxe6bC7k7b0t7w9kDMQmmXU1VOsdD+4zz3FUGQg/itmAorCZRXUXxhSBXe7K8aF00PgtfxY0l
-	klF+f3JpfP4PeqoS9OwTx/gNrlrnaQkc=
-X-Google-Smtp-Source: AGHT+IGNsOV4X6EuU2Cx9uru+UgCvt2SHFfMKSEOF6DN6EwXXCSpNdERHV1a1hygRioO3zt9qFaRgV8Lq6fjNY7CVCE=
-X-Received: by 2002:a05:6512:238c:b0:579:fb2b:d280 with SMTP id
- 2adb3069b0e04-5941d56502fmr862097e87.42.1761893542935; Thu, 30 Oct 2025
- 23:52:22 -0700 (PDT)
+	 To:Cc:Content-Type; b=a18kWSTxZ2Xzeoea+qYs1IEEOenfk3gal0qKgmSnHUC5VcfgrRWu9e0Qp03zklfdB2Nvgo1h3CsBWYXdr5YbDrCLqSU6kIvkTH873CiecLgkNB2IY7Xsr1ZsKwASgGRNJvreEMngl9AUpBD1fkb/vT/Fa0rgOCz36rl+Guuom6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A/JSzDqR; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6399328ff1fso3376036a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 23:57:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761893853; x=1762498653; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hF/sVbbm9Ao9b8Ns6PIrso6umKYBwwEUA+RHQF/p8WU=;
+        b=A/JSzDqRbjfKzcPqPgdPDQNN7w9Dd8ABFZnwKpqBE60E5zTtZALYm6VnFTiF5qJWKn
+         3kwQKIzcjdl32dmaYVF3/fU8W1ZBC+NEZjj8ItvJb2LPKVs4jNcv4V8ytSmMBfYvukoR
+         y8//olOfHc5l9vbwAOMiHb6KXz1a5bltE4D9pE8W5JjPqbsn3DyyQO0XxNKDTHzeQwc/
+         EcNBsVTacHvrnkjmrjRK7M/9hprpQk0q4kE9Ex2m226XnRw7r/bDoeSRXeJh27bXijXL
+         tyYjKz2WEthEpYdsrjiGpDvgv65c90+9ZIWHlHMkDsYV4lWFv2JDldy7vWgaxIIEcbKw
+         RFfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761893853; x=1762498653;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hF/sVbbm9Ao9b8Ns6PIrso6umKYBwwEUA+RHQF/p8WU=;
+        b=WOHMq/hi0PMVvcG2Zb58MPj9HrMo0mgso0Pkz3rQGNH17WMQb+P8ybw1hV0MInp8yF
+         RoNLrZ/bI0Fh4/o4cdA2aXLHy+LhOSBd+p3FoUoS8BT87gPWEP7kQSMNLGHKTaPf2rKw
+         Q5kkTiFoZbzn/BK6j2k+rfuZ+TeNhhwk0Qr6MIZYsS7dRsDuTIL6QjpTSM/vXgXnquv5
+         KCktTCmZzvYyF0UnJ1JkLwX70otbsuIocgkf3WbeAYLd3ni5SLmVs/DLrEYh3vCki0yh
+         qkUolh8pYhObYOsrfkIhj4l+4e3a+oHRA+yN8DVMNKlM54ksa7BVuBWE6id7vDssmZsf
+         Z7lg==
+X-Forwarded-Encrypted: i=1; AJvYcCW4rFw9D0eFcECvSc+19dUoQI4pFgbaZDap3le5wBRE+wA1sr2z3yaC50wiNf5KdjWAUSZHTK2Hx2b/nhA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziufWJ/xEWB9thCA6vBMyF4hv6yPbe2Gm6eN8dXh/+dQCLtAbj
+	BoF2/6xEkIQuBhW/kBup2yPRAyM3Z0LCw7j16SXBFEPED5qLZPpj+cul2EVbfJGDih2kbI/BURC
+	tZrBvzKr2Cfa1rKY7HOTs9cpmkCklJ+4=
+X-Gm-Gg: ASbGncsdcEqMrquuifqszHtOJiGQcpGgI1CoVFHrmk5ajuBPdhhDw8jjNP8mDmpZeM3
+	jd41da5S1+u4rGUTnwC7qoEpMidbnUImna1EQNzsE2eKRA8GmdBw8UIE0ut7rA/ZPLAuV2lD2oJ
+	2wYtHk2IHpgO8KTr+dVGkzWruUZ08mdlxx3Se04zOcYtdpEnxdd6Kftt7HFB4T3iWqVGf46Pm/Q
+	s4Uxxpbb16yc4wBbYYfHrS1AtMXv5UyrdUaHu7/TKJCj284t1a4Y01LNr8s5ic9C//BFg==
+X-Google-Smtp-Source: AGHT+IFyei+klT+e0zDZRYAQ8WfZ4bnVZVHTeB/u6lCn4sY3PNMEr1huxXolqGu7fMkBJJ2eI8cU2oPW7PqE/lfnbIQ=
+X-Received: by 2002:a05:6402:42d2:b0:639:4c9:9c9e with SMTP id
+ 4fb4d7f45d1cf-64076f745edmr1865815a12.10.1761893853181; Thu, 30 Oct 2025
+ 23:57:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251031024328.735161-1-maqianga@uniontech.com> <aQQ3KUap1cB73HOm@pie>
-In-Reply-To: <aQQ3KUap1cB73HOm@pie>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 31 Oct 2025 07:52:10 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXGxP_8FhZgD42iD-7pnnZgjez3mXkTZz69YAc5FPkLBMA@mail.gmail.com>
-X-Gm-Features: AWmQ_bkTKSyKxtWJ5rxc0jSzCLTGDjPaQTsOxTi8sBWFe8oDoA4aQMGWz-6rHWs
-Message-ID: <CAMj1kXGxP_8FhZgD42iD-7pnnZgjez3mXkTZz69YAc5FPkLBMA@mail.gmail.com>
-Subject: Re: [PATCH] efi/riscv: Remove the useless failure return message print
-To: Yao Zi <ziyao@disroot.org>
-Cc: Qiang Ma <maqianga@uniontech.com>, pjw@kernel.org, palmer@dabbelt.com, 
-	aou@eecs.berkeley.edu, alex@ghiti.fr, linux-efi@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250905112736.6401-1-linux.amoon@gmail.com> <176085588758.11569.7678087221969106036.b4-ty@kernel.org>
+In-Reply-To: <176085588758.11569.7678087221969106036.b4-ty@kernel.org>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Fri, 31 Oct 2025 12:27:15 +0530
+X-Gm-Features: AWmQ_bkdpeuvODAhvIaaZqDfiic9UVZyJJONFz6Rrfy4AXRXj22BM3Tny4odqv0
+Message-ID: <CANAwSgRjXS4V_Kpw5kaJnPA8f=18uN-MgfEQ5ErN3aFRqbJKfg@mail.gmail.com>
+Subject: Re: [PATCH v1] PCI: dw-rockchip: Simplify regulator setup with devm_regulator_get_enable_optional()
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Niklas Cassel <cassel@kernel.org>, Shawn Lin <shawn.lin@rock-chips.com>, 
+	Hans Zhang <18255117159@163.com>, Wilfred Mallawa <wilfred.mallawa@wdc.com>, linux-pci@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 31 Oct 2025 at 05:12, Yao Zi <ziyao@disroot.org> wrote:
->
-> On Fri, Oct 31, 2025 at 10:43:28AM +0800, Qiang Ma wrote:
-> > In the efi_create_mapping() in arch/riscv/kernel/efi.c,
-> > the return value is always 0, and this debug message
-> > is unnecessary. So, remove it.
->
-> Should we make efi_create_mapping() return void at the same time, if it
-> will never fail?
->
+Hi Manivannan,
 
-No.
+On Sun, 19 Oct 2025 at 12:08, Manivannan Sadhasivam <mani@kernel.org> wrote:
+>
+>
+> On Fri, 05 Sep 2025 16:57:25 +0530, Anand Moon wrote:
+> > Replace manual get/enable logic with devm_regulator_get_enable_optional()
+> > to reduce boilerplate and improve error handling. This devm helper ensures
+> > the regulator is enabled during probe and automatically disabled on driver
+> > removal. Dropping the vpcie3v3 struct member eliminates redundant state
+> > tracking, resulting in cleaner and more maintainable code.
+> >
+> >
+> > [...]
+>
+> Applied, thanks!
+>
+> [1/1] PCI: dw-rockchip: Simplify regulator setup with devm_regulator_get_enable_optional()
+>       commit: c930b10f17c03858cfe19b9873ba5240128b4d1b
+>
+I am looking to suspend or resume the issue. We probably need to
+toggle the regulator
+to maintain the power status on the PCIe controller.
+Therefore, dropping the patch is an option; I will add dev_err_probe
+for PHY later in the patch.
+
+> Best regards,
+> --
+> Manivannan Sadhasivam <mani@kernel.org>
+>
+Thanks
+-Anand
 
