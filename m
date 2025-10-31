@@ -1,228 +1,232 @@
-Return-Path: <linux-kernel+bounces-880557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F549C261EF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:31:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE770C2619B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:26:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 346AC584288
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:10:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F18C585E9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 526092EDD71;
-	Fri, 31 Oct 2025 16:06:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61CA034CFDF;
+	Fri, 31 Oct 2025 16:07:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZNzqTuFk"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="pDNNfQ97"
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11011060.outbound.protection.outlook.com [52.101.52.60])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CE172836A0
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 16:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761926793; cv=none; b=uKiQKy2q/sTBIw17prFS6MiH0b6bfegwrGu+RqDpat36gBNOVIoSzsBaSPIqmNmAUQ91bGI9Orv47vbC0E9u+U+XmGt3TpDgofH0Mh6OWV9kEww/vTYR3Am53XbGuhjFAkn1FHFa5O+MHD+eBwIEfpC8fSnqQH/A3v1bMyC4J+U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761926793; c=relaxed/simple;
-	bh=K5YIOa2uekYTR7BG1QeqoaCyvyNsybzRqs7pinkLnWU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PxFInQHZfXIoRm3QeBdrwRqNUddcdTC890EmcpuNRza4ONWsNjgJe7uTrArG2zoGbcs5MwxYLOYYEOBnniR31l57MPBl4u1+3Mi5l5pNswa8hE9XK5PlF/H1nRcruBp0AC8fyDqW/R9fH8y42rp66F4bHnwraDdZtK43e+XfGlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZNzqTuFk; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4710665e7deso11616325e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:06:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761926790; x=1762531590; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eRyeAIdNCNVWpBCeP53EIPuNRhQqWF48SYqRwaIlzas=;
-        b=ZNzqTuFkTuBZ8f3SDYnyOaDh3AHx8D37teQ2vkgeDtIR5KDXf2wyELVdYJGQOPSFv8
-         Q7RVHmwnYZXFiOlkxarzJzADWZjhHpTjEs0tjiulqiw2MmdvBvqbqUseRPZHxPXbgxQH
-         1TDXTvsJ9rb7jfPP228WbC0h4S1GEhWdEsv4/042sXXVXme7/J3Y4cAPmQ2cJyGsfHWZ
-         uyqlhCR43cn6k6csSlyvOBcbVYEq3dDlT4yOFp3RpYPNVXVrdgYcdbEDWRDQq+xfqYNM
-         YRXM5KxO+joZOmNkQZl/IN0gz6CNm3cEF1X3xPPA2b9hYgmePIu611YrviEnKtyhQ0s5
-         3jVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761926790; x=1762531590;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eRyeAIdNCNVWpBCeP53EIPuNRhQqWF48SYqRwaIlzas=;
-        b=HHc3aBC1iuHcAg8uoofyBFVGUxD0PWPij7my/TmDrTReSvnsfTYGszKEDJSoFQ7Few
-         +UY9ohZH8IYFCTrNb9oz/P+88xnPGhjRaISAtdoxbHGadd6FQeHoqB/MdO/Mq1R+wlPX
-         riNEgiNUlcUTpC2DwEHFUqutWn2+tbKC/OX8mxHYWDupFNQ6yXHw8PfWPgQyksbjbOiM
-         JpUpw/qVO5mScQroL7teP7cROaqUHy9fqbzH3LsIlrUq0Uvqus+doz3azaxAO2oDSXlO
-         dkr8tqtqmcXTK9WiDkMMXJMiMEFYK9B+lHaYVHJQgnTw4Lui7MdVET198Si7CuCLR8rx
-         Gw1w==
-X-Forwarded-Encrypted: i=1; AJvYcCX6eK0LJ0+ErCqgwFjHb3RCp2fQdQQbP9+6vYEBANhSfa+kMkaFZHkzMPHBI37tOs0+WQRASMnlvMrOri4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFZMUJU6lXpEYJ2CVLgDHI+WAB1KbchBrTXRXzxMRBVDhmgdkc
-	Z6qpiSFJvpV3L0DV5k7p37Ae/RRpcR3gNJ+54fDEuznfgvqNIApUPieZYWJuIIaUp+w=
-X-Gm-Gg: ASbGncsw8EsMbxBQXdqae0nLqueM9KCDPK/QtqPZlYQDKWUNkLi98s8ri9TTMZ3TTV1
-	JuUz4pQLAZUXT+ljRxWIujwxwWtbWn8n7bnvZ6H/j/3B07ZyrPrVwKAE4rcH3YFRZnKUHwbqkhO
-	BQ6YxUtetMmL3oX4e/RVv8UG9VoF7CSvoL1mQd9ZliAYdFu968yzrcaDyTc8WsAklwvncNpOdWo
-	/NMBDFDep0WFui0LHt/515XQTGCv/YK4TiNJpWtOMxV/EeTRpvGTilKPlgHzpa8TVyj1K/nH5+k
-	WauP1dP/hecCAzbpd3WyktaPtUZjej4Mtl6xlWPKVLG6IkvSuPZMqPqj5ofgbS6V4gc+b1vEMsp
-	g1rZof4/zkRX8ep0xBFvSrIxsiJr3WGjQQkWVQeKiS1x1aKh+k/85yyTfPe8artLRQ7tt02MjcN
-	FvyyuU06/n1/P8HPqaMWuI1zqplwFk6uo=
-X-Google-Smtp-Source: AGHT+IFCU6WaBZgiF/ZmQ2rOEta9IrMmGJFMsWC5NGLfn/XlBZep1GcrbuAmBW+nOAHJjxzhUAPNvQ==
-X-Received: by 2002:a05:600c:b8a:b0:46f:b42e:e39c with SMTP id 5b1f17b1804b1-477308efe61mr37787825e9.41.1761926789560;
-        Fri, 31 Oct 2025 09:06:29 -0700 (PDT)
-Received: from [192.168.0.252] ([82.76.204.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c13ec105sm4271473f8f.36.2025.10.31.09.06.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Oct 2025 09:06:28 -0700 (PDT)
-Message-ID: <336b06a7-8772-443e-8716-99e52ac4cc7e@linaro.org>
-Date: Fri, 31 Oct 2025 18:06:27 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960552FB993
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 16:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.52.60
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761926848; cv=fail; b=kc6IFNgz6tHmRZN6Wnfzkl8wQ8/v1I91a/6WiC8f0kbmuQnERUaeU4Yokq+gTaXpXumyaF+P48/GWgwKxQtXDfD85B8kmAojxEhOTCULgG3KHElqR0i6cgQb+N/6JHIUilXGhIDj+gBLJ0ZMGgZAK7ZaqzpLCsaEKSnLq0B22hM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761926848; c=relaxed/simple;
+	bh=UDbwIvPbuv3i8b7afCGL2fx3xlJOAtweCHEAumfJdIU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=u3tDArD58txYqeEhQe+1atJRKGEmPPSvOB9HlZ2DufIBuqoO9WWNWxrFlswMwCKPZFH4nGahl2mCMhG25+j8wQCw6i7H+VdDWTlsftR0wA3GkxMJF2t+w1mAX8I+3lVV9iBczLE5mk++/nx4oWlpehqYL6KIrbaCvTze9BlWKzM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=pDNNfQ97; arc=fail smtp.client-ip=52.101.52.60
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QvsU5TVmETB+1xwEm7B3d34KoW0NQx0GO03+ZWHbo3BwhqBMR5FQso2Fd9XYJLFz6KUtMcapE75FQrOMhOU9rlbG4eizJ8551h2nsedCXh4ynnS7om3EgHMbB9SgdspKVKiu+OP4aDUrGQeuK7GHuPMUWgPeRloZTVA+F6VAUlkgHkkn6BJJWICWb19DBbh8Fyt/oaIMPC03Hlwal1cAQj9hLXz+aT/MrtM4KN3uGUNUoM2QmpNyAHAHZcYBx24sSSNgkFSG8Doj6NM4LtPnQ6vyHzshh22VyhBp1zEKj63E5oWcghy45mk6pCjAOg4/X8wUUd9UgQwypoYMTiww0w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bJEZixQBfcT+mmyhngYpRpIlEC9ZfwLEu0+gz23E0vM=;
+ b=AehhrFsCK75zW4sFDO+nR9wSKod/mAdEubyuTCnEKpJNgMDhGuk3KwBT5kin+Gpx83oQYhGTEgxzTU+m/SKJqgPTIqiwZfSCRalTzMAQmnovWvWYK4K7V2/kbf55uHL3UurbPZ74n1unHynDCBo/+9DDiuEJOhsfDUT+PnQxMglrbSOcIQRlExPvc+UB/JdS/wPQ1lWmh8wUe5tjBtV7nw1zIzxBYcFeaeHdyV/zMEGFW10eZfkEMawbz3jPi9w9kkjWoLCAx0PUQ57VP+N9M7vW6SGRqZ0NR0o3EDTkDnNimN+EHLVAIXrhMvrvTbH8K2rogaPRaVpz3rZ1BEj9qQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bJEZixQBfcT+mmyhngYpRpIlEC9ZfwLEu0+gz23E0vM=;
+ b=pDNNfQ97VcaIcL+0/3RU3p+jfmbfpAZG+2RUZxLxo5AVe57IBipfXqSQf/p71ukEXV+NYtRMIWIR/VN2we6K2I92h6xU7CFY9iJhIOrhkiIDxYgZGJOK6cbLVYOeEWmM9WRkh1UdZ6RWH8ho9c6/nseJc/rWGf72Y2QEd0YfIsQ=
+Received: from BN9PR03CA0937.namprd03.prod.outlook.com (2603:10b6:408:108::12)
+ by CYYPR12MB9015.namprd12.prod.outlook.com (2603:10b6:930:c8::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Fri, 31 Oct
+ 2025 16:07:23 +0000
+Received: from BN3PEPF0000B06F.namprd21.prod.outlook.com
+ (2603:10b6:408:108:cafe::1b) by BN9PR03CA0937.outlook.office365.com
+ (2603:10b6:408:108::12) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9228.15 via Frontend Transport; Fri,
+ 31 Oct 2025 16:07:22 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ BN3PEPF0000B06F.mail.protection.outlook.com (10.167.243.74) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.0 via Frontend Transport; Fri, 31 Oct 2025 16:07:22 +0000
+Received: from SATLEXMB04.amd.com (10.181.40.145) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.2562.17; Fri, 31 Oct
+ 2025 09:07:09 -0700
+Received: from satlexmb07.amd.com (10.181.42.216) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 31 Oct
+ 2025 11:06:40 -0500
+Received: from [172.19.71.207] (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server id 15.2.2562.17 via Frontend
+ Transport; Fri, 31 Oct 2025 09:06:39 -0700
+Message-ID: <011ea4a8-3947-67a0-d132-816a2224360e@amd.com>
+Date: Fri, 31 Oct 2025 09:06:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: nvmem: add google,gs101-otp
-To: Conor Dooley <conor@kernel.org>, Srinivas Kandagatla <srini@kernel.org>
-Cc: Srinivas Kandagatla <srini@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- semen.protsenko@linaro.org, willmcvicker@google.com,
- kernel-team@android.com, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20251031-gs101-otp-v1-0-2a54f6c4e7b6@linaro.org>
- <20251031-gs101-otp-v1-1-2a54f6c4e7b6@linaro.org>
- <20251031-seltzer-briskness-6f223654c993@spud>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH V2] accel/amdxdna: Fix incorrect command state for timed
+ out job
 Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20251031-seltzer-briskness-6f223654c993@spud>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To: Mario Limonciello <superm1@kernel.org>, <ogabbay@kernel.org>,
+	<quic_jhugo@quicinc.com>, <maciej.falkowski@linux.intel.com>,
+	<dri-devel@lists.freedesktop.org>
+CC: <linux-kernel@vger.kernel.org>, <max.zhen@amd.com>, <sonal.santan@amd.com>
+References: <20251029193423.2430463-1-lizhi.hou@amd.com>
+ <8324911f-ff49-457c-9021-a860d2d4c0c7@kernel.org>
+From: Lizhi Hou <lizhi.hou@amd.com>
+In-Reply-To: <8324911f-ff49-457c-9021-a860d2d4c0c7@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+Received-SPF: None (SATLEXMB04.amd.com: lizhi.hou@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B06F:EE_|CYYPR12MB9015:EE_
+X-MS-Office365-Filtering-Correlation-Id: 58dff7cc-72c3-43a7-9455-08de18979395
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MWFDS2tqenJhTC9BdUxFb2RTNC8xOHBwbUVyY1NBOUdrUzZSamxYWG94Q0RU?=
+ =?utf-8?B?YzNPU1RPenNNbzB2UnhldWlDSUswWFpwbGFHVXhRM3VyZ2NHb2VFNXhJdE9u?=
+ =?utf-8?B?L1ArSXRWT282K3RDV2pWYm0wRWVDdUUyREdJbDlOOTdlK0FOem1LQWxWZi8v?=
+ =?utf-8?B?bEx0WE5PU0lQdnB0ZGZBYmFzTUJEaC8zWERCeFZ3SDRRN2NadEtRYkNlT1Nw?=
+ =?utf-8?B?ZWxIa2g3bnhaa2NuQ2VwYzZNa0NDR3hMWUJZQmREUnBaMVJyLzZ6eE5GcFdV?=
+ =?utf-8?B?N3NmODhDcWUyKzVDUFRWU0x4Q3dTWFhINXFUMlB5dUQwZmxQR2RjOURsNFIr?=
+ =?utf-8?B?bEZhL21pWVRFM3pGMWJMbmpQUmhSZ1B4aHYvLzdFbmRWNHZ6dGdtT3Jja1Fo?=
+ =?utf-8?B?empUMVJjajVNUHNHRkdkMmp5VUM2SWhsMDJDYURnZE1QWmYyNVZvTlZQMXk5?=
+ =?utf-8?B?ZkZvb0tGL3I4YWJFb210OU5INWhBS0N4TEhESjVKSDZXMlJkcW5sbER1clF3?=
+ =?utf-8?B?aDh4WGVCRUxxOVE5MUtSVUhpa1hBaFdJNXVweGVNdXRQT0YzUVNXU29kZ3cx?=
+ =?utf-8?B?NmQxczFORmpGd1M3MkRvdW9lSlZGZ1E2TU1MdC9ycVpVaVJSd3FIVUpCT3ZN?=
+ =?utf-8?B?R0g2aUJmb1h5QTNOQnArK2dMZEpQWDg1SVE3SXd5K1p0TE5CeGZzd0pXY1dT?=
+ =?utf-8?B?UlZ1OTE0NnRPd3lMTCthZTdBaHZDMWZPL0hTVWg0dnpiUXFXbEI1ZTBQdlFH?=
+ =?utf-8?B?RkJ5bVNPcjJuVTlteFpCdzNBYko1Qkd0SVhzNEg0QkZiM0hWa0pKSU9XeWJY?=
+ =?utf-8?B?cnJvTE90Y0hTV2NSNVVhUFJtTVNQQmZGeVl2ZDdSSUZCQUh3ZnU1Q1NISWYv?=
+ =?utf-8?B?eExCVzV6ZzJZSk9VditHMythaWp1amd2L2IvZXZsbFZFRk01aDZhZWJUNjB2?=
+ =?utf-8?B?ZjU2MU84ZzhZbE9jSk93TWt6d1VXUll4Rksyck5kNWZndEcxRWc1UXFEZ3BP?=
+ =?utf-8?B?MmU0VUE2aE41UjNTVW5nMklqRTMyMm1RM0d6SVVqWVFqbjQ1YUlaYmhXdFpV?=
+ =?utf-8?B?V05kQWNoN2NLdEI4dzlNNjVGVEdDYlZFanRYNlZzTm5vZXBCQVZyYnRpclFT?=
+ =?utf-8?B?N29xVWpnL0xuNnZZamxpVjVMQmltSkgrY25ob2Q0TEtGL21pTFQvQkVxRERL?=
+ =?utf-8?B?U3p1cWFxSWpIcUdQcXVjN1hIZzJRTkl6bXE0N3Z4SWFicW00dm5jVmQxcDE2?=
+ =?utf-8?B?cTIyalJUT2JPdDc3M0VHWm9hMFphZWFwRGp4Q1JGVnZFZmJ0RnVpNTZYczFV?=
+ =?utf-8?B?U3M4Tk5kRll0anpETHNEeGgvQmVjcHBvOU5EY2JxVTRsK1VmdFMzVW9UajJh?=
+ =?utf-8?B?VnFDUURBVWFxS28rYXAycVN6UEl1dW5PWGpicHkwYXY0R1gyb2p0ZUYyQldx?=
+ =?utf-8?B?eDVZNktNdlNJZWxpdCtRRHRDVVhEcHo0WlZDTU1lSlJnVlVEekdMMjZHekJK?=
+ =?utf-8?B?aDQ4V2ZmeXBhOGtxSExzeUxrLythb2RkZkZ2TERwbC83S3BVMGxlbC9kVlV5?=
+ =?utf-8?B?MTVpNWJrZFprZGV6QTZKaWNlU2RQMXpyV3ZvUzYrTjJOWXliUzlQd2dZcFp5?=
+ =?utf-8?B?aUZTRHlKZzVwK25pd3VoRlJ4OUxPa3RTR0dPRlgzVGMzdmJCenI0N2h5QzU3?=
+ =?utf-8?B?TW1HUzl5bEtmR3lLd2pSdXRsVkI3emo1ZlBXeDQrYmtMSEFCZ1F3eWY0OXVI?=
+ =?utf-8?B?SWNzRy9kemJ2YmJjZjR2Z25KZTdodk5aTzIwLzZobk5nMWw5ZVg5ZXc2Tjhs?=
+ =?utf-8?B?ai96MHFxYkN1MmxvUmpUNTRiaG1rcmd3cVdBczBGYmQ3ZjFyZkFFbzFxN0Fr?=
+ =?utf-8?B?NzdOMGZCbjdoSDBUdGppNU1FNktYRUZBSmRReGd2MVI5WTJMaSsvZmFiZ1F4?=
+ =?utf-8?B?TnI0ZDlDWmRsVTJ2ZllhZjJnTnZYeU11bDVyZHBsaVN3akZkN0tLVVdZdTRR?=
+ =?utf-8?B?RldvLy9VVTBUWjBTVmZnWTRVQmFMaml0NmVabWVvTFNqSGlMNWd4azRiNXFS?=
+ =?utf-8?B?VklibEpaK3JVby91UVNSUGkvTjVsM1k0K05LTi9xbGZQVDJoYjNmcnY1UldJ?=
+ =?utf-8?Q?gh8U=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2025 16:07:22.7945
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 58dff7cc-72c3-43a7-9455-08de18979395
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN3PEPF0000B06F.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB9015
 
+Applied to drm-misc-next.
 
-
-On 10/31/25 5:02 PM, Conor Dooley wrote:
-> On Fri, Oct 31, 2025 at 12:45:09PM +0000, Tudor Ambarus wrote:
->> Add binding for the OTP controller found on Google GS101.
+On 10/29/25 12:38, Mario Limonciello wrote:
+> On 10/29/25 2:34 PM, Lizhi Hou wrote:
+>> When a command times out, mark it as ERT_CMD_STATE_TIMEOUT. Any other
+>> commands that are canceled due to this timeout should be marked as
+>> ERT_CMD_STATE_ABORT.
 >>
->> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
->> ---
->>  .../bindings/nvmem/google,gs101-otp.yaml           | 68 ++++++++++++++++++++++
->>  1 file changed, 68 insertions(+)
+>> Fixes: aac243092b70 ("accel/amdxdna: Add command execution")
+>> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+> Reviewed-by: Mario Limonciello (AMD) <superm1@kernel.org>> ---
+>>   drivers/accel/amdxdna/aie2_ctx.c    | 15 +++++++++++++--
+>>   drivers/accel/amdxdna/amdxdna_ctx.h |  1 +
+>>   2 files changed, 14 insertions(+), 2 deletions(-)
 >>
->> diff --git a/Documentation/devicetree/bindings/nvmem/google,gs101-otp.yaml b/Documentation/devicetree/bindings/nvmem/google,gs101-otp.yaml
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..2144911297beb89337b0389b30fe6609db4156ea
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/nvmem/google,gs101-otp.yaml
->> @@ -0,0 +1,68 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/nvmem/google,gs101-otp.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> diff --git a/drivers/accel/amdxdna/aie2_ctx.c 
+>> b/drivers/accel/amdxdna/aie2_ctx.c
+>> index c6c473c78352..289a2aaf4cae 100644
+>> --- a/drivers/accel/amdxdna/aie2_ctx.c
+>> +++ b/drivers/accel/amdxdna/aie2_ctx.c
+>> @@ -204,10 +204,13 @@ aie2_sched_resp_handler(void *handle, void 
+>> __iomem *data, size_t size)
+>>         cmd_abo = job->cmd_bo;
+>>   -    if (unlikely(!data))
+>> +    if (unlikely(job->job_timeout)) {
+>> +        amdxdna_cmd_set_state(cmd_abo, ERT_CMD_STATE_TIMEOUT);
+>> +        ret = -EINVAL;
+>>           goto out;
+>> +    }
+>>   -    if (unlikely(size != sizeof(u32))) {
+>> +    if (unlikely(!data) || unlikely(size != sizeof(u32))) {
+>>           amdxdna_cmd_set_state(cmd_abo, ERT_CMD_STATE_ABORT);
+>>           ret = -EINVAL;
+>>           goto out;
+>> @@ -258,6 +261,13 @@ aie2_sched_cmdlist_resp_handler(void *handle, 
+>> void __iomem *data, size_t size)
+>>       int ret = 0;
+>>         cmd_abo = job->cmd_bo;
 >> +
->> +title: Google GS101 OTP Controller
+>> +    if (unlikely(job->job_timeout)) {
+>> +        amdxdna_cmd_set_state(cmd_abo, ERT_CMD_STATE_TIMEOUT);
+>> +        ret = -EINVAL;
+>> +        goto out;
+>> +    }
 >> +
->> +maintainers:
->> +  - Tudor Ambarus <tudor.ambarus@linaro.org>
->> +
->> +description: |
->> +  OTP controller drives a NVMEM memory where system or user specific data
->> +  can be stored. The OTP controller register space if of interest as well
->> +  because it contains dedicated registers where it stores the Product ID
->> +  and the Chip ID (apart other things like TMU or ASV info).
->> +
->> +allOf:
->> +  - $ref: nvmem.yaml#
->> +  - $ref: nvmem-deprecated-cells.yaml
-> 
-> Why are the deprecated cells needed here?
-> |  Before introducing NVMEM layouts all NVMEM (fixed) cells were defined
-> |  as direct device subnodes. That syntax was replaced by "fixed-layout"
-> |  and is deprecated now. No new bindings should use it.
+>>       if (unlikely(!data) || unlikely(size != sizeof(u32) * 3)) {
+>>           amdxdna_cmd_set_state(cmd_abo, ERT_CMD_STATE_ABORT);
+>>           ret = -EINVAL;
+>> @@ -370,6 +380,7 @@ aie2_sched_job_timedout(struct drm_sched_job 
+>> *sched_job)
+>>         xdna = hwctx->client->xdna;
+>>       trace_xdna_job(sched_job, hwctx->name, "job timedout", job->seq);
+>> +    job->job_timeout = true;
+>>       mutex_lock(&xdna->dev_lock);
+>>       aie2_hwctx_stop(xdna, hwctx, sched_job);
+>>   diff --git a/drivers/accel/amdxdna/amdxdna_ctx.h 
+>> b/drivers/accel/amdxdna/amdxdna_ctx.h
+>> index cbe60efbe60b..919c654dfea6 100644
+>> --- a/drivers/accel/amdxdna/amdxdna_ctx.h
+>> +++ b/drivers/accel/amdxdna/amdxdna_ctx.h
+>> @@ -116,6 +116,7 @@ struct amdxdna_sched_job {
+>>       /* user can wait on this fence */
+>>       struct dma_fence    *out_fence;
+>>       bool            job_done;
+>> +    bool            job_timeout;
+>>       u64            seq;
+>>       struct amdxdna_drv_cmd    *drv_cmd;
+>>       struct amdxdna_gem_obj    *cmd_bo;
 >
-
-This OTP controller has an OTP memory space that can be read/program/lock
-using specific OTP commands /register pokes (I'm not adding support for
-this in this patch set).
-
-The OTP controller register space contains dedicated registers for the
-Product ID and Chip ID, which I'd like to expose as nvmem cells so that
-a client can parse them and register as a soc device (see [1]).
-
-Right now I need to expose the OTP controller register space, but I
-expect that the OTP memory space will need to be exposed as nvmem cells
-in the future as well.
-
-Thus I need to be able to expose both the OTP register space and the
-OTP memory space as nvmem cells in DT. I thought of using the deprecated
-(fixed) cells for the OTP register space and the fixed-layout syntax
-for the OTP memory space.
-
-What is the recommended way to expose the OTP register space? I guess
-an alternative is to add empty nodes as direct device subnodes, and
-define and add the cells to the nvmem device from the driver using
-config->cells.
-
-[1] https://lore.kernel.org/linux-samsung-soc/20251031-gs101-chipid-v1-0-d78d1076b210@linaro.org/T/>> +
->> +properties:
->> +  compatible:
->> +    items:
->> +      - const: google,gs101-otp
->> +
->> +  clocks:
->> +    maxItems: 1
->> +
->> +  clock-names:
->> +    const: pclk
-> 
-> Why bother with clock-names when you only have one clock? Are you
-> anticipating a variant with more?
-> 
-
-Likely, but I'll drop the name. We can add it later on.>> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  power-domains:
->> +    maxItems: 1
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - "#address-cells"
->> +  - "#size-cells"
->> +  - clock-names
->> +  - clocks
->> +
->> +unevaluatedProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/clock/google,gs101.h>
->> +
->> +    otp: efuse@10000000 {
->> +        compatible = "google,gs101-otp";
->> +        reg = <0x10000000 0xf084>;
->> +        #address-cells = <1>;
->> +        #size-cells = <1>;
->> +        clocks = <&cmu_misc CLK_GOUT_MISC_OTP_CON_TOP_PCLK>;
->> +        clock-names = "pclk";
->> +
->> +        product_id: product_id@0 {
-> 
-> Why does this node name have an underscore?
-
-I forgot to update, will use product-id for the name> 
-> Additionally, all nodes here should lose their labels.
-
-and drop the labels from the examples.
-
-Thanks!
-ta
 
