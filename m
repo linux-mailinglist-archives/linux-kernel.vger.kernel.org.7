@@ -1,186 +1,116 @@
-Return-Path: <linux-kernel+bounces-879672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CCD4C23BC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:17:52 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3AE8C23ABB
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:07:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB178460B1E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:10:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7DD884F213F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:03:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38ED832ED26;
-	Fri, 31 Oct 2025 08:05:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DD37285C8C;
+	Fri, 31 Oct 2025 08:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EhwqZzL4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YAcAsoAq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C535132ED24
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93FDC17E4
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761897948; cv=none; b=pCKQkK5+dFLLYdtCJlWnvL4Kcipq6iTX1Bi6dKmje3xcTIUZtZ3iwz50FNUsqr8Zo9MdoAsSFiAVaeJaq1DQBSVAL4gIjFNKFv0v2LKnSMtvNPdjx+ZjJdUCU3tmtGBVIxcU98rG2rzc6d0ebkZmBsFuzmmD30s4k78Tm0Aa4N4=
+	t=1761897834; cv=none; b=TTh9ffy4lFay/93lRfQDjDtjjcioIFo84ZDPALFsQvQ1GlCjCj077kZLToW/fd41HOGTEohiO+8+fIhooo5pBmaF/udLNWcj/gOQ8RADQO73ofhBibXoVeANiViD6+XrChpYOd6H/vWn8Nuo48991m3ZVtkUzwg/utu+qnZuJnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761897948; c=relaxed/simple;
-	bh=spUqVFANeu6zA5mqKFPkIzzbgdNgivsG0RxjQcBExq4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MwDZOqur1tLJfqfUM0AP44UN97Z9tkSUBJMj8BSMJPpbtlAPdXXFszsPdUbkOHllR9b5n5bt+/PdRHJt6ywBUjrV2mGsQyxAU6icWCrL8qTtd+2YgHmj1HqRIuvkvusvAhvggXVHf1jAV8OVOJJ1VgVz+/SVPtDuzY+ZWC7CtG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EhwqZzL4; arc=none smtp.client-ip=198.175.65.12
+	s=arc-20240116; t=1761897834; c=relaxed/simple;
+	bh=3B+DwTc6G0EKnCh6goCBWPobJigUQNWy/wKbN0G0OJE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Amt8g2BSlgyZ51/axqm4gh/YP1dLqBsT1etOP+9k8MrTkURaEtFBNuETbcauU+5V0iUEagzV3MgsryuuIy4F78IPwl2CFRi178os+TPuNWiIr8roEGMxE7niH/3OOGeI10N6ZZt8Mhxc1DHOsH2qwoCcWm9h/o5J6Gc7OIo0Gns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YAcAsoAq; arc=none smtp.client-ip=198.175.65.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761897947; x=1793433947;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=spUqVFANeu6zA5mqKFPkIzzbgdNgivsG0RxjQcBExq4=;
-  b=EhwqZzL4rPw6uA9RaVWYPz8w//7kHB4mpJMiyPM469oTDH+efXf/gXQs
-   uC61qZW8rrdjqpPmI0HCHVJRnkxArycWh5YOVsqtYdq8XvMHNQS717lm1
-   GT7d3d+vPenYwBLLcWw+SHn+bqw+SLsjzNlmFqXskKMnd0V2WeTBVf63j
-   Q2CfLv+Nrh1afUWYm5Jsdyxfrg321VU1etuLhXdj9ZZVk+Fc1JWOuyR7G
-   lzE3ANCbgAK3t3e0ONkCvQNDcu7hcDb9fy25CgtTNwKxfmrP8Hx0y/WDe
-   S+TlGDinpR3zQwQYcoPmTEo/fVwaLOXz/do6QU19AvfmYE8ZPR1wUOKyL
-   g==;
-X-CSE-ConnectionGUID: 3s1tbHxLRQOjqDhf/Rzeng==
-X-CSE-MsgGUID: mUOInZvKQfWDXf1yV/YPxw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="75503186"
+  t=1761897832; x=1793433832;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=3B+DwTc6G0EKnCh6goCBWPobJigUQNWy/wKbN0G0OJE=;
+  b=YAcAsoAqPTorDsA9jXHKvBPLJgbDO3SYrWiv4LPKmkrEwD8rzc3c3X+P
+   i0q1Kn5cu7bDRePkE0kyt+FpwftBJ2hl9R7cMQSrfvRgaetAk9nkvS5Ua
+   5b17j7UXKA0s5ph7kIfsg3nywpWZO+lipnZWqIXVdBP9WyfkEy6Ub2M+P
+   To29+5PO85+U4YOzgbwl8YhU+QZmsWFkeR+jgHPB/iD2pNBH2RnezWzq1
+   SVSfSPn33f418ur6LHAd/oeebxTCzLtvZfPdtfylxeJV3A+XS+/sQcSlv
+   i9eOo615V2cM/h2NVSbN+Df6u4kJd48w2Dh5l/o5uDWI78ZnkN1uAz5ly
+   Q==;
+X-CSE-ConnectionGUID: 1tzrA4onTLy8ydqWdj3LHA==
+X-CSE-MsgGUID: lqxPFbZgSmqVZlu528Rvvw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="81465320"
 X-IronPort-AV: E=Sophos;i="6.19,268,1754982000"; 
-   d="scan'208";a="75503186"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 01:05:47 -0700
-X-CSE-ConnectionGUID: 9HtADjhIR/q20v4VSLKXUw==
-X-CSE-MsgGUID: ZFhhlHvuSUC6p+w0M31Byg==
+   d="scan'208";a="81465320"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 01:03:51 -0700
+X-CSE-ConnectionGUID: RbAZHea8SbeZEuLgKKRltA==
+X-CSE-MsgGUID: uy9QlEtWTFapy2WOz6btMA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,268,1754982000"; 
-   d="scan'208";a="216828328"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa002.jf.intel.com with ESMTP; 31 Oct 2025 01:05:45 -0700
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id A82D19A; Fri, 31 Oct 2025 09:05:41 +0100 (CET)
+   d="scan'208";a="190521419"
+Received: from mgoodin-mobl3.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.66])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 01:03:51 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vEk6r-00000004CcP-4A4i;
+	Fri, 31 Oct 2025 10:03:45 +0200
+Date: Fri, 31 Oct 2025 10:03:45 +0200
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mark Brown <broonie@kernel.org>,
+To: Sander Vanheule <sander@svanheule.net>
+Cc: Mark Brown <broonie@kernel.org>,
 	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Sander Vanheule <sander@svanheule.net>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	"Rafael J. Wysocki" <rafael@kernel.org>,
 	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH v3 5/5] regcache: maple: Split ->populate() from ->init()
-Date: Fri, 31 Oct 2025 09:03:20 +0100
-Message-ID: <20251031080540.3970776-6-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20251031080540.3970776-1-andriy.shevchenko@linux.intel.com>
-References: <20251031080540.3970776-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v2 3/5] regcache: flat: Remove unneeded check and error
+ message for -ENOMEM
+Message-ID: <aQRtYXcltiJwa3lB@smile.fi.intel.com>
+References: <20251030173915.3886882-1-andriy.shevchenko@linux.intel.com>
+ <20251030173915.3886882-4-andriy.shevchenko@linux.intel.com>
+ <39f251f542baf2148c9e75f94baf0b2188c38e95.camel@svanheule.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <39f251f542baf2148c9e75f94baf0b2188c38e95.camel@svanheule.net>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Split ->populate() implementation from ->init() code.
-This decoupling will help for the further changes.
+On Thu, Oct 30, 2025 at 09:18:11PM +0100, Sander Vanheule wrote:
+> On Thu, 2025-10-30 at 18:37 +0100, Andy Shevchenko wrote:
+> > There is a convention in the kernel to avoid error messages
+> > in the cases of -ENOMEM errors. Besides that, the idea behind
+> > using struct_size() and other macros from overflow.h is
+> > to saturate the size that the following allocation call will
+> > definitely fail, hence the check and the error messaging added
+> > in regcache_flat_init() are redundant. Remove them.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/base/regmap/regcache-maple.c | 47 +++++++++++++---------------
- 1 file changed, 21 insertions(+), 26 deletions(-)
+> Makes sense, although I couldn't find the failure path myself in the code (it's probably
+> too deep down in the memory management code). But I see now there are unit tests that
+> check allocation failure for overflowed sizes.
+> 
+> FWIW
+> 
+> Acked-by: Sander Vanheule <sander@svanheule.net>
 
-diff --git a/drivers/base/regmap/regcache-maple.c b/drivers/base/regmap/regcache-maple.c
-index 2319c30283a6..ca1c72b68f31 100644
---- a/drivers/base/regmap/regcache-maple.c
-+++ b/drivers/base/regmap/regcache-maple.c
-@@ -289,6 +289,23 @@ static int regcache_maple_sync(struct regmap *map, unsigned int min,
- 	return ret;
- }
- 
-+static int regcache_maple_init(struct regmap *map)
-+{
-+	struct maple_tree *mt;
-+
-+	mt = kmalloc(sizeof(*mt), map->alloc_flags);
-+	if (!mt)
-+		return -ENOMEM;
-+	map->cache = mt;
-+
-+	mt_init(mt);
-+
-+	if (!mt_external_lock(mt) && map->lock_key)
-+		lockdep_set_class_and_subclass(&mt->ma_lock, map->lock_key, 1);
-+
-+	return 0;
-+}
-+
- static int regcache_maple_exit(struct regmap *map)
- {
- 	struct maple_tree *mt = map->cache;
-@@ -340,26 +357,12 @@ static int regcache_maple_insert_block(struct regmap *map, int first,
- 	return ret;
- }
- 
--static int regcache_maple_init(struct regmap *map)
-+static int regcache_maple_populate(struct regmap *map)
- {
--	struct maple_tree *mt;
- 	int i;
- 	int ret;
- 	int range_start;
- 
--	mt = kmalloc(sizeof(*mt), map->alloc_flags);
--	if (!mt)
--		return -ENOMEM;
--	map->cache = mt;
--
--	mt_init(mt);
--
--	if (!mt_external_lock(mt) && map->lock_key)
--		lockdep_set_class_and_subclass(&mt->ma_lock, map->lock_key, 1);
--
--	if (!map->num_reg_defaults)
--		return 0;
--
- 	range_start = 0;
- 
- 	/* Scan for ranges of contiguous registers */
-@@ -369,23 +372,14 @@ static int regcache_maple_init(struct regmap *map)
- 			ret = regcache_maple_insert_block(map, range_start,
- 							  i - 1);
- 			if (ret != 0)
--				goto err;
-+				return ret;
- 
- 			range_start = i;
- 		}
- 	}
- 
- 	/* Add the last block */
--	ret = regcache_maple_insert_block(map, range_start,
--					  map->num_reg_defaults - 1);
--	if (ret != 0)
--		goto err;
--
--	return 0;
--
--err:
--	regcache_maple_exit(map);
--	return ret;
-+	return regcache_maple_insert_block(map, range_start, map->num_reg_defaults - 1);
- }
- 
- struct regcache_ops regcache_maple_ops = {
-@@ -393,6 +387,7 @@ struct regcache_ops regcache_maple_ops = {
- 	.name = "maple",
- 	.init = regcache_maple_init,
- 	.exit = regcache_maple_exit,
-+	.populate = regcache_maple_populate,
- 	.read = regcache_maple_read,
- 	.write = regcache_maple_write,
- 	.drop = regcache_maple_drop,
+Thanks for looking into this.
+
 -- 
-2.50.1
+With Best Regards,
+Andy Shevchenko
+
 
 
