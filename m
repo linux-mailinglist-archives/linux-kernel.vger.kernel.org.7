@@ -1,92 +1,91 @@
-Return-Path: <linux-kernel+bounces-880870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 291C0C26C23
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:31:54 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id E471EC26C08
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:31:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0902C1B21EAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 19:30:52 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C0BF0352BB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 19:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A3425FA29;
-	Fri, 31 Oct 2025 19:30:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C225A285C98;
+	Fri, 31 Oct 2025 19:30:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N2ug1YuP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sVw6UYJy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C40217F29;
-	Fri, 31 Oct 2025 19:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D1CA243968;
+	Fri, 31 Oct 2025 19:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761939013; cv=none; b=mjvBL6VEy1YL75Bb8UvXhqmgkIzHTSA39qoH9YMx2dMwTdwYAJT9lFrRxPdX/kmcWv3tT6qT2hrCNHA0qqJSU0s+DSV9X0UMi0JBWxQ2GBMl+SG/QUcum9YuBtGizmCgau8MaQOU5lFKgkVUfs4eVTYekTI8oqzFwXxc6837w4M=
+	t=1761939043; cv=none; b=b/4SPPU8Mf/ua9LMGfJW4fWgNy92WAV+nEcS8V6n4DwKnRF8mmoU6FFwMbPJvciwxh5krLrUlUnS94qlcqSqtrIb+J9YFQYEzVamMW72UHOFt4UfbipWp+XSupj9Us3lMzHIVZJ4GpyeUhV+C1/TQptTLiRW6CkE9nAqOV778xQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761939013; c=relaxed/simple;
-	bh=vDC8voIK3kAfvmRjhY+sjC+HS2822mbKCzHoiJMeMac=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=thfolLNyrDZQLM3CQgj0Ka3UjTimZ1wvnMNqFoV2y+U7DkoQdwdtsRQ4/N7QWKyFzSSHL8ZaDjDpiha7685t2HmWh6eMctOpn5gn4r+TQt52xgd6fyu/EvbuJ5NY3sDiUflObna8ZFBKOkU4GYFIRgQSmX79Qb8kRD/5Iz+W52Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N2ug1YuP; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761939011; x=1793475011;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=vDC8voIK3kAfvmRjhY+sjC+HS2822mbKCzHoiJMeMac=;
-  b=N2ug1YuPaNmui7/T/hIuDeq0vpJNneXfiWWIy2dzZnByi//4QtSbQUcr
-   nPtDoNYAHFHyAOR7nxI78qKff5RTWedK/ODqYXKoBvdvSs86Zpd056tdt
-   bwiDiQd/mfYMr9Pscyd1SrRVRE9BUj35dyjyEV3X5wz2+aLLJCQPgfmMS
-   Y++EHcJzSolbO7bcLzCD5XQN0F1cQgbYFbPetJ398nVcLPPFwc3hKK6dL
-   yRrRd/R7gTto1UtlC2pigGUvrFralK3LI+hlMUALv3pUQubo5Ady3xn/j
-   ftzGl7xtAUL2i1hjlchpXKjFnee2xOSsycUxaJZM3Wrg4WNJTK7ptCtMS
-   Q==;
-X-CSE-ConnectionGUID: K+Gp3MBKSAq8/Qto0aFMuA==
-X-CSE-MsgGUID: YYwMgcS0Q9KDWM/yjXRVcg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="64025355"
-X-IronPort-AV: E=Sophos;i="6.19,270,1754982000"; 
-   d="scan'208";a="64025355"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 12:29:48 -0700
-X-CSE-ConnectionGUID: JlFjmC9fTTidNtdqSzQ7kw==
-X-CSE-MsgGUID: NNm7J2i/R1y69SaiOONC4w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,270,1754982000"; 
-   d="scan'208";a="187052353"
-Received: from agladkov-desk.ger.corp.intel.com (HELO [10.245.244.92]) ([10.245.244.92])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 12:29:46 -0700
-Message-ID: <7ae2e133-7058-415c-99aa-55ccf8714b2b@linux.intel.com>
-Date: Fri, 31 Oct 2025 21:29:44 +0200
+	s=arc-20240116; t=1761939043; c=relaxed/simple;
+	bh=+XgHrn9U650ljmHAEWvfOR9F+8NjatIr0SZFYNe2vAg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FtHUd5VI4/oDpMv17QjfWP66cD5t3DzC8j/o6z/tTxCkuf1AtdwOax/Xtreh9wb3yT/Atf8nGdLTB77INPc7YwbUh4DFntROMwo+5E75C+tA5JAMTRBPGEJQLTm5FyEp6dyjp6cRpRSPPZznJcBkCFb9YSdz2M4tc3W9bdh4iFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sVw6UYJy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 051DCC4CEE7;
+	Fri, 31 Oct 2025 19:30:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761939042;
+	bh=+XgHrn9U650ljmHAEWvfOR9F+8NjatIr0SZFYNe2vAg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sVw6UYJyPWyG5b4wz8CTsf+W0ZXun4vQ+cV93rK5SRIJTsv+yhYgTdBgUSEW42PEv
+	 g1K3x0oeLrEkX2ti6s5WcGhDxc83JNUOEP1XChJbjiPmVpP0G+5ZZwJnkDcDvnu3MA
+	 Lp/SpVelUWE05LI3ZsDGAQb0MSsujdRqRQ8QV+yUXVOm0KM97Ex3Uc6HIKEnS/6kuP
+	 B8RV2/ymk8ZAReYhAwRz0pL4KX0tx2dnlC2MB5OGAjLjYV4kyhPiqkC05eu3ycEXI9
+	 JumSJgMN+WGgmCgxO0VRi62pFL6Hfi3lJXCV0Nri0JfvSUKR4Z7IkFijgEe4WZxEI7
+	 bcBsUmaG1fFmw==
+Date: Fri, 31 Oct 2025 12:30:40 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+Cc: Chu Guangqing <chuguangqing@inspur.com>, john.g.garry@oracle.com,
+	will@kernel.org, james.clark@linaro.org, mike.leach@linaro.org,
+	leo.yan@linux.dev, peterz@infradead.org, mingo@redhat.com,
+	acme@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tools: Fix typo error in json file
+Message-ID: <aQUOYLDrxBGIvKaM@google.com>
+References: <20251031031729.2304-1-chuguangqing@inspur.com>
+ <0016eecf-e261-a16e-461e-5f7c40705060@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] usb: xhci: limit run_graceperiod for only usb 3.0
- devices
-To: Hongyu Xie <xiehongyu1@kylinos.cn>, mathias.nyman@intel.com
-Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org
-References: <20251017121254.2887283-1-xiehongyu1@kylinos.cn>
- <7d19444c-930e-4f43-b7bc-00c746d38cc0@linux.intel.com>
- <b8ac5a69-22e0-4581-85cb-e8a8130e005e@kylinos.cn>
-Content-Language: en-US
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
-In-Reply-To: <b8ac5a69-22e0-4581-85cb-e8a8130e005e@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <0016eecf-e261-a16e-461e-5f7c40705060@os.amperecomputing.com>
 
-On 10/31/25 10:31, Hongyu Xie wrote:
-> Hello,
->    Anything new about this patch?
+Hello,
+
+On Fri, Oct 31, 2025 at 12:25:37PM -0700, Ilkka Koskinen wrote:
 > 
+> On Fri, 31 Oct 2025, Chu Guangqing wrote:
+> > Correct instruction spelling errors.
+> > 
+> > Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
+> 
+> 
+> Thanks for the patch. Just one comment, would you mind changing the subject
+> line slightly. Something like
+> 
+> "perf vendor events arm64: Fix typo in Ampere eMag json file"
+> 
+> 
+> With that change
+> 
+> Reviewed-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
 
-It's now in my for-usb-next branch targeted for 6.19
+Thanks, I'll handle the both changes.
+Namhyung
 
-Thanks
-Mathias
 
