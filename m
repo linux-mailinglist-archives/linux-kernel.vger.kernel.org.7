@@ -1,260 +1,169 @@
-Return-Path: <linux-kernel+bounces-880394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E898C25AD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:51:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54E45C25AF2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:52:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D31D18814A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:46:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AA291889C38
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E78134C9A8;
-	Fri, 31 Oct 2025 14:44:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C091726ED38;
+	Fri, 31 Oct 2025 14:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="g5tKUpIm";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="UExE6mbd"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="HuKKeMF9"
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 121EB34C9BA
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 14:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB70320380;
+	Fri, 31 Oct 2025 14:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761921853; cv=none; b=F5RJ5ELKVl6XGP7+TYTaDnAXL2QsnNvqFR8clNoR4S+XorIwDgnWhdr8tjqdWdilAviBeK7UX8z1D14p1vVONor6CFcfnyKIc1NbgH7OIev8TCj2nEhBSl+NUf9Mhjb7c3jYeBblM2JQmEmczpHPIMVsXWPkLIk3LlSBLaluwt0=
+	t=1761921901; cv=none; b=sNDDZYS30ndeW1k0tUBe5yn1Ag2UCom8nuoS9CQtiDm2+Q91kpRbqby4biMpJ472aBKFlabvydYMl7AeHiYO9C2OsjtzpTvccZbWZXwu6cYqWHhivc/AJD/aQcpe3ezxz6kw65OrDsLRRnqceqMsfIJl/iM9V0SNwORA+HDt5Ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761921853; c=relaxed/simple;
-	bh=GIK3trXcw/sk7VLilHo+YWW2cCNfD/NbCqHnIdsd8Ec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cA9XFFDkNslzFVPaENQFdkPZwwFUcuiPUI6dx7rNO7JkuOjRiFknLl0ssIvvNDnzYICWPW926JBl0w3n4BipiNl79bxBxsXZqxoKv528QnDwR7YLfBcOJcGHI+JSt5L7LlyQCwi3P+X45rp1lMdVEGtEp1rOWkjPcKq7ln8323E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=g5tKUpIm; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=UExE6mbd; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59V9lQjL1417238
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 14:44:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=1ceM6+N8m+GK9mPld4VxQRv4
-	x2AG5nmc3/hEKrhquEU=; b=g5tKUpIm5zoleF5P6fEqktCNw3TwIOoZndUwoWrL
-	SsmovNxTob4A5DgYGJvlufcapxY7fr6hYxm7E6EcbBXIlINsoXMmNrBtbPpjxCpJ
-	9nwgR0uG3bgrnz/xPryBLY3+/xLr6N0QPu3lVMfvYLux0RTWyyfYBsrmseax5Upo
-	lmJ/GHbghJDVNHYucucWWFIV1qwehYBMZV5piSg9wXvyM/YxELAeSobpiEscvdFs
-	PhYfvSIm8XWKqPI23jmQ/5WWwxi83x4xZBSwy3EasbxQ0C6JBaOBmepEKNCDo7M0
-	2oDwUhgWYkh8ntJ8KPQtYZkxecP2+BQBL/XMR+UHxR7vaw==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a4k69j2d6-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 14:44:10 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4ecf1b7686cso91247531cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:44:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1761921850; x=1762526650; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1ceM6+N8m+GK9mPld4VxQRv4x2AG5nmc3/hEKrhquEU=;
-        b=UExE6mbd/BlRxJAICHJGgDAsEb3cHsUm5Qyx8owgeJv3xcoe6hy0/DHoxXg7qnUwG9
-         FFmK6FSEtdEPF9SZayLN+An3PGLC4Sf1e1Nms3rIu7sZGH6uNlnvYiGnLi/HNwZ2bSNM
-         TwfKAWy59RyBeNdFfBFWQoIlZnqZe/WvpLTobKOhqSE9/tvdN/42Ju/5Vjq0j8FBAo3K
-         VUdDlM7WrA2ZoxapTf97oR/OB9zRH/8BuxqVn8sCUxSKv01vTE0pYfC2I5yqrSHJvP08
-         A0OnU8Y7YPubpDPzbrsaoccAu64nAsKh+9ahdQHfb9za64eU3MQE5Qx5mEmy6yB1HmiH
-         fI0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761921850; x=1762526650;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1ceM6+N8m+GK9mPld4VxQRv4x2AG5nmc3/hEKrhquEU=;
-        b=IFy+BcF6GYzEciSxcr/Pfc4bTelbx2lMlaOhA/rKey56Sihqd4r3HAxwxz5c1ppDCH
-         qFYvR6PCqBUwDu2wIg6PGmuyeF+CbcHug5kFafw9PyYcG98YBXSwJ7llcwp7SgSdvHZp
-         z4FXtPZfOxAVXY3UM7QxGse9JH9ew4nKUycrWxYu9t45CXcUN32T9nY6DI3H/L3SEP3U
-         DCzrBHD4kBbu9fMVnu19TJCPu/Vhp9Gga4ufgIFZxD1jnh9Q+oQQoJAug5oCOnjS9wGq
-         8SkVgYGrlAKitfVhfKnCi+U4lql5ppiMg6FJncTHgWqiKTuuBiy8Q9G3t8ytJQt6bWGF
-         1BNw==
-X-Forwarded-Encrypted: i=1; AJvYcCVA3H9flvRQJZmhF3uRO6mWOTE4BH6pgg7RQeXQF8RrSurm9UzKvUSWqgxCmdTxKsSSKcxQRJxiZv960fw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQXX3kRp8sOvPqtjw7ZBJIHzzyt3oneQHPU9eRChDHfxSJvh/P
-	rnx/OVMqeCnZeSCKDRsfvsXg29j8eCEb/gXnIExFTJk6U0JMfzG7EXK9OGHKkalE9ikG/7ojpcT
-	t9Eu7venS+I7G0HQOZa7re/R+0m7am4VH4R8VjzY+N9CB1QwgGHhNSzi+Tvcqx4SGZ60=
-X-Gm-Gg: ASbGncsGRiSsZQnAbSvgJBdcetTzGVOTp1phPSGhqeO5v/bCel91PqDby4O6raMPGt2
-	Ji2hNrFJwDkBl9VU7nwZKTW5Dbfmflo5x9dReohJjns2+ixylW039mM5O3e34dGyHHPDmWSIfSr
-	T0wUVtkVE22xx7iTYmeq2fxjtNuoCJr7CiMs02kFHxZN9nmmR62QLKQza8wDWHiW2tJJTwqtZDR
-	KUArCrNbqfP2nY7ZNh+1DHEtHq+czd48M8vH6l1UituE66CYiyX52u2Vesp3O2YSBEu6PigeLLT
-	6kMfjSxsRdaiS4oqcMVJgyXsLEjEXr90lLcQYToLfU/eLU9ZNSRpl8pu+NFSliyVRODIMsNt913
-	3vG8lAh9SbYa90PfCxvOlMVdFMvJIU3q7Rq3h6EphEGucVSrJ3EJ30FeXQn+9SQuouID/elDUYY
-	SeKCexA7uzYMCX
-X-Received: by 2002:ac8:5a55:0:b0:4ec:a568:7b1e with SMTP id d75a77b69052e-4ed21818a23mr88302201cf.18.1761921850226;
-        Fri, 31 Oct 2025 07:44:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHelD1VXCgMcFcYjxU37LbLyvDsI6dKjKx0q6y3pVlYUBG5k3XQdaFw6pC5rv2qPIwyt1TUlA==
-X-Received: by 2002:ac8:5a55:0:b0:4ec:a568:7b1e with SMTP id d75a77b69052e-4ed21818a23mr88301871cf.18.1761921849791;
-        Fri, 31 Oct 2025 07:44:09 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5941f38d0fbsm538383e87.23.2025.10.31.07.44.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 07:44:09 -0700 (PDT)
-Date: Fri, 31 Oct 2025 16:44:07 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Wesley Cheng <wesley.cheng@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
-Subject: Re: [PATCH v10 3/3] arm64: dts: qcom: sm8750: Add USB support for
- SM8750 MTP platform
-Message-ID: <glkwowxkqrhszlh7mpnct2pdc2na7yffq5r3uu73xphtj562oa@mbdlmdltyi4e>
-References: <20251031123354.542074-1-krishna.kurapati@oss.qualcomm.com>
- <20251031123354.542074-4-krishna.kurapati@oss.qualcomm.com>
+	s=arc-20240116; t=1761921901; c=relaxed/simple;
+	bh=Gd5KBjx2srwmWtROjooqn9fjQrwaUhRPcZIt8Eqh+rs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GSAUUgcNG25SfZugYfJDeRB8rF0Qle7jYhhrjsoNDP+Y48+rhuJmzZNPp23kYMkFGRohKUD2eKRdUlUW2n+o134V4X0wKS6TEUkqOw5Tupl+esFtdYEVg2KZ7MLRYY1mKbK6hGhUfCTIY0whdgFAFrFb9iddEkeS1pRVdauqk4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=HuKKeMF9; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1761921895; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=PfnYeDOw3NuHK44krWvx1RX9+ezQqo1kKRV2b1ByzRE=;
+	b=HuKKeMF9clBJikaLLZFn3CWI2aTtS6z7YzOAxuNbMitES689mwiLQFs5oL7sWyk1qsoUHoOKK5zxpMTSrPjyjAVBl6ClqwbM74cSDUSfAIdXH9LTTCnaV6de9GnERfbK10G4yf4Gv/LuMe4L9C/h2tj1Y0ejiHZSa2y3ZeJQiaE=
+Received: from 30.180.79.37(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WrPDkzZ_1761921893 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 31 Oct 2025 22:44:54 +0800
+Message-ID: <83b9dac8-815e-4990-8cc7-5aaf4ba85f42@linux.alibaba.com>
+Date: Fri, 31 Oct 2025 22:44:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251031123354.542074-4-krishna.kurapati@oss.qualcomm.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMxMDEzMyBTYWx0ZWRfX0+HkuhaBn3sd
- wvyqrcuE7yFYvWf1M5v2hNCGoHQsitwXod6dM2VKnXOe8ONS3cDcXmV4bDOZlrEr8Ds0IMFA+nv
- J9u0lO/31otVahNiVHqCxKEzbfSSkGpZz+wbrfYIxRvDXz/E5Cp/GeDITyjO2G/tP/Lo8Jb+hHe
- fW0tYKbkQOoFoRiM5flqLFGq1MqA+Ev++3an1zxyENyFBFKASToSCoHL0kQK4wZFBOiNUChGyJX
- gsSFfKdGLGJRnBy6AQ7AXkk17pgvlo4zrgvtbDZfuS6DQZc+ACK8T8BxIJiTjY55UDifs8KG1l1
- q/w9SbF6fAcKRbqpyofwKvKEgPnSztbpDenaChGUPdZVskCYumsRjAf19W3mW+dOUqp+KnmrxI0
- EPkksmb9nrXEkKwqIexkPvGPeTUWXw==
-X-Authority-Analysis: v=2.4 cv=Bv2QAIX5 c=1 sm=1 tr=0 ts=6904cb3a cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=EUspDBNiAAAA:8 a=injzwCg_ScxlFHaeU8wA:9 a=CjuIK1q_8ugA:10
- a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-GUID: n-ySchIZ7hGK0uLFEJJXYZ-3MuSy9m_r
-X-Proofpoint-ORIG-GUID: n-ySchIZ7hGK0uLFEJJXYZ-3MuSy9m_r
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-10-31_04,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0 priorityscore=1501
- adultscore=0 malwarescore=0 spamscore=0 clxscore=1015 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510310133
+User-Agent: Mozilla Thunderbird
+Subject: Re: question about bd_inode hashing against device_add() // Re:
+ [PATCH 03/11] block: call bdev_add later in device_add_disk
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+ Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>,
+ Luis Chamberlain <mcgrof@kernel.org>, linux-block@vger.kernel.org,
+ Joseph Qi <joseph.qi@linux.alibaba.com>, guanghuifeng@linux.alibaba.com,
+ zongyong.wzy@alibaba-inc.com, zyfjeff@linux.alibaba.com,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
+ linux-kernel@vger.kernel.org
+References: <20210818144542.19305-1-hch@lst.de>
+ <20210818144542.19305-4-hch@lst.de>
+ <43375218-2a80-4a7a-b8bb-465f6419b595@linux.alibaba.com>
+ <20251031090925.GA9379@lst.de>
+ <ae38c5dc-da90-4fb3-bb72-61b66ab5a0d2@linux.alibaba.com>
+ <20251031094552.GA10011@lst.de>
+ <7d0d8480-13a2-449f-a46d-d9b164d44089@linux.alibaba.com>
+ <2025103155-definite-stays-ebfe@gregkh>
+ <2a9ab583-07fc-4147-949e-7c68feda82f2@linux.alibaba.com>
+ <ec8b1c76-c211-49a5-a056-6a147faddd3b@linux.alibaba.com>
+ <2025103106-proposal-jogging-a076@gregkh>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <2025103106-proposal-jogging-a076@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 31, 2025 at 06:03:54PM +0530, Krishna Kurapati wrote:
-> From: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
+
+
+On 2025/10/31 22:34, Greg Kroah-Hartman wrote:
+> On Fri, Oct 31, 2025 at 08:23:32PM +0800, Gao Xiang wrote:
+>>
+>>
+>> On 2025/10/31 18:12, Gao Xiang wrote:
+>>> Hi Greg,
+>>>
+>>> On 2025/10/31 17:58, Greg Kroah-Hartman wrote:
+>>>> On Fri, Oct 31, 2025 at 05:54:10PM +0800, Gao Xiang wrote:
+>>>>>
+>>>>>
+>>>>> On 2025/10/31 17:45, Christoph Hellwig wrote:
+>>
+>> ...
+>>
+>>>>>> But why does the device node
+>>>>>> get created earlier?  My assumption was that it would only be
+>>>>>> created by the KOBJ_ADD uevent.  Adding the device model maintainers
+>>>>>> as my little dig through the core drivers/base/ code doesn't find
+>>>>>> anything to the contrary, but maybe I don't fully understand it.
+>>>>>
+>>>>> AFAIK, device_add() is used to trigger devtmpfs file
+>>>>> creation, and it can be observed if frequently
+>>>>> hotpluging device in the VM and mount.  Currently
+>>>>> I don't have time slot to build an easy reproducer,
+>>>>> but I think it's a real issue anyway.
+>>>>
+>>>> As I say above, that's not normal, and you have to be root to do this,
+>> I just spent time to reproduce with dynamic loop devices and
+>> actually it's easy if msleep() is located artificiallly,
+>> the diff as below:
+>>
+>> diff --git a/block/bdev.c b/block/bdev.c
+>> index 810707cca970..a4273b5ad456 100644
+>> --- a/block/bdev.c
+>> +++ b/block/bdev.c
+>> @@ -821,7 +821,7 @@ struct block_device *blkdev_get_no_open(dev_t dev, bool autoload)
+>>   	struct inode *inode;
+>>
+>>   	inode = ilookup(blockdev_superblock, dev);
+>> -	if (!inode && autoload && IS_ENABLED(CONFIG_BLOCK_LEGACY_AUTOLOAD)) {
+>> +	if (0) {
+>>   		blk_request_module(dev);
+>>   		inode = ilookup(blockdev_superblock, dev);
+>>   		if (inode)
+>> diff --git a/block/genhd.c b/block/genhd.c
+>> index 9bbc38d12792..3c9116fdc1ce 100644
+>> --- a/block/genhd.c
+>> +++ b/block/genhd.c
+>> @@ -428,6 +428,8 @@ static void add_disk_final(struct gendisk *disk)
+>>   	set_bit(GD_ADDED, &disk->state);
+>>   }
+>>
+>> +#include <linux/delay.h>
+>> +
+>>   static int __add_disk(struct device *parent, struct gendisk *disk,
+>>   		      const struct attribute_group **groups,
+>>   		      struct fwnode_handle *fwnode)
+>> @@ -497,6 +499,9 @@ static int __add_disk(struct device *parent, struct gendisk *disk,
+>>   	if (ret)
+>>   		goto out_free_ext_minor;
+>>
+>> +	if (disk->major == LOOP_MAJOR)
+>> +		msleep(2500);           // delay 2.5s for all loops
+>> +
 > 
-> Enable USB support on SM8750 QRD variant. Add the PMIC glink node with
-> connector to enable role switch support.
+> Yes, so you need to watch for the uevent to happen, THEN it is safe to
+> access the block device.  Doing it before then isn't a good idea :)
+> 
+> But, if you think this is an issue, do you have a patch that passes your
+> testing to fix it?
 
-Subject speaks about MTP.
+I just raise it up for some ideas, and this change is
+buried into the code refactor and honestly I need to
+look into the codebase and related patchsets first.
+
+Currently I have dozens of other development stuffs
+on hand, if it's really a regression, I do hope
+Christoph or other folks who are familiar with the code
+could try to address this.
+
+Thanks,
+Gao Xiang
 
 > 
-> Signed-off-by: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
-> [Konrad: Provided diff to flatten USB node on MTP]
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Co-developed-by: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
-> Signed-off-by: Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>
-> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/sm8750-qrd.dts | 73 +++++++++++++++++++++++++
->  1 file changed, 73 insertions(+)
+> thanks,
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sm8750-qrd.dts b/arch/arm64/boot/dts/qcom/sm8750-qrd.dts
-> index 13c7b9664c89..c545695751db 100644
-> --- a/arch/arm64/boot/dts/qcom/sm8750-qrd.dts
-> +++ b/arch/arm64/boot/dts/qcom/sm8750-qrd.dts
-> @@ -193,6 +193,51 @@ platform {
->  		};
->  	};
->  
-> +	pmic-glink {
-> +		compatible = "qcom,sm8750-pmic-glink",
-> +			     "qcom,sm8550-pmic-glink",
-> +			     "qcom,pmic-glink";
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +		orientation-gpios = <&tlmm 61 GPIO_ACTIVE_HIGH>;
-> +
-> +		connector@0 {
-> +			compatible = "usb-c-connector";
-> +			reg = <0>;
-> +
-> +			power-role = "dual";
-> +			data-role = "dual";
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
-> +					reg = <0>;
-> +
-> +					pmic_glink_hs_in: endpoint {
-> +						remote-endpoint = <&usb_dwc3_hs>;
-> +					};
-> +				};
-> +
-> +				port@1 {
-> +					reg = <1>;
-> +
-> +					pmic_glink_ss_in: endpoint {
-> +						remote-endpoint = <&usb_dp_qmpphy_out>;
-> +					};
-> +				};
-> +
-> +				port@2 {
-> +					reg = <2>;
-> +
-> +					pmic_glink_sbu: endpoint {
-> +					};
-> +				};
-> +			};
-> +		};
-> +	};
-> +
->  	vph_pwr: vph-pwr-regulator {
->  		compatible = "regulator-fixed";
->  
-> @@ -1054,3 +1099,31 @@ &ufs_mem_hc {
->  
->  	status = "okay";
->  };
-> +
-> +&usb {
-> +	status = "okay";
-> +};
-> +
-> +&usb_dwc3_hs {
-> +	remote-endpoint = <&pmic_glink_hs_in>;
-> +};
-> +
-> +&usb_hsphy {
-> +	vdd-supply = <&vreg_l2d_0p88>;
-> +	vdda12-supply = <&vreg_l3g_1p2>;
-> +
-> +	phys = <&pmih0108_eusb2_repeater>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&usb_dp_qmpphy {
-> +	vdda-phy-supply = <&vreg_l3g_1p2>;
-> +	vdda-pll-supply = <&vreg_l2d_0p88>;
-> +
-> +	status = "okay";
-> +};
-> +
-> +&usb_dp_qmpphy_out {
-> +	remote-endpoint = <&pmic_glink_ss_in>;
-> +};
+> greg k-h
 
-usb_dp < usb_hsphy
-
-> -- 
-> 2.34.1
-> 
-
--- 
-With best wishes
-Dmitry
 
