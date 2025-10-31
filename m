@@ -1,229 +1,793 @@
-Return-Path: <linux-kernel+bounces-879574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A270BC237EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:07:28 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47B97C237F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:07:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E0CC189E68E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:07:21 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BF97C34DEE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:07:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E3831A55B;
-	Fri, 31 Oct 2025 07:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6282631DD9A;
+	Fri, 31 Oct 2025 07:07:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="pu1CpcOc"
-Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010007.outbound.protection.outlook.com [52.101.229.7])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="H678zCAY";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="kbdGWq9z"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0518731986C;
-	Fri, 31 Oct 2025 07:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761894409; cv=fail; b=ccVjzLSk7gJv73SOwMnMN3cgTZ8eCXRqF0dXGO/NRgNLH0lFLgXpa5DH6Y85bjHv1ovb2WNea7sovOu2oz4hiqevPOZsjp3YDFi2Z/7C9GqzGnsC4ZO+7HaIIDrdBjKmZGP/eKviU+QF13imgMbNVCGu+U7QaiInUxd1+VqQHiI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761894409; c=relaxed/simple;
-	bh=C7Vd0ZO+nLF30ck/f9vVkTJhVdcnuonKXjSBcEG5/Fs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=TAZILR3oKgpg2meM7OWOuaDVQxJyYoEBv9iAEgCOMyERTMycthUOUVFvdZpv1oZyGSYIPbsHRSj2XZRCfjLEKcmvSsNjbBjdNDtQygqKRisBy2U3V3Pf+3hBDWDUDpo+FTTqLVYt9MqC1e0pis2EWyxuwTSrtNrFv23lv5Mgx7Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=pu1CpcOc; arc=fail smtp.client-ip=52.101.229.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yAaDyJBzWFTUOZnkoS26qok47g4ULjT070MBsk7SGJQZ2P5F5C/N8OmtqImPVSmPnbPSqiYCdo6dZAVKfcfubxT71rkRYbtsQp3ol9nvzVnisjZusnfk8t7AKgcQ+BbBCqPmUcYefEFee0FlKtzD2EGSEFxNPkgHtO9Uv2tMo3GohSnUmngNe2C1oMSzw6CiIimssAnCA5yDiMXA6Mu1TrW9WJYcF/bQp0as+BkfCUb/Hqv3egorEgbVE76PX+Z0rrmS+7KfT4WvAWRJ5FuTch4z+CYgFYCPjNJ1Sa4BGs6UwdhsyvTlT8IPfHK/6wCHO0zVPKXAy2DinfVeFjlM2w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5B8bbRbOFnDfM8d+qbPCG90/gHdvr7xEp2JbqwJEn9Q=;
- b=sfRH6nOoQYsqdj5nQxD69bM96fvvxh2OrzsTN4B8gRWnjE9URG2WoH3ebMjBFg2t0/d3cM7WMiGi1jAZ13+WSLeGGwx18vMpQWwjZJn4YhEzxkVQGp1ghR4LW9N/Gr5UPNDaAY0ObgCuxHZLfDJTAZx8oBimfW+E5/JjKzfuJDfGCQF5ijh19Oib5eKNkgewWPRhAcbKKkiLs+HYFr5TPuyas9Kla+bV0h7ufbKRMLQGQowUwk6L8WVsBqoDx+qIp2JUHT/etXnKFar20XhS6h1EeNiCvLyDb/ZqkprFzeVjods5DWW9S6RwOqSZlYoaJhucMDlR6TkFwIqZ6czLLQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5B8bbRbOFnDfM8d+qbPCG90/gHdvr7xEp2JbqwJEn9Q=;
- b=pu1CpcOcJHjNbltTpXYQ4mG/ktGnzo0tsG05FoJbReQ9r/QGXJbQ9eh1r07Nyp6k6x/mDLjRPgUpJfW4aE/9pdZ+2JQqBDhluQ3Ab2QGA7ocylK3NC37t9TcZXYywKyFJF+gvfCTLOhL++lZYfpRACAGoPAHUNy9Sg9kRF7nkmg=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by OS9PR01MB16876.jpnprd01.prod.outlook.com (2603:1096:604:40e::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Fri, 31 Oct
- 2025 07:06:42 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%6]) with mapi id 15.20.9275.013; Fri, 31 Oct 2025
- 07:06:42 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Hugo Villeneuve <hugo@hugovil.com>, biju.das.au <biju.das.au@gmail.com>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
-	<jirislaby@kernel.org>, wsa+renesas <wsa+renesas@sang-engineering.com>,
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, Geert
- Uytterhoeven <geert+renesas@glider.be>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-serial@vger.kernel.org"
-	<linux-serial@vger.kernel.org>, "linux-renesas-soc@vger.kernel.org"
-	<linux-renesas-soc@vger.kernel.org>
-Subject: RE: [PATCH v2 03/13] serial: sh-sci: Drop extra lines
-Thread-Topic: [PATCH v2 03/13] serial: sh-sci: Drop extra lines
-Thread-Index: AQHcScbHPfJOAc7lOEG5P8xJhHQqn7TbIh2AgACzrMA=
-Date: Fri, 31 Oct 2025 07:06:42 +0000
-Message-ID:
- <TY3PR01MB1134686842EA2A6EF864E1ABD86F8A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20251030175811.607137-1-biju.das.jz@bp.renesas.com>
-	<20251030175811.607137-4-biju.das.jz@bp.renesas.com>
- <20251030162155.d08e9d6fd3100092be2ade80@hugovil.com>
-In-Reply-To: <20251030162155.d08e9d6fd3100092be2ade80@hugovil.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|OS9PR01MB16876:EE_
-x-ms-office365-filtering-correlation-id: 986f62a6-3193-4939-2af5-08de184c0bd2
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?zn9B92vAwofJa7dkgeoKNb9AkgWLN7z/zQygkgHg3BdROwrJatpM021/1fxr?=
- =?us-ascii?Q?hymsTImrY0ZLRQbF8tAsvkDp235ZfdJqXEYgXzpQHCgGfHMAHF994NiBoIDL?=
- =?us-ascii?Q?Zqp6za1IFgi35Tspff1fmB+qqIqYhkCSaJHAzwZuegzVAIu78nHc7sAVEflq?=
- =?us-ascii?Q?3g18TXWqau+Vx2zAbDMy0fkhGUBCdL8if+yAdjRPUHES8wzy0razu66xjL1K?=
- =?us-ascii?Q?+DQswsOaoycmMkCd4qtLHkncWF9pfSSRGmrzuhyXoaTeAK96o+SJdfpaPimQ?=
- =?us-ascii?Q?RGpcpkm/McO81+95f/wmnkbrIaMfw9loWxKuVLastL53w9m7lvv0F87fSCGB?=
- =?us-ascii?Q?UB9wJ5sFu+/PHmko9bglSLMP70nRnP5SEwSnuoeabAe4EtbsdA6CwT2LWIvF?=
- =?us-ascii?Q?Sr24Kf6s7CII3KRv8sxE5+gXhf6NnpoS00rhXcGMdEnDqSW1NGLjbR8AJ2nG?=
- =?us-ascii?Q?ELzqlNP+OYVceXBbAz7NavDdeOlUEaAdHH3RaD1uYwqaEmC5Ol+qJ1XMqEuY?=
- =?us-ascii?Q?XmVsvybGdwuwRxmKhVa/QKG/UiuGOfjX6CqUmLIwDh/qL6IERRD6F8AfOyHZ?=
- =?us-ascii?Q?rPZMssLMEaPk9oRqkNe2w521nLWSe1Yl2rBaoLblT95iiwodP/Pk85SsBoJb?=
- =?us-ascii?Q?N921oWX1k1iZ6Iiu69gKlT2SlcRWqyZm8L86uc1BMbpHBuk/gYUG6N6FIouF?=
- =?us-ascii?Q?qDBHtE3e1B5Qb002raFTLYeeAP4toVZxTzBg5BBYG80ZyJxEBmp0uKUG483R?=
- =?us-ascii?Q?fhz4MkV7F03CGE59M3WB1YGDLCV+vbXsFoczk2taNhvs+p31CyxSp2MMsK8Z?=
- =?us-ascii?Q?AyN/ZWU0zw7nvfaOQBQQm79tQnD4jJw0KRjb29hoox5G3EGJEFMjLf99loMt?=
- =?us-ascii?Q?7l14Tv9APhMhI+TU4jdcV0RfflTB5Len60bHxKi0w+03qPTe8m1fbXME014E?=
- =?us-ascii?Q?xdUQ0UjmN1NoxqdDJZS7bCsYsx771CcsUArIgLRb4Y52jJrNLYTFyPCi/Q83?=
- =?us-ascii?Q?ofGdzmYaXvKFi3m3nd7cCNDQSMtxoZKoLLHM5ibl8csSuXqnwTkZs5KZ3T0G?=
- =?us-ascii?Q?MxV8gN0ahzHw88EVemK2l9aw95NanOUGOLf/KfeDaRKAtlcqr3qUXRyeP4dP?=
- =?us-ascii?Q?Dnfnd0IfrVbR8BKCm/XX05/wu9Mj67gDMZRhWBNTgE0g7fzwEZbNnUuoWxWU?=
- =?us-ascii?Q?BK13BhzL+AV9b1NQ6K8LXGsZ0rsvElIdLvVC3uttMMPJWJhKhqmKxAhWaIZY?=
- =?us-ascii?Q?TX7sY95einMVT19yn3/j7o2WJc9xblQHUdEqrU9R4duH7l0NdnSZXt0C3zcG?=
- =?us-ascii?Q?E0hOVAle2Y8OUdeVkVybJSm4hlnTbCiFG5CthYhHgOZnI43Xc62BPs6uCFmE?=
- =?us-ascii?Q?bL8UzlaXNUbG+XbfggW5H0rpoAGQWgcTm4dRj/t9bpzBJOqLqJYC6I/RrWsx?=
- =?us-ascii?Q?B8njG/uV9zd+6uVDUo/IRhc/T3a/YsfHgzb6O0Cj8RQFcQPf9EKMrv+m4rbI?=
- =?us-ascii?Q?mVBaY6SdUqboO+8EkcbLZX8Hug43a0gcwCaK?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?qmWQw3YuHxy/stIU9KLkCvl52A4jKrgwSst7wAWWNmdExg2nrmQO+qrk73ed?=
- =?us-ascii?Q?U8QfjYQ8JRVBXgrpX8xYk5/g4+8v/DpuU9W7Nu4r9fuFFKPD+mu3VHhH5y43?=
- =?us-ascii?Q?0mEH4fNjWEJJnp0V19ehFokRGooVlMbXhi4TLgQ2zt76vl9mOFrckRL1YVWQ?=
- =?us-ascii?Q?kL1a23C9YvRZ0a8/pOhmB7BiqxlXIFlrM4YjjKmjftL9bUVj7KzaM1QQMxxA?=
- =?us-ascii?Q?Cb4LSNhtKeliDHO8mZk7ShczFLoz51T/ZGIYGheJEMic9y8/GHOAv22WnBMH?=
- =?us-ascii?Q?wWdUPYc7Q69un9YcqLw9mC8qPGJsyqX0u2461Yk8Z0+cPv4NZPNffd9Qgiwk?=
- =?us-ascii?Q?38JVp+blrDbdMDr0CRYVsUpMisnVxLbdATT9rBYBR0e4g3qyzc0HQPS5Rn4F?=
- =?us-ascii?Q?9sP3HBxTS7JDSVZl9dAjpAkgeUl80Zw/BkPVWGTIFgfoL8I9BI8Y7cZ//sB7?=
- =?us-ascii?Q?Q1jWl2FFeyn/U9lZD6CCw/Kqsz57CAxg3Nm874a0KFuJiV/Z1efKIh13gveO?=
- =?us-ascii?Q?+D3twd1aWTGDnFJP9nZrip5mR9egiqHgd7iD440TqEfBNtey7I2/d/ax2geg?=
- =?us-ascii?Q?THXFte2PHM82u9BEtQ40Z2r8EoQJQ3gRrMTjx9NRS6K7iqUufSW/xf4CrAbA?=
- =?us-ascii?Q?bXunI2bfARCGdUxqDrEDNDm/bcgCKU0ytn0uLIWZvRnURIct8BZHJLj1lZGm?=
- =?us-ascii?Q?xTIfpkqI0cwKBOaQwnCzBYbMHnjxU9oUarLJQdLM8ZGbZUoPd8crLjis6CHO?=
- =?us-ascii?Q?x1b8TJd0r/FU9BGEMEfFZKpZKZBGurIdK8cHbZJIx6hOw9+ig1I6c22OgKlD?=
- =?us-ascii?Q?d/pkWOKMZXkzTliI0fXZiRjgt6rs8qcl4PtfCcb8zDE1ntmeo5UZUxxyVvXm?=
- =?us-ascii?Q?PWRFrT5Y4Zkkd92dQAhiY2ZPUlfyA4iFnyjSEFZtp/MXZBliojT9a/8DpXMD?=
- =?us-ascii?Q?E1yAtclw+Z2WpywWw3W37zOX+DDRPa4XxV++OKm5k3gfwjKv7UOsBLT3f1ih?=
- =?us-ascii?Q?GXlB0O1XiRGEMA9VVwxMT7uFISywSeX37QKWNqLn7z/kRu95Wl/t8O1ma+4X?=
- =?us-ascii?Q?d7Ddxsv6XPrSpYfWS8/IRfks4NTASl2Uge4+KMApiF7rLmmo1qvUSbdkvc2J?=
- =?us-ascii?Q?FmFUrEwH4C/F/t65MkTH/IJ7EGslIrYRsZjW9YBANVqet6bdPJXiO6ETHY2y?=
- =?us-ascii?Q?ja4UFH4EP8GdvfjjbnLLxWxCeIGfNADVA9gSsMFQO38WW8g3JfAbatCyseWS?=
- =?us-ascii?Q?IOF7MJUs47Cw3Dmwad11KL5LUX+YYAAX71NJcJpq1WBscPzJDViUcvGvAGPt?=
- =?us-ascii?Q?FjIC7hSjgiSfGBLA7BLySbe2BCQwbdJmY2Esl6RweVDY57FIYFfdV3i3qK09?=
- =?us-ascii?Q?wbU/KIJtC7EeMeDhPa5loK7Tpa3X9OsMy5ZMzVtx+AJ8Nqn7MKeCweZ3N1TI?=
- =?us-ascii?Q?NNk95/AgEBghwIRMJnSrBcZoQBStCBhhqke11f8dwWfPq79JEtaM2ljRkoIX?=
- =?us-ascii?Q?WHyKgskeQ5L39acaBpmZy3ENStxqPqrTm0w4Pmb6grlzJsqcGz/ui/NArWPT?=
- =?us-ascii?Q?lk44Mlm2mS1wQVyw9D3KcqNZWTwfrtIt6uB2NT9VvJlSXhZLQQG16wYIjAWh?=
- =?us-ascii?Q?Ig=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D9C236A8B
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761894449; cv=none; b=bbcoToRueaBYU0GIlqLt/2vndFvfqQF3OnbhFYc02b44UoudAzBDqmZEowFMNufj7glQjP+nkcN39Lkt+kwoXPBhfGaZ5ups9mfWPPQ0hTKrQqdU19pDGqjgW7596vIHYf9PPHMkKs8lcJffR09LtZdAi3pUUVpJluNfZmi54is=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761894449; c=relaxed/simple;
+	bh=ZxcXMVE8xN4IeU05v/z8dSpAk1rMX+uevUl2DBC7ofA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SNQ3Rk0BwocFipEWAwU+8KobgEK9ZG5EzauXN0Gl17rFI/Oh9COHXHxfBoMAbuXXJr4Anlazq9brkUGqTmqXUA0GGlv22yvhYsDJB3Qaf8/ydI8Eb/LSVhAM0aVuAWABJqWuS58cQponPMJlVSSPiKyLHSdPYBBWPsqeGtvOmuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=H678zCAY; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=kbdGWq9z; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59ULrFBJ897536
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:07:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	TCgcRF7pCUV20RbExg6CJ1ptqTw7+3uWzfDaCLXGZQ0=; b=H678zCAYGvyQ8uoA
+	yekN9g6gkJMJZLY1ugd2mTf8wBcO44M4d1kZQqmkDuvXYS6Jbzjsohw/KEjOiWZa
+	Evo5ONYBSjZ5I1vT7SE3uNyVxNNUdMvOV8tF8LlJV/jWuY7C7nhMyzlknCprIsz9
+	rfKQdvtkO38f4pkBORplYx4QspsS/V5syPAhj5vvIp5FArVlubb5a/qs4y6EKz4g
+	nyF+nY9R1sJNhh0cwTrHLyqdmWSe2s/RmJw+CWyigNf/16bfvAfdS4s4Y0HsOtJY
+	fCvPu1zBiuFDqqqEL8ABywyAIRNlHFOsaPQCiI+5VN3V5XzZgnEPH3dyfuhLKfsZ
+	Z2i9GA==
+Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a4gb2156x-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:07:26 +0000 (GMT)
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-781253de15aso4509241b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 00:07:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1761894446; x=1762499246; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TCgcRF7pCUV20RbExg6CJ1ptqTw7+3uWzfDaCLXGZQ0=;
+        b=kbdGWq9zMNXXGYb3nFvBtl7/65tDXh7L/qS5A+9F1nHQZOM3wjat57LjaW5OLbZ5F3
+         J6TZZ8rmpwZJHGlpRLnWF0vrOvv/JFXRM4HDNX7xgh4RRg8upa7QCPJz8BXpQP/RgPrI
+         JaTx36lP3Q25B4T3fnR7iueKvzgkQ2JaQxoASK+DonKWmqm3DXexwvRx1rOP60CMtoUo
+         qamUKeslY321l0pTpvNGim/+Rn4MbuJRG9Z4ml8+7YQBwsebyAHFtu7iVe5FxL5uGbN4
+         d1xVN40QUHbQK76/U6/ptl6lQ+oJVSliBUFtPxl8lXV4wQt2l0YkO/WurWJuM9N+7rdJ
+         bcrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761894446; x=1762499246;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TCgcRF7pCUV20RbExg6CJ1ptqTw7+3uWzfDaCLXGZQ0=;
+        b=ICVmXV06Vdx0joSes/Fu1nBzXFvJQ4+xpRzA2Q/B2ZcIhYz3DF8kDEHMzFl09Gjmv/
+         +XwtYeaKacXnkk0AaX8liax7tIsXv72ICy7OP4a7BLEeG4VmIxwkb0oe6VUuubjAj2Qc
+         DR3b7Ju4Sx0kRWtqQriUPjaYALCoMouHEVpTAcx07G2YO4RoHZmVyFeCgc350dl4ZHXA
+         V1cUjYicX8ltxXR/vtqPtsLRcIuOAf3U4726CPgI0U8qwA1jsJHsKAVnzy8T6nF3MVS1
+         C0tC0/0cN8hBSXXbnDyiF8GBL6x40D4fmCVBQpYrr99x39usv553yLAcDmpLXtPbfz4k
+         BMoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVTfCVSl64ItrDhzy2UnRJn42hkdbPnKcZh+LqXk7ndFCJEuq86QH2+RZ3aBqdpxxKofiNgCDGrJUXPPho=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSr25o28VoegUr/xOaPPJ7+uktNTWoisHuv65DZVPp3tcjWXry
+	3gGtHe1bVTwUOjLkzNEKtv2L8uD+EbLcwKGM5MCY1b64WBK+7ttXTu2Tu/VnWfx5NBxYxiUWc/N
+	AVAh/85Lro9/1p6YBtzmHSxKxZEmKHORMILj4i/8yUGPJFivFvKdIGqhSDl1TzSAIiYE=
+X-Gm-Gg: ASbGnctC37OBNR29LqeohCd+iNNoE1E6ru/WSU+cmkcOlXWlyCen8tgN5UIWMSWM0mh
+	Fo1LRMB/zjfC/yYVthyO/gtaGO5tChskP4Qjdv4T4RdE2Ucolgq9HFgSFLyAhLfY6bhYQYfz8Rr
+	uFxdN4VvYw/AD8q9+E8XjmOY9BM6E6pYK6XE4rOknB4rGs8oSXWrENZ3gJs40cDcYevE9hDRjLZ
+	48gG3GpPLfLwCpnCtod2EGgb8QxRXNBu3NouTo6BnygWu7tc9n3P9B/gPpfXGL+7DNs3NJDAX35
+	BoIfRXIFo22gr3Ki5FJCnWXRXPx+6Ai0ri342zUUwjnmpNyih5RbveOsPgU5PTW7XYgUgNbHhKn
+	pdQXSRg0SeT52nKHADeKO0UHd+LyX1Aw=
+X-Received: by 2002:a05:6a00:3e1f:b0:781:8680:3175 with SMTP id d2e1a72fcca58-7a7788ffd27mr3131030b3a.21.1761894445930;
+        Fri, 31 Oct 2025 00:07:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF1gqIuSX46I9cv82SCQXSnGBERXn2UygItSlULmI77GvaSGK+LpewAfCNl+01hxSxqgPT/JA==
+X-Received: by 2002:a05:6a00:3e1f:b0:781:8680:3175 with SMTP id d2e1a72fcca58-7a7788ffd27mr3130981b3a.21.1761894445283;
+        Fri, 31 Oct 2025 00:07:25 -0700 (PDT)
+Received: from [10.0.0.3] ([106.222.229.252])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a7db676f11sm1052641b3a.52.2025.10.31.00.07.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Oct 2025 00:07:24 -0700 (PDT)
+Message-ID: <950010c2-4b86-7530-bb3a-c7997bfcef66@oss.qualcomm.com>
+Date: Fri, 31 Oct 2025 12:37:20 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 986f62a6-3193-4939-2af5-08de184c0bd2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Oct 2025 07:06:42.7508
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: xM+D8IZ3c9fzkRbcZE2c1zRsCCKy2GaGCB7O6IIKiJmqw4M5tT5/UZJPz4eXtMwkzogTf5d0gMaqNifJtzO9Mv2HUeZY5GJ7QehA13z9sUQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS9PR01MB16876
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v3 4/5] media: iris: Define AV1-specific platform
+ capabilities and properties
+Content-Language: en-US
+To: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bod@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, kernel test robot <lkp@intel.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+References: <20251030-av1d_stateful_v3-v3-0-a1184de52fc4@oss.qualcomm.com>
+ <20251030-av1d_stateful_v3-v3-4-a1184de52fc4@oss.qualcomm.com>
+From: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+In-Reply-To: <20251030-av1d_stateful_v3-v3-4-a1184de52fc4@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=efswvrEH c=1 sm=1 tr=0 ts=6904602e cx=c_pps
+ a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=L4UNg9I9cQSOxNpRiiGXlA==:17
+ a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
+ a=SJrdC1_lA80DVDsO20YA:9 a=QEXdDO2ut3YA:10 a=zc0IvFSfCIW2DFIPzwfm:22
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMxMDA2NCBTYWx0ZWRfX4ezp7gBLVhbB
+ urFOVFLfrq0ZPMvWORdS0rVTZbnb8QPSChbohPvtXpqFAtkooZc53Zy4KhEKh60cBYZuMA4yOtT
+ E5ki2L0UWCnA7QcCxgkhKCGw9mOur9DLHmhWmAWUQcBGirTtx+duRENrdbJ3K28YOiEqe4Rk8bh
+ AhJj7BT4uNJTcyCrmN/yNuPkil9hoQcFAYlBtHc2p4LHTv7awQKbRGyI/sdcqZpcw+s/zJlyapK
+ +lwRemSVjO6njUg5aHQEIZZWlEhMXx0z/5tpUbfxDWduVSKg+8QXlzE/HMlTVPVQgmKhbZAsc7i
+ /pvNba6R20boE/VAxxuHnBhq1Ix88rnAJ7e53JsQSmgaDxjUZonxpjoPqLqbpoUxysFjdReTH07
+ /xf6qGO+9WsM9hxQ6fzCl0PeD91EPQ==
+X-Proofpoint-GUID: HaJ75Tp7AvXRF45KrnvISsJaM-ECNXoi
+X-Proofpoint-ORIG-GUID: HaJ75Tp7AvXRF45KrnvISsJaM-ECNXoi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-31_01,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 malwarescore=0 phishscore=0 impostorscore=0 lowpriorityscore=0
+ priorityscore=1501 spamscore=0 clxscore=1015 adultscore=0 suspectscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510310064
 
-Hi Hugo,
 
-> -----Original Message-----
-> From: Hugo Villeneuve <hugo@hugovil.com>
-> Sent: 30 October 2025 20:22
-> Subject: Re: [PATCH v2 03/13] serial: sh-sci: Drop extra lines
->=20
-> Hi Biju,
->=20
-> On Thu, 30 Oct 2025 17:57:51 +0000
-> Biju <biju.das.au@gmail.com> wrote:
->=20
-> > From: Biju Das <biju.das.jz@bp.renesas.com>
-> >
-> > Shorten the number lines in sci_init_clocks() by fitting the error
-> > messages within an 100-character length limit.
-> >
-> > Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> > ---
-> > v1->v2:
-> >  * Updated commit message 80-character->100-character.
-> >  * Increased line limit for error messages to 100-column limit.
-> > ---
-> >  drivers/tty/serial/sh-sci.c | 13 ++++---------
-> >  1 file changed, 4 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-> > index b33894d0273b..e9345f898224 100644
-> > --- a/drivers/tty/serial/sh-sci.c
-> > +++ b/drivers/tty/serial/sh-sci.c
-> > @@ -3008,11 +3008,8 @@ static int sci_init_clocks(struct sci_port *sci_=
-port, struct device *dev)
-> >  			return PTR_ERR(clk);
-> >
-> >  		if (!clk && sci_port->type =3D=3D SCI_PORT_RSCI &&
-> > -		    (i =3D=3D SCI_FCK || i =3D=3D SCI_BRG_INT)) {
-> > -			return dev_err_probe(dev, -ENODEV,
-> > -					     "failed to get %s\n",
-> > -					     name);
-> > -		}
-> > +		    (i =3D=3D SCI_FCK || i =3D=3D SCI_BRG_INT))
-> > +			return dev_err_probe(dev, -ENODEV, "failed to get %s\n", name);
-> >
-> >  		if (!clk && i =3D=3D SCI_FCK) {
-> >  			/*
-> > @@ -3022,16 +3019,14 @@ static int sci_init_clocks(struct sci_port *sci=
-_port, struct device *dev)
-> >  			 */
-> >  			clk =3D devm_clk_get(dev, "peripheral_clk");
-> >  			if (IS_ERR(clk))
-> > -				return dev_err_probe(dev, PTR_ERR(clk),
-> > -						     "failed to get %s\n",
-> > +				return dev_err_probe(dev, PTR_ERR(clk), "failed to get %s\n",
-> >  						     name);
->=20
-> This one can also be on one line (99 characters).
 
-It is 101 characters.
+On 10/30/2025 12:30 PM, Deepa Guthyappa Madivalara wrote:
+> Defining platform specific capabilities specific to AV1 decoder.
+> Set and subscribe to manadatory properties to firmware for AV1.
+> 
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Signed-off-by: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>
+> ---
+>  drivers/media/platform/qcom/iris/iris_buffer.h     |   1 +
+>  drivers/media/platform/qcom/iris/iris_ctrls.c      |   8 ++
+>  drivers/media/platform/qcom/iris/iris_hfi_common.h |   3 +
+>  .../platform/qcom/iris/iris_hfi_gen2_command.c     |  94 ++++++++++++++-
+>  .../platform/qcom/iris/iris_hfi_gen2_defines.h     |  10 +-
+>  .../platform/qcom/iris/iris_hfi_gen2_response.c    |  22 ++++
+>  .../platform/qcom/iris/iris_platform_common.h      |  13 ++
+>  .../media/platform/qcom/iris/iris_platform_gen2.c  | 133 ++++++++++++++++++++-
+>  drivers/media/platform/qcom/iris/iris_vidc.c       |   1 +
+>  9 files changed, 279 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_buffer.h b/drivers/media/platform/qcom/iris/iris_buffer.h
+> index 325d30fce5c99185b61ff989fbfd4de9a56762b2..5ef365d9236c7cbdee24a4614789b3191881968b 100644
+> --- a/drivers/media/platform/qcom/iris/iris_buffer.h
+> +++ b/drivers/media/platform/qcom/iris/iris_buffer.h
+> @@ -42,6 +42,7 @@ enum iris_buffer_type {
+>  	BUF_SCRATCH_1,
+>  	BUF_SCRATCH_2,
+>  	BUF_VPSS,
+> +	BUF_PARTIAL,
+>  	BUF_TYPE_MAX,
+>  };
+>  
+> diff --git a/drivers/media/platform/qcom/iris/iris_ctrls.c b/drivers/media/platform/qcom/iris/iris_ctrls.c
+> index 754a5ad718bc37630bb861012301df7a2e7342a1..620c7e1bd273e25febd8ca70dd1dcfb0b862692b 100644
+> --- a/drivers/media/platform/qcom/iris/iris_ctrls.c
+> +++ b/drivers/media/platform/qcom/iris/iris_ctrls.c
+> @@ -98,6 +98,10 @@ static enum platform_inst_fw_cap_type iris_get_cap_id(u32 id)
+>  		return B_FRAME_QP_H264;
+>  	case V4L2_CID_MPEG_VIDEO_HEVC_B_FRAME_QP:
+>  		return B_FRAME_QP_HEVC;
+> +	case V4L2_CID_MPEG_VIDEO_AV1_PROFILE:
+> +		return PROFILE_AV1;
+> +	case V4L2_CID_MPEG_VIDEO_AV1_LEVEL:
+> +		return LEVEL_AV1;
+>  	default:
+>  		return INST_FW_CAP_MAX;
+>  	}
+> @@ -185,6 +189,10 @@ static u32 iris_get_v4l2_id(enum platform_inst_fw_cap_type cap_id)
+>  		return V4L2_CID_MPEG_VIDEO_H264_B_FRAME_QP;
+>  	case B_FRAME_QP_HEVC:
+>  		return V4L2_CID_MPEG_VIDEO_HEVC_B_FRAME_QP;
+> +	case PROFILE_AV1:
+> +		return V4L2_CID_MPEG_VIDEO_AV1_PROFILE;
+> +	case LEVEL_AV1:
+> +		return V4L2_CID_MPEG_VIDEO_AV1_LEVEL;
+>  	default:
+>  		return 0;
+>  	}
+> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_common.h b/drivers/media/platform/qcom/iris/iris_hfi_common.h
+> index b51471fb32c70acee44c37f8e9dce0c6bc0b6ccc..3edb5ae582b49bea2e2408c4a5cfc0a742adc05f 100644
+> --- a/drivers/media/platform/qcom/iris/iris_hfi_common.h
+> +++ b/drivers/media/platform/qcom/iris/iris_hfi_common.h
+> @@ -141,6 +141,9 @@ struct hfi_subscription_params {
+>  	u32	profile;
+>  	u32	level;
+>  	u32	tier;
+> +	u32	drap;
+> +	u32	film_grain;
+> +	u32	super_block;
+>  };
+>  
+>  u32 iris_hfi_get_v4l2_color_primaries(u32 hfi_primaries);
+> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+> index 6a772db2ec33fb002d8884753a41dc98b3a8439d..ee99ba206b64bb3367d0a1cdd7634e3241f9ed83 100644
+> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_command.c
+> @@ -10,6 +10,7 @@
+>  
+>  #define UNSPECIFIED_COLOR_FORMAT 5
+>  #define NUM_SYS_INIT_PACKETS 8
+> +#define NUM_COMV_AV1 18
+>  
+>  #define SYS_INIT_PKT_SIZE (sizeof(struct iris_hfi_header) + \
+>  	NUM_SYS_INIT_PACKETS * (sizeof(struct iris_hfi_packet) + sizeof(u32)))
+> @@ -121,6 +122,7 @@ static u32 iris_hfi_gen2_get_port_from_buf_type(struct iris_inst *inst,
+>  		case BUF_COMV:
+>  		case BUF_NON_COMV:
+>  		case BUF_LINE:
+> +		case BUF_PARTIAL:
+>  			return HFI_PORT_BITSTREAM;
+>  		case BUF_OUTPUT:
+>  		case BUF_DPB:
+> @@ -380,6 +382,9 @@ static int iris_hfi_gen2_set_profile(struct iris_inst *inst, u32 plane)
+>  	case V4L2_PIX_FMT_H264:
+>  		profile = inst->fw_caps[PROFILE_H264].value;
+>  		break;
+> +	case V4L2_PIX_FMT_AV1:
+> +		profile = inst->fw_caps[PROFILE_AV1].value;
+> +		break;
+>  	}
+>  
+>  	inst_hfi_gen2->src_subcr_params.profile = profile;
+> @@ -409,6 +414,9 @@ static int iris_hfi_gen2_set_level(struct iris_inst *inst, u32 plane)
+>  	case V4L2_PIX_FMT_H264:
+>  		level = inst->fw_caps[LEVEL_H264].value;
+>  		break;
+> +	case V4L2_PIX_FMT_AV1:
+> +		level = inst->fw_caps[LEVEL_AV1].value;
+> +		break;
+>  	}
+>  
+>  	inst_hfi_gen2->src_subcr_params.level = level;
+> @@ -496,10 +504,12 @@ static int iris_hfi_gen2_set_linear_stride_scanline(struct iris_inst *inst, u32
+>  
+>  static int iris_hfi_gen2_set_tier(struct iris_inst *inst, u32 plane)
+>  {
+> -	struct iris_inst_hfi_gen2 *inst_hfi_gen2 = to_iris_inst_hfi_gen2(inst);
+>  	u32 port = iris_hfi_gen2_get_port(inst, V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE);
+> +	struct iris_inst_hfi_gen2 *inst_hfi_gen2 = to_iris_inst_hfi_gen2(inst);
+>  	u32 tier = inst->fw_caps[TIER].value;
+>  
+> +	tier = (inst->codec == V4L2_PIX_FMT_AV1) ? inst->fw_caps[TIER_AV1].value :
+> +							inst->fw_caps[TIER].value;
+>  	inst_hfi_gen2->src_subcr_params.tier = tier;
+>  
+>  	return iris_hfi_gen2_session_set_property(inst,
+> @@ -525,6 +535,40 @@ static int iris_hfi_gen2_set_frame_rate(struct iris_inst *inst, u32 plane)
+>  						  sizeof(u32));
+>  }
+>  
+> +static int iris_hfi_gen2_set_film_grain(struct iris_inst *inst, u32 plane)
+> +{
+> +	u32 port = iris_hfi_gen2_get_port(inst, V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE);
+> +	struct iris_inst_hfi_gen2 *inst_hfi_gen2 = to_iris_inst_hfi_gen2(inst);
+> +	u32 film_grain = inst->fw_caps[FILM_GRAIN].value;
+> +
+> +	inst_hfi_gen2->src_subcr_params.film_grain = film_grain;
+> +
+> +	return iris_hfi_gen2_session_set_property(inst,
+> +						  HFI_PROP_AV1_FILM_GRAIN_PRESENT,
+> +						  HFI_HOST_FLAGS_NONE,
+> +						  port,
+> +						  HFI_PAYLOAD_U32_ENUM,
+> +						  &film_grain,
+> +						  sizeof(u32));
+> +}
+> +
+> +static int iris_hfi_gen2_set_super_block(struct iris_inst *inst, u32 plane)
+> +{
+> +	u32 port = iris_hfi_gen2_get_port(inst, V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE);
+> +	struct iris_inst_hfi_gen2 *inst_hfi_gen2 = to_iris_inst_hfi_gen2(inst);
+> +	u32 super_block = inst->fw_caps[SUPER_BLOCK].value;
+> +
+> +	inst_hfi_gen2->src_subcr_params.super_block = super_block;
+> +
+> +	return iris_hfi_gen2_session_set_property(inst,
+> +						  HFI_PROP_AV1_SUPER_BLOCK_ENABLED,
+> +						  HFI_HOST_FLAGS_NONE,
+> +						  port,
+> +						  HFI_PAYLOAD_U32_ENUM,
+> +						  &super_block,
+> +						  sizeof(u32));
+> +}
+> +
+>  static int iris_hfi_gen2_session_set_config_params(struct iris_inst *inst, u32 plane)
+>  {
+>  	const struct iris_platform_data *pdata = inst->core->iris_platform_data;
+> @@ -548,6 +592,9 @@ static int iris_hfi_gen2_session_set_config_params(struct iris_inst *inst, u32 p
+>  		{HFI_PROP_LINEAR_STRIDE_SCANLINE,     iris_hfi_gen2_set_linear_stride_scanline },
+>  		{HFI_PROP_TIER,                       iris_hfi_gen2_set_tier                   },
+>  		{HFI_PROP_FRAME_RATE,                 iris_hfi_gen2_set_frame_rate             },
+> +		{HFI_PROP_AV1_FILM_GRAIN_PRESENT,     iris_hfi_gen2_set_film_grain             },
+> +		{HFI_PROP_AV1_SUPER_BLOCK_ENABLED,    iris_hfi_gen2_set_super_block            },
+> +		{HFI_PROP_OPB_ENABLE,                 iris_hfi_gen2_set_opb_enable             },
+>  	};
+>  
+>  	if (inst->domain == DECODER) {
+> @@ -561,12 +608,20 @@ static int iris_hfi_gen2_session_set_config_params(struct iris_inst *inst, u32 p
+>  			} else if (inst->codec == V4L2_PIX_FMT_VP9) {
+>  				config_params = pdata->dec_input_config_params_vp9;
+>  				config_params_size = pdata->dec_input_config_params_vp9_size;
+> +			} else if (inst->codec == V4L2_PIX_FMT_AV1) {
+> +				config_params = pdata->dec_input_config_params_av1;
+> +				config_params_size = pdata->dec_input_config_params_av1_size;
+>  			} else {
+>  				return -EINVAL;
+>  			}
+>  		} else {
+> -			config_params = pdata->dec_output_config_params;
+> -			config_params_size = pdata->dec_output_config_params_size;
+> +			if (inst->codec == V4L2_PIX_FMT_AV1) {
+> +				config_params = pdata->dec_output_config_params_av1;
+> +				config_params_size = pdata->dec_output_config_params_av1_size;
+> +			} else {
+> +				config_params = pdata->dec_output_config_params;
+> +				config_params_size = pdata->dec_output_config_params_size;
+> +			}
+>  		}
+>  	} else {
+>  		if (V4L2_TYPE_IS_OUTPUT(plane)) {
+> @@ -615,6 +670,9 @@ static int iris_hfi_gen2_session_set_codec(struct iris_inst *inst)
+>  		break;
+>  	case V4L2_PIX_FMT_VP9:
+>  		codec = HFI_CODEC_DECODE_VP9;
+> +		break;
+> +	case V4L2_PIX_FMT_AV1:
+> +		codec = HFI_CODEC_DECODE_AV1;
+>  	}
+>  
+>  	iris_hfi_gen2_packet_session_property(inst,
+> @@ -780,6 +838,11 @@ static int iris_hfi_gen2_subscribe_change_param(struct iris_inst *inst, u32 plan
+>  		change_param_size =
+>  			core->iris_platform_data->dec_input_config_params_vp9_size;
+>  		break;
+> +	case V4L2_PIX_FMT_AV1:
+> +		change_param = core->iris_platform_data->dec_input_config_params_av1;
+> +		change_param_size =
+> +			core->iris_platform_data->dec_input_config_params_av1_size;
+> +		break;
+>  	}
+>  
+>  	payload[0] = HFI_MODE_PORT_SETTINGS_CHANGE;
+> @@ -862,6 +925,16 @@ static int iris_hfi_gen2_subscribe_change_param(struct iris_inst *inst, u32 plan
+>  				payload_size = sizeof(u32);
+>  				payload_type = HFI_PAYLOAD_U32;
+>  				break;
+> +			case HFI_PROP_AV1_FILM_GRAIN_PRESENT:
+> +				payload[0] = subsc_params.film_grain;
+> +				payload_size = sizeof(u32);
+> +				payload_type = HFI_PAYLOAD_U32;
+> +				break;
+> +			case HFI_PROP_AV1_SUPER_BLOCK_ENABLED:
+> +				payload[0] = subsc_params.super_block;
+> +				payload_size = sizeof(u32);
+> +				payload_type = HFI_PAYLOAD_U32;
+> +				break;
+>  			default:
+>  				prop_type = 0;
+>  				ret = -EINVAL;
+> @@ -917,6 +990,11 @@ static int iris_hfi_gen2_subscribe_property(struct iris_inst *inst, u32 plane)
+>  			subscribe_prop_size =
+>  				core->iris_platform_data->dec_output_prop_vp9_size;
+>  			break;
+> +		case V4L2_PIX_FMT_AV1:
+> +			subcribe_prop = core->iris_platform_data->dec_output_prop_av1;
+> +			subscribe_prop_size =
+> +				core->iris_platform_data->dec_output_prop_av1_size;
+> +			break;
+>  		}
+>  	}
+>  
+> @@ -1092,6 +1170,8 @@ static u32 iris_hfi_gen2_buf_type_from_driver(u32 domain, enum iris_buffer_type
+>  		return HFI_BUFFER_ARP;
+>  	case BUF_VPSS:
+>  		return HFI_BUFFER_VPSS;
+> +	case BUF_PARTIAL:
+> +		return HFI_BUFFER_PARTIAL_DATA;
+>  	default:
+>  		return 0;
+>  	}
+> @@ -1104,7 +1184,13 @@ static int iris_set_num_comv(struct iris_inst *inst)
+>  	u32 num_comv;
+>  
+>  	caps = core->iris_platform_data->inst_caps;
+> -	num_comv = caps->num_comv;
+> +
+> +	/*
+> +	 * AV1 needs more comv buffers than other codecs.
+> +	 * Update accordingly.
+> +	 */
+> +	num_comv = (inst->codec == V4L2_PIX_FMT_AV1) ?
+> +				NUM_COMV_AV1 : caps->num_comv;
+>  
+>  	return core->hfi_ops->session_set_property(inst,
+>  						   HFI_PROP_COMV_BUFFER_COUNT,
+> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h b/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
+> index 3d56f257bc5620aacec2bb7e11253dc7c83b7db9..12b4c6517bf094e3e98332a1b2b70ac5a349b863 100644
+> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
+> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_defines.h
+> @@ -89,10 +89,18 @@ enum hfi_seq_header_mode {
+>  #define HFI_PROP_DEC_START_FROM_RAP_FRAME	0x03000169
+>  #define HFI_PROP_NO_OUTPUT			0x0300016a
+>  #define HFI_PROP_BUFFER_MARK			0x0300016c
+> +#define HFI_PROP_WORST_COMPRESSION_RATIO	0x03000174
+> +#define HFI_PROP_WORST_COMPLEXITY_FACTOR	0x03000175
+>  #define HFI_PROP_RAW_RESOLUTION		0x03000178
+>  #define HFI_PROP_TOTAL_PEAK_BITRATE		0x0300017C
+> -#define HFI_PROP_OPB_ENABLE			0x03000184
+> +#define HFI_PROP_AV1_FILM_GRAIN_PRESENT		0x03000180
+> +#define HFI_PROP_AV1_SUPER_BLOCK_ENABLED	0x03000181
+> +#define HFI_PROP_AV1_OP_POINT				0x03000182
+> +#define HFI_PROP_OPB_ENABLE                 0x03000184
+> +#define HFI_PROP_AV1_TILE_ROWS_COLUMNS      0x03000187
+> +#define HFI_PROP_AV1_DRAP_CONFIG            0x03000189
+>  #define HFI_PROP_COMV_BUFFER_COUNT		0x03000193
+> +#define HFI_PROP_AV1_UNIFORM_TILE_SPACING	0x03000197
+>  #define HFI_PROP_END				0x03FFFFFF
+>  
+>  #define HFI_SESSION_ERROR_BEGIN			0x04000000
+> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c b/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c
+> index 2f1f118eae4f6462ab1aa1d16844b34e6e699f1e..eb3373f0ad4a1b26fb847db02449ec8d8cb3bdbb 100644
+> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c
+> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen2_response.c
+> @@ -54,6 +54,8 @@ static u32 iris_hfi_gen2_buf_type_to_driver(struct iris_inst *inst,
+>  			return BUF_SCRATCH_2;
+>  	case HFI_BUFFER_PERSIST:
+>  		return BUF_PERSIST;
+> +	case HFI_BUFFER_PARTIAL_DATA:
+> +		return BUF_PARTIAL;
+>  	default:
+>  		return 0;
+>  	}
+> @@ -72,6 +74,7 @@ static bool iris_hfi_gen2_is_valid_hfi_buffer_type(u32 buffer_type)
+>  	case HFI_BUFFER_DPB:
+>  	case HFI_BUFFER_PERSIST:
+>  	case HFI_BUFFER_VPSS:
+> +	case HFI_BUFFER_PARTIAL_DATA:
+>  		return true;
+>  	default:
+>  		return false;
+> @@ -596,6 +599,10 @@ static void iris_hfi_gen2_read_input_subcr_params(struct iris_inst *inst)
+>  		inst->fw_caps[PROFILE_H264].value = subsc_params.profile;
+>  		inst->fw_caps[LEVEL_H264].value = subsc_params.level;
+>  		break;
+> +	case V4L2_PIX_FMT_AV1:
+> +		inst->fw_caps[PROFILE_AV1].value = subsc_params.profile;
+> +		inst->fw_caps[LEVEL_AV1].value = subsc_params.level;
+> +		break;
+>  	}
+>  
+>  	inst->fw_caps[POC].value = subsc_params.pic_order_cnt;
+> @@ -608,6 +615,11 @@ static void iris_hfi_gen2_read_input_subcr_params(struct iris_inst *inst)
+>  		iris_inst_change_state(inst, IRIS_INST_ERROR);
+>  	}
+>  
+> +	if (inst->codec == V4L2_PIX_FMT_AV1) {
+> +		inst->fw_caps[FILM_GRAIN].value = subsc_params.film_grain;
+> +		inst->fw_caps[SUPER_BLOCK].value = subsc_params.super_block;
+> +	}
+> +
+>  	inst->fw_min_count = subsc_params.fw_min_count;
+>  	inst->buffers[BUF_OUTPUT].min_count = iris_vpu_buf_count(inst, BUF_OUTPUT);
+>  	inst->buffers[BUF_OUTPUT].size = pixmp_op->plane_fmt[0].sizeimage;
+> @@ -711,6 +723,12 @@ static int iris_hfi_gen2_handle_session_property(struct iris_inst *inst,
+>  	case HFI_PROP_NO_OUTPUT:
+>  		inst_hfi_gen2->hfi_frame_info.no_output = 1;
+>  		break;
+> +	case HFI_PROP_AV1_FILM_GRAIN_PRESENT:
+> +		inst_hfi_gen2->src_subcr_params.film_grain = pkt->payload[0];
+> +		break;
+> +	case HFI_PROP_AV1_SUPER_BLOCK_ENABLED:
+> +		inst_hfi_gen2->src_subcr_params.super_block = pkt->payload[0];
+> +		break;
+>  	case HFI_PROP_QUALITY_MODE:
+>  	case HFI_PROP_STAGE:
+>  	case HFI_PROP_PIPE:
+> @@ -841,6 +859,10 @@ static void iris_hfi_gen2_init_src_change_param(struct iris_inst *inst)
+>  		subsc_params->profile = inst->fw_caps[PROFILE_H264].value;
+>  		subsc_params->level = inst->fw_caps[LEVEL_H264].value;
+>  		break;
+> +	case V4L2_PIX_FMT_AV1:
+> +		subsc_params->profile = inst->fw_caps[PROFILE_AV1].value;
+> +		subsc_params->level = inst->fw_caps[LEVEL_AV1].value;
+> +		break;
+>  	}
+>  
+>  	subsc_params->pic_order_cnt = inst->fw_caps[POC].value;
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
+> index 9aca70b4c0690f0d8d799e2a9976bd20d6bb8c94..19f0660f0388499ab71a1413b2c05f891bd5d511 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
+> @@ -100,6 +100,13 @@ enum platform_inst_fw_cap_type {
+>  	LEVEL_H264,
+>  	LEVEL_HEVC,
+>  	LEVEL_VP9,
+> +	PROFILE_AV1,
+> +	LEVEL_AV1,
+> +	TIER_AV1,
+> +	DRAP,
+> +	FILM_GRAIN,
+> +	SUPER_BLOCK,
+> +	ENH_LAYER_COUNT,
+>  	INPUT_BUF_HOST_MAX_COUNT,
+>  	OUTPUT_BUF_HOST_MAX_COUNT,
+>  	STAGE,
+> @@ -237,8 +244,12 @@ struct iris_platform_data {
+>  	unsigned int dec_input_config_params_hevc_size;
+>  	const u32 *dec_input_config_params_vp9;
+>  	unsigned int dec_input_config_params_vp9_size;
+> +	const u32 *dec_input_config_params_av1;
+> +	unsigned int dec_input_config_params_av1_size;
+>  	const u32 *dec_output_config_params;
+>  	unsigned int dec_output_config_params_size;
+> +	const u32 *dec_output_config_params_av1;
+> +	unsigned int dec_output_config_params_av1_size;
+>  	const u32 *enc_input_config_params;
+>  	unsigned int enc_input_config_params_size;
+>  	const u32 *enc_output_config_params;
+> @@ -251,6 +262,8 @@ struct iris_platform_data {
+>  	unsigned int dec_output_prop_hevc_size;
+>  	const u32 *dec_output_prop_vp9;
+>  	unsigned int dec_output_prop_vp9_size;
+> +	const u32 *dec_output_prop_av1;
+> +	unsigned int dec_output_prop_av1_size;
+>  	const u32 *dec_ip_int_buf_tbl;
+>  	unsigned int dec_ip_int_buf_tbl_size;
+>  	const u32 *dec_op_int_buf_tbl;
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_gen2.c b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> index 3b61723dbf27e9ba8d427686e44cf048a0ab7c5b..9ac5541f528741e45b31634230da44d53012e659 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_gen2.c
+> @@ -64,6 +64,16 @@ static struct platform_inst_fw_cap inst_fw_cap_sm8550_dec[] = {
+>  		.flags = CAP_FLAG_OUTPUT_PORT | CAP_FLAG_MENU,
+>  		.set = iris_set_u32_enum,
+>  	},
+> +	{
+> +		.cap_id = PROFILE_AV1,
+> +		.min = V4L2_MPEG_VIDEO_AV1_PROFILE_MAIN,
+> +		.max = V4L2_MPEG_VIDEO_AV1_PROFILE_MAIN,
+> +		.step_or_mask = BIT(V4L2_MPEG_VIDEO_AV1_PROFILE_MAIN),
+> +		.value = V4L2_MPEG_VIDEO_AV1_PROFILE_MAIN,
+> +		.hfi_id = HFI_PROP_PROFILE,
+> +		.flags = CAP_FLAG_OUTPUT_PORT | CAP_FLAG_MENU,
+> +		.set = iris_set_u32_enum,
+> +	},
+>  	{
+>  		.cap_id = PROFILE_VP9,
+>  		.min = V4L2_MPEG_VIDEO_VP9_PROFILE_0,
+> @@ -147,6 +157,33 @@ static struct platform_inst_fw_cap inst_fw_cap_sm8550_dec[] = {
+>  		.flags = CAP_FLAG_OUTPUT_PORT | CAP_FLAG_MENU,
+>  		.set = iris_set_u32_enum,
+>  	},
+> +	{
+> +		.cap_id = LEVEL_AV1,
+> +		.min = V4L2_MPEG_VIDEO_AV1_LEVEL_2_0,
+> +		.max = V4L2_MPEG_VIDEO_AV1_LEVEL_6_1,
+> +		.step_or_mask = BIT(V4L2_MPEG_VIDEO_AV1_LEVEL_2_0) |
+> +				BIT(V4L2_MPEG_VIDEO_AV1_LEVEL_2_1) |
+> +				BIT(V4L2_MPEG_VIDEO_AV1_LEVEL_2_2) |
+> +				BIT(V4L2_MPEG_VIDEO_AV1_LEVEL_2_3) |
+> +				BIT(V4L2_MPEG_VIDEO_AV1_LEVEL_3_0) |
+> +				BIT(V4L2_MPEG_VIDEO_AV1_LEVEL_3_1) |
+> +				BIT(V4L2_MPEG_VIDEO_AV1_LEVEL_3_2) |
+> +				BIT(V4L2_MPEG_VIDEO_AV1_LEVEL_3_3) |
+> +				BIT(V4L2_MPEG_VIDEO_AV1_LEVEL_4_0) |
+> +				BIT(V4L2_MPEG_VIDEO_AV1_LEVEL_4_1) |
+> +				BIT(V4L2_MPEG_VIDEO_AV1_LEVEL_4_2) |
+> +				BIT(V4L2_MPEG_VIDEO_AV1_LEVEL_4_3) |
+> +				BIT(V4L2_MPEG_VIDEO_AV1_LEVEL_5_0) |
+> +				BIT(V4L2_MPEG_VIDEO_AV1_LEVEL_5_1) |
+> +				BIT(V4L2_MPEG_VIDEO_AV1_LEVEL_5_2) |
+> +				BIT(V4L2_MPEG_VIDEO_AV1_LEVEL_5_3) |
+> +				BIT(V4L2_MPEG_VIDEO_AV1_LEVEL_6_0) |
+> +				BIT(V4L2_MPEG_VIDEO_AV1_LEVEL_6_1),
+> +		.value = V4L2_MPEG_VIDEO_AV1_LEVEL_6_1,
+> +		.hfi_id = HFI_PROP_LEVEL,
+> +		.flags = CAP_FLAG_OUTPUT_PORT | CAP_FLAG_MENU,
+> +		.set = iris_set_u32_enum,
+> +	},
+>  	{
+>  		.cap_id = TIER,
+>  		.min = V4L2_MPEG_VIDEO_HEVC_TIER_MAIN,
+> @@ -158,6 +195,53 @@ static struct platform_inst_fw_cap inst_fw_cap_sm8550_dec[] = {
+>  		.flags = CAP_FLAG_OUTPUT_PORT | CAP_FLAG_MENU,
+>  		.set = iris_set_u32_enum,
+>  	},
+> +	{
+> +		.cap_id = TIER_AV1,
+> +		.min = 0,
+> +		.max = 1,
+> +		.step_or_mask = 1,
+> +		.value = 0,
+> +		.hfi_id = HFI_PROP_TIER,
+> +		.flags = CAP_FLAG_INPUT_PORT,
+> +		.set = iris_set_u32,
+> +	},
+> +	{
+> +		.cap_id = DRAP,
+> +		.min = 0,
+> +		.max = 1,
+> +		.step_or_mask = 1,
+> +		.value = 0,
+> +		.hfi_id = HFI_PROP_AV1_DRAP_CONFIG,
+> +		.flags = CAP_FLAG_INPUT_PORT,
+> +		.set = iris_set_u32,
+> +	},
+> +	{
+> +		.cap_id = FILM_GRAIN,
+> +		.min = 0,
+> +		.max = 1,
+> +		.step_or_mask = 1,
+> +		.value = 0,
+> +		.hfi_id = HFI_PROP_AV1_FILM_GRAIN_PRESENT,
+> +		.flags = CAP_FLAG_VOLATILE,
+> +	},
+> +	{
+> +		.cap_id = SUPER_BLOCK,
+> +		.min = 0,
+> +		.max = 1,
+> +		.step_or_mask = 1,
+> +		.value = 0,
+> +		.hfi_id = HFI_PROP_AV1_SUPER_BLOCK_ENABLED,
+> +	},
+> +	{
+> +		.cap_id = ENH_LAYER_COUNT,
+> +		.min = 0,
+> +		.max = 1,
+> +		.step_or_mask = 1,
+> +		.value = 0,
+> +		.hfi_id = HFI_PROP_AV1_OP_POINT,
+> +		.flags = CAP_FLAG_INPUT_PORT,
+> +		.set = iris_set_u32,
+> +	},
+>  	{
+>  		.cap_id = INPUT_BUF_HOST_MAX_COUNT,
+>  		.min = DEFAULT_MAX_HOST_BUF_COUNT,
+> @@ -701,6 +785,19 @@ static const u32 sm8550_vdec_input_config_param_vp9[] = {
+>  	HFI_PROP_LEVEL,
+>  };
+>  
+> +static const u32 sm8550_vdec_input_config_param_av1[] = {
+> +	HFI_PROP_BITSTREAM_RESOLUTION,
+> +	HFI_PROP_CROP_OFFSETS,
+> +	HFI_PROP_LUMA_CHROMA_BIT_DEPTH,
+> +	HFI_PROP_BUFFER_FW_MIN_OUTPUT_COUNT,
+> +	HFI_PROP_PROFILE,
+> +	HFI_PROP_LEVEL,
+> +	HFI_PROP_TIER,
+> +	HFI_PROP_AV1_FILM_GRAIN_PRESENT,
+> +	HFI_PROP_AV1_SUPER_BLOCK_ENABLED,
+> +	HFI_PROP_SIGNAL_COLOR_INFO,
+> +};
+> +
+>  static const u32 sm8550_venc_input_config_params[] = {
+>  	HFI_PROP_COLOR_FORMAT,
+>  	HFI_PROP_RAW_RESOLUTION,
+> @@ -715,6 +812,12 @@ static const u32 sm8550_vdec_output_config_params[] = {
+>  	HFI_PROP_LINEAR_STRIDE_SCANLINE,
+>  };
+>  
+> +static const u32 sm8550_vdec_output_config_param_av1[] = {
+> +	HFI_PROP_OPB_ENABLE,
+> +	HFI_PROP_COLOR_FORMAT,
+> +	HFI_PROP_LINEAR_STRIDE_SCANLINE,
+> +};
 
-Cheers,
-Biju
+why do you still need this new structure?
+it is same as sm8550_vdec_output_config_params, please reuse.
+
+Thanks,
+Dikshita
+> +
+>  static const u32 sm8550_venc_output_config_params[] = {
+>  	HFI_PROP_BITSTREAM_RESOLUTION,
+>  	HFI_PROP_CROP_OFFSETS,
+> @@ -738,11 +841,18 @@ static const u32 sm8550_vdec_subscribe_output_properties_vp9[] = {
+>  	HFI_PROP_PICTURE_TYPE,
+>  };
+>  
+> +static const u32 sm8550_vdec_subscribe_output_properties_av1[] = {
+> +	HFI_PROP_PICTURE_TYPE,
+> +	HFI_PROP_WORST_COMPRESSION_RATIO,
+> +	HFI_PROP_WORST_COMPLEXITY_FACTOR,
+> +};
+> +
+>  static const u32 sm8550_dec_ip_int_buf_tbl[] = {
+>  	BUF_BIN,
+>  	BUF_COMV,
+>  	BUF_NON_COMV,
+>  	BUF_LINE,
+> +	BUF_PARTIAL,
+>  };
+>  
+>  static const u32 sm8550_dec_op_int_buf_tbl[] = {
+> @@ -807,11 +917,18 @@ struct iris_platform_data sm8550_data = {
+>  		sm8550_vdec_input_config_param_vp9,
+>  	.dec_input_config_params_vp9_size =
+>  		ARRAY_SIZE(sm8550_vdec_input_config_param_vp9),
+> +	.dec_input_config_params_av1 =
+> +		sm8550_vdec_input_config_param_av1,
+> +	.dec_input_config_params_av1_size =
+> +		ARRAY_SIZE(sm8550_vdec_input_config_param_av1),
+>  	.dec_output_config_params =
+>  		sm8550_vdec_output_config_params,
+>  	.dec_output_config_params_size =
+>  		ARRAY_SIZE(sm8550_vdec_output_config_params),
+> -
+> +	.dec_output_config_params_av1 =
+> +		sm8550_vdec_output_config_param_av1,
+> +	.dec_output_config_params_av1_size =
+> +		ARRAY_SIZE(sm8550_vdec_output_config_param_av1),
+>  	.enc_input_config_params =
+>  		sm8550_venc_input_config_params,
+>  	.enc_input_config_params_size =
+> @@ -832,6 +949,9 @@ struct iris_platform_data sm8550_data = {
+>  	.dec_output_prop_vp9 = sm8550_vdec_subscribe_output_properties_vp9,
+>  	.dec_output_prop_vp9_size =
+>  		ARRAY_SIZE(sm8550_vdec_subscribe_output_properties_vp9),
+> +	.dec_output_prop_av1 = sm8550_vdec_subscribe_output_properties_av1,
+> +	.dec_output_prop_av1_size =
+> +		ARRAY_SIZE(sm8550_vdec_subscribe_output_properties_av1),
+>  
+>  	.dec_ip_int_buf_tbl = sm8550_dec_ip_int_buf_tbl,
+>  	.dec_ip_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_ip_int_buf_tbl),
+> @@ -901,10 +1021,18 @@ struct iris_platform_data sm8650_data = {
+>  		sm8550_vdec_input_config_param_vp9,
+>  	.dec_input_config_params_vp9_size =
+>  		ARRAY_SIZE(sm8550_vdec_input_config_param_vp9),
+> +	.dec_input_config_params_av1 =
+> +		sm8550_vdec_input_config_param_av1,
+> +	.dec_input_config_params_av1_size =
+> +		ARRAY_SIZE(sm8550_vdec_input_config_param_av1),
+>  	.dec_output_config_params =
+>  		sm8550_vdec_output_config_params,
+>  	.dec_output_config_params_size =
+>  		ARRAY_SIZE(sm8550_vdec_output_config_params),
+> +	.dec_output_config_params_av1 =
+> +		sm8550_vdec_output_config_param_av1,
+> +	.dec_output_config_params_av1_size =
+> +		ARRAY_SIZE(sm8550_vdec_output_config_param_av1),
+>  
+>  	.enc_input_config_params =
+>  		sm8550_venc_input_config_params,
+> @@ -926,6 +1054,9 @@ struct iris_platform_data sm8650_data = {
+>  	.dec_output_prop_vp9 = sm8550_vdec_subscribe_output_properties_vp9,
+>  	.dec_output_prop_vp9_size =
+>  		ARRAY_SIZE(sm8550_vdec_subscribe_output_properties_vp9),
+> +	.dec_output_prop_av1 = sm8550_vdec_subscribe_output_properties_av1,
+> +	.dec_output_prop_av1_size =
+> +		ARRAY_SIZE(sm8550_vdec_subscribe_output_properties_av1),
+>  
+>  	.dec_ip_int_buf_tbl = sm8550_dec_ip_int_buf_tbl,
+>  	.dec_ip_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_ip_int_buf_tbl),
+> diff --git a/drivers/media/platform/qcom/iris/iris_vidc.c b/drivers/media/platform/qcom/iris/iris_vidc.c
+> index d38d0f6961cd5cb9929e2aecbec7353dcc2d4a7d..05eec18f937a51d3c081d0f98a8ffa6bbd30d166 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vidc.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vidc.c
+> @@ -178,6 +178,7 @@ int iris_open(struct file *filp)
+>  	INIT_LIST_HEAD(&inst->buffers[BUF_SCRATCH_1].list);
+>  	INIT_LIST_HEAD(&inst->buffers[BUF_SCRATCH_2].list);
+>  	INIT_LIST_HEAD(&inst->buffers[BUF_VPSS].list);
+> +	INIT_LIST_HEAD(&inst->buffers[BUF_PARTIAL].list);
+>  	init_completion(&inst->completion);
+>  	init_completion(&inst->flush_completion);
+>  
+> 
 
