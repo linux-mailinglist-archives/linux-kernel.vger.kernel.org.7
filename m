@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-879684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBD0BC23C20
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:22:51 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE974C23C05
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:20:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2AEE3BF074
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:13:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6AD864F5DE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0BE733859E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1FA337BB0;
 	Fri, 31 Oct 2025 08:10:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hqftHuG7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VxXPJYx5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2009D32ED31;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2011D3358B3;
 	Fri, 31 Oct 2025 08:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761898232; cv=none; b=LYSUq5LonvUt+UBXyEtiXg0k7aje8SbS79SfhqlEgCha5gHK9pPuSAKw02wvj+JAfpP9OVZacgMEuBXz/uWqkkuDm0DJlxYkVCwbf0jiF70li1mETB5ngjHm7UGGr8Axd8x88D6fIst+yHiI8eDTZgYePGw+Qn0mNZQAF33Kz0k=
+	t=1761898232; cv=none; b=U2th3ydRsnWB1CgXIpfRWTyt06y+YDr94uFsdMP+Yh1sVqBSFxRceziSqVIdO4ATP0cB4nsaIN+vDCAhcPA2d1F4uSTROiQ46njUZl0E/P0ZRCn9rkdKHnydtnkwGmAaD30WblJEsMGNFChDr78bltn1Zyq6Sd8O4GWiKpufBPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761898232; c=relaxed/simple;
-	bh=EIXHJpDNgd4/dzJhbSBB4YpUTUTgFGHOzNPZSvMfSdo=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XR2ME/IrIoJgdmX4ifQi8GiJkqWU41a7l6Zboux1lhz9yR6ni+RqTvH0NoKcaHUZ6ryvlIGf5EtJoLg5WzLEQPYbrzp25zRavIURYvlLNrZ67fBam2+FM9AUR3TQ1imsoleFVLVGEkvmNJSpmM9ZsssxjQLg7gR9McV8Q9kWuPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hqftHuG7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9D488C4CEFB;
+	bh=5tLSRE6BInQejsiPR/fc5RiDlVZ9iOn8Or4TkaTc/g4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=HSvC0nBYkpNTs9qbe4zZ9Z8qJ3HKQY8ZlRI2BWsOr7GidYi7OL5LpyACOttH+czr/QAUe+GpEBZ0Roxv+ILcnoG0EQ2/o617C4ya7dZjM9dBQEW+9tqCvoRGt3xM1HY2pzpNff+8YxtajGnxkaWvNwR2yRnpn7uCLNFs43i1+Ws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VxXPJYx5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B6D74C4CEF8;
 	Fri, 31 Oct 2025 08:10:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1761898231;
-	bh=EIXHJpDNgd4/dzJhbSBB4YpUTUTgFGHOzNPZSvMfSdo=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=hqftHuG7Gk1hdSRSGwTRDRJSsJ90jUL28WEUZkd5oVh2ef+783P5IleJNGYfscmeq
-	 LCCjXtsNtl7pL3h27eNSiUUQeNyIV4d+Fvo7pM6nB5P/PwnVhkvTgqOlrKCPiFFZX3
-	 /vweHWmG3dLkBi2hCTMWtBNA5+pxLHI41FnnflTiwbGUDHCu+Zi2AjxmxKDkH9GOGx
-	 RfiXgIpIA+zyDY1ldahLZ83K8EnXBg3pQOn7m7qp4PfbKf3U1GJIX1DjNfN9PkDLOW
-	 fwWRqS2lQc9D4wHaUZYcEnxQwcHJ+Wl512kQOmmq0hg3OmXu1dUbZHvHWZSsBLLgMZ
-	 /7RwjcJx7uRTA==
+	bh=5tLSRE6BInQejsiPR/fc5RiDlVZ9iOn8Or4TkaTc/g4=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=VxXPJYx5ExMJP2rAbhU4KIO8npVjh6DbnR2J6BRPtkKWcYGt9MmiqrDMZLVKjz+gS
+	 VVGTho99vx4Ak2zm0QIou05MCrjuMm4p0ECVsYS4MdpGLnR/xBCFYucgEwO4Qv99fv
+	 O9Y9aRIKvUxODjPwdU/RKNfmAOOL8SLMrBCrygOeDB4rhpxvro+5x0JJNW19yYWyqZ
+	 +cYK4u0ZdJBc7f92wjyC9oeY1xs161fYawAzN0EMiyDcyr5ThUKEIr4Gh0TdTtWbpA
+	 JTihv25gg1Jx61Fl/K47Jnc31oduDUl+zQa10nHeDIX1QLDofzw+evX9w9sNvhuKRA
+	 t/SqoC0Kja9Ew==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92204CCF9F8;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A53CECCF9FF;
 	Fri, 31 Oct 2025 08:10:31 +0000 (UTC)
 From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
-Subject: [PATCH v3 0/4] clk: amlogic: optimize the PLL driver
-Date: Fri, 31 Oct 2025 16:10:07 +0800
-Message-Id: <20251031-optimize_pll_driver-v3-0-92f3b2f36a83@amlogic.com>
+Date: Fri, 31 Oct 2025 16:10:08 +0800
+Subject: [PATCH v3 1/4] clk: amlogic: Fix out-of-range PLL frequency
+ setting
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,10 +55,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAN9uBGkC/23O2wqDMAyA4VeRXq/DxkO3Xe09xpC2phpQK1XKN
- vHdV4XBBrv8A/mShU3oCSd2SRbmMdBEboiRHRJmWjU0yKmOzSCFQqSQcjfO1NMLq7HrqtpTQM+
- lRnsWJ1maXLC4OXq09NjV2z12S9Ps/HM/EsQ2/Xjw1wuCp1yBLCSA1aXNr6rvXEPmaFzPNjHAl
- 5L9/ypAVDIJMrOFhkLpX2Vd1zf3oyAs/gAAAA==
+Message-Id: <20251031-optimize_pll_driver-v3-1-92f3b2f36a83@amlogic.com>
+References: <20251031-optimize_pll_driver-v3-0-92f3b2f36a83@amlogic.com>
+In-Reply-To: <20251031-optimize_pll_driver-v3-0-92f3b2f36a83@amlogic.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>, 
  Jerome Brunet <jbrunet@baylibre.com>, 
  Michael Turquette <mturquette@baylibre.com>, 
@@ -67,11 +67,11 @@ Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  Chuan Liu <chuan.liu@amlogic.com>
 X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761898227; l=3924;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761898227; l=991;
  i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=EIXHJpDNgd4/dzJhbSBB4YpUTUTgFGHOzNPZSvMfSdo=;
- b=E2xrDs0kzXWia5FQI+8iHPTNFBraPMo5rij9PqIA1dpWE4C4gew9KKfjOfDZ6+XiSjBgfC21D
- mHNmULzDasbDVbyPXl/SLksCIf31EvxUgsOkalRBhrslYxPNjPNqJHj
+ bh=6onhzW3ODDG4bFoHZLKVZ14BJkN4o2IaabjNVGrsFP0=;
+ b=y7Jqs7z4QNs/tnWA3pjqpJDu6y8SCyMGOt9v1jYNHZ6CEi+bTOQkabAxtRF0VzG2xjZecfXcr
+ Ey9zrxitmMGAFOuk4W44evTpq2JS4qNTWd0Jzg04fNoUjRao6J2tWaX
 X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
  pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
 X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
@@ -79,115 +79,38 @@ X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
 X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
 Reply-To: chuan.liu@amlogic.com
 
-This patch series consists of four topics involving the amlogic PLL
-driver:
-- Fix out-of-range PLL frequency setting.
-- Improve the issue of PLL lock failures.
-- Add handling for PLL lock failure.
-- Optimize PLL enable timing.
+From: Chuan Liu <chuan.liu@amlogic.com>
 
-For easier review and management, these are submitted as a single
-patch series.
+If the calculated 'm' falls into the range:
 
-The PLL timing optimization changes were merged into our internal
-repository quite some time ago and have been verified on a large
-number of SoCs:
-- Already supported upstream: G12A, G12B, SM1, S4, A1, C3.
-- Planned for upstream support: T7, A5, A4, S7, S7D, S6, etc.
+    pll->range->max < m < (1 << pll->m.width)
 
-Based on the upstream code base, I have performed functional testing
-on G12A, A1, A5, A4, T7, S7, S7D, and S6, all of which passed.
+Here an incorrect 'm' value could be obtained, so an additional
+condition is added to ensure that the calculated 'm' stays within a
+valid range.
 
-Additionally, stress testing using scripts was conducted on A5 and
-A1, with over 40,000 and 50,000 iterations respectively, and no
-abnormalities were observed. Below is a portion of the stress test
-log (CLOCK_ALLOW_WRITE_DEBUGFS has been manually enabled):
-
-- For A5:
-  # echo 491520000 > /sys/kernel/debug/clk/hifi_pll/clk_rate
-  # cnt=0
-  # while true; do
-  >     echo "------------ cnt=$cnt -----------"
-  >     echo 1 > /sys/kernel/debug/clk/hifi_pll/clk_prepare_enable
-  >     en=$(cat /sys/kernel/debug/clk/hifi_pll/clk_prepare_enable 2>/dev/null)
-  >     if [ "$en" != "1" ]; then
-  >         echo "[ERROR] PLL enable test failed! (clk_prepare_enable=$en)"
-  >         break
-  >     fi
-  > 
-  >     echo 0 > /sys/kernel/debug/clk/hifi_pll/clk_prepare_enable
-  >     cnt=$((cnt + 1))
-  >     echo -e "sleep time: 1 s."
-  >     sleep 1
-  > done &
-  # ------------ cnt=0 -----------
-  sleep time: 1 s.
-  ------------ cnt=1 -----------
-  sleep time: 1 s.
-  ------------ cnt=2 -----------
-  sleep time: 1 s.
-  ...
-  ------------ cnt=42076 -----------
-  sleep time: 1 s.
-
-- For A1:
-  # echo 983040000 > /sys/kernel/debug/clk/hifi_pll/clk_rate
-  # cnt=0
-  # while true; do
-  >     echo "------------ cnt=$cnt -----------"
-  >     echo 1 > /sys/kernel/debug/clk/hifi_pll/clk_prepare_enable
-  >     en=$(cat /sys/kernel/debug/clk/hifi_pll/clk_prepare_enable 2>/dev/null)
-  >     if [ "$en" != "1" ]; then
-  >         echo "[ERROR] PLL enable test failed! (clk_prepare_enable=$en)"
-  >         break
-  >     fi
-  > 
-  >     echo 0 > /sys/kernel/debug/clk/hifi_pll/clk_prepare_enable
-  >     cnt=$((cnt + 1))
-  >     echo -e "sleep time: 1 s."
-  >     sleep 1
-  > done &
-  # ------------ cnt=0 -----------
-  sleep time: 1 s.
-  ------------ cnt=1 -----------
-  sleep time: 1 s.
-  ------------ cnt=2 -----------
-  sleep time: 1 s.
-  ...
-  ------------ cnt=55051 -----------
-  sleep time: 1 s.
-
+Fixes: 8eed1db1adec6 ("clk: meson: pll: update driver for the g12a")
 Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
 ---
-Changes in v3:
-- Fix some formatting issues.
-- Move the 20 us delay after reset into the corresponding if
-condition (no delay is needed if there is no reset).
-- Move the code that releases rst back to execute before current_en.
-- Remove the patch that changes the active level of l_detect.
-- Link to v2: https://lore.kernel.org/r/20251030-optimize_pll_driver-v2-0-37273f5b25ab@amlogic.com
+ drivers/clk/meson/clk-pll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes in v2:
-- Modify the judgment condition of 'm' out of range.
-- Split the PLL timing optimization patch to make it easier to review.
-- Link to v1: https://lore.kernel.org/r/20251022-optimize_pll_driver-v1-0-a275722fb6f4@amlogic.com
+diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+index 1ea6579a760f..629f6af18ea1 100644
+--- a/drivers/clk/meson/clk-pll.c
++++ b/drivers/clk/meson/clk-pll.c
+@@ -191,7 +191,7 @@ static int meson_clk_get_pll_range_index(unsigned long rate,
+ 	*m = meson_clk_get_pll_range_m(rate, parent_rate, *n, pll);
+ 
+ 	/* the pre-divider gives a multiplier too big - stop */
+-	if (*m >= (1 << pll->m.width))
++	if (*m > pll->range->max || *m >= (1 << pll->m.width))
+ 		return -EINVAL;
+ 
+ 	return 0;
 
----
-Chuan Liu (4):
-      clk: amlogic: Fix out-of-range PLL frequency setting
-      clk: amlogic: Improve the issue of PLL lock failures
-      clk: amlogic: Add handling for PLL lock failure
-      clk: amlogic: Optimize PLL enable timing
-
- drivers/clk/meson/clk-pll.c | 64 +++++++++++++++++++++++++++------------------
- 1 file changed, 39 insertions(+), 25 deletions(-)
----
-base-commit: 01f3a6d1d59b8e25a6de243b0d73075cf0415eaf
-change-id: 20251020-optimize_pll_driver-7bef91876c41
-
-Best regards,
 -- 
-Chuan Liu <chuan.liu@amlogic.com>
+2.42.0
 
 
 
