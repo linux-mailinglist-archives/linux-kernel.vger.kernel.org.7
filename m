@@ -1,54 +1,78 @@
-Return-Path: <linux-kernel+bounces-880139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F687C24F5F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:20:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88216C24F68
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:20:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E91984E7BD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:20:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A33F7189793A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:20:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82CA92E2DD4;
-	Fri, 31 Oct 2025 12:20:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB412E1743;
+	Fri, 31 Oct 2025 12:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="I/PDbpu2"
-Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="oDuaB826"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B54253B42
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 12:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE27242D6A;
+	Fri, 31 Oct 2025 12:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761913207; cv=none; b=LhIDaKJeKWP4GnByjYtZWUATxzUMP44C0Fkm4BiD+Zl22FTfxtbfqomjDKnuXjPs/gEN+C5F4r91H21VyBGq5nYRNqZcn1Ha8R8EPuWjxnFmKnLSMJTQ5k0rU1XMa7600DW/GBgBdMAoaEHwe/WNawqzHxfcBC3l9BJkNntMpbs=
+	t=1761913220; cv=none; b=hntAyPOBxZDmJxvUkWckFAQj4G4+5yLDHADl9jpq+cSYQAxzt9xsqcZ//TMM4NUW/D0KqMR7yX7oYYswRe2oDT3WJJztwqcjo3P4PY8qe9NzJfL2rUwBQVrrrH9E8Aj9dFTqCvvSeQg+tnMsvSc0nF0MfnoUMgL9ROEerKWNaBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761913207; c=relaxed/simple;
-	bh=9JrQbTFVWDHfwPJ9t2AimbJl8IPZ9iJD9tJ9BlVMq1E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ox7BNXgK9sWEkGgYWi8SEErJpdOKhVN5rgzSCeB+f6s97gfZNdnMghdr8R/ThhNA98MTGG6dQ5g/UjBcmPD853JONDoo5HdVCVWSbv2wgO6bhAJrl4obwKrSjjcb/wv4ZHKVja1GHiWI1b9MdP5aduEbCJ5jxyQC6SnhCaYuVnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=I/PDbpu2; arc=none smtp.client-ip=95.215.58.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761913192;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=QdTeBVN/ilJ1FssJEyKSoAQftpG+92VQsGr2mpeorCA=;
-	b=I/PDbpu2Q5lrX28chT3ap81I+PnSUyIVnqUg6cme2gewMbc56R8C4aZxFNI+Sr3DbHCMD4
-	MFoHcT1VmnmZ7YZJNdUbHgZgnNbIVgpgkSQNfx+Qdz4XM+cUZewiohfm56r2cBtDEC2JE+
-	ucyC2ErFHw8pjSBQ6OiHhsKoHH/QAfc=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Cc: linux-hardening@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] platform: Replace deprecated strcpy in platform_device_alloc
-Date: Fri, 31 Oct 2025 13:18:58 +0100
-Message-ID: <20251031121858.156686-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1761913220; c=relaxed/simple;
+	bh=d4QruSv1lElxzeFhg355PqgTOZcwg4+qTj9fRNfipAw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bdDCxKoMnIRBiacFANltNg2hENbZBJhaWwfD+DSO2lkoq6JGeo6F9GKJ7AKfaOVjLmvCOyaM+3I/c0bdwy427+4QyPa6QQX0TQ1ole7uIbo16FYiYP3TcyYTPXlCgduL+ppqtPZL1neuP9Imuv5OfhohBaLngujUlJurJpuW1EY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=oDuaB826; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: f27bbdfab65311f0b33aeb1e7f16c2b6-20251031
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=gTU6KsNp/+TiTs2Aeqfmf3gR4n/zV/REoxgn6Z0vMHQ=;
+	b=oDuaB826EyfzqnTwMZDMimyB0TJ7Fxf8dRoZiDJMKWqOwKMQkltpr/7iPPqINpfaUvMob/k69eH/1b+ypGzXnT1IW47glToQWELb+ltUzOAFdZi+Bk0JUXfOenw8MrAyeKy/d2UasIOEOyMFM1zc0UJc+KcgOs25WH9iwrOPjW0=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:f2017535-c9cd-4233-a009-60515de517e4,IP:0,UR
+	L:25,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:25
+X-CID-META: VersionHash:a9d874c,CLOUDID:3cabfddf-3890-4bb9-a90e-2a6a4ecf6c66,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102|123|836|888|898,TC:-5,Content:0|
+	15|50,EDM:-3,IP:nil,URL:97|99|83|106|11|1,File:130,RT:0,Bulk:nil,QS:nil,BE
+	C:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: f27bbdfab65311f0b33aeb1e7f16c2b6-20251031
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
+	(envelope-from <peter.wang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1198405061; Fri, 31 Oct 2025 20:20:11 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Fri, 31 Oct 2025 20:20:09 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1748.26 via Frontend Transport; Fri, 31 Oct 2025 20:20:09 +0800
+From: <peter.wang@mediatek.com>
+To: <linux-scsi@vger.kernel.org>
+CC: <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
+	<robh@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+	<conor+dt@kernel.org>, <jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
+	<lgirdwood@gmail.com>, <broonie@kernel.org>, <matthias.bgg@gmail.com>,
+	<angelogioacchino.delregno@collabora.com>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-arm-kernel@lists.infradead.org>, <wenst@chromium.org>,
+	<michael@walle.cc>, <conor.dooley@microchip.com>, <chu.stanley@gmail.com>,
+	<chun-hung.wu@mediatek.com>, <peter.wang@mediatek.com>,
+	<alice.chao@mediatek.com>, <naomi.chu@mediatek.com>, <ed.tsai@mediatek.com>
+Subject: [PATCH v1] dt-bindings: ufs: mediatek,ufs: Update maintainer information in mediatek,ufs.yaml
+Date: Fri, 31 Oct 2025 20:19:12 +0800
+Message-ID: <20251031122008.1517549-1-peter.wang@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,48 +80,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain
+X-MTK: N
 
-First, use struct_size(), which provides additional compile-time checks
-for structures with flexible array members (e.g., __must_be_array()), to
-calculate the number of bytes to allocate for a new 'platform_object'.
+From: Peter Wang <peter.wang@mediatek.com>
 
-Then, since we know the length of 'name' and that it is guaranteed to be
-NUL-terminated, replace the deprecated strcpy() with a simple memcpy().
+Replace Stanley Chu with me and Chaotian in the maintainers field,
+since his email address is no longer active.
 
-Link: https://github.com/KSPP/linux/issues/88
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Signed-off-by: Peter Wang <peter.wang@mediatek.com>
 ---
- drivers/base/platform.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/ufs/mediatek,ufs.yaml | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-index 09450349cf32..55ec4fb023e2 100644
---- a/drivers/base/platform.c
-+++ b/drivers/base/platform.c
-@@ -13,6 +13,7 @@
- #include <linux/platform_device.h>
- #include <linux/of_device.h>
- #include <linux/of_irq.h>
-+#include <linux/overflow.h>
- #include <linux/module.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
-@@ -577,10 +578,11 @@ static void platform_device_release(struct device *dev)
- struct platform_device *platform_device_alloc(const char *name, int id)
- {
- 	struct platform_object *pa;
-+	size_t name_len = strlen(name);
+diff --git a/Documentation/devicetree/bindings/ufs/mediatek,ufs.yaml b/Documentation/devicetree/bindings/ufs/mediatek,ufs.yaml
+index 1dec54fb00f3..15c347f5e660 100644
+--- a/Documentation/devicetree/bindings/ufs/mediatek,ufs.yaml
++++ b/Documentation/devicetree/bindings/ufs/mediatek,ufs.yaml
+@@ -7,7 +7,8 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Mediatek Universal Flash Storage (UFS) Controller
  
--	pa = kzalloc(sizeof(*pa) + strlen(name) + 1, GFP_KERNEL);
-+	pa = kzalloc(struct_size(pa, name, name_len + 1), GFP_KERNEL);
- 	if (pa) {
--		strcpy(pa->name, name);
-+		memcpy(pa->name, name, name_len + 1);
- 		pa->pdev.name = pa->name;
- 		pa->pdev.id = id;
- 		device_initialize(&pa->pdev.dev);
+ maintainers:
+-  - Stanley Chu <stanley.chu@mediatek.com>
++  - Peter Wang <peter.wang@mediatek.com>
++  - Chaotian Jing <chaotian.jing@mediatek.com>
+ 
+ properties:
+   compatible:
 -- 
-2.51.1
+2.45.2
 
 
