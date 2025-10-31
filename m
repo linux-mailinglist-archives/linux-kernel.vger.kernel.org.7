@@ -1,119 +1,167 @@
-Return-Path: <linux-kernel+bounces-880989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B38EC27229
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 23:38:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22625C27238
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 23:47:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8F9744F36B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 22:37:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B9353AD55A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 22:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F13672FB990;
-	Fri, 31 Oct 2025 22:37:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1452F4A06;
+	Fri, 31 Oct 2025 22:47:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3K6A1ECk"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MU6ig07P"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DB12EB84F
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 22:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 650FF25FA29;
+	Fri, 31 Oct 2025 22:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761950258; cv=none; b=nj4MDR1SyGlMfJYzSHQhykexChsqA+v7gSm4Xojha0A8r0GWgr44X/ZreLQCHHpU8O8Ef2Jt5gq+H9t46aRQcIg4yo3pDxtJnQPV/5Ce3L3dQSwuD6acx+Hs2g5TbCfNdHvofoZsRDloKEeVeIaCpATDg/ciiLOfTZ1/3dDPFBo=
+	t=1761950844; cv=none; b=ZcK8QSNeNHceG3sDA9a26pen/MwlrGMl2XIDm+rKtBRSaEN3dZkZk8/yzim3/26zSLzq0zwNradjX7qJIBmghP4Kwgi3FaBP6qZtLq/AT28A49Gc3UM/WHxJ1cJWbWDKGlMqESo+qjigkfiQm53A00Ub63+/ldQ0U7kCCkZt7TE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761950258; c=relaxed/simple;
-	bh=vux0Wwx/9W3FtLrC7lRRcKcZZ6Lsj4RQdTq5HQzzrgs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=JvgiBq8EsbmRu1QMx5Gip9m6A9H3+hQwNefymaBDjeYyH2MGR+zEVTdW60q2oyezaeiwSQXe2hcvM75ddngwGm8A/vHOGYNhVsG/3eaMioFLyEgTe0BHGoXp4ITiDyujHOKhPmhR5Sf274Nb4DpQWUt44CmkVt7OggSCsgGp/Kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3K6A1ECk; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-340c0604e3dso2394a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 15:37:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761950256; x=1762555056; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2T//pv73tE9Ei8o1XpXkzLHPQNKRotM7rF6yYw0F0ng=;
-        b=3K6A1ECkAh+26/VlWFKuVCrJ/YLOpSz5sm9cbHT4Vt5AvKQEMyehBLDF1rLv0/XU9o
-         PQZcD2q4VUMuarS+ia2u0SiLKQaCsYsG++i0BSWhV7P6oUuW4fZHiTXDtEF6ItckxYV1
-         p9UThRufukTUcFOCoIgGzNzsy5/Zc3ukaP2P19L1Meg/7hfsA+O4bQSIFaIl1u4W7tWO
-         2EkyTFkfNY42GpfuLeMYCfffk50bl1tg8SfghBA2m5IS8GK1dekvz9tZMoks8GRKKoBW
-         3FjHVaN5sd8oQ58GvqfuefVtqyFHEDlPhbA7lGxAP/VHlc4wJbKaLCNcbObsDnmsxxKG
-         QF4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761950256; x=1762555056;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2T//pv73tE9Ei8o1XpXkzLHPQNKRotM7rF6yYw0F0ng=;
-        b=FWUEqM39tcyk/wbpcFCjbXU+bs0jr3/9eVsOrPL3fjo9kriLOu5bIX9vGhQsd+5Ib+
-         OJ22l1dmI9T3srL+/wSyMDReneuPKi66Bh/A4PKK0l45In9rgOGtVCLKRzn1StoR0GMq
-         saFQ0dbCSKJWgi5ioTtldmZvnhBWvu9k0LOdgNqXE9uu1eoUtdPlUSWJfgK1b2nBt1Gq
-         2SUGalgS4bwAzb61tB6hqKVorXOR/9eVK7/VnMmJmnXLeitROQNvc6pFpH+KAeImtr2a
-         z9k0YR61lEX1IIbYVBQELmAGiwUJb9bxlspF5SazDLkUutg8L3PjvnIjcylKg+Hc0SCK
-         maVg==
-X-Forwarded-Encrypted: i=1; AJvYcCW8etzBv5EU/ulUYV/8LiKPCnGxeqn5LOBr9YbhkQamp5icgn+mncVrXidVI4GGJQN4ieDaT5fh9BBHhkg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2Ai4pEQPhWnkJBHk9SQqDvu4sAZ7zymO5DzPIOtFp+5fUfDZI
-	076FQyjn1GwnuqVrOpdby7yHQuRUhfoPaMMWAKCYT5c1uIHDa+FmBKegvf/yU9noYXdG7hfKeZ3
-	U1iDaUw==
-X-Google-Smtp-Source: AGHT+IFBSsgOmDJAP0ZowasZdt6RS6QGflURINqQVeeKx6xgginy5tuxDnXnTajxz/ozqhWCKYOExEAszeA=
-X-Received: from pjzh17.prod.google.com ([2002:a17:90a:ea91:b0:340:bd8e:458f])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:dfcc:b0:339:f09b:d36f
- with SMTP id 98e67ed59e1d1-3408308a1b0mr5879498a91.28.1761950256248; Fri, 31
- Oct 2025 15:37:36 -0700 (PDT)
-Date: Fri, 31 Oct 2025 15:37:34 -0700
-In-Reply-To: <20251031222804.s26squjrtbaq7aly@desk>
+	s=arc-20240116; t=1761950844; c=relaxed/simple;
+	bh=r3vPPagarbLdHv2gqbl6ANprEGeb6pcMrvSRNr05Fgw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I+vE+2mBMOlxACLW/2+udrEXWVAtIvtYmnVjXWevG+Ag/rowIp8nVm2Ehhq2zVhOBq+B1JTJAzvx1wSGvdZmkJ8Penn9cYUVBwRxgq6TTS6flDfzc80Y7aLkO4l8yBaj8+SpV3G2aXwOgPAGANvIEiWqmYAQR71WxDpb2SQQJzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MU6ig07P; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761950842; x=1793486842;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=r3vPPagarbLdHv2gqbl6ANprEGeb6pcMrvSRNr05Fgw=;
+  b=MU6ig07P702xOqyGYTyS3bXjpW13UAc+o15zMA1qvlBcFn6opkT1EAP6
+   WZFcsRukcGXtqmaxEXe3UsiLinNQwX+6Wx9tP9+/ecLh3PC70CjQvgbGo
+   EiRLUzPwC1NeMu0fssZxRNz6avlmElCBRHncEM7UJeu1ESPLHCOuu64Vp
+   87fPA1vQDHwkxwFbshLR5sH3KQHGAnKWuHiKT8opTnoi1S3R1As7GjhWQ
+   Jj62671Y6sWplZbn2n/ooVHevZ2ebI7bwHJF5+YlkuI7XtempPmB+gfB1
+   0OPXbs/2vjJfjiB3V+S2yl/HsUNRZpVofw2FbnQOazaNNcvKuA59oeVXV
+   w==;
+X-CSE-ConnectionGUID: qTotVJKSTAeGaIGDVdSSxQ==
+X-CSE-MsgGUID: /ZnkBqGvQ2uugzE3IyOToQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="75467971"
+X-IronPort-AV: E=Sophos;i="6.19,270,1754982000"; 
+   d="scan'208";a="75467971"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 15:47:22 -0700
+X-CSE-ConnectionGUID: y20rF+GEQKCg1fBRC32BCQ==
+X-CSE-MsgGUID: DeNe8T2iSau4hxBj3KmU3Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,270,1754982000"; 
+   d="scan'208";a="216999108"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa002.jf.intel.com with ESMTP; 31 Oct 2025 15:47:18 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vExtS-000NhY-1M;
+	Fri, 31 Oct 2025 22:46:57 +0000
+Date: Sat, 1 Nov 2025 06:43:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, viro@zeniv.linux.org.uk, jack@suse.cz,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	torvalds@linux-foundation.org, pfalcato@suse.de,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: Re: [PATCH v4] fs: hide names_cachep behind runtime access machinery
+Message-ID: <202511010440.FLitz9Fi-lkp@intel.com>
+References: <20251030105242.801528-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251031003040.3491385-1-seanjc@google.com> <20251031003040.3491385-4-seanjc@google.com>
- <20251031222804.s26squjrtbaq7aly@desk>
-Message-ID: <aQU6LqP-PxBQ-R0m@google.com>
-Subject: Re: [PATCH v4 3/8] x86/bugs: Use an X86_FEATURE_xxx flag for the MMIO
- Stale Data mitigation
-From: Sean Christopherson <seanjc@google.com>
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Brendan Jackman <jackmanb@google.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251030105242.801528-1-mjguzik@gmail.com>
 
-On Fri, Oct 31, 2025, Pawan Gupta wrote:
-> On Thu, Oct 30, 2025 at 05:30:35PM -0700, Sean Christopherson wrote:
-> > Convert the MMIO Stale Data mitigation flag from a static branch into an
-> > X86_FEATURE_xxx so that it can be used via ALTERNATIVE_2 in KVM.
-> > 
-> > No functional change intended.
-> > 
-> > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > ---
-> >  arch/x86/include/asm/cpufeatures.h   |  1 +
-> >  arch/x86/include/asm/nospec-branch.h |  2 --
-> >  arch/x86/kernel/cpu/bugs.c           | 11 +----------
-> >  arch/x86/kvm/mmu/spte.c              |  2 +-
-> >  arch/x86/kvm/vmx/vmx.c               |  4 ++--
-> >  5 files changed, 5 insertions(+), 15 deletions(-)
-> > 
-> > diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-> > index 7129eb44adad..d1d7b5ec6425 100644
-> > --- a/arch/x86/include/asm/cpufeatures.h
-> > +++ b/arch/x86/include/asm/cpufeatures.h
-> > @@ -501,6 +501,7 @@
-> >  #define X86_FEATURE_ABMC		(21*32+15) /* Assignable Bandwidth Monitoring Counters */
-> >  #define X86_FEATURE_MSR_IMM		(21*32+16) /* MSR immediate form instructions */
-> >  #define X86_FEATURE_X2AVIC_EXT		(21*32+17) /* AMD SVM x2AVIC support for 4k vCPUs */
-> > +#define X86_FEATURE_CLEAR_CPU_BUF_MMIO	(21*32+18) /* Clear CPU buffers using VERW before VMRUN, iff the vCPU can access host MMIO*/
-> 
-> Some bikeshedding from my side too:
-> s/iff/if/
+Hi Mateusz,
 
-Heh, that's actually intentional.  "iff" is shorthand for "if and only if".  But
-this isn't the first time my use of "iff" has confused people, so I've no objection
-to switching to "if".
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on arnd-asm-generic/master]
+[also build test WARNING on linus/master brauner-vfs/vfs.all linux/master v6.18-rc3 next-20251031]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Mateusz-Guzik/fs-hide-names_cachep-behind-runtime-access-machinery/20251030-185523
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git master
+patch link:    https://lore.kernel.org/r/20251030105242.801528-1-mjguzik%40gmail.com
+patch subject: [PATCH v4] fs: hide names_cachep behind runtime access machinery
+config: i386-randconfig-061-20251031 (https://download.01.org/0day-ci/archive/20251101/202511010440.FLitz9Fi-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251101/202511010440.FLitz9Fi-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511010440.FLitz9Fi-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+   fs/d_path.c:195:9: sparse: sparse: context imbalance in 'prepend_path' - wrong count at exit
+   fs/d_path.c:359:9: sparse: sparse: context imbalance in '__dentry_path' - wrong count at exit
+>> fs/d_path.c:416:22: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+>> fs/d_path.c:416:22: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+   fs/d_path.c:446:9: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+--
+>> fs/namei.c:146:18: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+>> fs/namei.c:146:18: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+   fs/namei.c:163:25: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+   fs/namei.c:169:25: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+   fs/namei.c:191:25: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+   fs/namei.c:197:25: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+   fs/namei.c:203:25: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+   fs/namei.c:208:25: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+   fs/namei.c:249:18: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+   fs/namei.c:249:18: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+   fs/namei.c:261:25: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+   fs/namei.c:267:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+   fs/namei.c:294:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+   fs/namei.c:297:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+   fs/namei.c: note: in included file (through include/linux/rbtree.h, include/linux/mm_types.h, include/linux/mmzone.h, ...):
+   include/linux/rcupdate.h:871:25: sparse: sparse: context imbalance in 'leave_rcu' - unexpected unlock
+   fs/namei.c:2518:19: sparse: sparse: context imbalance in 'path_init' - different lock contexts for basic block
+--
+   drivers/base/firmware_loader/main.c:229:9: sparse: sparse: context imbalance in 'free_fw_priv' - wrong count at exit
+>> drivers/base/firmware_loader/main.c:509:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+>> drivers/base/firmware_loader/main.c:509:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+   drivers/base/firmware_loader/main.c:591:9: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
+
+vim +416 fs/d_path.c
+
+7a5cf791a74764 Al Viro 2018-03-05  393  
+7a5cf791a74764 Al Viro 2018-03-05  394  /*
+7a5cf791a74764 Al Viro 2018-03-05  395   * NOTE! The user-level library version returns a
+7a5cf791a74764 Al Viro 2018-03-05  396   * character pointer. The kernel system call just
+7a5cf791a74764 Al Viro 2018-03-05  397   * returns the length of the buffer filled (which
+7a5cf791a74764 Al Viro 2018-03-05  398   * includes the ending '\0' character), or a negative
+7a5cf791a74764 Al Viro 2018-03-05  399   * error value. So libc would do something like
+7a5cf791a74764 Al Viro 2018-03-05  400   *
+7a5cf791a74764 Al Viro 2018-03-05  401   *	char *getcwd(char * buf, size_t size)
+7a5cf791a74764 Al Viro 2018-03-05  402   *	{
+7a5cf791a74764 Al Viro 2018-03-05  403   *		int retval;
+7a5cf791a74764 Al Viro 2018-03-05  404   *
+7a5cf791a74764 Al Viro 2018-03-05  405   *		retval = sys_getcwd(buf, size);
+7a5cf791a74764 Al Viro 2018-03-05  406   *		if (retval >= 0)
+7a5cf791a74764 Al Viro 2018-03-05  407   *			return buf;
+7a5cf791a74764 Al Viro 2018-03-05  408   *		errno = -retval;
+7a5cf791a74764 Al Viro 2018-03-05  409   *		return NULL;
+7a5cf791a74764 Al Viro 2018-03-05  410   *	}
+7a5cf791a74764 Al Viro 2018-03-05  411   */
+7a5cf791a74764 Al Viro 2018-03-05  412  SYSCALL_DEFINE2(getcwd, char __user *, buf, unsigned long, size)
+7a5cf791a74764 Al Viro 2018-03-05  413  {
+7a5cf791a74764 Al Viro 2018-03-05  414  	int error;
+7a5cf791a74764 Al Viro 2018-03-05  415  	struct path pwd, root;
+7a5cf791a74764 Al Viro 2018-03-05 @416  	char *page = __getname();
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
