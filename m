@@ -1,55 +1,49 @@
-Return-Path: <linux-kernel+bounces-880724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3410C26674
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:38:44 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3648C26587
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:29:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3C8864FBDD4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:35:01 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2983934AFA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 930403587A0;
-	Fri, 31 Oct 2025 17:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FDC32ED4B;
+	Fri, 31 Oct 2025 17:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Vncpdjk7"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="uId7y65h"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F3CB35773E
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:28:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18681309DDB
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761931730; cv=none; b=re3KdGpQW7MEjyAqYZB8sf0BPke8ex8Tzek6Mn1tXwq8/8Yj2Ni3Xdak2EFLvu+1c7mgxyy301+L1B9t8mn5A3/+vuVsPI3hFqLnRsOxYyxbSax0KX9AYSHYSRStNQq776o/p6cqBy9+bdBH6NZ/zidSBohVEW1BTAqKPAffNRA=
+	t=1761931697; cv=none; b=aspUUaME8WudjJ72sW1pPFvsnrZzpUcOESqeHnTpyZ/eiBCODA1SQ/GhpLYjmwVvRs6rD2pmvftthUZF9/1wQygdvvnPk1oOUv0vDOOqmX6lF9ulMWUfnALBHucoM6ONGBrE9/jPs1M2Fpf5AureA+r/XYxpCSI8m0MV/VqeXW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761931730; c=relaxed/simple;
-	bh=e9FC+3UzvkjqWZ+ix07WU+iFe6vTYQmUx/syuc42dF0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CrfwMQ9yzX8qPOGDKN04x6J6k/fjn18hL0RRoMV+9RA2Ri1wc+vd+0ZE4/wRm1oMoFY6dhTnkI6WC1dAIZFtwzqc68oHMFjwBhtuoFZxdPICpIBIzcVzKKfT88QHWho/bEX8WGBDg6v/YKAQObyzuDUk6CJP6lOTBDcUxiTF+Oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Vncpdjk7; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id A91594E4143F;
-	Fri, 31 Oct 2025 17:28:47 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 7F16360704;
-	Fri, 31 Oct 2025 17:28:47 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0D1F011818007;
-	Fri, 31 Oct 2025 18:28:45 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761931726; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=Yqsm5byi+NRPnRhNkd8UBM/Bmv6Ofu8I+HrZRoBLCI0=;
-	b=Vncpdjk72ik/OAK7vIr+QdHzNB7KIZeweosE6fE9DJRk/oLB1X2XDCYOzOdCCSK7hpuIJS
-	6pbUX//afKCvZVnkDCtmN480fbGITJFS/X2fVGGEDckMaE+2dntQvo+l9D3s74DEZf7AzJ
-	KCm76pLqqO3+GxlXoCczI+Sf1Qp4sKr75ZGhRqGgSw5A5aXNHanWDRuxmbJgTjeBEG4PZb
-	3pVYOMO95HZOL2m+R+dAgC8w/0EkYOpZnRlQ+qN64e2R/OgqmN7xwAc22vQ48pKZm8EYke
-	1LePAD795uNNNyBM64E7koiaGE23wn5NwasJkrKAqBJKA0V9vW1QPU9f90vg/g==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Fri, 31 Oct 2025 18:27:12 +0100
-Subject: [PATCH 28/28] mtd: spinand: winbond: W35N octal DTR support
+	s=arc-20240116; t=1761931697; c=relaxed/simple;
+	bh=9SSY1folB+duN1Z637f7cJ0O43yr4Zt9RriQBj05roM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=McBW+Q0tBtrmdMBzQFGudq2HD1oLL84XIurmc8lzs6nN5x+b99ZnjvdF/qAGwuhrBk/MMaoZJ9okPH6wSMbwlNX4mFKiIDTHnVv27RdF2T89vdRk+0lZ7KU1lImAQj4uaHyrT8tKS1Mai2UfREmGzMiPPAdYLteeKTMUjV5fQeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=uId7y65h; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:1c69:314e:ee86:ae6e:30:9d13])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 19DC1B5;
+	Fri, 31 Oct 2025 18:26:14 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1761931575;
+	bh=9SSY1folB+duN1Z637f7cJ0O43yr4Zt9RriQBj05roM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=uId7y65hlTu2bACspNHUnUPnO2ewYDVwKqha0H6TwWXSU/U0SJ9/NB3tq3+Rm/QZa
+	 sxp8z4lFiTdlrkM28Uklg2bDOr1yTmhMwUTwE6naVkjmSA9Wdgiqp7F8lR/lWdtX7l
+	 zuN4kxbSCGvvz9FCy+/0kfEnbHkAylGQVnqJrUmA=
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+Subject: [PATCH 00/13] platform/raspberrypi: Add Broadcom Videocore shared
+ memory support
+Date: Fri, 31 Oct 2025 22:57:20 +0530
+Message-Id: <20251031-b4-vc-sm-cma-v1-0-0dd5c0ec3f5c@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,110 +52,117 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251031-winbond-v6-17-rc1-oddr-v1-28-be42de23ebf1@bootlin.com>
-References: <20251031-winbond-v6-17-rc1-oddr-v1-0-be42de23ebf1@bootlin.com>
-In-Reply-To: <20251031-winbond-v6-17-rc1-oddr-v1-0-be42de23ebf1@bootlin.com>
-To: Mark Brown <broonie@kernel.org>, Richard Weinberger <richard@nod.at>, 
- Vignesh Raghavendra <vigneshr@ti.com>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Pratyush Yadav <pratyush@kernel.org>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Steam Lin <STLin2@winbond.com>, Santhosh Kumar K <s-k6@ti.com>, 
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-mtd@lists.infradead.org, Miquel Raynal <miquel.raynal@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAHjxBGkC/yXNwQ6CMAyA4VchO1szN4FBjPE9DIfRFdlhICsSE
+ 8O7O+D4t+nXn2CKnljU2U9EWjz7cUhxOWUCezu8CLxLLZRU+UVqCe0VFgQOgMFCV5SqRF2hU7l
+ IJ+9Inf/u3LM5OtL0Sep8DEUgZrurdXY7UFUlsfcTOOJ52y0aJDhrXIFGo8L84R1ZHod2tNGdc
+ Qz37VlrmSBF8HOdaWuKQprSGF2JZl3/IRC+59kAAAA=
+X-Change-ID: 20251030-b4-vc-sm-cma-f6727c39cd25
+To: Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, 
+ bcm-kernel-feedback-list@broadcom.com
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Phil Elwell <phil@raspberrypi.com>, Stefan Wahren <wahrenst@gmx.net>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Kieran Bingham <kieran.bingham@ideasonboard.com>, 
+ Sumit Semwal <sumit.semwal@linaro.org>, 
+ =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Jai Luthra <jai.luthra@ideasonboard.com>, 
+ Dave Stevenson <dave.stevenson@raspberrypi.org>, 
+ Dom Cobley <popcornmix@gmail.com>, 
+ Alexander Winkowski <dereference23@outlook.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Juerg Haefliger <juerg.haefliger@canonical.com>
 X-Mailer: b4 0.14.2
-X-Last-TLS-Session-Version: TLSv1.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4137;
+ i=jai.luthra@ideasonboard.com; h=from:subject:message-id;
+ bh=9SSY1folB+duN1Z637f7cJ0O43yr4Zt9RriQBj05roM=;
+ b=owEBbQKS/ZANAwAKAUPekfkkmnFFAcsmYgBpBPGTIF52f00vRd2pwHOlyYuo04j8E+9SkmKbr
+ CumA/Ys9leJAjMEAAEKAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCaQTxkwAKCRBD3pH5JJpx
+ RZSxEADPMPUvu2vFXvGNh0skoDic2m8IZq4TOVSmTG0MihhMvHlaoft3qTBJFmIW9UMiid4plg4
+ 0/YTxc2mvYn26HrhtHq3mpAr88EdHq0ew7168lt2aFmQzffx9SnACNOxaDh8vlCJPfXJHnr1oyB
+ 8SFJuhftOKU0d0q1BolETdOK6ZIF1V26nAgKuK7HcSnVg+6LPY9yexPSdbpCXjHCQrteYTz6AB/
+ Iw6nlfS9NN2rpIbPdayWlBX3Hvu9FwjJFO9CFxc+pHi8yp4nMlB0tQHwY0pq1pddLTsbRYZD7zp
+ toh5brPceUEWgMnVutqbi4KB6gxSsa9EP+kfLsw8JO5e8Oy3K8sj1NtvnNck9XkJlk20C+rrA6D
+ Mfng5Ko6DAeCmC8rgGkI/qgQCLMjboBtGQNfR3QQABsHQBYN2Jd28IjBQ8I1QkuYilrDUmSVQ88
+ m0I3HGgruYNxSOQUanuAh44nNzUbrBoGjUQhF9SfM7i1XvJSLipw37hv9h+NWIM4+kLmoYMlw2X
+ sS9x7m4X2iTc544HfmURFye1aU5ZVsG3l8AmSwr3r88mrHySFV8ih8XSyF6gB3y/iDT+KLnSDB6
+ LvUmmSiY0qlPHnwO10rmkATrhpws+YLMT07POOYyD4vtxMxDITcwJ4De/rNuH/NpFGUMCDXnLFt
+ QIB+ONdx2mmwWTA==
+X-Developer-Key: i=jai.luthra@ideasonboard.com; a=openpgp;
+ fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
 
-Extend the support for the W35N chip family by supporting the ODTR bus
-interface. The chip is capable to run in this mode, which brings a
-significant performance improvement.
+Hi,
 
-1S-8S-8S:
+The vc-sm-cma driver allows contiguous memory blocks to be imported into
+the VideoCore VPU memory map. This series adds support for this driver
+and various changes to VCHIQ MMAL layer required to get this functional.
 
-   # flash_speed /dev/mtd0 -c1 -d
-   eraseblock write speed is 7529 KiB/s
-   eraseblock read speed is 15058 KiB/s
+These changes have lived in the staging directory of the downstream
+Raspberry Pi tree since quite some time, but are necessary for getting
+the VCHIQ based peripherals like the ISP and codec functional in
+mainline.
 
-8D-8D-8D:
+This series depends on an earlier series, destaging VCHIQ interface and
+MMAL driver, which was posted here:
+https://lore.kernel.org/all/20251029-vchiq-destage-v3-0-da8d6c83c2c5@ideasonboard.com/
 
-   # flash_speed /dev/mtd0 -c1 -d
-   eraseblock write speed is 9481 KiB/s
-   eraseblock read speed is 23272 KiB/s
+Thanks,
+	Jai
 
-This is +55% read speed and +26% write speed with the same hardware.
-
-Tests have been conducted with a TI AM62A7 using the Cadence quad SPI
-controller.
-
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
 ---
- drivers/mtd/nand/spi/winbond.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+Dave Stevenson (13):
+      platform/raspberrypi: vchiq-mmal: Avoid use of bool in structures
+      platform/raspberrypi: vchiq-mmal: Add support for event callbacks.
+      platform/raspberrypi: vchiq-mmal: Support sending data to MMAL ports
+      platform/raspberrypi: vchiq-mmal: Fix client_component for 64 bit kernel
+      platform/raspberrypi: vchiq-mmal: Add in the bayer and gray formats
+      platform/raspberrypi: vchiq-mmal: Update video parameters
+      platform/raspberrypi: vchiq-mmal: Free the event context for control ports
+      platform/raspberrypi: vchiq-mmal: Fix memory leak in error path
+      platform/raspberrypi: Add new vc-sm-cma driver
+      platform/raspberrypi: vchiq-mmal: Use vc-sm-cma to support zero copy
+      platform/raspberrypi: vchiq-mmal: Reset buffers_with_vpu on port_enable
+      platform/raspberrypi: vchiq-mmal: Add defines for mmal_es_format flags
+      platform/raspberrypi: vchiq: Register vc-sm-cma as a platform driver
 
-diff --git a/drivers/mtd/nand/spi/winbond.c b/drivers/mtd/nand/spi/winbond.c
-index 90e4ece00cf5e727df87cb2367d9f85a2a6759bb..8430ae307be0fefded8e27109403a59b9b17b089 100644
---- a/drivers/mtd/nand/spi/winbond.c
-+++ b/drivers/mtd/nand/spi/winbond.c
-@@ -36,6 +36,8 @@
-  */
- 
- static SPINAND_OP_VARIANTS(read_cache_octal_variants,
-+		SPINAND_PAGE_READ_FROM_CACHE_8D_8D_8D_OP(0, 24, NULL, 0, 120 * HZ_PER_MHZ),
-+		SPINAND_PAGE_READ_FROM_CACHE_8D_8D_8D_OP(0, 16, NULL, 0, 86 * HZ_PER_MHZ),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_1D_8D_OP(0, 3, NULL, 0, 120 * HZ_PER_MHZ),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_1D_8D_OP(0, 2, NULL, 0, 105 * HZ_PER_MHZ),
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_8S_8S_OP(0, 20, NULL, 0, 0),
-@@ -48,11 +50,13 @@ static SPINAND_OP_VARIANTS(read_cache_octal_variants,
- 		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_1S_OP(0, 1, NULL, 0, 0));
- 
- static SPINAND_OP_VARIANTS(write_cache_octal_variants,
-+		SPINAND_PROG_LOAD_8D_8D_8D_OP(true, 0, NULL, 0),
- 		SPINAND_PROG_LOAD_1S_8S_8S_OP(true, 0, NULL, 0),
- 		SPINAND_PROG_LOAD_1S_1S_8S_OP(0, NULL, 0),
- 		SPINAND_PROG_LOAD_1S_1S_1S_OP(true, 0, NULL, 0));
- 
- static SPINAND_OP_VARIANTS(update_cache_octal_variants,
-+		SPINAND_PROG_LOAD_8D_8D_8D_OP(false, 0, NULL, 0),
- 		SPINAND_PROG_LOAD_1S_8S_8S_OP(false, 0, NULL, 0),
- 		SPINAND_PROG_LOAD_1S_1S_1S_OP(false, 0, NULL, 0));
- 
-@@ -93,13 +97,22 @@ static SPINAND_OP_VARIANTS(update_cache_variants,
- 		   SPI_MEM_OP_NO_DUMMY,					\
- 		   SPI_MEM_OP_DATA_OUT(1, buf, 1))
- 
-+#define SPINAND_WINBOND_WRITE_VCR_8D_8D_8D(reg, buf)			\
-+	SPI_MEM_OP(SPI_MEM_DTR_OP_RPT_CMD(0x81, 8),			\
-+		   SPI_MEM_DTR_OP_ADDR(4, reg, 8),			\
-+		   SPI_MEM_OP_NO_DUMMY,					\
-+		   SPI_MEM_DTR_OP_DATA_OUT(2, buf, 8))
-+
- static SPINAND_OP_VARIANTS(winbond_w35_ops,
--		SPINAND_WINBOND_WRITE_VCR_1S_1S_1S(0, NULL));
-+		SPINAND_WINBOND_WRITE_VCR_1S_1S_1S(0, NULL),
-+		SPINAND_WINBOND_WRITE_VCR_8D_8D_8D(0, NULL));
- 
- static struct spi_mem_op
- spinand_fill_winbond_write_vcr_op(struct spinand_device *spinand, u8 reg, void *valptr)
- {
--	return (struct spi_mem_op)SPINAND_WINBOND_WRITE_VCR_1S_1S_1S(reg, valptr);
-+	return (spinand->bus_iface == SSDR) ?
-+		(struct spi_mem_op)SPINAND_WINBOND_WRITE_VCR_1S_1S_1S(reg, valptr) :
-+		(struct spi_mem_op)SPINAND_WINBOND_WRITE_VCR_8D_8D_8D(reg, valptr);
- }
- 
- #define SPINAND_WINBOND_SELECT_TARGET_1S_0_1S(buf)			\
-@@ -390,6 +403,9 @@ static int w35n0xjw_vcr_cfg(struct spinand_device *spinand,
- 	case SSDR:
- 		ref_op = spinand->ssdr_op_templates.read_cache;
- 		break;
-+	case ODTR:
-+		ref_op = spinand->odtr_op_templates.read_cache;
-+		break;
- 	default:
- 		return -EOPNOTSUPP;
- 	};
+ MAINTAINERS                                               |    7 +
+ drivers/platform/raspberrypi/Kconfig                      |    2 +
+ drivers/platform/raspberrypi/Makefile                     |    1 +
+ drivers/platform/raspberrypi/vc-sm-cma/Kconfig            |    9 +
+ drivers/platform/raspberrypi/vc-sm-cma/Makefile           |    9 +
+ drivers/platform/raspberrypi/vc-sm-cma/vc_sm.c            | 1619 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/platform/raspberrypi/vc-sm-cma/vc_sm.h            |   83 ++++++
+ drivers/platform/raspberrypi/vc-sm-cma/vc_sm_cma_vchi.c   |  513 ++++++++++++++++++++++++++++++++++++
+ drivers/platform/raspberrypi/vc-sm-cma/vc_sm_cma_vchi.h   |   63 +++++
+ drivers/platform/raspberrypi/vc-sm-cma/vc_sm_defs.h       |  298 +++++++++++++++++++++
+ drivers/platform/raspberrypi/vc-sm-cma/vc_sm_knl.h        |   28 ++
+ drivers/platform/raspberrypi/vchiq-interface/vchiq_arm.c  |    3 +
+ drivers/platform/raspberrypi/vchiq-mmal/Kconfig           |    3 +-
+ drivers/platform/raspberrypi/vchiq-mmal/mmal-common.h     |    5 +
+ drivers/platform/raspberrypi/vchiq-mmal/mmal-encodings.h  |   41 +++
+ drivers/platform/raspberrypi/vchiq-mmal/mmal-msg-format.h |   10 +
+ drivers/platform/raspberrypi/vchiq-mmal/mmal-msg.h        |   35 +++
+ drivers/platform/raspberrypi/vchiq-mmal/mmal-parameters.h |   38 ++-
+ drivers/platform/raspberrypi/vchiq-mmal/mmal-vchiq.c      |  269 +++++++++++++++++--
+ drivers/platform/raspberrypi/vchiq-mmal/mmal-vchiq.h      |    5 +
+ include/linux/raspberrypi/vc_sm_cma_ioctl.h               |  114 ++++++++
+ 21 files changed, 3132 insertions(+), 23 deletions(-)
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251030-b4-vc-sm-cma-f6727c39cd25
+prerequisite-message-id: <20251029-vchiq-destage-v3-0-da8d6c83c2c5@ideasonboard.com>
+prerequisite-patch-id: b0a98fe9aa5b5cd548c55f01fb51962d15c2a86d
+prerequisite-patch-id: a745143658be8020e9c906f7b503473b54cacb82
+prerequisite-patch-id: 163c9bc2d42a9b743ae726d1e5559fdc8988d5a2
+prerequisite-patch-id: 8d81e9507d7e47daca70eb681b1400d96e5cd869
+prerequisite-patch-id: 28f7ab0db3909b8ab9201d47741e7f941322680f
+prerequisite-patch-id: c39620e68ca4ef9441f621db946c072f3be66721
+prerequisite-patch-id: 47af76c416f5d80839e384ffb5b2d37032d2ee7a
 
+Best regards,
 -- 
-2.51.0
+Jai Luthra <jai.luthra@ideasonboard.com>
 
 
