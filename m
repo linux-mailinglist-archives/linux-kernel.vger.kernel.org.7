@@ -1,250 +1,119 @@
-Return-Path: <linux-kernel+bounces-880496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93DF9C25E3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:45:55 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93FA7C25E2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:44:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AE3C461C42
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:45:36 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 40835347DDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5675F2E1726;
-	Fri, 31 Oct 2025 15:45:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673B12E22AA;
+	Fri, 31 Oct 2025 15:44:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EapjZcLT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="hMoOV3ZA"
+Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B102E0418
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 15:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C7E2DEA67;
+	Fri, 31 Oct 2025 15:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761925523; cv=none; b=TCg2J0AzgIYX9fcOgg2pPVm72k05eoycScSZL6BcgkDKXK8b9r2nJRGPDTv8d6JIU7ohc6xc1uh8z5mBrYDAtS7x/4ehtGENHZ77vs4Ubor5rlou4rcTcHWLvNOZjsutoy+ICXXZhnNHILrKIrfVMl6cDRSeaLU9YBf6mbvJxvE=
+	t=1761925493; cv=none; b=mviS3QifCya3YaGCNfq2dGDk2a9Ve7ca4lW41j2nhBq7DBNscDJ0gg7KJv0yDwCFO6mtAi7ZGKIQbuS57vXtLAHZAK118/qCOSUD0y1FGYn8tMhn9B1dlk7mzc8lf530vUTnDMy59hrvTfVxkFo4dOuBJOZ7soYhXq1eJjrq2Mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761925523; c=relaxed/simple;
-	bh=wfzmU+lm5brudBQnnCmFkT5DSqW0qhWfji1dJIvs9Eo=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=WrQXi+WLOPcOicMgYXzHnqfYoCUWprPtxwkb8QhoScDFVF5vXSZpxB1yx3q0hwanJoLxeNjx9nwIN2bIgWKt8VhDBcRzOIRUcbKr461cABH+G+saH+Bf39+qRqDQDs/HXQyR7xPZA2inTZmMNEPpt9lbEs/pYEeI1a8E6d0sg+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EapjZcLT; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761925522; x=1793461522;
-  h=date:from:to:cc:subject:message-id;
-  bh=wfzmU+lm5brudBQnnCmFkT5DSqW0qhWfji1dJIvs9Eo=;
-  b=EapjZcLT9fU7eMYpuoRvGRj+ZjogUHO88doXkZ1G/TSKyeyvpq2AATya
-   NSXP485wfCt3GeybdO9oRRFOlrfKWJLtusaaZGURHVvGsdgMrfSGc4LR3
-   uwhyHW4KH61O2qOFEeMXUnN4hGOO20VGijeJGLvXrLf5JOEjaj/V+/qyA
-   Y0RsjFKzgCVo3nilP+iVzD0Yj85LoSbTCs4wNNGfVplhbGiNebbk0qyMR
-   VzmqpGXIYVp9bB1FyJaA+q+/g35FG6+Nb4VEdcQ7czpUT6YxB4FsGmMVV
-   DgYZu0hAPkcG/4aJwHITHPL1XRnySMVRcnpS13fF2B843am8YcCF7PQef
-   Q==;
-X-CSE-ConnectionGUID: WSEupAClQaaflLkvMFb1zg==
-X-CSE-MsgGUID: deTKMj/LS6yDBOlJsNsplg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="51660656"
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="51660656"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 08:45:21 -0700
-X-CSE-ConnectionGUID: BZh5U5AJTTyeQfb9SmoSiA==
-X-CSE-MsgGUID: ExrZt8WaTBGll8wH+wPsNg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="186382694"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 31 Oct 2025 08:45:20 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vErJV-000NNI-1r;
-	Fri, 31 Oct 2025 15:45:17 +0000
-Date: Fri, 31 Oct 2025 23:44:29 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/microcode] BUILD SUCCESS
- ca8313fd83399ea1d18e695c2ae9b259985c9e1f
-Message-ID: <202510312324.ZcLxtzrI-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	s=arc-20240116; t=1761925493; c=relaxed/simple;
+	bh=FDAijRtwdddL9oMCD05Q/U/iAXw08SRA+D3AEigmkA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZUkroUFJcibep0EKOR89b9FCcnKiyvGp6j88Pw21pM6jjG4ZdVh24HOnWpqsD3umoVCTcmQyot7JqqDptKAJTtk2UZW46bVgJ7f2IcWvXI9nuX6zCj43UP5dBvYfxhP/HhEQX30w+G2+2VwhOSE94pR6VDIMtO/jsBRwtSFKI/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=hMoOV3ZA; arc=none smtp.client-ip=83.149.199.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
+Received: from localhost (unknown [10.10.165.9])
+	by mail.ispras.ru (Postfix) with UTF8SMTPSA id 885C440762F2;
+	Fri, 31 Oct 2025 15:44:40 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 885C440762F2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
+	s=default; t=1761925480;
+	bh=0rAqqn2nJpzdHfAXSYxAawGoJkugYQCtBMPX+iP82ok=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hMoOV3ZAJATODreGpAqJKjyYrvpURmiQajbwGQOhumkRjYAWpo/nVlWc6kqdvVBzL
+	 ff4dHYhiiVFteWCzs3/8rxxayuXdVFg0s1rZeSLC5Yh4T+PLsrO33x+KV7xdfyen9U
+	 NKelAmzj/Svw28aS5dSdY5b8VqHCCAKT6UdibBeg=
+Date: Fri, 31 Oct 2025 18:44:40 +0300
+From: Fedor Pchelkin <pchelkin@ispras.ru>
+To: Jan Kara <jack@suse.cz>
+Cc: Theodore Ts'o <tytso@mit.edu>, 
+	Andreas Dilger <adilger.kernel@dilger.ca>, "Darrick J. Wong" <djwong@kernel.org>, 
+	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>, 
+	lvc-project@linuxtesting.org
+Subject: Re: [PATCH 1/2] ext4: fix up copying of mount_opts in superblock
+ tuning ioctls
+Message-ID: <20251031182448-c6e06b81d18b41af5704f2ba-pchelkin@ispras>
+References: <20251028130949.599847-1-pchelkin@ispras.ru>
+ <yq6rbx54jt4btntsh37urd6u63wwcd3lyhovbrm6w7occaveea@riljfkx5jmhi>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <yq6rbx54jt4btntsh37urd6u63wwcd3lyhovbrm6w7occaveea@riljfkx5jmhi>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/microcode
-branch HEAD: ca8313fd83399ea1d18e695c2ae9b259985c9e1f  x86/microcode: Mark early_parse_cmdline() as __init
+On Thu, 30. Oct 12:32, Jan Kara wrote:
+> On Tue 28-10-25 16:09:47, Fedor Pchelkin wrote:
+> > Judging by commit 8ecb790ea8c3 ("ext4: avoid potential buffer over-read in
+> > parse_apply_sb_mount_options()"), the contents of s_mount_opts should be
+> > treated as __nonstring, i.e. there might be no NUL-terminator in the
+> > provided buffer.
+> > 
+> > Then the same holds for the corresponding mount_opts field of the struct
+> > ext4_tune_sb_params exchanged with userspace via a recently implemented
+> > superblock tuning ioctl.
+> > 
+> > The problem is that strscpy_pad() can't work properly with non-NUL-term
+> > strings.  String fortifying infrastructure would complain if that happens.
+> > Commit 0efc5990bca5 ("string.h: Introduce memtostr() and memtostr_pad()")
+> > gives additional information in that regard.
+> > 
+> > Both buffers are just raw arrays of the similar fixed size, essentially
+> > they should represent the same contents.  As they don't necessarily have
+> > NUL-terminators, in both directions use plain memcpy() to copy their
+> > contents.
+> > 
+> > Found by Linux Verification Center (linuxtesting.org).
+> > 
+> > Fixes: 04a91570ac67 ("ext4: implemet new ioctls to set and get superblock parameters")
+> > Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+> 
+> I agree there are some holes in the logic of 8ecb790ea8c3 ("ext4: avoid
+> potential buffer over-read in parse_apply_sb_mount_options()") and
+> consequently 04a91570ac67 may need fixing up as well. But I think the fixes
+> should look differently. The clear intended use of s_mount_opts field is
+> that it is at most 63 characters long with the last byte guaranteed to be
+> 0. This is how userspace utilities use it and they complain if you try
+> setting more than 63 characters long string. So I think strscpy_pad() use
+> in ext4_ioctl_get_tune_sb() is actually fine (sizes of both buffers match).
+> In ext4_sb_setparams() we should actually make sure userspace buffer is
+> properly Nul-terminated and return error otherwise. And the buffer in
+> parse_apply_sb_mount_options() should actually be only 64 bytes long to
+> match the size of the source buffer at which point using strscpy_pad()
+> becomes correct. How does that sound?
+> 
+> 								Honza
 
-elapsed time: 1121m
+Thanks, Jan!  Sounds reasonable.  I was a bit confused by the __nonstring
+declaration of s_mount_opts at e2fsprogs [1] but rechecked - tune2fs side
+has always validated it to have at most 63 characters with the last one
+being NUL in the corner case, just as you say.
 
-configs tested: 158
-configs skipped: 121
+ext4 kernel docs also specify it to be ASCIIZ string [2].
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+I'll rework the series.
 
-tested configs:
-alpha                            allyesconfig    clang-19
-alpha                               defconfig    gcc-15.1.0
-arc                              allmodconfig    clang-19
-arc                              allyesconfig    clang-19
-arc                                 defconfig    gcc-15.1.0
-arc                            hsdk_defconfig    gcc-15.1.0
-arc                   randconfig-001-20251031    gcc-8.5.0
-arc                   randconfig-002-20251031    gcc-8.5.0
-arm                              allmodconfig    clang-19
-arm                              allyesconfig    clang-19
-arm                                 defconfig    gcc-15.1.0
-arm                            dove_defconfig    gcc-15.1.0
-arm                      jornada720_defconfig    clang-22
-arm                   randconfig-001-20251031    gcc-8.5.0
-arm                   randconfig-002-20251031    gcc-8.5.0
-arm                   randconfig-003-20251031    gcc-8.5.0
-arm                   randconfig-004-20251031    gcc-8.5.0
-arm64                            allmodconfig    clang-19
-arm64                               defconfig    gcc-15.1.0
-arm64                 randconfig-001-20251031    gcc-10.5.0
-arm64                 randconfig-002-20251031    gcc-10.5.0
-arm64                 randconfig-003-20251031    gcc-10.5.0
-arm64                 randconfig-004-20251031    gcc-10.5.0
-csky                                defconfig    gcc-15.1.0
-csky                  randconfig-001-20251031    gcc-10.5.0
-csky                  randconfig-002-20251031    gcc-10.5.0
-hexagon                          allmodconfig    clang-19
-hexagon                          allyesconfig    clang-19
-hexagon                             defconfig    gcc-15.1.0
-hexagon               randconfig-001-20251031    clang-22
-hexagon               randconfig-002-20251031    clang-22
-i386                             allmodconfig    clang-20
-i386                              allnoconfig    gcc-14
-i386                             allyesconfig    clang-20
-i386        buildonly-randconfig-001-20251031    clang-20
-i386        buildonly-randconfig-002-20251031    clang-20
-i386        buildonly-randconfig-003-20251031    clang-20
-i386        buildonly-randconfig-004-20251031    clang-20
-i386        buildonly-randconfig-005-20251031    clang-20
-i386        buildonly-randconfig-006-20251031    clang-20
-i386                                defconfig    gcc-15.1.0
-i386                  randconfig-001-20251031    clang-20
-i386                  randconfig-002-20251031    clang-20
-i386                  randconfig-003-20251031    clang-20
-i386                  randconfig-004-20251031    clang-20
-i386                  randconfig-005-20251031    clang-20
-i386                  randconfig-006-20251031    clang-20
-i386                  randconfig-007-20251031    clang-20
-i386                  randconfig-011-20251031    gcc-13
-i386                  randconfig-012-20251031    gcc-13
-i386                  randconfig-013-20251031    gcc-13
-i386                  randconfig-014-20251031    gcc-13
-i386                  randconfig-015-20251031    gcc-13
-i386                  randconfig-016-20251031    gcc-13
-i386                  randconfig-017-20251031    gcc-13
-loongarch                           defconfig    clang-19
-loongarch             randconfig-001-20251031    clang-22
-loongarch             randconfig-002-20251031    clang-22
-m68k                       bvme6000_defconfig    gcc-15.1.0
-m68k                                defconfig    clang-19
-m68k                       m5208evb_defconfig    clang-22
-microblaze                          defconfig    clang-19
-mips                         bigsur_defconfig    gcc-15.1.0
-nios2                            allmodconfig    clang-22
-nios2                            allyesconfig    clang-22
-nios2                               defconfig    clang-19
-nios2                 randconfig-001-20251031    clang-22
-nios2                 randconfig-002-20251031    clang-22
-openrisc                         allmodconfig    clang-22
-openrisc                         allyesconfig    gcc-15.1.0
-openrisc                            defconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20251031    clang-22
-parisc                randconfig-002-20251031    clang-22
-parisc64                            defconfig    clang-19
-powerpc                          allmodconfig    gcc-15.1.0
-powerpc                          allyesconfig    gcc-15.1.0
-powerpc                   lite5200b_defconfig    clang-22
-powerpc                     mpc512x_defconfig    gcc-15.1.0
-powerpc                     mpc5200_defconfig    clang-22
-powerpc                      ppc6xx_defconfig    gcc-15.1.0
-powerpc               randconfig-001-20251031    clang-22
-powerpc               randconfig-002-20251031    clang-22
-powerpc                     taishan_defconfig    gcc-15.1.0
-powerpc                     tqm8560_defconfig    gcc-15.1.0
-powerpc64             randconfig-001-20251031    clang-22
-powerpc64             randconfig-002-20251031    clang-22
-riscv                            allmodconfig    gcc-15.1.0
-riscv                            allyesconfig    gcc-15.1.0
-riscv                               defconfig    gcc-15.1.0
-riscv                 randconfig-001-20251031    clang-17
-riscv                 randconfig-002-20251031    clang-17
-s390                                defconfig    gcc-15.1.0
-s390                  randconfig-001-20251031    clang-17
-s390                  randconfig-002-20251031    clang-17
-sh                                  defconfig    gcc-14
-sh                    randconfig-001-20251031    clang-17
-sh                    randconfig-002-20251031    clang-17
-sh                           se7705_defconfig    clang-22
-sh                           se7750_defconfig    clang-22
-sh                            titan_defconfig    clang-22
-sparc                            allyesconfig    clang-22
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20251031    gcc-8.5.0
-sparc                 randconfig-002-20251031    gcc-8.5.0
-sparc64                          allmodconfig    clang-22
-sparc64                          allyesconfig    clang-22
-sparc64                             defconfig    gcc-14
-sparc64               randconfig-001-20251031    gcc-8.5.0
-sparc64               randconfig-002-20251031    gcc-8.5.0
-um                               allmodconfig    clang-19
-um                               allyesconfig    clang-19
-um                                  defconfig    gcc-14
-um                             i386_defconfig    gcc-14
-um                    randconfig-001-20251031    gcc-8.5.0
-um                    randconfig-002-20251031    gcc-8.5.0
-um                           x86_64_defconfig    gcc-14
-x86_64                           allmodconfig    clang-20
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20251031    gcc-14
-x86_64      buildonly-randconfig-002-20251031    gcc-14
-x86_64      buildonly-randconfig-003-20251031    gcc-14
-x86_64      buildonly-randconfig-004-20251031    gcc-14
-x86_64      buildonly-randconfig-005-20251031    gcc-14
-x86_64      buildonly-randconfig-006-20251031    gcc-14
-x86_64                              defconfig    gcc-14
-x86_64                                  kexec    clang-20
-x86_64                randconfig-001-20251031    gcc-14
-x86_64                randconfig-002-20251031    gcc-14
-x86_64                randconfig-003-20251031    gcc-14
-x86_64                randconfig-004-20251031    gcc-14
-x86_64                randconfig-005-20251031    gcc-14
-x86_64                randconfig-006-20251031    gcc-14
-x86_64                randconfig-011-20251031    gcc-14
-x86_64                randconfig-012-20251031    gcc-14
-x86_64                randconfig-013-20251031    gcc-14
-x86_64                randconfig-014-20251031    gcc-14
-x86_64                randconfig-015-20251031    gcc-14
-x86_64                randconfig-016-20251031    gcc-14
-x86_64                randconfig-071-20251031    clang-20
-x86_64                randconfig-072-20251031    clang-20
-x86_64                randconfig-073-20251031    clang-20
-x86_64                randconfig-074-20251031    clang-20
-x86_64                randconfig-075-20251031    clang-20
-x86_64                randconfig-076-20251031    clang-20
-x86_64                               rhel-9.4    clang-20
-x86_64                           rhel-9.4-bpf    gcc-14
-x86_64                          rhel-9.4-func    clang-20
-x86_64                    rhel-9.4-kselftests    clang-20
-x86_64                         rhel-9.4-kunit    gcc-14
-x86_64                           rhel-9.4-ltp    gcc-14
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                           allyesconfig    clang-22
-xtensa                randconfig-001-20251031    gcc-8.5.0
-xtensa                randconfig-002-20251031    gcc-8.5.0
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+[1]: https://github.com/tytso/e2fsprogs/blob/13dfdf2410648c361dfd49b28d7dbeac8a580532/lib/ext2fs/ext2_fs.h#L756
+[2]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/filesystems/ext4/super.rst?id=58fdd8484c05a19942690008304228ad784771e9#n407
 
