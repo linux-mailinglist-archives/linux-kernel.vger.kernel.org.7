@@ -1,131 +1,120 @@
-Return-Path: <linux-kernel+bounces-880915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E547FC26DDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:08:35 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F053C26DE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:08:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B192042789A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:07:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 56AEC4EA9E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D92327205;
-	Fri, 31 Oct 2025 20:07:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 324B3326D4A;
+	Fri, 31 Oct 2025 20:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eEbaFUeP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525A02222A0;
-	Fri, 31 Oct 2025 20:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="gsnc0Mk6"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7D9283FD6;
+	Fri, 31 Oct 2025 20:08:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761941259; cv=none; b=c6tHZ3XKZuyrl4kAzorwHFc8Aj6K1Bc6uhuJ8lTeUvxgeLfAa4Q7216FzvpJpo20bO2/3ZPu8tevBQMcqg0vJOYPhNzdc0E2YmEBdLeVjHjB+c0PQEIayEG1YYe2EsB0pBCl3/SNk6CZL/Msq5NiWS3/zArZecTd0yvYxKGK79c=
+	t=1761941329; cv=none; b=DlAEflhhg0kacJht0N870nmlJjIXQnGBSp2tB7sJu0HUKdYX+Z3oziUk0NbAyXY6cpUqvVYPh7dpTop4OMnkLWS9h+RgEFOpkeLO3eF7TcPflTAk+f8SxRqNFoA8Vz3b8B7vRGXCqPpjfpkzUFFW5aCHh0SOzILuXOYhCygn50M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761941259; c=relaxed/simple;
-	bh=wQet1zpVA979LHOCAKnvDe4vIz5lgogB/RiA4rvDzcE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=m8FISJOWvVyUX0TB0stp3DukBwNCanqtuY6ZUkYqeJGS8rDvLfC72cxOC8rNwoPIdykX7ht7jIPNbp2aOeqXkBtpeW4bZCpk0BBmINjwn79OodpS1hKW2ntjF7591LLaFt7HHYtSV60RwnkrvNfByFrZe1d5qDibZpXXPdsruUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eEbaFUeP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EC5FC4CEE7;
-	Fri, 31 Oct 2025 20:07:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761941258;
-	bh=wQet1zpVA979LHOCAKnvDe4vIz5lgogB/RiA4rvDzcE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=eEbaFUePEqsqd1xqvFj6PfHBe6jOCi2lEMdH8TycHl0Q5Auluk8S2lpJXmv9TxFx6
-	 NusxPnTpJc0X0f0CeYGgWHWJPP+pm9H5h9r65gPGw/KCR077Hi6MKNwd20DNPMNN6b
-	 WeahrAxPZQa10FjP/DdR4c+HK/1h5x2nUAasMuSHcOITJAiV483CzwcXL5NGIqys+P
-	 mY145nVNkpzIC2zpwBWy190cfG4RZuldrQmgNpuR1kKC8i8XpoLRbm6nuQrl1TbMCc
-	 xrhLxkelxND1eIrhNaB+SV+lyaoUFqxJyBOJ8iEADXR4rSsgSzl+qs3Ga+6/bKM9QS
-	 dwrww+Tnxquiw==
-Date: Fri, 31 Oct 2025 14:07:32 -0600 (MDT)
-From: Paul Walmsley <pjw@kernel.org>
-To: Deepak Gupta <debug@rivosinc.com>, Andy Chiu <andybnac@gmail.com>
-cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-    Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-    x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-    Andrew Morton <akpm@linux-foundation.org>, 
-    "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-    Vlastimil Babka <vbabka@suse.cz>, 
-    Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-    Paul Walmsley <paul.walmsley@sifive.com>, 
-    Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-    Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-    Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-    Christian Brauner <brauner@kernel.org>, 
-    Peter Zijlstra <peterz@infradead.org>, Oleg Nesterov <oleg@redhat.com>, 
-    Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
-    Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, 
-    Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>, 
-    Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-    Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-    =?ISO-8859-15?Q?Bj=F6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-    Andreas Hindborg <a.hindborg@kernel.org>, 
-    Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-    Benno Lossin <lossin@kernel.org>, linux-kernel@vger.kernel.org, 
-    linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-    linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-    linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
-    linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
-    richard.henderson@linaro.org, jim.shu@sifive.com, 
-    Andy Chiu <andybnac@gmail.com>, kito.cheng@sifive.com, 
-    charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com, 
-    cleger@rivosinc.com, alexghiti@rivosinc.com, samitolvanen@google.com, 
-    broonie@kernel.org, rick.p.edgecombe@intel.com, 
-    rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v22 17/28] riscv/signal: save and restore of shadow stack
- for signal
-In-Reply-To: <20251023-v5_user_cfi_series-v22-17-1935270f7636@rivosinc.com>
-Message-ID: <a8f469b8-5750-dfec-2390-09bad4515f99@kernel.org>
-References: <20251023-v5_user_cfi_series-v22-0-1935270f7636@rivosinc.com> <20251023-v5_user_cfi_series-v22-17-1935270f7636@rivosinc.com>
+	s=arc-20240116; t=1761941329; c=relaxed/simple;
+	bh=EL9F5S97G8vzOhU7NaniWA8pefyRkwTlhmtrIPEmZkA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LTPVMKvjboMwYgYNL/KGEPAhobIATMhMvvhnXra7w3uLQ6wmDZ+er1QxLiRhB7B6WBOumSMJEqjZgc0LzobVPmv0WTOVVQi6L3l7sQfs5NJXsjbwgnb3FvkdR/wcS5iKFfxasPyZsxoqYBX8ISVOVehIjlKpa4bZsrI7m+/kUF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=gsnc0Mk6; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.64.208.255] (unknown [52.148.138.235])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 64F7C211E344;
+	Fri, 31 Oct 2025 13:08:47 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 64F7C211E344
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1761941327;
+	bh=Gx6AHsv91Sdxbg2gKThn+6GlZSNoLXafPPqn8huw99U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gsnc0Mk6Km5YrmgBqXpgeCXSQQaYnG/jOX5jWeWpWFyThBs5Cpg4S/DaIEnWczYMG
+	 utg2babT7haTySlZoEYHQxTBoiUC5Daqmwhk5QtBZok3yqzwiecxnc4NeVEUdbgr9Q
+	 kuxiXBiT0MCddXLuPk0QM89t7wXgq+HL84EFHHJA=
+Message-ID: <28ab51c0-fe14-4122-8828-3f680207865d@linux.microsoft.com>
+Date: Fri, 31 Oct 2025 13:08:45 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mshv: Extend create partition ioctl to support cpu
+ features
+To: Wei Liu <wei.liu@kernel.org>
+Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+ muislam@microsoft.com, kys@microsoft.com, haiyangz@microsoft.com,
+ decui@microsoft.com, longli@microsoft.com, mhklinux@outlook.com,
+ skinsburskii@linux.microsoft.com, romank@linux.microsoft.com,
+ Jinank Jain <jinankjain@microsoft.com>
+References: <1761860431-11208-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <20251031183109.GC2612078@liuwe-devbox-debian-v2.local>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <20251031183109.GC2612078@liuwe-devbox-debian-v2.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 23 Oct 2025, Deepak Gupta via B4 Relay wrote:
-
-> From: Deepak Gupta <debug@rivosinc.com>
+On 10/31/2025 11:31 AM, Wei Liu wrote:
+> On Thu, Oct 30, 2025 at 02:40:31PM -0700, Nuno Das Neves wrote:
+>> From: Muminul Islam <muislam@microsoft.com>
+>>
+>> The existing mshv create partition ioctl does not provide a way to
+>> specify which cpu features are enabled in the guest. This was done
+>> to reduce unnecessary complexity in the API.
+>>
+>> However, some new scenarios require fine-grained control over the
+>> cpu feature bits.
+>>
+>> Define a new mshv_create_partition_v2 structure which supports passing
+>> through the disabled cpu flags and xsave flags to the hypervisor
+>> directly.
+>>
+>> When these are not specified (pt_num_cpu_fbanks == 0) or the old
+>> structure is used, define a set of default flags which cover most
+>> cases.
+>>
+>> Retain backward compatibility with the old structure via a new flag
+>> MSHV_PT_BIT_CPU_AND_XSAVE_FEATURES which enables the new struct.
+>>
+>> Co-developed-by: Jinank Jain <jinankjain@microsoft.com>
+>> Signed-off-by: Jinank Jain <jinankjain@microsoft.com>
+>> Signed-off-by: Muminul Islam <muislam@microsoft.com>
+>> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+>> ---
+>> Changes in v2:
+>> - Fix compilation issues [kernel test robot]
+>>
+>> ---
+>>  drivers/hv/mshv_root_main.c | 176 ++++++++++++++++++++++++++++++++----
+>>  include/hyperv/hvhdk.h      |  86 +++++++++++++++++-
 > 
-> Save shadow stack pointer in sigcontext structure while delivering signal.
-> Restore shadow stack pointer from sigcontext on sigreturn.
+> There is no mention of updating hvhdk.h in the commit message.
 > 
-> As part of save operation, kernel uses `ssamoswap` to save snapshot of
-> current shadow stack on shadow stack itself (can be called as a save
-> token). During restore on sigreturn, kernel retrieves token from top of
-> shadow stack and validates it. This allows that user mode can't arbitrary
-> pivot to any shadow stack address without having a token and thus provide
-> strong security assurance between signaly delivery and sigreturn window.
-> 
-> Use ABI compatible way of saving/restoring shadow stack pointer into
-> signal stack. This follows what Vector extension, where extra registers
-> are placed in a form of extension header + extension body in the stack.
-> The extension header indicates the size of the extra architectural
-> states plus the size of header itself, and a magic identifier of the
-> extension. Then, the extensions body contains the new architectural
-> states in the form defined by uapi.
-> 
-> Signed-off-by: Andy Chiu <andy.chiu@sifive.com>
-> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+Ah, that's true..
 
-This patch causes some 'checkpatch.pl --strict' messages:
+> Can you split out this part to a separate commit?
 
-CHECK: Comparison to NULL could be written "!saved_shstk_ptr"
-#271: FILE: arch/riscv/kernel/usercfi.c:186:
-+	if (saved_shstk_ptr == NULL)
+I put the header changes in this patch because a patch containing
+those alone doesn't have much merit on its own.
 
-CHECK: Lines should not end with a '('
-#300: FILE: arch/riscv/kernel/usercfi.c:215:
-+		pr_info_ratelimited(
+I know we have split header changes into separate patches in the
+past but I'm not sure it's always the right choice.
 
-I've fixed them up here in the event that v22 goes in, but please do the 
-same on your side in case a new version is needed.
+Thinking about this, I could also split it up another way: one
+patch to introduce the new cpu features flags and use them in the
+driver, and one patch to introduce mshv_create_partition_v2.
 
+Nuno> 
+> Wei
 
-- Paul
 
