@@ -1,100 +1,131 @@
-Return-Path: <linux-kernel+bounces-879888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 805E7C24539
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:03:14 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2942EC24500
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:01:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCBAF3B7FB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:00:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 59B1B4F58F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:59:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7279334688;
-	Fri, 31 Oct 2025 10:00:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15FF233373F;
+	Fri, 31 Oct 2025 09:58:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I133xcdR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Y6LRvkO0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F5B1F9F70
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB7B33372E;
+	Fri, 31 Oct 2025 09:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761904807; cv=none; b=Sbd+M1PnSjl0NTIYMZRahhnAlXP6gWKSB9d3eIe1btfYHTG4R86n9e1vHxcBPNiwsM9WMzW2+imV7ABVJmkGY7gD9Ar/YvOU0RKs7sNjLM33QI3LWtFE+zq5Wh3MTnW7szMsKL491B/OFHFuFaBLwQGY3bcml9uOZ4PfvXrQy8c=
+	t=1761904735; cv=none; b=UOwr7qk3MLiLPHLW/c8m7BBYSZDI3xtxrqQ3/kbRYVGs67KxlQgWKyE5hZGvTFi88khodgCrt3ytzSo5Y5+H7gIlx0XCxFvT35cLgNOS2LHBTjSyBZyku2poT+U1YeXWEL1OFvpWPnAABjQHouviL7fL7JBQpmuvXqYPIbONbRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761904807; c=relaxed/simple;
-	bh=h5qwRf0ce1SLJ0apgZD3wgSe98qLxjFEzkgcSLuDKYU=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=n7YDwQ0o64QUuI3GhPPPfriO93idhdC9nSk/2g3tzEbQf79N6yKXVT5pqVNKKj4vKUDcq0gTiwHS0nTPgpTCuOZO/ldf54OYyQG3ei6N2ap2/ZPYcmFDuDJzhU6nF5PnveddkNfwtPO05dgKS2G8vb8sWtDdnWM/XJo+K+9Mlwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I133xcdR; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761904805; x=1793440805;
-  h=date:from:to:cc:subject:message-id;
-  bh=h5qwRf0ce1SLJ0apgZD3wgSe98qLxjFEzkgcSLuDKYU=;
-  b=I133xcdR4xCX7CnCmRk0piAXPhPDncZmgrHZ4Av1ORKWamBmK1xBZyaA
-   6R5ZdbaJBrkZNJIGKDQauJBsPfV62bzJMKp1iraDqvOEtkv/JcC47oDTq
-   qVC4AvVqK+1RWMHes857WIV1MZ42VRi7M+A9wj0S/3QBXHe4Firnti7of
-   In/nfUuWkjrVaGa9TxiSvzzXJShCFNgMIf8HdISY+x6oQs+HVRM+SHPCc
-   B3dbseG/bGGOP6meEDUf+k8cUNKKt1IKldyoyV7nsQtaug61mrt2c1LNw
-   glIPzer/FX0Vw55Jkfb7Z+Kd7tUH1luf1N6Ks5Jt4HfYivkfyKF+0MvEJ
-   Q==;
-X-CSE-ConnectionGUID: eZkZzWv3QBmU5fu1xpFKWQ==
-X-CSE-MsgGUID: dmcMRTVFTj+7Vrq0IXiQPQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="64104480"
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="64104480"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 03:00:03 -0700
-X-CSE-ConnectionGUID: igFjaZgwQk6UUYH9dcdaqQ==
-X-CSE-MsgGUID: 5N3+CMOlTWKO7HB+pMyr6w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="190282405"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa003.jf.intel.com with ESMTP; 31 Oct 2025 03:00:02 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vElv9-000MyY-28;
-	Fri, 31 Oct 2025 09:59:50 +0000
-Date: Fri, 31 Oct 2025 17:58:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:perf/core] BUILD SUCCESS
- aa7387e79a5cff0585cd1b9091944142a06872b6
-Message-ID: <202510311710.kiWIYMXf-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	s=arc-20240116; t=1761904735; c=relaxed/simple;
+	bh=V3hG8BzpMh/pCP+5pYVHsS9SYsFsgrpbWinK543RY6g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XM7CzUgdsVD+KjhMY2O5pen4jHsPGj7Wv9ArRWeV2z7IbtsdjDQFXNgIe0eFMtavF9nxTYN90cek85UgCiDc0zUs0ARyJOPzVwywmzMU/PYJJG2zYY4N5GDl4n5h0TV3EkDGs2OE3fY+ebIH3gRKdK1+CFwa9vAWCW08RxhwHR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Y6LRvkO0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62BDEC4CEE7;
+	Fri, 31 Oct 2025 09:58:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1761904735;
+	bh=V3hG8BzpMh/pCP+5pYVHsS9SYsFsgrpbWinK543RY6g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Y6LRvkO0nH4Lrd0R/ZQ4vAlfY/yv/hr+pM6ePE6Cb7iKQ4cYZoY5qF96v/wXXYGmH
+	 Hfluq/K+Cq6ZitMw/PkoPYpUDtupRztNUwNmsqh0DvkI257yesZVI0prHygBtEm8Ck
+	 WinaWOoDVRkQamzD/LH2XVTI+7SH2BkLqG98PvjY=
+Date: Fri, 31 Oct 2025 10:58:52 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Gao Xiang <hsiangkao@linux.alibaba.com>
+Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+	Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	Luis Chamberlain <mcgrof@kernel.org>, linux-block@vger.kernel.org,
+	Joseph Qi <joseph.qi@linux.alibaba.com>,
+	guanghuifeng@linux.alibaba.com, zongyong.wzy@alibaba-inc.com,
+	zyfjeff@linux.alibaba.com, "Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: question about bd_inode hashing against device_add() // Re:
+ [PATCH 03/11] block: call bdev_add later in device_add_disk
+Message-ID: <2025103155-definite-stays-ebfe@gregkh>
+References: <20210818144542.19305-1-hch@lst.de>
+ <20210818144542.19305-4-hch@lst.de>
+ <43375218-2a80-4a7a-b8bb-465f6419b595@linux.alibaba.com>
+ <20251031090925.GA9379@lst.de>
+ <ae38c5dc-da90-4fb3-bb72-61b66ab5a0d2@linux.alibaba.com>
+ <20251031094552.GA10011@lst.de>
+ <7d0d8480-13a2-449f-a46d-d9b164d44089@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7d0d8480-13a2-449f-a46d-d9b164d44089@linux.alibaba.com>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
-branch HEAD: aa7387e79a5cff0585cd1b9091944142a06872b6  unwind_user/x86: Fix arch=um build
+On Fri, Oct 31, 2025 at 05:54:10PM +0800, Gao Xiang wrote:
+> 
+> 
+> On 2025/10/31 17:45, Christoph Hellwig wrote:
+> > On Fri, Oct 31, 2025 at 05:36:45PM +0800, Gao Xiang wrote:
+> > > Right, sorry yes, disk_uevent(KOBJ_ADD) is in the end.
+> > > 
+> > > >   Do you see that earlier, or do you have
+> > > > code busy polling for a node?
+> > > 
+> > > Personally I think it will break many userspace programs
+> > > (although I also don't think it's a correct expectation.)
+> > 
+> > We've had this behavior for a few years, and this is the first report
+> > I've seen.
+> > 
+> > > After recheck internally, the userspace program logic is:
+> > >    - stat /dev/vdX;
+> > >    - if exists, mount directly;
+> > >    - if non-exists, listen uevent disk_add instead.
+> > > 
+> > > Previously, for devtmpfs blkdev files, such stat/mount
+> > > assumption is always valid.
+> > 
+> > That assumption doesn't seem wrong.
+> 
+> ;-) I was thought UNIX mknod doesn't imply the device is
+> ready or valid in any case (but dev files in devtmpfs
+> might be an exception but I didn't find some formal words)...
+> so uevent is clearly a right way, but..
 
-elapsed time: 1464m
+Yes, anyone can do a mknod and attempt to open a device that isn't
+present.
 
-configs tested: 8
-configs skipped: 126
+when devtmpfs creates the device node, it should be there.  Unless it
+gets removed, and then added back, so you could race with userspace, but
+that's not normal.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+> > But why does the device node
+> > get created earlier?  My assumption was that it would only be
+> > created by the KOBJ_ADD uevent.  Adding the device model maintainers
+> > as my little dig through the core drivers/base/ code doesn't find
+> > anything to the contrary, but maybe I don't fully understand it.
+> 
+> AFAIK, device_add() is used to trigger devtmpfs file
+> creation, and it can be observed if frequently
+> hotpluging device in the VM and mount.  Currently
+> I don't have time slot to build an easy reproducer,
+> but I think it's a real issue anyway.
 
-tested configs:
-i386                          allnoconfig    gcc-14
-x86_64                        allnoconfig    clang-20
-x86_64  buildonly-randconfig-001-20251031    clang-20
-x86_64  buildonly-randconfig-002-20251031    gcc-14
-x86_64  buildonly-randconfig-003-20251031    clang-20
-x86_64  buildonly-randconfig-004-20251031    gcc-14
-x86_64  buildonly-randconfig-005-20251031    gcc-14
-x86_64  buildonly-randconfig-006-20251031    gcc-14
+As I say above, that's not normal, and you have to be root to do this,
+so I don't understand what you are trying to prevent happening?  What is
+the bug and why is it just showing up now (i.e. what changed to cause
+it?)
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+thanks,
+
+greg k-h
 
