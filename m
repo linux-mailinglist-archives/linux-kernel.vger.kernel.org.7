@@ -1,112 +1,176 @@
-Return-Path: <linux-kernel+bounces-879943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82005C24759
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:29:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F08BAC2473C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:27:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A78291A661C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:25:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5B034017FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6973333F8D7;
-	Fri, 31 Oct 2025 10:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3100033FE02;
+	Fri, 31 Oct 2025 10:27:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rgZr/ZlB"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="1XTiHZWL"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21D9233F8CA
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:24:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94FCC2EB87C
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:27:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761906282; cv=none; b=iu3fGLG1B5kZ/ZlrqiurfVOv2+7KnEr/hPJP26zeE8AXZyYtnYcCe5mSJ55syTIZ/xx9RZgzwnYktFm45WSjebgMK11FJ4pGYH/l4+J91NDmdmeT7mjSgXn+OF+dnchWCrFiabwSZGbByqddbNP1UyZ7TZgmVd2SCbqEzYOd0SM=
+	t=1761906437; cv=none; b=s+tI8bJLjOTwiLhqa/HCVlplSwBDI0vIZC+904M1O7iUsOd+FsTex1hDWLs/b16NaT6aHhbxmzOk1gshLXwbIBrb6NmMr1nKLpbrUXhrRrgDTM2vKB8mIyPmGLRy9cK0YZ26biEfDDMs8Yl1CBTrV8QdkU+se0bWaaJLfs2AcaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761906282; c=relaxed/simple;
-	bh=KieV0O7byC8e0nnu0XsmTnOJPcll1gsJYOjgt6OjyY0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=cjkedrEg6W6ouaVATZG/P8EtjHvGSJe6PsMc/zhSkv9WqmToUHtqlXYCMAgHo/m2vKTqxOVEOcEdd34jXpIEFnxlgo8N0dZDEhYsh7wtgf3loLRuDFcc/5jikkHiol6OIQ5TC2fyAPEmWk31TiuYATrujxK+MjNkA63TFKevBi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rgZr/ZlB; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-4773a7dc957so889185e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 03:24:40 -0700 (PDT)
+	s=arc-20240116; t=1761906437; c=relaxed/simple;
+	bh=LZJjK3oBrjpMjUbg96mJVTjbUwuIdFSzDRhJE0m26JQ=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SURAWQ863akM3xAo1iyplAvET6lQursJEBDOVKL4dW06ZE89OvVAfDh4PdchwZPvm29KY+mBs1Ka7UU9DVgzJlZBaWQWyvV1SwpGR/DKE6dW2qoCG/MmEDAJ6yU8yIxlT8gQbcUd7Y2ZhlXaMYIeF0NQl40XHxImNqs2F1pLW6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=1XTiHZWL; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-36bf096b092so19157501fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 03:27:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761906279; x=1762511079; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0CRyUBEdYzTfHD7NFKEMLRCGWmiMvGoOUHzXVYzcwM8=;
-        b=rgZr/ZlBaT03thp9K4M9q3mxJ8HMcIDcCv+GH+b+9y4TUnC93vuN3Hdf+qBoNGtqwI
-         ZGmJCAAhVp7vcuP1In/Khz3rKdo/PeOWsFT0bDAmAQroZmyu/ObBmr9YZsB8RdH4UXEI
-         YJSyFbo8DIdfgR8zHKQatTHSHiHne8v6KtQKQCqfhHd/uEw1bYJu6qRfPiKYyEap2H6l
-         R19rN+NkMatdwD5tUv9rRlvmz4RfeBaCk0qizSroVMwUZafF35GhqEkwNCMnamz7w5CX
-         eNg1Gg1M8blIQGGmVUtNmBGuM3g61N347gDA/qArTIAuQWxGGzp8Yn7kARbEZJVcYCZ2
-         83Og==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761906434; x=1762511234; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:references
+         :mime-version:in-reply-to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pNOU1iRdcbi0x6KU+9+XlLF3cgDUgehMK+0RcldpnIE=;
+        b=1XTiHZWLRywz1jgUl5oU4KKcSWlnxkl5AuoB8ztAuIRNjofKjiZOl5QQMN213ASpIk
+         /63Kvs8dR43qiY5kzd64ke4Np6NVDZuUScBIiCkfnJKQ4kUWDOPPl/9ti6nBMAPcOvff
+         XyC3XkfvGHRb04KpmvzUtiejHsDeyOdzsi/LWG3R1y/Dv7ZC80cuwTY9k6Ld3U0hnTgr
+         1tENe9LJB2Vkg+511sjc4hJP6RyWJFyD3bLfBbpJSHDFqo7Gx41t4j8YBNYZX/TzU2wo
+         5+32MNlcWW0qxZJA9ZFTw3rnqCEZlHIyjIZME/HeQSodN6HyEpJgBKRvwfqM580XMLXV
+         FBGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761906279; x=1762511079;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0CRyUBEdYzTfHD7NFKEMLRCGWmiMvGoOUHzXVYzcwM8=;
-        b=NEFidskGadxnQ+C8zN7Bu+3hvparHvdJjnW0YvzrCXoEzXCSB4VIlXXVpQjqra4L1W
-         pQiHQU2oQEkmgQM2aUfGKwrS5gun0y3/fntLdEEUWbkd0wlJcOEPhMS0hg0swl9mjNN2
-         6DWvqrj+Fpvu/VpcPsYn1pWQ2zJmBscjZ0r2AaGUDgY/xgLdrdbk0gWRsKj8yJuiPc9P
-         m9Y4TrVnDB/YgtRSYfkn2+zJu6bwk4J7g6NAiB+lWtU8gee2VIcqznL6g/liHFFu7zQW
-         dDrhJcZnj8tPr/Lz1MJdZDKHFBMnxoiwvOUKOazHF5Jz+eQ3U20P4RUPyOEn49FvIivk
-         ccoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVmsP134eOar+qO8zUhj/F9KSbqIH1JDhhGRwajSlos/Dz8ylV+ySGCRgUhqdmMC/xR0WzHxTmJ4p6ir9s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNuvcED/ovB8EEwZhXiAfxQ0P9uC+vFOTml3/5fTB1l+9JErhB
-	UNhuJTcN9zO64ljlGndrNmA4jPmFDkYYclxOlmoS7QrMWzyYwQcXO9N+wvq5xEnF4Gh+osrxmJz
-	kBbl1q3Bq3WStZFLvWQ==
-X-Google-Smtp-Source: AGHT+IFJiNqrAFjhTH0j1IQrWmuNfO9ezr7CBAv4dYvxjJD8RXOTsTwsexS+6DU3D3HPKTldT7mYPQwVt4lzjww=
-X-Received: from wmaz8.prod.google.com ([2002:a05:600c:6d88:b0:46f:aa50:d711])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3146:b0:46f:c55a:5a8d with SMTP id 5b1f17b1804b1-47730802df6mr26133065e9.4.1761906279576;
- Fri, 31 Oct 2025 03:24:39 -0700 (PDT)
-Date: Fri, 31 Oct 2025 10:24:38 +0000
-In-Reply-To: <288ba4d2-b7db-46cf-b979-341a58613fc0@redhat.com>
+        d=1e100.net; s=20230601; t=1761906434; x=1762511234;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:references
+         :mime-version:in-reply-to:from:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=pNOU1iRdcbi0x6KU+9+XlLF3cgDUgehMK+0RcldpnIE=;
+        b=Lb2nBCNfr3zlIyqDeOxEUr7sXHsUo+DynYvEOUIAqXdkYxhNwaMbJNlGmxMBecJ/k4
+         BolqARjn5ZL8nRCod/TfX4++0Hapin/3gSbfTGyHnVC/IV6YzuTFqtpE+A/u5Xwj1WGo
+         tKDhrGB/yr7330MkF4KN8I4cIUmZUPGBopZh4uhEB0I/qK8w0OdP972K6RWbGLcTTk54
+         U3FlvlaUgUl5T8U7kgnUSGzF+lqKroNqTQa3yFvtoWHdhP4Bai7Oo/eUeGCbzDWXBoSi
+         AIM3F1yCtKlfiibkHJ7GUnAaAE/2TugF5GvX8SYkJIdoBTPWQpGAWYWSW+JPA1DNuryj
+         R4jg==
+X-Forwarded-Encrypted: i=1; AJvYcCVDuH4KQZcLByYjHdZQou9GULavY+8LJlOiBedf5vV/D7tBHoCXxX8PIEFMZa7BNvd6owEnP0UvyqH3M/k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6b87TZmjnYEdOUWNTqBD1GjtYHPNi2rLxdVj/QVo3/OZk58K5
+	PcaaKktvJ1j3MRkD16Tg9tRgi1X/R7ezXSCjvDHvgCSA8+96wOEaGQpsXas7oq4o9MsMcsTaAIc
+	oQaZdxtSR6Tm/ivkqeeVKmljeM5jN3YSWCWeBCF6FLA==
+X-Gm-Gg: ASbGncvm5PEsS6naCv12h0W7gNt5VGXOPZzpvUTzmpPUIZQhGHCwzPqntjaGLPEDIdg
+	AqXYTSe1b3KgdbXIe2dzlGVKUvTa6rbR6MN46PleUx5g/NuWJaizeyFv2rMWYrIOAhututIQdvS
+	vy8hONj4zYiThElQC6IYhXbGaE6MRuLZFl7TSYqKNGJep+xZBqdD+obNlIQ+wMEoBXznH49GlsO
+	rRsk4n+KpilEB0iL1/QEL/Op55Zac+IlJRh8JiWt2sgdYZIV2Pi7npHYxE/k+llYYOiyw16XNL/
+	m8Y9LrmGuvo/dsYF
+X-Google-Smtp-Source: AGHT+IFo3peC5StgeTxxGQqDBXnQdp1UAiFfDKKeZSL+XtcRWdzRvlhIPKe567Wwjp5cIPhZ6+UfJrC81qMWudtMilk=
+X-Received: by 2002:a05:651c:31d4:b0:36c:7a76:d17a with SMTP id
+ 38308e7fff4ca-37a18d87b15mr10021321fa.9.1761906431943; Fri, 31 Oct 2025
+ 03:27:11 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Fri, 31 Oct 2025 05:27:10 -0500
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Fri, 31 Oct 2025 05:27:10 -0500
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+In-Reply-To: <aQSFDhUp89xul2AP@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251029183538.226257-1-lyude@redhat.com> <c1ff48ea-53ca-40ea-9541-85abd1a528d0@redhat.com>
- <e0112480a6786c64fa65888b5ce8befbba72a230.camel@redhat.com>
- <CAH5fLgiWceOs-VtDnFkx5EBxCbAnJ3cLkRwp9adQC7x9oJCDFQ@mail.gmail.com> <288ba4d2-b7db-46cf-b979-341a58613fc0@redhat.com>
-Message-ID: <aQSOZu7nN56Uqj6V@google.com>
-Subject: Re: [PATCH v4] rust: lock: Export Guard::do_unlocked()
-From: Alice Ryhl <aliceryhl@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Lyude Paul <lyude@redhat.com>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, Benno Lossin <lossin@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <20251029-reset-gpios-swnodes-v3-0-638a4cb33201@linaro.org>
+ <20251029-reset-gpios-swnodes-v3-2-638a4cb33201@linaro.org>
+ <aQMxNgC9SWQp-yUy@smile.fi.intel.com> <CAMRc=Md=Dcwj0qDu5ysDafjuV0Ud9z2Ky3PQpDzfiKRt2L-HgQ@mail.gmail.com>
+ <aQRztwrOFCWk8IG8@smile.fi.intel.com> <CAMRc=MezQ7RC=ZjiKkMa0qiaKTRXePOKxOCDjjV=-qUYto2jqA@mail.gmail.com>
+ <aQSFDhUp89xul2AP@smile.fi.intel.com>
+Date: Fri, 31 Oct 2025 05:27:10 -0500
+X-Gm-Features: AWmQ_bmvuRg5selCz60KVvdQ444EnQp28Ff1ZBUj00ynWwJi8NQDD4tLMKkPhnk
+Message-ID: <CAMRc=MdfbbkWBeAgw3G=k7xgSc8TPhZQ56ks9Or9p9Ah-y5YQw@mail.gmail.com>
+Subject: Re: [PATCH v3 02/10] software node: increase the reference of the
+ swnode by its fwnode
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij <linus.walleij@linaro.org>, 
+	Daniel Scally <djrscally@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 31, 2025 at 10:38:32AM +0100, Paolo Bonzini wrote:
-> On 10/31/25 10:31, Alice Ryhl wrote:
-> > I do agree that this behavior has a lot of potential to surprise
-> > users, but I don't think it's incorrect per se. It was done
-> > intentionally for Condvar, and it's not unsound. Just surprising.
-> 
-> Yes, I agree that it is not unsound.`
-> 
-> For conditional variables, wait() is clearly going to release the mutex to
-> wait for someone else so the surprise factor is much less.  Having it return
-> a new guard would be closer to std::sync::Condvar::wait, but it'd add churn
-> and I'm not sure how much you all care about consistency with std.  std has
-> the extra constraint of poisoned locks so it doesn't really have a choice.
+On Fri, 31 Oct 2025 10:44:46 +0100, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> said:
+> On Fri, Oct 31, 2025 at 10:03:47AM +0100, Bartosz Golaszewski wrote:
+>> On Fri, Oct 31, 2025 at 9:30=E2=80=AFAM Andy Shevchenko
+>> <andriy.shevchenko@linux.intel.com> wrote:
+>> > On Thu, Oct 30, 2025 at 03:33:02AM -0700, Bartosz Golaszewski wrote:
+>> > > On Thu, 30 Oct 2025 10:34:46 +0100, Andy Shevchenko
+>> > > <andriy.shevchenko@linux.intel.com> said:
+>
+> ...
+>
+>> > > Andy: the resulting code after patch 3/10 looks like this:
+>> > >
+>> > > struct fwnode_handle *refnode;
+>> > >
+>> > > (...)
+>> >
+>> > Let's say something like below to be put here
+>> >
+>> > /*
+>> >  * The reference in software node may refer to a node of a different t=
+ype.
+>> >  * Depending on the type we choose either to use software node directl=
+y, or
+>> >  * delegate that to fwnode API.
+>> >  */
+>>
+>> But this is incorrect: we're not really doing that. We either use the
+>> firmware node reference directly OR cast the software node to its
+>> firmware node representation. We ALWAYS use the firmware node API
+>> below.
+>>
+>> This really *is* evident from the code but if it'll make you happy and
+>> make you sign off on this, I'll add a corrected version.
+>
+> The comment should answer to the Q: "Why the heck are we calling fwnode A=
+PIs here?"
+>
+>> IMO It's completely redundant.
+>
+> This is unusual case for swnode API (see other functions, they call direc=
+tly
+> the low-level implementation instead of going to a round via fwnode). Tha=
+t's
+> why I insist on a comment of this piece. It may be obvious for you, but t=
+he
+> unprepared read would be surprised by this inconsistency.
+>
 
-I mean, it's not that much different.
+I propose to have the following:
 
-	my_method(&mut guard);
++       /*
++        * A software node can reference other software nodes or firmware
++        * nodes (which are the abstraction layer sitting on top of them).
++        * This is done to ensure we can create references to static softwa=
+re
++        * nodes before they're registered with the firmware node framework=
+.
++        * At the time the reference is being resolved, we expect the swnod=
+es
++        * in question to already have been registered and to be backed by
++        * a firmware node. This is why we use the fwnode API below to read=
+ the
++        * relevant properties and bump the reference count.
++        */
 
-might still call Condvar::wait internally, so it can release the lock
-today.
+This at least adds relevant information on *why* we're using the fwnode API=
+.
 
-Alice
+Bart
 
