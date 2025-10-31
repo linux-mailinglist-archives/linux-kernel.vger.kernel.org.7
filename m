@@ -1,126 +1,298 @@
-Return-Path: <linux-kernel+bounces-880300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BB17C255FB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:57:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 667D9C25613
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:59:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 89F534E9D7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:57:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68D654275E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1FA34A797;
-	Fri, 31 Oct 2025 13:57:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7463334B661;
+	Fri, 31 Oct 2025 13:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e+uRkNXx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OVR3g0Ci"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701D734A3AC;
-	Fri, 31 Oct 2025 13:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB8F286A4;
+	Fri, 31 Oct 2025 13:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761919054; cv=none; b=YW7Vg5XnSuqBpAcqMcrgxwBhd8RnJvRJDIi1cuzcbJyeDkDKXI3ErpjTSiyQQGUhHp7FKWI6gWZEiMcYm49bRKa5ImJCQqrL3ldyXsxCaIf/oSnF5Acqf8S8zjpTcffU1ywd9p8mpyeQ3zviEqt8xV8gO5fGVnPq8vIDmu/kd/o=
+	t=1761919114; cv=none; b=ZhvixBFIqr/s/N94JkTUDbs8F6+sxcEW0FEQvuwje3ddSi+wzMqDJeicWFwTJorM2o9q4xNOyFNtBjJ8XUTI9JC2iNybl92thInDma5+YBAGdUU1YNh/d6ItoHtDPRfoYVc1O4LAs7Akm+C7s2Drlm/bnEwU32FTZgPQjdlbd8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761919054; c=relaxed/simple;
-	bh=F2dQov/k8/XGikOnynsRGjTKyVzwWntonzbekUZ8F4M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=lnQjqfs5zWErUTpdMvintDJMvHpZhIq3x1TOfi/TgGPfEo9D1cXwcU3rcgpzV7VBrck9FZis9HMSCcVU5VnU1f+6/qSsfIGGGHQ2PHe9Z99VKYM6mk65wet6mE6aawxVatJRIb02jNjTs+XCF4mK9iORVNkcjPZk2cQqRoEDOUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e+uRkNXx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 0482AC4CEE7;
-	Fri, 31 Oct 2025 13:57:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761919052;
-	bh=F2dQov/k8/XGikOnynsRGjTKyVzwWntonzbekUZ8F4M=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=e+uRkNXx6Q4gCVsqoDCnid4Qs6AQphBQdX7Ip1BSVnSqP95FAMQJb0LIh0DTBA/tq
-	 UnurPcI4tjePldqN9aTbj0udPo0Jvb2WZAMS0ZZOie99wJbFePCgvjvZAVX3+UB4la
-	 B4cdrrC/K/UmtbJ2J3BI9EqrgKPp3ubfh5uhRlwWDNcBg//uVxv9lgplPJCIjsKTu0
-	 wnbqdRVUz9YemRSTBxZ67pmlb7/HBifTNEuuCnuGueHlfStJk9R9B8IJq1qrkdR3hO
-	 dIbMCbpVg7nJKKytRsNTSHqMQoC1dsTEs0tua3kkQQ/Mr6lj6rjmW2qBY5bOyO8tXt
-	 g16fQgD9mirdg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7EEFCCF9FF;
-	Fri, 31 Oct 2025 13:57:31 +0000 (UTC)
-From: Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org>
-Date: Fri, 31 Oct 2025 13:57:06 +0000
-Subject: [PATCH v2] iio: imu: inv_icm45600: Initializes
- inv_icm45600_buffer_postdisable sleep
+	s=arc-20240116; t=1761919114; c=relaxed/simple;
+	bh=bayY/glbkyFlGSSY0jLX8k8RyrFSF/EZWDZ5KOPr+xg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kKD7PufTOA9sBggV4coi5H1bJluZd5k7l5Bz4gV+Mi/3E7qd8kh3owj67RORwyNPebtCXawmzsUJiBVCz3kKNVCsVXrotmjpHeE3BMi9NX8nOpcbexXg/00lF3JVu8xTbEqPygIWgeIy6YnHYtjZw4l/CUvj6jn6E5hRZS1Y/tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OVR3g0Ci; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761919113; x=1793455113;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bayY/glbkyFlGSSY0jLX8k8RyrFSF/EZWDZ5KOPr+xg=;
+  b=OVR3g0Cit2Rm3JrAGouXlGurZz0dmE7OrIY5L3xcP57jkpI42mt2AI+i
+   R4ufaICWB9SPsvqwK7i1DVDYxKvjM78tYMb7AaCRL8h2MfObU1ZxCjB1U
+   ZmxqgP6x3eUxfceDQR9b2ZD7ASTXUevw3txmSQPiNH8vexhsw4HAScVL7
+   ++AxiRm72OZdqa6GkMjSJDUtrTr5W6I7Gpy6OlWMkJSmvKejTKbQrTpsp
+   5oebppWtIbQqjcES2DJUuszUqLMJc0HAdeJufEUwCLaNum3eU4X+72eAZ
+   Osf1ZjNSJ2K2wY1lBUbq6BIMlwEIAkQK4AGV3KDRpeSv321StQ/ABN70P
+   g==;
+X-CSE-ConnectionGUID: 18Kd9dp5R+2KtmcPH6bm3g==
+X-CSE-MsgGUID: YPDW3612SouO7iN8XleB5g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="64110923"
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="64110923"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 06:58:32 -0700
+X-CSE-ConnectionGUID: 0FL1TS1dQjWf+PAOirhHgg==
+X-CSE-MsgGUID: aAVBaDI1RMyRq5JrNtEbZg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="191387593"
+Received: from jjgreens-desk20.amr.corp.intel.com (HELO kuha.fi.intel.com) ([10.124.220.81])
+  by orviesa005.jf.intel.com with SMTP; 31 Oct 2025 06:58:16 -0700
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Fri, 31 Oct 2025 15:58:13 +0200
+Date: Fri, 31 Oct 2025 15:58:13 +0200
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Chaoyi Chen <kernel@airkyi.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Yubing Zhang <yubing.zhang@rock-chips.com>,
+	Frank Wang <frank.wang@rock-chips.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Amit Sunil Dhamne <amitsd@google.com>,
+	Chaoyi Chen <chaoyi.chen@rock-chips.com>,
+	Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
+	Diederik de Haas <didi.debian@cknow.org>,
+	Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v8 03/10] drm/bridge: Implement generic USB Type-C DP HPD
+ bridge
+Message-ID: <aQTAdaIgjgTRSgxL@kuha.fi.intel.com>
+References: <20251029071435.88-1-kernel@airkyi.com>
+ <20251029071435.88-4-kernel@airkyi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251031-icm45600_fix_buffer_sleep_init-v2-1-5cdc04e1bcba@tdk.com>
-X-B4-Tracking: v=1; b=H4sIADHABGkC/42NWw7CIBBFt9LMtxhAwOqX+zANsXSwE+0jgI2mY
- e9iV+Dnubk5Z4WIgTDCuVoh4EKRprGA3FXg+tt4R0ZdYZBcasEPgpEblDacW09v2768x2DjE3G
- 2NFJiNTfSG+RHXysokjlgOW6Ba1O4p5im8Nl6i/itf6sXwQQ7SYW+bYXRWF9S99i7aYAm5/wFw
- ETtacoAAAA=
-X-Change-ID: 20251031-icm45600_fix_buffer_sleep_init-8062f6e07f84
-To: Jonathan Cameron <jic23@kernel.org>, 
- David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Remi Buisson <remi.buisson@tdk.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761919051; l=1575;
- i=remi.buisson@tdk.com; s=20250411; h=from:subject:message-id;
- bh=Rx62rT5vGu7kFWtOCrCoEMC+ZXlR39elZof20ubLlDA=;
- b=kfjGhVBUaoE4027tfvZxjjDZqatcfqnxl2+OfuvbAz4md8gbYTd6AV3AOtULR8I2Q6O73oLj3
- bI93bDRmPAtCIrCRr1FreWPjr7Pj0TR9Oy9983/Xja55wM8eDT0fbpP
-X-Developer-Key: i=remi.buisson@tdk.com; a=ed25519;
- pk=yDVMi4C7RpXN4dififo42A7fDDt3THYzoZoNq9lUZuo=
-X-Endpoint-Received: by B4 Relay for remi.buisson@tdk.com/20250411 with
- auth_id=372
-X-Original-From: Remi Buisson <remi.buisson@tdk.com>
-Reply-To: remi.buisson@tdk.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029071435.88-4-kernel@airkyi.com>
 
-From: Remi Buisson <remi.buisson@tdk.com>
+Wed, Oct 29, 2025 at 03:14:28PM +0800, Chaoyi Chen kirjoitti:
+> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+> 
+> Several USB-C controller drivers have already implemented the DP HPD
+> bridge function provided by aux-hpd-bridge.c, but there are still
+> some USB-C controller driver that have not yet implemented it.
+> 
+> This patch implements a generic DP HPD bridge based on aux-hpd-bridge.c,
+> so that other USB-C controller drivers don't need to implement it again.
+> 
+> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+> ---
+> 
+> Changes in v8:
+> - Merge generic DP HPD bridge into one module.
+> 
+>  drivers/gpu/drm/bridge/Kconfig                |  5 +-
+>  drivers/gpu/drm/bridge/Makefile               |  8 +++-
+>  drivers/gpu/drm/bridge/aux-hpd-bridge.c       | 23 ++++++++-
+>  drivers/gpu/drm/bridge/aux-hpd-bridge.h       | 13 +++++
+>  .../gpu/drm/bridge/aux-hpd-typec-dp-bridge.c  | 47 +++++++++++++++++++
+>  5 files changed, 93 insertions(+), 3 deletions(-)
+>  create mode 100644 drivers/gpu/drm/bridge/aux-hpd-bridge.h
+>  create mode 100644 drivers/gpu/drm/bridge/aux-hpd-typec-dp-bridge.c
+> 
+> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+> index a250afd8d662..17257b223a28 100644
+> --- a/drivers/gpu/drm/bridge/Kconfig
+> +++ b/drivers/gpu/drm/bridge/Kconfig
+> @@ -23,13 +23,16 @@ config DRM_AUX_BRIDGE
+>  	  build bridges chain.
+>  
+>  config DRM_AUX_HPD_BRIDGE
+> -	tristate
+> +	tristate "AUX HPD bridge support"
 
-The sleep variable in inv_icm45600_buffer_postdisable could be used without
-being assigned in case of error. It must be initialized to 0 by default.
+Don't you now need:
 
-Fixes: 06674a72cf7a ("iio: imu: inv_icm45600: add buffer support in iio devices")
-Smatch static checker warning:
+        depends on TYPEC || !TYPEC
 
-	drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c:377 inv_icm45600_buffer_postdisable()
-	error: uninitialized symbol 'sleep'.
+>  	depends on DRM_BRIDGE && OF
+>  	select AUXILIARY_BUS
+>  	help
+>  	  Simple bridge that terminates the bridge chain and provides HPD
+>  	  support.
+>  
+> +	  Specifically, if you want a default Type-C DisplayPort HPD bridge for
+> +	  each port of the Type-C controller, say Y here.
+> +
+>  menu "Display Interface Bridges"
+>  	depends on DRM && DRM_BRIDGE
+>  
+> diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
+> index c7dc03182e59..2998937444bc 100644
+> --- a/drivers/gpu/drm/bridge/Makefile
+> +++ b/drivers/gpu/drm/bridge/Makefile
+> @@ -1,6 +1,12 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  obj-$(CONFIG_DRM_AUX_BRIDGE) += aux-bridge.o
+> -obj-$(CONFIG_DRM_AUX_HPD_BRIDGE) += aux-hpd-bridge.o
+> +
+> +hpd-bridge-y := aux-hpd-bridge.o
+> +ifneq ($(CONFIG_TYPEC),)
+> +hpd-bridge-y += aux-hpd-typec-dp-bridge.o
+> +endif
+> +obj-$(CONFIG_DRM_AUX_HPD_BRIDGE) += hpd-bridge.o
+> +
+>  obj-$(CONFIG_DRM_CHIPONE_ICN6211) += chipone-icn6211.o
+>  obj-$(CONFIG_DRM_CHRONTEL_CH7033) += chrontel-ch7033.o
+>  obj-$(CONFIG_DRM_CROS_EC_ANX7688) += cros-ec-anx7688.o
+> diff --git a/drivers/gpu/drm/bridge/aux-hpd-bridge.c b/drivers/gpu/drm/bridge/aux-hpd-bridge.c
+> index 2e9c702c7087..11ad6dc776c7 100644
+> --- a/drivers/gpu/drm/bridge/aux-hpd-bridge.c
+> +++ b/drivers/gpu/drm/bridge/aux-hpd-bridge.c
+> @@ -12,6 +12,8 @@
+>  #include <drm/drm_bridge.h>
+>  #include <drm/bridge/aux-bridge.h>
+>  
+> +#include "aux-hpd-bridge.h"
+> +
+>  static DEFINE_IDA(drm_aux_hpd_bridge_ida);
+>  
+>  struct drm_aux_hpd_bridge_data {
+> @@ -204,7 +206,26 @@ static struct auxiliary_driver drm_aux_hpd_bridge_drv = {
+>  	.id_table = drm_aux_hpd_bridge_table,
+>  	.probe = drm_aux_hpd_bridge_probe,
+>  };
+> -module_auxiliary_driver(drm_aux_hpd_bridge_drv);
+> +
+> +static int drm_aux_hpd_bridge_mod_init(void)
+> +{
+> +	int ret;
+> +
+> +	ret = auxiliary_driver_register(&drm_aux_hpd_bridge_drv);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return drm_aux_hpd_typec_dp_bridge_init();
+> +}
+> +
+> +static void drm_aux_hpd_bridge_mod_exit(void)
+> +{
+> +	drm_aux_hpd_typec_dp_bridge_exit();
+> +	auxiliary_driver_unregister(&drm_aux_hpd_bridge_drv);
+> +}
+> +
+> +module_init(drm_aux_hpd_bridge_mod_init);
+> +module_exit(drm_aux_hpd_bridge_mod_exit);
+>  
+>  MODULE_AUTHOR("Dmitry Baryshkov <dmitry.baryshkov@linaro.org>");
+>  MODULE_DESCRIPTION("DRM HPD bridge");
+> diff --git a/drivers/gpu/drm/bridge/aux-hpd-bridge.h b/drivers/gpu/drm/bridge/aux-hpd-bridge.h
+> new file mode 100644
+> index 000000000000..69364731c2f1
+> --- /dev/null
+> +++ b/drivers/gpu/drm/bridge/aux-hpd-bridge.h
+> @@ -0,0 +1,13 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +#ifndef AUX_HPD_BRIDGE_H
+> +#define AUX_HPD_BRIDGE_H
+> +
+> +#if IS_REACHABLE(CONFIG_TYPEC)
+> +int drm_aux_hpd_typec_dp_bridge_init(void);
+> +void drm_aux_hpd_typec_dp_bridge_exit(void);
+> +#else
+> +static inline int drm_aux_hpd_typec_dp_bridge_init(void) { return 0; }
+> +static inline void drm_aux_hpd_typec_dp_bridge_exit(void) { }
+> +#endif /* IS_REACHABLE(CONFIG_TYPEC) */
+> +
+> +#endif /* AUX_HPD_BRIDGE_H */
+> diff --git a/drivers/gpu/drm/bridge/aux-hpd-typec-dp-bridge.c b/drivers/gpu/drm/bridge/aux-hpd-typec-dp-bridge.c
+> new file mode 100644
+> index 000000000000..6f2a1fca0fc5
+> --- /dev/null
+> +++ b/drivers/gpu/drm/bridge/aux-hpd-typec-dp-bridge.c
+> @@ -0,0 +1,47 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +#include <linux/of.h>
+> +#include <linux/usb/typec_altmode.h>
+> +#include <linux/usb/typec_dp.h>
+> +#include <linux/usb/typec_notify.h>
+> +
+> +#include <drm/bridge/aux-bridge.h>
+> +
+> +#include "aux-hpd-bridge.h"
+> +
+> +#if IS_REACHABLE(CONFIG_TYPEC)
 
-Signed-off-by: Remi Buisson <remi.buisson@tdk.com>
----
-Changes in v2:
-- Moving pacth description from cover-letter to single commit
-- Link to v1: https://lore.kernel.org/r/20251031-icm45600_fix_buffer_sleep_init-v1-1-924efbb165e8@tdk.com
----
- drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+You don't need that. You should not use ifdefs in .c files.
 
-diff --git a/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c b/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c
-index 2efcc177f9d60a6a2509e448c0ddaf4b9e1fd755..bb8382feddc0fd882a6be2ce5e4fe77ab68f13fd 100644
---- a/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c
-+++ b/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c
-@@ -357,7 +357,7 @@ static int inv_icm45600_buffer_postdisable(struct iio_dev *indio_dev)
- 	struct device *dev = regmap_get_device(st->map);
- 	unsigned int sensor;
- 	unsigned int *watermark;
--	unsigned int sleep;
-+	unsigned int sleep = 0;
- 	int ret;
- 
- 	if (indio_dev == st->indio_gyro) {
+> +static int drm_typec_bus_event(struct notifier_block *nb,
+> +			       unsigned long action, void *data)
+> +{
+> +	struct typec_altmode *alt = (struct typec_altmode *)data;
+> +
+> +	if (action != TYPEC_ALTMODE_REGISTERED)
+> +		goto done;
+> +
+> +	if (is_typec_partner(&alt->dev) || alt->svid != USB_TYPEC_DP_SID)
+> +		goto done;
+> +
+> +	/*
+> +	 * alt->dev.parent->parent : USB-C controller device
+> +	 * alt->dev.parent         : USB-C connector device
+> +	 */
+> +	drm_dp_hpd_bridge_register(alt->dev.parent->parent,
+> +				   to_of_node(alt->dev.parent->fwnode));
+> +
+> +done:
+> +	return NOTIFY_OK;
+> +}
+> +
+> +static struct notifier_block drm_typec_event_nb = {
+> +	.notifier_call = drm_typec_bus_event,
+> +};
+> +
+> +int drm_aux_hpd_typec_dp_bridge_init(void)
+> +{
+> +	return typec_altmode_register_notify(&drm_typec_event_nb);
+> +}
+> +
+> +void drm_aux_hpd_typec_dp_bridge_exit(void)
+> +{
+> +	typec_altmode_unregister_notify(&drm_typec_event_nb);
+> +}
+> +#endif
+> -- 
+> 2.49.0
 
----
-base-commit: 70437bbd7529e9860fb7f0c92a89e0e6abaa994e
-change-id: 20251031-icm45600_fix_buffer_sleep_init-8062f6e07f84
-
-Best regards,
 -- 
-Remi Buisson <remi.buisson@tdk.com>
-
-
+heikki
 
