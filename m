@@ -1,112 +1,116 @@
-Return-Path: <linux-kernel+bounces-879757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A929AC23F2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:56:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE6C5C23F2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:56:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1D251A20E90
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:56:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3F1E04E7695
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC8D329E62;
-	Fri, 31 Oct 2025 08:55:31 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5CDF31A056;
+	Fri, 31 Oct 2025 08:56:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KA6vJYco";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="x5I+KeLO"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B95328B77
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039F33176EF
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761900931; cv=none; b=Eas7gjlWQjdqjCNQ421Giy6NaYIIMgM/z0F7sqN27Ajl8PW/H0ohIDYjKMnegSgj580gSZh7BACc6xgTXubGzmQKbiq0gXAH5i+eZV/tBzv4oSAp+0ZXvulx408wuy6zeKRSt0VC34K+dVwPgeysW574y7zYCNyvG9UKkVi7GbY=
+	t=1761900977; cv=none; b=X/S3OU9fCauFwMKEqw1Y+2gh8GqRoAF2D9agPw/3Co00tKaORZdjbGx9p6bgIybXhUSDfVWL12Fn+1tyhZouUNv/6BofYVfWZE2J/uEEH3urHFAGjDppeIZzCsNe5LG0LLSyGRgdNQ5JCqRxezzSjCo1XwzT2AJbmgRBex0Lp8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761900931; c=relaxed/simple;
-	bh=yKJia9ig9B/6F1hYjOmDx4MH0LEy2pBuagFT2leWtpE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=tP0SaPvMuNLOzmVM8skj+LtPnWKGIvTnKJhRWhcWiUAGcrx1GSPY/oEkBLxxrH2tH0jTMKbC2CzY73RNv4sc67e81qiWDWb9GQMaZSNYMsvfeNjPsF2YC8nCsX38iRUhnHJA+53S0NxKL8GooUuclCGSmLMXoGcCcqudTarfgbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-430db5635d6so26222005ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 01:55:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761900928; x=1762505728;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vQznDTewHzt7+x/YG9L0Jd10kp8tx1TfNBen+HEnewQ=;
-        b=BIX4ZQZ55ZcRlJPIrTZ2Td2hnkys0XjMQCp3lo2taTBmxMg0sPfUaaEue17VkdFsMI
-         WkePtZ3xgRwD43FexExjbEmPVDQDPOvBemBurOYo30ch2koZstWmsJsSta63gysHZr/2
-         sdejkNecKwAZ6HQ9p3AnK+TLeM0D1geEm6UozTX+AUnEu1W7kRFbzRKteqwhFSQw5ktC
-         83cU1q37rDXDLtmzJ1oxAMsxlIR6GDdPOeBYn95gmaK8dN2pw3ZkwAzxUAs6TnYHdGUn
-         o90/N7CQ5oGOo+DCxdlsHZ23WYpPUHgYOrL+zELooSgP8pDSIFX765hvDNEVoIHaTaJj
-         iqtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXzn0j1pTJh0GKPbmyCGWq7SukYP8Y/hAk7bWde2aCczfNA3OdmTrzHJ28J3OUEuVfwk+PJV3MOrbFm4tA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSIiHeS5QbvQCaSpxs6og+yyFOTIZmHZEMzwDPfhC397phclwm
-	yw2GlRVfvVx58aTDR80McZLYX7uJ1F2mZk6xjpqi38b9vS5+k0L3ymZG0Xcb+FBUQmI7LKCbNN9
-	XeqCCsNEwnZQj24cmC3kZliGAJHRsYluwDooXHvf0HnWQd0wQLlzvYLDIhcw=
-X-Google-Smtp-Source: AGHT+IGN0FNZi7bjppFgoPLB5NtNJOF6wA2T4eKlOvcfmIP1GS399KhMwT/MT6NeCXq8YnHjmGhpHmQGtwidwTeKMvVqhISXsqsC
+	s=arc-20240116; t=1761900977; c=relaxed/simple;
+	bh=iuDFykkDdPkE0VLPWpV6tBuaOMpsVLCTxOa1JGKjOeo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HnLqSMIbi/8TWTjVUw8koTHJX8ZaxOGmsbSEEBLxCKTsM4KJzcVga5NIvYT5ENKjW6g+C3PNp9NsyQ5Z3MXXtqsQAXwO9zQla5dbinH+B9V5DQBXCVqmmQZNb+QVdluRjfuuWPiUROH23c5M0Ujay0zyT6g2DzpjFEIFkkYblkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KA6vJYco; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=x5I+KeLO; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1761900966;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iuDFykkDdPkE0VLPWpV6tBuaOMpsVLCTxOa1JGKjOeo=;
+	b=KA6vJYcozWv7Wz4iz0T/ClS+OCtxkJCHrL2AR2BXm7akb7chCmvbalCsS+50AVwLe8brNH
+	IxrOGDC3/cEq723yyG9EvtXl4N58kLCLalPoUahkYxkwbFOAFGus0exkdw5ArFBLt7jhnd
+	2UL18o5hT/xoJfE6B1Q5qFOSkLqp+awxx92T4HgE2x+Mw4rOIy9p/1SMFViqoM/uNGinOA
+	qw2NSWgi007iZ67XNIFnAbQ6ph/Ifhl7+NG4RuZUczo+Qfm2fmRunAQ7lZNiUCgreMx4rM
+	JSleMtPiKP9w9Mw49FauxDn7VmCYmgQUic6M/h9cm0pbx+h0Z8sWsHOWn9Un7Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1761900966;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iuDFykkDdPkE0VLPWpV6tBuaOMpsVLCTxOa1JGKjOeo=;
+	b=x5I+KeLOOc/IpsHq4bfdJTnpTqKdM7wEkbj+5XAZXLFsn55Ahvfzm5HwwA4cgb9hF4i9EN
+	b8mZ1sI5shFI1/AQ==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Breno Leitao <leitao@debian.org>, Mike Galbraith
+ <efault@gmx.de>, linux-kernel@vger.kernel.org, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH printk v2 1/1] printk: nbcon: Allow unsafe
+ write_atomic() for panic
+In-Reply-To: <aQN-NeWzlxtWDLXF@pathway.suse.cz>
+References: <20251027161212.334219-1-john.ogness@linutronix.de>
+ <20251027161212.334219-2-john.ogness@linutronix.de>
+ <aQN-NeWzlxtWDLXF@pathway.suse.cz>
+Date: Fri, 31 Oct 2025 10:02:06 +0106
+Message-ID: <87346z5u1l.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a28:b0:430:ad98:981f with SMTP id
- e9e14a558f8ab-4330d14382cmr45224415ab.4.1761900928655; Fri, 31 Oct 2025
- 01:55:28 -0700 (PDT)
-Date: Fri, 31 Oct 2025 01:55:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69047980.050a0220.e9cb8.0006.GAE@google.com>
-Subject: [syzbot] Monthly fs report (Oct 2025)
-From: syzbot <syzbot+list0377cc5e08cc9b971109@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-Hello fs maintainers/developers,
+On 2025-10-30, Petr Mladek <pmladek@suse.com> wrote:
+> The patch looks good to me:
+>
+> Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-This is a 31-day syzbot report for the fs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/fs
+Thanks.
 
-During the period, 5 new issues were detected and 1 were fixed.
-In total, 59 issues are still open and 398 have already been fixed.
+> That said, it needs one more hunk to fix build with the patchset
+> adding support for nbcon into kdb which is
+> in https://git.kernel.org/pub/scm/linux/kernel/git/printk/linux.git/
 
-Some of the still happening issues:
+[...]
 
-Ref  Crashes Repro Title
-<1>  7013    Yes   BUG: sleeping function called from invalid context in hook_sb_delete
-                   https://syzkaller.appspot.com/bug?extid=12479ae15958fc3f54ec
-<2>  6890    Yes   WARNING in inc_nlink (3)
-                   https://syzkaller.appspot.com/bug?extid=2b3af42c0644df1e4da9
-<3>  6341    Yes   possible deadlock in input_event (2)
-                   https://syzkaller.appspot.com/bug?extid=d4c06e848a1c1f9f726f
-<4>  4584    Yes   INFO: task hung in path_openat (7)
-                   https://syzkaller.appspot.com/bug?extid=950a0cdaa2fdd14f5bdc
-<5>  4464    Yes   BUG: unable to handle kernel NULL pointer dereference in filemap_read_folio (4)
-                   https://syzkaller.appspot.com/bug?extid=09b7d050e4806540153d
-<6>  4309    Yes   WARNING in path_noexec (2)
-                   https://syzkaller.appspot.com/bug?extid=a9391462075ffb9f77c6
-<7>  3776    Yes   INFO: task hung in __iterate_supers
-                   https://syzkaller.appspot.com/bug?extid=b10aefdd9ef275e9368d
-<8>  3646    Yes   INFO: task hung in page_cache_ra_unbounded (2)
-                   https://syzkaller.appspot.com/bug?extid=265e1cae90f8fa08f14d
-<9>  2852    Yes   KASAN: use-after-free Read in hpfs_get_ea
-                   https://syzkaller.appspot.com/bug?extid=fa88eb476e42878f2844
-<10> 2314    Yes   INFO: task hung in filename_create (4)
-                   https://syzkaller.appspot.com/bug?extid=72c5cf124089bc318016
+> Also there is one trivial conflict with the new branch which is
+> preventing hardlockups in atomic flush which is
+> https://git.kernel.org/pub/scm/linux/kernel/git/printk/linux.git/log/?h=rework/atomic-flush-hardlockup
+>
+> Namely, it is the last patch which moves nbcon_context_try_acquire()
+> into to while cycle, see
+> https://git.kernel.org/pub/scm/linux/kernel/git/printk/linux.git/commit/?h=rework/atomic-flush-hardlockup&id=d5d399efff65773ed82ddaf6c11a0fcfdb5eb029
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+I can send a new patch that takes all these underlying series into
+account... assuming it is going through the printk tree.
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+> I am not sure how to move forward. IMHO, the original plan was to push
+> this patch together with the other netconsole-related changes. In this
+> case, the conflicts will need to be solved when merging pull requests
+> from netconsole and printk trees. Well, the conflicts are trivial.
+>
+> Or I could push this patch via the printk tree and queue it for 6.19.
+> But this might be too late for netconsole.
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+@Breno: This new feature only exists for netconsole at the moment, so I
+am fine with it going through the netconsole tree. But we need to decide
+this soon because there are a lot of printk-changes queued for 6.19 that
+conflict with this patch and we should get those sorted out sooner
+rather than later. (Note that the patch in its current form will also
+conflict with the netconsole tree, so regardless of our decision I need
+to submit a new version.)
 
-You may send multiple commands in a single email message.
+John
 
