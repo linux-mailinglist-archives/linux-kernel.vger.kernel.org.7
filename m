@@ -1,157 +1,170 @@
-Return-Path: <linux-kernel+bounces-880346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8E91C25917
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:29:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAE4BC2590B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:27:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 766813A6CB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:24:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2C7174F471E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FCC633E363;
-	Fri, 31 Oct 2025 14:24:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077A434B42C;
+	Fri, 31 Oct 2025 14:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jxbxuuNg"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b="X3hIl6qF"
+Received: from mx0.infotecs.ru (mx0.infotecs.ru [91.244.183.115])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7622B2222A9
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 14:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43AC0224B1B;
+	Fri, 31 Oct 2025 14:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.244.183.115
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761920666; cv=none; b=e1YXyCTcEjbkDPg9aHOrCL3YOt/l32lLSJ9BFC9pFethgaF1f2GDcf1Ef1FvuIwWqm5V4VkakOFMsE+NXORP/Xeu7NOnxjwdhS7B+Q2kp3i3ZGpwTaO5Zmhv7wgePOuO0mH2/9LVYnQcO8pmYOFe42jBiXCm/KVDob0zB0pt+BM=
+	t=1761920705; cv=none; b=LC//VZkvPbe+RtpcBlpGz5abHpAnA5GskIW4xZiIp56UqKRAwnMrPggtUXy6ZjeyJhJZ7oR/3278ZcjdZP5BwhaR65N1+xWUhH4ZtYdBPvFxHgFEUunovGIUjG9ftp6jnJVzWLw2z0ES5/8zSfz2DiliaLj7pSsQG1IHaPApJhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761920666; c=relaxed/simple;
-	bh=sn481Pbtg30Ig0+fkdFzlUzNl+Bj8bdorFW34ITxOpU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q9KcuES3IxSeHW1AK5i5g+w/DuqV2204/H1C1C6XyrxD2yTZHd9v+a1rpTBWb/TBZfLTO5XVLFWeQ3L7JFnEQv2EjJjdGqZjBTOCxVyBlkm1+rY8R+GzxA9ZJmOJ8if7ljSviSyuGaHKH0LIEtQHhTad5GcPkuKI8qZnJxO1RLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jxbxuuNg; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-63e076e24f2so4446655a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:24:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1761920661; x=1762525461; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UyvLR/aTPgdHtklMf3S8VVUt+hq3yvjQCoTbWQpjR1s=;
-        b=jxbxuuNgUu+4p/wp7E3/ls+hDjBuG0+0diJItQIq4Zulpe7Bh+Lv3C8aYVYthJKq0R
-         zXYucfeVQlU1y7Odfbvy6sLnVO58IKCtKBIbgKi0ri8RSHfvk86gQkMo8wjKZUd6gBHA
-         Vz1Uyq2NVBlkVvb5vyaQUWJtTvezOMEjyfISw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761920661; x=1762525461;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UyvLR/aTPgdHtklMf3S8VVUt+hq3yvjQCoTbWQpjR1s=;
-        b=pMAqnlQJbikOCllcBp0Qc/0i6QaRLO8/KZESP5yD/7TpVMnVFMkaA6Qqvdemujuyjn
-         DidlW91YTJfKbRgkEth0VK7zu8CCdOb3jO+irDT95d7oETCXV7RpnbGoLy/XHVVw93CD
-         0vZD3XjNKxaTkQDean3d9Em0FvacfF+6MH1zmQpRZiZ+ZqF+ezUfinBLdxrFr415xWvq
-         /3tiPz2pbsgxNZcdVbNGzqpuigHtZ1jxym5T6It+oB1Po20+CvYLq7YDjWl0tJaFpLQH
-         MAx34aMYl4N85fYtUC54LAxCzyCn+pMyj/LES+5WuqeR+cpYKX9BC9SkP79HX/U6bu5c
-         P+6g==
-X-Forwarded-Encrypted: i=1; AJvYcCVCYwKDT5jhSRwcl8nUH7FFawr9zfO7Lnz/N0unee7qRGyxzfMbAVQZYDx0T68d0gpNoiQN/xOUgGpoXa4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyT7tTzdJY0pMf8QOuM32abiNMPcVauG9FOExSJhFCFwG0JGw0S
-	HKpcSUw607MYxCgeSXGeqw4VxxJed9bZ04RU9BCezbuXvdKiXCtG8SoAqEvkABkgg5AbBPdy9gy
-	uMfN8YO5G
-X-Gm-Gg: ASbGncvfPFvPy3NfOGV3LPzwaO8qYHj1gvMiIYl6Ig+fqhbx5MmHQxbCXLwBI6mNIQC
-	bmoF66aiamdLg2PiT3VpHYLNYBWyOXwPMbDgS875JkDC1LNgzWDtlM/X051p1BagNxsGTMZQf1m
-	ULIv0fQjZtpV1f2/CYt7dzjwqFge7taf4siqAjWMu6+T2+Yk3Ox1xfUmx2hseRmdPYO/LANNfXq
-	4nwzQXhftiS9iSyA1E0+EaOyw8fkPDZG2MvVepJEsufPD7SrNTW270MJBn/EJUjImjlb0oAos8u
-	oKMRdOfmGDk1zlqBdCtvrbOFk0778s2JD/NluN6ZnvZkge296PU3gQfcI3V/sBtxaK8SyRTdzJs
-	z8/xtAg5HgJrztOvWDvb0eQCpvu+bek+5Zh1QeQOi7tT8FX69rZCeg+WpY4vvxYE4CpiYbywber
-	+ksjilqakLQ+bZIVltnldPq/QlG6sUeQv5cWYYbtq/2cO/ejr3Rw==
-X-Google-Smtp-Source: AGHT+IEql6BAZVVTd6HvruggnAFDB2lp07x5sOSofoDEVRG+Mh+chqo68Wat6RXtykRmHvydYLjHHg==
-X-Received: by 2002:a05:6402:51cf:b0:63c:45fc:7dda with SMTP id 4fb4d7f45d1cf-640770bc399mr3103494a12.20.1761920661223;
-        Fri, 31 Oct 2025 07:24:21 -0700 (PDT)
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com. [209.85.128.45])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6407b390d7dsm1691217a12.10.2025.10.31.07.24.19
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Oct 2025 07:24:19 -0700 (PDT)
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-47118259fd8so17365735e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:24:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUjofHRRhftzHYKB0H6OpyMAu/BMMSLmbDM6DVzLuuTprniwIaMRZrCE09U4pDkd8dLTTHJC9GpePirVfk=@vger.kernel.org
-X-Received: by 2002:a05:600c:608e:b0:475:d952:342f with SMTP id
- 5b1f17b1804b1-477308cb956mr34652905e9.39.1761920659162; Fri, 31 Oct 2025
- 07:24:19 -0700 (PDT)
+	s=arc-20240116; t=1761920705; c=relaxed/simple;
+	bh=+dR8LqYFVT19rB3T1VlHprmvJN/ZY1eeJ5SNnvu+yHE=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=WHwl//oO/VJqvmlDhjbNeHb/d/rBizoz5CzdVax08u3rQWHhIYjxb6BqdIODSUiyB0wkuSO06rtB203x+OCxoCZsYFuVqdneXJeCrCn8kiTvn5qn2g5X8DwTdnEsZlgVr3vWENJtECaa+vFrLPFG2iduPuNtbUmjiQXLskiknGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=infotecs.ru; spf=pass smtp.mailfrom=infotecs.ru; dkim=pass (1024-bit key) header.d=infotecs.ru header.i=@infotecs.ru header.b=X3hIl6qF; arc=none smtp.client-ip=91.244.183.115
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=infotecs.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infotecs.ru
+Received: from mx0.infotecs-nt (localhost [127.0.0.1])
+	by mx0.infotecs.ru (Postfix) with ESMTP id 6AA3610F3583;
+	Fri, 31 Oct 2025 17:24:50 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx0.infotecs.ru 6AA3610F3583
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infotecs.ru; s=mx;
+	t=1761920690; bh=pGzQ6kimm+/DeoMRD1FTfHpDg0coh7GojPD7fvrvnAk=;
+	h=From:To:CC:Subject:Date:From;
+	b=X3hIl6qFE3RVLlHyk4WYo5B4cXO7EWXBalK5mKt3GkVKqi/jOvaDY7WO6MotWZ08K
+	 uJEAY1P2tf7Q2MPqtNIUDkVQ1uuyq+GhV+uiAorR+lq092P/d2WGddnX4c6pii5mjV
+	 Vw/zRBUvfZzOUqpkeNn2pjuMJ40wrnmIpg60LNIA=
+Received: from msk-exch-02.infotecs-nt (msk-exch-02.infotecs-nt [10.0.7.192])
+	by mx0.infotecs-nt (Postfix) with ESMTP id 680D931057D4;
+	Fri, 31 Oct 2025 17:24:50 +0300 (MSK)
+From: Ilia Gavrilov <Ilia.Gavrilov@infotecs.ru>
+To: Linus Walleij <linus.walleij@linaro.org>
+CC: Bartosz Golaszewski <brgl@bgdev.pl>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, "linux-gpio@vger.kernel.org"
+	<linux-gpio@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "lvc-project@linuxtesting.org"
+	<lvc-project@linuxtesting.org>,
+	"syzbot+b95d0c98f01e7a95da72@syzkaller.appspotmail.com"
+	<syzbot+b95d0c98f01e7a95da72@syzkaller.appspotmail.com>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Subject: [PATCH] gpiolib: Fix a null-ptr-deref in gpiolib_seq_stop()
+Thread-Topic: [PATCH] gpiolib: Fix a null-ptr-deref in gpiolib_seq_stop()
+Thread-Index: AQHcSnIdMP+aip/9Pkix0VizLaSbyg==
+Date: Fri, 31 Oct 2025 14:24:50 +0000
+Message-ID: <20251031142449.1969807-1-Ilia.Gavrilov@infotecs.ru>
+Accept-Language: ru-RU, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-exclaimer-md-config: 208ac3cd-1ed4-4982-a353-bdefac89ac0a
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251030094434.1390143-1-ajye_huang@compal.corp-partner.google.com>
- <CAD=FV=V6xV0m4pj=7f2dxDP-0A1AaQuYJP5NAnXNz1_bzH7nSw@mail.gmail.com>
- <7071a2b8198c09011c84d39b45dc6d1da4b69d12@intel.com> <789d88744fbd3a05758971dc8d893fb4599475f3@intel.com>
-In-Reply-To: <789d88744fbd3a05758971dc8d893fb4599475f3@intel.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 31 Oct 2025 07:24:07 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XuWkudYB3OhPZrLJ0jNXFRyV1c6=czqn2RUo2M9CES9Q@mail.gmail.com>
-X-Gm-Features: AWmQ_bksWOd0CYzbEkU8DSTG-gAmtEAtGD6CyOC4AsR3tFevBy5nPue1f4Ho5ks
-Message-ID: <CAD=FV=XuWkudYB3OhPZrLJ0jNXFRyV1c6=czqn2RUo2M9CES9Q@mail.gmail.com>
-Subject: Re: [PATCH v1] drm/edid: add 6 bpc quirk to the Sharp LQ116M1JW10
-To: Jani Nikula <jani.nikula@intel.com>
-Cc: Ajye Huang <ajye_huang@compal.corp-partner.google.com>, linux-kernel@vger.kernel.org, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-KLMS-Rule-ID: 5
+X-KLMS-Message-Action: clean
+X-KLMS-AntiSpam-Status: not scanned, disabled by settings
+X-KLMS-AntiSpam-Interceptor-Info: not scanned
+X-KLMS-AntiPhishing: Clean, bases: 2025/10/31 13:36:00
+X-KLMS-AntiVirus: Kaspersky Security for Linux Mail Server, version 8.0.3.30, bases: 2025/10/31 11:38:00 #27817028
+X-KLMS-AntiVirus-Status: Clean, skipped
 
-Hi,
+Syzkaller reports a null-ptr-deref in gpiolib_seq_stop() [1]
 
-On Fri, Oct 31, 2025 at 3:40=E2=80=AFAM Jani Nikula <jani.nikula@intel.com>=
- wrote:
->
-> On Fri, 31 Oct 2025, Jani Nikula <jani.nikula@intel.com> wrote:
-> > On Thu, 30 Oct 2025, Doug Anderson <dianders@chromium.org> wrote:
-> >> Hi,
-> >>
-> >> On Thu, Oct 30, 2025 at 2:44=E2=80=AFAM Ajye Huang
-> >> <ajye_huang@compal.corp-partner.google.com> wrote:
-> >>>
-> >>> The Sharp LQ116M1JW105 reports that it supports 8 bpc modes,
-> >>> but it will happen display noise in some videos.
-> >>> So, limit it to 6 bpc modes.
-> >>>
-> >>> Signed-off-by: Ajye Huang <ajye_huang@compal.corp-partner.google.com>
-> >>> ---
-> >>>  drivers/gpu/drm/drm_edid.c | 3 +++
-> >>>  1 file changed, 3 insertions(+)
-> >>>
-> >>> diff --git a/drivers/gpu/drm/drm_edid.c b/drivers/gpu/drm/drm_edid.c
-> >>> index e2e85345aa9a..a73d37fe7ea1 100644
-> >>> --- a/drivers/gpu/drm/drm_edid.c
-> >>> +++ b/drivers/gpu/drm/drm_edid.c
-> >>> @@ -250,6 +250,9 @@ static const struct edid_quirk {
-> >>>         EDID_QUIRK('S', 'V', 'R', 0x1019, BIT(EDID_QUIRK_NON_DESKTOP)=
-),
-> >>>         EDID_QUIRK('A', 'U', 'O', 0x1111, BIT(EDID_QUIRK_NON_DESKTOP)=
-),
-> >>>
-> >>> +       /* LQ116M1JW10 displays noise when 8 bpc, but display fine as=
- 6 bpc */
-> >>> +       EDID_QUIRK('S', 'H', 'P', 0x154c, EDID_QUIRK_FORCE_6BPC),
-> >>
-> >> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> >
-> > FWIW,
-> >
-> > Acked-by: Jani Nikula <jani.nikula@intel.com>
->
-> And as soon as I hit send, I notice the quirk is missing BIT(). It's a
-> bit mask, and the enum signifies the bit number.
+If the memory allocation for priv variable in gpiolib_seq_start() fails,
+then s->private remains uninitialized, which leads to a null pointer
+dereference to s->private in gpiolib_seq_stop().
 
-Crud, that's not good! Sorry for missing that. :( Definitely glad you notic=
-ed!
+[1]
+Oops: general protection fault, probably for non-canonical address 0xdffffc=
+0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
+CPU: 1 UID: 0 PID: 10120 Comm: gpio_seq_stop Not tainted 6.12.53 #4
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1=
+.16.2-1 04/01/2014
+RIP: 0010:gpiolib_seq_stop+0x4c/0xd0
+Code: 48 c1 ea 03 80 3c 02 00 0f 85 95 00 00 00 48 8b 9b e0 00 00 00 48 b8 =
+00 00 00 00 00 fc ff df 48 8d 7b 04 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48 8=
+9 f8 83 e0 07 83 c0 03 38 d0 7c 04 84 d2 75 5d 8b
+RSP: 0018:ffffc90019f2fad8 EFLAGS: 00010247
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000400
+RDX: 0000000000000000 RSI: ffffffff84c57bfe RDI: 0000000000000004
+RBP: 0000000000000000 R08: 0000000000000dc0 R09: 00000000ffffffff
+R10: ffffffff8e3865b3 R11: 0000000000000001 R12: 0000000000000000
+R13: ffffffff8bd9da80 R14: 0000000000010000 R15: 0000000000000000
+FS:  00007fb9a07cf6c0(0000) GS:ffff888131600000(0000) knlGS:000000000000000=
+0
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000004c2018 CR3: 00000000264c6000 CR4: 00000000000006f0
+Call Trace:
+ <TASK>
+ seq_read_iter+0x610/0x1290
+ seq_read+0x3a4/0x570
+ ? __pfx_seq_read+0x10/0x10
+ full_proxy_read+0x12a/0x1a0
+ ? __pfx_full_proxy_read+0x10/0x10
+ vfs_read+0x1e2/0xcf0
+ ? __fget_files+0x23a/0x3f0
+ ? __pfx_lock_release+0x10/0x10
+ ? fdget_pos+0x24c/0x360
+ ? __pfx_vfs_read+0x10/0x10
+ ? __pfx___mutex_lock+0x10/0x10
+ ? __fget_files+0x244/0x3f0
+ ksys_read+0x12f/0x260
+ ? __pfx_ksys_read+0x10/0x10
+ do_syscall_64+0xcd/0x230
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-From off-list communication, it sounds like there is still some
-digging going on to see what's really happening with this panel, too.
-There is still some sort of mystery...
+Found by InfoTeCS on behalf of Linux Verification Center
+(linuxtesting.org) with Syzkaller
 
+Fixes: e348544f7994 ("gpio: protect the list of GPIO devices with SRCU")
+Reported-by: syzbot+b95d0c98f01e7a95da72@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=3Db95d0c98f01e7a95da72
+Cc: stable@vger.kernel.org # 6.9+
+Signed-off-by: Ilia Gavrilov <Ilia.Gavrilov@infotecs.ru>
+---
+ drivers/gpio/gpiolib.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
--Doug
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index 9952e412da50..13cf9f4bdc6d 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -5298,7 +5298,7 @@ static void *gpiolib_seq_start(struct seq_file *s, lo=
+ff_t *pos)
+=20
+ 	priv =3D kzalloc(sizeof(*priv), GFP_KERNEL);
+ 	if (!priv)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
+=20
+ 	s->private =3D priv;
+ 	if (*pos > 0)
+@@ -5331,8 +5331,11 @@ static void gpiolib_seq_stop(struct seq_file *s, voi=
+d *v)
+ {
+ 	struct gpiolib_seq_priv *priv =3D s->private;
+=20
+-	srcu_read_unlock(&gpio_devices_srcu, priv->idx);
+-	kfree(priv);
++	if (!IS_ERR(v)) {
++		srcu_read_unlock(&gpio_devices_srcu, priv->idx);
++		kfree(priv);
++	}
++	s->private =3D NULL;
+ }
+=20
+ static int gpiolib_seq_show(struct seq_file *s, void *v)
+--=20
+2.39.5
 
