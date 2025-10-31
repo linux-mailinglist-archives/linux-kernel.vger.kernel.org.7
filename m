@@ -1,201 +1,159 @@
-Return-Path: <linux-kernel+bounces-880439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD8DAC25C52
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:11:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5B98C25C6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:12:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4952189EFFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:01:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C3BD1B21FE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:02:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2562D6E48;
-	Fri, 31 Oct 2025 14:53:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C211F5617;
+	Fri, 31 Oct 2025 14:58:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hg3KPhvn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="VQlh90m6"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C632D5930;
-	Fri, 31 Oct 2025 14:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA405733E;
+	Fri, 31 Oct 2025 14:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761922425; cv=none; b=jl3/zsnEfj+h1JODYA0Q+ACMAC7i5TG+XD9jXAeEd7H/IRUF+ezbN/UcqSmmOkENyIMi4r7BVjuEXrcjo8aaJ64n/wYWNYCfAzc7gA01lX+GtNWo7pYtYRszQguidT4a6T1FWzPC5PBkQgztFFT02MWsxfQMlr8/Gi5umCs39uw=
+	t=1761922720; cv=none; b=ZVFnQfRITp4rGgoyYCuEMayjBuCjWSAfLj0cTFi7jNqiFblhcTDAIOnh3tDvvHEjRHnjmcAm/dxeBp0Jvl5NFCWzXvaRhqbNohGfbin88eKzwjsE9VKQOYfRGbl0aaZaoqMJgEvLLHfMbWN4Pjckl1tAyGzNq6SAgR2mwBfsnYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761922425; c=relaxed/simple;
-	bh=6vHW2fp30oSt1Z1dUetdmISj2k4xcp73KZzarQrJoJ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WlelFhb9x1A6/fowXWWpj08HDZZBZjVHft3MOeGSluLo038I61EoDwsJ/4BzlV1Rza3uOb/HuexXIoo8P5kNE+h+Y7K3KlBOx/PpEP8sGS4+uAiZ6hD9GgPiJEOBspJi+HIStBjwpCKBzIZvdGTC+AqDyNvnEte/bz4MSijl52Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hg3KPhvn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D644AC4CEE7;
-	Fri, 31 Oct 2025 14:53:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761922425;
-	bh=6vHW2fp30oSt1Z1dUetdmISj2k4xcp73KZzarQrJoJ8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hg3KPhvnGuPVN9p618BTCV3Kb5hMDEZ/ev5rl0D2cJy40ogHWKJltb29YlTacv1Hi
-	 nuQtkj25k0SbWF25CFg/DdLkuzPz/RURsIOAU66uFwwv54A/ApMvz2Xin7BsGdZJYF
-	 j5yZ5pWm8lBpWJCqiZ1jkvWYhsR3NN5d+uurlsoXAbqh3iFti2RRduOfw9NOsGAbjG
-	 ppISPIizNTSaIzCoNKSmA1BdWs0SLU19Q5fqROuSRTvMR/SbviKtgq9Tg/ONMgapjg
-	 OVI9t4PhUWeYhizGXPmrLqFj5OA7wLfWopW9c8lkW1uLlNRcLU6wNHfYQUlKFZeWXd
-	 4921bdDmC5uyQ==
-Date: Fri, 31 Oct 2025 20:23:27 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>, 
-	Niklas Cassel <cassel@kernel.org>, Shawn Lin <shawn.lin@rock-chips.com>, 
-	Hans Zhang <18255117159@163.com>, Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
-	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
-	"moderated list:ARM/Rockchip SoC support" <linux-arm-kernel@lists.infradead.org>, 
-	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 2/2] PCI: dw-rockchip: Add runtime PM support to
- Rockchip PCIe driver
-Message-ID: <e7cttuu5525k7ryvmkh6ifspm5vloj4muazvmp3yxtkgsdtbjs@u4odsfurejxq>
-References: <20251027145602.199154-1-linux.amoon@gmail.com>
- <20251027145602.199154-3-linux.amoon@gmail.com>
- <ukgkfetbggzon4ppndl7gpitlsz7hjhzhyx3dgxqhdo52exguy@bqksd7d27lpy>
- <CANAwSgTECOAoKeJS_=HxkkTP4OJvYu5xGQxY__Auh81v3QT=-w@mail.gmail.com>
+	s=arc-20240116; t=1761922720; c=relaxed/simple;
+	bh=W5ID3OY7yfWGGgbtnZevjVWj3uINdDq2sxdewYF9kdo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gdpWZKO7CA2wR8bPXMZc5Rovrl6+OXOH4mLvFs6N5hKoJwvlvbBiUGTxpYYGX2ts6DiQSeCwMIbDjJvEDpvnIQtjyG6hnteSKKE9JEIOqvr4ZsEdOD+43bsR/R4WdyaRbx9RA3gYtybtiTtIHhsoUJOwhr2J1fN4kdLJ3pDL/sM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=VQlh90m6; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1761922687; x=1762527487; i=rwarsow@gmx.de;
+	bh=W5ID3OY7yfWGGgbtnZevjVWj3uINdDq2sxdewYF9kdo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=VQlh90m6uDSmQ2IUwt2EtuBC2XK3VRqwlgSxCX+aWEhswCnEcHZVMtV7wP0hGmrI
+	 gdmoIk1QOHVuz/C2oKnvLHx4iAoq/5ZgIYR9g/XN2kQ2BjdygRf7gw2VAxZwzCK+d
+	 ZFBNf4bc+bpNc1mLcS60LJNc+VJln1Pu9GzzNJORybrfPoKfEvXtjINpzWxJ5jPz3
+	 +3Q+sRTdU5Avlp1fHEIyT8FLR2wccAfbmYBxRvZ2KuD73XvM0G2UZrRB5MJ2lEjb/
+	 ix+M1oxeMfUYIFkUJJVaXAY4V1wZbD0W9GAD9gUL43wsooFokgpr0gsHKCv/1n+GK
+	 2ohrOj4uU90RCqvJqQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.200.20] ([46.142.33.105]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1N1Obb-1wHHoy393b-015Yfi; Fri, 31
+ Oct 2025 15:58:07 +0100
+Message-ID: <5d3b7831-7130-4424-85ed-387918bad0b1@gmx.de>
+Date: Fri, 31 Oct 2025 15:58:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANAwSgTECOAoKeJS_=HxkkTP4OJvYu5xGQxY__Auh81v3QT=-w@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.17 00/35] 6.17.7-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, conor@kernel.org,
+ hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
+ sr@sladewatkins.com
+References: <20251031140043.564670400@linuxfoundation.org>
+From: Ronald Warsow <rwarsow@gmx.de>
+Content-Language: de-DE, en-US
+In-Reply-To: <20251031140043.564670400@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:GX9ArV7aBQISlJkxtunYnMGlaEBLgcFLfjT1wnJ4baw6LtLBkkI
+ UU5xxF7Te5OI7qR0lzBMI/vvtVm+Uygpm9C0ORoKiRiIJ4IFY3Rkq2rUuKmE7YrOb1mlBxA
+ DiCF9XbARMfj3OFWQRr4PYNZukwCMANHRYq11sA/ENyotVvysiQX2dc1BWqIfx5MVQHCgL1
+ CYdO6tUELHodVlf2Yr1ZQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:8C4bP8/kBlw=;BR89zmsWBs4oUBOp1X6Y6uxePL3
+ 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
 
-On Fri, Oct 31, 2025 at 07:33:23PM +0530, Anand Moon wrote:
-> Hi Manivannan
-> 
-> Thanks for your review comment.
-> 
-> On Fri, 31 Oct 2025 at 14:09, Manivannan Sadhasivam <mani@kernel.org> wrote:
-> >
-> > On Mon, Oct 27, 2025 at 08:25:30PM +0530, Anand Moon wrote:
-> > > Add runtime power management support to the Rockchip DesignWare PCIe
-> > > controller driver by enabling devm_pm_runtime() in the probe function.
-> > > These changes allow the PCIe controller to suspend and resume dynamically,
-> > > improving power efficiency on supported platforms.
-> > >
-> >
-> > Seriously? How can this patch improve the power efficiency if it is not doing
-> > any PM operation on its own?
-> >
-> I could verify that runtime power management is active
-> 
+Hi
 
-This is runtime status being active, which is a different thing as it only
-allows the runtime PM hierarchy to be maintained. But the way you described the
-commit message sounds like the patch is enabling runtime PM of the controller
-and that improves efficiency (as if the controller driver is actively doing
-runtime PM operations).
+no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
 
-> [root@rockpi-5b alarm]# cat
-> /sys/devices/platform/a41000000.pcie/power/runtime_status
-> active
-> [root@rockpi-5b alarm]#  find /sys -name runtime_status
-> /sys/devices/platform/a41000000.pcie/pci0004:40/0004:40:00.0/power/runtime_status
-> /sys/devices/platform/a41000000.pcie/pci0004:40/0004:40:00.0/pci_bus/0004:41/power/runtime_status
-> /sys/devices/platform/a41000000.pcie/pci0004:40/0004:40:00.0/0004:41:00.0/power/runtime_status
-> /sys/devices/platform/a41000000.pcie/pci0004:40/0004:40:00.0/0004:41:00.0/net/enP4p65s0/power/runtime_status
-> /sys/devices/platform/a41000000.pcie/pci0004:40/0004:40:00.0/0004:41:00.0/net/enP4p65s0/enP4p65s0-3::lan/power/runtime_status
-> /sys/devices/platform/a41000000.pcie/pci0004:40/0004:40:00.0/0004:41:00.0/net/enP4p65s0/enP4p65s0-2::lan/power/runtime_status
-> /sys/devices/platform/a41000000.pcie/pci0004:40/0004:40:00.0/0004:41:00.0/net/enP4p65s0/enP4p65s0-1::lan/power/runtime_status
-> /sys/devices/platform/a41000000.pcie/pci0004:40/0004:40:00.0/0004:41:00.0/net/enP4p65s0/enP4p65s0-0::lan/power/runtime_status
-> /sys/devices/platform/a41000000.pcie/pci0004:40/0004:40:00.0/0004:41:00.0/mdio_bus/r8169-4-4100/power/runtime_status
-> /sys/devices/platform/a41000000.pcie/pci0004:40/0004:40:00.0/0004:41:00.0/mdio_bus/r8169-4-4100/r8169-4-4100:00/power/runtime_status
-> /sys/devices/platform/a41000000.pcie/pci0004:40/0004:40:00.0/0004:41:00.0/mdio_bus/r8169-4-4100/r8169-4-4100:00/hwmon/hwmon11/power/runtime_status
-> 
-> Well, the powertop shows that the runtime power management is enabled
-> on Radxa Rock 5b,
-> 
-> PowerTOP 2.15     Overview   Idle stats   Frequency stats   Device
-> stats   Device Freq stats   Tunables   WakeUp
-> >> Good          Wireless Power Saving for interface wlan0
->    Good          VM writeback timeout
->    Good          Bluetooth device interface status
->    Good          NMI watchdog should be turned off
->    Good          Autosuspend for unknown USB device 2-1.3 (8087:0a2b)
->    Good          Autosuspend for USB device USB 2.0 Hub [2-1]
->    Good          Autosuspend for USB device Generic Platform OHCI
-> controller [usb1]
->    Good          Autosuspend for USB device xHCI Host Controller [usb8]
->    Good          Autosuspend for USB device Generic Platform OHCI
-> controller [usb4]
->    Good          Autosuspend for USB device EHCI Host Controller [usb2]
->    Good          Autosuspend for USB device xHCI Host Controller [usb6]
->    Good          Autosuspend for USB device EHCI Host Controller [usb3]
->    Good          Autosuspend for USB device xHCI Host Controller [usb5]
->    Good          Autosuspend for USB device xHCI Host Controller [usb7]
->    Good          Runtime PM for PCI Device Intel Corporation Wireless
-> 8265 / 8275
->    Good          Runtime PM for PCI Device Rockchip Electronics Co., Ltd RK3588
->    Good          Runtime PM for PCI Device Rockchip Electronics Co., Ltd RK3588
->    Good          Runtime PM for PCI Device Realtek Semiconductor Co.,
-> Ltd. RTL8125 2.5GbE Controller
->    Good          Runtime PM for PCI Device Rockchip Electronics Co., Ltd RK3588
->    Good          Runtime PM for PCI Device Samsung Electronics Co Ltd
-> NVMe SSD Controller SM981/PM981/PM983
-> 
-> PowerTOP 2.15     Overview   Idle stats   Frequency stats   Device
-> stats   Device Freq stats   Tunables   WakeUp
->               Usage     Device name
->               1.1%        CPU use
->             100.0%        Radio device: rfkill_gpio
->             100.0%        runtime-rockchip-gate-link-clk.712
->             100.0%        PCI Device: Realtek Semiconductor Co., Ltd.
-> RTL8125 2.5GbE Controller
->             100.0%        runtime-rockchip-gate-link-clk.717
->             100.0%        runtime-rockchip-gate-link-clk.714
->             100.0%        runtime-rockchip-gate-link-clk.489
->             100.0%        runtime-a40000000.pcie
->             100.0%        runtime-a40800000.pcie
->             100.0%        runtime-rockchip-gate-link-clk.718
->             100.0%        runtime-rockchip-gate-link-clk.706
->             100.0%        runtime-rockchip-gate-link-clk.708
->             100.0%        PCI Device: Intel Corporation Wireless 8265 / 8275
->             100.0%        Radio device: btusb
->             100.0%        runtime-fcd00000.usb
->             100.0%        PCI Device: Samsung Electronics Co Ltd NVMe
-> SSD Controller SM981/PM981/PM983
->             100.0%        Radio device: rfkill_gpio
->             100.0%        runtime-fc000000.usb
->             100.0%        Radio device: iwlwifi
->             100.0%        PCI Device: Rockchip Electronics Co., Ltd RK3588
->             100.0%        PCI Device: Rockchip Electronics Co., Ltd RK3588
->             100.0%        PCI Device: Rockchip Electronics Co., Ltd RK3588
->             100.0%        runtime-rockchip-gate-link-clk.711
->             100.0%        runtime-fc400000.usb
->             100.0%        runtime-rockchip-gate-link-clk.704
->             100.0%        runtime-rockchip-gate-link-clk.701
->             100.0%        runtime-rockchip-gate-link-clk.716
->             100.0%        runtime-rockchip-gate-link-clk.707
->             100.0%        runtime-rockchip-gate-link-clk.709
->             100.0%        runtime-rockchip-gate-link-clk.719
->             100.0%        runtime-xhci-hcd.1.auto
->             100.0%        runtime-feb50000.serial
->             100.0%        runtime-rockchip-gate-link-clk.715
->             100.0%        runtime-rockchip-gate-link-clk.710
-> 
-> > Again, a pointless patch.
+Thanks
 
-This patch might make sense on its own, to enable runtime PM status of the
-controller so that the runtime PM could be applied to the entire PCIe hierarchy.
+Tested-by: Ronald Warsow <rwarsow@gmx.de>
 
-> I implemented a .remove patch to ensure proper resource cleanup,
-> which is a necessary step for successfully enabling and managing
-> runtime power for the device.
-
-How a dead code (remove callback for a always built-in driver) becomes necessary
-for runtime PM.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
 
