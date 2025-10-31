@@ -1,128 +1,106 @@
-Return-Path: <linux-kernel+bounces-879871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E5ACC244BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:57:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8762EC2447F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:54:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89E0B3B67A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:54:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A37E1B21803
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA594334395;
-	Fri, 31 Oct 2025 09:52:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB011337106;
+	Fri, 31 Oct 2025 09:51:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gMN9VW77"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b="j3Z82cKC"
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F9FD333455;
-	Fri, 31 Oct 2025 09:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31BF63370EF;
+	Fri, 31 Oct 2025 09:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761904337; cv=none; b=BmpsWVfHmC94ZzdjfWaLLwT+Mm1Sfd5dTWwFDBQvQrfGS+P5wLS7RBW2efMMZhdnCd5vokrXM1liLfrtZH5aPtAsoS3WQoqBtGMOLC3Gw4cOVSsJSPAFzOHje6jr92oLoE0tiJQWDhBLFT2B7MgicQeG/Gd+w4n8RQPO0mhzX1s=
+	t=1761904315; cv=none; b=KLShdFYn0zEkhK4KAq5/6YK81s+lQ51GFB2qst5bM/5Rwog65WEx9jDD4Xo+DQdjcaoCBWUKvLyNDq09I+zziRb7vC58zCaBKsdal+Q0f4IN9wAPfrhyiWymeo8kMk6dvb3nvSdgD0Lw3k4wyxNAKrf+VwqqGFrWB2KaHzUUgPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761904337; c=relaxed/simple;
-	bh=HSkp7jDPDeQP9HFJEf48wH+0XtSGqoD1qmTPOJL9w5Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DA5ULdceO3KorXsMe6XHZjRA8HLvVXHNcEQomDHxHAYdT15EXjFbiKiPMvjRlLd943jnpgpBmAaT4BWtCNoR/DztT4qEM/eZXEX/yfsjxRg7lSmBosh/Mz0MqUv3hnUlO1AeINTdIpngNiXCBkn79kMXYpT3ZqHWS7EY1gsMJeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gMN9VW77; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 87468C4CEE7;
-	Fri, 31 Oct 2025 09:52:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761904334;
-	bh=HSkp7jDPDeQP9HFJEf48wH+0XtSGqoD1qmTPOJL9w5Y=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=gMN9VW77/ZfrX/TcZ4QdmnshcEs47rr1HukdvApfBak6tZ+35jYBavIJCxCtNkh5O
-	 dYGjTKtL2ZNInBzTDujmmkJq/rpErNeIn0bWRzUmZ4rjytxg6azm0nP5rrlohYRIAl
-	 a6XK8derUi+bE5qOglBuAC0VZbZJxJ0cFhLIh/RXtDt75Q5XgWUl45rkHVqi7ALAqH
-	 TtQKrI/rsXOpycH9zQ1ky5T1wsuGHbPzH0/xeUb/YjXvE95DXG8q0nLxQRdqCvhBid
-	 72oBjYbNAzBhHXHruY7pNh3Dn1zn4SD9kvM46cVjdfMVnYGYN8Y7WKh9UW4Il9n8Nn
-	 qaEgBvrb3x5Cw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7862FCCF9F8;
-	Fri, 31 Oct 2025 09:52:14 +0000 (UTC)
-From: Moritz Zielke via B4 Relay <devnull+moritz.zielke.gmail.com@kernel.org>
-Date: Fri, 31 Oct 2025 10:51:41 +0100
-Subject: [PATCH v2] rust: of: replace `core::mem::zeroed` with
- `pin_init::zeroed`
+	s=arc-20240116; t=1761904315; c=relaxed/simple;
+	bh=PDFuBlu8oOxRIhVXSqK9xLuC4ljEIXqwOKBWQgrEYOE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VEooDU9aymwk9pXqSBu6PnQaRnSlTyx+3BlO2WB1OdAEeZydhAcPoMtysH0be75FlutEDann8xiHzuzpOb2qTH5nUDLyqw0jj9tNocr0tRth330D7L1f4Dj95kJN0Po00GUCMndRVniupi5IfYhoul7qYl83BnOQZfKy2ILOKQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=gondor.apana.org.au header.i=@gondor.apana.org.au header.b=j3Z82cKC; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=gondor.apana.org.au; s=h01; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:cc:to:subject:message-id:date:
+	from:content-type:reply-to; bh=A229h7fmdP3j/E0BqPjEArCuwvdpxEJ5MbsR4jiXiU8=; 
+	b=j3Z82cKCXehYLTRbdgMfnYkQnRwoS5X1bLHjuwqJVsyZO/5ltBy4dE3e7YIVRQNTud3+jTj2c4X
+	DKsqH4aZ4cI+kfHkrxdJEnFTHsF7o5sAeq2Sktiq7H6q1qvtDucWumpGWefgeEPwlY6dlTik+pzjv
+	A2JIu9LJVL2t8Oh1zluFyQZnfePyADyQe8V23hGwpM7PKZ4QDlcAZx6hzXe3BSMjQ5REb3OMkkTyh
+	Lhq3PE6Bqfg2XYqOPQahawpxjLFSBpAvAH/OgCkrO3Kahoco7ATBRJ475D64lkeEEiM1oH3Cs4vMg
+	DRVTToGUMv20a/whkWXwMd5CLrT3unuN5c6g==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1vElnR-00H1h7-0u;
+	Fri, 31 Oct 2025 17:51:50 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 31 Oct 2025 17:51:49 +0800
+Date: Fri, 31 Oct 2025 17:51:49 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Chenghai Huang <huangchenghai2@huawei.com>
+Cc: davem@davemloft.net, linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linuxarm@openeuler.org,
+	liulongfang@huawei.com, qianweili@huawei.com,
+	wangzhou1@hisilicon.com, fanghao11@huawei.com,
+	nieweiqiang@huawei.com
+Subject: Re: [PATCH 0/4] crypto: hisilicon - various cleanup for QM and SGL
+Message-ID: <aQSGtcXDmT521qye@gondor.apana.org.au>
+References: <20251025101258.2793179-1-huangchenghai2@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251031-zeroed-of-rs-v2-1-f89ff71e943e@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAKyGBGkC/3WMzQrCMBCEX6Xs2ZX8aBVPvof0EJNtu2Ab2UhQS
- 97dtHeZ0zfDfAskEqYEl2YBocyJ41zB7Brwo5sHQg6VwShz1Moq/JJEChh7lISupXvttfX2BPX
- yFOr5veluXeWR0yvKZ7NnvbZ/RFljjT+0YZ3Nma7D5Pix93GCrpTyA1wqvbyoAAAA
-X-Change-ID: 20251030-zeroed-of-rs-a6eb25113c37
-To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
-Cc: Benno Lossin <lossin@kernel.org>, devicetree@vger.kernel.org, 
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Moritz Zielke <moritz.zielke@gmail.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761904321; l=1602;
- i=moritz.zielke@gmail.com; s=20251030; h=from:subject:message-id;
- bh=OnB3GPr22kqGecRkpj0YRj3co22bJtrQhNK1vieBomQ=;
- b=Tufu5yszhlo2brG2pyeFgV4tCFZzPlNkr6s0GwoPI8AGFxG3XMtjYWQHPa0vo82qs48v2pVfR
- FfQiIru0qadDaT+DakTg6GW4g6dhFxWCKILAYH/bdgswfukqVuONS4W
-X-Developer-Key: i=moritz.zielke@gmail.com; a=ed25519;
- pk=TFwYpZ0YPwD8idGzvlafpvAW4DDA0FrkMEjcfZVXkN0=
-X-Endpoint-Received: by B4 Relay for moritz.zielke@gmail.com/20251030 with
- auth_id=558
-X-Original-From: Moritz Zielke <moritz.zielke@gmail.com>
-Reply-To: moritz.zielke@gmail.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251025101258.2793179-1-huangchenghai2@huawei.com>
 
-From: Moritz Zielke <moritz.zielke@gmail.com>
+On Sat, Oct 25, 2025 at 06:12:54PM +0800, Chenghai Huang wrote:
+> This patch series addresses several issues in the hisilicon crypto
+> driver:
+> Patch 1: ensures proper synchronization when reading eqe/aeqe
+> values by saving the complete 4-byte values atomically. This
+> guarantees the valid bit and queue number are read as a consistent
+> pair that was written by the device.
+> Patch 2: adds concurrency protection for the err_threshold variable
+> to prevent race conditions between sysfs operations and hardware
+> error handling functions.
+> Patch 3: removes redundant error checks for curr_hw_sgl since
+> acc_get_sgl() cannot fail after mem_block creation, simplifying the
+> code.
+> Patch 4: adds a default case to a switch statement in
+> qm_vft_data_cfg to comply with coding style and prevent compiler
+> warnings.
+> 
+> nieweiqiang (4):
+>   crypto: hisilicon/qm - add concurrency protection for variable
+>     err_threshold
+>   crypto: hisilicon/qm - add missing default in switch in
+>     qm_vft_data_cfg
+>   crypto: hisilicon/qm - add the save operation of eqe and aeqe
+>   crypto: hisilicon/sgl - remove unnecessary checks for curr_hw_sgl
+>     error
+> 
+>  drivers/crypto/hisilicon/qm.c  | 41 ++++++++++++++++++++++------------
+>  drivers/crypto/hisilicon/sgl.c |  5 -----
+>  2 files changed, 27 insertions(+), 19 deletions(-)
+> 
+> -- 
+> 2.33.0
 
-All types in `bindings` implement `Zeroable` if they can, so use
-`pin_init::zeroed` instead of relying on `unsafe` code.
-
-If this ends up not compiling in the future, something in bindgen or on
-the C side changed and is most likely incorrect.
-
-Link: https://github.com/Rust-for-Linux/linux/issues/1189
-Suggested-by: Benno Lossin <lossin@kernel.org>
-Signed-off-by: Moritz Zielke <moritz.zielke@gmail.com>
----
-Changes in v2:
-- Rearrange tags and `---` so tags don't get lost when patch is applied
-- Link to v1: https://lore.kernel.org/r/20251030-zeroed-of-rs-v1-1-1c46d025128e@gmail.com
----
- rust/kernel/of.rs | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/rust/kernel/of.rs b/rust/kernel/of.rs
-index 58b20c367..cfcfbb1fd 100644
---- a/rust/kernel/of.rs
-+++ b/rust/kernel/of.rs
-@@ -35,9 +35,7 @@ impl DeviceId {
-     /// Create a new device id from an OF 'compatible' string.
-     pub const fn new(compatible: &'static CStr) -> Self {
-         let src = compatible.to_bytes_with_nul();
--        // Replace with `bindings::of_device_id::default()` once stabilized for `const`.
--        // SAFETY: FFI type is valid to be zero-initialized.
--        let mut of: bindings::of_device_id = unsafe { core::mem::zeroed() };
-+        let mut of: bindings::of_device_id = pin_init::zeroed();
- 
-         // TODO: Use `copy_from_slice` once stabilized for `const`.
-         let mut i = 0;
-
----
-base-commit: 3b1728b74a52e8489f0c7bfd3d682572dd9901de
-change-id: 20251030-zeroed-of-rs-a6eb25113c37
-
-Best regards,
+All applied.  Thanks.
 -- 
-Moritz Zielke <moritz.zielke@gmail.com>
-
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
