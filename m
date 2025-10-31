@@ -1,257 +1,180 @@
-Return-Path: <linux-kernel+bounces-880492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29D8BC25E31
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:45:04 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2DAAC25DE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:41:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4485F1A61065
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:45:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 73D4A4E52CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B43C62E336E;
-	Fri, 31 Oct 2025 15:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A692DFA26;
+	Fri, 31 Oct 2025 15:41:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cuMvyJcu"
-Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ThF8r4Jj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E618F2E0400;
-	Fri, 31 Oct 2025 15:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91ABB2DCF6E
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 15:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761925462; cv=none; b=RjjTum04gbq9XOSFNhghZER3qysKglUYB2HSOCjqDSuWfRRpisK+kXGeMdDyXBs/UAHeH9E81FlCnNIaRLZccur/eEMgn0KkBGln5vmAynr0t30MQJLRAQf6EYsrgtO6NPikfhLxUnH7kCgFViKO5oSkaEmgv9CbisJVwo7PiiM=
+	t=1761925290; cv=none; b=FjYVnIZBjuVmW5RDD0UMvAb7Wnee9+vAHpWC1OCRtUKcW5jOiMClivFlCMuv38v2mW3wcX26NO1hLgYwZuz3fKZWvk5aI2v198JsgaeL2qy0wdjJAI1NdMwfX0VHQVW8RqzJ+g3I9LlLmuyizeS/KZrEhuutHaTfoNeaYhkj110=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761925462; c=relaxed/simple;
-	bh=kbe8hMT2OvfiqAmCP4GWUa8XfLFY+MoXA/QxrTvkDww=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=c5RCmf8DNpp/A4fRDCbF4pk4iP3vv9e1XxcyBwvWs+I70Y0dvku2E5HQ2FDxcmW8+9bCnXxUhP5FIcmVUqe6KCdy+aijMJeI3W94+OkpQ+EKxKnjv89VpIMwM3oMxt7nf+Zs8mNtlK4g513ssJiLfd0sDYZYqtkkcbTVygLnPao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cuMvyJcu; arc=none smtp.client-ip=95.215.58.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1761925457;
+	s=arc-20240116; t=1761925290; c=relaxed/simple;
+	bh=CY07atiK/mfQVJUxa1CO3NfCCijt4RbMMTOr9MWii2Q=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pqaV/nMgckdJuetTbmQewtS44DvoAEZiwqzOM9QoVRv86nZGlB3Vdx54mv6MLEV+e7/yixvDuk/VnfirFhBXgPtN15BV3Y3BagoHWmntd7RMhZnCvl512Hrei7DMvF50bgfF9VC6K7t3B6AHl7WcJbVFxPR4guzRTg/Vc47/6rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ThF8r4Jj; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761925287;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9Co4HTS5uOZjTPA1XBfD/RtU0DY8DXK6Y5uls97p0Vw=;
-	b=cuMvyJcu4+I98YZ39u4pyAHTE3nLelMYnLssuGaiI+KdXbLwBI8dVPZV12yVJpmuty/vNP
-	OPpWxh6Zi6SorujhiEQLw50ZUcsOnXVS0LGmg+crTLBsuZr+wuDTmSUts0oePm2lGmUd/+
-	ErvPSV4Ks0t/nrxSbWS8gQXVNDT0Dp8=
-From: KaFai Wan <kafai.wan@linux.dev>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	shuah@kernel.org,
-	paul.chaignon@gmail.com,
-	m.shachnai@gmail.com,
-	henriette.herzog@rub.de,
-	kafai.wan@linux.dev,
-	luis.gerhorst@fau.de,
-	harishankar.vishwanathan@gmail.com,
-	colin.i.king@gmail.com,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH bpf-next v3 2/2] selftests/bpf: Add test for conditional jumps on same scalar register
-Date: Fri, 31 Oct 2025 23:41:07 +0800
-Message-ID: <20251031154107.403054-3-kafai.wan@linux.dev>
-In-Reply-To: <20251031154107.403054-1-kafai.wan@linux.dev>
-References: <20251031154107.403054-1-kafai.wan@linux.dev>
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=9qooR2gBmbQgGN8XbZaIkwlII4Zlk51tngieqgy2cUU=;
+	b=ThF8r4JjqH+hldeq53Vot1HWOUXJaVUtbw1mBeJ62m6rwKOhIAVCe+2wz4b3jzqmR4ucik
+	PGU2jjiFTv/1oJBSr9Z5G5alN5s+bRCNLnlEWhNplCjUe7qNYJNxCYwZqIfuwEMBb2NH4l
+	AeJoTS86xWSpm4ZeYQ+lIaLI8f2bFx8=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-668-irisuogoOn-kOPL3BLEauQ-1; Fri, 31 Oct 2025 11:41:26 -0400
+X-MC-Unique: irisuogoOn-kOPL3BLEauQ-1
+X-Mimecast-MFC-AGG-ID: irisuogoOn-kOPL3BLEauQ_1761925284
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-47106a388cfso18126945e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:41:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761925284; x=1762530084;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9qooR2gBmbQgGN8XbZaIkwlII4Zlk51tngieqgy2cUU=;
+        b=a/oAvusu2c/tJITdXBPS5FC90FF8NjNp0UlNKuBucQGFPUjaY/UZ6Z8y9af35T6/Zi
+         4Azg5844TX72FuD9DLUCRrPauK/5CPYi2FTyHOVdOC9lznRQZ+CS3zlRluH5yTum1cj1
+         lAnUmUX3S2Ox1znVVLCNzlihUeS6uxZPclhFF7KImknvlwF38vaTPfAxvgtgwJfhT3kS
+         f51l5/yi/BsyxNK0q53+mlPNQzTjyVu81oYcbBBkJL79JbShJgt99Wq22xFvHVopvrdR
+         GtoHyWgQwsi5eM1bfIMzpMb5tI5V8hksE6hhzZSX8LARgphuDV4id8L+U9zUC/GBjX2u
+         2MAA==
+X-Forwarded-Encrypted: i=1; AJvYcCWro7HK2s6lEmFt48/GEbIrvi7hyhPxyr0H5dclnnDqBFlpdLmP1oqIscPCjCIwwRZkyEJ0k7iRCfeL5rg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSrB6K/dIh3x/ppit0fq7oDPgIS5wz6se6VAiCxMTV867VO9xR
+	FGV+yKrCzT/4NQbwxMcNr3oqdTJs1flEzB95Mpf3G0EDA5E7A6N7yf67FTtcA0wu5sER6NcS7iV
+	EmSGQ7IBGHfEww+M1j/37A+faDjFIH38iL/KgmqhYSeeUtZr7M7CWxQXqFKVYycNUvg==
+X-Gm-Gg: ASbGncvpBwGXzzpz6vbDioZwBom416pVM5JbUaT6xWoOsJrdCX/M+Bc97Q3WnonZT2S
+	dJK3+5BfJmFYnEsRm4bT2Y74u3dty22UKHgqpW52HWpxPLtg2PVXSlNMEG+ccwM8AGE6ITTX02m
+	vmbuOyAJijIQ6oeb46Vtocy2Vid+tbBXoFUA1Veq8BWm1T7fq/ksAnpxzswSCqH+tL0lquZlQAd
+	wzyEPIdMKsOmUzxJSLr/1+9RCcKR4nQbuEuIlPw/ioRa3R0z0nEF+ADvWs8n45OUq2EAze/y0kI
+	lbIg4EGsAXosmiOFSvfa9RN+IXmuDx3a5NNM/qmFnkD1LtTVatg8HPk6MfNZxO1RlZX2BuSFaeX
+	Echf2jvlnv66+2QuXH6ZQa/Xj
+X-Received: by 2002:a05:600c:3489:b0:471:15bb:ad7f with SMTP id 5b1f17b1804b1-477307e1f05mr36743735e9.17.1761925284420;
+        Fri, 31 Oct 2025 08:41:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGzEJR5rAki79Ma8q+7kkmBdMIWsBwJsRMW2wtEaLva07Vg+1OMiXKWsCQUIlAiQZR5f1VJWg==
+X-Received: by 2002:a05:600c:3489:b0:471:15bb:ad7f with SMTP id 5b1f17b1804b1-477307e1f05mr36743515e9.17.1761925283935;
+        Fri, 31 Oct 2025 08:41:23 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.30])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c5647e1sm2162025e9.15.2025.10.31.08.41.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Oct 2025 08:41:23 -0700 (PDT)
+Message-ID: <2daa2e6217eeaa239616303626c0d73d808ae947.camel@redhat.com>
+Subject: Re: [RFC PATCH] sched/deadline: Avoid dl_server boosting with
+ expired deadline
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org, Ingo
+ Molnar <mingo@redhat.com>, Clark Williams <williams@redhat.com>,
+ arighi@nvidia.com
+Date: Fri, 31 Oct 2025 16:41:22 +0100
+In-Reply-To: <20251031152005.GT3245006@noisy.programming.kicks-ass.net>
+References: <20251014102541.GS3245006@noisy.programming.kicks-ass.net>
+	 <83a5971ef07226737421737f889795ec57b6fa6c.camel@redhat.com>
+	 <aO5zxvoCPNfWwfoK@jlelli-thinkpadt14gen4.remote.csb>
+	 <20251014193300.GA1206438@noisy.programming.kicks-ass.net>
+	 <aO8zwouX6qIaf-U-@jlelli-thinkpadt14gen4.remote.csb>
+	 <20251020141130.GJ3245006@noisy.programming.kicks-ass.net>
+	 <8dc29e28a4d87954378ef1d989e0374526b44723.camel@redhat.com>
+	 <20251030184205.GB2989771@noisy.programming.kicks-ass.net>
+	 <20251031130543.GV4068168@noisy.programming.kicks-ass.net>
+	 <1f2ad071e59db2ed8bc0b382ae202b7474d07afc.camel@redhat.com>
+	 <20251031152005.GT3245006@noisy.programming.kicks-ass.net>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0BrZXJuZWwub3JnPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmjKX2MCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfIQuAD+JulczTN6l7oJjyroySU55Fbjdvo52xiYYlMjPG7dCTsBAMFI7dSL5zg98I+8
+ cXY1J7kyNsY6/dcipqBM4RMaxXsOtCRHYWJyaWVsZSBNb25hY28gPGdtb25hY29AcmVkaGF0LmNvb
+ T6InAQTFgoARAIbAwUJBaOagAULCQgHAgIiAgYVCgkICwIEFgIDAQIeBwIXgBYhBMrKEfgLgd0WcK
+ eo9u9KbElYeE3yBQJoymCyAhkBAAoJEO9KbElYeE3yjX4BAJ/ETNnlHn8OjZPT77xGmal9kbT1bC1
+ 7DfrYVISWV2Y1AP9HdAMhWNAvtCtN2S1beYjNybuK6IzWYcFfeOV+OBWRDQ==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Add test cases to verify the correctness of the BPF verifier's branch analysis
-when conditional jumps are performed on the same scalar register. And make sure
-that JGT does not trigger verifier BUG.
+On Fri, 2025-10-31 at 16:20 +0100, Peter Zijlstra wrote:
+> On Fri, Oct 31, 2025 at 02:24:17PM +0100, Gabriele Monaco wrote:
+> >=20
+> > Different scenario if I have the CPU busy with other tasks (e.g. RT
+> > policies), there I can see the server stopping and starting again.
+> > After I do this I seem to get a different behaviour (even some boosting
+> > after idle), I'm trying to understand what's going on.
+> >=20
 
-Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
----
- .../selftests/bpf/progs/verifier_bounds.c     | 154 ++++++++++++++++++
- 1 file changed, 154 insertions(+)
+After running some heavy RT workload (stress-ng --cpu 10 --sched rr) I do s=
+ee
+the server stopping and starting as the models would expect, but somehow it=
+'s
+always boosting as soon as it's started.
 
-diff --git a/tools/testing/selftests/bpf/progs/verifier_bounds.c b/tools/testing/selftests/bpf/progs/verifier_bounds.c
-index 0a72e0228ea9..e975dc285db6 100644
---- a/tools/testing/selftests/bpf/progs/verifier_bounds.c
-+++ b/tools/testing/selftests/bpf/progs/verifier_bounds.c
-@@ -1709,4 +1709,158 @@ __naked void jeq_disagreeing_tnums(void *ctx)
- 	: __clobber_all);
- }
- 
-+SEC("socket")
-+__description("conditional jump on same register, branch taken")
-+__not_msg("20: (b7) r0 = 1 {{.*}} R0=1")
-+__success __log_level(2)
-+__retval(0) __flag(BPF_F_TEST_REG_INVARIANTS)
-+__naked void condition_jump_on_same_register(void *ctx)
-+{
-+	asm volatile("			\
-+	call %[bpf_get_prandom_u32];	\
-+	w8 = 0x80000000;		\
-+	r0 &= r8;			\
-+	if r0 == r0 goto +1;		\
-+	goto l1_%=;			\
-+	if r0 >= r0 goto +1;		\
-+	goto l1_%=;			\
-+	if r0 s>= r0 goto +1;		\
-+	goto l1_%=;			\
-+	if r0 <= r0 goto +1;		\
-+	goto l1_%=;			\
-+	if r0 s<= r0 goto +1;		\
-+	goto l1_%=;			\
-+	if r0 != r0 goto l1_%=;		\
-+	if r0 >  r0 goto l1_%=;		\
-+	if r0 s> r0 goto l1_%=;		\
-+	if r0 <  r0 goto l1_%=;		\
-+	if r0 s< r0 goto l1_%=;		\
-+l0_%=:	r0 = 0;				\
-+	exit;				\
-+l1_%=:	r0 = 1;				\
-+	exit;				\
-+"	:
-+	: __imm(bpf_get_prandom_u32)
-+	: __clobber_all);
-+}
-+
-+SEC("socket")
-+__description("jset on same register, constant value branch taken")
-+__not_msg("7: (b7) r0 = 1 {{.*}} R0=1")
-+__success __log_level(2)
-+__retval(0) __flag(BPF_F_TEST_REG_INVARIANTS)
-+__naked void jset_on_same_register_1(void *ctx)
-+{
-+	asm volatile("			\
-+	r0 = 0;				\
-+	if r0 & r0 goto l1_%=;		\
-+	r0 = 1;				\
-+	if r0 & r0 goto +1;		\
-+	goto l1_%=;			\
-+l0_%=:	r0 = 0;				\
-+	exit;				\
-+l1_%=:	r0 = 1;				\
-+	exit;				\
-+"	:
-+	: __imm(bpf_get_prandom_u32)
-+	: __clobber_all);
-+}
-+
-+SEC("socket")
-+__description("jset on same register, scalar value branch taken")
-+__not_msg("12: (b7) r0 = 1 {{.*}} R0=1")
-+__success __log_level(2)
-+__retval(0) __flag(BPF_F_TEST_REG_INVARIANTS)
-+__naked void jset_on_same_register_2(void *ctx)
-+{
-+	asm volatile("			\
-+	/* range [1;2] */		\
-+	call %[bpf_get_prandom_u32];	\
-+	r0 &= 0x1;			\
-+	r0 += 1;			\
-+	if r0 & r0 goto +1;		\
-+	goto l1_%=;			\
-+	/* range [-2;-1] */		\
-+	call %[bpf_get_prandom_u32];	\
-+	r0 &= 0x1;			\
-+	r0 -= 2;			\
-+	if r0 & r0 goto +1;		\
-+	goto l1_%=;			\
-+l0_%=:	r0 = 0;				\
-+	exit;				\
-+l1_%=:	r0 = 1;				\
-+	exit;				\
-+"	:
-+	: __imm(bpf_get_prandom_u32)
-+	: __clobber_all);
-+}
-+
-+SEC("socket")
-+__description("jset on same register, scalar value unknown branch 1")
-+__msg("3: (b7) r0 = 0 {{.*}} R0=0")
-+__msg("5: (b7) r0 = 1 {{.*}} R0=1")
-+__success __log_level(2)
-+__flag(BPF_F_TEST_REG_INVARIANTS)
-+__naked void jset_on_same_register_3(void *ctx)
-+{
-+	asm volatile("			\
-+	/* range [0;1] */		\
-+	call %[bpf_get_prandom_u32];	\
-+	r0 &= 0x1;			\
-+	if r0 & r0 goto l1_%=;		\
-+l0_%=:	r0 = 0;				\
-+	exit;				\
-+l1_%=:	r0 = 1;				\
-+	exit;				\
-+"	:
-+	: __imm(bpf_get_prandom_u32)
-+	: __clobber_all);
-+}
-+
-+SEC("socket")
-+__description("jset on same register, scalar value unknown branch 2")
-+__msg("4: (b7) r0 = 0 {{.*}} R0=0")
-+__msg("6: (b7) r0 = 1 {{.*}} R0=1")
-+__success __log_level(2)
-+__flag(BPF_F_TEST_REG_INVARIANTS)
-+__naked void jset_on_same_register_4(void *ctx)
-+{
-+	asm volatile("			\
-+	/* range [-1;0] */		\
-+	call %[bpf_get_prandom_u32];	\
-+	r0 &= 0x1;			\
-+	r0 -= 1;			\
-+	if r0 & r0 goto l1_%=;		\
-+l0_%=:	r0 = 0;				\
-+	exit;				\
-+l1_%=:	r0 = 1;				\
-+	exit;				\
-+"	:
-+	: __imm(bpf_get_prandom_u32)
-+	: __clobber_all);
-+}
-+
-+SEC("socket")
-+__description("jset on same register, scalar value unknown branch 3")
-+__msg("4: (b7) r0 = 0 {{.*}} R0=0")
-+__msg("6: (b7) r0 = 1 {{.*}} R0=1")
-+__success __log_level(2)
-+__flag(BPF_F_TEST_REG_INVARIANTS)
-+__naked void jset_on_same_register_5(void *ctx)
-+{
-+	asm volatile("			\
-+	/* range [-1;-1] */		\
-+	call %[bpf_get_prandom_u32];	\
-+	r0 &= 0x2;			\
-+	r0 -= 1;			\
-+	if r0 & r0 goto l1_%=;		\
-+l0_%=:	r0 = 0;				\
-+	exit;				\
-+l1_%=:	r0 = 1;				\
-+	exit;				\
-+"	:
-+	: __imm(bpf_get_prandom_u32)
-+	: __clobber_all);
-+}
-+
- char _license[] SEC("license") = "GPL";
--- 
-2.43.0
+Apparently dl_defer_running is always 1 in that scenario. Perhaps running i=
+dle
+counts as running something too, so it never defers. But I can't really see=
+ how
+this happens..
+
+<idle>-0     12.964637: (+8)     sched_switch:         swapper/9:0 [120] R =
+=3D=3D> irq/50:212 [49]
+irq/50-212   12.964699: (+58)    sched_wakeup:         trace-cmd:544 [120] =
+CPU:000
+irq/50-212   12.964831: (+24)    sched_migrate_task:   comm=3Dtrace-cmd pid=
+=3D544 prio=3D120 orig_cpu=3D0 dest_cpu=3D9
+irq/50-212   12.964842: (+11)    event_nomiss:         -9: idle x dl_server=
+_start -> idle
+irq/50-212   12.964843: (+1)     sched_dl_server_start: comm=3Dserver pid=
+=3D-9 runtime=3D16238881 deadline=3D13592407587 yielded=3D0
+irq/50-212   12.964854: (+11)    bprint:               pick_task_dl: Pickin=
+g server 9 (armed 1 running 1)
+irq/50-212   12.964861: (+7)     event_nomiss:         -9: idle x sched_swi=
+tch_in -> running
+irq/50-212   12.964862: (+1)     sched_switch:         irq/50:212 [49] S =
+=3D=3D> trace-cmd:544 [120]
+
+The trace-cmd in the example above is boosted, like highlighted by that bpr=
+int=09
+just before.
+
+> Ooooh, because idle time is accounted against the server budget too.
+>=20
+> That is, idle and running fair are both [2] in my comment. So we never
+> get to [5].
+
+Yeah that must be it, however I don't think it explains the other curious
+behaviour above.
+
+> Humm, let me noodle a bit more on this. Also, I should see if I can get
+> graphviz to draw ascii art state diagrams :-)
+
+Dot doesn't do it but graph-easy does reasonably well.
+
+Thanks,
+Gabriele
 
 
