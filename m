@@ -1,80 +1,67 @@
-Return-Path: <linux-kernel+bounces-880160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14240C2502C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:31:26 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A1B7C2502F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:31:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40BD63AE6AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:30:59 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 551B83511DE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE45734845F;
-	Fri, 31 Oct 2025 12:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD60026ED57;
+	Fri, 31 Oct 2025 12:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f7SbTAvU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Gi2elDP7"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0D41B142D;
-	Fri, 31 Oct 2025 12:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 472811B142D;
+	Fri, 31 Oct 2025 12:31:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761913854; cv=none; b=Na57PyCDpAMEeoctr2fSNhROrZN92NLIsh0PA+kejwdfwtnPHGL/xKNoPAs+gV7PskOZSxjpAqQ4Gf/Jb1tGhNQZtU0D4su2VeV9XrYmzpViUkjAJk5ikAAiH29AfQ0/10vWV+tsZP/xLORjwb3P4A+zRAcgoGUJFBRoFjwZheY=
+	t=1761913890; cv=none; b=WYiOjFFZlGNAxrjqBYnsE9WVvTVylG0j6i73ibppjgr00JZCm101Awzw9T8o2PsjpRwHnMA26Ou4PBgwRSWZvLzdsFvc5HSj+Ifc9DuM0s36nA8fxGYrwqJkz1liuBeuOr+W/djwzR04e3h+heAOJ0sx4P9VmlNCqBcKXuSI42A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761913854; c=relaxed/simple;
-	bh=EKUBekgrM5YHzOr1CYFWpexPh2n9tyOsa3c5XVlztVs=;
+	s=arc-20240116; t=1761913890; c=relaxed/simple;
+	bh=BB5MOJGAVcdNd8OyLaHPub0S39Sbsei9GmLKIfB6kss=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kyRf7GMhuLdQor/fk6nNKJIIxTqPG0NICWs+cPU+IIO8FjmT4qUl45k1hTrCm0YKOxDkQR1sTMvxWolI3FiKe2B1nYd1SJgUAvsAdzmlH/Yc1G3pv2jr0G29gtOhjhNlaNoX3V78cVdjloDeH9oGi0o3XgN7fAKPEy7idASJnCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f7SbTAvU; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761913852; x=1793449852;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=EKUBekgrM5YHzOr1CYFWpexPh2n9tyOsa3c5XVlztVs=;
-  b=f7SbTAvUUW1VK17EL9ske+KKNwt15/n+fWtafxwnHw6pCGgIYVBF7eof
-   9kiW+GEhC9EvCNdqCjdQeqYifIk6znlnPp3qBdtXBzTKy+skTQejQVKMn
-   UKnTPs4VMqAPV22tfsYzoyjD5qSEX8MdAxDW5U8FbowBdQfQgXOnhPcUk
-   g74egpKML2ejMljzOoFL9CpppfJWfRkMLp0FGCKLrYkuBYVY3fTn2k1Ze
-   BRzHFy+4lZ0daFZ/QdFHczvt+EiS1yOz5g3BIBkHtRdXnJA1LQGbJpSFy
-   ZQUAiDYFlheQQZbGkm+9K1i4Zr6Z0UnhKzFyM85YZzBnVxTW7p5aijg7W
-   A==;
-X-CSE-ConnectionGUID: 2dPckrK1QaKdg8VQJ0zouQ==
-X-CSE-MsgGUID: NraQ9150QUSdjnqGjRX4Og==
-X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="64224877"
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="64224877"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 05:30:52 -0700
-X-CSE-ConnectionGUID: XmVY6QafQyWfspjt3dEkwQ==
-X-CSE-MsgGUID: YLrRAJLMSxe/Mv9d4uWDQg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="185498784"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa010.jf.intel.com with ESMTP; 31 Oct 2025 05:30:49 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vEoHH-000N64-0O;
-	Fri, 31 Oct 2025 12:30:47 +0000
-Date: Fri, 31 Oct 2025 20:29:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: Samuel Wu <wusamuel@google.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	tuhaowen@uniontech.com, Samuel Wu <wusamuel@google.com>,
-	Saravana Kannan <saravanak@google.com>, kernel-team@android.com,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6] PM: Support aborting sleep during filesystem sync
-Message-ID: <202510312012.eHtS316T-lkp@intel.com>
-References: <20251030210110.298612-1-wusamuel@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=grySdA5NDqNsre7Z15hdopyGSqcfp3ioCjQT03vcWJmDF/5duwXNUdBphqp7D0Y6T7S8AjsuIduvvwtTNSra1oqS3pCgSc9MwTv4QxcXppCraXsASprF4gYUsBpnFKftpA+KB2jYUzYbn+yoH6tssTBJFxjVTK0xTp+JdBnbAao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Gi2elDP7; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=d2FCYC7D36HFZv9IvfozZxXlDh5wK0T/QIEPgoR4o5M=; b=Gi2elDP7xLpfFTJ+Lp6A8TSr7R
+	Nd6q1bXXFo7Q/7TX0kE6ZjqtqeQjMG2oy7JT+ozuGI5KFP7Iy9Oz2fbTPdIf8PczK7ldZd7bb8H3G
+	l4nns1QoqSeXcychHTpjScb4ZJe92eB9m5xe23Hn/Zq6Aac/+W2oL1B6SNlQKHi3DZBc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vEoHo-00Cb4i-Cq; Fri, 31 Oct 2025 13:31:20 +0100
+Date: Fri, 31 Oct 2025 13:31:20 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Clark Wang <xiaoning.wang@nxp.com>,
+	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	Aziz Sellami <aziz.sellami@nxp.com>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 0/3] net: enetc: add port MDIO support for both
+ i.MX94 and i.MX95
+Message-ID: <fef3dbdc-50e4-4388-a32e-b5ae9aaaed6d@lunn.ch>
+References: <20251030091538.581541-1-wei.fang@nxp.com>
+ <f6db67ec-9eb0-4730-af18-31214afe2e09@lunn.ch>
+ <PAXPR04MB8510744BB954BB245FA7A4A088F8A@PAXPR04MB8510.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,83 +70,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251030210110.298612-1-wusamuel@google.com>
+In-Reply-To: <PAXPR04MB8510744BB954BB245FA7A4A088F8A@PAXPR04MB8510.eurprd04.prod.outlook.com>
 
-Hi Samuel,
+> What we get from the DT is the external PHY address, just like the mdio
+> driver, this external PHY address based on the board, ENETC needs to
+> know its external PHY address so that its port MIDO can work properly.
 
-kernel test robot noticed the following build errors:
+So i don't get this. MDIO is just a bus, two lines. It can have up to
+32 devices on it. The bus master should not need to have any idea what
+devices are on it, it just twiddles the lines as requested.
 
-[auto build test ERROR on rafael-pm/linux-next]
-[also build test ERROR on rafael-pm/bleeding-edge linus/master v6.18-rc3 next-20251031]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Why does it need to know the external PHY address? In general, the
+only thing which needs to know the PHY address is phylib.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Samuel-Wu/PM-Support-aborting-sleep-during-filesystem-sync/20251031-050330
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
-patch link:    https://lore.kernel.org/r/20251030210110.298612-1-wusamuel%40google.com
-patch subject: [PATCH v6] PM: Support aborting sleep during filesystem sync
-config: sparc64-randconfig-002-20251031 (https://download.01.org/0day-ci/archive/20251031/202510312012.eHtS316T-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project d1c086e82af239b245fe8d7832f2753436634990)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251031/202510312012.eHtS316T-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510312012.eHtS316T-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> kernel/power/main.c:1159:10: error: call to undeclared function 'pm_start_fs_sync_workqueue'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-    1159 |         error = pm_start_fs_sync_workqueue();
-         |                 ^
-   kernel/power/main.c:1159:10: note: did you mean 'pm_start_workqueue'?
-   kernel/power/main.c:1147:19: note: 'pm_start_workqueue' declared here
-    1147 | static int __init pm_start_workqueue(void)
-         |                   ^
-    1148 | {
-    1149 |         pm_wq = alloc_workqueue("pm", WQ_FREEZABLE | WQ_UNBOUND, 0);
-    1150 | 
-    1151 |         return pm_wq ? 0 : -ENOMEM;
-    1152 | }
-    1153 | 
-    1154 | static int __init pm_init(void)
-    1155 | {
-    1156 |         int error = pm_start_workqueue();
-    1157 |         if (error)
-    1158 |                 return error;
-    1159 |         error = pm_start_fs_sync_workqueue();
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                 pm_start_workqueue
-   1 error generated.
-
-
-vim +/pm_start_fs_sync_workqueue +1159 kernel/power/main.c
-
-  1153	
-  1154	static int __init pm_init(void)
-  1155	{
-  1156		int error = pm_start_workqueue();
-  1157		if (error)
-  1158			return error;
-> 1159		error = pm_start_fs_sync_workqueue();
-  1160		if (error)
-  1161			return error;
-  1162		hibernate_image_size_init();
-  1163		hibernate_reserved_size_init();
-  1164		pm_states_init();
-  1165		power_kobj = kobject_create_and_add("power", NULL);
-  1166		if (!power_kobj)
-  1167			return -ENOMEM;
-  1168		error = sysfs_create_groups(power_kobj, attr_groups);
-  1169		if (error)
-  1170			return error;
-  1171		pm_print_times_init();
-  1172		return pm_autosleep_init();
-  1173	}
-  1174	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+	Andrew
 
