@@ -1,140 +1,159 @@
-Return-Path: <linux-kernel+bounces-879329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B332C22DA5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:18:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CAEDC22DAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:19:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90288188F2FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:18:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11761406245
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:19:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF6D22D7A9;
-	Fri, 31 Oct 2025 01:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F74923313E;
+	Fri, 31 Oct 2025 01:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="eAcaz765"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KxWgkhib"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5394C81;
-	Fri, 31 Oct 2025 01:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35364C81;
+	Fri, 31 Oct 2025 01:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761873502; cv=none; b=hM44bkb7miVETdzw3imDeOeIcIS6HL28doLV1LcVCb3Qwz7sPLuVEwbgXQD0YT1HNDGO9G0J04SIVtLBicEFjGM1iQCkQPz6nBVkiQZ6iyxhG7wz21kWXBgOXMEjxwU2G1g2CU0xuDlUfRnG5SfnIgvfGFMzqTxyiGTtlGIi6Xg=
+	t=1761873569; cv=none; b=Y8ZSEbq7HvhKM3VOscNRGg8AkPhfekjkJJqG0p7jXHCIFxWsghdeYNviYThh836dxoEY9cg5oa0sjq62plJRaorApuz4qvAZfpJcJvIJBJj3GYf///2oFaPz8VI0eGBNA9nc6HQtVnU7IhnCXhFioNFzXGxx0BrGpB0nKO6IvHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761873502; c=relaxed/simple;
-	bh=hXMrFcsWoZiW5tMzpdbWSGzUtGF/9ammpOK9a2U3Ow4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Sc+eqBpNAV996OQWUMGWnMqkQ0NE93T00I5w/FrWGruF20gAab1CCyo4CIkyFFTMKVnaeqHz7NrRQ6qqN8+aUo62l/4d6BkMeDsmqCO+SoX4wh3KYmuitkjEVZha7GkIzHEgyFgXbUBGAoZp2M4eOFybzdvcz5g2wciCGfiJu54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=eAcaz765; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1761873493;
-	bh=EnBz2xZ8wY++5A4DWATyj5lK5khc0mXCazXN4NiHVWY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=eAcaz765Wj3yx6dGSXxWVQuf3SQabeZcg5q5GAjbaBPl4k0DhFbH9U3AtENTMrtXA
-	 RxZmMy44rCOLrjQeoz6gOqfdUBo9jWQB9xFWKMnJsCO7CzddWVoAucaxlyWIcs5E/X
-	 eeohw2j9DL5s9gZClN9WrxEbasRJ4MQw2g6Bia7QQEBp3ktJvUS2P7XyUjsrglQONw
-	 hio3wl6VfEJP6ZccqOzAVxJ9hT/sLZQSfDIluktxo/KcBe+J8Fad6Okfixl//I+Vc7
-	 2bl+Zm2OTHLdLqpOAHd6Jus+3/ASpM1EVrgfw4hkQCAQFYoewUOKRIoBLWxIBQTg21
-	 qE4kpKDUJ4/jw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cyNQY2PsKz4w9V;
-	Fri, 31 Oct 2025 12:18:13 +1100 (AEDT)
-Date: Fri, 31 Oct 2025 12:18:12 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the tip tree
-Message-ID: <20251031121812.1db72425@canb.auug.org.au>
-In-Reply-To: <20251031120243.4394e6a8@canb.auug.org.au>
-References: <20251031120243.4394e6a8@canb.auug.org.au>
+	s=arc-20240116; t=1761873569; c=relaxed/simple;
+	bh=s3KxTLvxykwuQMgwYymSDxBhPd0V8H4sWyAgWwULAKI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r91kqQUNBpp7su1mpmwLLptkq3qAwmQdxYgpVhQX9JOrlNLeEuLilQRNpfmiA6EY4YBQMnCQqnOAEBATGF+/XP28TZCTUBv+Vp6DvLivDNOFERO2/7otwZcNf14e68AwWVilnFy+aiV3DwRlV26maWvo+2ErswaxqjaH7q+Z3ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KxWgkhib; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761873568; x=1793409568;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=s3KxTLvxykwuQMgwYymSDxBhPd0V8H4sWyAgWwULAKI=;
+  b=KxWgkhibFNk2OBR338daFTnQuyNBMUavEjdbyx5wclbp2wQh85cs99ZP
+   ay0whbO4SrVi73cMCmS/Nnj14H/2/9A8D2AdpN0PnAdM1K+DCMtfvb6PE
+   luu+UiDUzWapY3c/1t3xWTXhM+uzHJOIgJpURYsX7YF+wOBcwm4w5tvSk
+   KXtzajBxdOAtWlZZorLhi0kGWnEnkzq+YB/kncBDyOcmPOFtGOZoxkUjS
+   covSCGdo74xSzf0D9eUUyPtrVeK9u0PQsT4crAkWPYhpz21/4jt5a4YPs
+   xKnRdjXAArG46v0FD6yDiHY+cGA9LW4PqowpcynKeb0sl0AYtj/soPdqs
+   A==;
+X-CSE-ConnectionGUID: nwklheNoS4GfMfhjjv+Kzg==
+X-CSE-MsgGUID: +EpFke1ZQH6yAjCg9qy2zw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="64069214"
+X-IronPort-AV: E=Sophos;i="6.19,268,1754982000"; 
+   d="scan'208";a="64069214"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 18:19:28 -0700
+X-CSE-ConnectionGUID: mCjhLEe6QCKcT9fN0jidcg==
+X-CSE-MsgGUID: jQINaZDsRf6rcrtZb6y02w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,268,1754982000"; 
+   d="scan'208";a="185979707"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 30 Oct 2025 18:19:24 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vEdnS-000Mem-0M;
+	Fri, 31 Oct 2025 01:19:20 +0000
+Date: Fri, 31 Oct 2025 09:18:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Caleb James DeLisle <cjd@cjdns.fr>, nbd@nbd.name, lorenzo@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, ryder.lee@mediatek.com,
+	shayne.chen@mediatek.com, sean.wang@mediatek.com,
+	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	Caleb James DeLisle <cjd@cjdns.fr>
+Subject: Re: [PATCH] wifi: mt76: mmio_(read|write)_copy byte swap when on Big
+ Endian
+Message-ID: <202510310816.kyDHJNiS-lkp@intel.com>
+References: <20251027171759.1484844-1-cjd@cjdns.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/+uRBJiK6h8/FNj=F3ab9OgG";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251027171759.1484844-1-cjd@cjdns.fr>
 
---Sig_/+uRBJiK6h8/FNj=F3ab9OgG
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Caleb,
 
-Hi all,
+kernel test robot noticed the following build warnings:
 
-On Fri, 31 Oct 2025 12:02:43 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the tip tree, today's linux-next build (arm64 defconfig)
-> failed like this:
->=20
-> arch/arm64/kernel/entry-common.c: In function 'arm64_exit_to_user_mode':
-> arch/arm64/kernel/entry-common.c:103:9: error: implicit declaration of fu=
-nction 'exit_to_user_mode_prepare'; did you mean 'arch_exit_to_user_mode_pr=
-epare'? [-Wimplicit-function-declaration]
->   103 |         exit_to_user_mode_prepare(regs);
->       |         ^~~~~~~~~~~~~~~~~~~~~~~~~
->       |         arch_exit_to_user_mode_prepare
-> In file included from arch/arm64/include/asm/current.h:5,
->                  from include/linux/sched.h:12,
->                  from include/linux/context_tracking.h:5,
->                  from include/linux/irq-entry-common.h:5,
->                  from kernel/entry/common.c:3:
-> kernel/entry/common.c: In function 'exit_to_user_mode_loop':
-> kernel/entry/common.c:77:29: error: implicit declaration of function 'rse=
-q_exit_to_user_mode_restart'; did you mean 'arch_exit_to_user_mode_prepare'=
-? [-Wimplicit-function-declaration]
->    77 |                 if (likely(!rseq_exit_to_user_mode_restart(regs, =
-ti_work)))
->       |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> include/linux/compiler.h:76:45: note: in definition of macro 'likely'
->    76 | # define likely(x)      __builtin_expect(!!(x), 1)
->       |                                             ^
->=20
-> Caused by commit
->=20
->   d58930640310 ("entry: Split up exit_to_user_mode_prepare()")
->=20
-> and maybe following ones.
->=20
-> I have reverted these commits for today:
->=20
->   69c8e3d16105 ("rseq: Switch to TIF_RSEQ if supported")
->   1b3dd1c538a8 ("rseq: Split up rseq_exit_to_user_mode()")
->   d58930640310 ("entry: Split up exit_to_user_mode_prepare()")
+[auto build test WARNING on wireless-next/main]
+[also build test WARNING on wireless/main linus/master v6.18-rc3 next-20251030]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I also had to revert
+url:    https://github.com/intel-lab-lkp/linux/commits/Caleb-James-DeLisle/wifi-mt76-mmio_-read-write-_copy-byte-swap-when-on-Big-Endian/20251028-012349
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git main
+patch link:    https://lore.kernel.org/r/20251027171759.1484844-1-cjd%40cjdns.fr
+patch subject: [PATCH] wifi: mt76: mmio_(read|write)_copy byte swap when on Big Endian
+config: i386-randconfig-061-20251031 (https://download.01.org/0day-ci/archive/20251031/202510310816.kyDHJNiS-lkp@intel.com/config)
+compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251031/202510310816.kyDHJNiS-lkp@intel.com/reproduce)
 
-  84eeeb002035 ("rseq: Switch to fast path processing on exit to user")
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510310816.kyDHJNiS-lkp@intel.com/
 
---=20
-Cheers,
-Stephen Rothwell
+sparse warnings: (new ones prefixed by >>)
+>> drivers/net/wireless/mediatek/mt76/mmio.c:41:24: sparse: sparse: cast from restricted __le32
+>> drivers/net/wireless/mediatek/mt76/mmio.c:41:24: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int val @@     got restricted __le32 [usertype] @@
+   drivers/net/wireless/mediatek/mt76/mmio.c:41:24: sparse:     expected unsigned int val
+   drivers/net/wireless/mediatek/mt76/mmio.c:41:24: sparse:     got restricted __le32 [usertype]
+>> drivers/net/wireless/mediatek/mt76/mmio.c:63:23: sparse: sparse: cast to restricted __le32
 
---Sig_/+uRBJiK6h8/FNj=F3ab9OgG
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+vim +41 drivers/net/wireless/mediatek/mt76/mmio.c
 
------BEGIN PGP SIGNATURE-----
+    32	
+    33	static void mt76_mmio_write_copy_portable(void __iomem *dst,
+    34						  const u8 *src, int len)
+    35	{
+    36		__le32 val;
+    37		int i = 0;
+    38	
+    39		for (i = 0; i < ALIGN(len, 4); i += 4) {
+    40			memcpy(&val, src + i, sizeof(val));
+  > 41			writel(cpu_to_le32(val), dst + i);
+    42		}
+    43	}
+    44	
+    45	static void mt76_mmio_write_copy(struct mt76_dev *dev, u32 offset,
+    46					 const void *data, int len)
+    47	{
+    48		if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)) {
+    49			mt76_mmio_write_copy_portable(dev->mmio.regs + offset, data,
+    50						      len);
+    51			return;
+    52		}
+    53		__iowrite32_copy(dev->mmio.regs + offset, data, DIV_ROUND_UP(len, 4));
+    54	}
+    55	
+    56	static void mt76_mmio_read_copy_portable(u8 *dst,
+    57						 const void __iomem *src, int len)
+    58	{
+    59		u32 val;
+    60		int i;
+    61	
+    62		for (i = 0; i < ALIGN(len, 4); i += 4) {
+  > 63			val = le32_to_cpu(readl(src + i));
+    64			memcpy(dst + i, &val, sizeof(val));
+    65		}
+    66	}
+    67	
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkEDlQACgkQAVBC80lX
-0Gzh7wf/ZbDgcyXwu5FQYhfZpWwEok9NUa8ezGcQ3p2/WliPo0x2TFcz//yk7JqH
-9/TmBqdUo0C90PSEddCNwdBreeOhve+U+j0WhodNTZTw7j843nfI/LEOuLI6qkls
-zI6tI0+/VH/a+tSB7sFS+LzKoK9tGkVgUitePwDEj7Ax5l9oU6UUnSbGRz+Hh2cB
-RsliRjZquZboPDdayUVQ++Wk4mpn8JkmfvEbRr7iwFRmmrplyjmTCBUgaEN79/Gv
-R5rUBX23/fcoBoBsMWSPo6x+QybGzaRYt+1QwGnTMwZJmVkYUcxyA7L9oolApqhG
-bI5Fs28idY+JdFAbXf4Ez9eg+k5yCw==
-=c2C5
------END PGP SIGNATURE-----
-
---Sig_/+uRBJiK6h8/FNj=F3ab9OgG--
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
