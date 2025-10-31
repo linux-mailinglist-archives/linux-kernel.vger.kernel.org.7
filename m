@@ -1,200 +1,163 @@
-Return-Path: <linux-kernel+bounces-880681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32735C26548
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:27:05 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4110DC26596
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:29:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 003F03B80D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:26:53 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C02D54EA33A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3CC83054F7;
-	Fri, 31 Oct 2025 17:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4EBF30AD17;
+	Fri, 31 Oct 2025 17:28:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="U7NkMFPY"
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OUydQVO8"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681592F3C34
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805F7309EE3
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:28:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761931608; cv=none; b=CoOCDI+h1Mex+yV4zwNJchhHbA7+r1PC18F6FI/PwToPJTKFw/MfTeL8JqwXameWtE2dtIAEWBI0FcHUzJXatnSc1IN1OYr3vlaVan3oShK/ZN7Ey2vx8FdjU6aR61avx9du/XbNt4Q0yVMNWzOhjCcZUi6w+CECGE0BzS4jk6U=
+	t=1761931695; cv=none; b=Y++6Hhgf1J2X0YhqoC8VxWuuJwCiqjYSAFaaP180vHtCMBo9nyk01ZLMW6ar8ri5qzKruiDhXM1no+/H9VjIO04xN9YIKUBZoIzAsDINcD5UmLfN0gd1eEa/zkRM1hSdt2Uyj8+xrm8OkmIlOkAHcCXu3LKmJ0xqLANUv0RPqa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761931608; c=relaxed/simple;
-	bh=5jKZQnGfWIPBfEdMU3/GpXnA8AzNlM4kmlbx9UGKjh0=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=JQdIOeZtO7mpPxTRK6ntEynTonJPhxLCiWNhfNbbtOyw1qyCAVfeNAQqQ8TWEB2AQDoT8jSQi0NSudsx/FNU2PEj7Ir0l92DpcSz11ZxDSwNfkqU4HQDYyuERN9NaqsnsFVA5R/mg3+ozvK4wiVpeMsAud1Qy8u3gkj6esiYPfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=U7NkMFPY; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-88f2b29b651so243508285a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:26:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1761931604; x=1762536404; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OnjJjq1uXSia2MqKg+bdbADtCIwkFyG1D2hZxLKYUgI=;
-        b=U7NkMFPYLNIl+yW552PdrCJFkCZgsNauXElPOJ3HcESJorGbzkWDLmkZSNvW5ldI8n
-         j8bjOSURw3rztsYCKsjHDuCiLPWtUIkuLSxTGo/kJjsBrRcXsF8FpuntM4RNd1KI7GGu
-         j6yTVEqITk7F0oATRG61DZ0BvmpSK0e6Tv1zdrRHXkepGm1IH1Qcw313lFQsaoJfqvpC
-         skYSaVNT3KsF2FVQ/N1/fVCFRRRRND9zPy5PVLSQ+TBSX7Kh11Z9dutT4kGITBJ1K75/
-         Z3P3IsqNfBgZPG7cF2eO8/6F4w2doRv7MTV/Dr5MtoNTcapWfe8zGlAxCYbXqofFadz0
-         xQ5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761931604; x=1762536404;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OnjJjq1uXSia2MqKg+bdbADtCIwkFyG1D2hZxLKYUgI=;
-        b=iTUOx5LD6cXh4Gf6GWsUuYKzg2QDmruSfu/A84OwUe+dR/Nz8WwfuM71N/1zOKmnf6
-         aWkKXldvMcextmoGkj7E3jhi6cmDu8h1w5SGHkNIiixBsuxbHDgi/VLOQdZVs5NgVQwR
-         V0Wf3n5yml7fGBlUNd4Ji0fGbvZQXaYJqmqgJinqrEpMK+nDJRShpzi3683izIluxloK
-         I1SVsi+kDxUCzYrZFlDR3xin8NDEyxV7cmdEQJeve2y+Fqhcb4iPbdhyTel/tgvD6RnD
-         zuoIN+kxOY+dzpsHFrfpJ1Duj/spbO7+pEYMKD1bUVeR52kqWp7pCS/5YUNToscw5hJF
-         EwFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVMNMzkwrmJU0TrxZOK16LVQx6hK4efqzNisGPqJitFXBPEUzjqJslxRdko4f8OguM4bfwQqVnCZNmTp/8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5kYZs+hVKeNLP2k7TBYfqZx3DAlWkt3BwHI+LDPnJIJO8+TlC
-	ZT4lyhRPScoahROOyE11r5j6dTfcilFyc91yzFzhw97W/p+gv3NvA1lYKhp1hd1S1js=
-X-Gm-Gg: ASbGncvMu5y5sv/DmFBvEaIwL3pznNnK7eJvpbK6GHO0EAEzNayfiQZbMnjj35hlKrE
-	LJlqukJtvvO74VuLXOKePTVrmTZUEGQNW2y1J6IoCIH9XhhOni8hEXy4nDej1D0mJc0wuJxLKt9
-	eeuDwbMos60XngPmXgiP53HjBJQETWbwjJjoEPRfhBB2AldJ3bDCrj67x04ovzEQb9QNRJBDf5E
-	vg4tlaelXvrH4Yac/FPV9tx4h/Ck/l7Fy/19d2mDA0l19CSb/q9Y79aSuD+2ZrX7UAGdvtBSxrL
-	d75c41HBjFkvwmkqyifz+v4cCJAnq6a8GW7aokb6y3RTx7smddKrPjCzfa4V8vRTjMEaw/Tmbqu
-	xzpcc9AmnCzEIc3DcywXLh/RVZKMi9o2iUPAvD+ianUpq7/pE+BB0nzYIwYnPnib+ZAAUpOLlYy
-	H8sOvp+ySKCNR9mhNo8M4yAD/A0V9YSw==
-X-Google-Smtp-Source: AGHT+IEDxP9vwyv7ouxIhibFgZNx+LhZvF97GTT8bElIHceMVNW5ssNQSqUHJbYZg7UAidVl4EZQZw==
-X-Received: by 2002:a05:620a:2913:b0:89a:5b62:d9e9 with SMTP id af79cd13be357-8ab9b59c430mr440378785a.65.1761931603515;
-        Fri, 31 Oct 2025 10:26:43 -0700 (PDT)
-Received: from xanadu (modemcable048.4-80-70.mc.videotron.ca. [70.80.4.48])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8ac03f4d585sm143968785a.56.2025.10.31.10.26.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 10:26:42 -0700 (PDT)
-Date: Fri, 31 Oct 2025 13:26:41 -0400 (EDT)
-From: Nicolas Pitre <npitre@baylibre.com>
-To: David Laight <david.laight.linux@gmail.com>
-cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
-    u.kleine-koenig@baylibre.com, Oleg Nesterov <oleg@redhat.com>, 
-    Peter Zijlstra <peterz@infradead.org>, 
-    Biju Das <biju.das.jz@bp.renesas.com>, Borislav Petkov <bp@alien8.de>, 
-    Dave Hansen <dave.hansen@linux.intel.com>, 
-    "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, 
-    Thomas Gleixner <tglx@linutronix.de>, Li RongQing <lirongqing@baidu.com>, 
-    Yu Kuai <yukuai3@huawei.com>, Khazhismel Kumykov <khazhy@chromium.org>, 
-    Jens Axboe <axboe@kernel.dk>, x86@kernel.org
-Subject: Re: [PATCH v4 next 3/9] lib: mul_u64_u64_div_u64() simplify check
- for a 64bit product
-In-Reply-To: <20251031091918.643b0868@pumpkin>
-Message-ID: <689390nn-ssr5-3341-018r-s181qrr81qop@onlyvoer.pbz>
-References: <20251029173828.3682-1-david.laight.linux@gmail.com> <20251029173828.3682-4-david.laight.linux@gmail.com> <26p1nq66-8pq5-3655-r7n5-102o989391s2@onlyvoer.pbz> <20251031091918.643b0868@pumpkin>
+	s=arc-20240116; t=1761931695; c=relaxed/simple;
+	bh=Ml0+puobOr15atbDR6Js54+RvH0AL45e5tSJs6UJB+4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=k42wCbpUmhBZzfdh9vEmBwL36StZO8zVHU3pQQul1vDRye4GA+g6mzNBSEsdBda7HjlnMKvGagP0FALJIjwu8CRn+ZkM6rzJ1/roKkRh1FlMacaAYys0i+x96wHCnemYVN2vXrPD4bB9QQAClWFyWXHcpm9z2R7FaIxZgNvW7ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OUydQVO8; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id E4F1F1A17C2;
+	Fri, 31 Oct 2025 17:28:10 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id AF75660704;
+	Fri, 31 Oct 2025 17:28:10 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 39D5C11818007;
+	Fri, 31 Oct 2025 18:28:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761931689; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=Fq+SD7dZXVNCzjRnu2v6o1CWVJn5BJ/WuAi9xUnaeHo=;
+	b=OUydQVO8Cu07f+UP4SO047uIenuskYJFzXnEozwc4WSizjn254jbRDCjiA0n+CBQkAiuU7
+	l3bhqYGvEARuqGTfgHwtlkmu0Zll4M+fAMEIFaY9vjnkSrgAr9vdE+JQ/LIDd0mcXCkcZ0
+	O1h6Em1pdCHZW56wOKtvY6Ua9knPQS5bNz0iWb+Gp+CKKyDfBLRzwstlqvAZAdO+ABhW8P
+	gauuyTchQm49P4yD+hBXGMhWMaG36ahLdbldvEUCwIQmQb39BlLZlrixN2jpasBxVO+gfj
+	CkFibuXIIkpYFYTfoJGl2eri76ONht8Co6e7kTLtN6Jx7c1MNK+uG4KmWvu6jw==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH 00/28] mtd: spinand: Octal DTR support
+Date: Fri, 31 Oct 2025 18:26:44 +0100
+Message-Id: <20251031-winbond-v6-17-rc1-oddr-v1-0-be42de23ebf1@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAFTxBGkC/x3MOwqFQAxA0a1IagMT/7qVh4WaqGlmJAM+Qdy7g
+ +Up7r0hiqlEGLIbTE6NGnwC5Rks++Q3QeVkKFxRkysJ/+rn4BnPBqlFWwgDs2HZ1aurmq6auIc
+ UHyarXt/4Nz7PCxPSFORoAAAA
+X-Change-ID: 20251031-winbond-v6-17-rc1-oddr-385f04684ad9
+To: Mark Brown <broonie@kernel.org>, Richard Weinberger <richard@nod.at>, 
+ Vignesh Raghavendra <vigneshr@ti.com>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Pratyush Yadav <pratyush@kernel.org>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Steam Lin <STLin2@winbond.com>, Santhosh Kumar K <s-k6@ti.com>, 
+ linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-mtd@lists.infradead.org, Miquel Raynal <miquel.raynal@bootlin.com>
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, 31 Oct 2025, David Laight wrote:
+Hello,
 
-> On Wed, 29 Oct 2025 14:11:08 -0400 (EDT)
-> Nicolas Pitre <npitre@baylibre.com> wrote:
-> 
-> > On Wed, 29 Oct 2025, David Laight wrote:
-> > 
-> > > If the product is only 64bits div64_u64() can be used for the divide.
-> > > Replace the pre-multiply check (ilog2(a) + ilog2(b) <= 62) with a
-> > > simple post-multiply check that the high 64bits are zero.
-> > > 
-> > > This has the advantage of being simpler, more accurate and less code.
-> > > It will always be faster when the product is larger than 64bits.
-> > > 
-> > > Most 64bit cpu have a native 64x64=128 bit multiply, this is needed
-> > > (for the low 64bits) even when div64_u64() is called - so the early
-> > > check gains nothing and is just extra code.
-> > > 
-> > > 32bit cpu will need a compare (etc) to generate the 64bit ilog2()
-> > > from two 32bit bit scans - so that is non-trivial.
-> > > (Never mind the mess of x86's 'bsr' and any oddball cpu without
-> > > fast bit-scan instructions.)
-> > > Whereas the additional instructions for the 128bit multiply result
-> > > are pretty much one multiply and two adds (typically the 'adc $0,%reg'
-> > > can be run in parallel with the instruction that follows).
-> > > 
-> > > The only outliers are 64bit systems without 128bit mutiply and
-> > > simple in order 32bit ones with fast bit scan but needing extra
-> > > instructions to get the high bits of the multiply result.
-> > > I doubt it makes much difference to either, the latter is definitely
-> > > not mainstream.
-> > > 
-> > > If anyone is worried about the analysis they can look at the
-> > > generated code for x86 (especially when cmov isn't used).
-> > > 
-> > > Signed-off-by: David Laight <david.laight.linux@gmail.com>  
-> > 
-> > Comment below.
-> > 
-> > 
-> > > ---
-> > > 
-> > > Split from patch 3 for v2, unchanged since.
-> > > 
-> > >  lib/math/div64.c | 6 +++---
-> > >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/lib/math/div64.c b/lib/math/div64.c
-> > > index 1092f41e878e..7158d141b6e9 100644
-> > > --- a/lib/math/div64.c
-> > > +++ b/lib/math/div64.c
-> > > @@ -186,9 +186,6 @@ EXPORT_SYMBOL(iter_div_u64_rem);
-> > >  #ifndef mul_u64_u64_div_u64
-> > >  u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 d)
-> > >  {
-> > > -	if (ilog2(a) + ilog2(b) <= 62)
-> > > -		return div64_u64(a * b, d);
-> > > -
-> > >  #if defined(__SIZEOF_INT128__)
-> > >  
-> > >  	/* native 64x64=128 bits multiplication */
-> > > @@ -224,6 +221,9 @@ u64 mul_u64_u64_div_u64(u64 a, u64 b, u64 d)
-> > >  		return ~0ULL;
-> > >  	}
-> > >  
-> > > +	if (!n_hi)
-> > > +		return div64_u64(n_lo, d);  
-> > 
-> > I'd move this before the overflow test. If this is to be taken then 
-> > you'll save one test. same cost otherwise.
-> > 
-> 
-> I wanted the 'divide by zero' result to be consistent.
+This series adds support for 8D-8D-8D in SPI NAND, which can already be
+leveraged without any SPI changes as controllers already have this
+support for some SPI NOR devices.
 
-It is. div64_u64(x, 0) will produce the same result/behavior.
+The series is a bit long because many preparation patches were needed
+in order to have a clean 8D-8D-8D introduction (one of the last
+patches), but I believe the split is worth it.
 
-> Additionally the change to stop the x86-64 version panicking on
-> overflow also makes it return ~0 for divide by zero.
-> If that is done then this version needs to be consistent and
-> return ~0 for divide by zero - which div64_u64() won't do.
+Among the few spi-mem patches, they are needed for building the SPI NAND
+changes (especially the ODTR introduction at the end) and therefore an
+immutable tag will be needed for merging in the MTD tree (unless all the
+series goes through MTD directly ofc).
 
-Well here I disagree. If that is some x86 peculiarity then x86 should 
-deal with it and not impose it on everybody. At least having most other 
-architectures raising SIGFPE when encountering a divide by 0 should 
-provide enough coverage to have such obviously buggy code fixed.
+There is a benchmark in the last Winbond patch, we get +55% read speed
+and +26% write speed with this series, at 25MHz!
 
-> It is worth remembering that the chance of (a * b + c)/d being ~0
-> is pretty small (for non-test inputs), and any code that might expect
-> such a value is likely to have to handle overflow as well.
-> (Not to mention avoiding overflow of 'a' and 'b'.)
-> So using ~0 for overflow isn't really a problem.
+    1S-8S-8S:
+    
+       # flash_speed /dev/mtd0 -c1 -d
+       eraseblock write speed is 7529 KiB/s
+       eraseblock read speed is 15058 KiB/s
+    
+    8D-8D-8D:
+    
+       # flash_speed /dev/mtd0 -c1 -d
+       eraseblock write speed is 9481 KiB/s
+       eraseblock read speed is 23272 KiB/s
 
-It is not.
+I am excited to see this finally upstream! Next step will be to see TI's
+PHY tuning series from Santhosh in conjunction with this one to operate at
+maximum speed.
 
-To be clear I'm not talking about overflow nor divide by zero here. I'm 
-suggesting that the case where div64_u64() can be used should be tested 
-first as this is a far more prevalent valid occurrence than a zero 
-divisor which is not.
+Thanks!
+Miquèl
 
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+---
+Miquel Raynal (28):
+      spi: spi-mem: Make the DTR command operation macro more suitable
+      spi: spi-mem: Create a repeated address operation
+      spi: spi-mem: Limit octal DTR constraints to octal DTR situations
+      mtd: spinand: Fix kernel doc
+      mtd: spinand: Add missing check
+      mtd: spinand: Remove stale definitions
+      mtd: spinand: Use standard return values
+      mtd: spinand: Decouple write enable and write disable operations
+      mtd: spinand: Create an array of operation templates
+      mtd: spinand: Make use of the operation templates through SPINAND_OP()
+      mtd: spinand: Convert vendor drivers to SPINAND_OP()
+      mtd: spinand: macronix: Convert vendor specific operation to SPINAND_OP()
+      mtd: spinand: winbond: Convert W25N specific operation to SPINAND_OP()
+      mtd: spinand: winbond: Convert W35N specific operation to SPINAND_OP()
+      mtd: spinand: List vendor specific operations and make sure they are supported
+      mtd: spinand: macronix: Register vendor specific operation
+      mtd: spinand: winbond: Register W25N vendor specific operation
+      mtd: spinand: winbond: Register W35N vendor specific operation
+      mtd: spinand: winbond: Fix style
+      mtd: spinand: winbond: Rename IO_MODE register macro
+      mtd: spinand: winbond: Configure the IO mode after the dummy cycles
+      mtd: spinand: Gather all the bus interface steps in one single function
+      mtd: spinand: Add support for setting a bus interface
+      mtd: spinand: Propagate the bus interface across core helpers
+      mtd: spinand: Give the bus interface to the configuration helper
+      mtd: spinand: Warn if using SSDR-only vendor commands in a non SSDR mode
+      mtd: spinand: Add octal DTR support
+      mtd: spinand: winbond: W35N octal DTR support
 
-Nicolas
+ drivers/mtd/nand/spi/core.c       | 297 +++++++++++++++++++++++++++++++-------
+ drivers/mtd/nand/spi/esmt.c       |   4 +-
+ drivers/mtd/nand/spi/gigadevice.c |   8 +-
+ drivers/mtd/nand/spi/macronix.c   |  49 ++++++-
+ drivers/mtd/nand/spi/micron.c     |   8 +-
+ drivers/mtd/nand/spi/toshiba.c    |   3 +-
+ drivers/mtd/nand/spi/winbond.c    | 129 ++++++++++++-----
+ drivers/spi/spi-mem.c             |  15 +-
+ include/linux/mtd/spinand.h       | 246 ++++++++++++++++++++++++++++---
+ include/linux/spi/spi-mem.h       |  14 +-
+ 10 files changed, 646 insertions(+), 127 deletions(-)
+---
+base-commit: 604a0841a26de188280b47fb7e78dcdaa966a09e
+change-id: 20251031-winbond-v6-17-rc1-oddr-385f04684ad9
+
+Best regards,
+-- 
+Miquel Raynal <miquel.raynal@bootlin.com>
+
 
