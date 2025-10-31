@@ -1,172 +1,323 @@
-Return-Path: <linux-kernel+bounces-880350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31236C2592C
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:30:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4C84C2593B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:30:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8D8D334ECC3
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:30:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B85421A60B15
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:30:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A4C34C14E;
-	Fri, 31 Oct 2025 14:29:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E2D34C826;
+	Fri, 31 Oct 2025 14:30:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="m/llmHWP"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Y4qMl8Jo"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93DAE34D38A;
-	Fri, 31 Oct 2025 14:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6345F3491FC;
+	Fri, 31 Oct 2025 14:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761920996; cv=none; b=GRN4vpXhK3lMmEYLSG5ty94rPQ6sigJGD10dW9vFksNdelyUmy3MQw9GqYX7TltEkc0EmERzFCgJ1wKYjMPEXXM60qjXBLW8amyrIGOI2HK3ewaE2suxWZadlRGAWMVdUw1Au9VzMw9XRU40NNrLb18E8B4Bca5GMAkgdUllVcc=
+	t=1761921006; cv=none; b=lNhAPRnJg6fLSwsry+10scUxRR23WuQxzaIqoWqPdeUSRTGO3JgeCFbgXZJTBEa8j24PC4tsHnrohlLtkBY5VTOw/ROCX1T8XxE0t/onp+XRABV2tf12Bb8klg2xc+OnEWAcz1MZG0vR5U3b5+bBduckgpjDvagZCa6aDIxcHo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761920996; c=relaxed/simple;
-	bh=DpRmmnQNFBCQ/QafgwFnqLT9Yw/H1JWWO9tLoLVtAy4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hMMjOQbF57fXTy+zbieJu1qFW39orZSv+ayUi8JjyWWcCWxL1SCswVkW9rIRidzut4IYufxLO/gEUNuW/Ax5zw1xQEIbB6pnIwqjnYu6dwUIRFPx4aGzgGQKqU9xRfUqQbrjvaoFBDWQxW4Reo+l9cu3HD/x3FNppGBJ7eJ2tGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=m/llmHWP; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 4FEEBC0E955;
-	Fri, 31 Oct 2025 14:29:31 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id BF96E60710;
-	Fri, 31 Oct 2025 14:29:51 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C4B4A11818003;
-	Fri, 31 Oct 2025 15:29:31 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761920989; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=H1xEmCgdr5BM399Kc4ZsWwaTbhEQ52MJYYiQpqbSK6Q=;
-	b=m/llmHWPK2GTOxgP86qebD1Z2Edet7KZozbxg7xHP71zP8WGHqlNCsjTjzbgRJW6AoYEg9
-	PGGuEBK7TNuc+3zADlLbC1jrjiYc/TXhPfAwEtjv3025kcM3TvB0cUwMNtHDn+fuYXbapk
-	18lKsj6lpv1/ObuOPQiBVRZx/Tm+zaLVFOXH7eT76X6+OiJSchpc3v+iGXicmC9AbAQ7Fi
-	n3R42rQTkma0JCEYRFgzMb9znRzRns4yCbMUv4DSU7pRjgiVIxLEd6NnupsCZT4TGW2iAp
-	n6HmKRiLt0yJEP375+9QgT+CNjKgF6b7Kiq48SW1im8mtyVm7PYpr3cu982RMw==
-Date: Fri, 31 Oct 2025 15:29:30 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Shawn Guo
- <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, Wolfram Sang
- <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, Arnd
- Bergmann <arnd@arndb.de>, Saravana Kannan <saravanak@google.com>, Bjorn
- Helgaas <bhelgaas@google.com>, Charles Keepax
- <ckeepax@opensource.cirrus.com>, Richard Fitzgerald
- <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, Linus
- Walleij <linus.walleij@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- Mark Brown <broonie@kernel.org>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
- <sakari.ailus@linux.intel.com>, Len Brown <lenb@kernel.org>, Davidlohr
- Bueso <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>, Alison Schofield
- <alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, Ira
- Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Wolfram Sang <wsa@kernel.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-sound@vger.kernel.org,
- patches@opensource.cirrus.com, linux-gpio@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-spi@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, Allan Nielsen
- <allan.nielsen@microchip.com>, Horatiu Vultur
- <horatiu.vultur@microchip.com>, Steen Hegelund
- <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v4 05/29] dt-bindings: bus: Add simple-platform-bus
-Message-ID: <20251031152930.3c51a313@bootlin.com>
-In-Reply-To: <CAMuHMdVnsWMB24BTFKwggEXKOtqJ96GWZh2Xz+ogocQHM+=+6Q@mail.gmail.com>
-References: <20251015071420.1173068-1-herve.codina@bootlin.com>
-	<20251015071420.1173068-6-herve.codina@bootlin.com>
-	<CAMuHMdVnsWMB24BTFKwggEXKOtqJ96GWZh2Xz+ogocQHM+=+6Q@mail.gmail.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1761921006; c=relaxed/simple;
+	bh=ekH119YCbDk6U0IF3Eu7JcYuyONDbrMuXZhtS/onYQ0=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=eWaij3JKs6o4AbmrA83DWRTxArmM2CrZxRNhmsIq++Hh0IMRIUgXj0mmC8mcx+L96eDPxF6MKu6ZY4ttiC+cwpZ4lCVzRL3+op/qAmn6ERfW2x9Yzrmh9eYa/+/C+Wdvx+n81xZ9Z9Xx5IlwWXtXxvC08ZJ7A+iKsZtv0goKySE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Y4qMl8Jo; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 59VAeDFj020435;
+	Fri, 31 Oct 2025 14:29:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:to; s=pp1;
+	 bh=3FYJ8D7u/k2qYxeAygyymY1Npb81FPaF+arFjgRUBeE=; b=Y4qMl8JoZzer
+	yH6/q35F5s+n7af0ZiP+QCDepNQbt/fPaEDky2DC4OcPgbKrLNVq1ZwQBw0Utk3Z
+	l3OuVF9p5KbH59Lk4s/Jcog7TDqplCTSD9ZOW/JelScqZxa42uEHxJqboL69udYr
+	LNDwnh1ytzieHzthjC5WHIITj3o0bonSeoJ2yhZjeITxsDuEGi7n0MHRgs1pOf9I
+	ujma6LGPVgtGib0O/liqPtObc42PuOE5JOcNlxNkHnZbyTTZfaw89Xie8/371/0i
+	FYuPBINiKEk6Hw3vGANlB1blUEk/qmt5JTQV7zaY2ZzFewMizRhD6Wgf7wF6zVoq
+	yXybkFbVCw==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a34agx16w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 Oct 2025 14:29:52 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 59VCdnES023847;
+	Fri, 31 Oct 2025 14:29:51 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a33vxen11-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 Oct 2025 14:29:51 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 59VETpsH4326218
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 31 Oct 2025 14:29:51 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E677958063;
+	Fri, 31 Oct 2025 14:29:50 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6DCB458059;
+	Fri, 31 Oct 2025 14:29:50 +0000 (GMT)
+Received: from ltc.linux.ibm.com (unknown [9.5.196.140])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 31 Oct 2025 14:29:50 +0000 (GMT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Date: Fri, 31 Oct 2025 15:29:50 +0100
+From: Harald Freudenberger <freude@linux.ibm.com>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-crypto@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        Ard
+ Biesheuvel <ardb@kernel.org>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>,
+        Holger Dengler <dengler@linux.ibm.com>,
+        Herbert Xu
+ <herbert@gondor.apana.org.au>,
+        linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/15] SHA-3 library
+Reply-To: freude@linux.ibm.com
+Mail-Reply-To: freude@linux.ibm.com
+In-Reply-To: <20251030171453.GA1624@sol>
+References: <20251026055032.1413733-1-ebiggers@kernel.org>
+ <ba3ff3d5183ab78b3d02d8db30223def@linux.ibm.com> <20251029163216.GA1603@sol>
+ <fa8bc10f36b1aeb9ffe1abf6350adbc1@linux.ibm.com> <20251030171453.GA1624@sol>
+Message-ID: <4f5cf63500da3e528d0ce74d617e0110@linux.ibm.com>
+X-Sender: freude@linux.ibm.com
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=K+gv3iWI c=1 sm=1 tr=0 ts=6904c7e0 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=kj9zAlcOel0A:10 a=x6icFKpwvdMA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=JeQ386FCg45pv_AdrM0A:9 a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: vyIPV_xetAk4YBfMUewVVdQoSnHuXhgz
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDI4MDE2NiBTYWx0ZWRfX2FoWJt0PTPb9
+ 7crTsLmcXlg4EqL/OH9R2ksrPM1sL+Sv+Jwm0gGMjACiipBKA5enOO+Gj4ZJrJQZzuUzLvKarI5
+ zvmy3ThN5lgH1Cu6kyxSQvxn1Iatso+e40rc0Cq+uP4PyhuDb+zdsvHEsyeRboc6d869TQ4NZro
+ TsX4XAgIIvb9X++uVOl5/12RibwFtCSujdrfwwko8cZnL6YCy7YO0NLJhjJlof/+ZS0kvG8XMQH
+ EM6C3J4sTKC2+W0gJwIcjG8o+7gzBgnjrASpt+yXlsFAh1tjKLvyfqrumsJz2VXL8zG/PLAoXAw
+ 8LAY4yEj9IHR0lciVp+Rohw74aiF9NlqZ9sBLsfYQBWozC/RKarDEt+coZ61W7G72Pp3szi/5Iu
+ C8Nj9qvKomB1ADxhipqPDwdYWNX47w==
+X-Proofpoint-GUID: vyIPV_xetAk4YBfMUewVVdQoSnHuXhgz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-31_04,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 priorityscore=1501 impostorscore=0 suspectscore=0
+ adultscore=0 clxscore=1015 malwarescore=0 phishscore=0 spamscore=0
+ bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2510240000
+ definitions=main-2510280166
 
-On Fri, 31 Oct 2025 09:52:16 +0100
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-
-> Hi Hervé,
+On 2025-10-30 18:14, Eric Biggers wrote:
+> On Thu, Oct 30, 2025 at 11:10:22AM +0100, Harald Freudenberger wrote:
+>> On 2025-10-29 17:32, Eric Biggers wrote:
+>> > On Wed, Oct 29, 2025 at 10:30:40AM +0100, Harald Freudenberger wrote:
+>> > > > If the s390 folks could re-test the s390 optimized SHA-3 code (by
+>> > > > enabling CRYPTO_LIB_SHA3_KUNIT_TEST and CRYPTO_LIB_BENCHMARK), that
+>> > > > would be helpful.  QEMU doesn't support the instructions it uses.  Also,
+>> > > > it would be helpful to provide the benchmark output from just before
+>> > > > "lib/crypto: s390/sha3: Add optimized Keccak function", just after it,
+>> > > > and after "lib/crypto: s390/sha3: Add optimized one-shot SHA-3 digest
+>> > > > functions".  Then we can verify that each change is useful.
+>> > [...]
+>> > >
+>> > > Picked this series from your ebiggers repo branch sha3-lib-v2.
+>> > > Build on s390 runs without any complains, no warnings.
+>> > > As recommended I enabled the KUNIT option and also
+>> > > CRYPTO_SELFTESTS_FULL.
+>> > > With an "modprobe tcrypt" I enforced to run the selftests
+>> > > and in parallel I checked that the s390 specific CPACF instructions
+>> > > are really used (can be done with the pai command and check for
+>> > > the KIMD_SHA3_* counters). Also ran some AF-alg tests to verify
+>> > > all the the sha3 hashes and check for thread safety.
+>> > > All this ran without any findings. However there are NO performance
+>> > > related tests involved.
+>> >
+>> > Thanks!  Just to confirm, did you actually run the sha3 KUnit test and
+>> > verify that all its test cases passed?  That's the most important one.
+>> > It also includes a benchmark, if CONFIG_CRYPTO_LIB_BENCHMARK=y is
+>> > enabled, and I was hoping to see your results from that after each
+>> > change.  The results get printed to the kernel log when the test runs.
+>> >
+>> 
+>> Here it is - as this is a zVM system the benchmark values may show 
+>> poor
+>> performance.
+>> 
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel: KTAP version 1
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel: 1..1
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     KTAP version 1
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # Subtest: sha3
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # module: sha3_kunit
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     1..21
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 1 
+>> test_hash_test_vectors
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 2
+>> test_hash_all_lens_up_to_4096
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 3
+>> test_hash_incremental_updates
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 4
+>> test_hash_buffer_overruns
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 5 test_hash_overlaps
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 6
+>> test_hash_alignment_consistency
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 7
+>> test_hash_ctx_zeroization
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 8
+>> test_hash_interrupt_context_1
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 9
+>> test_hash_interrupt_context_2
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 10 
+>> test_sha3_224_basic
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 11 
+>> test_sha3_256_basic
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 12 
+>> test_sha3_384_basic
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 13 
+>> test_sha3_512_basic
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 14 
+>> test_shake128_basic
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 15 
+>> test_shake256_basic
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 16 
+>> test_shake128_nist
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 17 
+>> test_shake256_nist
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 18
+>> test_shake_all_lens_up_to_4096
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 19
+>> test_shake_multiple_squeezes
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 20
+>> test_shake_with_guarded_bufs
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # benchmark_hash: 
+>> len=1: 14
+>> MB/s
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # benchmark_hash: 
+>> len=16: 109
+>> MB/s
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # benchmark_hash: 
+>> len=64: 911
+>> MB/s
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # benchmark_hash: 
+>> len=127:
+>> 1849 MB/s
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # benchmark_hash: 
+>> len=128:
+>> 1872 MB/s
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # benchmark_hash: 
+>> len=200:
+>> 2647 MB/s
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # benchmark_hash: 
+>> len=256:
+>> 3338 MB/s
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # benchmark_hash: 
+>> len=511:
+>> 5484 MB/s
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # benchmark_hash: 
+>> len=512:
+>> 5562 MB/s
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # benchmark_hash: 
+>> len=1024:
+>> 8297 MB/s
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # benchmark_hash: 
+>> len=3173:
+>> 12625 MB/s
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # benchmark_hash: 
+>> len=4096:
+>> 11242 MB/s
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     # benchmark_hash: 
+>> len=16384:
+>> 12853 MB/s
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel:     ok 21 benchmark_hash
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel: # sha3: pass:21 fail:0 
+>> skip:0
+>> total:21
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel: # Totals: pass:21 fail:0 
+>> skip:0
+>> total:21
+>> Oct 30 10:46:44 b3545008.lnxne.boe kernel: ok 1 sha3
 > 
-> On Wed, 15 Oct 2025 at 09:17, Herve Codina <herve.codina@bootlin.com> wrote:
-> > A Simple Platform Bus is a transparent bus that doesn't need a specific
-> > driver to perform operations at bus level.
-> >
-> > Similar to simple-bus, a Simple Platform Bus allows to automatically
-> > instantiate devices connected to this bus.
-> >
-> > Those devices are instantiated only by the Simple Platform Bus probe
-> > function itself.
-> >
-> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>  
+> Thanks!  Is this with the whole series applied?  Those numbers are
+> pretty fast, so probably at least the Keccak acceleration part is
+> worthwhile.  But just to reiterate what I asked for:
 > 
-> Thanks for your patch!
+>     Also, it would be helpful to provide the benchmark output from just
+>     before "lib/crypto: s390/sha3: Add optimized Keccak function", just
+>     after it, and after "lib/crypto: s390/sha3: Add optimized one-shot
+>     SHA-3 digest functions".
 > 
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/bus/simple-platform-bus.yaml
-> > @@ -0,0 +1,50 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/bus/simple-platform-bus.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Simple Platform Bus
-> > +
-> > +maintainers:
-> > +  - Herve Codina <herve.codina@bootlin.com>
-> > +
-> > +description: |
-> > +  A Simple Platform Bus is a transparent bus that doesn't need a specific
-> > +  driver to perform operations at bus level.
-> > +
-> > +  Similar to simple-bus, a Simple Platform Bus allows to automatically
-> > +  instantiate devices connected to this bus. Those devices are instantiated
-> > +  only by the Simple Platform Bus probe function itself.  
-> 
-> So what are the differences with simple-bus? That its children are
-> instantiated "only by the Simple Platform Bus probe function itself"?
-> If that is the case, in which other places are simple-bus children
-> instantiated?
+> So I'd like to see how much each change helped, which isn't clear if 
+> you
+> show only the result at the end.
 
-In of_platform_populate(). It call of_platform_bus_create() which is
-recursive:
-  https://elixir.bootlin.com/linux/v6.14/source/drivers/of/platform.c#L374
-
-So children are instantiated out of the bus probe().
-
+Yea, let's see ... Monday maybe ...
 
 > 
-> Do we need properties related to power-management (clocks, power-domains),
-> or will we need a "simple-pm-platform-bus" later? ;-)
+> If there's still no evidence that "lib/crypto: s390/sha3: Add optimized
+> one-shot SHA-3 digest functions" actually helps significantly vs. 
+> simply
+> doing the Keccak acceleration, then we should drop it for simplicity.
 > 
-> FTR, I still think we wouldn't have needed the distinction between
-> "simple-bus" and "simple-pm-bus"...
+>> > > What's a little bit tricky here is that the sha3 lib is statically
+>> > > build into the kernel. So no chance to unload/load this as a module.
+>> > > For sha1 and the sha2 stuff I can understand the need to have this
+>> > > statically enabled in the kernel. Sha3 is only supposed to be
+>> > > available
+>> > > as backup in case of sha2 deficiencies. So I can't see why this is
+>> > > really statically needed.
+>> >
+>> > CONFIG_CRYPTO_LIB_SHA3 is a tristate option.  It can be either built-in
+>> > or a loadable module, depending on what other kconfig options select it.
+>> > Same as all the other crypto library modules.
+>> 
+>> I know and see this. However, I am unable to switch this to 'm'. It 
+>> seems
+>> like the root cause is that CRYPTO_SHA3='y' and I can't change this to 
+>> 'm'.
+>> And honestly I am unable to read these dependencies (forgive my 
+>> ignorance):
+>> 
+>> CONFIG_CRYPTO_SHA3:
+>> SHA-3 secure hash algorithms (FIPS 202, ISO/IEC 10118-3)
+>>  Symbol: CRYPTO_SHA3 [=y]
+>>   Type  : tristate
+>>   Defined at crypto/Kconfig:1006
+>>     Prompt: SHA-3
+>>     Depends on: CRYPTO [=y]
+>>     Location:
+>>       -> Cryptographic API (CRYPTO [=y])
+>>         -> Hashes, digests, and MACs
+>>           -> SHA-3 (CRYPTO_SHA3 [=y])
+>>   Selects: CRYPTO_HASH [=y] && CRYPTO_LIB_SHA3 [=y]
+>>   Selected by [y]:
+>>     - CRYPTO_JITTERENTROPY [=y] && CRYPTO [=y]
+> 
+> Well, all that is saying is that there is a built-in option that 
+> selects
+> SHA-3, which causes it to be built-in.  So SHA-3 being built-in is
+> working as intended in that case.  (And it's also intended that we no
+> longer allow the architecture-optimized code to be built as a module
+> when the generic code is built-in.  That was always a huge footgun.)  
+> If
+> you want to know why something that needs SHA-3 is being built-in, 
+> you'd
+> need to follow the chain of dependencies up to see how it gets 
+> selected.
+> 
+> - Eric
 
-I would like that. Using simple-pm-bus solves my issue but I don't have any
-clocks or power-domains to set. The simple-pm-bus bus requires at least
-one of them. Even if the driver itself solved my issue, I cannot be
-compliant with its binding.
-
-Best regards,
-Hervé
+Thanks
 
