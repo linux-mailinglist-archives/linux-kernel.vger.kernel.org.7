@@ -1,174 +1,157 @@
-Return-Path: <linux-kernel+bounces-880466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84260C25CEF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:21:27 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7913C25D1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:24:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DAFB189B1AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:18:50 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 02B134F692F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D531929B217;
-	Fri, 31 Oct 2025 15:18:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60DB2820A0;
+	Fri, 31 Oct 2025 15:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NUQI39Pu"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZXX1Bma9"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8BB728D83E
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 15:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A8382BEFE8;
+	Fri, 31 Oct 2025 15:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761923899; cv=none; b=Q4OznIrFOifoC0tsuzWS5iy1sG51uO4huWtA1E7xitcDx85WNPdxd6vrIcX30qO7wj3POdGPHaUbPslbDI7pk0bwaKdLOjxyq38mAkGTN695X/aPc/oOCGVOjFu+QFK7COjpXJuXDMkCJfQIhDiwxpKRn5vhCa2hk6hE94NtD0E=
+	t=1761924030; cv=none; b=ZNEKAbLyroFbt3tBAvQcZY9QYeTiAGiX1SzC8peQ4f8t+sDmwBelAleHe5XPOyzm9NUFeYsreEwcOGds458lXU5MraRIVJ0L6MNSAcyiDNtxm8zqSCuAi2I9F3QLJ22H/qeulh/VWG00arhqpdxT/nw4+xEbdGOGGzK3iXxMfdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761923899; c=relaxed/simple;
-	bh=On3cALU8nBb0+4ieggXOsWPvMWQU83j2ni/F0KAU+8g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AC80f9BUk4vg8N1U/YCmBiqvYpb6PpX1xjMiYAWLGkYTRajatkX7gdDQzYkdMjZ6GEafExlyM11LWluQmbffQr+1CW5tPnV4+oDJxe9sz+ZVn5BW6Z25jDj/4XTRhbD7r4PCjL8F4vo/doiVfDmsUoODRVzcYEqTbITPn4jMLwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NUQI39Pu; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-3737d0920e6so29161401fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:18:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761923895; x=1762528695; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LWTZKkOkYcn9N/iXeT7lTpb6wx5Kgm29lLrZZWz6S0Y=;
-        b=NUQI39PutpnQtcrVBQp3FC3sNqrkkV7ZC8PAzdjeWSW8gfiVVE3+EiLjGsssBFCjws
-         LXnO8PNgfkuqWzFGVKbeRJNYFT11TqWxdk0M8UG6MKeV7Og+6X2JYcSp8Bhx7WnCBBx7
-         wV2gkxe7ZfAwsopmHY4JP34khkX8W38eFFIh1L/fBb95oV/WA6Lq7aNPZ7/RszRfh6Hb
-         47pxXkqCistkPkkcAgZg+QVeL51px149xmU9DWYCm41+ZdAtUkfRtY047mv/hPgftfTd
-         5qtZ1eUXuGPG1wQExkKtFega/oWWB9SDKmZlIdqY18RoNyRbufXpOnxfL+Srb0LjUEKF
-         +lJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761923895; x=1762528695;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LWTZKkOkYcn9N/iXeT7lTpb6wx5Kgm29lLrZZWz6S0Y=;
-        b=QFcgruGVc1p+iaI/cPsaC1ABIxPd3SbwfbvqyhbdSp0FpoWcvxwS5KlVI0q9sdz2/U
-         CDgnsF2+AxBYAE9mpXftZoRcK8n52WJE1YdD/sW6jr8egopNoUYu3q7ppKKJBKMOV3n0
-         rtYPz8knKgg9tc3Py8NfuglsTyuXYcd+YSl7DmBtUhE1EPqpJK9ALa3ixVwG5eOvcbWF
-         O2x1st2cOmkRbRsg+vA3sd0hxhmPnD57IvR5t6sL82iMm/mlCvRmkwcX9b72vKL2BgST
-         xfTKgjnU8Xc8fFmG6U/3eUFsrtrTCs0+gOzjhXjA4iaWjff6eai+9YjyBn8bIxYxNAQn
-         COjg==
-X-Forwarded-Encrypted: i=1; AJvYcCW93nIX4zp8cgKwqPsdkZ1Ku3n13Dzdmqde9Icmh2tyqCfHSdPv4yGMhktPiN5+1vgnxBc8RVi64UJBV0o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsW7qrbNU0guj8+1/9EH1yuOITJQq23+sFvgcRsNHWkzFJPH+Z
-	yeHSwKDb4+7vs8MACwZ9b4Yo4wKzmXljm2xXdcEWYzZ+VikUkNhLsgtr62wmVo+OUgREk3qVdNI
-	HWsj1H1QUf19n3e8Ff5zjYEKPe1woc3g=
-X-Gm-Gg: ASbGnctJuFA9fZ8yXuxgkm1ETNse4CQEG/zwLCQaeX8IvG3z4oCNOovrTTROCYQbezb
-	BmsgUQAce7TqPMLrSJjWjZT+JopO1I8osbPoRhMc0yIL3BA/2iy2AI+TPVc+/vxzO/VWvpyoiUa
-	/mKFhkreBCGbNnCkzETAig5bwSxEM6aIabpO8YC4kSUgZ0I/LAzeGchKDxQd+8betovZhCCT21R
-	GIyYfXq4Oal7OJpZ1B6rFe+bXDVTP2RlcTFFbu8We2lVoLK13wfR6rHyAPuE0nMwU2D8A==
-X-Google-Smtp-Source: AGHT+IHhCyX5WgD/BnEfxs9+rDfxqdatiMXwvRpqYTj0+QM5LEWR/Zg4MlR9SQpm0sfZglZhrIAAIz4nl5FkspVBkEw=
-X-Received: by 2002:a05:651c:2209:b0:336:9232:fb91 with SMTP id
- 38308e7fff4ca-37a18d84e13mr14682981fa.4.1761923894307; Fri, 31 Oct 2025
- 08:18:14 -0700 (PDT)
+	s=arc-20240116; t=1761924030; c=relaxed/simple;
+	bh=y3b+wUCsWckPBCTPgAZadRRNBEdlpxrfsSHKNnGesNY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IIaBcq2DZFuFNWCJ69Rp0+KvIfpGueRbZrey+b0r4YUEldPX23/cFLYyPXuR7y7OVFEDeUfC36Mk+wy6edhs8knsppObLPKWJzX7olzwvTmKIcm7U2PRpgMev9arNBx8aTv5dw3R4a0H4WpDPy2dAuPOut7Zp8NffcGGgLtXzO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZXX1Bma9; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id B52E14E41440;
+	Fri, 31 Oct 2025 15:20:25 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 8C26D60704;
+	Fri, 31 Oct 2025 15:20:25 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 067DE11818041;
+	Fri, 31 Oct 2025 16:20:05 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761924023; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=goHQM/1NASiwEpJFuU+gt1w80LtYcWXr5Gc0K9tmMcc=;
+	b=ZXX1Bma9X3KMNXlEJ6m3KmzgeWaoHvqKZUDGbtyXcyczSWNcqa1WxZl7PaaP3QnmzL9gq4
+	h0YuPlq7t/ag22Qc0RV6DUkEOizZ8aU4YvVAi5tQ0oCrNCN9uTlgnrGvmTf6uzjWAFrc/P
+	iOZon5nGEinDurKqvP8UIygDFPUWAiUqm59zHUbmHyOs3e60XOGs63ifmZhf114mLUKRqK
+	bIKj+JoZJxnMO/w5PK2AbEIM7ADXeVegLKetdhc6qx0E6UYxyvcnSln30z+BZXKje9+TfM
+	AmSNEEcgTn5HJwFcJWmSNYyzhr1jXdHX0RhRB0lSnwspgtNFDoD+bFqnfo/hgQ==
+Date: Fri, 31 Oct 2025 16:20:04 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Danilo Krummrich <dakr@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
+ Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Andi
+ Shyti <andi.shyti@kernel.org>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, Arnd
+ Bergmann <arnd@arndb.de>, Saravana Kannan <saravanak@google.com>, Bjorn
+ Helgaas <bhelgaas@google.com>, Charles Keepax
+ <ckeepax@opensource.cirrus.com>, Richard Fitzgerald
+ <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, Linus
+ Walleij <linus.walleij@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Mark Brown <broonie@kernel.org>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>, Len Brown <lenb@kernel.org>, Davidlohr
+ Bueso <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Dave Jiang <dave.jiang@intel.com>, Alison Schofield
+ <alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, Ira
+ Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, Wolfram Sang <wsa@kernel.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-sound@vger.kernel.org,
+ patches@opensource.cirrus.com, linux-gpio@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-spi@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, Allan Nielsen
+ <allan.nielsen@microchip.com>, Horatiu Vultur
+ <horatiu.vultur@microchip.com>, Steen Hegelund
+ <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 05/29] dt-bindings: bus: Add simple-platform-bus
+Message-ID: <20251031162004.180d5e3f@bootlin.com>
+In-Reply-To: <20251030141448.GA3853761-robh@kernel.org>
+References: <20251015071420.1173068-1-herve.codina@bootlin.com>
+	<20251015071420.1173068-6-herve.codina@bootlin.com>
+	<20251030141448.GA3853761-robh@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029022955.827475-1-quic_shuaz@quicinc.com> <20251029022955.827475-2-quic_shuaz@quicinc.com>
-In-Reply-To: <20251029022955.827475-2-quic_shuaz@quicinc.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Fri, 31 Oct 2025 11:18:02 -0400
-X-Gm-Features: AWmQ_bnmEoXSHQbwofIVHDVHm8UazbPDGWMN_lWJ04lJ7qFjiRa0BctPyX2rqPk
-Message-ID: <CABBYNZKh5_Ed0Jm-rjpPZKEf26zo3Lz-ZZrEKAJJWkZWQy3o7Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] Bluetooth: btusb: add default nvm file
-To: Shuai Zhang <quic_shuaz@quicinc.com>
-Cc: dmitry.baryshkov@oss.qualcomm.com, marcel@holtmann.org, 
-	linux-bluetooth@vger.kernel.org, stable@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	quic_chejiang@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi,
+Hi Rob,
 
-On Tue, Oct 28, 2025 at 10:30=E2=80=AFPM Shuai Zhang <quic_shuaz@quicinc.co=
-m> wrote:
->
-> If no NVM file matches the board_id, load the default NVM file.
->
-> Signed-off-by: Shuai Zhang <quic_shuaz@quicinc.com>
-> Cc: stable@vger.kernel.org
-> ---
->  drivers/bluetooth/btusb.c | 23 ++++++++++++++++++-----
->  1 file changed, 18 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-> index dcbff7641..6903606d3 100644
-> --- a/drivers/bluetooth/btusb.c
-> +++ b/drivers/bluetooth/btusb.c
-> @@ -3482,15 +3482,14 @@ static int btusb_setup_qca_load_rampatch(struct h=
-ci_dev *hdev,
->  }
->
->  static void btusb_generate_qca_nvm_name(char *fwname, size_t max_size,
-> -                                       const struct qca_version *ver)
-> +                                       const struct qca_version *ver,
-> +                                       u16 board_id)
->  {
->         u32 rom_version =3D le32_to_cpu(ver->rom_version);
->         const char *variant, *fw_subdir;
->         int len;
-> -       u16 board_id;
->
->         fw_subdir =3D qca_get_fw_subdirectory(ver);
-> -       board_id =3D qca_extract_board_id(ver);
->
->         switch (le32_to_cpu(ver->ram_version)) {
->         case WCN6855_2_0_RAM_VERSION_GF:
-> @@ -3522,14 +3521,28 @@ static int btusb_setup_qca_load_nvm(struct hci_de=
-v *hdev,
->         const struct firmware *fw;
->         char fwname[80];
->         int err;
-> +       u16 board_id =3D 0;
->
-> -       btusb_generate_qca_nvm_name(fwname, sizeof(fwname), ver);
-> +       board_id =3D qca_extract_board_id(ver);
->
-> +retry:
-> +       btusb_generate_qca_nvm_name(fwname, sizeof(fwname), ver, board_id=
-);
->         err =3D request_firmware(&fw, fwname, &hdev->dev);
->         if (err) {
-> +               if (err =3D=3D -EINVAL) {
-> +                       bt_dev_err(hdev, "QCOM BT firmware file request f=
-ailed (%d)", err);
-> +                       return err;
-> +               }
-> +
->                 bt_dev_err(hdev, "failed to request NVM file: %s (%d)",
->                            fwname, err);
-> -               return err;
-> +               if (err =3D=3D -ENOENT && board_id !=3D 0) {
-> +                       board_id =3D 0;
-> +                       goto retry;
+On Thu, 30 Oct 2025 09:14:48 -0500
+Rob Herring <robh@kernel.org> wrote:
 
-goto backwards is asking for trouble, just split the required code
-into its own function and then call it again with board set to 0.
+> On Wed, Oct 15, 2025 at 09:13:52AM +0200, Herve Codina wrote:
+> > A Simple Platform Bus is a transparent bus that doesn't need a specific
+> > driver to perform operations at bus level.
+> > 
+> > Similar to simple-bus, a Simple Platform Bus allows to automatically
+> > instantiate devices connected to this bus.
+> > 
+> > Those devices are instantiated only by the Simple Platform Bus probe
+> > function itself.  
+> 
+> Don't let Greg see this... :)
+> 
+> I can't say I'm a fan either. "Platform bus" is a kernel thing, and the 
+> distinction here between the 2 compatibles is certainly a kernel thing.
+> 
+> I think this needs to be solved within the kernel.
 
-> +               } else {
-> +                       bt_dev_err(hdev, "QCOM BT firmware file request f=
-ailed (%d)", err);
-> +                       return err;
-> +               }
->         }
->
->         bt_dev_info(hdev, "using NVM file: %s", fwname);
-> --
-> 2.34.1
->
+I fully agree with that.
 
+> 
+> What I previously said is define a list of compatibles to not 
+> instantiate the child devices. This would essentially be any case having 
+> a specific compatible and having its own driver. So if someone has 
+> 'compatible = "vendor,not-so-simple-bus", "simple-bus"', when and if 
+> they add a driver for "vendor,not-so-simple-bus", then they have to add 
+> the compatible to the list in the simple-pm-bus driver. I wouldn't 
+> expect this to be a large list. There's only a handful of cases where 
+> "simple-bus" has a more specific compatible. And only a few of those 
+> have a driver. A more general and complicated solution would be making 
+> linux handle 2 (or more) drivers matching a node and picking the driver 
+> with most specific match. That gets complicated with built-in vs. 
+> modules. I'm not sure we really need to solve that problem.
 
---=20
-Luiz Augusto von Dentz
+Right. Let discard the "more general and complicated solution" and focus
+on the list of compatible to avoid child devices instantiation.
+
+Do you mean that, for "simple-bus" compatible we should:
+ - Remove the recursive device instantiation from of_platform_populate().
+ - In simple-bus probe(), check the device we probe against the
+   'no_instantiate_children' list
+      - If it matches, do not instantiate chidren
+      - If it doesn't match instantiate children
+
+Is that correct?
+
+Best regards,
+Hervé
 
