@@ -1,224 +1,209 @@
-Return-Path: <linux-kernel+bounces-880621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2D2DC26261
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:37:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B88DDC26276
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:39:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 71F8D351ED2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:37:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 393564E39D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3D112ECD31;
-	Fri, 31 Oct 2025 16:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEBE9289374;
+	Fri, 31 Oct 2025 16:38:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="YHOLOb8C"
-Received: from relay10.grserver.gr (relay10.grserver.gr [37.27.248.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E+Vfn4b3"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19E9A296159;
-	Fri, 31 Oct 2025 16:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.27.248.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F742ED141
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 16:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761928625; cv=none; b=n2D3lIU8eEtTnUYkyyHvmFwRCDiB3pq5JRPm0pGTqdXXxaVlZzzPRmWqh6MDSNz5ULzOijIKGdLfiQicDPzt7bTTwKtjnfXb16ywYUYJGOjMdkJttsJkK7rC+SmBEsRT8GA8EH5dum30qvvqZjxOQaPf4D4dB2IZuV9EsqoegBI=
+	t=1761928698; cv=none; b=TiWtZQOiJveB+idaOgtBTe+tlcB5m821Oxol6OWEowigfzXJDedp8UwRTvQXjP+Oae8jPrqK9KDa0ssaNM20xs2xmQW0UFfLMcEKMtQ6cIlhqoe0gTWmUdYYLrav/F2Z93NuwBOX1uDbKC4F1KJ/JGWXJCKHdPv5ZaurmXtFwqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761928625; c=relaxed/simple;
-	bh=5/MkzF4b0enGlcC8P6GU9B36DychBhk89uhfjulbGpA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OLpRW76oAATTLOBZTnOxBJhfwFs7nX4vBCIOFWemPmYCEVJ0JkAY9Tt+9f5dk/905h8nPlkJhz2yy6TYOT2e4g54sQtyY/wSGNA7SzF3MVLUEX63hz7SOn1HS9rLYlhC7gjpdW0o5Av1WyRI74QGycYX4gBcdg3UgQ2jSqm3ngU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=YHOLOb8C; arc=none smtp.client-ip=37.27.248.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from relay10 (localhost.localdomain [127.0.0.1])
-	by relay10.grserver.gr (Proxmox) with ESMTP id 58E6D464D1;
-	Fri, 31 Oct 2025 18:37:00 +0200 (EET)
-Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by relay10.grserver.gr (Proxmox) with ESMTPS id D6A6E45F00;
-	Fri, 31 Oct 2025 18:36:59 +0200 (EET)
-Received: from antheas-z13 (unknown [IPv6:2a05:f6c2:511b:0:8d8a:5967:d692:ea4e])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id D801E200C43;
-	Fri, 31 Oct 2025 18:36:58 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1761928619;
-	bh=eaCcJl1/Nu0H6MYEFWCb5trAxgrURxKusB7XqUtYWpw=; h=From:To:Subject;
-	b=YHOLOb8C5iZo7FcEwOLHEQnbtpDuP6hUOLS3cg6FUQWvmUcj8MMY82W6iHORlcADt
-	 SMUcCwb1GUerLPgo6C0l4UQq5m29hX6fUaCC5QNC5eD0zVzPSLLgSfU7/lEL3gWHCN
-	 HPv4eKFLZlU2qR9LA9LJHbiapFb4ruZ8hKQ76VYlRWO6d4Q5JkUTtYrLvQ2zr22TTC
-	 prpZAXnmAnZKEFvauF48wTmgYxMZQyp6CmEu1hr0HRsnoNrjRByvff6PusXcp+qQZU
-	 EhY9gjtPwGN8g0SJEiBPFJEcmrXNVb5SsJwwrzwTZUMH6fkhACVmAZ1NJr2zBneNv4
-	 MsxfpHRVm4m7A==
-Authentication-Results: linux3247.grserver.gr;
-	spf=pass (sender IP is 2a05:f6c2:511b:0:8d8a:5967:d692:ea4e) smtp.mailfrom=lkml@antheas.dev smtp.helo=antheas-z13
-Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
-From: Antheas Kapenekakis <lkml@antheas.dev>
-To: platform-driver-x86@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org,
-	Hans de Goede <hansg@kernel.org>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Derek John Clark <derekjohn.clark@gmail.com>,
-	=?UTF-8?q?Joaqu=C3=ADn=20Ignacio=20Aramend=C3=ADa?= <samsagax@gmail.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Antheas Kapenekakis <lkml@antheas.dev>
-Subject: [PATCH v3 6/6] platform/x86: ayaneo-ec: Add suspend hook
-Date: Fri, 31 Oct 2025 17:36:51 +0100
-Message-ID: <20251031163651.1465981-7-lkml@antheas.dev>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <20251031163651.1465981-1-lkml@antheas.dev>
-References: <20251031163651.1465981-1-lkml@antheas.dev>
+	s=arc-20240116; t=1761928698; c=relaxed/simple;
+	bh=p7vdofTGqu3x6DvvTHZIENYATo0Ig2XlNqgLI2N93SI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V7V6UbDhY5Gm/ZGZ3IFeAt3qXGuzNTTtCNNmNtOx4ZXH/jLF4eMAsAzl+ny9+pfHVsOyJLG097/PEnfjdyrFeqxnROvCfqfHWyVo6yf7qELmMbY6liYPGu9sFOzwLtDFL4zlJqnNXvjcLR/lkzqmkqT90UsxC4cUw9pENi/lulg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E+Vfn4b3; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-429bccca1e8so897683f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:38:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761928687; x=1762533487; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=or8GDDYatTrrl85V6YGHNAw/hbsTDPW4OGinPVZC6ss=;
+        b=E+Vfn4b3ekT+IChBYxiXQHMPwpLOuBGOv43snic5wpcnaepJcV3A0Z3UJMd3CPb/iz
+         juvVlYTGbQ0DepWpWBC0MYFxrVlkJPWwd1VUk/cRScBjW7VauxE3F9ON41BitzWudmRC
+         2sPeYIAf0hK+Y5SOTy3TDk5oXj6sbO06c+UYRROL55fZOLz4U3tDGXI8vckvtraBafFc
+         6/sbzqrU+ntKkf/zRPlm1WL4q82RkMfvCer7OpsDzjcGfOtITZhmFiLgruUaFXAOKRCo
+         mBORYin9v/1N+dTTAECjm+hkTOPDTBXpRSChMht9HbtbnDVmdGOWeVZarumiwB/n0+37
+         R3GQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761928687; x=1762533487;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=or8GDDYatTrrl85V6YGHNAw/hbsTDPW4OGinPVZC6ss=;
+        b=MO3+H5yp/wcnZHznu+fFq1wMHcfoXX5P5T+FiKGG91b+f1r0NPrkz4x2Q2jl9kz5h0
+         upANwTMtLNTK1V6lA70efH3VTrPwRcTyjNm4awuvy9alSrT/qVTdIMZdjMJkplAQNigm
+         uNsDnIPjF7qRTHikdEHfIXxgTgFZCWX2pmSvUSdxrxG+dQrfQCFxb45p2iU61u5oRXUw
+         d6xNu+UgcufP+N/U7SUX+i14/sJbS8a+YBiWFrDmHrdPt2f477TMatoXR6RWzxyEuyov
+         Y6hgdBC6WGZZQ06bcvC4Tn0iVG0dz6nOZO0PwQLdbfMgu2lOVLPV6Ow1Fi+Vs2gVpILF
+         ouLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2hBpkoRcW4mesndz52tfqFdC5Eh64uoy33qV3EVivF3zYz4mghJ0C3eXlJKDDiX+DE9H7nsiqvGgxu0Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFNN4FpUItvjXcQp0EzOnNnUgrxHnG7ESbEfRrWCBEfJ3oWJJE
+	dLpfjx4orzqS9ukEU+fH/QGayem6lDljjyHogZG11GPZzfcGgkPKbWLLAplsxxKPV4UH6XTeidZ
+	tF00P0DkO2D8LemjxOn1aQZoBK8mc6JQ=
+X-Gm-Gg: ASbGncvwVZdALQMmAlIqHF+zlFloL9GV50FfQNM5e06mCzxWnf1qLTYCFsIqcNooXqb
+	nxv4CSYMzmHpyAefXJHOp/eKqbS+dWJSRXyi3ull+khxRslrkI2vSX4IEORGvgAe6YW7etza4ZQ
+	AGh9w56mP8e3bysl6OxqkZfDn3qGhlXANrkDdpEE+MFkX9migfoM9bwE2p1nAMrFT5HbAxi/u5N
+	n91tQoTKKZvbooNd7XC9WUcYmdknKHQlh1gSnMZKmTkC35FoYzMABv09ddWsiJMALeG6j4d1fJo
+	5uLpROSBYtFalQMhKSOWxSDZlktp
+X-Google-Smtp-Source: AGHT+IFBHh5rk74gwLSZ2LKe1jBxHjLUksqYeKCEGxnQHUNuc86p9MCP6sT8KBMTg23E0aT5bpyGxxtlW+e826OBh3M=
+X-Received: by 2002:a05:6000:178f:b0:429:ba6a:3a86 with SMTP id
+ ffacd0b85a97d-429bd6b2196mr3452799f8f.57.1761928687090; Fri, 31 Oct 2025
+ 09:38:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: 
- <176192861939.3949331.11112013268147092094@linux3247.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
-X-Virus-Status: Clean
+References: <20251031154107.403054-1-kafai.wan@linux.dev> <20251031154107.403054-2-kafai.wan@linux.dev>
+In-Reply-To: <20251031154107.403054-2-kafai.wan@linux.dev>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Fri, 31 Oct 2025 09:37:54 -0700
+X-Gm-Features: AWmQ_bl06Po1W4MOoS1jpCHAUNH8kXBIMxWHPf8qXw0QaexrF09WsuZ1bhbcqWc
+Message-ID: <CAADnVQ+4QoCU4gYEfTR6Ok122zkfG32s8AxRx-irMcCA1jEhvQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v3 1/2] bpf: Skip bounds adjustment for
+ conditional jumps on same scalar register
+To: KaFai Wan <kafai.wan@linux.dev>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Shuah Khan <shuah@kernel.org>, Paul Chaignon <paul.chaignon@gmail.com>, 
+	Matan Shachnai <m.shachnai@gmail.com>, Henriette Herzog <henriette.herzog@rub.de>, 
+	Luis Gerhorst <luis.gerhorst@fau.de>, 
+	Harishankar Vishwanathan <harishankar.vishwanathan@gmail.com>, colin.i.king@gmail.com, 
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, Kaiyan Mei <M202472210@hust.edu.cn>, 
+	Yinhao Hu <dddddd@hust.edu.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The Ayaneo EC resets after hibernation, losing the charge control state.
-Add a small PM hook to restore this state on hibernation resume.
+On Fri, Oct 31, 2025 at 8:44=E2=80=AFAM KaFai Wan <kafai.wan@linux.dev> wro=
+te:
+>
+> When conditional jumps are performed on the same scalar register
+> (e.g., r0 <=3D r0, r0 > r0, r0 < r0), the BPF verifier incorrectly
+> attempts to adjust the register's min/max bounds. This leads to
+> invalid range bounds and triggers a BUG warning.
+>
+> The problematic BPF program:
+>    0: call bpf_get_prandom_u32
+>    1: w8 =3D 0x80000000
+>    2: r0 &=3D r8
+>    3: if r0 > r0 goto <exit>
+>
+> The instruction 3 triggers kernel warning:
+>    3: if r0 > r0 goto <exit>
+>    true_reg1: range bounds violation u64=3D[0x1, 0x0] s64=3D[0x1, 0x0] u3=
+2=3D[0x1, 0x0] s32=3D[0x1, 0x0] var_off=3D(0x0, 0x0)
+>    true_reg2: const tnum out of sync with range bounds u64=3D[0x0, 0xffff=
+ffffffffffff] s64=3D[0x8000000000000000, 0x7fffffffffffffff] var_off=3D(0x0=
+, 0x0)
+>
+> Comparing a register with itself should not change its bounds and
+> for most comparison operations, comparing a register with itself has
+> a known result (e.g., r0 =3D=3D r0 is always true, r0 < r0 is always fals=
+e).
+>
+> Fix this by:
+> 1. Enhance is_scalar_branch_taken() to properly handle branch direction
+>    computation for same register comparisons across all BPF jump operatio=
+ns
+> 2. Adds early return in reg_set_min_max() to avoid bounds adjustment
+>    for unknown branch directions (e.g., BPF_JSET) on the same register
+>
+> The fix ensures that unnecessary bounds adjustments are skipped, preventi=
+ng
+> the verifier bug while maintaining correct branch direction analysis.
+>
+> Reported-by: Kaiyan Mei <M202472210@hust.edu.cn>
+> Reported-by: Yinhao Hu <dddddd@hust.edu.cn>
+> Closes: https://lore.kernel.org/all/1881f0f5.300df.199f2576a01.Coremail.k=
+aiyanm@hust.edu.cn/
+> Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
+> ---
+>  kernel/bpf/verifier.c | 33 +++++++++++++++++++++++++++++++++
+>  1 file changed, 33 insertions(+)
+>
+> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> index 542e23fb19c7..a571263f4ebe 100644
+> --- a/kernel/bpf/verifier.c
+> +++ b/kernel/bpf/verifier.c
+> @@ -15995,6 +15995,8 @@ static int is_scalar_branch_taken(struct bpf_reg_=
+state *reg1, struct bpf_reg_sta
+>
+>         switch (opcode) {
+>         case BPF_JEQ:
+> +               if (reg1 =3D=3D reg2)
+> +                       return 1;
+>                 /* constants, umin/umax and smin/smax checks would be
+>                  * redundant in this case because they all should match
+>                  */
+> @@ -16021,6 +16023,8 @@ static int is_scalar_branch_taken(struct bpf_reg_=
+state *reg1, struct bpf_reg_sta
+>                 }
+>                 break;
+>         case BPF_JNE:
+> +               if (reg1 =3D=3D reg2)
+> +                       return 0;
+>                 /* constants, umin/umax and smin/smax checks would be
+>                  * redundant in this case because they all should match
+>                  */
+> @@ -16047,6 +16051,12 @@ static int is_scalar_branch_taken(struct bpf_reg=
+_state *reg1, struct bpf_reg_sta
+>                 }
+>                 break;
+>         case BPF_JSET:
+> +               if (reg1 =3D=3D reg2) {
+> +                       if (tnum_is_const(t1))
+> +                               return t1.value !=3D 0;
+> +                       else
+> +                               return (smin1 <=3D 0 && smax1 >=3D 0) ? -=
+1 : 1;
+> +               }
+>                 if (!is_reg_const(reg2, is_jmp32)) {
+>                         swap(reg1, reg2);
+>                         swap(t1, t2);
+> @@ -16059,48 +16069,64 @@ static int is_scalar_branch_taken(struct bpf_re=
+g_state *reg1, struct bpf_reg_sta
+>                         return 0;
+>                 break;
+>         case BPF_JGT:
+> +               if (reg1 =3D=3D reg2)
+> +                       return 0;
+>                 if (umin1 > umax2)
+>                         return 1;
+>                 else if (umax1 <=3D umin2)
+>                         return 0;
+>                 break;
+>         case BPF_JSGT:
+> +               if (reg1 =3D=3D reg2)
+> +                       return 0;
 
-The fan speed is also lost during hibernation, but since hibernation
-failures are common with this class of devices, setting a low fan speed
-when the userspace program controlling the fan will potentially not
-take over could cause the device to overheat, so it is not restored.
+This is uglier than the previous version.
+reg1 =3D=3D reg2 is a syzbot territory.
+We shouldn't uglify the code everywhere because of it.
 
-Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
----
- drivers/platform/x86/ayaneo-ec.c | 73 ++++++++++++++++++++++++++++++++
- 1 file changed, 73 insertions(+)
-
-diff --git a/drivers/platform/x86/ayaneo-ec.c b/drivers/platform/x86/ayaneo-ec.c
-index 9548e3d22093..e1ad5968d3b4 100644
---- a/drivers/platform/x86/ayaneo-ec.c
-+++ b/drivers/platform/x86/ayaneo-ec.c
-@@ -41,6 +41,8 @@
- #define AYANEO_MODULE_LEFT	BIT(0)
- #define AYANEO_MODULE_RIGHT	BIT(1)
- 
-+#define AYANEO_CACHE_LEN	1
-+
- struct ayaneo_ec_quirk {
- 	bool has_fan_control;
- 	bool has_charge_control;
-@@ -51,6 +53,9 @@ struct ayaneo_ec_platform_data {
- 	struct platform_device *pdev;
- 	struct ayaneo_ec_quirk *quirks;
- 	struct acpi_battery_hook battery_hook;
-+
-+	bool restore_charge_limit;
-+	bool restore_pwm;
- };
- 
- static const struct ayaneo_ec_quirk quirk_fan = {
-@@ -207,10 +212,14 @@ static int ayaneo_ec_read(struct device *dev, enum hwmon_sensor_types type,
- static int ayaneo_ec_write(struct device *dev, enum hwmon_sensor_types type,
- 			   u32 attr, int channel, long val)
- {
-+	struct ayaneo_ec_platform_data *data = platform_get_drvdata(
-+		to_platform_device(dev));
-+	int ret;
- 	switch (type) {
- 	case hwmon_pwm:
- 		switch (attr) {
- 		case hwmon_pwm_enable:
-+			data->restore_pwm = false;
- 			switch (val) {
- 			case 1:
- 				return ec_write(AYANEO_PWM_ENABLE_REG,
-@@ -224,6 +233,15 @@ static int ayaneo_ec_write(struct device *dev, enum hwmon_sensor_types type,
- 		case hwmon_pwm_input:
- 			if (val < 0 || val > 255)
- 				return -EINVAL;
-+			if (data->restore_pwm) {
-+				// Defer restoring PWM control to after
-+				// userspace resumes successfully
-+				ret = ec_write(AYANEO_PWM_ENABLE_REG,
-+					       AYANEO_PWM_MODE_MANUAL);
-+				if (ret)
-+					return ret;
-+				data->restore_pwm = false;
-+			}
- 			return ec_write(AYANEO_PWM_REG, (val * 100) / 255);
- 		default:
- 			break;
-@@ -474,10 +492,65 @@ static int ayaneo_ec_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static int ayaneo_freeze(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct ayaneo_ec_platform_data *data = platform_get_drvdata(pdev);
-+	int ret;
-+	u8 tmp;
-+
-+	if (data->quirks->has_charge_control) {
-+		ret = ec_read(AYANEO_CHARGE_REG, &tmp);
-+		if (ret)
-+			return ret;
-+
-+		data->restore_charge_limit = tmp == AYANEO_CHARGE_VAL_INHIBIT;
-+	}
-+
-+	if (data->quirks->has_fan_control) {
-+		ret = ec_read(AYANEO_PWM_ENABLE_REG, &tmp);
-+		if (ret)
-+			return ret;
-+
-+		data->restore_pwm = tmp == AYANEO_PWM_MODE_MANUAL;
-+
-+		// Release the fan when entering hibernation to avoid
-+		// overheating if hibernation fails and hangs
-+		if (data->restore_pwm) {
-+			ret = ec_write(AYANEO_PWM_ENABLE_REG, AYANEO_PWM_MODE_AUTO);
-+			if (ret)
-+				return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int ayaneo_restore(struct device *dev)
-+{
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct ayaneo_ec_platform_data *data = platform_get_drvdata(pdev);
-+	int ret;
-+
-+	if (data->quirks->has_charge_control && data->restore_charge_limit) {
-+		ret = ec_write(AYANEO_CHARGE_REG, AYANEO_CHARGE_VAL_INHIBIT);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops ayaneo_pm_ops = {
-+	.freeze = ayaneo_freeze,
-+	.restore = ayaneo_restore,
-+};
-+
- static struct platform_driver ayaneo_platform_driver = {
- 	.driver = {
- 		.name = "ayaneo-ec",
- 		.dev_groups = ayaneo_ec_groups,
-+		.pm = &ayaneo_pm_ops,
- 	},
- 	.probe = ayaneo_ec_probe,
- };
--- 
-2.51.1
-
-
+pw-bot: cr
 
