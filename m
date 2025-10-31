@@ -1,131 +1,182 @@
-Return-Path: <linux-kernel+bounces-880251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 813F0C25391
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:18:55 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9EC7C253A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:19:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70B0A3B3588
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:18:53 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5A7FE350771
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54696322A1D;
-	Fri, 31 Oct 2025 13:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398B734404F;
+	Fri, 31 Oct 2025 13:19:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q/emK1o9"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GnwBzzqh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B5B20FAA4
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 13:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80188212D7C;
+	Fri, 31 Oct 2025 13:19:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761916727; cv=none; b=exHugvT8NtQowFyPpqHbSpObkCCPvDlt8nLGDygYd9V+7bRmgGcVsYlRpB+bpdU8OMpV3lfJvLKpRYVQwyXsB82LefDinOobIQUQNMLzmBu/KOfGJTsEoH3a/yLSENTodaMMGEXnyRpBCroAb6ma+9td1ctLBxVl2DYnMAjeP5w=
+	t=1761916760; cv=none; b=Ugd0dPcre2zesCcawBHpNvK+mV/eKOeMs3hlx5mifx0sNB/1s9PbNf31i0lNQ2PIMSuEoIoFTM7YR2Uqps+N0MVsXrWglMs0KAwJkWz+1TMvGsnrxaiMh2UvCkTDfmP9ccRz0SAk/r/2FI89SUDFyQkidPjzwivpBGQnfXdvJOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761916727; c=relaxed/simple;
-	bh=hwPwg21PUNDY7bWS1a5ZPuPQ7556dJiTKUQ/Cmgyxw0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KOlA7hSHg0L5QpP5Ise3DDempMekv8tOE8CFLigYLv+99x2LHGOYh75V8JMUk55uIrwyxPHLA8elmk8BZEqSwiV34q5QmmVy8X4FK9psHZzAXK195SQY7z76tHA0PAcyNicvvWDqiXCWY1XeDfezuaEWPeVP21R9pzHyMDn8Vg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q/emK1o9; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b6d0294865eso49461a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 06:18:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761916726; x=1762521526; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hwPwg21PUNDY7bWS1a5ZPuPQ7556dJiTKUQ/Cmgyxw0=;
-        b=Q/emK1o9WweUKP/TM0qnDGBni2rJZHQZAp0oWvw1UfE1vFfICbOMC7CNzNuj2OPwXf
-         eDc7fXGb0fUGWFWhr+qY1PvacuFs8uAmaqVaFztMiJwKaCOO71Gew+NJKrocVJ42YwL0
-         k8iAMw3VSMxt0qsULEAmRrjraycqOUHZX+k/7CjOad2SH+HH3p6rUfScc/Hsl+QALrBL
-         dbcV5kFINAPQ0lk6Gz95M01d1NHyCbjZuWXvu8d6gRtjIjPqiuNXzOz+Xqw3jTKBpL+V
-         pQjcPzQZl1haXGQ9SGNvC0+zUYy3jrJojqPuPZLm1RLQcCN6caBqcDwlE0RZb2RNw618
-         X8NA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761916726; x=1762521526;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hwPwg21PUNDY7bWS1a5ZPuPQ7556dJiTKUQ/Cmgyxw0=;
-        b=FHVmNpwJuqIE40ZwWS7lrWW8fMghqml2ukXFGW5npgU1bIjM1NIxjTaSFPGqTX/sx9
-         DkDBTW0LWNMeNPNek/usIud9UoNwY/J7/znmDNb5LCB383HgCNCC5C+LP6q4yfWit99a
-         OlouYrWOuKG31l5akYrE9TlHUVGN66wD6V/NyT4pr4V24sMZwz90Ec2sBXNa94J8tTsH
-         Nhh6A/95uOaCD1aLQVFFv9LlDFYMrv/xeyW87XhvGopI1OlbV9QPX4FVuqTPIcrfJxzW
-         g9dSQo7TrmKC2Uk7Umd0YHMIiyADjSmRRBrYc7NlqgblxaXlGnROugG8Us+PyePd6fvn
-         CZ5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX3XXNaBwhCgk6IZ7Ci2tIt5vt3xnS6Uu093EXjV8WsTxXEZOumWMyDl9rcHPINKd9+YvWHVoNQS6q2chI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDwtkmnuq4vmTWL4xkRJGEsBoYr2VbQY23z8sX3BKrALxeB4m3
-	dyGZtQ7w/GlUvu6B3zywb9Vb3CdSFQ2e8fnLBTWixfMoMTmlvJi6lKV31J/0MzBwKKedRKnS2cn
-	eYTmbow80LPzPoP1i/LegMRZA1qvQcN0=
-X-Gm-Gg: ASbGncsxS+Qng9v7q3mPTtIgDmzwdgju6vlPey3N6sBJ7BlECPjI7v/1d61EJz5qtzN
-	zHMgVTxovIUxKyYIotcPxdzS9zu1sbmuGNUfBa+DrbqW39SRdl8HT5zXve6onQ/NY1uNRnR/tpb
-	lcydIp1FssMGXdkkAuFZ9nX9Q5cYXe8dZ/rxeFonihdgQOLHBDNYezn8dFd1V/Q24IQFNzbTmJP
-	k4TV4qQoGyxpTNNdjO8297sBQF54bFwlTYRPaycoHgR65fxKuqUTXA7YRyA9jFimctS+apoj19V
-	yN7zP2u4mt1B3Mh4JjQ/WXajAGUptJ2S3B7Eqi59pzyzfU0Hmbzj/k+/05ahPaQaYXP8RKQv/do
-	W796ZVltT+j9XlQ==
-X-Google-Smtp-Source: AGHT+IEJ49gwJ5mRxtZtv0b41URKbZUBJLIt2VoQe30SlwO+FAYpwSB5aWCZX5jYTBZ0NgbiTYvlaN89VXh+FK/gXxA=
-X-Received: by 2002:a17:902:f684:b0:294:ec58:1d23 with SMTP id
- d9443c01a7336-2951a3a3eecmr24614175ad.3.1761916725522; Fri, 31 Oct 2025
- 06:18:45 -0700 (PDT)
+	s=arc-20240116; t=1761916760; c=relaxed/simple;
+	bh=g9RWQD8D4O1UlN5vPyBMjyczbtK5gnAPjxg/+rIXUAY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MvNShF3O9hVYJr/OYUNdUPHuV0/H7J4TFJFrf9VoyMSzFHqgVdWrru5s3LfIlZD0RhOgMFddQSTBvWH0/SqNzLT4ykj5O/SdEdJFlil5N8ZehQR8tv512YyI8ZEEfIpxcqU28BEXecxoGMsUa5meypjC6eNGc9ANwov/38s08x0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GnwBzzqh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A56DDC4CEF8;
+	Fri, 31 Oct 2025 13:19:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761916760;
+	bh=g9RWQD8D4O1UlN5vPyBMjyczbtK5gnAPjxg/+rIXUAY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GnwBzzqhHp52Vo1y7cVsLrM5uxT5VS/xlZjCpOGGIAPiMQqE9sRpqhjUqq/4VsL1Z
+	 FZTw3XywHcO6vaGJPsIo5o2TnPasBWXXBVuOLkVejHeFsqyF8sBGkk0eZOrJqoPEm4
+	 tkEB7ehAu8LFdhks2kIRseqXT0MksTVJlUrLzF/9yn42nRBmdRSIUsPmKvIAmuP77L
+	 aM39UlOy+qONHzA88MDjTlnw7JxYt2MI6JZqrvXmTbuu5xgzRK08QR4cTDG66fd4qo
+	 mKq9hfeqoAoMWDv28kNIWpcUDbMMhG/5NIgYp4JdFkczxMuxbCW9kk1Ru6+zopsarP
+	 uDWvO9Kkzhs8A==
+Message-ID: <865037d1-c89f-4142-a66f-3283c17bf533@kernel.org>
+Date: Fri, 31 Oct 2025 14:19:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027200547.1038967-1-markus.probst@posteo.de>
- <DDVLMBC40199.2BVFYHDGQP4Q4@kernel.org> <cf50c6db2106a900f2b9b3e11e477617d8cbb04a.camel@posteo.de>
-In-Reply-To: <cf50c6db2106a900f2b9b3e11e477617d8cbb04a.camel@posteo.de>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 31 Oct 2025 14:18:33 +0100
-X-Gm-Features: AWmQ_bmiIa3swbTRNRoyyzvdTz1VncSekR2-DDUNMdwP2E3BLG71zRyd1NoCFP4
-Message-ID: <CANiq72nhhji-cz2T2Cg9y5AwUwcc9q1Hd=-6J=6TafaxcHZHeA@mail.gmail.com>
-Subject: Re: [PATCH v7 0/2] rust: leds: add led classdev abstractions
-To: Markus Probst <markus.probst@posteo.de>, Lee Jones <lee@kernel.org>, 
-	Pavel Machek <pavel@kernel.org>
-Cc: Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Dave Ertman <david.m.ertman@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Leon Romanovsky <leon@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	rust-for-linux@vger.kernel.org, linux-leds@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6] memory: tegra210: Support interconnect framework
+To: webgeek1234@gmail.com, Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+References: <20251027-t210-actmon-p2-v6-1-1c4bd227d676@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251027-t210-actmon-p2-v6-1-1c4bd227d676@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 30, 2025 at 7:09=E2=80=AFPM Markus Probst <markus.probst@posteo=
-.de> wrote:
->
-> No there is no MAINTAINERS entry for it, therefore it will covered by
-> the "RUST" entry in the file. I have added the led maintainers and the
-> "linux-leds" mailing list to every patch sent regarding the led
-> bindings and none of the maintainers have commented on it so far.
+On 27/10/2025 18:48, Aaron Kling via B4 Relay wrote:
+> +
+> +	err = dev_pm_opp_of_add_table(emc->dev);
+> +	if (err) {
+> +		if (err == -ENODEV)
+> +			dev_err_probe(emc->dev, err,
+> +				      "OPP table not found, please update your device tree\n");
+> +		else
+> +			dev_err_probe(emc->dev, err, "failed to add OPP table\n");
+> +
+> +		goto put_hw_table;
+> +	}
+> +
+> +	max_opps = dev_pm_opp_get_opp_count(emc->dev);
+> +	if (max_opps <= 0) {
+> +		dev_err_probe(emc->dev, err, "Failed to add OPPs\n");
+> +		goto remove_table;
+> +	}
+> +
+> +	if (emc->num_timings != max_opps) {
+> +		dev_err_probe(emc->dev, err, "OPP table does not match emc table\n");
+> +		goto remove_table;
+> +	}
+> +
+> +	for (i = 0; i < emc->num_timings; i++) {
+> +		rate = emc->timings[i].rate * 1000;
+> +		opp = dev_pm_opp_find_freq_exact(emc->dev, rate, true);
+> +		if (IS_ERR(opp)) {
+> +			dev_err_probe(emc->dev, err, "Rate %lu not found in OPP table\n", rate);
+> +			goto remove_table;
+> +		}
+> +
+> +		dev_pm_opp_put(opp);
+> +	}
+> +
+> +	dev_info_once(emc->dev, "OPP HW ver. 0x%x, current clock rate %lu MHz\n",
+> +		      hw_version, clk_get_rate(emc->clk) / 1000000);
+> +
+> +	return 0;
+> +
+> +remove_table:
+> +	dev_pm_opp_of_remove_table(emc->dev);
+> +put_hw_table:
+> +	dev_pm_opp_put_supported_hw(opp_token);
+> +
+> +	return err;
+> +}
+> +
+>  static void tegra210_emc_detect(struct tegra210_emc *emc)
+>  {
+>  	u32 value;
+> @@ -1966,6 +2222,14 @@ static int tegra210_emc_probe(struct platform_device *pdev)
+>  
+>  	tegra210_emc_debugfs_init(emc);
+>  
+> +	err = tegra210_emc_opp_table_init(emc);
+> +	if (!err) {
+> +		tegra210_emc_rate_requests_init(emc);
+> +		tegra210_emc_interconnect_init(emc);
 
-The global "RUST" entry is generally meant for core abstractions and
-infrastructure. The best way forward is to get the C side maintainers
-involved, since they are the experts on the subsystem.
+This looks like new ABI or did I miss something and it is already
+documented? If so please always mention in the changelog that bindings
+are already merged to master tree.
 
-Depending on what they want to do (e.g. they may want to maintain the
-Rust side themselves, or they may be looking for a co-maintainer, or
-they may not want Rust code for the time being, or they may prefer to
-leave this to another entry, etc.), we can see what to do.
+Same question for earlier PM OPP.
 
-The first version was posted, I think, earlier this month (please
-correct me if I am wrong), so let's give them one kernel cycle at
-least to think about it.
 
-Of course, it also depends on what you want to do. For instance, would
-you be willing to maintain this code if the maintainers want to have a
-"LED SUBSYSTEM [RUST]" subentry?
+> +	} else if (err != -ENODEV) {
+> +		return err;
+> +	}
+> +
+>  	cd = devm_thermal_of_cooling_device_register(emc->dev, np, "emc", emc,
+>  				
 
-Thanks!
-
-Cheers,
-Miguel
+Best regards,
+Krzysztof
 
