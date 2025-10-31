@@ -1,123 +1,156 @@
-Return-Path: <linux-kernel+bounces-879628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BBDEC239C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:50:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6F13C239CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:50:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED5BE42769E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:49:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8AA618869C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:51:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF81328B77;
-	Fri, 31 Oct 2025 07:49:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B4AE2F12B5;
+	Fri, 31 Oct 2025 07:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SxqUeRtN"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="OB+1MkaC";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jCj8OVxd"
+Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A47927B32D
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:49:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2565117C77
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 07:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761896958; cv=none; b=S97FamRZgeHW6MiB8jyEgFCFSm8la5SD39/T7ZoipSYVwZGcR2wKA3pi7Jgz2Ssi1GqvP4FovffpTl2y5D2TD4IdM/3n2W/+cOz8MJWoGNTDGJX+20Z5uuWJ2HFyCpu1nyGSg7zWXa9lz7+Q+zNWG0X+baujg9+cROU6t79BpU0=
+	t=1761897050; cv=none; b=Noz2lFElh/3FW/K0jbTg/zCjYgGl3enhXfwMN/ioYL08P91IikzQvI9O3FkwxL9tbXd4pOoOsueLwzQu2cPwdkCMkDH6P+YyUWNmcm2YEV7UlZk5Z/vucBasHhPzn/tMwxBUYlpn8T0n1MiM9lT49b+dzfHEBOrN/ipgZVKGgik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761896958; c=relaxed/simple;
-	bh=mj/okHz5PHZV0wR4OqbZRN7R8+J74cRQmf1t7fmO9CM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Xm1OGXK99wFz9sQfrnagFShfTkRMiqFVXbv5Zn/yZ71WGNlwfD6fWuqFURJVdONbogi8143C2lZSW7KNcIN5dYfUYt+UOCrg19C4s3x7SMtjqtFNLFzCne2pFkvy9PZMbxCU3kasIOBm38RuJLPB4eKkRtgE3JYMnqlGlVZndp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SxqUeRtN; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-71d71bcac45so22872787b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 00:49:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761896954; x=1762501754; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mj/okHz5PHZV0wR4OqbZRN7R8+J74cRQmf1t7fmO9CM=;
-        b=SxqUeRtNx+BaFjKkAlBbX7Mz9rBWZvOHFHBBx7DvJ5kbVTi/gEolF71Y0iXVrEy8wq
-         gfim5iF35rbhHKYutLaDI8vk26onDVBH2uUPdH80t55bHluITtWBV5PBuLppl7Tztvw6
-         8OH5GnMoTFAnMF0cI4GQoHXMWJf96mgeHxbLOxAG9QKDeE4j6sh9O5W0a3hPcEhUlbxL
-         oIi3F3Od+j3vwyg/EEvlD+EzM9wbu7myXB9DMTsN5FnyVaGQ4LbR9wHXRfJfte6Dw0Ai
-         aDzIn5lKow3KOKHsnZKOHdN5bmQi8HVNYNU1HlWxA4PYe3l9a/LfhsnH1xr8N2ytovnB
-         Sq9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761896954; x=1762501754;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mj/okHz5PHZV0wR4OqbZRN7R8+J74cRQmf1t7fmO9CM=;
-        b=wxeEeeMIVDcdpvKHNKekfaewu/bjCkurXdJbZ4p3JcyK0METbd8EAPHV0zVWPCc84X
-         9ppPJ0j5dJnpBlyvkiFYkrZNLf23m3rjl9X8uksutYUIluT0EUwa2o2amvLCff6fa/G5
-         eaQ0+Kdn0vABc3GNrW818Yi2nR2NPszz64mTy9f/CO7TsD9goZvytbQjMAaZ4yaElwR9
-         T7hJh829QcO6GiR1IW7GLgZH7jQRFJlrTBglV3HafG7O8mCRUtVCvQJi7hKnNZcwiox3
-         KfypW7eT/eTnGT5ELkpAvlhkYiE1a88mdPv9bWfcYvYIetUlnd2Hw4myfIDzd8f9vATw
-         aGgw==
-X-Forwarded-Encrypted: i=1; AJvYcCXVcs1Ulb8hA/5y0dYljSDUA/mKgSUIX6f7G8/Anl3OkK/86SBStuinueyudt1w943z7PszXiB/2yK2IQE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuWCVRm20hFyIG35eLYPEZDaelgRTvMw+9gXWfa4Mkt3iP+OiW
-	9UmeC+FiK+129Fme8JzzoAKYF1HB8rFAurG+Sv0ZDEXJ5m6ioSQND/QKu1tBkilbClBpnoXepBb
-	UHf2ShoEnNlfYeBHdhAzqy2Ja948KyQM=
-X-Gm-Gg: ASbGnctFa1MwfoOLGUKBm0o1mSY2mqOqoDki+6jvke5XdAqGl8yMdKi+56ABvAo6vJS
-	XyEIOFMWQXCRzXSyh2LMruqrypnsOBgJMiQ7KPICndUuUR1aMXsBvcW86QCoL3ZiLwgKPur5ZfS
-	M/2cJ0InhWtakWyu4qKf/hzcu3yokoUABsrIFfU43lHBsM5FSr9xQ0Ks+1Uq5sTq90A0/amdnRx
-	hFpl503ikwGDXBfYIUlzuDjw383dlCIljSx4YTVgzB0HRiXsLPOUg7tx064GuQ9xuVoZ1X57FTi
-	XzmfA4RrfKiotdLNnhRCHQ==
-X-Google-Smtp-Source: AGHT+IEccNo+Ud/dOtRufb2gzRJKeSMooBpV7Zz3ch+oKF7jaIplRlzywy5u4xYHf4jy/vs0gsE5Pv+qfW9zHowBm0A=
-X-Received: by 2002:a05:690c:3603:b0:739:7377:fdc4 with SMTP id
- 00721157ae682-786484dd91dmr22017567b3.35.1761896954009; Fri, 31 Oct 2025
- 00:49:14 -0700 (PDT)
+	s=arc-20240116; t=1761897050; c=relaxed/simple;
+	bh=SMtMJt9229H5PjTDv6S5YGs3DXegSlRLe7j1ltiWon0=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=Z2/Fr8EJayp2O8hnLwnYb+UopaU/FQejzWc3pVvBibuuuelM/8mw2+ZF5MlnFaAwBogJoUmg8p9MNLAjgJLGjxXvBVN0wxitY2lhYr06yZVuQSmQZcxYgFR3z5npFys3KuVK9fDG6PD9fdUL+qU4f0gsuRk0NC4nEfR+DmnwcOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=OB+1MkaC; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jCj8OVxd; arc=none smtp.client-ip=202.12.124.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=testtoast.com
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 0F78A7A016A;
+	Fri, 31 Oct 2025 03:50:47 -0400 (EDT)
+Received: from phl-imap-17 ([10.202.2.105])
+  by phl-compute-05.internal (MEProxy); Fri, 31 Oct 2025 03:50:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=testtoast.com;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm3;
+	 t=1761897046; x=1761983446; bh=SMtMJt9229H5PjTDv6S5YGs3DXegSlRL
+	e7j1ltiWon0=; b=OB+1MkaCVWJdu474hTwAov/7B/NxRFLvIVtnUhsIeK0sQtLp
+	yknoVs2AECKZXFEWcBcEO5Q7QeEdJ4k2cFpK8ZZX13BgjJBxda7ofogMPwSjA1zd
+	EvmUxfTxe+os/y0Iyw5z5FId6NozzLeeku4OGJz2XeMkijXkIUa7vJPIFMnsABK4
+	MwbDkh+0T3lJqSXzUf5p6EFEJ56JaNAV7dxZUoV2IYLdYUmgvwYnweLxi2VBkQ7R
+	aN+Ls/yN133hmiN2GuEDIKGP2ondpXTm209AB91WpIM1DAkc/SKxXJ3Du3HYnZ7Y
+	7eeptWFZpnLIObY5SfivJz1FhHXcKVi3GHVKzw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1761897046; x=
+	1761983446; bh=SMtMJt9229H5PjTDv6S5YGs3DXegSlRLe7j1ltiWon0=; b=j
+	Cj8OVxd1qClL8je34LdIaiNeVR74mLhSNue1Vdv7RDWAt2tRL81dzEbIZKiEQ5aw
+	z71FFci3hY+oWohmd6H2cLSXRH2nbzFLj52wNbUpJg/H3gRM6w3U133cDxAcUZW0
+	m0F7+Bmb/BgHESK3M1zVRxiWT1jKJHDFqhBGcGuTJfCEfJqoP/m3arxOUaQYJepS
+	wxfnxyFHAuHwjqJ3oy5i782/Ve5fJnItjYkD0BXqtbRl317bdeTDiXNSCO3//vYZ
+	TxT307a/ZQe1UX9kte4zq0Pda7akUljwF9STLloxvQTEUVuHFzN6PHmEgdEZVixn
+	n74Lj1piIj90OhJXb405g==
+X-ME-Sender: <xms:VWoEaZc-EVrGLSTj6lpolqjshjtG6sQ6diIq-D_qg8wNJvcK8jxdcA>
+    <xme:VWoEaSAkVliCLoSx0OI0T-xKP6XGuBUgJ8uRfOhiVJiuq5jdjzFnfddpPJUFmmCYK
+    A0rBNOqQN8k7A7iiFLX-fNHW7R19PIwfC2l2tl0VDPXJHUOK4wgjQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggdduieekleefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftfihrghn
+    ucghrghlkhhlihhnfdcuoehrhigrnhesthgvshhtthhorghsthdrtghomheqnecuggftrf
+    grthhtvghrnhepjefhueekjeejgfduvdffheevveejhfdtuddthfduuddvveefjeffgfdv
+    leefuefgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    eprhihrghnsehtvghsthhtohgrshhtrdgtohhmpdhnsggprhgtphhtthhopeduvddpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtohepfigvnhhssegtshhivgdrohhrghdprhgtph
+    htthhopehsihhmohhnrgesfhhffihllhdrtghhpdhrtghpthhtoheprghirhhlihgvuges
+    ghhmrghilhdrtghomhdprhgtphhtthhopehjvghrnhgvjhdrshhkrhgrsggvtgesghhmrg
+    hilhdrtghomhdprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrd
+    gtohhmpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhk
+    thhophdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhish
+    htshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhigqdhsuhhngihi
+    sehlihhsthhsrdhlihhnuhigrdguvghv
+X-ME-Proxy: <xmx:VWoEadQZHgRdyPiy2BkK6XNrlf-V3We4qlYVrQYbWcgbycQzDPe3iQ>
+    <xmx:VWoEaTfDH4HDoLDN7Y9tLn4_42UlWlcvPSlHsNdWoFn8xCnqEIqzPw>
+    <xmx:VWoEaWtri6bahWOI8KkZ9AHJMqqeyRswKe4Awru-zvqZibiqzejCAw>
+    <xmx:VWoEafLRSJr789YZa1LVKQO3D0l4yhDVoc0oshnGtDIxTnbH5R1tfA>
+    <xmx:VmoEafI-Zdjb1igu5VB4L0qBPslqvbA2_v_nmQGK38gfVU9fzUG23UFI>
+Feedback-ID: idc0145fc:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 6CAECC40054; Fri, 31 Oct 2025 03:50:45 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251030064736.24061-1-dqfext@gmail.com> <CAKYAXd9nkQFgXPpKpOY+O_B5HRLeyiZKO5a4X5MdfjYoO_O+Aw@mail.gmail.com>
- <CALW65jZQzTMv1HMB3R9cSACebVagtUsMM9iiL8zkTGmethfcPg@mail.gmail.com> <2025103116-grinning-component-3aea@gregkh>
-In-Reply-To: <2025103116-grinning-component-3aea@gregkh>
-From: Qingfang Deng <dqfext@gmail.com>
-Date: Fri, 31 Oct 2025 15:49:02 +0800
-X-Gm-Features: AWmQ_bnGnl7eYzzqxU3isuAIhu5FYgWbwGA7Uh3VYsm5FYbX-qLmiqhxk1Hb_ds
-Message-ID: <CALW65jZgu2=BfSEvi5A8vG_vBKrg=XLs68UoE3F3GBOOpeJtpg@mail.gmail.com>
-Subject: Re: [PATCH] ksmbd: server: avoid busy polling in accept loop
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Namjae Jeon <linkinjeon@kernel.org>, Steve French <smfrench@gmail.com>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Tom Talpey <tom@talpey.com>, 
-	Ronnie Sahlberg <lsahlber@redhat.com>, Hyunchul Lee <hyc.lee@gmail.com>, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	Sasha Levin <sashal@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-ThreadId: AzHZpsL-MR1k
+Date: Fri, 31 Oct 2025 20:50:23 +1300
+From: "Ryan Walklin" <ryan@testtoast.com>
+To: "Jernej Skrabec" <jernej.skrabec@gmail.com>,
+ "Maxime Ripard" <mripard@kernel.org>, "Chen-Yu Tsai" <wens@csie.org>
+Cc: "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>,
+ "David Airlie" <airlied@gmail.com>, simona@ffwll.ch,
+ "Samuel Holland" <samuel@sholland.org>, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Message-Id: <64c0a4e1-15a5-4f41-9fba-852b0e83fd6f@app.fastmail.com>
+In-Reply-To: <20251012192330.6903-1-jernej.skrabec@gmail.com>
+References: <20251012192330.6903-1-jernej.skrabec@gmail.com>
+Subject: Re: [PATCH 00/30] drm/sun4i: Refactor layer code for proper DE33 support
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 31, 2025 at 3:44=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Mon, 13 Oct 2025, at 8:23 AM, Jernej Skrabec wrote:
+> Current DE33 support in sun4i-drm driver is based on my PoC code. It was
+> written with *a lot* of hacks, because it was never meant to be upstreamed.
+> Fortunately, DT parts were never merged which give us a chance to do it
+> right.
 >
-> On Fri, Oct 31, 2025 at 03:32:06PM +0800, Qingfang Deng wrote:
-> > Hi Namjae,
-> >
-> > On Thu, Oct 30, 2025 at 4:11=E2=80=AFPM Namjae Jeon <linkinjeon@kernel.=
-org> wrote:
-> > > > Fixes: 0626e6641f6b ("cifsd: add server handler for central process=
-ing and tranport layers")
-> > > > Signed-off-by: Qingfang Deng <dqfext@gmail.com>
-> > > Applied it to #ksmbd-for-next-next.
-> > > Thanks!
-> >
-> > I just found that this depends on another commit which is not in
-> > kernel versions earlier than v6.1:
-> > a7c01fa93aeb ("signal: break out of wait loops on kthread_stop()")
-> >
-> > With the current Fixes tag, this commit will be backported to v5.15
-> > automatically. But without said commit, kthread_stop() cannot wake up
-> > a blocking kernel_accept().
-> > Should I change the Fixes tag, or inform linux-stable not to backport
-> > this patch to v5.15?
+> This is first of three series with proper DE33 support for H616 SoC. It's
+> the longest, since it prepares terrain for new drivers in remaining series.
+> Point of this work is to completely decouple mixer and layer code. Till
+> DE3, mixer and layers were intimately connected. However, from DE33
+> onwards, this is no longer the case. DE33 and upcoming DE35 planes are
+> shared comodity between all mixers and can be assigned in any way driver
+> (or user) prefers. This requires planes code to be completely independent
+> from mixer. The only exception is mixer clock frequency which is used in
+> VI scaler, but in that case mixer pointer is obtained through currently
+> assigned CRTC.
 >
-> Email stable@vger.kernel.org when it lands in Linus's tree to not
-> backport it that far.
+> Second series will introduce separate driver for DE33 planes and adjust
+> mixer code to new DT bindings. Third series will introduce TCON(-TOP)
+> adjustments, HDMI PHY and finally, DT updates for several boards.
+>
+> Current WIP code for remaining two series can be found at [1]. Code has
+> been tested on Tanix TX6, which has DE3, for any regressions and on Myir
+> MYD-YT507H board [2], which has DE33, with HDMI and LVDS panel outputs
+> running simultaneously and independently. This confirms that plane code
+> is properly decoupled.
+>
+> Please review.
 
-Noted. Thanks!
+Thanks Jernej, can confirm that this patch series, when overlaid with the remaining out-of-tree patches and my previous LCD DT patch series, allows simultaneous HDMI and LCD output with separate framebuffers on the Anbernic RG35XX series of devices with the Allwinner H700.
+
+> Best regards,
+> Jernej
+>
+
+Tested-by: Ryan Walklin <ryan@testtoast.com>
+
+Regards,
+
+Ryan
 
