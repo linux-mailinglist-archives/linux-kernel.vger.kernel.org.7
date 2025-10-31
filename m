@@ -1,208 +1,129 @@
-Return-Path: <linux-kernel+bounces-879912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C881C245E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:11:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 771D7C24636
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:16:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 737A134FDF4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:11:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD99B1A64ED3
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8FE20013A;
-	Fri, 31 Oct 2025 10:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD4E33B94A;
+	Fri, 31 Oct 2025 10:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="NhSEC7Cc"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="k88e6phy"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34303332EAF
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F04327F16A
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761905438; cv=none; b=bccvDJaCB0Tp00ujcpGb0LAubRjAedMGJPmp1YihfG7u59ij3gbhrS5z9+8t5NsOvpSe1FX/MH2jPGm1+9VRYQoNJCb9KL8fVP0FpEtNmTZXCfmn+7kKCRdtDJY6uJ4WSQpzBiZ11jtQnh/UbxCJMepAXWEd0FqOiufx+3BBMms=
+	t=1761905461; cv=none; b=TE6U9yP7mhJNQXqyQnBUxtxHWhsX8K1ui6L4UApYmLLoBbOcLfdFsoPcBWw3RrrB315Fx6BErus/b8be0wngl1nDYlqGuUCgMu1Ke+XYGHVx3z9Ko2HYu/HocUbQnyP3RJBQ4mLP2G+0VXQ1Ce5pYU0MzSeuShsScro6nF3fk4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761905438; c=relaxed/simple;
-	bh=wMJte6XNIxKtOzu/Q9qpqBQzJfIqmGjSeN8ThIGDy+I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jEVdlQdAr587Fq5x8mabn/0uPtfov3aZAk//Jk5j7arxjgaDvtE2r1WpV0TcHyWRXg6BDcYvZoAel+3+va9AdedgFo3KSWS22vNlQlF+3VS5TXLbwJsqJWOfJnSYW5zugh3Mo7vNjWfNw6/gfqwMZJQYC5QBCY4xLuHUhp2hwVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com; spf=pass smtp.mailfrom=arista.com; dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b=NhSEC7Cc; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=arista.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arista.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-295395ceda3so217725ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 03:10:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=google; t=1761905431; x=1762510231; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9/e5tjl72pLoATST6uvgUSXblWbJCqEWY7WIs3qpXwQ=;
-        b=NhSEC7CcYqfHB4s4LPlvjaEXfqtKuVxTJnqf9mbG9UhvbCJeoKAPadm4tNKeokIeH5
-         VMGYjZWOamtT1y7TMX/xmHdQslOCSTJmMTiBijsPo8x05ZOYRJ9SEPDhI5osqQvDpqB6
-         HxRCtDmzjtEZzPREov29hH7uSN7lhNq4LzzT9RQjXRaoC3ng+aakJ4Yfiu4S7qGcuAD7
-         8uv2paCiuLCpXWPphx20ugmNWIxCzeNWy2pzpwVLf582m8qFoD1gj7WdP/xw+tccOQXr
-         o3c0zm8mrMjer++dKgXiAek9AaEy5whxmor2DLc2VhDdXRwt1bHD1SAwm8mDRYOeOjqq
-         a6Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761905431; x=1762510231;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9/e5tjl72pLoATST6uvgUSXblWbJCqEWY7WIs3qpXwQ=;
-        b=ZPo22bWZQWv/CkA3dlXGXIU3hhhE5Io3k0QItWu/gkOhJf/l8ktMywdSGZA/4y6wr5
-         iDbyErOGJqV1Fv29NPlAs87OrtBzIGcAvVnhTxqTwAustSd7+D9jZQkYAGS4nrnvPYIM
-         pscOHimCGLjwMGGzegOiD4nChhANxFUWO27KS5eOfapBLCz8tSuAl6VzL0QxTkWqryua
-         AlicJQtwK1DsRl+q8rRsOyVYWshuDUhAq4TK1BWriwJS1pGTWV5tUuTf/kp6GbRwm5jL
-         APuyzFYmUZu0gkgNw/AthP1yrrn6OeYkibmdPbCvd6SCoNi0GI5rihj4uJpMyuilRVAJ
-         REOg==
-X-Forwarded-Encrypted: i=1; AJvYcCXZVb57yOv3ctJqobeNwZ1cskF4j5UD8Lhm8J8bovlbNYnV94wPhhOWApUvMXT/PaqBZ8wLiVXEzUBZRQo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCGtOUFob3PWNFm8rbH6xNiwayIv2URNabvRrZUlNKkk/Qhws3
-	KFNhVf9wGmi7TwzQkqackJK99E0QTBqGmDFvi5qDTlYVWv1txB4/H8JkehUV/NFJ6g==
-X-Gm-Gg: ASbGnctpvv1U+RJKDqsGrrIididvqtE3NY6QbQgPLiSKUkPCbtv5HVbAZ67sBWy/1y7
-	L7KB+Z1ZMzALqYn+qIKmXrG6vhAqfrb9QVILqK8dlheuSLGYKV/eALtJLN/rYrmDPQzv6Cs/fTQ
-	uqNt2eQGbOj2yxGao2Nyc7QyElGibMN4QPTTf8aVAYDhcGeuzDKNxTomaDwD/OC/pJ7xRsDC91o
-	F+oaV4dwtygiRigzrrBUjH89QwrTwaf5ru4NvC17ScMN04ayzY0idqEAOBpsRODnAQ3VBHTelyY
-	fI6ZBJZ4s8pfy3zP+E2VibGxxnaEeWreXwcpOo7uoIBbJY0i6jjnFKeN4/8TUTaAy6H9gzEIGoj
-	nV7skdhkwwA2kvbKPHxzzoPJ/vgo2QUVYaUyIhpmcpuqocc9eJHOEHgwb2yt2wNArkKyoLAEPly
-	Wrd60Zdk1wHHbFcbslV+zZqpeVYPRMAlVT7tRSwRu5WLHp46U=
-X-Google-Smtp-Source: AGHT+IEBP5bjyyzwFFW9rk5+yU8llkt/2A95S3HRbdUz8eFDWn98s8uULia4xAwJsfbPjA7zk4U3Mg==
-X-Received: by 2002:a17:903:38c8:b0:295:37ac:8d54 with SMTP id d9443c01a7336-29537ac8ec7mr3467745ad.9.1761905430618;
-        Fri, 31 Oct 2025 03:10:30 -0700 (PDT)
-Received: from adriana-dmi-upstream.sjc.aristanetworks.com ([74.123.28.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2952774570bsm17458545ad.99.2025.10.31.03.10.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 03:10:30 -0700 (PDT)
-From: adriana <adriana@arista.com>
-To: ilias.apalodimas@linaro.org,
-	ardb@kernel.org,
-	trini@konsulko.com
-Cc: robh@kernel.org,
-	krzk@kernel.org,
-	jdelvare@suse.com,
-	frowand.list@gmail.com,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	vasilykh@arista.com,
-	arm.ebbr-discuss@arm.com,
-	boot-architecture@lists.linaro.org,
-	linux-efi@vger.kernel.org,
-	uefi-discuss@lists.uefi.org,
-	linux-arm-kernel@lists.infradead.org,
-	adriana <adriana@arista.com>
-Subject: [PATCH v4 2/2] drivers: firmware: dmi_scan: Add support for reading SMBIOS from DT
-Date: Fri, 31 Oct 2025 03:10:09 -0700
-Message-ID: <20251031101009.704759-3-adriana@arista.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251031101009.704759-1-adriana@arista.com>
-References: <20251031084101.701159-1-adriana@arista.com>
- <20251031101009.704759-1-adriana@arista.com>
+	s=arc-20240116; t=1761905461; c=relaxed/simple;
+	bh=zzIA31z1vZE/W2+9f9ZIl6kxQ8d4TebInqnMy4NR1i0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XjHEn6ooGJR+NJlbjaZAljcmrbvQhBC29fskSRmaigKGBQ35GMRD+mSQ9Lhws0C0yvpbc1bZslfeA8CHTjrO3yqBw5PtSDu4xtDnoHuerEPy84hZBIOdw4Z2zeMMSTI3iCWhVq+2l5uCa97G4L0buULjRwRN8+aWrKmQWRBIJDk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=k88e6phy; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4cycDy4PDqz9srd;
+	Fri, 31 Oct 2025 11:10:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1761905442; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oX/fzg/n5SwFz0Vlx5NQrJ0TysuKtNx7wJbpBrBb7Gc=;
+	b=k88e6phyFxYs99l4k8KsioLz4O6ef0gXmbm7ITVuJtXtCZFyS6hh5TuF2Wy4FSI47MQ7Qs
+	BojqW1hz38sMglZAjHmtgA5sjHCPmPZpIQACSUq3b2X1E9qCbpGn8of51w3XJ+6K71rikJ
+	wTZIflBggUbfO8UJAZsvA0eVsj4cUZQ+8f4ErjEwIxtlBzS89ZNupA3/pSaw9yAPDitzkC
+	Xi9F/4ib5T4bDtLSlh+df9wQWuHntf0FxccAqK7meDkTwJUhNw8zObwVifxfhR2ZWTBiOW
+	UYbTrs6EThAQDGrh4oJr6Oy7eH6cMqKqaH1SDLpw9Parot2qehFDrs8imKTr1g==
+Message-ID: <a243e68704eda067bd18458aa41452d1da220d68.camel@mailbox.org>
+Subject: Re: [PATCH 1/2] drm/sched: Fix comment in drm_sched_run_job_work()
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Matthew Brost <matthew.brost@intel.com>, Philipp Stanner
+ <phasta@kernel.org>
+Cc: Danilo Krummrich <dakr@kernel.org>, Christian =?ISO-8859-1?Q?K=F6nig?=
+ <ckoenig.leichtzumerken@gmail.com>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,  tursulin@ursulin.net,
+ dri-devel@lists.freedesktop.org,  linux-kernel@vger.kernel.org
+Date: Fri, 31 Oct 2025 11:10:38 +0100
+In-Reply-To: <aQJG1/izCBbNnX0a@lstrano-desk.jf.intel.com>
+References: <20251028134602.94125-2-phasta@kernel.org>
+	 <20251028134602.94125-3-phasta@kernel.org>
+	 <aQJG1/izCBbNnX0a@lstrano-desk.jf.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MBO-RS-ID: d0c2776e058c22ecbae
+X-MBO-RS-META: yjw8d48kozfrob7ej5igbn3qmsdok7rq
 
-Some bootloaders provide SMBIOS/DMI tables at a specific memory address,
-particularly on non-EFI ARM platforms. The kernel's standard EFI DMI
-scanner cannot find these tables.
+On Wed, 2025-10-29 at 09:54 -0700, Matthew Brost wrote:
+> On Tue, Oct 28, 2025 at 02:46:01PM +0100, Philipp Stanner wrote:
+> > drm_sched_run_job_work() contains a comment which explains that an
+> > entity being NULL means that there is no more work to do. It can,
+> > however, also mean that there is work, but the scheduler doesn't have
+> > enough credits to process the jobs right now.
+> >=20
+> > Provide this detail in the comment.
+> >=20
+> > Signed-off-by: Philipp Stanner <phasta@kernel.org>
+>=20
+> Reviewed-by: Matthew Brost <matthew.brost@intel.com>
 
-This patch adds a fallback mechanism to the DMI scanner to read the
-physical address of the SMBIOS3 entry point from the device tree.
+Applied to drm-misc-next.
+Dropped the other patch.
 
-This scan is performed only if the standard EFI check fails.
+Thx
+P.
 
-Signed-off-by: adriana <adriana@arista.com>
----
- drivers/firmware/dmi_scan.c | 54 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 54 insertions(+)
-
-diff --git a/drivers/firmware/dmi_scan.c b/drivers/firmware/dmi_scan.c
-index 70d39adf50dc..c29ca98f09b5 100644
---- a/drivers/firmware/dmi_scan.c
-+++ b/drivers/firmware/dmi_scan.c
-@@ -10,10 +10,12 @@
- #include <linux/random.h>
- #include <asm/dmi.h>
- #include <linux/unaligned.h>
-+#include <linux/of.h>
- 
- #ifndef SMBIOS_ENTRY_POINT_SCAN_START
- #define SMBIOS_ENTRY_POINT_SCAN_START 0xF0000
- #endif
-+#define SMBIOS3_ENTRY_POINT_SIZE 32
- 
- struct kobject *dmi_kobj;
- EXPORT_SYMBOL_GPL(dmi_kobj);
-@@ -670,6 +672,51 @@ static int __init dmi_smbios3_present(const u8 *buf)
- 	return 1;
- }
- 
-+/**
-+ * dmi_scan_from_dt - Find SMBIOS3 entrypoint address via Device Tree
-+ *
-+ * Checks if the bootloader has passed the physical address of the
-+ * SMBIOS3 entrypoint structure via the "linux,smbios3-entrypoint"
-+ * property in the /chosen node.
-+ * Returns true if a valid entrypoint is found.
-+ */
-+static bool __init dmi_scan_from_dt(void)
-+{
-+	struct device_node *chosen;
-+	const __be64 *prop;
-+	char buf[SMBIOS3_ENTRY_POINT_SIZE];
-+	void __iomem *p;
-+	bool dmi_available = false;
-+	u64 addr;
-+	int len;
-+
-+	if(!IS_ENABLED(CONFIG_OF))
-+		return false;
-+
-+	chosen = of_find_node_by_path("/chosen");
-+	if (!chosen)
-+		return false;
-+
-+	prop = of_get_property(chosen, "linux,smbios3-entrypoint", &len);
-+	if (prop && len >= sizeof(u64)) {
-+		addr = be64_to_cpup(prop);
-+
-+		p = dmi_early_remap(addr, SMBIOS3_ENTRY_POINT_SIZE);
-+		if (!p)
-+			goto out;
-+
-+		memcpy_fromio(buf, p, sizeof(buf));
-+		dmi_early_unmap(p, SMBIOS3_ENTRY_POINT_SIZE);
-+
-+		if (!dmi_smbios3_present(buf))
-+			dmi_available = true;
-+	}
-+
-+out:
-+	of_node_put(chosen);
-+	return dmi_available;
-+}
-+
- static void __init dmi_scan_machine(void)
- {
- 	char __iomem *p, *q;
-@@ -718,6 +765,13 @@ static void __init dmi_scan_machine(void)
- 			dmi_available = 1;
- 			return;
- 		}
-+	} else if (dmi_scan_from_dt()) {
-+		/*
-+		 * If EFI is not present or failed, try getting SMBIOS3
-+		 * entrypoint from the Device Tree.
-+		 */
-+		dmi_available = 1;
-+		return;
- 	} else if (IS_ENABLED(CONFIG_DMI_SCAN_MACHINE_NON_EFI_FALLBACK)) {
- 		p = dmi_early_remap(SMBIOS_ENTRY_POINT_SCAN_START, 0x10000);
- 		if (p == NULL)
--- 
-2.51.0
+>=20
+> > ---
+> > =C2=A0drivers/gpu/drm/scheduler/sched_main.c | 9 +++++++--
+> > =C2=A01 file changed, 7 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/s=
+cheduler/sched_main.c
+> > index c39f0245e3a9..492e8af639db 100644
+> > --- a/drivers/gpu/drm/scheduler/sched_main.c
+> > +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> > @@ -1237,8 +1237,13 @@ static void drm_sched_run_job_work(struct work_s=
+truct *w)
+> > =C2=A0
+> > =C2=A0	/* Find entity with a ready job */
+> > =C2=A0	entity =3D drm_sched_select_entity(sched);
+> > -	if (!entity)
+> > -		return;	/* No more work */
+> > +	if (!entity) {
+> > +		/*
+> > +		 * Either no more work to do, or the next ready job needs more
+> > +		 * credits than the scheduler has currently available.
+> > +		 */
+> > +		return;
+> > +	}
+> > =C2=A0
+> > =C2=A0	sched_job =3D drm_sched_entity_pop_job(entity);
+> > =C2=A0	if (!sched_job) {
+> > --=20
+> > 2.49.0
+> >=20
 
 
