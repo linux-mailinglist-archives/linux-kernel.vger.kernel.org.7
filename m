@@ -1,273 +1,126 @@
-Return-Path: <linux-kernel+bounces-880638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A97EC263A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:52:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C37E4C2635A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:49:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7AD8562D65
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:42:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE2A518944E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:45:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B08D32F3607;
-	Fri, 31 Oct 2025 16:42:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AFAF2F9DA7;
+	Fri, 31 Oct 2025 16:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AKv5CfzT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QkKGO8nY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64C22F6183;
-	Fri, 31 Oct 2025 16:42:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69AEE22FDFF;
+	Fri, 31 Oct 2025 16:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761928959; cv=none; b=LuOy+aUClSBNoyoqlGCnKpEEy5r784ScXSi/0ovAGmhuP+0b4vM3wKrdEn33keQfZ4C2GfjafAMqcITjj8EXlxMfXnUON+mamABRkwC+2K4MwmUlfCzkokcFPZwZy3Cv+5ug8phdxfR6DB5dVcIObbH9fbd6cHrdrkReRUokL9g=
+	t=1761929103; cv=none; b=IqABLGMls5XJbPZlblc/Zix48IDkiRu/lTsbE4sC/VEku7Plva/vqlX1d5+BspXjYHdROLkO9DnzztTNSBlh1U17SE2OlBTX0lrTF4tlwwI1hrq1XGajQJxn1v0IRcUjEbtclDYA1h98wb/x7tROdtZc4SKxRu6SFGGFuIghOWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761928959; c=relaxed/simple;
-	bh=y9SS1AanRaN3IJF7ZKQYXKyWoIq2zbJr960kdKeZFA0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GbP2rgld+hdxkJeYvVFilNeehOyH9SfCjoQqb1A7pAHAMf6xDEPIugNFwUG7eJDeBlNr3Wnat6HlGzBSw3zXME/0CLB1FzFYEYAn5JbqaBch+I1MqJN4IGYNVSw6Bzbjg/w7gAapdKrWB5xYNGyq90/pa9DF8gPpKWYC0OZ6Qwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AKv5CfzT; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761928955; x=1793464955;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=y9SS1AanRaN3IJF7ZKQYXKyWoIq2zbJr960kdKeZFA0=;
-  b=AKv5CfzTW2SQUVJAULy0Mk7xoHoXqzpwdDjIl1JLBcilat6ITZaWdsqI
-   xSUQPTAofRAR4JrzrpJBEv2q5yKfh3AK+/dkV5ZZWFCQFN3zCU2xz5PcB
-   qvV8S+e1j8H7f/GMRP/Splr6tNRZrCeqPTrmdrAHxLjlp0T0u5B0w7Nnv
-   /nL8IMsNbWZ+hDIDh4L7Bfzc7rFYA3empDPCT97btvIWhMFwmhHo8y3Qi
-   Wj3i1yXCRpQhBlU0QFbyizDjhGpGg5F31aQ8NE77iEr/sbNz7gFO2a75R
-   YaKUET9ti72zwZ2c22uAb6tUWx2j9kfOhOgVEGPYljvNtrV9L0uDnsW03
-   g==;
-X-CSE-ConnectionGUID: jl5jQaLgRxSPCWE32mzneA==
-X-CSE-MsgGUID: rlSdTnIlSHmeuFJS6heH0g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="67954794"
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="67954794"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 09:42:29 -0700
-X-CSE-ConnectionGUID: BoHLWMZKSxalHKuavq7lIQ==
-X-CSE-MsgGUID: JvpjFaUfTUCJl1yAWJcl3w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="187016744"
-Received: from abityuts-desk.ger.corp.intel.com (HELO [10.245.244.98]) ([10.245.244.98])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 09:42:24 -0700
-Message-ID: <79bbbd8b-e60b-435b-82b6-ea59230997e2@intel.com>
-Date: Fri, 31 Oct 2025 16:42:22 +0000
+	s=arc-20240116; t=1761929103; c=relaxed/simple;
+	bh=uIS7zBDWfdQJx8qntBb7S24DkB/hxR9MvYC9OYo5Ts8=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=HjA1ikuTHfScfNmELpiKRndhKZSXJrEJnMovDrYm/DZ5k5Rdes79T0NmRiCcTJhjf4MACI+B7TQhOAKXVx4GMxtwgn1w3tN6CDKYXf2FaC+WoIl7WEnJmyqSRsJP36aSLdGGiS11iYMl0qet/uQPsBQvV80qw+V1HFXzf+KpJ7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QkKGO8nY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3B00C4CEE7;
+	Fri, 31 Oct 2025 16:45:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761929101;
+	bh=uIS7zBDWfdQJx8qntBb7S24DkB/hxR9MvYC9OYo5Ts8=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=QkKGO8nYWsTjGv6z3slYoUbqY0KF1Bv0AjmWKUrPfmipdru12VXcU/QGY8wurh7uJ
+	 XlkcH8XeM5J+jkX3LBdio98aaWdtM8oo1xSJCF5pBm0ugWoGkr9jusDL92GWCSN+r7
+	 76ATEboGLngKG1SA9GwqxTCE1jqaOKc9OrVJIrD8pIQ+X/Ky5DwxsK7rPSot3+WI6d
+	 mftswOZtmwrI09FTyAgHY0zlW79MPgPFqtG+2or/ngeA2idt/TAX2/Z3sSuf5U80F8
+	 q5sbCY37TgUYOcpT5OCW5hKL+NL0T3vKhWaoe5v23iRfGzrwpViJFZqtXvSbuqQkK9
+	 3+caJoTbvej+Q==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33F1D3A8256F;
+	Fri, 31 Oct 2025 16:44:39 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 4/4] samples: rust: Add sample demonstrating DRM buddy
- allocator
-To: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
- dakr@kernel.org, David Airlie <airlied@gmail.com>
-Cc: acourbot@nvidia.com, Alistair Popple <apopple@nvidia.com>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- bjorn3_gh@protonmail.com, Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
- joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
- Daniel Almeida <daniel.almeida@collabora.com>,
- Andrea Righi <arighi@nvidia.com>, Philipp Stanner <phasta@kernel.org>,
- nouveau@lists.freedesktop.org
-References: <20251030190613.1224287-1-joelagnelf@nvidia.com>
- <20251030190613.1224287-5-joelagnelf@nvidia.com>
-Content-Language: en-GB
-From: Matthew Auld <matthew.auld@intel.com>
-In-Reply-To: <20251030190613.1224287-5-joelagnelf@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH bpf-next v7 00/15] selftests/bpf: Integrate test_xsk.c to
+ test_progs framework
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <176192907800.534773.1083705735783093321.git-patchwork-notify@kernel.org>
+Date: Fri, 31 Oct 2025 16:44:38 +0000
+References: <20251031-xsk-v7-0-39fe486593a3@bootlin.com>
+In-Reply-To: <20251031-xsk-v7-0-39fe486593a3@bootlin.com>
+To: Bastien Curutchet (Schneider Electric) <bastien.curutchet@bootlin.com>
+Cc: bjorn@kernel.org, magnus.karlsson@intel.com, maciej.fijalkowski@intel.com,
+ jonathan.lemon@gmail.com, ast@kernel.org, daniel@iogearbox.net,
+ andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, mykolal@fb.com,
+ shuah@kernel.org, davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
+ thomas.petazzoni@bootlin.com, alexis.lothore@bootlin.com,
+ netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On 30/10/2025 19:06, Joel Fernandes wrote:
-> Demonstrates usage of the DRM buddy allocator bindings through
-> a simple test module that initializes the allocator, performs
-> allocations, and prints information about the allocated blocks.
+Hello:
+
+This series was applied to bpf/bpf-next.git (master)
+by Alexei Starovoitov <ast@kernel.org>:
+
+On Fri, 31 Oct 2025 09:04:36 +0100 you wrote:
+> Hi all,
 > 
-> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
-> ---
->   samples/rust/Kconfig           |  14 +++++
->   samples/rust/Makefile          |   1 +
->   samples/rust/rust_drm_buddy.rs | 106 +++++++++++++++++++++++++++++++++
->   3 files changed, 121 insertions(+)
->   create mode 100644 samples/rust/rust_drm_buddy.rs
+> The test_xsk.sh script covers many AF_XDP use cases. The tests it runs
+> are defined in xksxceiver.c. Since this script is used to test real
+> hardware, the goal here is to leave it as it is, and only integrate the
+> tests that run on veth peers into the test_progs framework.
 > 
-> diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
-> index b45631e2593c..8ccb4064ba91 100644
-> --- a/samples/rust/Kconfig
-> +++ b/samples/rust/Kconfig
-> @@ -21,6 +21,20 @@ config SAMPLE_RUST_CLIST
->   
->   	  If unsure, say N.
->   
-> +config SAMPLE_RUST_DRM_BUDDY
-> +	tristate "DRM buddy allocator sample"
-> +	depends on DRM_BUDDY
-> +	help
-> +	  This option builds the Rust DRM buddy allocator sample.
-> +
-> +	  The sample demonstrates using the DRM buddy allocator bindings
-> +	  to allocate and free memory blocks.
-> +
-> +	  To compile this as a module, choose M here:
-> +	  the module will be called rust_drm_buddy.
-> +
-> +	  If unsure, say N.
-> +
->   config SAMPLE_RUST_CONFIGFS
->   	tristate "Configfs sample"
->   	depends on CONFIGFS_FS
-> diff --git a/samples/rust/Makefile b/samples/rust/Makefile
-> index f8899c0df762..a56204ee4e96 100644
-> --- a/samples/rust/Makefile
-> +++ b/samples/rust/Makefile
-> @@ -2,6 +2,7 @@
->   ccflags-y += -I$(src)				# needed for trace events
->   
->   obj-$(CONFIG_SAMPLE_RUST_CLIST)			+= rust_clist.o
-> +obj-$(CONFIG_SAMPLE_RUST_DRM_BUDDY)		+= rust_drm_buddy.o
->   obj-$(CONFIG_SAMPLE_RUST_MINIMAL)		+= rust_minimal.o
->   obj-$(CONFIG_SAMPLE_RUST_MISC_DEVICE)		+= rust_misc_device.o
->   obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
-> diff --git a/samples/rust/rust_drm_buddy.rs b/samples/rust/rust_drm_buddy.rs
-> new file mode 100644
-> index 000000000000..96907bc19243
-> --- /dev/null
-> +++ b/samples/rust/rust_drm_buddy.rs
-> @@ -0,0 +1,106 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Rust DRM buddy allocator sample.
-> +//!
-> +//! This sample demonstrates using the DRM buddy allocator from Rust.
-> +
-> +use kernel::{
-> +    drm::buddy::{
-> +        BuddyFlags,
-> +        DrmBuddy, //
-> +    },
-> +    prelude::*,
-> +    sizes::*, //
-> +};
-> +
-> +module! {
-> +    type: RustDrmBuddySample,
-> +    name: "rust_drm_buddy",
-> +    authors: ["Joel Fernandes"],
-> +    description: "DRM buddy allocator sample",
-> +    license: "GPL",
-> +}
-> +
-> +struct RustDrmBuddySample;
-> +
-> +impl kernel::Module for RustDrmBuddySample {
-> +    fn init(_module: &'static ThisModule) -> Result<Self> {
-> +        // Create a buddy allocator managing 1GB with 4KB chunks.
-> +        let buddy = DrmBuddy::new(SZ_1G, SZ_4K)?;
-> +
-> +        pr_info!("=== Test 1: Single 16MB block ===\n");
-> +        let allocated = buddy.alloc_blocks(
-> +            0,
-> +            0,
+> [...]
 
-Does this map to the start/end? Surprised that this works with 
-RANGE_ALLOCATION below. I guess it works because of the end-1, but I'm 
-not sure if that was intended.
+Here is the summary with links:
+  - [bpf-next,v7,01/15] selftests/bpf: test_xsk: Split xskxceiver
+    https://git.kernel.org/bpf/bpf-next/c/3ab77f35a75e
+  - [bpf-next,v7,02/15] selftests/bpf: test_xsk: Initialize bitmap before use
+    https://git.kernel.org/bpf/bpf-next/c/2233ef8bba81
+  - [bpf-next,v7,03/15] selftests/bpf: test_xsk: Fix __testapp_validate_traffic()'s return value
+    https://git.kernel.org/bpf/bpf-next/c/cadc0c1fd79c
+  - [bpf-next,v7,04/15] selftests/bpf: test_xsk: fix memory leak in testapp_stats_rx_dropped()
+    https://git.kernel.org/bpf/bpf-next/c/d66e49ffa020
+  - [bpf-next,v7,05/15] selftests/bpf: test_xsk: fix memory leak in testapp_xdp_shared_umem()
+    https://git.kernel.org/bpf/bpf-next/c/bea4f03897c0
+  - [bpf-next,v7,06/15] selftests/bpf: test_xsk: Wrap test clean-up in functions
+    https://git.kernel.org/bpf/bpf-next/c/e3dfa0faf1f7
+  - [bpf-next,v7,07/15] selftests/bpf: test_xsk: Release resources when swap fails
+    https://git.kernel.org/bpf/bpf-next/c/f477b0fd75f5
+  - [bpf-next,v7,08/15] selftests/bpf: test_xsk: Add return value to init_iface()
+    https://git.kernel.org/bpf/bpf-next/c/e645bcfb16ea
+  - [bpf-next,v7,09/15] selftests/bpf: test_xsk: Don't exit immediately when xsk_attach fails
+    https://git.kernel.org/bpf/bpf-next/c/f12f1b5d14b0
+  - [bpf-next,v7,10/15] selftests/bpf: test_xsk: Don't exit immediately when gettimeofday fails
+    https://git.kernel.org/bpf/bpf-next/c/3f09728f9080
+  - [bpf-next,v7,11/15] selftests/bpf: test_xsk: Don't exit immediately when workers fail
+    https://git.kernel.org/bpf/bpf-next/c/5b2a757a1619
+  - [bpf-next,v7,12/15] selftests/bpf: test_xsk: Don't exit immediately if validate_traffic fails
+    https://git.kernel.org/bpf/bpf-next/c/844b13a9ff54
+  - [bpf-next,v7,13/15] selftests/bpf: test_xsk: Don't exit immediately on allocation failures
+    https://git.kernel.org/bpf/bpf-next/c/7a96615f2e2d
+  - [bpf-next,v7,14/15] selftests/bpf: test_xsk: Isolate non-CI tests
+    https://git.kernel.org/bpf/bpf-next/c/75fc630867bb
+  - [bpf-next,v7,15/15] selftests/bpf: test_xsk: Integrate test_xsk.c to test_progs framework
+    https://git.kernel.org/bpf/bpf-next/c/d1aec26fce25
 
-Anyway, probably you didn't really want RANGE_ALLOCATION here? That is 
-only if you want something at a specific offset or within a special bias 
-range. So here I think it will give you a massive bias range covering 
-everything due to end-1, but all you wanted was any available 16M block, 
-which is the typical flow? It still technically works, but looks a bit 
-non-standard and will internally take the bias range path, which is not 
-ideal :)
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-Also I guess worth updating the example in buddy.rs, which also does this?
-
-> +            SZ_16M,
-> +            SZ_4K,
-> +            BuddyFlags::RANGE_ALLOCATION,
-> +            GFP_KERNEL,
-> +        )?;
-> +
-> +        let mut count = 0;
-> +        for block in &allocated {
-> +            pr_info!(
-> +                "  Block {}: offset=0x{:x}, order={}, size={}\n",
-> +                count,
-> +                block.offset(),
-> +                block.order(),
-> +                block.size(&buddy)
-> +            );
-> +            count += 1;
-> +        }
-> +        pr_info!("  Total: {} blocks\n", count);
-> +        drop(allocated);
-> +
-> +        pr_info!("=== Test 2: Three 4MB blocks ===\n");
-> +        let allocated = buddy.alloc_blocks(
-> +            0,
-> +            0,
-> +            SZ_4M * 3,
-> +            SZ_4K,
-> +            BuddyFlags::RANGE_ALLOCATION,
-> +            GFP_KERNEL,
-> +        )?;
-> +
-> +        count = 0;
-> +        for block in &allocated {
-> +            pr_info!(
-> +                "  Block {}: offset=0x{:x}, order={}, size={}\n",
-> +                count,
-> +                block.offset(),
-> +                block.order(),
-> +                block.size(&buddy)
-> +            );
-> +            count += 1;
-> +        }
-> +        pr_info!("  Total: {} blocks\n", count);
-> +        drop(allocated);
-> +
-> +        pr_info!("=== Test 3: Two 8MB blocks ===\n");
-> +        let allocated = buddy.alloc_blocks(
-> +            0,
-> +            0,
-> +            SZ_8M * 2,
-> +            SZ_4K,
-> +            BuddyFlags::RANGE_ALLOCATION,
-> +            GFP_KERNEL,
-> +        )?;
-> +
-> +        count = 0;
-> +        for block in &allocated {
-> +            pr_info!(
-> +                "  Block {}: offset=0x{:x}, order={}, size={}\n",
-> +                count,
-> +                block.offset(),
-> +                block.order(),
-> +                block.size(&buddy)
-> +            );
-> +            count += 1;
-> +        }
-> +        pr_info!("  Total: {} blocks\n", count);
-> +
-> +        pr_info!("=== All tests passed! ===\n");
-> +
-> +        Ok(RustDrmBuddySample {})
-> +    }
-> +}
 
 
