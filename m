@@ -1,123 +1,111 @@
-Return-Path: <linux-kernel+bounces-879732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E278C23D71
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:36:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EE0EC23D77
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:37:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE9EB189DAD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:36:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCD983B6525
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:37:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52ABE2EA48F;
-	Fri, 31 Oct 2025 08:36:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F179B2EC0A1;
+	Fri, 31 Oct 2025 08:37:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DB+REZMg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="efo3Ys7M"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA578DF59;
-	Fri, 31 Oct 2025 08:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C9E8DF59;
+	Fri, 31 Oct 2025 08:37:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761899777; cv=none; b=CDYXhPEAC3ttoRfTbq9LowYP69FOYXsm2PV6fTwJoKjnOCoLlU3f//X6ipCb0dDLmCQWY8LGaipD7DjfXSq4AuxvHAj7GZctmrnyekHB1UTNEEjiQoU5UF/VA7sMIqXN59hCy9ZyQszwFRkc948F/tbNk1KzxcmGQzB4Gj1ilw8=
+	t=1761899841; cv=none; b=gICILMiB5kCX1h1wOrCvh5uaFZ2w8hwFEuPg9EbzT+WY/eZKSyg7c+gj8pzLfHOgQk64ioVy5s18iIwJ5xvWfZf8z2MKawoNRFRs1DNk5Tigm29lPqpMHgXBfkdTumbMr5VeUQzZ7pNd+rbIfukY2v3EJHzRzPYzyNrVLbsynxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761899777; c=relaxed/simple;
-	bh=Nx7zVNS1vjKGvEyYcqY9qSwj4mu6QiBOxd85u7jmiQA=;
+	s=arc-20240116; t=1761899841; c=relaxed/simple;
+	bh=u2rSV+xALNV5Gy6zzb2fmDcmbew8tyHsmquJzh1ljDU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r6LmA3Q+HX8IWql9p9zjGLxq3vpJZUakxtjzxuXSYw16w+YkZfrCeYrM36MfWnNwEkJkDoWVo5EezhBBP7A0fj6JQGb2h8zJNY/AEQBlgcYeGGgjsvuhLPIUDZYqFa2uefBM/FRIFgqj05l6c/NP9PC1HVfnMHm8nP9IqffGqWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DB+REZMg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1566C4CEF8;
-	Fri, 31 Oct 2025 08:36:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761899777;
-	bh=Nx7zVNS1vjKGvEyYcqY9qSwj4mu6QiBOxd85u7jmiQA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DB+REZMguC0RGfpKJBoX+sOgdcIi5yciIlZIxO5NxQ2mVNyBQW9mXbO1v7xcjyfm/
-	 w8Bg2yVAzmmOEbt+/hkBBkl4ZurTPtxBiqblO+JZoh7dunXkUEpnG/3MQ6BVEDoyTS
-	 PIfxNd0NLxnmLH6IG0YnjgRLCBYbkXlIw9C6bV28AQ8o13ULg0unlpsJOmdlUU72dD
-	 7TTIF/yUIJt1sb628+EWRPk5KwytqYverSAvRnke86/lZPBok1k1Mi4oTgXV/Rxjnc
-	 3QFS9RncRXyshpnHTskdxE6OFbLzimD+B/SshEmJDRd9YD0BzGvdV3QrZhW1iLSQPK
-	 2H2LSV8a7jbrg==
-Date: Fri, 31 Oct 2025 14:06:05 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>, 
-	Niklas Cassel <cassel@kernel.org>, Shawn Lin <shawn.lin@rock-chips.com>, 
-	Hans Zhang <18255117159@163.com>, Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
-	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>, 
-	"moderated list:ARM/Rockchip SoC support" <linux-arm-kernel@lists.infradead.org>, 
-	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 1/2] PCI: dw-rockchip: Add remove callback for
- resource cleanup
-Message-ID: <b2micr4atfax2sgolsublmjk4kwvbmdnqjlk2lb7cflzeycm5i@bi62lg75ilo6>
-References: <20251027145602.199154-1-linux.amoon@gmail.com>
- <20251027145602.199154-2-linux.amoon@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QrOxoUxjQidLwHbQOlTzdBKu5GHUZ/7mpi4mpIL4EU8oBzKFqvvCp2vuOT4B7VuTk1YDSOrBHrPeeSk3lZ1xdexKNmppMLD8O+nb5KdAya1+qOZI166fnhFTIiMRDd8fpwZzbFZQ2Ubh7QjH1qGrv4AhCq6luewZ4hpUqU5melM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=efo3Ys7M; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761899840; x=1793435840;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=u2rSV+xALNV5Gy6zzb2fmDcmbew8tyHsmquJzh1ljDU=;
+  b=efo3Ys7MrIiHhtcgo9jRY6j3uzl8uuaD/xQ7LVb/b9xPWUZrTmjzxOOH
+   Nq4VojAfXt8Z6vqDDeI1TkxRVPMCLSczSARsAEW+ewmZdaD0lvP6czx3e
+   XHUj/FsgbN4WEW/JlEjCIaZoFjKZ8BchgKtQaf196QX9MwQyyl+xuO342
+   yCbitgcb6eiKSAlan2g7a71ND9w8eaBbp3M5elQr2m872ad+8QrsrEXJ0
+   xpqRoBsev0Zl/jq/gICUEhD45Apym09Qab/IRi96fWuR8R5p2DPA5CWpq
+   zwy9wL1ksBcehjnW2P2rI/YFGBBuEuozdn90Fh5PzyKN0mpO1Z4ZRPb1g
+   g==;
+X-CSE-ConnectionGUID: P98n0r4jS2uMtLkDSAwh8g==
+X-CSE-MsgGUID: DMCUfO4PTj6XtJtn6cNJOg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="74347088"
+X-IronPort-AV: E=Sophos;i="6.19,268,1754982000"; 
+   d="scan'208";a="74347088"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 01:37:20 -0700
+X-CSE-ConnectionGUID: 2UlwxA0iTvCXwGFLJGWuNg==
+X-CSE-MsgGUID: r/qe0u3cRXyz5xSqmlUsVA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,268,1754982000"; 
+   d="scan'208";a="185867159"
+Received: from mgoodin-mobl3.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.66])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 01:37:17 -0700
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vEkdE-00000004D6i-1UeL;
+	Fri, 31 Oct 2025 10:37:12 +0200
+Date: Fri, 31 Oct 2025 10:37:11 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Ajith Anandhan <ajithanandhan0406@gmail.com>
+Cc: linux-iio@vger.kernel.org, jic23@kernel.org, dlechner@baylibre.com,
+	nuno.sa@analog.com, andy@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/3] iio: adc: Add support for TI ADS1120 ADC
+Message-ID: <aQR1N__AwvPm21tm@smile.fi.intel.com>
+References: <20251030163411.236672-1-ajithanandhan0406@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251027145602.199154-2-linux.amoon@gmail.com>
+In-Reply-To: <20251030163411.236672-1-ajithanandhan0406@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, Oct 27, 2025 at 08:25:29PM +0530, Anand Moon wrote:
-> Introduce a .remove() callback to the Rockchip DesignWare PCIe
-> controller driver to ensure proper resource deinitialization during
-> device removal. This includes disabling clocks and deinitializing the
-> PCIe PHY.
+On Thu, Oct 30, 2025 at 10:04:08PM +0530, Ajith Anandhan wrote:
+> This RFC patch series adds support for the Texas Instruments ADS1120,
+> a precision 16-bit delta-sigma ADC with SPI interface.
 > 
-
-How can you remove a driver that is only built-in? You are just sending some
-pointless patches that were not tested and does not make sense at all.
-
-Please stop wasting others time.
-
-- Mani
-
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> ---
->  drivers/pci/controller/dwc/pcie-dw-rockchip.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
+> The driver provides:
+> - 4 single-ended voltage input channels
+> - Programmable gain amplifier (1 to 128)
+> - Configurable data rates (20 to 1000 SPS)
+> - Single-shot conversion mode
 > 
-> diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> index 87dd2dd188b4..b878ae8e2b3e 100644
-> --- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> +++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
-> @@ -717,6 +717,16 @@ static int rockchip_pcie_probe(struct platform_device *pdev)
->  	return ret;
->  }
->  
-> +static void rockchip_pcie_remove(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct rockchip_pcie *rockchip = dev_get_drvdata(dev);
-> +
-> +	/* Perform other cleanups as necessary */
-> +	clk_bulk_disable_unprepare(rockchip->clk_cnt, rockchip->clks);
-> +	rockchip_pcie_phy_deinit(rockchip);
-> +}
-> +
->  static const struct rockchip_pcie_of_data rockchip_pcie_rc_of_data_rk3568 = {
->  	.mode = DW_PCIE_RC_TYPE,
->  };
-> @@ -754,5 +764,6 @@ static struct platform_driver rockchip_pcie_driver = {
->  		.suppress_bind_attrs = true,
->  	},
->  	.probe = rockchip_pcie_probe,
-> +	.remove = rockchip_pcie_remove,
->  };
->  builtin_platform_driver(rockchip_pcie_driver);
-> -- 
-> 2.50.1
+> I'm looking for feedback on:
+> 1. The implementation approach for single-shot conversions
+> 2. Any other suggestions for improvement
 > 
+> Datasheet: https://www.ti.com/lit/gpn/ads1120
+
+The cover letter missed to answer the Q: Why a new driver? Have you checked the
+existing drivers? Do we have a similar enough one that may be extended to
+support this chip?
 
 -- 
-மணிவண்ணன் சதாசிவம்
+With Best Regards,
+Andy Shevchenko
+
+
 
