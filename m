@@ -1,159 +1,305 @@
-Return-Path: <linux-kernel+bounces-879330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CAEDC22DAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:19:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30141C22DB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:20:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11761406245
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:19:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B162C420024
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:20:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F74923313E;
-	Fri, 31 Oct 2025 01:19:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F0DE234964;
+	Fri, 31 Oct 2025 01:20:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KxWgkhib"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TdtBVZx3"
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F35364C81;
-	Fri, 31 Oct 2025 01:19:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A83A1D5146
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 01:20:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761873569; cv=none; b=Y8ZSEbq7HvhKM3VOscNRGg8AkPhfekjkJJqG0p7jXHCIFxWsghdeYNviYThh836dxoEY9cg5oa0sjq62plJRaorApuz4qvAZfpJcJvIJBJj3GYf///2oFaPz8VI0eGBNA9nc6HQtVnU7IhnCXhFioNFzXGxx0BrGpB0nKO6IvHo=
+	t=1761873611; cv=none; b=E31GQHz3IoSlQkHAFB3owI7ULI5O9dj0SthUXtClfFhr0Z9m3d/cQIhAQDUYDGQ6sRXds5oAZvGPk0IOssR/po8OFS3virPGe+b7HiTOn+x9P29o/hkx+VooWRh/rydJ9QmWNcbB7+yw6/GQ4QsSGbRT7W0lsTA1YFrVwtDv7h4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761873569; c=relaxed/simple;
-	bh=s3KxTLvxykwuQMgwYymSDxBhPd0V8H4sWyAgWwULAKI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r91kqQUNBpp7su1mpmwLLptkq3qAwmQdxYgpVhQX9JOrlNLeEuLilQRNpfmiA6EY4YBQMnCQqnOAEBATGF+/XP28TZCTUBv+Vp6DvLivDNOFERO2/7otwZcNf14e68AwWVilnFy+aiV3DwRlV26maWvo+2ErswaxqjaH7q+Z3ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KxWgkhib; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761873568; x=1793409568;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=s3KxTLvxykwuQMgwYymSDxBhPd0V8H4sWyAgWwULAKI=;
-  b=KxWgkhibFNk2OBR338daFTnQuyNBMUavEjdbyx5wclbp2wQh85cs99ZP
-   ay0whbO4SrVi73cMCmS/Nnj14H/2/9A8D2AdpN0PnAdM1K+DCMtfvb6PE
-   luu+UiDUzWapY3c/1t3xWTXhM+uzHJOIgJpURYsX7YF+wOBcwm4w5tvSk
-   KXtzajBxdOAtWlZZorLhi0kGWnEnkzq+YB/kncBDyOcmPOFtGOZoxkUjS
-   covSCGdo74xSzf0D9eUUyPtrVeK9u0PQsT4crAkWPYhpz21/4jt5a4YPs
-   xKnRdjXAArG46v0FD6yDiHY+cGA9LW4PqowpcynKeb0sl0AYtj/soPdqs
-   A==;
-X-CSE-ConnectionGUID: nwklheNoS4GfMfhjjv+Kzg==
-X-CSE-MsgGUID: +EpFke1ZQH6yAjCg9qy2zw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="64069214"
-X-IronPort-AV: E=Sophos;i="6.19,268,1754982000"; 
-   d="scan'208";a="64069214"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2025 18:19:28 -0700
-X-CSE-ConnectionGUID: mCjhLEe6QCKcT9fN0jidcg==
-X-CSE-MsgGUID: jQINaZDsRf6rcrtZb6y02w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,268,1754982000"; 
-   d="scan'208";a="185979707"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 30 Oct 2025 18:19:24 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vEdnS-000Mem-0M;
-	Fri, 31 Oct 2025 01:19:20 +0000
-Date: Fri, 31 Oct 2025 09:18:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: Caleb James DeLisle <cjd@cjdns.fr>, nbd@nbd.name, lorenzo@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, ryder.lee@mediatek.com,
-	shayne.chen@mediatek.com, sean.wang@mediatek.com,
-	matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	Caleb James DeLisle <cjd@cjdns.fr>
-Subject: Re: [PATCH] wifi: mt76: mmio_(read|write)_copy byte swap when on Big
- Endian
-Message-ID: <202510310816.kyDHJNiS-lkp@intel.com>
-References: <20251027171759.1484844-1-cjd@cjdns.fr>
+	s=arc-20240116; t=1761873611; c=relaxed/simple;
+	bh=/R2PajZdpDBSilz28LyEbbHfwCWVmHXzyoDsVJ1DaIs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=flAJY9SNUy4fR9EIBQjvSxnS+gyfWhXzpE96oDXyxvjNot1NiBw0u3jwsWUz/y4SEJ2gHoms0vBqXTnYpZh1wO5SiWxmuljzB60OtN/KTmMzz6lbx45iWLaXIRmLsJB7OXXTQOaPmW0UrTpBB5ucnqqKFB61pu6NIQRgjaF7Tv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TdtBVZx3; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-88032235d68so3496116d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 18:20:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761873607; x=1762478407; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xLeeinn5rkLUxgKFdg/nWVzRKsFjkOZNlZH0y97MZCU=;
+        b=TdtBVZx3S3WWl1giFExLb/1j0oOe+d90l0IUPf6QppfRJfzQ4bNhXWc0rppfECxXME
+         8eCEXHa5pdjeuZ/bHtYRk1rq0qeve8kJjm602exTBrEJUwzBJEhsB3DSzazmigxlqcJr
+         08e5MCZLp+1ZwZBK/j0wSRk4Hd9QfyoI1x6JIh03uYXJvOa5dDKoxrBGTYaxzrdunbWM
+         ogSKPjNF3+Kl0uO256y80G02+dRLqwOJuIJvCCi53XnGlS6NxR2sRinLdkIHOucvEUWZ
+         RKnSzKOR6HZVvCq0Lfse1d7uwu/YcMV+AdYKoa0Wh2KIOKxPQJhCdA+sCTzTwIWO/VPJ
+         Uo9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761873607; x=1762478407;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xLeeinn5rkLUxgKFdg/nWVzRKsFjkOZNlZH0y97MZCU=;
+        b=oJ9+ck+cXMMBXFMcdARoASMDWTf42Npj2en9g3RHaHiLHie2ZtZIkfkkqrqMXFgtFt
+         ERafijJ4bVeOFG92jv1lko5j2f8HOjmVWqzKIOt7PryxOrAGfNsl9nTlM6yklbdxrd4E
+         hLpJUxtpWqLd/YdOlVibRXrZizcqDBgROz0nBT3SlzJ6Y1lV3+P8XVPY9f4mAkzt5ElK
+         EMBnxiGpVH3WlmsHAWp/TlmtTK7LGhCyXkmX0B15OIIm8sEoaI02gLbXdnpak3/uifNQ
+         i9H1APZdHdHDs4Sl3A4wzypCbv7l75N7AT+qYZthWCGlrn0aS2igkFYyTAhTpmUXrdXy
+         K7sw==
+X-Forwarded-Encrypted: i=1; AJvYcCXSQdbjUsrPa/qOXxd2/d6Vada0UfdeleKZSnh5/LTOpOUp2ypYAOBIOlagKqFh9qvAPy334iCVs5kopB8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy74Kjvv9KQE1nJDIt+oZj/q3fGhElKLTQqZ42D/Bwi07ry8Y6v
+	LsNdBIBEsxxD3mVK8tBAToyEXbv+jHf3Pybnd++ZCGkysYLhFhc90GUyy2ez0SyWiTcqbRh+TqG
+	N4DwNnOWDBXa3L+Ne/eixFS64nIO3inE=
+X-Gm-Gg: ASbGnctPggdmkuXQOEF4/s7r8cb4jsww2M4VhR0d+Xe00KfpN6ZDk5pkQKaHpxrbbTS
+	y+0x0xtbbd9F405u8qmzrS1IrdrC5XhaVuBNPlOTgfyBIyn7CI8mGsk/LIH7A2i2kfSPF7V9EBF
+	BPOCs6t2fvdErYzBSJUhOPPM7ELBoOf7Jmfdwuy4FuGJjygmJmAZkNOzxiSi2DFAcAx42f+ZHlW
+	q36m6Mb7N0DlWA2fF2dfUCJUf4FlC8oD0HvsmtSX8jQNtGJNvO/51FCjgtJRQ==
+X-Google-Smtp-Source: AGHT+IEbmRcoqGcwNEI9wXZ/2Xuv9CNaJRoSUqwyug6wtC8Ip8PX7K9TgOV8xAA2brbHWRPkE+31xM/qKoRjdxWw6BI=
+X-Received: by 2002:a05:6214:e45:b0:87c:20b5:6685 with SMTP id
+ 6a1803df08f44-8802f4f8ea0mr23094946d6.55.1761873606895; Thu, 30 Oct 2025
+ 18:20:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251027171759.1484844-1-cjd@cjdns.fr>
+References: <20251026081240.997038-1-derekjohn.clark@gmail.com>
+ <20251026081240.997038-4-derekjohn.clark@gmail.com> <4c3a594b-7a57-4b5e-85c8-e9337d70c7e6@kernel.org>
+ <1411B6CE-132B-4450-BB27-9ED44BD897B0@gmail.com> <e3f19e6b-9500-4283-aae8-24ebba2bbb60@kernel.org>
+In-Reply-To: <e3f19e6b-9500-4283-aae8-24ebba2bbb60@kernel.org>
+From: Derek John Clark <derekjohn.clark@gmail.com>
+Date: Thu, 30 Oct 2025 18:19:56 -0700
+X-Gm-Features: AWmQ_bkaD-yhBt9MtVyJSewcJAo2YppAMOaIyrkykyYKFDy53ykMkV-9krNHVmE
+Message-ID: <CAFqHKT=brdboD_=kfCHqPza+gbHvAicWnY9vcCDhPb3YBLzTaA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] platform/x86: lenovo-wmi-gamezone Use explicit allow list
+To: Mario Limonciello <superm1@kernel.org>
+Cc: Hans de Goede <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Armin Wolf <W_Armin@gmx.de>, Len Brown <lenb@kernel.org>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Zhixin Zhang <zhangzx36@lenovo.com>, 
+	Mia Shao <shaohz1@lenovo.com>, Mark Pearson <mpearson-lenovo@squebb.ca>, 
+	"Pierre-Loup A . Griffais" <pgriffais@valvesoftware.com>, Kurt Borja <kuurtb@gmail.com>, 
+	platform-driver-x86@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Caleb,
+On Sun, Oct 26, 2025 at 2:19=E2=80=AFPM Mario Limonciello <superm1@kernel.o=
+rg> wrote:
+>
+>
+>
+> On 10/26/25 2:22 PM, Derek J. Clark wrote:
+> > On October 26, 2025 10:50:40 AM PDT, Mario Limonciello <superm1@kernel.=
+org> wrote:
+> >>
+> >>
+> >> On 10/26/25 3:12 AM, Derek J. Clark wrote:
+> >>> The stubbed extreme mode issue seems to be more prevalent than previo=
+usly
+> >>> thought with multiple users having reported BIOS bugs from setting
+> >>> "performance" when using userspace tools such as PPD. To avoid this e=
+ver
+> >>> being possible, make enabling extreme mode an explicit allow list ins=
+tead.
+> >>> These users will still be able to set extreme mode using the Fn+Q key=
+board
+> >>> chord, so no functionality is lost. Currently no models have been
+> >>> validated with extreme mode.
+> >>
 
-kernel test robot noticed the following build warnings:
+Hi Mario.
+> >> So what exactly happens when a user uses FN+Q to change to extreme mod=
+e but it's now in the allow list?  Does it report as "custom" mode?
 
-[auto build test WARNING on wireless-next/main]
-[also build test WARNING on wireless/main linus/master v6.18-rc3 next-20251030]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+The affected user that originally reported this issue to me was able
+to test. With the series applied he booted into Linux after setting
+extreme in Windows. Both the legacy firmware interface and the new
+class interface report "extreme" despite it not being available in the
+profile options. He also reported expected behavior from the power
+slider in KDE's PPD widget.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Caleb-James-DeLisle/wifi-mt76-mmio_-read-write-_copy-byte-swap-when-on-Big-Endian/20251028-012349
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git main
-patch link:    https://lore.kernel.org/r/20251027171759.1484844-1-cjd%40cjdns.fr
-patch subject: [PATCH] wifi: mt76: mmio_(read|write)_copy byte swap when on Big Endian
-config: i386-randconfig-061-20251031 (https://download.01.org/0day-ci/archive/20251031/202510310816.kyDHJNiS-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251031/202510310816.kyDHJNiS-lkp@intel.com/reproduce)
+> > It turns out I got a correction after posting this that I'll need to in=
+clude for v2. Extreme is never actually set using Fn+Q and can only be set =
+in software. In that case, functionality is lost (though extreme should mat=
+ch custom mode default values, so only slightly). The only chance this coul=
+d happen realistically would be if a user switched from windows in extreme =
+mode and then booted windows, since the setting is retained.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202510310816.kyDHJNiS-lkp@intel.com/
+I got more amplifying information on this that explains the back and
+forth confusion. In windows there is a toggle in the userspace UI that
+can add or remove the extreme profile from the Fn+Q macro cycle, so
+sometimes this scenario will be possible and sometimes not. I don't
+see anything in the documentation for extreme mode toggling
+specifically, but there is a toggle for custom mode in Fn+Q so that
+could be a translation error or a mistake in the docs. I'll need to
+get amplification from Lenovo on this, but adding it will also depend
+on the series by Rong that adds capdata00 so I'll forgo adding the
+toggle functionality in this series. Once Rong's series is accepted
+and I can get amplification from Lenovo I'll submit another series to
+add it as an attribute in the lenovo-wmi-other firmware-attributes.
 
-sparse warnings: (new ones prefixed by >>)
->> drivers/net/wireless/mediatek/mt76/mmio.c:41:24: sparse: sparse: cast from restricted __le32
->> drivers/net/wireless/mediatek/mt76/mmio.c:41:24: sparse: sparse: incorrect type in argument 1 (different base types) @@     expected unsigned int val @@     got restricted __le32 [usertype] @@
-   drivers/net/wireless/mediatek/mt76/mmio.c:41:24: sparse:     expected unsigned int val
-   drivers/net/wireless/mediatek/mt76/mmio.c:41:24: sparse:     got restricted __le32 [usertype]
->> drivers/net/wireless/mediatek/mt76/mmio.c:63:23: sparse: sparse: cast to restricted __le32
+> Is retaining the setting across reboots/OSes the "expected" behavior?
+> Or should it be resetting to balanced at startup?
 
-vim +41 drivers/net/wireless/mediatek/mt76/mmio.c
+> If you set it explicitly to balanced when the module is loaded that
+> would help to alleviate any of these corner cases.
 
-    32	
-    33	static void mt76_mmio_write_copy_portable(void __iomem *dst,
-    34						  const u8 *src, int len)
-    35	{
-    36		__le32 val;
-    37		int i = 0;
-    38	
-    39		for (i = 0; i < ALIGN(len, 4); i += 4) {
-    40			memcpy(&val, src + i, sizeof(val));
-  > 41			writel(cpu_to_le32(val), dst + i);
-    42		}
-    43	}
-    44	
-    45	static void mt76_mmio_write_copy(struct mt76_dev *dev, u32 offset,
-    46					 const void *data, int len)
-    47	{
-    48		if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN)) {
-    49			mt76_mmio_write_copy_portable(dev->mmio.regs + offset, data,
-    50						      len);
-    51			return;
-    52		}
-    53		__iowrite32_copy(dev->mmio.regs + offset, data, DIV_ROUND_UP(len, 4));
-    54	}
-    55	
-    56	static void mt76_mmio_read_copy_portable(u8 *dst,
-    57						 const void __iomem *src, int len)
-    58	{
-    59		u32 val;
-    60		int i;
-    61	
-    62		for (i = 0; i < ALIGN(len, 4); i += 4) {
-  > 63			val = le32_to_cpu(readl(src + i));
-    64			memcpy(dst + i, &val, sizeof(val));
-    65		}
-    66	}
-    67	
+This is expected behavior, and it can be set in BIOS manually as well.
+I don't think changing this at driver load is necessary and would
+probably be confusing to users who expect it to remain consistent.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> >
+> > TBS, I'm asking some folks to test exactly that situation so we can kno=
+w definitely. My assumption was that it would report extreme normally but n=
+ot be setable.
+> >
+> >> I feel like this is going to turn into an impedance mismatch.  I'm lea=
+ning it's better to just expose extreme mode so that userspace knows what's=
+ actually going on.
+> >
+> > It's possible, I'll wait for confirmation of the behavior from someone =
+with the affected hardware.
+>
+> OK.
+>
+> >
+> > Thanks,
+> > Derek
+> >
+> >> I feel the bug situation will actually improve because PPD and Tuned h=
+ave no idea what extreme mode means so it won't be "easy" to get into it.  =
+This at least will allow discovery of BIOS bugs as well that can then get r=
+eported and fixed in BIOS.
+
+I'm leaning towards the original deny list now because of this as
+well. I'll drop patch 3 for v2 unless Armin or Ilpo have a
+disagreement.
+
+Thanks,
+Derek
+
+> >>
+> >>>
+> >>> Signed-off-by: Derek J. Clark <derekjohn.clark@gmail.com>
+> >>> ---
+> >>>    .../wmi/devices/lenovo-wmi-gamezone.rst       | 10 +++---
+> >>>    drivers/platform/x86/lenovo/wmi-gamezone.c    | 33 ++-------------=
+----
+> >>>    2 files changed, 8 insertions(+), 35 deletions(-)
+> >>>
+> >>> diff --git a/Documentation/wmi/devices/lenovo-wmi-gamezone.rst b/Docu=
+mentation/wmi/devices/lenovo-wmi-gamezone.rst
+> >>> index 6c908f44a08e..79051dc62022 100644
+> >>> --- a/Documentation/wmi/devices/lenovo-wmi-gamezone.rst
+> >>> +++ b/Documentation/wmi/devices/lenovo-wmi-gamezone.rst
+> >>> @@ -31,11 +31,11 @@ The following platform profiles are supported:
+> >>>    Extreme
+> >>>    ~~~~~~~~~~~~~~~~~~~~
+> >>>    Some newer Lenovo "Gaming Series" laptops have an "Extreme Mode" p=
+rofile
+> >>> -enabled in their BIOS.
+> >>> -
+> >>> -For some newer devices the "Extreme Mode" profile is incomplete in t=
+he BIOS
+> >>> -and setting it will cause undefined behavior. A BIOS bug quirk table=
+ is
+> >>> -provided to ensure these devices cannot set "Extreme Mode" from the =
+driver.
+> >>> +enabled in their BIOS. For some newer devices the "Extreme Mode" pro=
+file
+> >>> +is incomplete in the BIOS and setting it will cause undefined behavi=
+or. To
+> >>> +prevent ever setting this on unsupported hardware, an explicit allow=
+ quirk
+> >>> +table is provided with all validated devices. This ensures only full=
+y
+> >>> +supported devices can set "Extreme Mode" from the driver.
+> >>>      Custom Profile
+> >>>    ~~~~~~~~~~~~~~
+> >>> diff --git a/drivers/platform/x86/lenovo/wmi-gamezone.c b/drivers/pla=
+tform/x86/lenovo/wmi-gamezone.c
+> >>> index faabbd4657bd..0488162a7194 100644
+> >>> --- a/drivers/platform/x86/lenovo/wmi-gamezone.c
+> >>> +++ b/drivers/platform/x86/lenovo/wmi-gamezone.c
+> >>> @@ -47,10 +47,6 @@ struct quirk_entry {
+> >>>     bool extreme_supported;
+> >>>    };
+> >>>    -static struct quirk_entry quirk_no_extreme_bug =3D {
+> >>> -   .extreme_supported =3D false,
+> >>> -};
+> >>> -
+> >>>    /**
+> >>>     * lwmi_gz_mode_call() - Call method for lenovo-wmi-other driver n=
+otifier.
+> >>>     *
+> >>> @@ -241,31 +237,8 @@ static int lwmi_gz_profile_set(struct device *de=
+v,
+> >>>     return 0;
+> >>>    }
+> >>>    +/* Explicit allow list */
+> >>>    static const struct dmi_system_id fwbug_list[] =3D {
+> >>> -   {
+> >>> -           .ident =3D "Legion Go 8APU1",
+> >>> -           .matches =3D {
+> >>> -                   DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
+> >>> -                   DMI_MATCH(DMI_PRODUCT_VERSION, "Legion Go 8APU1")=
+,
+> >>> -           },
+> >>> -           .driver_data =3D &quirk_no_extreme_bug,
+> >>> -   },
+> >>> -   {
+> >>> -           .ident =3D "Legion Go S 8APU1",
+> >>> -           .matches =3D {
+> >>> -                   DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
+> >>> -                   DMI_MATCH(DMI_PRODUCT_VERSION, "Legion Go S 8APU1=
+"),
+> >>> -           },
+> >>> -           .driver_data =3D &quirk_no_extreme_bug,
+> >>> -   },
+> >>> -   {
+> >>> -           .ident =3D "Legion Go S 8ARP1",
+> >>> -           .matches =3D {
+> >>> -                   DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
+> >>> -                   DMI_MATCH(DMI_PRODUCT_VERSION, "Legion Go S 8ARP1=
+"),
+> >>> -           },
+> >>> -           .driver_data =3D &quirk_no_extreme_bug,
+> >>> -   },
+> >>>     {},
+> >>>      };
+> >>> @@ -278,7 +251,7 @@ static const struct dmi_system_id fwbug_list[] =
+=3D {
+> >>>     * Anything version 5 or lower does not. For devices with a versio=
+n 6 or
+> >>>     * greater do a DMI check, as some devices report a version that s=
+upports
+> >>>     * extreme mode but have an incomplete entry in the BIOS. To ensur=
+e this
+> >>> - * cannot be set, quirk them to prevent assignment.
+> >>> + * cannot be set, quirk them to enable assignment.
+> >>>     *
+> >>>     * Return: bool.
+> >>>     */
+> >>> @@ -292,7 +265,7 @@ static bool lwmi_gz_extreme_supported(int profile=
+_support_ver)
+> >>>             dmi_id =3D dmi_first_match(fwbug_list);
+> >>>     if (!dmi_id)
+> >>> -           return true;
+> >>> +           return false;
+> >>>             quirks =3D dmi_id->driver_data;
+> >>>
+> >>
+> >
+>
 
