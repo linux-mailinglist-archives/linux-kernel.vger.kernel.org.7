@@ -1,108 +1,174 @@
-Return-Path: <linux-kernel+bounces-880181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60AF0C25107
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:44:56 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48679C25113
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:45:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BEC8C34C95D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:44:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 365DA4E8859
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:45:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990A834B1BD;
-	Fri, 31 Oct 2025 12:44:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587D01F872D;
+	Fri, 31 Oct 2025 12:45:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w4E/e1To"
-Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MUY1i8uU"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AAF32550AF
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 12:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48D61A23B6
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 12:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761914689; cv=none; b=LxLnkpJcJhtoVRl/CYiUbxe40u4Yexjv87Q0y4AbvEtcFNXrHw/47pMCJ2PdvQG1fpngT1fbz64Ux1NIeE1fn4LxyZoTY0PTSIm0zEBdY51TV6Y0VmAuZQFwW7t1e3K/+OQFBSYRzspNVIk5drcI7UaNRV/zv2nR3jcxBKBhkKE=
+	t=1761914723; cv=none; b=JWX+Y7TCyK1PJBF7pZ0Y463tQEBURySg7qPxt37e6n9ZZdigfgXTQAEsG1jkeyt02uaNyVeRe/zojVWUgyDSR4oE2CWkCBNzY/We2Zh8TyWsl9S+zy9m5AQOcPSuG+ZXiR9N7WtJjow4qrtD9rPI8WTd0OGA/IemyuQIfWmmW88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761914689; c=relaxed/simple;
-	bh=CvFGZtOf26dYUowBbWluZEW4m1VkUdBhmnfG6Yu+Vrc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ak+rywxB7pEo1m8/vMAurlcUf3Sa43US3PCdaXk9i0rT6jKVD05a5oSeUxXYdV4pa3k6yCD2mzW7wU9co9JCkOy7AXzDRSE0gWOS21z6rXwSsrCH90oaUUo4FlpdaaJ8WzsBHcmIn98iHJJlJe6zN1IiDC4zI23hZMQGtUDeW20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w4E/e1To; arc=none smtp.client-ip=209.85.218.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-b4626b2d07bso149990966b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 05:44:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761914670; x=1762519470; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CvFGZtOf26dYUowBbWluZEW4m1VkUdBhmnfG6Yu+Vrc=;
-        b=w4E/e1ToSxACHbjeiQQRoiGgPJTsQwcGVaJ4BHnpDrbdK22SkM32KW1iyPAyuaPC35
-         Qs+MjHhxgppVWencfKCudOl0gzfA9xWBR9q6c04Y0/WRaBqED9Zr47zKM3vCauqBlX9D
-         +puIsFL1OIu0Ry75ONG+s1K0zlzq8QRMnfajIdI/mZK83CNUHtRSbr9IJ9ipWBYOhFej
-         HTUDK0bgJjfQyGip9oId26ih1AgMRSwyVt/xMwn2kT+1F+3h+ZSyc6nRbrEYB/MvR22Z
-         sTF5nFwiqr6MbDpwa8wjiQqPk25qGIJnkHJTyeWTXEJyuwnvXRht+mBZhB63Jn43kbck
-         4mAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761914670; x=1762519470;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CvFGZtOf26dYUowBbWluZEW4m1VkUdBhmnfG6Yu+Vrc=;
-        b=UzFQ1x0qt991zHI9NR1B+/PjWZwfeyt5iMPZM3M25IERlKVuGKWevbsPeIf2qCuQ7v
-         H9iYetlDxt6fVkDH5Hr5T508caoHkKa8zHsCSsQecD8ffGmBwjUzi6RPjizoyzyyeYWK
-         wwaOzzwAD57FtFeh9RxZyqdd9qEys3aZvt1oYFKabi4vlRI8+hZ1vEck6PaXYXsRKhsB
-         04mIEOBXOHj9s87S4ADTYSJDbt5og7v0FLblu5TafO2aJjCMaBrlWjkPKO1nVRlpZkga
-         LiJGv+kCy38Hlu6vDrIYh5BCwPkSXEziLiw3ltisdWJxurxSt9qxfRR2IXujnWC3gtki
-         FnUA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWnGyjAz7csNYSe2mRHWPOh+h8ZdYkHTdt4CaCbrBux/fURQgt+8a3/4ksvhpjYa2NHOu6RdGZLLXwoCA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNEvkmHYErleyQleUc1nsCdrk0OYtm694hU4gB3mB4W/+GUDGI
-	HTlWEMUf/LNuJXw0Od9b1UWst1RGcNvdr+Ql0QwCffdYIOGZY4HCuE5CNSDk/zixEpmBtngYnT8
-	2uekcjI3eHKWzHQ==
-X-Google-Smtp-Source: AGHT+IHU8weZjAEhs2IehgqJcwvwtB2UGWE4Em0q57RBbrPppiWnDSvsBrl9MlsbTlimASqXdDTHfslYBQ30Kw==
-X-Received: from ejcsp10.prod.google.com ([2002:a17:907:394a:b0:b70:4a91:9d5a])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:907:97cc:b0:b3e:e16a:8cdb with SMTP id a640c23a62f3a-b70700db192mr431743566b.12.1761914669956;
- Fri, 31 Oct 2025 05:44:29 -0700 (PDT)
-Date: Fri, 31 Oct 2025 12:44:29 +0000
-In-Reply-To: <20251014-b4-ksft-error-on-fail-v3-1-31e96fdf9bd7@google.com>
+	s=arc-20240116; t=1761914723; c=relaxed/simple;
+	bh=K5q//jN+xFbMnjLt2ib59yWrnzhPh0H51eHTGov1I/k=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PanCYEF421fX8gPSmVZ+zNlGYLhI50OMd6+aRp8clHU3QcuL3wZD7lYGYLJYCemEVTXJ67ujsVKEPB4CYL40DCn8S87M9ySNFVit35apNRMt9EHOnPYHTPP6GxgqMA1h7JrimwN0IXYW/lF4OM4D4YakGdLUY3O+doCGZvXFOz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MUY1i8uU; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id D71FAC0E952;
+	Fri, 31 Oct 2025 12:44:49 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 4314460704;
+	Fri, 31 Oct 2025 12:45:10 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 15CD2102F23AA;
+	Fri, 31 Oct 2025 13:45:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761914709; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=qgp6G2apTFkb3BTGo6WcnDijZFxPuR/3oy0/Azz+WCc=;
+	b=MUY1i8uUMpvgefI9eoO3XmEIctdlBkOt1P6m+IdM/SUJq3wMJEzoVpdNDeS1n1bBfnp167
+	wUxbi/+n7wmfr3AxctsYaZb+JcxV6vSe6v3DGA34/hlYlKpijUpJtPP6NLvyGJG+OOrdu4
+	TMPC+WgJ2eBBXxd/Z7q7RNSozwIRR8OEGrotYYcwYdUieEUGZwnQSeSa0tZY7/R0Xnt7Af
+	VY+Ivzz628EgNSFmfbLYgKueOoi1qP2k9g2LqKLuhGrDyjdV0zGJtRX8EjUHIKSYX7Fbh1
+	7EAz9YjTiUDEdgVlAx/l8hBnMNkDCyMt2M1hjcGX3OfO1FHuMda8wZ6R14VzqA==
+From: "Thomas Richard (TI.com)" <thomas.richard@bootlin.com>
+Date: Fri, 31 Oct 2025 13:44:56 +0100
+Subject: [PATCH v2] firmware: ti_sci: set IO Isolation only if the firmware
+ is capable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251014-b4-ksft-error-on-fail-v3-1-31e96fdf9bd7@google.com>
-X-Mailer: aerc 0.21.0
-Message-ID: <DDWIMGXNSBHN.3LI1W4BHB75W0@google.com>
-Subject: Re: [PATCH v3] selftests/run_kselftest.sh: exit with error if tests fail
-From: Brendan Jackman <jackmanb@google.com>
-To: Brendan Jackman <jackmanb@google.com>, Shuah Khan <shuah@kernel.org>
-Cc: "=?utf-8?q?Thomas_Wei=C3=9Fschuh?=" <thomas.weissschuh@linutronix.de>, <linux-kselftest@vger.kernel.org>, 
-	<linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251031-ti-sci-io-isolation-v2-1-60d826b65949@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAEevBGkC/22NSwrCQBBErxJ6bUsmX+PKe0gW82lNQ0zLzBCUM
+ Hd3DLhz+YqqVxsE8kwBzsUGnlYOLEuG6lCAnfRyJ2SXGaqyalWpaoyMwTKyIAeZdcx97Gp9MtY
+ NrqEB8vLp6cav3XodM08covj3frKqb/rzNX99q0KFXW97S61TpqsvRiTOvBytPGBMKX0ATAPOy
+ bgAAAA=
+X-Change-ID: 20251013-ti-sci-io-isolation-63a8bcd9d4e9
+To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
+ Santosh Shilimkar <ssantosh@kernel.org>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ Richard Genoud <richard.genoud@bootlin.com>, Udit Kumar <u-kumar1@ti.com>, 
+ Prasanth Mantena <p-mantena@ti.com>, Abhash Kumar <a-kumar2@ti.com>, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ "Thomas Richard (TI.com)" <thomas.richard@bootlin.com>
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue Oct 14, 2025 at 2:45 PM UTC, Brendan Jackman wrote:
-> Parsing KTAP is quite an inconvenience, but most of the time the thing
-> you really want to know is "did anything fail"?
->
-> Let's give the user the his information without them needing
-> to parse anything.
->
-> Because of the use of subshells and namespaces, this needs to be
-> communicated via a file. Just write arbitrary data into the file and
-> treat non-empty content as a signal that something failed.
->
-> In case any user depends on the current behaviour, such as running this
-> from a script with `set -e` and parsing the result for failures
-> afterwards, add a flag they can set to get the old behaviour, namely
-> --no-error-on-fail.
->
-> Signed-off-by: Brendan Jackman <jackmanb@google.com>
+Prevent calling ti_sci_cmd_set_io_isolation() on firmware that does not
+support the IO_ISOLATION capability. Add the MSG_FLAG_CAPS_IO_ISOLATION
+capability flag and check it before attempting to set IO isolation during
+suspend/resume operations.
 
-Hi Shuah,
+Without this check, systems with older firmware may experience undefined
+behavior or errors when entering/exiting suspend states.
 
-Can you take a look at this?
+Fixes: ec24643bdd62 ("firmware: ti_sci: Add system suspend and resume call")
+Signed-off-by: Thomas Richard (TI.com) <thomas.richard@bootlin.com>
+---
+Changes in v2:
+- improve commit message
+- Link to v1: https://lore.kernel.org/r/20251014-ti-sci-io-isolation-v1-1-67c7ce5d1b63@bootlin.com
+---
+ drivers/firmware/ti_sci.c | 21 +++++++++++++--------
+ drivers/firmware/ti_sci.h |  2 ++
+ 2 files changed, 15 insertions(+), 8 deletions(-)
 
-Cheers,
-Brendan
+diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
+index 49fd2ae01055d0f425062147422471f0fd49e4bd..8d96a3c12b36a908097805b44dc3343172fbbfec 100644
+--- a/drivers/firmware/ti_sci.c
++++ b/drivers/firmware/ti_sci.c
+@@ -3751,9 +3751,11 @@ static int __maybe_unused ti_sci_suspend_noirq(struct device *dev)
+ 	struct ti_sci_info *info = dev_get_drvdata(dev);
+ 	int ret = 0;
+ 
+-	ret = ti_sci_cmd_set_io_isolation(&info->handle, TISCI_MSG_VALUE_IO_ENABLE);
+-	if (ret)
+-		return ret;
++	if (info->fw_caps & MSG_FLAG_CAPS_IO_ISOLATION) {
++		ret = ti_sci_cmd_set_io_isolation(&info->handle, TISCI_MSG_VALUE_IO_ENABLE);
++		if (ret)
++			return ret;
++	}
+ 
+ 	return 0;
+ }
+@@ -3767,9 +3769,11 @@ static int __maybe_unused ti_sci_resume_noirq(struct device *dev)
+ 	u8 pin;
+ 	u8 mode;
+ 
+-	ret = ti_sci_cmd_set_io_isolation(&info->handle, TISCI_MSG_VALUE_IO_DISABLE);
+-	if (ret)
+-		return ret;
++	if (info->fw_caps & MSG_FLAG_CAPS_IO_ISOLATION) {
++		ret = ti_sci_cmd_set_io_isolation(&info->handle, TISCI_MSG_VALUE_IO_DISABLE);
++		if (ret)
++			return ret;
++	}
+ 
+ 	ret = ti_sci_msg_cmd_lpm_wake_reason(&info->handle, &source, &time, &pin, &mode);
+ 	/* Do not fail to resume on error as the wake reason is not critical */
+@@ -3928,11 +3932,12 @@ static int ti_sci_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	ti_sci_msg_cmd_query_fw_caps(&info->handle, &info->fw_caps);
+-	dev_dbg(dev, "Detected firmware capabilities: %s%s%s%s\n",
++	dev_dbg(dev, "Detected firmware capabilities: %s%s%s%s%s\n",
+ 		info->fw_caps & MSG_FLAG_CAPS_GENERIC ? "Generic" : "",
+ 		info->fw_caps & MSG_FLAG_CAPS_LPM_PARTIAL_IO ? " Partial-IO" : "",
+ 		info->fw_caps & MSG_FLAG_CAPS_LPM_DM_MANAGED ? " DM-Managed" : "",
+-		info->fw_caps & MSG_FLAG_CAPS_LPM_ABORT ? " LPM-Abort" : ""
++		info->fw_caps & MSG_FLAG_CAPS_LPM_ABORT ? " LPM-Abort" : "",
++		info->fw_caps & MSG_FLAG_CAPS_IO_ISOLATION ? " IO-Isolation" : ""
+ 	);
+ 
+ 	ti_sci_setup_ops(info);
+diff --git a/drivers/firmware/ti_sci.h b/drivers/firmware/ti_sci.h
+index 701c416b2e78f8ef20ce6741a88ffa6fd4853b2d..7559cde17b6ccfeeb1bc357fce5c5767c3f75c54 100644
+--- a/drivers/firmware/ti_sci.h
++++ b/drivers/firmware/ti_sci.h
+@@ -149,6 +149,7 @@ struct ti_sci_msg_req_reboot {
+  *		MSG_FLAG_CAPS_LPM_PARTIAL_IO: Partial IO in LPM
+  *		MSG_FLAG_CAPS_LPM_DM_MANAGED: LPM can be managed by DM
+  *		MSG_FLAG_CAPS_LPM_ABORT: Abort entry to LPM
++ *		MSG_FLAG_CAPS_IO_ISOLATION: IO Isolation support
+  *
+  * Response to a generic message with message type TI_SCI_MSG_QUERY_FW_CAPS
+  * providing currently available SOC/firmware capabilities. SoC that don't
+@@ -160,6 +161,7 @@ struct ti_sci_msg_resp_query_fw_caps {
+ #define MSG_FLAG_CAPS_LPM_PARTIAL_IO	TI_SCI_MSG_FLAG(4)
+ #define MSG_FLAG_CAPS_LPM_DM_MANAGED	TI_SCI_MSG_FLAG(5)
+ #define MSG_FLAG_CAPS_LPM_ABORT		TI_SCI_MSG_FLAG(9)
++#define MSG_FLAG_CAPS_IO_ISOLATION	TI_SCI_MSG_FLAG(7)
+ #define MSG_MASK_CAPS_LPM		GENMASK_ULL(4, 1)
+ 	u64 fw_caps;
+ } __packed;
+
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251013-ti-sci-io-isolation-63a8bcd9d4e9
+
+Best regards,
+-- 
+Thomas Richard (TI.com) <thomas.richard@bootlin.com>
+
 
