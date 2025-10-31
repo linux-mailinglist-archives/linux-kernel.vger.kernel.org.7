@@ -1,131 +1,144 @@
-Return-Path: <linux-kernel+bounces-879370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BE0FC22F32
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 03:12:52 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99FEBC22F35
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 03:13:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0738434F50A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:12:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 31DA64EF11A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB3026F2B7;
-	Fri, 31 Oct 2025 02:12:44 +0000 (UTC)
-Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1846326F46C;
+	Fri, 31 Oct 2025 02:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MBvkmt3N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDFAC26ED3D;
-	Fri, 31 Oct 2025 02:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6763D26ED51;
+	Fri, 31 Oct 2025 02:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761876763; cv=none; b=JLmsfYvK9cMXMPgDwamzVrhMLrbJBxlWUqUZYk5MDCmW0iMzKo0F4VGAEOMvXB0QGVFc4M74U8QgXX17h1FJKS3GhyNoptk/qUpQ9GNyYCZjAQfnUQRjeS2CK1fRsc2LSobWMJ/owdRyEkUs3QRwriv/GIFSN7OsX4rnMB6VA0A=
+	t=1761876788; cv=none; b=VibLnFmwQmg+9VfUaXwPL7r/WQXRAGGyU0c4e+AYNKBfABG9HeDjhQyKYbIH8AGIcjMeKmqSjXbulGe0uBM6S50K4YAxF6QDZDIMmHP63Ci2ioChaK8YHzgvqrM8BYckmMr4A36xAvGvXzJs2VGjK9pA2jlTtan2+y9/nb3dIR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761876763; c=relaxed/simple;
-	bh=ZBwZjWI7wSXLqWL/Ncs2woEyY8gobs3k9L6OvTEd0ik=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ACdqb1n8EoGLkXnnjF+T7nj9V79rF6bssbF4IjE2ws/AoNj4p0fAG6WljxS8zwpozA9MRe2oFZTDl+d1SxCr1peN5uLxG2d9jSknjrQ5ujjXc7YtiQ9IDoL96L/S8jI5eQ19oEW9JrJe6yW8P+3/ytw1DXoFZc61wKySO28LAj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
-Received: from local
-	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
-	 (Exim 4.98.2)
-	(envelope-from <daniel@makrotopia.org>)
-	id 1vEecx-000000000zr-3oCY;
-	Fri, 31 Oct 2025 02:12:32 +0000
-Date: Fri, 31 Oct 2025 02:12:26 +0000
-From: Daniel Golle <daniel@makrotopia.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andreas Schirm <andreas.schirm@siemens.com>,
-	Lukas Stockmann <lukas.stockmann@siemens.com>,
-	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Peter Christen <peter.christen@siemens.com>,
-	Avinash Jayaraman <ajayaraman@maxlinear.com>,
-	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
-	Juraj Povazanec <jpovazanec@maxlinear.com>,
-	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
-	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
-	"Livia M. Rosu" <lrosu@maxlinear.com>,
-	John Crispin <john@phrozen.org>
-Subject: Re: [PATCH net-next v5 06/12] dt-bindings: net: dsa: lantiq,gswip:
- add support for MII delay properties
-Message-ID: <aQQbCs-zn4PfrS71@makrotopia.org>
-References: <cover.1761823194.git.daniel@makrotopia.org>
- <8025f8c5fcc31adf6c82f78e5cfaf75b0f89397c.1761823194.git.daniel@makrotopia.org>
- <20251031002924.GA516142-robh@kernel.org>
- <20251031003704.GA533574-robh@kernel.org>
+	s=arc-20240116; t=1761876788; c=relaxed/simple;
+	bh=+WcBso6J6LHQRJ4EScB/fJYa5oFGrBCc0QPlOxkJw1g=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=Nt45RbiGuwCIGaSA+c2drcY2sew9cIOitnEE1RIk+FQa/hhIJ5YMyM9NdFQdjX/OP2l2eeSZZK7+VVHWt0a8ddLtrfv9d9fmxCeuYOl9ULskAVIXDg+RRZu9uqyoozHrZeXuolvOzWzZHRLIDTTaoJ8Xblgs0TPg/ZKaNl7ptwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MBvkmt3N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DB1CC113D0;
+	Fri, 31 Oct 2025 02:13:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761876786;
+	bh=+WcBso6J6LHQRJ4EScB/fJYa5oFGrBCc0QPlOxkJw1g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MBvkmt3NuXwki28bwNSFGA3le6EkiRx7VsSJ6W1jakfMK8tPeh/7kI87/BqtR9Pnr
+	 gHPCHCqqQDMDY321w4JWTijdqM3IZWnWZVq+Am9DphD2aLHP5H5mw2A8dp7bTW36vG
+	 SwMnQkrNlLqdaZ3xeZi50Gdsd6P7/3EgtalETCzw/HJrMj0mfYiAj+DwWiIEoMRQBf
+	 VArzOuILX+PGubnoC7lmKMcFSFnwo1UPFcEUU+vmrWhBeLzoejLb1XcZ7Iwur3J7a1
+	 F7t0gBMFShiyHbPWZqIaRLz9gWHJDzRgqwDW8pjmTmgslpSqrh9Hq3JF8xnOSdk3hY
+	 75opi9XMgW20A==
+Date: Fri, 31 Oct 2025 11:13:02 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 0/2] tracing: Add an option to show symbols in
+ _text+offset for function profiler
+Message-Id: <20251031111302.43c44a032d350bc0fd3ac791@kernel.org>
+In-Reply-To: <20251030052548.31130e33@gandalf.local.home>
+References: <176179500583.960652.5730113001091388258.stgit@devnote2>
+	<20251030052548.31130e33@gandalf.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251031003704.GA533574-robh@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 30, 2025 at 07:37:04PM -0500, Rob Herring wrote:
-> On Thu, Oct 30, 2025 at 07:29:24PM -0500, Rob Herring wrote:
-> > On Thu, Oct 30, 2025 at 11:28:35AM +0000, Daniel Golle wrote:
-> > > Add support for standard tx-internal-delay-ps and rx-internal-delay-ps
-> > > properties on port nodes to allow fine-tuning of RGMII clock delays.
-> > > 
-> > > The GSWIP switch hardware supports delay values in 500 picosecond
-> > > increments from 0 to 3500 picoseconds, with a post-reset default of 2000
-> > > picoseconds for both TX and RX delays. The driver currently sets the
-> > > delay to 0 in case the PHY is setup to carry out the delay by the
-> > > corresponding interface modes ("rgmii-id", "rgmii-rxid", "rgmii-txid").
-> > > 
-> > > This corresponds to the driver changes that allow adjusting MII delays
-> > > using Device Tree properties instead of relying solely on the PHY
-> > > interface mode.
-> > > 
-> > > Signed-off-by: Daniel Golle <daniel@makrotopia.org>
-> > > ---
-> > > v4:
-> > >  * remove misleading defaults
-> > > 
-> > > v3:
-> > >  * redefine ports node so properties are defined actually apply
-> > >  * RGMII port with 2ps delay is 'rgmii-id' mode
-> > > 
-> > >  .../bindings/net/dsa/lantiq,gswip.yaml        | 31 +++++++++++++++++--
-> > >  1 file changed, 28 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml b/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
-> > > index f3154b19af78..8ccbc8942eb3 100644
-> > > --- a/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
-> > > +++ b/Documentation/devicetree/bindings/net/dsa/lantiq,gswip.yaml
-> > > @@ -6,8 +6,31 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
-> > >  
-> > >  title: Lantiq GSWIP Ethernet switches
-> > >  
-> > > -allOf:
-> > > -  - $ref: dsa.yaml#/$defs/ethernet-ports
-> > 
-> > I think you can keep this as you aren't adding custom properties.
+On Thu, 30 Oct 2025 05:25:48 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
+
+> On Thu, 30 Oct 2025 12:30:05 +0900
+> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
 > 
-> Nevermind, I see the next patch now...
+> >  kernel/trace/blktrace.c              |    6 +
+> >  kernel/trace/ftrace.c                |   26 ++++++
+> >  kernel/trace/trace.c                 |  154 +++++++++++++++++-----------------
+> >  kernel/trace/trace.h                 |   40 +++++----
+> >  kernel/trace/trace_events.c          |    4 -
+> >  kernel/trace/trace_events_synth.c    |    2 
+> >  kernel/trace/trace_fprobe.c          |    6 +
+> >  kernel/trace/trace_functions_graph.c |   18 ++--
+> >  kernel/trace/trace_irqsoff.c         |   30 +++----
+> >  kernel/trace/trace_kdb.c             |    2 
+> >  kernel/trace/trace_kprobe.c          |    6 +
+> >  kernel/trace/trace_output.c          |   18 ++--
+> >  kernel/trace/trace_sched_wakeup.c    |   24 +++--
+> >  kernel/trace/trace_syscalls.c        |    4 -
+> >  kernel/trace/trace_wprobe.c          |    2 
+> 
+> I didn't realize this affected your branch too. Which means I can't apply
+> this to any branch.
+> 
+> Also, could you make a helper function...
+> 
+> +++ b/kernel/trace/trace_wprobe.c
+> @@ -260,7 +260,7 @@ print_wprobe_event(struct trace_iterator *iter, int flags,
+>  
+>         trace_seq_printf(s, "%s: (", trace_probe_name(tp));
+>  
+> -       if (!seq_print_ip_sym(s, field->ip, flags | TRACE_ITER_SYM_OFFSET))
+> +       if (!seq_print_ip_sym(s, field->ip, flags | TRACE_ITER(SYM_OFFSET)))
+>                 goto out;
+>  
+>         trace_seq_putc(s, ')');
+> 
+> that both fprobe and wprobe use? And then you don't need to have this open
+> coded everywhere.
+> 
+> That is, add this patch:
+> 
+> diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
+> index 591adc9bb1e9..bd26004cc320 100644
+> --- a/kernel/trace/trace_probe.h
+> +++ b/kernel/trace/trace_probe.h
+> @@ -598,3 +598,9 @@ struct uprobe_dispatch_data {
+>  	struct trace_uprobe	*tu;
+>  	unsigned long		bp_addr;
+>  };
+> +
+> +static inline int probe_print_ip_sym(struct trace_seq *s, unsigned long ip,
+> +				     int flags)
+> +{
+> +	retun seq_print_ip_sym(s, field->ip, flags | TRACE_ITER_SYM_OFFSET);
+> +}
+> 
+> And use that instead.
 
-I suppose you mean [08/12] ("dt-bindings: net: dsa: lantiq,gswip: add
-MaxLinear RMII refclk output property"), right?
+I would like to use more generic wrappers:
 
-The intention to divert from dsa.yaml#/$defs/ethernet-ports
-already in this patch was to enforce the possible values of
-{rx,tx}-internal-delay-ps.
+static inline int seq_print_ip_sym_offset(struct trace_seq *s, unsigned long ip,
+					   unsigned long sym_flags)
+{
+	return seq_print_ip_sym(s,ip, sym_flags | TRACE_ITER(SYM_OFFSET));
+}
+static inline int seq_print_ip_sym_no_offset(struct trace_seq *s, unsigned long ip,
+					   unsigned long sym_flags)
+{
+	return seq_print_ip_sym(s,ip, sym_flags & ~TRACE_ITER(SYM_OFFSET));
+}
 
-Anyway, so you are saying I can keep the change in this patch? Or
-should I just drop the constraints on the possible values of the
-delays and only divert from dsa.yaml#/$defs/ethernet-ports once I'm
-actually adding maxlinear,rmii-refclk-out?
+In trace_output.h, since this is also used in function_graph tracer.
+
+Thank you,
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
