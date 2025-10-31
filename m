@@ -1,117 +1,125 @@
-Return-Path: <linux-kernel+bounces-880013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32F6CC24A75
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:59:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CD1FEC24A7B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:59:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7599E1A226F1
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:58:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11EE31A25017
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E53B43431F4;
-	Fri, 31 Oct 2025 10:58:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF6534320F;
+	Fri, 31 Oct 2025 10:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gzsv3UXb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="USDSA+cG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B785277026;
-	Fri, 31 Oct 2025 10:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A5A277026;
+	Fri, 31 Oct 2025 10:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761908292; cv=none; b=h3sH00DT4x9RKQtu7OcuSYlWpbSoOhqfKlC5J6jCizjQSwFCxqVnTj9cD5AiepBOGmbY6qaI6JOzj+ceMY0hznAtZ4CisSVEjGjcqkn8UKA3giBcU/id2dGLm0tfsNAvjQQ7ptrEgB0tuOwR33MNoEjJ81WZbaOJiJNxfxorJGk=
+	t=1761908314; cv=none; b=q970AYMmk7I8V5VkLefhbdLsxI0k+Y4fNI/9Ro/7RcZci1ZGUFyCZiQTtV+o4hBCUXjwIkg5W933b3pGPfVkcJZevWlcxF7DcEMSikR/t0YudAtR31/kIkJyK5hxWPkBdjT0/juM0fEPDFkm4FXG6yGg2DMT7uuKj1zTfjQjAak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761908292; c=relaxed/simple;
-	bh=5do5Ubxatm6jhrmYPuudJ1w3ROQptVL1YObQ7qj6QOY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Jvzumbz3dtpQBCIMlvFX1+J/GBNqkyN7LWXXARNvOXnOUAslylB+OYhEPLTAQia3eDCRTz4s/jdAe39jfZDnRqdQ3dRswg6y+qmfvXDYmDn7MGegPzb9owJSHpfXvMVQcfFV1OpmKwPARXhLzKniujWDKfNr1ZwdPo55PwdmJZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gzsv3UXb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BC717C4CEF8;
-	Fri, 31 Oct 2025 10:58:06 +0000 (UTC)
+	s=arc-20240116; t=1761908314; c=relaxed/simple;
+	bh=LpJlMhIspbUx/F0UxN1zmCEQJYnhFqHunkuXu4FDahw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TFst/7ucOwF/EcFoO++N4FgKS3xu07x0DJfrbVCAF87f5S+A8PJ/uAd0NHGkFXG3LTGi6tUR/W4ZPtLfkcNzho5Irc3GcPGvX14pU8L++6tIP/wgGCjMjDJH0kImir5nCXeGUEG4yIFOB01cbJqoWaCoysxaPk5dXPeJmcmW3CQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=USDSA+cG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 997A4C4CEFD;
+	Fri, 31 Oct 2025 10:58:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761908286;
-	bh=5do5Ubxatm6jhrmYPuudJ1w3ROQptVL1YObQ7qj6QOY=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=Gzsv3UXbHy7RyruyvtZcbyq8FVXlB7mFLG1WRH79syQ/wPyO0D/RKrqRAn15mDmQS
-	 BNRh1XzZl5ejcxq/Ws7eNMKxpsU1fxrcowWrcsVTL1PsOmDgdTIWzkyMgNEiQSULxz
-	 yEA4+teRszW+P26gQJrzxdCtRA2I1GC8jWxxRzDcj4qZDkGUAq4jA2jd5nFCZiqlp8
-	 ge7t2J8c8nT1m9/xxu58Z19LtN4HBFEwwnXHEMAMblS1xWV2tFEL4YuEBYJlsPEVHk
-	 UDZgf/nPir9fq/YlGWq4jJ7zr8E8FMuubhBu4Uv4b42P9v2gndHRTgCe9JlQvHL0eS
-	 0DtowObYF8Pyw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD5B2CCF9FA;
-	Fri, 31 Oct 2025 10:58:06 +0000 (UTC)
-From: Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org>
-Date: Fri, 31 Oct 2025 10:58:02 +0000
-Subject: [PATCH] iio: imu: inv_icm45600: Initializes
- inv_icm45600_buffer_postdisable sleep
+	s=k20201202; t=1761908314;
+	bh=LpJlMhIspbUx/F0UxN1zmCEQJYnhFqHunkuXu4FDahw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=USDSA+cGrJsbV4SfrArJT9UeuUOBBAM7kuSDKgISSb3ZnEgJGLXh8TkjAvXKVk7xr
+	 6Da2tW9iYt/uCbZYRfsDzpuukpW99fukSAJ6lfBo/o0EJF2EGHYag/6C8hwxdQAdVL
+	 0TiRBVZ8A2q6/Pt2BTSsldapIL7vtul06kMM077jeUstGgEJvESewl7+/HsD7GvTD4
+	 Bx2DOKQ07GV6bq5qFI6sCXgfZ6jfgsZiNrLhqNQgKYPyTwmHGqVRgoDVif7wZ9ZB+o
+	 YqVbvd9AtKIejRvD6oUtQwxtQsceAmRqM7mE95aerQr+NKX0Gw6gyWmXIPfzLzRiQf
+	 n5C3XWgBXCcgw==
+Date: Fri, 31 Oct 2025 10:58:29 +0000
+From: Conor Dooley <conor@kernel.org>
+To: claudiu beznea <claudiu.beznea@tuxon.dev>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	pierre-henry.moussay@microchip.com,
+	valentina.fernandezalanis@microchip.com,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 1/7] reset: mpfs: add non-auxiliary bus probing
+Message-ID: <20251031-mosaic-trimness-d683527a6866@spud>
+References: <20251029-chewing-absolve-c4e6acfe0fa4@spud>
+ <20251029-macarena-neglector-318431fec367@spud>
+ <a996e76e-8201-4b72-b4fa-0ea9ac62e6b1@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251031-icm45600_fix_buffer_sleep_init-v1-1-924efbb165e8@tdk.com>
-X-B4-Tracking: v=1; b=H4sIADmWBGkC/x2NUQqDMBAFryL73cAmaiq9SilB7dt2oU0lqSKId
- zf4OTDMbJSRFJlu1UYJi2b9xQL2UtH47uMLRp+FybFrLdfW6PhtWs8cRNcwzCJIIX+AKWjUv+n
- YO/Hgq3QNlciUUMRzcH/s+wHd5zjpcAAAAA==
-X-Change-ID: 20251031-icm45600_fix_buffer_sleep_init-8062f6e07f84
-To: Jonathan Cameron <jic23@kernel.org>, 
- David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Remi Buisson <remi.buisson@tdk.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1761908285; l=1222;
- i=remi.buisson@tdk.com; s=20250411; h=from:subject:message-id;
- bh=VpdMvsXgKn/COc93uRlwlfHH10F/tvvmLU5wsUZM+qk=;
- b=88NM6IdkF46e5D0ne2znApGOCl5VOkNTq5eKGAlANfUloG09rdBKjBok1Q/3dI34AXfq+nl2o
- SuVaGkLinm2BoJReF8U0Pu5E0VLPHGBQbhxDkzb/zzK+jvBIHl6m1FJ
-X-Developer-Key: i=remi.buisson@tdk.com; a=ed25519;
- pk=yDVMi4C7RpXN4dififo42A7fDDt3THYzoZoNq9lUZuo=
-X-Endpoint-Received: by B4 Relay for remi.buisson@tdk.com/20250411 with
- auth_id=372
-X-Original-From: Remi Buisson <remi.buisson@tdk.com>
-Reply-To: remi.buisson@tdk.com
-
-From: Remi Buisson <remi.buisson@tdk.com>
-
-Fixes: 06674a72cf7a ("iio: imu: inv_icm45600: add buffer support in iio devices")
----
-The sleep variable in inv_icm45600_buffer_postdisable could be used without being
-assigned in case f error. It must be initialized to 0 by default.
-
-Signed-off-by: Remi Buisson <remi.buisson@tdk.com>
----
- drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c b/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c
-index 2efcc177f9d60a6a2509e448c0ddaf4b9e1fd755..bb8382feddc0fd882a6be2ce5e4fe77ab68f13fd 100644
---- a/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c
-+++ b/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c
-@@ -357,7 +357,7 @@ static int inv_icm45600_buffer_postdisable(struct iio_dev *indio_dev)
- 	struct device *dev = regmap_get_device(st->map);
- 	unsigned int sensor;
- 	unsigned int *watermark;
--	unsigned int sleep;
-+	unsigned int sleep = 0;
- 	int ret;
- 
- 	if (indio_dev == st->indio_gyro) {
-
----
-base-commit: 70437bbd7529e9860fb7f0c92a89e0e6abaa994e
-change-id: 20251031-icm45600_fix_buffer_sleep_init-8062f6e07f84
-
-Best regards,
--- 
-Remi Buisson <remi.buisson@tdk.com>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2eMSdNOwjosdKxAa"
+Content-Disposition: inline
+In-Reply-To: <a996e76e-8201-4b72-b4fa-0ea9ac62e6b1@tuxon.dev>
 
 
+--2eMSdNOwjosdKxAa
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Oct 31, 2025 at 09:20:17AM +0200, claudiu beznea wrote:
+> On 10/29/25 18:11, Conor Dooley wrote:
+> > -static int mpfs_reset_probe(struct auxiliary_device *adev,
+> > -			    const struct auxiliary_device_id *id)
+> > +static int mpfs_reset_mfd_probe(struct platform_device *pdev)
+> >   {
+> > -	struct device *dev =3D &adev->dev;
+> >   	struct reset_controller_dev *rcdev;
+> > +	struct device *dev =3D &pdev->dev;
+> > +	struct mpfs_reset *rst;
+> > +
+> > +	rst =3D devm_kzalloc(dev, sizeof(*rst), GFP_KERNEL);
+> > +	if (!rst)
+> > +		return -ENOMEM;
+> > +
+> > +	rcdev =3D &rst->rcdev;
+> > +	rcdev->dev =3D dev;
+> > +	rcdev->ops =3D &mpfs_reset_ops;
+> > +
+> > +	rcdev->of_node =3D pdev->dev.parent->of_node;
+> > +	rcdev->of_reset_n_cells =3D 1;
+> > +	rcdev->of_xlate =3D mpfs_reset_xlate;
+> > +	rcdev->nr_resets =3D MPFS_NUM_RESETS;
+> > +
+> > +	rst->regmap =3D device_node_to_regmap(pdev->dev.parent->of_node);
+> > +	if (IS_ERR(rst->regmap))
+> > +		dev_err_probe(dev, PTR_ERR(rst->regmap), "Failed to find syscon regm=
+ap\n");
+>=20
+> Do you want to continue registering the reset controller here? rcdev->base
+> is NULL, thus the reset controller ops will fail, if I'm not wrong.
+
+
+Oh, good point. That line is missing a return.
+
+--2eMSdNOwjosdKxAa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQSWVQAKCRB4tDGHoIJi
+0kU4AP0auWGgL7fvd2ZpPml/M7wJExlNMK6dDbH0jluNcknvYAD+MyFTGGUMPK0D
+94ntVM/k3LljGZVFZDJ9Lovn1G4vFQw=
+=xnj6
+-----END PGP SIGNATURE-----
+
+--2eMSdNOwjosdKxAa--
 
