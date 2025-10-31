@@ -1,111 +1,172 @@
-Return-Path: <linux-kernel+bounces-880349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89CACC2592F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:30:11 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31236C2592C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:30:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2AE0B4EF589
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:27:32 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8D8D334ECC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B8D34B1B9;
-	Fri, 31 Oct 2025 14:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86A4C34C14E;
+	Fri, 31 Oct 2025 14:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kxcFP4UT";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GQEAfg5N"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="m/llmHWP"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3AD1223DF0
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 14:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93DAE34D38A;
+	Fri, 31 Oct 2025 14:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761920849; cv=none; b=B2qFakmWDgDoKmG/wg74sp9WXM3kT/fZFI8UrG+xGi2Zk58l1xsrOm6tN0kbfT4xmKzYb0UgmJ5IBcD0eR/xXoGyjZUSgXHS+K5GPZiYCznKiRHcIAOhIm+JH7ktgbErlHlYt9g8nFd/iS0XcCiOwP94rScn+bRM5A2KFnFzA8M=
+	t=1761920996; cv=none; b=GRN4vpXhK3lMmEYLSG5ty94rPQ6sigJGD10dW9vFksNdelyUmy3MQw9GqYX7TltEkc0EmERzFCgJ1wKYjMPEXXM60qjXBLW8amyrIGOI2HK3ewaE2suxWZadlRGAWMVdUw1Au9VzMw9XRU40NNrLb18E8B4Bca5GMAkgdUllVcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761920849; c=relaxed/simple;
-	bh=6dabikcygS5NFGAJn1YRnp2DMF+Tl2EmigcpVURkj3w=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kp7Nl+Dr2YSVZGQ2eAeEvZLI609Oxt2NPAuRAkHErqzsAWwUhBRRPrqi+CFaP8it2nb56MHBzOtJjct9Ife2sG3aXSNkvsnWrZ+6Lvp8eCb/HrbLAC4owJQ56/CKNIjemrrvOlYLL422yf5ERckif28dfypOl8NZ9VisqthE+qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kxcFP4UT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GQEAfg5N; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1761920844;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=puHnyc20p8sAWYsRHJv+bIg840wKApr1Wt+zvBnTdM4=;
-	b=kxcFP4UTZ2S10SgJ6dYc5lS2OufRvY5RnnE1p3+oWjSJjM0QPalpHavX01uiWMwewtyr+f
-	sZDgr/Vg8H3nQMG5WuUHxt2HN6puLXWxiDShZRsrMzPUuYvtRS0eD7o++yf6YLAoMxw4HY
-	qqI3szZ2xJQgrcjQAUpgMK6fmEzj3vJhi1kZMun/KBFnSiI3lhoIlJGeRq5tvPik9352Vg
-	AbSoWvcwlz9haEhIbTj65cOVBasgsPOB/vKidXbnOtlaeAwJAl/ZG5N+l/YyWgiCZkAeDH
-	eBi0MeUgH/dkp1kMSWTbEczve69FsMOIU89sb724CNlHlKytr9hFx8Njv7cBRA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1761920844;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=puHnyc20p8sAWYsRHJv+bIg840wKApr1Wt+zvBnTdM4=;
-	b=GQEAfg5NIAuBSHfOmdTtuzRwmt0TdRXgRmKGX/DAfCom4x00fMq/uucuKMpdan9+TZ/bKD
-	F6kLOZ06Wv2LU6Cg==
-To: Prakash Sangappa <prakash.sangappa@oracle.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Michael Jeanson
- <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
- "Paul E. McKenney" <paulmck@kernel.org>, "x86@kernel.org"
- <x86@kernel.org>, Sean Christopherson <seanjc@google.com>, Wei Liu
- <wei.liu@kernel.org>
-Subject: Re: [patch V6 20/31] rseq: Replace the original debug implementation
-In-Reply-To: <C1AC58DD-70DC-49C3-A590-2A0198AE974D@oracle.com>
-References: <20251027084220.785525188@linutronix.de>
- <20251027084307.212510692@linutronix.de>
- <C1AC58DD-70DC-49C3-A590-2A0198AE974D@oracle.com>
-Date: Fri, 31 Oct 2025 15:27:22 +0100
-Message-ID: <878qgrtad1.ffs@tglx>
+	s=arc-20240116; t=1761920996; c=relaxed/simple;
+	bh=DpRmmnQNFBCQ/QafgwFnqLT9Yw/H1JWWO9tLoLVtAy4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hMMjOQbF57fXTy+zbieJu1qFW39orZSv+ayUi8JjyWWcCWxL1SCswVkW9rIRidzut4IYufxLO/gEUNuW/Ax5zw1xQEIbB6pnIwqjnYu6dwUIRFPx4aGzgGQKqU9xRfUqQbrjvaoFBDWQxW4Reo+l9cu3HD/x3FNppGBJ7eJ2tGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=m/llmHWP; arc=none smtp.client-ip=185.171.202.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 4FEEBC0E955;
+	Fri, 31 Oct 2025 14:29:31 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id BF96E60710;
+	Fri, 31 Oct 2025 14:29:51 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id C4B4A11818003;
+	Fri, 31 Oct 2025 15:29:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1761920989; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=H1xEmCgdr5BM399Kc4ZsWwaTbhEQ52MJYYiQpqbSK6Q=;
+	b=m/llmHWPK2GTOxgP86qebD1Z2Edet7KZozbxg7xHP71zP8WGHqlNCsjTjzbgRJW6AoYEg9
+	PGGuEBK7TNuc+3zADlLbC1jrjiYc/TXhPfAwEtjv3025kcM3TvB0cUwMNtHDn+fuYXbapk
+	18lKsj6lpv1/ObuOPQiBVRZx/Tm+zaLVFOXH7eT76X6+OiJSchpc3v+iGXicmC9AbAQ7Fi
+	n3R42rQTkma0JCEYRFgzMb9znRzRns4yCbMUv4DSU7pRjgiVIxLEd6NnupsCZT4TGW2iAp
+	n6HmKRiLt0yJEP375+9QgT+CNjKgF6b7Kiq48SW1im8mtyVm7PYpr3cu982RMw==
+Date: Fri, 31 Oct 2025 15:29:30 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, Shawn Guo
+ <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>, Wolfram Sang
+ <wsa+renesas@sang-engineering.com>, Peter Rosin <peda@axentia.se>, Arnd
+ Bergmann <arnd@arndb.de>, Saravana Kannan <saravanak@google.com>, Bjorn
+ Helgaas <bhelgaas@google.com>, Charles Keepax
+ <ckeepax@opensource.cirrus.com>, Richard Fitzgerald
+ <rf@opensource.cirrus.com>, David Rhodes <david.rhodes@cirrus.com>, Linus
+ Walleij <linus.walleij@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Mark Brown <broonie@kernel.org>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>, Len Brown <lenb@kernel.org>, Davidlohr
+ Bueso <dave@stgolabs.net>, Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Dave Jiang <dave.jiang@intel.com>, Alison Schofield
+ <alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, Ira
+ Weiny <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, Wolfram Sang <wsa@kernel.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-sound@vger.kernel.org,
+ patches@opensource.cirrus.com, linux-gpio@vger.kernel.org,
+ linux-pm@vger.kernel.org, linux-spi@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-cxl@vger.kernel.org, Allan Nielsen
+ <allan.nielsen@microchip.com>, Horatiu Vultur
+ <horatiu.vultur@microchip.com>, Steen Hegelund
+ <steen.hegelund@microchip.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v4 05/29] dt-bindings: bus: Add simple-platform-bus
+Message-ID: <20251031152930.3c51a313@bootlin.com>
+In-Reply-To: <CAMuHMdVnsWMB24BTFKwggEXKOtqJ96GWZh2Xz+ogocQHM+=+6Q@mail.gmail.com>
+References: <20251015071420.1173068-1-herve.codina@bootlin.com>
+	<20251015071420.1173068-6-herve.codina@bootlin.com>
+	<CAMuHMdVnsWMB24BTFKwggEXKOtqJ96GWZh2Xz+ogocQHM+=+6Q@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Thu, Oct 30 2025 at 21:52, Prakash Sangappa wrote:
+On Fri, 31 Oct 2025 09:52:16 +0100
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
->> On Oct 27, 2025, at 1:45=E2=80=AFAM, Thomas Gleixner <tglx@linutronix.de=
-> wrote:
->>=20
->> Just utilize the new infrastructure and put the original one to rest.
->>=20
->> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
->> Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> [=E2=80=A6]
->> void rseq_syscall(struct pt_regs *regs)
->> {
->> - unsigned long ip =3D instruction_pointer(regs);
->> struct task_struct *t =3D current;
->> - struct rseq_cs rseq_cs;
->> + u64 csaddr;
->>=20
->> - if (!t->rseq.usrptr)
->> + if (!t->rseq.event.has_rseq)
->> + return;
->> + if (!get_user(csaddr, &t->rseq.usrptr->rseq_cs))
->> + goto fail;
->
-> I believe get_user() would returns non zero(-EFAULT) on failure.=20=20
-> Noticed test program dies with segv when command line parameter rseq_debu=
-g=3D1 is set.=20
->
-> So, It should be
->   if (get_user(csaddr, &t->rseq.usrptr->rseq_cs))
-> 	goto fail;
+> Hi Hervé,
+> 
+> On Wed, 15 Oct 2025 at 09:17, Herve Codina <herve.codina@bootlin.com> wrote:
+> > A Simple Platform Bus is a transparent bus that doesn't need a specific
+> > driver to perform operations at bus level.
+> >
+> > Similar to simple-bus, a Simple Platform Bus allows to automatically
+> > instantiate devices connected to this bus.
+> >
+> > Those devices are instantiated only by the Simple Platform Bus probe
+> > function itself.
+> >
+> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>  
+> 
+> Thanks for your patch!
+> 
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/bus/simple-platform-bus.yaml
+> > @@ -0,0 +1,50 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/bus/simple-platform-bus.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Simple Platform Bus
+> > +
+> > +maintainers:
+> > +  - Herve Codina <herve.codina@bootlin.com>
+> > +
+> > +description: |
+> > +  A Simple Platform Bus is a transparent bus that doesn't need a specific
+> > +  driver to perform operations at bus level.
+> > +
+> > +  Similar to simple-bus, a Simple Platform Bus allows to automatically
+> > +  instantiate devices connected to this bus. Those devices are instantiated
+> > +  only by the Simple Platform Bus probe function itself.  
+> 
+> So what are the differences with simple-bus? That its children are
+> instantiated "only by the Simple Platform Bus probe function itself"?
+> If that is the case, in which other places are simple-bus children
+> instantiated?
 
-Indeed
+In of_platform_populate(). It call of_platform_bus_create() which is
+recursive:
+  https://elixir.bootlin.com/linux/v6.14/source/drivers/of/platform.c#L374
+
+So children are instantiated out of the bus probe().
+
+
+> 
+> Do we need properties related to power-management (clocks, power-domains),
+> or will we need a "simple-pm-platform-bus" later? ;-)
+> 
+> FTR, I still think we wouldn't have needed the distinction between
+> "simple-bus" and "simple-pm-bus"...
+
+I would like that. Using simple-pm-bus solves my issue but I don't have any
+clocks or power-domains to set. The simple-pm-bus bus requires at least
+one of them. Even if the driver itself solved my issue, I cannot be
+compliant with its binding.
+
+Best regards,
+Hervé
 
