@@ -1,44 +1,47 @@
-Return-Path: <linux-kernel+bounces-879314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23E77C22D1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:50:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2A5DC22D0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:48:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 992FD3A14BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:47:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 67C414E5261
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:48:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306B01F5617;
-	Fri, 31 Oct 2025 00:47:24 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 545B61FF1C4;
+	Fri, 31 Oct 2025 00:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WQ2YfmJ6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D61419309E;
-	Fri, 31 Oct 2025 00:47:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E719D1A0BD6;
+	Fri, 31 Oct 2025 00:47:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761871643; cv=none; b=Dw2DVU6TNZ8O92D2E8r0xAQOk0eFGoO3CpRVKIsdEU2oXqxVoMTc1m8ojGgvSB2+ZYW/OI3Qzo49G9V6/qVJxZnU3uO/Qt8ImFi4XjoW8l5cwWr7V5uMs2be8I5xyWE5ZscPuMrVCm0ZOphX7uSAp8pVekE3aaxAaTybvw9cjhc=
+	t=1761871673; cv=none; b=b8ICsa1CqpVfZNngIPPvC4/mb0Q2Ob0hIPhrPl9IO31GjrlAz1fe1Ba9in3NDvNfq0xinimpuwHBGQWISKIbXgYkjGYnUs3hB2AQGHO5ZvGznzOyuj6Ssw8lJ5qIZlWiBz96265oJ+AmNdRD0/kEOcMgtGLbSm1j9xivAuWpKn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761871643; c=relaxed/simple;
-	bh=6cgPR9XTw7YF+B+jZk7vxc3y9myV6hT8pVhU/Uzo320=;
+	s=arc-20240116; t=1761871673; c=relaxed/simple;
+	bh=Q/3pCYP1Hkx205QNrpRkbTB6pd0suGsT/vBlPAPGQFs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PhIBlVPgqA85lxSo/4WwnG6HykQTBCVvJW9bmQtKCjnFHA4ehkwhDdZCuysLq4NGMpuFeGehJ3Of5mXYG5AoSGnEr985DXtB6YwEiYrl/QBsvmUDqn7e4rML1raYNB8jF5U5oxrYtDrWXwQwvEqG9PZnKfWp0a5Kyi5r5Bs9kw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4cyMkj0KnVzYQtg4;
-	Fri, 31 Oct 2025 08:47:09 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 9B13B1A01A1;
-	Fri, 31 Oct 2025 08:47:16 +0800 (CST)
-Received: from [10.67.111.176] (unknown [10.67.111.176])
-	by APP2 (Coremail) with SMTP id Syh0CgBX+EASBwRpdyu7CA--.20734S2;
-	Fri, 31 Oct 2025 08:47:16 +0800 (CST)
-Message-ID: <a35dbd76-9f85-4ac2-aa57-1f0f78ff9fc0@huaweicloud.com>
-Date: Fri, 31 Oct 2025 08:47:14 +0800
+	 In-Reply-To:Content-Type; b=g9wybG5vvm99X9GnWSsxUBANywTeflImHGJQqHsCl0sqADQF8cdJHY00cxOT7SEdBNiSgvklbO2LeGDk/LcTf2s9/3k8+WizfdjwoE5mvsA+mpvWo3FPOzcM6oGYRLVGBib87R1UvVtSU8LK5BqmTScaBHTpau81WtiCtk9Z4Yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WQ2YfmJ6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7478FC113D0;
+	Fri, 31 Oct 2025 00:47:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761871671;
+	bh=Q/3pCYP1Hkx205QNrpRkbTB6pd0suGsT/vBlPAPGQFs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WQ2YfmJ6V4akOBoME9bk6hBT8Ojt8oYb+S0rK+4CFe6vFKJhZubbOK/2d5uxlZrEg
+	 iQqyLleYmOG1SjFxJ+Vj32ui5xD/u0NA9QaMeIXdsavXtz/+ohlMNm3rMmwswfzhry
+	 Mxq7y3IRz28xRtok86Y+nV8LkY6MvpZ2bxVsu3DJfMTh2gtdsVcJear3f7koqE516C
+	 RoYkDh7h3p8fsG8oXDqDGUPcLUh1/NAE2CREdFaAdP6wxs+Y8DTLVrbK/lgxIig0Nw
+	 weUOzPPuYi8+73ffp3howKi5mz8rlVJqDlMD5s704s+ygmP/dXEvWWQWEo8vREAV9d
+	 FP8mQAeXPUlzA==
+Message-ID: <c9788b3b-00a7-44a3-8e2b-56ea4581ee78@kernel.org>
+Date: Fri, 31 Oct 2025 00:47:47 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,272 +49,654 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv4 2/2] sched/deadline: Walk up cpuset hierarchy to decide
- root domain when hot-unplug
-To: Pingfan Liu <piliu@redhat.com>
-Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
- Waiman Long <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>, Pierre Gondois <pierre.gondois@arm.com>,
- Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
- =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
-References: <20251028034357.11055-1-piliu@redhat.com>
- <20251028034357.11055-2-piliu@redhat.com>
- <73663a65-8028-4294-8eaf-9c94dc4451ff@huaweicloud.com>
- <aQH3-_YmqAq9aE67@fedora>
- <44130515-725a-4f44-b064-3b396ed26159@huaweicloud.com>
- <aQNBydr4geMWXebC@fedora>
+Subject: Re: [PATCH v3 5/5] media: iris: Add internal buffer calculation for
+ AV1 decoder
+To: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+ Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, kernel test robot <lkp@intel.com>
+References: <20251030-av1d_stateful_v3-v3-0-a1184de52fc4@oss.qualcomm.com>
+ <yKXH3pDx5EDew0YEvZQ_9-nq6Gr28-iWM3acWPllsTGoMyf63bdwxzHOP_Ad1Nl9NVnFPWQx2r5jaloGxUp0XQ==@protonmail.internalid>
+ <20251030-av1d_stateful_v3-v3-5-a1184de52fc4@oss.qualcomm.com>
+From: Bryan O'Donoghue <bod@kernel.org>
 Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <aQNBydr4geMWXebC@fedora>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgBX+EASBwRpdyu7CA--.20734S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxtw17XFWDGry5GrWDWFy5twb_yoWfuryUpF
-	yDGF43Ar4UJr1xCw4aqw1UuF9aq3ykJF17XrnxJw1rAr9IyFn7Jr1UZFn8Cr97urnxCr1U
-	ZrWDKr4a9FyYyFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
-	s2-5UUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+In-Reply-To: <20251030-av1d_stateful_v3-v3-5-a1184de52fc4@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-
-On 2025/10/30 18:45, Pingfan Liu wrote:
-> On Thu, Oct 30, 2025 at 02:44:43PM +0800, Chen Ridong wrote:
->>
->>
->> On 2025/10/29 19:18, Pingfan Liu wrote:
->>> Hi Ridong,
->>>
->>> Thank you for your review, please see the comment below.
->>>
->>> On Wed, Oct 29, 2025 at 10:37:47AM +0800, Chen Ridong wrote:
->>>>
->>>>
->>>> On 2025/10/28 11:43, Pingfan Liu wrote:
->>>>> *** Bug description ***
->>>>> When testing kexec-reboot on a 144 cpus machine with
->>>>> isolcpus=managed_irq,domain,1-71,73-143 in kernel command line, I
->>>>> encounter the following bug:
->>>>>
->>>>> [   97.114759] psci: CPU142 killed (polled 0 ms)
->>>>> [   97.333236] Failed to offline CPU143 - error=-16
->>>>> [   97.333246] ------------[ cut here ]------------
->>>>> [   97.342682] kernel BUG at kernel/cpu.c:1569!
->>>>> [   97.347049] Internal error: Oops - BUG: 00000000f2000800 [#1] SMP
->>>>> [...]
->>>>>
->>>>> In essence, the issue originates from the CPU hot-removal process, not
->>>>> limited to kexec. It can be reproduced by writing a SCHED_DEADLINE
->>>>> program that waits indefinitely on a semaphore, spawning multiple
->>>>> instances to ensure some run on CPU 72, and then offlining CPUs 1–143
->>>>> one by one. When attempting this, CPU 143 failed to go offline.
->>>>>   bash -c 'taskset -cp 0 $$ && for i in {1..143}; do echo 0 > /sys/devices/system/cpu/cpu$i/online 2>/dev/null; done'
->>>>>
->>>>> `
->>>>> *** Issue ***
->>>>> Tracking down this issue, I found that dl_bw_deactivate() returned
->>>>> -EBUSY, which caused sched_cpu_deactivate() to fail on the last CPU.
->>>>> But that is not the fact, and contributed by the following factors:
->>>>> When a CPU is inactive, cpu_rq()->rd is set to def_root_domain. For an
->>>>> blocked-state deadline task (in this case, "cppc_fie"), it was not
->>>>> migrated to CPU0, and its task_rq() information is stale. So its rq->rd
->>>>> points to def_root_domain instead of the one shared with CPU0.  As a
->>>>> result, its bandwidth is wrongly accounted into a wrong root domain
->>>>> during domain rebuild.
->>>>>
->>>>> The key point is that root_domain is only tracked through active rq->rd.
->>>>> To avoid using a global data structure to track all root_domains in the
->>>>> system, there should be a method to locate an active CPU within the
->>>>> corresponding root_domain.
->>>>>
->>>>> *** Solution ***
->>>>> To locate the active cpu, the following rules for deadline
->>>>> sub-system is useful
->>>>>   -1.any cpu belongs to a unique root domain at a given time
->>>>>   -2.DL bandwidth checker ensures that the root domain has active cpus.
->>>>>
->>>>> Now, let's examine the blocked-state task P.
->>>>> If P is attached to a cpuset that is a partition root, it is
->>>>> straightforward to find an active CPU.
->>>>> If P is attached to a cpuset that has changed from 'root' to 'member',
->>>>> the active CPUs are grouped into the parent root domain. Naturally, the
->>>>> CPUs' capacity and reserved DL bandwidth are taken into account in the
->>>>> ancestor root domain. (In practice, it may be unsafe to attach P to an
->>>>> arbitrary root domain, since that domain may lack sufficient DL
->>>>> bandwidth for P.) Again, it is straightforward to find an active CPU in
->>>>> the ancestor root domain.
->>>>>
->>>>> This patch groups CPUs into isolated and housekeeping sets. For the
->>>>> housekeeping group, it walks up the cpuset hierarchy to find active CPUs
->>>>> in P's root domain and retrieves the valid rd from cpu_rq(cpu)->rd.
->>>>>
->>>>> Signed-off-by: Pingfan Liu <piliu@redhat.com>
->>>>> Cc: Waiman Long <longman@redhat.com>
->>>>> Cc: Tejun Heo <tj@kernel.org>
->>>>> Cc: Johannes Weiner <hannes@cmpxchg.org>
->>>>> Cc: "Michal Koutný" <mkoutny@suse.com>
->>>>> Cc: Ingo Molnar <mingo@redhat.com>
->>>>> Cc: Peter Zijlstra <peterz@infradead.org>
->>>>> Cc: Juri Lelli <juri.lelli@redhat.com>
->>>>> Cc: Pierre Gondois <pierre.gondois@arm.com>
->>>>> Cc: Vincent Guittot <vincent.guittot@linaro.org>
->>>>> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
->>>>> Cc: Steven Rostedt <rostedt@goodmis.org>
->>>>> Cc: Ben Segall <bsegall@google.com>
->>>>> Cc: Mel Gorman <mgorman@suse.de>
->>>>> Cc: Valentin Schneider <vschneid@redhat.com>
->>>>> To: cgroups@vger.kernel.org
->>>>> To: linux-kernel@vger.kernel.org
->>>>> ---
->>>>> v3 -> v4:
->>>>> rename function with cpuset_ prefix
->>>>> improve commit log
->>>>>
->>>>>  include/linux/cpuset.h  | 18 ++++++++++++++++++
->>>>>  kernel/cgroup/cpuset.c  | 26 ++++++++++++++++++++++++++
->>>>>  kernel/sched/deadline.c | 30 ++++++++++++++++++++++++------
->>>>>  3 files changed, 68 insertions(+), 6 deletions(-)
->>>>>
->>>>> diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
->>>>> index 2ddb256187b51..d4da93e51b37b 100644
->>>>> --- a/include/linux/cpuset.h
->>>>> +++ b/include/linux/cpuset.h
->>>>> @@ -12,6 +12,7 @@
->>>>>  #include <linux/sched.h>
->>>>>  #include <linux/sched/topology.h>
->>>>>  #include <linux/sched/task.h>
->>>>> +#include <linux/sched/housekeeping.h>
->>>>>  #include <linux/cpumask.h>
->>>>>  #include <linux/nodemask.h>
->>>>>  #include <linux/mm.h>
->>>>> @@ -130,6 +131,7 @@ extern void rebuild_sched_domains(void);
->>>>>  
->>>>>  extern void cpuset_print_current_mems_allowed(void);
->>>>>  extern void cpuset_reset_sched_domains(void);
->>>>> +extern void cpuset_get_task_effective_cpus(struct task_struct *p, struct cpumask *cpus);
->>>>>  
->>>>>  /*
->>>>>   * read_mems_allowed_begin is required when making decisions involving
->>>>> @@ -276,6 +278,22 @@ static inline void cpuset_reset_sched_domains(void)
->>>>>  	partition_sched_domains(1, NULL, NULL);
->>>>>  }
->>>>>  
->>>>> +static inline void cpuset_get_task_effective_cpus(struct task_struct *p,
->>>>> +		struct cpumask *cpus)
->>>>> +{
->>>>> +	const struct cpumask *hk_msk;
->>>>> +
->>>>> +	hk_msk = housekeeping_cpumask(HK_TYPE_DOMAIN);
->>>>> +	if (housekeeping_enabled(HK_TYPE_DOMAIN)) {
->>>>> +		if (!cpumask_intersects(p->cpus_ptr, hk_msk)) {
->>>>> +			/* isolated cpus belong to a root domain */
->>>>> +			cpumask_andnot(cpus, cpu_active_mask, hk_msk);
->>>>> +			return;
->>>>> +		}
->>>>> +	}
->>>>> +	cpumask_and(cpus, cpu_active_mask, hk_msk);
->>>>> +}
->>>>> +
->>>>>  static inline void cpuset_print_current_mems_allowed(void)
->>>>>  {
->>>>>  }
->>>>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->>>>> index 27adb04df675d..6ad88018f1a4e 100644
->>>>> --- a/kernel/cgroup/cpuset.c
->>>>> +++ b/kernel/cgroup/cpuset.c
->>>>> @@ -1102,6 +1102,32 @@ void cpuset_reset_sched_domains(void)
->>>>>  	mutex_unlock(&cpuset_mutex);
->>>>>  }
->>>>>  
->>>>> +/* caller hold RCU read lock */
->>>>> +void cpuset_get_task_effective_cpus(struct task_struct *p, struct cpumask *cpus)
->>>>> +{
->>>>> +	const struct cpumask *hk_msk;
->>>>> +	struct cpuset *cs;
->>>>> +
->>>>> +	hk_msk = housekeeping_cpumask(HK_TYPE_DOMAIN);
->>>>> +	if (housekeeping_enabled(HK_TYPE_DOMAIN)) {
->>>>> +		if (!cpumask_intersects(p->cpus_ptr, hk_msk)) {
->>>>> +			/* isolated cpus belong to a root domain */
->>>>> +			cpumask_andnot(cpus, cpu_active_mask, hk_msk);
->>>>> +			return;
->>>>> +		}
->>>>> +	}
->>>>> +	/* In HK_TYPE_DOMAIN, cpuset can be applied */
->>>>> +	cs = task_cs(p);
->>>>> +	while (cs != &top_cpuset) {
->>>>> +		if (is_sched_load_balance(cs))
->>>>> +			break;
->>>>> +		cs = parent_cs(cs);
->>>>> +	}
->>>>> +
->>>>> +	/* For top_cpuset, its effective_cpus does not exclude isolated cpu */
->>>>> +	cpumask_and(cpus, cs->effective_cpus, hk_msk);
->>>>> +}
->>>>> +
->>>>
->>>> It seems you may have misunderstood what Longman intended to convey.
->>>>
->>>
->>> Thanks for pointing that out. That is possible and please let me address
->>> your concern.
->>>
->>>> First, you should add comments to this function because its purpose is not clear. When I first saw
->>>
->>> OK, I will.
->>>
->>>> this function, I thought it was supposed to retrieve p->cpus_ptr excluding the offline CPU mask.
->>>> However, I'm genuinely confused about the function's actual purpose.
->>>>
->>>
->>> This function retrieves the active CPUs within the root domain where a specified task resides.
->>>
->>
->> Thank you for the further clarification.
->>
->> 	+	/*
->> 	+	 * If @p is in blocked state, task_cpu() may be not active. In that
->> 	+	 * case, rq->rd does not trace a correct root_domain. On the other hand,
->> 	+	 * @p must belong to an root_domain at any given time, which must have
->> 	+	 * active rq, whose rq->rd traces the valid root domain.
->> 	+	 */
->>
->> Is it necessary to walk up to the root partition (is_sched_load_balance(cs))?
->>
->> The effective_cpus of the cpuset where @p resides should contain active CPUs.
->> If all CPUs in cpuset.cpus are offline, it would inherit the parent's effective_cpus for v2, and it
->> would move the task to the parent for v1.
->>
+On 30/10/2025 07:00, Deepa Guthyappa Madivalara wrote:
+> Implement internal buffer count and size calculations for AV1 decoder
+> for all the buffer types required by the AV1 decoder, including BIN,
+> COMV, PERSIST, LINE, and PARTIAL.
 > 
-> Suppose that the parent cpuset has no active CPUs too.
-> But for a root_domain, deadline bandwidth validation can guard there are
-> active CPUs remaining.
+> This ensures the hardware decoder has properly allocated memory for AV1
+> decoding operations, enabling correct AV1 video playback.
 > 
+> Signed-off-by: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>
+> ---
+>   drivers/media/platform/qcom/iris/iris_buffer.h     |   1 +
+>   drivers/media/platform/qcom/iris/iris_vpu_buffer.c | 297 ++++++++++++++++++++-
+>   drivers/media/platform/qcom/iris/iris_vpu_buffer.h | 116 ++++++++
+>   3 files changed, 411 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_buffer.h b/drivers/media/platform/qcom/iris/iris_buffer.h
+> index 5ef365d9236c7cbdee24a4614789b3191881968b..75bb767761824c4c02e0df9b765896cc093be333 100644
+> --- a/drivers/media/platform/qcom/iris/iris_buffer.h
+> +++ b/drivers/media/platform/qcom/iris/iris_buffer.h
+> @@ -27,6 +27,7 @@ struct iris_inst;
+>    * @BUF_SCRATCH_1: buffer to store decoding/encoding context data for HW
+>    * @BUF_SCRATCH_2: buffer to store encoding context data for HW
+>    * @BUF_VPSS: buffer to store VPSS context data for HW
+> + * @BUF_PARTIAL: buffer for AV1 IBC data
+>    * @BUF_TYPE_MAX: max buffer types
+>    */
+>   enum iris_buffer_type {
+> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
+> index 4463be05ce165adef6b152eb0c155d2e6a7b3c36..694f431cca98af945ac8afee41a0c2de6edac3ef 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
+> @@ -9,6 +9,17 @@
+>   #include "iris_hfi_gen2_defines.h"
+> 
+>   #define HFI_MAX_COL_FRAME 6
+> +#define HFI_COLOR_FORMAT_YUV420_NV12_UBWC_Y_TILE_HEIGHT (8)
+> +#define HFI_COLOR_FORMAT_YUV420_NV12_UBWC_Y_TILE_WIDTH (32)
+> +#define HFI_COLOR_FORMAT_YUV420_NV12_UBWC_UV_TILE_HEIGHT (8)
+> +#define HFI_COLOR_FORMAT_YUV420_NV12_UBWC_UV_TILE_WIDTH (16)
+> +#define HFI_COLOR_FORMAT_YUV420_TP10_UBWC_Y_TILE_HEIGHT (4)
+> +#define HFI_COLOR_FORMAT_YUV420_TP10_UBWC_Y_TILE_WIDTH (48)
+> +#define HFI_COLOR_FORMAT_YUV420_TP10_UBWC_UV_TILE_HEIGHT (4)
+> +#define HFI_COLOR_FORMAT_YUV420_TP10_UBWC_UV_TILE_WIDTH (24)
+> +#define AV1D_SIZE_BSE_COL_MV_64x64 512
+> +#define AV1D_SIZE_BSE_COL_MV_128x128 2816
+> +
+> 
+>   #ifndef SYSTEM_LAL_TILE10
+>   #define SYSTEM_LAL_TILE10 192
+> @@ -39,6 +50,31 @@ static u32 hfi_buffer_bin_h264d(u32 frame_width, u32 frame_height, u32 num_vpp_p
+>   	return size_h264d_hw_bin_buffer(n_aligned_w, n_aligned_h, num_vpp_pipes);
+>   }
+> 
+> +static u32 size_av1d_hw_bin_buffer(u32 frame_width, u32 frame_height, u32 num_vpp_pipes)
+> +{
+> +	u32 size_yuv, size_bin_hdr, size_bin_res;
+> +
+> +	size_yuv = ((frame_width * frame_height) <= BIN_BUFFER_THRESHOLD) ?
+> +		((BIN_BUFFER_THRESHOLD * 3) >> 1) :
+> +		((frame_width * frame_height * 3) >> 1);
+> +	size_bin_hdr = size_yuv * AV1_CABAC_HDR_RATIO_HD_TOT;
+> +	size_bin_res = size_yuv * AV1_CABAC_RES_RATIO_HD_TOT;
+> +	size_bin_hdr = ALIGN(size_bin_hdr / num_vpp_pipes,
+> +			     DMA_ALIGNMENT) * num_vpp_pipes;
+> +	size_bin_res = ALIGN(size_bin_res / num_vpp_pipes,
+> +			     DMA_ALIGNMENT) * num_vpp_pipes;
+> +
+> +	return size_bin_hdr + size_bin_res;
+> +}
+> +
+> +static u32 hfi_buffer_bin_av1d(u32 frame_width, u32 frame_height, u32 num_vpp_pipes)
+> +{
+> +	u32 n_aligned_h = ALIGN(frame_height, 16);
+> +	u32 n_aligned_w = ALIGN(frame_width, 16);
+> +
+> +	return size_av1d_hw_bin_buffer(n_aligned_w, n_aligned_h, num_vpp_pipes);
+> +}
+> +
+>   static u32 size_h265d_hw_bin_buffer(u32 frame_width, u32 frame_height, u32 num_vpp_pipes)
+>   {
+>   	u32 product = frame_width * frame_height;
+> @@ -110,6 +146,26 @@ static u32 hfi_buffer_comv_h265d(u32 frame_width, u32 frame_height, u32 _comv_bu
+>   	return (_size * (_comv_bufcount)) + 512;
+>   }
+> 
+> +static u32 num_lcu(u32 frame_width, u32 frame_height, u32 lcu_size)
+> +{
+> +	return ((frame_width + lcu_size - 1) / lcu_size) *
+> +			((frame_height + lcu_size - 1) / lcu_size);
+> +}
+> +
+> +static u32 hfi_buffer_comv_av1d(u32 frame_width, u32 frame_height, u32 comv_bufcount)
+> +{
+> +	u32 size;
+> +
+> +	size =  2 * ALIGN(max(num_lcu(frame_width, frame_height, 64) *
+> +						  AV1D_SIZE_BSE_COL_MV_64x64,
+> +						  num_lcu(frame_width, frame_height, 128) *
+> +						AV1D_SIZE_BSE_COL_MV_128x128),
+> +					  DMA_ALIGNMENT);
 
-I don't think this should happen. When a parent's effective_cpus is empty, it should inherit its own
-parent's effective_cpus as well, meaning that in v2, the effective_cpus should not ultimately remain
-empty.
+The formatting is all over the gaff.
 
-For v1, the task would be moved to an ancestor with active cpus.
+> +	size *= comv_bufcount;
+> +
+> +	return size;
+> +}
+> +
+>   static u32 size_h264d_bse_cmd_buf(u32 frame_height)
+>   {
+>   	u32 height = ALIGN(frame_height, 32);
+> @@ -174,6 +230,20 @@ static u32 hfi_buffer_persist_h264d(void)
+>   		    DMA_ALIGNMENT);
+>   }
+> 
+> +static u32 hfi_buffer_persist_av1d(u32 max_width, u32 max_height, u32 total_ref_count)
+> +{
+> +	u32 comv_size, size;
+> +
+> +	comv_size =  hfi_buffer_comv_av1d(max_width, max_height, total_ref_count);
+> +	size = ALIGN((SIZE_AV1D_SEQUENCE_HEADER * 2 + SIZE_AV1D_METADATA +
+> +	AV1D_NUM_HW_PIC_BUF * (SIZE_AV1D_TILE_OFFSET + SIZE_AV1D_QM) +
+> +	AV1D_NUM_FRAME_HEADERS * (SIZE_AV1D_FRAME_HEADER +
+> +	2 * SIZE_AV1D_PROB_TABLE) + comv_size + HDR10_HIST_EXTRADATA_SIZE +
+> +	SIZE_AV1D_METADATA * AV1D_NUM_HW_PIC_BUF), DMA_ALIGNMENT);
+> +
+> +	return ALIGN(size, DMA_ALIGNMENT);
+> +}
+> +
+>   static u32 hfi_buffer_non_comv_h264d(u32 frame_width, u32 frame_height, u32 num_vpp_pipes)
+>   {
+>   	u32 size_bse = size_h264d_bse_cmd_buf(frame_height);
+> @@ -459,6 +529,182 @@ static u32 hfi_buffer_line_h264d(u32 frame_width, u32 frame_height,
+>   	return ALIGN((size + vpss_lb_size), DMA_ALIGNMENT);
+>   }
+> 
+> +static u32 size_av1d_lb_opb_wr1_nv12_ubwc(u32 frame_width, u32 frame_height)
+> +{
+> +	u32 size, y_width, y_width_a = 128;
+> +
+> +	y_width = ALIGN(frame_width, y_width_a);
+> +
+> +	size = ((y_width + HFI_COLOR_FORMAT_YUV420_NV12_UBWC_Y_TILE_WIDTH - 1) /
+> +					HFI_COLOR_FORMAT_YUV420_NV12_UBWC_Y_TILE_WIDTH  +
+> +					(AV1D_MAX_TILE_COLS - 1));
+> +	return size * 256;
 
--- 
-Best regards,
-Ridong
+Why 256 ?
+
+You reuse this value at least one other time.
+
+So it should be a define with a name that imparts a meaning to the 
+re/viewer.
+
+> +}
+> +
+> +static u32 size_av1d_lb_opb_wr1_tp10_ubwc(u32 frame_width, u32 frame_height)
+> +{
+> +	u32 size, y_width, y_width_a = 256;
+> +
+> +	y_width = ALIGN(frame_width, y_width_a);
+> +
+> +	size = ((y_width + HFI_COLOR_FORMAT_YUV420_TP10_UBWC_Y_TILE_WIDTH - 1) /
+> +			 HFI_COLOR_FORMAT_YUV420_TP10_UBWC_Y_TILE_WIDTH +
+> +			 (AV1D_MAX_TILE_COLS - 1));
+> +
+> +	return size * 256;
+> +}
+> +
+> +static u32 hfi_buffer_line_av1d(u32 frame_width, u32 frame_height,
+> +				bool is_opb, u32 num_vpp_pipes)
+> +{
+> +	u32 size, vpss_lb_size, opbwrbufsize, opbwr8, opbwr10;
+> +
+> +	size = ALIGN(size_av1d_lb_fe_top_data(frame_width, frame_height),
+> +		     DMA_ALIGNMENT) +
+> +		ALIGN(size_av1d_lb_fe_top_ctrl(frame_width, frame_height),
+> +		      DMA_ALIGNMENT) +
+> +		ALIGN(size_av1d_lb_fe_left_data(frame_width, frame_height),
+> +		      DMA_ALIGNMENT) * num_vpp_pipes +
+> +		ALIGN(size_av1d_lb_fe_left_ctrl(frame_width, frame_height),
+> +		      DMA_ALIGNMENT) * num_vpp_pipes +
+> +		ALIGN(size_av1d_lb_se_left_ctrl(frame_width, frame_height),
+> +		      DMA_ALIGNMENT) * num_vpp_pipes +
+> +		ALIGN(size_av1d_lb_se_top_ctrl(frame_width, frame_height),
+> +		      DMA_ALIGNMENT) +
+> +		ALIGN(size_av1d_lb_pe_top_data(frame_width, frame_height),
+> +		      DMA_ALIGNMENT) +
+> +		ALIGN(size_av1d_lb_vsp_top(frame_width, frame_height),
+> +		      DMA_ALIGNMENT) +
+> +		ALIGN(size_av1d_lb_recon_dma_metadata_wr
+> +		      (frame_width, frame_height), DMA_ALIGNMENT) * 2 +
+> +		ALIGN(size_av1d_qp(frame_width, frame_height), DMA_ALIGNMENT);
+> +	opbwr8 = size_av1d_lb_opb_wr1_nv12_ubwc(frame_width, frame_height);
+> +	opbwr10 = size_av1d_lb_opb_wr1_tp10_ubwc(frame_width, frame_height);
+> +	opbwrbufsize = opbwr8 >= opbwr10 ? opbwr8 : opbwr10;
+> +	size = ALIGN((size + opbwrbufsize), DMA_ALIGNMENT);
+> +	if (is_opb) {
+> +		vpss_lb_size = size_vpss_lb(frame_width, frame_height);
+> +		size = ALIGN((size + vpss_lb_size) * 2, DMA_ALIGNMENT);
+> +	}
+> +
+> +	return size;
+> +}
+> +
+> +static u32 size_av1d_ibc_nv12_ubwc(u32 frame_width, u32 frame_height)
+> +{
+> +	u32 size;
+> +	u32 y_width_a = 128, y_height_a = 32;
+> +	u32 uv_width_a = 128, uv_height_a = 32;
+> +	u32 ybufsize, uvbufsize, y_width, y_height, uv_width, uv_height;
+> +	u32 y_meta_width_a = 64, y_meta_height_a = 16;
+> +	u32 uv_meta_width_a = 64, uv_meta_height_a = 16;
+> +	u32 meta_height, meta_stride, meta_size;
+> +	u32 tile_width_y = HFI_COLOR_FORMAT_YUV420_NV12_UBWC_Y_TILE_WIDTH;
+> +	u32 tile_height_y = HFI_COLOR_FORMAT_YUV420_NV12_UBWC_Y_TILE_HEIGHT;
+> +	u32 tile_width_uv = HFI_COLOR_FORMAT_YUV420_NV12_UBWC_UV_TILE_WIDTH;
+> +	u32 tile_height_uv = HFI_COLOR_FORMAT_YUV420_NV12_UBWC_UV_TILE_HEIGHT;
+> +
+> +	y_width = ALIGN(frame_width, y_width_a);
+> +	y_height = ALIGN(frame_height, y_height_a);
+> +	uv_width = ALIGN(frame_width, uv_width_a);
+> +	uv_height = ALIGN(((frame_height + 1) >> 1), uv_height_a);
+> +	ybufsize = ALIGN((y_width * y_height), HFI_ALIGNMENT_4096);
+> +	uvbufsize = ALIGN(uv_width * uv_height, HFI_ALIGNMENT_4096);
+> +	size = ybufsize + uvbufsize;
+> +	meta_stride = ALIGN(((frame_width + (tile_width_y - 1)) / tile_width_y),
+> +			    y_meta_width_a);
+> +	meta_height = ALIGN(((frame_height + (tile_height_y - 1)) / tile_height_y),
+> +			    y_meta_height_a);
+> +	meta_size = ALIGN(meta_stride * meta_height, HFI_ALIGNMENT_4096);
+> +	size += meta_size;
+> +	meta_stride = ALIGN(((((frame_width + 1) >> 1) + (tile_width_uv - 1)) /
+> +				tile_width_uv),	uv_meta_width_a);
+> +	meta_height = ALIGN(((((frame_height + 1) >> 1) + (tile_height_uv - 1)) /
+> +				tile_height_uv), uv_meta_height_a);
+> +	meta_size = ALIGN(meta_stride * meta_height, HFI_ALIGNMENT_4096);
+> +	size += meta_size;
+> +
+> +	return size;
+> +}
+> +
+> +static u32 hfi_yuv420_tp10_calc_y_stride(u32 frame_width, u32 stride_multiple)
+> +{
+> +	u32 stride;
+> +
+> +	stride = ALIGN(frame_width, 192);
+> +	stride = ALIGN(stride * 4 / 3, stride_multiple);
+> +
+> +	return stride;
+> +}
+> +
+> +static u32 hfi_yuv420_tp10_calc_y_bufheight(u32 frame_height, u32 min_buf_height_multiple)
+> +{
+> +	return ALIGN(frame_height, min_buf_height_multiple);
+> +}
+> +
+> +static u32 hfi_yuv420_tp10_calc_uv_stride(u32 frame_width, u32 stride_multiple)
+> +{
+> +	u32 stride;
+> +
+> +	stride = ALIGN(frame_width, 192);
+> +	stride = ALIGN(stride * 4 / 3, stride_multiple);
+> +
+> +	return stride;
+> +}
+> +
+> +static u32 hfi_yuv420_tp10_calc_uv_bufheight(u32 frame_height, u32 min_buf_height_multiple)
+> +{
+> +	return ALIGN(((frame_height + 1) >> 1),	min_buf_height_multiple);
+> +}
+> +
+> +static u32 size_av1d_ibc_tp10_ubwc(u32 frame_width, u32 frame_height)
+> +{
+> +	u32 size;
+> +	u32 y_width_a = 256, y_height_a = 16,
+> +		uv_width_a = 256, uv_height_a = 16;
+> +	u32 ybufsize, uvbufsize, y_width, y_height, uv_width, uv_height;
+> +	u32 y_meta_width_a = 64, y_meta_height_a = 16,
+> +		uv_meta_width_a = 64, uv_meta_height_a = 16;
+> +	u32 meta_height, meta_stride, meta_size;
+> +	u32 tile_width_y = HFI_COLOR_FORMAT_YUV420_TP10_UBWC_Y_TILE_WIDTH;
+> +	u32 tile_height_y = HFI_COLOR_FORMAT_YUV420_TP10_UBWC_Y_TILE_HEIGHT;
+> +	u32 tile_width_uv = HFI_COLOR_FORMAT_YUV420_TP10_UBWC_UV_TILE_WIDTH;
+> +	u32 tile_height_uv = HFI_COLOR_FORMAT_YUV420_TP10_UBWC_UV_TILE_HEIGHT;
+> +
+> +	y_width = hfi_yuv420_tp10_calc_y_stride(frame_width, y_width_a);
+> +	y_height = hfi_yuv420_tp10_calc_y_bufheight(frame_height, y_height_a);
+> +	uv_width = hfi_yuv420_tp10_calc_uv_stride(frame_width, uv_width_a);
+> +	uv_height = hfi_yuv420_tp10_calc_uv_bufheight(frame_height, uv_height_a);
+> +	ybufsize = ALIGN(y_width * y_height, HFI_ALIGNMENT_4096);
+> +	uvbufsize = ALIGN(uv_width * uv_height, HFI_ALIGNMENT_4096);
+> +	size = ybufsize + uvbufsize;
+> +	meta_stride = ALIGN(((frame_width + (tile_width_y - 1)) / tile_width_y),
+> +			    y_meta_width_a);
+> +	meta_height = ALIGN(((frame_height + (tile_height_y - 1)) / tile_height_y),
+> +			    y_meta_height_a);
+> +	meta_size = ALIGN(meta_stride * meta_height, HFI_ALIGNMENT_4096);
+> +	size += meta_size;
+> +	meta_stride = ALIGN(((((frame_width + 1) >> 1) + (tile_width_uv - 1)) /
+> +				tile_width_uv), uv_meta_width_a);
+> +	meta_height = ALIGN(((((frame_height + 1) >> 1) + (tile_height_uv - 1)) /
+> +				tile_height_uv), uv_meta_height_a);
+> +	meta_size = ALIGN(meta_stride * meta_height, HFI_ALIGNMENT_4096);
+> +	size += meta_size;
+> +
+> +	return size;
+> +}
+> +
+> +static u32 hfi_buffer_ibc_av1d(u32 frame_width, u32 frame_height)
+> +{
+> +	u32 size, ibc8, ibc10;
+> +
+> +	ibc8 = size_av1d_ibc_nv12_ubwc(frame_width, frame_height);
+> +	ibc10 = size_av1d_ibc_tp10_ubwc(frame_width, frame_height);
+> +	size = ibc8 >= ibc10 ? ibc8 : ibc10;
+> +
+> +	return ALIGN(size, DMA_ALIGNMENT);
+> +}
+> +
+>   static u32 iris_vpu_dec_bin_size(struct iris_inst *inst)
+>   {
+>   	u32 num_vpp_pipes = inst->core->iris_platform_data->num_vpp_pipe;
+> @@ -472,6 +718,8 @@ static u32 iris_vpu_dec_bin_size(struct iris_inst *inst)
+>   		return hfi_buffer_bin_h265d(width, height, num_vpp_pipes);
+>   	else if (inst->codec == V4L2_PIX_FMT_VP9)
+>   		return hfi_buffer_bin_vp9d(width, height, num_vpp_pipes);
+> +	else if (inst->codec == V4L2_PIX_FMT_AV1)
+> +		return hfi_buffer_bin_av1d(width, height, num_vpp_pipes);
+> 
+>   	return 0;
+>   }
+> @@ -487,18 +735,34 @@ static u32 iris_vpu_dec_comv_size(struct iris_inst *inst)
+>   		return hfi_buffer_comv_h264d(width, height, num_comv);
+>   	else if (inst->codec == V4L2_PIX_FMT_HEVC)
+>   		return hfi_buffer_comv_h265d(width, height, num_comv);
+> +	else if (inst->codec == V4L2_PIX_FMT_AV1) {
+> +		if (inst->fw_caps[DRAP].value)
+> +			return 0;
+> +		else
+> +			return hfi_buffer_comv_av1d(width, height, num_comv);
+> +	}
+> 
+>   	return 0;
+>   }
+> 
+>   static u32 iris_vpu_dec_persist_size(struct iris_inst *inst)
+>   {
+> +	struct platform_inst_caps *caps;
+> +
+>   	if (inst->codec == V4L2_PIX_FMT_H264)
+>   		return hfi_buffer_persist_h264d();
+>   	else if (inst->codec == V4L2_PIX_FMT_HEVC)
+>   		return hfi_buffer_persist_h265d(0);
+>   	else if (inst->codec == V4L2_PIX_FMT_VP9)
+>   		return hfi_buffer_persist_vp9d();
+> +	else if (inst->codec == V4L2_PIX_FMT_AV1) {
+> +		caps = inst->core->iris_platform_data->inst_caps;
+> +		if (inst->fw_caps[DRAP].value)
+> +			return hfi_buffer_persist_av1d(caps->max_frame_width,
+> +			caps->max_frame_height, 16);
+> +		else
+> +			return hfi_buffer_persist_av1d(0, 0, 0);
+> +	}
+> 
+>   	return 0;
+>   }
+> @@ -545,6 +809,8 @@ static u32 iris_vpu_dec_line_size(struct iris_inst *inst)
+>   	else if (inst->codec == V4L2_PIX_FMT_VP9)
+>   		return hfi_buffer_line_vp9d(width, height, out_min_count, is_opb,
+>   			num_vpp_pipes);
+> +	else if (inst->codec == V4L2_PIX_FMT_AV1)
+> +		return hfi_buffer_line_av1d(width, height, is_opb, num_vpp_pipes);
+> 
+>   	return 0;
+>   }
+> @@ -653,6 +919,15 @@ static u32 iris_vpu_enc_bin_size(struct iris_inst *inst)
+>   				  num_vpp_pipes, inst->hfi_rc_type);
+>   }
+> 
+> +static u32 iris_vpu_dec_partial_size(struct iris_inst *inst)
+> +{
+> +	struct v4l2_format *f = inst->fmt_src;
+> +	u32 height = f->fmt.pix_mp.height;
+> +	u32 width = f->fmt.pix_mp.width;
+> +
+> +	return hfi_buffer_ibc_av1d(width, height);
+> +}
+> +
+>   static inline
+>   u32 hfi_buffer_comv_enc(u32 frame_width, u32 frame_height, u32 lcu_size,
+>   			u32 num_recon, u32 standard)
+> @@ -1414,7 +1689,9 @@ static int output_min_count(struct iris_inst *inst)
+> 
+>   	/* fw_min_count > 0 indicates reconfig event has already arrived */
+>   	if (inst->fw_min_count) {
+> -		if (iris_split_mode_enabled(inst) && inst->codec == V4L2_PIX_FMT_VP9)
+> +		if (iris_split_mode_enabled(inst) &&
+> +		    (inst->codec == V4L2_PIX_FMT_VP9 ||
+> +		     inst->codec == V4L2_PIX_FMT_AV1))
+>   			return min_t(u32, 4, inst->fw_min_count);
+>   		else
+>   			return inst->fw_min_count;
+> @@ -1422,6 +1699,8 @@ static int output_min_count(struct iris_inst *inst)
+> 
+>   	if (inst->codec == V4L2_PIX_FMT_VP9)
+>   		output_min_count = 9;
+> +	else if (inst->codec == V4L2_PIX_FMT_AV1)
+> +		output_min_count = 11;
+> 
+>   	return output_min_count;
+>   }
+> @@ -1444,6 +1723,7 @@ u32 iris_vpu_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type)
+>   		{BUF_PERSIST,     iris_vpu_dec_persist_size         },
+>   		{BUF_DPB,         iris_vpu_dec_dpb_size             },
+>   		{BUF_SCRATCH_1,   iris_vpu_dec_scratch1_size        },
+> +		{BUF_PARTIAL,     iris_vpu_dec_partial_size         },
+>   	};
+> 
+>   	static const struct iris_vpu_buf_type_handle enc_internal_buf_type_handle[] = {
+> @@ -1510,14 +1790,20 @@ static u32 internal_buffer_count(struct iris_inst *inst,
+>   	    buffer_type == BUF_PERSIST) {
+>   		return 1;
+>   	} else if (buffer_type == BUF_COMV || buffer_type == BUF_NON_COMV) {
+> -		if (inst->codec == V4L2_PIX_FMT_H264 || inst->codec == V4L2_PIX_FMT_HEVC)
+> +		if (inst->codec == V4L2_PIX_FMT_H264 ||
+> +		    inst->codec == V4L2_PIX_FMT_HEVC ||
+> +		    inst->codec == V4L2_PIX_FMT_AV1)
+>   			return 1;
+>   	}
+> +
+>   	return 0;
+>   }
+> 
+>   static inline int iris_vpu_dpb_count(struct iris_inst *inst)
+>   {
+> +	if (inst->codec == V4L2_PIX_FMT_AV1)
+> +		return 11;
+> +
+>   	if (iris_split_mode_enabled(inst)) {
+>   		return inst->fw_min_count ?
+>   			inst->fw_min_count : inst->buffers[BUF_OUTPUT].min_count;
+> @@ -1536,9 +1822,13 @@ int iris_vpu_buf_count(struct iris_inst *inst, enum iris_buffer_type buffer_type
+>   			return MIN_BUFFERS;
+>   		else
+>   			return output_min_count(inst);
+> +	case BUF_NON_COMV:
+> +		if (inst->codec == V4L2_PIX_FMT_AV1)
+> +			return 0;
+> +		else
+> +			return 1;
+>   	case BUF_BIN:
+>   	case BUF_COMV:
+> -	case BUF_NON_COMV:
+>   	case BUF_LINE:
+>   	case BUF_PERSIST:
+>   		return internal_buffer_count(inst, buffer_type);
+> @@ -1546,6 +1836,7 @@ int iris_vpu_buf_count(struct iris_inst *inst, enum iris_buffer_type buffer_type
+>   	case BUF_SCRATCH_2:
+>   	case BUF_VPSS:
+>   	case BUF_ARP:
+> +	case BUF_PARTIAL:
+>   		return 1; /* internal buffer count needed by firmware is 1 */
+>   	case BUF_DPB:
+>   		return iris_vpu_dpb_count(inst);
+> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_buffer.h b/drivers/media/platform/qcom/iris/iris_vpu_buffer.h
+> index 04f0b7400a1e4e1d274d690a2761b9e57778e8b7..a8ffc1286260bddbf49df18fba0a23f78056a484 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vpu_buffer.h
+> +++ b/drivers/media/platform/qcom/iris/iris_vpu_buffer.h
+> @@ -11,6 +11,7 @@ struct iris_inst;
+>   #define MIN_BUFFERS			4
+> 
+>   #define DMA_ALIGNMENT			256
+> +#define HFI_ALIGNMENT_4096      4096
+> 
+>   #define NUM_HW_PIC_BUF			32
+>   #define LCU_MAX_SIZE_PELS 64
+> @@ -81,6 +82,22 @@ struct iris_inst;
+>   #define MAX_PE_NBR_DATA_LCU64_LINE_BUFFER_SIZE	384
+>   #define MAX_FE_NBR_DATA_LUMA_LINE_BUFFER_SIZE	640
+> 
+> +#define AV1_CABAC_HDR_RATIO_HD_TOT 2
+> +#define AV1_CABAC_RES_RATIO_HD_TOT 2
+> +#define AV1D_LCU_MAX_SIZE_PELS 128
+> +#define AV1D_LCU_MIN_SIZE_PELS 64
+> +#define AV1D_MAX_TILE_COLS     64
+> +#define MAX_PE_NBR_DATA_LCU32_LINE_BUFFER_SIZE 192
+> +#define MAX_PE_NBR_DATA_LCU16_LINE_BUFFER_SIZE 96
+> +#define AV1D_NUM_HW_PIC_BUF    16
+> +#define AV1D_NUM_FRAME_HEADERS 16
+> +#define SIZE_AV1D_SEQUENCE_HEADER 768
+> +#define SIZE_AV1D_METADATA        512
+> +#define SIZE_AV1D_FRAME_HEADER    1280
+> +#define SIZE_AV1D_TILE_OFFSET     65536
+> +#define SIZE_AV1D_QM              3328
+> +#define SIZE_AV1D_PROB_TABLE      22784
+
+Cool, thank you.
+
+> +
+>   #define SIZE_SLICE_CMD_BUFFER (ALIGN(20480, 256))
+>   #define SIZE_SPS_PPS_SLICE_HDR (2048 + 4096)
+>   #define SIZE_BSE_SLICE_CMD_BUF ((((8192 << 2) + 7) & (~7)) * 3)
+> @@ -101,6 +118,15 @@ struct iris_inst;
+>   #define NUM_MBS_4K (DIV_ROUND_UP(MAX_WIDTH, 16) * DIV_ROUND_UP(MAX_HEIGHT, 16))
+>   #define NUM_MBS_720P	(((ALIGN(1280, 16)) >> 4) * ((ALIGN(736, 16)) >> 4))
+> 
+> +#define BITS_PER_PIX                   16
+> +#define NUM_LINES_LUMA                 10
+> +#define NUM_LINES_CHROMA               6
+> +#define AV1D_LCU_MAX_SIZE_PELS         128
+> +#define AV1D_LCU_MIN_SIZE_PELS         64
+> +#define AV1D_MAX_TILE_COLS             64
+> +#define BITS_PER_CTRL_PACK             128
+> +#define NUM_CTRL_PACK_LCU              10
+> +
+>   static inline u32 size_h264d_lb_fe_top_data(u32 frame_width)
+>   {
+>   	return MAX_FE_NBR_DATA_LUMA_LINE_BUFFER_SIZE * ALIGN(frame_width, 16) * 3;
+> @@ -146,6 +172,96 @@ static inline u32 size_h264d_qp(u32 frame_width, u32 frame_height)
+>   	return DIV_ROUND_UP(frame_width, 64) * DIV_ROUND_UP(frame_height, 64) * 128;
+>   }
+> 
+> +static inline u32 size_av1d_lb_fe_top_data(u32 frame_width, u32 frame_height)
+> +{
+> +	return (ALIGN(frame_width, AV1D_LCU_MAX_SIZE_PELS) *
+> +			((BITS_PER_PIX * NUM_LINES_LUMA) >> 3) +
+> +			ALIGN(frame_width, AV1D_LCU_MAX_SIZE_PELS) / 2 *
+> +			((BITS_PER_PIX * NUM_LINES_CHROMA) >> 3) * 2);
+> +}
+> +
+> +static inline u32 size_av1d_lb_fe_left_data(u32 frame_width, u32 frame_height)
+> +{
+> +	return (32 * (ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) +
+> +		ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) /
+> +		AV1D_LCU_MIN_SIZE_PELS * 16) +
+> +	16 * (ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) / 2 +
+> +		ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) /
+> +		AV1D_LCU_MIN_SIZE_PELS * 8) * 2 +
+> +	24 * (ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) +
+> +		ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) /
+> +		AV1D_LCU_MIN_SIZE_PELS * 16) +
+> +	24 * (ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) / 2 +
+> +		ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) /
+> +		AV1D_LCU_MIN_SIZE_PELS * 12) * 2 +
+> +	24 * (ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) +
+> +		ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) /
+> +		AV1D_LCU_MIN_SIZE_PELS * 16) +
+> +	16 * (ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) +
+> +		ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) /
+> +		AV1D_LCU_MIN_SIZE_PELS * 16) +
+> +	16 * (ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) / 2 +
+> +		ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) /
+> +		AV1D_LCU_MIN_SIZE_PELS * 12) * 2);
+> +}
+> +
+> +static inline u32 size_av1d_lb_fe_top_ctrl(u32 frame_width, u32 frame_height)
+> +{
+> +	return (NUM_CTRL_PACK_LCU * ((frame_width + AV1D_LCU_MIN_SIZE_PELS - 1) /
+> +			AV1D_LCU_MIN_SIZE_PELS) * BITS_PER_CTRL_PACK / 8);
+> +}
+> +
+> +static inline u32 size_av1d_lb_fe_left_ctrl(u32 frame_width, u32 frame_height)
+> +{
+> +	return (16 * ((ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) / 16) +
+> +	(ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) /
+> +	AV1D_LCU_MIN_SIZE_PELS)) +
+> +	3 * 16 * (ALIGN(frame_height, AV1D_LCU_MAX_SIZE_PELS) /
+> +	AV1D_LCU_MIN_SIZE_PELS));
+> +}
+> +
+> +static inline u32 size_av1d_lb_se_top_ctrl(u32 frame_width, u32 frame_height)
+> +{
+> +	return (((frame_width + 7) / 8) * MAX_SE_NBR_CTRL_LCU16_LINE_BUFFER_SIZE);
+> +}
+> +
+> +static inline u32 size_av1d_lb_se_left_ctrl(u32 frame_width, u32 frame_height)
+> +{
+> +	return (max(((frame_height + 15) / 16) *
+> +		MAX_SE_NBR_CTRL_LCU16_LINE_BUFFER_SIZE,
+> +		max(((frame_height + 31) / 32) *
+> +		MAX_SE_NBR_CTRL_LCU32_LINE_BUFFER_SIZE,
+> +		((frame_height + 63) / 64) *
+> +		MAX_SE_NBR_CTRL_LCU64_LINE_BUFFER_SIZE)));
+> +}
+> +
+> +static inline u32 size_av1d_lb_pe_top_data(u32 frame_width, u32 frame_height)
+> +{
+> +	return (max(((frame_width + 15) / 16) *
+> +	MAX_PE_NBR_DATA_LCU16_LINE_BUFFER_SIZE,
+> +	max(((frame_width + 31) / 32) *
+> +	MAX_PE_NBR_DATA_LCU32_LINE_BUFFER_SIZE,
+> +	((frame_width + 63) / 64) *
+> +	MAX_PE_NBR_DATA_LCU64_LINE_BUFFER_SIZE)));
+
+This indentation can't be right - look at se_left_ctrl.
+
+Please have another go through this code and fix your indentation.
+
+0004-media-iris-Define-AV1-specific-platform-capabilities.patch has no 
+obvious style problems and is ready for submission.
+0004-media-iris-Define-AV1-specific-platform-capabilities.patch:635: 
+filp ==> flip
+total: 0 errors, 0 warnings, 0 checks, 555 lines checked
+
+> +}
+> +
+> +static inline u32 size_av1d_lb_vsp_top(u32 frame_width, u32 frame_height)
+> +{
+> +	return (max(((frame_width + 63) / 64) * 1280,
+> +		    ((frame_width + 127) / 128) * 2304));
+> +}
+> +
+> +static inline u32 size_av1d_lb_recon_dma_metadata_wr(u32 frame_width,
+> +						     u32 frame_height)
+> +{
+> +	return ((ALIGN(frame_height, 8) / (4 / 2)) * 64);
+> +}
+> +
+> +static inline u32 size_av1d_qp(u32 frame_width, u32 frame_height)
+> +{
+> +	return size_h264d_qp(frame_width, frame_height);
+> +}
+> +
+>   u32 iris_vpu_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type);
+>   u32 iris_vpu33_buf_size(struct iris_inst *inst, enum iris_buffer_type buffer_type);
+>   int iris_vpu_buf_count(struct iris_inst *inst, enum iris_buffer_type buffer_type);
+> 
+> --
+> 2.34.1
+> 
 
 
