@@ -1,169 +1,138 @@
-Return-Path: <linux-kernel+bounces-880058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B241C24C55
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:26:08 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4834EC24C6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:27:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A91C7403626
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:25:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 22EF94E571C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970523451B3;
-	Fri, 31 Oct 2025 11:25:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF1C3451A8;
+	Fri, 31 Oct 2025 11:27:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fbxJ2KY5"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PkecskUt"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE432D4807
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 11:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF742D4807
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 11:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761909953; cv=none; b=HaRilfpQQR+TMRHfeMGht6OMlSMzCqD3S8dm6TVgGFXjlJg3BsTu2QxKg82cQPTx9PdI2r0TTWQk9YZDZbH7Y61uiCke6Z41wnObLs2nx/oAeTFGmt/eqiwcQfyy9TPiNnIDd0nNGzCClqP17ErXa4VkH2SUsL8RmXjO14Ovd58=
+	t=1761910059; cv=none; b=MSfqIt6m0e0dVpRoC/7NQ/7ITZvMxu/0h6NF2ds4E/vRqwKS8qLBajd+ADytVXYi1A3EpuLbIgHTerg3vLBm3z6n4eY8bovA8KnPAa6xLIcGIoze6Gj5Qsgeh/nsnbcwPbmNfbDJ0WnNniOR0niSSF4CRSJZ8QquidqYQUEngvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761909953; c=relaxed/simple;
-	bh=X4VaRNNgNgnlXlGOlZI2p4bomujrfvSguly9xNpr6YQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=VrtkRjGkk0/jaIc5RPyy1YwO6cqdVd+3McXSM5rPqx6kceQroAOzWk5Db23MBloc7wrvEPBCj/JIlYquPVkLQt5gShlb0xa0hHjdtJDVfB0c3UuwPfH3ViLPEiiCkNnAAFHi9t9H0ku7rOMmoPvG2+or09fgCBsijYWA375muVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fbxJ2KY5; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jackmanb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-477124f7c00so12260805e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 04:25:50 -0700 (PDT)
+	s=arc-20240116; t=1761910059; c=relaxed/simple;
+	bh=IPuXV6lIBcqOfrwOexC6xvGZcz1LmHT75V+kfc1/ojY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=L1nFlGXVEPkpIYKgylQ+9gs2kiNBcKcHHlES0b+798uOB2V/Tq/DUeOTXmgU95yoS+pacuppQT5EUKoSgxIv3RZ05zffs7dSso1vkBW9qTKWzDRS/v4Ss6hCbk2y84O3XFF1Eq56q/tYz77RKlmisIaEEW5HHE4hxcluoLYoI9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PkecskUt; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-780fc3b181aso1586790b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 04:27:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761909949; x=1762514749; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gC+O1H55oLfCNcv4yz7bhSqw3iH3dOLNxNvOfa9XL8w=;
-        b=fbxJ2KY5dnwrJO7Nn9FbxPHCcbeHbgADX2BGRfcr3Ko0PJRRQr2jNl8NAnN/cJs/oz
-         GObFasb3g++9tmkyvVme2CdCT/QjTQ7kUSjQzblt/ohhhVfpBCZp2rNdwiKg0kwh6tRH
-         r2D8pGdJrtxdEkzjjJDKBRDf2vuxXorzTu6WUiZnld/xpouHFNEHmL/V0mptTftGdVnO
-         ltMk+e2wNAZrinq7RP2eTVEM85or6LctYlhKwZzq/X4Ad4EZLnLtqQGGXUE/GE9vJqeE
-         8Q/9/UytwpcSirxksi7QwwYcOKkAn67MX+krxi4GYCWWk/CR60xo8RLptX5JLNrJ53u+
-         emJw==
+        d=gmail.com; s=20230601; t=1761910057; x=1762514857; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=841lRTZT5x+EU23D4TPPYc3iU3UALNZmZRcvpFA9gCE=;
+        b=PkecskUt/ox5Eyf+Y/6LbEJyPKHjvmCOIPkZ7zPm7EW0YHSSREw+zSDQrfUSZ0aBuz
+         /DLEXLbaVDZweFC7lVawV9/VeIbg72Q8CZGSx31XoHcgNNg3t9O7BGZP9BtE7QyTE7Ec
+         zFsnZXepIYdF55qZREIbLXMxJPrzcdmpg9wT1HZjMJyyY4VCtc2Jfi+PA2/By58iUFeL
+         RDxY3PGUYiNTA6IbMWN+rGMK+EVOvHY3wpQlLZHMWuud9sNRiTUw6Abj3X6H7kd+nH99
+         L7PuKPOvVXgAo8naSUJAMP5W9d2Tq4vnoIZ8C/gCSKKDyuD0HqhBuwme7Kh/a6C4yRZI
+         wgeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761909949; x=1762514749;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gC+O1H55oLfCNcv4yz7bhSqw3iH3dOLNxNvOfa9XL8w=;
-        b=d+W0l596nU5cPJ/9yyniRenueW+NsBxg9oAtto+mENd214FkR+Af/CdbRw/F1VqWca
-         ERQ0muH461YfU/eU6vbqn2J1o7fCJsubHu52ZsiFLJP9cHkoCXkAzflLLYMu8bo8HWC9
-         SJgIPieFVaeQlqwkHeSvrGxw1rnAOFUr5oZxx67xUvwbh5smb5F6sPwhvyy3BMm10f+X
-         zsK6mRISB/CkeOjrJs2dDt9NwsotCJoEGCxKy/750QiDmKs8MDIjNKnPVMBLAPxgn9aI
-         CNWYAtZ5PhD8Um5OhRlSPX1c2USQ2wTbGlt6gIAWc8lOotx9m7eaR47gX5d4XQRB6vdV
-         ctXA==
-X-Forwarded-Encrypted: i=1; AJvYcCUsAWRY07nsRB8PWgNd77MeSRk4H1qOf4gRCB7/eqiFaAdKY9g5qc72UcGxJobWWW+TqDvhp8LJlpm892s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHOCFr/APpVrHqw9mMVLSLq4lRRYEHDE6WBAJZ5oetuY+S4+Hr
-	CLSAhQXaGSqsJ0JRlukJmXRlEb4E50nVMNCPozEQqM+F5YTHdkaK3udW0nfizTe1XWbtc/vm11A
-	b8kmnQONzt5CeqA==
-X-Google-Smtp-Source: AGHT+IEOTuytwp3PmKm6W+0WiiAoI4oh/JX4kv9XKyvEyXzu66nx1kXLfw2RNbRxaOXTa0uRUHzCIPMiIlG46Q==
-X-Received: from wmbh20.prod.google.com ([2002:a05:600c:a114:b0:46e:684e:1977])
- (user=jackmanb job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:4e87:b0:46e:74cc:42b8 with SMTP id 5b1f17b1804b1-4773080fbfbmr28060755e9.17.1761909949647;
- Fri, 31 Oct 2025 04:25:49 -0700 (PDT)
-Date: Fri, 31 Oct 2025 11:25:49 +0000
-In-Reply-To: <20251030184354.qwulxmbxkt6thu6b@desk>
+        d=1e100.net; s=20230601; t=1761910057; x=1762514857;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=841lRTZT5x+EU23D4TPPYc3iU3UALNZmZRcvpFA9gCE=;
+        b=JWaNpuo4XnDZVxg/zI+Qq2DT/x0BfK0UCnnkStZpw3UMEViEGm8Ccb4UPUVICxZfJh
+         s4h1PLsdj9OnxdkQHV3eW7/p87LBiwOO6ru3aikcza6JJVcBGterELb9k9XxXG/Yvnak
+         tUHBPMJb0fBTAovGfvA1lZ2NUs3SwXTlOjGulucSnRz+XsfQupgfIIypH5tmXY6pGEjc
+         SHz9gvEEj4YRvsVr5a3Xtl7upJRlwxx86mXgH+CK5f6VIdF7tpjMyIsCMuIEvn3Qn0T/
+         x62Ss0u9KSi0RrJbOE9J/wvuBVypxUSAFJdTysn6kqVo3Vycl2cIAlwjS1RqBS1S9OX3
+         3KUg==
+X-Gm-Message-State: AOJu0YwJnU842/Z09UELOZxAJf4DY3/NmiAPk62RcNVi0C2Y3OHZRLme
+	PP5xpHHYLNpBDssllV2QjZ9VsIEAkY2SG4FOcR2v1EGExZB/sRIkLNgB
+X-Gm-Gg: ASbGnctaCJR4etWXzTofRYmi6v7TTm1H/KEySDYc5xSESnA5ZrCUnmXSwFUuMNbnw13
+	rr2LYYwwFfg31N2csaf8Z4K69S5ofpj0p8DpGU+x1b/pzvCtgSdXHPXvGXYbfowfvw2fK6x3c6X
+	oCzz8Rm+xCYmQcPn8pT7Iew8+yI1USWi1lQOjVkW0zqgRWnCj//vNvxJsWIbVjagzofdHXYwAhL
+	Em+T3rpUVnYYJF4iPv4Vh+KxEzRJlScubv7Kd1gbuNKdQR7DEegJyHR+Wt67H76LKKXtpcECFTb
+	CKDkcjSQd7CRBiPdPuDqsh+CR+KomslqkcWXZTqLOyFDpVCnNGC0P1/SftjZGT2l/tVVDDkV55j
+	j8+ic2AqYAZfdjguM4AI843JD/pFF3/MLZYXtdDn1YUSnKmwUFzS8mA6XC34In7FL4r6Ddrp0St
+	LMK/rAUNMuLFg=
+X-Google-Smtp-Source: AGHT+IH9hYEkyK3AXZ+IMp9m3KiAHOe4yc444P5qMkA/mzNCRPgTC75k9sFDT03UAxG/sZ06ANMb+w==
+X-Received: by 2002:a05:6a20:258c:b0:2d8:ce9e:87a2 with SMTP id adf61e73a8af0-348ccdfd2cdmr4592558637.57.1761910056860;
+        Fri, 31 Oct 2025 04:27:36 -0700 (PDT)
+Received: from archie.me ([210.87.74.117])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b93bf44dc8esm1827291a12.35.2025.10.31.04.27.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Oct 2025 04:27:35 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 094144209E4A; Fri, 31 Oct 2025 18:27:31 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux RISC-V <linux-riscv@lists.infradead.org>
+Cc: Paul Walmsley <pjw@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Alexandre Ghiti <alex@ghiti.fr>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Bagas Sanjaya <bagasdotme@gmail.com>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	=?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>
+Subject: [PATCH] MAINTAINERS: Remove Albert Ou from riscv
+Date: Fri, 31 Oct 2025 18:27:03 +0700
+Message-ID: <20251031112702.41271-2-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251029-verw-vm-v1-0-babf9b961519@linux.intel.com>
- <20251029-verw-vm-v1-1-babf9b961519@linux.intel.com> <DDVNNDVOE49L.1F77ZUNBVTR1I@google.com>
- <20251030184354.qwulxmbxkt6thu6b@desk>
-X-Mailer: aerc 0.21.0
-Message-ID: <DDWGY8JOYRIO.2XYJMYGEEVLIX@google.com>
-Subject: Re: [PATCH 1/3] x86/bugs: Use VM_CLEAR_CPU_BUFFERS in VMX as well
-From: Brendan Jackman <jackmanb@google.com>
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, 
-	Brendan Jackman <jackmanb@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
-	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, <x86@kernel.org>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>, 
-	Tao Zhang <tao1.zhang@intel.com>, Jim Mattson <jmattson@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1354; i=bagasdotme@gmail.com; h=from:subject; bh=ILQo4TDpqVd/Vz4HeogVsmkzW+Qi7czkZpkAAN/N6kk=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDJksc6QmeZ96rKO2kH0W45Hn8yz2WS/6K2Zy5c5P2X8KD 7boS9q96ShlYRDjYpAVU2SZlMjXdHqXkciF9rWOMHNYmUCGMHBxCsBELBIZ/kp9fnl/59yp3F1v D61MWvjRU+Gy5DK2d0neU055dMTVuaYz/E/Z1fZra6XOohvssxXltGorq31CKzY9yee/rf6z9IL ySRYA
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 
-On Thu Oct 30, 2025 at 6:43 PM UTC, Pawan Gupta wrote:
-> On Thu, Oct 30, 2025 at 12:28:06PM +0000, Brendan Jackman wrote:
->> On Wed Oct 29, 2025 at 9:26 PM UTC, Pawan Gupta wrote:
->> > TSA mitigation:
->> >
->> >   d8010d4ba43e ("x86/bugs: Add a Transient Scheduler Attacks mitigation")
->> >
->> > introduced VM_CLEAR_CPU_BUFFERS for guests on AMD CPUs. Currently on Intel
->> > CLEAR_CPU_BUFFERS is being used for guests which has a much broader scope
->> > (kernel->user also).
->> >
->> > Make mitigations on Intel consistent with TSA. This would help handling the
->> > guest-only mitigations better in future.
->> >
->> > Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
->> > ---
->> >  arch/x86/kernel/cpu/bugs.c | 9 +++++++--
->> >  arch/x86/kvm/vmx/vmenter.S | 3 ++-
->> >  2 files changed, 9 insertions(+), 3 deletions(-)
->> >
->> > diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
->> > index d7fa03bf51b4517c12cc68e7c441f7589a4983d1..6d00a9ea7b4f28da291114a7a096b26cc129b57e 100644
->> > --- a/arch/x86/kernel/cpu/bugs.c
->> > +++ b/arch/x86/kernel/cpu/bugs.c
->> > @@ -194,7 +194,7 @@ DEFINE_STATIC_KEY_FALSE(switch_mm_cond_l1d_flush);
->> >  
->> >  /*
->> >   * Controls CPU Fill buffer clear before VMenter. This is a subset of
->> > - * X86_FEATURE_CLEAR_CPU_BUF, and should only be enabled when KVM-only
->> > + * X86_FEATURE_CLEAR_CPU_BUF_VM, and should only be enabled when KVM-only
->> >   * mitigation is required.
->> >   */
->> 
->> So if I understand correctly with this patch the aim is:
->> 
->> X86_FEATURE_CLEAR_CPU_BUF means verw before exit to usermode
->> 
->> X86_FEATURE_CLEAR_CPU_BUF_VM means unconditional verw before VM Enter
->> 
->> cpu_buf_vm_clear[_mmio_only] means verw before VM Enter for
->> MMIO-capable guests.
->
-> Yup, thats the goal.
->
->> Since this is being cleaned up can we also:
->> 
->> - Update the definition of X86_FEATURE_CLEAR_CPU_BUF in cpufeatures.h to
->>   say what context it applies to (now it's specifically exit to user)
->> 
->> - Clear up how verw_clear_cpu_buf_mitigation_selected relates to these
->>   two flags. Thinking aloud here... it looks like this is set:
->> 
->>   - If MDS mitigations are on, meaning both flags are set
->> 
->>   - If TAA mitigations are on, meaning both flags are set
->> 
->>   - If MMIO mitigations are on, and the CPU has MDS or TAA. In this case
->>     both flags are set, but this causality is messier.
->> 
->>   - If RFDS mitigations are on and supported, meaning both flags are set
->> 
->>   So if I'm reading this correctly whenever
->>   verw_clear_cpu_buf_mitigation_selected we should expect both flags
->>   enabled. So I think all that's needed is to add a reference to
->>   X86_FEATURE_CLEAR_CPU_BUF_VM to the comment?
->
-> Yes. I will update the comment accordingly.
->
->> I think we also need to update the assertion of vmx->disable_fb_clear?
->
-> I am not quite sure about the update needed. Could you please clarify?
->
->> Anyway thanks this seems like a very clear improvement to me.
->
-> Thanks for the review and suggestions!
+From: Charlie Jenkins <charlie@rivosinc.com>
 
-I will drop this thread and continue here:
-https://lore.kernel.org/all/20251031003040.3491385-2-seanjc@google.com/
+Albert is not an active maintainer (he only posted on LKML three times
+in 2019 [1]) and his inbox rejects all emails. Remove him from the
+maintainer's list to put an end to everybody who interacts with the
+riscv linux mailing list from getting spammed with rejection emails.
+
+Link: https://lore.kernel.org/lkml/?q=f%3Aaou%40eecs.berkeley.edu [1]
+Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+Reviewed-by: Björn Töpel <bjorn@kernel.org>
+Link: https://lore.kernel.org/r/20241205-remove_albert-v1-1-17eb850f1540@rivosinc.com
+[Bagas: Rebase and add lore search link]
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+---
+riscv maintainers: Please route this patch through fixes branch of riscv tree.
+
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 3da2c26a796b82..c27d8ad6677c57 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -22084,7 +22084,6 @@ F:	arch/riscv/boot/dts/andes/
+ RISC-V ARCHITECTURE
+ M:	Paul Walmsley <pjw@kernel.org>
+ M:	Palmer Dabbelt <palmer@dabbelt.com>
+-M:	Albert Ou <aou@eecs.berkeley.edu>
+ R:	Alexandre Ghiti <alex@ghiti.fr>
+ L:	linux-riscv@lists.infradead.org
+ S:	Supported
+
+base-commit: 2e448567839c65768486d56612c88cb327d26050
+-- 
+An old man doll... just what I always wanted! - Clara
+
 
