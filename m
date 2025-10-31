@@ -1,116 +1,197 @@
-Return-Path: <linux-kernel+bounces-880446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28D07C25C07
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:07:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5502CC25C0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:07:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2A2D4004E9
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:03:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 239203A8A95
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EB222C326D;
-	Fri, 31 Oct 2025 15:00:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBFDC1F4631;
+	Fri, 31 Oct 2025 15:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XIBqVAyg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TX0Ut3TQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B8CF2C08C2;
-	Fri, 31 Oct 2025 15:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FAA038F9C;
+	Fri, 31 Oct 2025 15:02:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761922847; cv=none; b=dvDMex4LDsFKuwnBQ5OGrFImIbjFteoQ1qWNbho6tL11QpiZimsNyhe5jbFbKy/EPMfcoW7Md1yAlHn/vzuEZyE7ANHuzvsqgr9EcVG+0E1XauA/eut0hYPTTLwfsRnL8iQgnYNpQjG9KXwrmb0l1FiVs4MVuoioEmtzprCCjJ8=
+	t=1761922927; cv=none; b=r/4aSeQ8AL2ywvQ3YzbdQFvF4cILzd4vFZmtzVA0N2+yCmlGjApoDk1SUpqlOI9KBA01UnskH0d1gAjB8hYBnN4AldWWpRl+B0TajBEwU2l1oDlmuzvDJNyWnASImW9Ct4bFl+31Mc8M9TGfSJyNE2lM6G3oawbu96u3368Ow44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761922847; c=relaxed/simple;
-	bh=2992/aGiepAvk4rFlzjAqZ8Bo4XcpdcVK6JMUKNBlaE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TIHc72x1GrNOuh19fc/nuW4SmVHBXBfp88fwf9gx96Usfty3bG8n/2fwyZ1bjQsWAnq0F9Iq+9QbHXBgOc2pm+A8XXYeYXCjKXPNPsa5C8T1wnWak79yQt8Jo7XzIV6CkhR1FCvldZ0MeH4ybYBqBDe2aW7/JX5d+M3TMQvCV70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XIBqVAyg; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761922846; x=1793458846;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=2992/aGiepAvk4rFlzjAqZ8Bo4XcpdcVK6JMUKNBlaE=;
-  b=XIBqVAygUI1B6F1GaxkkEG6PAPoqcqVsXgFMHFdYTVuYRk8BBtrZ+klR
-   WN36fmyJsRK1DOFdkmWY666f8kQdVkM3ZBFkfRRUb19QshqsS/eSN7MTi
-   FfuIzmCF5gi2w+6mhYXNhyUDVevhCCHh2BZNVV1rvcUFueNMBIbdlONyx
-   d3PnPefPGO2JNN8SgfdtmVRehBGfFp/R4/eJgTuRK5HWUF1QwIrodX+Uu
-   vj6giLrOkhi/9tE56zAmXxV2EHQjWjKdzr1ecfesdWlppnDTTp5yWmEa5
-   NnYZk1fhrwECB8LV8vJoNve03gVQU4Lu2RhMpoWt++6XdVZ3QFeKlmtuD
-   g==;
-X-CSE-ConnectionGUID: kpgdRF7YTDGCaCiwc+Eo3A==
-X-CSE-MsgGUID: czScV5n1Q3ST+llnrL0+Lg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="63289446"
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="63289446"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 08:00:45 -0700
-X-CSE-ConnectionGUID: CgDdVfnCTe+n/AziIk2UJA==
-X-CSE-MsgGUID: bRalChfrTwmqPTpZDoioMA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="186995712"
-Received: from agladkov-desk.ger.corp.intel.com (HELO [10.245.244.92]) ([10.245.244.92])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 08:00:44 -0700
-Message-ID: <2797d75d-693f-4a99-9465-a340f956cc4f@linux.intel.com>
-Date: Fri, 31 Oct 2025 17:00:42 +0200
+	s=arc-20240116; t=1761922927; c=relaxed/simple;
+	bh=A6j+79ZaDyl14b4czHD2Hz3q07hKaC3/PBYZxWZEW7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T+BYYd3UzvH9CkuqYZWSx/kmUN+i3bBoWK+e3TXjFzPx8s54C4YSCmu5uHAKvtMtMX/dkTUAa2fgVLg+yJs02VC1zTvZG+QGldK/eBQqT/lY4HoanBJnxlXR3D7NB8t7Z++hCFi6SyO4EY4QS56dgZ0qXrqrDBVArI/7IFsxI3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TX0Ut3TQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2191BC4CEE7;
+	Fri, 31 Oct 2025 15:02:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761922927;
+	bh=A6j+79ZaDyl14b4czHD2Hz3q07hKaC3/PBYZxWZEW7Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TX0Ut3TQ6crDZ0ZG/j7ordqRhLzS6QiXiKwdM5uYEBLnnXofofePNUeKEQFyaUG+Z
+	 wKJTnF4KNl+HDA7LQjO2y4SNWDYBFrt2GEFNTmf69bECZFtZLryn62jfhqiXNGnATu
+	 EQ2spNcNXRC4+3pSdUQhbYZtGypQKGI39vnMMLfND/yIX3M4LvGAoB0guqcXw/AO/l
+	 rUMXZBC7JVTrwlJ/Qcr0pIS10UsS/7gGascLkyC0MUz9t3wU6bVBmiO/OLfCplhuZn
+	 5cHSA7HV9zzc6j0ETSvLv4DvPZ1DiZjIPAJx97pHDvJhfFOZGqjYnYOuqa+t+btqhF
+	 H2J4KqgXgacaA==
+Date: Fri, 31 Oct 2025 15:02:01 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Srinivas Kandagatla <srini@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	semen.protsenko@linaro.org, willmcvicker@google.com,
+	kernel-team@android.com, linux-kernel@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/5] dt-bindings: nvmem: add google,gs101-otp
+Message-ID: <20251031-seltzer-briskness-6f223654c993@spud>
+References: <20251031-gs101-otp-v1-0-2a54f6c4e7b6@linaro.org>
+ <20251031-gs101-otp-v1-1-2a54f6c4e7b6@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] usb: xhci: Fix a format bug
-To: Michal Pecio <michal.pecio@gmail.com>,
- Mathias Nyman <mathias.nyman@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251016182813.3d10a8a3.michal.pecio@gmail.com>
-Content-Language: en-US
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
-In-Reply-To: <20251016182813.3d10a8a3.michal.pecio@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="usvtYDXm1VC9pvha"
+Content-Disposition: inline
+In-Reply-To: <20251031-gs101-otp-v1-1-2a54f6c4e7b6@linaro.org>
 
-On 10/16/25 19:28, Michal Pecio wrote:
-> The width of 'addr' depends on kernel configuration and gibberish is
-> printed in traces and dynamic debug on some 32 bit systems like ARM:
-> 
->    Removing canceled TD starting at 0xf9c96eb0 (dma) in stream 0 URB 54e247b5
->    Set TR Deq ptr 0x205400000000000, cycle 0
-> 
->    Successful Set TR Deq Ptr cmd, deq = @f9c96ef0
-> 
-> Fix it by casting to 64 bits. No effect on unaffected systems.
-> Remove the newline which casuses an empty line to appear next.
-> 
-> Fixes: d1dbfb942c33 ("xhci: introduce a new move_dequeue_past_td() function to replace old code.")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Michal Pecio <michal.pecio@gmail.com>
+
+--usvtYDXm1VC9pvha
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Oct 31, 2025 at 12:45:09PM +0000, Tudor Ambarus wrote:
+> Add binding for the OTP controller found on Google GS101.
+>=20
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 > ---
->   drivers/usb/host/xhci-ring.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-> index c7f658d446cd..6d799a5a062d 100644
-> --- a/drivers/usb/host/xhci-ring.c
-> +++ b/drivers/usb/host/xhci-ring.c
-> @@ -776,7 +776,7 @@ static int xhci_move_dequeue_past_td(struct xhci_hcd *xhci,
->   	ep->queued_deq_ptr = new_deq;
->   
->   	xhci_dbg_trace(xhci, trace_xhci_dbg_cancel_urb,
-> -		       "Set TR Deq ptr 0x%llx, cycle %u\n", addr, new_cycle);
-> +		       "Set TR Deq ptr 0x%llx, cycle %u", (u64) addr, new_cycle);
+>  .../bindings/nvmem/google,gs101-otp.yaml           | 68 ++++++++++++++++=
+++++++
+>  1 file changed, 68 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/nvmem/google,gs101-otp.yam=
+l b/Documentation/devicetree/bindings/nvmem/google,gs101-otp.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..2144911297beb89337b0389b3=
+0fe6609db4156ea
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/nvmem/google,gs101-otp.yaml
+> @@ -0,0 +1,68 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/nvmem/google,gs101-otp.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Google GS101 OTP Controller
+> +
+> +maintainers:
+> +  - Tudor Ambarus <tudor.ambarus@linaro.org>
+> +
+> +description: |
+> +  OTP controller drives a NVMEM memory where system or user specific data
+> +  can be stored. The OTP controller register space if of interest as well
+> +  because it contains dedicated registers where it stores the Product ID
+> +  and the Chip ID (apart other things like TMU or ASV info).
+> +
+> +allOf:
+> +  - $ref: nvmem.yaml#
+> +  - $ref: nvmem-deprecated-cells.yaml
 
+Why are the deprecated cells needed here?
+|  Before introducing NVMEM layouts all NVMEM (fixed) cells were defined
+|  as direct device subnodes. That syntax was replaced by "fixed-layout"
+|  and is deprecated now. No new bindings should use it.
 
-Why not %pad and &addr instead?
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - const: google,gs101-otp
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-names:
+> +    const: pclk
 
-Thanks
-Mathias
+Why bother with clock-names when you only have one clock? Are you
+anticipating a variant with more?
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  power-domains:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - "#address-cells"
+> +  - "#size-cells"
+> +  - clock-names
+> +  - clocks
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/google,gs101.h>
+> +
+> +    otp: efuse@10000000 {
+> +        compatible =3D "google,gs101-otp";
+> +        reg =3D <0x10000000 0xf084>;
+> +        #address-cells =3D <1>;
+> +        #size-cells =3D <1>;
+> +        clocks =3D <&cmu_misc CLK_GOUT_MISC_OTP_CON_TOP_PCLK>;
+> +        clock-names =3D "pclk";
+> +
+> +        product_id: product_id@0 {
+
+Why does this node name have an underscore?
+
+Additionally, all nodes here should lose their labels.
+
+pw-bot: changes-requested
+
+> +            reg =3D <0x0 0x4>;
+> +        };
+> +
+> +        chip_id: chip-id@4 {
+> +            reg =3D <0x4 0x10>;
+> +        };
+> +    };
+>=20
+> --=20
+> 2.51.1.930.gacf6e81ea2-goog
+>=20
+
+--usvtYDXm1VC9pvha
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaQTPaQAKCRB4tDGHoIJi
+0o2cAP9I0IfVYwrgz4yBIgFzfJebObNu1sDfp54Jot15zJ20yQEAy6bLbD/bixRO
+unoT5rHftBNPQEVc7PZ4SzaJ+kmQoQE=
+=2JhO
+-----END PGP SIGNATURE-----
+
+--usvtYDXm1VC9pvha--
 
