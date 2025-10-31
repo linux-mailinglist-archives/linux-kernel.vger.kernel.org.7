@@ -1,130 +1,143 @@
-Return-Path: <linux-kernel+bounces-880087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91FE4C24D69
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:49:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3EB9C24D4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:48:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 261B1350E43
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:49:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C2A7E4E6320
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:48:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA7F346FD9;
-	Fri, 31 Oct 2025 11:48:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AA7B346760;
+	Fri, 31 Oct 2025 11:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Qu6amDWd"
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dK8lsHId"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B8C346FB4
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 11:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DD7332909;
+	Fri, 31 Oct 2025 11:48:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761911309; cv=none; b=CTC3X9kuD+KXWLE9aQ01252qURDZ64kIH06vGLMJ3OX4xfhNU/O8zkZ95S1nBqhMPxiXjNmFmvo+Q+RzcEzjIqRdxzgGSVr08Prp1QRS2xx+ALjwRaLVCrmUL8tc3TXkumxRLauZFu0NRoxSY4I3w5sOBp1K0a5pFC+9KzSmI3Y=
+	t=1761911303; cv=none; b=qCeslNGxe8FxYmgw0v/92QbEUImWQ1w5a7XbGHift1QJKBCgMkiq0DZaFOHHbmZoM81H8uh5ZqfcLFyK/RQIBxbeKKrUCLRZB99bIgl9qdZZgYxxpmQA6WawusaflQoSTyZjVqYJqiL653MwY4N7ULYuN1ZSj6z7/fYbj3Eyyjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761911309; c=relaxed/simple;
-	bh=z+o0QIXZjT8lXxXxsGC/4Fs2wMHpYKBAa2A7KhQGQ1w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CoZ8XqOmsLuYsI6flbbsmfQj3w1fmqoGk1UDCYbM66OlcVImjc05L0yOMxtu0sOKbayuwlzD/V2yFz1l2IR2ULMKBZgt3O/9xTpo26UaCtkyHg3OXGDPHi3B55u7hN6Vo7U18RY1EBB/Ewd0XgTHLtjZUiNwcWV9ru8whzNoCok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Qu6amDWd; arc=none smtp.client-ip=209.85.167.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-44da917e7deso1136393b6e.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 04:48:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761911306; x=1762516106; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KlwS3zPH7Q41Nzo2HC1V07gN7n2rhCpo5Vfsn6GhCWs=;
-        b=Qu6amDWdQkOYAc2m1sA6GmuxxYkBThNtLYqji4A5HzPLrQOlMjJvxEJOps6Kh5mYEo
-         kRCz5cAsdxuTI57zNwYkBRrxCLkITOT2nuM9LAtvhjt86huw07Z2HdyNWpJiGOPNVdJq
-         c160scaFY4Z8kXTOpqmn2jKFKz0nKGayf7vHQOyByeGgd27lBQZVKMqPXTbB7oDS6gvs
-         9gbZNYYHdtj43sUxEg7eiD+vH+xRikFcO0fKXWgS6rOJP8/cjsFeKfJop3myt3eksoj4
-         NmSOJfMyW/QcsrbwyrfBT/UBpukr6zJDsxSGXUgBBVft8w7SarUnZBUhuTI/HgqqoNwV
-         3oTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761911306; x=1762516106;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KlwS3zPH7Q41Nzo2HC1V07gN7n2rhCpo5Vfsn6GhCWs=;
-        b=EIGbjiYU99zQDQF8TPrOSVGLt37LkY4GARjfgbP7rnJKhhpEqoYgc/jEEJkwYA0B00
-         qF42DOZKlSROH7pvbTaRhGt4hMntGlhHqZUvvjHYTYgzpNY4EZvTvj5Nt2QBrYbEcknK
-         9FRdPyx2d3dbM+MMS0fCFR0JBf265R+TLNtDUoUVU/UZPLvgfn19EgxxyIibhqcuxj8E
-         GlPqXLwzVTFr5lQ7EBWmrJurBy4V8EVMtdk7mOhyr3FxBmqrH/a5hPbvr17b9f2oNpq5
-         JyJiavlytUZzqkR7dMVt8G9/MHc3aSV3voG8jaVYj788nljkfXDgCz79DSTRsxfCnHVt
-         JB1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXtl5GPopxGt5b3vaP67DTNtCRSxZbzxvqm9Wz/3BtI/++apVPjy/RKL1bNVYb/NWKVDKLHQbiFXQnY0xc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8QUTGNS998zCNAAxsF0dNczC2oh+GSt+YmzYPJ4u/AgGXwKp4
-	qbVwNoxNTQ3AtpycJDq7oo6ukxqKIFm5SP8Nj98NB6ygX5btFWVsxOZeWgNB796hchGMRO7yzA6
-	qh3URtk+n2MhqPbaTgztCE8ueSUriX3769zNP96kptX2pjklrkSSz3ku9LlI=
-X-Gm-Gg: ASbGncthGcCoYyQ3Vd0CrCuVBVL8VzSeUlXkareBEXvC2ZkmdCV6b+qWrUMpVZLmZLG
-	2lgCg6oF9BE8soC2M3wxND7FVAnIknbkau94T34LLxTz5XYnkK7XxqvEEsHpsWiC46wMuhEhMnv
-	ju2HmwiP4hUG6Ee1et65IjHIiOWyZRRJh2SJP8Rr5TZ24wrnqjuqzHMERLoELlOKW1pk1hs2rxs
-	BjU8tfb+NjKvvejduTHa0zdq3K1oNdnSW20cO1ZXn/EsNlP68+zOX+L4O3PoDGadPlB7EG/bqG7
-	XSyEP/sCK8S2F1w=
-X-Google-Smtp-Source: AGHT+IFn+kdpOaxRHChvDDCOT/IzFOqf6Yuxb5QncITiTYgJQXvWtUAPFk1/Z9bVNPh2z8gErYmDPzmHey0AxrHVefg=
-X-Received: by 2002:a05:6808:218d:b0:441:8f74:f0d with SMTP id
- 5614622812f47-44f95fac413mr1322392b6e.55.1761911306379; Fri, 31 Oct 2025
- 04:48:26 -0700 (PDT)
+	s=arc-20240116; t=1761911303; c=relaxed/simple;
+	bh=xFdA05+PlblvAzIvNC7xtxYhQfDUVZ5c8IHxvCC3bbU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q3zm9WUbpNOYPE0XDHo3f5f7q7LsVijjSv9UOqumRkDB1mEMTFZePFF4gc64EbPUvQT8rbWZIvtg8U4FEUEYr3Lzak/2nNVixphy9hmp7gHDS51ToIDMQ3ko412esdKYMbhY2slnfTtmuXQAtMmudexrjx1Wx0qULeD9J0AVA+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dK8lsHId; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1E10C4CEE7;
+	Fri, 31 Oct 2025 11:48:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761911303;
+	bh=xFdA05+PlblvAzIvNC7xtxYhQfDUVZ5c8IHxvCC3bbU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dK8lsHIdAGyUPhqd1Rvy0Lb6bBMBcLM//xkuEooR1Mg4eEIf4JTFsCMqlqRlXiF51
+	 gt/ej/ZIxgzW+ENZWGTk4NlV43/c+9/JxEZc9wK+s040jqnqb6UutGoEHGTj+8tDLi
+	 sR/1B6punzfwNz90/ql7m1WB7H9Vmh/HhDrmAUDb3GADUM5kyILLI/e0LxFcTqvfze
+	 tyRu+N8Vilce6HPFMEKVrN/0XyzsIK/FrpfJ19uop5cDyEZd/PhrHCVJGCS/+Z75JK
+	 2/7z2JKregPOyLma522tx02fBJn2c6++nMQJvK/VVRhDXQ0uB7UkR8QL1MIRktmdbD
+	 gqv2c35t1Uzhw==
+Message-ID: <13d2963d-e931-4e51-b875-a1650b899bb7@kernel.org>
+Date: Fri, 31 Oct 2025 12:48:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAEXGt5QeDpiHTu3K9tvjUTPqo+d-=wuCNYPa+6sWKrdQJ-ATdg@mail.gmail.com>
- <20251030183621.39ea843ebba82ae133b2b38b@linux-foundation.org>
-In-Reply-To: <20251030183621.39ea843ebba82ae133b2b38b@linux-foundation.org>
-From: Big Sleep <big-sleep-vuln-reports@google.com>
-Date: Fri, 31 Oct 2025 12:48:15 +0100
-X-Gm-Features: AWmQ_bllX8fiVQbcOAZy9XxrHCwkX9Mk1pssFOX_WeDNH-_wvRGsENq8nY9U520
-Message-ID: <CAEXGt5TEr353v7waAc8N68te4xLwCRE+RB2BWs5tFwMC1mQs9Q@mail.gmail.com>
-Subject: Re: Oops in secretmem_fault()
-To: big-sleep-vuln-reports@google.com
-Cc: Mike Rapoport <rppt@kernel.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Lance Yang <lance.yang@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] watchdog: Add driver for Gunyah Watchdog
+To: hrishabh.rajput@oss.qualcomm.com, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
+ <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+References: <20251031-gunyah_watchdog-v4-0-7abb1ee11315@oss.qualcomm.com>
+ <20251031-gunyah_watchdog-v4-2-7abb1ee11315@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251031-gunyah_watchdog-v4-2-7abb1ee11315@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello Andrew!
+On 31/10/2025 11:18, Hrishabh Rajput via B4 Relay wrote:
+> +
+> +static DEFINE_SIMPLE_DEV_PM_OPS(gunyah_wdt_pm_ops, gunyah_wdt_suspend, gunyah_wdt_resume);
+> +
+> +static struct platform_driver gunyah_wdt_driver = {
+> +	.probe = gunyah_wdt_probe,
+> +	.driver = {
+> +		.name = "gunyah-wdt",
+> +		.pm = pm_sleep_ptr(&gunyah_wdt_pm_ops),
+> +	},
+> +};
+> +
+> +static int __init gunyah_wdt_init(void)
+> +{
+> +	return platform_driver_register(&gunyah_wdt_driver);
+> +}
+> +
+> +module_init(gunyah_wdt_init);
 
-On Fri, Oct 31, 2025 at 2:36=E2=80=AFAM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
-> On Thu, 30 Oct 2025 16:34:29 +0100 Big Sleep <big-sleep-vuln-reports@goog=
-le.com> wrote:
-> You might want to include a token here so we (you!) can track the
-> report through to its resolution.  See what the sysbot people are
-> doing.  For example,
->
-> https://lkml.rescloud.iu.edu/2408.2/07972.html included:
->
-> : IMPORTANT: if you fix the issue, please add the following tag to the co=
-mmit:
-> : Reported-by: syzbot+5054473a31f78f735416@syzkaller.appspotmail.com
->
-> and when Dmitry fixed this he included that info in the patch metadata:
->
-> https://lore.kernel.org/all/20251028101447.693289-1-dmantipov@yandex.ru/T=
-/#u
->
-> and that Reported-by: will be carried all the way into the mainline tree.
 
-Thank you for the suggestion!  We are not currently tracking reports
-which we categorize as having no security impact, but we will include
-a tagging scheme like this for future reports to the kernel which do
-have a security impact.
+Heh, what was my last message? If I see module_init() I will NAK it.
 
-> btw, it would be nice to Cc some human on these reports.  One cannot
-> be very confident that emails sent to big-sleep-vuln-reports@google.com
-> will actually be read by someone.
+At v3 you really ignored entire feedback and this one here continues the
+pattern.
 
-We are monitoring and replying to our reports and the surrounding
-conversations from our project alias.  We'll try to clarify this on
-future reports.
+NAK, please read how Linux driver model is works.
 
---Google Big Sleep Team
+Best regards,
+Krzysztof
 
