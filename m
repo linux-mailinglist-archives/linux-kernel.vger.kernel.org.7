@@ -1,220 +1,527 @@
-Return-Path: <linux-kernel+bounces-879345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A556DC22E38
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:37:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 133CEC22E4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:39:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7A1874E3306
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:37:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 192813B18C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198C224DD09;
-	Fri, 31 Oct 2025 01:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F4B253356;
+	Fri, 31 Oct 2025 01:38:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="uXty7MD2"
-Received: from mail-il1-f196.google.com (mail-il1-f196.google.com [209.85.166.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="mjOL9NBy"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 894FC24A078
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 01:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2526C1A0BD6;
+	Fri, 31 Oct 2025 01:38:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761874641; cv=none; b=dwK7fUw85LAtlEFuT+d3a5uGwQW2QYKfZps8B9SNqFi+4WzE9Wkh/3ZVpV25gwViQwKl+icyCUGS490xsXYgHp+6KuvHsDt15FRpoMBfkQtH/smFO2NHc3qWe/U2zx2iTRkt4lsNnymA3CJ12R0QPObo3dfpa9bjK16KfGy/46Q=
+	t=1761874720; cv=none; b=Y3raC8i9WDVspdQ/Lt9NKVKngaTN+BpMleimkZwjDxaz00a54lV88UZrihOeaMy+QczFANeJMu/wl2XB5qKsI/TeX5300cM5mi4delNIiswHWwrDt/9iYApD0zf8351c474gRET6T2LQx+uIauNrfz7um2tnEUjpVu4M1iJ4dMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761874641; c=relaxed/simple;
-	bh=nQ29tceSmQ4urDG0IsVFtbhp5svpPgNTCQfprJofihs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ApTZw7aAFAWTtn8dsHIoEbBBBfbxUeXICP7FxFTXRNOdYLjDdnB+uZAwZt+cULNV/g2TlXRU7zTImt3zrKLnfwSI82LGt8ZabRcI8poGZTBJR3WNmRDFmnBn9eKw4W7MjlY/AJbIS1rQul9Z9GDbN/216601ZRvIFq6Aa+6Cb4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=uXty7MD2; arc=none smtp.client-ip=209.85.166.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-il1-f196.google.com with SMTP id e9e14a558f8ab-433100c59dcso773975ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 18:37:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1761874638; x=1762479438; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=MZXfwu/E+BC+JAhEUtk1GdLUOAn+XEVcnmRSn9TxWj8=;
-        b=uXty7MD2IMXtj/z2YgEmQfmOPcGb9VBgZY/cYAYCiYEDpIyToMZuA/kRHfE+ZGDyHs
-         hdfQ3+3WdJ/gW8+b7OAW4wP5DWCqtCUQGauVyV+uvF6s+BkY0rmrkqo/pYXc0UMOnP4H
-         FmUmzIeQJx7ezApiDcl7829rTv6xNoXJHBrYibXPoPn1gpzR8oUGHQWLPH/KjHOQtGwc
-         NYE721SFaQmAa3WWk1B2jV8vpvUwk5DBu51p+vPi5M0hKDgOaE+gTAwKIqCAyO86ylaW
-         Fwxhw0mOMG3vArfRVV8Q1AenBBgtGrcmCbYIpB+yOIN7tjtL+/YMuSQx+/S/94X1Fpdi
-         tTDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761874638; x=1762479438;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MZXfwu/E+BC+JAhEUtk1GdLUOAn+XEVcnmRSn9TxWj8=;
-        b=soBjmZagOHBsxygvn0agt2Au7iq5KPcJdH+3Ovfw3+CZMLR5QBvqgufJ4nz84zik8E
-         QPBjVf9PPx9Q2pAlxZlRBh6cVp6xsqtYnrS1nWEO3SlOk4ChoNbOFfWMLz2qmVcoT8+2
-         efSsfCiCmGccdypAfNUFgHwieJlFzUKf4APksbds2rgedJxIXrB2qplWlSGkyuWfFqq1
-         Ebzb1W0sxv8b4+rbtoNV2OOdsmQsJtx7HW3Oamnri4xhXJY7jiBXs3fRkvcqf798gsBn
-         OhkaWF3Ys0ezlAS0aCtpMmNZJ1rR7rRgNOKFEPGoiVK9hL2MrRze2Fzr+w4eFSLLH49l
-         xJdA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqJyL0jSvwsohtTExS5zSRAsDqek8HuTzwQQs9qL5FD4OeugnzZL/THKWnbxueOhvHlj2BC7RKxX5hoSE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjRsMd6ZaxMSIph1tOxgcz2Gh3RuNErPOnCQzdW1OYxPiSUh6/
-	0Y9uRl5hjnpIDj1inZDzAuH5YQXZVa5GhI4ldP8eHuXX6RZrjCoPE8selQ/iu/dk8WI=
-X-Gm-Gg: ASbGncvpjdqiAv2vA+qF/QKR+eTWR5zU5+OX6uIKgmwDVaFz0TUPzLpm6IpeaL2o9kG
-	+K67Ny3If9x6zGh22MeFPQyn6r7pE3dE6fAnrQhFQDwLN9BzuXyqobaeFWD5VwCK3LKECb9whXj
-	Td2HfulsgbxgbTb6HyOKvyUNGrjuziMtjUCBELLtCt2nGrJMwIJw0whAYXHFJz926PGsQ8O9GwD
-	rPTX+ZOj8APx+jmVp0MXyVXZrHzOLdGuX3Ux1DcSKIbiPi/cR98i4UiQs6I2OK6W0JSSf0ma/dK
-	pU0n07PDinLix7fT7D2lwQPAlq+XNqqXwCFOBE8qQTkjf/I8lv/K7+9pn6CbAdUBj1Mat85ZGhx
-	gSHX6Nkam+T2eSex9O0jqY9Zja3v4lRQcsbXW8kguSLV1sdV7tESCNAxADprA5FfJTf3u+RSGtm
-	xlp+AuA4366RQriOYWVOKYIFJsijp2t16vwdOmC/d7
-X-Google-Smtp-Source: AGHT+IF8jKPMcN4haMJfj2iiZ24svqDtow1spkbfII1MB862Q9VVregRX2uRZw72R6OIomLop1+AMQ==
-X-Received: by 2002:a05:6e02:b27:b0:430:af13:accc with SMTP id e9e14a558f8ab-4330d1280afmr28635775ab.7.1761874638596;
-        Thu, 30 Oct 2025 18:37:18 -0700 (PDT)
-Received: from [172.22.22.234] (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-43310245c34sm1321815ab.2.2025.10.30.18.37.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Oct 2025 18:37:18 -0700 (PDT)
-Message-ID: <9e60f7ed-7afc-4151-a301-4a0832b9105f@riscstar.com>
-Date: Thu, 30 Oct 2025 20:37:16 -0500
+	s=arc-20240116; t=1761874720; c=relaxed/simple;
+	bh=BHiiT5Bfg+sFqya7R0d8CbR5Mfy6EzHMQ6z4HvKGY0w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LuE3KtHi7tmcO3feMirBNiK78JKiHbjEn9HyNVqAVKh0BHGw79FlYxisG8Gnvbz7MYpUH/A2K67F1HDB1/6rvFrzHdMMonJPmr6KBuUuPYhbFgqhSbI1hiVqwpKOnM79gwFJqtPzJ5smfPQQGtEA8SQzfLnDIkOrzsZynv6KvUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=mjOL9NBy; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1761874714;
+	bh=PYUiL+0V/cAR3Reu0+ixQuOq/kSh5SzuNdMBa0Obe3U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mjOL9NByobrA9rW4IdexS3RXI0PXddIhq9nMk49FugrhdSxNFchk7bz/JsiRbhtOg
+	 drWMXJpy2jh5RbLm+HULU0/+2MBX1vKXXQLmmuHRv8fwwuKg6T6IK+enDHLJ5A9mpP
+	 bYsTuSOmKauyUhGzjTDQTo/xRZSZSkFIeGGusB06U1R4DrHispQf8GirRMFAfSc/Ps
+	 6PUgE6DYL5C7vs0ru2ZCrvYX99rOONxSTRFK/MD4VLCoPum9+AI2auXyrjIbEcoIkV
+	 bZjgurgoF/Pilfkbk8Gw6EBQwSd3FkR1xf/qXgRA2EFu0MKv/Ud5fey8lXXDNfM9MD
+	 AhUNhjp1zQNhg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4cyNt20dMtz4wc4;
+	Fri, 31 Oct 2025 12:38:34 +1100 (AEDT)
+Date: Fri, 31 Oct 2025 12:38:33 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the tip tree
+Message-ID: <20251031123833.1dbd0130@canb.auug.org.au>
+In-Reply-To: <20251031121812.1db72425@canb.auug.org.au>
+References: <20251031120243.4394e6a8@canb.auug.org.au>
+	<20251031121812.1db72425@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/7] dt-bindings: pci: spacemit: introduce PCIe host
- controller
-To: Rob Herring <robh@kernel.org>
-Cc: krzk+dt@kernel.org, conor+dt@kernel.org, bhelgaas@google.com,
- lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
- dlan@gentoo.org, guodong@riscstar.com, devicetree@vger.kernel.org,
- linux-pci@vger.kernel.org, spacemit@lists.linux.dev,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251030220259.1063792-1-elder@riscstar.com>
- <20251030220259.1063792-4-elder@riscstar.com>
- <20251031005718.GA539812-robh@kernel.org>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <20251031005718.GA539812-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/LcOTsX+LdJosb8gjuj83z+O";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 10/30/25 7:58 PM, Rob Herring wrote:
-> On Thu, Oct 30, 2025 at 05:02:54PM -0500, Alex Elder wrote:
->> Add the Device Tree binding for the PCIe root complex found on the
->> SpacemiT K1 SoC.  This device is derived from the Synopsys Designware
->> PCIe IP.  It supports up to three PCIe ports operating at PCIe gen 2
->> link speeds (5 GT/sec).  One of the ports uses a combo PHY, which is
->> typically used to support a USB 3 port.
->>
->> Signed-off-by: Alex Elder <elder@riscstar.com>
->> ---
->>   .../bindings/pci/spacemit,k1-pcie-host.yaml   | 157 ++++++++++++++++++
->>   1 file changed, 157 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/pci/spacemit,k1-pcie-host.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/pci/spacemit,k1-pcie-host.yaml b/Documentation/devicetree/bindings/pci/spacemit,k1-pcie-host.yaml
->> new file mode 100644
->> index 0000000000000..58239a155ecc0
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pci/spacemit,k1-pcie-host.yaml
->> @@ -0,0 +1,157 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/pci/spacemit,k1-pcie-host.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: SpacemiT K1 PCI Express Host Controller
->> +
->> +maintainers:
->> +  - Alex Elder <elder@riscstar.com>
->> +
->> +description: >
->> +  The SpacemiT K1 SoC PCIe host controller is based on the Synopsys
->> +  DesignWare PCIe IP.  The controller uses the DesignWare built-in
->> +  MSI interrupt controller, and supports 256 MSIs.
-> 
-> Wrap lines at 80.
+--Sig_/LcOTsX+LdJosb8gjuj83z+O
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-OK.
+Hi all,
 
->> +
->> +allOf:
->> +  - $ref: /schemas/pci/snps,dw-pcie.yaml#
->> +
->> +properties:
->> +  compatible:
->> +    const: spacemit,k1-pcie
->> +
->> +  reg:
->> +    items:
->> +      - description: DesignWare PCIe registers
->> +      - description: ATU address space
->> +      - description: PCIe configuration space
->> +      - description: Link control registers
->> +
->> +  reg-names:
->> +    items:
->> +      - const: dbi
->> +      - const: atu
->> +      - const: config
->> +      - const: link
->> +
->> +  clocks:
->> +    items:
->> +      - description: DWC PCIe Data Bus Interface (DBI) clock
->> +      - description: DWC PCIe application AXI-bus master interface clock
->> +      - description: DWC PCIe application AXI-bus slave interface clock
->> +
->> +  clock-names:
->> +    items:
->> +      - const: dbi
->> +      - const: mstr
->> +      - const: slv
->> +
->> +  resets:
->> +    items:
->> +      - description: DWC PCIe Data Bus Interface (DBI) reset
->> +      - description: DWC PCIe application AXI-bus master interface reset
->> +      - description: DWC PCIe application AXI-bus slave interface reset
->> +
->> +  reset-names:
->> +    items:
->> +      - const: dbi
->> +      - const: mstr
->> +      - const: slv
->> +
->> +  interrupts:
->> +    items:
->> +      - description: Interrupt used for MSIs
->> +
->> +  interrupt-names:
->> +    const: msi
->> +
->> +  spacemit,apmu:
->> +    $ref: /schemas/types.yaml#/definitions/phandle-array
->> +    description:
->> +      A phandle that refers to the APMU system controller, whose
->> +      regmap is used in managing resets and link state, along with
->> +      and offset of its reset control register.
->> +    items:
->> +      - items:
->> +          - description: phandle to APMU system controller
->> +          - description: register offset
->> +
->> +patternProperties:
->> +  '^pcie?@':
-> 
-> It's always PCIe, so drop the '?'.
+On Fri, 31 Oct 2025 12:18:12 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Fri, 31 Oct 2025 12:02:43 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
+> wrote:
+> >
+> > After merging the tip tree, today's linux-next build (arm64 defconfig)
+> > failed like this:
+> >=20
+> > arch/arm64/kernel/entry-common.c: In function 'arm64_exit_to_user_mode':
+> > arch/arm64/kernel/entry-common.c:103:9: error: implicit declaration of =
+function 'exit_to_user_mode_prepare'; did you mean 'arch_exit_to_user_mode_=
+prepare'? [-Wimplicit-function-declaration]
+> >   103 |         exit_to_user_mode_prepare(regs);
+> >       |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+> >       |         arch_exit_to_user_mode_prepare
+> > In file included from arch/arm64/include/asm/current.h:5,
+> >                  from include/linux/sched.h:12,
+> >                  from include/linux/context_tracking.h:5,
+> >                  from include/linux/irq-entry-common.h:5,
+> >                  from kernel/entry/common.c:3:
+> > kernel/entry/common.c: In function 'exit_to_user_mode_loop':
+> > kernel/entry/common.c:77:29: error: implicit declaration of function 'r=
+seq_exit_to_user_mode_restart'; did you mean 'arch_exit_to_user_mode_prepar=
+e'? [-Wimplicit-function-declaration]
+> >    77 |                 if (likely(!rseq_exit_to_user_mode_restart(regs=
+, ti_work)))
+> >       |                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > include/linux/compiler.h:76:45: note: in definition of macro 'likely'
+> >    76 | # define likely(x)      __builtin_expect(!!(x), 1)
+> >       |                                             ^
+> >=20
+> > Caused by commit
+> >=20
+> >   d58930640310 ("entry: Split up exit_to_user_mode_prepare()")
+> >=20
+> > and maybe following ones.
+> >=20
+> > I have reverted these commits for today:
+> >=20
+> >   69c8e3d16105 ("rseq: Switch to TIF_RSEQ if supported")
+> >   1b3dd1c538a8 ("rseq: Split up rseq_exit_to_user_mode()")
+> >   d58930640310 ("entry: Split up exit_to_user_mode_prepare()") =20
+>=20
+> I also had to revert
+>=20
+>   84eeeb002035 ("rseq: Switch to fast path processing on exit to user")
 
-I'll fix that.
+And then the sparc64 defconfig build failed like this:
 
-> With that,
-> 
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+In file included from io_uring/io_uring.h:6,
+                 from io_uring/notif.c:8:
+include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
+include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rseq_=
+handle_notify_resume' from incompatible pointer type [-Werror=3Dincompatibl=
+e-pointer-types]
+   62 |         rseq_handle_notify_resume(regs);
+      |                                   ^~~~
+      |                                   |
+      |                                   struct pt_regs *
+In file included from include/linux/resume_user_mode.h:9,
+                 from io_uring/io_uring.h:6,
+                 from io_uring/notif.c:8:
+include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argument=
+ is of type 'struct pt_regs *'
+  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
+struct pt_regs *regs) { }
+      |                                              ~~~~~~~~~~~~~~~~^~~~
+In file included from io_uring/io_uring.h:6,
+                 from io_uring/notif.c:8:
+include/linux/resume_user_mode.h:62:9: error: too few arguments to function=
+ 'rseq_handle_notify_resume'
+   62 |         rseq_handle_notify_resume(regs);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from include/linux/resume_user_mode.h:9,
+                 from io_uring/io_uring.h:6,
+                 from io_uring/notif.c:8:
+include/linux/rseq.h:155:20: note: declared here
+  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
+struct pt_regs *regs) { }
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+cc1: some warnings being treated as errors
+make[4]: *** [scripts/Makefile.build:287: io_uring/notif.o] Error 1
+make[4]: *** Waiting for unfinished jobs....
+In file included from io_uring/io_uring.h:6,
+                 from io_uring/opdef.c:12:
+include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
+include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rseq_=
+handle_notify_resume' from incompatible pointer type [-Werror=3Dincompatibl=
+e-pointer-types]
+   62 |         rseq_handle_notify_resume(regs);
+      |                                   ^~~~
+      |                                   |
+      |                                   struct pt_regs *
+In file included from include/linux/resume_user_mode.h:9,
+                 from io_uring/io_uring.h:6,
+                 from io_uring/opdef.c:12:
+include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argument=
+ is of type 'struct pt_regs *'
+  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
+struct pt_regs *regs) { }
+      |                                              ~~~~~~~~~~~~~~~~^~~~
+In file included from io_uring/io_uring.h:6,
+                 from io_uring/opdef.c:12:
+include/linux/resume_user_mode.h:62:9: error: too few arguments to function=
+ 'rseq_handle_notify_resume'
+   62 |         rseq_handle_notify_resume(regs);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from include/linux/resume_user_mode.h:9,
+                 from io_uring/io_uring.h:6,
+                 from io_uring/opdef.c:12:
+include/linux/rseq.h:155:20: note: declared here
+  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
+struct pt_regs *regs) { }
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+cc1: some warnings being treated as errors
+make[4]: *** [scripts/Makefile.build:287: io_uring/opdef.o] Error 1
+In file included from io_uring/io_uring.h:6,
+                 from io_uring/filetable.c:12:
+include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
+include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rseq_=
+handle_notify_resume' from incompatible pointer type [-Werror=3Dincompatibl=
+e-pointer-types]
+   62 |         rseq_handle_notify_resume(regs);
+      |                                   ^~~~
+      |                                   |
+      |                                   struct pt_regs *
+In file included from include/linux/resume_user_mode.h:9,
+                 from io_uring/io_uring.h:6,
+                 from io_uring/filetable.c:12:
+include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argument=
+ is of type 'struct pt_regs *'
+  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
+struct pt_regs *regs) { }
+      |                                              ~~~~~~~~~~~~~~~~^~~~
+In file included from io_uring/io_uring.h:6,
+                 from io_uring/filetable.c:12:
+include/linux/resume_user_mode.h:62:9: error: too few arguments to function=
+ 'rseq_handle_notify_resume'
+   62 |         rseq_handle_notify_resume(regs);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from include/linux/resume_user_mode.h:9,
+                 from io_uring/io_uring.h:6,
+                 from io_uring/filetable.c:12:
+include/linux/rseq.h:155:20: note: declared here
+  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
+struct pt_regs *regs) { }
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+cc1: some warnings being treated as errors
+make[4]: *** [scripts/Makefile.build:287: io_uring/filetable.o] Error 1
+arch/sparc/vdso/vclock_gettime.c:274:1: warning: no previous prototype for =
+'__vdso_clock_gettime' [-Wmissing-prototypes]
+  274 | __vdso_clock_gettime(clockid_t clock, struct __kernel_old_timespec =
+*ts)
+      | ^~~~~~~~~~~~~~~~~~~~
+arch/sparc/vdso/vclock_gettime.c:302:1: warning: no previous prototype for =
+'__vdso_clock_gettime_stick' [-Wmissing-prototypes]
+  302 | __vdso_clock_gettime_stick(clockid_t clock, struct __kernel_old_tim=
+espec *ts)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~
+arch/sparc/vdso/vclock_gettime.c:327:1: warning: no previous prototype for =
+'__vdso_gettimeofday' [-Wmissing-prototypes]
+  327 | __vdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezon=
+e *tz)
+      | ^~~~~~~~~~~~~~~~~~~
+arch/sparc/vdso/vclock_gettime.c:363:1: warning: no previous prototype for =
+'__vdso_gettimeofday_stick' [-Wmissing-prototypes]
+  363 | __vdso_gettimeofday_stick(struct __kernel_old_timeval *tv, struct t=
+imezone *tz)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from io_uring/io_uring.h:6,
+                 from io_uring/tctx.c:12:
+include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
+include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rseq_=
+handle_notify_resume' from incompatible pointer type [-Werror=3Dincompatibl=
+e-pointer-types]
+   62 |         rseq_handle_notify_resume(regs);
+      |                                   ^~~~
+      |                                   |
+      |                                   struct pt_regs *
+In file included from include/linux/resume_user_mode.h:9,
+                 from io_uring/io_uring.h:6,
+                 from io_uring/tctx.c:12:
+include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argument=
+ is of type 'struct pt_regs *'
+  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
+struct pt_regs *regs) { }
+      |                                              ~~~~~~~~~~~~~~~~^~~~
+In file included from io_uring/io_uring.h:6,
+                 from io_uring/tctx.c:12:
+include/linux/resume_user_mode.h:62:9: error: too few arguments to function=
+ 'rseq_handle_notify_resume'
+   62 |         rseq_handle_notify_resume(regs);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from include/linux/resume_user_mode.h:9,
+                 from io_uring/io_uring.h:6,
+                 from io_uring/tctx.c:12:
+include/linux/rseq.h:155:20: note: declared here
+  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
+struct pt_regs *regs) { }
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+cc1: some warnings being treated as errors
+make[4]: *** [scripts/Makefile.build:287: io_uring/tctx.o] Error 1
+In file included from io_uring/io_uring.h:6,
+                 from io_uring/kbuf.c:15:
+include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
+include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rseq_=
+handle_notify_resume' from incompatible pointer type [-Werror=3Dincompatibl=
+e-pointer-types]
+   62 |         rseq_handle_notify_resume(regs);
+      |                                   ^~~~
+      |                                   |
+      |                                   struct pt_regs *
+In file included from include/linux/resume_user_mode.h:9,
+                 from io_uring/io_uring.h:6,
+                 from io_uring/kbuf.c:15:
+include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argument=
+ is of type 'struct pt_regs *'
+  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
+struct pt_regs *regs) { }
+      |                                              ~~~~~~~~~~~~~~~~^~~~
+In file included from io_uring/io_uring.h:6,
+                 from io_uring/kbuf.c:15:
+include/linux/resume_user_mode.h:62:9: error: too few arguments to function=
+ 'rseq_handle_notify_resume'
+   62 |         rseq_handle_notify_resume(regs);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from include/linux/resume_user_mode.h:9,
+                 from io_uring/io_uring.h:6,
+                 from io_uring/kbuf.c:15:
+include/linux/rseq.h:155:20: note: declared here
+  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
+struct pt_regs *regs) { }
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+cc1: some warnings being treated as errors
+make[4]: *** [scripts/Makefile.build:287: io_uring/kbuf.o] Error 1
+In file included from io_uring/io_uring.h:6,
+                 from io_uring/rw.c:19:
+include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
+include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rseq_=
+handle_notify_resume' from incompatible pointer type [-Werror=3Dincompatibl=
+e-pointer-types]
+   62 |         rseq_handle_notify_resume(regs);
+      |                                   ^~~~
+      |                                   |
+      |                                   struct pt_regs *
+In file included from include/linux/resume_user_mode.h:9,
+                 from io_uring/io_uring.h:6,
+                 from io_uring/rw.c:19:
+include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argument=
+ is of type 'struct pt_regs *'
+  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
+struct pt_regs *regs) { }
+      |                                              ~~~~~~~~~~~~~~~~^~~~
+In file included from io_uring/io_uring.h:6,
+                 from io_uring/rw.c:19:
+include/linux/resume_user_mode.h:62:9: error: too few arguments to function=
+ 'rseq_handle_notify_resume'
+   62 |         rseq_handle_notify_resume(regs);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from include/linux/resume_user_mode.h:9,
+                 from io_uring/io_uring.h:6,
+                 from io_uring/rw.c:19:
+include/linux/rseq.h:155:20: note: declared here
+  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
+struct pt_regs *regs) { }
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+cc1: some warnings being treated as errors
+make[4]: *** [scripts/Makefile.build:287: io_uring/rw.o] Error 1
+In file included from io_uring/io_uring.h:6,
+                 from io_uring/rsrc.c:17:
+include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
+include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rseq_=
+handle_notify_resume' from incompatible pointer type [-Werror=3Dincompatibl=
+e-pointer-types]
+   62 |         rseq_handle_notify_resume(regs);
+      |                                   ^~~~
+      |                                   |
+      |                                   struct pt_regs *
+In file included from include/linux/resume_user_mode.h:9,
+                 from io_uring/io_uring.h:6,
+                 from io_uring/rsrc.c:17:
+include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argument=
+ is of type 'struct pt_regs *'
+  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
+struct pt_regs *regs) { }
+      |                                              ~~~~~~~~~~~~~~~~^~~~
+In file included from io_uring/io_uring.h:6,
+                 from io_uring/rsrc.c:17:
+include/linux/resume_user_mode.h:62:9: error: too few arguments to function=
+ 'rseq_handle_notify_resume'
+   62 |         rseq_handle_notify_resume(regs);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from include/linux/resume_user_mode.h:9,
+                 from io_uring/io_uring.h:6,
+                 from io_uring/rsrc.c:17:
+include/linux/rseq.h:155:20: note: declared here
+  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
+struct pt_regs *regs) { }
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+cc1: some warnings being treated as errors
+make[4]: *** [scripts/Makefile.build:287: io_uring/rsrc.o] Error 1
+In file included from arch/sparc/vdso/vdso32/vclock_gettime.c:22:
+arch/sparc/vdso/vdso32/../vclock_gettime.c:274:1: warning: no previous prot=
+otype for '__vdso_clock_gettime' [-Wmissing-prototypes]
+  274 | __vdso_clock_gettime(clockid_t clock, struct __kernel_old_timespec =
+*ts)
+      | ^~~~~~~~~~~~~~~~~~~~
+arch/sparc/vdso/vdso32/../vclock_gettime.c:302:1: warning: no previous prot=
+otype for '__vdso_clock_gettime_stick' [-Wmissing-prototypes]
+  302 | __vdso_clock_gettime_stick(clockid_t clock, struct __kernel_old_tim=
+espec *ts)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~~
+arch/sparc/vdso/vdso32/../vclock_gettime.c:327:1: warning: no previous prot=
+otype for '__vdso_gettimeofday' [-Wmissing-prototypes]
+  327 | __vdso_gettimeofday(struct __kernel_old_timeval *tv, struct timezon=
+e *tz)
+      | ^~~~~~~~~~~~~~~~~~~
+arch/sparc/vdso/vdso32/../vclock_gettime.c:363:1: warning: no previous prot=
+otype for '__vdso_gettimeofday_stick' [-Wmissing-prototypes]
+  363 | __vdso_gettimeofday_stick(struct __kernel_old_timeval *tv, struct t=
+imezone *tz)
+      | ^~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from io_uring/io_uring.h:6,
+                 from io_uring/io_uring.c:83:
+include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
+include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rseq_=
+handle_notify_resume' from incompatible pointer type [-Werror=3Dincompatibl=
+e-pointer-types]
+   62 |         rseq_handle_notify_resume(regs);
+      |                                   ^~~~
+      |                                   |
+      |                                   struct pt_regs *
+In file included from include/linux/resume_user_mode.h:9,
+                 from io_uring/io_uring.h:6,
+                 from io_uring/io_uring.c:83:
+include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argument=
+ is of type 'struct pt_regs *'
+  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
+struct pt_regs *regs) { }
+      |                                              ~~~~~~~~~~~~~~~~^~~~
+In file included from io_uring/io_uring.h:6,
+                 from io_uring/io_uring.c:83:
+include/linux/resume_user_mode.h:62:9: error: too few arguments to function=
+ 'rseq_handle_notify_resume'
+   62 |         rseq_handle_notify_resume(regs);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from include/linux/resume_user_mode.h:9,
+                 from io_uring/io_uring.h:6,
+                 from io_uring/io_uring.c:83:
+include/linux/rseq.h:155:20: note: declared here
+  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
+struct pt_regs *regs) { }
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+cc1: some warnings being treated as errors
+make[4]: *** [scripts/Makefile.build:287: io_uring/io_uring.o] Error 1
+make[3]: *** [scripts/Makefile.build:556: io_uring] Error 2
+make[3]: *** Waiting for unfinished jobs....
+In file included from arch/sparc/kernel/signal_64.c:18:
+include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
+include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rseq_=
+handle_notify_resume' from incompatible pointer type [-Werror=3Dincompatibl=
+e-pointer-types]
+   62 |         rseq_handle_notify_resume(regs);
+      |                                   ^~~~
+      |                                   |
+      |                                   struct pt_regs *
+In file included from include/linux/resume_user_mode.h:9,
+                 from arch/sparc/kernel/signal_64.c:18:
+include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argument=
+ is of type 'struct pt_regs *'
+  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
+struct pt_regs *regs) { }
+      |                                              ~~~~~~~~~~~~~~~~^~~~
+In file included from arch/sparc/kernel/signal_64.c:18:
+include/linux/resume_user_mode.h:62:9: error: too few arguments to function=
+ 'rseq_handle_notify_resume'
+   62 |         rseq_handle_notify_resume(regs);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from include/linux/resume_user_mode.h:9,
+                 from arch/sparc/kernel/signal_64.c:18:
+include/linux/rseq.h:155:20: note: declared here
+  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
+struct pt_regs *regs) { }
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
+cc1: some warnings being treated as errors
+make[5]: *** [scripts/Makefile.build:287: arch/sparc/kernel/signal_64.o] Er=
+ror 1
+make[5]: *** Waiting for unfinished jobs....
+make[4]: *** [scripts/Makefile.build:556: arch/sparc/kernel] Error 2
+make[4]: *** Waiting for unfinished jobs....
+make[3]: *** [scripts/Makefile.build:556: arch/sparc] Error 2
+kernel/fork.c: In function '__do_sys_clone3':
+kernel/fork.c:2898:2: warning: #warning clone3() entry point is missing, pl=
+ease fix [-Wcpp]
+ 2898 | #warning clone3() entry point is missing, please fix
+      |  ^~~~~~~
+kernel/fork.c:2898:2: warning: #warning clone3() entry point is missing, pl=
+ease fix [-Wcpp]
+ 2898 | #warning clone3() entry point is missing, please fix
+      |  ^~~~~~~
+In file included from kernel/task_work.c:5:
+include/linux/resume_user_mode.h: In function 'resume_user_mode_work':
+include/linux/resume_user_mode.h:62:35: error: passing argument 1 of 'rseq_=
+handle_notify_resume' from incompatible pointer type [-Werror=3Dincompatibl=
+e-pointer-types]
+   62 |         rseq_handle_notify_resume(regs);
+      |                                   ^~~~
+      |                                   |
+      |                                   struct pt_regs *
+In file included from include/linux/resume_user_mode.h:9,
+                 from kernel/task_work.c:5:
+include/linux/rseq.h:155:62: note: expected 'struct ksignal *' but argument=
+ is of type 'struct pt_regs *'
+  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
+struct pt_regs *regs) { }
+      |                                              ~~~~~~~~~~~~~~~~^~~~
+In file included from kernel/task_work.c:5:
+include/linux/resume_user_mode.h:62:9: error: too few arguments to function=
+ 'rseq_handle_notify_resume'
+   62 |         rseq_handle_notify_resume(regs);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from include/linux/resume_user_mode.h:9,
+                 from kernel/task_work.c:5:
+include/linux/rseq.h:155:20: note: declared here
+  155 | static inline void rseq_handle_notify_resume(struct ksignal *ksig, =
+struct pt_regs *regs) { }
+      |                    ^~~~~~~~~~~~~~~~~~~~~~~~~
 
-Thanks for the review.
+I will come back to this later today.
 
-					-Alex
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/LcOTsX+LdJosb8gjuj83z+O
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkEExkACgkQAVBC80lX
+0Gxozgf/aPkRoi/CeUF9RBPKGG2zalrrnDcD0vPKvnVrLdN1xvE76Izq0f1cp2Yo
+/2eDp4sXztlgTUCsX/BxpkIhaUPQUR9V33vvCY8gr3PUYYAKWym/ZLbkndpk0oIV
+NsvhTKJmPSO4nhLPLcP0xGSJYdfFhZ9A71Cpy84DH+8nd7jFjxbXLO6LFWdP5nii
+MNG3WVYhCDhPaRqv9L1rmG7V27gHg9E4nCIezpjyQzy1PtHPhcICG1txDAQymDhC
+4MmoaM17PNCVSF3Za1V0LMu0xL+VrafMVU3rKpUm8fR1Klpqjl5eMNPyME9YzLyf
+gH1gC1BKDtMHumwBPqeO0RQjhXojgw==
+=N/K0
+-----END PGP SIGNATURE-----
+
+--Sig_/LcOTsX+LdJosb8gjuj83z+O--
 
