@@ -1,166 +1,131 @@
-Return-Path: <linux-kernel+bounces-879508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81571C2345F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 05:51:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57126C23468
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 05:57:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EF541A61A16
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 04:51:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46095189B439
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 04:57:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E19FC2C21F9;
-	Fri, 31 Oct 2025 04:51:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1496C27147D;
+	Fri, 31 Oct 2025 04:56:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MXliqMht"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dVUUVvQZ"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AA611F5827;
-	Fri, 31 Oct 2025 04:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47992D0C70
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 04:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761886263; cv=none; b=KYqtoQPR4pLozRNlwSVBm07aHlTz+ynKHI0ieN6YnO7Rr95Ew4jzHsAAWsEgmLMZ400Mi2cq7LV1/d2xLUFwiYqsrDZ+61ZZXG7lYCGp1YF2T1wHncUIPio1CUfgb3ugMu5mq/wYPwomn5E1n3lhuEPrD/dVGhSV1nFbjXV0vE0=
+	t=1761886616; cv=none; b=ogwBWaenpOjnW5kJbjxU85V3NB5qVpsbTBeL26kO1qOdk8mCbMwFkFVK1H4NtbclpKULnbYpWXqNrOvhNefSyQhpILntNiKR108iKB3QwD8M4x9mynWHZEdSdfZTSvYlPSe3+iAf55ZtgJO7r8ZALyDEAOSzU8y5uykTkORizJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761886263; c=relaxed/simple;
-	bh=G44bpHHiuqg+ANzubI4TrUoruxDDx7aa5Q7m+kQvkZY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a46ze+AFnRoHiQaI3uEJClyNh7d2bBokEjqdzul43/MtmMfFaVUXDxXqWg9XORC9E5ttHzwW+VYZGsyNsiGlgQBwvQ3wWXMIiv1e6qwqjcvXEG3eg41FdqNt9O/GVVFGjvShUfxgIAUBrvHIdd/oY8s0rVioxRQarv3C6LlTMQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MXliqMht; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9E2DC4CEE7;
-	Fri, 31 Oct 2025 04:50:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761886260;
-	bh=G44bpHHiuqg+ANzubI4TrUoruxDDx7aa5Q7m+kQvkZY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MXliqMhtI+f/PfhTT8LI2eyAKC9LIxIi1lDYHyOLsgGgApNkE6QOZDDs3jQyjDBp4
-	 oD/WdNb7iZZNPGDvNt8yac7uG7paOzuv6cHv15NDCZXDVUkYgxHgQ2VLw1MJspnuo+
-	 YTU+3UN7ZysihCIk4yRlasstcfqMEnNP2ivS2brojGLLjEcd2BDeD+WL8jy+MDGRHT
-	 2ZhW5M7sWI4VplxmqCFsepCDUXWunmECYKOq/xNc+ElavFGNEeDnrUJZZ7vbo/fome
-	 4vIn2z5FtPpr8lDe4TuG/fDZgxufU7opFYKq3aYkeYY6aExdBD9ACIfzUdbOtmCZuh
-	 D8X56kWZB7Jlg==
-Message-ID: <19a08b75-13ca-45f9-884d-f96602336dfd@kernel.org>
-Date: Fri, 31 Oct 2025 05:50:56 +0100
+	s=arc-20240116; t=1761886616; c=relaxed/simple;
+	bh=RXiIl8QHy2RQmDekiRS+ZJE4djwIoThOX41hbOUjqNo=;
+	h=From:Date:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=YsytTAR0G0E53V23dibjTlTlQX8BcjgBRCfBvTizzJ/cEP6IIY5VpicxurO10W20QfcpcU28V2SoT5LNIH67W1+9cb47UZbI4avB1i/ONL8LP3tCnh7guM63BfxBfehRNKI4KIatyiL7ts3Nfa47aJldIpmuuuNS0S6N9/GTKLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dVUUVvQZ; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-429c20ac820so39341f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 21:56:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761886613; x=1762491413; darn=vger.kernel.org;
+        h=mime-version:message-id:subject:cc:to:date:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=o3m8aq/RrYHBIP7bSVm+Q0EOZW0+wlH0W2+b0O6JlKU=;
+        b=dVUUVvQZpVBRdix2o9qf08yA5A/zChGeTo+jjcpKMRUqQGK7ZH1xpuivJdNHHb4bCD
+         hDCvLLUB4sZ7TTYzK7SbQRygxZzHBY2W0H8uSC3HBhlCZ04oD8SJ7eyuwicjg7nOrXqI
+         GwrufQwr+EdFC9om6huDivDbCVznZ0JOnIV4CwWsLi/H/b08fsF3qdZpIdImNNoHMwSX
+         PAzCisFMNoq5uaGKpqhtnL8ekpGz8kXy47G1BjqS1eD/CbjDUzEi2GUnl13NPSyCGO+5
+         ss4A0XkLi9vnVax8ucaSsxrk3SlUmBQYoJUnl2aAXD9FQjkzUnYqnNOQLQt22YaiLyaF
+         ixMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761886613; x=1762491413;
+        h=mime-version:message-id:subject:cc:to:date:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=o3m8aq/RrYHBIP7bSVm+Q0EOZW0+wlH0W2+b0O6JlKU=;
+        b=hsWzfBOLMchTSUjwP2O5I4sEGUyYl5/hpxLg9HbfRgiEXJwm3CAaCplGQUw/in6Zem
+         LRP3f9ytrdDx2Ci0nye9ryjw/s6Z4kE/JsGjPJo+CYqBugfmogW8bMyxGNnjL+vFznjO
+         VbkiPwKiAYWkJVT/7TqQCNVoXUqLER9gkIyvp+49MR76XFJHKbjEMIk5kYk1iLNafKc2
+         fWt4WMgdTSgh39DFXx6S7dtoE2fQlhO9uZQGvDsDTMQVN0Mu1nb28kefImFVI8qFBpGv
+         dJqxZcXhiVQvEHtW5gHJKPPxDYPOLfZ3xr4annrvmb/09jcHpYL5CHHTh4vbfQ8i1eg0
+         7G3g==
+X-Forwarded-Encrypted: i=1; AJvYcCV+gcokhhUObPXyHnAKqsXk67cSK3Fsux68yxMZzpQzFX6dvJPe8gazeHhcfTTnlY7FS1tMY0Z8VHTTFP0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+H+w3/dVxq19YTJhiTsGgnhKThWNn/o18rieUkuv1kjVSxjav
+	v0tuphaas9py209puUx+/pRVH/ZomnxVXBZ4CiWw+HXf7AeadDSm1ct+
+X-Gm-Gg: ASbGncuQMaCJDkofMP5CgFqQ070fg5z7WA4P/XwLrj2z7X/3+MbLVL8AriZ0J92fipG
+	boMQ4BamWMtg1/Dkn1rLLWlD3MSVHeKbloonK3rSy2SWGOFcbLXdWu6WzHZf/gBFLjDCUVXSvIs
+	m3DNec8VRs2ozQAfiMULmLma2XkE4dgL9AwBicAdNlNXic3Cmbodlj8TSrc2MiVF5/vqfqmVClx
+	m0VXlRL5F8TpDquEjW9thT1bMFx9f3S5KU5R0Jdu18qpyF5MJ+SETVi4Ku9M5SxDndTcfR9hKZg
+	RbW++3lzt73oj3la/ETS0nhALwKZcvNroTHwIYwCfN4jpdDpp+8vuZlCbsdhTiqMxgMCZUC6htT
+	6XrZ7wBTgqEBGYDr4oIRIruuKBwJlFYLEEMnXZfOw4Csv3tjZ1m/ChxlXwLy4oQ2L8eRf+MIFdw
+	tOlAg=
+X-Google-Smtp-Source: AGHT+IHZJzakzTgwlQHrJ/hVyQ/JzPNqC0OXG+Lg3olvwUpspwRFjhHXnZ1HB94EgEI14GhptLth7A==
+X-Received: by 2002:a5d:5c89:0:b0:3de:b99d:d43 with SMTP id ffacd0b85a97d-429bd6895ddmr1557063f8f.19.1761886612883;
+        Thu, 30 Oct 2025 21:56:52 -0700 (PDT)
+Received: from [172.23.94.183] ([147.161.143.91])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c112413esm1351004f8f.12.2025.10.30.21.56.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Oct 2025 21:56:52 -0700 (PDT)
+From: HariKrishna Sagala <hariconscious@gmail.com>
+X-Google-Original-From: HariKrishna Sagala <hkrishna@gmail.com>
+Date: Fri, 31 Oct 2025 10:26:02 +0530 (IST)
+To: lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz, tiwai@suse.com, 
+    kuninori.morimoto.gx@renesas.com
+cc: shuah@kernel.org, david.hunter.linux@gmail.com, 
+    linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC] ASoC: soc-core: proposal to remove num_auto_selectable_formats
+ from snd_soc_dai_ops
+Message-ID: <2daa603f-13fe-c803-17fc-4fdd8e5723ba@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 12/13] serial: sh-sci: Add support for RZ/G3E RSCI SCIF
-To: Biju <biju.das.au@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
- Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org, linux-renesas-soc@vger.kernel.org
-References: <20251030175811.607137-1-biju.das.jz@bp.renesas.com>
- <20251030175811.607137-13-biju.das.jz@bp.renesas.com>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20251030175811.607137-13-biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="8323329-437433266-1761886612=:1037"
+
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--8323329-437433266-1761886612=:1037
+Content-Type: text/plain; charset=ISO-8859-7
+Content-Transfer-Encoding: 8BIT
 
 Hi,
 
-On 30. 10. 25, 18:58, Biju wrote:
-> From: Biju Das <biju.das.jz@bp.renesas.com>
-> 
-> Add support for RZ/G3E RSCI SCIF(a.k.a FIFO mode). RSCI IP found on the
-> RZ/G3E SoC is similar to RZ/T2H, but it has a 32-stage FIFO. it has 6
-> clocks(5 module clocks + 1 external clock) instead of 3 clocks(2 module
-> clocks + 1 external clock) on T2H and has multiple resets. Add support
-> for the hardware flow control.
-> 
-> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
-> ---
-...
-> --- a/drivers/tty/serial/rsci.c
-> +++ b/drivers/tty/serial/rsci.c
-> @@ -11,6 +11,8 @@
-...
-> +static void rsci_finish_console_write(struct uart_port *port, u32 ctrl)
-> +{
-> +	rsci_serial_out(port, CCR0, ctrl & ~CCR0_TE);
-> +	cpu_relax();
+Good day.
+I¢d like to propose a small cleanup and simplification in the
+snd_soc_dai_ops structure by removing the
+"num_auto_selectable_formats" parameter.
 
-What's the intent of cpu_relax in here? It does not make much sense to 
-me. If you need delay, use delay.
+Context:
+Currently,snd_soc_dai_ops includes the "num_auto_selectable_formats"
+field to indicate the number of entries in the "auto_selectable_formats"
+array.However, this count can be derived programmatically using the
+ARRAY_SIZE() macro wherever needed.
 
-> +	rsci_serial_out(port, CCR0, ctrl);
-> +}
-> +
-...
-> diff --git a/drivers/tty/serial/sh-sci.c b/drivers/tty/serial/sh-sci.c
-> index fac83dace27c..85b89c1ebf15 100644
-> --- a/drivers/tty/serial/sh-sci.c
-> +++ b/drivers/tty/serial/sh-sci.c
-> @@ -3397,7 +3397,7 @@ static void sci_remove(struct platform_device *dev)
->   	if (s->port.fifosize > 1)
->   		device_remove_file(&dev->dev, &dev_attr_rx_fifo_trigger);
->   	if (type == PORT_SCIFA || type == PORT_SCIFB || type == PORT_HSCIF ||
-> -	    type == SCI_PORT_RSCI)
-> +	    type == SCI_PORT_RSCI || type == RSCI_PORT_SCIF)
->   		device_remove_file(&dev->dev, &dev_attr_rx_fifo_timeout);
-...
-> @@ -3759,7 +3763,8 @@ static int sci_probe(struct platform_device *dev)
->   			return ret;
->   	}
->   	if (sp->type == PORT_SCIFA || sp->type == PORT_SCIFB ||
-> -	    sp->type == PORT_HSCIF || sp->type == SCI_PORT_RSCI) {
-> +	    sp->type == PORT_HSCIF || sp->type == SCI_PORT_RSCI ||
-> +	    sp->type == RSCI_PORT_SCIF) {
+Proposal:
+Remove the "num_auto_selectable_formats" field from the
+snd_soc_dai_ops structure.Replace usage references to this field with
+ARRAY_SIZE(auto_selectable_formats) in the relevant code paths.
 
-This test is duplicated -- you seem you need a helper for this.
+One effect I see is if the parameter "auto_selectable_formats" has
+only one priority format because few codecs are defined as a u64
+variable,will correct and prepare a patch.
 
-thanks,
--- 
-js
-suse labs
+Please provide suggestions, objections and also to consider any
+compatibility problems,historic importance of same.
+
+If there are no objections, I would like to prepare a patch for
+the same.
+
+Thanks.
+
+Regards,
+HariKrishna.
+--8323329-437433266-1761886612=:1037--
 
