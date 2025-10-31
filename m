@@ -1,134 +1,126 @@
-Return-Path: <linux-kernel+bounces-879886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BABA9C24524
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:02:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8007AC2455D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:04:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D41953BB9F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:59:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49CF41B20DA5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419F5333732;
-	Fri, 31 Oct 2025 09:59:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC006332919;
+	Fri, 31 Oct 2025 10:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B/X9S9bo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J4f3W9rX"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6D21B87EB;
-	Fri, 31 Oct 2025 09:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F211322A25
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761904763; cv=none; b=DvFZYCeZ271YaKMfQKyqO/PYBvBKO0N03CwRxNx/40JDIfwNhTAwY+wqtXg+/E8JGx7xBBmCW+DEsmGZKghIG7QMrYtVsv3mR8Asc4vHuRyiItTTmWiKiuujPrkoVEveZ1EpuAeQOb6LMIRsRojuPPDM+c+tFqnooRfJcjSci7s=
+	t=1761904806; cv=none; b=GNZatrL2Wqv2bZ3Zc71bOQG9xQzZJ7Drk9vl+HrTbrIi+tBWl/W2riCV7feyTbq3rlVVvF/aMHITddkdhSjmx5qt0RFErDSHtJpjihv7vW14YgdFUcJTv2CbpDeicdzCJ0cviodi3XHzfOiCTMFCyOVXXFXkyiHqRKsWFdB/itA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761904763; c=relaxed/simple;
-	bh=fbWfcUSRmmSGBIa7RvGFKILcyx2LFQdk812Ih8G0axY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LnLolD1ieruFTgqTCQbn43KqvVXeO4jYKgxNBET3IXrAqN+MiOEimPvYRXR9t7UGkNED9+l2svmjaXrhqzVD8Tz7ybl2MSiPxqurzuRb076hjZ1r00mFuFJL+EUxks6G+VVyLoyBKMsEg3ShZmJywjm+funEz8awwxB5GcWBVsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B/X9S9bo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00199C4CEE7;
-	Fri, 31 Oct 2025 09:59:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761904763;
-	bh=fbWfcUSRmmSGBIa7RvGFKILcyx2LFQdk812Ih8G0axY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B/X9S9bovPQF50GHgjwW/vIf0AsSsp64qbJdE19thdNyppfFyHrowADfIzxgilHha
-	 A/jpOa69Lv0SgKllffjaNRCbjvkRI+7+1JiP9CJCKDYqqZM6Tjm/7tbvPhObuzx/9R
-	 BO7w4YmmWcwxi2Yg6d9QS/dTwBEXtoFACYU+hbBqz4p4LUt7imQtt+5wEKXZClcoUY
-	 DkyhTugW2NZiY/Pf8gSGz9ZaHj1mHzJQRPTPEnKgxiE2CFWnQzq9ppapfN+GQeS4Vw
-	 DV+f3c1KGZWPnuX/3/NeCVIaatiRrx6mXXSe+YVieVb3GpCdgVdqo+ttN1IEHCm06p
-	 7jJojaeQqffYA==
-Date: Fri, 31 Oct 2025 11:59:16 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Lance Yang <lance.yang@linux.dev>
-Cc: akpm@linux-foundation.org, big-sleep-vuln-reports@google.com,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	lorenzo.stoakes@oracle.com, willy@infradead.org, david@redhat.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/1] mm/secretmem: fix use-after-free race in fault
- handler
-Message-ID: <aQSIdCpf-2pJLwAF@kernel.org>
-References: <CAEXGt5QeDpiHTu3K9tvjUTPqo+d-=wuCNYPa+6sWKrdQJ-ATdg@mail.gmail.com>
- <20251031091818.66843-1-lance.yang@linux.dev>
+	s=arc-20240116; t=1761904806; c=relaxed/simple;
+	bh=wNnjGniV6pu3D6d0+vHC1OpzEzE1DnHmr+R7k2tu6TU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=F7W0NbcTK/QYUWizpLq5bdYMiTzZGvFpiQaA7DMSp+MU5E4KEFkzf9P4Gd5c3smEOsXizfFgdGeauYa5l+YfHggtksYgH80ZrsHrUswLF4WqEMxzLxYMS1yNVYzeQgtMBnTY+Mq/O2KdEH1Y/kUrE8J2RQNx2vfWR29UMMy09cU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J4f3W9rX; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4770e7062b5so14706735e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 03:00:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761904803; x=1762509603; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=9XmagYXZGhiRCZo8nGtg5dtjzropHlOVEQuuywu8QoA=;
+        b=J4f3W9rXGjMCaWSR6Lxj7YXEWIJgdZSbBIrNsbATnAknXIGFGL1YFerW/2meokdt5+
+         DNNXhauX+rEW5pjvlg0uAORbrQs4yxcAWuq8Z5wYU7xIUzBVxdHofS+uG2hE13xxh4sM
+         7NSUUgwKy+kKGodo3uFPEEemwhmosAplqPGW809/IH5C9gjZaS826RWPyzAsJAudYPsJ
+         JdKckZN33cePnrmmh6QTxN6+vLeFNqanG3DR3oP9nUFP9zBQAr9x2r8lpLFwLgGgfbBC
+         pjgDts2J7nB3MFJEkwORLcTJRDUv8M2/u+xT0b+VKGnTYAA5i+LysobG0gpmakWDBIiv
+         s5Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761904803; x=1762509603;
+        h=content-transfer-encoding:in-reply-to:from:cc:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9XmagYXZGhiRCZo8nGtg5dtjzropHlOVEQuuywu8QoA=;
+        b=wViTC+VwTzx/c1CrU6vxbpJXph9NY3Di6qvlamhb9GEyNb1V96v4eOFl+ger3lx4CJ
+         xMX+LTqM+g/HPxdoF1+9VPGbyUEQgoXup73i3CaKBZCgK/6o4gS3x1SePTfnKNI3yEGG
+         OTDpTzhdFpGDPW06tIv/5/3VrI6af/TWTcJwCq4vMFjlSwk3p46WMCYewzut8ml3IL+j
+         pDINwO3W8vFsNXs+zPyX2rEOKVTrhofhkgmALORVa/fqlqcszcfZJKQBcz4Vr0gpWVme
+         huw6a3PRYcfHYNlIM3oc6A7F7GCOaI1qCL4huJugYr6Kg8ozH1kI4tX6syZyDvnKZO3M
+         dEXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUAuTitf4DcudezvHloQ80zQAddOLXlJ5XGssu63ONikHuhPxDUvXzGHU1dXEwDUWoFwmGSpE8RIzAcZbs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvzyhdM+e46Dw9qidVu4i6extVmTCWL9Itf28f4/H4Bo8E0jaQ
+	IetmoFhJCHDi1YyppBzUBn5H9UTTGXe7lfjFTpK4BLmnC86x4ge7A9nM69vfZnLHX90=
+X-Gm-Gg: ASbGnctREbpXWv6sSRDTvqF8+CxFUkh/kCPkxrfB7uVSi1MG3semQ03Vz3rPsp/mXgC
+	INsXR3tggwgjt4ZlqABWaip4z//lvd9XFD0rYDRLAyBr4ZkW8QtAtynEw5135qEeEMSr4+HOOBr
+	149iVtb8DzVWGSUirVfU53chji7I+bv3c1c/Zl8WuF5Q3SHnF+sbI/CQtyehe8tc/5bkrkeg8iW
+	YVBwHkcN76zkb4sNgLy+SM7+43VpYQMXZSUPj/IPLd58RJbyRRTLJG3FdfyutKG1mK0NaLIkq98
+	Za1KcnGem62buzuReZAbxDYkxrAa7FQcIDshWG7fhTwVmlVDdZLJ3n4bALJBk3+vKzAdQJQe8Sb
+	EVrOXa2c+KDy/VqQ30DstUSTs0iQ96AM5O3pJHWwa/qGhwSA0NrZH5NY7Mx69OBeha8NSVXVxd2
+	pYkH+sP+7qSSPrT0r8
+X-Google-Smtp-Source: AGHT+IEv9vBf1gcZcP/1EXFL+TdkTt1q9osVqrYbZXlOtnlKXOqyYbm17I+a0qRcWFjfmA40A3E6SA==
+X-Received: by 2002:a05:600c:4e44:b0:45f:2cb5:ecff with SMTP id 5b1f17b1804b1-477308ce7b2mr28429105e9.31.1761904802781;
+        Fri, 31 Oct 2025 03:00:02 -0700 (PDT)
+Received: from [192.168.1.3] ([185.48.77.170])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47728a979b8sm86399575e9.10.2025.10.31.03.00.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 31 Oct 2025 03:00:02 -0700 (PDT)
+Message-ID: <18df2108-5f09-4806-af0f-3af3fbff3f92@linaro.org>
+Date: Fri, 31 Oct 2025 10:00:00 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251031091818.66843-1-lance.yang@linux.dev>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tools: Fix typo error in json file
+To: Chu Guangqing <chuguangqing@inspur.com>
+References: <20251031031729.2304-1-chuguangqing@inspur.com>
+Content-Language: en-US
+Cc: john.g.garry@oracle.com, will@kernel.org, mike.leach@linaro.org,
+ leo.yan@linux.dev, peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+ namhyung@kernel.org, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
+ adrian.hunter@intel.com, linux-arm-kernel@lists.infradead.org,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20251031031729.2304-1-chuguangqing@inspur.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 31, 2025 at 05:18:18PM +0800, Lance Yang wrote:
-> From: Lance Yang <lance.yang@linux.dev>
+
+
+On 31/10/2025 3:17 am, Chu Guangqing wrote:
+> Correct instruction spelling errors.
 > 
-> The error path in secretmem_fault() frees a folio before restoring its
-> direct map status, which is a race leading to a panic.
-
-Let's use the issue description from the report:
-
-When a page fault occurs in a secret memory file created with
-`memfd_secret(2)`, the kernel will allocate a new folio for it, mark
-the underlying page as not-present in the direct map, and add it to
-the file mapping.
-
-If two tasks cause a fault in the same page concurrently, both could
-end up allocating a folio and removing the page from the direct map,
-but only one would succeed in adding the folio to the file
-mapping. The task that failed undoes the effects of its attempt by (a)
-freeing the folio again and (b) putting the page back into the direct
-map. However, by doing these two operations in this order, the page
-becomes available to the allocator again before it is placed back in
-the direct mapping.
-
-If another task attempts to allocate the page between (a) and (b), and
-the kernel tries to access it via the direct map, it would result in a
-supervisor not-present page fault.
- 
-> Fix the ordering to restore the map before the folio is freed.
-
-... restore the direct map
-
-With these changes
-
-Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-
-> 
-> Cc: <stable@vger.kernel.org>
-> Reported-by: Google Big Sleep <big-sleep-vuln-reports@google.com>
-> Closes: https://lore.kernel.org/linux-mm/CAEXGt5QeDpiHTu3K9tvjUTPqo+d-=wuCNYPa+6sWKrdQJ-ATdg@mail.gmail.com/
-> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+> Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
 > ---
->  mm/secretmem.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>   tools/perf/pmu-events/arch/arm64/ampere/emag/cache.json | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/mm/secretmem.c b/mm/secretmem.c
-> index c1bd9a4b663d..37f6d1097853 100644
-> --- a/mm/secretmem.c
-> +++ b/mm/secretmem.c
-> @@ -82,13 +82,13 @@ static vm_fault_t secretmem_fault(struct vm_fault *vmf)
->  		__folio_mark_uptodate(folio);
->  		err = filemap_add_folio(mapping, folio, offset, gfp);
->  		if (unlikely(err)) {
-> -			folio_put(folio);
->  			/*
->  			 * If a split of large page was required, it
->  			 * already happened when we marked the page invalid
->  			 * which guarantees that this call won't fail
->  			 */
->  			set_direct_map_default_noflush(folio_page(folio, 0));
-> +			folio_put(folio);
->  			if (err == -EEXIST)
->  				goto retry;
->  
-> -- 
-> 2.49.0
-> 
+> diff --git a/tools/perf/pmu-events/arch/arm64/ampere/emag/cache.json b/tools/perf/pmu-events/arch/arm64/ampere/emag/cache.json
+> index 4cc50b7da526..4001cc5753a7 100644
+> --- a/tools/perf/pmu-events/arch/arm64/ampere/emag/cache.json
+> +++ b/tools/perf/pmu-events/arch/arm64/ampere/emag/cache.json
+> @@ -81,7 +81,7 @@
+>           "BriefDescription": "L2D TLB access"
+>       },
+>       {
+> -        "PublicDescription": "Level 2 access to instruciton TLB that caused a page table walk. This event counts on any instruciton access which causes L2I_TLB_REFILL to count",
+> +        "PublicDescription": "Level 2 access to instruction TLB that caused a page table walk. This event counts on any instruction access which causes L2I_TLB_REFILL to count",
+>           "EventCode": "0x35",
+>           "EventName": "L2I_TLB_ACCESS",
+>           "BriefDescription": "L2I TLB access"
 
--- 
-Sincerely yours,
-Mike.
+Reviewed-by: James Clark <james.clark@linaro.org>
+
 
