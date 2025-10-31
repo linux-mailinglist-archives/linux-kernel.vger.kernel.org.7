@@ -1,215 +1,279 @@
-Return-Path: <linux-kernel+bounces-879560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62A9BC2374F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:50:11 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A70EC236F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:47:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49E1D3B59DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:47:42 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2FC0534DAB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:47:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886272F9DBC;
-	Fri, 31 Oct 2025 06:47:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gocontrollcom.onmicrosoft.com header.i=@gocontrollcom.onmicrosoft.com header.b="LQXU3Wjw"
-Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11023080.outbound.protection.outlook.com [52.101.83.80])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C16233074B7;
+	Fri, 31 Oct 2025 06:47:03 +0000 (UTC)
+Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437782DCBEB;
-	Fri, 31 Oct 2025 06:47:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761893233; cv=fail; b=IFS3Ekzcbho0gT3S5k2Esg4FloXWi7944BGklwUVGp9rQEUYLISApjt42VUfhE2YefXFKIdZXoAKk1sSEauVwrxnjtqEghYHulT5IGJYCHcUQucY00YnAMDttfuv0GhJbgCFN6HnXgsVuGMOsPXLI0H7fb0hGpUed5KibaNFTHM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761893233; c=relaxed/simple;
-	bh=gE/4IL95CaOVDOVYad5BgswYwqPslBMGwI3nlb2k6xc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=nxLZw2XiRvsyRw0vS89YTLsBDQFnjTU8WAcXc2N4MtzPxs6tptrAeK3L2HhpS4VPOqk1ixDwczoq75EdBEXLyjP0MvazD1WUKbofPYLCvFnKNKg+twVywQCIkLXrMMHygsmJka6XYpQOYpoTJyzDj/YBxM81XU/5VEE/B+FmsyI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gocontroll.com; spf=pass smtp.mailfrom=gocontroll.com; dkim=pass (2048-bit key) header.d=gocontrollcom.onmicrosoft.com header.i=@gocontrollcom.onmicrosoft.com header.b=LQXU3Wjw; arc=fail smtp.client-ip=52.101.83.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gocontroll.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gocontroll.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EndzDSj8T8Oi4hPTfrrLYhwe8S0PApYcmnFMlaqCqf3xoOy/IpVeLSncXCT2h5LKF7KnUkx+fBIEkWSd5Qd+mzsF84Py6yC5OCamconKYflY99kNQGB5BAOORvhedgnqga6Z8b2ok1h37SF0kB+Lc8131i00Z9qKwciYa5YNsh1bo3fRlAVWD5uTorFw7D1mVG7/8nbZYw1sIgP1ODhNFEpU+jHZfnXBcqnC/WYCo+V7wAQmvJZZY/AWvzTIcFEdDS5BS4BKX6wRmU9s+FGJrj2CkNILgKIqvTnH3Tzi3MftXXNAGdKMdov23baC9L73rjrxb/CcnicTKfvPod6qxQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bBYaLyo10ue0EWz7wQU83apQu4zthKLaYqTwGy4qnUA=;
- b=sVbVkCeTWP12XccEPnPsL+JgKttkpc+kfjX4khzl0Q+oGtRDhWZqhrFPtIuUvj3pp22E0Ru8Pst2HXOevc3oqGL3EMfoxAMzfVEPFRZbSl4S/qpgxGwyizBpR7zEjBYZl8VTxZB90mStIydB3Y1TX1EFYSXjpx2H8qvF774/br5qOIA2jGgJ1rUivkxzCykb04IiIjNH2G0IFXsXX7NdUZppXLgDFUEnDjSy+EPt1+xp2889Z9spJneApK2LpWkoc3cjgov7Zmj4+IizGG+q6aMWPK9/nFZ3vgUXkxWZw4xxRS20Nv9JcQOGD/JUE1vnmaFzpyyYQMYqhWElhtLBeA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=gocontroll.com; dmarc=pass action=none
- header.from=gocontroll.com; dkim=pass header.d=gocontroll.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=gocontrollcom.onmicrosoft.com; s=selector1-gocontrollcom-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bBYaLyo10ue0EWz7wQU83apQu4zthKLaYqTwGy4qnUA=;
- b=LQXU3WjwN7QGSyEnnA8euGGElMlgwYPniWjKhnALC7cLUIkuf4rKx721tYBgdCH/Yxn/Dxi9zPKqzkIOreXGy2fg1/8wEl7nQ7GWpctLaSFMas+jUfHp8NrObXFbheXXQqU5RT4TW9Jgs6FAN/QumX+0nz2SG58QD6GczF/XMW4nCE7nmFhXeRJt2umNb15xhjkgspQiTkqC5WS4rFeb0vGuaAw2iqZLQQ8gzfwyHK7eSr2XNIEBsYaGptI6I9a3FkicPx+QJ3LhI1AIC1m/zuQc6x2VfqXCKTCxJ1+0gkwgMbxPYSuSwJ1ZZCb7Jew+tyywFz3usTxrF6x15XVqEA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=gocontroll.com;
-Received: from PA4PR04MB7630.eurprd04.prod.outlook.com (2603:10a6:102:ec::16)
- by PAXPR04MB9278.eurprd04.prod.outlook.com (2603:10a6:102:2b8::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.14; Fri, 31 Oct
- 2025 06:47:07 +0000
-Received: from PA4PR04MB7630.eurprd04.prod.outlook.com
- ([fe80::311b:ad3a:4a62:7b5f]) by PA4PR04MB7630.eurprd04.prod.outlook.com
- ([fe80::311b:ad3a:4a62:7b5f%6]) with mapi id 15.20.9275.013; Fri, 31 Oct 2025
- 06:47:04 +0000
-Message-ID: <90911798-b692-4bd0-9efe-50268ff8bee6@gocontroll.com>
-Date: Fri, 31 Oct 2025 07:46:45 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/6] dt-bindings: arm: fsl: Add GOcontroll Moduline
- IV/Mini
-To: Conor Dooley <conor@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>,
- Matti Vaittinen <mazziesaccount@gmail.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-References: <20251030-mini_iv-v3-0-ef56c4d9f219@gocontroll.com>
- <20251030-mini_iv-v3-1-ef56c4d9f219@gocontroll.com>
- <20251030-unfailing-venue-e27a74ebab2d@spud>
-Content-Language: en-US
-From: Maud Spierings <maudspierings@gocontroll.com>
-In-Reply-To: <20251030-unfailing-venue-e27a74ebab2d@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AS4P191CA0044.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:20b:657::15) To PA4PR04MB7630.eurprd04.prod.outlook.com
- (2603:10a6:102:ec::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01141238C2F;
+	Fri, 31 Oct 2025 06:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761893222; cv=none; b=uq1Zwov0nvuYmHVzV6dQ6ZP2w4DQLp7AmdWrlxh3oJYxZy5MlDJaaOZ6xCRxO/0sxAgZGhmnNjINuZoqQMdfXSEyyaGRPREBIzgHd9MTy9BZRWvttHlZSFkvkndwNSo1gyZj9xb3i0biscgdxo9PyLVoXVlKz1IV2Ru270lAIYA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761893222; c=relaxed/simple;
+	bh=JZ4d4kYh8rfhRKOmG05eahnty61ao/DjaXEzL0J39VE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TskgaPVQJsUCUuHXplTXXLo5eukzUN6/Q7Wkl7H7QqPVPsZEkVxtSyvpZ9hLtQbI00b+JikGCQ9r5etgDgA4AVRoE3uzfS/kUMkVb5aXHKnLdOQ1mcVfG/U7REJOiDvSqXLK5YMgJ8zFJwpCYXnQOj1EYgo4xBq+LVuMpAXgCsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=linux.starfivetech.com; spf=none smtp.mailfrom=linux.starfivetech.com; arc=none smtp.client-ip=54.243.244.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=linux.starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.starfivetech.com
+X-QQ-mid: esmtpgz13t1761893210tf21d82f4
+X-QQ-Originating-IP: R90kadoSj/Lu9jhXDo3EOBK+P2zoChp7ZYtBXxB6TvQ=
+Received: from [192.168.125.98] ( [113.104.140.154])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Fri, 31 Oct 2025 14:46:46 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 1332421492275545379
+Message-ID: <99841AD0EE6A35D4+4a6afacb-4d1c-4727-9a75-134190350aca@linux.starfivetech.com>
+Date: Fri, 31 Oct 2025 14:46:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PA4PR04MB7630:EE_|PAXPR04MB9278:EE_
-X-MS-Office365-Filtering-Correlation-Id: 06c0064b-959d-404c-b513-08de18494d90
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N0FINlcrcG5FbzFYWXZuMFNHemRNMURmKzhTT3lGRStKejFRcFJXbnR0d0Vl?=
- =?utf-8?B?R25qSUlyYnVGVzBjNk9uUWJmcGRJcWZBRVJBN1J4VlVjOEhSZVcyaldlYVkw?=
- =?utf-8?B?OFE5bDhYWVBTdHU0cFp5QktNUDQySENhN3lpSmQ2Q09KTXRnZXltdmV4WXlw?=
- =?utf-8?B?STBVTG5FRUN0WmRNTkNER1N1ZHBTbkNHNi9jYXd0c2dkMDN6bldHVnYxQkgx?=
- =?utf-8?B?UzRrU2p6MkZCdXVvallYbHFkc08wV0g4bXBFTFJXQlJhcnZIdkpENXpDcnFC?=
- =?utf-8?B?bjJxbFlFTEVKWGhmclgraEtURUJyRXo3bjdyeEhEUHEweDV2Yk5qQ1ZCMWc5?=
- =?utf-8?B?U29VQkt0N1p3SlYzSjQ4dmZZTUF6RExtdVpqc0J4VjArN1o4dU93UmJPdjJ4?=
- =?utf-8?B?UEYxdjdMMi9MYVBlTjZsTnh3Nzl6VUJvOC9FdGJZWkJaeFI5YVUxYTVOODJZ?=
- =?utf-8?B?cHNLbzV5Rm00S3c5TkR2V21SWThWTGdNRGFKbE9FMURLVlFXNmF0a0VNOGUz?=
- =?utf-8?B?aG90aS90UFlUT0RueHNMeWxDVnk4aFROYXZsa1BuZ0FpZXBhbS9KVjc0dkk0?=
- =?utf-8?B?a2l2UDNMOFh5Z0dnWGVsNHVhZmZQaGQ2alRvQmxqVi9xdE42UzRJVXlQalJk?=
- =?utf-8?B?aGFBOUpZMWV4M05IL2laUzU4UTdiQ1lpYXJQdFhnTHBWZkxPck5EeCttVExY?=
- =?utf-8?B?amgza1hURWpPTk1DYjMzR24ybmFXdVlTYUhaT2xMRmd1SVo1MnNSaFNhaU9p?=
- =?utf-8?B?aXpBUGtHMUtsR2RoNWM0QnhYNEtlRUw5VXdQZFVzT21MbHNqSDl5cGFCaFkv?=
- =?utf-8?B?MVhSVFVqVGZEN0gzQnlPcStFaGNzM0dXNFJFeGRTZXhjWXlzdkFkS1l0QS8v?=
- =?utf-8?B?MERIU1RNTlc0a3REbnhmN1NtTGRVcFNBb2NMRTl0QjFERDRaWVdHdHNBRjV6?=
- =?utf-8?B?Uzh6OGtxZTRjVityWTFrTUk0U05kZkhpZlQwVThRUHdpK3JCOXBWdE1vT0V0?=
- =?utf-8?B?YVQzRFZLWUF4SVh5YWIwRlk2aGhNeVpHSFFKWmJqMDRNZWpzc0luYzN0c001?=
- =?utf-8?B?QWxrM21ud05vby9YNlhTUURSWkMzOGZNc1N5U1p0VVZJVVBLZ21YR2tyWmxq?=
- =?utf-8?B?Ty9MdjNqV0pNVXdac28rVzc4VmhNbnF2NHdXeG9Td3pXUmw3SHhoWTZEK3Zr?=
- =?utf-8?B?ZCtQRHFtQ2E1c2JSazRmeHVnOXFQekFTVEZvcG83V1RkN2pGTGorb3RQN2Rn?=
- =?utf-8?B?VExiTFZaWlp5dWVQczlPQmN1Sy83bGUwa3k4a2w3azJXa0QwZGZsL2FpWUZl?=
- =?utf-8?B?WlhHelpKNWVoOUVkV3FuTVBiLzUrUHF5UmlHemdUamoxQ1VwbDM2K3JpajdQ?=
- =?utf-8?B?N3dwZ2c4WTV3ZVJwRVJNS0pEbDlUUnNzQ2szejcxL21nYW96MDNLZVY2aUI4?=
- =?utf-8?B?K0liZTBqbzRWczhydTFIVkFrMDVCUlZkNEI5dDZ5UUxRa0lhaklKeFBMMjFj?=
- =?utf-8?B?VStaNkNDNXJzSGYxN29tekNaR3BhMkpORkd0ZXpNRnhCdzZzczc1TElwMkVM?=
- =?utf-8?B?WEsxOGdmR25lZVozbitWU0hEUzNpUlpMWmZDOXc5UHVBRTVJc2dEZVhLZ2dW?=
- =?utf-8?B?elVOQzBaMU1RSHJoY0NaTEZaTVcwbkd2UHgrVHViMjFmKytyRjlDU2QrNkdH?=
- =?utf-8?B?S1FMR1RpZlFmVnZCanRkakU1SXd4RytMeVM4bzZ6QTRZQno5K3lxWnRwUE9Q?=
- =?utf-8?B?aWszWEkvQ3Q5bWZKSHk1MmZXb3d1LzV1Sy9oVmRSc0I3dW1wSmMxYytFdUFo?=
- =?utf-8?B?VnRsSkpURmM0N0NTUUxoZDdvd1VZNXdXNnF4SWY4elFqcUZWOFBHL1B1SWhW?=
- =?utf-8?B?R05rQ1Y3RWFCU2JQdlpaMWtpdGZ0eWgxVnJNR0tvVHF4NzBsZzRRUUtHZWRi?=
- =?utf-8?Q?kogzLll+Gj7GG/oDhhrIgmPsAsneK+E3?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA4PR04MB7630.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(10070799003);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RmJHTURVL283bzhaYnpseGNDaXNCZDFKcDZQZ2VwS2ptUXdUS2RiS1JETzBO?=
- =?utf-8?B?NDJMeDRGdzBTaERXU2w5c1F5dkluTG5tT1FreFpPQUxkZHc1amlyc0tNVG5O?=
- =?utf-8?B?MDJ0aCtENFFhR0Jna3pzRDIvQ1pac3ZlajkwbGVFMXZFMEZONklHZkNzZnNu?=
- =?utf-8?B?Njg2WkZiWERPdE1FcUluQXFsaTF1c0ZBZkd4ZmtkejlTcUpzS28wLzZrWjgz?=
- =?utf-8?B?U2xwalM4MHp4d3JBaUZOL1dyVVMyR0ExejZwWi9IckxEZm4zQmU4R1hkaU1G?=
- =?utf-8?B?TWlpWDMwaElPR2h4TWZQWERkMnhZSjBQY0haZ1o4QzdRb0NSUUQ0KzkxMkxl?=
- =?utf-8?B?Z2RQL2FnVzl4ajhqVXIzYjdiZ2JtVVpoZng3MEZxY25nVW9hTzBnSnZiRGcz?=
- =?utf-8?B?OXdUY29abExwNGxCZG9sYjhlZy9jU2tIODYxMG1QdFlVbms2dmVGaXkvVEdO?=
- =?utf-8?B?UUhwZGVrVnNPdU1Sb1pFQTJwT3NMTFQrVkU1QUEvRkNhMm5YR1B2c1J3ZlVK?=
- =?utf-8?B?Vy95bE1ncHVCVi9zMGNndmcrMmsrdExmc1cvcnYzZUR6MUsrVDBhUExPVXlY?=
- =?utf-8?B?MmJ1eHVnZ2hHVG8yem14Q2wwNzZWMDhDZFJRSnRjbE9VOWpMNkFxczA0RUtD?=
- =?utf-8?B?R2NkUE56Rk9mT2d2cGp2TEhVS1VZUXFOWTBKL05WN2YxZk1NYVMveWlPekxX?=
- =?utf-8?B?SVpwUGhzdER1SXdpR0NOM05yQy9XVmw5RC9wTUZrc0FXaWE4NHh0REEwUElG?=
- =?utf-8?B?cjlkN3hvaDFJSTZBL3daNVo4b3ZIcWJiMmZuL0pDdzBqR3dYMkxndU5QYWRZ?=
- =?utf-8?B?OUJzb2NpYmt2SzJWNENDTTNCaHpTQXFDMW1qc0hvTFV2SThzUFdQUzFFTXhL?=
- =?utf-8?B?YVdiNWJvTGZQZlpaWi8wTjJUTHhuU1lSZDlwWEI0UGkyb3dZMWJzUmI3TDdC?=
- =?utf-8?B?SUJKM0twSlBZNjFWRzV6ZVAzcHhNdEx6MC9DUXkvREJDK0Y1MW9YWllSUytH?=
- =?utf-8?B?WlQ1eVBoVWZuMXFEN3plWmVERFhUU3g0bTA1TGwrSTR3MzMzZ3pSaFM1OWFU?=
- =?utf-8?B?NkIrZmpzVW9SWUMxdXRoY05YVml5NDVEdTJpZEw0bzEwRHBaNWdOVkkrUHhF?=
- =?utf-8?B?b2FNRlBUWG5oZlpuY3lIY2tSdWtpTmpHeWoxK3hndDNXNXprOWxQcnhhVnlF?=
- =?utf-8?B?OVFSZWlJOXhGREtONUtaK2Y0SnZuNUhuSnEwRzBZeTBYZWdrQW5qUGtZT2Ft?=
- =?utf-8?B?QnhFVE9tTmRWeUxHSTVSRUZ3V29BR09Vak4yZjBBT2FDSi9JUnh0aU45ZWdH?=
- =?utf-8?B?T1FpeGtzbXFZejI4dlp4enF4RnBKbUpLT3JpTDBNb1A1ZGZ1aitmN3A0Qi91?=
- =?utf-8?B?MlVnL2VQdlkyeG96NU4rTTB3eVVUeDZ6dVpteXg5Z1hVK0FNVnBOczFqSWJB?=
- =?utf-8?B?clF1QnVySm5YUFVaSWFtaTNRM290S1ZpSys3emsrQzRBejNCSWUvdjZ6b2My?=
- =?utf-8?B?bU5kZ254UUtORXpJbXJGS01YK3k4N1Jja083Qjk1NWlDcXJkZitINFY2SEM5?=
- =?utf-8?B?cUxBZVBiTHNxN0VneFJTK3VjdVFOVk44QUE1Yk9VSlJuRHUxWlZwenBUUGpU?=
- =?utf-8?B?RVNJTGcxS3M0TjAxdzVsamdCL2IxVGR4cmpsRGxtd1paV2ozczlrMEF2WDBR?=
- =?utf-8?B?aDNKR0NhU2tsMFFrb0FHZUJ0ZFFyTkRhcktpWldYVVJ2aWxHdThjYXk0ekU4?=
- =?utf-8?B?dVhDWTVrbjB0UlBPMDV1UlVVUjZFOENrb0lxMmJEelE3eVdVYy9pWkZIMGFh?=
- =?utf-8?B?dUxIWFlFK2dIczIzaEN4aWV1SEdOMWFKNlpsSTVHTzNYejlwY3ZUdFQ0bkdN?=
- =?utf-8?B?eko0UGxNa2JUc1hXYktEd0FTV3loUERCb0ZEWWtudituMHBnN2tIUFNWc1lP?=
- =?utf-8?B?VkpaMnc3NDhrVnFEOFd2aHV2YmhEcXJwZWhEOWM2aWt6L2p3T0YvTDJQMEhk?=
- =?utf-8?B?OUVzTjcrWFI3dy92SHVUcXMwQU0rU2JNWGU0U1lRRkVnd0ZWT3pSc2k1RHJp?=
- =?utf-8?B?bUx0UEd4dXc2dzMyaGpRa3FmMmhLeFltc3BvQ0lYZm1la1FMY3ovQ1F4Qmdj?=
- =?utf-8?B?aVJ4WFZydDlxaVVNYXJOb0E1dGcwYWNSMEFaZmpNTUN6SWNUOG5WbmQrVUFR?=
- =?utf-8?B?YnZnTFpVamtyV21MYTdyemx1MWE5QnRoVnNuaVVYandqbG9hYVgyUGJyZTIr?=
- =?utf-8?B?MXQxWHhsRnVjdmJzVUM1M1prbHJBPT0=?=
-X-OriginatorOrg: gocontroll.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 06c0064b-959d-404c-b513-08de18494d90
-X-MS-Exchange-CrossTenant-AuthSource: PA4PR04MB7630.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2025 06:47:04.7642
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4c8512ff-bac0-4d26-919a-ee6a4cecfc9d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: R3fnPl7D9Gx4yeVYUwszT4343SAsy9SnqcJ88sOixXiI86twWhzw15pbvTBGksgKsFaM9RcRZZD4f/DbexE30koEJX9GFnTWakEgNtHnDj4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB9278
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: Remove extra blank lines
+To: "Rob Herring (Arm)" <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
+ Vinod Koul <vkoul@kernel.org>, Moritz Fischer <mdf@kernel.org>,
+ Xu Yilun <yilun.xu@intel.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Guenter Roeck <linux@roeck-us.net>, Andi Shyti <andi.shyti@kernel.org>,
+ Jonathan Cameron <jic23@kernel.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Georgi Djakov <djakov@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Joerg Roedel <joro@8bytes.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Johannes Berg <johannes@sipsolutions.net>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Bjorn Helgaas
+ <bhelgaas@google.com>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Sebastian Reichel <sre@kernel.org>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
+ <ukleinek@kernel.org>, Mark Brown <broonie@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Olivia Mackall <olivia@selenic.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-fbdev@vger.kernel.org, dmaengine@vger.kernel.org,
+ linux-fpga@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-pm@vger.kernel.org, iommu@lists.linux.dev,
+ linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
+ netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ linux-crypto@vger.kernel.org, linux-sound@vger.kernel.org,
+ linux-usb@vger.kernel.org
+References: <20251023143957.2899600-1-robh@kernel.org>
+Content-Language: en-US
+From: Hal Feng <hal.feng@linux.starfivetech.com>
+In-Reply-To: <20251023143957.2899600-1-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:linux.starfivetech.com:qybglogicsvrgz:qybglogicsvrgz5a-1
+X-QQ-XMAILINFO: OXV5Clc+9wUNMha98fyhsJ9fYHhPR6licQKZE9QKvLaYdJH05c3/jMdo
+	t1zEuZz6yoP4kE4PsT4O7GS31TYuk4U5zQv84lqP40Ins5iyRxFusFsY1CPVJ8MZbIIC2kM
+	3iX+CSTeqePRj7lESMUGrtGI5xDxnEOZknXdtdQdLI+EnyseMDgcG1J+nnEGzdqlF6VM70C
+	Zd6hXQ9NYaBr95+DhGRmTINNntgYoyTqO5EIAY2tT4Us4c02HwXHJQeX6esG9wHXD/6PE+6
+	fkyYNMvflwWQcIvFnSxC0Lc2wHhiayC7k9ehO5YQHzM2Hsk86Vg2P0AZdpjhy1ggB0mw7nf
+	3zMfyOMAnqUDN15S8zfGsbk9RLrFbLW7txuGqyRwUWXre5gGL3fiH4xFPrBxCGwUR8vRJi9
+	pWr1UosPhh4spXLQtGx4RMXMGN/+pe21cT7mVYnq9pCIP4zXlHwPsxwm7gtyW9J1XBMk9xz
+	2E8SOPE4Y95KfPA6NlKoZOp+/KecsNDOOBIgXDnNAXnuRB0UbD0HnEbTTidl0X4WmimGqZt
+	OhZA8XC8qkivUeoH7e9pxDHVtLjXzmJDlQllu8maKt64i12OOVpQXM+81q0KgDpXZW/8K6z
+	ssCfxrg4K/aPbEpyL07sBVlHbJzyBUwltEqKnR5GwuFD1412AE24sSBOp9vouoA+lGNJkIk
+	fCziUFmhD6bZCS1M5f3QH1rGW14BWcM5zq1lWVY8se2UOFCtwenZvhZ0HRW3u3wUdb3G/AD
+	bMvaGAMfA2ZDZmXrBlE8wBnYCUrRNfGfrNowHJTktwBbAytQCz22VEWfHnuRqcEIqD//9Nf
+	lKkiNXJNpafll9bQg1rd098Yw718lE4sEaTdLITVoyiEjeBFD7iCC7abM4WN49kmh5OVWsL
+	kVzNsLnjHQ+O3ZO64KddXLXloL3LpByIV99gAOXLivP/ylOf9qkmJTwAcYTvYrteHrpSizY
+	Ovi85/99AoQotG/SBsdUfGRTP44UsyLAEhVw=
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-Hi Conor
-
-On 10/30/25 19:34, Conor Dooley wrote:
-> On Thu, Oct 30, 2025 at 07:35:37AM +0100, Maud Spierings via B4 Relay wrote:
->> From: Maud Spierings <maudspierings@gocontroll.com>
->>
->> Document the compatible strings for the Moduline IV and Mini.
+On 10/23/2025 10:37 PM, Rob Herring (Arm) wrote:
+> Generally at most 1 blank line is the standard style for DT schema
+> files. Remove the few cases with more than 1 so that the yamllint check
+> for this can be enabled.
 > 
->> Also add a compatible for the Ka-Ro Electronics TX8M-1610
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/.yamllint                  | 2 +-
+>  Documentation/devicetree/bindings/arm/psci.yaml              | 1 -
+>  .../bindings/clock/allwinner,sun4i-a10-gates-clk.yaml        | 1 -
+>  .../devicetree/bindings/clock/renesas,cpg-mssr.yaml          | 1 -
+>  .../devicetree/bindings/clock/xlnx,clocking-wizard.yaml      | 1 -
+>  .../display/allwinner,sun4i-a10-display-frontend.yaml        | 1 -
+>  .../devicetree/bindings/display/allwinner,sun6i-a31-drc.yaml | 1 -
+>  .../bindings/display/allwinner,sun8i-a83t-dw-hdmi.yaml       | 1 -
+>  .../devicetree/bindings/display/amlogic,meson-vpu.yaml       | 1 -
+>  .../devicetree/bindings/display/bridge/adi,adv7511.yaml      | 1 -
+>  .../devicetree/bindings/display/bridge/lvds-codec.yaml       | 1 -
+>  .../devicetree/bindings/display/bridge/toshiba,tc358767.yaml | 1 -
+>  .../devicetree/bindings/display/ilitek,ili9486.yaml          | 1 -
+>  Documentation/devicetree/bindings/display/msm/gpu.yaml       | 1 -
+>  .../devicetree/bindings/display/panel/panel-timing.yaml      | 1 -
+>  .../devicetree/bindings/display/panel/tpo,tpg110.yaml        | 1 -
+>  .../devicetree/bindings/display/rockchip/rockchip,dw-dp.yaml | 1 -
+>  .../devicetree/bindings/display/simple-framebuffer.yaml      | 1 -
+>  .../devicetree/bindings/dma/snps,dma-spear1340.yaml          | 1 -
+>  Documentation/devicetree/bindings/dma/stericsson,dma40.yaml  | 1 -
+>  .../devicetree/bindings/dma/stm32/st,stm32-dma.yaml          | 1 -
+>  Documentation/devicetree/bindings/edac/apm,xgene-edac.yaml   | 1 -
+>  .../devicetree/bindings/firmware/qemu,fw-cfg-mmio.yaml       | 1 -
+>  Documentation/devicetree/bindings/fpga/fpga-region.yaml      | 5 -----
+>  .../devicetree/bindings/gpio/brcm,xgs-iproc-gpio.yaml        | 1 -
+>  .../devicetree/bindings/gpio/fairchild,74hc595.yaml          | 1 -
+>  Documentation/devicetree/bindings/hwmon/adi,ltc2947.yaml     | 1 -
+>  Documentation/devicetree/bindings/hwmon/adi,max31827.yaml    | 1 -
+>  Documentation/devicetree/bindings/hwmon/national,lm90.yaml   | 1 -
+>  Documentation/devicetree/bindings/hwmon/ti,tmp513.yaml       | 1 -
+>  Documentation/devicetree/bindings/hwmon/ti,tps23861.yaml     | 1 -
+>  Documentation/devicetree/bindings/i2c/i2c-mux-gpmux.yaml     | 1 -
+>  .../devicetree/bindings/i2c/realtek,rtl9301-i2c.yaml         | 1 -
+>  Documentation/devicetree/bindings/i2c/tsd,mule-i2c-mux.yaml  | 2 --
+>  Documentation/devicetree/bindings/iio/adc/adi,ad7380.yaml    | 1 -
+>  Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml    | 1 -
+>  Documentation/devicetree/bindings/iio/adc/adi,ad7949.yaml    | 1 -
+>  Documentation/devicetree/bindings/iio/adc/adi,ade9000.yaml   | 1 -
+>  .../devicetree/bindings/iio/adc/cosmic,10001-adc.yaml        | 1 -
+>  Documentation/devicetree/bindings/iio/adc/st,stm32-adc.yaml  | 1 -
+>  .../devicetree/bindings/iio/adc/x-powers,axp209-adc.yaml     | 1 -
+>  .../devicetree/bindings/iio/afe/voltage-divider.yaml         | 1 -
+>  .../devicetree/bindings/iio/frequency/adi,admv4420.yaml      | 1 -
+>  .../devicetree/bindings/iio/pressure/murata,zpa2326.yaml     | 1 -
+>  .../devicetree/bindings/iio/proximity/semtech,sx9324.yaml    | 1 -
+>  .../devicetree/bindings/iio/temperature/adi,ltc2983.yaml     | 1 -
+>  Documentation/devicetree/bindings/input/ti,drv266x.yaml      | 1 -
+>  .../devicetree/bindings/interconnect/qcom,rpmh.yaml          | 1 -
+>  .../devicetree/bindings/interrupt-controller/arm,gic-v3.yaml | 1 -
+>  .../bindings/interrupt-controller/aspeed,ast2700-intc.yaml   | 1 -
+>  .../bindings/interrupt-controller/fsl,vf610-mscm-ir.yaml     | 1 -
+>  .../bindings/interrupt-controller/loongson,liointc.yaml      | 1 -
+>  .../bindings/interrupt-controller/mediatek,mtk-cirq.yaml     | 1 -
+>  .../bindings/interrupt-controller/mscc,ocelot-icpu-intr.yaml | 1 -
+>  Documentation/devicetree/bindings/iommu/arm,smmu.yaml        | 4 ----
+>  Documentation/devicetree/bindings/mailbox/arm,mhu.yaml       | 1 -
+>  Documentation/devicetree/bindings/mailbox/arm,mhuv2.yaml     | 1 -
+>  Documentation/devicetree/bindings/mailbox/mtk,adsp-mbox.yaml | 1 -
+>  Documentation/devicetree/bindings/media/amphion,vpu.yaml     | 1 -
+>  Documentation/devicetree/bindings/media/i2c/adi,adv7604.yaml | 2 --
+>  .../devicetree/bindings/media/i2c/techwell,tw9900.yaml       | 1 -
+>  Documentation/devicetree/bindings/media/nxp,imx8-jpeg.yaml   | 1 -
+>  .../devicetree/bindings/media/qcom,sc8280xp-camss.yaml       | 1 -
+>  .../bindings/media/samsung,exynos4212-fimc-is.yaml           | 1 -
+>  .../devicetree/bindings/media/samsung,s5pv210-jpeg.yaml      | 1 -
+>  Documentation/devicetree/bindings/media/st,stm32-dma2d.yaml  | 1 -
+>  .../devicetree/bindings/media/video-interface-devices.yaml   | 4 ----
+>  .../memory-controllers/qcom,ebi2-peripheral-props.yaml       | 1 -
+>  Documentation/devicetree/bindings/mfd/stericsson,ab8500.yaml | 1 -
+>  .../devicetree/bindings/mtd/amlogic,meson-nand.yaml          | 1 -
+>  .../devicetree/bindings/mtd/marvell,nand-controller.yaml     | 1 -
+>  Documentation/devicetree/bindings/mux/mux-controller.yaml    | 1 -
+>  .../devicetree/bindings/net/allwinner,sun8i-a83t-emac.yaml   | 2 --
+>  Documentation/devicetree/bindings/net/brcm,bcmgenet.yaml     | 1 -
+>  .../devicetree/bindings/net/brcm,mdio-mux-iproc.yaml         | 1 -
+>  .../devicetree/bindings/net/cortina,gemini-ethernet.yaml     | 1 -
+>  Documentation/devicetree/bindings/net/fsl,gianfar.yaml       | 2 --
+>  .../devicetree/bindings/net/mdio-mux-multiplexer.yaml        | 1 -
+>  Documentation/devicetree/bindings/net/qcom,ipa.yaml          | 1 -
+>  Documentation/devicetree/bindings/net/ti,cpsw-switch.yaml    | 1 -
+>  .../devicetree/bindings/net/wireless/ti,wlcore.yaml          | 1 -
+>  .../devicetree/bindings/pci/altr,pcie-root-port.yaml         | 1 -
+>  Documentation/devicetree/bindings/pci/loongson.yaml          | 1 -
+>  Documentation/devicetree/bindings/pci/rockchip-dw-pcie.yaml  | 1 -
+>  .../devicetree/bindings/pci/starfive,jh7110-pcie.yaml        | 1 -
+>  Documentation/devicetree/bindings/pci/versatile.yaml         | 1 -
+>  .../bindings/phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml         | 1 -
+>  .../devicetree/bindings/pinctrl/brcm,bcm21664-pinctrl.yaml   | 1 -
+>  .../devicetree/bindings/pinctrl/fsl,imx9-pinctrl.yaml        | 1 -
+>  .../devicetree/bindings/pinctrl/qcom,qcs404-pinctrl.yaml     | 1 -
+>  .../bindings/pinctrl/qcom,sm6115-lpass-lpi-pinctrl.yaml      | 1 -
+>  .../devicetree/bindings/pinctrl/qcom,sm6125-tlmm.yaml        | 1 -
+>  .../devicetree/bindings/pinctrl/renesas,rza1-ports.yaml      | 3 ---
+>  .../devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.yaml | 1 -
+>  .../devicetree/bindings/power/supply/mt6360_charger.yaml     | 1 -
+>  .../bindings/power/supply/stericsson,ab8500-charger.yaml     | 1 -
+>  .../devicetree/bindings/pwm/allwinner,sun4i-a10-pwm.yaml     | 1 -
+>  .../bindings/regulator/richtek,rt6245-regulator.yaml         | 1 -
+>  .../devicetree/bindings/remoteproc/ti,k3-r5f-rproc.yaml      | 2 --
+>  Documentation/devicetree/bindings/reset/ti,sci-reset.yaml    | 1 -
+>  .../bindings/rng/inside-secure,safexcel-eip76.yaml           | 2 --
+>  .../devicetree/bindings/soc/fsl/cpm_qe/fsl,qe-muram.yaml     | 1 -
+>  .../devicetree/bindings/soc/mediatek/mediatek,mutex.yaml     | 1 -
+>  .../bindings/soc/microchip/atmel,at91rm9200-tcb.yaml         | 1 -
+>  Documentation/devicetree/bindings/soc/rockchip/grf.yaml      | 1 -
+>  Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml       | 3 ---
+>  Documentation/devicetree/bindings/sound/adi,adau1372.yaml    | 1 -
+>  Documentation/devicetree/bindings/sound/adi,adau7118.yaml    | 1 -
+>  .../devicetree/bindings/sound/rockchip,i2s-tdm.yaml          | 1 -
+>  .../devicetree/bindings/sound/rockchip,rk3328-codec.yaml     | 2 +-
+>  Documentation/devicetree/bindings/sound/samsung,tm2.yaml     | 1 -
+>  .../devicetree/bindings/sound/ti,tlv320dac3100.yaml          | 1 -
+>  Documentation/devicetree/bindings/sound/wlf,wm8903.yaml      | 1 -
+>  .../devicetree/bindings/timer/nvidia,tegra-timer.yaml        | 1 -
+>  .../devicetree/bindings/timer/nvidia,tegra186-timer.yaml     | 1 -
+>  Documentation/devicetree/bindings/usb/qcom,pmic-typec.yaml   | 1 -
+>  116 files changed, 2 insertions(+), 136 deletions(-)
 > 
-> This is not very helpful to say, makes what you've done seem accidental.
-> I assumed this was wrong, until I looked up this device and found out it
-> was a SoM. Please put that in the commit message.
-> With that info,
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> pw-bot: changes-requested
-> 
 
-Thanks for the review, new commit message will be:
+...
 
-Document the compatible strings for the Moduline IV and Mini.
+> diff --git a/Documentation/devicetree/bindings/pci/starfive,jh7110-pcie.yaml b/Documentation/devicetree/bindings/pci/starfive,jh7110-pcie.yaml
+> index 5f432452c815..33c80626e8ec 100644
+> --- a/Documentation/devicetree/bindings/pci/starfive,jh7110-pcie.yaml
+> +++ b/Documentation/devicetree/bindings/pci/starfive,jh7110-pcie.yaml
+> @@ -16,7 +16,6 @@ properties:
+>    compatible:
+>      const: starfive,jh7110-pcie
+>  
+> -
+>    reg:
+>      maxItems: 2
+>  
 
-Also add a compatible for the Ka-Ro Electronics TX8M-1610 SoM which they 
-are based on.
+...
 
----
-Kind regards,
-Maud
+> diff --git a/Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.yaml
+> index f3258f2fd3a4..3f14eab01c54 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/starfive,jh7100-pinctrl.yaml
+> @@ -32,7 +32,6 @@ description: |
+>      | | |     |   |   |          -------
+>      UART0     UART1 --
+>  
+> -
+>    The big MUX in the diagram only has 7 different ways of mapping peripherals
+>    on the left to pins on the right. StarFive calls the 7 configurations "signal
+>    groups".
 
+Reviewed-by: Hal Feng <hal.feng@starfivetech.com>
+
+Best regards,
+Hal
 
