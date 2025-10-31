@@ -1,48 +1,84 @@
-Return-Path: <linux-kernel+bounces-880230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EF73C25264
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:02:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18262C2528E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:04:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC5581886A07
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:01:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2004424286
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:04:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA0434AB1C;
-	Fri, 31 Oct 2025 13:01:01 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D9134A789;
+	Fri, 31 Oct 2025 13:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AWUEHXVz"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD913271E9;
-	Fri, 31 Oct 2025 13:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42E41EA7DD
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 13:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761915661; cv=none; b=ixe060j1cZvEV3tCnEzQ7XMEU4nBtdHP7pPQrFNEgcnx/GjV79ediZ4YejnkNvjrB0wv0KRkZ5kiN06Zi/Orw0MhKO/dsFhDmGjMxmLawdRwCQN9kk/97gMORtnZjS5mJZM0ZIkAU1Cagyp3QYrS48vANtHDdgS5YTqN42l3V4s=
+	t=1761915875; cv=none; b=M8k1SYqfXFlpJQ2QVNw2p6elftSOJGW82u8BS5IhM6MzXv5n6jLgUqcSA24mY6739LD2ZY2at33O16x09mpL4HR3tL5bN+/39TqN7oR3t2KBXEOQ3ajs34ChAKVjdOFgwzveN4geoDR1GNxi1TYIEYB89Vd8z/91OzDDdqf0onk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761915661; c=relaxed/simple;
-	bh=ZEn/aGQHjkZVe82YckT2+K8RU6xxfrWAYS8r175AALM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G/S2IWEIxQ+O3iZ4tvPor45Lpp0HranXvT+dq/DUX1hLfZ0g7DDisphrtA5SrlMj4FVlnh/CrYpg3GGzDEnzN3EZA4zY1dzF7u4wfVw2Nn45ye0ifIE7y1HN4ngzsekYFa+b8SsSmN3s0KdANma/34TgzGoP69t0sobLgpev1gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id E8C55227A88; Fri, 31 Oct 2025 14:00:50 +0100 (CET)
-Date: Fri, 31 Oct 2025 14:00:50 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Christoph Hellwig <hch@lst.de>, Carlos Maiolino <cem@kernel.org>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
-	linux-block@vger.kernel.org
-Subject: Re: fall back from direct to buffered I/O when stable writes are
- required
-Message-ID: <20251031130050.GA15719@lst.de>
-References: <20251029071537.1127397-1-hch@lst.de> <aQNJ4iQ8vOiBQEW2@dread.disaster.area> <20251030143324.GA31550@lst.de> <aQPyVtkvTg4W1nyz@dread.disaster.area>
+	s=arc-20240116; t=1761915875; c=relaxed/simple;
+	bh=yeiq88IC/wiatgkkK0r6GR62xuv/O/ItLS4vy5v9HZQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=uL8M2tjhe+j1YfCjCKL2e8sRwRWgPgXYRR0BKk6zPj7xjSKUEwfMc9WLdKl9hzMYbZ9pQ//WNanS2731ejrzoWMcShqIVZUY5ZXzNr1/bV0spYtruv1poR7m6GO/yyQM5grQmW09Snxb1Uljc6UGp7jgymHk8oOSuLXMlHHUcaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AWUEHXVz; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-47114a40161so25294765e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 06:04:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761915872; x=1762520672; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qhTG70xhFOoL3LxdnSOH1s4YIgOQ3cukod+Akz7RCDg=;
+        b=AWUEHXVzRER+h3Fa/h/PpkzNHYFo+BN1THtGkFpY5ACBoaNibcfs88be+6wTqjh5c8
+         4+rLyQEHYb7P4zllAPFRz9VCNRiRvSDvqT80y8xqGrp1ryUg6VhmMt4Gmm9sXvzNuThu
+         I+Q9YNN+DawHtGuUNqAfa6lt14W4ZlfL1U2bt5weoYD/n9CxZVj6haqd6oFAD4/Ds9AF
+         b5IDNha0wTlqbgIKwEDgNk1sTybAEMIH3iMM3nzkDGkvM4Q8Patnj0bwuu997iAHSztQ
+         gt7kBpINEcP5qJsYeonUmMevIdL3Ugr3+F17Qa85h65aGcA1ootFzMqkoT76epJpDb+n
+         bwHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761915872; x=1762520672;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qhTG70xhFOoL3LxdnSOH1s4YIgOQ3cukod+Akz7RCDg=;
+        b=AH8iY/AT8H7bIVwU9SPL2uw78z8MY90aQxRSeaGmsUJBJq4cMuOH7Kz9t347m5GhsT
+         TtvqFc25kshjPM7HfPdu8xSqID7Bw0QHCA++bpSpgnpQreS7L9mP0rE9AJ9ctk2YpW9S
+         xmXiduEj6yFc3k0uIeRQ40AAStVHKnfnDdR6U8OvDU3r6GFv8C3kB1POpb3Sc4YN9Zn8
+         rIhFFpNVhb5KeOTZUibBOt88gkmLwKAkuSrZonD7T4GXBY58CsDTH6khRZ/g/5E7Tw3h
+         GrnJ8n12OcdpHSPGI3xn77XA28QlkXjDDdsjK0EOYXN2ZauDXqvwln+3dogrBVix1VJc
+         paQA==
+X-Forwarded-Encrypted: i=1; AJvYcCWkOPPHEJnloIzBYxjlhFctaCyCgGFQtVneMjwmr2a5GIw0KxvWaHdtCRmObVTNEXKWypECnvw2g2P2aGs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm3JUP/UmluBbyspQ0FeLtJMCKf9HVzygcZZrjP3D+MLPgf1RC
+	zAo6BtGec7L3BrBJtqwUdFlPz417JAbyOQZMKO+pN16Pk2C/a8qROZV78hJQKomZgWA=
+X-Gm-Gg: ASbGncsP2p0euEbnRbn2CT8CZuW/5wPEJV6yOt6sIOWsX6Jr88hmO2WBDkyl45wX4W4
+	5Se6UzWogfAigrCn4dB88ggM5QHzcgfR8X6zrplg23aTnxINBiIaiWqIrWEtElLj0qtdjb8xBu8
+	bhON8gKNSrDMdo9af8yVSEwhS/o+IM7fwX7rcsDpDpoDVRIePGBJqDrBB2K8qrfgts4oz2p8zsh
+	CK67e/z76FbULaj0GCKKjg80Dc7siLZA6z7VYldiQlp4FkbrWthM9tzVZ1MjL9ZBjaRbKBqFQqW
+	WxKY5KMLDk+awGhf5oFaLLk8HELqHdOtCw0IqcB2zUonETsSLgW6c0PaCrv9zV2sMfQLkeqpajT
+	sjvbS7P/Xny9YrZm6sxohy9E2hwYTmfFzNNg+Xovh7K/ZM4IatlILeL7CEN9ZjZ/zNjFhhzYueB
+	v4LYaromTtEq+MiD3W
+X-Google-Smtp-Source: AGHT+IESqZPWaIgD3AFJm0+ERJLsHPPT26aWWfG1t25b6cC3jhoS3LSTQWz0ZPa8qZHwD6kKbm0TEA==
+X-Received: by 2002:a05:600c:1907:b0:46e:59bd:f7d3 with SMTP id 5b1f17b1804b1-4773089c432mr29850955e9.20.1761915872032;
+        Fri, 31 Oct 2025 06:04:32 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-47733023256sm33788435e9.17.2025.10.31.06.04.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Oct 2025 06:04:31 -0700 (PDT)
+Date: Fri, 31 Oct 2025 16:04:28 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Ping-Ke Shih <pkshih@realtek.com>,
+	Harshit Mogalapalli <harshit.m.mogalapalli@gmail.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH] rtlwifi: rtl8188ee: remove an accidental '-' character
+Message-ID: <aQSz3KnK4wFIJoe3@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,104 +87,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aQPyVtkvTg4W1nyz@dread.disaster.area>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Mailer: git-send-email haha only kidding
 
-On Fri, Oct 31, 2025 at 10:18:46AM +1100, Dave Chinner wrote:
-> I'm not asking about btrfs - I'm asking about actual, real world
-> problems reported in production XFS environments.
+The "->allstasleep" variable is a 1 bit bitfield.  It can only be
+0 or 1.  This "= -1" assignement was supposed to be "= 1".  This
+doesn't change how the code works, it's just a cleanup.
 
-The same things applies once we have checksums with PI.  But it seems
-like you don't want to listen anyway.
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+Found with a static checker rule that Harshit and I wrote.
 
-> > For RAID you probably won't see too many reports, as with RAID the
-> > problem will only show up as silent corruption long after a rebuild
-> > rebuild happened that made use of the racy data.
-> 
-> Yet we are not hearing about this, either. Nobody is reporting that
-> their data is being found to be corrupt days/weeks/months/years down
-> the track.
-> 
-> This is important, because software RAID5 is pretty much the -only-
-> common usage of BLK_FEAT_STABLE_WRITES that users are exposed to.
+ drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-RAID5 bounce buffers by default.  It has a tunable to disable that:
-
-https://sbsfaq.com/qnap-fails-to-reveal-data-corruption-bug-that-affects-all-4-bay-and-higher-nas-devices/
-
-and once that was turned on it pretty much immediately caused data
-corruption:
-
-https://sbsfaq.com/qnap-fails-to-reveal-data-corruption-bug-that-affects-all-4-bay-and-higher-nas-devices/
-https://sbsfaq.com/synology-nas-confirmed-to-have-same-data-corruption-bug-as-qnap/
-
-> This patch set is effectively disallowing direct IO for anyone
-> using software RAID5. That is simply not an acceptible outcome here.
-
-Quite contrary, fixing this properly allows STABLE_WRITES to actually
-work without bouncing in lower layers and at least get efficient
-buffered I/O.
-
-> 
-> > With checksums
-> > it is much easier to reproduce and trivially shown by various xfstests.
-> 
-> Such as? 
-
-Basically anything using fsstress long enough plus a few others.
-
-> 
-> > With increasing storage capacities checksums are becoming more and
-> > more important, and I'm trying to get Linux in general and XFS
-> > specifically to use them well.
-> 
-> So when XFS implements checksums and that implementation is
-> incompatible with Direct IO, then we can talk about disabling Direct
-> IO on XFS when that feature is enabled. But right now, that feature
-> does not exist, and ....
-
-Every Linux file system supports checksums with PI capable device.
-I'm trying to make it actually work for all case and perform well for a
-while.
-
-> 
-> > Right now I don't think anyone is
-> > using PI with XFS or any Linux file system given the amount of work
-> > I had to put in to make it work well, and how often I see regressions
-> > with it.
-> 
-> .... as you say, "nobody is using PI with XFS".
-> 
-> So patchset is a "fix" for a problem that no-one is actually having
-> right now.
-
-I'm making it work.
-
-> Modifying an IO buffer whilst a DIO is in flight on that buffer has
-> -always- been an application bug.
-
-Says who?
-
-> It is a vector for torn writes
-> that don't get detected until the next read. It is a vector for
-> in-memory data corruption of read buffers.
-
-That assumes that particular use case cares about torn writes.  We've
-never ever documented any such requirement.  We can't just make that
-up 20+ years later.
-
-> Indeed, it does not matter if the underlying storage asserts
-> BLK_FEAT_STABLE_WRITES or not, modifying DIO buffers that are under
-> IO will (eventually) result in data corruption.
-
-It doesn't if that's not your assumption.  But more importantly with
-RAID5 if you modify them you do not primarily corrupt your own data,
-but other data in the stripe.  It is a way how a malicious user can
-corrupt other users data.
-
-> Hence, by your
-> logic, we should disable Direct IO for everyone.
-
-That's your weird logic, not mine.
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c
+index 7252bc621211..7ef57b1c674c 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c
+@@ -694,7 +694,7 @@ void rtl88e_set_p2p_ps_offload_cmd(struct ieee80211_hw *hw, u8 p2p_ps_state)
+ 
+ 			if (P2P_ROLE_GO == rtlpriv->mac80211.p2p) {
+ 				p2p_ps_offload->role = 1;
+-				p2p_ps_offload->allstasleep = -1;
++				p2p_ps_offload->allstasleep = 1;
+ 			} else {
+ 				p2p_ps_offload->role = 0;
+ 			}
+-- 
+2.51.0
 
 
