@@ -1,143 +1,116 @@
-Return-Path: <linux-kernel+bounces-879647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1099C23A6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:04:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 84D6AC23BB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:16:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B5ED3B9F27
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:03:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6A35426D7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA6E8285C8C;
-	Fri, 31 Oct 2025 08:03:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAAE5340298;
+	Fri, 31 Oct 2025 08:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PrpmTPir"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A18xIDk+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A823167272
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FB532E6B0
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 08:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761897787; cv=none; b=Ck9CCU4UGl5P1g2kyQTZ/ymMFyuOY9CtVIxG8+y+Osbevdi+d5Gq8RMI6ENS0EzrH+cnUaBsQ9wCmrbnVcihaabiLCTD2WjZm2tfU1YnSmMwOSR+57krrQltPONmi6AJ1St06g03zW1SMh+FaHScAJyEbv3rpLIeluEthVj3YA4=
+	t=1761897947; cv=none; b=Cgrok2b2R0n06oDuAKM2d/oRbKL9xxVC+tdNJnSBED72QyGaBKkyxZJuk5rQhPBXgOc2yVgRayjhknAh7WUNoes+a9+ZsBEz45gixhtJ3igR65nb9y/L0GJHWtMlqhifCFX8ilxZkL24AJYRwlsMR5fzOjeJnxzziQjmLjZH8Eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761897787; c=relaxed/simple;
-	bh=rP/EAMI45WYJlvg0iRFxgh/OmWO0tg41yWxJgWgYAAo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=apVIuDApJhxpghY/ClNaqIg88IFqnXGkbmyGtmQqCTZtupVSq3nTMEihVbX2DHWXxT94Y7bpIOiBc9X2Hzj7oHViYuAYGv6KygQKk1qGBu0ooqHB7LzcmkoVfVNzn8juiHA9+2hjWuCVIIxgT+R68Sun2nBETdwh2jMDKpExgZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PrpmTPir; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4770e7062b5so13826525e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 01:03:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761897783; x=1762502583; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iuxiUkBLx8vKlnec9/5CywDzn8GdyQUbr0sVZo29GFE=;
-        b=PrpmTPirpG7QvI3eiWvG2RVErrKFQJCllGhmqkOf4oIeeMGoi/eejISvRZO6cNHrnG
-         j87SMro0V3O+zfgFdDaUXl3qqeyKIhAMX32ZQCF/gWwQdU5LO+d3Tg3gjLjblA4LldZ/
-         FfDYx5DzE+XFX6Tuy4KDHp2W1JJF/wAOnBHBFAJR7ToPX8DQai0zILIe/I2Qmy9V7nTo
-         gbMiceQOfxWZiKt3Pi74MSBEkfWrTcSYmpL1GDsSazZCpgKR7tOw6YyXYc+STRtydoQb
-         DWOKytn/eVYM7Ur82NrKQ1ztIk4wcb2KywgUtMyxs9s3s8BiaXwqu3MhR06mc4Gme26d
-         nH/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761897783; x=1762502583;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iuxiUkBLx8vKlnec9/5CywDzn8GdyQUbr0sVZo29GFE=;
-        b=MW5QntyrBhCBR67w0+ZA5z9KuM9oKoQXV3czEp+YcekPvanEyMZzau7E6Y9VDbbxvc
-         baylvcB+m3ui2hpgS6AErRnNu7mBVs8HBiYseZvjd3A/q24EsWk4Lj+sMdww75PJHPG4
-         z/8vcfrB+bvwx/4JIN0fzQ4V2sPqV7ifjKZHzyJtTYrcS6m82HsQtvc8wNtPxzUCUVGs
-         Edoyw0caquiC3Fpdz5f4w9tjn1PMYbRwn+8M4g7YW67wq06YwwU1kPWBhpFYn0/XvCBu
-         nopcfg8oMW/glle2Y3m+J4kMuW/tEXBz+wnEK5ouWx07tP4+aCyOEqrBeqRj1BxMPRyX
-         5TLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVofkxGXfiHdLM2vfoLR7qR2+RnJyKg7UoqjcG0tZla9ppfAuEU7pqj8DiY7wCBW+iF0ayNscbASJH8SJc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySgxStCaJ3j2I78sdhJHnUGDeQm3FMEmyodLMYfc+HvBGLlTYS
-	N1/TTfaOzzGeHUNllo/7VdLdFI6GxzJfk7Yuj8ToLXZPVh7ox8PB3fvMpty6oxl7H+Y=
-X-Gm-Gg: ASbGnctUGW2DBZzXdSIhYDNenP3SrBYW7b2kaLfoiPHmVoUxawnqK+YoU4+UYgoHg6C
-	C0EyZ9+YhNOhFK2dPZbn1fzUb48iEwZLqvYGH6Zp+6CUC6olOtC+F1fhYTeSDv63P+nl3JgNGIp
-	85TurGHbJAvJiyfVphG+Tb75yGd2ypSlei7gpLbP1/RKGUMyhebeMv8HzD7h879b9zz50YalZW7
-	xClooMTF94+MeGRQgugd4mkEGeE66LPxGYhETYhukYYqp28oly78bNkAPKMngehcYlppZG3unWz
-	7WlxmSP3k1Xzsu81Fwj2PE/gv911t2qlurNOUZQqYc1nIb6OPUJdrwFxDhf2WzCaHBfw1N35eQD
-	jSAPSHX2SQtMT+Xc5sHLDT4C6iEnTjPKCmdzeOH83LDzqkksvmgz4/hPQjpxsdfusu89NNepiMC
-	GeqOiVHB0gpVqhjKU1mCe0t8eWEUJv5+JNrcNjBNu7bKsiiqiTyOTBtSvzW5Ny
-X-Google-Smtp-Source: AGHT+IErZEMZ8RsUWbyCgbeb1Q5ZNzR29K+yKSMn2AYjlqALM0mnJriWuWEedLWtLw+5aAf7+4a+8A==
-X-Received: by 2002:a05:600c:3149:b0:45d:e6b6:55fe with SMTP id 5b1f17b1804b1-477308e5d8amr25954095e9.34.1761897782651;
-        Fri, 31 Oct 2025 01:03:02 -0700 (PDT)
-Received: from ?IPV6:2a05:6e02:1041:c10:2b:468c:c228:91bf? ([2a05:6e02:1041:c10:2b:468c:c228:91bf])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-429c114ca0csm2361827f8f.21.2025.10.31.01.03.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Oct 2025 01:03:02 -0700 (PDT)
-Message-ID: <2316cd4e-737d-4596-b713-2f29928ab26c@linaro.org>
-Date: Fri, 31 Oct 2025 09:03:01 +0100
+	s=arc-20240116; t=1761897947; c=relaxed/simple;
+	bh=Q2xZkwCW0AmTa4qnwcYOKgh1ZpeXBgV48tHAsig79RI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S9m5vG9FG5+ms9rCpz+gs79GybEuSNNTGXOemF0Nt4MhgxFS/YL1ZCs3XiaEklojSPj9QuaVdYPKHo3eXY18SpUozGkQRzRIjmN8wvMqDfjXtMuUDis9OccYb4juCEQoZjMGxmssPp33ZBkqRPWBQeb5pk9f3sToNppOIJ+f1K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A18xIDk+; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761897946; x=1793433946;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Q2xZkwCW0AmTa4qnwcYOKgh1ZpeXBgV48tHAsig79RI=;
+  b=A18xIDk+crcd/sdj/qQKLGRYHB6uqm6l8HsBNSv3ut0nZBU0ABOaveem
+   KVWzkB5Woxz6+7Z8uSotexM+8BpgbK9SYzKnVAsPhB0N8LT1v+kyzsRJy
+   h5+UFYDJxKJtmqz6LwG7h+zTKhQ+4bpdv6VU5O1wUaMEsMZfIYOvqzfnQ
+   yGQhdwGohwZi+B/E2bog5RhdLbp0/afvwQOxu51L1Z5ArgwCCTBMFTX3d
+   ne133H0tReRLy6aaa+uK03gxHhkhAzAwX2d2E1hHUuZIs51esl8OFvRTC
+   EYz/pjbo1u4s5NnM4xExthVjblUJ6uiwUrvVymSKYIGI9/9m80vDz/UCj
+   g==;
+X-CSE-ConnectionGUID: uFx7GIAOSSqaWdDW1eO0Vg==
+X-CSE-MsgGUID: gwn+ZfZSRpOdPfvk9Fhhtg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="86676353"
+X-IronPort-AV: E=Sophos;i="6.19,268,1754982000"; 
+   d="scan'208";a="86676353"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 01:05:45 -0700
+X-CSE-ConnectionGUID: mwoy04vURTS1BdedhmpToA==
+X-CSE-MsgGUID: 1p+/7rVVQ/uQnXhpXxeGJg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,268,1754982000"; 
+   d="scan'208";a="186631607"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa009.fm.intel.com with ESMTP; 31 Oct 2025 01:05:43 -0700
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id 9349695; Fri, 31 Oct 2025 09:05:41 +0100 (CET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mark Brown <broonie@kernel.org>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Sander Vanheule <sander@svanheule.net>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH v3 0/5] regcache: Split out ->populate() and use it
+Date: Fri, 31 Oct 2025 09:03:15 +0100
+Message-ID: <20251031080540.3970776-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/2] iio: adc: Add the NXP SAR ADC support for the
- s32g2/3 platforms
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: jic23@kernel.org, dlechner@baylibre.com, nuno.sa@analog.com,
- andy@kernel.org, robh@kernel.org, conor+dt@kernel.org, krzk+dt@kernel.org,
- linux-iio@vger.kernel.org, s32@nxp.com, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, chester62515@gmail.com, mbrugger@suse.com,
- ghennadi.procopciuc@oss.nxp.com
-References: <20251017164238.1908585-1-daniel.lezcano@linaro.org>
- <20251017164238.1908585-3-daniel.lezcano@linaro.org>
- <aPP0uVZu1T7tTQGo@ashevche-desk.local>
- <050f96d5-e60c-4b33-b6d2-24fb3925e378@linaro.org>
- <aQMvqHGN7r6babgw@smile.fi.intel.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <aQMvqHGN7r6babgw@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 10/30/25 10:28, Andy Shevchenko wrote:
-> On Thu, Oct 30, 2025 at 09:27:21AM +0100, Daniel Lezcano wrote:
->> On 10/18/25 22:12, Andy Shevchenko wrote:
->>> On Fri, Oct 17, 2025 at 06:42:38PM +0200, Daniel Lezcano wrote:
-> 
-> ...
-> 
->>>> +#include <linux/circ_buf.h>
->>>
->>> Why not kfifo?
->>
->> I'm sorry but I don't get your comment.
->>
->> Do you mean why not use kfifo.h or use kfifo API and change all the code
->> using the circ_buf by the kfifo ?
-> 
-> Yes, I mean why use circ_buf API and not kfifo API.
+This is a refactoring series to decouple cache initialisation and population.
+On its own it has no functional impact but will be used in the further
+development. Besides that I found this split useful on its own (from the design
+perspective). That's why I decided to send it out as is separately from a bigger
+(and ongoing) work.
 
-Ok, thanks for the clarification.
+Changelog v3:
+- added missing space (Mark)
+- collected tags (Sander)
 
-At the first glance, the resulting code with the kfifo API would look 
-nicer. However, on one side, the current code was largely tested and it 
-is running on a production system, on the other side the IIO framework 
-will evolve with the cyclic DMA support and this driver would be 
-converted to it when ready.
+Changelog v2:
+v2: https://lore.kernel.org/r/20251030173915.3886882-1-andriy.shevchenko@linux.intel.com
+- rebased on top of the recent regcache changes (Mark)
+- a new clean up patch induced by the previous
 
-I can convert to kfifo but if it is changed again for the new IIO cyclic 
-DMA, I'm not sure it is worth the effort.
+v1: https://lore.kernel.org/r/20251029073131.3004660-1-andriy.shevchenko@linux.intel.com
 
+Andy Shevchenko (5):
+  regcache: Add ->populate() callback to separate from ->init()
+  regcache: rbtree: Split ->populate() from ->init()
+  regcache: flat: Remove unneeded check and error message for -ENOMEM
+  regcache: flat: Split ->populate() from ->init()
+  regcache: maple: Split ->populate() from ->init()
 
-[ ... ]
-
+ drivers/base/regmap/internal.h        |  1 +
+ drivers/base/regmap/regcache-flat.c   | 37 +++++++++++----------
+ drivers/base/regmap/regcache-maple.c  | 47 ++++++++++++---------------
+ drivers/base/regmap/regcache-rbtree.c | 31 ++++++++++--------
+ drivers/base/regmap/regcache.c        | 16 +++++++++
+ 5 files changed, 74 insertions(+), 58 deletions(-)
 
 -- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+2.50.1
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
