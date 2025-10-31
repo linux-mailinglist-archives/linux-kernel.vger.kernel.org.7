@@ -1,127 +1,126 @@
-Return-Path: <linux-kernel+bounces-880297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B439EC255DD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:56:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BB17C255FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:57:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 22D06351521
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:56:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 89F534E9D7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:57:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20F634A3AC;
-	Fri, 31 Oct 2025 13:55:58 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1FA34A797;
+	Fri, 31 Oct 2025 13:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e+uRkNXx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFFCE2F0699;
-	Fri, 31 Oct 2025 13:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701D734A3AC;
+	Fri, 31 Oct 2025 13:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761918958; cv=none; b=TpBMc2HFdNGManQk7wfVGIAqJ/+Mmfg+ZqU+lovdLotjSowcIZuraHqKI8gM7T1IBKGOaR77N5WS2iX9ombklLBPAUVVw69dZOkeytelDM9OGwqxglxFjANPKJqUeeKDA9LGYPgWIYbSNbh9FaU5782MwPqcyqePrJTO0aXCTvk=
+	t=1761919054; cv=none; b=YW7Vg5XnSuqBpAcqMcrgxwBhd8RnJvRJDIi1cuzcbJyeDkDKXI3ErpjTSiyQQGUhHp7FKWI6gWZEiMcYm49bRKa5ImJCQqrL3ldyXsxCaIf/oSnF5Acqf8S8zjpTcffU1ywd9p8mpyeQ3zviEqt8xV8gO5fGVnPq8vIDmu/kd/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761918958; c=relaxed/simple;
-	bh=6NkBGG6MBPr3tGI6UhUfBqT345cQBS6YO0MM0giZo2U=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=irTNnhPu8poPrQ1HC76M2sFGjFAW1fQ3FNpWtO0St5sI/EN29EGZeoFgkaUCci+UU3OCDwqlvQM5aHcfCHQKEneBSa/ira1TO+UszXI6cR3fJ865hG8ofjKpniBRCRS5bqxse7/94IMC2UtX7d1d9/7GTwPUPUfewGr6s9RfeO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4cyj8J2hyPz6M4V2;
-	Fri, 31 Oct 2025 21:52:00 +0800 (CST)
-Received: from dubpeml100005.china.huawei.com (unknown [7.214.146.113])
-	by mail.maildlp.com (Postfix) with ESMTPS id 36EBA140144;
-	Fri, 31 Oct 2025 21:55:54 +0800 (CST)
-Received: from localhost (10.203.177.15) by dubpeml100005.china.huawei.com
- (7.214.146.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 31 Oct
- 2025 13:55:53 +0000
-Date: Fri, 31 Oct 2025 13:55:52 +0000
-From: Jonathan Cameron <jonathan.cameron@huawei.com>
-To: Ard Biesheuvel <ardb+git@google.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-crypto@vger.kernel.org>, <herbert@gondor.apana.org.au>,
-	<ebiggers@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, Kees Cook
-	<kees@kernel.org>
-Subject: Re: [PATCH v4 04/21] arm64/simd: Add scoped guard API for kernel
- mode SIMD
-Message-ID: <20251031135552.00004281@huawei.com>
-In-Reply-To: <20251031103858.529530-27-ardb+git@google.com>
-References: <20251031103858.529530-23-ardb+git@google.com>
-	<20251031103858.529530-27-ardb+git@google.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1761919054; c=relaxed/simple;
+	bh=F2dQov/k8/XGikOnynsRGjTKyVzwWntonzbekUZ8F4M=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=lnQjqfs5zWErUTpdMvintDJMvHpZhIq3x1TOfi/TgGPfEo9D1cXwcU3rcgpzV7VBrck9FZis9HMSCcVU5VnU1f+6/qSsfIGGGHQ2PHe9Z99VKYM6mk65wet6mE6aawxVatJRIb02jNjTs+XCF4mK9iORVNkcjPZk2cQqRoEDOUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e+uRkNXx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 0482AC4CEE7;
+	Fri, 31 Oct 2025 13:57:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761919052;
+	bh=F2dQov/k8/XGikOnynsRGjTKyVzwWntonzbekUZ8F4M=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=e+uRkNXx6Q4gCVsqoDCnid4Qs6AQphBQdX7Ip1BSVnSqP95FAMQJb0LIh0DTBA/tq
+	 UnurPcI4tjePldqN9aTbj0udPo0Jvb2WZAMS0ZZOie99wJbFePCgvjvZAVX3+UB4la
+	 B4cdrrC/K/UmtbJ2J3BI9EqrgKPp3ubfh5uhRlwWDNcBg//uVxv9lgplPJCIjsKTu0
+	 wnbqdRVUz9YemRSTBxZ67pmlb7/HBifTNEuuCnuGueHlfStJk9R9B8IJq1qrkdR3hO
+	 dIbMCbpVg7nJKKytRsNTSHqMQoC1dsTEs0tua3kkQQ/Mr6lj6rjmW2qBY5bOyO8tXt
+	 g16fQgD9mirdg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7EEFCCF9FF;
+	Fri, 31 Oct 2025 13:57:31 +0000 (UTC)
+From: Remi Buisson via B4 Relay <devnull+remi.buisson.tdk.com@kernel.org>
+Date: Fri, 31 Oct 2025 13:57:06 +0000
+Subject: [PATCH v2] iio: imu: inv_icm45600: Initializes
+ inv_icm45600_buffer_postdisable sleep
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100011.china.huawei.com (7.191.174.247) To
- dubpeml100005.china.huawei.com (7.214.146.113)
+Message-Id: <20251031-icm45600_fix_buffer_sleep_init-v2-1-5cdc04e1bcba@tdk.com>
+X-B4-Tracking: v=1; b=H4sIADHABGkC/42NWw7CIBBFt9LMtxhAwOqX+zANsXSwE+0jgI2mY
+ e9iV+Dnubk5Z4WIgTDCuVoh4EKRprGA3FXg+tt4R0ZdYZBcasEPgpEblDacW09v2768x2DjE3G
+ 2NFJiNTfSG+RHXysokjlgOW6Ba1O4p5im8Nl6i/itf6sXwQQ7SYW+bYXRWF9S99i7aYAm5/wFw
+ ETtacoAAAA=
+X-Change-ID: 20251031-icm45600_fix_buffer_sleep_init-8062f6e07f84
+To: Jonathan Cameron <jic23@kernel.org>, 
+ David Lechner <dlechner@baylibre.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Andy Shevchenko <andy@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Remi Buisson <remi.buisson@tdk.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761919051; l=1575;
+ i=remi.buisson@tdk.com; s=20250411; h=from:subject:message-id;
+ bh=Rx62rT5vGu7kFWtOCrCoEMC+ZXlR39elZof20ubLlDA=;
+ b=kfjGhVBUaoE4027tfvZxjjDZqatcfqnxl2+OfuvbAz4md8gbYTd6AV3AOtULR8I2Q6O73oLj3
+ bI93bDRmPAtCIrCRr1FreWPjr7Pj0TR9Oy9983/Xja55wM8eDT0fbpP
+X-Developer-Key: i=remi.buisson@tdk.com; a=ed25519;
+ pk=yDVMi4C7RpXN4dififo42A7fDDt3THYzoZoNq9lUZuo=
+X-Endpoint-Received: by B4 Relay for remi.buisson@tdk.com/20250411 with
+ auth_id=372
+X-Original-From: Remi Buisson <remi.buisson@tdk.com>
+Reply-To: remi.buisson@tdk.com
 
-On Fri, 31 Oct 2025 11:39:03 +0100
-Ard Biesheuvel <ardb+git@google.com> wrote:
+From: Remi Buisson <remi.buisson@tdk.com>
 
-> From: Ard Biesheuvel <ardb@kernel.org>
-> 
-> Encapsulate kernel_neon_begin() and kernel_neon_end() using a 'ksimd'
-> cleanup guard. This hides the prototype of those functions, allowing
-> them to be changed for arm64 but not ARM, without breaking code that is
-> shared between those architectures (RAID6, AEGIS-128)
-> 
-> It probably makes sense to expose this API more widely across
-> architectures, as it affords more flexibility to the arch code to
-> plumb it in, while imposing more rigid rules regarding the start/end
-> bookends appearing in matched pairs.
-> 
-> Reviewed-by: Kees Cook <kees@kernel.org>
-> Reviewed-by: Eric Biggers <ebiggers@kernel.org>
-> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-Very nice.
+The sleep variable in inv_icm45600_buffer_postdisable could be used without
+being assigned in case of error. It must be initialized to 0 by default.
 
-FWIW I looked at all the usecases and other than a couple of trivial
-comments on individual patches they look good to me.
+Fixes: 06674a72cf7a ("iio: imu: inv_icm45600: add buffer support in iio devices")
+Smatch static checker warning:
 
-Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-For patches 4-19
+	drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c:377 inv_icm45600_buffer_postdisable()
+	error: uninitialized symbol 'sleep'.
 
+Signed-off-by: Remi Buisson <remi.buisson@tdk.com>
+---
+Changes in v2:
+- Moving pacth description from cover-letter to single commit
+- Link to v1: https://lore.kernel.org/r/20251031-icm45600_fix_buffer_sleep_init-v1-1-924efbb165e8@tdk.com
+---
+ drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  arch/arm64/include/asm/simd.h | 7 +++++++
->  1 file changed, 7 insertions(+)
-> 
-> diff --git a/arch/arm64/include/asm/simd.h b/arch/arm64/include/asm/simd.h
-> index 8e86c9e70e48..d9f83c478736 100644
-> --- a/arch/arm64/include/asm/simd.h
-> +++ b/arch/arm64/include/asm/simd.h
-> @@ -6,12 +6,15 @@
->  #ifndef __ASM_SIMD_H
->  #define __ASM_SIMD_H
->  
-> +#include <linux/cleanup.h>
->  #include <linux/compiler.h>
->  #include <linux/irqflags.h>
->  #include <linux/percpu.h>
->  #include <linux/preempt.h>
->  #include <linux/types.h>
->  
-> +#include <asm/neon.h>
-> +
->  #ifdef CONFIG_KERNEL_MODE_NEON
->  
->  /*
-> @@ -40,4 +43,8 @@ static __must_check inline bool may_use_simd(void) {
->  
->  #endif /* ! CONFIG_KERNEL_MODE_NEON */
->  
-> +DEFINE_LOCK_GUARD_0(ksimd, kernel_neon_begin(), kernel_neon_end())
-> +
-> +#define scoped_ksimd()	scoped_guard(ksimd)
-> +
->  #endif
+diff --git a/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c b/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c
+index 2efcc177f9d60a6a2509e448c0ddaf4b9e1fd755..bb8382feddc0fd882a6be2ce5e4fe77ab68f13fd 100644
+--- a/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c
++++ b/drivers/iio/imu/inv_icm45600/inv_icm45600_buffer.c
+@@ -357,7 +357,7 @@ static int inv_icm45600_buffer_postdisable(struct iio_dev *indio_dev)
+ 	struct device *dev = regmap_get_device(st->map);
+ 	unsigned int sensor;
+ 	unsigned int *watermark;
+-	unsigned int sleep;
++	unsigned int sleep = 0;
+ 	int ret;
+ 
+ 	if (indio_dev == st->indio_gyro) {
+
+---
+base-commit: 70437bbd7529e9860fb7f0c92a89e0e6abaa994e
+change-id: 20251031-icm45600_fix_buffer_sleep_init-8062f6e07f84
+
+Best regards,
+-- 
+Remi Buisson <remi.buisson@tdk.com>
+
 
 
