@@ -1,214 +1,238 @@
-Return-Path: <linux-kernel+bounces-879767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87924C23F8F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:00:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 924F1C23FD1
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:04:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D670F4E7695
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:00:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1C563BE162
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:01:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4647532D420;
-	Fri, 31 Oct 2025 09:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9A032D438;
+	Fri, 31 Oct 2025 09:01:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fbPRSq25";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="G/90Esjo"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="loCW9yb4"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA79926FDA5
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7657632C305
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:01:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761901233; cv=none; b=IBH+LBUWgw720zClV2Lw+kdSJUAFDkJEl13zjNtDr0X6TePQf0UGM/KOIdxvogH0H3+ONyvwAHXSUgXTSR05ju1jE9sq/oYx+aNLe38Yte95B/hRh2ZwnZkqmuGf4Sl0ugLNWkh/eRjx5DBWQCrPA23ZNQvGma197hcIkh6B7Y4=
+	t=1761901266; cv=none; b=kIeYOzJwA9S+XZ9u2PNQ+UfS3pQrgevpKTh8Zg4XxP+ea8S43jTDCHDLlVHcTk/zNvaV0ycFvznnana/YmYEDfM6rH2Q+qgMnIvNfWmGK9XjuxHtDv7fQoCI0wdMJwRAIvvYXeI5vCdjYFcUZYNkAyspoikbcYHYXRrioHMy1JE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761901233; c=relaxed/simple;
-	bh=3Nqyo0lm23KKHy/yRGd1tfKCqpvRuaRhkfrwBtXRfvo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fxFdrw+KVYsvMBC+RkgBoEu0q/cpxu7Nn9duEr3x/HUvXkpEODudT09GLdWf6UmUBleRsfgCiH6Mv4t3HCt9/fnHQO1ZKNExKLkswKM0LOqPY0X5VT581HVC6t1gu9ap2YhViF89Jke16LCRgWmM7DLM7ieh9s2JCt8jLb+T9ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fbPRSq25; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=G/90Esjo; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 59V18FS11417342
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:00:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	51KxsmTUlKetVoa7snk55iZwO//Znw/8nsnKLTwJvYQ=; b=fbPRSq25IGipg4E6
-	/VkiMce1fELBZtibgEllNim3q2c77sYolnq+li+ZLBOVtP3zlwXdD7YfefreQSmC
-	lEQT/16IZNQEXDGKPzmCv3pQdRImE9n1zudx4imN0FAG/7RezvA6r0wDfTN7aKXh
-	2j7xbnqYPn5QGaood2AlThg3xwUBE4aloRjR7BK07+FWlx9N91nLQebLrzN5R8u0
-	TQ9BeZWim3gaBweFG62oCvIqkZY/WIVCCGgr5FUdCsVmjb5VLlOuEjAfhwoJYNSq
-	Qj7O2kNxQG+Gy+akFdYOOhqnvu1BWmJjm0+lQU7ofgJ+gOrf7//OUbr2OyNgFSBb
-	EIFmPA==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a4k69h48w-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:00:30 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4e56b12ea56so3966381cf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:00:30 -0700 (PDT)
+	s=arc-20240116; t=1761901266; c=relaxed/simple;
+	bh=kfJpm0mLG9RdVDLearjYwAtnnJ9GdvDB4BJl81FcoME=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NB2DTYqLK0nGtlat+SPknXI9vRbyt3Ly9SniO6sakf66FbKZXMzYVfl4cfaxLO93ZPuNdM58daILUTqLAw66dBhCKWGry6F3kfXHr6NSPK9ExMNHX7I8J02gGvk6h4/3B0MqUpEFg+/x6XSZQdyLMYBWTT8qV5IKAVRjBnArcHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=loCW9yb4; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-591c74fd958so2211173e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:01:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1761901230; x=1762506030; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=51KxsmTUlKetVoa7snk55iZwO//Znw/8nsnKLTwJvYQ=;
-        b=G/90EsjoZ/0W82/8DWUFN2dQsfYaG1NbPTlqbNDe4Nqc18WSoE6Xa9GkWtiRkrF81O
-         ICgUl3jTYik1T65d4Q0WYBHXpcuBJH8eIdb5mOMu9WRpNP+AFJyimr8CFMuljxQH4uMl
-         X0T6DzXY0j6xi+YlmyKntvpIUUOpkGfw41PLmlSujTbdZhxe7nB0Nxy8g568Irv/ui4J
-         EQBUVHEKbep31CWGt4vPydYh7sRGyov3WOtL9OGqnbxXd69sNNeVKC3w+BJtzmbZ922Q
-         A13f2J9vUSzfeMZC7N0IxbDe2yEfnVz7pgCLiKhvj2rXQUnj4MR8YhOE7Cv6suAEso3Z
-         RJQQ==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1761901262; x=1762506062; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U2zWXQAb4J66gJtbZXDf79DLTVt9tmjwLAqTV9wFU9Q=;
+        b=loCW9yb48Ax3J5ZW4b3UlLYQBoK3qE6SPslSpIH94lJGfJ6xybBDgNQJCJnuIt+YV2
+         DaX8hLxBsazM0nbViqlSQEK9yx+vRX/CAgtXmuz5QehQctVS6Zb27xB9e+r3rBFKs3wu
+         OVqHBROSuBFAy4dwL7iPMHmH8u0/I+USgRz96ag5v+N5qPGBtg8D1i+B5IcXIZFWbW7k
+         CEMqQNzQGj8RWyJW9bKISGl68guZ8no7XknSG2g0A20OsJb2zOfYTJ439dGTD4qKs0jo
+         2oeZsd4/2TZS8HUBR2ATS0NY5nQncBWRGzgWK5CurPZrI9pMxSTC01ZGsLmAcQdA/7Ff
+         KtpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761901230; x=1762506030;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=51KxsmTUlKetVoa7snk55iZwO//Znw/8nsnKLTwJvYQ=;
-        b=H70iksV8ef+7t6yRZsPKrWd3EDxyGCHcpOaMpSuEulMi1XaE2gSEc+H1qE/zozC33c
-         YdBsLq15fOdPTfGb2MGYk5VoS3f7w/HHCBkCRD1OYlcXyyFgY8z6BMuQ1XLXmGteehiu
-         dz7v9eCYERd23+6qyzKLT+FLmxISpDhJuIYfD8kP7zG5LSQ/qn74CdU9mT3pjiZizj15
-         57QV3hTMRJBRMEX1CBqn4KGo3e59UK+VtqL+1Def4xTc9LmZb4d2n1kff55FlTv4oRbk
-         zqvTEOxUH/FJIuPzK5BfA8Od7SJP6eqwesEjmcVGoOf/ICNUp2Epez1i3+vscd/smdaG
-         L83w==
-X-Forwarded-Encrypted: i=1; AJvYcCXrmmkexcpBBoU+NaCdPb9yBC/LV45OTW5nzfa7JUjAKP41BV2963Fxki6UjBdFZwyDAqmL/ic/gwoia8Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCZgDxWAm6qvV6xrEyGlMc5C64H/7LHVBT/pzgBqyl6VqBQleY
-	BhEUZLOgGRKDHFd5SrzoYaobWo54ZWl8lgcYVAAZ4IqBN3gAOaiLmxQUPqKgAwLxKUj3aYAcTUI
-	C1x93z62cshINITWGLQQ9QI/xc1KHdsGqoDmW6RM4mFbeVk1lTUYEyROl7UdTvdlv5k8=
-X-Gm-Gg: ASbGnctwpluv5rcDLYARHj9eDYNPG6aEdWxc+MzOw6VTcZTpgFbLJWimU6dmlNxdPL9
-	n51qjQ0fRrhsztbk1TKN0pUU7f1lDMQbCNtCaAzQCWqR7eZEtbu177HorowJ1Z1GFWqSd0dD/jF
-	My93NT5GP2PhY47ojuk8O6B3OsAr7IyY6/oGPOaO+q8TV+4PfOKuNDOu4S7YcLYd2ExKO6ckY/F
-	ylNvfUYk7pi9wVIJJTiHeplPS1XUsVF/JxrHuiR+zR8MkWoqhbEbQUF7KQ/PJI3LHruWarl4YhS
-	6O96QOUeLomy7yUECk3epuxNUhUfKdEXWoFyAOEGVs4+l4jhnSm11pTXvpuS6S2zBA8S8AqpiVm
-	JeMxF1YtETtLf81+2BTkxO2FzZehQleO6ajcjrhsoEDV9zBTLBpM+Jki0
-X-Received: by 2002:ac8:5749:0:b0:4eb:9cb1:c290 with SMTP id d75a77b69052e-4ed30dcaad4mr21525541cf.4.1761901229642;
-        Fri, 31 Oct 2025 02:00:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGY3YnzS1GfkHDDFPzYKp5lWuSQxcoirGYCUMxBG2rM3MMEMYWs4Z0j773x521VXm95NlUAZw==
-X-Received: by 2002:ac8:5749:0:b0:4eb:9cb1:c290 with SMTP id d75a77b69052e-4ed30dcaad4mr21525131cf.4.1761901229036;
-        Fri, 31 Oct 2025 02:00:29 -0700 (PDT)
-Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7077c9dc34sm120572466b.55.2025.10.31.02.00.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Oct 2025 02:00:28 -0700 (PDT)
-Message-ID: <b4a86788-fe0e-483c-93ff-fe993edb3181@oss.qualcomm.com>
-Date: Fri, 31 Oct 2025 10:00:25 +0100
+        d=1e100.net; s=20230601; t=1761901262; x=1762506062;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=U2zWXQAb4J66gJtbZXDf79DLTVt9tmjwLAqTV9wFU9Q=;
+        b=Qo4YYogi5HssXCcPHzkPSHZw5p75HgB54ix7s+xACmpa7eYkRbARJ/20w+4kR7iSVH
+         /tVsmXPGUbeyRnm/rjdVKqlSNpD7HfduhT1xiLOkmnGUDukj1ymCoS7xP/txq4bg7nN2
+         BteLMJodK3M6JDZNsg9uTZYTFA1EHgZSCoWZYvOQc0vCpj12XDBqK7oouqjPK73armpu
+         A45DAVYd0yzc3bwSXAiXyzdaOYxOXjRr7j0yuN97siWfPLO6nDF9U4WiUcJpnKwEFE84
+         X7w+uxfM2qIcrMbqn1wnVyT0R5OlfDH1AnBseX3arEFASjtAOoWUA8z7yu9WO/VW3qOj
+         2sDw==
+X-Forwarded-Encrypted: i=1; AJvYcCXUcsFUVg7pcEGADd2K6QeHzSr6s89MM9PJmM7WZ4ta7ZGS5RrhTgQAgseV3KtlmRkNYq9AP6jKz0e8CPo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRAoxj/pxjlkjlLK4Isst7f0cCEZgpjjz7ySqtLDmAThIdBgD/
+	29NE3DLq3jhridSdqucW/Sg/fqnwndxyuNMxmGK94fYuE7OUsGdzFl4WbOvu9S2IHEmcVbTMWPR
+	m37uenkwOSZ7g9TcGywMF/cBjM0FTMnZNqr7LQ2GJlA==
+X-Gm-Gg: ASbGncsZHXrnrYzFN/AjEsgV47tC7V1k3ioYKkPqnYSmmIwZGLeCsSkGbHlm0LwkqUL
+	wkiJgQ+LZ1UEAmAzA+SKJiV7nc7gG4z2BhOL3oISPEN4sJp0s1NEMQr76ECXaI9kp4Y0RM+Ft01
+	uyM9NzXLEvpv+2C5VrUx+PYCq4POUjHkWbYqr5teJcfEP0mh8/36tbHHUsSqCDFB04qcSDiYLZz
+	MsgpT8akOzHXK3z94gz6/KK2xunsEyJ7kPkoFUJEXCTMDT97WHX0XMzk941h2rbPos0fzPmbb2B
+	Wa1z0jD3tRl9p4dF
+X-Google-Smtp-Source: AGHT+IH9CdyA/9CpR4yuZJkUQBQIcmzJf4sYm4WcPQACoUSrA5BoL7natdG3cIpjNxAp+exZosbxpHf54nNaLort178=
+X-Received: by 2002:a05:6512:3e0d:b0:592:f9c6:9736 with SMTP id
+ 2adb3069b0e04-5941d563fdfmr953358e87.56.1761901249206; Fri, 31 Oct 2025
+ 02:00:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] iio: adc: qcom-pm8xxx-xoadc: fix incorrect
- calibration values
-To: Antony Kurniawan Soemardi <linux@smankusors.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        David Lechner <dlechner@baylibre.com>,
-        =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
-        Andy Shevchenko <andy@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20251028-pm8xxx-xoadc-fix-v1-0-b000e1036e41@smankusors.com>
- <20251028-pm8xxx-xoadc-fix-v1-2-b000e1036e41@smankusors.com>
- <7558d070-762c-4c81-aed7-1b087d131483@oss.qualcomm.com>
- <6f68327c-73b2-4684-bc8a-156714b6e3fc@smankusors.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <6f68327c-73b2-4684-bc8a-156714b6e3fc@smankusors.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMDMxMDA4MCBTYWx0ZWRfX4ZtszyuCWVOS
- Gx8QvJkAR3av08rtV3/HnuJ1/5nrKC8AKXBnUSMlW+02sx4AYMQy4RvGVcWOarwCzXHqzTvrqVt
- 3nJwgx00iqKmxUM+y/vkVSapydA6D5+A1SoHqN7US2ShRMF0I66CnjGDC86pOoEuIAH7siBbjqw
- uxf4NYeuMlgrCyi5/zF2UO0LtYtbjiqI05Zi2IuFR8lyVpV1X6BAKx4OixDgxkw3z/ktjGZWZK9
- XVDtDUWJMONhfH6UMnRMn8lnnj4AUdyFIcdpg03OdZxVug2DRCXnz/62vWPq49quyYw1vooFL9k
- +fYvUauLFpIA7CJxNcYWWbep1mMIVGdIm95dSPLSx43WWB48hoOKws/EtqsfDVMNE5g+97O7bTn
- M5lLaefF8NGYnK+gnG2YGM7+9Q+pBw==
-X-Authority-Analysis: v=2.4 cv=Bv2QAIX5 c=1 sm=1 tr=0 ts=69047aae cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=x6icFKpwvdMA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=NEAV23lmAAAA:8 a=wxLWbCv9AAAA:8
- a=GSQsxLvvc7Q80mA-0Z8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=dawVfQjAaf238kedN5IG:22 a=QJY96suAAestDpCc5Gi9:22
-X-Proofpoint-GUID: phv9CcoGxDlhtYThwYPxa39YiJXd2gp2
-X-Proofpoint-ORIG-GUID: phv9CcoGxDlhtYThwYPxa39YiJXd2gp2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-10-31_02,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 lowpriorityscore=0 bulkscore=0 priorityscore=1501
- adultscore=0 malwarescore=0 spamscore=0 clxscore=1015 impostorscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2510310080
+References: <20251029-reset-gpios-swnodes-v3-0-638a4cb33201@linaro.org>
+ <20251029-reset-gpios-swnodes-v3-3-638a4cb33201@linaro.org>
+ <aQMy00pxp7lrIrvh@smile.fi.intel.com> <CAMRc=MdP58d=o7ZL4bAdsaYwzrs6nJo3bhS7Jf1UkDNwPOnAsg@mail.gmail.com>
+ <aQRyFSHWzccTPa3M@smile.fi.intel.com>
+In-Reply-To: <aQRyFSHWzccTPa3M@smile.fi.intel.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Fri, 31 Oct 2025 10:00:37 +0100
+X-Gm-Features: AWmQ_bknobk-QJWbVtapIqlH_lufop-oiWv3enLciZJOoLidz7raNrtQVaowNic
+Message-ID: <CAMRc=McT+Q8ZVk9_HTyWd6uS0OoP92E_phwef7CDyDVeNbJCqA@mail.gmail.com>
+Subject: Re: [PATCH v3 03/10] software node: allow referencing firmware nodes
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/30/25 5:57 PM, Antony Kurniawan Soemardi wrote:
-> On 10/28/2025 4:44 PM, Konrad Dybcio wrote:
->> On 10/27/25 6:29 PM, Antony Kurniawan Soemardi wrote:
->>> On msm8960 phones, the XOADC driver was using incorrect calibration
->>> values:
->>> absolute calibration dx = 625000 uV, dy = 4 units
->>> ratiometric calibration dx = 1800, dy = -29041 units
->>>
->>> As a result, reading from the IIO bus returned unexpected results:
->>> in_voltage_7 (USB_VBUS): 0
->>> in_voltage_10 (125V): 0
->>>
->>> The issue was caused by not setting the ratiometric scale (amux_ip_rsv)
->>> from the predefined channels. Additionally, the downstream code always
->>> set the ADC_ARB_USRP_DIG_PARAM register to PM8XXX_ADC_ARB_ANA_DIG [1].
->>> That value does not include the SEL_SHIFT0 and SEL_SHIFT1 bits. Enabling
->>> those bits caused calibration errors too, so they were removed.
->>>
->>> With these fixes, calibration now uses the correct values:
->>> absolute calibration dx = 625000 uV, dy = 6307 units
->>> ratiometric calibration dx = 1800, dy = 18249 units
->>>
->>> Reading from the IIO bus now returns expected results:
->>> in_voltage_7 (USB_VBUS): 4973836
->>> in_voltage_10 (125V): 1249405
->>>
->>> [1] https://github.com/LineageOS/android_kernel_sony_msm8960t/blob/93319b1e5aa343ec1c1aabcb028c5e88c7df7c01/drivers/hwmon/pm8xxx-adc.c#L407-L408
->>>
->>> Signed-off-by: Antony Kurniawan Soemardi <linux@smankusors.com>
->>> ---
->>>   drivers/iio/adc/qcom-pm8xxx-xoadc.c | 10 ++++++----
->>>   1 file changed, 6 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/drivers/iio/adc/qcom-pm8xxx-xoadc.c b/drivers/iio/adc/qcom-pm8xxx-xoadc.c
->>> index 8555f34036fb13c41ac720dc02c1dc39876e9198..a53d361456ec36b66d258041877bd96ab37838c4 100644
->>> --- a/drivers/iio/adc/qcom-pm8xxx-xoadc.c
->>> +++ b/drivers/iio/adc/qcom-pm8xxx-xoadc.c
->>> @@ -503,10 +503,11 @@ static int pm8xxx_read_channel_rsv(struct pm8xxx_xoadc *adc,
->>>           goto unlock;
->>>         /* Decimation factor */
->>> -    ret = regmap_write(adc->map, ADC_ARB_USRP_DIG_PARAM,
->>> -               ADC_ARB_USRP_DIG_PARAM_SEL_SHIFT0 |
->>> -               ADC_ARB_USRP_DIG_PARAM_SEL_SHIFT1 |
->>> -               ch->decimation << ADC_DIG_PARAM_DEC_SHIFT);
->>> +    ret = regmap_update_bits(adc->map,
->>> +                 ADC_ARB_USRP_DIG_PARAM,
->>> +                 ADC_ARB_USRP_DIG_PARAM_DEC_RATE0 |
->>> +                 ADC_ARB_USRP_DIG_PARAM_DEC_RATE1,
->> The PM8921 datasheet suggests a single valid value of BIT(5)=1, BIT(6)=0
->> for a "1K" (1/1024?) ratio, although a comment in this file suggests
->> BIT(5)|BIT(6) is also valid and corresponds to 1/4096.. I wouldn't be
->> surprised if that is the case
->>
->> The previously set bits are a field called DECI_SEL but are otherwise left
->> undescribed
-> 
-> So, do you think we can leave the BIT(0) and BIT(1) as is? I have a feeling
-> that if they aren't set, these changes might prevent the APQ8060 Dragonboard
-> from reading the cm3605 sensor? or maybe not?
-> 
-> I mean this one, since the driver was originally tested on that board
-> https://github.com/torvalds/linux/blob/e53642b87a4f4b03a8d7e5f8507fc3cd0c595ea6/arch/arm/boot/dts/qcom/qcom-apq8060-dragonboard.dts#L67-L79
+On Fri, Oct 31, 2025 at 9:24=E2=80=AFAM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Thu, Oct 30, 2025 at 04:17:48AM -0700, Bartosz Golaszewski wrote:
+> > On Thu, 30 Oct 2025 10:41:39 +0100, Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> said:
+> > > On Wed, Oct 29, 2025 at 01:28:37PM +0100, Bartosz Golaszewski wrote:
+> > >>
+> > >> At the moment software nodes can only reference other software nodes=
+.
+> > >> This is a limitation for devices created, for instance, on the auxil=
+iary
+> > >> bus with a dynamic software node attached which cannot reference dev=
+ices
+> > >> the firmware node of which is "real" (as an OF node or otherwise).
+> > >>
+> > >> Make it possible for a software node to reference all firmware nodes=
+ in
+> > >> addition to static software nodes. To that end: add a second pointer=
+ to
+> > >> struct software_node_ref_args of type struct fwnode_handle. The core
+> > >> swnode code will first check the swnode pointer and if it's NULL, it
+> > >> will assume the fwnode pointer should be set. Rework the helper macr=
+os
+> > >> and deprecate the existing ones whose names don't indicate the refer=
+ence
+> > >> type.
+> > >>
+> > >> Software node graphs remain the same, as in: the remote endpoints st=
+ill
+> > >> have to be software nodes.
+> > >
+> > > ...
+> > >
+> > >> -#define SOFTWARE_NODE_REFERENCE(_ref_, ...)                       \
+> > >> +#define __SOFTWARE_NODE_REF(_ref, _node, ...)                     \
+> > >>  (const struct software_node_ref_args) {                           \
+> > >> -  .node =3D _ref_,                                          \
+> > >> +  ._node =3D _ref,                                          \
+> > >>    .nargs =3D COUNT_ARGS(__VA_ARGS__),                       \
+> > >>    .args =3D { __VA_ARGS__ },                                \
+> > >>  }
+> > >
+> > > Okay, looking at this again I think we don't need a new parameter.
+> > > We may check the type of _ref_
+> > > (actually why are the macro parameters got renamed here and elsewhere=
+?)
+> > > and assign the correct one accordingly. I think this is what _Generic=
+()
+> > > is good for.
+> > >
+> >
+> > Oh, that's neat, I would love to use _Generic() here but I honest to go=
+d have
+> > no idea how to make it work. I tried something like:
+> >
+> > #define __SOFTWARE_NODE_REF(_ref, ...)                          \
+> > _Generic(_ref,                                                  \
+> >         const struct software_node *:                           \
+> >                 (const struct software_node_ref_args) {         \
+> >                         .swnode =3D _ref,                         \
+> >                         .nargs =3D COUNT_ARGS(__VA_ARGS__),       \
+> >                         .args =3D { __VA_ARGS__ },                \
+> >                 },                                              \
+> >         struct fwnode_handle *:                                 \
+> >                 (const struct software_node_ref_args) {         \
+> >                         .fwnode =3D _ref,                         \
+> >                         .nargs =3D COUNT_ARGS(__VA_ARGS__),       \
+> >                         .args =3D { __VA_ARGS__ },                \
+> >                 }                                               \
+> >         )
+> >
+> >
+> > But this fails like this:
+> >
+> > In file included from ./include/linux/acpi.h:16,
+> >                  from drivers/reset/core.c:8:
+> > drivers/reset/core.c: In function =E2=80=98__reset_add_reset_gpio_devic=
+e=E2=80=99:
+> > drivers/reset/core.c:958:52: error: initialization of =E2=80=98const st=
+ruct
+> > software_node *=E2=80=99 from incompatible pointer type =E2=80=98struct=
+ fwnode_handle
+> > *=E2=80=99 [-Wincompatible-pointer-types]
+> >   958 |                                                    parent->fwno=
+de,
+> >       |                                                    ^~~~~~
+> > ./include/linux/property.h:374:35: note: in definition of macro
+> > =E2=80=98__SOFTWARE_NODE_REF=E2=80=99
+> >   374 |                         .swnode =3D _ref,                      =
+   \
+> >
+> > So the right branch is not selected. How exactly would you use it here?
+>
+> I believe this is an easy task.
+>
+> But first of all, your series doesn't compile AFAICS:
+>
+> drivers/reset/core.c:981:6: error: variable 'ret' is used uninitialized w=
+henever 'if' condition is true [-Werror,-Wsometimes-uninitialized]
+>   981 |         if (IS_ERR(rgpio_dev->swnode))
+>       |             ^~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/reset/core.c:1001:9: note: uninitialized use occurs here
+>        1001 |         return ret;
+>             |                ^~~
+> drivers/reset/core.c:981:2: note: remove the 'if' if its condition is alw=
+ays false
+>   981 |         if (IS_ERR(rgpio_dev->swnode))
+>       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>   982 |                 goto err_put_of_node;
+>       |                 ~~~~~~~~~~~~~~~~~~~~
+> drivers/reset/core.c:905:13: note: initialize the variable 'ret' to silen=
+ce this warning
+>   905 |         int id, ret, lflags;
+>       |                    ^
+>       |                     =3D 0
+> 1 error generated.
+>
 
-+Dmitry would you have that (or similar) board in your museum?
+You're not wrong but for the record: it builds fine for me with
+aarch64-linux-gnu-gcc 14.2 for some reason so I didn't notice it. I'll
+fix it.
 
-Konrad
+> So, but to the topic
+>
+> I have applied this and get the only error as per above
+>
+>  (const struct software_node_ref_args) {                                \
+>  -       ._node =3D _ref,                                          \
+>  +       .swnode =3D _Generic(_ref, const struct software_node *: _ref, d=
+efault: NULL), \
+>  +       .fwnode =3D _Generic(_ref, struct fwnode_handle *: _ref, default=
+: NULL), \
+>
+
+That works, thanks for the idea.
+
+Bartosz
 
