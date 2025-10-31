@@ -1,319 +1,186 @@
-Return-Path: <linux-kernel+bounces-879531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED782C23510
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:05:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 150ADC23516
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 07:06:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 577324E85D0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:05:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B85A40860F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 06:06:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1351E2E6CB8;
-	Fri, 31 Oct 2025 06:05:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A2C2E7BB2;
+	Fri, 31 Oct 2025 06:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P9cQjO0J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QU1c8aEm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 184C51F4C87;
-	Fri, 31 Oct 2025 06:05:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C902E4241
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 06:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761890734; cv=none; b=mxWgyuwZ4Fn9PyHaf7w0B+CWzV7CObJTZOk4nYoWLZUjkKpVEFpsXom8pJAUdgNpvUmvRVfHn1u1ZKE9YuSsZKhQedqIQtGAUS9yCkMlzxRofycOVTTfeRUQKcoOhGKT3BAKTgvzNtSvNB3BKoD7wchnwfO75C4obS3ypVWe74Y=
+	t=1761890775; cv=none; b=rOto+FzEAOvfOoMPnQL7NaMeFU3TVjGc314L2cN8grUgZp4v48WsYlbXypitg+irXOC3/IGeOwnXSgQgU4Ij/g3nGCu9Tob/Itec2TuEa1T0+Vf5PGWJva+ApLzmJWyVxdooVwEOKEmFWjHlY1kkTEBT2olp8tFZbEjWDnW/EVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761890734; c=relaxed/simple;
-	bh=jqQTe6N9XDY3VxuJw19Hj4Vu8BlM8rHNLPg3ljunTGI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YRK84H5uEnN6Va76kaDWgwpJCLzHKD1pJXUjvrKBztmYNpjRrALDsG7VjzX6HIJKDDf9iuRqPCxsLVPCovXrxM1SnKZLESn29PsBDE7RUYJHOCEHDhrIVnPP7ZIQaQN+H5wRd61I4GxjR+XzobAkFUvXq9Z3k0NcMwPYn7LxypQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P9cQjO0J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DB6DC4CEE7;
-	Fri, 31 Oct 2025 06:05:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761890731;
-	bh=jqQTe6N9XDY3VxuJw19Hj4Vu8BlM8rHNLPg3ljunTGI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P9cQjO0Jmw4u9vLPZevaClVSNrpJr5AQFpI54aDK1KXyLt4zHIfC/jytwzHh5WIKF
-	 v0OaVPD6jl99AvyWrW7ExIGAti7r8gjh+2Gy//Otid7HK7+ATZICn57C1xdp14K1ze
-	 4++1I4wQDWbhTi0hGhgh3AsLT0a/Y+y+xLBOPCc/0tRFFmjeZZKwJPBeBKCsov+03x
-	 UUdFZooabIujv4s+6bQ6U38BVPRHtqOYfV6YmHKuZutdsj+ue1+B/1jyeUq6wm1vwg
-	 EhExmioV2IzQyIjfTD/87kaKdiXHWLTOMfzARJvTXF8W/2SlyPxOKO5/w8O0IbgBSn
-	 kVUZFabQyGiaw==
-Date: Fri, 31 Oct 2025 11:35:20 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	bhelgaas@google.com, lpieralisi@kernel.org, kwilczynski@kernel.org, vkoul@kernel.org, 
-	kishon@kernel.org, dlan@gentoo.org, guodong@riscstar.com, pjw@kernel.org, 
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, p.zabel@pengutronix.de, 
-	christian.bruel@foss.st.com, shradha.t@samsung.com, krishna.chundru@oss.qualcomm.com, 
-	qiang.yu@oss.qualcomm.com, namcao@linutronix.de, thippeswamy.havalige@amd.com, 
-	inochiama@gmail.com, devicetree@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-phy@lists.infradead.org, spacemit@lists.linux.dev, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/7] PCI: spacemit: introduce SpacemiT PCIe host driver
-Message-ID: <546kfkmfkndae32mmculbgacuni4raqwpgmeb4xnhvsuavjl3w@3pjtpmblmril>
-References: <20251013153526.2276556-1-elder@riscstar.com>
- <20251013153526.2276556-6-elder@riscstar.com>
- <274772thveml3xq2yc7477b7lywzzwelbjtq3hiy4louc6cqom@o5zq66mqa27h>
- <4027609d-6396-44c0-a514-11d7fe8a5b58@riscstar.com>
- <paxtbwlvndtsmllhsdiovwqoes7aqwiltac6ah4ehrpkz554y6@uj5k3w5jxeln>
- <9bebde96-485f-4f30-b54c-be9e6c16f2d6@riscstar.com>
+	s=arc-20240116; t=1761890775; c=relaxed/simple;
+	bh=uzKsr8p0ZgM+SLgICEjgau4Cc9/3BVPso+PqdA0y7L8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B9vH/kLDWg8BqQrsJKD+5EOxieqlBdhrqhH24B/+YjUfYjwqwT/y6AMJVJPEDS2IPfWNH4cFyF4IOgyMMI1U8JHwu2pbE7zEM5p127AhWWRRTV1ZpwhF2Fdvu4jeQwsaYAKhf5fwSRTNo3QFhBwRNsCvDftu4j3wQ9OrfRHnh7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QU1c8aEm; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761890771;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+bCrk/NYYmYlKBsMjf6Y0gKt7P2+73Hm3s9fxJ/Q+sk=;
+	b=QU1c8aEm4jVduz9Rz40ONQ31bB2HcvA7Cs1KxPJeKzdbZIr7hNuBNCX14LUt5r4Aq6HGnn
+	HYI7yLwiF35xBJK4VifEX4PPiySlyH1MeXHR8sgWxt/usScGjfzWjKa1QMPgpPAXT6JSGC
+	LhJmIJEQeiIkHSH+nziXMMMRanuuvN4=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-618-7ClablYyO1OVe2uC7hp5hQ-1; Fri,
+ 31 Oct 2025 02:06:09 -0400
+X-MC-Unique: 7ClablYyO1OVe2uC7hp5hQ-1
+X-Mimecast-MFC-AGG-ID: 7ClablYyO1OVe2uC7hp5hQ_1761890768
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 79D581953958;
+	Fri, 31 Oct 2025 06:06:07 +0000 (UTC)
+Received: from localhost.localdomain (unknown [10.72.120.6])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 96EE21955BE3;
+	Fri, 31 Oct 2025 06:05:55 +0000 (UTC)
+From: Jason Wang <jasowang@redhat.com>
+To: mst@redhat.com,
+	jasowang@redhat.com,
+	xuanzhuo@linux.alibaba.com,
+	eperezma@redhat.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: virtualization@lists.linux.dev,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH net V2] virtio_net: fix alignment for virtio_net_hdr_v1_hash
+Date: Fri, 31 Oct 2025 14:05:51 +0800
+Message-ID: <20251031060551.126-1-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <9bebde96-485f-4f30-b54c-be9e6c16f2d6@riscstar.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Wed, Oct 29, 2025 at 07:10:10PM -0500, Alex Elder wrote:
-> On 10/28/25 2:06 AM, Manivannan Sadhasivam wrote:
-> > On Mon, Oct 27, 2025 at 05:24:38PM -0500, Alex Elder wrote:
-> > > On 10/26/25 11:55 AM, Manivannan Sadhasivam wrote:
-> > > > On Mon, Oct 13, 2025 at 10:35:22AM -0500, Alex Elder wrote:
-> > > > > Introduce a driver for the PCIe host controller found in the SpacemiT
-> > > > > K1 SoC.  The hardware is derived from the Synopsys DesignWare PCIe IP.
-> > > > > The driver supports three PCIe ports that operate at PCIe gen2 transfer
-> > > > > rates (5 GT/sec).  The first port uses a combo PHY, which may be
-> > > > > configured for use for USB 3 instead.
-> > > > > 
-> > > > > Signed-off-by: Alex Elder <elder@riscstar.com>
-> > > > > ---
-> 
-> . . .
-> 
-> > > > > +	ret = devm_regulator_get_enable(dev, "vpcie3v3-supply");
-> > > > > +	if (ret)
-> > > > > +		return dev_err_probe(dev, ret,
-> > > > > +				     "failed to get \"vpcie3v3\" supply\n");
-> > > > 
-> > > > As mentioned in the bindings patch, you should rely on the PWRCTRL_SLOT driver
-> > > > to handle the power supplies. It is not yet handling the PERST#, but I have a
-> > > > series floating for that:
-> > > > https://lore.kernel.org/linux-pci/20250912-pci-pwrctrl-perst-v3-0-3c0ac62b032c@oss.qualcomm.com/
-> > > 
-> > > I think that just means that I'll define a DT node compatible with
-> > > "pciclass,0604", and in that node I'll specify the vpcie3v3-supply
-> > > property.  That will cause that (pwrctrl) device to get and enable
-> > > the supply before the "real" PCIe device probes.
-> > > 
-> > 
-> > Right.
-> > 
-> > > And once your PERST work gets merged into the PCI power control
-> > > framework, a callback will allow that to assert PERST# as needed
-> > > surrounding power transitions.  (But I won't worry about that
-> > > for now.)
-> > > 
-> > 
-> > I'm still nervous to say that you should not worry about it (about not
-> > deasserting PERST# at the right time) as it goes against the PCIe spec.
-> > Current pwrctrl platforms supporting PERST# are working fine due to sheer luck.
-> > 
-> > So it would be better to leave the pwrctrl driver out of the equation now and
-> > enable the supply in this driver itself. Later, once my pwrctrl rework gets
-> > merged, I will try to switch this driver to use it.
-> 
-> As I understand it, PERST# should be only be deasserted after
-> all power rails are known to be stable.
-> 
+From: "Michael S. Tsirkin" <mst@redhat.com>
 
-Yes
+Changing alignment of header would mean it's no longer safe to cast a
+2 byte aligned pointer between formats. Use two 16 bit fields to make
+it 2 byte aligned as previously.
 
-> This driver enables the regulator during probe, shortly
-> before calling dw_pcie_host_init().  That function calls
-> back to k1_pcie_init(), which enables clocks, deasserts
-> resets, and initializes the PHY before it changes the
-> PERST# state.
-> 
-> By "changing the PERST# state" I mean it is asserted
-> (driven low), then deasserted after 100 milliseconds
-> (PCIE_T_PVPERL_MS).
-> 
-> I have two questions on this:
-> - You say the PCI spec talks about the "right time" to
->   deassert PERST# (relative to power).  Is that at all
->   related to PCIE_T_PVPERL_MS?
+This fixes the performance regression since
+commit ("virtio_net: enable gso over UDP tunnel support.") as it uses
+virtio_net_hdr_v1_hash_tunnel which embeds
+virtio_net_hdr_v1_hash. Pktgen in guest + XDP_DROP on TAP + vhost_net
+shows the TX PPS is recovered from 2.4Mpps to 4.45Mpps.
 
-The PCI CEM spec says that PERST# should be deasserted atleast 100ms after the
-power becomes stable. But with the current pwrctrl design, the host controller
-deasserts the PERST# even before the pwrctrl probe. So this is in violation of
-the spec. But depending on the endpoint device design, this might not cause any
-issue as PERST# is a level triggered signal. So once the endpoint boots up, it
-will see the PERST# deassert and will start working. I'm not justifying the
-current design, but just mentioning that you might not see any issue.
+Fixes: 56a06bd40fab ("virtio_net: enable gso over UDP tunnel support.")
+Cc: stable@vger.kernel.org
+Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+---
+Changes since V1:
+- Fix build issues of virtio_net_hdr_tnl_from_skb()
+---
+ drivers/net/virtio_net.c        | 15 +++++++++++++--
+ include/linux/virtio_net.h      |  3 ++-
+ include/uapi/linux/virtio_net.h |  3 ++-
+ 3 files changed, 17 insertions(+), 4 deletions(-)
 
-That being said, we are going to submit a series that reworks pwrctrl framework
-such that each controller can call an API to probe pwrctrl drivers. This way,
-host controller driver can make sure that the device will get powered ON before
-it deasserts the PERST#.
-
-> - I notice that PERST# is in a deasserted state at the
->   time I assert it in this sequence.  Do you see any
->   reason I should assert it early as an initialization
->   step, or is asserting it and holding it there for
->   100 msec sufficient?
-> 
-
-You should assert PERST# before doing any controller initialization sequence as
-that may affect the endpoint. Once PERST# is asserted, it will cause the
-endpoint to 'reset'. So you do your initialization sequence and deassert it once
-done.
-
-> > > Is that right?
-> > > 
-> > > > > +
-> > > > > +	/* Hold the PHY in reset until we start the link */
-> > > > > +	regmap_set_bits(k1->pmu, k1->pmu_off + PCIE_CLK_RESET_CONTROL,
-> > > > > +			APP_HOLD_PHY_RST);
-> > > > > +
-> > > > > +	k1->phy = devm_phy_get(dev, NULL);
-> > > > > +	if (IS_ERR(k1->phy))
-> > > > > +		return dev_err_probe(dev, PTR_ERR(k1->phy),
-> > > > > +				     "failed to get PHY\n");
-> > > > 
-> > > > Once you move these properties to Root Port binding, you need to have per-Root
-> > > > Port parser. Again, you can refer the STM32 driver.
-> > > 
-> > > I see getting the PHY in stm32_pcie_parse_port(), but nothing
-> > > about the supply (which you mentioned in the other message).
-> > > 
-> > 
-> > To conclude, you should move forward with defining the PHY and supply properties
-> > in the Root Port node, but parse/handle them in this driver itself.
-> 
-> Got it.
-> 
-> > > > > +
-> > > > > +	k1->pci.dev = dev;
-> > > > > +	k1->pci.ops = &k1_pcie_ops;
-> > > > > +	dw_pcie_cap_set(&k1->pci, REQ_RES);
-> > > > > +
-> > > > > +	k1->pci.pp.ops = &k1_pcie_host_ops;
-> > > > > +	k1->pci.pp.num_vectors = MAX_MSI_IRQS;
-> > > > 
-> > > > This driver is just using a single 'msi' vector, which can only support 32 MSIs.
-> > > > But MAX_MSI_IRQS is 256. So this looks wrong.
-> > > 
-> > > In dw_pcie_host_init(), if unspecified, MSI_DEF_NUM_VECTORS=32 is
-> > > used for num_vectors.  If it is specified, only if the value
-> > > exceeds MAX_MSI_IRQS=256 is an error returned.
-> > > 
-> > 
-> > Yes, because the driver trusts the glue drivers to provide the num_vectors if
-> > they support more than 32.
-> > 
-> > > In dw_handle_msi_irq(), "num_ctrls" is computed based on
-> > > num_vectors / MAX_MSI_IRQS_PER_CTRL=32.  A loop then
-> > > iterates over those "controllers"(?) to handle each bit
-> > > set in their corresponding register.
-> > > 
-> > > This seems OK.  Can you explain why you think it's wrong?
-> > > 
-> > 
-> > So both 'ctrl' and 'msi' IRQs are interrelated. Each 'ctrl' can have upto 32 MSI
-> > vectors only. If your platform supports more than 32 MSI vectors, like 256, then
-> > the platform DT should provide 8 'msi' IRQs.
-> 
-> I have asked SpacemiT about this, specifically whether there
-> are additional interrupts (I don't think there are), or if
-> not that, additional registers to support MSI 32+ (see
-> below).  In their downstream driver they handle interrupts
-> differently.  I suspect num_vectors needs to be set to 32
-> (or I'll leave it unset and take the default).
-> 
-> 
-> In the DesignWare driver, there are up to 8 "ctrls", and each
-> ctrl has 32 bit positions representing 32 MSI vectors.  Each
-> can have an msi_irq defined.  An msi_irq is always set up for
-> ctrl 0.
-> 
-> For any ctrl with an msi_irq assigned, dw_pcie_msi_host_init()
-> sets its interrupt handler to dw_chained_msi_isr(), which just
-> calls dw_handle_msi_irq().
-> 
-> The way dw_handle_msi_irq() works, a single ctrl apparently can
-> handle up to 256 MSI vectors, as long as the block of 3 registers
-> that manage the ctrl (ENABLE, MASK, and STATUS presumably) are
-> consecutive in I/O memory for consecutive ctrls.
-> 
-
-I'm not sure how you came up with this observation. dw_handle_msi_irq() loops
-over the 'status' using find_next_bit() of size MAX_MSI_IRQS_PER_CTRL, which is
-32. So I don't see how a single ctrl can handle up to 256 vectors.
-
-> 
-> I looked for other examples.  I see that "pcie-fu740.c", which
-> supports compatible "sifive,fu740-pcie", sets num_vectors to
-> MAX_MSI_IRQS, but "fu740-c000.dtsi" defines just one "msi"
-> interrupt.  And "pci-dra7xx.c" seems to do something similar,
-> and maybe "pcie-rcar-gen4.c" too.
-> 
-
-Yes. But I think those are mistakes. I will submit patches to fix them.
-
-> > Currently the driver is not strict about this requirement. I will send a patch
-> > to print an error message if this requirement is not satisfied.
-> > 
-> > > > > +
-> > > > > +	platform_set_drvdata(pdev, k1);
-> > > > > +
-> > > > 
-> > > > For setting the correct runtime PM state of the controller, you should do:
-> > > > 
-> > > > pm_runtime_set_active()
-> > > > pm_runtime_no_callbacks()
-> > > > devm_pm_runtime_enable()
-> > > 
-> > > OK, that's easy enough.
-> > > 
-> > > > This will fix the runtime PM hierarchy of PCIe chain (from host controller to
-> > > > client drivers). Otherwise, it will be broken.
-> > > Is this documented somewhere?  (It wouldn't surprise me if it
-> > > is and I just missed it.)
-> > > 
-> > 
-> > Sorry no. It is on my todo list. But I'm getting motivation now.
-> > 
-> > > This driver has as its origins some vendor code, and I simply
-> > > removed the runtime PM calls.  I didn't realize something would
-> > > be broken without making pm_runtime*() calls.
-> > > 
-> > 
-> > It is the PM framework requirement to mark the device as 'active' to allow it to
-> > participate in runtime PM. If you do not mark it as 'active' and 'enable' it,
-> > the framework will not allow propagating the runtime PM changes before *this*
-> > device. For instance, consider the generic PCI topology:
-> > 
-> > PCI controller (platform device)
-> > 	|
-> > PCI host bridge
-> > 	|
-> > PCI Root Port
-> > 	|
-> > PCI endpoint device
-> > 
-> > If the runtime PM is not enabled for the PCI Root Port, then if the PCI endpoint
-> > device runtime suspends, it will not trigger runtime suspend for the Root Port
-> > and also for the PCI controller. Also, since the runtime PM framework doesn't
-> > have the visibility of the devices underneath the bus (like endpoint), it may
-> > assume that no devices (children) are currently active and may trigger runtime
-> > suspend of the Root Port (parent) even though the endpoint device could be
-> > 'active'.
-> 
-> So this basically marks this controller as a pass-through device that
-> doesn't itself change state for runtime PM, but still communicates that
-> somewhere at or below it there might be devices that do participate.
-
-Yes.
-
-- Mani
-
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index 8e8a179aaa49..e6e650bc3bc3 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -2539,6 +2539,13 @@ static struct sk_buff *receive_mergeable(struct net_device *dev,
+ 	return NULL;
+ }
+ 
++static inline u32
++virtio_net_hash_value(const struct virtio_net_hdr_v1_hash *hdr_hash)
++{
++	return __le16_to_cpu(hdr_hash->hash_value_lo) |
++		(__le16_to_cpu(hdr_hash->hash_value_hi) << 16);
++}
++
+ static void virtio_skb_set_hash(const struct virtio_net_hdr_v1_hash *hdr_hash,
+ 				struct sk_buff *skb)
+ {
+@@ -2565,7 +2572,7 @@ static void virtio_skb_set_hash(const struct virtio_net_hdr_v1_hash *hdr_hash,
+ 	default:
+ 		rss_hash_type = PKT_HASH_TYPE_NONE;
+ 	}
+-	skb_set_hash(skb, __le32_to_cpu(hdr_hash->hash_value), rss_hash_type);
++	skb_set_hash(skb, virtio_net_hash_value(hdr_hash), rss_hash_type);
+ }
+ 
+ static void virtnet_receive_done(struct virtnet_info *vi, struct receive_queue *rq,
+@@ -3311,6 +3318,10 @@ static int xmit_skb(struct send_queue *sq, struct sk_buff *skb, bool orphan)
+ 
+ 	pr_debug("%s: xmit %p %pM\n", vi->dev->name, skb, dest);
+ 
++	/* Make sure it's safe to cast between formats */
++	BUILD_BUG_ON(__alignof__(*hdr) != __alignof__(hdr->hash_hdr));
++	BUILD_BUG_ON(__alignof__(*hdr) != __alignof__(hdr->hash_hdr.hdr));
++
+ 	can_push = vi->any_header_sg &&
+ 		!((unsigned long)skb->data & (__alignof__(*hdr) - 1)) &&
+ 		!skb_header_cloned(skb) && skb_headroom(skb) >= hdr_len;
+@@ -6750,7 +6761,7 @@ static int virtnet_xdp_rx_hash(const struct xdp_md *_ctx, u32 *hash,
+ 		hash_report = VIRTIO_NET_HASH_REPORT_NONE;
+ 
+ 	*rss_type = virtnet_xdp_rss_type[hash_report];
+-	*hash = __le32_to_cpu(hdr_hash->hash_value);
++	*hash = virtio_net_hash_value(hdr_hash);
+ 	return 0;
+ }
+ 
+diff --git a/include/linux/virtio_net.h b/include/linux/virtio_net.h
+index 4d1780848d0e..b673c31569f3 100644
+--- a/include/linux/virtio_net.h
++++ b/include/linux/virtio_net.h
+@@ -401,7 +401,8 @@ virtio_net_hdr_tnl_from_skb(const struct sk_buff *skb,
+ 	if (!tnl_hdr_negotiated)
+ 		return -EINVAL;
+ 
+-        vhdr->hash_hdr.hash_value = 0;
++	vhdr->hash_hdr.hash_value_lo = 0;
++	vhdr->hash_hdr.hash_value_hi = 0;
+         vhdr->hash_hdr.hash_report = 0;
+         vhdr->hash_hdr.padding = 0;
+ 
+diff --git a/include/uapi/linux/virtio_net.h b/include/uapi/linux/virtio_net.h
+index 8bf27ab8bcb4..1db45b01532b 100644
+--- a/include/uapi/linux/virtio_net.h
++++ b/include/uapi/linux/virtio_net.h
+@@ -193,7 +193,8 @@ struct virtio_net_hdr_v1 {
+ 
+ struct virtio_net_hdr_v1_hash {
+ 	struct virtio_net_hdr_v1 hdr;
+-	__le32 hash_value;
++	__le16 hash_value_lo;
++	__le16 hash_value_hi;
+ #define VIRTIO_NET_HASH_REPORT_NONE            0
+ #define VIRTIO_NET_HASH_REPORT_IPv4            1
+ #define VIRTIO_NET_HASH_REPORT_TCPv4           2
 -- 
-மணிவண்ணன் சதாசிவம்
+2.31.1
+
 
