@@ -1,397 +1,235 @@
-Return-Path: <linux-kernel+bounces-879363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CFFDC22EEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:58:40 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E269C22EFE
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 03:00:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 956E34EA788
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:58:38 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0D8B73487CA
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 02:00:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0925D26ED30;
-	Fri, 31 Oct 2025 01:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4847D26ED38;
+	Fri, 31 Oct 2025 02:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LpewS+py"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="kitULnyE"
+Received: from DM5PR21CU001.outbound.protection.outlook.com (mail-centralusazon11011069.outbound.protection.outlook.com [52.101.62.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBCA26E71E
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 01:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761875912; cv=none; b=bsIHlE1ALZDA1UmT3OFkEMA7K4rDcwxnLcRECwM3XIw9qBwCx7kkfG91sywrlaArWtsPz1C4/CY9VFeWdulrXc9mpy0A/jH9vifoLCjb0IKAbBmZg5m2QA96ffoNagJtoTrR2MQH7Z8bvgRA/hy3V6zhbXcIWjN07n+ObuSiTXk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761875912; c=relaxed/simple;
-	bh=qoLOLJ8CghwzAKD1P8AgatCrUQWPeocUhlHkDqWseAo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t7xWAKjkUjO23j84IbjMe0fRaJ4xhBLtdnsdszOqIQXty5oLeid+CExj3mOofM+WJ+KoRfbYgzvbaagbcr4AcJ98u3js/T1cq2tzrTqHCj0uzSK0wGR2s78xTuN7yBiACzk3wi2M2lge1BolPhRUg1TCIhxJHU6IzIlcogF6n54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LpewS+py; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4ed0f3d4611so17324441cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 18:58:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761875909; x=1762480709; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bdzsK5YWfwrx5m88qzgoweuH/29p0dfJPHsfsCuX24c=;
-        b=LpewS+pyCBFY5+qXsDua/l2zHp69vVLZMICj4QSr/sHEUjP37Xn6U2e72rXWSl8lcG
-         ptQUOOX48DVVnn/O7K33rtjvKgxv1cCea8U14yVlmEUatwFx2UM6MOwlgzUGbk5BsmKJ
-         jx0VGVqvipC6YstdP1gDqS9259WUdjYHARK6w0KVtfkdMmWj8kq2MIX+PWjgsKqp3Mxi
-         4iQsQLcEcNQpTD2iH0A4lA4yVU1ISHQ8fIymwE8xpoWGYYmYx6vLlhCNKnEFA95ntT/p
-         xCMB0wWseEAyXidULSsyQFGok/68Ecq3qEkuThKzQG0xovVhxnnzWNCuvARTcaG+L50L
-         0XnA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761875909; x=1762480709;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bdzsK5YWfwrx5m88qzgoweuH/29p0dfJPHsfsCuX24c=;
-        b=xDpnCIyYDyIsXDUmNeJpGviB3pjEyREsMpaT/HyBVHJRnFGM+Nfgy5Igp2Vn2d341A
-         BncNUx92ZnR1SBBZ7saEyRG04yryE91SG552sAXtu9uuG2K74yMOnO/BBIIx2wcYO8xh
-         EbjKU86cwKIyggaGazo0Fp1qTUvyI7avb53wbDYNuYF5CGK8y8LiM9SkuWHXkbaQYvex
-         Xm0bOmDx5XJgiPOdvKUWxiLM4mWy7XmLyi/WVHYyB1s6UVQsBsQ+VfUOGjuP1u/w7Gmc
-         3BZFDpiByOY1WVvHUp6HoEgA1xL1KtE7JzX26RjJmlZiYg5jRMC07E43ygY3uUg3YLeJ
-         Se+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXrmVQCgtak2YEfRi+LYLU718isyyh2bxdGXi/crxM2eQCFm70vY/QlhmIsE/WNsp6SOxZub8cEZcSdt/4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyk3yvykOuX9v0d4Hwk5N68Ac1/2WNnNUgoKIs0LHWuBJgKwmMh
-	C8zWg7W96is4QqkDFZjNT9tIslg0yTIDbRT9Bcw0DXlaCDEnX5Kdy0ENkU0CyqUGZH+cUnfgu6V
-	VCQSI+gQaL3NYnriVQ1REoqsT4a3uNmE=
-X-Gm-Gg: ASbGnctLR75lCCXM25391IGRfJYXWbJ7NzQytoZlqyte57kkrS7W+38H4cV53ynRzM2
-	FvcHl+Yg94bvtvL/6PnBuAVO8/u7YZtgaStV/hqvwtcfF249I5MDlieqvtdPYRnfqwPP6cqdR+o
-	hQQAj/A7502rWQsjthzrxDWzzloPFb+zD1ZPCF3F/oyuDMFAsaXRsaMZ+3K0nPE13q3H09XmYuQ
-	qQVfpNFqf/LJhYDpXVVGWc81X9vH3Pr/Pkzl1XAD4GQO50hJZ3EUIHQiBGj6YhbCy2Fuk1M
-X-Google-Smtp-Source: AGHT+IFRHV5MyeEMU+rr0VowwH5Pr0w1ilg/JQkRhiBeRexrq9HNDOOWm+yQF/vsSy2r2tbJfcy9F+Rm0j3QEsvHz8Y=
-X-Received: by 2002:a05:622a:5408:b0:4e8:acea:6c86 with SMTP id
- d75a77b69052e-4ed30d514abmr21883291cf.14.1761875908851; Thu, 30 Oct 2025
- 18:58:28 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC817082A
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 02:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.62.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761876028; cv=fail; b=AEomhbFG4VSd/F6RE5lOwEFTXskDkQYgG8VhsTG3hror/30gnZ/59Y2ItSuQ0y/6sr+g5Ub7czhaGi+7kHS+4f5Y3R1Sq+LFUTeZOvcJSRhW1joF6NP4pCA5QlBzh2uDXKil5E7khfOA1hnHaSscK1KF6cUyhHEKc01mvP7ieoY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761876028; c=relaxed/simple;
+	bh=2PNZsfFWi/jPxixwYp3CbSej95NdtCALopup8iEwXQQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NsyMbDBPbHkSwkv20I49cQHimkzTXIz1oGs6vcV/i6jdhWOLMtl17sPxJ6xZQNC5W4ZKGxTssTo0zIJhwNIpAj79ZscuOzoNDi8bvLv8R6QipHrKV8X4Y5H++5fWfljgyS4VYd/IuNXG+DGG7OmScwilOnjidkAmSrROWcE0muA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=kitULnyE; arc=fail smtp.client-ip=52.101.62.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hzx1FIdE/AhWSd+FpmmpHFnT3Uz00g6aYcMF+hEkEk+N6Hj0+fuv9oQO7YS2uyEiFIVrgX9gwcLMLeSB4sHKwnS4fsJj0qGoEU85sceRr3/S8RhiM0F0yMtAEpQMgW21qIF6LAGZPYvjVFGPWd2OIiEuY55mXEEZYPgt3iViujF67oTScO28qyuN7q0G5vndbwhKkbjyKeEu9SsHEvb0xh1sSPO28fzsFAaBab+KyqSs1+JGY/B8QhQF5GVr6vUqqJzbzxutWA7KE/zBuEpJKIA6lgQZzaeu0CQtQ3zdeyau7FrG1WlAlTVVsoashZTl4/heJj079GURSGZEmvc64w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Aijq0x58ki+hOIw2kA9obFH2zF5v3qVcjUbQN9PZVBw=;
+ b=S1IephVnM7dJ11IJSIp8POQhZ3pgR2kLEPjzoBi6y1enghX1eNaHqo4Kg+/3+PHSCM3iAs+lbi5tOnqbJt0vXGVhQKH73nQOgD7TaEF6rlGE8KaJXxgnpaHwoUFwcCn+FyBPtCOJ9OvZFNBGGiR/8flxo0Qmvu7SbRkexGh6Qh7zH3HKmzp3WQzsMsgqSU69IB0SXm1aEIB1Oi9WGOVg/K42YziUyAr5mZI8rc1VSrViB1T6xgmz6e4mIOk/L2jKI5O3Wt75KdVuFWZSdhLjSFmeaGw6xzkQhrQPD/jT3UlbjbiFVLN5YTVH+5Cgm2uw/QH/8Deaj3DeFAW4+3/5Nw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linux.microsoft.com
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Aijq0x58ki+hOIw2kA9obFH2zF5v3qVcjUbQN9PZVBw=;
+ b=kitULnyEDzUsjKaD1dPLnKJlKGtEEELG2zrKGXn3wxMWI9d+kk/ftdCk8mOLV6ZV3sxOoAemRERXkmE96oawUf3RECRYYlmi7VR4Qq1/I5/Xy6uTCV3ygWELNPZ4I/79kbV9TUyuxrBxb5kc7XQarvI73Uzb2p+f/YbuBLqYUMFArSzK5PXJPWF6DqdLHs1pvGRClBuDxjKlWfvzNKTEdDE9cNPiBhY0ocDsJJVJnUvF/Ou2a8qqRNHNraNZo/9JZ1eoB+5XzeJ4fG7+YHakbC2oiMbQy4IRaSWWZeJAtq7V06lm+YYiNlfeV1IRnI0Nd8DrWFLOtVNfQlwImPyOPA==
+Received: from MN2PR15CA0016.namprd15.prod.outlook.com (2603:10b6:208:1b4::29)
+ by DS7PR12MB8251.namprd12.prod.outlook.com (2603:10b6:8:e3::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9275.12; Fri, 31 Oct 2025 02:00:20 +0000
+Received: from BL6PEPF0001AB52.namprd02.prod.outlook.com
+ (2603:10b6:208:1b4:cafe::e6) by MN2PR15CA0016.outlook.office365.com
+ (2603:10b6:208:1b4::29) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.15 via Frontend Transport; Fri,
+ 31 Oct 2025 02:00:21 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ BL6PEPF0001AB52.mail.protection.outlook.com (10.167.241.4) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9253.7 via Frontend Transport; Fri, 31 Oct 2025 02:00:20 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 30 Oct
+ 2025 19:00:07 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Thu, 30 Oct
+ 2025 19:00:05 -0700
+Received: from Asurada-Nvidia (10.127.8.13) by mail.nvidia.com (10.129.68.9)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Thu, 30 Oct 2025 19:00:04 -0700
+Date: Thu, 30 Oct 2025 19:00:02 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Jacob Pan <jacob.pan@linux.microsoft.com>
+CC: <linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
+	<iommu@lists.linux.dev>, Will Deacon <will@kernel.org>, Joerg Roedel
+	<joro@8bytes.org>, Mostafa Saleh <smostafa@google.com>, Jason Gunthorpe
+	<jgg@nvidia.com>, Robin Murphy <robin.murphy@arm.com>, Zhang Yu
+	<zhangyu1@linux.microsoft.com>, Jean Philippe-Brucker
+	<jean-philippe@linaro.org>, Alexander Grest <Alexander.Grest@microsoft.com>
+Subject: Re: [PATCH v2 2/2] iommu/arm-smmu-v3: Improve CMDQ lock fairness and
+ efficiency
+Message-ID: <aQQYIkC9lmQnd27S@Asurada-Nvidia>
+References: <20251020224353.1408-1-jacob.pan@linux.microsoft.com>
+ <20251020224353.1408-3-jacob.pan@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251030193955.107148-1-i@rong.moe> <20251030193955.107148-6-i@rong.moe>
-In-Reply-To: <20251030193955.107148-6-i@rong.moe>
-From: Derek John Clark <derekjohn.clark@gmail.com>
-Date: Thu, 30 Oct 2025 18:58:18 -0700
-X-Gm-Features: AWmQ_bmmxyOUrDhs21Q8LkgwgF9C9DC8QxD5a3cyHLJJ9H0KTHwj9LCCNvyHdVc
-Message-ID: <CAFqHKTmCfk2zfMvNavOqEuT7NfvQG2ZCOmEpjfAChCkY3ztrzw@mail.gmail.com>
-Subject: Re: [PATCH v2 5/6] platform/x86: lenovo-wmi-capdata: Add support for
- Fan Test Data
-To: Rong Zhang <i@rong.moe>
-Cc: Mark Pearson <mpearson-lenovo@squebb.ca>, Armin Wolf <W_Armin@gmx.de>, 
-	Hans de Goede <hansg@kernel.org>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Guenter Roeck <linux@roeck-us.net>, platform-driver-x86@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251020224353.1408-3-jacob.pan@linux.microsoft.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB52:EE_|DS7PR12MB8251:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5faea740-ca67-428d-37a3-08de18213f10
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|7416014|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?gLiRCgI793ob4P/4gw0xqtEewTvbOeez/P+CoHjVDj3SY6gEBLq6GqTJryGM?=
+ =?us-ascii?Q?j2rd/l8eYH6DD+Mh5CW0RS6m2euUNYh77An9m3ZAusu8Fcg9QOYAt3kcCLNW?=
+ =?us-ascii?Q?R9PNwY4gi5TJEGUhs3lMsNVG/w78cBmH8i7vdGSc644/CYujW4ax3GsiMdaz?=
+ =?us-ascii?Q?k0JmBG3hQAgwOYgn1r7Ic6Cirg2RluTpooxO9Qw3be1fc/Vh6AfYla+C6D16?=
+ =?us-ascii?Q?0y+Ocj+r6YS5O+m8Bro1srROXUwlg/v/Qu7V77Ux8pN8QLK3zRH5tAvxPtCI?=
+ =?us-ascii?Q?j9mxUbdh7YW+E1/BXX6bd0Suyb36v2Rtz1FuSyXKKeXxGuPCEe2VgGXSnAoO?=
+ =?us-ascii?Q?kg7VgsKxTmA5YR35fd++UJ8Q+ScWhqlUMrNHZP6KC5zTsxHigIuhJSTYzTtr?=
+ =?us-ascii?Q?3/9m8z6LDVNGY8bmUCfZY+MffW0ptEfFKIg8c5dKSIAXNsam4MDoogsr0tQO?=
+ =?us-ascii?Q?UgRpnvbGPtRxqKhLygLFouSqzRFaCQsQTebAC9ymFL9zUsLO+USH6r7AQqUC?=
+ =?us-ascii?Q?SXN5KXZtUtuWcZoqoTiYKOlN27BehLq2izXyQ11fEzqTd3AycO5f47UBcLeP?=
+ =?us-ascii?Q?Go3068qu8wBYURfD+oPkzpXZetSKXzxK7mPOu0+g5WieW9Fis3W6VG+B6kGw?=
+ =?us-ascii?Q?jpMOqlpiPHvaezBlRFY5dwqbsWlvNB/YGWMn7hcfiy5g3YUPnmZBLwT+kvTb?=
+ =?us-ascii?Q?hn7EYwNXyHgsDN1OGpmkBFoJf2x5u6KCZVLrtDsXXMKOMhp48yoB3Fu1Mg6E?=
+ =?us-ascii?Q?ldFgRSBX8JsxaejzPpyKtBirDtMqKr0O7Bfk2SO48OEmMRKkYm/H6/cWUHBc?=
+ =?us-ascii?Q?vn7fpSTfNh8S9S5EEpq3tUwigM1QEnWhOPq6ODPhXhZhrZUvOTbKMc/jZps+?=
+ =?us-ascii?Q?WTvDEwFFNTNuUQuuYms0q3QM8O+vB/VgVD3GuTxQ+0N0FbRP0ZAbl5nxbjgZ?=
+ =?us-ascii?Q?U9wDz+y40NizonApBlDolVI+YuqNWlEG+6xy59cxVWtkgyDwkypAFzAV/PKS?=
+ =?us-ascii?Q?Z9WHKulv+LQAJfi4fFn9rZ2HEX8eIUU+nGAQkVLnjlafVFP/3RHpBKprKocb?=
+ =?us-ascii?Q?ZZWWqK0Quf/i7eDlOH2yNl5QBT4ODUzD194v9HTTNDBRszYa5WrICP4PUh05?=
+ =?us-ascii?Q?Bq3Gx8IXtM5jaa0NYtpDZHNonKB1h+c+qBrhmPOip6c8aGIpcLOEnG9hSZ3/?=
+ =?us-ascii?Q?OYv8+mfsFggDdPzk4k7AO1/K1XpHNRhfwfWHUSMcaJe9vhVSMJk8mmvkMJ8U?=
+ =?us-ascii?Q?5PCQEJ1yKYxYtAyCxaQFXMYXOgp/n83Y13nU7QB8IIemInxGUXhxO4/Eexrb?=
+ =?us-ascii?Q?g+uj89FKyWm5pPUtgL4Kx/NMn4zZF00OKKHDPpKg9T7/17Djj3ltMfLUCTJv?=
+ =?us-ascii?Q?phkM6aHyQuMoMbt6O0xOO53ACobmUsoaKVbib/V44ayFy4HwXAvusyqU0EmA?=
+ =?us-ascii?Q?2dXF4SvTkajtO7MMM1OpzhVMpG+R+eAQdxEMpaI6Pjbi+bhUd91bGqlMDFWL?=
+ =?us-ascii?Q?Zr4uqeCbX7+PQQSf03oVv6q61NEAS2VzqfzOdieQstQtsihqhlTwhXZt/+9G?=
+ =?us-ascii?Q?huMsQTBVPzoDX+VDNcs=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(7416014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2025 02:00:20.2920
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5faea740-ca67-428d-37a3-08de18213f10
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB52.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB8251
 
-On Thu, Oct 30, 2025 at 12:40=E2=80=AFPM Rong Zhang <i@rong.moe> wrote:
->
-> Add support for LENOVO_FAN_TEST_DATA WMI data block. Provides an
-> interface for querying the min/max fan speed RPM (reference data) of a
-> given fan ID.
->
-> Signed-off-by: Rong Zhang <i@rong.moe>
-> ---
-> Changes in v2:
-> - Reword documentation
-> ---
->  .../wmi/devices/lenovo-wmi-other.rst          |  17 +++
->  drivers/platform/x86/lenovo/wmi-capdata.c     | 102 ++++++++++++++++++
->  drivers/platform/x86/lenovo/wmi-capdata.h     |   8 ++
->  3 files changed, 127 insertions(+)
->
-> diff --git a/Documentation/wmi/devices/lenovo-wmi-other.rst b/Documentati=
-on/wmi/devices/lenovo-wmi-other.rst
-> index fcad595d49af2..821282e07d93c 100644
-> --- a/Documentation/wmi/devices/lenovo-wmi-other.rst
-> +++ b/Documentation/wmi/devices/lenovo-wmi-other.rst
-> @@ -62,6 +62,13 @@ The following firmware-attributes are implemented:
->   - ppt_pl2_sppt: Platform Profile Tracking Slow Package Power Tracking
->   - ppt_pl3_fppt: Platform Profile Tracking Fast Package Power Tracking
->
-> +LENOVO_FAN_TEST_DATA
-> +-------------------------
-> +
-> +WMI GUID ``B642801B-3D21-45DE-90AE-6E86F164FB21``
-> +
-> +The LENOVO_FAN_TEST_DATA interface provides reference data for self-test=
- of
-> +cooling fans.
->
->  WMI interface description
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-> @@ -115,3 +122,13 @@ data using the `bmfdec <https://github.com/pali/bmfd=
-ec>`_ utility:
->      [WmiDataId(3), read, Description("Data Size.")] uint32 DataSize;
->      [WmiDataId(4), read, Description("Default Value"), WmiSizeIs("DataSi=
-ze")] uint8 DefaultValue[];
->    };
-> +
-> +  [WMI, Dynamic, Provider("WmiProv"), Locale("MS\\0x409"), Description("=
-Definition of Fan Test Data"), guid("{B642801B-3D21-45DE-90AE-6E86F164FB21}=
-")]
-> +  class LENOVO_FAN_TEST_DATA {
-> +    [key, read] string InstanceName;
-> +    [read] boolean Active;
-> +    [WmiDataId(1), read, Description("Mode.")] uint32 NumOfFans;
-> +    [WmiDataId(2), read, Description("Fan ID."), WmiSizeIs("NumOfFans")]=
- uint32 FanId[];
-> +    [WmiDataId(3), read, Description("Maximum Fan Speed."), WmiSizeIs("N=
-umOfFans")] uint32 FanMaxSpeed[];
-> +    [WmiDataId(4), read, Description("Minumum Fan Speed."), WmiSizeIs("N=
-umOfFans")] uint32 FanMinSpeed[];
-> +  };
-> diff --git a/drivers/platform/x86/lenovo/wmi-capdata.c b/drivers/platform=
-/x86/lenovo/wmi-capdata.c
-> index e8ec30701d883..e456aace87f24 100644
-> --- a/drivers/platform/x86/lenovo/wmi-capdata.c
-> +++ b/drivers/platform/x86/lenovo/wmi-capdata.c
-> @@ -13,6 +13,10 @@
->   * attribute has multiple pages, one for each of the thermal modes manag=
-ed by
->   * the Gamezone interface.
->   *
-> + * Fan Test Data includes the max/min fan speed RPM for each fan. This i=
-s
-> + * reference data for self-test. If the fan is in good condition, it is =
-capable
-> + * to spin faster than max RPM or slower than min RPM.
-> + *
->   * Copyright (C) 2025 Derek J. Clark <derekjohn.clark@gmail.com>
->   *   - Initial implementation (formerly named lenovo-wmi-capdata01)
->   *
-> @@ -41,6 +45,7 @@
->
->  #define LENOVO_CAPABILITY_DATA_00_GUID "362A3AFE-3D96-4665-8530-96DAD5BB=
-300E"
->  #define LENOVO_CAPABILITY_DATA_01_GUID "7A8F5407-CB67-4D6E-B547-39B3BE01=
-8154"
-> +#define LENOVO_FAN_TEST_DATA_GUID "B642801B-3D21-45DE-90AE-6E86F164FB21"
->
->  #define ACPI_AC_CLASS "ac_adapter"
->  #define ACPI_AC_NOTIFY_STATUS 0x80
-> @@ -48,6 +53,7 @@
->  enum lwmi_cd_type {
->         LENOVO_CAPABILITY_DATA_00,
->         LENOVO_CAPABILITY_DATA_01,
-> +       LENOVO_FAN_TEST_DATA,
->  };
->
->  #define LWMI_CD_TABLE_ITEM(_type)              \
-> @@ -64,6 +70,7 @@ static const struct lwmi_cd_info {
->  } lwmi_cd_table[] =3D {
->         LWMI_CD_TABLE_ITEM(LENOVO_CAPABILITY_DATA_00),
->         LWMI_CD_TABLE_ITEM(LENOVO_CAPABILITY_DATA_01),
-> +       LWMI_CD_TABLE_ITEM(LENOVO_FAN_TEST_DATA),
->  };
->
->  struct lwmi_cd_priv {
-> @@ -80,6 +87,7 @@ struct cd_list {
->         union {
->                 DECLARE_FLEX_ARRAY(struct capdata00, cd00);
->                 DECLARE_FLEX_ARRAY(struct capdata01, cd01);
-> +               DECLARE_FLEX_ARRAY(struct capdata_fan, cd_fan);
->         };
->  };
->
-> @@ -108,6 +116,14 @@ static int lwmi_cd_component_bind(struct device *cd_=
-dev,
->         case LENOVO_CAPABILITY_DATA_01:
->                 binder->cd01_list =3D priv->list;
->                 break;
-> +       case LENOVO_FAN_TEST_DATA:
-> +               /*
-> +                * Do not expose dummy data.
-> +                * See also lwmi_cd_fan_list_alloc_cache().
-> +                */
-> +               if (priv->list->count)
-> +                       binder->cd_fan_list =3D priv->list;
-> +               break;
->         default:
->                 return -EINVAL;
->         }
-> @@ -152,6 +168,9 @@ EXPORT_SYMBOL_NS_GPL(lwmi_cd00_get_data, "LENOVO_WMI_=
-CD");
->  DEF_LWMI_CDXX_GET_DATA(cd01, LENOVO_CAPABILITY_DATA_01, struct capdata01=
-);
->  EXPORT_SYMBOL_NS_GPL(lwmi_cd01_get_data, "LENOVO_WMI_CD");
->
-> +DEF_LWMI_CDXX_GET_DATA(cd_fan, LENOVO_FAN_TEST_DATA, struct capdata_fan)=
-;
-> +EXPORT_SYMBOL_NS_GPL(lwmi_cd_fan_get_data, "LENOVO_WMI_CD");
-> +
->  /**
->   * lwmi_cd_cache() - Cache all WMI data block information
->   * @priv: lenovo-wmi-capdata driver data.
-> @@ -175,6 +194,9 @@ static int lwmi_cd_cache(struct lwmi_cd_priv *priv)
->                 p =3D &priv->list->cd01[0];
->                 size =3D sizeof(priv->list->cd01[0]);
->                 break;
-> +       case LENOVO_FAN_TEST_DATA:
-> +               /* Done by lwmi_cd_alloc() =3D> lwmi_cd_fan_list_alloc_ca=
-che(). */
-> +               return 0;
->         default:
->                 return -EINVAL;
->         }
-> @@ -197,6 +219,78 @@ static int lwmi_cd_cache(struct lwmi_cd_priv *priv)
->         return 0;
->  }
->
-> +/**
-> + * lwmi_cd_fan_list_alloc_cache() - Alloc and cache Fan Test Data list
-> + * @priv: lenovo-wmi-capdata driver data.
-> + * @listptr: Pointer to returned cd_list pointer.
-> + *
-> + * Return: count of fans found, or an error.
+On Mon, Oct 20, 2025 at 03:43:53PM -0700, Jacob Pan wrote:
+> From: Alexander Grest <Alexander.Grest@microsoft.com>
+> 
+> The SMMU CMDQ lock is highly contentious when there are multiple CPUs
+> issuing commands on an architecture with small queue sizes e.g 256
+> entries.
+
+As Robin pointed out that 256 entry itself is not quite normal,
+the justification here might still not be very convincing..
+
+I'd suggest to avoid saying "an architecture with a small queue
+sizes, but to focus on the issue itself -- potential starvation.
+"256-entry" can be used a testing setup to reproduce the issue.
+
+> The lock has the following states:
+>  - 0:		Unlocked
+>  - >0:		Shared lock held with count
+>  - INT_MIN+N:	Exclusive lock held, where N is the # of shared waiters
+>  - INT_MIN:	Exclusive lock held, no shared waiters
+> 
+> When multiple CPUs are polling for space in the queue, they attempt to
+> grab the exclusive lock to update the cons pointer from the hardware. If
+> they fail to get the lock, they will spin until either the cons pointer
+> is updated by another CPU.
+> 
+> The current code allows the possibility of shared lock starvation
+> if there is a constant stream of CPUs trying to grab the exclusive lock.
+> This leads to severe latency issues and soft lockups.
+
+It'd be nicer to have a graph to show how the starvation might
+happen due to a race:
+
+CPU0 (exclusive)  | CPU1 (shared)     | CPU2 (exclusive)    | `cmdq->lock`
+--------------------------------------------------------------------------
+trylock() //takes |                   |                     | 0
+                  | shared_lock()     |                     | INT_MIN
+                  | fetch_inc()       |                     | INT_MIN
+                  | no return         |                     | INT_MIN + 1
+                  | spins // VAL >= 0 |                     | INT_MIN + 1
+unlock()          | spins...          |                     | INT_MIN + 1
+set_release(0)    | spins...          |                     | 0  <-- BUG?
+(done)            | (sees 0)          | trylock() // takes  | 0
+                  | *exits loop*      | cmpxchg(0, INT_MIN) | 0
+                  |                   | *cuts in*           | INT_MIN
+                  | cmpxchg(0, 1)     |                     | INT_MIN
+                  | fails // != 0     |                     | INT_MIN
+                  | spins // VAL >= 0 |                     | INT_MIN
+                  | *starved*         |                     | INT_MIN
+
+And point it out that it should have reserved the "+1" from CPU1
+instead of nuking the entire cmdq->lock to 0.
+
+> In a staged test where 32 CPUs issue SVA invalidations simultaneously on
+> a system with a 256 entry queue, the madvise (MADV_DONTNEED) latency
+> dropped by 50% with this patch and without soft lockups.
+
+This might not be very useful per Robin's remarks. I'd drop it.
+
+> Reviewed-by: Mostafa Saleh <smostafa@google.com>
+> Signed-off-by: Alexander Grest <Alexander.Grest@microsoft.com>
+> Signed-off-by: Jacob Pan <jacob.pan@linux.microsoft.com>
+
+Reviewed-by: Nicolin Chen <nicolinc@nvidia.com>
+
+> @@ -500,9 +506,14 @@ static bool arm_smmu_cmdq_shared_tryunlock(struct arm_smmu_cmdq *cmdq)
+>  	__ret;								\
+>  })
+>  
+> +/*
+> + * Only clear the sign bit when releasing the exclusive lock this will
+> + * allow any shared_lock() waiters to proceed without the possibility
+> + * of entering the exclusive lock in a tight loop.
 > + */
-> +static int lwmi_cd_fan_list_alloc_cache(struct lwmi_cd_priv *priv, struc=
-t cd_list **listptr)
-> +{
-> +       u32 count, *fan_ids, *fan_min_rpms, *fan_max_rpms;
-> +       union acpi_object *ret_obj __free(kfree) =3D NULL;
-> +       struct block { u32 nr; u32 data[]; } *block;
-> +       struct cd_list *list;
-> +       size_t size;
-> +       int idx;
-> +
-> +       ret_obj =3D wmidev_block_query(priv->wdev, 0);
-> +       if (!ret_obj)
-> +               return -ENODEV;
-> +
-> +       /*
-> +        * This is usually caused by a dummy ACPI method. Do not return a=
-n error
-> +        * as failing to probe this device will result in master driver b=
-eing
-> +        * unbound - this behavior aligns with lwmi_cd_cache().
-> +        */
-> +       if (ret_obj->type !=3D ACPI_TYPE_BUFFER) {
-> +               count =3D 0;
-> +               goto alloc;
-> +       }
-> +
-> +       size =3D ret_obj->buffer.length;
-> +       block =3D (struct block *)ret_obj->buffer.pointer;
-> +
-> +       count =3D size >=3D sizeof(*block) ? block->nr : 0;
-> +       if (size < struct_size(block, data, count * 3)) {
-> +               dev_warn(&priv->wdev->dev,
-> +                        "incomplete fan test data block: %zu < %zu, igno=
-ring\n",
-> +                        size, struct_size(block, data, count * 3));
-> +               count =3D 0;
-> +       }
-> +
-> +       if (count =3D=3D 0)
-> +               goto alloc;
-> +
-> +       if (count > U8_MAX) {
-> +               dev_warn(&priv->wdev->dev,
-> +                        "too many fans reported: %u > %u, truncating\n",
-> +                        count, U8_MAX);
-> +               count =3D U8_MAX;
-> +       }
-> +
-> +       fan_ids =3D &block->data[0];
-> +       fan_max_rpms =3D &block->data[count];
-> +       fan_min_rpms =3D &block->data[count * 2];
-> +
-> +alloc:
-> +       list =3D devm_kzalloc(&priv->wdev->dev, struct_size(list, cd_fan,=
- count), GFP_KERNEL);
-> +       if (!list)
-> +               return -ENOMEM;
-> +
-> +       for (idx =3D 0; idx < count; idx++) {
-> +               list->cd_fan[idx] =3D (struct capdata_fan) {
-> +                       .id =3D fan_ids[idx],
-> +                       .min_rpm =3D fan_min_rpms[idx],
-> +                       .max_rpm =3D fan_max_rpms[idx],
-> +               };
-> +       }
-> +
-> +       *listptr =3D list;
-> +       return count;
-> +}
-> +
->  /**
->   * lwmi_cd_alloc() - Allocate a cd_list struct in drvdata
->   * @priv: lenovo-wmi-capdata driver data.
-> @@ -222,6 +316,12 @@ static int lwmi_cd_alloc(struct lwmi_cd_priv *priv, =
-enum lwmi_cd_type type)
->         case LENOVO_CAPABILITY_DATA_01:
->                 list_size =3D struct_size(list, cd01, count);
->                 break;
-> +       case LENOVO_FAN_TEST_DATA:
-> +               count =3D lwmi_cd_fan_list_alloc_cache(priv, &list);
-> +               if (count < 0)
-> +                       return count;
-> +
-> +               goto got_list;
->         default:
->                 return -EINVAL;
->         }
-> @@ -230,6 +330,7 @@ static int lwmi_cd_alloc(struct lwmi_cd_priv *priv, e=
-num lwmi_cd_type type)
->         if (!list)
->                 return -ENOMEM;
->
-> +got_list:
->         ret =3D devm_mutex_init(&priv->wdev->dev, &list->list_mutex);
->         if (ret)
->                 return ret;
-> @@ -368,6 +469,7 @@ static void lwmi_cd_remove(struct wmi_device *wdev)
->  static const struct wmi_device_id lwmi_cd_id_table[] =3D {
->         { LWMI_CD_WDEV_ID(LENOVO_CAPABILITY_DATA_00) },
->         { LWMI_CD_WDEV_ID(LENOVO_CAPABILITY_DATA_01) },
-> +       { LWMI_CD_WDEV_ID(LENOVO_FAN_TEST_DATA) },
->         {}
->  };
->
-> diff --git a/drivers/platform/x86/lenovo/wmi-capdata.h b/drivers/platform=
-/x86/lenovo/wmi-capdata.h
-> index a6f0cb006e745..52bc215ac43d8 100644
-> --- a/drivers/platform/x86/lenovo/wmi-capdata.h
-> +++ b/drivers/platform/x86/lenovo/wmi-capdata.h
-> @@ -26,13 +26,21 @@ struct capdata01 {
->         u32 max_value;
->  };
->
-> +struct capdata_fan {
-> +       u32 id;
-> +       u32 min_rpm;
-> +       u32 max_rpm;
-> +};
-> +
->  struct lwmi_cd_binder {
->         struct cd_list *cd00_list;
->         struct cd_list *cd01_list;
-> +       struct cd_list *cd_fan_list;
->  };
->
->  int lwmi_cd00_get_data(struct cd_list *list, u32 attribute_id, struct ca=
-pdata00 *output);
->  int lwmi_cd01_get_data(struct cd_list *list, u32 attribute_id, struct ca=
-pdata01 *output);
-> +int lwmi_cd_fan_get_data(struct cd_list *list, u32 attribute_id, struct =
-capdata_fan *output);
->  void lwmi_cd_match_add_all(struct device *master, struct component_match=
- **matchptr);
->
->  #endif /* !_LENOVO_WMI_CAPDATA_H_ */
-> --
-> 2.51.0
->
-Reviewed-by: Derek J. Clark <derekjohn.clark@gmail.com>
+>  #define arm_smmu_cmdq_exclusive_unlock_irqrestore(cmdq, flags)		\
+>  ({									\
+> -	atomic_set_release(&cmdq->lock, 0);				\
+> +	atomic_fetch_and_release(~INT_MIN, &cmdq->lock);				\
 
-Thanks,
-Derek
+Align the tailing spacing with other lines please.
+
+Nicolin
 
