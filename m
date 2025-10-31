@@ -1,187 +1,299 @@
-Return-Path: <linux-kernel+bounces-879925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37368C2468E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:20:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49ED7C2469D
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:21:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F32D4278CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:18:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC6853B4F0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:20:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 489F433F393;
-	Fri, 31 Oct 2025 10:18:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABBC33F377;
+	Fri, 31 Oct 2025 10:19:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iEWEp9JC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OP8Y0iNg"
+Received: from mail-yx1-f49.google.com (mail-yx1-f49.google.com [74.125.224.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4050633A024;
-	Fri, 31 Oct 2025 10:18:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F89E33B949
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761905925; cv=none; b=gV4JLTnXg3lRx+3xzJxZmEkxpPOLPlSAVbUG/oX6hgRrRGUpS9Z5tD9tOyyju3MyszVfsxSOwpVq80AB0KhhG1EpDfRLxRVBqK/vnLEICVci4iAF9u57LiAXP8ulJjhtC0rAdtQCijjTn8l0W+9wBB7IhEcXU8kjnfIALpuetA8=
+	t=1761905995; cv=none; b=fa79H3NZ24buxGnYeifzidxPn2VpAQFNggV/oUQSidY9nQjcNinijP/BdmS/jqvmaM9TxX0Cq7eAtN4rDrEfjELLO4d9IwmFobLpl62id/aou4HInKl5Nj0Jjvi7uPdWrdqA8kXs6q30V90NMEPIc0K3EAaS2OI69AlFs+kojx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761905925; c=relaxed/simple;
-	bh=ScQKh0k+g0sLHY6zzPeiiWF3Mx49kdxeKS7TZIXktok=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oerCHwtGdqIc67mCjnve1K8p0mD5KA8pvsNKmOGmhCLiUCmx7VINWSH/jWfqLngqpeCKJ4J/f866qQMZB0CsQAFaEs0k5XshzvK+8Vb+085yewvUU/7JA431gZX9Yx3eeWOfuO4PLW34Rf9a23RdP/65PoTvrJpwCV4j6u1HUbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iEWEp9JC; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761905923; x=1793441923;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ScQKh0k+g0sLHY6zzPeiiWF3Mx49kdxeKS7TZIXktok=;
-  b=iEWEp9JCYSCTMYEkh6+Zz1rt/s5pZ2VgFxzqpXxW+DRrRf5PNQ7aFvkL
-   CJD25IV0pzyfoFdwYjiecfuek128+Cm918K9zI40cDnoaDdvAbIjHd+VH
-   lByTnzpanD5vZeQ+iDwzf8rKH7k6E7TP0t4AshFxWu6xgBR+RxtWNSKoY
-   qkkCYYOWQLEXyK562JGi39oQHfDMoRo/M8GeCJrOV7VbTEH5UrohnX4PU
-   aH/VBCsvk5kusq7fqqhBsR+E/jlX3nrFtmTYO2v9+cGxjtf8Y712UDXAE
-   olJqMlsOagBzm9bLb/YzPKqX4yEhtnqA9aCYBwpOkQqji7laDm5s5njJM
-   Q==;
-X-CSE-ConnectionGUID: wudIQrEYThGBVwKxzKhXrw==
-X-CSE-MsgGUID: yP4uDmFtTxqbP1YRHiBnAw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="63761119"
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="63761119"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 03:18:43 -0700
-X-CSE-ConnectionGUID: k25i44LyS2un9PQ5Y6ncag==
-X-CSE-MsgGUID: vJDIqqS8RQmFeEw6PNSdLg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="185890295"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.56])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 03:18:30 -0700
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: linux-cxl@vger.kernel.org, "Rafael J . Wysocki" <rafael@kernel.org>,
- Len Brown <lenb@kernel.org>, Tony Luck <tony.luck@intel.com>,
- Borislav Petkov <bp@alien8.de>, Hanjun Guo <guohanjun@huawei.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Shuai Xue <xueshuai@linux.alibaba.com>, Davidlohr Bueso <dave@stgolabs.net>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
- Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
- Sunil V L <sunilvl@ventanamicro.com>, Xiaofei Tan <tanxiaofei@huawei.com>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Huacai Chen <chenhuacai@kernel.org>,
- Heinrich Schuchardt <heinrich.schuchardt@canonical.com>,
- Arnd Bergmann <arnd@arndb.de>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@kernel.org>, Guo Weikang <guoweikang.kernel@gmail.com>,
- Xin Li <xin@zytor.com>, Will Deacon <will@kernel.org>,
- Huang Yiwei <quic_hyiwei@quicinc.com>, Gavin Shan <gshan@redhat.com>,
- Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
- Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>,
- Li Ming <ming.li@zohomail.com>,
- Ilpo =?UTF-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
- Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
- Karolina Stolarek <karolina.stolarek@oracle.com>,
- Jon Pan-Doh <pandoh@google.com>, Lukas Wunner <lukas@wunner.de>,
- Shiju Jose <shiju.jose@huawei.com>, linux-kernel@vger.kernel.org,
- linux-acpi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-pci@vger.kernel.org
-Subject: Re: [PATCH 2/6 v6] ACPI: extlog: Trace CPER PCI Express Error Section
-Date: Fri, 31 Oct 2025 11:18:27 +0100
-Message-ID: <2351924.vFx2qVVIhK@fdefranc-mobl3>
-In-Reply-To: <20251028144816.000018a3@huawei.com>
-References:
- <20251023122612.1326748-1-fabio.m.de.francesco@linux.intel.com>
- <20251023122612.1326748-3-fabio.m.de.francesco@linux.intel.com>
- <20251028144816.000018a3@huawei.com>
+	s=arc-20240116; t=1761905995; c=relaxed/simple;
+	bh=vYEp5LCQLKcZt/AJH9FMShktlCjD0MSMpUC07j93mL0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WHQefokuXDsxLmCXXEcx9mw6JycwWuu9HkF2CzGjS/uCgzGGjjJemKW5Apz9EzHv+mZ03ttTdT2/T1/Hnv4JKsyt200X4fQVkwJQ2C0/4SQXo6DKt6LkY2wIq0wUj4iDaqoTzLlssyOT66UJps7OeTveLMOVWWLg4keqsg6OsJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OP8Y0iNg; arc=none smtp.client-ip=74.125.224.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-63f945d2060so614401d50.3
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 03:19:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1761905992; x=1762510792; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aPKXKxyxHjncQ9cjShE0Ho84jnqExLGCProdqRHO1kU=;
+        b=OP8Y0iNgHOYlUJu+BQ2U1RvXgGXeCeFpMEtRqFQOshuqjn6lq4aUcdN9BdWM8U8XjG
+         Pm0ay4iWZRmsGDl/yD8x8lgRNhJFDDAFBhSlfkhRKxv87WHHBU/9dzzXPvO1/PqH2G0n
+         B2APsIa/lmc7w/0dRsHf5mitHZasXSPlaKgDcIQdwc+NT4zfdVHWrhNI/YX05+61QRnc
+         JXaNO3kjYL3IPeonQG2FuvJ+EObIGduwLQiA3Ss3gEMSvKR1A6N/o7nyBAW6/Eu2AXF7
+         QkcddyRamLY1kpugY7vJP9LUtOINgTv2z5J8T/Tp1IbxDBVqP0Z43X1dfi/A7Ox5gLlz
+         Wxlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761905992; x=1762510792;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aPKXKxyxHjncQ9cjShE0Ho84jnqExLGCProdqRHO1kU=;
+        b=SeVmAWGCdyVQROx2LrNAdzsWBK02VZCWqMzDSZJU55dnau1mufEOxAvJYa5VD6ptqn
+         l1R/+t637Pgv+dXeKfxd5STrqy1RBHFyhMLAQIo8tA63x53nqKnRewghPm4Mhh7PwrpG
+         n8W7n4t02JlCsVW6pkzt1AuFyjpVL2GlzyUB+4AkfoDLVN0naps1EHYZVB/n72CL5yEB
+         WbQ3j3zDGiYwcwUqzN8Q2qp4G9AOm75xz78lNHwaCa6mdvGY/ZT7T4m9+aGqrz4oDgHo
+         Z/g8pKkAAaYHo9ZtByRXVRcaoGhNcfeNJR4+uKuxEAoI4QG8FIv2cSt2RqNKIZJfHEOv
+         561w==
+X-Forwarded-Encrypted: i=1; AJvYcCVlqo93Mz5dmXRxDvsDfdiAMBfbs9NTiuSQispy+nI+gcPtyS+CG+M480quMwA0/uJOYlrYBAl25VdWbYU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIZgTVXWnzqYaxrvILxYGPQ8w+K24ZgqPPoE/n+Xe4sJelAbr4
+	ZIJyQAoRArmZbfh/eYe89BCnDcG6ZMHUEdJ/eyJtRx90OtKR+ttRYwfVk+Js2LQqkyc0Z3UAco7
+	h8nN0nQ1Ohm1ukKqufIIO61Dvk/VA5U6gIfydLoqDIQ==
+X-Gm-Gg: ASbGncuLzKjNTAHEoiWWug8h7LV8PP+DrX4CD/84zeczYJBrac82FR/T5wAnZK9JeZQ
+	FB4AIWMB8C81/IBnKI67rjGLMACy3R4zVSlf6Zh4dDPlbuPXmbdtvlrIc4tey1NfphJ1Llul9FP
+	FNJJ4NyAoRp7eLdQ5b0NkrfyzcvWNOX9iTF666pPA4/Jn49UsRh4reWdUimZ78yusIlEbUikbZP
+	pJgtkYn4oXtSekQE90yPByak+SuUoGONVOYqtLBG5T4gGrkBcCu2gLx7tOtvg==
+X-Google-Smtp-Source: AGHT+IFsTiLTA6cpzlCTzrmxVqWzDKcCRkhAd4TjVbco+5uODr6qAdgcAAlWDTr7vSuTaJZgkuQGUU1CQMg4deAauaI=
+X-Received: by 2002:a05:690c:b88:b0:785:c415:6a8 with SMTP id
+ 00721157ae682-786485304f1mr22769367b3.56.1761905991904; Fri, 31 Oct 2025
+ 03:19:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20251016151929.75863-1-ulf.hansson@linaro.org>
+ <20251016151929.75863-3-ulf.hansson@linaro.org> <CAJZ5v0hPUYoLFs=jZ10a1cX6TE1bmRF7CkBH1Ebejao9Hdfhnw@mail.gmail.com>
+ <CAPDyKFrrhw5vMYLEWJ5LRphVzwPwjiU-n=tdbgOtOmFSXGd0GQ@mail.gmail.com>
+ <CAJZ5v0g5p-8WrmNQ6-tvTEy50gVjfEMsmXxTK8bmLqafe30jKw@mail.gmail.com>
+ <CAPDyKFo+U=oJVxXCDBN_WZLBpkwPgv_=qw96hauAttFnAQuPtw@mail.gmail.com>
+ <CAJZ5v0h_OFzmhcKohS3SNWwz_vwpq6frymXSSgFjk_K27ncSTg@mail.gmail.com>
+ <CAPDyKFqs_Mn57SxPNy5_e56LuFxx3KkfJfHqgg9_wp77rpn7Pw@mail.gmail.com> <CAJZ5v0jTVZtyV2yeFNpGo4TnZY79CH_fpaSbVq1T9BJ0BohZsg@mail.gmail.com>
+In-Reply-To: <CAJZ5v0jTVZtyV2yeFNpGo4TnZY79CH_fpaSbVq1T9BJ0BohZsg@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Fri, 31 Oct 2025 11:19:15 +0100
+X-Gm-Features: AWmQ_bn_ES3pms530igeilc5LJpLblVGtlMFWIl2LYJGbqgHLcd8baXCa4JRQcs
+Message-ID: <CAPDyKFoPzFqbXo1nD_6r-mW+OYUHSdH+P19ov-0kjb8znLYtYw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] pmdomain: Respect the CPU system-wakeup QoS limit
+ during s2idle
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: linux-pm@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Saravana Kannan <saravanak@google.com>, 
+	Maulik Shah <quic_mkshah@quicinc.com>, Prasad Sodagudi <psodagud@quicinc.com>, 
+	Dhruva Gole <d-gole@ti.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
 
-On Tuesday, October 28, 2025 3:48:16=E2=80=AFPM Central European Standard T=
-ime Jonathan Cameron wrote:
-> On Thu, 23 Oct 2025 14:25:37 +0200
-> "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com> wrote:
->=20
-> > I/O Machine Check Architecture events may signal failing PCIe components
-> > or links. The AER event contains details on what was happening on the w=
-ire
-> > when the error was signaled.
-> >=20
-> > Trace the CPER PCIe Error section (UEFI v2.10, Appendix N.2.7) reported
-> > by the I/O MCA.
-> >=20
-> > Cc: Dan Williams <dan.j.williams@intel.com>
-> > Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> > Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
-> > Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.=
-com>
-> Hi Fabio,
->=20
-> Was taking a fresh look at this as a precursor to looking at later
-> patches in series and spotted something that I'm doubtful about.
->=20
-> > diff --git a/drivers/acpi/acpi_extlog.c b/drivers/acpi/acpi_extlog.c
-> > index 47d11cb5c912..cefe8d2d8aff 100644
-> > --- a/drivers/acpi/acpi_extlog.c
-> > +++ b/drivers/acpi/acpi_extlog.c
-> > @@ -132,6 +132,34 @@ static int print_extlog_rcd(const char *pfx,
-> >  	return 1;
-> >  }
-> > =20
-> > +static void extlog_print_pcie(struct cper_sec_pcie *pcie_err,
-> > +			      int severity)
-> > +{
-> > +	struct aer_capability_regs *aer;
-> > +	struct pci_dev *pdev;
-> > +	unsigned int devfn;
-> > +	unsigned int bus;
-> > +	int aer_severity;
-> > +	int domain;
-> > +
-> > +	if (!(pcie_err->validation_bits & CPER_PCIE_VALID_DEVICE_ID ||
-> > +	      pcie_err->validation_bits & CPER_PCIE_VALID_AER_INFO))
->=20
-> Looking again, I'm not sure this is as intended.  Is the aim to
-> allow for either one of these two?  Or check that that are both present?=
-=20
-> That is should it be !(A && B) rather than !(A || B)?
->=20
-Hi Jonathan,
+On Thu, 30 Oct 2025 at 19:11, Rafael J. Wysocki <rafael@kernel.org> wrote:
+>
+> On Thu, Oct 30, 2025 at 4:07=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.o=
+rg> wrote:
+> >
+> > On Thu, 30 Oct 2025 at 15:02, Rafael J. Wysocki <rafael@kernel.org> wro=
+te:
+> > >
+> > > On Thu, Oct 30, 2025 at 1:32=E2=80=AFPM Ulf Hansson <ulf.hansson@lina=
+ro.org> wrote:
+> > > >
+> > > > On Thu, 30 Oct 2025 at 13:23, Rafael J. Wysocki <rafael@kernel.org>=
+ wrote:
+> > > > >
+> > > > > On Thu, Oct 30, 2025 at 1:00=E2=80=AFPM Ulf Hansson <ulf.hansson@=
+linaro.org> wrote:
+> > > > > >
+> > > > > > On Thu, 30 Oct 2025 at 11:45, Rafael J. Wysocki <rafael@kernel.=
+org> wrote:
+> > > > > > >
+> > > > > > > On Thu, Oct 16, 2025 at 5:19=E2=80=AFPM Ulf Hansson <ulf.hans=
+son@linaro.org> wrote:
+> > > > > > > >
+> > > > > > > > A CPU system-wakeup QoS limit may have been requested by us=
+er-space. To
+> > > > > > > > avoid breaking this constraint when entering a low-power st=
+ate during
+> > > > > > > > s2idle through genpd, let's extend the corresponding genpd =
+governor for
+> > > > > > > > CPUs. More precisely, during s2idle let the genpd governor =
+select a
+> > > > > > > > suitable low-power state, by taking into account the QoS li=
+mit.
+> > > > > > > >
+> > > > > > > > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > > > > > > > ---
+> > > > > > > >
+> > > > > > > > Changes in v2:
+> > > > > > > >         - Limite the change to the genpd governor for CPUs.
+> > > > > > > >
+> > > > > > > > ---
+> > > > > > > >  drivers/pmdomain/core.c     | 10 ++++++++--
+> > > > > > > >  drivers/pmdomain/governor.c | 27 +++++++++++++++++++++++++=
+++
+> > > > > > > >  include/linux/pm_domain.h   |  1 +
+> > > > > > > >  3 files changed, 36 insertions(+), 2 deletions(-)
+> > > > > > > >
+> > > > > > > > diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/cor=
+e.c
+> > > > > > > > index 61c2277c9ce3..4fd546ef0448 100644
+> > > > > > > > --- a/drivers/pmdomain/core.c
+> > > > > > > > +++ b/drivers/pmdomain/core.c
+> > > > > > > > @@ -1425,8 +1425,14 @@ static void genpd_sync_power_off(str=
+uct generic_pm_domain *genpd, bool use_lock,
+> > > > > > > >                         return;
+> > > > > > > >         }
+> > > > > > > >
+> > > > > > > > -       /* Choose the deepest state when suspending */
+> > > > > > > > -       genpd->state_idx =3D genpd->state_count - 1;
+> > > > > > > > +       if (genpd->gov && genpd->gov->system_power_down_ok)=
+ {
+> > > > > > > > +               if (!genpd->gov->system_power_down_ok(&genp=
+d->domain))
+> > > > > > > > +                       return;
+> > > > > > > > +       } else {
+> > > > > > > > +               /* Default to the deepest state. */
+> > > > > > > > +               genpd->state_idx =3D genpd->state_count - 1=
+;
+> > > > > > > > +       }
+> > > > > > > > +
+> > > > > > > >         if (_genpd_power_off(genpd, false)) {
+> > > > > > > >                 genpd->states[genpd->state_idx].rejected++;
+> > > > > > > >                 return;
+> > > > > > > > diff --git a/drivers/pmdomain/governor.c b/drivers/pmdomain=
+/governor.c
+> > > > > > > > index 39359811a930..bd1b9d66d4a5 100644
+> > > > > > > > --- a/drivers/pmdomain/governor.c
+> > > > > > > > +++ b/drivers/pmdomain/governor.c
+> > > > > > > > @@ -415,9 +415,36 @@ static bool cpu_power_down_ok(struct d=
+ev_pm_domain *pd)
+> > > > > > > >         return false;
+> > > > > > > >  }
+> > > > > > > >
+> > > > > > > > +static bool cpu_system_power_down_ok(struct dev_pm_domain =
+*pd)
+> > > > > > > > +{
+> > > > > > > > +       s64 constraint_ns =3D cpu_wakeup_latency_qos_limit(=
+) * NSEC_PER_USEC;
+> > > > > > >
+> > > > > > > I'm not sure why genpd needs to take cpu_wakeup_latency_qos_l=
+imit()
+> > > > > > > into account directly.
+> > > > > > >
+> > > > > > > It should be told by cpuidle which state has been selected on=
+ the CPU
+> > > > > > > side and it should not go any deeper than that anyway.
+> > > > > >
+> > > > > > For PSCI OS-initiated mode, cpuidle doesn't know about the stat=
+es that
+> > > > > > may be shared among a group of CPUs.
+> > > > > >
+> > > > > > Instead, those states are controlled through the PM domain topo=
+logy by
+> > > > > > genpd and its governor, hence this is needed too.
+> > > > >
+> > > > > All right, but I'd like to understand how all of that works.
+> > > > >
+> > > > > So cpuidle selects a state to enter for the given CPU and then ge=
+npd
+> > > > > is invoked.  It has to take the exit latency of that state into
+> > > > > account, so it doesn't go too deep.  How does it do that?
+> > > >
+> > > > Depending on the state selected, in cpuidle-psci.c we may end up
+> > > > calling __psci_enter_domain_idle_state() (only for the deepest
+> > > > CPU-state).
+> > > >
+> > > > For s2idle this means we call dev_pm_genpd_suspend|resume(), to man=
+age
+> > > > the reference counting of the PM domains via genpd. This then may l=
+ead
+> > > > to that genpd_sync_power_off() tries to select a state by calling t=
+he
+> > > > new governor function above.
+> > > >
+> > > > Did that make sense?
+> > >
+> > > So IIUC this will only happen if the deepest idle state is selected i=
+n
+> > > which case the cpu_wakeup_latency_qos_limit() value is greater than
+> > > the exit latency of that state, but it may still need to be taken int=
+o
+> > > account when selecting the domain state.  However, this means that th=
+e
+> >
+> > Correct.
+> >
+> > > exit latency number for the deepest idle state is too low (it should
+> > > represent the worst-case exit latency which means the maximum domain
+> > > exit latency in this particular case).
+> >
+> > Yes, from the cpuidle state-selection point of view, but how is that a =
+problem?
+>
+> It is confusing.  Otherwise, for s2idle, I guess it is not a big deal.
+>
+> I guess what happens is that genpd has a range of states with
+> different latency values to choose from and it is not practical to
+> expose all of them as CPU idle states, so you end up exposing just one
+> of them with the lowest latency value to allow cpuidle to involve
+> genpd often enough.
 
-You're right. We need to check that both are true and return if they are=20
-not, then the statement has to be !(A && B).
+Yes, the states that are CPU specific are exposed to CPU-idle.
 
-Thank you,
+The states that are shared with other CPUs are managed by genpd,
+because those need reference counting. Not even limited to CPUs.
 
-=46abio=20
->=20
-> > +		return;
-> > +
-> > +	aer_severity =3D cper_severity_to_aer(severity);
-> > +	aer =3D (struct aer_capability_regs *)pcie_err->aer_info;
-> > +	domain =3D pcie_err->device_id.segment;
-> > +	bus =3D pcie_err->device_id.bus;
-> > +	devfn =3D PCI_DEVFN(pcie_err->device_id.device,
-> > +			  pcie_err->device_id.function);
-> > +	pdev =3D pci_get_domain_bus_and_slot(domain, bus, devfn);
-> > +	if (!pdev)
-> > +		return;
-> > +
-> > +	pci_print_aer(pdev, aer_severity, aer);
-> > +	pci_dev_put(pdev);
-> > +}
->=20
->=20
+>
+> If that's the case, I'd make a note of that somewhere if I were you,
+> or people will routinely get confused by it.
 
+Documentation is always nice.
 
+We have DT docs and the PSCI spec, but we lack proper documentation of
+the whole genpd interface. Actually, I have started working on
+documentation for genpd, but haven't reached the point of submitting a
+patch for it.
 
+>
+> > If the genpd-governor doesn't find a suitable "domain-idle-state", we
+> > fallback to using the one cpuidle selected.
+> >
+> > >
+> > > Moreover, it looks like the "runtime" cpuidle has the same problem, d=
+oesn't it?
+> >
+> > It works in a very similar way, but I fail to understand why you think
+> > there is a problem.
+>
+> There is a problem because it may violate a "runtime" latency constraint.
+>
+> Say you expose 2 CPU idle states, a shallow one and a genpd one.  The
+> advertised exit latency of the genpd state is X and the current
+> latency constraint is Y > X.  The genpd state is selected and genpd
+> doesn't look at the cpuidle_governor_latency_req() return value, so it
+> chooses a real state with exit latency Z > Y.
+>
+> To a minimum, genpd should be made aware of
+> cpuidle_governor_latency_req(), but even then cpuidle governors take
+> exit latency into consideration in their computations, so things may
+> get confused somewhat.
 
+Please have a look at cpu_power_down_ok(), which is the function that
+runs to select the domain-idle-state. It does take the constraints
+into account during runtime, even it doesn't call
+cpuidle_governor_latency_req() explicitly.
+
+Kind regards
+Uffe
 
