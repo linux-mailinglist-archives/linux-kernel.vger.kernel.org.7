@@ -1,254 +1,158 @@
-Return-Path: <linux-kernel+bounces-879307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF7A4C22CAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:33:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B941BC22CB8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 01:34:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AEEE84EDE2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:32:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BA8214EF494
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 00:33:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 708071DF27F;
-	Fri, 31 Oct 2025 00:31:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB391EB19B;
+	Fri, 31 Oct 2025 00:31:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TZpi9qhF"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A/iPZChc"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04DCE21ABB9
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 00:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625201E521E
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 00:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761870662; cv=none; b=aA/MRr+cLKRF7gUkAqGd66qMZU4cb1l0VPq5oMxnKj1WIeGA6BbiWNS6YSYKDX7Doq8U9HVqcyxSHI5ZqLbih2nRa9z9Y+dN0A10u7V88syfW7++Ir+GWn0YWuR3VpkSpgPXa3hIOFt6CFZ6PS7OsQAt0QFBmqYNpOz8bUNtwsg=
+	t=1761870672; cv=none; b=RYYm4ceje/gwU5vMmVCqeNUBHiznViM2kISZEIuaABFuxR2jtQ6pRQsFrQnCgEQ455rnSM2TPWTalhjcCemDmWqg7JDBk1lVLNgJEjpivwtICw4ViXkfiSV+ffCexA4LLxkF6VYkYi4YH0luj9WBoflcU/vhznw8wShcjSesr7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761870662; c=relaxed/simple;
-	bh=RT/sHTj0KzhQejEjxZna5Y25pQzofKvau2oAC0XFLaw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=YApKlL5QsjWMLsZhMSxWHwA2xG/vhhPzRE8Fy1LjcWzDAn/jC6VRRw0KydeJW/FaLG15PVyf16R7lwi4MGSz4iZw55SqghE2aH8Bb7dhRN3PMeSmV6B1mEnuRbEwkzgWKG7F/rbM31pI2Hv8wREHS5O5FwKxqOjSKqy7bID3xLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TZpi9qhF; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-294880e7ca4so33217445ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:31:00 -0700 (PDT)
+	s=arc-20240116; t=1761870672; c=relaxed/simple;
+	bh=KMzDRKv5vA7T7CtnN1YiylERwCfSkYzsAuzyPy6DuS8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P+foGtEOwbjghd54o014mHfE2cVqGjHI25wwq0UKop5Bv6rOm6SbOe1tUZrNU71vPLkxqsMDoeJeb7PTBhRKpxHCiZJjj7kqU2h7B2hx0qV/8SVXsOuARmgYe4nHuMlAAnpWYvpdSs3Ak3H2tj+5jOurwyZQxPX7pqYWwFXcqjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=A/iPZChc; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-471b80b994bso20768495e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 30 Oct 2025 17:31:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1761870660; x=1762475460; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=LbTsWO94j2FTsRt3NBHviHWz1y0m9u2EeuxD0YgFUA4=;
-        b=TZpi9qhFK+2O1C3GQijopQgJMlMLtGga7+AqwSHkJvMxQPN724rnyE+PlzRQ+NsVBf
-         adB0KdVoHD8ANTKbvCMcKcBmFNApJPZFt7VDoWS49c3CBGzS3rqRf12tAV53FDafb+85
-         E6XL1/gKN31qy4p9gcPqR49nWCiwoXFXpziH0Zq+uIK8dUmtbz9RSi3z5LE7xpG01CWl
-         LbgpG2v420R/EWNpw+VCT73hfxKYG+XI+tkskoPH5/tzSXwesSECLsR/HfTsN0AEzmMk
-         +AviEr025TIbazYPS4ZJmVpV3QwbwVK8DiOHGp0awOZy093QHWlSBCQILceFKbjo95hq
-         jtKg==
+        d=linaro.org; s=google; t=1761870667; x=1762475467; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XQyM+gpE1/R8XB7auHos6sn8eyFYyrQM/uv08lULwXc=;
+        b=A/iPZChchR43f4h7UeGjo2dAGs1KBe9fc6oP9w6W1oJWCBBQXsxSdpyugvLTzY87sk
+         O9NLOvtYWWc/DIMaW1tqBhPTT1IlBOTtIa4yN26p0DdX1nNrIv5Rz87en4leoeYGnEBp
+         EEr1pD+kpp5zVxE3VEw8WimXA9P6cpC9fZ0o09+ftNbWp6KPgskct2DpcX9KnXag4/9f
+         od47Zd2y0CZ1P0LjxruKRAg8M8fIKFxzcDJAItnzZ8K6DytU0LNc31X1pB93HT2RW0Qd
+         Sw6MeqLR/qyP/UPR27hl3ngZppBGc6M+iUoGRfFBHVK8P8pCglwIJxk57pYYP4bFsLZ+
+         9NEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761870660; x=1762475460;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LbTsWO94j2FTsRt3NBHviHWz1y0m9u2EeuxD0YgFUA4=;
-        b=D9RB3tZETw0G8tm+JtaK1riMIy0+cN7V28x/KE2/Cu4E6Mh8bp9RQxr1simblUs5/0
-         Jf5ish3oJSoVSKtkzEh4bmPtHdLViqvOIGAQf7QOSHFWBIFmtPug5qKUNOBIHdKW5hnU
-         KAzDSyqF246UvTuErG5T8A01/ED47ApObV4nd9KgJp+sRlZH5TQIqZAV8UEQwcQd91N/
-         Gw994igxTFIp7VdVtzejqW3g41LWynQJiUrBBC7k0d/mqYuoHnmLRvOmZhCvWYVcR9gB
-         C6mUYHp5pfi+CUivThZ8dmrvxj0CMtai9aCo7gBjRG1o0x+w1HQApUXU1fLwXaQJ1dOQ
-         rvtg==
-X-Forwarded-Encrypted: i=1; AJvYcCVljTUEnFTFz75v82CTwR1JXtj08xi7rEYxe6R1m7KAf+QSYHuZrIncXzfc9GwvNGmkGzm68vGwsqy38ls=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyphhsaJwByH3ctBA6X0MeNrWfvmgYIavTGXJe/t2UcNv0Sgk4r
-	ObgOCPq0EVVy3bYa2k9cd2S4k4XnMim8O1EmqNWxq7EzcY/MXo5C0Loz3aG8y8B09TkVwVOVZkk
-	Byl6V3g==
-X-Google-Smtp-Source: AGHT+IG9niXeqcQKc5xfb5DpFxjBvH7jNOuHlLCtg8NMqPQ9wNkIMDEwIxItwd+jCVHQRiKCwCLg7bs2U5Y=
-X-Received: from plblq15.prod.google.com ([2002:a17:903:144f:b0:268:11e:8271])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:ea0e:b0:292:39b4:e785
- with SMTP id d9443c01a7336-2951a3e696fmr21856645ad.26.1761870660376; Thu, 30
- Oct 2025 17:31:00 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 30 Oct 2025 17:30:40 -0700
-In-Reply-To: <20251031003040.3491385-1-seanjc@google.com>
+        d=1e100.net; s=20230601; t=1761870667; x=1762475467;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XQyM+gpE1/R8XB7auHos6sn8eyFYyrQM/uv08lULwXc=;
+        b=QwxfbHjBA2JvxLrT/5D2Z5Kqj5Eqj0YZoNd49V22pCW9z7Taa0gevVgYN2vnuyotko
+         3Wq1zItEatSYqaZA/5ZhrTFZqM2A4vW0DwsodjjhaIO6QDcHpw38lzAXfin8Yosu5S0K
+         RONf1VskPqWyXiwsAtx5fKo5SemtgHTr1x2sNO0DZqi0Cwkq29snAIVJEgVz048lljz1
+         VRKX/s7OH/w7ZqtcKunfMLKbssbKYd199b4F/ixYsz92kjZVQL7IRCXkHjXZIx18B/gK
+         rY/oixE274QAIX1f9WsXhI6psSCZIcHABcu9oFQbn66FdfHBiahG8fNIMJLpJsybLi2r
+         yckw==
+X-Forwarded-Encrypted: i=1; AJvYcCXS5LYDUTVMej1xmRbvTfTUf8cqZvyJ5HFgNAKaCBUssT6PuBfo9PrUuLPGofQQih98LUxpq196pQUlJSs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyV8pp4gNeXi3KFne4AEDVOVm3SLTfdhQJfrOeQt39DED4BWnU6
+	aq4DSyEsmhK2241/v/zq3iYXQ5RlFUldSBATKYfAOYG42Rqxey85emixtwdCZVGHhlU=
+X-Gm-Gg: ASbGncu7ZP0tREsmAfNYYygbcJnSN679wf0RottLw32Eu9B72BlAFDg+FvLAyb7YVy7
+	9RwV1KpsKuIm6k1vDF7DGXbmeXMhODIRJamlSm3P9EHSieugxGUMasp7z9NLpFX1QZJ4k+0w98g
+	o9G2PBJYdf1EO3l7n1uGJLiGk1YNg+Rt5A5pQT7U/jGLOnaVMj5Dc1lOT7djUY8gs/144Ml334v
+	XtN+8Wn1h7hmS+9W2OQZIhlcgbOfOLrdiBGPi6yzL41kMLfpVpOiapEB2Ik5dVtsHIfY0spNJtc
+	wWPs7j+LYLVv60O+TULN519+SA/b5wkPRAeip9bFch5Q2i8khJIKuL1Rw3FsOB2LN5Lc3pjOASa
+	+rKb4h0yhbrmlul746UrybDcm+iF28Sn+nUgQA5N3VSTjRrMfsWJdL4yO6ZD6jJcwZfMR8V6u0i
+	5tTCQQabzgwiL4ljU3NGWFzIOxax8uWUWug1IX17/MxoSWiQ2ldb9y
+X-Google-Smtp-Source: AGHT+IHXcj8ihCaJ0joDQKKDFiMlVz4FGEpmj/DtV4mCnROhkUQEtdynsk+5jYqiPYBn1KFHIFfjeQ==
+X-Received: by 2002:a05:600d:6352:b0:45f:28d2:bd38 with SMTP id 5b1f17b1804b1-4773163825dmr4196955e9.18.1761870667522;
+        Thu, 30 Oct 2025 17:31:07 -0700 (PDT)
+Received: from [192.168.0.21] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c13e1d8bsm286786f8f.25.2025.10.30.17.31.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Oct 2025 17:31:06 -0700 (PDT)
+Message-ID: <85217da4-3ba5-491f-a771-40c95a31f1f3@linaro.org>
+Date: Fri, 31 Oct 2025 00:31:04 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251031003040.3491385-1-seanjc@google.com>
-X-Mailer: git-send-email 2.51.1.930.gacf6e81ea2-goog
-Message-ID: <20251031003040.3491385-9-seanjc@google.com>
-Subject: [PATCH v4 8/8] KVM: x86: Unify L1TF flushing under per-CPU variable
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Brendan Jackman <jackmanb@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/5] media: uapi: videodev2: Add support for AV1
+ stateful decoder
+To: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+ Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+ Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+ Abhinav Kumar <abhinav.kumar@linux.dev>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, kernel test robot <lkp@intel.com>
+References: <20251030-av1d_stateful_v3-v3-0-a1184de52fc4@oss.qualcomm.com>
+ <_CZHQqm9UaYWFVQTen8I6llGxozVDgeSVxCp_HGBttKghQ3or75NV-dfyGOXiKF-bPIDdgsTtNtKJjED0nko8w==@protonmail.internalid>
+ <20251030-av1d_stateful_v3-v3-1-a1184de52fc4@oss.qualcomm.com>
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Content-Language: en-US
+In-Reply-To: <20251030-av1d_stateful_v3-v3-1-a1184de52fc4@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Brendan Jackman <jackmanb@google.com>
-
-Currently the tracking of the need to flush L1D for L1TF is tracked by
-two bits: one per-CPU and one per-vCPU.
-
-The per-vCPU bit is always set when the vCPU shows up on a core, so
-there is no interesting state that's truly per-vCPU. Indeed, this is a
-requirement, since L1D is a part of the physical CPU.
-
-So simplify this by combining the two bits.
-
-The vCPU bit was being written from preemption-enabled regions.  To play
-nice with those cases, wrap all calls from KVM and use a raw write so that
-request a flush with preemption enabled doesn't trigger what would
-effectively be DEBUG_PREEMPT false positives.  Preemption doesn't need to
-be disabled, as kvm_arch_vcpu_load() will mark the new CPU as needing a
-flush if the vCPU task is migrated, or if userspace runs the vCPU on a
-different task.
-
-Signed-off-by: Brendan Jackman <jackmanb@google.com>
-[sean: put raw write in KVM instead of in a hardirq.h variant]
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/include/asm/kvm_host.h |  3 ---
- arch/x86/kvm/mmu/mmu.c          |  2 +-
- arch/x86/kvm/vmx/nested.c       |  2 +-
- arch/x86/kvm/vmx/vmx.c          | 20 +++++---------------
- arch/x86/kvm/x86.c              |  6 +++---
- arch/x86/kvm/x86.h              | 14 ++++++++++++++
- 6 files changed, 24 insertions(+), 23 deletions(-)
-
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index 48598d017d6f..fcdc65ab13d8 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -1055,9 +1055,6 @@ struct kvm_vcpu_arch {
- 	/* be preempted when it's in kernel-mode(cpl=0) */
- 	bool preempted_in_kernel;
- 
--	/* Flush the L1 Data cache for L1TF mitigation on VMENTER */
--	bool l1tf_flush_l1d;
--
- 	/* Host CPU on which VM-entry was most recently attempted */
- 	int last_vmentry_cpu;
- 
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 18d69d48bc55..4e016582adc7 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -4859,7 +4859,7 @@ int kvm_handle_page_fault(struct kvm_vcpu *vcpu, u64 error_code,
- 	 */
- 	BUILD_BUG_ON(lower_32_bits(PFERR_SYNTHETIC_MASK));
- 
--	vcpu->arch.l1tf_flush_l1d = true;
-+	kvm_request_l1tf_flush_l1d();
- 	if (!flags) {
- 		trace_kvm_page_fault(vcpu, fault_address, error_code);
- 
-diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-index b0cd745518b4..6f2f969d19f9 100644
---- a/arch/x86/kvm/vmx/nested.c
-+++ b/arch/x86/kvm/vmx/nested.c
-@@ -3828,7 +3828,7 @@ static int nested_vmx_run(struct kvm_vcpu *vcpu, bool launch)
- 		goto vmentry_failed;
- 
- 	/* Hide L1D cache contents from the nested guest.  */
--	vcpu->arch.l1tf_flush_l1d = true;
-+	kvm_request_l1tf_flush_l1d();
- 
- 	/*
- 	 * Must happen outside of nested_vmx_enter_non_root_mode() as it will
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 1b5540105e4b..f87af1836ea1 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -395,26 +395,16 @@ static noinstr void vmx_l1d_flush(struct kvm_vcpu *vcpu)
- 	 * 'always'
- 	 */
- 	if (static_branch_likely(&vmx_l1d_flush_cond)) {
--		bool flush_l1d;
--
- 		/*
--		 * Clear the per-vcpu flush bit, it gets set again if the vCPU
-+		 * Clear the per-cpu flush bit, it gets set again if the vCPU
- 		 * is reloaded, i.e. if the vCPU is scheduled out or if KVM
- 		 * exits to userspace, or if KVM reaches one of the unsafe
--		 * VMEXIT handlers, e.g. if KVM calls into the emulator.
-+		 * VMEXIT handlers, e.g. if KVM calls into the emulator,
-+		 * or from the interrupt handlers.
- 		 */
--		flush_l1d = vcpu->arch.l1tf_flush_l1d;
--		vcpu->arch.l1tf_flush_l1d = false;
--
--		/*
--		 * Clear the per-cpu flush bit, it gets set again from
--		 * the interrupt handlers.
--		 */
--		flush_l1d |= kvm_get_cpu_l1tf_flush_l1d();
-+		if (!kvm_get_cpu_l1tf_flush_l1d())
-+			return;
- 		kvm_clear_cpu_l1tf_flush_l1d();
--
--		if (!flush_l1d)
--			return;
- 	}
- 
- 	vcpu->stat.l1d_flush++;
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index b4b5d2d09634..851f078cd5ca 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -5189,7 +5189,7 @@ void kvm_arch_vcpu_load(struct kvm_vcpu *vcpu, int cpu)
- {
- 	struct kvm_pmu *pmu = vcpu_to_pmu(vcpu);
- 
--	vcpu->arch.l1tf_flush_l1d = true;
-+	kvm_request_l1tf_flush_l1d();
- 
- 	if (vcpu->scheduled_out && pmu->version && pmu->event_count) {
- 		pmu->need_cleanup = true;
-@@ -7999,7 +7999,7 @@ int kvm_write_guest_virt_system(struct kvm_vcpu *vcpu, gva_t addr, void *val,
- 				unsigned int bytes, struct x86_exception *exception)
- {
- 	/* kvm_write_guest_virt_system can pull in tons of pages. */
--	vcpu->arch.l1tf_flush_l1d = true;
-+	kvm_request_l1tf_flush_l1d();
- 
- 	return kvm_write_guest_virt_helper(addr, val, bytes, vcpu,
- 					   PFERR_WRITE_MASK, exception);
-@@ -9395,7 +9395,7 @@ int x86_emulate_instruction(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
- 		return handle_emulation_failure(vcpu, emulation_type);
- 	}
- 
--	vcpu->arch.l1tf_flush_l1d = true;
-+	kvm_request_l1tf_flush_l1d();
- 
- 	if (!(emulation_type & EMULTYPE_NO_DECODE)) {
- 		kvm_clear_exception_queue(vcpu);
-diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-index f3dc77f006f9..cd67ccbb747f 100644
---- a/arch/x86/kvm/x86.h
-+++ b/arch/x86/kvm/x86.h
-@@ -420,6 +420,20 @@ static inline bool kvm_check_has_quirk(struct kvm *kvm, u64 quirk)
- 	return !(kvm->arch.disabled_quirks & quirk);
- }
- 
-+static __always_inline void kvm_request_l1tf_flush_l1d(void)
-+{
-+#if IS_ENABLED(CONFIG_CPU_MITIGATIONS) && IS_ENABLED(CONFIG_KVM_INTEL)
-+	/*
-+	 * Use a raw write to set the per-CPU flag, as KVM will ensure a flush
-+	 * even if preemption is currently enabled..  If the current vCPU task
-+	 * is migrated to a different CPU (or userspace runs the vCPU on a
-+	 * different task) before the next VM-Entry, then kvm_arch_vcpu_load()
-+	 * will request a flush on the new CPU.
-+	 */
-+	raw_cpu_write(irq_stat.kvm_cpu_l1tf_flush_l1d, 1);
-+#endif
-+}
-+
- void kvm_inject_realmode_interrupt(struct kvm_vcpu *vcpu, int irq, int inc_eip);
- 
- u64 get_kvmclock_ns(struct kvm *kvm);
--- 
-2.51.1.930.gacf6e81ea2-goog
-
+On 30/10/2025 07:00, Deepa Guthyappa Madivalara wrote:
+> Introduce a new pixel format, V4L2_PIX_FMT_AV1, to the
+> Video4Linux2(V4L2) API. This format is intended for AV1
+> bitstreams in stateful decoding/encoding workflows.
+> The fourcc code 'AV10' is used to distinguish
+> this format from the existing V4L2_PIX_FMT_AV1_FRAME,
+> which is used for stateless AV1 decoder implementation.
+> 
+> Signed-off-by: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>
+> ---
+>   Documentation/userspace-api/media/v4l/pixfmt-compressed.rst | 8 ++++++++
+>   include/uapi/linux/videodev2.h                              | 1 +
+>   2 files changed, 9 insertions(+)
+> 
+> diff --git a/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst b/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst
+> index c7efb0465db6480fe35be8557728c196e0e530f4..0c70410ffd4d58e0719d3cf13ad336c97b454ae9 100644
+> --- a/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst
+> +++ b/Documentation/userspace-api/media/v4l/pixfmt-compressed.rst
+> @@ -275,6 +275,14 @@ Compressed Formats
+>           of macroblocks to decode a full corresponding frame to the matching
+>           capture buffer.
+> 
+> +    * .. _V4L2-PIX-FMT-AV1:
+> +
+> +      - ``V4L2_PIX_FMT_AV1``
+> +      - 'AV01'
+> +      - AV1 compressed video frame. This format is adapted for implementing AV1
+> +        pipeline. The decoder implements stateful video decoder and expects one
+> +        Temporal Unit per buffer from OBU-stream or AnnexB.
+> +        The encoder generates one Temporal Unit per buffer.
+>   .. raw:: latex
+> 
+>       \normalsize
+> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
+> index becd08fdbddb857f8f2bf205d2164dc6e20e80b2..cf0b71bbe0f9d397e1e6c88433a0fc3ba11fb947 100644
+> --- a/include/uapi/linux/videodev2.h
+> +++ b/include/uapi/linux/videodev2.h
+> @@ -775,6 +775,7 @@ struct v4l2_pix_format {
+>   #define V4L2_PIX_FMT_H264_SLICE v4l2_fourcc('S', '2', '6', '4') /* H264 parsed slices */
+>   #define V4L2_PIX_FMT_HEVC_SLICE v4l2_fourcc('S', '2', '6', '5') /* HEVC parsed slices */
+>   #define V4L2_PIX_FMT_AV1_FRAME v4l2_fourcc('A', 'V', '1', 'F') /* AV1 parsed frame */
+> +#define V4L2_PIX_FMT_AV1      v4l2_fourcc('A', 'V', '0', '1') /* AV1 */
+>   #define V4L2_PIX_FMT_SPK      v4l2_fourcc('S', 'P', 'K', '0') /* Sorenson Spark */
+>   #define V4L2_PIX_FMT_RV30     v4l2_fourcc('R', 'V', '3', '0') /* RealVideo 8 */
+>   #define V4L2_PIX_FMT_RV40     v4l2_fourcc('R', 'V', '4', '0') /* RealVideo 9 & 10 */
+> 
+> --
+> 2.34.1
+> 
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
