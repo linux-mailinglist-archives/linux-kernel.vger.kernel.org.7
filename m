@@ -1,129 +1,95 @@
-Return-Path: <linux-kernel+bounces-880659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89EA5C2643F
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:03:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51C3FC2646F
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:07:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47BAE189F519
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:03:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC5264257F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83D42FD695;
-	Fri, 31 Oct 2025 17:02:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2A9302144;
+	Fri, 31 Oct 2025 17:01:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lma9lMk6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BiAMWdgC"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAE462FD684;
-	Fri, 31 Oct 2025 17:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B972D0C7A
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761930156; cv=none; b=t9f6yoAQfatOFTT1X5TiUDSfW8RI+n1bHBpDZddnRmMMCv6psvjJKyJOKRgmaam9ojGdx6ls6XpEmbM+ARa1/AwmuQk+xP54R/tCrhiTN+TtiEac2V+Dlx7S88p82nb6CJDHZGv5qH5r7JeBR0gK7Vn7U8XX4qk2FGrPBHidq24=
+	t=1761930102; cv=none; b=fqmdsmLcrjmwp9ti53QRgU6PM87RdCRoS8JBu0KyDy42ggtoz2fhfh+55DGsXH39F88nTvx0giAxoaetDZMA6/crcskpDKaYlOlSYH2/pl/42sLNMwk/t7IBuGEkLUse9fZ95IYngPMC8LbStJMtzmq9boPLoCYamznTrArcP5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761930156; c=relaxed/simple;
-	bh=xBrRg5gnKGkW3B8XP6rpJw1tbT54300fN3/BrYXoe+o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j9uP0Tb9ydAUhrpd5VkvJFX0pmOK8wGKd7OnyzZsAURK/7NYyhN5urA4r+uKP0dBg7JMeI4mnm7B9pahuMcZp1XH7AfIpUJzdspOlxE1baemvDEHIQg5uE7R37bYutggobQMUoQ7OStqcMZSH3yNaVMsTc+7xQ9g7RxzJEzgq0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lma9lMk6; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761930155; x=1793466155;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xBrRg5gnKGkW3B8XP6rpJw1tbT54300fN3/BrYXoe+o=;
-  b=Lma9lMk6fwafyitW9KDq8JNZ+QtBtpMG1Mudzi0OedI1BwkSulAtjqws
-   iInP4luoD+J2Z66Ix8zJibqd1kC5GDripLfQUMaNVH/7d9YFXdPjkXqca
-   Auinpcf0ndLE1kxbJ7S705xPQGkIeryJ3UdpY0u1UbrvhUzCAX7W969mh
-   /w25EAWkKhJHHoPx3TQ69pMeksXtsZVmBvgvUzoktkHt54g3iPjEBTrkA
-   /Ge5FtyEsFHtdZ9bNos7PLWusXyXubxnsSGxhDxxGWO+vKMGIKC9HcAAP
-   MawvomwlTNtSKb/p4RsK7uxkm+VEO54i+n5Os19gXl9rqT7fbo4SSYrwN
-   A==;
-X-CSE-ConnectionGUID: LjTz6QYpQa+UzAfi1SSdUQ==
-X-CSE-MsgGUID: i0RO0dLlTh2ODri0JAsmyA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64022383"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="64022383"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 10:02:35 -0700
-X-CSE-ConnectionGUID: x68roOhWTn6lqkp9QuvNGA==
-X-CSE-MsgGUID: ZjElhhxgQQ6EulK2irEIZQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="190629319"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 31 Oct 2025 10:02:32 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vEsWC-000NUK-34;
-	Fri, 31 Oct 2025 17:02:28 +0000
-Date: Sat, 1 Nov 2025 01:02:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: akemnade@kernel.org, Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Tony Lindgren <tony@atomide.com>, Kevin Hilman <khilman@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
-	linux-omap@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] Input: twl4030 - add TWL603x power button
-Message-ID: <202511010024.4O4b58oK-lkp@intel.com>
-References: <20251030-twl6030-button-v2-2-09653d05a2b1@kernel.org>
+	s=arc-20240116; t=1761930102; c=relaxed/simple;
+	bh=ExP714MhRpE/X2S1bgAsGplYXRnkY86iAwV9dqwqkTM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=qEaCDDRlGsPV/sMbsqb1qMDlp9krVyLClsI3JsJBZIAo8Vgn76EZh++t+hYJZXZOEaBNU7eRKZ4qRWHl4gQ/wwqz1ZgvLyRZqNXQXPAp8lBN9/8GhOlXV8/iwSRsU08/LyA3gKCG1XgQbQOQ/1Tt9/wn3ay5k5YWFAeNl32gL+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BiAMWdgC; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-32eb18b5659so1915027a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:01:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761930100; x=1762534900; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2/MRbBtlEvav5GDT1r+/BrezlWRnmNwGU9mv00LO9a4=;
+        b=BiAMWdgCEG5fj3u5rMQhLIVleLkQkzAxYX+RZLhfzMKRNdvcTpeYAQ6MpoULfgNaa4
+         44G4BZe5EorU7NjtoUazEBB49XFI2uvz9U/mDb35IuEs8dlYQMBE3UJjjVWINxJCx576
+         YVXakuP2qFvigki1O7TLrE2jWEPDqKc54g6kpTH9U9MXb8E6kPt2IrdXn6m7ScWPRom3
+         yCjdWocfF7xLL+ins9cf3hUnS31/s75ejUSoCGQBYt5+NiuuBtIPAR9U3nwKijwa19Gv
+         Aw3x4di78OPaWZjOIXUX975yLD62DvtPlaBuRG8ZtAqdIT33uoTy7nnyenxDhYSgj9LP
+         PNdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761930100; x=1762534900;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2/MRbBtlEvav5GDT1r+/BrezlWRnmNwGU9mv00LO9a4=;
+        b=ZiX/WXr3euoUacrDzhPm6oCVwJwiXLMoVd2ub2abSqErYYJoZCMmQBNWRBbrjKvAcK
+         toQEz0D2Bq2yfXIyCfuFtrwSlTMBMfFazaO2jFQF8r7mYv8rmFb+/ZoFLkqnYZpTPBvV
+         k976/DfFnHN+iInanffz697Q2zk/9k8DI+W1l+oyuIo9Lz+cciW9p/e+vmgvgzU+mZDo
+         crLhGhU734MftMGTVwX1mZbCQ1lQ4uuvpo75aF7drTyPfVRR9eglV6lDQtRTdEa6602n
+         qjYo/EeT/Ad8bZREYN5jQphJ/93wrjGXpwMILmyYmFI3vXDtVBHSei7/9kB95qwaEQ0A
+         +8Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCXeLU9smZiqF/Rg9gUkwhj5L5CNLXrfE1a+qny85HYq0xA0mCrb4IQWbEOj6W2+Lao1L04ryZSOj72qMqg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrupPyw3tK1sLH8xfUX4H/LTGoXVsnAD4CeprRow+y7aYoG85L
+	pAp0XUxlIPQiYSlv+jGJJCNM4mLL2AMnAk5IE9CRWah0hSySyQjB0hMrkvqECxcYNkxOLSMqeey
+	YN2qRDg==
+X-Google-Smtp-Source: AGHT+IH748GsxTeI/Q04BSQ33R6BefPTyOvqnz4pgeN1lbp9XyK8W64dvo9aC285XLDySIC0ETt+QAl6jJ0=
+X-Received: from pjbgo19.prod.google.com ([2002:a17:90b:3d3:b0:33d:4297:184e])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1812:b0:340:299e:dbc
+ with SMTP id 98e67ed59e1d1-34082fd608emr6573642a91.16.1761930100216; Fri, 31
+ Oct 2025 10:01:40 -0700 (PDT)
+Date: Fri, 31 Oct 2025 10:01:38 -0700
+In-Reply-To: <bophxumzbp2yuovzhvt62jeb5e6vwc2mirvcl6uyztse5mqvjt@xmbhgmqnpn5d>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251030-twl6030-button-v2-2-09653d05a2b1@kernel.org>
+Mime-Version: 1.0
+References: <20251030185004.3372256-1-seanjc@google.com> <bophxumzbp2yuovzhvt62jeb5e6vwc2mirvcl6uyztse5mqvjt@xmbhgmqnpn5d>
+Message-ID: <aQTrcgT9MMY_69wh@google.com>
+Subject: Re: [PATCH] KVM: x86: Add a helper to dedup reporting of unhandled VM-Exits
+From: Sean Christopherson <seanjc@google.com>
+To: Yao Yuan <yaoyuan@linux.alibaba.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-Hi,
+On Fri, Oct 31, 2025, Yao Yuan wrote:
+> On Thu, Oct 30, 2025 at 11:50:03AM +0800, Sean Christopherson wrote:
+> I like the dedup, and this brings above for tdx which not
+> before. Just one small thing: Will it be better if keep the
+> "vmx"/"svm" hint as before and plus the "tdx" hint yet ?
 
-kernel test robot noticed the following build warnings:
+It'd be nice to have, but I honestly don't think it's worth going out of our
+way to capture that information.  If someone can't disambiguate "kvm" to mean
+"vmx/tdx" vs. "svm" based on the host, they've got bigger problems.
 
-[auto build test WARNING on 3a8660878839faadb4f1a6dd72c3179c1df56787]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/akemnade-kernel-org/dt-bindings-mfd-twl-enable-power-button-also-for-twl603x/20251031-031300
-base:   3a8660878839faadb4f1a6dd72c3179c1df56787
-patch link:    https://lore.kernel.org/r/20251030-twl6030-button-v2-2-09653d05a2b1%40kernel.org
-patch subject: [PATCH v2 2/3] Input: twl4030 - add TWL603x power button
-config: x86_64-randconfig-123-20251031 (https://download.01.org/0day-ci/archive/20251101/202511010024.4O4b58oK-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251101/202511010024.4O4b58oK-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511010024.4O4b58oK-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/input/misc/twl4030-pwrbutton.c:44:31: sparse: sparse: symbol 'twl4030_chipdata' was not declared. Should it be static?
->> drivers/input/misc/twl4030-pwrbutton.c:49:31: sparse: sparse: symbol 'twl6030_chipdata' was not declared. Should it be static?
-
-vim +/twl4030_chipdata +44 drivers/input/misc/twl4030-pwrbutton.c
-
-    43	
-  > 44	struct twl_pwrbutton_chipdata twl4030_chipdata = {
-    45		STS_HW_CONDITIONS_4030,
-    46		false,
-    47	};
-    48	
-  > 49	struct twl_pwrbutton_chipdata twl6030_chipdata = {
-    50		STS_HW_CONDITIONS_6030,
-    51		true,
-    52	};
-    53	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+And as for "vmx" vs. "tdx", I really hope that's not meaningful information for
+users, e.g. the printks are ratelimited, and users should really be gleaning
+information from the VMM instance, not from dmesg.
 
