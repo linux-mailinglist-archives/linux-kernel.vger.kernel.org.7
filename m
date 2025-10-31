@@ -1,203 +1,164 @@
-Return-Path: <linux-kernel+bounces-880647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 840AEC26430
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 18:02:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FA3AC263E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:56:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F25B73BD141
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:54:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 131EC189DD3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:55:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BDB62FD682;
-	Fri, 31 Oct 2025 16:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A89A2FD67F;
+	Fri, 31 Oct 2025 16:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JYHWdcgP"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WVOJjmI5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8982FD67F
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 16:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164672F0671;
+	Fri, 31 Oct 2025 16:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761929662; cv=none; b=erArFoyRE+B+9RW7jfiIHTfJnMwE6e5nAdfZEqsJRr3oIPyMcp3WImh571EnKYIuqodb6bV3FlU5GqCdxMINUOYMMfU+6V+8h88sHEdX9Hn1FulSJwp5Cql5NSmg5BR69SFUUQDpKfs558gRApQNHF8VDwekkWk0txPg+4fRqhA=
+	t=1761929705; cv=none; b=Oyg+bDokTAr/RxlNdsYlPTBRGEoj/iiBS1YXEqTenSHf8eRdvW80vYxbQSSsqi2YNKUyh3bort8GgVM9kcvl2arV5ug3tvIvQlenrVjwuNAqurMm+dhFh0DgQycMlz1EoAzP0nIe4L6GfoUhLh5tbIF9lF6rhbCmvxM386g1RPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761929662; c=relaxed/simple;
-	bh=ic8R7PeSfgqiLUOO7h3/ggxGPF9WW8qd3pCh4Pyv/o0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cGa8n6HHDOZsjsnt5pp3giMaG9xH1H80BesLRqwCv0Tf+5z8Yb2rL5zonKLeoOPz6os0hzj2S0OUPd6Fq8MqQADx9av33je3nezKqMQGVzqQNCfHUvNpuyxFaruzTsD8wP+n4hjMqqtjZFlEnF67wGW/voSQl8SQhKGwzkHs+o0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JYHWdcgP; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-46e6a689bd0so24072595e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:54:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761929659; x=1762534459; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q/vCylrs+0tr4q3q6ZAFpBo+ranVb22GkyacwbW2xw4=;
-        b=JYHWdcgPCmH2iRM6bEUrof+ZjoGWLoyy8Xof68kJKJTfCwJC5XeqDeLxeAXk7zl4Dt
-         MbNzxIUPE9WoZiXB8w/geNbQz+GI5E8B6DEcl3F4ZmDKOvMul+FUIRfu3QESHRR+8jFb
-         w7orhtRA/6gziMhT/Yh/0i5/4ePQONjaGDw7ZvwM5l+wjUHDcljqr/AEgYVsxqIvCJ3N
-         HsG9XpX3NdAgrxLYUBjPl92U6oK5Aw+YG50Q1l06DKmMNEzfkBF3Zo0y0P67I561pMVy
-         3zvvs9ouP5+LKKtpohlirUyIw5xvMwK7KH9o31IiamV9w1OuQtqP51Y5RxoK78LcRvEN
-         WGOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761929659; x=1762534459;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q/vCylrs+0tr4q3q6ZAFpBo+ranVb22GkyacwbW2xw4=;
-        b=CWsWCP51fcsF4ebGjar7AZXf3wNgQhSe1RER8DiUJwSbiE4f4c2h96m3UEbtN1t+ta
-         ie8qyq/q5CCnkSsckFHdubqfZNJ7C3Y+dQGSlW4TZtB1kZIUZn/GdV0kmfn+C0tqMp39
-         IrroQf7WDdpjpU2QT8I+xTVDUFW52OxI2vtd8kzGvNDvNIENHC1YCl5L1d8lL6BKyRdd
-         S6T9wPoJCXy5TYQw8pvSZM2Bx/+tgLzmYr8X6V7hQaE+//dOulHtv7V6hUSEOCvNjdy/
-         CbpUFDrikTYwj5E5qqYtYvOwBSnsoVaYOLT073Q7tJ9X107jrmisHo/Nw+cv9qMSD/7m
-         YWqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVvDew14Q4ZkJWcMkrahxWwsKg3SzHPpWBefFaWPAnPUrIMu+50c0JIJkNcewsEUtHZV3RORIodvTtMSa8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yye53fquziytAEHPMByC/b5T/zxtocFIHggDO/qPC+KIWFcjf/f
-	cmTvkpCLIrFkigMQTTJ1xFgBujg7FEHWkgS/Bw49rAwYQV4qhUNYYxVy
-X-Gm-Gg: ASbGncvk38UEy/JVsrABvAO2EfmG4IEpyK5Chwjo+0XEKIa62uFTWwD0AbiJYynQH4D
-	kU7VxKjXyUtbsBG87qhaUA5CvA6hdEbydl9uxd+vSo+RSa4yCliYBHkKaBpGIy+FfOk/pT8mMxl
-	PrjxmI3emkNw1VWCoNeLhLHDEn/DRX7gRsNVpo1zbXDuJDXIGHC1zZqPk+CLE2LTEqlOK8tUZY9
-	dAdWQqpFL9+3vNdakvze2z1Av1qfjs+ObDSSmsdiBorW0G+vqV1zX/MAOzcEv0J/MnrB7tVDtAE
-	oHM3FlsWRgMLeJRz+ITsn29AitRn/GXApO7h9DF4fkIkhmC7HGhwV393gs9/fCDj/rI1Kv7NeXu
-	GmQJmQpir8EU63EjlfgrWlndMPfVD35Menmq0+jL/iqggGEV2z3NURbIHwTnWbZyNzdgQJ4v6On
-	3KSu4g7FF7I77lboK+DMe+8N3aN7ecnXeeheURv8cPmQ==
-X-Google-Smtp-Source: AGHT+IHSI+zsuHw2dropePAurzOFarCziEZZIfwNC9vETGbIZ+nr86tqW6LFJQrkhJOWJLe3kxpBzw==
-X-Received: by 2002:a05:600c:699a:b0:477:1326:7b4b with SMTP id 5b1f17b1804b1-47730872322mr45079395e9.19.1761929658835;
-        Fri, 31 Oct 2025 09:54:18 -0700 (PDT)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c13e03d0sm4564270f8f.26.2025.10.31.09.54.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 09:54:18 -0700 (PDT)
-Date: Fri, 31 Oct 2025 16:54:17 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] device_cgroup: Replace strcpy/sprintf in set_majmin
-Message-ID: <20251031165417.4490941a@pumpkin>
-In-Reply-To: <FE3AAB5A-9AB9-49B6-BB67-FCB97CD5AF29@linux.dev>
-References: <20251031110647.102728-2-thorsten.blum@linux.dev>
-	<20251031125916.3b0c8b22@pumpkin>
-	<FE3AAB5A-9AB9-49B6-BB67-FCB97CD5AF29@linux.dev>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1761929705; c=relaxed/simple;
+	bh=mE1Nacho2z2E7aj19mlpYVozO+U1hfyyMLxt4xW3lTs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S9jHlQiAWSbF2SG1XdzbbVceQUWbX2pfhMvEGaSRNiajTY17Dn6dKSXM1cNFc/cR8SUXTHdxbh+jZMZkJtcfEXCoZ7WnKkhLf+Ue1DWtyIx7kleZKt/4Hylrmc3v7zXPAHd2tTlD79NNWsPab2Hv3L4bPw+xJNwtcQxmHVXLJQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WVOJjmI5; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761929704; x=1793465704;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=mE1Nacho2z2E7aj19mlpYVozO+U1hfyyMLxt4xW3lTs=;
+  b=WVOJjmI54Oy4zOJsAF6W5J54zKw8CXFhZgIAVA6TYSt1q3UOsZP31Axp
+   O8LI5QxPIPGWHaiJ7TXpxgGWaKhKRgt+B7oVkm6ZDOqgEsWlASYN5u/jW
+   TUNF5uAvfcnQkaDTaB3kExpZaDhGqploN9WehpoDFDTHsBeA10bgwdFrK
+   qXI3M0F3XKusd6j/cKeLjY8jxrvtLydJppGCw10YkrGJ0iIVkV0KOHSAN
+   iKbQ2Z1li2O7gZq2PHaYpjDnAmypxURyA42rtvYuQQ+4biR4ZyMDNpwmG
+   wLkoL0To7IILulLOxQhSe2B+wI4DPo27dRovY/GiWwUgoDSHHwp7Jnlie
+   Q==;
+X-CSE-ConnectionGUID: hyqCD9IJQ5yTZBdRIXvQHQ==
+X-CSE-MsgGUID: UqdhOagySpmQ5V1b2nFyXw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="67750424"
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="67750424"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 09:55:03 -0700
+X-CSE-ConnectionGUID: MIQ+2tf3QFiBgB8VYnsr8w==
+X-CSE-MsgGUID: jX0/fKWfROCUL4AocpFS5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="217119772"
+Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.110.52]) ([10.125.110.52])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 09:55:02 -0700
+Message-ID: <f559e1fa-dfc6-435f-9337-30315891a394@intel.com>
+Date: Fri, 31 Oct 2025 09:55:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 9/9] x86/cpu: Enable LASS by default during CPU
+ initialization
+To: David Laight <david.laight.linux@gmail.com>,
+ Sohil Mehta <sohil.mehta@intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+ the arch/x86 maintainers <x86@kernel.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Jonathan Corbet <corbet@lwn.net>,
+ Josh Poimboeuf <jpoimboe@kernel.org>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Ard Biesheuvel <ardb@kernel.org>, "Kirill A . Shutemov" <kas@kernel.org>,
+ Xin Li <xin@zytor.com>, David Woodhouse <dwmw@amazon.co.uk>,
+ Sean Christopherson <seanjc@google.com>,
+ Rick P Edgecombe <rick.p.edgecombe@intel.com>,
+ Vegard Nossum <vegard.nossum@oracle.com>,
+ Andrew Cooper <andrew.cooper3@citrix.com>,
+ Randy Dunlap <rdunlap@infradead.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>, Kees Cook <kees@kernel.org>,
+ Tony Luck <tony.luck@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ linux-doc@vger.kernel.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-efi@vger.kernel.org
+References: <20251029210310.1155449-1-sohil.mehta@intel.com>
+ <20251029210310.1155449-10-sohil.mehta@intel.com>
+ <789ADBB5-F7AC-4B08-B343-F23260FB8FBC@zytor.com>
+ <13681100-ddc3-4ef0-bd13-744282324ff1@app.fastmail.com>
+ <d1b5698e-94ab-45a2-a472-4488895d55bb@intel.com>
+ <20251030211318.74d90c3f@pumpkin>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20251030211318.74d90c3f@pumpkin>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Fri, 31 Oct 2025 16:23:02 +0100
-Thorsten Blum <thorsten.blum@linux.dev> wrote:
-
-> On 31. Oct 2025, at 13:59, David Laight wrote:
-> > Even if ex->major can be ~0 there are much cleaner ways of writing this code.  
+On 10/30/25 14:13, David Laight wrote:
+>> Unfortunately, CONFIG_X86_VSYSCALL_EMULATION defaults to y. Also, the
+>> default Vsyscall mode is XONLY. So even if vsyscalls are deprecated,
+>> there is a non-zero possibility someone would complain about it.
+> Presumably a command line parameter could be used to disable LASS
+> in order to enable vsyscall emulation?
 > 
-> Thanks for pointing this out. Looking at the bigger picture makes it
-> clear that most of the code can actually be removed. What do you think
-> of this change?
+> That might let LASS be enabled by default.
 
-That is sort of what I was thinking about, but it doesn't quite work.
+Sure... There are a million ways to skin this cat. That's the problem.
 
-> 
-> Thanks,
-> Thorsten
-> 
-> diff --git a/security/device_cgroup.c b/security/device_cgroup.c
-> index a41f558f6fdd..cb845b1fad6b 100644
-> --- a/security/device_cgroup.c
-> +++ b/security/device_cgroup.c
-> @@ -244,7 +244,6 @@ static void devcgroup_css_free(struct cgroup_subsys_state *css)
-> #define DEVCG_DENY 2
-> #define DEVCG_LIST 3
-> 
-> -#define MAJMINLEN 13
-> #define ACCLEN 4
-> 
-> static void set_access(char *acc, short access)
-> @@ -270,19 +269,11 @@ static char type_to_char(short type)
-> 	return 'X';
-> }
-> 
-> -static void set_majmin(char *str, unsigned m)
-> -{
-> -	if (m == ~0)
-> -		strscpy(str, "*", MAJMINLEN);
-> -	else
-> -		snprintf(str, MAJMINLEN, "%u", m);
-> -}
-> -
-> static int devcgroup_seq_show(struct seq_file *m, void *v)
-> {
-> 	struct dev_cgroup *devcgroup = css_to_devcgroup(seq_css(m));
-> 	struct dev_exception_item *ex;
-> -	char maj[MAJMINLEN], min[MAJMINLEN], acc[ACCLEN];
-> +	char acc[ACCLEN];
-> 
-> 	rcu_read_lock();
-> 	/*
-> @@ -293,17 +284,12 @@ static int devcgroup_seq_show(struct seq_file *m, void *v)
-> 	 */
-> 	if (devcgroup->behavior == DEVCG_DEFAULT_ALLOW) {
-> 		set_access(acc, DEVCG_ACC_MASK);
-> -		set_majmin(maj, ~0);
-> -		set_majmin(min, ~0);
-> -		seq_printf(m, "%c %s:%s %s\n", type_to_char(DEVCG_DEV_ALL),
-> -			   maj, min, acc);
-> +		seq_printf(m, "%c *:* %s\n", type_to_char(DEVCG_DEV_ALL), acc);
+The compile switch is the smallest amount of code with the fewest
+implications to ABI or documentation that we can muster. All I'm saying
+is we should _start_ here, not _end_ here.
 
-type_to_char(DEVCG_DEV_ALL) is 'a' and this is the only place it happens,
-also acc is "rwm".
-So that could be:
-		seq_puts(m, "a *:* rwm\n");
-
-> 	} else {
-> 		list_for_each_entry_rcu(ex, &devcgroup->exceptions, list) {
-> 			set_access(acc, ex->access);
-> -			set_majmin(maj, ex->major);
-> -			set_majmin(min, ex->minor);
-> -			seq_printf(m, "%c %s:%s %s\n", type_to_char(ex->type),
-> -				   maj, min, acc);
-> +			seq_printf(m, "%c %u:%u %s\n", type_to_char(ex->type),
-> +				   ex->major, ex->minor, acc);
-
-It looks like both ex->major and ex->minor can be ~0.
-(I'm not sure it makes any sense to have major == ~0 and minor != ~0).
-However this should be ok:
-			seq_putc(m, type_to_char(ex->type);
-			if (ex->major == ~0)
-				seq_puts(m, " *:");
-			else
-				seq_printf(m, " %u:", ex->major);
-			if (ex->minor == ~0)
-				seq_puts(m, "* ");
-			else
-				seq_printf(m, "%u ", ex->minor);
-			if (ex->access & DEVCG_ACC_READ)
-				seq_putc(m, 'r');
-			if (ex->access & DEVCG_ACC_WRITE)
-				seq_putc(m, 'w');
-			if (ex->access & DEV_ACC_MKNOD)
-				seq_putc(m. 'm');
-			seq_putc(m, '\n');
-
-A less intrusive change would be to pass 'm' the the set_xxx() functions
-and add the separators between the calls.
-
-	David
-
-
-> 		}
-> 	}
-> 	rcu_read_unlock();
-> 
-
+If anyone agrees with that approach, acks would be appreciated.
 
