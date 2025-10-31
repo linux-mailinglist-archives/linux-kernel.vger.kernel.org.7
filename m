@@ -1,134 +1,99 @@
-Return-Path: <linux-kernel+bounces-880443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99E2AC25C63
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:12:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D28BC25C58
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:11:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE1531A61309
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:02:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 44EE64F8F11
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03BB827E7EB;
-	Fri, 31 Oct 2025 14:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27F52DCF4D;
+	Fri, 31 Oct 2025 15:00:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TabzbHyD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="w+fo/ZN1"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF47277CA1;
-	Fri, 31 Oct 2025 14:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA431259CA0;
+	Fri, 31 Oct 2025 15:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761922786; cv=none; b=qgOlRxFVFhQ3ewDCBt7JpDHzEzdJfHDZ7jdI56J7gpj/IYIDLxSYwy6U0VP0/lhwxbW22FwS+dBs4Szh9k5HhPcnCsaJ6ypvztEWZYZ//8DREHcdvp2DYHNoZJEQ7ZpDrkgapf/lfLGzhZ0uCbVIiubqOCcHQE5hJuy/QQ/xqhI=
+	t=1761922812; cv=none; b=E+JOpgIwgXMYMW6ydbd7uWnHeQ0ga0y/d7RvyxNFZYFwk4WsBKup77GJB2wYKCGAJ1c58HklSI6Rgtb4oWxq31Q+5X6V3SlTOLw0YjeuEImWlxVs9CB0Y+sTBjQQYE6m9Qd5y6SnWNYT36phhve03rbQy7iqTwppKzmT2n6BlmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761922786; c=relaxed/simple;
-	bh=Se1X+I72s40rkJM8ntQMAsthPScDNCwADTjGR+2p8i8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=uUpr293flM0CAluAXhz7ZTa3DUd1Hq6GOlVQvsD+SgXL8gefOmKm6uprMIE7yUA23n5QDTB2fOEy1VLbnns6uyxQ236JEmm3vZ7KcKJzmjUfIYBeUUZiBR+95fdaeH2FCCYAQ0e0Uh6Ce9nqKc3f8Cg8TU5V0EWBEsscFm04aFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TabzbHyD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE9E2C4CEE7;
-	Fri, 31 Oct 2025 14:59:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761922785;
-	bh=Se1X+I72s40rkJM8ntQMAsthPScDNCwADTjGR+2p8i8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=TabzbHyDksb3gZOmCavUq22PsUmNwua/fz4XrJHtK90DBFupxbVOUjNqvAsWsjRsE
-	 at9BKimGYNbQY11qtTZ9Ih5wTf1k2sM3u0VVMGM8tm/qnwR/Uw/Brt9vvh7BanuXMO
-	 mXYxw1ZAWLD4DA8+p50XG5IROBwWGTY1k/+Bq214IK+BQrB9f18SzK6zzBWgbfZ6dr
-	 CgQYphcUND5E4ubz9hC2+td6P4q+N2HtXoHIEyPVbLq6Ax96+oWl98LiYJV0vq4SV4
-	 ioYSzZ4Yj/+iLA2GYYPGcDgK+Url8fR3U4UxsBi65l+sYIesHYr+l5FjsnFk42pIle
-	 tn/LMiTLkQcsw==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org, Thomas
- Gleixner <tglx@linutronix.de>, Boqun Feng <boqun.feng@gmail.com>,
- linux-kernel@vger.kernel.org, Daniel Almeida
- <daniel.almeida@collabora.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
- Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
-Subject: Re: [PATCH v13 03/17] preempt: Introduce HARDIRQ_DISABLE_BITS
-In-Reply-To: <20251013155205.2004838-4-lyude@redhat.com>
-References: <20251013155205.2004838-1-lyude@redhat.com>
- <20251013155205.2004838-4-lyude@redhat.com>
-Date: Fri, 31 Oct 2025 15:59:34 +0100
-Message-ID: <87pla386cp.fsf@t14s.mail-host-address-is-not-set>
+	s=arc-20240116; t=1761922812; c=relaxed/simple;
+	bh=5JJUqE9Q8MCtCxiCImUZx5VT+wBmQBLXtq+olP+/1LU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LjbHy7NTSgwElUVUQc3nCHS+CIZlpDn0goLz368xgvM+nrGXE0GaNog4HGDaWTw3Z4tH1N/vtCf0YvSE83nilikIhWaCBQ/NLEs7k2sW6q8/C6YKdBmsJCVAnULxjBSc8BUTiIivOn7JcaXVmH0Qr7drShJuWF/aQ+gZYz2THHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=w+fo/ZN1; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=6qKSobEU69BAnqLIcfo/zvc97NzO3H9n/t1gZuZHQ5I=; b=w+fo/ZN13bzqSt5KwxkF2AmKVx
+	LxvV2QCFrgnVurPbX3RHME5wrKn8xBVIE9BAN1A0m8ZrYJ45Q7I3v7fis4dbIoHmPGfa1tE/tQ8VI
+	E4MCGGal/r/Y/cmfaXsGZRUQW7s+enwbxn6wuB7geqZ3+qYnNddXzERS8wSOD9DCminJShRBHTOSO
+	FSbZF9mEnjU5aCo5rqgFlTs3Srgn9VRLu8zjTr4Wm/R0rvMLnv4Qyg4UXRGfLD7wGWWocsxGhecBl
+	ppOMMqCFOChSO4xOLtKBuIf+0cUFzEJJeUfrTsBnLxLrHUT6ftjTXtCZJjpcUT4dtVg0JujfOauSP
+	RgVq8gUg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:33210)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1vEqbh-0000000072S-168a;
+	Fri, 31 Oct 2025 15:00:01 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.98.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1vEqbe-0000000013S-3AmU;
+	Fri, 31 Oct 2025 14:59:58 +0000
+Date: Fri, 31 Oct 2025 14:59:58 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Horatiu Vultur <horatiu.vultur@microchip.com>
+Cc: andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net v4 1/2] net: phy: micrel: lan8842 errata
+Message-ID: <aQTO7uEzDMrVrxbN@shell.armlinux.org.uk>
+References: <20251031121629.814935-1-horatiu.vultur@microchip.com>
+ <20251031121629.814935-2-horatiu.vultur@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251031121629.814935-2-horatiu.vultur@microchip.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Lyude Paul <lyude@redhat.com> writes:
+On Fri, Oct 31, 2025 at 01:16:28PM +0100, Horatiu Vultur wrote:
+> Add errata for lan8842. The errata document can be found here [1].
+> This is fixing the module 2 ("Analog front-end not optimized for
+> PHY-side shorted center taps").
+> 
+> [1] https://ww1.microchip.com/downloads/aemDocuments/documents/UNG/ProductDocuments/Errata/LAN8842-Errata-DS80001172.pdf
+> 
+> Fixes: 5a774b64cd6a ("net: phy: micrel: Add support for lan8842")
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-> From: Boqun Feng <boqun.feng@gmail.com>
->
-> In order to support preempt_disable()-like interrupt disabling, that is,
-> using part of preempt_count() to track interrupt disabling nested level,
-> change the preempt_count() layout to contain 8-bit HARDIRQ_DISABLE
-> count.
->
-> Note that HARDIRQ_BITS and NMI_BITS are reduced by 1 because of this,
-> and it changes the maximum of their (hardirq and nmi) nesting level.
->
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
->  include/linux/preempt.h | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
->
-> diff --git a/include/linux/preempt.h b/include/linux/preempt.h
-> index 9580b972e1545..bbd2e51363d8f 100644
-> --- a/include/linux/preempt.h
-> +++ b/include/linux/preempt.h
-> @@ -17,6 +17,8 @@
->   *
->   * - bits 0-7 are the preemption count (max preemption depth: 256)
->   * - bits 8-15 are the softirq count (max # of softirqs: 256)
-> + * - bits 16-23 are the hardirq disable count (max # of hardirq disable: 256)
-> + * - bits 24-27 are the hardirq count (max # of hardirqs: 16)
->   * - bit 28 is the NMI flag (no nesting count, tracked separately)
->   *
->   * The hardirq count could in theory be the same as the number of
-> @@ -30,29 +32,34 @@
->   *
->   *         PREEMPT_MASK:	0x000000ff
->   *         SOFTIRQ_MASK:	0x0000ff00
-> - *         HARDIRQ_MASK:	0x000f0000
-> + * HARDIRQ_DISABLE_MASK:	0x00ff0000
-> + *         HARDIRQ_MASK:	0x0f000000
->   *             NMI_MASK:	0x10000000
->   * PREEMPT_NEED_RESCHED:	0x80000000
->   */
->  #define PREEMPT_BITS	8
->  #define SOFTIRQ_BITS	8
-> +#define HARDIRQ_DISABLE_BITS	8
->  #define HARDIRQ_BITS	4
->  #define NMI_BITS	1
->  
->  #define PREEMPT_SHIFT	0
->  #define SOFTIRQ_SHIFT	(PREEMPT_SHIFT + PREEMPT_BITS)
-> -#define HARDIRQ_SHIFT	(SOFTIRQ_SHIFT + SOFTIRQ_BITS)
-> +#define HARDIRQ_DISABLE_SHIFT	(SOFTIRQ_SHIFT + SOFTIRQ_BITS)
-> +#define HARDIRQ_SHIFT	(HARDIRQ_DISABLE_SHIFT + HARDIRQ_DISABLE_BITS)
->  #define NMI_SHIFT	(HARDIRQ_SHIFT + HARDIRQ_BITS)
->  
->  #define __IRQ_MASK(x)	((1UL << (x))-1)
->  
->  #define PREEMPT_MASK	(__IRQ_MASK(PREEMPT_BITS) << PREEMPT_SHIFT)
->  #define SOFTIRQ_MASK	(__IRQ_MASK(SOFTIRQ_BITS) << SOFTIRQ_SHIFT)
-> +#define HARDIRQ_DISABLE_MASK	(__IRQ_MASK(SOFTIRQ_BITS) << HARDIRQ_DISABLE_SHIFT)
+As this has substantially changed, you shouldn't automatically keep the
+reviewed-by's previously added unless you've asked those who have given
+them.
 
-Should this be HARDIRQ_DISABLE_BITS rather than SOFTIRQ_BITS ?
+Apart from that,
 
+Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
 
-Best regards,
-Andreas Hindborg
+Thanks!
 
-
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
