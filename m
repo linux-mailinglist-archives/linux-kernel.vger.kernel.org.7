@@ -1,96 +1,85 @@
-Return-Path: <linux-kernel+bounces-880048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AA46C24BF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:17:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2E79C24C07
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:18:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 356D64F1C21
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:16:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BEE418949C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC263451A8;
-	Fri, 31 Oct 2025 11:16:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C697C3446CA;
+	Fri, 31 Oct 2025 11:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bd9a0jEP"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gsKuwkQL"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB5EC264A92
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 11:16:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE46D306B1A
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 11:17:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761909403; cv=none; b=jc41TowgvyT/o/BRw3PBtPPpTfNNXAPTg2y7IKUYf9JBOibOjp7SGbLm5+0BdZWSdzt6KMf294QZPhIy+57G0yJyztjiiGojFvPNMuTJgyW3YE5q+j7+fJs3JS34voAMqmPc1jYWJ7NzVgZmUKfAPxoDMDufiq8mr45dzQQLl2c=
+	t=1761909457; cv=none; b=DguOVo+DR41m3wk97nU8UKJ4bOl0luAHsbnePuqfcVP6EhZiNvyJKrJsyEq1qXc6k22S/AGFyXTuC0FM/3LKKkOs3lIrSeIjPPG1zavYVKij0cOqhaMy3oIUHFEP16UU55+PsMPjbiYAFTdth/gOWiIa6OkVmcl0dTsELYjJPao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761909403; c=relaxed/simple;
-	bh=qN38CT0TF/fW3+PzwztgKsAVnz0QCmJ5fxwPvyCFM5I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YxVKzvc7Lm7LJ7SLN7si92Fliosxh/uwpS7fmjSfjf/+CyK26B+LVtFMkJlAPvsBxFieRnny2InPqfeR7No/L9RDXQ+iDOG/pVrAn3WAZrhPg8LulOJzkPtTQ9k7E9rmBfAK70aKWXHpWnBkSey//TsqVNqC9nLWTDGpjCaatUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bd9a0jEP; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-47109187c32so11050115e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 04:16:41 -0700 (PDT)
+	s=arc-20240116; t=1761909457; c=relaxed/simple;
+	bh=rCLJ6hwa9Lj8OJwfpuGfm4VjzDMM2/dDqWVI+BgYPmU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Xq0lkLimwa8bglDZh7jajInXMKZg1F2UYI28NnmHxvsPBqsDAnfsx8dcHcnkD4Y62l/faxtYS8iP+j/O6GCusEJhruhvtzvJyk0woo2bPbTLJImSNz9rmtTAxF+z8OjhkKus1ODSd12xtyAc6iHsiek6b7jvYx9JNGYzH9a2qzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gsKuwkQL; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7810289cd4bso2483308b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 04:17:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1761909400; x=1762514200; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xycop7wbord5TE45Na8jt3nX8C+21DdnTnC7CBQYq24=;
-        b=bd9a0jEP8Bsy94WP0mnaUq0M2v4NCcFE0Dv0KzFARcrvCN1kAmtVzb+p5wiw9zuTkl
-         gu7EjABrOry3xlrb8r/Q+M+KePRO9W1t0KADJQFMe8aa/y4Dw4747ckjHFmo/MU1aZPR
-         oziHkvSGcyW59F/3EDo+EHw6QobpVOqmXYJ2aoQG5ydqNx9p/WPep/RQ4qvgrLKwxzGd
-         1/etetOum1i9Vrz5ZcbduqHppvbG1FyGpremZrUw09zi7u8MWrwR9rTqTbdLTTmPPZPd
-         HMoTICIPaP307fWj6wSF7Lpg1jroi05i0RIgBBz1u6AS/BqHK6FXchXc9Yh1GAOd3Ztb
-         6WuQ==
+        d=gmail.com; s=20230601; t=1761909455; x=1762514255; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7FW9g8tetROcy3bzpkRVbdV9vmDjQkA5zzLWmu49/bA=;
+        b=gsKuwkQLNSK/gpFijuLadkyGIUOeXMjjNdSI2E1K+UNoNEf9V5uqbVqhZ0KDQSPpnS
+         WGLWUBPntZYTwagF5mo3+6yooQjYe1orGlZxEtFYi1siQ8ldAThNH6AVAlBjQ4LOWFrF
+         I5vRVczBp3gpsHzLwtgc0teIbh3ooggHaSr1ylwRSrvFrRcwcBO92pPs4h1sJ0R53e8p
+         cT2BNh5Z0c92lD2qCnyiVyX7jsIPtic1prBKvrBzzHjTZTrjWgOP4xKNtt59pKKtcPIx
+         ncwA2/X+954EGmh6cj3MEgA0+ozhZHmsyYuw3cLQ70Sf5w64LsAQSwaoSRxi3/5fkY10
+         oe7g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761909400; x=1762514200;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Xycop7wbord5TE45Na8jt3nX8C+21DdnTnC7CBQYq24=;
-        b=qY4AffWPD2c6PA5SgWAfYpWa5fz49c5f6TaPueex/iBXnSsTHstox4ktkwz5R580/Q
-         F5TKkYVH9erKPkYZpuQ7kB56OGfofgci8zZXbqWQFGhLQ9wG3ZFIkhzCTrDwVlLPniQv
-         CD25BUau5+zlCcStdexQEVRk4Ukgq+8oljpo88XO6541xUc3eE2k1H2Wa9+4tMI4HSeM
-         1DdGd+d8xw2tVEkx7js5W87d3P6YRhuBeaYF8miB8nEdfgS8H2ArDYLM4x/Yg57XrPNz
-         RD5ZDe4xugXqo+Z75XkKHCBexrV/qmc0bDeHIcH4TDOl1/GDvpBwKsEK+UMuv69QwunX
-         rFzg==
-X-Gm-Message-State: AOJu0YzJrNLG476+qXxUn7SaPtFKFjRF0JSipxIb2aqW4cmtjCUbq2O2
-	I4mlJqyqX+8nveVeeylPXKCIA4U15uuQJirX4XMEdKKgtdpZVxN8Y8VWRMhdzaEyAEksNMS8p9b
-	9ehkd
-X-Gm-Gg: ASbGncuHHafTzRW490W8UM35e7vRlTsogG/SC6bwGlvt8TkO/DSCPFK667QcgsHxYDi
-	AuhxX5GhThFDNFq76zYUHA5y6thr9s/x4N8PM9ZSofteD0iNbdbkqzuCSfUiz28HJ4PUYAqNRQM
-	/PX3svD8meJD1v5mvK0K6/93YDdWypTLui/nFtqNayx5Vt1jCsMx6yDPnnJX8e3pCpvnK0ZrjW6
-	+VyGGROt0ZHDmAzBSFbbU7hn3g1c1nG8toCoo792MBURgR8LCNeC/ZpmKVmqLaAirVe0RxUG27n
-	GUnzWsUw8F8zFxaLKmuB9Dn4mpVEfbmvOKFY47MF1/G0YChbftMXznL8OVJCUoqLzuA3vflc5C+
-	sBf9STFX5hr6WdC03Jd9pocPdjfZ+UMd5oOjYMSnu2C2BhRJ3HnLCkVDFINsBpJ+d28j24fHxrW
-	1i2hynBDp2WkCzC2UKwm2EYf56IOK2JNOy3d0=
-X-Google-Smtp-Source: AGHT+IHwiiVmhpr3cXk2m6ooZOwHikOG8TzNlWLPGfZ7k5nDMwXDj7hi28vLxatiJoSm+MxMyjxS+Q==
-X-Received: by 2002:a05:600c:34c8:b0:471:115e:9605 with SMTP id 5b1f17b1804b1-477346a92d2mr16118405e9.35.1761909399717;
-        Fri, 31 Oct 2025 04:16:39 -0700 (PDT)
-Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-47732ddd2d5sm27222865e9.7.2025.10.31.04.16.39
+        d=1e100.net; s=20230601; t=1761909455; x=1762514255;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7FW9g8tetROcy3bzpkRVbdV9vmDjQkA5zzLWmu49/bA=;
+        b=PxfN5PAepuME5kt4mXmhHmgHMjxLuIC7HK25RaPlllgjs2P47SZ4ccxOe8I2dQzz28
+         d84Ckk3E2RxWm33iSUiiqVTt6yoaBWGHLXI2xDfNbuH46fuLyZPqStl5ogWLUUduUPQp
+         ofALEjhQjKMtV2pgX7YO50n1zBrV+SzsfxtA88ODJgUz4szdlguiGLqDHSuWYQ+VpZ26
+         0o8HvsBrWftsps8gB0TcCEXYAr1ruzNnVxHQP4f+asu6j4qbEhmcuSoLsTXVSMvQEC07
+         rmQueI4yOHk3jP2bAFQEKvmh6wr9+8KdWdpKnKNgBpjmd2ugk2+MWeo4IfS7RePc36Zb
+         7i8A==
+X-Forwarded-Encrypted: i=1; AJvYcCVrZX32LIRczt0JVYL7zRrJ6kXMOxmWWzO6eB0Dk1Bbjq9nyqY0NiFfgJKJckANWLxokZdXftHcV7urk6c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz45XIQwvaOk/CuLmgJrWULsU23Aj3RGM1nhskXXdtBf0vo1wXv
+	zWVww5CiOpn28jSnIq5+zzBuzkA4hkyGRvfDHpirHySJ6klrwEx02NYH
+X-Gm-Gg: ASbGncsrTBHPKsxHZbD9tLYF0RU3kJvRkGhMt0Is/ivzf9LHmzO0cur9SNKXiU+pWY/
+	JZSA5OHyP7puU4HFmX2N2DfvoCdZrRSo4nEGKQYUGDNsmTjc1Aozbya+AFjtVYg1rwcqo7vE3BC
+	H61Ce0PRrlvc9omPXhuNI+RO2AtUg/61gimgFWG1Sz7hxKC4UP6WOggwbyLYDuxWhyiabH/pO/R
+	xDiB59QzdZsfXLA9UKVmDOWcw5yKtzODp8i3wJjxsOKnvXijLBLwc38Qu6dln4zUtG2GEsNCQrQ
+	5uydJc/pRw8DaIr6Plv5wYFyry+CcfiNUPZiIdjG2E5j9lR3UZImDu+4Dx2/wpRErRl/g2E9J5F
+	RtnOIolzPhnLz5/mk6pXJ4rCnu5YOBnXm363a8GE65Ih+26T1qreFs3csdL8jqyqQQqd5xp9PW9
+	L2660bUDb3OyEXU0o+PGu3Tht4XcYG27so
+X-Google-Smtp-Source: AGHT+IFlhnYfXMSj2T55Ss8vnR2jwuezLPVcKwc/QgNEa6eU9nUkToSG449YGCbPZeDNO/OCtRrkdQ==
+X-Received: by 2002:a05:6a20:5483:b0:32b:7220:8536 with SMTP id adf61e73a8af0-348cad92443mr4451995637.16.1761909455133;
+        Fri, 31 Oct 2025 04:17:35 -0700 (PDT)
+Received: from tpp14s.i.sslab.ics.keio.ac.jp ([131.113.100.7])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-7a7db197366sm1896707b3a.46.2025.10.31.04.17.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 04:16:39 -0700 (PDT)
-From: Marco Crivellari <marco.crivellari@suse.com>
-To: linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Marco Crivellari <marco.crivellari@suse.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Kent Gibson <warthog618@gmail.com>
-Subject: [PATCH 1/1] gpio: cdev: replace use of system_wq with system_percpu_wq
-Date: Fri, 31 Oct 2025 12:16:28 +0100
-Message-ID: <20251031111628.143924-2-marco.crivellari@suse.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251031111628.143924-1-marco.crivellari@suse.com>
-References: <20251031111628.143924-1-marco.crivellari@suse.com>
+        Fri, 31 Oct 2025 04:17:34 -0700 (PDT)
+From: Hiroaki Yamamoto <hrak1529@gmail.com>
+To: Ping-Ke Shih <pkshih@realtek.com>
+Cc: hrak1529@gmail.com,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] wifi: rtw88: Add BUFFALO WI-U3-866DHP to the USB ID list
+Date: Fri, 31 Oct 2025 20:16:34 +0900
+Message-ID: <20251031111641.33653-1-hrak1529@gmail.com>
+X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,48 +88,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently if a user enqueue a work item using schedule_delayed_work() the
-used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-schedule_work() that is using system_wq and queue_work(), that makes use
-again of WORK_CPU_UNBOUND.
+BUFFALO WI-U3-866DHP (0411:03d0) is based on rtl8812bu. I locally tested
+this patch with a retail sample and it worked fine.
 
-This lack of consistency cannot be addressed without refactoring the API.
-
-system_wq should be the per-cpu workqueue, yet in this name nothing makes
-that clear, so replace system_wq with system_percpu_wq.
-
-The old wq (system_wq) will be kept for a few release cycles.
-
-Suggested-by: Tejun Heo <tj@kernel.org>
-Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+Signed-off-by: Hiroaki Yamamoto <hrak1529@gmail.com>
 ---
- drivers/gpio/gpiolib-cdev.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/wireless/realtek/rtw88/rtw8822bu.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpio/gpiolib-cdev.c b/drivers/gpio/gpiolib-cdev.c
-index 175836467f21..602ba46befeb 100644
---- a/drivers/gpio/gpiolib-cdev.c
-+++ b/drivers/gpio/gpiolib-cdev.c
-@@ -700,7 +700,7 @@ static enum hte_return process_hw_ts(struct hte_ts_data *ts, void *p)
- 	if (READ_ONCE(line->sw_debounced)) {
- 		line->total_discard_seq++;
- 		line->last_seqno = ts->seq;
--		mod_delayed_work(system_wq, &line->work,
-+		mod_delayed_work(system_percpu_wq, &line->work,
- 		  usecs_to_jiffies(READ_ONCE(line->desc->debounce_period_us)));
- 	} else {
- 		if (unlikely(ts->seq < line->line_seqno))
-@@ -841,7 +841,7 @@ static irqreturn_t debounce_irq_handler(int irq, void *p)
- {
- 	struct line *line = p;
- 
--	mod_delayed_work(system_wq, &line->work,
-+	mod_delayed_work(system_percpu_wq, &line->work,
- 		usecs_to_jiffies(READ_ONCE(line->desc->debounce_period_us)));
- 
- 	return IRQ_HANDLED;
+diff --git a/drivers/net/wireless/realtek/rtw88/rtw8822bu.c b/drivers/net/wireless/realtek/rtw88/rtw8822bu.c
+index 44e28e583964..2769b86ce1b2 100644
+--- a/drivers/net/wireless/realtek/rtw88/rtw8822bu.c
++++ b/drivers/net/wireless/realtek/rtw88/rtw8822bu.c
+@@ -79,6 +79,8 @@ static const struct usb_device_id rtw_8822bu_id_table[] = {
+ 	  .driver_info = (kernel_ulong_t)&(rtw8822b_hw_spec) }, /* D-Link DWA-T185 rev. A1 */
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(0x0411, 0x03d1, 0xff, 0xff, 0xff),
+ 	  .driver_info = (kernel_ulong_t)&(rtw8822b_hw_spec) }, /* BUFFALO WI-U2-866DM */
++	{ USB_DEVICE_AND_INTERFACE_INFO(0x0411, 0x03d0, 0xff, 0xff, 0xff),
++	  .driver_info = (kernel_ulong_t)&(rtw8822b_hw_spec) }, /* BUFFALO WI-U3-866DHP */
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(usb, rtw_8822bu_id_table);
 -- 
-2.51.0
+2.51.2
 
 
