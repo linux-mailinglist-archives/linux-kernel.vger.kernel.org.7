@@ -1,101 +1,165 @@
-Return-Path: <linux-kernel+bounces-880159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D391EC25011
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:30:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14240C2502C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 13:31:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52B553BDDCE
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:30:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40BD63AE6AC
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 12:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6249348897;
-	Fri, 31 Oct 2025 12:30:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE45734845F;
+	Fri, 31 Oct 2025 12:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="NAacxvQK"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f7SbTAvU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20DEE348477;
-	Fri, 31 Oct 2025 12:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0D41B142D;
+	Fri, 31 Oct 2025 12:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761913805; cv=none; b=ZAarUCKJ8S7e3soI+LpRro8I0SiRjxptUcUj4xMfuV6Iqn55irwgQROXWs+Up9DVvuberOHzJlOYKL2wXanh0zBn51PW6sEVoqpeZVVfHfOGZfKNkVNquwc1wLFicAuH66mFvNugXLPEYWLsmCErA1EY0OqItDj+dMBMx7RBQG0=
+	t=1761913854; cv=none; b=Na57PyCDpAMEeoctr2fSNhROrZN92NLIsh0PA+kejwdfwtnPHGL/xKNoPAs+gV7PskOZSxjpAqQ4Gf/Jb1tGhNQZtU0D4su2VeV9XrYmzpViUkjAJk5ikAAiH29AfQ0/10vWV+tsZP/xLORjwb3P4A+zRAcgoGUJFBRoFjwZheY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761913805; c=relaxed/simple;
-	bh=ZfBeZeOrfeCfA4IySjbQEl56zVTIo3NBKvN2p8nK5EA=;
+	s=arc-20240116; t=1761913854; c=relaxed/simple;
+	bh=EKUBekgrM5YHzOr1CYFWpexPh2n9tyOsa3c5XVlztVs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qVPyclRMg2u40YMiaH2mcOrHQPINz2JfkH+FuWxF3AUxgiKBrG2UGOssPm0aed+1IaSDsZpu23kdWXVIvABqjDwk+PIfhru8soe2tFs0c0neE55lLEm/VP+myn2uQmnurG6ryW4CoH9LbVHScl/Wz2c/rqqCs1MJlxwyspt8a1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=NAacxvQK; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B467A40E021A;
-	Fri, 31 Oct 2025 12:30:00 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id fTS8d06j1pil; Fri, 31 Oct 2025 12:29:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1761913796; bh=5W8cFUSX+1C2+f7kJV0HMrg+JK7CQzCAJMjTC+oP5I0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NAacxvQKxHE0dPthBsBaPtsdILOOvIBJv67+sKLIEqUE44MpKgJnfJoLUKdYiUcXh
-	 P/d0E+/sZv30I8IAq0vjqlXyyFhpHf/ZeZaSlpjDgcZZp8oqe9bXk/RCtOV9HBARv4
-	 34NJnluqgwB3Ez+EnIf9mswJRyp8dZESsMxktoRJO2LeZmvVDRlth9QHUL7QhxcxaI
-	 CMtrulPq6QIf9gSvelYg9VZoSoMXMjjEJP/dr5Z8kDtLaTkR3tMaHxQ2kjRnGbBuEP
-	 uqIsK9G8K8aXmLdQ7qvy4jczlUKiJKPXSGFbc/gTG2FAMPbwDhk0h60/Nmnz+OdxaT
-	 hCQpsnM158Btl2JA/zNqAqEEWMuSZynvwhQdn6iFsT3zHCDeOMjkcsdHYy4c5BA4HO
-	 SyLkQfW/HOOA2bOlaD+/3RZWCVFSH+WhQkWQlgPEXKDikOvh7WaE/yUT+0mI6XMuGG
-	 GHAkgCAkvFb0Ezs6yRAlKAANIOAaPQ1Uhpi/givOfq5JvheZ2sVvftbMWKm+0rJ+la
-	 XmzJPzClpR1+TPPbwTA5/JOhOBIvr/hGDmTBm9LSLTKu1NYUSpbddFCzwsKR7EysDk
-	 fqVL4Lp+EsuxMGZBqX7afwS4G9V/ajIC1FZR+k4eUAchhcZgKGTsHHXaq4fInM0Bf7
-	 HAriFeBSCfkRn4T3SO9L/G+8=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 0538740E016D;
-	Fri, 31 Oct 2025 12:29:38 +0000 (UTC)
-Date: Fri, 31 Oct 2025 13:29:38 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Kiryl Shutsemau <kas@kernel.org>
-Cc: Usama Arif <usamaarif642@gmail.com>, dwmw@amazon.co.uk,
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	ardb@kernel.org, hpa@zytor.com, x86@kernel.org, apopple@nvidia.com,
-	thuth@redhat.com, nik.borisov@suse.com,
-	linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
-	kernel-team@meta.com, Michael van der Westhuizen <rmikey@meta.com>,
-	Tobias Fleig <tfleig@meta.com>
-Subject: Re: [PATCH v2 0/2] x86: Fix kexec 5-level to 4-level paging
- transition
-Message-ID: <20251031122938.GLaQSrsjuXOp6FA8p7@fat_crate.local>
-References: <20251028105637.769470-1-usamaarif642@gmail.com>
- <20251029204814.GHaQJ9jhw4u5SU1rNJ@fat_crate.local>
- <e7h3mlj6x4k36e2ydsmbqkulh3ombhm3j4kvmw4pzlynoaaxjz@yrth4sw2tf26>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kyRf7GMhuLdQor/fk6nNKJIIxTqPG0NICWs+cPU+IIO8FjmT4qUl45k1hTrCm0YKOxDkQR1sTMvxWolI3FiKe2B1nYd1SJgUAvsAdzmlH/Yc1G3pv2jr0G29gtOhjhNlaNoX3V78cVdjloDeH9oGi0o3XgN7fAKPEy7idASJnCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f7SbTAvU; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761913852; x=1793449852;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=EKUBekgrM5YHzOr1CYFWpexPh2n9tyOsa3c5XVlztVs=;
+  b=f7SbTAvUUW1VK17EL9ske+KKNwt15/n+fWtafxwnHw6pCGgIYVBF7eof
+   9kiW+GEhC9EvCNdqCjdQeqYifIk6znlnPp3qBdtXBzTKy+skTQejQVKMn
+   UKnTPs4VMqAPV22tfsYzoyjD5qSEX8MdAxDW5U8FbowBdQfQgXOnhPcUk
+   g74egpKML2ejMljzOoFL9CpppfJWfRkMLp0FGCKLrYkuBYVY3fTn2k1Ze
+   BRzHFy+4lZ0daFZ/QdFHczvt+EiS1yOz5g3BIBkHtRdXnJA1LQGbJpSFy
+   ZQUAiDYFlheQQZbGkm+9K1i4Zr6Z0UnhKzFyM85YZzBnVxTW7p5aijg7W
+   A==;
+X-CSE-ConnectionGUID: 2dPckrK1QaKdg8VQJ0zouQ==
+X-CSE-MsgGUID: NraQ9150QUSdjnqGjRX4Og==
+X-IronPort-AV: E=McAfee;i="6800,10657,11598"; a="64224877"
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="64224877"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 05:30:52 -0700
+X-CSE-ConnectionGUID: XmVY6QafQyWfspjt3dEkwQ==
+X-CSE-MsgGUID: YLrRAJLMSxe/Mv9d4uWDQg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
+   d="scan'208";a="185498784"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa010.jf.intel.com with ESMTP; 31 Oct 2025 05:30:49 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vEoHH-000N64-0O;
+	Fri, 31 Oct 2025 12:30:47 +0000
+Date: Fri, 31 Oct 2025 20:29:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: Samuel Wu <wusamuel@google.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	tuhaowen@uniontech.com, Samuel Wu <wusamuel@google.com>,
+	Saravana Kannan <saravanak@google.com>, kernel-team@android.com,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6] PM: Support aborting sleep during filesystem sync
+Message-ID: <202510312012.eHtS316T-lkp@intel.com>
+References: <20251030210110.298612-1-wusamuel@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e7h3mlj6x4k36e2ydsmbqkulh3ombhm3j4kvmw4pzlynoaaxjz@yrth4sw2tf26>
+In-Reply-To: <20251030210110.298612-1-wusamuel@google.com>
 
-On Thu, Oct 30, 2025 at 10:23:11AM +0000, Kiryl Shutsemau wrote:
-> Older kernels in our fleet run with 5-level paging disabled. The newer
-> one enables it. Machines need to switch between kernel version from time
-> to time for different reasons. Switching from the newer kernel to an
-> older one triggered the issue.
+Hi Samuel,
 
-Thx, makes sense.
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on rafael-pm/linux-next]
+[also build test ERROR on rafael-pm/bleeding-edge linus/master v6.18-rc3 next-20251031]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Samuel-Wu/PM-Support-aborting-sleep-during-filesystem-sync/20251031-050330
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/20251030210110.298612-1-wusamuel%40google.com
+patch subject: [PATCH v6] PM: Support aborting sleep during filesystem sync
+config: sparc64-randconfig-002-20251031 (https://download.01.org/0day-ci/archive/20251031/202510312012.eHtS316T-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project d1c086e82af239b245fe8d7832f2753436634990)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251031/202510312012.eHtS316T-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202510312012.eHtS316T-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> kernel/power/main.c:1159:10: error: call to undeclared function 'pm_start_fs_sync_workqueue'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+    1159 |         error = pm_start_fs_sync_workqueue();
+         |                 ^
+   kernel/power/main.c:1159:10: note: did you mean 'pm_start_workqueue'?
+   kernel/power/main.c:1147:19: note: 'pm_start_workqueue' declared here
+    1147 | static int __init pm_start_workqueue(void)
+         |                   ^
+    1148 | {
+    1149 |         pm_wq = alloc_workqueue("pm", WQ_FREEZABLE | WQ_UNBOUND, 0);
+    1150 | 
+    1151 |         return pm_wq ? 0 : -ENOMEM;
+    1152 | }
+    1153 | 
+    1154 | static int __init pm_init(void)
+    1155 | {
+    1156 |         int error = pm_start_workqueue();
+    1157 |         if (error)
+    1158 |                 return error;
+    1159 |         error = pm_start_fs_sync_workqueue();
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~
+         |                 pm_start_workqueue
+   1 error generated.
+
+
+vim +/pm_start_fs_sync_workqueue +1159 kernel/power/main.c
+
+  1153	
+  1154	static int __init pm_init(void)
+  1155	{
+  1156		int error = pm_start_workqueue();
+  1157		if (error)
+  1158			return error;
+> 1159		error = pm_start_fs_sync_workqueue();
+  1160		if (error)
+  1161			return error;
+  1162		hibernate_image_size_init();
+  1163		hibernate_reserved_size_init();
+  1164		pm_states_init();
+  1165		power_kobj = kobject_create_and_add("power", NULL);
+  1166		if (!power_kobj)
+  1167			return -ENOMEM;
+  1168		error = sysfs_create_groups(power_kobj, attr_groups);
+  1169		if (error)
+  1170			return error;
+  1171		pm_print_times_init();
+  1172		return pm_autosleep_init();
+  1173	}
+  1174	
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
