@@ -1,111 +1,107 @@
-Return-Path: <linux-kernel+bounces-879693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51E9DC23BAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:15:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F766C23BB7
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:16:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CB1E18820BE
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:16:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CB4B1884C0C
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16FF2ED87C;
-	Fri, 31 Oct 2025 08:15:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7580B280A58;
+	Fri, 31 Oct 2025 08:15:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="l0Vt9XNQ"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fHb/SkMi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59186283FD9;
-	Fri, 31 Oct 2025 08:15:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D077F257AEC;
+	Fri, 31 Oct 2025 08:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761898523; cv=none; b=HFy1EXoATbrzGnM7aOoQdh55aN8kb7NoNLZ6Rf7Fiagp8NVD2qejpZelffvhAUY6e14N2E+SxKeiMN9Cg5bT79SHe4O9iLca9FWNzottyhCgzQl7BcMbsXzAdw4MUuUSoLQCTWiE0mp0iHMDNQySlrr3WoufeDeEfg4ecTHfhv8=
+	t=1761898529; cv=none; b=aRvl0YEVzlTB6l2kJXC8Z5IudV0ZENEsA8pAMBgWkEhySXr91SegG98/EDFdq76PJh/hOVguK5lQ4k+ciZcBKLF2yA/ILUSTheXtVimsXSD8roHR6VK4Gv3Gk7GFKDrcU2I10eHbYlFbnrNs8RvPGyKIYFHx2QXWwnSIobnao9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761898523; c=relaxed/simple;
-	bh=TkuW446e07aVvRNoD/2OBW7hiIMfiCZOhDLN5PcO/ww=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KZ9Zp8vX0LpniCPe6/9UAqdy2TpU9NeVIYGQVkHjTXa3I+PVx/Y9ojg9rQztIgcgNPWotIYAnmNRI9kFnw02HucuMHMC90FtGAnMeYKa7PAIBy9nP5MRsttwSV/dFihv/Tuxydxcg3gAi+N1tjYBuZ5kz7vEEqNg3QCW+p0yVho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=l0Vt9XNQ; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 7C4D7A06F4;
-	Fri, 31 Oct 2025 09:15:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=mail; bh=fNyFuLbHFHMnPQduFVhMqMv+ss2KCFXTeDgcG6D6th0=; b=
-	l0Vt9XNQYUiIPK2wKMwxgMw9z/Z91aKTGxWlMQHOddJGGCpwasn1GG9Zz0vjzGDn
-	N/7WVP7ckHvAykxlppOV1ISG68ueyldIZMqtovHatCX6/ZrqQiru0Q+GpMX7Y5YY
-	e6cv3vP617seQAs2G1Gl0j0LERfVM6omd/kj0Pl3WYu9irB2Y6yHnLVeAlPiNyRb
-	A8vhHLDqemMHSTbiOmiI/SqI5LjMjQDwg07p2lXZjYvUCamcuATpYu/fknazebnG
-	RHEEuXIqXpe6TaKgeuLT6NuNmJf0jKVXOIPHFYG5Py41nwXXC2qm8WfXMNsWv/F0
-	0mGCpc34MStwQ49+2ntArb08CAb/q0xc0aSGvFbWyITcJBJNyEOnjVAORN5zM21V
-	PBzcwkZ6Ru48TjHlywu3MGsVyI+svfGQWPglawFx0HCXq824htU1+M59h7DBvCoi
-	WK5MgaR/ZAb/XqIHuhysIyVUcY3JpIZNT6B4D0zqPqL6ihexkijZA7jGDX+4C5Jp
-	IASkZ4SEqmDGP62RLZjXF6j5NnPyVQ/0zBA82/o5hPEO+u+nJdnar9HVClyoWOyO
-	EpET8Fg8oiCUtg3ta/9zjbLlyfNKGklqyxbfiXNjwqnid9bplaZDbaJkpWzKn+rS
-	+D0P9w0nS8pwqoUDSp5GGtpv2dpGAbY8qZOlUqnYg34=
-From: Buday Csaba <buday.csaba@prolan.hu>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>,
-	<netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Buday Csaba <buday.csaba@prolan.hu>
-Subject: [PATCH] dt-bindings: net: ethernet-phy: clarify when compatible must specify PHY ID
-Date: Fri, 31 Oct 2025 09:15:06 +0100
-Message-ID: <b8613028fb2f7f69e2fa5e658bd2840c790935d4.1761898321.git.buday.csaba@prolan.hu>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1761898529; c=relaxed/simple;
+	bh=LpMT6+KdYml7IMGouPrjUtsmwkVq4998zVK5tNtOfIg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OzFaR1Wmq8IeHVjxaPt8WHHR77sSixsypN703FKPdkabHMy0r6vU0o1cnPpGegPSQIlkLsSHrgwQ6BrquxOxoJgkkzkKtAilLoCYk/BQeoMtevDAeR8GmnbPo38N4CkcJXvgLpQVEkPPFLnxtGObjB4y0Wt1jMVi8kNJDjK7KAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fHb/SkMi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7722EC4CEFB;
+	Fri, 31 Oct 2025 08:15:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761898529;
+	bh=LpMT6+KdYml7IMGouPrjUtsmwkVq4998zVK5tNtOfIg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fHb/SkMiLB1KIJCF8ifz25lBccCapXvWtnBNrraT5G3gDKud3anb6rbeTopV+RmaW
+	 IcnNnOLWVsNAf8tBLuFWDlRBqz7dnuC5OuIJfPx6XjafqoLUMSCJLVj5fPQxusri9k
+	 y3rjeSHd2TXpbTd/N95PNIhJCwgr0y/pfnX3TIS4mMaxyDhyvti/jaEkAmEvYvTR/H
+	 TF6WuEUhsDZ2P/VAqFufF1eIxgt7YwKmhfmGACao6fa/7OfcPHccN3mmKXV37mhM6l
+	 NoD7/CcKjzg9KyXd0yL65qUAp8EGr40xfsCSGIVLwZX7XhdbuuoNOSJdNF3zaYKTc/
+	 AFt64KnQFbpew==
+Date: Fri, 31 Oct 2025 13:45:17 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
+	bjorn.andersson@oss.qualcomm.com, arnd@arndb.de, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org
+Subject: Re: [RESEND PATCH] arm64: defconfig: Enable SCSI UFS Crypto and
+ Block Inline encryption drivers
+Message-ID: <w52ajxs5rszlw5tyuezgf5ym2sz5nqnqlm2bbvbfvqy2rbth6v@jttotxort4rb>
+References: <20251030095509.5877-1-manivannan.sadhasivam@oss.qualcomm.com>
+ <27841a96-b8a5-44aa-b0ef-d8bab9ba3477@kernel.org>
+ <2oynmuekw5lnzl244uqz2aehpg5rhttddu43lqplnxemyjd3g5@6yzchzihe57h>
+ <6f9dd9f2-5b4c-4600-a537-d7c8e1ad0f9b@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1761898508;VERSION=8001;MC=3880224194;ID=191218;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A296767155F677D62
+In-Reply-To: <6f9dd9f2-5b4c-4600-a537-d7c8e1ad0f9b@kernel.org>
 
-Change PHY ID description in ethernet-phy.yaml to clarify that a
-PHY ID is required (may -> must) when the PHY requires special
-initialization sequence.
+On Fri, Oct 31, 2025 at 08:45:38AM +0100, Krzysztof Kozlowski wrote:
+> On 31/10/2025 07:24, Manivannan Sadhasivam wrote:
+> > On Thu, Oct 30, 2025 at 08:48:48PM +0100, Krzysztof Kozlowski wrote:
+> >> On 30/10/2025 10:55, Manivannan Sadhasivam wrote:
+> >>> These drivers will allow using the crypto functionalities of the UFS
+> >>> device, like Inline Crypto Encryption. Both of these drivers are of type
+> >>> 'bool', so they cannot be built as modules.
+> >>
+> >> Is there any device benefiting from these? Which board?
+> >>
+> > 
+> > All ICE capable Qcom UFS based boards.
+> > 
+> >>>
+> >>> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> >>> Signed-off-by: Manivannan Sadhasivam <mani@kernel.org>
+> >>
+> >> You do not need the second tag. You send it via oss.qualcomm.com which
+> >> is still valid.
+> >>
+> > 
+> > Yes, I know. But I was having some issue in sending email through
+> > oss.qualcomm.com. Now it got fixed in the RESEND patch, but forgot to remove my
+> > korg s-o-b.
+> 
+> 
+> You do not need second sob when sending through korg. Your previous
+> identity was still valid. It's used only when old identity is considered
+> revoked.
+> 
 
-Link: https://lore.kernel.org/netdev/20251026212026.GA2959311-robh@kernel.org/
-Link: https://lore.kernel.org/netdev/aQIZvDt5gooZSTcp@debianbuilder/
+Hmm. I thought the s-o-b should always match the maildomain from which the patch
+was sent.
 
-Signed-off-by: Buday Csaba <buday.csaba@prolan.hu>
----
- Documentation/devicetree/bindings/net/ethernet-phy.yaml | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Thanks for clarifying.
 
-diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-index 2ec2d9fda..6f5599902 100644
---- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-+++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-@@ -35,9 +35,10 @@ properties:
-         description: PHYs that implement IEEE802.3 clause 45
-       - pattern: "^ethernet-phy-id[a-f0-9]{4}\\.[a-f0-9]{4}$"
-         description:
--          If the PHY reports an incorrect ID (or none at all) then the
--          compatible list may contain an entry with the correct PHY ID
--          in the above form.
-+          If the PHY reports an incorrect ID (or none at all), or the PHY
-+          requires a specific initialization sequence (like a particular
-+          order of clocks, resets, power supplies), then the compatible list
-+          must contain an entry with the correct PHY ID in the above form.
-           The first group of digits is the 16 bit Phy Identifier 1
-           register, this is the chip vendor OUI bits 3:18. The
-           second group of digits is the Phy Identifier 2 register,
+- Mani
+
 -- 
-2.39.5
-
-
+மணிவண்ணன் சதாசிவம்
 
