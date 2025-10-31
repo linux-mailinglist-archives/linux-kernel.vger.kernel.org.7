@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-879773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F5F2C2400E
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:05:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3078C24008
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:05:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7425856741D
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:02:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA7331A20B9E
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238CF32E755;
-	Fri, 31 Oct 2025 09:01:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E65330B1C;
+	Fri, 31 Oct 2025 09:02:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="01K1rCA1"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="k3w+Tc2/"
+Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7402132D0F2;
-	Fri, 31 Oct 2025 09:01:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD0E32ED44
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 09:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761901318; cv=none; b=gTN/YAejVQkqSaiH7uEJkY343ReyvMqUoy8zBkPCpXM1lYq97b66oY8R/djTa/cqv589VtkN7yYFVWmN16iTHn0ozy9AOn8wnisK0ebruaTkkhRWk9a12IYHhMxd2dOUTixpbMx8qvVf1QEUolmnJNcn9JElzSe+I4qFbmBHovk=
+	t=1761901322; cv=none; b=ukLSf3Fad48FlyroMlvpkgLXjI4iNAxc+6nVmp1R+v8NeGGWjQkeMR/yBgnxHgazAEye0/BQwj80TQI6qFxOLIlMCl80YDewna5Bc+wjSytdyrWPiNSkOBptR/1xaHM3v7ancNB9NLVY9MboGwPFjhz6p1cQkZ2zRf0tSC4EeEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761901318; c=relaxed/simple;
-	bh=mqvC6RlbP3oeEflL7AIfw7ofEo2NITuMjz5Yg98lAwA=;
+	s=arc-20240116; t=1761901322; c=relaxed/simple;
+	bh=pMUGzYjbOegFHkT1FuYNVbyBzYCy/Ejns06DI02dhcI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hsCNxNwiJ2KjuZcuKeYepeGfUdbhn3Gm9nrpjMoumRIRXbQDNgJVf0KyBQ3pyN29WpymbH3AsMRfhk3HQM+aXtFQ12kczAhkBwu04BeaEEFmcd8KzoI38YVTT9dK7vWFtb3ZePq9GJtuyVA5ibxuFL895oqQWJ1hr7Nk+9bSzQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=01K1rCA1; arc=none smtp.client-ip=185.246.84.56
+	 In-Reply-To:To:Cc; b=qrlC+xTDj4/Y2zlYrmB7c8ZxPhd62Rf190RC/w44X/sbKF53X9hzGcHIWs/WpVzjiCKiqpC55enUTaVaKtasuU6YolgJ8ErxIys9Q4u872DH27vwuk+soIlHbUIOA7pA1OqvTo6a1bHxao20gCZahgzg6XqVu9GhWbgXK2Ud1hI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=k3w+Tc2/; arc=none smtp.client-ip=185.171.202.116
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id B2F7A1A17A8;
-	Fri, 31 Oct 2025 09:01:54 +0000 (UTC)
+	by smtpout-04.galae.net (Postfix) with ESMTPS id 168C7C0E94E;
+	Fri, 31 Oct 2025 09:01:38 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 8229260704;
-	Fri, 31 Oct 2025 09:01:54 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id CCB3A1181083D;
-	Fri, 31 Oct 2025 10:01:51 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 92B7160704;
+	Fri, 31 Oct 2025 09:01:58 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B7BEE11810848;
+	Fri, 31 Oct 2025 10:01:55 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761901313; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1761901317; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=0dcDKq9UuBF20o0hyNzb1Nz3YZY3Z4xE5wso7h6K0Sc=;
-	b=01K1rCA1W+aEl0wk61vycso2DndXwdNGIeDX8edqTDo0yicG1WoV+arUK21ttnUpUW13JZ
-	CY5VaWWXoxoZP3+hclLqf3r6sF8bBRkXuLgun0QKW92EkwnZSHRCSAIfSPJ5C3WKo5eFh7
-	2uJvgesb1oaxuN08rqH3dhrhgc1HOalZjgrm+TO2dP7SQ7ayfoWqxgkbCBDhm6/5kXj7FM
-	evRBCgofpMNmwW2MzAKQPm7zuR6WdHsAPpxZU4G2+dFamfWruI2RQI0wtqohxkzNGsIxRV
-	SxlvHKOeXPx1SNwTCeWVWR8jl0oIXz9JEmntQtMAp6Jvm93x/76SVPCYHg0Vvw==
+	bh=OV3wcdNzU1YfXWJ7DsorNSNJWoONphM2tAJI5bX7CJo=;
+	b=k3w+Tc2/LyqKRzh1F8MYwVSx5Bxpx9fY2jfwXYZsifPPCvZ1EPX48l88hxNgeQDiJ8I57J
+	Rycs1WbQDn97olU+mvf5877HinAi/sAGpgFU1vyhNR5t1dpsvW+0gme1Qb6ZaQxnNlp7RP
+	Bf+PX6Q8sowyJ7TLXZvraxD5oNlkWyLZ/EOGwMnDzIb0abGstJMc7RPxJrGaxtLbck+qxz
+	RNa5En15rOzkAgQuzibPgvQkRUT6dbRrH9AMudxxUUS5Tiae9lJWIasRFplRPDgN/edpOA
+	ljzOqea+BcIrCped1Tzw+C1q9ZUvFVPnA66J41U66Mktbaock+Tw+rnjdJe9ig==
 From: =?utf-8?q?Alexis_Lothor=C3=A9_=28eBPF_Foundation=29?= <alexis.lothore@bootlin.com>
-Date: Fri, 31 Oct 2025 10:01:41 +0100
-Subject: [PATCH bpf-next 1/3] selftests/bpf: skip tc_tunnel subtest if its
- setup fails
+Date: Fri, 31 Oct 2025 10:01:43 +0100
+Subject: [PATCH bpf-next 3/3] selftests/bpf: use start_server_str rather
+ than start_reuseport_server in tc_tunnel
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20251031-tc_tunnel_improv-v1-1-0ffe44d27eda@bootlin.com>
+Message-Id: <20251031-tc_tunnel_improv-v1-3-0ffe44d27eda@bootlin.com>
 References: <20251031-tc_tunnel_improv-v1-0-0ffe44d27eda@bootlin.com>
 In-Reply-To: <20251031-tc_tunnel_improv-v1-0-0ffe44d27eda@bootlin.com>
 To: Alexei Starovoitov <ast@kernel.org>, 
@@ -78,31 +78,86 @@ Cc: ebpf@linuxfoundation.org,
 X-Mailer: b4 0.14.3
 X-Last-TLS-Session-Version: TLSv1.3
 
-A subtest setup can fail in a wide variety of ways, so make sure not to
-run it if an issue occurs during its setup. The return value is
-already representing whether the setup succeeds or fails, it is just
-about wiring it.
+test_tc_tunnel currently uses start_reuseport_server because it needs to
+frequently start and stop the server, so we need SO_REUSEPORT to avoid
+getting errors on server restart due to the socket being in TIME_WAIT
+state. But the test is only using one server at a time, so it is a bit
+confusing to use this API.
+
+Replace start_reuseport with start_sever_str, and provided the relevant
+callback to set SO_REUSEPORT.
 
 Signed-off-by: Alexis Lothoré (eBPF Foundation) <alexis.lothore@bootlin.com>
 ---
- tools/testing/selftests/bpf/prog_tests/test_tc_tunnel.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../selftests/bpf/prog_tests/test_tc_tunnel.c      | 24 +++++++++++++++-------
+ 1 file changed, 17 insertions(+), 7 deletions(-)
 
 diff --git a/tools/testing/selftests/bpf/prog_tests/test_tc_tunnel.c b/tools/testing/selftests/bpf/prog_tests/test_tc_tunnel.c
-index cf2e088bfe8e..1d8d38e67f8b 100644
+index deea90aaefad..8e3fe6dc6221 100644
 --- a/tools/testing/selftests/bpf/prog_tests/test_tc_tunnel.c
 +++ b/tools/testing/selftests/bpf/prog_tests/test_tc_tunnel.c
-@@ -666,8 +666,8 @@ void test_tc_tunnel(void)
- 		ret = build_subtest_name(cfg, cfg->name, TEST_NAME_MAX_LEN);
- 		if (ret < 0 || !test__start_subtest(cfg->name))
- 			continue;
--		subtest_setup(skel, cfg);
--		run_test(cfg);
-+		if (subtest_setup(skel, cfg) == 0)
-+			run_test(cfg);
- 		subtest_cleanup(cfg);
+@@ -69,7 +69,7 @@ struct subtest_cfg {
+ 	int client_egress_prog_fd;
+ 	int server_ingress_prog_fd;
+ 	char extra_decap_mod_args[TUNNEL_ARGS_MAX_LEN];
+-	int *server_fd;
++	int server_fd;
+ };
+ 
+ struct connection {
+@@ -131,20 +131,30 @@ static void set_subtest_addresses(struct subtest_cfg *cfg)
  	}
- 	cleanup();
+ }
+ 
++static int reuseport_cb(int fd, void *opts)
++{
++	int one = 1;
++
++	return setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &one, sizeof(one));
++}
++
+ static int run_server(struct subtest_cfg *cfg)
+ {
+ 	int family = cfg->ipproto == 6 ? AF_INET6 : AF_INET;
++	struct network_helper_opts opts = {
++		.timeout_ms = TIMEOUT_MS,
++		.post_socket_cb	= reuseport_cb,
++	};
+ 	struct nstoken *nstoken;
+ 
+ 	nstoken = open_netns(SERVER_NS);
+ 	if (!ASSERT_OK_PTR(nstoken, "open server ns"))
+ 		return -1;
+ 
+-	cfg->server_fd = start_reuseport_server(family, SOCK_STREAM,
+-						cfg->server_addr, TEST_PORT,
+-						TIMEOUT_MS, 1);
++	cfg->server_fd = start_server_str(family, SOCK_STREAM, cfg->server_addr,
++					  TEST_PORT, &opts);
+ 	close_netns(nstoken);
+-	if (!ASSERT_OK_PTR(cfg->server_fd, "start server"))
++	if (!ASSERT_OK_FD(cfg->server_fd, "start server"))
+ 		return -1;
+ 
+ 	return 0;
+@@ -152,7 +162,7 @@ static int run_server(struct subtest_cfg *cfg)
+ 
+ static void stop_server(struct subtest_cfg *cfg)
+ {
+-	free_fds(cfg->server_fd, 1);
++	close(cfg->server_fd);
+ }
+ 
+ static int check_server_rx_data(struct subtest_cfg *cfg,
+@@ -188,7 +198,7 @@ static struct connection *connect_client_to_server(struct subtest_cfg *cfg)
+ 		return NULL;
+ 	}
+ 
+-	server_fd = accept(*cfg->server_fd, NULL, NULL);
++	server_fd = accept(cfg->server_fd, NULL, NULL);
+ 	if (server_fd < 0) {
+ 		close(client_fd);
+ 		free(conn);
 
 -- 
 2.51.1.dirty
