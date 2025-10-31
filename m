@@ -1,399 +1,273 @@
-Return-Path: <linux-kernel+bounces-880637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58058C26330
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:46:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A97EC263A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 17:52:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 621F71897E9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:43:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7AD8562D65
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE44F2F619F;
-	Fri, 31 Oct 2025 16:42:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B08D32F3607;
+	Fri, 31 Oct 2025 16:42:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eq5VMBc4"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AKv5CfzT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264702F6581;
-	Fri, 31 Oct 2025 16:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761928944; cv=fail; b=OR0H8GnVbY9V9oYZwDi9FVOFhfL3sJpi8Qw3qyZx7Eriy7ot/qdNCJB8lGDJIoZEIYm0yJssOI/QtYwUVDnVC1AP2hJZ8F8rwlTar1iRT62RksgPx4ukKxU8l9BhNQaGXjiP7Q3pBgh6W9oQJiLRQxpePiCz79pB2NP2SwpW/Ls=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761928944; c=relaxed/simple;
-	bh=gSafGoFPEp7BpKihCdYky0NFDY3fNQZL5fMqD88H/Rw=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=f1T9w868Hf1lEGGdLiyRmBAyhdSizZj0OXDWR+OnwPPqvEtEl/i/fcGCw61RvvrksnPCCbpIaFZD3wpNc2Kq/HWv9vWT6+gR5pY+4nci5MfQ2gUYKeAtC/vAHIuzmbJXwMXzvFrGgSQWFbCJPz/QYvyvSKTVMl5y+2FCXb2WuEg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eq5VMBc4; arc=fail smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64C22F6183;
+	Fri, 31 Oct 2025 16:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761928959; cv=none; b=LuOy+aUClSBNoyoqlGCnKpEEy5r784ScXSi/0ovAGmhuP+0b4vM3wKrdEn33keQfZ4C2GfjafAMqcITjj8EXlxMfXnUON+mamABRkwC+2K4MwmUlfCzkokcFPZwZy3Cv+5ug8phdxfR6DB5dVcIObbH9fbd6cHrdrkReRUokL9g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761928959; c=relaxed/simple;
+	bh=y9SS1AanRaN3IJF7ZKQYXKyWoIq2zbJr960kdKeZFA0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GbP2rgld+hdxkJeYvVFilNeehOyH9SfCjoQqb1A7pAHAMf6xDEPIugNFwUG7eJDeBlNr3Wnat6HlGzBSw3zXME/0CLB1FzFYEYAn5JbqaBch+I1MqJN4IGYNVSw6Bzbjg/w7gAapdKrWB5xYNGyq90/pa9DF8gPpKWYC0OZ6Qwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AKv5CfzT; arc=none smtp.client-ip=192.198.163.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761928934; x=1793464934;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=gSafGoFPEp7BpKihCdYky0NFDY3fNQZL5fMqD88H/Rw=;
-  b=eq5VMBc4qDys1WqATWBY8RvrR38QU1vU9ya6rn4hhEHSLL8E9GevruLR
-   yltSeR+J+rwMAHuDKeC54QdzfRjygK/b/vQP6KDretVr8nAc2rArRpc1l
-   hDWbD+oqoFRL+K5TRahKS5hzPC/IuSoLPQAG4o5TeFJtklItCZIEdkPEJ
-   sfQ6buMzpsSkejs1KIzK1Wi6+O+VgyYqyJREoBOG1wE1WJD0Ftyc53CSq
-   2LB4D/vXzT+T8iR+tNrRAAE5qB+2BaimyngbQ6WPyCTp1WQMLRQlTqbDd
-   9qcQILjuXolm3cefe8f1SRTZBhSAOcJu78Df4pyQ4oye40Sbt81fe97lm
-   A==;
-X-CSE-ConnectionGUID: OxyIwpBhTymZ4P18s9GVLQ==
-X-CSE-MsgGUID: OlNjS88mRKONQ+LqzUD8jQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="75543337"
+  t=1761928955; x=1793464955;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=y9SS1AanRaN3IJF7ZKQYXKyWoIq2zbJr960kdKeZFA0=;
+  b=AKv5CfzTW2SQUVJAULy0Mk7xoHoXqzpwdDjIl1JLBcilat6ITZaWdsqI
+   xSUQPTAofRAR4JrzrpJBEv2q5yKfh3AK+/dkV5ZZWFCQFN3zCU2xz5PcB
+   qvV8S+e1j8H7f/GMRP/Splr6tNRZrCeqPTrmdrAHxLjlp0T0u5B0w7Nnv
+   /nL8IMsNbWZ+hDIDh4L7Bfzc7rFYA3empDPCT97btvIWhMFwmhHo8y3Qi
+   Wj3i1yXCRpQhBlU0QFbyizDjhGpGg5F31aQ8NE77iEr/sbNz7gFO2a75R
+   YaKUET9ti72zwZ2c22uAb6tUWx2j9kfOhOgVEGPYljvNtrV9L0uDnsW03
+   g==;
+X-CSE-ConnectionGUID: jl5jQaLgRxSPCWE32mzneA==
+X-CSE-MsgGUID: rlSdTnIlSHmeuFJS6heH0g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="67954794"
 X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="75543337"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 09:42:07 -0700
-X-CSE-ConnectionGUID: IVFqzwL2RraGEWiwR4IoFw==
-X-CSE-MsgGUID: MgcyzYmjQjqy8obwzwxrJg==
+   d="scan'208";a="67954794"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 09:42:29 -0700
+X-CSE-ConnectionGUID: BoHLWMZKSxalHKuavq7lIQ==
+X-CSE-MsgGUID: JvpjFaUfTUCJl1yAWJcl3w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="186214041"
-Received: from fmsmsx903.amr.corp.intel.com ([10.18.126.92])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 09:42:07 -0700
-Received: from FMSMSX901.amr.corp.intel.com (10.18.126.90) by
- fmsmsx903.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Fri, 31 Oct 2025 09:42:07 -0700
-Received: from fmsedg902.ED.cps.intel.com (10.1.192.144) by
- FMSMSX901.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Fri, 31 Oct 2025 09:42:07 -0700
-Received: from CY7PR03CU001.outbound.protection.outlook.com (40.93.198.45) by
- edgegateway.intel.com (192.55.55.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Fri, 31 Oct 2025 09:42:06 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kv+DcEiRotcrSqk8Lr3STYwzcABeRMMgXFg3cvxJ1nRl0OMlQv4ktWaVEXTXLXw7AYKYJyIhrMadrDy+he5AnnBcFVQ1qOdeWPgUvgYNcEZWQnMuY+SoY64g7zdzy7GAKe9NrhSHe37bCFSryewjha2IE3HZsXVzxZ13xh258oKpPiMPSdngFE2oQJnfVrK3dtt98gcaXmjXpj6kn05hQbxBOZ7uPyhqLQA0uV0IGVzqcTKL0FL8dJk/EholMmd8ROi06AYcD274y41oMLxjrS7SZKpGRM1nR8QwcF5x8hK0etwOogOh3zuOmtG57uET2B5f2uQQBCkgQMaLJ7uKkw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=839dnX3WGJjujAdXvOPO/B9iKGp2/wejwoq5its3SJ0=;
- b=t7duHB4bxTWX7WT++GOyjJSfY3RxEIs+tl4yG7C51b2Kh22BMOEjx6RWemZWHdukDMTx1dH7myt31YtWkEbbsN6CNtvaCgs7i+6Exfc9KcX31Kjrr7XVW+9dvnvKoMBJLTMA5nGKugNSeNbfqoEcpx6oGQMuFjQYDmaCjMmVoE7faF5PytzA2VQCeTYVT1pLr4mF+qlhHArsZRpwjCAcEyY5xRjoTx6w6Znxz4Ep6UQPn5hu0d7seLDvYWKEn6CrdL/S6MYUhsi+s9hgzuZ9MG0F8fIQjs1ztgNECeiMGy9s3dryVpNPTWD5izful4hxHe67kZEYHOVfnx8iyOYS5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN0PR11MB6011.namprd11.prod.outlook.com (2603:10b6:208:372::6)
- by BL4PR11MB8823.namprd11.prod.outlook.com (2603:10b6:208:5a6::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Fri, 31 Oct
- 2025 16:42:04 +0000
-Received: from MN0PR11MB6011.namprd11.prod.outlook.com
- ([fe80::bbbc:5368:4433:4267]) by MN0PR11MB6011.namprd11.prod.outlook.com
- ([fe80::bbbc:5368:4433:4267%6]) with mapi id 15.20.9275.013; Fri, 31 Oct 2025
- 16:42:04 +0000
-Message-ID: <fda784ef-0817-43f3-a058-15517f5c38eb@intel.com>
-Date: Fri, 31 Oct 2025 17:41:57 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 08/28] drm/xe/pf: Add minimalistic migration descriptor
-To: =?UTF-8?Q?Micha=C5=82_Winiarski?= <michal.winiarski@intel.com>, "Alex
- Williamson" <alex@shazbot.org>, Lucas De Marchi <lucas.demarchi@intel.com>,
-	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	"Rodrigo Vivi" <rodrigo.vivi@intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Yishai Hadas <yishaih@nvidia.com>, Kevin Tian <kevin.tian@intel.com>, Shameer
- Kolothum <skolothumtho@nvidia.com>, <intel-xe@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>, Matthew Brost
-	<matthew.brost@intel.com>
-CC: <dri-devel@lists.freedesktop.org>, Jani Nikula
-	<jani.nikula@linux.intel.com>, Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, "Lukasz
- Laguna" <lukasz.laguna@intel.com>, Christoph Hellwig <hch@infradead.org>
-References: <20251030203135.337696-1-michal.winiarski@intel.com>
- <20251030203135.337696-9-michal.winiarski@intel.com>
-Content-Language: en-US
-From: Michal Wajdeczko <michal.wajdeczko@intel.com>
-In-Reply-To: <20251030203135.337696-9-michal.winiarski@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: WA2P291CA0034.POLP291.PROD.OUTLOOK.COM
- (2603:10a6:1d0:1f::7) To MN0PR11MB6011.namprd11.prod.outlook.com
- (2603:10b6:208:372::6)
+   d="scan'208";a="187016744"
+Received: from abityuts-desk.ger.corp.intel.com (HELO [10.245.244.98]) ([10.245.244.98])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 09:42:24 -0700
+Message-ID: <79bbbd8b-e60b-435b-82b6-ea59230997e2@intel.com>
+Date: Fri, 31 Oct 2025 16:42:22 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR11MB6011:EE_|BL4PR11MB8823:EE_
-X-MS-Office365-Filtering-Correlation-Id: 10864c94-11e4-4d59-8e82-08de189c6ba0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024|921020;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?L2pQT2N0Qlc0cWVsandQSWFYTnVCK25keDlLMG1SMy80dWltK21DeG01M0Vs?=
- =?utf-8?B?UXhZN05aR3VaUUlVdVdSMDgrdWo3NXR0S1RwS1UyT3YrTTZyUWVzWTVFYnF0?=
- =?utf-8?B?RVh5SWwzSWdSM2FXZTNjT2RaeXA5MW5PbHd4eitnV3JIN2JRUUVUSEs1TU96?=
- =?utf-8?B?S0dURkVCcVNXRW1nQzhRNXAza01pdGJOUjQwUXVvV09TY3RjUnFhMzhRcnJR?=
- =?utf-8?B?a2ptdnlwVkg3TUlpZmpVc0MwS3R5UHJCVnNpc3VGZEFhZGJhQ0RVMDRUM2Rw?=
- =?utf-8?B?Y29EUWdvSVkyVTlqTHIrTExIN2tjTUEvblErZ05UaFJqaGRoZmt0OXNRbm9T?=
- =?utf-8?B?MitKa2Nib2puRmJIcmg1b010bWhjVTVVdzA3d1l1R3A3NVFJbFBmRko2MnA0?=
- =?utf-8?B?WVZLN3Z1dlVQd3djaTQyamZreDVMdTEveVZNVmQ4Y21JbDM2aHNUZ3E2SkQ4?=
- =?utf-8?B?eGR1YzZESFR4Wk5GVWZCdGUreExNZzQzZmsxTW93WWwzY3lpZzkxWVBhOVNz?=
- =?utf-8?B?WmM1bVFqMGhUSy9saVJGemxUMGFYR2pVRjE1bmM1c2hiaDErOEdlTytpREFS?=
- =?utf-8?B?elVlbkJ2THdGMjRQMUI0eGQveFM2eTVNQWNEd1A1MXYwNFhmVmtST0ErTktJ?=
- =?utf-8?B?NmZRY21OTnY0QzZ6a3BBc05oTGx2S1BWYlJzanRTc2FBWTRmUnUvUkdUb045?=
- =?utf-8?B?V3d4TFJUaTQrWmdGYlRXREVMTWJOdFpwcEp6UXJUZmd6Y2R3UDZ5UnF3ZkRF?=
- =?utf-8?B?WjhFZ1NLbDJlVXc4dDArVmI5N2pMaXJVZ2tweXNEc0toUkEzaHJ3Y25tUFdw?=
- =?utf-8?B?YThtZFZSSUdsakFQK2lUQnVkRDhxYkd6Sk9GT0RqRWxlWmlvb1lOSlltdlhS?=
- =?utf-8?B?dE5IWDdtN2lqcFlDQ1hmQlhBaWd2bnYxWVg0K1VZdFZMdHpXM1MxL2tOM3N2?=
- =?utf-8?B?M0I3RU96cEJTejhPVEh4YXJBdnp6NnowUFc4RFMrdFlMTmhYLzErU3hWZDJy?=
- =?utf-8?B?ZzREZm9HcC93bldlYkhEY3o1YXYzV1JORTd0QTVtUGVTVGdZcThnckFqMVht?=
- =?utf-8?B?VHJMVEdMZzJvVTg1VTlpd0ZsZHNSSTRhWjQzWHJOK2hyYUVwK1FUanY3M083?=
- =?utf-8?B?SkpkUEwrdzVvbTBPcUdETU14c2hIZVBFVTFvVmd4YUR0ZHZGODluSURJVDZR?=
- =?utf-8?B?cHhKRXY4eno1UndFNkR6OElFUWROOEczQlYwbFJNUmE5cWhwMWJzN0xrbHlB?=
- =?utf-8?B?aHhIZHZJYWo5N2dtUVU3ZWg3bGxDTGpGeHJ6b3dOSXV2dG5tMVZ0aWpNS2w2?=
- =?utf-8?B?Q2d2ZkJnN3p0Q3RscUtTWDNWb3BvNFhLZXQxQ3JPRTVwR1ZrU2FIcUdHWEti?=
- =?utf-8?B?NDhaWGVpaXFINlN1dDZtb014a1Q0NjZONTVWdkVjS1d2MFdQMzRJNGVLWVZX?=
- =?utf-8?B?Nmo0TjRXaEhKVW90bklBS1Nra0dEd2lKUVdYYlQ2V21ZeHlBZEoyU3lXckFN?=
- =?utf-8?B?OVZqYUZLVXpIK0pDTkNWMmtpMkluUlc3Y016MVBudU1PUTFOR0ZsMUJ1b0JU?=
- =?utf-8?B?S2xKRSs5VE0raUdXcU8vOFdrUHpUNVdCYm5oK1U3U3FmNnhIVXh4SnAreG5Z?=
- =?utf-8?B?K1I1azB2RmE4Mk40MmFSdThmVjgva3BBcWRhcjhTa0FDTGxRNXdIblM0VVg5?=
- =?utf-8?B?SmR0b2oyS0pNZjFiT0JNTzRhYTJvV0tsSERkd3ZHQ1kwRTBBbWw4KzA5ZzYx?=
- =?utf-8?B?RDZKRlFQcUxwMmN0QWd2Z3BtMUVyRXVjajZoMVlTNGNWMElXZWM2WEo3ZzFy?=
- =?utf-8?B?Z0F2RkhDTU9nMTJ6Uk9Ic1Z6S05TVU5iRCswZGhIeU1mQ2FZZ0tETFRGK2kz?=
- =?utf-8?B?R3lMK2hMbmM1Qm5Hb3E0WGw0NjNhVDMwcTFhZk1HclpWU3RJeVVHamQ3TnBj?=
- =?utf-8?B?cW9HaW1ITnhRTkk2WG1sRTNKYWJtOThMVng5TTJ6YTBhYjNzOUR2REErYmNh?=
- =?utf-8?B?LzhiWFYrbmwzVW5GUXU3eFRlMGp1bTBESkQxVE5PUWt6VEp2dGR3bGg1bHNj?=
- =?utf-8?Q?Dzzx8t?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB6011.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MVh2bGZFbEtqR0Qvck9ZZkNzRVhGTERKMWd2bWMxM2F4SG01M0UwUm8xRi9k?=
- =?utf-8?B?ZWx6ZVR4a0xTOUNPQ1d0a2NBMjJMUlVuRUtrcTVia3ZPdzdGSEoyVE1rQTI5?=
- =?utf-8?B?OThjeVNTYVgrNDc0RWRoK3pzV3pIcHd3cHl6STdZeVhGakx5bGtkV0NybHNz?=
- =?utf-8?B?L1c2eVdzQWhBRnQyVjlqbHBKTUhXWjJXOTJBWndhRVpLaGFhWVRLdGZQbVk1?=
- =?utf-8?B?T2VHY0hrSHppVmhKVVNUS3lnakJkdU1nYk5IZENOUkpiaUJLbHozLzlWc3Ax?=
- =?utf-8?B?N0xOUXVCTm1UUkI2RG52VERKSW1RcG04M09vdjZSZ1FrYmVnaHNTYzkxZFR1?=
- =?utf-8?B?TjJ0dUZCQXVCYTh4cVB6Wis1NkxGSU9rTVM5eGc2bUM3c1ZmRllxc0JtWm1Q?=
- =?utf-8?B?UG95MGhOay93QXgxeXJ6d0loVlJIRVlobDFlUWxKc2JLUnE1NWNYVjJCWGlN?=
- =?utf-8?B?WUNic1VqOG9ZTlRaZ0JWZm9MMFRNSStOU3dUNFVDRkRDaDBZbUZQWFdCMGY4?=
- =?utf-8?B?YVZWZlZCN3diSjN6TWRBd2dSRjl2ZnN6aDNsem5pc0lwQ3l4SlRPd1crMHkz?=
- =?utf-8?B?ZGoxclJUbjI2VEpWZW1pZi84cmN1MWxOdG8wSnRyQXM4V1A3TmxlU2ZOakxR?=
- =?utf-8?B?aTVmNUhVOVRaU2trbEFHeXZ4am9KRnM4UmJpQ21hZ0RRMmdOaWV5Y0Y0cGhh?=
- =?utf-8?B?bVE5MG5hMWVpN2E1YkwyaFh2ZW1CMEhMYUxDWmIwdmRDdU1yb2J1Y1hZNnZn?=
- =?utf-8?B?R0dwNzNsRWI5am1MdmVGQVJwL3E5Ukc0d2VFQTVNbVJiNEtxYUxoVjJuM3RX?=
- =?utf-8?B?WWJveVYycmFLZEsrazAvcERtcW1ydlVGa3E1Zm5YMXljMzVnL1BlRURNYmZn?=
- =?utf-8?B?d25hclVTeXJoZUlEK2hwY1FvNDJyTEQyQk1CR0U2TmdhVjhCS1d1c2RZQUg4?=
- =?utf-8?B?L1RHOTF6cEx3c1NLNkRGZXFzcU1sbUYrc0lBdGk3Rm5pUlFxUUQ4R01EdVlo?=
- =?utf-8?B?dy9KTjBldlc5REZFdjJ4dW9Kc2FyejdqS3hRNmFCTW1sMHMzbmRlNG5LNkgx?=
- =?utf-8?B?amxHNEhsVEtVQ1RNWGhBbXBlQjhlekdkK2lnaVkzcGxJVGkwM3hWclo5RWg3?=
- =?utf-8?B?cmplZm1CVDRtTUk4aDZCUHdzVlh5NzBtQlZwNXB4T2I3Sk5EU09WM1BWL2xa?=
- =?utf-8?B?ODlua28rVDMzdUpKMnhUcFVWNFZRSEd3cHBBOFVvc1k4MFRkUlg5MXlrblFW?=
- =?utf-8?B?MkdhRzk2WlVJYmJML0R4empHOVhBT3NBcVJ3STJ6UlBNRnVjVndQRXFBcDg2?=
- =?utf-8?B?TWwzSG0ycVVWWDNheTdKYWFTdUVGcVdJQ3A5SFlZQ2RYMzFGcXlJREM2aWdp?=
- =?utf-8?B?eG85M1dTclJBVHAydEhhSW5pelZLem5JTzlvTVB1OXVId1g2M0JzcFp0Y3lz?=
- =?utf-8?B?Z2E1dVM0ZnFMMDkvNy9uNEpKTTlUWlJKYzZMWUxrSDFyOVYwWjNMbklXeGt3?=
- =?utf-8?B?LzZqZUI4WW1OemdQeXVVV3pyUkFUNVRMUWN1Sy9MVTRzcjkvdVRyRzBHMkxO?=
- =?utf-8?B?V08rVXc0Rm8wRzNSTi9vVXJqMTV5eG51SXNkbzkydGNsM29nNERyMHk3UU1r?=
- =?utf-8?B?aTVaSjRBZ2YzdTQ4RkQvaVJPaFF6dVRLd2pYam9ZN215M2JsbisyYmlibXNw?=
- =?utf-8?B?VHBSNlZLc0tlZGg2bEhnd3VVWGtRVWNKZTZvb0JMWkFjazNOSnJ5V3BtNDdi?=
- =?utf-8?B?L3pYdFhvbG9FN1FSNXB1V0owOUMxYldLcHdjTG9wOWpyV2FZT3ZwL3VBY1E3?=
- =?utf-8?B?WnpyRVc5R1RldjRoeUpNeDc1cVR3UE90WHpkcTFjaFlRbm5QUTU5bUtrNlNr?=
- =?utf-8?B?TXRNTEd6OEJ5SVNTc2p2d094SHBxbEFtWnNTTE94UnlJazl3TEpPeXNIcmJM?=
- =?utf-8?B?enR6amk2enhHdndleDFpZGs0aFZkTkZZcEZ5cVplakVoL2V2d2daUUJmVW5N?=
- =?utf-8?B?emNtdmRkQzZHT2tqbTgzTUtqeEt4Mm5yZmdXUFhPclZVNkpyTWNCa0ZBcTBp?=
- =?utf-8?B?OW5LZkhPazVualQxMHduLzdER1NMWjF0eExYc0V2UE1TSDZZRXJvajVSMkxV?=
- =?utf-8?B?MGdJSGNBN24rZXljTzZJWk0wQTBFV2R6ajVLVzNXTDVhQytrZm4rVUlnVkY0?=
- =?utf-8?B?NUE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 10864c94-11e4-4d59-8e82-08de189c6ba0
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB6011.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2025 16:42:03.8891
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MOey5PsVvy11UfjMIfVIT0ThEryKS36RLUKKEZ/suZeS8f18ZJImzeo9Kqk7N7sG4ikQ/5leIIwVImvW17S1h8wsTMGnRwBhbvakXY0yoQo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL4PR11MB8823
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 4/4] samples: rust: Add sample demonstrating DRM buddy
+ allocator
+To: Joel Fernandes <joelagnelf@nvidia.com>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ dakr@kernel.org, David Airlie <airlied@gmail.com>
+Cc: acourbot@nvidia.com, Alistair Popple <apopple@nvidia.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ bjorn3_gh@protonmail.com, Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
+ Daniel Almeida <daniel.almeida@collabora.com>,
+ Andrea Righi <arighi@nvidia.com>, Philipp Stanner <phasta@kernel.org>,
+ nouveau@lists.freedesktop.org
+References: <20251030190613.1224287-1-joelagnelf@nvidia.com>
+ <20251030190613.1224287-5-joelagnelf@nvidia.com>
+Content-Language: en-GB
+From: Matthew Auld <matthew.auld@intel.com>
+In-Reply-To: <20251030190613.1224287-5-joelagnelf@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-
-On 10/30/2025 9:31 PM, Michał Winiarski wrote:
-> The descriptor reuses the KLV format used by GuC and contains metadata
-> that can be used to quickly fail migration when source is incompatible
-> with destination.
+On 30/10/2025 19:06, Joel Fernandes wrote:
+> Demonstrates usage of the DRM buddy allocator bindings through
+> a simple test module that initializes the allocator, performs
+> allocations, and prints information about the allocated blocks.
 > 
-> Signed-off-by: Michał Winiarski <michal.winiarski@intel.com>
+> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
 > ---
->  drivers/gpu/drm/xe/xe_sriov_migration_data.c | 89 +++++++++++++++++++-
->  drivers/gpu/drm/xe/xe_sriov_migration_data.h |  2 +
->  drivers/gpu/drm/xe/xe_sriov_pf_migration.c   |  6 ++
->  3 files changed, 96 insertions(+), 1 deletion(-)
+>   samples/rust/Kconfig           |  14 +++++
+>   samples/rust/Makefile          |   1 +
+>   samples/rust/rust_drm_buddy.rs | 106 +++++++++++++++++++++++++++++++++
+>   3 files changed, 121 insertions(+)
+>   create mode 100644 samples/rust/rust_drm_buddy.rs
 > 
-> diff --git a/drivers/gpu/drm/xe/xe_sriov_migration_data.c b/drivers/gpu/drm/xe/xe_sriov_migration_data.c
-> index a3f50836adc81..18e17706772fc 100644
-> --- a/drivers/gpu/drm/xe/xe_sriov_migration_data.c
-> +++ b/drivers/gpu/drm/xe/xe_sriov_migration_data.c
-> @@ -5,6 +5,7 @@
->  
->  #include "xe_bo.h"
->  #include "xe_device.h"
-> +#include "xe_guc_klv_helpers.h"
->  #include "xe_sriov_migration_data.h"
->  #include "xe_sriov_pf_helpers.h"
->  #include "xe_sriov_pf_migration.h"
-> @@ -383,11 +384,19 @@ ssize_t xe_sriov_migration_data_write(struct xe_device *xe, unsigned int vfid,
->  	return produced;
->  }
->  
-> -#define MIGRATION_DESCRIPTOR_DWORDS 0
-> +#define MIGRATION_KLV_DEVICE_DEVID_KEY	0xf001u
-> +#define MIGRATION_KLV_DEVICE_DEVID_LEN	1u
-> +#define MIGRATION_KLV_DEVICE_REVID_KEY	0xf002u
-> +#define MIGRATION_KLV_DEVICE_REVID_LEN	1u
+> diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
+> index b45631e2593c..8ccb4064ba91 100644
+> --- a/samples/rust/Kconfig
+> +++ b/samples/rust/Kconfig
+> @@ -21,6 +21,20 @@ config SAMPLE_RUST_CLIST
+>   
+>   	  If unsure, say N.
+>   
+> +config SAMPLE_RUST_DRM_BUDDY
+> +	tristate "DRM buddy allocator sample"
+> +	depends on DRM_BUDDY
+> +	help
+> +	  This option builds the Rust DRM buddy allocator sample.
 > +
-> +#define MIGRATION_DESCRIPTOR_DWORDS	(GUC_KLV_LEN_MIN + MIGRATION_KLV_DEVICE_DEVID_LEN + \
-> +					 GUC_KLV_LEN_MIN + MIGRATION_KLV_DEVICE_REVID_LEN)
->  static size_t pf_descriptor_init(struct xe_device *xe, unsigned int vfid)
->  {
->  	struct xe_sriov_migration_data **desc = pf_pick_descriptor(xe, vfid);
->  	struct xe_sriov_migration_data *data;
-> +	unsigned int len = 0;
-> +	u32 *klvs;
->  	int ret;
->  
->  	data = xe_sriov_migration_data_alloc(xe);
-> @@ -401,11 +410,89 @@ static size_t pf_descriptor_init(struct xe_device *xe, unsigned int vfid)
->  		return ret;
->  	}
->  
-> +	klvs = data->vaddr;
-> +	klvs[len++] = PREP_GUC_KLV_CONST(MIGRATION_KLV_DEVICE_DEVID_KEY,
-> +					 MIGRATION_KLV_DEVICE_DEVID_LEN);
-> +	klvs[len++] = xe->info.devid;
-> +	klvs[len++] = PREP_GUC_KLV_CONST(MIGRATION_KLV_DEVICE_REVID_KEY,
-> +					 MIGRATION_KLV_DEVICE_REVID_LEN);
-> +	klvs[len++] = xe->info.revid;
+> +	  The sample demonstrates using the DRM buddy allocator bindings
+> +	  to allocate and free memory blocks.
 > +
-> +	xe_assert(xe, len == MIGRATION_DESCRIPTOR_DWORDS);
+> +	  To compile this as a module, choose M here:
+> +	  the module will be called rust_drm_buddy.
 > +
->  	*desc = data;
->  
->  	return 0;
->  }
->  
-> +/**
-> + * xe_sriov_migration_data_process_descriptor() - Process migration data descriptor.
-> + * @xe: the &xe_device
-> + * @vfid: the VF identifier
-> + * @data: the &struct xe_sriov_pf_migration_data containing the descriptor
-> + *
-> + * The descriptor uses the same KLV format as GuC, and contains metadata used for
-> + * checking migration data compatibility.
-> + *
-> + * Return: 0 on success, -errno on failure.
-> + */
-> +int xe_sriov_migration_data_process_descriptor(struct xe_device *xe, unsigned int vfid,
-> +					       struct xe_sriov_migration_data *data)
-> +{
-> +	u32 num_dwords = data->size / sizeof(u32);
-> +	u32 *klvs = data->vaddr;
+> +	  If unsure, say N.
 > +
-> +	xe_assert(xe, data->type == XE_SRIOV_MIGRATION_DATA_TYPE_DESCRIPTOR);
+>   config SAMPLE_RUST_CONFIGFS
+>   	tristate "Configfs sample"
+>   	depends on CONFIGFS_FS
+> diff --git a/samples/rust/Makefile b/samples/rust/Makefile
+> index f8899c0df762..a56204ee4e96 100644
+> --- a/samples/rust/Makefile
+> +++ b/samples/rust/Makefile
+> @@ -2,6 +2,7 @@
+>   ccflags-y += -I$(src)				# needed for trace events
+>   
+>   obj-$(CONFIG_SAMPLE_RUST_CLIST)			+= rust_clist.o
+> +obj-$(CONFIG_SAMPLE_RUST_DRM_BUDDY)		+= rust_drm_buddy.o
+>   obj-$(CONFIG_SAMPLE_RUST_MINIMAL)		+= rust_minimal.o
+>   obj-$(CONFIG_SAMPLE_RUST_MISC_DEVICE)		+= rust_misc_device.o
+>   obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
+> diff --git a/samples/rust/rust_drm_buddy.rs b/samples/rust/rust_drm_buddy.rs
+> new file mode 100644
+> index 000000000000..96907bc19243
+> --- /dev/null
+> +++ b/samples/rust/rust_drm_buddy.rs
+> @@ -0,0 +1,106 @@
+> +// SPDX-License-Identifier: GPL-2.0
 > +
-> +	if (data->size % sizeof(u32)) {
-> +		xe_sriov_warn(xe, "Aborting migration, descriptor not in KLV format (size=%llu)\n",
-> +			      data->size);
-> +		return -EINVAL;
-> +	}
+> +//! Rust DRM buddy allocator sample.
+> +//!
+> +//! This sample demonstrates using the DRM buddy allocator from Rust.
 > +
-> +	while (num_dwords >= GUC_KLV_LEN_MIN) {
-> +		u32 key = FIELD_GET(GUC_KLV_0_KEY, klvs[0]);
-> +		u32 len = FIELD_GET(GUC_KLV_0_LEN, klvs[0]);
+> +use kernel::{
+> +    drm::buddy::{
+> +        BuddyFlags,
+> +        DrmBuddy, //
+> +    },
+> +    prelude::*,
+> +    sizes::*, //
+> +};
 > +
-> +		klvs += GUC_KLV_LEN_MIN;
-> +		num_dwords -= GUC_KLV_LEN_MIN;
-> +
-> +		if (len > num_dwords)
-
-nit:
-			xe_sriov_warn(xe, "Aborting migration, truncated KLV %#x, len %u\n",
-
-
-> +			return -EINVAL;
-> +
-> +		switch (key) {
-> +		case MIGRATION_KLV_DEVICE_DEVID_KEY:
-> +			if (*klvs != xe->info.devid) {
-> +				xe_sriov_warn(xe,
-> +					      "Aborting migration, devid mismatch %#06x!=%#06x\n",
-> +					      *klvs, xe->info.devid);
-> +				return -ENODEV;
-> +			}
-> +			break;
-> +		case MIGRATION_KLV_DEVICE_REVID_KEY:
-> +			if (*klvs != xe->info.revid) {
-> +				xe_sriov_warn(xe,
-> +					      "Aborting migration, revid mismatch %#06x!=%#06x\n",
-> +					      *klvs, xe->info.revid);
-> +				return -ENODEV;
-> +			}
-> +			break;
-> +		default:
-> +			xe_sriov_dbg(xe,
-> +				     "Skipping unknown migration descriptor key %#06x (len=%#06x)\n",
-> +				     key, len);
-> +			print_hex_dump_bytes("desc: ", DUMP_PREFIX_OFFSET, klvs,
-> +					     min(SZ_64, len * sizeof(u32)));
-> +			break;
-> +		}
-> +
-> +		klvs += len;
-> +		num_dwords -= len;
-> +	}
-> +
-> +	return 0;
+> +module! {
+> +    type: RustDrmBuddySample,
+> +    name: "rust_drm_buddy",
+> +    authors: ["Joel Fernandes"],
+> +    description: "DRM buddy allocator sample",
+> +    license: "GPL",
 > +}
 > +
->  static void pf_pending_init(struct xe_device *xe, unsigned int vfid)
->  {
->  	struct xe_sriov_migration_data **data = pf_pick_pending(xe, vfid);
-> diff --git a/drivers/gpu/drm/xe/xe_sriov_migration_data.h b/drivers/gpu/drm/xe/xe_sriov_migration_data.h
-> index 7ec489c3f28d2..bb4ea5850e5c0 100644
-> --- a/drivers/gpu/drm/xe/xe_sriov_migration_data.h
-> +++ b/drivers/gpu/drm/xe/xe_sriov_migration_data.h
-> @@ -30,6 +30,8 @@ ssize_t xe_sriov_migration_data_read(struct xe_device *xe, unsigned int vfid,
->  				     char __user *buf, size_t len);
->  ssize_t xe_sriov_migration_data_write(struct xe_device *xe, unsigned int vfid,
->  				      const char __user *buf, size_t len);
-> +int xe_sriov_migration_data_process_descriptor(struct xe_device *xe, unsigned int vfid,
-> +					       struct xe_sriov_migration_data *data);
->  int xe_sriov_migration_data_save_init(struct xe_device *xe, unsigned int vfid);
->  
->  #endif
-> diff --git a/drivers/gpu/drm/xe/xe_sriov_pf_migration.c b/drivers/gpu/drm/xe/xe_sriov_pf_migration.c
-> index 8ea531d36f53b..f0a0c2b027a20 100644
-> --- a/drivers/gpu/drm/xe/xe_sriov_pf_migration.c
-> +++ b/drivers/gpu/drm/xe/xe_sriov_pf_migration.c
-> @@ -175,9 +175,15 @@ xe_sriov_pf_migration_save_consume(struct xe_device *xe, unsigned int vfid)
->  static int pf_handle_descriptor(struct xe_device *xe, unsigned int vfid,
->  				struct xe_sriov_migration_data *data)
->  {
-> +	int ret;
+> +struct RustDrmBuddySample;
 > +
->  	if (data->tile != 0 || data->gt != 0)
->  		return -EINVAL;
->  
-> +	ret = xe_sriov_migration_data_process_descriptor(xe, vfid, data);
-> +	if (ret)
-> +		return ret;
+> +impl kernel::Module for RustDrmBuddySample {
+> +    fn init(_module: &'static ThisModule) -> Result<Self> {
+> +        // Create a buddy allocator managing 1GB with 4KB chunks.
+> +        let buddy = DrmBuddy::new(SZ_1G, SZ_4K)?;
 > +
->  	xe_sriov_migration_data_free(data);
->  
->  	return 0;
+> +        pr_info!("=== Test 1: Single 16MB block ===\n");
+> +        let allocated = buddy.alloc_blocks(
+> +            0,
+> +            0,
 
-just nit, so
+Does this map to the start/end? Surprised that this works with 
+RANGE_ALLOCATION below. I guess it works because of the end-1, but I'm 
+not sure if that was intended.
 
-Reviewed-by: Michal Wajdeczko <michal.wajdeczko@intel.com>
+Anyway, probably you didn't really want RANGE_ALLOCATION here? That is 
+only if you want something at a specific offset or within a special bias 
+range. So here I think it will give you a massive bias range covering 
+everything due to end-1, but all you wanted was any available 16M block, 
+which is the typical flow? It still technically works, but looks a bit 
+non-standard and will internally take the bias range path, which is not 
+ideal :)
 
+Also I guess worth updating the example in buddy.rs, which also does this?
+
+> +            SZ_16M,
+> +            SZ_4K,
+> +            BuddyFlags::RANGE_ALLOCATION,
+> +            GFP_KERNEL,
+> +        )?;
+> +
+> +        let mut count = 0;
+> +        for block in &allocated {
+> +            pr_info!(
+> +                "  Block {}: offset=0x{:x}, order={}, size={}\n",
+> +                count,
+> +                block.offset(),
+> +                block.order(),
+> +                block.size(&buddy)
+> +            );
+> +            count += 1;
+> +        }
+> +        pr_info!("  Total: {} blocks\n", count);
+> +        drop(allocated);
+> +
+> +        pr_info!("=== Test 2: Three 4MB blocks ===\n");
+> +        let allocated = buddy.alloc_blocks(
+> +            0,
+> +            0,
+> +            SZ_4M * 3,
+> +            SZ_4K,
+> +            BuddyFlags::RANGE_ALLOCATION,
+> +            GFP_KERNEL,
+> +        )?;
+> +
+> +        count = 0;
+> +        for block in &allocated {
+> +            pr_info!(
+> +                "  Block {}: offset=0x{:x}, order={}, size={}\n",
+> +                count,
+> +                block.offset(),
+> +                block.order(),
+> +                block.size(&buddy)
+> +            );
+> +            count += 1;
+> +        }
+> +        pr_info!("  Total: {} blocks\n", count);
+> +        drop(allocated);
+> +
+> +        pr_info!("=== Test 3: Two 8MB blocks ===\n");
+> +        let allocated = buddy.alloc_blocks(
+> +            0,
+> +            0,
+> +            SZ_8M * 2,
+> +            SZ_4K,
+> +            BuddyFlags::RANGE_ALLOCATION,
+> +            GFP_KERNEL,
+> +        )?;
+> +
+> +        count = 0;
+> +        for block in &allocated {
+> +            pr_info!(
+> +                "  Block {}: offset=0x{:x}, order={}, size={}\n",
+> +                count,
+> +                block.offset(),
+> +                block.order(),
+> +                block.size(&buddy)
+> +            );
+> +            count += 1;
+> +        }
+> +        pr_info!("  Total: {} blocks\n", count);
+> +
+> +        pr_info!("=== All tests passed! ===\n");
+> +
+> +        Ok(RustDrmBuddySample {})
+> +    }
+> +}
 
 
