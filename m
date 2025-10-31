@@ -1,117 +1,92 @@
-Return-Path: <linux-kernel+bounces-879753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B535C23ECE
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:53:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D41EC23EF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 09:54:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 711D54E70BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:53:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0ED22422D0B
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 08:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B973D31814C;
-	Fri, 31 Oct 2025 08:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793A831814C;
+	Fri, 31 Oct 2025 08:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DYEKqxr2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dm9k6WmW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14882310625;
-	Fri, 31 Oct 2025 08:53:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFAF6310625;
+	Fri, 31 Oct 2025 08:53:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761900798; cv=none; b=Di9ylg654/JVFSqnGwllK2GA/5t+OOGud3bg8ijgB5PrrmWIuWqzJc/9dQNeqjxrI+6lOZDyIM2RTh6bU9Uro+ssCvB1VcNfbli0WGXPyzuWAnJJITD2dqH2IZR8h3BJNbig+Ed9ExjGPV0r40Whd/r/SFQ8Hub6dLnTXuS/pPg=
+	t=1761900805; cv=none; b=iYLoSC2P5quaI66Iinyz9GNTI1TOfnQocAOisQwzSAJ2UKpO24R4gpb1Z+4HpsE+vJnKC1uM1y5uKuJsoVoxuV7IRmbC19CDXwc2A/YF1V47vYSa7X0AdrZk3Q4KxX4WrPG3cH7sul5mbNwemeuK2OCxS5EUkPj8XLQ7Rebdtcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761900798; c=relaxed/simple;
-	bh=oK5nbB1LtOV7g02ZprYXgPq8GKEmIM9bcsXX+afO7Kc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g1BgbiuW8l7yY2zOa8Oiag+rq/KeCuZASbLsTMUT0HyG40Qpm8xOBRAkOxL+VQ/o2aCjgFaCHs2TyzNR6I1HyYDvIjgnDrVdQOD5HjsnwZpgHRTbk7lPbsiNiBESM+HgXrFE0WS90lrR31s9Gth3bXZUjt3gVUeqFtaISjUkDnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DYEKqxr2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11393C4CEF1;
-	Fri, 31 Oct 2025 08:53:17 +0000 (UTC)
+	s=arc-20240116; t=1761900805; c=relaxed/simple;
+	bh=5lLjxIzAgzkUJ1WMCPxKdYVneDvO0fPVfQqhFcLinzA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=J4Ftu/9ZpkSE2ROwF36aYf4vmI8K91gceN/49haJlaKRGuMsrsxwCqMSWzbpoIeanKTWw42D4SabT4Frmb6bCZwZZSeSeCrva0T04MS799l4CNyvzEfCfzv7uZ52b7eppXbs1HNo+CwXhOUBeUJJxKBF3NJ59v26c5qwSy5Tro4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dm9k6WmW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8990CC4CEF8;
+	Fri, 31 Oct 2025 08:53:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761900797;
-	bh=oK5nbB1LtOV7g02ZprYXgPq8GKEmIM9bcsXX+afO7Kc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DYEKqxr2pRl3d4ijIZ5ZZYCcw/en5aFTZ5TcxpfP/QJ/ZgAtoCyBwnXU3e4SfKfTW
-	 WIUQWa+Y0SU4tIKw68AHY4F928BIByHXV5FqmoMmT99dz6DbRvpPJozKjMgge7YxxH
-	 TjmTg8tIUZvZyr/dlja+uj+/OKCvrbuS2ANl8RXD0vOKF+goo9uuUDr52O1N6T6ciQ
-	 q/glR4+532A3FeETTACxSYqblvKYGQEfoNgo89uv/UL1TmYJyBrDHns/tDyk/7cvIq
-	 SqxnjErCtLd3Pf0aCARGpwKJ6mWGAVMfTes+Br3yGaakDaY4gK9hgAfh6tJ+pY1u7G
-	 HqtI34pitwAOA==
-Date: Fri, 31 Oct 2025 09:53:15 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: weishangjuan@eswincomputing.com
-Cc: devicetree@vger.kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com, 
-	alexandre.torgue@foss.st.com, rmk+kernel@armlinux.org.uk, yong.liang.choong@linux.intel.com, 
-	vladimir.oltean@nxp.com, prabhakar.mahadev-lad.rj@bp.renesas.com, jan.petrous@oss.nxp.com, 
-	inochiama@gmail.com, jszhang@kernel.org, 0x1207@gmail.com, boon.khai.ng@altera.com, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	robh@kernel.org, linux-arm-kernel@lists.infradead.org, ningyu@eswincomputing.com, 
-	linmin@eswincomputing.com, lizhi2@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Subject: Re: [PATCH] dt-bindings: ethernet: eswin: fix yaml schema issues
-Message-ID: <20251031-elated-radical-limpet-6a0eaf@kuoka>
-References: <20251030085001.191-1-weishangjuan@eswincomputing.com>
+	s=k20201202; t=1761900805;
+	bh=5lLjxIzAgzkUJ1WMCPxKdYVneDvO0fPVfQqhFcLinzA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=dm9k6WmWGVgybTFkgYPZXca2qmWqQBfx6bMJfZZSJwdWhAmrzi27tOCq1MjexlaH1
+	 BY2MuUywMoh7JIihXqwl0TWcNhz4vBzrjJc9kSe2i4/bGnqLGmzgGc/DXeDZLtUymu
+	 mYOGjSFGNrIkNJul/v9MWJZ46OuSijrTc8t/UBeJDTdX2uDAgdCzE5WvSyL00URSxo
+	 jybwpLLoZR0iOb9Vz4ZYojPCp/k3EZtDDNRdYeiOS2gL0cZnqsdrgGBnTdguJbQoJO
+	 FmwxoWuIYWkNkojuXfRm2U4Q+aBGvaTNj9eK13yjd53I1Yj7pguKTgmERcw68ovHab
+	 22P89gdI3UFFQ==
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Vignesh Raghavendra <vigneshr@ti.com>, 
+ Siddharth Vadapalli <s-vadapalli@ti.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+ linux-omap@vger.kernel.org, linux-pci@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Anand Moon <linux.amoon@gmail.com>
+Cc: Markus Elfring <Markus.Elfring@web.de>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+In-Reply-To: <20251028154229.6774-1-linux.amoon@gmail.com>
+References: <20251028154229.6774-1-linux.amoon@gmail.com>
+Subject: Re: [PATCH v3 0/2] PCI: j721e: A couple of cleanups
+Message-Id: <176190080005.8740.2017130135799803682.b4-ty@kernel.org>
+Date: Fri, 31 Oct 2025 14:23:20 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251030085001.191-1-weishangjuan@eswincomputing.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Thu, Oct 30, 2025 at 04:50:01PM +0800, weishangjuan@eswincomputing.com wrote:
-> From: Shangjuan Wei <weishangjuan@eswincomputing.com>
+
+On Tue, 28 Oct 2025 21:12:22 +0530, Anand Moon wrote:
+> Refactor the J721e probe function to use devres helpers for resource
+> management. This replaces manual clock handling with
+> devm_clk_get_optional_enabled() and assigns the reset GPIO directly
+> to the struct members, eliminating unnecessary local variables.
 > 
-> Due to the detection of errors in the eswin mmc module
-> regarding the eswin,hsp-sp-csr attributes in the
-> eswin,eic7700-eth.yaml file, the link is as follows:
-> https://lore.kernel.org/all/176096011380.22917.1988679321096076522.robh@kernel.org/
-
-Drop, reported already says that.
-
-Just say that this is one phandle with multiple arguments, so the syntax
-should be in the form of:
-
-> Therefore, the eswin,hsp-sp-csr attributes of the eic7700-eth.yaml file
-> regarding eswin and hsp-sp-csr will be changed to the form of:
-
-> items:
->   - items:
->       - description: ...
->       - description: ...
->       - description: ...
->       - description: ...
+> These patches have been compile-tested only, as I do not have access
+> to the hardware for runtime verification.
 > 
-> The MMC,Ethernet,and USB modules of eswin vendor have defined
-> eswin,hsp-sp-csr attribute in YAML. In order to be consistent
-> with the property description of MMC,USB, I have modified the
-> description content of eswin,hsp-sp-csr attribute in Ethernet YAML.
+> [...]
 
-That's redundant paragraph. Write concise messages describing the
-problem, not some background or unrelated bindings. See also submitting
-patches about preferred English form.
+Applied, thanks!
 
-> 
-> Fixes: 888bd0eca93c("dt-bindings: ethernet: eswin: Document for EIC7700 SoC")
-
-Missing space, missing checkpatch.
-
-Please run scripts/checkpatch.pl on the patches and fix reported
-warnings. After that, run also 'scripts/checkpatch.pl --strict' on the
-patches and (probably) fix more warnings. Some warnings can be ignored,
-especially from --strict run, but the code here looks like it needs a
-fix. Feel free to get in touch if the warning is not clear.
-
-With first paragraph and fixes tag corrected:
-
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+[1/2] PCI: j721e: Use devm_clk_get_optional_enabled() to get the clock
+      commit: 59ba8c0981e73cb2bb70074be4ef46b4188424ea
+[2/2] PCI: j721e: Use inline reset GPIO assignment and drop local variable
+      commit: 8895c0fc0671f38746ee1c02b728b126f7dbbf97
 
 Best regards,
-Krzysztof
+-- 
+Manivannan Sadhasivam <mani@kernel.org>
 
 
