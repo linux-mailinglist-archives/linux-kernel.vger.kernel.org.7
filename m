@@ -1,215 +1,411 @@
-Return-Path: <linux-kernel+bounces-880910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFEEBC26DA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:59:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCBC3C26DF8
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 21:12:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2369B1A619F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:00:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 38EBA4E9D29
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 20:12:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8276431B822;
-	Fri, 31 Oct 2025 19:59:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900803271E8;
+	Fri, 31 Oct 2025 20:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DkDybfQq"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="pT5YBr7v"
+Received: from sonic314-20.consmr.mail.gq1.yahoo.com (sonic314-20.consmr.mail.gq1.yahoo.com [98.137.69.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E420431B83B
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 19:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FC331B83B
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 20:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.69.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761940774; cv=none; b=gc9iU/8/m5+iisSOZccCyhVTxOm/8JrG7ySmVlQxHc3mkgWQoaUMp4enfyvkSbNGSBQRdfgWuSHxZi97+IDbn+cl/9JAJWs1nrIfT5oLFBVtCIldmsvmpWTNeYZUnKtaeKw/mJO4iNmpD0t2OEqDXs1RtQEgnY6m3r7oNxe54v0=
+	t=1761941543; cv=none; b=CwnrhRDKiIwomSHLgguPw8Le9IMzKU75CjRs/ab9dixKs39Wq6NFbTILOFlZRLPb9uteqs4muS6WijNEwBpcI36qJ6O183egAKwomQx1ewxIGbxEmc5JGpkGDZVu+GBppYU4XdFEFJ2enxy5udr86XIQ1I5anYOwM1XsL+SC+FQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761940774; c=relaxed/simple;
-	bh=ik1a8gZCy8OHc0UXQ1M5tX69fdcP0uB4uz3wGzgfqYU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bXBOtGe9m4vev8srkk6yqQII/+NbHfhZrqcSaXVRIK/zkgcpEDS2+TilLlu5TAzObf+p4sNEiSkTqyhpoR2ixsjJXRIac6eWoXlx+9+vP9DDurbEcIwg7xVfitDxf2xp+cTMvOSxC1b0Cw7o3kLRYqvBLIqZkAqJ411k8sxH3cQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DkDybfQq; arc=none smtp.client-ip=209.85.219.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-88032235d68so13144396d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 12:59:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761940772; x=1762545572; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8Iyen6dvY92B9sLWrKqEv//LwHqaAqRQqY1+ybrCM0Y=;
-        b=DkDybfQq/tuUPI/rIuwIuPjnSBIw3YHzZRvoev7TakyPxqhDofuaLdHBpAaOs2/8hf
-         AQyr0SlcwvRwy6nuzOYpEU9L3SlalwAYnlEFobNGEl32pOZpA6bTskkMVrWT95gxOXNH
-         EiM1eXqD6pD1HX4MErg+Ker89lVh8j2P5HW+LJFPronFS041PxulHPRyITA26I75akCY
-         AkA917JSpAj3xN/ss3VeMqOnAeZ9z/2fekzA4mAgSkw4Tn2RTeSsuXEKUpqIJzE3lbz6
-         5e5PqDxrvlDLN7OiPtrhPRKYfY+1mkgw1TobmgdxLXQf+QYxk0moOPRYkjCn2/z1Aezn
-         2rbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761940772; x=1762545572;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8Iyen6dvY92B9sLWrKqEv//LwHqaAqRQqY1+ybrCM0Y=;
-        b=WNVHF2b5/jbgSlMrLY3q+yurbNsEWGH/JLV82NQhiAFm7sPNAYAeCThQsNO15Uki+s
-         RnRW6ryEendm+txykjVw6w0FQAiuSmJbRkIeYluyOSSjMMAGD9LREWTllDgagk7EDPNS
-         KBLPW9/QGbv9yNFGrYiDTDvEfHG3RdVnrOGv8G+D51FYfk6ptmlubbkCxyZSm3PsVXPp
-         T3l/cz3Kf/p15Sbvfsgm047IgbNVRkdmAVFrZooroE9QCu9LjhepjOE3C9+x3DO78LfO
-         vYugL3loSE8tDKGoC59tngLlRW3e4/S/Z/KvDJohC1Jo2vOrjwjSbASfH4sdXw9/zGmy
-         PSSg==
-X-Forwarded-Encrypted: i=1; AJvYcCXBeEJtcyBfFqUjifhQHuwsKvlh/iKDUHOszsgaF4xuAthHdfOVHLD7fNZOB9oEo2jhoGhGQe7v3o274bc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7BTcGON1M/p/DaW9O7F/0kqfK35eJnyHurXUfRp9XwgUTWBaw
-	RCx3wPBga5NjSnU9Nl4aXH4HJUYAqkoML3R/EYEE6xK/7SQ7UNk4Xc4f
-X-Gm-Gg: ASbGncvWLPqyMuLsN67/V7bni7XYMwoydGQ8dxouu6sDOT+9Il/Zu/gmqYhUf+1Hrf8
-	fwBjiVjSPwVpL47Plba6Oq3by3+gwCKo5G+7Fg/fa3O/m/WWbdCdFyfMiYtB1JVB/8LXV4DTvUg
-	AdeQnKcoh/1Oh4B6dkf/dg4idKBWqlxytsO55l3/iR5cC/FxnbBZnK2x9wt/n9aghFu7PK3JBfL
-	Kdcr5dffq74JX0epUeGmTOFF3fgG/gNuSo9+kw+D/VrJpXc2Ov4XoHfcmDgoalCCtEHspy5Lcto
-	nKR9K1A4JNUoPrpZ7CftdPe1ga5KCdU4Y9/vT6uzL5lVjYwm8sunfH6+fp5N2dnBrLXelEd1Z1X
-	44PUItCn6vEodUme0vE4vbPzX3aNxXCEdUUNd+SEIyGKo6Dr1jExpJ3sQkwtXsz1jBZ3Ls/cXTj
-	NazLVzq9/FDpgrD8rMqTyV5LMZbbnAY5cNYctS8xWBD1W99aa9xuVFCGBfnLKVIZahhtyy/fnhZ
-	njctTS7BSOt8X4=
-X-Google-Smtp-Source: AGHT+IGfg364yBfQ6pTjAFa6RKxm15WKlYb2bY+1rBy9kaSNNc/J4bnrGgtFJE+IhOXSrcpxI52U/Q==
-X-Received: by 2002:a05:6214:470b:b0:880:3a3d:8a25 with SMTP id 6a1803df08f44-8803a3dc9abmr31936456d6.49.1761940771721;
-        Fri, 31 Oct 2025 12:59:31 -0700 (PDT)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-880360ffca8sm16996426d6.27.2025.10.31.12.59.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 12:59:31 -0700 (PDT)
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 49027F4006B;
-	Fri, 31 Oct 2025 15:59:30 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Fri, 31 Oct 2025 15:59:30 -0400
-X-ME-Sender: <xms:IhUFacccSkfnWblQ65-BNGAvHR9Trml7hfJfCV8JCqyMojBF7RdnoA>
-    <xme:IhUFaVzabmAdsNspNnI8XDlKZ5tV51HZmwgXnl8IsO5DFF9O5dDOzdzLf7UOPDq7J
-    iMBl2WP3sRoL_IVdP-4dElIsH1vlKIJQkLZ7ePsvhLJlL5R2lZ_rA>
-X-ME-Received: <xmr:IhUFadKr3NZREz7vJQjIXErgVM36jNyilp8IkFwRveCR1fs2AUvfJCtmXBfn7yYBxzN9CZwMLmGI3284oAl3taFid8Ehr7DE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujedtfeelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhunhcu
-    hfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrghtth
-    gvrhhnpeehudfgudffffetuedtvdehueevledvhfelleeivedtgeeuhfegueevieduffei
-    vdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsoh
-    hquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedq
-    udejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmh
-    gvrdhnrghmvgdpnhgspghrtghpthhtohepudeipdhmohguvgepshhmthhpohhuthdprhgt
-    phhtthhopegrrdhhihhnuggsohhrgheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
-    ihuhguvgesrhgvughhrghtrdgtohhmpdhrtghpthhtoheprhhushhtqdhfohhrqdhlihhn
-    uhigsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglhigsehlihhnuh
-    htrhhonhhigidruggvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdr
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdgrlhhmvghiuggrsegtoh
-    hllhgrsghorhgrrdgtohhmpdhrtghpthhtohepmhhinhhgohesrhgvughhrghtrdgtohhm
-    pdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoh
-    epjhhurhhirdhlvghllhhisehrvgguhhgrthdrtghomh
-X-ME-Proxy: <xmx:IhUFaeszn_PGY45eAljR22aE3YnFPpK0IPqp8-eOist3GzG2tQ9Ruw>
-    <xmx:IhUFafTEY37fDHhP6KWngtwsag2wO3_KhjTatUD7NjHWGat7E0kOPw>
-    <xmx:IhUFafRR5HueIgG-nP5PZzdyRDeZj6dNunkWhZwuTVjgNwuaiG-VpQ>
-    <xmx:IhUFabo4xHyosp7fidZvLmOjHghsjZ7xrngFcXj_H54UFWfe2OwLRQ>
-    <xmx:IhUFafCOYdPNgX9E7mZyQgSd8RBBoEHsEFuABh8aVGfyXT93kUpfKIBj>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 31 Oct 2025 15:59:29 -0400 (EDT)
-Date: Fri, 31 Oct 2025 12:59:28 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>
-Subject: Re: [PATCH v13 03/17] preempt: Introduce HARDIRQ_DISABLE_BITS
-Message-ID: <aQUVIMElF674xTao@tardis.local>
-References: <20251013155205.2004838-1-lyude@redhat.com>
- <20251013155205.2004838-4-lyude@redhat.com>
- <87pla386cp.fsf@t14s.mail-host-address-is-not-set>
+	s=arc-20240116; t=1761941543; c=relaxed/simple;
+	bh=zShKxfP0nVEMYim+rC7RNh4h8Uy6aeRNwb1snK7E9FM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k7Ovo8IF0aByZ4p0hYE2JDyVwfIheoDGzXTNpSfRjVtfaAUOTMCQnMABvOe6MRmiPD9H8Y1BMxxzde2Bc4hV1EgcjFT9tZ7pQjPWEPnqTfiOYy3c09VRc53xzAAwZSuKdtHkjjIbmj4/RFufM93DjCUwk7BAz1ZOixuiBbsO5Xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=pT5YBr7v; arc=none smtp.client-ip=98.137.69.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1761941535; bh=BOJ5Jw7QZ2Hwk9e5yvlRJo3M6jwqiPaySJ51gXkIEA4=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=pT5YBr7vlLrqdrzfgZEuXmRQYsYqrmLG5nHRnOeyPJccxyhIuKf5DaREGt06Gg6YEOfwi36G91mfyhsoDcFHjGKaALb/vU0K77VzWQxCiRfd0yC5NRKI77VKzLoWijGCVf56eax5s8Rk3H99SUr+jdmdnKEHh+Y9GFDZpkfaMCQePJSkEMB4FYbBThkB6D31ECFIplyTKag6g7NBxfFCAZkGdU1QGWpdn+uFcokimb9UBfY0UlGKT4sNcm8hKI++khHjO9C5/OV28x4tLH5+dTyAfE4MjjUyzl8sF8FVTx3bSuVtJkvCWdaxpBFNS+/fzdQ7X9LngC22QSjUjGAczw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1761941535; bh=ay68o+8OQSrVhTr3aKx/RY6x292PzPE+i9uK2zOQIpA=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=feskGi+TeIT4BsrmqZL+zp+IuW+kF5XpfRvFBFvT2H06c6xCbge5ShygxkGhsi4e6MbgOBJGyatRBTRKmpPFYu4em7SOq24xZIl1UO/12cUV1wRbacpvybD4WDiuvzhlxBVs9zYldSLJ6+vRZ3dvV6CEniKQ9Au1d9HrS7b9SLRLCyWhULgeNnd5rSIu4vPtiCltIhYC4xxaQZi0nj4F8AoreSv0wU8XConkRsTyWMY2cYPNS9DBqLB14DM3OO1Mz74HHRXcV8++9Ht/AD6bUcY2GGmGa8YI7GuQhe/q2Q86482SeUfUcsWdnhpn6HJZljjTNv+Zlp7ex78Ra+VS1A==
+X-YMail-OSG: i5zodQ4VM1kZF8iwGb2vMiF.eay8FlyGapXXFu9sBOtutZnUc27RCNIt1yAbBPT
+ eYJY4fXFg2tU06wW1Kzk1.EPVTGfl8Nf7DHjw3UrqEVQtjQx40Q3YsaVdrmCc61hUsOIABRcJtMT
+ s9FB73Zz55X_Qn_C4SGpXAKrZcaPMwDQFzCWxEu4dJ27EAsc4UNQ2QLPGYQmMa5x0SWam5YjOAU6
+ hwRA1zTkTHGv.TTT6Mm1vP2s9Szp4SJPW9Smwz3idbwvrB0WDfFus06o7JEeG5SAmrDt_xEI4wAd
+ ei6D0Ym6JV.A8W__PJai890JQUvGraPj6VEkquHldVVge6FIHsYUOhFVU4sWN3rnN5ZEHbyfkqty
+ mfkl0yYVwXwQYDOdZg8eAWpt.T7CMgHQcW2svAIYdzcKH3H3Hrb6OGgdjZ8O7VjYPB_J6C1ntvc6
+ oJc7zZQzHZRlnHUlRZmAJrY7xGIuyQ8PYNWZRfPpiWLE.N.TkwfOsK9rr.2R0qQogaOC8V7hSneG
+ gr93WUeF.dG8TxUQhZ1W6rV2b0HDb97qAYMTFobXoFySNYsylyTtdJR._UrEOwgyepWQLjOxwObw
+ TROvUp69vhalCtdD1BCjHtR2LW5Jsv1.RjSSnorkErw8zOXy4v.oja5MtlR9T0OU3IVgUxDbFn3w
+ 5CPiPxFcB9HGMKJvRgm.M6w8iq07OFJlK_S0YEdev5Tbs4l0t88fkOek9Jw9Wyo46nqUZ9SqnPhN
+ xA_lAe.BL.OvSjykC3uTtGJLab9XntTpMrUEK2330Tq5Eit5WjWxuktUX_lUJanb6.ILFVd3xjE3
+ 6dI2fnhFqyvvif.eT7zmr10kwuqidT6sE8NSyggts7jcOGbPOyZCj0IpeUImEwNO1pgQ5CeaFt0G
+ smrNwJtqtP5IWtE3CM6c7DW8HR8c6wvhQ6cFbWNcZ9lpzl053lh2lOZ9OaRoRHjReHWYULnjKVgj
+ mA3ZsIzB9Q3jneyWa4kKz8t9EZ.T56dbdtMD.ca2KVIb5B1rHWHT61qNCZ71A5hI95J661e.xUqb
+ bZpfokGwpZdQvLqBlQMojrE5c8x.GFipmtboZHxZjFWo4VXg2Hv3r2Qr7EORTw_k_U_ZfV2vPtsC
+ Fv7jYtp5GMHe5LL.oSnW6lSyoBIXSbI.seZJtBfZ6Ml_WQLHQeSV8rRufQZaBqHyHpJw7DHN3vTx
+ lTpGgBAD7sK2jyaC9yTRpsUYROrV78OweE08YuUQkBPzmZIHFn3WSo_lFFnvThJriN_M26c9f8EU
+ Sv.TYE.M9.Nugk7DwGzI1D7udctRkh3IkqWlwzUSyBX5IoBVsHuOfeVG0yimEPa2caYA2WKjaQ.M
+ GtXvpZ9Y2mbUpzF26TxGog4llm9cYD2OOb4X.KbCFb_56mbSgpD34HMckU67Dt5dnZ9UhNbKbK_b
+ x8BwMq8DpChmvg3Ay2TsnR8R1Vel2Ya8porV3BuOEzDHHyskEypjuaeRwQrQD57G8NziIXh.fnpR
+ VekNsZ_FOFrryqCJnXFS2DjYKR337k6LPnW04hmeij7LbDtpP3lXiYawiP4l8lgPq7n3Cta01NCS
+ uOgnpGyDllv6cjS_jUKeOLmhsiAQIXMeJAm2HzOZF9ZF7Jt0tiz7h6Oh15ZwV3EFVy0pz8LhNdkm
+ W6NbURv5oS9QW8YSEUV.3hMzkoWZqLolGEqABiC17k3Gqe.gFi1GcJBxP0c1OSTSHWUQFFtMNEeK
+ YiM2fdhl4bafUaggGx_VFtCr8G0hx3NAQ1smZosF_5wCoxcLqgoXxWTZMv89mb7SQL72QawEzk5U
+ 9HRgjcyWeN3bEPze6ll9p98VtsfQSvZftc7Wij_bozyWQjth_QiN0Ha.5kPPEz1QZGSgy5OTUZ2W
+ KOIi9FFsRHNZAAky39q8F_yoY5Knsdmmh3xikNV0q0hS0bLzz9vRibzdl_a4WebMULZIMD.xrzKn
+ fM3rsQ38Q0Muz3alVeVcytdrDwhgSUqbxBOhNlM70jz7xt4CUv36iLSgbn5CGz2qPGwIQPSaVDrj
+ b2SAyCN.eZ9NiJfcZTC4lU92ltsl9n4bI1iV6ARRZ1ug2dZHtQ1ffO3lFL0Eto1Yur9YU14i57Ry
+ bsXz5dTWnfJQMyN0FOA_6hf4ThW78gmDMXvLBEZ34tHqiNic0RaKNnF_cTtr9klYWWwQKeE7IPSX
+ U6Az1mlwVowgUezrnRTyQVEv7Ul7HTvOUZfvnlQEUT0Uq4VCHKjVDk8MXbUMc0JJ0gVZ.WaNC0C_
+ 2IEUIE3gUgP6nBPsNtaHO1VxAxQrZ1cQH01wNQQJpFcp3UyRXfdB906n402KPL6FJFFtpv2R0hej
+ LPJtxDjOeEthk
+X-Sonic-MF: <adelodunolaoluwa@yahoo.com>
+X-Sonic-ID: 1aa3a47d-2071-4549-b0bb-ab07f69b22cc
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.gq1.yahoo.com with HTTP; Fri, 31 Oct 2025 20:12:15 +0000
+Received: by hermes--production-ir2-5fcfdd8d7f-72pzv (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 047a24e14e331714b0dc96afdb1dc439;
+          Fri, 31 Oct 2025 20:02:02 +0000 (UTC)
+Message-ID: <939c78fc-ea90-4e5d-a9b1-e750dd6b4e25@yahoo.com>
+Date: Fri, 31 Oct 2025 21:01:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87pla386cp.fsf@t14s.mail-host-address-is-not-set>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] selftests: af_unix: Add tests for ECONNRESET and EOF
+ semantics
+To: Kuniyuki Iwashima <kuniyu@google.com>
+Cc: "=David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Shuah Khan <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>,
+ David Hunter <david.hunter.linux@gmail.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel-mentees@lists.linuxfoundation.org
+References: <20251025190256.11352-1-adelodunolaoluwa.ref@yahoo.com>
+ <20251025190256.11352-1-adelodunolaoluwa@yahoo.com>
+ <CAAVpQUAbDfaiAZ_NCppGE5vsafWoU7V1xvnqtQQM44cwv6jHsA@mail.gmail.com>
+ <7c4070ed-1702-4288-90c6-7edb90468718@yahoo.com>
+ <CAAVpQUAT8CVwQfSXq+P78kgPVy8gyD9thEgBcAz45Jpxh=1smw@mail.gmail.com>
+Content-Language: en-US
+From: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+In-Reply-To: <CAAVpQUAT8CVwQfSXq+P78kgPVy8gyD9thEgBcAz45Jpxh=1smw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.24652 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Fri, Oct 31, 2025 at 03:59:34PM +0100, Andreas Hindborg wrote:
-> Lyude Paul <lyude@redhat.com> writes:
-> 
-> > From: Boqun Feng <boqun.feng@gmail.com>
-> >
-> > In order to support preempt_disable()-like interrupt disabling, that is,
-> > using part of preempt_count() to track interrupt disabling nested level,
-> > change the preempt_count() layout to contain 8-bit HARDIRQ_DISABLE
-> > count.
-> >
-> > Note that HARDIRQ_BITS and NMI_BITS are reduced by 1 because of this,
-> > and it changes the maximum of their (hardirq and nmi) nesting level.
-> >
-> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> > Signed-off-by: Lyude Paul <lyude@redhat.com>
-> > ---
-> >  include/linux/preempt.h | 11 +++++++++--
-> >  1 file changed, 9 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/include/linux/preempt.h b/include/linux/preempt.h
-> > index 9580b972e1545..bbd2e51363d8f 100644
-> > --- a/include/linux/preempt.h
-> > +++ b/include/linux/preempt.h
-> > @@ -17,6 +17,8 @@
-> >   *
-> >   * - bits 0-7 are the preemption count (max preemption depth: 256)
-> >   * - bits 8-15 are the softirq count (max # of softirqs: 256)
-> > + * - bits 16-23 are the hardirq disable count (max # of hardirq disable: 256)
-> > + * - bits 24-27 are the hardirq count (max # of hardirqs: 16)
-> >   * - bit 28 is the NMI flag (no nesting count, tracked separately)
-> >   *
-> >   * The hardirq count could in theory be the same as the number of
-> > @@ -30,29 +32,34 @@
-> >   *
-> >   *         PREEMPT_MASK:	0x000000ff
-> >   *         SOFTIRQ_MASK:	0x0000ff00
-> > - *         HARDIRQ_MASK:	0x000f0000
-> > + * HARDIRQ_DISABLE_MASK:	0x00ff0000
-> > + *         HARDIRQ_MASK:	0x0f000000
-> >   *             NMI_MASK:	0x10000000
-> >   * PREEMPT_NEED_RESCHED:	0x80000000
-> >   */
-> >  #define PREEMPT_BITS	8
-> >  #define SOFTIRQ_BITS	8
-> > +#define HARDIRQ_DISABLE_BITS	8
-> >  #define HARDIRQ_BITS	4
-> >  #define NMI_BITS	1
-> >  
-> >  #define PREEMPT_SHIFT	0
-> >  #define SOFTIRQ_SHIFT	(PREEMPT_SHIFT + PREEMPT_BITS)
-> > -#define HARDIRQ_SHIFT	(SOFTIRQ_SHIFT + SOFTIRQ_BITS)
-> > +#define HARDIRQ_DISABLE_SHIFT	(SOFTIRQ_SHIFT + SOFTIRQ_BITS)
-> > +#define HARDIRQ_SHIFT	(HARDIRQ_DISABLE_SHIFT + HARDIRQ_DISABLE_BITS)
-> >  #define NMI_SHIFT	(HARDIRQ_SHIFT + HARDIRQ_BITS)
-> >  
-> >  #define __IRQ_MASK(x)	((1UL << (x))-1)
-> >  
-> >  #define PREEMPT_MASK	(__IRQ_MASK(PREEMPT_BITS) << PREEMPT_SHIFT)
-> >  #define SOFTIRQ_MASK	(__IRQ_MASK(SOFTIRQ_BITS) << SOFTIRQ_SHIFT)
-> > +#define HARDIRQ_DISABLE_MASK	(__IRQ_MASK(SOFTIRQ_BITS) << HARDIRQ_DISABLE_SHIFT)
-> 
-> Should this be HARDIRQ_DISABLE_BITS rather than SOFTIRQ_BITS ?
-> 
+On 10/31/25 20:41, Kuniyuki Iwashima wrote:
+> On Thu, Oct 30, 2025 at 6:45 AM Sunday Adelodun
+> <adelodunolaoluwa@yahoo.com> wrote:
+>> On 10/28/25 19:28, Kuniyuki Iwashima wrote:
+>>> On Sat, Oct 25, 2025 at 12:03 PM Sunday Adelodun
+>>> <adelodunolaoluwa@yahoo.com> wrote:
+>>>> Add selftests to verify and document Linux’s intended behaviour for
+>>>> UNIX domain sockets (SOCK_STREAM and SOCK_DGRAM) when a peer closes.
+>>>> The tests cover:
+>>>>
+>>>>     1. EOF returned when a SOCK_STREAM peer closes normally.
+>>>>     2. ECONNRESET returned when a SOCK_STREAM peer closes with unread data.
+>>>>     3. SOCK_DGRAM sockets not returning ECONNRESET on peer close.
+>>>>
+>>>> This follows up on review feedback suggesting a selftest to clarify
+>>>> Linux’s semantics.
+>>>>
+>>>> Suggested-by: Kuniyuki Iwashima <kuniyu@google.com>
+>>>> Signed-off-by: Sunday Adelodun <adelodunolaoluwa@yahoo.com>
+>>>> ---
+>>>> Changelog:
+>>>>
+>>>> Changes made from v1:
+>>>>
+>>>> - Patch prefix updated to selftest: af_unix:.
+>>>>
+>>>> - All mentions of “UNIX” changed to AF_UNIX.
+>>>>
+>>>> - Removed BSD references from comments.
+>>>>
+>>>> - Shared setup refactored using FIXTURE_VARIANT().
+>>>>
+>>>> - Cleanup moved to FIXTURE_TEARDOWN() to always run.
+>>>>
+>>>> - Tests consolidated to reduce duplication: EOF, ECONNRESET, SOCK_DGRAM peer close.
+>>>>
+>>>> - Corrected ASSERT usage and initialization style.
+>>>>
+>>>> - Makefile updated for new directory af_unix.
+>>>>
+>>>>    tools/testing/selftests/net/af_unix/Makefile  |   1 +
+>>>>    .../selftests/net/af_unix/unix_connreset.c    | 161 ++++++++++++++++++
+>>>>    2 files changed, 162 insertions(+)
+>>>>    create mode 100644 tools/testing/selftests/net/af_unix/unix_connreset.c
+>>>>
+>>>> diff --git a/tools/testing/selftests/net/af_unix/Makefile b/tools/testing/selftests/net/af_unix/Makefile
+>>>> index de805cbbdf69..5826a8372451 100644
+>>>> --- a/tools/testing/selftests/net/af_unix/Makefile
+>>>> +++ b/tools/testing/selftests/net/af_unix/Makefile
+>>>> @@ -7,6 +7,7 @@ TEST_GEN_PROGS := \
+>>>>           scm_pidfd \
+>>>>           scm_rights \
+>>>>           unix_connect \
+>>>> +       unix_connreset \
+>>>>    # end of TEST_GEN_PROGS
+>>>>
+>>>>    include ../../lib.mk
+>>>> diff --git a/tools/testing/selftests/net/af_unix/unix_connreset.c b/tools/testing/selftests/net/af_unix/unix_connreset.c
+>>>> new file mode 100644
+>>>> index 000000000000..c65ec997d77d
+>>>> --- /dev/null
+>>>> +++ b/tools/testing/selftests/net/af_unix/unix_connreset.c
+>>>> @@ -0,0 +1,161 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0
+>>>> +/*
+>>>> + * Selftest for AF_UNIX socket close and ECONNRESET behaviour.
+>>>> + *
+>>>> + * This test verifies that:
+>>>> + *  1. SOCK_STREAM sockets return EOF when peer closes normally.
+>>>> + *  2. SOCK_STREAM sockets return ECONNRESET if peer closes with unread data.
+>>>> + *  3. SOCK_DGRAM sockets do not return ECONNRESET when peer closes.
+>>>> + *
+>>>> + * These tests document the intended Linux behaviour.
+>>>> + *
+>>>> + */
+>>>> +
+>>>> +#define _GNU_SOURCE
+>>>> +#include <stdlib.h>
+>>>> +#include <string.h>
+>>>> +#include <fcntl.h>
+>>>> +#include <unistd.h>
+>>>> +#include <errno.h>
+>>>> +#include <sys/socket.h>
+>>>> +#include <sys/un.h>
+>>>> +#include "../../kselftest_harness.h"
+>>>> +
+>>>> +#define SOCK_PATH "/tmp/af_unix_connreset.sock"
+>>>> +
+>>>> +static void remove_socket_file(void)
+>>>> +{
+>>>> +       unlink(SOCK_PATH);
+>>>> +}
+>>>> +
+>>>> +FIXTURE(unix_sock)
+>>>> +{
+>>>> +       int server;
+>>>> +       int client;
+>>>> +       int child;
+>>>> +};
+>>>> +
+>>>> +FIXTURE_VARIANT(unix_sock)
+>>>> +{
+>>>> +       int socket_type;
+>>>> +       const char *name;
+>>>> +};
+>>>> +
+>>>> +/* Define variants: stream and datagram */
+>>>> +FIXTURE_VARIANT_ADD(unix_sock, stream) {
+>>>> +       .socket_type = SOCK_STREAM,
+>>>> +       .name = "SOCK_STREAM",
+>>>> +};
+>>>> +
+>>>> +FIXTURE_VARIANT_ADD(unix_sock, dgram) {
+>>>> +       .socket_type = SOCK_DGRAM,
+>>>> +       .name = "SOCK_DGRAM",
+>>>> +};
+>>> Let's add coverage for SOCK_SEQPACKET,
+>>> which needs listen() / connect() but other semantics
+>>> are similar to SOCK_DGRAM.
+>> I will add it through:
+>> if (variant->socket_type == SOCK_STREAM ||
+>>                  variant->socket_type == SOCK_SEQPACKET)
+>>
+>>
+>> in both the setup and teardown fixtures with a little bit of modification
+>>
+>> where necessary (especially in the setup fixture).
+>>
+>> And also the fixture_variant_add macro.
+>>
+>>>> +
+>>>> +FIXTURE_SETUP(unix_sock)
+>>>> +{
+>>>> +       struct sockaddr_un addr = {};
+>>>> +       int err;
+>>>> +
+>>>> +       addr.sun_family = AF_UNIX;
+>>>> +       strcpy(addr.sun_path, SOCK_PATH);
+>>>> +
+>>>> +       self->server = socket(AF_UNIX, variant->socket_type, 0);
+>>>> +       ASSERT_LT(-1, self->server);
+>>>> +
+>>>> +       err = bind(self->server, (struct sockaddr *)&addr, sizeof(addr));
+>>>> +       ASSERT_EQ(0, err);
+>>>> +
+>>>> +       if (variant->socket_type == SOCK_STREAM) {
+>>>> +               err = listen(self->server, 1);
+>>>> +               ASSERT_EQ(0, err);
+>>>> +
+>>>> +               self->client = socket(AF_UNIX, SOCK_STREAM, 0);
+>>>> +               ASSERT_LT(-1, self->client);
+>>>> +
+>>>> +               err = connect(self->client, (struct sockaddr *)&addr, sizeof(addr));
+>>>> +               ASSERT_EQ(0, err);
+>>>> +
+>>>> +               self->child = accept(self->server, NULL, NULL);
+>>>> +               ASSERT_LT(-1, self->child);
+>>>> +       } else {
+>>>> +               /* Datagram: bind and connect only */
+>>>> +               self->client = socket(AF_UNIX, SOCK_DGRAM | SOCK_NONBLOCK, 0);
+>>>> +               ASSERT_LT(-1, self->client);
+>>>> +
+>>>> +               err = connect(self->client, (struct sockaddr *)&addr, sizeof(addr));
+>>>> +               ASSERT_EQ(0, err);
+>>>> +       }
+>>>> +}
+>>>> +
+>>>> +FIXTURE_TEARDOWN(unix_sock)
+>>>> +{
+>>>> +       if (variant->socket_type == SOCK_STREAM)
+>>>> +               close(self->child);
+>>>> +
+>>>> +       close(self->client);
+>>>> +       close(self->server);
+>>>> +       remove_socket_file();
+>>>> +}
+>>>> +
+>>>> +/* Test 1: peer closes normally */
+>>>> +TEST_F(unix_sock, eof)
+>>>> +{
+>>>> +       char buf[16] = {};
+>>>> +       ssize_t n;
+>>>> +
+>>>> +       if (variant->socket_type != SOCK_STREAM)
+>>>> +               SKIP(return, "This test only applies to SOCK_STREAM");
+>>> Instead of skipping, let's define final ASSERT() results
+>>> for each type.
+>>>
+>>> Same for other 2 tests.
+>> can I use a switch statement in all the tests? say, for example
+> switch() is completely fine, but I guess "if" will be shorter :)
+I will go for if then.
+>
+>> test1:
+>>
+>> ...
+>>
+>> switch (variant->socket_type) {
+>>
+>> case SOCK_STREAM:
+>>
+>> case SOCK_SEQPACKET:
+>>
+>>           ASSERT_EQ(0, n);
+> You need break; here.
+Thank you. It was an omission
+>
+>> case SOCK_DGRAM:
+>>
+>>           ASSERT(-1, n);
+>>
+>>           ASSERT_EQ(EAGAIN, errno);
+>>
+>>           break;
+> And also please make sure the compiler will not complain
+> without default: depending on inherited build options.
+I will look into this
+>
+>> }
+>>
+>> ...
+>>
+>> test2:
+>>
+>> ...
+>>
+>> switch (variant->socket_type) {
+>>
+>> case SOCK_STREAM:
+>>
+>> case SOCK_SEQPACKET:
+>>
+>>           ASSERT_EQ(-1, n);
+>>
+>>           ASSERT_EQ(ECONNRESET, errno);
+>>
+>>           break;
+>>
+>> case SOCK_DGRAM:
+>>
+>>           ASSERT(-1, n);
+>>
+>>           ASSERT_EQ(EAGAIN, errno);
+>>
+>>           break;
+>>
+>> }
+>> ...
+>>
+>> test 3:
+>>
+>> ...
+>>
+>> switch (variant->socket_type) {
+>>
+>> case SOCK_STREAM:
+>>
+>> case SOCK_SEQPACKET:
+>>
+>>           ASSERT_EQ(-1, n);
+>>
+>>           ASSERT_EQ(ECONNRESET, errno);
+>>
+>>           break;
+>>
+>> case SOCK_DGRAM:
+>>
+>>           ASSERT(-1, n);
+>>
+>>           ASSERT_EQ(EAGAIN, errno);
+>>
+>>           break;
+>>
+>> }
+>>
+>> ...
+>>
+>> if not these, could you kindly shed more light to what you meant
+>>
+>>>
+>>>> +
+>>>> +       /* Peer closes normally */
+>>>> +       close(self->child);
+>>>> +
+>>>> +       n = recv(self->client, buf, sizeof(buf), 0);
+>>>> +       TH_LOG("%s: recv=%zd errno=%d (%s)", variant->name, n, errno, strerror(errno));
+>>>> +       if (n == -1)
+>>>> +               ASSERT_EQ(ECONNRESET, errno);
+>>> ... otherwise, we don't see an error here
+>>>
+>>>> +
+>>>> +       if (n != -1)
+>>>> +               ASSERT_EQ(0, n);
+>>> and this can be checked unconditionally.
+>> did you mean I should remove the if (n != -1) ASSERT_EQ(0, n); part?
+> If SOCK_DGRAM does not reuse this test, yes.
+>
+> The point is we do not want to miss future regression by
+> preparing both if (n == -1) case and if  (n == 0) case, one
+> of which should never happen at this point.
+>
+> Thanks!
+>
+Thank you for these.
+I will work on them and send v3 shortly.
 
-Good catch! Yes, it' should be HARDIRQ_DISABLE_BITS. Thank you!
+Thanks once again.
 
-Regards,
-Boqun
-
-> 
-> Best regards,
-> Andreas Hindborg
-> 
-> 
 
