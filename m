@@ -1,226 +1,119 @@
-Return-Path: <linux-kernel+bounces-880440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-880426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF613C25BDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:04:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D458C25BEF
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 16:06:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DAC4E420034
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 15:01:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 854901B27640
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 14:58:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312A92BEC57;
-	Fri, 31 Oct 2025 14:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E37C1EE019;
+	Fri, 31 Oct 2025 14:48:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OZJQ8oQv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="GPKDZ4Ji"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDFC734D385;
-	Fri, 31 Oct 2025 14:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48307192B84;
+	Fri, 31 Oct 2025 14:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761922693; cv=none; b=tuug/BVBHHpL6BR31VaciZI+c4XAW/utjZhGVP69fHWp6PSyzVzm2I32v7t1fGSyJ+WVEHDQngW61tynVoeDHAodoJjdGZLZXUmhcUTcRnUcFrVTcNmGmj4aXhjDtXjnS15tg5UEgFN4T6NumxlM07O3FoOVzTvjxsQhPXZ+gu4=
+	t=1761922082; cv=none; b=t+YWSXTEj+97zrobfxvjO8VOGwPZcA8wjRxOXyZqYMy6cz7E6zw79XSfx0+nbB00wXkNRWFuczstxSMAivGqEXT4HReR9I4fAlSxbP+tG3vBEOFnidwMTGtXKxz38PJ88o5iI54UYrrW4Xpon3+Xd5DUSvhLd7nlV0G7uQ22IJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761922693; c=relaxed/simple;
-	bh=hJWzz6XCk4hYFyEUatn9zLjpnq+roHgfo0xNOZNwXeY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=npAY0jsergAnZqo7kf1wtVANb/AdM4GQDT2AqBh93pxYZZGxJQ/7r+sqR2PgM7DdJQ1WJzD7PqZ980WRBL0dwNydB9kMAztUjx/Ar0AHvWuFkritfFwRdUTJoEeYWgpEBferegOPT3n34Wdq54NKSQL1WcM8FmLy8xXASgIP0vE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OZJQ8oQv; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761922691; x=1793458691;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=hJWzz6XCk4hYFyEUatn9zLjpnq+roHgfo0xNOZNwXeY=;
-  b=OZJQ8oQvuCpuJZEcRQxRbjVtpIrLHcE0iUTk59ESmJZ3sz1cekNB4DN+
-   SxLw4oXbqnmirQi0SR/ynC0lWTT+60K9ESEa/DRnLyWBZy46by30Ir+sg
-   lxdXNPp7+0GPA6ilzp3IDJH5R2gO+wPacNu2y9I5VOnqAfa7QYZdQNDVh
-   pohhg/1guu+yVibtNW3BdtHhpWkWSxTPSCBjSdOHXAAdPcFUj0sHOMS/1
-   Ti/v2OrtAXxBF0XaJsZ/i54TEHJ5iW9QSlDkTYnkUQLAHe90iGMo8XpP/
-   GyOoP7WgeRf6JAmGxLN5trWMgJ/0jMFgUz7WHvSkXn21YBAS6jzRygK+2
-   A==;
-X-CSE-ConnectionGUID: Pmrbe/2pTAuO4ibac5Qp6Q==
-X-CSE-MsgGUID: ZullW2zkRdCLum5aUM4S8w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="75201585"
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="75201585"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 07:58:10 -0700
-X-CSE-ConnectionGUID: wZxVrHPYTKGc0sRQ28fQ0A==
-X-CSE-MsgGUID: gEOuztlpS5u3NzlhBamfgQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,269,1754982000"; 
-   d="scan'208";a="185470386"
-Received: from mgoodin-mobl3.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.66])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 07:58:06 -0700
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vEqZj-00000004Imb-3mXr;
-	Fri, 31 Oct 2025 16:57:59 +0200
-Date: Fri, 31 Oct 2025 16:57:59 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: =?iso-8859-1?Q?Beno=EEt?= Monin <benoit.monin@bootlin.com>
-Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>,
-	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
-	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	Dmitry Guzman <dmitry.guzman@mobileye.com>,
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH v2 4/5] i2c: designware: Implement I2C_M_STOP support
-Message-ID: <aQTOd4tghCexT_0Z@smile.fi.intel.com>
-References: <20251031-i2c-dw-v2-0-90416874fcc0@bootlin.com>
- <20251031-i2c-dw-v2-4-90416874fcc0@bootlin.com>
+	s=arc-20240116; t=1761922082; c=relaxed/simple;
+	bh=wUbU0LdBSZ9qpL5qWJVMd119J9mcG2Lz3LJ8hYUx95A=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=p0+yGrPUw6Ojlk4K96XDURH9fdQVRwChSv+5O2WGVdFOYiieJ7li4HosQOm9uRFtZavzo1K2nXv9vIGo7WvS+APycgKuFB2plDBXl3+MkrpBPpRTkoHIw7YM3G4nsHNd3rMJci6OUBwhobm4NSEKH7FrP2BEtBNEKbJAnHrsEgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=GPKDZ4Ji; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4cykFd5Ty1z9t6Q;
+	Fri, 31 Oct 2025 15:41:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1761921701; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=r7oF0pHiTKfHggDqHbs4XCDSzjGm+M2FdqzdYufdWyg=;
+	b=GPKDZ4JixaBKjXl2cX9I1oyUFn+2gT1Mvzzfp+dtw61j63t1VKbr4wE/3DL7lHcmGtms1L
+	WYLpHlKRysiK/+AcAOIE/Lc2UcB50ZdPWhASbd33rwMQ8BXpZmtRQcbn9n0NzpFbnF1khc
+	A5ehcjerpzth4q8Q3Be+aJIzdcM9+QqZfRgdXgttIevy5WsSUHNyzyEjzej2Lh7UD8nUNk
+	EvRXRqtQ+VVlDQ2XO4NMVOXK7sr2Pl8xUHlh0UnyzkLt0a36mYR/idiWnlnmQsBGguYH67
+	eNqtW8UV2otQBr9uK9A4mF9IRvWhv+0LAwWwCqgr6XUSdJ4Nhws9I+SedACoHw==
+Message-ID: <3006a63b5e38f3d3bfd07047fa8e8ed2e9d2a93d.camel@mailbox.org>
+Subject: Re: [PATCH v3] drm/sched: Add warning for removing hack in
+ drm_sched_fini()
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Pierre-Eric Pelloux-Prayer <pierre-eric@damsy.net>, Philipp Stanner
+ <phasta@kernel.org>, Matthew Brost <matthew.brost@intel.com>, Danilo
+ Krummrich <dakr@kernel.org>, Christian =?ISO-8859-1?Q?K=F6nig?=
+ <ckoenig.leichtzumerken@gmail.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	linux-media@vger.kernel.org
+Date: Fri, 31 Oct 2025 15:41:38 +0100
+In-Reply-To: <ebc028f2-3d2d-4f42-a667-df7d6c2b7eb0@damsy.net>
+References: <20251023123429.139848-2-phasta@kernel.org>
+	 <ebc028f2-3d2d-4f42-a667-df7d6c2b7eb0@damsy.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251031-i2c-dw-v2-4-90416874fcc0@bootlin.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+X-MBO-RS-META: ozkjknk9jqrgne35isjct51z4rm7d7ye
+X-MBO-RS-ID: 718dfa83b9c480413cf
 
-On Fri, Oct 31, 2025 at 03:35:42PM +0100, Benoît Monin wrote:
-> Add the support of the I2C_M_STOP flag in i2c_msg by splitting
-> i2c_dw_xfer() in two: __i2c_dw_xfer_unlocked() for the core transfer logic
-> and i2c_dw_xfer() for handling the high-level transaction management.
-> 
-> In detail __i2c_dw_xfer_unlocked() starts a transaction and wait for its
-> completion, either with a STOP on the bus or an error. i2c_dw_xfer()
-> loops over the messages to search for the I2C_M_STOP flag and calls
-> __i2c_dw_xfer_unlocked() for each part of the messages up to a STOP or
-> the end of the messages array.
-> 
-> i2c_dw_xfer() holds the device lock while calling __i2c_dw_xfer_unlocked(),
-> this allows to group multiple accesses to device that support a STOP in
-> a transaction when done via i2c_dev I2C_RDWR ioctl, in a single-master
-> configuration.
-> 
-> Also, now that we have a lookup of the messages in i2c_dw_xfer() prior
-> to each transaction, we use it to make sure the messages are valid for
-> the transaction. We check that the target address does not change before
-> starting the transaction instead of aborting the transfer while it is
-> happening, as it was done in i2c_dw_xfer_msg(). The target address can
-> only be changed after an I2C_M_STOP flag, thus a STOP on the i2c bus.
-> 
-> The I2C_FUNC_PROTOCOL_MANGLING flag is added to the list of
-> functionalities supported by the adapter, except for the AMD NAVI i2c
-> controller which uses its own xfer() function and is left untouched.
+On Fri, 2025-10-31 at 15:10 +0100, Pierre-Eric Pelloux-Prayer wrote:
+> Hi Philipp,
+>=20
+> Le 23/10/2025 =C3=A0 14:34, Philipp Stanner a =C3=A9crit=C2=A0:
+> > The assembled developers agreed at the X.Org Developers Conference 2025
+> > that the hack added for amdgpu in drm_sched_fini() shall be removed. It
+> > shouldn't be needed by amdgpu anymore.
+> >=20
+> > As it's unclear whether all drivers really follow the life time rule of
+> > entities having to be torn down before their scheduler, it is reasonabl=
+e
+> > to warn for a while before removing the hack.
+> >=20
+> > Add a warning in drm_sched_fini() that fires if an entity is still
+> > active.
+> >=20
+> > Signed-off-by: Philipp Stanner <phasta@kernel.org>
 
-...
+[=E2=80=A6]
 
->  /*
-> - * Prepare controller for a transaction and call i2c_dw_xfer_msg.
-> + * Prepare controller for a transaction, start the transfer of the msgs
-> + * and wait for completion.
-> + * Caller must hold the device lock.
+>=20
+> The patch is Acked-by: Pierre-Eric Pelloux-Prayer=20
+> <pierre-eric.pelloux-prayer@amd.com>
 
-Comment is good, but having a lockdep annotation in addition to is even better!
+Pushed to drm-misc-next, thanks.
 
->   */
+For the future: b4 / maintainer-tools wasn't able to automatically
+harvest your Acked-by. Would be helpful if you have the A-b on a single
+line without line break and without other content in the future
 
-...
+Have a nice weekend,
+P.
 
-> +done:
-> +	return ret;
-
-Drop now unneeded label, return directly.
-
-...
-
-> +static int
-> +i2c_dw_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
-> +{
-> +	struct dw_i2c_dev *dev = i2c_get_adapdata(adap);
-> +	struct i2c_msg *msg;
-> +	int ret, cnt;
-> +
-> +	dev_dbg(dev->dev, "%s: msgs: %d\n", __func__, num);
-
-__func__ can be turned on or off at runtime (with Dynamic Debug help).
-
-> +	pm_runtime_get_sync(dev->dev);
-
-Can you switch to use ACQUIRE() ?
-
-> +	switch (dev->flags & MODEL_MASK) {
-> +	case MODEL_AMD_NAVI_GPU:
-> +		ret = amd_i2c_dw_xfer_quirk(adap, msgs, num);
-> +		goto done_nolock;
-> +	default:
-> +		break;
-> +	}
-> +
-> +	ret = i2c_dw_acquire_lock(dev);
-> +	if (ret)
-> +		goto done_nolock;
-> +
-> +	/*
-> +	 * If the I2C_M_STOP is present in some the messages,
-> +	 * we do one transaction for each part up to the STOP.
-> +	 */
-> +	for (msg = msgs; msg < msgs + num; msg += cnt) {
-> +		u16 addr = msg->addr;
-> +
-> +		/*
-> +		 * Count the messages in a transaction, up to a STOP
-> +		 * or the end of the msgs.
-> +		 */
-> +		for (cnt = 1; ; cnt++) {
-> +			/*
-> +			 * We cannot change the target address during
-> +			 * a transaction, so make sure the address stays
-> +			 * the same.
-> +			 */
-> +			if (msg[cnt - 1].addr != addr) {
-> +				dev_err(dev->dev, "invalid target address\n");
-> +				ret = -EINVAL;
-> +				goto done;
-> +			}
-> +
-> +			if ((msg[cnt - 1].flags & I2C_M_STOP) ||
-> +			    (msg + cnt == msgs + num))
-> +				break;
-> +		}
-> +
-> +		ret = __i2c_dw_xfer_unlocked(dev, msg, cnt);
-> +		if (ret < 0)
-> +			goto done;
-> +	}
-> +
->  done:
->  	i2c_dw_release_lock(dev);
->  
->  done_nolock:
->  	pm_runtime_put_autosuspend(dev->dev);
->  
-> -	return ret;
-> +	if (ret < 0)
-> +		return ret;
-> +	return num;
->  }
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+>=20
+> Thanks.
+>=20
+>=20
+> > =C2=A0=C2=A0		spin_unlock(&rq->lock);
+> > =C2=A0=C2=A0		kfree(sched->sched_rq[i]);
+> > =C2=A0=C2=A0	}
 
 
