@@ -1,188 +1,145 @@
-Return-Path: <linux-kernel+bounces-879952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-879956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C3D1C24781
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:32:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18E20C247CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 11:36:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A5A03B8626
-	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:32:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80FB61A24581
+	for <lists+linux-kernel@lfdr.de>; Fri, 31 Oct 2025 10:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 266791F5423;
-	Fri, 31 Oct 2025 10:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8CF34D3B4;
+	Fri, 31 Oct 2025 10:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xXQPnFrJ"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Nce8sMlE"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820F52E8DF0
-	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26759311C24
+	for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 10:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761906731; cv=none; b=UIjOLUBzz8atJoks1PodoieGnQ02e4tzDsup8KMX/+Z5WNQHMiVbuDVK0AhmKh7qC+t8QUZzjcEDivsUdOkKaRKKYWCEdkM7+PsVr/ta6nVnJb67CMMq6heNAGI/MWXRpiGcyGUZ4LrGjiOYYM3bGzk2jWQ2hPFAb1V603YCtR4=
+	t=1761906857; cv=none; b=OQOIxVgaLQr9mp9uNuGqHEKdiy2y21dQhD7yQgDjt0OsLssZDYj8vtX8ceAJmaW/+wPVrEbwyNzj3skPZ+H31aucyrAHPvSaJUknO9y+6lt5ji0fanTxCqxwVBbyUjecbAW7J0a/N1/mNH+Pd8/FkGyWQn2IpKymXzFYqiYd4V4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761906731; c=relaxed/simple;
-	bh=gy+saDTlQayoKwFwRxm0cXA75jFfEVhJH4p23EiPWsE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z8wXmsALsAkPioQmgqe5lroTPWhwVsaoPeDlYLMAXkdRJXtChUPI9vJDCGOxU6sjXNZcL6kJHNxfIdzRy8wnjudSXrE24Ivzdhw/IU6+EAvgjnvioN9sYNd/9SJ6VGrdTcfNRGFefr1hwx0tM6c05Tl6ZX4r+n3KtJFuvaPFHYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xXQPnFrJ; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-8906eb94264so251011985a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 03:32:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761906728; x=1762511528; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rBHO5DkgwwLeTufaaCOE3ZnuCbkH/gU+aNGIgHEYT4A=;
-        b=xXQPnFrJKX3JYrzixK3Zva1j/f+uATHF+16yeKKpyhSk+F39KipRmKlz4WmKzQqiu7
-         H+m2joQsVVeAD/N87Z0KjTDv0ruw7+bhSNILbe3/x1f7s36Vv5faiUiLitaX6BPikgRO
-         SKcBI0gJZYyKBFbfHqaYrFNoh5kTy3RN6T3HfSC5SMer0dIWxShQD2qVsecu34vPwMG5
-         IINE/iKVOSij9RKYfyf91OszzKEveiwfjoTQy50Ik7agoxFdW6uN0GIJKd2OMGrMymDC
-         yA02PtxmSjlmZj9PKPMR9NImqkEfUNLeA3ajm1TnTl4wKoDWoQ/KKDvRDtpZaoVOQtZP
-         MnlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761906728; x=1762511528;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rBHO5DkgwwLeTufaaCOE3ZnuCbkH/gU+aNGIgHEYT4A=;
-        b=p5MmeJRd9JsFHL0/Wx7cQAxV5jBE6EHKtoNWnfGN53kV4jsCl+J+KnDeR+wYTYq0/4
-         eVSOkwS+xxWQlA7YrDsdPSEygPiS/69dBx1LQHi4yeRVmGQx7Xe1AK4rraRlVhEFFlX1
-         n/t5IJgc2DX9CCaGavsV0H9CfOYyYqeQ0d6IyqXUnooUHScmeVZCmqUzR7vqLulL1QrB
-         8MuMAJsA58WAzVFWGcbMlbBCMZZv1Xp8+zgkZ6NkgLm5dfeSB8SN6xdjCLKcJ+XSZxkS
-         ae12uKp+5XKc/twZx0HcXvirIGmLEf2iCVZKnX9nuqHA1S+isPsNkSMCnoIj0CQ49LMe
-         qLfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXg9NQZM3hNH9WLgSi5dGlBeuq2hHtK/M2sD9dz/wbh+LfKJqiI858t62OxGoMvDw0X2w6JpHH7Jhrd3LQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyngEHiZL6IiAHzL4uGztj33MwuBjcm4mbbJ/65zdKyEZFI5TBH
-	hSJrGJPRmBZh01jCcHMAdK7cSEd9yzDTWIbtMhli8g5XMR3fWB3rLHkUJuQR5A39Qr+b3OKfFXS
-	wzp/kjTAdTK22RzjvfJjWO2IN6ZAPVL/ANF+GejQfVA==
-X-Gm-Gg: ASbGncvGDLd1Pp8eu38xLA9IAe7TC6fJupduBzvvjW/hBU7TeKw/5T52EDqvQ20Nwhu
-	imtIiekM4ePv6kj++ffiJCQKrvg/lrmnB1WCJvGw9pvFp4JelAIBqNWQlPBQ1onNoi36QSLW2Rh
-	lr4ADc84cz0HseF8iivBZZU6mfpV5xPNDKepbGbYL67XZjkPl2LgRNkyOARcKyt19TfIwuIreEQ
-	PbtNxpt1eFVcHzJoOw+NQXo7BdiM2JMCQtggSS38KaepEuSEuyKoPJbaw2WkrdnlGh/c4pAx/Rr
-	PEoV+zMzFarVBNgVHg==
-X-Google-Smtp-Source: AGHT+IHu+NHlSWMWZgBbLXx+pIUFMav8YMQmxFZfBPTCoDQCkEpCLEoQ8xm5xc5cOQvFGZ4xecaH79wXPEyhGj06zgA=
-X-Received: by 2002:a05:620a:4590:b0:8a5:4246:686b with SMTP id
- af79cd13be357-8ab998806ffmr315842185a.36.1761906728163; Fri, 31 Oct 2025
- 03:32:08 -0700 (PDT)
+	s=arc-20240116; t=1761906857; c=relaxed/simple;
+	bh=DgOsns4eXsSGg4ImlNipqf7EsxEa/Phy3SMjBp8pzdc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aawoOGZW2AWA1w5n3AER5BvcBIWUtvlANUAuCkvot8MmDDxmd+9rCutqDbQi8GyoGNdY87bovUNwTuehDrhqe/lZl+NFJ3ImWstcqVoftR15rI0L0G945H/e2hOQ38KJ2PMJ5Of2muSyHR02VLRR/xcVznQtVHfQsJu+mBV2eoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Nce8sMlE; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <11c80527-5dc7-440f-b09e-a9e4a8093ee2@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761906850;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=No4nG0fxP+YGa8mecuIh966uI+UlF5o7DLaj/1/zRLQ=;
+	b=Nce8sMlEtSshax3q44vCtydt5Q6Om6F3fG6V8IsPoi85c7l1X3hQpGwgjBtYRssoRogXiu
+	s+3HlcOvHRTJKrKoZZIuo3lkykRBBW4X4ovuqyYo/Q17KmbE72Mt65pGhiRQEkew35cDsW
+	+lY2qDo1vQSvh+PsnUGQSWVZvW3qM4Y=
+Date: Fri, 31 Oct 2025 18:34:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251020-extended_cti-v5-0-6f193da2d467@oss.qualcomm.com>
-In-Reply-To: <20251020-extended_cti-v5-0-6f193da2d467@oss.qualcomm.com>
-From: Mike Leach <mike.leach@linaro.org>
-Date: Fri, 31 Oct 2025 10:31:57 +0000
-X-Gm-Features: AWmQ_bnPKuVtHaksPvutzIO9xzBxS0KRp3OKWBqD3D-KPtG6AzFEkqk1d4z4hs0
-Message-ID: <CAJ9a7VjTqBczkdMYXqb1WmDRUYhC--dY6Ky5R=NfUZaYkiWmVw@mail.gmail.com>
-Subject: Re: [PATCH v5 0/2] Add Qualcomm extended CTI support
-To: Yingchao Deng <yingchao.deng@oss.qualcomm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark <james.clark@linaro.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, coresight@lists.linaro.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>, 
-	quic_yingdeng@quicinc.com, Jinlong Mao <jinlong.mao@oss.qualcomm.com>, 
-	Jinlong Mao <jinglong.mao@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-This set is looking good now and appears to be getting close to being ready=
-.
-
-There are a few minor issues in the second patch and a few items that
-need to be confirmed.
-1) I note that you removed the code to prevent calling claim/disclaim.
-Does this mean that you confirm that you have tested the patch update
-for claim tags I posted works on your system?
-2) In patch 2 I made some comments in regard to ARCH values - please
-confirm that these are accurate and have been tested as working on
-your system
-3) As mentioned in the comments to patch 2 - you need to update the
-docs for the new sysfs selection file you have added
-
-Thanks and Regards
-
-Mike
-
-On Mon, 20 Oct 2025 at 08:12, Yingchao Deng
-<yingchao.deng@oss.qualcomm.com> wrote:
->
-> The QCOM extended CTI is a heavily parameterized version of ARM=E2=80=99s=
- CSCTI.
-> It allows a debugger to send to trigger events to a processor or to send
-> a trigger event to one or more processors when a trigger event occurs on
-> another processor on the same SoC, or even between SoCs.
->
-> QCOM extended CTI supports up to 128 triggers. And some of the register
-> offsets are changed.
->
-> The commands to configure CTI triggers are the same as ARM's CTI.
->
-> Changes in v5:
-> 1. Move common part in qcom-cti.h to coresight-cti.h.
-> 2. Convert trigger usage fields to dynamic bitmaps and arrays.
-> 3. Fix holes in struct cti_config to save some space.
-> 4. Revert the previous changes related to the claim tag in
->    cti_enable/disable_hw.
-> Link to v4 - https://lore.kernel.org/linux-arm-msm/20250902-extended_cti-=
-v4-1-7677de04b416@oss.qualcomm.com/
->
-> Changes in v4:
-> 1. Read the DEVARCH registers to identify Qualcomm CTI.
-> 2. Add a reg_idx node, and refactor the coresight_cti_reg_show() and
-> coresight_cti_reg_store() functions accordingly.
-> 3. The register offsets specific to Qualcomm CTI are moved to qcom_cti.h.
-> Link to v3 - https://lore.kernel.org/linux-arm-msm/20250722081405.2947294=
--1-quic_jinlmao@quicinc.com/
->
-> Changes in v3:
-> 1. Rename is_extended_cti() to of_is_extended_cti().
-> 2. Add the missing 'i' when write the CTI trigger registers.
-> 3. Convert the multi-line output in sysfs to single line.
-> 4. Initialize offset arrays using designated initializer.
-> Link to V2 - https://lore.kernel.org/all/20250429071841.1158315-3-quic_ji=
-nlmao@quicinc.com/
->
-> Changes in V2:
-> 1. Add enum for compatible items.
-> 2. Move offset arrays to coresight-cti-core
->
-> Signed-off-by: Jinlong Mao <jinlong.mao@oss.qualcomm.com>
-> Signed-off-by: Yingchao Deng <yingchao.deng@oss.qualcomm.com>
-> ---
-> Yingchao Deng (2):
->       coresight: cti: Convert trigger usage fields to dynamic bitmaps and=
- arrays
->       coresight: cti: Add Qualcomm extended CTI support
->
->  drivers/hwtracing/coresight/coresight-cti-core.c   | 144 +++++++++++++--=
--
->  .../hwtracing/coresight/coresight-cti-platform.c   |  16 +-
->  drivers/hwtracing/coresight/coresight-cti-sysfs.c  | 184 +++++++++++++++=
-------
->  drivers/hwtracing/coresight/coresight-cti.h        |  60 ++++++-
->  drivers/hwtracing/coresight/qcom-cti.h             |  29 ++++
->  5 files changed, 346 insertions(+), 87 deletions(-)
-> ---
-> base-commit: 1fdbb3ff1233e204e26f9f6821ae9c125a055229
-> change-id: 20251016-extended_cti-2a426c8894b1
->
-> Best regards,
-> --
-> Yingchao Deng <yingchao.deng@oss.qualcomm.com>
->
+Subject: Re: [PATCH 1/1] mm/secretmem: fix use-after-free race in fault
+ handler
+To: Mike Rapoport <rppt@kernel.org>
+Cc: akpm@linux-foundation.org, big-sleep-vuln-reports@google.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ lorenzo.stoakes@oracle.com, willy@infradead.org, david@redhat.com,
+ stable@vger.kernel.org
+References: <CAEXGt5QeDpiHTu3K9tvjUTPqo+d-=wuCNYPa+6sWKrdQJ-ATdg@mail.gmail.com>
+ <20251031091818.66843-1-lance.yang@linux.dev> <aQSIdCpf-2pJLwAF@kernel.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Lance Yang <lance.yang@linux.dev>
+In-Reply-To: <aQSIdCpf-2pJLwAF@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
 
---=20
-Mike Leach
-Principal Engineer, ARM Ltd.
-Manchester Design Centre. UK
+
+On 2025/10/31 17:59, Mike Rapoport wrote:
+> On Fri, Oct 31, 2025 at 05:18:18PM +0800, Lance Yang wrote:
+>> From: Lance Yang <lance.yang@linux.dev>
+>>
+>> The error path in secretmem_fault() frees a folio before restoring its
+>> direct map status, which is a race leading to a panic.
+> 
+> Let's use the issue description from the report:
+
+Will do. I'll also add the missing Fixes: tag.
+
+> 
+> When a page fault occurs in a secret memory file created with
+> `memfd_secret(2)`, the kernel will allocate a new folio for it, mark
+> the underlying page as not-present in the direct map, and add it to
+> the file mapping.
+> 
+> If two tasks cause a fault in the same page concurrently, both could
+> end up allocating a folio and removing the page from the direct map,
+> but only one would succeed in adding the folio to the file
+> mapping. The task that failed undoes the effects of its attempt by (a)
+> freeing the folio again and (b) putting the page back into the direct
+> map. However, by doing these two operations in this order, the page
+> becomes available to the allocator again before it is placed back in
+> the direct mapping.
+> 
+> If another task attempts to allocate the page between (a) and (b), and
+> the kernel tries to access it via the direct map, it would result in a
+> supervisor not-present page fault.
+>   
+>> Fix the ordering to restore the map before the folio is freed.
+> 
+> ... restore the direct map
+> 
+> With these changes
+> 
+> Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+
+Thanks!
+Lance
+
+> 
+>>
+>> Cc: <stable@vger.kernel.org>
+>> Reported-by: Google Big Sleep <big-sleep-vuln-reports@google.com>
+>> Closes: https://lore.kernel.org/linux-mm/CAEXGt5QeDpiHTu3K9tvjUTPqo+d-=wuCNYPa+6sWKrdQJ-ATdg@mail.gmail.com/
+>> Signed-off-by: Lance Yang <lance.yang@linux.dev>
+>> ---
+>>   mm/secretmem.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/mm/secretmem.c b/mm/secretmem.c
+>> index c1bd9a4b663d..37f6d1097853 100644
+>> --- a/mm/secretmem.c
+>> +++ b/mm/secretmem.c
+>> @@ -82,13 +82,13 @@ static vm_fault_t secretmem_fault(struct vm_fault *vmf)
+>>   		__folio_mark_uptodate(folio);
+>>   		err = filemap_add_folio(mapping, folio, offset, gfp);
+>>   		if (unlikely(err)) {
+>> -			folio_put(folio);
+>>   			/*
+>>   			 * If a split of large page was required, it
+>>   			 * already happened when we marked the page invalid
+>>   			 * which guarantees that this call won't fail
+>>   			 */
+>>   			set_direct_map_default_noflush(folio_page(folio, 0));
+>> +			folio_put(folio);
+>>   			if (err == -EEXIST)
+>>   				goto retry;
+>>   
+>> -- 
+>> 2.49.0
+>>
+> 
+
 
