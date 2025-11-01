@@ -1,92 +1,77 @@
-Return-Path: <linux-kernel+bounces-881233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DD70C27C95
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 12:17:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EECE6C27C9B
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 12:19:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0DEC1891FA5
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 11:17:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95F663BF549
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 11:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2682F3C2A;
-	Sat,  1 Nov 2025 11:17:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1652F3C1D;
+	Sat,  1 Nov 2025 11:19:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="aJ8c+uxG"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cpjTaGHY"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A23B254AE1;
-	Sat,  1 Nov 2025 11:17:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167BD1D5CF2
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 11:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761995826; cv=none; b=jQdsmcVQCOItR0JrWZ3ZdchP7E4L0zd/peqTrKzooLWgjWHwIjpJbEeFlihulpMzChEn0DNoxYgJr4LYmx4ZcBriWiVef4OeHjfGro6A0H0/2HoxXdwoDKNiZ/CEzxHi8Z5ZMP2MBlEDY0K23RFFbHs1ZfV98+5fPvkiwWYVPkI=
+	t=1761995956; cv=none; b=j4p00iQRjjGjzTp7MiSR58D/++YquxbUui2sgLPUOZ5umQrgLXwaZAnI1KgCBSwlR3fO0S/5yITMFjJ3UNuBRZyRWlKMClFMHERfqT7kVOh4tryNXtsQrugOD1PTTlYoBUsoflkFF65XkyaV8gGgeO4EjswySidg8dsw8Phzdh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761995826; c=relaxed/simple;
-	bh=YjtOQpZf6et/V3P3XZ8O/UUV0rD+i3CXNm+Z/P7n9aQ=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=hD5LZ3EgLMEH9a8M90Ef5HjJ9nZXs/RreGTEeqj8JHk6zwpG9xDYtetphV6lH4y/Wi09gTq19KzGOIOT5WNtEIswQ/m8Q0d32X4r59wMALeAc9h0mXgTc+/1prs4rrTaxuf+3yyy8naOzNCGQzQeOui0VH9q6CuJ3ay9OeTa/8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=aJ8c+uxG; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1761995814;
-	bh=YjtOQpZf6et/V3P3XZ8O/UUV0rD+i3CXNm+Z/P7n9aQ=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=aJ8c+uxGHt4PklY3ZU44h3HmYDq90mf11KFxfGlNTEzaa6dlb0vvrXqeATHYzJy4i
-	 bcUgSrWeR8KFeuM48NKTPvVILxK7nEJ0yclmnDaOSCVYK76eoZKF2W+X2uDJWtWCt9
-	 Wr8sg/YY/j3W86hdH/2aXRudy6hVT8Ed/6NoAHl/SfHIPjgZ2cUhCGj3TptX/+zhc3
-	 8B9wEw8sJfRyvCNjZb94CtUJqswtG3GpF0h2N2zvU6yR1VKY8M1CYWilfP4Htv1EFs
-	 e1oRJZhXQtiVt1K0oh2DZL6OkiIyAlLchhj90MCJP/n5U6RG+JrHGab9sT/u89HLrP
-	 HUoH405cH4fsA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4czFft2bPQz4wCZ;
-	Sat, 01 Nov 2025 22:16:54 +1100 (AEDT)
-Date: Sat, 01 Nov 2025 22:16:50 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Joel Granados <joel.granados@kernel.org>
-CC: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the sysctl tree
-User-Agent: K-9 Mail for Android
-In-Reply-To: <rvvbiogh3palkhlbq7ymnntujvzfuiivbaabvyplbidgf5djqy@ullh6sl2q43t>
-References: <20251031094958.432f4e44@canb.auug.org.au> <rvvbiogh3palkhlbq7ymnntujvzfuiivbaabvyplbidgf5djqy@ullh6sl2q43t>
-Message-ID: <C1E2DB59-6064-4871-8F01-369AE6121E48@canb.auug.org.au>
+	s=arc-20240116; t=1761995956; c=relaxed/simple;
+	bh=Le3ojftnvwAMSHGtZ12ti6v3tbFc6aZVtoSsbrZK5Sg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=huUx/rYSWY1Anntm2h1tHSnrJKsGhchdPloqUzdKLUT1crYyxX+LwxMF2t/aLP2/8UKnAzCUptoDZxjmwlqW8k2zpE9IP39sEPqom7sZjHci3+utfZvZ+p/6BsoOfp3DmbEgPT6MIfC6XCjhIjQ8BZ8n5HDBDVDyhoGQRk9wAn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cpjTaGHY; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <9193e49a-b7e8-4a45-ab30-c7308f8e9d75@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1761995941;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ybok/k/EaCYbs1jQUTE3ffytqk49cuVoxPSAGtQzHbQ=;
+	b=cpjTaGHY7o2jQE5u/jerXx9XdI2PXlkTRisB8iKajAYMm0GwGn0yOoY8R5DNR6zACa0Zka
+	UqGye6yTsmhpENccIdneKZZVPgPR+iHVY6oWOZvQhasHgex4lqYLLCQEiFhXFooN6a3m3K
+	HbD49XO+sOgUa11l1DQG4XXc3taP5Wo=
+Date: Sat, 1 Nov 2025 11:18:59 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] ptp: ocp: Add newline to sysfs attribute output
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>, richardcochran@gmail.com,
+ jonathan.lemon@gmail.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251030124519.1828058-1-zhongqiu.han@oss.qualcomm.com>
+ <20251031165903.4b94aa66@kernel.org>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20251031165903.4b94aa66@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On 1 November 2025 12:42:46=E2=80=AFam AEDT, Joel Granados <joel=2Egranados=
-@kernel=2Eorg> wrote:
->On Fri, Oct 31, 2025 at 09:49:58AM +1100, Stephen Rothwell wrote:
->> Hi all,
->>=20
->> After merging the sysctl tree, today's linux-next build (powerpc
->> ppc64_defconfig) failed like this:
->Is it *only* powerpc=2E Right? I'll take a look at this ASAP=2E
+On 31/10/2025 23:59, Jakub Kicinski wrote:
+> On Thu, 30 Oct 2025 20:45:19 +0800 Zhongqiu Han wrote:
+>> Append a newline character to the sysfs_emit() output in ptp_ocp_tty_show.
+>> This aligns with common kernel conventions and improves readability for
+>> userspace tools that expect newline-terminated values.
+> 
+> Vadim? Is the backward compat here a concern?
 
-
-Hi Joel,
-
-powerpc was just the first build I did, so out is possible that there are =
-other
-architectures and/or configs that also do not implicitly include the neede=
-d
-files=2E
-
-Cheers,
-Stephen Rothwell
---=20
-Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
+I'm checking our software now, hopefully it will not break, but I need a
+bit of time to be sure
 
