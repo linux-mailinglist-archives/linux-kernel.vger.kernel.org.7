@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-881047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32357C274BF
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 01:46:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47715C274CE
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 01:46:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69562421E2F
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 00:46:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88831422697
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 00:46:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B779C34D387;
-	Sat,  1 Nov 2025 00:45:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B542423B62B;
+	Sat,  1 Nov 2025 00:45:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="nPK/nqUq"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="D9E/bU3H"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B73222156F;
-	Sat,  1 Nov 2025 00:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3CB7223DD5
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 00:45:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761957919; cv=none; b=A4vBEQo6myS6phZQo/tZ5oomc7wAfmZklDnyWRiWSpui1W37Di08A6z+MOYZmqErKeoTOg9evDiX7GUAsiKWHVDCzzUkX8ZOTJSY1XQvh3PWcG/Le85iXy8LMkbSPAJK6shpJG5PvL9gK2BDPZ2p8MPFNWvgquc+IuZpWoGEE0M=
+	t=1761957920; cv=none; b=HCH/sKt6kDXXguXK9tMd9ORE4EIF4AC5pmTaQQXhjbAPlKX8F9A0JIqZpo4WNGp0xozXkM8v6T6MuojJ7hD9/RXFs1QtBzfNcaIErr921wZCfypriWkKhcAVXTNOGL2JOdG9z8AbFnvEUw/AyOOBd2U/2rCkpInkwZdry+2LQes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761957919; c=relaxed/simple;
-	bh=sGH6upfh+TcClYAnuHx8xUZYfzOcEBal6VRL0R94VlY=;
+	s=arc-20240116; t=1761957920; c=relaxed/simple;
+	bh=GobNp8G3Ev64l8yEWW4+TcrOQJ0KYKgHNjJ650ShNLw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mRgRliwAC5v62P7iFImfStgTRv4dtJ7WvAd6UovPsJu86+IxzhZ2wc9N79ir14dK8hFN8Ec2qTqy+dUSZlSgeRPTUSa9L5udtJqEd5S/5oy3v/uV06th3euUnrs1K+Cuom+izOwPoksXrMlEdXM+AqpHbHKEW5FjKER+pxA7Qzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=nPK/nqUq; arc=none smtp.client-ip=185.171.202.116
+	 In-Reply-To:To:Cc; b=nScdKFqhyTWJIxcqHKkiUfvv+w9tPMnIPQ+vWl1cb2HVxwXzcZ+qfzZpkQOJNj48Kha5hs+KVGMmQ+D3wLQ3/a9CcolG/gQAyiu6L5/SXZxDbcHKtxqVMaFm8DWYNJN1N3ho61p2cnl4PWALf+aDTwud/xeYOkNPgOeaAUKApto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=D9E/bU3H; arc=none smtp.client-ip=185.246.85.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id C2F75C0E963;
-	Sat,  1 Nov 2025 00:44:54 +0000 (UTC)
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 7CEC94E4144A;
+	Sat,  1 Nov 2025 00:45:16 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 5B03C6070B;
-	Sat,  1 Nov 2025 00:45:15 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7CA131181ABB0;
-	Sat,  1 Nov 2025 01:45:14 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 541596070B;
+	Sat,  1 Nov 2025 00:45:16 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 714351181ABB0;
+	Sat,  1 Nov 2025 01:45:15 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761957914; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1761957915; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=jDWyGb3RRZopHXhl6YMWKxHX2sGWn7H5g8JS5Vz0uiM=;
-	b=nPK/nqUqEn2kTLz3gc3toNoFTXxr2gUQiL4+dZ0g+A4Yu9eto86wjrkqJvbJ6tcyoD4FPN
-	dcoBBHqemR0tHjSw1ysAukaLU3tPY8uDR04aeT/VzNbg4z9RZk8ndSIemUvbxVYGMF7jVC
-	GLjQDfGlyvKvlxa+kgJh5qbwXbkwmDTvw3k8gSPRiVnxdW9AzYyYhKlvs+eLvwD/WHA3Z1
-	9XkDydrAVgr0o4I/qI5flYP6nJBOIAA7qXy6UVYDsdB7vlDSTGTQ+yYwjjnp4qHrgGkyag
-	nuOgXLyc4cOs4adi2nHbgRVwtemRrqvjNfj2oIuaIfl5IW6z7YiwpZrzXYnMKA==
+	bh=9O6YhW97T7eOntyjEzyP3IadqCae0DdHScd0olQJcs8=;
+	b=D9E/bU3HKp7S33VJgVZJJmODBSAty3I8mpo9/hPz5ga4i79ZkBr1oR44RuSr1bpo/gHany
+	nDNbjwBaoR0JG2v35CEAc+KYm3l8cNfE2WejkncCAIQZUZoenmggZYrOkgVQhPsVmTQjtA
+	srbKryRJyAqVj8m7KJ/Sv/HSjSJwSnca6zbUsrbDUsJ8Jkj5XsqM8vsy/PcPMzGI91jWLz
+	p14YfA19KAVjroOl6AODmLaufI8Hsia2FBe1+TjhgGjyrFdP1miKVrym6TEboulOeLEHYM
+	QR8YoTmaJBF26DmGepNchaqpJ9mi7JqJ2rkaYDWJ3FnLWl2qv0NXSLtcU92dmw==
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Date: Sat, 01 Nov 2025 01:45:08 +0100
-Subject: [PATCH 06/11] rtc: rv3032: stop setting max_user_freq
+Date: Sat, 01 Nov 2025 01:45:09 +0100
+Subject: [PATCH 07/11] rtc: rv8803: stop setting max_user_freq
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,7 +58,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251101-max_user_freq-v1-6-c9a274fd6883@bootlin.com>
+Message-Id: <20251101-max_user_freq-v1-7-c9a274fd6883@bootlin.com>
 References: <20251101-max_user_freq-v1-0-c9a274fd6883@bootlin.com>
 In-Reply-To: <20251101-max_user_freq-v1-0-c9a274fd6883@bootlin.com>
 To: Joshua Kinard <linux@kumba.dev>, 
@@ -76,22 +76,22 @@ setting it from individual driver to avoid confusing new contributors.
 
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- drivers/rtc/rtc-rv3032.c | 2 --
+ drivers/rtc/rtc-rv8803.c | 2 --
  1 file changed, 2 deletions(-)
 
-diff --git a/drivers/rtc/rtc-rv3032.c b/drivers/rtc/rtc-rv3032.c
-index b8376bd1d905..6c09da7738e1 100644
---- a/drivers/rtc/rtc-rv3032.c
-+++ b/drivers/rtc/rtc-rv3032.c
-@@ -968,8 +968,6 @@ static int rv3032_probe(struct i2c_client *client)
- 	eeprom_cfg.priv = rv3032;
- 	devm_rtc_nvmem_register(rv3032->rtc, &eeprom_cfg);
+diff --git a/drivers/rtc/rtc-rv8803.c b/drivers/rtc/rtc-rv8803.c
+index 1327251e527c..4e9e04cbec89 100644
+--- a/drivers/rtc/rtc-rv8803.c
++++ b/drivers/rtc/rtc-rv8803.c
+@@ -738,8 +738,6 @@ static int rv8803_probe(struct i2c_client *client)
  
--	rv3032->rtc->max_user_freq = 1;
+ 	devm_rtc_nvmem_register(rv8803->rtc, &nvmem_cfg);
+ 
+-	rv8803->rtc->max_user_freq = 1;
 -
- #ifdef CONFIG_COMMON_CLK
- 	rv3032_clkout_register_clk(rv3032, client);
- #endif
+ 	return 0;
+ }
+ 
 
 -- 
 2.51.1
