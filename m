@@ -1,202 +1,130 @@
-Return-Path: <linux-kernel+bounces-881238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id D31F5C27CB9
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 12:29:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB25AC27CCE
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 12:38:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4F3F534A01A
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 11:29:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00EE03AACCF
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 11:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D632B2F5483;
-	Sat,  1 Nov 2025 11:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C8A226D16;
+	Sat,  1 Nov 2025 11:37:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LxfJq7h6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="z/dudYB6"
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97C402EBDD6;
-	Sat,  1 Nov 2025 11:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD74FA41
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 11:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761996546; cv=none; b=jji6JFLnXDIteUXi41UBqfK5H4at/hQfH90GNiZr5u0zSQ58CAF36lEyc3mR4IA1+mRpSijp5FdK5ZPL+Zg2vc7ECYNbO/K0j2S+y+SCzk6y6ofsul437zhZkH0QB/JzH4QhyPDuPb505Mhwdg5eDhkWRsabkd0dU07GjJFoASo=
+	t=1761997055; cv=none; b=Pe0YIBoTGB/Oj3/R96Iq1vBEB1uTCo0KUVSs6yy4/5YiIRXwtYsjDXZtBssaPmgcSEz3FbaWZZW4BNqEInqBFt7NGyIfInorTFMeMhKf1Ganu0tPl3r8VERooLT8EJ2hakhZdhmQUpox/2obe6G1/WeGm1v2h7g5jrBj4NZeMOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761996546; c=relaxed/simple;
-	bh=Reok4oEuIAaxqAgmj0W2bIeJU4APzPDb2Uj5NGGYoJI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=luM+IBelyyYapgbICy5peGdyptB2sv4+wYndVelTiJ4J5W3ri4Z2SvBagJV6oYzfz9bE2QipC6omr7zaPKA/EvcafrX5ZtfS67r5ukDlx2dYZPFA9fiU80ffkBfHu0Jfzh6tQxkjs8i2omsxxEClxV4PJejXLaU8kv83w9vc8qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LxfJq7h6; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761996543; x=1793532543;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Reok4oEuIAaxqAgmj0W2bIeJU4APzPDb2Uj5NGGYoJI=;
-  b=LxfJq7h6nlqEhK0aQBIt5/CjznfSKlvsMb4+IT3xkdLh97pivLLBjPyv
-   /TwHYFm8LA1fpTGhM8o9f7658Y5u8YFYUAqQYAcRTxt8fkFlQ/tGrh5kS
-   kIk3/ophOg4PZ4Skm6jNhCO8o9I6suuSmWMKwca2vKK0CnWxTpBM4txGP
-   ++kewSF7WybErWevSJdWDIddgJlgo1X7X7HlM7cIjSiFFlkGf6PxTOEn9
-   rgJ8j2or0Q4EAwOcTrEd0MdfclJFGRmm/tX8/759chtb0hGpUoW33aJbq
-   gJFxx08efNP8HtAB5GZkrHKMGlShi2HYBtPNU5PXUu9u0Ta5Kgk1cLrC+
-   w==;
-X-CSE-ConnectionGUID: YLzi93uwSBq0b/Rv/zY/8w==
-X-CSE-MsgGUID: xmVmJOCdSUK9+jZk+QZBrg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="64031509"
-X-IronPort-AV: E=Sophos;i="6.19,272,1754982000"; 
-   d="scan'208";a="64031509"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2025 04:29:03 -0700
-X-CSE-ConnectionGUID: cKgZ26MZRE2lzqT36WXJvQ==
-X-CSE-MsgGUID: rpFU1DQ1RS6UsQlYYlZchw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,272,1754982000"; 
-   d="scan'208";a="187183168"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 01 Nov 2025 04:28:57 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vF9mx-000OBq-01;
-	Sat, 01 Nov 2025 11:28:55 +0000
-Date: Sat, 1 Nov 2025 19:28:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jason-JH Lin <jason-jh.lin@mediatek.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-media@vger.kernel.org,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Nicolas Dufresne <nicolas@ndufresne.ca>,
-	Jason-JH Lin <jason-jh.lin@mediatek.com>,
-	Nancy Lin <nancy.lin@mediatek.com>,
-	Singo Chang <singo.chang@mediatek.com>,
-	Paul-PL Chen <paul-pl.chen@mediatek.com>,
-	Moudy Ho <moudy.ho@mediatek.com>,
-	Xiandong Wang <xiandong.wang@mediatek.com>,
-	Sirius Wang <sirius.wang@mediatek.com>,
-	Fei Shao <fshao@chromium.org>, Chen-yu Tsai <wenst@chromium.org>,
-	Project_Global_Chrome_Upstream_Group@mediatek.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/5] soc: mediatek: mtk-cmdq: Add
- cmdq_pkt_jump_rel_temp() for removing shift_pa
-Message-ID: <202511011919.0lkK3DY8-lkp@intel.com>
-References: <20251031160309.1654761-3-jason-jh.lin@mediatek.com>
+	s=arc-20240116; t=1761997055; c=relaxed/simple;
+	bh=jBBIH7MG4SUzxArAdWl/9abCdnBvCrp6q9Gg5bOYK/8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qXcE7arO4Obx6rLAhNJVNWvJU94Yo9nseky/KOHEX8ESRtE0fDERB0Up6+9eUHuitEcg/GAgEJOyf6tCDfXh/T7VvDq3kLcCW6lfh9qJg6RjGjUpj1QjMIbZx9eQBJm7iWhUfFL3CIqWvDsjL45xJCUH/DHPXRc5WMA6t/nhoS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=z/dudYB6; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6002b.ext.cloudfilter.net ([10.0.30.203])
+	by cmsmtp with ESMTPS
+	id F8sIva6qNSkcfF9vCvt6IW; Sat, 01 Nov 2025 11:37:26 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id F9vBv85Ei74Z0F9vBvSbeW; Sat, 01 Nov 2025 11:37:26 +0000
+X-Authority-Analysis: v=2.4 cv=BuidwZX5 c=1 sm=1 tr=0 ts=6905f0f6
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=iZo6ewWmMc9ApeDx_DoA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=TWHceUOi+puB+4vFJPbTXNJOHv78GEBKrK1kOsG0L4A=; b=z/dudYB6w0QTB7pCJTpwt2eQ50
+	a54yIoIfuSBDvRDP1Sc2PcpGKMFaSwjvWOWL5OwGR0nWCmYCvQyHjPUXaOvoqNnbxNPqgamb+/Wsq
+	H3qL877SYFfIHzFUsNhlyol6mRYMu1RuAWDLsRWQjH1CHuFMBgW34XT4WuJfq06jKv4qW1ZNbGJDN
+	NRNVcZZ5UM4FIib06tRzEiwFxFA5pPMa+NvWrpkXOkQWCKdBs1JpO0jHIypcAMxa4c35cSo9y37Ev
+	IE/O8tfG8usT3Katc4wPi20yP30QVPrZ0o+j9g74Uc/NYU/qONxO3MlNkoha8onGAQ+FRJpvTzcIq
+	XcxqJbHg==;
+Received: from c-73-92-56-26.hsd1.ca.comcast.net ([73.92.56.26]:50078 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
+	(Exim 4.98.2)
+	(envelope-from <re@w6rz.net>)
+	id 1vF9vB-00000003aYP-1knG;
+	Sat, 01 Nov 2025 05:37:25 -0600
+Message-ID: <5ec93d4b-fadf-4d38-aca7-e22a7c42078d@w6rz.net>
+Date: Sat, 1 Nov 2025 04:37:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251031160309.1654761-3-jason-jh.lin@mediatek.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.17 00/35] 6.17.7-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ achill@achill.org, sr@sladewatkins.com
+References: <20251031140043.564670400@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20251031140043.564670400@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.92.56.26
+X-Source-L: No
+X-Exim-ID: 1vF9vB-00000003aYP-1knG
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-92-56-26.hsd1.ca.comcast.net ([10.0.1.116]) [73.92.56.26]:50078
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 17
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfH8rB0pFAKkZYRUI1kNEnvv3RhZR73HS2z30iqVFvwT9u0MRPZGTvps1TBq2gs8OUXgI8W4Z2xXSDnWVfbVU1asv6NUocfr5pMSE8iRJSqXaS2AZX9iK
+ uvKHjVzPwZlmYupmLA7PFRxBdWgi2ymi7yB9aKMLShX3s7CntBksV+NZTmvsS9xBoywLTM2mZjZ6Pb0tjLgaHL4vrBZHXhpj+lk=
 
-Hi Jason-JH,
+On 10/31/25 07:01, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.17.7 release.
+> There are 35 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sun, 02 Nov 2025 14:00:34 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.17.7-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.17.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-kernel test robot noticed the following build errors:
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-[auto build test ERROR on linuxtv-media-pending/master]
-[also build test ERROR on media-tree/master linus/master v6.18-rc3 next-20251031]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Tested-by: Ron Economos <re@w6rz.net>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jason-JH-Lin/soc-mediatek-Use-pkt_write-function-pointer-for-subsys-ID-compatibility/20251101-000555
-base:   https://git.linuxtv.org/media-ci/media-pending.git master
-patch link:    https://lore.kernel.org/r/20251031160309.1654761-3-jason-jh.lin%40mediatek.com
-patch subject: [PATCH 2/5] soc: mediatek: mtk-cmdq: Add cmdq_pkt_jump_rel_temp() for removing shift_pa
-config: x86_64-buildonly-randconfig-001-20251101 (https://download.01.org/0day-ci/archive/20251101/202511011919.0lkK3DY8-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251101/202511011919.0lkK3DY8-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511011919.0lkK3DY8-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/soc/mediatek/mtk-mmsys.c:14:
-   In file included from include/linux/soc/mediatek/mtk-mmsys.h:11:
->> include/linux/soc/mediatek/mtk-cmdq.h:530:10: error: use of undeclared identifier 'EIMVAL'
-     530 |         return -EIMVAL;
-         |                 ^
-   drivers/soc/mediatek/mtk-mmsys.c:170:26: error: no member named 'pkt_write_mask' in 'struct cmdq_client_reg'
-     170 |                 ret = mmsys->cmdq_base.pkt_write_mask(cmdq_pkt,
-         |                       ~~~~~~~~~~~~~~~~ ^
-   drivers/soc/mediatek/mtk-mmsys.c:172:30: error: no member named 'pa_base' in 'struct cmdq_client_reg'
-     172 |                                                       mmsys->cmdq_base.pa_base,
-         |                                                       ~~~~~~~~~~~~~~~~ ^
-   3 errors generated.
---
-   In file included from drivers/soc/mediatek/mtk-mutex.c:12:
-   In file included from include/linux/soc/mediatek/mtk-mmsys.h:11:
->> include/linux/soc/mediatek/mtk-cmdq.h:530:10: error: use of undeclared identifier 'EIMVAL'
-     530 |         return -EIMVAL;
-         |                 ^
-   drivers/soc/mediatek/mtk-mutex.c:1002:16: error: no member named 'pkt_write' in 'struct cmdq_client_reg'
-    1002 |         mtx->cmdq_reg.pkt_write(cmdq_pkt, mtx->cmdq_reg.subsys, en_addr, en_addr, 1);
-         |         ~~~~~~~~~~~~~ ^
-   2 errors generated.
---
-   In file included from mtk-mmsys.c:14:
-   In file included from include/linux/soc/mediatek/mtk-mmsys.h:11:
->> include/linux/soc/mediatek/mtk-cmdq.h:530:10: error: use of undeclared identifier 'EIMVAL'
-     530 |         return -EIMVAL;
-         |                 ^
-   mtk-mmsys.c:170:26: error: no member named 'pkt_write_mask' in 'struct cmdq_client_reg'
-     170 |                 ret = mmsys->cmdq_base.pkt_write_mask(cmdq_pkt,
-         |                       ~~~~~~~~~~~~~~~~ ^
-   mtk-mmsys.c:172:30: error: no member named 'pa_base' in 'struct cmdq_client_reg'
-     172 |                                                       mmsys->cmdq_base.pa_base,
-         |                                                       ~~~~~~~~~~~~~~~~ ^
-   3 errors generated.
---
-   In file included from mtk-mutex.c:12:
-   In file included from include/linux/soc/mediatek/mtk-mmsys.h:11:
->> include/linux/soc/mediatek/mtk-cmdq.h:530:10: error: use of undeclared identifier 'EIMVAL'
-     530 |         return -EIMVAL;
-         |                 ^
-   mtk-mutex.c:1002:16: error: no member named 'pkt_write' in 'struct cmdq_client_reg'
-    1002 |         mtx->cmdq_reg.pkt_write(cmdq_pkt, mtx->cmdq_reg.subsys, en_addr, en_addr, 1);
-         |         ~~~~~~~~~~~~~ ^
-   2 errors generated.
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for OF_GPIO
-   Depends on [n]: GPIOLIB [=y] && OF [=n] && HAS_IOMEM [=y]
-   Selected by [y]:
-   - GPIO_TB10X [=y] && GPIOLIB [=y] && HAS_IOMEM [=y] && (ARC_PLAT_TB10X || COMPILE_TEST [=y])
-   WARNING: unmet direct dependencies detected for GPIO_SYSCON
-   Depends on [n]: GPIOLIB [=y] && HAS_IOMEM [=y] && MFD_SYSCON [=y] && OF [=n]
-   Selected by [y]:
-   - GPIO_SAMA5D2_PIOBU [=y] && GPIOLIB [=y] && HAS_IOMEM [=y] && MFD_SYSCON [=y] && OF_GPIO [=y] && (ARCH_AT91 || COMPILE_TEST [=y])
-   WARNING: unmet direct dependencies detected for I2C_K1
-   Depends on [n]: I2C [=y] && HAS_IOMEM [=y] && (ARCH_SPACEMIT || COMPILE_TEST [=y]) && OF [=n]
-   Selected by [y]:
-   - MFD_SPACEMIT_P1 [=y] && HAS_IOMEM [=y] && (ARCH_SPACEMIT || COMPILE_TEST [=y]) && I2C [=y]
-
-
-vim +/EIMVAL +530 include/linux/soc/mediatek/mtk-cmdq.h
-
-   526	
-   527	/* This wrapper has to be removed after all users migrated to jump_rel */
-   528	static inline int cmdq_pkt_jump_rel_temp(struct cmdq_pkt *pkt, s32 offset, u8 shift_pa)
-   529	{
- > 530		return -EIMVAL;
-   531	}
-   532	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
