@@ -1,168 +1,144 @@
-Return-Path: <linux-kernel+bounces-881536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D94D3C286A1
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 20:42:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 484E9C286C5
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 20:46:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECA17421E72
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 19:41:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06F6C3B5F6D
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 19:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E6730103D;
-	Sat,  1 Nov 2025 19:41:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625FF3019B8;
+	Sat,  1 Nov 2025 19:46:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SLPbJI/e";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VU1e3ufa"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bt6NhuXw"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED9E2FF678;
-	Sat,  1 Nov 2025 19:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99AC42FB620
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 19:46:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762026092; cv=none; b=D94tF67/sMJfXOqQddaYTipALBabvZd5t/CpyDZyacii5OadWqVcnP7Aa1P59LptjRzEjGlC0pNrx/YFK8lfsqUnQWUTM9mqgT3vQ1X6+sIwNQdD3H0k8HX7OGw7V/VSZPYclD9gl4ao6903+qSepiEUlR8lnXhzerN2B95wHms=
+	t=1762026384; cv=none; b=lIkn5+4HhRkL2xkg03r8NUQKDLhIjMfYDuSs6kukH3ADK+AgMxFEf2V+T09FGeFLU0DWRzY6wECRNmlAyo59oPTaGx6cNzVRsif05xTyCHdqBBRjeZJOCiD8NU5GPVujnN2QtX4gvuGwgqoEtjudnumYrflTUPRXIiy44cBGu4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762026092; c=relaxed/simple;
-	bh=szv9cNoEXcDtWr9nW2lkXi6QTpDCRZR9l/s5Q1+6sNA=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=oOZGiYjaP35E9tpmjuXHhIH6WtyeNqeKsiczzzVzeezSP3vwHquBnD/HxL00zRDKE0vfg3WDZ8Vbc/TbAT+pIS8BRW/NufwQrrLs/cB9Ho8lqHzoNxnKjVhb7N+CrtzQRUmRne6qiU1cKM378oy/5PJVjZuKEHfr8iYa9X5d0h0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SLPbJI/e; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VU1e3ufa; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 01 Nov 2025 19:41:27 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762026089;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
+	s=arc-20240116; t=1762026384; c=relaxed/simple;
+	bh=ya9HLn9UBkGfXOMBjOZnSUdvjJGss6zEIROPu9RJexs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=fw0VNaoNQyLfDqqn7ZSd/yzqAlNo8dl+ZoQ7PQBP3mRwUsJgZGBKXhRJx4+5+ykFFs1P0IWVjMYS0hvPqNHpf/nSyt8vyKZ0GjCpdguXlIeHhMrYx5eutkoWlnZ6sL9ilSErwX6QGh2KsxrCI6aWxgyj/oSvaM0rKQYPkZbmgL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bt6NhuXw; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <57bbade3-0707-4045-b39b-2053434b0b7c@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762026370;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=QLLFM/2bZP1+rTxQQGnO5HuHmTcNu5wwhq7mne+71g0=;
-	b=SLPbJI/enCKy0BIDtLeDUTY2PlnSgnnI1Uc5WjX8/chEd25BMSt7HF4+5nG4TXB4RYy6i4
-	XKKkCRUeDA78y2Lx1imAajKmsY1nw/6dTF4tTrZUUoks1WC7uJTJ2SrS4YPKZ5kWQzgwFG
-	0nLv58vehdqljDcEv+ifzjMQcjIR5l1ei0gccqOkCIwREaDZ3xZk2KLgGgSScgqhXhpBcJ
-	YXKaqGsSFvCcdJZFFDgJLPYrHjU54hzDL9OsHs1OkVQtT5dsQ2X9wcWgy+cBTsiGztMTi+
-	uZVCvaQ2JMXYmV9Fy0aockNqD9bkDINeFNmipZRQdr85d7CdiglaAh3HSUluzQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762026089;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QLLFM/2bZP1+rTxQQGnO5HuHmTcNu5wwhq7mne+71g0=;
-	b=VU1e3ufaBR5D+1RT+d2s9OP8v2vybVK1a7VKthZOXAeKCJkAE24jMbMaXCl5H+6jOY+r7a
-	uQxluV9YEMhuHXCw==
-From: "tip-bot2 for Frederic Weisbecker" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: timers/core] timers/migration: Convert "while" loops to use "for"
-Cc: Frederic Weisbecker <frederic@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20251024132536.39841-2-frederic@kernel.org>
-References: <20251024132536.39841-2-frederic@kernel.org>
+	bh=qSk/sZRQi90GHI3IILQtj3YgPAQn3xbHNm/4+VGi7to=;
+	b=bt6NhuXwWlyIZUWEiIsROrc2jyonkIZX/DOSReszd9+6z1Nhl2up7ZnTMedodcIqC9ozwX
+	W6aLNMDub//7cjEzYGIR3b7lj/p/0Mp4ex4mSvTR50MifJPiYezgJYuplEidrWU1FkCTxz
+	qJsT50eEfIWOMW9JdydU/DYe9lZNic8=
+Date: Sat, 1 Nov 2025 12:45:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176202608781.2601451.1432013530667416309.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v9 9/9] liveupdate: kho: Use %pe format specifier for
+ error pointer printing
+To: Pasha Tatashin <pasha.tatashin@soleen.com>, akpm@linux-foundation.org,
+ brauner@kernel.org, corbet@lwn.net, graf@amazon.com, jgg@ziepe.ca,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mm@kvack.org, masahiroy@kernel.org, ojeda@kernel.org,
+ pratyush@kernel.org, rdunlap@infradead.org, rppt@kernel.org, tj@kernel.org
+References: <20251101142325.1326536-1-pasha.tatashin@soleen.com>
+ <20251101142325.1326536-10-pasha.tatashin@soleen.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <20251101142325.1326536-10-pasha.tatashin@soleen.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-The following commit has been merged into the timers/core branch of tip:
 
-Commit-ID:     6c181b5667eea3e6564d334443536a5974190e15
-Gitweb:        https://git.kernel.org/tip/6c181b5667eea3e6564d334443536a59741=
-90e15
-Author:        Frederic Weisbecker <frederic@kernel.org>
-AuthorDate:    Fri, 24 Oct 2025 15:25:31 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sat, 01 Nov 2025 20:38:24 +01:00
+在 2025/11/1 7:23, Pasha Tatashin 写道:
+> From: Zhu Yanjun <yanjun.zhu@linux.dev>
+>
+> Make pr_xxx() call to use the %pe format specifier instead of %d.
+> The %pe specifier prints a symbolic error string (e.g., -ENOMEM,
+> -EINVAL) when given an error pointer created with ERR_PTR(err).
+>
+> This change enhances the clarity and diagnostic value of the error
+> message by showing a descriptive error name rather than a numeric
+> error code.
+>
+> Note, that some err are still printed by value, as those errors
+> might come from libfdt and not regular errnos.
+>
+> Signed-off-by: Zhu Yanjun <yanjun.zhu@linux.dev>
+> Co-developed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 
-timers/migration: Convert "while" loops to use "for"
+Appreciate your help, Pasha
 
-Both the "do while" and "while" loops in tmigr_setup_groups() eventually
-mimic the behaviour of "for" loops.
+Yanjun.Zhu
 
-Simplify accordingly.
+> Reviewed-by: Simon Horman <horms@kernel.org>
+> ---
+>   kernel/liveupdate/kexec_handover.c         |  4 ++--
+>   kernel/liveupdate/kexec_handover_debugfs.c | 10 ++++++----
+>   2 files changed, 8 insertions(+), 6 deletions(-)
+>
+> diff --git a/kernel/liveupdate/kexec_handover.c b/kernel/liveupdate/kexec_handover.c
+> index be945c133a2f..167c761988d3 100644
+> --- a/kernel/liveupdate/kexec_handover.c
+> +++ b/kernel/liveupdate/kexec_handover.c
+> @@ -1448,8 +1448,8 @@ void __init kho_populate(phys_addr_t fdt_phys, u64 fdt_len,
+>   		memblock_add(area->addr, size);
+>   		err = memblock_mark_kho_scratch(area->addr, size);
+>   		if (WARN_ON(err)) {
+> -			pr_warn("failed to mark the scratch region 0x%pa+0x%pa: %d",
+> -				&area->addr, &size, err);
+> +			pr_warn("failed to mark the scratch region 0x%pa+0x%pa: %pe",
+> +				&area->addr, &size, ERR_PTR(err));
+>   			goto out;
+>   		}
+>   		pr_debug("Marked 0x%pa+0x%pa as scratch", &area->addr, &size);
+> diff --git a/kernel/liveupdate/kexec_handover_debugfs.c b/kernel/liveupdate/kexec_handover_debugfs.c
+> index 46e9e6c0791f..ac739d25094d 100644
+> --- a/kernel/liveupdate/kexec_handover_debugfs.c
+> +++ b/kernel/liveupdate/kexec_handover_debugfs.c
+> @@ -150,8 +150,8 @@ __init void kho_in_debugfs_init(struct kho_debugfs *dbg, const void *fdt)
+>   		err = __kho_debugfs_fdt_add(&dbg->fdt_list, sub_fdt_dir, name,
+>   					    phys_to_virt(*fdt_phys));
+>   		if (err) {
+> -			pr_warn("failed to add fdt %s to debugfs: %d\n", name,
+> -				err);
+> +			pr_warn("failed to add fdt %s to debugfs: %pe\n", name,
+> +				ERR_PTR(err));
+>   			continue;
+>   		}
+>   	}
+> @@ -168,8 +168,10 @@ __init void kho_in_debugfs_init(struct kho_debugfs *dbg, const void *fdt)
+>   	 * reviving state from KHO and setting up KHO for the next
+>   	 * kexec.
+>   	 */
+> -	if (err)
+> -		pr_err("failed exposing handover FDT in debugfs: %d\n", err);
+> +	if (err) {
+> +		pr_err("failed exposing handover FDT in debugfs: %pe\n",
+> +		       ERR_PTR(err));
+> +	}
+>   }
+>   
+>   __init int kho_out_debugfs_init(struct kho_debugfs *dbg)
 
-Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://patch.msgid.link/20251024132536.39841-2-frederic@kernel.org
----
- kernel/time/timer_migration.c | 23 +++++++++++++----------
- 1 file changed, 13 insertions(+), 10 deletions(-)
+-- 
+Best Regards,
+Yanjun.Zhu
 
-diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
-index c0c54dc..1e371f1 100644
---- a/kernel/time/timer_migration.c
-+++ b/kernel/time/timer_migration.c
-@@ -1642,22 +1642,23 @@ static void tmigr_connect_child_parent(struct tmigr_g=
-roup *child,
- static int tmigr_setup_groups(unsigned int cpu, unsigned int node)
- {
- 	struct tmigr_group *group, *child, **stack;
--	int top =3D 0, err =3D 0, i =3D 0;
-+	int i, top =3D 0, err =3D 0;
- 	struct list_head *lvllist;
-=20
- 	stack =3D kcalloc(tmigr_hierarchy_levels, sizeof(*stack), GFP_KERNEL);
- 	if (!stack)
- 		return -ENOMEM;
-=20
--	do {
-+	for (i =3D 0; i < tmigr_hierarchy_levels; i++) {
- 		group =3D tmigr_get_group(cpu, node, i);
- 		if (IS_ERR(group)) {
- 			err =3D PTR_ERR(group);
-+			i--;
- 			break;
- 		}
-=20
- 		top =3D i;
--		stack[i++] =3D group;
-+		stack[i] =3D group;
-=20
- 		/*
- 		 * When booting only less CPUs of a system than CPUs are
-@@ -1667,16 +1668,18 @@ static int tmigr_setup_groups(unsigned int cpu, unsig=
-ned int node)
- 		 * be different from tmigr_hierarchy_levels, contains only a
- 		 * single group.
- 		 */
--		if (group->parent || list_is_singular(&tmigr_level_list[i - 1]))
-+		if (group->parent || list_is_singular(&tmigr_level_list[i]))
- 			break;
-+	}
-=20
--	} while (i < tmigr_hierarchy_levels);
--
--	/* Assert single root */
--	WARN_ON_ONCE(!err && !group->parent && !list_is_singular(&tmigr_level_list[=
-top]));
-+	/* Assert single root without parent */
-+	if (WARN_ON_ONCE(i >=3D tmigr_hierarchy_levels))
-+		return -EINVAL;
-+	if (WARN_ON_ONCE(!err && !group->parent && !list_is_singular(&tmigr_level_l=
-ist[top])))
-+		return -EINVAL;
-=20
--	while (i > 0) {
--		group =3D stack[--i];
-+	for (; i >=3D 0; i--) {
-+		group =3D stack[i];
-=20
- 		if (err < 0) {
- 			list_del(&group->list);
 
