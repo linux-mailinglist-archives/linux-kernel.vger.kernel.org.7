@@ -1,117 +1,134 @@
-Return-Path: <linux-kernel+bounces-881489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7797DC2852B
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 19:24:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45463C2854B
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 19:25:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C3AB188F8AE
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 18:22:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC959188286F
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 18:24:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0408230170F;
-	Sat,  1 Nov 2025 18:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2E4309EEE;
+	Sat,  1 Nov 2025 18:20:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fzx1oqvX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ggX/QGSm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61EC12FE563;
-	Sat,  1 Nov 2025 18:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 731F830101D;
+	Sat,  1 Nov 2025 18:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762021239; cv=none; b=LEWhZ5iHmmW8aSDWeu12HPjn90Sc4i/OZh1el+8JIcX9aBSLJZzBBPGRDO3frjQHQIZ3O2kAUNXb5DEgkjlw+zRga96q7+60x8Hqhnb4KkZNxZuCug/2C/88VEOfvs7BtnDzZ5vVS1FurgbCA/eX1jujLIslEH91F3fDi9v2cp8=
+	t=1762021242; cv=none; b=jCzHNrxLrsE8WuBg/b0brroz89+ZJ0NcnRVTBMAD9j1+cB1MKDpHf3fjGGzjvM8ZlNsB+Wah9T/0/OTmiexz2vlC15hoZMdTot8uUt9mso8jWUVN1ZK5sxjfBg2uDU+UD9B15w47mLgy2E+EttjI2ENV0SAasvnDv5Zq/iMO6w4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762021239; c=relaxed/simple;
-	bh=7jFvaJGAP1Q4wk1944apRFLq0yQCQ9xbNJKdqchcXTU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cInH78zx3Rq3d1O+ePaXOLeFAachopGoI54/KJxXoBZ6k3wOrG6dpfeh8VRUzazwCPBq5ivYjxA67k2rEhWhW3g3cNIzkY4m5DbuRgtWj4s5hfQy7IFq+V/By3AkgHFxpVn2Ln7c9AOWkwFaOdSBHX6WTkN/qUMVriYEkC45R/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fzx1oqvX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EFD7C113D0;
-	Sat,  1 Nov 2025 18:20:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762021239;
-	bh=7jFvaJGAP1Q4wk1944apRFLq0yQCQ9xbNJKdqchcXTU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fzx1oqvXMfUViV2BMqJZfpb2KQUo0kC6CUqYBP0FLxcaGA0B1YdoM+vM/lR9jXdkQ
-	 qucFe3ffLdcRsidGlwfI2JPBgfhilaS7lDoaq+Ypdutd6XFBKLk8+qh46IQRv0RtKZ
-	 DUkCvOoDwFpjzVk/PELeY0IqCbcWoeppyIBMHVXAgxbuxoQzAIgjM+owg5Lp0mGzc9
-	 7qOzWsP/orm51MAae9p1o3z7PhJbKG9OlXIa0VolWBEymS/OTdUCDuDfr/3tI1NvWm
-	 qXjGK8v1MFiB+uahqGHPzfoWkCUnFpwdZx/KwgpEBGqOc/fFkpZp0IUPleZcXSJWh2
-	 Kg2xrmTnJwrZA==
-From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	"# 6 . 1 . x" <stable@vger.kernel.org>,
-	Brendan Higgins <brendan.higgins@linux.dev>,
-	David Gow <davidgow@google.com>,
-	damon@lists.linux.dev,
-	kunit-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH 10/22] mm/damon/tests/core-kunit: handle alloc failures in damon_test_set_regions()
-Date: Sat,  1 Nov 2025 11:20:04 -0700
-Message-ID: <20251101182021.74868-11-sj@kernel.org>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251101182021.74868-1-sj@kernel.org>
-References: <20251101182021.74868-1-sj@kernel.org>
+	s=arc-20240116; t=1762021242; c=relaxed/simple;
+	bh=wctQo2sQS2IeFVkzrGEKm4QgBJQP6Do/o0doA3HMcmY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T9qQav1IVUTard46h/v0vxHCaWdcEuOI++pm9d5PmuRkFgySXtJN2oftDoC/ztE+OLsinqrU1pp1RYURZMsPCbraGZi/nH1ydQU4EdZP5LQ+yxvGBVTdxlqrVoTjykHGfbpYirIqrUtsIwqZtXBn+mMEujSlZhKEMaf0cZd3+jA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ggX/QGSm; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762021241; x=1793557241;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=wctQo2sQS2IeFVkzrGEKm4QgBJQP6Do/o0doA3HMcmY=;
+  b=ggX/QGSmWdyODOGW3XqCVSHdQw6LqbppGYLmMk1PTmf03pMCFExvsXeT
+   yWh3ndnNCl/Ono+RBjod+pNOOB332OCRxEYlMbMg08h1m5u3dT7yuOa7+
+   4lSfaSPGvC7dBTqiY0OGzHguEodLcZVwXI/NRKs+uLRnicoCna62OsSab
+   EXBmdEVOMJoywouGFM4S1dX+l7JVidQdex3UXhFVq6HDVn1O1jDOON3+i
+   2Q/Yv1F+gMwZdmEOAXIFXc67rXIhkkAu0T+0wNTkL8Ep8SmzacMdKbwTk
+   f5u9KQG56yibuaE+ZahY4V9tEg0uF+juuf6yOPBDdyM78iC2FFl0SaSX7
+   A==;
+X-CSE-ConnectionGUID: CCecyGerTTO/SsV6riPKEg==
+X-CSE-MsgGUID: SBW5DS7MTOm6i/XLUjjDxA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11600"; a="64077072"
+X-IronPort-AV: E=Sophos;i="6.19,272,1754982000"; 
+   d="scan'208";a="64077072"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2025 11:20:40 -0700
+X-CSE-ConnectionGUID: LAHlsHgkRSSwJsptzqbMEw==
+X-CSE-MsgGUID: a1oY91SfQfKF7k/Jz5dtkg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,272,1754982000"; 
+   d="scan'208";a="186828114"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 01 Nov 2025 11:20:38 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vFGDL-000OZk-2Q;
+	Sat, 01 Nov 2025 18:20:35 +0000
+Date: Sun, 2 Nov 2025 02:20:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Menglong Dong <menglong8.dong@gmail.com>, mhiramat@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, rostedt@goodmis.org, jolsa@kernel.org,
+	mathieu.desnoyers@efficios.com, jiang.biao@linux.dev,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] tracing: fprobe: use ftrace if
+ CONFIG_DYNAMIC_FTRACE_WITH_ARGS
+Message-ID: <202511020220.bv169Bd9-lkp@intel.com>
+References: <20251031024038.19176-1-dongml2@chinatelecom.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251031024038.19176-1-dongml2@chinatelecom.cn>
 
-damon_test_set_regions() is assuming all dynamic memory allocation in it
-will succeed.  Those are indeed likely in the real use cases since those
-allocations are too small to fail, but theoretically those could fail.
-In the case, inappropriate memory access can happen.  Fix it by
-appropriately cleanup pre-allocated memory and skip the execution of the
-remaining tests in the failure cases.
+Hi Menglong,
 
-Fixes: 62f409560eb2 ("mm/damon/core-test: test damon_set_regions")
-Cc: <stable@vger.kernel.org> # 6.1.x
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- mm/damon/tests/core-kunit.h | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+kernel test robot noticed the following build warnings:
 
-diff --git a/mm/damon/tests/core-kunit.h b/mm/damon/tests/core-kunit.h
-index 96c8f1269f44..e38c95f86a68 100644
---- a/mm/damon/tests/core-kunit.h
-+++ b/mm/damon/tests/core-kunit.h
-@@ -368,13 +368,26 @@ static void damon_test_ops_registration(struct kunit *test)
- static void damon_test_set_regions(struct kunit *test)
- {
- 	struct damon_target *t = damon_new_target();
--	struct damon_region *r1 = damon_new_region(4, 16);
--	struct damon_region *r2 = damon_new_region(24, 32);
-+	struct damon_region *r1, *r2;
- 	struct damon_addr_range range = {.start = 8, .end = 28};
- 	unsigned long expects[] = {8, 16, 16, 24, 24, 28};
- 	int expect_idx = 0;
- 	struct damon_region *r;
- 
-+	if (!t)
-+		kunit_skip(test, "target alloc fail");
-+	r1 = damon_new_region(4, 16);
-+	if (!r1) {
-+		damon_free_target(t);
-+		kunit_skip(test, "region alloc fail");
-+	}
-+	r2 = damon_new_region(24, 32);
-+	if (!r2) {
-+		damon_free_target(t);
-+		damon_free_region(r1);
-+		kunit_skip(test, "second region alloc fail");
-+	}
-+
- 	damon_add_region(r1, t);
- 	damon_add_region(r2, t);
- 	damon_set_regions(t, &range, 1, DAMON_MIN_REGION);
+[auto build test WARNING on trace/for-next]
+[also build test WARNING on next-20251031]
+[cannot apply to linus/master v6.18-rc3]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Menglong-Dong/tracing-fprobe-use-ftrace-if-CONFIG_DYNAMIC_FTRACE_WITH_ARGS/20251031-104301
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
+patch link:    https://lore.kernel.org/r/20251031024038.19176-1-dongml2%40chinatelecom.cn
+patch subject: [PATCH v2] tracing: fprobe: use ftrace if CONFIG_DYNAMIC_FTRACE_WITH_ARGS
+config: loongarch-randconfig-002-20251102 (https://download.01.org/0day-ci/archive/20251102/202511020220.bv169Bd9-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251102/202511020220.bv169Bd9-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511020220.bv169Bd9-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> kernel/trace/fprobe.c:340:13: warning: 'fprobe_set_ips' defined but not used [-Wunused-function]
+     340 | static void fprobe_set_ips(unsigned long *ips, unsigned int cnt, int remove,
+         |             ^~~~~~~~~~~~~~
+
+
+vim +/fprobe_set_ips +340 kernel/trace/fprobe.c
+
+   339	
+ > 340	static void fprobe_set_ips(unsigned long *ips, unsigned int cnt, int remove,
+   341				   int reset)
+   342	{
+   343		ftrace_set_filter_ips(&fprobe_graph_ops.ops, ips, cnt, remove, reset);
+   344		ftrace_set_filter_ips(&fprobe_ftrace_ops, ips, cnt, remove, reset);
+   345	}
+   346	#else
+   347	static int fprobe_ftrace_add_ips(unsigned long *addrs, int num)
+   348	{
+   349		return -ENOENT;
+   350	}
+   351	
+
 -- 
-2.47.3
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
