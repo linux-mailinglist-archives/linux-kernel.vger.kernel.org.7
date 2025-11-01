@@ -1,191 +1,78 @@
-Return-Path: <linux-kernel+bounces-881467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B182AC28437
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 18:49:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7459AC28449
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 18:53:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2CF644E34AC
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 17:49:45 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C46AF4E6F51
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 17:53:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C9E2820DB;
-	Sat,  1 Nov 2025 17:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDEF0284671;
+	Sat,  1 Nov 2025 17:53:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IGHSl59l"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PNcr5jO2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E13752701D8;
-	Sat,  1 Nov 2025 17:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5470A27B354;
+	Sat,  1 Nov 2025 17:53:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762019379; cv=none; b=R0fGg0Ear8RQ6bLwaHVavEQnXKjlrlV7epbJd9XzReMGfGALMSVyzVyCmryOpXoeTrjFFtjf3j/8JaEAHetDaK1w4soQ2/s1PFJ+owCze1U2LobPxVFf1N70slEPJfESWPBFosoN+S22WNvRjNMbNYcF3M89zPpVbZ6L9NiSVnY=
+	t=1762019587; cv=none; b=f6qjj+nG0Kh+m0ZMQRxoDjPOZR9HMwuj26iMZa9cs6VpRMI3UJrvMtWNcOleUQauBGfwEsA2Tj3ATFX8G3lvRPHuStQwkknCdtLN2HP86mVvgvRE4D4N18Xb9NTQiUMJnUnEPMqSEGOrz+QcPiDvQDAaHvdCIDzFxSxSWOcfDnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762019379; c=relaxed/simple;
-	bh=ij1XrhRwLm7shGtODy/du1WAYcGn3j6QGULbLxSBhh4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oADz4o0T1GwJWbABM0AYTK7UoS6OnHDXR1aVS7pRdtg3yF7JAuhS4BYSCIG9LCym4qiaXOvCstew+fnAtzaLGBmojtTlIEL316fshKPt4QCy8pIUixRGftxkNIbU9goKNUHZAuCLI7O/bU71BmC5IThT3KUYtp6DcmbF0qGRPMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IGHSl59l; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762019378; x=1793555378;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ij1XrhRwLm7shGtODy/du1WAYcGn3j6QGULbLxSBhh4=;
-  b=IGHSl59lzym8cxNWkwHd+Noll82xG1txm9NC56/f5BDbJ1poD57iAJjK
-   82gFy9x/7oY0odRI2HW41D/0Xpqlx0u1jYDK+Td6URBuGFNA+m3nZcTjc
-   EVjFESqPxQH2aC0gVXLS08VPLufn+NcqjqVo4TnS58QKAZMKe/xZK30Pb
-   FRqmn0q47Zbg3QvDW1sfZVLcifDpGp/t8ebUT3LeK/pLnUsm9Wkrj+bNS
-   yg8sm5m2rZdEa7CsN8MLdF2pO3vckk3kD6A1AgazS/a5WFAfxlEX2kPVO
-   anOXUILLfGTuxmsRJz/7LRYTrEwjxoF07s0BO/Y5WotIDuTAqsAly8cgE
-   Q==;
-X-CSE-ConnectionGUID: Ms92yDeuQx2Sub3vBTQfjg==
-X-CSE-MsgGUID: iB6u2aNHSm+/E0OvoXWHOA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11600"; a="63176875"
-X-IronPort-AV: E=Sophos;i="6.19,272,1754982000"; 
-   d="scan'208";a="63176875"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2025 10:49:37 -0700
-X-CSE-ConnectionGUID: X6ptYErhTnmJ70iMbDKTVg==
-X-CSE-MsgGUID: 2ob+0bbGSV62bpZuymtMqw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,272,1754982000"; 
-   d="scan'208";a="185776408"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa010.jf.intel.com with ESMTP; 01 Nov 2025 10:49:35 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vFFjI-000OXU-12;
-	Sat, 01 Nov 2025 17:49:32 +0000
-Date: Sun, 2 Nov 2025 01:49:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mateusz Guzik <mjguzik@gmail.com>, torvalds@linux-foundation.org
-Cc: oe-kbuild-all@lists.linux.dev, brauner@kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, tglx@linutronix.de, pfalcato@suse.de,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: Re: [PATCH 3/3] fs: hide names_cachep behind runtime access machinery
-Message-ID: <202511020147.47PufBIR-lkp@intel.com>
-References: <20251031174220.43458-4-mjguzik@gmail.com>
+	s=arc-20240116; t=1762019587; c=relaxed/simple;
+	bh=Pq4hiA5KUEpQNLEUv5rFTagvCYc8rEZqjvCX624uJH8=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=j7HTKuk97DZ8oRwBC6UKkx7ISe0xbNIg9vNlyUxxJpznxU6Kq4xIaNuiTxoZx4qpjvzkVlJLcyZREKHceiLSZZl8liTk8q0L8WMiAGalHWaq/h3KXxsK7D/YUucOFRjClvXgnFcueUyLaY7LJTwAAQa+Xgh7Rv9rNO94NXLL+iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PNcr5jO2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3221FC4CEF1;
+	Sat,  1 Nov 2025 17:53:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762019587;
+	bh=Pq4hiA5KUEpQNLEUv5rFTagvCYc8rEZqjvCX624uJH8=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=PNcr5jO28JFBBw223bL9o9owpb1RcWGxehgsa1xhLN/1jt8BLamSG0HL0d8nz7PPc
+	 bnAC8GBaOcBJGxDnZnfo7Y8xsCc77g6QGtXaO10kKPqLarLwKiqSVa6FbyRmyM3Xa4
+	 5fuY9PYjJxE0wR+DQbLSm6Gkr/nAc83czo/zgljr78b8AtLXyFfXSr5urFfPhZYxTj
+	 qQMXIpfsLfCwagE3yKPPSZEaB65Sfcg6/E0/Oj02xfzphwk23gczEBJEpafxEMiXUd
+	 reVZal24knl3/pBrtwXE2eRdx2tnZC/DoZ6AkaYhTzwP3HoJq7E/w8LVUjgQzcrH7O
+	 vVbzzebE9xz2A==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB1083809A1B;
+	Sat,  1 Nov 2025 17:52:43 +0000 (UTC)
+Subject: Re: [GIT PULL] SPI fixes for v6.18-rc3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <ebe895d1aed47312d7f57da076ac3d68@kernel.org>
+References: <ebe895d1aed47312d7f57da076ac3d68@kernel.org>
+X-PR-Tracked-List-Id: <linux-spi.vger.kernel.org>
+X-PR-Tracked-Message-Id: <ebe895d1aed47312d7f57da076ac3d68@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-fix-v6.18-rc3
+X-PR-Tracked-Commit-Id: e7dbfe6f15b4df34bb169d180bd10f1a3c043814
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 691d401c7e0e5ea34ac6f8151bc0696db1b2500a
+Message-Id: <176201956268.853286.10590101280136848742.pr-tracker-bot@kernel.org>
+Date: Sat, 01 Nov 2025 17:52:42 +0000
+To: Mark Brown <broonie@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251031174220.43458-4-mjguzik@gmail.com>
 
-Hi Mateusz,
+The pull request you sent on Sat, 01 Nov 2025 12:30:05 +0000:
 
-kernel test robot noticed the following build warnings:
+> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-fix-v6.18-rc3
 
-[auto build test WARNING on arnd-asm-generic/master]
-[also build test WARNING on linus/master brauner-vfs/vfs.all v6.18-rc3 next-20251031]
-[cannot apply to linux/master]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/691d401c7e0e5ea34ac6f8151bc0696db1b2500a
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mateusz-Guzik/x86-fix-access_ok-and-valid_user_address-using-wrong-USER_PTR_MAX-in-modules/20251101-054539
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/arnd/asm-generic.git master
-patch link:    https://lore.kernel.org/r/20251031174220.43458-4-mjguzik%40gmail.com
-patch subject: [PATCH 3/3] fs: hide names_cachep behind runtime access machinery
-config: i386-randconfig-061-20251101 (https://download.01.org/0day-ci/archive/20251102/202511020147.47PufBIR-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251102/202511020147.47PufBIR-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511020147.47PufBIR-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
-   fs/smb/client/link.c: note: in included file:
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
-   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
---
-   fs/smb/client/dir.c: note: in included file:
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
-   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
---
-   fs/smb/client/misc.c: note: in included file:
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
-   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
---
-   fs/smb/client/cifsfs.c: note: in included file:
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
-   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
---
-   fs/smb/client/ioctl.c: note: in included file:
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
-   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
---
-   fs/smb/client/inode.c: note: in included file:
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
-   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
---
-   fs/smb/client/file.c: note: in included file:
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
-   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
---
-   fs/smb/client/readdir.c: note: in included file:
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
-   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
---
-   fs/smb/client/namespace.c: note: in included file:
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
-   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
---
-   fs/smb/client/smb2ops.c: note: in included file:
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
->> fs/smb/client/cifsproto.h:71:16: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
-   fs/smb/client/cifsproto.h:77:17: sparse: sparse: cast truncates bits from constant value (123456789abcdef becomes 89abcdef)
-
-vim +71 fs/smb/client/cifsproto.h
-
-b6b38f704a8193 fs/cifs/cifsproto.h Joe Perches        2010-04-21  48  
-6d5786a34d98bf fs/cifs/cifsproto.h Pavel Shilovsky    2012-06-20  49  #define free_xid(curr_xid)						\
-b6b38f704a8193 fs/cifs/cifsproto.h Joe Perches        2010-04-21  50  do {									\
-6d5786a34d98bf fs/cifs/cifsproto.h Pavel Shilovsky    2012-06-20  51  	_free_xid(curr_xid);						\
-a0a3036b81f1f6 fs/cifs/cifsproto.h Joe Perches        2020-04-14  52  	cifs_dbg(FYI, "VFS: leaving %s (xid = %u) rc = %d\n",		\
-b6b38f704a8193 fs/cifs/cifsproto.h Joe Perches        2010-04-21  53  		 __func__, curr_xid, (int)rc);				\
-d683bcd3e5d157 fs/cifs/cifsproto.h Steve French       2018-05-19  54  	if (rc)								\
-d683bcd3e5d157 fs/cifs/cifsproto.h Steve French       2018-05-19  55  		trace_smb3_exit_err(curr_xid, __func__, (int)rc);	\
-d683bcd3e5d157 fs/cifs/cifsproto.h Steve French       2018-05-19  56  	else								\
-d683bcd3e5d157 fs/cifs/cifsproto.h Steve French       2018-05-19  57  		trace_smb3_exit_done(curr_xid, __func__);		\
-b6b38f704a8193 fs/cifs/cifsproto.h Joe Perches        2010-04-21  58  } while (0)
-4d79dba0e00749 fs/cifs/cifsproto.h Shirish Pargaonkar 2011-04-27  59  extern int init_cifs_idmap(void);
-4d79dba0e00749 fs/cifs/cifsproto.h Shirish Pargaonkar 2011-04-27  60  extern void exit_cifs_idmap(void);
-b74cb9a80268be fs/cifs/cifsproto.h Sachin Prabhu      2016-05-17  61  extern int init_cifs_spnego(void);
-b74cb9a80268be fs/cifs/cifsproto.h Sachin Prabhu      2016-05-17  62  extern void exit_cifs_spnego(void);
-f6a9bc336b600e fs/cifs/cifsproto.h Al Viro            2021-03-05  63  extern const char *build_path_from_dentry(struct dentry *, void *);
-7ad54b98fc1f14 fs/cifs/cifsproto.h Paulo Alcantara    2022-12-18  64  char *__build_path_from_dentry_optional_prefix(struct dentry *direntry, void *page,
-7ad54b98fc1f14 fs/cifs/cifsproto.h Paulo Alcantara    2022-12-18  65  					       const char *tree, int tree_len,
-7ad54b98fc1f14 fs/cifs/cifsproto.h Paulo Alcantara    2022-12-18  66  					       bool prefix);
-268a635d414df4 fs/cifs/cifsproto.h Aurelien Aptel     2017-02-13  67  extern char *build_path_from_dentry_optional_prefix(struct dentry *direntry,
-f6a9bc336b600e fs/cifs/cifsproto.h Al Viro            2021-03-05  68  						    void *page, bool prefix);
-f6a9bc336b600e fs/cifs/cifsproto.h Al Viro            2021-03-05  69  static inline void *alloc_dentry_path(void)
-f6a9bc336b600e fs/cifs/cifsproto.h Al Viro            2021-03-05  70  {
-f6a9bc336b600e fs/cifs/cifsproto.h Al Viro            2021-03-05 @71  	return __getname();
-f6a9bc336b600e fs/cifs/cifsproto.h Al Viro            2021-03-05  72  }
-f6a9bc336b600e fs/cifs/cifsproto.h Al Viro            2021-03-05  73  
+Thank you!
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
