@@ -1,144 +1,127 @@
-Return-Path: <linux-kernel+bounces-881275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CB2CC27E23
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 13:36:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDBF0C27E32
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 13:41:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5916A4E900E
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 12:35:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D3CE189AD98
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 12:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FA12F7479;
-	Sat,  1 Nov 2025 12:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588EF2F49E5;
+	Sat,  1 Nov 2025 12:41:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ued7h9x5"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sjoerd@collabora.com header.b="hVxDDM/g"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC0518A6B0
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 12:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762000509; cv=none; b=YdtY092qF0NEKwXn2rFFVbxozg5r/fzz2hS6b46CySNPE0AOk+wHQSrSvHt1j3PhM4rfzE6uvHKjTiEyWUcOn5j/H4GAOyJujkArin/KF1CClC1NGTfYb8OEGF6ezHeGttrTTJVK+mR4Liq4pmXBRL/kH3uiOD/CleLVr8lUnAE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762000509; c=relaxed/simple;
-	bh=5lljvy+eeKPbsrR97UeOzg7UMYKoHcYzDLWKuAQGdYE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=XAsVa5dYmFJnSX54Xbf3AltZl46fKlrspkaaybu6jKUZdXJiNORV7eFBxpCm4a3W7pKKVQ7YI/mDcAkBoU0154KqUkOPziscpbPA6CkwElqtbSWDFHG66aja6fBx6Pv5z4G1ngIwBDgLO2MPjHRrWbTOOWAwZm1lwrq6KSzCf9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ued7h9x5; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-34053e17eb6so382979a91.0
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 05:35:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762000504; x=1762605304; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9iow4Uh3JbPUWEJRhV4H6RzrlPY1bk6TBjtSGGBlaN4=;
-        b=Ued7h9x5vp0OfEsZWuXKwb9qcb5oLIHTWDDn4AxY+qZkmycD2q3m44JV4+7frRu/UA
-         wYyq0oLtY1dNqRwF2SOVVvcruV0ARLln9kOuRJuxiMVSqViyXG5kt5DEDTWR9Psji40A
-         g6SlYcW/pWt46sl8AHfdbG2IYlzJcuXhm/rb5mwjV/9uIajQD/xSRbanNOnQwsHc+X+q
-         /d1FSnKge3SyE6LJnqbPdWY2o5vc1RAFvWex38Vy08ujVzdqtKrQo2HzrYvbmqClZlQ9
-         Z21Yf/Sn+CGkHMZ2iucHUZ2VdqGQ33dZTk0/seAtBGPYHvSPaIOKvn6iI4D1+C5BLnKz
-         FIWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762000504; x=1762605304;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9iow4Uh3JbPUWEJRhV4H6RzrlPY1bk6TBjtSGGBlaN4=;
-        b=QvCcwLyOXR8zIq4Y19h20xlBLiv0W/O3naNX+IGGEtg/mjtbDV8sPvsdVLvARinT5J
-         JbAwGC50E8HzW7caHEL8p5+1aI+Hl6HisaXJBa0uq9oRT2cKvxNxyiqEeUyiG7Yt4vhT
-         HWn1rMtNqjoXJbxFN4dXvDEHoRDJ7F2sgZeREZGucVt0cvtMhNGhaYuHNqGeLJqTb1em
-         E9YQprBikeZEDC3iCOLvkCHA1okZooIHFz8vtEc7pUUWCnbs7UuHfmGXn7qCIwS0zsh+
-         nzaes8sdV5QM+F+U2nOrhM61pjLp4gquxuL5JdiVXwq5sQC3sa6vcuxepLpv5pmFQ+0j
-         2mJg==
-X-Forwarded-Encrypted: i=1; AJvYcCVDzRWH6qED8c1q85M4r0zBgLPoBHUHvsGS3PHn3kfA4ViBTx7CO0At9fozs9xpuyIUZyfdxdC09luLpDM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHbLQZ84gx4g5fDQwtkpu9I1QS2lhscAPafrz37OKbBE+KTb9k
-	MqNDPZquN8VjMV2AGhnWi2Pr+Zqdj41Owv+O8j3aq+6VkcpnK9cOI3a7
-X-Gm-Gg: ASbGncvLsuA7N/NFjh9HOTkChJZDX3R7qAjxgLsKoY0tW8W/AFArHRvevGB+1lBGOTX
-	6dj7kY7HN8CUu0yW3lDBz0dDC6MywVNKG4jU5Ytk1s7dq6W/ONtXdgs24aANoxSjsYEuVEC1qND
-	LQzOM5yDVyo3k38GxjuiQfOnpPUcAJBV2EfTdWb8qjnNb3OkmcOBKfCcojkeBUyPMt6rEVAiUUm
-	0opHgJIahbiX2TRDJVF6EPEOTpgqikEZ8dsdDN79hVNS629k/JywjzpXq0COGQBh/D+7Qw5Ia4K
-	GSDalQFCnVRPPqNweaAQCSDsvd/HaaC3Vktw/WSQyGwCYzkAs5Rn1wX3zuczYlrgwllIiQLe+my
-	Bfy8/OROuZkQmd5V8HtJ6QChCHeuGMy3J90tr+9sEc1YWnpLsbBYm7erlLI1pdal1/iaXXds/+p
-	k3wLgoOpiWxres/WtvrgCs/+crMhQ85SWIsupoi4mt
-X-Google-Smtp-Source: AGHT+IGaymgUrpOcvB4JBLFSPVUyGWWS9X0AS3vOHetSYGMoN5nDwO4YcwN9LuZvJ9JYCEcykcWlKg==
-X-Received: by 2002:aa7:88cd:0:b0:7a5:396d:76d3 with SMTP id d2e1a72fcca58-7a7797c005bmr3975673b3a.4.1762000503825;
-        Sat, 01 Nov 2025 05:35:03 -0700 (PDT)
-Received: from [127.0.1.1] ([2406:7400:10c:9fcf:a95f:918:2618:d2cf])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a7db86f0fesm5214017b3a.60.2025.11.01.05.34.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Nov 2025 05:35:03 -0700 (PDT)
-From: Ranganath V N <vnranganath.20@gmail.com>
-Date: Sat, 01 Nov 2025 18:04:48 +0530
-Subject: [PATCH v2 2/2] net: sched: act_connmark: zero initialize the
- struct to avoid KMSAN
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9023823BD01;
+	Sat,  1 Nov 2025 12:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762000870; cv=pass; b=fC+kCYqsM2asGktoaI9nsbPobz4w0HTZwq9VK+L8JjVnRF36wMU4mtS+Obbes2WBPkrQmLJfWDdsNBvAwupSlmq5n0F0TT0GB3ZmWzgXG4zlFUTc9s6j5hknmYlCbB1mFi/6dnjBPPuFfJXdf3Qbj76zvSL2APx3um69shrlD3A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762000870; c=relaxed/simple;
+	bh=Xx4k/fa+z5oSv3/s6q/fkvdh6lOYHQhINeo6yjxMnCM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=X2kfL1u9nkQgcjWMa7NgpheN9rzmyoO3Wyn9Mfn29cUgoFteCZaaDam12VeiW+whAddZmGDBLSsIKZAFUJqithEmTeON7s3Sh8lYubVhlo2uB4EKh2ltIvjEjNloy8nKC3kKe48q3KNHjIN19j0ZlUZ29uyy8EbMeW2uFoScvb4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sjoerd@collabora.com header.b=hVxDDM/g; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1762000821; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=A7QggDksDzCmseQYSFGx/xof5FXoKWhxWCF1voGnOqira6R7CpXcFOe0adxPrhAfq46N1HjN76y4RmHjG2MKHWqbGxvwsMyJVal7+yN2yaVxHACMWl+iV2XKLZ756ZfiGeB7GPOMfmO5c2NiDuOqi33nIosp10r5BtTbdXDjSu0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1762000821; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=wX50N1iHvuUcfFTPrDTk6BLpkXD7It4diuWw8d34XeY=; 
+	b=IRfmqhYlU29u+cfbSc2SPpAMwbA9jqEXzZ2q6s4FAq/fo8xrlDQSrLa8qvj+KfyhxxoqqjfejRhYxARtTv0si7j9gCxYbC/wfSsPcXJeow/Nupy5oK9uEUoQqa+vx/v1KKRRxXaopfS8uW9e92K+MwM/7lXIx+A+HLzbpKdLB3Y=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sjoerd@collabora.com;
+	dmarc=pass header.from=<sjoerd@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762000821;
+	s=zohomail; d=collabora.com; i=sjoerd@collabora.com;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=wX50N1iHvuUcfFTPrDTk6BLpkXD7It4diuWw8d34XeY=;
+	b=hVxDDM/gqRw68T07nRuvdrHGupRkXhOU8RexT1UeP+9bS+r2KO4yzzfNJKjP+80C
+	7ABb6CAL4qYLI3lXalMwKyt2SNufHOI19Bfnb3DH6aWQUjo7eCQ7Z9iLnS5/At0SWAQ
+	DMYA4onW8qA2XN4liLwbv9J0ttSlgEbygWhi/Tro=
+Received: by mx.zohomail.com with SMTPS id 1762000816267360.6637248664106;
+	Sat, 1 Nov 2025 05:40:16 -0700 (PDT)
+Message-ID: <548101c6c887299b3c39f294e376c782e0bd2160.camel@collabora.com>
+Subject: Re: [PATCH 13/15] arm64: dts: mediatek: mt7981b: Add wifi memory
+ region
+From: Sjoerd Simons <sjoerd@collabora.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,  Matthias Brugger
+ <matthias.bgg@gmail.com>, Ryder Lee <ryder.lee@mediatek.com>, Jianjun Wang	
+ <jianjun.wang@mediatek.com>, Bjorn Helgaas <bhelgaas@google.com>, Lorenzo
+ Pieralisi <lpieralisi@kernel.org>, Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?=
+ <kwilczynski@kernel.org>,  Manivannan Sadhasivam	 <mani@kernel.org>,
+ Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul	 <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Lee Jones	 <lee@kernel.org>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"	
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski	
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Lorenzo Bianconi	
+ <lorenzo@kernel.org>, Felix Fietkau <nbd@nbd.name>
+Cc: kernel@collabora.com, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org, 
+	linux-phy@lists.infradead.org, netdev@vger.kernel.org, Daniel Golle
+	 <daniel@makrotopia.org>, Bryan Hinton <bryan@bryanhinton.com>
+Date: Sat, 01 Nov 2025 13:40:06 +0100
+In-Reply-To: <9bf32a56-b67f-488a-8719-3f97d85533d3@collabora.com>
+References: <20251016-openwrt-one-network-v1-0-de259719b6f2@collabora.com>
+	 <20251016-openwrt-one-network-v1-13-de259719b6f2@collabora.com>
+	 <9bf32a56-b67f-488a-8719-3f97d85533d3@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2-7 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251101-infoleak-v2-2-01a501d41c09@gmail.com>
-References: <20251101-infoleak-v2-0-01a501d41c09@gmail.com>
-In-Reply-To: <20251101-infoleak-v2-0-01a501d41c09@gmail.com>
-To: Jamal Hadi Salim <jhs@mojatatu.com>, 
- Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- skhan@linuxfoundation.org, david.hunter.linux@gmail.com, khalid@kernel.org, 
- Ranganath V N <vnranganath.20@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762000490; l=1124;
- i=vnranganath.20@gmail.com; s=20250816; h=from:subject:message-id;
- bh=5lljvy+eeKPbsrR97UeOzg7UMYKoHcYzDLWKuAQGdYE=;
- b=bNfAU7fFhFu8TXmm6LrwvsK/5elG10436Ao1RifFc2YEB/o84xMwIUoUqeEcARWUBz37FRUsC
- SgI8FmaDr2wBYAcMsXO0YTdp3BUjZOLvpN3TozwQf8vw5mi/iZdNnGH
-X-Developer-Key: i=vnranganath.20@gmail.com; a=ed25519;
- pk=7mxHFYWOcIJ5Ls8etzgLkcB0M8/hxmOh8pH6Mce5Z1A=
+X-ZohoMailClient: External
 
-zero initialize the struct to avoid the infoleak to the userspace.
+On Thu, 2025-10-16 at 13:28 +0200, AngeloGioacchino Del Regno wrote:
+> Il 16/10/25 12:08, Sjoerd Simons ha scritto:
+> > Add required memory region for the builtin wifi block. Disable the bloc=
+k
+> > by default as it won't function properly without at least pin muxing.
+> >=20
+> > Signed-off-by: Sjoerd Simons <sjoerd@collabora.com>
+>=20
+> You should split this commit in two:
+> =C2=A0 - Add wifi memory region
+> =C2=A0 - Disable wifi by default
 
-Signed-off-by: Ranganath V N <vnranganath.20@gmail.com>
----
- net/sched/act_connmark.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+Will split.
 
-diff --git a/net/sched/act_connmark.c b/net/sched/act_connmark.c
-index 3e89927d7116..cf3cdfaaa34b 100644
---- a/net/sched/act_connmark.c
-+++ b/net/sched/act_connmark.c
-@@ -195,13 +195,15 @@ static inline int tcf_connmark_dump(struct sk_buff *skb, struct tc_action *a,
- 	const struct tcf_connmark_info *ci = to_connmark(a);
- 	unsigned char *b = skb_tail_pointer(skb);
- 	const struct tcf_connmark_parms *parms;
--	struct tc_connmark opt = {
--		.index   = ci->tcf_index,
--		.refcnt  = refcount_read(&ci->tcf_refcnt) - ref,
--		.bindcnt = atomic_read(&ci->tcf_bindcnt) - bind,
--	};
-+	struct tc_connmark opt;
- 	struct tcf_t t;
- 
-+	memset(&opt, 0, sizeof(opt));
-+
-+	opt.index   = ci->tcf_index,
-+	opt.refcnt  = refcount_read(&ci->tcf_refcnt) - ref,
-+	opt.bindcnt = atomic_read(&ci->tcf_bindcnt) - bind,
-+
- 	rcu_read_lock();
- 	parms = rcu_dereference(ci->parms);
- 
+> Regarding the second commit, you have to re-enable the wifi node in all o=
+f
+> the currently supported MT7981b devices, including:
+> =C2=A0 - Xiaomi AX3000T
+> =C2=A0 - Cudy WR3000 V1
+>=20
+> While I agree that without pin muxing the wifi may not properly work, it =
+is
+> unclear whether the aforementioned devices are pre-setting the pinmux in =
+the
+> bootloader before booting Linux.
+>=20
+> In case those do, you'd be "breaking" WiFi on two routers here.
 
--- 
-2.43.0
+Wifi will never have worked on those upstream; The driver hits an unconditi=
+onal -EINVAL during probe
+due to the  missing memory-region this patch adds. I'll make sure to note t=
+hat in the new disable
+patch.
 
+--=20
+Sjoerd Simons <sjoerd@collabora.com>
 
