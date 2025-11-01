@@ -1,83 +1,109 @@
-Return-Path: <linux-kernel+bounces-881390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62FBEC281FA
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 17:03:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B277C28200
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 17:04:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 831BE188FA91
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 16:02:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 346863AB6B3
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 16:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA04E1DE2B4;
-	Sat,  1 Nov 2025 16:02:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C941DED49;
+	Sat,  1 Nov 2025 16:03:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="L01lCcPm"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nYTQqEkm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A122634D3AD;
-	Sat,  1 Nov 2025 16:02:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3841192B84
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 16:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762012927; cv=none; b=semnW/vDdMqwVzKaY7mF/MArSogXqDuD0BlDgzOxHtxszHy8hpKvo5+PiU5MJoT3a8JbMmhlOsxJ6aagqL1hfQ1GGHntFDwiIGLEBlZ0yP+oWHW5eJccrJFdFIODgirr+padePmayAvG77Z2Jgy/YSoKc55i42K+UQKJj94sbGQ=
+	t=1762013003; cv=none; b=Ckhd+YyvnPhrO/w6gULA3Kujlmfn87fXOvEOzv3qxicGVrTPKQ6+O4SKwbaFlw7r5JNqibveRhwBLfcoAiIxG/fSYa5qtzztJ8FjSXC53G/YOqaD8npShoqIc5soZ439Mmydw92lka+Doo+h4sGW082C7tPsqQ7Ntd0JKpsmYrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762012927; c=relaxed/simple;
-	bh=GbVR6kceTtyQtx+nPaggJRF0YkqFBaVBZbZLgE7tuGA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KjgoJw5Z7ggHs1T5ghgN+hwcctu78e5Q6q2OGeVw8nJpGmf3r85v2s+DVLw92uyNou1T3ibfTjBaFWYCLVrg2aqmHUQJeGKC05CwV4pjex2h81Gbvmug0My+nAcwjkFFAZm9Oxpf6qaNbhvthgeBjHsncNGrZtyFgfVkmZXwUHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=L01lCcPm; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=achCPvh2j2Wq4WWIsZcSuVU5hHoyHWQc1iOhRa3GSPU=; b=L01lCcPm1a4ZGT3UvVExKFxoCu
-	PB9/AXca28BEjqgYcLQTcrWQ8ANs1Kw+cuSQQC370hT8AZmFw0sunOYCpTk2z0i2R8GylMHsRCvkT
-	JtAvbKMR0i2HYxY7J1y5PFPWmasH0Gh+R6gaP2332+h++6RN5e6gnK8L01DQWefCobTCSgCqx4dLC
-	jY8UT5x2A68M0aRmVzg5a64KOJDM9HmZP5e8CWi/16WiS/yOLsGoZv5PTe+FWXFswBDT5wQ+s//d+
-	WyqCezW5kAbqtGbxw6nO8+SHBkOf18ryGMa4viEewBrwokmpEnKa1vHozdXFWA0YDlmAYw+dr2HHF
-	BS9BZhHw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vFE3D-0000000GVZH-0qy8;
-	Sat, 01 Nov 2025 16:01:59 +0000
-Date: Sat, 1 Nov 2025 16:01:58 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-Cc: ntfs3@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH RFC] fs/ntfs3: disable readahead for compressed files
-Message-ID: <aQYu9jktrEAsx2y0@casper.infradead.org>
-References: <20251028165131.9187-1-almaz.alexandrovich@paragon-software.com>
+	s=arc-20240116; t=1762013003; c=relaxed/simple;
+	bh=aa/gqAz9RaWN80zemM688XDWfvLb70mREOY7Xxyt7bk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bg9xyXmxRialN9A4zGQk8CBNbWVZAmkm9CJje82wI8wZY/ypXsvcVXigR4EmFq7TdtmuXwoKL95NkEgD5CjQvYvtUvn82lTUnHE0psr+9+YkKJcsVrBZWKXWdS9SJE3q10RXy4gqSxDrSB7OamY+C6AYZ3mW8qh6wjIMLVk8jRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nYTQqEkm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0188C4CEF1;
+	Sat,  1 Nov 2025 16:03:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762013002;
+	bh=aa/gqAz9RaWN80zemM688XDWfvLb70mREOY7Xxyt7bk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=nYTQqEkmiview9FIhkwppkOJmXfzGLTMStxbUyib9PJblrELBRnmphn9xpmO0Un9x
+	 Wiplwf/2NIIsgu5w0UAFWGhFDracx/3uMLaFB4JwlkT+1CBvP3gRZNbPoj6aH/uAGx
+	 yxcMPixbN6rvi+cTbtzGi+XFwGyydeJXEGDhwrA+m5fq8rYkBArLTfkhGfDCM8LueJ
+	 eVtIS0JrZavDWO+adZfriMWFwmJAQko3acGtfc8D6XspesNTWXO/XDyA0iFCpxCC4a
+	 H8e+vSH8B7lodSQNn7rLUp/y0gd14CDo3UGHelgrnTacPVwizNHpe9EXuyXUutT9Yo
+	 ZuuXnc8Zg60wA==
+Date: Sat, 1 Nov 2025 13:03:18 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Christian Brauner <brauner@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ian Rogers <irogers@google.com>,
+	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>
+Subject: [PATCH 1/1] tools headers: Sync uapi/linux/fcntl.h with the kernel
+ sources
+Message-ID: <aQYvRnFbgvCCl5ID@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251028165131.9187-1-almaz.alexandrovich@paragon-software.com>
 
-On Tue, Oct 28, 2025 at 05:51:31PM +0100, Konstantin Komarov wrote:
-> Reading large compressed files is extremely slow when readahead is enabled.
-> For example, reading a 4 GB XPRESS-4K compressed file (compression ratio
-> ≈ 4:1) takes about 230 minutes with readahead enabled, but only around 3
-> minutes when readahead is disabled.
-> 
-> The issue was first observed in January 2025 and is reproducible with large
-> compressed NTFS files. Disabling readahead for compressed files avoids this
-> performance regression, although this may not be the ideal long-term fix.
-> 
-> This patch is submitted as an RFC to gather feedback on whether disabling
-> readahead is an acceptable solution or if a more targeted fix should be
-> implemented.
+tldr; Just FYI, I'm carrying this on the perf tools tree.
 
-I suspect your real problem is that readahead is synchronous in ntfs3
-and the VFS is not expecting this.  Your get_block (ntfs_get_block_vbo)
-calls bh_read() which waits for the I/O to complete.  That means we get
-no pipelining which will significantly reduce bandwidth.
+Full explanation:
+
+There used to be no copies, with tools/ code using kernel headers
+directly. From time to time tools/perf/ broke due to legitimate kernel
+hacking. At some point Linus complained about such direct usage. Then we
+adopted the current model.
+
+See further details at:
+
+ https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/include/uapi/README
+
+To pick up the changes in this cset:
+
+  e83f0b5d10dcf628 ("nsfs: support exhaustive file handles")
+
+That doesn't introduce anything of interest for tools/, just addresses
+these perf build warnings:
+
+Warning: Kernel ABI header differences:
+  diff -u tools/perf/trace/beauty/include/uapi/linux/fcntl.h include/uapi/linux/fcntl.h
+
+Please see tools/include/uapi/README for further details.
+
+Cc: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/trace/beauty/include/uapi/linux/fcntl.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tools/perf/trace/beauty/include/uapi/linux/fcntl.h b/tools/perf/trace/beauty/include/uapi/linux/fcntl.h
+index f291ab4f94ebccac..3741ea1b73d85000 100644
+--- a/tools/perf/trace/beauty/include/uapi/linux/fcntl.h
++++ b/tools/perf/trace/beauty/include/uapi/linux/fcntl.h
+@@ -111,6 +111,7 @@
+ #define PIDFD_SELF_THREAD_GROUP		-10001 /* Current thread group leader. */
+ 
+ #define FD_PIDFS_ROOT			-10002 /* Root of the pidfs filesystem */
++#define FD_NSFS_ROOT			-10003 /* Root of the nsfs filesystem */
+ #define FD_INVALID			-10009 /* Invalid file descriptor: -10000 - EBADF = -10009 */
+ 
+ /* Generic flags for the *at(2) family of syscalls. */
+-- 
+2.51.0
+
 
