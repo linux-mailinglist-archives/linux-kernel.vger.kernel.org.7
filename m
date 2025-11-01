@@ -1,175 +1,83 @@
-Return-Path: <linux-kernel+bounces-881352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 821F9C280F6
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 15:26:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7060C280F9
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 15:26:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B819401526
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 14:25:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 880BA4EA86F
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 14:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 473B52FD1BC;
-	Sat,  1 Nov 2025 14:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE5FB2F656D;
+	Sat,  1 Nov 2025 14:24:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="EfpmVhp6"
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="zZmw4Gd2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171CB2FC866
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 14:23:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1CA2F5A03;
+	Sat,  1 Nov 2025 14:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762007031; cv=none; b=FAPyXUGSWhghwtUx/+Jy9xEo0tav02iSfllUMhKhzPEgw3gXmfOuXOFCwC7YSRtGa9x7Hr45wv9Bb4YTHjrS/QvY06OHEhQPe45j4gxN8WzBRrZmxRuXFW/3SojVj1EZ6mevcFNnDljAVtx581OyuQ/RymnUS8cJv5xITTYFpnI=
+	t=1762007096; cv=none; b=r96707+d3ayGy+/GWpshdHpx24lHQEkRL7AriXRAorZKm0QSoYhCtJOMhmgWtj/Ad/+71R8YtofvKI6BRjCdkFBXmQeelwQUYXkBvPMyexuUIwVj2SdXEYv7jplr0YSjfkiRexMMquuZDSaRTD+YXujfoPYs8Gmxs71yM2We/68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762007031; c=relaxed/simple;
-	bh=Oqtj3JWIeCIubS0ImzITam9qN03yIsBoqb2XmRHV0gQ=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jbTjjBUKmjox95x86v/J6N5Xa/3El1Cbbrp/RiIGNhhZ5sXRIrvcu+14MzCPBzYu/ObHwqLSakg/G0BGV+CXkXP7F7puaJwXadBl3vXnywteDt+GvxBwsRasXwxiuWnTPm+hA8qSehmhvbWVCLnhAICzy4/1JnC+LaT79Hqfx4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=EfpmVhp6; arc=none smtp.client-ip=209.85.217.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-5dbd150efe8so16714137.0
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 07:23:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1762007029; x=1762611829; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Y89e1Xc3DS2D9wc25qIhLt1elzzrVrlmI1KWnbpgyDg=;
-        b=EfpmVhp6JcEhxU01fAVXy3zpa5VJopT6YsxUmzHJ7HTQhogkzVqTZVNPzaZROChJcX
-         NjdqnoHaJTval7JoQS+TMXg6UtWtIlpflZVjWpiz047RUgnR83QLHzYN3naKo4AR4uvT
-         W3+XatYzNkj1xoXhh7wUoPtiDwljaAbwtzMZ6yRUQkXjCVrQpTpFr0ZfoKmu5ZY5Ycq6
-         zEqHvLuiZ6XA0I7TNz8vVsA3c66dkAjXJIRjMitPwH0KOJmVP9ERAuR/7HdyW2GHVDXz
-         H1/l6OrNlbe63RpZoP6LcLzvf92w9NZ1QnwYjhohRSFObLvVYCSZZ6uxnNU3n8X4Rp/s
-         j4uQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762007029; x=1762611829;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y89e1Xc3DS2D9wc25qIhLt1elzzrVrlmI1KWnbpgyDg=;
-        b=WwXBw9P5EvcAx5xaLES37St2ws1PdGFDYqtvMmr4nzknFSPObeJ3j7xYq4YT8DzXuX
-         3m/oQdS9pctoc6IcSa5MXmK2jEHU25ciH5m5z9n9jRzvYNymctaQ+cWwitc105GigPdE
-         uuSeWghGGPbgK6ZoofOXZyQKwNkJOyamFnfyax6a45TVJDcFCSNLNHGwCzYd/xtOTKVW
-         bgI1SefvXwYqQoJOa73hTVkfOProMfAlekK4OiKUtpKfd8isGsbpnrNzBY6zzaa6CItP
-         5i1yjBbBEgTRbFreqwPWx7fWP2qusBFAPFMfr3lHzGQ5pfvSW6AeXRvBTbHPdcJEyrVo
-         2pnA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKAhEQAooyTn2buVpC6QNFuEDWIlJAi3B591cRlh1qbjPBAwDFzsUYXY8N1SIh1pNOQc7jBjVR3EkfcxU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDtTeRFGJffdbnfiSDbBsiwh5EqvL1Y4pm080CHAz15ENK0eHF
-	kHd8YnQT57Xrby+9SF1HjpWuW2RECsm4SdcbNUDjaNSXYsAndfHxMf3jHYxP0bzvgk0=
-X-Gm-Gg: ASbGncth1MPTstOpqC19tWBwLH7KChu77t6Jgf6HdebXwKfT91KtV/L6nOztpw95cVY
-	4kq3JED7BeVwpfNBUUzi0sTiqK4N2/G3qd6F7QERq4famMUGwWC5CGrMh00mHpoDC8cXNOlZKJn
-	Hd4PrTsiC0Ia2+/vuaz1cuc2oDAR4G0VaYln0LIt3APvo8O61qajMh8Bm0bIt0gmE4nag6s4PN4
-	M7QNGJQzzwsco0ydflE83hHB4MelXjMuUocwlbGDz0Z2Og7WY+S+m9gGBW7/Dlf81ck2lD82KM0
-	/ocU1bbXCJY39qIDNQxuEFVX6pIWFPYZiaDh268g3HpxiNvbHkhCrmIfjNjhFGRi46UhoJLHOSy
-	96awVcloZYNyVXeJtji50eUv0HrDXiyyX6SG1FwVvQ1FwHtYu8JtOuPgeekb4PV290HeDDKxS7+
-	1CMn//rQmq7LVywcfBuSIVAhHBQ2hdaOGjA9kzHS4WwOB9N1VafUdG3oO0urs1
-X-Google-Smtp-Source: AGHT+IGFDCScfqliWb9KcrLwkQzx/ze/7HdLlm3rrxqjpvvjEhbQ+nHt0IFtgECikftA3CUT6aFcGQ==
-X-Received: by 2002:a05:6102:441b:b0:5d6:5e9:9e0c with SMTP id ada2fe7eead31-5dbb11f02d1mr1796389137.4.1762007029092;
-        Sat, 01 Nov 2025 07:23:49 -0700 (PDT)
-Received: from soleen.c.googlers.com.com (53.47.86.34.bc.googleusercontent.com. [34.86.47.53])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-559449647e0sm1776242e0c.3.2025.11.01.07.23.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Nov 2025 07:23:48 -0700 (PDT)
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-To: akpm@linux-foundation.org,
-	brauner@kernel.org,
-	corbet@lwn.net,
-	graf@amazon.com,
-	jgg@ziepe.ca,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org,
-	masahiroy@kernel.org,
-	ojeda@kernel.org,
-	pasha.tatashin@soleen.com,
-	pratyush@kernel.org,
-	rdunlap@infradead.org,
-	rppt@kernel.org,
-	tj@kernel.org,
-	yanjun.zhu@linux.dev
-Subject: [PATCH v9 9/9] liveupdate: kho: Use %pe format specifier for error pointer printing
-Date: Sat,  1 Nov 2025 10:23:25 -0400
-Message-ID: <20251101142325.1326536-10-pasha.tatashin@soleen.com>
-X-Mailer: git-send-email 2.51.1.930.gacf6e81ea2-goog
-In-Reply-To: <20251101142325.1326536-1-pasha.tatashin@soleen.com>
-References: <20251101142325.1326536-1-pasha.tatashin@soleen.com>
+	s=arc-20240116; t=1762007096; c=relaxed/simple;
+	bh=iqxvFnNb6/boAaK2Der2ZSOyxGXgApmOzVrQg7jYZEo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nO9hPvbhFFjPMprhOIoDR6OR3bVjam4R6myLEqzTgPCuTD8+fQXyzBEx6Lu05r05oQ5N9CV8Yt++fLmd3lOvKv2YiAXvAmjNzzmByE+JNu9UkEO4DeLdfmdH8J2qNR2+eeAxaZnLAnsW7qp84QIXHgmuvJgzpf8gMH0W/oWmYEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=zZmw4Gd2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7BDBC4CEF1;
+	Sat,  1 Nov 2025 14:24:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1762007095;
+	bh=iqxvFnNb6/boAaK2Der2ZSOyxGXgApmOzVrQg7jYZEo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=zZmw4Gd2ivbmv9eg5yS215S8iN6rflYoEMKeGssf5WLctUPclxh127NL7llkuIFsH
+	 uMTsBUmJMqFXS0kgKEljr63u9BRnnZfqiOImRzIIb6URIqpcujTWMfx3yNb84c9ckg
+	 eXbfHRU8dtYgvvW7O3XfX6fg8A6UFp77QyQA17Vs=
+Date: Sat, 1 Nov 2025 15:24:51 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Staging Drivers <linux-staging@lists.linux.dev>,
+	Jonathan Corbet <corbet@lwn.net>, Akira Yokosawa <akiyks@gmail.com>
+Subject: Re: [PATCH] staging: Pull in staging drivers docs into documentation
+ tree
+Message-ID: <2025110115-nineteen-diner-186e@gregkh>
+References: <20251101124053.62544-1-bagasdotme@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251101124053.62544-1-bagasdotme@gmail.com>
 
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
+On Sat, Nov 01, 2025 at 07:40:53PM +0700, Bagas Sanjaya wrote:
+> Some staging drivers have documentation that are spread out in
+> drivers/staging/*/Documentation/. Pull them into kernel docs tree by
+> using the same technique as in 1e9ddbb2cd346e ("docs: Pull LKMM
+> documentation into dev-tools book"): wrapping them with kernel-include::
+> directive as literal include.
+> 
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 
-Make pr_xxx() call to use the %pe format specifier instead of %d.
-The %pe specifier prints a symbolic error string (e.g., -ENOMEM,
--EINVAL) when given an error pointer created with ERR_PTR(err).
+No, please do not do this.  staging drivers are "self contained" and do
+not spread out into the rest of the kernel.  If/when the driver moves
+out of staging, then it can be included in the normal kernel
+documentation builds and the rest of the stuff (i.e. include/ locations
+and the like.)
 
-This change enhances the clarity and diagnostic value of the error
-message by showing a descriptive error name rather than a numeric
-error code.
+So leave them alone.  Documentation does not need to be built for
+staging drivers, there are much bigger things that need to be done for
+them instead.
 
-Note, that some err are still printed by value, as those errors
-might come from libfdt and not regular errnos.
+thanks,
 
-Signed-off-by: Zhu Yanjun <yanjun.zhu@linux.dev>
-Co-developed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-Reviewed-by: Simon Horman <horms@kernel.org>
----
- kernel/liveupdate/kexec_handover.c         |  4 ++--
- kernel/liveupdate/kexec_handover_debugfs.c | 10 ++++++----
- 2 files changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/kernel/liveupdate/kexec_handover.c b/kernel/liveupdate/kexec_handover.c
-index be945c133a2f..167c761988d3 100644
---- a/kernel/liveupdate/kexec_handover.c
-+++ b/kernel/liveupdate/kexec_handover.c
-@@ -1448,8 +1448,8 @@ void __init kho_populate(phys_addr_t fdt_phys, u64 fdt_len,
- 		memblock_add(area->addr, size);
- 		err = memblock_mark_kho_scratch(area->addr, size);
- 		if (WARN_ON(err)) {
--			pr_warn("failed to mark the scratch region 0x%pa+0x%pa: %d",
--				&area->addr, &size, err);
-+			pr_warn("failed to mark the scratch region 0x%pa+0x%pa: %pe",
-+				&area->addr, &size, ERR_PTR(err));
- 			goto out;
- 		}
- 		pr_debug("Marked 0x%pa+0x%pa as scratch", &area->addr, &size);
-diff --git a/kernel/liveupdate/kexec_handover_debugfs.c b/kernel/liveupdate/kexec_handover_debugfs.c
-index 46e9e6c0791f..ac739d25094d 100644
---- a/kernel/liveupdate/kexec_handover_debugfs.c
-+++ b/kernel/liveupdate/kexec_handover_debugfs.c
-@@ -150,8 +150,8 @@ __init void kho_in_debugfs_init(struct kho_debugfs *dbg, const void *fdt)
- 		err = __kho_debugfs_fdt_add(&dbg->fdt_list, sub_fdt_dir, name,
- 					    phys_to_virt(*fdt_phys));
- 		if (err) {
--			pr_warn("failed to add fdt %s to debugfs: %d\n", name,
--				err);
-+			pr_warn("failed to add fdt %s to debugfs: %pe\n", name,
-+				ERR_PTR(err));
- 			continue;
- 		}
- 	}
-@@ -168,8 +168,10 @@ __init void kho_in_debugfs_init(struct kho_debugfs *dbg, const void *fdt)
- 	 * reviving state from KHO and setting up KHO for the next
- 	 * kexec.
- 	 */
--	if (err)
--		pr_err("failed exposing handover FDT in debugfs: %d\n", err);
-+	if (err) {
-+		pr_err("failed exposing handover FDT in debugfs: %pe\n",
-+		       ERR_PTR(err));
-+	}
- }
- 
- __init int kho_out_debugfs_init(struct kho_debugfs *dbg)
--- 
-2.51.1.930.gacf6e81ea2-goog
-
+greg k-h
 
