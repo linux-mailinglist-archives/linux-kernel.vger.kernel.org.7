@@ -1,66 +1,50 @@
-Return-Path: <linux-kernel+bounces-881138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDAD1C278C1
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 07:10:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 373B5C278CB
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 07:18:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86006407072
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 06:10:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E2F6189D5D8
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 06:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33FC28C871;
-	Sat,  1 Nov 2025 06:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578AA1A9F84;
+	Sat,  1 Nov 2025 06:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dNU64AAz"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="aUfkeWNe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB49E26ED5E;
-	Sat,  1 Nov 2025 06:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3EE0635
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 06:18:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761977435; cv=none; b=apH/o/noZ+vnmDvZ67pjzgM0hycNZYvjidz8XJ5Vzi0Gm/0snk9OCoG+EUtTpgizTZ531cG1cgD9SizcKvp8NdpSm3t+CvuFCsMBHXUovPlchvP4Uhh2Dbh+wOVS/+AEZJci4YK15SKF5zlCJTu8AG3FZbwIrHSzs7IceIpYcCs=
+	t=1761977905; cv=none; b=pTCm38TE+KfTNs+Ir7j8A8O9IDVPT0aZPvMrG4xz4UEAMaC3zdOd2vDsLLDifBbw1CiEMCCQHwwKSp8sUKukxNAmlLQqdbKvtG0PyBCJ8Rmkp9lu1gPNkIe7tfHUnGXnXMTnJC1avSVgb3yJ8SAQihBqsFIl3GXKqL2Y36MRtcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761977435; c=relaxed/simple;
-	bh=j+Yfr5cijQdjT2ruVKtXGnYQcWJxGCeRrDvfu1qPzdI=;
+	s=arc-20240116; t=1761977905; c=relaxed/simple;
+	bh=5yAoqEPuE6KKwtbKkjtS2q3wb9YxdWs28FPD+/o6xWM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RUrzcIS2napMuaaHMs22b4b+T1/dIemgnWW/UbFeWbFKGmVlQbGE3l/mQfmLWBSd/jVCn5S53H+PjScb/Rs7GgFRs9YEcSntiu6vvJ8Y9pWwE2vRIXWO5pQboBYtRyLLcCirgkB8KbgyXVeU43S/EGnbM49gcnDwlnrsfF2SyEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dNU64AAz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAE9DC4CEF1;
-	Sat,  1 Nov 2025 06:10:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nzukhv9k7qZwxFPcdI3tJPE9EkMq/LFa6KfOl8Yk7JdSHSja9J57g2lMqsGhuhNB3Uv8i4aGWcY9lrbRzOAplr+JsicMgxRdQor0gifpQPHXbbYvCZGU8eQrR4a5cTmwO23BCi7Q7CjIrR5GgfDXOD9C/uIdwPJ91+S7ZYtyuPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=aUfkeWNe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2D7BC4CEF1;
+	Sat,  1 Nov 2025 06:18:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1761977434;
-	bh=j+Yfr5cijQdjT2ruVKtXGnYQcWJxGCeRrDvfu1qPzdI=;
+	s=korg; t=1761977905;
+	bh=5yAoqEPuE6KKwtbKkjtS2q3wb9YxdWs28FPD+/o6xWM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dNU64AAzHqsFhm0VugFNVN5YzL5HHeuCzK8H1H/2yKASkNrk59jV6glQQT9H772P3
-	 5P7sYd0dYCZNy2Crzpc7GjL0Ozv4XJk7Loh/9ZKT6mSTIn28XCkhDdi0nfiTlVKlMb
-	 VEj3CKxcG0/8EfIQC9FHQMgYKvsDHmVqCdTUT6b8=
-Date: Sat, 1 Nov 2025 07:10:30 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Roy Luo <royluo@google.com>
-Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Joy Chakraborty <joychakr@google.com>,
-	Naveen Kumar <mnkumar@google.com>,
-	Badhri Jagan Sridharan <badhri@google.com>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Subject: Re: [PATCH v4 2/2] usb: dwc3: Add Google Tensor SoC DWC3 glue driver
-Message-ID: <2025110128-jailhouse-situated-22b1@gregkh>
-References: <20251017233459.2409975-1-royluo@google.com>
- <20251017233459.2409975-3-royluo@google.com>
- <20251030011659.bmgdry3wwf4kgjwv@synopsys.com>
- <CA+zupgxPYXCqew1548uwGx7=9u0b5oCwaXfP7F=FmqMR7a5bDw@mail.gmail.com>
+	b=aUfkeWNe2sLL1ZRQMnFK9bOkHBX8zaWweWzQgioulsW0t2rcl8Xvexs9NaSIyh43s
+	 YlGePY88YlmlbrpkFgNNwG2cRk6aTcfZrO0+dco0V4OpHBV45pK5itgHfYuQme2sK4
+	 CQPiYWKcQL8TfI+Fme9AgDaXyvtz4xDzYebRQa8w=
+Date: Sat, 1 Nov 2025 07:18:22 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: kees@kernel.org, broonie@kernel.org, arnd@arndb.de,
+	andriy.shevchenko@linux.intel.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] mod_devicetable: Bump auxiliary_device_id name size
+Message-ID: <2025110105-upright-dinginess-3b2c@gregkh>
+References: <20251031190234.224813-1-raag.jadav@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,23 +53,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+zupgxPYXCqew1548uwGx7=9u0b5oCwaXfP7F=FmqMR7a5bDw@mail.gmail.com>
+In-Reply-To: <20251031190234.224813-1-raag.jadav@intel.com>
 
-On Fri, Oct 31, 2025 at 05:49:28PM -0700, Roy Luo wrote:
-> > > +         dr_role != DWC3_GCTL_PRTCAP_HOST) {
-> > > +             dev_warn(google->dev, "spurious pme irq %d, hibernation %d, dr_role %u\n",
-> > > +                      irq, google->is_hibernation, dr_role);
-> >
-> > Should we limit this print and do we need this to be dev_warn? It may be
-> > noisy wouldn't it.
+On Sat, Nov 01, 2025 at 12:32:34AM +0530, Raag Jadav wrote:
+> Since auxiliary device id string is formed using the combination of parent
+> and child device names, it may require more than 32 bytes if both the names
+> are long enough. Bump the size to 40 bytes to satisfy such cases.
+
+What in-kernel users need such a larger name?  If we allow larger names,
+people will try to do crazy things and use memory addresses in them (has
+happened already...)
+
+> Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Raag Jadav <raag.jadav@intel.com>
+> ---
+> Triggered by [1].
 > 
-> Ack, will make it WARN_ONCE in the next version.
+> [1] https://lore.kernel.org/r/aQSwWLVKH_3TthTW@smile.fi.intel.com
 
-So you really want to panic your system if this happens (remember, the
-HUGE majority of Linux systems run with panic-on-warn enabled)?
-
-Please do not, handle the issue, dump a message to the log if you really
-need to, and move on, don't crash.
+How long would this driver submission's name be?  I couldn't figure it
+out, and really, any device with a huge name is going to be a pain...
 
 thanks,
 
