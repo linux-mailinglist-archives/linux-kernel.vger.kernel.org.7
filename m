@@ -1,149 +1,188 @@
-Return-Path: <linux-kernel+bounces-881157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 862DAC27939
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 08:57:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0B4AC27945
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 08:57:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B6C2134AFFE
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 07:57:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A55B3A5B0B
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 07:57:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10C226ED4C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9752426A1AB;
 	Sat,  1 Nov 2025 07:56:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pa1QPnqH"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b="40Sb7gp3"
+Received: from mail.subdimension.ro (nalicastle.subdimension.ro [172.105.74.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94406257448
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 07:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD9C4242925;
+	Sat,  1 Nov 2025 07:56:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.105.74.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761983817; cv=none; b=S9h5rrt1xF27XjuvFq+UQYQPnqQC5UqEtZNgtaC2fbKQPJe+57hPagVwU9aL58TINH3CQjunF7Wqu+3XZegvzQbYNMGI8/Jcxl+8yV5cbsrW3la7wJx45EDJOK3anGe2eC5FoA5vjqjKUklZGr42SLypM/6q4lOkq8UEp0Qb5B8=
+	t=1761983817; cv=none; b=iitYb2cfw486R5pQy35wotqq1w1l0BpGuxnAOVmghhCCkd7yVaFQ7w8l4YYP/H9Ro3eObvUpx94Q5MzxH7Xx1B9wz8ApchgIWcWTJ7g1MCLtMvxMTJ/m9gIBbr/nVE8gQYFAVyzZd+blbNT+fnug+3fqKGVGRLu2vK+wLBxj7DE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1761983817; c=relaxed/simple;
-	bh=oFYLAyUgUKVca6bX5z+JnclDAZnq1RY9Sq5wx6V9lBk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ym3js5p/vPq5k+bnSsCb+ZcDRDEK5eriIu1utEBhJUg59BpOTYDRAOWJjm7q+lK2qS5B1Txv6tHl6RB3y4p52jzHRS1KT534XQkf7r7NE+618mjOiyXqPU8BR5vhzQaDbbB9DZqlSzIVSc9O0VBWJdnKyFObPPssU4yl9dbxvSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pa1QPnqH; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A131arZ029142;
-	Sat, 1 Nov 2025 07:56:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Qz5z4z
-	Wp+0kzLrzXpj+cIxoReZBRNWWRZSQGf6FSCGI=; b=pa1QPnqHCQsyy9jFHkaiAt
-	Ept8AbeBEKTTb9N7UmUt+usBiwQKYj8RztJN/CaNcoovPoSgVc9PmfaNY0JF3q+8
-	gvZQGXrz7UozcT+1H4Nvn0mwKiKPkqoSSYd265CK3eJluHOSh3NgOhNemSDdMzOD
-	NFF8HRg6RZKfaMFTa6AH5G+RPlFSu3NqvfYb6nzPvNAkm3ERmifdfyxeGBboRiTp
-	dz2eHte4vXqrseRWslEfuQqyu0kgOpJ6q9pnn9L+MnLBIEveckr0Qicm40+3fYSs
-	2NbJS1IkfWAPCHn90MZXSJB8rv04SpVaRIBRCcF3x9Nxs3SHCGcYe7c1KTI1jE5w
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59xbggms-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 01 Nov 2025 07:56:17 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5A17uGbi015678;
-	Sat, 1 Nov 2025 07:56:16 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59xbggmq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 01 Nov 2025 07:56:16 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A15lKF2030770;
-	Sat, 1 Nov 2025 07:56:15 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a33wx1w4f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 01 Nov 2025 07:56:15 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A17uDFo41681366
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 1 Nov 2025 07:56:13 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3106420043;
-	Sat,  1 Nov 2025 07:56:13 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9A85A20040;
-	Sat,  1 Nov 2025 07:56:10 +0000 (GMT)
-Received: from [9.124.213.44] (unknown [9.124.213.44])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Sat,  1 Nov 2025 07:56:10 +0000 (GMT)
-Message-ID: <3f7ec825-7e85-499f-bc44-1fcda0a862ae@linux.ibm.com>
-Date: Sat, 1 Nov 2025 13:26:09 +0530
+	bh=tWn4ufTyuQGOgYCyH47Q/VRlm9ousGUJIlvtzVgbvfc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WdwCOWduelaGKqtQZMYusBAZ9RGgrs69BDwCt7a1VcwNFeO7mQAoVAl+Pj/771whIBWBnHRONvhjugyHj2h1MuKdaIEGj+GG98SH4uP+NYfVufkw1DW5bKBAIZp5VhLuhaY7a6kVZf0yjxUOxJJn0p2op1OQzAADNEzG8DlzURc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro; spf=pass smtp.mailfrom=subdimension.ro; dkim=pass (2048-bit key) header.d=subdimension.ro header.i=@subdimension.ro header.b=40Sb7gp3; arc=none smtp.client-ip=172.105.74.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=subdimension.ro
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=subdimension.ro
+Received: from lipo.home.arpa (unknown [IPv6:2a02:2f0e:3e0c:5b00:f1e0:3f4b:286c:9ddb])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.subdimension.ro (Postfix) with ESMTPSA id 377D1160209;
+	Sat, 01 Nov 2025 09:56:45 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=subdimension.ro;
+	s=mail; t=1761983805;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DvZurcr82awvHEfrspbknKnStLnDMBRHjfUAZq2hRoY=;
+	b=40Sb7gp3oImKShQiUrrrSV/kqAqScd12/c5lk7eOTB5PO5uGQfCKLoMqeGjRhnrX8Cv1Fj
+	fMtNwvTRsJqSNjqa6ML3AxoEg1gsYHNVBzOQ7jxwNA3aUvdcmvmDmHbSV4LG0o8X9Rb7Dr
+	TKTIRGX1Ucmf+MyuE7sGLIGFyrw1O3Y1tl07Ng0euHqu+xe/hnfJY/sH/tsJVQi/8mk6zs
+	XYMP+n7QpktRy5Mk2i+y6ZwGWKWGBRdO+hKWMmr7F3Sm/bnAxwdUbJRn8rgdDPRTUBVf2d
+	itGsCbNYlVHVufMVtCva+0iXAGjJw/+D5Ozb/gQ9/1IEcFyjA+njFu5Pw1yTuQ==
+Date: Sat, 1 Nov 2025 09:56:42 +0200
+From: Petre Rodan <petre.rodan@subdimension.ro>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jagath Jog J <jagathjog1996@gmail.com>
+Subject: Re: [PATCH 3/6] iio: accel: bma220: add tap detection
+Message-ID: <aQW9OnJSrOzn_Sws@lipo.home.arpa>
+References: <20251014-bma220_events-v1-0-153424d7ea08@subdimension.ro>
+ <20251014-bma220_events-v1-3-153424d7ea08@subdimension.ro>
+ <20251018181632.76851d4e@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [patch V3 00/20] sched: Rewrite MM CID management
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Gabriele Monaco <gmonaco@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Michael Jeanson <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-        Florian Weimer <fweimer@redhat.com>, Tim Chen <tim.c.chen@intel.com>,
-        Yury Norov <yury.norov@gmail.com>
-References: <20251029123717.886619142@linutronix.de>
- <47e73026-390e-40d6-a860-10e9378a3bf3@linux.ibm.com>
- <ae8de225-3c07-43ac-80d1-ecb6ac45d5d9@linux.ibm.com> <87ecqisw2h.ffs@tglx>
-Content-Language: en-US
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-In-Reply-To: <87ecqisw2h.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAyMSBTYWx0ZWRfX5x0Ux1rQ7MGm
- XvSm6IjGsf32oT3WwG2vkAZLAj3Nkgs4k+dEOazcteDTlOVITtsbIB2tPEuJiAZlfZvKpZE+ULz
- Rycj18Ph+xdwnDKeXZgSNkmLlLtNayDPUYVTxl3suwTrE6Ogg09O2gbwDG2CNbQGWWcyM67c5zv
- fWwoSp2Ns2ihlUG5/aR8LEuNuhk2tuIV8A89PxS4TSGZwy0yd7h2/7UBuYpX9XNpglpTnns0T4w
- UiNuN+YzEPQJnR5M3HL23nsyh+H4o8o/7l5XL/yGAY9iUOZENnB1/FD0FAlRT9LcAVzOMH0PD6h
- r+famzfPrJRroy7IMHSkFhDIjaNZP7Z8Z/u3eRbNGVFOrFUApWPg2gkH0Fcj2uSlxpmGlNaY+mJ
- tan/sZWBp0SXLbyuDUgqlxcspUi8lQ==
-X-Proofpoint-GUID: LgZoCtd8AR86LuaX1gC0B4A5u9zuUlXi
-X-Authority-Analysis: v=2.4 cv=OdCVzxTY c=1 sm=1 tr=0 ts=6905bd21 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=w-UqUKPv55kzaV5c4kIA:9 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-ORIG-GUID: TALgBEPv3_sGAvWoFUSGCA25QXEeV8SV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-01_01,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 adultscore=0 spamscore=0 suspectscore=0 impostorscore=0
- lowpriorityscore=0 priorityscore=1501 clxscore=1015 phishscore=0 bulkscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010021
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5yEGpi0/vFzggbYN"
+Content-Disposition: inline
+In-Reply-To: <20251018181632.76851d4e@jic23-huawei>
 
 
+--5yEGpi0/vFzggbYN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 11/1/25 1:06 AM, Thomas Gleixner wrote:
-> On Thu, Oct 30 2025 at 12:10, Shrikanth Hegde wrote:
->>> I am running into crash at boot on power10 pseries.
->>> Thought of putting it here first. Me trying to figure out why.
->>>
->>> I am using your tree.
->>> git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git
-> 
-> Can you update and revalidate? There are a couple of fixes there though
-> I don't know how they would be related.
 
-Tried with latest. It boots fine with NR_CPUS=8192.
+Hello Jonathan,
 
-at commit:
-commit 870c1793316eddb6f8c9814f830f237e6e1c40ee (origin/rseq/cid)
-Author: Thomas Gleixner <tglx@linutronix.de>
-Date:   Tue Oct 14 10:51:04 2025 +0200
+thank you for the review.
 
-     sched/mmcid: Switch over to the new mechanism
+On Sat, Oct 18, 2025 at 06:16:32PM +0100, Jonathan Cameron wrote:
+> > +			ret =3D regmap_read(data->regmap, BMA220_REG_CONF3, &reg_val);
+> > +			if (ret)
+> > +				return ret;
+> > +			*val =3D FIELD_GET(BMA220_TT_DUR_MSK, reg_val);
+>=20
+> This needs to be in second if you are using duration. Is the register rea=
+lly in seconds?
+
+this IC has a very small number of bits that configure duration/hysteresis/=
+threshold levels. it's between 2 and 6 for each of them. in the case of hig=
+h and low G events the duration is not even directly defined as a time inte=
+rval, but as a count of samples that are over a threshold value.
+
+I was hoping that simply passing along a unitless value between 0 and param=
+eter_max would be enough to customize all the event parameters. this does m=
+ean that the driver makes the assumption that the user is familiar with the=
+ device datasheet and knows the number of bits every parameter has been all=
+ocated. should the driver provide a conversion table for tt_duration just l=
+ike for _scale_table and _lpf_3dB_freq_Hz_table?
+
+> > @@ -506,13 +777,36 @@ static irqreturn_t bma220_irq_handler(int irq, vo=
+id *private)
+> >  	struct bma220_data *data =3D iio_priv(indio_dev);
+> >  	int ret;
+> >  	unsigned int bma220_reg_if1;
+> > +	s64 timestamp =3D iio_get_time_ns(indio_dev);
+> > +
+> > +	guard(mutex)(&data->lock);
+> > =20
+> >  	ret =3D regmap_read(data->regmap, BMA220_REG_IF1, &bma220_reg_if1);
+> >  	if (ret)
+> >  		return IRQ_NONE;
+> > =20
+> > -	if (FIELD_GET(BMA220_IF_DRDY, bma220_reg_if1))
+> > +	if (FIELD_GET(BMA220_IF_DRDY, bma220_reg_if1)) {
+>=20
+> Is it an either / or case? I.e. we can only have buffered reads with
+> the data ready interrupt or events?   That does happen in some devices
+> but is fairly unusual.
+
+the driver got an interrupt, so it checks the source - it's either a data r=
+eady when the sensor is used to sample the environment or it's an event in =
+which case it just sets the event.
+now that you mention it I think I would miss events if both happened before=
+ the kernel executes the _irq_handler(), so I will rewrite this bit. if you=
+ ment something else please tell me.
+
+best regards,
+peter
+
+>=20
+> >  		iio_trigger_poll_nested(data->trig);
+> > +		return IRQ_HANDLED;
+> > +	}
+> > +
+> > +	if (FIELD_GET(BMA220_IF_TT, bma220_reg_if1)) {
+> > +
+> > +		if (data->tap_type =3D=3D BMA220_TAP_TYPE_SINGLE)
+> > +			iio_push_event(indio_dev,
+> > +				       IIO_MOD_EVENT_CODE(IIO_ACCEL, 0,
+> > +							  IIO_MOD_X_OR_Y_OR_Z,
+> > +							  IIO_EV_TYPE_GESTURE,
+> > +							  IIO_EV_DIR_SINGLETAP),
+> > +				       timestamp);
+> > +		else
+> > +			iio_push_event(indio_dev,
+> > +				       IIO_MOD_EVENT_CODE(IIO_ACCEL, 0,
+> > +							  IIO_MOD_X_OR_Y_OR_Z,
+> > +							  IIO_EV_TYPE_GESTURE,
+> > +							  IIO_EV_DIR_DOUBLETAP),
+> > +				       timestamp);
+> > +	}
+> > =20
+> >  	return IRQ_HANDLED;
+> >  }
+> >=20
+>=20
+
+--=20
+petre rodan
+
+--5yEGpi0/vFzggbYN
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEGiKYHD4NvFCkTqJ3dCsnp2M6SWMFAmkFvTUACgkQdCsnp2M6
+SWOP6BAAmew3aKxXqOypw0w4ORqYbVBYrGw4kYSo/qQgxFNl4zGSmTB/5rccZQp9
+drbnZc9CDHg2YptNZPxEjtpPE+NTM05SxLQ2ndWi/L12mDNElG/uRszRoxHE9M5m
+KZCMiXzWFR5M84rPOLYvH0ghlQnOBIT+QSsatRhf8PQc2H5E1yFYR3/tYTBoAC+y
+fPswJM7fRAnyo7h5f3XrtljLoDyjlDVnv3dZdd4qWu9d6wWgFIFIWMHOB4pDpIoQ
+zzOx1f7yNMCZqCaYZOSQTxIMcojkB5qjsAJow1cuyJcW5tmyJTh926SNgv4G2CWn
+8pkgZZyRPJrSUzxS/rTQgRlDrH0Ti050gs2SXdjnON3R68W65Txy+KQozvpNpOQw
+vkDX0fzfrcn4T8waIDofBqzNSHEechRbfqzb5QAOzKZLBunot+aVgqxNSWJvUod/
+EFJL7UpHnTxOQ5VUMRgDO16icYh1Q/jY2PBnI5vJvTGS4imdLkZKmHJKb5KCXJ16
+9uW9FqzMNS9ysB44/pCe2CEEN+gWkMQtjJkCIOwN6YjDMk2Z4doY2KP4IfsOwcUu
+DH0nKS7ndb23ZjBupXTbNy/qx2NVuxuiY+w+Vq/w0SCYgjH4Bw3nnvN0vFvwZ47S
+fPBftOBs7D4ofLZKYbpDOyF+MAtkk6f6/33Sh34dpRDRfeOxdBU=
+=EkOh
+-----END PGP SIGNATURE-----
+
+--5yEGpi0/vFzggbYN--
 
