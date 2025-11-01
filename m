@@ -1,97 +1,75 @@
-Return-Path: <linux-kernel+bounces-881584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39BB3C287FB
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 22:16:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3466BC28805
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 22:21:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F0093AC5DF
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 21:16:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA7683BB6AF
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 21:20:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E7A2701B1;
-	Sat,  1 Nov 2025 21:16:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A9C285CB8;
+	Sat,  1 Nov 2025 21:20:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CnWm/wx1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="j71DDsZ/"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487677E105;
-	Sat,  1 Nov 2025 21:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A443244677;
+	Sat,  1 Nov 2025 21:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762031779; cv=none; b=SkD566bUar9BMiyKyqcKV6BB2plL2VbO/z8VF93Uq9AN/kGmiyrCTI+EMWLYqru4BiojuekLA1fFdPYnGBYGxaohXb/lkb11ay2+IY7gMXA5/ks12Gq2F50QVmHfEOAo4Boq3QDuPTrVoaxQZKuM8AUFgk3z5mfvsqiH0FD53zs=
+	t=1762032050; cv=none; b=AT8JCrqJeWhW1rA4Be4m6OQSjTDuBnFSrwpNbaYa6HdSHa1i61FTbQxA8MZk6bLYooj+7oqTartl0h6ZrW4TUhlXtEb4AzvnzX/n9ZqOdj4VuKP7mv8nHMx6T8xTuF642F6TRZD0Y6UQ5VcesMkzuBJEoRI2HDist4cOMdqeh6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762031779; c=relaxed/simple;
-	bh=3f5jGbLEPiTFaHNajvzVZqE9JxNvQ6mJRJ/Ahx3sHXg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UhD5n+0iikvZYsDnoc2ki5mivEsCo6AVq7+nyfiYhvnUCepZQx+dhyv/Erw5risw06XkafSndg3pqhOVvd8R5tZo/VM/jlEX3/9e8jC0HRuQC3yVgvqBMcg6cwDH1ZQexHhPEW1kHalVlI7RdW7PBOlpPzRZdjgAb0dMtoDXnR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CnWm/wx1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1FA4C4CEF1;
-	Sat,  1 Nov 2025 21:16:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762031779;
-	bh=3f5jGbLEPiTFaHNajvzVZqE9JxNvQ6mJRJ/Ahx3sHXg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CnWm/wx1c672BzY+Fy5EmeXjxCYfb/bQExn5kCITKp+YEaVb71ua9hLzTzo8pJ7tQ
-	 5geTPMBIWLKAnt9smpTNH8O2gMQJrEZB8HG3uqJrDsCcAjuiUpPq3rGhw031ByWeWL
-	 X12zCmL372x/XmHak+vU42Do15jLD/RxidZ+XQ/tni1jULz2b5/hR1fJ3O1ZIKKVz4
-	 qxS0Mo3dUWynrTn01YYSm+FXWbw5mA2RMTRKAFeso3U7gA38V6sp1OhHhe9JmTAEFw
-	 HxP1XuQKAfn4e4YaNVtc5z5yqCPmEcXhMM+uHtPmidhupS5rYDke4RjQTkUlQxqBV1
-	 CVpvLvze6A/ng==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: gregkh@linuxfoundation.org
-Cc: achill@achill.org,
-	akpm@linux-foundation.org,
-	broonie@kernel.org,
-	conor@kernel.org,
-	f.fainelli@gmail.com,
-	hargar@microsoft.com,
-	jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	linux@roeck-us.net,
-	lkft-triage@lists.linaro.org,
-	patches@kernelci.org,
-	patches@lists.linux.dev,
-	pavel@denx.de,
-	rwarsow@gmx.de,
-	shuah@kernel.org,
-	sr@sladewatkins.com,
-	stable@vger.kernel.org,
-	sudipm.mukherjee@gmail.com,
-	torvalds@linux-foundation.org,
-	Miguel Ojeda <ojeda@kernel.org>
-Subject: Re: [PATCH 6.17 00/35] 6.17.7-rc1 review
-Date: Sat,  1 Nov 2025 22:16:07 +0100
-Message-ID: <20251101211607.1121626-1-ojeda@kernel.org>
-In-Reply-To: <20251031140043.564670400@linuxfoundation.org>
-References: <20251031140043.564670400@linuxfoundation.org>
+	s=arc-20240116; t=1762032050; c=relaxed/simple;
+	bh=x93ugru9bvXAQkZntAATxaGJnMDH3h6hst4REgEf21I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nWj+d4hInLAcgzsYCkN64zyiRRa9P/c+4GGca+XQRWon5vkqDp9NDv7nDZT1wQYFZV/oz8qYj94ydCTEh7m6DyfAG4VmRq+ECqv7jNyNNjBjLz9UerJTdES/oJ/zf6vCsVzdPGNd6eQpHibl7mEgy3JBG3dfmRPEnb05GpEbyX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=j71DDsZ/; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=wSZIw/mmKpcqy9rrzv1+xiAFYxy212t/4U4L01X1tps=; b=j71DDsZ/PmqWMbgMaeT41lxvJp
+	YGM9IvfCniAL4kmp23wDF0+wAWgYBim15xmN8dIznq+KpF+ZIbxt4laA3GouUgw51Q/+c1mp4Zhay
+	HfaTanGYvb4ZU6ELZJYhRWVEUciCzMWSiuMIlKSx/XRj6jaX/vL40TNvo/mYQ/EZTklg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vFJ1Z-00CgDl-19; Sat, 01 Nov 2025 22:20:37 +0100
+Date: Sat, 1 Nov 2025 22:20:37 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: David Yang <mmyangfl@gmail.com>, Vladimir Oltean <olteanv@gmail.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] net: dsa: yt921x: Fix spelling mistake "stucked"
+ -> "stuck"
+Message-ID: <e101febe-0f69-47b4-9905-098da8aa7f84@lunn.ch>
+References: <20251101183446.32134-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251101183446.32134-1-colin.i.king@gmail.com>
 
-On Fri, 31 Oct 2025 15:01:08 +0100 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.17.7 release.
-> There are 35 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun, 02 Nov 2025 14:00:34 +0000.
-> Anything received after that time might be too late.
+On Sat, Nov 01, 2025 at 06:34:46PM +0000, Colin Ian King wrote:
+> There is a spelling mistake in a dev_err message. Fix it.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 
-Boot-tested under QEMU for Rust x86_64, arm64 and riscv64; built-tested
-for arm and loongarch64:
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Tested-by: Miguel Ojeda <ojeda@kernel.org>
-
-Thanks!
-
-Cheers,
-Miguel
+    Andrew
 
