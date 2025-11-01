@@ -1,147 +1,131 @@
-Return-Path: <linux-kernel+bounces-881166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2055FC279D9
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 09:44:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 58366C279F2
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 09:50:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 444BD18993E9
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 08:44:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8072018974B8
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 08:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FEA629BD90;
-	Sat,  1 Nov 2025 08:44:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6DF2BCF4A;
+	Sat,  1 Nov 2025 08:50:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UfrJOb4B";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="aa4pWtfM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UYjCU7pG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6067285CB8
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 08:43:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFFFF29D270;
+	Sat,  1 Nov 2025 08:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761986640; cv=none; b=H7CjuZoc0Xcl3ga1sB08reLgZv9Z/dJlogX1dAFjxNESFIFj7qB/yvig1FAsnT328/QFkXqnVWT37ms6Jnj7neSKoDoFhYUf6eZ5ZNy+l7wwPj02/tX+VlcjKXcV5fczE1pg9xot0St7FelBWmKlDYkHllfTaFfWqtibtw40Znk=
+	t=1761986999; cv=none; b=dgANwPBVCJln8pLNVE+SogfEitKEWdxClDn0L79mUyDL1Mm40DFTiFJOJrh1Qt4BiXtldJuTJn2np1E7YWntCSYwl70oJpqmgepx72qFZ5Au2KunTwU7EYhDKefFZauTyIdAdzgXeLJQNUYrFhB63O1aTCXdXPjj4plxmhIQRyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761986640; c=relaxed/simple;
-	bh=vqSBX4ZLTfcHH4WP6NpAV6KAQx1wO7zGlzS63hIjves=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=ffG0brXbkPssR9TZ1q5KRsCXLrTRMKV9PazB6wIZexM9LF9nsA/pdS3y55mYVbkV/MaFFI8Mu/O63UZLaEocUIGYvikaRz1wKcXQ1R8KX2oTWYdWktqBUTVfKBigPtZf7qokbZbJlGeaSYiGoIQP54HnXQzqf/kXFMf1L9U8Hx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UfrJOb4B; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=aa4pWtfM; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761986637;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vqSBX4ZLTfcHH4WP6NpAV6KAQx1wO7zGlzS63hIjves=;
-	b=UfrJOb4BIqjbxexEM0Ao7nSakEQptbqFKAeeons0FUA1UtGtFosklwm9Mc2Vg6uQfS8h2E
-	N0PqY9qEMIrUmsa4OMAUvBPbmKyNRMbJ1GKg1QuNafFtIAzYBNQ9FPehHmB0CkA7e5V/M/
-	HqdcWufpkXcaGrEcz8htZEyCMYgtOF0=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-205-m5DS_W-dMDa2TPZSMkUHaQ-1; Sat, 01 Nov 2025 04:43:56 -0400
-X-MC-Unique: m5DS_W-dMDa2TPZSMkUHaQ-1
-X-Mimecast-MFC-AGG-ID: m5DS_W-dMDa2TPZSMkUHaQ_1761986635
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-b7051ea719aso356465966b.2
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 01:43:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1761986635; x=1762591435; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vqSBX4ZLTfcHH4WP6NpAV6KAQx1wO7zGlzS63hIjves=;
-        b=aa4pWtfMh0O4hIOE+vt5/E+CiQy3dG/EyrNgSX8QNhPX0whZviARVjN/36jlF99rUd
-         VA4UkpfMXsmOJBd8vOOETwXUQnmgYNE1LSktGF/df2jw4JBMlNwIABoCZ3n73iv33ZPK
-         OVQLmPEuas5DKdWrIQOSuLjX4AfGXDVdaRbMorCmVAqcuuI9nCxEGM5mnryIO/Z+szUm
-         4KZdqtv++VnugxiA7kfSt/nS5kArgZf7/jMUr8UWxaxkGm2zY1EPJX4NdI+YvZbCvZQh
-         nTt6x5DtlqQQyZH6OEFTRLk59pJQIuK3hpmJUEPZq6gEGSIoiVUKO6OvuAYp4VVZzGOT
-         4XUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761986635; x=1762591435;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=vqSBX4ZLTfcHH4WP6NpAV6KAQx1wO7zGlzS63hIjves=;
-        b=WfcwtIDsbschYy3/MHNl9t+aFD6L4IQAUQcRk1GKJWywcvxHw6TUvMvd3wZruch7tO
-         bM8+TA8vDRnLvqwB2aa7GAmET1UAi/WlWEoXFlsp9YM7EXQQ/296QMECGTRGqHcBoBQy
-         RlkxtxMeoyB/LOl/UsFKQopeq/KDaYW+YaX4XcHHhoR7nMQ/JSTzdDVPY3l2JiCtF/qF
-         nntbJ6KRCxl9TvgfjJ1LflXBcODuf1+3mT0/HEKC9Z+3GRDBvhYzN6taaGaHrXszlXPu
-         jeeq5c7QPx6aiqppyN37/xU+Qt4Hs6EKiVfixuUQUHwS5mJauGRQuos4gFZBmsfNxA7/
-         colQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0hFRpoDDJjv07NwsHv5sQZS5R37ozpwCASG4+9TVhp+yaSFclR/DzUSPn2KVq5bp2S5zLKi4gNBHihQI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUECuyzUTd+l1FNT265qruGEcKtFLpdYoPiT6qhYGbsVUhVcWA
-	VBOoaEGPwd0UK+sk0BspB/e4BXyfLFIp+kRGsgasxuVojN5mosLM/nmNBN4r3BngcZ+MUyV5tv8
-	YhNDdCqWgQ6Qc6IPRseE+lCv7JRdCVkaufZU5pePJZv4ONrxVTLI2rg7CSPHTQ6X6Kg==
-X-Gm-Gg: ASbGnct9mpMJ0Plne0iqYXyb9N11toY+pEubg2+yrfiHzEKQ5Ptt9jiFNJaBhGfDWmS
-	lxKR0MaMb8qv+N3Rul+9Vsf6NK40ITROaz/wh7cUNKwDE+pyczu9NUjWuiSohSX5dPY3bJhTIzm
-	R6PW5XpQG45UTpQtdBX1zm6DUA1E6JLQQplUkGUDnEXRNXhyDy35ayNg0Mxk4fhcNoMc3gLuw2D
-	bTq3NDcTxCUf4K1HbdljF77KD5q1OkVIApGfWTF9dXWRo4/CHHifH6lzV3EmLV5YpVxWK8lMHaf
-	6gsVC+7ahspOTZLYYamfH6+VCI08lweOBRTkOSo/wgHsf1uoAv0ajWhU4YdttTsjC2UJEM6PC6H
-	iS8rG5bRNjp5dbsngiwJpEjGCyQzlzw==
-X-Received: by 2002:a17:907:1c0c:b0:b70:5aa6:1535 with SMTP id a640c23a62f3a-b7070137d1cmr773981966b.18.1761986635252;
-        Sat, 01 Nov 2025 01:43:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGzYuwI9LkI1rg7DX7ovxnjZ2EeJY71ZMPTvBJYies+ChUPxcoh72u9lsyipR35Td8cio6Mzg==
-X-Received: by 2002:a17:907:1c0c:b0:b70:5aa6:1535 with SMTP id a640c23a62f3a-b7070137d1cmr773980366b.18.1761986634765;
-        Sat, 01 Nov 2025 01:43:54 -0700 (PDT)
-Received: from [127.0.0.1] (mob-83-225-102-57.net.vodafone.it. [83.225.102.57])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b70779a9124sm393085166b.16.2025.11.01.01.43.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 01 Nov 2025 01:43:54 -0700 (PDT)
-Date: Sat, 1 Nov 2025 08:43:51 +0000 (UTC)
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>, Clark Williams <williams@redhat.com>,
-	arighi@nvidia.com
-Message-ID: <48ee3f26-7dbc-4c59-b98d-f9aeed980a43@redhat.com>
-In-Reply-To: <20251101000803.GA2212249@noisy.programming.kicks-ass.net>
-References: <aO5zxvoCPNfWwfoK@jlelli-thinkpadt14gen4.remote.csb> <20251014193300.GA1206438@noisy.programming.kicks-ass.net> <aO8zwouX6qIaf-U-@jlelli-thinkpadt14gen4.remote.csb> <20251020141130.GJ3245006@noisy.programming.kicks-ass.net> <8dc29e28a4d87954378ef1d989e0374526b44723.camel@redhat.com> <20251030184205.GB2989771@noisy.programming.kicks-ass.net> <20251031130543.GV4068168@noisy.programming.kicks-ass.net> <1f2ad071e59db2ed8bc0b382ae202b7474d07afc.camel@redhat.com> <20251031152005.GT3245006@noisy.programming.kicks-ass.net> <2daa2e6217eeaa239616303626c0d73d808ae947.camel@redhat.com> <20251101000803.GA2212249@noisy.programming.kicks-ass.net>
-Subject: Re: [RFC PATCH] sched/deadline: Avoid dl_server boosting with
- expired deadline
+	s=arc-20240116; t=1761986999; c=relaxed/simple;
+	bh=9s/STQTxcc3k88CIQt95xpXMPCs3JdFq9Lp93ypc8O8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K2xP0tToPf/F+D3vDQjNExKMXMjzC9eyh799BnFYce64rjqOvcNUw684iPgZkHXQMWkWtHqUXPcqI07a2pwThdpOtt6oxNXg69uFqDV2LyFh/MQKRZaMJTCffR39CK/Jr0TDThSIX6h1+s/ItmlGwAVBqR3pbrrH+JxRuy8aV9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UYjCU7pG; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761986998; x=1793522998;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9s/STQTxcc3k88CIQt95xpXMPCs3JdFq9Lp93ypc8O8=;
+  b=UYjCU7pGpJP1l3jU4HLldrQnN84mI91fV0O0FwkYc81XsEI0lBvy2mNz
+   D77lXisguHQjxGF0XPxCOJTDGy7Z5HD44AqgRUJPYdF+ta8RIlTFj/zbW
+   GGYBqaygEpFMPDh+YH89iYUH1Ab9risdX9s17D2A1jZYS+MAHYU78ACDl
+   DNBEYtRWH1Y4byquxXsq90R5q7IM/MfqQUD19i02FT7NryegAKfeO/gD2
+   0kuuPqS74T1Kg/mI2OLenZQ9PZatdZIK2AQc9L0Vaz10CV8TVghqmgijd
+   cciv+v0yeqf1hP/XIsMBjHKCwraMy+iCYxiGqzEgvowWp+oOy0th1Z1Sz
+   w==;
+X-CSE-ConnectionGUID: 4V9ithJURnm2z0g2fHNCPg==
+X-CSE-MsgGUID: f5NHueueQLK9kgiehus+gQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="51709718"
+X-IronPort-AV: E=Sophos;i="6.19,271,1754982000"; 
+   d="scan'208";a="51709718"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2025 01:49:57 -0700
+X-CSE-ConnectionGUID: I0St/XsbSMKzNTm82JZ0YA==
+X-CSE-MsgGUID: Z0R3c7DDRjq0Nctd+arFGA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,271,1754982000"; 
+   d="scan'208";a="190771097"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa004.jf.intel.com with ESMTP; 01 Nov 2025 01:49:55 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vF7Im-000O3M-31;
+	Sat, 01 Nov 2025 08:49:42 +0000
+Date: Sat, 1 Nov 2025 16:49:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Lukas Bulwahn <lbulwahn@redhat.com>,
+	Samuel Kayode <samuel.kayode@savoirfairelinux.com>,
+	Lee Jones <lee@kernel.org>, imx@lists.linux.dev
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Frank Li <Frank.Li@nxp.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+	Sean Nyekjaer <sean@geanix.com>, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] MAINTAINERS: adjust file entry in NXP PF1550 PMIC MFD
+ DRIVER
+Message-ID: <202511011641.mVLMVN8V-lkp@intel.com>
+References: <20251029104228.95498-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Correlation-ID: <48ee3f26-7dbc-4c59-b98d-f9aeed980a43@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029104228.95498-1-lukas.bulwahn@redhat.com>
 
-2025-11-01T00:08:37Z Peter Zijlstra <peterz@infradead.org>:
+Hi Lukas,
 
-> On Fri, Oct 31, 2025 at 04:41:22PM +0100, Gabriele Monaco wrote:
->> On Fri, 2025-10-31 at 16:20 +0100, Peter Zijlstra wrote:
->>> On Fri, Oct 31, 2025 at 02:24:17PM +0100, Gabriele Monaco wrote:
->>>>
->>>> Different scenario if I have the CPU busy with other tasks (e.g. RT
->>>> policies), there I can see the server stopping and starting again.
->>>> After I do this I seem to get a different behaviour (even some boosting
->>>> after idle), I'm trying to understand what's going on.
->>>>
->>
->> After running some heavy RT workload (stress-ng --cpu 10 --sched rr) I do see
->> the server stopping and starting as the models would expect, but somehow it's
->> always boosting as soon as it's started.
->>
->> Apparently dl_defer_running is always 1 in that scenario. Perhaps running idle
->> counts as running something too, so it never defers. But I can't really see how
->> this happens..
->
-> The transition [4], will retain dl_defer_running, such that a timely
-> re-start of the dl_server can immediately run again.
+kernel test robot noticed the following build errors:
 
-Alright I worded it poorly. As far as I understand, what you mentioned is desired behaviour when handling starvation. We don't defer and start the next period boosting.
-What I was observing was the server staying running indefinitely.
-I run a test with 5s of RR stress-ng and 30s of mostly idle DL workload on a clean VM. I expect boosting only during the first 5 seconds, but I see it also after, where there was clearly no starvation (system was idle, probably a bit hard to see from the trace I shared).
+[auto build test ERROR on next-20251029]
+[cannot apply to lee-leds/for-leds-next linus/master v6.18-rc3 v6.18-rc2 v6.18-rc1 v6.18-rc3]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks for the updated patch, I'll try that and see how it goes.
+url:    https://github.com/intel-lab-lkp/linux/commits/Lukas-Bulwahn/MAINTAINERS-adjust-file-entry-in-NXP-PF1550-PMIC-MFD-DRIVER/20251029-184717
+base:   next-20251029
+patch link:    https://lore.kernel.org/r/20251029104228.95498-1-lukas.bulwahn%40redhat.com
+patch subject: [PATCH] MAINTAINERS: adjust file entry in NXP PF1550 PMIC MFD DRIVER
+config: powerpc-randconfig-002-20251101 (https://download.01.org/0day-ci/archive/20251101/202511011641.mVLMVN8V-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project d1c086e82af239b245fe8d7832f2753436634990)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251101/202511011641.mVLMVN8V-lkp@intel.com/reproduce)
 
-Gabriele
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511011641.mVLMVN8V-lkp@intel.com/
 
+All errors (new ones prefixed by >>):
+
+>> ld.lld: error: relocation R_PPC_ADDR16_HI cannot be used against symbol 'init_task'; recompile with -fPIC
+   >>> defined in vmlinux.a(init/init_task.o)
+   >>> referenced by head_85xx.S:222 (arch/powerpc/kernel/head_85xx.S:222)
+   >>>               arch/powerpc/kernel/head_85xx.o:(.head.text+0x41a) in archive vmlinux.a
+--
+>> ld.lld: error: relocation R_PPC_ADDR16_LO cannot be used against symbol 'init_task'; recompile with -fPIC
+   >>> defined in vmlinux.a(init/init_task.o)
+   >>> referenced by head_85xx.S:223 (arch/powerpc/kernel/head_85xx.S:223)
+   >>>               arch/powerpc/kernel/head_85xx.o:(.head.text+0x41e) in archive vmlinux.a
+--
+>> ld.lld: error: relocation R_PPC_ADDR16_HI cannot be used against symbol 'init_thread_union'; recompile with -fPIC
+   >>> defined in ./arch/powerpc/kernel/vmlinux.lds:146
+   >>> referenced by head_85xx.S:230 (arch/powerpc/kernel/head_85xx.S:230)
+   >>>               arch/powerpc/kernel/head_85xx.o:(.head.text+0x42a) in archive vmlinux.a
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
