@@ -1,153 +1,234 @@
-Return-Path: <linux-kernel+bounces-881368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62264C2816A
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 16:36:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61185C28173
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 16:42:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2163C40107A
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 15:36:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2C9E14E5473
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 15:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3CC25A350;
-	Sat,  1 Nov 2025 15:36:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD2E23BCE3;
+	Sat,  1 Nov 2025 15:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GTuw/mL8"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A05vzw8C"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A0A2147FB
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 15:36:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088B0A59
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 15:41:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762011388; cv=none; b=BrueqROiTa4b1nJwdi390L3yzMrBs1cKKJBkDuMAzxV5vrIxH18Ke2y3ERoUAl3BMVoDN6mhBf4riXm+kroSumsdxen2RiyAB1Wx8hoSypqqafI3dVyH20et4WtrTTqpN/PBpU2+ZnxM/P1CfGgiFbvtePyS+sUv75F1L8Ldk2I=
+	t=1762011712; cv=none; b=h315QVRMMXAxrIj+fqgNbaLRgznNgDFS3GgWQGl93FmvGqvEJ3zf6XzebLcEdMrqhHJIyApVok3DFSVV0OKiq+h8trUZQcwFNJCSAhxew8clQARyQTbmQEWba9C8qeSdjoNdMl3Yd36OpUpqtwZN8cFX7L7UWT3OelK0pSWr5C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762011388; c=relaxed/simple;
-	bh=bdxPdHZEuhQ1dkWTiW1iF9wThJEn+irBUmR5Dc6YpDk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MvN7yrmz3cq2FDcmA0E/2Of0kWIO+gukxg3trr8WiHaVzJ7jOfbWwP/4GZDMBlO4udrxwATpHioqm5JlJhx7nQ3Siyc7Ff5XwYIBML71/3dAulqTDJxO1M8BVEe0n9ac/+ZPW9UqoBTcaFaunooIPwVviGCNXulKZDTWdQCD4O8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GTuw/mL8; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b8f70154354so480440a12.2
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 08:36:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762011386; x=1762616186; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wfjJn/f7oQqzZoFQTxcwXAUfHD/4AwfoEc5HZKyEpqA=;
-        b=GTuw/mL8H4YRyM8i15Qcv3m8RrOMcwBNytiDg6uIpMqBoR46U72MHQ90reQbtYzOZS
-         74gb0RLYzBS6C2miI3ntTvSyOe2016MoEsvDkERZP6ufAms3euZgTUQuxFxJRMQb15kW
-         l5a0e8upgxHxF/ngGrLX2iA5d3BNj7tGtj7Ni5pkppyXIvIIhGM1Bi03O4r/sPcCPDPR
-         bBLYZWsl+7nY4zaI9bU0ZsOzaBNh6lb0JEJYbZTAqmtHTMqjO33tenacj3eHAnCZ5f9y
-         0Qq5PH1QvB/ZZUs8fDFC1jsuxc1C1KE+YqGarp+/ZjijdXazBW0MONUlgUJtxbRRAyVA
-         E0Tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762011386; x=1762616186;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wfjJn/f7oQqzZoFQTxcwXAUfHD/4AwfoEc5HZKyEpqA=;
-        b=I+Q+7lVfXgWzFbHgh5kDQwnqd4enPnkFw80ERSYA3qsxuSY9+S/I+2z0oZ34Ivulcx
-         UuDfp4FpWxnDpXDy4ZR0Zte/KJwBO+NgipOnh8p8mGpn/R9hb4zfLZbyi/rdeWO5E58M
-         s1N3HkWq+TdKiwnfVN8AjGGnSSpD9HY3UC508+g3GGFf2eGneJI/+fS+Ff8cIVrT6Znh
-         2TSiDMxQHkjCX45cefgn0lKFRd4E0Qbw3Bx4aaIv6vdXZFiDwRH15GkAm6iKEpZ2IYYy
-         x81cfLPU+XRpoZ6wvq2YbpFwzhLYLwRf+jmXF4GbJSprKSyMuvRU51dsNYC6v8Dv4ZOs
-         /65g==
-X-Forwarded-Encrypted: i=1; AJvYcCVthn0TlWY57Md8YVo9iaX4UB3qAkaCOO+SqFUPUjs5VaahM3mpXQFZK4ruzr7vVZK5FqBU/FXZzXb9Drs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5zCI4Yn9MRgg6g3UwXJewHLxIIBpNgfN88iYAnFcs7fq9Qc3p
-	uYeSCvHg0QCHarkTpzRkpWkgYIp3SYWRGZc839+8yPs74ZTQENpF8JHA5b7w44UHfHZSDf1yzOa
-	i7O7HJGJ3lGQfLivqZQpW/1XpGU9nw9w=
-X-Gm-Gg: ASbGncveHgRycOD1GgJrPuFxhJsC3QDPB4Vy0WfSE+De+Ob+jiCi6OoknlllcZ95x1G
-	KTovedf2PrhCllLuHh7GLPmrXPeQowtYtWHvpVKHwa/SsOaWQbL0W9Cos6YPkHj8P/pxFFnY4bQ
-	GbufWyE9Tf3gWcntSmj1hrtT1LTT74GpDNAFS7YdxMxq8amyEI29Me5zhXi1ANBmyYQpi/ZX2LN
-	YXfbw4GAyt7Om4z8O2YtPzVC6OJOp3wnbb1CqQg+IAGrqPnlkvGV/4yQvWpSDbkT+T0KaasrfNr
-	4K0zsCVJJ3qOUpPAcqlOUTZRBD4HquL1G5tSWwhFZviEfoGYklzcPQ80CU4PxD5N91/b/wyVBlW
-	nC6gOI9wNEJ0dvQ==
-X-Google-Smtp-Source: AGHT+IFPkL9moEs1IDaYMib+cnXVWvLGHDmNr26zj8ffw14If7Hx8/KbyBNWa9R59glcpNMaDzsQ03S+R0Vk6uJtUK8=
-X-Received: by 2002:a17:902:dac9:b0:27e:da7d:32d2 with SMTP id
- d9443c01a7336-2951a4d86bcmr59790335ad.7.1762011386406; Sat, 01 Nov 2025
- 08:36:26 -0700 (PDT)
+	s=arc-20240116; t=1762011712; c=relaxed/simple;
+	bh=pySyZGTUYfYGfQGT5N1o/T8A3vUThMrPCbuMiDtrF2U=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=IKlD7fwpfQzeAiHbiBnsDbD7SUBcuoMu+4GwJoctf5PeehMCmcI4b03RJCkIvtzJy2yN0u5190H0j2xRoBb71j99CyO8xqNv61XCTNBrnr3HWhBKqFSxY/CwvJBy0rOFtBXdJBeG/tzyysOFjzsVd/LjMQX4a+fqRtnOlVeaMg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A05vzw8C; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762011711; x=1793547711;
+  h=date:from:to:cc:subject:message-id;
+  bh=pySyZGTUYfYGfQGT5N1o/T8A3vUThMrPCbuMiDtrF2U=;
+  b=A05vzw8CUuMYZhvfmprkmAdu1lMPNFM23kiRpVk/iTd9u1Ub5iIS0t66
+   dGHHnXgtLaCfyy9hTWEAikGYm3P3CwPLryYaU6R9ocg3zM93hudBKI7l9
+   YGG9g3wv4siHRBY2QnY2k6hjeRUHtKuoawW8FP00VX3dtqn/fl6puQ2dP
+   GBFWm2wZcLcvYMTEFZBkkNJUMA67EHwzX5l6Hmuppd12or1KdZ3okunZ6
+   C25dI52wrVIaIVD7SwnhTQPZ/psESwjGHKQZUECGfVhyr88XBOsBI5Z4j
+   f9fvixaHpUne61tj4kzkRRoQNpI8+JDI+dfjlVcrLmroypHnEhIXSmO6w
+   g==;
+X-CSE-ConnectionGUID: 4PLaqNqZRC+Z4aS/Ks61zw==
+X-CSE-MsgGUID: l1WC3AV/QVmDIdLWjBV2pg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11600"; a="75602973"
+X-IronPort-AV: E=Sophos;i="6.19,272,1754982000"; 
+   d="scan'208";a="75602973"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2025 08:41:51 -0700
+X-CSE-ConnectionGUID: WgevYaU+S6qc3vWC6nWjSA==
+X-CSE-MsgGUID: pImL6YYuSsKirZGBpj3+kQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,272,1754982000"; 
+   d="scan'208";a="190824446"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa004.jf.intel.com with ESMTP; 01 Nov 2025 08:41:50 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vFDjf-000OPc-1K;
+	Sat, 01 Nov 2025 15:41:47 +0000
+Date: Sat, 01 Nov 2025 23:41:34 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/urgent] BUILD SUCCESS
+ 9b041a4b66b3b62c30251e700b5688324cf66625
+Message-ID: <202511012328.T3rTthtR-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251101-b4-as-flattened-v1-1-860f2ebeedfd@nvidia.com>
-In-Reply-To: <20251101-b4-as-flattened-v1-1-860f2ebeedfd@nvidia.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sat, 1 Nov 2025 16:36:13 +0100
-X-Gm-Features: AWmQ_bmv363FKeQLbteYinlQkLkfy3udKcWiF4asqch5Ak2oOTQbYYj6c7b_nbg
-Message-ID: <CANiq72n6KLjA5XQmAhy=SRTnWY8sCCmp9ETnB-dTSVZ84-mjzw@mail.gmail.com>
-Subject: Re: [PATCH RESEND] rust: enable slice_flatten feature and abstract it
- through an extension trait
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas.schier@linux.dev>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 1, 2025 at 2:32=E2=80=AFPM Alexandre Courbot <acourbot@nvidia.c=
-om> wrote:
->
-> Hopefully it captures Miguel's suggestion [2] accurately, but please let
-> me know if I missed something.
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
+branch HEAD: 9b041a4b66b3b62c30251e700b5688324cf66625  x86/mm: Ensure clear_page() variants always have __kcfi_typeid_ symbols
 
-Yeah, this is what I meant and looks great -- thanks!
+elapsed time: 1001m
 
-If you need to use it this cycle in another branch:
+configs tested: 142
+configs skipped: 121
 
-Acked-by: Miguel Ojeda <ojeda@kernel.org>
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-Otherwise, I will pick it up.
+tested configs:
+alpha                               defconfig    gcc-15.1.0
+arc                              allmodconfig    clang-19
+arc                              allyesconfig    clang-19
+arc                                 defconfig    gcc-15.1.0
+arc                   randconfig-001-20251101    gcc-8.5.0
+arc                   randconfig-002-20251101    gcc-8.5.0
+arm                              allmodconfig    clang-19
+arm                              allyesconfig    clang-19
+arm                                 defconfig    gcc-15.1.0
+arm                        mvebu_v7_defconfig    clang-22
+arm                   randconfig-001-20251101    gcc-8.5.0
+arm                   randconfig-002-20251101    gcc-8.5.0
+arm                   randconfig-003-20251101    gcc-8.5.0
+arm                   randconfig-004-20251101    gcc-8.5.0
+arm                        spear3xx_defconfig    clang-22
+arm                        spear6xx_defconfig    clang-22
+arm                        vexpress_defconfig    clang-22
+arm64                            allmodconfig    clang-19
+arm64                            allyesconfig    gcc-15.1.0
+arm64                               defconfig    gcc-15.1.0
+arm64                 randconfig-001-20251101    gcc-14.3.0
+arm64                 randconfig-002-20251101    gcc-14.3.0
+arm64                 randconfig-003-20251101    gcc-14.3.0
+arm64                 randconfig-004-20251101    gcc-14.3.0
+csky                             allmodconfig    gcc-15.1.0
+csky                             allyesconfig    gcc-15.1.0
+csky                                defconfig    gcc-15.1.0
+csky                  randconfig-001-20251101    gcc-14.3.0
+csky                  randconfig-002-20251101    gcc-14.3.0
+hexagon                             defconfig    gcc-15.1.0
+hexagon               randconfig-001-20251101    clang-19
+hexagon               randconfig-002-20251101    clang-19
+i386                             allmodconfig    clang-20
+i386                              allnoconfig    gcc-14
+i386                             allyesconfig    clang-20
+i386        buildonly-randconfig-001-20251101    clang-20
+i386        buildonly-randconfig-002-20251101    clang-20
+i386        buildonly-randconfig-003-20251101    clang-20
+i386        buildonly-randconfig-004-20251101    clang-20
+i386        buildonly-randconfig-005-20251101    clang-20
+i386        buildonly-randconfig-006-20251101    clang-20
+i386                                defconfig    gcc-15.1.0
+i386                  randconfig-001-20251101    gcc-14
+i386                  randconfig-002-20251101    gcc-14
+i386                  randconfig-003-20251101    gcc-14
+i386                  randconfig-004-20251101    gcc-14
+i386                  randconfig-005-20251101    gcc-14
+i386                  randconfig-006-20251101    gcc-14
+i386                  randconfig-007-20251101    gcc-14
+i386                  randconfig-011-20251101    clang-20
+i386                  randconfig-012-20251101    clang-20
+i386                  randconfig-013-20251101    clang-20
+i386                  randconfig-014-20251101    clang-20
+i386                  randconfig-015-20251101    clang-20
+i386                  randconfig-016-20251101    clang-20
+i386                  randconfig-017-20251101    clang-20
+loongarch                        allmodconfig    clang-19
+loongarch                        allyesconfig    gcc-15.1.0
+loongarch             randconfig-001-20251101    clang-19
+loongarch             randconfig-002-20251101    clang-19
+m68k                             allmodconfig    clang-19
+m68k                             allyesconfig    clang-19
+microblaze                       allmodconfig    clang-19
+microblaze                       allyesconfig    clang-19
+mips                             allmodconfig    gcc-15.1.0
+mips                             allyesconfig    gcc-15.1.0
+nios2                            allmodconfig    clang-22
+nios2                            allyesconfig    clang-22
+nios2                 randconfig-001-20251101    clang-19
+nios2                 randconfig-002-20251101    clang-19
+openrisc                         allmodconfig    clang-22
+openrisc                         allyesconfig    gcc-15.1.0
+openrisc                            defconfig    gcc-15.1.0
+parisc                           allmodconfig    gcc-15.1.0
+parisc                           allyesconfig    gcc-15.1.0
+parisc                              defconfig    gcc-15.1.0
+powerpc                          allmodconfig    gcc-15.1.0
+powerpc                          allyesconfig    gcc-15.1.0
+powerpc                     skiroot_defconfig    clang-22
+riscv                            allmodconfig    gcc-15.1.0
+riscv                            allyesconfig    gcc-15.1.0
+riscv                               defconfig    gcc-15.1.0
+riscv                 randconfig-001-20251101    clang-17
+riscv                 randconfig-002-20251101    clang-17
+s390                             allmodconfig    gcc-15.1.0
+s390                             allyesconfig    gcc-15.1.0
+s390                                defconfig    gcc-15.1.0
+s390                  randconfig-001-20251101    clang-17
+s390                  randconfig-002-20251101    clang-17
+sh                               allmodconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                                  defconfig    gcc-14
+sh                    randconfig-001-20251101    clang-17
+sh                    randconfig-002-20251101    clang-17
+sh                           se7206_defconfig    clang-22
+sh                   secureedge5410_defconfig    clang-22
+sparc                            allmodconfig    gcc-15.1.0
+sparc                            allyesconfig    clang-22
+sparc                               defconfig    gcc-15.1.0
+sparc64                          allmodconfig    clang-22
+sparc64                          allyesconfig    clang-22
+sparc64                             defconfig    gcc-14
+um                                  defconfig    gcc-14
+um                             i386_defconfig    gcc-14
+um                           x86_64_defconfig    gcc-14
+x86_64                           allmodconfig    clang-20
+x86_64                            allnoconfig    clang-20
+x86_64                           allyesconfig    clang-20
+x86_64      buildonly-randconfig-001-20251101    gcc-14
+x86_64      buildonly-randconfig-002-20251101    gcc-14
+x86_64      buildonly-randconfig-003-20251101    gcc-14
+x86_64      buildonly-randconfig-004-20251101    gcc-14
+x86_64      buildonly-randconfig-005-20251101    gcc-14
+x86_64      buildonly-randconfig-006-20251101    gcc-14
+x86_64                              defconfig    gcc-14
+x86_64                                  kexec    clang-20
+x86_64                randconfig-001-20251101    clang-20
+x86_64                randconfig-002-20251101    clang-20
+x86_64                randconfig-003-20251101    clang-20
+x86_64                randconfig-004-20251101    clang-20
+x86_64                randconfig-005-20251101    clang-20
+x86_64                randconfig-006-20251101    clang-20
+x86_64                randconfig-011-20251101    gcc-14
+x86_64                randconfig-012-20251101    gcc-14
+x86_64                randconfig-013-20251101    gcc-14
+x86_64                randconfig-014-20251101    gcc-14
+x86_64                randconfig-015-20251101    gcc-14
+x86_64                randconfig-016-20251101    gcc-14
+x86_64                randconfig-071-20251101    clang-20
+x86_64                randconfig-072-20251101    clang-20
+x86_64                randconfig-073-20251101    clang-20
+x86_64                randconfig-074-20251101    clang-20
+x86_64                randconfig-075-20251101    clang-20
+x86_64                randconfig-076-20251101    clang-20
+x86_64                               rhel-9.4    clang-20
+x86_64                           rhel-9.4-bpf    gcc-14
+x86_64                          rhel-9.4-func    clang-20
+x86_64                    rhel-9.4-kselftests    clang-20
+x86_64                         rhel-9.4-kunit    gcc-14
+x86_64                           rhel-9.4-ltp    gcc-14
+x86_64                          rhel-9.4-rust    clang-20
+xtensa                           allyesconfig    clang-22
 
-> +config RUSTC_HAS_SLICE_AS_FLATTENED
-
-I guess you used this one since they renamed it and since we don't use
-the `alloc` method. It is fine, both options are confusing in
-different ways, but sometimes the feature name is the only one that
-can be used (since it may enable several methods etc.), so I wonder if
-we should try to use that consistently.
-
-> +/// In Rust 1.80, the previously unstable `slice::flatten` family of met=
-hods
-> +/// have been stabilized and renamed from `flatten` to `as_flattened`.
-> +///
-> +/// This creates an issue for as long as the MSRV is < 1.80, as the same=
- functionality is provided
-> +/// by different methods depending on the compiler version.
-> +///
-> +/// This extension trait solves this by abstracting `as_flatten` and cal=
-ling the correct  method
-> +/// depending on the Rust version.
-> +///
-> +/// This trait can be removed once the MSRV passes 1.80.
-
-These paragraphs sound like implementations details -- I would
-probably leave that to the commit message or normal comments instead
-(we should notice we need to remove these thanks to the line in
-`Kconfig` already).
-
-Nit: two spaces above.
-
-> +    /// Takes an `&[[T; N]]` and flattens it to a `&[T]`.
-
-Nit: I don't know how one is supposed to pronounce these, but I guess
-it is "a" in the first one, like the second one (the upstream docs
-also do that).
-
-By the way, it crossed my mind that we may want to use `#[doc(alias =3D
-"...")` here to guide search, but I guess not many developers are
-using local/older versions and this will go away soon anyway.
-
-Cheers,
-Miguel
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
