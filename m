@@ -1,58 +1,75 @@
-Return-Path: <linux-kernel+bounces-881216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74A7EC27BC7
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 11:45:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F934C27BDF
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 11:48:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 420F24E2D09
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 10:45:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D34E0189EDEF
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 10:48:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6A22C3253;
-	Sat,  1 Nov 2025 10:45:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D312D323F;
+	Sat,  1 Nov 2025 10:47:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ODuS3egM"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="QW+d7IKA"
+Received: from relay11.grserver.gr (relay11.grserver.gr [78.46.171.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D039612CDBE;
-	Sat,  1 Nov 2025 10:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3EF0189F3B;
+	Sat,  1 Nov 2025 10:47:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.171.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761993939; cv=none; b=tjuwId3XOXjKK4sEqmTUwvnXOnJel06USHse3d2191QFjAPLU/lAdqc6JayWJ32Dq9ymhdBroKXO6gMYTJAdbYejsaFpLVuqW8FtjKhwWYtbyca2cEliiUkV+hB/Q5js8zF0XVvevrMC9ji0EntNQuju116fjSFjmfKS9HDJpLw=
+	t=1761994042; cv=none; b=NzkQDAPI1yTxF1HcnZhDct/Fqg9knZ8lzC1eP21/2ALbIzO2Rxpxoozm+78scWWCFzyBEbwUBnmiJ0pzCijH+pcJW+4dEu9nz2X/jmYMJOhUCROWKC0HoV/KEWkGNlQ40ldrknMpWb2QT5tefRUnVncZf5/cdLgJs+VJsPEn590=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761993939; c=relaxed/simple;
-	bh=1DmLqQ5xgulAil/OTSejFlaJRb+dG3u/LfzBzj6S2L4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oHTYunD3+V2F2XEmPNURs0o5DC5nOa1TvMxrk5GhtJcI/f+8jMdvFY+KPXVPStp3yABMDbyP3R2A1h7znwM/+DOz6MgvalCxGjNCqKhwMTfk8FTCnCfOgvdldJTzTAPj4hqMqqulPMFtqhIKkEgx9y6SpQoQKO30z2ExVDUt5VQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ODuS3egM; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=NB
-	iim02VIKMoTBdg3B5y5d3wwkbplwwTHcNfC6L8TcA=; b=ODuS3egMP4EZRl8dNd
-	iOCoEZi3z6OmJeozPAm8+0uKIZFJmbwTE7c00Hu4/oB6GlJnOAobC62DgXFnr8O3
-	G7WoDbIjm7k8NOumzgbIjNDq5y27nK+PeWCldjwhX63yt0YCO1IHDlK3Ts0+u3H1
-	AIahf9PCZOuJyl0FzXoOiXplg=
-Received: from localhost (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wD335fE5AVpOE+hAw--.53550S2;
-	Sat, 01 Nov 2025 18:45:25 +0800 (CST)
-From: Cen Zhang <zzzccc427@163.com>
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	johan.hedberg@gmail.com,
-	marcel@holtmann.org
+	s=arc-20240116; t=1761994042; c=relaxed/simple;
+	bh=MDDtq8405s/WNBchSupcPAYuOVE0Lg7jhO41JkSLUbA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EMe273RIlVBa4rBa+ti2HrgHJbk7ew7hU6QihLESTO2z72579AuNzqZLvibptn+TqvmXpPABHKBdfGNAflgHk3NrnA3S2lcqHDSXLijdXs1M1uJnf8aYcxX+biYn/ji29lAwqrEfufhHiH6g+x6AJxvsAIUc3KjCsA/fNnRq//4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=QW+d7IKA; arc=none smtp.client-ip=78.46.171.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay11 (localhost.localdomain [127.0.0.1])
+	by relay11.grserver.gr (Proxmox) with ESMTP id D4593C113B;
+	Sat,  1 Nov 2025 12:47:15 +0200 (EET)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay11.grserver.gr (Proxmox) with ESMTPS id 0A706C10FB;
+	Sat,  1 Nov 2025 12:47:15 +0200 (EET)
+Received: from antheas-z13 (unknown [IPv6:2a05:f6c2:511b:0:8d8a:5967:d692:ea4e])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id 2DB271FDFA6;
+	Sat,  1 Nov 2025 12:47:14 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1761994034;
+	bh=0qKTwCWfv1ZBCLcV2fwRY8CVaQljFmpXVQekmLQ4btc=; h=From:To:Subject;
+	b=QW+d7IKAmWfVrhZyAiH4uIvdNgUNzaMFU5aJpowS12v8x9QKijgDFs35x2WmrkWRP
+	 kdHhl8/i57NlvV6dRI6XcjkD8TV/NmYfkRPdYOaRpoxstsb0PYyeAERhYre+B4nNHG
+	 9/1myP2Fn5CUE19vuJtlO0iDG2SqH7M26WoKJufEmz2di/gP6lVzjfKQb7JI9ZWwp0
+	 EGJq3Hc3DFskMiLb2CRmhUGpMLbEyPZUkox7iiRLrHdJfKMiENjftIv/6SuzRlJb0H
+	 vPG26LpR+zC3BIRmBjJCqS8bRxMD776XOrE3U9LGaHN7vHjR6Q3tWEte7jweoNvXv8
+	 7+D0apB8e2/2w==
+Authentication-Results: linux3247.grserver.gr;
+	spf=pass (sender IP is 2a05:f6c2:511b:0:8d8a:5967:d692:ea4e) smtp.mailfrom=lkml@antheas.dev smtp.helo=antheas-z13
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+From: Antheas Kapenekakis <lkml@antheas.dev>
+To: platform-driver-x86@vger.kernel.org,
+	linux-input@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
-	linux-bluetooth@vger.kernel.org,
-	baijiaju1990@gmail.com,
-	r33s3n6@gmail.com,
-	gality369@gmail.com,
-	zhenghaoran154@gmail.com,
-	Cen Zhang <zzzccc427@163.com>
-Subject: [PATCH v3] bluetooth: sco: Serialize state check in sco_sock_connect to fix UAF
-Date: Sat,  1 Nov 2025 10:45:22 +0000
-Message-ID: <20251101104522.174388-1-zzzccc427@163.com>
-X-Mailer: git-send-email 2.43.0
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Corentin Chary <corentin.chary@gmail.com>,
+	"Luke D . Jones" <luke@ljones.dev>,
+	Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Denis Benato <benato.denis96@gmail.com>,
+	Antheas Kapenekakis <lkml@antheas.dev>
+Subject: [PATCH v8 00/10] HID: asus: Fix ASUS ROG Laptop's Keyboard backlight
+ handling
+Date: Sat,  1 Nov 2025 11:47:02 +0100
+Message-ID: <20251101104712.8011-1-lkml@antheas.dev>
+X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,106 +77,142 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD335fE5AVpOE+hAw--.53550S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxCF17KrWrtF4ktF1xKw45KFg_yoW5CFyUpF
-	WDKan3KF98Jrn3ursayay8Wr4kArn5uFW2kr10gwn5Aas5KFW0yF48trWUtrs8CrWvyF45
-	ZF1qgFW3GF4DurDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piG2NtUUUUU=
-X-CM-SenderInfo: 5222uujfuslqqrwthudrp/1tbiXQT4hGkF2758DQAAsd
+X-PPP-Message-ID: 
+ <176199403469.3745465.17412874683015295942@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
-Concurrent sco_sock_connect() calls could race on the same socket since the
-state checks (BT_OPEN/BT_BOUND) were done without holding the socket lock.
-This allowed two parallel connects to proceed and end up binding two
-separate sco_conn objects to the same sk. Later, when sk->conn had been
-updated to point to the second conn, closing the socket could free the
-second conn and the socket, while the first conn's connect confirm path
-still referenced the stale sk/conn, triggering a KASAN use-after-free.
+This is a two part series which does the following:
+  - Clean-up init sequence
+  - Unify backlight handling to happen under asus-wmi so that all Aura
+    devices have synced brightness controls and the backlight button works
+    properly when it is on a USB laptop keyboard instead of one w/ WMI.
 
-Fix by taking lock_sock(sk) before checking sk->sk_state and sk->sk_type,
-performing the destination address assignment under the lock, and releasing
-it before invoking sco_connect() (which will acquire the lock as needed).
-This serializes concurrent connect attempts for the same sk and prevents the
-interleaving that caused the double-attachment and subsequent UAF.
-
-Thread 1:               Thread 2:               Thread3:
-check sk_state          check sk_state
-sco_sock_connect(sk)    sco_sock_connect(sk)    sco_connect_cfm(sk->conn)
-conn1->sk = sk
-                        conn2->sk = sk
-sk->conn = conn1
-                        sk->conn = conn2
-                        sco_sock_release
-                        free conn2 and sk
-                                                sco_connect_cfm
-                                                sco_conn_del
-                                                sco_conn_free
-                                                UAF on sk 
-
-The representative KASAN report excerpt:
-
-  BUG: KASAN: slab-use-after-free in sco_conn_free net/bluetooth/sco.c:94
-  ...
-  Write of size 8 at addr ffff88810d2be350 by task kworker/u25:1/88
-  ...
-  Call Trace:
-  sco_conn_free net/bluetooth/sco.c:94 [inline]
-  kref_put include/linux/kref.h:65 [inline]
-  sco_conn_put+0x49d/0xfc0 net/bluetooth/sco.c:115
-  sco_conn_del+0x46d/0x8d0 net/bluetooth/sco.c:280
-  sco_connect_cfm+0x83d/0x1ee0 net/bluetooth/sco.c:1468
-  hci_connect_cfm include/net/bluetooth/hci_core.h:2082 [inline]
-  ...
-  Allocated by task 294:
-  ...
-  sco_sock_create+0x22d/0xc00 net/bluetooth/sco.c:616
-  ...
-  Freed by task 295:
-  __sk_destruct+0x4b0/0x630 net/core/sock.c:2373
-  sock_put include/net/sock.h:1962 [inline]
-  sco_sock_kill+0x64d/0x9b0 net/bluetooth/sco.c:526
-  sco_sock_release+0x770/0xa50 net/bluetooth/sco.c:1359
-  ...
-
-Reported-by: Cen Zhang <zzzccc427@163.com>
-Signed-off-by: Cen Zhang <zzzccc427@163.com>
+For more context, see cover letter of V1. Since V5, I removed some patches
+to make this easier to merge.
 
 ---
-v2 and v3:
- - Fix the patch format
----
+V7: https://lore.kernel.org/all/20251018101759.4089-1-lkml@antheas.dev/
+V6: https://lore.kernel.org/all/20251013201535.6737-1-lkml@antheas.dev/
+V5: https://lore.kernel.org/all/20250325184601.10990-1-lkml@antheas.dev/
+V4: https://lore.kernel.org/lkml/20250324210151.6042-1-lkml@antheas.dev/
+V3: https://lore.kernel.org/lkml/20250322102804.418000-1-lkml@antheas.dev/
+V2: https://lore.kernel.org/all/20250320220924.5023-1-lkml@antheas.dev/
+V1: https://lore.kernel.org/all/20250319191320.10092-1-lkml@antheas.dev/
 
----
- net/bluetooth/sco.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+Changes since V7:
+  - Readd legacy init quirk for Dennis
+  - Remove HID_QUIRK_INPUT_PER_APP as a courtesy to asusctl
+  - Fix warning due to enum_backlight receiving negative values
 
-diff --git a/net/bluetooth/sco.c b/net/bluetooth/sco.c
-index ab0cf442d..0af266880 100644
---- a/net/bluetooth/sco.c
-+++ b/net/bluetooth/sco.c
-@@ -651,13 +651,18 @@ static int sco_sock_connect(struct socket *sock, struct sockaddr *addr, int alen
- 	    addr->sa_family != AF_BLUETOOTH)
- 		return -EINVAL;
- 
--	if (sk->sk_state != BT_OPEN && sk->sk_state != BT_BOUND)
-+	lock_sock(sk);
-+
-+	if (sk->sk_state != BT_OPEN && sk->sk_state != BT_BOUND){
-+		release_sock(sk);
- 		return -EBADFD;
-+	}
- 
--	if (sk->sk_type != SOCK_SEQPACKET)
--		err = -EINVAL;
-+	if (sk->sk_type != SOCK_SEQPACKET){
-+		release_sock(sk);
-+		return -EINVAL;
-+	}
- 
--	lock_sock(sk);
- 	/* Set destination address and psm */
- 	bacpy(&sco_pi(sk)->dst, &sa->sco_bdaddr);
- 	release_sock(sk);
+Changes since V6:
+  - Split initialization refactor into three patches, update commit text
+    to be clearer in what it does
+  - Replace spinlock accesses with guard and scoped guard in all patches
+  - Add missing includes mentioned by Ilpo
+  - Reflow, tweak comment in prevent binding to all HID devices on ROG
+  - Replace asus_ref.asus with local reference in all patches
+  - Add missing kernel doc comments
+  - Other minor nits from Ilpo
+  - User reported warning due to scheduling work while holding a spinlock.
+    Restructure patch for multiple handlers to limit when spinlock is held to
+    variable access only. In parallel, setup a workqueue to handle registration
+    of led device and setting brightness. This is required as registering the
+    led device triggers kbd_led_get which needs to hold the spinlock to
+    protect the led_wk value. The workqueue is also required for the hid
+    event passthrough to avoid scheduling work while holding the spinlock.
+    Apply the workqueue to wmi brightness buttons as well, as that was
+    omitted before this series and WMI access was performed.
+  - On "HID: asus: prevent binding to all HID devices on ROG", rename
+    quirk HANDLE_GENERIC to SKIP_REPORT_FIXUP and only skip report fixup.
+    This allows other quirks to apply (applies quirk that fixes keyboard
+    being named as a pointer device).
+
+Changes since V5:
+  - It's been a long time
+  - Remove addition of RGB as that had some comments I need to work on
+  - Remove folio patch (already merged)
+  - Remove legacy fix patch 11 from V4. There is a small chance that
+    without this patch, some old NKEY keyboards might not respond to
+    RGB commands according to Luke, but the kernel driver does not do
+    RGB currently. The 0x5d init is done by Armoury crate software in
+    Windows. If an issue is found, we can re-add it or just remove patches
+    1/2 before merging. However, init could use the cleanup.
+
+Changes since V4:
+  - Fix KConfig (reported by kernel robot)
+  - Fix Ilpo's nits, if I missed anything lmk
+
+Changes since V3:
+  - Add initializer for 0x5d for old NKEY keyboards until it is verified
+    that it is not needed for their media keys to function.
+  - Cover init in asus-wmi with spinlock as per Hans
+  - If asus-wmi registers WMI handler with brightness, init the brightness
+    in USB Asus keyboards, per Hans.
+  - Change hid handler name to asus-UNIQ:rgb:peripheral to match led class
+  - Fix oops when unregistering asus-wmi by moving unregister outside of
+    the spin lock (but after the asus reference is set to null)
+
+Changes since V2:
+  - Check lazy init succeds in asus-wmi before setting register variable
+  - make explicit check in asus_hid_register_listener for listener existing
+    to avoid re-init
+  - rename asus_brt to asus_hid in most places and harmonize everything
+  - switch to a spinlock instead of a mutex to avoid kernel ooops
+  - fixup hid device quirks to avoid multiple RGB devices while still exposing
+    all input vendor devices. This includes moving rgb init to probe
+    instead of the input_configured callbacks.
+  - Remove fan key (during retest it appears to be 0xae that is already
+    supported by hid-asus)
+  - Never unregister asus::kbd_backlight while asus-wmi is active, as that
+  - removes fds from userspace and breaks backlight functionality. All
+  - current mainline drivers do not support backlight hotplugging, so most
+    userspace software (e.g., KDE, UPower) is built with that assumption.
+    For the Ally, since it disconnects its controller during sleep, this
+    caused the backlight slider to not work in KDE.
+
+Changes since V1:
+  - Add basic RGB support on hid-asus, (Z13/Ally) tested in KDE/Z13
+  - Fix ifdef else having an invalid signature (reported by kernel robot)
+  - Restore input arguments to init and keyboard function so they can
+    be re-used for RGB controls.
+  - Remove Z13 delay (it did not work to fix the touchpad) and replace it
+    with a HID_GROUP_GENERIC quirk to allow hid-multitouch to load. Squash
+    keyboard rename into it.
+  - Unregister brightness listener before removing work queue to avoid
+    a race condition causing corruption
+  - Remove spurious mutex unlock in asus_brt_event
+  - Place mutex lock in kbd_led_set after LED_UNREGISTERING check to avoid
+    relocking the mutex and causing a deadlock when unregistering leds
+  - Add extra check during unregistering to avoid calling unregister when
+    no led device is registered.
+  - Temporarily HID_QUIRK_INPUT_PER_APP from the ROG endpoint as it causes
+    the driver to create 4 RGB handlers per device. I also suspect some
+    extra events sneak through (KDE had the @@@@@@).
+
+Antheas Kapenekakis (10):
+  HID: asus: simplify RGB init sequence
+  HID: asus: use same report_id in response
+  HID: asus: fortify keyboard handshake
+  HID: asus: prevent binding to all HID devices on ROG
+  HID: asus: initialize LED endpoint early for old NKEY keyboards
+  platform/x86: asus-wmi: Add support for multiple kbd led handlers
+  HID: asus: listen to the asus-wmi brightness device instead of
+    creating one
+  platform/x86: asus-wmi: remove unused keyboard backlight quirk
+  platform/x86: asus-wmi: add keyboard brightness event handler
+  HID: asus: add support for the asus-wmi brightness handler
+
+ drivers/hid/hid-asus.c                     | 222 +++++++++++----------
+ drivers/platform/x86/asus-wmi.c            | 214 +++++++++++++++++---
+ include/linux/platform_data/x86/asus-wmi.h |  70 +++----
+ 3 files changed, 331 insertions(+), 175 deletions(-)
+
+
+base-commit: 211ddde0823f1442e4ad052a2f30f050145ccada
 -- 
-2.34.1
+2.51.2
+
 
 
