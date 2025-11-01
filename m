@@ -1,140 +1,93 @@
-Return-Path: <linux-kernel+bounces-881126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11E36C2785A
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 06:10:58 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2360C27860
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 06:11:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B3EFD34C5C6
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 05:10:56 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9F20A34C7A8
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 05:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 550982550D4;
-	Sat,  1 Nov 2025 05:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2637D2765D4;
+	Sat,  1 Nov 2025 05:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iMEdI9FR"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CMtPtvso"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A8F24338F
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 05:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722BE1E231E;
+	Sat,  1 Nov 2025 05:11:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761973849; cv=none; b=VPqmxmtCeu7OuCNerYXTkiZRI7J+G/LUw3alLU12ghsPuUpw1CB73Do32X2uIKJd3d0SOuAktPpJ9aq5mtfYZptz6UXZpd/sNKBGL7wPIB3dhEnmZjxgxhGSXsEd3hIsK/iqr5gSjThUVVS5N4ttp5mLIvooAgXRtBSrUG3X6dY=
+	t=1761973904; cv=none; b=PZCTlF6a1Yd/Mff1RXrIcTkyi+UoGtFqIsxhDjsy2VQi1Cj4WfMYZRa5/AhoIbN6DBbyH7WbanGZ0arWdbkONnNDiSutqUs4n/YQB91Jr4gy/IEGwTdM4UzR9J5nuFUec6zlcw4rxO10mbtjmXN5Y1png+M9Slqf/tiy0nKPg+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761973849; c=relaxed/simple;
-	bh=eOlM1uFeuGo4OskzqCGnrLnEeqaOGDwuYrRt8MXSqLM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ew0fdO8aYeeOvEHr5GRnlNEEPUzRvs9zW6qHa/6H+sKDTX9vIMRq+HfuPba8Nj46Vve7+f2xn6Bh5T3M0jwdwbNe/3aINfbSQe/LEw7Sy7CLwSSr9qYlebsp2vQxIFL3rCKa+IVGCK3XYQjpFK1Fy+CTmYfb+dkqwkC1E5vzXn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iMEdI9FR; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-37a1267c45dso24572731fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 22:10:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761973845; x=1762578645; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cDBf0EPKFSh2QRdvgUh08qctzAfCvCuzR3NbXNNUNTg=;
-        b=iMEdI9FRmOCKFSJDM5JHp1I8ENxi/wN4KiN0O7101WgZCIqjWQO1V3mZjc991Sdfg+
-         xophtcs1ENxjmtluIGZo/0uqdsu61PRh7f7ep8OqFVDDj/UXK0yPchVfBNoH2W+MB1sD
-         o+ibQO7SYZybvTMduEz5Jla5jw1HsQHyotq6LwOMawQJ/pcw3400uovKSFNoOvBS6nLv
-         94bscpKVQoGdlGAj6avqDbvIEvbtqo820oGU2nPvcz9Zg+TdehJ1Cr4TfX/rYxgzazyu
-         Tybg3eITahSfMt3CCBFhJ5ociJ2XZeuTlVW2ks2ojm3vlSJompwmx1PLmF85Gw2Qcnu9
-         gtFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761973845; x=1762578645;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cDBf0EPKFSh2QRdvgUh08qctzAfCvCuzR3NbXNNUNTg=;
-        b=ECSjIZhF/U3QMx1KdtUKtW0CcTSInGqa6jXd9tI3VsapZ7ITyGvpaG7gYzRLDKAJKW
-         e72Kdqxf6nJwcLvaxw0cGRX6ZarbjX53n+C2EbcBBZzIcrYoJCyilladdPiAuJyHXg0O
-         wCmRKRRcfgc+j6PU49vNBPLyS5cq2IeDetOzjAR1Z3kmf1Vb+E/6eT64sf1udNeJtHp2
-         s90YWc18PZuKydbdGPGtBSMofVr3vCsByVwDARVGOgBop5+ooVIdQQMRe7rVMIMXZeEN
-         WI8kTfBbnS4DpN/+MCIUl8iqw0tGvmQysBXI4VZoFKuuziYxD6bnHYMdEe99jG304bcF
-         3Ygg==
-X-Forwarded-Encrypted: i=1; AJvYcCUNuRz+KTJSPMa8PLEowJyfZm5FbCNcYsE19oiROprB3i6LhHSky2J0ZNXJKln3gNj1xow8BnP2PlgDZWs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZQjUdHDH0a8JFbXPGZC+dPpvy0qmMQ+R8SC/N0G2vFku23ufO
-	mgiu6NvZkvlSOfD+FUrREMEPjmEc6/UHI7FElnF3LB1bt74HBd0QSsiMGdG9iqLUWBLegDtVLwV
-	cZoo4qNgTMMeGy6IrKPeXfbsEeSbU5D4=
-X-Gm-Gg: ASbGncsIreCq5buA5MxIP75ikYzgud2tTbxJ9O1VeYlB0BkwSAPcCtY6aGhy0ARR7da
-	AginotcOLbkWD28oC9Zjpme2/oxmYdqJlVCvJp5iYF4/iVBIo3+Z6z9o5jNxkbRJfYcFHdgLIEe
-	aQplWDEA/jRCNGTddijT9wWaNnNSMmG9tklKGEEcb0lIjm/x1WQQaPSINoLPY29/THhAD7tykdk
-	gd8HUKXVu+fWTZOr1WRNBHqP3joq9TsddxLZcVz0x4LdnjJFaDwCnfPjuwpeKML4VVypwuQngr+
-	k0u+HeeAxrB2WCohwA==
-X-Google-Smtp-Source: AGHT+IEgcVh16NBSlAcq0VebB5Gm+0g5P4XcZHFf7Hd8YhrkSByvbyzY03uBh9X6qmIXljQ+9mmdAKbfTpWuA4Lurqw=
-X-Received: by 2002:a05:651c:2049:b0:376:4320:e33b with SMTP id
- 38308e7fff4ca-37a18dee5f8mr15061341fa.47.1761973844866; Fri, 31 Oct 2025
- 22:10:44 -0700 (PDT)
+	s=arc-20240116; t=1761973904; c=relaxed/simple;
+	bh=PzuIANretVlJ+/5XVSLxnTOpbgWbF/+fa/hXznRs/Xo=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=iolI0/JDVYFEkS4ZreOgy/shFRmGi1SkmfpUXl+wLwvcXcPbdug7luxSOSieCwS4PV9mKSjIpz0PVOd8rtlVZ0Eq/M6fvX0NA1vk+J6ZA+SwAfitjTH/S1IXmkwBGQm0cGnZX6O5VtCqutdaJzi1pZOzl3ai+Sy+VrfZWS9bz0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CMtPtvso; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37687C4CEF1;
+	Sat,  1 Nov 2025 05:11:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761973904;
+	bh=PzuIANretVlJ+/5XVSLxnTOpbgWbF/+fa/hXznRs/Xo=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=CMtPtvso0cGt88NYNPdZKPHJ2B4r397VAX0M5cNNfIkcR2VSflXzBuwVHCAXVNo5d
+	 WGYYj5sw9xKxna1o7v8TSN6QWMOsFr75azwaqEck5eOBdkvpNRNMH+hdo4SM0/PgsY
+	 ngPjZ2hnmk21YrFv4scyju2nLStyI5mLr011DdK3MkUOcWa0WWJebfr8Mv0ykVd7Rn
+	 5TxngedR+++O655KgrAHMqHxx/PYlgZCg93mdH7PnA8dC6gloArfP61MxVkdogNAmv
+	 2LcKKXBrb+IpiIc1usSfzm6k+Vh5VQyT0HXFhvBiNYo+aUEYdsOso5toE8zYG2J3WK
+	 /Dq6ssZz4x8eg==
+Date: Fri, 31 Oct 2025 22:11:44 -0700
+From: Kees Cook <kees@kernel.org>
+To: Jakub Kicinski <kuba@kernel.org>
+CC: Paolo Abeni <pabeni@redhat.com>,
+ "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ John Fastabend <john.fastabend@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Simon Horman <horms@kernel.org>, Kuniyuki Iwashima <kuniyu@google.com>,
+ Willem de Bruijn <willemb@google.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5Bnet-next_PATCH_v4_1/7=5D_net=3A_Convert_prot?=
+ =?US-ASCII?Q?o=5Fops_bind=28=29_callbacks_to_use_sockaddr=5Funsized?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20251031170520.0b8486cf@kernel.org>
+References: <20251029214355.work.602-kees@kernel.org> <20251029214428.2467496-1-kees@kernel.org> <20251031170520.0b8486cf@kernel.org>
+Message-ID: <3BF4FE5C-376C-4FF5-8D1F-D5088D5DA6A1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251031140043.939381518@linuxfoundation.org> <19689e2c-5dd1-4c3f-a243-84b69a552f91@googlemail.com>
-In-Reply-To: <19689e2c-5dd1-4c3f-a243-84b69a552f91@googlemail.com>
-From: Dileep malepu <dileep.debian@gmail.com>
-Date: Sat, 1 Nov 2025 10:40:32 +0530
-X-Gm-Features: AWmQ_bl-6-f_3Ztgk64RenjMy1dM7NuNxp6tpcUL91fjp2wWmf8Gqa3cmQnHIAQ
-Message-ID: <CAC-m1rqVAbQ4HUQibgheOZ6HJf57wmC-MAApAyuuQ63oeDGRHw@mail.gmail.com>
-Subject: Re: [PATCH 6.12 00/40] 6.12.57-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, 
-	shuah@kernel.org, patches@kernelci.org, lkft-triage@lists.linaro.org, 
-	pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
-	sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org, 
-	hargar@microsoft.com, broonie@kernel.org, achill@achill.org, 
-	sr@sladewatkins.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 31, 2025 at 10:04=E2=80=AFAM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+
+
+On October 31, 2025 5:05:20 PM PDT, Jakub Kicinski <kuba@kernel=2Eorg> wro=
+te:
+>On Wed, 29 Oct 2025 14:43:58 -0700 Kees Cook wrote:
+>> Update all struct proto_ops bind() callback function prototypes from
+>> "struct sockaddr *" to "struct sockaddr_unsized *" to avoid lying to th=
+e
+>> compiler about object sizes=2E Calls into struct proto handlers gain ca=
+sts
+>> that will be removed in the struct proto conversion patch=2E
 >
-> This is the start of the stable review cycle for the 6.12.57 release.
-> There are 40 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun, 02 Nov 2025 14:00:34 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.12.57-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.12.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+>I fail to spot whether the new type is defined :)
+>Or is the new type not defined at all?
+>If it is probably best to have that as a separate patch=2E
+
+Arrrgh=2E Yeah, what should be patch 1 got skipped=2E I will try again! =
+=F0=9F=98=AD
 
 
-Build and Boot Report for 6.12.57-rc1
-
-The kernel version 6.12.57-rc1 was built and boot-tested using qemu-x86_64
-and qemu-arm64 with the default configuration (defconfig). The build and bo=
-ot
-processes completed successfully, and the kernel operated as expected
-in the virtualized environments without any issues.
-
-Build Details :
-Builds : arm64, x86_64
-Kernel Version: 6.12.57-rc1
-Configuration : defconfig
-Source: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git
-Commit : c3010c2f692bb27dc44fd2318888446944f5846e
-
-Tested-by: Dileep Malepu <dileep.debian@gmail.com>
-
-Best regards,
-Dileep Malepu
+--=20
+Kees Cook
 
