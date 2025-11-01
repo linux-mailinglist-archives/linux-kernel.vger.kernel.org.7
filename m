@@ -1,78 +1,116 @@
-Return-Path: <linux-kernel+bounces-881471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A493C2844F
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 18:53:28 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1004C28458
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 18:57:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02D1C1A20BF6
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 17:53:46 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 486E0349AFF
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 17:57:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB6F286D7D;
-	Sat,  1 Nov 2025 17:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E00286D56;
+	Sat,  1 Nov 2025 17:57:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yj/SHFeM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ElAO+T25"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9364E27B354
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 17:53:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DEFC2727FE;
+	Sat,  1 Nov 2025 17:57:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762019593; cv=none; b=K9TZ02MXw8LKzcrTTweRuNdPAxk+GtigURloTmIHO3CbORkjGJff7Tnn8fXxMWIxuC2orWTziOAeUeiY2+9pV3Vhn0EC5gPEPjVaSOsTC3uiTit6GLD3JoBFipFTQ3O/mJqxGBFgTrMZUDXieT2za1OSdjc28fLh6rCzDmlC2s8=
+	t=1762019830; cv=none; b=KDiflamdHhrdE6FSqBaH7shJT8JYVUFR/8oIP8syQXaBX/VRpYmBZ3XV3N1SqS3eBtexB8W42kQKiGtFYaZKMeFWDunYgM9Vj8daGrlo1ft155GDQF8VzPaneSvuIkOLMza4Gqb21UBdywd7IQ/wEQRBCmbcMDuQNWSerqD2j/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762019593; c=relaxed/simple;
-	bh=NZClzHyiv3XiAjBkmrrcXrrVJ5t5IFQjQhKOHTGgltg=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=aOwsMXRRijq0x7zGXznuLuakCus9p+5EywjbsPdN/4ruG1bYvBHjiIsGTRlXvoPj35LURum3UIWVRWogiy2gR89IpDs5MOv4PBziib+JP2Gbl4ZxA+Y5Pte+bY/hGNcGXGJXEEenYRaGjUst0CXtuIy5RD9MJOFx09ObDgwe/tU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yj/SHFeM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61A48C4CEFB;
-	Sat,  1 Nov 2025 17:53:13 +0000 (UTC)
+	s=arc-20240116; t=1762019830; c=relaxed/simple;
+	bh=4alG/4J+Zw7vtUovcB0c4P8srDoSOCdZC4qNDI79DGk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Gs+qwJOgb0xdo0fWPMTfMAyt/UyOwJKuQa74/Pa60pD+UmyMBwywnzk4dKVV4UVqX9RPZbAld4AWHRGbp6nDP4/BGGtFaBrLZ40u2f+MbOqLjBMP3YCRlSxvLo01fHHN9laqQ8zTXBriZagB3vGBZmllW6VeNim6hJuIx7MFy08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ElAO+T25; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 670F4C113D0;
+	Sat,  1 Nov 2025 17:57:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762019593;
-	bh=NZClzHyiv3XiAjBkmrrcXrrVJ5t5IFQjQhKOHTGgltg=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=Yj/SHFeMX2pjXFMJ/uMa6nzkDbWLmiC49GtUI20tQA1C5IUp08cAfjstKjzVicyST
-	 ZFuUnDiAPMrl58mwCjwzYjve62D2dJx/tFjnuOVWGkp6qUDkpSKChYrWCBXYCkVqT7
-	 +uVXsn52df8s9pq0X8T95d7VY9qeW1G/bfH8j4a37y4fsafGrDYmn5/m7nTyrmOufO
-	 zF86KXd/ZjcWGzH/j5rJaghogQ0XjID7ugGdJGn2ubLJxl7jVBVJsd9Klp+SWJQluC
-	 Sv2fGF08HfBv8jEftDN7iW+/rjGX4fbAlp9zO6IQBEtMEWBBLGsucuZ/Lmv6UFoVJ7
-	 TEbRCjc5aIjow==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33B083809A1B;
-	Sat,  1 Nov 2025 17:52:50 +0000 (UTC)
-Subject: Re: [GIT PULL] regulator fixes for v6.18-rc3
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <3a91deb5123e4918a27d974dc0085011@kernel.org>
-References: <3a91deb5123e4918a27d974dc0085011@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <3a91deb5123e4918a27d974dc0085011@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-fix-v6.18-rc3
-X-PR-Tracked-Commit-Id: 47a0925ee4bd2689f0aef4dbd67dd46442fe1ca2
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: bfeeb4a1bdf5d255ea885f16be80968d1f31281b
-Message-Id: <176201956880.853286.3089841961926755052.pr-tracker-bot@kernel.org>
-Date: Sat, 01 Nov 2025 17:52:48 +0000
-To: Mark Brown <broonie@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+	s=k20201202; t=1762019829;
+	bh=4alG/4J+Zw7vtUovcB0c4P8srDoSOCdZC4qNDI79DGk=;
+	h=From:Subject:Date:To:Cc:From;
+	b=ElAO+T259sbS4PtfmsssBEzluhML/6LPnjZ4Hr7bRblaRQaNwxS4empP39szfUUvB
+	 5U4NG1RDEwaL4eD5td4370wz09h/A7FEjUnXIYUpXaa6TV06MLdBLSv6GdxqDPw7by
+	 b9GcgFgm3pXnGT1C3gEwx+Bm6+6na298CbCu6ec43s8yeTjedW4Eih1B1IgfoC4imC
+	 x6UtJSPOfghHk+IdQb2gnUZZlD4lswjBRacqtS4op80V1/0DrjGz/RFBCS8NwNJF46
+	 U5PYaVFlBdCK5Sac43ExjXx9YazWBb57nmpGb1qRkcw2k729WUffcwSLFzIkOwn0Wr
+	 fO3Zz8XWpVkAQ==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Subject: [PATCH net-next 0/4] mptcp: pm: in-kernel: fullmesh endp nb + bind
+ cases
+Date: Sat, 01 Nov 2025 18:56:50 +0100
+Message-Id: <20251101-net-next-mptcp-fm-endp-nb-bind-v1-0-b4166772d6bb@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOJJBmkC/zWNQQqEMAxFryJZGzCCM+pVxIVt05ksjKUtIoh3t
+ wgu3uIt3v8nJI7CCcbqhMi7JNm0CNUV2P+iP0ZxxaFt2o6oIVTOhSPjGrIN6FdkdQHVoBF1aP1
+ 3MZ++d4MnKCMhspfjOZjgbWG+rhv1xhc4egAAAA==
+X-Change-ID: 20251101-net-next-mptcp-fm-endp-nb-bind-cf7ab688d9f1
+To: Mat Martineau <martineau@kernel.org>, Geliang Tang <geliang@kernel.org>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>
+Cc: netdev@vger.kernel.org, mptcp@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1683; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=4alG/4J+Zw7vtUovcB0c4P8srDoSOCdZC4qNDI79DGk=;
+ b=owGbwMvMwCVWo/Th0Gd3rumMp9WSGDLZPF9VncyUn7TkdNwk1ca59af7L6yY9W8hT+Gfw+vEg
+ kPbnH5pd5SyMIhxMciKKbJIt0Xmz3xexVvi5WcBM4eVCWQIAxenAEzEwprhf4H4a/uLW3ZMtvVb
+ Lv8491RwJk9m95xbNxxDjge8ShCcpMzI8NPtcIiG1Mlu/jifP0fYH5Y5f4o4O+fCkSZWBsv7DCu
+ 7WQA=
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-The pull request you sent on Sat, 01 Nov 2025 12:29:53 +0000:
+Here is a small optimisation for the in-kernel PM, joined by a small
+behavioural change to avoid confusions, and followed by a few more
+tests.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git tags/regulator-fix-v6.18-rc3
+- Patch 1: record fullmesh endpoints numbers, not to iterate over all
+  endpoints to check if one is marked as fullmesh.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/bfeeb4a1bdf5d255ea885f16be80968d1f31281b
+- Patch 2: when at least one endpoint is marked as fullmesh, only use
+  these endpoints when reacting to an ADD_ADDR, even if there are no
+  endpoints for this IP family: this is less confusing.
 
-Thank you!
+- Patch 3: reduce duplicated code to prepare the next patch.
 
+- Patch 4: extra "bind" cases: the listen socket restrict the bind to
+  one IP address, not allowing MP_JOIN to extra IP addresses, except if
+  another listening socket accepts them.
+
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+Matthieu Baerts (NGI0) (4):
+      mptcp: pm: in-kernel: record fullmesh endp nb
+      mptcp: pm: in kernel: only use fullmesh endp if any
+      selftests: mptcp: join: do_transfer: reduce code dup
+      selftests: mptcp: join: validate extra bind cases
+
+ include/uapi/linux/mptcp.h                        |   3 +-
+ net/mptcp/pm_kernel.c                             |  36 ++++-
+ net/mptcp/protocol.h                              |   1 +
+ net/mptcp/sockopt.c                               |   2 +
+ tools/testing/selftests/net/mptcp/mptcp_connect.c |  10 +-
+ tools/testing/selftests/net/mptcp/mptcp_join.sh   | 187 +++++++++++++++++++---
+ 6 files changed, 213 insertions(+), 26 deletions(-)
+---
+base-commit: 01cc760632b875c4ad0d8fec0b0c01896b8a36d4
+change-id: 20251101-net-next-mptcp-fm-endp-nb-bind-cf7ab688d9f1
+
+Best regards,
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
+
 
