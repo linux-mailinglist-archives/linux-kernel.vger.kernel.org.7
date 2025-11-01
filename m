@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-881111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CE6DC277BA
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 05:37:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8155EC277BD
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 05:37:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B0DAD4E3F15
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 04:37:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CF8354E2F96
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 04:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A79B20FA81;
-	Sat,  1 Nov 2025 04:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0E62857F0;
+	Sat,  1 Nov 2025 04:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JftPg4Ew"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IlL5R+lj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6CF176ADE;
-	Sat,  1 Nov 2025 04:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB655257820;
+	Sat,  1 Nov 2025 04:37:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761971847; cv=none; b=VVcUyYFWnZly85wvLyA77qxapLEBfM4AE/0nvFo/XQeMW70rSRoOfnJnJ/KRxkrbnE6qbO7QDccjwapHrRZYIAshyvmvgdiZv55bR3/SrxXLvn6cGBS9G6mKPH08eILnyrIcd4ZPrTzZSf829JSZcEwBk5pwjAJbzbtnJrtyC+o=
+	t=1761971848; cv=none; b=nJPHXY6Iq3r/hnqsS14NgZTVpKBH7mPI7Vv4ifbE0TsrhgL5OnJPvuM5IrezW1w668bz1+wTPcyrUnqsQxm9w2WrYIHPfTK7qgb9a+6ZaaJxp6jkU+++NjIGguZqZHPGlqkQ5Z8dllp0RacouKspAgVCwSYt91468Yvqwpoic30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761971847; c=relaxed/simple;
-	bh=dQhbjR/JetT2TngI4/G+ds/GUXhV2XTtyLMOdSrZ5Vo=;
+	s=arc-20240116; t=1761971848; c=relaxed/simple;
+	bh=p6yQXpdLSJy53Brl9/Ptc7CoyMBdnRwKPTbii8DBsAE=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=uZswJWWpfdRs1yIjx71VCvnKLTJpO/lq204cvyPbP4z9coIqJPS3lDgnIRvwBWEGrLwbcCsiTQTG+KxKeu2nPnmrAVE53cRKpvrBPSuOGy+BfNRzNz8ZuZlEZOzADHl2liN4we8htsgyrgzDIJsEER1enyYVkyST69xwqCmY/yA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JftPg4Ew; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D087C4CEF1;
-	Sat,  1 Nov 2025 04:37:26 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Lk8lbOcKEsHexpAP6zai0Aw8RPiTFdSf3EJ8t4F9mLKtxW5clmHB+CkYxYWAWZElVxTxsbrYLNDgRVNokkWRsgWjoOSmwJ175ZqPMdy76wtjd3nMh53jc0bzGKN/9DEfpJP6M0ZbyOJVsvLwAfkp5C5c7g+uxTpFIRyi6uKSaDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IlL5R+lj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B76EFC4CEF7;
+	Sat,  1 Nov 2025 04:37:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761971847;
-	bh=dQhbjR/JetT2TngI4/G+ds/GUXhV2XTtyLMOdSrZ5Vo=;
+	s=k20201202; t=1761971848;
+	bh=p6yQXpdLSJy53Brl9/Ptc7CoyMBdnRwKPTbii8DBsAE=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=JftPg4EwuvzlcBbkd7l5vlMN5WBQ+vj/PEiiWGkfrR8TaRV7W+8wlUDjDo2phEPIo
-	 LGkeeUfqcr4NvFTW6OsMm8mEmBlPD4fyYUYTs71aP3k/hGXJ7VCCeEaxpWxyGrOgiK
-	 6jDT+6X7naFyaGmG5SLb/YE8ZfgIm+M+p8oTD7ZqcqoY8Z3j7OACxT2d88M+yKnxLV
-	 ZCvMMskQgpRRlWmPaAoJTpq/FFGaSkvOpVU2ucfxQW+UsvH1NtBWyEF8UWZ5PEYGUP
-	 On0AOexrjoAf3799McdvK+2V9Gqz2aNaE3/GBLeilRx93q5xBGxWr+u9YWcxO0Gl48
-	 za67Lp8ax0BtA==
+	b=IlL5R+lj4cDp7cdlcyebKz2/KYnSQwapDnzjLeQnALEoIRamLIGWf46mHpzWrxPSZ
+	 PuAxbPSG7Y427zu///7SOfrsvi+KcKt4mY65I9bvyW68BTPWS9HnTWFvo4R2kaGG+s
+	 40aKwxw7fKy1sZ7eXNiseZOZKYsAMyltXdiTb2Xi0Z5AKJiit+FY+UY5SiEtP8YZFS
+	 gOW/m65TtGM7ctPjQw21Be9piOJ653Hz1sJ3CzgHkBxIhXeJ7IJGfQ4r9ZBkhR/AlH
+	 upFc3mTd+Ha7B70T52W55/oVeIaPbZmPhEmaZbBUTQktsMGTjdd505tGxclTGMlu+y
+	 HzpZLDf2+lsxQ==
 From: Nathan Chancellor <nathan@kernel.org>
 To: linux-kbuild@vger.kernel.org, 
  =?utf-8?q?Jakub_Hork=C3=BD?= <jakub.git@horky.net>
 Cc: linux-kernel@vger.kernel.org
-In-Reply-To: <20251014154933.3990990-1-jakub.git@horky.net>
-References: <20251014154933.3990990-1-jakub.git@horky.net>
-Subject: Re: [PATCH] kconfig/mconf: Initialize the default locale at
+In-Reply-To: <20251014144405.3975275-2-jakub.git@horky.net>
+References: <20251014144405.3975275-2-jakub.git@horky.net>
+Subject: Re: [PATCH] kconfig/nconf: Initialize the default locale at
  startup
-Message-Id: <176197184636.682017.1549900338236343756.b4-ty@kernel.org>
-Date: Sat, 01 Nov 2025 00:37:26 -0400
+Message-Id: <176197184748.682017.1476965392341625574.b4-ty@kernel.org>
+Date: Sat, 01 Nov 2025 00:37:27 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,8 +61,8 @@ Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.15-dev
 
 
-On Tue, 14 Oct 2025 17:49:32 +0200, Jakub Horký wrote:
-> Fix bug where make menuconfig doesn't initialize the default locale, which
+On Tue, 14 Oct 2025 16:44:06 +0200, Jakub Horký wrote:
+> Fix bug where make nconfig doesn't initialize the default locale, which
 > causes ncurses menu borders to be displayed incorrectly (lqqqqk) in
 > UTF-8 terminals that don't support VT100 ACS by default, such as PuTTY.
 > 
@@ -70,8 +70,8 @@ On Tue, 14 Oct 2025 17:49:32 +0200, Jakub Horký wrote:
 
 Applied, thanks!
 
-[1/1] kconfig/mconf: Initialize the default locale at startup
-      https://git.kernel.org/kbuild/c/3927c4a1084c4
+[1/1] kconfig/nconf: Initialize the default locale at startup
+      https://git.kernel.org/kbuild/c/43c2931a95e6b
 
 Best regards,
 -- 
