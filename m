@@ -1,144 +1,128 @@
-Return-Path: <linux-kernel+bounces-881280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5B51C27E56
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 13:51:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DA9FC27E9B
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 13:55:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F74C400C73
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 12:51:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63B4B400D77
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 12:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2659288C34;
-	Sat,  1 Nov 2025 12:51:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6842F83C5;
+	Sat,  1 Nov 2025 12:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="bzkZ44vf"
-Received: from mail1.manjaro.org (mail1.manjaro.org [142.132.176.110])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m2Ja8INm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD42E34D397;
-	Sat,  1 Nov 2025 12:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=142.132.176.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4FF285CA3;
+	Sat,  1 Nov 2025 12:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762001475; cv=none; b=c/L0KSqQ7+m96D2PTEI8GFbY3l5UozV0vUrchC1GeKca7vvlXPzQqFW/GWA4PoT7WWQN7lIrrbDFft2cwmYbgxwvS1awysWhRfEnSmo6H2Mu1cHU6NUPM98rFrjpqO64+J+r7sA5Bf2detAdbpiHMp3g21BXVahGwQeoAsoqlgo=
+	t=1762001682; cv=none; b=hpAPw/4QWHWr4J2Ga1YiLLjvaWiMZ3pcfw2aBXDGvKux+1F5XYN76VlWg0w2NBSbF2N8yyTv65DFETK2j5OcdzHBcmNzT+kgx4AbnQdFUUsT7z5vCMufL18xzA3awTd7ZUMizTGs4ySlA8+IFRLHjDmQDrcp1R7EnTf+JIFffxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762001475; c=relaxed/simple;
-	bh=exBJA7nbMEZeZZpabcc2P8rsMbPKLfh9sPnBN8lg9J8=;
-	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
-	 Message-ID:Subject; b=UjCvNTJwNECMVEiPiKodA9KoFBsMgk3uLopTdZaj6Wg6WteC6Vv3P/nvMz3lY5sGTIqxyHk0STQXpqhXPLO/+cyOOx84czuG4RiXpjPN1iOwiWWr1aoAcRTs+2KyHhDMEovrMTTF6003YZnVuOeN36hiLYbwzLRdWzUIAw1NyDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=bzkZ44vf; arc=none smtp.client-ip=142.132.176.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPA id CBA4340E0A;
-	Sat,  1 Nov 2025 13:50:59 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=dkim;
-	t=1762001463; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=fQvbdhiXZZph0YAYJiNdm8OJtzwwngVKL/B8nmm12Vc=;
-	b=bzkZ44vfgDZOcAzzR08beda9GaadarJtptSNqvAwy8aIv4HWsvMPJ2+iZS/50wypTQTy7g
-	dNeURtHLT34G9vAf6hfv7SShnBj8ghs//nLo74Cojy+jm/gqQw3fWIACg+7caq5tPVhLbD
-	w7yLteKmYySaEdjZeHK58xpNH4WUX6aMQUqAr6ueN0efIfjSiwMWkZVQzAdlftiynd5/hx
-	uALokfjnoBno9fktxvRo+cSv/lY6xL831ktF5Dt6rbtaTCl5hKaaN5eVQvJBcAMzu2vrL9
-	4Yk1UFSJq4jovHfYGj78G3rOS+BQ5+1on/cmmcnIJOmIMcaSuAIy/dCr2LATEw==
-From: "Dragan Simic" <dsimic@manjaro.org>
-In-Reply-To: <10751338.nUPlyArG6x@phil>
-Content-Type: text/plain; charset="utf-8"
-References: <20251017073954.130710-1-cnsztl@gmail.com>
- <08911ae2-fef3-432d-a236-d820c9cb67ac@gmail.com>
- <5af928c4-4b6e-489c-ad39-26cef3dd7473@gmail.com> <10751338.nUPlyArG6x@phil>
-Date: Sat, 01 Nov 2025 13:50:59 +0100
-Cc: "Shawn Lin" <shawn.lin@rock-chips.com>, "Tianling Shen" <cnsztl@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Grzegorz Sterniczuk" <grzegorz@sternicz.uk>, "Jonas Karlman" <jonas@kwiboo.se>, "Jianfeng Liu" <liujianfeng1994@gmail.com>
-To: "Heiko Stuebner" <heiko@sntech.de>
+	s=arc-20240116; t=1762001682; c=relaxed/simple;
+	bh=u8wLUW6Z9fiKj5eOJYtlEh+2BUk0OgRlOVt2xpH117E=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Wc9Qm9BGqBGLUIwkfaJ3kNEfeFLJoYC9eX+ZeIOyqCzW0eOlVFczg5dfh9Gm6vKU+MHLPSpTDiZY4F7+aD7tu4mgaoVaApiRDmjGRIrRwNcPOkrTz/mw5c/QgB6IU20y0XvA/pnqY7mTSnKh2E5uQQW8CdKiNlJKfV0vfPfAbrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m2Ja8INm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5798DC4CEF1;
+	Sat,  1 Nov 2025 12:54:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762001682;
+	bh=u8wLUW6Z9fiKj5eOJYtlEh+2BUk0OgRlOVt2xpH117E=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=m2Ja8INmdmWC+X9QiZI/7Ju8nffsDc41U90B44Ib7WcVp6vUo4JqlJjoOl1yKT56E
+	 7MVzY84TraRsZpgUsoPw6XoRF1fjyeo3GnboQIK+okHNo7n3d8FSVqo2ROoiF5qtiC
+	 vVOPO8hqGk/oOyQ91JT35BHZDkVzFmJuogMnFXVffC9ugf12XovXvInne/ZWBNA+yN
+	 HeTmy9FXRi+RheaBoqM1YaSFP7yyTOcS8wi6DDalSRYYVL1BGDuP+IyPsXJiJTZbo7
+	 9SIFt54sqomIX79v1eu1KCYF5VKHt0pmXePMZBkB8zaD+Pn+CLqbmsSImSi2U2JFd6
+	 BKF0dZ7BePKOA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB1FCCFA00;
+	Sat,  1 Nov 2025 12:54:42 +0000 (UTC)
+From: Maud Spierings via B4 Relay <devnull+maud_spierings.hotmail.com@kernel.org>
+Subject: [PATCH 0/6] arm64: dts: qcom: x1e80100-vivobook-s15: add more
+ missing features
+Date: Sat, 01 Nov 2025 13:54:11 +0100
+Message-Id: <20251101-asus_usbc_dp-v1-0-9fd4eb9935e8@hotmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <e52de2b5-bf10-ce0e-66b7-66b1c46525f3@manjaro.org>
-Subject: =?utf-8?q?Re=3A?= [PATCH] =?utf-8?q?arm64=3A?==?utf-8?q?_dts=3A?=
- =?utf-8?q?_rockchip=3A?= fix eMMC corruption on NanoPC-T6 with A3A444 chips
-User-Agent: SOGoMail 5.12.3
-Content-Transfer-Encoding: quoted-printable
-X-Last-TLS-Session-Version: None
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPMCBmkC/yWN24rCMBRFf6Xk2SO5tDEpg/gfg0iac6IB23SSV
+ gTx3yfVx7Vhr/VihXKkwvrmxTI9YolpqiB2DfM3N10JIlZmksuOa9GCK2u5rGXwF5yBS66cbKX
+ X1rB6mTOF+Pzofs9fzvS3VuvyHdlIpbiPtW9+NqngQsGS5ujhKchwwTnccIzw0MBBOetNONQ06
+ tM9Ti6nfcrX4xYbXCHwaRzj0jfWDGgGoR11BzJBdt522FodPJLCgGikVNgKdn6//wG1sxP+9QA
+ AAA==
+X-Change-ID: 20250614-asus_usbc_dp-0203a242c698
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ Maud Spierings <maud_spierings@hotmail.com>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762001681; l=1678;
+ i=maud_spierings@hotmail.com; s=20241110; h=from:subject:message-id;
+ bh=u8wLUW6Z9fiKj5eOJYtlEh+2BUk0OgRlOVt2xpH117E=;
+ b=zZCnXRfNh5ObdUMoRA0mRNkebgUnURd3FVRw3ClZhVV36UkJPFZ1zarismFBaXyve+lPr+fvc
+ kaeH65WFNenAPU5QkTPWLPNiEoi1BjmzdZOjk+cYd85IxnBzVV8D7Zi
+X-Developer-Key: i=maud_spierings@hotmail.com; a=ed25519;
+ pk=CeFKVnZvRfX2QjB1DpdiAe2N+MEjwLEB9Yhx/OAcxRc=
+X-Endpoint-Received: by B4 Relay for maud_spierings@hotmail.com/20241110
+ with auth_id=273
+X-Original-From: Maud Spierings <maud_spierings@hotmail.com>
+Reply-To: maud_spierings@hotmail.com
 
-Hello Heiko,
+There are still many missing features on this machine, add the ps8830
+retimers for display over usb-c, the simple bridge/HDMI port and set up
+to use IRIS.
 
-On Saturday, November 01, 2025 12:54 CET, Heiko Stuebner <heiko@sntech.=
-de> wrote:
-> Am Montag, 27. Oktober 2025, 18:34:25 Mitteleurop=C3=A4ische Normalze=
-it schrieb Tianling Shen:
-> > On 2025/10/20 12:44, Tianling Shen wrote:
-> > > On 2025/10/20 9:53, Shawn Lin wrote:
-> > >> On 2025/10/17 Friday 15:39, Tianling Shen wrote:
-> > >>> From: Grzegorz Sterniczuk <grzegorz@sternicz.uk>
-> > >>>
-> > >>> Some NanoPC-T6 boards with A3A444 eMMC chips experience I/O err=
-ors and
-> > >>> corruption when using HS400 mode. Downgrade to HS200 mode to en=
-sure
-> > >>> stable operation.
-> > >>
-> > >> May I ask you to test another patch I just posted to see if it f=
-ixes
-> > >> your issue?
-> > >>
-> > >> https://patchwork.kernel.org/project/linux-mmc/=20
-> > >> patch/1760924981-52339-1- git-send-email-shawn.lin@rock-chips.co=
-m/
-> > >=20
-> > > Thank you for the patch! I will ask my friend to test it but he u=
-ses=20
-> > > this board as a home router, so it may take a few days or weeks t=
-o=20
-> > > report the result.
-> >=20
-> > Hi all, sorry for the late. My friend has tested this patch and it =
-works=20
-> > fine after 50 times dd operation. A big thanks to Shawn!
->=20
-> So I guess, we don't need the patch reducing the speed anymore, right=
-?
+Currently IRIS gives a ETIMEDOUT, not sure what that is coming from.
 
-Exactly, the approach of lowering the speed of eMMC to improve
-its reliability is no longer needed, thanks to Shawn correcting
-the DLL=5FSTRBIN=5FTAPNUM=5FDEFAULT value in the above-linked patch.
+lots of these patches are very strongly based on the work of other
+maintainers of these snapdragon machines, like the HDMI part on that of
+Neil Armstrong, many thanks to those who laid the baseline for me to
+follow.
 
-We just need to test does HS400 work on the ROCK 5 ITX reliably
-as well, so the previous lowering to HS200 in commit b36402e4a077
-("arm64: dts: rockchip: slow down emmc freq for rock 5 itx", 2025-
-02-28) could be reverted as no longer needed.
+Signed-off-by: Maud Spierings <maud_spierings@hotmail.com>
+---
+Maud Spierings (6):
+      dt-bindings: display: bridge: simple: document the Parade PS185HDM DP-to-HDMI bridge
+      drm/bridge: simple: add the Parade PS185HDM DP-to-HDMI bridge
+      arm64: dts: qcom: x1e80100-vivobook-s15: enable ps8830 retimers
+      arm64: dts: qcom: x1e80100-vivobook-s15: add HDMI port
+      arm64: dts: qcom: x1e80100-vivobook-s15: add charge limit nvmem
+      arm64: dts: qcom: x1e80100-vivobook-s15: enable IRIS
 
-> > And hi Jianfeng, I found you made a similiar patch[1] for the ROCK =
-5 ITX=20
-> > board to lower down the mmc speed, could you please check if this p=
-atch=20
-> > also fixes your issue?
-> >=20
-> > [1] https://lore.kernel.org/linux-rockchip/20250228143341.70244-1-l=
-iujianfeng1994@gmail.com/
-> >=20
-> > >>> Signed-off-by: Grzegorz Sterniczuk <grzegorz@sternicz.uk>
-> > >>> Signed-off-by: Tianling Shen <cnsztl@gmail.com>
-> > >>> ---
-> > >>>   arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi | 3 +--
-> > >>>   1 file changed, 1 insertion(+), 2 deletions(-)
-> > >>>
-> > >>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi=
- b/=20
-> > >>> arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
-> > >>> index fafeabe9adf9..5f63f38f7326 100644
-> > >>> --- a/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
-> > >>> +++ b/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
-> > >>> @@ -717,8 +717,7 @@ &sdhci {
-> > >>>       no-sd;
-> > >>>       non-removable;
-> > >>>       max-frequency =3D <200000000>;
-> > >>> -    mmc-hs400-1=5F8v;
-> > >>> -    mmc-hs400-enhanced-strobe;
-> > >>> +    mmc-hs200-1=5F8v;
-> > >>>       status =3D "okay";
-> > >>>   };
+ .../bindings/display/bridge/simple-bridge.yaml     |   1 +
+ .../boot/dts/qcom/x1e80100-asus-vivobook-s15.dts   | 402 ++++++++++++++++++++-
+ drivers/gpu/drm/bridge/simple-bridge.c             |   5 +
+ 3 files changed, 400 insertions(+), 8 deletions(-)
+---
+base-commit: 98bd8b16ae57e8f25c95d496fcde3dfdd8223d41
+change-id: 20250614-asus_usbc_dp-0203a242c698
+prerequisite-message-id: <20251013-topic-x1e80100-hdmi-v6-0-3a9c8f7506d6@linaro.org>
+prerequisite-patch-id: 5af0a76cad087e18b0a2f771a78d030f9bf3bd68
+prerequisite-patch-id: 5b908c1f0c5a0c52da384a181a75f17c5e2d19b5
+prerequisite-patch-id: ed40af8d7e99a3f1bcb33b4c678b5f21b0618612
+
+Best regards,
+-- 
+Maud Spierings <maud_spierings@hotmail.com>
+
 
 
