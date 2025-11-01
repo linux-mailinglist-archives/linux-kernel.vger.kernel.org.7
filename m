@@ -1,94 +1,116 @@
-Return-Path: <linux-kernel+bounces-881293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEC60C27EEB
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 14:10:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35F45C27EF7
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 14:11:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DFC4D4E5CE9
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 13:10:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 842FF40156F
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 13:11:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2BD2264A9;
-	Sat,  1 Nov 2025 13:10:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D94472222C0;
+	Sat,  1 Nov 2025 13:11:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JjT/Z/op"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b="b5rnxHrU"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB1F1B86C7;
-	Sat,  1 Nov 2025 13:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762002647; cv=none; b=mWErflsGKYUlDv0g3GJOLxOTpbun+mHx5OE/lofoMk4nK6R/Hj0LHqVIQJQxm3C7JIRuIK5guHhGFJTuxD1iH9SsAphQ8b5qebfpRNkvuqPduQdL+XXNx/3jTcd0f8MZufL2WQqzuYTSL3Ct7HROck2PbD6sO9cvZ3hIhjB+pAE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762002647; c=relaxed/simple;
-	bh=E344S8+1QRn521QovyCsMxpgRFO6Ptgyc0Tz/4QqK8M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TRcAW6y7KrIHQa1q5J0sZC1zRRciTZbNe0MDF27HN3E+9TTRjpdo4XhwNDyHwTIWdowNOMje0Cf+V3NIAKfec26oTQdH0med6VVERQwKZEqDs5krjlAivkIE686ehP0MWcJeKgzX8ueC6kcgFD8O0LJO84ULLws0gE65YcjABA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JjT/Z/op; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1ED4C4CEF1;
-	Sat,  1 Nov 2025 13:10:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762002646;
-	bh=E344S8+1QRn521QovyCsMxpgRFO6Ptgyc0Tz/4QqK8M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JjT/Z/opVGfVr4F4Wclj1iqAhu4ykoa4Yaaxd7zIFjwL1SYIT5QzSnscf/EJdd8Rj
-	 YN8rXYZhn/6r0H0w/aXVE295papxyNTLWdwtdTcnukL+4CNroA8Y0Ppij/9Q5k7txo
-	 CIVZCKb5j2j7/QQWG11fIIsUnlyX3yOsZWN/DUEbk9PJNnX0gPCKt+imp1MezAOMax
-	 lw68wPqHGmCex+hMbsKuXecKlMl658L6dXuDjFndhJtHN+vZ8r4bKN79nLpV6Jqq78
-	 1922RHwU1LmLYS4fDaVoU/kciVgf5qok0gA/i8KuVKD+aZg2ax6IAHq7pj5nm7ZiWD
-	 4pjudhk5R/32w==
-Date: Sat, 1 Nov 2025 14:10:42 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, linux-efi@vger.kernel.org, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	David Sterba <dsterba@suse.com>
-Subject: Re: fms extension (Was: [PATCH] fs/pipe: stop duplicating union
- pipe_index declaration)
-Message-ID: <20251101-bugsieren-gemocht-0e6115014a45@brauner>
-References: <20251029173828.GA1669504@ax162>
- <20251029-wobei-rezept-bd53e76bb05b@brauner>
- <CAHk-=wjGcos7LACF0J40x-Dwf4beOYj+mhptD+xcLte1RG91Ug@mail.gmail.com>
- <20251030-zuruf-linken-d20795719609@brauner>
- <20251029233057.GA3441561@ax162>
- <20251030-meerjungfrau-getrocknet-7b46eacc215d@brauner>
- <CAMj1kXHP14_F1xUYHfUzvtoNJjPEQM9yLaoKQX=v4j3-YyAn=A@mail.gmail.com>
- <20251030172918.GA417112@ax162>
- <20251030-zukunft-reduzieren-323e5f33dca6@brauner>
- <20251031013457.GA2650519@ax162>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C271EC018
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 13:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762002683; cv=pass; b=Xzrk6xuRyC4aJVzDbGwJecfOI0maknJ/unccv0IcMu56MKS40jtEW53o/DmZT9Sf1nVECoQzIOwMvC5g7YgdeBZed//L66/gOtAy2JYtO+4JE7sWyc9ypE1Uv0jGtL6NpDHAJEn7hJoGh95cn7bj0xEu1Kt3lT13FmyyJJqUEDM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762002683; c=relaxed/simple;
+	bh=0taRMor14N8gkPrOTnbjnXxGx8ZXOvRA4oL3AHJE1RQ=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=RcrFPuuWIbQs2geJaPLo8JXKKcXtmWQFGOXmXVLxVZeV2tQLhsv5cF0UIP2pHEMO8UJFy9HOQnLAIsZq7yRpk9njmDiRHeapcPYxNPDfkrBjl89CU8WLZljBgQfCPREH+3+oDT/cq04m3DzDcaReclo1Pq4JE42s/KZSeA//pRA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty; spf=pass smtp.mailfrom=linux.beauty; dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b=b5rnxHrU; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.beauty
+ARC-Seal: i=1; a=rsa-sha256; t=1762002662; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=UtHNSr1Fg9s8aac54dFgJC6UkSJZtVFgoo3lZMzdUSp6ELAnaa7/OzSEBHidOfh/ZGXDr/pt6rZr/Yv2tbKlRjynCe3ZU8+jUc6831g4q7ivuLIE24XfpNgh76eFXTxMHxmqc+PmE/Qia8PRehlv49scO7uVCXnJVweTJ5O3nIo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1762002662; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=FQkuvTbMrWNB614TnSFI9TReTgW3UOssKpYpKVzLOk0=; 
+	b=j8d16OD1g74dhDpxpcqu80wYkIdGNTd9mQVFG0WermIyjtFbcOkyWSnxhJNT25KfEDaWSpG2AfHntkjfVMUlLuJtqkaDHuQDJEbyfKLQXjaj3RKS31MN08jE7Dffo7HXjmfxYMBC3TJ9mPwRuZop2LIRGvtBrqnxuO/bEuqR+ZQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=linux.beauty;
+	spf=pass  smtp.mailfrom=me@linux.beauty;
+	dmarc=pass header.from=<me@linux.beauty>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762002662;
+	s=zmail; d=linux.beauty; i=me@linux.beauty;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=FQkuvTbMrWNB614TnSFI9TReTgW3UOssKpYpKVzLOk0=;
+	b=b5rnxHrUVfk6jEq6hzevc/mm/DZmNpA+2Q3c8mIPOZXVvTd2Hq6ZX37dz9r1BhLB
+	yA1V/MfmCKWwgmHVLHgbJ92njIe9PxhcRewQ6k2ADhTbOTymz8li2qvuWjrAeAAINfe
+	maEKA7tp25GCn/rmfuAb/7Y1gnaGcA1otFBkAAt8=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1762002659821563.1430926747331; Sat, 1 Nov 2025 06:10:59 -0700 (PDT)
+Date: Sat, 01 Nov 2025 21:10:59 +0800
+From: Li Chen <me@linux.beauty>
+To: "Zheng Gu" <cengku@gmail.com>
+Cc: "dm-devel" <dm-devel@lists.linux.dev>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>,
+	"Dongsheng Yang" <dongsheng.yang@linux.dev>
+Message-ID: <19a3f8ae9db.8a18892d3330798.1127794710232272337@linux.beauty>
+In-Reply-To: <CADSj-VoQerDc2UUfBOknRMGetSddMEqRKaC3VDniD+xCq0pH1g@mail.gmail.com>
+References: <20251030123323.967081-1-me@linux.beauty> <20251030123323.967081-4-me@linux.beauty> <CADSj-VoQerDc2UUfBOknRMGetSddMEqRKaC3VDniD+xCq0pH1g@mail.gmail.com>
+Subject: Re: [PATCH 3/3] dm-pcache: avoid leaking invalid metadata in
+ pcache_meta_find_latest()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251031013457.GA2650519@ax162>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
 
-On Thu, Oct 30, 2025 at 09:34:57PM -0400, Nathan Chancellor wrote:
-> On Thu, Oct 30, 2025 at 09:16:02PM +0100, Christian Brauner wrote:
-> > On Thu, Oct 30, 2025 at 10:29:18AM -0700, Nathan Chancellor wrote:
-> > > There are several other places in the kernel that blow away
-> > > KBUILD_CFLAGS like this that will need the same fix (I went off of
-> > > searching for -std=gnu11, as that was needed in many places to fix GCC
-> > > 15). It is possible that we might want to take the opportunity to unify
-> > > these flags into something like KBUILD_DIALECT_CFLAGS but for now, I
-> > > just bothered with adding the flags in the existing places.
-> > 
-> > That should hopefully do it. Can you update the shared branch with that
-> > and then tell me when I can repull?
-> 
-> I have applied this as commit e066b73bd881 ("kbuild: Add
-> '-fms-extensions' to areas with dedicated CFLAGS") in the
-> kbuild-ms-extensions branch. I may solicit acks from architecture
-> maintainers but I would like to make sure there are no other surprises
-> before then.
+Hi Zheng,
 
-I'd like a stable branch before -rc5, please.
+ ---- On Fri, 31 Oct 2025 10:01:23 +0800  Zheng Gu <cengku@gmail.com> wrote=
+ ---=20
+ >> On Thu, Oct 30, 2025 at 8:36=E2=80=AFPM Li Chen <me@linux.beauty> wrote=
+:From: Li Chen <chenl311@chinatelecom.cn>
+ >>=20
+ >> Before this change pcache_meta_find_latest() was copying each
+ >> slot directly into meta_ret while scanning. If no valid slot
+ >> was found and the function returned NULL, meta_ret still held
+ >> whatever was last copied (possibly CRC-bad). Later users
+ >> (e.g. cache_segs_init) could mistakenly trust that data.
+ >=20
+ > This functions is * __must_check*, users must check the return value fir=
+st before touching the meta_ret, so it should not be a problem here.
+
+Right now, the callers only check the return value with IS_ERR(). If the
+function returns NULL instead of an error pointer, a caller like
+cache_info_init() will assume that no valid cache_info was found because al=
+l cache_info are
+corrupted. Instead, it will try to init a new one, and then return 0 (succe=
+ss),=20
+https://github.com/torvalds/linux/blob/master/drivers/md/dm-pcache/cache.c#=
+L61
+
+Later, cache_tail_init() will access cache->cache_info.flags. But in this
+path all cache_info may have already been corrupted, and the CRCs are misma=
+tched
+(https://github.com/torvalds/linux/blob/ba36dd5ee6fd4643ebbf6ee6eefcecf0b07=
+e35c7/drivers/md/dm-pcache/pcache_internal.h#L97),
+so flags may contain garbage.
+
+This commit fixes this issue by allocating a temp buffer with kvmalloc, so =
+meta_ret would never
+contain corrupted values.
+
+Regards,
+
+Li=E2=80=8B
+
 
