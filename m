@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-881428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E1AAC28300
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 17:37:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BE97C282DF
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 17:34:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A7933AC180
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 16:32:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 689A4189C014
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 16:32:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0518C26ED20;
-	Sat,  1 Nov 2025 16:31:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10587253B64;
+	Sat,  1 Nov 2025 16:31:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ar9f79Pk"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="U9McLapY"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD995263F30
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 16:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF432265CDD
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 16:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762014708; cv=none; b=SrUnEvARJOpHYhGmMImd18lv7C6hN71raIuZVyuJYTkF+mnLgANH0pw+YhQ+tzHpY48fWcw9ZN1AjwFHUYZgueMZqlh9yuL85EFZxBviVHIk54VHore6Ua5ZnZNpabroWjm5yOj0+KftSQbarVm6CpKjMpK79OYTvOA7d5+tAj8=
+	t=1762014709; cv=none; b=F14FtfinKmtBIRvQJGamErVY63vfFkIiLGi2fVyYY84tP7xmhcfTPo8s6t3LQ5zvvUYreP+zj5pN1/+zb9Q4m9ZZeWAWPF3RRAXYXq5Z8Y1KbuSdswAchvrkAGVX0KsmyR0LwaKS+EBoBos02nrQcrLv3cul9hGdBTbxJs26RvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762014708; c=relaxed/simple;
-	bh=/+z72a0HG4HnREfzMdeSt5GSakxveM/XKf3p4bLSwYE=;
+	s=arc-20240116; t=1762014709; c=relaxed/simple;
+	bh=M+HTbFEvOs14zz+Qzo5NFOodIQwx4sRzNfxNyQ6Vu6E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hFLkZgEpHQSXkQVIlhCIeg2auSicm39dllAkIgFz9F2xP0b0P1M0fYG/9CKXpMlvXKIRmyg3feyudv00fbZD4whxH1MdKweIYNFVgU8wW5ac26f8kIe7X4Vu2v1wrU1iJlx76cbB8XrrOk0gqvhm3dmWLNJruw7ba0M0BL0UKLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ar9f79Pk; arc=none smtp.client-ip=209.85.128.45
+	 MIME-Version:Content-Type; b=IrkJkEFZIqRRTGDaee8sNq/5Iy18ETahvTFTxwtqtsyC8s79jrfH63Jn5ICjx7/yWAHFa4Q+isd9Y4lUZCfY4R5vi6ssWrCsZ46wkZgFbXM1HM1vYPkZqpAG2qPt5iIZ05mF0K8z+YOvOBn+O0nWs/xlX/3t9YX7/dwcrBa8v18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=U9McLapY; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4770c2cd96fso20981955e9.3
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 09:31:45 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-47114a40161so36378795e9.3
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 09:31:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762014704; x=1762619504; darn=vger.kernel.org;
+        d=suse.com; s=google; t=1762014705; x=1762619505; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZYxN3f0sISH3VgYFCYL8piMSpurElNpYj5fttjw9+bM=;
-        b=ar9f79PkWyGJ9NEpBnvnlSROM8LMMeiPT6FS7QJJP8DTcXybfcPuCrWOUrZY2pw5jz
-         Q4aaBGj4jXvgj9CYWql8FGb/H6FC8xqUbSiyif0nHjnRuWNJUXh2hLhEPgRTVkr/3U7G
-         WqaBRenyEjtLn6ZI6OC9HlkYdSW15V3rkrjAqzBJu6hHt4ktQrKRbSIxepOxao/O3o4J
-         NAtdS3DGhwkkQleja4VaobmtxT19fa7/4auTAujLfGbj3UCNd+yZi0YtvHm451Wkh2Uz
-         klfqHo5UTkNhBNVnHLZKp0xgp0/vOS1mPszIdS9p9vBimoLZtlse8PN8qFXZ90Fg5RqH
-         Y5OQ==
+        bh=edy/Vm6M6bIk0NgCarBHEsL69x+coUeeUJHets+qLoU=;
+        b=U9McLapYF6WPJdVbrtLTblECtVj0lZPUbW1YZfqfLDptVZVHVqn8p87n+3UooO+wrN
+         ZJKuXbXhE6xpXi9QvSFM1miED9h4b8gzO0QtJ4KMIrqFP7weVpxUMtTHSCd8Nu/vvFuA
+         JuHRmvwIm6wHrSmmOnV9L2MaAhF2tEcM8gCnKWoLy7r2MdiZD61M4zjDKTjytLg105/Q
+         BGHU7S4ci+S+5wndMZQukod/uIqq8Mm6dy880LixLbToT+O3V1WLpyjbXKZT8ALHPVcZ
+         Yj4PKJdWaRXyeIQ3qI2GoG8IXGCsReOPBAq47+LdHJfL8GylEhHfY+ffcrU+4dR8xQyq
+         sz9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762014704; x=1762619504;
+        d=1e100.net; s=20230601; t=1762014705; x=1762619505;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZYxN3f0sISH3VgYFCYL8piMSpurElNpYj5fttjw9+bM=;
-        b=iVilnMdBxR10SnFjF60xZS5ooeLmhT+FNaUod6719vfxWfU7HcWtdVPR4xM/xb7Biq
-         k7Z+w+vHashLaxATOPdeHUo2RNtr7Pa2E/ZhOE3q1PB+K3FzqCCW2cYQ3TinzEC0t2fO
-         GLNkHXUYtS1TOrfCusVKO56FTdFgSw1wm2fLNs1zLtX3NscXt9DfLrgZ7VpbbmUGuvrc
-         eZMJJ9OaBcvrlYcx9zF2juSJblrIvr8UfQHXYJ3uPqhqiHIxXmK7HZVWKeJfPEnaWFNC
-         pEfqM5UrKNA1s4I/Jl5cSVySKn89jkzEDYGAwz1I6XrVpV6mWFDrNPi/VkFUVb493bmc
-         ef9w==
-X-Gm-Message-State: AOJu0YxO1Wtm37Y3bpv0tAZ/AkxqZOCT+9t79vCkFEI/RuxG5vV6PiKo
-	kWG3SoMOe5hKrpQDDm0J1L9kBu7ArVQbJ69Obrd515lSLWL2C4JCa919Ujic3/Og7RBR2phAa1f
-	KCUn0
-X-Gm-Gg: ASbGncsxBu5+fRXI9AFgSoR6Z3o8cLGBGGim98wo3VlJeX1JzEMkn+M30QbUVganAKn
-	A6tZA7esJQ/F2+LdNPfnCZknpjiTcRKNg2KGByrlzFj8bE+7IuiafMJmpZ5d1hrL8Hh3tTGg4cZ
-	qsa5Vm8ovlsQAvpFlFc54t8I99U+9oHRQ6GyEvHFZsyi3DqX7JDjHyB9aumwG18jQ8cE3O1a8eE
-	HI+uK/ChioXj745e7YqT79jDxhg7wjtfdFdBwJ5d09mV1PPO65uLgteV+iH0EaBB4oPuwUukqdq
-	VvRyMnGkYIoXKDwPIV1BnjZkDJzPifqnD+ddM+dy9KStIPwU3GlfwPpwOSyytzv6hlXtNv6RqkQ
-	oLRjfPEdh77frVyccdJPhdeQFGi8SPeLi7WgZdQT1aMoivdi5BXDaUNOpHD/nSNgVU4K+6mq2nU
-	HXDN+2mg1PnebEgbqMFVtHytkm
-X-Google-Smtp-Source: AGHT+IEQI/OmS9cYFi4nezlD18gB9/y0tILr+1Qa0cLSqTcdp9k3IlgKBk0q4nInZ5a3mPNL8k0tmA==
-X-Received: by 2002:a05:600c:3511:b0:476:4efc:8edc with SMTP id 5b1f17b1804b1-477307d9920mr63343645e9.15.1762014703867;
-        Sat, 01 Nov 2025 09:31:43 -0700 (PDT)
+        bh=edy/Vm6M6bIk0NgCarBHEsL69x+coUeeUJHets+qLoU=;
+        b=Y77tOhWBKSRWKjGlZe6jqtI4BBKyqB0yh6bQBvR69iFs8Sjo0jzFK0eXEYe28vDKXc
+         U1/jDaSLiyA2GcaYCXfLuwBISVz4cFbS0v0rPJoMCuxL6ktGG5iWvMKUpQXyX2krCMW8
+         9pUoDVIDp2PaH8BTdMGrG42Uf5wZeD4PMdYVs+xNK6bjRom/+TFmK0ML91ZVWCUvvzt3
+         0y1LnXr27ez/Fr0oGG4OGb3sK6GiM2Sm7iFIbN45pUXPlQA1mtAA3uDZGEguUPlQ9tWS
+         EwLcuWkLbka9OqzanKC9GyAnEoffSobBB3+6Y5hFpvWVL3EfJkoHSNLiFlOe1I7yPvfz
+         jnhg==
+X-Gm-Message-State: AOJu0Yx21m+ykM9WnFB2wrt2rWZ6Te3ZOX5E8vzKzkH+DCg1PRb4+hfz
+	3EI1xwAH7CmesaZ8Xb/SK/1yeHpRCdr23Orq95y7u7Z9bVjviN48aJazmSajS8X46idBYB+tmMk
+	du7aP
+X-Gm-Gg: ASbGncsCtgf17UdSj+e8MIaX3QuAcBfaBn4Y45Ab781QJJT8m2pzApxbTIzsKvLO768
+	lvRpHzd9VoV8n04Zhoe5n0Pe7GbMgRcrjYgajIivNlRmnMNrGAPzOQOSfxBq3IzQywL87TVLYZF
+	oyulg6Zwage0dn9XWulYvEBQctcsCWNIvel9G1ArSne5CXliy+8r3u3sL/hMtWdtuiL9MH7RrF8
+	jq97909/iR1l6Ozth0Dd+zLZVmdkderjHCakgOU2p3JTti4UB7MChOEmkukOgqCZNfmoPeRKwGO
+	F+QBVYBsy+0l3Fv2P57jKwf7aNQNPUQH6qOCnaRcWbzOewjyg8Kd4m38xjA/2BkDhVC8S6nyibJ
+	982FhbwvHPBXDdCvZWmJ5bFdiODSPNx7G2eDUCx81lXdYo8vaLPZ59z8IOIfAT8Kwp5JQqBxAIF
+	Ajafg8r/iCA3gTyg7yRyHKZhD1wwwT70FYq9w=
+X-Google-Smtp-Source: AGHT+IFERS3rJ2ULC1YVWKNWA3KseWiAk4MFC4NTTgLowJegNZ8jjdlLfmXtfvReueuEEHynaSc8Sw==
+X-Received: by 2002:a05:600c:470c:b0:46e:5b74:4858 with SMTP id 5b1f17b1804b1-477307e4890mr65694995e9.13.1762014704826;
+        Sat, 01 Nov 2025 09:31:44 -0700 (PDT)
 Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c394e33sm56742285e9.13.2025.11.01.09.31.43
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c394e33sm56742285e9.13.2025.11.01.09.31.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Nov 2025 09:31:43 -0700 (PDT)
+        Sat, 01 Nov 2025 09:31:44 -0700 (PDT)
 From: Marco Crivellari <marco.crivellari@suse.com>
 To: linux-kernel@vger.kernel.org,
 	linux-rdma@vger.kernel.org
@@ -84,10 +84,10 @@ Cc: Tejun Heo <tj@kernel.org>,
 	Michal Hocko <mhocko@suse.com>,
 	Jason Gunthorpe <jgg@ziepe.ca>,
 	Leon Romanovsky <leon@kernel.org>,
-	Yishai Hadas <yishaih@nvidia.com>
-Subject: [PATCH 4/5] RDMA/mlx4: WQ_PERCPU added to alloc_workqueue users
-Date: Sat,  1 Nov 2025 17:31:14 +0100
-Message-ID: <20251101163121.78400-5-marco.crivellari@suse.com>
+	Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>
+Subject: [PATCH 5/5] IB/rdmavt: WQ_PERCPU added to alloc_workqueue users
+Date: Sat,  1 Nov 2025 17:31:15 +0100
+Message-ID: <20251101163121.78400-6-marco.crivellari@suse.com>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251101163121.78400-1-marco.crivellari@suse.com>
 References: <20251101163121.78400-1-marco.crivellari@suse.com>
@@ -124,26 +124,27 @@ must now use WQ_PERCPU.
 Once migration is complete, WQ_UNBOUND can be removed and unbound will
 become the implicit default.
 
-CC: Yishai Hadas <yishaih@nvidia.com>
+CC: Dennis Dalessandro <dennis.dalessandro@cornelisnetworks.com>
 Suggested-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
 ---
- drivers/infiniband/hw/mlx4/cm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/sw/rdmavt/cq.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/infiniband/hw/mlx4/cm.c b/drivers/infiniband/hw/mlx4/cm.c
-index 12b481d138cf..03aacd526860 100644
---- a/drivers/infiniband/hw/mlx4/cm.c
-+++ b/drivers/infiniband/hw/mlx4/cm.c
-@@ -591,7 +591,7 @@ void mlx4_ib_cm_paravirt_clean(struct mlx4_ib_dev *dev, int slave)
- 
- int mlx4_ib_cm_init(void)
+diff --git a/drivers/infiniband/sw/rdmavt/cq.c b/drivers/infiniband/sw/rdmavt/cq.c
+index 0ca2743f1075..e7835ca70e2b 100644
+--- a/drivers/infiniband/sw/rdmavt/cq.c
++++ b/drivers/infiniband/sw/rdmavt/cq.c
+@@ -518,7 +518,8 @@ int rvt_poll_cq(struct ib_cq *ibcq, int num_entries, struct ib_wc *entry)
+  */
+ int rvt_driver_cq_init(void)
  {
--	cm_wq = alloc_workqueue("mlx4_ib_cm", 0, 0);
-+	cm_wq = alloc_workqueue("mlx4_ib_cm", WQ_PERCPU, 0);
- 	if (!cm_wq)
+-	comp_vector_wq = alloc_workqueue("%s", WQ_HIGHPRI | WQ_CPU_INTENSIVE,
++	comp_vector_wq = alloc_workqueue("%s",
++					 WQ_HIGHPRI | WQ_CPU_INTENSIVE | WQ_PERCPU,
+ 					 0, "rdmavt_cq");
+ 	if (!comp_vector_wq)
  		return -ENOMEM;
- 
 -- 
 2.51.0
 
