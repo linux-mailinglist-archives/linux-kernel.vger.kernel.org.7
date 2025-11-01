@@ -1,244 +1,156 @@
-Return-Path: <linux-kernel+bounces-881186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D2BAC27A9A
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 10:10:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79080C27AA6
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 10:14:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BED1C4E4A90
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 09:10:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2EB51A26A36
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 09:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74B082BE7B6;
-	Sat,  1 Nov 2025 09:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B51FD2BE7D5;
+	Sat,  1 Nov 2025 09:14:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Uzjm36Bb"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZsEDrVzY"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A854C2BE655
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 09:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB9BD27E
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 09:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761988216; cv=none; b=DborW0QWDyv7lVLlRMTkXAjvMYSnD5zMGEvonMa5IkAphLs7/BRYAUkx6mtkdxzIEMCkqwoS102cUBcccRQkqA4A9CcwaBkjbaZ7c6eZFkv1Kaix8FBQgz4fcSnHCzFhLSgd1dVmrVPSbDhiwYkWtr9saaxlhyPapJbNBD53F5s=
+	t=1761988484; cv=none; b=NBQjAV/u2ynIjUdtRkvCjLqEoe/vstahGBxq+fRGeDioIsOAa9r9NqU3YZSIO9TsiJK2AwrP7J1hKTPDA2TrR0hnMaTUHZCCRH2ISp090qaWxF4m8LM/A3tHWsZeAijO7Mcto7MlLne/+4HqLbc4yB4Rt3aSYaNmvgJRzBcVTxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761988216; c=relaxed/simple;
-	bh=Dp2+LlrmkGSTKwtwAHJEz8oBvjgRnxxMPvMMXnTMpGc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GqM9ksojX+qseV9MwFTI2vH6eKEou7xhVxjGZzf7kqElp7fi80XZhQMZk+fgk0jnHEYn1by/050X3bgaGCgBR7ew+y/tE+5TzqhJk2be4asmXDGjpNWTK7bcRiAO4DfTIdiwcvLcEUVDLG/+YK0x98D1allqzyvkCykeRNsNmcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Uzjm36Bb; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b6ceb3b68eeso2294574a12.2
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 02:10:14 -0700 (PDT)
+	s=arc-20240116; t=1761988484; c=relaxed/simple;
+	bh=bcrlFnjZggziM0QjMVr/YX7dISMIrIzKScqkwXuRVEU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GvvzD+NCSWxEpHFujhvPAxkwZuBM3T3J0yVGCYa6LddMgHJTG/NuHOxjGIhTs7Gp4x9X/rWQ0pUgH2/+zcg5w15khwOVAdTH/crTlZHjfMTNyF1lkntGu6ORUaMqnIIF55C6TE/YzyPccvw+gTpQ34pgFcb/nxXfMO5xcKzKpQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZsEDrVzY; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b5b823b4f3dso514264366b.3
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 02:14:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1761988214; x=1762593014; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cjy8DpaTk4xM2lcsRurqJM+HB6H2irc/jMu1lfXkZyU=;
-        b=Uzjm36BbryBEWFC/R5XN2WXT0GRfRU0fw8DiomaofNV23VpZE9VljizfF3+3joSaNY
-         E8lpk+cIpNrZw7FsLOp9516nrzDij4veMBB1VjjaIQGmQCQPUJwmOTQNLi9SGn11VqCL
-         KNQJmK1bvLZaAfN62jqv4RtF2W4FMBC/q2CCyJ2UDTm07ai1M4phnbNf5LRsM8OGfjv9
-         sc9kHrIfx4BD60Puc0dGt8d+qgUIACSLgswabnWHe1nL3ofcvZ3GXLNvc2Siaax9eRsU
-         VEXJIT9FhhFj8pRnYQLpeIuUw6w3BMPHJMEyW0D3ZBp/eMxoG9oLRBiXn3i9N89Np4N6
-         eLCw==
+        d=gmail.com; s=20230601; t=1761988481; x=1762593281; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bjIH77hSFGTlPjPYXJoBf9VYrU+klsU2kyIOYwEmpag=;
+        b=ZsEDrVzY2Sw7IOsPUFyPEquNjVCBKVmnWv8CvhQqnIXQeq+H3BHzFJk06V8dJmX8mx
+         jUzED/yole49OUO3wPQB0SMnFsN50Zamz40+5u+uNNBJliE53/Xs7rsTJad/myMNzX8Z
+         ykkrhhTowNOpP4XGqdNiyNmrWmcDHv4sfPLVAtFzeren6yPOTsC9AAIKn2vwcC0A4BMn
+         k2urr8yCc4mpTKmaOkm41WP0ajzsZxl7YlymErFfc+6AuG5o3mOcng0R2tIFg0Aaaj1x
+         C0NJhhVAkAlGbDWnFmeWjNGXXcbYOCN5ILwgK1CNa9uW5ijjQVnOtkoSOxN0zvTskwsS
+         CX3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761988214; x=1762593014;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cjy8DpaTk4xM2lcsRurqJM+HB6H2irc/jMu1lfXkZyU=;
-        b=T6Bf00J77TJMue/RTdbXaEl5+VE5cAuCjDOlSiF/kuyc+VVaihb9YLLYHorhZ8PYV/
-         qD/xyTzxu7H4a+ZDwVRgxh0szV6d6KPIU2UpfVoxKcAmSwxoCNR6VqumOzv/eD2NVKjb
-         DIUmUfzul6btxWW2PfHHy/MXLpZjWTwAC9lO4GtCgnX6LRZ++0O5Mh0kIReLGE9upXwt
-         GoLDKVS2o1U8PuerExf6Z6LJhIofH+GeF5crSw2JTNWqhgI9nqjKbgCCaVgmvguWMV7E
-         OrFiv51o9MULOMT0aMtek+uzvQZci/QjfrhU+mhv50CHjxdxSQb2tpDlMI0sw2lJjV4E
-         NNVw==
-X-Forwarded-Encrypted: i=1; AJvYcCVbAsH+xEYo8OUhAehsG24oLxySN6y9Gel9jLCG/8twBoRpykTF73or72Ug/ghqyQgY15fgr+GtSTcwOUQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCcIUEpkle+hPcq965fBwiTNKUU0N1BlWxxzJCWdjGLL8qgzUK
-	h4wDBEDuGmzHT1cXSxEEMS2Z+Tt7tQAUD7slUhhYQVubHQzhpwMEl5PrfL4jkMw33w7Y3lTZiUQ
-	xNcJnURhe7L0HAsu+jbBeqS14hBCA5zvdcBP/10HnJA==
-X-Gm-Gg: ASbGnctPx7IJtDpRK0+Sy0hFjBbDqNfJbKCiC4JDzcNFKLA+4Ny7MupN2/oQXPgBnJl
-	KOk6644IC5lSkyoOEwvGk88fTQy+kdy7DRoJ7YWWLoW4kYl6jaSs1BQ5aFTLwlq7pJoKo8AUCez
-	yx7/HVwxpJ/DiB8Imzr2ilGkCIGolwdMZaPvj5UzSPPCRPAiweoJVY5oLoLMJWzGNi7Axsw+gxj
-	VlPkC626mk63CR2Gvq8F8nV0dOjIORpdjV1o0sGU+dWmg3Yatscq7S9xjVLpIXxUdpbCJMeNgO9
-	mYqcX+33ddVOognqBk86aBBxt6Ncfz8yU/X4sowU1kzLUX/XzKu0iPUQExmp
-X-Google-Smtp-Source: AGHT+IE/83P0PCPiiJybb9+6zHNoa/A2vjnRPupEud97zgL56fm2RzORpcZVk52SpVD1UIWKuQlELJKAnLSFFv96QWo=
-X-Received: by 2002:a17:903:1207:b0:294:a827:851 with SMTP id
- d9443c01a7336-2951a37a48dmr87237605ad.17.1761988213917; Sat, 01 Nov 2025
- 02:10:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1761988481; x=1762593281;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bjIH77hSFGTlPjPYXJoBf9VYrU+klsU2kyIOYwEmpag=;
+        b=KcbBy4zutYjZ9KymPZuJrcotE1YQWNZJipGYTzJiHDwhuyk3pBrMaQ9sjoQp2X5Ark
+         lkbqIdx+d/N12cEOLC0MTRxHD7jRoePhFE1hZlk8ANj5bc3FVWfff8kgBAoveVCKz3rD
+         nDYn/mW87KNTaz7nB1LpYZh1lgtfD4eh70Ky2X2sM9VThyir93KEK1Ahrm3jO/fcRFJt
+         lFTc2KVrL2oGmXgffTSjfg6A9swV8Tcc8WPXl0lPUIOZtXQZO3XgyHTJ2Nya7pvaZshj
+         w5UxO2i3FmF4zJ/pmvPk9HPcstsbu4T31x+0uAlSYpH505DuNt5eemJVqN0CYChX4smZ
+         iL0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXfMdoideFqn4ZvSZ3U+u4gZ38bPpnsu7yIQEPaEyLjKYuQb3KGpHn/i5Pc9qwre0RNGTyuceyc00GmV1A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm6uIRMr8s5r9IsL0I5iYk7zy/q56OIsfhV3n4phaNSDgcr6FV
+	dZ7J86UbWA7/P0MPW0At+CGfa+D/qT/oY5Fuunn7jOlaEaRuysKCeZUb
+X-Gm-Gg: ASbGnctikNLy/tm5we1wcWQ8Qgu5YBl7KZ0vj+/QWLHx3o2QaFp8iF5dJmfuRl9Q/Mi
+	DTqgvKBfKiy5qKMzTGYvTLT3f+MgFNeWhUyEHVPF2MJLRExHw7QFoUsdJ3Ls3t/KvyaG7mRR0Tn
+	kQOYMVOILaFq5zMwVNktt7ktSD2t6oyxP948bsD659DLEgKRPgzl8mVk8wnehcWwx8u3JPQ6DJO
+	s2HdVULT58wYz5vWfOSYdw4VPs+6alqPPNeYPpi4KIUjGIuF/wnontTnY6S77Zrb/ubsrrUCweG
+	t4A7b4/gndc5JBKgw+QoBX+0jCfxWpRLjVIb5WOXD2gjKJND2Ag6+MIgx3Z0JhozyAHuWpmxvIV
+	gc/4luHY02/6ZIA4ZXpkUFEFZtTdJSFPUxTEeD2dukLyp+ZH2txM0lIAFeaRK8Yjqglu420/Agd
+	jKyM/b2C6BrVc=
+X-Google-Smtp-Source: AGHT+IE4m8jWVnUeKVDtexD4VIUk1rWLovwGz6eGHJUc/54gMaEdRZBIb1qgJ3mc6oZKZWsrxXePlQ==
+X-Received: by 2002:a17:907:3f82:b0:b6d:2773:3dcb with SMTP id a640c23a62f3a-b7070138988mr589022366b.14.1761988480766;
+        Sat, 01 Nov 2025 02:14:40 -0700 (PDT)
+Received: from archie.me ([210.87.74.117])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b70779a92c9sm409785466b.22.2025.11.01.02.14.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Nov 2025 02:14:39 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 9B9D14209E50; Sat, 01 Nov 2025 16:14:35 +0700 (WIB)
+Date: Sat, 1 Nov 2025 16:14:35 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Randy Dunlap <rdunlap@infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Networking <netdev@vger.kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Steffen Klassert <steffen.klassert@secunet.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH net-next 0/6] xfrm docs update
+Message-ID: <aQXPe49BkkZ1W1uM@archie.me>
+References: <20251029082615.39518-1-bagasdotme@gmail.com>
+ <7148e00e-14c4-4eb7-a940-112e86902bc2@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251031140043.564670400@linuxfoundation.org>
-In-Reply-To: <20251031140043.564670400@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Sat, 1 Nov 2025 14:40:02 +0530
-X-Gm-Features: AWmQ_bnMvHfcDTj3Sf0J1WFQ_EMmx_jBUTSCbGachXza86m83JFdBgDkQLmkckE
-Message-ID: <CA+G9fYuCoXiue1eS6XV+cyB+pDH2Bdhkdo6cc9OCt-8F9nXkng@mail.gmail.com>
-Subject: Re: [PATCH 6.17 00/35] 6.17.7-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org, 
-	achill@achill.org, sr@sladewatkins.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6h14tAqlT9+a5/Iu"
+Content-Disposition: inline
+In-Reply-To: <7148e00e-14c4-4eb7-a940-112e86902bc2@infradead.org>
+
+
+--6h14tAqlT9+a5/Iu
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, 31 Oct 2025 at 19:36, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.17.7 release.
-> There are 35 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun, 02 Nov 2025 14:00:34 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.17.7-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.17.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Fri, Oct 31, 2025 at 09:58:33PM -0700, Randy Dunlap wrote:
+> OK, one small nit. 3 of the section headings end with ':'
+> that should not be there.  See xfrm/index.html:
+>=20
+> XFRM Framework
+> XFRM device - offloading the IPsec computations
+>   Overview
+>   Callbacks to implement
+>   Flow
+> XFRM proc - /proc/net/xfrm_* files
+> Transformation Statistics
+> XFRM sync
+>   1) Message Structure
+>   2) TLVS reflect the different parameters:
+>   3) Default configurations for the parameters:
+>   4) Message types
+>   Exceptions to threshold settings
+> XFRM Syscall
+>   /proc/sys/net/core/xfrm_* Variables:
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+Sure, I'll clean them up in v2.
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>=20
+> Oh, and could/should
+>   Exceptions to threshold settings
+> be numbered, 5) ? It looks odd to be unnumbered.
 
-## Build
-* kernel: 6.17.7-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 7914a8bbc909547c8cb9b1af5fbc4f1741e9e680
-* git describe: v6.17.6-36-g7914a8bbc909
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.17.y/build/v6.17=
-.6-36-g7914a8bbc909
+Ack.
 
-## Test Regressions (compared to v6.17.4-346-g10e3f8e671f7)
+Thanks.
 
-## Metric Regressions (compared to v6.17.4-346-g10e3f8e671f7)
+--=20
+An old man doll... just what I always wanted! - Clara
 
-## Test Fixes (compared to v6.17.4-346-g10e3f8e671f7)
+--6h14tAqlT9+a5/Iu
+Content-Type: application/pgp-signature; name=signature.asc
 
-## Metric Fixes (compared to v6.17.4-346-g10e3f8e671f7)
+-----BEGIN PGP SIGNATURE-----
 
-## Test result summary
-total: 126960, pass: 107190, fail: 4404, skip: 15366, xfail: 0
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCaQXPdwAKCRD2uYlJVVFO
+o7MJAP9oppzWwRobyPNTMy/S+a83Bl9LCyQUEYE9ompFmbp8rQD+PNBr+LTiJ8ac
+5XEpfnhav7RYgjmpzWnVM2z5LwA5agY=
+=jv2q
+-----END PGP SIGNATURE-----
 
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 139 total, 139 passed, 0 failed
-* arm64: 57 total, 53 passed, 3 failed, 1 skipped
-* i386: 18 total, 18 passed, 0 failed
-* mips: 34 total, 33 passed, 1 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 40 total, 39 passed, 1 failed
-* riscv: 25 total, 25 passed, 0 failed
-* s390: 22 total, 22 passed, 0 failed
-* sh: 5 total, 5 passed, 0 failed
-* sparc: 4 total, 3 passed, 1 failed
-* x86_64: 49 total, 48 passed, 1 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mm
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-rust
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* lava
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-build-clang
-* log-parser-build-gcc
-* log-parser-test
-* ltp-capability
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-* rt-tests-cyclicdeadline
-* rt-tests-pi-stress
-* rt-tests-pmqtest
-* rt-tests-rt-migrate-test
-* rt-tests-signaltest
-
---
-Linaro LKFT
-https://lkft.linaro.org
+--6h14tAqlT9+a5/Iu--
 
