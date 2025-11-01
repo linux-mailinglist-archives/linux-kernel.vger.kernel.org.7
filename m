@@ -1,152 +1,161 @@
-Return-Path: <linux-kernel+bounces-881415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C9A9C28279
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 17:24:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6B03C28291
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 17:27:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F41B1189AA92
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 16:24:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2827940218D
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 16:24:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562E525F7BF;
-	Sat,  1 Nov 2025 16:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="LXJ0jJPg"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 648AA24DCE6;
+	Sat,  1 Nov 2025 16:24:51 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F46E19049B;
-	Sat,  1 Nov 2025 16:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2529224AE6;
+	Sat,  1 Nov 2025 16:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762014258; cv=none; b=MpWyZyEQn9hyvCLh1/zM2nFDg/CgAXq4NZw7YUlilif2t+frfUC5Z33eg7ykj+5B1ORPyzoRP6GJXZ66D22/PgfUzF0TKKDUPXAsK1qeBRjTPaB5/dPj5NWYMItLh5i4ZAwANgq0kNWVuaSxOgW+GdDHIotKv5MMr5nBJXAMgGA=
+	t=1762014291; cv=none; b=tNXfU7DEUGmEDNPqjKjhzbWXysRVVWPszuZir1lgoZnhOuhJDQ99Wtasji/RzLr+9K0kK2PMBnpZJy12Le7wbeIRyBIt+6aJhKEMvzm+GcQvj+z4oSRfLcb36yvizi1qk5YgDsRUJ1OkI6YQ+EfMF71H7TAiS56HVsDwc8G6qQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762014258; c=relaxed/simple;
-	bh=W1Ad/Hpmi05kW+LkYpX9iXeR3vzD1qS/oR7rcvv5ZMM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UFF+OQiuUSMrWTohaFS7vhH4xOeiePAsx7XlNg5o9s/E6mx9yrJ3QRdm+CMj5Ms5HST1iZ142ET1xLpakpiQrZFV3vuXX73UAyCMJFb7yV/9VkJ0jzlrtGCVUc8UzqADtTA2PzKiJF/gS6U5fevoCzuNJwnIKm2xVX12BqSWQUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=LXJ0jJPg; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=rT
-	eDMOibmlghpQVXp52MOWLYZFEzyWAti7xjOoZt1/I=; b=LXJ0jJPgsEbN8jsn3g
-	j7upqizSVegB/eDdNnZhbBIspuKLiGJThtOBLiXg7L6BWlV6VqKrjDLBc+PTLVAk
-	jVirPP6XtUUMTAi6phZ1nGhBIHfcseWp0vjw0Avu5deeySv8l1tDysOit+kQO+F0
-	OBlwNtc9NvBnoAojmi2mKMtrU=
-Received: from zhb.. (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wCHBDkQNAZpNmGwAw--.59274S4;
-	Sun, 02 Nov 2025 00:23:47 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: mahesh@linux.ibm.com,
-	bhelgaas@google.com
-Cc: oohall@gmail.com,
-	mani@kernel.org,
-	lukas@wunner.de,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hans Zhang <18255117159@163.com>
-Subject: [RESEND PATCH v4 2/2] PCI/AER: Use pci_clear/set_config_dword to simplify code
-Date: Sun,  2 Nov 2025 00:22:19 +0800
-Message-Id: <20251101162219.12016-3-18255117159@163.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251101162219.12016-1-18255117159@163.com>
-References: <20251101162219.12016-1-18255117159@163.com>
+	s=arc-20240116; t=1762014291; c=relaxed/simple;
+	bh=mXqPYfYw9esG1ib211VZSuWGPUTcOUBNT+kvWwKlaY0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gfMPOW/y/nZj2HpgMrIWf1ewMKMgisVAB6TN7pRRDmDb+Qzf2GhYgBdSUG+27MpGiOysiIRmc/IYXVtCf4KBy6h0X58oOZCzBP+KVcwG+U5pYjxq67JfZ932JKzNDlEtWXhvuUKa8bYoS32lr0ojrUoVGssIX0ZLb29UvFrbC9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.5] (ip5f5af736.dynamic.kabel-deutschland.de [95.90.247.54])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 020BF61CC3FE8;
+	Sat, 01 Nov 2025 17:24:18 +0100 (CET)
+Message-ID: <88de4c86-8696-42d2-a9a5-192202c6d90e@molgen.mpg.de>
+Date: Sat, 1 Nov 2025 17:24:17 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wCHBDkQNAZpNmGwAw--.59274S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxZFyDAFy7AF15tw1kJr4ruFg_yoW5Xw1UpF
-	W3AFWfAr4UJF15ZrWDWaykJwn5AF97t34fKr93Kwn5XF48uFZrJ3sav34UJ345KFZ5X34r
-	Jws5Ka1rZF4UJ3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zE2YLgUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiFQj4o2kGMU41FwABs1
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] Bluetooth: 6lowpan: fix BDADDR_LE vs ADDR_LE_DEV
+ address type confusion
+To: Pauli Virtanen <pav@iki.fi>
+Cc: linux-bluetooth@vger.kernel.org, marcel@holtmann.org,
+ johan.hedberg@gmail.com, luiz.dentz@gmail.com,
+ jukka.rissanen@linux.intel.com, linux-kernel@vger.kernel.org
+References: <639c5cb6ceb49ffd63952dc69d0d48b022aaec3b.1761998763.git.pav@iki.fi>
+ <0d953f217feaafb4ba40281c3ab87e18ad28bae7.1761998763.git.pav@iki.fi>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <0d953f217feaafb4ba40281c3ab87e18ad28bae7.1761998763.git.pav@iki.fi>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Replace manual read-modify-write sequences in multiple functions with
-pci_clear/set_config_dword helper to reduce code duplication.
+Dear Pauli,
 
-Signed-off-by: Hans Zhang <18255117159@163.com>
----
- drivers/pci/pcie/aer.c | 29 ++++++++++-------------------
- 1 file changed, 10 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-index e286c197d716..468d4a726a20 100644
---- a/drivers/pci/pcie/aer.c
-+++ b/drivers/pci/pcie/aer.c
-@@ -176,14 +176,12 @@ static int enable_ecrc_checking(struct pci_dev *dev)
- static int disable_ecrc_checking(struct pci_dev *dev)
- {
- 	int aer = dev->aer_cap;
--	u32 reg32;
- 
- 	if (!aer)
- 		return -ENODEV;
- 
--	pci_read_config_dword(dev, aer + PCI_ERR_CAP, &reg32);
--	reg32 &= ~(PCI_ERR_CAP_ECRC_GENE | PCI_ERR_CAP_ECRC_CHKE);
--	pci_write_config_dword(dev, aer + PCI_ERR_CAP, reg32);
-+	pci_clear_config_dword(dev, aer + PCI_ERR_CAP,
-+			       PCI_ERR_CAP_ECRC_GENE | PCI_ERR_CAP_ECRC_CHKE);
- 
- 	return 0;
- }
-@@ -1102,15 +1100,12 @@ static bool find_source_device(struct pci_dev *parent,
- static void pci_aer_unmask_internal_errors(struct pci_dev *dev)
- {
- 	int aer = dev->aer_cap;
--	u32 mask;
- 
--	pci_read_config_dword(dev, aer + PCI_ERR_UNCOR_MASK, &mask);
--	mask &= ~PCI_ERR_UNC_INTN;
--	pci_write_config_dword(dev, aer + PCI_ERR_UNCOR_MASK, mask);
-+	pci_clear_config_dword(dev, aer + PCI_ERR_UNCOR_MASK,
-+			       PCI_ERR_UNC_INTN);
- 
--	pci_read_config_dword(dev, aer + PCI_ERR_COR_MASK, &mask);
--	mask &= ~PCI_ERR_COR_INTERNAL;
--	pci_write_config_dword(dev, aer + PCI_ERR_COR_MASK, mask);
-+	pci_clear_config_dword(dev, aer + PCI_ERR_COR_MASK,
-+			       PCI_ERR_COR_INTERNAL);
- }
- 
- static bool is_cxl_mem_dev(struct pci_dev *dev)
-@@ -1556,23 +1551,19 @@ static irqreturn_t aer_irq(int irq, void *context)
- static void aer_enable_irq(struct pci_dev *pdev)
- {
- 	int aer = pdev->aer_cap;
--	u32 reg32;
- 
- 	/* Enable Root Port's interrupt in response to error messages */
--	pci_read_config_dword(pdev, aer + PCI_ERR_ROOT_COMMAND, &reg32);
--	reg32 |= ROOT_PORT_INTR_ON_MESG_MASK;
--	pci_write_config_dword(pdev, aer + PCI_ERR_ROOT_COMMAND, reg32);
-+	pci_set_config_dword(pdev, aer + PCI_ERR_ROOT_COMMAND,
-+			     ROOT_PORT_INTR_ON_MESG_MASK);
- }
- 
- static void aer_disable_irq(struct pci_dev *pdev)
- {
- 	int aer = pdev->aer_cap;
--	u32 reg32;
- 
- 	/* Disable Root Port's interrupt in response to error messages */
--	pci_read_config_dword(pdev, aer + PCI_ERR_ROOT_COMMAND, &reg32);
--	reg32 &= ~ROOT_PORT_INTR_ON_MESG_MASK;
--	pci_write_config_dword(pdev, aer + PCI_ERR_ROOT_COMMAND, reg32);
-+	pci_clear_config_dword(pdev, aer + PCI_ERR_ROOT_COMMAND,
-+			       ROOT_PORT_INTR_ON_MESG_MASK);
- }
- 
- /**
--- 
-2.25.1
+Thank you for your patch.
 
+Am 01.11.25 um 13:09 schrieb Pauli Virtanen:
+> Bluetooth 6lowpan.c confuses BDADDR_LE and ADDR_LE_DEV address types,
+> e.g. debugfs "connect" command takes the former, and "disconnect" and
+> "connect" to already connected device take the latter.  This is due to
+> using same value both for l2cap_chan_connect and hci_conn_hash_lookup_le
+> which take different dst_type values.
+> 
+> Fix address type passed to hci_conn_hash_lookup_le().
+> 
+> Retain the debugfs API difference between "connect" and "disconnect"
+> commands since it's been like this since 2015 and nobody apparently
+> complained.
+> 
+> Fixes: f5ad4ffceba0 ("Bluetooth: 6lowpan: Use hci_conn_hash_lookup_le() when possible")
+> Signed-off-by: Pauli Virtanen <pav@iki.fi>
+> ---
+>   net/bluetooth/6lowpan.c | 28 ++++++++++++++++++++++++----
+>   1 file changed, 24 insertions(+), 4 deletions(-)
+> 
+> diff --git a/net/bluetooth/6lowpan.c b/net/bluetooth/6lowpan.c
+> index f1d29fa4b411..0d8c2e2e9a6c 100644
+> --- a/net/bluetooth/6lowpan.c
+> +++ b/net/bluetooth/6lowpan.c
+> @@ -957,10 +957,11 @@ static struct l2cap_chan *bt_6lowpan_listen(void)
+>   }
+>   
+>   static int get_l2cap_conn(char *buf, bdaddr_t *addr, u8 *addr_type,
+> -			  struct l2cap_conn **conn)
+> +			  struct l2cap_conn **conn, bool disconnect)
+>   {
+>   	struct hci_conn *hcon;
+>   	struct hci_dev *hdev;
+> +	int le_addr_type;
+>   	int n;
+>   
+>   	n = sscanf(buf, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx %hhu",
+> @@ -971,13 +972,32 @@ static int get_l2cap_conn(char *buf, bdaddr_t *addr, u8 *addr_type,
+>   	if (n < 7)
+>   		return -EINVAL;
+>   
+> +	if (disconnect) {
+> +		/* The "disconnect" debugfs command has used different address
+> +		 * type constants than "connect" since 2015. Let's retain that
+> +		 * for now even though it's obviously buggy...
+> +		 */
+> +		*addr_type += 1;
+> +	}
+> +
+> +	switch (*addr_type) {
+> +	case BDADDR_LE_PUBLIC:
+> +		le_addr_type = ADDR_LE_DEV_PUBLIC;
+> +		break;
+> +	case BDADDR_LE_RANDOM:
+> +		le_addr_type = ADDR_LE_DEV_RANDOM;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+>   	/* The LE_PUBLIC address type is ignored because of BDADDR_ANY */
+>   	hdev = hci_get_route(addr, BDADDR_ANY, BDADDR_LE_PUBLIC);
+>   	if (!hdev)
+>   		return -ENOENT;
+>   
+>   	hci_dev_lock(hdev);
+> -	hcon = hci_conn_hash_lookup_le(hdev, addr, *addr_type);
+> +	hcon = hci_conn_hash_lookup_le(hdev, addr, le_addr_type);
+>   	hci_dev_unlock(hdev);
+>   	hci_dev_put(hdev);
+>   
+> @@ -1104,7 +1124,7 @@ static ssize_t lowpan_control_write(struct file *fp,
+>   	buf[buf_size] = '\0';
+>   
+>   	if (memcmp(buf, "connect ", 8) == 0) {
+> -		ret = get_l2cap_conn(&buf[8], &addr, &addr_type, &conn);
+> +		ret = get_l2cap_conn(&buf[8], &addr, &addr_type, &conn, false);
+>   		if (ret == -EINVAL)
+>   			return ret;
+>   
+> @@ -1141,7 +1161,7 @@ static ssize_t lowpan_control_write(struct file *fp,
+>   	}
+>   
+>   	if (memcmp(buf, "disconnect ", 11) == 0) {
+> -		ret = get_l2cap_conn(&buf[11], &addr, &addr_type, &conn);
+> +		ret = get_l2cap_conn(&buf[11], &addr, &addr_type, &conn, true);
+>   		if (ret < 0)
+>   			return ret;
+>   
+
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+
+
+Kind regards,
+
+Paul
 
