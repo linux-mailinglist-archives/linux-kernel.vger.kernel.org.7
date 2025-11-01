@@ -1,126 +1,135 @@
-Return-Path: <linux-kernel+bounces-881227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44890C27C1B
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 11:50:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6838C27C33
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 11:52:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD413189E3B9
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 10:49:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E6C84073A5
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 10:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1E6B2DC33B;
-	Sat,  1 Nov 2025 10:47:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344CA202976;
+	Sat,  1 Nov 2025 10:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="aN2bHYtX"
-Received: from relay12.grserver.gr (relay12.grserver.gr [88.99.38.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NThrswy+"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E226189F3B;
-	Sat,  1 Nov 2025 10:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.99.38.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC1F2D29B7
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 10:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761994048; cv=none; b=Sjgaa+0iOhBXlnENRTgbajH+q4r0gpP2LxAxjFgH157gya3tvNPfSR5Dt3rFTP3A8KJdcgw4nEkl3ajv/8bg/i86xduf1znmywCycYo4XQ09c/Z5SYLNIbanaQNaxiQGCirGo01zwt1ArU3xy965pwdgHG8GA7LX0OFhMYX1I8M=
+	t=1761994096; cv=none; b=LnvjcqeysJCeaObHqQdzwk+XqGGmJerwnBa/Fr134mjcr0aeUteOgDNASby9LzhP9sHPQqUbp7OxN7SPXO1QyYFTTh0S8nhKEXYsruJu/kkjdKbYl5K8t76yEufarvFmHhWB9Kc9GgjDZT5z7+Gkc7u9z4AUpl6KIgu14XRDwUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761994048; c=relaxed/simple;
-	bh=Gwa/WQk/xj079I4Ej8YkVWk2rs3/+gWOrbRhP7ZHHHc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Q5lmc1TUaRvO+9wx4pihwoeM0koFbHdu/hcOoJ7nHFru3RNxWUw7g0IMqL9LSIn5O3XLWWD8wWYXtYocKYqqWjgi/UZGJH3ZSZNX2TG3e3sDlVqbgKHrZwgNr+5dkETuLUXxZqxBuSu88x4ckffeiSw8Si4o4al+nMe4G8j5Kkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=aN2bHYtX; arc=none smtp.client-ip=88.99.38.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from relay12 (localhost [127.0.0.1])
-	by relay12.grserver.gr (Proxmox) with ESMTP id CF52CC1B97;
-	Sat,  1 Nov 2025 12:47:24 +0200 (EET)
-Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by relay12.grserver.gr (Proxmox) with ESMTPS id 66D4DC1BCF;
-	Sat,  1 Nov 2025 12:47:24 +0200 (EET)
-Received: from antheas-z13 (unknown [IPv6:2a05:f6c2:511b:0:8d8a:5967:d692:ea4e])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id 48FFD1FF536;
-	Sat,  1 Nov 2025 12:47:23 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1761994044;
-	bh=sKyp44I3nTVlmUCkPmKCLcA1wkuc+IxWTQk6uSnUt2k=; h=From:To:Subject;
-	b=aN2bHYtXWFGM+MF+yJfFutxiyjbusgcpeHDBYxSJPE+IKPmXqrqN7IcS8bdgDoo1E
-	 J2PvTxAfvinG28M2D9bz+LGW+59ldy3eWWglsC2lfyt3jH923n9FDh++liQT5+YDaM
-	 XZBlyYOFUndf/tK49NTWgy4btoMEie9ShdOHOAEfFTLzrTr5i2lxLPtAUk4LmW9Z6w
-	 YFpiJr+CgIX9xOJObIg1DrwzdZiXc1iwJ6TYt3+cilm2uQSLByArSveM1G+IPw9m8/
-	 4q3QDWNNixAzCvbJ7f7zxhq8Xjm0klhsdmuStx3czAuGp5bypry+AuWfgL/tIGQUo1
-	 0Nd9cwD9GkamQ==
-Authentication-Results: linux3247.grserver.gr;
-	spf=pass (sender IP is 2a05:f6c2:511b:0:8d8a:5967:d692:ea4e) smtp.mailfrom=lkml@antheas.dev smtp.helo=antheas-z13
-Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
-From: Antheas Kapenekakis <lkml@antheas.dev>
-To: platform-driver-x86@vger.kernel.org,
-	linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	Corentin Chary <corentin.chary@gmail.com>,
-	"Luke D . Jones" <luke@ljones.dev>,
-	Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Denis Benato <benato.denis96@gmail.com>,
-	Antheas Kapenekakis <lkml@antheas.dev>
-Subject: [PATCH v8 10/10] HID: asus: add support for the asus-wmi brightness
- handler
-Date: Sat,  1 Nov 2025 11:47:12 +0100
-Message-ID: <20251101104712.8011-11-lkml@antheas.dev>
-X-Mailer: git-send-email 2.51.2
-In-Reply-To: <20251101104712.8011-1-lkml@antheas.dev>
-References: <20251101104712.8011-1-lkml@antheas.dev>
+	s=arc-20240116; t=1761994096; c=relaxed/simple;
+	bh=xzez+fchR72BquI7aMREthZ1SO2DLRmUDjwIbYO9kQ0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XxhSQ1h0gkRjMGVtGwlp45HZxwuURZrRpxM+JS/6y8eFdZaKhv4HJUts99SffuS5tZELzbb8Ae7UGD6akr2q8+6jRimxUjI072TKi/KQZ4OiOI6kTjmNcB+8V7lZaWRo/Yd78T7tW+yM3kI+IqtWmlkKRqzvJ8ISQ1z/NIAqLps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NThrswy+; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-63e076e24f2so5733865a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 03:48:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761994092; x=1762598892; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=gtLoHp0kEwq/bLHJArViyfu5fWlEi0xAxEhFmz0T09k=;
+        b=NThrswy+wIz3JR7dQ5EI4mUVdOoPoo7rRLQmZFYXp9D61b76y1jc9YMpolQvR0cB7u
+         7dEQjKatmW4Dz3Tfe8ph24F8+VSygQbmHudW0fZfgbOXQBBpAq87KrkwZvYq1xuat0jQ
+         7Jt+85YH3Xg9e0yadg1XooRtdSzL6p8Q/mxLsMERxVV2lZXPAC1XsFh6sWREuqJG+287
+         cVn18acrECtn2dLiBKobGs/79ppMQuKk4huK2SWIioIRdRA8NCBE/mPveeZlD5XayTwW
+         g1SNRTeBbKN5AhGllbBxw9SOexE/rGtUagiim9EjMNitxXKK0uv2PZwBUsCB/5raYraI
+         tNVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761994092; x=1762598892;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gtLoHp0kEwq/bLHJArViyfu5fWlEi0xAxEhFmz0T09k=;
+        b=mGnytH4GHVZ3WgfobqDVjgEN+0n8jsbwdLp61ZgTNejtFs5DX7/E+cEJVpQlxBKVhu
+         OL6QItcd978xJGX3q1ERgx5uCuNkZeB2Zdqv+IcFZ0DJF/OCdJjKZ6sX2j1o2kaLU3cm
+         xfbhVNyWVJNvBsutLsCHt3NJl25OC2iWxRMdrPAgRsaUhfvA2Dc8YgInEgL/79eU7XBl
+         eb9eOssiOLFiN2SdvnGmdnthXZNcAhRhfojEU6A/pCpj64jQu5D1OPkrOnh7QsQfAxxE
+         9HzLWo7dQVkpCDC3hFXiYkBHaer69Xh9IAQwvhWuvszyqH+WsUWW54T89T8pSWQph/Qg
+         6MLA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/l+jyIQntTZW50q5AYN4SukDnej/GeCKIekajZKYEpDmb3uH91GtBPhnAdsR0Ep6xWRle8icH0PyOarQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0DAKOIQAN37mqoeNmoay7xW88PqwVDjodPNQ95Bx7prkdcC1W
+	Jq4ZUhBFx2iMQa+NVAjHmazMR2/yITQYVSMlW7X7LXx+9jEZmRZ35Az1IoTouUARuxRa98K0PEX
+	xvMv4XB7KyEyGUfduHMfecLDL7KvAMS0=
+X-Gm-Gg: ASbGncujNDwPvbQfk/X5z1gBZJXnOX8U1FCZHk+bV1UFgJiJZxnug4dJLjFGIQvo3uS
+	XXlZKyOvSXKiwyenY3XbY1bVSNgs0SPMgCWl2N86jLeUwJS+d+hF0DO+LugLd2yy1QATdvEY9jS
+	9atApYdNUwyYQNMSvLoV3761A4/0+ulUxoxCs8DsrfR4TlEglKz/IprVxA03V8Qn5V3kGaD+cSX
+	BHgYN+E6RfzfLRKY9sxy1N32r1m0UdpiSNxp4l1SGvQoTquc2yppFbm4RK5sgiRrczWxg==
+X-Google-Smtp-Source: AGHT+IEwEAbpzczbirHeYPq9CirAqArt7tfqx1f1DuepotXx+VdlfMQPQPP7/cGb1j0Z5jLq9Qc9/0ubBl45KkLxH90=
+X-Received: by 2002:a05:6402:518b:b0:639:dd3f:f265 with SMTP id
+ 4fb4d7f45d1cf-640771ceb67mr5718247a12.25.1761994091667; Sat, 01 Nov 2025
+ 03:48:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: 
- <176199404390.3745949.13918222675205834482@linux3247.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
-X-Virus-Status: Clean
+References: <20250905112736.6401-1-linux.amoon@gmail.com> <176085588758.11569.7678087221969106036.b4-ty@kernel.org>
+ <CANAwSgRjXS4V_Kpw5kaJnPA8f=18uN-MgfEQ5ErN3aFRqbJKfg@mail.gmail.com>
+In-Reply-To: <CANAwSgRjXS4V_Kpw5kaJnPA8f=18uN-MgfEQ5ErN3aFRqbJKfg@mail.gmail.com>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Sat, 1 Nov 2025 16:17:54 +0530
+X-Gm-Features: AWmQ_bmhgMeWFkOeYmBpsEodWI1g24fEo-iGnLSXhllxCODvU7vKr_LfOJBB0YE
+Message-ID: <CANAwSgSrisWFPPRkZ=ukCjui3_xzgrmLKz5F9iXnerUFktk5UA@mail.gmail.com>
+Subject: Re: [PATCH v1] PCI: dw-rockchip: Simplify regulator setup with devm_regulator_get_enable_optional()
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Niklas Cassel <cassel@kernel.org>, Shawn Lin <shawn.lin@rock-chips.com>, 
+	Hans Zhang <18255117159@163.com>, Wilfred Mallawa <wilfred.mallawa@wdc.com>, linux-pci@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-If the asus-wmi brightness handler is available, send the
-keyboard brightness events to it instead of passing them
-to userspace. If it is not, fall back to sending them to it.
+Hi Manivannan,
 
-Reviewed-by: Luke D. Jones <luke@ljones.dev>
-Tested-by: Luke D. Jones <luke@ljones.dev>
-Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
----
- drivers/hid/hid-asus.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+On Fri, 31 Oct 2025 at 12:27, Anand Moon <linux.amoon@gmail.com> wrote:
+>
+> Hi Manivannan,
+>
+> On Sun, 19 Oct 2025 at 12:08, Manivannan Sadhasivam <mani@kernel.org> wrote:
+> >
+> >
+> > On Fri, 05 Sep 2025 16:57:25 +0530, Anand Moon wrote:
+> > > Replace manual get/enable logic with devm_regulator_get_enable_optional()
+> > > to reduce boilerplate and improve error handling. This devm helper ensures
+> > > the regulator is enabled during probe and automatically disabled on driver
+> > > removal. Dropping the vpcie3v3 struct member eliminates redundant state
+> > > tracking, resulting in cleaner and more maintainable code.
+> > >
+> > >
+> > > [...]
+> >
+> > Applied, thanks!
+> >
+> > [1/1] PCI: dw-rockchip: Simplify regulator setup with devm_regulator_get_enable_optional()
+> >       commit: c930b10f17c03858cfe19b9873ba5240128b4d1b
+> >
+> I am looking to suspend or resume the issue. We probably need to
+> toggle the regulator
+> to maintain the power status on the PCIe controller.
+> Therefore, dropping the patch is an option; I will add dev_err_probe
+> for PHY later in the patch.
+>
+I found this series with the address system suspend support
 
-diff --git a/drivers/hid/hid-asus.c b/drivers/hid/hid-asus.c
-index e5d3f28c1fad..de64451e315d 100644
---- a/drivers/hid/hid-asus.c
-+++ b/drivers/hid/hid-asus.c
-@@ -325,6 +325,17 @@ static int asus_event(struct hid_device *hdev, struct hid_field *field,
- 			 usage->hid & HID_USAGE);
- 	}
- 
-+	if (usage->type == EV_KEY && value) {
-+		switch (usage->code) {
-+		case KEY_KBDILLUMUP:
-+			return !asus_hid_event(ASUS_EV_BRTUP);
-+		case KEY_KBDILLUMDOWN:
-+			return !asus_hid_event(ASUS_EV_BRTDOWN);
-+		case KEY_KBDILLUMTOGGLE:
-+			return !asus_hid_event(ASUS_EV_BRTTOGGLE);
-+		}
-+	}
-+
- 	return 0;
- }
- 
--- 
-2.51.2
+[1] https://lore.kernel.org/linux-pci/20251029-rockchip-pcie-system-suspend-v4-0-ce2e1b0692d2@collabora.com/
 
+This patch will conflict with
+[2] https://lore.kernel.org/linux-pci/20251029-rockchip-pcie-system-suspend-v4-3-ce2e1b0692d2@collabora.com/
 
+So please drop my patch.
+
+Thanks
+-Anand
 
