@@ -1,207 +1,190 @@
-Return-Path: <linux-kernel+bounces-881448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B9B7C283A6
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 18:01:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DB0CC283B5
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 18:03:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB5CE1A2222A
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 17:01:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6115F1881BE6
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 17:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9F91DFE26;
-	Sat,  1 Nov 2025 17:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E943F50F;
+	Sat,  1 Nov 2025 17:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="VKSAlrvI"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="M+ZGUhmV"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206A519309C
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 17:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5E81DFE26;
+	Sat,  1 Nov 2025 17:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762016448; cv=none; b=Z1hZ+8mBxD6jr05tpmjFAoi0TpIqH6n+RLr6Xi8UiMREug2bOydYmMHSdu9N4zCLF6v7oARMGC3MAsit9Ah+s86Wem493TMzc/If47fK/n+E/Wb1aW1mj4Iv5eEocwoqaDdrGvGMUP+iYLiQit+I/8AwTtCr/a/kSIOjVlx3eAk=
+	t=1762016488; cv=none; b=BoAVWqhmM4x++pdAHlnJ24zQ2Fg9GMSQdu/fXM1PjoPSmXO0Kv5ODBaxW3H7JJePD4UuSKajLn7yUkMclNj4X7oNnAQwaRQahKDBui7oDjnfoVS8i+ZiXmHUyNFsD9asiKQC1h7h6o0enq/MOHb9nDppIWedLbgIljzYYCtXmVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762016448; c=relaxed/simple;
-	bh=ZVKAtJQ7YxW2ydkUhmrqBw8xd9VSlPorpAYP+7y4b9s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J4PZ2gLkMBv2dh3WzWCobkPX9mIMzdMh+LPZLN7lOKLB3jX7fLL9HzLD4xKEeK+BXCp7Bf/0ReA6ZXEvnfK6Jaqc5kkI0AJU/ZK8C2VNUh4VtLrcFW7vXkoKLqWO0tjt93d0Fq1VT5EFaXMtDgUZ3mfuDQLEPuRkZ0snQLtSuJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=VKSAlrvI; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b608df6d2a0so2930571a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 10:00:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1762016446; x=1762621246; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+bQwNAi66Xq10BeoG6s8poTPGkQCGKxfLLVH03d/lh0=;
-        b=VKSAlrvI6QIfiVCdoTdXr/VAuXZXB9Y4BgSD2dQXTtm7hT1GdYR/qiWdpv9oo4kx1d
-         TMzr8dnsGUZtf+DEYynrVkmIbsWxFu6rbMtZ2SLIWqHwQW1x8bidOIVPOnQd21q8vRxJ
-         +IJEDuV5Xt+ubp9yEWVH6TdmAoHwS5AkdTujd7A/NyvLT1ED6ydIcd2GrS9s44y9Az7m
-         5e4elTAX5TjJga0YjxFRKJ15Plr6p7MxvYzEzWk/+BkHJoWxabz/YbmEfoFDtp8bmk7M
-         OQ0K/htqI3qz6yaSYLNOmXmMROAvoOUHb6yW6WsXb39SXRw9mRjasznnaOMcO2tS1pZx
-         a8eA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762016446; x=1762621246;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+bQwNAi66Xq10BeoG6s8poTPGkQCGKxfLLVH03d/lh0=;
-        b=w+QCZUxxEomYRNTWdU0w/8eUB+NOpx3YDA8nyMyWATFUeeaclZ+ytjGksIKsXq7DaR
-         2fRlbRz3O1jaa4VRVLkeBATBi/8Kn1/dOVit4DpIAjyGnxpIcbtj4vdVS+qSskr5+2Uo
-         vgQZQeK8ZP/isOQ0w3X0INZGvgaqJ2Z1LWgVsEdrOEyWxgdqu34bmV7VGLChvepnU3MN
-         6+Wx9wPRDJNsYaBfmfyNEinCB3FT3talpla0LT8JIyc0yyTgvcNwrMlgnzo1JcqSttVX
-         j2vbBAZ5LJJ5sfvDn5XNZkRgQP/owXKxBHYPQDoXIMhZScNM1Dim4Dytya/vEHspJJBV
-         rfYg==
-X-Forwarded-Encrypted: i=1; AJvYcCVMM7tA74v91YynaCv8tVGOdnNgTKNQmZ2TPTJ5ddhYcaoejS9A+//mN211mNuSHhaMWZ8jYoobBR5oQIs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBec/o83A/8gtsyRIse5dbkwwwP490QouRNJtR03uMgsdhIVsQ
-	qGhk7dmmPfSpsTxQ7EuciF9Du8EdnGOHcKmSs8kfPB5grYtGlgVdzDGL1XpdyCo/JL2+eM5Xhx5
-	P4oZ1K+6PK8AEo9t31C1u0lz/4cNsg4TkRNlTlgiK
-X-Gm-Gg: ASbGncv0dd3r5Rww8eKfjKHjMP2xYGbtyd0o5qabn7u3pWFu8hW0Y5k5+UT5lFL/u2I
-	MPtmuvaTF22G2JxZvlFSwdcR3AC9r6r+B5jRsE2ndLOY1zhhgAB7a7Zl6Q4uYkawpIOkfhC2Rkh
-	wLrx8xRJsY2QTixonB2XQPNdfRJhfT8ejz0PO8IWeYTKU9vfxOCi4ldUI8wRy27IPecfa6oQpq/
-	VTKcdC3DnDlYhgSNhtWGAuBm77YT4/IElPJ668sBUZIi2Kq50xsH6zn9FjlnH/uqCLqUqI=
-X-Google-Smtp-Source: AGHT+IEGxfHBAfIq6y58pVGnMEg/azCvX8aaX6JSItHLFd5Voo6bXcarfvoQmwX9lQYzeehfVz2aLCPmZPU47JHX8+U=
-X-Received: by 2002:a17:903:94e:b0:28b:4ca5:d522 with SMTP id
- d9443c01a7336-2951a496d09mr102011965ad.39.1762016445731; Sat, 01 Nov 2025
- 10:00:45 -0700 (PDT)
+	s=arc-20240116; t=1762016488; c=relaxed/simple;
+	bh=6cgCz2XhKQjeiHjZ9yJcICIYarnhGGJs7JtPlEcxyPE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PKRhTogapy1RoH2Yvik1egaVO8WxLAGYx0RW7PSQvQ3JbnjVQOYkd3To6mdvyAhjAgEDGv1zZhw8KbKTJ03yIO6uTbRwE/QOV+PQNdzADp2OasGRrZXvMv//X4sTMrMyFcx3ZZirT5G8UCZ2auP6ybbHaHCq/aibIWdCqG0s/OU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=M+ZGUhmV; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=bt
+	PNQ78ofuz9BQtjwT/RO+d80HvZGd3wPR//jV3fT5U=; b=M+ZGUhmVALYPfSK3Ez
+	zjS2Eo2eLx4bjjXoPHRIYNL1x/2olUx/CyZbFz9O2BmqzQG/NYZ7cH4NhMt4abU1
+	m3aKbFVi10Dxj4KcXQM7zPZCHsjtNPRz9QiWdR/ijmYtm1a1bfsDdct0jk+K/gOF
+	U3MpOZCuf/Uq+DIgqTNAbioGU=
+Received: from localhost (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wAXIUrZPAZpK7S+Aw--.48439S2;
+	Sun, 02 Nov 2025 01:01:14 +0800 (CST)
+From: Cen Zhang <zzzccc427@163.com>
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	johan.hedberg@gmail.com,
+	marcel@holtmann.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-bluetooth@vger.kernel.org,
+	baijiaju1990@gmail.com,
+	r33s3n6@gmail.com,
+	gality369@gmail.com,
+	zhenghaoran154@gmail.com,
+	zzzccc427@163.com
+Subject: [PATCH v4] Bluetooth: sco: Serialize state check in sco_sock_connect to fix UAF
+Date: Sat,  1 Nov 2025 17:01:10 +0000
+Message-ID: <20251101170110.179111-1-zzzccc427@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251031110647.102728-2-thorsten.blum@linux.dev>
- <20251031125916.3b0c8b22@pumpkin> <FE3AAB5A-9AB9-49B6-BB67-FCB97CD5AF29@linux.dev>
- <20251031165417.4490941a@pumpkin>
-In-Reply-To: <20251031165417.4490941a@pumpkin>
-From: Paul Moore <paul@paul-moore.com>
-Date: Sat, 1 Nov 2025 13:00:34 -0400
-X-Gm-Features: AWmQ_blUrxe9-_hCXsnuI7mX--XQCm306FtUwVkeT5LISw4c3OmPPoz0yMf9Sxs
-Message-ID: <CAHC9VhQ3nhAjupyENXnZN0WXsbibjeA6OT6fCXOfXBjWaw0=6A@mail.gmail.com>
-Subject: Re: [PATCH] device_cgroup: Replace strcpy/sprintf in set_majmin
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wAXIUrZPAZpK7S+Aw--.48439S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxCF17KrWrtF4ktF1xKw45KFg_yoWrJw1DpF
+	ZrKa9xK34UJrn3uFsayFW8Wrs5ArnYvFy2kr10gwn5Aas5KFWFyr48tryUtrZ8CrWvyF45
+	Za1UKF43KF4DWrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pimhF7UUUUU=
+X-CM-SenderInfo: 5222uujfuslqqrwthudrp/1tbiXQP4hGkGO84QCQAAsh
 
-On Fri, Oct 31, 2025 at 12:54=E2=80=AFPM David Laight
-<david.laight.linux@gmail.com> wrote:
-> On Fri, 31 Oct 2025 16:23:02 +0100
-> Thorsten Blum <thorsten.blum@linux.dev> wrote:
->
-> > On 31. Oct 2025, at 13:59, David Laight wrote:
-> > > Even if ex->major can be ~0 there are much cleaner ways of writing th=
-is code.
-> >
-> > Thanks for pointing this out. Looking at the bigger picture makes it
-> > clear that most of the code can actually be removed. What do you think
-> > of this change?
->
-> That is sort of what I was thinking about, but it doesn't quite work.
->
-> >
-> > Thanks,
-> > Thorsten
-> >
-> > diff --git a/security/device_cgroup.c b/security/device_cgroup.c
-> > index a41f558f6fdd..cb845b1fad6b 100644
-> > --- a/security/device_cgroup.c
-> > +++ b/security/device_cgroup.c
-> > @@ -244,7 +244,6 @@ static void devcgroup_css_free(struct cgroup_subsys=
-_state *css)
-> > #define DEVCG_DENY 2
-> > #define DEVCG_LIST 3
-> >
-> > -#define MAJMINLEN 13
-> > #define ACCLEN 4
-> >
-> > static void set_access(char *acc, short access)
-> > @@ -270,19 +269,11 @@ static char type_to_char(short type)
-> >       return 'X';
-> > }
-> >
-> > -static void set_majmin(char *str, unsigned m)
-> > -{
-> > -     if (m =3D=3D ~0)
-> > -             strscpy(str, "*", MAJMINLEN);
-> > -     else
-> > -             snprintf(str, MAJMINLEN, "%u", m);
-> > -}
-> > -
-> > static int devcgroup_seq_show(struct seq_file *m, void *v)
-> > {
-> >       struct dev_cgroup *devcgroup =3D css_to_devcgroup(seq_css(m));
-> >       struct dev_exception_item *ex;
-> > -     char maj[MAJMINLEN], min[MAJMINLEN], acc[ACCLEN];
-> > +     char acc[ACCLEN];
-> >
-> >       rcu_read_lock();
-> >       /*
-> > @@ -293,17 +284,12 @@ static int devcgroup_seq_show(struct seq_file *m,=
- void *v)
-> >        */
-> >       if (devcgroup->behavior =3D=3D DEVCG_DEFAULT_ALLOW) {
-> >               set_access(acc, DEVCG_ACC_MASK);
-> > -             set_majmin(maj, ~0);
-> > -             set_majmin(min, ~0);
-> > -             seq_printf(m, "%c %s:%s %s\n", type_to_char(DEVCG_DEV_ALL=
-),
-> > -                        maj, min, acc);
-> > +             seq_printf(m, "%c *:* %s\n", type_to_char(DEVCG_DEV_ALL),=
- acc);
->
-> type_to_char(DEVCG_DEV_ALL) is 'a' and this is the only place it happens,
-> also acc is "rwm".
-> So that could be:
->                 seq_puts(m, "a *:* rwm\n");
->
-> >       } else {
-> >               list_for_each_entry_rcu(ex, &devcgroup->exceptions, list)=
- {
-> >                       set_access(acc, ex->access);
-> > -                     set_majmin(maj, ex->major);
-> > -                     set_majmin(min, ex->minor);
-> > -                     seq_printf(m, "%c %s:%s %s\n", type_to_char(ex->t=
-ype),
-> > -                                maj, min, acc);
-> > +                     seq_printf(m, "%c %u:%u %s\n", type_to_char(ex->t=
-ype),
-> > +                                ex->major, ex->minor, acc);
->
-> It looks like both ex->major and ex->minor can be ~0.
-> (I'm not sure it makes any sense to have major =3D=3D ~0 and minor !=3D ~=
-0).
-> However this should be ok:
->                         seq_putc(m, type_to_char(ex->type);
->                         if (ex->major =3D=3D ~0)
->                                 seq_puts(m, " *:");
->                         else
->                                 seq_printf(m, " %u:", ex->major);
->                         if (ex->minor =3D=3D ~0)
->                                 seq_puts(m, "* ");
->                         else
->                                 seq_printf(m, "%u ", ex->minor);
->                         if (ex->access & DEVCG_ACC_READ)
->                                 seq_putc(m, 'r');
->                         if (ex->access & DEVCG_ACC_WRITE)
->                                 seq_putc(m, 'w');
->                         if (ex->access & DEV_ACC_MKNOD)
->                                 seq_putc(m. 'm');
->                         seq_putc(m, '\n');
->
-> A less intrusive change would be to pass 'm' the the set_xxx() functions
-> and add the separators between the calls.
+Concurrent sco_sock_connect() calls could race on the same socket since the
+state checks (BT_OPEN/BT_BOUND) were done without holding the socket lock.
+This allowed two parallel connects to proceed and end up binding two
+separate sco_conn objects to the same sk. Later, when sk->conn had been
+updated to point to the second conn, closing the socket could free the
+second conn and the socket, while the first conn's connect confirm path
+still referenced the stale sk/conn, triggering a KASAN use-after-free.
 
-Yes, just pass the seq_file pointer up to set_majmin() and have it do
-the writes/puts directly.  Might as well rename if from set_majmin()
-to put_majmin() while you are at it.
+Fix by taking lock_sock(sk) before checking sk->sk_state and sk->sk_type,
+performing the destination address assignment under the lock, and releasing
+it before invoking sco_connect() (which will acquire the lock as needed).
+This serializes concurrent connect attempts for the same sk and prevents the
+interleaving that caused the double-attachment and subsequent UAF.
 
---=20
-paul-moore.com
+Thread 1:               Thread 2:               Thread3:
+check sk_state          check sk_state
+sco_sock_connect(sk)    sco_sock_connect(sk)    sco_connect_cfm(sk->conn)
+conn1->sk = sk
+                        conn2->sk = sk
+sk->conn = conn1
+                        sk->conn = conn2
+                        sco_sock_release
+                        free conn2 and sk
+                                                sco_connect_cfm
+                                                sco_conn_del
+                                                sco_conn_free
+                                                UAF on sk 
+
+The representative KASAN report excerpt:
+
+  BUG: KASAN: slab-use-after-free in sco_conn_free net/bluetooth/sco.c:94
+  ...
+  Write of size 8 at addr ffff88810d2be350 by task kworker/u25:1/88
+  ...
+  Call Trace:
+  sco_conn_free net/bluetooth/sco.c:94 [inline]
+  kref_put include/linux/kref.h:65 [inline]
+  sco_conn_put+0x49d/0xfc0 net/bluetooth/sco.c:115
+  sco_conn_del+0x46d/0x8d0 net/bluetooth/sco.c:280
+  sco_connect_cfm+0x83d/0x1ee0 net/bluetooth/sco.c:1468
+  hci_connect_cfm include/net/bluetooth/hci_core.h:2082 [inline]
+  ...
+  Allocated by task 294:
+  ...
+  sco_sock_create+0x22d/0xc00 net/bluetooth/sco.c:616
+  ...
+  Freed by task 295:
+  __sk_destruct+0x4b0/0x630 net/core/sock.c:2373
+  sock_put include/net/sock.h:1962 [inline]
+  sco_sock_kill+0x64d/0x9b0 net/bluetooth/sco.c:526
+  sco_sock_release+0x770/0xa50 net/bluetooth/sco.c:1359
+  ...
+
+Reported-by: Cen Zhang <zzzccc427@163.com>
+Signed-off-by: Cen Zhang <zzzccc427@163.com>
+
+---
+v2 and v3:
+ - Fix the patch format
+---
+
+---
+v4:
+ - fix the subject prefix to "Bluetooth: SCO: ..."
+ - in sco_chan_add(), also check sco_pi(sk)->conn and return -EBUSY if the
+   socket is already attached
+ - in sco_connect(), if sco_chan_add() fails, drop the hci_conn ref
+---
+
+---
+ net/bluetooth/sco.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
+
+diff --git a/net/bluetooth/sco.c b/net/bluetooth/sco.c
+index ab0cf442d..b73ee71c6 100644
+--- a/net/bluetooth/sco.c
++++ b/net/bluetooth/sco.c
+@@ -298,7 +298,7 @@ static int sco_chan_add(struct sco_conn *conn, struct sock *sk,
+ 	int err = 0;
+ 
+ 	sco_conn_lock(conn);
+-	if (conn->sk)
++	if (conn->sk || sco_pi(sk)->conn)
+ 		err = -EBUSY;
+ 	else
+ 		__sco_chan_add(conn, sk, parent);
+@@ -356,6 +356,7 @@ static int sco_connect(struct sock *sk)
+ 	err = sco_chan_add(conn, sk, NULL);
+ 	if (err) {
+ 		release_sock(sk);
++		hci_conn_drop(hcon);
+ 		goto unlock;
+ 	}
+ 
+@@ -651,13 +652,18 @@ static int sco_sock_connect(struct socket *sock, struct sockaddr *addr, int alen
+ 	    addr->sa_family != AF_BLUETOOTH)
+ 		return -EINVAL;
+ 
+-	if (sk->sk_state != BT_OPEN && sk->sk_state != BT_BOUND)
++	lock_sock(sk);
++
++	if (sk->sk_state != BT_OPEN && sk->sk_state != BT_BOUND){
++		release_sock(sk);
+ 		return -EBADFD;
++	}
+ 
+-	if (sk->sk_type != SOCK_SEQPACKET)
+-		err = -EINVAL;
++	if (sk->sk_type != SOCK_SEQPACKET){
++		release_sock(sk);
++		return -EINVAL;
++	}
+ 
+-	lock_sock(sk);
+ 	/* Set destination address and psm */
+ 	bacpy(&sco_pi(sk)->dst, &sa->sco_bdaddr);
+ 	release_sock(sk);
+-- 
+2.34.1
+
 
