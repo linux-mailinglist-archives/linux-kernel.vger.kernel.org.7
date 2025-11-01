@@ -1,141 +1,156 @@
-Return-Path: <linux-kernel+bounces-881204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AE53C27B6C
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 10:56:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E31AC27B7B
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 10:57:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ED0F84E6860
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 09:56:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3FD33A4A95
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 09:57:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C20F2C2363;
-	Sat,  1 Nov 2025 09:56:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CEA12C11C6;
+	Sat,  1 Nov 2025 09:57:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PUykRZz/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rajagiritech-edu-in.20230601.gappssmtp.com header.i=@rajagiritech-edu-in.20230601.gappssmtp.com header.b="qV83dMGu"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213A328689F
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 09:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD40CF510
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 09:57:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761990976; cv=none; b=M8ZY19ugwzxB7wYbv+a2dzfjaMLuXHviN7eg4eKfgUglZgtffo+Vo4AZ3yRvh2/7dusIBg7IIQFUkmdUoK7G9qhOxZghueo4sn6Knj+FBgKeRrTBGlSBcX1UVTzk90o7iWs38aA0fbxkfTqBEHAaTn8H6jCOyFdLyD8O8f32wXA=
+	t=1761991033; cv=none; b=elU1KLxsj+xa1uHU+gUfB6iMbIaeoOsHliI1mIe6+vkNmBneYKnSUyxuYmT22DICxikQ/PA8Dnu70TQXm17Fpp+9N8ntVf6tFgvY8skOGax5u/ZEIVWZn6jGmD+OA/C3zkjSRO0GL9uyuM5xko7ap7YXM5F7GdwNuOS2PXjgLa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761990976; c=relaxed/simple;
-	bh=CfutuVK1wzmbDwh21rNys0bmr6xMd9exGWoLnWBdWbI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=IismVZFV1cNy9gcTOzwNl80ruxh9umwc43FkXGVtufZOTPpjAl9mpRQYyzmPlHC7I89HrNMhzIz16CZcOP/d0EQD2bwtgm0Typn1bQ4X7whgZZlwjhTpq/oHRGuk8jNJ9iD6wE4/tG5pQnyBnomBMEZZGtgLvFltr7hkLTKYmmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PUykRZz/; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761990975; x=1793526975;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=CfutuVK1wzmbDwh21rNys0bmr6xMd9exGWoLnWBdWbI=;
-  b=PUykRZz/R/ylst6w3KgHmiwMhW3ChmuS82LypI2+EVJHsybP2PmfneVV
-   YybrPkW1IMs8n415whLrML2aQRsjv5bgjhnzgablboYtGCS9pLMhQH4r/
-   fWFlHVK0xAe/K5hZgO/UL+WqJrmVBbbEZfRRMSvPlHzvj7Biz25jqRups
-   dbgFZG+d7o5nFBUQsg/XZD67HtnwTRAuJ/dJKXvjNFsB2XDa1MuVJlvWb
-   gP3KjtdRjyAczBCVPuc98mA9B/+9XIihJgi1q3qVOhQXjNLT+mtq/rW6q
-   HgNWVoORfbxtD7hJeN/WbEpGeHhul57urCiPhoadDg+oqVD24vlWP6err
-   Q==;
-X-CSE-ConnectionGUID: bT84SBDlTtuEF5I2SqV9nw==
-X-CSE-MsgGUID: gWNkaXSVRq24sfdF8IVJ9w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="64059810"
-X-IronPort-AV: E=Sophos;i="6.19,271,1754982000"; 
-   d="scan'208";a="64059810"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2025 02:56:14 -0700
-X-CSE-ConnectionGUID: 9yStbpcqTLSd4YvyV8ykGg==
-X-CSE-MsgGUID: UF1ChgspSZORzdocnrv4Ug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,271,1754982000"; 
-   d="scan'208";a="209992855"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 01 Nov 2025 02:56:13 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vF8LC-000O6A-2R;
-	Sat, 01 Nov 2025 09:56:10 +0000
-Date: Sat, 1 Nov 2025 17:53:53 +0800
-From: kernel test robot <lkp@intel.com>
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Matt Coster <matt.coster@imgtec.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: drivers/gpu/drm/imagination/pvr_power.c:341:undefined reference to
- `pwrseq_power_off'
-Message-ID: <202511011739.SONHjSfR-lkp@intel.com>
+	s=arc-20240116; t=1761991033; c=relaxed/simple;
+	bh=EZYP2ZGqpOgoKSADv8CU64QeuXYdH8H9uMcFqy7wW8c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DzhPm9bYnYoVE0Q5D9v477jW8W8EdG+9RuitDXfPqPBdI6mCm1c9EAzSo7XqNKnjBsvtR3E6rysQCHq5MYgq+RJKrqjyuJ24EhhH3WSaNKOY5hr4g05CP8XFcX/o/Ssf7V+t1FLRCfeME45dFSEwX63CB7YJkWpbS+8b5j06md4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rajagiritech.edu.in; spf=none smtp.mailfrom=rajagiritech.edu.in; dkim=pass (2048-bit key) header.d=rajagiritech-edu-in.20230601.gappssmtp.com header.i=@rajagiritech-edu-in.20230601.gappssmtp.com header.b=qV83dMGu; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rajagiritech.edu.in
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=rajagiritech.edu.in
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-b6d70df0851so593985766b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 02:57:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rajagiritech-edu-in.20230601.gappssmtp.com; s=20230601; t=1761991030; x=1762595830; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=OGFt2XQpdp9rBNdBCSOgkWHGSVJBimii0ao4cHcHnEE=;
+        b=qV83dMGu+m3VWZFBhubmTgdb9cZHEXkRWo/msSyAtE03L6r53MyS9IWkBp1uCW64Q/
+         S45DRUem0IaFD6YfqKbE/Kx0U6EXAfMh2E+DGGyZEB++9qrFcY4V2yiIe/yzAcvfhn6c
+         DEZvUFOjPlMCeF+Dm/0rVJUKuM91ZajjeRt8iG4mCxg9dyCQdanWpBm18tmHLn7bGhGR
+         DkT8yhyZBCmnTUAKV09/EdqFkuEDxF/si8WqTkI/cHA2u58NHL0lLq5rRrvuQwwZ9tH+
+         ZWr1YL4VZcEfHlFC2FN84GA1+Ziy5IlOhKoajqhPswCiPo548m/E+L+pJOPkJ+6GuwmQ
+         Fpag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761991030; x=1762595830;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OGFt2XQpdp9rBNdBCSOgkWHGSVJBimii0ao4cHcHnEE=;
+        b=bne17Ps+NpjZckzK/NFHu0uW3ww3pt81z2o8rrGyDeZavHjACn32pO433rdJcMlaSj
+         hKfRqDLOWXxWvl21En1s9Y6bUMcPIz4pz8zDVZoKFQGlSCKNwqEu0orlYkNJclVY7YDN
+         jw9fqP43GqrUIr0WavKdqMqNz9kT+3TXTXQnkvKSkgtd2HoYET7PvpRNVxokI/oJ3Yea
+         Hcn2zZyHrZZpB+O/uL9t2Dd0q5EQtxaoD1eXtZeGcyMv6Ilav9AT1v1p4LLs0f0aVQsw
+         /Q4+EXe5irs8oOp3EiMOVv3IflDKH1T8u1LO6eFUG2bQPSt135Em5u3G4eYEJ2Jsg4Bd
+         0I3w==
+X-Forwarded-Encrypted: i=1; AJvYcCXmAc3SxfHIwxdYOA3W6qp58z9LxekhhEgD6Mp3b/3dNTzPzrHczfjpE6rB8xqC50/n11KXJNV/wpcROjo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyhc8ldaAKIPde+qvuMd/g8/Dy3q2HaTNAhgllAZpKxXNAp3QJl
+	waeQVxUhzpHLny1z2BEBDl6V4LBx+48DMdAxc3HtSg7x5+ThaB5bwZuETpcFQbpT0NBWHYv25Aa
+	YZrsgog3d21qMfv+EUJTrrIWRNpZ6NY4fURch0d9Wrw==
+X-Gm-Gg: ASbGncvfe69nlqEDkt181zflv/Sf0ZDdqCaW/YfyUJgMsqUvqc4dn7U8UlDxcdypo29
+	x/AmmGzyA1iY1tI++NBGeMPd2WJK31GK0yOCsdSDfbCz31RnAtk+/EcSBoQJI7b4wcQcCVzEu+h
+	wzeugsVCcRrVFsy5I4PapwDkmK/jjA8vZhh9FRQhl3QEyXyZNXcyN/t8rA1dOUUkOLPwmgXwFXI
+	PTfkL4pNUn9evLOESCvvWwoAmBsGE9QNfikNgPHhN1Up+P2YjHWAN33fx/Ug7KeXXXhln/m
+X-Google-Smtp-Source: AGHT+IGs4uAX3yencgx0/XZuSpz5r9hsMQdALphD2vGQGD03EeAm6F6Xe1h2PTXFJBtX+prIK2L0qcVEIjfa4HGQf4Y=
+X-Received: by 2002:a17:906:9fc4:b0:b6d:a7ad:2fda with SMTP id
+ a640c23a62f3a-b70700b5861mr718340266b.12.1761991029382; Sat, 01 Nov 2025
+ 02:57:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20251031140043.564670400@linuxfoundation.org>
+In-Reply-To: <20251031140043.564670400@linuxfoundation.org>
+From: Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
+Date: Sat, 1 Nov 2025 15:26:31 +0530
+X-Gm-Features: AWmQ_bmibL6tpkqJQn24nQT7RZtlAq2etQdeb3xjOE_tEFUjo2XhoVmekwL8ago
+Message-ID: <CAG=yYwkDgbkvR0JD4ihRHsPPd1a6oZLaYn+E_0qPKFo6Ugy__A@mail.gmail.com>
+Subject: Re: [PATCH 6.17 00/35] 6.17.7-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	lkml <linux-kernel@vger.kernel.org>, torvalds@linux-foundation.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, 
+	Shuah Khan <shuah@kernel.org>, patches@kernelci.org, lkft-triage@lists.linaro.org, 
+	Pavel Machek <pavel@denx.de>, jonathanh@nvidia.com, f.fainelli@gmail.com, 
+	sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org, 
+	hargar@microsoft.com, broonie@kernel.org, achill@achill.org, 
+	sr@sladewatkins.com
+Content-Type: multipart/mixed; boundary="00000000000067ab4e06428581f3"
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   ba36dd5ee6fd4643ebbf6ee6eefcecf0b07e35c7
-commit: e38e8391f30b41c5a24bb46dc6ef4161921e782d drm/imagination: Use pwrseq for TH1520 GPU power management
-date:   9 weeks ago
-config: arm64-randconfig-r121-20251101 (https://download.01.org/0day-ci/archive/20251101/202511011739.SONHjSfR-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 13.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251101/202511011739.SONHjSfR-lkp@intel.com/reproduce)
+--00000000000067ab4e06428581f3
+Content-Type: text/plain; charset="UTF-8"
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511011739.SONHjSfR-lkp@intel.com/
+compiled and  booted  6.17.7-rc1+
+dmesg -l warn  shows some,
+file   attached
 
-All errors (new ones prefixed by >>):
+Tested-by: Jeffrin Jose T <jeffrin@rajagiritech.edu.in>
 
-   aarch64-linux-ld: Unexpected GOT/PLT entries detected!
-   aarch64-linux-ld: Unexpected run-time procedure linkages detected!
-   aarch64-linux-ld: drivers/gpu/drm/imagination/pvr_power.o: in function `pvr_power_off_sequence_pwrseq':
->> drivers/gpu/drm/imagination/pvr_power.c:341:(.text+0x150): undefined reference to `pwrseq_power_off'
-   aarch64-linux-ld: drivers/gpu/drm/imagination/pvr_power.o: in function `pvr_power_on_sequence_pwrseq':
->> drivers/gpu/drm/imagination/pvr_power.c:336:(.text+0x188): undefined reference to `pwrseq_power_on'
-   aarch64-linux-ld: drivers/gpu/drm/imagination/pvr_power.o: in function `pvr_power_init_pwrseq':
->> drivers/gpu/drm/imagination/pvr_power.c:320:(.text+0x1cc): undefined reference to `devm_pwrseq_get'
-
-
-vim +341 drivers/gpu/drm/imagination/pvr_power.c
-
-   315	
-   316	static int pvr_power_init_pwrseq(struct pvr_device *pvr_dev)
-   317	{
-   318		struct device *dev = from_pvr_device(pvr_dev)->dev;
-   319	
- > 320		pvr_dev->pwrseq = devm_pwrseq_get(dev, "gpu-power");
-   321		if (IS_ERR(pvr_dev->pwrseq)) {
-   322			/*
-   323			 * This platform requires a sequencer. If we can't get it, we
-   324			 * must return the error (including -EPROBE_DEFER to wait for
-   325			 * the provider to appear)
-   326			 */
-   327			return dev_err_probe(dev, PTR_ERR(pvr_dev->pwrseq),
-   328					     "Failed to get required power sequencer\n");
-   329		}
-   330	
-   331		return 0;
-   332	}
-   333	
-   334	static int pvr_power_on_sequence_pwrseq(struct pvr_device *pvr_dev)
-   335	{
- > 336		return pwrseq_power_on(pvr_dev->pwrseq);
-   337	}
-   338	
-   339	static int pvr_power_off_sequence_pwrseq(struct pvr_device *pvr_dev)
-   340	{
- > 341		return pwrseq_power_off(pvr_dev->pwrseq);
-   342	}
-   343	
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+software  engineer
+rajagiri school of engineering and technology
+
+--00000000000067ab4e06428581f3
+Content-Type: text/plain; charset="US-ASCII"; name="dmesg-warn.txt"
+Content-Disposition: attachment; filename="dmesg-warn.txt"
+Content-Transfer-Encoding: base64
+Content-ID: <f_mhg3x5060>
+X-Attachment-Id: f_mhg3x5060
+
+WyAgICAwLjI0NTYxNV0gVk1TQ0FQRTogU01UIG9uLCBTVElCUCBpcyByZXF1aXJlZCBmb3IgZnVs
+bCBwcm90ZWN0aW9uLiBTZWUgaHR0cHM6Ly93d3cua2VybmVsLm9yZy9kb2MvaHRtbC9sYXRlc3Qv
+YWRtaW4tZ3VpZGUvaHctdnVsbi92bXNjYXBlLmh0bWwgZm9yIG1vcmUgZGV0YWlscy4KWyAgICAw
+LjU3MzQyOV0gQ291bGQgbm90IHJldHJpZXZlIHBlcmYgY291bnRlcnMgKC0xOSkKWyAgICAwLjY0
+NTczMl0gaTgwNDI6IFBOUDogUFMvMiBhcHBlYXJzIHRvIGhhdmUgQVVYIHBvcnQgZGlzYWJsZWQs
+IGlmIHRoaXMgaXMgaW5jb3JyZWN0IHBsZWFzZSBib290IHdpdGggaTgwNDIubm9wbnAKWyAgIDE1
+LjY1ODM2Nl0gYW1kZ3B1IDAwMDA6MDQ6MDAuMDogYW1kZ3B1OiBmYWlsZWQgdG8gbG9hZCB1Y29k
+ZSBSTENfUkVTVE9SRV9MSVNUX0NOVEwoMHgyOSkgClsgICAxNS42NTgzNzBdIGFtZGdwdSAwMDAw
+OjA0OjAwLjA6IGFtZGdwdTogcHNwIGdmeCBjb21tYW5kIExPQURfSVBfRlcoMHg2KSBmYWlsZWQg
+YW5kIHJlc3BvbnNlIHN0YXR1cyBpcyAoMHhGRkZGMzAwRikKWyAgIDE1LjY1ODkwM10gYW1kZ3B1
+IDAwMDA6MDQ6MDAuMDogYW1kZ3B1OiBmYWlsZWQgdG8gbG9hZCB1Y29kZSBSTENfUkVTVE9SRV9M
+SVNUX0dQTV9NRU0oMHgyQSkgClsgICAxNS42NTg5MDddIGFtZGdwdSAwMDAwOjA0OjAwLjA6IGFt
+ZGdwdTogcHNwIGdmeCBjb21tYW5kIExPQURfSVBfRlcoMHg2KSBmYWlsZWQgYW5kIHJlc3BvbnNl
+IHN0YXR1cyBpcyAoMHhGRkZGMDAwRikKWyAgIDE1LjY1OTQzOV0gYW1kZ3B1IDAwMDA6MDQ6MDAu
+MDogYW1kZ3B1OiBmYWlsZWQgdG8gbG9hZCB1Y29kZSBSTENfUkVTVE9SRV9MSVNUX1NSTV9NRU0o
+MHgyQikgClsgICAxNS42NTk0NDJdIGFtZGdwdSAwMDAwOjA0OjAwLjA6IGFtZGdwdTogcHNwIGdm
+eCBjb21tYW5kIExPQURfSVBfRlcoMHg2KSBmYWlsZWQgYW5kIHJlc3BvbnNlIHN0YXR1cyBpcyAo
+MHhGRkZGMDAwRikKWyAgIDE4Ljk5NzM5MF0gc3lzdGVtZC1zeXN2LWdlbmVyYXRvclszMzFdOiBT
+eXNWIHNlcnZpY2UgJy9ldGMvaW5pdC5kL2xwZCcgbGFja3MgYSBuYXRpdmUgc3lzdGVtZCB1bml0
+IGZpbGUsIGF1dG9tYXRpY2FsbHkgZ2VuZXJhdGluZyBhIHVuaXQgZmlsZSBmb3IgY29tcGF0aWJp
+bGl0eS4KWyAgIDE4Ljk5NzM5N10gc3lzdGVtZC1zeXN2LWdlbmVyYXRvclszMzFdOiBQbGVhc2Ug
+dXBkYXRlIHBhY2thZ2UgdG8gaW5jbHVkZSBhIG5hdGl2ZSBzeXN0ZW1kIHVuaXQgZmlsZS4KWyAg
+IDE4Ljk5NzQwMF0gc3lzdGVtZC1zeXN2LWdlbmVyYXRvclszMzFdOiAhIFRoaXMgY29tcGF0aWJp
+bGl0eSBsb2dpYyBpcyBkZXByZWNhdGVkLCBleHBlY3QgcmVtb3ZhbCBzb29uLiAhClsgICAxOC45
+OTkyNzRdIHN5c3RlbWQtc3lzdi1nZW5lcmF0b3JbMzMxXTogU3lzViBzZXJ2aWNlICcvZXRjL2lu
+aXQuZC9saWdodGRtJyBsYWNrcyBhIG5hdGl2ZSBzeXN0ZW1kIHVuaXQgZmlsZSwgYXV0b21hdGlj
+YWxseSBnZW5lcmF0aW5nIGEgdW5pdCBmaWxlIGZvciBjb21wYXRpYmlsaXR5LgpbICAgMTguOTk5
+Mjc5XSBzeXN0ZW1kLXN5c3YtZ2VuZXJhdG9yWzMzMV06IFBsZWFzZSB1cGRhdGUgcGFja2FnZSB0
+byBpbmNsdWRlIGEgbmF0aXZlIHN5c3RlbWQgdW5pdCBmaWxlLgpbICAgMTguOTk5MjgxXSBzeXN0
+ZW1kLXN5c3YtZ2VuZXJhdG9yWzMzMV06ICEgVGhpcyBjb21wYXRpYmlsaXR5IGxvZ2ljIGlzIGRl
+cHJlY2F0ZWQsIGV4cGVjdCByZW1vdmFsIHNvb24uICEKWyAgIDE5LjAwNDExMV0gc3lzdGVtZC1z
+eXN2LWdlbmVyYXRvclszMzFdOiBTeXNWIHNlcnZpY2UgJy9ldGMvaW5pdC5kL2ZldGNobWFpbCcg
+bGFja3MgYSBuYXRpdmUgc3lzdGVtZCB1bml0IGZpbGUsIGF1dG9tYXRpY2FsbHkgZ2VuZXJhdGlu
+ZyBhIHVuaXQgZmlsZSBmb3IgY29tcGF0aWJpbGl0eS4KWyAgIDE5LjAwNDExNl0gc3lzdGVtZC1z
+eXN2LWdlbmVyYXRvclszMzFdOiBQbGVhc2UgdXBkYXRlIHBhY2thZ2UgdG8gaW5jbHVkZSBhIG5h
+dGl2ZSBzeXN0ZW1kIHVuaXQgZmlsZS4KWyAgIDE5LjAwNDExOV0gc3lzdGVtZC1zeXN2LWdlbmVy
+YXRvclszMzFdOiAhIFRoaXMgY29tcGF0aWJpbGl0eSBsb2dpYyBpcyBkZXByZWNhdGVkLCBleHBl
+Y3QgcmVtb3ZhbCBzb29uLiAhClsgICAyNC40NjM5OTldIG52bWUgbnZtZTA6IHVzaW5nIHVuY2hl
+Y2tlZCBkYXRhIGJ1ZmZlcgpbICAgMjguMTc0OTc5XSBrYXVkaXRkX3ByaW50a19za2I6IDEyNiBj
+YWxsYmFja3Mgc3VwcHJlc3NlZAo=
+--00000000000067ab4e06428581f3--
 
