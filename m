@@ -1,143 +1,88 @@
-Return-Path: <linux-kernel+bounces-881434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BD21C2831D
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 17:42:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 37973C2832D
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 17:42:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 216833B9DAB
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 16:37:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15B123A8D35
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 16:38:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0296C266B66;
-	Sat,  1 Nov 2025 16:37:23 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72BB9267B02;
+	Sat,  1 Nov 2025 16:38:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jyfkrC+i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E885A34D3A7;
-	Sat,  1 Nov 2025 16:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17E234D3A7;
+	Sat,  1 Nov 2025 16:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762015042; cv=none; b=jMVwiLhfm3jMvWxaCZuKlLv6G3WzzI5CpsTV3n7aGwMmsM1J/I997zKFhtAyozgMszZ7GGMxYk59zcjPaTz8Vit9Q98i7Rk4oNPt4BrpbJBoAXzgmbO7HJ4TCetzFF37CMOQzQ9T7cXMDRmc9c3RJnv+Kc1GidGWmUX0VhlTtC0=
+	t=1762015114; cv=none; b=jGQoC+U6/WSMqEog7JAxJ/NWPdRv2RnTkRwIkAQV7OyU2vaeCsO+dJiBuTXA20sTMwzLwchCqY+1zGBP15FS8wadNKdMtGVyXDPOOBNY5cA75zYShjJSbKNptO9UJb4yCuTFUZ5clypctKrYrmlLtfWjVUaQbx6PvUt2b04u9Uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762015042; c=relaxed/simple;
-	bh=B+ip0vUVqEsJmoaAWpIRIaah/ynRxJ2G5jP6uXOcx1s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aOlWiJNCEIDk0YhUOlPONEb0yonIiTT5gm03Q+saiTtNcOwS+h+uKzvwLsiNB0G6S4gaqFPrYPZuix9k3wFKIHXWHtDiK0/Nhdu3LgvyaisNLfqWbKRvNe5MgkcR2LgKkRWvFKSHmUZIPWkDcgaR3ltQ/F2/pBCdUxjevEc11Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: fe40d808b74011f0a38c85956e01ac42-20251102
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
-	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
-	IP_UNTRUSTED, SRC_UNTRUSTED, IP_UNFAMILIAR, SRC_UNFAMILIAR, DN_TRUSTED
-	SRC_TRUSTED, SA_EXISTED, SN_EXISTED, SPF_NOPASS, DKIM_NOPASS
-	DMARC_NOPASS, CIE_GOOD_SPF, CIE_UNKNOWN, GTI_FG_BS, GTI_RG_INFO
-	GTI_C_BU, AMN_GOOD, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:48c632b1-43e4-4524-afb9-81608eb814f5,IP:10,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:-30,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-20
-X-CID-INFO: VERSION:1.3.6,REQID:48c632b1-43e4-4524-afb9-81608eb814f5,IP:10,URL
-	:0,TC:0,Content:0,EDM:0,RT:0,SF:-30,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:-20
-X-CID-META: VersionHash:a9d874c,CLOUDID:80434152ae953d646c7bde4402a63861,BulkI
-	D:251102003116LS0FDXU4,BulkQuantity:2,Recheck:0,SF:10|66|78|102|850,TC:nil
-	,Content:0|15|50,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,BEC:nil
-	,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: fe40d808b74011f0a38c85956e01ac42-20251102
-X-User: hehuiwen@kylinos.cn
-Received: from localhost.localdomain [(120.228.9.121)] by mailgw.kylinos.cn
-	(envelope-from <hehuiwen@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1751878440; Sun, 02 Nov 2025 00:37:01 +0800
-From: Huiwen He <hehuiwen@kylinos.cn>
-To: marcelo.leitner@gmail.com,
-	lucien.xin@gmail.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	linux-sctp@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Huiwen He <hehuiwen@kylinos.cn>
-Subject: [PATCH] sctp: make sctp_transport_init() void
-Date: Sun,  2 Nov 2025 00:36:56 +0800
-Message-Id: <20251101163656.585550-1-hehuiwen@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1762015114; c=relaxed/simple;
+	bh=TbYkopGyFIENuHFLTsV1V/jcgq4zG4Ty8C4XMJb33II=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MFl4kNMZFDu98GGZpNoPr8VAf6XaxMBK05kXYNY9zZj+o8+b0oDt6MNL4OS6E9FoFLHMtOHvneoIy7R7VN16XRC+W0YatbO7Nuzu5g2nxxgGWjjqQuQGJf0bNp4x3kxzk30wIWNjQBpVSI9fhMbzkgJdej/MPSdUlKIfOVRG7y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jyfkrC+i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFF3BC4CEF1;
+	Sat,  1 Nov 2025 16:38:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762015114;
+	bh=TbYkopGyFIENuHFLTsV1V/jcgq4zG4Ty8C4XMJb33II=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jyfkrC+ikQeJH77i4aH47bJY6O3wr3xTa3lr2CYFhGR7l14ZHoYW4hmzOE/Ua9SXb
+	 Q8t6WH5YISEsddmO/udRldPCV+t/UOjkDDVyaqy59DaKS4EYTSEpiYYmAMf47XAx7d
+	 NO7bUVzL1Q8LpxBsJY6c3lX2q3WsG5LSac+riEZXekvOtCT58FJtGP8oJmfD+hF7LH
+	 N2U5KF3Ehcq0lQpBMgHbpw842nj6dfnFb7vRf352FMN8H4Likmowl5t0b/5zjxPJ5z
+	 Cxw1c2184KlmI1aUU06U5WP5xKCkeM4D1lTvo8mVizx9nducIm2DmwsV3sAMlhAC3n
+	 TAZWgjkHiwOeg==
+Date: Sat, 1 Nov 2025 12:38:28 -0400
+From: Nathan Chancellor <nathan@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-efi@vger.kernel.org,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, David Sterba <dsterba@suse.com>
+Subject: Re: fms extension (Was: [PATCH] fs/pipe: stop duplicating union
+ pipe_index declaration)
+Message-ID: <20251101163828.GA3243548@ax162>
+References: <20251029-wobei-rezept-bd53e76bb05b@brauner>
+ <CAHk-=wjGcos7LACF0J40x-Dwf4beOYj+mhptD+xcLte1RG91Ug@mail.gmail.com>
+ <20251030-zuruf-linken-d20795719609@brauner>
+ <20251029233057.GA3441561@ax162>
+ <20251030-meerjungfrau-getrocknet-7b46eacc215d@brauner>
+ <CAMj1kXHP14_F1xUYHfUzvtoNJjPEQM9yLaoKQX=v4j3-YyAn=A@mail.gmail.com>
+ <20251030172918.GA417112@ax162>
+ <20251030-zukunft-reduzieren-323e5f33dca6@brauner>
+ <20251031013457.GA2650519@ax162>
+ <20251101-bugsieren-gemocht-0e6115014a45@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251101-bugsieren-gemocht-0e6115014a45@brauner>
 
-sctp_transport_init() is static and never returns NULL. It is only
-called by sctp_transport_new(), so change it to void and remove the
-redundant return value check.
+On Sat, Nov 01, 2025 at 02:10:42PM +0100, Christian Brauner wrote:
+> I'd like a stable branch before -rc5, please.
 
-Signed-off-by: Huiwen He <hehuiwen@kylinos.cn>
----
- net/sctp/transport.c | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
+Sure thing. I have sent the change out for Acks now:
 
-diff --git a/net/sctp/transport.c b/net/sctp/transport.c
-index 4d258a6e8033..97da92390aa7 100644
---- a/net/sctp/transport.c
-+++ b/net/sctp/transport.c
-@@ -37,10 +37,10 @@
- /* 1st Level Abstractions.  */
- 
- /* Initialize a new transport from provided memory.  */
--static struct sctp_transport *sctp_transport_init(struct net *net,
--						  struct sctp_transport *peer,
--						  const union sctp_addr *addr,
--						  gfp_t gfp)
-+static void sctp_transport_init(struct net *net,
-+				struct sctp_transport *peer,
-+				const union sctp_addr *addr,
-+				gfp_t gfp)
- {
- 	/* Copy in the address.  */
- 	peer->af_specific = sctp_get_af_specific(addr->sa.sa_family);
-@@ -83,8 +83,6 @@ static struct sctp_transport *sctp_transport_init(struct net *net,
- 	get_random_bytes(&peer->hb_nonce, sizeof(peer->hb_nonce));
- 
- 	refcount_set(&peer->refcnt, 1);
--
--	return peer;
- }
- 
- /* Allocate and initialize a new transport.  */
-@@ -98,16 +96,12 @@ struct sctp_transport *sctp_transport_new(struct net *net,
- 	if (!transport)
- 		goto fail;
- 
--	if (!sctp_transport_init(net, transport, addr, gfp))
--		goto fail_init;
-+	sctp_transport_init(net, transport, addr, gfp);
- 
- 	SCTP_DBG_OBJCNT_INC(transport);
- 
- 	return transport;
- 
--fail_init:
--	kfree(transport);
--
- fail:
- 	return NULL;
- }
--- 
-2.25.1
+  https://lore.kernel.org/20251101-kbuild-ms-extensions-dedicated-cflags-v1-1-38004aba524b@kernel.org/
 
+I will finalize the branch by Thursday at the latest and ping you when
+it is ready.
+
+Cheers,
+Nathan
 
