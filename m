@@ -1,426 +1,162 @@
-Return-Path: <linux-kernel+bounces-881235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18EF9C27CA1
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 12:19:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11456C27CD3
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 12:38:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E9694000CE
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 11:19:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D14E71896AEE
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 11:38:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6AA2F3C22;
-	Sat,  1 Nov 2025 11:19:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E7B283FEA;
+	Sat,  1 Nov 2025 11:38:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kcHjwK2P"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="FA1uYQ10"
+Received: from out162-62-58-216.mail.qq.com (out162-62-58-216.mail.qq.com [162.62.58.216])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBBD82741CD
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 11:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4865285CA3
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 11:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761995988; cv=none; b=mbUgjOmLn6/Mpgzvv8mIwfx37+mkDiCjIA06PdhLXn+a9D5VVbnNjQHRlUMgKRlCxi8RfPbzIpba3Zzejf5oGLacKgzeh7AHs+2MLZwfZI+6bR62saiB6vx8WC1tU6v0yTu8bETKU3GSx9iIZV/gI9lM0qVrAEbQZ4IPQzXxffU=
+	t=1761997080; cv=none; b=IntfT2XJUxzyEir154QH5j9ox17CBBZjdpB1xmZZR4X06uzWKqf22DAI0djAAIi2Z+x6AoKm4iGLljvyU/w817OsuZY8cKZfYZadm5/ob5Fir2Q4Vq2CKClsGbYYp+LhiJ1WlP3/2kb+oQgPWOVZ3llpjNZ21ZkeDmDF/uFINF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761995988; c=relaxed/simple;
-	bh=XsoXTmpAkK0IC/tFVkUo8vTWFMZmLGSAwPHjrFQDMQs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Zs1KK7hZ6fR0z7nG4f7OZq2H3jTStqyOyw41EEHZKhufk7dGicRrKfWO6WHPcBgZrl4NDminrePMg1o2IKvQz088NS3WurtbE8X4GoAvGpzBo6V2LVNSiNQq98cq5P0FmNEWYrtOheej+wLjpvEZAvsQ02B0tIqKPLpB20DZ4zI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kcHjwK2P; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-63c489f1e6cso5630023a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 04:19:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761995983; x=1762600783; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=VA9/GYZqPtmMozVN89uR4Q0aoS5m99Ji3OBPgu1mZyE=;
-        b=kcHjwK2PaMoKKVW20qyDWew3UDxdeivvtVquRaWWeRKoskzbLpLV1H+LCPRS5w07vc
-         w/UQIm0w++hetfEZOlSMSyJreGhztGbHMc3nM7qWSLQhFbx8E3wAChfhvew+vqeP0Xme
-         JJiFCNYoS6wP2OTcFl6/UWdGVesv1nxDzpI5E0CgNn3eEGUu8EoXySCWYjo2nyglg22S
-         JuNr+DdtL0HWE+phr8G/YIamySO1+b4FA90e9fhRPcwLFtAzew4VQ+yxP9ny8JUt9XsK
-         PWxjVRzDMs8x+uNq+KAhC6hhu0um3A6MvNI6KqVTVhPufdoBccBPriZmr+n3dVDz/o9E
-         yfaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761995983; x=1762600783;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VA9/GYZqPtmMozVN89uR4Q0aoS5m99Ji3OBPgu1mZyE=;
-        b=Tw4kJk7CAAX0qtoXeYagexjMDHLvJDtY3ieWJOVVsJpr9utYDoGjXm8bZMO24V0GlE
-         MGPyvRPO/JpDv9DA0VvlO4zc44mQuKLSuDJVeMqJ+2LwLC3hlGDPmZASvw2Ur+zH8jWS
-         08QasxM4vQA5F4GvhymBq9eBC4HYoxCYuyX43Q9fcPTiEPwDCLY5Oe1UK7yQAL3GDm8B
-         NX2gyMo2hdgvSx0rgU6eXMgglGORh76/2kmQgySRTaJyKdyIKrnMtqoygHA5xLl0Rhgs
-         y0GuxGTU7HEhlfBrjk/vZNz+XtPdArs7Jeze+5RNZMU8Uaa0Dl3qyu4w4O39WDK9l6P+
-         65Zg==
-X-Forwarded-Encrypted: i=1; AJvYcCWow2zVT75ezo6c7t1afxGAaSVZ937PPhtZlEr12xCoIOugCfdFZGaClUKpMl9J4YYl/biGOczke9HeQHA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznXDGO7r1Eakd6MxofH5YmE2YE1vrdRjiQzcS8dSm0cNuyA8x4
-	NldzPzGLjDwCFYfTHQ+SlYA/8z8omPyT9eZoxfyjeg7yYpdFhTov9c13Jqylo4+SMlphYcGqOti
-	mp/fMQAyXpX8T5JkXfsge9cyDh5FyHd//Ijwj
-X-Gm-Gg: ASbGncvxOJOwoRZKPvv+6iM1DE4FojOfvpJ7859klSBJ7lHW8fIikViXhHnOdzbPpEB
-	qSACZEPNWtkpfIvjnapEWNxRvVj6kpNqYmQLcpHUN6gol3WDxPc9FER5Ajmj4D1TGN9XrpAHQp2
-	LCc5SjjQT3dhYU7E1wZzwHEacsE9IPi1Is35/DInYUvqVWEikS6ETGmzBkAxWJGX9b0g/BLglDN
-	hZie5KiSzxwF1JtDUiyLqUsdPVl+gjjhNuAHv3yn2XX7Y0Pd2WZ2PsxKoSfXAaerii2Sw==
-X-Google-Smtp-Source: AGHT+IEQEHTI7whxk9fnli4P3xU5KyTR7FJHxqf2wRSXKBIIgvmPQ5NPDMPaydsHGdsnaMf8venN81CtsI73mU47/Pw=
-X-Received: by 2002:a05:6402:210b:b0:640:9997:a229 with SMTP id
- 4fb4d7f45d1cf-6409997ae92mr1067104a12.3.1761995983045; Sat, 01 Nov 2025
- 04:19:43 -0700 (PDT)
+	s=arc-20240116; t=1761997080; c=relaxed/simple;
+	bh=pNDcR1KTKm/T30iTW1kw7zpsKDTjUt4pmLuDVedD8lw=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=pBjXtEFrofrmfNpFTb+f/xhBr+S0QCz1zREANJ+cftNJTY28ecR0KgqCPxuutn4e50AyE2uO4fKxMIkq9UZjWYokT1LPU+4mT1rDmfZWBKZkg68oXYOeqx3lh/7XjC1eitTQBpChUiEKiN6R9KtoGRUnvgaWYXYjz4ACIY6+884=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=FA1uYQ10; arc=none smtp.client-ip=162.62.58.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1761996765; bh=CUgEyo6nN7ShpfI6AF428d8IS4iX3QXo/uRoycL/89s=;
+	h=From:To:Cc:Subject:Date;
+	b=FA1uYQ10A43KA7/O9YZdAOYMXM7xBp1JO1nx1wqx+cszA9T+1i8H85xthdCYbPI2L
+	 CqXPty9J+d6VokZy9XBqE0dLeXBVmpcdox5yupP+oBXbqI6cgklq8DsmQingDzXULb
+	 EFOxB470q9xcU6ebiAkeCkPuVKlox4LptuI4AMZk=
+Received: from ray-virtual-machine.. ([112.96.50.110])
+	by newxmesmtplogicsvrszb20-1.qq.com (NewEsmtp) with SMTP
+	id 686BAAF2; Sat, 01 Nov 2025 19:26:06 +0800
+X-QQ-mid: xmsmtpt1761996366tmrr121w3
+Message-ID: <tencent_59CE737B39C37282F84B9CF7765A6C1D8006@qq.com>
+X-QQ-XMAILINFO: NX3IH4pixvQAWshGcEEQvgC8Eo3Fo/FLgaa5oCTS5Fe5JVHve2Tf9wPJ9yJNrk
+	 21ezElm7i+lbEUaQHiFeMumRB70Pd5gJ91kxD81IHcQ7UO1YLKJPfbqafKWaeiGTX92YfNKW8ut/
+	 zoY1RZ47kcP53xxaEtdC/E7P6Zm/cw/JSGGxD8LthoMla2q2h3jj+dsP1nxtl6sgzO8FeubPBpMF
+	 sG+BxiH5zCbgqoBRWnAuIrRSzFKq5gv+rH5SKF+hexZJWDM/gVnUafd6QYwhvjLbnOngmqcFiUgY
+	 daRETO9qsRBc0eZh5ukWnOHxbWiGPh60SO6gXgGYU6fm6vhw24PBJPODXibT9jijiusjVGAS3KmT
+	 wtRm/+hC6TPY9YwDRGEPtwraubWR5l6P//FQRiIqJmfkKS0FV7e+oLln+lWp6RJDXdhAjslI3tao
+	 +27GiX1k3Dcp+eCmImy6b+s4GpNLQyE8cIsDPIPs3mp5qu5k85aR7joovAe5vff9xSIIegiOW6JR
+	 8UNsUomcF7MNl/mtH3TrpR1/dLk52AU9gLg0vg/28QoGFGwMoVOHnAi+QlQQ0TqFKpRFAU/SxV5J
+	 awMItzS2xqx7V8g4nkxSYqghQyi20UJS3SvCRhuFozF/9iXpKnczLiYYfoSzdJghrQkdyjiqqbk8
+	 xKJuXFyR2MHK8TsAzc2r/xQVE4nApYy8pGj1YDneDD/ZwJKPPzoSUjuVQBeIeOWxlUo25otm4HFW
+	 igdhPwbBr1zvYh6w/YoDB5kNPdOzXElYd+hlk24uSmdaKiQN04+4DzKwLrAVdSyp9sIxEfdW9eE6
+	 Qx4dbOXpD/ZRwvLmBDKBQMm5agiVfIuTqBc7JshrddxPR6jXXi3kk2Q+2kj62YlHyGoYNfztioYX
+	 t1ZBG9PUABmTraRyZb+vSjrxfcJ0rAzd1blgqsDym4svhcq32FaIl6dCKSozfxYT++4v5fDl98Sz
+	 Mg+IyhM4N6MqbOlLGREzZJameW3wqA7SGjdfcRncbypZg+xQKKiJ6Gmm4s0EXB7TpMSd2ivqcEtI
+	 TxaJZByNIxfiDxe4HAo7qP6zeNjE0pIAeb81xE4Ooap6saf7Qit6O9XlvnQWYhsKISiAgrVJCtXf
+	 gmDfQeSaO7ZiNk2Lty3TifDtLkGMAoIQICvPHm
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+From: ray <veidongray@qq.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Cc: x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	linux-kernel@vger.kernel.org,
+	ray <veidongray@qq.com>
+Subject: [PATCH] x86/irq: Precompute nr_legacy_irqs() for performance optimization
+Date: Sat,  1 Nov 2025 19:26:04 +0800
+X-OQ-MSGID: <20251101112604.45715-1-veidongray@qq.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029-rockchip-pcie-system-suspend-v4-0-ce2e1b0692d2@collabora.com>
-In-Reply-To: <20251029-rockchip-pcie-system-suspend-v4-0-ce2e1b0692d2@collabora.com>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Sat, 1 Nov 2025 16:49:25 +0530
-X-Gm-Features: AWmQ_bmpT_2mcSjzejdSRAZS_z3Z3YCstTId1JiavKjLthWXyNA8r6zVYPZ7wSg
-Message-ID: <CANAwSgTMc=FcOi4=vPCUytMMg5dZO7QU4m6D=6V8RZ9hSDxn4A@mail.gmail.com>
-Subject: Re: [PATCH v4 0/9] PCI: dw-rockchip: add system suspend support
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
-	Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Heiko Stuebner <heiko@sntech.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Jingoo Han <jingoohan1@gmail.com>, Shawn Lin <shawn.lin@rock-chips.com>, 
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Sebastian,
+Precompute the return value of nr_legacy_irqs() in init_ISA_irqs(),
+init_IRQ(), and native_init_IRQ() functions to avoid repeated function
+calls in loops, improving performance.
 
-On Wed, 29 Oct 2025 at 23:27, Sebastian Reichel
-<sebastian.reichel@collabora.com> wrote:
->
-> I've recently been working on fixing up at least basic system suspend
-> support on the Rockchip RK3576 platform. Currently the biggest open
-> issue is missing support in the PCIe driver. This series is a follow-up
-> for Shawn Lin's series with feedback from Niklas Cassel and Manivannan
-> Sadhasivam being handled as well as some of my own changes fixing up
-> things I noticed.
->
-> In opposite to Shawn Lin I did not test with different peripherals as my
-> main goal is getting basic suspend to ram working in the first place. I
-> did notice issues with the Broadcom WLAN card on the RK3576 EVB.
-> Suspending that platform without a driver being probed works, but after
-> probing brcmfmac suspend is aborted because brcmf_pcie_pm_enter_D3()
-> does not work. As far as I can tell the problem is unrelated to the
-> Rockchip PCIe driver.
->
-Well, I gave it a try on Radxa Rock 5b,
-I am observing the falling warning.
+Changes made:
+- Precompute nr_legacy_irqs() return value in three functions
+- Use local variables instead of function calls in loops
+- Maintain original logic unchanged
 
-PM: noirq suspend of devices failed
+Signed-off-by: ray <veidongray@qq.com>
+---
+ arch/x86/kernel/irqinit.c | 18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
 
-alarm@rockpi-5b:~$ sudo systemctl suspend
-[sudo] password for alarm:
-alarm@rockpi-5b:~$ [  459.301536][ T6149] wlan0: deauthenticating from
-78:d2:94:85:bb:b2 by local choice (Reason: 3=DEAUTH_LEAVING)
-[  459.383823][ T6056] r8169 0004:41:00.0 enP4p65s0: Link is Down
-[  459.384568][ T6056] r8169 0004:41:00.0: disabling bus mastering
-[  459.862229][ T6291] PM: suspend entry (deep)
-[  459.935040][ T6291] Filesystems sync: 0.072 seconds
-[  459.941444][ T6253] (NULL device *): loading
-/lib/firmware/6.18.0-rc3-3-ARM64-GCC/intel/ibt-12-16.sfi failed with
-error -20
-[  459.943775][ T6253] (NULL device *): loading
-/lib/firmware/6.18.0-rc3-3-ARM64-GCC/intel/ibt-12-16.ddc failed with
-error -20
-[  459.945047][   T59] (NULL device *): loading
-/lib/firmware/6.18.0-rc3-3-ARM64-GCC/arm/mali/arch10.8/mali_csffw.bin
-failed with error -20
-[  459.946854][ T6253] (NULL device *): loading
-/lib/firmware/6.18.0-rc3-3-ARM64-GCC/iwlwifi-8265-36.ucode failed with
-error -20
-[  459.953052][ T6291] Freezing user space processes
-[  460.001306][ T6291] Freezing user space processes completed
-(elapsed 0.047 seconds)
-[  460.001993][ T6291] OOM killer disabled.
-[  460.002341][ T6291] Freezing remaining freezable tasks
-[  460.004202][ T6291] Freezing remaining freezable tasks completed
-(elapsed 0.001 seconds)
-[  460.004953][ T6291] printk: Suspending console(s) (use
-no_console_suspend to debug)
-[  460.070242][ T6253] nvme 0000:01:00.0: save config 0x00: 0xa808144d
-[  460.070261][ T6253] nvme 0000:01:00.0: save config 0x04: 0x00100406
-[  460.070272][ T6253] nvme 0000:01:00.0: save config 0x08: 0x01080200
-[  460.070281][ T6253] nvme 0000:01:00.0: save config 0x0c: 0x00000000
-[  460.070291][ T6253] nvme 0000:01:00.0: save config 0x10: 0xf0200004
-[  460.070300][ T6253] nvme 0000:01:00.0: save config 0x14: 0x00000000
-[  460.070309][ T6253] nvme 0000:01:00.0: save config 0x18: 0x00000000
-[  460.070319][ T6253] nvme 0000:01:00.0: save config 0x1c: 0x00000000
-[  460.070328][ T6253] nvme 0000:01:00.0: save config 0x20: 0x00000000
-[  460.070337][ T6253] nvme 0000:01:00.0: save config 0x24: 0x00000000
-[  460.070346][ T6253] nvme 0000:01:00.0: save config 0x28: 0x00000000
-[  460.070355][ T6253] nvme 0000:01:00.0: save config 0x2c: 0xa801144d
-[  460.070364][ T6253] nvme 0000:01:00.0: save config 0x30: 0x00000000
-[  460.070373][ T6253] nvme 0000:01:00.0: save config 0x34: 0x00000040
-[  460.070383][ T6253] nvme 0000:01:00.0: save config 0x38: 0x00000000
-[  460.070392][ T6253] nvme 0000:01:00.0: save config 0x3c: 0x0000016d
-[  460.274027][ T6253] iwlwifi 0002:21:00.0: save config 0x00: 0x24fd8086
-[  460.274058][ T6253] iwlwifi 0002:21:00.0: save config 0x04: 0x00100406
-[  460.274080][ T6253] iwlwifi 0002:21:00.0: save config 0x08: 0x02800078
-[  460.274102][ T6253] iwlwifi 0002:21:00.0: save config 0x0c: 0x00000000
-[  460.274124][ T6253] iwlwifi 0002:21:00.0: save config 0x10: 0xf2200004
-[  460.274146][ T6253] iwlwifi 0002:21:00.0: save config 0x14: 0x00000000
-[  460.274168][ T6253] iwlwifi 0002:21:00.0: save config 0x18: 0x00000000
-[  460.274189][ T6253] iwlwifi 0002:21:00.0: save config 0x1c: 0x00000000
-[  460.274210][ T6253] iwlwifi 0002:21:00.0: save config 0x20: 0x00000000
-[  460.274232][ T6253] iwlwifi 0002:21:00.0: save config 0x24: 0x00000000
-[  460.274253][ T6253] iwlwifi 0002:21:00.0: save config 0x28: 0x00000000
-[  460.274275][ T6253] iwlwifi 0002:21:00.0: save config 0x2c: 0x10108086
-[  460.274296][ T6253] iwlwifi 0002:21:00.0: save config 0x30: 0x00000000
-[  460.274318][ T6253] iwlwifi 0002:21:00.0: save config 0x34: 0x000000c8
-[  460.274340][ T6253] iwlwifi 0002:21:00.0: save config 0x38: 0x00000000
-[  460.274361][ T6253] iwlwifi 0002:21:00.0: save config 0x3c: 0x00000183
-[  460.274917][ T6300] r8169 0004:41:00.0: save config 0x00: 0x812510ec
-[  460.274927][ T6300] r8169 0004:41:00.0: save config 0x04: 0x00100403
-[  460.274937][ T6300] r8169 0004:41:00.0: save config 0x08: 0x02000005
-[  460.274947][ T6300] r8169 0004:41:00.0: save config 0x0c: 0x00000010
-[  460.274957][ T6300] r8169 0004:41:00.0: save config 0x10: 0xf4100001
-[  460.274967][ T6300] r8169 0004:41:00.0: save config 0x14: 0x00000000
-[  460.274977][ T6300] r8169 0004:41:00.0: save config 0x18: 0xf4200004
-[  460.274987][ T6300] r8169 0004:41:00.0: save config 0x1c: 0x00000000
-[  460.274996][ T6300] r8169 0004:41:00.0: save config 0x20: 0xf4210004
-[  460.275006][ T6300] r8169 0004:41:00.0: save config 0x24: 0x00000000
-[  460.275016][ T6300] r8169 0004:41:00.0: save config 0x28: 0x00000000
-[  460.275026][ T6300] r8169 0004:41:00.0: save config 0x2c: 0x012310ec
-[  460.275036][ T6300] r8169 0004:41:00.0: save config 0x30: 0x00000000
-[  460.275045][ T6300] r8169 0004:41:00.0: save config 0x34: 0x00000040
-[  460.275055][ T6300] r8169 0004:41:00.0: save config 0x38: 0x00000000
-[  460.275065][ T6300] r8169 0004:41:00.0: save config 0x3c: 0x00000197
-[  460.285117][ T6253] iwlwifi 0002:21:00.0: PCI PM: Suspend power state: D3hot
-[  460.287498][ T6300] r8169 0004:41:00.0: PCI PM: Suspend power state: D3hot
-[  460.287631][ T6296] pcieport 0004:40:00.0: save config 0x00: 0x35881d87
-[  460.287644][ T6296] pcieport 0004:40:00.0: save config 0x04: 0x00100507
-[  460.287651][ T6296] pcieport 0004:40:00.0: save config 0x08: 0x06040001
-[  460.287658][ T6296] pcieport 0004:40:00.0: save config 0x0c: 0x00010000
-[  460.287664][ T6296] pcieport 0004:40:00.0: save config 0x10: 0x00000000
-[  460.287671][ T6296] pcieport 0004:40:00.0: save config 0x14: 0x00000000
-[  460.287677][ T6296] pcieport 0004:40:00.0: save config 0x18: 0x00414140
-[  460.287683][ T6296] pcieport 0004:40:00.0: save config 0x1c: 0x00000000
-[  460.287689][ T6296] pcieport 0004:40:00.0: save config 0x20: 0xf420f420
-[  460.287696][ T6296] pcieport 0004:40:00.0: save config 0x24: 0x0001fff1
-[  460.287702][ T6296] pcieport 0004:40:00.0: save config 0x28: 0x00000000
-[  460.287708][ T6296] pcieport 0004:40:00.0: save config 0x2c: 0x00000000
-[  460.287714][ T6296] pcieport 0004:40:00.0: save config 0x30: 0x00000000
-[  460.287720][ T6296] pcieport 0004:40:00.0: save config 0x34: 0x00000040
-[  460.287727][ T6296] pcieport 0004:40:00.0: save config 0x38: 0x00000000
-[  460.287733][ T6296] pcieport 0004:40:00.0: save config 0x3c: 0x00020197
-[  460.299895][ T6296] pcieport 0004:40:00.0: PCI PM: Suspend power state: D3hot
-[  460.311927][ T6291] rockchip-dw-pcie a41000000.pcie: Timeout
-waiting for L2 entry! LTSSM: 0x12
-[  460.311935][ T6291] rockchip-dw-pcie a41000000.pcie: PM:
-dpm_run_callback(): genpd_suspend_noirq returns -110
-[  460.311950][ T6291] rockchip-dw-pcie a41000000.pcie: PM: failed to
-suspend noirq: error -110
-[  460.328691][   T57] pcieport 0004:40:00.0: restore config 0x2c:
-0x00000000 -> 0x00000000
-[  460.328706][   T57] pcieport 0004:40:00.0: restore config 0x28:
-0x00000000 -> 0x00000000
-[  460.328714][   T57] pcieport 0004:40:00.0: restore config 0x24:
-0x0001fff1 -> 0x0001fff1
-[  460.329363][ T6299] iwlwifi 0002:21:00.0: restore config 0x3c:
-0x00000100 -> 0x00000183
-[  460.329558][ T6299] iwlwifi 0002:21:00.0: restore config 0x10:
-0x00000004 -> 0xf2200004
-[  460.329643][ T6299] iwlwifi 0002:21:00.0: restore config 0x04:
-0x00100000 -> 0x00100406
-[  460.341978][ T6291] PM: noirq suspend of devices failed
-[  460.352925][ T6303] xhci-hcd xhci-hcd.7.auto: xHC error in resume,
-USBSTS 0x401, Reinit
-[  460.352937][ T6303] usb usb5: root hub lost power or was reset
-[  460.352941][ T6303] usb usb6: root hub lost power or was reset
-[  460.517043][   T56] xhci-hcd xhci-hcd.8.auto: xHC error in resume,
-USBSTS 0x401, Reinit
-[  460.517056][   T56] usb usb7: root hub lost power or was reset
-[  460.517060][   T56] usb usb8: root hub lost power or was reset
-[  460.833660][ T6291] OOM killer enabled.
-[  460.834002][ T6291] Restarting tasks: Starting
-[  460.835432][ T6291] Restarting tasks: Done
-[  460.835846][ T6291] random: crng reseeded on system resumption
-[  460.837377][ T6291] PM: suspend exit
-[  460.838167][ T6291] PM: suspend entry (s2idle)
-[  460.976541][ T6291] Filesystems sync: 0.138 seconds
-[  460.978668][ T6291] Freezing user space processes
-[  460.980928][ T6291] Freezing user space processes completed
-(elapsed 0.001 seconds)
-[  460.981607][ T6291] OOM killer disabled.
-[  460.981954][ T6291] Freezing remaining freezable tasks
-[  460.997394][ T6291] Freezing remaining freezable tasks completed
-(elapsed 0.014 seconds)
-[  460.998116][ T6291] printk: Suspending console(s) (use
-no_console_suspend to debug)
-[  461.041501][ T6299] nvme 0000:01:00.0: save config 0x00: 0xa808144d
-[  461.041520][ T6299] nvme 0000:01:00.0: save config 0x04: 0x00100406
-[  461.041530][ T6299] nvme 0000:01:00.0: save config 0x08: 0x01080200
-[  461.041540][ T6299] nvme 0000:01:00.0: save config 0x0c: 0x00000000
-[  461.041549][ T6299] nvme 0000:01:00.0: save config 0x10: 0xf0200004
-[  461.041559][ T6299] nvme 0000:01:00.0: save config 0x14: 0x00000000
-[  461.041568][ T6299] nvme 0000:01:00.0: save config 0x18: 0x00000000
-[  461.041577][ T6299] nvme 0000:01:00.0: save config 0x1c: 0x00000000
-[  461.041586][ T6299] nvme 0000:01:00.0: save config 0x20: 0x00000000
-[  461.041595][ T6299] nvme 0000:01:00.0: save config 0x24: 0x00000000
-[  461.041604][ T6299] nvme 0000:01:00.0: save config 0x28: 0x00000000
-[  461.041613][ T6299] nvme 0000:01:00.0: save config 0x2c: 0xa801144d
-[  461.041622][ T6299] nvme 0000:01:00.0: save config 0x30: 0x00000000
-[  461.041632][ T6299] nvme 0000:01:00.0: save config 0x34: 0x00000040
-[  461.041641][ T6299] nvme 0000:01:00.0: save config 0x38: 0x00000000
-[  461.041650][ T6299] nvme 0000:01:00.0: save config 0x3c: 0x0000016d
-[  461.211199][ T6307] r8169 0004:41:00.0: save config 0x00: 0x812510ec
-[  461.211220][ T6307] r8169 0004:41:00.0: save config 0x04: 0x00100403
-[  461.211233][ T6307] r8169 0004:41:00.0: save config 0x08: 0x02000005
-[  461.211246][ T6307] r8169 0004:41:00.0: save config 0x0c: 0x00000010
-[  461.211257][ T6307] r8169 0004:41:00.0: save config 0x10: 0xf4100001
-[  461.211269][ T6307] r8169 0004:41:00.0: save config 0x14: 0x00000000
-[  461.211294][ T6297] iwlwifi 0002:21:00.0: save config 0x00: 0x24fd8086
-[  461.211298][ T6307] r8169 0004:41:00.0: save config 0x18: 0xf4200004
-[  461.211311][ T6307] r8169 0004:41:00.0: save config 0x1c: 0x00000000
-[  461.211327][ T6297] iwlwifi 0002:21:00.0: save config 0x04: 0x00100406
-[  461.211333][ T6307] r8169 0004:41:00.0: save config 0x20: 0xf4210004
-[  461.211350][ T6297] iwlwifi 0002:21:00.0: save config 0x08: 0x02800078
-[  461.211355][ T6307] r8169 0004:41:00.0: save config 0x24: 0x00000000
-[  461.211372][ T6297] iwlwifi 0002:21:00.0: save config 0x0c: 0x00000000
-[  461.211379][ T6307] r8169 0004:41:00.0: save config 0x28: 0x00000000
-[  461.211395][ T6297] iwlwifi 0002:21:00.0: save config 0x10: 0xf2200004
-[  461.211401][ T6307] r8169 0004:41:00.0: save config 0x2c: 0x012310ec
-[  461.211417][ T6297] iwlwifi 0002:21:00.0: save config 0x14: 0x00000000
-[  461.211421][ T6307] r8169 0004:41:00.0: save config 0x30: 0x00000000
-[  461.211439][ T6297] iwlwifi 0002:21:00.0: save config 0x18: 0x00000000
-[  461.211445][ T6307] r8169 0004:41:00.0: save config 0x34: 0x00000040
-[  461.211461][ T6297] iwlwifi 0002:21:00.0: save config 0x1c: 0x00000000
-[  461.211468][ T6307] r8169 0004:41:00.0: save config 0x38: 0x00000000
-[  461.211483][ T6297] iwlwifi 0002:21:00.0: save config 0x20: 0x00000000
-[  461.211487][ T6307] r8169 0004:41:00.0: save config 0x3c: 0x00000197
-[  461.211505][ T6297] iwlwifi 0002:21:00.0: save config 0x24: 0x00000000
-[  461.211527][ T6297] iwlwifi 0002:21:00.0: save config 0x28: 0x00000000
-[  461.211550][ T6297] iwlwifi 0002:21:00.0: save config 0x2c: 0x10108086
-[  461.211574][ T6297] iwlwifi 0002:21:00.0: save config 0x30: 0x00000000
-[  461.211596][ T6297] iwlwifi 0002:21:00.0: save config 0x34: 0x000000c8
-[  461.211618][ T6297] iwlwifi 0002:21:00.0: save config 0x38: 0x00000000
-[  461.211644][ T6297] iwlwifi 0002:21:00.0: save config 0x3c: 0x00000183
-[  461.224517][ T6297] iwlwifi 0002:21:00.0: PCI PM: Suspend power state: D3hot
-[  461.224566][ T6307] r8169 0004:41:00.0: PCI PM: Suspend power state: D3hot
-[  461.224614][ T6299] pcieport 0004:40:00.0: save config 0x00: 0x35881d87
-[  461.224622][ T6299] pcieport 0004:40:00.0: save config 0x04: 0x00100507
-[  461.224629][ T6299] pcieport 0004:40:00.0: save config 0x08: 0x06040001
-[  461.224636][ T6299] pcieport 0004:40:00.0: save config 0x0c: 0x00010000
-[  461.224642][ T6299] pcieport 0004:40:00.0: save config 0x10: 0x00000000
-[  461.224649][ T6299] pcieport 0004:40:00.0: save config 0x14: 0x00000000
-[  461.224655][ T6299] pcieport 0004:40:00.0: save config 0x18: 0x00414140
-[  461.224661][ T6299] pcieport 0004:40:00.0: save config 0x1c: 0x00000000
-[  461.224667][ T6299] pcieport 0004:40:00.0: save config 0x20: 0xf420f420
-[  461.224673][ T6299] pcieport 0004:40:00.0: save config 0x24: 0x0001fff1
-[  461.224680][ T6299] pcieport 0004:40:00.0: save config 0x28: 0x00000000
-[  461.224686][ T6299] pcieport 0004:40:00.0: save config 0x2c: 0x00000000
-[  461.224692][ T6299] pcieport 0004:40:00.0: save config 0x30: 0x00000000
-[  461.224698][ T6299] pcieport 0004:40:00.0: save config 0x34: 0x00000040
-[  461.224705][ T6299] pcieport 0004:40:00.0: save config 0x38: 0x00000000
-[  461.224711][ T6299] pcieport 0004:40:00.0: save config 0x3c: 0x00020197
-[  461.236873][ T6299] pcieport 0004:40:00.0: PCI PM: Suspend power state: D3hot
-[  461.247945][ T6291] rockchip-dw-pcie a41000000.pcie: Failed to
-receive PME_TO_Ack
-[  461.258929][ T6291] rockchip-dw-pcie a41000000.pcie: Timeout
-waiting for L2 entry! LTSSM: 0x12
-[  461.258937][ T6291] rockchip-dw-pcie a41000000.pcie: PM:
-dpm_run_callback(): genpd_suspend_noirq returns -110
-[  461.258952][ T6291] rockchip-dw-pcie a41000000.pcie: PM: failed to
-suspend noirq: error -110
-[  461.276608][ T6303] iwlwifi 0002:21:00.0: restore config 0x3c:
-0x00000100 -> 0x00000183
-[  461.276655][ T6302] pcieport 0004:40:00.0: restore config 0x2c:
-0x00000000 -> 0x00000000
-[  461.276683][ T6302] pcieport 0004:40:00.0: restore config 0x28:
-0x00000000 -> 0x00000000
-[  461.276714][ T6302] pcieport 0004:40:00.0: restore config 0x24:
-0x0001fff1 -> 0x0001fff1
-[  461.276805][ T6303] iwlwifi 0002:21:00.0: restore config 0x10:
-0x00000004 -> 0xf2200004
-[  461.276908][ T6303] iwlwifi 0002:21:00.0: restore config 0x04:
-0x00100000 -> 0x00100406
-[  461.289977][ T6291] PM: noirq suspend of devices failed
-[  461.302571][ T6298] xhci-hcd xhci-hcd.7.auto: xHC error in resume,
-USBSTS 0x401, Reinit
-[  461.302581][ T6298] usb usb5: root hub lost power or was reset
-[  461.302585][ T6298] usb usb6: root hub lost power or was reset
-[  461.425101][ T6307] xhci-hcd xhci-hcd.8.auto: xHC error in resume,
-USBSTS 0x401, Reinit
-[  461.425111][ T6307] usb usb7: root hub lost power or was reset
-[  461.425115][ T6307] usb usb8: root hub lost power or was reset
-[  461.746324][ T6291] OOM killer enabled.
-[  461.746666][ T6291] Restarting tasks: Starting
-[  461.748345][ T6291] Restarting tasks: Done
-[  461.748757][ T6291] random: crng reseeded on system resumption
-[  461.749533][ T6291] PM: suspend exit
-[  461.809104][ T6056] Realtek Internal NBASE-T PHY r8169-4-4100:00:
-attached PHY driver (mii_bus:phy_addr=r8169-4-4100:00, irq=MAC)
-[  461.810148][ T6056] r8169 0004:41:00.0: enabling bus mastering
-[  461.989335][ T6298] r8169 0004:41:00.0 enP4p65s0: Link is Down
-[  464.915207][ T6311] r8169 0004:41:00.0 enP4p65s0: Link is Up -
-1Gbps/Full - flow control rx/tx
-[  465.527599][ T6149] wlan0: authenticate with 78:d2:94:85:bb:b2
-(local address=a4:6b:b6:06:5c:8e)
-[  465.529749][ T6149] wlan0: send auth to 78:d2:94:85:bb:b2 (try 1/3)
-[  465.543850][ T6298] wlan0: authenticated
-[  465.545190][ T6298] wlan0: associate with 78:d2:94:85:bb:b2 (try 1/3)
-[  465.555534][ T6298] wlan0: RX AssocResp from 78:d2:94:85:bb:b2
-(capab=0x31 status=0 aid=1)
-[  465.560431][ T6298] wlan0: associated
+diff --git a/arch/x86/kernel/irqinit.c b/arch/x86/kernel/irqinit.c
+index 6ab9eac64670..bb7cbf99f65c 100644
+--- a/arch/x86/kernel/irqinit.c
++++ b/arch/x86/kernel/irqinit.c
+@@ -54,7 +54,7 @@ DEFINE_PER_CPU(vector_irq_t, vector_irq) = {
+ void __init init_ISA_irqs(void)
+ {
+ 	struct irq_chip *chip = legacy_pic->chip;
+-	int i;
++	int i, nr_legacy;
+ 
+ 	/*
+ 	 * Try to set up the through-local-APIC virtual wire mode earlier.
+@@ -66,7 +66,9 @@ void __init init_ISA_irqs(void)
+ 
+ 	legacy_pic->init(0);
+ 
+-	for (i = 0; i < nr_legacy_irqs(); i++) {
++	nr_legacy = nr_legacy_irqs();
++
++	for (i = 0; i < nr_legacy; i++) {
+ 		irq_set_chip_and_handler(i, chip, handle_level_irq);
+ 		irq_set_status_flags(i, IRQ_LEVEL);
+ 	}
+@@ -74,7 +76,7 @@ void __init init_ISA_irqs(void)
+ 
+ void __init init_IRQ(void)
+ {
+-	int i;
++	int i, nr_legacy;
+ 
+ 	/*
+ 	 * On cpu 0, Assign ISA_IRQ_VECTOR(irq) to IRQ 0..15.
+@@ -84,7 +86,10 @@ void __init init_IRQ(void)
+ 	 * then this vector space can be freed and re-used dynamically as the
+ 	 * irq's migrate etc.
+ 	 */
+-	for (i = 0; i < nr_legacy_irqs(); i++)
++
++	nr_legacy = nr_legacy_irqs();
++
++	for (i = 0; i < nr_legacy; i++)
+ 		per_cpu(vector_irq, 0)[ISA_IRQ_VECTOR(i)] = irq_to_desc(i);
+ 
+ 	BUG_ON(irq_init_percpu_irqstack(smp_processor_id()));
+@@ -94,6 +99,7 @@ void __init init_IRQ(void)
+ 
+ void __init native_init_IRQ(void)
+ {
++	int nr_legacy;
+ 	/* Execute any quirks before the call gates are initialised: */
+ 	x86_init.irqs.pre_vector_init();
+ 
+@@ -106,7 +112,9 @@ void __init native_init_IRQ(void)
+ 
+ 	lapic_assign_system_vectors();
+ 
+-	if (!acpi_ioapic && !of_ioapic && nr_legacy_irqs()) {
++	nr_legacy = nr_legacy_irqs();
++
++	if (!acpi_ioapic && !of_ioapic && nr_legacy) {
+ 		/* IRQ2 is cascade interrupt to second interrupt controller */
+ 		if (request_irq(2, no_action, IRQF_NO_THREAD, "cascade", NULL))
+ 			pr_err("%s: request_irq() failed\n", "cascade");
+-- 
+2.34.1
 
-Thanks
--Anand
-
-> Changes since PATCHv3:
->  * https://lore.kernel.org/linux-pci/1744940759-23823-1-git-send-email-shawn.lin@rock-chips.com/
->  * rename rockchip_pcie_get_ltssm to rockchip_pcie_get_ltssm_status_reg
->    in a separate patch (Niklas Cassel)
->  * rename rockchip_pcie_get_pure_ltssm to rockchip_pcie_get_ltssm_state
->    in a separate patch (Niklas Cassel)
->  * Move devm_phy_get out of phy_init to probe in a separate patch
->    (Manivannan Sadhasivam)
->  * Add helper function for enhanced LTSSM control mode in a separate patch
->    (Niklas Cassel)
->  * Add helper function for controller mode in a separate patch
->    (Niklas Cassel)
->  * Add helper function for DDL indicator in a separate patch
->    (Niklas Cassel)
->  * Move rockchip_pcie_pme_turn_off implementation in a separate patch
->  * Rebase to v6.18-rc3 using new FIELD_PREP_WM16()
->  * Improve readability of PME_TURN_OFF/PME_TO_ACK defines (Manivannan Sadhasivam)
->  * Fix usage of reverse Xmas (Manivannan Sadhasivam)
->  * Assert PERST# before turning off other resources (Manivannan Sadhasivam)
->  * Improve some error messages (Manivannan Sadhasivam)
->  * Rename goto labels as per their purpose (Manivannan Sadhasivam)
->  * Add extra patch for dw_pcie_resume_noirq, since I've seen errors
->    during resume on boards not having anything plugged into their PCIe
->    port
->
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> ---
-> Sebastian Reichel (9):
->       PCI: dw-rockchip: Rename rockchip_pcie_get_ltssm function
->       PCI: dw-rockchip: Support get_ltssm operation
->       PCI: dw-rockchip: Move devm_phy_get out of phy_init
->       PCI: dw-rockchip: Add helper function for enhanced LTSSM control mode
->       PCI: dw-rockchip: Add helper function for controller mode
->       PCI: dw-rockchip: Add helper function for DDL indicator
->       PCI: dw-rockchip: Add pme_turn_off support
->       PCI: dw-rockchip: Add system PM support
->       PCI: dwc: support missing PCIe device on resume
->
->  drivers/pci/controller/dwc/pcie-designware-host.c |  13 +-
->  drivers/pci/controller/dwc/pcie-dw-rockchip.c     | 220 ++++++++++++++++++----
->  2 files changed, 198 insertions(+), 35 deletions(-)
-> ---
-> base-commit: dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
-> change-id: 20251028-rockchip-pcie-system-suspend-86cf08a7b229
->
-> Best regards,
-> --
-> Sebastian Reichel <sebastian.reichel@collabora.com>
->
->
 
