@@ -1,133 +1,94 @@
-Return-Path: <linux-kernel+bounces-881456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86D68C283F2
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 18:39:47 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1E14C2840A
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 18:43:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 42EDE4E23DF
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 17:39:46 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EC75A34979C
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 17:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6A52FB08F;
-	Sat,  1 Nov 2025 17:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qv8XHu5u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4532FB09A;
+	Sat,  1 Nov 2025 17:43:34 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB5D2287518;
-	Sat,  1 Nov 2025 17:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7E82FABF8
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 17:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762018777; cv=none; b=H443N+mjADb65CiVoz90aNTgPHBngOqIaC5akQHUEFwksrvhrzz5xP3SY+qkK5pdZw6RZLhSygsNhud+qfiYjXWFACNX5/WSofk8c9w2tcgghOMK+5aRbnZKfwzp123dz9Cu8RD2HwNGqzlMqsjFmAXJ/BtbFEoAlFMyXhrgZzM=
+	t=1762019013; cv=none; b=M/aMJ9HS35pzpr51MIPmjk7vUMSsNt/YBplr7OpQTbztiYwY92ww2nYErS2E+Q8GVLFD6rp6NPiiik5MJo3zOjo+UMv4Lvg0YJWb3esOBbaHmmFsGixjXdECBzmvn/RUpzDHCJ2aKDMJGYl8qtwH+cxo9HVbOm5GJHRDQIqMnWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762018777; c=relaxed/simple;
-	bh=jaSI9PNTjac7hlUazQQKeti2y4UuuMm8Ia+3VWtswo0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=biLCm815CGDFjY4pLlCOSd4uSfd/c2IOwRISYByrvMn40EhkaJMmSMvQ9f/QckYPIOePyY47qgRtrNv+gUPOdouNFQ2ZY9PlPu4C8ALni+XtFO8X9amooS1U9WsfmQ4J+gR+o1PvBLyJ4weG9dmuWoH/Ssy8SIsUXPfo/IlDNFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qv8XHu5u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3A47C4CEF1;
-	Sat,  1 Nov 2025 17:39:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762018777;
-	bh=jaSI9PNTjac7hlUazQQKeti2y4UuuMm8Ia+3VWtswo0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qv8XHu5uIpfwy46IgaXSKzFT1mtky30cDG1MtBpOcXdvGpJqmXf1iWAlPWUwep1yq
-	 /g8W52E7CKC4M91nNDXNN4VxbNwlJwLPiozuRDqHUBXxapzzTvqWJZABdkg1+629Fl
-	 Gdal3ohlx15frNALNhqNm2G47zjIqjX/sr1pH+B1AgRpytSt3aZYWlwY6AIWT5kQR2
-	 fFyWivhik+oti8F8QiUpqe2ucAs4L/UOpF7MXAEfqG6PjJACDJUz/t9V9R/hGyTuVB
-	 a9hH9dT4ZHQ2WyQKOlbnH+4jPLOIlzLqJdCWKUa+DvbTplBDkrsfOcTlHxJSyP6zSn
-	 uNCLgVNmWxaiQ==
-Date: Sat, 1 Nov 2025 12:42:55 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Ilia Lin <ilia.lin@kernel.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Raag Jadav <raag.jadav@intel.com>, linux-arm-msm@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] cpufreq: qcom-nvmem: add compatible fallback for
- ipq806x for no SMEM
-Message-ID: <qael7opoqary2n5iqefxxp42v3qoudfhfvcgjyxfe3t7353zge@ahgvniscxl7v>
-References: <20251031130835.7953-1-ansuelsmth@gmail.com>
- <20251031130835.7953-4-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1762019013; c=relaxed/simple;
+	bh=o0eiown53fe7mK/LKj//alXONUq0VIY8OfJfEjRu3xw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Mkqshk375QSWRrHFQJylAhJyCG9or4+zuuynZ1RB9AMyw2b6jSx/O3xzFCRGITLwWW9LReElUQ9083k8/gjUmAjKQG09oNwOOojK5dtZJ2bui39b4vjqL7ahzF9PzpuB7luUiacNqbIOpEZsYAAGtessOX4/Oogn2LjUyJhshUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
+Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay09.hostedemail.com (Postfix) with ESMTP id 3A97D88A8E;
+	Sat,  1 Nov 2025 17:43:25 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf06.hostedemail.com (Postfix) with ESMTPA id D19052000F;
+	Sat,  1 Nov 2025 17:43:22 +0000 (UTC)
+Message-ID: <1189b6b0a67eef57f824f200121c8d46e73e5f24.camel@perches.com>
+Subject: Re: [PATCH] checkpatch: add IDR to the deprecated list
+From: Joe Perches <joe@perches.com>
+To: Carlos =?ISO-8859-1?Q?L=F3pez?= <clopez@suse.de>, 
+	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>
+Cc: willy@infradead.org, Dan Williams <dan.j.williams@intel.com>, Andy
+ Whitcroft <apw@canonical.com>, Dwaipayan Ray <dwaipayanray1@gmail.com>,
+ Lukas Bulwahn	 <lukas.bulwahn@gmail.com>
+Date: Sat, 01 Nov 2025 10:43:21 -0700
+In-Reply-To: <20251031111908.2266077-2-clopez@suse.de>
+References: <20251031111908.2266077-2-clopez@suse.de>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251031130835.7953-4-ansuelsmth@gmail.com>
+X-Rspamd-Queue-Id: D19052000F
+X-Stat-Signature: xuohni195sg5t888mb3hr8cazptxuxkg
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX19avXQfbgyS4MjPj/QgSfbVV166y5wlDUA=
+X-HE-Tag: 1762019002-310553
+X-HE-Meta: U2FsdGVkX18kFvFkgy7Pla7wIYr1cTwSaBL/lElk07aWvuV0UI86zpS4xI2ieWHL7cnDsgP6Va+OiG66G2GI0T6dwAnfuBv0r8O1HYaT5748kTaecL4ImGL7ja227J8OAvnWazlEg29/MIRVr0QshmxddRNecxlmO0dbhRmrRrIwYAfI2LCTmOCUE/UZcmp2+1qFipy43Ah06ryfcV57tolAZGKE7GsdpXEz/alzoL8Wf8V3Cbu7SSN38UOYnndPf9uUENDqHwV8U5VItohm8zFhK1abhySNRfmnCg+FRv4argx1DevWwd2w2vBBOtsJTZfU7p+5ZPyCRBg2UTuRrjIkTK+ctMAQyjs1DDEgXuznxkAQYoNqnAbvDeftvf/5DEGX+up/9O0CVV2QhT8SfQ==
 
-On Fri, Oct 31, 2025 at 02:08:34PM +0100, Christian Marangi wrote:
-> On some IPQ806x SoC SMEM might be not initialized by SBL. This is the
-> case for some Google devices (the OnHub family) that can't make use of
-> SMEM to detect the SoC ID.
-> 
-> To handle these specific case, check if the SMEM is not initialized (by
-> checking if the qcom_smem_get_soc_id returns -ENODEV) and fallback to
-> OF machine compatible checking to identify the SoC variant.
-> 
-> Notice that the checking order is important as the machine compatible
-> are normally defined with the specific one following the generic SoC
-> (for example compatible = "qcom,ipq8065", "qcom,ipq8064").
-> 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
-
-And as mentioned in v1, this (cpufreq) patch can be merged independently
-of the first two patches. So please merge it through the cpufreq tree.
-
-Regards,
-Bjorn
-
+On Fri, 2025-10-31 at 12:19 +0100, Carlos L=F3pez wrote:
+> As of commit 85656ec193e9, the IDR interface is marked as deprecated
+> in the documentation, but no checks are made in that regard for new
+> code. Add the existing IDR initialization APIs to the deprecated list
+> in checkpatch, so that if new code is introduced using these APIs, a
+> warning is emitted.
+>=20
+> Suggested-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Carlos L=F3pez <clopez@suse.de>
 > ---
->  drivers/cpufreq/qcom-cpufreq-nvmem.c | 17 +++++++++++++++--
->  1 file changed, 15 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/qcom-cpufreq-nvmem.c b/drivers/cpufreq/qcom-cpufreq-nvmem.c
-> index 3a8ed723a23e..5a9bd780a4f3 100644
-> --- a/drivers/cpufreq/qcom-cpufreq-nvmem.c
-> +++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
-> @@ -257,8 +257,8 @@ static int qcom_cpufreq_ipq8064_name_version(struct device *cpu_dev,
->  					     char **pvs_name,
->  					     struct qcom_cpufreq_drv *drv)
->  {
-> +	int msm_id = -1, ret = 0;
->  	int speed = 0, pvs = 0;
-> -	int msm_id, ret = 0;
->  	u8 *speedbin;
->  	size_t len;
->  
-> @@ -275,8 +275,21 @@ static int qcom_cpufreq_ipq8064_name_version(struct device *cpu_dev,
->  	get_krait_bin_format_a(cpu_dev, &speed, &pvs, speedbin);
->  
->  	ret = qcom_smem_get_soc_id(&msm_id);
-> -	if (ret)
-> +	if (ret == -ENODEV) {
-> +		/* Fallback to compatible match with no SMEM initialized */
-> +		ret = 0;
-> +		if (of_machine_is_compatible("qcom,ipq8062"))
-> +			msm_id = QCOM_ID_IPQ8062;
-> +		else if (of_machine_is_compatible("qcom,ipq8065") ||
-> +			 of_machine_is_compatible("qcom,ipq8069"))
-> +			msm_id = QCOM_ID_IPQ8065;
-> +		else if (of_machine_is_compatible("qcom,ipq8064") ||
-> +			 of_machine_is_compatible("qcom,ipq8066") ||
-> +			 of_machine_is_compatible("qcom,ipq8068"))
-> +			msm_id = QCOM_ID_IPQ8064;
-> +	} else if (ret) {
->  		goto exit;
-> +	}
->  
->  	switch (msm_id) {
->  	case QCOM_ID_IPQ8062:
-> -- 
-> 2.51.0
-> 
+>  scripts/checkpatch.pl | 4 ++++
+>  1 file changed, 4 insertions(+)
+>=20
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index 92669904eecc..bc72fa66c0ef 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -860,6 +860,10 @@ our %deprecated_apis =3D (
+>  	"kunmap"				=3D> "kunmap_local",
+>  	"kmap_atomic"				=3D> "kmap_local_page",
+>  	"kunmap_atomic"				=3D> "kunmap_local",
+> +	#These should be enough to drive away new IDR users
+> +	"DEFINE_IDR"				=3D> "DEFINE_XARRAY",
+> +	"idr_init"				=3D> "xa_init",
+> +	"idr_init_base"				=3D> "xa_init_flags"
+>  );
+> =20
+>  #Create a search pattern for all these strings to speed up a loop below
+
+Acked-by: Joe Perches <joe@perches.com>
 
