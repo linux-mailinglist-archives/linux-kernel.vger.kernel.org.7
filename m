@@ -1,88 +1,107 @@
-Return-Path: <linux-kernel+bounces-881435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37973C2832D
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 17:42:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D0DEC28339
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 17:45:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15B123A8D35
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 16:38:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1097C3A454B
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 16:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72BB9267B02;
-	Sat,  1 Nov 2025 16:38:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6294726B742;
+	Sat,  1 Nov 2025 16:42:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jyfkrC+i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="hFU03DG9"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17E234D3A7;
-	Sat,  1 Nov 2025 16:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888E1269AEE;
+	Sat,  1 Nov 2025 16:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762015114; cv=none; b=jGQoC+U6/WSMqEog7JAxJ/NWPdRv2RnTkRwIkAQV7OyU2vaeCsO+dJiBuTXA20sTMwzLwchCqY+1zGBP15FS8wadNKdMtGVyXDPOOBNY5cA75zYShjJSbKNptO9UJb4yCuTFUZ5clypctKrYrmlLtfWjVUaQbx6PvUt2b04u9Uk=
+	t=1762015320; cv=none; b=Kp/8s4iE661tuDR53C8v/0myOL6XBIZuavpgRquF2w+1aJEDU9PNDA6NmsCb5Nm79/mV1rFYGfYGWSef8GcGW9nSZVwmok4sJDScG+wxjO1ILSTkDBdz9s+34J+YzG14Jlgxj5T0P8kCUuLnveKA0OqJynO1IVIvGwzPMQq8Eck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762015114; c=relaxed/simple;
-	bh=TbYkopGyFIENuHFLTsV1V/jcgq4zG4Ty8C4XMJb33II=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MFl4kNMZFDu98GGZpNoPr8VAf6XaxMBK05kXYNY9zZj+o8+b0oDt6MNL4OS6E9FoFLHMtOHvneoIy7R7VN16XRC+W0YatbO7Nuzu5g2nxxgGWjjqQuQGJf0bNp4x3kxzk30wIWNjQBpVSI9fhMbzkgJdej/MPSdUlKIfOVRG7y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jyfkrC+i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFF3BC4CEF1;
-	Sat,  1 Nov 2025 16:38:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762015114;
-	bh=TbYkopGyFIENuHFLTsV1V/jcgq4zG4Ty8C4XMJb33II=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jyfkrC+ikQeJH77i4aH47bJY6O3wr3xTa3lr2CYFhGR7l14ZHoYW4hmzOE/Ua9SXb
-	 Q8t6WH5YISEsddmO/udRldPCV+t/UOjkDDVyaqy59DaKS4EYTSEpiYYmAMf47XAx7d
-	 NO7bUVzL1Q8LpxBsJY6c3lX2q3WsG5LSac+riEZXekvOtCT58FJtGP8oJmfD+hF7LH
-	 N2U5KF3Ehcq0lQpBMgHbpw842nj6dfnFb7vRf352FMN8H4Likmowl5t0b/5zjxPJ5z
-	 Cxw1c2184KlmI1aUU06U5WP5xKCkeM4D1lTvo8mVizx9nducIm2DmwsV3sAMlhAC3n
-	 TAZWgjkHiwOeg==
-Date: Sat, 1 Nov 2025 12:38:28 -0400
-From: Nathan Chancellor <nathan@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-efi@vger.kernel.org,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org, David Sterba <dsterba@suse.com>
-Subject: Re: fms extension (Was: [PATCH] fs/pipe: stop duplicating union
- pipe_index declaration)
-Message-ID: <20251101163828.GA3243548@ax162>
-References: <20251029-wobei-rezept-bd53e76bb05b@brauner>
- <CAHk-=wjGcos7LACF0J40x-Dwf4beOYj+mhptD+xcLte1RG91Ug@mail.gmail.com>
- <20251030-zuruf-linken-d20795719609@brauner>
- <20251029233057.GA3441561@ax162>
- <20251030-meerjungfrau-getrocknet-7b46eacc215d@brauner>
- <CAMj1kXHP14_F1xUYHfUzvtoNJjPEQM9yLaoKQX=v4j3-YyAn=A@mail.gmail.com>
- <20251030172918.GA417112@ax162>
- <20251030-zukunft-reduzieren-323e5f33dca6@brauner>
- <20251031013457.GA2650519@ax162>
- <20251101-bugsieren-gemocht-0e6115014a45@brauner>
+	s=arc-20240116; t=1762015320; c=relaxed/simple;
+	bh=/Lmtqv2YdFzMKD+tU35ni0Evtp/XjGnVQdRIqfQxcXc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=f3ihGKaqKGiYw6Nve6OVIXknMS3E4zlr84OrbWhei6yEOsg2EndVyNKkrCGETVK1ZvJdHIFvJhLAXVVAk5d+uD8pBFh/zuCniO0j5aZjZcV5W4Z8g/vCWWi35a/ZUOy24yB0+zUnoyF8emJIDW87oWTv0/m9dKare7Ghcbe8Dec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=hFU03DG9; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=9w
+	Up7u3My76G+R/WLPGyk/WkzbItLsUENPV0fn3j5Pw=; b=hFU03DG9YqxprWd8g9
+	o6LU3NwjxRNyuxl96ki11m69KzgEen+Ho6qMFhsEtJbt1aW5Kd0XIX3HAJf1EZf9
+	L1xIKitgFZbjT6SX4Xksx6sFp23Oa7sOB4tcVUBgwxsicI4TYEAKgHgHZU74+hVB
+	dOE8FEMBhtp6oa7wFN2E/sIKw=
+Received: from zhb.. (unknown [])
+	by gzsmtp3 (Coremail) with SMTP id PigvCgDnofBAOAZpIs11CQ--.54784S2;
+	Sun, 02 Nov 2025 00:41:37 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: bhelgaas@google.com,
+	helgaas@kernel.org
+Cc: linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hans Zhang <18255117159@163.com>,
+	Manivannan Sadhasivam <mani@kernel.org>
+Subject: [PATCH v3 1/1] PCI: of: Relax max-link-speed check to support PCIe Gen5/Gen6
+Date: Sun,  2 Nov 2025 00:41:32 +0800
+Message-Id: <20251101164132.14145-1-18255117159@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251101-bugsieren-gemocht-0e6115014a45@brauner>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PigvCgDnofBAOAZpIs11CQ--.54784S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7AFWUGFW8Jr15uw4fKF4fGrg_yoW8GFW8pa
+	y7AryrWry8WF43Zw4DX3WruFyjgasxXrWDtry5W3ZruF43GF4aqFySvF4fXFn29rWkZr17
+	XF13tr47Jw4jyaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pEVc_wUUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiFR-4o2kGMU6GewAAs8
 
-On Sat, Nov 01, 2025 at 02:10:42PM +0100, Christian Brauner wrote:
-> I'd like a stable branch before -rc5, please.
+The existing code restricted `max-link-speed` to values 1~4 (Gen1~Gen4),
+but current SOCs using Synopsys/Cadence IP may require Gen5/Gen6 support.
 
-Sure thing. I have sent the change out for Acks now:
+While DT binding validation already checks this property, the code-level
+validation in `of_pci_get_max_link_speed` also needs to be updated to allow
+values up to 6, ensuring compatibility with newer PCIe generations.
 
-  https://lore.kernel.org/20251101-kbuild-ms-extensions-dedicated-cflags-v1-1-38004aba524b@kernel.org/
+Signed-off-by: Hans Zhang <18255117159@163.com>
+Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
+---
+Changes for v3:
+- Modify the commit message.
+- Add Reviewed-by tag.
 
-I will finalize the branch by Thursday at the latest and ping you when
-it is ready.
+Changes for v2:
+https://patchwork.kernel.org/project/linux-pci/cover/20250529021026.475861-1-18255117159@163.com/
+- The following files have been deleted:
+  Documentation/devicetree/bindings/pci/pci.txt
 
-Cheers,
-Nathan
+  Update to this file again:
+  dtschema/schemas/pci/pci-bus-common.yaml
+---
+ drivers/pci/of.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/pci/of.c b/drivers/pci/of.c
+index 3579265f1198..53928e4b3780 100644
+--- a/drivers/pci/of.c
++++ b/drivers/pci/of.c
+@@ -890,7 +890,7 @@ int of_pci_get_max_link_speed(struct device_node *node)
+ 	u32 max_link_speed;
+ 
+ 	if (of_property_read_u32(node, "max-link-speed", &max_link_speed) ||
+-	    max_link_speed == 0 || max_link_speed > 4)
++	    max_link_speed == 0 || max_link_speed > 6)
+ 		return -EINVAL;
+ 
+ 	return max_link_speed;
+-- 
+2.34.1
+
 
