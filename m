@@ -1,125 +1,110 @@
-Return-Path: <linux-kernel+bounces-881147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 641D4C27903
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 08:26:42 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 017B0C2790C
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 08:34:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B64FD1899F91
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 07:27:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 651BF4E21CB
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 07:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3DF299922;
-	Sat,  1 Nov 2025 07:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ACD5299923;
+	Sat,  1 Nov 2025 07:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o+djXzyS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HxTH9xjH"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16198232369
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 07:26:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA47634D389
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 07:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761981996; cv=none; b=Vof+49Mwdf9NjQcBODGrXharDGq+ZvYGovVxByyHkVBU3ROTW8Bo7T0l84SbHO2/FNgwq00H7PlPCRoK2L9vdtx0TjQeSfVIf/d24IF0GXJ8YgnfloBAB6ZXercNIS0T0V7d3+7UtHUPr902wEU/6k0qOGSbZEr8WUvBce+0+DE=
+	t=1761982483; cv=none; b=uDWTXjhbZirgvbAegH3dtw7/ATIitWQRq54BUV4576Al19EMfW++KQZDpUr/g6wUFJJiIIiceGB0QG1th/onJUfpAFy/vdBy0mySd28ldmbF8/F/oy8pc9Hp5enfl3rsDvY5xiCNV8piuLdAZzKb/I/kTmkf6Ze3DPau7RrFUR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761981996; c=relaxed/simple;
-	bh=Y6CupxvvSomkDOtUTC8nawCChBmoqTrTLdlqF79f+7E=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=onXmPQlWH0Ydes+CFuAhcdRYpd/aA91Jw+6nCtXdGcl8VBDRJjNLnEzzcGh/R0Xurwo3k2B0uabXQN96z6O0zYxdqwCLFh3+gUe6TMK7bC1oxs6z97LRLa76ibBxN9lCQmaKcMOVVu2Vvpupin9HGKopeXuHItgrotp/whAbYNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o+djXzyS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E51EC4CEF1;
-	Sat,  1 Nov 2025 07:26:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761981995;
-	bh=Y6CupxvvSomkDOtUTC8nawCChBmoqTrTLdlqF79f+7E=;
-	h=Date:From:To:Cc:Subject:From;
-	b=o+djXzyS5jLL9cpnfYWHtNKlvZa3azVaHkBqc3GpE8TrgwBS+FYtn5rJBSMH38STs
-	 7Q560cfefRL8peqBueTrH60PHaAfA0jXc+DTy26p7mQn85lHiqsY4tvMxZAyVwj9+s
-	 NMSqGV0FQYsywO4XondFPmQMrMUfd/84yI35qJtCpHGi7vu19P3xJ+0aSyPTBlnF7i
-	 STiP3XnY2Iz9CQOnW8cx+wrm7AEtSARV6LL1t5gU87j2PhFsIrxS8gffxqDjItipUs
-	 Q9XmQfwCps53sB7vwgL4FYTdg5Exr+stlpoAFHWG3b1KafEguVrHNEahx5w7rCuJOR
-	 rvMxqz9vaI1iA==
-Date: Sat, 1 Nov 2025 08:26:26 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Subject: [GIT PULL] x86 fixes
-Message-ID: <aQW2Imsfgixz_jBc@gmail.com>
+	s=arc-20240116; t=1761982483; c=relaxed/simple;
+	bh=tbIlqcUdt4K/0Wbd5er6IiYuRxDgb3ky4LwFPVHhFaM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AB+aOanbtKbF3hX9kfyFu2V492q64LUTTBSuPiY8a6r3uBu0oUH/dF01bflUrqlOc4vf3U6iA6DgUKNGKgI9t+3ZWPlR2zwevVdEL5I5UzmBBA6vU3MMunqmGaWFwMfVPOF7+XSGRrD2T4i5GHYW8yoQvIe1JF730ws41vhip7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HxTH9xjH; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-378d6fa5aebso30340891fa.2
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 00:34:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761982479; x=1762587279; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7ikyUkEuAIUj+HxEe8beF0cjcpPgN6wIzeDAnASkpDU=;
+        b=HxTH9xjH/7cMaU10KBJ7Z6ArqeGpXNAbsZn90cCliiUynz3Urz/m19JH7moAV7/WcS
+         b1XghfROG/cpgzunJSLObgYpkr0EfiowE74eQt6O72MHGriXtdyub/4PkrVcpJCEXuG5
+         9HUAdtEHtKiUzB6aVGvnR1X3mjNSrWg4oHp166jXXUdNBmSaY+U5a0UG4kR2LLppJJji
+         cH9RjWEYEKZLL6ckdlLQsvsxVojBXbFv6pSs97dD4FKfdKMkUF3JROoB8MaA8rE5GXId
+         KT7gkKzCFc8qWlcL8wh7uXoYlHCU+lSbFw9bR666H9su5K71862X7DVbowu3TR7BlQtV
+         qR8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761982479; x=1762587279;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7ikyUkEuAIUj+HxEe8beF0cjcpPgN6wIzeDAnASkpDU=;
+        b=dbCIjO2Mmlu3ulN9aMIJFEls5QXXX3pqSjEttMaxCbCR/8IlC85B6JleLLOxRUyOhP
+         +8akGdkQEKQA6OuQjZ058KLU6oEi9BiY4+rJ7LEDeav+n/soKHezJFtqFCUpie3W87VZ
+         6ACBoQhAtP/Jp5XTO14KnTn/aM1Da7dfddazR0XVX5bHb8Z2aSBWUsgOQYkbLv7mMMhK
+         q2Cs6QDllx4L64bKYARhAvyUkeyph15iNu7If/aPr08nxK0wbiQpnLU3bMLK4vzg/Wxh
+         PBFJ+6z55AmYPiW26nJrvVnIwo2EyeUQKACCcT5EM/NFRPMMBtHffeQ2TIBS6oMVTOs6
+         bdUQ==
+X-Gm-Message-State: AOJu0YyTnZLaj3U7LceYdFjTQHME7TFD6GkMMCwrhvr+G5dMmFVs1X10
+	r14CAYk6lmwsRqOO5bCVHtEIlBKnDaHY9BBnqAdfOqEJykkFwk6832V3/sS19hSt
+X-Gm-Gg: ASbGncte+O3l0eNhcsfy2tPcDNYgel8w1EbKkhcFdk7qOy5KnjQxllFd3UG2IYkcgl1
+	knpf47Iq9Dd/KyAs4pbL5Z/vP+YS0pw2WoMg2jwQM11Y+rbaPh14f6U+Vx8L7zmpWO0Dn2vwCnI
+	de+mLYUZDzmcgnoqVJ8tRVOK2i3W8hoXtnYwlXEXaUcNTqOWPEzqkOM1XRwPEmk4xa6ZD8sEvvX
+	7DF+MzGFlgUXIh6o20joWZU6hA+3Vpd6Xs3DOVOO53AVBYr5B3/OSuqf7FQcSsqoFbtzmpEIxu8
+	9Qn03ajJNkuhEbBZz76p6/F74fF4DuDhdaYKkcnZKpvo6pZLFjYoCiM1GpMWGzUisrVVNM1/YRu
+	UOIIfQ86hniEtEL2EbKWYgDz/xw0kkMr1bga0WrvepQHsDdnZZrLOYpHcHMJQOc4wPZqSWgh8vj
+	NHEvwfwFDb0gIARw==
+X-Google-Smtp-Source: AGHT+IGSi1MaERRSeAaLh4wNzQnSFVO7/v/mdkdzZiR4yeubPQLkUoJbtY78vIGcHgt3adn0ZKW5FQ==
+X-Received: by 2002:a05:6512:10c3:b0:591:eb01:8eeb with SMTP id 2adb3069b0e04-5941d565e05mr1735327e87.46.1761982479195;
+        Sat, 01 Nov 2025 00:34:39 -0700 (PDT)
+Received: from archlinux ([109.234.28.204])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5941f39d2c0sm1046152e87.46.2025.11.01.00.34.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Nov 2025 00:34:37 -0700 (PDT)
+From: zntsproj <vacacax16@gmail.com>
+X-Google-Original-From: zntsproj <vseokaktusah7@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: greybus-dev@lists.linaro.org,
+	zntsproj <vseokaktusah7@gmail.com>
+Subject: [PATCH] Fix tiny typo in firmware-management docs
+Date: Sat,  1 Nov 2025 10:33:45 +0300
+Message-ID: <20251101073345.10520-1-vseokaktusah7@gmail.com>
+X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Linus,
+---
+ .../staging/greybus/Documentation/firmware/firmware-management  | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Please pull the latest x86/urgent Git tree from:
+diff --git a/drivers/staging/greybus/Documentation/firmware/firmware-management b/drivers/staging/greybus/Documentation/firmware/firmware-management
+index 7918257e5..393455557 100644
+--- a/drivers/staging/greybus/Documentation/firmware/firmware-management
++++ b/drivers/staging/greybus/Documentation/firmware/firmware-management
+@@ -193,7 +193,7 @@ Identifying the Character Device
+ 
+ There can be multiple devices present in /dev/ directory with name
+ gb-authenticate-N and user first needs to identify the character device used for
+-authentication a of particular interface.
++authentication of a particular interface.
+ 
+ The Authentication core creates a device of class 'gb_authenticate', which shall
+ be used by the user to identify the right character device for it. The class
+-- 
+2.51.2
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-urgent-2025-11-01
-
-   # HEAD: 9b041a4b66b3b62c30251e700b5688324cf66625 x86/mm: Ensure clear_page() variants always have __kcfi_typeid_ symbols
-
-Miscellaneous fixes:
-
- - Limit AMD microcode Entrysign sha256 signature checking to
-   known CPU generations.
-
- - Disable AMD RDSEED32 on certain Zen5 CPUs that have a
-   microcode version before when the microcode-based fix was
-   issued for the AMD-SB-7055 erratum.
-
- - Fix FPU AMD XFD state synchronization on signal delivery
-
- - Fix (work around) a SSE4a-disassembly related build failure
-   on X86_NATIVE_CPU=y builds.
-
- - Extend the AMD Zen6 model space with a new range of models
-
- - Fix <asm/intel-family.h> CPU model comments
-
- - Fix the CONFIG_CFI=y and CONFIG_LTO_CLANG_FULL=y build, which
-   was unhappy due to missing kCFI type annotations of clear_page()
-   variants.
-
- Thanks,
-
-	Ingo
-
------------------->
-Borislav Petkov (AMD) (2):
-      x86/microcode/AMD: Limit Entrysign signature checking to known generations
-      x86/CPU/AMD: Extend Zen6 model range
-
-Chang S. Bae (1):
-      x86/fpu: Ensure XFD state on signal delivery
-
-Gregory Price (1):
-      x86/CPU/AMD: Add RDSEED fix for Zen5
-
-Nathan Chancellor (1):
-      x86/mm: Ensure clear_page() variants always have __kcfi_typeid_ symbols
-
-Peter Zijlstra (1):
-      x86/build: Disable SSE4a
-
-Tony Luck (1):
-      x86/cpu: Add/fix core comments for {Panther,Nova} Lake
-
-
- arch/x86/Makefile                   |  2 +-
- arch/x86/include/asm/intel-family.h |  6 +++---
- arch/x86/include/asm/page_64.h      |  3 +++
- arch/x86/kernel/cpu/amd.c           | 12 +++++++++++-
- arch/x86/kernel/cpu/microcode/amd.c | 20 +++++++++++++++++++-
- arch/x86/kernel/fpu/core.c          |  3 +++
- 6 files changed, 40 insertions(+), 6 deletions(-)
 
