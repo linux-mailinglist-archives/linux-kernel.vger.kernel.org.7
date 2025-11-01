@@ -1,79 +1,100 @@
-Return-Path: <linux-kernel+bounces-881262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3C87C27DAD
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 13:14:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E774C27DBD
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 13:15:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 237CD4E7EDF
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 12:14:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C077B4EA4A2
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 12:14:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BEB62F6924;
-	Sat,  1 Nov 2025 12:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89082F656A;
+	Sat,  1 Nov 2025 12:14:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KBk0neOd"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I5s+LJuj";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="tTonvGR6"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 577432F6193
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 12:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5826E2F6193
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 12:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761999279; cv=none; b=t6WKAmTLeO2yPmULx+rsINpcYiAYUSaa1vIhpBNumdFkjkYFJNqam7BjgQLlp4YjgcAH3m2TFQ/Qpm0KiZytJSTYbqCBnxgbeB/Uuntgq0Gdzi71CBfFNI9NkdrHAODRivchx+yl0go+dNTh9oxuTcG/M5+TVihh42KzdJaEnkM=
+	t=1761999289; cv=none; b=QzrD0vuurpjTGrq03lcozzbL8BhqCw5eVkJk1bB/pqdOx3GOItkoh4ETaDhIO0PSEBz9oojp0GL1QMLIpjkO8KVQ+Cb0CsZo6lzXCafnTsv9o4zgn0h9QZDr9ah8ZRJlZDPe4SKt/2Es1SsFCIA4K4uRrA/ewJM0Ul+wPbZZvCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761999279; c=relaxed/simple;
-	bh=QWQRfctde/i6733HoeiN3BEKCruQKAcajbElJ53s+mc=;
+	s=arc-20240116; t=1761999289; c=relaxed/simple;
+	bh=jy2jgJkMfkDGdMVffHZ/eEz56ufPSvFanLhBPvSYzZI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DSeSvCcPKn+y06YU8lRlKohESzNXbU4mC/ox9CrL5rW8rc2iQAqx4VsRgoGSNvIifeQNZ1dFiMSBo7WfTEIcogPqMT8uM6dSvkOndYVyBid8YVjebpuW0bgGJodUfFequgelnxT5GkUYuzwdGXdiJLXKM4dc0UmOvkJEeQvyWBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KBk0neOd; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-290d4d421f6so30339295ad.2
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 05:14:38 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=jMfjrM6RFvMfy/19P9oM2qAHexnyXxKuafHVUkxM5cm/uIgQTz9mZHAfWBz8TTSRqAg/4JU+/ljjK7p+9LKbQRVIkCX1+IAhacalTpo6mH08In8hN+eAZqg0I7i3R24qEuMA9vti9ZdhqXcB20guLzrPSeROmx7l5P/cWYjXNbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I5s+LJuj; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=tTonvGR6; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761999286;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Wcrewv7OssaEm3gyvMk1iF/ClvQjL5UKQAK3UbLbS48=;
+	b=I5s+LJujy807p09M01y7bbwR77hghtjGqVcUfTYCe6756sWnWbyhfw7Bse9KFnHs++fOdr
+	0ho7H2mIq3BhaHBaX16Y44n8GcJ+rUwxhPnPSawSMAuwOmQwLqG3O1fZUisbzPyuEOWC6+
+	flIaBZP3P6ZKrhcu9q6YmCl1ngS6riE=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-455-Yqoc5D5VPaGSUA279RQ8Cw-1; Sat, 01 Nov 2025 08:14:45 -0400
+X-MC-Unique: Yqoc5D5VPaGSUA279RQ8Cw-1
+X-Mimecast-MFC-AGG-ID: Yqoc5D5VPaGSUA279RQ8Cw_1761999284
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4721b4f3afbso9000185e9.0
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 05:14:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761999277; x=1762604077; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2ujdLBAXhZY2AOY4FZZ6eP/3+PsXNveO7Mezvnen8AY=;
-        b=KBk0neOdk1GOQd5Mrf4G3k6kzK/IEFO/zZI8fFVmDjhvaBgffsk+lP8oYQn5Zg26WB
-         fwG4l/UquNHuijL+bvQPQLryphsPr6fpzJ7kNtlnEC8DlnTSr/F1c/W/i+RLXlOSyHvb
-         MnWIDrxDuDIoF292Oik0zihKWF3U1kpTxA6qXFX8aE4Sf558S3avmX0bUynXMucflO6b
-         FNK1DEvMAWmGyvjyl9o1KyYeN/FFh+Knzcq04rhWJbu6SAxIVuofqcjb/K66gTaDG83t
-         Ard5eQyjG1TuiuzT6qN7GSqZTu6aqW1g/igVs/v8nQi1PxNdLf85ARvbJZtffe7ooZ+l
-         c5eg==
+        d=redhat.com; s=google; t=1761999284; x=1762604084; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wcrewv7OssaEm3gyvMk1iF/ClvQjL5UKQAK3UbLbS48=;
+        b=tTonvGR6XAikxvVrzkb5UQGIQjR9FP/ansXBtzL87UvcCS0Jv1LmSRXhB2cXjlNDSL
+         FA5Pw9W2lm8O58lFhg0dra2wYp2y9v0L/P5Y/XG/6LaHl1ZcKwmO3CA1/XrDCoa/njET
+         DJNJVoxY9Xevl5egVqyJT+FcdojTv/cLK9ZI3qJS3tDrCuIdfbm1bckfX4/BhmILKvgP
+         28YZiaV0VMuRUBwgBhIINd2BIvZZhb/kVls9CuDdDOrs8EsgEQOOWUWzDivHStKPt2s/
+         /JS8psP2M/+qNwGOxtPfXgwvWKCENI8yx4+3UnwD7GbkxlpuzobD4GyDaEIr9VW4/5ff
+         capQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761999277; x=1762604077;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=2ujdLBAXhZY2AOY4FZZ6eP/3+PsXNveO7Mezvnen8AY=;
-        b=KFqFrALirxFP0qc0VjCiwIvq3z+tecXu8R0aeDk+IAqykF7remlfmNCTZtTaTwN9ph
-         p3pC7/5Rkr5g/FNd87E+F2c9tpniOP/dEJPr0jvsazr9DWL1jtTpcabDW4fzVoqDhEeY
-         0yK/2m42j/b/VosLRRw16qumNpKEdABdA9sf20IrSqmJG/qiZMs+3gRsy/O+DSOdzvQ3
-         TdbET1bx4aNhzPALwdsYkQ0nKJqtdtZVZ5vfRNFRy1iT75rSWL4UsbmVkog2ULBeuha5
-         NAk2bZhbHHvLl/whtq6aQQk87Dh30J7VBnnGFTvO6yD7XrntXaJ6rLYHYWifgG2eKjSD
-         Y87g==
-X-Forwarded-Encrypted: i=1; AJvYcCUlJPwxzcBSNjNV/JTJNE4P27cEJkWep90+WDGmiujz7GcNtyN39OdXqOxqhFljQBFKQ3U0sXOM1f/5Th8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNUzD6e+nz13PDL2rZ8RLpAD0cz3ZFVIssFx0oubGflveLiyqe
-	FT/RZsJZKCQTtUjwhMfxsCFGphULiFeponn/37nRJfkFN0OpHZx0S58m
-X-Gm-Gg: ASbGncuk5WcjmMl7elq8jhHONM6TWXbc0oIeLZOyp9pyZiRI8luOBKY0plIjpidC1IY
-	k+8JcC8/fWeSHR8+089toy83CC5zSYafTQF3WoRnWWPqHNBma4gefKXw4U2939DjuoUO/P1pxXR
-	Y/aHVUOs/7eL1BomQ4MN+MSXi91+RYSXhKoHAzjAoaHyl8Evd88gl3r0ZFm30TrlxWIhArXUCx3
-	6Gr6DM/MKqCaFz69DKOd2dtnDBIKAt0AMacpXs+yK0ZQMRLvDlq6wmLkRlUC/I6iAgFze/2TIXq
-	p/GuGMOby3gmVPua8e/rA8iv1YsgdbFwsh5lkh3HXgZ+EoTkUifae4nH3ETg51YlK6Anq6nCBHE
-	E8X6joAkF7F5H9rJcyLpwyzjLfBq4BaZQBmNAs8UtTFKqgbAcV94RijKj8PqZcIk=
-X-Google-Smtp-Source: AGHT+IEeRk+2DxXb5yHODDdJKSDxSfi10vJFhmh11HwS87jb+u5luDPpAWnpSEzbksr4arETIJtz8w==
-X-Received: by 2002:a17:903:2343:b0:27e:ef35:2dbf with SMTP id d9443c01a7336-2951a55b4e1mr82703355ad.30.1761999276934;
-        Sat, 01 Nov 2025 05:14:36 -0700 (PDT)
-Received: from CNSZTL-PC.lan ([2001:df0:a640:1::14])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2952e9a3972sm49654205ad.46.2025.11.01.05.14.33
+        d=1e100.net; s=20230601; t=1761999284; x=1762604084;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Wcrewv7OssaEm3gyvMk1iF/ClvQjL5UKQAK3UbLbS48=;
+        b=oRrJQIANpSIUE1Iz1ukPWKXaNL+Wui3eTiny7W3x0ngpexsA+xk2ShpJtDfsewWvKf
+         zycAx10fdTVu5xGLcbSQPIPVHbRfEKgYyM3hUmsa69zlGMharJZyMINe3NP1hJ1MnMO+
+         wvxzeW0WXyx7Av463BTrAFbq/UiStnSet/GFd+BYRLrIGwTqVITtn1iyt+9mqaJZ2OBy
+         i8Nh+CpLRW+p5ftk5wZcfFOV6XexIzXrdwXnRPbRWb661KcHu7tC4Ycl4Jpsqb3aAlQe
+         bJJRIVev3LtLYTuorcoIvZ0VxrEafd++5ptCTmzZf37ob//1qu+6UjlDcj+vQGcku3Tv
+         dQbg==
+X-Gm-Message-State: AOJu0YwxPrgPT6Ype3q5trPBYJPvpbv0OIF55aE+UN5cR6QREoetJVGL
+	E4ufuL5DwwiWA9UqT/3lv4rp6U8FDRuZEPXC3N8hNcibr8+Jc7r/GbsTDfOO8kmov08zGNpfVWN
+	5ROpzAmhNzDtczw5VVBZ2KFvgzzRnV7cXRpty+DcElQqhoefNb1t3HyQOiiidZrF1pg==
+X-Gm-Gg: ASbGnctvldpTXuRiprf27vFx1FB0wnHhaKLdHxtD68FLUXXKV8nSHKgw4wiu9euXaHW
+	3pc3wp17fLzIezAssSht3JhRT0fjuqoV9KELCbvt/Kt1T60CTadFmtwAqhJlzRq+VOcWfIADoon
+	+RIFGQpn6a9mYsbUCg5EqeBXCpxea+A6N/X4Ggb6BV27Ugi8k0MnB6CZ15nx4Xm0tARe4Enrzvx
+	ebhovtKfe/fE9f428txWmAKxHuUhpcRsTHQg1EzUKXb5DgKuYoISYoU6E8SZJ6cQaUBSqppTovV
+	ERTK8XciIBDci5URdW/731An3KWPq8gvHM0FRONdpj6dt54owNM78bQNGu/IKA3QwPQxZJyOH6w
+	UTpmBOygFwsIfDCrlanf4UUuRFvpYuXxX6Q9tqOJkTNhK/GhuETDMEyR//f0dF5Gvr+Iid7FFWo
+	z8nuV1cV48u1sMvbvJJaheGr9z4pk=
+X-Received: by 2002:a05:600c:a0b:b0:476:57b4:72b6 with SMTP id 5b1f17b1804b1-477305a6db5mr69965065e9.8.1761999283758;
+        Sat, 01 Nov 2025 05:14:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFFQqut/W+Hh2058Mo2KRwgSobvPqBB9YeSBGPmcQlX0YmXFdyt0oSxc1X9BsoNgscSeoohIA==
+X-Received: by 2002:a05:600c:a0b:b0:476:57b4:72b6 with SMTP id 5b1f17b1804b1-477305a6db5mr69964795e9.8.1761999283199;
+        Sat, 01 Nov 2025 05:14:43 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169? (p200300d82f3f4b00ee138c225cc5d169.dip0.t-ipconnect.de. [2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c110037asm9428834f8f.3.2025.11.01.05.14.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 01 Nov 2025 05:14:36 -0700 (PDT)
-Message-ID: <3cba9996-228e-4086-99ba-4a2a00de57ab@gmail.com>
-Date: Sat, 1 Nov 2025 20:14:31 +0800
+        Sat, 01 Nov 2025 05:14:42 -0700 (PDT)
+Message-ID: <c2859944-734f-4ba0-8b49-e0df23e1bdbf@redhat.com>
+Date: Sat, 1 Nov 2025 13:14:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,113 +102,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: rockchip: fix eMMC corruption on NanoPC-T6
- with A3A444 chips
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- Shawn Lin <shawn.lin@rock-chips.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Grzegorz Sterniczuk <grzegorz@sternicz.uk>,
- Dragan Simic <dsimic@manjaro.org>, Jonas Karlman <jonas@kwiboo.se>,
- Jianfeng Liu <liujianfeng1994@gmail.com>
-References: <20251017073954.130710-1-cnsztl@gmail.com>
- <08911ae2-fef3-432d-a236-d820c9cb67ac@gmail.com>
- <5af928c4-4b6e-489c-ad39-26cef3dd7473@gmail.com> <10751338.nUPlyArG6x@phil>
-From: Tianling Shen <cnsztl@gmail.com>
-In-Reply-To: <10751338.nUPlyArG6x@phil>
+Subject: Re: [PATCH v4 03/12] powerpc/mm: implement arch_flush_lazy_mmu_mode()
+To: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ David Woodhouse <dwmw2@infradead.org>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+ Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
+References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
+ <20251029100909.3381140-4-kevin.brodsky@arm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20251029100909.3381140-4-kevin.brodsky@arm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Hi Heiko,
+On 29.10.25 11:09, Kevin Brodsky wrote:
+> Upcoming changes to the lazy_mmu API will cause
+> arch_flush_lazy_mmu_mode() to be called when leaving a nested
+> lazy_mmu section.
+> 
+> Move the relevant logic from arch_leave_lazy_mmu_mode() to
+> arch_flush_lazy_mmu_mode() and have the former call the latter.
+> 
+> Note: the additional this_cpu_ptr() on the
+> arch_leave_lazy_mmu_mode() path will be removed in a subsequent
+> patch.
+> 
+> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+> ---
 
-On 2025/11/1 19:54, Heiko Stuebner wrote:
-> Am Montag, 27. Oktober 2025, 18:34:25 Mitteleuropäische Normalzeit schrieb Tianling Shen:
->> + Jianfeng
->>
->> On 2025/10/20 12:44, Tianling Shen wrote:
->>> Hi Shawn,
->>>
->>> On 2025/10/20 9:53, Shawn Lin wrote:
->>>> Hi Tianling
->>>>
->>>> On 2025/10/17 Friday 15:39, Tianling Shen wrote:
->>>>> From: Grzegorz Sterniczuk <grzegorz@sternicz.uk>
->>>>>
->>>>> Some NanoPC-T6 boards with A3A444 eMMC chips experience I/O errors and
->>>>> corruption when using HS400 mode. Downgrade to HS200 mode to ensure
->>>>> stable operation.
->>>>
->>>> May I ask you to test another patch I just posted to see if it fixes
->>>> your issue?
->>>>
->>>> https://patchwork.kernel.org/project/linux-mmc/
->>>> patch/1760924981-52339-1- git-send-email-shawn.lin@rock-chips.com/
->>>
->>> Thank you for the patch! I will ask my friend to test it but he uses
->>> this board as a home router, so it may take a few days or weeks to
->>> report the result.
->>
->> Hi all, sorry for the late. My friend has tested this patch and it works
->> fine after 50 times dd operation. A big thanks to Shawn!
-> 
-> So I guess, we don't need the patch reducing the speed anymore, right?
+Acked-by: David Hildenbrand <david@redhat.com>
 
-Yes! ;)
+-- 
+Cheers
 
-Thanks,
-Tianling.
-
-> 
-> 
-> Thanks
-> Heiko
-> 
-> 
->> And hi Jianfeng, I found you made a similiar patch[1] for the ROCK 5 ITX
->> board to lower down the mmc speed, could you please check if this patch
->> also fixes your issue?
->>
->> Thanks,
->> Tianling.
->>
->> 1.
->> https://lore.kernel.org/linux-rockchip/20250228143341.70244-1-liujianfeng1994@gmail.com/
->>
->>>
->>> Thanks,
->>> Tianling.
->>>
->>>>
->>>>
->>>>>
->>>>> Signed-off-by: Grzegorz Sterniczuk <grzegorz@sternicz.uk>
->>>>> Signed-off-by: Tianling Shen <cnsztl@gmail.com>
->>>>> ---
->>>>>    arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi | 3 +--
->>>>>    1 file changed, 1 insertion(+), 2 deletions(-)
->>>>>
->>>>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi b/
->>>>> arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
->>>>> index fafeabe9adf9..5f63f38f7326 100644
->>>>> --- a/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
->>>>> +++ b/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
->>>>> @@ -717,8 +717,7 @@ &sdhci {
->>>>>        no-sd;
->>>>>        non-removable;
->>>>>        max-frequency = <200000000>;
->>>>> -    mmc-hs400-1_8v;
->>>>> -    mmc-hs400-enhanced-strobe;
->>>>> +    mmc-hs200-1_8v;
->>>>>        status = "okay";
->>>>>    };
->>>>
->>>
->>
->>
-> 
-> 
-> 
-> 
+David / dhildenb
 
 
