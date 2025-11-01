@@ -1,197 +1,113 @@
-Return-Path: <linux-kernel+bounces-881578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60F68C287CB
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 21:35:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CACDFC287D6
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 21:49:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73C1518910E0
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 20:35:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 803D53BB4D0
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 20:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1373423BCE7;
-	Sat,  1 Nov 2025 20:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDDED2222AF;
+	Sat,  1 Nov 2025 20:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1QP2RUnf";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LVWp3bak"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cQ04z9sL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F4713AA2F;
-	Sat,  1 Nov 2025 20:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112CE1DF25C
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 20:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762029324; cv=none; b=EELefcGQ1ZSTj3g0PBicmPIpz3nEemzN9vsJwZ4jxzl/iYqhy6LPT5MShBb4S5PWzeQkhpWJCAt+vsXyr4XFz6LrOB0LnV7PXfwzuXqeHRlMVhwMglcAeCrTCulabbyb+Drji7SegOaczE147qYESr6wc8WHOP4qBH06xa70T0o=
+	t=1762030182; cv=none; b=s2I6MqRd7GCEMGAMuRCqZ9cqksatt5AcbLVLJWB9z18Y3eJol9hk+Dj6/mrmL7p8TvTygq+sMi/4Ogxnzbdhzdg7yVoxrDhNArNpw8gCaqbtFBeoGnGft3F6/gcDoSLZAH58dUuGYhRdQA9PwamG9zG7mOuDyTTwmOgUY1k2RKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762029324; c=relaxed/simple;
-	bh=qBR311xG9hbJUXi3wAxdnPHJhe/GnqTLDgghqVJMpuw=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=oxZ9URtS+V9HY5nkkHecRYULatJGNvzcAGdjCPJZ9dlqWpngVt8fLuAHwRUIGLEnK8cugJWlelYXBW21Ov3gZ1w2mqtxjYrX6yC4nzjreSTWEYirgR/a6FJlXFjESfOaWouChZ28sgBm+i+wyt4Vq9TTnYqJIEIhaVqQOKWP4Nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1QP2RUnf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LVWp3bak; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 01 Nov 2025 20:35:18 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762029319;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pEmCYxBYXKX76ATC702JHVn+ME1yei50fmsUp5Bh1hk=;
-	b=1QP2RUnfJpI7RWbpT5+px0+SaIPsAwBu53Rh3BHBxXq3hTk7+1Od11RZqcbhHeXobGFiCS
-	h5dYFNonEazQfvbW5fAkIf352HAkrgTcBD3ZmHNVKcVE3qpFkvjgsaKEtFs46OUtcI5UM/
-	wd5rBI1jBLjw+8CSQkAYLe0jWDZh8EDLl29yuV+CvsHTlrRBbnEONz1T/sNkjWFJR5gHrj
-	LCCK6dEh2tAjtWklDvTv4+v1FmdwIXvmLFFrcoVS9FY79uUVSUI7osKRrxSIpf8fezDY6U
-	yDIMlZOaeNCZ6jWxb1ZcH+WZohytVhoR+9yIkBBSWJywicZqkOSqjKV+bQ8U4g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762029319;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pEmCYxBYXKX76ATC702JHVn+ME1yei50fmsUp5Bh1hk=;
-	b=LVWp3bakQD1gpWxahae0zjBEbtud44qyqKifQpUMPwa9Eb+6J6loGeVF7LjOtiFnKSKgmw
-	ZBfntG9u73u8MmAg==
-From: "tip-bot2 for Lukas Wunner" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] genirq/manage: Reduce priority of forced secondary
- interrupt handler
-Cc: Crystal Wood <crwood@redhat.com>, Lukas Wunner <lukas@wunner.de>,
- Thomas Gleixner <tglx@linutronix.de>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To:
- <f6dcdb41be2694886b8dbf4fe7b3ab89e9d5114c.1761569303.git.lukas@wunner.de>
-References:
- <f6dcdb41be2694886b8dbf4fe7b3ab89e9d5114c.1761569303.git.lukas@wunner.de>
+	s=arc-20240116; t=1762030182; c=relaxed/simple;
+	bh=vtaJtB6X2iEXQA9donquA8hXG8zxzUSKFQPqkbA63XE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LKspKs+cXmwtozXVNRkidIRsHCplW3ftcsO+lwll3DrnEtjPEuHhZDRwlac+2CslvZ3sbLREsmJ7BJfaLn/pOTn3gLxz2EOVYj0jQFdRZi4b6WbVuy1VGGPxmrBdiP17nuTNRG2jbeKh/i/SFmjcUTlZ9xWnK9OHlAAgNcnNPvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cQ04z9sL; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762030180; x=1793566180;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vtaJtB6X2iEXQA9donquA8hXG8zxzUSKFQPqkbA63XE=;
+  b=cQ04z9sLsR9xnQGjXsfNLvzOrBcIlm6mfje9EDvwOUAMsDEcaJu37O9U
+   dXvoOsWDQUspcZMdzqL82kwj3ywwP+/RQvZyVlyTuUQ6laQ9MNOif3M6x
+   j/1bCelD0w38tkKuihbmd+JPjWbvw83O9t+EwDs1WTr1aKuLjjPaJi8RH
+   BFEAakFvnGT6yxm8ED8ndwb5ULcnijvteXqPayDa/zrJ0hfiG7bhdxay3
+   QWL7SV8gPK17pR7NcYLg9DdWF4XmdYCcs9eNAXklYxB1wXvPdhIPnJN5F
+   Ek2fL2K5YbgtlWQSG8f+DgFodHvgW36slxk05KPZyB6tJ5Px5bxYESPgr
+   w==;
+X-CSE-ConnectionGUID: sH38uwNkS/6LexRw3nX2nw==
+X-CSE-MsgGUID: xtleEIG4RO2SlWVwcRN7Ug==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64065844"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="64065844"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2025 13:49:40 -0700
+X-CSE-ConnectionGUID: UxhKeRH/Seus6A1hvxsOHw==
+X-CSE-MsgGUID: KEiKZmuNTKqkGWXZYJwJ2Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,272,1754982000"; 
+   d="scan'208";a="186662152"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 01 Nov 2025 13:49:37 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vFIXN-000Og0-23;
+	Sat, 01 Nov 2025 20:49:30 +0000
+Date: Sun, 2 Nov 2025 04:48:37 +0800
+From: kernel test robot <lkp@intel.com>
+To: Marc Herbert <marc.herbert@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Marc Herbert <marc.herbert@linux.intel.com>
+Subject: Re: [PATCH] x86/msr: add CPU_OUT_OF_SPEC taint name to
+ "unrecognized" pr_warn(msg)
+Message-ID: <202511020456.NiTKb752-lkp@intel.com>
+References: <20251101-tainted-msr-v1-1-e00658ba04d4@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176202931818.2601451.1497935414944669151.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251101-tainted-msr-v1-1-e00658ba04d4@linux.intel.com>
 
-The following commit has been merged into the irq/core branch of tip:
+Hi Marc,
 
-Commit-ID:     51d0656959bcdb743232f9b530b4cca569e74e7f
-Gitweb:        https://git.kernel.org/tip/51d0656959bcdb743232f9b530b4cca569e=
-74e7f
-Author:        Lukas Wunner <lukas@wunner.de>
-AuthorDate:    Mon, 27 Oct 2025 13:59:31 +01:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sat, 01 Nov 2025 21:30:02 +01:00
+kernel test robot noticed the following build errors:
 
-genirq/manage: Reduce priority of forced secondary interrupt handler
+[auto build test ERROR on dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa]
 
-Crystal reports that the PCIe Advanced Error Reporting driver gets stuck
-in an infinite loop on PREEMPT_RT:
+url:    https://github.com/intel-lab-lkp/linux/commits/Marc-Herbert/x86-msr-add-CPU_OUT_OF_SPEC-taint-name-to-unrecognized-pr_warn-msg/20251101-111139
+base:   dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
+patch link:    https://lore.kernel.org/r/20251101-tainted-msr-v1-1-e00658ba04d4%40linux.intel.com
+patch subject: [PATCH] x86/msr: add CPU_OUT_OF_SPEC taint name to "unrecognized" pr_warn(msg)
+config: x86_64-randconfig-103-20251101 (https://download.01.org/0day-ci/archive/20251102/202511020456.NiTKb752-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251102/202511020456.NiTKb752-lkp@intel.com/reproduce)
 
-Both the primary interrupt handler aer_irq() as well as the secondary
-handler aer_isr() are forced into threads with identical priority.
-Crystal writes that on the ARM system in question, the primary handler
-has to clear an error in the Root Error Status register...
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511020456.NiTKb752-lkp@intel.com/
 
-   "before the next error happens, or else the hardware will set the
-    Multiple ERR_COR Received bit.  If that bit is set, then aer_isr()
-    can't rely on the Error Source Identification register, so it scans
-    through all devices looking for errors -- and for some reason, on
-    this system, accessing the AER registers (or any Config Space above
-    0x400, even though there are capabilities located there) generates
-    an Unsupported Request Error (but returns valid data).  Since this
-    happens more than once, without aer_irq() preempting, it causes
-    another multi error and we get stuck in a loop."
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
-The issue does not show on non-PREEMPT_RT because the primary handler
-runs in hardirq context and thus can preempt the threaded secondary
-handler, clear the Root Error Status register and prevent the secondary
-handler from getting stuck.
+>> ERROR: modpost: "taint_flags" [arch/x86/kernel/msr.ko] undefined!
 
-Emulate the same behavior on PREEMPT_RT by assigning a lower default
-priority to the secondary handler if the primary handler is forced into
-a thread.
-
-Reported-by: Crystal Wood <crwood@redhat.com>
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Crystal Wood <crwood@redhat.com>
-Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Link: https://patch.msgid.link/f6dcdb41be2694886b8dbf4fe7b3ab89e9d5114c.17615=
-69303.git.lukas@wunner.de
-Closes: https://lore.kernel.org/r/20250902224441.368483-1-crwood@redhat.com/
----
- include/linux/sched.h   |  1 +
- kernel/irq/manage.c     |  5 ++++-
- kernel/sched/syscalls.c | 13 +++++++++++++
- 3 files changed, 18 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index cbb7340..cd6be74 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1901,6 +1901,7 @@ extern int sched_setscheduler(struct task_struct *, int=
-, const struct sched_para
- extern int sched_setscheduler_nocheck(struct task_struct *, int, const struc=
-t sched_param *);
- extern void sched_set_fifo(struct task_struct *p);
- extern void sched_set_fifo_low(struct task_struct *p);
-+extern void sched_set_fifo_secondary(struct task_struct *p);
- extern void sched_set_normal(struct task_struct *p, int nice);
- extern int sched_setattr(struct task_struct *, const struct sched_attr *);
- extern int sched_setattr_nocheck(struct task_struct *, const struct sched_at=
-tr *);
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index 7a09d96..c812b6f 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -1239,7 +1239,10 @@ static int irq_thread(void *data)
-=20
- 	irq_thread_set_ready(desc, action);
-=20
--	sched_set_fifo(current);
-+	if (action->handler =3D=3D irq_forced_secondary_handler)
-+		sched_set_fifo_secondary(current);
-+	else
-+		sched_set_fifo(current);
-=20
- 	if (force_irqthreads() && test_bit(IRQTF_FORCED_THREAD,
- 					   &action->thread_flags))
-diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
-index 77ae87f..4834795 100644
---- a/kernel/sched/syscalls.c
-+++ b/kernel/sched/syscalls.c
-@@ -856,6 +856,19 @@ void sched_set_fifo_low(struct task_struct *p)
- }
- EXPORT_SYMBOL_GPL(sched_set_fifo_low);
-=20
-+/*
-+ * Used when the primary interrupt handler is forced into a thread, in addit=
-ion
-+ * to the (always threaded) secondary handler.  The secondary handler gets a
-+ * slightly lower priority so that the primary handler can preempt it, there=
-by
-+ * emulating the behavior of a non-PREEMPT_RT system where the primary handl=
-er
-+ * runs in hard interrupt context.
-+ */
-+void sched_set_fifo_secondary(struct task_struct *p)
-+{
-+	struct sched_param sp =3D { .sched_priority =3D MAX_RT_PRIO / 2 - 1 };
-+	WARN_ON_ONCE(sched_setscheduler_nocheck(p, SCHED_FIFO, &sp) !=3D 0);
-+}
-+
- void sched_set_normal(struct task_struct *p, int nice)
- {
- 	struct sched_attr attr =3D {
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
