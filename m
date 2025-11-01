@@ -1,57 +1,79 @@
-Return-Path: <linux-kernel+bounces-881136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B50B8C278AF
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 07:06:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F756C278B8
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 07:09:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DD333BD3DC
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 06:06:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EB1F04E363C
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 06:09:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 289DD27EFEE;
-	Sat,  1 Nov 2025 06:06:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1D728C00C;
+	Sat,  1 Nov 2025 06:09:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="h6vT9EhZ"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A1FWopUu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC8A126C17;
-	Sat,  1 Nov 2025 06:05:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8E626ED5E;
+	Sat,  1 Nov 2025 06:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761977165; cv=none; b=ER9z5SuiuibdbMYfxNjiXQnj1XRi/4xLvxRKWrZbQq6oDQ75d4RWrA52ZoFO0hEjqefv0/jxZR2JgYaEWElqS9htueYqy7ZIuINqzqdu6j8+ciD+/JhhseNZX6op4rG41ACSrwZZqeGYlN5IepbtgWfOuHy2mZr5epKpB40Hwb8=
+	t=1761977370; cv=none; b=Joj2dnhccHt5RtVYm4wl7ImcQNVIrRNV0mXujw5Lp27+88bEhglG1cFvOuvxDcik1Ttv+FDsckDUC8+pEffoJN+OSf1djMBSGfGhYDqzF0ynmSbEPmXAui9u0AIDL+v1qkgEt07m5pbyA9IW3DOLMqhO9fxGz0T0gHzkGiOscnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761977165; c=relaxed/simple;
-	bh=gYrncJmArK3RNa4qqvrSOt4IFgnoAuk+me9d9nS8WBg=;
+	s=arc-20240116; t=1761977370; c=relaxed/simple;
+	bh=bqaEm8qkzluJFcj5K3U/O86yPhUXk6DJ/URd+gKLwj4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B7aMbLVKyyBXkP+pfKa5AMgoK5qa1H2UdZiFXKLWmfm4gPawUz3vaXlMBw5SNsTOkQ2682YDcZ63hfzVyMDJPIAGQzc7dTdRjKKI1Qbc0eyMdB+LL06bQiWKUSpLKjdiA9ExRxUB+3gEs4cVznTK9onqLv9qNeC/N5NieAgUt4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=h6vT9EhZ; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=XWsNnOEHkuis54uMq6f1l6L+DC+6mSqsUWNG6xGTRgI=; b=h6vT9EhZLLPHTd0JmdDJcWFroi
-	nMXA1nQtgP2vCHie1ZQbT/mBSs9GtcBJB7KTavV4K/JXn9X083UtqPJMGyvYxHJz1hdefrMvC64t8
-	Sg/v+C+jz2pVLwfsTDzFKWdNpyo94JjgHzesdd8LWiBfKmfjelUUHZ0j3Cc0HrpVHy9Zda93olCbw
-	7VSZGyOb5miPYFO9Mz35RlI8Oo/bDlPIgQdN4laD4apbxbp4rIwY9CCmYJAOw4E/PJ136dUX1U8vl
-	h3Ncns7+1vF+DhtteztWHb1bKMFKDXcKr72wy6PXXRjNxo6D8bUtes4Qlute16OV+WpWEOicfUWsb
-	NwrcrI1w==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vF4kO-00000005EgC-1gtl;
-	Sat, 01 Nov 2025 06:05:56 +0000
-Date: Sat, 1 Nov 2025 06:05:56 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: touch up predicts in putname()
-Message-ID: <20251101060556.GA1235503@ZenIV>
-References: <20251029134952.658450-1-mjguzik@gmail.com>
- <20251031201753.GD2441659@ZenIV>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dEicMsK72TfgLDeSg4WWbU6WIE/OxFw1tmo/M622zHEqcbAAQbAGtP3dZzzSsqJgt+2Ue9SGws9gizCjEQZWxUc3ow8rXnBjpwqdXoRqnz5CjsnXxoFKWbANk0DYrVqJJh7KJEUEK/Yei2+yVlDnQ/cWP0Ui7TKLQjdGVp3p6vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A1FWopUu; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761977368; x=1793513368;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bqaEm8qkzluJFcj5K3U/O86yPhUXk6DJ/URd+gKLwj4=;
+  b=A1FWopUuAEHT9O9u97QS2qXN3dbpUt+UTcwEZ6/wUKV4iDrkJfX/moV4
+   84bt3fl9r4NB+qSRGTvrCpFCefqPjutOEKYCf4CMNEy5u/nIDqKK+jq3K
+   H9wTMZKSWjbQJclVYLEcGhyHgdQeXyi5xjRACRWLmZ4yNZ/9s7LJ0MkSV
+   bpxzo+zTuuTfET7zLsDOJcm0uslDSeN/HqHcOyCYBY7VZrWrHsG1IUmA7
+   ZSwNnhS2IMqO2M5gE7crzwb05QWLwBHfUFcc2GnjhgyMfHNnGr59SiDJC
+   nIyt31JMFm7ddb3IOFEs0SWPURnYPcrRPGPNGNpz9PdyvBkFQf6StChzo
+   A==;
+X-CSE-ConnectionGUID: t8W6KUakSC2Kqc1iiu8Biw==
+X-CSE-MsgGUID: FCq7ssn0Ql+O/o+J649pRQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="81764624"
+X-IronPort-AV: E=Sophos;i="6.19,271,1754982000"; 
+   d="scan'208";a="81764624"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 23:09:27 -0700
+X-CSE-ConnectionGUID: +Sz5wqAaQ+Gea1s6q3fWlQ==
+X-CSE-MsgGUID: YBxcoucjQX6pgDdGU9bSrw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,271,1754982000"; 
+   d="scan'208";a="186282191"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 31 Oct 2025 23:09:24 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vF4ni-000NxA-0W;
+	Sat, 01 Nov 2025 06:09:22 +0000
+Date: Sat, 1 Nov 2025 14:08:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ricardo Robaina <rrobaina@redhat.com>, audit@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	paul@paul-moore.com, eparis@redhat.com, fw@strlen.de,
+	pablo@netfilter.org, kadlec@netfilter.org,
+	Ricardo Robaina <rrobaina@redhat.com>
+Subject: Re: [PATCH v4 1/2] audit: add audit_log_packet_ip4 and
+ audit_log_packet_ip6 helper functions
+Message-ID: <202511011350.ye4VgG6l-lkp@intel.com>
+References: <cfafc5247fbfcd2561de16bcff67c1afd5676c9e.1761918165.git.rrobaina@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,21 +82,93 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251031201753.GD2441659@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <cfafc5247fbfcd2561de16bcff67c1afd5676c9e.1761918165.git.rrobaina@redhat.com>
 
-On Fri, Oct 31, 2025 at 08:17:53PM +0000, Al Viro wrote:
+Hi Ricardo,
 
-> 0) get rid of audit_reusename() and aname->uptr (I have that series,
-> massaging it for posting at the moment).  Basically, don't have
-> getname et.al. called in retry loops - there are few places doing
-> that, and they are not hard to fix.
+kernel test robot noticed the following build errors:
 
-See #work.filename-uptr; I'll post individual patches tomorrow morning,
-hopefully along with getname_alien()/take_filename() followups, including
-the removal of atomic (still not settled on the calling conventions for
-getname_alien()).
+[auto build test ERROR on pcmoore-audit/next]
+[also build test ERROR on netfilter-nf/main linus/master v6.18-rc3 next-20251031]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> I'll post the ->uptr removal series tonight or tomorrow; figuring out the right
-> calling conventions for getname_alien() is the main obstacle for (1--3) ATM...
+url:    https://github.com/intel-lab-lkp/linux/commits/Ricardo-Robaina/audit-add-audit_log_packet_ip4-and-audit_log_packet_ip6-helper-functions/20251031-220605
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git next
+patch link:    https://lore.kernel.org/r/cfafc5247fbfcd2561de16bcff67c1afd5676c9e.1761918165.git.rrobaina%40redhat.com
+patch subject: [PATCH v4 1/2] audit: add audit_log_packet_ip4 and audit_log_packet_ip6 helper functions
+config: s390-randconfig-002-20251101 (https://download.01.org/0day-ci/archive/20251101/202511011350.ye4VgG6l-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project be2081d9457ed095c4a6ebe2a920f0f7b76369c6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251101/202511011350.ye4VgG6l-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511011350.ye4VgG6l-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> net/netfilter/nft_log.c:48:10: error: call to undeclared function 'audit_log_packet_ip4'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+      48 |                         fam = audit_log_packet_ip4(ab, skb) ? NFPROTO_IPV4 : -1;
+         |                               ^
+>> net/netfilter/nft_log.c:51:10: error: call to undeclared function 'audit_log_packet_ip6'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+      51 |                         fam = audit_log_packet_ip6(ab, skb) ? NFPROTO_IPV6 : -1;
+         |                               ^
+   net/netfilter/nft_log.c:56:9: error: call to undeclared function 'audit_log_packet_ip4'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+      56 |                 fam = audit_log_packet_ip4(ab, skb) ? NFPROTO_IPV4 : -1;
+         |                       ^
+   net/netfilter/nft_log.c:59:9: error: call to undeclared function 'audit_log_packet_ip6'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+      59 |                 fam = audit_log_packet_ip6(ab, skb) ? NFPROTO_IPV6 : -1;
+         |                       ^
+   4 errors generated.
+
+
+vim +/audit_log_packet_ip4 +48 net/netfilter/nft_log.c
+
+    28	
+    29	static void nft_log_eval_audit(const struct nft_pktinfo *pkt)
+    30	{
+    31		struct sk_buff *skb = pkt->skb;
+    32		struct audit_buffer *ab;
+    33		int fam = -1;
+    34	
+    35		if (!audit_enabled)
+    36			return;
+    37	
+    38		ab = audit_log_start(NULL, GFP_ATOMIC, AUDIT_NETFILTER_PKT);
+    39		if (!ab)
+    40			return;
+    41	
+    42		audit_log_format(ab, "mark=%#x", skb->mark);
+    43	
+    44		switch (nft_pf(pkt)) {
+    45		case NFPROTO_BRIDGE:
+    46			switch (eth_hdr(skb)->h_proto) {
+    47			case htons(ETH_P_IP):
+  > 48				fam = audit_log_packet_ip4(ab, skb) ? NFPROTO_IPV4 : -1;
+    49				break;
+    50			case htons(ETH_P_IPV6):
+  > 51				fam = audit_log_packet_ip6(ab, skb) ? NFPROTO_IPV6 : -1;
+    52				break;
+    53			}
+    54			break;
+    55		case NFPROTO_IPV4:
+    56			fam = audit_log_packet_ip4(ab, skb) ? NFPROTO_IPV4 : -1;
+    57			break;
+    58		case NFPROTO_IPV6:
+    59			fam = audit_log_packet_ip6(ab, skb) ? NFPROTO_IPV6 : -1;
+    60			break;
+    61		}
+    62	
+    63		if (fam == -1)
+    64			audit_log_format(ab, " saddr=? daddr=? proto=-1");
+    65	
+    66		audit_log_end(ab);
+    67	}
+    68	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
