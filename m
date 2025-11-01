@@ -1,176 +1,104 @@
-Return-Path: <linux-kernel+bounces-881078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 082E4C275CA
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 03:12:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD305C275CD
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 03:12:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 835F41886E16
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 02:12:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 646D44E1BD1
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 02:12:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08B123F429;
-	Sat,  1 Nov 2025 02:11:31 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B400246764;
+	Sat,  1 Nov 2025 02:12:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LmtlPny/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2362045AD
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 02:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A99EC22D9F7
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 02:12:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761963091; cv=none; b=sGnBh0LYh3ibZQ0iaYsmtr1Oq2i+ucY0/+twF4AkGmFH8UrzRslyHQ8aup6lUK7E3yxh5kxHtLzPGf++7CpjG2Hc2PjXnT+/VnuRALmflqtctT6zC0BJ5GT5CaJh3A1t5E7FRGFIUYM8Lgf3ZUQfEO9idD5aIdh/+gb/x/gWhDM=
+	t=1761963162; cv=none; b=YQtncx6BUGZr5uv3scwof5Mslf6x8Zkc7RMri93fOmTplKYDMKtf71XUn0nHxtaCDblTvIIaczUIGeqdDJYmogRc092l7baY7cDwlqdGevTZ2et9/wFvTxYLh+5xxwPrYV2UjDTyvuKW6eDzmyaruEP+tpKHyro54MgEBhNHJqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761963091; c=relaxed/simple;
-	bh=K8ImMs6n9uySCZYArV5RIiG8bIqLyPLzV1sXOzBoRtY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=hJIeFRBLpiQf/KcvScMvdU3FjUm0R1qBNeHZYKlMkl5ebCLEAwYr5Bk98vhDXtErANnduLtbv2qBJQpnWcA0mpdN9eT8ZWUjFMFV8l4QwkYr/1S7nTCzB31rSShUpQDNl7iCR/zxDSdpKk/68SLGK8vE2O45WQFBIVggskWw5Q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-430c9176acaso40488335ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 19:11:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761963089; x=1762567889;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y8wH2JlkS8rwz4h7Dq6s8besfCrkPbJyaWFvQHAG38c=;
-        b=EokS8+OrqM3QotRk2IMqId1URnbCxkAKUYJVLYegpTCBKny7vkMT2MNpaJs0IsujFj
-         AyDh3Oa0bktlgYuTz2sLR2MEkfI/NzVifcU5NVmkKGzVd2+bXB1nzDO+lRqibDkqWGjg
-         7rXvQ5U3oC3Fe7jQxVeHhnll3pU8fMgO1RSzZcHwg6E/Jo/dl79kU0x7k6jkDUg9AiqD
-         V5wjUXG7gHP2vT0ocbF7KQs8ekmI5gKEls1uiqHgRB5JzQJOYDznsA7TZj4JeCU3g3G+
-         UUVtg/UCflNfrC4hBKKumUeH6SD0wUwTQOX8bmloa8y7IjilV6I31NAvpkKA/M8MWvys
-         E6Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCVgjeyPUR2H/vPs8+PWZOyvfPNjf1DqfecmvDTLTGRa0U/fVtlWX3FSH2F0QNNrZhmDR4DwAk8Ox/lE18Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOTHztlmwZ3U3SDo+poVCGN+Ifh4YYHIBhnm0UXyVjUOI+SSRQ
-	UCLo7j5ZORzBSl2DTLMs9r0u7N7YtW3W4XFTDJ1RMK9uK5cz7HnxgqIDwYLkn6OznLx4VczqYjh
-	F0Wq+yZbwXkQ1ZP2hqvevYDUl8gmxhlKAvkpxVvwoV5gA4VjyZzQAfr2nnEU=
-X-Google-Smtp-Source: AGHT+IEzesGSsLWX/EFccy4sTErr4FvPtAfe/c1E2omwJKxtrILDrP3iAzGkXHjWDghJqUY1wFYh1OAqdHkvq30NnOikP4OVaNgf
+	s=arc-20240116; t=1761963162; c=relaxed/simple;
+	bh=Qst1R5LzdYJcHzYXn017ZyXdrjjln8r8RVjOmd53+Ow=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=bBmq6iDvEcuYedZGl9etpo2gZ9Z5qOV7afpZIMsvu4sH2EvKF44LSJwd/DFA6VTk9CsU73qgxzHXuVFovtz53BaHxE/PekoTCjiV0YCIZjaxo7O55T14VfMJGXg0hF+aM+oxyqn7o7ulekBvL5vr6ojt5mvAYaCJ281UX4fIDo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LmtlPny/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0E8CC4CEE7;
+	Sat,  1 Nov 2025 02:12:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1761963162;
+	bh=Qst1R5LzdYJcHzYXn017ZyXdrjjln8r8RVjOmd53+Ow=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LmtlPny/JGo5vFV8kNf2renOPBjUk6hMtft5aykSyxLQ3sWlYhXq0wKMQDoy16b4L
+	 VZ4Gp47v3DRqqxxWilHYNgPheu5mp8QRD+/1cIGVPDUYMnvqm7uD1rUA8iXp2JVt4w
+	 NwZ5vXJhAJygLs98qbKVqbg5UGsMg/1Bd1ZZA/Tc=
+Date: Fri, 31 Oct 2025 19:12:41 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: linux-kernel@vger.kernel.org, u.kleine-koenig@baylibre.com, Nicolas
+ Pitre <npitre@baylibre.com>, Oleg Nesterov <oleg@redhat.com>, Peter
+ Zijlstra <peterz@infradead.org>, Biju Das <biju.das.jz@bp.renesas.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Thomas
+ Gleixner <tglx@linutronix.de>, Li RongQing <lirongqing@baidu.com>, Yu Kuai
+ <yukuai3@huawei.com>, Khazhismel Kumykov <khazhy@chromium.org>, Jens Axboe
+ <axboe@kernel.dk>, x86@kernel.org
+Subject: Re: [PATCH v4 next 4/9] lib: Add mul_u64_add_u64_div_u64() and
+ mul_u64_u64_div_u64_roundup()
+Message-Id: <20251031191241.c3d0fa93219cab2a1157fe1e@linux-foundation.org>
+In-Reply-To: <20251031205917.56763269@pumpkin>
+References: <20251029173828.3682-1-david.laight.linux@gmail.com>
+	<20251029173828.3682-5-david.laight.linux@gmail.com>
+	<20251031205917.56763269@pumpkin>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a4a:b0:422:a9aa:7ff4 with SMTP id
- e9e14a558f8ab-4330cf069bdmr81980165ab.11.1761963088808; Fri, 31 Oct 2025
- 19:11:28 -0700 (PDT)
-Date: Fri, 31 Oct 2025 19:11:28 -0700
-In-Reply-To: <68cc0578.050a0220.28a605.0006.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69056c50.a70a0220.1e08cc.006c.GAE@google.com>
-Subject: Re: [syzbot] [iomap?] kernel BUG in folio_end_read (2)
-From: syzbot <syzbot+3686758660f980b402dc@syzkaller.appspotmail.com>
-To: brauner@kernel.org, chao@kernel.org, djwong@kernel.org, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-syzbot has found a reproducer for the following issue on:
+On Fri, 31 Oct 2025 20:59:17 +0000 David Laight <david.laight.linux@gmail.com> wrote:
 
-HEAD commit:    98bd8b16ae57 Add linux-next specific files for 20251031
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=163b2bcd980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=63d09725c93bcc1c
-dashboard link: https://syzkaller.appspot.com/bug?extid=3686758660f980b402dc
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=176fc342580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10403f34580000
+> > -static inline u64 mul_u64_u64_div_u64(u64 a, u64 mul, u64 div)
+> > +static inline u64 mul_u64_add_u64_div_u64(u64 rax, u64 mul, u64 add, u64 div)
+> >  {
+> > -	u64 q;
+> > +	u64 rdx;
+> >  
+> > -	asm ("mulq %2; divq %3" : "=a" (q)
+> > -				: "a" (a), "rm" (mul), "rm" (div)
+> > -				: "rdx");
+> > +	asm ("mulq %[mul]" : "+a" (rax), "=d" (rdx) : [mul] "rm" (mul));
+> >  
+> > -	return q;
+> > +	if (statically_true(add))
+> 
+> This needs to be:
+> 	if (!statically_true(!add))
+> 
+> Do you need me to resend the full series?
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/975261746f29/disk-98bd8b16.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ad565c6cf272/vmlinux-98bd8b16.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/1816a55a8d5f/bzImage-98bd8b16.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/d6d9eee31fdb/mount_0.gz
-  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=17803f34580000)
+I queued a fix, thanks.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3686758660f980b402dc@syzkaller.appspotmail.com
+--- a/arch/x86/include/asm/div64.h~lib-add-mul_u64_add_u64_div_u64-and-mul_u64_u64_div_u64_roundup-fix
++++ a/arch/x86/include/asm/div64.h
+@@ -90,7 +90,7 @@ static inline u64 mul_u64_add_u64_div_u6
+ 
+ 	asm ("mulq %[mul]" : "+a" (rax), "=d" (rdx) : [mul] "rm" (mul));
+ 
+-	if (statically_true(add))
++	if (!statically_true(add))
+ 		asm ("addq %[add], %[lo]; adcq $0, %[hi]" :
+ 			[lo] "+r" (rax), [hi] "+r" (rdx) : [add] "irm" (add));
+ 
+_
 
- vms_complete_munmap_vmas+0x206/0x8a0 mm/vma.c:1279
- do_vmi_align_munmap+0x364/0x440 mm/vma.c:1538
- do_vmi_munmap+0x253/0x2e0 mm/vma.c:1586
- __vm_munmap+0x207/0x380 mm/vma.c:3196
- __do_sys_munmap mm/mmap.c:1077 [inline]
- __se_sys_munmap mm/mmap.c:1074 [inline]
- __x64_sys_munmap+0x60/0x70 mm/mmap.c:1074
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-------------[ cut here ]------------
-kernel BUG at mm/filemap.c:1530!
-Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
-CPU: 1 UID: 0 PID: 5989 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:folio_end_read+0x1e9/0x230 mm/filemap.c:1530
-Code: 79 c7 ff 48 89 df 48 c7 c6 20 6d 74 8b e8 9f df 2e ff 90 0f 0b e8 d7 79 c7 ff 48 89 df 48 c7 c6 40 63 74 8b e8 88 df 2e ff 90 <0f> 0b e8 c0 79 c7 ff 48 89 df 48 c7 c6 20 6d 74 8b e8 71 df 2e ff
-RSP: 0018:ffffc90003f8e268 EFLAGS: 00010246
-RAX: c6904ff3387db700 RBX: ffffea0001b5ef00 RCX: 0000000000000000
-RDX: 0000000000000007 RSI: ffffffff8d780a1b RDI: 00000000ffffffff
-RBP: 0000000000000000 R08: ffffffff8f7d7477 R09: 1ffffffff1efae8e
-R10: dffffc0000000000 R11: fffffbfff1efae8f R12: 1ffffd400036bde1
-R13: 1ffffd400036bde0 R14: ffffea0001b5ef08 R15: 00fff20000004060
-FS:  0000555572333500(0000) GS:ffff888125fe2000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f57d6844000 CR3: 0000000075586000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- iomap_readahead+0x96a/0xbc0 fs/iomap/buffered-io.c:547
- iomap_bio_readahead include/linux/iomap.h:608 [inline]
- erofs_readahead+0x1c3/0x3c0 fs/erofs/data.c:383
- read_pages+0x17a/0x580 mm/readahead.c:163
- page_cache_ra_order+0x924/0xe70 mm/readahead.c:518
- filemap_readahead mm/filemap.c:2658 [inline]
- filemap_get_pages+0x7ff/0x1df0 mm/filemap.c:2704
- filemap_read+0x3f6/0x11a0 mm/filemap.c:2800
- __kernel_read+0x4cf/0x960 fs/read_write.c:530
- integrity_kernel_read+0x89/0xd0 security/integrity/iint.c:28
- ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:480 [inline]
- ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
- ima_calc_file_hash+0x85e/0x16f0 security/integrity/ima/ima_crypto.c:568
- ima_collect_measurement+0x428/0x8f0 security/integrity/ima/ima_api.c:293
- process_measurement+0x1121/0x1a40 security/integrity/ima/ima_main.c:405
- ima_file_check+0xd7/0x120 security/integrity/ima/ima_main.c:656
- security_file_post_open+0xbb/0x290 security/security.c:2652
- do_open fs/namei.c:3977 [inline]
- path_openat+0x2f26/0x3830 fs/namei.c:4134
- do_filp_open+0x1fa/0x410 fs/namei.c:4161
- do_sys_openat2+0x121/0x1c0 fs/open.c:1437
- do_sys_open fs/open.c:1452 [inline]
- __do_sys_openat fs/open.c:1468 [inline]
- __se_sys_openat fs/open.c:1463 [inline]
- __x64_sys_openat+0x138/0x170 fs/open.c:1463
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f0b08d8efc9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffec6a5d268 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007f0b08fe5fa0 RCX: 00007f0b08d8efc9
-RDX: 0000000000121140 RSI: 0000200000000000 RDI: ffffffffffffff9c
-RBP: 00007f0b08e11f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 000000000000013d R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f0b08fe5fa0 R14: 00007f0b08fe5fa0 R15: 0000000000000004
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:folio_end_read+0x1e9/0x230 mm/filemap.c:1530
-Code: 79 c7 ff 48 89 df 48 c7 c6 20 6d 74 8b e8 9f df 2e ff 90 0f 0b e8 d7 79 c7 ff 48 89 df 48 c7 c6 40 63 74 8b e8 88 df 2e ff 90 <0f> 0b e8 c0 79 c7 ff 48 89 df 48 c7 c6 20 6d 74 8b e8 71 df 2e ff
-RSP: 0018:ffffc90003f8e268 EFLAGS: 00010246
-RAX: c6904ff3387db700 RBX: ffffea0001b5ef00 RCX: 0000000000000000
-RDX: 0000000000000007 RSI: ffffffff8d780a1b RDI: 00000000ffffffff
-RBP: 0000000000000000 R08: ffffffff8f7d7477 R09: 1ffffffff1efae8e
-R10: dffffc0000000000 R11: fffffbfff1efae8f R12: 1ffffd400036bde1
-R13: 1ffffd400036bde0 R14: ffffea0001b5ef08 R15: 00fff20000004060
-FS:  0000555572333500(0000) GS:ffff888125ee2000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b30063fff CR3: 0000000075586000 CR4: 00000000003526f0
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
 
