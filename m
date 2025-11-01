@@ -1,106 +1,101 @@
-Return-Path: <linux-kernel+bounces-881593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B500C28844
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 23:59:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EB25C2885B
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 00:01:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79A293AF900
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 22:59:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9947418938EB
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 23:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63F7A29992A;
-	Sat,  1 Nov 2025 22:59:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 249EA299954;
+	Sat,  1 Nov 2025 23:01:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BUR/Tn3k";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qjaNNTID"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SC52EshU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3392566
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 22:59:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24782221F03;
+	Sat,  1 Nov 2025 23:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762037953; cv=none; b=Hgbk9p8s+5bo3IQVAxYsvwSn1WlA1ofPBEHNcnYdvK93y02LYW7scp8pJeN4ii7ACFFtl7+jOYnqOfyUMzVfealjkMbdKLE+9EGcB1csPPhX4Mh9zEwOYeV304mjugLpM49MwxXn7/LE4n4yDXdUqao68rekSM66FqTsdL2hcXI=
+	t=1762038076; cv=none; b=M8MU/Bg5nczQFrEWGe5Q5F5hPm1xXMhXx5Hd19+d6G07EVSNcqxazAm1Pk37u3uP05RJOEbtJ+LnrLcBLewIDK+ZGt/CJABSgYZ5N02ioVcMEyoZlLWCJDgUTvlgqPkFAXzGJXFMi3UkFRtyhP9eTkLAfI/dtctjx+dhI/HVaJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762037953; c=relaxed/simple;
-	bh=Tf2DS2Gr5T/fYs+ignvAhfeUXfWXoYmReVXxz4l8TMU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=UnrYCoxXmaagrJWjCVgBUXO9CmmrJ1j2609opYmmYumoI+lX6gSnTfjYOIohxfG2TrUlgcs/mNGyFG+1uYRQd0g69koljkEADG9dmYPc7Nk5+JiPaYP+kI8hLU4YYUN+6++HUwmM/LuJNqkex4GrIgpmA7dGB3X0z47gB+gAv6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BUR/Tn3k; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qjaNNTID; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762037950;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xlQVfxesiPBr5LLf09SJrMEOQz7ygOrMc1zMq2EC5Yo=;
-	b=BUR/Tn3kw747LUKJ8UIr108Iqqqw1f8lvwnWzcGZUFCgXHzN0/fl3nDWkzLQrpXuX+KI2R
-	yc8glqY6x/hpS6ER252UHkpO1O7ivUarVzrywo0VoGcHt8jg4451nrH9+1t+ozOMrHjIWT
-	bAtmIVeVdVm8y6fC57VaUWBYnMMExsWMI00DoykDDGhgYK6j46pEeyr2Yq5I6P7mQfaldK
-	ClrsSm8Swj6WofH6S5ohZhTY+1/c+pLj34rwaDI4agW8JblDOl+KfpWfcUdAfL+IB12Qo8
-	tIWyE3LG+mN6omdCbZLQASOHY2u0RjOYUL3JnM5djPwc9rT0ohCENB+r8U6P5w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762037950;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xlQVfxesiPBr5LLf09SJrMEOQz7ygOrMc1zMq2EC5Yo=;
-	b=qjaNNTIDKDO6Jy5KTGjg5QkPoQx6eF0eQlUAnVYuqS/78sKGTBE3eMgBBCiJrXsyZ7OWlr
-	Nt9jfwJq2sDjjuCQ==
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, LKML
- <linux-kernel@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Gabriele Monaco
- <gmonaco@redhat.com>, Michael Jeanson <mjeanson@efficios.com>, Jens Axboe
- <axboe@kernel.dk>, "Paul E. McKenney" <paulmck@kernel.org>, "Gautham R.
- Shenoy" <gautham.shenoy@amd.com>, Florian Weimer <fweimer@redhat.com>, Tim
- Chen <tim.c.chen@intel.com>, Yury Norov <yury.norov@gmail.com>, Shrikanth
- Hegde <sshegde@linux.ibm.com>
-Subject: Re: [patch V3 09/20] cpumask: Cache num_possible_cpus()
-In-Reply-To: <87sef1tnui.ffs@tglx>
-References: <20251029123717.886619142@linutronix.de>
- <20251029124515.846126176@linutronix.de>
- <938a1d18-c7b0-45d6-ac4b-4c1246e08044@efficios.com> <87sef1tnui.ffs@tglx>
-Date: Sat, 01 Nov 2025 23:59:09 +0100
-Message-ID: <87wm49we9u.ffs@tglx>
+	s=arc-20240116; t=1762038076; c=relaxed/simple;
+	bh=24ZR53rGFlS9aCl+cwrC35kW0ffMoIyXJnJR8Fkzos4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=lFgrq9BTRL2943yxsJ6nOhSFE4R2nHfYJx7vUOR6cm1xpW7t3dNUJhymYViW4WsnOpQT2y0w4rFVaQKI0lAIWh8taQUhabiZM0uiqq7GKFfylGB80VKF1ZTRK6Hq/YifNC/4wNwhvxJQwaYCVGTUAN7e4sI2nlFGHoF8s8IX+vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SC52EshU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8DB78C4CEF7;
+	Sat,  1 Nov 2025 23:01:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762038075;
+	bh=24ZR53rGFlS9aCl+cwrC35kW0ffMoIyXJnJR8Fkzos4=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=SC52EshUG0sKa1iIsH10cKdkIIPoq1S1Qrfm5Qd3qhP5gqLRQtP0IMVEszhSb/agc
+	 bRJYcTdXczQ2alLeoe4NY6oH4nXYACTIxZe5+GGmBCFwa+ymCmeF90E+C05TrG+0pl
+	 RT2+WWxa3d0dOpoxe6eKTHvEQwBwRpryZMBcltE7CJM3IwW3tr6HdZK9BsmwUlmQOK
+	 OQSCIh7S7nu1kF/hhqIiT446XdGFA8CZ21PDkq9eaVWYLtJk7MTzKHl2IQcO9SfyKa
+	 jHEx7ApsBKMkfJ/gVMy3QTdfejjyD9cx8/LG5s4uYN3X6ok98hn0Y0MTcD6uITvSoX
+	 dC3a4YWUjM0ag==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 828F4CCF9F8;
+	Sat,  1 Nov 2025 23:01:15 +0000 (UTC)
+From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
+Subject: [PATCH 0/2] arm64: tegra: Enable mmu on Tegra194 display
+ controllers
+Date: Sat, 01 Nov 2025 18:01:09 -0500
+Message-Id: <20251101-tegra194-dc-mmu-v1-0-8401c45d8f13@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADWRBmkC/x3MPQqAMAxA4atIZgNNtYNeRRwkTTWDP7QqQvHuF
+ sdveC9DkqiSoK8yRLk16b4VUF0BL9M2C6ovBmusIzKEp8xxoq5Fz7iuF7J01nFofMsBSnVECfr
+ 8x2F83w+5kEo3YQAAAA==
+X-Change-ID: 20251101-tegra194-dc-mmu-ce925cf3d4cf
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762038074; l=612;
+ i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
+ bh=24ZR53rGFlS9aCl+cwrC35kW0ffMoIyXJnJR8Fkzos4=;
+ b=qoKvxUZlk1keasy7Yzs1Er5PafaKd65ytc2MeyLgvp4vKYmZSTeWrLaxizj19b+88vFthzZFn
+ JJPZb/5aUiNA7MIIYICOzjKu/lByTWzdpQKcSdzQGZNO7ypdpbvuYwa
+X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
+ pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
+X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
+ auth_id=342
+X-Original-From: Aaron Kling <webgeek1234@gmail.com>
+Reply-To: webgeek1234@gmail.com
 
-On Wed, Oct 29 2025 at 22:11, Thomas Gleixner wrote:
+This involves reverting a commit that explicitly disabled the associated
+smmu, then wiring that to unit to the display controllers.
 
-> On Wed, Oct 29 2025 at 11:54, Mathieu Desnoyers wrote:
->> On 2025-10-29 09:09, Thomas Gleixner wrote:
->> [...]
->>>   
->>> +void set_cpu_possible(unsigned int cpu, bool possible)
->>
->> Unless I'm missing something, I suspect that "set_cpu_possible()" should
->> be marked as __init.
->
-> Good point!
+Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+---
+Aaron Kling (2):
+      Revert "arm64: tegra: Disable ISO SMMU for Tegra194"
+      arm64: tegra: Enable mmu on Tegra194 display controllers
 
-And only wishful thinking as set_cpu_possible() is wrongly used in code
-which is not marked __init all over the architecture zoo. Cleaning that
-up is yet another massive patch series dealing with mostly unmaintained
-code. A nice task for people who want to get started with kernel
-development. :)
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+---
+base-commit: dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
+change-id: 20251101-tegra194-dc-mmu-ce925cf3d4cf
 
-On anything contemporary invoking set_cpu_possible() after init is going
-to crash and burn because the related cpumask and variables are marked
-RO at that point.
+Best regards,
+-- 
+Aaron Kling <webgeek1234@gmail.com>
 
-I've just addded a comment to that effect above the function to prevent
-people from trying casually.
 
-Thanks,
-
-        tglx
 
