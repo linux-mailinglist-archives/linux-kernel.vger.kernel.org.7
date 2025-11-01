@@ -1,101 +1,116 @@
-Return-Path: <linux-kernel+bounces-881120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85324C27812
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 06:03:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1949C27824
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 06:05:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6C6D189C767
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 05:02:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B416A189B813
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 05:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3924227466A;
-	Sat,  1 Nov 2025 05:01:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0030244186;
+	Sat,  1 Nov 2025 05:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m8cBoJTe"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cgyhM0lz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D37921ADCB;
-	Sat,  1 Nov 2025 05:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16B8521B9C0;
+	Sat,  1 Nov 2025 05:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761973274; cv=none; b=LhAx4OyC2ZpaskM9Q8CNKc90Dmsyhy5WOmoN85LvT5W696QHr6fYq+6kOry0Q+e8Z+SrFyXgu9/oh/WqXKU5SrcKJd39C+HxQEo6kRnLd5gTqpzsu/GtNn+g2EHlDBe0Aa3yoR0uZZjJO2J238qsPr+K0HGajw7AmFlTkw0yFyY=
+	t=1761973512; cv=none; b=boDsS39bRq5pznto/wembg6CjcrBd0JirQQPiIWhjhBCb2lvs5mp1w5qqWg3XM7F0wJabDi/LdJEB6+CW4TmKK5XujNT1EGBk+uWr1tFmb1SHobhdzX0pUDKHq4s6VvE6RqayiSK4ryFlmjpD2wgeb2WCQhpP2g3Dg0Z5XMbbH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761973274; c=relaxed/simple;
-	bh=MSmFonQhLiVrYFtlSYTNKc2d0hY0+PZpclkFF5lut+U=;
+	s=arc-20240116; t=1761973512; c=relaxed/simple;
+	bh=LeiFkNCDRAuejMGKT/dWBbvRfSXK4gUKUaZjvynezAE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XmxCwhm8sqBPyD7ezKDbSx/izBjH1BmfIu7NtBx+n2J24V9H/dqAxKp1bBNGWejIstvffGOU+jdFLz2gwYYK9YT3J2y2dkns8vyHw/CCtN5LQatzgiS2AxwnQlwPNnHDju823UkeV6EmVxMnEFoMblYJ+D0tl/h7+8d7JIlMLU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=m8cBoJTe; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=nUfYsQtKHPf6wGb5urLnNs0QXXFwsJ1uqZTAIsOnWO8=; b=m8cBoJTe+4lqxnFOY3CicYWrN9
-	vVSfzrov1mXQcm/ejH+7snvW0fku6j+TSEDgJwiDbvk/BnnBQSZsiKKBCmg37krQiQeR+s0VwfA5K
-	Hgb2urZ/RwlHXrFPYj+wGmHk0aTco+RQek0qer0J512Q9VkTZxrn56/xiC92KtH6U1NMvNNuLGc/8
-	oUfXrHCVC2jjaTuwC47G3NDf7Tly13LH93JapnK3sbtB6XFfe0Gp0GQvvXHN+08/6IPxhXBB7b7+H
-	FTjNGlQdcG5NuSfTy3cYcsYhNyZRXe+Ir078vlZrvPRsl1FGaknm4HGKCrGkIO0KaxG8AyLzTpgGE
-	UQVLjJpA==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vF3jL-00000001FAo-1qO9;
-	Sat, 01 Nov 2025 05:00:47 +0000
-Date: Sat, 1 Nov 2025 05:00:47 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Hugh Dickins <hughd@google.com>
-Cc: Kiryl Shutsemau <kirill@shutemov.name>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Dave Chinner <david@fromorbit.com>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv3 1/2] mm/memory: Do not populate page table entries
- beyond i_size
-Message-ID: <aQWT_6cXWAcjZYON@casper.infradead.org>
-References: <20251027115636.82382-1-kirill@shutemov.name>
- <20251027115636.82382-2-kirill@shutemov.name>
- <20251027153323.5eb2d97a791112f730e74a21@linux-foundation.org>
- <hw5hjbmt65aefgfz5cqsodpduvlkc6fmlbmwemvoknuehhgml2@orbho2mz52sv>
- <9e2750bf-7945-cc71-b9b3-632f03d89a55@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cM+s5Yhfe+LC7XIsKejpf68lcepvJ7pdRVa8e4iHp5ShRkVrZjzqVEaOIUA2+vcF3RVHjE1yOTbkV1bbR090Tpf4Yv0Ct9+XBa+Re+wIxI5w3GKt1kK01TyO6m5VeNLfk8dgjgd7sdVNo23amouPFZQZsnhoDFZj6+a/AVlnY6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cgyhM0lz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6F3DC4CEF1;
+	Sat,  1 Nov 2025 05:05:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761973511;
+	bh=LeiFkNCDRAuejMGKT/dWBbvRfSXK4gUKUaZjvynezAE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cgyhM0lzKupdYYW7pR50+Ms59lrPZYwfGOjZftvoVOnEnGjcaQ2AuUMjAOeg4ZX84
+	 //40GEC//ZWQ+tPQXCih7Fr/0YiRPFoosBxz+z31mRzNosWjgaAolCrz3oTG9bY2Xs
+	 +Py8A4jd6dvEGBiBxKl2m70m2nlvROe60+51swpExO+Qsg3YolJmINEzapYlKkRjsE
+	 OTDUqHn26jSYtZmFjnSNJ+HbOhqOtwv5vQCh76P0mlumE+teDkLH1i/qazrO8xYQtG
+	 3X0E7LOR5D6PQIa3nJRd8iX7DF4mihqWmdAgRGNOmk2MKnrJJe3jeGnZxHhODSWd5h
+	 zbJQxRiWRQh2w==
+Date: Sat, 1 Nov 2025 10:34:58 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, cros-qcom-dts-watchers@chromium.org, linux-pci@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v9 2/7] PCI: Add assert_perst() operation to control PCIe
+ PERST#
+Message-ID: <prngl7yl7rveyp76ksmskzgv2oigayrhz4s5fnlz7iycae3kkp@v6fn54ybwrec>
+References: <20251101-tc9563-v9-0-de3429f7787a@oss.qualcomm.com>
+ <20251101-tc9563-v9-2-de3429f7787a@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <9e2750bf-7945-cc71-b9b3-632f03d89a55@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251101-tc9563-v9-2-de3429f7787a@oss.qualcomm.com>
 
-On Wed, Oct 29, 2025 at 02:45:52AM -0700, Hugh Dickins wrote:
-> But you're giving yourself too hard a time of backporting with your
-> 5.10 Fixee 01c70267053d for 1/2: the only filesystem which set the
-> flag then was tmpfs, which you're now excepting.  The flag got
-> renamed later (in 5.16) and then in 5.17 at last there was another
-> filesystem to set it.  So, this 1/2 would be
+On Sat, Nov 01, 2025 at 09:29:33AM +0530, Krishna Chaitanya Chundru wrote:
+> Controller driver probes firsts, enables link training and scans the
+> bus. When the PCI bridge is found, its child DT nodes will be scanned
+> and pwrctrl devices will be created if needed. By the time pwrctrl
+> driver probe gets called link training is already enabled by controller
+> driver.
 > 
-> Fixes: 6795801366da ("xfs: Support large folios")
+> Certain devices like TC9563 which uses PCI pwrctl framework needs to
+> configure the device before PCI link is up.
+> 
+> As the controller driver already enables link training as part of
+> its probe, the moment device is powered on, controller and device
+> participates in the link training and link can come up immediately
+> and may not have time to configure the device.
+> 
+> So we need to stop the link training by using assert_perst() by asserting
+> the PERST# and de-assert the PERST# after device is configured.
+> 
+> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
 
-I haven't been able to keep up with this patchset -- sorry.
+Acked-by: Manivannan Sadhasivam <mani@kernel.org>
 
-But this problem didn't exist until bs>PS support was added because we
-would never add a folio to the page cache which extended beyond i_size
-before.  We'd shrink the folio order allocated in do_page_cache_ra()
-(actually, we still do, but page_cache_ra_unbounded() rounds it up
-again).  So it doesn't fix that commit at all, but something far more
-recent.
+- Mani
+
+> ---
+>  include/linux/pci.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index d1fdf81fbe1e427aecbc951fa3fdf65c20450b05..ed5dac663e96e3a6ad2edffffc9fa8b348d0a677 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -829,6 +829,7 @@ struct pci_ops {
+>  	void __iomem *(*map_bus)(struct pci_bus *bus, unsigned int devfn, int where);
+>  	int (*read)(struct pci_bus *bus, unsigned int devfn, int where, int size, u32 *val);
+>  	int (*write)(struct pci_bus *bus, unsigned int devfn, int where, int size, u32 val);
+> +	int (*assert_perst)(struct pci_bus *bus, bool assert);
+>  };
+>  
+>  /*
+> 
+> -- 
+> 2.34.1
+> 
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
