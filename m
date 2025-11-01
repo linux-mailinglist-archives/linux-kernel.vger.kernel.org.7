@@ -1,144 +1,153 @@
-Return-Path: <linux-kernel+bounces-881537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 484E9C286C5
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 20:46:30 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECF8AC286CB
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 20:47:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06F6C3B5F6D
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 19:46:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 73D904E5350
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 19:47:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625FF3019B8;
-	Sat,  1 Nov 2025 19:46:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2957D303A07;
+	Sat,  1 Nov 2025 19:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bt6NhuXw"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jF1vUUQ7";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yKYraF+Y"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99AC42FB620
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 19:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 262AA3019B8;
+	Sat,  1 Nov 2025 19:47:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762026384; cv=none; b=lIkn5+4HhRkL2xkg03r8NUQKDLhIjMfYDuSs6kukH3ADK+AgMxFEf2V+T09FGeFLU0DWRzY6wECRNmlAyo59oPTaGx6cNzVRsif05xTyCHdqBBRjeZJOCiD8NU5GPVujnN2QtX4gvuGwgqoEtjudnumYrflTUPRXIiy44cBGu4M=
+	t=1762026455; cv=none; b=godjG7q2VVvY0uX/7kS+MyER/3EOtMqS+hevrpX9P0OJs28GYB/rUaAciomFdZrdUUNB/gqDx2kZ7gbtNEW4qTDgRkWZs/3XB3y+Vs1h26jI5C1eCwpjEm3CrFW5/rtbE46LkZO7ItMcd+dhvkotfZvzAk1r7kdf0llg7N+jeyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762026384; c=relaxed/simple;
-	bh=ya9HLn9UBkGfXOMBjOZnSUdvjJGss6zEIROPu9RJexs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=fw0VNaoNQyLfDqqn7ZSd/yzqAlNo8dl+ZoQ7PQBP3mRwUsJgZGBKXhRJx4+5+ykFFs1P0IWVjMYS0hvPqNHpf/nSyt8vyKZ0GjCpdguXlIeHhMrYx5eutkoWlnZ6sL9ilSErwX6QGh2KsxrCI6aWxgyj/oSvaM0rKQYPkZbmgL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bt6NhuXw; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <57bbade3-0707-4045-b39b-2053434b0b7c@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762026370;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1762026455; c=relaxed/simple;
+	bh=I99KdJmuOctKLuwvymerkINu/nlRPajmxtNSCtIIIOI=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=d+9Gjlzq5D8kvPV9CDMdBlRhEeCnau5n/UI99ZVWdW3IcRXw3x5JERe64gACm0zUay8IHAe3Ft8Wn19hmmkeEaIxACsXW9jdeHFj8YtRWPecf/eRcLkwslccDYDy2TYwUPIhx4Umnf6D7hkTLOyKr/wxjRT0/mZDbzNG1AfUg5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jF1vUUQ7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yKYraF+Y; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sat, 01 Nov 2025 19:47:29 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762026451;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=qSk/sZRQi90GHI3IILQtj3YgPAQn3xbHNm/4+VGi7to=;
-	b=bt6NhuXwWlyIZUWEiIsROrc2jyonkIZX/DOSReszd9+6z1Nhl2up7ZnTMedodcIqC9ozwX
-	W6aLNMDub//7cjEzYGIR3b7lj/p/0Mp4ex4mSvTR50MifJPiYezgJYuplEidrWU1FkCTxz
-	qJsT50eEfIWOMW9JdydU/DYe9lZNic8=
-Date: Sat, 1 Nov 2025 12:45:59 -0700
+	bh=xjFCy3oIeZxEg07jRQaX7gYuOEcEErQGrddy4g0nFQw=;
+	b=jF1vUUQ7mRTZANzH0i26opjv96gWo6dQ4ULTkn2V/LL+j8uUFCEk1Bv7WI2Vifqz9dl51/
+	3wA3yMvsxuOLbR1J7y4uxlpeNMdxpAGYA46jyv5chomm9+3MJh+SYJEdrBE25CpFRIju92
+	QnCKXWpJeWmGCFnxD9PkYe71AwUo/yYWxIl6X3vYs+ia1m54y0+46DocJC6U4nIDqUQHq9
+	yLrO77r/sTKG9FR2fn/y3B5QtCeBotxVLIrG241ah4pY/65RFRXukN9cUgoPejff2es0qI
+	LHmieHNw1NCsT7jo665NT9xz6NJxNdJE6V/CnckKDm6ygDF+YJgf8XZywFHZCQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762026451;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xjFCy3oIeZxEg07jRQaX7gYuOEcEErQGrddy4g0nFQw=;
+	b=yKYraF+YGYI57yHwfBhCJRZ2O+RU44L4bPUdPDbOtPOPmAfeQzzlC/tTaEBPN4J9ozdaxo
+	tQpqfIJVRgIoKmDw==
+From: "tip-bot2 for Arnd Bergmann" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/vdso] clocksource: Remove ARCH_CLOCKSOURCE_DATA
+Cc: Arnd Bergmann <arnd@arndb.de>, thomas.weissschuh@linutronix.de,
+ Thomas Gleixner <tglx@linutronix.de>, Andreas Larsson <andreas@gaisler.com>,
+ John Stultz <jstultz@google.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To:
+ <20251014-vdso-sparc64-generic-2-v4-35-e0607bf49dea@linutronix.de>
+References: <20251014-vdso-sparc64-generic-2-v4-35-e0607bf49dea@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v9 9/9] liveupdate: kho: Use %pe format specifier for
- error pointer printing
-To: Pasha Tatashin <pasha.tatashin@soleen.com>, akpm@linux-foundation.org,
- brauner@kernel.org, corbet@lwn.net, graf@amazon.com, jgg@ziepe.ca,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mm@kvack.org, masahiroy@kernel.org, ojeda@kernel.org,
- pratyush@kernel.org, rdunlap@infradead.org, rppt@kernel.org, tj@kernel.org
-References: <20251101142325.1326536-1-pasha.tatashin@soleen.com>
- <20251101142325.1326536-10-pasha.tatashin@soleen.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <20251101142325.1326536-10-pasha.tatashin@soleen.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Message-ID: <176202644955.2601451.11045424848598772412.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
+The following commit has been merged into the timers/vdso branch of tip:
 
-在 2025/11/1 7:23, Pasha Tatashin 写道:
-> From: Zhu Yanjun <yanjun.zhu@linux.dev>
->
-> Make pr_xxx() call to use the %pe format specifier instead of %d.
-> The %pe specifier prints a symbolic error string (e.g., -ENOMEM,
-> -EINVAL) when given an error pointer created with ERR_PTR(err).
->
-> This change enhances the clarity and diagnostic value of the error
-> message by showing a descriptive error name rather than a numeric
-> error code.
->
-> Note, that some err are still printed by value, as those errors
-> might come from libfdt and not regular errnos.
->
-> Signed-off-by: Zhu Yanjun <yanjun.zhu@linux.dev>
-> Co-developed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+Commit-ID:     4c6736970fbf35aa65512ce7f82abd970f133c8e
+Gitweb:        https://git.kernel.org/tip/4c6736970fbf35aa65512ce7f82abd970f1=
+33c8e
+Author:        Arnd Bergmann <arnd@arndb.de>
+AuthorDate:    Tue, 14 Oct 2025 08:49:21 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Sat, 01 Nov 2025 20:44:08 +01:00
 
-Appreciate your help, Pasha
+clocksource: Remove ARCH_CLOCKSOURCE_DATA
 
-Yanjun.Zhu
+After sparc64, there are no remaining users of ARCH_CLOCKSOURCE_DATA
+and it can just be removed.
 
-> Reviewed-by: Simon Horman <horms@kernel.org>
-> ---
->   kernel/liveupdate/kexec_handover.c         |  4 ++--
->   kernel/liveupdate/kexec_handover_debugfs.c | 10 ++++++----
->   2 files changed, 8 insertions(+), 6 deletions(-)
->
-> diff --git a/kernel/liveupdate/kexec_handover.c b/kernel/liveupdate/kexec_handover.c
-> index be945c133a2f..167c761988d3 100644
-> --- a/kernel/liveupdate/kexec_handover.c
-> +++ b/kernel/liveupdate/kexec_handover.c
-> @@ -1448,8 +1448,8 @@ void __init kho_populate(phys_addr_t fdt_phys, u64 fdt_len,
->   		memblock_add(area->addr, size);
->   		err = memblock_mark_kho_scratch(area->addr, size);
->   		if (WARN_ON(err)) {
-> -			pr_warn("failed to mark the scratch region 0x%pa+0x%pa: %d",
-> -				&area->addr, &size, err);
-> +			pr_warn("failed to mark the scratch region 0x%pa+0x%pa: %pe",
-> +				&area->addr, &size, ERR_PTR(err));
->   			goto out;
->   		}
->   		pr_debug("Marked 0x%pa+0x%pa as scratch", &area->addr, &size);
-> diff --git a/kernel/liveupdate/kexec_handover_debugfs.c b/kernel/liveupdate/kexec_handover_debugfs.c
-> index 46e9e6c0791f..ac739d25094d 100644
-> --- a/kernel/liveupdate/kexec_handover_debugfs.c
-> +++ b/kernel/liveupdate/kexec_handover_debugfs.c
-> @@ -150,8 +150,8 @@ __init void kho_in_debugfs_init(struct kho_debugfs *dbg, const void *fdt)
->   		err = __kho_debugfs_fdt_add(&dbg->fdt_list, sub_fdt_dir, name,
->   					    phys_to_virt(*fdt_phys));
->   		if (err) {
-> -			pr_warn("failed to add fdt %s to debugfs: %d\n", name,
-> -				err);
-> +			pr_warn("failed to add fdt %s to debugfs: %pe\n", name,
-> +				ERR_PTR(err));
->   			continue;
->   		}
->   	}
-> @@ -168,8 +168,10 @@ __init void kho_in_debugfs_init(struct kho_debugfs *dbg, const void *fdt)
->   	 * reviving state from KHO and setting up KHO for the next
->   	 * kexec.
->   	 */
-> -	if (err)
-> -		pr_err("failed exposing handover FDT in debugfs: %d\n", err);
-> +	if (err) {
-> +		pr_err("failed exposing handover FDT in debugfs: %pe\n",
-> +		       ERR_PTR(err));
-> +	}
->   }
->   
->   __init int kho_out_debugfs_init(struct kho_debugfs *dbg)
+[ Thomas W: Drop sparc64 bits ]
 
--- 
-Best Regards,
-Yanjun.Zhu
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Andreas Larsson <andreas@gaisler.com>
+Reviewed-by: Andreas Larsson <andreas@gaisler.com>
+Acked-by: John Stultz <jstultz@google.com>
+Link: https://patch.msgid.link/20251014-vdso-sparc64-generic-2-v4-35-e0607bf4=
+9dea@linutronix.de
+---
+ include/linux/clocksource.h | 6 +-----
+ kernel/time/Kconfig         | 4 ----
+ 2 files changed, 1 insertion(+), 9 deletions(-)
 
+diff --git a/include/linux/clocksource.h b/include/linux/clocksource.h
+index 65b7c41..12d853b 100644
+--- a/include/linux/clocksource.h
++++ b/include/linux/clocksource.h
+@@ -25,8 +25,7 @@ struct clocksource_base;
+ struct clocksource;
+ struct module;
+=20
+-#if defined(CONFIG_ARCH_CLOCKSOURCE_DATA) || \
+-    defined(CONFIG_GENERIC_GETTIMEOFDAY)
++#if defined(CONFIG_GENERIC_GETTIMEOFDAY)
+ #include <asm/clocksource.h>
+ #endif
+=20
+@@ -106,9 +105,6 @@ struct clocksource {
+ 	u64			max_idle_ns;
+ 	u32			maxadj;
+ 	u32			uncertainty_margin;
+-#ifdef CONFIG_ARCH_CLOCKSOURCE_DATA
+-	struct arch_clocksource_data archdata;
+-#endif
+ 	u64			max_cycles;
+ 	u64			max_raw_delta;
+ 	const char		*name;
+diff --git a/kernel/time/Kconfig b/kernel/time/Kconfig
+index 7c6a52f..fe33118 100644
+--- a/kernel/time/Kconfig
++++ b/kernel/time/Kconfig
+@@ -9,10 +9,6 @@
+ config CLOCKSOURCE_WATCHDOG
+ 	bool
+=20
+-# Architecture has extra clocksource data
+-config ARCH_CLOCKSOURCE_DATA
+-	bool
+-
+ # Architecture has extra clocksource init called from registration
+ config ARCH_CLOCKSOURCE_INIT
+ 	bool
 
