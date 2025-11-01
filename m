@@ -1,77 +1,79 @@
-Return-Path: <linux-kernel+bounces-881197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F5CAC27B3F
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 10:50:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9008C27B06
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 10:48:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9D67403EC9
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 09:48:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5CDD1A253FC
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 09:48:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83EA2D46BB;
-	Sat,  1 Nov 2025 09:48:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EA352C2374;
+	Sat,  1 Nov 2025 09:48:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nLcbzdl9"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i2KBum1A"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA092D0C72
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 09:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30A7D22173D
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 09:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761990485; cv=none; b=hzTdMGCAV1UDr74HwkmQTwuO+HpWmnWYvAD5aAbAlYuOt6PNzIoKdpD6dIjCDROoeaqWm65mst9EGCB4Wnja19Lm7Dj4HLNO5caYRSAyp/j4uzMKXEohyYtWagACKr0h+NNSKH9unIac7fEAJh33wVzDtIr2y54r89VPgb61xhs=
+	t=1761990482; cv=none; b=u55dpAnVM5BCjUyMZgmsXTAB/icTD9F+NY0Bohqb5HzhESiXLBVx/nn4BXRcREjYBXTikA/pOi501Ijz7NCPhlRKftLQrOTSdP6QXZI+vcFOdjm/GLXCXLJ6bgOT4zcJeOpC3TcEvkyjQ+isdsO0yZUjKt9aTHBTvBEaY8xnpBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761990485; c=relaxed/simple;
-	bh=3OG2wiKH22RCfvC+iceoRBKIWpDNYuCgxZ/0fv2vRj4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ONBd8sA1Rmpu0kVBfog3/icVvFe2kvijoCE45qs6yZPWkSeHRQk3z4gM/aqxc2u4QUXqBmhAJrs4KbBnmirZ8nlEpmFCmJzST09eUm26ylTk60uGuriQncbtBMfvQk+Cd8mmCtPaAZG4WIyLsz7HYteUl4IU6lJU/Mw4Aj/YgxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nLcbzdl9; arc=none smtp.client-ip=209.85.210.171
+	s=arc-20240116; t=1761990482; c=relaxed/simple;
+	bh=WsMaVYjhEX5xzYsbLkIYbNUU/KAzYM8jBkJPwJqvx+Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=XgEOSc4+8l7i231exW2Okx16igbYO+Xbz6dqGFxhMVB9AkiV8Kfn8r8GaGOqmSR8XydFf9Aa4vhiVTZAnJ/ORQYT2TFpogKhAB2BbGe+y13mnTZ7Uz2xENLmSjRduJudTuwtzvQ5OJ+pCA1eKdGdfD/aQI8g+kKi4uKOuO1eans=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i2KBum1A; arc=none smtp.client-ip=209.85.215.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7a27bf4fbcbso3062435b3a.1
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 02:48:04 -0700 (PDT)
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b593def09e3so2240001a12.2
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 02:48:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761990483; x=1762595283; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WH5O/8nAx5rVFTEi7/lXcZZ45r+c3Q9ZyuJj8snlwgs=;
-        b=nLcbzdl9dR0X3krcX6dwvdW2QSYs+p3GtfBlu3l2dEIINpLVz700FoeUkEvGq/kuiM
-         mk6ObxRygf8sG5V1QlH6k4Mcyvz1+hqXbgoHbLL4iSUDAsJBd3NezgbCsDNRfCO6vUam
-         1gHzIn8UzOm80YSQ2UudACKO0iPJL0qltaCF35gEgjPA66GkaAwnF090QE3HHc4Owide
-         rhNUk0bgSFS4z5qXDpLw4pfbqO8zWLbrTY+tZQcMttGe/jyLRHd6wHn35gMD7BsGnaXY
-         hx9lfmc3PXqDRYEMexP11+x7I75c8HWOUAxYihyjjhEjoH65atsT2Ncpb+Gyhn8a9zmZ
-         bhjA==
+        d=gmail.com; s=20230601; t=1761990480; x=1762595280; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ys+iXshBYZnizwFhgQPeQbnnGsPPwsLlRfA8FiXKhyI=;
+        b=i2KBum1A1oetCqXn/NH0NnP0kM1of8OivYXErx5FS7wf5Ny6rLV6nSuuL2EeZ39B8W
+         f4Y9NFPAAcVYr6FMaeebliczS9IxyZHoU+XPuceX/CG8SeVQNII4jeHZ3ydiLw1dl2UO
+         yfxMIEkpjrzfmZ5ddQHbkR+VPGJGnsF46AesdYLNDBRustXeFjRqPJGyhDHuOw/DcVcJ
+         hzwYzmzqD8LIdbbiLAV1PQtYA5PaW7WvfQgBlyjUpLOQb4smhQEcS1nMx5tGS/ql5LtM
+         EcLwk0qLrAamMbgUOxo7lvOPf/VZfMbaWo8+VaarpW0ayar61mFa6EiLXH/OzQgdIe9M
+         qtBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761990483; x=1762595283;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WH5O/8nAx5rVFTEi7/lXcZZ45r+c3Q9ZyuJj8snlwgs=;
-        b=PxXUOxzrNXH17cwK5hzXifSjgTKpQ3IjROnZ5+GJFeGFbW/6BeKU8g0RM5ebChCsWB
-         urrJzxLTiunpM16U7GNNmwfqnEJY6AnP8hUdLar64MxRxCdLWlxJg1xRHtM+Ee5zXzCo
-         vN+e1rSh99/y/7CgR3sIcChyNFys5mLKbKjLCUBuGmiuO9tyDkE//TIuzoZGPRs48V4+
-         KpQ9LnMNenFQN0+Rq7F4ngz1gQ5btQA+PB+QDYFXSGMmFAKarRbvuuWB0cjdxjrUvoiZ
-         p8bBgbIbY1SpEnHbq/1wY1NnNs2qwS645qVqZIAWqPQ5w8U8sQsCNWnGyO6V7NllWNW0
-         Gk1g==
-X-Gm-Message-State: AOJu0YzYO9u95G0z3xTBqBnWNDEVB5wP4F9sfa+TWrkEZmBpvvohfVRv
-	q3B89Q7N1h6oXZPe0Q/kmZCSJoi+av6q3GW2A97dsvhO66EtVkOQuLk3
-X-Gm-Gg: ASbGncuuf1nzYJ/jzLSz/6Nf8ClOwsG8KlFPz2bWMuJDF+cAF6pVbTnAgypRgpnZZWr
-	McgGGL704Nchx6hRVoHDCobUqpcEPhP8aNq8OcoR8BbcLxy0E2jBcsiR+SH295kS3Ts7UE1Chjb
-	iid6/t+GtMTKV2w4Pd9EXQ2CE8v5cai/QrCcoPEe/FjzYi89giHwUHZ6CGQUL/yfHUHBSbhG6ty
-	Pf4QIz+1klA2QkHUGLSptSEVyfBOz4t5Ke1JVvmkSEWzWXZFDr89Vu2bK8Et+sII7UBtfE07mN4
-	PKrMVQSMSU0Hhwm4P5zEm6qkLUgKqNko1L/NtOxKwUS3o7Z8wHdpF1d1FAtR8Ojb5TaENFM3I82
-	Va3vg+GBWuZCRokBDF5a698AhN1rbepE/9wpbl3LkGdoYOhWh0xQtwP/Tcek/k8G7mq0q7hz24j
-	fa
-X-Google-Smtp-Source: AGHT+IFkkEhMNFBtz799ZVmYFsXMsu0ozafr7JzI6vs8a+fPrI8GNOdanKuJbIbpaRMf1whMNOYWqw==
-X-Received: by 2002:aa7:8883:0:b0:7a2:70f5:c83f with SMTP id d2e1a72fcca58-7a77747a497mr7159153b3a.10.1761990483399;
-        Sat, 01 Nov 2025 02:48:03 -0700 (PDT)
-Received: from archie.me ([210.87.74.117])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a7d8d72733sm4804521b3a.21.2025.11.01.02.47.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        d=1e100.net; s=20230601; t=1761990480; x=1762595280;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ys+iXshBYZnizwFhgQPeQbnnGsPPwsLlRfA8FiXKhyI=;
+        b=FPvhyiOiGCogJK7A8dCEjUQX9dHSQ66nrSkq2E/MGIzDH3+AyYVnQSiezQjHdhIpoj
+         6wPI0edTUQJlWosI4GfUOuLoV56erZrBAB09cLfRpf4wWLbFyurnvyWF0BgdgXKDcirW
+         mKsXeBOe0LLr2BVzNkGvCwK61DDc1BZBftR9QffDLGgKX5DMGDJ5J1kc9QqsNZdZ0Yhr
+         Ic08CLzqMpHPDF7K+rIY4rSxnu88tXb4sijdcSe9rKyXNrnDKAxfC37UtqJQKdWqO4m2
+         OZbqoR0BlcOZGxoi3L2dFaU4z1cXKdzA632AlqKwpjbP/TFPzbDb+OTrdm7eVxHwXe0S
+         efmQ==
+X-Gm-Message-State: AOJu0YyYNA+NQswKYyVWXRgf6NDLYZ6f+oVD7zV+b47t6+YpURQX0VNd
+	VB9+Bo6BVNumjpBpNzc+KyNiZlPM9q3JA4Xp6muyegUpTHSRnUdFc4T2
+X-Gm-Gg: ASbGncvrHhlFvh60AKh3AyDux032ks8LuMYUSSYcw/pN2XXkYll71XIfvPFK0HuzIz1
+	psr2WCeSa+GYBXonFQp9l9YX0yx8MmMo1YkSUtXcGLavIs/1lnIlUpt3HjSfsWh6j9YgzQM3X/q
+	okFBb6QjDC7HSP6+Rwb0wZ9br/iCd6WPZYKyU4NTdq5kZ7jplyaukV4bY5CxlgmbzcLvoj2+zPH
+	LiXghePss7NhiFXWZB4UWxdiRVSXmN+41Hol23T6/6p/Y/e1VWNh7HIc4MrpDE3gZtcGK65e7Iw
+	dcFXDXZRjZEnywcipcNtzxeayb1CrWo5G9XIniDX/WKOTjlYSjTtiN7e2SyHipgZ+jCAcy9nrTf
+	OKSj64sTz9ZLsbCe8EgH5HEqD39J2/SS+ZKA0Ex5Iy9wnWUYggysPoR6hCT8P295c8O716IUDTr
+	qh
+X-Google-Smtp-Source: AGHT+IEuf2OXCpVvj5mt9JoXkTV63btzK3GM762PmBpPq77R+yTBCtQ7CzPQQFc+4UmjQ7/sOnLiHQ==
+X-Received: by 2002:a17:902:e5d2:b0:246:e1b6:f9b0 with SMTP id d9443c01a7336-2951a38af0amr90955605ad.18.1761990480237;
         Sat, 01 Nov 2025 02:48:00 -0700 (PDT)
+Received: from archie.me ([210.87.74.117])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-295268d10e9sm50868325ad.50.2025.11.01.02.47.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Nov 2025 02:47:59 -0700 (PDT)
 Received: by archie.me (Postfix, from userid 1000)
-	id 5228C4209E50; Sat, 01 Nov 2025 16:47:56 +0700 (WIB)
+	id 64F3D4209E90; Sat, 01 Nov 2025 16:47:56 +0700 (WIB)
 From: Bagas Sanjaya <bagasdotme@gmail.com>
 To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Documentation <linux-doc@vger.kernel.org>,
@@ -84,62 +86,57 @@ Cc: "David S. Miller" <davem@davemloft.net>,
 	Jonathan Corbet <corbet@lwn.net>,
 	Steffen Klassert <steffen.klassert@secunet.com>,
 	Herbert Xu <herbert@gondor.apana.org.au>,
-	Bagas Sanjaya <bagasdotme@gmail.com>
-Subject: [PATCH net-next v2 0/8] xfrm docs update
-Date: Sat,  1 Nov 2025 16:47:36 +0700
-Message-ID: <20251101094744.46932-1-bagasdotme@gmail.com>
+	Bagas Sanjaya <bagasdotme@gmail.com>,
+	Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH net-next v2 1/8] Documentation: xfrm_device: Wrap iproute2 snippets in literal code block
+Date: Sat,  1 Nov 2025 16:47:37 +0700
+Message-ID: <20251101094744.46932-2-bagasdotme@gmail.com>
 X-Mailer: git-send-email 2.51.1
+In-Reply-To: <20251101094744.46932-1-bagasdotme@gmail.com>
+References: <20251101094744.46932-1-bagasdotme@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1792; i=bagasdotme@gmail.com; h=from:subject; bh=3OG2wiKH22RCfvC+iceoRBKIWpDNYuCgxZ/0fv2vRj4=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDJms1zJm651g7L3+4YxH5x0enzdfmeoZHySvdDr6TVHpz yZ3ETmXjlIWBjEuBlkxRZZJiXxNp3cZiVxoX+sIM4eVCWQIAxenAEyk8jQjw9QJLtFbJZYwFVpE udzYf1lR8dq8NYLW9cc3buHV4OUT9mBkuKZv0dzqV/Ji39eN699+4thtcO6Q6M1FJ1+U6PzQnLj ajBEA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1513; i=bagasdotme@gmail.com; h=from:subject; bh=WsMaVYjhEX5xzYsbLkIYbNUU/KAzYM8jBkJPwJqvx+Y=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDJms13Kblm6rb3ryI+T9Q+WPFs0pi1svRc3x2Oq64MTPF 0zlH6+d6ShlYRDjYpAVU2SZlMjXdHqXkciF9rWOMHNYmUCGMHBxCsBEpPMY/kr62J815jXz/FLd 2HP0xr50vrL37DMXPGjLnBejwvieo5KR4e/D+bXTT/7i4HW9dY7Tc9VR2b5lk1fuPj6N0SA9zPy 2OScA
 X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
 Content-Transfer-Encoding: 8bit
 
-Hi,
+iproute2 snippets (ip x) are shown in long-running definition lists
+instead. Format them as literal code blocks that do the semantic job
+better.
 
-Here are xfrm documentation patches. Patches [1-6/8] are formatting polishing;
-[7/8] groups the docs and [8/8] adds MAINTAINERS entries for them.
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+---
+ Documentation/networking/xfrm_device.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Enjoy!
-
-Changes since v1 [1]:
-
-  - Also polish xfrm_sync section headings (Randy)
-  - Apply review trailers (Randy)
-
-[1]: https://lore.kernel.org/lkml/20251029082615.39518-1-bagasdotme@gmail.com/
-
-Bagas Sanjaya (8):
-  Documentation: xfrm_device: Wrap iproute2 snippets in literal code
-    block
-  Documentation: xfrm_device: Use numbered list for offloading steps
-  Documentation: xfrm_device: Separate hardware offload sublists
-  Documentation: xfrm_sync: Properly reindent list text
-  Documentation: xfrm_sync: Trim excess section heading characters
-  Documentation: xfrm_sync: Number the fifth section
-  net: Move XFRM documentation into its own subdirectory
-  MAINTAINERS: Add entry for XFRM documentation
-
- Documentation/networking/index.rst            |  5 +-
- Documentation/networking/xfrm/index.rst       | 13 +++
- .../networking/{ => xfrm}/xfrm_device.rst     | 20 ++--
- .../networking/{ => xfrm}/xfrm_proc.rst       |  0
- .../networking/{ => xfrm}/xfrm_sync.rst       | 97 ++++++++++---------
- .../networking/{ => xfrm}/xfrm_sysctl.rst     |  0
- MAINTAINERS                                   |  1 +
- 7 files changed, 77 insertions(+), 59 deletions(-)
- create mode 100644 Documentation/networking/xfrm/index.rst
- rename Documentation/networking/{ => xfrm}/xfrm_device.rst (95%)
- rename Documentation/networking/{ => xfrm}/xfrm_proc.rst (100%)
- rename Documentation/networking/{ => xfrm}/xfrm_sync.rst (64%)
- rename Documentation/networking/{ => xfrm}/xfrm_sysctl.rst (100%)
-
-
-base-commit: 01cc760632b875c4ad0d8fec0b0c01896b8a36d4
+diff --git a/Documentation/networking/xfrm_device.rst b/Documentation/networking/xfrm_device.rst
+index 122204da0fff69..7a13075b5bf06a 100644
+--- a/Documentation/networking/xfrm_device.rst
++++ b/Documentation/networking/xfrm_device.rst
+@@ -34,7 +34,7 @@ Right now, there are two types of hardware offload that kernel supports.
+ Userland access to the offload is typically through a system such as
+ libreswan or KAME/raccoon, but the iproute2 'ip xfrm' command set can
+ be handy when experimenting.  An example command might look something
+-like this for crypto offload:
++like this for crypto offload::
+ 
+   ip x s add proto esp dst 14.0.0.70 src 14.0.0.52 spi 0x07 mode transport \
+      reqid 0x07 replay-window 32 \
+@@ -42,7 +42,7 @@ like this for crypto offload:
+      sel src 14.0.0.52/24 dst 14.0.0.70/24 proto tcp \
+      offload dev eth4 dir in
+ 
+-and for packet offload
++and for packet offload::
+ 
+   ip x s add proto esp dst 14.0.0.70 src 14.0.0.52 spi 0x07 mode transport \
+      reqid 0x07 replay-window 32 \
 -- 
 An old man doll... just what I always wanted! - Clara
 
