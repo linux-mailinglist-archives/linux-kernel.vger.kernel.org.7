@@ -1,107 +1,129 @@
-Return-Path: <linux-kernel+bounces-881436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D0DEC28339
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 17:45:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 36810C2833C
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 17:46:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1097C3A454B
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 16:42:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DB673AA648
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 16:43:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6294726B742;
-	Sat,  1 Nov 2025 16:42:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D0826E6FF;
+	Sat,  1 Nov 2025 16:43:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="hFU03DG9"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="anbufR7M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888E1269AEE;
-	Sat,  1 Nov 2025 16:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E9E51FDE14;
+	Sat,  1 Nov 2025 16:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762015320; cv=none; b=Kp/8s4iE661tuDR53C8v/0myOL6XBIZuavpgRquF2w+1aJEDU9PNDA6NmsCb5Nm79/mV1rFYGfYGWSef8GcGW9nSZVwmok4sJDScG+wxjO1ILSTkDBdz9s+34J+YzG14Jlgxj5T0P8kCUuLnveKA0OqJynO1IVIvGwzPMQq8Eck=
+	t=1762015415; cv=none; b=ZOpKlbymauVqXLV8+esf6pTmYvR9UeysDlQaA5OtLzwGfesT3THCmlle3y6yHkhlN5VW57rAnhHugMOoCeqArj9Yy9M76Y8KfA3QFnizQUsRGzBFr+suuIsFrZsTAqgohs/e19TLa2uB1Q/1eOC6et5VWt8ZJ4/IW6Kp64YrmXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762015320; c=relaxed/simple;
-	bh=/Lmtqv2YdFzMKD+tU35ni0Evtp/XjGnVQdRIqfQxcXc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=f3ihGKaqKGiYw6Nve6OVIXknMS3E4zlr84OrbWhei6yEOsg2EndVyNKkrCGETVK1ZvJdHIFvJhLAXVVAk5d+uD8pBFh/zuCniO0j5aZjZcV5W4Z8g/vCWWi35a/ZUOy24yB0+zUnoyF8emJIDW87oWTv0/m9dKare7Ghcbe8Dec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=hFU03DG9; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=9w
-	Up7u3My76G+R/WLPGyk/WkzbItLsUENPV0fn3j5Pw=; b=hFU03DG9YqxprWd8g9
-	o6LU3NwjxRNyuxl96ki11m69KzgEen+Ho6qMFhsEtJbt1aW5Kd0XIX3HAJf1EZf9
-	L1xIKitgFZbjT6SX4Xksx6sFp23Oa7sOB4tcVUBgwxsicI4TYEAKgHgHZU74+hVB
-	dOE8FEMBhtp6oa7wFN2E/sIKw=
-Received: from zhb.. (unknown [])
-	by gzsmtp3 (Coremail) with SMTP id PigvCgDnofBAOAZpIs11CQ--.54784S2;
-	Sun, 02 Nov 2025 00:41:37 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: bhelgaas@google.com,
-	helgaas@kernel.org
-Cc: linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hans Zhang <18255117159@163.com>,
-	Manivannan Sadhasivam <mani@kernel.org>
-Subject: [PATCH v3 1/1] PCI: of: Relax max-link-speed check to support PCIe Gen5/Gen6
-Date: Sun,  2 Nov 2025 00:41:32 +0800
-Message-Id: <20251101164132.14145-1-18255117159@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1762015415; c=relaxed/simple;
+	bh=Y5Jcgi1hHxmPyWFLZ7tYrmAPkHHnXS1xs/OhfJGBS6g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C6Tx9fC+AYTqJDT5jPQg7h3CXPboXfMK70JcGNAOJc84FnMR1koFa7Me4ANVyZT8B3I2oSjjcfdjBFpQR/ssp1Anzn2rU4MAsw3pKjcCyuGEvNB5TG03KvMMSr4MLHAeN7YISDBIwqrPI/+wjVXXFoL3p1Xpq6lrON+4rlPrWlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=anbufR7M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA3B5C4CEF1;
+	Sat,  1 Nov 2025 16:43:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762015414;
+	bh=Y5Jcgi1hHxmPyWFLZ7tYrmAPkHHnXS1xs/OhfJGBS6g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=anbufR7MdnE+oDZZJmm9a5HkUQXBvxA4p/omg739+B7WiD+eWyNgk1CGWbmrUHl8n
+	 diaT2MB6uI1OLRk8c8ARJscGYFOQtdvC6YCkX+4RxD8gZ2JADi3Xbm6cs5nZgpyJXy
+	 NKrdcRAyX+JVut8SzrqgjgO5rU0QxA0mkT54b23FdCvignoUmOlKoUBIydfEYD8g0H
+	 xR31r42OwFWrKlnRmaXB4emfGwrSaU4DXqxPQs3ow8VCbj90Z84fy46G08OzoprXmV
+	 S/g8x4qBxhc3YJt3nUTSMVQLwANT2d2PZuFgRdup+4rhKk3Suijg/VM4ydTs+BB09G
+	 bKUDIr3rABkKQ==
+Date: Sat, 1 Nov 2025 12:43:29 -0400
+From: Nathan Chancellor <nathan@kernel.org>
+To: Borislav Petkov <bp@alien8.de>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-tip-commits@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
+	Joe Lawrence <joe.lawrence@redhat.com>, x86@kernel.org
+Subject: Re: [PATCH] tools/objtool: Copy the __cleanup unused variable fix
+ for older clang
+Message-ID: <20251101164329.GA3250327@ax162>
+References: <176060833509.709179.4619457534479145477.tip-bot2@tip-bot2>
+ <20251031114919.GBaQSiPxZrziOs3RCW@fat_crate.local>
+ <20251031140944.GA3022331@ax162>
+ <20251031142100.GEaQTFzKD-nV3kQkhj@fat_crate.local>
+ <wi54qqmdbzuajt7f5krknhcibs7pj45zhf42n3z5nyqujoabgz@hbduuwymyufh>
+ <20251031202526.GB2486902@ax162>
+ <20251101124432.GBaQYAsK3mcvrB9cqm@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PigvCgDnofBAOAZpIs11CQ--.54784S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7AFWUGFW8Jr15uw4fKF4fGrg_yoW8GFW8pa
-	y7AryrWry8WF43Zw4DX3WruFyjgasxXrWDtry5W3ZruF43GF4aqFySvF4fXFn29rWkZr17
-	XF13tr47Jw4jyaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pEVc_wUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiFR-4o2kGMU6GewAAs8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251101124432.GBaQYAsK3mcvrB9cqm@fat_crate.local>
 
-The existing code restricted `max-link-speed` to values 1~4 (Gen1~Gen4),
-but current SOCs using Synopsys/Cadence IP may require Gen5/Gen6 support.
+On Sat, Nov 01, 2025 at 01:44:32PM +0100, Borislav Petkov wrote:
+> From: "Borislav Petkov (AMD)" <bp@alien8.de>
+> Date: Sat, 1 Nov 2025 13:37:51 +0100
+> 
+> Copy from
+> 
+>   54da6a092431 ("locking: Introduce __cleanup() based infrastructure")
+> 
+> the bits which mark the variable with a cleanup attribute unused so that my
+> clang 15 can dispose of it properly instead of warning that it is unused which
+> then fails the build due to -Werror.
+> 
+> Suggested-by: Nathan Chancellor <nathan@kernel.org>
+> Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+> Link: https://lore.kernel.org/r/20251031114919.GBaQSiPxZrziOs3RCW@fat_crate.local
 
-While DT binding validation already checks this property, the code-level
-validation in `of_pci_get_max_link_speed` also needs to be updated to allow
-values up to 6, ensuring compatibility with newer PCIe generations.
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
 
-Signed-off-by: Hans Zhang <18255117159@163.com>
-Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
----
-Changes for v3:
-- Modify the commit message.
-- Add Reviewed-by tag.
-
-Changes for v2:
-https://patchwork.kernel.org/project/linux-pci/cover/20250529021026.475861-1-18255117159@163.com/
-- The following files have been deleted:
-  Documentation/devicetree/bindings/pci/pci.txt
-
-  Update to this file again:
-  dtschema/schemas/pci/pci-bus-common.yaml
----
- drivers/pci/of.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pci/of.c b/drivers/pci/of.c
-index 3579265f1198..53928e4b3780 100644
---- a/drivers/pci/of.c
-+++ b/drivers/pci/of.c
-@@ -890,7 +890,7 @@ int of_pci_get_max_link_speed(struct device_node *node)
- 	u32 max_link_speed;
- 
- 	if (of_property_read_u32(node, "max-link-speed", &max_link_speed) ||
--	    max_link_speed == 0 || max_link_speed > 4)
-+	    max_link_speed == 0 || max_link_speed > 6)
- 		return -EINVAL;
- 
- 	return max_link_speed;
--- 
-2.34.1
-
+> ---
+>  tools/objtool/include/objtool/warn.h | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/objtool/include/objtool/warn.h b/tools/objtool/include/objtool/warn.h
+> index e88322d97573..a1e3927d8e7c 100644
+> --- a/tools/objtool/include/objtool/warn.h
+> +++ b/tools/objtool/include/objtool/warn.h
+> @@ -107,6 +107,15 @@ extern int indent;
+>  
+>  static inline void unindent(int *unused) { indent--; }
+>  
+> +/*
+> + * Clang prior to 17 is being silly and considers many __cleanup() variables
+> + * as unused (because they are, their sole purpose is to go out of scope).
+> + *
+> + * https://github.com/llvm/llvm-project/commit/877210faa447f4cc7db87812f8ed80e398fedd61
+> + */
+> +#undef __cleanup
+> +#define __cleanup(func) __maybe_unused __attribute__((__cleanup__(func)))
+> +
+>  #define __dbg(format, ...)						\
+>  	fprintf(stderr,							\
+>  		"DEBUG: %s%s" format "\n",				\
+> @@ -127,7 +136,7 @@ static inline void unindent(int *unused) { indent--; }
+>  })
+>  
+>  #define dbg_indent(args...)						\
+> -	int __attribute__((cleanup(unindent))) __dummy_##__COUNTER__;	\
+> +	int __cleanup(unindent) __dummy_##__COUNTER__;			\
+>  	__dbg_indent(args);						\
+>  	indent++
+>  
+> -- 
+> 2.51.0
+> 
+> 
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> https://people.kernel.org/tglx/notes-about-netiquette
 
