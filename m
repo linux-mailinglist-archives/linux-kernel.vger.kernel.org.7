@@ -1,124 +1,111 @@
-Return-Path: <linux-kernel+bounces-881154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFD35C2792A
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 08:48:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93744C27933
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 08:53:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 992D14E363B
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 07:48:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A52DA3B12F3
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 07:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB71C235045;
-	Sat,  1 Nov 2025 07:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4144F246BC5;
+	Sat,  1 Nov 2025 07:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c7bnfDi5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TOmorMhR"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2738D219E0;
-	Sat,  1 Nov 2025 07:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0376D147C9B
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 07:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761983321; cv=none; b=VcVLJ18BLLJVVS/YJDPfkf48Lf7+OVaHPjgBPlfs6Av1Ukl2gLeq3xTode7/z9nFSKhtUd3fP6fX0dqR+U5LpAvjojHELZM4aPbXMr7iPwjt+hUygaK9+ojemhdxvZYSJnq5DFgk1gS5c/Y7CCkDb3efvSCNTAcMum8oROjNf6M=
+	t=1761983587; cv=none; b=dnabRsnQHmAmnGDGF1OxtMwadrZd4onzBfsK7H+GEKRfP4ZVDolonBMsW+lTWCqOM3BSFM9t992I1NCIxKSGwu1rtZVP2xQMTxwGHKD7vQbgtcYv0UORre0v0a/xBmKeCrg+Foi/PZHOgHrFO+VjMwsdTpjzgJ7YLcnJj+ybhgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761983321; c=relaxed/simple;
-	bh=mzAWt0VYI2RyQ0sip9V2G/bfNrEhs9YdzGH+8hO9s6g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gT4QAlvZ9Vz9nLLOtT5DUs/PJmVTcfO09qbK0vqoiOjqlsx2wX++mk3hhCAMR+X9cC3XH/YC2JcW3uSaw3/f++JQLgKnvhkTFiE3PpcixrIeCOX/F1pEaFnW22pI+iKgl1IKlY8hKFodAKXEV/SQfb82lrJPekFEwKQ6VnorHwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c7bnfDi5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2019DC4CEF1;
-	Sat,  1 Nov 2025 07:48:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761983320;
-	bh=mzAWt0VYI2RyQ0sip9V2G/bfNrEhs9YdzGH+8hO9s6g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c7bnfDi5RwaUlmioUjOoNv55m77nO2La3QV/AhD0KvFBRsWKuoHmveiYpenDOMYyt
-	 T/J+hHj9+q0D+hZ/a+0LmV5lkNC7C7g9H9S8SbZwaJVHuIUBcQqAqFxF/6T1UtYgTX
-	 iFcanpz3rDdkeqmSNUO61XnHX9911kxotK26C5bkb97+jEZF7Rnnl0IF/pysJjm1sV
-	 YqJs0poQ4qd7+C/GqENThkq0AE0PJIDTPPEfIJEt9BPpEsXfeLJ+ArStQZAgF6ZzHl
-	 IpSikK4rsOtasXtKVxw9JpiTC1SqrcsAsEuXX0bh7DizbcpVMXbWf+mCtIDG8PAVlJ
-	 pruy6NXeFHUnw==
-Date: Sat, 1 Nov 2025 08:48:37 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	Benjamin Larsson <benjamin.larsson@genexis.eu>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Lorenzo Bianconi <lorenzo@kernel.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v24] pwm: airoha: Add support for EN7581 SoC
-Message-ID: <d7muk67gsfgrz7ykw57gq5koepa6c3sjt2kqbalcudmilux4fp@yueqgglt4aon>
-References: <20251013103408.14724-1-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1761983587; c=relaxed/simple;
+	bh=FO8B+XSbG8/tNz7UwdzRHKt4zk5YCDQOjGbVamOS/1Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tVUj4lb1Y9k9osfxaX14bekwNVOUBkv+6mcnXCXFqu7v4tMmYfMzvprk62v4DEa7xL7wd84OqKb/pKPz9s0AfuP1kwNF0A7KQLMuwDaIlD+597f6RLz3+ZmzN2UT4pp2qk7d28uMopW7fPuaIdsBIssWCXrwO/oNwd3OgdngJ0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TOmorMhR; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-3737d09d123so39093201fa.2
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 00:53:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761983584; x=1762588384; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YV8ILjCLbAd6Rh+u+y5fp6wN9Ns1g2oLwKcbOPZD8ow=;
+        b=TOmorMhRgidaFv8kc3HEDgDjS8XfT8VNGbfvTF1V1lpTaj8YoIH8SDrmstcuAemigt
+         ljEdsqChLtAbGir2lLY3HMNprCwgzDGDFtf8ydQvovDUYaPn1BV2xS6iVgDS1XoYNOPp
+         XYLfvVaDnTsjmueGirNkHUwe2hDdAV/eqiaBQ2xObUYGZ64ecfiWgBOm16WEg7tEh5Np
+         YztXhWtoYDnipNYIXyXBwa2jK8fLMNyo/6yr8Mg1JCiq6V4RWqncgwz3MQpOT2UKizAJ
+         l4yGVau7FlZ0Ri4w857XBlF0Kty9HdVzmeOgfUSRAIS/oC40jD31rJVur7n3RbkpufHH
+         SbVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761983584; x=1762588384;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YV8ILjCLbAd6Rh+u+y5fp6wN9Ns1g2oLwKcbOPZD8ow=;
+        b=Zb3vV6OFuPkk8Hqtyg5ZDvEAW1dhQ3Eld0dLtGXvsvaFxEIlDwB/XDeEqhSaFwSG/p
+         ErSZx4FC5IVg2WhCBh0Y7fNjq6q3aVGUl0n4CoovEgK/unKlR6+s92h+zOUGvp+GAknN
+         oAu8vdXP6wRs6R3/XO7E7x9XmDvodPaHWWVX3VDqULUZYrWbWu4KxhgA2w0iy0KpWWz2
+         xRhp1W40CTsko2L3vJa2IBTanPON9pGlyBnnqNFbtYkFYOnCx4YW5ClAe3lHghqSVJw0
+         GnglpZ6Z6cAoBTGwCYtgjah5tk9e+5vXV/wTnMSxWX5iCexBidUYcbsNDk2rEePPN0yq
+         JLgg==
+X-Gm-Message-State: AOJu0Yx2FYCPOm2QbkHCcmBPjbpUJW9h6sTyiC9Hfg1JUn9ARBtYe7tR
+	ZAu2gI2nv8dusATLNOQCvit5WRUwH27DeS86NqLgZtzk0SbWyMcXfjRjDm+Yc/ag
+X-Gm-Gg: ASbGncsU40dKE9NpZJ+ECNTremof0oPqbAbwdodovw6DGg4sxKZNMghhL/qSMWv5WEz
+	vIzyolwtmZbG8giiQKzhG1JEUjrccjco4rQHjTaxcQqRHT/m9yeWMWvW9Y1BJaNlPpH1lVysnG5
+	zNt1LdkseWonj61Y1o7Jxv4+uF5t4aaamAMMY0Je7FF0bzK2xE821nPZifd7TicDPsBkq8iC5Qx
+	73fYYU8FlBF+LZgQir5qPscY+gZOl73eQPVKulyFVYgoqTFY6RH55Pc378m51lO0IX6W7qNdpLz
+	IEp2E9P+yuxtoQAlnWF6L722ANpNL3xlW5O53HVgGznEXKPmHxNW5SG2C5e+gCHz7xYRQJwUOxH
+	ub6azSwNXz75Wlce1GTG4P/KnfyRvPYHPlhNdP6OLqRdj1UoMlALUX+QNQxWtb8C96jjxY6SEkS
+	0Ct2K+ZLQRbCCcAQ==
+X-Google-Smtp-Source: AGHT+IE0HcnJGsxbaeCG4AVppHi/hzI1/ydTTSIq4i3fwtlEauPkj+HA5GKPmybObzIqOF+AZJU4Gw==
+X-Received: by 2002:a2e:bc19:0:b0:378:e08b:5590 with SMTP id 38308e7fff4ca-37a18d86953mr19329691fa.3.1761983583414;
+        Sat, 01 Nov 2025 00:53:03 -0700 (PDT)
+Received: from archlinux ([109.234.28.204])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-37a1c0e9bb2sm9142051fa.51.2025.11.01.00.53.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Nov 2025 00:53:02 -0700 (PDT)
+From: zntsproj <vacacax16@gmail.com>
+X-Google-Original-From: zntsproj <vseokaktusah7@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: greybus-dev@lists.linaro.org,
+	zntsproj <vseokaktusah7@gmail.com>
+Subject: [PATCH v3] Fix tiny typo in firmware-management docs
+Date: Sat,  1 Nov 2025 10:52:47 +0300
+Message-ID: <20251101075247.11415-1-vseokaktusah7@gmail.com>
+X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="y2cpikgkm6gyrjug"
-Content-Disposition: inline
-In-Reply-To: <20251013103408.14724-1-ansuelsmth@gmail.com>
+Content-Transfer-Encoding: 8bit
 
+Signed-off-by: zntsproj <vseokaktusah7@gmail.com>
+---
+ .../staging/greybus/Documentation/firmware/firmware-management  | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---y2cpikgkm6gyrjug
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v24] pwm: airoha: Add support for EN7581 SoC
-MIME-Version: 1.0
+diff --git a/drivers/staging/greybus/Documentation/firmware/firmware-management b/drivers/staging/greybus/Documentation/firmware/firmware-management
+index 7918257e5..393455557 100644
+--- a/drivers/staging/greybus/Documentation/firmware/firmware-management
++++ b/drivers/staging/greybus/Documentation/firmware/firmware-management
+@@ -193,7 +193,7 @@ Identifying the Character Device
+ 
+ There can be multiple devices present in /dev/ directory with name
+ gb-authenticate-N and user first needs to identify the character device used for
+-authentication a of particular interface.
++authentication of a particular interface.
+ 
+ The Authentication core creates a device of class 'gb_authenticate', which shall
+ be used by the user to identify the right character device for it. The class
+-- 
+2.51.2
 
-Hello Christian,
-
-On Mon, Oct 13, 2025 at 12:34:03PM +0200, Christian Marangi wrote:
-> From: Benjamin Larsson <benjamin.larsson@genexis.eu>
->=20
-> Introduce driver for PWM module available on EN7581 SoC.
->=20
-> Limitations:
-> - Only 8 concurrent waveform generators are available for 8 combinations =
-of
->   duty_cycle and period. Waveform generators are shared between 16 GPIO
->   pins and 17 SIPO GPIO pins.
-> - Supports only normal polarity.
-> - On configuration the currently running period is completed.
-> - Minimum supported period is 4 ms
-> - Maximum supported period is 1s
->=20
-> Signed-off-by: Benjamin Larsson <benjamin.larsson@genexis.eu>
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
-> Co-developed-by: Lorenzo Bianconi <lorenzo@kernel.org>
-> Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
-> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Co-developed-by: Christian Marangi <ansuelsmth@gmail.com>
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-
-I still have the impression that the bucket selection is more
-complicated than necessary, but I don't want to delay this patch
-further, so I applied it to
-https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/for-=
-next
-as 6.19-rc1 material.
-
-Thanks for your perseverance,
-Uwe
-
---y2cpikgkm6gyrjug
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmkFu1IACgkQj4D7WH0S
-/k4tAAf/UztN30JwvU+zVhO9+M9lu/hfAcDNAjMI1yRXXjBgi+/3fmLWbZ5r8iX5
-lk2z27Rus93Bh53VjsXRQsqauKs78efxE4vl+nsbHbiz8dAPT3Qtt06EQEk/qfAp
-gFOPDjJEt7E65fBiOwgHTvS2rZRz9tdJdGCHulDaUatE1d4lWDuj6djSKU3QcQ5d
-sLrXVG5cAGTkh3fosOmOnTSz4MB6SvfVxMf09bYnuAlDa+aH6y9tcqLQxk4GLXqT
-c7vHts8UZ/Rg9uuLssyVx5C7VqVMYG8SXnI/1oIMnHZlxlTe3TsmFjTvKL5/SiQJ
-nwmgmfg/jBFn8WTweB5rlOQ+enwC2w==
-=WCAa
------END PGP SIGNATURE-----
-
---y2cpikgkm6gyrjug--
 
