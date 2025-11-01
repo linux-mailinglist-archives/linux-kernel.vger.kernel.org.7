@@ -1,167 +1,175 @@
-Return-Path: <linux-kernel+bounces-881089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5026FC276E1
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 04:41:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27635C276EA
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 04:44:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC8E23AEE35
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 03:41:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FD60189E050
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 03:42:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F22825EF90;
-	Sat,  1 Nov 2025 03:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F83B25F797;
+	Sat,  1 Nov 2025 03:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IqCPcve6"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JTn6uPdd"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997FB23814D;
-	Sat,  1 Nov 2025 03:41:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCC0B23814D
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 03:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761968503; cv=none; b=F3HAL8hLV/jNRjehMrG+aIK9NEdlsz3NyAaatsWMVrwG7sPcCh9NA+H6K5IkLsI19e6MQvgpBJOUwFlUcfCRac2u6aIhv7P9Eni5bGxchrdCX+54rfwCtizSH+E1muYjC9hDkQQYHK77cP23B2HLl0GxFiXE8bQsOsCzfEQUBjw=
+	t=1761968521; cv=none; b=eUYISOrAXN2X2Cb8PAhshKTc4sKglkRfa7mO4csiyY23JAB6bPIVM/55eX8Wmjly+e8p0pwzNHnK5e14WLzLvC6sjPnEe1sHzETPQfNQA8NByxsrhQ7syqNk+OPbLP2FV/ekIAuE44QVlfkITlzp7x59OGpTS13KrhRQ/aNEkOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761968503; c=relaxed/simple;
-	bh=NIZM2xMZSEv/ygTwlhilPDLU8FT6CBCjAXqYQYP2iHg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fAOjIsAJYwJVyVF7GE3tg5s6aHfcO6gS33H20kwOsAme+oyeGDqIuwEa0XdZ4AG/DWIpC7Ua01fdxhAqOyp6X9/Ej9huhLZwnYh+GKnASAjxU29RJvf7yqmKHPJQ9tvCDgyRa9nuPktwe3ENj1c2baNItatvmxP1S0IFwHsFCMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IqCPcve6; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761968502; x=1793504502;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=NIZM2xMZSEv/ygTwlhilPDLU8FT6CBCjAXqYQYP2iHg=;
-  b=IqCPcve6QB3h/PxETR78MhNCTo2R1u+hXJC9wYlvoTpEnfdJPeqVbeyC
-   rBloAI7uQWsJbEACXdyUgdWzaQngS7ciwmWTJEBhwDzt9afnCqZcQOC0R
-   WKlQOXFPXQa6+eoJwi9kcXyFoO7fqp1li6W4KmMyrTQq2k5hNYK2dJmis
-   EEjOAGeGBevJ63rQ55dyRBzpI9JJqAtMQ6rzXjvObzEdKW11cRgHVfmwe
-   R65ZdBjBVt3UHs898ZOCZFeDToXb8L9IVq1mooZjACXdCqAPgqPGhrofw
-   HItvhWKoSpqQTp+SrRVOfXmABxb84OS6JOI2AUZm8CTU0Hr+EK8aale9J
-   w==;
-X-CSE-ConnectionGUID: VwXRxHTvTxeVg7IhXT234g==
-X-CSE-MsgGUID: nfuhDZOHTN60zo31XfQsjQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="86757813"
-X-IronPort-AV: E=Sophos;i="6.19,271,1754982000"; 
-   d="scan'208";a="86757813"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 20:41:42 -0700
-X-CSE-ConnectionGUID: 3qrPQcaQQrGTDXa3w5bu/Q==
-X-CSE-MsgGUID: ExK4bYSeTASKKric6xfQsw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,271,1754982000"; 
-   d="scan'208";a="223628839"
-Received: from iherna2-mobl4.amr.corp.intel.com (HELO desk) ([10.124.220.87])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 20:41:40 -0700
-Date: Fri, 31 Oct 2025 20:41:32 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
-Subject: Re: [PATCH v4 4/8] KVM: VMX: Handle MMIO Stale Data in VM-Enter
- assembly via ALTERNATIVES_2
-Message-ID: <20251101034132.2qi5b2ysld6fi2cq@desk>
-References: <20251031003040.3491385-1-seanjc@google.com>
- <20251031003040.3491385-5-seanjc@google.com>
- <20251031235524.cuwrx4qys46xnpjr@desk>
+	s=arc-20240116; t=1761968521; c=relaxed/simple;
+	bh=9MbVMVWSVrLR86ei77JNmP1zRHJednoWwWBBG+aAt/k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b7mUI7QEcz7bjSzQ4RRLEZPeqz/ClF2DmwvY+4CFJWl3afLgtXCyleJHn44cS6Em0f+zlH7ermzRpEo0Ym/3LfdhNOVUTW59XYyIxQMHeydmB4a7yr/TA7xLfjqIVDgwmOUqiXRUdUtgX5cVOKyJl5avOtnz05K+dgH2lOo1+Q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JTn6uPdd; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-33d7589774fso3743839a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 20:41:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761968519; x=1762573319; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p6DxzGsF0ReGwbytjfaFauugox95ZUf7zrl7UO1KLmU=;
+        b=JTn6uPddOWHiarHB0YBXxSWRUg0s2zZHrbLzX65apT8Vq4BeEr8RgTq23b9PyYiKIG
+         gbL4/cgaxh3LD6LoUOi4/ti0XEBteqVSHGc5A7Xio45bQZrEVabUmaElStPjWnLNvNcb
+         Sz2ZOgAyCcczhFc3ng7yHzHGGnN+3z7Jz3+XnzYNpYPNwWUq4oguujmrOeOnxK3IekYs
+         3dAi7zrrsFK/IRKgnzHfu1UmhdeqRItL9kUKI5ajpy/1Nj0iVaVewNCgYbYBL+Ytd4/s
+         Nlx1Wkg9eS2TVEwUcY/2G8/3MA3P/wgp0VlN6jnI1V9nj9p3EI1rDIVti8LM/MLMYH2s
+         CB4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761968519; x=1762573319;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p6DxzGsF0ReGwbytjfaFauugox95ZUf7zrl7UO1KLmU=;
+        b=bwQ3+uwd/SAppjUYKqq8AZgis5k9EdOe/38bhAmRPzirZ26R6Es4wiRb9Dsl98DKeU
+         XnrTYcudj8k4stzxoewxTY9/60OK4zkrbqkkNilrOsaD9+IjXvkM4k7wrb8Vdwmsq0WS
+         tmImy+8mBG/YGt++8F83KdS2BqyOpZBJvlaWeR0G6YPAyXmtCKDYA40RjanG7kEqBBsN
+         YPCWAMrw2VL1BektwJqd1Pz0H+E2ioIWfX/j96P1vAThSxSYmmvpC5FGi74LUcJnedrN
+         U03ExI9BdjbLHK482DfGCxhvAdwqIyFv4M4tD2V8P1gcPX8g5zIaqHl3+9US/xfc9bNV
+         OJuw==
+X-Forwarded-Encrypted: i=1; AJvYcCWyHgh0hpThzvnxq1GIBKojeMFaGaGRwTBbEOG+3g1CQyn6LyRqizkbFoPBNJjWTFDbLseCBXSoGRxrwSo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypwzNlAhJFJGo0FzZG3LcNMDI+kVv9OA2rqczKy0rdZIuPpxzn
+	bpVYBewWklYXOAEgZZwWPkOcspsnKzRTDGMSf3q420qJYQJI2ItPcbm6
+X-Gm-Gg: ASbGncuu4CDoLEGwIcqSuCWeNwdll/t0K0QMYvAkPP+UG4W/+XpvGcX0/PKa688aHNb
+	jv1/WPCi/hBbSLpw0/uQSLP54X5JkJZZzE73s5+3bl3jGHox27PjZUsaZJMEPpNx+f1OOWA1ATm
+	UZE3GzpL5jgOQEhMQNKO9pVkjyNDDleqqTMj5yiozzVk4WUguVcajRRPrLQ/8YZ1aPodJqahKKA
+	6nFRSwXOpFNRf36n3Pt24pUEusDIrpCk6L5CPmO6nB7C1R0D+WztoVdZ9Yo7dS5OzOo0eL9ZLY3
+	2ig7XGLGdR6UdInTJmTJ6yGC68PlVRmVxjLAcwCaT+nUUVRTmwvcm1F7EG7BPu85aIwQ/tAZRru
+	Fi5PffYVvhN930M8pJsYA9daVOgUNzCaHmzCigliyXOx+7NK2LMdIuaYQEUdNYmtEj6G3mcDls7
+	qZpJqqtCCx/3M/O3qneRlx0pGABKpm/m8=
+X-Google-Smtp-Source: AGHT+IFTKC+45FAGjBsfJbS2jWqy7zIBFJxN0wNU7A4TaUwJWYWu38/fpztwMnb4h9wTzf56Tf+jgw==
+X-Received: by 2002:a17:90b:1d47:b0:31e:cc6b:320f with SMTP id 98e67ed59e1d1-34082fc4ebamr6861404a91.5.1761968519146;
+        Fri, 31 Oct 2025 20:41:59 -0700 (PDT)
+Received: from localhost.localdomain ([124.156.216.125])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-340bae47beasm652975a91.3.2025.10.31.20.41.50
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Fri, 31 Oct 2025 20:41:58 -0700 (PDT)
+From: Lance Yang <ioworker0@gmail.com>
+To: bagasdotme@gmail.com
+Cc: Liam.Howlett@oracle.com,
+	akpm@linux-foundation.org,
+	alexs@kernel.org,
+	arnd@arndb.de,
+	christophe.jaillet@wanadoo.fr,
+	corbet@lwn.net,
+	david@redhat.com,
+	dzm91@hust.edu.cn,
+	gregkh@linuxfoundation.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	lorenzo.stoakes@oracle.com,
+	mhocko@suse.com,
+	rppt@kernel.org,
+	si.yanteng@linux.dev,
+	surenb@google.com,
+	vbabka@suse.cz,
+	Lance Yang <lance.yang@linux.dev>
+Subject: Re: [PATCH] Documentation: treewide: Replace marc.info links with lore
+Date: Sat,  1 Nov 2025 11:41:44 +0800
+Message-ID: <20251101034145.31515-1-ioworker0@gmail.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20251031043358.23709-1-bagasdotme@gmail.com>
+References: <20251031043358.23709-1-bagasdotme@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251031235524.cuwrx4qys46xnpjr@desk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 31, 2025 at 04:55:37PM -0700, Pawan Gupta wrote:
-> On Thu, Oct 30, 2025 at 05:30:36PM -0700, Sean Christopherson wrote:
-> ...
-> > diff --git a/arch/x86/kvm/vmx/vmenter.S b/arch/x86/kvm/vmx/vmenter.S
-> > index 1f99a98a16a2..61a809790a58 100644
-> > --- a/arch/x86/kvm/vmx/vmenter.S
-> > +++ b/arch/x86/kvm/vmx/vmenter.S
-> > @@ -71,6 +71,7 @@
-> >   * @regs:	unsigned long * (to guest registers)
-> >   * @flags:	VMX_RUN_VMRESUME:	use VMRESUME instead of VMLAUNCH
-> >   *		VMX_RUN_SAVE_SPEC_CTRL: save guest SPEC_CTRL into vmx->spec_ctrl
-> > + *		VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO: vCPU can access host MMIO
-> >   *
-> >   * Returns:
-> >   *	0 on VM-Exit, 1 on VM-Fail
-> > @@ -137,6 +138,12 @@ SYM_FUNC_START(__vmx_vcpu_run)
-> >  	/* Load @regs to RAX. */
-> >  	mov (%_ASM_SP), %_ASM_AX
-> >  
-> > +	/* Stash "clear for MMIO" in EFLAGS.ZF (used below). */
-> > +	ALTERNATIVE_2 "",								\
-> > +		      __stringify(test $VMX_RUN_CLEAR_CPU_BUFFERS_FOR_MMIO, %ebx), 	\
-> > +		      X86_FEATURE_CLEAR_CPU_BUF_MMIO,					\
-> > +		      "", X86_FEATURE_CLEAR_CPU_BUF_VM
-> > +
-> >  	/* Check if vmlaunch or vmresume is needed */
-> >  	bt   $VMX_RUN_VMRESUME_SHIFT, %ebx
-> >  
-> > @@ -161,7 +168,12 @@ SYM_FUNC_START(__vmx_vcpu_run)
-> >  	mov VCPU_RAX(%_ASM_AX), %_ASM_AX
-> >  
-> >  	/* Clobbers EFLAGS.ZF */
-> > -	VM_CLEAR_CPU_BUFFERS
-> > +	ALTERNATIVE_2 "",							\
-> > +		      __stringify(jz .Lskip_clear_cpu_buffers;			\
-> > +				  CLEAR_CPU_BUFFERS_SEQ;			\
-> > +				  .Lskip_clear_cpu_buffers:),			\
-> > +		      X86_FEATURE_CLEAR_CPU_BUF_MMIO,				\
-> > +		      __CLEAR_CPU_BUFFERS, X86_FEATURE_CLEAR_CPU_BUF_VM
+From: Lance Yang <lance.yang@linux.dev>
+
+
+On Fri, 31 Oct 2025 11:33:56 +0700, Bagas Sanjaya wrote:
+> In the past, people would link to third-party mailing list archives
+> (like marc.info) for any kernel-related discussions. Now that there
+> is lore archive under kernel.org infrastructure, replace these marc
+> links
 > 
-> Another way to write this could be:
+> Note that the only remaining marc link is "Re: Memory mapping on Cirrus
+> EP9315" [1] since that thread is not available at lore [2].
 > 
-> 	ALTERNATIVE_2 "jmp .Lskip_clear_cpu_buffers",					\
-> 		      "jz  .Lskip_clear_cpu_buffers", X86_FEATURE_CLEAR_CPU_BUF_MMIO,	\
-> 		      "",			      X86_FEATURE_CLEAR_CPU_BUF_VM
+> [1]: https://marc.info/?l=linux-arm-kernel&m=110061245502000&w=2
+> [2]: https://lore.kernel.org/linux-arm-kernel/?q=b%3A%22Re%3A+Memory+mapping+on+Cirrus+EP9315%22
 > 
-> 	CLEAR_CPU_BUFFERS_SEQ
-> .Lskip_clear_cpu_buffers:
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> ---
+
+Thanks! Feel free to add:
+
+Reviewed-by: Lance Yang <lance.yang@linux.dev>
+
+>  Documentation/driver-api/usb/writing_musb_glue_layer.rst | 2 +-
+>  Documentation/mm/active_mm.rst                           | 2 +-
+>  Documentation/translations/zh_CN/mm/active_mm.rst        | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
 > 
-> With this jmp;verw; would show up in the disassembly on unaffected CPUs, I
-> don't know how big a problem is that. OTOH, I find this easier to understand.
-
-As far as execution is concerned, it basically boils down to 9 NOPs:
-
-54:	48 8b 00             	mov    (%rax),%rax
-				---
-57:	90                   	nop
-58:	90                   	nop
-59:	90                   	nop
-5a:	90                   	nop
-5b:	90                   	nop
-5c:	90                   	nop
-5d:	90                   	nop
-5e:	90                   	nop
-5f:	90                   	nop
-				---
-60:	73 08                	jae
-
-versus 1 near jump:
-
-54:	48 8b 00             	mov    (%rax),%rax
-				---
-57:	eb 0b                	jmp    ffffffff81fa1064
-59:	90                   	nop
-5a:	90                   	nop
-5b:	90                   	nop
-5c:	90                   	nop
-5d:	0f 00 2d dc ef 05 ff 	verw   -0xfa1024(%rip)
-				---
-64:	73 08                	jae
-
-I can't tell which one is better.
+> diff --git a/Documentation/driver-api/usb/writing_musb_glue_layer.rst b/Documentation/driver-api/usb/writing_musb_glue_layer.rst
+> index 0bb96ecdf527b4..b748b9fb1965af 100644
+> --- a/Documentation/driver-api/usb/writing_musb_glue_layer.rst
+> +++ b/Documentation/driver-api/usb/writing_musb_glue_layer.rst
+> @@ -709,7 +709,7 @@ Resources
+>  
+>  USB Home Page: https://www.usb.org
+>  
+> -linux-usb Mailing List Archives: https://marc.info/?l=linux-usb
+> +linux-usb Mailing List Archives: https://lore.kernel.org/linux-usb
+>  
+>  USB On-the-Go Basics:
+>  https://www.maximintegrated.com/app-notes/index.mvp/id/1822
+> diff --git a/Documentation/mm/active_mm.rst b/Documentation/mm/active_mm.rst
+> index d096fc091e2330..60d819d7d0435a 100644
+> --- a/Documentation/mm/active_mm.rst
+> +++ b/Documentation/mm/active_mm.rst
+> @@ -92,4 +92,4 @@ helpers, which abstract this config option.
+>   and register state is separate, the alpha PALcode joins the two, and you
+>   need to switch both together).
+>  
+> - (From http://marc.info/?l=linux-kernel&m=93337278602211&w=2)
+> + (From https://lore.kernel.org/lkml/Pine.LNX.4.10.9907301410280.752-100000@penguin.transmeta.com/)
+> diff --git a/Documentation/translations/zh_CN/mm/active_mm.rst b/Documentation/translations/zh_CN/mm/active_mm.rst
+> index b3352668c4c850..9496a0bb7d0705 100644
+> --- a/Documentation/translations/zh_CN/mm/active_mm.rst
+> +++ b/Documentation/translations/zh_CN/mm/active_mm.rst
+> @@ -87,4 +87,4 @@ Active MM
+>   最丑陋的之一--不像其他架构的MM和寄存器状态是分开的，alpha的PALcode将两者
+>   连接起来，你需要同时切换两者）。
+>  
+> - (文档来源 http://marc.info/?l=linux-kernel&m=93337278602211&w=2)
+> + (文档来源 https://lore.kernel.org/lkml/Pine.LNX.4.10.9907301410280.752-100000@penguin.transmeta.com/)
+> 
+> base-commit: e5e7ca66a7fc6b8073c30a048e1157b88d427980
 
