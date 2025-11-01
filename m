@@ -1,141 +1,130 @@
-Return-Path: <linux-kernel+bounces-881357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3871C2811D
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 15:40:50 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0700EC28123
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 15:43:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EFC81891F34
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 14:41:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E1C6C4E8DD1
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 14:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB33245010;
-	Sat,  1 Nov 2025 14:40:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27FDA246BDE;
+	Sat,  1 Nov 2025 14:43:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="JvPlEtkV"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="QTHqesBE"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648F21BD9F0;
-	Sat,  1 Nov 2025 14:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208021DED7B;
+	Sat,  1 Nov 2025 14:43:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762008043; cv=none; b=N4NDSIJCwM+0N93OSaXMAS9SJF/M/7jzgZa2c3MyU9wGC1k4Gw0ghJOJhdPrJoFixi23ZB0XnEf0jLw+eoutqt4F54Puv0Nyo/4QwTcDdh8qUKvLzOmR9ITwT0Vq/pR+Fy7ZlnxqG8dOI3sqOQobojJtlEQIe09Iu4JSMh6ThJ0=
+	t=1762008229; cv=none; b=D93Zpiw/hY/QDzhWBVjJqU4MeMKF9bpXhQuZfsumT7gPpDX1gX8T7RBoYkoT/lcIercudzhOIgxXcSAaAOzASHDX3agg5dWxzN5UowGAZqMzfktYctuK0XYrYndPGuqSc/cCpgZ7SZuTbGADiC8U+Fl+ggSZ8o5qApBXOfcSkOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762008043; c=relaxed/simple;
-	bh=wx2j3MswhoxUK4tUM4MFH9dlK4bbicOdsQcKqMmWSdI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=daudHkvS7BJQTI1N10KeweD0aIk+5UxJDoKySiZhQCN1wxR3F09suxzhYh/wVVce5PWReqAdeKX1rp4ad2JQVT/6CMmyBzrb2e3pJovebSgfn7b5MHj65Vywb4RdI2HvlY+SImW1XMt9dX2tvsSJB9425AjqnPc0JktMa/AHDeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=JvPlEtkV; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=GJ
-	2zCIHiKG62pgfqtGy6VnLIxl5DOG0adzVxO21inlU=; b=JvPlEtkVp05tNt53dv
-	o9w/1fMK017qUS0ecjnUAWmsMekftOCP9F4wJQUIRsVkYM3T0IHxoTUyvtRygfAn
-	8UZUoymNA/XYRcHyA45uCYZwqnbMgcBRxnXxoaOSxwlHbYxw9WblKorKp6gkcNI1
-	8PlQofu6KgyLgiLz6GRXv/bYE=
-Received: from localhost (unknown [])
-	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wD3n77WGwZpZ0jBAw--.46548S2;
-	Sat, 01 Nov 2025 22:40:23 +0800 (CST)
-From: Cen Zhang <zzzccc427@163.com>
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	johan.hedberg@gmail.com,
-	marcel@holtmann.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-bluetooth@vger.kernel.org,
-	baijiaju1990@gmail.com,
-	r33s3n6@gmail.com,
-	gality369@gmail.com,
-	zhenghaoran154@gmail.com,
-	zzzccc427@163.com
-Subject: [BUG] Bluetooth: SCO: UAF due to concurrent sco_sock_connect() on same socket
-Date: Sat,  1 Nov 2025 14:40:22 +0000
-Message-ID: <20251101144022.177197-1-zzzccc427@163.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1762008229; c=relaxed/simple;
+	bh=CHj1Zkul6hoVNKjHSeA7+UVJxNaSbzYzOpQ/55QeZ+g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n2ldyHq9esk/XeWuqZq6vZGgwNNl4BdmyFV7SUYK2r5SlwWN+QhyNRZDjBuB1wxg4k9DdE5JVFHIqEAFPq0rEuGaaHDVvV1vXYRZXNSl/jTA99y3dmWFGfvj2qIYgGDcl/rs2CTnTjl6lvqQBGixtwW/9/n8rWNJxaYPPrQHrdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=QTHqesBE; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=kbrQJNAxkCeAlLdCX6AM0uLGxMIQSMwoVqkBE0HruFk=; b=QTHqesBE/rr9SPQWh1nAIjaULw
+	IP+06M4QcoN3gZcv/zQvkXIGEOiftxnyf8ljgtb6GYVONV2IYA1yoEo1zZ75m1WMpQY0A3jx5R+H4
+	VTEV+q46wSSb14kP+8e3LDBMBpbutfuuzHoz2IXFgs9L0wsneNmOm73bc42A3iWynGpk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vFCpE-00CfRd-Le; Sat, 01 Nov 2025 15:43:28 +0100
+Date: Sat, 1 Nov 2025 15:43:28 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Clark Wang <xiaoning.wang@nxp.com>,
+	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	Aziz Sellami <aziz.sellami@nxp.com>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 0/3] net: enetc: add port MDIO support for both
+ i.MX94 and i.MX95
+Message-ID: <157cf60d-5fc2-4da0-be71-3c495e018c3d@lunn.ch>
+References: <20251030091538.581541-1-wei.fang@nxp.com>
+ <f6db67ec-9eb0-4730-af18-31214afe2e09@lunn.ch>
+ <PAXPR04MB8510744BB954BB245FA7A4A088F8A@PAXPR04MB8510.eurprd04.prod.outlook.com>
+ <fef3dbdc-50e4-4388-a32e-b5ae9aaaed6d@lunn.ch>
+ <PAXPR04MB85101E443E1489D07927BCFE88F9A@PAXPR04MB8510.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3n77WGwZpZ0jBAw--.46548S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxGF4rtr4fWw1xCFyfAF18Krg_yoW5Gw4UpF
-	Wqga1Ska4DArn5ZFsayF18Wr4kZrs09FW2kr10grn5A3s8KFW0yF40yr4UtwsrCr1ktF47
-	ZanFgrW3CF4DWaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piG2NtUUUUU=
-X-CM-SenderInfo: 5222uujfuslqqrwthudrp/1tbiXQz4hGkGGawciwABsh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PAXPR04MB85101E443E1489D07927BCFE88F9A@PAXPR04MB8510.eurprd04.prod.outlook.com>
 
-Hi maintainers,
+On Sat, Nov 01, 2025 at 12:24:42AM +0000, Wei Fang wrote:
+> > > What we get from the DT is the external PHY address, just like the mdio
+> > > driver, this external PHY address based on the board, ENETC needs to
+> > > know its external PHY address so that its port MIDO can work properly.
+> > 
+> > So i don't get this. MDIO is just a bus, two lines. It can have up to
+> > 32 devices on it. The bus master should not need to have any idea what
+> > devices are on it, it just twiddles the lines as requested.
+> > 
+> > Why does it need to know the external PHY address? In general, the
+> > only thing which needs to know the PHY address is phylib.
+> > 
+> 
+> >From the hardware perspective, NETC IP has only one external master MDIO
+> interface (eMDIO) for managing external PHYs. The 'EMDIO function' and the
+> ENETC port MDIO are all virtual ports of the eMDIO.
+> 
+> The difference is that 'EMDIO function' is a 'global port', it can access and
+> control all the PHYs on the eMDIO, so it provides a means for different
+> software modules to share a single set of MDIO signals to access their PHYs.
+> 
+> But for ENETC port MDIO, each ENETC can access its set of registers to
+> initiate accesses on the MDIO and the eMDIO arbitrates between them,
+> completing one access before proceeding with the next. It is required that
+> each ENETC port MDIO has exclusive access and control of its PHY. That is
+> why we need to set the external PHY address for ENETCs, so that its port
+> MDIO can only access its PHY. If the PHY address accessed by the port
+> MDIO is different from the preset PHY address, the MDIO access will be
+> invalid.
+> 
+> Normally, all ENETCs use the interfaces provided by the 'EMDIO function'
+> to access their PHYs, provided that the ENETC and EMDIO are on the same
+> OS. If an ENETC is assigned to a guest OS, it will not be able to use the
+> interfaces provided by EMDIO, so it must uses its port MDIO to access and
+> manage its PHY.
 
-I would like to report a KASAN use-after-free in the SCO path caused by two concurrent sco_sock_connect() calls on the same socket.
-This race allows both call paths to proceed into sco_connect() and eventually bind two different struct sco_conn objects to the same sk. 
-Later, when sk->conn has been updated to the second conn, close() can free that conn and the socket, 
-while the HCI connect-confirm path still references the first (stale) conn/sk, triggering a UAF.
+So you have up to 32 virtual MDIO busses stacked on top of one
+physical MDIO bus. When creating the virtual MDIO bus, you need to
+tell it what address it should allow through and which it should
+block?
 
-Thread 1:               Thread 2:               Thread3:
-check sk_state          check sk_state
-sco_sock_connect(sk)    sco_sock_connect(sk)    sco_connect_cfm(sk->conn)
-conn1->sk = sk
-                        conn2->sk = sk
-sk->conn = conn1
-                        sk->conn = conn2
-                        sco_sock_release
-                        free conn2 and sk
-                                                sco_connect_cfm
-                                                sco_conn_del
-                                                sco_conn_free
-                                                UAF on sk
+If what i'm saying is correct, please make the commit message a lot
+easier to understand.
 
-Representative KASAN excerpt
+But this is still broken. Linux has no restrictions on the number of
+PHYs on an MDIO bus. It also does not limit the MDIO bus to only
+PHYs. It could be an Ethernet switch on the bus, using a number of
+addresses on the bus. So its not an address you need to program into
+the virtual MDIO bus, it is a bitmap of addresses.
 
-  BUG: KASAN: slab-use-after-free in sco_conn_free net/bluetooth/sco.c:94
-  Write of size 8 at addr ffff88810d2be350 by task kworker/u25:1/88
-  Call Trace:
-    sco_conn_free net/bluetooth/sco.c:94 [inline]
-    kref_put include/linux/kref.h:65 [inline]
-    sco_conn_put+0x49d/0xfc0 net/bluetooth/sco.c:115
-    sco_conn_del+0x46d/0x8d0 net/bluetooth/sco.c:280
-    sco_connect_cfm+0x83d/0x1ee0 net/bluetooth/sco.c:1468
-    hci_connect_cfm include/net/bluetooth/hci_core.h:2082 [inline]
-  Allocated by task 294:
-    sco_sock_create+0x22d/0xc00 net/bluetooth/sco.c:616
-  Freed by task 295:
-    __sk_destruct+0x4b0/0x630 net/core/sock.c:2373
-    sock_put include/net/sock.h:1962 [inline]
-    sco_sock_kill+0x64d/0x9b0 net/bluetooth/sco.c:526
-    sco_sock_release+0x770/0xa50 net/bluetooth/sco.c:1359
+	Andrew
 
-Reproducer and race amplification
-
-- A easy PoC which triggers concurrent sco_sock_connect() on the same socket and a fast close is available here:
-  https://github.com/zzzcccyyyggg/Syzkaller-log/blob/main/UAF-in-sco_conn_free-due-to-concurrent-sco_sock_connect/poc.c
-
-- To enlarge the probability that two connect operations overlap (i.e., widen the race window), inserting a fixed delay right after the state/type checks reliably reproduces the issue in my tests. Concretely, after:
-
-  if (sk->sk_state != BT_OPEN && sk->sk_state != BT_BOUND) {
-      release_sock(sk);
-      return -EBADFD;
-  }
-
-  if (sk->sk_type != SOCK_SEQPACKET) {
-      release_sock(sk);
-      return -EINVAL;
-  }
-
-  add:
-
-  /* increase race window for testing */
-  msleep(2000);
-
-
-We tried using the following patch to fix this bug, but it seems to have failed.
-https://lore.kernel.org/linux-bluetooth/20251101104522.174388-1-zzzccc427@163.com/T/#t
-
-Thank you for your attention to this matter.
-
-Best regards,
-Cen Zhang
 
 
