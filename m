@@ -1,129 +1,146 @@
-Return-Path: <linux-kernel+bounces-881192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46BD4C27AF1
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 10:40:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F5CAC27B3F
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 10:50:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5984B4E6BB1
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 09:40:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9D67403EC9
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 09:48:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D952C21F8;
-	Sat,  1 Nov 2025 09:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A83EA2D46BB;
+	Sat,  1 Nov 2025 09:48:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X4nu1emX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nLcbzdl9"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCEA12C15B8;
-	Sat,  1 Nov 2025 09:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA092D0C72
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 09:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761990031; cv=none; b=gvCAvLdwIwNyEodnrzD7P8kdr0/2v+l7BVk8OEu3j8JMUaENKv0DafrOnYcARJz74Gi5ksSofGCzxCdCGIJ+uJoGVDr9Mobcv67TRTWGSEG199kIyWoGOkMedrxQcl62ybhedEdIEZOgnnA9ASvwimH1a33EWXEobNm0A8sfOXs=
+	t=1761990485; cv=none; b=hzTdMGCAV1UDr74HwkmQTwuO+HpWmnWYvAD5aAbAlYuOt6PNzIoKdpD6dIjCDROoeaqWm65mst9EGCB4Wnja19Lm7Dj4HLNO5caYRSAyp/j4uzMKXEohyYtWagACKr0h+NNSKH9unIac7fEAJh33wVzDtIr2y54r89VPgb61xhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761990031; c=relaxed/simple;
-	bh=KEyjwC/3ZixttteNhE28UtTrJX6xHVbizD+fICju5HQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jU7wbaixaq37QKMxPfLDz6yf7ZBHQuTyt5rLPEkOyxDbHZbuW49+ICOlouG1TvGwUi76gbpFwlps1eG9VU1E2DVAFWJvBH8E6jUPIJXA/Ti+6wz+vw8wNI7ihBjU3s7URuPk0CNZk69Jelr794Rko28Tap5/r3QOLy/PlDsj83k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X4nu1emX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A056EC4CEF1;
-	Sat,  1 Nov 2025 09:40:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761990031;
-	bh=KEyjwC/3ZixttteNhE28UtTrJX6xHVbizD+fICju5HQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=X4nu1emXFZUXSucv1dsi/I9LyoXD3yBy1scLkXVz0y0+zJaWdGWWzc5nFl/suDVGH
-	 9qLovUiIHNnQUwrpqTcj6KLr3B7CHrb6VrgoQVjr7MYTdqOVYKGF2k3bLkOmheIkVN
-	 pMR/rteY6XfnrH3eWoX8p4r5gWRlVZdqBoEhvq5DxUGEU2NQFM/I5x2mOqiMD8+EeE
-	 YmWUCugkhOHutuBNZ6Npz1v2NohxC7/zve+pCywq8huv9MGIT62UAG9DxqZzE0Q8w8
-	 ZxctAQ5osq+FNf9OLrRrqH/r0ltT1GkebJo2bMja7MMbtjpSjhF5wdoifpYx7OfIk6
-	 d+w+LEFGvwohQ==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	rust-for-linux@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
-	WANG Xuerui <kernel@xen0n.name>,
-	loongarch@lists.linux.dev,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: [PATCH] rust: kbuild: support `-Cjump-tables=n` for Rust 1.93.0
-Date: Sat,  1 Nov 2025 10:40:11 +0100
-Message-ID: <20251101094011.1024534-1-ojeda@kernel.org>
+	s=arc-20240116; t=1761990485; c=relaxed/simple;
+	bh=3OG2wiKH22RCfvC+iceoRBKIWpDNYuCgxZ/0fv2vRj4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ONBd8sA1Rmpu0kVBfog3/icVvFe2kvijoCE45qs6yZPWkSeHRQk3z4gM/aqxc2u4QUXqBmhAJrs4KbBnmirZ8nlEpmFCmJzST09eUm26ylTk60uGuriQncbtBMfvQk+Cd8mmCtPaAZG4WIyLsz7HYteUl4IU6lJU/Mw4Aj/YgxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nLcbzdl9; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7a27bf4fbcbso3062435b3a.1
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 02:48:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761990483; x=1762595283; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WH5O/8nAx5rVFTEi7/lXcZZ45r+c3Q9ZyuJj8snlwgs=;
+        b=nLcbzdl9dR0X3krcX6dwvdW2QSYs+p3GtfBlu3l2dEIINpLVz700FoeUkEvGq/kuiM
+         mk6ObxRygf8sG5V1QlH6k4Mcyvz1+hqXbgoHbLL4iSUDAsJBd3NezgbCsDNRfCO6vUam
+         1gHzIn8UzOm80YSQ2UudACKO0iPJL0qltaCF35gEgjPA66GkaAwnF090QE3HHc4Owide
+         rhNUk0bgSFS4z5qXDpLw4pfbqO8zWLbrTY+tZQcMttGe/jyLRHd6wHn35gMD7BsGnaXY
+         hx9lfmc3PXqDRYEMexP11+x7I75c8HWOUAxYihyjjhEjoH65atsT2Ncpb+Gyhn8a9zmZ
+         bhjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761990483; x=1762595283;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WH5O/8nAx5rVFTEi7/lXcZZ45r+c3Q9ZyuJj8snlwgs=;
+        b=PxXUOxzrNXH17cwK5hzXifSjgTKpQ3IjROnZ5+GJFeGFbW/6BeKU8g0RM5ebChCsWB
+         urrJzxLTiunpM16U7GNNmwfqnEJY6AnP8hUdLar64MxRxCdLWlxJg1xRHtM+Ee5zXzCo
+         vN+e1rSh99/y/7CgR3sIcChyNFys5mLKbKjLCUBuGmiuO9tyDkE//TIuzoZGPRs48V4+
+         KpQ9LnMNenFQN0+Rq7F4ngz1gQ5btQA+PB+QDYFXSGMmFAKarRbvuuWB0cjdxjrUvoiZ
+         p8bBgbIbY1SpEnHbq/1wY1NnNs2qwS645qVqZIAWqPQ5w8U8sQsCNWnGyO6V7NllWNW0
+         Gk1g==
+X-Gm-Message-State: AOJu0YzYO9u95G0z3xTBqBnWNDEVB5wP4F9sfa+TWrkEZmBpvvohfVRv
+	q3B89Q7N1h6oXZPe0Q/kmZCSJoi+av6q3GW2A97dsvhO66EtVkOQuLk3
+X-Gm-Gg: ASbGncuuf1nzYJ/jzLSz/6Nf8ClOwsG8KlFPz2bWMuJDF+cAF6pVbTnAgypRgpnZZWr
+	McgGGL704Nchx6hRVoHDCobUqpcEPhP8aNq8OcoR8BbcLxy0E2jBcsiR+SH295kS3Ts7UE1Chjb
+	iid6/t+GtMTKV2w4Pd9EXQ2CE8v5cai/QrCcoPEe/FjzYi89giHwUHZ6CGQUL/yfHUHBSbhG6ty
+	Pf4QIz+1klA2QkHUGLSptSEVyfBOz4t5Ke1JVvmkSEWzWXZFDr89Vu2bK8Et+sII7UBtfE07mN4
+	PKrMVQSMSU0Hhwm4P5zEm6qkLUgKqNko1L/NtOxKwUS3o7Z8wHdpF1d1FAtR8Ojb5TaENFM3I82
+	Va3vg+GBWuZCRokBDF5a698AhN1rbepE/9wpbl3LkGdoYOhWh0xQtwP/Tcek/k8G7mq0q7hz24j
+	fa
+X-Google-Smtp-Source: AGHT+IFkkEhMNFBtz799ZVmYFsXMsu0ozafr7JzI6vs8a+fPrI8GNOdanKuJbIbpaRMf1whMNOYWqw==
+X-Received: by 2002:aa7:8883:0:b0:7a2:70f5:c83f with SMTP id d2e1a72fcca58-7a77747a497mr7159153b3a.10.1761990483399;
+        Sat, 01 Nov 2025 02:48:03 -0700 (PDT)
+Received: from archie.me ([210.87.74.117])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a7d8d72733sm4804521b3a.21.2025.11.01.02.47.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 01 Nov 2025 02:48:00 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 5228C4209E50; Sat, 01 Nov 2025 16:47:56 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Networking <netdev@vger.kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Steffen Klassert <steffen.klassert@secunet.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: [PATCH net-next v2 0/8] xfrm docs update
+Date: Sat,  1 Nov 2025 16:47:36 +0700
+Message-ID: <20251101094744.46932-1-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1792; i=bagasdotme@gmail.com; h=from:subject; bh=3OG2wiKH22RCfvC+iceoRBKIWpDNYuCgxZ/0fv2vRj4=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDJms1zJm651g7L3+4YxH5x0enzdfmeoZHySvdDr6TVHpz yZ3ETmXjlIWBjEuBlkxRZZJiXxNp3cZiVxoX+sIM4eVCWQIAxenAEyk8jQjw9QJLtFbJZYwFVpE udzYf1lR8dq8NYLW9cc3buHV4OUT9mBkuKZv0dzqV/Ji39eN699+4thtcO6Q6M1FJ1+U6PzQnLj ajBEA
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
 Content-Transfer-Encoding: 8bit
 
-Rust 1.93.0 (expected 2026-01-22) is stabilizing `-Zno-jump-tables`
-[1][2] as `-Cjump-tables=n` [3].
+Hi,
 
-Without this change, one would eventually see:
+Here are xfrm documentation patches. Patches [1-6/8] are formatting polishing;
+[7/8] groups the docs and [8/8] adds MAINTAINERS entries for them.
 
-      RUSTC L rust/core.o
-    error: unknown unstable option: `no-jump-tables`
+Enjoy!
 
-Thus support the upcoming version.
+Changes since v1 [1]:
 
-Link: https://github.com/rust-lang/rust/issues/116592 [1]
-Link: https://github.com/rust-lang/rust/pull/105812 [2]
-Link: https://github.com/rust-lang/rust/pull/145974 [3]
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
- arch/loongarch/Makefile | 2 +-
- arch/x86/Makefile       | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+  - Also polish xfrm_sync section headings (Randy)
+  - Apply review trailers (Randy)
 
-diff --git a/arch/loongarch/Makefile b/arch/loongarch/Makefile
-index dc5bd3f1b8d2..96ca1a688984 100644
---- a/arch/loongarch/Makefile
-+++ b/arch/loongarch/Makefile
-@@ -109,7 +109,7 @@ endif
- ifdef CONFIG_RUSTC_HAS_ANNOTATE_TABLEJUMP
- KBUILD_RUSTFLAGS		+= -Cllvm-args=--loongarch-annotate-tablejump
- else
--KBUILD_RUSTFLAGS		+= -Zno-jump-tables # keep compatibility with older compilers
-+KBUILD_RUSTFLAGS		+= $(if $(call rustc-min-version,109300),-Cjump-tables=n,-Zno-jump-tables) # keep compatibility with older compilers
- endif
- ifdef CONFIG_LTO_CLANG
- # The annotate-tablejump option can not be passed to LLVM backend when LTO is enabled.
-diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-index 4db7e4bf69f5..c60371db49d9 100644
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -98,7 +98,7 @@ ifeq ($(CONFIG_X86_KERNEL_IBT),y)
- #   https://gcc.gnu.org/bugzilla/show_bug.cgi?id=104816
- #
- KBUILD_CFLAGS += $(call cc-option,-fcf-protection=branch -fno-jump-tables)
--KBUILD_RUSTFLAGS += -Zcf-protection=branch -Zno-jump-tables
-+KBUILD_RUSTFLAGS += -Zcf-protection=branch $(if $(call rustc-min-version,109300),-Cjump-tables=n,-Zno-jump-tables)
- else
- KBUILD_CFLAGS += $(call cc-option,-fcf-protection=none)
- endif
+[1]: https://lore.kernel.org/lkml/20251029082615.39518-1-bagasdotme@gmail.com/
 
-base-commit: dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
+Bagas Sanjaya (8):
+  Documentation: xfrm_device: Wrap iproute2 snippets in literal code
+    block
+  Documentation: xfrm_device: Use numbered list for offloading steps
+  Documentation: xfrm_device: Separate hardware offload sublists
+  Documentation: xfrm_sync: Properly reindent list text
+  Documentation: xfrm_sync: Trim excess section heading characters
+  Documentation: xfrm_sync: Number the fifth section
+  net: Move XFRM documentation into its own subdirectory
+  MAINTAINERS: Add entry for XFRM documentation
+
+ Documentation/networking/index.rst            |  5 +-
+ Documentation/networking/xfrm/index.rst       | 13 +++
+ .../networking/{ => xfrm}/xfrm_device.rst     | 20 ++--
+ .../networking/{ => xfrm}/xfrm_proc.rst       |  0
+ .../networking/{ => xfrm}/xfrm_sync.rst       | 97 ++++++++++---------
+ .../networking/{ => xfrm}/xfrm_sysctl.rst     |  0
+ MAINTAINERS                                   |  1 +
+ 7 files changed, 77 insertions(+), 59 deletions(-)
+ create mode 100644 Documentation/networking/xfrm/index.rst
+ rename Documentation/networking/{ => xfrm}/xfrm_device.rst (95%)
+ rename Documentation/networking/{ => xfrm}/xfrm_proc.rst (100%)
+ rename Documentation/networking/{ => xfrm}/xfrm_sync.rst (64%)
+ rename Documentation/networking/{ => xfrm}/xfrm_sysctl.rst (100%)
+
+
+base-commit: 01cc760632b875c4ad0d8fec0b0c01896b8a36d4
 -- 
-2.51.2
+An old man doll... just what I always wanted! - Clara
 
 
