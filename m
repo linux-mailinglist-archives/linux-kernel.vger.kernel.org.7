@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-881360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88C61C2812C
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 15:57:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5B7CC28136
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 16:00:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4861188AF39
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 14:58:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06DDB188AF14
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 15:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98562C0291;
-	Sat,  1 Nov 2025 14:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B121E991B;
+	Sat,  1 Nov 2025 15:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="KpiUUIGQ"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="h0B+Iq8E"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AAFF34CDD
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 14:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A12115D1
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 15:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762009061; cv=none; b=WLCHXrAxJSS31LMSO+D/ZahtOueY9DCcFp3RX5rPBy8EISBOjwtbK9nnwnqbErl65H+Mq1Bwo9YB/QpJ5ROxvM3+pHHW/tDq+30BQ7siOIl1poA0lS856vA3iuYYnnbwcOkuLizTAiwxUnN5J4yquSMvMaTL99aS73HDALuMKfE=
+	t=1762009235; cv=none; b=KmSid2c0cTlrp0oPW/Dk61PuNMUuae0fSWrsv4sXZYsUic+1WnCYi1oXgKKX1NgVH3kGPW9WT8SfCvLufPA2ntvqm9wqLOIuhX42lHJjjkXTAWKNDYQQIc0PPL0R6ohYXQVkAOHdL8Hkj2x2a6k3GAcwrOYAAvWTQypTjdVs4Co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762009061; c=relaxed/simple;
-	bh=UX6a+St/oon0bMcSt/uBqo7nx1nv8SZZ1H93Yc3b+SI=;
+	s=arc-20240116; t=1762009235; c=relaxed/simple;
+	bh=K3/b3jr5SBSHHuWefiHTx21BlqOp5dw/wmKirB+uwkw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ALemlm1BShxaU7SeX1xVySL475+vYsTGR4n3GkbE7WEVIK5AeNMI8zwkuvcSD8b2Azz9JScdxTXD2q1SywuOQJFbG2vwIZ3vOOeePH4C0NXAX49OsmX9L9ya01kfhkAWt5JpA3KkXLoBjg99fojoZQu/ate3C3tev+TCAKDctvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=KpiUUIGQ; arc=none smtp.client-ip=209.85.128.41
+	 In-Reply-To:Content-Type; b=abi6r+WORlwflEel80KKRsjprmU+3lkX1e6ZNFOt9h1j717Pf16LFVwNHA8JmvY4KHoifmotoswOP902lA8q27oBa1RV0OgVhO5LaCu8bVHiNakOoNcoK3f3sMIF0cTd46JZrUwcKVcuNYAUDM/CaYap5fZkSJ1p5Dk5Eo3wsE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=h0B+Iq8E; arc=none smtp.client-ip=209.85.221.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-47719ad0c7dso27248925e9.0
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 07:57:37 -0700 (PDT)
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-429c19b5de4so1348122f8f.3
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 08:00:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1762009056; x=1762613856; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1762009232; x=1762614032; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=EqDn1RC8UO2IDPb+c3+sWenx5mUO6CHUTILYTfEVrJQ=;
-        b=KpiUUIGQWDvMUNPYVfsTF6YOcunazgTEyC6ydYBt339ok4PzSJfQ6GW4Aqb0kNSIu8
-         iKjmOI0GlGHnuW6m6mbv+ypWeG/WJ+kluruY32GRxOc7ulwgHxBtq2pQTuSjZDGWH1bA
-         8ZOS9tn56883pSj8hzz4c8gK12DdFdYY2vGOrQqAOQtxgkLV1MEwFlWgc7ocWwGEKDMi
-         ++PW6dCyOj/oJJPRPhHbyONmLFGuWqDVGIAbZ63RsTq32jZAHl5ycvlpMS5Ygiv7DNTp
-         d0Ob5X983SjuEjq3zbDaQ3nC7CqOwLY3uOD0otseT9NvAPFG8wQlE4kRu09gLi6VMeIk
-         9+ww==
+        bh=J6g7/oxMyVMxygIoIjYSwO2RhZz+LTOeAZEKc76K6rk=;
+        b=h0B+Iq8EMiI/uM3RZAgX45is0ksIrBB3vVl2jGbikXyVBEBEbbMt8OTwIgXqiaqnE0
+         ucs3LLV6JzdaTbnxiu/RMFrKA9kQuTPdIX6agE7JSwIxKk+qitDmLXBNKG0fNT/GNADx
+         4bmOgFiKdPRcOi+PcPAlqputBur/EAoS542l14bbEgiEhhOojXo3/LgelpSc/Kz1UYuC
+         LaBooIMxJyL7BRhmNS+KcrDwlmfarj5GY3GqTniR8XSAM45v7j3i6glrMDuTo9AwHh04
+         Lou4BD/aS4+AikEEfujubsUCw7OJFlL0R4tYUh3baCO5Lr4MUnlyw0rgNKGBGvM9SBP9
+         FOBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762009056; x=1762613856;
+        d=1e100.net; s=20230601; t=1762009232; x=1762614032;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EqDn1RC8UO2IDPb+c3+sWenx5mUO6CHUTILYTfEVrJQ=;
-        b=tpwSIKGJLQwxzfvG3yxQVqV3ybvkpjBIEb8VyfhhxkLjMHmNSBkJ6KqFn0yedBpJkV
-         zIP0QD5v23wys4FTgtofB0u+fGeHbhzoesLV/nTi6tQc85AOKvxlzTpfce0U7Z4Lv+2A
-         t2lKXZISUx07sh2C2mIgyRV58z2upXHf/09dUFha4H1559Tfiwwg+8y59QFJCMGgD8/1
-         NVgkTvZaAX+5WYvnuSMN7VLvTAxcq+qPUrsOaF20jaKwRk0XJ78yRTnXj7zAvOjw4WV+
-         UdjHZbqtE/DzncyT9xISfbobInO/ZYSJ3XnHXO8ULBEj0hMO1bUQDHBv0fkyj4uimu9t
-         +z2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVdT3YhC3tl3MqummxZeHjfLeHKVW+a65c6PeBxuFyVqFubwkx+yBzGv+ZNBDuNN2W2zhOIFZcTfVXZMQ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiTvWfUFNxJQc+CwxqXPfJlfvO1rX8s5GMTR+DUbfJ/iORhHnW
-	dxjzcunUXAAVsR7SKh/v4sN72oY90TIKjGKGtP2+89MbV3yKCH82IAN4Akp+iJI6BSw=
-X-Gm-Gg: ASbGnctIA00F46+6IkRgrvSlDdwDRG/Upn9dE2goK20nqlAfEd6+9gUw/n7lLk/SphC
-	oMunrTUJngyZHsinODGFw5oi9U2Sntf3OnMppWDVJP6WnWbIdk99TGQVxbsAZzVF0yhLU2rVgc4
-	zCRExqr5ysjlq/KXOS/3UXRTeEzLFvVEv9qkgErVAaMSeD0vfXap6+GHdYi3LdG3qM/Hxy/Czmc
-	8GBtiRklADbS+4TQpG3GGK4HN1SwIbQK1Ud/25nr0LIweGzQK0D+8M89kIrc+W6UHB+seIdHFvg
-	aIOMsJ7NPRGm4h0CXM4wjWWrc6Fs8G0vfX54n/eKqqr/gaLzJ7NIIgTmaArL4ermRCqkPTSao8/
-	R9uw1dl33mTkLD28BOlpICeEqfM1j1TUihlKFTWCFnruW4g4930ib5WCgxROeZgSL7TdAYt11I0
-	6F9WNaFv3u
-X-Google-Smtp-Source: AGHT+IEqIrsV+gOof4n3Jx/bwouIFoZoJa8acq7wXUb7wBmEv6oMx40rV85tqc9myqKF+jTACk906Q==
-X-Received: by 2002:a05:600c:3b9f:b0:471:6f4:602a with SMTP id 5b1f17b1804b1-4773086bee3mr82378005e9.23.1762009055927;
-        Sat, 01 Nov 2025 07:57:35 -0700 (PDT)
+        bh=J6g7/oxMyVMxygIoIjYSwO2RhZz+LTOeAZEKc76K6rk=;
+        b=wH6ZG3lhDq4RhMTA0bm4h1FHO73zjLYK431iSDbmSkBBEDvcSxJeSoNBQg2QvzHKRP
+         96ohAVX+cToXkYPTIHr4vyKdRDA8DiURGowsLl9b9Hf2uX1usHE0Lkf5/Okkd0LVxd7h
+         xti7MJykYy3DYZoN6R+v8wCyhXkld96U9VSolBL+NfKLaBHxl9gytBmqKLD3HfGmm5Rp
+         pI7cewx9q7VCmo8iOeW0x6bzLFuZF7pEpDhEjYSvmUuZ68+cOwrSmiwKyV1w6MKxtH3E
+         J5G4U2JRongbgLS++Ou2NrWCLKW7LQKczORsoXbrxNs2Y9LmZdUvfPzU9KBQqSAKPhdU
+         /Nhw==
+X-Forwarded-Encrypted: i=1; AJvYcCVqUITjTf3uAjH0C74ozCEP6r3jvWDOINg8h9L6xLYk7cSaWQIMlBWFOItckTN7qEZgQ5pEJI0rmoOFx78=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaG3Mwt4QFn/z3mBKx3kZnZoEyPTIE236riqGsEiEtR+YS44RH
+	LPyyiFa0c5bxf2XvoEW4rozER31NOrStVM928/B8fdIabYHVks1Pql5p3gEfxme0YL+g0QWCWGm
+	s+Nrb
+X-Gm-Gg: ASbGnct+gH9gW3HXfXT+6kaTLNPcA+wTS6W2bEwV7+5fnVbO7/PNQXW0uE1cNzAF5Do
+	oYtNaWzGEeKPD+69ysxviNKzj77Ecyqwp+VXrgeGg1h4oCa7PWwewsHS0Q8Yl35gurDjliC3VDF
+	nxKXvjn7GK7HX+9f1lmoiU2TLU7/xJq2rf12ies7MmmdtMw6UShGDiGtD+bfN0L5OSg+HJKqLkI
+	uW+WG6qmyfPMNtBdvecKPsaEfh2MDjrHHjkEoWSuGLWIstPekOaEodyTwsCchMdfuzPiYr0YtIu
+	BgpCXrJCx1cpsh0eNUAmQo+sbbwUHc2Nj4x3lGtlOlR2Ojr5cD5KkqWf1ahRnNYFLpAUcDV+XLH
+	T9JU2XCI0ve/VF6RphZnv6ATsMYEIPFVmWWxu+vZuouZ7DEdkcLOEyUHqjkiQKhYQmfD+RTNf4Q
+	4Dc8wwTzCe
+X-Google-Smtp-Source: AGHT+IFIRiQVA75Sc+kE1CPWUk4PiMBnedhmmWdsH1gtnnIcarCQEzcyI5Zta9nGlQH0Yr7n0uCFuA==
+X-Received: by 2002:a5d:5f87:0:b0:428:55f2:be4b with SMTP id ffacd0b85a97d-429bd6a4c29mr7851522f8f.38.1762009232556;
+        Sat, 01 Nov 2025 08:00:32 -0700 (PDT)
 Received: from [192.168.50.4] ([82.78.167.134])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c23b8d9sm60335475e9.0.2025.11.01.07.57.34
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c13f3278sm9347526f8f.42.2025.11.01.08.00.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 01 Nov 2025 07:57:35 -0700 (PDT)
-Message-ID: <5d306cb4-a383-4efd-a3ff-add07ef28e8b@tuxon.dev>
-Date: Sat, 1 Nov 2025 16:57:33 +0200
+        Sat, 01 Nov 2025 08:00:32 -0700 (PDT)
+Message-ID: <12f2e17e-15ee-40d3-90c6-e8e210b7da2e@tuxon.dev>
+Date: Sat, 1 Nov 2025 17:00:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,48 +83,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] reset: rzg2l-usbphy-ctrl: Fix a NULL vs IS_ERR() bug
- in probe
-To: Dan Carpenter <dan.carpenter@linaro.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <aQYKqxD6qCQwFCye@stanley.mountain>
+Subject: Re: [PATCH 04/11] rtc: renesas-rtca3: stop setting max_user_freq
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Joshua Kinard <linux@kumba.dev>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+ Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+References: <20251101-max_user_freq-v1-0-c9a274fd6883@bootlin.com>
+ <20251101-max_user_freq-v1-4-c9a274fd6883@bootlin.com>
 From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 Content-Language: en-US
-In-Reply-To: <aQYKqxD6qCQwFCye@stanley.mountain>
+In-Reply-To: <20251101-max_user_freq-v1-4-c9a274fd6883@bootlin.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
-On 11/1/25 15:27, Dan Carpenter wrote:
-> The devm_regmap_field_alloc() function never returns NULL, it returns
-> error pointers.  Update the error checking to match.
+On 11/1/25 02:45, Alexandre Belloni wrote:
+> max_user_freq has not been related to the hardware RTC since commit
+> 6610e0893b8b ("RTC: Rework RTC code to use timerqueue for events"). Stop
+> setting it from individual driver to avoid confusing new contributors.
 > 
-> Fixes: 58128aa88867 ("reset: rzg2l-usbphy-ctrl: Add support for USB PWRRDY")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
 Reviewed-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
 > ---
->  drivers/reset/reset-rzg2l-usbphy-ctrl.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/rtc/rtc-renesas-rtca3.c | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> diff --git a/drivers/reset/reset-rzg2l-usbphy-ctrl.c b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-> index eea56687cd0a..4ecb9acb2641 100644
-> --- a/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-> +++ b/drivers/reset/reset-rzg2l-usbphy-ctrl.c
-> @@ -158,8 +158,8 @@ static int rzg2l_usbphy_ctrl_pwrrdy_init(struct device *dev)
->  	field.msb = __fls(args[1]);
+> diff --git a/drivers/rtc/rtc-renesas-rtca3.c b/drivers/rtc/rtc-renesas-rtca3.c
+> index ab816bdf0d77..a238ead6cf1a 100644
+> --- a/drivers/rtc/rtc-renesas-rtca3.c
+> +++ b/drivers/rtc/rtc-renesas-rtca3.c
+> @@ -772,7 +772,6 @@ static int rtca3_probe(struct platform_device *pdev)
+>  		return PTR_ERR(priv->rtc_dev);
 >  
->  	pwrrdy = devm_regmap_field_alloc(dev, regmap, field);
-> -	if (!pwrrdy)
-> -		return -ENOMEM;
-> +	if (IS_ERR(pwrrdy))
-> +		return PTR_ERR(pwrrdy);
+>  	priv->rtc_dev->ops = &rtca3_ops;
+> -	priv->rtc_dev->max_user_freq = 256;
+>  	priv->rtc_dev->range_min = RTC_TIMESTAMP_BEGIN_2000;
+>  	priv->rtc_dev->range_max = RTC_TIMESTAMP_END_2099;
 >  
->  	rzg2l_usbphy_ctrl_set_pwrrdy(pwrrdy, true);
->  
+> 
 
 
