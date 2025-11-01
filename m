@@ -1,132 +1,144 @@
-Return-Path: <linux-kernel+bounces-881411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEB0AC28264
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 17:21:33 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 173E5C2825E
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 17:20:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CF973AECAD
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 16:18:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 435444E94CB
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 16:19:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421C02253B0;
-	Sat,  1 Nov 2025 16:18:06 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCB0416DEB1;
+	Sat,  1 Nov 2025 16:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vh63XGtJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494DD34D396
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 16:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315741DF248
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 16:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762013885; cv=none; b=OG5LbAG3Ldxxd3uzjlkLmx8qcx644GFrxl+SoACxLnd4+6kvONyuV+BroPta9n1eCUaARosaMAE2eKJUKIK6hypK+3zTCdoSUnf29wIiA5cl8CBnBWHS27Kytx99Lh8UOfKm/M1H0YjC2nsVgnrlgzV4WNqyqvyjfc+vNehb2qU=
+	t=1762013957; cv=none; b=TsLygwXmoIZCexRHjBw91Hmn32FGuQ6rJlv3k4xwk23bbB4HKRyx0xwBClb3JpUyuqG4EMe6SpNt5WBzeVra6OxWmk073Hau6lNPBKKnCwyS9g7a8Jz9VZEhJxNEXHg9XzAmPVIpPlnHQsjArYB3rTFhE0bjrzQtcRd/Tjd/2KI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762013885; c=relaxed/simple;
-	bh=XSm3vC2ez/AEyBB2DTeOKkGbpZYTNfhdf4JmzWztjVI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=q7q9z8qh4HkcX+2wjGjyBr3/QJDr8bWI8XVawK+zBiaXmkSU5/0/GG+haFu/axNsXcmytAZe6PWfYGbK/spOq/Y2OofAiIHsIL1u7WjNFwPrqNkRS8yafWZpGRYdp9GiRVj3WNgjJJKnxLKCFd85QdSs1N8IIgHCcBY8D8JTqeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-9483f60a7adso29370139f.3
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 09:18:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762013883; x=1762618683;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IKG7IWuIMo2y1Jyaaa7H2mRRBpXwYBQJcngycYZ1wvE=;
-        b=BgUK4ZcGvNmxjPSOunsJXCc4qCnq6UHY9BV3nE98h9ITA3bVs3CFy+wHnoGtpjpTt/
-         A9PPtdTxLUW8xKDeBYzCwpBGgAP120jNjw6DDuIQa8wjcYQX+sgTbJfv19zcMXwzgKlY
-         Fp6fp2FdjX6GdxOdFsafg7D3QafeM6KT4a/gAti95yzVGoxRLvbnmtvN3bGxjcrW1YSM
-         vIpz+GieyzdxOCamoGmxIkwi0QMZYfyX9tGfGO0C8mjMML+uNU2QW9qZ2rWx2KpYlhPR
-         zdLJOmNYBDhyCSXigytCytcqq3OQ+V+aD4IS79qUzLDotuK4E5UuEoZ2Fud5MVlpy6T7
-         HqQg==
-X-Gm-Message-State: AOJu0YzEuIGTU41afPifb3jRC/tCS0VyuzQJ2nVUVn/v0JxPsuLJ+cNT
-	12+6zIqB0H6R+j7J38IyJiMmnClmTl0fPqZJvOKrfDU5dXhfI27Tetlrnwu9GPBF3QaWjIAbuhV
-	a2nPtm6/vzsvEVg080shjAdmsJ6rEKlFikXk9oHm6LSTMLMC6ZzN6KWVohK8=
-X-Google-Smtp-Source: AGHT+IGssXTfkIPCFTKLE5Zzdy1LArvxmvRJbOW9XQAntxAzLu1PKhvuNvqlRb2P9pqzgBbpxum93YC2UdIwpUHeYzdmdrKoX7OR
+	s=arc-20240116; t=1762013957; c=relaxed/simple;
+	bh=4TPxhbXjzZ5GG6UNvfKKPlLuJTj8WK/2rvCLzu+vicg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=nBwgzutAYrZVdX6R/7WYDmnfZybvMgJn16BPPUOXdowdlYUY0y6EWBHOyDwgOcdjvW9C26Sz+J5wc/Q0kVJXjO4302ocTbBlzQvIb4K7uJifVpGQsU+kL6BYlGzuPp79jgnkxHCB7vQNDkYJpGsuqISp3CmGyxUjTiqvePjHqt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vh63XGtJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F383AC4CEF1;
+	Sat,  1 Nov 2025 16:19:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762013956;
+	bh=4TPxhbXjzZ5GG6UNvfKKPlLuJTj8WK/2rvCLzu+vicg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Vh63XGtJpo1jCoN/pe2xmRa9WCq9xNXsgmiE8FJmQ5BvrDRJnNXqlcZTnBa5Q9UY7
+	 v5gb0MtiZ0hdqyIRDI8CVa4pfWbNJUWypfFEH9mn+5C+r23C17gHgSb8obmmg0dAeU
+	 AKR/STrr70f0MnkUGjBaUYYRwmmDbyhcmnMlKWsNn4k4xJKTb4Q/hys2xhLTt2Pe0g
+	 dV9P/pra5hib2pmt6C8Gj0xRQnlGFNs7Ks312DQZUIveoiM7PMdloBfa4oN8sKIgaJ
+	 K/HPFH1CnjBMGxoJiI2O5hkLW/qp+niyoRcaupa9Pz0r2TFI0pjGaDcYU09itDSmHV
+	 Agkf71b7FFubw==
+Date: Sat, 1 Nov 2025 13:19:13 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Babu Moger <babu.moger@amd.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Nikunj A Dadhania <nikunj@amd.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Sean Christopherson <seanjc@google.com>, Xin Li <xin@zytor.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ian Rogers <irogers@google.com>,
+	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>
+Subject: [PATCH 1/1] tools headers x86 cpufeatures: Sync with the kernel
+ sources
+Message-ID: <aQYzAdKEjNo_M0OZ@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:461a:b0:433:24c4:7697 with SMTP id
- e9e14a558f8ab-43324c47965mr14908785ab.21.1762013883399; Sat, 01 Nov 2025
- 09:18:03 -0700 (PDT)
-Date: Sat, 01 Nov 2025 09:18:03 -0700
-In-Reply-To: <20251101153157.837686-1-m@maowtm.org>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690632bb.050a0220.29fc44.0005.GAE@google.com>
-Subject: Re: [syzbot] [fs?] BUG: sleeping function called from invalid context
- in hook_sb_delete
-From: syzbot <syzbot+12479ae15958fc3f54ec@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, m@maowtm.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hello,
+tldr; Just FYI, I'm carrying this on the perf tools tree.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in get_data
+Full explanation:
 
-Bluetooth: hci0: unexpected cc 0x0c03 length: 249 > 1
-Bluetooth: hci0: unexpected cc 0x1003 length: 249 > 9
-------------[ cut here ]------------
-WARNING: kernel/printk/printk_ringbuffer.c:1278 at get_data+0x48a/0x840 kernel/printk/printk_ringbuffer.c:1278, CPU#1: kworker/u9:1/5147
-Modules linked in:
-CPU: 1 UID: 0 PID: 5147 Comm: kworker/u9:1 Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-Workqueue: hci0 hci_rx_work
-RIP: 0010:get_data+0x48a/0x840 kernel/printk/printk_ringbuffer.c:1278
-Code: 83 c4 f8 48 b8 00 00 00 00 00 fc ff df 41 0f b6 04 07 84 c0 0f 85 ee 01 00 00 44 89 65 00 49 83 c5 08 eb 13 e8 b7 d6 1e 00 90 <0f> 0b 90 eb 05 e8 ac d6 1e 00 45 31 ed 4c 89 e8 48 83 c4 28 5b 41
-RSP: 0018:ffffc9000ed9eec0 EFLAGS: 00010293
-RAX: ffffffff81a1ef09 RBX: 00003fffffffffff RCX: ffff888035008000
-RDX: 0000000000000000 RSI: 00003fffffffffff RDI: 0000000000000000
-RBP: 0000000000000012 R08: 0000000000000ea9 R09: 0000005832e2457e
-R10: 0000005832e2457e R11: 0000141b82000035 R12: 0000000000000012
-R13: 0000000000000000 R14: ffffc9000ed9f008 R15: 1ffffffff1c0ab06
-FS:  0000000000000000(0000) GS:ffff888125dd3000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffea26700c0 CR3: 0000000075b8a000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- copy_data kernel/printk/printk_ringbuffer.c:1857 [inline]
- prb_read kernel/printk/printk_ringbuffer.c:1966 [inline]
- _prb_read_valid+0x672/0xa90 kernel/printk/printk_ringbuffer.c:2143
- prb_read_valid+0x3c/0x60 kernel/printk/printk_ringbuffer.c:2215
- printk_get_next_message+0x15c/0x7b0 kernel/printk/printk.c:2978
- console_emit_next_record kernel/printk/printk.c:3062 [inline]
- console_flush_one_record kernel/printk/printk.c:3194 [inline]
- console_flush_all+0x4cc/0xb10 kernel/printk/printk.c:3268
- __console_flush_and_unlock kernel/printk/printk.c:3298 [inline]
- console_unlock+0xbb/0x190 kernel/printk/printk.c:3338
- vprintk_emit+0x4c5/0x590 kernel/printk/printk.c:2423
- _printk+0xcf/0x120 kernel/printk/printk.c:2448
- bt_warn+0x10b/0x160 net/bluetooth/lib.c:276
- hci_cc_func net/bluetooth/hci_event.c:4192 [inline]
- hci_cmd_complete_evt+0x493/0xa80 net/bluetooth/hci_event.c:4216
- hci_event_func net/bluetooth/hci_event.c:7629 [inline]
- hci_event_packet+0x78f/0x1260 net/bluetooth/hci_event.c:7686
- hci_rx_work+0x45d/0xfc0 net/bluetooth/hci_core.c:4099
- process_one_work+0x94a/0x15d0 kernel/workqueue.c:3267
- process_scheduled_works kernel/workqueue.c:3350 [inline]
- worker_thread+0x9b0/0xee0 kernel/workqueue.c:3431
- kthread+0x711/0x8a0 kernel/kthread.c:463
- ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+There used to be no copies, with tools/ code using kernel headers
+directly. From time to time tools/perf/ broke due to legitimate kernel
+hacking. At some point Linus complained about such direct usage. Then we
+adopted the current model.
 
+See further details at:
 
-Tested on:
+ https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/include/uapi/README
 
-commit:         98bd8b16 Add linux-next specific files for 20251031
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=12a8e32f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=90be0b22166ec0b9
-dashboard link: https://syzkaller.appspot.com/bug?extid=12479ae15958fc3f54ec
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1430e32f980000
+To pick the changes from:
+
+  e19c06219985f2be ("x86/cpufeatures: Add support for Assignable Bandwidth Monitoring Counters (ABMC)")
+  7b59c73fd611eae8 ("x86/cpufeatures: Add SNP Secure TSC")
+  3c7cb84145336721 ("x86/cpufeatures: Add a CPU feature bit for MSR immediate form instructions")
+  2f8f173413f1cbf5 ("x86/vmscape: Add conditional IBPB mitigation")
+  a508cec6e5215a3f ("x86/vmscape: Enumerate VMSCAPE bug")
+
+This causes these perf files to be rebuilt and brings some X86_FEATURE
+that may be used by:
+
+      CC       /tmp/build/perf/bench/mem-memcpy-x86-64-asm.o
+      CC       /tmp/build/perf/bench/mem-memset-x86-64-asm.o
+
+And addresses this perf build warning:
+
+  Warning: Kernel ABI header differences:
+    diff -u tools/arch/x86/include/asm/cpufeatures.h arch/x86/include/asm/cpufeatures.h
+
+Please see tools/include/uapi/README for further details.
+
+Cc: Babu Moger <babu.moger@amd.com>
+Cc: Borislav Petkov (AMD) <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Nikunj A Dadhania <nikunj@amd.com>
+Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Sean Christopherson <seanjc@google.com>
+Cc: Xin Li <xin@zytor.com>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/arch/x86/include/asm/cpufeatures.h | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/tools/arch/x86/include/asm/cpufeatures.h b/tools/arch/x86/include/asm/cpufeatures.h
+index 06fc0479a23f01e5..4091a776e37aaed6 100644
+--- a/tools/arch/x86/include/asm/cpufeatures.h
++++ b/tools/arch/x86/include/asm/cpufeatures.h
+@@ -444,6 +444,7 @@
+ #define X86_FEATURE_VM_PAGE_FLUSH	(19*32+ 2) /* VM Page Flush MSR is supported */
+ #define X86_FEATURE_SEV_ES		(19*32+ 3) /* "sev_es" Secure Encrypted Virtualization - Encrypted State */
+ #define X86_FEATURE_SEV_SNP		(19*32+ 4) /* "sev_snp" Secure Encrypted Virtualization - Secure Nested Paging */
++#define X86_FEATURE_SNP_SECURE_TSC	(19*32+ 8) /* SEV-SNP Secure TSC */
+ #define X86_FEATURE_V_TSC_AUX		(19*32+ 9) /* Virtual TSC_AUX */
+ #define X86_FEATURE_SME_COHERENT	(19*32+10) /* hardware-enforced cache coherency */
+ #define X86_FEATURE_DEBUG_SWAP		(19*32+14) /* "debug_swap" SEV-ES full debug state swap support */
+@@ -495,6 +496,9 @@
+ #define X86_FEATURE_TSA_SQ_NO		(21*32+11) /* AMD CPU not vulnerable to TSA-SQ */
+ #define X86_FEATURE_TSA_L1_NO		(21*32+12) /* AMD CPU not vulnerable to TSA-L1 */
+ #define X86_FEATURE_CLEAR_CPU_BUF_VM	(21*32+13) /* Clear CPU buffers using VERW before VMRUN */
++#define X86_FEATURE_IBPB_EXIT_TO_USER	(21*32+14) /* Use IBPB on exit-to-userspace, see VMSCAPE bug */
++#define X86_FEATURE_ABMC		(21*32+15) /* Assignable Bandwidth Monitoring Counters */
++#define X86_FEATURE_MSR_IMM		(21*32+16) /* MSR immediate form instructions */
+ 
+ /*
+  * BUG word(s)
+@@ -551,4 +555,5 @@
+ #define X86_BUG_ITS			X86_BUG( 1*32+ 7) /* "its" CPU is affected by Indirect Target Selection */
+ #define X86_BUG_ITS_NATIVE_ONLY		X86_BUG( 1*32+ 8) /* "its_native_only" CPU is affected by ITS, VMX is not affected */
+ #define X86_BUG_TSA			X86_BUG( 1*32+ 9) /* "tsa" CPU is affected by Transient Scheduler Attacks */
++#define X86_BUG_VMSCAPE			X86_BUG( 1*32+10) /* "vmscape" CPU is affected by VMSCAPE attacks from guests */
+ #endif /* _ASM_X86_CPUFEATURES_H */
+-- 
+2.51.0
 
 
