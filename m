@@ -1,417 +1,120 @@
-Return-Path: <linux-kernel+bounces-881027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A087FC273DA
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 01:02:05 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB4C0C273E3
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 01:03:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E11E44E7DA1
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 00:01:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1767A4E7B2D
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 00:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77FEC8C1F;
-	Sat,  1 Nov 2025 00:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365341B808;
+	Sat,  1 Nov 2025 00:03:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dJic4WAl"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G2qFSOC7"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE60C2566
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 00:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F1AA8460
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 00:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761955267; cv=none; b=Ni9tUr0eWG7kkouGSN5sVhj2JLVvxVoW0SHvuKUGQr5xpqBRaP4bYiwqvra0Kd4JZDKCqGhCqEIakUIs7M+0BgP13FhxotoxxYy/YFJd/q3BMwZbA6zN7G4AN+YLAPksH2jOeBJodJ84ZkNNiithrjURJJP1AaOAuwcw1fgGgoo=
+	t=1761955384; cv=none; b=hMoJFtZ7RwEl2zapKxgw76e5tC0g1+HFHVvJ4gFNEW4QA8XDd5LLgyouR3oMIpbEFsadL19i9NlY3vP26aqBpyjFFhe4ISx4Kgs3AoiFM67b6ltQ8Upu+L3SMjGW3eHSWW8K5BN8RkdwUA/6ax+UvS6lNdcV7DNkFr3FvhZGDYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761955267; c=relaxed/simple;
-	bh=xz6Huae52+zjZSFtZZ1TJEXOgb6jwELyBu5h7d3nmeo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JE1QashQ+imLxCn0/a0H3k0fnjrGHnXxFlE41h/CvvPl0XAuLTtYOXOFX53C3AKzudZ2JD0ASfdvjEKPc24zCz8Xwopj8jgwuIN50mCHkRqX9Ifr8EPbZQs2lhNq6IsM0qpMFqT1NrhSK1sxdB4dFUIyAHWwNTvhwC7YnhT2Ib8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dJic4WAl; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=wJBWqGhCLnUh6VL+1eyRUTUHV9N2HpITphi3s8ups4k=; b=dJic4WAlm9fOUnTaMLlbRD5uBk
-	tAYuVRnrFl9xE2APFhnynw6d6FmllChUazCuP8fqYu5AtdeVQ4+82bdD+Fv9kocLO/f7Y2gS5nu+A
-	xT+R8NMc3jh/w6NRIVaphv3kcXW1hZFtzkGpNjwGvOxb2K4EsmW93DzKlkfsscoh5rUumxZrrV7V7
-	Mh4LWG/8wfVmHbGHXf2E3LmFsfF3w6yF9jV+knC6aBi2XwtUpL8oIN+aKu4c2xl7tUp/sXcMz1Xit
-	ZpPZMbeB6oNtYRhh5inbM3U41M/U6+BMiY+0HJnnsE1b72HW9ZFOjJii4qqOasDfYfPREI/wWdsoy
-	JniFDWxA==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vEz3B-0000000Bz81-3y3j;
-	Sat, 01 Nov 2025 00:00:59 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id AB3F5300289; Sat, 01 Nov 2025 01:00:57 +0100 (CET)
-Date: Sat, 1 Nov 2025 01:00:57 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Clark Williams <williams@redhat.com>, arighi@nvidia.com
-Subject: Re: [RFC PATCH] sched/deadline: Avoid dl_server boosting with
- expired deadline
-Message-ID: <20251101000057.GA2184199@noisy.programming.kicks-ass.net>
-References: <20251014193300.GA1206438@noisy.programming.kicks-ass.net>
- <aO8zwouX6qIaf-U-@jlelli-thinkpadt14gen4.remote.csb>
- <20251020141130.GJ3245006@noisy.programming.kicks-ass.net>
- <8dc29e28a4d87954378ef1d989e0374526b44723.camel@redhat.com>
- <20251030184205.GB2989771@noisy.programming.kicks-ass.net>
- <20251031130543.GV4068168@noisy.programming.kicks-ass.net>
- <1f2ad071e59db2ed8bc0b382ae202b7474d07afc.camel@redhat.com>
- <20251031152005.GT3245006@noisy.programming.kicks-ass.net>
- <2daa2e6217eeaa239616303626c0d73d808ae947.camel@redhat.com>
- <20251031154455.GU3245006@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1761955384; c=relaxed/simple;
+	bh=6B5ADNO6b+I1304veLGc80oNx2ETfK4pQRdC0pLmZ+Y=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=KTPnayCOqfw6pO4/BlyXj+E6NTYa5fMh5j9kuR3HTerWr1/agmr1A4SmBw+Y2R1pu9lDokkB/4g7fVT16OTYIDGQfTwyLoPncfz61EPwQ+qa+Mda0U19+3o3xdR4pVxNua8GZwtqEBQrR4g0NrbSOw7ovnaN8gZbBVt7tobD0IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G2qFSOC7; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3307af9b55eso2141657a91.2
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 17:03:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1761955382; x=1762560182; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Vsa9BLl4UP9MQX24fXJz57VqPDYmKwpeFV0rHWUJWjE=;
+        b=G2qFSOC7hnOC1uAv0lpJoJnu0mlkc4I/eKEYXYjYFyve9AuaTVoaSTlNKt0VcrK1hv
+         bdc4CdBA+XWwUSu7IiKvg7641mlED1XN/TeYppKQ0Ja9OZ0f+Pf6COqXlazeUdQl+moE
+         sUo1mOH3thn9/GFswS0rLC3F6CBjAS/NWTMTKwki1pkl8jIXZi7xhJI82vhhhBIRLZvw
+         uyYhntO+e4bwX43TvW1ICMUHNclRiAln7mVnRkCMGM4TIaMlhee+j1CyS8lqKvUuByj8
+         kXzmyyyax1pRT9FXWhcUO+BW5elGygErDqBcGpXjpNwZ2akEuoXv+R1BGVbtSZziSJ7O
+         jDlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761955382; x=1762560182;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Vsa9BLl4UP9MQX24fXJz57VqPDYmKwpeFV0rHWUJWjE=;
+        b=bHK0fw+zKpYibCgRgl36pW7ors1W+2dOA8c1ZvsW7LOkN6SusDGZKJBoQ6w+qsBUZE
+         uHlVFwN3h4AofH4RzbgV9GQPLnzMW0oufP4+XKNrUtPZTyOWpCPKoIFKUzvj/Uf+MjMu
+         slJyTrgpBJS6DvMazIH0HICYhiOl5RcIsT0+hbCPWC8CbcciH1MTULUFQUrxwTap5zq/
+         p325lkiOV7zvDw27mIhFnaETTbAVG7Ooc+2vhRF2P5fDbbWpXcVCnku3wRFRYU0Umnjt
+         uvbMX9RJmKfgFqzH8cSNlwgiqbQumhJN2Sqp4iWkz8h+Lrqy29jP/NRbkUvegc+NbMxv
+         55zA==
+X-Forwarded-Encrypted: i=1; AJvYcCXyUo+zXxJPwgVLkj8Z5f+OT/zjuGxY118LlmqfB+Ko7894nVVuYIOKUUf+CmiylCE/skOxshdw9D+Qj/Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLMiqso7FPxVzste5R+0UGkIh6PCY6RWcbpO2ip1dIJcHbUY8v
+	Tqja40CyPRxUCPQVg6qvGnaWnP8SEAyU1w9zQwRJofv5GYmSlG42WJZIEBrbvDo804bBCigELmV
+	/FVvNgPe1WxkPgg==
+X-Google-Smtp-Source: AGHT+IFGS4KHFxDjDA6q9T2d8R7JKao2hxEA3pruFKNUwFkxPAWOw+0Hgh7uYwWFyeqdISipHxL9HRKSd6Yrag==
+X-Received: from plbmi11.prod.google.com ([2002:a17:902:fccb:b0:295:445a:2a75])
+ (user=jmattson job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:903:22c2:b0:295:fc0:5a32 with SMTP id d9443c01a7336-2951a36c311mr67301915ad.3.1761955382518;
+ Fri, 31 Oct 2025 17:03:02 -0700 (PDT)
+Date: Fri, 31 Oct 2025 17:02:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251031154455.GU3245006@noisy.programming.kicks-ass.net>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.2.1006.ga50a493c49-goog
+Message-ID: <20251101000241.3764458-1-jmattson@google.com>
+Subject: [PATCH] KVM: x86: SVM: Mark VMCB_LBR dirty when L1 sets DebugCtl[LBR]
+From: Jim Mattson <jmattson@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Maxim Levitsky <mlevitsk@redhat.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Cc: Jim Mattson <jmattson@google.com>, Matteo Rizzo <matteorizzo@google.com>, evn@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Oct 31, 2025 at 04:44:55PM +0100, Peter Zijlstra wrote:
+With the VMCB's LBR_VIRTUALIZATION_ENABLE bit set, the CPU will load
+the DebugCtl MSR from the VMCB's DBGCTL field at VMRUN. To ensure that
+it does not load a stale cached value, clear the VMCB's LBR clean bit
+when L1 is running and bit 0 (LBR) of the DBGCTL field is changed from
+0 to 1. (Note that this is already handled correctly when L2 is
+running.)
 
-> Anyway, back to noodling on how to make it stop on idle :-)
+There is no need to clear the clean bit in the other direction,
+because when the VMCB's DBGCTL.LBR is 0, the VMCB's
+LBR_VIRTUALIZATION_ENABLE bit will be clear, and the CPU will not
+consult the VMCB's DBGCTL field at VMRUN.
 
-This seems to behave (at least, it did before the cleanup). 
-
-It has the fancy comment, ascii-art and everything. Hopefully we'll all
-get less confused when looking at this in the future.
-
+Fixes: 1d5a1b5860ed ("KVM: x86: nSVM: correctly virtualize LBR msrs when L2 is running")
+Reported-by: Matteo Rizzo <matteorizzo@google.com>
+Reported-by: evn@google.com
+Signed-off-by: Jim Mattson <jmattson@google.com>
 ---
- include/linux/sched.h   |   15 +--
- kernel/sched/deadline.c |  233 +++++++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 240 insertions(+), 8 deletions(-)
+ arch/x86/kvm/svm/svm.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -685,20 +685,22 @@ struct sched_dl_entity {
- 	 *
- 	 * @dl_server tells if this is a server entity.
- 	 *
--	 * @dl_defer tells if this is a deferred or regular server. For
--	 * now only defer server exists.
--	 *
--	 * @dl_defer_armed tells if the deferrable server is waiting
--	 * for the replenishment timer to activate it.
--	 *
- 	 * @dl_server_active tells if the dlserver is active(started).
- 	 * dlserver is started on first cfs enqueue on an idle runqueue
- 	 * and is stopped when a dequeue results in 0 cfs tasks on the
- 	 * runqueue. In other words, dlserver is active only when cpu's
- 	 * runqueue has atleast one cfs task.
- 	 *
-+	 * @dl_defer tells if this is a deferred or regular server. For
-+	 * now only defer server exists.
-+	 *
-+	 * @dl_defer_armed tells if the deferrable server is waiting
-+	 * for the replenishment timer to activate it.
-+	 *
- 	 * @dl_defer_running tells if the deferrable server is actually
- 	 * running, skipping the defer phase.
-+	 *
-+	 * @dl_defer_idle tracks idle state
- 	 */
- 	unsigned int			dl_throttled      : 1;
- 	unsigned int			dl_yielded        : 1;
-@@ -709,6 +711,7 @@ struct sched_dl_entity {
- 	unsigned int			dl_defer	  : 1;
- 	unsigned int			dl_defer_armed	  : 1;
- 	unsigned int			dl_defer_running  : 1;
-+	unsigned int			dl_defer_idle     : 1;
- 
- 	/*
- 	 * Bandwidth enforcement timer. Each -deadline task has its
---- a/kernel/sched/deadline.c
-+++ b/kernel/sched/deadline.c
-@@ -1173,6 +1173,11 @@ static enum hrtimer_restart dl_server_ti
- 		 */
- 		rq->curr->sched_class->update_curr(rq);
- 
-+		if (dl_se->dl_defer_idle) {
-+			dl_server_stop(dl_se);
-+			return HRTIMER_NORESTART;
-+		}
-+
- 		if (dl_se->dl_defer_armed) {
- 			/*
- 			 * First check if the server could consume runtime in background.
-@@ -1420,10 +1425,11 @@ s64 dl_scaled_delta_exec(struct rq *rq,
+diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+index 153c12dbf3eb..b4e5a0684f57 100644
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -816,6 +816,8 @@ void svm_enable_lbrv(struct kvm_vcpu *vcpu)
+ 	/* Move the LBR msrs to the vmcb02 so that the guest can see them. */
+ 	if (is_guest_mode(vcpu))
+ 		svm_copy_lbrs(svm->vmcb, svm->vmcb01.ptr);
++	else
++		vmcb_mark_dirty(svm->vmcb, VMCB_LBR);
  }
  
- static inline void
--update_stats_dequeue_dl(struct dl_rq *dl_rq, struct sched_dl_entity *dl_se,
--			int flags);
-+update_stats_dequeue_dl(struct dl_rq *dl_rq, struct sched_dl_entity *dl_se, int flags);
-+
- static void update_curr_dl_se(struct rq *rq, struct sched_dl_entity *dl_se, s64 delta_exec)
- {
-+	bool idle = rq->curr == rq->idle;
- 	s64 scaled_delta_exec;
- 
- 	if (unlikely(delta_exec <= 0)) {
-@@ -1444,6 +1450,9 @@ static void update_curr_dl_se(struct rq
- 
- 	dl_se->runtime -= scaled_delta_exec;
- 
-+	if (dl_se->dl_defer_idle && !idle)
-+		dl_se->dl_defer_idle = 0;
-+
- 	/*
- 	 * The fair server can consume its runtime while throttled (not queued/
- 	 * running as regular CFS).
-@@ -1454,6 +1463,29 @@ static void update_curr_dl_se(struct rq
- 	 */
- 	if (dl_se->dl_defer && dl_se->dl_throttled && dl_runtime_exceeded(dl_se)) {
- 		/*
-+		 * Non-servers would never get time accounted while throttled.
-+		 */
-+		WARN_ON_ONCE(!dl_server(dl_se));
-+
-+		/*
-+		 * While the server is marked idle, do not push out the
-+		 * activation further, instead wait for the period timer
-+		 * to lapse and stop the server.
-+		 */
-+		if (dl_se->dl_defer_idle && idle) {
-+			/*
-+			 * The timer is at the zero-laxity point, this means
-+			 * dl_server_stop() / dl_server_start() can happen
-+			 * while now < deadline. This means update_dl_entity()
-+			 * will not replenish. Additionally start_dl_timer()
-+			 * will be set for 'deadline - runtime'. Negative
-+			 * runtime will not do.
-+			 */
-+			dl_se->runtime = 0;
-+			return;
-+		}
-+
-+		/*
- 		 * If the server was previously activated - the starving condition
- 		 * took place, it this point it went away because the fair scheduler
- 		 * was able to get runtime in background. So return to the initial
-@@ -1465,6 +1497,9 @@ static void update_curr_dl_se(struct rq
- 
- 		replenish_dl_new_period(dl_se, dl_se->rq);
- 
-+		if (idle)
-+			dl_se->dl_defer_idle = 1;
-+
- 		/*
- 		 * Not being able to start the timer seems problematic. If it could not
- 		 * be started for whatever reason, we need to "unthrottle" the DL server
-@@ -1560,6 +1595,199 @@ void dl_server_update(struct sched_dl_en
- 		update_curr_dl_se(dl_se->rq, dl_se, delta_exec);
- }
- 
-+/*
-+ * dl_server && dl_defer:
-+ *
-+ *                                        6
-+ *                            +--------------------+
-+ *                            v                    |
-+ *     +-------------+  4   +-----------+  5     +------------------+
-+ * +-> |   A:init    | <--- | D:running | -----> | E:replenish-wait |
-+ * |   +-------------+      +-----------+        +------------------+
-+ * |     |         |    1     ^    ^               |
-+ * |     | 1       +----------+    | 3             |
-+ * |     v                         |               |
-+ * |   +--------------------------------+   2      |
-+ * |   |                                | ----+    |
-+ * | 8 |       B:zero_laxity-wait       |     |    |
-+ * |   |                                | <---+    |
-+ * |   +--------------------------------+          |
-+ * |     |              ^     ^           2        |
-+ * |     | 7            | 2   +--------------------+
-+ * |     v              |
-+ * |   +-------------+  |
-+ * +-- | C:idle-wait | -+
-+ *     +-------------+
-+ *       ^ 7       |
-+ *       +---------+
-+ *
-+ *
-+ * [A] - init
-+ *   dl_server_active = 0
-+ *   dl_throttled = 0
-+ *   dl_defer_armed = 0
-+ *   dl_defer_running = 0/1
-+ *   dl_defer_idle = 0
-+ *
-+ * [B] - zero_laxity-wait
-+ *   dl_server_active = 1
-+ *   dl_throttled = 1
-+ *   dl_defer_armed = 1
-+ *   dl_defer_running = 0
-+ *   dl_defer_idle = 0
-+ *
-+ * [C] - idle-wait
-+ *   dl_server_active = 1
-+ *   dl_throttled = 1
-+ *   dl_defer_armed = 1
-+ *   dl_defer_running = 0
-+ *   dl_defer_idle = 1
-+ *
-+ * [D] - running
-+ *   dl_server_active = 1
-+ *   dl_throttled = 0
-+ *   dl_defer_armed = 0
-+ *   dl_defer_running = 1
-+ *   dl_defer_idle = 0
-+ *
-+ * [E] - replenish-wait
-+ *   dl_server_active = 1
-+ *   dl_throttled = 1
-+ *   dl_defer_armed = 0
-+ *   dl_defer_running = 1
-+ *   dl_defer_idle = 0
-+ *
-+ *
-+ * [1] A->B, A->D
-+ * dl_server_start()
-+ *   dl_server_active = 1;
-+ *   enqueue_dl_entity()
-+ *     update_dl_entity(WAKEUP)
-+ *       if (!dl_defer_running)
-+ *         dl_defer_armed = 1;
-+ *         dl_throttled = 1;
-+ *     if (dl_throttled && start_dl_timer())
-+ *       return;
-+ *       // start server into waiting for zero-laxity
-+ *     __enqueue_dl_entity();
-+ *     // start running
-+ *
-+ * // deplete server runtime from client-class
-+ * [2] B->B, C->B, E->B
-+ * dl_server_update()
-+ *   update_curr_dl_se()
-+ *     if (dl_defer_idle)
-+ *       dl_defer_idle = 0;
-+ *     if (dl_defer && dl_throttled && dl_runtime_exceeded())
-+ *       dl_defer_running = 0;
-+ *       hrtimer_try_to_cancel();   // stop timer
-+ *       replenish_dl_new_period()
-+ *         // fwd period
-+ *         dl_throttled = 1;
-+ *         dl_defer_armed = 1;
-+ *       start_dl_timer();        // restart timer
-+ *       // back into waiting for zero-laxity
-+ *
-+ * // timer actually fires means we have runtime
-+ * [3] B->D
-+ * dl_server_timer()
-+ *   if (dl_defer_armed)
-+ *     dl_defer_running = 1;
-+ *   enqueue_dl_entity(REPLENISH)
-+ *     replenish_dl_entity()
-+ *       // fwd period
-+ *       if (dl_throttled)
-+ *         dl_throttled = 0;
-+ *       if (dl_defer_armed)
-+ *         dl_defer_armed = 0;
-+ *     __enqueue_dl_entity();
-+ *     // goto [4]
-+ *
-+ * // schedule server
-+ * [4] D->A
-+ * pick_task_dl()
-+ *   p = server_pick_task();
-+ *   if (!p)
-+ *     dl_server_stop()
-+ *       dequeue_dl_entity();
-+ *       hrtimer_try_to_cancel();
-+ *       dl_defer_armed = 0;
-+ *       dl_throttled = 0;
-+ *       dl_server_active = 0;
-+ *       // goto [1]
-+ *   return p;
-+ *
-+ * // server running
-+ * [5] D->E
-+ * update_curr_dl_se()
-+ *   if (dl_runtime_exceeded())
-+ *     dl_throttled = 1;
-+ *     dequeue_dl_entity();
-+ *     start_dl_timer();
-+ *     // replenish-timer
-+ *
-+ * // server exchausted
-+ * [6] E->D
-+ * dl_server_timer()
-+ *   enqueue_dl_entity(REPLENISH)
-+ *     replenish_dl_entity()
-+ *       fwd-period
-+ *       if (dl_throttled)
-+ *         dl_throttled = 0;
-+ *     __enqueue_dl_entity();
-+ *     // goto [4]
-+ *
-+ * // deplete server runtime from idle
-+ * [7] B->C, C->C
-+ * dl_server_update_idle()
-+ *   update_curr_dl_se()
-+ *     if (dl_defer && dl_throttled && dl_runtime_exceeded())
-+ *       if (dl_defer_idle)
-+ *         return;
-+ *       dl_defer_running = 0;
-+ *       hrtimer_try_to_cancel();
-+ *       replenish_dl_new_period()
-+ *         // fwd period
-+ *         dl_throttled = 1;
-+ *         dl_defer_armed = 1;
-+ *       dl_defer_idle = 1;
-+ *       start_dl_timer();        // restart timer
-+ *
-+ * // stop idle server
-+ * [8] C->A
-+ * dl_server_timer()
-+ *   if (dl_defer_idle)
-+ *     dl_server_stop();
-+ *
-+ *
-+ * digraph dl_server {
-+ *   "A:init" -> "B:zero_laxity-wait"             [label="1:dl_server_start"]
-+ *   "A:init" -> "D:running"                      [label="1:dl_server_start"]
-+ *   "B:zero_laxity-wait" -> "B:zero_laxity-wait" [label="2:dl_server_update"]
-+ *   "B:zero_laxity-wait" -> "C:idle-wait"        [label="7:dl_server_update_idle"]
-+ *   "B:zero_laxity-wait" -> "D:running"          [label="3:dl_server_timer"]
-+ *   "C:idle-wait" -> "C:idle-wait"               [label="7:dl_server_update_idle"]
-+ *   "C:idle-wait" -> "B:zero_laxity-wait"        [label="2:dl_server_update"]
-+ *   "C:idle-wait" -> "A:init"                    [label="8:dl_server_timer"]
-+ *   "D:running" -> "A:init"                      [label="4:pick_task_dl"]
-+ *   "D:running" -> "E:replenish-wait"            [label="5:update_curr_dl_se"]
-+ *   "E:replenish-wait" -> "B:zero_laxity-wait"   [label="2:dl_server_update"]
-+ *   "E:replenish-wait" -> "D:running"            [label="6:dl_server_timer"]
-+ * }
-+ *
-+ *
-+ * Notes:
-+ *
-+ *  - When there are fair tasks running the most likely loop is [2]->[2].
-+ *    the dl_server never actually runs, the timer never fires.
-+ *
-+ *  - When there is actual fair starvation; the timer fires and starts the
-+ *    dl_server. This will then throttle and replenish like a normal DL
-+ *    task. Notably it will not 'defer' again.
-+ *
-+ *  - When idle it will push the activation forward once, and then wait
-+ *    for the timer to hit or a non-idle update to restart things.
-+ */
- void dl_server_start(struct sched_dl_entity *dl_se)
- {
- 	struct rq *rq = dl_se->rq;
-@@ -1590,6 +1818,7 @@ void dl_server_stop(struct sched_dl_enti
- 	hrtimer_try_to_cancel(&dl_se->dl_timer);
- 	dl_se->dl_defer_armed = 0;
- 	dl_se->dl_throttled = 0;
-+	dl_se->dl_defer_idle = 0;
- 	dl_se->dl_server_active = 0;
- }
- 
+ static void svm_disable_lbrv(struct kvm_vcpu *vcpu)
+-- 
+2.51.2.1006.ga50a493c49-goog
+
 
