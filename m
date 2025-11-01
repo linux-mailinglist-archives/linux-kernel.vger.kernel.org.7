@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-881055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45237C274F8
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 01:50:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 052B2C27504
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 01:51:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E8E764E663A
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 00:50:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EFD4188FDCF
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 00:51:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A11F1FA178;
-	Sat,  1 Nov 2025 00:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0740F1FF1C7;
+	Sat,  1 Nov 2025 00:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ChKx70cv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CT/gqRHY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F421E89C;
-	Sat,  1 Nov 2025 00:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C662214A9B;
+	Sat,  1 Nov 2025 00:50:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761958233; cv=none; b=ok0S+jiPK97NhnDbEVKrUzmY3kyuHSaHIxOWeqmvsEZ6XwbdGj09nGX5Q3EGMzich08+vrrFliBnWYvty5bN4oHMkBm2xFNdqiZa/weibDgIcHX+0neRyY9htIR1WS7cZEyP7LyDJ1clF1nBo9a7i79RiACEkrxf3oQWftsLeIE=
+	t=1761958235; cv=none; b=U+oOI999VfwN7KMwip6xOkE9VmwtyR5hAPRhHIIeyvQEWqzyzq6lMPnP25T4we/lsi8PNC/wKVzahMGowY/CMoVh98Qt9iPzOiQBOBocbtGjPra3fK42d4JiHf2E0+0O+qsdhhZT9MoqEeNUUOy+JUj59SGBVUZTjKTETrUbaF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761958233; c=relaxed/simple;
-	bh=YJZn/eLU0RXxJqRTKeG7+rSmwiek4v9aSi3x9JVlsM8=;
+	s=arc-20240116; t=1761958235; c=relaxed/simple;
+	bh=mxnF0wr4BqX8APrMyeKsRyrXXgrLHbvMSo0RkdsUCqA=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=MSS81HrnZoRZumfvWHQ1Nx7McN9NPB8Oba8gUf2BbSEvcmp6ezM/aIbI6LeqVqz68+unhInSGPyblKov7ic5U+rH+crEmwC0SrxFaRvFKnJ+GT4rXaYxQLFZjHA13PJXlZG0IL9mJSgCTEGVIvtaZPJv9GV6PRrpFvfTtcYmytA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ChKx70cv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0ABDC4CEE7;
-	Sat,  1 Nov 2025 00:50:32 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=jztqWvu05KzCz+T2JXow28ds3Mh2OHM/thJbYmVZB506GyUN5jWymk2y1QAs9e0UZKpCzRDPM+3OVU7i6UTg29vrKSEvW7h2wFhA1a+as7r9fU8HnWtSdxY19/x1m+MbTczfUs4SV7YrONYGIi/U1guPMB4b3uwfUOY37jE7Ud0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CT/gqRHY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D8E6C4CEE7;
+	Sat,  1 Nov 2025 00:50:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761958232;
-	bh=YJZn/eLU0RXxJqRTKeG7+rSmwiek4v9aSi3x9JVlsM8=;
+	s=k20201202; t=1761958235;
+	bh=mxnF0wr4BqX8APrMyeKsRyrXXgrLHbvMSo0RkdsUCqA=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ChKx70cvZNuZkqLss+Mdp/htv1EH90QwKs+quOIb5lYMSOnL+bzKnCysdMef+hxSn
-	 0TxFK9MkUg4doy5uMJcVtreaI6M1VdQ2qkV3wEmxNqIr/eOE49FeIv1OE4+v6uTXH3
-	 IUmYEcF7uZKobtY6aqyiVrWd052SuqNPgm2lSBRO1Yn+YUhnay9CkmmGsyu3xGo3yH
-	 348Bt4u0t+EwjPD+Sof7bJUkUVxFfIppYujK1X3c2mJXqoiOo3AH29ZemjFs2b/4PS
-	 fiwSelEbFFUrgtmQpsdsrp2pgyL2kqF+afRP6L+OWyyYrYdLwRI/oWSFpSqXRRsRL7
-	 Oo/uPOkBCRxKg==
+	b=CT/gqRHY16P9OmBQQCuRNSNQyCPLbwL4JdHo2g6VHaw+eAd+o5lJNYmw2Yx2wPyqp
+	 iheMQkaEYW+qnulq2WvNpP1kCmvQmiCyQVIcxsEbiti6aknrEZxwStZMiVPY7NYKxa
+	 /iO6I/SnZ1ofN1aH2r83FgqRCCsZ8GIfTyQYxElqnEwOM/8Uk3yQSuRgQqFe4azfhe
+	 nre+SZtaTr/PyRzxwMEp/RdIOgg0a/BZPwMO5tt4tgathiRYzbC13+1GHGUtn1b5D+
+	 aQtebHgwC4hRyy0/q9jHkN3GIYSQyHffZhBCcnYHnV5zawLJl7tazmVjCqPmSxQsOq
+	 OvXj1Qi7cCUeg==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB0313809A00;
-	Sat,  1 Nov 2025 00:50:09 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70F303809A00;
+	Sat,  1 Nov 2025 00:50:12 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,36 +51,49 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v2] isdn: mISDN: hfcsusb: fix memory leak in
- hfcsusb_probe()
+Subject: Re: [PATCH net v2] selftests: netdevsim: Fix ethtool-coalesce.sh fail
+ by
+ installing ethtool-common.sh
 From: patchwork-bot+netdevbpf@kernel.org
 Message-Id: 
- <176195820878.682052.7911747222895966918.git-patchwork-notify@kernel.org>
-Date: Sat, 01 Nov 2025 00:50:08 +0000
-References: <20251030042524.194812-1-nihaal@cse.iitm.ac.in>
-In-Reply-To: <20251030042524.194812-1-nihaal@cse.iitm.ac.in>
-To: Abdun Nihaal <nihaal@cse.iitm.ac.in>
-Cc: isdn@linux-pingi.de, horms@kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
+ <176195821124.682052.16276710639901642661.git-patchwork-notify@kernel.org>
+Date: Sat, 01 Nov 2025 00:50:11 +0000
+References: <20251030040340.3258110-1-wangliang74@huawei.com>
+In-Reply-To: <20251030040340.3258110-1-wangliang74@huawei.com>
+To: Wang Liang <wangliang74@huawei.com>
+Cc: kuba@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, shuah@kernel.org,
+ acardace@redhat.com, netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yuehaibing@huawei.com,
+ zhangchangzhong@huawei.com
 
 Hello:
 
 This patch was applied to netdev/net.git (main)
 by Jakub Kicinski <kuba@kernel.org>:
 
-On Thu, 30 Oct 2025 09:55:22 +0530 you wrote:
-> In hfcsusb_probe(), the memory allocated for ctrl_urb gets leaked when
-> setup_instance() fails with an error code. Fix that by freeing the urb
-> before freeing the hw structure. Also change the error paths to use the
-> goto ladder style.
+On Thu, 30 Oct 2025 12:03:40 +0800 you wrote:
+> The script "ethtool-common.sh" is not installed in INSTALL_PATH, and
+> triggers some errors when I try to run the test
+> 'drivers/net/netdevsim/ethtool-coalesce.sh':
 > 
-> Compile tested only. Issue found using a prototype static analysis tool.
+>   TAP version 13
+>   1..1
+>   # timeout set to 600
+>   # selftests: drivers/net/netdevsim: ethtool-coalesce.sh
+>   # ./ethtool-coalesce.sh: line 4: ethtool-common.sh: No such file or directory
+>   # ./ethtool-coalesce.sh: line 25: make_netdev: command not found
+>   # ethtool: bad command line argument(s)
+>   # ./ethtool-coalesce.sh: line 124: check: command not found
+>   # ./ethtool-coalesce.sh: line 126: [: -eq: unary operator expected
+>   # FAILED /0 checks
+>   not ok 1 selftests: drivers/net/netdevsim: ethtool-coalesce.sh # exit=1
 > 
 > [...]
 
 Here is the summary with links:
-  - [net,v2] isdn: mISDN: hfcsusb: fix memory leak in hfcsusb_probe()
-    https://git.kernel.org/netdev/net/c/3f978e3f1570
+  - [net,v2] selftests: netdevsim: Fix ethtool-coalesce.sh fail by installing ethtool-common.sh
+    https://git.kernel.org/netdev/net/c/d01f8136d46b
 
 You are awesome, thank you!
 -- 
