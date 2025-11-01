@@ -1,143 +1,144 @@
-Return-Path: <linux-kernel+bounces-881279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89F3EC27E4D
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 13:45:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5B51C27E56
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 13:51:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F4913B0FE7
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 12:45:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F74C400C73
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 12:51:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A4529BDAB;
-	Sat,  1 Nov 2025 12:45:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2659288C34;
+	Sat,  1 Nov 2025 12:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="XrraMPtP"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="bzkZ44vf"
+Received: from mail1.manjaro.org (mail1.manjaro.org [142.132.176.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF55C54763;
-	Sat,  1 Nov 2025 12:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD42E34D397;
+	Sat,  1 Nov 2025 12:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=142.132.176.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762001099; cv=none; b=cbAxxHYeEnrYPQojQ57jvtQuAzVvFQulZaWLc/Ja4y3/EGohLJNlIdcbsc/8Y56pbZHgATCFuLygPcJb02VQ041KGVLdS560ubjL6CTrOwpaxYsv714amS9HvyKdLb1CZvk2YKjgA5wJK8evpbL1S18qjloOzYT/eIthGWtywxQ=
+	t=1762001475; cv=none; b=c/L0KSqQ7+m96D2PTEI8GFbY3l5UozV0vUrchC1GeKca7vvlXPzQqFW/GWA4PoT7WWQN7lIrrbDFft2cwmYbgxwvS1awysWhRfEnSmo6H2Mu1cHU6NUPM98rFrjpqO64+J+r7sA5Bf2detAdbpiHMp3g21BXVahGwQeoAsoqlgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762001099; c=relaxed/simple;
-	bh=nFl4NJ6phhRXj1GOmZxAmKelEwgrnNQgsWxQ8GmlmXI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ntlv+btFZpX6nCpyCnficQrznOq5PS7DECyDTqIpUyOe5wyOFCph55NITTjMY1WytuIhM9WNeGLN9YUN7FOUiPQ/wSSF7CnsYf9+HpbGyJjaw52TV6PMbW8wZR3H9ozmkW5wTSKKXay6tt6YRMp9xtWPNZMRSHLIRQLTTY1M0hA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=XrraMPtP; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 355C540E0200;
-	Sat,  1 Nov 2025 12:44:54 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id DrM_EKOnMZ_3; Sat,  1 Nov 2025 12:44:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1762001088; bh=N4BOLLoJpHCqamHMqtxMixX7XoGo/cMXwO0xAm9y68w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XrraMPtPqsH9UjOKErD4x6QZWo8r5bvm8ascTfwRLY1jE0D/mdXOkRuudd5w8fBjk
-	 pvHJeLvmhnVoVUccyxbspFrSc7u/+t11wKw/bNDTASO30p+WuPEOzw9FT8eY+JYjmv
-	 54zzAxGObD4m0/PS1w+M2xXBGUaiOQT74EAvIeggHmbFuN1l286W5tQZYdbXc02jj5
-	 PpJLPkkVqjc14qgGhRh3Um4FHzJiflEpinwoRVmmnlskK4E+my26oFoyhMTAfpaCLj
-	 EmlRZVPrwEsf2bwOXRxPHPKd9zoABA0N9dknj+9eO4ilcIdOWad44x0283n7DlGGJI
-	 QeT0LICPC+qVsIqqXLcG0cR5fuzEWpQrb8H2G/XKiTU7xOxVuUhoL+i+1kS/S9wIEb
-	 frqi5ovdiKYD3A1CJWuy8tAU7y6FuZuSb9hv54+K1d2i/PXhIDE7awIdM46COEoX6T
-	 KK5zkVzKo25ETjIrLf71wWXcfwEAvrKqnY4gpciHvkv6VliQliDVYBvjyAMLzD9Kkk
-	 gfP8q/Y/dtwZ6FGVQ7CKIG7Fjs5Ae7bKr5S8+l4Kmx5Rlxk3xqtCLvL9FcQSbVvygO
-	 ncvPVakmHck+74BhJu7wd9GPR0+uygI2fC30LIpDaKkKaeXIU0KlGLfJEbPKR81pH6
-	 u5gyi2ouXkFH2KU5PdKUeeuQ=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id EF1E440E015B;
-	Sat,  1 Nov 2025 12:44:40 +0000 (UTC)
-Date: Sat, 1 Nov 2025 13:44:32 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-tip-commits@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
-	Joe Lawrence <joe.lawrence@redhat.com>, x86@kernel.org
-Subject: [PATCH] tools/objtool: Copy the __cleanup unused variable fix for
- older clang
-Message-ID: <20251101124432.GBaQYAsK3mcvrB9cqm@fat_crate.local>
-References: <176060833509.709179.4619457534479145477.tip-bot2@tip-bot2>
- <20251031114919.GBaQSiPxZrziOs3RCW@fat_crate.local>
- <20251031140944.GA3022331@ax162>
- <20251031142100.GEaQTFzKD-nV3kQkhj@fat_crate.local>
- <wi54qqmdbzuajt7f5krknhcibs7pj45zhf42n3z5nyqujoabgz@hbduuwymyufh>
- <20251031202526.GB2486902@ax162>
+	s=arc-20240116; t=1762001475; c=relaxed/simple;
+	bh=exBJA7nbMEZeZZpabcc2P8rsMbPKLfh9sPnBN8lg9J8=;
+	h=From:In-Reply-To:Content-Type:References:Date:Cc:To:MIME-Version:
+	 Message-ID:Subject; b=UjCvNTJwNECMVEiPiKodA9KoFBsMgk3uLopTdZaj6Wg6WteC6Vv3P/nvMz3lY5sGTIqxyHk0STQXpqhXPLO/+cyOOx84czuG4RiXpjPN1iOwiWWr1aoAcRTs+2KyHhDMEovrMTTF6003YZnVuOeN36hiLYbwzLRdWzUIAw1NyDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=bzkZ44vf; arc=none smtp.client-ip=142.132.176.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPA id CBA4340E0A;
+	Sat,  1 Nov 2025 13:50:59 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=dkim;
+	t=1762001463; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=fQvbdhiXZZph0YAYJiNdm8OJtzwwngVKL/B8nmm12Vc=;
+	b=bzkZ44vfgDZOcAzzR08beda9GaadarJtptSNqvAwy8aIv4HWsvMPJ2+iZS/50wypTQTy7g
+	dNeURtHLT34G9vAf6hfv7SShnBj8ghs//nLo74Cojy+jm/gqQw3fWIACg+7caq5tPVhLbD
+	w7yLteKmYySaEdjZeHK58xpNH4WUX6aMQUqAr6ueN0efIfjSiwMWkZVQzAdlftiynd5/hx
+	uALokfjnoBno9fktxvRo+cSv/lY6xL831ktF5Dt6rbtaTCl5hKaaN5eVQvJBcAMzu2vrL9
+	4Yk1UFSJq4jovHfYGj78G3rOS+BQ5+1on/cmmcnIJOmIMcaSuAIy/dCr2LATEw==
+From: "Dragan Simic" <dsimic@manjaro.org>
+In-Reply-To: <10751338.nUPlyArG6x@phil>
+Content-Type: text/plain; charset="utf-8"
+References: <20251017073954.130710-1-cnsztl@gmail.com>
+ <08911ae2-fef3-432d-a236-d820c9cb67ac@gmail.com>
+ <5af928c4-4b6e-489c-ad39-26cef3dd7473@gmail.com> <10751338.nUPlyArG6x@phil>
+Date: Sat, 01 Nov 2025 13:50:59 +0100
+Cc: "Shawn Lin" <shawn.lin@rock-chips.com>, "Tianling Shen" <cnsztl@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Grzegorz Sterniczuk" <grzegorz@sternicz.uk>, "Jonas Karlman" <jonas@kwiboo.se>, "Jianfeng Liu" <liujianfeng1994@gmail.com>
+To: "Heiko Stuebner" <heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251031202526.GB2486902@ax162>
+Message-ID: <e52de2b5-bf10-ce0e-66b7-66b1c46525f3@manjaro.org>
+Subject: =?utf-8?q?Re=3A?= [PATCH] =?utf-8?q?arm64=3A?==?utf-8?q?_dts=3A?=
+ =?utf-8?q?_rockchip=3A?= fix eMMC corruption on NanoPC-T6 with A3A444 chips
+User-Agent: SOGoMail 5.12.3
+Content-Transfer-Encoding: quoted-printable
+X-Last-TLS-Session-Version: None
 
-From: "Borislav Petkov (AMD)" <bp@alien8.de>
-Date: Sat, 1 Nov 2025 13:37:51 +0100
+Hello Heiko,
 
-Copy from
+On Saturday, November 01, 2025 12:54 CET, Heiko Stuebner <heiko@sntech.=
+de> wrote:
+> Am Montag, 27. Oktober 2025, 18:34:25 Mitteleurop=C3=A4ische Normalze=
+it schrieb Tianling Shen:
+> > On 2025/10/20 12:44, Tianling Shen wrote:
+> > > On 2025/10/20 9:53, Shawn Lin wrote:
+> > >> On 2025/10/17 Friday 15:39, Tianling Shen wrote:
+> > >>> From: Grzegorz Sterniczuk <grzegorz@sternicz.uk>
+> > >>>
+> > >>> Some NanoPC-T6 boards with A3A444 eMMC chips experience I/O err=
+ors and
+> > >>> corruption when using HS400 mode. Downgrade to HS200 mode to en=
+sure
+> > >>> stable operation.
+> > >>
+> > >> May I ask you to test another patch I just posted to see if it f=
+ixes
+> > >> your issue?
+> > >>
+> > >> https://patchwork.kernel.org/project/linux-mmc/=20
+> > >> patch/1760924981-52339-1- git-send-email-shawn.lin@rock-chips.co=
+m/
+> > >=20
+> > > Thank you for the patch! I will ask my friend to test it but he u=
+ses=20
+> > > this board as a home router, so it may take a few days or weeks t=
+o=20
+> > > report the result.
+> >=20
+> > Hi all, sorry for the late. My friend has tested this patch and it =
+works=20
+> > fine after 50 times dd operation. A big thanks to Shawn!
+>=20
+> So I guess, we don't need the patch reducing the speed anymore, right=
+?
 
-  54da6a092431 ("locking: Introduce __cleanup() based infrastructure")
+Exactly, the approach of lowering the speed of eMMC to improve
+its reliability is no longer needed, thanks to Shawn correcting
+the DLL=5FSTRBIN=5FTAPNUM=5FDEFAULT value in the above-linked patch.
 
-the bits which mark the variable with a cleanup attribute unused so that my
-clang 15 can dispose of it properly instead of warning that it is unused which
-then fails the build due to -Werror.
+We just need to test does HS400 work on the ROCK 5 ITX reliably
+as well, so the previous lowering to HS200 in commit b36402e4a077
+("arm64: dts: rockchip: slow down emmc freq for rock 5 itx", 2025-
+02-28) could be reverted as no longer needed.
 
-Suggested-by: Nathan Chancellor <nathan@kernel.org>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/r/20251031114919.GBaQSiPxZrziOs3RCW@fat_crate.local
----
- tools/objtool/include/objtool/warn.h | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+> > And hi Jianfeng, I found you made a similiar patch[1] for the ROCK =
+5 ITX=20
+> > board to lower down the mmc speed, could you please check if this p=
+atch=20
+> > also fixes your issue?
+> >=20
+> > [1] https://lore.kernel.org/linux-rockchip/20250228143341.70244-1-l=
+iujianfeng1994@gmail.com/
+> >=20
+> > >>> Signed-off-by: Grzegorz Sterniczuk <grzegorz@sternicz.uk>
+> > >>> Signed-off-by: Tianling Shen <cnsztl@gmail.com>
+> > >>> ---
+> > >>>   arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi | 3 +--
+> > >>>   1 file changed, 1 insertion(+), 2 deletions(-)
+> > >>>
+> > >>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi=
+ b/=20
+> > >>> arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
+> > >>> index fafeabe9adf9..5f63f38f7326 100644
+> > >>> --- a/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
+> > >>> +++ b/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
+> > >>> @@ -717,8 +717,7 @@ &sdhci {
+> > >>>       no-sd;
+> > >>>       non-removable;
+> > >>>       max-frequency =3D <200000000>;
+> > >>> -    mmc-hs400-1=5F8v;
+> > >>> -    mmc-hs400-enhanced-strobe;
+> > >>> +    mmc-hs200-1=5F8v;
+> > >>>       status =3D "okay";
+> > >>>   };
 
-diff --git a/tools/objtool/include/objtool/warn.h b/tools/objtool/include/objtool/warn.h
-index e88322d97573..a1e3927d8e7c 100644
---- a/tools/objtool/include/objtool/warn.h
-+++ b/tools/objtool/include/objtool/warn.h
-@@ -107,6 +107,15 @@ extern int indent;
- 
- static inline void unindent(int *unused) { indent--; }
- 
-+/*
-+ * Clang prior to 17 is being silly and considers many __cleanup() variables
-+ * as unused (because they are, their sole purpose is to go out of scope).
-+ *
-+ * https://github.com/llvm/llvm-project/commit/877210faa447f4cc7db87812f8ed80e398fedd61
-+ */
-+#undef __cleanup
-+#define __cleanup(func) __maybe_unused __attribute__((__cleanup__(func)))
-+
- #define __dbg(format, ...)						\
- 	fprintf(stderr,							\
- 		"DEBUG: %s%s" format "\n",				\
-@@ -127,7 +136,7 @@ static inline void unindent(int *unused) { indent--; }
- })
- 
- #define dbg_indent(args...)						\
--	int __attribute__((cleanup(unindent))) __dummy_##__COUNTER__;	\
-+	int __cleanup(unindent) __dummy_##__COUNTER__;			\
- 	__dbg_indent(args);						\
- 	indent++
- 
--- 
-2.51.0
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
