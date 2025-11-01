@@ -1,272 +1,147 @@
-Return-Path: <linux-kernel+bounces-881165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D96AC279D6
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 09:43:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2055FC279D9
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 09:44:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B2693B71D9
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 08:43:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 444BD18993E9
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 08:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FCC29D26D;
-	Sat,  1 Nov 2025 08:43:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FEA629BD90;
+	Sat,  1 Nov 2025 08:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lZwJB1G1";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="PCUlI/8s"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UfrJOb4B";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="aa4pWtfM"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387B529B8DD
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 08:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6067285CB8
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 08:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761986595; cv=none; b=sV4x5zGNSD9RuehUtrc4BrnE3x6228Kkqw2FrGVpSAyNOu687X2Eoiq6iaL1nYW6nebWMZx0eaBE9SvkGFEVt1nqzHbXXW6i0IG8KWH2lfWiqurqP9rAwOH2bumaNzsFSfi7PU+S8siokO8MEEoc/FsOk32ZUMpjGQ7p1Ey+FRg=
+	t=1761986640; cv=none; b=H7CjuZoc0Xcl3ga1sB08reLgZv9Z/dJlogX1dAFjxNESFIFj7qB/yvig1FAsnT328/QFkXqnVWT37ms6Jnj7neSKoDoFhYUf6eZ5ZNy+l7wwPj02/tX+VlcjKXcV5fczE1pg9xot0St7FelBWmKlDYkHllfTaFfWqtibtw40Znk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761986595; c=relaxed/simple;
-	bh=Gcc4WfI7cosZeD8n8HiCMCxxzhy6/BxEn4onVPGuHP8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tU+lkSzj49+OxCVmNadp7qo+sysJZgsY3XWysx8OsUYRIp9y0Oo1qfmDTD+GSiWm+wvHSukSJKMql0etE90JvF4vBC1C1aNA5fBPUAIDvSB+psrm4dA+XBfhUDKm4ITVSLc5FjOJwUd9XUWMmLqtdtZgGoreEEVAavFeK/P0AHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lZwJB1G1; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=PCUlI/8s; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A13k5Xg657816
-	for <linux-kernel@vger.kernel.org>; Sat, 1 Nov 2025 08:43:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	EfqyUh7o2Ampai6FJH2BnCnB2E+AjfrQoXU2Q/OvGIU=; b=lZwJB1G1MfIzJ5ee
-	eCHmfmB7Lz8H/8Q2US+o8ChU4JMGl054yS4ASue2ujK4+GXNUjO722NMV2Hu6AgJ
-	BfJtttfXbvPgCWoYmeRd1yWo0E9brbl8vL/xKsFQrU4NzFe3dQOBwjviSK4t48QS
-	Y8DKtE6r9EV3RUkiWhEdh0Pn5XKg3a/7CGuOOYgsRlJkuQxhtR3FhWb231Bxskx1
-	7/AhzCt20T//ABORENNOjGv6Mr8+cIexqZKe7LECox+znwUHjHY+4mK3O+nNhYcO
-	FmO70YI01OcG8hMnhKqIFxJhJnz3Bc9FpQADHd0RCHous2u+nTbF0OHUIcCYjVEL
-	BCHO2A==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a59778fkx-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 08:43:12 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4ecf8faf8bdso32357831cf.1
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 01:43:12 -0700 (PDT)
+	s=arc-20240116; t=1761986640; c=relaxed/simple;
+	bh=vqSBX4ZLTfcHH4WP6NpAV6KAQx1wO7zGlzS63hIjves=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=ffG0brXbkPssR9TZ1q5KRsCXLrTRMKV9PazB6wIZexM9LF9nsA/pdS3y55mYVbkV/MaFFI8Mu/O63UZLaEocUIGYvikaRz1wKcXQ1R8KX2oTWYdWktqBUTVfKBigPtZf7qokbZbJlGeaSYiGoIQP54HnXQzqf/kXFMf1L9U8Hx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UfrJOb4B; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=aa4pWtfM; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761986637;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vqSBX4ZLTfcHH4WP6NpAV6KAQx1wO7zGlzS63hIjves=;
+	b=UfrJOb4BIqjbxexEM0Ao7nSakEQptbqFKAeeons0FUA1UtGtFosklwm9Mc2Vg6uQfS8h2E
+	N0PqY9qEMIrUmsa4OMAUvBPbmKyNRMbJ1GKg1QuNafFtIAzYBNQ9FPehHmB0CkA7e5V/M/
+	HqdcWufpkXcaGrEcz8htZEyCMYgtOF0=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-205-m5DS_W-dMDa2TPZSMkUHaQ-1; Sat, 01 Nov 2025 04:43:56 -0400
+X-MC-Unique: m5DS_W-dMDa2TPZSMkUHaQ-1
+X-Mimecast-MFC-AGG-ID: m5DS_W-dMDa2TPZSMkUHaQ_1761986635
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-b7051ea719aso356465966b.2
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 01:43:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1761986592; x=1762591392; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=EfqyUh7o2Ampai6FJH2BnCnB2E+AjfrQoXU2Q/OvGIU=;
-        b=PCUlI/8sdX2ZGF0ZJg6PhJVeJKz9kEnxz67318JxLO3coEoD83wnyJo57XljGoQQTh
-         qFB7+znyC7Jwc/VoEYMQH5U2I/OMetIBZWQ4LHaavwysRCkpGg9zAIvK7mYrY1gBNsvJ
-         jX3sDOFCDcSA7NeddlNxs4oUr7L/IeZe28rB5T1FpW/eeSC8K8hYijaSeD5qVSJU74wm
-         rcRx0Sr2qvNunVq1vSfDbrULkSGDczJyWPbV4OTXEhMjRvTEHy7rACXE01/iW/W8IHzw
-         IlP04khcqJBEH80pDhlheFhwP9Q3xDfHMYlbt6ilv+n4vKOS9lb5FkyPN0E45nkw+J3Y
-         KL6Q==
+        d=redhat.com; s=google; t=1761986635; x=1762591435; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vqSBX4ZLTfcHH4WP6NpAV6KAQx1wO7zGlzS63hIjves=;
+        b=aa4pWtfMh0O4hIOE+vt5/E+CiQy3dG/EyrNgSX8QNhPX0whZviARVjN/36jlF99rUd
+         VA4UkpfMXsmOJBd8vOOETwXUQnmgYNE1LSktGF/df2jw4JBMlNwIABoCZ3n73iv33ZPK
+         OVQLmPEuas5DKdWrIQOSuLjX4AfGXDVdaRbMorCmVAqcuuI9nCxEGM5mnryIO/Z+szUm
+         4KZdqtv++VnugxiA7kfSt/nS5kArgZf7/jMUr8UWxaxkGm2zY1EPJX4NdI+YvZbCvZQh
+         nTt6x5DtlqQQyZH6OEFTRLk59pJQIuK3hpmJUEPZq6gEGSIoiVUKO6OvuAYp4VVZzGOT
+         4XUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761986592; x=1762591392;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EfqyUh7o2Ampai6FJH2BnCnB2E+AjfrQoXU2Q/OvGIU=;
-        b=GOriCY5p4TLsQyYnNThha7EiKWpFgzE8lq46KIMmudQdVdEicaToXGhXSHvtaXTVEx
-         UvnkPJemRiNfDaTzNS/8A6QlnyCfkOk9MHrFMZxUbNNVzA3jz7UTDG74pcQSCDq/geE2
-         f9va3q9baCxFwAwqsxmKbBS4VRRXu8ChPy4NdOWuJlces0olgb3pRAufbqg0YIG8LWw/
-         JF+fjziEX+FE2o/ZhDUszyKKUOQa+65J2QAeCdTjeh2oOIsuL0BSPbD37TXp16CYEt8n
-         kxd78mhTBCt1xNQc+Hk31nNeg4kgxv6ltmWfT1dfo+yTrix2qCu3vEf7W47yv++Zx+r4
-         WN1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUxLENK7nVA4y8y49/VN215lFm8t3RYnqYytK20TyvUnZglLd0OvllDCmxSSDCGAIn42MvPI19s/trcN6E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywtymm0r5F6XLsJlT3gV15uAGzdolhj+y9V1vbcqH2YVLKiANYc
-	r6ghE8rrKX9w4zoY+XmiEc2O0GlvDxOzTC5z/zeU3lpJbOpjBPSIf0LXVOLPSnUeaxIbXCQ39r5
-	NzyZs76OzBgtqMnx5iER886MHocOOA2qQ/q+r/vUB75ktOlUKnVNufkJVfCnfTSft9FA=
-X-Gm-Gg: ASbGncvsmtN1KuVNuXomzoGeKPhd6BFstQatPRR6Y4SoolqHs+Gb8ceAuggeCYGRmiV
-	O/8mSU08ltnjAOFEAv9crTZJmd7KoE0vPNApBWL8KnEgnHNWz35YHtV8ouB0j5XntY0O7quevN7
-	85KEW2qSwO1NWMSfZ8y2UGeqIFghrsDdglLrHXMQGuA9xUFOLr750eWE7cw7v3KObsNpi9RaMoZ
-	TAvIW+jyaosLaJ85hnwgE/ZcxoQq33R4Uv2oz0TLOxuKNCrVoJez+Y70mAiybGi1bVhqLS46+bZ
-	L/98Gkt/gOY0gIBQ3Sl24m1REjHsscqSVtkgPuLFDrrUod0f5IwSckVWNoXFrLaNximjlcb+/h0
-	hxQksFjp/V78cYoB2wor59S/3EN02HAejsNvrRlhF0tzyo+OeEe7ZhYwTxf5pNov3N/dXTOepyT
-	UTUxaoyqNSSBNf
-X-Received: by 2002:ac8:57c3:0:b0:4eb:a07a:5fce with SMTP id d75a77b69052e-4ed30d4d0b2mr82308191cf.17.1761986591764;
-        Sat, 01 Nov 2025 01:43:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF9vl/ZeceDq5qPZj91Yx8Lh2DmzSyst1fJqqvipGnlWsAKyiWPr4peWPX3C7h14PXePIRC4A==
-X-Received: by 2002:ac8:57c3:0:b0:4eb:a07a:5fce with SMTP id d75a77b69052e-4ed30d4d0b2mr82307991cf.17.1761986591306;
-        Sat, 01 Nov 2025 01:43:11 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-37a2e1141fbsm427011fa.2.2025.11.01.01.43.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Nov 2025 01:43:09 -0700 (PDT)
-Date: Sat, 1 Nov 2025 10:43:08 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Tessolve Upstream <tessolveupstream@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, konradybcio@kernel.org,
-        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 1/1] arm64: dts: qcom: talos-evk: Add support for
- dual-channel LVDS panel
-Message-ID: <3genyggxae5ejlpi2k2zflliaujdov6f2nd5nppzxtg7fmerff@52dac4oh2c3z>
-References: <20251028061636.724667-1-tessolveupstream@gmail.com>
- <20251028061636.724667-2-tessolveupstream@gmail.com>
- <fvtwdsthi242vxxlaqsbvqec4xkduch3fcslwqsjzkz4fidewn@mku374rrwlp7>
- <90185600-c08d-4548-8e66-16d3d0de8765@gmail.com>
+        d=1e100.net; s=20230601; t=1761986635; x=1762591435;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=vqSBX4ZLTfcHH4WP6NpAV6KAQx1wO7zGlzS63hIjves=;
+        b=WfcwtIDsbschYy3/MHNl9t+aFD6L4IQAUQcRk1GKJWywcvxHw6TUvMvd3wZruch7tO
+         bM8+TA8vDRnLvqwB2aa7GAmET1UAi/WlWEoXFlsp9YM7EXQQ/296QMECGTRGqHcBoBQy
+         RlkxtxMeoyB/LOl/UsFKQopeq/KDaYW+YaX4XcHHhoR7nMQ/JSTzdDVPY3l2JiCtF/qF
+         nntbJ6KRCxl9TvgfjJ1LflXBcODuf1+3mT0/HEKC9Z+3GRDBvhYzN6taaGaHrXszlXPu
+         jeeq5c7QPx6aiqppyN37/xU+Qt4Hs6EKiVfixuUQUHwS5mJauGRQuos4gFZBmsfNxA7/
+         colQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV0hFRpoDDJjv07NwsHv5sQZS5R37ozpwCASG4+9TVhp+yaSFclR/DzUSPn2KVq5bp2S5zLKi4gNBHihQI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUECuyzUTd+l1FNT265qruGEcKtFLpdYoPiT6qhYGbsVUhVcWA
+	VBOoaEGPwd0UK+sk0BspB/e4BXyfLFIp+kRGsgasxuVojN5mosLM/nmNBN4r3BngcZ+MUyV5tv8
+	YhNDdCqWgQ6Qc6IPRseE+lCv7JRdCVkaufZU5pePJZv4ONrxVTLI2rg7CSPHTQ6X6Kg==
+X-Gm-Gg: ASbGnct9mpMJ0Plne0iqYXyb9N11toY+pEubg2+yrfiHzEKQ5Ptt9jiFNJaBhGfDWmS
+	lxKR0MaMb8qv+N3Rul+9Vsf6NK40ITROaz/wh7cUNKwDE+pyczu9NUjWuiSohSX5dPY3bJhTIzm
+	R6PW5XpQG45UTpQtdBX1zm6DUA1E6JLQQplUkGUDnEXRNXhyDy35ayNg0Mxk4fhcNoMc3gLuw2D
+	bTq3NDcTxCUf4K1HbdljF77KD5q1OkVIApGfWTF9dXWRo4/CHHifH6lzV3EmLV5YpVxWK8lMHaf
+	6gsVC+7ahspOTZLYYamfH6+VCI08lweOBRTkOSo/wgHsf1uoAv0ajWhU4YdttTsjC2UJEM6PC6H
+	iS8rG5bRNjp5dbsngiwJpEjGCyQzlzw==
+X-Received: by 2002:a17:907:1c0c:b0:b70:5aa6:1535 with SMTP id a640c23a62f3a-b7070137d1cmr773981966b.18.1761986635252;
+        Sat, 01 Nov 2025 01:43:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGzYuwI9LkI1rg7DX7ovxnjZ2EeJY71ZMPTvBJYies+ChUPxcoh72u9lsyipR35Td8cio6Mzg==
+X-Received: by 2002:a17:907:1c0c:b0:b70:5aa6:1535 with SMTP id a640c23a62f3a-b7070137d1cmr773980366b.18.1761986634765;
+        Sat, 01 Nov 2025 01:43:54 -0700 (PDT)
+Received: from [127.0.0.1] (mob-83-225-102-57.net.vodafone.it. [83.225.102.57])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b70779a9124sm393085166b.16.2025.11.01.01.43.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 01 Nov 2025 01:43:54 -0700 (PDT)
+Date: Sat, 1 Nov 2025 08:43:51 +0000 (UTC)
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>, Clark Williams <williams@redhat.com>,
+	arighi@nvidia.com
+Message-ID: <48ee3f26-7dbc-4c59-b98d-f9aeed980a43@redhat.com>
+In-Reply-To: <20251101000803.GA2212249@noisy.programming.kicks-ass.net>
+References: <aO5zxvoCPNfWwfoK@jlelli-thinkpadt14gen4.remote.csb> <20251014193300.GA1206438@noisy.programming.kicks-ass.net> <aO8zwouX6qIaf-U-@jlelli-thinkpadt14gen4.remote.csb> <20251020141130.GJ3245006@noisy.programming.kicks-ass.net> <8dc29e28a4d87954378ef1d989e0374526b44723.camel@redhat.com> <20251030184205.GB2989771@noisy.programming.kicks-ass.net> <20251031130543.GV4068168@noisy.programming.kicks-ass.net> <1f2ad071e59db2ed8bc0b382ae202b7474d07afc.camel@redhat.com> <20251031152005.GT3245006@noisy.programming.kicks-ass.net> <2daa2e6217eeaa239616303626c0d73d808ae947.camel@redhat.com> <20251101000803.GA2212249@noisy.programming.kicks-ass.net>
+Subject: Re: [RFC PATCH] sched/deadline: Avoid dl_server boosting with
+ expired deadline
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <90185600-c08d-4548-8e66-16d3d0de8765@gmail.com>
-X-Proofpoint-GUID: 2ZPPu9D0gC0UB1i522jbVBGlfM4_Yzmo
-X-Proofpoint-ORIG-GUID: 2ZPPu9D0gC0UB1i522jbVBGlfM4_Yzmo
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDA3MyBTYWx0ZWRfXw/aUvz252fVt
- LvVeiYVfCSTAy2Xz6J8ESbKzOYp1ZXESR7OUGkF6iGOqJIY2igPTb+voVmy3gwhDpdRLbfOWVAP
- D/N2VD5PVBec+JYdq4oBOfpKqHrFC1JmJVIuZvwRl+c96TiMkTSfWglgnwSfLz2XIuW2rz7vWBp
- 2bqWdzWSBsty1RazgYkVBWkAYp0oChMbWrCxkuQfzBOWsia54lKp7iGUf2heEAftez1390ItSnj
- nwHYbI3bt5y9omexhssej+qiwTLG6ncRhsDKQ+uZVDk/R7Xt2MMrHpQxXiRmlgKgCYHQqoMR6v2
- r+8YmXIiF4HGw4tbF3S9kiS7MX3+nDRyTatOvNdmhlLQe1ORcygVwZn9jWJya6DPSCfqSLM3k0W
- nLipfPjUo3wBJ2TwdBC6oRqaNlxWcw==
-X-Authority-Analysis: v=2.4 cv=WcABqkhX c=1 sm=1 tr=0 ts=6905c820 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=rzCUXBBmrDPBhJRWehYA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=-_B0kFfA75AA:10 a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-01_01,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 adultscore=0 priorityscore=1501
- impostorscore=0 spamscore=0 malwarescore=0 clxscore=1015 suspectscore=0
- bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511010073
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Correlation-ID: <48ee3f26-7dbc-4c59-b98d-f9aeed980a43@redhat.com>
 
-On Fri, Oct 31, 2025 at 02:42:05PM +0530, Tessolve Upstream wrote:
-> 
-> 
-> On 29/10/25 21:18, Bjorn Andersson wrote:
-> > On Tue, Oct 28, 2025 at 11:46:36AM +0530, Sudarshan Shetty wrote:
-> >> This patch introduces a new device tree for the QCS615 Talos
-> > 
-> > "This patch" doesn't make sense when you look at the git log once the
-> > patch has been accepted, please avoid it.
-> > 
-> > Please read https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
-> > 
-> > Start your commit message with a "problem description", describe what
-> > this LVDS talos is, why it should have it's own dts file etc.
-> 
-> Okay, will update in next patch.
-> > 
-> >> EVK platform with dual-channel LVDS display support.
-> >>
-> >> The new DTS file (`talos-evk-lvds.dts`) is based on the existing
-> >> `talos-evk.dts` and extends it to enable a dual-channel LVDS display
-> >> configuration using the TI SN65DSI84 DSI-to-LVDS bridge.
-> >>
-> >> where channel-A carries odd pixel and channel-B carries even pixel
-> >> on the QCS615 talos evk platform.
-> >>
-> >> Signed-off-by: Sudarshan Shetty <tessolveupstream@gmail.com>
-> >> ---
-> >>  arch/arm64/boot/dts/qcom/Makefile           |   1 +
-> >>  arch/arm64/boot/dts/qcom/talos-evk-lvds.dts | 128 ++++++++++++++++++++
-> >>  2 files changed, 129 insertions(+)
-> >>  create mode 100644 arch/arm64/boot/dts/qcom/talos-evk-lvds.dts
-> >>
-> >> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-> >> index d5a3dd98137d..6e7b04e67287 100644
-> >> --- a/arch/arm64/boot/dts/qcom/Makefile
-> >> +++ b/arch/arm64/boot/dts/qcom/Makefile
-> >> @@ -307,6 +307,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= sm8750-mtp.dtb
-> >>  dtb-$(CONFIG_ARCH_QCOM)	+= sm8750-qrd.dtb
-> >>  dtb-$(CONFIG_ARCH_QCOM)	+= talos-evk.dtb
-> >>  dtb-$(CONFIG_ARCH_QCOM)	+= talos-evk-dsi.dtb
-> >> +dtb-$(CONFIG_ARCH_QCOM)	+= talos-evk-lvds.dtb
-> >>  x1e001de-devkit-el2-dtbs	:= x1e001de-devkit.dtb x1-el2.dtbo
-> >>  dtb-$(CONFIG_ARCH_QCOM)	+= x1e001de-devkit.dtb x1e001de-devkit-el2.dtb
-> >>  x1e78100-lenovo-thinkpad-t14s-el2-dtbs	:= x1e78100-lenovo-thinkpad-t14s.dtb x1-el2.dtbo
-> >> diff --git a/arch/arm64/boot/dts/qcom/talos-evk-lvds.dts b/arch/arm64/boot/dts/qcom/talos-evk-lvds.dts
-> >> new file mode 100644
-> >> index 000000000000..7ba4ab96ada6
-> >> --- /dev/null
-> >> +++ b/arch/arm64/boot/dts/qcom/talos-evk-lvds.dts
-> >> @@ -0,0 +1,128 @@
-> >> +// SPDX-License-Identifier: BSD-3-Clause
-> >> +/*
-> >> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
-> >> + */
-> >> +/dts-v1/;
-> >> +#include "talos-evk.dts"
-> > 
-> > We don't include .dts files, split the existing one in a dtsi and dts
-> > file and then include the dtsi here. Or provide provide this as a dtso
-> > overlay on top of the dts.
-> > 
-> > It's not clear to me which is the correct way, because you didn't
-> > adequately described how the SN65DSI84 enter the picture. Is it always
-> > there, but not part of the standard dip-switch configuration? Or is this
-> > some mezzanine?
-> 
-> Thanks for the feedback.
+2025-11-01T00:08:37Z Peter Zijlstra <peterz@infradead.org>:
 
-You didn't answer the question. It was about the hardware, not about
-DTs.
+> On Fri, Oct 31, 2025 at 04:41:22PM +0100, Gabriele Monaco wrote:
+>> On Fri, 2025-10-31 at 16:20 +0100, Peter Zijlstra wrote:
+>>> On Fri, Oct 31, 2025 at 02:24:17PM +0100, Gabriele Monaco wrote:
+>>>>
+>>>> Different scenario if I have the CPU busy with other tasks (e.g. RT
+>>>> policies), there I can see the server stopping and starting again.
+>>>> After I do this I seem to get a different behaviour (even some boosting
+>>>> after idle), I'm trying to understand what's going on.
+>>>>
+>>
+>> After running some heavy RT workload (stress-ng --cpu 10 --sched rr) I do see
+>> the server stopping and starting as the models would expect, but somehow it's
+>> always boosting as soon as it's started.
+>>
+>> Apparently dl_defer_running is always 1 in that scenario. Perhaps running idle
+>> counts as running something too, so it never defers. But I can't really see how
+>> this happens..
+>
+> The transition [4], will retain dl_defer_running, such that a timely
+> re-start of the dl_server can immediately run again.
 
-> Currently, the Talos device tree hierarchy is organized as follows:
-> 
-> talos-som.dtsi — defines SoM-specific interfaces
-> talos-evk.dts — adds carrier board (CB) interfaces such as MicroSD, power
-> button, and HDMI
-> talos-evk-lvds.dts — enables the LVDS display (includes SoM + CB +
-> LVDS + disables HDMI)
+Alright I worded it poorly. As far as I understand, what you mentioned is desired behaviour when handling starvation. We don't defer and start the next period boosting.
+What I was observing was the server staying running indefinitely.
+I run a test with 5s of RR stress-ng and 30s of mostly idle DL workload on a clean VM. I expect boosting only during the first 5 seconds, but I see it also after, where there was clearly no starvation (system was idle, probably a bit hard to see from the trace I shared).
 
-So, is LVDS a part of the standard board or is it a mezzanine?
+Thanks for the updated patch, I'll try that and see how it goes.
 
-> 
-> The LVDS and HDMI displays share a common DSI output, so only one 
-> interface can be active at a time. At present, talos-evk-lvds.dts 
-> includes talos-evk.dts directly so that the base SoM and carrier 
-> interfaces (e.g., MicroSD, power button) remain available.
-> 
-> However, as you pointed out, including a .dts file directly is not
-> recommended upstream. To address this, I am considering the following 
-> restructuring options:
-> 
-> Option 1: Introduce a talos-cb.dtsi
-> 
-> talos-som.dtsi: SoM-specific interfaces
-> talos-cb.dtsi: common carrier board interfaces (MicroSD, power button, etc.)
-> talos-evk.dts: includes talos-som.dtsi + talos-cb.dtsi + HDMI
-> talos-evk-lvds.dts: includes talos-som.dtsi + talos-cb.dtsi + LVDS
-> 
-> This approach avoids including .dts files directly and keeps the carrier
-> board interfaces centralized and reusable.It also cleanly separates SoM
-> and CB content and is consistent with how other Qualcomm platforms 
-> structure their EVK variants.
+Gabriele
 
-This sounds okay, but please respond to previous questions.
-
-> 
-> Option 2: Move CB interfaces to talos-som.dtsi (disabled by default)
-
-Why? What happens when somebody reuses the SoM with some other base
-board?
-
-> 
-> Move MicroSD, power button, etc., to talos-som.dtsi with status = "disabled";
-> Enable these interfaces in each top-level DTS (e.g., talos-evk.dts,
-> talos-evk-lvds.dts)
-> While this also avoids .dts inclusion, it may make the SoM DTS 
-> unnecessarily complex and less reusable, as those CB-specific 
-> peripherals don’t belong to the SoM hardware.
-> 
-> Let me know your prepared approach here.
-
-If you yourself don't like the second option, why do you propose it?
-
--- 
-With best wishes
-Dmitry
 
