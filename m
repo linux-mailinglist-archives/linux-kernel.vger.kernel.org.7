@@ -1,47 +1,42 @@
-Return-Path: <linux-kernel+bounces-881385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61E80C281DC
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 16:52:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1749BC281E5
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 16:54:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EA471889B8E
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 15:52:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C4011A21B5E
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 15:54:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E53A32C08CD;
-	Sat,  1 Nov 2025 15:52:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h4BV0M0n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DBED2C08CD;
+	Sat,  1 Nov 2025 15:54:05 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 495F717B418;
-	Sat,  1 Nov 2025 15:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD9323313E;
+	Sat,  1 Nov 2025 15:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762012335; cv=none; b=UxZ8MBxJxf9+Kc76S9KJ7O5PVSLRi+9YeOfNyt5dXdXBXp8+T2044TTgVTmziP3JqtrqnKyXQLQwhjXwjrKOm+Hyg8udbawJNAalEYERBrGHW5tg59COphlKcCYJjRj0WqWGVq/HWJOk8UKaHy0mbsZksTPKO4BMc4LLsM4ba6Q=
+	t=1762012445; cv=none; b=iHUQg62DJQWUnYKN4JzFkWGGZv3Aaye6pxJyfLOiDq9qS9cnoiXezBfVGHwD2c/sfHVYjLjdH+ANo+nzX0tianmXhO9PCfondJqh3ke1C5R5JYa7EefmgAGOJU5uw5lk4EOp7saXcdAWprAgBB8fGqPxny4VSlFkZzZWqtFmRhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762012335; c=relaxed/simple;
-	bh=mXqd0l7ECSTvxHPGvSpLFI1tOa5Alav9itpNsJAdNHc=;
+	s=arc-20240116; t=1762012445; c=relaxed/simple;
+	bh=XXqhB3GOVSDLddidiZlNuz1jOVJyuIppL/dLwYnhkc0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z2WgM80M5ublOQqtlYsaz/DCyqgD4uIJXqvD16wzWJK7p/yYusojehE18F9WMIb+KoModE+8FmPOmYYoZCuj0dagJQzR4v798Q5kVlpfxCk92AgEZ9RrM4t23RxC1Qs4wfB0M37Ixn6eHwC2vgaPRrKY7voPysCADSSt1CLvWTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h4BV0M0n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11298C4CEF1;
-	Sat,  1 Nov 2025 15:52:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762012334;
-	bh=mXqd0l7ECSTvxHPGvSpLFI1tOa5Alav9itpNsJAdNHc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=h4BV0M0n10LDbuwAwZsWXONtt3jXlW7BvPyFY18806Q71OGK6KJdHJhMYp8TeM4JI
-	 kRDTXBnsZ7Aeu2iCaFEQvA3HZMSpD1ytCXi37KzRFjHxX03uAvdaPr5E+8Uq5GnIBF
-	 H9dMAhkKfIaUrdRdpU1l71e1g4HBJyfr+oi7ofIaJoi3EhXC3UXSwmb0l0WVAWoEZg
-	 IMLL/6samBqAOf3QB54sehaxeHlrCIbWbxC24Bq0H/y5FW8Jq3JGMd07IlTY1c7w40
-	 PextemOi/n+htkbZo8QX4dcZJo//pz5uPDGJwSaXciIjJw9GMkydbwfMViE4I1tcws
-	 LAD+m7cA6oXRA==
-Message-ID: <65a7bf26-6661-42dd-aa9f-dd1076a866a8@kernel.org>
-Date: Sat, 1 Nov 2025 16:52:09 +0100
+	 In-Reply-To:Content-Type; b=gH7ECyhLMab4dokfR6kX0Q7DoHrFfGeaVVZl4KCM1ZgFRrJiysUPCiJECI2lgs2vCgluXsuNLi+NYyXu6PlZoj6JVTXTbMfyCFvSpoIxBlF+c2gp6AjLzgxUrRuXI2OCIqd8SIE1Nikie0vn8NH7QsfUkBi35rOikKyPfZyhRIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.44.103] (unknown [185.238.219.5])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 4B5BD61CC3FE8;
+	Sat, 01 Nov 2025 16:52:49 +0100 (CET)
+Message-ID: <37c918cc-9b02-4901-87ce-753a6b9c90bd@molgen.mpg.de>
+Date: Sat, 1 Nov 2025 16:52:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,28 +44,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND] rust: enable slice_flatten feature and abstract it
- through an extension trait
-To: Alexandre Courbot <acourbot@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
- Nathan Chancellor <nathan@kernel.org>,
- Nicolas Schier <nicolas.schier@linux.dev>, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, linux-kbuild@vger.kernel.org
-References: <20251101-b4-as-flattened-v1-1-860f2ebeedfd@nvidia.com>
-From: Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH 1/4] Bluetooth: 6lowpan: reset link-local header on ipv6
+ recv path
+To: Pauli Virtanen <pav@iki.fi>
+Cc: linux-bluetooth@vger.kernel.org, marcel@holtmann.org,
+ johan.hedberg@gmail.com, luiz.dentz@gmail.com,
+ jukka.rissanen@linux.intel.com, linux-kernel@vger.kernel.org
+References: <639c5cb6ceb49ffd63952dc69d0d48b022aaec3b.1761998763.git.pav@iki.fi>
 Content-Language: en-US
-In-Reply-To: <20251101-b4-as-flattened-v1-1-860f2ebeedfd@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <639c5cb6ceb49ffd63952dc69d0d48b022aaec3b.1761998763.git.pav@iki.fi>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 11/1/25 2:31 PM, Alexandre Courbot wrote:
-> Since the Nova GSP boot series makes use of this, I hope to eventually
-> merge it alongside the series, through the DRM tree.
+Dear Pauli,
 
-If Miguel agrees, it's fine for me to take it through the drm-rust tree.
 
-Acked-by: Danilo Krummrich <dakr@kernel.org>
+Thank you for your patch.
+
+Am 01.11.25 um 13:09 schrieb Pauli Virtanen:
+> Bluetooth 6lowpan.c netdev has header_ops, so it must set link-local
+> header for RX skb, otherwise things crash, eg. with AF_PACKET SOCK_RAW
+> 
+> Add missing skb_reset_mac_header() for uncompressed ipv6 RX path.
+> 
+> For the compressed one, it is done in lowpan_header_decompress().
+> 
+> Log: (BlueZ 6lowpan-tester Client Recv Raw - Success)
+> ------
+> kernel BUG at net/core/skbuff.c:212!
+> Call Trace:
+> <IRQ>
+> ...
+> packet_rcv (net/packet/af_packet.c:2152)
+> ...
+> <TASK>
+> __local_bh_enable_ip (kernel/softirq.c:407)
+> netif_rx (net/core/dev.c:5648)
+> chan_recv_cb (net/bluetooth/6lowpan.c:294 net/bluetooth/6lowpan.c:359)
+> ------
+> 
+> Fixes: 18722c247023 ("Bluetooth: Enable 6LoWPAN support for BT LE devices")
+> Signed-off-by: Pauli Virtanen <pav@iki.fi>
+> ---
+>   net/bluetooth/6lowpan.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/net/bluetooth/6lowpan.c b/net/bluetooth/6lowpan.c
+> index f0c862091bff..f1d29fa4b411 100644
+> --- a/net/bluetooth/6lowpan.c
+> +++ b/net/bluetooth/6lowpan.c
+> @@ -289,6 +289,7 @@ static int recv_pkt(struct sk_buff *skb, struct net_device *dev,
+>   		local_skb->pkt_type = PACKET_HOST;
+>   		local_skb->dev = dev;
+>   
+> +		skb_reset_mac_header(local_skb);
+>   		skb_set_transport_header(local_skb, sizeof(struct ipv6hdr));
+>   
+>   		if (give_skb_to_upper(local_skb, dev) != NET_RX_SUCCESS) {
+
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+
+
+Kind regards,
+
+Paul
 
