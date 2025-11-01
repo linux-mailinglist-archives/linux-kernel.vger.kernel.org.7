@@ -1,116 +1,135 @@
-Return-Path: <linux-kernel+bounces-881294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35F45C27EF7
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 14:11:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11CE7C27F03
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 14:14:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 842FF40156F
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 13:11:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67E521A229FE
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 13:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D94472222C0;
-	Sat,  1 Nov 2025 13:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6EA2C0307;
+	Sat,  1 Nov 2025 13:14:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b="b5rnxHrU"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="tz9Aq75g"
+Received: from smtp.smtpout.orange.fr (smtp-82.smtpout.orange.fr [80.12.242.82])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C271EC018
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 13:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762002683; cv=pass; b=Xzrk6xuRyC4aJVzDbGwJecfOI0maknJ/unccv0IcMu56MKS40jtEW53o/DmZT9Sf1nVECoQzIOwMvC5g7YgdeBZed//L66/gOtAy2JYtO+4JE7sWyc9ypE1Uv0jGtL6NpDHAJEn7hJoGh95cn7bj0xEu1Kt3lT13FmyyJJqUEDM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762002683; c=relaxed/simple;
-	bh=0taRMor14N8gkPrOTnbjnXxGx8ZXOvRA4oL3AHJE1RQ=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=RcrFPuuWIbQs2geJaPLo8JXKKcXtmWQFGOXmXVLxVZeV2tQLhsv5cF0UIP2pHEMO8UJFy9HOQnLAIsZq7yRpk9njmDiRHeapcPYxNPDfkrBjl89CU8WLZljBgQfCPREH+3+oDT/cq04m3DzDcaReclo1Pq4JE42s/KZSeA//pRA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty; spf=pass smtp.mailfrom=linux.beauty; dkim=pass (1024-bit key) header.d=linux.beauty header.i=me@linux.beauty header.b=b5rnxHrU; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.beauty
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.beauty
-ARC-Seal: i=1; a=rsa-sha256; t=1762002662; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=UtHNSr1Fg9s8aac54dFgJC6UkSJZtVFgoo3lZMzdUSp6ELAnaa7/OzSEBHidOfh/ZGXDr/pt6rZr/Yv2tbKlRjynCe3ZU8+jUc6831g4q7ivuLIE24XfpNgh76eFXTxMHxmqc+PmE/Qia8PRehlv49scO7uVCXnJVweTJ5O3nIo=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1762002662; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=FQkuvTbMrWNB614TnSFI9TReTgW3UOssKpYpKVzLOk0=; 
-	b=j8d16OD1g74dhDpxpcqu80wYkIdGNTd9mQVFG0WermIyjtFbcOkyWSnxhJNT25KfEDaWSpG2AfHntkjfVMUlLuJtqkaDHuQDJEbyfKLQXjaj3RKS31MN08jE7Dffo7HXjmfxYMBC3TJ9mPwRuZop2LIRGvtBrqnxuO/bEuqR+ZQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=linux.beauty;
-	spf=pass  smtp.mailfrom=me@linux.beauty;
-	dmarc=pass header.from=<me@linux.beauty>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762002662;
-	s=zmail; d=linux.beauty; i=me@linux.beauty;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=FQkuvTbMrWNB614TnSFI9TReTgW3UOssKpYpKVzLOk0=;
-	b=b5rnxHrUVfk6jEq6hzevc/mm/DZmNpA+2Q3c8mIPOZXVvTd2Hq6ZX37dz9r1BhLB
-	yA1V/MfmCKWwgmHVLHgbJ92njIe9PxhcRewQ6k2ADhTbOTymz8li2qvuWjrAeAAINfe
-	maEKA7tp25GCn/rmfuAb/7Y1gnaGcA1otFBkAAt8=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 1762002659821563.1430926747331; Sat, 1 Nov 2025 06:10:59 -0700 (PDT)
-Date: Sat, 01 Nov 2025 21:10:59 +0800
-From: Li Chen <me@linux.beauty>
-To: "Zheng Gu" <cengku@gmail.com>
-Cc: "dm-devel" <dm-devel@lists.linux.dev>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"Dongsheng Yang" <dongsheng.yang@linux.dev>
-Message-ID: <19a3f8ae9db.8a18892d3330798.1127794710232272337@linux.beauty>
-In-Reply-To: <CADSj-VoQerDc2UUfBOknRMGetSddMEqRKaC3VDniD+xCq0pH1g@mail.gmail.com>
-References: <20251030123323.967081-1-me@linux.beauty> <20251030123323.967081-4-me@linux.beauty> <CADSj-VoQerDc2UUfBOknRMGetSddMEqRKaC3VDniD+xCq0pH1g@mail.gmail.com>
-Subject: Re: [PATCH 3/3] dm-pcache: avoid leaking invalid metadata in
- pcache_meta_find_latest()
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF4C3254B09;
+	Sat,  1 Nov 2025 13:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.82
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762002887; cv=none; b=JacZ8+EMxJgu8u8qOUXJ0ZGK/FFMQdN0fX1erpuruZVqzX2V6I2gCWwyjLj2GNVGiXFSRZ+MpTFB2tNFLAOiAG+nD2teyTpv7XQ6zC32FBuE+MoKv1jzMrXO2oCDlx9qM1BuC0nCnfviA5tqLH/k+ZmfOjfuC+IxEqjNgV/KjFk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762002887; c=relaxed/simple;
+	bh=4/HCqTH6QVAgyoFA0vyk+8EG5alrDDUv0Jior9NUFXQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JgK4sjxOLzC+eopXvigQ+gtE5llaXxXRCNpQ+QM9upQW61Mv9WDlHaHL9TP8U5piq85Ai4tAzfvOnSiKLeJBxeB5h821lh55nGbcBzilY1qvE0W7qV82xWAjLkQQGPH1n8FgVILZi/Ble+qa/wvjTimKEMfpMKnJkZsDgY/IlIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=tz9Aq75g; arc=none smtp.client-ip=80.12.242.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id FBQAvpxTMfpAtFBQBvVQQR; Sat, 01 Nov 2025 14:13:32 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1762002812;
+	bh=JjGbBPHBN73tG3pr/4Sq0ecZepCR3rtBC5d+11wEzGM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=tz9Aq75gTBrbF6mwnvyeCMkoCbvrx1hwjGbuMX1TCjjqvl0NJ59rYjKPxTfRMrXXN
+	 IJutUnaEU+B9nVyDSAAkKGt4dRzta/Gutwl64fWvDulDvd+Bf0lVARTa9iy73Ide/d
+	 mYDR39vqCCaMuuDQIOZRd2UKgepGrJneO0p1kXFaLXQBI/NpNN5ICvP+L3Ht7O4vGT
+	 H6ziwEn8rLIhACNaQd4xq1wY34fJrAryVwTzo224jK/vfZwb1qQYCSHzp+3H20Fal2
+	 /BoIY1vlUf9/u61BHr6/AIt7pWE270y2KlEHucXMWPRr10umctJOFYa7keRLoFWzkb
+	 HwShxUbiRA9WA==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Sat, 01 Nov 2025 14:13:32 +0100
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <76bfdeaf-3c95-4cf2-a210-9d3f069b5707@wanadoo.fr>
+Date: Sat, 1 Nov 2025 14:13:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] configfs: Constify some fileds in struct
+ config_item_type
+To: Andreas Hindborg <a.hindborg@kernel.org>, leitao@debian.org
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <UMPsw5UqjtBaIrv5LPKiow0sOdVevbuvSx39jhXV_gtjHReEeeqGpgijGJj5OoJjMJA3mDIeSyzR9lffgIOr6g==@protonmail.internalid>
+ <cover.1761390472.git.christophe.jaillet@wanadoo.fr>
+ <87sef2fa5x.fsf@t14s.mail-host-address-is-not-set>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Language: en-US, fr-FR
+In-Reply-To: <87sef2fa5x.fsf@t14s.mail-host-address-is-not-set>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Zheng,
+Le 29/10/2025 à 08:18, Andreas Hindborg a écrit :
+> "Christophe JAILLET" <christophe.jaillet@wanadoo.fr> writes:
+> 
+>> These 2 patches constify ct_item_ops and ct_group_ops in struct
+>> config_item_type.
+>>
+>> When/if they are applied, I'll send some patchess in each subsystem to
+>> constify the corresponding structures.
+>>
+>> This 2 steps approach is IMHO easier way to make these changes.
+>> This avoids long series and cover-letter/first patches sent to many
+>> maintainers and lists.
+>>
+>> However, if you prefer things to be done in the same serie, I can do
+>> that as well.
+> 
+> Looks good to me. Please also include a patch to fix up the rust
+> bindings in the 2nd step:
+> 
+> diff --git a/rust/kernel/configfs.rs b/rust/kernel/configfs.rs
+> index 318a2f073d1c7..468c8c4170d5e 100644
+> --- a/rust/kernel/configfs.rs
+> +++ b/rust/kernel/configfs.rs
+> @@ -755,8 +755,8 @@ pub const fn new_with_child_ctor<const N: usize, Child>(
+>                   Self {
+>                       item_type: Opaque::new(bindings::config_item_type {
+>                           ct_owner: owner.as_ptr(),
+> -                        ct_group_ops: GroupOperationsVTable::<Data, Child>::vtable_ptr().cast_mut(),
+> -                        ct_item_ops: ItemOperationsVTable::<$tpe, Data>::vtable_ptr().cast_mut(),
+> +                        ct_group_ops: GroupOperationsVTable::<Data, Child>::vtable_ptr(),
+> +                        ct_item_ops: ItemOperationsVTable::<$tpe, Data>::vtable_ptr(),
+>                           ct_attrs: core::ptr::from_ref(attributes).cast_mut().cast(),
+>                           ct_bin_attrs: core::ptr::null_mut(),
+>                       }),
+> @@ -773,7 +773,7 @@ pub const fn new<const N: usize>(
+>                       item_type: Opaque::new(bindings::config_item_type {
+>                           ct_owner: owner.as_ptr(),
+>                           ct_group_ops: core::ptr::null_mut(),
+> -                        ct_item_ops: ItemOperationsVTable::<$tpe, Data>::vtable_ptr().cast_mut(),
+> +                        ct_item_ops: ItemOperationsVTable::<$tpe, Data>::vtable_ptr(),
+>                           ct_attrs: core::ptr::from_ref(attributes).cast_mut().cast(),
+>                           ct_bin_attrs: core::ptr::null_mut(),
+>                       }),
+> 
 
- ---- On Fri, 31 Oct 2025 10:01:23 +0800  Zheng Gu <cengku@gmail.com> wrote=
- ---=20
- >> On Thu, Oct 30, 2025 at 8:36=E2=80=AFPM Li Chen <me@linux.beauty> wrote=
-:From: Li Chen <chenl311@chinatelecom.cn>
- >>=20
- >> Before this change pcache_meta_find_latest() was copying each
- >> slot directly into meta_ret while scanning. If no valid slot
- >> was found and the function returned NULL, meta_ret still held
- >> whatever was last copied (possibly CRC-bad). Later users
- >> (e.g. cache_segs_init) could mistakenly trust that data.
- >=20
- > This functions is * __must_check*, users must check the return value fir=
-st before touching the meta_ret, so it should not be a problem here.
+I'm not a big fan of mixing c and rs files updates in the same commit.
+And, as I don't know rust, I'm reluctant to changes things that I don't 
+understand and I'm not able to at least compile test.
 
-Right now, the callers only check the return value with IS_ERR(). If the
-function returns NULL instead of an error pointer, a caller like
-cache_info_init() will assume that no valid cache_info was found because al=
-l cache_info are
-corrupted. Instead, it will try to init a new one, and then return 0 (succe=
-ss),=20
-https://github.com/torvalds/linux/blob/master/drivers/md/dm-pcache/cache.c#=
-L61
+Can s.o. send this change as a follow-up patch?
 
-Later, cache_tail_init() will access cache->cache_info.flags. But in this
-path all cache_info may have already been corrupted, and the CRCs are misma=
-tched
-(https://github.com/torvalds/linux/blob/ba36dd5ee6fd4643ebbf6ee6eefcecf0b07=
-e35c7/drivers/md/dm-pcache/pcache_internal.h#L97),
-so flags may contain garbage.
+CJ
 
-This commit fixes this issue by allocating a temp buffer with kvmalloc, so =
-meta_ret would never
-contain corrupted values.
-
-Regards,
-
-Li=E2=80=8B
+> 
+> 
+> Best regards,
+> Andreas Hindborg
+> 
+> 
+> 
+> 
 
 
