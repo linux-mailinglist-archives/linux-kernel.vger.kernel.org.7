@@ -1,169 +1,143 @@
-Return-Path: <linux-kernel+bounces-881278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EB1AC27E47
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 13:43:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89F3EC27E4D
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 13:45:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83C551A2138C
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 12:43:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F4913B0FE7
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 12:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F10D2D0619;
-	Sat,  1 Nov 2025 12:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A4529BDAB;
+	Sat,  1 Nov 2025 12:45:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="JhzwNVNg"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="XrraMPtP"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448CD54763;
-	Sat,  1 Nov 2025 12:43:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF55C54763;
+	Sat,  1 Nov 2025 12:44:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762000983; cv=none; b=cbloSbnNqiBG5CDvBpmPt0vrTJB5361cxgt0dIQZC4PFbOLpbxCQK6V6DP/VU0zdPNLmHZeiySStSY2DQT//t41MtqApIFEmabtebifOhN3rFxGR/MIq32z3mSOgTUN6YH8rnBDT7oGfy8lQfCdrT6ra2IWnVH/QJqcRo4nA+WY=
+	t=1762001099; cv=none; b=cbAxxHYeEnrYPQojQ57jvtQuAzVvFQulZaWLc/Ja4y3/EGohLJNlIdcbsc/8Y56pbZHgATCFuLygPcJb02VQ041KGVLdS560ubjL6CTrOwpaxYsv714amS9HvyKdLb1CZvk2YKjgA5wJK8evpbL1S18qjloOzYT/eIthGWtywxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762000983; c=relaxed/simple;
-	bh=rDtsQXGPyMLri87V0fvSXcf2oqKNzDo7OvfiTltv6ro=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=FVeAAGc3UykIQpDT/FXrjj/4u1miDVbXgU003hA58uWwBn2iduSr3K8q29n5By8kxLDeowrJiNsWNdtKztDBrbVFCPq+Xgt5Jl6aeux6wFZ2NrC7EiCCzK1t8SZ2K5ea5d5rFJY1ql7zUH+04jJwr6M3VWWmYgTz2PVcL+6+XgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=JhzwNVNg; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1762000978; x=1762605778; i=markus.elfring@web.de;
-	bh=rDtsQXGPyMLri87V0fvSXcf2oqKNzDo7OvfiTltv6ro=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=JhzwNVNgzDdKb/1kP/OR1L2PZTA12KYum1+Ovkol3O1zN6RYV9ScvGlNMGIE/ZW1
-	 9RfX7y77ZGW9DK0grnAP5flb+MAHMsa3Gf/RcbbOMNYsNFyCr/WNxAP+LAMdxjyBr
-	 QwK3SyhdEjjnIw+ga2dGvYVWdCweqDK+mAkHK932qtItR5hJvKkrXBB/DVr+eQq6K
-	 I3nB8JvAMIIpaOrGxHd2aIGG8GvIBueEw9+Gg97U+1mNaGqyjS+yptkmJK7vM4QTb
-	 u4pwcnsNlDN7+p6qBYTbzmRdGwNOwfeq33lI4UazEFz+MJFZUaUZgBHhIExufux72
-	 Sh8WC35W3soAVERriQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.236]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MdwNg-1vmrrw17EE-00m324; Sat, 01
- Nov 2025 13:42:58 +0100
-Message-ID: <52e58416-d75f-4a47-9555-88a99d664069@web.de>
-Date: Sat, 1 Nov 2025 13:42:56 +0100
+	s=arc-20240116; t=1762001099; c=relaxed/simple;
+	bh=nFl4NJ6phhRXj1GOmZxAmKelEwgrnNQgsWxQ8GmlmXI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ntlv+btFZpX6nCpyCnficQrznOq5PS7DECyDTqIpUyOe5wyOFCph55NITTjMY1WytuIhM9WNeGLN9YUN7FOUiPQ/wSSF7CnsYf9+HpbGyJjaw52TV6PMbW8wZR3H9ozmkW5wTSKKXay6tt6YRMp9xtWPNZMRSHLIRQLTTY1M0hA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=XrraMPtP; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 355C540E0200;
+	Sat,  1 Nov 2025 12:44:54 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id DrM_EKOnMZ_3; Sat,  1 Nov 2025 12:44:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1762001088; bh=N4BOLLoJpHCqamHMqtxMixX7XoGo/cMXwO0xAm9y68w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XrraMPtPqsH9UjOKErD4x6QZWo8r5bvm8ascTfwRLY1jE0D/mdXOkRuudd5w8fBjk
+	 pvHJeLvmhnVoVUccyxbspFrSc7u/+t11wKw/bNDTASO30p+WuPEOzw9FT8eY+JYjmv
+	 54zzAxGObD4m0/PS1w+M2xXBGUaiOQT74EAvIeggHmbFuN1l286W5tQZYdbXc02jj5
+	 PpJLPkkVqjc14qgGhRh3Um4FHzJiflEpinwoRVmmnlskK4E+my26oFoyhMTAfpaCLj
+	 EmlRZVPrwEsf2bwOXRxPHPKd9zoABA0N9dknj+9eO4ilcIdOWad44x0283n7DlGGJI
+	 QeT0LICPC+qVsIqqXLcG0cR5fuzEWpQrb8H2G/XKiTU7xOxVuUhoL+i+1kS/S9wIEb
+	 frqi5ovdiKYD3A1CJWuy8tAU7y6FuZuSb9hv54+K1d2i/PXhIDE7awIdM46COEoX6T
+	 KK5zkVzKo25ETjIrLf71wWXcfwEAvrKqnY4gpciHvkv6VliQliDVYBvjyAMLzD9Kkk
+	 gfP8q/Y/dtwZ6FGVQ7CKIG7Fjs5Ae7bKr5S8+l4Kmx5Rlxk3xqtCLvL9FcQSbVvygO
+	 ncvPVakmHck+74BhJu7wd9GPR0+uygI2fC30LIpDaKkKaeXIU0KlGLfJEbPKR81pH6
+	 u5gyi2ouXkFH2KU5PdKUeeuQ=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id EF1E440E015B;
+	Sat,  1 Nov 2025 12:44:40 +0000 (UTC)
+Date: Sat, 1 Nov 2025 13:44:32 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-tip-commits@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
+	Joe Lawrence <joe.lawrence@redhat.com>, x86@kernel.org
+Subject: [PATCH] tools/objtool: Copy the __cleanup unused variable fix for
+ older clang
+Message-ID: <20251101124432.GBaQYAsK3mcvrB9cqm@fat_crate.local>
+References: <176060833509.709179.4619457534479145477.tip-bot2@tip-bot2>
+ <20251031114919.GBaQSiPxZrziOs3RCW@fat_crate.local>
+ <20251031140944.GA3022331@ax162>
+ <20251031142100.GEaQTFzKD-nV3kQkhj@fat_crate.local>
+ <wi54qqmdbzuajt7f5krknhcibs7pj45zhf42n3z5nyqujoabgz@hbduuwymyufh>
+ <20251031202526.GB2486902@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: cocci@inria.fr, kernel-janitors@vger.kernel.org
-Content-Language: en-GB, de-DE
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
- linux-xfs@vger.kernel.org
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [RFC] Detecting missing null pointer checks after memory allocations
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:USpDIOU0dB69LNgSEuPV+jqgMgPhiPW/CQZU2wUaho32lyC9gb8
- 8BfwJ1stb/PuC4N4H2n7PIXywLp1Udx+r4wmkCc7A7pT9/OK1qMXb0GovaQwO7X8kFpAWs8
- ikf4OkirxDbRVn/84FolhHaIGT113Gq3N+LgzcEklLV5CicQJ76UCxEx1b9ebtZCPKw0aWd
- 6DGB/52MgUGBzgmzqzqMQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:OpkVSMgbTHY=;tXi1eEEwrei+L3SYvaA062S2L9l
- 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
- HCKx1/bG8gZHXfTAG3JHNj3OR/BPASWWSqA=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251031202526.GB2486902@ax162>
 
-Hello,
+From: "Borislav Petkov (AMD)" <bp@alien8.de>
+Date: Sat, 1 Nov 2025 13:37:51 +0100
 
-I got into the mood to try another simple source code search out which
-can be achieved also by the means of the semantic patch language.
+Copy from
 
-@display@
-expression size, source, target;
-@@
- target =3D
-(
-*kmalloc
-|
-*vmalloc
-|
-*malloc
-)(...);
- memcpy(target, source, size);
+  54da6a092431 ("locking: Introduce __cleanup() based infrastructure")
+
+the bits which mark the variable with a cleanup attribute unused so that my
+clang 15 can dispose of it properly instead of warning that it is unused which
+then fails the build due to -Werror.
+
+Suggested-by: Nathan Chancellor <nathan@kernel.org>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/r/20251031114919.GBaQSiPxZrziOs3RCW@fat_crate.local
+---
+ tools/objtool/include/objtool/warn.h | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/tools/objtool/include/objtool/warn.h b/tools/objtool/include/objtool/warn.h
+index e88322d97573..a1e3927d8e7c 100644
+--- a/tools/objtool/include/objtool/warn.h
++++ b/tools/objtool/include/objtool/warn.h
+@@ -107,6 +107,15 @@ extern int indent;
+ 
+ static inline void unindent(int *unused) { indent--; }
+ 
++/*
++ * Clang prior to 17 is being silly and considers many __cleanup() variables
++ * as unused (because they are, their sole purpose is to go out of scope).
++ *
++ * https://github.com/llvm/llvm-project/commit/877210faa447f4cc7db87812f8ed80e398fedd61
++ */
++#undef __cleanup
++#define __cleanup(func) __maybe_unused __attribute__((__cleanup__(func)))
++
+ #define __dbg(format, ...)						\
+ 	fprintf(stderr,							\
+ 		"DEBUG: %s%s" format "\n",				\
+@@ -127,7 +136,7 @@ static inline void unindent(int *unused) { indent--; }
+ })
+ 
+ #define dbg_indent(args...)						\
+-	int __attribute__((cleanup(unindent))) __dummy_##__COUNTER__;	\
++	int __cleanup(unindent) __dummy_##__COUNTER__;			\
+ 	__dbg_indent(args);						\
+ 	indent++
+ 
+-- 
+2.51.0
 
 
-It can be determined then from the generated diff file that mentioned
-implementation details can be found at 11 places (4 source files) of
-the software =E2=80=9CLinux next-20251031=E2=80=9D.
-Will such analysis information trigger further collateral evolution?
+-- 
+Regards/Gruss,
+    Boris.
 
-Regards,
-Markus
+https://people.kernel.org/tglx/notes-about-netiquette
 
