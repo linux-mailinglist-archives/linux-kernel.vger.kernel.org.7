@@ -1,138 +1,114 @@
-Return-Path: <linux-kernel+bounces-881362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 566F3C2813C
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 16:02:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 183FCC28148
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 16:07:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1CCE24E1010
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 15:02:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BF2E188F065
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 15:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F198F2264BA;
-	Sat,  1 Nov 2025 15:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9A12BE633;
+	Sat,  1 Nov 2025 15:07:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JXi9MXYv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ks7WCdDl"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5822815D1;
-	Sat,  1 Nov 2025 15:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA4928A704
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 15:07:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762009343; cv=none; b=GZdCGZgQhbEXzoX08tcl+uLT3u7fK5jvQCXk2F+GB287m9xGQQu6ytgnJavyU/37wGpFG+k/PB32sIy+gbvSxBAQX1YMsBVbn5Wfs3a2Zy4sErsQ46Ok+HoffRYKZR54OW+k55USAtjGUt8t9ZIKHK5bDYO7WuOvFGvZgsaUMJs=
+	t=1762009623; cv=none; b=MCfuQMHmjk/XooPabqo4//LQlrV6iQ6jeec/SH3/wxlls3tuIMmcBj8GPmcTqvdKlrvzPtBA3vjQhBU065aZdf+sYG7p2tXKiwsB3FmID1wqHhcggDMQzi9EzTRFsp0e2Io2XpzFtxe6f3Igpf2m7EBXcl/xtGYms9lAyxFprOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762009343; c=relaxed/simple;
-	bh=XjqkzxujCssc2zk4tDrvih0oWnYgkiq9ucEXAO2KA3Y=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=OE7srUNTmXDu42iT6hasQLkeBP1gPCdF2/PX695mSv78IhUBB3okCQUlgqcVP5+WwgLkOdjVXAljMHZmWEgb8djwFQ3uqZLkme5HPcPoOe/jBqQm3E649jt5tCAn+GkXdArBOVqzxKWZSOcWvTK2Z2rpS2FNSkFmUA1qXMwUQ8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JXi9MXYv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA099C4CEF1;
-	Sat,  1 Nov 2025 15:02:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762009342;
-	bh=XjqkzxujCssc2zk4tDrvih0oWnYgkiq9ucEXAO2KA3Y=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=JXi9MXYvV+9UQPohIrfx+2q5bqfUaBY+fjcqd0597u+aQfZgIt7ewlwe23GVoaFKz
-	 IRbRec6awKlAUU1agKgFUnIhQGcP5VY9Y1vhfAXLlpBZFLmopVTp088U/plN7nT9QM
-	 mbt1AS9GiF6XJFGgTU3u7QTqXo/BsOlewiTTQpKVhEZ+eWXrgS6UbWqls01WG8Gkia
-	 rN0/vPYtGRzEFCd/rtvreLmq7RhqMcIZFdjitrV8maMEAsOLK4dm5bYyskZNfSHRXR
-	 8g3Ch/eEC+SLeyrLC5OLCegha6x0mbTIt848BGiPrfc2WUbQz5iKB6kb5rt83loCxL
-	 bdpBjjB/xBwyg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, leitao@debian.org
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH 0/2] configfs: Constify some fileds in struct
- config_item_type
-In-Reply-To: <76bfdeaf-3c95-4cf2-a210-9d3f069b5707@wanadoo.fr>
-References: <UMPsw5UqjtBaIrv5LPKiow0sOdVevbuvSx39jhXV_gtjHReEeeqGpgijGJj5OoJjMJA3mDIeSyzR9lffgIOr6g==@protonmail.internalid>
- <cover.1761390472.git.christophe.jaillet@wanadoo.fr>
- <87sef2fa5x.fsf@t14s.mail-host-address-is-not-set>
- <AenlUrApTlCB19zk49DWpC_tbPKSEaDPmg7GhZfuqlDfQvbMuYTWFkgVfp85fisHGgilvaGZEy_is6qnad9KMA==@protonmail.internalid>
- <76bfdeaf-3c95-4cf2-a210-9d3f069b5707@wanadoo.fr>
-Date: Sat, 01 Nov 2025 16:02:15 +0100
-Message-ID: <87ms5594p4.fsf@t14s.mail-host-address-is-not-set>
+	s=arc-20240116; t=1762009623; c=relaxed/simple;
+	bh=becdGP2alRJ2u1AdEeRmaLP7ThHZQI0eIuX4AXNQ4Ug=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IuY+xizwmJfVCFwvdpws5tTtmVDTh/xnR1ejCGc/mc63LF0jHbz8+DgsnrMYRETDEBTTQd4Wra6cT4cc8moJEdNNZYzgpfHyLsUzmOhcedcZ4L95pzMD70SiQflNY+54EgC1Iz3Dp3CaL1YMWZbTUsG4tKX4K5Op5HaXBnBH+lU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ks7WCdDl; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7a2687cb882so473876b3a.3
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 08:07:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762009620; x=1762614420; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7YiAzuZ3UregSrMpF9J31H4Yx7ePy+2MOlCUjA8nJCA=;
+        b=ks7WCdDlLigxXHjPcJDq7rRN4iM1gi975yI9wejfBe1LEToibzFS0ChatgRmyTzoae
+         XLOCzoxzexqMKJkn+qf8/0Yri9P5qWy+4GjtuM4mzQIUZUryAiFUulQSlBda/Y5f8JOe
+         gpMVz2vBi0+Ng9kDf9V5/cz+C9urIxoeSTWLcC4YP9N25m+cDDKDRcu01h+RLZK4ACZl
+         2vCZ/v0mA4Y/W8Mm8/ycdSz8UhoAZyQmqMk6S80208QggdpnjVNDMGaC5AcNus78VzvO
+         FO4xOVjC63QhjQxNfrMKdSOO65p4epi6t/YHvTtZZYp82MzVVN+gaoHfVfevoQMUINo2
+         Y1Bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762009620; x=1762614420;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7YiAzuZ3UregSrMpF9J31H4Yx7ePy+2MOlCUjA8nJCA=;
+        b=wMZZmjxp+ZK1gOvtC9bISbZit0nQNNM9SOboZWoNdwJ/6gvYKWH6u8uH3PWfQgCthZ
+         7LKyeJSLJjwl5xwJSmEhLxMcYxzut+VROLzLYiKKv+WHt3SqgcHWXTBU6H/FXQUSw+2a
+         xRsv7UcjOZkb/bnwrycmR1K0c3I3M6SLZxSlnrT1MgzfsjvIq8XqdRswhPnBY+6A9cIV
+         Lm09pjLI5LS+N1X/QsWpEjSsVnb0Ykxyj5DrSM2vi/tOWG5VS7T8pnjpDr7geobwyCN2
+         OuNhscp0YmgeqBdndcm02ZYetX92fkncIgwx4C6Sg8Ay0W1s06Jh72JRoc1NdfvZZUZk
+         kUvw==
+X-Forwarded-Encrypted: i=1; AJvYcCWSvdFMBrF/nJHLQn8zAaujDo/n9tuWncMXCjEiczomJ/mNeG09uLnxYF0uviQx1jEXvXawk/yW9fqLa+I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGAa8OoMvHMAwOVrF5nGn6idngqkndbymEHsx8Uwy36zibTPSI
+	8eVxGqhGxZsyYpyami2Y4SUSSLGDS87vfSBRk9DA6SyEpQHibIwGW0+q24VOI0gmXrFWxDnFQy+
+	26fWOFZwyFgPsiK/mMEeMGVmycloox8I=
+X-Gm-Gg: ASbGncuaW9hH75rsTwWTCa9cvFgh53P8tThRnU059Q6p9k1KPbEiyLWqkZAAxpcuAqP
+	W6aeR4seLB7kpArLSpMjfCjYsj/Lv4745SsK9d/0zlmHxd2UkCZi+9d/E/j2IeSn9Q4NlkfTjSO
+	tBwf7iFRTvYtpmRRqdzHGFM0EJtPYMM5k6zEi79bD1zI+tlwxej1/TYELeGsEjjd6DFDcYBDfKC
+	0HH71WJprTbVChAchHlomiPYLnGOU1/sPZAvPpq/aYUlGdajlNNuWx6KcByOksglrxvIx8S1Tss
+	SlRZWF02MPqyacIXLvqgELdr+lIRKy0d2wjZ4NuadlxZ9rUzI7KsfCJKvdZAvW3s0dKABlMnEzg
+	H3Nx2cj/RE4d13Q==
+X-Google-Smtp-Source: AGHT+IGi6G3P46MnlLa6pHrqzoZMNbq5z4mcGHcJTxA29pvYP66KNHtzQiBAWUFWhhFhSjojWQFNPtYK8TTJX1H3rRs=
+X-Received: by 2002:a17:902:d2cc:b0:295:6d30:e26e with SMTP id
+ d9443c01a7336-2956d30e5famr6001545ad.8.1762009619849; Sat, 01 Nov 2025
+ 08:06:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20251022143158.64475-1-dakr@kernel.org> <20251022143158.64475-6-dakr@kernel.org>
+ <aPnnkU3IWwgERuT3@google.com> <DDPMUZAEIEBR.ORPLOPEERGNB@kernel.org>
+ <CAH5fLgiM4gFFAyOd3nvemHPg-pdYKK6ttx35pnYOAEz8ZmrubQ@mail.gmail.com>
+ <DDPNGUVNJR6K.SX999PDIF1N2@kernel.org> <aPoPbFXGXk_ohOpW@google.com>
+ <CANiq72k8bVMQLVCkwSS24Q6--b155e53tJ7aayTnz5vp0FpzUQ@mail.gmail.com> <DDXFFQCZJW8Y.3GMX8666EJQ2I@nvidia.com>
+In-Reply-To: <DDXFFQCZJW8Y.3GMX8666EJQ2I@nvidia.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 1 Nov 2025 16:06:47 +0100
+X-Gm-Features: AWmQ_blyOPSYdkZpX6T0yNaf0355JZzLQBA5jSJ7sUHzLUv-DNemVpz3bwTrLh8
+Message-ID: <CANiq72=MetoQajmJ5Hwmopp32YZZmbNu5a5EtQve5rxP7z0uMQ@mail.gmail.com>
+Subject: Re: [PATCH v3 05/10] rust: uaccess: add UserSliceWriter::write_slice_file()
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@kernel.org>, gregkh@linuxfoundation.org, 
+	rafael@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	lossin@kernel.org, a.hindborg@kernel.org, tmgross@umich.edu, 
+	mmaurer@google.com, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-"Christophe JAILLET" <christophe.jaillet@wanadoo.fr> writes:
-
-> Le 29/10/2025 =C3=A0 08:18, Andreas Hindborg a =C3=A9crit=C2=A0:
->> "Christophe JAILLET" <christophe.jaillet@wanadoo.fr> writes:
->>
->>> These 2 patches constify ct_item_ops and ct_group_ops in struct
->>> config_item_type.
->>>
->>> When/if they are applied, I'll send some patchess in each subsystem to
->>> constify the corresponding structures.
->>>
->>> This 2 steps approach is IMHO easier way to make these changes.
->>> This avoids long series and cover-letter/first patches sent to many
->>> maintainers and lists.
->>>
->>> However, if you prefer things to be done in the same serie, I can do
->>> that as well.
->>
->> Looks good to me. Please also include a patch to fix up the rust
->> bindings in the 2nd step:
->>
->> diff --git a/rust/kernel/configfs.rs b/rust/kernel/configfs.rs
->> index 318a2f073d1c7..468c8c4170d5e 100644
->> --- a/rust/kernel/configfs.rs
->> +++ b/rust/kernel/configfs.rs
->> @@ -755,8 +755,8 @@ pub const fn new_with_child_ctor<const N: usize, Chi=
-ld>(
->>                   Self {
->>                       item_type: Opaque::new(bindings::config_item_type {
->>                           ct_owner: owner.as_ptr(),
->> -                        ct_group_ops: GroupOperationsVTable::<Data, Chi=
-ld>::vtable_ptr().cast_mut(),
->> -                        ct_item_ops: ItemOperationsVTable::<$tpe, Data>=
-::vtable_ptr().cast_mut(),
->> +                        ct_group_ops: GroupOperationsVTable::<Data, Chi=
-ld>::vtable_ptr(),
->> +                        ct_item_ops: ItemOperationsVTable::<$tpe, Data>=
-::vtable_ptr(),
->>                           ct_attrs: core::ptr::from_ref(attributes).cast=
-_mut().cast(),
->>                           ct_bin_attrs: core::ptr::null_mut(),
->>                       }),
->> @@ -773,7 +773,7 @@ pub const fn new<const N: usize>(
->>                       item_type: Opaque::new(bindings::config_item_type {
->>                           ct_owner: owner.as_ptr(),
->>                           ct_group_ops: core::ptr::null_mut(),
->> -                        ct_item_ops: ItemOperationsVTable::<$tpe, Data>=
-::vtable_ptr().cast_mut(),
->> +                        ct_item_ops: ItemOperationsVTable::<$tpe, Data>=
-::vtable_ptr(),
->>                           ct_attrs: core::ptr::from_ref(attributes).cast=
-_mut().cast(),
->>                           ct_bin_attrs: core::ptr::null_mut(),
->>                       }),
->>
+On Sat, Nov 1, 2025 at 3:27=E2=80=AFPM Alexandre Courbot <acourbot@nvidia.c=
+om> wrote:
 >
-> I'm not a big fan of mixing c and rs files updates in the same commit.
-> And, as I don't know rust, I'm reluctant to changes things that I don't
-> understand and I'm not able to at least compile test.
-
-This is why I gave you the diff.
-
+> Are you referring to this discussion?
 >
-> Can s.o. send this change as a follow-up patch?
+> https://lore.kernel.org/rust-for-linux/DDK4KADWJHMG.1FUPL3SDR26XF@kernel.=
+org/
 
-Sure, I can do that.
+I saw that one and the patches  -- perhaps it was in meetings, but
+dealing with guarantees that are only true in the kernel (assumptions,
+conversions) has come up before several times over the years.
 
-
-Best regards,
-Andreas Hindborg
-
-
-
+Cheers,
+Miguel
 
