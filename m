@@ -1,108 +1,94 @@
-Return-Path: <linux-kernel+bounces-881292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6150C27ECB
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 13:59:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEC60C27EEB
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 14:10:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8DE4F4E1761
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 12:59:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DFC4D4E5CE9
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 13:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C1F02F5A03;
-	Sat,  1 Nov 2025 12:59:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE2BD2264A9;
+	Sat,  1 Nov 2025 13:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OmzLBTeX"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JjT/Z/op"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F9E2874F8
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 12:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB1F1B86C7;
+	Sat,  1 Nov 2025 13:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762001963; cv=none; b=MfGhZJgGD8JiYbEMoKo8FaXOSEm2d6qRB3O0j/sjyLeiCzTsO8Gj4x/pD4txFkRfReqC7iGJUNZICL4C8iT2wMGloCo0g0WlTajwZ+o673u/qzQ7Qm00oj6AXWgRCyHNTRWDxI284MHQ5BWcHrD1X4od8UyqGFr+jb18kfPhJ3o=
+	t=1762002647; cv=none; b=mWErflsGKYUlDv0g3GJOLxOTpbun+mHx5OE/lofoMk4nK6R/Hj0LHqVIQJQxm3C7JIRuIK5guHhGFJTuxD1iH9SsAphQ8b5qebfpRNkvuqPduQdL+XXNx/3jTcd0f8MZufL2WQqzuYTSL3Ct7HROck2PbD6sO9cvZ3hIhjB+pAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762001963; c=relaxed/simple;
-	bh=q0wnPO6LZkJSYa2KQQEDnYK/8cjLmnoYdIYFwsMDMPU=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=hvLTbEceDI1UhDD42j9olclykBw79l4v0B5/2jYCR55bd1X8NDzHcbHtSdOhWZ5EEd0M9+rduZLyTAmkHVTQ2azdLCJ+tb9b3XGJw+43mv75rJK1oDgHHQaasgLyElBo3FK88m1k9y8V+9LBfki/1v0MiLNsYZGQyXmDJ+mdqW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OmzLBTeX; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b98983baeacso68297a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 05:59:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762001961; x=1762606761; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=q0wnPO6LZkJSYa2KQQEDnYK/8cjLmnoYdIYFwsMDMPU=;
-        b=OmzLBTeXxwLFjsX3L6AeIvN+QE5znkQUPjihIezEqdVLQgCOEtnglZ+2nKtxmn8mIF
-         z9uXkjed9eo/ktbs4GvDk/2CrNqK6wAXwuUqogRU9tdTrKFrtj2ofXSM/BpvkMYHDwHe
-         Wz76n+rmtQIyoUv3q+eRPyBmnrTt4CSN5ECP4QRruz8Drj8DRbC1tiGlU4cUvIjHKV/i
-         KFkFbYygeMtKnIuxo0CUA//8y7T9aTcj/BTBu65SHVf2d3bJpuZP+BEmeuT3uumJPY20
-         2y8OsQXS52BZY4uvWKJBDE/oX98smps0w5aW0vKIWGJcn1WwQrA5gKfKI/A0plPL6etp
-         zZ3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762001961; x=1762606761;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=q0wnPO6LZkJSYa2KQQEDnYK/8cjLmnoYdIYFwsMDMPU=;
-        b=CySkI8ROHT10Ra/Sk4nZ7z10McUHdMk2ZbXHsGMd2Cdx9aq5TXfAUUOoGbko8MVF2o
-         8SXZlahp0bn7gf6WTZJ6SUd3B6R1yPNwfVlMsd1hwVhG+k/2M4ZN0aPdN9gJd9wFUAtV
-         exDXvwBInZ93tyWntK1hOE5C/jUOjKZ7DBJhV6KUmuaBGCLnPYNTadCz/TPFVmJ0ZHt4
-         HmnGbjO7Bubeq3znYX/EpJSuet0ZOX/v4UBby8p7DiUB3+UCauooPZtPHIpl0VYiwVjh
-         zwB26IH7aECPb75yacB/wy0GGcK4JBSqc+tijeIKQHg3iM4IYo2NlMea6AYHmZjfAUfT
-         tlrA==
-X-Gm-Message-State: AOJu0YxZYuvJFDwBKAyJ5oWsf198SR6sLz32YSCwxj6TJUUDsIu7s85V
-	SfpmQCPtSaGyFPJNsAz79aDo5G69LrnVeoKP00+NH05SHv/6EE5Qye9hz2qoxHZuBJLjKMgmMLx
-	+n/0Hso2YN6dgXGbfe4oWraVTZILfvN/Zzzq7
-X-Gm-Gg: ASbGncsl45/3KPVfGxhAaPSU9vg3qXzS9LhZuM/JX3redFze0ozthDyaqxCzjcZz2pr
-	Q1HWgXdwrXtlCLkQdazkSFYbEqVmMbO/0zUeF+46R0vmoiSEPW9/eMdNdEd6GZacGUaylappMZ9
-	+JhycDVV8/X75tnHN6sS5g4qW6eyUJfHCIGFxv6Y2Ymdipilqc0j8X/lTwdxKrcdMUNrEKHTt3H
-	NHGptfTJfjR8qcucQFzpByuCdgd9FLwpjM+czuhIYpLUO1HC0Q66Wn9jLW6ajNkmOqbQ89Lw6le
-	zp4xEVdXj+gMtG7Q6XWaSSFkA31BMZ/ixhmjTGOP
-X-Google-Smtp-Source: AGHT+IECTxEDYbXR5/YWjfROEd2DbX82PbnlXyKMNPDssRDbW4sB6vrDAV1stFo8/wkvP21NG8bXG9HbSIJj3s1n0Aw=
-X-Received: by 2002:a17:902:ec8f:b0:267:cdb8:c683 with SMTP id
- d9443c01a7336-2951a49dd78mr107251275ad.27.1762001960837; Sat, 01 Nov 2025
- 05:59:20 -0700 (PDT)
+	s=arc-20240116; t=1762002647; c=relaxed/simple;
+	bh=E344S8+1QRn521QovyCsMxpgRFO6Ptgyc0Tz/4QqK8M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TRcAW6y7KrIHQa1q5J0sZC1zRRciTZbNe0MDF27HN3E+9TTRjpdo4XhwNDyHwTIWdowNOMje0Cf+V3NIAKfec26oTQdH0med6VVERQwKZEqDs5krjlAivkIE686ehP0MWcJeKgzX8ueC6kcgFD8O0LJO84ULLws0gE65YcjABA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JjT/Z/op; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1ED4C4CEF1;
+	Sat,  1 Nov 2025 13:10:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762002646;
+	bh=E344S8+1QRn521QovyCsMxpgRFO6Ptgyc0Tz/4QqK8M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JjT/Z/opVGfVr4F4Wclj1iqAhu4ykoa4Yaaxd7zIFjwL1SYIT5QzSnscf/EJdd8Rj
+	 YN8rXYZhn/6r0H0w/aXVE295papxyNTLWdwtdTcnukL+4CNroA8Y0Ppij/9Q5k7txo
+	 CIVZCKb5j2j7/QQWG11fIIsUnlyX3yOsZWN/DUEbk9PJNnX0gPCKt+imp1MezAOMax
+	 lw68wPqHGmCex+hMbsKuXecKlMl658L6dXuDjFndhJtHN+vZ8r4bKN79nLpV6Jqq78
+	 1922RHwU1LmLYS4fDaVoU/kciVgf5qok0gA/i8KuVKD+aZg2ax6IAHq7pj5nm7ZiWD
+	 4pjudhk5R/32w==
+Date: Sat, 1 Nov 2025 14:10:42 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, linux-efi@vger.kernel.org, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	David Sterba <dsterba@suse.com>
+Subject: Re: fms extension (Was: [PATCH] fs/pipe: stop duplicating union
+ pipe_index declaration)
+Message-ID: <20251101-bugsieren-gemocht-0e6115014a45@brauner>
+References: <20251029173828.GA1669504@ax162>
+ <20251029-wobei-rezept-bd53e76bb05b@brauner>
+ <CAHk-=wjGcos7LACF0J40x-Dwf4beOYj+mhptD+xcLte1RG91Ug@mail.gmail.com>
+ <20251030-zuruf-linken-d20795719609@brauner>
+ <20251029233057.GA3441561@ax162>
+ <20251030-meerjungfrau-getrocknet-7b46eacc215d@brauner>
+ <CAMj1kXHP14_F1xUYHfUzvtoNJjPEQM9yLaoKQX=v4j3-YyAn=A@mail.gmail.com>
+ <20251030172918.GA417112@ax162>
+ <20251030-zukunft-reduzieren-323e5f33dca6@brauner>
+ <20251031013457.GA2650519@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Vlad Ilie <vladflorin.ilie@gmail.com>
-Date: Sat, 1 Nov 2025 14:59:08 +0200
-X-Gm-Features: AWmQ_blh5_uNJsw_pUZvb5z29KWdjETm1QxEUWBYtz0RNt194g1IH59OC6dDVmQ
-Message-ID: <CALR5YtV3tiH8azka+d8=QiucMBCUTC5jOguScoioaDZg+-h35Q@mail.gmail.com>
-Subject: [QUESTION] EDAC/igen6: Missing PCI ID for Intel "Arrow Lake-S" Host
- Bridge (8086:7d1a)
-To: linux-edac@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251031013457.GA2650519@ax162>
 
-Hello,
+On Thu, Oct 30, 2025 at 09:34:57PM -0400, Nathan Chancellor wrote:
+> On Thu, Oct 30, 2025 at 09:16:02PM +0100, Christian Brauner wrote:
+> > On Thu, Oct 30, 2025 at 10:29:18AM -0700, Nathan Chancellor wrote:
+> > > There are several other places in the kernel that blow away
+> > > KBUILD_CFLAGS like this that will need the same fix (I went off of
+> > > searching for -std=gnu11, as that was needed in many places to fix GCC
+> > > 15). It is possible that we might want to take the opportunity to unify
+> > > these flags into something like KBUILD_DIALECT_CFLAGS but for now, I
+> > > just bothered with adding the flags in the existing places.
+> > 
+> > That should hopefully do it. Can you update the shared branch with that
+> > and then tell me when I can repull?
+> 
+> I have applied this as commit e066b73bd881 ("kbuild: Add
+> '-fms-extensions' to areas with dedicated CFLAGS") in the
+> kbuild-ms-extensions branch. I may solicit acks from architecture
+> maintainers but I would like to make sure there are no other surprises
+> before then.
 
-I am running a system with a new Intel "Arrow Lake-S" CPU (Core Ultra
-9 285T) on an ASRock IMB-X1317-10G motherboard, which supports In-Band
-ECC.
-
-I have confirmed ECC is enabled in the BIOS, and dmidecode reports an
-80-bit total width, so the hardware is active.
-
-However, the igen6_edac driver fails to attach, and edac-util reports
-"No memory controllers found."
-
-I've diagnosed the issue:
-
-1. My CPU's Host Bridge PCI ID is [8086:7d1a] (from lspci -nn -s 00:00.0).
-
-2. I checked the igen6_edac driver's latest source, and this PCI ID is
-missing. The driver has support for "Arrow Lake-UH" (e.g., 7d06) and
-even future "Wildcat Lake" CPUs, but not the "Arrow Lake-S" desktop
-variant.
-
-Is adding the 8086:7d1a PCI ID for Arrow Lake-S on the roadmap?
-
-Thank you.
+I'd like a stable branch before -rc5, please.
 
