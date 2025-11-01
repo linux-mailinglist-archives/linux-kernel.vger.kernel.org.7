@@ -1,147 +1,186 @@
-Return-Path: <linux-kernel+bounces-881529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E32BBC2868C
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 20:36:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F8C6C2868F
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 20:38:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A18841886F87
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 19:37:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 933911891206
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 19:39:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9124D289E06;
-	Sat,  1 Nov 2025 19:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A73A42797A9;
+	Sat,  1 Nov 2025 19:38:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MoLHs00s"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="D0HbcYS4"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F8F02652A4
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 19:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426CC211706
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 19:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762025813; cv=none; b=L65rpDVBlfxYnRKACqJlbb7B+siZuj0Fr6Y9AUz06ANsniE3QjUQcR5sbGm5nqrKG1rgYp4A92mCSN61ddByqQk6CRDGWZ5OumNAR4quXrBqmCUapAO/ORI5B9VC+XQ8/SVM/ssX8MjVimsrKYSUIDzDV1pyLbScYF743K2/hKg=
+	t=1762025913; cv=none; b=c/ijNnAHP7DBmSjt7WycnTlkrHRhm3VX54PaYp1TMkKVV5ALOHt6GB93Lg61kCGNEdQhCUZyUJb/cfgVuwnsw4Hyry+GsdY3NljVeglBR2RX2ugkadgJssu2f06++Vis81QCzk2Ct0i+OrTOWSWD3zPN7RCeWC/Ssbg3yk0YNhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762025813; c=relaxed/simple;
-	bh=UNLgUNEbuilYnhoztX92QSHI2QpWIAoqAV+6Dwad9Fg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QXHCAw9XcDn7P9UxQVqReSChjYi+Wwko1xTkefm2hhKRfQKuHknH9lI0rme9GcRtFzzlMEI+3M7LN1ozZfp0PuXs+lFypytYXKVZm5nDOwmAu2puZZ0xc6+p6w7YlnD4WzgpwOiVmfHRB6CBm2ccbgPGkihqWeZhjl6tT/hs/YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MoLHs00s; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762025810; x=1793561810;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UNLgUNEbuilYnhoztX92QSHI2QpWIAoqAV+6Dwad9Fg=;
-  b=MoLHs00sL7pqk43zO1TEXF+5EjosJeSRyqduT6OASFxG8OOIv9Gtuy26
-   MKGbcJWphF2VSiwAnsZBHUDqYohzc6Chna9JlQvQFfoxBesiNep4RWYZn
-   tiNvmKnPvIVmGXHz75r6Yl1++wun7TyY0rsFpdhruvF0GOimMm8bgMRKP
-   d0+m8EwslIEGCHW6iGDDPLiz3eEV9hTckbdIwf4woz6t6y4/JS3ivRrK1
-   I0YoWVh991ZS4RqjKo7t2nvI23yP7QgxZsAyo5nCgXxqzzFhbmz9J++g2
-   Vt+9SY5oAYvLh+sGLzbWxeXMigzTIN7oVETuzLE+ZnDtAkF3u6NyszR+r
-   Q==;
-X-CSE-ConnectionGUID: SaqetNpVTtmuaCY9tmsaJw==
-X-CSE-MsgGUID: UvxEEdneTBuKS+qDC/F3cw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64086998"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="64086998"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2025 12:36:49 -0700
-X-CSE-ConnectionGUID: /AXIaqu7T1CsP3LWinhpbA==
-X-CSE-MsgGUID: xzImgq6JSjeWc0g6fZo9+A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,272,1754982000"; 
-   d="scan'208";a="186393320"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 01 Nov 2025 12:36:46 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vFHON-000Odw-2x;
-	Sat, 01 Nov 2025 19:36:10 +0000
-Date: Sun, 2 Nov 2025 03:35:20 +0800
-From: kernel test robot <lkp@intel.com>
-To: David Laight <david.laight.linux@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	David Laight <david.laight.linux@gmail.com>,
-	u.kleine-koenig@baylibre.com, Nicolas Pitre <npitre@baylibre.com>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Li RongQing <lirongqing@baidu.com>, Yu Kuai <yukuai3@huawei.com>,
-	Khazhismel Kumykov <khazhy@chromium.org>,
-	Jens Axboe <axboe@kernel.dk>, x86@kernel.org
-Subject: Re: [PATCH v4 next 6/9] lib: test_mul_u64_u64_div_u64: Test both
- generic and arch versions
-Message-ID: <202511020341.TEhkaR65-lkp@intel.com>
-References: <20251029173828.3682-7-david.laight.linux@gmail.com>
+	s=arc-20240116; t=1762025913; c=relaxed/simple;
+	bh=tL1khiSJCZAIFR8BTUUF98pjzFaPp3DAe9Q+ke4qxSo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dcDyp3uzpjAWmQHciqCkv85+9uDxpsDWpBWOQHbKzjmz9beenW5uY/qhBVEpRfjBvJ4Wa0g+wLIROa4Rh8BfOebWNCT50klKa1KC/A8HgU2UGGcDnJbej95c28x3HHD3RtOyftPah4sRv84xFBSGTeHSqQ/gqvNizIwjqYfQKbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=D0HbcYS4; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A1EiGov009566;
+	Sat, 1 Nov 2025 19:37:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=n7noBi6+FXl1r4Ffe3YufTyb4NpkxmUZpvnxTho9v
+	bs=; b=D0HbcYS4nMb/QAeI2oZowCx3Ff+Np3qS7X8w2F8oyIQSGu+0Yga17r2CN
+	E59jlE3fxyIVvZ/OPT8K63KMbXlpEAMSnp9MMDhRlOsyMegH7cpVxC2uTJQjl+9O
+	lqSgDqqzOrkytXztI5En1O3nsMSlxJNjOwc6P8C66BI1KPEGZFNlXsodH/Wjyxgk
+	cnHsvoVHKk7DpwejGwuumoNvrFipzTNFT8MXnx0Kzcv4YBsCEXORRmPlzRmpv6Jh
+	ZFD56LUiI1oC6vkA/OxUTil3dPArX26mOWmQKS4xbLc4m9v9JhzpNxvZdxaeaPY/
+	6y8Z8iL6XP78PUkRleWXayyjhGojw==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a58mkhvxx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 01 Nov 2025 19:37:59 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A1HjVLC018796;
+	Sat, 1 Nov 2025 19:37:58 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a33xwupke-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 01 Nov 2025 19:37:58 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A1Jbu4L18743702
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 1 Nov 2025 19:37:56 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7323020043;
+	Sat,  1 Nov 2025 19:37:56 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B1BEF20040;
+	Sat,  1 Nov 2025 19:37:54 +0000 (GMT)
+Received: from li-4f5ba44c-27d4-11b2-a85c-a08f5b49eada.ibm.com.com (unknown [9.39.30.101])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Sat,  1 Nov 2025 19:37:54 +0000 (GMT)
+From: Sourabh Jain <sourabhjain@linux.ibm.com>
+To: linux-kernel@vger.kernel.org
+Cc: Sourabh Jain <sourabhjain@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
+        Zhen Lei <thunder.leizhen@huawei.com>, kexec@lists.infradead.org
+Subject: [PATCH] crash: fix crashkernel resource shrink
+Date: Sun,  2 Nov 2025 01:07:41 +0530
+Message-ID: <20251101193741.289252-1-sourabhjain@linux.ibm.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029173828.3682-7-david.laight.linux@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: kMXoSIs9mW8II7IHhqD7Wz4vDw2X9ynF
+X-Proofpoint-GUID: kMXoSIs9mW8II7IHhqD7Wz4vDw2X9ynF
+X-Authority-Analysis: v=2.4 cv=SqidKfO0 c=1 sm=1 tr=0 ts=69066197 cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=Z4Rwk6OoAAAA:8 a=20KFwNOVAAAA:8
+ a=i0EeH86SAAAA:8 a=JfrnYn6hAAAA:8 a=VnNF1IyMAAAA:8 a=JIB6K9Ufr1_efp9ICtEA:9
+ a=HkZW87K1Qel5hWWM3VKY:22 a=1CNFftbPRP8L7MoqJWF3:22 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAwOSBTYWx0ZWRfXz8yTfRld4vT7
+ fPN6MoGKQ59o0fTLfDxoQF1E15M7wyXtuTCatfX25+eaRRyJGiLWcdOdDiV9Wx2FdXXeAOIZoaH
+ 7LmNIFpxIpFBEWVE/QzlSFCI5QEAHjmTt6uK0poF79MfMuAO9sr7/o155B//EyRY19VBSNrKcoQ
+ EmOCpQZJ3MS5phLG8Mnh3OBEt7UgpJlXzOvbQBDR1UjuQcC0d6dFT8VdQx64AnUGVUl2LiLbXyQ
+ r9173XaJTKDXh3bHhJO9GY/Ft2gfXSfc568vcvuueZO30cY+82TvHMxjnHdbJjrISJ3XWsW5LGa
+ v1S/DIp37Bcb3MUPNXcfJne67lNLIOUvw2qMfIuWbsa0FXcfRdT3Zd755gdAQWLxIw+SNEk2bGG
+ R1pTk2tvwSPGv8PKKF8srizmDRhudQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-01_04,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 clxscore=1011 impostorscore=0 adultscore=0 lowpriorityscore=0
+ malwarescore=0 spamscore=0 priorityscore=1501 bulkscore=0 phishscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010009
 
-Hi David,
+When crashkernel is configured with a high reservation, shrinking its
+value below the low crashkernel reservation causes two issues:
 
-kernel test robot noticed the following build warnings:
+1. Invalid crashkernel resource objects
+2. Kernel crash if crashkernel shrinking is done twice
 
-[auto build test WARNING on next-20251029]
+For example, with crashkernel=200M,high, the kernel reserves 200MB of
+high memory and some default low memory (say 256MB). The reservation
+appears as:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/David-Laight/lib-mul_u64_u64_div_u64-rename-parameter-c-to-d/20251030-025633
-base:   next-20251029
-patch link:    https://lore.kernel.org/r/20251029173828.3682-7-david.laight.linux%40gmail.com
-patch subject: [PATCH v4 next 6/9] lib: test_mul_u64_u64_div_u64: Test both generic and arch versions
-config: i386-randconfig-052-20251102 (https://download.01.org/0day-ci/archive/20251102/202511020341.TEhkaR65-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251102/202511020341.TEhkaR65-lkp@intel.com/reproduce)
+cat /proc/iomem | grep -i crash
+af000000-beffffff : Crash kernel
+433000000-43f7fffff : Crash kernel
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511020341.TEhkaR65-lkp@intel.com/
+If crashkernel is then shrunk to 50MB (echo 52428800 >
+/sys/kernel/kexec_crash_size), /proc/iomem still shows 256MB reserved:
+af000000-beffffff : Crash kernel
 
-All warnings (new ones prefixed by >>):
+Instead, it should show 50MB:
+af000000-b21fffff : Crash kernel
 
->> lib/math/test_mul_u64_u64_div_u64.c:142:9: warning: "__div64_32" redefined
-     142 | #define __div64_32 __div64_32
-         |         ^~~~~~~~~~
-   In file included from include/linux/math.h:6,
-                    from include/linux/math64.h:6,
-                    from include/linux/time.h:6,
-                    from include/linux/stat.h:19,
-                    from include/linux/module.h:13,
-                    from lib/math/test_mul_u64_u64_div_u64.c:9:
-   arch/x86/include/asm/div64.h:78:9: note: this is the location of the previous definition
-      78 | #define __div64_32
-         |         ^~~~~~~~~~
+Further shrinking crashkernel to 40MB causes a kernel crash with the
+following trace (x86):
 
+BUG: kernel NULL pointer dereference, address: 0000000000000038
+PGD 0 P4D 0
+Oops: 0000 [#1] PREEMPT SMP NOPTI
+<snip...>
+Call Trace: <TASK>
+? __die_body.cold+0x19/0x27
+? page_fault_oops+0x15a/0x2f0
+? search_module_extables+0x19/0x60
+? search_bpf_extables+0x5f/0x80
+? exc_page_fault+0x7e/0x180
+? asm_exc_page_fault+0x26/0x30
+? __release_resource+0xd/0xb0
+release_resource+0x26/0x40
+__crash_shrink_memory+0xe5/0x110
+crash_shrink_memory+0x12a/0x190
+kexec_crash_size_store+0x41/0x80
+kernfs_fop_write_iter+0x141/0x1f0
+vfs_write+0x294/0x460
+ksys_write+0x6d/0xf0
+<snip...>
 
-vim +/__div64_32 +142 lib/math/test_mul_u64_u64_div_u64.c
+This happens because __crash_shrink_memory()/kernel/crash_core.c
+incorrectly updates the crashk_res resource object even when
+crashk_low_res should be updated.
 
-   140	
-   141	/* Compile the generic mul_u64_add_u64_div_u64() code */
- > 142	#define __div64_32 __div64_32
-   143	#define div_s64_rem div_s64_rem
-   144	#define div64_u64_rem div64_u64_rem
-   145	#define div64_u64 div64_u64
-   146	#define div64_s64 div64_s64
-   147	#define iter_div_u64_rem iter_div_u64_rem
-   148	
+Fix this by ensuring the correct crashkernel resource object is updated
+when shrinking crashkernel memory.
 
+Fixes: 16c6006af4d4 ("kexec: enable kexec_crash_size to support two crash kernel regions")
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Baoquan He <bhe@redhat.com>
+Cc: Zhen Lei <thunder.leizhen@huawei.com>
+Cc: kexec@lists.infradead.org
+Signed-off-by: Sourabh Jain <sourabhjain@linux.ibm.com>
+---
+ kernel/crash_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/crash_core.c b/kernel/crash_core.c
+index 3b1c43382eec..99dac1aa972a 100644
+--- a/kernel/crash_core.c
++++ b/kernel/crash_core.c
+@@ -373,7 +373,7 @@ static int __crash_shrink_memory(struct resource *old_res,
+ 		old_res->start = 0;
+ 		old_res->end   = 0;
+ 	} else {
+-		crashk_res.end = ram_res->start - 1;
++		old_res->end = ram_res->start - 1;
+ 	}
+ 
+ 	crash_free_reserved_phys_range(ram_res->start, ram_res->end);
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.51.0
+
 
