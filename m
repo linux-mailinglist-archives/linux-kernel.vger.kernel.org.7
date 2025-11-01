@@ -1,126 +1,161 @@
-Return-Path: <linux-kernel+bounces-881083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93DBCC2765F
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 04:11:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F97BC27668
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 04:14:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2CE614E028E
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 03:10:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51A9C1897FDD
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 03:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CC52571D8;
-	Sat,  1 Nov 2025 03:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YE4GI8Fm"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A74525BF13;
+	Sat,  1 Nov 2025 03:12:33 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394A4212FB3
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 03:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACAB21D3C5
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 03:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761966654; cv=none; b=ZvT6jOCELEhBkAmxjkwa9xB9fAftTlNHoB3FGG5mNFKYfMKuKpK/42c7Z6kAukeVUJ9ERAY3mAATwe7O6205JQ1Dii13fgHVz1sGOidx5X5eCbNIzLsUgHlHSOFRj00PJ0/DAEwcXsBiF/svPoTzuKQovHfgdQC5O+xXNfnEcaI=
+	t=1761966753; cv=none; b=Y26VjEq2G9uzw18xKEIOkjVMfAEZ54fwxfVJTq5M8xeI9tWIoeWwPrhU8Yboe2jNtWGnRtQV2H00J03n6kWNOl70ktOMzp7ezDgKvS2nWxdH4cXf+zZAo5HgVYt/ni2u/Ze8SNAbnH2grMuz7rsorktnIFNfJ2/uzevOP1ix6vU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761966654; c=relaxed/simple;
-	bh=e2ppcsw5vrnDLhjG9IG7t1gIPzbTAfc/eHNpnig1wk0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=eS39uw9w9xQCu+M/H85O/HxCw+RmRqt6/aNaI6yuJPXGx1UJplTXVqIwepP2S0z8jqZgTGnQtA/pKmH2Shsq4zKlOB4LdKlqHEe5Z63VW5tmE+1fgRExeIwvDe35uG1Q8/n/ZzaLMY/s3DanQwClxO2wWFNhzWlzTRtUVT+kPFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YE4GI8Fm; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761966652; x=1793502652;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:to:cc;
-  bh=e2ppcsw5vrnDLhjG9IG7t1gIPzbTAfc/eHNpnig1wk0=;
-  b=YE4GI8FmdYpuGWRphBlr39nCi7jXODjr1tDMRBNTOEMbqozGats2/XtX
-   fOheM+/e5f29KdMAeRCzQ9rrms6bHT46jBcf6OnU5CppmE6fzYIHG0ysh
-   xSlDrPH099XV3EOQauzGZhpAuxIpyvfCepx5zm6zBFTAs/6SD6qLvKyu1
-   hrSc9Zk93RJ0L5uyn9RcyhgJi9G8sGant4XZDUkLwpJ9gxOQnMK5NMR+u
-   aOAO1t502YrLHUdC3a13W4TxEdQU3R7Q8uCTx6Z2rx0lUOC0VaK4ixU0k
-   Qj14AmXS4eysxg6orl81c7yHsGL0ddgsP9jySo+SpskuhR+GEU8EAuXIU
-   w==;
-X-CSE-ConnectionGUID: bH5VbRRjTaCbbZ7QyyNEIQ==
-X-CSE-MsgGUID: RhsVU7RNQl24Ly4fVfkmVw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="63150983"
-X-IronPort-AV: E=Sophos;i="6.19,271,1754982000"; 
-   d="scan'208";a="63150983"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 20:10:51 -0700
-X-CSE-ConnectionGUID: brsDFrXqQZyA3pHE3hW02g==
-X-CSE-MsgGUID: rZe12tLERJGkgMLJnoKVNA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,271,1754982000"; 
-   d="scan'208";a="190727873"
-Received: from unknown (HELO hyperion.local) ([10.243.61.29])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 20:10:51 -0700
-From: Marc Herbert <marc.herbert@linux.intel.com>
-Date: Sat, 01 Nov 2025 03:10:24 +0000
-Subject: [PATCH] x86/msr: add CPU_OUT_OF_SPEC taint name to "unrecognized"
- pr_warn(msg)
+	s=arc-20240116; t=1761966753; c=relaxed/simple;
+	bh=1nJzeRaMWwh80JChzmBrDut1RAfItrUcuVoWyS9W8BI=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HyVWNSb5yjzdOp5Aun5YYpnvMROP9NclVNVUx7aolgcaPUFsul1Y0pTi6hNWZo2LlarZOxVlDhtWqUYem8wd/XVL0AJSpKw8CUiIN0icsiOy4wyyEU//hw1ku96HlLjMqif2wwBgBZRzQ/RMPUVs1LMEspZyQI5wDBY7ShiKGsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-430c1cbd1f2so35076345ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 20:12:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761966750; x=1762571550;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Nl4e23YNqS4a7oAFSjJzU/Fyw1wJYae3i9pNM46KVAQ=;
+        b=bZGLxQjNoUA5tOlWeTqcRzD5we5mMPSu0Jy/BGsg7rByW1fdknu6ZDVitBwehOu8xu
+         VWfFWSz7qy6GNiNjVC36xx2th00gosu6q1RMFIQmPpm0+0k87BcoJSIrqOGyJWitThGQ
+         eEhrl9pWInm/JKAcB9MU8CAIgMa/7sufpZvkfkX74HzDYt47QLnc8OVfqfeEN7uBl5Pt
+         YVkJG+zYiKEb8k6bkICe1Ev8PldiTN6JOc89hsPBiwFBF4hUoVpP6MNNaOLInmA5P3Xn
+         cBvINlZo12SwlOZ614E33V/m1M0bgyM2cxBfh2SjNwkHbrWMHIG2SemYwN2aA5GT9Y+D
+         UwcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV6/sGL2HcBFZgWotIuzxMjA73bM3k+xVTOlZbaJ/mRdyP+zdPPgfn4Slm9RRI5KiWniKP7kU46JGyhFow=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQFT1oeh9OhXipEw/6kIMn8C/ZYWW5dR/ixJ8sZHv//IefpfDA
+	MdrJCx4CDvOTbDaXsPYK0LJWGP7Zk73EqgPbyVNAUq/L6bHFyVDn019hjIxdc9Im7SBGskkODmO
+	JGWdrUG4iavvLDIUr74y1Rmq5CiZU9a6ZZCNk4bD8dpC3PEedJCt3dAwH4rc=
+X-Google-Smtp-Source: AGHT+IGU9iu+ivCWDkfgQvQKDWX2CZ+qpkUm7qlePBwEIbdYdZA9JhcDVKqMu9RL2kdzvV76yqGo/riCLF1afnUzzVFv2/wklNNG
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251101-tainted-msr-v1-1-e00658ba04d4@linux.intel.com>
-X-B4-Tracking: v=1; b=H4sIAB96BWkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1NDA2MD3ZLEzLyS1BTd3OIiXZM0k9Rki8TkFEvTZCWgjoKi1LTMCrBp0bG
- 1tQCWKB+3XQAAAA==
-X-Change-ID: 20251030-tainted-msr-4f4ec8acd95c
-To: "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
-Cc: linux-kernel@vger.kernel.org, 
- Marc Herbert <marc.herbert@linux.intel.com>
-X-Mailer: b4 0.15-dev
+X-Received: by 2002:a05:6e02:2501:b0:430:d5b8:6160 with SMTP id
+ e9e14a558f8ab-4330d1e6f32mr100382805ab.29.1761966750612; Fri, 31 Oct 2025
+ 20:12:30 -0700 (PDT)
+Date: Fri, 31 Oct 2025 20:12:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69057a9e.050a0220.e9cb8.001f.GAE@google.com>
+Subject: [syzbot] [wireless?] WARNING in rfkill_fop_open
+From: syzbot <syzbot+1254ea61f6f4969c9ef4@syzkaller.appspotmail.com>
+To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-While restricting access, commit a7e1f67ed29f ("x86/msr: Filter MSR
-writes") also added warning and tainting. But the warning message never
-mentioned tainting. Moreover, this uses the "CPU_OUT_OF_SPEC" flag which
-is not clearly related to MSRs: that flag is overloaded by several,
-fairly different situations, including some much scarier ones. So,
-without an expert around (thank you Dave Hansen), it would have been
-practically impossible to root cause the tainting from just the log file
-at hand.  Fix this by simply appending the CPU_OUT_OF_SPEC flag to the
-warning message.
+Hello,
 
-This readability issue happened when staring at logs involving the
-Intel Memory Latency Checker (among many other things going on in that
-log). The MLC disables hardware prefetch.
+syzbot found the following issue on:
 
-Signed-off-by: Marc Herbert <marc.herbert@linux.intel.com>
+HEAD commit:    fd57572253bc Merge tag 'sched_ext-for-6.18-rc3-fixes' of g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14140704580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=41ad820f608cb833
+dashboard link: https://syzkaller.appspot.com/bug?extid=1254ea61f6f4969c9ef4
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c72764dfac75/disk-fd575722.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c0f65b3e3b85/vmlinux-fd575722.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/53a0e239c3e5/bzImage-fd575722.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1254ea61f6f4969c9ef4@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+rtmutex deadlock detected
+WARNING: CPU: 1 PID: 13303 at kernel/locking/rtmutex.c:1674 rt_mutex_handle_deadlock+0x28/0xb0 kernel/locking/rtmutex.c:1674
+Modules linked in:
+CPU: 1 UID: 0 PID: 13303 Comm: syz.5.857 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:rt_mutex_handle_deadlock+0x28/0xb0 kernel/locking/rtmutex.c:1674
+Code: 90 90 41 57 41 56 41 55 41 54 53 83 ff dd 0f 85 8c 00 00 00 48 89 f7 e8 a6 3c 01 00 90 48 c7 c7 e0 18 eb 8a e8 39 7f c0 f6 90 <0f> 0b 90 90 4c 8d 3d 00 00 00 00 65 48 8b 1c 25 08 40 a2 91 4c 8d
+RSP: 0018:ffffc9000543f490 EFLAGS: 00010246
+RAX: 3180a59543ab4000 RBX: ffffc9000543f520 RCX: ffff888057f79e00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc9000543f628 R08: 0000000000000000 R09: 0000000000000000
+R10: dffffc0000000000 R11: ffffed101712487b R12: 1ffff92000a87ea0
+R13: ffffffff8ac280a9 R14: ffffffff8eb42480 R15: dffffc0000000000
+FS:  00007f6af12ee6c0(0000) GS:ffff888126efc000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f6af12edf98 CR3: 000000003d872000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ __rt_mutex_slowlock kernel/locking/rtmutex.c:1734 [inline]
+ __rt_mutex_slowlock_locked kernel/locking/rtmutex.c:1760 [inline]
+ rt_mutex_slowlock+0x692/0x6e0 kernel/locking/rtmutex.c:1800
+ __rt_mutex_lock kernel/locking/rtmutex.c:1815 [inline]
+ __mutex_lock_common kernel/locking/rtmutex_api.c:536 [inline]
+ mutex_lock_nested+0x16a/0x1d0 kernel/locking/rtmutex_api.c:547
+ rfkill_fop_open+0x138/0x820 net/rfkill/core.c:1178
+ misc_open+0x2de/0x350 drivers/char/misc.c:163
+ chrdev_open+0x4cf/0x5e0 fs/char_dev.c:414
+ do_dentry_open+0x9b1/0x1350 fs/open.c:965
+ vfs_open+0x3b/0x350 fs/open.c:1097
+ do_open fs/namei.c:3975 [inline]
+ path_openat+0x2ef1/0x3840 fs/namei.c:4134
+ do_filp_open+0x1fa/0x410 fs/namei.c:4161
+ do_sys_openat2+0x121/0x1c0 fs/open.c:1437
+ do_sys_open fs/open.c:1452 [inline]
+ __do_sys_openat fs/open.c:1468 [inline]
+ __se_sys_openat fs/open.c:1463 [inline]
+ __x64_sys_openat+0x138/0x170 fs/open.c:1463
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f6af308efc9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f6af12ee038 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007f6af32e5fa0 RCX: 00007f6af308efc9
+RDX: 0000000000000801 RSI: 0000200000000040 RDI: ffffffffffffff9c
+RBP: 00007f6af3111f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f6af32e6038 R14: 00007f6af32e5fa0 R15: 00007ffeabd8a878
+ </TASK>
+
+
 ---
- arch/x86/kernel/msr.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/arch/x86/kernel/msr.c b/arch/x86/kernel/msr.c
-index e17c16c54a37..21355130cc78 100644
---- a/arch/x86/kernel/msr.c
-+++ b/arch/x86/kernel/msr.c
-@@ -98,8 +98,8 @@ static int filter_write(u32 reg)
- 	if (!__ratelimit(&fw_rs))
- 		return 0;
- 
--	pr_warn("Write to unrecognized MSR 0x%x by %s (pid: %d).\n",
--	        reg, current->comm, current->pid);
-+	pr_warn("Write to unrecognized MSR 0x%x by %s (pid: %d), tainting %s\n",
-+		reg, current->comm, current->pid, taint_flags[TAINT_CPU_OUT_OF_SPEC].desc);
- 	pr_warn("See https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/about for details.\n");
- 
- 	return 0;
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
----
-base-commit: dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
-change-id: 20251030-tainted-msr-4f4ec8acd95c
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Best regards,
---  
-Marc Herbert <marc.herbert@linux.intel.com>
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
