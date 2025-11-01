@@ -1,137 +1,153 @@
-Return-Path: <linux-kernel+bounces-881366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D8F0C28164
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 16:35:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62264C2816A
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 16:36:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D237B1A21CEF
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 15:36:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2163C40107A
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 15:36:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8480323956E;
-	Sat,  1 Nov 2025 15:35:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3CC25A350;
+	Sat,  1 Nov 2025 15:36:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q8hLat10"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GTuw/mL8"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D17817B418
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 15:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A0A2147FB
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 15:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762011330; cv=none; b=RbCY1zun6r83vRroHliylrGHe08S/NiyhpxmMIE4JYRZdgST4lxeSRJ0NUSdSb9oHtsMQNg/qrypidg+nS3h8pt/Jx1ff5auRBMdjly46EDmvnjJbOeh9Fsw2hmJwzeokjWKYxI3xMQ6nMFXqVP7IUnDXNYWJKRVuVFu/wylsJc=
+	t=1762011388; cv=none; b=BrueqROiTa4b1nJwdi390L3yzMrBs1cKKJBkDuMAzxV5vrIxH18Ke2y3ERoUAl3BMVoDN6mhBf4riXm+kroSumsdxen2RiyAB1Wx8hoSypqqafI3dVyH20et4WtrTTqpN/PBpU2+ZnxM/P1CfGgiFbvtePyS+sUv75F1L8Ldk2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762011330; c=relaxed/simple;
-	bh=2l14iCi71vkVUgeo+E1Q/tEM4El2uFdeq8BhYm+l/kM=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=aFSTDxgxkMIrNU2x8P8Jg7DP831vArAej7RopeJ9ARrMA94tO3dcfsvyR6v5/WggXVFag7+bB4lvHylrMVOPrfXP+Sft98m/mhmvYiTh//nXrYQpB8CH0R3kf7XvJfK++rq6N4pwfmUmaH2brKwA4JdqKBZZmFoTrp9XaAQ7mwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q8hLat10; arc=none smtp.client-ip=209.85.208.48
+	s=arc-20240116; t=1762011388; c=relaxed/simple;
+	bh=bdxPdHZEuhQ1dkWTiW1iF9wThJEn+irBUmR5Dc6YpDk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MvN7yrmz3cq2FDcmA0E/2Of0kWIO+gukxg3trr8WiHaVzJ7jOfbWwP/4GZDMBlO4udrxwATpHioqm5JlJhx7nQ3Siyc7Ff5XwYIBML71/3dAulqTDJxO1M8BVEe0n9ac/+ZPW9UqoBTcaFaunooIPwVviGCNXulKZDTWdQCD4O8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GTuw/mL8; arc=none smtp.client-ip=209.85.215.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-63e484f8e54so688385a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 08:35:29 -0700 (PDT)
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b8f70154354so480440a12.2
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 08:36:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762011328; x=1762616128; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1762011386; x=1762616186; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=h0Tk9dDcYmqBenbtFC0DeeXVXsg2rmtasPdJhxUdBos=;
-        b=Q8hLat10cBiTqyiSayLxowXV9Md4o03S2ySShBAk9A/3UNNC2YWCSdgHGRauYwMmot
-         AcrTfEUXGBXyd7j3V+0fu2+upl71lyrKwU2dxxONyhFXl733R2zFegJke9TbsBNRKhor
-         N4wfehNo2YdW6FX6QOdRHVaIZyUyl9XCN/uTXioOZJA6/UTuajJ+EnWzCjGywvpc/BfI
-         doAQQu36ps1rj1yUpxkSU4R0Pfq3Wh6dUD5i/+w1w/PaVMChAFFRrQ06nB+r24U29Q4k
-         +E1aA9wHNw4GlSP0bN/mvZjEA1WOK10IgzrGwxh1tZ4CtnkBJQS4zd4jooux/WtU9PJu
-         kA2A==
+        bh=wfjJn/f7oQqzZoFQTxcwXAUfHD/4AwfoEc5HZKyEpqA=;
+        b=GTuw/mL8H4YRyM8i15Qcv3m8RrOMcwBNytiDg6uIpMqBoR46U72MHQ90reQbtYzOZS
+         74gb0RLYzBS6C2miI3ntTvSyOe2016MoEsvDkERZP6ufAms3euZgTUQuxFxJRMQb15kW
+         l5a0e8upgxHxF/ngGrLX2iA5d3BNj7tGtj7Ni5pkppyXIvIIhGM1Bi03O4r/sPcCPDPR
+         bBLYZWsl+7nY4zaI9bU0ZsOzaBNh6lb0JEJYbZTAqmtHTMqjO33tenacj3eHAnCZ5f9y
+         0Qq5PH1QvB/ZZUs8fDFC1jsuxc1C1KE+YqGarp+/ZjijdXazBW0MONUlgUJtxbRRAyVA
+         E0Tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762011328; x=1762616128;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=h0Tk9dDcYmqBenbtFC0DeeXVXsg2rmtasPdJhxUdBos=;
-        b=AKH0jRqbQxk1pZHPnoqOmL1o45xPETCIh+qf9Y+AYJR0JtN3gMLB09/KY3gKRjasfK
-         arAoemzueQDeorfXIz4vDBc9WJhqr+fNaIt2hMzLvsnu0bzDrdQ+sZdLzyrSh2A07Iv7
-         lAl+N4k0n0Pr6NK+SdrqWnn35PhmrWyKcJkfvonpsIUl7R4B1UXLKeJCjuddeA2eq2Ln
-         gSxWdlosuIq7zko1zkghb/GDXIV8SWS2qD3q7mfIScIPMXp8erRQ/LIg10PzwRotyahg
-         2VMGOTGlKUUKa/I1i0SEg5ajOhCxoGGFd+GR2Xrs1LEC6bDUeHScBwSZ5bksB4mfrNRc
-         M50g==
-X-Forwarded-Encrypted: i=1; AJvYcCW0CMNoXMoUW+qpMWK15f+HYckDaRsO0BkzHYkPjGlTgRfY6eNC7FvP/XPqv2tZd/uf1QCmfxByEyK8Pgw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqwcRwX4FYWn+YIU1BtMn3MpQFcNeDqcAkWfZy6atNbt9Assml
-	+1dwenx68O3+NJG+46+SHmegcBGXovFgozLz0pzLOgXYT5AMG+WMfgL/
-X-Gm-Gg: ASbGncvpf23cHdMCZcHnlgD7f9XW3blRgMzPy7iMc30458h/WZxK2L2WtJF/7LWZz7V
-	kOF+beSE5CMSUioaqTrJS68YhkEjeWGj+qo2aLASDrP2BaofTMm36xUyWVoQ4Ri+4cunw973nWe
-	fYwkwk0CEVueCGmBbpK6MyUoQCrkYaqbOEixNVk40ztxkYPto1g+yutOueMXpZ+U7d2Jfy43n1I
-	FwuLILtKZ4H9UTorE6Z7C9c3ntfIIHbZUDNmoJe2CZegwLrPM1S9OKG57Jwx6gUWqiBvNoAGkEj
-	IkpJE1ztGfslPyohDL1evdTXvqXzFjTd8ILSqzBB6UO5Rs7TmAdvzVcfWL8oKbXE3BwXzCTHYbn
-	qCk2xYNXj6GNSehJ1no9CmM2fs5YyxXpu/ooaxhRoOmVd/3emEEy/B/HtWD3U2zS6wdknz4wLQq
-	/49mwVZEZkFebOPT96ogGll4uAnrbaga0bDZNU4YpD9fxbshzfIw==
-X-Google-Smtp-Source: AGHT+IGGbZKmix+04v0yBeE+miuCe2f5O67VTMu7nJKCL7jr0B/QprRarMtQ6I/yofHU8ylwWgs/DA==
-X-Received: by 2002:a17:906:730b:b0:b6d:5587:e336 with SMTP id a640c23a62f3a-b70708c8a6fmr418924566b.9.1762011327533;
-        Sat, 01 Nov 2025 08:35:27 -0700 (PDT)
-Received: from ?IPV6:2a02:a449:4071:0:32d0:42ff:fe10:6983? ([2a02:a449:4071:0:32d0:42ff:fe10:6983])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7077cfa966sm478124166b.65.2025.11.01.08.35.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 01 Nov 2025 08:35:27 -0700 (PDT)
-Message-ID: <92714b6c-6c0d-4a10-afe4-73ed313c87c0@gmail.com>
-Date: Sat, 1 Nov 2025 16:35:26 +0100
+        d=1e100.net; s=20230601; t=1762011386; x=1762616186;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wfjJn/f7oQqzZoFQTxcwXAUfHD/4AwfoEc5HZKyEpqA=;
+        b=I+Q+7lVfXgWzFbHgh5kDQwnqd4enPnkFw80ERSYA3qsxuSY9+S/I+2z0oZ34Ivulcx
+         UuDfp4FpWxnDpXDy4ZR0Zte/KJwBO+NgipOnh8p8mGpn/R9hb4zfLZbyi/rdeWO5E58M
+         s1N3HkWq+TdKiwnfVN8AjGGnSSpD9HY3UC508+g3GGFf2eGneJI/+fS+Ff8cIVrT6Znh
+         2TSiDMxQHkjCX45cefgn0lKFRd4E0Qbw3Bx4aaIv6vdXZFiDwRH15GkAm6iKEpZ2IYYy
+         x81cfLPU+XRpoZ6wvq2YbpFwzhLYLwRf+jmXF4GbJSprKSyMuvRU51dsNYC6v8Dv4ZOs
+         /65g==
+X-Forwarded-Encrypted: i=1; AJvYcCVthn0TlWY57Md8YVo9iaX4UB3qAkaCOO+SqFUPUjs5VaahM3mpXQFZK4ruzr7vVZK5FqBU/FXZzXb9Drs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5zCI4Yn9MRgg6g3UwXJewHLxIIBpNgfN88iYAnFcs7fq9Qc3p
+	uYeSCvHg0QCHarkTpzRkpWkgYIp3SYWRGZc839+8yPs74ZTQENpF8JHA5b7w44UHfHZSDf1yzOa
+	i7O7HJGJ3lGQfLivqZQpW/1XpGU9nw9w=
+X-Gm-Gg: ASbGncveHgRycOD1GgJrPuFxhJsC3QDPB4Vy0WfSE+De+Ob+jiCi6OoknlllcZ95x1G
+	KTovedf2PrhCllLuHh7GLPmrXPeQowtYtWHvpVKHwa/SsOaWQbL0W9Cos6YPkHj8P/pxFFnY4bQ
+	GbufWyE9Tf3gWcntSmj1hrtT1LTT74GpDNAFS7YdxMxq8amyEI29Me5zhXi1ANBmyYQpi/ZX2LN
+	YXfbw4GAyt7Om4z8O2YtPzVC6OJOp3wnbb1CqQg+IAGrqPnlkvGV/4yQvWpSDbkT+T0KaasrfNr
+	4K0zsCVJJ3qOUpPAcqlOUTZRBD4HquL1G5tSWwhFZviEfoGYklzcPQ80CU4PxD5N91/b/wyVBlW
+	nC6gOI9wNEJ0dvQ==
+X-Google-Smtp-Source: AGHT+IFPkL9moEs1IDaYMib+cnXVWvLGHDmNr26zj8ffw14If7Hx8/KbyBNWa9R59glcpNMaDzsQ03S+R0Vk6uJtUK8=
+X-Received: by 2002:a17:902:dac9:b0:27e:da7d:32d2 with SMTP id
+ d9443c01a7336-2951a4d86bcmr59790335ad.7.1762011386406; Sat, 01 Nov 2025
+ 08:36:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Johan Jonker <jbx6244@gmail.com>
-Subject: [PATCH v1] arm64: dts: rockchip: correct assigned-clock-rates
- spelling
-To: heiko@sntech.de
-Cc: robh@kernel.org, conor+dt@kernel.org, krzk+dt@kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20251101-b4-as-flattened-v1-1-860f2ebeedfd@nvidia.com>
+In-Reply-To: <20251101-b4-as-flattened-v1-1-860f2ebeedfd@nvidia.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 1 Nov 2025 16:36:13 +0100
+X-Gm-Features: AWmQ_bmv363FKeQLbteYinlQkLkfy3udKcWiF4asqch5Ak2oOTQbYYj6c7b_nbg
+Message-ID: <CANiq72n6KLjA5XQmAhy=SRTnWY8sCCmp9ETnB-dTSVZ84-mjzw@mail.gmail.com>
+Subject: Re: [PATCH RESEND] rust: enable slice_flatten feature and abstract it
+ through an extension trait
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nicolas Schier <nicolas.schier@linux.dev>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Due to some copy and paste from the manufacturer tree the property
-assigned-clock-rate is missing a letter "s". Correct spelling to
-reduce dtbs_check output.
+On Sat, Nov 1, 2025 at 2:32=E2=80=AFPM Alexandre Courbot <acourbot@nvidia.c=
+om> wrote:
+>
+> Hopefully it captures Miguel's suggestion [2] accurately, but please let
+> me know if I missed something.
 
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
----
+Yeah, this is what I meant and looks great -- thanks!
 
-https://github.com/rockchip-linux/kernel/blob/develop-4.4/arch/arm64/boot/dts/rockchip/rk3328-evb.dts#L313
----
- arch/arm64/boot/dts/rockchip/rk3318-a95x-z2.dts | 2 +-
- arch/arm64/boot/dts/rockchip/rk3328-evb.dts     | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+If you need to use it this cycle in another branch:
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3318-a95x-z2.dts b/arch/arm64/boot/dts/rockchip/rk3318-a95x-z2.dts
-index b5bf84322031..b9d4d78bff0f 100644
---- a/arch/arm64/boot/dts/rockchip/rk3318-a95x-z2.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3318-a95x-z2.dts
-@@ -184,7 +184,7 @@ &emmc {
+Acked-by: Miguel Ojeda <ojeda@kernel.org>
 
- &gmac2phy {
- 	assigned-clock-parents = <&cru SCLK_MAC2PHY_SRC>;
--	assigned-clock-rate = <50000000>;
-+	assigned-clock-rates = <50000000>;
- 	assigned-clocks = <&cru SCLK_MAC2PHY>;
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328-evb.dts b/arch/arm64/boot/dts/rockchip/rk3328-evb.dts
-index 3707df6acf1f..76715de886e2 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328-evb.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-evb.dts
-@@ -101,7 +101,7 @@ &emmc {
- &gmac2phy {
- 	phy-supply = <&vcc_phy>;
- 	clock_in_out = "output";
--	assigned-clock-rate = <50000000>;
-+	assigned-clock-rates = <50000000>;
- 	assigned-clocks = <&cru SCLK_MAC2PHY>;
- 	assigned-clock-parents = <&cru SCLK_MAC2PHY_SRC>;
- 	status = "okay";
---
-2.39.5
+Otherwise, I will pick it up.
 
+> +config RUSTC_HAS_SLICE_AS_FLATTENED
+
+I guess you used this one since they renamed it and since we don't use
+the `alloc` method. It is fine, both options are confusing in
+different ways, but sometimes the feature name is the only one that
+can be used (since it may enable several methods etc.), so I wonder if
+we should try to use that consistently.
+
+> +/// In Rust 1.80, the previously unstable `slice::flatten` family of met=
+hods
+> +/// have been stabilized and renamed from `flatten` to `as_flattened`.
+> +///
+> +/// This creates an issue for as long as the MSRV is < 1.80, as the same=
+ functionality is provided
+> +/// by different methods depending on the compiler version.
+> +///
+> +/// This extension trait solves this by abstracting `as_flatten` and cal=
+ling the correct  method
+> +/// depending on the Rust version.
+> +///
+> +/// This trait can be removed once the MSRV passes 1.80.
+
+These paragraphs sound like implementations details -- I would
+probably leave that to the commit message or normal comments instead
+(we should notice we need to remove these thanks to the line in
+`Kconfig` already).
+
+Nit: two spaces above.
+
+> +    /// Takes an `&[[T; N]]` and flattens it to a `&[T]`.
+
+Nit: I don't know how one is supposed to pronounce these, but I guess
+it is "a" in the first one, like the second one (the upstream docs
+also do that).
+
+By the way, it crossed my mind that we may want to use `#[doc(alias =3D
+"...")` here to guide search, but I guess not many developers are
+using local/older versions and this will go away soon anyway.
+
+Cheers,
+Miguel
 
