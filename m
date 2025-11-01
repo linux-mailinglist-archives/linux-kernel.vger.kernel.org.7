@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-881375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32DCCC28198
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 16:44:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8830C281AC
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 16:45:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D84D1A21C59
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 15:44:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 126364E4008
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 15:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B1542F9DBB;
-	Sat,  1 Nov 2025 15:43:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99BD92FB09A;
+	Sat,  1 Nov 2025 15:43:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="WeZpp3N0"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="ltAGTjVa"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14862A59
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 15:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4972FABFF
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 15:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762011825; cv=none; b=FebWSJv15fN2Rld3h//18YXegVPRFg3YMufdyS98RKiQtulkQOUVIrSVg8Zk1VG1hpUQZeLEOTlgoWi1IpvOfMlrwLmmhKHt7yPm709Woe1DUfAfsfFV/nY9UmzcCgh1wllDiss7QT/eogFixA7F5DIDj44Almg1Q/SrKaikf1M=
+	t=1762011833; cv=none; b=pDfw/J/accrN9TlJbdY+SLEeZf88Z9ptXrilW8vpadYBTQiZ/8V/uZuAw4DmRRSFU3951mndPjq6ebfPs8TrQ6otp6Fbs9HIYgzG9bhEAPcLgE4UaIZePvruSjGf+G7aVfO9Qg4teK48cWPiiaiV5jzYSa529k9nIIiX5BUulzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762011825; c=relaxed/simple;
-	bh=MebY2Kn6y2LU2xMPrHuRiqWl4Ev7U4wWsZxdN5aqQsE=;
+	s=arc-20240116; t=1762011833; c=relaxed/simple;
+	bh=1/PSRddxMss1ZLh6BKodL70umd3EchlKrwrkzcSbhDI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jMre8IC/6oLyqL4NsRT2jD+UI8BEvdAveXcDENXUsM0BE3nCDrob1+8Qj3j+n81tcuWo/nwbpQFZ91kl6tG2GCz6Zo5Yaak0M7IYhUglSMZ/qsPCiTgoaFTErR1HZlItzrHxQmMcqIbEIGGd17k79XkqXlyPMJCyMJ1LSqEJBv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=WeZpp3N0; arc=none smtp.client-ip=209.85.214.181
+	 MIME-Version; b=XYXEK5HQprHSUkEv9N4ILWnYX1VhQfr/41pYbBpZ8BCgxgBCtyChR/33XXtDIEBvi9haFAuOkb2pLTaYdFMyZF/9X04imbAtUULA/WfWfamn/w73PWrjFAUo//HPGY8Q6mZuEGwcMK9OyN9RGO/r1/Bn4yrO6C0mYp0cFrXvrHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=ltAGTjVa; arc=none smtp.client-ip=209.85.215.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-29555b384acso6098815ad.1
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 08:43:43 -0700 (PDT)
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b6ce696c18bso2808672a12.1
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 08:43:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1762011823; x=1762616623; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1762011832; x=1762616632; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VKOoQPMUVsEmi6hMo7Uy8Fdi9yV1PxzBRenc/eHTo9c=;
-        b=WeZpp3N0Hr110Jpi0AkhuiWRuKAhsXfOsEY2eAHyo3fit9fo4TDKmQ9T3L58XzXuyZ
-         NQwWHPy0tRB9lbQR0ZHGeLmB9843eKBKpYgenlQSvMf7Y+O5YVWPpfKgKrQK2I8LCoGX
-         lRKqHXQRVt+UxVvWeFOvhKmn27l+Yxe6OQIlx1XZB3g9P8M1j+baqdBXCS6JaUtq+3M8
-         xB4EYI/NtamEnG4KcB2SJbzCDD+HAieUMSn97g6xo+zbKJq5tXrbpLH+jToeDId4r84z
-         uDuOM0zarZ3VbYCzbYgwzbr6LmzsaSJsDk0gz+s8gZJgGpnnJzswhtGhasoR5hDO36S/
-         xyqQ==
+        bh=/cNRcLxuGh85qOUhHhakMZrIP7xVwXKqva0C/jWYbVA=;
+        b=ltAGTjVaEoEzdubkUW6z1KjhT+VCJk2eVIiIKTvA0I0dNXfkFFUROtNIMBXAyiX1pQ
+         GojLX/x3ZtanzUdvgzN67TzWzfOqtWajWp7qfWYfuS30I8TKzvNAOSSNgVPNLD4NRuZP
+         7I6okhqzjmfNYLIqzofVeVTrLZp2Ts2atef4EFJIADidwecG7oO1bHwfAFIjwwyUBq6J
+         jk/PC+AaJ0QtUifY7zSUgywmAqiYYW3yVV+GtTUcXa70crSiRFilq+prym4rLQbw9s6U
+         YzM3xUJIkqheeaP24Hz6yv5JGWve0VnZr8hyRP7YUxW0azlBppsr3MElydrubXwKkAIB
+         y9rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762011823; x=1762616623;
+        d=1e100.net; s=20230601; t=1762011832; x=1762616632;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VKOoQPMUVsEmi6hMo7Uy8Fdi9yV1PxzBRenc/eHTo9c=;
-        b=YdgEYrCjiPW+JSAVfHLzLg4w6weKxadXHPFgZsWeADIo1CGtJVgB6pYyh39Gd0X58v
-         qW6thimEZTjgGHjK+gJBY3R7/xbemwOsvPkU5AukIHLwy4qnDY77agm3RgnhboBASqnA
-         Kr23W2Ya3P/uqBNPwWVTKXkU4/1Ry43q/tzi5w5lTQY+7YQJSpfiPo9Is9s6Y+zDcvkx
-         al0BTLgqLZZW83yc05KNdmUY7lo+xHMd7COprsZdVTXY+WdFcKW0rRSSqnZKUwSPOFBC
-         MPyM65Jj8O7dvJyy2NctABSusnApUKvwGUNtes83rT9SJp9NVQV2jjbvjmpVc64htg7C
-         YI/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWfjy4fESsRg8ZKKk1EnG+J+MbQk1zWoqlPy+9BqXtoretcMKeFRAYBfmsq9lHwLDd2BBnjCmuWW8HsN/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTf64XCLFLVgWzjSGYDgfnUU8xrF+CEUlR2Vt8Y4ZPzyhBPniC
-	/Hn2c2LTd2E5fmMvBo8dq8OcLZ2LGCSPGUnDgvuX+qYPSO1RX19UuQLiM+cOL3m3HYs=
-X-Gm-Gg: ASbGncvlAVrnRn2ql10oQhGETia7tJeFgBPeJ7TF3bRVOFmUy3Ky6dlMcanCs7q6KyC
-	Bk/3dRwHJTf2Ab6zKHS0TUzrNgvjaj/r4dY7aIQWW+htB3l3a6OcsE0ii1qoTAugO8KBp9NdN1U
-	rePnl9nfCukIocruKs1Ozy4tVxjt0t9OSiC3VRHEs3tQfvMzTay7uJ6NJQOb6W5LznHPgVJd/aj
-	lsw3WRFGEOWDP9zizlyayMtsDQyWCU9CttVq81E3vAMV5VRV8OPN9DMsE/220OGeBCtDhP9AGFB
-	sZOkfv/r8CDUfrM1ha8w374taPesEKzmxHKIYx/xv4ylQ3jbTdoidsuuIpWCvUAFl5ZbiJw5Mna
-	PVaNJgM7D+cUEIUmTiHVdfrb2veCdqxXjbuc+JYuh8C/FQhstItWXUhWmTes5GgTgp86GoAN/Im
-	m1Nc/RfgMxY/0moqm1JJ25bB/jRPJXqO7MSHmUAPA37JCdFr6sKjU9
-X-Google-Smtp-Source: AGHT+IFJbHT4F5pXbCNLO8qvOGYbikUZ+tUCbxIpYKWdYciUFwFGUUJMQoZvXRQKkQTGN7eTPXehmg==
-X-Received: by 2002:a17:903:2441:b0:295:20c5:5453 with SMTP id d9443c01a7336-29520c5565dmr98352145ad.29.1762011823274;
-        Sat, 01 Nov 2025 08:43:43 -0700 (PDT)
+        bh=/cNRcLxuGh85qOUhHhakMZrIP7xVwXKqva0C/jWYbVA=;
+        b=AEsCJ4fJ2rDZCwwlQNLGHfJwhDq0JtgFwvhlkUVZJjkWjoT8plaz2XsTJUdqBKJy7w
+         5JnXcI/Vq9kLbB6TrBq2cp/59a3iYysv3Xqipm/nJYrX855PN0IDdBfSXVpQZgj67TYd
+         EEM0InqWL35l3ybJY/CiihWHhfHpCfHKNUYkJe5vZOBsIogpTyrXNeq+moOvYWxVxm/7
+         L602ztz3GJV7t6SRgsjBNErdd7QzKtt8O6WLU7fKsyy6K2FlY0+q0rEK/6FhvpG88kOV
+         nOJLNXMAIfV8CYoWS/wOomjQNL0TGCvNzcOwYw0AAb/OmqTxiWuUBUBy3E0Ly8UzZ0zN
+         28oA==
+X-Forwarded-Encrypted: i=1; AJvYcCWB77GgLMjF2BhHaH6A25yZbV5S7ssKVcCsNQI5MwlYX99CxxbOl1IvveY/j6DQDLCSqP++rtKNV9VXvPk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznlY3pYnKRI81ojdWmfqtQKEZoWnX3SQppBEEpoyTDqhSUWDwy
+	KbyNBLmPapBHJsYaz6UEVKg/JPSc10UrtJ0Z0xvgGZV7Q0juvc1wjpKKfGKX5Dvechs=
+X-Gm-Gg: ASbGnct1kUHsoNfYbPZiKYN+jYTHKzinfADBHkQ0MDeTEus1IFFVnKGgG+5T84bDhYH
+	IaI8jH39BQDZVR4/DGCYG41EaBROewYGRw0vhlYy/8Q2YYyywPqk9o0z5fMmaAmafWCnwYmA+a+
+	bzYNq5AbPwaulO42ZWc2xdCyrBie5Ts033Qnoy4lr5YrsM8WPo4aoqLfYna9skToi2GJx9BTxY2
+	85oOnS08TkEfO/2cx579ldLrvndqIRk/M/SaCJWvbvXCqLEZcKGQqWfnqcAGi3eo2h630fs3T4S
+	TLM9Al0bL7QGbMoJIE3rQOTD1gBUZUGGF2lOeobGw0GENs+PY0PRQrtijGc4I0Fj7rD9Jrp8gt7
+	kBPPS7KRdyMv2kW85uU7oNGllrScPsFYVjSdp56dg3AxR7DSSeebjR9db2PrbkUpEO5vyXUyfFA
+	8ymNNMUV0ZeGnDz7SOD2OUnKrkXCV+2l4=
+X-Google-Smtp-Source: AGHT+IE9dgmddcRbzfRQuPturLe2P+J6B0ktYW7UkJ98oGijMhfJoMmqTs3LZbQLk6Eea6Hsg8gvAw==
+X-Received: by 2002:a17:902:d505:b0:290:c0ed:de42 with SMTP id d9443c01a7336-2951a4dfc4fmr100179015ad.36.1762011831758;
+        Sat, 01 Nov 2025 08:43:51 -0700 (PDT)
 Received: from localhost.localdomain ([122.171.20.36])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-295269bd2fesm59990105ad.105.2025.11.01.08.43.35
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-295269bd2fesm59990105ad.105.2025.11.01.08.43.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Nov 2025 08:43:42 -0700 (PDT)
+        Sat, 01 Nov 2025 08:43:51 -0700 (PDT)
 From: Anup Patel <apatel@ventanamicro.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -98,11 +98,11 @@ Cc: Alexandre Ghiti <alex@ghiti.fr>,
 	linux-riscv@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Mayuresh Chitale <mchitale@ventanamicro.com>,
-	Anup Patel <apatel@ventanamicro.com>
-Subject: [PATCH v2 05/12] rvtrace: Add trace encoder driver
-Date: Sat,  1 Nov 2025 21:12:38 +0530
-Message-ID: <20251101154245.162492-6-apatel@ventanamicro.com>
+	Anup Patel <apatel@ventanamicro.com>,
+	Mayuresh Chitale <mchitale@ventanamicro.com>
+Subject: [PATCH v2 06/12] rvtrace: Add function to copy into perf AUX buffer
+Date: Sat,  1 Nov 2025 21:12:39 +0530
+Message-ID: <20251101154245.162492-7-apatel@ventanamicro.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251101154245.162492-1-apatel@ventanamicro.com>
 References: <20251101154245.162492-1-apatel@ventanamicro.com>
@@ -114,158 +114,94 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Mayuresh Chitale <mchitale@ventanamicro.com>
+The RISC-V trace ramsink will need a mechanism to copy trace data
+into the perf AUX buffer. Add rvtrace_path_copyto_auxbuf() function
+and corresponding trace driver callback copyto_auxbuf() for this
+purpose.
 
-Add initial implementation of RISC-V trace encoder driver. The encoder
-is defined in the RISC-V Trace Control Interface specification.
-
-Co-developed-by: Anup Patel <apatel@ventanamicro.com>
-Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+Co-developed-by: Mayuresh Chitale <mchitale@ventanamicro.com>
 Signed-off-by: Mayuresh Chitale <mchitale@ventanamicro.com>
+Signed-off-by: Anup Patel <apatel@ventanamicro.com>
 ---
- drivers/hwtracing/rvtrace/Kconfig           |   7 ++
- drivers/hwtracing/rvtrace/Makefile          |   1 +
- drivers/hwtracing/rvtrace/rvtrace-encoder.c | 107 ++++++++++++++++++++
- 3 files changed, 115 insertions(+)
- create mode 100644 drivers/hwtracing/rvtrace/rvtrace-encoder.c
+ drivers/hwtracing/rvtrace/rvtrace-core.c | 22 ++++++++++++++++++++++
+ include/linux/rvtrace.h                  | 21 +++++++++++++++++++++
+ 2 files changed, 43 insertions(+)
 
-diff --git a/drivers/hwtracing/rvtrace/Kconfig b/drivers/hwtracing/rvtrace/Kconfig
-index f8f6feea1953..ba35c05f3f54 100644
---- a/drivers/hwtracing/rvtrace/Kconfig
-+++ b/drivers/hwtracing/rvtrace/Kconfig
-@@ -14,3 +14,10 @@ menuconfig RVTRACE
+diff --git a/drivers/hwtracing/rvtrace/rvtrace-core.c b/drivers/hwtracing/rvtrace/rvtrace-core.c
+index 35bd77d6880a..b955e5f3b048 100644
+--- a/drivers/hwtracing/rvtrace/rvtrace-core.c
++++ b/drivers/hwtracing/rvtrace/rvtrace-core.c
+@@ -675,6 +675,28 @@ int rvtrace_path_stop(struct rvtrace_path *path)
+ }
+ EXPORT_SYMBOL_GPL(rvtrace_path_stop);
  
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called rvtrace.
-+
-+config RVTRACE_ENCODER
-+	tristate "RISC-V Trace Encoder driver"
-+	depends on RVTRACE
-+	default y
-+	help
-+	  This driver provides support for RISC-V Trace Encoder component.
-diff --git a/drivers/hwtracing/rvtrace/Makefile b/drivers/hwtracing/rvtrace/Makefile
-index 988525a379cf..f320693a1fc5 100644
---- a/drivers/hwtracing/rvtrace/Makefile
-+++ b/drivers/hwtracing/rvtrace/Makefile
-@@ -2,3 +2,4 @@
- 
- obj-$(CONFIG_RVTRACE) += rvtrace.o
- rvtrace-y := rvtrace-core.o rvtrace-platform.o
-+obj-$(CONFIG_RVTRACE_ENCODER) += rvtrace-encoder.o
-diff --git a/drivers/hwtracing/rvtrace/rvtrace-encoder.c b/drivers/hwtracing/rvtrace/rvtrace-encoder.c
-new file mode 100644
-index 000000000000..69ceb5821709
---- /dev/null
-+++ b/drivers/hwtracing/rvtrace/rvtrace-encoder.c
-@@ -0,0 +1,107 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2025 Ventana Micro Systems Inc.
-+ */
-+
-+#include <linux/device.h>
-+#include <linux/rvtrace.h>
-+#include <linux/types.h>
-+
-+#define RVTRACE_COMPONENT_CTRL_ITRACE_SHIFT	2
-+#define RVTRACE_COMPONENT_CTRL_INSTMODE_SHIFT	4
-+
-+static int rvtrace_encoder_start(struct rvtrace_component *comp)
++int rvtrace_path_copyto_auxbuf(struct rvtrace_path *path,
++			       struct rvtrace_perf_auxbuf *buf,
++			       size_t *bytes_copied)
 +{
-+	u32 val;
++	const struct rvtrace_driver *rtdrv;
++	struct rvtrace_component *comp;
++	struct rvtrace_path_node *node;
 +
-+	val = rvtrace_read32(comp->pdata, RVTRACE_COMPONENT_CTRL_OFFSET);
-+	val |= BIT(RVTRACE_COMPONENT_CTRL_ITRACE_SHIFT);
-+	rvtrace_write32(comp->pdata, val, RVTRACE_COMPONENT_CTRL_OFFSET);
-+	return rvtrace_poll_bit(comp->pdata, RVTRACE_COMPONENT_CTRL_OFFSET,
-+				RVTRACE_COMPONENT_CTRL_ITRACE_SHIFT, 1,
-+				comp->pdata->control_poll_timeout_usecs);
-+}
++	list_for_each_entry(node, &path->comp_list, head) {
++		comp = node->comp;
++		rtdrv = to_rvtrace_driver(comp->dev.driver);
++		if (!rtdrv->copyto_auxbuf)
++			continue;
 +
-+static int rvtrace_encoder_stop(struct rvtrace_component *comp)
-+{
-+	int ret;
-+	u32 val;
-+
-+	val = rvtrace_read32(comp->pdata, RVTRACE_COMPONENT_CTRL_OFFSET);
-+	val &= ~BIT(RVTRACE_COMPONENT_CTRL_ITRACE_SHIFT);
-+	rvtrace_write32(comp->pdata, val, RVTRACE_COMPONENT_CTRL_OFFSET);
-+	ret = rvtrace_poll_bit(comp->pdata, RVTRACE_COMPONENT_CTRL_OFFSET,
-+			       RVTRACE_COMPONENT_CTRL_ITRACE_SHIFT, 0,
-+			       comp->pdata->control_poll_timeout_usecs);
-+	if (ret) {
-+		dev_err(&comp->dev, "failed to stop tracing.\n");
-+		return ret;
++		*bytes_copied = rtdrv->copyto_auxbuf(comp, buf);
++		return 0;
 +	}
 +
-+	return rvtrace_comp_is_empty(comp);
++	return -EOPNOTSUPP;
 +}
++EXPORT_SYMBOL_GPL(rvtrace_path_copyto_auxbuf);
 +
-+static void rvtrace_encoder_setmode(struct rvtrace_component *comp, u32 mode)
-+{
-+	u32 val;
-+
-+	val = rvtrace_read32(comp->pdata, RVTRACE_COMPONENT_CTRL_OFFSET);
-+	val |= (mode << RVTRACE_COMPONENT_CTRL_INSTMODE_SHIFT);
-+	rvtrace_write32(comp->pdata, val, RVTRACE_COMPONENT_CTRL_OFFSET);
-+}
-+
-+static int rvtrace_encoder_probe(struct rvtrace_component *comp)
-+{
-+	int ret;
-+
-+	rvtrace_encoder_setmode(comp, 0x6);
-+	ret = rvtrace_enable_component(comp);
-+	if (ret)
-+		return dev_err_probe(&comp->dev, ret, "failed to enable encoder.\n");
-+
-+	return 0;
-+}
-+
-+static void rvtrace_encoder_remove(struct rvtrace_component *comp)
-+{
-+	int ret;
-+
-+	ret = rvtrace_disable_component(comp);
-+	if (ret)
-+		dev_err(&comp->dev, "failed to disable encoder.\n");
-+}
-+
-+static struct rvtrace_component_id rvtrace_encoder_ids[] = {
-+	{ .type = RVTRACE_COMPONENT_TYPE_ENCODER,
-+	  .version = rvtrace_component_mkversion(1, 0), },
-+	{},
+ struct rvtrace_path *rvtrace_create_path(struct rvtrace_component *source,
+ 					 struct rvtrace_component *sink,
+ 					 enum rvtrace_component_mode mode)
+diff --git a/include/linux/rvtrace.h b/include/linux/rvtrace.h
+index e2842e8728d4..cecf6c153ca6 100644
+--- a/include/linux/rvtrace.h
++++ b/include/linux/rvtrace.h
+@@ -277,9 +277,28 @@ void rvtrace_destroy_path(struct rvtrace_path *path);
+ int rvtrace_path_start(struct rvtrace_path *path);
+ int rvtrace_path_stop(struct rvtrace_path *path);
+ 
++/**
++ * struct rvtrace_perf_auxbuf - Representation of the perf AUX buffer
++ * @length:   size of the AUX buffer
++ * @nr_pages: number of pages of the AUX buffer
++ * @base:     start address of AUX buffer
++ * @pos:      position in the AUX buffer to commit traced data
++ */
++struct rvtrace_perf_auxbuf {
++	size_t length;
++	int nr_pages;
++	void *base;
++	long pos;
 +};
 +
-+static struct rvtrace_driver rvtrace_encoder_driver = {
-+	.id_table = rvtrace_encoder_ids,
-+	.start = rvtrace_encoder_start,
-+	.stop = rvtrace_encoder_stop,
-+	.probe = rvtrace_encoder_probe,
-+	.remove = rvtrace_encoder_remove,
-+	.driver = {
-+		.name = "rvtrace-encoder",
-+	},
-+};
++int rvtrace_path_copyto_auxbuf(struct rvtrace_path *path,
++			       struct rvtrace_perf_auxbuf *buf,
++			       size_t *bytes_copied);
 +
-+static int __init rvtrace_encoder_init(void)
-+{
-+	return rvtrace_register_driver(&rvtrace_encoder_driver);
-+}
-+
-+static void __exit rvtrace_encoder_exit(void)
-+{
-+	rvtrace_unregister_driver(&rvtrace_encoder_driver);
-+}
-+
-+module_init(rvtrace_encoder_init);
-+module_exit(rvtrace_encoder_exit);
-+
-+/* Module information */
-+MODULE_AUTHOR("Mayuresh Chitale <mchitale@ventanamicro.com>");
-+MODULE_DESCRIPTION("RISC-V Trace Encoder Driver");
-+MODULE_LICENSE("GPL");
+ /**
+  * struct rvtrace_driver - Representation of a RISC-V trace driver
+  * id_table: Table to match components handled by the driver
++ * copyto_auxbuf:Callback to copy data into perf AUX buffer
+  * start:        Callback to start tracing
+  * stop:         Callback to stop tracing
+  * probe:        Driver probe() function
+@@ -290,6 +309,8 @@ int rvtrace_path_stop(struct rvtrace_path *path);
+  */
+ struct rvtrace_driver {
+ 	const struct rvtrace_component_id *id_table;
++	size_t			(*copyto_auxbuf)(struct rvtrace_component *comp,
++						 struct rvtrace_perf_auxbuf *buf);
+ 	int			(*start)(struct rvtrace_component *comp);
+ 	int			(*stop)(struct rvtrace_component *comp);
+ 	int			(*probe)(struct rvtrace_component *comp);
 -- 
 2.43.0
 
