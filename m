@@ -1,161 +1,109 @@
-Return-Path: <linux-kernel+bounces-881084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F97BC27668
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 04:14:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CADF7C27675
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 04:19:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51A9C1897FDD
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 03:13:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CBB8189FF52
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 03:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A74525BF13;
-	Sat,  1 Nov 2025 03:12:33 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A7D41E5B78;
+	Sat,  1 Nov 2025 03:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="CLFRKK9T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACAB21D3C5
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 03:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D088A41;
+	Sat,  1 Nov 2025 03:19:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761966753; cv=none; b=Y26VjEq2G9uzw18xKEIOkjVMfAEZ54fwxfVJTq5M8xeI9tWIoeWwPrhU8Yboe2jNtWGnRtQV2H00J03n6kWNOl70ktOMzp7ezDgKvS2nWxdH4cXf+zZAo5HgVYt/ni2u/Ze8SNAbnH2grMuz7rsorktnIFNfJ2/uzevOP1ix6vU=
+	t=1761967164; cv=none; b=YVwAOK+wJoRjegEKvmMtLNW8r4hpEVCxQ8Ox//8YPFu+Evs0NIXt01+WaDV2aJ0zfspguIbcgSF0MfKRb7xZIdsGZ9F3qxsR2ymnf32Lh2Bn8BzK8Abc1p5Q6F41h+54BvvB7APZSpl3AvSpZOI9foqPMEu+wn5gxYeMDBRXb+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761966753; c=relaxed/simple;
-	bh=1nJzeRaMWwh80JChzmBrDut1RAfItrUcuVoWyS9W8BI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HyVWNSb5yjzdOp5Aun5YYpnvMROP9NclVNVUx7aolgcaPUFsul1Y0pTi6hNWZo2LlarZOxVlDhtWqUYem8wd/XVL0AJSpKw8CUiIN0icsiOy4wyyEU//hw1ku96HlLjMqif2wwBgBZRzQ/RMPUVs1LMEspZyQI5wDBY7ShiKGsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-430c1cbd1f2so35076345ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 20:12:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761966750; x=1762571550;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Nl4e23YNqS4a7oAFSjJzU/Fyw1wJYae3i9pNM46KVAQ=;
-        b=bZGLxQjNoUA5tOlWeTqcRzD5we5mMPSu0Jy/BGsg7rByW1fdknu6ZDVitBwehOu8xu
-         VWfFWSz7qy6GNiNjVC36xx2th00gosu6q1RMFIQmPpm0+0k87BcoJSIrqOGyJWitThGQ
-         eEhrl9pWInm/JKAcB9MU8CAIgMa/7sufpZvkfkX74HzDYt47QLnc8OVfqfeEN7uBl5Pt
-         YVkJG+zYiKEb8k6bkICe1Ev8PldiTN6JOc89hsPBiwFBF4hUoVpP6MNNaOLInmA5P3Xn
-         cBvINlZo12SwlOZ614E33V/m1M0bgyM2cxBfh2SjNwkHbrWMHIG2SemYwN2aA5GT9Y+D
-         UwcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV6/sGL2HcBFZgWotIuzxMjA73bM3k+xVTOlZbaJ/mRdyP+zdPPgfn4Slm9RRI5KiWniKP7kU46JGyhFow=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQFT1oeh9OhXipEw/6kIMn8C/ZYWW5dR/ixJ8sZHv//IefpfDA
-	MdrJCx4CDvOTbDaXsPYK0LJWGP7Zk73EqgPbyVNAUq/L6bHFyVDn019hjIxdc9Im7SBGskkODmO
-	JGWdrUG4iavvLDIUr74y1Rmq5CiZU9a6ZZCNk4bD8dpC3PEedJCt3dAwH4rc=
-X-Google-Smtp-Source: AGHT+IGU9iu+ivCWDkfgQvQKDWX2CZ+qpkUm7qlePBwEIbdYdZA9JhcDVKqMu9RL2kdzvV76yqGo/riCLF1afnUzzVFv2/wklNNG
+	s=arc-20240116; t=1761967164; c=relaxed/simple;
+	bh=0bDl4Evl43JD3FcmfjL9pGUxTnN5KWMJY8C8qeVhF+Q=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=hf8oNMf+kcYogWsq0kQJA+KE49Yra66aMmYjvXl6yPsp28x1YN2vpornrYr0RBy/TWA/huFuQT6tvdq2gVjNGwHTXQ9xCEph9gDlsz5vIa/hiQuTjCiW9eR3dXjTuUVa24VnMTOEwtP9boSnKBPI6/g7fLq9d6jHDAUmzgWbBLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=CLFRKK9T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4C8CC4CEF7;
+	Sat,  1 Nov 2025 03:19:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1761967164;
+	bh=0bDl4Evl43JD3FcmfjL9pGUxTnN5KWMJY8C8qeVhF+Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CLFRKK9TWsimttfuaW9EtO5QFoKpOVoQnRWdpjAS0qdvxt2bFvMkPcC4bcArqHtaQ
+	 aFcBWz2z7DCoc2sGAp2bGOyuujPsyO2sRbuTR36Jft1WpIktstGLYw5fQ5bYfCiaQk
+	 +yfqCb7YHBbG4LwOiePhDC/6ZQZMi+F6ct5vdTW8=
+Date: Fri, 31 Oct 2025 20:19:23 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Ankit Khushwaha <ankitkhushwaha.linux@gmail.com>
+Cc: linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+ Bala-Vignesh-Reddy <reddybalavignesh9979@gmail.com>, Wei Yang
+ <richard.weiyang@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-kernel-mentees@lists.linuxfoundation.org, Steven Rostedt
+ <rostedt@goodmis.org>
+Subject: Re: [PATCH] selftests/user_events: Avoid taking address of packed
+ member in perf_test
+Message-Id: <20251031201923.2e9a592a209c0978246f63d6@linux-foundation.org>
+In-Reply-To: <aQIwxjBNonW5Py_I@fedora>
+References: <20251027113439.36059-1-ankitkhushwaha.linux@gmail.com>
+	<20251027162521.c56c7f89f6ad4e3d639c408c@linux-foundation.org>
+	<aQD2Igc3svAF3klc@fedora>
+	<20251028132605.2926d3ef5eb6ea60d22ceffe@linux-foundation.org>
+	<aQIwxjBNonW5Py_I@fedora>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2501:b0:430:d5b8:6160 with SMTP id
- e9e14a558f8ab-4330d1e6f32mr100382805ab.29.1761966750612; Fri, 31 Oct 2025
- 20:12:30 -0700 (PDT)
-Date: Fri, 31 Oct 2025 20:12:30 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69057a9e.050a0220.e9cb8.001f.GAE@google.com>
-Subject: [syzbot] [wireless?] WARNING in rfkill_fop_open
-From: syzbot <syzbot+1254ea61f6f4969c9ef4@syzkaller.appspotmail.com>
-To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Wed, 29 Oct 2025 20:50:38 +0530 Ankit Khushwaha <ankitkhushwaha.linux@gmail.com> wrote:
 
-syzbot found the following issue on:
+> > > > >  	/* Ensure write shows up at correct offset */
+> > > > > -	ASSERT_NE(-1, write(self->data_fd, &reg.write_index,
+> > > > > +	memcpy(&write_index, &reg.write_index, sizeof(reg.write_index));
+> > > > > +	ASSERT_NE(-1, write(self->data_fd, &write_index,
+> > > > >  	                    sizeof(reg.write_index)));
+> > > > 
+> > > > Simply casting &write_index to void* would fix this?
+> > > 
+> > > yes, this hides the type mismatch from the compiler. But i think
+> > > casting to void * will not fix the alignment mismatch for packed struct.
+> > > It works on x86, but might break on other platform.
+> > 
+> > It's the second argument to write(2)!  write(2) expects a const char *,
+> > but void* will work.
+> 
+> Hi Andrew,
+> Indeed 
+> `ASSERT_NE(-1, write(self->data_fd, (void *)&reg.write_index, 
+> 		     sizeof(reg.write_index)));`
+> 
+> would work. However since `reg` is packed struct, directly taking the 
+> address of its member  `&reg.write_index` may lead to unaligned access 
+> on some architectures. as indicated by the compiler warning
+> 
+> 	perf_test.c:239:38: warning: taking address of packed member
+> 	'write_index' of class or structure 'user_reg' may result in 
+> 	an unaligned pointer value [-Waddress-of-packed-member]
 
-HEAD commit:    fd57572253bc Merge tag 'sched_ext-for-6.18-rc3-fixes' of g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14140704580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=41ad820f608cb833
-dashboard link: https://syzkaller.appspot.com/bug?extid=1254ea61f6f4969c9ef4
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+Well sure, we might get an unaligned pointer value and it would be an
+error to dereference that pointer.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+But we don't dereference it!  We pass that pointer to write(2), which
+is happy with any alignment.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c72764dfac75/disk-fd575722.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c0f65b3e3b85/vmlinux-fd575722.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/53a0e239c3e5/bzImage-fd575722.xz
+The warning is accurate.  It "may" indeed "result in an unaligned
+pointer value".  But there is nothing at all wrong with this code.  OK,
+let's find some way to suppress the warning (preferably without adding
+a pointless memcpy) and let's make the changelog and code comments be
+clear about what's going on here.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1254ea61f6f4969c9ef4@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-rtmutex deadlock detected
-WARNING: CPU: 1 PID: 13303 at kernel/locking/rtmutex.c:1674 rt_mutex_handle_deadlock+0x28/0xb0 kernel/locking/rtmutex.c:1674
-Modules linked in:
-CPU: 1 UID: 0 PID: 13303 Comm: syz.5.857 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:rt_mutex_handle_deadlock+0x28/0xb0 kernel/locking/rtmutex.c:1674
-Code: 90 90 41 57 41 56 41 55 41 54 53 83 ff dd 0f 85 8c 00 00 00 48 89 f7 e8 a6 3c 01 00 90 48 c7 c7 e0 18 eb 8a e8 39 7f c0 f6 90 <0f> 0b 90 90 4c 8d 3d 00 00 00 00 65 48 8b 1c 25 08 40 a2 91 4c 8d
-RSP: 0018:ffffc9000543f490 EFLAGS: 00010246
-RAX: 3180a59543ab4000 RBX: ffffc9000543f520 RCX: ffff888057f79e00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc9000543f628 R08: 0000000000000000 R09: 0000000000000000
-R10: dffffc0000000000 R11: ffffed101712487b R12: 1ffff92000a87ea0
-R13: ffffffff8ac280a9 R14: ffffffff8eb42480 R15: dffffc0000000000
-FS:  00007f6af12ee6c0(0000) GS:ffff888126efc000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f6af12edf98 CR3: 000000003d872000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- __rt_mutex_slowlock kernel/locking/rtmutex.c:1734 [inline]
- __rt_mutex_slowlock_locked kernel/locking/rtmutex.c:1760 [inline]
- rt_mutex_slowlock+0x692/0x6e0 kernel/locking/rtmutex.c:1800
- __rt_mutex_lock kernel/locking/rtmutex.c:1815 [inline]
- __mutex_lock_common kernel/locking/rtmutex_api.c:536 [inline]
- mutex_lock_nested+0x16a/0x1d0 kernel/locking/rtmutex_api.c:547
- rfkill_fop_open+0x138/0x820 net/rfkill/core.c:1178
- misc_open+0x2de/0x350 drivers/char/misc.c:163
- chrdev_open+0x4cf/0x5e0 fs/char_dev.c:414
- do_dentry_open+0x9b1/0x1350 fs/open.c:965
- vfs_open+0x3b/0x350 fs/open.c:1097
- do_open fs/namei.c:3975 [inline]
- path_openat+0x2ef1/0x3840 fs/namei.c:4134
- do_filp_open+0x1fa/0x410 fs/namei.c:4161
- do_sys_openat2+0x121/0x1c0 fs/open.c:1437
- do_sys_open fs/open.c:1452 [inline]
- __do_sys_openat fs/open.c:1468 [inline]
- __se_sys_openat fs/open.c:1463 [inline]
- __x64_sys_openat+0x138/0x170 fs/open.c:1463
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f6af308efc9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f6af12ee038 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007f6af32e5fa0 RCX: 00007f6af308efc9
-RDX: 0000000000000801 RSI: 0000200000000040 RDI: ffffffffffffff9c
-RBP: 00007f6af3111f91 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f6af32e6038 R14: 00007f6af32e5fa0 R15: 00007ffeabd8a878
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
