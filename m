@@ -1,110 +1,131 @@
-Return-Path: <linux-kernel+bounces-881148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 017B0C2790C
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 08:34:50 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3952C2790F
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 08:36:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 651BF4E21CB
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 07:34:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 54F3D4E30C5
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 07:36:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ACD5299923;
-	Sat,  1 Nov 2025 07:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1AE29992A;
+	Sat,  1 Nov 2025 07:36:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HxTH9xjH"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="csEYfitd"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA47634D389
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 07:34:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5089634D389
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 07:36:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761982483; cv=none; b=uDWTXjhbZirgvbAegH3dtw7/ATIitWQRq54BUV4576Al19EMfW++KQZDpUr/g6wUFJJiIIiceGB0QG1th/onJUfpAFy/vdBy0mySd28ldmbF8/F/oy8pc9Hp5enfl3rsDvY5xiCNV8piuLdAZzKb/I/kTmkf6Ze3DPau7RrFUR4=
+	t=1761982573; cv=none; b=qCWD4TrePTlH1LMKV8C9E7ur8TUM0TNWdemI36NAVeRSbfhXePLXYwX6immnzpQqgeV984y3luGmH6bkBanCYGNyoepsEUJtqbd15yKnD7qCHEpnTrVomjq0EAn7ZuIPnxMI+7CNKylyy/czwPJETCyrhtRzkjCXsvAcCNgZJmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761982483; c=relaxed/simple;
-	bh=tbIlqcUdt4K/0Wbd5er6IiYuRxDgb3ky4LwFPVHhFaM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AB+aOanbtKbF3hX9kfyFu2V492q64LUTTBSuPiY8a6r3uBu0oUH/dF01bflUrqlOc4vf3U6iA6DgUKNGKgI9t+3ZWPlR2zwevVdEL5I5UzmBBA6vU3MMunqmGaWFwMfVPOF7+XSGRrD2T4i5GHYW8yoQvIe1JF730ws41vhip7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HxTH9xjH; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-378d6fa5aebso30340891fa.2
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 00:34:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761982479; x=1762587279; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7ikyUkEuAIUj+HxEe8beF0cjcpPgN6wIzeDAnASkpDU=;
-        b=HxTH9xjH/7cMaU10KBJ7Z6ArqeGpXNAbsZn90cCliiUynz3Urz/m19JH7moAV7/WcS
-         b1XghfROG/cpgzunJSLObgYpkr0EfiowE74eQt6O72MHGriXtdyub/4PkrVcpJCEXuG5
-         9HUAdtEHtKiUzB6aVGvnR1X3mjNSrWg4oHp166jXXUdNBmSaY+U5a0UG4kR2LLppJJji
-         cH9RjWEYEKZLL6ckdlLQsvsxVojBXbFv6pSs97dD4FKfdKMkUF3JROoB8MaA8rE5GXId
-         KT7gkKzCFc8qWlcL8wh7uXoYlHCU+lSbFw9bR666H9su5K71862X7DVbowu3TR7BlQtV
-         qR8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761982479; x=1762587279;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7ikyUkEuAIUj+HxEe8beF0cjcpPgN6wIzeDAnASkpDU=;
-        b=dbCIjO2Mmlu3ulN9aMIJFEls5QXXX3pqSjEttMaxCbCR/8IlC85B6JleLLOxRUyOhP
-         +8akGdkQEKQA6OuQjZ058KLU6oEi9BiY4+rJ7LEDeav+n/soKHezJFtqFCUpie3W87VZ
-         6ACBoQhAtP/Jp5XTO14KnTn/aM1Da7dfddazR0XVX5bHb8Z2aSBWUsgOQYkbLv7mMMhK
-         q2Cs6QDllx4L64bKYARhAvyUkeyph15iNu7If/aPr08nxK0wbiQpnLU3bMLK4vzg/Wxh
-         PBFJ+6z55AmYPiW26nJrvVnIwo2EyeUQKACCcT5EM/NFRPMMBtHffeQ2TIBS6oMVTOs6
-         bdUQ==
-X-Gm-Message-State: AOJu0YyTnZLaj3U7LceYdFjTQHME7TFD6GkMMCwrhvr+G5dMmFVs1X10
-	r14CAYk6lmwsRqOO5bCVHtEIlBKnDaHY9BBnqAdfOqEJykkFwk6832V3/sS19hSt
-X-Gm-Gg: ASbGncte+O3l0eNhcsfy2tPcDNYgel8w1EbKkhcFdk7qOy5KnjQxllFd3UG2IYkcgl1
-	knpf47Iq9Dd/KyAs4pbL5Z/vP+YS0pw2WoMg2jwQM11Y+rbaPh14f6U+Vx8L7zmpWO0Dn2vwCnI
-	de+mLYUZDzmcgnoqVJ8tRVOK2i3W8hoXtnYwlXEXaUcNTqOWPEzqkOM1XRwPEmk4xa6ZD8sEvvX
-	7DF+MzGFlgUXIh6o20joWZU6hA+3Vpd6Xs3DOVOO53AVBYr5B3/OSuqf7FQcSsqoFbtzmpEIxu8
-	9Qn03ajJNkuhEbBZz76p6/F74fF4DuDhdaYKkcnZKpvo6pZLFjYoCiM1GpMWGzUisrVVNM1/YRu
-	UOIIfQ86hniEtEL2EbKWYgDz/xw0kkMr1bga0WrvepQHsDdnZZrLOYpHcHMJQOc4wPZqSWgh8vj
-	NHEvwfwFDb0gIARw==
-X-Google-Smtp-Source: AGHT+IGSi1MaERRSeAaLh4wNzQnSFVO7/v/mdkdzZiR4yeubPQLkUoJbtY78vIGcHgt3adn0ZKW5FQ==
-X-Received: by 2002:a05:6512:10c3:b0:591:eb01:8eeb with SMTP id 2adb3069b0e04-5941d565e05mr1735327e87.46.1761982479195;
-        Sat, 01 Nov 2025 00:34:39 -0700 (PDT)
-Received: from archlinux ([109.234.28.204])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5941f39d2c0sm1046152e87.46.2025.11.01.00.34.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Nov 2025 00:34:37 -0700 (PDT)
-From: zntsproj <vacacax16@gmail.com>
-X-Google-Original-From: zntsproj <vseokaktusah7@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: greybus-dev@lists.linaro.org,
-	zntsproj <vseokaktusah7@gmail.com>
-Subject: [PATCH] Fix tiny typo in firmware-management docs
-Date: Sat,  1 Nov 2025 10:33:45 +0300
-Message-ID: <20251101073345.10520-1-vseokaktusah7@gmail.com>
-X-Mailer: git-send-email 2.51.2
+	s=arc-20240116; t=1761982573; c=relaxed/simple;
+	bh=2VdscPC7pHDwv0/PiRnBKewiLHLlkoj22vBUnc0cpXs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Y7V4LchfpOQbDSa9pcAMJP+r7MrwtdN/YEjjG1cFMDxrjzAw9cyPEEKJgY+k2wwZsvuFUWm3HRirtJHuS/qYIc2fKZ8VG+v7w0FxocGkB0NTV7gVJFFmztOkOtgn4xUpHYll9BIUWuIrXy3cVZa+twgpopatNAj8XREWL6pprwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=csEYfitd; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761982571; x=1793518571;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=2VdscPC7pHDwv0/PiRnBKewiLHLlkoj22vBUnc0cpXs=;
+  b=csEYfitddaLqZbDc7y+pQ2sDVHXO5IPww/mC15rcEVv6Cdz2n+Z6/Ul8
+   pnyP0KzFqez6Y6GcnvkLWWADOzaDaRW6Kxuy3s4OYSxFlg0qmIz4eHAp1
+   TApmDtww5oVebIkfnL6LdtNoy0DUd9Q2WWr5hL7TE+yXb3+qoSeLtD6tS
+   9X0C1E7ECO90tTypNHE/16d8oA1qsNzLqbfBy93noV97GbjVf19/M+mq0
+   qWeSNXosKa3c8FCx3B9HjO8QyTThh5XlsBdLcxYRbl9IN48MQQEucIcVr
+   36MvybdVdf/XVOhZ8RWFaJIDFl0hidfdaNW4EXvqDuFqyFl2cI6wyIIJk
+   g==;
+X-CSE-ConnectionGUID: p9frkROzQPCWxzhBj0JjEw==
+X-CSE-MsgGUID: kPaPgla9T2aWgz+bop7R0Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64042575"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="64042575"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2025 00:36:09 -0700
+X-CSE-ConnectionGUID: 2wZYMgcDTG6ACTMrPwVJ8A==
+X-CSE-MsgGUID: b5y0npAAQJmutDCAcYhFlw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,271,1754982000"; 
+   d="scan'208";a="190761705"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa004.jf.intel.com with ESMTP; 01 Nov 2025 00:36:08 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vF69d-000O00-27;
+	Sat, 01 Nov 2025 07:36:05 +0000
+Date: Sat, 1 Nov 2025 15:35:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Simon Horman <horms@kernel.org>
+Subject: drivers/net/ethernet/intel/ixgbe/ixgbe_e610.c:3938:28: error: no
+ member named 'ixgbe_dbg_adapter' in 'struct ixgbe_adapter'
+Message-ID: <202511011546.mIG3y3Pt-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
----
- .../staging/greybus/Documentation/firmware/firmware-management  | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Michal,
 
-diff --git a/drivers/staging/greybus/Documentation/firmware/firmware-management b/drivers/staging/greybus/Documentation/firmware/firmware-management
-index 7918257e5..393455557 100644
---- a/drivers/staging/greybus/Documentation/firmware/firmware-management
-+++ b/drivers/staging/greybus/Documentation/firmware/firmware-management
-@@ -193,7 +193,7 @@ Identifying the Character Device
- 
- There can be multiple devices present in /dev/ directory with name
- gb-authenticate-N and user first needs to identify the character device used for
--authentication a of particular interface.
-+authentication of a particular interface.
- 
- The Authentication core creates a device of class 'gb_authenticate', which shall
- be used by the user to identify the right character device for it. The class
+FYI, the error/warning still remains.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   ba36dd5ee6fd4643ebbf6ee6eefcecf0b07e35c7
+commit: 641585bc978e0a1170ca8f12fbb1468b3874a2db ixgbe: fwlog support for e610
+date:   7 weeks ago
+config: powerpc-skiroot_defconfig (https://download.01.org/0day-ci/archive/20251101/202511011546.mIG3y3Pt-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project cc271437553452ede002d871d32abc02084341a8)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251101/202511011546.mIG3y3Pt-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511011546.mIG3y3Pt-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/net/ethernet/intel/ixgbe/ixgbe_e610.c:3938:28: error: no member named 'ixgbe_dbg_adapter' in 'struct ixgbe_adapter'
+    3938 |                 .debugfs_root = adapter->ixgbe_dbg_adapter,
+         |                                 ~~~~~~~  ^
+   1 error generated.
+
+
+vim +3938 drivers/net/ethernet/intel/ixgbe/ixgbe_e610.c
+
+  3931	
+  3932	int ixgbe_fwlog_init(struct ixgbe_hw *hw)
+  3933	{
+  3934		struct ixgbe_adapter *adapter = hw->back;
+  3935		struct libie_fwlog_api api = {
+  3936			.pdev = adapter->pdev,
+  3937			.send_cmd = __fwlog_send_cmd,
+> 3938			.debugfs_root = adapter->ixgbe_dbg_adapter,
+  3939			.priv = hw,
+  3940		};
+  3941	
+  3942		if (hw->mac.type != ixgbe_mac_e610)
+  3943			return -EOPNOTSUPP;
+  3944	
+  3945		return libie_fwlog_init(&hw->fwlog, &api);
+  3946	}
+  3947	
+
 -- 
-2.51.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
