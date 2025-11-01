@@ -1,151 +1,129 @@
-Return-Path: <linux-kernel+bounces-881191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89698C27AE8
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 10:39:41 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46BD4C27AF1
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 10:40:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 730293BC3D6
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 09:39:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5984B4E6BB1
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 09:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6172C2363;
-	Sat,  1 Nov 2025 09:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D952C21F8;
+	Sat,  1 Nov 2025 09:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cJ+WYDY+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X4nu1emX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33BB14086A;
-	Sat,  1 Nov 2025 09:39:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCEA12C15B8;
+	Sat,  1 Nov 2025 09:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761989965; cv=none; b=h9MnHuwbeQSesrCWQ9DM2rsMyGDM1Ok6gBqxrPuqc0IlIYX/LB+s5yFnd7fw8lt5zUh66JmIc5v6iEwdbaio+RzfKVHgk/GxMYo949xFbmyjm3CmJMvJAdKlmsAJY84kHZHpyZYkC51VJIw/pNLpBl+GPNZsJeKYJUkTRdtS0nI=
+	t=1761990031; cv=none; b=gvCAvLdwIwNyEodnrzD7P8kdr0/2v+l7BVk8OEu3j8JMUaENKv0DafrOnYcARJz74Gi5ksSofGCzxCdCGIJ+uJoGVDr9Mobcv67TRTWGSEG199kIyWoGOkMedrxQcl62ybhedEdIEZOgnnA9ASvwimH1a33EWXEobNm0A8sfOXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761989965; c=relaxed/simple;
-	bh=jKoa9V9XhQiv7BaQFL5zndUrFnF2g5McGSxuYRyVXf8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ptq5PgaO6Qu7UptyAzLaB1JW5JhrfE/a8zo98unhMo+TgUE7uc7caCzktWBwGtta1ulHOcDqifK1l/FoKXbhTwCqs1LqOCXpuh8nnsq3+BNErkUtgr+c9mwvW62q/cv1G3pBrsmzIHxvEP86S58WGbywigBtEd4MncL8Uu3UFJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cJ+WYDY+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5088C4CEF1;
-	Sat,  1 Nov 2025 09:39:05 +0000 (UTC)
+	s=arc-20240116; t=1761990031; c=relaxed/simple;
+	bh=KEyjwC/3ZixttteNhE28UtTrJX6xHVbizD+fICju5HQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jU7wbaixaq37QKMxPfLDz6yf7ZBHQuTyt5rLPEkOyxDbHZbuW49+ICOlouG1TvGwUi76gbpFwlps1eG9VU1E2DVAFWJvBH8E6jUPIJXA/Ti+6wz+vw8wNI7ihBjU3s7URuPk0CNZk69Jelr794Rko28Tap5/r3QOLy/PlDsj83k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X4nu1emX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A056EC4CEF1;
+	Sat,  1 Nov 2025 09:40:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1761989964;
-	bh=jKoa9V9XhQiv7BaQFL5zndUrFnF2g5McGSxuYRyVXf8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cJ+WYDY+iJ5sz8QoBX/tgU9hS9MUKyxppf6Z2c2jctyOP9E8oK4uNRpvXJ0N7Vtn8
-	 +1BC2YnPbSVKmc/bH7MUpPoZNwya+izl1xNabQT+1XlwS1BQ4mOQge1ALFNjsbnpmH
-	 8dbbR8VGuC2diAqgEA5+pZ7+auNqQQcyoqaky5EjcHqjT6Zh6x5c48FIa6MZAHcUO2
-	 apa+2zlnhJh/yi7yQPnsElQoV2X21wJKxz+CMPsU3MT27ZRV+jsk8w9hUJaFL+SyDM
-	 lvJSrGW+4VcIuBmjfZP5z9FNQIsXfcO66WMXFChCMGvguxkPx5evJAwXAwFgmlWDUz
-	 rGvhbOdFX0KoA==
-Date: Sat, 1 Nov 2025 11:39:02 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Brendan Jackman <jackmanb@google.com>
-Cc: "Roy, Patrick" <roypat@amazon.co.uk>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"corbet@lwn.net" <corbet@lwn.net>,
-	"maz@kernel.org" <maz@kernel.org>,
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>,
-	"joey.gouly@arm.com" <joey.gouly@arm.com>,
-	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
-	"yuzenghui@huawei.com" <yuzenghui@huawei.com>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-	"luto@kernel.org" <luto@kernel.org>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"willy@infradead.org" <willy@infradead.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"david@redhat.com" <david@redhat.com>,
-	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
-	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
-	"vbabka@suse.cz" <vbabka@suse.cz>,
-	"surenb@google.com" <surenb@google.com>,
-	"mhocko@suse.com" <mhocko@suse.com>,
-	"song@kernel.org" <song@kernel.org>,
-	"jolsa@kernel.org" <jolsa@kernel.org>,
-	"ast@kernel.org" <ast@kernel.org>,
-	"daniel@iogearbox.net" <daniel@iogearbox.net>,
-	"andrii@kernel.org" <andrii@kernel.org>,
-	"martin.lau@linux.dev" <martin.lau@linux.dev>,
-	"eddyz87@gmail.com" <eddyz87@gmail.com>,
-	"yonghong.song@linux.dev" <yonghong.song@linux.dev>,
-	"john.fastabend@gmail.com" <john.fastabend@gmail.com>,
-	"kpsingh@kernel.org" <kpsingh@kernel.org>,
-	"sdf@fomichev.me" <sdf@fomichev.me>,
-	"haoluo@google.com" <haoluo@google.com>,
-	"jgg@ziepe.ca" <jgg@ziepe.ca>,
-	"jhubbard@nvidia.com" <jhubbard@nvidia.com>,
-	"peterx@redhat.com" <peterx@redhat.com>,
-	"jannh@google.com" <jannh@google.com>,
-	"pfalcato@suse.de" <pfalcato@suse.de>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	"Cali, Marco" <xmarcalx@amazon.co.uk>,
-	"Kalyazin, Nikita" <kalyazin@amazon.co.uk>,
-	"Thomson, Jack" <jackabt@amazon.co.uk>,
-	"derekmn@amazon.co.uk" <derekmn@amazon.co.uk>,
-	"tabba@google.com" <tabba@google.com>,
-	"ackerleytng@google.com" <ackerleytng@google.com>
-Subject: Re: [PATCH v7 05/12] KVM: guest_memfd: Add flag to remove from
- direct map
-Message-ID: <aQXVNuBwEIRBtOc0@kernel.org>
-References: <20250924151101.2225820-4-patrick.roy@campus.lmu.de>
- <20250924152214.7292-1-roypat@amazon.co.uk>
- <20250924152214.7292-2-roypat@amazon.co.uk>
- <DDWOP8GKHESP.2EOY2HGM9RXHU@google.com>
+	s=k20201202; t=1761990031;
+	bh=KEyjwC/3ZixttteNhE28UtTrJX6xHVbizD+fICju5HQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=X4nu1emXFZUXSucv1dsi/I9LyoXD3yBy1scLkXVz0y0+zJaWdGWWzc5nFl/suDVGH
+	 9qLovUiIHNnQUwrpqTcj6KLr3B7CHrb6VrgoQVjr7MYTdqOVYKGF2k3bLkOmheIkVN
+	 pMR/rteY6XfnrH3eWoX8p4r5gWRlVZdqBoEhvq5DxUGEU2NQFM/I5x2mOqiMD8+EeE
+	 YmWUCugkhOHutuBNZ6Npz1v2NohxC7/zve+pCywq8huv9MGIT62UAG9DxqZzE0Q8w8
+	 ZxctAQ5osq+FNf9OLrRrqH/r0ltT1GkebJo2bMja7MMbtjpSjhF5wdoifpYx7OfIk6
+	 d+w+LEFGvwohQ==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	rust-for-linux@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	WANG Xuerui <kernel@xen0n.name>,
+	loongarch@lists.linux.dev,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: [PATCH] rust: kbuild: support `-Cjump-tables=n` for Rust 1.93.0
+Date: Sat,  1 Nov 2025 10:40:11 +0100
+Message-ID: <20251101094011.1024534-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DDWOP8GKHESP.2EOY2HGM9RXHU@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 31, 2025 at 05:30:12PM +0000, Brendan Jackman wrote:
-> On Wed Sep 24, 2025 at 3:22 PM UTC, Patrick Roy wrote:
-> > diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> > index 1d0585616aa3..73a15cade54a 100644
-> > --- a/include/linux/kvm_host.h
-> > +++ b/include/linux/kvm_host.h
-> > @@ -731,6 +731,12 @@ static inline bool kvm_arch_has_private_mem(struct kvm *kvm)
-> >  bool kvm_arch_supports_gmem_mmap(struct kvm *kvm);
-> >  #endif
-> >  
-> > +#ifdef CONFIG_KVM_GUEST_MEMFD
-> > +#ifndef kvm_arch_gmem_supports_no_direct_map
-> > +#define kvm_arch_gmem_supports_no_direct_map can_set_direct_map
-> > +#endif
-> > +#endif /* CONFIG_KVM_GUEST_MEMFD */
-> 
-> The test robot seems happy so I think I'm probably mistaken here, but
-> AFAICS can_set_direct_map only exists when ARCH_HAS_SET_DIRECT_MAP,
-> which powerpc doesn't set.
+Rust 1.93.0 (expected 2026-01-22) is stabilizing `-Zno-jump-tables`
+[1][2] as `-Cjump-tables=n` [3].
 
-We have stubs returning 0 for architectures that don't have
-ARCH_HAS_SET_DIRECT_MAP.
- 
-> If this is indeed an issue I think it can be fixed by just defining
-> can_set_direct_map() to false when !ARCH_HAS_SET_DIRECT_MAP.
+Without this change, one would eventually see:
 
+      RUSTC L rust/core.o
+    error: unknown unstable option: `no-jump-tables`
+
+Thus support the upcoming version.
+
+Link: https://github.com/rust-lang/rust/issues/116592 [1]
+Link: https://github.com/rust-lang/rust/pull/105812 [2]
+Link: https://github.com/rust-lang/rust/pull/145974 [3]
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+---
+ arch/loongarch/Makefile | 2 +-
+ arch/x86/Makefile       | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/loongarch/Makefile b/arch/loongarch/Makefile
+index dc5bd3f1b8d2..96ca1a688984 100644
+--- a/arch/loongarch/Makefile
++++ b/arch/loongarch/Makefile
+@@ -109,7 +109,7 @@ endif
+ ifdef CONFIG_RUSTC_HAS_ANNOTATE_TABLEJUMP
+ KBUILD_RUSTFLAGS		+= -Cllvm-args=--loongarch-annotate-tablejump
+ else
+-KBUILD_RUSTFLAGS		+= -Zno-jump-tables # keep compatibility with older compilers
++KBUILD_RUSTFLAGS		+= $(if $(call rustc-min-version,109300),-Cjump-tables=n,-Zno-jump-tables) # keep compatibility with older compilers
+ endif
+ ifdef CONFIG_LTO_CLANG
+ # The annotate-tablejump option can not be passed to LLVM backend when LTO is enabled.
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index 4db7e4bf69f5..c60371db49d9 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -98,7 +98,7 @@ ifeq ($(CONFIG_X86_KERNEL_IBT),y)
+ #   https://gcc.gnu.org/bugzilla/show_bug.cgi?id=104816
+ #
+ KBUILD_CFLAGS += $(call cc-option,-fcf-protection=branch -fno-jump-tables)
+-KBUILD_RUSTFLAGS += -Zcf-protection=branch -Zno-jump-tables
++KBUILD_RUSTFLAGS += -Zcf-protection=branch $(if $(call rustc-min-version,109300),-Cjump-tables=n,-Zno-jump-tables)
+ else
+ KBUILD_CFLAGS += $(call cc-option,-fcf-protection=none)
+ endif
+
+base-commit: dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
 -- 
-Sincerely yours,
-Mike.
+2.51.2
+
 
