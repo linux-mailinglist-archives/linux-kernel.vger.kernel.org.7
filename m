@@ -1,110 +1,86 @@
-Return-Path: <linux-kernel+bounces-881589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B362EC2882B
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 23:11:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AEC7C28835
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 23:31:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 20AE8348A64
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 22:11:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 321DC188F36C
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 22:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DA5D296BA4;
-	Sat,  1 Nov 2025 22:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06046274B3C;
+	Sat,  1 Nov 2025 22:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uWtuQJ7l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b="T4RQRs7R"
+Received: from mail-24417.protonmail.ch (mail-24417.protonmail.ch [109.224.244.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E516D1B7F4;
-	Sat,  1 Nov 2025 22:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931BD78F4A
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 22:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.224.244.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762035056; cv=none; b=epnmiZg/Lhspm9qlvf0uNqVrXiDSW3auc43znFXFtxJxsTvKCMJqBwfiDjxpCt+F70j8PieqFdETSlLTNtXepHjHk/xmFxSVhaISSgrc0WLpNZQXFJNQu2KenoeMIPX/6NUb5kEJbtRKnkKDe7MMv/NCF0E8p3p4TN0X5Ujx82s=
+	t=1762036297; cv=none; b=VIfFd0rmdwLBocEjJPe9FK6kJxfpWa1MyIEGgOvx7mlh+OGPKqARjYQ4aalufclCyL4rdDiNxGFrOZeiTff3wAnC6mGMm8bLKhmLhnaBHqNq9ZS6KtOybVpB/B9mwDUCtwTGe2dcpJz55VX+98oXWmDUxFxfZiHhnQ+uUPLBOCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762035056; c=relaxed/simple;
-	bh=oluztI+MIemez6HwqODfyI/rPIrU07A52mxjJ/pFf8Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eErf/WHtSX3vd29uhuChyPGOxB0ip5fRxj0f5ECIKq0JgjYOXh1vglQealI22VKCSohVVaDiJJNA4e3Yw2liaGRwS/T5/bMGBSvmSHt6dLD2cCYCg1mnL/xuf0uiCv/wdJeGblkx85ivyUyBjg1OoAcV6hRSk2bUaPNzcIm0j80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uWtuQJ7l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4C19C4CEF1;
-	Sat,  1 Nov 2025 22:10:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762035055;
-	bh=oluztI+MIemez6HwqODfyI/rPIrU07A52mxjJ/pFf8Q=;
-	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uWtuQJ7lC7ZOsCjZ+xKQd42045lUa3wn/Usaokuh/KYyWXEKy1Auo3yRdUOfNR5SC
-	 Bz5vDHORskHb1hgmOIG7Tr1+RNzMXrU+P1wdFdrIzksmgZbvpheivc+OuVUP5G+O76
-	 oXYJgRcuCnkaqaHeojeFI1gVe/yL43B0y7vaho86JKNU5IXzwTMfG2vc1+2Txc/Nic
-	 F7NftRx8uuoNWtcxI9RmIqKzC9xXtJTJ7p8RNG05S+32HQpDsJdAQWFK9puc8tEKVH
-	 5S2eBtGx19+KRtDMkFvFHtqNha0aXX0TM5yXDoRtAOMxgFRQO9O4QkCZbFXER6Wqkq
-	 HpLxPGszmhuwA==
-Message-ID: <3bf85718-8cea-4982-944d-b4c7a4faaf8f@kernel.org>
-Date: Sat, 1 Nov 2025 23:10:51 +0100
+	s=arc-20240116; t=1762036297; c=relaxed/simple;
+	bh=JqArab//VtjVTAuZADI3rtalHlSOh2zYSvZup8Qb328=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=uMJ+6HFENfYz23WBU2MNF9TLsxpD7vwzWDEMusHjZsEdrAjapaaYpS2Xcov6zlAzvM+4Bd+SMCCsFBwYeiLa9KWOiEdg8nn/xLNQPg5PO3JtwVd7Ybj/pXxLZ8qDXrCztzoPACyl+dvWKRp+P/ov35armBfbAzRK2/uiUCPLG6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=T4RQRs7R; arc=none smtp.client-ip=109.224.244.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1762036286; x=1762295486;
+	bh=JqArab//VtjVTAuZADI3rtalHlSOh2zYSvZup8Qb328=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=T4RQRs7R9UhpKAd9pi+kL4gwYCzU5y3djHNT1aDcRBbpt7tDrX0Alxn5Xh1GuhCoj
+	 LjUHTjLhG6dFnFkHVXX2jPiWIzeeGxc94JrlcbpLgY8OVM2v+SYK0Qn0AiGieDbys/
+	 44sAmcC0Zm/KlF59w0epCJ1yX4prfVCW/R9h3tOnNKJO1UKVxkzOROfO0lmmHmRWxL
+	 C2bvsFSZ/QPmWX/gmWc6ZFsW5xBhvnOxsYO/ipDPTHdxT87OeqUlON7Fu9CgrdSst1
+	 ijGyuJvjZfCaY7uPpGl6+QTyWdeZeEfHH0vw6cQDThxCKDXUrqU8hnUMOs1RwMwXbS
+	 0cFTbhJljhLiw==
+Date: Sat, 01 Nov 2025 22:31:19 +0000
+To: corbet@lwn.net
+From: Gabriele Ricciardi <gricciardi-coding@pm.me>
+Cc: workflows@vger.kernel.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Gabriele Ricciardi <gricciardi-coding@pm.me>
+Subject: [PATCH] coding-style: fix verb typo
+Message-ID: <20251101223027.171874-1-gricciardi-coding@pm.me>
+Feedback-ID: 114464819:user:proton
+X-Pm-Message-ID: deac9e48a8ef2c74c4177133565786595b6dcd84
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Daniel Gomez <da.gomez@kernel.org>
-Subject: Re: [PATCH] module: Only declare set_module_sig_enforced when
- CONFIG_MODULE_SIG=y
-To: Coiby Xu <coxu@redhat.com>, linux-modules@vger.kernel.org
-Cc: linux-integrity@vger.kernel.org, kernel test robot <lkp@intel.com>,
- Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>,
- "open list:MODULE SUPPORT" <linux-kernel@vger.kernel.org>
-References: <20251031080949.2001716-1-coxu@redhat.com>
-Content-Language: en-US
-From: Daniel Gomez <da.gomez@kernel.org>
-Organization: kernel.org
-In-Reply-To: <20251031080949.2001716-1-coxu@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 31/10/2025 09.09, Coiby Xu wrote:
-> Currently, set_module_sig_enforced is declared as long as CONFIG_MODULES
-> is enabled. This can lead to a linking error if
-> set_module_sig_enforced is called with CONFIG_MODULE_SIG=n,
-> 
->     ld: security/integrity/ima/ima_appraise.o: in function `ima_appraise_measurement':
->     security/integrity/ima/ima_appraise.c:587:(.text+0xbbb): undefined reference to `set_module_sig_enforced'
+In the Identation section there is a list of instructions in
+second-person. The offending line uses third-person singular.
 
-It's a bit unclear whether you're referring to a current upstream issue (which I
-couldn't find as of -rc3), or if this is just a hypothetical scenario.
+Signed-off-by: Gabriele Ricciardi <gricciardi-coding@pm.me>
+---
+ Documentation/process/coding-style.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> So only declare set_module_sig_enforced when CONFIG_MODULE_SIG is
-> enabled.
-
-I only see cases where code has a safeguard like in
-security/integrity/ima/ima_efi.c:71
-
-		if (IS_ENABLED(CONFIG_MODULE_SIG))
-			set_module_sig_enforced();
-
-> 
-> Note this issue hasn't caused a real problem because all current callers
-> of set_module_sig_enforced e.g. security/integrity/ima/ima_efi.c
-> depend on CONFIG_MODULE_SIG=y.
-
-I think the correct term we should use here is runtime safeguard. The code does
-not actually depend on that config, nor is there any dep in Kconfig.
-
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202510030029.VRKgik99-lkp@intel.com/
-> Signed-off-by: Coiby Xu <coxu@redhat.com>
+diff --git a/Documentation/process/coding-style.rst b/Documentation/process=
+/coding-style.rst
+index d1a8e5465ed9..2969ca378dbb 100644
+--- a/Documentation/process/coding-style.rst
++++ b/Documentation/process/coding-style.rst
+@@ -76,7 +76,7 @@ Don't use commas to avoid using braces:
+ =09if (condition)
+ =09=09do_this(), do_that();
+=20
+-Always uses braces for multiple statements:
++Always use braces for multiple statements:
+=20
+ .. code-block:: c
+=20
+--=20
+2.51.2
 
 
-Just minor nits regarding the commit message structure. This change should allow
-us to remove the safeguard from users of set_module_sig_enforced().
-
-
-Other than that, LGTM,
-
-Reviewed-by: Daniel Gomez <da.gomez@samsung.com>
 
