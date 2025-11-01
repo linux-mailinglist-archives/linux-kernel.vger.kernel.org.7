@@ -1,222 +1,199 @@
-Return-Path: <linux-kernel+bounces-881254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64F96C27D5F
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 13:01:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C09EC27D77
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 13:05:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81C6440376C
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 12:01:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF5BA1A25F61
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 12:06:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86CE72F83C5;
-	Sat,  1 Nov 2025 12:00:44 +0000 (UTC)
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7DE02F693E;
+	Sat,  1 Nov 2025 12:05:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R3OomEQS";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="o4MnhvxJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A274D2F6190;
-	Sat,  1 Nov 2025 12:00:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DB772F6928
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 12:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761998444; cv=none; b=PnVC/M6lgEPk2qQRWKogVE73mIIK87Lq3m5WXyEU5UVonqpCxWdZGDK5ngOKWBBJnbyk4j7c7UPzgnKtK4Y6fzgYC0uLFZyFrYJt92yDmphRxAH2i856YTdFDvyc+/UGpHjYho1vXfP5U6rjn1zCdemVwh82POMaZJN0JQvxST0=
+	t=1761998739; cv=none; b=Ah9c7LA8kMUTyXxfqh4BXWJhkA2ZLAzaTsZg+n3T4LrHiHZPvz5QMdO6lZc1TF/HtibccgYbkS79mIxoJ5h/6URfF/YUHi0etMyZn2yTeXvXhrx7QeT7GdvICe5/7K/5lu7YQhWatbp5Q9baFB0jGdkd4GmZm6AtPHe+QDHRksI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761998444; c=relaxed/simple;
-	bh=bnoZL44cmgQ5fXoUbsYtLZUMhkvJ/6jmim4+uoVl7zE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NO0hSCCblp4tdM7EfPs2IEDPjtV+uYjDDXSZ61r7L2h8hUvu7PvhUt80aDS/8xMxURybSN07qetDzHIDHNvgTV7PNfB3RQvahEprw900x0hv6vIHql8HJQ9CSZpcPp75t2OACcoYlUHajDcNIhG0rLIDOgkPSh+CIXMyTAHUm8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from localhost.localdomain (unknown [58.61.140.134])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 2801cc49f;
-	Sat, 1 Nov 2025 20:00:37 +0800 (GMT+08:00)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Chukun Pan <amadeus@jmu.edu.cn>,
-	Hsun Lai <i@chainsx.cn>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH 6/6] arm64: dts: rockchip: update 100ASK DshanPi A1 support
-Date: Sat,  1 Nov 2025 20:00:10 +0800
-Message-Id: <20251101120010.41729-6-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20251101120010.41729-1-amadeus@jmu.edu.cn>
-References: <20251101120010.41729-1-amadeus@jmu.edu.cn>
+	s=arc-20240116; t=1761998739; c=relaxed/simple;
+	bh=J7IUCZ0bPZlXR+tr1rXTk63Za+FR2mBxuCqIX9ssnMU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N6FV9DgvN+T62g94gfDSS6h1WIN2YLMUkwcn5CnZ/u2mB7IdnZMb66FbxAIrQNPEtb1V/EDKls8v3YCyie8XH1ioNURYI7YT5vfFn7wz1+GXaNMNFjceES9hBY7E0iWZsfa5fvaZHFa7oHNhqwnk2vyswXsvy/ZM5x1HQypncOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R3OomEQS; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=o4MnhvxJ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1761998737;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=kMG4ZrGhtDivlDXT9Lf+Em5Cw+QAoMNy/XfdlpySJK0=;
+	b=R3OomEQSi205HBBbecAHzGWrPl8pHj/FPmcUyYufGgr0tfQqvRg0tayrkFn8hsG7G5xtUe
+	8MmGWoxYvHnpheR8kYRCJITSHsjM14SEDoqgMbxiMWEPJ7EYSyK8KSGa8L/6vSsIbtivos
+	XO39WSe8MxutZ+WnhHeGM/9bvCgS/rQ=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-629--8EEabmnPpqfR429hLzCLQ-1; Sat, 01 Nov 2025 08:05:36 -0400
+X-MC-Unique: -8EEabmnPpqfR429hLzCLQ-1
+X-Mimecast-MFC-AGG-ID: -8EEabmnPpqfR429hLzCLQ_1761998735
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4771e696e76so31951445e9.0
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 05:05:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1761998735; x=1762603535; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=kMG4ZrGhtDivlDXT9Lf+Em5Cw+QAoMNy/XfdlpySJK0=;
+        b=o4MnhvxJvzMFKP7boK6o+YuWkUtDwRf3zcmSdzRVbw1POaUKmrIOSpdbPg2S9JfQwg
+         fOTS8t8Q6Xru/ApEKdxCMGFJT7b+rY+3EGBKzy9P7rkyPmnq7ertCWN5g2y7llVfgj4N
+         QVAicjy6fvCARIT+q73afx6w6of+JHAj3lqG/p62C2g0lbDU7JXinc+IVqLsMFIKmnQe
+         2HnEwuVCcS0E3pBfRRzNhq7mfUwykiVRiu8COiD+JyFdOP7pBV7Na0PaJUQkZsapdgjU
+         XHU4A3GU5Slc5Zhm0IuAD/50HIKp67HlyjKGlgP/1VWK7nE5kBg/aRfM1NANf7lYtTsj
+         Mqvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761998735; x=1762603535;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kMG4ZrGhtDivlDXT9Lf+Em5Cw+QAoMNy/XfdlpySJK0=;
+        b=CyXYT61Xk10y9yxhew/vCHwkCftZOMr0RUavFXItSETQftmSfnOo8MYLsSDKnFIeCu
+         b5m7eUnl6GhB2ey+ff13TetYjla+oQuac/6Bao52vYAXLRS4fcvE0Z8ZLmcEOnfw+bSd
+         xbrFXsWCZ2zErYWz4pXx3qMnUhop589JTJ4gtB6xGoWkPtJYMOivs5Jijt6KGDdqj+mU
+         gkELSGBfpbo8UXACpol4idtG2iRCShdWaWxHYe7ZN9PzPCyeEaijMYpSyOu2VrdAzQ4W
+         PBRIMkiVrDDIhmnK/D8DQWTo97BQkvZacrf16DVtqJ1FS3jWlPZpenxFJuAEI0f79Od1
+         jcuA==
+X-Gm-Message-State: AOJu0YweyNaUzN7BAz7j1SG4wDQjk4TobDdBJzMzHb1YoKQLgGmq7UjZ
+	fi74XPv/y6l59Jarfkbg/TF3lyTVIdyUe1keKtS58hJct51Y6I2KdfCWqM4WLDF/cxanByAzY2k
+	5gY0wFJVOwTrGMd2t/ER9hY+wGhUWnIJx6cebFVPOnH9cTa16k0tTdNGZTB21GB4JOw==
+X-Gm-Gg: ASbGncs8mltNg11w7+/egWNOCsTUrikTnPHgI5wT4q6xgbpxhHl823ZKnUIqv36FsXB
+	UuqKsqm3tcXqe3DYXJxF6qpI4wb1Djg/qgmJhafADtrMzoAwyi0m1sEVk48Tz7EtpWcW74gMbjg
+	M6f9UAeWexqSoYQpMkNwqPXwM5tW823A/jUVnXPZUb47J5UlehbQRmjAjuF5Xk15CPPS8YJsh4c
+	ainwEL0m7d6qWyHqih8EILz+DxZEwohViMwF6+lf4Gqd8R6HTZFIJoLWu9DiJ10tks3ffWGPQFE
+	mSRLdoqHIe25auFlrXe3PytT7tBx3pQsT993RIZyE+z6nBENWSSp8EDyAuWSnFjPUVhj92KeKWH
+	B2CwuYrbAvLXqzsMnpiObHBPGFqZb6twDf1q8yHPd8AxgLMFJfi+X8iCNz+Yl1fd78NPTQfgnlB
+	GLYBxW0cu0o4U9aXO4a3Utv3vUn2c=
+X-Received: by 2002:a05:600c:3e8f:b0:475:dac3:699f with SMTP id 5b1f17b1804b1-477307c1470mr61733545e9.9.1761998734808;
+        Sat, 01 Nov 2025 05:05:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEswSMAFiCrNpu5lyiFxKzugAwsfKeFqrIXw4LJyG0OxPKZu66BGogk4vu+xHj3Hhqm/A5QqQ==
+X-Received: by 2002:a05:600c:3e8f:b0:475:dac3:699f with SMTP id 5b1f17b1804b1-477307c1470mr61733085e9.9.1761998734330;
+        Sat, 01 Nov 2025 05:05:34 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169? (p200300d82f3f4b00ee138c225cc5d169.dip0.t-ipconnect.de. [2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c374f84sm45678605e9.0.2025.11.01.05.05.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 01 Nov 2025 05:05:33 -0700 (PDT)
+Message-ID: <07861e97-757c-48b2-829c-d1b1b5df81a0@redhat.com>
+Date: Sat, 1 Nov 2025 13:05:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a9a3f4a7ae303a2kunmc60b64232d3775
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZGRpDVkMeHUJPQk9DTh9PGFYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlOQ1VNSlVKT0tVSkhPWVdZFhoPEhUdFFlBWU9LSFVKS0hKTkxOVUpLS1VKQk
-	tLWQY+
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 01/12] powerpc/64s: Do not re-activate batched TLB
+ flush
+To: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ David Woodhouse <dwmw2@infradead.org>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+ Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
+References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
+ <20251029100909.3381140-2-kevin.brodsky@arm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ qIws/H2t
+In-Reply-To: <20251029100909.3381140-2-kevin.brodsky@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Enable button, RTC and USB support for the 100ASK DshanPi A1 board.
+On 29.10.25 11:08, Kevin Brodsky wrote:
+> From: Alexander Gordeev <agordeev@linux.ibm.com>
+> 
+> Since commit b9ef323ea168 ("powerpc/64s: Disable preemption in hash
+> lazy mmu mode") a task can not be preempted while in lazy MMU mode.
+> Therefore, the batch re-activation code is never called, so remove it.
+> 
+> Signed-off-by: Alexander Gordeev <agordeev@linux.ibm.com>
+> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+> ---
 
-Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
----
- .../dts/rockchip/rk3576-100ask-dshanpi-a1.dts | 94 +++++++++++++++++++
- 1 file changed, 94 insertions(+)
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3576-100ask-dshanpi-a1.dts b/arch/arm64/boot/dts/rockchip/rk3576-100ask-dshanpi-a1.dts
-index 815f75e7cd70..f325adf348ce 100644
---- a/arch/arm64/boot/dts/rockchip/rk3576-100ask-dshanpi-a1.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3576-100ask-dshanpi-a1.dts
-@@ -7,6 +7,7 @@
- /dts-v1/;
- 
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
- #include <dt-bindings/leds/common.h>
- #include <dt-bindings/pinctrl/rockchip.h>
- #include <dt-bindings/soc/rockchip,vop2.h>
-@@ -66,6 +67,61 @@ hdmi_con_in: endpoint {
- 		};
- 	};
- 
-+	keys-0 {
-+		compatible = "adc-keys";
-+		io-channels = <&saradc 0>;
-+		io-channel-names = "buttons";
-+		keyup-threshold-microvolt = <1800000>;
-+		poll-interval = <100>;
-+
-+		button-maskrom {
-+			label = "MASKROM";
-+			linux,code = <KEY_SETUP>;
-+			press-threshold-microvolt = <0>;
-+		};
-+	};
-+
-+	keys-1 {
-+		compatible = "adc-keys";
-+		io-channels = <&saradc 1>;
-+		io-channel-names = "buttons";
-+		keyup-threshold-microvolt = <1800000>;
-+		poll-interval = <100>;
-+
-+		button-recovery {
-+			label = "RECOVERY";
-+			linux,code = <KEY_VENDOR>;
-+			press-threshold-microvolt = <0>;
-+		};
-+	};
-+
-+	keys-2 {
-+		compatible = "adc-keys";
-+		io-channels = <&saradc 4>;
-+		io-channel-names = "buttons";
-+		keyup-threshold-microvolt = <1800000>;
-+		poll-interval = <100>;
-+
-+		button-user2 {
-+			label = "USER2";
-+			linux,code = <BTN_2>;
-+			press-threshold-microvolt = <0>;
-+		};
-+	};
-+
-+	keys-3 {
-+		compatible = "gpio-keys";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&gpio0_a0_d>;
-+
-+		button-user1 {
-+			gpios = <&gpio0 RK_PA0 GPIO_ACTIVE_LOW>;
-+			label = "USER1";
-+			linux,code = <BTN_1>;
-+			wakeup-source;
-+		};
-+	};
-+
- 	vcc_in: regulator-vcc-12v0-dcin {
- 		compatible = "regulator-fixed";
- 		regulator-name = "vcc_in";
-@@ -599,6 +655,15 @@ regulator-state-mem {
- 	};
- };
- 
-+&i2c2 {
-+	status = "okay";
-+
-+	rtc@68 {
-+		compatible = "dallas,ds1338";
-+		reg = <0x68>;
-+	};
-+};
-+
- &i2c4 {
- 	status = "okay";
- 
-@@ -618,6 +683,11 @@ es8388: audio-codec@11 {
- 	};
- };
- 
-+&i2c9 {
-+	pinctrl-0 = <&i2c9m1_xfer>;
-+	status = "okay";
-+};
-+
- &mdio0 {
- 	rgmii_phy0: phy@0 {
- 		compatible = "ethernet-phy-ieee802.3-c22";
-@@ -661,6 +731,12 @@ gmac1_rst: gmac1-rst {
- 		};
- 	};
- 
-+	gpio-keys {
-+		gpio0_a0_d: gpio0-a0-d {
-+			rockchip,pins = <0 RK_PA0 RK_FUNC_GPIO &pcfg_pull_up>;
-+		};
-+	};
-+
- 	headphone {
- 		hp_det: hp-det {
- 			rockchip,pins = <0 RK_PA2 RK_FUNC_GPIO &pcfg_pull_none>;
-@@ -688,6 +764,11 @@ &sai6 {
- 	status = "okay";
- };
- 
-+&saradc {
-+	vref-supply = <&vcca1v8_pldo2_s0>;
-+	status = "okay";
-+};
-+
- &sdhci {
- 	bus-width = <8>;
- 	full-pwr-cycle-in-suspend;
-@@ -733,6 +814,19 @@ &uart0 {
- 	status = "okay";
- };
- 
-+&usbdp_phy {
-+	status = "okay";
-+};
-+
-+&usb_drd0_dwc3 {
-+	status = "okay";
-+};
-+
-+&usb_drd1_dwc3 {
-+	dr_mode = "host";
-+	status = "okay";
-+};
-+
- &vop {
- 	status = "okay";
- };
 -- 
-2.25.1
+Cheers
+
+David / dhildenb
 
 
