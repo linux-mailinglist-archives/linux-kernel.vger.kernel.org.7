@@ -1,340 +1,140 @@
-Return-Path: <linux-kernel+bounces-881125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BE41C27854
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 06:09:14 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11E36C2785A
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 06:10:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 574854E4A69
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 05:09:13 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B3EFD34C5C6
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 05:10:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42512255F2D;
-	Sat,  1 Nov 2025 05:09:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 550982550D4;
+	Sat,  1 Nov 2025 05:10:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="izRA2gHH"
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012022.outbound.protection.outlook.com [40.93.195.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iMEdI9FR"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ACB01FC0ED;
-	Sat,  1 Nov 2025 05:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.22
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761973746; cv=fail; b=evapJ4vn6gwIDsyOF3PMuk6wzTYyo+iJapUIRNiJMkclBCC4e70uVSiZXqkLV1y3McTt8rPrLw+ZyDNU66yhbUrC3vSmEH/BZdF5jGU0ZX6dLNvK/UzGLmMlfNJRg5moz19F0jXCySpmKiZFNk1kbZqH+oz8qXOYfYp53JmNOic=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761973746; c=relaxed/simple;
-	bh=xUr8Usjh4qO3UAAiMWWJPqQQhrsxxaUvZIYBkpNBd/M=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=oD3sLrLgAQSdo/xbwYZuFP30P32sD7Zv94U5hsz8oeuOlhsMTFKkPx4D5iOWWABp5gXzOxvZeKqFxQ5ZHOPLLWQ+OjcYFOy6xea/FkEMzfWrCheqeKvnUEa+4nGXYZaa3y9ktvi8NHZgWd/AkiwK0gH5+cpt3gll3lXJqiROb0o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=izRA2gHH; arc=fail smtp.client-ip=40.93.195.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TVTR4yVxMrb8yMEYpFPiq6FtFtfkZTJvmL2kSzkw84oeND8ZqGHQtXt8R0ydUlr+BoLTrwUKLL5Ogii7DD0g6hs5ynky42OEJCQgrT23fVTFDg2/qbaGNgZSTvFrSSJezr6oqWvW+O/pLMaAX66argTCx6vbgx67q9+ghorIyEeH0V8GAPZTtN6tIDUi4Js42jMRxQyPLpT1ljB/Xs1rp/VBOGmpa1kugssm1aNqZLyn+Afw4j8D4hb8xnIsHySR7R6pmzaB6oVuXIEzVbtWnCif1+00WLvqAOnuSIS0RaP7qsYoRGyelHMLdsz18TlEg9rk10jJvSJkEgtHCNrIXQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WpppkZgNDbyB8/XbmhfgMQhZE6JhcjSvL4IuxV/lPxs=;
- b=ouO4WPdHK2KlddmdAPj5po4cOMVrVygNly7zippVjwvGVR0QKGWDmkyIRAkd4rc81w9CIaBJQGudoxSZ897v+Y8yaCA3tCr3b6K71lFRVjwZLZCvSuTOqb4hw9il2sWWvjUCosY1aWUWLWnCPCEVRLZa+xzyeIDBasT2uUMprRWr5pqp0cS9UWPxWlx1tGqnJUV/uvA2avtw7cmx8BhwgiadPxOyK+/d4eOJ98z0CJGSh4WkPBcM4VRB2jzlZkFwg0FRoMgaHp7hjUE0pTSLimvksiZ6ep1S4s1NGpCmTDz1HHqFJebgVEdzxyvyRqhR90+i8bMT4YLMlSb6/CVaHw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WpppkZgNDbyB8/XbmhfgMQhZE6JhcjSvL4IuxV/lPxs=;
- b=izRA2gHH8i2ywpC1xw5oh74ggCDQvrAJvBAj2bPt50B5n9FrZilmBEYVZn/A79xBjmgGy3nLA2yGLxzIUf7xBuuM8lZhBgeICxsYKOzHBWrVgRhErZEKD0hunbAeKEYq8ki7mEpPiD29KHgM42vNZ4Ync57MCfUpJoh9LPCBFiqzDNTc2F4PqrxkQntpQTfGlLUcfuhOrNeiVrk4rTHVxP0zpFbgdikp4T5NzdAPdYbiUqbPtaI6H4j5Xlnr26Z0HFK2ifIPv76hwgeKeWP21R6csJt39EEsClgvsBfuUEn3ftNA3STWovzzEvYDlKVZkHSrTToReDllg3UlP2N1nQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by DS5PPFEAC589ED8.namprd12.prod.outlook.com (2603:10b6:f:fc00::667) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Sat, 1 Nov
- 2025 05:09:01 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9275.013; Sat, 1 Nov 2025
- 05:09:00 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 01 Nov 2025 14:08:56 +0900
-Message-Id: <DDX3K8BNA4DW.12U3WTKDD5GCF@nvidia.com>
-Cc: <acourbot@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
- Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Simona Vetter" <simona@ffwll.ch>,
- "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "John
- Hubbard" <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
- <joel@joelfernandes.org>, "Elle Rhumsaa" <elle@weathered-steel.dev>,
- "Daniel Almeida" <daniel.almeida@collabora.com>, "Andrea Righi"
- <arighi@nvidia.com>, "Philipp Stanner" <phasta@kernel.org>,
- <nouveau@lists.freedesktop.org>, "Nouveau"
- <nouveau-bounces@lists.freedesktop.org>
-Subject: Re: [PATCH RFC 3/4] rust: drm: Add DRM buddy allocator bindings
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Joel Fernandes" <joelagnelf@nvidia.com>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <dri-devel@lists.freedesktop.org>, <dakr@kernel.org>, "David Airlie"
- <airlied@gmail.com>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20251030190613.1224287-1-joelagnelf@nvidia.com>
- <20251030190613.1224287-4-joelagnelf@nvidia.com>
-In-Reply-To: <20251030190613.1224287-4-joelagnelf@nvidia.com>
-X-ClientProxiedBy: TYCP301CA0069.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:405:7d::9) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A8F24338F
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 05:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761973849; cv=none; b=VPqmxmtCeu7OuCNerYXTkiZRI7J+G/LUw3alLU12ghsPuUpw1CB73Do32X2uIKJd3d0SOuAktPpJ9aq5mtfYZptz6UXZpd/sNKBGL7wPIB3dhEnmZjxgxhGSXsEd3hIsK/iqr5gSjThUVVS5N4ttp5mLIvooAgXRtBSrUG3X6dY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761973849; c=relaxed/simple;
+	bh=eOlM1uFeuGo4OskzqCGnrLnEeqaOGDwuYrRt8MXSqLM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ew0fdO8aYeeOvEHr5GRnlNEEPUzRvs9zW6qHa/6H+sKDTX9vIMRq+HfuPba8Nj46Vve7+f2xn6Bh5T3M0jwdwbNe/3aINfbSQe/LEw7Sy7CLwSSr9qYlebsp2vQxIFL3rCKa+IVGCK3XYQjpFK1Fy+CTmYfb+dkqwkC1E5vzXn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iMEdI9FR; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-37a1267c45dso24572731fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 22:10:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761973845; x=1762578645; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cDBf0EPKFSh2QRdvgUh08qctzAfCvCuzR3NbXNNUNTg=;
+        b=iMEdI9FRmOCKFSJDM5JHp1I8ENxi/wN4KiN0O7101WgZCIqjWQO1V3mZjc991Sdfg+
+         xophtcs1ENxjmtluIGZo/0uqdsu61PRh7f7ep8OqFVDDj/UXK0yPchVfBNoH2W+MB1sD
+         o+ibQO7SYZybvTMduEz5Jla5jw1HsQHyotq6LwOMawQJ/pcw3400uovKSFNoOvBS6nLv
+         94bscpKVQoGdlGAj6avqDbvIEvbtqo820oGU2nPvcz9Zg+TdehJ1Cr4TfX/rYxgzazyu
+         Tybg3eITahSfMt3CCBFhJ5ociJ2XZeuTlVW2ks2ojm3vlSJompwmx1PLmF85Gw2Qcnu9
+         gtFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761973845; x=1762578645;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cDBf0EPKFSh2QRdvgUh08qctzAfCvCuzR3NbXNNUNTg=;
+        b=ECSjIZhF/U3QMx1KdtUKtW0CcTSInGqa6jXd9tI3VsapZ7ITyGvpaG7gYzRLDKAJKW
+         e72Kdqxf6nJwcLvaxw0cGRX6ZarbjX53n+C2EbcBBZzIcrYoJCyilladdPiAuJyHXg0O
+         wCmRKRRcfgc+j6PU49vNBPLyS5cq2IeDetOzjAR1Z3kmf1Vb+E/6eT64sf1udNeJtHp2
+         s90YWc18PZuKydbdGPGtBSMofVr3vCsByVwDARVGOgBop5+ooVIdQQMRe7rVMIMXZeEN
+         WI8kTfBbnS4DpN/+MCIUl8iqw0tGvmQysBXI4VZoFKuuziYxD6bnHYMdEe99jG304bcF
+         3Ygg==
+X-Forwarded-Encrypted: i=1; AJvYcCUNuRz+KTJSPMa8PLEowJyfZm5FbCNcYsE19oiROprB3i6LhHSky2J0ZNXJKln3gNj1xow8BnP2PlgDZWs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZQjUdHDH0a8JFbXPGZC+dPpvy0qmMQ+R8SC/N0G2vFku23ufO
+	mgiu6NvZkvlSOfD+FUrREMEPjmEc6/UHI7FElnF3LB1bt74HBd0QSsiMGdG9iqLUWBLegDtVLwV
+	cZoo4qNgTMMeGy6IrKPeXfbsEeSbU5D4=
+X-Gm-Gg: ASbGncsIreCq5buA5MxIP75ikYzgud2tTbxJ9O1VeYlB0BkwSAPcCtY6aGhy0ARR7da
+	AginotcOLbkWD28oC9Zjpme2/oxmYdqJlVCvJp5iYF4/iVBIo3+Z6z9o5jNxkbRJfYcFHdgLIEe
+	aQplWDEA/jRCNGTddijT9wWaNnNSMmG9tklKGEEcb0lIjm/x1WQQaPSINoLPY29/THhAD7tykdk
+	gd8HUKXVu+fWTZOr1WRNBHqP3joq9TsddxLZcVz0x4LdnjJFaDwCnfPjuwpeKML4VVypwuQngr+
+	k0u+HeeAxrB2WCohwA==
+X-Google-Smtp-Source: AGHT+IEgcVh16NBSlAcq0VebB5Gm+0g5P4XcZHFf7Hd8YhrkSByvbyzY03uBh9X6qmIXljQ+9mmdAKbfTpWuA4Lurqw=
+X-Received: by 2002:a05:651c:2049:b0:376:4320:e33b with SMTP id
+ 38308e7fff4ca-37a18dee5f8mr15061341fa.47.1761973844866; Fri, 31 Oct 2025
+ 22:10:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|DS5PPFEAC589ED8:EE_
-X-MS-Office365-Filtering-Correlation-Id: 893cac32-aeca-4c39-d5b7-08de1904c4b5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aitidVprSk52cy8rMmZsK1VFbWRpd0phSVBsaXE0bGc5QUs5d0d3NE9IQ0ZK?=
- =?utf-8?B?MXg3QnRnbk9GZ1VjTjZsWHhaOGozdGQrNWtHK0c1K20rL09tWC9iMThHWGNk?=
- =?utf-8?B?OWUvbTlsYkkrVWZrM3hCcHkzRVFUYmJieFM3N2tjbGlETzdZclp0TXZBK1V3?=
- =?utf-8?B?TWJYSUJJYjNYc1N5TVhXcEVvaHE3cHNWRGZ1RXhPaHRCdFlaSGlvYW80d3Jv?=
- =?utf-8?B?blFSZ2xFYkJxUzBZR0twTllzQlIvQXBHeW1sMU5SWWlsM1JsRCtjcVByUzha?=
- =?utf-8?B?aC9HbEdBVDJvbC96SUpUNUtQRkE0aUpOck9FSk5VVUZiQzlHb2I2TDYzQWZY?=
- =?utf-8?B?UlFPTFNkZzkySUhDNHBMcTQvSCtFdURtc0FIcTZ2RWRNVjRlMjhJelNpMjJN?=
- =?utf-8?B?Tk8vbnJZS1g5ZCthTmNmdXpXOFlvZk1vWFpXS1QvRm1icGsxWm1GcTVRNUgx?=
- =?utf-8?B?VDkvSlR2d2p5WUIwbVp4RjBWUnZwVXNpMDVZb05Eb0RUMm1IMzdZWjJKK3V4?=
- =?utf-8?B?TFcrcSt4K2VkcjcySDRHS0hkVTIzZFMwcjI2V3AyN1lDK3pISEpRazVxTE5M?=
- =?utf-8?B?cTdoL3dqRkpBME1qbmFuNFRjbi9mL3JJbjJFYVlSRXliZUZLaGoyNlpsNldk?=
- =?utf-8?B?OVJYdVkzWGZsWkRkV1pFUUdCVGp6ejVtTFJlb0tLYTFEQjdVWmY3T21BMVJD?=
- =?utf-8?B?a2kyZUoraGdHZUttSnRHcEQxSHp0cCs2aUUxNE1NNm1uK0hjWTZsQVplTVRl?=
- =?utf-8?B?WTJqdmlyU2JMQWZaRFczbDdFS0JzMGRkc2Y2bWNITUVvdVE1U3NWZWcvQ01x?=
- =?utf-8?B?NjVqaHNTeTVEOGRuWWJtWE83NmYxQWZBZ29tOEpDd2ZudmM3WlZ2QkNRV2NF?=
- =?utf-8?B?WmpLNGYycXFWUFdkeElxZktteWFWZXhURVV2OWZjRGwwaWE1dXJIMnZWMGpZ?=
- =?utf-8?B?ZUU4aG9OYURIVVBDcWdXUTFUNEFvSUhoVW0rL0FtdFM3N055ODJJdGVEUmJa?=
- =?utf-8?B?eGYwVUtOQjh6bC8zRnJuVWhNNTlVdks4a3pVUDBZV2ZPMmNaT1BMRkUvVXRo?=
- =?utf-8?B?OGlrZmhXeGkwYm8rOExpbWVldnpidGRQb1dVNEpycTA5MTBUSWZNdTdRbXU0?=
- =?utf-8?B?SzNJdVdnWFg3Z2M2U3JBdUIzQ3pKNGRXaTNGbGYxZE1WeGloTktZNFA4OEZy?=
- =?utf-8?B?Zk9jQXBITkVUSGZkZGxtbXQyM2I1ajJvM0FMS2UvWDhIMWRNbzc3bDhueTlv?=
- =?utf-8?B?TFNYRlZWanZpQ0l5OEl6NldTcWVkZzdRRHJKOHA3c2I3em44WHhTQ1FGM2JG?=
- =?utf-8?B?dThSdW0vNUZwa0JRbGVaS2RWdC80SFRVaWR1aHljNHF3WjdRdC9pTEp0NEY2?=
- =?utf-8?B?Zlc4T0Zha083c2dZWVRYS3ZYczVrTHdpaWVWRkpWN2VpUDJZV3k2N3h3Mm5r?=
- =?utf-8?B?TjVORFZ2UEhxYklxWllrZVdGYUtwZW5pNm15NWs3dm5iVVp0Q053NUZwUU5Z?=
- =?utf-8?B?aDdnMlFqMXF3bVRYaUJhZzVCK0JIYm1adVJzUUNkbzZYeDJqY0JGTE94STR3?=
- =?utf-8?B?c1FTcTJTOEkvRXNvdCtJbFhtZ1Z3MEtoUktYU0xDOVFvT2dnY0djNzFUNmta?=
- =?utf-8?B?ZWdGcjF5UlJ4YTBuV0IwUTR4TWVobUxoa3VzQjJwVXBEYk5OTU5OdlI1cjZq?=
- =?utf-8?B?MXhGa0RvMVRHU0MrWlJpRkJmcFgvTklXQTEzYyt0K0JUSGxCWFFWeWkwQTlT?=
- =?utf-8?B?TU1GL09UVHVvM2I5SktlOGhNNnkram00TkorRTF3TXRxWEE2V1NsZzVJdHc2?=
- =?utf-8?B?T0tVSzY3dnJrV05VYUxHM09GMUNSVVlHQVRURmtCMVlrRkZHSE5SQU9GQTdp?=
- =?utf-8?B?dHlHcjVveXp5bWlnVERlb28rZmdNZnA5RGZUQjVJU2tGd0VramN3MWl6bGtL?=
- =?utf-8?Q?dOSu/Uby7IPfHCjZ8UEesFQl1ROUea6B?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(10070799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aVNMNCtBN1ZqTTN4dHU1UDVZSEdPZEppQVhWK1JxM0JCaVBWQkhxUHRMd2ly?=
- =?utf-8?B?MFA2bVQyeDBiRWZpdFFSOWhyNGQ2TE1KUjBvVncxYzJJbWNGbHViL08rb0g2?=
- =?utf-8?B?UjVJeWlBLzlac0pNSkI0RmRwVWR3V1ZyckVHVUQyQ25vTUFNL25OS2RmNjFJ?=
- =?utf-8?B?aHJXbGZPRTJOM2lHOHYxc0VpbTIxMVpiS2x2Sm1RT043RkVNVUxxU0E4eTZU?=
- =?utf-8?B?WGc4RC8yaE9NQ2xPcGZ3TUx1MnRTYmlHWG5BUU9oamdHbGdEQVAxT054K1Iy?=
- =?utf-8?B?THFxS09wU0F1WVdnRnUrZHNEaFVkNzkxaDZUVWZwYkl4MG1YeXNTZWM0RVY0?=
- =?utf-8?B?bDBRaGR3U2UxMnFFNVQ2VGlRTzBOU3hSTG16OHZEaXVCb2U5SXhVdHIxQUdN?=
- =?utf-8?B?SE93RlZxMVlSMEozOEZGMkxsblJEVFc2ejEwZmFNQjRVQTFaWU9GLzc1dSsv?=
- =?utf-8?B?S0FlSUFGczRFUHBYZXFkK2dLMWhNb3BMVkdZelJSdHF6MFh3NmJZQVMydFBE?=
- =?utf-8?B?eUlzSmxmK09Ba1dNcWZvS0htaHBUZVdOVnpnd3p5Z3I2azNCTm1LRXF2NW53?=
- =?utf-8?B?T3VOcmlmSHkvdzIvK3U1ME5tTmxhWENyNjZOTzFZKzJqQmJua2JqWFpWY0Yv?=
- =?utf-8?B?SEhsR1dBUXc1d3g5eC9VQnpzdDRCU0Q0bkhIbE9KVnNtM211R1Bsbm5CcU9u?=
- =?utf-8?B?dktVZWdjNmRtbWhBVFljUnRUQVhsRzlWSUhEMlJOVjdYL09SaSt4L0g2QmdG?=
- =?utf-8?B?K2o0bmp3VzY1S2Y5WTUxL215L3JlaFFsWFVHM2NBQTl2NzNpS3VOemF1SVBT?=
- =?utf-8?B?M2VvQWs0SlV6MVU3M09VMENjUzlJQ01CVGFYYUJWKzk0empSTlZZN1JkcUtt?=
- =?utf-8?B?czdocFl3MHhaSXg1aCt0cXJ2dVh3UTA2VlR2ZWVOQ0ZWMlJhYlE4R3pkc3FF?=
- =?utf-8?B?NnRjL2dOdjQ1ZUtHQmJSRG54ekRnWjFXZWFxM3FydllHZEgxVmx4Wjhqd0NZ?=
- =?utf-8?B?ZWdBajJNNHVVSDVLdVRMSFpVcmMrbFBYRXVMaFJaekRLNWdjZDIvTElRdEhs?=
- =?utf-8?B?WGhrbGlISkt1QTk4ZjNtSW5PekFqRkdjckpUMVJwMFFVUTVzN3BrcHo0NkJo?=
- =?utf-8?B?K3puQmNMZllRSFZQZDl0eGM2ZFErcDI2L2hhZHoyK2ZFcTRKNExObThkcC9O?=
- =?utf-8?B?TVVqbU5kYVlqNDN0a0JUcktTQnJXZ2JqTHRQVm94SGsyQWxFTk1pVHFnUmU2?=
- =?utf-8?B?UDNVdnRtSy9veU5CUi8wU1dCQXArb0RyY3RoVDRxT2lNRmxNK1lzdU5HVUQw?=
- =?utf-8?B?NkVKYWtGRWdDc0NUZ2tZS0lKdGZ0Ny9CdG9iKy9DdDRRdFMwRGU3cXRMUGlh?=
- =?utf-8?B?Z1VtZ0d1cWFHUmRma2xaS0pvMHl3ZGJYaWIrbHZ1ekJUazI3VXlnemR6TDkr?=
- =?utf-8?B?T0lWSmY0dE9UZUQxOUdGRlNoVGRkQXFIVzFaYmhVYjZEdkJNdFpOSC9ycFBF?=
- =?utf-8?B?elN6NSthVEh5V2w4YXFQRnpDMGljWVI1cUJrcllwRkd0V1IxS2t5QVpLNVVq?=
- =?utf-8?B?YW4ya2VXaXBCVmtnWXpnNk0wck5yeFJ4QlR2elRwYmF1K2JldE5QS0dTZnVr?=
- =?utf-8?B?a0l1cUxUVk9EekZOa0xLUFM3Q0dMUXl1b3Z5QVBQSFc2YThBdStEcXY3aHF4?=
- =?utf-8?B?V1RQM21qb1BtQmZ3VUZMcTk5aDBEUTNwV2lrNG1HbDJnTW9XMmdva0pSUkJm?=
- =?utf-8?B?THpHVjVIVHlHVkFsT1JDRWVmNXpjT1NqWVZpOGE1VDljdTZEdTdtbEZUY25T?=
- =?utf-8?B?U1B3ZksyUGttbWlOMjJDMThKeFZseEhQUFM2eEpkZzAzUGVWV3JKWW1oOHp6?=
- =?utf-8?B?aWR0OGxRWUJ2ODhLQmMxRnh5UldPbkF1cGs4em0yYUl1UjhXbXFZVm1xQ2VB?=
- =?utf-8?B?ZzJOTS9pTkxJcmxBeUZuWEZTSTRBSlZmZi92UWM4T1VmUVZ3b3RYaUdIb2ht?=
- =?utf-8?B?cGtmcHdrWFhuSDgzY0xBTStuU29SR0NEL1hNdHlaOXVkUE1rVUtlaDhJZmRK?=
- =?utf-8?B?Z3A3TUNaQXVGMFVvQ04wSCtmOUpDaWcyWUlrYUlNUmRTZDkxbjl4YzBMSTh1?=
- =?utf-8?B?V3hXUndzd2UzS25JbFFXWUQ0SExoZXlJSmxLbVg1TGo0anpZd0hqYW1RSTQz?=
- =?utf-8?Q?trCa+f4bTpSXQAQKRCmrFnZf5wFm1Ow7Ajtv7CuO9xFL?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 893cac32-aeca-4c39-d5b7-08de1904c4b5
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Nov 2025 05:09:00.6745
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: K7uQKRF4loUA70RSk15zm6DrKpkc1njMREJI3cfkydQ5LSKxCuTQTfUh35597nAwjZa1O/0WuAq6v0Ykmg9TXg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS5PPFEAC589ED8
+References: <20251031140043.939381518@linuxfoundation.org> <19689e2c-5dd1-4c3f-a243-84b69a552f91@googlemail.com>
+In-Reply-To: <19689e2c-5dd1-4c3f-a243-84b69a552f91@googlemail.com>
+From: Dileep malepu <dileep.debian@gmail.com>
+Date: Sat, 1 Nov 2025 10:40:32 +0530
+X-Gm-Features: AWmQ_bl-6-f_3Ztgk64RenjMy1dM7NuNxp6tpcUL91fjp2wWmf8Gqa3cmQnHIAQ
+Message-ID: <CAC-m1rqVAbQ4HUQibgheOZ6HJf57wmC-MAApAyuuQ63oeDGRHw@mail.gmail.com>
+Subject: Re: [PATCH 6.12 00/40] 6.12.57-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	torvalds@linux-foundation.org, akpm@linux-foundation.org, linux@roeck-us.net, 
+	shuah@kernel.org, patches@kernelci.org, lkft-triage@lists.linaro.org, 
+	pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
+	sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org, 
+	hargar@microsoft.com, broonie@kernel.org, achill@achill.org, 
+	sr@sladewatkins.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri Oct 31, 2025 at 4:06 AM JST, Joel Fernandes wrote:
-<snip>
-> +/// DRM buddy allocator instance.
-> +///
-> +/// This structure wraps the C `drm_buddy` allocator.
-> +///
-> +/// # Safety
-> +///
-> +/// Not thread-safe. Concurrent alloc/free operations require external
-> +/// synchronization (e.g., wrapping in `Arc<Mutex<DrmBuddy>>`).
-> +///
-> +/// # Invariants
-> +///
-> +/// - `mm` is initialized via `drm_buddy_init()` and remains valid until=
- Drop.
-> +pub struct DrmBuddy {
-> +    mm: Opaque<bindings::drm_buddy>,
-> +}
+On Fri, Oct 31, 2025 at 10:04=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.12.57 release.
+> There are 40 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sun, 02 Nov 2025 14:00:34 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.12.57-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.12.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-not a big deal, but usually such wrapping structures are defined as
-follows:
 
-pub struct DrmBuddy(Opaque<bindings::drm_buddy>);
+Build and Boot Report for 6.12.57-rc1
 
-> +
-> +impl DrmBuddy {
-> +    /// Create a new buddy allocator.
-> +    ///
-> +    /// Creates a buddy allocator that manages a contiguous address spac=
-e of the given
-> +    /// size, with the specified minimum allocation unit (chunk_size mus=
-t be at least 4KB).
-> +    ///
-> +    /// # Examples
-> +    ///
-> +    /// See the complete example in the documentation comments for [`All=
-ocatedBlocks`].
-> +    pub fn new(size: usize, chunk_size: usize) -> Result<Self> {
-> +        // Create buddy allocator with zeroed memory.
-> +        let buddy =3D Self {
-> +            mm: Opaque::zeroed(),
+The kernel version 6.12.57-rc1 was built and boot-tested using qemu-x86_64
+and qemu-arm64 with the default configuration (defconfig). The build and bo=
+ot
+processes completed successfully, and the kernel operated as expected
+in the virtualized environments without any issues.
 
-Isn't `Opaque::uninit` more appropriate here, since `drm_buddy_init`
-below will overwrite the data?
+Build Details :
+Builds : arm64, x86_64
+Kernel Version: 6.12.57-rc1
+Configuration : defconfig
+Source: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git
+Commit : c3010c2f692bb27dc44fd2318888446944f5846e
 
-<snip>
-> +// SAFETY: DrmBuddy can be sent between threads. Caller is responsible f=
-or
-> +// ensuring thread-safe access if needed (e.g., via Mutex).
-> +unsafe impl Send for DrmBuddy {}
-> +
-> +/// Allocated blocks from the buddy allocator with automatic cleanup.
-> +///
-> +/// This structure owns a list of allocated blocks and ensures they are
-> +/// automatically freed when dropped. Blocks may be iterated over and ar=
-e
-> +/// read-only after allocation (iteration via [`IntoIterator`] and
-> +/// automatic cleanup via [`Drop`] only). To share across threads, wrap
-> +/// in `Arc<AllocatedBlocks>`. Rust owns the head list head of the
-> +/// allocated blocks; C allocates blocks and links them to the head
-> +/// list head. Clean up of the allocated blocks is handled by C code.
-> +///
-> +/// # Invariants
-> +///
-> +/// - `list_head` is an owned, valid, initialized list_head.
-> +/// - `buddy` points to a valid, initialized [`DrmBuddy`].
-> +pub struct AllocatedBlocks<'a> {
-> +    list_head: KBox<bindings::list_head>,
-> +    buddy: &'a DrmBuddy,
-> +}
+Tested-by: Dileep Malepu <dileep.debian@gmail.com>
 
-Isn't the lifetime going to severely restrict how this can be used?
-
-For instance, after allocating a list of blocks I suppose you will want
-to store it somewhere, do some other business, and free it much later in
-a completely different code path. The lifetime is going to make this
-very difficult.
-
-For instance, try and adapt the unit test in the following patch to
-allocate some driver object on the heap (representing a bound device),
-and store both the `DrmBuddy` and the allocated blocks into it. I don't
-think the borrow checker will let you do that.
-
-I think this calls for a reference-counted design instead - this will
-move lifetime management to runtime, and solve the issue.
-
-> +
-> +impl Drop for AllocatedBlocks<'_> {
-> +    fn drop(&mut self) {
-> +        // Free all blocks automatically when dropped.
-> +        // SAFETY: list_head is a valid list of blocks per the type's in=
-variants.
-> +        unsafe {
-> +            bindings::drm_buddy_free_list(self.buddy.as_raw(), &mut *sel=
-f.list_head as *mut _, 0);
-> +        }
-> +    }
-> +}
-> +
-> +impl<'a> AllocatedBlocks<'a> {
-> +    /// Check if the block list is empty.
-> +    pub fn is_empty(&self) -> bool {
-> +        // SAFETY: list_head is a valid list of blocks per the type's in=
-variants.
-> +        unsafe { clist::list_empty(&*self.list_head as *const _) }
-> +    }
-> +
-> +    /// Iterate over allocated blocks.
-> +    pub fn iter(&self) -> clist::ClistIter<'_, Block> {
-> +        // SAFETY: list_head is a valid list of blocks per the type's in=
-variants.
-> +        clist::iter_list_head::<Block>(&*self.list_head)
-> +    }
-> +}
-> +
-> +/// Iteration support for allocated blocks.
-> +///
-> +/// # Examples
-> +///
-> +/// ```ignore
-> +/// for block in &allocated_blocks {
-> +///     // Use block.
-> +/// }
-> +/// ```
-> +impl<'a> IntoIterator for &'a AllocatedBlocks<'_> {
-> +    type Item =3D Block;
-> +    type IntoIter =3D clist::ClistIter<'a, Block>;
-> +
-> +    fn into_iter(self) -> Self::IntoIter {
-> +        self.iter()
-> +    }
-> +}
-> +
-> +/// A DRM buddy block.
-> +///
-> +/// Wraps a pointer to a C `drm_buddy_block` structure. This is returned
-> +/// from allocation operations and used to free blocks.
-> +///
-> +/// # Invariants
-> +///
-> +/// `drm_buddy_block_ptr` points to a valid `drm_buddy_block` managed by=
- the buddy allocator.
-> +pub struct Block {
-> +    drm_buddy_block_ptr: NonNull<bindings::drm_buddy_block>,
-> +}
-
-This also looks like a good change to use a transparent struct with an
-opaque. I guess once you adapt the CList design as suggested it will
-come to this naturally.
-
+Best regards,
+Dileep Malepu
 
