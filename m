@@ -1,186 +1,159 @@
-Return-Path: <linux-kernel+bounces-881530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F8C6C2868F
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 20:38:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 237ECC286A0
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 20:42:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 933911891206
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 19:39:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7DE018809F8
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 19:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A73A42797A9;
-	Sat,  1 Nov 2025 19:38:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF16328DB52;
+	Sat,  1 Nov 2025 19:41:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="D0HbcYS4"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DFY2TlB9";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4OEq39/V"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426CC211706
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 19:38:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA5D1A256B;
+	Sat,  1 Nov 2025 19:41:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762025913; cv=none; b=c/ijNnAHP7DBmSjt7WycnTlkrHRhm3VX54PaYp1TMkKVV5ALOHt6GB93Lg61kCGNEdQhCUZyUJb/cfgVuwnsw4Hyry+GsdY3NljVeglBR2RX2ugkadgJssu2f06++Vis81QCzk2Ct0i+OrTOWSWD3zPN7RCeWC/Ssbg3yk0YNhM=
+	t=1762026086; cv=none; b=pUFsEzFxNrV0iU28BbDaWy7f2ESe/tvIGICQ9c4MOEu1JK1ia7DDAcccfb5/d63/Vcq9kr7we7Hl0AM1jSVT38rw+fxPuU3/kP63R1E/Gt6bOavsstbl9aJToluC7DkyAdUIBcB7nMDfOENStMM7BmWQESbs1yi0rtoCCObHBQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762025913; c=relaxed/simple;
-	bh=tL1khiSJCZAIFR8BTUUF98pjzFaPp3DAe9Q+ke4qxSo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dcDyp3uzpjAWmQHciqCkv85+9uDxpsDWpBWOQHbKzjmz9beenW5uY/qhBVEpRfjBvJ4Wa0g+wLIROa4Rh8BfOebWNCT50klKa1KC/A8HgU2UGGcDnJbej95c28x3HHD3RtOyftPah4sRv84xFBSGTeHSqQ/gqvNizIwjqYfQKbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=D0HbcYS4; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A1EiGov009566;
-	Sat, 1 Nov 2025 19:37:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=n7noBi6+FXl1r4Ffe3YufTyb4NpkxmUZpvnxTho9v
-	bs=; b=D0HbcYS4nMb/QAeI2oZowCx3Ff+Np3qS7X8w2F8oyIQSGu+0Yga17r2CN
-	E59jlE3fxyIVvZ/OPT8K63KMbXlpEAMSnp9MMDhRlOsyMegH7cpVxC2uTJQjl+9O
-	lqSgDqqzOrkytXztI5En1O3nsMSlxJNjOwc6P8C66BI1KPEGZFNlXsodH/Wjyxgk
-	cnHsvoVHKk7DpwejGwuumoNvrFipzTNFT8MXnx0Kzcv4YBsCEXORRmPlzRmpv6Jh
-	ZFD56LUiI1oC6vkA/OxUTil3dPArX26mOWmQKS4xbLc4m9v9JhzpNxvZdxaeaPY/
-	6y8Z8iL6XP78PUkRleWXayyjhGojw==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a58mkhvxx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 01 Nov 2025 19:37:59 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A1HjVLC018796;
-	Sat, 1 Nov 2025 19:37:58 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a33xwupke-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 01 Nov 2025 19:37:58 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A1Jbu4L18743702
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sat, 1 Nov 2025 19:37:56 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7323020043;
-	Sat,  1 Nov 2025 19:37:56 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B1BEF20040;
-	Sat,  1 Nov 2025 19:37:54 +0000 (GMT)
-Received: from li-4f5ba44c-27d4-11b2-a85c-a08f5b49eada.ibm.com.com (unknown [9.39.30.101])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Sat,  1 Nov 2025 19:37:54 +0000 (GMT)
-From: Sourabh Jain <sourabhjain@linux.ibm.com>
-To: linux-kernel@vger.kernel.org
-Cc: Sourabh Jain <sourabhjain@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
-        Zhen Lei <thunder.leizhen@huawei.com>, kexec@lists.infradead.org
-Subject: [PATCH] crash: fix crashkernel resource shrink
-Date: Sun,  2 Nov 2025 01:07:41 +0530
-Message-ID: <20251101193741.289252-1-sourabhjain@linux.ibm.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1762026086; c=relaxed/simple;
+	bh=Y4mdNZAUZtyF/RPGTx3VgGK6Odqb2z7iu1jtjloaE2Q=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=dSJuskRxNL1I++zFI+bAq1fGf+8se/ODrRkK/TN0DrCtkIQIVVW0ilvhPP2BmujQw89fg9cXILRxNJvTsunXFBjkzQC+IlPK1aERG4Tt0FNoY8ITkK9Fb8J3MSRpmMqQylYe8J1VNl7f5C6CKniq1ipoh69hXGMvpGWP5VE39lo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DFY2TlB9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4OEq39/V; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sat, 01 Nov 2025 19:41:20 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762026082;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O0b+i1Ha95xk1Ug/3PnLDPIVVy2VFAiAqDgQ1Hi3j60=;
+	b=DFY2TlB9tak/rHTEzmwQS/jm3pkcGWVxtt7KsgvAPDfiY1Q2NITqi3RI9aNLZjA9spp5tM
+	CM5cClIgPX59LpinSdef2J9Q9cWlYe5uUmo1VVtTZlolZz6tQIBsnGCh9+xZlKq8Ng3Oxs
+	hEgPANHE8J+YIV4gbgEGsvd/0Adj07A6uhVv+CN6RjiI+Y/epqxRIP7ObG+C7lzUdHqSdh
+	8QgsSIiM00QjQeH74GGi1K2ldubSIq8SGmN93lQwJ2Id8re3tvOWrfZ13I0BCsb/2pvRpa
+	4GXEVD77r4Lbg4cKjoRcWaaX1vEVQBAQEUfY7hcBJMgCj33INGSAbO2Dh4i+Ug==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762026082;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=O0b+i1Ha95xk1Ug/3PnLDPIVVy2VFAiAqDgQ1Hi3j60=;
+	b=4OEq39/VzAtrY3ym/DRSL2AP9LYUsxi8spupRnWEKWdON2G0IxkWvrYOVJ3gTMvICtlVzz
+	3rlIuW3AQb/LoNCA==
+From: "tip-bot2 for Frederic Weisbecker" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/core] timers/migration: Remove dead code handling idle
+ CPU checking for remote timers
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20251024132536.39841-7-frederic@kernel.org>
+References: <20251024132536.39841-7-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: kMXoSIs9mW8II7IHhqD7Wz4vDw2X9ynF
-X-Proofpoint-GUID: kMXoSIs9mW8II7IHhqD7Wz4vDw2X9ynF
-X-Authority-Analysis: v=2.4 cv=SqidKfO0 c=1 sm=1 tr=0 ts=69066197 cx=c_pps
- a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
- a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=Z4Rwk6OoAAAA:8 a=20KFwNOVAAAA:8
- a=i0EeH86SAAAA:8 a=JfrnYn6hAAAA:8 a=VnNF1IyMAAAA:8 a=JIB6K9Ufr1_efp9ICtEA:9
- a=HkZW87K1Qel5hWWM3VKY:22 a=1CNFftbPRP8L7MoqJWF3:22 a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAwOSBTYWx0ZWRfXz8yTfRld4vT7
- fPN6MoGKQ59o0fTLfDxoQF1E15M7wyXtuTCatfX25+eaRRyJGiLWcdOdDiV9Wx2FdXXeAOIZoaH
- 7LmNIFpxIpFBEWVE/QzlSFCI5QEAHjmTt6uK0poF79MfMuAO9sr7/o155B//EyRY19VBSNrKcoQ
- EmOCpQZJ3MS5phLG8Mnh3OBEt7UgpJlXzOvbQBDR1UjuQcC0d6dFT8VdQx64AnUGVUl2LiLbXyQ
- r9173XaJTKDXh3bHhJO9GY/Ft2gfXSfc568vcvuueZO30cY+82TvHMxjnHdbJjrISJ3XWsW5LGa
- v1S/DIp37Bcb3MUPNXcfJne67lNLIOUvw2qMfIuWbsa0FXcfRdT3Zd755gdAQWLxIw+SNEk2bGG
- R1pTk2tvwSPGv8PKKF8srizmDRhudQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-01_04,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1011 impostorscore=0 adultscore=0 lowpriorityscore=0
- malwarescore=0 spamscore=0 priorityscore=1501 bulkscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010009
+Message-ID: <176202608092.2601451.8554494536186478242.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-When crashkernel is configured with a high reservation, shrinking its
-value below the low crashkernel reservation causes two issues:
+The following commit has been merged into the timers/core branch of tip:
 
-1. Invalid crashkernel resource objects
-2. Kernel crash if crashkernel shrinking is done twice
+Commit-ID:     ba14500e4bfcab5e841fbf8d7fcbbc80e98d6b9e
+Gitweb:        https://git.kernel.org/tip/ba14500e4bfcab5e841fbf8d7fcbbc80e98=
+d6b9e
+Author:        Frederic Weisbecker <frederic@kernel.org>
+AuthorDate:    Fri, 24 Oct 2025 15:25:36 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Sat, 01 Nov 2025 20:38:25 +01:00
 
-For example, with crashkernel=200M,high, the kernel reserves 200MB of
-high memory and some default low memory (say 256MB). The reservation
-appears as:
+timers/migration: Remove dead code handling idle CPU checking for remote time=
+rs
 
-cat /proc/iomem | grep -i crash
-af000000-beffffff : Crash kernel
-433000000-43f7fffff : Crash kernel
+Idle migrators don't walk the whole tree in order to find out if there
+are timers to migrate because they recorded the next deadline to be
+verified within a single check in tmigr_requires_handle_remote().
 
-If crashkernel is then shrunk to 50MB (echo 52428800 >
-/sys/kernel/kexec_crash_size), /proc/iomem still shows 256MB reserved:
-af000000-beffffff : Crash kernel
+Remove the related dead code and data.
 
-Instead, it should show 50MB:
-af000000-b21fffff : Crash kernel
-
-Further shrinking crashkernel to 40MB causes a kernel crash with the
-following trace (x86):
-
-BUG: kernel NULL pointer dereference, address: 0000000000000038
-PGD 0 P4D 0
-Oops: 0000 [#1] PREEMPT SMP NOPTI
-<snip...>
-Call Trace: <TASK>
-? __die_body.cold+0x19/0x27
-? page_fault_oops+0x15a/0x2f0
-? search_module_extables+0x19/0x60
-? search_bpf_extables+0x5f/0x80
-? exc_page_fault+0x7e/0x180
-? asm_exc_page_fault+0x26/0x30
-? __release_resource+0xd/0xb0
-release_resource+0x26/0x40
-__crash_shrink_memory+0xe5/0x110
-crash_shrink_memory+0x12a/0x190
-kexec_crash_size_store+0x41/0x80
-kernfs_fop_write_iter+0x141/0x1f0
-vfs_write+0x294/0x460
-ksys_write+0x6d/0xf0
-<snip...>
-
-This happens because __crash_shrink_memory()/kernel/crash_core.c
-incorrectly updates the crashk_res resource object even when
-crashk_low_res should be updated.
-
-Fix this by ensuring the correct crashkernel resource object is updated
-when shrinking crashkernel memory.
-
-Fixes: 16c6006af4d4 ("kexec: enable kexec_crash_size to support two crash kernel regions")
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Baoquan He <bhe@redhat.com>
-Cc: Zhen Lei <thunder.leizhen@huawei.com>
-Cc: kexec@lists.infradead.org
-Signed-off-by: Sourabh Jain <sourabhjain@linux.ibm.com>
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://patch.msgid.link/20251024132536.39841-7-frederic@kernel.org
 ---
- kernel/crash_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/time/timer_migration.c | 16 ----------------
+ 1 file changed, 16 deletions(-)
 
-diff --git a/kernel/crash_core.c b/kernel/crash_core.c
-index 3b1c43382eec..99dac1aa972a 100644
---- a/kernel/crash_core.c
-+++ b/kernel/crash_core.c
-@@ -373,7 +373,7 @@ static int __crash_shrink_memory(struct resource *old_res,
- 		old_res->start = 0;
- 		old_res->end   = 0;
- 	} else {
--		crashk_res.end = ram_res->start - 1;
-+		old_res->end = ram_res->start - 1;
- 	}
- 
- 	crash_free_reserved_phys_range(ram_res->start, ram_res->end);
--- 
-2.51.0
-
+diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
+index 73d9b06..19ddfa9 100644
+--- a/kernel/time/timer_migration.c
++++ b/kernel/time/timer_migration.c
+@@ -504,11 +504,6 @@ static bool tmigr_check_lonely(struct tmigr_group *group)
+  * @now:		timer base monotonic
+  * @check:		is set if there is the need to handle remote timers;
+  *			required in tmigr_requires_handle_remote() only
+- * @tmc_active:		this flag indicates, whether the CPU which triggers
+- *			the hierarchy walk is !idle in the timer migration
+- *			hierarchy. When the CPU is idle and the whole hierarchy is
+- *			idle, only the first event of the top level has to be
+- *			considered.
+  */
+ struct tmigr_walk {
+ 	u64			nextexp;
+@@ -519,7 +514,6 @@ struct tmigr_walk {
+ 	unsigned long		basej;
+ 	u64			now;
+ 	bool			check;
+-	bool			tmc_active;
+ };
+=20
+ typedef bool (*up_f)(struct tmigr_group *, struct tmigr_group *, struct tmig=
+r_walk *);
+@@ -1119,15 +1113,6 @@ static bool tmigr_requires_handle_remote_up(struct tmi=
+gr_group *group,
+ 	 */
+ 	if (!tmigr_check_migrator(group, childmask))
+ 		return true;
+-
+-	/*
+-	 * When there is a parent group and the CPU which triggered the
+-	 * hierarchy walk is not active, proceed the walk to reach the top level
+-	 * group before reading the next_expiry value.
+-	 */
+-	if (group->parent && !data->tmc_active)
+-		return false;
+-
+ 	/*
+ 	 * The lock is required on 32bit architectures to read the variable
+ 	 * consistently with a concurrent writer. On 64bit the lock is not
+@@ -1172,7 +1157,6 @@ bool tmigr_requires_handle_remote(void)
+ 	data.now =3D get_jiffies_update(&jif);
+ 	data.childmask =3D tmc->groupmask;
+ 	data.firstexp =3D KTIME_MAX;
+-	data.tmc_active =3D !tmc->idle;
+ 	data.check =3D false;
+=20
+ 	/*
 
