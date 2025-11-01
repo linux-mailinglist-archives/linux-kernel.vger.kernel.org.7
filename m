@@ -1,236 +1,377 @@
-Return-Path: <linux-kernel+bounces-881130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05E25C2787C
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 06:19:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A9F0C27889
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 06:28:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 738291B22A43
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 05:20:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BF31189D1B4
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 05:28:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18F3258CE1;
-	Sat,  1 Nov 2025 05:19:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEAE7279DA2;
+	Sat,  1 Nov 2025 05:28:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="YAr4r4YE"
-Received: from PH7PR06CU001.outbound.protection.outlook.com (mail-westus3azon11010012.outbound.protection.outlook.com [52.101.201.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X9Bxb1Z/"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95CDA13C3F2;
-	Sat,  1 Nov 2025 05:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.201.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761974370; cv=fail; b=sJzxhYOIZ04GSBdoKBO9r1dkOR9AHicOUfAIzcHZuBzGikuKkNiGQ48qnNtVcebUfRe7DU+PNJWv3r0QIr29tZueb34t+iQ+V9DZVuvWmmWEpiuy/9McOx8+1+vU12MEXVKp0YpJf3BhldsSvv0DCkQUoeHjsmFWPFype/AKbeY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761974370; c=relaxed/simple;
-	bh=DhbE/6WrgKAAMty8j85+Iu3184JdTY4qi2cSO2JVec4=;
-	h=Content-Type:Date:Message-Id:To:Cc:Subject:From:References:
-	 In-Reply-To:MIME-Version; b=gjT3bROrcHsvf9pzobnRwrYolWRLokqFq0fAMxS1AbY7GbQHmM2YLBkwMCX64Bj6tA6NzdZr9clgkm84W7N25wTXMyViYb8JqXvD6TDX/3cEqiYf1TwCJnU3mJAnYtV8apBi0lUpdYQjRmlUOMQ444Wa9NY7wmczlFxhWj9M95E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=YAr4r4YE; arc=fail smtp.client-ip=52.101.201.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EL3E9g1mZVs0N5ksjfvw+w8ywT6k+k93wQ6SJAcU7aimkBjBEWWH7L+jgclR1D4qlBcC5H2bNuL9jKIRJGXe7inqZu4OGGaup0wpMdH1kHYXDWcIMQbsyk1lulqCw7DYX3NAvq2Ee0YgAcKHgQOlKDKURJDkQFZHBTkWqzbI9/KE6+CI4lRXjVUwQEEfwOCbdERhk54pdNVG4p989MDhm+3BxMxXayL5zbSRbn40ZnhY/+dANIfa0Tu6hfA+8cOjblCD8SwOZPH0vDZbiSpnqGW9lJUh7NyvLWQcagSbmFLxFBYi8ANG1uJkHdbX4K1ZkwfdPnYKf9GKxyCokxCuwA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cvTh3kQ0e1gwN+aQH+M19F2KHXuY0sgLwETChmCitWI=;
- b=q/4I/TpWa5BbaBdv42FlwKPjfvSFe+Ocz6sby1BD9pkiXwbbMknL/+V90R+7pfwAwhP73yjGx83Cb6ktY+CvmnefxbURzI7CgqtL6IcLZaJk2Kvk48TzFo9CAehlwPaS0+im5ntW9RHdhp4VfoGGtRuaYg80CubU1LRmc7I4q/zk7S0zAoQhz84qiAoq9Noi+qrNHYEsUE1dYSp3kCDQl2N80FUhOthU43MSVNUw0ZDDA9kmUvX1PX3xvKBbJwaBOgBeNqQdTFocA+iI9O255DEU+Q1fhlDOiv4GFGwIbtQKYWgYyEvBMxaZQbmi4ExN7xPM31H8/quQdw/GFGPjXg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cvTh3kQ0e1gwN+aQH+M19F2KHXuY0sgLwETChmCitWI=;
- b=YAr4r4YEX4osBE2uFsFfYbvpwML9+qi36qf73zzOMwC7h6MlzKDDE023+PccuK3TrQgCuSQmtQYJWa9IY2jy1pn9SpYjUuaw+VC5c6EXjinU0NpoVUsLiV0IEcroOVaaZdIwy7kF7uSZ22ZDAeU+xnoxk9ZJ4aOHSkqTKELZxRDySDZP7UQh+aNoFlzjnQElh06p8rddgyKoLDvDfjEAPgWN6XSC/ueO59D7It/W4Hwju1vVxC+N0q63WdpHbaUHZ7eaOnjluWBrUoADmqhSXHt7/YoXF1aRL/cj2soZ8EnciEjRqNXL2uQZAV2L7zxpyCKHQKjlWodD8Qk2zsfdew==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by DS0PR12MB8020.namprd12.prod.outlook.com (2603:10b6:8:14f::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.14; Sat, 1 Nov
- 2025 05:19:22 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9275.013; Sat, 1 Nov 2025
- 05:19:22 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 01 Nov 2025 14:19:18 +0900
-Message-Id: <DDX3S62U4O46.133LFLRFHMZI3@nvidia.com>
-To: "Joel Fernandes" <joelagnelf@nvidia.com>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <dri-devel@lists.freedesktop.org>, <dakr@kernel.org>, "David Airlie"
- <airlied@gmail.com>
-Cc: <acourbot@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
- Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Simona Vetter" <simona@ffwll.ch>,
- "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "John
- Hubbard" <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
- <joel@joelfernandes.org>, "Elle Rhumsaa" <elle@weathered-steel.dev>,
- "Daniel Almeida" <daniel.almeida@collabora.com>, "Andrea Righi"
- <arighi@nvidia.com>, "Philipp Stanner" <phasta@kernel.org>,
- <nouveau@lists.freedesktop.org>, "Nouveau"
- <nouveau-bounces@lists.freedesktop.org>
-Subject: Re: [PATCH RFC 3/4] rust: drm: Add DRM buddy allocator bindings
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20251030190613.1224287-1-joelagnelf@nvidia.com>
- <20251030190613.1224287-4-joelagnelf@nvidia.com>
-In-Reply-To: <20251030190613.1224287-4-joelagnelf@nvidia.com>
-X-ClientProxiedBy: TYCP286CA0078.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:2b3::15) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C55B1BF58
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 05:27:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761974881; cv=none; b=A4De8tdj3L3xZvITqkinhQVA+rv2BttCCjVKlZlcCmNHI+i3xbS0Llao1658RQaHhUsMkcT4gkqaxre7WJ+ylVQQuVqn3dM0JyaxsLSxoBDbn6xi8leiE10Y7Q2EMvHDvlXnI9F/4Thw+/Au51PfhWFigzSwodELMO1T9Xmxic8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761974881; c=relaxed/simple;
+	bh=+GZ9/pl+8tJmcSAdMKK7yphZtxzKGCjQy/GcNEI0V8c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hFMMOjzzBiM8XnOG6mWRe3uFS9dyRnjAe2MI8SVAzNt3v0GhFantje+nHgYGXw37Dirz2ckdxFFlSzFch8tzwNa80ZhA2422MWCPP8s2M5kfmKtxv8rgLa0++I1c9fNY3zKMrWbuKQxIngHRkxECWsgE+csLb9KuYa8RvZn8d1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X9Bxb1Z/; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b8aa14e5ed9so2252634a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 22:27:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1761974878; x=1762579678; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=z/ptnNT0Ywe4s6PcYyycXyPs8DpHI02oawu5aekCWR0=;
+        b=X9Bxb1Z/0QXoU8q3d9yG78L+a5bNqc8F+1sNinz6pRbRvmqpwSkIInKT9C7mwhm5Zk
+         OIHmYD03+YjBtcARD+Ewh7CjzkqzaMWThZJiKx1uKlBRgot4/9FO/X2GXz6Cli/0gv70
+         2TR8F0bf1szviSuxLGsrVPFEWP+GF86qJ9UAIJ9exgmSIpWBkF8DSu1smfEPypN9C8xl
+         nC6KxC4JOhwCreC8KK2ugSYyt/vZtYaRgFvvhXYp3Em6WaPHHmqB7bKpNnKPm4/hx9Pj
+         eBj5JOJFV09iABW3AgdjJ293mOxSe+VIgzGgEUs0nRGNHuyB+4ilwmGjTDPyi1Efr+oN
+         sUFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761974878; x=1762579678;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=z/ptnNT0Ywe4s6PcYyycXyPs8DpHI02oawu5aekCWR0=;
+        b=ktrQnO+F/Z/7Qsqy5j4egXWdlywC+MRkw5QZbgFWvWPwdY7XM3Z/517BUXz9ZwClmx
+         OMcIKHSKZ0bBbAU36/0aT9CYVbOkJ+kl/iGjLNdfDdXgPWt0QZQC5R3fVMG2l7ZHB2ZW
+         6wjU8sbpartH/e3x/XsID0ErAf1md0BuuX2xOdxyh+JZyjZa0a4rRQOvTY2pin01QaXp
+         aAQs9of1sqfrgtJA1HbX7xnXE3IReXmlGhePuzk/wlKZ8ymhVynfj99gj6uD3iyIS4GI
+         MUqtAaUrzn7c6yCP9SG1CeOlSThLgEeE4Fu6Br99c2cSsEkmbEt9wGZENMQ4+3bOajIC
+         UsAA==
+X-Forwarded-Encrypted: i=1; AJvYcCUopNrdHzzhj+y162qB65iqj+opzySVXj2n+0V+YW9pJlSSRC9mxjGN/8TNY7IPv2Ayv/rWYwX1dvuQu1Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGg0dnIm8PunUoROpSas1deRICLn9qjit1sFPSD5K4IN779fM6
+	ndosEYUdb+xwp2iR9DchF+H1pBuSjGEz1umpt72ucpZbHoA6ogzoVvYp
+X-Gm-Gg: ASbGncspyiC/7+gt1DaxNyuSQZ02UvsrBYMBnyu+90vXMM1d4sFIfeNE9PH5qeGT+87
+	FL3s2eq9ozUjUvrlh/c3121p4PBedUFsx3k33HUWHJnsMg4NgJs/I1XgOw5diILkBDF+RlNKflT
+	XB3yywmQfYMqMDu+LWv5D6qOhIzJw96715McHGjzWMgK4AfmesIlifPl9ELVEMNta52+/xqKwdW
+	rRzb+e0C3lk3rGjIdFI6yZN8cSZR+uOl06QPmcRwZyv5UuxleCO+/HcndeyvpHi95nJKpnBjLhE
+	jpcri+T9BDEwt5QNEFNoEBgKQXS85CWt0cWt7sEPbTExm4a9eNRJlxuejTHPkNsz3wJK7cgiVyO
+	/Bp8M+O7Pvro0olJek8hl31p4cZ4jKsz6ku0XPiy4cqiJ3PCw38jS6F7vkkG6nm4/UGzartWptA
+	dhY+pROp1xbVhbB6pVqUAY+P32winlTeAKxxrVokxOMs9Z6GKPuiGCkXZCDQ4sr3MSdGvcFez4S
+	tl/eWkfrG1He35fo9BqshaU3g==
+X-Google-Smtp-Source: AGHT+IGsr0iWlw76pddp4ckfx5jyzC4ernwO/7Dv/NG7LUkw/+6xWR4R4woGmK7aLj+ui0CQBbPtug==
+X-Received: by 2002:a17:903:3c23:b0:294:7048:643 with SMTP id d9443c01a7336-2951a3981fcmr77796005ad.15.1761974878463;
+        Fri, 31 Oct 2025 22:27:58 -0700 (PDT)
+Received: from opensource206.. ([106.222.234.180])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3407f24ee93sm2041158a91.9.2025.10.31.22.27.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Oct 2025 22:27:58 -0700 (PDT)
+From: Pavan Bobba <opensource206@gmail.com>
+To: skhan@linuxfoundation.org,
+	kieran.bingham@ideasonboard.com,
+	mchehab@kernel.org
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pavan Bobba <opensource206@gmail.com>
+Subject: [PATCH] media: vimc: add RGB/YUV input entity implementation
+Date: Sat,  1 Nov 2025 10:56:51 +0530
+Message-ID: <20251101052651.6197-1-opensource206@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|DS0PR12MB8020:EE_
-X-MS-Office365-Filtering-Correlation-Id: 16248b09-0f21-4b0e-0589-08de19063715
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|10070799003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?cVozTENWVFZRYzEydGpONWhWaStlYWZ2ZklvS2g3ZllSZHU1eTRMWmQvaHNG?=
- =?utf-8?B?VXczR09QRlBUeDl2czh4UDlVem81S25oNXJMYXJlL3VRVDdLSFhoWnpSVkpP?=
- =?utf-8?B?bUs0TjNKbUhZMExTSytQYTBQbUdlUE1wQTdzM1VjNndEd1lOZmFVOXAwWVJE?=
- =?utf-8?B?YkxIRitTQ0tyeEplenZTZzZ4RmwydkVWUHkxZnMxSG1QWldaVFhTc1AzYVBp?=
- =?utf-8?B?bHlYYk9CK3ZDNVcxYm9Rc1BocVZ4NWwraXlrZWYyaWo5b3VjVERRaFcxd05h?=
- =?utf-8?B?MUd3QXlnVFpWRUQwSHFIRE5vK1ZOeDc5RncvdVFkejFCVGN4dWZ4RzMxVmJB?=
- =?utf-8?B?b2JyekxaRUd0cjVqV2JvK0hwR1dTdUhHaFBXQ0lhMWZDSXdheWlVa2ROZDE5?=
- =?utf-8?B?NHlLMkpJbWVrRkl1ZXJzVDFtUkc5V0pEVm9OYlVFL3pUV0NpQ1ZQNDMvdHM3?=
- =?utf-8?B?REZjUStGcW85RUU1dCtXcDd6a01OMDVra0ZpV0IvWUpGRk84dTJQYjQxYmhB?=
- =?utf-8?B?a2JiUU9mVytlRW1pUVAreGNyb290Ujc5Z1pPV2NBZ1BzRFlDcjdEeU1VVzlG?=
- =?utf-8?B?cnJjOUF5Uk95SXBGTE1pQXpTZFlZZWhVTXp0ZE9jUFR0RHlsbCtQMVBoTkRE?=
- =?utf-8?B?L2IxcmdkYm1qbW5sU2hxL2ZNeTkzdUVwSHdLMnZVNFRaV1JpbHRXZDBwSTNj?=
- =?utf-8?B?NzFMbXNxWC9Nd05hU0ZBRGtuNnBNd2xCWG45RUh0SThIclVaUk5VUDk3MXhO?=
- =?utf-8?B?MUxWTWlpWU1CcEl0YUhHQllHK0J2ZGptb200Vzk3em5LT2h3MGt3czA2dmhR?=
- =?utf-8?B?TVZPcU9IbUdWQVQ5THo1cEtuWUpzNHpFaHpsRy8wMVZNVlg3ZDFpZTA0OUNq?=
- =?utf-8?B?T0dyRFZkYXUwZEFaTnM0THFQWHJRR1VpaHlyL1pwM1BQL2tJbVlQRGlMNGdL?=
- =?utf-8?B?U3BFT3Y5b1pIeStzZDZYZ3lGSmkvY3NiNXlvZGZBR0c4UnNuWlRwNW9KYnpK?=
- =?utf-8?B?bEhiR0ZiOFFUTElEZFl3Z1hZaW4zMUIyUTBJbW5hRjVmM2R1a3ExSVhsUU1T?=
- =?utf-8?B?enMwZHByK2NDQXplcTRJWG5KbUlWUWxvOElDY1FKdG5WZndvRUoxWmlOY1lL?=
- =?utf-8?B?QVgyOXFxcXVZRTBFUEdGN1dWVzNlOFREYTMvVWo4UTU5Ty93c0tSQmkvUFcv?=
- =?utf-8?B?WldtU3MvbXNCektPNG5nbjVPRlUyK2RaQTRvY0YwNzJIMGcrNXUxNVZZbnZD?=
- =?utf-8?B?enNtUVBmN3VDakIrRVYwWEd0UFpaQUowVERZbzhDN3dIMHM2YlFJd3FrU2tT?=
- =?utf-8?B?K0hvSEMzOUViTFlnQWI2OHJ3eXl2WG1VOEhKZWxUMjFYUDFTcnFGUGFuZk0r?=
- =?utf-8?B?S25WTVM0Z3RMT2k2eDIwTFJ1cDdHUWRVSFVSbDY3UUhZdk55dS9BckV6WFlG?=
- =?utf-8?B?VTBtOGZVZGhSZXIrSDZxTlI2dUhZMURLa3V5WHAwY0xiS1V0cmZiU09iR2lt?=
- =?utf-8?B?WE0zc2ZKSitTbXV5U0dYTElPQk5jUENVRzRQdDc2N08yVGRMVHVvRmpWMElE?=
- =?utf-8?B?SFRxa1pTMm9aY3JwbzV5eHducFhxRzBlZXMwNmZnWmlHUWpTVjdTc3JVeWRT?=
- =?utf-8?B?b3h0a1Y1eFF5ckZHdHhsTkxVYWxSRmNrcFY1T09ONWhOQ2VOTWlsWTQyZE14?=
- =?utf-8?B?YythblZPcmpJeHpEZ2hOZ0I5ZktDMU51N2t3emNsU0Q1SW1MSmZJRUZJS0Fk?=
- =?utf-8?B?SUFBWkhhV05vWC9Qa2UrYUhMb1dZR3FJUUM2RmhJY3dXa1dqbUwrSlJxY1Zl?=
- =?utf-8?B?SFZaWDlzRXg4eFdWU2VkeWRlcUZzM3B0Wk5XeW5OVzdoYVd5TE93cVVaU2kx?=
- =?utf-8?B?YUtraHMyOHg5KzJiL2V1UmdtZldSeEdEQzBWK0hVMFVNWVZMNkZaUkxzNy8z?=
- =?utf-8?Q?nCtf3296Akj6RHRuTCs0a70ygI4EG+A4?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(10070799003);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SitSMzBNMWpONHVwQzBRTUt3VHU1SGpJbDRYVnlYK0EwdndaK2YxeDBrd0pE?=
- =?utf-8?B?YW1lYkkwNExPbjhna01CSlJMTWlZanpncmFwYTdzVWJ1ZGtINEJ3RU5aTjB2?=
- =?utf-8?B?UjNlS1RoOVZBRnNsNmdqaDlYUkw0TWE0VmQ2OG9XODkwajBacjJpbVVhd1U2?=
- =?utf-8?B?blNYR1hrUzdaNGRvY1lkbXBvekhmeHg4ZmZJbk1KZFV4M1RBTjlFdTNQSE8r?=
- =?utf-8?B?K1FOR2VvTEVOeWM5aEw0K1A3b3h1MWlLRUhWcTJTajhncnh4VVM1NlJpenR6?=
- =?utf-8?B?ZUV2bk1lVU0zdjNQMXZNRXRBT21wMWxwOUR4dkE0aUFva0kxZWFZcWtCWkdJ?=
- =?utf-8?B?V1hMVE5uUTlDWEdkakZrcklkRWt5TWFyL2JSdTRVL2Z2TktBbWtPT3FwUFZS?=
- =?utf-8?B?Z3I2VDNRZHZEcE9PR2E3UGIyaFFtaVY2U1RxdnZ3TTk2WFVHWFp4ckRrb3hM?=
- =?utf-8?B?Z1ZseWxqa3JlUDA5UGxPdmNrRytGV3hyZGgzdThIbFNuR1FlV2dOcVY2U29U?=
- =?utf-8?B?UzVBN0lVeVNqN09PczRIOTloYklmeDAwTnRNM3FjS1o4SGNJUWV0a0FGVWVt?=
- =?utf-8?B?a0hoM3EvU0VrTGI3Uk5HTnVSWHYvODlXYSt4NDdKaVBPb216d2hLbGQrQzdx?=
- =?utf-8?B?T2gxYUd3c2xYbk1LQkU1bklVYVgzQjk5bktyOW0zcjNFSy9jVE1td2hsQ3Y1?=
- =?utf-8?B?aEtCQzdMTjNhR2Z1SCtZSGRJVXZtV2xtdmdldUpoVFA2SEw1VS85a3pBUit5?=
- =?utf-8?B?SlJweW84cUlNRG5GQUlGNVRHYW92OTUrSlRXTTNRRG1BM042cGs4MVh0RndO?=
- =?utf-8?B?a3pkVTJYbVpmK0p2QWhYd1RUV1BSM2IyQ0JicVRYazJIREFFcmd2bENDV0No?=
- =?utf-8?B?ZVJuQ0hBaTh1OFBKaTRBMGhKZDJkZWNScDBGUHN3MHFlVmhPY3p1UmNuK1VS?=
- =?utf-8?B?SnVFcVVHeWdienpOdkk2Z3VXdlc0ZEpmM2xMcEZYSDBQMTRDeGcveW85Ukd0?=
- =?utf-8?B?NHBRczV1NnBLei8xSCtoVHNXeS9OTFlqUnVvWlYreTc3RzVLQmpFb05rYi9E?=
- =?utf-8?B?R3F3MmFzUCt1RWNKeEZhSFhWcTh3dlYvQlVWWkFMdEMvcFJOcjkzZE9mcDhR?=
- =?utf-8?B?Yi9KakdEblRvOGFPS0JSNWJJTCsvWjZsY2kwbU9zVml1VU43YTVySU1wZ2Zl?=
- =?utf-8?B?V0ZLdm13UDlQa3lQSjErZjdNZXhWN3dTZXVHTWRUYU0zSDRFUnhLY0dmZ2tv?=
- =?utf-8?B?VTJoRFdUZFpuY2dZeGdiM2VPNlNLbFNWdFhHbTRRUUE5aVhtYWpFWnl6Q29P?=
- =?utf-8?B?QXRDZWluMHducnhicjVQWFJhWnRSaW1rVWROcFBoNVpxL25yTVMzWG1ad3Ba?=
- =?utf-8?B?c3ArTlVIMzhOdFFvVThEMFNtRzlsTEZOQ0hLVHdKQ2szM05PVXR1RGJtMUFm?=
- =?utf-8?B?U0thWmZsZ21vS2NwOXU0YkNsM0MwbFZ2YXJNWWUzbFNIT1RSYUNUSmliMXRa?=
- =?utf-8?B?TjZYWGRhVEZFbGptamJYRVk1UFRRZmxwdFhmRWNPNUlrMUNEOFVQNy9wcFN3?=
- =?utf-8?B?QVdXRWZ1M2dEak1qdnhhWXA2d1FWNWt5UmROZ2hZVmpmaVY0WlFSanJwYTFa?=
- =?utf-8?B?LysvWDZRRFI5R204MDAwY0Y2YWJSd3NvNjNKQXY2dU1vYkVMUE92VXZlVjRD?=
- =?utf-8?B?SXJsTkN4Nm5XM0NIVEdDeGNCM2ZsQ09TcW9qR0ExVmgxYnp1YUJKbE5RK0Vr?=
- =?utf-8?B?UDdRSlB1TVhYMmp6azJjL2RicFRNRDc5UW5yeEZDSlorNXlwMEJMazdlMzEv?=
- =?utf-8?B?NHVoOUJyTnpLUjNobG91dy9ZOVlIa3grYnFsNkpkU05FZWM0YlZoZlZiOStJ?=
- =?utf-8?B?Y3lQWjZHTjBlNWxicWFPTDFiR3VxV3ZOR3dmSVVnb3pYUjE2cGs1WUlsaGN3?=
- =?utf-8?B?eVhzSmg5V0xTZERIMGtWTnMzcFMyTkJOWVp6b1kxWFVRbkttT2ZoSjBuYnUx?=
- =?utf-8?B?bnNIbEJ2ZkdzZnFPdDNxNlUzemI3SjFwOVNBcE95MVhubSt4c3lDcGNFTXVp?=
- =?utf-8?B?dDArVllGY0FtdEo0KzZWSHlXM2JtWlBWcW5UQTFzUGNUODNHMC9HOWUwNWd3?=
- =?utf-8?B?SUN3NWF1SnZXSHlieVJoU05FV09FMlFqRm14YWtYcDRlaDA5cU9TdjU1Uk13?=
- =?utf-8?Q?r9CJroFvqDhwGnts6NgSE5NxdjYO2DwMNy8zxCA0VT6q?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 16248b09-0f21-4b0e-0589-08de19063715
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Nov 2025 05:19:21.9365
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rBqnMeZPuWABI4RU8DNfv0jj+EWqV/WKWy3jiiEQ7NG5HtIFuG+cnhNCJLzl2wvdhoSlmorbfSau9v0gQHUXzQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8020
+Content-Transfer-Encoding: 8bit
 
-On Fri Oct 31, 2025 at 4:06 AM JST, Joel Fernandes wrote:
-<snip>
-> +    /// Allocate blocks from the buddy allocator.
-> +    ///
-> +    /// Returns an [`AllocatedBlocks`] structure that owns the allocated=
- blocks and automatically
-> +    /// frees them when dropped. Allocation of `list_head` uses the `gfp=
-` flags passed.
-> +    pub fn alloc_blocks(
-> +        &self,
-> +        start: usize,
-> +        end: usize,
-> +        size: usize,
-> +        min_block_size: usize,
-> +        flags: BuddyFlags,
-> +        gfp: Flags,
-> +    ) -> Result<AllocatedBlocks<'_>> {
+Introduce a new vimc-input entity to simulate a color frame source in the
+Virtual Media Controller (VIMC) pipeline. This entity outputs RGB888 frames
+and allows testing of pipelines that start from a pre-processed RGB/YUV
+source instead of a raw Bayer sensor.
 
-It looks like some of the flags heavily modify the behavior of the
-allocator, and make some of the parameters irrelevant (for instance,
-IIUC `start` and `end` only make sense if `RANGE_ALLOCATION` is
-passed?).
+The patch adds vimc-input.c with basic pad operations for format
+enumeration, get/set, and stream enable/disable handlers. The entity is
+registered in the VIMC core configuration, replacing the previous temporary
+use of vimc-sensor. Frame generation is not yet implemented and remains a
+TODO for future work.
 
-In that case, we should either have several allocation methods, or have
-an `AllocationRequest` enum which variants are the allocation type and its
-relevant parameters. E.g (very naively):
+This change enables link validation and format negotiation for the
+RGB/YUV input path, paving the way for software frame injection and
+test-pattern generation.
 
-enum AllocationRange {
-    Whole,
-    Ranged(Range<u64>),
-    ...
-}
+Signed-off-by: Pavan Bobba <opensource206@gmail.com>
+---
+ drivers/media/test-drivers/vimc/Makefile      |   3 +-
+ drivers/media/test-drivers/vimc/vimc-common.h |   1 +
+ drivers/media/test-drivers/vimc/vimc-core.c   |   3 +-
+ drivers/media/test-drivers/vimc/vimc-input.c  | 210 ++++++++++++++++++
+ 4 files changed, 214 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/media/test-drivers/vimc/vimc-input.c
 
-struct AllocationRequest {
-    range: AllocationRange,
-    top_down: bool,
-    contiguous: bool,
-    clear: bool,
-}
+diff --git a/drivers/media/test-drivers/vimc/Makefile b/drivers/media/test-drivers/vimc/Makefile
+index 9b9631562473..7e1fdb2f2a78 100644
+--- a/drivers/media/test-drivers/vimc/Makefile
++++ b/drivers/media/test-drivers/vimc/Makefile
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ vimc-y := vimc-core.o vimc-common.o vimc-streamer.o vimc-capture.o \
+-		vimc-debayer.o vimc-scaler.o vimc-sensor.o vimc-lens.o
++		vimc-debayer.o vimc-scaler.o vimc-sensor.o vimc-lens.o \
++		vimc-input.o
+ 
+ obj-$(CONFIG_VIDEO_VIMC) += vimc.o
+ 
+diff --git a/drivers/media/test-drivers/vimc/vimc-common.h b/drivers/media/test-drivers/vimc/vimc-common.h
+index 7a45a2117748..6c94b1635fa8 100644
+--- a/drivers/media/test-drivers/vimc/vimc-common.h
++++ b/drivers/media/test-drivers/vimc/vimc-common.h
+@@ -172,6 +172,7 @@ extern const struct vimc_ent_type vimc_debayer_type;
+ extern const struct vimc_ent_type vimc_scaler_type;
+ extern const struct vimc_ent_type vimc_capture_type;
+ extern const struct vimc_ent_type vimc_lens_type;
++extern const struct vimc_ent_type vimc_input_type;
+ 
+ /**
+  * vimc_pix_map_by_index - get vimc_pix_map struct by its index
+diff --git a/drivers/media/test-drivers/vimc/vimc-core.c b/drivers/media/test-drivers/vimc/vimc-core.c
+index f632c77e52f5..2f6846facb23 100644
+--- a/drivers/media/test-drivers/vimc/vimc-core.c
++++ b/drivers/media/test-drivers/vimc/vimc-core.c
+@@ -107,9 +107,8 @@ static const struct vimc_ent_config ent_config[] = {
+ 		.type = &vimc_capture_type
+ 	},
+ 	[RGB_YUV_INPUT] = {
+-		/* TODO: change this to vimc-input when it is implemented */
+ 		.name = "RGB/YUV Input",
+-		.type = &vimc_sensor_type
++		.type = &vimc_input_type
+ 	},
+ 	[SCALER] = {
+ 		.name = "Scaler",
+diff --git a/drivers/media/test-drivers/vimc/vimc-input.c b/drivers/media/test-drivers/vimc/vimc-input.c
+new file mode 100644
+index 000000000000..cedcc450d59e
+--- /dev/null
++++ b/drivers/media/test-drivers/vimc/vimc-input.c
+@@ -0,0 +1,210 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * vimc-input.c Virtual Media Controller Driver
++ *
++ * Copyright (C) 2025 Virtual Input Entity Implementation
++ */
++
++#include <linux/v4l2-mediabus.h>
++#include <media/v4l2-subdev.h>
++
++#include "vimc-common.h"
++
++struct vimc_input_device {
++	struct vimc_ent_device ved;
++	struct v4l2_subdev sd;
++	struct media_pad pad;
++};
++
++static const struct v4l2_mbus_framefmt fmt_default = {
++	.width = 640,
++	.height = 480,
++	.code = MEDIA_BUS_FMT_RGB888_1X24,
++	.field = V4L2_FIELD_NONE,
++	.colorspace = V4L2_COLORSPACE_SRGB,
++};
++
++static int vimc_input_init_state(struct v4l2_subdev *sd,
++				 struct v4l2_subdev_state *sd_state)
++{
++	struct v4l2_mbus_framefmt *mf;
++	unsigned int i;
++
++	for (i = 0; i < sd->entity.num_pads; i++) {
++		mf = v4l2_subdev_state_get_format(sd_state, i);
++		*mf = fmt_default;
++	}
++
++	return 0;
++}
++
++static int vimc_input_enum_mbus_code(struct v4l2_subdev *sd,
++				     struct v4l2_subdev_state *sd_state,
++				     struct v4l2_subdev_mbus_code_enum *code)
++{
++	if (code->index > 0)
++		return -EINVAL;
++
++	code->code = MEDIA_BUS_FMT_RGB888_1X24;
++
++	return 0;
++}
++
++static int vimc_input_enum_frame_size(struct v4l2_subdev *sd,
++				      struct v4l2_subdev_state *sd_state,
++				      struct v4l2_subdev_frame_size_enum *fse)
++{
++	const struct vimc_pix_map *vpix;
++
++	if (fse->index)
++		return -EINVAL;
++
++	/* Only accept code in the pix map table */
++	vpix = vimc_pix_map_by_code(fse->code);
++	if (!vpix)
++		return -EINVAL;
++
++	fse->min_width = VIMC_FRAME_MIN_WIDTH;
++	fse->max_width = VIMC_FRAME_MAX_WIDTH;
++	fse->min_height = VIMC_FRAME_MIN_HEIGHT;
++	fse->max_height = VIMC_FRAME_MAX_HEIGHT;
++
++	return 0;
++}
++
++static int vimc_input_get_fmt(struct v4l2_subdev *sd,
++			      struct v4l2_subdev_state *sd_state,
++			      struct v4l2_subdev_format *fmt)
++{
++	struct v4l2_mbus_framefmt *mf;
++
++	mf = v4l2_subdev_state_get_format(sd_state, fmt->pad);
++
++	fmt->format = *mf;
++
++	return 0;
++}
++
++static int vimc_input_set_fmt(struct v4l2_subdev *sd,
++			      struct v4l2_subdev_state *sd_state,
++			      struct v4l2_subdev_format *fmt)
++{
++	struct v4l2_mbus_framefmt *mf;
++
++	mf = v4l2_subdev_state_get_format(sd_state, fmt->pad);
++
++	/* Set the new format */
++	*mf = fmt->format;
++
++	return 0;
++}
++
++static int vimc_input_enable_streams(struct v4l2_subdev *sd,
++				     struct v4l2_subdev_state *state,
++				     u32 pad, u64 streams_mask)
++{
++	/* For input entity, we don't allocate frames since we expect
++	 * external frame injection. Just mark that streaming is active.
++	 *
++	 * TODO: For future enhancement, consider implementing frame generation
++	 * or userspace frame injection mechanism. This would require:
++	 * - Frame buffer allocation (similar to vimc-sensor.c)
++	 * - Interface for userspace to inject frames (e.g., via sysfs/debugfs)
++	 * - Frame rate control for generated test patterns
++	 * - Integration with VIMC's streaming infrastructure
++	 * This would make the input entity suitable for more testing scenarios.
++	 */
++	return 0;
++}
++
++static int vimc_input_disable_streams(struct v4l2_subdev *sd,
++				      struct v4l2_subdev_state *state,
++				      u32 pad, u64 streams_mask)
++{
++	/* Streaming stopped - no cleanup needed for input entity */
++	return 0;
++}
++
++static const struct v4l2_subdev_pad_ops vimc_input_pad_ops = {
++	.enum_mbus_code		= vimc_input_enum_mbus_code,
++	.enum_frame_size	= vimc_input_enum_frame_size,
++	.get_fmt		= vimc_input_get_fmt,
++	.set_fmt		= vimc_input_set_fmt,
++	.enable_streams		= vimc_input_enable_streams,
++	.disable_streams	= vimc_input_disable_streams,
++};
++
++static const struct v4l2_subdev_ops vimc_input_ops = {
++	.pad = &vimc_input_pad_ops,
++};
++
++static const struct v4l2_subdev_internal_ops vimc_input_internal_ops = {
++	.init_state = vimc_input_init_state,
++};
++
++static void vimc_input_release(struct vimc_ent_device *ved)
++{
++	struct vimc_input_device *vinput =
++		container_of(ved, struct vimc_input_device, ved);
++
++	v4l2_subdev_cleanup(&vinput->sd);
++	media_entity_cleanup(vinput->ved.ent);
++	kfree(vinput);
++}
++
++/*
++ * Input process frame function
++ * For an input entity, just return the received frame unchanged
++ */
++static void *vimc_input_process_frame(struct vimc_ent_device *ved,
++				      const void *frame)
++{
++	/* For an input entity, just return the received frame unchanged.
++	 *
++	 * TODO: Future enhancement could implement:
++	 * - Frame validation and format checking
++	 * - Frame transformation or processing
++	 * - Frame injection from userspace buffers
++	 * - Frame rate limiting or buffering
++	 * Currently, this is a simple pass-through for external frame sources.
++	 */
++	return (void *)frame;
++}
++
++static struct vimc_ent_device *vimc_input_add(struct vimc_device *vimc,
++					      const char *vcfg_name)
++{
++	struct v4l2_device *v4l2_dev = &vimc->v4l2_dev;
++	struct vimc_input_device *vinput;
++	int ret;
++
++	/* Allocate the vinput struct */
++	vinput = kzalloc(sizeof(*vinput), GFP_KERNEL);
++	if (!vinput)
++		return ERR_PTR(-ENOMEM);
++
++	/* Initialize the media pad */
++	vinput->pad.flags = MEDIA_PAD_FL_SOURCE;
++
++	ret = vimc_ent_sd_register(&vinput->ved, &vinput->sd, v4l2_dev,
++				   vcfg_name,
++				   MEDIA_ENT_F_IO_V4L, 1, &vinput->pad,
++				   &vimc_input_internal_ops, &vimc_input_ops);
++	if (ret)
++		goto err_free_vinput;
++
++	vinput->ved.process_frame = vimc_input_process_frame;
++	vinput->ved.dev = vimc->mdev.dev;
++
++	return &vinput->ved;
++
++err_free_vinput:
++	kfree(vinput);
++
++	return ERR_PTR(ret);
++}
++
++const struct vimc_ent_type vimc_input_type = {
++	.add = vimc_input_add,
++	.release = vimc_input_release
++};
+-- 
+2.43.0
 
-I.e. use the type system to make sure we can only express things that
-make sense, and never pass data that will end up being ignored.
-
-If we do that well, I think we can drop the `BuddyFlags` type
-altogether, which is great as it seems to serve several different
-purposes.
 
