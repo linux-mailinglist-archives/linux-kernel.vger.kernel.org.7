@@ -1,88 +1,88 @@
-Return-Path: <linux-kernel+bounces-881133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A9F0C27889
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 06:28:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E52BDC2789E
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 06:44:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BF31189D1B4
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 05:28:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8BC9E4E11DD
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 05:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEAE7279DA2;
-	Sat,  1 Nov 2025 05:28:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEAA628726E;
+	Sat,  1 Nov 2025 05:44:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X9Bxb1Z/"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kqoSwLs2"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C55B1BF58
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 05:27:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B338B286887
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 05:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761974881; cv=none; b=A4De8tdj3L3xZvITqkinhQVA+rv2BttCCjVKlZlcCmNHI+i3xbS0Llao1658RQaHhUsMkcT4gkqaxre7WJ+ylVQQuVqn3dM0JyaxsLSxoBDbn6xi8leiE10Y7Q2EMvHDvlXnI9F/4Thw+/Au51PfhWFigzSwodELMO1T9Xmxic8=
+	t=1761975878; cv=none; b=ex82uOyyJIx4gNn6Au3YZqIuqjE7c1bNV736cZI1Ik0XjZM37RLQ4fB/ZgT9ocV8c8GWmt/5TeJ2he/sYgj6P3Clfvyxe6mGpZEK+jpD63VXCM55R/ZuzulIq/hNOm5w/BEGRmd7mTKFgfLlq6rA9lXaJJ4YCUSIdjW9e+urocs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761974881; c=relaxed/simple;
-	bh=+GZ9/pl+8tJmcSAdMKK7yphZtxzKGCjQy/GcNEI0V8c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hFMMOjzzBiM8XnOG6mWRe3uFS9dyRnjAe2MI8SVAzNt3v0GhFantje+nHgYGXw37Dirz2ckdxFFlSzFch8tzwNa80ZhA2422MWCPP8s2M5kfmKtxv8rgLa0++I1c9fNY3zKMrWbuKQxIngHRkxECWsgE+csLb9KuYa8RvZn8d1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X9Bxb1Z/; arc=none smtp.client-ip=209.85.215.171
+	s=arc-20240116; t=1761975878; c=relaxed/simple;
+	bh=QoAanW8uPcUmodqCBbkdSS+W6EcjbWm0OuMo8lhfn4o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HoREBiSQ6hsTEKVR3tAqhJPIUvS1eGxeJaZFGf7ONgaXdyBKrvUkUv3r0jH1aU/kUx2J0dXvDo4UaU0RndnKTIVkFElQ1SPq21pSjBa1g1oIVWN050fWbKWlPgOSnKkCrsP55uXZab62Bmqind28UKnimHz8kCsKmgoGse8DEKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kqoSwLs2; arc=none smtp.client-ip=209.85.210.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-b8aa14e5ed9so2252634a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 22:27:59 -0700 (PDT)
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-78125ed4052so4116635b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 22:44:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761974878; x=1762579678; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761975876; x=1762580676; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=z/ptnNT0Ywe4s6PcYyycXyPs8DpHI02oawu5aekCWR0=;
-        b=X9Bxb1Z/0QXoU8q3d9yG78L+a5bNqc8F+1sNinz6pRbRvmqpwSkIInKT9C7mwhm5Zk
-         OIHmYD03+YjBtcARD+Ewh7CjzkqzaMWThZJiKx1uKlBRgot4/9FO/X2GXz6Cli/0gv70
-         2TR8F0bf1szviSuxLGsrVPFEWP+GF86qJ9UAIJ9exgmSIpWBkF8DSu1smfEPypN9C8xl
-         nC6KxC4JOhwCreC8KK2ugSYyt/vZtYaRgFvvhXYp3Em6WaPHHmqB7bKpNnKPm4/hx9Pj
-         eBj5JOJFV09iABW3AgdjJ293mOxSe+VIgzGgEUs0nRGNHuyB+4ilwmGjTDPyi1Efr+oN
-         sUFw==
+        bh=hXfrEv5oiBHpW6muXJlmwbpRlo7zdmnpcibEEEHdvoI=;
+        b=kqoSwLs2BHY6phzuu3KFVnu/bH4e6cl5I9EHme7FbXoriQIe/GinEuuk89cR0Pzczf
+         76As40o15YGikZwen5C6bVQX3cPlsx/prXgAaSxhT3MXpuX0l5NqFW7ajWzeHAvtEjn/
+         p7O8T9ogLKfrLqkwcVeq6fd5iGPZtZxiTseyIrSUv6wtqdfUydQ29o9rgyEX59FGrNcA
+         rQ6fTPpboB1X3es8Yi+xnNuM+re9U7Jkk8pzYLdT92yeAN093poHtIg74GHuhiTRShkY
+         jBuT0pydkQ3JfSgqqVRCySsH0oxPjkiSBulrjj2krurD17swTqdW4+LlYJEKZWzWsRrA
+         zKIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761974878; x=1762579678;
+        d=1e100.net; s=20230601; t=1761975876; x=1762580676;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=z/ptnNT0Ywe4s6PcYyycXyPs8DpHI02oawu5aekCWR0=;
-        b=ktrQnO+F/Z/7Qsqy5j4egXWdlywC+MRkw5QZbgFWvWPwdY7XM3Z/517BUXz9ZwClmx
-         OMcIKHSKZ0bBbAU36/0aT9CYVbOkJ+kl/iGjLNdfDdXgPWt0QZQC5R3fVMG2l7ZHB2ZW
-         6wjU8sbpartH/e3x/XsID0ErAf1md0BuuX2xOdxyh+JZyjZa0a4rRQOvTY2pin01QaXp
-         aAQs9of1sqfrgtJA1HbX7xnXE3IReXmlGhePuzk/wlKZ8ymhVynfj99gj6uD3iyIS4GI
-         MUqtAaUrzn7c6yCP9SG1CeOlSThLgEeE4Fu6Br99c2cSsEkmbEt9wGZENMQ4+3bOajIC
-         UsAA==
-X-Forwarded-Encrypted: i=1; AJvYcCUopNrdHzzhj+y162qB65iqj+opzySVXj2n+0V+YW9pJlSSRC9mxjGN/8TNY7IPv2Ayv/rWYwX1dvuQu1Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGg0dnIm8PunUoROpSas1deRICLn9qjit1sFPSD5K4IN779fM6
-	ndosEYUdb+xwp2iR9DchF+H1pBuSjGEz1umpt72ucpZbHoA6ogzoVvYp
-X-Gm-Gg: ASbGncspyiC/7+gt1DaxNyuSQZ02UvsrBYMBnyu+90vXMM1d4sFIfeNE9PH5qeGT+87
-	FL3s2eq9ozUjUvrlh/c3121p4PBedUFsx3k33HUWHJnsMg4NgJs/I1XgOw5diILkBDF+RlNKflT
-	XB3yywmQfYMqMDu+LWv5D6qOhIzJw96715McHGjzWMgK4AfmesIlifPl9ELVEMNta52+/xqKwdW
-	rRzb+e0C3lk3rGjIdFI6yZN8cSZR+uOl06QPmcRwZyv5UuxleCO+/HcndeyvpHi95nJKpnBjLhE
-	jpcri+T9BDEwt5QNEFNoEBgKQXS85CWt0cWt7sEPbTExm4a9eNRJlxuejTHPkNsz3wJK7cgiVyO
-	/Bp8M+O7Pvro0olJek8hl31p4cZ4jKsz6ku0XPiy4cqiJ3PCw38jS6F7vkkG6nm4/UGzartWptA
-	dhY+pROp1xbVhbB6pVqUAY+P32winlTeAKxxrVokxOMs9Z6GKPuiGCkXZCDQ4sr3MSdGvcFez4S
-	tl/eWkfrG1He35fo9BqshaU3g==
-X-Google-Smtp-Source: AGHT+IGsr0iWlw76pddp4ckfx5jyzC4ernwO/7Dv/NG7LUkw/+6xWR4R4woGmK7aLj+ui0CQBbPtug==
-X-Received: by 2002:a17:903:3c23:b0:294:7048:643 with SMTP id d9443c01a7336-2951a3981fcmr77796005ad.15.1761974878463;
-        Fri, 31 Oct 2025 22:27:58 -0700 (PDT)
-Received: from opensource206.. ([106.222.234.180])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3407f24ee93sm2041158a91.9.2025.10.31.22.27.56
+        bh=hXfrEv5oiBHpW6muXJlmwbpRlo7zdmnpcibEEEHdvoI=;
+        b=XeASAcKyyIDqvAbVjKB5rtcLDY99nIJp8gkj7sF2lb0mBl70FM3Q69kNecsIgs246L
+         NaupsUxSvHJfTY+/K+gFp2Q/+zFpi5zj4mQMI4v/+OWvNB1GSPlvyhCPFjSRJlc1GQAf
+         WbD2lGVb71zT6uBlzBEDBUWybXZdurk5e5jO0H7pt4JIXaA3ahLAOHtvkqXviwf5bE7a
+         sCs4FNp5k6o31D5HV5b7f/cMtRcXFmCkPngglnHOEDn8O+OBVLx3EHJCTQwfJBSAv10y
+         dc34z55whAxjVEcY7SeaHYRR1blOrWUfv74j279Uba6Z8iC1Zcb+w3vrRc5OnPoYN26w
+         Sx/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUYnDOT7fnEVygvY7mNvTNmmGk7gqYiTqDVb8JVmXse03xnvgXmvncCpqfDugTNpPr3dlPA2oAF9RY2pPk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqJM1NmK3DUFVaysFdgG/xEHDQPR4TWehrEOV/7IqT8n2zi/nf
+	Sn60bdbqWk871wAME4Yu1/eo7b4qeYl4meUbqONROcF94UFRzSZzjwv7Nxsv05oX
+X-Gm-Gg: ASbGncv1/aZl5X9fvqvFt0/se2yE9pdQynDT8vX3Vg8R4Zf4A6glMgUFyCUcfcycUqN
+	ULU+wUp0BkFRvRlcYBorVIhdMi8qBBPquEyItgX90vV9i6TavZD9eFqIcbGbd5NDXJ6afySgSKz
+	ffXSC1zs0zCsCAOb5MjOQ6M7rZdb4jy6Z/FEMJ6FY0WoGJ8L6XCFzpcWXBaN0MfgqKB80tCrK0h
+	0waWH9z8dg8pogMIbzY2ykE6xa8uTT9rx2DIqOZ4cOuqRKvDKsvzy6lAKFmjJwpl5wVZHWjmXjc
+	bEmabfnVjgdjDE602C5YEozz8KA3KTGgKBJrOfPug2tHR9zRQfFJZEf0pVL1agLaFSLNrT6m6N7
+	jC8liWqU5+6FIIZLACvYyYatq6LgqIYTpIhv5NDaoBZr50aX7zOqeq3gUeecX311Xj0VCLTVS
+X-Google-Smtp-Source: AGHT+IEGJ4mGhF1h11nXlNMyKOMIlTHFuQycoD3FINV1TwEi5cyxUm493MSp+VBY0wey3CeA3mtjJQ==
+X-Received: by 2002:a05:6a20:3d86:b0:334:8ac9:bc5 with SMTP id adf61e73a8af0-348cc8e5729mr8648568637.36.1761975875916;
+        Fri, 31 Oct 2025 22:44:35 -0700 (PDT)
+Received: from fedora ([38.137.53.248])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a7d897e86fsm4067572b3a.11.2025.10.31.22.44.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 22:27:58 -0700 (PDT)
-From: Pavan Bobba <opensource206@gmail.com>
-To: skhan@linuxfoundation.org,
-	kieran.bingham@ideasonboard.com,
-	mchehab@kernel.org
-Cc: linux-media@vger.kernel.org,
+        Fri, 31 Oct 2025 22:44:35 -0700 (PDT)
+From: Shi Hao <i.shihao.999@gmail.com>
+To: philipp.reisner@linbit.com
+Cc: lars.ellenberg@linbit.com,
+	christoph.boehmwalder@linbit.com,
+	axboe@kernel.dk,
+	drbd-dev@lists.linbit.com,
+	linux-block@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Pavan Bobba <opensource206@gmail.com>
-Subject: [PATCH] media: vimc: add RGB/YUV input entity implementation
-Date: Sat,  1 Nov 2025 10:56:51 +0530
-Message-ID: <20251101052651.6197-1-opensource206@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	i.shihao.999@gmail.com
+Subject: [PATCH] drbd: replace kmap() with kmap_local_page() in receiver path
+Date: Sat,  1 Nov 2025 11:14:22 +0530
+Message-ID: <20251101054422.17045-1-i.shihao.999@gmail.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,287 +91,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce a new vimc-input entity to simulate a color frame source in the
-Virtual Media Controller (VIMC) pipeline. This entity outputs RGB888 frames
-and allows testing of pipelines that start from a pre-processed RGB/YUV
-source instead of a raw Bayer sensor.
+Use kmap_local_page() instead of kmap() to avoid
+CPU contention.
 
-The patch adds vimc-input.c with basic pad operations for format
-enumeration, get/set, and stream enable/disable handlers. The entity is
-registered in the VIMC core configuration, replacing the previous temporary
-use of vimc-sensor. Frame generation is not yet implemented and remains a
-TODO for future work.
+kmap() uses a global set of mapping slots that can cause contention
+between multiple CPUs, while kmap_local_page() uses per-CPU slots
+eliminating this contention. It also ensures non-sleeping operation
+and provides better cache locality.
 
-This change enables link validation and format negotiation for the
-RGB/YUV input path, paving the way for software frame injection and
-test-pattern generation.
+Convert kmap() to kmap_local_page() as it aligns with ongoing
+kernel efforts to modernize kmap() usage for better multi-core
+scalability.
 
-Signed-off-by: Pavan Bobba <opensource206@gmail.com>
+Signed-off-by: Shi Hao <i.shihao.999@gmail.com>
 ---
- drivers/media/test-drivers/vimc/Makefile      |   3 +-
- drivers/media/test-drivers/vimc/vimc-common.h |   1 +
- drivers/media/test-drivers/vimc/vimc-core.c   |   3 +-
- drivers/media/test-drivers/vimc/vimc-input.c  | 210 ++++++++++++++++++
- 4 files changed, 214 insertions(+), 3 deletions(-)
- create mode 100644 drivers/media/test-drivers/vimc/vimc-input.c
+ drivers/block/drbd/drbd_receiver.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/media/test-drivers/vimc/Makefile b/drivers/media/test-drivers/vimc/Makefile
-index 9b9631562473..7e1fdb2f2a78 100644
---- a/drivers/media/test-drivers/vimc/Makefile
-+++ b/drivers/media/test-drivers/vimc/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- vimc-y := vimc-core.o vimc-common.o vimc-streamer.o vimc-capture.o \
--		vimc-debayer.o vimc-scaler.o vimc-sensor.o vimc-lens.o
-+		vimc-debayer.o vimc-scaler.o vimc-sensor.o vimc-lens.o \
-+		vimc-input.o
- 
- obj-$(CONFIG_VIDEO_VIMC) += vimc.o
- 
-diff --git a/drivers/media/test-drivers/vimc/vimc-common.h b/drivers/media/test-drivers/vimc/vimc-common.h
-index 7a45a2117748..6c94b1635fa8 100644
---- a/drivers/media/test-drivers/vimc/vimc-common.h
-+++ b/drivers/media/test-drivers/vimc/vimc-common.h
-@@ -172,6 +172,7 @@ extern const struct vimc_ent_type vimc_debayer_type;
- extern const struct vimc_ent_type vimc_scaler_type;
- extern const struct vimc_ent_type vimc_capture_type;
- extern const struct vimc_ent_type vimc_lens_type;
-+extern const struct vimc_ent_type vimc_input_type;
- 
- /**
-  * vimc_pix_map_by_index - get vimc_pix_map struct by its index
-diff --git a/drivers/media/test-drivers/vimc/vimc-core.c b/drivers/media/test-drivers/vimc/vimc-core.c
-index f632c77e52f5..2f6846facb23 100644
---- a/drivers/media/test-drivers/vimc/vimc-core.c
-+++ b/drivers/media/test-drivers/vimc/vimc-core.c
-@@ -107,9 +107,8 @@ static const struct vimc_ent_config ent_config[] = {
- 		.type = &vimc_capture_type
- 	},
- 	[RGB_YUV_INPUT] = {
--		/* TODO: change this to vimc-input when it is implemented */
- 		.name = "RGB/YUV Input",
--		.type = &vimc_sensor_type
-+		.type = &vimc_input_type
- 	},
- 	[SCALER] = {
- 		.name = "Scaler",
-diff --git a/drivers/media/test-drivers/vimc/vimc-input.c b/drivers/media/test-drivers/vimc/vimc-input.c
-new file mode 100644
-index 000000000000..cedcc450d59e
---- /dev/null
-+++ b/drivers/media/test-drivers/vimc/vimc-input.c
-@@ -0,0 +1,210 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * vimc-input.c Virtual Media Controller Driver
-+ *
-+ * Copyright (C) 2025 Virtual Input Entity Implementation
-+ */
-+
-+#include <linux/v4l2-mediabus.h>
-+#include <media/v4l2-subdev.h>
-+
-+#include "vimc-common.h"
-+
-+struct vimc_input_device {
-+	struct vimc_ent_device ved;
-+	struct v4l2_subdev sd;
-+	struct media_pad pad;
-+};
-+
-+static const struct v4l2_mbus_framefmt fmt_default = {
-+	.width = 640,
-+	.height = 480,
-+	.code = MEDIA_BUS_FMT_RGB888_1X24,
-+	.field = V4L2_FIELD_NONE,
-+	.colorspace = V4L2_COLORSPACE_SRGB,
-+};
-+
-+static int vimc_input_init_state(struct v4l2_subdev *sd,
-+				 struct v4l2_subdev_state *sd_state)
-+{
-+	struct v4l2_mbus_framefmt *mf;
-+	unsigned int i;
-+
-+	for (i = 0; i < sd->entity.num_pads; i++) {
-+		mf = v4l2_subdev_state_get_format(sd_state, i);
-+		*mf = fmt_default;
-+	}
-+
-+	return 0;
-+}
-+
-+static int vimc_input_enum_mbus_code(struct v4l2_subdev *sd,
-+				     struct v4l2_subdev_state *sd_state,
-+				     struct v4l2_subdev_mbus_code_enum *code)
-+{
-+	if (code->index > 0)
-+		return -EINVAL;
-+
-+	code->code = MEDIA_BUS_FMT_RGB888_1X24;
-+
-+	return 0;
-+}
-+
-+static int vimc_input_enum_frame_size(struct v4l2_subdev *sd,
-+				      struct v4l2_subdev_state *sd_state,
-+				      struct v4l2_subdev_frame_size_enum *fse)
-+{
-+	const struct vimc_pix_map *vpix;
-+
-+	if (fse->index)
-+		return -EINVAL;
-+
-+	/* Only accept code in the pix map table */
-+	vpix = vimc_pix_map_by_code(fse->code);
-+	if (!vpix)
-+		return -EINVAL;
-+
-+	fse->min_width = VIMC_FRAME_MIN_WIDTH;
-+	fse->max_width = VIMC_FRAME_MAX_WIDTH;
-+	fse->min_height = VIMC_FRAME_MIN_HEIGHT;
-+	fse->max_height = VIMC_FRAME_MAX_HEIGHT;
-+
-+	return 0;
-+}
-+
-+static int vimc_input_get_fmt(struct v4l2_subdev *sd,
-+			      struct v4l2_subdev_state *sd_state,
-+			      struct v4l2_subdev_format *fmt)
-+{
-+	struct v4l2_mbus_framefmt *mf;
-+
-+	mf = v4l2_subdev_state_get_format(sd_state, fmt->pad);
-+
-+	fmt->format = *mf;
-+
-+	return 0;
-+}
-+
-+static int vimc_input_set_fmt(struct v4l2_subdev *sd,
-+			      struct v4l2_subdev_state *sd_state,
-+			      struct v4l2_subdev_format *fmt)
-+{
-+	struct v4l2_mbus_framefmt *mf;
-+
-+	mf = v4l2_subdev_state_get_format(sd_state, fmt->pad);
-+
-+	/* Set the new format */
-+	*mf = fmt->format;
-+
-+	return 0;
-+}
-+
-+static int vimc_input_enable_streams(struct v4l2_subdev *sd,
-+				     struct v4l2_subdev_state *state,
-+				     u32 pad, u64 streams_mask)
-+{
-+	/* For input entity, we don't allocate frames since we expect
-+	 * external frame injection. Just mark that streaming is active.
-+	 *
-+	 * TODO: For future enhancement, consider implementing frame generation
-+	 * or userspace frame injection mechanism. This would require:
-+	 * - Frame buffer allocation (similar to vimc-sensor.c)
-+	 * - Interface for userspace to inject frames (e.g., via sysfs/debugfs)
-+	 * - Frame rate control for generated test patterns
-+	 * - Integration with VIMC's streaming infrastructure
-+	 * This would make the input entity suitable for more testing scenarios.
-+	 */
-+	return 0;
-+}
-+
-+static int vimc_input_disable_streams(struct v4l2_subdev *sd,
-+				      struct v4l2_subdev_state *state,
-+				      u32 pad, u64 streams_mask)
-+{
-+	/* Streaming stopped - no cleanup needed for input entity */
-+	return 0;
-+}
-+
-+static const struct v4l2_subdev_pad_ops vimc_input_pad_ops = {
-+	.enum_mbus_code		= vimc_input_enum_mbus_code,
-+	.enum_frame_size	= vimc_input_enum_frame_size,
-+	.get_fmt		= vimc_input_get_fmt,
-+	.set_fmt		= vimc_input_set_fmt,
-+	.enable_streams		= vimc_input_enable_streams,
-+	.disable_streams	= vimc_input_disable_streams,
-+};
-+
-+static const struct v4l2_subdev_ops vimc_input_ops = {
-+	.pad = &vimc_input_pad_ops,
-+};
-+
-+static const struct v4l2_subdev_internal_ops vimc_input_internal_ops = {
-+	.init_state = vimc_input_init_state,
-+};
-+
-+static void vimc_input_release(struct vimc_ent_device *ved)
-+{
-+	struct vimc_input_device *vinput =
-+		container_of(ved, struct vimc_input_device, ved);
-+
-+	v4l2_subdev_cleanup(&vinput->sd);
-+	media_entity_cleanup(vinput->ved.ent);
-+	kfree(vinput);
-+}
-+
-+/*
-+ * Input process frame function
-+ * For an input entity, just return the received frame unchanged
-+ */
-+static void *vimc_input_process_frame(struct vimc_ent_device *ved,
-+				      const void *frame)
-+{
-+	/* For an input entity, just return the received frame unchanged.
-+	 *
-+	 * TODO: Future enhancement could implement:
-+	 * - Frame validation and format checking
-+	 * - Frame transformation or processing
-+	 * - Frame injection from userspace buffers
-+	 * - Frame rate limiting or buffering
-+	 * Currently, this is a simple pass-through for external frame sources.
-+	 */
-+	return (void *)frame;
-+}
-+
-+static struct vimc_ent_device *vimc_input_add(struct vimc_device *vimc,
-+					      const char *vcfg_name)
-+{
-+	struct v4l2_device *v4l2_dev = &vimc->v4l2_dev;
-+	struct vimc_input_device *vinput;
-+	int ret;
-+
-+	/* Allocate the vinput struct */
-+	vinput = kzalloc(sizeof(*vinput), GFP_KERNEL);
-+	if (!vinput)
-+		return ERR_PTR(-ENOMEM);
-+
-+	/* Initialize the media pad */
-+	vinput->pad.flags = MEDIA_PAD_FL_SOURCE;
-+
-+	ret = vimc_ent_sd_register(&vinput->ved, &vinput->sd, v4l2_dev,
-+				   vcfg_name,
-+				   MEDIA_ENT_F_IO_V4L, 1, &vinput->pad,
-+				   &vimc_input_internal_ops, &vimc_input_ops);
-+	if (ret)
-+		goto err_free_vinput;
-+
-+	vinput->ved.process_frame = vimc_input_process_frame;
-+	vinput->ved.dev = vimc->mdev.dev;
-+
-+	return &vinput->ved;
-+
-+err_free_vinput:
-+	kfree(vinput);
-+
-+	return ERR_PTR(ret);
-+}
-+
-+const struct vimc_ent_type vimc_input_type = {
-+	.add = vimc_input_add,
-+	.release = vimc_input_release
-+};
--- 
-2.43.0
+diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
+index caaf2781136d..14821420ea50 100644
+--- a/drivers/block/drbd/drbd_receiver.c
++++ b/drivers/block/drbd/drbd_receiver.c
+@@ -1736,13 +1736,13 @@ read_in_block(struct drbd_peer_device *peer_device, u64 id, sector_t sector,
+ 	page = peer_req->pages;
+ 	page_chain_for_each(page) {
+ 		unsigned len = min_t(int, ds, PAGE_SIZE);
+-		data = kmap(page);
++		data = kmap_local_page(page);
+ 		err = drbd_recv_all_warn(peer_device->connection, data, len);
+ 		if (drbd_insert_fault(device, DRBD_FAULT_RECEIVE)) {
+ 			drbd_err(device, "Fault injection: Corrupting data on receive\n");
+ 			data[0] = data[0] ^ (unsigned long)-1;
+ 		}
+-		kunmap(page);
++		kunmap_local(data);
+ 		if (err) {
+ 			drbd_free_peer_req(device, peer_req);
+ 			return NULL;
+@@ -1777,7 +1777,7 @@ static int drbd_drain_block(struct drbd_peer_device *peer_device, int data_size)
+
+ 	page = drbd_alloc_pages(peer_device, 1, 1);
+
+-	data = kmap(page);
++	data = kmap_local_page(page);
+ 	while (data_size) {
+ 		unsigned int len = min_t(int, data_size, PAGE_SIZE);
+
+@@ -1786,7 +1786,7 @@ static int drbd_drain_block(struct drbd_peer_device *peer_device, int data_size)
+ 			break;
+ 		data_size -= len;
+ 	}
+-	kunmap(page);
++	kunmap_local(data);
+ 	drbd_free_pages(peer_device->device, page);
+ 	return err;
+ }
+--
+2.51.0
 
 
