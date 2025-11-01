@@ -1,145 +1,179 @@
-Return-Path: <linux-kernel+bounces-881140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E64C278CE
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 07:33:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80E12C278DA
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 07:34:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 86E814E4A65
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 06:33:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BC7944E3DA5
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 06:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB105286889;
-	Sat,  1 Nov 2025 06:33:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1B9288C25;
+	Sat,  1 Nov 2025 06:34:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iTC1AX5F"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d4VCR4kL"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA5C1D5147
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 06:33:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B851C264628;
+	Sat,  1 Nov 2025 06:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761978801; cv=none; b=DRkCaWmNko0VH3lK4+63LySaE97bOLnWlucRiR63u8zDrL59dDiZOBMjpb/kf5ogcUGa4JrK7hUyEVH8HP79gmypnyPiR4/gKpx4FqtJyB2XKQJYVmIv1XU7iXooyOs+aSFgzEHv7Ch/OqUC76m93S1SL1UK0PXEptAHr0X/bMs=
+	t=1761978873; cv=none; b=g32AaDcr7o9xtZuwdJm5z2OxOWwDFlknuZOOH3o1GDoaEL0DSUc7WeSZqJ19cMn5+dr1PTgvBYIOeu0bOYrjZuHipk7LDmmwWk2fOdGF98AwATpIa3OesftTI3D6DK0i6SkU9XiYr0TKAUf518PFWklA3uwLlHZ2XtdE+LkR7WI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761978801; c=relaxed/simple;
-	bh=+zQAd6/Lx4XwBMrDDvVeD3K00OAGTAt0KqKDT/5MdBI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=heJnaz6SGVazA15U5u+4SD76wvkcA6sugRGv2m7Q1VydH6rbVsbLuSx2d9le5DUK3xwglPRzAdA3YALnLVjapQIRA0jOCPZ3Er4rP37fmCH0x+5mUdBgROMnCrfwCCZp3D9QhH/6wcLhdduZ7yPFa51VVfvYOC7xCh2p97qKA8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iTC1AX5F; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-780fc3b181aso2118994b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 23:33:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761978799; x=1762583599; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=csSbJcLFM5L2vu2gw+h6Q2d5cAu19xceBRmAiyL/H8Q=;
-        b=iTC1AX5FnaDqv+ALdsPkxgMavndxVUMntm/8197M3jIznZwfsKboaw1TUR4FPrB5eu
-         I36BZefitP8w+Q4F7dJvwKt/rlUcTRVk9xWQTjvwtntypOReymr+NPKR5TNtiC/VJcgD
-         ZwV054SprZDQ2Myy1/hCVwKTliP1bzNoReGChJlayGAWk6v5nXI+yyCkMwWtZLUmk93c
-         4oJ3LzLdKMQVbXu/xPcg758yk96TnagfCJ3AEsgOAledRyl1tNvsBZ9R1QYC69MXw1VR
-         9yLMvlYZ+wSufdQWQo8fCYDLEGK7AWqI2BOAurcM+t3lDCD2Q3WQoFRp+uM97CVTCkNh
-         IdAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761978799; x=1762583599;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=csSbJcLFM5L2vu2gw+h6Q2d5cAu19xceBRmAiyL/H8Q=;
-        b=mmqU7Z7v0Z/rKUXIv5f0Jh/Ul6ctMs215u/72IxxAFsD53NxPMY+qYcc+avwNwuG15
-         rtOwD6bJ2WHAHQbdI1SqA548BZy7//QvjX7T1EKdd7NSA/ulgScBYPRIuy4+tRXiYkU1
-         iFiqqKWE7rBrMxn+J+Zx5x2YaVaA5UcbHKW39v3rrY/pUq+LQcear7Nwv1yCgo/sIOod
-         4HSqNr8tRlkUqgoFukYLQXo+s3Ca8AAAGaHVSqYSUvWjDQH7gZPFB81BvOF5hwkjcYKw
-         n+WKqTVLGiiwyx/y7RXeSWG6vtbY21LTCEVHyg5C6okf5MJTDkBv+/0ah9DAnPm7y9Ru
-         KaCg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3n2TUEwHu32jPUIQ6rpuymDZFxkkNGKVFgH0gJDKBc+C7IaysTw6uUabmB/6xm7IAND703G33A48kQXw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxt/DysR2yoYr2ZX9snqNWwDNEwYXxn0iNN4Nn8av6bd7wQGE29
-	ve+dtBQDoptfB0+AtP+UaA+3lplATPqmV4+okngg74BHaWNCheHibGlXYZcMjA==
-X-Gm-Gg: ASbGncvHBRCuctOwPhIhAerMGXQ3WaeTaw05vPLR0FrOwd2wLFBAh16+bAOyW88ftys
-	lzVMHF+Jbwje+dcg2fssJXY3SoCxMO8TMa41aj5eIlVmLu01+1qlcsuC8pRbAem76ZQ1+Ukb/41
-	uKuk9mi2vgH6vZsRLBbexAjxTkAxOVSuMb8ZRf86PspGpC+nXT7eVePH+ugTs+bf6abT9GSsUht
-	547+WBBYdcyulsE0fBB/uaZfibsUniNIHIHgficpOzkRd5oJydObrYJrTtk7P5pyW0rIPHd0Al1
-	x4h6/RLDSlXMv7U+mV9/j7MeIlUo2n/9iO2A+rGdXbwuY2bWCGvFnUJLEqJ/gVO01LBq0MBgv68
-	YmbRWJF3940t8EYvKRipsQ1Pa36dkFLxDlxuRnok3fNmUz6bGKpVC7Bc0WsIdjxYraqTodzt5nj
-	vgoqjULclcWyovX00TO+IHkJEBW9XpgH+HvpcdqfLIfOEOEWxy/NVvKuiBxwF6xeC7mPzcOg26S
-	AD8Oal91oN+JtybHatyKiDdtQ==
-X-Google-Smtp-Source: AGHT+IF/YXEAtCeyA+uL076BR8IeQ9W6hQvJB4WrGBw6+wROOWrzFmGWzsApi83flVhRhFyvZoFKhQ==
-X-Received: by 2002:a05:6300:2189:b0:342:b918:b475 with SMTP id adf61e73a8af0-348ca5653aemr9055088637.21.1761978799150;
-        Fri, 31 Oct 2025 23:33:19 -0700 (PDT)
-Received: from opensource206.. ([106.222.234.180])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b93be4045fbsm4041381a12.28.2025.10.31.23.33.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 Oct 2025 23:33:18 -0700 (PDT)
-From: Pavan Bobba <opensource206@gmail.com>
-To: skhan@linuxfoundation.org,
-	kieran.bingham@ideasonboard.com,
-	mchehab@kernel.org
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pavan Bobba <opensource206@gmail.com>
-Subject: [PATCH] media: vimc: add support for V4L2_FIELD_ALTERNATE in vimc-sensor
-Date: Sat,  1 Nov 2025 12:03:12 +0530
-Message-ID: <20251101063312.13466-1-opensource206@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1761978873; c=relaxed/simple;
+	bh=svHrHLDDhTnGKlEJaxJBVr2ClX4h1Mz3MZ8oZRBL50U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CwXLrempom2u35fBbUqZUzhV/2sKt/4Fq5DLOb4na+lsCtqs+lcfLTrmfKxCeCaL84PVZMjGJidusuiunvQCEcMnQ1aCSvxaI5y6eRIKQAF6r5smP330NN4REiBua/aWyItSrEyz/BWdwIa2iPTe3v+0AOD9bNrxwNGXrFeOMNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d4VCR4kL; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761978872; x=1793514872;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=svHrHLDDhTnGKlEJaxJBVr2ClX4h1Mz3MZ8oZRBL50U=;
+  b=d4VCR4kL9JTiesVZ/NxAm8wam6Sl8XhwNH7aBZehuSIwtdQBrMOvOO3y
+   9RbCkkalv3gO6pJzFykypLZczQETx46JVTQ4orCCJUGm2hfwmD0eFZic/
+   vUWyZFErb6AEu5q3b/Ezs2Pf3fIM2DCRW2cBPpvt82QmGdlOJXmUHipn/
+   VJijaCFyfcyZGM884rIHslom/DhfL6bpFEdDwd7GiedQIfwc9GmdontBG
+   yd60vSm1/73UpAHsX52XsAFQLg5nkwpo73wrYpyOSZtfab7XRQKtmOfUr
+   EA6XtWTDDDV/zUuV8ILBtWK8MNRBRRQg86T35yW9tJzV8L9rN6pCBc5ZM
+   A==;
+X-CSE-ConnectionGUID: 41Wf7znTQ0aRTHLPiR+r1Q==
+X-CSE-MsgGUID: eR0A5ImES9GmU15wf2ZN7Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="75485753"
+X-IronPort-AV: E=Sophos;i="6.19,271,1754982000"; 
+   d="scan'208";a="75485753"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 23:34:31 -0700
+X-CSE-ConnectionGUID: TOVc8IFERiOx9yzGOalz9w==
+X-CSE-MsgGUID: bHthRj8XTdGc0S/Gcn+6Vw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,271,1754982000"; 
+   d="scan'208";a="185632982"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa006.jf.intel.com with ESMTP; 31 Oct 2025 23:34:26 -0700
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vF5Bw-000Nxw-1a;
+	Sat, 01 Nov 2025 06:34:24 +0000
+Date: Sat, 1 Nov 2025 14:33:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	sboyd@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, mturquette@baylibre.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com, laura.nao@collabora.com,
+	nfraprado@collabora.com, wenst@chromium.org,
+	y.oudjana@protonmail.com, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH v2 7/7] clk: mediatek: Add support for MT6685 PM/Clock IC
+ Clock Controller
+Message-ID: <202511011423.LH8doBcv-lkp@intel.com>
+References: <20251027111343.21723-8-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251027111343.21723-8-angelogioacchino.delregno@collabora.com>
 
-The vimc sensor currently ignores V4L2_FIELD_ALTERNATE and always
-configures the test pattern generator (TPG) with a progressive field.
-This patch adds basic handling for the ALTERNATE field type.
+Hi AngeloGioacchino,
 
-When userspace requests V4L2_FIELD_ALTERNATE, the TPG is configured
-to output alternating top and bottom fields by calling tpg_s_field()
-with the interlaced flag set. For all other field types, existing
-progressive behaviour is preserved.
+kernel test robot noticed the following build errors:
 
-This change allows the vimc-sensor subdevice to correctly reflect
-the requested field type in its reported format, enabling basic
-testing of interlaced-field negotiation in the media pipeline.
-Other vimc entities (debayer, scaler, capture) still treat all
-streams as progressive, so streaming with ALTERNATE may not yet
-succeed.
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on linus/master v6.18-rc3 next-20251031]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Signed-off-by: Pavan Bobba <opensource206@gmail.com>
----
- drivers/media/test-drivers/vimc/vimc-sensor.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/AngeloGioacchino-Del-Regno/clk-mediatek-Split-out-registration-from-mtk_clk_register_gates/20251027-191633
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20251027111343.21723-8-angelogioacchino.delregno%40collabora.com
+patch subject: [PATCH v2 7/7] clk: mediatek: Add support for MT6685 PM/Clock IC Clock Controller
+config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20251101/202511011423.LH8doBcv-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251101/202511011423.LH8doBcv-lkp@intel.com/reproduce)
 
-diff --git a/drivers/media/test-drivers/vimc/vimc-sensor.c b/drivers/media/test-drivers/vimc/vimc-sensor.c
-index 027767777763..900c3f329f1c 100644
---- a/drivers/media/test-drivers/vimc/vimc-sensor.c
-+++ b/drivers/media/test-drivers/vimc/vimc-sensor.c
-@@ -105,8 +105,10 @@ static void vimc_sensor_tpg_s_format(struct vimc_sensor_device *vsensor,
- 	tpg_s_bytesperline(&vsensor->tpg, 0, format->width * vpix->bpp);
- 	tpg_s_buf_height(&vsensor->tpg, format->height);
- 	tpg_s_fourcc(&vsensor->tpg, vpix->pixelformat);
--	/* TODO: add support for V4L2_FIELD_ALTERNATE */
--	tpg_s_field(&vsensor->tpg, format->field, false);
-+	if (format->field == V4L2_FIELD_ALTERNATE)
-+		tpg_s_field(&vsensor->tpg, V4L2_FIELD_TOP, true);
-+	else
-+		tpg_s_field(&vsensor->tpg, format->field, false);
- 	tpg_s_colorspace(&vsensor->tpg, format->colorspace);
- 	tpg_s_ycbcr_enc(&vsensor->tpg, format->ycbcr_enc);
- 	tpg_s_quantization(&vsensor->tpg, format->quantization);
-@@ -127,8 +129,7 @@ static void vimc_sensor_adjust_fmt(struct v4l2_mbus_framefmt *fmt)
- 	fmt->height = clamp_t(u32, fmt->height, VIMC_FRAME_MIN_HEIGHT,
- 			      VIMC_FRAME_MAX_HEIGHT) & ~1;
- 
--	/* TODO: add support for V4L2_FIELD_ALTERNATE */
--	if (fmt->field == V4L2_FIELD_ANY || fmt->field == V4L2_FIELD_ALTERNATE)
-+	if (fmt->field == V4L2_FIELD_ANY)
- 		fmt->field = fmt_default.field;
- 
- 	vimc_colorimetry_clamp(fmt);
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511011423.LH8doBcv-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/clk/mediatek/clk-mtk-spmi.c: In function 'mtk_spmi_clk_simple_probe':
+>> drivers/clk/mediatek/clk-mtk-spmi.c:48:20: error: implicit declaration of function 'devm_spmi_subdevice_alloc_and_add' [-Wimplicit-function-declaration]
+      48 |         sub_sdev = devm_spmi_subdevice_alloc_and_add(&pdev->dev, sparent);
+         |                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/clk/mediatek/clk-mtk-spmi.c:48:18: error: assignment to 'struct spmi_subdevice *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+      48 |         sub_sdev = devm_spmi_subdevice_alloc_and_add(&pdev->dev, sparent);
+         |                  ^
+   In file included from drivers/clk/mediatek/clk-mtk-spmi.c:16:
+>> drivers/clk/mediatek/clk-mtk-spmi.c:52:53: error: invalid use of undefined type 'struct spmi_subdevice'
+      52 |         regmap = devm_regmap_init_spmi_ext(&sub_sdev->sdev, &mtk_spmi_clk_regmap_config);
+         |                                                     ^~
+   include/linux/regmap.h:775:20: note: in definition of macro '__regmap_lockdep_wrapper'
+     775 |                 fn(__VA_ARGS__, &_key,                                  \
+         |                    ^~~~~~~~~~~
+   drivers/clk/mediatek/clk-mtk-spmi.c:52:18: note: in expansion of macro 'devm_regmap_init_spmi_ext'
+      52 |         regmap = devm_regmap_init_spmi_ext(&sub_sdev->sdev, &mtk_spmi_clk_regmap_config);
+         |                  ^~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +/devm_spmi_subdevice_alloc_and_add +48 drivers/clk/mediatek/clk-mtk-spmi.c
+
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  21  
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  22  int mtk_spmi_clk_simple_probe(struct platform_device *pdev)
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  23  {
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  24  	struct regmap_config mtk_spmi_clk_regmap_config = {
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  25  		.reg_bits = 16,
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  26  		.val_bits = 8,
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  27  		.fast_io = true
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  28  	};
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  29  	struct device_node *node = pdev->dev.of_node;
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  30  	const struct mtk_spmi_clk_desc *mscd;
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  31  	struct spmi_subdevice *sub_sdev;
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  32  	struct spmi_device *sparent;
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  33  	struct regmap *regmap;
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  34  	int ret;
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  35  
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  36  	ret = of_property_read_u32(node, "reg", &mtk_spmi_clk_regmap_config.reg_base);
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  37  	if (ret)
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  38  		return ret;
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  39  
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  40  	/* If the max_register was not declared the pdata is not valid */
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  41  	mscd = device_get_match_data(&pdev->dev);
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  42  	if (mscd->max_register == 0)
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  43  		return -EINVAL;
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  44  
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  45  	mtk_spmi_clk_regmap_config.max_register = mscd->max_register;
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  46  
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  47  	sparent = to_spmi_device(pdev->dev.parent);
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27 @48  	sub_sdev = devm_spmi_subdevice_alloc_and_add(&pdev->dev, sparent);
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  49  	if (IS_ERR(sub_sdev))
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  50  		return PTR_ERR(sub_sdev);
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  51  
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27 @52  	regmap = devm_regmap_init_spmi_ext(&sub_sdev->sdev, &mtk_spmi_clk_regmap_config);
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  53  	if (IS_ERR(regmap))
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  54  		return PTR_ERR(regmap);
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  55  
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  56  	return mtk_clk_simple_probe_internal(pdev, node, mscd->desc, regmap);
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  57  }
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  58  EXPORT_SYMBOL_GPL(mtk_spmi_clk_simple_probe);
+80a000281742dc AngeloGioacchino Del Regno 2025-10-27  59  
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
