@@ -1,300 +1,223 @@
-Return-Path: <linux-kernel+bounces-881179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B29EC27A64
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 10:01:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8AA3C27A71
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 10:04:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87BDB1A2672A
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 09:01:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B85B189A80D
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 09:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857BE289378;
-	Sat,  1 Nov 2025 09:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IgyagDq/";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="blen2bGG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB866299AAC;
+	Sat,  1 Nov 2025 09:03:25 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D6E72618
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 09:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A17022FE0E
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 09:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761987655; cv=none; b=Iaj9KMV2oy+52fCUfAKMAesti2DBBiqQfU4lwyOdCjbHRgsxjgi9fYxCBxXgo88u2+3X+Lt2c6hdui6UZCu95DH6mY1X+7UYhSm74LFoqHqvEncVCNfA8QC1YWWImraOovxvcmm21bMC4xpyA/4v4dGnpW1aaE3eu1nQPFxMbp8=
+	t=1761987805; cv=none; b=fDC6zjqnC/+CxVyfSrE6q1wit50jwHh98fX0A7bKdLEl7Tsb+0dPpMcilsV6aVvatZ5QN4Byh5T8Us8+uapITTUCruAn8W4qZ+JpTdT0zpiSBrFMghU4j63AW/wKRDW2oMdEfe0OHltQvawPd3ZjIOTljC39CS/li84cfQ127u4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761987655; c=relaxed/simple;
-	bh=erZlZwmG67hxS99lC1J1OI9uGWwNY/GeBgK/oj0OKmY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sdm4LeRo/Y8h0fKbjCddhFOZK1yVcIDkMgESgU7NCD2FRy2j97Gh179rfZM3lsvWqfq8EB8HtA0X81psVpH2L1PmWzqK/yw/S2rde4JBefbi2kQDFZ1/2qs4Qyt6wmLbuOKQTGNhTV4IkP5wHOQj/9UdoNtuuQK1G016o+n/dV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IgyagDq/; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=blen2bGG; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761987652;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zn+afpMdtbihpSuxES9QlBr4zxqcZucnzgZEXoXLmqk=;
-	b=IgyagDq/CitjMgUDhbljgaQGZ87DPt9eN08cSoIdeVepxtbzCPBqeGnqT6V4E28WSPM7Ly
-	tkT97vHIW6ThJkecNJdM02mWaFWPzL9pnssdEEXJWEh3RFAlRALL8hL0rg5qjAxlDKOAHW
-	cEioMENsNTrHLU28ynXCR9o4H8Dt3wM=
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
- [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-241-bnwWuaKIPf6ISv5pOthFsQ-1; Sat, 01 Nov 2025 05:00:49 -0400
-X-MC-Unique: bnwWuaKIPf6ISv5pOthFsQ-1
-X-Mimecast-MFC-AGG-ID: bnwWuaKIPf6ISv5pOthFsQ_1761987648
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b62da7602a0so2362281a12.2
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 02:00:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1761987648; x=1762592448; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zn+afpMdtbihpSuxES9QlBr4zxqcZucnzgZEXoXLmqk=;
-        b=blen2bGG23EME1nloT8jfpM7moyTZH6nR6Rc3wqpblDIBzZPJPkSnvCdqLFB487s+X
-         mLsdTw4HcPmI1qF4E+7F2EzOvmLXl0A1gzWgAY/pBcblh7MhJm319Y8Peipxin4Y8+4F
-         dKLMwk9mSTelxQ79/t8cPJv+WScaMQG23SefCXKpQV+FYOTm83A+bbznSbdkHqLLSEaU
-         wZYojmNnG5Zg7LkhkDneT0iBL85nEk0pCPuJBaBpsXpUpFUydv4SCLzzV/JIGeIJynp8
-         SQAjVagznDlG1W8SdR9cg5u8OgkYftBfMUqe3pIe0eBj9SwNqgaU6EjQUVhCnO0nFXQv
-         chyw==
+	s=arc-20240116; t=1761987805; c=relaxed/simple;
+	bh=9zw0fQzkZU069VpAF7zgk3WnsFPUO7hjMuj1hwtJVf8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AfdCWn5OKAWUk80kphNhWDojrpIcqIrLfBKUVWPo8aybXiGn0rUN2+ZApTfwgATROlPcgJDGJEWS30mrH0gpCQ/RwGjCEXKgiBHoPHUCgV6qe1+9j+ga49M1mVeO0Gvlcn9ieYiOLxgkyjLdZIxqVH1fAdW+rawX+Mx0+KrVueQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-431d8643856so110428165ab.2
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 02:03:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761987648; x=1762592448;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zn+afpMdtbihpSuxES9QlBr4zxqcZucnzgZEXoXLmqk=;
-        b=U0fleYCGtOD8Zd8HFI0fZ8tME8W9JtGjon+qs4VWmjAm+VVvEZZaaeqE0oOH5LQWUr
-         CPQxdcyKV5ku9SJL7sqmQvkBiYbZ2QxCN6sn9An4obTI8LmGx+1tmVyCqL79o0LkVhnB
-         jrdICPOnCzsrZ/eW5laCqgugCV7ZrzyQ5vNur4wZbGFnd1m/xs8Wx3gpZvS1jSXwkmbj
-         9W5O7UxoLGyDWqweNkNvauo0vXL2ffb5XLsHyZIfpJLyRHbiuw631ENsfdhAd3IIpXKH
-         6pwI8Cwo2S+baikmEvazcvZ8Y4refa8B8UcRYH0B2buCwtQxhZo93Pg2B8TifqClaMOd
-         dDQg==
-X-Forwarded-Encrypted: i=1; AJvYcCXyJI5Fi3P1R1gICIkiYTODHWz47/eN9nbwEHyAEjueE77ddDSjIcgoDAMaJ2f8W8QHAIEdXq9a2uuiRbk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjfHHUeyM8v6YuFNrnINj7NHkXSlCEbUn4xTuGJ34Dp+GRx/pM
-	OsPnQGchcWnqfJiYepfRNHLyrEk6y14N5KJKWMUuZxq8jS+EzdNaw0gQVawWYakCf5auPCHLcG2
-	XXgf9JsDG/CeN9/TU1OAUzoxlz/8F2RZ48SFcmuomzGxrPtWvb2wRkbAXP8S3b6Sa3g==
-X-Gm-Gg: ASbGncvZKLqk3tNjkDlEbNY4lvJPjrIXyp6blmjQeKyxu8RdxYHSi2ifK7jyBs04iAe
-	7oEcTYBjf+Y2nJUETMTYaHfLRa+8vIY35oc/XyhKw7x9mP5nHtmIm1BcIs/5OBJ1qrHx3hOzMS2
-	0XS22L9+N27d+0TNCA68LfXGoyoXT/egWSgXsJXsZ18kb1RYhe5kJStuGA0qMPVIjqKCQh6Jen2
-	/RtODSakHJjhaMtHZwSS6Vh7rSwHCZYIkTZ+3YejG5/y2taiTECZCezOatuqac48qZNG/KUE4E3
-	4O/6ug1neV0updvlr4GA0MUb0JDgh0lv5YakkRakCmcGonzSueerExLgAmKMwLNy1zdzj0gRAFO
-	/KSf+xj50vLgH02mBflYsghJl0qBSv73JV6VmcE8=
-X-Received: by 2002:a17:902:c401:b0:295:595c:d002 with SMTP id d9443c01a7336-295595cd1bamr11607055ad.15.1761987647762;
-        Sat, 01 Nov 2025 02:00:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFWfYSpqPPKZTWZUIuCP9sZI3ZFUiApsjI7S0Dmb+QGZeLsda0a9cQgrC17lhu6wzKpF6jaeg==
-X-Received: by 2002:a17:902:c401:b0:295:595c:d002 with SMTP id d9443c01a7336-295595cd1bamr11606135ad.15.1761987646798;
-        Sat, 01 Nov 2025 02:00:46 -0700 (PDT)
-Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29556d61c4dsm16365525ad.56.2025.11.01.02.00.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Nov 2025 02:00:46 -0700 (PDT)
-Date: Sat, 1 Nov 2025 17:00:40 +0800
-From: Zorro Lang <zlang@redhat.com>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: fstests@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
-	djwong@kernel.org, john.g.garry@oracle.com, tytso@mit.edu,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v7 05/12] generic: Add atomic write test using fio crc
- check verifier
-Message-ID: <20251101090040.6ukcaal2c55ka7wy@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
-References: <cover.1758264169.git.ojaswin@linux.ibm.com>
- <3c034b2fb5b81b3a043f1851f3905ce6a41c827a.1758264169.git.ojaswin@linux.ibm.com>
- <aQCQFOtjhyzohgnA@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+        d=1e100.net; s=20230601; t=1761987802; x=1762592602;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pf76Hd5vgGJ7oxkL6ijeQHPMEy2GLQx6R0KPYx0hzk8=;
+        b=cBO3L2HLf/eTrv+oWX+ZXzrqkpgT5rlAbsHAuy4iQrx2ffHD1SGs0O/ejOBGsZAJf5
+         60LikS/kjumAwhjhc7DS3RVZc8iShMC9I/kLozP6wbD+fVXBOl1Xiv+MwKEBlQPmPE1n
+         i14t9g0ZjE3cXpM0cJbjydSmEfZUYliI//UhkFUNr/qGq7pd57YL5uaw7/Kj9NkLsHcb
+         LuNIb7MM5TnB2T4DBaN2/GwaezevuS8s4SRW+FVXRm/AHK+bKowtakI5f7g67HuTwU8R
+         moa8sk9DIt92EOg3dQrwwlo8hamJgESkZQdFFTrbx0em/mmLDUoOvhQa806bIZxkSAvf
+         9+5w==
+X-Forwarded-Encrypted: i=1; AJvYcCU2X3cnq7i+Cbu7k2RiWto9kCp8q9fkwbUTxlZmKwmuyIBWH5W3mnL2a1nZWHU4cvv0yYy/ERmNbAXrUxM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2ZGcldD2RRii9gVoPLaWkdZqHq5HemvLzZLOjlfcxueIMgaPc
+	OvMHB3bbI3uxEGMnZxU1NbSH+HbxJAkdbeEpWpsvwb88PujCWfLPeTcDrAQxB/lWGjgKKHDVAqg
+	N09L3vii3eTXf8VsT+rkgBSSw8+OmeGnTemOhn8uJpBQt1d2XozumkTVJAJE=
+X-Google-Smtp-Source: AGHT+IHzuXjQVbm0BA4RqY95jTn5np8kTxqmPkk8uQd662dfLL9TQw8TvH1JR8qeGSB57Hdyifkn6bCZisJPo2Tymh2KmmVOdIl0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQCQFOtjhyzohgnA@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+X-Received: by 2002:a05:6e02:1a28:b0:432:fbe2:35f2 with SMTP id
+ e9e14a558f8ab-4330d125b9dmr95820205ab.4.1761987802311; Sat, 01 Nov 2025
+ 02:03:22 -0700 (PDT)
+Date: Sat, 01 Nov 2025 02:03:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6905ccda.a70a0220.eb9ff.003f.GAE@google.com>
+Subject: [syzbot] [ocfs2?] kernel BUG in ocfs2_page_mkwrite (3)
+From: syzbot <syzbot+ea5aff81e35d189b9335@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 28, 2025 at 03:12:44PM +0530, Ojaswin Mujoo wrote:
-> On Fri, Sep 19, 2025 at 12:17:58PM +0530, Ojaswin Mujoo wrote:
-> > This adds atomic write test using fio based on it's crc check verifier.
-> > fio adds a crc header for each data block, which is verified later to
-> > ensure there is no data corruption or torn write.
-> > 
-> > This test essentially does a lot of parallel RWF_ATOMIC IO on a
-> > preallocated file to stress the write and end-io unwritten conversion
-> > code paths. The idea is to increase code coverage to ensure RWF_ATOMIC
-> > hasn't introduced any issues.
-> > 
-> > Avoid doing overlapping parallel atomic writes because it might give
-> > unexpected results. Use offset_increment=, size= fio options to achieve
-> > this behavior.
-> > 
-> > Co-developed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> > Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> > Reviewed-by: John Garry <john.g.garry@oracle.com>
-> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> > ---
-> >  tests/generic/1226     | 108 +++++++++++++++++++++++++++++++++++++++++
-> >  tests/generic/1226.out |   2 +
-> >  2 files changed, 110 insertions(+)
-> >  create mode 100755 tests/generic/1226
-> >  create mode 100644 tests/generic/1226.out
-> > 
-> > diff --git a/tests/generic/1226 b/tests/generic/1226
-> > new file mode 100755
-> > index 00000000..7ad74554
-> > --- /dev/null
-> > +++ b/tests/generic/1226
-> > @@ -0,0 +1,108 @@
-> > +#! /bin/bash
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +# Copyright (c) 2025 IBM Corporation. All Rights Reserved.
-> > +#
-> > +# FS QA Test 1226
-> 
-> Hey Zorro,
-> 
-> Thanks for picking these in for-next. I just noticed that the test
-> number for this test has become 773, but we missed changing:
-> 
->  # FS QA Test 1226
-> 
->  to
-> 
->  # FS QA Test 773
+Hello,
 
-Hmm...weird, I change the case number by running `./tools/mvtest generic/1226 generic/773`.
-The "FS QA Test 1226" should be changed to "FS QA Test No. 773" by:
+syzbot found the following issue on:
 
-  sed -e "s/^# FS[[:space:]]*QA.*Test.*[0-9]\+$/# FS QA Test No. ${did}/g" -i "tests/${dest}"
+HEAD commit:    fd57572253bc Merge tag 'sched_ext-for-6.18-rc3-fixes' of g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11bc6c92580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=929790bc044e87d7
+dashboard link: https://syzkaller.appspot.com/bug?extid=ea5aff81e35d189b9335
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
 
-I'm not sure what happened at that time, I'll check if there're more "wrong number" issues,
-will correct them in one patch. Thanks for reporting:)
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Thanks,
-Zorro
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-fd575722.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6e170eb91da3/vmlinux-fd575722.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/0a3532363786/bzImage-fd575722.xz
 
-> 
-> 
-> Commit: https://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git/commit/?h=for-next&id=1499d4ff2365803e97af3279ba3312bba2cc9a80
-> 
-> Regards,
-> Ojaswin
-> 
-> > +#
-> > +# Validate FS atomic write using fio crc check verifier.
-> > +#
-> > +. ./common/preamble
-> > +. ./common/atomicwrites
-> > +
-> > +_begin_fstest auto aio rw atomicwrites
-> > +
-> > +_require_scratch_write_atomic
-> > +_require_odirect
-> > +_require_aio
-> > +_require_fio_atomic_writes
-> > +
-> > +_scratch_mkfs >> $seqres.full 2>&1
-> > +_scratch_mount
-> > +_require_xfs_io_command "falloc"
-> > +
-> > +touch "$SCRATCH_MNT/f1"
-> > +awu_min_write=$(_get_atomic_write_unit_min "$SCRATCH_MNT/f1")
-> > +awu_max_write=$(_get_atomic_write_unit_max "$SCRATCH_MNT/f1")
-> > +
-> > +blocksize=$(_max "$awu_min_write" "$((awu_max_write/2))")
-> > +threads=$(_min "$(($(nproc) * 2 * LOAD_FACTOR))" "100")
-> > +filesize=$((blocksize * threads * 100))
-> > +depth=$threads
-> > +io_size=$((filesize / threads))
-> > +io_inc=$io_size
-> > +testfile=$SCRATCH_MNT/test-file
-> > +
-> > +fio_config=$tmp.fio
-> > +fio_out=$tmp.fio.out
-> > +
-> > +fio_aw_config=$tmp.aw.fio
-> > +fio_verify_config=$tmp.verify.fio
-> > +
-> > +function create_fio_configs()
-> > +{
-> > +	create_fio_aw_config
-> > +	create_fio_verify_config
-> > +}
-> > +
-> > +function create_fio_verify_config()
-> > +{
-> > +cat >$fio_verify_config <<EOF
-> > +	[verify-job]
-> > +	direct=1
-> > +	ioengine=libaio
-> > +	rw=read
-> > +	bs=$blocksize
-> > +	filename=$testfile
-> > +	size=$filesize
-> > +	iodepth=$depth
-> > +	group_reporting=1
-> > +
-> > +	verify_only=1
-> > +	verify=crc32c
-> > +	verify_fatal=1
-> > +	verify_state_save=0
-> > +	verify_write_sequence=0
-> > +EOF
-> > +}
-> > +
-> > +function create_fio_aw_config()
-> > +{
-> > +cat >$fio_aw_config <<EOF
-> > +	[atomicwrite-job]
-> > +	direct=1
-> > +	ioengine=libaio
-> > +	rw=randwrite
-> > +	bs=$blocksize
-> > +	filename=$testfile
-> > +	size=$io_inc
-> > +	offset_increment=$io_inc
-> > +	iodepth=$depth
-> > +	numjobs=$threads
-> > +	group_reporting=1
-> > +	atomic=1
-> > +
-> > +	verify_state_save=0
-> > +	verify=crc32c
-> > +	do_verify=0
-> > +EOF
-> > +}
-> > +
-> > +create_fio_configs
-> > +_require_fio $fio_aw_config
-> > +
-> > +cat $fio_aw_config >> $seqres.full
-> > +cat $fio_verify_config >> $seqres.full
-> > +
-> > +$XFS_IO_PROG -fc "falloc 0 $filesize" $testfile >> $seqres.full
-> > +
-> > +$FIO_PROG $fio_aw_config >> $seqres.full
-> > +ret1=$?
-> > +$FIO_PROG $fio_verify_config >> $seqres.full
-> > +ret2=$?
-> > +
-> > +[[ $ret1 -eq 0 && $ret2 -eq 0 ]] || _fail "fio with atomic write failed"
-> > +
-> > +# success, all done
-> > +echo Silence is golden
-> > +status=0
-> > +exit
-> > diff --git a/tests/generic/1226.out b/tests/generic/1226.out
-> > new file mode 100644
-> > index 00000000..6dce0ea5
-> > --- /dev/null
-> > +++ b/tests/generic/1226.out
-> > @@ -0,0 +1,2 @@
-> > +QA output created by 1226
-> > +Silence is golden
-> > -- 
-> > 2.49.0
-> > 
-> 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ea5aff81e35d189b9335@syzkaller.appspotmail.com
 
+loop0: detected capacity change from 0 to 32768
+=======================================================
+WARNING: The mand mount option has been deprecated and
+         and is ignored by this kernel. Remove the mand
+         option from the mount to silence this warning.
+=======================================================
+JBD2: Ignoring recovery information on journal
+ocfs2: Mounting device (7,0) on (node local, slot 0) with ordered data mode.
+(syz.0.0,5316,0):__ocfs2_journal_access:727 ERROR: Error -30 getting 1 access to buffer!
+(syz.0.0,5316,0):ocfs2_write_end_nolock:1944 ERROR: status = -30
+(syz.0.0,5316,0):ocfs2_commit_trans:404 ERROR: status = -5
+------------[ cut here ]------------
+kernel BUG at fs/ocfs2/mmap.c:107!
+Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5316 Comm: syz.0.0 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:__ocfs2_page_mkwrite fs/ocfs2/mmap.c:107 [inline]
+RIP: 0010:ocfs2_page_mkwrite+0xc37/0xc40 fs/ocfs2/mmap.c:144
+Code: 07 e8 9d 45 17 fe eb 0d 48 ff cb e8 93 45 17 fe 48 89 5c 24 08 49 be 00 00 00 00 00 fc ff df e9 cb f4 ff ff e8 7a 45 17 fe 90 <0f> 0b cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc9000f557320 EFLAGS: 00010246
+RAX: ffffffff83a8ce96 RBX: 00000000ffffffe2 RCX: 0000000000100000
+RDX: ffffc9000dcfa000 RSI: 00000000000fffff RDI: 0000000000100000
+RBP: ffffc9000f5574c0 R08: ffffffff8f7cf477 R09: 1ffffffff1ef9e8e
+R10: dffffc0000000000 R11: fffffbfff1ef9e8f R12: ffffea00014b1ac0
+R13: 0000000000002fff R14: 0000000000000000 R15: 0000000000001000
+FS:  00007f9f7161c6c0(0000) GS:ffff88808d733000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00002000000d0e40 CR3: 000000004258c000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ do_page_mkwrite+0x14d/0x310 mm/memory.c:3488
+ wp_page_shared mm/memory.c:3889 [inline]
+ do_wp_page+0x268d/0x5800 mm/memory.c:4108
+ handle_pte_fault mm/memory.c:6193 [inline]
+ __handle_mm_fault+0x1033/0x5400 mm/memory.c:6318
+ handle_mm_fault+0x40a/0x8e0 mm/memory.c:6487
+ do_user_addr_fault+0x764/0x1380 arch/x86/mm/fault.c:1387
+ handle_page_fault arch/x86/mm/fault.c:1476 [inline]
+ exc_page_fault+0x82/0x100 arch/x86/mm/fault.c:1532
+ asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:618
+RIP: 0010:rep_movs_alternative+0x4a/0x90 arch/x86/lib/copy_user_64.S:74
+Code: 31 04 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 8b 06 48 89 07 48 83 c6 08 48 83 c7 08 83 e9 08 74 db 83 f9 08 73 e8 eb c5 <f3> a4 c3 cc cc cc cc 48 8b 06 48 89 07 48 8d 47 08 48 83 e0 f8 48
+RSP: 0018:ffffc9000f557ae8 EFLAGS: 00050246
+RAX: ffffffff848b1901 RBX: 0000000000000040 RCX: 0000000000000040
+RDX: 0000000000000000 RSI: ffffc9000f557b80 RDI: 00002000000d0e40
+RBP: ffffc9000f557c30 R08: ffffc9000f557bbf R09: 1ffff92001eaaf77
+R10: dffffc0000000000 R11: fffff52001eaaf78 R12: 00002000000d0e80
+R13: 00007ffffffff000 R14: ffffc9000f557b80 R15: 00002000000d0e40
+ copy_user_generic arch/x86/include/asm/uaccess_64.h:126 [inline]
+ raw_copy_to_user arch/x86/include/asm/uaccess_64.h:147 [inline]
+ _inline_copy_to_user include/linux/uaccess.h:197 [inline]
+ _copy_to_user+0x8a/0xb0 lib/usercopy.c:26
+ copy_to_user include/linux/uaccess.h:225 [inline]
+ rng_dev_read+0x3f2/0x770 drivers/char/hw_random/core.c:258
+ do_loop_readv_writev fs/read_write.c:847 [inline]
+ vfs_readv+0x5aa/0x850 fs/read_write.c:1020
+ do_preadv fs/read_write.c:1132 [inline]
+ __do_sys_preadv fs/read_write.c:1179 [inline]
+ __se_sys_preadv fs/read_write.c:1174 [inline]
+ __x64_sys_preadv+0x197/0x2a0 fs/read_write.c:1174
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f9f7078efc9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f9f7161c038 EFLAGS: 00000246 ORIG_RAX: 0000000000000127
+RAX: ffffffffffffffda RBX: 00007f9f709e5fa0 RCX: 00007f9f7078efc9
+RDX: 0000000000000001 RSI: 0000200000000240 RDI: 0000000000000008
+RBP: 00007f9f70811f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f9f709e6038 R14: 00007f9f709e5fa0 R15: 00007ffde7cc2f48
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__ocfs2_page_mkwrite fs/ocfs2/mmap.c:107 [inline]
+RIP: 0010:ocfs2_page_mkwrite+0xc37/0xc40 fs/ocfs2/mmap.c:144
+Code: 07 e8 9d 45 17 fe eb 0d 48 ff cb e8 93 45 17 fe 48 89 5c 24 08 49 be 00 00 00 00 00 fc ff df e9 cb f4 ff ff e8 7a 45 17 fe 90 <0f> 0b cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90 90 90
+RSP: 0018:ffffc9000f557320 EFLAGS: 00010246
+RAX: ffffffff83a8ce96 RBX: 00000000ffffffe2 RCX: 0000000000100000
+RDX: ffffc9000dcfa000 RSI: 00000000000fffff RDI: 0000000000100000
+RBP: ffffc9000f5574c0 R08: ffffffff8f7cf477 R09: 1ffffffff1ef9e8e
+R10: dffffc0000000000 R11: fffffbfff1ef9e8f R12: ffffea00014b1ac0
+R13: 0000000000002fff R14: 0000000000000000 R15: 0000000000001000
+FS:  00007f9f7161c6c0(0000) GS:ffff88808d733000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00002000000d0e40 CR3: 000000004258c000 CR4: 0000000000352ef0
+----------------
+Code disassembly (best guess):
+   0:	31 04 00             	xor    %eax,(%rax,%rax,1)
+   3:	66 2e 0f 1f 84 00 00 	cs nopw 0x0(%rax,%rax,1)
+   a:	00 00 00
+   d:	0f 1f 00             	nopl   (%rax)
+  10:	48 8b 06             	mov    (%rsi),%rax
+  13:	48 89 07             	mov    %rax,(%rdi)
+  16:	48 83 c6 08          	add    $0x8,%rsi
+  1a:	48 83 c7 08          	add    $0x8,%rdi
+  1e:	83 e9 08             	sub    $0x8,%ecx
+  21:	74 db                	je     0xfffffffe
+  23:	83 f9 08             	cmp    $0x8,%ecx
+  26:	73 e8                	jae    0x10
+  28:	eb c5                	jmp    0xffffffef
+* 2a:	f3 a4                	rep movsb %ds:(%rsi),%es:(%rdi) <-- trapping instruction
+  2c:	c3                   	ret
+  2d:	cc                   	int3
+  2e:	cc                   	int3
+  2f:	cc                   	int3
+  30:	cc                   	int3
+  31:	48 8b 06             	mov    (%rsi),%rax
+  34:	48 89 07             	mov    %rax,(%rdi)
+  37:	48 8d 47 08          	lea    0x8(%rdi),%rax
+  3b:	48 83 e0 f8          	and    $0xfffffffffffffff8,%rax
+  3f:	48                   	rex.W
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
