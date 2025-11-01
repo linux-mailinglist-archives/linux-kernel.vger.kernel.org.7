@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-881199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDBCEC27B48
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 10:51:13 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDD03C27B27
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 10:49:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 592023B089A
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 09:49:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DD87B4E4CA1
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 09:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152BB2D7DDC;
-	Sat,  1 Nov 2025 09:48:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382392D73A8;
+	Sat,  1 Nov 2025 09:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EthWXMUe"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ABdQt3g0"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB222D5921
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 09:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80F12D46C0
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 09:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761990489; cv=none; b=dBrxKkvC0DDUNy5FpsgAzjkrs3J0LwijrEenbO0Ah8CLbsfejJHJJ4DDncLlVuSobLrlvn6/Cr2jRm/arqPM19bmJOzxZgbWe8NkcDQR2CYGa1alPoCkTGY1kABGWW95l5XyXrNslGSBUfCe5kzFVsXrGM0F/R1q+h1XouD+zDI=
+	t=1761990488; cv=none; b=lFqLhRalG7ntshufuhmXkhjHK53cd3W36SbfE3BF7cTuazi6AEJpJ60I0MG5iDAM/KCeE2lohAVxX2Cz9J5+rZw7gXpCMuAyH70/WbrVYEKhnp1dqyk9bwb/qrhIhK0KrnVB+HZlNl1ZAsNvHj0KuiR/J+/OFGidMOI8aQ33C7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761990489; c=relaxed/simple;
-	bh=pOYQYpe/p2QLe1BjNGnDKFKMgBDeR7vUGryegGJSYW4=;
+	s=arc-20240116; t=1761990488; c=relaxed/simple;
+	bh=VFD6GtIua5YG7zFmjDzL7GA/HqAr0MELlfN71DmH60w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XK6TzM3m7Dz7SDfDThoZmkmEZEhMEgyTRLaXPCl9e2L9jtqunvtFVmKGtC781tiveZ0M8eaq5bCcd0UkaOwPkP5YlYz7KRJ8xDwCHzyRL0paCsBpqRq24gNaOa6oNFMepmdEco7JlFGKohv23lKF9+imz6YWOsBXEHUTPfDWVRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EthWXMUe; arc=none smtp.client-ip=209.85.216.43
+	 MIME-Version; b=lq4Z5ppz8RoR9xecNDuhQ3gRZwLoQ8ayGalBUw5mdR2PupcK/i5mRJrN8sOeijOkyH0UL5x3wCFFf3Z2UAv/Lkd5BHvHBjdFHbcPRttpbyqki8JC8zp8IQAhE5YWkLDM5t0ObmNg1htds8Ms9YlqWBU71PXPXfPPX5SAvRRJU/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ABdQt3g0; arc=none smtp.client-ip=209.85.216.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-33b9dc8d517so2904842a91.0
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 02:48:06 -0700 (PDT)
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-33e27a3b153so3180429a91.3
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 02:48:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1761990486; x=1762595286; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1761990485; x=1762595285; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=itKwJGhZdbxlkpaaw8hh/vRlQCwh4eBKAzIwk/pIlYA=;
-        b=EthWXMUeY9lkzfb6iFId1nEUr9wmyk7ZbkLOhThmn4nuEKSHGZjVRH9+4iOuZzEoTa
-         DSAZBTzBAdFh2gdzFoD11zyLDsC86DbpSNYnX/mvD9926cLCDYmsbVJLtuVjFKdye8Or
-         Cvazgtkl5+SIovxrLStWPxp8gu31hppEjVj8j+UHh9n8qr9mEotsrMBuBw4qhB0n9xPy
-         nLgtVdq4y928Bul13GZjJV6Am4pEv2WLg0fpg/03781qeTt/QjJcH5PS+rKCy7B7Uj0I
-         Za2RVaX2LRnvQ30pUJnxG16nTC7iYSA/017tgBXAvS+z5wNqlVK2AE3jYmEAzcgsxZmq
-         pYUA==
+        bh=i163pqyR8qyoX26TG357PYVJu78JzhXd/RDPq6ZRj24=;
+        b=ABdQt3g0TTlpYbMo/ARof8OQvjUtMB9l/em7aVs0+wNr3lVgeNbcOcvF5Lqm9n7VVD
+         vTvFntx52tMokyCjK4vCOvaS1p8vHy4YVC3qyFa6MhkZqbWaLBELOxsvMsMcYbaRwF6h
+         rB07DSBxfK59rWuOm7a+bvr2SXGSUBJmBid9R3kM8DFZ24y4UaJB31OZPtNiM8mWxCMS
+         sSK0sTPawyD0exRkqKY0XMwyOeodnBaSUbzdF2AnSjBtUgOPGX1n/+6YXAe7dwZtrvAG
+         pYrsqIhEPD+/L+eCaQkdEagedk+UqnuEtZqxFzTfvACRNtzB5mz8CbAOJE6LVC6LKuJO
+         23Vg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761990486; x=1762595286;
+        d=1e100.net; s=20230601; t=1761990485; x=1762595285;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=itKwJGhZdbxlkpaaw8hh/vRlQCwh4eBKAzIwk/pIlYA=;
-        b=tHXTPdzUsYnUsMur1RUiOjTb8HQ4ZFp78HopbSmR5kdIMcHnJLqUT2cuvoaX7Fvdik
-         jnYGfWgvGZ1vDUe/rHAiUn1Rr3H3ITtMajEu1utWRIJeFOTS9dBxQTgmzJmyWwWLwLM7
-         0m1Fc3o4Mq9YBJeB0sASI1F+C8utzbPZZ9k/skFNznnDVI1wOSvRS8mrn0fvdNFXEUWn
-         JBrdjdY//b4HIm8m9bnYphyOGnZbTYSgF8ooM1iyNvberaWGkYzLxwvlhhHg1jgbUmww
-         TS4OxP83YvAkPHl9wp5hrd2y6tcNdQZnbgUJDJlWBjYYUGv4NelLvHpufBcy1ULA6RiP
-         YNfA==
-X-Gm-Message-State: AOJu0YxJG2uhzSTpT3J9CPCYZkOdzuMLMSVGdCD7arZgxKfx0YlnUuBy
-	dq8TyrTtLTAL4HNl7nSIfzHnUumyDNf1Obzi6hdjRApkGsHgea3oE6fI
-X-Gm-Gg: ASbGncscxBHPZTowIFvqbzHr6zqK5bg5ABMs1MzlamIXsKIsbgRvENDY3pxgJg0gybo
-	sz6P/nwgUobKnL/OtaM2oNWaGuqO8DnY31FirinqqY15nx9Gz7XGC+aMaXXryyXsEud6Wkgg2YF
-	FYgp18/2Cj/rFLi1NPkwCGJO+YNNc5MwHbn0zbxrySmeMpiJjGtt3ZeAnG8WPAm1HbuNLjQXeCi
-	wCx/ESJJPGCKksPo2eGqbGdCt+mETHXrmX3MjlzChVL4Aj5c/vcb6vXRodmbsmI2WlTqu0OJiwl
-	0GNDX8xl/p0p7OeylS1hHWzedAARytA2dxvOU3jg5lP3Gqh35SR4nDFM91zaj47Xk2TkrNyup17
-	R197CQDzFQqdAJa35eyCfzO9oMXCF9HCAAoo9HGidlPsBqkamXMyH9CTT9mfhECQCDQuhGN3Phw
-	Go
-X-Google-Smtp-Source: AGHT+IGmSKAUBfWmJQyRevQMSinNhEHGk8mmuhO/TF63IeIvW13vO2DcRHYCG0bn6xcNqmxzXv7kqg==
-X-Received: by 2002:a17:902:e84f:b0:295:507c:4b80 with SMTP id d9443c01a7336-295507c4c3cmr31484355ad.61.1761990485598;
+        bh=i163pqyR8qyoX26TG357PYVJu78JzhXd/RDPq6ZRj24=;
+        b=cuVW0NfNG7lqx1BmrxSapoylxTjz695JFw9I7pYI5AmJu8ytDIpL2nxBmqX02oftTh
+         xeftibL+YWr6tCIlWlDEMsC+yL+4vyIdgQ7X3l7KutBVJgTsz07hVnitm4uVO2W8hhRy
+         Ly9Ukg7ABTMzfRrKJapAo+O+pmjsJXVUHqX1Uc7ntGNKLMpmo8TxewkT6AGK7lWjFzbU
+         regs+oFs2boehQb0vOcRUrtFz791od+9RyceKfp+OqJUwy7yITLxrTDbvxJ0vCfQu2lU
+         mxWP2JgW5n8acXAd3SVX4OvHpGGXm1nQj22TQ+1dJ334QeNp+vzsoVdCGDXfEXsnb5DH
+         A+Lg==
+X-Gm-Message-State: AOJu0YxfRJb4gNJx85bT75/HzXuNUshH5/fUpESGW/8rpBQCxLfNn8v7
+	snstcGb4QK+pmFsfcHWy76c7TPxX5xA/Ymqdd+fkM9UU/PqRTGXEbwXV
+X-Gm-Gg: ASbGncsZItyzbNHKP36uoQRgj7ZYMh4tZOZgrMO7hi6MOOkc+EXR4xmEeBGL3KZby5h
+	jLD7epSguaT6P6dejwBbdQkSYoE+jFhux6aCS9a6ywAFdwbR3F/Omz/OzX7PCMZxi9I9WHvMLBp
+	86fx5QylQcrqJ4/GBvtTj0VbsYidkUSIHKAZOaFTVR2z1HdqBbiscU4lk2P83+0lvS2kcTBBF7c
+	9acyRr0pWBSZF4z76AbTbV9WTrU02HjCrJieqlsD4o7I6okhMiWawV1+Encw47RhHkHjP/MHO0G
+	tNG4uCz8ePDbOJiCY8p9IRF/5unq+y3ab0W0wQ6wEt2H6+BU9+5E43neSBFLJkuh9lLjNxmoJkp
+	t6tB4+xVbjU4dpUP2jAPz8C71k00ch+Up8h2opAI9oXr6XAjGGIvwjvbYdINDncvKMYRS+uHF8q
+	Dj
+X-Google-Smtp-Source: AGHT+IGGaTpxpgNC8ciQSQqiqJUywpj2+O3W4oFH7FhMd41eXjxSmQvEhN4sZcxR4XzrFlG6iXv0kA==
+X-Received: by 2002:a17:90b:1c07:b0:340:d511:e163 with SMTP id 98e67ed59e1d1-340d511e58amr540915a91.8.1761990485008;
         Sat, 01 Nov 2025 02:48:05 -0700 (PDT)
 Received: from archie.me ([210.87.74.117])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29554cba950sm21531135ad.97.2025.11.01.02.48.01
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a7d8982117sm4722357b3a.15.2025.11.01.02.48.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Sat, 01 Nov 2025 02:48:03 -0700 (PDT)
 Received: by archie.me (Postfix, from userid 1000)
-	id C5F6541FA3A7; Sat, 01 Nov 2025 16:47:56 +0700 (WIB)
+	id DB82841FA3A8; Sat, 01 Nov 2025 16:47:56 +0700 (WIB)
 From: Bagas Sanjaya <bagasdotme@gmail.com>
 To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Documentation <linux-doc@vger.kernel.org>,
@@ -88,9 +88,9 @@ Cc: "David S. Miller" <davem@davemloft.net>,
 	Herbert Xu <herbert@gondor.apana.org.au>,
 	Bagas Sanjaya <bagasdotme@gmail.com>,
 	Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH net-next v2 5/8] Documentation: xfrm_sync: Trim excess section heading characters
-Date: Sat,  1 Nov 2025 16:47:41 +0700
-Message-ID: <20251101094744.46932-6-bagasdotme@gmail.com>
+Subject: [PATCH net-next v2 6/8] Documentation: xfrm_sync: Number the fifth section
+Date: Sat,  1 Nov 2025 16:47:42 +0700
+Message-ID: <20251101094744.46932-7-bagasdotme@gmail.com>
 X-Mailer: git-send-email 2.51.1
 In-Reply-To: <20251101094744.46932-1-bagasdotme@gmail.com>
 References: <20251101094744.46932-1-bagasdotme@gmail.com>
@@ -100,56 +100,34 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1815; i=bagasdotme@gmail.com; h=from:subject; bh=pOYQYpe/p2QLe1BjNGnDKFKMgBDeR7vUGryegGJSYW4=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDJms13KNlx4KFSxULsk3LP3JtY35sWGfXpg2k+SFYP+X2 3yT70V2lLIwiHExyIopskxK5Gs6vctI5EL7WkeYOaxMIEMYuDgFYCKibowMZ0r6ZqdFrjr9f4q2 2kWJGVwLvtyy2M357c0KznVcGYJSGxgZbh9tPhniE+L+LnVzSdOyM2f2XuKyycic2vwn+d9mc6M L7AA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1096; i=bagasdotme@gmail.com; h=from:subject; bh=VFD6GtIua5YG7zFmjDzL7GA/HqAr0MELlfN71DmH60w=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDJms1/J61eMXh5r+5VtpuJ9Vae2HZ5pck3/9ZC9+wrTmo CDvkzsLO0pZGMS4GGTFFFkmJfI1nd5lJHKhfa0jzBxWJpAhDFycAjARUUNGhp2cd7vve3/YPVXf p5gnfWOM2NMCjeUTV6z6s+aziv7rI38Y/tl3/V3BVPIkw0ZqYnR3IM8kj2mXPBdYrq8qvHHN4sh LWy4A
 X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
 Content-Transfer-Encoding: 8bit
 
-The first section "Message Structure" has excess underline, while the
-second and third one ("TLVS reflect the different parameters" and
-"Default configurations for the parameters") have trailing colon. Trim
-them.
+Number the fifth section ("Exception to threshold settings") to be
+consistent with the rest of sections.
 
 Suggested-by: Randy Dunlap <rdunlap@infradead.org>
 Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 ---
- Documentation/networking/xfrm_sync.rst | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ Documentation/networking/xfrm_sync.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/Documentation/networking/xfrm_sync.rst b/Documentation/networking/xfrm_sync.rst
-index c811c3edfa571a..de4da4707037ea 100644
+index de4da4707037ea..112f7c102ad043 100644
 --- a/Documentation/networking/xfrm_sync.rst
 +++ b/Documentation/networking/xfrm_sync.rst
-@@ -36,7 +36,7 @@ is not driven by packet arrival.
- - the replay sequence for both inbound and outbound
+@@ -179,8 +179,8 @@ happened) is set to inform the user what happened.
+ Note the two flags are mutually exclusive.
+ The message will always have XFRMA_LTIME_VAL and XFRMA_REPLAY_VAL TLVs.
  
- 1) Message Structure
------------------------
-+--------------------
+-Exceptions to threshold settings
+---------------------------------
++5) Exceptions to threshold settings
++-----------------------------------
  
- nlmsghdr:aevent_id:optional-TLVs.
- 
-@@ -83,8 +83,8 @@ when going from kernel to user space)
- A program needs to subscribe to multicast group XFRMNLGRP_AEVENTS
- to get notified of these events.
- 
--2) TLVS reflect the different parameters:
-------------------------------------------
-+2) TLVS reflect the different parameters
-+----------------------------------------
- 
- a) byte value (XFRMA_LTIME_VAL)
- 
-@@ -106,8 +106,8 @@ d) expiry timer (XFRMA_ETIMER_THRESH)
-    This is a timer value in milliseconds which is used as the nagle
-    value to rate limit the events.
- 
--3) Default configurations for the parameters:
-----------------------------------------------
-+3) Default configurations for the parameters
-+--------------------------------------------
- 
- By default these events should be turned off unless there is
- at least one listener registered to listen to the multicast
+ If you have an SA that is getting hit by traffic in bursts such that
+ there is a period where the timer threshold expires with no packets
 -- 
 An old man doll... just what I always wanted! - Clara
 
