@@ -1,98 +1,111 @@
-Return-Path: <linux-kernel+bounces-881329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F477C2805F
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 14:52:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFECEC28068
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 14:57:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3DFB3A9CF7
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 13:52:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEC9D188E187
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 13:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8C71DED7B;
-	Sat,  1 Nov 2025 13:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UFxKWV2i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73F734D3A0;
-	Sat,  1 Nov 2025 13:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE5B22D78A;
+	Sat,  1 Nov 2025 13:56:53 +0000 (UTC)
+Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [118.143.206.90])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064D534D3B6;
+	Sat,  1 Nov 2025 13:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=118.143.206.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762005124; cv=none; b=C7DO8ZOA8bvGP4Ix8UsGxwtHwdk2G3lpRMVurvBA0QVBjOUkaO4JIEYhsj73YTYjmvXF3/vXvU+Za/jZbzPrvLcy689qjLvFdDScYLCbhoBJheCFVE1dh7JawRm2YKaZnX6VlZUJRs/G92igQ12rFZ67b7EMEkG7XxyU1W8ABts=
+	t=1762005413; cv=none; b=AHkgrgIFdkdI+F0lh9PweMB7biP5THo6D4LMtMeekuy6CWYcnIpzsyxlYyU/UvuKcTci2p3aTC7MfdUqN1ua2MyW9k7635S/dOsxoFusWcg84hyk6p6nNiPHdfaZdsm40vRHItmCIQJx8htVMVL013uPWFBDOTZcp5ypY/RdXkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762005124; c=relaxed/simple;
-	bh=9BNrKXwUlGNzP5HzLWvXn1mQ3hf2YRbRxhSn/CZG7yE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=gY4O7KrJZ7Oo58OtjEzHnIXXr8AeLORsggL05A1sGxQrvTenbR9jgTyiOmeXHDFewbkP0JxdtGEeVF5NTXIyfaEq7ri4p40UflLv5A2JEG5ryL4jwlGaI9AwcqXMLetxNiLQVRwcwMwVOrdzsGz0OKlXlbfyZ4KwfFZxGChI0Pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UFxKWV2i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 101FAC4CEF1;
-	Sat,  1 Nov 2025 13:52:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762005124;
-	bh=9BNrKXwUlGNzP5HzLWvXn1mQ3hf2YRbRxhSn/CZG7yE=;
-	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
-	b=UFxKWV2iyBFluHp7ml5o3kHVnOGCBgild1Zk3er1uzvuNpk8fLnXf0UimJQUAhhoY
-	 5vkm6AwGkQmXzaFBgGhJryontG2UibvB//hMG46lW+0d7sp+R3nMw6ewUxNs3LcC/9
-	 nJNkfJSxWXL/94SXEfJ7ZcPAsaG7TZ+iLVloINmsRlzDMbWYrPYkVCtPKseZuUPBu4
-	 jcQx8jNee+LWgCDLMHXFW1zZlWsrB8ZFdkztQDm9Nj1gmA9ME/cUmf7zvDW7WdLRgN
-	 f9bHsz0F5h0XSmfErYNrkHNDkCeBoCDsXTchUQoDStS8omAXSLYaKQST/YTQCW4bPn
-	 kbiHJE7D4SwYQ==
+	s=arc-20240116; t=1762005413; c=relaxed/simple;
+	bh=54YFvUQyKiUBXLsSAVClXBwjoW43bRWANDi9bisFiVU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BeUVeHZ6uNyA0GBdi0tORr9GBjhMRUNt+kxysppBJrdG+qhGimNeCixWZsqtPsCrOyC5TmVY+pnbfLyq8RkpAwKwN+h5wKVzXgEawbKxM/1NDW8UNaJp5UTK9X+5abZRl4k4Hh7eCGkX32+pmvHur5VCSRJugJOcnCTXRyrMO2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=118.143.206.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
+X-CSE-ConnectionGUID: wpOrwVv0TfGh+FJzZcbPPQ==
+X-CSE-MsgGUID: SFIU6wynT+iEPt/G+F7yQw==
+X-IronPort-AV: E=Sophos;i="6.19,272,1754928000"; 
+   d="scan'208";a="131247206"
+Date: Sat, 1 Nov 2025 21:55:22 +0800
+From: Owen Gu <guhuinan@xiaomi.com>
+To: Oliver Neukum <oneukum@suse.com>
+CC: Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+	<linux-scsi@vger.kernel.org>, <usb-storage@lists.one-eyed-alien.net>,
+	<linux-kernel@vger.kernel.org>, Yu Chen <chenyu45@xiaomi.com>, Michal Pecio
+	<michal.pecio@gmail.com>
+Subject: Re: [PATCH v2] usb: uas: fix urb unmapping issue when the uas device
+ is remove during ongoing data transfer
+Message-ID: <aQYRIgg2lyFhd7Lf@oa-guhuinan-2.localdomain>
+References: <20251015153157.11870-1-guhuinan@xiaomi.com>
+ <aP8Llz04UH8Sbq5Q@oa-guhuinan-2.localdomain>
+ <8de18ee2-ccdd-4cdd-ae49-48600ad30ed4@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 01 Nov 2025 14:52:00 +0100
-Message-Id: <DDXEOPKO5RV5.37NXWB7O9AA6K@kernel.org>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-To: "Alexandre Courbot" <acourbot@nvidia.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH RESEND] rust: transmute: add `from_bytes_prefix` family
- of methods
-References: <20251101-b4-frombytes-prefix-v1-1-0d9c1fd63b34@nvidia.com>
-In-Reply-To: <20251101-b4-frombytes-prefix-v1-1-0d9c1fd63b34@nvidia.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <8de18ee2-ccdd-4cdd-ae49-48600ad30ed4@suse.com>
+X-ClientProxiedBy: BJ-MBX07.mioffice.cn (10.237.8.127) To BJ-MBX05.mioffice.cn
+ (10.237.8.125)
 
-On Sat Nov 1, 2025 at 2:41 PM CET, Alexandre Courbot wrote:
-> The `from_bytes*` family of functions expect a slice of the exact same
-> size as the requested type. This can be sometimes cumbersome for callers
-> that deal with dynamic stream of data that needs to be manually cut
-> before each invocation of `from_bytes`.
+On Mon, Oct 27, 2025 at 02:35:37PM +0100, Oliver Neukum wrote:
+> Hi,
+> 
+> I think I was unclear the first time.
+> Sorry for that.
+> 
+> On 27.10.25 07:05, Owen Gu wrote:
+> > Hi Oliver,
+> > 
+> 
+> > > This patch modifies the error condition check in the uas_submit_urbs()
+> > > function. When a UAS device is removed but one or more URBs have already
+> > > been successfully submitted to USB, it avoids immediately invoking
+> > > scsi_done() and save the cmnd to devinfo->cmnd array. If the successfully
+> > > submitted URBs is completed before devinfo->resetting being set, then
+> > > the scsi_done() function will be called within uas_try_complete() after
+> 
+> This requires that uas_try_complete() is called.
+> 
+> And I am afraid uas_stat_cmplt() cannot guarantee that in the error case.
+> I think the following sequence of events is possible:
+> 
+> CPU A						CPU B
+> 
+> uas_queuecommand_lck() calls uas_submit_urbs()
+> COMMAND_INFLIGHT is set and URB submitted
+> 						URB gets an error
+> 						status = -EBABBLE (just an example)
+> 						uas_stat_cmplt is called
+> 						resetting is not set
+> 						if (status)
+> 							goto out;
+> 
+> 						uas_try_complete _not_ called
+> 
+> The scsi command runs for indeterminate amount of time.
+> It seems to me that if you want to use your approach you also
+> need to change error handling in uas_stat_cmplt()
+> 
+> 	Regards
+> 		Oliver
+> 
 >
-> To simplify such callers, introduce a new `from_bytes*_prefix` family of
-> methods, which split the input slice at the index required for the
-> equivalent `from_bytes` method to succeed, and return its result
-> alongside with the remainder of the slice.
->
-> This design is inspired by zerocopy's `try_*_from_prefix` family of
-> methods.
->
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+Hi Oliver,
+I think the error handling only takes effect when uas_queuecommand_lck() calls
+uas_submit_urbs() and returns the error value -ENODEV . In this case, the device is
+disconnected, and the flow proceeds to uas_disconnect(), where uas_zap_pending() is
+invoked to call uas_try_complete().
 
-Reviewed-by: Danilo Krummrich <dakr@kernel.org>
+Regards
+Owen
 
-One nit below:
-
-> +    /// Converts the beginning of `bytes` to a reference to `Self`.
-> +    ///
-> +    /// This method is similar to [`Self::from_bytes`], with the differe=
-nce that `bytes` does not
-> +    /// need to be the same size of `Self` - the appropriate portion is =
-cut from the beginning of
-> +    /// `bytes`, and the remainder returned alongside the result.
-
-Maybe "alongside `&Self`"? "alongside the result" sounds a bit like the met=
-hod
-would return `Result<&Self>, &[u8]`.
 
