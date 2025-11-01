@@ -1,211 +1,140 @@
-Return-Path: <linux-kernel+bounces-881354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DF84C280FF
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 15:27:38 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35B21C28108
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 15:29:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B671734A2D0
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 14:27:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B4E14EC970
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 14:27:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 513D32F6597;
-	Sat,  1 Nov 2025 14:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89CEB2F39D0;
+	Sat,  1 Nov 2025 14:27:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pPAg/znQ"
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010016.outbound.protection.outlook.com [52.101.61.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L5Yny+Rq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BFC60B8A;
-	Sat,  1 Nov 2025 14:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762007247; cv=fail; b=ZIIISK0oHvuKsmi1/N6qCX/xy6HElDOet41SrBsZ+7F10wi5rtdopGVGHJnucGAOZc5fOrKZp21XNiBpyfuNB/GWePdU+6MbwNydL4uRcw6U6jRs3dT3W/DsvYsn9SwxsFXh1LEzxfe2q4O88r3FEf/+1260kB4SF5pWUXIytts=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762007247; c=relaxed/simple;
-	bh=u/9JZ4p+nDAtlxVjAsMFKkb11/zY/9hrTxQYJp9B0ZY=;
-	h=Content-Type:Date:Message-Id:Subject:From:To:Cc:References:
-	 In-Reply-To:MIME-Version; b=a50z0zbJJRw67dsWWXKiaHt594zTlPJrrCxmNHm2J8TvCTapTBLb2wSqKotosKPuXYR5eiXwDvKenmx5v9n0Ti1qOC2eM3+DcQaHreInx/M+HdjRnhMlbHcgCrhYzKm/3CLXgZdenvvTfWYqR7tyukWWguyQ+KacLZJPke7HmRg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pPAg/znQ; arc=fail smtp.client-ip=52.101.61.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=h6WPaLoQQmFxNI7IL10OK+szAX3EBDlHz93e+oDI/zIQTm65AJE4NO/QE6wkxUhgaueXkSIIhUxpKB9fk+T9Xb4DUjrt+EQITLuGx7RtM9YgWNVC46BHqVLVRDGGLu0/qmOBfYkVbqEx+rcpI0KtIxYgdaOuesAiQFm6mNPqddYDdcPvSfBhYYLb8Qe1ccMR7mfOdRS2cdAmXyoJku3nQ2I2TViG+Bx9HiAdFWpEOyG8Vc68ScXxUsfAeehiiBztwJMGZL/qXExxREBfBHc3rBpYJAWgK+LDT1GDDVv3BGuf9XpenDxUBGEBZPA/k6ty7zawnnU2TO4dXi6bM0+How==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=u/9JZ4p+nDAtlxVjAsMFKkb11/zY/9hrTxQYJp9B0ZY=;
- b=AMXQvKHbrx7MqjB+nwQTUMLRvjPXtbUc0qY9iJ24K7e5DarVBNG6GqEpBXCgDNNd+yjaJmEzRJ1ANU/rMSlAFGtdlU1soaxwXW3nwSni8b770XKbrwJhy+ydgNKFWzavp4I1dHoWdz8AE/CJmep+b6QvuCwG11jC9fxH7YRf251xeGNLgJNfhQ+/Fcm5wAVJ3ZgsULjsHJrTM9SmwiOLFldGdX2vAoChwTqHMP+3/z5cXXi+PAGYMPkHVj6mM6gP1/S+G16hNq8CgeMZSbd12x7KE80gfzEl3tI1g5Q7GChNLKLUPcBPaJPfr+S5o6V7BnPbrunkhF5cnSHr7vnr4g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u/9JZ4p+nDAtlxVjAsMFKkb11/zY/9hrTxQYJp9B0ZY=;
- b=pPAg/znQYeduPsJgeapYJ5UUoYiNwdV1SlwwaEXUG6KN8hxxik95BO1cClSUhCNz323KoDAFyPSg6uv+jrC9UxiiOTvI1H8elgca6hROTWV7Q7xZaxpz8MnbIe2Al6FePykHmbwsTCjiC39SwdYTKmNcMHJpolrljYw7FHpCBiQigVON9Q5YRSNgjS70Wv8lxu/FWeGMYV24A9i2BZkEgJW9t67OnSVzvRl3Dt5+iH9Fi89e8hqzhbcaxK2YmzG6+aCZT8QMWnuQcY69hDPJzC4+Ounu+X62eKSG7alRxZCx9ggAn5WUBQB/6dGs47t5nqRQ+hHmBA6H48wMt403UA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by LV2PR12MB5776.namprd12.prod.outlook.com (2603:10b6:408:178::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Sat, 1 Nov
- 2025 14:27:21 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9275.013; Sat, 1 Nov 2025
- 14:27:21 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 01 Nov 2025 23:27:17 +0900
-Message-Id: <DDXFFQCZJW8Y.3GMX8666EJQ2I@nvidia.com>
-Subject: Re: [PATCH v3 05/10] rust: uaccess: add
- UserSliceWriter::write_slice_file()
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>, "Alice Ryhl"
- <aliceryhl@google.com>
-Cc: "Danilo Krummrich" <dakr@kernel.org>, <gregkh@linuxfoundation.org>,
- <rafael@kernel.org>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
- <boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
- <lossin@kernel.org>, <a.hindborg@kernel.org>, <tmgross@umich.edu>,
- <mmaurer@google.com>, <rust-for-linux@vger.kernel.org>,
- <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20251022143158.64475-1-dakr@kernel.org>
- <20251022143158.64475-6-dakr@kernel.org> <aPnnkU3IWwgERuT3@google.com>
- <DDPMUZAEIEBR.ORPLOPEERGNB@kernel.org>
- <CAH5fLgiM4gFFAyOd3nvemHPg-pdYKK6ttx35pnYOAEz8ZmrubQ@mail.gmail.com>
- <DDPNGUVNJR6K.SX999PDIF1N2@kernel.org> <aPoPbFXGXk_ohOpW@google.com>
- <CANiq72k8bVMQLVCkwSS24Q6--b155e53tJ7aayTnz5vp0FpzUQ@mail.gmail.com>
-In-Reply-To: <CANiq72k8bVMQLVCkwSS24Q6--b155e53tJ7aayTnz5vp0FpzUQ@mail.gmail.com>
-X-ClientProxiedBy: OS7PR01CA0021.jpnprd01.prod.outlook.com
- (2603:1096:604:24f::8) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E513C60B8A
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 14:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762007266; cv=none; b=M+O34mXnVnyyJchjhPcrqs4Phw4lB0kSNCh+5z3D3Q+Ge67cpkrWEcTSa3nt4P9vjW1ouW1XX3/JE66kyL6PdWZ7LCyOyJqGML40EZ17wIi9wOr7eOECAfAAAsqVi7AlBRaMgcRVd3mZ8xXG4E/Xgx5E2z3N+tF+F0jniU3aNG8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762007266; c=relaxed/simple;
+	bh=lV3WbcP4L63VVdKmRFHTW2IFkZA0MqVRd2TKiW7+rwE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sRgd84b3jya6JqMci0s2WZKPuu15nQWptnfTR5vyKEKhMqOyQHOal7OcqGFR8KgM7HI0+8MrfcNiy7Lr4a0qoU+e3Jik3xA8ZRgL4iW/22ZKLWdzVVpZJ6xTu2HSzFigblrcPgOFEwI75HWHNdBxAMaP2L1flOj5eEAZudbxb/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L5Yny+Rq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DFDCC113D0
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 14:27:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762007265;
+	bh=lV3WbcP4L63VVdKmRFHTW2IFkZA0MqVRd2TKiW7+rwE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=L5Yny+RqR6ejBT6dWjFU5SPnufclvSK/b4ZmkHgMH6VFD/mWp5pBe6NBwWJvKh9WQ
+	 dsgceBxVUt+AO2fGJ7F7f4vOLZIkAgGFHdATQcvg9q0kcr9iabq4uwwJWy9kUzAwa/
+	 DoFWq7t+6T2yv6Ptrc+1xMFw9+2PuFR79bBKtT5OVGW5QUlQ4CXg6r4756IW3Qb5v7
+	 7J0q4ufSMc/E670BHmPOvjV+CV0F5R1Wsu0m4YJP2ZnJbv3BDCkn6uHoqDdpjcqTGE
+	 GNEOyFEnh+Zc8PEnjyMQkOUWtgLc+S/vNujsiam8gFVG3pcxFUM8cBPBRvB7oe3FfY
+	 5Cs7n7Dvgpnyw==
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b67ae7e76abso2342208a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 07:27:45 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUuMcP6T4WhM/B1SHJM0ya9thVc1iWIoW4aLYm8kdacjKiHrTar65/QCY0AnOjQL2iHPs1t9CWjOzGe5SQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRMGdfA7aNIXOu7wdnXRePkoEpToCcQVaMGIVprfSiF8BK1pYD
+	IWZDxdiRAdKNpwvsoZEcv+HIHxh8F/74pOYtsxEchQ55EUznY5BXPdCXkMuVBpBIxHKm5JC3ElR
+	6S4gVyeCRc5pir3FGv41K9xdahGXCfA==
+X-Google-Smtp-Source: AGHT+IGnOFjLL6wAsT9pv5cIhcF/90Mw/1kp/7g3CvXtV1RTTu/pF5hz4dyECsPv9IpJsPMLjLxpTdmcXg7a1NiMbbo=
+X-Received: by 2002:a17:903:24f:b0:295:24ab:fb06 with SMTP id
+ d9443c01a7336-29524abfc57mr60471485ad.22.1762007265054; Sat, 01 Nov 2025
+ 07:27:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|LV2PR12MB5776:EE_
-X-MS-Office365-Filtering-Correlation-Id: 783a1f0f-bcdb-4026-fa63-08de1952c469
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|10070799003|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MUV6aDFud3ZUcjdQWlRvY09vc1hoOEl0NWlQQlpOR0w4cEFnazBESm9MZGNF?=
- =?utf-8?B?QUE2bTduT3lrczg4dmpyQk53L3hQTHB5Um5IWjE3THVJUTdmZDVTYUt4cUlP?=
- =?utf-8?B?aURiWlcySzRmdHBZZjdEMXdJRE54MUlFbTFXN1lzaHR4b1FtK3Nuc3BYYWtn?=
- =?utf-8?B?cERnbjIrbFVhVGd3OURqTFdqckxDUUppaSs0aCtYN1hud3hzekxqbzZvTm5J?=
- =?utf-8?B?aE9HV1cwSmZYTk8xRnYvTUZNUlBJbEJETU5ZelZQQ2swcEJtbmdncnlVR1FV?=
- =?utf-8?B?YmdtMCs0MVNQNDdCbWNVdlVRV1N2VHdsd1UzL0gvMHdUK1pVcnlyL2RrNU0v?=
- =?utf-8?B?SnhIWkMvV0dkdDRuVk1GQWRROTEzeFNwMnFEK0cxSnUreHJaRVhvWHBFNks0?=
- =?utf-8?B?UUJNQlBUUktDaTNYQzhyOGZ1clNVT1pUaSt5UnR1ZEhiN1J0OWZHczZYYWZt?=
- =?utf-8?B?bGxuSVYxTkQ4WWlRT0NrQkl2eDF4di9qTlc0eGE4VE9oN3NNRWdKOFJLbGI2?=
- =?utf-8?B?ZTRhcTlYVjErdkJ2amxRa3AxdzQ3b3FJc1RiZldRb1VOYng1bkNDa3pRdTJ1?=
- =?utf-8?B?b0lVNVFOUmdpeXljS0wrenk4M0MrdUtXYlZwNUtXMGZBazM2ZHozT1o2V0pV?=
- =?utf-8?B?WGltWFRJMkYzbmtlTk03MHNRS2RNZUd2TW1ZUTFhNXNERUFsMkxHUVNpbm1u?=
- =?utf-8?B?MnE5VWxRRGM4YWl5TU15UWtWbzhkQjRxd0t3ZHovK1R0Q3MrMk15MzBYMGtI?=
- =?utf-8?B?eGZwcXdHM29wUzlOZ1ZEOWd5dHZPMk1qb1FNWjdRTjFrWERwdE1UcTcvVmNR?=
- =?utf-8?B?dVZVZnV3UWlFZ1ZjeEFBSFo1Z3F3UzJXZG11REFLNzFTZ2RDM0N0L1F3czNo?=
- =?utf-8?B?c2tsUmwrZmJPSjVwYWRlcnA2Z2xKb25KNFBiZmZpeFRpUG5jQVY3TklmbDZ0?=
- =?utf-8?B?cVYycmRaRUFxcnpJUUowQnN2dmdXUmUwMWJXMlc1Y3hWRzMzNCszM0pEeXY3?=
- =?utf-8?B?VEpsN1N1SG9tQ2NsbnZnY0k1U1I5LzRrUzZkQnFmckNjVmYybzdsSWRKN0RR?=
- =?utf-8?B?WWNxVGw4T2RLZUQ2aE5kMDg1UFRjVVZQUGFISnc0TTdzRmcwUGxDV0ZsQzR1?=
- =?utf-8?B?TDArSXNIOWc5cDVIbitiNEhGYnVlVG1UL1I2cHV5V0VCWGtSR05VV1JrU1la?=
- =?utf-8?B?SW9hOHpSc2R2enplMmtkRTIxdDg0THFvVHgxUmdITVl5MlFOMVNtTW1UUWxt?=
- =?utf-8?B?bCtUMVhsNWNTcERvaDBaMFNUYXlwVEJ4SmRHMkxFdFM0M1M0S3R4Y1JpMXA2?=
- =?utf-8?B?ZlhXTDF4dmg5b1VLbVpwQlpCTkZ3ek9aVDc2MmNucktUU0cwYVhEVDYvT1RJ?=
- =?utf-8?B?WmlicnRkYUNBNk9ON2ZmMjNXL3R3bGJxWjEwZVh1Q0IxS1FEMi9zSVFpejZC?=
- =?utf-8?B?ejM1TWdyZjBMR0JPSEpMcHZqTk9LTmpFdE5yWm1ON1NEdk9DSGhPc2NkWk1E?=
- =?utf-8?B?SzI2K2drck5BNEZpQXozaDdhcUsxUHhsdmhMaWlicThydDc5WitJeXVWNGxs?=
- =?utf-8?B?TVV2WlVrM1F5YU1LMDNDQlczdFVYb1Z5QU9Zc2FaS2pzTzhLd1FFSzF3Tk9t?=
- =?utf-8?B?MjEvTTBraDJXVS9EM1FFMCt2Y0YyM3h0MHpSWW1nejNoQ0tKWTJzT0FlaUdF?=
- =?utf-8?B?R21zalBPUENkaXhNVHQydDR2Z1NnL0VrUkJBaDYzeUg3SXZOWlFIOVJ0L3gw?=
- =?utf-8?B?TVp3SW9ERkp4SFQvL2pRbVlmWVNNZzNNeG5HS05UaTdXTFhjTGdRbnh5Tnl4?=
- =?utf-8?B?WHJoOURzczFvL0cweUxkdUpwNHJrS0QyQ0YvSGQ3bEpkODRwa2l4N3R3V0d0?=
- =?utf-8?B?UlpvVWQ0d0c0S1dmeFpkL2pEQ0xaeXZhOXArVkg3a2ZDcjNSampUOXhUR2cx?=
- =?utf-8?B?MjYrY1JKOGY4MlQ2MFQ1TDdnUXFCVU1ZQlJYSWpSWFV5Sy9WcWtMSXE2anRO?=
- =?utf-8?B?SlBNYWU1WjhRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bXRwMnhIa2F2WlJ0eWdUUzBXNW5qODZDQUdkNTMzb0NoWXJMSXBiaGtMNURK?=
- =?utf-8?B?Q1Q2M0RHSXZyTFdwSTlST1VYUUpldVdBTkVSd243N1AybFo1SlYvbWlaMGVZ?=
- =?utf-8?B?OUU1U2lXOGFZTXpITkhOUU9GT0FXVTg2OTV3emkvQVVHOGNLSkpBZjNqNUNN?=
- =?utf-8?B?OEcxdTUzYm9PYTRLdGlkUHpHSExIajI1ci9uSGx2a1BtcmtzTjE2ZXpPSUNL?=
- =?utf-8?B?akV2Slc1Qm04bFNDdzV0MXBTWm9xQ0pBVzBzbGJNbTdFa1NQNE9Lb0NqMmdj?=
- =?utf-8?B?ZnpTbG5IQmgxUVVjb1BweXVvc1dRWGI1VDA0SEV2THl2emZjS3E0Sm9MWWQz?=
- =?utf-8?B?eTdmUUlUd08vUmc5bGpFbVAvVU1JbVY2Ym9nSmQ2ZUd0OHRQT0l1QXdUbjdr?=
- =?utf-8?B?UGNEaU9MbWdtdkEyNyszVCtzWHYxRnZlOUsvdWJVeC81L2VBblQyY2xiTEl0?=
- =?utf-8?B?TUR0SVIwQ2EyVVprRXFCSkVuMTFST1V1dExMRFB6bU5ZVldJaG9tY3EvYmZO?=
- =?utf-8?B?cUV1MWdWY3REbDhJaG5nTGhpS05lNkNYYVlhMkJnaUt5cnptWWtid2dnRDd1?=
- =?utf-8?B?TTJmakZ0WEZOWXI0YzAzZ2gySW9RN0ZpT0tYYmp6QWNSdVZOUHhCekhoVzVG?=
- =?utf-8?B?Z2hucUZTR1N2d3pTRUZuUE5Ob0x5RTFEMThSQW0wbVhJQ0ZWL1JnZEFDYUMz?=
- =?utf-8?B?aXI1SFc2Q0VDOUVEejJnaXprVUlXcGc4ZGYraFRzdGtLaURLQUJINTZLQlBo?=
- =?utf-8?B?VDlyUXAyVnFZNXdrUlduZnVVVERSdlFNRitVcnpiN2lnTitzZTU1SVVvSjBs?=
- =?utf-8?B?d2Q3NXplT2ZqSmllSnVrTVNhQ2NrMlgzdytrTDFMSTFVRXRiNWMvL2J3cU9P?=
- =?utf-8?B?V0hLemxCamlVamlGTjBlNXhQem4rTGx2NUxYVGx0Q3pWQVVOWUE4aW5lUVov?=
- =?utf-8?B?MWdid1M4ZlFzNkFpM1p2QldDSGk5U2pYSll0azVCVm1WWWZ5QlZyS2NvUTRR?=
- =?utf-8?B?bW5kbXhHQXZtWFZZL0ZBbmFaT1pQZGFzdnFWUTBveFJ2OE1YUExMdDdOdm81?=
- =?utf-8?B?bXkwYUhRK0I3SlZaWGREaWd5amY0UEFKaHNHK1M3WjFrWlVkN01jbEtOVmNu?=
- =?utf-8?B?V3YrVHpZcDdJMkpucnVNTXBCcFdoQzF1alk0dzVJYlgzVUViUVpHZGVSR3p2?=
- =?utf-8?B?QzV4RWJ6WGNGckNtNHpxaTloR0E0LzlVMTNDWTRNZ1dYektpUkNCK0lWRis5?=
- =?utf-8?B?bDJSMHAyeUFCTGJiMVVvMWc5U09SMzhqOHpUd1g2Q0cwK0QxdWk2dFZMS1Fh?=
- =?utf-8?B?L1JCNnNFdExaaTJLTkV3VllJWVRWQTY1UDk5WGFiNmN4QitHcTlmZ3ExbTBl?=
- =?utf-8?B?NlNIbnJ3RUNKNW1oM1E1ZVB5UVg0bW5LOUlLQTJHWWYxUHVkTXRTTjZrdzc4?=
- =?utf-8?B?aWJQMEN6NndCMXh4aXhOdmJzU1U1T1c2STI4UkJzeGJvYjBPSUtnZGxjS0hN?=
- =?utf-8?B?RHVXeEVmM1hPRlg3YXQrMDdtenBkdU1xUUhEbzEwa3lBQzVQeGs5NU5SYXA5?=
- =?utf-8?B?T3RGR2haVHJjRlpZRVRub3ZtUU1BUjk1WGJDdUhKNEIwSEtSV0U3WFVNNXRX?=
- =?utf-8?B?clhTNjBjMzdCbW40ZzdMSTI1QmJPY2NGdjlxajF0eVY5RkVMcHYzT0l6d0FB?=
- =?utf-8?B?UDRwQmlwWWViTEVKMEV4KzFqcEluRWw5L0JNWldRS0VhQytuUThOMkhQSHFQ?=
- =?utf-8?B?eWdHVWN4ZzVGTmZMYUN3RElIa2dFOHJNMnFwU2E2cFNoMk9xdGtob0RyU2xQ?=
- =?utf-8?B?eXFkS0xtYkVxN0xEM1hLYUk0NXRNUS9ERU9pZmQ1amptNnplblhnSTc5dDVQ?=
- =?utf-8?B?RFJCaHU4ZytyU2hHdTJxWjExRkgwTmp2eFAvWUswOG4wV1cwVU1EY1VmdGFV?=
- =?utf-8?B?bmRHSThYOW0yQWVUakpQbGRGVVFrdlFvcHNqT0hRNkcwVXAyWXk1VXhkak1U?=
- =?utf-8?B?azdnK2RueFdFeEZYa3FHNHBUWkFzRFowRTR5dzdxWTZJbUc4QWJ1SGpTajZQ?=
- =?utf-8?B?Z056a0FqMURlazVJdlJTblNVWVF5T2hsaG5XWkRWTE5TL3lTMlJDOWJtRENX?=
- =?utf-8?B?MlBFOW53RnFwclhLU0tadVJueHJSbnJjUVpXMk5zLy84WGNWanV3bDRMTGE0?=
- =?utf-8?Q?0BK2JZq6Gu0gmKQxiJW0GuM39JEWsYUpgGPuLOxjEURB?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 783a1f0f-bcdb-4026-fa63-08de1952c469
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Nov 2025 14:27:20.9601
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zZRA3Xn1naaWkcn3QhLLnXa2dNvdeNSEjbToJISYnq5SDOAbLCwHY19s25g4q6Ie2gYBjKRJn60dAVVbXQxKeA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5776
+References: <20251024202756.811425-1-ariel.dalessandro@collabora.com>
+In-Reply-To: <20251024202756.811425-1-ariel.dalessandro@collabora.com>
+From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
+Date: Sat, 1 Nov 2025 14:27:32 +0000
+X-Gmail-Original-Message-ID: <CAAOTY__Ac8S3gnbx6RbVZrNzMcqSkE70xuq5ErbzAWPUh9moAA@mail.gmail.com>
+X-Gm-Features: AWmQ_bn-FuEPLjCksrS_ODh-bQvHMz1N_UARyqPo_gbgBDuh1txOjH8bx8rhYo0
+Message-ID: <CAAOTY__Ac8S3gnbx6RbVZrNzMcqSkE70xuq5ErbzAWPUh9moAA@mail.gmail.com>
+Subject: Re: [PATCH] drm/mediatek: Disable AFBC support on Mediatek DRM driver
+To: "Ariel D'Alessandro" <ariel.dalessandro@collabora.com>
+Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com, 
+	simona@ffwll.ch, matthias.bgg@gmail.com, 
+	angelogioacchino.delregno@collabora.com, greenjustin@chromium.org, 
+	sjoerd@collabora.com, dri-devel@lists.freedesktop.org, 
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kernel@collabora.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat Oct 25, 2025 at 3:02 AM JST, Miguel Ojeda wrote:
-> On Thu, Oct 23, 2025 at 1:20=E2=80=AFPM Alice Ryhl <aliceryhl@google.com>=
- wrote:
->>
->> I would love to have infallible conversions from usize to u64 (and u32
->> to usize), but we can't really modify the stdlib to add them.
+Ariel D'Alessandro <ariel.dalessandro@collabora.com> =E6=96=BC 2025=E5=B9=
+=B410=E6=9C=8824=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=888:28=E5=AF=
+=AB=E9=81=93=EF=BC=9A
 >
-> I don't have a link at hand now, but we already (recently too, I
-> think) discussed having these "we know it is infallible in the kernel"
-> conversions. Maybe there was a patch posted even.
+> Commit c410fa9b07c32 ("drm/mediatek: Add AFBC support to Mediatek DRM
+> driver") added AFBC support to Mediatek DRM and enabled the
+> 32x8/split/sparse modifier.
 >
-> Otherwise, I will create a good first issue.
+> However, this is currently broken on Mediatek MT8188 (Genio 700 EVK
+> platform); tested using upstream Kernel and Mesa (v25.2.1), AFBC is used =
+by
+> default since Mesa v25.0.
+>
+> Kernel trace reports vblank timeouts constantly, and the render is garble=
+d:
+>
+> ```
+> [CRTC:62:crtc-0] vblank wait timed out
+> WARNING: CPU: 7 PID: 70 at drivers/gpu/drm/drm_atomic_helper.c:1835 drm_a=
+tomic_helper_wait_for_vblanks.part.0+0x24c/0x27c
+> [...]
+> Hardware name: MediaTek Genio-700 EVK (DT)
+> Workqueue: events_unbound commit_work
+> pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=3D--)
+> pc : drm_atomic_helper_wait_for_vblanks.part.0+0x24c/0x27c
+> lr : drm_atomic_helper_wait_for_vblanks.part.0+0x24c/0x27c
+> sp : ffff80008337bca0
+> x29: ffff80008337bcd0 x28: 0000000000000061 x27: 0000000000000000
+> x26: 0000000000000001 x25: 0000000000000000 x24: ffff0000c9dcc000
+> x23: 0000000000000001 x22: 0000000000000000 x21: ffff0000c66f2f80
+> x20: ffff0000c0d7d880 x19: 0000000000000000 x18: 000000000000000a
+> x17: 000000040044ffff x16: 005000f2b5503510 x15: 0000000000000000
+> x14: 0000000000000000 x13: 74756f2064656d69 x12: 742074696177206b
+> x11: 0000000000000058 x10: 0000000000000018 x9 : ffff800082396a70
+> x8 : 0000000000057fa8 x7 : 0000000000000cce x6 : ffff8000823eea70
+> x5 : ffff0001fef5f408 x4 : ffff80017ccee000 x3 : ffff0000c12cb480
+> x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff0000c12cb480
+> Call trace:
+>  drm_atomic_helper_wait_for_vblanks.part.0+0x24c/0x27c (P)
+>  drm_atomic_helper_commit_tail_rpm+0x64/0x80
+>  commit_tail+0xa4/0x1a4
+>  commit_work+0x14/0x20
+>  process_one_work+0x150/0x290
+>  worker_thread+0x2d0/0x3ec
+>  kthread+0x12c/0x210
+>  ret_from_fork+0x10/0x20
+> ---[ end trace 0000000000000000 ]---
+> ```
+>
+> Until this gets fixed upstream, disable AFBC support on this platform, as
+> it's currently broken with upstream Mesa.
 
-Are you referring to this discussion?
+Applied to mediatek-drm-fixes [1], thanks.
 
-https://lore.kernel.org/rust-for-linux/DDK4KADWJHMG.1FUPL3SDR26XF@kernel.or=
-g/
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/=
+log/?h=3Dmediatek-drm-fixes
 
-If so, I have posted something along those lines:
+Regards,
+Chun-Kuang.
 
-https://lore.kernel.org/rust-for-linux/20251029-nova-as-v3-4-6a30c7333ad9@n=
-vidia.com/
-
-We planned to have it stew in Nova for a bit, but I don't mind moving
-this to the core code if you think that looks good enough.
+>
+> Signed-off-by: Ariel D'Alessandro <ariel.dalessandro@collabora.com>
+> ---
 
