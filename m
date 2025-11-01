@@ -1,228 +1,153 @@
-Return-Path: <linux-kernel+bounces-881479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38AFAC28491
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 19:19:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ACFBC2849E
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 19:20:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B44B74E88D5
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 18:19:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B26D189C4FB
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 18:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 752DF288510;
-	Sat,  1 Nov 2025 18:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6852FBDE1;
+	Sat,  1 Nov 2025 18:20:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="K14XynHM"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MoOC/Q9T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2430126ED22;
-	Sat,  1 Nov 2025 18:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93310271A7C;
+	Sat,  1 Nov 2025 18:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762021187; cv=none; b=kAsJQzSrmbVRGXa6PlCDZM7iCpNQEZ6edY6pmy0GQueENirJoxYKoMHlUdFOBS+McXQMH6OrsO1iLgmR7zKjOsgF1CWPm6/xq7tdX+3dcyaXdV/vYRXykfJwOYzfDWU/Df++xdfDTDYQkOnwb1Rudu8qG4va1p82zFkItGuykIo=
+	t=1762021236; cv=none; b=URFnXhH82S3u4v0QHXDfb+l2DCWjyLMNLi0AtzXDywSp7CvMZu+4ZWcNDn1CqRHjU81lKL79Zct4kAgF13JVTbIFtJSLWisLqKccKCXGZeTj7/FLxJk4xLDypjaBAkR+lJAs4A6B0t6iCIEf8//Ji4Let/jwz6gwgEXTNkDDZKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762021187; c=relaxed/simple;
-	bh=5ZJ9zxycQjbx/i+FbyQoNKRQ1fZvPwQuacxljfYzA6E=;
-	h=Date:From:To:Cc:Subject:Content-Type:MIME-Version:Message-ID; b=ONFjH/OAPlgGp7et2q0d0ooc/ce5EKoywvo7YNV3t7M5zS72SANxqGdSCCrMSpHAmREd3eD6lEYSKATmF8GXFKNBItwsAljpeUIudpgOGqYadkH+1T5PvN676irA7dJ2UtZoJEL9JkG0oWusrfwTUeTExwbvh+R+WOZpHopTUSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=K14XynHM reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=ytZeTGg9AuhPLhuwQJhIE9vbEd8h71Yi4qBw+NJiqJI=; b=K
-	14XynHM3yiQWfFYBrVAsLF4m/u3Z+B6/brNuMxvNVCk+siK/hrTLeUiMGgp8QPS+
-	TzAWAHdLXZMjv2lewjxoahJamcNE1+j9/fniF/fDvz3rj8ZzisdYFchzoLQd+gM7
-	6vKNxeddUjZMBrqDV952/q+8MXVQjbDSwDxvcSO7XU=
-Received: from zzzccc427$163.com ( [1.203.169.43] ) by
- ajax-webmail-wmsvr-40-101 (Coremail) ; Sun, 2 Nov 2025 02:19:11 +0800 (CST)
-Date: Sun, 2 Nov 2025 02:19:11 +0800 (CST)
-From: zzzccc427  <zzzccc427@163.com>
-To: luiz.dentz@gmail.com, pav@iki.fi, johan.hedberg@gmail.com,
-	marcel@holtmann.org
-Cc: linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-	baijiaju1990@gmail.com, r33s3n6@gmail.com, gality369@gmail.com,
-	zhenghaoran154@gmail.com
-Subject: [BUG] Bluetooth: Mistakenly sco_conn_put in sco_conn_del() leading
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2023.4-cmXT build
- 20250723(a044bf12) Copyright (c) 2002-2025 www.mailtech.cn 163com
-X-NTES-SC: AL_Qu2dAPyZvkku5ySeZOkfmUYQj+02WsKwufkl3oJUPJ18jCvpyi4wRH1KAWP3/Nm0DhKsgiO9VTR++/hcc5VJUZ0iEnv0u41whcMSbwNbzHILTw==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1762021236; c=relaxed/simple;
+	bh=YTd/vHBelVnR6mgK17h8ySbO2cFbzynFbPAWylHXqLk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LiG5IB5tqDuATEhTO1npC3zsJrGoll8I1uL377vjd3ES7bae0MK/9+0x1nyErFdD7gRJApLOaBm8GjVdnZuAR+3ezAKLwpkSGjWXIPzJbu4tAwVqN45PCROOoOCd6rh03g0/gFD2K95KaymKdq23WFOXH6lbPBLNM5tvCTnCuwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MoOC/Q9T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8240C4CEF1;
+	Sat,  1 Nov 2025 18:20:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762021236;
+	bh=YTd/vHBelVnR6mgK17h8ySbO2cFbzynFbPAWylHXqLk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=MoOC/Q9TCmUnC9Zl9aJKK4Yg4xuuXinVSTajYDp9j64NVw/rlgaaJbt4ukM9OiZ6Y
+	 uadJI7iBu2uFO+7SxgMkGpiBcJ+TjBkSp1poVWyvl2NBGZ/h9l1gA8Yje4Om5EobN5
+	 o2lBy8yVeq2buFtnN3egBTJo734aeGWc5JlBREdi6x3B7lYYqwXh8qkpsMZKMLbYQx
+	 lsaRHNXbje01iUxvNzpcfGUnvGtU9a9mosNIIUhlXjZsepnxJBawU5OZdSX/4Zl6cR
+	 E8Z+2mEU4PKW+loBu6Plk/HfQv8kmh6q82v7VPii4zOFy1D1fl0eSd+XuJPw8rtACa
+	 P0/2lWn2IE96Q==
+From: SeongJae Park <sj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	"# 5 . 15 . x" <stable@vger.kernel.org>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Sang-Heon Jeon <ekffu200098@gmail.com>,
+	damon@lists.linux.dev,
+	kunit-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH 00/22] mm/damon/tests: fix memory bugs in kunit tests
+Date: Sat,  1 Nov 2025 11:19:54 -0700
+Message-ID: <20251101182021.74868-1-sj@kernel.org>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <24c397a7.356e.19a40a512ed.Coremail.zzzccc427@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:ZSgvCgCXBr0fTwZpuXEYAA--.524W
-X-CM-SenderInfo: 5222uujfuslqqrwthudrp/1tbiXR-4hGkGO858pQAEs5
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Transfer-Encoding: 8bit
 
-SGkgbWFpbnRhaW5lcnMsCgpJIHdvdWxkIGxpa2UgdG8gcmVwb3J0IGEgY29uY3VycmVuY3kgVUFG
-IEJVRy4KClJlZmNvdW50IGhhbmRsaW5nIGluIHNjb19jb25uX2RlbCgpIGlzIHVuYmFsYW5jZWQg
-d2hlbiBhbm90aGVyIHRocmVhZCBpcyBrcmVmX3B1dGluZywgd2hpY2gKY2FuIGxlYWQgdG8gYSBy
-ZWZjb3VudCB1bmRlcmZsb3cgYW5kIHVzZS1hZnRlci1mcmVlLlRoZSBkZXRhaWxlZCBleGVjdXRp
-b24gZmxvdyBpcyBhcyBiZWxvdzoKClRocmVhZDEgICAgICAgICAgICAgICAgVGhyZWFkMgpjbG9z
-ZShzb2NrKSAgICAgICAgICAgIHNjb19jb25uZWN0X2NmbSguLi4pCsKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgICAgICAgIGNvbm4gPSBzY29fY29ubl9ob2xkX3VubGVzc196ZXJv
-KGNvbm4pCsKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgICAgICAgICDCoChub3cgcmVm
-ID0gMikKc2NvX3BpKHNrKS0+Y29ubiA9IE5VTEwKY29ubi0+c2sgPSBOVUxMCnNvY2tfcHV0KHNr
-KQprcmVmX3B1dCgmY29ubi0+cmVmLCBzY29fY29ubl9mcmVlKTsKKG5vdyByZWYgPSAxKQrCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCAgICAgICAgwqBzY29fY29ubl9wdXQoY29ubikK
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgICAgICAgKG5vdyByZWYgPSAwKQrC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCAgICAgICBzY29fY29ubl9mcmVlKCkK
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgICAgICAgIMKga2ZyZWUoY29ubikKwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgICAgICAgc2sgPSBzY29fc29ja19ob2xk
-KGNvbm4pIOKGkiBOVUxMIChzb2NrZXQgYWxyZWFkeSBjbG9zZWQpCsKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgICAgICAgICDCoHNjb19jb25uX3B1dChjb25uKShub3cgdGhlIGNvbm4g
-aGFzIGJlZW4gZnJlZWQpCsKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgICAgICAgICDC
-oGtyZWZfcHV0KCZjb25uLT5yZWYsIHNjb19jb25uX2ZyZWUpOwrCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCAgICAgICBVQUYgb24gY29ubi0+cmVmCgpcS0FTQU4gcmVwb3J0IGFz
-IGZvbGxvd3M6Cj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PQpCVUc6IEtBU0FOOiBzbGFiLXVzZS1hZnRlci1mcmVlIGluIGlu
-c3RydW1lbnRfYXRvbWljX3JlYWQgaW5jbHVkZS9saW51eC9pbnN0cnVtZW50ZWQuaDo2OCBbaW5s
-aW5lXQpCVUc6IEtBU0FOOiBzbGFiLXVzZS1hZnRlci1mcmVlIGluIGF0b21pY19yZWFkIGluY2x1
-ZGUvbGludXgvYXRvbWljL2F0b21pYy1pbnN0cnVtZW50ZWQuaDozMiBbaW5saW5lXQpCVUc6IEtB
-U0FOOiBzbGFiLXVzZS1hZnRlci1mcmVlIGluIHJlZmNvdW50X3JlYWQgaW5jbHVkZS9saW51eC9y
-ZWZjb3VudC5oOjE3MCBbaW5saW5lXQpCVUc6IEtBU0FOOiBzbGFiLXVzZS1hZnRlci1mcmVlIGlu
-IGtyZWZfcmVhZCBpbmNsdWRlL2xpbnV4L2tyZWYuaDozNiBbaW5saW5lXQpCVUc6IEtBU0FOOiBz
-bGFiLXVzZS1hZnRlci1mcmVlIGluIHNjb19jb25uX3B1dCsweDc3LzB4ZjUwIG5ldC9ibHVldG9v
-dGgvc2NvLmM6MTEzClJlYWQgb2Ygc2l6ZSA0IGF0IGFkZHIgZmZmZjg4ODEwNTdlZGE3NCBieSB0
-YXNrIGt3b3JrZXIvdTI1OjEvODYKCkNQVTogMyBVSUQ6IDAgUElEOiA4NiBDb21tOiBrd29ya2Vy
-L3UyNToxIE5vdCB0YWludGVkIDYuMTcuMC1yYzUtZzIyMzUyNjgxZTQyOC1kaXJ0eSAjNDUgUFJF
-RU1QVCh2b2x1bnRhcnkpIApIYXJkd2FyZSBuYW1lOiBRRU1VIFN0YW5kYXJkIFBDIChpNDQwRlgg
-KyBQSUlYLCAxOTk2KSwgQklPUyAxLjE1LjAtMSAwNC8wMS8yMDE0CldvcmtxdWV1ZTogaGNpMCBo
-Y2lfcnhfd29yawpDYWxsIFRyYWNlOgogPFRBU0s+CiBfX2R1bXBfc3RhY2sgbGliL2R1bXBfc3Rh
-Y2suYzo5NCBbaW5saW5lXQogZHVtcF9zdGFja19sdmwrMHhjYS8weDEzMCBsaWIvZHVtcF9zdGFj
-ay5jOjEyMAogcHJpbnRfYWRkcmVzc19kZXNjcmlwdGlvbiBtbS9rYXNhbi9yZXBvcnQuYzozNzgg
-W2lubGluZV0KIHByaW50X3JlcG9ydCsweDE3MS8weDdmMCBtbS9rYXNhbi9yZXBvcnQuYzo0ODIK
-IGthc2FuX3JlcG9ydCsweDEzOS8weDE3MCBtbS9rYXNhbi9yZXBvcnQuYzo1OTUKIGthc2FuX2No
-ZWNrX3JhbmdlKzB4MmIwLzB4MmMwIG1tL2thc2FuL2dlbmVyaWMuYzoxODkKIGluc3RydW1lbnRf
-YXRvbWljX3JlYWQgaW5jbHVkZS9saW51eC9pbnN0cnVtZW50ZWQuaDo2OCBbaW5saW5lXQogYXRv
-bWljX3JlYWQgaW5jbHVkZS9saW51eC9hdG9taWMvYXRvbWljLWluc3RydW1lbnRlZC5oOjMyIFtp
-bmxpbmVdCiByZWZjb3VudF9yZWFkIGluY2x1ZGUvbGludXgvcmVmY291bnQuaDoxNzAgW2lubGlu
-ZV0KIGtyZWZfcmVhZCBpbmNsdWRlL2xpbnV4L2tyZWYuaDozNiBbaW5saW5lXQogc2NvX2Nvbm5f
-cHV0KzB4NzcvMHhmNTAgbmV0L2JsdWV0b290aC9zY28uYzoxMTMKIHNjb19jb25uX2RlbCsweDQ3
-Ny8weDhkMCBuZXQvYmx1ZXRvb3RoL3Njby5jOjI4MAogc2NvX2Nvbm5lY3RfY2ZtKzB4ODNkLzB4
-MWVlMCBuZXQvYmx1ZXRvb3RoL3Njby5jOjE0NjgKIGhjaV9jb25uZWN0X2NmbSBpbmNsdWRlL25l
-dC9ibHVldG9vdGgvaGNpX2NvcmUuaDoyMDgyIFtpbmxpbmVdCiBoY2lfc2NvX3NldHVwKzB4Mzlj
-LzB4ZDIwIG5ldC9ibHVldG9vdGgvaGNpX2Nvbm4uYzo1NTQKIGhjaV9jb25uX2NvbXBsZXRlX2V2
-dCsweDZlYi8weDMyNzAgbmV0L2JsdWV0b290aC9oY2lfZXZlbnQuYzozMjAxCiBoY2lfZXZlbnRf
-ZnVuYyBuZXQvYmx1ZXRvb3RoL2hjaV9ldmVudC5jOjc1NDUgW2lubGluZV0KIGhjaV9ldmVudF9w
-YWNrZXQrMHgxN2NkLzB4MmRhMCBuZXQvYmx1ZXRvb3RoL2hjaV9ldmVudC5jOjc1OTkKIGhjaV9y
-eF93b3JrKzB4OTgyLzB4MjIxMCBuZXQvYmx1ZXRvb3RoL2hjaV9jb3JlLmM6NDA3MQogcHJvY2Vz
-c19vbmVfd29yayBrZXJuZWwvd29ya3F1ZXVlLmM6MzIzNiBbaW5saW5lXQogcHJvY2Vzc19zY2hl
-ZHVsZWRfd29ya3MrMHg3YTgvMHgxMDMwIGtlcm5lbC93b3JrcXVldWUuYzozMzE5CiB3b3JrZXJf
-dGhyZWFkKzB4Yjk3LzB4MTFkMCBrZXJuZWwvd29ya3F1ZXVlLmM6MzQwMAoga3RocmVhZCsweDNk
-NC8weDgwMCBrZXJuZWwva3RocmVhZC5jOjQ2MwogcmV0X2Zyb21fZm9yaysweDEzYi8weDFlMCBh
-cmNoL3g4Ni9rZXJuZWwvcHJvY2Vzcy5jOjE0OAogcmV0X2Zyb21fZm9ya19hc20rMHgxYS8weDMw
-IGFyY2gveDg2L2VudHJ5L2VudHJ5XzY0LlM6MjQ1CiA8L1RBU0s+CgpBbGxvY2F0ZWQgYnkgdGFz
-ayAzMDI6CiBrYXNhbl9zYXZlX3N0YWNrIG1tL2thc2FuL2NvbW1vbi5jOjQ3IFtpbmxpbmVdCiBr
-YXNhbl9zYXZlX3RyYWNrKzB4M2UvMHg4MCBtbS9rYXNhbi9jb21tb24uYzo2OAogcG9pc29uX2tt
-YWxsb2NfcmVkem9uZSBtbS9rYXNhbi9jb21tb24uYzozODggW2lubGluZV0KIF9fa2FzYW5fa21h
-bGxvYysweDcyLzB4OTAgbW0va2FzYW4vY29tbW9uLmM6NDA1CiBrbWFsbG9jX25vcHJvZiBpbmNs
-dWRlL2xpbnV4L3NsYWIuaDo5MDUgW2lubGluZV0KIGt6YWxsb2Nfbm9wcm9mIGluY2x1ZGUvbGlu
-dXgvc2xhYi5oOjEwMzkgW2lubGluZV0KIHNjb19jb25uX2FkZCsweDIzNy8weGE1MCBuZXQvYmx1
-ZXRvb3RoL3Njby5jOjIxNQogc2NvX2Nvbm5lY3QgbmV0L2JsdWV0b290aC9zY28uYzozNTYgW2lu
-bGluZV0KIHNjb19zb2NrX2Nvbm5lY3QrMHg2ZWEvMHgxYWYwIG5ldC9ibHVldG9vdGgvc2NvLmM6
-Njg0CiBfX3N5c19jb25uZWN0X2ZpbGUgbmV0L3NvY2tldC5jOjIwODYgW2lubGluZV0KIF9fc3lz
-X2Nvbm5lY3QrMHgyNzcvMHgzNTAgbmV0L3NvY2tldC5jOjIxMDUKIF9fZG9fc3lzX2Nvbm5lY3Qg
-bmV0L3NvY2tldC5jOjIxMTEgW2lubGluZV0KIF9fc2Vfc3lzX2Nvbm5lY3QgbmV0L3NvY2tldC5j
-OjIxMDggW2lubGluZV0KIF9feDY0X3N5c19jb25uZWN0KzB4N2EvMHg5MCBuZXQvc29ja2V0LmM6
-MjEwOAogZG9fc3lzY2FsbF94NjQgYXJjaC94ODYvZW50cnkvc3lzY2FsbF82NC5jOjYzIFtpbmxp
-bmVdCiBkb19zeXNjYWxsXzY0KzB4ZDIvMHgyMDAgYXJjaC94ODYvZW50cnkvc3lzY2FsbF82NC5j
-Ojk0CiBlbnRyeV9TWVNDQUxMXzY0X2FmdGVyX2h3ZnJhbWUrMHg3Ny8weDdmCgpGcmVlZCBieSB0
-YXNrIDg2Ogoga2FzYW5fc2F2ZV9zdGFjayBtbS9rYXNhbi9jb21tb24uYzo0NyBbaW5saW5lXQog
-a2FzYW5fc2F2ZV90cmFjaysweDNlLzB4ODAgbW0va2FzYW4vY29tbW9uLmM6NjgKIGthc2FuX3Nh
-dmVfZnJlZV9pbmZvKzB4NDAvMHg1MCBtbS9rYXNhbi9nZW5lcmljLmM6NTc2CiBwb2lzb25fc2xh
-Yl9vYmplY3QgbW0va2FzYW4vY29tbW9uLmM6MjQzIFtpbmxpbmVdCiBfX2thc2FuX3NsYWJfZnJl
-ZSsweDQxLzB4NTAgbW0va2FzYW4vY29tbW9uLmM6Mjc1CiBrYXNhbl9zbGFiX2ZyZWUgaW5jbHVk
-ZS9saW51eC9rYXNhbi5oOjIzMyBbaW5saW5lXQogc2xhYl9mcmVlX2hvb2sgbW0vc2x1Yi5jOjI0
-MjggW2lubGluZV0KIHNsYWJfZnJlZSBtbS9zbHViLmM6NDcwMSBbaW5saW5lXQoga2ZyZWUrMHgx
-ODkvMHgzOTAgbW0vc2x1Yi5jOjQ5MDAKIHNjb19jb25uX2ZyZWUgbmV0L2JsdWV0b290aC9zY28u
-YzoxMDUgW2lubGluZV0KIGtyZWZfcHV0IGluY2x1ZGUvbGludXgva3JlZi5oOjY1IFtpbmxpbmVd
-CiBzY29fY29ubl9wdXQrMHg5ZjIvMHhmNTAgbmV0L2JsdWV0b290aC9zY28uYzoxMTUKIHNjb19j
-b25uX2RlbCsweDQwMy8weDhkMCBuZXQvYmx1ZXRvb3RoL3Njby5jOjI3OAogc2NvX2Nvbm5lY3Rf
-Y2ZtKzB4ODNkLzB4MWVlMCBuZXQvYmx1ZXRvb3RoL3Njby5jOjE0NjgKIGhjaV9jb25uZWN0X2Nm
-bSBpbmNsdWRlL25ldC9ibHVldG9vdGgvaGNpX2NvcmUuaDoyMDgyIFtpbmxpbmVdCiBoY2lfc2Nv
-X3NldHVwKzB4MzljLzB4ZDIwIG5ldC9ibHVldG9vdGgvaGNpX2Nvbm4uYzo1NTQKIGhjaV9jb25u
-X2NvbXBsZXRlX2V2dCsweDZlYi8weDMyNzAgbmV0L2JsdWV0b290aC9oY2lfZXZlbnQuYzozMjAx
-CiBoY2lfZXZlbnRfZnVuYyBuZXQvYmx1ZXRvb3RoL2hjaV9ldmVudC5jOjc1NDUgW2lubGluZV0K
-IGhjaV9ldmVudF9wYWNrZXQrMHgxN2NkLzB4MmRhMCBuZXQvYmx1ZXRvb3RoL2hjaV9ldmVudC5j
-Ojc1OTkKIGhjaV9yeF93b3JrKzB4OTgyLzB4MjIxMCBuZXQvYmx1ZXRvb3RoL2hjaV9jb3JlLmM6
-NDA3MQogcHJvY2Vzc19vbmVfd29yayBrZXJuZWwvd29ya3F1ZXVlLmM6MzIzNiBbaW5saW5lXQog
-cHJvY2Vzc19zY2hlZHVsZWRfd29ya3MrMHg3YTgvMHgxMDMwIGtlcm5lbC93b3JrcXVldWUuYzoz
-MzE5CiB3b3JrZXJfdGhyZWFkKzB4Yjk3LzB4MTFkMCBrZXJuZWwvd29ya3F1ZXVlLmM6MzQwMAog
-a3RocmVhZCsweDNkNC8weDgwMCBrZXJuZWwva3RocmVhZC5jOjQ2MwogcmV0X2Zyb21fZm9yaysw
-eDEzYi8weDFlMCBhcmNoL3g4Ni9rZXJuZWwvcHJvY2Vzcy5jOjE0OAogcmV0X2Zyb21fZm9ya19h
-c20rMHgxYS8weDMwIGFyY2gveDg2L2VudHJ5L2VudHJ5XzY0LlM6MjQ1CgpUaGUgYnVnZ3kgYWRk
-cmVzcyBiZWxvbmdzIHRvIHRoZSBvYmplY3QgYXQgZmZmZjg4ODEwNTdlZGEwMAogd2hpY2ggYmVs
-b25ncyB0byB0aGUgY2FjaGUga21hbGxvYy0xMjggb2Ygc2l6ZSAxMjgKVGhlIGJ1Z2d5IGFkZHJl
-c3MgaXMgbG9jYXRlZCAxMTYgYnl0ZXMgaW5zaWRlIG9mCiBmcmVlZCAxMjgtYnl0ZSByZWdpb24g
-W2ZmZmY4ODgxMDU3ZWRhMDAsIGZmZmY4ODgxMDU3ZWRhODApCgpUaGUgYnVnZ3kgYWRkcmVzcyBi
-ZWxvbmdzIHRvIHRoZSBwaHlzaWNhbCBwYWdlOgpwYWdlOiByZWZjb3VudDowIG1hcGNvdW50OjAg
-bWFwcGluZzowMDAwMDAwMDAwMDAwMDAwIGluZGV4OjB4MCBwZm46MHgxMDU3ZWQKYW5vbiBmbGFn
-czogMHgyMDAwMDAwMDAwMDAwMDAobm9kZT0wfHpvbmU9MikKcGFnZV90eXBlOiBmNShzbGFiKQpy
-YXc6IDAyMDAwMDAwMDAwMDAwMDAgZmZmZjg4ODEwMDA0MmEwMCBmZmZmZWEwMDA0MTVmZjQwIDAw
-MDAwMDAwMDAwMDAwMDMKcmF3OiAwMDAwMDAwMDAwMDAwMDAwIDAwMDAwMDAwODAxMDAwMTAgMDAw
-MDAwMDBmNTAwMDAwMCAwMDAwMDAwMDAwMDAwMDAwCnBhZ2UgZHVtcGVkIGJlY2F1c2U6IGthc2Fu
-OiBiYWQgYWNjZXNzIGRldGVjdGVkCgpNZW1vcnkgc3RhdGUgYXJvdW5kIHRoZSBidWdneSBhZGRy
-ZXNzOgogZmZmZjg4ODEwNTdlZDkwMDogZmEgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIg
-ZmIgZmIgZmIgZmIgZmIKIGZmZmY4ODgxMDU3ZWQ5ODA6IGZjIGZjIGZjIGZjIGZjIGZjIGZjIGZj
-IGZjIGZjIGZjIGZjIGZjIGZjIGZjIGZjCj5mZmZmODg4MTA1N2VkYTAwOiBmYSBmYiBmYiBmYiBm
-YiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYgogICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXgogZmZmZjg4ODEwNTdlZGE4
-MDogZmMgZmMgZmMgZmMgZmMgZmMgZmMgZmMgZmMgZmMgZmMgZmMgZmMgZmMgZmMgZmMKIGZmZmY4
-ODgxMDU3ZWRiMDA6IDAwIDAwIDAwIDAwIDAwIDAwIDAwIDAwIDAwIDAwIDAwIDAwIDAwIDAwIDAw
-IDAwCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PQpbdGlkOjg2XSBjb25uIDAwMDAwMDAwZWRhMWJmZGIgcmVmY250IDAKLS0t
-LS0tLS0tLS0tWyBjdXQgaGVyZSBdLS0tLS0tLS0tLS0tCnJlZmNvdW50X3Q6IHVuZGVyZmxvdzsg
-dXNlLWFmdGVyLWZyZWUuCldBUk5JTkc6IENQVTogMyBQSUQ6IDg2IGF0IGxpYi9yZWZjb3VudC5j
-OjI4IHJlZmNvdW50X3dhcm5fc2F0dXJhdGUrMHgxMWEvMHgxZDAgbGliL3JlZmNvdW50LmM6MjgK
-TW9kdWxlcyBsaW5rZWQgaW46CkNQVTogMyBVSUQ6IDAgUElEOiA4NiBDb21tOiBrd29ya2VyL3Uy
-NToxIFRhaW50ZWQ6IEcgICAgQiAgICAgICAgICAgICAgIDYuMTcuMC1yYzUtZzIyMzUyNjgxZTQy
-OC1kaXJ0eSAjNDUgUFJFRU1QVCh2b2x1bnRhcnkpIApUYWludGVkOiBbQl09QkFEX1BBR0UKSGFy
-ZHdhcmUgbmFtZTogUUVNVSBTdGFuZGFyZCBQQyAoaTQ0MEZYICsgUElJWCwgMTk5NiksIEJJT1Mg
-MS4xNS4wLTEgMDQvMDEvMjAxNApXb3JrcXVldWU6IGhjaTAgaGNpX3J4X3dvcmsKUklQOiAwMDEw
-OnJlZmNvdW50X3dhcm5fc2F0dXJhdGUrMHgxMWEvMHgxZDAgbGliL3JlZmNvdW50LmM6MjgKQ29k
-ZTogZTAgN2QgMTcgYWEgZTggMjcgY2EgMGMgZmYgOTAgMGYgMGIgOTAgOTAgZWIgZDcgZTggN2Ig
-Y2IgM2QgZmYgYzYgMDUgZmMgYjQgNDYgMDQgMDEgOTAgNDggYzcgYzcgNDAgN2UgMTcgYWEgZTgg
-MDcgY2EgMGMgZmYgOTAgPDBmPiAwYiA5MCA5MCBlYiBiNyBlOCA1YiBjYiAzZCBmZiBjNiAwNSBk
-OSBiNCA0NiAwNCAwMSA5MCA0OCBjNyBjNwpSU1A6IDAwMTg6ZmZmZjg4ODEwOGQ0Nzc0MCBFRkxB
-R1M6IDAwMDEwMjQ2ClJBWDogODVkZGRlYjdhZDlhOGQwMCBSQlg6IDAwMDAwMDAwMDAwMDAwMDMg
-UkNYOiBmZmZmODg4MTA4YmI5ZTgwClJEWDogMDAwMDAwMDAwMDAwMDAwMCBSU0k6IDAwMDAwMDAw
-MDAwMDAwMDEgUkRJOiAwMDAwMDAwMDAwMDAwMDAwClJCUDogMDAwMDAwMDAwMDAwMDAwMCBSMDg6
-IGZmZmY4ODgxZjY4ZTNlNTMgUjA5OiAxZmZmZjExMDNlZDFjN2NhClIxMDogZGZmZmZjMDAwMDAw
-MDAwMCBSMTE6IGZmZmZlZDEwM2VkMWM3Y2IgUjEyOiAxZmZmZjExMDIwYWZkYjRlClIxMzogZGZm
-ZmZjMDAwMDAwMDAwMCBSMTQ6IGZmZmY4ODgxMDU3ZWRhNzQgUjE1OiAwMDAwMDAwMDAwMDAwMGZi
-CkZTOiAgMDAwMDAwMDAwMDAwMDAwMCgwMDAwKSBHUzpmZmZmODg4MjQ5YzcxMDAwKDAwMDApIGtu
-bEdTOjAwMDAwMDAwMDAwMDAwMDAKQ1M6ICAwMDEwIERTOiAwMDAwIEVTOiAwMDAwIENSMDogMDAw
-MDAwMDA4MDA1MDAzMwpDUjI6IDAwMDA3ZmMyNmRlNWNkNTggQ1IzOiAwMDAwMDAwMTJkNDY2MDAw
-IENSNDogMDAwMDAwMDAwMDAwMDZmMApDYWxsIFRyYWNlOgogPFRBU0s+CiBfX3JlZmNvdW50X3N1
-Yl9hbmRfdGVzdCBpbmNsdWRlL2xpbnV4L3JlZmNvdW50Lmg6NDAwIFtpbmxpbmVdCiBfX3JlZmNv
-dW50X2RlY19hbmRfdGVzdCBpbmNsdWRlL2xpbnV4L3JlZmNvdW50Lmg6NDMyIFtpbmxpbmVdCiBy
-ZWZjb3VudF9kZWNfYW5kX3Rlc3QgaW5jbHVkZS9saW51eC9yZWZjb3VudC5oOjQ1MCBbaW5saW5l
-XQoga3JlZl9wdXQgaW5jbHVkZS9saW51eC9rcmVmLmg6NjQgW2lubGluZV0KIHNjb19jb25uX3B1
-dCsweGExNi8weGY1MCBuZXQvYmx1ZXRvb3RoL3Njby5jOjExNQogc2NvX2Nvbm5fZGVsKzB4NDc3
-LzB4OGQwIG5ldC9ibHVldG9vdGgvc2NvLmM6MjgwCiBzY29fY29ubmVjdF9jZm0rMHg4M2QvMHgx
-ZWUwIG5ldC9ibHVldG9vdGgvc2NvLmM6MTQ2OAogaGNpX2Nvbm5lY3RfY2ZtIGluY2x1ZGUvbmV0
-L2JsdWV0b290aC9oY2lfY29yZS5oOjIwODIgW2lubGluZV0KIGhjaV9zY29fc2V0dXArMHgzOWMv
-MHhkMjAgbmV0L2JsdWV0b290aC9oY2lfY29ubi5jOjU1NAogaGNpX2Nvbm5fY29tcGxldGVfZXZ0
-KzB4NmViLzB4MzI3MCBuZXQvYmx1ZXRvb3RoL2hjaV9ldmVudC5jOjMyMDEKIGhjaV9ldmVudF9m
-dW5jIG5ldC9ibHVldG9vdGgvaGNpX2V2ZW50LmM6NzU0NSBbaW5saW5lXQogaGNpX2V2ZW50X3Bh
-Y2tldCsweDE3Y2QvMHgyZGEwIG5ldC9ibHVldG9vdGgvaGNpX2V2ZW50LmM6NzU5OQogaGNpX3J4
-X3dvcmsrMHg5ODIvMHgyMjEwIG5ldC9ibHVldG9vdGgvaGNpX2NvcmUuYzo0MDcxCiBwcm9jZXNz
-X29uZV93b3JrIGtlcm5lbC93b3JrcXVldWUuYzozMjM2IFtpbmxpbmVdCiBwcm9jZXNzX3NjaGVk
-dWxlZF93b3JrcysweDdhOC8weDEwMzAga2VybmVsL3dvcmtxdWV1ZS5jOjMzMTkKIHdvcmtlcl90
-aHJlYWQrMHhiOTcvMHgxMWQwIGtlcm5lbC93b3JrcXVldWUuYzozNDAwCiBrdGhyZWFkKzB4M2Q0
-LzB4ODAwIGtlcm5lbC9rdGhyZWFkLmM6NDYzCiByZXRfZnJvbV9mb3JrKzB4MTNiLzB4MWUwIGFy
-Y2gveDg2L2tlcm5lbC9wcm9jZXNzLmM6MTQ4CiByZXRfZnJvbV9mb3JrX2FzbSsweDFhLzB4MzAg
-YXJjaC94ODYvZW50cnkvZW50cnlfNjQuUzoyNDUKIDwvVEFTSz4KLS0tWyBlbmQgdHJhY2UgMDAw
-MDAwMDAwMDAwMDAwMCBdLS0tCgpUaGFuayB5b3UgZm9yIHlvdXIgYXR0ZW50aW9uIHRvIHRoaXMg
-bWF0dGVyLgoKQmVzdCByZWdhcmRzLApDZW4gWmhhbmcKCgoKCgoKIAoKCgoKCgoK
+DAMON kunit tests were initially written assuming those will be run on
+environments that are well controlled and therefore tolerant to
+transient test failures and bugs in the test code itself.  The user-mode
+linux based manual run of the tests is one example of such an
+environment.  And the test code was written for adding more test
+coverage as fast as possible, over making those safe and reliable.
+
+As a result, the tests resulted in having a number of bugs including
+real memory leaks, theoretical unhandled memory allocation failures, and
+unused memory allocations.  The allocation failures that are not handled
+well are unlikely in the real world, since those allocations are too
+small to fail.  But in theory, it can happen and cause inappropriate
+memory access.
+
+It is arguable if bugs in test code can really harm users.  But, anyway
+bugs are bugs that need to be fixed.  Fix the bugs one by one.  Also Cc
+stable@ for the fixes of memory leak and unhandled memory allocation
+failures.  The unused memory allocations are only a matter of memory
+efficiency, so not Cc-ing stable@.
+
+The first patch fixes memory leaks in the test code for the DAMON core
+layer.
+
+Following fifteen, three, and one patches respectively fix unhandled
+memory allocation failures in the test code for DAMON core layer,
+virtual address space DAMON operation set, and DAMON sysfs interface,
+one by one per test function.
+
+Final two patches remove memory allocations that are correctly
+deallocated at the end, but not really being used by any code.
+
+SeongJae Park (22):
+  mm/damon/tests/core-kunit: fix memory leak in
+    damon_test_set_filters_default_reject()
+  mm/damon/tests/core-kunit: handle allocation failures in
+    damon_test_regions()
+  mm/damon/tests/core-kunit: handle memory failure from
+    damon_test_target()
+  mm/damon/tests/core-kunit: handle memory alloc failure from
+    damon_test_aggregate()
+  mm/damon/tests/core-kunit: handle alloc failures on
+    damon_test_split_at()
+  mm/damon/tests/core-kunit: handle alloc failures on
+    damon_test_merge_two()
+  mm/damon/tests/core-kunit: handle alloc failures on
+    dasmon_test_merge_regions_of()
+  mm/damon/tests/core-kunit: handle alloc failures on
+    damon_test_split_regions_of()
+  mm/damon/tests/core-kunit: handle alloc failures in
+    damon_test_ops_registration()
+  mm/damon/tests/core-kunit: handle alloc failures in
+    damon_test_set_regions()
+  mm/damon/tests/core-kunit: handle alloc failures in
+    damon_test_update_monitoring_result()
+  mm/damon/tests/core-kunit: handle alloc failure on
+    damon_test_set_attrs()
+  mm/damon/tests/core-kunit: handle alloc failres in
+    damon_test_new_filter()
+  mm/damon/tests/core-kunit: handle alloc failure on
+    damos_test_commit_filter()
+  mm/damon/tests/core-kunit: handle alloc failures on
+    damos_test_filter_out()
+  mm/damon/tests/core-kunit: handle alloc failures on
+    damon_test_set_filters_default_reject()
+  mm/damon/tests/vaddr-kunit: handle alloc failures on
+    damon_do_test_apply_three_regions()
+  mm/damon/tests/vaddr-kunit: handle alloc failures in
+    damon_test_split_evenly_fail()
+  mm/damon/tests/vaddr-kunit: handle alloc failures on
+    damon_test_split_evenly_succ()
+  mm/damon/tests/sysfs-kunit: handle alloc failures on
+    damon_sysfs_test_add_targets()
+  mm/damon/tests/core-kunit: remove unnecessary damon_ctx variable on
+    damon_test_split_at()
+  mm/damon/tests/core-kunit: remove unused ctx in
+    damon_test_split_regions_of()
+
+ mm/damon/tests/core-kunit.h  | 125 ++++++++++++++++++++++++++++++++---
+ mm/damon/tests/sysfs-kunit.h |  25 +++++++
+ mm/damon/tests/vaddr-kunit.h |  26 +++++++-
+ 3 files changed, 163 insertions(+), 13 deletions(-)
+
+
+base-commit: 75f0c76bb8c01fdea838a601dc3326b11177c0d8
+-- 
+2.47.3
 
