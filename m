@@ -1,97 +1,58 @@
-Return-Path: <linux-kernel+bounces-881211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51F0CC27BA6
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 11:23:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BC8FC27BAC
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 11:29:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E02CA188C064
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 10:22:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF6883B4B20
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 10:28:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A342D060B;
-	Sat,  1 Nov 2025 10:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B49A2C2357;
+	Sat,  1 Nov 2025 10:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="dpRB9xT/";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="3OGk3Fwt"
-Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="WPSn0KWX"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB11D2C11DB
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 10:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 517C634D38D;
+	Sat,  1 Nov 2025 10:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761992502; cv=none; b=Frl53rcf7igilTFuTTip5M7NyF/1OxtOagJzxitFi/kGsHW3b18EUpEJCQbs5qrIiiC6mtBUBemrqcZ4jsGl7ofhJEodTRMsvxqY4zpCpX0IrA76TJhKl2M1qmMAWz4S+o8zbrUcWMt6kjCfvJrZkIOCWRxoP/HHreC+ioYd+Eg=
+	t=1761992929; cv=none; b=lD4zOobG1Lj9yPB/CsFiQSyaqA/f0e5JVWqAQy0vxNZgCQlH6ZkeegzOO1arYhW4LZpe40FCspABfGJ6g+HKb3i1+awEI8Dvj+QXBVlJWqyMwmAWoL+fXZjRTPuudnd15EUpsjuwZcuTxjZXsNU6iiJwsf6xz27hc1S1J/imHdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761992502; c=relaxed/simple;
-	bh=VXvhdCtIF94jIUy9sZM5HOnX/S1loA6RO4drU2W4ZCc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=H1V2qThtTm6UxT3vq3+HYXabDh6rImfnShFP4j6BU/OnPGkPI5TSFipXz7qenq91KnisUo//joR/gBBeCkjqXa9nhkaJdf9LpTQo2aFdXlMrObs7eykDCaIhDTXncWO0t80Q6RIrpt39WM952qDpYZXa2D7TYj3tk3uL+9EMAkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=dpRB9xT/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=3OGk3Fwt; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.phl.internal (Postfix) with ESMTP id 7CC33EC00DA;
-	Sat,  1 Nov 2025 06:21:38 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Sat, 01 Nov 2025 06:21:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1761992498; x=
-	1762078898; bh=VDehe93yxTJXuOHBmVVwaEhZloz0X+dnzSOWWU6PpS0=; b=d
-	pRB9xT/th3Z6KGq5FNgfkfDwJ3WHxkIt7OhcjRU15s7Fpchf3iyDXD+VSnJVbizU
-	co/SeFl7eG5u7N0IskowZYp5WLBFvdwJvSr8U1ODR9GfUH/ROXluE4t+WfZYxNk8
-	pYppYckAb65PL5HBz/4QzBwy4j1C9i9AsGCbJ4nWJj0/otcuwL67XkeVAHkbp9mx
-	5OltfhCIAwhGPFNILM8hbg6A52AQss33QGv2V8LMkJxLtbcndTIVp2ZmUiAOD5mE
-	BbtHsfQCyTt4s2lkeqMq+Fz0+dBSO0HiHwtbuiM31KRxxojjJragoWc4Jo1ekfrM
-	2NITtTE2xFpVfjwJAVSbQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1761992498; x=1762078898; bh=V
-	Dehe93yxTJXuOHBmVVwaEhZloz0X+dnzSOWWU6PpS0=; b=3OGk3FwtFXjnGr/w+
-	zxx4x8lHuoJR9EDRb9VOqWqscWa7yuvG60Zl4cbufXgAtatInHkV954PV0ggH0UF
-	q6A5fb9Jqgo03AOkJYkXpmjkCn1/viNMlFngw9nYXqzc0cVKKN7jGsfiY1eppJve
-	9oWNkqzpkpEe9x9/NKf5J1uBTqLsP9k5lR1tBskvqAU67zCh2z6/WFmT3j/jo7e+
-	Yef8VnC1IpGB3G7OLvxQfyKEx4W03UFLYtX4gbHLrDw1v8OM5dtItVGnYjD4e0uE
-	T+hamhZxhrj9Px8pEvkyVhy0ajcXDV5aklcIkFMl7N4xKrB6SgaG5VufhnuQ1rXG
-	pvVVw==
-X-ME-Sender: <xms:Mt8FaZ7sCbtqHB1xpkHUsN-owZnC8_0dOagWNlmEPdDJqF5syOmYhA>
-    <xme:Mt8FaU38UdsKQYTdRcYHmfPRrYgyhr2RXHsRkgaZwE774g_ECo6wxOmNfpCMwZ1Os
-    1GyqVZa19yvsfgGTOrHBx1S0HPI1LAxhAQJg5Z_r3uNn0ujSWme-_E>
-X-ME-Received: <xmr:Mt8FaYAYWFGJR5jz8yGn0Mm2eUcWpBMkm3fhpPtI4PXFs2GMGaZRMrtxWiFSk9nuiUnKUyC4JGpqqxGUKh6MXp4wV7WBCvPOiPt4v4DLcJQMrLI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujedvuddvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffojghfggfgsedtkeertd
-    ertddtnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghkrghs
-    hhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpedvjefgjeeuvd
-    fguddukeelveetgfdtvefhtdfffeeigfevueetffeivdffkedvtdenucevlhhushhtvghr
-    ufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehoqdhtrghkrghshhhisehsrg
-    hkrghmohgttghhihdrjhhppdhnsggprhgtphhtthhopedvpdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopehlihhnuhigudefleegqdguvghvvghlsehlihhsthhsrdhsohhurh
-    gtvghfohhrghgvrdhnvghtpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgv
-    rhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:Mt8Fae1ZHfxfqSR6I-BIcZuwQAMTOuH2veVvLfM8d2HQAB1rVo_Quw>
-    <xmx:Mt8FaavqWv9Fz3Yxxa54fOLEJuQu-d_3Fx3wDkmUX2t-9IolQ5_5TA>
-    <xmx:Mt8FaW6EAbr3pkffNGN0-aqOrP8yEA9GDFK7eXURSjI6hIHHBz6A-g>
-    <xmx:Mt8FaTI_hj3j0oZJjj_l9btdD8Gm9-WWSGOi8zYDEWn-wrFV_cFEvA>
-    <xmx:Mt8Faat8CYe-5aBVKv5dprVZiT_NrgrqoYwh4lmGGsw0rlhOo4DTYPiV>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 1 Nov 2025 06:21:37 -0400 (EDT)
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: linux1394-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] firewire: core: code refactoring to find and pop transaction entry
-Date: Sat,  1 Nov 2025 19:21:31 +0900
-Message-ID: <20251101102131.925071-3-o-takashi@sakamocchi.jp>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251101102131.925071-1-o-takashi@sakamocchi.jp>
-References: <20251101102131.925071-1-o-takashi@sakamocchi.jp>
+	s=arc-20240116; t=1761992929; c=relaxed/simple;
+	bh=SHYtH5bETGar8dS4QBtS1eUfRcYLLVYSMMofFjNxIQg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X79IA3KtzAeiiTeXNd8z3PjmDua6+EaI+LCv8ZQdKF4uJfCHWOCAQRS7vGaZ0uI0A5v+HdfVc8wviJj3B4YDOSWNyZTt8RjVU6wimkuY0mjvZSjBu1/GBPkeP1RLVyg/XEbBi9mq+dvZNM7Jo20tkN5K98xKzHrZRit/YO2+Plg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=WPSn0KWX; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=rq
+	6HLerKSGV89rZ0utez+xAew3A/QhvKdFmaZJVOYj0=; b=WPSn0KWXkjeReDUzqo
+	rjbrugTtKQFS11eod2dGBptl8heWIqxBwnHcEJdYZ99010ETIJ0sTcw/ZTTqIB+6
+	WWnRxcR6KBHpTB5un3b5RR7dYHRYmV2HTbmUI+kX6QLOs9oqaabwr/m6r3gy9lPf
+	lJAyIh+rq3hX42WK9ziHBqHQM=
+Received: from localhost (unknown [])
+	by gzsmtp5 (Coremail) with SMTP id QCgvCgBHw3XN4AVpl9dNCQ--.35324S2;
+	Sat, 01 Nov 2025 18:28:30 +0800 (CST)
+From: Cen Zhang <zzzccc427@163.com>
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	johan.hedberg@gmail.com,
+	marcel@holtmann.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-bluetooth@vger.kernel.org,
+	baijiaju1990@gmail.com,
+	r33s3n6@gmail.com,
+	gality369@gmail.com,
+	zhenghaoran154@gmail.com,
+	Cen Zhang <zzzccc427@163.com>
+Subject: [PATCH] bluetooth: sco: Serialize state check in sco_sock_connect to fix UAF
+Date: Sat,  1 Nov 2025 10:28:25 +0000
+Message-ID: <20251101102825.173610-1-zzzccc427@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,96 +60,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:QCgvCgBHw3XN4AVpl9dNCQ--.35324S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxCF17KrWrtF4ktF1xKw45KFg_yoW5CryDpF
+	WDKanak34DJrn3ursayay8Wr4kArn5uFW2kr10gwn5Aas5KFW0yF48trWUtrs8CrWvyF45
+	Z3WqgFW3CF4DurDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piL0ePUUUUU=
+X-CM-SenderInfo: 5222uujfuslqqrwthudrp/1tbiXQH4hGkF275GMwAAsc
 
-The list operation to find and pop transaction entry appears several
-times in transaction implementation, and can be replaced with a helper
-functional macro.
+Concurrent sco_sock_connect() calls could race on the same socket since the
+state checks (BT_OPEN/BT_BOUND) were done without holding the socket lock.
+This allowed two parallel connects to proceed and end up binding two
+separate sco_conn objects to the same sk. Later, when sk->conn had been
+updated to point to the second conn, closing the socket could free the
+second conn and the socket, while the first conn's connect confirm path
+still referenced the stale sk/conn, triggering a KASAN use-after-free.
 
-Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Fix by taking lock_sock(sk) before checking sk->sk_state and sk->sk_type,
+performing the destination address assignment under the lock, and releasing
+it before invoking sco_connect() (which will acquire the lock as needed).
+This serializes concurrent connect attempts for the same sk and prevents the
+interleaving that caused the double-attachment and subsequent UAF.
+
+Thread 1:                          Thread 2:						Thread3:
+check sk_state                     check sk_state
+sco_sock_connect(sk)               sco_sock_connect(sk)			sco_connect_cfm(sk->conn)
+conn1->sk = sk				       
+								   conn2->sk = sk
+sk->conn = conn1			       
+								   sk->conn = conn2
+								   sco_sock_release
+								   free conn2 and sk
+																sco_connect_cfm
+																sco_conn_del
+																sco_conn_free
+																UAF on sk 
+
+The representative KASAN report excerpt:
+
+  BUG: KASAN: slab-use-after-free in sco_conn_free net/bluetooth/sco.c:94
+  ...
+  Write of size 8 at addr ffff88810d2be350 by task kworker/u25:1/88
+  ...
+  Call Trace:
+  sco_conn_free net/bluetooth/sco.c:94 [inline]
+  kref_put include/linux/kref.h:65 [inline]
+  sco_conn_put+0x49d/0xfc0 net/bluetooth/sco.c:115
+  sco_conn_del+0x46d/0x8d0 net/bluetooth/sco.c:280
+  sco_connect_cfm+0x83d/0x1ee0 net/bluetooth/sco.c:1468
+  hci_connect_cfm include/net/bluetooth/hci_core.h:2082 [inline]
+  ...
+  Allocated by task 294:
+  ...
+  sco_sock_create+0x22d/0xc00 net/bluetooth/sco.c:616
+  ...
+  Freed by task 295:
+  __sk_destruct+0x4b0/0x630 net/core/sock.c:2373
+  sock_put include/net/sock.h:1962 [inline]
+  sco_sock_kill+0x64d/0x9b0 net/bluetooth/sco.c:526
+  sco_sock_release+0x770/0xa50 net/bluetooth/sco.c:1359
+  ...
+
+Reported-by: Cen Zhang <zzzccc427@163.com>
+Signed-off-by: Cen Zhang <zzzccc427@163.com>
+
 ---
- drivers/firewire/core-transaction.c | 45 ++++++++++++++---------------
- 1 file changed, 22 insertions(+), 23 deletions(-)
+ net/bluetooth/sco.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/firewire/core-transaction.c b/drivers/firewire/core-transaction.c
-index 8bd79c3f97f2..e80791d6d46b 100644
---- a/drivers/firewire/core-transaction.c
-+++ b/drivers/firewire/core-transaction.c
-@@ -51,28 +51,34 @@ static void remove_transaction_entry(struct fw_card *card, struct fw_transaction
- 	card->transactions.tlabel_mask &= ~(1ULL << entry->tlabel);
- }
+diff --git a/net/bluetooth/sco.c b/net/bluetooth/sco.c
+index ab0cf442d..0af266880 100644
+--- a/net/bluetooth/sco.c
++++ b/net/bluetooth/sco.c
+@@ -651,13 +651,18 @@ static int sco_sock_connect(struct socket *sock, struct sockaddr *addr, int alen
+ 	    addr->sa_family != AF_BLUETOOTH)
+ 		return -EINVAL;
  
-+// card->transactions.lock must be acquired in advance.
-+#define find_and_pop_transaction_entry(card, condition)			\
-+({									\
-+	struct fw_transaction *iter, *t = NULL;				\
-+	list_for_each_entry(iter, &card->transactions.list, link) {	\
-+		if (condition) {					\
-+			t = iter;					\
-+			break;						\
-+		}							\
-+	}								\
-+	if (t && try_cancel_split_timeout(t))				\
-+		remove_transaction_entry(card, t);			\
-+	t;								\
-+})
+-	if (sk->sk_state != BT_OPEN && sk->sk_state != BT_BOUND)
++	lock_sock(sk);
 +
- static int close_transaction(struct fw_transaction *transaction, struct fw_card *card, int rcode,
- 			     u32 response_tstamp)
- {
--	struct fw_transaction *t = NULL, *iter;
-+	struct fw_transaction *t;
++	if (sk->sk_state != BT_OPEN && sk->sk_state != BT_BOUND){
++		release_sock(sk);
+ 		return -EBADFD;
++	}
  
- 	// NOTE: This can be without irqsave when we can guarantee that __fw_send_request() for
- 	// local destination never runs in any type of IRQ context.
- 	scoped_guard(spinlock_irqsave, &card->transactions.lock) {
--		list_for_each_entry(iter, &card->transactions.list, link) {
--			if (iter == transaction) {
--				if (try_cancel_split_timeout(iter)) {
--					remove_transaction_entry(card, iter);
--					t = iter;
--				}
--				break;
--			}
--		}
-+		t = find_and_pop_transaction_entry(card, iter == transaction);
-+		if (!t)
-+			return -ENOENT;
- 	}
+-	if (sk->sk_type != SOCK_SEQPACKET)
+-		err = -EINVAL;
++	if (sk->sk_type != SOCK_SEQPACKET){
++		release_sock(sk);
++		return -EINVAL;
++	}
  
--	if (!t)
--		return -ENOENT;
--
- 	if (!t->with_tstamp) {
- 		t->callback.without_tstamp(card, rcode, NULL, 0, t->callback_data);
- 	} else {
-@@ -1102,7 +1108,7 @@ EXPORT_SYMBOL(fw_core_handle_request);
- 
- void fw_core_handle_response(struct fw_card *card, struct fw_packet *p)
- {
--	struct fw_transaction *t = NULL, *iter;
-+	struct fw_transaction *t = NULL;
- 	u32 *data;
- 	size_t data_length;
- 	int tcode, tlabel, source, rcode;
-@@ -1144,15 +1150,8 @@ void fw_core_handle_response(struct fw_card *card, struct fw_packet *p)
- 	// NOTE: This can be without irqsave when we can guarantee that __fw_send_request() for
- 	// local destination never runs in any type of IRQ context.
- 	scoped_guard(spinlock_irqsave, &card->transactions.lock) {
--		list_for_each_entry(iter, &card->transactions.list, link) {
--			if (iter->node_id == source && iter->tlabel == tlabel) {
--				if (try_cancel_split_timeout(iter)) {
--					remove_transaction_entry(card, iter);
--					t = iter;
--				}
--				break;
--			}
--		}
-+		t = find_and_pop_transaction_entry(card,
-+				iter->node_id == source && iter->tlabel == tlabel);
- 	}
- 
- 	trace_async_response_inbound((uintptr_t)t, card->index, p->generation, p->speed, p->ack,
+-	lock_sock(sk);
+ 	/* Set destination address and psm */
+ 	bacpy(&sco_pi(sk)->dst, &sa->sco_bdaddr);
+ 	release_sock(sk);
 -- 
-2.51.0
+2.34.1
 
 
