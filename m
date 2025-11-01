@@ -1,123 +1,172 @@
-Return-Path: <linux-kernel+bounces-881103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16894C27771
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 05:09:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49C66C27774
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 05:13:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 13C094E46FF
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 04:09:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9C6554E2FB2
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 04:13:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A38CB2741AC;
-	Sat,  1 Nov 2025 04:09:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE3D2749CA;
+	Sat,  1 Nov 2025 04:13:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="BUybZAkr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nfvoobAY"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C422B2727FE;
-	Sat,  1 Nov 2025 04:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F50434D38C;
+	Sat,  1 Nov 2025 04:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761970190; cv=none; b=PLwKbyCrt6o5wXSjnZ587PTVIdqt7r7/K2soS/qN0G9AJlZ8HcChedClO2+Z4NY7qQ8KMsOb/ErHlvwjVwTiua/VT4FbsHoPZ9ZTc7yicTP0JYWux3EHlfIBpgrjrl+7UoSYmidwlkefTOZYgThYSzm2BGKsGfK/W4kVfpfWr8k=
+	t=1761970414; cv=none; b=Pzvk/j4uMEx0vWIQsvIIXbmdMM4Dy6t2DeI6Ss9Aq0zifXzWc/lSfxxKfBe3m/ZHSAAdgVHCMIotie7N1ovrTdWQMMUPi9PrYN+xNZYlPgCp7XUYWKCZejKh/xu3DeUvw5NZiNiPJnxQk1X08uUpsJGv+4yAgA1EHuVnz7A9Y6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761970190; c=relaxed/simple;
-	bh=vIzIpGr+Y0KCqjEMshY9/Fa+K5rSJIBw2Btho9NZx94=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=JVwCu9i8eC/+iYPYmn0x3vEiE2bO09I1JUvusROXGhuRy4JKuZ81+ISc2/iXouy7EsNcsz4uV1ASVqjBRsF01Yfue1RTrLYqNweOkEBkMvQOjSEN5BHCwftwClq5awcV2AWD78wSq+/mphy0FPDdw88TXUmVHV8Z3TZIHJ+GDcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=BUybZAkr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB93EC4CEF1;
-	Sat,  1 Nov 2025 04:09:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1761970189;
-	bh=vIzIpGr+Y0KCqjEMshY9/Fa+K5rSJIBw2Btho9NZx94=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=BUybZAkrmZfEv7OYCM/DQB6sLpaells0D9RK8FedH5j5ONj6Zc5Wf7hVGuEMiJ2sp
-	 /4HBi8fOxSJ0Oc20nFFr/ao8OIzmN2b/2KTE4JE3Yfp+OaWrfx/t5tmQrw/tYlJU+H
-	 8+6CzSZTVaoSPbpAL8gNFj2ZcLurm3NnLnIIzKBI=
-Date: Fri, 31 Oct 2025 21:09:47 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Guan-Chun Wu <409411716@gms.tku.edu.tw>
-Cc: ebiggers@kernel.org, tytso@mit.edu, jaegeuk@kernel.org,
- xiubli@redhat.com, idryomov@gmail.com, kbusch@kernel.org, axboe@kernel.dk,
- hch@lst.de, sagi@grimberg.me, visitorckw@gmail.com, home7438072@gmail.com,
- linux-nvme@lists.infradead.org, linux-fscrypt@vger.kernel.org,
- ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/6] lib/base64: add generic encoder/decoder, migrate
- users
-Message-Id: <20251031210947.1d2b028da88ef526aebd890d@linux-foundation.org>
-In-Reply-To: <20251029101725.541758-1-409411716@gms.tku.edu.tw>
-References: <20251029101725.541758-1-409411716@gms.tku.edu.tw>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1761970414; c=relaxed/simple;
+	bh=t35qE8O/UY/ELx866Fdwau4Jjt6Z15dBhkoXwNVMAZM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YUj3S/fGjI+CD/pJ7KGkYhY+8PpVnbQk3/trBLYvR+OE2dtNYcCQBbAyD+V876QClD5fYxsIf0pIXmYAlGwCVvOWaGsVceMTehjX0dAJXW1toTVlgqtUjvPWoz35oLfkrcMmQKBkrnkmHKHwbeHkjs84pkXRRmDb+a7fRL/jqP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nfvoobAY; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1761970413; x=1793506413;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=t35qE8O/UY/ELx866Fdwau4Jjt6Z15dBhkoXwNVMAZM=;
+  b=nfvoobAYrL8hxbguhP2pyCqN2NMi2lGDgFgYVtJg1DQYO93u3y9Y6laK
+   Y5lAy9EC9kuObjkGxrCNaI8Yd4akX7zKIq9S/W+H3FLy/gsoQWwlz4Mpw
+   cH2OY12Lc+sK9islKdzW8HAtEDBXTKW4JnSUVF/HvnWFRVMQ8YLyyN8Fs
+   NlZDvmYbBX8QKAe+CxKG2pGGcXq1JjtC6e9P2j8jqnz/SfWUJz4r4KXbE
+   0uo4vFCAjkJfenhK03jnICG5FZiwgU3GuFOQA4rLvYK/k3C+mIxWiQRCt
+   hxT6BycDbDvPUrvjyn5qIuj3DTBS8lD24i0kEqw6BjU9UcIWdFMZA6LG3
+   Q==;
+X-CSE-ConnectionGUID: Fr4rjrdjTv6Km7zBeqD3kQ==
+X-CSE-MsgGUID: fVP32eQEQFavEZ1JbQ+Oww==
+X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="64021236"
+X-IronPort-AV: E=Sophos;i="6.19,271,1754982000"; 
+   d="scan'208";a="64021236"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 21:13:32 -0700
+X-CSE-ConnectionGUID: F8W6k9wYQUqSLTeqMV2sKw==
+X-CSE-MsgGUID: PBL7mAU0TWqCXqKw+PUYeQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,271,1754982000"; 
+   d="scan'208";a="190473603"
+Received: from iherna2-mobl4.amr.corp.intel.com (HELO desk) ([10.124.220.87])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 21:13:31 -0700
+Date: Fri, 31 Oct 2025 21:13:24 -0700
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
+Subject: Re: [PATCH v4 2/8] x86/bugs: Decouple ALTERNATIVE usage from VERW
+ macro definition
+Message-ID: <20251101041324.k2crtjvwqaxhkasr@desk>
+References: <20251031003040.3491385-1-seanjc@google.com>
+ <20251031003040.3491385-3-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251031003040.3491385-3-seanjc@google.com>
 
-On Wed, 29 Oct 2025 18:17:25 +0800 Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:
-
-> This series introduces a generic Base64 encoder/decoder to the kernel
-> library, eliminating duplicated implementations and delivering significant
-> performance improvements.
+On Thu, Oct 30, 2025 at 05:30:34PM -0700, Sean Christopherson wrote:
+> Decouple the use of ALTERNATIVE from the encoding of VERW to clear CPU
+> buffers so that KVM can use ALTERNATIVE_2 to handle "always clear buffers"
+> and "clear if guest can access host MMIO" in a single statement.
 > 
-> The Base64 API has been extended to support multiple variants (Standard,
-> URL-safe, and IMAP) as defined in RFC 4648 and RFC 3501. The API now takes
-> a variant parameter and an option to control padding. As part of this
-> series, users are migrated to the new interface while preserving their
-> specific formats: fscrypt now uses BASE64_URLSAFE, Ceph uses BASE64_IMAP,
-> and NVMe is updated to BASE64_STD.
+> No functional change intended.
 > 
-> On the encoder side, the implementation processes input in 3-byte blocks,
-> mapping 24 bits directly to 4 output symbols. This avoids bit-by-bit
-> streaming and reduces loop overhead, achieving about a 2.7x speedup compared
-> to previous implementations.
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/x86/include/asm/nospec-branch.h | 21 ++++++++++-----------
+>  1 file changed, 10 insertions(+), 11 deletions(-)
 > 
-> On the decoder side, replace strchr() lookups with per-variant reverse tables
-> and process input in 4-character groups. Each group is mapped to numeric values
-> and combined into 3 bytes. Padded and unpadded forms are validated explicitly,
-> rejecting invalid '=' usage and enforcing tail rules.
+> diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+> index 08ed5a2e46a5..923ae21cbef1 100644
+> --- a/arch/x86/include/asm/nospec-branch.h
+> +++ b/arch/x86/include/asm/nospec-branch.h
+> @@ -308,24 +308,23 @@
+>   * CFLAGS.ZF.
+>   * Note: Only the memory operand variant of VERW clears the CPU buffers.
+>   */
+> -.macro __CLEAR_CPU_BUFFERS feature
+>  #ifdef CONFIG_X86_64
+> -	ALTERNATIVE "", "verw x86_verw_sel(%rip)", \feature
+> +#define CLEAR_CPU_BUFFERS_SEQ	verw x86_verw_sel(%rip)
+>  #else
+> -	/*
+> -	 * In 32bit mode, the memory operand must be a %cs reference. The data
+> -	 * segments may not be usable (vm86 mode), and the stack segment may not
+> -	 * be flat (ESPFIX32).
+> -	 */
+> -	ALTERNATIVE "", "verw %cs:x86_verw_sel", \feature
+> +/*
+> + * In 32bit mode, the memory operand must be a %cs reference. The data segments
+> + * may not be usable (vm86 mode), and the stack segment may not be flat (ESPFIX32).
+> + */
+> +#define CLEAR_CPU_BUFFERS_SEQ	verw %cs:x86_verw_sel
+>  #endif
+> -.endm
+> +
+> +#define __CLEAR_CPU_BUFFERS	__stringify(CLEAR_CPU_BUFFERS_SEQ)
+>  
+>  #define CLEAR_CPU_BUFFERS \
+> -	__CLEAR_CPU_BUFFERS X86_FEATURE_CLEAR_CPU_BUF
+> +	ALTERNATIVE "", __CLEAR_CPU_BUFFERS, X86_FEATURE_CLEAR_CPU_BUF
+>  
+>  #define VM_CLEAR_CPU_BUFFERS \
+> -	__CLEAR_CPU_BUFFERS X86_FEATURE_CLEAR_CPU_BUF_VM
+> +	ALTERNATIVE "", __CLEAR_CPU_BUFFERS, X86_FEATURE_CLEAR_CPU_BUF_VM
 
-Looks like wonderful work, thanks.  And it's good to gain a selftest
-for this code.
+Sorry nitpicking, we have too many "CLEAR_CPU_BUF" in these macros, can we
+avoid adding CLEAR_CPU_BUFFERS_SEQ?
 
-> This improves throughput by ~43-52x.
+Or better yet, can we name the actual instruction define to VERW_SEQ, so as
+to differentiate it from the ALTERNATIVE defines?
 
-Well that isn't a thing we see every day.
-
-: Decode:
-:   64B   ~1530ns  ->  ~80ns    (~19.1x)
-:   1KB  ~27726ns  -> ~1239ns   (~22.4x)
-
-
-: Encode:
-:   64B   ~90ns   -> ~32ns   (~2.8x)
-:   1KB  ~1332ns  -> ~510ns  (~2.6x)
-: 
-: Decode:
-:   64B  ~1530ns  -> ~35ns   (~43.7x)
-:   1KB ~27726ns  -> ~530ns  (~52.3x)
-
-
-: This change also improves performance: encoding is about 2.7x faster and
-: decoding achieves 43-52x speedups compared to the previous implementation.
-
-: This change also improves performance: encoding is about 2.7x faster and
-: decoding achieves 43-52x speedups compared to the previous local
-: implementation.
-
-
-Do any of these callers spend a sufficient amount of time in this
-encoder/decoder for the above improvements to be observable/useful?
-
-
-I'll add the series to mm.git's mm-nonmm-unstable branch to give it
-linux-next exposure.  I ask the NVMe, ceph and fscrypt teams to check
-the code and give it a test in the next few weeks, thanks.  
-
+---
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index 4cf347732ec1..16b957382224 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -309,23 +309,21 @@
+  * Note: Only the memory operand variant of VERW clears the CPU buffers.
+  */
+ #ifdef CONFIG_X86_64
+-#define CLEAR_CPU_BUFFERS_SEQ	verw x86_verw_sel(%rip)
++#define VERW_SEQ	verw x86_verw_sel(%rip)
+ #else
+ /*
+  * In 32bit mode, the memory operand must be a %cs reference. The data segments
+  * may not be usable (vm86 mode), and the stack segment may not be flat (ESPFIX32).
+  */
+-#define CLEAR_CPU_BUFFERS_SEQ	verw %cs:x86_verw_sel
++#define VERW_SEQ	verw %cs:x86_verw_sel
+ #endif
+ 
+-#define __CLEAR_CPU_BUFFERS	__stringify(CLEAR_CPU_BUFFERS_SEQ)
+-
+ /* Primarily used in exit-to-userspace path */
+ #define CLEAR_CPU_BUFFERS \
+-	ALTERNATIVE "", __CLEAR_CPU_BUFFERS, X86_FEATURE_CLEAR_CPU_BUF
++	ALTERNATIVE "", __stringify(VERW_SEQ), X86_FEATURE_CLEAR_CPU_BUF
+ 
+ #define VM_CLEAR_CPU_BUFFERS \
+-	ALTERNATIVE "", __CLEAR_CPU_BUFFERS, X86_FEATURE_CLEAR_CPU_BUF_VM
++	ALTERNATIVE "", __stringify(VERW_SEQ), X86_FEATURE_CLEAR_CPU_BUF_VM
+ 
+ #ifdef CONFIG_X86_64
+ .macro CLEAR_BRANCH_HISTORY
 
