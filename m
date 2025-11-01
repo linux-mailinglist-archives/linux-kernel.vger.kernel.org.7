@@ -1,206 +1,314 @@
-Return-Path: <linux-kernel+bounces-881092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F164C276FC
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 04:53:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E2BFFC27708
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 04:59:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B25F61B21087
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 03:53:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFE8C189DB54
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 04:00:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D61C225A35E;
-	Sat,  1 Nov 2025 03:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26DC261B78;
+	Sat,  1 Nov 2025 03:59:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="EtfoPlTR"
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11013006.outbound.protection.outlook.com [40.93.196.6])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="I5FEZNFc";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="CsrJv4UY"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82182224AE6;
-	Sat,  1 Nov 2025 03:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.196.6
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761969184; cv=fail; b=JB5k9ScEF09zWJ91GoR8QVAFbBQ6R45p+Xanj9whO3XhF9Qum5mPlhiWEgEQQM/dkflA0PvjtUtJIpgFmTEJ52M1fqP5HvKFqNFDfraiY1N1rel7M+UUzDiAc2fiFBWPNSDfGC4i5OMypLseHEgZ1f6Yo5aI1HB9NfWpW4lSGdI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761969184; c=relaxed/simple;
-	bh=wVPPbtSRqkSIkrzoBqzr3jOctjx926LnR8NT+yoLKaE=;
-	h=Content-Type:Date:Message-Id:Subject:From:To:Cc:References:
-	 In-Reply-To:MIME-Version; b=FZH8pGdd+BxroVyuLcggtk6vwJWh2CENBfCeoAk5e0aXJ8qt+o08cLEtjItSIovp8HxcNBuayB3udl2r+74HClqWa24+7rO7lHRztu+LwE/vi3aI7HsLYSum3OP+/yVKNCBlRgQIn8YIfnuFgAUfhe/XMb0giXNlKe4UBiwk0SY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=EtfoPlTR; arc=fail smtp.client-ip=40.93.196.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tFiRm0UEPciisayVsPP688GihtDiM82aYgPRXlbbdJtwha6nn5vvGEEQ5lQ4q+BBBn9sDQjL7sOjymr3AabX8onf2dJDdZRGO4pz+xWoKfE7lU+rmxWUCLSEQ9nyhz53cMIYU7QvmLh6XTyTI8dqoRssbKgISveBsJ0k0ObBxWg0UMUxgZ5XpGjot/nG9HF2A+90cjlGi11D/WG6PhVqWip4Cd07doiZEl87DQlC3NxpK0U7tuNmEo9b2pzXWqgoZvYm2lvqF920Ndb6XAzdeTWD2uh8rAiAEi1uaYNEcAzkkzNZZiNI/ZsNc39rg+G7RjhHhD9Ab2yrGxoVrPXziA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wVPPbtSRqkSIkrzoBqzr3jOctjx926LnR8NT+yoLKaE=;
- b=A3aas6Rx8AlqRVPdo6o1d/fhCcRa2CuXNOQT3tpDDUJFDvD2EOBqevkCa0oIJRUHwVTMn5qPXSw5oaNiED7KRjzviezc0qblr2UeV/eqLZBQqT1gHYFSiORY6te92+b2t9xcJlAu92mj+NHxFmIeK1yweR59LeKHV7hd92wBHXNdDJRSZxiTeThUOwgQGote8zHWIGpbwyCpdXVEqckgxjdgvdEc08qrC0bFTzuM/RXnxopTfm42jX1SeleCBC61TY858SSnRxTWKuU+8xt/schbSuBbZtUm3mszcL2VYJOLv20vEmAzZ1ljazBK4KQG0Bx08GUEZHV3kREFY8mQ0Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wVPPbtSRqkSIkrzoBqzr3jOctjx926LnR8NT+yoLKaE=;
- b=EtfoPlTR2wbHQnYY3cP50vLOF5o/isbxjJkLuPbzVsorx4VLOlIhn0JzSIEsthevPgKmCfs2kA+4irA1AhhSPikMKfG5xeoDLYI0EMpQcaSPoNMZuKPVXmVRlK0lQC9RINgksOH3h/1qSrJ7WcizXDl27l6cWMrgnXvVa25oVotamNnaMIN8n5xUlwRI++WvDXzJdKS21MY5r7NP6K07f9jMe0lP2srvaRSI+T7RznwfQ4l2YkMev7l9Bxly7xcg6j7slSstpd9XSJtyHlFUTsxGqfOTgG2A+jFhBqicui/OHH6fv4vPM5EAvbLoNP30RB8rP2PPBqoT4AEhb/PnlA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by MW4PR12MB7483.namprd12.prod.outlook.com (2603:10b6:303:212::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Sat, 1 Nov
- 2025 03:52:59 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9275.013; Sat, 1 Nov 2025
- 03:52:59 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 01 Nov 2025 12:52:54 +0900
-Message-Id: <DDX1Y0EUNNPR.1KQ7OF9H4T81E@nvidia.com>
-Subject: Re: [PATCH RFC 2/4] samples: rust: Add sample demonstrating C
- linked list iteration
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Danilo Krummrich" <dakr@kernel.org>, "Joel Fernandes"
- <joelagnelf@nvidia.com>
-Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <dri-devel@lists.freedesktop.org>, "David Airlie" <airlied@gmail.com>,
- <acourbot@nvidia.com>, "Alistair Popple" <apopple@nvidia.com>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
- Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Simona Vetter" <simona@ffwll.ch>,
- "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime Ripard"
- <mripard@kernel.org>, "Thomas Zimmermann" <tzimmermann@suse.de>, "John
- Hubbard" <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
- <joel@joelfernandes.org>, "Elle Rhumsaa" <elle@weathered-steel.dev>,
- "Daniel Almeida" <daniel.almeida@collabora.com>, "Andrea Righi"
- <arighi@nvidia.com>, "Philipp Stanner" <phasta@kernel.org>,
- <nouveau@lists.freedesktop.org>, "Nouveau"
- <nouveau-bounces@lists.freedesktop.org>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20251030190613.1224287-1-joelagnelf@nvidia.com>
- <20251030190613.1224287-3-joelagnelf@nvidia.com>
- <DDVYVKDW8WG2.2STCJ4ZU00MZF@kernel.org>
-In-Reply-To: <DDVYVKDW8WG2.2STCJ4ZU00MZF@kernel.org>
-X-ClientProxiedBy: OS7PR01CA0017.jpnprd01.prod.outlook.com
- (2603:1096:604:24f::17) To MN2PR12MB3997.namprd12.prod.outlook.com
- (2603:10b6:208:161::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C1125BEF2
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 03:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1761969587; cv=none; b=ndQ5/ZkF6WF65Z9JWcedeeG8gWmjqfV5v+pnZcjQm4qxBZ1IWZXgUjSqE1j5BSsFlApVzgPzfq97X1r7Ifa/cYZHP/x3jmBRvuYepg5OCGJlzMgUApl76rybUjeom4y7AIMU9O8eAEtaGPYgj1C0pR/jizmRBa2UK/9QTMzvT4c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1761969587; c=relaxed/simple;
+	bh=AVFJeWhwjPeMfv4vZC+1z3aySCaKehRl8D67ckwLWlY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Qes9GjFb997A20opNUN/rVYwzm3b9jQc9FOjJKA/WddEsItVH8bFj/9GJuH3DY/KZNwcuC5JLjDdQcUcL+bfu87uK6v4gg87Wzhkawc88ZaN44Tz93vW/NSe6Mwki6Z00bomjdRUfpFG4Z40L6+bgkSdVHGScHuzmTHlg93L2n4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=I5FEZNFc; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=CsrJv4UY; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A12q0Wh461961
+	for <linux-kernel@vger.kernel.org>; Sat, 1 Nov 2025 03:59:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=nS4VA2S6QxRvYf5zmxs18z
+	z4+QdRrBTL2vqWGCC+Tho=; b=I5FEZNFcNxkhcwu7xuV/E6DqtyodcJ5L3nURDO
+	cUHJduNuJwC9S11lQzzfPTXBfw2f/0oaWkOSQHAB6F28iSVcRvZlux7qcz/urJDa
+	8gHhdXdV/Rky97zPIUP68bs7A90Bk/M5QCWySagN3bjvB5Wj79edEed3dLoa4wO9
+	g6+ZOrJq6p0DI0EO2X0W1RBypCSMiSulOLdLQnTSlWm5//ujAsbLDtcvta+u9MGE
+	WcV5Kj5FScV6325z7QH0U85xicsWly4NefSzEk4YwhloNZd7vWAOW8h5CH78xqvS
+	H0s9K3FWV51dkhffqxoMChtJmlN0i21s8sCHdCNWl1BTS4pQ==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a59t002ns-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 03:59:44 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-29523ed27e0so15256005ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 31 Oct 2025 20:59:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1761969584; x=1762574384; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nS4VA2S6QxRvYf5zmxs18zz4+QdRrBTL2vqWGCC+Tho=;
+        b=CsrJv4UYkvsgGVBCgGhu7Buqe0Gblc6jbv1QAbw08bhYCVxDTYr6K4NShW+F+5xXTK
+         p9QFgSUBFEgCd/XyPaYIZ9ETcEdrrnhsZDV8hNRhKHFvvzFaokt7MJrH8kREYrHkYrFr
+         l/pC7UUxTXKjNGfZawbXL35IFAfE9CV5BOt6J6s89pwGlP6imbLwgezEcEHe1T8U+3ZA
+         zJJ59IHuYw1J/Ha6uCfo7o5mMv7+gnNG9NBVhEV5Jso6pvDwRMxzjVOJ0/2VWFsig4dK
+         KpLxKWIqqO++HnxFoATipICM6PdFXC9pMC/fb0YuMeSArcJn6csanduuwAuTuTiGEYTT
+         pndg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1761969584; x=1762574384;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nS4VA2S6QxRvYf5zmxs18zz4+QdRrBTL2vqWGCC+Tho=;
+        b=LYLJp2p/2y9p7IdyxfKrHguDSlHG1JfZjt0SxN86HWtSCEqpGqy0DxO9DyevV5txZT
+         tpAzhfuCIRQAR4JWbxFvpBcoF6c8qS4oYFZxpqQ52MGG5MQ4rsfYdeqRKauAdPQlkJvN
+         JtSRQv3aS22MGqMdVY+JnY5KkYufBkt00D1xZLoOA2whwnSEE6K7C0saLb+retjJ+f/c
+         MQkcH9V5009BEEE52++m35YGMc0hdyHTJ1YSduqBKrFNxiB2UTdwH6l59tpQJqAn/n/x
+         nJHWkS+Dp1tHa/grfqDvRZ6iqfWGx3igkeRkc0mRPJ50WHljIbjxrqL5l8lVK8IpQoV2
+         NUpw==
+X-Forwarded-Encrypted: i=1; AJvYcCV1bHyV41Ta6Osay402wTDZuhbv9ZLzeZ+3rM7exjlVx+/by5qwv4nMDPEnSfNk/rL1dG96CpOPZOlJgA0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5GnjkHMODReYXa5pUYb0iNiFt+mZg6FeGubHV9UtP6DBcURL9
+	ELDmU8vg7+pw8eIjc+1RmJCv7ikxUdu+EU85STEjbLRpy9vdEGXLW616yPxUlUq7ytuCz7YAbwV
+	HMEHrwSYcGDQmU7eOtct+ivat7VYWIbFrm7b31Ki3x73v2hatAkl5synC51+3Dtfr+20=
+X-Gm-Gg: ASbGnctufBLjwocUuhvw7KNuoan2+JwcLvvXOg9M7hk94/EOzS02Rkdg2XPkg33Osyb
+	G/8w8qw6fjHgbzwqoPE6Y4Huot1HaYxCwUqDGWl9/pOYxPv2yI8YxbmbG1hznAh9rSHIHjNTHhb
+	Z2dFmjoOUQuHdmPE4RKuvRSzu2eyVz8Z0RzJwyYL1nJd7awDBR6WRHHBR43ABpg6k8wpqUUpLOz
+	v0z4fAqYiA9oP2ThZQvf5Z46LRHAs4pQgkZqYjh3bpxT60i0qJ+P5XKTcB6nhFkX9YedlCIRCIm
+	oh3C+EIvWIR/0G975gp0IluI/XuYzLBc8ChD6wozuNSokAOze3BoWvUcYXofXxjMgGxn8tU4rRZ
+	h1kuVXML2/dhtz6miF06nCQvFADc0s5/cEA==
+X-Received: by 2002:a17:902:cec7:b0:295:5668:2f27 with SMTP id d9443c01a7336-295566831dbmr12503995ad.9.1761969583325;
+        Fri, 31 Oct 2025 20:59:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGE5xXMxDCRfEogt8u0lCduW2jhsKu29eTg1BS9RJ1hxfwUl1jmGC7Ip7Vz358MzGpb31qELA==
+X-Received: by 2002:a17:902:cec7:b0:295:5668:2f27 with SMTP id d9443c01a7336-295566831dbmr12503695ad.9.1761969582738;
+        Fri, 31 Oct 2025 20:59:42 -0700 (PDT)
+Received: from hu-krichai-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-295268717ffsm41490725ad.2.2025.10.31.20.59.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Oct 2025 20:59:42 -0700 (PDT)
+From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Subject: [PATCH v9 0/7] PCI: Enable Power and configure the TC9563 PCIe
+ switch
+Date: Sat, 01 Nov 2025 09:29:31 +0530
+Message-Id: <20251101-tc9563-v9-0-de3429f7787a@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|MW4PR12MB7483:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2ea91413-32ea-4c58-ad8a-08de18fa2584
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?U2VJaEtCQVZmZ21INEdhQlV2aExSRndsZ1Z1aWdZWDdkRFYzd0F5UWFSUUM2?=
- =?utf-8?B?ZTVSVktLZVNuemRlemlhREUyRk8xUzhpSGU5UkxhR3BRR1VQRmFOaFVobEF2?=
- =?utf-8?B?RUQyQTBlZkh2WkkwdHJZN0h0U2hWY1BHeTJTOXVNNngwUzdmU0VKNW0wV3JQ?=
- =?utf-8?B?TUdhcXp2YnNRa3c4TzBhbXRyb2dkVG1lWmtrK0t0K0pwMUlFZHZ4YnVJV0la?=
- =?utf-8?B?b3ZiM3Z3b0VzaUhxNGlvVGwrWVRWQUJsa3A5T2ErME9DMC9rMUVKaXUrY1Fk?=
- =?utf-8?B?UnRHS1NuQzZOd0tTZWdkdlkzbjZES0NXRmdsYkxZdWdjbzM5Rmh2dGUwQkNH?=
- =?utf-8?B?TlBYS040cnNNL2FDT2gxZGZjalo5NVpuRjY3cHV6WVFUNnh0T3R0UzRaT2po?=
- =?utf-8?B?cmpIREs1RXpPWERocXRaRXpvdVpVOXg4M25qa3ZXNDkyd3NnVEsxVnpjSHpQ?=
- =?utf-8?B?eXRxMkZoZG03d05YU21Vc0x3MWpNQjkzbWpwcGZ1VUZ4bXdkQ2Q2NXBGMko4?=
- =?utf-8?B?WWMwYW96alZmRklDM05SdXFVMjUrTWpLazJxVU1RbXRhZFVueFBtcXBZTkU2?=
- =?utf-8?B?ZFZPZHJwWmdqdXRGbk03Ylh0aEFTM3YrSG9XcWNKS1hhWUltc2d2RzVUbDNx?=
- =?utf-8?B?dWNVeFA2djJ6eERiMnllaFRpRUVxajB0eEVkL1NydnlCYTh0Ri9Id1FIZ2JN?=
- =?utf-8?B?eUFmYkpVQ1p0R3B6b09PcWplbkIvZGsrU1BPOWc2OU9JS1R1MmFMV25WWGov?=
- =?utf-8?B?WkRQcElCM2dnaUhGU1UzSTd6ZGFrSWZRUGtvSEhkMmQ1R3o4bzlSQ051b0JP?=
- =?utf-8?B?d01KMnBVZjUyZVpwWkIxM0xwVU5JZVowVEpmR0JMd2Zhc08xWU5uLzZETnNC?=
- =?utf-8?B?SWVLbmxkVXBFMlRkNVpzSVpDQmdZdC8wV2dyd0J0c2ZJaEhjblBVckJsYW51?=
- =?utf-8?B?QVNMeDlMNUtldTZ0OW9vdW0vQUs0TFM1Q1A1ZkRvT0VZZDhBNVJ3aUJSbEkr?=
- =?utf-8?B?cVlhMnRmNThvSjIrRlJyaDZRcmVGMWJ3UWtWbjNHTFhVc2JnWkNwanhMcjQr?=
- =?utf-8?B?dlA5RWw2aWNLQ3dvZXRxcnNuNWI3UVBybzFKblFJejN4ZElJcmUybDV2eXdU?=
- =?utf-8?B?UFFQcHR5dE4rVzYvWGg0LzNhVy9oMUF2dUlnNWQ1WXptNTNlK1ozRWk4cGFK?=
- =?utf-8?B?YzhSdWVKZklaWkd5S3ZHVStrd2xNNVM3NmZtZ3ZPdFdnT093RG93cWo3d2NU?=
- =?utf-8?B?Z3YrNlFackVzbW5iVXVOVG5HMUdvSFFuM2dPRDhIS3ZneW0xY25KYlAveUlL?=
- =?utf-8?B?dUd5ZVZKMEhkdFcrU1FUcGhyTlRwa0wwN09YY3RvdWpRaDdrU3o4L0RBcnpX?=
- =?utf-8?B?Vm5wVFRHMjM3eHh0T3VhMjFYNDk1ejFqVUZWZjYvWC90bTFXblRtTWhGZXln?=
- =?utf-8?B?MlJOQ0RJYXhhOHNWd25mZlBNTjhaZHFRZjJtc3JrdXpnblRDR3IzcnZxVjdS?=
- =?utf-8?B?MlBLL2NZQzIxVk5XeGhlYUh5L2dJQ1VjeDN1am5YU3JxUlFGQ3AzRlN3eFdw?=
- =?utf-8?B?bXo0U3FRbjcvNzI5MlhoNXBrSmlTWGFzTmJ0NDFaQkY2cFpWdkxlVFBUMFhK?=
- =?utf-8?B?RGt1cDYwUDVxWmNLOHEzNzRZOVdGNjQyaFFraExlc1dQVTY1L09ZTkx0cThJ?=
- =?utf-8?B?ZUhpT25UeGViQ28rRzJRaHM3U0twVzFGWVlpNnNwcWdxUDJGTlM1cEZpN3Qx?=
- =?utf-8?B?Um8wdlVGRjZpVXgwRkEzTkRIeVlpOHNzUUZEUjNWWVhnbW1yYzZpNTRiVThN?=
- =?utf-8?B?U0N3QVordTRKclFFOGk0YTBXUVlVTmpwR1RjWXNxaUVUQ1llS21pS0RNZk1G?=
- =?utf-8?B?clF1WWpJZXlaeHhoUDVlQ2svWjZXRHZBeVV4bUs0NjdEckRjQjFMQ0tKeVRY?=
- =?utf-8?Q?cTAzNA//v3/Ft62zMq0FcxgeqZ2h69Ir?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ckI4OVE4VlpZeHYvemhndkdjTzFMNzgyNmZiUVpvUWdGNGlWSGlPaXBiS0JZ?=
- =?utf-8?B?eFU2RmlPWVVuU3VQYXB2ZElTc0Z4UFBrWnEyNUljeFhBelhXNmNZK3p5OW9J?=
- =?utf-8?B?UmNFR0I5UCtoQVNEWFVDbXVkR2V5TGtDVmdCVlBZV214R0VtOTdaQmpsdk9j?=
- =?utf-8?B?OXlaZzFCdU5pRnp0MGdDVktQRkJGTlBIL2tSemc0ODVzWjhRclNiSjFTcVBN?=
- =?utf-8?B?N0UrL3BjSDlBVjJ4dFp3YkszYisyNFJRRmtMUWFJYnhPVEpsc01NbFUyYUdR?=
- =?utf-8?B?S1ZTQThXMUdxdmVYSm54QVM4Mm9pUGNjRS9GVXlzVFVSRnc5eG5LWWJjdE9G?=
- =?utf-8?B?N3Axdm1nNEYxRGZaT082b2s0cllyNjY1d29yMXFPeVhxL1VYWSsrNmJzY3Yw?=
- =?utf-8?B?UkJTVTdqSHQzSVV4WGN3YUUzcEFQcVlLQzM4d0pFTlk4RkNodnExVTh6bUZs?=
- =?utf-8?B?VXFQeTZBR3FvODMzOHhCV0xnVWdlRmxKSk5pV3c2Z0c0MUNueEkzRE5ZbmpJ?=
- =?utf-8?B?MVREQ3MvZzZ6MFVlUHdvYWdUVHBrOVAxbmttK0F4N0J1a3VKbE01MVR2aklO?=
- =?utf-8?B?Q0VhazZoaEVINmwrcnVPeG5IcTUzbmYvTk93SHE2NnpRbjNHTnRvK3hZajRG?=
- =?utf-8?B?d1Q4L0xFUTJicnE2OTVocTJzWXA3UDVZZForV0FGK1FhdWM0NXcwZzErQWVj?=
- =?utf-8?B?QzFZUTRURTIvTXFsOHNkUFpsWGdXbklXZVZoSHVVVk9JaER5SFd4TUNJbTlh?=
- =?utf-8?B?aWtNQi9ncS9ZTWZQZUdrZUJkREhRYjlNYWJOM2hMMUdLNGRBdm8vWkQxS0ZI?=
- =?utf-8?B?UnVicUdkR3lvNnBySDd1YkZvNU9VNmdPNWtORHdRaUJySElCTDdHUlZQT1ky?=
- =?utf-8?B?UlYzNVN5NkFzQ1NQZWZ3dE9KQ08ra2Q5UjduSHlhNjRhakhEQVRNM244SmxG?=
- =?utf-8?B?U3pSbHAxV1R1MitLV1YrN2Q1T2lWcm52dWVGK1NEL3QyejVWWGZXVS9mSnRN?=
- =?utf-8?B?QVA3RTRaaGhGSVUweVgxWFdsc2RIaWpGblUvdkR0Z2g4QjFJUDFuL1hMcUMv?=
- =?utf-8?B?dDJwYUlQSjR5TDluNkxHdUxHRTRhWFVvOXNaK1lpaUNDVWNDdzJlVG8xZHE4?=
- =?utf-8?B?ODRNTkhVRWZTMkdCWWRrZm1NMXVKQTV0OWN5UGFNVmUxakc0SE5iRDNDR3BL?=
- =?utf-8?B?eFQyaE1qa2V4bVZtRTk2ek1Yb1dtbFN4Nk94SnRKVHY0TzJGTjdkSkFFdW02?=
- =?utf-8?B?N1lrZ0NqUkIrb2NIcGxwSXUyK2hPVlM0eHExMkRzclVheno1NmhuNEgzU3Z6?=
- =?utf-8?B?S3d0N043VFZNK2x1OEQ2aTJMV3lEb1pQcFZ5Q1BqTUVMNXptZE5ZUXhnR2cw?=
- =?utf-8?B?N0hGT2pxdVM0STF3Ukh2aWd1Qi90MXNjQUxSdC9nMWtZVHQycSs2RFZ3TmVP?=
- =?utf-8?B?a3prS05rampDR1lSQllWN2M4R1BkcjloVXNNcTlBL044a2JhU29iTkttTmZu?=
- =?utf-8?B?dG1qRUlaYkdzbUNkSVc3eHJYU29Ndlp5ZlRrZ3o3NFhLZ3hXSVkwTFp2UUJz?=
- =?utf-8?B?cE9zRGtjVGh4ODZsNmM0SWJWbmhzeEFHSEhYb2gzeXgrMDRwRCtHazVmTzJD?=
- =?utf-8?B?Zlo1RVZrdnBQeUowNktJUzdqUFl0WlNmbmE2K2wwVGg5WFB6amxoNGxRS3lM?=
- =?utf-8?B?OGdzM1hNeGw5UHJoWHROam85ZHR1QWM3eG9POUliTk40Ly9ia0Iyaks4elN6?=
- =?utf-8?B?R2s5eHQzU1RFY0kwRU1FWmljWGp4NVIrQ1J5YmllN0RSMGEyaFZOT3hJdXR3?=
- =?utf-8?B?eEQ2MHZUYkQxaTY5TzA4SGtrbUMxZFB2K0ZGR2hqYUp6NFFLOXJiK1pJS1Bs?=
- =?utf-8?B?QkpDc0gzUFZpb2ZVUU1tMzA3ZmRpV2UvQVR6Ukx3RlVybkFISnVZOEhzQi9P?=
- =?utf-8?B?Zk5jRE1HUjBvTTU2Uys2VFJVelBHQlYzeDluS2czTmhzNy9wRHFPVklPWDgw?=
- =?utf-8?B?Vlk4R0RPNHFpZHorMHJIZVdMWGZUZjR0TmFZMWpIU0N4SENzcGJneUViWDJP?=
- =?utf-8?B?TkZRNFFVQ3QzSTdBMFowMDBSOE5tTGVNVE84cFh2d1NPWWJmVldVS2NBS0lK?=
- =?utf-8?B?bHNUOU1vdzVKYzgxdEJseVN6NHBHb0xYcUdMMzFPeDdSMFRxZzd1d2JGdS9l?=
- =?utf-8?Q?rAamvgteiB3/NP4AcwzTBpnJxkTenO4pCkgqZaILVdrN?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ea91413-32ea-4c58-ad8a-08de18fa2584
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR12MB3997.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Nov 2025 03:52:59.1193
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: k78TXy5AowheUQCMppZVREFZEfbIlSdEcgZIguU285k5zXsCbLWrsRsSKBLCJBu8NbvKXlh4CSP+I95Wo+7a8w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7483
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAKOFBWkC/2WMwQ6CMBBEf4Xs2ZIttYR68j8Mh1pWaSIUW2w0p
+ P/uytXLZN5k8jZIFD0lOFUbRMo++TAzmEMFbrTznYQfmKHBRktUUqzO6FYJY4ajlVxJKeDzEun
+ m37vo0jOPPq0hfnZv7n7rnyJ3AoWiq9VaIWIrzyGl+vmyDxemqeaAvpTyBc/3V3SjAAAA
+X-Change-ID: 20251031-tc9563-99d4a1956e33
+To: Bjorn Helgaas <bhelgaas@google.com>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org
+Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Manivannan Sadhasivam <mani@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1761969577; l=8336;
+ i=krishna.chundru@oss.qualcomm.com; s=20230907; h=from:subject:message-id;
+ bh=AVFJeWhwjPeMfv4vZC+1z3aySCaKehRl8D67ckwLWlY=;
+ b=O6Gb7HXzuG4MiH5g8A4O+zWxImjei5v0cRTRVAyvrLcH3t285hfrXzvo/Lbrc6jm7OTFQu64s
+ qhmXGrKeA1lBUKWueIuBjIuVaQk9m9bfifNjB0JdeHznmzZdMsIPwE8
+X-Developer-Key: i=krishna.chundru@oss.qualcomm.com; a=ed25519;
+ pk=10CL2pdAKFyzyOHbfSWHCD0X0my7CXxj8gJScmn1FAg=
+X-Authority-Analysis: v=2.4 cv=B5e0EetM c=1 sm=1 tr=0 ts=690585b0 cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=yKAn6K1XAAAA:8
+ a=COk6AnOGAAAA:8 a=LYJiWw1m0VcFHw0g8QYA:9 a=QEXdDO2ut3YA:10
+ a=1OuFwYUASf3TG4hYMiVC:22 a=6M1ixcW_PCWoKiWyFx5v:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: pQgrKDph4iAHNSlE7Cltp6IXU4e9gZpe
+X-Proofpoint-ORIG-GUID: pQgrKDph4iAHNSlE7Cltp6IXU4e9gZpe
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAzMCBTYWx0ZWRfX6cUkVeYvVCwD
+ hGUdNwC3nAdiZzGrmJz4cqKDZ8LXe1eudeHw5xP1Ov9zpc6XcLhGA4mPwLDWpDy/LaG33Kht6ZN
+ CWz+if+D4SJ4fsP9XAoA3/pMrvEULi3Re7dY3yE5opbLP1lV4r+oaTiGMvvswS8KOIfnBC8dWR7
+ etmzpzqPjRzn749EPH/jjX1pKTwiFjoahpaWiULDo3ul8+d9b2JCJl8e2fqX8Jwo6+d5Jlqpcdp
+ dyPdEtgROEO6mT3Kgn1pa2gcn33TklEZYSJ4Immp3413Yd+OJLp73OmAAJEnHyVMe/8d0FFPxgF
+ tr4OaYgWfpIIteWBhyr7POp95TE30q1eZTPKvrxwrhB1YDLmWtOk3IkJomuR9ix3bw3IZxzA4wi
+ eafemM6QKJ5mwzyDpMIMH15qmvztpQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-10-31_08,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 impostorscore=0 spamscore=0 bulkscore=0 adultscore=0
+ clxscore=1015 suspectscore=0 priorityscore=1501 malwarescore=0
+ lowpriorityscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511010030
 
-On Fri Oct 31, 2025 at 6:15 AM JST, Danilo Krummrich wrote:
-> On Thu Oct 30, 2025 at 8:06 PM CET, Joel Fernandes wrote:
->> Demonstrates usage of the clist module for iterating over
->> C-managed linked lists. C code creates and populates the list,
->> Rust code performs safe iteration using the clist abstraction.
->
-> I don't think a sample module is the correct choice for this. It makes it=
- look a
-> bit like this is an API intended for drivers. I think kunit tests might b=
-e a
-> better fit.
+TC9563 is the PCIe switch which has one upstream and three downstream
+ports. To one of the downstream ports ethernet MAC is connected as endpoint
+device. Other two downstream ports are supposed to connect to external
+device. One Host can connect to TC956x by upstream port.
 
-Yup, we can probably move this into the doctest examples and have them
-serve as examples as well.
+TC9563 switch power is controlled by the GPIO's. After powering on
+the switch will immediately participate in the link training. if the
+host is also ready by that time PCIe link will established. 
+
+The TC9563 needs to configured certain parameters like de-emphasis,
+disable unused port etc before link is established.
+
+As the controller starts link training before the probe of pwrctl driver,
+the PCIe link may come up as soon as we power on the switch. Due to this
+configuring the switch itself through i2c will not have any effect as
+this configuration needs to done before link training. To avoid this
+introduce assert_perst() which asserts & de-asserts the PERST# which helps
+to stop switch from participating from the link training.
+
+Note: The QPS615 PCIe switch is rebranded version of Toshiba switch TC9563 series.
+There is no difference between both the switches, both has two open downstream ports
+and one embedded downstream port to which Ethernet MAC is connected. As QPS615 is the
+rebranded version of Toshiba switch rename qps615 with tc9563 so that this driver
+can be leveraged by all who are using Toshiba switch.
+
+Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+---
+Changes in v9:
+- Change driver to align with dt properties (Bjorn).
+- Link to v8: https://lore.kernel.org/r/20251031-tc9563-v8-0-3eba55300061@oss.qualcomm.com
+
+Changes in v8:
+- Rebase on the pci branch (Bjorn)
+- Change order of the patch (Dmitry)
+- Couple of nits pointed by (Ilpo)
+- Change reset-gpios to resx-gpios (Mani)
+- Link to v7: https://lore.kernel.org/r/20251029-qps615_v4_1-v7-0-68426de5844a@oss.qualcomm.com
+
+Changes in v7:
+- Rename stop_link() & start_link() to asser_perst() and change all
+  occurances  (Bjorn).
+- Remove PCIe link is active check & relevent patch,  assume this driver will
+  be for the swicth connected directly to the root port, if it is
+  connected in the DSP of another switch we can't control the link so driver will not have any impact
+  we need make them as fixed regulators for now.
+- Link to v6: https://lore.kernel.org/r/20250828-qps615_v4_1-v6-0-985f90a7dd03@oss.qualcomm.com
+
+Changes in v6:
+- Took v10 patch  https://lore.kernel.org/all/1822371399.1670864.1756212520886.JavaMail.zimbra@raptorengineeringinc.com/
+  to my series as my change is dependent on it.
+- Add Reviewed-by tag by Rob on dt-binding patch.
+- Add Reviewed-by tag by Dmitry on devicetree.
+- Fixed compilation errors.
+- Fixed n-fts issue point by (Bjorn Helgaas).
+- Fixed couple of nits by (Bjorn Helgas).
+- Link to v5: https://lore.kernel.org/r/20250412-qps615_v4_1-v5-0-5b6a06132fec@oss.qualcomm.com
+Changes from v4:
+- Rename tc956x to tc9563, instead of using x which represents overlay board one
+  use actual name (Konrad & Krzysztof).
+- Remove the patches 9 & 10 from the series and this will be added by mani
+- Couple of nits by Konrad
+- Have defconfig change for TC956X by Dmitry
+- Change the function name pcie_is_link_active to pcie_link_is_active
+  replace all call sites of pciehp_check_link_active() with a call
+  to the new function. return bool instead of int (Lukas)
+- Add pincntrl property for reset gpio (Dmitry)
+- Follow the example-schema order, remove ref for the
+  tx-amplitude-microvolt, change the vendor prefix (Krzysztof)
+- for USP node refer pci-bus-common.yaml and for remaining refer
+  pci-pci-bridge.yaml(Mani)
+- rebase to latest code and change pci dev retrieval logic due code
+  changes in the latest tip.
+- Link to v4: https://lore.kernel.org/r/20250225-qps615_v4_1-v4-0-e08633a7bdf8@oss.qualcomm.com
+changes from v3:
+- move common properties like l0s-delay, l1-delay and nfts to pci-host-common.yaml (bjorn H)
+- remove axi-clk-frequency property (Krzysztof)
+- Update the pattern properties (Rob)
+- use pci-pci-bridge as the reference (Rob)
+- change tx-amplitude-millivolt to tx-amplitude-microvolt  (Krzysztof)
+- rename qps615_pwrctl_power_on to qps615_pwrctl_bring_up (Bart)
+- move the checks for l0s_delay, l1_delay etc to helper functon to
+  reduce a level of indentation (Bjorn H)
+- move platform_set_drvdata to end after there is no error return (bjorn H)
+- Replace GPIOD_ASIS to GPIOD_OUT_HIGH (Mani)
+- Create a common api to check if link is up or not and use that to call
+  stop_link() and start_link().
+- couple of nits in comments, names etc from everyone
+Link to v3: https://lore.kernel.org/all/20241112-qps615_pwr-v3-3-29a1e98aa2b0@quicinc.com/T/
+Changes from v2:
+- As per offline discussions with rob i2c-parent is best suitable to
+  use i2c client device. So use i2c-parent as suggested and remove i2c
+  client node reference from the dt-bindings & devicetree.
+- Remove "PCI: Change the parent to correctly represent pcie hierarchy"
+  as this requires seperate discussions.
+- Remove bdf logic to identify the dsp's and usp's to make it generic
+  by using the logic that downstream devices will always child of
+  upstream node and dsp1, dsp2 will always in same order (Dmitry)
+- Remove recursive function for parsing devicetree instead parse
+  only for required devicetree nodes (Dmitry)
+- Fix the issue in be & le conversion (Dmitry).
+- Call put_device for i2c device once done with the usage (Dmitry)
+- Use $defs to describe common properties between upstream port and
+  downstream properties. and remove unneccessary if then. (Krzysztof)
+- Place the qcom,qps615 compatibility in dt-binding document in alphabatic order (Krzysztof)
+- Rename qcom,no-dfe to describe it as hardware capability and change
+  qcom,nfts description to reflect hardware details (Krzysztof)
+- Fix the indentation in the example in dt binding (Dmitry)
+- Add more description to qcom,nfts (Dmitry)
+- Remove nanosec from the property description (Dmitry)
+- Link to v2: https://lore.kernel.org/r/linux-arm-msm/20240803-qps615-v2-0-9560b7c71369@quicinc.com/T/
+Changes from v1:
+- Instead of referencing whole i2c-bus add i2c-client node and reference it (Dmitry)
+- Change the regulator's as per the schematics as per offline review
+(Bjorn Andresson)
+- Remove additional host check in bus.c (Bart)
+- For stop_link op change return type from int to void (Bart)
+- Remove firmware based approach for configuring sequence as suggested
+by multiple reviewers.
+- Introduce new dt-properties for the switch to configure the switch
+as we are replacing the firmware based approach.
+- The downstream ports add properties in the child nodes which will
+represented in PCIe hierarchy format.
+- Removed D3cold D0 sequence in suspend resume for now as it needs
+separate discussion.
+- Link to v1: https://lore.kernel.org/linux-pci/20240626-qps615-v1-4-2ade7bd91e02@quicinc.com/T/
+
+---
+Krishna Chaitanya Chundru (7):
+      dt-bindings: PCI: Add binding for Toshiba TC9563 PCIe switch
+      PCI: Add assert_perst() operation to control PCIe PERST#
+      PCI: dwc: Add assert_perst() hook for dwc glue drivers
+      PCI: dwc: Implement .assert_perst() hook
+      PCI: qcom: Add support for assert_perst()
+      PCI: pwrctrl: Add power control driver for TC9563
+      arm64: dts: qcom: qcs6490-rb3gen2: Add TC9563 PCIe switch node
+
+ .../devicetree/bindings/pci/toshiba,tc9563.yaml    | 179 ++++++
+ arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts       | 128 ++++
+ arch/arm64/boot/dts/qcom/sc7280.dtsi               |   2 +-
+ drivers/pci/controller/dwc/pcie-designware-host.c  |   9 +
+ drivers/pci/controller/dwc/pcie-designware.h       |   9 +
+ drivers/pci/controller/dwc/pcie-qcom.c             |  13 +
+ drivers/pci/pwrctrl/Kconfig                        |  14 +
+ drivers/pci/pwrctrl/Makefile                       |   2 +
+ drivers/pci/pwrctrl/pci-pwrctrl-tc9563.c           | 648 +++++++++++++++++++++
+ include/linux/pci.h                                |   1 +
+ 10 files changed, 1004 insertions(+), 1 deletion(-)
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251031-tc9563-99d4a1956e33
+
+Best regards,
+-- 
+Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+
 
