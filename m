@@ -1,170 +1,243 @@
-Return-Path: <linux-kernel+bounces-881229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ACB2C27C70
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 12:07:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01037C27C85
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 12:13:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39E5C189E997
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 11:08:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F5FC3B0F19
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 11:13:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA66D2F2918;
-	Sat,  1 Nov 2025 11:07:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A7A2E5406;
+	Sat,  1 Nov 2025 11:13:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jm5PnlJw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e1XU4ulT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 793202E54DB;
-	Sat,  1 Nov 2025 11:07:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3AD21D6DB5
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 11:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761995267; cv=none; b=Gx6dYql/JM4J3Uian8vx/OoKoeXg3PggrR2yaCTx8CM981PvrXgznuPi6ztc0FGYKi7XooK2cVgLDbyjnIj5zUpyOSTe2JC/zmCX/Acwr/csq4pLp/cHMceVOlicybDvPYiAnhZaybACSJ7qRKhhmpZvUXLwcaA48pgpzb8oPJ4=
+	t=1761995629; cv=none; b=ILuwGpJ0ANh4kkvTLQU5B+uDeCwizSOwhQynFMOQIKpGIpHhkYc52545PxbktbUB1yoEF6N1FIhiZjtf284CaYyNztWNj9fCICfyFKdsdbq6Ujm/31omS0rBpSgata6i4uPEMPVObXyeoO2yYpY621iuEd2EUQ7eLwhsYurqxmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761995267; c=relaxed/simple;
-	bh=pwo2AH/F6d+H4i2vyh89lNZ+XD4n4HBplTVDLdDFnB4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K0nf1u9ftAuSnAXKE6PPp/apaLMUpvXdIJXy1VuFBfjx7eUutdDkwnHyrbmU7j7bBD2ApE5DpOejPG0mkFzioVgPd7rWNLvvSsqzv6F2Por2xp6f3BKv3Es3hUY7xOU7ouiBulGJnvfQK7lzNg458iPQTetTmf9w7TcX3RO3EGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jm5PnlJw; arc=none smtp.client-ip=198.175.65.14
+	s=arc-20240116; t=1761995629; c=relaxed/simple;
+	bh=rpNf0mE6cAdDaK1mclD77ot3Jj5Si3A9Gpp08KRJZ5U=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=hKxMZ3UbMMHbxhukvKexUUDcNt69fPM+6lyRoCQpgnTyFCsC8lextwssVFPK7WC0rJa4jaE6I9vZ8ny+rxmH2A6t9TbPJroPGImn3jf4xel30j+Qqd7UmaQV6TStK7jfcTXi8lELNIPUy4UtZVGoc72LlZCa4cXn9lGhdRBzg84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e1XU4ulT; arc=none smtp.client-ip=198.175.65.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761995265; x=1793531265;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pwo2AH/F6d+H4i2vyh89lNZ+XD4n4HBplTVDLdDFnB4=;
-  b=Jm5PnlJwxr82UmtT9GMQBDM33G6qWaUDkSYg/M7EetOmQpeODpe+rf8m
-   QFjoKVBfGzninZQ+r7Aq90ovuvp8YpswOHnU/XXx3vNHLy0GOZfwVQ/vI
-   qmzxRswOxCZf3/P6a6qNmQsBtdGxmmp2CnQ/UVLrXENQ9ev6MKYZ3ovv/
-   lSE+8jtC17n8jYpMHo7RYibjZoe+TfLK4rN07hh4n9VpKodZjGotRa9q7
-   Z7fm5b9B0HNgC/kZZYCMDhiyKib9ZxieGxF06C1MRVFaVhmO9ZoCqDVjz
-   qCy60AORX9ZYJRBVqVXkdcvtQvZ3KEnnk72tkToGW0y9cXYNpVCdmzS6a
+  t=1761995627; x=1793531627;
+  h=date:from:to:cc:subject:message-id;
+  bh=rpNf0mE6cAdDaK1mclD77ot3Jj5Si3A9Gpp08KRJZ5U=;
+  b=e1XU4ulT2N+4kM9dQO8Q/Ipe1P7Ybpe+/yALZxPkT0aETQf5lz3ilQN7
+   SogCNZZmOTYSKcsLmXqa0XjDSe5lC4UMae3gRXU4gawp26fFxto1bOrlk
+   Ni7MFXhA9zhTCudk5TiyX+tCH0Kwes/fcarR8Om+oBiND02MqJjuHNoSO
+   D7l1OG60Vy9o3woyJ9Ga5ZjWSg4tHMRIhJyn3exT6BVi8YVHXpJ2Z0INa
+   cHTUEpCuV45V74Hs/hkqZgMdgo2uwwLKBdwoFY9J4SaIzbyi4vudDJnD9
+   imbVPewU78AM270wO6eq+Bp6x9h2oS+sOnWvBAmXj4plmGw7qPZEi0E++
    Q==;
-X-CSE-ConnectionGUID: /3/n6Ag6TsqQ9HUFI4jf4w==
-X-CSE-MsgGUID: WIBPjXUJQtKNOlviYiPLeg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="67979214"
+X-CSE-ConnectionGUID: PuEYWNHbRcmHgovNSFjjDA==
+X-CSE-MsgGUID: 75klEr1ZSKykWkHIBZJ3MQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64069465"
 X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="67979214"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2025 04:07:45 -0700
-X-CSE-ConnectionGUID: D9pmvt2aRzub+M8lQn84cw==
-X-CSE-MsgGUID: FpfaqeAFSECmJUUrEqcDeg==
+   d="scan'208";a="64069465"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2025 04:13:45 -0700
+X-CSE-ConnectionGUID: 49XnAu5RSOiZ+Wbry2kbTw==
+X-CSE-MsgGUID: fvwAtx/9SAGOJfxirTyAuw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,271,1754982000"; 
-   d="scan'208";a="190789457"
+   d="scan'208";a="185665911"
 Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 01 Nov 2025 04:07:39 -0700
+  by orviesa006.jf.intel.com with ESMTP; 01 Nov 2025 04:13:45 -0700
 Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1vF9SE-000OAS-0o;
-	Sat, 01 Nov 2025 11:07:33 +0000
-Date: Sat, 1 Nov 2025 19:06:56 +0800
+	id 1vF9YA-000OB8-0E;
+	Sat, 01 Nov 2025 11:13:40 +0000
+Date: Sat, 01 Nov 2025 19:12:42 +0800
 From: kernel test robot <lkp@intel.com>
-To: Jason-JH Lin <jason-jh.lin@mediatek.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-media@vger.kernel.org,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Nicolas Dufresne <nicolas@ndufresne.ca>,
-	Jason-JH Lin <jason-jh.lin@mediatek.com>,
-	Nancy Lin <nancy.lin@mediatek.com>,
-	Singo Chang <singo.chang@mediatek.com>,
-	Paul-PL Chen <paul-pl.chen@mediatek.com>,
-	Moudy Ho <moudy.ho@mediatek.com>,
-	Xiandong Wang <xiandong.wang@mediatek.com>,
-	Sirius Wang <sirius.wang@mediatek.com>,
-	Fei Shao <fshao@chromium.org>, Chen-yu Tsai <wenst@chromium.org>,
-	Project_Global_Chrome_Upstream_Group@mediatek.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/5] soc: mediatek: Use pkt_write function pointer for
- subsys ID compatibility
-Message-ID: <202511011822.Vn6fsvGr-lkp@intel.com>
-References: <20251031160309.1654761-2-jason-jh.lin@mediatek.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:objtool/core] BUILD SUCCESS
+ 6568f14cb5ae68cd6c612604ca0c89301cf3a0d0
+Message-ID: <202511011937.dMysHLFL-lkp@intel.com>
+User-Agent: s-nail v14.9.25
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251031160309.1654761-2-jason-jh.lin@mediatek.com>
 
-Hi Jason-JH,
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git objtool/core
+branch HEAD: 6568f14cb5ae68cd6c612604ca0c89301cf3a0d0  vmlinux.lds: Exclude .text.startup and .text.exit from TEXT_MAIN
 
-kernel test robot noticed the following build errors:
+elapsed time: 1459m
 
-[auto build test ERROR on linuxtv-media-pending/master]
-[also build test ERROR on media-tree/master linus/master v6.18-rc3 next-20251031]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+configs tested: 151
+configs skipped: 3
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jason-JH-Lin/soc-mediatek-Use-pkt_write-function-pointer-for-subsys-ID-compatibility/20251101-000555
-base:   https://git.linuxtv.org/media-ci/media-pending.git master
-patch link:    https://lore.kernel.org/r/20251031160309.1654761-2-jason-jh.lin%40mediatek.com
-patch subject: [PATCH 1/5] soc: mediatek: Use pkt_write function pointer for subsys ID compatibility
-config: powerpc64-randconfig-r063-20251101 (https://download.01.org/0day-ci/archive/20251101/202511011822.Vn6fsvGr-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251101/202511011822.Vn6fsvGr-lkp@intel.com/reproduce)
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511011822.Vn6fsvGr-lkp@intel.com/
+tested configs:
+alpha                             allnoconfig    gcc-15.1.0
+arc                               allnoconfig    gcc-15.1.0
+arc                   randconfig-001-20251031    gcc-8.5.0
+arc                   randconfig-001-20251101    gcc-8.5.0
+arc                   randconfig-002-20251031    gcc-8.5.0
+arc                   randconfig-002-20251101    gcc-8.5.0
+arm                               allnoconfig    clang-22
+arm                   randconfig-001-20251031    gcc-14.3.0
+arm                   randconfig-001-20251101    gcc-8.5.0
+arm                   randconfig-002-20251031    clang-22
+arm                   randconfig-002-20251101    gcc-8.5.0
+arm                   randconfig-003-20251031    gcc-11.5.0
+arm                   randconfig-003-20251101    gcc-8.5.0
+arm                   randconfig-004-20251031    clang-22
+arm                   randconfig-004-20251101    gcc-8.5.0
+arm                          sp7021_defconfig    gcc-15.1.0
+arm64                             allnoconfig    gcc-15.1.0
+arm64                            allyesconfig    gcc-15.1.0
+arm64                 randconfig-001-20251101    gcc-14.3.0
+arm64                 randconfig-001-20251101    gcc-8.5.0
+arm64                 randconfig-002-20251101    clang-22
+arm64                 randconfig-002-20251101    gcc-14.3.0
+arm64                 randconfig-003-20251101    clang-17
+arm64                 randconfig-003-20251101    gcc-14.3.0
+arm64                 randconfig-004-20251101    gcc-14.3.0
+csky                             allmodconfig    gcc-15.1.0
+csky                              allnoconfig    gcc-15.1.0
+csky                             allyesconfig    gcc-15.1.0
+csky                  randconfig-001-20251101    gcc-14.3.0
+csky                  randconfig-001-20251101    gcc-15.1.0
+csky                  randconfig-002-20251101    gcc-14.3.0
+csky                  randconfig-002-20251101    gcc-15.1.0
+hexagon                           allnoconfig    clang-22
+hexagon               randconfig-001-20251031    clang-22
+hexagon               randconfig-001-20251101    clang-19
+hexagon               randconfig-002-20251031    clang-22
+hexagon               randconfig-002-20251101    clang-19
+i386                             alldefconfig    gcc-14
+i386                              allnoconfig    gcc-14
+i386        buildonly-randconfig-001-20251101    clang-20
+i386        buildonly-randconfig-002-20251101    gcc-13
+i386        buildonly-randconfig-003-20251101    clang-20
+i386        buildonly-randconfig-004-20251101    gcc-14
+i386        buildonly-randconfig-005-20251101    clang-20
+i386        buildonly-randconfig-006-20251101    clang-20
+loongarch                         allnoconfig    clang-22
+loongarch                        allyesconfig    gcc-15.1.0
+loongarch                           defconfig    clang-19
+loongarch             randconfig-001-20251031    gcc-15.1.0
+loongarch             randconfig-001-20251101    clang-19
+loongarch             randconfig-002-20251031    gcc-14.3.0
+loongarch             randconfig-002-20251101    clang-19
+m68k                              allnoconfig    gcc-15.1.0
+m68k                                defconfig    clang-19
+m68k                       m5249evb_defconfig    gcc-15.1.0
+microblaze                        allnoconfig    gcc-15.1.0
+microblaze                          defconfig    clang-19
+mips                             allmodconfig    gcc-15.1.0
+mips                              allnoconfig    gcc-15.1.0
+mips                             allyesconfig    gcc-15.1.0
+mips                        bcm63xx_defconfig    clang-22
+nios2                            allmodconfig    clang-22
+nios2                            allmodconfig    gcc-11.5.0
+nios2                             allnoconfig    gcc-11.5.0
+nios2                            allyesconfig    clang-22
+nios2                            allyesconfig    gcc-11.5.0
+nios2                               defconfig    clang-19
+nios2                 randconfig-001-20251031    gcc-9.5.0
+nios2                 randconfig-001-20251101    clang-19
+nios2                 randconfig-002-20251031    gcc-11.5.0
+nios2                 randconfig-002-20251101    clang-19
+openrisc                         allmodconfig    clang-22
+openrisc                          allnoconfig    gcc-15.1.0
+openrisc                         allyesconfig    gcc-15.1.0
+openrisc                            defconfig    gcc-15.1.0
+parisc                           allmodconfig    gcc-15.1.0
+parisc                            allnoconfig    gcc-15.1.0
+parisc                           allyesconfig    gcc-15.1.0
+parisc                              defconfig    gcc-15.1.0
+parisc                randconfig-001-20251101    clang-20
+parisc                randconfig-001-20251101    gcc-11.5.0
+parisc                randconfig-002-20251101    clang-20
+parisc                randconfig-002-20251101    gcc-8.5.0
+parisc64                            defconfig    clang-19
+powerpc                          allmodconfig    gcc-15.1.0
+powerpc                           allnoconfig    gcc-15.1.0
+powerpc                          allyesconfig    gcc-15.1.0
+powerpc                 linkstation_defconfig    clang-20
+powerpc               randconfig-001-20251101    clang-20
+powerpc               randconfig-001-20251101    gcc-11.5.0
+powerpc               randconfig-002-20251101    clang-20
+powerpc               randconfig-002-20251101    clang-22
+powerpc64             randconfig-001-20251101    clang-20
+powerpc64             randconfig-001-20251101    gcc-11.5.0
+powerpc64             randconfig-002-20251101    clang-20
+riscv                            allmodconfig    gcc-15.1.0
+riscv                             allnoconfig    gcc-15.1.0
+riscv                            allyesconfig    gcc-15.1.0
+riscv                               defconfig    gcc-15.1.0
+riscv                 randconfig-001-20251031    gcc-8.5.0
+riscv                 randconfig-001-20251101    clang-17
+riscv                 randconfig-002-20251031    clang-17
+riscv                 randconfig-002-20251101    clang-17
+s390                             allmodconfig    gcc-15.1.0
+s390                              allnoconfig    clang-22
+s390                             allyesconfig    gcc-15.1.0
+s390                                defconfig    gcc-15.1.0
+s390                  randconfig-001-20251031    clang-16
+s390                  randconfig-001-20251101    clang-17
+s390                  randconfig-002-20251031    gcc-12.5.0
+s390                  randconfig-002-20251101    clang-17
+sh                               allmodconfig    gcc-15.1.0
+sh                                allnoconfig    gcc-15.1.0
+sh                               allyesconfig    gcc-15.1.0
+sh                                  defconfig    gcc-15.1.0
+sh                    randconfig-001-20251031    gcc-14.3.0
+sh                    randconfig-001-20251101    clang-17
+sh                    randconfig-002-20251031    gcc-14.3.0
+sh                    randconfig-002-20251101    clang-17
+sh                   secureedge5410_defconfig    gcc-15.1.0
+sparc                            allmodconfig    gcc-15.1.0
+sparc                             allnoconfig    gcc-15.1.0
+sparc                            allyesconfig    clang-22
+sparc                               defconfig    gcc-15.1.0
+sparc                 randconfig-001-20251101    gcc-15.1.0
+sparc                 randconfig-002-20251101    gcc-14.3.0
+sparc64                          allmodconfig    clang-22
+sparc64                          allyesconfig    clang-22
+sparc64                             defconfig    clang-20
+sparc64               randconfig-001-20251101    gcc-15.1.0
+sparc64               randconfig-002-20251101    clang-22
+um                                allnoconfig    clang-22
+um                                  defconfig    clang-22
+um                             i386_defconfig    gcc-14
+um                    randconfig-001-20251101    clang-16
+um                    randconfig-002-20251101    gcc-14
+um                           x86_64_defconfig    clang-22
+x86_64                            allnoconfig    clang-20
+x86_64      buildonly-randconfig-001-20251101    clang-20
+x86_64      buildonly-randconfig-002-20251101    gcc-14
+x86_64      buildonly-randconfig-003-20251101    gcc-13
+x86_64      buildonly-randconfig-005-20251101    gcc-13
+x86_64                              defconfig    gcc-14
+x86_64                           rhel-9.4-bpf    gcc-14
+x86_64                         rhel-9.4-kunit    gcc-14
+x86_64                           rhel-9.4-ltp    gcc-14
+xtensa                            allnoconfig    gcc-15.1.0
+xtensa                           allyesconfig    clang-22
+xtensa                  cadence_csp_defconfig    gcc-15.1.0
+xtensa                randconfig-001-20251101    gcc-13.4.0
+xtensa                randconfig-002-20251101    gcc-12.5.0
 
-All errors (new ones prefixed by >>):
-
->> drivers/soc/mediatek/mtk-mmsys.c:170:26: error: no member named 'pkt_write_mask' in 'struct cmdq_client_reg'
-     170 |                 ret = mmsys->cmdq_base.pkt_write_mask(cmdq_pkt,
-         |                       ~~~~~~~~~~~~~~~~ ^
->> drivers/soc/mediatek/mtk-mmsys.c:172:30: error: no member named 'pa_base' in 'struct cmdq_client_reg'
-     172 |                                                       mmsys->cmdq_base.pa_base,
-         |                                                       ~~~~~~~~~~~~~~~~ ^
-   2 errors generated.
 --
->> drivers/soc/mediatek/mtk-mutex.c:1002:16: error: no member named 'pkt_write' in 'struct cmdq_client_reg'
-    1002 |         mtx->cmdq_reg.pkt_write(cmdq_pkt, mtx->cmdq_reg.subsys, en_addr, en_addr, 1);
-         |         ~~~~~~~~~~~~~ ^
-   1 error generated.
-
-
-vim +170 drivers/soc/mediatek/mtk-mmsys.c
-
-   162	
-   163	static void mtk_mmsys_update_bits(struct mtk_mmsys *mmsys, u32 offset, u32 mask, u32 val,
-   164					  struct cmdq_pkt *cmdq_pkt)
-   165	{
-   166		int ret;
-   167		u32 tmp;
-   168	
-   169		if (mmsys->cmdq_base.size && cmdq_pkt) {
- > 170			ret = mmsys->cmdq_base.pkt_write_mask(cmdq_pkt,
-   171							      mmsys->cmdq_base.subsys,
- > 172							      mmsys->cmdq_base.pa_base,
-   173							      mmsys->cmdq_base.offset + offset,
-   174							      val, mask);
-   175			if (ret)
-   176				pr_debug("CMDQ unavailable: using CPU write\n");
-   177			else
-   178				return;
-   179		}
-   180		tmp = readl_relaxed(mmsys->regs + offset);
-   181		tmp = (tmp & ~mask) | (val & mask);
-   182		writel_relaxed(tmp, mmsys->regs + offset);
-   183	}
-   184	
-
--- 
 0-DAY CI Kernel Test Service
 https://github.com/intel/lkp-tests/wiki
 
