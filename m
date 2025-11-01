@@ -1,79 +1,66 @@
-Return-Path: <linux-kernel+bounces-881137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F756C278B8
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 07:09:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDAD1C278C1
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 07:10:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EB1F04E363C
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 06:09:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86006407072
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 06:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1D728C00C;
-	Sat,  1 Nov 2025 06:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33FC28C871;
+	Sat,  1 Nov 2025 06:10:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A1FWopUu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dNU64AAz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8E626ED5E;
-	Sat,  1 Nov 2025 06:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB49E26ED5E;
+	Sat,  1 Nov 2025 06:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761977370; cv=none; b=Joj2dnhccHt5RtVYm4wl7ImcQNVIrRNV0mXujw5Lp27+88bEhglG1cFvOuvxDcik1Ttv+FDsckDUC8+pEffoJN+OSf1djMBSGfGhYDqzF0ynmSbEPmXAui9u0AIDL+v1qkgEt07m5pbyA9IW3DOLMqhO9fxGz0T0gHzkGiOscnw=
+	t=1761977435; cv=none; b=apH/o/noZ+vnmDvZ67pjzgM0hycNZYvjidz8XJ5Vzi0Gm/0snk9OCoG+EUtTpgizTZ531cG1cgD9SizcKvp8NdpSm3t+CvuFCsMBHXUovPlchvP4Uhh2Dbh+wOVS/+AEZJci4YK15SKF5zlCJTu8AG3FZbwIrHSzs7IceIpYcCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761977370; c=relaxed/simple;
-	bh=bqaEm8qkzluJFcj5K3U/O86yPhUXk6DJ/URd+gKLwj4=;
+	s=arc-20240116; t=1761977435; c=relaxed/simple;
+	bh=j+Yfr5cijQdjT2ruVKtXGnYQcWJxGCeRrDvfu1qPzdI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dEicMsK72TfgLDeSg4WWbU6WIE/OxFw1tmo/M622zHEqcbAAQbAGtP3dZzzSsqJgt+2Ue9SGws9gizCjEQZWxUc3ow8rXnBjpwqdXoRqnz5CjsnXxoFKWbANk0DYrVqJJh7KJEUEK/Yei2+yVlDnQ/cWP0Ui7TKLQjdGVp3p6vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A1FWopUu; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1761977368; x=1793513368;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=bqaEm8qkzluJFcj5K3U/O86yPhUXk6DJ/URd+gKLwj4=;
-  b=A1FWopUuAEHT9O9u97QS2qXN3dbpUt+UTcwEZ6/wUKV4iDrkJfX/moV4
-   84bt3fl9r4NB+qSRGTvrCpFCefqPjutOEKYCf4CMNEy5u/nIDqKK+jq3K
-   H9wTMZKSWjbQJclVYLEcGhyHgdQeXyi5xjRACRWLmZ4yNZ/9s7LJ0MkSV
-   bpxzo+zTuuTfET7zLsDOJcm0uslDSeN/HqHcOyCYBY7VZrWrHsG1IUmA7
-   ZSwNnhS2IMqO2M5gE7crzwb05QWLwBHfUFcc2GnjhgyMfHNnGr59SiDJC
-   nIyt31JMFm7ddb3IOFEs0SWPURnYPcrRPGPNGNpz9PdyvBkFQf6StChzo
-   A==;
-X-CSE-ConnectionGUID: t8W6KUakSC2Kqc1iiu8Biw==
-X-CSE-MsgGUID: FCq7ssn0Ql+O/o+J649pRQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11599"; a="81764624"
-X-IronPort-AV: E=Sophos;i="6.19,271,1754982000"; 
-   d="scan'208";a="81764624"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Oct 2025 23:09:27 -0700
-X-CSE-ConnectionGUID: +Sz5wqAaQ+Gea1s6q3fWlQ==
-X-CSE-MsgGUID: YBxcoucjQX6pgDdGU9bSrw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,271,1754982000"; 
-   d="scan'208";a="186282191"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 31 Oct 2025 23:09:24 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vF4ni-000NxA-0W;
-	Sat, 01 Nov 2025 06:09:22 +0000
-Date: Sat, 1 Nov 2025 14:08:35 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ricardo Robaina <rrobaina@redhat.com>, audit@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	paul@paul-moore.com, eparis@redhat.com, fw@strlen.de,
-	pablo@netfilter.org, kadlec@netfilter.org,
-	Ricardo Robaina <rrobaina@redhat.com>
-Subject: Re: [PATCH v4 1/2] audit: add audit_log_packet_ip4 and
- audit_log_packet_ip6 helper functions
-Message-ID: <202511011350.ye4VgG6l-lkp@intel.com>
-References: <cfafc5247fbfcd2561de16bcff67c1afd5676c9e.1761918165.git.rrobaina@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RUrzcIS2napMuaaHMs22b4b+T1/dIemgnWW/UbFeWbFKGmVlQbGE3l/mQfmLWBSd/jVCn5S53H+PjScb/Rs7GgFRs9YEcSntiu6vvJ8Y9pWwE2vRIXWO5pQboBYtRyLLcCirgkB8KbgyXVeU43S/EGnbM49gcnDwlnrsfF2SyEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dNU64AAz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAE9DC4CEF1;
+	Sat,  1 Nov 2025 06:10:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1761977434;
+	bh=j+Yfr5cijQdjT2ruVKtXGnYQcWJxGCeRrDvfu1qPzdI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dNU64AAzHqsFhm0VugFNVN5YzL5HHeuCzK8H1H/2yKASkNrk59jV6glQQT9H772P3
+	 5P7sYd0dYCZNy2Crzpc7GjL0Ozv4XJk7Loh/9ZKT6mSTIn28XCkhDdi0nfiTlVKlMb
+	 VEj3CKxcG0/8EfIQC9FHQMgYKvsDHmVqCdTUT6b8=
+Date: Sat, 1 Nov 2025 07:10:30 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Roy Luo <royluo@google.com>
+Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Joy Chakraborty <joychakr@google.com>,
+	Naveen Kumar <mnkumar@google.com>,
+	Badhri Jagan Sridharan <badhri@google.com>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Subject: Re: [PATCH v4 2/2] usb: dwc3: Add Google Tensor SoC DWC3 glue driver
+Message-ID: <2025110128-jailhouse-situated-22b1@gregkh>
+References: <20251017233459.2409975-1-royluo@google.com>
+ <20251017233459.2409975-3-royluo@google.com>
+ <20251030011659.bmgdry3wwf4kgjwv@synopsys.com>
+ <CA+zupgxPYXCqew1548uwGx7=9u0b5oCwaXfP7F=FmqMR7a5bDw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,93 +69,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cfafc5247fbfcd2561de16bcff67c1afd5676c9e.1761918165.git.rrobaina@redhat.com>
+In-Reply-To: <CA+zupgxPYXCqew1548uwGx7=9u0b5oCwaXfP7F=FmqMR7a5bDw@mail.gmail.com>
 
-Hi Ricardo,
+On Fri, Oct 31, 2025 at 05:49:28PM -0700, Roy Luo wrote:
+> > > +         dr_role != DWC3_GCTL_PRTCAP_HOST) {
+> > > +             dev_warn(google->dev, "spurious pme irq %d, hibernation %d, dr_role %u\n",
+> > > +                      irq, google->is_hibernation, dr_role);
+> >
+> > Should we limit this print and do we need this to be dev_warn? It may be
+> > noisy wouldn't it.
+> 
+> Ack, will make it WARN_ONCE in the next version.
 
-kernel test robot noticed the following build errors:
+So you really want to panic your system if this happens (remember, the
+HUGE majority of Linux systems run with panic-on-warn enabled)?
 
-[auto build test ERROR on pcmoore-audit/next]
-[also build test ERROR on netfilter-nf/main linus/master v6.18-rc3 next-20251031]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Please do not, handle the issue, dump a message to the log if you really
+need to, and move on, don't crash.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ricardo-Robaina/audit-add-audit_log_packet_ip4-and-audit_log_packet_ip6-helper-functions/20251031-220605
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git next
-patch link:    https://lore.kernel.org/r/cfafc5247fbfcd2561de16bcff67c1afd5676c9e.1761918165.git.rrobaina%40redhat.com
-patch subject: [PATCH v4 1/2] audit: add audit_log_packet_ip4 and audit_log_packet_ip6 helper functions
-config: s390-randconfig-002-20251101 (https://download.01.org/0day-ci/archive/20251101/202511011350.ye4VgG6l-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project be2081d9457ed095c4a6ebe2a920f0f7b76369c6)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251101/202511011350.ye4VgG6l-lkp@intel.com/reproduce)
+thanks,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511011350.ye4VgG6l-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> net/netfilter/nft_log.c:48:10: error: call to undeclared function 'audit_log_packet_ip4'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      48 |                         fam = audit_log_packet_ip4(ab, skb) ? NFPROTO_IPV4 : -1;
-         |                               ^
->> net/netfilter/nft_log.c:51:10: error: call to undeclared function 'audit_log_packet_ip6'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      51 |                         fam = audit_log_packet_ip6(ab, skb) ? NFPROTO_IPV6 : -1;
-         |                               ^
-   net/netfilter/nft_log.c:56:9: error: call to undeclared function 'audit_log_packet_ip4'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      56 |                 fam = audit_log_packet_ip4(ab, skb) ? NFPROTO_IPV4 : -1;
-         |                       ^
-   net/netfilter/nft_log.c:59:9: error: call to undeclared function 'audit_log_packet_ip6'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      59 |                 fam = audit_log_packet_ip6(ab, skb) ? NFPROTO_IPV6 : -1;
-         |                       ^
-   4 errors generated.
-
-
-vim +/audit_log_packet_ip4 +48 net/netfilter/nft_log.c
-
-    28	
-    29	static void nft_log_eval_audit(const struct nft_pktinfo *pkt)
-    30	{
-    31		struct sk_buff *skb = pkt->skb;
-    32		struct audit_buffer *ab;
-    33		int fam = -1;
-    34	
-    35		if (!audit_enabled)
-    36			return;
-    37	
-    38		ab = audit_log_start(NULL, GFP_ATOMIC, AUDIT_NETFILTER_PKT);
-    39		if (!ab)
-    40			return;
-    41	
-    42		audit_log_format(ab, "mark=%#x", skb->mark);
-    43	
-    44		switch (nft_pf(pkt)) {
-    45		case NFPROTO_BRIDGE:
-    46			switch (eth_hdr(skb)->h_proto) {
-    47			case htons(ETH_P_IP):
-  > 48				fam = audit_log_packet_ip4(ab, skb) ? NFPROTO_IPV4 : -1;
-    49				break;
-    50			case htons(ETH_P_IPV6):
-  > 51				fam = audit_log_packet_ip6(ab, skb) ? NFPROTO_IPV6 : -1;
-    52				break;
-    53			}
-    54			break;
-    55		case NFPROTO_IPV4:
-    56			fam = audit_log_packet_ip4(ab, skb) ? NFPROTO_IPV4 : -1;
-    57			break;
-    58		case NFPROTO_IPV6:
-    59			fam = audit_log_packet_ip6(ab, skb) ? NFPROTO_IPV6 : -1;
-    60			break;
-    61		}
-    62	
-    63		if (fam == -1)
-    64			audit_log_format(ab, " saddr=? daddr=? proto=-1");
-    65	
-    66		audit_log_end(ab);
-    67	}
-    68	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+greg k-h
 
