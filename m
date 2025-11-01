@@ -1,128 +1,115 @@
-Return-Path: <linux-kernel+bounces-881514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D299CC285DC
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 19:58:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5908CC285C0
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 19:56:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ADEBD4E3762
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 18:58:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF58F3BE4CE
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 18:56:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE83E2FD68C;
-	Sat,  1 Nov 2025 18:58:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D407E2FD1DB;
+	Sat,  1 Nov 2025 18:56:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="2921O6Ar"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GVgy8Ebl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BF912FD1D0;
-	Sat,  1 Nov 2025 18:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FE5B2FCBE5;
+	Sat,  1 Nov 2025 18:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762023524; cv=none; b=AiYC+hFc9kG0onkjl1oQVp7Xd7u8OSnVzSgEsoiqYo3PWUMpokWsgQG49Qu55xXCEjMKryTw/w8gM164/o90Af6iz2zBI3xSJFgQLh1SwEUar8XTTnkoo9hMFxmvkFK1AINgX4STdX0EvHVJSJw9tmQi2xQVGmImpJXsW3SXlY4=
+	t=1762023385; cv=none; b=cUf8Qt91o04RHcv0JxblV7lWt9DgHfPjkMnK2ehQ0uOx4I4s8rx1p8dPwm1cuX6ocuPaJEXGCeYzsHWYhX6MbISIhdBqFvPriTsw358NIrDG5wBE2SeA3vgue8rSLgxnNFbvVrtyrDK43PK4toMQ1rADFJMGnT76DEamM3PXP2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762023524; c=relaxed/simple;
-	bh=7LoAPepD4eFaaUqZEIMxR8uSjySCCaR8EcLjDwAwFFw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ArmOFM1I9676miOo0nJu2QW96aWxno/ne+XYKvYV+nxT+olNOcNLOd030ovKwl63OTwBxWMYkA3NOBoqu7ZOOHLNxE/tH9KjR3WkmG6K2LlIdLzulRGKTUEpBHMIS8gTo/0YfpT15dYb5kroDlPQXp8fyOpqpJ9F+ybAy8JtiqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=2921O6Ar; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=P8HmXM67TmlRyT3RaMYldgJ94lqKSzK8QgtFkpR1p/8=; b=2921O6Ar+EXel+oStPCeppjFPI
-	AZKrvYYNfGjs7+yVEAhYHOw6dDdABBs811giP5m/l5ZJ4TeELxxJqUg7WIXw8MhTlUKOojSXb9QP8
-	mf2X7uagZtbgqB/o1f8ePwDpDnrjx18Fo80+FBo6cueTc6yu+ZKo/Nuc3j9wHQGKn8qLfdxw9oXKn
-	Vd4GWVQY1lQEaJ05gYty3AznyeJ8qf2Lz/AS0YsCKg3VunPgn9R2Y8qvBy1KyBCFG9JMtlrypeNK4
-	7gSRGzX/PpsVv//3MxCRsTSX/znrLr8OHbWUisOCwhA9gdaFb8h+XxwA1fjtAqwSl7heDmxC14HWL
-	uWSwFcCw==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vFGoB-000000081ew-1lXp;
-	Sat, 01 Nov 2025 18:58:39 +0000
-Message-ID: <c3ee9b5d-62f4-4c7f-b6a4-9e0dd8290edc@infradead.org>
-Date: Sat, 1 Nov 2025 11:58:37 -0700
+	s=arc-20240116; t=1762023385; c=relaxed/simple;
+	bh=Rvtu9l5fDahHyClytx/z8pD6jps8dw8Jm3ocrKxQOFM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mogcu7i5Nn4idyLpwRYU+i6XLa7sNtJUvcbK2+uK6le7S3g02+CWMShVz3B+H4wbH4jfMXpAy/BHMQJF91+8V6DBRasy6/cunmioLjz9b1U420Jd6rtKkR0gMqJGNrfOMN8EF1vNtwkWu12rsILeVESmtYq/DMlRfXC1elFBxcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GVgy8Ebl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08063C4CEF1;
+	Sat,  1 Nov 2025 18:56:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762023384;
+	bh=Rvtu9l5fDahHyClytx/z8pD6jps8dw8Jm3ocrKxQOFM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GVgy8Ebl1vzH6dKZeYYaIVcIiOUyULa8GYuJwWNj/kwwdzlXaNPgJtkhWX0oKi6Ov
+	 Rpny9h/f7rQ7yIdJAqktFD93F822JGYLtpUD5DzHw2wCLu5qy7zLDgJ/UhhYElB8xQ
+	 85w83n+a4ccGK+CT8a9uM35m6FVvfjSklG4UJOYfKBxOh5zY86IZ6eBkJ+nxijdAeJ
+	 SOSw2G8BRTdcIPyFR4sNOiW3bHlEyn9QrdljYkdmx18AlFoVw/pVHlK8KHwJejbzVF
+	 96uIMGKtJ35cbUiBlEYwYa8HSXNidMg8PPuzrACgCB6MXjdukrk5F1cOUaU+yiTWIl
+	 7mTN794yKJ6Ww==
+Date: Sat, 1 Nov 2025 13:59:44 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Amit Singh <quic_amitsi@quicinc.com>
+Cc: konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, quic_riteshk@quicinc.com, quic_rajeevny@quicinc.com, 
+	quic_vproddut@quicinc.com
+Subject: Re: [PATCH] arm64: dts: qcom: qcs6490-rb3gen2: Use 'edp_hot'
+ function for hpd gpio
+Message-ID: <nzg7auudxocxnpnjsc2emot7sgh5azvucl72jqzgqsp4jhzint@hykb2xyx66uh>
+References: <20251031085739.440153-1-quic_amitsi@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 0/8] xfrm docs update
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Linux Networking <netdev@vger.kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>,
- Steffen Klassert <steffen.klassert@secunet.com>,
- Herbert Xu <herbert@gondor.apana.org.au>
-References: <20251101094744.46932-1-bagasdotme@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251101094744.46932-1-bagasdotme@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251031085739.440153-1-quic_amitsi@quicinc.com>
 
+On Fri, Oct 31, 2025 at 02:27:39PM +0530, Amit Singh wrote:
+> Currently, hpd gpio is configured as a general-purpose gpio, which does
+> not support interrupt generation. This change removes the generic
+> hpd-gpios property and assigns the edp_hot function to the pin,
+> enabling proper irq support.
+> 
 
+No, it replaces the use of display-connector for hotplug detect with the
+DP-controller's internal HPD logic.
 
-On 11/1/25 2:47 AM, Bagas Sanjaya wrote:
-> Hi,
-> 
-> Here are xfrm documentation patches. Patches [1-6/8] are formatting polishing;
-> [7/8] groups the docs and [8/8] adds MAINTAINERS entries for them.
-> 
-> Enjoy!
-> 
-> Changes since v1 [1]:
-> 
->   - Also polish xfrm_sync section headings (Randy)
->   - Apply review trailers (Randy)
+There might be good reasons to do so, but you need to describe them.
 
-Changes all look good. However, there is still one header that ends
-with ':'. Not sure it is worth fixing.
+I'm guessing that there are still some issues in the DP driver's logic
+for handling of external HPD? This should be addressed by fixing that
+logic in the DP driver, to ensure that this (display-connector +
+hpd-gpios) works, and then you should send this patch again explaining
+why the internal HPD hardware does a better job.
 
-XFRM Syscall
-  /proc/sys/net/core/xfrm_* Variables:
+Regards,
+Bjorn
 
-> [1]: https://lore.kernel.org/lkml/20251029082615.39518-1-bagasdotme@gmail.com/
+> Fixes: 756efb7cb7293 ("arm64: dts: qcom: qcs6490-rb3gen2: Add DP output")
+> Signed-off-by: Amit Singh <quic_amitsi@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 3 ---
+>  1 file changed, 3 deletions(-)
 > 
-> Bagas Sanjaya (8):
->   Documentation: xfrm_device: Wrap iproute2 snippets in literal code
->     block
->   Documentation: xfrm_device: Use numbered list for offloading steps
->   Documentation: xfrm_device: Separate hardware offload sublists
->   Documentation: xfrm_sync: Properly reindent list text
->   Documentation: xfrm_sync: Trim excess section heading characters
->   Documentation: xfrm_sync: Number the fifth section
->   net: Move XFRM documentation into its own subdirectory
->   MAINTAINERS: Add entry for XFRM documentation
+> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> index c146161e4bb4..caa0b6784df3 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> @@ -49,8 +49,6 @@ dp-connector {
+>  		label = "DP";
+>  		type = "mini";
+>  
+> -		hpd-gpios = <&tlmm 60 GPIO_ACTIVE_HIGH>;
+> -
+>  		port {
+>  			dp_connector_in: endpoint {
+>  				remote-endpoint = <&mdss_edp_out>;
+> @@ -1420,7 +1418,6 @@ &wifi {
+>  /* PINCTRL - ADDITIONS TO NODES IN PARENT DEVICE TREE FILES */
+>  
+>  &edp_hot_plug_det {
+> -	function = "gpio";
+>  	bias-disable;
+>  };
+>  
+> -- 
+> 2.34.1
 > 
->  Documentation/networking/index.rst            |  5 +-
->  Documentation/networking/xfrm/index.rst       | 13 +++
->  .../networking/{ => xfrm}/xfrm_device.rst     | 20 ++--
->  .../networking/{ => xfrm}/xfrm_proc.rst       |  0
->  .../networking/{ => xfrm}/xfrm_sync.rst       | 97 ++++++++++---------
->  .../networking/{ => xfrm}/xfrm_sysctl.rst     |  0
->  MAINTAINERS                                   |  1 +
->  7 files changed, 77 insertions(+), 59 deletions(-)
->  create mode 100644 Documentation/networking/xfrm/index.rst
->  rename Documentation/networking/{ => xfrm}/xfrm_device.rst (95%)
->  rename Documentation/networking/{ => xfrm}/xfrm_proc.rst (100%)
->  rename Documentation/networking/{ => xfrm}/xfrm_sync.rst (64%)
->  rename Documentation/networking/{ => xfrm}/xfrm_sysctl.rst (100%)
-> 
-> 
-> base-commit: 01cc760632b875c4ad0d8fec0b0c01896b8a36d4
-
--- 
-~Randy
-
 
