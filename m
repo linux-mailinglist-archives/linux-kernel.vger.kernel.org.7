@@ -1,61 +1,53 @@
-Return-Path: <linux-kernel+bounces-881397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 414EFC2821E
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 17:08:42 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60DD0C28221
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 17:08:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6B843AD691
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 16:07:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DBA244EF253
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 16:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A5B243374;
-	Sat,  1 Nov 2025 16:07:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D4D72FB620;
+	Sat,  1 Nov 2025 16:06:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="n4M0JJJf"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Qv4h+ZWT"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5651E7261E;
-	Sat,  1 Nov 2025 16:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83341DF248;
+	Sat,  1 Nov 2025 16:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762013273; cv=none; b=hyaIg0HVdINcW/cVqw746i6MzFaMqrS/jTL9v8A7TR05Y7rQIz9ibYNEUnlBpXRUpZ6fSpnehq4AKsMbbqK00bky+MQb4UVNVsjcdat88cU5A9huBK8nkGQFhdBvXHPdHRkWs41Ckb/JYVI8nCRHWntbOflMN76KhuBnAJNejEM=
+	t=1762013170; cv=none; b=JIk/JT56rIxToqWU1Y/qIiTAn/9e9YUEFVqvLLtR5z3YgjPEUO35JLAM46AKi0u5WcDXkl2ThLXwk0hTGyNxgfuLeUFEE9Ub+i0pfYMzv44XJJkvIWwDo9K4KfY9LMbqoyBLq+V4/unxBVDIbNEBbh04Ywt+QNrJUPD0EK4UsPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762013273; c=relaxed/simple;
-	bh=rLaA5biyEWgzLspmyBsTRKuveqKq94YSvW4jCahrfgI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=D7xH6TLm2rzRJMZkFeVN11UGj56vGY2LkIbtHVgC1TaVgoqJfZs3B+61YSMETOLPfZy8oq6TROhN3CRc0TdY4b1FfOv4/c4VUXfPWseQaq9OtJ3p5QDUV3cb/g51llcTUPGat6bzu1p8faJmV8vGWTN878/q13QrEl/GYtEHHgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=n4M0JJJf; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from debian.intra.ispras.ru (unknown [10.10.165.11])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 89BF24076B5F;
-	Sat,  1 Nov 2025 16:07:40 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 89BF24076B5F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1762013260;
-	bh=XFSe9gHlAGM09jrTHm/1yNU5d6iXc71Vqx/fAARQGHQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=n4M0JJJfimxzUvBdgmVj1WFvpIZFzn3LetwwQcF/goDK3bl3jdaJuvsRSmRWA36iC
-	 rfPZVcLjLSSoJdPBQKE9kbtXfIncV8sQQZkbvayY+rPOBRwCaLmQZTXx1T4ENj5Ehp
-	 BBZHJYfM08UqlmKVbFRwZzX4TuE+oW5AjAfOjT0s=
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: "Theodore Ts'o" <tytso@mit.edu>,
-	Jan Kara <jack@suse.cz>,
-	linux-ext4@vger.kernel.org
-Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH v2 2/2] ext4: check if mount_opts is NUL-terminated in ext4_ioctl_set_tune_sb()
-Date: Sat,  1 Nov 2025 19:04:29 +0300
-Message-ID: <20251101160430.222297-2-pchelkin@ispras.ru>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251101160430.222297-1-pchelkin@ispras.ru>
-References: <20251101160430.222297-1-pchelkin@ispras.ru>
+	s=arc-20240116; t=1762013170; c=relaxed/simple;
+	bh=Qkq2J1XbXyE+1yYBv/tl1ZkDKsDlaBjvSwLxP8RDrus=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=loGovGeXYM/GPVhgEzlOqN7U1c+sk7wNtiIOrRztHaSFj7vm9gYyt3J7s2u0Vt+lRPFQOOHAcAMVxzfWM95Ocy7DHwF2i+WE+496LnqFst9V/3P9SJlEpA8kxgEcfqqjjlHglp+n5QZ9KlJBbLyuWCCnMiPq85Ug5bwekTpD2cM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Qv4h+ZWT; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=wt
+	UqoOB1t4ZfIMOLU4hyF3m97cGANHPWUTnEiH4MHfI=; b=Qv4h+ZWTNeHY8wZVya
+	KNdLA4ekmcvy3lCgO/cU6kF1PohIvFnjLAhusLoxZUFb88ZQ2Zyj8McJNopCCurD
+	avCuCgnRdForiJMec6+KgrLe3iM4GXPz3yRQBNbVt+B9C5qKo3di42o4XDlWUz0v
+	wb8juJAnMqBkFkrHu5sIR5Dt4=
+Received: from zhb.. (unknown [])
+	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wDXL4nTLwZp3qOtAw--.844S2;
+	Sun, 02 Nov 2025 00:05:40 +0800 (CST)
+From: Hans Zhang <18255117159@163.com>
+To: bhelgaas@google.com,
+	helgaas@kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Hans Zhang <18255117159@163.com>
+Subject: [PATCH v4 0/4] PCI: Add delay macros for better code readability and maintainability
+Date: Sun,  2 Nov 2025 00:05:34 +0800
+Message-Id: <20251101160538.10055-1-18255117159@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,43 +55,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDXL4nTLwZp3qOtAw--.844S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7AFyDtw15Gw1fXw4fGr1rWFg_yoW8Ww4kpa
+	y5GFsYkrs7J3yFya97ua1I9F98Aa9rAFWjqrWkG3429FW3Z3W5XFsagr4YvFy7ZrW0gw1I
+	qry2kw10ka4jyFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pEgAw8UUUUU=
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOhn4o2kGKs1Z4QACsK
 
-params.mount_opts may come as potentially non-NUL-term string.  Userspace
-is expected to pass a NUL-term string.  Add an extra check to ensure this
-holds true.  Note that further code utilizes strscpy_pad() so this is just
-for proper informing the user of incorrect data being provided.
+This series improves code readability and maintainability in the PCI
+subsystem by replacing hard-coded delay values with descriptive macros.
 
-Found by Linux Verification Center (linuxtesting.org).
+---
+Hi Bjorn,
 
-Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+I wonder if there is still a need to advance this series? If it's not necessary,
+please drop it. Thank you very much.
+
+Best regards
+Hans
+
+
+Changes for v4:
+https://patchwork.kernel.org/project/linux-pci/patch/20250826170315.721551-1-18255117159@163.com/
+
+- According to Bjorn's feedback, the benefits of using fsleep are not significant.
+  drop the 0002 patch in v3. (Bjorn)
+- For the controller drivers, the added macros do no good and provide no value.
+  So if you ever respin this series, you can drop them. (Mani)
+
+Changes for v3:
+https://patchwork.kernel.org/project/linux-pci/cover/20250822155908.625553-1-18255117159@163.com/
+
+- According to Bjorn's suggestion, split the first patch of v2 and add
+  macro definitions to the remaining patches.
+
+Changes for v2:
+https://patchwork.kernel.org/project/linux-pci/patch/20250820160944.489061-1-18255117159@163.com/
+
+- According to the Maintainer's suggestion, it was modified to fsleep,
+  usleep_range, and macro definitions were used instead of hard code. (Bjorn)
 ---
 
-v2: check length of mount_opts in superblock tuning ioctl (Jan Kara)
+Hans Zhang (4):
+  PCI: Add macro for secondary bus reset delay
+  PCI: Add macro for link status check delay
+  PCI: pciehp: Add macros for hotplug operation delays
+  PCI/DPC: Add macro for RP busy check delay
 
-    Can't plainly return error at strscpy_pad() call site in
-    ext4_sb_setparams(), that's a void ext4_update_sb_callback.
+ drivers/pci/hotplug/pciehp_hpc.c |  7 +++++--
+ drivers/pci/pci.c                | 11 +++++------
+ drivers/pci/pci.h                |  3 +++
+ drivers/pci/pcie/dpc.c           |  4 +++-
+ 4 files changed, 16 insertions(+), 9 deletions(-)
 
-v1: https://lore.kernel.org/lkml/20251028130949.599847-1-pchelkin@ispras.ru/T/#u
 
- fs/ext4/ioctl.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-index a93a7baae990..3dec26c939fd 100644
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -1394,6 +1394,10 @@ static int ext4_ioctl_set_tune_sb(struct file *filp,
- 	if (copy_from_user(&params, in, sizeof(params)))
- 		return -EFAULT;
- 
-+	if (strnlen(params.mount_opts, sizeof(params.mount_opts)) ==
-+	    sizeof(params.mount_opts))
-+		return -E2BIG;
-+
- 	if ((params.set_flags & ~TUNE_OPS_SUPPORTED) != 0)
- 		return -EOPNOTSUPP;
- 
+base-commit: ba36dd5ee6fd4643ebbf6ee6eefcecf0b07e35c7
 -- 
-2.51.0
+2.34.1
 
 
