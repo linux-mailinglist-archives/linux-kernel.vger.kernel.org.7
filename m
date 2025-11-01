@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-881379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EB7DC281AF
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 16:45:26 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29115C281C7
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 16:47:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB02D1A21F70
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 15:45:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3FB0E4EFF34
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 15:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8483923BCE3;
-	Sat,  1 Nov 2025 15:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B65D32FB99C;
+	Sat,  1 Nov 2025 15:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="a5AW46dE"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="WbzOGzR7"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939782F9DBC
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 15:44:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430352F9DBC
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 15:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762011859; cv=none; b=F0t6DGATzNejblNYfclVJFTpw/2y1FUb6crnTvzE0XmIOnXmnAN+db8jyjz3QBl5Rtic/IpfaOLcjA+cQ/BISm0xqt2WT+qTQJZMkPH26Y3/FJShUG9rrNgaUsK4yY9jgUMeyji5NwIERblAy+KlgnGV2ElumktfHZqJYrAdPVE=
+	t=1762011868; cv=none; b=QtznIyIPEnlMQ2amnnTNH+7p/1Fmm6yFilTKuSfJ9AH94AzUpCRi8hhYMpd2S3aiKDViTC0UPnX+DK0Ttx2SNHEhWpLzhg60SJuLqZYcIiyEoSMKslXdUhgCykirKUMoAHDRNcfRHj6aOUIxZOu32Hs7VzV7QzsToc5AFNaifLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762011859; c=relaxed/simple;
-	bh=g5rD55j0ewpWZwtP4iDepKmEh3GBb5aXjxdfchIjUts=;
+	s=arc-20240116; t=1762011868; c=relaxed/simple;
+	bh=pizzB9cRq+aT3hF9bgrZeiXgsMsAyZQ2bUTDm+uBFMU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oO5Oiv77L3j0QUPFJQYVLAzP7bC3OMEYd8qkr/gDOYk+EA+9HTw7JzoszZh6sQUGkFlMci5u5J1Wpx3AX5kJo+wh5jbVBf/eefYwalCBiRyVHvHehPUUzChOOFfs9ObXnz+Z82T1Vl23+jOApTQ+zYgXRriFQaMfmX9rlnX/qAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=a5AW46dE; arc=none smtp.client-ip=209.85.214.173
+	 MIME-Version; b=Sc9qLqkH0k4tKfehxIVojsyYifq18XpEimIcOORzpoQt2nT4U9tgj/+hyPD5TyWgUO89bDQAojNV0KZLK7ruxG11zD/+YicZME2tLigUoeFEgQuCm3tep0LyOVGRxUNGb7cARqdWz3/syDrANPUHmXn+vJRbsOFnQj6ReuTYULc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=WbzOGzR7; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-29524c38f4fso22196795ad.2
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 08:44:17 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-27d3540a43fso32333875ad.3
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 08:44:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1762011857; x=1762616657; darn=vger.kernel.org;
+        d=ventanamicro.com; s=google; t=1762011866; x=1762616666; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uw3xX0lWv0Z5caNa0HF905Jm6Ibav/ckH29ZGZIeYG0=;
-        b=a5AW46dE9IHdzZ2nYC0qH8ODDdmsqR+6Y5n1zCnveKYYe1S4+O+NJQ91GXTDd3DkzC
-         u5hB9wAed6gSMZiOSOp4e8Ju8rTJRgIiJCuXOiDWJqQSH87GlHDXYEYUmkTGLF9KZYsh
-         gA/aPg6FPvHDnw+9sNdeUHxmWE2ItUUxwcMR8DwxOxmn4Qbn84HetDuyrjmjcxAJxm/N
-         YwyjI6Ar9E6xl3s84Ci5K3PiCqslGb5LILN70/vAa1sWFkBaxIDVdYvidGF6y8A0CQLg
-         MgFw421qgdy4wvIiRyznOGfC/CdnubBuGEM0uT+EOGSvmrBC+OihDvMmaxNrrN/hjQTI
-         x9Mw==
+        bh=7XnFRCS+sTtRhexwba7Np0dAUXiR2aGYN+xgEcH1cxk=;
+        b=WbzOGzR7EZ21EGYkpi0SW/jclvIB1HG8csrLqC1mRo0HY8eGThmgPdfegsN3CZPStP
+         dZOXcxzI4B3MTU3HO7Ru/4RbSgLXfKlYs55OlATdvJEtdXWungTXcBY8cjxL8+HexJzZ
+         ONoPNKzxoF4mw6C9cagi6GsPGyfxaBbdbws2Uqk83vnA+CwoJi9YCg7OFDSaADc8Re7w
+         cMFb660Fds0jx0xII8jcmOZ55EN8IAU0DCRAksEPRuqAMqIRpwgi2XOxyGuHUqH+BLig
+         7toWKtSImkOPJa3ysw72x06wXuIdUS0QFEgySN0kd6QFPSSXflljnNqkfX9PQywu7mm3
+         E9xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762011857; x=1762616657;
+        d=1e100.net; s=20230601; t=1762011866; x=1762616666;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uw3xX0lWv0Z5caNa0HF905Jm6Ibav/ckH29ZGZIeYG0=;
-        b=tRRPP8KoYmKJ5h1dgc09TJx2yf4E3dGBKdAnNoOGOVXYWk0e6Dg13LSJluRczdDxo4
-         eoWvVQz7lBxwcjWEGaQ69IIL1G4GU/VrOhWHfCO8gU3DtQ3gcTDIleMUqxusiIAO3kDX
-         Qmvv83s7kN++xY8/kK5P9L/l5OMddlN023XUPHjusDEUuC8SDJHO9tNzlM3QHQVA/Nrk
-         By0MQbZuA8npzRvy1STgaXh0t6ILXhQ9NxZ1JHhKuwtiEuSPi78Adgit2AjdVLn7Myvd
-         yDacb1Hv57eYG2H6JC8hrTIa6Dz5hZyynzIjGLfZGGf5KcDDqnKX1asADzGLkXPVXO8M
-         i1wg==
-X-Forwarded-Encrypted: i=1; AJvYcCXTPbCU5CSE4VMFuS0ug7AR2Jc2fO7HZ4XZfOCeDLwmk4ioWx9rclhATwGFD1p3ATQxqORgxP3TJ691/Xg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzog9waXygI22NtK/csYtlnz6E8FkkdLUtcNNquuNBcjy/23ITq
-	dZJtnG7Xi2esCImX4noxOC0mHxwmu2aCuQxdkAeN5thFRQUNXRWM6ttrqbQT9QvG71c=
-X-Gm-Gg: ASbGncs38qczYrrE9QIfxUv2ZwvMfiV8BmegZXcYszzCmd8tjgJgEeDH8omuikmvddk
-	B4K6elJw92bx3WRNJE3O1vRObDOkux0FNhgwinQI0pgGjD2o+6HUWchxxE2BCV245u1N8BKh+fp
-	6EYUGlKGNfV75EBeIp5Wr/iZbmvEI8QFNGCqnOd1WsTMzsI8IBYWsIhfaIYi9oZ3wO7ZbNwUw+O
-	5PSw8xTCBgQqro9ePVJ/65oa+buZ5u1Nob2po4Z6fHVcAWyLC1YO/dZ2mna189OiyXtbkeER/ZJ
-	fMDcRZy8c73M9gyg/grD31nM4ywTzFTKXcq+7vCqGCee3eRSMOW24vLZz2N7HVzHnEq5YjEu5PA
-	ooM/AHGwGAYILQEMgZknxC+YK0WTObHOk/G/h+sjqSbEHhN2VZYTZvybkN+tOPMCnzS0qseuLXH
-	EaTuIxhbUtuwWswehWc+pMiZ/vuya+62o=
-X-Google-Smtp-Source: AGHT+IFFWL85T9HhS0difffMIWTRJBYYSad8o6w2jHo37Nk+CHybhhZtaAfAEVq3uYrHD502FqqzfA==
-X-Received: by 2002:a17:902:ea0d:b0:295:7bbd:52fa with SMTP id d9443c01a7336-2957bbd5b0dmr6783025ad.56.1762011856866;
-        Sat, 01 Nov 2025 08:44:16 -0700 (PDT)
+        bh=7XnFRCS+sTtRhexwba7Np0dAUXiR2aGYN+xgEcH1cxk=;
+        b=GrTYP70Skb4cZqmpdC+tQa8fqGk6un79xTnEKRD1PQfAZqSq41bsUss8ttUySXbOIe
+         sc7q5bFKRxApoYRrMyG8jsKHnkWSqdnHLCr4lZxElJ30cZn/JpxfKRWsKD2vNmTu9r7Y
+         xUpwRegPAtGHflXgC2TRzYtfrPyQJ6rOcGpaC5yUwb0CVDvh/p0D4m0Oq7iI8FMDbW1n
+         kImUdoPwMDxiJg8pvZswj0csOQQgg/iiPOgpxRdgB/GLNS0yNhKM77OzNp2rAYcWhWXI
+         YuX6+lOqpboaBf1tpSih4psH4k9YRxOB64s+RJTQ6zahZJzHgRUK6jw6SEcETNGwpaOW
+         rQ5A==
+X-Forwarded-Encrypted: i=1; AJvYcCVnYtmsHG+GHzBRYvjkvLv5Tgq0T57CUuj5NOZO2rr7L1BzLsWPc1h0QJEbzsxhZSc6pbElzA3QTTQPL8w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwRsml/TYWGW7+SUJLYOtf5jw6mnkQUHZUrdxRXU7sJcTcUOm3
+	vgnkg8CUnXSTBIYYb1+B7hqDOcYadmpfr7epHEzokkzetGOHND9jTWKJmZCXNR3Masg=
+X-Gm-Gg: ASbGncuZ4TKR7NlGE2LU9blEdobcMVqjEJMNLThskl5uGAYVkUMSDatcuyBFa/DfyiH
+	j9fNlM6487rUdEQScqgFSp2uB/P753W7/2vEuR0krlu+8LhJW/acCJP19lsCpimMQY0REni+8Sv
+	ktJ0PAuZEaAMhMha1a91ZK+hDlyNibZ20owSDaiJSMW36mnVekMIH7b+m87t/8pxUgQv/2WN1Tb
+	kGprpC+k8mtTCj+A64SPNVVBNQRuj+68uBBXAV7ZJ2NBTnNa257F6FBdICev7xWY4IsCzRFhxgX
+	/27dN58FeB1gvV+caJiq211bRz7PQj64ehOid5TZtxS0/a4NWVyQv4L8iMSY3PdyehT8krNKlwO
+	Sz/dhiiLVoTL2FCXF8memMbbwx7FKhHhT/fUpfGVfIFENaAhBWGtJ9jfVM8NeU3RaS/Vz/OHoGv
+	6rx2twj5ilIG0BoeDK3KPkYV11mGPwZPr5oaFEHK6h9w==
+X-Google-Smtp-Source: AGHT+IHqSK+MBUN/GAqGdH+BeccrIifT4o6CYolTjikOEjgbWEPinm6+JP4k2LJ8ohbiCjztsZFCQA==
+X-Received: by 2002:a17:902:ce81:b0:295:5945:2930 with SMTP id d9443c01a7336-29559452c6emr26600735ad.2.1762011866181;
+        Sat, 01 Nov 2025 08:44:26 -0700 (PDT)
 Received: from localhost.localdomain ([122.171.20.36])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-295269bd2fesm59990105ad.105.2025.11.01.08.44.08
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-295269bd2fesm59990105ad.105.2025.11.01.08.44.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Nov 2025 08:44:16 -0700 (PDT)
+        Sat, 01 Nov 2025 08:44:25 -0700 (PDT)
 From: Anup Patel <apatel@ventanamicro.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -100,9 +100,9 @@ Cc: Alexandre Ghiti <alex@ghiti.fr>,
 	linux-kernel@vger.kernel.org,
 	Mayuresh Chitale <mchitale@ventanamicro.com>,
 	Anup Patel <apatel@ventanamicro.com>
-Subject: [PATCH v2 09/12] rvtrace: Add perf driver for tracing using perf tool
-Date: Sat,  1 Nov 2025 21:12:42 +0530
-Message-ID: <20251101154245.162492-10-apatel@ventanamicro.com>
+Subject: [PATCH v2 10/12] perf tools: Add RISC-V trace PMU record capabilities
+Date: Sat,  1 Nov 2025 21:12:43 +0530
+Message-ID: <20251101154245.162492-11-apatel@ventanamicro.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20251101154245.162492-1-apatel@ventanamicro.com>
 References: <20251101154245.162492-1-apatel@ventanamicro.com>
@@ -116,431 +116,303 @@ Content-Transfer-Encoding: 8bit
 
 From: Mayuresh Chitale <mchitale@ventanamicro.com>
 
-Add perf driver for RISC-V tracing similar to ARM Coresight and Hisilicon
-PTT drivers. The driver adds 'rvtrace' event descriptor which can be used
-by the perf tool to record the RISC-V trace data.
+Introduce the required auxiliary API functions allowing the perf core
+to interact with RISC-V trace perf driver.
 
 Co-developed-by: Anup Patel <apatel@ventanamicro.com>
 Signed-off-by: Anup Patel <apatel@ventanamicro.com>
 Signed-off-by: Mayuresh Chitale <mchitale@ventanamicro.com>
 ---
- drivers/hwtracing/rvtrace/Kconfig        |   1 +
- drivers/hwtracing/rvtrace/Makefile       |   2 +-
- drivers/hwtracing/rvtrace/rvtrace-core.c |   8 +
- drivers/hwtracing/rvtrace/rvtrace-perf.c | 343 +++++++++++++++++++++++
- include/linux/rvtrace.h                  |   3 +
- 5 files changed, 356 insertions(+), 1 deletion(-)
- create mode 100644 drivers/hwtracing/rvtrace/rvtrace-perf.c
+ tools/perf/arch/riscv/util/Build      |   1 +
+ tools/perf/arch/riscv/util/auxtrace.c | 218 ++++++++++++++++++++++++++
+ tools/perf/util/auxtrace.c            |   1 +
+ tools/perf/util/auxtrace.h            |   1 +
+ tools/perf/util/rvtrace.h             |  18 +++
+ 5 files changed, 239 insertions(+)
+ create mode 100644 tools/perf/arch/riscv/util/auxtrace.c
+ create mode 100644 tools/perf/util/rvtrace.h
 
-diff --git a/drivers/hwtracing/rvtrace/Kconfig b/drivers/hwtracing/rvtrace/Kconfig
-index 0577f9acb858..ba11acf1117d 100644
---- a/drivers/hwtracing/rvtrace/Kconfig
-+++ b/drivers/hwtracing/rvtrace/Kconfig
-@@ -4,6 +4,7 @@ menuconfig RVTRACE
- 	tristate "RISC-V Trace Support"
- 	depends on RISCV
- 	depends on OF
-+	select PERF_EVENTS
- 	default RISCV
- 	help
- 	  This framework provides a kernel interface for the RISC-V trace
-diff --git a/drivers/hwtracing/rvtrace/Makefile b/drivers/hwtracing/rvtrace/Makefile
-index 122e575da9fb..07403f4d94e3 100644
---- a/drivers/hwtracing/rvtrace/Makefile
-+++ b/drivers/hwtracing/rvtrace/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
+diff --git a/tools/perf/arch/riscv/util/Build b/tools/perf/arch/riscv/util/Build
+index 58a672246024..2ba1fb98a0ad 100644
+--- a/tools/perf/arch/riscv/util/Build
++++ b/tools/perf/arch/riscv/util/Build
+@@ -3,3 +3,4 @@ perf-util-y += header.o
  
- obj-$(CONFIG_RVTRACE) += rvtrace.o
--rvtrace-y := rvtrace-core.o rvtrace-platform.o
-+rvtrace-y := rvtrace-core.o rvtrace-platform.o rvtrace-perf.o
- obj-$(CONFIG_RVTRACE_ENCODER) += rvtrace-encoder.o
- obj-$(CONFIG_RVTRACE_RAMSINK) += rvtrace-ramsink.o
-diff --git a/drivers/hwtracing/rvtrace/rvtrace-core.c b/drivers/hwtracing/rvtrace/rvtrace-core.c
-index b955e5f3b048..bbe39aaf930d 100644
---- a/drivers/hwtracing/rvtrace/rvtrace-core.c
-+++ b/drivers/hwtracing/rvtrace/rvtrace-core.c
-@@ -777,11 +777,19 @@ static int __init rvtrace_init(void)
- 		return ret;
- 	}
- 
-+	ret = rvtrace_perf_init();
-+	if (ret) {
-+		platform_driver_unregister(&rvtrace_platform_driver);
-+		bus_unregister(&rvtrace_bustype);
-+		return ret;
-+	}
-+
- 	return 0;
- }
- 
- static void __exit rvtrace_exit(void)
- {
-+	rvtrace_perf_exit();
- 	platform_driver_unregister(&rvtrace_platform_driver);
- 	bus_unregister(&rvtrace_bustype);
- }
-diff --git a/drivers/hwtracing/rvtrace/rvtrace-perf.c b/drivers/hwtracing/rvtrace/rvtrace-perf.c
+ perf-util-$(CONFIG_LIBTRACEEVENT) += kvm-stat.o
+ perf-util-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
++perf-util-$(CONFIG_AUXTRACE) += auxtrace.o
+diff --git a/tools/perf/arch/riscv/util/auxtrace.c b/tools/perf/arch/riscv/util/auxtrace.c
 new file mode 100644
-index 000000000000..2d3039f8b681
+index 000000000000..adc86bd38998
 --- /dev/null
-+++ b/drivers/hwtracing/rvtrace/rvtrace-perf.c
-@@ -0,0 +1,343 @@
++++ b/tools/perf/arch/riscv/util/auxtrace.c
+@@ -0,0 +1,218 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Copyright(C) 2025 Ventanamicro Limited. All rights reserved.
-+ * Author: Mayuresh Chitale <mchitale@venanamicro.com>
++ * Risc-V E-Trace support
 + */
 +
-+#include <linux/bitfield.h>
-+#include <linux/cpumask.h>
-+#include <linux/device.h>
-+#include <linux/list.h>
-+#include <linux/mm.h>
-+#include <linux/init.h>
-+#include <linux/perf_event.h>
-+#include <linux/vmalloc.h>
-+#include <linux/percpu-defs.h>
-+#include <linux/slab.h>
-+#include <linux/stringhash.h>
++#include <linux/kernel.h>
 +#include <linux/types.h>
-+#include <linux/workqueue.h>
-+#include <linux/rvtrace.h>
++#include <linux/bitops.h>
++#include <linux/log2.h>
++#include <linux/zalloc.h>
++#include <time.h>
++
++#include <internal/lib.h> // page_size
++#include "../../../util/auxtrace.h"
++#include "../../../util/cpumap.h"
++#include "../../../util/debug.h"
++#include "../../../util/event.h"
++#include "../../../util/evlist.h"
++#include "../../../util/evsel.h"
++#include "../../../util/rvtrace.h"
++#include "../../../util/pmu.h"
++#include "../../../util/record.h"
++#include "../../../util/session.h"
++#include "../../../util/tsc.h"
 +
 +#define RVTRACE_PMU_NAME "rvtrace"
-+#define RVTRACE_BUF_LEN (4 * 1024 * 1024)
++#define KiB(x) ((x) * 1024)
++#define MiB(x) ((x) * 1024 * 1024)
 +
-+static struct pmu rvtrace_pmu;
-+static DEFINE_SPINLOCK(perf_buf_lock);
-+
-+/**
-+ * struct rvtrace_event_data - RISC-V trace specific perf event data
-+ * @work:		Handle to free allocated memory outside IRQ context.
-+ * @mask:		Hold the CPU(s) this event was set for.
-+ * @aux_hwid_done:	Whether a CPU has emitted the TraceID packet or not.
-+ * @path:		An array of path, each slot for one CPU.
-+ * @buf:		Aux buffer / pages allocated by perf framework.
-+ */
-+struct rvtrace_event_data {
-+	struct work_struct work;
-+	cpumask_t mask;
-+	cpumask_t aux_hwid_done;
-+	struct rvtrace_path * __percpu *path;
-+	struct rvtrace_perf_auxbuf buf;
++struct rvtrace_recording {
++	struct auxtrace_record	itr;
++	struct perf_pmu *rvtrace_pmu;
++	struct evlist *evlist;
 +};
 +
-+struct rvtrace_ctxt {
-+	struct perf_output_handle handle;
-+	struct rvtrace_event_data *event_data;
-+};
-+
-+static DEFINE_PER_CPU(struct rvtrace_ctxt, rvtrace_ctxt);
-+
-+static void *alloc_event_data(int cpu)
++static size_t rvtrace_info_priv_size(struct auxtrace_record *itr __maybe_unused,
++				     struct evlist *evlist __maybe_unused)
 +{
-+	struct rvtrace_event_data *event_data;
-+	cpumask_t *mask;
-+
-+	event_data = kzalloc(sizeof(*event_data), GFP_KERNEL);
-+	if (!event_data)
-+		return NULL;
-+
-+	/* Update mask as per selected CPUs */
-+	mask = &event_data->mask;
-+	if (cpu != -1)
-+		cpumask_set_cpu(cpu, mask);
-+	else
-+		cpumask_copy(mask, cpu_present_mask);
-+
-+	event_data->path = alloc_percpu(struct rvtrace_path *);
-+	return event_data;
++	return RVTRACE_AUXTRACE_PRIV_SIZE;
 +}
 +
-+static void rvtrace_free_aux(void *data)
++static int rvtrace_info_fill(struct auxtrace_record *itr, struct perf_session *session,
++			     struct perf_record_auxtrace_info *auxtrace_info, size_t priv_size)
 +{
-+	struct rvtrace_event_data *event_data = data;
++	struct rvtrace_recording *ptr = container_of(itr, struct rvtrace_recording, itr);
++	struct perf_pmu *rvtrace_pmu = ptr->rvtrace_pmu;
 +
-+	schedule_work(&event_data->work);
-+}
-+
-+static struct rvtrace_path **rvtrace_event_cpu_path_ptr(struct rvtrace_event_data *data,
-+							int cpu)
-+{
-+	return per_cpu_ptr(data->path, cpu);
-+}
-+
-+static void free_event_data(struct work_struct *work)
-+{
-+	struct rvtrace_event_data *event_data;
-+	struct rvtrace_path *path;
-+	cpumask_t *mask;
-+	int cpu;
-+
-+	event_data = container_of(work, struct rvtrace_event_data, work);
-+	mask = &event_data->mask;
-+	for_each_cpu(cpu, mask) {
-+		path = *rvtrace_event_cpu_path_ptr(event_data, cpu);
-+		rvtrace_destroy_path(path);
-+	}
-+	free_percpu(event_data->path);
-+	kfree(event_data);
-+}
-+
-+static void *rvtrace_setup_aux(struct perf_event *event, void **pages,
-+			       int nr_pages, bool overwrite)
-+{
-+	struct rvtrace_event_data *event_data = NULL;
-+	struct page **pagelist;
-+	int cpu = event->cpu, i;
-+	cpumask_t *mask;
-+
-+	event_data = alloc_event_data(cpu);
-+	if (!event_data)
-+		return NULL;
-+
-+	INIT_WORK(&event_data->work, free_event_data);
-+	mask = &event_data->mask;
-+	/*
-+	 * Create the path for each CPU in the mask. In case of any failure skip the CPU
-+	 */
-+	for_each_cpu(cpu, mask) {
-+		struct rvtrace_component *src;
-+		struct rvtrace_path *path;
-+
-+		src = rvtrace_cpu_source(cpu);
-+		if (!src)
-+			continue;
-+
-+		path = rvtrace_create_path(src, NULL, RVTRACE_COMPONENT_MODE_PERF);
-+		if (!path)
-+			continue;
-+
-+		*rvtrace_event_cpu_path_ptr(event_data, cpu) = path;
-+	}
-+
-+	/* If we don't have any CPUs ready for tracing, abort */
-+	cpu = cpumask_first(&event_data->mask);
-+	if (cpu >= nr_cpu_ids)
-+		goto err;
-+
-+	pagelist = kcalloc(nr_pages, sizeof(*pagelist), GFP_KERNEL);
-+	if (!pagelist)
-+		goto err;
-+
-+	for (i = 0; i < nr_pages; i++)
-+		pagelist[i] = virt_to_page(pages[i]);
-+
-+	event_data->buf.base = vmap(pagelist, nr_pages, VM_MAP, PAGE_KERNEL);
-+	if (!event_data->buf.base) {
-+		kfree(pagelist);
-+		goto err;
-+	}
-+
-+	event_data->buf.nr_pages = nr_pages;
-+	event_data->buf.length = nr_pages * PAGE_SIZE;
-+	event_data->buf.pos = 0;
-+	return event_data;
-+err:
-+	rvtrace_free_aux(event_data);
-+	return NULL;
-+}
-+
-+static void rvtrace_event_read(struct perf_event *event)
-+{
-+}
-+
-+static void rvtrace_event_destroy(struct perf_event *event)
-+{
-+}
-+
-+static int rvtrace_event_init(struct perf_event *event)
-+{
-+	if (event->attr.type != rvtrace_pmu.type)
++	if (priv_size != RVTRACE_AUXTRACE_PRIV_SIZE)
 +		return -EINVAL;
 +
-+	event->destroy = rvtrace_event_destroy;
++	if (!session->evlist->core.nr_mmaps)
++		return -EINVAL;
++
++	auxtrace_info->type = PERF_AUXTRACE_RISCV_TRACE;
++	auxtrace_info->priv[0] = rvtrace_pmu->type;
++
 +	return 0;
 +}
 +
-+static void rvtrace_event_start(struct perf_event *event, int flags)
++static int rvtrace_set_auxtrace_mmap_page(struct record_opts *opts)
 +{
-+	struct rvtrace_ctxt *ctxt = this_cpu_ptr(&rvtrace_ctxt);
-+	struct perf_output_handle *handle = &ctxt->handle;
-+	struct rvtrace_event_data *event_data;
-+	int cpu = smp_processor_id();
-+	struct rvtrace_path *path;
++	bool privileged = perf_event_paranoid_check(-1);
 +
-+	if (WARN_ON(ctxt->event_data))
-+		goto fail;
++	if (!opts->full_auxtrace)
++		return 0;
 +
++	if (opts->full_auxtrace && !opts->auxtrace_mmap_pages) {
++		if (privileged) {
++			opts->auxtrace_mmap_pages = MiB(16) / page_size;
++		} else {
++			opts->auxtrace_mmap_pages = KiB(128) / page_size;
++			if (opts->mmap_pages == UINT_MAX)
++				opts->mmap_pages = KiB(256) / page_size;
++		}
++	}
++
++	/* Validate auxtrace_mmap_pages */
++	if (opts->auxtrace_mmap_pages) {
++		size_t sz = opts->auxtrace_mmap_pages * (size_t)page_size;
++		size_t min_sz = KiB(8);
++
++		if (sz < min_sz || !is_power_of_2(sz)) {
++			pr_err("Invalid mmap size : must be at least %zuKiB and a power of 2\n",
++			       min_sz / 1024);
++			return -EINVAL;
++		}
++	}
++
++	return 0;
++}
++
++static int rvtrace_recording_options(struct auxtrace_record *itr, struct evlist *evlist,
++				     struct record_opts *opts)
++{
++	struct rvtrace_recording *ptr = container_of(itr, struct rvtrace_recording, itr);
++	struct perf_pmu *rvtrace_pmu = ptr->rvtrace_pmu;
++	struct evsel *evsel, *rvtrace_evsel = NULL;
++	struct evsel *tracking_evsel;
++	int err;
++
++	ptr->evlist = evlist;
++	evlist__for_each_entry(evlist, evsel) {
++		if (evsel->core.attr.type == rvtrace_pmu->type) {
++			if (rvtrace_evsel) {
++				pr_err("There may be only one " RVTRACE_PMU_NAME "x event\n");
++				return -EINVAL;
++			}
++			evsel->core.attr.freq = 0;
++			evsel->core.attr.sample_period = 1;
++			evsel->needs_auxtrace_mmap = true;
++			rvtrace_evsel = evsel;
++			opts->full_auxtrace = true;
++		}
++	}
++
++	err = rvtrace_set_auxtrace_mmap_page(opts);
++	if (err)
++		return err;
 +	/*
-+	 * Deal with the ring buffer API and get a handle on the
-+	 * session's information.
++	 * To obtain the auxtrace buffer file descriptor, the auxtrace event
++	 * must come first.
 +	 */
-+	event_data = perf_aux_output_begin(handle, event);
-+	if (!event_data)
-+		goto fail;
++	evlist__to_front(evlist, rvtrace_evsel);
++	evsel__set_sample_bit(rvtrace_evsel, TIME);
 +
-+	if (!cpumask_test_cpu(cpu, &event_data->mask))
-+		goto out;
++	/* Add dummy event to keep tracking */
++	err = parse_event(evlist, "dummy:u");
++	if (err)
++		return err;
 +
-+	event_data->buf.pos = handle->head % event_data->buf.length;
-+	path = *rvtrace_event_cpu_path_ptr(event_data, cpu);
-+	if (!path) {
-+		pr_err("Error. Path not found\n");
-+		return;
-+	}
++	tracking_evsel = evlist__last(evlist);
++	evlist__set_tracking_event(evlist, tracking_evsel);
 +
-+	if (rvtrace_path_start(path)) {
-+		pr_err("Error. Tracing not started\n");
-+		return;
-+	}
++	tracking_evsel->core.attr.freq = 0;
++	tracking_evsel->core.attr.sample_period = 1;
++	evsel__set_sample_bit(tracking_evsel, TIME);
 +
-+	/*
-+	 * output cpu / trace ID in perf record, once for the lifetime
-+	 * of the event.
-+	 */
-+	if (!cpumask_test_cpu(cpu, &event_data->aux_hwid_done)) {
-+		cpumask_set_cpu(cpu, &event_data->aux_hwid_done);
-+		perf_report_aux_output_id(event, cpu);
-+	}
-+
-+out:
-+	/* Tell the perf core the event is alive */
-+	event->hw.state = 0;
-+	ctxt->event_data = event_data;
-+	return;
-+fail:
-+	event->hw.state = PERF_HES_STOPPED;
++	return 0;
 +}
 +
-+static void rvtrace_event_stop(struct perf_event *event, int mode)
++static u64 rvtrace_reference(struct auxtrace_record *itr __maybe_unused)
 +{
-+	struct rvtrace_ctxt *ctxt = this_cpu_ptr(&rvtrace_ctxt);
-+	struct perf_output_handle *handle = &ctxt->handle;
-+	struct rvtrace_event_data *event_data;
-+	int ret, cpu = smp_processor_id();
-+	struct rvtrace_path *path;
-+	size_t size;
-+
-+	if (event->hw.state == PERF_HES_STOPPED)
-+		return;
-+
-+	if (handle->event &&
-+	    WARN_ON(perf_get_aux(handle) != ctxt->event_data))
-+		return;
-+
-+	event_data = ctxt->event_data;
-+	ctxt->event_data = NULL;
-+
-+	if (WARN_ON(!event_data))
-+		return;
-+
-+	if (handle->event && (mode & PERF_EF_UPDATE) && !cpumask_test_cpu(cpu, &event_data->mask)) {
-+		event->hw.state = PERF_HES_STOPPED;
-+		perf_aux_output_end(handle, 0);
-+		return;
-+	}
-+
-+	/* stop tracing */
-+	path = *rvtrace_event_cpu_path_ptr(event_data, cpu);
-+	if (!path) {
-+		pr_err("Error. Path not found\n");
-+		return;
-+	}
-+
-+	if (rvtrace_path_stop(path)) {
-+		pr_err("Error. Tracing not stopped\n");
-+		return;
-+	}
-+
-+	event->hw.state = PERF_HES_STOPPED;
-+	if (handle->event && (mode & PERF_EF_UPDATE)) {
-+		if (WARN_ON_ONCE(handle->event != event))
-+			return;
-+		spin_lock(&perf_buf_lock);
-+		ret = rvtrace_path_copyto_auxbuf(path, &event_data->buf, &size);
-+		spin_unlock(&perf_buf_lock);
-+		WARN_ON_ONCE(ret);
-+		if (READ_ONCE(handle->event))
-+			perf_aux_output_end(handle, size);
-+		else
-+			WARN_ON(size);
-+	}
++	return rdtsc();
 +}
 +
-+static int rvtrace_event_add(struct perf_event *event, int mode)
++static void rvtrace_recording_free(struct auxtrace_record *itr)
 +{
-+	struct hw_perf_event *hwc = &event->hw;
-+	int ret = 0;
++	struct rvtrace_recording *ptr =
++			container_of(itr, struct rvtrace_recording, itr);
 +
-+	if (mode & PERF_EF_START) {
-+		rvtrace_event_start(event, 0);
-+		if (hwc->state & PERF_HES_STOPPED)
-+			ret = -EINVAL;
-+	} else {
-+		hwc->state = PERF_HES_STOPPED;
++	free(ptr);
++}
++
++static struct auxtrace_record *rvtrace_recording_init(int *err, struct perf_pmu *rvtrace_pmu)
++{
++	struct rvtrace_recording *ptr;
++
++	if (!rvtrace_pmu) {
++		*err = -ENODEV;
++		return NULL;
 +	}
 +
-+	return ret;
++	ptr = zalloc(sizeof(*ptr));
++	if (!ptr) {
++		*err = -ENOMEM;
++		return NULL;
++	}
++
++	ptr->rvtrace_pmu = rvtrace_pmu;
++	ptr->itr.recording_options = rvtrace_recording_options;
++	ptr->itr.info_priv_size = rvtrace_info_priv_size;
++	ptr->itr.info_fill = rvtrace_info_fill;
++	ptr->itr.free = rvtrace_recording_free;
++	ptr->itr.reference = rvtrace_reference;
++	ptr->itr.read_finish = auxtrace_record__read_finish;
++	ptr->itr.alignment = 0;
++
++	*err = 0;
++	return &ptr->itr;
 +}
 +
-+static void rvtrace_event_del(struct perf_event *event, int mode)
++static struct perf_pmu *find_pmu_for_event(struct perf_pmu **pmus,
++					   int pmu_nr, struct evsel *evsel)
 +{
-+	rvtrace_event_stop(event, PERF_EF_UPDATE);
++	int i;
++
++	if (!pmus)
++		return NULL;
++
++	for (i = 0; i < pmu_nr; i++) {
++		if (evsel->core.attr.type == pmus[i]->type)
++			return pmus[i];
++	}
++
++	return NULL;
 +}
 +
-+PMU_FORMAT_ATTR(event, "config:0-0");
-+
-+static struct attribute *rvtrace_pmu_formats_attr[] = {
-+	&format_attr_event.attr,
-+	NULL,
-+};
-+
-+static struct attribute_group rvtrace_pmu_format_group = {
-+	.name = "format",
-+	.attrs = rvtrace_pmu_formats_attr,
-+};
-+
-+static const struct attribute_group *rvtrace_pmu_attr_groups[] = {
-+	&rvtrace_pmu_format_group,
-+	NULL,
-+};
-+
-+int __init rvtrace_perf_init(void)
++struct auxtrace_record *auxtrace_record__init(struct evlist *evlist, int *err)
 +{
-+	rvtrace_pmu.capabilities	= (PERF_PMU_CAP_EXCLUSIVE | PERF_PMU_CAP_ITRACE);
-+	rvtrace_pmu.attr_groups		= rvtrace_pmu_attr_groups;
-+	rvtrace_pmu.task_ctx_nr		= perf_sw_context;
-+	rvtrace_pmu.read		= rvtrace_event_read;
-+	rvtrace_pmu.event_init		= rvtrace_event_init;
-+	rvtrace_pmu.setup_aux		= rvtrace_setup_aux;
-+	rvtrace_pmu.free_aux		= rvtrace_free_aux;
-+	rvtrace_pmu.start		= rvtrace_event_start;
-+	rvtrace_pmu.stop		= rvtrace_event_stop;
-+	rvtrace_pmu.add			= rvtrace_event_add;
-+	rvtrace_pmu.del			= rvtrace_event_del;
-+	rvtrace_pmu.module		= THIS_MODULE;
++	struct perf_pmu	*rvtrace_pmu = NULL;
++	struct perf_pmu *found_etm = NULL;
++	struct evsel *evsel;
 +
-+	return perf_pmu_register(&rvtrace_pmu, RVTRACE_PMU_NAME, -1);
-+}
++	if (!evlist)
++		return NULL;
 +
-+void __exit rvtrace_perf_exit(void)
-+{
-+	perf_pmu_unregister(&rvtrace_pmu);
++	rvtrace_pmu = perf_pmus__find(RVTRACE_PMU_NAME);
++	evlist__for_each_entry(evlist, evsel) {
++		if (rvtrace_pmu && !found_etm)
++			found_etm = find_pmu_for_event(&rvtrace_pmu, 1, evsel);
++	}
++
++	if (found_etm)
++		return rvtrace_recording_init(err, rvtrace_pmu);
++
++	*err = 0;
++	return NULL;
 +}
-diff --git a/include/linux/rvtrace.h b/include/linux/rvtrace.h
-index cecf6c153ca6..d5f782ac132f 100644
---- a/include/linux/rvtrace.h
-+++ b/include/linux/rvtrace.h
-@@ -343,4 +343,7 @@ static inline int rvtrace_comp_is_empty(struct rvtrace_component *comp)
- 				comp->pdata->control_poll_timeout_usecs);
- }
+diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
+index 1539c1dc823c..c905563e0d8a 100644
+--- a/tools/perf/util/auxtrace.c
++++ b/tools/perf/util/auxtrace.c
+@@ -1394,6 +1394,7 @@ int perf_event__process_auxtrace_info(struct perf_session *session,
+ 	case PERF_AUXTRACE_VPA_DTL:
+ 		err = powerpc_vpadtl_process_auxtrace_info(event, session);
+ 		break;
++	case PERF_AUXTRACE_RISCV_TRACE:
+ 	case PERF_AUXTRACE_UNKNOWN:
+ 	default:
+ 		return -EINVAL;
+diff --git a/tools/perf/util/auxtrace.h b/tools/perf/util/auxtrace.h
+index e0a5b39fed12..1c89a281a06c 100644
+--- a/tools/perf/util/auxtrace.h
++++ b/tools/perf/util/auxtrace.h
+@@ -51,6 +51,7 @@ enum auxtrace_type {
+ 	PERF_AUXTRACE_S390_CPUMSF,
+ 	PERF_AUXTRACE_HISI_PTT,
+ 	PERF_AUXTRACE_VPA_DTL,
++	PERF_AUXTRACE_RISCV_TRACE,
+ };
  
-+int rvtrace_perf_init(void);
-+void rvtrace_perf_exit(void);
+ enum itrace_period_type {
+diff --git a/tools/perf/util/rvtrace.h b/tools/perf/util/rvtrace.h
+new file mode 100644
+index 000000000000..93c041db8660
+--- /dev/null
++++ b/tools/perf/util/rvtrace.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright(C) 2015 Linaro Limited. All rights reserved.
++ * Author: Mathieu Poirier <mathieu.poirier@linaro.org>
++ */
 +
- #endif
++#ifndef INCLUDE__UTIL_PERF_RVTRACE_H__
++#define INCLUDE__UTIL_PERF_RVTRACE_H__
++
++#include "debug.h"
++#include "auxtrace.h"
++#include "util/event.h"
++#include "util/session.h"
++#include <linux/bits.h>
++
++#define RVTRACE_AUXTRACE_PRIV_SIZE	sizeof(u64)
++
++#endif
 -- 
 2.43.0
 
