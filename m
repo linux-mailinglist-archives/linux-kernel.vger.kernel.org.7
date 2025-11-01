@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-881044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7103EC27498
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 01:45:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39E13C274AB
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 01:46:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDC69189C4A6
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 00:46:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B72C5421B3E
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 00:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B180821A457;
-	Sat,  1 Nov 2025 00:45:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B10B224893;
+	Sat,  1 Nov 2025 00:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="qxNkHPW7"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mlB/RF9h"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1ED15E5DC;
-	Sat,  1 Nov 2025 00:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4351F2BA4
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 00:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761957916; cv=none; b=OlU86NUs55Sae9rGaiLwZKhPhri9/2CYL74t0fp5bkUuLrisMxEUjXvKodI/WHjV2A7JSylJNXvCWFY5GFoJk1sktfnDhh8/wCX5GCGX0AwVKwdqzTCRUWzkkH4qCgDc/cXSE1wZSYEemecdMJEnTHfT4Pm6rqSUzYqorqKIHcU=
+	t=1761957917; cv=none; b=EoZHw7w9XHcUd9c+y3sBaRUOLqlWx6oWdqvzalkoHmqkqnlh1aF4am6WAUYtG+h98KWMJFGnZzWMi1b4W5kqa/AhKIGOBvMzQBYAvhmW/kd00Pb8WuDZsNjOo4Zb2imWcRQAaJ/h+GC7IPmCR4933EwqrUi5X2Lk1HDLS8Qm9UU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761957916; c=relaxed/simple;
-	bh=/jxoynyBaShK9+FI01QQ2oG3U0XL7BViJ01AF3IPgDQ=;
+	s=arc-20240116; t=1761957917; c=relaxed/simple;
+	bh=mDI6feqcRrUy3mbxyhCEd5Um1z0QOl3NJhKDJNC32X8=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lOXvbi5Z82+xINcqiO86pztw0Ty5k9OrLGewKV4ub36783bcHphyISB1h5dU/LBkmlXiJz/Q1m4kQHi1w2U2y6TGFv/b5TWtZJH5xDb/5ZtH6IGFNiiGdoUPXVtp7mU/qO3HHSLeyPdg2bdtoohmwJUL371rFMSiGwgNJLTAFgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=qxNkHPW7; arc=none smtp.client-ip=185.246.85.4
+	 In-Reply-To:To:Cc; b=MzN7iwzjWPe7APYleWQ1QtrLHYGTjjUbQA1xVVgRKHbh7LDBT8QfsNc+/xjypU2DbgYjJ4r/S2WJJYnh6rzAlobXk9JNlatw4qnbCUIchn++RDWgQpteid8Rk/fIIhfSMBvyfHIem+Ab6EWIRgKP6MD8TRD6FipaoDFxZORYWas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mlB/RF9h; arc=none smtp.client-ip=185.246.84.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 548384E4145A;
-	Sat,  1 Nov 2025 00:45:12 +0000 (UTC)
+	by smtpout-02.galae.net (Postfix) with ESMTPS id 67D6B1A17CF;
+	Sat,  1 Nov 2025 00:45:13 +0000 (UTC)
 Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 2A0576070B;
-	Sat,  1 Nov 2025 00:45:12 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 43C5E1181ABB0;
-	Sat,  1 Nov 2025 01:45:11 +0100 (CET)
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 399C46070B;
+	Sat,  1 Nov 2025 00:45:13 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5EC141181ABB0;
+	Sat,  1 Nov 2025 01:45:12 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761957911; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	t=1761957912; h=from:subject:date:message-id:to:cc:mime-version:content-type:
 	 content-transfer-encoding:in-reply-to:references;
-	bh=+Sw9x0lfyio5hvi1NamAm1DllHegD6Zt+iX/+ppYJlQ=;
-	b=qxNkHPW793gPbeLrQ2Hp+9nGDA+z6vuaawfwLa41vpdCHUFmck8TRtzoH2BdxlaMkOOvgu
-	0YcRv65emeDyp9NXHFNzn4CWSGEwOj0dL0s9lVbnV0CsH+/CIWYN1xbg7fghoP7NJtNpNi
-	yiX2e1riNgulC7kKJ/rvAhVGMKtDbTIppi99j7Aq7Ue5weAzsRzVNz5N9MOvVXhges+BhT
-	minJ6WhUtbHe6/5oylAzUOeQMfTSLcjgmMoD0sEAIviGy3HeFtHWe0Dvs6L24IGv8zeBxa
-	hH6yFGVYYRPWQSCLGQsXVsrxqJJDASpjvLj+DCVbtEH6+9bp4ur9uKDffBy1tA==
+	bh=rIIYHDjHQ2HoARYwD0t1QwRU8DtbVqJRz4i7rCEVP80=;
+	b=mlB/RF9hex6Fd8YTOfwqDaY2Ln39X2s8SYJANS9IdxYqP+VK/wlgJ+0bPXSYiHugTyFZJa
+	E/jTajTFbzazNJNToal3Z1XtrYcv0IctnUAsI43NgdYw27H/Odt1p1RDc1MDO0nEx66C3L
+	tdJi/P8SgZblYGkb0VGH9/Vvtvos2ER5U5JPLQmmD+5o/LLKxsYPwUI19HeqMkfuVNNUCS
+	pEwSGRunbjDnRtD/w0ZNcFMP1h5bLIzNufpoyh+g+8/RIJGkTBWFS3sQHH0HnAkbDGzjD2
+	M6NmTSStMS8wiPEPQ9LwHNtW3WFOX+lZAxVXVG6rOPBzWekRQvdsVBUMbTF/OA==
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Date: Sat, 01 Nov 2025 01:45:05 +0100
-Subject: [PATCH 03/11] rtc: pic32: stop setting max_user_freq
+Date: Sat, 01 Nov 2025 01:45:06 +0100
+Subject: [PATCH 04/11] rtc: renesas-rtca3: stop setting max_user_freq
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,7 +58,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251101-max_user_freq-v1-3-c9a274fd6883@bootlin.com>
+Message-Id: <20251101-max_user_freq-v1-4-c9a274fd6883@bootlin.com>
 References: <20251101-max_user_freq-v1-0-c9a274fd6883@bootlin.com>
 In-Reply-To: <20251101-max_user_freq-v1-0-c9a274fd6883@bootlin.com>
 To: Joshua Kinard <linux@kumba.dev>, 
@@ -76,22 +76,21 @@ setting it from individual driver to avoid confusing new contributors.
 
 Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 ---
- drivers/rtc/rtc-pic32.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/rtc/rtc-renesas-rtca3.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/rtc/rtc-pic32.c b/drivers/rtc/rtc-pic32.c
-index 2812da2c50c5..52c11532bc3a 100644
---- a/drivers/rtc/rtc-pic32.c
-+++ b/drivers/rtc/rtc-pic32.c
-@@ -340,8 +340,6 @@ static int pic32_rtc_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto err_nortc;
+diff --git a/drivers/rtc/rtc-renesas-rtca3.c b/drivers/rtc/rtc-renesas-rtca3.c
+index ab816bdf0d77..a238ead6cf1a 100644
+--- a/drivers/rtc/rtc-renesas-rtca3.c
++++ b/drivers/rtc/rtc-renesas-rtca3.c
+@@ -772,7 +772,6 @@ static int rtca3_probe(struct platform_device *pdev)
+ 		return PTR_ERR(priv->rtc_dev);
  
--	pdata->rtc->max_user_freq = 128;
--
- 	pic32_rtc_setfreq(&pdev->dev, 1);
- 	ret = devm_request_irq(&pdev->dev, pdata->alarm_irq,
- 			       pic32_rtc_alarmirq, 0,
+ 	priv->rtc_dev->ops = &rtca3_ops;
+-	priv->rtc_dev->max_user_freq = 256;
+ 	priv->rtc_dev->range_min = RTC_TIMESTAMP_BEGIN_2000;
+ 	priv->rtc_dev->range_max = RTC_TIMESTAMP_END_2099;
+ 
 
 -- 
 2.51.1
