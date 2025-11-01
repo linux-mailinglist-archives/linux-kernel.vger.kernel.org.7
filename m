@@ -1,111 +1,79 @@
-Return-Path: <linux-kernel+bounces-881334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE22AC28083
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 15:05:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C552C28086
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 15:05:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A70213BF98C
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 14:05:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F39004E1576
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 14:05:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32335238159;
-	Sat,  1 Nov 2025 14:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D30323AB8A;
+	Sat,  1 Nov 2025 14:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TBgUo5xI"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bit-tao.eu header.i=@bit-tao.eu header.b="mTf2D2Ts"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655E77261B
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 14:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E39E7261B
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 14:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762005901; cv=none; b=TczYC25ewjA57H/6rdY9QYV6GoNpMPZwP6G5vi76i94g+N5aWZmE1yT/6EoujIcZbUVzdz47JqAT9p0zdMqT5LA1RaDZHDj0/ssM6skbwt/omk7IJKk2AQrjYPpcqvhuXcysIB8Xtab7XZS/mUQRy3ph6tjeGom8jG2AqltAlGI=
+	t=1762005908; cv=none; b=UJTLvtFO5FeGdQsCMgzmMSOVIIvl1wORAiT22dnlk5ok7sdURdolPT0vSe0/BuASsvqtGcrBe1DW6GXLqjR2HK2Vmk2FlG7bMoTIkKCc7em7ufSXxhrh8gszHfK55KXJJOspwjCv2Q6ajfERA4UBdWUOSpRdSxaczw2dOAKYiAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762005901; c=relaxed/simple;
-	bh=SQ38qYTNJxk5DYz0GtHJiiInMCX0D2KO2qM0xpn1akg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bmZIUqRp7DMK0kVSxmHuf4U30xDSB8fuurd6if6g6nsDNyFD0JXeckUSEX9TuRUyV4PXrHy9tVsamuRhyWnkV7dEJt9sq1IoONx8WgFFi+Py1yGYPvR0TO/ahPCbMzqxKzPK4g8wx3MoFoCHp35qtrz34VSunO4fYP7qyefwaXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TBgUo5xI; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762005896;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=GeA2oPtPm0WGain9EgMxJLDlTytvn/JelbYftagDkAI=;
-	b=TBgUo5xIH0RcEGr3LoS4cfOyE5O7PsYWwEd+Yc9phTdUd6TRM+Kh97F2csTOOF/W5htME3
-	VDcWvB1DIrbEDGhqEv3jT2HXNLdYKhXBAZs1WatoW6CMxahzL6oipj6cIy2accYemYRwSP
-	R5Lx27drlAX7uD32T8R4GNWuT/xvrho=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Srujana Challa <schalla@marvell.com>,
-	Bharat Bhushan <bbhushan2@marvell.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Sunil Kovvuri Goutham <sgoutham@marvell.com>,
-	Subbaraya Sundeep <sbhatta@marvell.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Sai Krishna <saikrishnag@marvell.com>,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] crypto: octeontx2 - Replace deprecated strcpy in cpt_ucode_load_fw
-Date: Sat,  1 Nov 2025 15:04:42 +0100
-Message-ID: <20251101140445.2226-1-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1762005908; c=relaxed/simple;
+	bh=eAm5kFU4eLjfvmS1rz/Fg0P98fu1/zs14s1EHWAT9LY=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=WgaMKgA8g1vRLRV8wrZJpfwyy6GunLQ342KpC5fNM/GkDKt31Ea3XkH4RCJKf1DNUBOoR+IHBVB1ILfwNnNACRlmK774ZvUZ+9q9a66ctnEDVLLqZ6+ZgBsvIgoX7D4bNT4yVvwGUd6B/WySL3NFWvK/GOke+fV8iYTRiepVhnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-tao.eu; spf=pass smtp.mailfrom=bit-tao.eu; dkim=pass (2048-bit key) header.d=bit-tao.eu header.i=@bit-tao.eu header.b=mTf2D2Ts; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-tao.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bit-tao.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=bit-tao.eu;
+	s=ds202510; h=Content-Transfer-Encoding:Content-Type:Subject:From:To:
+	MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:
+	Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=LrfOZLFkmdDc2zPaukbIADOKDBlys/n+6ZBvDpVmvpI=; b=mTf2D2TsVtYMAJFDFVaFFGb97A
+	cRvccEl1ZxdJH/7U9TZAmbWAE2HZ5ClVGtQCUa76/4BClmLPEk6pxKud0VD0d7QuyLbFcRNAgv5rH
+	mjVFLn2RKERFE7tP1SD94zBB33/glhrQJVceORyYDqR0cOKgfFByZMJK3FICazLG2nSYJdQzHmbh9
+	x2p+xnQ7R3b5BT/2hLM4F2vZKTdh4zlS5M7n1/crebi3U1mREMuOP90YfbTmgCdaPGzjaxv8OjEqz
+	Xet8rhdFmakQlZd+QFOyq5s9VwGS8JVY7qjPUmiRPpM8FqhrvhYVIdfZVLriGgLO8JcP4dT0qYob8
+	OzwtEKTg==;
+Received: from smtp
+	by smtp.domeneshop.no with esmtpsa (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	id 1vFCDz-00GWAN-1B
+	for linux-kernel@vger.kernel.org;
+	Sat, 01 Nov 2025 15:04:59 +0100
+Message-ID: <37a9da10-79f4-4f4d-b2e5-12409a0aab52@bit-tao.eu>
+Date: Sat, 1 Nov 2025 15:04:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: linux-kernel@vger.kernel.org
+From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <budi@bit-tao.eu>
+Subject: GNU GOD = Earlier version of Bit Tao
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-strcpy() is deprecated; use the safer strscpy() instead.
+Know that GNU is an earlier version of Bit Tao (GNU GOD).
 
-The destination buffer is only zero-initialized for the first iteration
-and since strscpy() guarantees its NUL termination anyway, remove
-zero-initializing 'eng_type'.
+So this should be familiar.
 
-Link: https://github.com/KSPP/linux/issues/88
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- drivers/crypto/marvell/octeontx2/otx2_cptpf_ucode.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+My research and that I should do so, is so famous, that it is this 
+phrase already.
 
-diff --git a/drivers/crypto/marvell/octeontx2/otx2_cptpf_ucode.c b/drivers/crypto/marvell/octeontx2/otx2_cptpf_ucode.c
-index ebdf4efa09d4..b5cc5401f704 100644
---- a/drivers/crypto/marvell/octeontx2/otx2_cptpf_ucode.c
-+++ b/drivers/crypto/marvell/octeontx2/otx2_cptpf_ucode.c
-@@ -3,6 +3,7 @@
- 
- #include <linux/ctype.h>
- #include <linux/firmware.h>
-+#include <linux/string.h>
- #include <linux/string_choices.h>
- #include "otx2_cptpf_ucode.h"
- #include "otx2_cpt_common.h"
-@@ -458,13 +459,13 @@ static int cpt_ucode_load_fw(struct pci_dev *pdev, struct fw_info_t *fw_info,
- 			     u16 rid)
- {
- 	char filename[OTX2_CPT_NAME_LENGTH];
--	char eng_type[8] = {0};
-+	char eng_type[8];
- 	int ret, e, i;
- 
- 	INIT_LIST_HEAD(&fw_info->ucodes);
- 
- 	for (e = 1; e < OTX2_CPT_MAX_ENG_TYPES; e++) {
--		strcpy(eng_type, get_eng_type_str(e));
-+		strscpy(eng_type, get_eng_type_str(e));
- 		for (i = 0; i < strlen(eng_type); i++)
- 			eng_type[i] = tolower(eng_type[i]);
- 
--- 
-2.51.1
+Do see https://bit-tao.eu/ for the fininshed version.
+
+LIGHT!
+Ywe Cærlyn
+Budi, Bit Geeks. (incorporates all of HAC, design, related).
 
 
