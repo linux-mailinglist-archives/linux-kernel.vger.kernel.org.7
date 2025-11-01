@@ -1,98 +1,70 @@
-Return-Path: <linux-kernel+bounces-881052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E105FC274D7
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 01:47:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88582C274E6
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 01:48:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5A7363505AF
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 00:47:02 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1AE6234DFB9
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 00:48:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04CC1258CDF;
-	Sat,  1 Nov 2025 00:45:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4AA51DB375;
+	Sat,  1 Nov 2025 00:48:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hQfxUUh6"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DMSQjqkY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C123524DD01
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 00:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0911397;
+	Sat,  1 Nov 2025 00:48:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761957925; cv=none; b=K2EnCRo3y6nXJK4kMxZufQzPK74w71DTbkgLQ/5u6chfVRG93KNdpcN0hvwdS+41sCeQWhlkmDAQs5TN9WwdfEhaa7iomdMaICUjS0XuUyFBgRBfPu41MUCjMhZVvlvzsUuvM8jdT5ghKEGnkfsyIWS5sMikkNmyt6vGTYQA2so=
+	t=1761958101; cv=none; b=u23AI5O56cvOr1UpcyGt/uJtY5OlJMvuNHY2Gm4FElX9nhHZ61DF76ZDBecXtafN6oU9i124kO5Q+aZtGHOGl9DzO4KERY+b6oLh7TZGzBrdeD/8qn947Fp3PYN5egqv/Jv86mTRvEkGHW7sQ9/ypOEMB6Mr/lW6nKbWVotWav4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761957925; c=relaxed/simple;
-	bh=F9VjP9MZyfC80zjI0pYGFI9I2uGhstvRQgehchEYHNs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mQ5zXOLNBdIw7pD4Km2mCDvqdEzViUlI/ITAWajpPRnpaTnrkUEkW21HtG6W8JLXyZfD6hpFldtqzzUEGMQpK4Z+1QZ7Y9F2QRDdTV/irEhWGkGzPMtKQdPO0siBtj0kryMhU8ahSkJb5fz9ynevAycPRQ+eHatnfmI/ewWVlSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hQfxUUh6; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 25AE11A17C5
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 00:45:22 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id E69F26070B;
-	Sat,  1 Nov 2025 00:45:21 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EE7A61181ABD3;
-	Sat,  1 Nov 2025 01:45:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1761957920; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=EbRbx1I+mIoxOsRtsB/upoTC4mC2hPcZJGHmdGubXRE=;
-	b=hQfxUUh6LtrT/sJfftbP0Kik80QjzCMT85fTW4m+rM/gQXU2R9pT/G2aLqfMkzdSZKAHBS
-	/MBRuOfRKUI93NAZSfEzgmHNpyIT4zul6t64JqYOiu4F2+dkbxQwYTrqqCwWQVbCQC2g+t
-	QIPsuMSKpx3sdmDPIbHQOpgNqU3KiHN3dIFlv0ZmfAECFcF4Jckikt8izImy3ii+0/9NXb
-	Ks26ez4XuX78BFfK5A5wtMeXXEFFaFR931PnDlouErCz6TlhfLfQRNVyEdQDrhXKii3uEs
-	HkeMKx12+a+/Pb/Wl9I5Gbk7qwDl+3J9RTDrMCciptZFmvvZ51S4IQ2e/u/asg==
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Date: Sat, 01 Nov 2025 01:45:13 +0100
-Subject: [PATCH 11/11] rtc: sh: stop setting max_user_freq
+	s=arc-20240116; t=1761958101; c=relaxed/simple;
+	bh=gVmU7p20Dkh1MkTMXJqDbhSOU2knZn8d816HpufhXIU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lvkq/Cyy495/2LNqLWg3fTZ5uZMVrNqGLHGpfOREZCLQ6/bSg6tbjBLRUNE8ibB4zqjC4lb9rnX5INo/bfGfJeYmrGTguH8R8dR3DNkwi9qIWiLWk3gJQygK8xw+RqcBzKP04NSSOfjysMIPN/VjcHZO/ljdtp5lXc59d1DwWE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DMSQjqkY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96016C4CEE7;
+	Sat,  1 Nov 2025 00:48:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1761958100;
+	bh=gVmU7p20Dkh1MkTMXJqDbhSOU2knZn8d816HpufhXIU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DMSQjqkYOAHSkJKNWA52qpYoV0G4DyrvMV9pByA4RzPCRg06Z7Zu9qTfdijtCEYC4
+	 v4d2g3eCTvv0DaGkWqETKObLr2WwD57MXZmVuKGeu7rJVV1+Dy5AzX5zr7zW9PFzvI
+	 oKp3msAcVQFURtirJ6AcKjWO/4sQ7pgk6cIj4TzfUeB3fn7lQk19ZQRv2vBo3LQfgu
+	 /lKfMZ0OT4a9HhXMmaAq5ngaVA9ojNVRs/QYdxj6sbsmiTjX8ZtfyMYP+PPYTUOtY5
+	 aTIBDJFhLaacxGBQqhPxERF6wTGIfJB+LCk1eaITcideupmOTbn/5vgMwznQ+AvIKc
+	 UHwA8WRya/RRQ==
+Date: Fri, 31 Oct 2025 14:48:19 -1000
+From: Tejun Heo <tj@kernel.org>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Qu Wenruo <wqu@suse.com>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH PM/for-6.19] freezer: Clarify that only cgroup1 freezer
+ uses PM freezer
+Message-ID: <aQVY0yrigjd4kj7C@slm.duckdns.org>
+References: <aPZ3q6Hm865NicBC@slm.duckdns.org>
+ <CAJZ5v0gPNwrKXNg1Ng6bJ5B99PEDNhdh2YrfvbcpXc4CjLq0ww@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251101-max_user_freq-v1-11-c9a274fd6883@bootlin.com>
-References: <20251101-max_user_freq-v1-0-c9a274fd6883@bootlin.com>
-In-Reply-To: <20251101-max_user_freq-v1-0-c9a274fd6883@bootlin.com>
-To: Joshua Kinard <linux@kumba.dev>, 
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, 
- Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-renesas-soc@vger.kernel.org, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-X-Mailer: b4 0.14.3
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJZ5v0gPNwrKXNg1Ng6bJ5B99PEDNhdh2YrfvbcpXc4CjLq0ww@mail.gmail.com>
 
-max_user_freq has not been related to the hardware RTC since commit
-6610e0893b8b ("RTC: Rework RTC code to use timerqueue for events"). Stop
-setting it from individual driver to avoid confusing new contributors.
+On Thu, Oct 30, 2025 at 08:11:51PM +0100, Rafael J. Wysocki wrote:
+> I gather that this is for me to pick up, so applied.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/rtc/rtc-sh.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/rtc/rtc-sh.c b/drivers/rtc/rtc-sh.c
-index 619800a00479..0510dc64c3e2 100644
---- a/drivers/rtc/rtc-sh.c
-+++ b/drivers/rtc/rtc-sh.c
-@@ -423,7 +423,6 @@ static int __init sh_rtc_probe(struct platform_device *pdev)
- 	writeb(tmp, rtc->regbase + RCR1);
- 
- 	rtc->rtc_dev->ops = &sh_rtc_ops;
--	rtc->rtc_dev->max_user_freq = 256;
- 
- 	if (rtc->capabilities & RTC_CAP_4_DIGIT_YEAR) {
- 		rtc->rtc_dev->range_min = RTC_TIMESTAMP_BEGIN_1900;
+Right, I should have been clearer. Thanks!
 
 -- 
-2.51.1
-
+tejun
 
