@@ -1,100 +1,82 @@
-Return-Path: <linux-kernel+bounces-881267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D008C27DEA
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 13:22:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5183C27DF6
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 13:25:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6D8004E6990
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 12:22:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 638C23B9311
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 12:25:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD382F5A18;
-	Sat,  1 Nov 2025 12:22:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94D992F692D;
+	Sat,  1 Nov 2025 12:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UQMSLWUr";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="hZwFJyPf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RgqMCPri"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07C32DC348
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 12:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A10C2F5338
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 12:24:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761999771; cv=none; b=ZX+xVSD/0upuuTIt9he0qW1HUlQ71v6DsFXnhKU4JidNt6VSQT1dv+MzZSNSRuNUJldZLErvqxhkPijfgMGSqbQXgM5lKSj9HfHMnkzwRVhsxYHTC/iWInAA04G4tx6mVuC7rPXHC4EIgGGc2VJFEJGNmkepOpfiLSorP8iOla4=
+	t=1761999893; cv=none; b=hVMhUS44SC1HkZY2qU1rNWoe5xTWZGJLrZnt9w0ivaUBiudFEVR1WQCzF6miIKLycjBYeuCwc8tL6S9EpRIc8vlzKz2QtKAecrJi0DkZWJqDqZGZHJsQsv25RWotaYvtDlzdf1RMlvu5iQeR82CbTYXHIV/7WQpT6hmcxXDWFXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761999771; c=relaxed/simple;
-	bh=I8W8mLAe3KzDAv7PEhne9ji0gjawU8UAnWFhTg8FafQ=;
+	s=arc-20240116; t=1761999893; c=relaxed/simple;
+	bh=H3T42zwZoQOY918AUIfXPtQAQ8O4vJUH6zE5aMCtHeQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=snikcDWldX2jU1J4idg8Psgnytmd8jVzJP/UseB0emmyiAfW5PDgbOj5Z1IVqvbDQr22hmnh4Hg9lSeSocc4e971KfXcyJWH6PzTeOZIiKOFS5CL/CfwI6zoywiWHvGlkU945NW4k1RndfF+vugRia+s0AycTFn7waSy7qvh9jI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UQMSLWUr; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=hZwFJyPf; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1761999768;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=iR1r/3xhU7MVcJwVYZUltUXo3c7eUSFIQ+pGKdoQg2M=;
-	b=UQMSLWUrkXO0pRNmu8worlMcsAfloA1RfS0gSaJ8hYaZrQeHS8G6qzI1H6FBWx3ObyL3cS
-	FP3g4/q9KDVDqqaiOBnF9y7k1pshb9IlvbnKxyuZPllG2xIEbguTmAy9IVadJDjBlPxbpB
-	5O1lVBWdk5ES8R5IQRu8hDJhyI54HmI=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-625--DC4eyXgM6G82yzvzZ0iXQ-1; Sat, 01 Nov 2025 08:22:47 -0400
-X-MC-Unique: -DC4eyXgM6G82yzvzZ0iXQ-1
-X-Mimecast-MFC-AGG-ID: -DC4eyXgM6G82yzvzZ0iXQ_1761999766
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-42855d6875fso2317766f8f.3
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 05:22:46 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=rjSVhNXdRh5ElgfymSSXyCgcBTh2zlukP29fLULczHNpXuLgRdBh1n7KUmaU8cwbXBZ6xJvVV4YThcWQ8xF4iikt0hvAUz6i0RMt95YWZYPX+Pak7AKkQ9W0tV8y1IOIXtNB2YXXbCnpGjsrueuQTVBawBxgglZkQ9KO/x5OAlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RgqMCPri; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2957850c63bso342505ad.0
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 05:24:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1761999766; x=1762604566; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=iR1r/3xhU7MVcJwVYZUltUXo3c7eUSFIQ+pGKdoQg2M=;
-        b=hZwFJyPf9NDxNdf0BCr4JBM2+Cie1X1M+REKpow2vSfKYtfNCTgLqlCHdsM0ijtzmA
-         rjX42vkTgxbzSV8tiO8eTKKCXvG1BuIT4nlI0XuF2BgWnzvojS0xBlU36COG6FnM7NMi
-         AlAxFqIBL0U0eSqenGPIweJ8Z4Nt+scwj3Ep6ylVcE0qaxCfsFOjgCKxNELUtBrzaPvS
-         Ry2Q1j6SoKo1Tywaoj6qQBdzem/WDbT6YXDc6YllZjqeMrXufkluWrFo9w0TMIy38DCx
-         urHKDN8xFwenW9ith8P/AwJxkBDD8BDIQ4+/aFCzp0/kHZgqE1SbllIsXtNUUrbt8gQj
-         IWaQ==
+        d=gmail.com; s=20230601; t=1761999891; x=1762604691; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AicKeGnMXx8PABK7v2yBnCUGk97CkJDInr2iWMYCK54=;
+        b=RgqMCPrirpwlk8jFzakVb9m3YGeBglQjl+LMtpXvz4+DoWm1D06rkyklM5fBVfD62u
+         2t/Lv0VNBgPVJoh74uAfHuvXh4D4gl4+D+pdcjm4Rrs8AWdx97Ofc4qyB2mkR0JMprc4
+         aWwHykGm7aFq6SOm4ky1OuOvQJEP9HtwjYNcXRNRzOzL2cC0iOROVEomngPnKGz12Zhp
+         m1cvqUjMU7mAgaeZ5sJTsSKUupH7tylCd9UmqD0GgHdmntQ377v/XD1xYz9ODEOXlLGp
+         giZplxDzcy5wX8YlI+0yQT0FZHM+9O4rOmqfBR9kM0wKfdRGNi7MVBn7pknIPwd+pWy8
+         2EUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761999766; x=1762604566;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iR1r/3xhU7MVcJwVYZUltUXo3c7eUSFIQ+pGKdoQg2M=;
-        b=rXAWhMxJFSZ7ttauhmq4tDnSYWTLtrAUT0QXMhGC9MbeIOnrCL/VkG+FOIwPIFmYtm
-         cN5lK+6C38Idc4CHes623V2VFFtk6WqaLj0OdCkb17m3udF57iJGish7SsVUQ7v7F8wE
-         jsMTEAgVFgauWUfqKK7lgxxWZIo4e2vKTtNgZY4fla+bQ6yCuyIy5yh3o/Grp4Ffdtsi
-         RVAkRyvoHnaFlH/LLSopcPq8F36T0yhJp2G455XE3KkKmkSmpYaaUOtt0Lf0InElTB18
-         0+zwM0t4KzcAwkIJo5t9tY4YkpcUn9VItkhnqzV+48AQ+0n5y/JFPesEWRACNUwnaXwb
-         qevA==
-X-Gm-Message-State: AOJu0YzzO5VIl6+yjDFHscax/5jmEqZcoOXupO8uTrVx40549+XcHzRi
-	Gkw/1DuveXnopLZamBJFRs75EySGFyfrzHJnS7AMCI/hTu3FUFSDGwl2HReaAM2rbDWtnuyewL/
-	5CUFOwjoI54buFCc9oQwgfNouCK3bq8bRgFL+HWBI8uSovCb3Zmebd9jvcx0OkOK2dw==
-X-Gm-Gg: ASbGncuEwCRNibVI2H7smyYMUX6CbwvGcXuIW6m9/MjLyVTuN3ofXke8B8fEIIIvcUf
-	/utoT2ANnWyItxhK7qyJBbzqpM74b8H2GeGsasyc9r8BVQF0NbxM4nYhiHcsEb/CNC77qT6zhed
-	S+5GSttd6UO5w5ulStRS1Wvmah4xkYy3moPc1Gnvh7wyxR1XG3FrFLjbpmXkLh3rEy7TjvjW1it
-	6B+uGdQWVQas2aMgPK/yu8TzkcxqSCbramlC3KDcZuFFY6rt7qmYfnA+OF3cqKeJnFavsTMESEL
-	pxFNKbdHcInZ6IVw/QKhPwwVmEGmXz8pgYtTc4kQdCKSUQWV74Bm6WEFTANVIIGwwtwvY7GACSl
-	SW7KQtHd3gE1dWF9fn+XwZEx5ajgU367Nty9nNVPwOx5KG+kv/PozPfQp8tjS924Rd8gg/q1bve
-	Yy0ssuguDkXdueQ1taGb1VSa0eM7I=
-X-Received: by 2002:a05:6000:2f86:b0:429:8daa:c6b4 with SMTP id ffacd0b85a97d-429bd6860d5mr4833008f8f.21.1761999765966;
-        Sat, 01 Nov 2025 05:22:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFJ+TTH/VeYpEYhd62jH/WbFLaTQZ/6xytSCDTH7QTl8AfN9d4nyTXPMxG2nY+bN2wOvpiPqw==
-X-Received: by 2002:a05:6000:2f86:b0:429:8daa:c6b4 with SMTP id ffacd0b85a97d-429bd6860d5mr4832980f8f.21.1761999765533;
-        Sat, 01 Nov 2025 05:22:45 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169? (p200300d82f3f4b00ee138c225cc5d169.dip0.t-ipconnect.de. [2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c110037asm9461926f8f.3.2025.11.01.05.22.43
+        d=1e100.net; s=20230601; t=1761999891; x=1762604691;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AicKeGnMXx8PABK7v2yBnCUGk97CkJDInr2iWMYCK54=;
+        b=KzZ1MAQF5NeSnUX4I5aIzj6RPiy57jQgZv+PhFEhGBWHy4K/FAjdwZmDezRtWWGzVo
+         UoxSpb9fTfHKgffehPu0w/uZs1UWUCZqKEpB3XDpC8EMRPfAZQSjnLecl9WK2gF4YU7i
+         1k/ICJ0zI9RPze1fRGiXCAax7Fus/M9IPS8+1atwdu+hqaPd5i1w/mUxchalc7bIAJVR
+         iBI7IpD6a/EU1ZK0TcjNCUIc+f37+t7p4NZevkSRYbRhRGM4fMqNZFmkhY8nZqfS1MGW
+         dbj4bbJCA75de8G3n4/95xLKlVtJinqMwUI5rXX1MtHq37zc5VOz4KceilIF/wPSjMg2
+         HIIg==
+X-Forwarded-Encrypted: i=1; AJvYcCUOqcNvQq/Utdromf2Ka+yTOn12/tkb5kV98jDQw/7/514AHY42OLdCoswQSS5aIm8bTV2C9s6d0p8RbFs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcQzjIy7ncw46pouF8xMMd0uRZoAYcqGPS6M1KHwYndlg/akZe
+	l8LaCcIx3GRetF8PnHbMw6ZA1B20mHvLN3X3jOyfTCemWQXxddHq06cz
+X-Gm-Gg: ASbGncv7/0cGBa4u4SQInn+T4bRo3QLGYpI00xmqtRUl3kLbqwOjvalKGnvTF5xpvAK
+	yUMEswvitMkrfY+4jlMU4OMuo7jGOrbX7V7+DNqTRGE+Bhs4kIlxH4CISrPHWRKzBOhvsxlj7oZ
+	8DXs+4biHBbeapsslDkNtfFG28EAU68Eeb35wD5mlc5GJJasusmucMZWpAaCtDK4NUNpJL6a1if
+	L7v55R5LG7npNx1vGWuaCk9MOHOMdgcc9CkObY2jJk74e93TukGSfPA/jA5O+mTZbyks8Co43w/
+	1zfBMyjN1yZItbjzFRsruK0lv59BU5u7prGBKXsiFILDIwbFyertx5sUlKhzHdPDcPw2xV+/Ux2
+	+brgDMBRMwnprVlTPlAuJ/xcU1Ib/YNR0nczsAt59lN1mc9uz3fLX+M4QuUMiUKiRmttnWXcI3O
+	uhY32j17ZbghzMP22Hp70MVrhqUfRSdc5YNOis83oFUQdaOCIrmptonRz49wf7t8eRhXLZWBSPk
+	uER59Dqp50Alzi5KlydaBBkBcAamJqbqCyREVBrNdiCqRnw3ANIjnXuWDqpFtWshVYVCSqLEuZF
+	xkuOvUgg
+X-Google-Smtp-Source: AGHT+IEkansOp7TmntY6pjVJdWg2R+kz+hv16vydkYdNnNBGWpvEJ3956bhJwqof2q5MCUwJUJGaqg==
+X-Received: by 2002:a17:902:e891:b0:24b:1585:6350 with SMTP id d9443c01a7336-295185b3b01mr86689115ad.11.1761999891327;
+        Sat, 01 Nov 2025 05:24:51 -0700 (PDT)
+Received: from ?IPV6:2402:e280:21d3:2:61a9:cfa6:c139:b812? ([2402:e280:21d3:2:61a9:cfa6:c139:b812])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2952699b785sm56474475ad.78.2025.11.01.05.24.48
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 01 Nov 2025 05:22:45 -0700 (PDT)
-Message-ID: <ae1236da-2647-4d53-bf4d-ff8fc32eb734@redhat.com>
-Date: Sat, 1 Nov 2025 13:22:42 +0100
+        Sat, 01 Nov 2025 05:24:51 -0700 (PDT)
+Message-ID: <1c5a2683-77ad-4687-b47b-18732807d5e8@gmail.com>
+Date: Sat, 1 Nov 2025 17:54:47 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,108 +84,127 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 07/12] mm: enable lazy_mmu sections to nest
-To: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>,
- David Woodhouse <dwmw2@infradead.org>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
- Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
-References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
- <20251029100909.3381140-8-kevin.brodsky@arm.com>
-From: David Hildenbrand <david@redhat.com>
+Subject: Re: [RFC PATCH 1/3] dt-bindings: iio: adc: Add TI ADS1120 binding
+To: David Lechner <dlechner@baylibre.com>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>
+Cc: linux-iio@vger.kernel.org, jic23@kernel.org, nuno.sa@analog.com,
+ andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251030163411.236672-1-ajithanandhan0406@gmail.com>
+ <20251030163411.236672-2-ajithanandhan0406@gmail.com>
+ <20251030171212.00004069@huawei.com>
+ <31d3d3f9-c9e2-4ad9-a3c6-e85fab4520d6@baylibre.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZoEEwEIAEQCGwMCF4ACGQEFCwkIBwICIgIG
- FQoJCAsCBBYCAwECHgcWIQQb2cqtc1xMOkYN/MpN3hD3AP+DWgUCaJzangUJJlgIpAAKCRBN
- 3hD3AP+DWhAxD/9wcL0A+2rtaAmutaKTfxhTP0b4AAp1r/eLxjrbfbCCmh4pqzBhmSX/4z11
- opn2KqcOsueRF1t2ENLOWzQu3Roiny2HOU7DajqB4dm1BVMaXQya5ae2ghzlJN9SIoopTWlR
- 0Af3hPj5E2PYvQhlcqeoehKlBo9rROJv/rjmr2x0yOM8qeTroH/ZzNlCtJ56AsE6Tvl+r7cW
- 3x7/Jq5WvWeudKrhFh7/yQ7eRvHCjd9bBrZTlgAfiHmX9AnCCPRPpNGNedV9Yty2Jnxhfmbv
- Pw37LA/jef8zlCDyUh2KCU1xVEOWqg15o1RtTyGV1nXV2O/mfuQJud5vIgzBvHhypc3p6VZJ
- lEf8YmT+Ol5P7SfCs5/uGdWUYQEMqOlg6w9R4Pe8d+mk8KGvfE9/zTwGg0nRgKqlQXrWRERv
- cuEwQbridlPAoQHrFWtwpgYMXx2TaZ3sihcIPo9uU5eBs0rf4mOERY75SK+Ekayv2ucTfjxr
- Kf014py2aoRJHuvy85ee/zIyLmve5hngZTTe3Wg3TInT9UTFzTPhItam6dZ1xqdTGHZYGU0O
- otRHcwLGt470grdiob6PfVTXoHlBvkWRadMhSuG4RORCDpq89vu5QralFNIf3EysNohoFy2A
- LYg2/D53xbU/aa4DDzBb5b1Rkg/udO1gZocVQWrDh6I2K3+cCs7BTQRVy5+RARAA59fefSDR
- 9nMGCb9LbMX+TFAoIQo/wgP5XPyzLYakO+94GrgfZjfhdaxPXMsl2+o8jhp/hlIzG56taNdt
- VZtPp3ih1AgbR8rHgXw1xwOpuAd5lE1qNd54ndHuADO9a9A0vPimIes78Hi1/yy+ZEEvRkHk
- /kDa6F3AtTc1m4rbbOk2fiKzzsE9YXweFjQvl9p+AMw6qd/iC4lUk9g0+FQXNdRs+o4o6Qvy
- iOQJfGQ4UcBuOy1IrkJrd8qq5jet1fcM2j4QvsW8CLDWZS1L7kZ5gT5EycMKxUWb8LuRjxzZ
- 3QY1aQH2kkzn6acigU3HLtgFyV1gBNV44ehjgvJpRY2cC8VhanTx0dZ9mj1YKIky5N+C0f21
- zvntBqcxV0+3p8MrxRRcgEtDZNav+xAoT3G0W4SahAaUTWXpsZoOecwtxi74CyneQNPTDjNg
- azHmvpdBVEfj7k3p4dmJp5i0U66Onmf6mMFpArvBRSMOKU9DlAzMi4IvhiNWjKVaIE2Se9BY
- FdKVAJaZq85P2y20ZBd08ILnKcj7XKZkLU5FkoA0udEBvQ0f9QLNyyy3DZMCQWcwRuj1m73D
- sq8DEFBdZ5eEkj1dCyx+t/ga6x2rHyc8Sl86oK1tvAkwBNsfKou3v+jP/l14a7DGBvrmlYjO
- 59o3t6inu6H7pt7OL6u6BQj7DoMAEQEAAcLBfAQYAQgAJgIbDBYhBBvZyq1zXEw6Rg38yk3e
- EPcA/4NaBQJonNqrBQkmWAihAAoJEE3eEPcA/4NaKtMQALAJ8PzprBEXbXcEXwDKQu+P/vts
- IfUb1UNMfMV76BicGa5NCZnJNQASDP/+bFg6O3gx5NbhHHPeaWz/VxlOmYHokHodOvtL0WCC
- 8A5PEP8tOk6029Z+J+xUcMrJClNVFpzVvOpb1lCbhjwAV465Hy+NUSbbUiRxdzNQtLtgZzOV
- Zw7jxUCs4UUZLQTCuBpFgb15bBxYZ/BL9MbzxPxvfUQIPbnzQMcqtpUs21CMK2PdfCh5c4gS
- sDci6D5/ZIBw94UQWmGpM/O1ilGXde2ZzzGYl64glmccD8e87OnEgKnH3FbnJnT4iJchtSvx
- yJNi1+t0+qDti4m88+/9IuPqCKb6Stl+s2dnLtJNrjXBGJtsQG/sRpqsJz5x1/2nPJSRMsx9
- 5YfqbdrJSOFXDzZ8/r82HgQEtUvlSXNaXCa95ez0UkOG7+bDm2b3s0XahBQeLVCH0mw3RAQg
- r7xDAYKIrAwfHHmMTnBQDPJwVqxJjVNr7yBic4yfzVWGCGNE4DnOW0vcIeoyhy9vnIa3w1uZ
- 3iyY2Nsd7JxfKu1PRhCGwXzRw5TlfEsoRI7V9A8isUCoqE2Dzh3FvYHVeX4Us+bRL/oqareJ
- CIFqgYMyvHj7Q06kTKmauOe4Nf0l0qEkIuIzfoLJ3qr5UyXc2hLtWyT9Ir+lYlX9efqh7mOY
- qIws/H2t
-In-Reply-To: <20251029100909.3381140-8-kevin.brodsky@arm.com>
+From: Ajith Anandhan <ajithanandhan0406@gmail.com>
+In-Reply-To: <31d3d3f9-c9e2-4ad9-a3c6-e85fab4520d6@baylibre.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
+On 10/31/25 1:34 AM, David Lechner wrote:
+> On 10/30/25 12:12 PM, Jonathan Cameron wrote:
+>> On Thu, 30 Oct 2025 22:04:09 +0530
+>> Ajith Anandhan<ajithanandhan0406@gmail.com> wrote:
+>>
+>>> Add device tree binding documentation for the Texas Instruments
+>>> ADS1120.
+>>>
+>>> The binding defines required properties like compatible, reg, and
+>>> SPI configuration parameters.
+>>>
+>>> Link:https://www.ti.com/lit/gpn/ads1120
+>> Datasheet:https://www.ti.com/lit/gpn/ads1120
+>>
+>> Is a somewhat official tag for these. Though better to put it in the dt-binding
+>> doc itself as well or instead of here.
+>>
+>>> Signed-off-by: Ajith Anandhan<ajithanandhan0406@gmail.com>
+>>> ---
+>>>   .../bindings/iio/adc/ti,ads1120.yaml          | 50 +++++++++++++++++++
+>>>   1 file changed, 50 insertions(+)
+>>>   create mode 100644 Documentation/devicetree/bindings/iio/adc/ti,ads1120.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/iio/adc/ti,ads1120.yaml b/Documentation/devicetree/bindings/iio/adc/ti,ads1120.yaml
+>>> new file mode 100644
+>>> index 000000000..09285c981
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/iio/adc/ti,ads1120.yaml
+>>> @@ -0,0 +1,50 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id:http://devicetree.org/schemas/iio/adc/ti,ads1120.yaml#
+>>> +$schema:http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Texas Instruments ADS1120 4-channel, 16-bit, 2kSPS ADC
+>>> +
+>>> +maintainers:
+>>> +  - Ajith Anandhan<ajithanandhan0406@gmail.com>
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    const: ti,ads1120
+>>> +
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +  spi-max-frequency:
+>>> +    maximum: 4000000
+>>> +
+>>> +  spi-cpha: true
+>>> +
+>>> +  "#io-channel-cells":
+>>> +    const: 1
+>> Power supplies should be here and required (even if real boards
+>> rely on stub regulators).
+>>
+>> Looks like there is an optional reference as well - so include that
+>> but not as required (use internal ref if not supplied).
+> Actually, there are two. REF{P,N}1 is an alternative function of
+> the AIN{0,3} pins.
 
->   static inline void lazy_mmu_mode_pause(void)
->   {
-> +	struct lazy_mmu_state *state = &current->lazy_mmu_state;
-> +
-> +	VM_WARN_ON(state->nesting_level == 0 || !state->active);
-> +
-> +	state->active = false;
->   	arch_leave_lazy_mmu_mode();
+I'll add avdd-supply as required and vref-supply as optional to support 
+both external reference configurations (REFP0/REFN0 and REFP1/REFN1).
 
-Just one question:
+>
+> It is also possible that the analog power supply can be used as
+> a reference source instead of the internal one.
+>
+> This came up recently and we glossed over it. However, I think
+> it would make sense to have a flag property that means "the
+> AVSS supply is of sufficient quality that it is better than
+> the internal reference supply", e.g. ti,avdss-is-ref. And
+> drivers can use this info to decide if they want to select it
+> as the reference voltage or not.
 
-Don't we want to allow for pause/resume when not enabled? Would seem 
-valid to me, because pause/resume code should actually not worry about 
-that, right?
+I'll add the ti,avdss-is-ref boolean property to let the driver know 
+when AVDD is suitable as a reference source.
 
-if (!state->nesting_level) {
-	VM_WARN_ON(state->active);
-	return;
-}
-VM_WARN_ON(!state->active);
-state->active = false;
-arch_leave_lazy_mmu_mode();
+>
+>> There is a data ready pin as well so I'd expect an interrupt.
+> There is actually two DRDY pins. One is shared with DOUT, so we
+> should have two interrupts and interrupt-names so we know which
+> pin is actually wired up.
+Thanks for the clarification. I'll add support for up to two interrupts 
+with interrupt-names ("drdy" and "dout") to handle both pin configurations.
+>
+>> All these should be in the binding from the start as we want it
+>> to be as complete as possible.  The driver doesn't have to use everything
+>> the binding supplies.
+>>
+> Another trivial one is an optional clocks property for the external
+> clock. It doesn't need clock-names since there is only one.
+Will add the optional clocks property for external clock support.
+>
+> Additional bindings needed when this is used with temperature sensors
+> are not so trivial though, so we don't need to add those until someone
+> actually needs them.
+
+I'll incorporate all these changes in v2. Thank you both for the 
+thorough review!
+
 
 -- 
-Cheers
-
-David / dhildenb
+Best Regards,
+Ajith Anandhan.
 
 
