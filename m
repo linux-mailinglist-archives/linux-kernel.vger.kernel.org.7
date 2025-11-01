@@ -1,115 +1,113 @@
-Return-Path: <linux-kernel+bounces-881164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9626BC279CD
-	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 09:40:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D96AC279D6
+	for <lists+linux-kernel@lfdr.de>; Sat, 01 Nov 2025 09:43:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D4E5C4E3290
-	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 08:40:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B2693B71D9
+	for <lists+linux-kernel@lfdr.de>; Sat,  1 Nov 2025 08:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A729829BD9A;
-	Sat,  1 Nov 2025 08:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5FCC29D26D;
+	Sat,  1 Nov 2025 08:43:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YiHyVG1/";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="dQTz9N+Z"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lZwJB1G1";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="PCUlI/8s"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E46F29ACD8
-	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 08:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387B529B8DD
+	for <linux-kernel@vger.kernel.org>; Sat,  1 Nov 2025 08:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1761986407; cv=none; b=uH+sQqJS+06CjZy+Ma5SXWy0EoSlOhFEGB0YS7HHaB2MWVZ4gwsPeaHMkST3bJAB0VG+LDlR3bdeZB7OkhH6eSrTRMaom2zuhOHgeiz7cJBOfr7os2572mhXQpSlyDLzElsIhmS2tdZDF9RI7ajwvfCMk0guDcp4DPkrVGlrC1o=
+	t=1761986595; cv=none; b=sV4x5zGNSD9RuehUtrc4BrnE3x6228Kkqw2FrGVpSAyNOu687X2Eoiq6iaL1nYW6nebWMZx0eaBE9SvkGFEVt1nqzHbXXW6i0IG8KWH2lfWiqurqP9rAwOH2bumaNzsFSfi7PU+S8siokO8MEEoc/FsOk32ZUMpjGQ7p1Ey+FRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1761986407; c=relaxed/simple;
-	bh=Da0py1Y0E4x4inIQd2G3+AMVd3teJHimqtvZ03C6K1M=;
+	s=arc-20240116; t=1761986595; c=relaxed/simple;
+	bh=Gcc4WfI7cosZeD8n8HiCMCxxzhy6/BxEn4onVPGuHP8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=po3vo06rLUzIKZoniwEtPa9lBaRFI/5vAuVp952ZJ+tVQtWyH9FyUF5L3L4LE552lDxo6YisdoyyJkYjkPNVBOGx0H06R0TafONBsQUujHoTQBHIFSQTSpulunmlOQWqoquI9R0cvDdSyScvT73a26fnwtG98QOrv/QE2dzq9AE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YiHyVG1/; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=dQTz9N+Z; arc=none smtp.client-ip=205.220.168.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=tU+lkSzj49+OxCVmNadp7qo+sysJZgsY3XWysx8OsUYRIp9y0Oo1qfmDTD+GSiWm+wvHSukSJKMql0etE90JvF4vBC1C1aNA5fBPUAIDvSB+psrm4dA+XBfhUDKm4ITVSLc5FjOJwUd9XUWMmLqtdtZgGoreEEVAavFeK/P0AHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lZwJB1G1; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=PCUlI/8s; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A13iANa447301
-	for <linux-kernel@vger.kernel.org>; Sat, 1 Nov 2025 08:40:03 GMT
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A13k5Xg657816
+	for <linux-kernel@vger.kernel.org>; Sat, 1 Nov 2025 08:43:12 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	iiDPYD1MU46TmXyxWiXXTtTFKJuO4K8jYXckjJideXM=; b=YiHyVG1/6H3wiyse
-	PlS+APALLWJ3BKu/yiRG/e8AEuOFKTGOxz9TofFfn58A0aHY1W2PShNZp98Z9fmK
-	KFEcGgevzKGJ7JL/O97TMIufwY/58Oy/ekUapb/RxvmXoSu3YEYMEwI58lPwAV5x
-	ERPJdjU3kTj0feqA7C5SK+Mw0VjAS7tCLp7v1U8FpBTtKF2ztOTfkUqM/B0/6vP2
-	U5XFqwCD4/IVHUyvl+Iin1dHoSrUKwoK87X3TjWsExB9T+ZeW9yBVfMThgf3AOca
-	VA3bNGzyW3jckxejoAKLLclTyKy9sN1DALHaaz/KDHq2BwFDDWIMLd9APFaAuira
-	jUp+Sg==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a5ae30by3-1
+	EfqyUh7o2Ampai6FJH2BnCnB2E+AjfrQoXU2Q/OvGIU=; b=lZwJB1G1MfIzJ5ee
+	eCHmfmB7Lz8H/8Q2US+o8ChU4JMGl054yS4ASue2ujK4+GXNUjO722NMV2Hu6AgJ
+	BfJtttfXbvPgCWoYmeRd1yWo0E9brbl8vL/xKsFQrU4NzFe3dQOBwjviSK4t48QS
+	Y8DKtE6r9EV3RUkiWhEdh0Pn5XKg3a/7CGuOOYgsRlJkuQxhtR3FhWb231Bxskx1
+	7/AhzCt20T//ABORENNOjGv6Mr8+cIexqZKe7LECox+znwUHjHY+4mK3O+nNhYcO
+	FmO70YI01OcG8hMnhKqIFxJhJnz3Bc9FpQADHd0RCHous2u+nTbF0OHUIcCYjVEL
+	BCHO2A==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a59778fkx-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 08:40:03 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4ed240c3d93so27548071cf.2
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 01:40:03 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 08:43:12 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4ecf8faf8bdso32357831cf.1
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 01:43:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1761986403; x=1762591203; darn=vger.kernel.org;
+        d=oss.qualcomm.com; s=google; t=1761986592; x=1762591392; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=iiDPYD1MU46TmXyxWiXXTtTFKJuO4K8jYXckjJideXM=;
-        b=dQTz9N+Z885HYE2TyHkik4d0D9rWoj7Bfg5HpEIYiEHMktBRN0ch+BM1Mlifl8kMoM
-         2Yp/lvVMxGJGxOgMjFSEUImfHpcVOd0NkPzYFtNOsyeZn1yJ6dnOsIbwzitJHLHAipkQ
-         qIN3IE61rgNwwSfCcjB7dFvQseXw7cys9SYZJyhRU+rN+/LtFdqn9HfTGQxM24tcZG7c
-         NzhKs7p+UN/2EHLIofbKznFg5AK5rWYOMEAqMpyb4GhmmlCcMd3YLHDEs1/PwwSJP+GF
-         qy7Zs4A/M/m0JusriUoDlUEdL1FmEuIu90+Dr7VazBVL8XbOEoQXHSlf2i1k0kyvJy6v
-         8W+Q==
+        bh=EfqyUh7o2Ampai6FJH2BnCnB2E+AjfrQoXU2Q/OvGIU=;
+        b=PCUlI/8sdX2ZGF0ZJg6PhJVeJKz9kEnxz67318JxLO3coEoD83wnyJo57XljGoQQTh
+         qFB7+znyC7Jwc/VoEYMQH5U2I/OMetIBZWQ4LHaavwysRCkpGg9zAIvK7mYrY1gBNsvJ
+         jX3sDOFCDcSA7NeddlNxs4oUr7L/IeZe28rB5T1FpW/eeSC8K8hYijaSeD5qVSJU74wm
+         rcRx0Sr2qvNunVq1vSfDbrULkSGDczJyWPbV4OTXEhMjRvTEHy7rACXE01/iW/W8IHzw
+         IlP04khcqJBEH80pDhlheFhwP9Q3xDfHMYlbt6ilv+n4vKOS9lb5FkyPN0E45nkw+J3Y
+         KL6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1761986403; x=1762591203;
+        d=1e100.net; s=20230601; t=1761986592; x=1762591392;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iiDPYD1MU46TmXyxWiXXTtTFKJuO4K8jYXckjJideXM=;
-        b=bXHde0iJ4b1BVVlx3XQuOSiIZhwpb0NiXNwakbohpTjPjVNKTeK4XOOwcUbvLgfx+U
-         uU3vIvwpOlTQ1boGjzjXtwP2A1kR7QoEZyfrNdJ71KmCdmrgpZbmOdbD2ODtHYK7fk3e
-         l9FkQ1/wrsOQNPensZWwRmXBrgF5cpJW31/UxeRdQVt6BJQNB9lu+t3zYxJLAHve38nu
-         hau/2xsJdp/8M1sOAebi9daCFlIHibAwabiT+kEenPeLZKhVj54e0Cyj02C71C87FsEF
-         GlSabH1juzu/IpvUJETgKTnbCZQe/M0ZkSO8UqitkwQtqhO6qOJhDAUeSOmsxJcrJI0O
-         YNfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXG8FGajHOvh13H51kHx7COmQcEJlAG7TYYXwLeklrrpWf5RGGE8W9QePOhYCZLdFkb6xlq6u8XYdhYuZ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSpC5pb6FP9OYtTHI3zGWRiPbKG9iWKOh7b/JFI27L3DtnSAoz
-	I+UvJnLJkhpPPNCr3skvCCgaAiZjI/VhDAqxPKM7CQauwzlzRChZxG2GgZAidi6DYtyBQwz701h
-	lA1dlpZJBWWGHJeu54hnFuChzGAu1St5FaxIhva2PRbLzYmsibFPIvF4HzE/QCO4yE7E=
-X-Gm-Gg: ASbGncsmVcwc/pCxgj6RXvia+RcD4GTXwUJVwuNh5nCkuvPKD3Ly21T10qzai672ZKO
-	PcY1eT7znsF+CKFqSDhDT+HeWiwiwPuoEJ2wRxdiFm36C+onUwQAtg2vpcad1DAw15nHMCSSl0J
-	CYYEfDzNsgHrsS6dONIGbc0+4b5vvfh2USmwtQLy50R8tCbjqgvCc+43UaSv644NHlxtVbYMQiv
-	nfYIgsUn3e0TsJFCZvCV4VLLrVhEdRea0h6awIt4tOSxyDrcJoNpOU0ywlsDhz+9u2vApmbpHPc
-	St5a0TCyQ6YCvow8iQDqnnLk9FNkuXlcpuCb0jPZ+wnOjqtMwRjEpFF/6BwDHOmAeExlrVYchWs
-	Tu3yrdnfgXHLVmkkDN1VhVUxARm/uZUMuUDTYGhTQAFJMTJFhZRhmzO3iuFtLDl5hSuMsEoxros
-	uo/522wMiFX0UQ
-X-Received: by 2002:a05:622a:1b19:b0:4e5:6c5e:430a with SMTP id d75a77b69052e-4ed31077a89mr88339371cf.64.1761986402545;
-        Sat, 01 Nov 2025 01:40:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEU9EgMJhiC16qX9D2bKMP+GqfW3n0SmoSciun4HYpBFMbXg5yU0XcuPEvAwldmaDJv1QV+1g==
-X-Received: by 2002:a05:622a:1b19:b0:4e5:6c5e:430a with SMTP id d75a77b69052e-4ed31077a89mr88339241cf.64.1761986401945;
-        Sat, 01 Nov 2025 01:40:01 -0700 (PDT)
+        bh=EfqyUh7o2Ampai6FJH2BnCnB2E+AjfrQoXU2Q/OvGIU=;
+        b=GOriCY5p4TLsQyYnNThha7EiKWpFgzE8lq46KIMmudQdVdEicaToXGhXSHvtaXTVEx
+         UvnkPJemRiNfDaTzNS/8A6QlnyCfkOk9MHrFMZxUbNNVzA3jz7UTDG74pcQSCDq/geE2
+         f9va3q9baCxFwAwqsxmKbBS4VRRXu8ChPy4NdOWuJlces0olgb3pRAufbqg0YIG8LWw/
+         JF+fjziEX+FE2o/ZhDUszyKKUOQa+65J2QAeCdTjeh2oOIsuL0BSPbD37TXp16CYEt8n
+         kxd78mhTBCt1xNQc+Hk31nNeg4kgxv6ltmWfT1dfo+yTrix2qCu3vEf7W47yv++Zx+r4
+         WN1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUxLENK7nVA4y8y49/VN215lFm8t3RYnqYytK20TyvUnZglLd0OvllDCmxSSDCGAIn42MvPI19s/trcN6E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywtymm0r5F6XLsJlT3gV15uAGzdolhj+y9V1vbcqH2YVLKiANYc
+	r6ghE8rrKX9w4zoY+XmiEc2O0GlvDxOzTC5z/zeU3lpJbOpjBPSIf0LXVOLPSnUeaxIbXCQ39r5
+	NzyZs76OzBgtqMnx5iER886MHocOOA2qQ/q+r/vUB75ktOlUKnVNufkJVfCnfTSft9FA=
+X-Gm-Gg: ASbGncvsmtN1KuVNuXomzoGeKPhd6BFstQatPRR6Y4SoolqHs+Gb8ceAuggeCYGRmiV
+	O/8mSU08ltnjAOFEAv9crTZJmd7KoE0vPNApBWL8KnEgnHNWz35YHtV8ouB0j5XntY0O7quevN7
+	85KEW2qSwO1NWMSfZ8y2UGeqIFghrsDdglLrHXMQGuA9xUFOLr750eWE7cw7v3KObsNpi9RaMoZ
+	TAvIW+jyaosLaJ85hnwgE/ZcxoQq33R4Uv2oz0TLOxuKNCrVoJez+Y70mAiybGi1bVhqLS46+bZ
+	L/98Gkt/gOY0gIBQ3Sl24m1REjHsscqSVtkgPuLFDrrUod0f5IwSckVWNoXFrLaNximjlcb+/h0
+	hxQksFjp/V78cYoB2wor59S/3EN02HAejsNvrRlhF0tzyo+OeEe7ZhYwTxf5pNov3N/dXTOepyT
+	UTUxaoyqNSSBNf
+X-Received: by 2002:ac8:57c3:0:b0:4eb:a07a:5fce with SMTP id d75a77b69052e-4ed30d4d0b2mr82308191cf.17.1761986591764;
+        Sat, 01 Nov 2025 01:43:11 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF9vl/ZeceDq5qPZj91Yx8Lh2DmzSyst1fJqqvipGnlWsAKyiWPr4peWPX3C7h14PXePIRC4A==
+X-Received: by 2002:ac8:57c3:0:b0:4eb:a07a:5fce with SMTP id d75a77b69052e-4ed30d4d0b2mr82307991cf.17.1761986591306;
+        Sat, 01 Nov 2025 01:43:11 -0700 (PDT)
 Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5941f39d2c0sm1081455e87.46.2025.11.01.01.40.00
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-37a2e1141fbsm427011fa.2.2025.11.01.01.43.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Nov 2025 01:40:01 -0700 (PDT)
-Date: Sat, 1 Nov 2025 10:39:58 +0200
+        Sat, 01 Nov 2025 01:43:09 -0700 (PDT)
+Date: Sat, 1 Nov 2025 10:43:08 +0200
 From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 To: Tessolve Upstream <tessolveupstream@gmail.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, andersson@kernel.org,
-        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Bjorn Andersson <andersson@kernel.org>, konradybcio@kernel.org,
+        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v1 1/1] arm64: dts: qcom: talos-evk: Add support for
  dual-channel LVDS panel
-Message-ID: <mit5xey5rorafacljgnayvjpnbkvtpxis72pzhgnuvjmzmc7sg@c2v4bl6dm6wq>
+Message-ID: <3genyggxae5ejlpi2k2zflliaujdov6f2nd5nppzxtg7fmerff@52dac4oh2c3z>
 References: <20251028061636.724667-1-tessolveupstream@gmail.com>
  <20251028061636.724667-2-tessolveupstream@gmail.com>
- <d05fe82a-640f-4a09-9d83-39bb5aff179d@oss.qualcomm.com>
- <9208d2ef-79da-4e80-ac1f-e01fa5feae0a@gmail.com>
- <sfxvtfzzstdbt7in6z6ztsjfy6e555fr3sjbi5kqkv5sk77b26@kl57zs7iuuvk>
- <ae9021dc-e0ca-4631-b45b-3cf9f526bd14@gmail.com>
+ <fvtwdsthi242vxxlaqsbvqec4xkduch3fcslwqsjzkz4fidewn@mku374rrwlp7>
+ <90185600-c08d-4548-8e66-16d3d0de8765@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -119,120 +117,154 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ae9021dc-e0ca-4631-b45b-3cf9f526bd14@gmail.com>
-X-Proofpoint-ORIG-GUID: FsiCYW-NJjbbaIKW_HGH8wirSpXixjhM
-X-Proofpoint-GUID: FsiCYW-NJjbbaIKW_HGH8wirSpXixjhM
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDA3MiBTYWx0ZWRfXxRu9UEH8LULn
- XMQpGDqBmmRPVptmQlmfQolc+zGXmCBWFV3QDd5r7W9QxelOahNaxf+ChPyE5Y3n+9VCMWMICDh
- DUclDJnPZMrCeatA8Kq1UEhhtozAAZEqfYCSVijaRe0t+rE5J/yONW+tNQizG4P/+ntw4SNuu8B
- c4GO+RFrj4ypE4TmeA8MywNHpjBqEaKe5YuY4WS5DSt63lw27hVNbE2PcWnfCYzTnkmlgN6rwL2
- C7PwGms0QCDl/iw2hAXDqquhuK+PUuduXCNynlbaI05yA36IueKW9dwm4V92p4yVeI3cV+c1Siu
- fU2OY81zqPRj/7ADiv9O9qpyctBgR9zPsyaUQAwCrPukdqVX4GEQsbC0PQgHXldaM1pInSaIQ6C
- mt23R+qkhkKHwJ2McTb7L+W7ubuvOQ==
-X-Authority-Analysis: v=2.4 cv=CfUFJbrl c=1 sm=1 tr=0 ts=6905c763 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+In-Reply-To: <90185600-c08d-4548-8e66-16d3d0de8765@gmail.com>
+X-Proofpoint-GUID: 2ZPPu9D0gC0UB1i522jbVBGlfM4_Yzmo
+X-Proofpoint-ORIG-GUID: 2ZPPu9D0gC0UB1i522jbVBGlfM4_Yzmo
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDA3MyBTYWx0ZWRfXw/aUvz252fVt
+ LvVeiYVfCSTAy2Xz6J8ESbKzOYp1ZXESR7OUGkF6iGOqJIY2igPTb+voVmy3gwhDpdRLbfOWVAP
+ D/N2VD5PVBec+JYdq4oBOfpKqHrFC1JmJVIuZvwRl+c96TiMkTSfWglgnwSfLz2XIuW2rz7vWBp
+ 2bqWdzWSBsty1RazgYkVBWkAYp0oChMbWrCxkuQfzBOWsia54lKp7iGUf2heEAftez1390ItSnj
+ nwHYbI3bt5y9omexhssej+qiwTLG6ncRhsDKQ+uZVDk/R7Xt2MMrHpQxXiRmlgKgCYHQqoMR6v2
+ r+8YmXIiF4HGw4tbF3S9kiS7MX3+nDRyTatOvNdmhlLQe1ORcygVwZn9jWJya6DPSCfqSLM3k0W
+ nLipfPjUo3wBJ2TwdBC6oRqaNlxWcw==
+X-Authority-Analysis: v=2.4 cv=WcABqkhX c=1 sm=1 tr=0 ts=6905c820 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
  a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=pGLkceISAAAA:8 a=DJbqY3hvPHzaRxFNiBYA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=a_PwQJl-kcHnX1M80qC6:22
+ a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=rzCUXBBmrDPBhJRWehYA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=-_B0kFfA75AA:10 a=uxP6HrT_eTzRwkO_Te1X:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2025-11-01_01,2025-10-29_03,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 impostorscore=0 spamscore=0 bulkscore=0
- adultscore=0 phishscore=0 lowpriorityscore=0 priorityscore=1501 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511010072
+ phishscore=0 lowpriorityscore=0 adultscore=0 priorityscore=1501
+ impostorscore=0 spamscore=0 malwarescore=0 clxscore=1015 suspectscore=0
+ bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511010073
 
-On Thu, Oct 30, 2025 at 02:24:15PM +0530, Tessolve Upstream wrote:
+On Fri, Oct 31, 2025 at 02:42:05PM +0530, Tessolve Upstream wrote:
 > 
 > 
-> On 29/10/25 18:04, Dmitry Baryshkov wrote:
-> > On Wed, Oct 29, 2025 at 05:50:01PM +0530, Tessolve Upstream wrote:
-> >>
-> >>
-> >> On 28/10/25 14:55, Konrad Dybcio wrote:
-> >>> On 10/28/25 7:16 AM, Sudarshan Shetty wrote:
-> >>>> This patch introduces a new device tree for the QCS615 Talos
-> >>>> EVK platform with dual-channel LVDS display support.
-> >>>>
-> >>>> The new DTS file (`talos-evk-lvds.dts`) is based on the existing
-> >>>> `talos-evk.dts` and extends it to enable a dual-channel LVDS display
-> >>>> configuration using the TI SN65DSI84 DSI-to-LVDS bridge.
-> >>>>
-> >>>> where channel-A carries odd pixel and channel-B carries even pixel
-> >>>> on the QCS615 talos evk platform.
-> >>>>
-> >>>> Signed-off-by: Sudarshan Shetty <tessolveupstream@gmail.com>
-> >>>> ---
-> >>>
-> >>> [...]
-> >>>
-> >>>> +	backlight: backlight {
-> >>>> +		compatible = "gpio-backlight";
-> >>>> +		gpios = <&tlmm 115 GPIO_ACTIVE_HIGH>;
-> >>>> +		default-on;
-> >>>> +	};
-> >>>> +
-> >>>> +	lcd0_pwm_en {
-> >>>
-> >>> Use hyphens instead of underscores in node names
-> >>
-> >> Okay, will update in next patch.
-> >>>
-> >>>> +		compatible = "pwm-gpio";
-> >>>> +		gpios = <&tlmm 59 GPIO_ACTIVE_HIGH>;
-> >>>> +		pinctrl-0 = <&lcd0_bklt_pwm>;
-> >>>
-> >>> I think your intention was to use pwm-backlight and wire this node
-> >>> up to that
-> >>
-> >> Soc does not support the PWM interface hence we are using gpio 
-> >> as "pwm-gpio" by setting the duty cycle to 100%(i.e. "no pwm")
+> On 29/10/25 21:18, Bjorn Andersson wrote:
+> > On Tue, Oct 28, 2025 at 11:46:36AM +0530, Sudarshan Shetty wrote:
+> >> This patch introduces a new device tree for the QCS615 Talos
 > > 
-> > Why do you mention PWM here at all? It's perfectly fine to use
-> > gpio-backlight. That looks extremely suspicious since you are not
-> > referecing the pwm-gpio device at all.
+> > "This patch" doesn't make sense when you look at the git log once the
+> > patch has been accepted, please avoid it.
+> > 
+> > Please read https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
+> > 
+> > Start your commit message with a "problem description", describe what
+> > this LVDS talos is, why it should have it's own dts file etc.
+> 
+> Okay, will update in next patch.
+> > 
+> >> EVK platform with dual-channel LVDS display support.
+> >>
+> >> The new DTS file (`talos-evk-lvds.dts`) is based on the existing
+> >> `talos-evk.dts` and extends it to enable a dual-channel LVDS display
+> >> configuration using the TI SN65DSI84 DSI-to-LVDS bridge.
+> >>
+> >> where channel-A carries odd pixel and channel-B carries even pixel
+> >> on the QCS615 talos evk platform.
+> >>
+> >> Signed-off-by: Sudarshan Shetty <tessolveupstream@gmail.com>
+> >> ---
+> >>  arch/arm64/boot/dts/qcom/Makefile           |   1 +
+> >>  arch/arm64/boot/dts/qcom/talos-evk-lvds.dts | 128 ++++++++++++++++++++
+> >>  2 files changed, 129 insertions(+)
+> >>  create mode 100644 arch/arm64/boot/dts/qcom/talos-evk-lvds.dts
+> >>
+> >> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+> >> index d5a3dd98137d..6e7b04e67287 100644
+> >> --- a/arch/arm64/boot/dts/qcom/Makefile
+> >> +++ b/arch/arm64/boot/dts/qcom/Makefile
+> >> @@ -307,6 +307,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= sm8750-mtp.dtb
+> >>  dtb-$(CONFIG_ARCH_QCOM)	+= sm8750-qrd.dtb
+> >>  dtb-$(CONFIG_ARCH_QCOM)	+= talos-evk.dtb
+> >>  dtb-$(CONFIG_ARCH_QCOM)	+= talos-evk-dsi.dtb
+> >> +dtb-$(CONFIG_ARCH_QCOM)	+= talos-evk-lvds.dtb
+> >>  x1e001de-devkit-el2-dtbs	:= x1e001de-devkit.dtb x1-el2.dtbo
+> >>  dtb-$(CONFIG_ARCH_QCOM)	+= x1e001de-devkit.dtb x1e001de-devkit-el2.dtb
+> >>  x1e78100-lenovo-thinkpad-t14s-el2-dtbs	:= x1e78100-lenovo-thinkpad-t14s.dtb x1-el2.dtbo
+> >> diff --git a/arch/arm64/boot/dts/qcom/talos-evk-lvds.dts b/arch/arm64/boot/dts/qcom/talos-evk-lvds.dts
+> >> new file mode 100644
+> >> index 000000000000..7ba4ab96ada6
+> >> --- /dev/null
+> >> +++ b/arch/arm64/boot/dts/qcom/talos-evk-lvds.dts
+> >> @@ -0,0 +1,128 @@
+> >> +// SPDX-License-Identifier: BSD-3-Clause
+> >> +/*
+> >> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+> >> + */
+> >> +/dts-v1/;
+> >> +#include "talos-evk.dts"
+> > 
+> > We don't include .dts files, split the existing one in a dtsi and dts
+> > file and then include the dtsi here. Or provide provide this as a dtso
+> > overlay on top of the dts.
+> > 
+> > It's not clear to me which is the correct way, because you didn't
+> > adequately described how the SN65DSI84 enter the picture. Is it always
+> > there, but not part of the standard dip-switch configuration? Or is this
+> > some mezzanine?
 > 
 > Thanks for the feedback.
-> GPIO59 (LED_PWM) connected to the panel’s dimming input.
-> 
-> Since we can only drive the LED_PWM pin high (100% duty), 
-> it does not provide true PWM control.
-> 
-> I’ll remove the non-standard "pwm-gpio" node and model both lines
-> using the standard gpio-backlight binding, like this:
-> 
-> backlight: backlight {
->     compatible = "gpio-backlight";
->     gpios = <&tlmm 115 GPIO_ACTIVE_HIGH>, <&tlmm 59 GPIO_ACTIVE_HIGH>;
 
+You didn't answer the question. It was about the hardware, not about
+DTs.
 
-You will have to adapt the gpio-backlight bindings and driver to handle
-multiple entries here.
+> Currently, the Talos device tree hierarchy is organized as follows:
+> 
+> talos-som.dtsi — defines SoM-specific interfaces
+> talos-evk.dts — adds carrier board (CB) interfaces such as MicroSD, power
+> button, and HDMI
+> talos-evk-lvds.dts — enables the LVDS display (includes SoM + CB +
+> LVDS + disables HDMI)
 
->     default-on;
->     pinctrl-0 = <&lcd0_bklt_en>, <&lcd0_bklt_pwm>;
->     pinctrl-names = "default";
-> };
+So, is LVDS a part of the standard board or is it a mezzanine?
+
 > 
-> &tlmm {
->        lcd0_bklt_en: lcd0-bklt-en-state {
->                pins = "gpio115";
->                function = "gpio";
->                bias-disable;
->        };
+> The LVDS and HDMI displays share a common DSI output, so only one 
+> interface can be active at a time. At present, talos-evk-lvds.dts 
+> includes talos-evk.dts directly so that the base SoM and carrier 
+> interfaces (e.g., MicroSD, power button) remain available.
 > 
->        lcd0_bklt_pwm: lcd0-bklt-pwm-state {
->                pins = "gpio59";
->                function = "gpio";
->                bias-disable;
->        };
-> };
+> However, as you pointed out, including a .dts file directly is not
+> recommended upstream. To address this, I am considering the following 
+> restructuring options:
 > 
-> Let me know your opinion here,
-> Thanks in advance.
-> > 
+> Option 1: Introduce a talos-cb.dtsi
 > 
+> talos-som.dtsi: SoM-specific interfaces
+> talos-cb.dtsi: common carrier board interfaces (MicroSD, power button, etc.)
+> talos-evk.dts: includes talos-som.dtsi + talos-cb.dtsi + HDMI
+> talos-evk-lvds.dts: includes talos-som.dtsi + talos-cb.dtsi + LVDS
+> 
+> This approach avoids including .dts files directly and keeps the carrier
+> board interfaces centralized and reusable.It also cleanly separates SoM
+> and CB content and is consistent with how other Qualcomm platforms 
+> structure their EVK variants.
+
+This sounds okay, but please respond to previous questions.
+
+> 
+> Option 2: Move CB interfaces to talos-som.dtsi (disabled by default)
+
+Why? What happens when somebody reuses the SoM with some other base
+board?
+
+> 
+> Move MicroSD, power button, etc., to talos-som.dtsi with status = "disabled";
+> Enable these interfaces in each top-level DTS (e.g., talos-evk.dts,
+> talos-evk-lvds.dts)
+> While this also avoids .dts inclusion, it may make the SoM DTS 
+> unnecessarily complex and less reusable, as those CB-specific 
+> peripherals don’t belong to the SoM hardware.
+> 
+> Let me know your prepared approach here.
+
+If you yourself don't like the second option, why do you propose it?
 
 -- 
 With best wishes
