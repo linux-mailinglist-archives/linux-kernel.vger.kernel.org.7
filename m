@@ -1,204 +1,127 @@
-Return-Path: <linux-kernel+bounces-881750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA8F3C28DBA
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 11:59:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B184FC28DC1
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 12:00:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B11B3A9A26
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 10:57:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3F113A2EDC
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 10:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9221926E716;
-	Sun,  2 Nov 2025 10:57:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6189B26CE37;
+	Sun,  2 Nov 2025 10:57:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Wi0kVEQQ"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Shz5f0W2"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3675E2264A9;
-	Sun,  2 Nov 2025 10:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 605C61F03D7
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 10:57:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762081028; cv=none; b=rPcf8YzzSuirn15eGipcKYdO2NqyFTR554w6sBPNfn3tKFGl+Vi3YUk6mv2J3obZ5kpiORlyPNgxiDmcOaefq4KFm/0q4ujQdRHss8BML6B9QunXnDw2oY/fK1SAE/LdhzQl8wD8sgaxi2svd/QQFSQ4AmvVtD7jK2mvaJQ8wQM=
+	t=1762081073; cv=none; b=dpvO6PmcRPh/I5wE8h7tVWqg9V/QYem/oF6wDo8FPnXjbsK6jEpfZEZpxu3JreLgtFJeucjeFCIxVYUkOd9lpaFvfoiF3rReSLJ07NwJtyhXa/FaRztFLH8bZ0EIPrp8pzdnZ6w0Zj5c0HcTSQU78r2XbsWtpWWdzfggzKVd8j0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762081028; c=relaxed/simple;
-	bh=xsjNnBk/QkmgSAG5n3nrTOX2ojRciG717tCy+qHjaQ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mwNAZ/kKLvcOVH/xI5YHS2W160V3Lh7xg5lMH8V0ywK3+QsmJz+n1UQCJzSFfVy/tEQInHa7YJZuEYFJDWjcM8VQ+Kd2dNhBRISbzRmqZ3YIx1xz/ZB/oN2r0uHDrFXX1cZ2uB79yW29fevyOrDsfN1e8YKs+Iovzp2X3yG5sfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Wi0kVEQQ; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (mob-5-90-50-232.net.vodafone.it [5.90.50.232])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6B300B3;
-	Sun,  2 Nov 2025 11:55:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1762080913;
-	bh=xsjNnBk/QkmgSAG5n3nrTOX2ojRciG717tCy+qHjaQ0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wi0kVEQQ9NCVGZTJ/m9GvKl4yfHu4HL5nquEK299QrXdLTTOnPjEY7fSp07josm2u
-	 ivP9q+pDjHtq4AAPcYV6XCeLuVuIwMnIE2RHDnkk/7HpaVEfTT+yBD//XKTstgOFMM
-	 Q0k0+q2Er1J49ah4UJRvbPB4r1ltIoQzSokZcA7s=
-Date: Sun, 2 Nov 2025 11:57:02 +0100
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, Jacopo Mondi <jacopo@jmondi.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Kieran Bingham <kieran.bingham@ideasonboard.com>, 
-	David Plowman <david.plowman@raspberrypi.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Peter Robinson <pbrobinson@gmail.com>, Stefan Wahren <wahrenst@gmx.net>, 
-	"Ivan T. Ivanov" <iivanov@suse.de>
-Subject: Re: [PATCH 07/13] media: i2c: ov5647: Add support for regulator
- control.
-Message-ID: <dcr6edcm4tjxadd6fjfnolqqver2lg3fxh6mhe4f6lvip3ufy5@5kuc7e566nxi>
-References: <20251028-b4-rpi-ov5647-v1-0-098413454f5e@ideasonboard.com>
- <20251028-b4-rpi-ov5647-v1-7-098413454f5e@ideasonboard.com>
+	s=arc-20240116; t=1762081073; c=relaxed/simple;
+	bh=SHEr//40zR6hLobNUNKlzHkrDggRl9UZzzbYH4lErwI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hMBCNPfOUS2jup8iUkf9cLcr2LS4yt3y/woD9LDGkAVREnYqNh0hfdNTDcNAwvvxMbnfsh4/U7OuYpwhs5XQ8+JNRp+lIOOHnM/dEelozmfMZ/LnXwotgeHzVkbkmMytJgDPjl9Lys/Asgai2t1RmoS+Dq6VsMSFyBk4npdBfqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Shz5f0W2; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-78af3fe5b17so3362189b3a.2
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 02:57:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762081071; x=1762685871; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vMHdxPCuQYx37q4+PHeYjwUMtBpJVYVKStqHxBRsAFs=;
+        b=Shz5f0W2eaQvA6yepaDocTLtgIomMWfKApVjy/e6LwXAlXHS9jLC9vqoHy0lDqCZ1Y
+         WEzJMVxYnh/iSP9V4rZyhR/WrMymVbsnddwHCIUZddZxavq6MpvxQLJkQGmATJES9Ia1
+         fI9oeAFritkilA2HaBATKa2zksKmLq9YpEFr2yzJkDPoGLuMtm8aVmHynZSZsK7GQQ5Z
+         GQLw6kafUnB81TEbwZDmCl3Zx/G5A+MEybKOE4y4dtiCp4W5mrFuO3hy7wBKvSVR4B8z
+         jQ1FdY6GY50dbWJh81Q69nzs0wirkidI5l3NBtWYztKRvo+3qOz4PEtLZd8gpJapYTRD
+         SdxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762081071; x=1762685871;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vMHdxPCuQYx37q4+PHeYjwUMtBpJVYVKStqHxBRsAFs=;
+        b=dyG1jy4EuKoshMPd3Z0MUJAMZ7RqZVC+dIlV+dlA2kqdCfJmhuSRQTp3dH/+OEZa+A
+         IRuFVsQ6+2c2ev/fiNkfJitGH691Jz5KlN5+9fmB6odspCeuadWQoWNGSFueglHak4XZ
+         OhAcUBThIl8kgRHieljJXiZmUCvugoU3A3hB3taBWL2jqfcXeingmSg3JlpDrzLnpQc1
+         HNV4cNblRrDq9OW/1ParkBOrv8CdsBgL28U4ASUtcIChyghfnQpbuiuPWEQoymfVhFW4
+         OpOZKe651cNo/2j3WZy//AGqJtB9amSVuBipZ1ntjUGNkzmId7K3E0Qtg7CtmQtDtQZY
+         DAJw==
+X-Forwarded-Encrypted: i=1; AJvYcCXRKbn7rd55P9W431hcPTA9kiRXBBCH7SIDcjvPquo8Ibg7LdrJCd/AZKXEAcsXjLCsmpO6rUXhl2kUKVk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywi/YJhBc4TJR7YCpAHHH8up7OtKrjb9Q0a3Fx5on90R3Hud4zP
+	atWSil6LFA0hK3fgqK8YsGQr30c3hAr0789uBsWZFWAspyA9R7C+1HDq
+X-Gm-Gg: ASbGnct1834ODrUHm0j+kmfoRiSXHINdXy3P4z/LmeaQtQo51jGwdOSG5Yauo+KWaMJ
+	vpm6zw/ZUj0OKrxwqiq7ndYQSlA0EUWfmBGX18evjcditbBNDmpJe8P69j5GktSOQZEH//s+Ipl
+	zDZcNd9B9l+ykHbzA5Pil4YxW0tOfjtWCmlBZKeu8q86mMdwqcWJJ6mkfkydGZW4gYANRUdhMZi
+	Ft/xL7qsk/fX7EKLK04Sc0hWXvdW5HteQtHQG19mMLopDu6J6Y4VjTG0j7PZIYd7IC4wd47QITZ
+	UNQWN15x7acSxBJDCkQXQVSQ1RLeUZj+d/tlwoP+0AYkFQr2StFictj7v7vk7tT0EJQC5Utqlv7
+	u9sAagmXeXJ4XzXDAYepAVSOsXNWBDz3BC4ecfY15bPhyJf+GsGp26f8T97XWwtLygTFjExosNX
+	F2XKMJ3mqAguzBmbL37/0JZsPZXa5cmufNF9wyCik=
+X-Google-Smtp-Source: AGHT+IEsI4Z/8PcAT7j2pialDGZiC/BBy4ILYzqkSINF9zrcfL6KP/AE2O0RDl67g6y34Zj7lSoeRQ==
+X-Received: by 2002:a05:6a00:886:b0:792:574d:b2c with SMTP id d2e1a72fcca58-7a7794c4f13mr13897182b3a.15.1762081070616;
+        Sun, 02 Nov 2025 02:57:50 -0800 (PST)
+Received: from localhost.localdomain ([113.102.236.151])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a7db67999bsm7488050b3a.56.2025.11.02.02.57.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Nov 2025 02:57:50 -0800 (PST)
+From: Guangbo Cui <jckeep.cuiguangbo@gmail.com>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Cc: Waiman Long <longman@redhat.com>,
+	linux-rt-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	Guangbo Cui <jckeep.cuiguangbo@gmail.com>
+Subject: [PATCH v4 0/2] PCI/aer_inject: Adjust locking for PREEMPT_RT
+Date: Sun,  2 Nov 2025 10:57:04 +0000
+Message-ID: <20251102105706.7259-1-jckeep.cuiguangbo@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251028-b4-rpi-ov5647-v1-7-098413454f5e@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Jai
+This patch series addresses locking issues in the AER injection
+path under PREEMPT_RT.
 
-On Tue, Oct 28, 2025 at 12:57:18PM +0530, Jai Luthra wrote:
-> From: Dave Stevenson <dave.stevenson@raspberrypi.com>
->
-> The driver supported using GPIOs to control the shutdown line,
-> but no regulator control.
->
-> Add regulator hooks.
+Signed-off-by: Guangbo Cui <jckeep.cuiguangbo@gmail.com>
+---
+Changes in v4:
+- Reverse the patch ordering.
+- Link to v2: https://lore.kernel.org/all/20251026044335.19049-2-jckeep.cuiguangbo@gmail.com/
 
-Do bindings need an update ?
+Changes in v3:
+- Remove unnecessary lock in aer_inject_exit.
+- Link to v2: https://lore.kernel.org/all/20251009150651.93618-1-jckeep.cuiguangbo@gmail.com/
 
->
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
-> ---
->  drivers/media/i2c/ov5647.c | 37 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 37 insertions(+)
->
-> diff --git a/drivers/media/i2c/ov5647.c b/drivers/media/i2c/ov5647.c
-> index a33e2d8edc114d302e830639cb7cb161f16a6208..598764638d518a28c8ac61ea590b996f09ecd45c 100644
-> --- a/drivers/media/i2c/ov5647.c
-> +++ b/drivers/media/i2c/ov5647.c
-> @@ -20,6 +20,7 @@
->  #include <linux/module.h>
->  #include <linux/of_graph.h>
->  #include <linux/pm_runtime.h>
-> +#include <linux/regulator/consumer.h>
->  #include <linux/slab.h>
->  #include <linux/videodev2.h>
->  #include <media/v4l2-ctrls.h>
-> @@ -83,6 +84,15 @@
->  #define OV5647_EXPOSURE_DEFAULT		1000
->  #define OV5647_EXPOSURE_MAX		65535
->
-> +/* regulator supplies */
-> +static const char * const ov5647_supply_names[] = {
-> +	"avdd",		/* Analog power */
-> +	"dovdd",	/* Digital I/O power */
-> +	"dvdd",		/* Digital core power */
-> +};
-> +
-> +#define OV5647_NUM_SUPPLIES ARRAY_SIZE(ov5647_supply_names)
-> +
->  struct regval_list {
->  	u16 addr;
->  	u8 data;
-> @@ -104,6 +114,7 @@ struct ov5647 {
->  	struct mutex			lock;
->  	struct clk			*xclk;
->  	struct gpio_desc		*pwdn;
-> +	struct regulator_bulk_data supplies[OV5647_NUM_SUPPLIES];
+---
 
-nit: please align 'supplies' to other members
+Guangbo Cui (2):
+  PCI/aer_inject: Remove unnecessary lock in aer_inject_exit
+  PCI/aer_inject: Convert inject_lock to raw_spinlock_t
 
->  	bool				clock_ncont;
->  	struct v4l2_ctrl_handler	ctrls;
->  	const struct ov5647_mode	*mode;
-> @@ -781,6 +792,12 @@ static int ov5647_power_on(struct device *dev)
->
->  	dev_dbg(dev, "OV5647 power on\n");
->
-> +	ret = regulator_bulk_enable(OV5647_NUM_SUPPLIES, sensor->supplies);
-> +	if (ret < 0) {
-> +		dev_err(dev, "Failed to enable regulators\n");
-> +		return ret;
-> +	}
-> +
->  	if (sensor->pwdn) {
->  		gpiod_set_value_cansleep(sensor->pwdn, 0);
+ drivers/pci/pcie/aer_inject.c | 33 +++++++++++++++------------------
+ 1 file changed, 15 insertions(+), 18 deletions(-)
 
-Should we disable regulators if this fail ?
+-- 
+2.43.0
 
-Also, gpiod_set_value_cansleep() supports optional gpios, so you might
-want to remove if (sensor->pwdn), check the return value of this
-function and jump to a new label
-
->  		msleep(PWDN_ACTIVE_DELAY_MS);
-> @@ -812,6 +829,7 @@ static int ov5647_power_on(struct device *dev)
->  	clk_disable_unprepare(sensor->xclk);
->  error_pwdn:
->  	gpiod_set_value_cansleep(sensor->pwdn, 1);
-> +	regulator_bulk_disable(OV5647_NUM_SUPPLIES, sensor->supplies);
->
->  	return ret;
->  }
-> @@ -841,6 +859,7 @@ static int ov5647_power_off(struct device *dev)
->
->  	clk_disable_unprepare(sensor->xclk);
->  	gpiod_set_value_cansleep(sensor->pwdn, 1);
-> +	regulator_bulk_disable(OV5647_NUM_SUPPLIES, sensor->supplies);
->
->  	return 0;
->  }
-> @@ -1341,6 +1360,18 @@ static const struct v4l2_ctrl_ops ov5647_ctrl_ops = {
->  	.s_ctrl = ov5647_s_ctrl,
->  };
->
-> +static int ov5647_configure_regulators(struct device *dev,
-> +				       struct ov5647 *sensor)
-> +{
-> +	unsigned int i;
-> +
-> +	for (i = 0; i < OV5647_NUM_SUPPLIES; i++)
-
-nit: you can now declared i inside the for loop
-
-Thanks
-  j
-
-> +		sensor->supplies[i].supply = ov5647_supply_names[i];
-> +
-> +	return devm_regulator_bulk_get(dev, OV5647_NUM_SUPPLIES,
-> +				       sensor->supplies);
-> +}
-> +
->  static int ov5647_init_controls(struct ov5647 *sensor, struct device *dev)
->  {
->  	struct i2c_client *client = v4l2_get_subdevdata(&sensor->sd);
-> @@ -1489,6 +1520,12 @@ static int ov5647_probe(struct i2c_client *client)
->  		return -EINVAL;
->  	}
->
-> +	ret = ov5647_configure_regulators(dev, sensor);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to get power regulators\n");
-> +		return ret;
-> +	}
-> +
->  	mutex_init(&sensor->lock);
->
->  	sensor->mode = OV5647_DEFAULT_MODE;
->
-> --
-> 2.51.0
->
 
