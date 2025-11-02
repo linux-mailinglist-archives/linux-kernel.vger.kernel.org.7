@@ -1,155 +1,201 @@
-Return-Path: <linux-kernel+bounces-882016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 384C9C29757
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 22:44:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C02CFC297A5
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 22:49:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1E09D4E48A5
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 21:44:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B66F4ED5F4
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 21:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0E323313E;
-	Sun,  2 Nov 2025 21:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CB802E0917;
+	Sun,  2 Nov 2025 21:44:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AnEF1Qi5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZikXbao/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CEF02F56;
-	Sun,  2 Nov 2025 21:44:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98861255240;
+	Sun,  2 Nov 2025 21:44:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762119870; cv=none; b=RGPr+gIDNeYKMddbIxtQXzpVu/483k3L08dHhUHei7V2F2BjiZ7SAswEVkgDpttEAEefVg0naoowJRQdXnSBIdnmreFCD6Yw8ZTK2KhE1lY6toe93n3Eutr4ywGU/J9TLs2N8UCpp9ui4L202CQSuoODUe0b4BEjXzh9Rxld2X4=
+	t=1762119879; cv=none; b=T29BZ9RUSN6+iGO1S3xY3yxvKzNCOc0gMz5c2YboB19ZT/QR7HmnLj7jOiGMUJnkQULdYSYaDht9CkVu2SKKftjy5MFCf6VwBsYLV/7kYUJL8mmWrVa8x6+/w1ApCR4NOlU7zBdf8K1NvLBKmoDanRFxBAjaYkWdvU6S1/wl9LE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762119870; c=relaxed/simple;
-	bh=RdNBSKVqYEgSq8FX1QqVdr66kaOaDgGlTA8bajRQyaI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=AlR/UBtyWTQH04Bkhleew2qCM2Vw2SgHBWpHXWWIO+evDS6i1uGKsoPMfNYJ3cdDuI0ITXU9xQydyXxRAmUmDMiNku2POKXfSyTOwFgnpyMyJdF1mOZLaPr6RUrHTDJ0Zme7O/jh+LogzH4j0YUbm5j7EFieNhgSmkQGkxZxUX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AnEF1Qi5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81C8EC4CEF7;
-	Sun,  2 Nov 2025 21:44:29 +0000 (UTC)
+	s=arc-20240116; t=1762119879; c=relaxed/simple;
+	bh=vGDS0HEqwbT4kBxbF1tBRuTN6wYIuGTYd7f7W76C1sk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=EwVHLEWqacqMXanCM83Dn1rXv2Ou+n33XahtHcW1DD7aK2L3Bn7DSHWec6ogQtVk9JiJ2vN54/RVnwimG+lxOztUFDAAjtQem1O+usGVr4rm+DAj8ElwL/iC6Yj3bey6BxkCUwMQ5SNQM0SPTiDEAtfgsC/pD+uTKnCqhAiMwUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZikXbao/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55BFDC2BC86;
+	Sun,  2 Nov 2025 21:44:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762119869;
-	bh=RdNBSKVqYEgSq8FX1QqVdr66kaOaDgGlTA8bajRQyaI=;
-	h=Date:From:To:Cc:Subject:Reply-To:From;
-	b=AnEF1Qi5lBKtUet2jLC0hwiXAchZb8gos0Oc8BxQVm3DsfPh2gbwAeSxQ9w28msP/
-	 sCTcOaKR+f9dD2VOp4zGMunVxYs8L2H5nEsvBsWpMlPTG3lM6nXfrbTi8kM6R3aF7l
-	 BWCcANoSqcNm/NLVTv651ViFHoA2IVjU/J/Ux0jZQmolOAMyWqNe/fdBFU7QPno+k/
-	 c2wVUdLmfXjBdyEX96Zxa4l8RR7SeE/0Ep1ulPafSNoU5UFuEkChLz2/ghE4xPDkWy
-	 BRelBQH0gAo7mdTg7QKPcwcAyx1bbCAEjtadPHXyJaE0EQneGA6AFJ1w20PaD2bflQ
-	 UAH2sbYbOwPFg==
+	s=k20201202; t=1762119879;
+	bh=vGDS0HEqwbT4kBxbF1tBRuTN6wYIuGTYd7f7W76C1sk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ZikXbao/h8H5u2wC+awuGBqqRwgAfFKn9GmA/PGbLovW1bQ9SYoYqCzhFevZ82bqE
+	 uzXC7R6fLnGBaWzkvWtcyG2xb+zvlu5R2we2YbgIKFWaGa7aY2VMKvN9I/tkBbo4Cs
+	 hangwbMfWKyTlzPSPMAwvg2FoUsxaY1yBenUKqlDaaW9/k8ku/QSnRcGJZr3LdIbFv
+	 zpA4I6Ig1RMKuKsm+w9THJnNwU3OZ46gOE1h5bG7fFI7hCAlKZnb1gaeDAXfi0LogV
+	 ax18uiYs5SybAmm04IpaNRWiAcoLKJu3YTZa6X2wdD2dky9AtBCC9Hp6HYpXsLQdCm
+	 KKf7BqrS4cJHw==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 16A84CE0F4C; Sun,  2 Nov 2025 13:44:29 -0800 (PST)
-Date: Sun, 2 Nov 2025 13:44:29 -0800
+	id 99F12CE1605; Sun,  2 Nov 2025 13:44:37 -0800 (PST)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org
-Subject: [PATCH 0/18] SRCU updates for v6.19
-Message-ID: <082fb8ba-91b8-448e-a472-195eb7b282fd@paulmck-laptop>
-Reply-To: paulmck@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	rostedt@goodmis.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	bpf@vger.kernel.org
+Subject: [PATCH 13/19] srcu: Add SRCU_READ_FLAVOR_FAST_UPDOWN CPP macro
+Date: Sun,  2 Nov 2025 13:44:30 -0800
+Message-Id: <20251102214436.3905633-13-paulmck@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <082fb8ba-91b8-448e-a472-195eb7b282fd@paulmck-laptop>
+References: <082fb8ba-91b8-448e-a472-195eb7b282fd@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hello!
+This commit adds the SRCU_READ_FLAVOR_FAST_UPDOWN=0x8 macro
+and adjusts rcutorture to make use of it.  In this commit, both
+SRCU_READ_FLAVOR_FAST=0x4 and the new SRCU_READ_FLAVOR_FAST_UPDOWN
+test SRCU-fast.  When the SRCU-fast-updown is added, the new
+SRCU_READ_FLAVOR_FAST_UPDOWN macro will test it when passed to the
+rcutorture.reader_flavor module parameter.
 
-This series creates an srcu_expedite_current() function that allows
-after-the-fact expediting of SRCU grace periods, adds a DEFINE_SRCU_FAST()
-that further speeds things up by removing a conditional branch from
-srcu_read_lock_fast*(), updates documentation, uses SRCU-fast to guard
-event traces in PREEMPT_RT kernel (thus making such kernels safe for
-event tracing), adds srcu_read_{,un}lock_fast_updown() functions that are
-compatible with srcu_down_read() and srcu_up_read(), but do not permit
-use in NMI handlers (to permit further optimization of SRCU-fast readers
-by relieving them of the need to deal with irq/softirq/NMI handlers with
-unbalanced lock/unlock calls), and optimizes SRCU-fast-updown for large
-ARM servers that use LSE.  It is expected that this optimization will be
-obsoleted by some arm64 architecture-specific work:
+The old SRCU_READ_FLAVOR_FAST macro's value changed from 0x8 to 0x4.
 
-	https://lore.kernel.org/all/aQU7l-qMKJTx4znJ@arm.com/
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: <bpf@vger.kernel.org>
+---
+ include/linux/srcu.h    | 16 +++++++++-------
+ kernel/rcu/rcutorture.c | 24 ++++++++++++++++++------
+ 2 files changed, 27 insertions(+), 13 deletions(-)
 
-The patches are as follows:
+diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+index 41e27c1d917d..1dd6812aabe7 100644
+--- a/include/linux/srcu.h
++++ b/include/linux/srcu.h
+@@ -56,13 +56,15 @@ int init_srcu_struct_fast(struct srcu_struct *ssp);
+ #endif /* #else #ifdef CONFIG_DEBUG_LOCK_ALLOC */
+ 
+ /* Values for SRCU Tree srcu_data ->srcu_reader_flavor, but also used by rcutorture. */
+-#define SRCU_READ_FLAVOR_NORMAL	0x1		// srcu_read_lock().
+-#define SRCU_READ_FLAVOR_NMI	0x2		// srcu_read_lock_nmisafe().
+-//				0x4		// SRCU-lite is no longer with us.
+-#define SRCU_READ_FLAVOR_FAST	0x8		// srcu_read_lock_fast().
+-#define SRCU_READ_FLAVOR_ALL   (SRCU_READ_FLAVOR_NORMAL | SRCU_READ_FLAVOR_NMI | \
+-				SRCU_READ_FLAVOR_FAST) // All of the above.
+-#define SRCU_READ_FLAVOR_SLOWGP	SRCU_READ_FLAVOR_FAST
++#define SRCU_READ_FLAVOR_NORMAL		0x1		// srcu_read_lock().
++#define SRCU_READ_FLAVOR_NMI		0x2		// srcu_read_lock_nmisafe().
++//					0x4		// SRCU-lite is no longer with us.
++#define SRCU_READ_FLAVOR_FAST		0x4		// srcu_read_lock_fast().
++#define SRCU_READ_FLAVOR_FAST_UPDOWN	0x8		// srcu_read_lock_fast().
++#define SRCU_READ_FLAVOR_ALL		(SRCU_READ_FLAVOR_NORMAL | SRCU_READ_FLAVOR_NMI | \
++					 SRCU_READ_FLAVOR_FAST | SRCU_READ_FLAVOR_FAST_UPDOWN)
++						// All of the above.
++#define SRCU_READ_FLAVOR_SLOWGP		(SRCU_READ_FLAVOR_FAST | SRCU_READ_FLAVOR_FAST_UPDOWN)
+ 						// Flavors requiring synchronize_rcu()
+ 						// instead of smp_mb().
+ void __srcu_read_unlock(struct srcu_struct *ssp, int idx) __releases(ssp);
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index e30311551a62..587b28258b6e 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -702,6 +702,8 @@ static void srcu_torture_init(void)
+ 	rcu_sync_torture_init();
+ 	if (reader_flavor & SRCU_READ_FLAVOR_FAST)
+ 		srcu_ctlp = &srcu_ctlf;
++	if (reader_flavor & SRCU_READ_FLAVOR_FAST_UPDOWN)
++		srcu_ctlp = &srcu_ctlf;
+ }
+ 
+ static void srcu_get_gp_data(int *flags, unsigned long *gp_seq)
+@@ -728,6 +730,12 @@ static int srcu_torture_read_lock(void)
+ 		ret += idx << 1;
+ 	}
+ 	if (reader_flavor & SRCU_READ_FLAVOR_FAST) {
++		scp = srcu_read_lock_fast(srcu_ctlp);
++		idx = __srcu_ptr_to_ctr(srcu_ctlp, scp);
++		WARN_ON_ONCE(idx & ~0x1);
++		ret += idx << 2;
++	}
++	if (reader_flavor & SRCU_READ_FLAVOR_FAST_UPDOWN) {
+ 		scp = srcu_read_lock_fast(srcu_ctlp);
+ 		idx = __srcu_ptr_to_ctr(srcu_ctlp, scp);
+ 		WARN_ON_ONCE(idx & ~0x1);
+@@ -758,8 +766,10 @@ srcu_read_delay(struct torture_random_state *rrsp, struct rt_read_seg *rtrsp)
+ static void srcu_torture_read_unlock(int idx)
+ {
+ 	WARN_ON_ONCE((reader_flavor && (idx & ~reader_flavor)) || (!reader_flavor && (idx & ~0x1)));
+-	if (reader_flavor & SRCU_READ_FLAVOR_FAST)
++	if (reader_flavor & SRCU_READ_FLAVOR_FAST_UPDOWN)
+ 		srcu_read_unlock_fast(srcu_ctlp, __srcu_ctr_to_ptr(srcu_ctlp, (idx & 0x8) >> 3));
++	if (reader_flavor & SRCU_READ_FLAVOR_FAST)
++		srcu_read_unlock_fast(srcu_ctlp, __srcu_ctr_to_ptr(srcu_ctlp, (idx & 0x8) >> 2));
+ 	if (reader_flavor & SRCU_READ_FLAVOR_NMI)
+ 		srcu_read_unlock_nmisafe(srcu_ctlp, (idx & 0x2) >> 1);
+ 	if ((reader_flavor & SRCU_READ_FLAVOR_NORMAL) || !(reader_flavor & SRCU_READ_FLAVOR_ALL))
+@@ -793,7 +803,7 @@ static int srcu_torture_down_read(void)
+ 		WARN_ON_ONCE(idx & ~0x1);
+ 		return idx;
+ 	}
+-	if (reader_flavor & SRCU_READ_FLAVOR_FAST) {
++	if (reader_flavor & SRCU_READ_FLAVOR_FAST_UPDOWN) {
+ 		scp = srcu_down_read_fast(srcu_ctlp);
+ 		idx = __srcu_ptr_to_ctr(srcu_ctlp, scp);
+ 		WARN_ON_ONCE(idx & ~0x1);
+@@ -806,7 +816,7 @@ static int srcu_torture_down_read(void)
+ static void srcu_torture_up_read(int idx)
+ {
+ 	WARN_ON_ONCE((reader_flavor && (idx & ~reader_flavor)) || (!reader_flavor && (idx & ~0x1)));
+-	if (reader_flavor & SRCU_READ_FLAVOR_FAST)
++	if (reader_flavor & SRCU_READ_FLAVOR_FAST_UPDOWN)
+ 		srcu_up_read_fast(srcu_ctlp, __srcu_ctr_to_ptr(srcu_ctlp, (idx & 0x8) >> 3));
+ 	else if ((reader_flavor & SRCU_READ_FLAVOR_NORMAL) ||
+ 		 !(reader_flavor & SRCU_READ_FLAVOR_ALL))
+@@ -901,14 +911,16 @@ static struct rcu_torture_ops srcu_ops = {
+ 	.no_pi_lock	= IS_ENABLED(CONFIG_TINY_SRCU),
+ 	.debug_objects	= 1,
+ 	.have_up_down	= IS_ENABLED(CONFIG_TINY_SRCU)
+-				? 0 : SRCU_READ_FLAVOR_NORMAL | SRCU_READ_FLAVOR_FAST,
++				? 0 : SRCU_READ_FLAVOR_NORMAL | SRCU_READ_FLAVOR_FAST_UPDOWN,
+ 	.name		= "srcu"
+ };
+ 
+ static void srcud_torture_init(void)
+ {
+ 	rcu_sync_torture_init();
+-	if (reader_flavor & SRCU_READ_FLAVOR_FAST)
++	if (reader_flavor & SRCU_READ_FLAVOR_FAST_UPDOWN)
++		WARN_ON(init_srcu_struct_fast(&srcu_ctld));
++	else if (reader_flavor & SRCU_READ_FLAVOR_FAST)
+ 		WARN_ON(init_srcu_struct_fast(&srcu_ctld));
+ 	else
+ 		WARN_ON(init_srcu_struct(&srcu_ctld));
+@@ -953,7 +965,7 @@ static struct rcu_torture_ops srcud_ops = {
+ 	.no_pi_lock	= IS_ENABLED(CONFIG_TINY_SRCU),
+ 	.debug_objects	= 1,
+ 	.have_up_down	= IS_ENABLED(CONFIG_TINY_SRCU)
+-				? 0 : SRCU_READ_FLAVOR_NORMAL | SRCU_READ_FLAVOR_FAST,
++				? 0 : SRCU_READ_FLAVOR_NORMAL | SRCU_READ_FLAVOR_FAST_UPDOWN,
+ 	.name		= "srcud"
+ };
+ 
+-- 
+2.40.1
 
-1.	Permit Tiny SRCU srcu_read_unlock() with interrupts disabled.
-
-2.	Create an srcu_expedite_current() function.
-
-3.	Test srcu_expedite_current().
-
-4.	Create a DEFINE_SRCU_FAST().
-
-5.	Make grace-period determination use ssp->srcu_reader_flavor.
-
-6.	Exercise DEFINE_STATIC_SRCU_FAST() and init_srcu_struct_fast().
-
-7.	Require special srcu_struct define/init for SRCU-fast readers.
-
-8.	Make SRCU-fast readers enforce use of SRCU-fast definition/init.
-
-9.	Update for SRCU-fast definitions and initialization.
-
-10.	Guard __DECLARE_TRACE() use of __DO_TRACE_CALL() with SRCU-fast.
-
-11.	Mark diagnostic functions as notrace.
-
-12.	Permit kvm-again.sh to re-use the build directory.
-
-13.	Add SRCU_READ_FLAVOR_FAST_UPDOWN CPP macro.
-
-14.	Permit negative kvm.sh --kconfig numberic arguments.
-
-15.	Create an SRCU-fast-updown API.
-
-16.	Test SRCU-fast separately from SRCU-fast-updown.
-
-17.	Optimize SRCU-fast-updown for arm64.
-
-18.	Make srcu{,d}_torture_init() announce the SRCU type.
-
-19.	Remove redundant rcutorture_one_extend() from
-	rcu_torture_one_read().
-
-Many of these patches were previously associated with another series
-that re-implemented RCU tasks trace in terms of SRCU-fast.  This work
-is being deferred pending resolution of the ARM LSE situation on the one
-hand or full debugging of the all-too-clever workaround optimization on
-the other.  ;-)
-
-https://lore.kernel.org/all/7fa58961-2dce-4e08-8174-1d1cc592210f@paulmck-laptop/
-
-						Thanx, Paul
-
-------------------------------------------------------------------------
-
- b/Documentation/RCU/Design/Requirements/Requirements.rst |   33 +--
- b/Documentation/RCU/checklist.rst                        |   12 -
- b/Documentation/RCU/whatisRCU.rst                        |    3 
- b/include/linux/notifier.h                               |    2 
- b/include/linux/srcu.h                                   |   16 +
- b/include/linux/srcutiny.h                               |    1 
- b/include/linux/srcutree.h                               |    8 
- b/include/linux/tracepoint.h                             |   45 ++--
- b/include/trace/perf.h                                   |    4 
- b/include/trace/trace_events.h                           |    4 
- b/kernel/rcu/rcutorture.c                                |   12 +
- b/kernel/rcu/srcutiny.c                                  |   13 -
- b/kernel/rcu/srcutree.c                                  |   58 +++++
- b/kernel/rcu/tree.c                                      |    2 
- b/kernel/rcu/update.c                                    |    8 
- b/kernel/tracepoint.c                                    |   21 +-
- b/tools/testing/selftests/rcutorture/bin/kvm-again.sh    |   56 +++--
- b/tools/testing/selftests/rcutorture/bin/kvm.sh          |    2 
- include/linux/srcu.h                                     |  133 ++++++++++--
- include/linux/srcutiny.h                                 |   30 ++
- include/linux/srcutree.h                                 |  157 +++++++++++----
- kernel/rcu/rcutorture.c                                  |   93 ++++++--
- kernel/rcu/srcutree.c                                    |   78 ++++++-
- 23 files changed, 624 insertions(+), 167 deletions(-)
 
