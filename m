@@ -1,96 +1,96 @@
-Return-Path: <linux-kernel+bounces-881926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2FBBC29400
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 18:33:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4E94C2940D
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 18:38:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E21F94E7756
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 17:33:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AF9B3ACF89
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 17:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0CE02DF150;
-	Sun,  2 Nov 2025 17:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PDkY6Tm1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA0722DF132;
+	Sun,  2 Nov 2025 17:38:04 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33EA32DCBF4;
-	Sun,  2 Nov 2025 17:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37272DE200
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 17:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762104812; cv=none; b=Xn46mRLhnFXSO7OxvLSQ+rAzqPpcNjzx/KLQv6PBtj7wYYuGGiItFGAXiExxfP0ExZIqulgJgjjNJv22Ztj3bgZJ1OfRjx1MOn7f/RyNCwuhfKlA7Jzqoj/9useis24sYnwEae1jZ2i+hZ1DQWZs7uiO8RNIE/IMIdTWOBEi6/I=
+	t=1762105084; cv=none; b=mgnvHNx7JQ7/3tHtrgIVSz8Er9gnDhKJfs2XXSjzQaLOAWh8oHLxDmrNF10jJmvK5iRDXKEl87X3EmnwKZc4gyXalFReTBCCvfsK8jnV3aWKz4Y700H7Si7MJKaLTbQ3cwlpFVvnVZ6akEYd7UL9utL6XeYfagehdiP6+5KbY80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762104812; c=relaxed/simple;
-	bh=rNZEtonEvsnwG9knkIy44hyOEBhCUx41mMf+yHH/MxM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qwi162Y0oMYbevbHrapsik2xGRamjj05ZOw9aWm8Kb7Cs15Y55Ns3eLtY3kP3usiwgNYPBdHXST2YQaSmYhYZjqaZhOnpRI71eagmehQ6n8stVCg9OBoddGINH7bnkYhcs5O9HdnKldiM+ND383qVr6QmGSf4PmkjpaiDDtIpcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PDkY6Tm1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91496C4CEF7;
-	Sun,  2 Nov 2025 17:33:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762104811;
-	bh=rNZEtonEvsnwG9knkIy44hyOEBhCUx41mMf+yHH/MxM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PDkY6Tm1Q6aSFi2vy/wLX6Q7v1bsKgjjxwe8mnBOdm6ItooU5NdPjDJIix2hcMBMI
-	 ZtqjmWicOZiZTb/iYS7NUBv0povn3FLfn29dDpiq2aPknvQoHRhzfGFgpJ2d7U3E6X
-	 kWQd7w4zW8zVNzblgxDmFubZwoUEsimyyU79oNBrY+494+CO7jx0VQNlEo9iTEvdh3
-	 CcsgmDGjeQz8oiCJq021Mjuitg4q/zM+SuO80vA/PgHsstiluTc8aIYll0XJvghmwc
-	 gRs8ZCmsf5OR3a9SWQfJuCfuRY04GXyNhaZq6vBgugwnbisnfY+RGUM5/+5KQBNyBe
-	 6Ap0sg6cyT0gA==
-Date: Sun, 2 Nov 2025 11:36:56 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Fenglin Wu <quic_fenglinw@quicinc.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Linus Walleij <linus.walleij@linaro.org>, ~postmarketos/upstreaming@lists.sr.ht, 
-	phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-leds@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] dt-bindings: mfd: qcom-spmi-pmic: Document PM7550
- PMIC
-Message-ID: <mvqkwezj7nbcvmlhamgukbr5ofddyoyvsbfy2kywylojaqgijz@7uqxm7ajicdd>
-References: <20251023-sm7635-pmxr2230-v3-0-f70466c030fe@fairphone.com>
- <20251023-sm7635-pmxr2230-v3-2-f70466c030fe@fairphone.com>
+	s=arc-20240116; t=1762105084; c=relaxed/simple;
+	bh=o0FIdqFREk++l3J1v2J3tW9h4pt95Mr7/7IG2Ece5Aw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=g7G4pRLgJkIY3oKTRvx00gZwRJXlRHI9b23b/PM+OzI56CvfQuVL/e9fRwX0P6iPAbrGcx+wkQyDpjDDt/klhMKSJoaoSNqMGaiDSvj9YHv8jo+aMSKSkFjUyJsJW/1eJ7lTnOA55eWpyAYhWGrS/1GzVi15vveWTK618vBMvsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-43327c30cb1so6854285ab.2
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 09:38:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762105082; x=1762709882;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=r/wAEv9GIPrwh1+x/pr00cLookNh43MVdSe1H945Cxs=;
+        b=IJNxUyLj0CLL7xukRgd47/WQsWwx3fN9J3iFqnmM4/ZtMZOsu7Q3i0SmuUC+ZaJY+t
+         suLOGguvUB6bIjee5+KgR6vw9ovurLuw22LPxA+CwBukjwB8C9Usf7a9OSxdyw8JZT/6
+         GGMnyu+pteFPa0JdkeVI0iRlmCGLt5HpZNSI+dvDRApLn0eHHGZwBQ9tYgm9BsVC49cD
+         +76HQ7vcRrFnDmbxDFCYbvfibZg48ei9NXDOgQMKk9U5CJCb3/agb79IRCeL1puxd+0k
+         LzjNWmDjeRx/GyXy3qILYGejPyn6rI8/DJ/IL3ex4Vr1Dr0FiaT4/kIssTpAdwHeJVnn
+         sh4w==
+X-Forwarded-Encrypted: i=1; AJvYcCWYForBlnbbh5L2S1hai53KAFTHS7ndGbE4s2m8zo6Fn2aHmVv/goFHQQQr6HKM0EgMCUX2v88oNdVh/Fg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmZ8K0pajuH0CdK3EX8AJv7KFlWzrydMXhFLpy3ffjQZETY+l8
+	xnlddT1D8tngFYgS4TP2dT0+GUasn5PU8zM8qT/InPM/y6hrGOBTDn4cKhpL5YEpj92UYuegAtC
+	UYIBJsk3o0TaPepPk7zlxmcpvfccrrF0EQOcbXP8O0nBfCR2uZWuhtlfo/lM=
+X-Google-Smtp-Source: AGHT+IG1zgigFckBfcGNeJaiPbJX6Gh9TmGX80g1LSF0Ct9iysgCECfpHX/faSxFEexyhP9Nc8O6trkMpNHWl4XussCMo5cabh/D
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251023-sm7635-pmxr2230-v3-2-f70466c030fe@fairphone.com>
+X-Received: by 2002:a05:6e02:3e8c:b0:430:ab63:69d6 with SMTP id
+ e9e14a558f8ab-4330d1c9e60mr128484625ab.21.1762105082195; Sun, 02 Nov 2025
+ 09:38:02 -0800 (PST)
+Date: Sun, 02 Nov 2025 09:38:02 -0800
+In-Reply-To: <67b454d4.050a0220.173698.0051.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690796fa.a70a0220.37351b.000b.GAE@google.com>
+Subject: Re: [syzbot] [kernfs?] [netfs?] INFO: task hung in pipe_write (6)
+From: syzbot <syzbot+5984e31a805252b3b40a@syzkaller.appspotmail.com>
+To: asmadeus@codewreck.org, brauner@kernel.org, ceph-devel@vger.kernel.org, 
+	dhowells@redhat.com, gregkh@linuxfoundation.org, idryomov@gmail.com, 
+	jack@suse.cz, jlayton@kernel.org, kprateek.nayak@amd.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com, 
+	mhiramat@kernel.org, netfs@lists.linux.dev, oleg@redhat.com, 
+	rostedt@goodmis.org, syzkaller-bugs@googlegroups.com, tj@kernel.org, 
+	viro@zeniv.linux.org.uk, xiubli@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 23, 2025 at 01:32:26PM +0200, Luca Weiss wrote:
-> Document the compatible string for the PM7550 PMIC.
-> 
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+syzbot suspects this issue was fixed by commit:
 
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+commit e8fe3f07a357c39d429e02ca34f740692d88967a
+Author: Oleg Nesterov <oleg@redhat.com>
+Date:   Tue Aug 19 16:10:13 2025 +0000
 
-> ---
->  Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml b/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml
-> index 078a6886f8b1..d0c54ed6df38 100644
-> --- a/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml
-> @@ -43,6 +43,7 @@ properties:
->            - qcom,pm7250b
->            - qcom,pm7550ba
->            - qcom,pm7325
-> +          - qcom,pm7550
->            - qcom,pm8004
->            - qcom,pm8005
->            - qcom,pm8009
-> 
-> -- 
-> 2.51.1
-> 
+    9p/trans_fd: p9_fd_request: kick rx thread if EPOLLIN
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=154ba342580000
+start commit:   ad1b832bf1cf Merge tag 'devicetree-fixes-for-6.14-1' of gi..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e55cabe422b4fcaf
+dashboard link: https://syzkaller.appspot.com/bug?extid=5984e31a805252b3b40a
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=170d57df980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12df35a4580000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: 9p/trans_fd: p9_fd_request: kick rx thread if EPOLLIN
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
