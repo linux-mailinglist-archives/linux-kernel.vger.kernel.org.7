@@ -1,388 +1,314 @@
-Return-Path: <linux-kernel+bounces-881938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18AC9C2944E
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 18:54:06 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D0FEC2945D
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 18:55:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 976D23A71AC
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 17:54:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4D4CF4E60EE
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 17:55:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E83221B1BC;
-	Sun,  2 Nov 2025 17:53:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F51821B191;
+	Sun,  2 Nov 2025 17:55:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EmUXQoX6"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h6NLlThM"
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D075128819
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 17:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B438A128819
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 17:55:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762106038; cv=none; b=pd5t88XOIjVHncGFzeIXzAC/g0ROcN+n5j06Cxn99ZB9PNhlTZbXaiRPf/b3RQpwaSfY8lwM6Y5BG6NPG5IWj9DeKg1zG3Jp18gKTP77MExZkbQzXd01nzx147fuyHPRWB1EzfIxE32fsHcq44DwmqmVr//MDlaB/fyeHfCOgOg=
+	t=1762106147; cv=none; b=b3DPgKbp267hDP2ryq1AfzvoQibHh5evSFIglAKR2msNxtAP9VMQ9Uef+rrvAEU0FuhYR/y+AW7NtxpiwpcMQQ9RFEV7GX61uAaQABLc3036/djuz1JUIoHNJE+2kNEqjYeHTGQ3QZX7zVmYXnlLUF6HWuIebcEE4Hb6RZh4UqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762106038; c=relaxed/simple;
-	bh=hSN9QeULJIG/N1VKpn8Fge1G8WgCsbC/Si6SdehOt0U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fPCtKnfMl5US1z9faKdj2fVq0njHPa8HlMQqPDVl5jYTGcLmsV9I7Shp2RfcTzLXLfzUgAs8VkXpaLzO+8Y6gFHoThK6nY/VDCHxS2ibfnukG0swx5nRkmrrFfJxm1zTOodf2sHks8qCVU5jY2bvOdB0BMWMB4WHEese/8BL368=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EmUXQoX6; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1762106147; c=relaxed/simple;
+	bh=eIjHrFzjlZWQYgWzqHxuokeCzTlN4VmnXV09NgGsz4U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qkbCWhsZ+mF7uJn9nXkjkXHvgbSf9MCkCvrccJcU8hidsWmmZ7EYkXZhAjcTwSQeQ51eLiMyjB/oEoQwphQuDCHfkTsQz0pkoKXfZf2ii2zfXqFqZmuMyNlmtEQN9BtigKhXAPWNKWoAaUwmLLR8q9W7NKRR2q09kv3kntgDTL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h6NLlThM; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b98983bae80so461186a12.0
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 09:53:56 -0800 (PST)
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-7866aca9ff4so6290377b3.3
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 09:55:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762106035; x=1762710835; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=IfJHdPhbP2WBePsO4xmIC0qOMXrninjFm/OpgG5WwJU=;
-        b=EmUXQoX6O+yDNVHL5pxmkx1RN+Ug2id95F2K3JDbV1q9hOm5+wgODbuncwWUQ4lVQy
-         j+3Ni3MYpKBxlihK22tyUgVy7OBTm1SvGbIXXEGYUyAxJWMQvMqZZQRCfoBolUSsq03H
-         Eq5+m6cbog2jqknYOKo5AYIaqnxo9p6ZYMvxGwpdSAtAViqaHJo0C0Zwss3TssLuIjZb
-         ixCQp/KPiPKZBfg4Kzp6+eb/2zXcUYVjYpM7lkgIcEZ4J6Uz2WJl5m8vLLNAmt8m3eiG
-         +RdjcERSqC7RgTKqxc8CO27GBreiriLfUy7PiiVLvRWFHRqMXrin7p9zsDoYgtizorJF
-         enWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762106035; x=1762710835;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1762106145; x=1762710945; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IfJHdPhbP2WBePsO4xmIC0qOMXrninjFm/OpgG5WwJU=;
-        b=OSPyCB3VlfysPXugTrOeJk9BzUvRl9HY4RSgpeAsvSfgqUboKggGNT8a0cR8KDcOL3
-         T9Vkl48CmjgVvSfdAfus9rMTwEySki6PURz1Jge473UbL616ShU6J6dUdZkB/t8YI4Ik
-         YkeNgtQkZUrMhwII3PzD8rCq4sjjgq0gb87vFRqpfSFLeWOJozAQSCDzqoY7jOO7G4jg
-         FMLtvuc15BJqoSbtS5f3ZbsQOdpgU3WD8NmjFKhXwxikYPVyPfDMTej3K5yLBkPYpHOp
-         VqssrZ8PodxPDlkklVaiGlK1GzdzW106C+kAYxOVtkUbwlxuSIFAop02TarALhEfejDp
-         IJ8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUbo4W00zUwybjg5lfxOHDNU3sdcHcJh3A95IVMXX9exxYQV6OF5un3oVuvje3NI8bFErUMQvmJbUJ2spo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzozRxKFJaNYD7NM7sit70KVuxOEToYu4TgnmiGc/bvLZ28lZip
-	dXRknJcR9QJtg+mr7WVgXHX/OBKqbPwMgc4fSR/xH+MGdzBPFUj1Rkwa
-X-Gm-Gg: ASbGnctpG84tV3/pAO4cWRcHvDnjO0xvEW/PFpGwWBWNAlGK1kseP0nFaQdBvMg6NTK
-	08tffwdUiJHqiNKs1KwjQbs8AfYnJVt23mKeojtOexhll0wkWB0z6BaPSVxglaMPXS5eQEWyoBl
-	c/4nhFfdgS+bzPIB1AV2lRcX7nXy5adTjfOOAPQywOYb7HNLS9SiK0Gjt5t4k61J+fr8y/9TS0B
-	NnEW4qdIj07TL730KVrxAnfTrST6m5u050YIqSlHikRi970RVC3AYpclKXn0SyqlunmwBvgetPO
-	0MEWYwa4hcGpMB5orm9AtZrwuhwLr9f79adWlpRavvzAzQjWXu5BVccEZlRNu2iT/e7BweX10O8
-	PFhEgdK7CE7YGN7JDlKJ4RqW6Sq0R+R2IohnLAoRqZOyghlDX7A3a45fCGHAOfxXl75Xj6N+0tR
-	1wHNU/8RIWpgKTMQ5CsumMNKGPJI23X6MSeIoclcz2rYWUkrON
-X-Google-Smtp-Source: AGHT+IHrl5E2v6vxaiMK0TNW1XHgxAV/kXko677RL/q1623vUdR+CHe0Ccw+8EDMlnT1Ejo4ZMUkBw==
-X-Received: by 2002:a17:902:f60c:b0:295:9cb5:ae07 with SMTP id d9443c01a7336-2959cb5b093mr24104155ad.38.1762106035488;
-        Sun, 02 Nov 2025 09:53:55 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2953e6835a3sm75036735ad.28.2025.11.02.09.53.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 02 Nov 2025 09:53:55 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <77129f40-2da6-4463-b06f-4c6d38135fed@roeck-us.net>
-Date: Sun, 2 Nov 2025 09:53:53 -0800
+        bh=COrNcrGnqRmVYJypFzHWli2n6WfayONN+cM0WGt3gX4=;
+        b=h6NLlThMGWvWzmDNngZtksv+umXRYBEWw0Me9T6hzr+o/1E/68x7Ij0Zl/Pj9fwdME
+         ELhk+3IZo9DmJ4qQOTEwLPsMgwneggfc6cysiUktmBnCtSKUfiUzvEEKoqTkclF/aV8E
+         XXGmFxRrtMctKQBYdBen/d1MryUmlcato3YuBVEXM5NErBuHxO6Ns+LM2b4M+s5eK3/b
+         C29meQPJKW+9PtS7NJM7cCNXA33/cMi+NzGTz2bJB0A5Y+pYm7HmmGngivIzJQouME6D
+         CpXVSONEJjFggUyA93TS4XoT6DhD2iKPyyFna03cphpIlcV+91PpFKa/BQoQzrm+LZuF
+         4wBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762106145; x=1762710945;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=COrNcrGnqRmVYJypFzHWli2n6WfayONN+cM0WGt3gX4=;
+        b=nQgMEuehiFHzr6IpVvAC6enM1yf7CEx2vXPcVJxe5FW0Ot+U0NGnpwXeN78AXM8U0C
+         lAmiJ1QUJG+gIE2StxIQV6jPKs9841eIfg0XaHE80RpDM2W8RVg2QktpJMIylwOZcVS0
+         NJ/AnqS1wTS2KZoRayJs/TF/XKspCQWI1TFUVmPbB3Gen8lG0gBqydxvgB3dvGISTyMT
+         Xkp9538KewxZUHGnoBk4FhESDYeVINv2LUD3LrmEnpSJYU3/mdxHPWiJ7ioknXo4jFmp
+         BaxX4oR5lzjQTJR5HiIPGITxKGqx1QBX+wKJE89k4CJtMTBBwSrrkOAEVtmpLLD8Wsl/
+         Hk3w==
+X-Forwarded-Encrypted: i=1; AJvYcCWIda2GqDCZPT5AsKB4mAQJx9eCR/ejUouzDjUhqN9FsmD8ih223SCH4kKE7ZMSZHtw0xG7+fejSHCruEI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2YxDH64p/hznMDQMFXkEvaYGFYEcgzUtYIw82kknQb4xqEFXD
+	QlrOUqEEVgClIMiDmZkC/FTg/d5V0/J1ndUW0PRqIAoTgiwI5npo9jwrERobUSiKLqPUWFL3SPy
+	/Hif0Fv46RzsrWVISuKa/eQvcetQYYJU=
+X-Gm-Gg: ASbGncvvfJurT2oOCDXV2kjIOZn7QLXBM7s+kEbyVxSg4z8p1mr/FjmWchFEkVNSpes
+	LzzvjWvn2MOolLGFRJNCpz6ybe0lXpEI0MmSkDcjZn/lrI2IKke0nNPB44HNjQC5h3026ALhaiC
+	sjPYxRdrnuiCf1S61kLQM2nlR8Pd8zk5tLHtZ3PEiWY5qL60qeHr3t71S1HvBAy4jAXxZrmMz1L
+	b6VV8iMuHbQigCW6HloAqikC92i1W+SF5dgmcX7KFj5uvFcGzo8q7Qwar9hGNBy4pHoqs0Ym6bW
+	FPlDu6frEYIDqyzoVw==
+X-Google-Smtp-Source: AGHT+IHwOoTLpyzH/g3E/JzA7phD7BGeV6UpgA7q5eX+Y0LqpTITLujui7fYoTqTi21cWBOv2eaSPrNTGdO3xpZZc9g=
+X-Received: by 2002:a05:690c:4d8a:b0:786:7797:6d90 with SMTP id
+ 00721157ae682-78677977fcfmr14963877b3.15.1762106144618; Sun, 02 Nov 2025
+ 09:55:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [char-misc-next] mei: hook mei_device on class device
-To: "Usyskin, Alexander" <alexander.usyskin@intel.com>
-Cc: =?UTF-8?Q?Marek_Marczykowski-G=C3=B3recki?=
- <marmarek@invisiblethingslab.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Abliyev, Reuven" <reuven.abliyev@intel.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20250826125617.1166546-1-alexander.usyskin@intel.com>
- <8deef7c4-ac75-4db8-91b7-02cf0e39e371@roeck-us.net>
- <CY5PR11MB6366B9836B306AD2A72BDDFEEDC6A@CY5PR11MB6366.namprd11.prod.outlook.com>
- <CABXOdTfOfrjP40DhZaqcXXUs0PbEZwv=qcZu=k=TwaRgMhFS_g@mail.gmail.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <CABXOdTfOfrjP40DhZaqcXXUs0PbEZwv=qcZu=k=TwaRgMhFS_g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250908-ifpc-support-v2-0-631b1080bf91@oss.qualcomm.com>
+ <20250908-ifpc-support-v2-15-631b1080bf91@oss.qualcomm.com>
+ <CAPaKu7TQ3tkQREG8xphW_L5eQPLuQhA=oKjfmYVJDR7PsNBXQg@mail.gmail.com>
+ <CACSVV02B8BzvznzOoMw0EgOXEY39syWdyfzTcqWB0qsYjf42hQ@mail.gmail.com> <1d6a50c3-eb1d-46a9-922c-e57e6e83779d@oss.qualcomm.com>
+In-Reply-To: <1d6a50c3-eb1d-46a9-922c-e57e6e83779d@oss.qualcomm.com>
+From: Chia-I Wu <olvaffe@gmail.com>
+Date: Sun, 2 Nov 2025 09:55:33 -0800
+X-Gm-Features: AWmQ_blh6__PmMaN0IO5NFLoRXaEv17c5FLIGT9OWNmNqb_llsX2WSXZEKBZN_A
+Message-ID: <CAPaKu7QvBZmx0b8SDBY1H3u-Em+0py0BrGkmrfGUXkx1uQrg3A@mail.gmail.com>
+Subject: Re: [PATCH v2 15/16] drm/msm/a6xx: Enable IFPC on Adreno X1-85
+To: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+Cc: rob.clark@oss.qualcomm.com, Sean Paul <sean@poorly.run>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>, 
+	Abhinav Kumar <abhinav.kumar@linux.dev>, Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Antonino Maniscalco <antomani103@gmail.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/2/25 07:37, Guenter Roeck wrote:
-> On Sun, Nov 2, 2025 at 7:00 AM Usyskin, Alexander <linux@roeck-us.net> wrote:
+On Sat, Nov 1, 2025 at 12:52=E2=80=AFPM Akhil P Oommen <akhilpo@oss.qualcom=
+m.com> wrote:
+>
+> On 11/1/2025 6:27 PM, Rob Clark wrote:
+> > On Fri, Oct 31, 2025 at 4:43=E2=80=AFPM Chia-I Wu <olvaffe@gmail.com> w=
+rote:
+> >>
+> >> On Mon, Sep 8, 2025 at 1:28=E2=80=AFAM Akhil P Oommen <akhilpo@oss.qua=
+lcomm.com> wrote:
+> >>>
+> >>> Add the IFPC restore register list and enable IFPC support on Adreno
+> >>> X1-85 gpu.
+> >>>
+> >>> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+> >>> ---
+> >>>  drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 68 +++++++++++++++++++++=
++++++++++-
+> >>>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 15 +++++--
+> >>>  drivers/gpu/drm/msm/adreno/a6xx_gpu.h     |  1 +
+> >>>  3 files changed, 79 insertions(+), 5 deletions(-)
+> >>>
+> >>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/=
+drm/msm/adreno/a6xx_catalog.c
+> >>> index 00e1afd46b81546eec03e22cda9e9a604f6f3b60..547c046730a9b50a82cc9=
+b27f08a5b1eeb08dced 100644
+> >>> --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+> >>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+> >>> @@ -1343,6 +1343,69 @@ static const uint32_t a7xx_pwrup_reglist_regs[=
+] =3D {
+> >>>
+> >>>  DECLARE_ADRENO_REGLIST_LIST(a7xx_pwrup_reglist);
+> >>>
+> >>> +/* Applicable for X185, A750 */
+> >>> +static const u32 a750_ifpc_reglist_regs[] =3D {
+> >>> +       REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_0,
+> >>> +       REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_1,
+> >>> +       REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_2,
+> >>> +       REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_3,
+> >>> +       REG_A6XX_TPL1_BICUBIC_WEIGHTS_TABLE_4,
+> >>> +       REG_A6XX_TPL1_NC_MODE_CNTL,
+> >>> +       REG_A6XX_SP_NC_MODE_CNTL,
+> >>> +       REG_A6XX_CP_DBG_ECO_CNTL,
+> >>> +       REG_A6XX_CP_PROTECT_CNTL,
+> >>> +       REG_A6XX_CP_PROTECT(0),
+> >>> +       REG_A6XX_CP_PROTECT(1),
+> >>> +       REG_A6XX_CP_PROTECT(2),
+> >>> +       REG_A6XX_CP_PROTECT(3),
+> >>> +       REG_A6XX_CP_PROTECT(4),
+> >>> +       REG_A6XX_CP_PROTECT(5),
+> >>> +       REG_A6XX_CP_PROTECT(6),
+> >>> +       REG_A6XX_CP_PROTECT(7),
+> >>> +       REG_A6XX_CP_PROTECT(8),
+> >>> +       REG_A6XX_CP_PROTECT(9),
+> >>> +       REG_A6XX_CP_PROTECT(10),
+> >>> +       REG_A6XX_CP_PROTECT(11),
+> >>> +       REG_A6XX_CP_PROTECT(12),
+> >>> +       REG_A6XX_CP_PROTECT(13),
+> >>> +       REG_A6XX_CP_PROTECT(14),
+> >>> +       REG_A6XX_CP_PROTECT(15),
+> >>> +       REG_A6XX_CP_PROTECT(16),
+> >>> +       REG_A6XX_CP_PROTECT(17),
+> >>> +       REG_A6XX_CP_PROTECT(18),
+> >>> +       REG_A6XX_CP_PROTECT(19),
+> >>> +       REG_A6XX_CP_PROTECT(20),
+> >>> +       REG_A6XX_CP_PROTECT(21),
+> >>> +       REG_A6XX_CP_PROTECT(22),
+> >>> +       REG_A6XX_CP_PROTECT(23),
+> >>> +       REG_A6XX_CP_PROTECT(24),
+> >>> +       REG_A6XX_CP_PROTECT(25),
+> >>> +       REG_A6XX_CP_PROTECT(26),
+> >>> +       REG_A6XX_CP_PROTECT(27),
+> >>> +       REG_A6XX_CP_PROTECT(28),
+> >>> +       REG_A6XX_CP_PROTECT(29),
+> >>> +       REG_A6XX_CP_PROTECT(30),
+> >>> +       REG_A6XX_CP_PROTECT(31),
+> >>> +       REG_A6XX_CP_PROTECT(32),
+> >>> +       REG_A6XX_CP_PROTECT(33),
+> >>> +       REG_A6XX_CP_PROTECT(34),
+> >>> +       REG_A6XX_CP_PROTECT(35),
+> >>> +       REG_A6XX_CP_PROTECT(36),
+> >>> +       REG_A6XX_CP_PROTECT(37),
+> >>> +       REG_A6XX_CP_PROTECT(38),
+> >>> +       REG_A6XX_CP_PROTECT(39),
+> >>> +       REG_A6XX_CP_PROTECT(40),
+> >>> +       REG_A6XX_CP_PROTECT(41),
+> >>> +       REG_A6XX_CP_PROTECT(42),
+> >>> +       REG_A6XX_CP_PROTECT(43),
+> >>> +       REG_A6XX_CP_PROTECT(44),
+> >>> +       REG_A6XX_CP_PROTECT(45),
+> >>> +       REG_A6XX_CP_PROTECT(46),
+> >>> +       REG_A6XX_CP_PROTECT(47),
+> >>> +};
+> >>> +
+> >>> +DECLARE_ADRENO_REGLIST_LIST(a750_ifpc_reglist);
+> >>> +
+> >>>  static const struct adreno_info a7xx_gpus[] =3D {
+> >>>         {
+> >>>                 .chip_ids =3D ADRENO_CHIP_IDS(0x07000200),
+> >>> @@ -1432,12 +1495,14 @@ static const struct adreno_info a7xx_gpus[] =
+=3D {
+> >>>                 .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
+> >>>                 .quirks =3D ADRENO_QUIRK_HAS_CACHED_COHERENT |
+> >>>                           ADRENO_QUIRK_HAS_HW_APRIV |
+> >>> -                         ADRENO_QUIRK_PREEMPTION,
+> >>> +                         ADRENO_QUIRK_PREEMPTION |
+> >>> +                         ADRENO_QUIRK_IFPC,
+> >>>                 .init =3D a6xx_gpu_init,
+> >>>                 .a6xx =3D &(const struct a6xx_info) {
+> >>>                         .hwcg =3D a740_hwcg,
+> >>>                         .protect =3D &a730_protect,
+> >>>                         .pwrup_reglist =3D &a7xx_pwrup_reglist,
+> >>> +                       .ifpc_reglist =3D &a750_ifpc_reglist,
+> >>>                         .gmu_chipid =3D 0x7050001,
+> >>>                         .gmu_cgc_mode =3D 0x00020202,
+> >>>                 },
+> >>> @@ -1466,6 +1531,7 @@ static const struct adreno_info a7xx_gpus[] =3D=
+ {
+> >>>                 .a6xx =3D &(const struct a6xx_info) {
+> >>>                         .protect =3D &a730_protect,
+> >>>                         .pwrup_reglist =3D &a7xx_pwrup_reglist,
+> >>> +                       .ifpc_reglist =3D &a750_ifpc_reglist,
+> >>>                         .gmu_chipid =3D 0x7090100,
+> >>>                         .gmu_cgc_mode =3D 0x00020202,
+> >>>                         .bcms =3D (const struct a6xx_bcm[]) {
+> >>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/=
+msm/adreno/a6xx_gpu.c
+> >>> index 76dd78f5c48ea818a2aa209e0c0c88bc5e8f4e06..91a2a82c4f388ca6b0521=
+72efdd7255165f3c04a 100644
+> >>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> >>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> >>> @@ -828,11 +828,10 @@ static void a7xx_patch_pwrup_reglist(struct msm=
+_gpu *gpu)
+> >>>         u32 *dest =3D (u32 *)&lock->regs[0];
+> >>>         int i;
+> >>>
+> >>> -       reglist =3D adreno_gpu->info->a6xx->pwrup_reglist;
+> >>> -
+> >>>         lock->gpu_req =3D lock->cpu_req =3D lock->turn =3D 0;
+> >>> -       lock->ifpc_list_len =3D 0;
+> >>> -       lock->preemption_list_len =3D reglist->count;
+> >>> +
+> >>> +       reglist =3D adreno_gpu->info->a6xx->ifpc_reglist;
+> >> This is NULL on X1-45 and causes
+> >>
+> >>   [    8.795603] Unable to handle kernel NULL pointer dereference at
+> >> virtual address 0000000000000008
+> >
+> > Hmm, this is probably going to happen on all a7xx which don't have
+> > IFPC from the looks of it.
+> >
+> > We should either check for the IFPC quirk.. or maybe just drop the
+> > quirk and decide whether IFPC is supported based on ifpc_reglist !=3D
+> > NULL?
+> >
+> > (That said, we probably do want to have IFPC enabled for x1-45)
+>
+> We should add a check for IFPC quirk here. Chia, do you plan to send a fi=
+x?
+>
+> To enable IFPC, we can just add a750_ifpc_reglist_regs[] to
+> adreno_gpu->info->a6xx->ifpc_reglist and enable the IFPC quirk.
+Maybe it is easier for you to do the fix? Because I would have several
+little questions (what happens when the reglist and the quirk flag are
+inconsistent? how about preemption reglist?)
 
-That got messed up. Sorry for that. Really sending to Alexander this time.
+I am happy to do the testing.
 
-Guenter
-
-> ...
->>
->> Seems I've missed the error flow in probe (my test machines always have an ME in a good state...).
->>
->> Below patch should fix the problem, can you confirm?
->>
-> Yes, it does. With this patch applied, the log output is:
-> 
-> ...
-> [   16.406790] mtdoops: mtd device (mtddev=name/number) must be supplied
-> [   18.380400] mei mei0: wait hw ready failed
-> [   18.384594] mei mei0: hw_start failed ret = -62 fw status =
-> 00070355 002F0006 00000000 00000000 00000000 00000000
-> [   20.428395] mei mei0: wait hw ready failed
-> [   20.432542] mei mei0: hw_start failed ret = -62 fw status =
-> 00070355 002F0006 00000000 00000000 00000000 00000000
-> [   22.476390] mei mei0: wait hw ready failed
-> [   22.480533] mei mei0: hw_start failed ret = -62 fw status =
-> 00070355 002F0006 00000000 00000000 00000000 00000000
-> [   22.490847] mei mei0: reset: reached maximal consecutive resets:
-> disabling the device
-> [   22.498718] mei mei0: reset failed ret = -19
-> [   22.503012] mei mei0: link layer initialization failed.
-> [   22.508261] mei_me 0000:00:16.0: init hw failure.
-> [   22.513662] mei_me 0000:00:16.0: initialization failed.
-> initramfs(out): Mounting system filesystems for initramfs init.d
-> ...
-> 
-> Official Tested-by: tag below. Note that it is from my Google address
-> since this is where I tested the fix.
-> 
->   Thanks a lot for the quick turnaround!
-> 
-> Guenter
-> 
->>  From c58f311df60f26df2efe1e0f9fc523bfa4b93936 Mon Sep 17 00:00:00 2001
->> From: Alexander Usyskin <alexander.usyskin@intel.com>
->> Date: Sun, 2 Nov 2025 10:57:22 +0200
->> Subject: [PATCH] mei: fix error flow in probe
->> MIME-Version: 1.0
->> Content-Type: text/plain; charset=UTF-8
->> Content-Transfer-Encoding: 8bit
->>
->> Dismantle class device last in probe error flow to avoid accessing freed memory like:
->>
->> [   87.926774] WARNING: CPU: 9 PID: 518 at kernel/workqueue.c:4234
->> __flush_work+0x340/0x390
->> ...
->> [   87.926912] Workqueue: async async_run_entry_fn
->> [   87.926918] RIP: e030:__flush_work+0x340/0x390
->> [   87.926923] Code: 26 9d 05 00 65 48 8b 15 26 3c ca 02 48 85 db 48 8b
->> 04 24 48 89 54 24 58 0f 85 de fe ff ff e9 f6 fd ff ff 0f 0b e9 77 ff ff
->> ff <0f> 0b e9 70 ff ff ff 0f 0b e9 19 ff ff ff e8 7d 8b 0e 01 48 89 de
->> [   87.926931] RSP: e02b:ffffc900412ebc00 EFLAGS: 00010246
->> [   87.926936] RAX: 0000000000000000 RBX: ffff888103e55090 RCX: 0000000000000000
->> [   87.926941] RDX: 000fffffffe00000 RSI: 0000000000000001 RDI: ffffc900412ebc60
->> [   87.926945] RBP: ffff888103e55090 R08: ffffffffc1266ec8 R09: ffff8881109076e8
->> [   87.926949] R10: 0000000080040003 R11: 0000000000000000 R12: ffff888103e54000
->> [   87.926953] R13: ffffc900412ebc18 R14: 0000000000000001 R15: 0000000000000000
->> [   87.926962] FS:  0000000000000000(0000) GS:ffff888233238000(0000) knlGS:0000000000000000
->> [   87.926967] CS:  e030 DS: 0000 ES: 0000 CR0: 0000000080050033
->> [   87.926971] CR2: 00007e7923b32708 CR3: 00000001088df000 CR4: 0000000000050660
->> [   87.926977] Call Trace:
->> [   87.926981]  <TASK>
->> [   87.926987]  ? __call_rcu_common.constprop.0+0x11e/0x310
->> [   87.926993]  cancel_work_sync+0x5e/0x80
->> [   87.926999]  mei_cancel_work+0x19/0x40 [mei]
->> [   87.927051]  mei_me_probe+0x273/0x2b0 [mei_me]
->> [   87.927060]  local_pci_probe+0x45/0x90
->> [   87.927066]  pci_call_probe+0x5b/0x180
->> [   87.927070]  pci_device_probe+0x95/0x140
->> [   87.927074]  ? driver_sysfs_add+0x57/0xc0
->> [   87.927079]  really_probe+0xde/0x340
->> [   87.927083]  ? pm_runtime_barrier+0x54/0x90
->> [   87.927087]  __driver_probe_device+0x78/0x110
->> [   87.927092]  driver_probe_device+0x1f/0xa0
->> [   87.927095]  __driver_attach_async_helper+0x5e/0xe0
->> [   87.927100]  async_run_entry_fn+0x34/0x130
->> [   87.927104]  process_one_work+0x18d/0x340
->> [   87.927108]  worker_thread+0x256/0x3a0
->> [   87.927111]  ? __pfx_worker_thread+0x10/0x10
->> [   87.927115]  kthread+0xfc/0x240
->> [   87.927120]  ? __pfx_kthread+0x10/0x10
->> [   87.927124]  ? __pfx_kthread+0x10/0x10
->> [   87.927127]  ret_from_fork+0xf5/0x110
->> [   87.927132]  ? __pfx_kthread+0x10/0x10
->> [   87.927136]  ret_from_fork_asm+0x1a/0x30
->> [   87.927141]  </TASK>
->>
->> Reported-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
->> Reported-by: Guenter Roeck <linux@roeck-us.net>
->> Fixes: 7704e6be4ed2 ("mei: hook mei_device on class device")
->> Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
-> 
-> Tested-by: Guenter Roeck <groeck@google.com>
-> 
->>
->> ---
->>   drivers/misc/mei/pci-me.c       | 13 ++++++-------
->>   drivers/misc/mei/pci-txe.c      | 13 ++++++-------
->>   drivers/misc/mei/platform-vsc.c | 11 +++++------
->>   3 files changed, 17 insertions(+), 20 deletions(-)
->>
->> diff --git a/drivers/misc/mei/pci-me.c b/drivers/misc/mei/pci-me.c
->> index b017ff29dbd1..73cad914be9f 100644
->> --- a/drivers/misc/mei/pci-me.c
->> +++ b/drivers/misc/mei/pci-me.c
->> @@ -223,6 +223,10 @@ static int mei_me_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->>          hw->mem_addr = pcim_iomap_table(pdev)[0];
->>          hw->read_fws = mei_me_read_fws;
->>
->> +       err = mei_register(dev, &pdev->dev);
->> +       if (err)
->> +               goto end;
->> +
->>          pci_enable_msi(pdev);
->>
->>          hw->irq = pdev->irq;
->> @@ -237,13 +241,9 @@ static int mei_me_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->>          if (err) {
->>                  dev_err(&pdev->dev, "request_threaded_irq failure. irq = %d\n",
->>                         pdev->irq);
->> -               goto end;
->> +               goto deregister;
->>          }
->>
->> -       err = mei_register(dev, &pdev->dev);
->> -       if (err)
->> -               goto release_irq;
->> -
->>          if (mei_start(dev)) {
->>                  dev_err(&pdev->dev, "init hw failure.\n");
->>                  err = -ENODEV;
->> @@ -283,11 +283,10 @@ static int mei_me_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->>          return 0;
->>
->>   deregister:
->> -       mei_deregister(dev);
->> -release_irq:
->>          mei_cancel_work(dev);
->>          mei_disable_interrupts(dev);
->>          free_irq(pdev->irq, dev);
->> +       mei_deregister(dev);
->>   end:
->>          dev_err(&pdev->dev, "initialization failed.\n");
->>          return err;
->> diff --git a/drivers/misc/mei/pci-txe.c b/drivers/misc/mei/pci-txe.c
->> index 06b55a891c6b..98d1bc2c7f4b 100644
->> --- a/drivers/misc/mei/pci-txe.c
->> +++ b/drivers/misc/mei/pci-txe.c
->> @@ -87,6 +87,10 @@ static int mei_txe_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->>          hw = to_txe_hw(dev);
->>          hw->mem_addr = pcim_iomap_table(pdev);
->>
->> +       err = mei_register(dev, &pdev->dev);
->> +       if (err)
->> +               goto end;
->> +
->>          pci_enable_msi(pdev);
->>
->>          /* clear spurious interrupts */
->> @@ -106,13 +110,9 @@ static int mei_txe_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->>          if (err) {
->>                  dev_err(&pdev->dev, "mei: request_threaded_irq failure. irq = %d\n",
->>                          pdev->irq);
->> -               goto end;
->> +               goto deregister;
->>          }
->>
->> -       err = mei_register(dev, &pdev->dev);
->> -       if (err)
->> -               goto release_irq;
->> -
->>          if (mei_start(dev)) {
->>                  dev_err(&pdev->dev, "init hw failure.\n");
->>                  err = -ENODEV;
->> @@ -145,11 +145,10 @@ static int mei_txe_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->>          return 0;
->>
->>   deregister:
->> -       mei_deregister(dev);
->> -release_irq:
->>          mei_cancel_work(dev);
->>          mei_disable_interrupts(dev);
->>          free_irq(pdev->irq, dev);
->> +       mei_deregister(dev);
->>   end:
->>          dev_err(&pdev->dev, "initialization failed.\n");
->>          return err;
->> diff --git a/drivers/misc/mei/platform-vsc.c b/drivers/misc/mei/platform-vsc.c
->> index 288e7b72e942..9787b9cee71c 100644
->> --- a/drivers/misc/mei/platform-vsc.c
->> +++ b/drivers/misc/mei/platform-vsc.c
->> @@ -362,28 +362,27 @@ static int mei_vsc_probe(struct platform_device *pdev)
->>
->>          ret = mei_register(mei_dev, dev);
->>          if (ret)
->> -               goto err_dereg;
->> +               goto err;
->>
->>          ret = mei_start(mei_dev);
->>          if (ret) {
->>                  dev_err_probe(dev, ret, "init hw failed\n");
->> -               goto err_cancel;
->> +               goto err;
->>          }
->>
->>          pm_runtime_enable(mei_dev->parent);
->>
->>          return 0;
->>
->> -err_dereg:
->> -       mei_deregister(mei_dev);
->> -
->> -err_cancel:
->> +err:
->>          mei_cancel_work(mei_dev);
->>
->>          vsc_tp_register_event_cb(tp, NULL, NULL);
->>
->>          mei_disable_interrupts(mei_dev);
->>
->> +       mei_deregister(mei_dev);
->> +
->>          return ret;
->>   }
->>
->> --
->> 2.43.0
->>
->>
->>
->>
-
+>
+> -Akhil.
+>
+> >
+> > BR,
+> > -R
+> >
+> >>> +       lock->ifpc_list_len =3D reglist->count;
+> >>>
+> >>>         /*
+> >>>          * For each entry in each of the lists, write the offset and =
+the current
+> >>> @@ -843,6 +842,14 @@ static void a7xx_patch_pwrup_reglist(struct msm_=
+gpu *gpu)
+> >>>                 *dest++ =3D gpu_read(gpu, reglist->regs[i]);
+> >>>         }
+> >>>
+> >>> +       reglist =3D adreno_gpu->info->a6xx->pwrup_reglist;
+> >>> +       lock->preemption_list_len =3D reglist->count;
+> >>> +
+> >>> +       for (i =3D 0; i < reglist->count; i++) {
+> >>> +               *dest++ =3D reglist->regs[i];
+> >>> +               *dest++ =3D gpu_read(gpu, reglist->regs[i]);
+> >>> +       }
+> >>> +
+> >>>         /*
+> >>>          * The overall register list is composed of
+> >>>          * 1. Static IFPC-only registers
+> >>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h b/drivers/gpu/drm/=
+msm/adreno/a6xx_gpu.h
+> >>> index 124c63c4615930b00c64e488a498163ae35afccd..0b17d36c36a9567e6afa4=
+269ae7783ed3578e40e 100644
+> >>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
+> >>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.h
+> >>> @@ -45,6 +45,7 @@ struct a6xx_info {
+> >>>         const struct adreno_reglist *hwcg;
+> >>>         const struct adreno_protect *protect;
+> >>>         const struct adreno_reglist_list *pwrup_reglist;
+> >>> +       const struct adreno_reglist_list *ifpc_reglist;
+> >>>         u32 gmu_chipid;
+> >>>         u32 gmu_cgc_mode;
+> >>>         u32 prim_fifo_threshold;
+> >>>
+> >>> --
+> >>> 2.50.1
+> >>>
+>
 
