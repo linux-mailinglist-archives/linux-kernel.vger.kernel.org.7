@@ -1,56 +1,59 @@
-Return-Path: <linux-kernel+bounces-882362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85009C2A479
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:19:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 733D5C2A4C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:22:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A405F3AB6F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:19:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CC0A188F5D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:22:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D87029D270;
-	Mon,  3 Nov 2025 07:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8812D594B;
+	Mon,  3 Nov 2025 07:19:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gBa2rhcF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uWSg0cJ3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933BA298CC7;
-	Mon,  3 Nov 2025 07:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EFE72BEFF9;
+	Mon,  3 Nov 2025 07:19:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762154352; cv=none; b=j6Rgryl1+JifpIPqRwxeu/e5D1STbCa1u76mS4/LxeW0IyVrbWYNpEiZFk39JPOOrpaD+XZZBGY36jpAQA8xc3txp3mkc/ywlpJWnY6Nb7zTdonUN9o8IWDqeqZQyKqDclElJyTRKSjGSOk1VvRxYiXwFI9wGhQFsAN0VKl+khI=
+	t=1762154354; cv=none; b=tqtGZI9/Y+17C9RWZqbyOlfgnuRSRL8iNkaEqLqN9S4aS8efEnyWMR0zGNCn5kD5XU9f4LMZru/azRF97D4bmc01OTxmUiWyfroa5Gm/LCLsFinTMezcTBt5He02gy636OdrxCdxlSqJqm3e80ZbAONKAUFqBxRP0TJRN7uapVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762154352; c=relaxed/simple;
-	bh=d+Yn3i1lzgRjb0Q5CeMOtXQwj+BmYuzfNnrAziwjsOA=;
+	s=arc-20240116; t=1762154354; c=relaxed/simple;
+	bh=8ZCRNXXqmbiShzfe05dmFtCIZXEOypE5e1dE70Rypfo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YeFu8O+4AXbBNkShijA4zXlyeyVV/oPuUFKlp3lZpt4bbKvEmbWRQZzk4pphp1drHNH7oIC/zTcmMBpKoc3MToUwXJrk4dkZmBtN3f8a9dwHmOVkAl6y/Uney9gCvPzK/iLKIrpFJsDUb4vvQaRN2CMzfyUCZKEx64zOL7cKcFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gBa2rhcF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36172C4CEFD;
-	Mon,  3 Nov 2025 07:19:12 +0000 (UTC)
+	 MIME-Version; b=SrmVUqewK4ae0LS7nEjq073MUdqDYkpOxWnzeNQFs/PECsUQTd0dqllCMB0uCJ3aRNvqdUYm/dsZVhGlFM1iKkvIG5ERC3jXEaJgFecwR+sNmfu8aTfcBUKMHFFDyYKuheTs+buL6FnCRs2fMKAPUGR62a4+72yp6MWvnYeN10U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uWSg0cJ3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78A66C19423;
+	Mon,  3 Nov 2025 07:19:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762154352;
-	bh=d+Yn3i1lzgRjb0Q5CeMOtXQwj+BmYuzfNnrAziwjsOA=;
+	s=k20201202; t=1762154354;
+	bh=8ZCRNXXqmbiShzfe05dmFtCIZXEOypE5e1dE70Rypfo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gBa2rhcFvKwFNpcXBJrF+Z0Q2utbsvC+ckcki/Fk/XaUl816LJjpLORp38k11FxS4
-	 6cIX8pVEDaEKtrdmEjdRqnipQKoEOkmm6WSsWGHpMJDZyzSqIMZAZif2R3dchUtsYk
-	 vVvyfmGCygm+wcqOq2Pgz5utpUHvatRme9iuSfrzl6GNHe6p1VulqWelhItiMscTZ8
-	 FZfuIitkKXA5uPexsT2eVJ32T6w7tTxSfk+0IW7aXXzZuPSQD2vt3g4z/Q1IJQFOmT
-	 o2hhInf6pvZc5UeSzICOavGUMVqtZhbT0b8Ij+EyHkG4hd8Eo/NuJlsN0E22E5fLW8
-	 f/PYNWZbGb5BA==
+	b=uWSg0cJ31rkYVJyjqhuAnue/g4l4rIK0s8Konh5jLRD36uxNAaFltUbqKR/ocyvNj
+	 u8UV+2QAWAWSbnKTrQrkCyu4LD+3DPPVdnsVB9CToWPEJyg6MOcvieckyqoS88BgMy
+	 1nWfYssSxzanfQRhtW4G/QSIDtPlfbn1W3tToDx0yrZ6//SJuYMTICHXoCu4plIemz
+	 pH7d/8Ls52k3Cw7gVJl1sa0AaJgwO18qXv0RDuW/lYMsHFHRQWtkn13n9qAoOeVRWx
+	 iSnouZb7vALblJe7Txv0uGeCtBuFE4TvReUz1SKKu1HolxAAOdU82xSS5g9YXb0//y
+	 Qw3HJjINaeTqQ==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 019E0CE13CA; Sun,  2 Nov 2025 14:49:50 -0800 (PST)
+	id 04793CE160B; Sun,  2 Nov 2025 14:49:50 -0800 (PST)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
 	rostedt@goodmis.org,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH 7/8] refscale: Do not diable interrupts for tests involving local_bh_enable()
-Date: Sun,  2 Nov 2025 14:49:47 -0800
-Message-Id: <20251102224948.3906224-7-paulmck@kernel.org>
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	bpf@vger.kernel.org
+Subject: [PATCH 8/8] refscale: Add SRCU-fast-updown readers
+Date: Sun,  2 Nov 2025 14:49:48 -0800
+Message-Id: <20251102224948.3906224-8-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <19fae851-0c49-43d2-9bbf-913424641ff4@paulmck-laptop>
 References: <19fae851-0c49-43d2-9bbf-913424641ff4@paulmck-laptop>
@@ -62,69 +65,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Some kernel configurations prohibit invoking local_bh_enable() while
-interrupts are disabled.  However, refscale disables interrupts to reduce
-OS noise during the tests, which results in splats.  This commit therefore
-adds an ->enable_irqs flag to the ref_scale_ops structure, and refrains
-from disabling interrupts when that flag is set.  This flag is set for
-the "bh" and "incpercpubh" scale_type module-parameter values.
+This commit adds refscale readers based on srcu_read_lock_fast_updown()
+and srcu_read_lock_fast_updown() ("refscale.scale_type=srcu-fast-updown").
+On my x86 laptop, these are about 2.2ns per pair.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: <bpf@vger.kernel.org>
 ---
- kernel/rcu/refscale.c | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ kernel/rcu/refscale.c | 40 +++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 39 insertions(+), 1 deletion(-)
 
 diff --git a/kernel/rcu/refscale.c b/kernel/rcu/refscale.c
-index 2b247355de40..7429ec9f0092 100644
+index 7429ec9f0092..07a313782dfd 100644
 --- a/kernel/rcu/refscale.c
 +++ b/kernel/rcu/refscale.c
-@@ -136,6 +136,7 @@ struct ref_scale_ops {
- 	void (*cleanup)(void);
- 	void (*readsection)(const int nloops);
- 	void (*delaysection)(const int nloops, const int udl, const int ndl);
-+	bool enable_irqs;
- 	const char *name;
+@@ -186,6 +186,7 @@ static const struct ref_scale_ops rcu_ops = {
+ // Definitions for SRCU ref scale testing.
+ DEFINE_STATIC_SRCU(srcu_refctl_scale);
+ DEFINE_STATIC_SRCU_FAST(srcu_fast_refctl_scale);
++DEFINE_STATIC_SRCU_FAST_UPDOWN(srcu_fast_updown_refctl_scale);
+ static struct srcu_struct *srcu_ctlp = &srcu_refctl_scale;
+ 
+ static void srcu_ref_scale_read_section(const int nloops)
+@@ -254,6 +255,42 @@ static const struct ref_scale_ops srcu_fast_ops = {
+ 	.name		= "srcu-fast"
  };
  
-@@ -495,6 +496,7 @@ static const struct ref_scale_ops incpercpubh_ops = {
- 	.init		= rcu_sync_scale_init,
- 	.readsection	= ref_incpercpubh_section,
- 	.delaysection	= ref_incpercpubh_delay_section,
-+	.enable_irqs	= true,
- 	.name		= "incpercpubh"
- };
++static bool srcu_fast_updown_sync_scale_init(void)
++{
++	srcu_ctlp = &srcu_fast_updown_refctl_scale;
++	return true;
++}
++
++static void srcu_fast_updown_ref_scale_read_section(const int nloops)
++{
++	int i;
++	struct srcu_ctr __percpu *scp;
++
++	for (i = nloops; i >= 0; i--) {
++		scp = srcu_read_lock_fast_updown(srcu_ctlp);
++		srcu_read_unlock_fast_updown(srcu_ctlp, scp);
++	}
++}
++
++static void srcu_fast_updown_ref_scale_delay_section(const int nloops, const int udl, const int ndl)
++{
++	int i;
++	struct srcu_ctr __percpu *scp;
++
++	for (i = nloops; i >= 0; i--) {
++		scp = srcu_read_lock_fast_updown(srcu_ctlp);
++		un_delay(udl, ndl);
++		srcu_read_unlock_fast_updown(srcu_ctlp, scp);
++	}
++}
++
++static const struct ref_scale_ops srcu_fast_updown_ops = {
++	.init		= srcu_fast_updown_sync_scale_init,
++	.readsection	= srcu_fast_updown_ref_scale_read_section,
++	.delaysection	= srcu_fast_updown_ref_scale_delay_section,
++	.name		= "srcu-fast-updown"
++};
++
+ #ifdef CONFIG_TASKS_RCU
  
-@@ -872,6 +874,7 @@ static void ref_bh_delay_section(const int nloops, const int udl, const int ndl)
- static const struct ref_scale_ops bh_ops = {
- 	.readsection	= ref_bh_section,
- 	.delaysection	= ref_bh_delay_section,
-+	.enable_irqs	= true,
- 	.name		= "bh"
- };
- 
-@@ -1234,15 +1237,18 @@ ref_scale_reader(void *arg)
- 	if (!atomic_dec_return(&n_warmedup))
- 		while (atomic_read_acquire(&n_warmedup))
- 			rcu_scale_one_reader();
--	// Also keep interrupts disabled.  This also has the effect
--	// of preventing entries into slow path for rcu_read_unlock().
--	local_irq_save(flags);
-+	// Also keep interrupts disabled when it is safe to do so, which
-+	// it is not for local_bh_enable().  This also has the effect of
-+	// preventing entries into slow path for rcu_read_unlock().
-+	if (!cur_ops->enable_irqs)
-+		local_irq_save(flags);
- 	start = ktime_get_mono_fast_ns();
- 
- 	rcu_scale_one_reader();
- 
- 	duration = ktime_get_mono_fast_ns() - start;
--	local_irq_restore(flags);
-+	if (!cur_ops->enable_irqs)
-+		local_irq_restore(flags);
- 
- 	rt->last_duration_ns = WARN_ON_ONCE(duration < 0) ? 0 : duration;
- 	// To reduce runtime-skew noise, do maintain-load invocations until
+ // Definitions for RCU Tasks ref scale testing: Empty read markers.
+@@ -1479,7 +1516,8 @@ ref_scale_init(void)
+ 	long i;
+ 	int firsterr = 0;
+ 	static const struct ref_scale_ops *scale_ops[] = {
+-		&rcu_ops, &srcu_ops, &srcu_fast_ops, RCU_TRACE_OPS RCU_TASKS_OPS
++		&rcu_ops, &srcu_ops, &srcu_fast_ops, &srcu_fast_updown_ops,
++		RCU_TRACE_OPS RCU_TASKS_OPS
+ 		&refcnt_ops, &percpuinc_ops, &incpercpu_ops, &incpercpupreempt_ops,
+ 		&incpercpubh_ops, &incpercpuirqsave_ops,
+ 		&rwlock_ops, &rwsem_ops, &lock_ops, &lock_irq_ops, &acqrel_ops,
 -- 
 2.40.1
 
