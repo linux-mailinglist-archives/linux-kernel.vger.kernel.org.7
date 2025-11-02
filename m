@@ -1,193 +1,119 @@
-Return-Path: <linux-kernel+bounces-881792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 231C0C28EEA
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 13:08:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE25DC28EED
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 13:10:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AB863AC1C0
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 12:08:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10661188AA2C
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 12:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 346962609FD;
-	Sun,  2 Nov 2025 12:07:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B2524886A;
+	Sun,  2 Nov 2025 12:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NR1w5gf5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fo2THDm0"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8723134D39C;
-	Sun,  2 Nov 2025 12:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4B034D39C
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 12:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762085273; cv=none; b=M1gGcUqqEymXLUmKUs0F+zurIAMmwh6VDhaBFxXe8S0iQCjuW2u0lffxnsEPE/iK8tzsZCl2YOFmxaI9p6t0BiWc1dWmd4hB59bp/e4JUw87e9GUtrfT/j9ZZ24OQ4Ga7HknXW3OdlkPbXle62CGQDzzGXsLXODY2M/VlUZ3NtA=
+	t=1762085394; cv=none; b=BWinPdswIbKFYPIa7+xTUf100gcZoMNzKAQkooufJQsNqOvN7Yawde2/7RCSPAJCRTygnh93WCG3by3vaxufifHrQwK3gYyJu/ddzP7rGjiEdfJGfdiT7XF4hAkX9vX6rfzdfAzMTdCWwPG8sATZy2gA2hg/zem1SMo5RuJy20U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762085273; c=relaxed/simple;
-	bh=ikluRLwAQOhoq3dUiGSz7FKG3t3zxynUJqtA23ZgsD8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HEtQJIk/wRklXxxZfaTLZKoz4aZgGNAJ+KB8CqiM/KtS9PRfMDb8vonvE5GA3urxJlzIKYS5LlYR2vaIgqoFQ46iC1hTrBMtyTPeT97s/Sun2WAl6szd9QYpG0yUl0ahGjJRf95FdvU4701A6IRgm37i5nwSxyXoBXetM67Jmcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NR1w5gf5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40307C4CEF7;
-	Sun,  2 Nov 2025 12:07:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762085273;
-	bh=ikluRLwAQOhoq3dUiGSz7FKG3t3zxynUJqtA23ZgsD8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NR1w5gf5TLhA+7s1VfbKdJiWB2AerUn9FGAZzcW5luA8xLelI0r7XeXsa8RWyaCYx
-	 Qvz0ZrmT6Jf1dnVhmvpFlhOPh5vlCfCcNbAEpAb/H9XMrPr7rSkLYsNWPaAzPE0UZm
-	 WIvgGT7JWKTP4cTkSUW26K69SpUJxrej58bFOqjF+e3aa827G6DoaDwPX6bmenddUh
-	 ilkvQWs5PxiC1SGrltyKWg8bI72fI/SKy2qfNvqgkqTFRETA+P5ROOVlw7Npa/KzxD
-	 go0e6+Zi2DbRSA9FePaAngjBGofRNH5S83jJRTMjrUkVygHsaVI1c3hlWdMMfmUONN
-	 Zkx+D/Esxka5A==
-Date: Sun, 2 Nov 2025 12:07:46 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
-Cc: wens@kernel.org, Andy Shevchenko <andriy.shevchenko@intel.com>, David
- Lechner  <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko  <andy@kernel.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: core: Use datasheet name as fallback for label
-Message-ID: <20251102120746.48dfb71b@jic23-huawei>
-In-Reply-To: <9e4253955100998826b36834632b2326782141ac.camel@gmail.com>
-References: <20251027124210.788962-1-wens@kernel.org>
-	<20251027144327.09f59982@jic23-huawei>
-	<aQB5Dw2Eg0tVdNow@smile.fi.intel.com>
-	<5e3bf0d87ae1b539d134edefee67d3e3ef3b46cb.camel@gmail.com>
-	<CAGb2v676eOkPOc33+FMX6k9562gn34+MR15t-iucLjd0qQKs7Q@mail.gmail.com>
-	<9e4253955100998826b36834632b2326782141ac.camel@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762085394; c=relaxed/simple;
+	bh=kYY7U7pS3H03BMzTuVjOg6m+6/nYhcFlrgpd5Sjym7c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yl4Dv9Lp/qkwiABmqVBsjiYxKI5HSHFqEqINiqQ5otCoLVRs5hpslpxcTe/X4DNPdVkf8pZy/6ZUtdt6wOvbHKD/W17G+hSpGKnvHE/cLEPlNWclGMLZ+rui3oaE5wj+jl2CyFdo/DOH/xhB0SXdiqeuLFOCqRZU5NDnwJ0fwBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fo2THDm0; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id CF35740E0191;
+	Sun,  2 Nov 2025 12:09:41 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ua72yWXg4D3Z; Sun,  2 Nov 2025 12:09:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1762085376; bh=x6Mx0hsZ3l/i6WLivy/Af6FUYZm5euxEpNmvS2outEQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fo2THDm0+InRhoSpLXmOeBHRVfMz0XXNi77IQ5DMSFrSRkn+Ry2efDBmWJ7jBY8WT
+	 n1UdqtCapPjvZhhsuKbIUwKuw0J/9nRw19ag/OaPvflP5fvaysIpfacKS4OllSo5it
+	 TjqYnLABeA/pO2vbPR4iTCdAhdCnSrup/kEBD1GCQ7jMeZxSz75AkquVLoGAvZbTdv
+	 SZOXSV13Njo6+LhF3JokaDDJaYrswSJI2TKD49wf3cRyxbrEwyOMZdD3FS25P7jCam
+	 EfuftWJd7Y0GS6+vpkmpgS2Cjyv7O1oFqRDjQxb//rdL5E+oRuCjGqicBfqKWAsiaj
+	 QNSgx7Loy1yqlmPElBfl6UIZ8pieFUZfVs2/MkL6wyzPnzzaLuaG/6ayDAZGHsKxVc
+	 Vwsg/t0EDt9VhMRRyzLlmBKPUoxaE0QFr9Zzyjn5zFQO7FkDh2hF2GL1TswY7F9uvz
+	 zpKCmCvZ98LjD/3Sf9GdjWQEvFCDhZwFGVzkEdJRXxivR1iSJ1ueIVS+ftMEBV9+gj
+	 7n0cLL+luelDbxDad4hpsSde7TUFillwGeihoYmKRzXUFPEChFIG6bslY+VWo1raUD
+	 LnPPKGCt7GuQzUOxD8iiuPgb48ZqS2DQFBbJPW3lZ22V6nZZoWAq1O7eun80wtZJl7
+	 jCVJLhOzC4t8jAUWSwUOQkJo=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 1F61140E00DA;
+	Sun,  2 Nov 2025 12:09:29 +0000 (UTC)
+Date: Sun, 2 Nov 2025 13:09:22 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Marc Herbert <marc.herbert@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/msr: add CPU_OUT_OF_SPEC taint name to
+ "unrecognized" pr_warn(msg)
+Message-ID: <20251102120922.GAaQdJ8noSCgyoTE2F@fat_crate.local>
+References: <20251101-tainted-msr-v1-1-e00658ba04d4@linux.intel.com>
+ <20251101100325.GAaQXa7UF-Ru2yqdI1@fat_crate.local>
+ <m2bjll15q8.fsf@kvalverd-mobl1.amr.corp.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <m2bjll15q8.fsf@kvalverd-mobl1.amr.corp.intel.com>
 
-On Tue, 28 Oct 2025 15:17:24 +0000
-Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+Hi,
 
-> On Tue, 2025-10-28 at 22:36 +0800, Chen-Yu Tsai wrote:
-> > On Tue, Oct 28, 2025 at 5:22=E2=80=AFPM Nuno S=C3=A1 <noname.nuno@gmail=
-.com> wrote: =20
-> > >=20
-> > > On Tue, 2025-10-28 at 10:04 +0200, Andy Shevchenko wrote: =20
-> > > > On Mon, Oct 27, 2025 at 02:43:27PM +0000, Jonathan Cameron wrote: =
-=20
-> > > > > On Mon, 27 Oct 2025 20:42:09 +0800
-> > > > > Chen-Yu Tsai <wens@kernel.org> wrote:
-> > > > >  =20
-> > > > > > Some IIO drivers do not provide labels or extended names for th=
-eir
-> > > > > > channels. However they may provide datasheet names. axp20x-adc =
-is
-> > > > > > one such example.
-> > > > > >=20
-> > > > > > Use the datasheet name as a fallback for the channel label. This
-> > > > > > mainly
-> > > > > > benefits iio-hwmon by letting the produced hwmon sensors have m=
-ore
-> > > > > > meaningful names rather than in_voltageX. =20
-> > > > >=20
-> > > > > I definitely don't want to have different behaviour for in kernel
-> > > > > requests
-> > > > > and for people reading the _label attributes.
-> > > > > https://elixir.bootlin.com/linux/v6.18-rc2/source/drivers/iio/ind=
-ustrialio-core.c#L1232
-> > > > > would need modifying to allow for the sysfs attributes to be crea=
-ted.
-> > > > >=20
-> > > > > In general I'm not sure I want to do this.=C2=A0 Datasheet names =
-can be
-> > > > > exceptionally
-> > > > > obscure which is why we've kept them hidden from userspace.=C2=A0=
- At least
-> > > > > dts
-> > > > > writers
-> > > > > tend to have those names on their circuit diagrams and tend to ha=
-ve
-> > > > > datasheet access.
-> > > > >=20
-> > > > > Let's see if anyone else has feedback on this suggestion over nex=
-t week
-> > > > > or
-> > > > > so. =20
-> > > >=20
-> > > > This is an ABI change without =20
-> > >=20
-> > > Indeed...
-> > >  =20
-> > > > 1) proper documentation;
-> > > > 2) backward compatibility (i.e. there is no knob to opt-out the cha=
-nge, or
-> > > > make
-> > > > it opt-in).
-> > > >=20
-> > > > In this form is definitely NAK.
-> > > >=20
-> > > > If you wish something like this, better to have a separate attribut=
-e. But
-> > > > the
-> > > > problem maybe also that the same component (or 100% compatible one)=
- made
-> > > > by
-> > > > different vendors and have different datasheet names. This means th=
-at the
-> > > > new
-> > > > attribute may still be ambiguous. Hence I see a little sense to hav=
-e it,
-> > > > rather
-> > > > better to have these links / names to be put in DT schema. At least=
- there
-> > > > we
-> > > > have different vendors and compatibility mappings. =20
-> > >=20
-> > > I mean, we already have labels for channels so this all looks like a =
-bit of
-> > > overlap to me (though I see the temptation of going this way). For
-> > > extended_names, there was a reason why it came as a fallback for .lab=
-el()
-> > > [1].
-> > > For this, I'm not really convinced for now. There is also at least one
-> > > driver
-> > > already exporting the .datasheet_name as a label [2] so maybe we shou=
-ld do
-> > > that
-> > > instead (again, I understand that doing it like this we only need to =
-change
-> > > one
-> > > place...)? Otherwise we should clean up those and that should definit=
-ely be
-> > > part
-> > > of the series (if we even consider this). =20
-> >=20
-> > Thanks for the pointers. In my case I think either solution works.
-> >=20
-> > The axp20x-adc driver currently provides _no_ labels. Would adding labe=
-ls
-> > now be considered backward incompatible?
-> >  =20
->=20
-> Jonathan should know better but I'm not seeing any reason why you could n=
-ot add
-> .label support for axp20x-adc (exporting the .datasheet_name for the chan=
-nels)
-> instead of the current patch.
+On Sat, Nov 01, 2025 at 08:19:27PM -0700, Marc Herbert wrote:
+> I just struggled to make sense of some unrelated crash logs and that's
+> really all from my point of view. I mean all for now at least.
 
-I'd prefer a per driver version of this as then the author can look for the
-sorts of issues Andy raised.  Basically it boils down to are the datasheet
-names convenient and human readable names that it makes sense to reuse
-for a particular set of devices (if no label in DT is provided)?
+There's the answer to my question! :-)
 
-So basically side step the insane by doing it where we can evaluate that
-the names meet this criteria.
+>   pr_warn( "... (pid: %d), tainting CPU_OUT_OF_SPEC.\n",
 
-Jonathan
+Right, or simply "tainting kernel" suffices. Like other code does. So that you
+can find the word "taint" in the logs and you know where it comes from. As
+this is what you want.
 
->=20
-> - Nuno S=C3=A1
->=20
+> This patch is not "really necessary". Its purpose is only to save hours
+> or even days for people trying to make sense of crash logs. In my ideal
+> world, it should always be easy to tell "who tainted what when" from the
+> logs without an corresponding expert and/or searching the source code.
 
+Yap, makes sense.
+
+> I admit this could harm job security ;-)
+
+Yeah, although there are always other, more interesting things to hack on. :-)
+
+So yeah, v2 with the agreed upon changes sounds good.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
