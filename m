@@ -1,364 +1,211 @@
-Return-Path: <linux-kernel+bounces-881953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53782C294E8
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 19:23:02 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D7B8C294EB
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 19:23:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 860A53475B8
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 18:23:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E8EC44E8720
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 18:23:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A0C20E702;
-	Sun,  2 Nov 2025 18:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="pv6Z/23X"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1483620F08C;
+	Sun,  2 Nov 2025 18:23:25 +0000 (UTC)
+Received: from LO3P265CU004.outbound.protection.outlook.com (mail-uksouthazon11020081.outbound.protection.outlook.com [52.101.196.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 650303B2A0;
-	Sun,  2 Nov 2025 18:22:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762107775; cv=none; b=DSyC28T70+f7gEK/LqHYbiLWxvM8tl1SPF5Q7KpTxhlO9rbM74ZgeD15BWP9ND/poQqFI9lSmUZde/E5wQ9zPbwkzgmXQ7WW4vpLeCTlzmwIHVDndolJ8GnOVOLh7V6rIOMO36ye0Bt7wbqomO67uCSN3aGTIsmlPdyMlvKq6G0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762107775; c=relaxed/simple;
-	bh=GryvnuiQ9Law3X+tGXky7OAc98f2jwyyxubkwOTLFIY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lCEn+QMdei0UleAwSElSi8OKp2gl2wjLsD34eAP/OUJ/1gQABBz8eZ9wwWcQOUz8I0d7NCa6H04xkaI3O/fJa6Zs8xuRw8ttzvlJSm/pCYIK41CoTISolbvBt6agGt4nsXpR/zLLohG0BDoP+sKEDwIkdjiEgCQ7u+RkZWEnXq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=pv6Z/23X; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1762107771; x=1762712571; i=w_armin@gmx.de;
-	bh=JgrhhmMwd44O7pKwRL8PNs+E25dW+AXgqvfbiGXUesw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=pv6Z/23XByHEZ6xsjLhMNBeU6CL91cyikQ7vkIA25U3hdcHmRIeC0W5nnlJs0LIS
-	 3bSD0m5FVqbVnRtB7lr88cqMWe3xXV6uFf1rkRpVxDjJRza4UN9y5kBvJw9zbO77S
-	 EYfJURz7NRacL0ZsClSKmJRMDCd4fDl0Zt9PFRJrcyXVwT3d8IUggUofn6JQQTIw6
-	 Cy5dxwqSZoH88uFyjEg+eRVEzOSbp9Ebh4kSi/tdhVSD/EpI2Ql2QLwMhIF8N6H5h
-	 dJGXfgT55pkiovAR1PAVK021uCj6quYzMZ/0jlWHwM6w7Hs9g1bJh3ToLY9eAW74d
-	 HgQxU0WkM18O8DsVSw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.69] ([93.202.247.91]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MryXH-1w0Uil3N1p-00gXKt; Sun, 02
- Nov 2025 19:22:51 +0100
-Message-ID: <cc2aa069-304a-4b38-951a-0891a4004804@gmx.de>
-Date: Sun, 2 Nov 2025 19:22:49 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C313B2A0;
+	Sun,  2 Nov 2025 18:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.196.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762107804; cv=fail; b=qTvD7oHuQq27svlHOjsAMNUvMpIa2BEK1sBKUDvo6nZAc2zWOxJWqx/u/wG+Y7sfQ7ohTFqrAonE3P2RvehafMVUHIHmeFn10f5/PiU01NT0tqikcnpcA8MbfjKNH6QdoeRlH/xB3pdS/Qi3D9wILlG+LPnRQqyeIAFm+/ymlrw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762107804; c=relaxed/simple;
+	bh=SLshKaQ9XaJw2RE/D9RjtElUQU8VNrONsoM3p2mxKCA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=QHuTIRnwHQuPaxZiA/wsCwDK5n5NQ3RUF01gqOPGWjbWbVqZXD+2WUrszQJ18huy5RqF1O9rGKxtpFdFtMF8hbmeFzKuIHc0MvscChRqV9BDzrLxQvc6B0Qh1W2emKwBJS/OqYzVDLWH49+wUlH5dhE02n/yy8F5j5fTq0nvvRI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com; spf=pass smtp.mailfrom=atomlin.com; arc=fail smtp.client-ip=52.101.196.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=atomlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atomlin.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PAumqTuMinQvh7K+ImJFN+m6ijumqJuSfCwYespKRpyyVdq+vyXcvSrXw2dgE5RR/Nq0phxMs6YL6lqf8zolBe5Lrl7+LFAbCTkNc0+5DQ0P1LRy1dmkjxq+l8XqybYLEtdsMcPqXWEH1wWKvJ36k3BuUH/+K2WFt/4IxO88h9FwopS5KtR2HAeUDzV7u0CXK3F67vVB7ZcTm8lBrmcwBEET1FZ3E6Ly3VdUtzQDpiSOWVi8mvpR3cIzoboVtU96bMnBKRs6KMko19aGYwGxkTSEU0UveiRMRMj1cwiaYCK05viViL+8iMA7sTreiWVW6VZ8JyY92qnpCuatVVtEGA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aVluQ+oBLxKEO67OrYfnFGiyyqhN+f3YqJdNbEHILZk=;
+ b=ZQ+0iIDWpVnOl8KKguaNrgDD7wQCGLbjyZyqF6oV+rTADzXzSrXBwwecnSIoVBVwUwfTjAkJc4ve7e/prZwwo3M2gKSX7076dqaXJWptqFWHHziVcWmbyxs+N/32aZM3q2EhuAHX/i1Q1OA2WEfaX6IIXrfWYn+3TcqsScJALUveV58eQLcp1gZVBoQiMuVWPmtUtXuR4pvgsRQQsneRPzYqegfNxsg2yNnSqMcQCGGKrbwt3JIIm6VbWbiFouABSvTySAwTB4HJU2NOHOdasa4Lvx3FKH2Y7/90mdAhBy4mR8dNDWjeDU/IbrlTpgQFrV24V7/Qom/Ptc1DIXnCDQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=atomlin.com; dmarc=pass action=none header.from=atomlin.com;
+ dkim=pass header.d=atomlin.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=atomlin.com;
+Received: from CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:70::10)
+ by CW1P123MB8286.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:25c::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Sun, 2 Nov
+ 2025 18:23:18 +0000
+Received: from CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
+ ([fe80::de8e:2e4f:6c6:f3bf]) by CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
+ ([fe80::de8e:2e4f:6c6:f3bf%5]) with mapi id 15.20.9275.013; Sun, 2 Nov 2025
+ 18:23:16 +0000
+Date: Sun, 2 Nov 2025 13:23:13 -0500
+From: Aaron Tomlin <atomlin@atomlin.com>
+To: Lucas De Marchi <lucas.demarchi@intel.com>
+Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Petr Pavlu <petr.pavlu@suse.com>
+Subject: Re: [PATCH 2/2] module: Simplify warning on positive returns from
+ module_init()
+Message-ID: <tgktmvprrmokcfdjww3xttwnvilqvue3tqpae2w556uggltr6q@e5u7e2w4ztbz>
+References: <20251013-module-warn-ret-v1-0-ab65b41af01f@intel.com>
+ <20251013-module-warn-ret-v1-2-ab65b41af01f@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251013-module-warn-ret-v1-2-ab65b41af01f@intel.com>
+X-ClientProxiedBy: BN0PR07CA0011.namprd07.prod.outlook.com
+ (2603:10b6:408:141::32) To CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:400:70::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/6] platform/x86: ayaneo-ec: Add hwmon support
-To: Antheas Kapenekakis <lkml@antheas.dev>,
- platform-driver-x86@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
- Hans de Goede <hansg@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Derek John Clark <derekjohn.clark@gmail.com>,
- =?UTF-8?Q?Joaqu=C3=ADn_Ignacio_Aramend=C3=ADa?= <samsagax@gmail.com>,
- Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
-References: <20251031163651.1465981-1-lkml@antheas.dev>
- <20251031163651.1465981-3-lkml@antheas.dev>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20251031163651.1465981-3-lkml@antheas.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:EyJwFNVJCGsu4jn1jmmhnd6fh7eVwtbQP50hC7xPeo4XvHhndRM
- MwELF/hm+VjhOU65C0Y2SvetwX2C3Zhe0Rw624kpsRJFVBgIbkhC03GalpPKbYDGG9/07lE
- ownspURdv9GSvldXZjIksbwxO7e+3bNpDV9WYAmfrP+SRHy4Xx/gke3kZ8PX/svD+IBqMnT
- lvhndso9jMm7Qjj9Zyj5w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:oao+AbzXsCI=;uDEWnZy1lSyYB3ZornPshRBSn10
- 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
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CWLP123MB3523:EE_|CW1P123MB8286:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0c530535-3260-4d0a-a8ca-08de1a3ce460
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RWtuR2lvZWVOREFYblZDZnJNbE1sQnlkcExrOHpGZmhmOWdCWWw4SzZkaG9T?=
+ =?utf-8?B?dWVma3ByRWYrZDhWT01mblR1ZGxvUW5DY205MllEUFBVWnIvOUswVHU5bHFm?=
+ =?utf-8?B?M3pFWFJhNUJ4cGFBd1FZYW9oaWNwaDQ0VnFvUlVjcU5NWnFNR2RJM0pQeU9G?=
+ =?utf-8?B?Y01weHdFMzAyWS9NRWVBdTROOCsyL1FOUHFoOGF2S2xVRmI3VWYvRXNvS0Z4?=
+ =?utf-8?B?Zkp3Y1E1Wk96cVFPbkpCZE9hRG9jZDlMQmdDUS9MOWM3NDRxejJyVUVCU1Na?=
+ =?utf-8?B?OE1FUXdJY2lrVDhGQlJsT1BWTjFuMzRWR09Vdm4wSkVVWGRwYU5VUCt3MjFJ?=
+ =?utf-8?B?Ti8wS1lZd0FMVlpHMGo0WG1La2FRMGVwcGI4S2tGd1NGc1hkSVNjVm9qR3kx?=
+ =?utf-8?B?RCtCd2xMNlgzYS81TnVqT0xmTlRkZTZSV01DUU1RekUwdDZHZmNjMDM2VlB3?=
+ =?utf-8?B?amxtYjB1UmRINmNaSlJjRFVqK3FxT3E4SENPTE5yMmdwKzFRZ1A3WDQxNHVM?=
+ =?utf-8?B?SlhTTUkvMkxlcDQ1Y3B0RDlqcFZzM1dEcS9lSmpDd3FWbWFWTytJMUhDME1l?=
+ =?utf-8?B?WG5oYy9DcWxGRXlMUyt2RXRzYWlONWxuYXR0S1pXU1ZTbEltRWJYeEQ3RVQy?=
+ =?utf-8?B?ellRZ1dQa056SnBiZ0N2eWRvWjFtZnU2N2tWS0R1Z0tVT0tPc2QrV0xGTmMv?=
+ =?utf-8?B?dnFCZ3JtMjFzWm9hWE5YSGUyM3JSdmJDUU9VZVpDaDBIUDFBZVFlU1htVGxl?=
+ =?utf-8?B?L29XTmRWaHd4N2JoajE0cUJKUmRqMGNOWDdBb1did3Yva1FhYzlIemNGLzJm?=
+ =?utf-8?B?Q3VITHkzb0IycW9XSURVNitSSjVnQXVVUGV1MlhVSVRpd3RGMnVwM3Y1enV5?=
+ =?utf-8?B?Qmg0Nmc0SWFJZ2JUSnN6RGdPSXRUUkorUXYyNnhWUWN6SmRVT0I1WjJ5MjUy?=
+ =?utf-8?B?dHV6WnJ0WHRnTXpMQjdmRjNrQ3dFOFRLZHhvZVJvOExGVTdxR2VvZkNRQ2tp?=
+ =?utf-8?B?OE5zdjdRSHVKWjZUaVlHVEpHNTFXUTk2SUQzbnFwL0U0eEdyeGlnYmlodDRM?=
+ =?utf-8?B?Q3UvU3dxWFVHR1F6c1RYc3ZjaUp5SUF0VnQ3RDFHb3IvOHphbm1BSXBGUnFx?=
+ =?utf-8?B?aGp0cTRpRms2VzlQNFdoREFVTE5kb0tJSnlNNWJJWmNIcXJ1WVZuQXV1UWpG?=
+ =?utf-8?B?REdrSzJGU2g2N01hMGF1b1RLK0RqaGtjZWh4UG5xZjVtOFozY0ovZEJiVDc1?=
+ =?utf-8?B?TngrbnAzT1FEUGxMSTFENTVsaGFRQm9wYXFiNldOaWNkNGZBMXI0VEc0WE5B?=
+ =?utf-8?B?UkpyU25vMGtsVCtzZUhpTG1FazFLV0ZFbGxQSG5FQXRxMGRWemNKemhianA1?=
+ =?utf-8?B?VnlobWZRenJ6b0krUW56S1p6ZFBhS0MwM1R5dXUwN010RUJGZTExd1lEYW5U?=
+ =?utf-8?B?S0xNYU81YVFBWDJYb0xzZ2I2UlZVOCt4MnIvS05pWURpaUtBRm1PakJpd2p4?=
+ =?utf-8?B?WE95ZFdLeHRoZWNSWVF3c3pVS3dSUzBtSVEySndIY3FMUC9mbHEwbW5Hc2RF?=
+ =?utf-8?B?cmV4OGdTQWxkeE83c0c1Z0E3WU5FZFE5eHV0Vjk3NFFJNmpyMm1DRGg1UWF3?=
+ =?utf-8?B?d3dvNkNkRWJZMXdqR2JUdWo0dTBaWks4VnlSZTZubG9GeFo5N0VDdkVtREla?=
+ =?utf-8?B?NWUrOXFZMitvMHlJaWM0bEU0WFBKaVRaaHBCT28wejR0NTVscmdMa21JcXc1?=
+ =?utf-8?B?VEdwSFQrVktielRJMTEwYXVvSUtNL3FhVjdvS0g4SHR2Q01SYVhQRUhmM2J5?=
+ =?utf-8?B?cmZhTjhsS2JORGI3eHBBS0V2NURwZXVyVHBlZ05HZExsSjZZR0NWUXVLbGdU?=
+ =?utf-8?B?TGVZcmpnSWtqdWV3T0xVTHdWUCtPMFlqSDIxd1JCU3h4NXhMdHhFY21rUVZo?=
+ =?utf-8?Q?9dMvfXK0EIzh1tIV1WGhWzXRcIpaoIly?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RGVvRTI3Yml6Q2NhL0lidDZPUHhJYWtRWml2UW9pQVJKanNwcWZXdWdsMW4z?=
+ =?utf-8?B?T2ZjOHB5MDdXYXVnd1dORnpnUFBrbnhLSm5nOVJkQldzOFRPMno4TkpSSWg2?=
+ =?utf-8?B?cUVVQzEySWEyeEpkN3BtMFRUdWYxc2JCdU1TeVVzaVRPK3kzVHBMWE9TWVlU?=
+ =?utf-8?B?bVJNclJaRXlCd2U5eHMrTWhYUWtGT2tuK283QnV5dkY3NWZaSE1FdDlSQTVC?=
+ =?utf-8?B?NDEwYnlzUXgrdEpXSlQzTnNtdWtWN0dueGRWQmZLZzJUVHVOMy9pd3Bla1BO?=
+ =?utf-8?B?c2lCSzU2VGFlSGxqaWthNm9leGhlV0gxa25OOEpsTitqZDkyRUtKQmwwTFNN?=
+ =?utf-8?B?WEEvREpWU2h6T1lTdHI3S2VlczJNbUZibWR0b250SUNFRThZbXA4TjlIY3dC?=
+ =?utf-8?B?QS9vN29ON3p6clpuWUU5MTc2cEJCcWxDVUFMMkc5dVFqUjVJcG9jUS9QSzhN?=
+ =?utf-8?B?R2RPaW14MkVZNnFLQ09xYWkrQzVMdjRwNy9uRlhXa3F0aXRSd2xjUzN3d2VZ?=
+ =?utf-8?B?NE5qNzZEQUZsWEVOOEFVSVB4SEJPVnpTeWhUOUwzQW95dllaZ1pIaWlKTkFn?=
+ =?utf-8?B?OVduWDFneGVxdXhiOTBqcmR2bk1YZC80UXFYQmd6aXBUTmIreG1SNEZnVE9X?=
+ =?utf-8?B?SnJOajVENm1PdTNvRlZYNm9tSDB4YWJiK0Jrd0R4T0ZGSFMzR0E2VWNBV3Ns?=
+ =?utf-8?B?TW43bHdnNTh4dTJnVVFCWWxjV3pkSXVXMFNqSzliak9qYTlVbkdhVFpwZTFJ?=
+ =?utf-8?B?b2FIMHIzckQvR0EveGgzaWFqVUFZZldjUXVwS1Q2OWRUK2VUUzdwbXFwdCta?=
+ =?utf-8?B?QkF3ZStHb091VnZRc3lEK1JZL2dYSWVqSjhrNXhyQjFuYkdyS2FVVUl1VEFa?=
+ =?utf-8?B?Q3BscitMdVJPZVZOWXFYMER2WDN2ZG11eW1tOURqTkFtakplRlJzSjV3cEhC?=
+ =?utf-8?B?ZlNIRzhRT1NaVmlXbnZLb0g0Z0RTWjludXpDc2JSQWN1Tjd6RmIxYU1vR285?=
+ =?utf-8?B?eVlBN3IxMlRuWjZyUERPa2FKZnZhUVhTRjJFWExlTEpDSjJSaEwvQnVyTDdu?=
+ =?utf-8?B?Q05FOTM1bTJONXJmdXl1SFcrc210MElaSjI1WDY1bzFxZkd5V1pOek83ajkw?=
+ =?utf-8?B?TU0yU055NktNWVJZZWVocVNmSEk0dzFnaTV3eGtQSmZxaFBVUDBGQ3F2a0l6?=
+ =?utf-8?B?a0pONmw3RWt0eFIzUGY5RlVFNVhPQm5PQVBBaCtnSVZlVTMzaWxJRFFxTUN4?=
+ =?utf-8?B?bGJCU0dJM3JtL2xDMm43TUNNck50elF6NlFHNzNObG5tZ0s0QXM2dFVTaW41?=
+ =?utf-8?B?VWtLMXEzUklQcWdPRHREN2Q3T2d1QU9yQWRoYjJ3eEFiQ2VKR1RGcVl4dXZH?=
+ =?utf-8?B?Q0cvM3pNRStpSCtIaWJtejU2Y0duZFFxTVoxeGVJNVkxbjlBLzBIY2dZNkNI?=
+ =?utf-8?B?ZllydGozbm0vcXRlY2RESVcxaVlobEFWeWhtYVZaSDFLaDFYMUEwQkJQV05M?=
+ =?utf-8?B?NU5xTUlETlp3ZTJlOWM5amtQbWhXVnJRU2ppVVdVMVBVTEtUREdGdlFNak5N?=
+ =?utf-8?B?QnEzcGRPSk1QZnZDRmtlbzdnMDF2M25JK1VwSGJKRkorTVFCVnZ5Tk9LK2Fq?=
+ =?utf-8?B?SElKSHNRSlRGd0xOMVEwV0cvOWQ2a1E1YjVCczYvcWRFTEJ6UUFpRlR4bktT?=
+ =?utf-8?B?Sy9SRzdCMXpFaXZQNUhqZTl3RFlTTVdLK0lMWFNoYisxdUUzcFpJK3FlNVRp?=
+ =?utf-8?B?K0FqclJFVmd5ZDlWSCtmbDJJM3Z1UkE4MnV5SzNhN0ZqR2dNNGo2UUt3OEg1?=
+ =?utf-8?B?b2lESEdxWlJFSGIyZ0JMbVUvbVh5THlHMHdCanhBSlBJZktoZzNsekhnbnJC?=
+ =?utf-8?B?VW1MRkZxNGExTlM4ZlJuR3Z3WGk2dlJUSkNzckdZYzVMd0FDcWE4NnFKN0t2?=
+ =?utf-8?B?Zk0yaDdXekdBOVAyZmU2VXU3Rkx4SzJPcHpsTUtTUmViUG1WWWFMZFVIUWZh?=
+ =?utf-8?B?T3IrclFVcWh3Q3podHpLN3F4SzlYSktpUitWb3N1eUtMYlIwMm9vRHM1NFJD?=
+ =?utf-8?B?Q3pHZWZ4TGJVTFdySEpMM2JmMFdvdzFaWHhWWjY5OHBvMEROZEs4Q3oxN3hl?=
+ =?utf-8?Q?OfIQfbHe4kFIZtMg0szuRmoMk?=
+X-OriginatorOrg: atomlin.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0c530535-3260-4d0a-a8ca-08de1a3ce460
+X-MS-Exchange-CrossTenant-AuthSource: CWLP123MB3523.GBRP123.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2025 18:23:16.7824
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: e6a32402-7d7b-4830-9a2b-76945bbbcb57
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xP+PvpP/j/c7ZD/+mAm49/GbVQx9ruG74c117c6rIqzq8fEOKmlwmb58MYagwTyTqWwJp5BRj9hfVnEOY7F9AQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CW1P123MB8286
 
-Am 31.10.25 um 17:36 schrieb Antheas Kapenekakis:
-
-> Add hwmon single fan sensor reads and control for Ayaneo devices.
-> The register and method of access is the same for all devices.
-
-Reviewed-by: Armin-Wolf <W_Armin@gmx.de>
-
-> Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+On Mon, Oct 13, 2025 at 09:26:24AM -0700, Lucas De Marchi wrote:
+> It should now be rare to trigger this warning - it doesn't need to be so
+> verbose. Make it follow the usual style in the module loading code.
+> 
+> For the same reason, drop the dump_stack().
+> 
+> Suggested-by: Petr Pavlu <petr.pavlu@suse.com>
+> Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
 > ---
->   drivers/platform/x86/Kconfig     |   2 +
->   drivers/platform/x86/ayaneo-ec.c | 136 +++++++++++++++++++++++++++++++
->   2 files changed, 138 insertions(+)
->
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index ebe7d2ab8758..b3beaff4b03a 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -318,6 +318,8 @@ config ASUS_TF103C_DOCK
->  =20
->   config AYANEO_EC
->   	tristate "Ayaneo EC platform control"
-> +	depends on ACPI_EC
-> +	depends on HWMON
->   	help
->   	  Enables support for the platform EC of Ayaneo devices. This
->   	  includes fan control, fan speed, charge limit, magic
-> diff --git a/drivers/platform/x86/ayaneo-ec.c b/drivers/platform/x86/aya=
-neo-ec.c
-> index 2fe66c8a89f4..108a23458a4f 100644
-> --- a/drivers/platform/x86/ayaneo-ec.c
-> +++ b/drivers/platform/x86/ayaneo-ec.c
-> @@ -7,14 +7,24 @@
->    * Copyright (C) 2025 Antheas Kapenekakis <lkml@antheas.dev>
->    */
->  =20
-> +#include <linux/acpi.h>
->   #include <linux/dmi.h>
->   #include <linux/err.h>
-> +#include <linux/hwmon.h>
->   #include <linux/init.h>
->   #include <linux/kernel.h>
->   #include <linux/module.h>
->   #include <linux/platform_device.h>
->  =20
-> +#define AYANEO_PWM_ENABLE_REG	 0x4A
-> +#define AYANEO_PWM_REG		 0x4B
-> +#define AYANEO_PWM_MODE_AUTO	 0x00
-> +#define AYANEO_PWM_MODE_MANUAL	 0x01
-> +
-> +#define AYANEO_FAN_REG		 0x76
-> +
->   struct ayaneo_ec_quirk {
-> +	bool has_fan_control;
->   };
->  =20
->   struct ayaneo_ec_platform_data {
-> @@ -23,6 +33,7 @@ struct ayaneo_ec_platform_data {
->   };
->  =20
->   static const struct ayaneo_ec_quirk quirk_ayaneo3 =3D {
-> +	.has_fan_control =3D true,
->   };
->  =20
->   static const struct dmi_system_id dmi_table[] =3D {
-> @@ -36,10 +47,128 @@ static const struct dmi_system_id dmi_table[] =3D {
->   	{},
->   };
->  =20
-> +/* Callbacks for hwmon interface */
-> +static umode_t ayaneo_ec_hwmon_is_visible(const void *drvdata,
-> +					  enum hwmon_sensor_types type, u32 attr,
-> +					  int channel)
-> +{
-> +	switch (type) {
-> +	case hwmon_fan:
-> +		return 0444;
-> +	case hwmon_pwm:
-> +		return 0644;
-> +	default:
-> +		return 0;
-> +	}
-> +}
-> +
-> +static int ayaneo_ec_read(struct device *dev, enum hwmon_sensor_types t=
-ype,
-> +			  u32 attr, int channel, long *val)
-> +{
-> +	u8 tmp;
-> +	int ret;
-> +
-> +	switch (type) {
-> +	case hwmon_fan:
-> +		switch (attr) {
-> +		case hwmon_fan_input:
-> +			ret =3D ec_read(AYANEO_FAN_REG, &tmp);
-> +			if (ret)
-> +				return ret;
-> +			*val =3D tmp << 8;
-> +			ret =3D ec_read(AYANEO_FAN_REG + 1, &tmp);
-> +			if (ret)
-> +				return ret;
-> +			*val +=3D tmp;
-> +			return 0;
-> +		default:
-> +			break;
-> +		}
-> +		break;
-> +	case hwmon_pwm:
-> +		switch (attr) {
-> +		case hwmon_pwm_input:
-> +			ret =3D ec_read(AYANEO_PWM_REG, &tmp);
-> +			if (ret)
-> +				return ret;
-> +			if (tmp > 100)
-> +				return -EIO;
-> +			*val =3D (255 * tmp) / 100;
-> +			return 0;
-> +		case hwmon_pwm_enable:
-> +			ret =3D ec_read(AYANEO_PWM_ENABLE_REG, &tmp);
-> +			if (ret)
-> +				return ret;
-> +			if (tmp =3D=3D AYANEO_PWM_MODE_MANUAL)
-> +				*val =3D 1;
-> +			else if (tmp =3D=3D AYANEO_PWM_MODE_AUTO)
-> +				*val =3D 2;
-> +			else
-> +				return -EIO;
-> +			return 0;
-> +		default:
-> +			break;
-> +		}
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +static int ayaneo_ec_write(struct device *dev, enum hwmon_sensor_types =
-type,
-> +			   u32 attr, int channel, long val)
-> +{
-> +	switch (type) {
-> +	case hwmon_pwm:
-> +		switch (attr) {
-> +		case hwmon_pwm_enable:
-> +			switch (val) {
-> +			case 1:
-> +				return ec_write(AYANEO_PWM_ENABLE_REG,
-> +						AYANEO_PWM_MODE_MANUAL);
-> +			case 2:
-> +				return ec_write(AYANEO_PWM_ENABLE_REG,
-> +						AYANEO_PWM_MODE_AUTO);
-> +			default:
-> +				return -EINVAL;
-> +			}
-> +		case hwmon_pwm_input:
-> +			if (val < 0 || val > 255)
-> +				return -EINVAL;
-> +			return ec_write(AYANEO_PWM_REG, (val * 100) / 255);
-> +		default:
-> +			break;
-> +		}
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +	return -EOPNOTSUPP;
-> +}
-> +
-> +static const struct hwmon_ops ayaneo_ec_hwmon_ops =3D {
-> +	.is_visible =3D ayaneo_ec_hwmon_is_visible,
-> +	.read =3D ayaneo_ec_read,
-> +	.write =3D ayaneo_ec_write,
-> +};
-> +
-> +static const struct hwmon_channel_info *const ayaneo_ec_sensors[] =3D {
-> +	HWMON_CHANNEL_INFO(fan, HWMON_F_INPUT),
-> +	HWMON_CHANNEL_INFO(pwm, HWMON_PWM_INPUT | HWMON_PWM_ENABLE),
-> +	NULL,
-> +};
-> +
-> +static const struct hwmon_chip_info ayaneo_ec_chip_info =3D {
-> +	.ops =3D &ayaneo_ec_hwmon_ops,
-> +	.info =3D ayaneo_ec_sensors,
-> +};
-> +
->   static int ayaneo_ec_probe(struct platform_device *pdev)
->   {
->   	const struct dmi_system_id *dmi_entry;
->   	struct ayaneo_ec_platform_data *data;
-> +	struct device *hwdev;
->  =20
->   	dmi_entry =3D dmi_first_match(dmi_table);
->   	if (!dmi_entry)
-> @@ -53,6 +182,13 @@ static int ayaneo_ec_probe(struct platform_device *p=
-dev)
->   	data->quirks =3D dmi_entry->driver_data;
->   	platform_set_drvdata(pdev, data);
->  =20
-> +	if (data->quirks->has_fan_control) {
-> +		hwdev =3D devm_hwmon_device_register_with_info(&pdev->dev,
-> +			"ayaneo_ec", NULL, &ayaneo_ec_chip_info, NULL);
-> +		if (IS_ERR(hwdev))
-> +			return PTR_ERR(hwdev);
-> +	}
-> +
->   	return 0;
->   }
->  =20
+>  kernel/module/main.c | 10 +++-------
+>  1 file changed, 3 insertions(+), 7 deletions(-)
+> 
+> diff --git a/kernel/module/main.c b/kernel/module/main.c
+> index 74ff87b13c517..31c54bf6df4b2 100644
+> --- a/kernel/module/main.c
+> +++ b/kernel/module/main.c
+> @@ -3045,13 +3045,9 @@ static noinline int do_init_module(struct module *mod)
+>  		}
+>  		goto fail_free_freeinit;
+>  	}
+> -	if (ret > 0) {
+> -		pr_warn("%s: '%s'->init suspiciously returned %d, it should "
+> -			"follow 0/-E convention\n"
+> -			"%s: loading module anyway...\n",
+> -			__func__, mod->name, ret, __func__);
+> -		dump_stack();
+> -	}
+> +	if (ret > 0)
+> +		pr_warn("%s: init suspiciously returned %d, it should follow 0/-E convention\n",
+> +			mod->name, ret);
+>  
+>  	/* Now it's a first class citizen! */
+>  	mod->state = MODULE_STATE_LIVE;
+> 
+> -- 
+> 2.51.0
+> 
+> 
+
+Fair enough. Looks good to me.
+
+Reviewed-by: Aaron Tomlin <atomlin@atomlin.com>
+
+-- 
+Aaron Tomlin
 
