@@ -1,135 +1,91 @@
-Return-Path: <linux-kernel+bounces-881762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DCD8C28DF9
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 12:17:17 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3432C28E04
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 12:19:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6A9C74E4F2A
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 11:17:06 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4C7EA3473BE
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 11:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9138129A307;
-	Sun,  2 Nov 2025 11:16:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1609299AB4;
+	Sun,  2 Nov 2025 11:19:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="I9AhayFa"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=1wt.eu header.i=@1wt.eu header.b="WUl+L6/l"
+Received: from mta1.formilux.org (mta1.formilux.org [51.159.59.229])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893F72AF1D;
-	Sun,  2 Nov 2025 11:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35AAF26D4D4
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 11:18:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.59.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762082219; cv=none; b=POrrizO1hM7EOcLfJEG4tzqjSj7by0lgkOEKoadkMJKK78uEhmIGV69i3PoIwXTp0xzIkXDXDAUI+Tu/FNgSzA/+8mNa4cGC0HbeLoYMZ3qHmZm2ihTehKGSQYn7VhyTLigosG+4UmMlp8dndff1BqFkoq0rAY0atoeS1HT3cTQ=
+	t=1762082341; cv=none; b=fN/WYb68U8b76Kc37TsmpwjKi9DjgnRUqlKL1gXuDv6z/S6qLSBcRzSZGSJ+f2YOF51GVYgXZIIVx4bFY1jAEQpPABDtFwWn1sFVgRXd1zZnE+6WSri7164O6UBCVo5z9YgmAvydLx3twWd88KGJR+SpiTnkp3ZU9oKWyZcsL2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762082219; c=relaxed/simple;
-	bh=YHmZcKeWBJQ1DVFENLeNqVFuWjkvn9t61exZ/sPUq6M=;
+	s=arc-20240116; t=1762082341; c=relaxed/simple;
+	bh=FXqYYj4HnCxLhvx3sNturZIy9zj6sZMO0CPDZzXeP5I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EokF9vneoW8CLPNnJIVQuef4yEzJ2zhC6NBbs+3tX4BOnDwq2jPgR5f/47i7QuItjLOXhz9ompQSg7aXHu4UxgibsKOTzzAjKrXwn6KMDtrhSLno4mygrvVz/JRVl8AJpgVtrGdTUbI6uUNWqeiVVKSrTNwATnW35PyIkTlDmz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=I9AhayFa; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (mob-5-90-50-232.net.vodafone.it [5.90.50.232])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9BB6C177B;
-	Sun,  2 Nov 2025 12:15:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1762082102;
-	bh=YHmZcKeWBJQ1DVFENLeNqVFuWjkvn9t61exZ/sPUq6M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I9AhayFaikfgLI2bDvWDyEDqlJYvNLshAF4ABPIl/NMtRtyFBpifyHQB70Q1GXHra
-	 lDvL68gXpZILIkR+zDGuT2MI4qMNOzI1EtRK3tn4ZpcNLZZApI0ml9CAxX3oW+MsoB
-	 8ZwBoJ0B0rbeAIRCIIK7QqAzTudlkoDG5yqUecf0=
-Date: Sun, 2 Nov 2025 12:16:51 +0100
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, Jacopo Mondi <jacopo@jmondi.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Kieran Bingham <kieran.bingham@ideasonboard.com>, 
-	David Plowman <david.plowman@raspberrypi.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Peter Robinson <pbrobinson@gmail.com>, Stefan Wahren <wahrenst@gmx.net>, 
-	"Ivan T. Ivanov" <iivanov@suse.de>
-Subject: Re: [PATCH 12/13] media: i2c: ov5647: Use the same PLL config for
- full, 1080p, and binned modes
-Message-ID: <l2a7xmbcjujgprlnyduxgbif7xfyez3kgsoqbg6mjk3bivlsro@p5rpiidtk7kj>
-References: <20251028-b4-rpi-ov5647-v1-0-098413454f5e@ideasonboard.com>
- <20251028-b4-rpi-ov5647-v1-12-098413454f5e@ideasonboard.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DWCN/w8usklH9qmLO2qK4lquKBCBxonENVdaMOJos1iJ0/hohW9ykxYx0+NIsrnH2H1fyT4L4gYLC1muVsVe46juxeR2wp+d+VCQGQGskoUrp63rogESsqMTOgoWx0+e2uA7iYNjUXpBIJhkTtg1+gSk6aYP5gDH7VC80xytj0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; dkim=pass (1024-bit key) header.d=1wt.eu header.i=@1wt.eu header.b=WUl+L6/l; arc=none smtp.client-ip=51.159.59.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=1wt.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=1wt.eu; s=mail;
+	t=1762082336; bh=WIDcqbQHHgVxE34iPek1ZZrJpBo1ZHI55VmseFRiPW8=;
+	h=From:Message-ID:From;
+	b=WUl+L6/lKCewUmHJ6apZvrEUk5IKahkjX70WxQqTQKvC9GbsnMDmq9dOM4Y95Y42Y
+	 v986PuNvVDt2hkC2k1ZI/YYq93Ng/SGONTJbny3SME/Vk/I08uQHQPz+psKOJZvI5m
+	 MWNhY9isC8VxiJsew+rlxiK0Dw742/cqh9sWPYMA=
+Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
+	by mta1.formilux.org (Postfix) with ESMTP id B55ADC06EE;
+	Sun, 02 Nov 2025 12:18:55 +0100 (CET)
+Received: (from willy@localhost)
+	by pcw.home.local (8.15.2/8.15.2/Submit) id 5A2BItkr024886;
+	Sun, 2 Nov 2025 12:18:55 +0100
+Date: Sun, 2 Nov 2025 12:18:55 +0100
+From: Willy Tarreau <w@1wt.eu>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: shuah@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/4] tools/nolibc: add the more portable inttypes.h
+Message-ID: <20251102111855.GA24871@1wt.eu>
+References: <20251102104611.24454-1-w@1wt.eu>
+ <20251102104611.24454-3-w@1wt.eu>
+ <cc94509b-a87b-410e-a601-6381c2a2e6e1@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20251028-b4-rpi-ov5647-v1-12-098413454f5e@ideasonboard.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cc94509b-a87b-410e-a601-6381c2a2e6e1@t-8ch.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Hi Jai
+On Sun, Nov 02, 2025 at 12:04:01PM +0100, Thomas Weißschuh wrote:
+> On 2025-11-02 11:46:09+0100, Willy Tarreau wrote:
+> > It's often recommended to only use inttypes.h instead of stdint.h for
+> > portability reasons since the former is always present when the latter
+> > is present, but not conversely, and the former includes the latter. Due
+> > to this some simple programs fail to build when including inttypes.h.
+> > Let's add one that simply includes stdint.h to better support these
+> > programs.
+> > 
+> > Signed-off-by: Willy Tarreau <w@1wt.eu>
+> > ---
+> >  tools/include/nolibc/Makefile   | 1 +
+> >  tools/include/nolibc/inttypes.h | 8 ++++++++
+> >  2 files changed, 9 insertions(+)
+> >  create mode 100644 tools/include/nolibc/inttypes.h
+> 
+> I think this should also interact with the big nolibc.h.
+> Both being included from it and including it itself, to follow the
+> generally used pattern.
+> 
 
-On Tue, Oct 28, 2025 at 12:57:23PM +0530, Jai Luthra wrote:
-> From: Dave Stevenson <dave.stevenson@raspberrypi.com>
->
-> In order to simplify the driver slightly, use the same PLL
-> configuration, and hence pixel rate and link frequency (to be
-> added) for the full, 1080p, and binned modes.
->
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
-> ---
->  drivers/media/i2c/ov5647.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/media/i2c/ov5647.c b/drivers/media/i2c/ov5647.c
-> index a0aaf83759e089aea727c44b614c6a9f3237586c..be0b96c4372ae0c6d8fc57280b195d6069dd7019 100644
-> --- a/drivers/media/i2c/ov5647.c
-> +++ b/drivers/media/i2c/ov5647.c
-> @@ -252,7 +252,7 @@ static struct regval_list ov5647_2592x1944_10bpp[] = {
->  };
->
->  static struct regval_list ov5647_1080p30_10bpp[] = {
-> -	{0x3036, 0x62},
-> +	{0x3036, 0x69},
->  	{0x3821, 0x00},
->  	{0x3820, 0x00},
->  	{0x3612, 0x5b},
-> @@ -288,7 +288,7 @@ static struct regval_list ov5647_1080p30_10bpp[] = {
->  };
->
->  static struct regval_list ov5647_2x2binned_10bpp[] = {
-> -	{0x3036, 0x62},
-> +	{0x3036, 0x69},
->  	{0x3821, 0x01},
->  	{0x3820, 0x41},
->  	{0x3612, 0x59},
-> @@ -396,7 +396,7 @@ static const struct ov5647_mode ov5647_modes[] = {
->  			.width		= 1928,
->  			.height		= 1080,
->  		},
-> -		.pixel_rate	= 81666700,
-> +		.pixel_rate	= 87500000,
+You mean you'd prefer "include nolibc.h" from inttypes and
+"include inttypes" from nolibc, that's it ?
 
-I get a value of 87499965, so I guess this is correct approximation
-
-Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-
-Thanks
-  j
-
->  		.hts		= 2416,
->  		.vts		= 0x450,
->  		.reg_list	= ov5647_1080p30_10bpp,
-> @@ -417,7 +417,7 @@ static const struct ov5647_mode ov5647_modes[] = {
->  			.width		= 2592,
->  			.height		= 1944,
->  		},
-> -		.pixel_rate	= 81666700,
-> +		.pixel_rate	= 87500000,
->  		.hts		= 1896,
->  		.vts		= 0x59b,
->  		.reg_list	= ov5647_2x2binned_10bpp,
->
-> --
-> 2.51.0
->
+Willy
 
