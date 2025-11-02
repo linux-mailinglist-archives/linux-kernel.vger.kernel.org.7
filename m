@@ -1,132 +1,84 @@
-Return-Path: <linux-kernel+bounces-881897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C22D1C292B6
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 17:44:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 27EDDC292B3
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 17:43:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A581018841CB
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 16:44:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F6711884424
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 16:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68044264630;
-	Sun,  2 Nov 2025 16:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8B92690D5;
+	Sun,  2 Nov 2025 16:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JVbb5ltA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lfEPQ90A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5034C1A3154
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 16:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABF3E22B584;
+	Sun,  2 Nov 2025 16:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762101810; cv=none; b=kgpNBzjJKHB9r5c4xkidkqOr9wf8P0ZmccspeaxQLl/3Glm027cgo2JHPDoxhtxaveDmWxnMzjLkEFgqV4NxgsPHWCJ+QGYfuTnhOu5ZT/YN18+boCfdP1AUC1IDaSQ8bzwQK8jbPGNKvIrRGaSvKXgutFLhuI45IWdnxTzysEk=
+	t=1762101693; cv=none; b=nM+9+GlglhQinAZnjzCiIGf0MiD7MF9xl3ig+sUZ7ZdD4idjRJ2egrhfODwdldAri6CvcS7Qwz8nzS2YeFmMuH+IKhPVny8eQlaW2BHNYccAQzcs8PlAcHmu29el0V7/RIm87ie+7uFAfPM9ogf830h9QkuDzhLpyvoO/hRHs14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762101810; c=relaxed/simple;
-	bh=eRQr/VRd9ouC+ynzQsRP6GqDWYplFUllMu+6jFjshSg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=SfsZ/h1GDI/nTe7DOcj+7dF6vVsI8WPb87P7qUtCEL4LfV3SN7JE27so/sght2Zz7nH+0tAXMRDrjWN4EAFjjyyglVtuwmjFskwGvySK6xVPyCJSs8xl2ucf1j73Ui+xLtYOA+jLOlb8Izc//Xo3cwE35uF3QE3DQi08zxV+aDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JVbb5ltA; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762101809; x=1793637809;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=eRQr/VRd9ouC+ynzQsRP6GqDWYplFUllMu+6jFjshSg=;
-  b=JVbb5ltA5PD+NbyZUec5JUmwsZFk8uPkTeGEw6gm4Ca2nYri6ZN36ynI
-   l5Kb4aAnoqfPu6N9hpbBDr9etn1hwMcVl9wTZ+M+bQ9AXk2wA6Ex5p0rw
-   LBqBpyCjqL3wup3IYvHydolhdI2xsT0Np5hVYM5wi8NVvIan30njG3+B4
-   DfExxtPv50cZUpIsoRtydudHXWP776lYWo6AELr68460wVKeELn3rRAIx
-   BeysJOcP/HussPMbShmMpgaRdKasazF6ph30sg5QB4fCQSwcv6ZF8SNTi
-   p/goAiWFnXLn2vN+a2HECtVthibVa3zSGMttJoHiH4Nh6Yno10Dnf3PKu
-   w==;
-X-CSE-ConnectionGUID: PNu7vA1JT8ejsLysxNz/TA==
-X-CSE-MsgGUID: 0Kj52DeeRn6x8Gb6pbsKyQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64095587"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="64095587"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2025 08:43:29 -0800
-X-CSE-ConnectionGUID: wGSyW/03RRm13wYiWHP9oA==
-X-CSE-MsgGUID: pFFpYBBUQ0yDzDBEYGrUjQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,274,1754982000"; 
-   d="scan'208";a="191789262"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 02 Nov 2025 08:43:27 -0800
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vFbAq-000PPH-2T;
-	Sun, 02 Nov 2025 16:43:24 +0000
-Date: Mon, 3 Nov 2025 00:41:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [tip:core/rseq 40/42] arch/arm64/kernel/entry-common.c:103:9: error:
- implicit declaration of function 'exit_to_user_mode_prepare'; did you mean
- 'arch_exit_to_user_mode_prepare'?
-Message-ID: <202511030013.EmYk0XGN-lkp@intel.com>
+	s=arc-20240116; t=1762101693; c=relaxed/simple;
+	bh=Qw2o7qqiBovxxDEWs9ElY7NcJNTGLYN9uvGaOrZH0y8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eSTpygJSkDAXTNF82GBlvf4k8qTJTWMpv+oqPgvI233tBB/RwoEqDMiwvZr04ghPl7/8MObQY3+Lo7dpoVySFkb1rlWN1Sk7lRVGfHLeKWfXDQOSbBcK/pXgHwDk7NMxGtZzB5FOax/hl8PFQGpvduICmIgEgznEC+5wq1l0ba0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lfEPQ90A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6791C4CEF7;
+	Sun,  2 Nov 2025 16:41:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762101693;
+	bh=Qw2o7qqiBovxxDEWs9ElY7NcJNTGLYN9uvGaOrZH0y8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lfEPQ90ANx5Z7evVCdIJUbBJ3FyL3MeBlDDuDClUr/MrUuBOVFWV1i8jjqkmP2adp
+	 C3t1mFYv8Ox5HNeepAngVWQzEn3CQNRyeGCWsp3LC2Y5INFnB4XYycW2jaAaSiNwnr
+	 MLPZAvWECTT4GUdJEhmXRh92ZByJe9Wweuv8EACKwBcivfkBxc91/9gXR/Oaiyn94q
+	 IcKQEbmp1AFknATj50ZKSA+JYM3nT+Bw7E3FBNbI+u3tgOtgnfqOLcwXx8oI88jyeP
+	 V7CUMNy1fKt09Pwrlx8ETWCVdIgZzenm9BhNZPchjHbVgGUToVdhZdlAvHVkv+dvVi
+	 1DstzWu0hZSNg==
+Date: Sun, 2 Nov 2025 17:41:30 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Maud Spierings <maud_spierings@hotmail.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 1/6] dt-bindings: display: bridge: simple: document the
+ Parade PS185HDM DP-to-HDMI bridge
+Message-ID: <20251102-shaggy-famous-loon-0c4913@kuoka>
+References: <20251101-asus_usbc_dp-v1-0-9fd4eb9935e8@hotmail.com>
+ <20251101-asus_usbc_dp-v1-1-9fd4eb9935e8@hotmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <20251101-asus_usbc_dp-v1-1-9fd4eb9935e8@hotmail.com>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core/rseq
-head:   69c8e3d1610588d677faaa6035e1bd5de9431d6e
-commit: d589306403107aa3ba5f014cb7d17b3d5db3cf94 [40/42] entry: Split up exit_to_user_mode_prepare()
-config: arm64-randconfig-003-20251102 (https://download.01.org/0day-ci/archive/20251103/202511030013.EmYk0XGN-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 11.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251103/202511030013.EmYk0XGN-lkp@intel.com/reproduce)
+On Sat, Nov 01, 2025 at 01:54:12PM +0100, Maud Spierings wrote:
+> The Parade PS185HDM is a transparent Displayport to HDMI bridge.
+> 
+> Signed-off-by: Maud Spierings <maud_spierings@hotmail.com>
+> ---
+>  Documentation/devicetree/bindings/display/bridge/simple-bridge.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511030013.EmYk0XGN-lkp@intel.com/
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-All errors (new ones prefixed by >>):
+Best regards,
+Krzysztof
 
-   arch/arm64/kernel/entry-common.c: In function 'arm64_exit_to_user_mode':
->> arch/arm64/kernel/entry-common.c:103:9: error: implicit declaration of function 'exit_to_user_mode_prepare'; did you mean 'arch_exit_to_user_mode_prepare'? [-Werror=implicit-function-declaration]
-     103 |         exit_to_user_mode_prepare(regs);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~
-         |         arch_exit_to_user_mode_prepare
-   cc1: some warnings being treated as errors
-
-
-vim +103 arch/arm64/kernel/entry-common.c
-
-bc29b71f53b13c Mark Rutland 2021-08-02   93  
-bc29b71f53b13c Mark Rutland 2021-08-02   94  /*
-bc29b71f53b13c Mark Rutland 2021-08-02   95   * Handle IRQ/context state management when exiting to user mode.
-bc29b71f53b13c Mark Rutland 2021-08-02   96   * After this function returns it is not safe to call regular kernel code,
-59598b42eb52c7 Mukesh Ojha  2022-10-29   97   * instrumentable code, or any code which may trigger an exception.
-bc29b71f53b13c Mark Rutland 2021-08-02   98   */
-997d79eb938e98 Mark Rutland 2024-02-06   99  
-b3cf07851b6c4a Jinjie Ruan  2025-08-15  100  static __always_inline void arm64_exit_to_user_mode(struct pt_regs *regs)
-4d1c2ee2709fd6 Mark Rutland 2021-08-02  101  {
-97d935faacde47 Mark Rutland 2024-02-06  102  	local_irq_disable();
-ab1e29acdb33c9 Eric Chan    2023-05-31 @103  	exit_to_user_mode_prepare(regs);
-b3cf07851b6c4a Jinjie Ruan  2025-08-15  104  	local_daif_mask();
-e130338eed5de0 Mark Rutland 2021-08-02  105  	mte_check_tfsr_exit();
-b3cf07851b6c4a Jinjie Ruan  2025-08-15  106  	exit_to_user_mode();
-e130338eed5de0 Mark Rutland 2021-08-02  107  }
-e130338eed5de0 Mark Rutland 2021-08-02  108  
-
-:::::: The code at line 103 was first introduced by commit
-:::::: ab1e29acdb33c971e1af8ed8ec427bd1deff5f32 arm64: lockdep: enable checks for held locks when returning to userspace
-
-:::::: TO: Eric Chan <ericchancf@google.com>
-:::::: CC: Catalin Marinas <catalin.marinas@arm.com>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
