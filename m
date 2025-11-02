@@ -1,124 +1,258 @@
-Return-Path: <linux-kernel+bounces-881624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91F96C28956
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 03:16:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8CDCC28962
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 03:25:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1F821897848
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 02:16:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 628E43AD498
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 02:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF24F1A3A80;
-	Sun,  2 Nov 2025 02:16:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3464B2248AF;
+	Sun,  2 Nov 2025 02:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V6PakqWS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TdYkKLXA"
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011058.outbound.protection.outlook.com [40.107.208.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313BA2F56;
-	Sun,  2 Nov 2025 02:16:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762049774; cv=none; b=Z01AkSiJZA3YWi5Xl64lTz+qwQbv3QrkyMARj1X0QHiFfJdmBONFuoZTE5cHR1V36z5T1OPeeaaN9t5nx2fguQ15Oo07lpY80k0/wPaE+/gzk+OeGhVUWAVy6H+Zao/z2Zdg0hw9Jqh79et7QSB2U3FCinukK2xq66QNbsTpsFs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762049774; c=relaxed/simple;
-	bh=IhILa7q+QWjgRJMc9buThJ+9nju/E8F3i03bMj9qMLk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bHYY3a1oQF8y8b5npnVI+izH5lJIkz6tMRE32whglgTEYGa73GX0Sepyddzsp1PtbEkc2ZsV5TKT2T+THCBit9rUhb8KGhc1Meh93PuJF56XulBYuOwtuLsmjd5BgqhjxyLOLFkjli9Eli06Zk99/jO7slKJ/U+5NS2QeefzUik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V6PakqWS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E5D7C4CEF1;
-	Sun,  2 Nov 2025 02:16:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762049771;
-	bh=IhILa7q+QWjgRJMc9buThJ+9nju/E8F3i03bMj9qMLk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=V6PakqWSI/KghR9vn65BHgyqqTMuKoEJ0jocLVpwKYHFuFttm72p7gsfcvl5ITNsG
-	 b0DfeKkxQTcgoHNfKg1cJDxa40dLeBtntdlL3bC3FPO/vMnYZi4YIThP8z1HE9RGsg
-	 AZtMSWTBbqCgyHpKu289UEJT7+O1PGVdM8tEd3rxqCgC8alDuWHzXCg1Z3iThJDl/k
-	 MyvGhJpgSO6Nrwpom5qaS2H841i1gemnHTN0JOw53uJh7nz75UlcqbL4Qd6SFsLyyq
-	 Guvd9fEhjMN1QLMTx5RkY6RoveyOfBM+tao+VsMkONPtmN0nu3eCRuXVx+BerLYfG7
-	 bMAzPH9nBdlsQ==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH v2] lib/crypto: arm/blake2s: Fix some comments
-Date: Sat,  1 Nov 2025 19:15:53 -0700
-Message-ID: <20251102021553.176587-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.51.2
-In-Reply-To: <20251102014541.170188-1-ebiggers@kernel.org>
-References: <20251102014541.170188-1-ebiggers@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7752F56;
+	Sun,  2 Nov 2025 02:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762050326; cv=fail; b=pAWQBBjloF8Aciq5n7v+L4DOIqkmcHnA/SWic+b/S2nmyONqrBLlcDi0hKCF8g8c7O/ojPW1rRXhLtCl9AABilGfSFrjtqvXOX1g1moZZcPBK26BmixrQU+9hA65aDWtCozlj7tx1w6CCmcvOTvnLbpEMih5Oi5PnXttu3NBpfA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762050326; c=relaxed/simple;
+	bh=HNxHvOkCJWX5+AdBnZKudydORwv/PcDce6zGCdgLGHo=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=Ou/hqOu4ej4rIfrKDlO9vqBfAaUX9KfLYHFBd7suq/fyNaNEK6AwmuKmfnC3qKnwgGVMyY3YyRsdEewd0PAtMAKcnIq5eoePwZ0e830rOGDwvoHhPnEYq3DEBB4UFwVm+NUDGB1zUe72IuL5HB++CpeaPlW0C925IlUqGoE1rdI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TdYkKLXA; arc=fail smtp.client-ip=40.107.208.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=jEX48VupIbjctKXKcKgcBdLeoTpm3zAPw2MrlJHLSxojeXKRV20ufhXr9sELDlW71vizb0TgCk3Bmxz72RnHy5kGmQUYI28Ogqm7ieRCSWZlQqw5/HJgq8IybZeM8bqWCgO4vyGSdnx9CEsiJaquiPZ/Cyx+7fmjsMUsYte0y2Jy8rrdRHWK1gMeFOT8zhYD4o8tAtDMMb9wQfLUegbkOkWKZLoSSb8uK8KqKPnYhzZBkFonzQzWoh1NYctfAQGU6+tnLexUP5Mu5yYIPAF8FCqO8M9j+/cOlCE4r1B7PTi/c/JMWAMbyptCPuLAJ1w3aPne13Ly7aYsehz+JTxveQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vE+0k1Qo2y0Hf76sPowhCCzBxRq0aYlfEL8n+7XzOqo=;
+ b=sekE/EqJUlrB6WTjMdagdQ2vUMpl7/QPJbDS20T6+npnXgEyRwaxo5rXUPFi0AUidAf3NsFyO+JCT+9NrU9qF8z15qix7/gn5OQRGZOzxvKoik70R/uxSAnqGj8jikuAx9SxsE5fDl3clmuwnJXUJmtvJuqwVWGzYa9qdUYq/oK/rS4n5QnZrZ2cPDxTrbDuFH2Wrfv46MpE0uop8VwtidXKQdzkLb287QX/x8FH7x2OfwdLATJ6SyDoZh1yvoeK4o99m8Pn6GYnwcRzpjY3UgKl+2sR9/ELXHcscDb5MqgqpKh+1ImAAjw/AurrOTZH7f68wWBBE7DgpMMDWBEK+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vE+0k1Qo2y0Hf76sPowhCCzBxRq0aYlfEL8n+7XzOqo=;
+ b=TdYkKLXAmGIjtI7n+rhhYYq8NgruQ5P+plbpibCeQ7k90plbXTLm6of3maFieKgc9y1KYsMijXe2/j94vzEsHUihU4kZKJJ1MR9sX8oXHrKteby+bIDClo7wWZxBwdYBePBx++i7YcJVDJb4WSh7srUjQVELtfTOdJ6C052ZHHKjzEKexRmgQltNW+0oAesXvzCV6q7/K7O20mopYFoRgBbCQyZ0HBHGkCRXoRq/c7RnLc0PO8or18wjOZ+NeluNWqueSl99GB6XAnj4WJ5e5RixrF5T3EtNX5dq6+5Bzhn6idV8NvdPfK8moLeYOO0N+x1Xp7lV2lXCJK6OO/DhEg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by PH7PR12MB7284.namprd12.prod.outlook.com (2603:10b6:510:20b::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Sun, 2 Nov
+ 2025 02:25:14 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9275.013; Sun, 2 Nov 2025
+ 02:25:08 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 02 Nov 2025 11:25:03 +0900
+Message-Id: <DDXUPAELH6C2.3JK5JVGP87V8N@nvidia.com>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Boqun Feng" <boqun.feng@gmail.com>,
+ "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
+ "Nathan Chancellor" <nathan@kernel.org>, "Nicolas Schier"
+ <nicolas.schier@linux.dev>, <linux-kernel@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-kbuild@vger.kernel.org>
+Subject: Re: [PATCH RESEND] rust: enable slice_flatten feature and abstract
+ it through an extension trait
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>, "Alexandre Courbot"
+ <acourbot@nvidia.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251101-b4-as-flattened-v1-1-860f2ebeedfd@nvidia.com>
+ <CANiq72n6KLjA5XQmAhy=SRTnWY8sCCmp9ETnB-dTSVZ84-mjzw@mail.gmail.com>
+In-Reply-To: <CANiq72n6KLjA5XQmAhy=SRTnWY8sCCmp9ETnB-dTSVZ84-mjzw@mail.gmail.com>
+X-ClientProxiedBy: TYCP286CA0112.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:29c::7) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|PH7PR12MB7284:EE_
+X-MS-Office365-Filtering-Correlation-Id: fbe717da-edf0-4232-42cf-08de19b70a95
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|376014|7416014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?NWF2N1AvTjRyQ2g2dXJqZGRFeXlKY25GMm1vZlR2ZVZOR3BtcTFDa1BpVXNw?=
+ =?utf-8?B?YkxQN3dPZmhiTk5CTjlQc0tEMnhzbWNTK2FXeG9TU2pUMFRrVWhBMDJodzYx?=
+ =?utf-8?B?UjkzWTNxbENYZFRtREFFMCs4SDNhTzVtcjJPbzhRZ1ZHSXloRW5kR1RVMTUx?=
+ =?utf-8?B?bXhkZFphTnBSeW10cmdpSUpuQm1DNFNKYldZUWFKd2pPcDc4S3Azb1plK0gw?=
+ =?utf-8?B?a2RFWWZBWi9reGV5bnIvcWt4TDBWK0ZaTjdjZGtWV0M4SjErUDFRWjJDT2dT?=
+ =?utf-8?B?UXpNb2RxLy9XcmptbHV3UGxMSmFLemJwS1VKZFZoL1FFWmg1NE9FQk9uV3hF?=
+ =?utf-8?B?aysybEgzQ2NQOUJzMmNFcFROd1YzSE5ibnBpZVV2S3Y0VTAxaGZKek1nOGNU?=
+ =?utf-8?B?MGMzK3AzcjVUaERXVEwwTXBYVllGdVFDRkFWQ2JoR3ppeVA5bEJveFBlYVZt?=
+ =?utf-8?B?dFBZd2d6a0YvelUySVlwWnp0enRORDNBM2pNLzVvSVl3MmQvUG1EbW9BdG1Y?=
+ =?utf-8?B?bzFKNTUxQmlCZkNDUTBVTTJtOE8xYncvN1RhaGRCczRucktMRGwwM0krR2JN?=
+ =?utf-8?B?R1ZWR1dGRmZsSUJLS2FKdFNRTkYxS3o5cCtpcGM0Z2tWUnRkOWNmZ1ZqeElx?=
+ =?utf-8?B?UUpSWWx3a0djb004b2dPeGEvUkwxV3l5T2xSa3Q1dHc3bnVSWll0TEh3WE82?=
+ =?utf-8?B?LzFtSG05RnA2ME1TQ2U3TXhNTzliUmZsOWJJV0RsODhzSXIvM0tDaFpJQ0RW?=
+ =?utf-8?B?czlHOWpkMkd0V0FERDU5ZEFYbXZPeE9TVkZidklWY0lkT3N3WFBQbGE3TDRs?=
+ =?utf-8?B?NTFqajRidFpoT2UzSjhOaTc4c212QkN4VUFXOWZoNlBFbS9acnVRMWRNRnhm?=
+ =?utf-8?B?M2Q3Z0VBQ1dGbnZPcE92V1JxbjZqVER6M1VtVERLTDNaNXU2NGJ2UlNUTkYw?=
+ =?utf-8?B?YjJsazNhYlRQZTV0WDlMd0QvaC9iZEFSaldsTUlETWszS3haYlFUek5nbGpZ?=
+ =?utf-8?B?MGRNWjFoT3l6Zk1kNm5DM0pETG1NY1dZK0dIbzZDVFM1NlYvb2dEZzA5MVpz?=
+ =?utf-8?B?OWVsMGRpZnZtVjA2SzJqY1k2RnZCQ3ZJTE9PeHRxQUVvV29SdzEwRWJGOFNq?=
+ =?utf-8?B?dERiRVpHdktaS2lRL2RyQll6UWQxdnMybDVLM0ZDNEpENDNLa2lHSWVaMHhD?=
+ =?utf-8?B?RjR2UEwvSDVyQ2tZWFR0VWRIWEZDM29oNDBQaG1NTGlxbHprWWh4Q3RMRG4w?=
+ =?utf-8?B?Nm9lTGNZNmVRR1lNcExxSDloM3RIbnRySGQ5NXpLQ0hWMnRGMmdlWGJnWFg0?=
+ =?utf-8?B?RjE1cXN4TkNJWEhBaHNYemk1cWZDWHpCYmlWL0U3bENFanBIbUV1SVhqZ2hO?=
+ =?utf-8?B?eis4Y0FTUktjMGtjKzQyaW82M20xYXNZQkNuUHg2V3pqYkxaYUlEcjlRMWNh?=
+ =?utf-8?B?bkhTUVRNeEZmTmhKaGxrWkNGT25sdEhzUGZaRzFtZlVpR3Nha0pBRDM5QjQy?=
+ =?utf-8?B?azlWUjNJQ0NlSkU0TTBObk92cWpZbGV2WWh2UlkrQmYwUkRmd0djSVk2cHAw?=
+ =?utf-8?B?WEV5RnBJN01CNDFsb1FjeEIzVzFZV2VDOURDd1FrazdGcUE4eHdNK1hXdjBH?=
+ =?utf-8?B?Y1FZenNrNm1tQ2prV2p1alpTZE1pVHRMdXQ1L2IxeWpwM1A4UU52RmQwaFdq?=
+ =?utf-8?B?ZHNIZU4xUjU1QkdiMW5rQXZjdGw3U2ppcXhCcmxJUk9QKy9qOFZoNlFKWjBs?=
+ =?utf-8?B?WWFEMDlkb2FJcmo2Y3MwVStUcFJBUlRyUlc5ODJkV0tzRGEvY21WWXVGc09H?=
+ =?utf-8?B?b1QwQ084RVJVamtTWEhseURzU29BSVJhVFNXb3djNWJHNG5wVkw0M25qaTVS?=
+ =?utf-8?B?ZnVObGVVZnUwNVFSTmIxTnp2WEd2d3ZHbXhnbjdBMmd3d1dqYkJUTThoTzJJ?=
+ =?utf-8?Q?CXsWHh5qRvYTZ0lzfbmh28p5/NkYkyNg?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?c0NEdFJWVUUrbi9vRWpoY3hobUJQODg5UTA2K05ZK3VKc292aUNFSERURFNE?=
+ =?utf-8?B?dlhKcDZFdkVXdFlSSkJxb0M0WTVJanpEc3JlMU5ZaUpFTmJFdG0rUUpsTDRa?=
+ =?utf-8?B?T0d6dkRhNWVnSW03SWx5eGZQd3RmMjRiUE4rUktIamRiTXdvbzNIRGV6bmlv?=
+ =?utf-8?B?NDFVNEJxSzVkY2l3elpvK2dReXA3NHNxQVRXS1h5SDNGaStXaGJVNFY5UmVW?=
+ =?utf-8?B?eitROGYxaGNwQ205WW1FWjR4b3pOcnpuVTJNb0pEcmhPclBFanBGUmJKcUwr?=
+ =?utf-8?B?eUhjK2JFNC9YN00wZkNKVEZ4N3VGeTVLK2ZpaXp0T3N6MDZacUdXb21jdmZj?=
+ =?utf-8?B?SHhmRTA5ME4rVGJ2TkVjUWNVSDE2SDZBMUcrUU45WkhpcUxjUVpOUExiRVUw?=
+ =?utf-8?B?ZUNKSU9aWUphdU9qS2ZwK0FIMkVyVUl5ZWloN0NJU2JMNU9zZ09OQVpDbWZT?=
+ =?utf-8?B?bzFvZ1Ztczlzc0dDLzRYeTB5WXRaK1MwSjhQTnUzRktXTDdTanA3ZmpmM0tT?=
+ =?utf-8?B?VVJPU2llT0JuOERVM0Q0ZFFwUWkxOER2V1ZZaWpDTHlWVCtkN3NMVmowU1ly?=
+ =?utf-8?B?VGYvWGdLYlp6ZzVCaGRTZHpBa1p1L1UwN1d2Y1VRZHRIZzYyblJTQllBMnY3?=
+ =?utf-8?B?ajVvY1p1dUtwYit2ejFWNHc5Tjc5dE9yY3FQKzNJQ0d6U1ZIRmE2Slo4ZFJE?=
+ =?utf-8?B?N1JSWG5kUEg5U1V1ZGtkK1RYY2UwRWdzOFp0aVpSSE44QUdLeXk4bnNvdGxk?=
+ =?utf-8?B?WkNSVERkN2N6SHhCU29ZV1hUNmJMRXJsSS9hRlRWL3kyYkFYb0tSZlVhZXZx?=
+ =?utf-8?B?ZCt4Tm0xanRxYmVrc3l0T1VHQ1JMQjh6dHRGT1diTXREaTI1RnBLWnRwcGwr?=
+ =?utf-8?B?MEpidkwrVWJGNERSRmtMeEhmUTNMWDM1OTREWDI0NlVuZng0Sk82ci9hSlpx?=
+ =?utf-8?B?VStmZU55S2thb0NNK3J1UGtYZ3hMUXd4Q0JsVjhqZ0ZuaXhoNHQrU2NMSmRV?=
+ =?utf-8?B?Z2wzOXd1MG0wWEMxY0hkQk8zeUJKcEFmdXhLVjMvamszdUR3TGE3ckFPTThz?=
+ =?utf-8?B?cXhkOXRRam1lTmpTNUdmNlF5SlVsc1A0NUpWNTVkWXo1aDVPb1JKdDdZMlJs?=
+ =?utf-8?B?bXNHaU1POGVWN2p2NnhQRlBtTXpNdGQvSnJUcWNYUmVPTVo0ZlJnM2RWeEta?=
+ =?utf-8?B?Tkg2dGlmVU5PdGtCeFpXMkNpUkwvUE1iZ0JkNXBUOW1uZ3g3MjZwanJVckpo?=
+ =?utf-8?B?ZEx2dWE2Sk5EL3BUL1BMMkFPY3NuYksrRWhsR21Fc0Y0OURzSmEvc1BXa2Vy?=
+ =?utf-8?B?dUxwa0laSkpPTDZhWFp1WmhPMTVzWVg1L1pXSEk1bUl2ekFiTlMvNlllNXR1?=
+ =?utf-8?B?VlRkVXJLV09NejQ1UFcrckxTTUtrUTluTFdxVlFPY2hHZUhlSWhURG5KSHUy?=
+ =?utf-8?B?dHRUSFRQQmxaNkszNERBdDU0RjlGSmVhRE5LU2oxYXp2MWdES00xYnJVOEwy?=
+ =?utf-8?B?QUU1ZERBR3YyZktQTnovbGJROWlZZWdNRDkvOU1PaXA3c2hsZm8wSjhhcXVk?=
+ =?utf-8?B?elZjOU1FWlFFbVQrbmhZRC9yZDVOTEJhYVBEU1hPQWVkRzV6K0lYR2Y5WlBQ?=
+ =?utf-8?B?RFNabVBSNEtCYVpnSXlOSHFuNDBuWnFPKzZQUUlkTzlSR0N5dkhIZEZva0dS?=
+ =?utf-8?B?WEpscWZobEtXK3dkc3NyVjlYVzdLZEdsb09HaU4wbUxrYlNobXB5VzY3dXU0?=
+ =?utf-8?B?cVF5eStUSTdKTW1hZkplRGl2TEhpbVNDTi9YdUlXYk9rQjBHMDFpVzAvbmI2?=
+ =?utf-8?B?MUFQSjNxZDFhbFFTZkZsc0tQK2NLZk1YNTZ3R1A5QVl5UVo3b3QvRzUyV2Ez?=
+ =?utf-8?B?VEVmT1dpS1A5RkJ5VG8xa2I0RFViUmU3WmdhNXkycytPTFBtajUxQnFxNk50?=
+ =?utf-8?B?L3RSZ2tsbDlYMkpLRk0xZ3kwVVB6bWMxa3B2eFZrcW9zTERFUGxVeHRRclpn?=
+ =?utf-8?B?eS9jeDltWTJQSjhndWhxRTJXcnJEeHVPcnRsaVNiOFRKcVErTE1mbkFXZVcz?=
+ =?utf-8?B?SWxzRUdMS2NSUGZtNHdqSXI1Z3hkdFZtVVNkK1Y3b25xaVUvdC85M2hCY0Zh?=
+ =?utf-8?B?bnNEL1FZRDJwYTA3MnJ4d2N5RVhTQmVyUnhOQ1c4ZDMxZXZNRFR0RWZlWUtI?=
+ =?utf-8?Q?Wr4AqQEbT+4v8T/hzgrqIGUJNq4uQ0/63RdHlTNPaS8t?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fbe717da-edf0-4232-42cf-08de19b70a95
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2025 02:25:08.2401
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JQa3Odf51GeWJ3hoOzDhKv44Z6U//jPjsI+3Meb6zHVseNLhAXUL9M2P3B9M2HrZHYThOMzHVlFlXmQnY/v4+A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7284
 
-Fix the indices in some comments in blake2s-core.S.
+On Sun Nov 2, 2025 at 12:36 AM JST, Miguel Ojeda wrote:
+> On Sat, Nov 1, 2025 at 2:32=E2=80=AFPM Alexandre Courbot <acourbot@nvidia=
+.com> wrote:
+>>
+>> Hopefully it captures Miguel's suggestion [2] accurately, but please let
+>> me know if I missed something.
+>
+> Yeah, this is what I meant and looks great -- thanks!
+>
+> If you need to use it this cycle in another branch:
+>
+> Acked-by: Miguel Ojeda <ojeda@kernel.org>
+>
+> Otherwise, I will pick it up.
 
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
----
+Thanks!
 
-v2: Fixed the same mistake in another place.
+>
+>> +config RUSTC_HAS_SLICE_AS_FLATTENED
+>
+> I guess you used this one since they renamed it and since we don't use
+> the `alloc` method. It is fine, both options are confusing in
+> different ways, but sometimes the feature name is the only one that
+> can be used (since it may enable several methods etc.), so I wonder if
+> we should try to use that consistently.
 
-This patch is targeting libcrypto-next
+Ah, I think I see what you mean. The `slice_flatten` feature has been
+removed in 1.80 with the stabilization and method rename, so I guess we
+would have to do something like:
 
- lib/crypto/arm/blake2s-core.S | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+config RUSTC_HAS_SLICE_FLATTEN
+	def_bool RUSTC_VERSION < 108000
 
-diff --git a/lib/crypto/arm/blake2s-core.S b/lib/crypto/arm/blake2s-core.S
-index 14eb7c18a836..933f0558b7cd 100644
---- a/lib/crypto/arm/blake2s-core.S
-+++ b/lib/crypto/arm/blake2s-core.S
-@@ -113,11 +113,11 @@
- 	eor		\b1, \c1, \b1, ror#12
- .endm
- 
- // Execute one round of BLAKE2s by updating the state matrix v[0..15].  v[0..9]
- // are in r0..r9.  The stack pointer points to 8 bytes of scratch space for
--// spilling v[8..9], then to v[9..15], then to the message block.  r10-r12 and
-+// spilling v[8..9], then to v[10..15], then to the message block.  r10-r12 and
- // r14 are free to use.  The macro arguments s0-s15 give the order in which the
- // message words are used in this round.
- //
- // All rotates are performed using the implicit rotate operand accepted by the
- // 'add' and 'eor' instructions.  This is faster than using explicit rotate
-@@ -207,22 +207,22 @@ ENTRY(blake2s_compress)
- 	_le32_bswap_8x	r2, r3, r4, r5, r6, r7, r8, r9,  r14
- 	stmia		r12, {r2-r9}
- .Lcopy_block_done:
- 	str		r1, [sp, #68]		// Update message pointer
- 
--	// Calculate v[8..15].  Push v[9..15] onto the stack, and leave space
-+	// Calculate v[8..15].  Push v[10..15] onto the stack, and leave space
- 	// for spilling v[8..9].  Leave v[8..9] in r8-r9.
- 	mov		r14, r0			// r14 = ctx
- 	adr		r12, .Lblake2s_IV
- 	ldmia		r12!, {r8-r9}		// load IV[0..1]
- 	__ldrd		r0, r1, r14, 40		// load f[0..1]
--	ldm		r12, {r2-r7}		// load IV[3..7]
-+	ldm		r12, {r2-r7}		// load IV[2..7]
- 	eor		r4, r4, r10		// v[12] = IV[4] ^ t[0]
- 	eor		r5, r5, r11		// v[13] = IV[5] ^ t[1]
- 	eor		r6, r6, r0		// v[14] = IV[6] ^ f[0]
- 	eor		r7, r7, r1		// v[15] = IV[7] ^ f[1]
--	push		{r2-r7}			// push v[9..15]
-+	push		{r2-r7}			// push v[10..15]
- 	sub		sp, sp, #8		// leave space for v[8..9]
- 
- 	// Load h[0..7] == v[0..7].
- 	ldm		r14, {r0-r7}
- 
+... and invert the logic in the code. That would run contrary to the
+other `RUSTC_HAS` options requiring at least a given version though.
 
-base-commit: 5a2a5e62a5216ba05d4481cf90d915f4de0bfde9
--- 
-2.51.2
+Also not all of these seem to be tied to a feature;
+`RUSTC_HAS_FILE_AS_C_STR` appears to refer to the
+`Location::file_as_c_str` method, which is behind the `file_with_nul`
+feature.
 
+So I guess `config RUST_HAS_AS_FLATTENED` would also work. I'm happy to
+follow what you think is best here. :)
+
+>
+>> +/// In Rust 1.80, the previously unstable `slice::flatten` family of me=
+thods
+>> +/// have been stabilized and renamed from `flatten` to `as_flattened`.
+>> +///
+>> +/// This creates an issue for as long as the MSRV is < 1.80, as the sam=
+e functionality is provided
+>> +/// by different methods depending on the compiler version.
+>> +///
+>> +/// This extension trait solves this by abstracting `as_flatten` and ca=
+lling the correct  method
+>> +/// depending on the Rust version.
+>> +///
+>> +/// This trait can be removed once the MSRV passes 1.80.
+>
+> These paragraphs sound like implementations details -- I would
+> probably leave that to the commit message or normal comments instead
+> (we should notice we need to remove these thanks to the line in
+> `Kconfig` already).
+>
+> Nit: two spaces above.
+>
+>> +    /// Takes an `&[[T; N]]` and flattens it to a `&[T]`.
+>
+> Nit: I don't know how one is supposed to pronounce these, but I guess
+> it is "a" in the first one, like the second one (the upstream docs
+> also do that).
+
+The funny thing is that I intented to copy the Rust doc for
+`as_flattened`, but failed to even copy/paste it properly! ^_^; Fixed,
+thanks.
 
