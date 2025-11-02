@@ -1,80 +1,142 @@
-Return-Path: <linux-kernel+bounces-882003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F0F5C296E7
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 22:05:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0B96C296F0
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 22:06:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B12F3AC8E0
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 21:05:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1C343AF073
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 21:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF6C1DD543;
-	Sun,  2 Nov 2025 21:05:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3F222A7E5;
+	Sun,  2 Nov 2025 21:05:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bknimoo8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OFj+LG1Q"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC95B663;
-	Sun,  2 Nov 2025 21:05:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0E31F418F;
+	Sun,  2 Nov 2025 21:05:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762117539; cv=none; b=jqYZ3BMqAdAV/z2GY/GAjQqHfd3m/85fKBuvnTCQbrCTfq3jn9wB41m1odZkY/H/oJuJk8yl+azRBuv0aFM3/PF1fa1dY9lMONm9c9ShJU1sLaZUx+ayKnZFKXl+2IN1DtmU1PbuQEyUz9QvDlImZ4MGSFsDqFIc8LD4N7np6tI=
+	t=1762117551; cv=none; b=CS+lGrjTa5d7JEn+WfBSV3/A6dbz/U0b/xUTFaZIjb3Vy+7ZdNx/sxzIPeNr9kXYoNakZkA4fPPY8JlAUVdouVmnyPJ8/J107jDZQZw9CPl0pC5owDNPH34PYXF0U6pC7Ma2qJ6etgiCcyHh+EcN9HddlfY1n0G1vCokVUeKVZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762117539; c=relaxed/simple;
-	bh=XOWgPjZl8OpTIlB3PQabtMF0yGYfr9xcimARbAiruWw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=WT+bC1MSTzQdhgW7BWbAWY0eLPhjWTaa3nXr6VNvfh8I3IFB/qx8BdzvsyrsHHgoxlzdmFJCr5uAifQhBrs6gx8oLLOWLqDGXTqQSHa3RXebU6TxW5LXwH6kKY6Rcx49lvKnty3oJ9y4hm5fxeZMe3G4KxKdUyuxJnAvuzTzttw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bknimoo8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18D31C4CEF7;
-	Sun,  2 Nov 2025 21:05:39 +0000 (UTC)
+	s=arc-20240116; t=1762117551; c=relaxed/simple;
+	bh=nTHX1YfCh7X8t+gy7/mwsMUuWMwgp6cK39S8CemYIGw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=MbDRwwUxoB31wLKPSuW6bLNeenD9TwufDset/qEAnLDV6MVSo3pEi4PxdikyHtQbId+fjvD/d9fgiWHNkXhtehCZ2QcQxj9N1lCnHqW3DVKN1bkWtSlFDQejtWI2Y35o1X1yohj9bgZMyChQbAVTOIYk3UD3Vpdol5hVvFSsh6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OFj+LG1Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58283C4CEF7;
+	Sun,  2 Nov 2025 21:05:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762117539;
-	bh=XOWgPjZl8OpTIlB3PQabtMF0yGYfr9xcimARbAiruWw=;
-	h=Date:From:To:Cc:Subject:Reply-To:From;
-	b=bknimoo8FbvV8LzDBStYcYVi43byS0mlU0N+P6l5AwJ8VGo/s9RAqGxfWtuleJQ7d
-	 44IGp4zodDyPNyqyYaRkRlTzsZLTgViVsxyr0KA5lpNmv5u5mDvYYlKzlKfGQjLjyy
-	 5aPxf3wdNUBh6O6xuulOSSsn7i5897U7VxkdLHkTSrcc/mgK05UkBahUVUPvrG8HlR
-	 5f3c9BttvN6rg+wuNSmSBZYKwTymyUs4kwAZE6DC2qZT7ucAzSLsaEH/zhb209Bj2I
-	 QEgvs7w4dphBgoUNJsZZusxgM6EgULyQozlc2yTtNFktiNdUAG1983G0FPuXnS2q0J
-	 /VFc9zGVKPp0Q==
+	s=k20201202; t=1762117551;
+	bh=nTHX1YfCh7X8t+gy7/mwsMUuWMwgp6cK39S8CemYIGw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=OFj+LG1Qvk7YNodw8pQtzv2vnJKRnj9xVaY0axOQSaDzpCPJV8DgA/C1c7Hm5zUQa
+	 JGI3dMin4BaQD3IEM5kDqUog9AAkE5lzu/cxxx+4H0Z5X8ixaiVcY5hZNpKFzM0NTj
+	 YeJzHFr4Ksxhu9l8/8RYaqdKsOwFfAOe5+7UNmECedngREaJryK62Ff22ie0L3bLbh
+	 OngBPm2t8ISRF8FbARoj2ZdoVb0CuHrzcP3AuPK3//jx30/pe2Cf10Pc9Djul5Krg4
+	 VUBYf4FLR/mUrag+Dvnv+aUTSqEvNJuC77VyJeDmYVDu0TC2Zih+gk6LCkF6teRenx
+	 tTk23700Sgz4Q==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id C7CD8CE0F4C; Sun,  2 Nov 2025 13:05:37 -0800 (PST)
-Date: Sun, 2 Nov 2025 13:05:37 -0800
+	id 37630CE0F4C; Sun,  2 Nov 2025 13:05:50 -0800 (PST)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org
-Subject: [PATCH 0/3] Miscellaneous RCU updates for v6.19
-Message-ID: <6eb0d40f-9776-412a-9ab4-2d3298ead766@paulmck-laptop>
-Reply-To: paulmck@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	rostedt@goodmis.org,
+	Wang Liang <wangliang74@huawei.com>,
+	Zhang Changzhong <zhangchangzhong@huawei.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>
+Subject: [PATCH 1/3] locktorture: Fix memory leak in param_set_cpumask()
+Date: Sun,  2 Nov 2025 13:05:45 -0800
+Message-Id: <20251102210547.3898972-1-paulmck@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <6eb0d40f-9776-412a-9ab4-2d3298ead766@paulmck-laptop>
+References: <6eb0d40f-9776-412a-9ab4-2d3298ead766@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hello!
+From: Wang Liang <wangliang74@huawei.com>
 
-This series provides miscellaneous RCU updates:
+With CONFIG_CPUMASK_OFFSTACK=y, the 'bind_writers' buffer is allocated via
+alloc_cpumask_var() in param_set_cpumask(). But it is not freed, when
+setting the module parameter multiple times by sysfs interface or removing
+module.
 
-1.	Fix memory leak in param_set_cpumask(), courtesy of Wang Liang.
+Below kmemleak trace is seen for this issue:
 
-2.	use WRITE_ONCE() for ->next and ->pprev of hlist_nulls, courtesy
-	of Xuanqiang Luo.
+unreferenced object 0xffff888100aabff8 (size 8):
+  comm "bash", pid 323, jiffies 4295059233
+  hex dump (first 8 bytes):
+    07 00 00 00 00 00 00 00                          ........
+  backtrace (crc ac50919):
+    __kmalloc_node_noprof+0x2e5/0x420
+    alloc_cpumask_var_node+0x1f/0x30
+    param_set_cpumask+0x26/0xb0 [locktorture]
+    param_attr_store+0x93/0x100
+    module_attr_store+0x1b/0x30
+    kernfs_fop_write_iter+0x114/0x1b0
+    vfs_write+0x300/0x410
+    ksys_write+0x60/0xd0
+    do_syscall_64+0xa4/0x260
+    entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-3.	Add kvm-series.sh to test commit/scenario combination.
+This issue can be reproduced by:
+  insmod locktorture.ko bind_writers=1
+  rmmod locktorture
 
-						Thanx, Paul
+or:
+  insmod locktorture.ko bind_writers=1
+  echo 2 > /sys/module/locktorture/parameters/bind_writers
 
-------------------------------------------------------------------------
+Considering that setting the module parameter 'bind_writers' or
+'bind_readers' by sysfs interface has no real effect, set the parameter
+permissions to 0444. To fix the memory leak when removing module, free
+'bind_writers' and 'bind_readers' memory in lock_torture_cleanup().
 
- include/linux/rculist_nulls.h                        |    6 
- kernel/locking/locktorture.c                         |    8 -
- tools/testing/selftests/rcutorture/bin/kvm-series.sh |  115 +++++++++++++++++++
- 3 files changed, 124 insertions(+), 5 deletions(-)
+Fixes: 73e341242483 ("locktorture: Add readers_bind and writers_bind module parameters")
+Suggested-by: Zhang Changzhong <zhangchangzhong@huawei.com>
+Signed-off-by: Wang Liang <wangliang74@huawei.com>
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+---
+ kernel/locking/locktorture.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/locking/locktorture.c b/kernel/locking/locktorture.c
+index ce0362f0a871..6567e5eeacc0 100644
+--- a/kernel/locking/locktorture.c
++++ b/kernel/locking/locktorture.c
+@@ -103,8 +103,8 @@ static const struct kernel_param_ops lt_bind_ops = {
+ 	.get = param_get_cpumask,
+ };
+ 
+-module_param_cb(bind_readers, &lt_bind_ops, &bind_readers, 0644);
+-module_param_cb(bind_writers, &lt_bind_ops, &bind_writers, 0644);
++module_param_cb(bind_readers, &lt_bind_ops, &bind_readers, 0444);
++module_param_cb(bind_writers, &lt_bind_ops, &bind_writers, 0444);
+ 
+ long torture_sched_setaffinity(pid_t pid, const struct cpumask *in_mask, bool dowarn);
+ 
+@@ -1211,6 +1211,10 @@ static void lock_torture_cleanup(void)
+ 			cxt.cur_ops->exit();
+ 		cxt.init_called = false;
+ 	}
++
++	free_cpumask_var(bind_readers);
++	free_cpumask_var(bind_writers);
++
+ 	torture_cleanup_end();
+ }
+ 
+-- 
+2.40.1
+
 
