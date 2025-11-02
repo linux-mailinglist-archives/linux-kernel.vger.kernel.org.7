@@ -1,88 +1,88 @@
-Return-Path: <linux-kernel+bounces-881775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E77EC28E54
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 12:42:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01DA3C28E66
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 12:42:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED6CB3A6F28
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 11:42:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04E1D3B1FAA
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 11:42:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600272D8768;
-	Sun,  2 Nov 2025 11:42:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11E472D94A2;
+	Sun,  2 Nov 2025 11:42:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="UclykNDV"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I4QlC+D/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 267FA2D839D
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 11:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60730210F59;
+	Sun,  2 Nov 2025 11:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762083724; cv=none; b=KIhhZikkFQ8pniFtPaAjgk+OGs2JOC2B4zPI/695W4EzHb66Q5500WPA4PjiutRlOjp9Oma74OFy7NWA+3QgwDULW1Z5pAeTaWE/PTQV6WOTE6XSSA51sG1r8Md1iX+VUmqInAkICF2b8s7FkpK4m85YzDyuAqD8iopCvxfajz8=
+	t=1762083733; cv=none; b=Es2A7EK4EU3FhJC2CUHsIo1VxL0VepFJOyDeAoFenS621vOYK85x/6ndHZoC9vONd2ZnMWrf/uMw7NRs3EQE1iUyWzao5yD0PaRAbbsFLCKrpFalq9fNyAXfs2lwDww1YjLQVwGFHtUcqbSAGTPQJyxK+xV5yN6EXtIqY5t/iN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762083724; c=relaxed/simple;
-	bh=nlZFXH31G46OMgkFai5nO/GmjX3QkicYJ1jxaD0fX2I=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=imPchvTp0ocmgULj+Q/jnXUTkIQSvbXl9klgL2hr/zI+3pnVGo60I3XXFeoi2TDmRCQOFti6yC9ULe4pig0wCIfXdYz00Zv6GvmZXvRSSPLWk6+32DeUr6mtf3FySEp7pw14K05WkXnN57ypKCgH8c5l5Elsft2zypr6cQ01xcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=UclykNDV; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1762083721;
-	bh=nlZFXH31G46OMgkFai5nO/GmjX3QkicYJ1jxaD0fX2I=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=UclykNDVQJgK/YUhBbnQTk5PwAQlBKo8YEvluUM9pTG4irQPn8HJHfMmChVFa+xGO
-	 iU0j9wWKSXEi5hEEuviZ4jLd0Z1xDnSJxa6IvQZUKfrB+wAuUgaWu/DaaPInz1fAU7
-	 4KphVro5cmH4IOIchVokOC4+4kK854aYPW5vIGwI=
-Date: Sun, 2 Nov 2025 12:41:57 +0100 (GMT+01:00)
-From: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Willy Tarreau <w@1wt.eu>
-Cc: shuah@kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <58e535bd-6125-4f18-9a0d-7ce1cdd3f478@weissschuh.net>
-In-Reply-To: <20251102111855.GA24871@1wt.eu>
-References: <20251102104611.24454-1-w@1wt.eu> <20251102104611.24454-3-w@1wt.eu> <cc94509b-a87b-410e-a601-6381c2a2e6e1@t-8ch.de> <20251102111855.GA24871@1wt.eu>
-Subject: Re: [PATCH v2 2/4] tools/nolibc: add the more portable inttypes.h
+	s=arc-20240116; t=1762083733; c=relaxed/simple;
+	bh=Qhv1WcJSX0Gbo4sykFz90BCNTR/3+y4I0vbbjKSkLtg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YabJw9FLRN+GKaASU3s6WkJqkBzOZMrcauGkXNrKjaQQFwGD8aN1q9diMAR0RcXAB+bubncDgSAfDnFu9hd27dzbraTuHPI2H1HuyFDR0d+d0fEytZL6YPVg/T+bi113iim8uo/uz3af3TJmmhs6sZeve0GXDzJA7IME1RN4X8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I4QlC+D/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB6AEC4CEF7;
+	Sun,  2 Nov 2025 11:42:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762083733;
+	bh=Qhv1WcJSX0Gbo4sykFz90BCNTR/3+y4I0vbbjKSkLtg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=I4QlC+D/DJDloLzGjxK4Jb0n/9/nQwvjgzj9izK7P5mND1VdNTPJDaxo9GhZA9GNF
+	 m/tCpoOk3TC0/vApvUsXzLOf2YzgmtxjBHZoskSRBy2QISs14lRgK9RxfK7po/Xl+l
+	 OEoIVX13MfjaXuLCsyR8u0PXSt9LTswz4H9WqRmooQr22H8ZBBgVDIpuVeI4DKjwTP
+	 blJeI+KPsphuESXnhn5qGlVPwfCxpU446P59b/jMfk0NOSlVxa53m6uAPvyGEeqCXd
+	 ZJT6H2Jt5ZTXkixzJJ4fMY6oM5yRUXdGCPu9v7Uj3fmYLRccCJhmOy3Ug/Ar+jzTTv
+	 vfK94GofqlylA==
+Date: Sun, 2 Nov 2025 11:42:06 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>, Wolfram
+ Sang <wsa+renesas@sang-engineering.com>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, Magnus Damm
+ <magnus.damm@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
+ <broonie@kernel.org>, linux-iio@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Pascal Eberhard <pascal.eberhard@se.com>,
+ Miquel Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 2/4] iio: adc: Add support for the Renesas RZ/N1 ADC
+Message-ID: <20251102114206.37b3bbf5@jic23-huawei>
+In-Reply-To: <aQMpHDwCqcrNrnT9@smile.fi.intel.com>
+References: <20251029144644.667561-1-herve.codina@bootlin.com>
+	<20251029144644.667561-3-herve.codina@bootlin.com>
+	<aQMpHDwCqcrNrnT9@smile.fi.intel.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Correlation-ID: <58e535bd-6125-4f18-9a0d-7ce1cdd3f478@weissschuh.net>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Nov 2, 2025 12:18:57 Willy Tarreau <w@1wt.eu>:
+On Thu, 30 Oct 2025 11:00:12 +0200
+Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
 
-> On Sun, Nov 02, 2025 at 12:04:01PM +0100, Thomas Wei=C3=9Fschuh wrote:
->> On 2025-11-02 11:46:09+0100, Willy Tarreau wrote:
->>> It's often recommended to only use inttypes.h instead of stdint.h for
->>> portability reasons since the former is always present when the latter
->>> is present, but not conversely, and the former includes the latter. Due
->>> to this some simple programs fail to build when including inttypes.h.
->>> Let's add one that simply includes stdint.h to better support these
->>> programs.
->>>
->>> Signed-off-by: Willy Tarreau <w@1wt.eu>
->>> ---
->>> tools/include/nolibc/Makefile=C2=A0=C2=A0 | 1 +
->>> tools/include/nolibc/inttypes.h | 8 ++++++++
->>> 2 files changed, 9 insertions(+)
->>> create mode 100644 tools/include/nolibc/inttypes.h
->>
->> I think this should also interact with the big nolibc.h.
->> Both being included from it and including it itself, to follow the
->> generally used pattern.
->>
->
-> You mean you'd prefer "include nolibc.h" from inttypes and
-> "include inttypes" from nolibc, that's it ?
+> On Wed, Oct 29, 2025 at 03:46:42PM +0100, Herve Codina (Schneider Electric) wrote:
+> > The Renesas RZ/N1 ADC controller is the ADC controller available in the
+> > Renesas RZ/N1 SoCs family. It can use up to two internal ADC cores (ADC1
+> > and ADC2) those internal cores are not directly accessed but are handled
+> > through ADC controller virtual channels.  
+> 
+> Looks much better, thanks! My comments below.
+FWIW I took a look as well but found the only things I noticed were a small
+subset of Andy's much more thorough review ;)
 
-Yep.
-
-
-Thomas
+Jonathan
 
