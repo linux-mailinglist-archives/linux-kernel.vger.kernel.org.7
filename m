@@ -1,134 +1,235 @@
-Return-Path: <linux-kernel+bounces-881630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D5B9C28986
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 04:19:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D276C2898C
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 04:22:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 075EF4E16F4
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 03:19:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D39863A6750
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 03:22:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B94A12C544;
-	Sun,  2 Nov 2025 03:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2FD13635E;
+	Sun,  2 Nov 2025 03:21:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ba+ni+Nk"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=invisiblethingslab.com header.i=@invisiblethingslab.com header.b="Acxal4bI";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qIRZnWUx"
+Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE7D4A3C
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 03:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D53F4A3C
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 03:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762053576; cv=none; b=ZD2nSCU9U4X1ghyg3lZJFUgreef2Blpm7gmSRhxipfI46w96pGV35R/enQ6G+DHxcUNZ7HUEs7zd4zV4yOnl2XDbakzea7g0T9gKzP+u69kXh/VqBcLzXmWq3ctqEbAlG1G7A7rGEDere7whnL+W20xnZu9AFwkR6hLiQoEC/SE=
+	t=1762053715; cv=none; b=njWVjBnq3VOa/yM/NkGIW3HkbmJRmeUnwZ4xCTdKYRDHT7khhIEEOicLIS5/2Tf0VZVqtUo5AHjd1XTWjqsw7v2Tx3YfGvmES1oMeg52FikvQSnM1lYdJ8MjjaBE0YQbV+yFIZZ47dfqd9pdmnCLIasMatq5AHTBEW+Btk/zmuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762053576; c=relaxed/simple;
-	bh=OpfpPIF0FAOQIQ6J9k/BzwstL3azrmYNk+tF3wh9dfw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Od9uJT4q0UpiWSltdszwfKud0k9t4E9dvm/cIxMu1I43RUjyNc0t8yLk2R/enOeID9a/7ptuAYqqNrJtHXUFiHZLLYRLq1AhvRj0RNqJiDD20d5bh/rpSemwiZxqwN7knOCVmaASM+uE/Og788/S2WOE3zynJnnyo4L0r+EHnK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ba+ni+Nk; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762053575; x=1793589575;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=OpfpPIF0FAOQIQ6J9k/BzwstL3azrmYNk+tF3wh9dfw=;
-  b=Ba+ni+Nk9f1dyPr//Ksu82bT0DDIX5SFQKtmbZQrp9gDUUfvvFhcybfD
-   z9ExDxVJDEUnMvK9ifyEfd0luzEx6WiulTiESmV0N8+CmltQyJ7w2QlGu
-   bdoM5I/SThseJSXMtH27lI+ZsqdaiXUQyzNdCeH0NqHFrWTiJBhsHxlTq
-   ARyaRrD6nLRpB913I91xb4Jj+J9GCZp/Ou9WsB01eEyusXlvndZjTg4Cq
-   7ZR/14FalyUeYmwE0yVb38zbFdbu8YBC+6UlLjHiK/r0GKuQaRi+fv3E+
-   09kcVqe+Enb/+a+Xpz8ToHT4Gfa9nrqn2LGV1Cnu3Nwq9L11jc01ry3Da
-   w==;
-X-CSE-ConnectionGUID: Dkzcj54AQqCGPdC4aqeHsg==
-X-CSE-MsgGUID: pnJOPkJYTjS4APvb9uFytQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11600"; a="74462361"
-X-IronPort-AV: E=Sophos;i="6.19,273,1754982000"; 
-   d="scan'208";a="74462361"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2025 20:19:34 -0700
-X-CSE-ConnectionGUID: bmCNi3uWRMKvOsBgy1+5Sg==
-X-CSE-MsgGUID: /+w3pXMMT2mYSFdhF3gSCg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,273,1754982000"; 
-   d="scan'208";a="187295258"
-Received: from kvalverd-mobl1.amr.corp.intel.com ([10.125.182.77])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2025 20:19:33 -0700
-From: Marc Herbert <marc.herbert@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>,  Thomas Gleixner <tglx@linutronix.de>,
-  Ingo Molnar <mingo@redhat.com>,  Dave Hansen
- <dave.hansen@linux.intel.com>,  x86@kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/msr: add CPU_OUT_OF_SPEC taint name to
- "unrecognized" pr_warn(msg)
-In-Reply-To: <20251101100325.GAaQXa7UF-Ru2yqdI1@fat_crate.local> (Borislav
-	Petkov's message of "Sat, 1 Nov 2025 11:03:25 +0100")
-References: <20251101-tainted-msr-v1-1-e00658ba04d4@linux.intel.com>
-	<20251101100325.GAaQXa7UF-Ru2yqdI1@fat_crate.local>
-Date: Sat, 01 Nov 2025 20:19:27 -0700
-Message-ID: <m2bjll15q8.fsf@kvalverd-mobl1.amr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1762053715; c=relaxed/simple;
+	bh=8owp4UIl0k4qUOamyXVtzxnC1PD+ylJ+aGtGGBHL3xw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=J8RlVgfC9pfXbaXjyk22VRi5ycewTBnIG/jqWVXYr2HB64Gsl0MLfK/XeYo/G2cof/xMPhl5otxRael6aPT5SWiXifxOt0a85qaj4jAMfG2T7s9suaX1aKxoMZUWm7xIqsLbz1f33jv9ia1NOH02O43wYewe+U05oXZvY0nlEYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=invisiblethingslab.com; spf=pass smtp.mailfrom=invisiblethingslab.com; dkim=pass (2048-bit key) header.d=invisiblethingslab.com header.i=@invisiblethingslab.com header.b=Acxal4bI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qIRZnWUx; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=invisiblethingslab.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=invisiblethingslab.com
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfout.phl.internal (Postfix) with ESMTP id 1430CEC018D;
+	Sat,  1 Nov 2025 23:21:52 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Sat, 01 Nov 2025 23:21:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	invisiblethingslab.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:from:from:in-reply-to
+	:message-id:mime-version:reply-to:subject:subject:to:to; s=fm2;
+	 t=1762053712; x=1762140112; bh=7hp+3CUJGKWZLD+hs/ZP9jRp9wO3QWsC
+	LcVGR4MJGqI=; b=Acxal4bIYVnPZ4U9m9xz1ww8MwlHQ7U2OfaYK0UOczkpcnlp
+	9WXoMQlkR/3+2NU1/4JUxeVB/BYKeyfFfTGCnQb/CzpSz+HKHCyweChjy2GOEQQm
+	Lq6tiEQudElM6ur0bEP12/VGvH0cIT3Q/WVns5bfMIznVPJZBFvDTkOlvGWzPRq+
+	1OUqYOS59vaAYKKTPO5u6LN3lUSo8yLKjVxuPRCJQ19+o4+nckvx800EON50P/gY
+	78C0N0aKYscPXkz9FtXgyz1vbqHTCB2Nrxu9WTNGGwD+c+7yqB2n6B5G0NLGPUpR
+	7tpmjIXE0UHExak2soe/zyqQ9PSoDs+XGCo5Zw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1762053712; x=1762140112; bh=7hp+3CUJGKWZLD+hs/ZP9jRp9wO3
+	QWsCLcVGR4MJGqI=; b=qIRZnWUxNNmXVVXbT2dQc2bM3+01aSp0RMwjv7xqfCge
+	sydge9N73VuOktpifnHYH/Mg3lpXbB0Bvd21BOSo1aMV4SWZJ5kR48zipRRtG1nE
+	AfSN3LMO0curC3EdmS9+qhPzTT9AvbgFzP9pGo6v8oh2DVZBI154t4wmWqQPYo7F
+	qoMWHM7mXvl5qWO8wYfLHvrj9tGPbcBwsrUb4BH/EQrSqFjyn0fnK+d+abmj6ZQJ
+	txugkoJXZgB7fkS5fwycxKU761ubmEVz1SJEi8aKkZnisJHFIJaRj+X1hNsvxK+p
+	yIr3iXOtiUm2BOnKxZ/vLdTi3e+qi5wsyeudX0iwZA==
+X-ME-Sender: <xms:T84GaQaERxFIcHrqT_-je8u5rmmiy_Wbo0MKH_et94WqwvNWdSlv-g>
+    <xme:T84Gab1QOpeX6or8XcoTcotSUwAfEarLALzBjbeFjaejUZddSNMAvj9jfN8sl7VmP
+    k5skdLIqbj0GiU8mG_27dj3kjKLFf7Ee6bOrYupBu-B329ffg>
+X-ME-Received: <xmr:T84GaboqoeW5hDCQAcjBsLzZBiEyMT4D4OGmvPTVQEHlHHzZVLBfFPbTlaXLS6PGWyRofqnwrQD4rG6uuJkXotKvnum3RjishOKjv72KoTI>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujeegudeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhephffvvefufffkofggtgfgsehtkeertdertdejnecuhfhrohhmpeforghrvghkucfo
+    rghrtgiihihkohifshhkihdqifpkrhgvtghkihcuoehmrghrmhgrrhgvkhesihhnvhhish
+    hisghlvghthhhinhhgshhlrggsrdgtohhmqeenucggtffrrghtthgvrhhnpeekkeeiveek
+    ueehfeegveejveevuedtjeeiveeguefhvdffueetfedtuddvueetveenucffohhmrghinh
+    epkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehm
+    rghilhhfrhhomhepmhgrrhhmrghrvghksehinhhvihhsihgslhgvthhhihhnghhslhgrsg
+    drtghomhdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
+    oheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
+    htohepmhgrrhhmrghrvghksehinhhvihhsihgslhgvthhhihhnghhslhgrsgdrtghomhdp
+    rhgtphhtthhopehjghhrohhsshesshhushgvrdgtohhmpdhrtghpthhtohepshhsthgrsg
+    gvlhhlihhniheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohhlvghkshgrnhgurhgp
+    thihshhhtghhvghnkhhosegvphgrmhdrtghomhdprhgtphhtthhopehjihgrnhhgrdhpvg
+    hnghelseiithgvrdgtohhmrdgtnhdprhgtphhtthhopegthhgvnhhqihhujhhiieeiiees
+    ghhmrghilhdrtghomhdprhgtphhtthhopehjrghsohhnrdgrnhgurhihuhhksegrmhgurd
+    gtohhmpdhrtghpthhtohepgigvnhdquggvvhgvlheslhhishhtshdrgigvnhhprhhojhgv
+    tghtrdhorhhg
+X-ME-Proxy: <xmx:T84GaSM0Rrntpe2dpe1DelGU6fxM69KeMa2CMQMVAruIQHJzpLw5Pw>
+    <xmx:T84GacrdpdOFpJ_2MOqtxUogwmJCCMKY7CHFDycssv3dc1ghJSw8tw>
+    <xmx:T84GaVvsj_U_IiHKkM1DkZ3lW-MAjvXErrMrNPKCo3PO8DsThC7W2w>
+    <xmx:T84Gab08owYKCtGPDFJTNuKooxcK2BmWoPjzEJ-lxfWZIRTVTUUeLw>
+    <xmx:UM4GadWWm080WdXiZ630qOlPi_dAm9aP9avnDEi9X7Ez8P2_mNpwFqOB>
+Feedback-ID: i1568416f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 1 Nov 2025 23:21:49 -0400 (EDT)
+From: =?UTF-8?q?Marek=20Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>
+To: linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?Marek=20Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>,
+	Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	Peng Jiang <jiang.peng9@zte.com.cn>,
+	Qiu-ji Chen <chenqiuji666@gmail.com>,
+	Jason Andryuk <jason.andryuk@amd.com>,
+	xen-devel@lists.xenproject.org (moderated list:XEN HYPERVISOR INTERFACE)
+Subject: [PATCH] xen/xenbus: better handle backend crash
+Date: Sun,  2 Nov 2025 04:20:12 +0100
+Message-ID: <20251102032105.772670-1-marmarek@invisiblethingslab.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Thanks Boris for looking at this!
+When the backend domain crashes, coordinated device cleanup is not
+possible (as it involves waiting for the backend state change). In that
+case, toolstack forcefully removes frontend xenstore entries.
+xenbus_dev_changed() handles this case, and triggers device cleanup.
+It's possible that toolstack manages to connect new device in that
+place, before xenbus_dev_changed() notices the old one is missing. If
+that happens, new one won't be probed and will forever remain in
+XenbusStateInitialising.
 
-Borislav Petkov <bp@alien8.de> writes:
-> Taint flags are expensive and we don't have flag for everything. And when
-> userspace is poking at MSRs, that's similar to putting the CPU in
-> a out-of-specification mode of sorts. So I took what's closest.
+Fix this by checking backend-id and if it changes, consider it
+unplug+plug operation. It's important that cleanup on such unplug
+doesn't modify xenstore entries (especially the "state" key) as it
+belong to the new device to be probed - changing it would derail
+establishing connection to the new backend (most likely, closing the
+device before it was even connected). Handle this case by setting new
+xenbus_device->vanished flag to true, and check it before changing state
+entry.
 
-I tried to be very thorough to justify the change but I did not mean
-some alternative implementation was available, sorry if I gave that
-impression. I just struggled to make sense of some unrelated crash logs
-and that's really all from my point of view. I mean all for now at
-least.
+And even if xenbus_dev_changed() correctly detects the device was
+forcefully removed, the cleanup handling is still racy. Since this whole
+handling doesn't happend in a single xenstore transaction, it's possible
+that toolstack might put a new device there already. Avoid re-creating
+the state key (which in the case of loosing the race would actually
+close newly attached device).
 
-> What is not clear to me is why do you need to dump the fact that it tainted
-> here and dump the taint flag too?
+The problem does not apply to frontend domain crash, as this case
+involves coordinated cleanup.
 
-You mean the "%s", tainted_flags[OOSPEC].desc bit? Not sure I understand
-your question. That was just a way to re-use the existing string. But as
-found by the kernel test robot, that was a mistake because
-tainted_flags[] is not exported to modules. I missed that msr.c could be
-compiled as a module, apologies. I've removed that in v2, I want to make
-this change even simpler and append this instead:
+Problem originally reported at
+https://lore.kernel.org/xen-devel/aOZvivyZ9YhVWDLN@mail-itl/T/#t,
+including reproduction steps.
 
-  pr_warn( "... (pid: %d), tainting CPU_OUT_OF_SPEC.\n",
+Signed-off-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
+---
+I considered re-using one of existing fields instead of a new
+xenbus_device->vanished, but I wasn't sure if that would work better.
+Setting xenbus_device->nodename to NULL would prevent few other places
+using it (including some log messages). Setting xenbus_device->otherend
+might have less unintentional impact, but logically it doesn't feel
+correct.
 
-> Also, why aren't you using print_tainted()... 
+With this patch applied, I cannot reproduce the issue anymore - neither
+with the simplified reproducer script, nor with the full test suite.
+---
+ drivers/xen/xenbus/xenbus_client.c |  2 ++
+ drivers/xen/xenbus/xenbus_probe.c  | 25 +++++++++++++++++++++++++
+ include/xen/xenbus.h               |  1 +
+ 3 files changed, 28 insertions(+)
 
-AFAIK print_tainted() shows all current flags, not just
-CPU_OUT_OF_SPEC. So a full print_tainted() display would not make
-unambiguous which specific flag is being set, even more so considering
-writing MSRs can happen a very long time after boot. But, much worse:
-the CPU_OUT_OF_SPEC taint loop has not even been set yet when this
-pr_warn() is run...
-
-> ...  if that is really necessary?
-
-This patch is not "really necessary". Its purpose is only to save hours
-or even days for people trying to make sense of crash logs. In my ideal
-world, it should always be easy to tell "who tainted what when" from the
-logs without an corresponding expert and/or searching the source code. I
-admit this could harm job security ;-)
-
-This is not unusual, for instance TAINT_OOT_MODULE is not printed
-literally in the logs yet this other pr_warn() clearly points the finger
-at mod->name(s) in the logs:
-
-  pr_warn("%s: loading out-of-tree module taints kernel, mod->name);
-
-Some other flags have a much narrower range which makes the lack of
-finger pointing a non-issue.
+diff --git a/drivers/xen/xenbus/xenbus_client.c b/drivers/xen/xenbus/xenbus_client.c
+index e73ec225d4a61..ce2f49d9aa4ad 100644
+--- a/drivers/xen/xenbus/xenbus_client.c
++++ b/drivers/xen/xenbus/xenbus_client.c
+@@ -275,6 +275,8 @@ __xenbus_switch_state(struct xenbus_device *dev,
+  */
+ int xenbus_switch_state(struct xenbus_device *dev, enum xenbus_state state)
+ {
++	if (dev->vanished)
++		return 0;
+ 	return __xenbus_switch_state(dev, state, 0);
+ }
+ 
+diff --git a/drivers/xen/xenbus/xenbus_probe.c b/drivers/xen/xenbus/xenbus_probe.c
+index 86fe6e7790566..3c3e56b544976 100644
+--- a/drivers/xen/xenbus/xenbus_probe.c
++++ b/drivers/xen/xenbus/xenbus_probe.c
+@@ -444,6 +444,9 @@ static void xenbus_cleanup_devices(const char *path, struct bus_type *bus)
+ 		info.dev = NULL;
+ 		bus_for_each_dev(bus, NULL, &info, cleanup_dev);
+ 		if (info.dev) {
++			dev_warn(&info.dev->dev,
++			         "device forcefully removed from xenstore\n");
++			info.dev->vanished = true;
+ 			device_unregister(&info.dev->dev);
+ 			put_device(&info.dev->dev);
+ 		}
+@@ -659,6 +662,28 @@ void xenbus_dev_changed(const char *node, struct xen_bus_type *bus)
+ 		return;
+ 
+ 	dev = xenbus_device_find(root, &bus->bus);
++	/* Backend domain crash results in not coordinated frontend removal,
++	 * without going through XenbusStateClosing. Check if the device
++	 * wasn't replaced to point at another backend in the meantime.
++	 */
++	if (dev && !strncmp(node, "device/", sizeof("device/")-1)) {
++		int backend_id;
++		int err = xenbus_gather(XBT_NIL, root,
++				        "backend-id", "%i", &backend_id,
++					NULL);
++		if (!err && backend_id != dev->otherend_id) {
++			/* It isn't the same device, assume the old one
++			 * vanished and new one needs to be probed.
++			 */
++			dev_warn(&dev->dev,
++				 "backend-id mismatch (%d != %d), reconnecting\n",
++				 backend_id, dev->otherend_id);
++			dev->vanished = true;
++			device_unregister(&dev->dev);
++			put_device(&dev->dev);
++			dev = NULL;
++		}
++	}
+ 	if (!dev)
+ 		xenbus_probe_node(bus, type, root);
+ 	else
+diff --git a/include/xen/xenbus.h b/include/xen/xenbus.h
+index 7dab04cf4a36c..43a5335f1d5a3 100644
+--- a/include/xen/xenbus.h
++++ b/include/xen/xenbus.h
+@@ -87,6 +87,7 @@ struct xenbus_device {
+ 	struct completion down;
+ 	struct work_struct work;
+ 	struct semaphore reclaim_sem;
++	bool vanished;
+ 
+ 	/* Event channel based statistics and settings. */
+ 	atomic_t event_channels;
+-- 
+2.51.0
 
 
