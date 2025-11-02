@@ -1,98 +1,57 @@
-Return-Path: <linux-kernel+bounces-881740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFA7FC28D63
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 11:36:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0462C28D69
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 11:38:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FD143B39DF
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 10:36:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8540E3A7AC4
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 10:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4364F2236E1;
-	Sun,  2 Nov 2025 10:36:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F9024EA81;
+	Sun,  2 Nov 2025 10:38:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ul2QtWlS"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RjjTEi+i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D0734D3BA
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 10:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8D1202F9C;
+	Sun,  2 Nov 2025 10:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762079767; cv=none; b=bcsLRji1dfKoLYJfIe4W8eGzQtO06UkUV2AnfujK9CuG8MvJPaHD5M8hJ2zmga6GuZ5TcAu4FeePG6Kt/FV2DERPCLlQ2FDd6k/4eGp5CkAWMzx4Ti3HS4KINe0336nYppIdLSCxCbIOg4CAKQ9hjVNS63mho/TO8Y6eMwMhjiY=
+	t=1762079894; cv=none; b=oz3XC8swVVzkGevyIfbldx6XaSxpRBYb99H+rhvCgvnwb92ax0HtVXgXStr1lFQNx073rLnDdlWlVHJ0pU10PA/KHGoQckk8vJipkPx9rOz8W8gjoE1IX0okbG9Z1SC60OnZ0879QHrasdUZfKSbDdtzUWJAu/Uen3+9I2RbCSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762079767; c=relaxed/simple;
-	bh=QDjFHAnNGxJtqq3B2eRN6crskPhgy/pT5GpK0XQSS00=;
+	s=arc-20240116; t=1762079894; c=relaxed/simple;
+	bh=czP7YbvSnWl+QBZ/OpftcMTzFtBFis7UJczjWGygrcM=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b6njtW3BgOIDF3jxwgKTpJAv0v+hUZrlnSNadpw73J7h9nfzjc8kcHOwCJXQZ5l8GG/3LF5wSKD7FMFi8vBoJYNGYmByM6yxH8qX1SF1GU4YaNI+cDYJrmJ50uxZIAW9mJI8pFT/4c9Z7xh7YMNp4Fc1MUh370RCp+3zoaHUCLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ul2QtWlS; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-475dc0ed8aeso23911655e9.2
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 02:36:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762079763; x=1762684563; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ovu4hk1QeQJCG4bKMFk7VDTxcv3q5N8PBdUxZwYYOd8=;
-        b=Ul2QtWlSoDxh4MWqylZ77hg4fgrgfhBG/oBdfPiFpbVTzpuRWxE397hTj3ithGKGPF
-         GTJULEaFTdN7hb9gjT12mgukgtU3s+/RO+WxcrdiW14ptIw8wAQEumWky4MuCC5mfyWn
-         2ZuvwQ1xYqzJr8TNWIII/fgCup0TRkBBlQ3ygfoC9uYjhAh5KyHb21jhpkmHKOjcnt/K
-         kVc2WVea3xb+YdayRdVQe2fcYI2ErHC+Kei7gFco4vr8OGbYuIsHnvo0hBfbhRD1LsJH
-         CHmnA1NXlQ5KhAZ/tY4dvEzectJ4BTf2fff8TEUS6IvWuVdxpkjzkaBkW7yWQcmApZsz
-         2oLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762079763; x=1762684563;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ovu4hk1QeQJCG4bKMFk7VDTxcv3q5N8PBdUxZwYYOd8=;
-        b=VjxiDrH1SJWULTJZoIeKyDVqN2RbkXwDg87CL4tOnXPHpJQlqYX0qDxEkjMjLRdkp+
-         /YEkDs57dlzJ0kimgwn6cxZ/NZhHGMznsPKawaU0oqIqMWSbHdm28iiE67GXwTaViNoS
-         o/B5azyq8FwwVrnZdFFCqbfhLijgAqc0BIGNoDmfg7/iE9F5F/Qu/YCAAm1G9KdglIAw
-         FtoW38tvAYALgG4ZbRB7195ELocLY/gl0WVxTXiF5gzUYQp9ZQsoI0ecdGbmOdFN99np
-         O3xKbMcim+f0j/p7LFJfD6q8eC6MLoDtKgCZniUBFAtc8kXkvrasEhlYLJR5MqFcYmrD
-         7W8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVYJhdHJGSZG2MIXrpa9mBKwA1out3JnWoKT06BrChN/LzEyNnxTw3MAlA2aKim7cJh8Z2qJXWVfJmuRzY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYw8KNrxJWpuHBJvWKiA6R2YL1E7o0EFr3o0gcglNA8nYtLvwn
-	rnz71iFoAEYhPRjB06Uv8x9Mfi+NdsMFYmAUGLBsczngddo++rkAYqpU
-X-Gm-Gg: ASbGncvcMN3ER3oPJgcpct6s3ZGkEJJci31rUugrz35hiYVKPMZTN04ylPZTtcHg3hE
-	N7V7+OWvpObcJzRdYR+dGHmvbqgwxT4noFbTANsRorU3JfA9nHOdxA/39o9TR/34iZGuq8bm05c
-	GlIzBLD4/OzFbfwJ5xQSGyRcg7ERzKxiNQsyMn56q9HJ/IPWisACBye5fdv8/IdhYplREMZol0b
-	npYnPaFFMrhON+kvT5NMxHsQBnC8Qd3MlgnV1cwwslS06KYoHz8C5zZHUUjjGCECSs1zLwWJfpv
-	VBQd0Yu3SV3Xl+HT9xCMSbM4ZD3YsYQPyZEwFXl754f1BPk/JAAIBWOM1CLNdH03x+4s+j0uaY+
-	Cbsjypx1wffRNK7jaKZWx+PbItZGwDHDYGS6ORDeuAFFsxGtg8m0twzAWy3TLgLtEFbpuEyE/lg
-	eSf6p13LX3x4EZzBttSD/JXOSyPQjRjtXOlaj7jx/fUgjuOCaM9MlX
-X-Google-Smtp-Source: AGHT+IHL30gVPu+1tpP35sbbUpZLKsl40U91AdkYUoDD4qFiMCXwuao1AO3rSfpQub8UcTTdTBgniA==
-X-Received: by 2002:a05:600c:1c1d:b0:46d:cfc9:1d0f with SMTP id 5b1f17b1804b1-4773086e04fmr100701075e9.19.1762079762968;
-        Sun, 02 Nov 2025 02:36:02 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4772fbeef62sm64496655e9.1.2025.11.02.02.36.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Nov 2025 02:36:02 -0800 (PST)
-Date: Sun, 2 Nov 2025 10:36:00 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: kernel test robot <lkp@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, Linux Memory
- Management List <linux-mm@kvack.org>, u.kleine-koenig@baylibre.com, Nicolas
- Pitre <npitre@baylibre.com>, Oleg Nesterov <oleg@redhat.com>, Peter
- Zijlstra <peterz@infradead.org>, Biju Das <biju.das.jz@bp.renesas.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, Thomas
- Gleixner <tglx@linutronix.de>, Li RongQing <lirongqing@baidu.com>, Yu Kuai
- <yukuai3@huawei.com>, Khazhismel Kumykov <khazhy@chromium.org>, Jens Axboe
- <axboe@kernel.dk>, x86@kernel.org
-Subject: Re: [PATCH v4 next 6/9] lib: test_mul_u64_u64_div_u64: Test both
- generic and arch versions
-Message-ID: <20251102103600.65754bf2@pumpkin>
-In-Reply-To: <202511020421.ZZPBAIIw-lkp@intel.com>
-References: <20251029173828.3682-7-david.laight.linux@gmail.com>
-	<202511020421.ZZPBAIIw-lkp@intel.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	 MIME-Version:Content-Type; b=F5nisl6u96NAxYfuHLZM19bzmtpGdHjOIvKXDQLFZ4a/p08h9yigJdgF8M8lYt3NPk4zRbTD1FeAjEjb/nf4n7kHIKR2xU3qeFJmpBuF95Xfbpnc2OaFyxssh/Sag2CJ2U0zzGbZCUiSaSBBz4zOxSwT+CIhLem437nw7VokdlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RjjTEi+i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20456C4CEF7;
+	Sun,  2 Nov 2025 10:38:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762079893;
+	bh=czP7YbvSnWl+QBZ/OpftcMTzFtBFis7UJczjWGygrcM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=RjjTEi+in/b8qUlEHCg7pOsOqHggr4ahzQ7JA/tvckfZWyx67hZ9NydT6jawUBoPs
+	 D/Che19cmK8iFqazo7DPrKgB8VbgenGJXu2Du6vjzBCdTku51SsxnJj3U3HZDEfkWL
+	 T0I7Io0YCFrcgn5/hl64zEkY8vNZdOM2ix9YwUYts3XORYBMDB4YD5yiN3mR5QzjeU
+	 grxbGE5n3SvOYIIfcKmQxC/Q+r0ZyWK9omeJpIehQjNBjHfG2XjsSEjIG6RAUpm5IP
+	 s5yVXWIkXHBrL2d6XLPGiiP+iUt15QUhJTT9K2yoPI9H5Kp+tMmZPSu0pT8eznuYrM
+	 kuFLR1Uq/PVHA==
+Date: Sun, 2 Nov 2025 10:38:08 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Antoni Pokusinski <apokusinski01@gmail.com>
+Cc: dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
+ marcelo.schmitt1@gmail.com, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] iio: mpl3115: add threshold events support
+Message-ID: <20251102103808.73cac929@jic23-huawei>
+In-Reply-To: <20251031201821.88374-2-apokusinski01@gmail.com>
+References: <20251031201821.88374-1-apokusinski01@gmail.com>
+	<20251031201821.88374-2-apokusinski01@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,63 +61,189 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Sun, 2 Nov 2025 04:59:10 +0800
-kernel test robot <lkp@intel.com> wrote:
+On Fri, 31 Oct 2025 21:18:22 +0100
+Antoni Pokusinski <apokusinski01@gmail.com> wrote:
 
-> Hi David,
+> Add support for pressure and temperature rising threshold events. For
+> both channels *_en and *_value (in raw units) attributes are exposed.
 > 
-> kernel test robot noticed the following build warnings:
+> Since in write_event_config() the ctrl_reg1.active and ctrl_reg4
+> are modified, accessing the data->ctrl_reg{1,4} in set_trigger_state()
+> and write_event_config() needs to be now guarded by data->lock.
+> Otherwise, it would be possible that 2 concurrent threads executing
+> these functions would access the data->ctrl_reg{1,4} at the same time
+> and then one would overwrite the other's result.
 > 
-> [auto build test WARNING on next-20251029]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/David-Laight/lib-mul_u64_u64_div_u64-rename-parameter-c-to-d/20251030-025633
-> base:   next-20251029
-> patch link:    https://lore.kernel.org/r/20251029173828.3682-7-david.laight.linux%40gmail.com
-> patch subject: [PATCH v4 next 6/9] lib: test_mul_u64_u64_div_u64: Test both generic and arch versions
-> config: i386-buildonly-randconfig-004-20251102 (https://download.01.org/0day-ci/archive/20251102/202511020421.ZZPBAIIw-lkp@intel.com/config)
-> compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251102/202511020421.ZZPBAIIw-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202511020421.ZZPBAIIw-lkp@intel.com/
-> 
-> All warnings (new ones prefixed by >>):
-> 
-> >> lib/math/test_mul_u64_u64_div_u64.c:142:9: warning: '__div64_32' macro redefined [-Wmacro-redefined]  
->      142 | #define __div64_32 __div64_32
->          |         ^
->    arch/x86/include/asm/div64.h:78:9: note: previous definition is here
->       78 | #define __div64_32
+> Signed-off-by: Antoni Pokusinski <apokusinski01@gmail.com>
 
-That is preceded by a comment that says it can't happen for x86-64.
-I think it would be better as '#define __div64_32 @@@' so that you get a compile
-error.
-But that isn't part of this change,
->          |         ^
->    1 warning generated.
+Generally looks good to me, but some comments on the 24 bit value reading.
+
+You got a lot of review quickly for this patch so I want to give some time
+for follow up on v2 anyway. 
+
+Thanks,
+
+Jonathan
+
+
+> ---
+>  drivers/iio/pressure/mpl3115.c | 219 +++++++++++++++++++++++++++++++--
+>  1 file changed, 209 insertions(+), 10 deletions(-)
 > 
-> 
-> vim +/__div64_32 +142 lib/math/test_mul_u64_u64_div_u64.c
-> 
->    140	
->    141	/* Compile the generic mul_u64_add_u64_div_u64() code */
->  > 142	#define __div64_32 __div64_32  
+> diff --git a/drivers/iio/pressure/mpl3115.c b/drivers/iio/pressure/mpl3115.c
+> index c212dfdf59ff..472e9fd65776 100644
+...
+> @@ -347,15 +370,45 @@ static irqreturn_t mpl3115_interrupt_handler(int irq, void *private)
+>  	struct iio_dev *indio_dev = private;
+>  	struct mpl3115_data *data = iio_priv(indio_dev);
+>  	int ret;
+> +	__be32 val_press;
+> +	__be16 val_temp;
+>  
+>  	ret = i2c_smbus_read_byte_data(data->client, MPL3115_INT_SOURCE);
+>  	if (ret < 0)
+>  		return IRQ_HANDLED;
+>  
+> -	if (!(ret & MPL3115_INT_SRC_DRDY))
+> +	if (!(ret & (MPL3115_INT_SRC_TTH | MPL3115_INT_SRC_PTH |
+> +		     MPL3115_INT_SRC_DRDY)))
+>  		return IRQ_NONE;
+>  
+> -	iio_trigger_poll_nested(data->drdy_trig);
+> +	if (ret & MPL3115_INT_SRC_DRDY)
+> +		iio_trigger_poll_nested(data->drdy_trig);
+> +
+> +	if (ret & MPL3115_INT_SRC_PTH) {
+> +		iio_push_event(indio_dev,
+> +			       IIO_UNMOD_EVENT_CODE(IIO_PRESSURE, 0,
+> +						    IIO_EV_TYPE_THRESH,
+> +						    IIO_EV_DIR_RISING),
+> +						    iio_get_time_ns(indio_dev));
+> +
+> +		/* Reset the SRC_PTH bit in INT_SOURCE */
+> +		i2c_smbus_read_i2c_block_data(data->client,
+> +					      MPL3115_OUT_PRESS,
+> +					      3, (u8 *)&val_press);
 
-It needs a preceding #undef
-Although I'm not sure why a normal build doesn't show it.
+This is an oddity.  Why read into a __be32 when it's a 24bit number?
+I guess it doesn't really matter as you just need a big enough space
+and throw the value away.  However, I'd read it into a u8 [3]; then size off that
+as well.
 
-Looks like I'll need to do a v5 :-(
+There are two existing cases of this in the driver. One of them should use
+get_unaligned_be24 on a u8[3] buffer.  The other one is more complex as it's
+reading directly into the scan buffer that gets pushed to the kfifo and is
+reading into a u8 buffer ultimately anyway so at least there is no
+real suggestion of it being 32 bits (just a +4 shift to deal with natural
+alignment as the storage has to be power of 2 in that case.).
 
-	David
+hmm. I think either we should tidy up the easy case (_read_info_raw) +
+use a u8[3] here or just stick to this being odd.
+My preference would be to have another patch tidying up the other case
++ use a u8[3] here.
 
->    143	#define div_s64_rem div_s64_rem
->    144	#define div64_u64_rem div64_u64_rem
->    145	#define div64_u64 div64_u64
->    146	#define div64_s64 div64_s64
->    147	#define iter_div_u64_rem iter_div_u64_rem
->    148	
-> 
 
+
+> +	}
+> +
+> +	if (ret & MPL3115_INT_SRC_TTH) {
+> +		iio_push_event(indio_dev,
+> +			       IIO_UNMOD_EVENT_CODE(IIO_TEMP, 0,
+> +						    IIO_EV_TYPE_THRESH,
+> +						    IIO_EV_DIR_RISING),
+> +						    iio_get_time_ns(indio_dev));
+> +
+> +		/* Reset the SRC_TTH bit in INT_SOURCE */
+> +		i2c_smbus_read_i2c_block_data(data->client,
+> +					      MPL3115_OUT_TEMP,
+> +					      2, (u8 *)&val_temp);
+> +	}
+>  
+>  	return IRQ_HANDLED;
+>  }
+
+> +
+> +static int mpl3115_read_thresh(struct iio_dev *indio_dev,
+> +			       const struct iio_chan_spec *chan,
+> +			       enum iio_event_type type,
+> +			       enum iio_event_direction dir,
+> +			       enum iio_event_info info,
+> +			       int *val, int *val2)
+> +{
+> +	struct mpl3115_data *data = iio_priv(indio_dev);
+> +	int ret;
+> +	__be16 tmp;
+> +
+> +	if (info != IIO_EV_INFO_VALUE)
+> +		return -EINVAL;
+> +
+> +	switch (chan->type) {
+> +	case IIO_PRESSURE:
+> +		ret = i2c_smbus_read_i2c_block_data(data->client,
+> +						    MPL3115_PRESS_TGT,
+> +						    sizeof(tmp), (u8 *)&tmp);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		/*
+> +		 * Target value for the pressure is
+> +		 * 16-bit unsigned value in 2 Pa units
+
+Trivial but wrap comments to 80 char limit. Obviously doesn't really matter;
+just a question of consistency.
+
+
+> +		 */
+> +		*val = be16_to_cpu(tmp) << 1;
+> +
+> +		return IIO_VAL_INT;
+> +	case IIO_TEMP:
+> +		ret = i2c_smbus_read_byte_data(data->client, MPL3115_TEMP_TGT);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		/* Target value for the temperature is 8-bit 2's complement */
+> +		*val = sign_extend32(ret, 7);
+> +
+> +		return IIO_VAL_INT;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static int mpl3115_write_thresh(struct iio_dev *indio_dev,
+> +				const struct iio_chan_spec *chan,
+> +				enum iio_event_type type,
+> +				enum iio_event_direction dir,
+> +				enum iio_event_info info,
+> +				int val, int val2)
+> +{
+> +	struct mpl3115_data *data = iio_priv(indio_dev);
+> +	__be16 tmp;
+> +
+> +	if (info != IIO_EV_INFO_VALUE)
+> +		return -EINVAL;
+> +
+> +	switch (chan->type) {
+> +	case IIO_PRESSURE:
+> +		val >>= 1;
+> +
+> +		if (val < 0 || val > U16_MAX)
+> +			return -EINVAL;
+> +
+> +		tmp = cpu_to_be16(val);
+> +
+> +		return i2c_smbus_write_i2c_block_data(data->client,
+> +						      MPL3115_PRESS_TGT,
+> +						      sizeof(tmp), (u8 *)&tmp);
+> +	case IIO_TEMP:
+> +		if (val < S8_MIN || val > S8_MAX)
+> +			return -EINVAL;
+> +
+> +		return i2c_smbus_write_byte_data(data->client,
+> +						 MPL3115_TEMP_TGT, val);
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
 
