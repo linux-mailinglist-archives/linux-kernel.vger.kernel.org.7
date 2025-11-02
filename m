@@ -1,133 +1,82 @@
-Return-Path: <linux-kernel+bounces-882099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 349C3C29A0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 00:22:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6388BC29A4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 00:44:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D6813AC314
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 23:22:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 761F8188C4B0
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 23:44:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F34248F4F;
-	Sun,  2 Nov 2025 23:22:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015E32472BD;
+	Sun,  2 Nov 2025 23:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="mfG+CMex"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ktHwqGAK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6EFB29CE1;
-	Sun,  2 Nov 2025 23:22:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56DD734D394;
+	Sun,  2 Nov 2025 23:44:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762125758; cv=none; b=USmZKos04EeRk5kPpDOVWXl/Pvgu4Wee7mAnfZK0LIAbBqI5XQ+5I9VUaXumLF4zff8mx+6c9JMUphRts9i0aGKJLs5Q/WtBCtywxEkvkHj5eFCbZlbYX7Mj3wPvhOxgMXj54ZibHn2so3SX7Bw9QLw3I7U9lVVmzTOKFJvyuSM=
+	t=1762127043; cv=none; b=nIvjPjOBOU/0H7uR5677tdeZdFCXXoT2/emufB7MOkVI1awdxRtvreX2/cNV+J/MOKrxfn0EZiNT4ctjM852gaPCBlx00qosYENaxepemXdyG+v3xxcHOrh/Ic6r7POXArj+2NE3gLFpzvDimKApuxMhKJrdjeECzm/OLPuGu2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762125758; c=relaxed/simple;
-	bh=8dpOvcBUkhSg9A4vZgLpQsfmxP6rErxd/Y6BEDqff8s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=QadPa0OqvcO/Q5ptJjt/W/M7tQI2+RG1AQVY1gtP3in5IdYa3jkK5glc5z9K4R878GDHLsqzkCct4OYHPOykxvWQ4V/ibHsK2uhVso/WQhfZ2SOuEAvOmchQ6cB7iQMpZJ+8JH3dYN2kZFCmSYpwjH5QLk5G1m6zBP3u8D5i2gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=mfG+CMex; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1762125754;
-	bh=2rNjtOI2mww09uharcAW9DKM4SCrFQrcePKn6Adh+n0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=mfG+CMexHVEfMn3XGPzUyXvEjUu1LqUoNtF+InvzBVCkEMXKMEarUI88/zOD5lxlG
-	 qem25g7hWN2y8mHmJmlqw0ePJKNVOkCJSu5KFVi/kKlAg05LK9Ia5HQmZhQV5dsOEX
-	 fAlytqfzGSAjxvov8UQT5Tw80nJKtSbG6rM0bmDLf1I31a0bUw+8SVVjQAKfsnV+tM
-	 nbr+bkqHUj1pe6FULUN5iXqFed0eoA9+OlfWhWynMF7rN4SASamgjDdyKhLKmb66Gx
-	 FfCAmpvXU9+hFXO6xv9cT2pZwOSZ422NbaWBN98KO/uWDMgXSMv71dp0N4LFSd0LIa
-	 nF+ICqKnc7Qwg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d09jj6TLhz4w93;
-	Mon, 03 Nov 2025 10:22:33 +1100 (AEDT)
-Date: Mon, 3 Nov 2025 10:22:33 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Simona Vetter <simona.vetter@ffwll.ch>, Jani Nikula
- <jani.nikula@linux.intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: Jani Nikula <jani.nikula@intel.com>, Intel Graphics
- <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Ville =?UTF-8?B?U3lyasOkbMOk?=
- <ville.syrjala@linux.intel.com>
-Subject: linux-next: manual merge of the drm-intel tree with the drm-misc
- tree
-Message-ID: <20251103102233.7c6adc9a@canb.auug.org.au>
+	s=arc-20240116; t=1762127043; c=relaxed/simple;
+	bh=Q7QXZ/Qj0FeCy6FMpj+maeazXIun4yipJEjx7uRGw38=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CBp3XfgSCj/14f592uBuzc4UWo1svsUbIUoJRCmxeei6CjT2eglzRuU+EpCWYNqDMjJwV0ViJwzCJa979mx34OWbkUuNwUGq3cfY+PzbkyEd7RnXHe/PVLp3rJ3Bt9H97Fc5pnUtuQreDSZqWRzdE3bmoWHEoVqqAaGsm8m2qpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ktHwqGAK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CC09C4CEF7;
+	Sun,  2 Nov 2025 23:44:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762127042;
+	bh=Q7QXZ/Qj0FeCy6FMpj+maeazXIun4yipJEjx7uRGw38=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ktHwqGAKeHzzSV8OINhp6oSGgv1mdUt2Mj2VrKzTHvan9w0f3k3SCZcXtSLOQUmRN
+	 d35dNNqaJB2c5eCFYYiD8ov774jYlm/cGppZ2x/KsJkjL3S9u4VrZYGDRGUqWGxPRQ
+	 NH4Ium1oRxFn0c/IfknC4WGwMIurz1/SBqz5UwEJDBkKErvHR3uiR3zrtsh3mADITa
+	 rqiCoq+QwTrjiny3iZAYeJ2xs0CyWesN9o+kdYJgRo+Okpu0DQJgEfv9/yGa3rX6FP
+	 S3nzBVVMI1mQZ8pq2RB1FS0T/4gOCfKtaq4hYIVBtmngO4lyG2e1HAekHrZw6noBOk
+	 PPnGypXlgy9Mw==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	x86@kernel.org,
+	Samuel Neves <sneves@dei.uc.pt>,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH 0/6] x86 BLAKE2s cleanups
+Date: Sun,  2 Nov 2025 15:42:03 -0800
+Message-ID: <20251102234209.62133-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/fUz4vqoMbt2t_KNm2IayWRr";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 
---Sig_/fUz4vqoMbt2t_KNm2IayWRr
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Various cleanups for the SSSE3 and AVX512 implementations of BLAKE2s.
 
-Hi all,
+This is targeting libcrypto-next.
 
-Today's linux-next merge of the drm-intel tree got a conflict in:
+Eric Biggers (6):
+  lib/crypto: x86/blake2s: Fix 32-bit arg treated as 64-bit
+  lib/crypto: x86/blake2s: Drop check for nblocks == 0
+  lib/crypto: x86/blake2s: Use local labels for data
+  lib/crypto: x86/blake2s: Improve readability
+  lib/crypto: x86/blake2s: Avoid writing back unchanged 'f' value
+  lib/crypto: x86/blake2s: Use vpternlogd for 3-input XORs
 
-  drivers/gpu/drm/i915/display/intel_bw.c
+ lib/crypto/x86/blake2s-core.S | 275 +++++++++++++++++++---------------
+ 1 file changed, 157 insertions(+), 118 deletions(-)
 
-between commit:
+base-commit: 5a2a5e62a5216ba05d4481cf90d915f4de0bfde9
+-- 
+2.51.2
 
-  f6e8dc9edf96 ("drm: include drm_print.h where needed")
-
-from the drm-misc tree and commit:
-
-  ac930bab1c89 ("drm/i915/bw: Untangle dbuf bw from the sagv/mem bw stuff")
-
-from the drm-intel tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/gpu/drm/i915/display/intel_bw.c
-index b3e4cc9985e9,3033c53e61d1..000000000000
---- a/drivers/gpu/drm/i915/display/intel_bw.c
-+++ b/drivers/gpu/drm/i915/display/intel_bw.c
-@@@ -3,9 -3,6 +3,8 @@@
-   * Copyright =C2=A9 2019 Intel Corporation
-   */
- =20
-- #include <drm/drm_atomic_state_helper.h>
- +#include <drm/drm_print.h>
- +
-  #include "soc/intel_dram.h"
- =20
-  #include "i915_drv.h"
-
---Sig_/fUz4vqoMbt2t_KNm2IayWRr
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkH57kACgkQAVBC80lX
-0GzFmQf+J56RnPQxGAMIrZg2X4PAPoS7F6DlQhHOjBxn07eOrXCTErRQqEeN+Rlp
-6iFvL9UdMmiVi5qBo3riK92kx2sfLZdVXq0zs2TZbARlW/SDt0AaslUZEHz408t/
-7EVXxdxvOIkPr1D/lANCVsjvhk21L7EeTlbT61EFF8ccsOQArMR4F/pNM4uxhm6P
-zLRCNQR5Jpz9UOk6MrTtUKNiFD0SYGaHTgf+6sVDBZMGz1s5XpcuA5K6GyhaPSEZ
-/tvnHyfc9oBFrCFUqrC4MJZ0UlP54j9Mn6Z+jOEXqjg9ZgtHbCmT4AdNSahMo9Xv
-UNWjtDWGl6tnpMs/QW0yZzPXUFV2cQ==
-=ynOq
------END PGP SIGNATURE-----
-
---Sig_/fUz4vqoMbt2t_KNm2IayWRr--
 
