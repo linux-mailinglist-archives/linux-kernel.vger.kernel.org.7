@@ -1,137 +1,218 @@
-Return-Path: <linux-kernel+bounces-881608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6A91C288EA
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 01:31:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F994C288F0
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 01:35:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F35AA4E668C
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 00:31:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7EC504E4342
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 00:35:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEFCF1991CB;
-	Sun,  2 Nov 2025 00:31:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF51E19C546;
+	Sun,  2 Nov 2025 00:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="hb4LFYO8"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ej2SAkl/"
+Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012023.outbound.protection.outlook.com [52.101.48.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32E8629A2;
-	Sun,  2 Nov 2025 00:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762043461; cv=none; b=SuU3aPGVr4VjOyS+pz7Zx+02xp/lpw1lyc99DCEnBfV/K6Ub/2gdnZ0aTffQaoLcJTE0DTyOxgAHUesuiJVlPHc5SRv3aXQW2qY8XCwbDC+AHCQ7jWpPTOB7QzV+MlaABMcXwITwJiuFAXvPjr4sLvh2IEifPcExBLctiGMbKKc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762043461; c=relaxed/simple;
-	bh=svWNgZCtOjso/oW4IU8AjB0f/EKUwcTrDzXQT6w5yd4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lG2XPJpG5GnsrVo4/qWriXGMC4M/UcqqwseJbEV4btd2JOu2zQRP0VjqYU8tULY1MDRO+t7xFWItGP9WCCQWDp2j2Q4rZTYKLq4DKlxZHj4BMkFYufKfaoM0BgF9CTcdM9fVwGT6Y4nsqegfLpB64yGMQ2yfd28+I8Vc/iw4ttM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=hb4LFYO8; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (82-203-160-149.bb.dnainternet.fi [82.203.160.149])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 2C6711118;
-	Sun,  2 Nov 2025 01:29:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1762043344;
-	bh=svWNgZCtOjso/oW4IU8AjB0f/EKUwcTrDzXQT6w5yd4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hb4LFYO8jCYLvGpe7YVbC2qXUNIoNFojN2fIQmy0cKSJ0HPrZ5+ixKw1oNxT1SwIC
-	 v4Ss/TyZEkKnD4VeEs24LF3pUENpRzDcasVRh31FFk+VhhmiS/7r9TAu247UgBrJ4i
-	 vDPQcMVVJhYC3xNMRXVbsIw6ay3v+jXJLXGSZ/aA=
-Date: Sun, 2 Nov 2025 02:30:42 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Stanimir Varbanov <svarbanov@suse.de>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-rpi-kernel@lists.infradead.org,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Phil Elwell <phil@raspberrypi.com>,
-	Jonathan Bell <jonathan@raspberrypi.com>,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>
-Subject: Re: [PATCH v2 0/5] dd ethernet support for RPi5
-Message-ID: <20251102003042.GJ797@pendragon.ideasonboard.com>
-References: <20250822093440.53941-1-svarbanov@suse.de>
- <20251031114518.GA17287@pendragon.ideasonboard.com>
- <eef9a83f-6103-4ab2-927c-921dd9a6a5b3@suse.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66356BE49;
+	Sun,  2 Nov 2025 00:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.23
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762043739; cv=fail; b=neRgyIApmUkzDK55WXorlmAmAUP844jLAV16F9OLviYfRrdFIy2dtwuOml9n8o8BEl3czWu2HEu/KECDK1uyB+TYi6bmXFldDlC6m2M6vjH5QWIOuLpakrcN9zFB4nLsiSyVM7nm6QJBqi6dSkYcFzkrkehXVLNlImJhA2J4XWo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762043739; c=relaxed/simple;
+	bh=eZkxXKkGvZ8Fjs6sOzcRv8cT2aU3w3HrrHvMvMFFoK0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=iuE8idxL2tWSlO3asGc/aSCfTx2qk6TPl7SK9qFrYmKLpEE+9338sKssi3JbBzeeHwpM9d/a5UWjAog28JHw5CAhTBwBAfDBZGB+epob2JJQAAiGUOArrtWQo/Sp6F/qWy8eeOue8a3iLYfXH/Hrx2Hd2fIKjH7w7i4mb4rrxps=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ej2SAkl/; arc=fail smtp.client-ip=52.101.48.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FxexHJpVc2dw70rboZujtVRcrR877ZTYVdDvpWzz4vWpahta3I7fg6HNBD+V7UIhFbnRwDKxnrsZDr2r5xHWWa+tbVOTFQEWp7RJZZtp/gE2+Ott2l6D6p5iGjdEx6PE0JcNsCsKI4oKJXpMM+uVl6K0ZjE4anKf8aq0uxegWb05Q493iVI4V8uS5/c5OPvit01Sx6qmUlJEpLSjq3rCgvEKzgBJr+YfkFc+VriI63L9UG1XetCmH5GNEAPPqW1mOVK4GEGYOyRt+4dMi6mOsrbQi6m6eTdmghu5LI3qCv69g2j3zUN0eV5bUa1gT/y1+Sio/LA5k/OdljmkvxlRQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Nlq0JSPfi712vwOpCvUa35Iod3RcFxY0gEfMDYK0VBo=;
+ b=bLURlz8L43FYUQfTLSrmsLf4M1tTRwMjrWGTxMDcekYPXYAP6Ph7bxLxIHNubeJ0jnV7oFSSqp0E+N6VNWHwvmGI3q+SyGsZE/ErLv+l9b0urf4MiH7mVxINVfGLxZ2D9WALBk4f9exe8LYuMv6nE5qIAZZlItpfWWCDf7GLfT0FQoHW8IRAtgCTwGjAYCYEHMGnpiKsxW057BYIPDBn13/rsnOJcEffsCsYWuzmE0VVm2Y+ep6BqRt7DCrgzfQxrSFg4/M3u3xqOuB6wu+hUdgWhfPQx6LWNC5AwyJ1MHI/fssz439VQiiNhzxopBovcjAJsnmBZgD7ypgNQay8Zg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Nlq0JSPfi712vwOpCvUa35Iod3RcFxY0gEfMDYK0VBo=;
+ b=ej2SAkl/JieBJi+mc4kUI/Csco1AFYIFmwNcxyEXkTIwXB8ajntOd8DH9vxTaP1qYVPRADHlTYcQa/qbx3a39LxytwXKiZzYxU+D20NRNygK48UMm1OZKIRZJGqX0P+clsmS6Mro8xUD5oZ3aoDbxWAEBT3egTD1nu0Vwsle3CRPS73i0L40JngeCOrbPmx10GqheAkNI6sstLnniPIoW0Exont3RQCPUN4wrfwXZgz/syLEbPj8Bb8xs/WRwFyKJYwDChRDPtfk8WSXH9XyczqHRzNnoBfWfv1FYhf61Zv2jvSgbjXxCoTPgKrTe5c8UMY3oCptYIVutdZvYDQ9mg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
+ by DS0PR12MB9421.namprd12.prod.outlook.com (2603:10b6:8:1a1::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Sun, 2 Nov
+ 2025 00:35:33 +0000
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9275.013; Sun, 2 Nov 2025
+ 00:35:33 +0000
+Message-ID: <64018a2d-1c0c-4851-95d5-989f041d220d@nvidia.com>
+Date: Sat, 1 Nov 2025 17:34:41 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] gpu: nova-core: add boot42 support for next-gen
+ GPUs
+To: Alexandre Courbot <acourbot@nvidia.com>,
+ Danilo Krummrich <dakr@kernel.org>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ Alistair Popple <apopple@nvidia.com>, Edwin Peer <epeer@nvidia.com>,
+ Zhi Wang <zhiw@nvidia.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Bjorn Helgaas <bhelgaas@google.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ nouveau@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>,
+ Nouveau <nouveau-bounces@lists.freedesktop.org>
+References: <20251029030332.514358-1-jhubbard@nvidia.com>
+ <20251029030332.514358-3-jhubbard@nvidia.com>
+ <DDUV3MZ58O0T.229A7N13MM1HN@nvidia.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <DDUV3MZ58O0T.229A7N13MM1HN@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY5PR17CA0028.namprd17.prod.outlook.com
+ (2603:10b6:a03:1b8::41) To BY5PR12MB4116.namprd12.prod.outlook.com
+ (2603:10b6:a03:210::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <eef9a83f-6103-4ab2-927c-921dd9a6a5b3@suse.de>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|DS0PR12MB9421:EE_
+X-MS-Office365-Filtering-Correlation-Id: ee446e40-67f2-4d42-4559-08de19a7bb71
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Tk8rNi9nODV0QWpvTEt3cjNtZWp3VDEyM0xWQWxyTFYzWk9mTCtTZ0d5ZTJy?=
+ =?utf-8?B?Y1JYK29kd1ZKTm5oOUs1SkV0VlFSZ0NiczlPRm5ZWHQvNS9yKzVEallYMlRG?=
+ =?utf-8?B?VDFBZnNIb3ZzcXFaWGtTemVuaDQ2VDZwc0NvNUlEMWRMN1drL2QzbnNsZGky?=
+ =?utf-8?B?ZEdzU3FCK25lS0Q4M0ZNM1daZjFQd09SZ0ZrZVYvL0VqeGVRbUFMbytMRjd0?=
+ =?utf-8?B?dTlkUG5keW0zd3NtRm1iNlB6L0pEdjNsWW9Qc2RWZEdVSlkwLzB1ZzZ5Q2lL?=
+ =?utf-8?B?enNuclJwc1NLSzFwbExZeVJJQVlNWWg3VHVCeFNwbVRaVTBYV2p5U1BiUDJK?=
+ =?utf-8?B?N1VlQXQ4Yk1xNGc1QTdHNFo2TThiRDN0K0FoTlhTNzRRWmtmTEdOSzA0NTZV?=
+ =?utf-8?B?NmNpako4U1U5Z2RaUVU4cnhjb0ErMHRvK0h3VTFnQmt2czlaY2RsTFgvYnIz?=
+ =?utf-8?B?Z1N1ekRnaitkMlJvT0RyTlQ4dnB0N09SejFZWmlIUlVCU2NQWkI5S0sxK0U4?=
+ =?utf-8?B?d1ZCNHc0VTF6ZVJmc003aWc0U3R0dlR5SERLbENsS0RpWUtBa0JDY0tPRHhj?=
+ =?utf-8?B?TGZRdE4welBtY0YrbVZSZUFqYlJSWUg3ZlhEZDU2MjA2a0ZHeVJCaloyZzNJ?=
+ =?utf-8?B?QzJLNWNpbHU1S1lFMXJ0YUFlNGRlcitoWFlBVURpRlUreEgrbmJpemsvM2hC?=
+ =?utf-8?B?cVFzNjMwbWdvaEx2WFNnZWlSOGVSZkFvdkowWGhnVldEdDNLM2hMaVNEQ1VG?=
+ =?utf-8?B?RmR6NXZoRElOaWUzaVNHSDR4N0JGVzNaakVrNFpnL0ZtVmY5b3g2czdwZ25I?=
+ =?utf-8?B?cGp5alFXeVlxR0Z1ZzBXQVl4K0d3YVpIcjFpTDArQnBXUTlaS20wSWNtT2VJ?=
+ =?utf-8?B?YmV2eWp4eWM5bVhlWmVnbVN5eUlPL1RnZ05jZWJoMVQ4KzdGQXNXWjVKRTAr?=
+ =?utf-8?B?eGFBdlg0dXdubUd1UExFV1Y2ZDcyeWlSd2VtdEtzVHJJUkYxUHBBVVo1WjJp?=
+ =?utf-8?B?NzJzMnBlajh6aFVuWlZSb0JCcDJ3WFQ5eE83YWRhaGtRQXdvay9QNlJHYzFB?=
+ =?utf-8?B?VHJIekdxbDlpbTZwcGtiZjNuSmFHaTltemR6L0V6S2JIbjRQenJoelRXakNq?=
+ =?utf-8?B?WHE5MHZ2aUZHOE5CYytiTUovUXVkYzFFSCs1c1QxWGszaE1KNlg2VFFCWU9S?=
+ =?utf-8?B?VUphZ1hZZ1JvY2Z0RkVZblkyeXdkN0RlNGtGVEpiQitWbC9uMmw0dlg0ZkVO?=
+ =?utf-8?B?NXZub3c0TVdwd3JLZUtTUDh2dkJwN2t6NDl5WnozckhDd1JVdU9leGJDV0Jp?=
+ =?utf-8?B?K3BlOWFZWUxta3ZaK3FMczlhTmVSc21NSzk3TUYwTGpRWEMvTzFYWS90K0Nl?=
+ =?utf-8?B?K1FQSGVudzRCcUpCQ1U0cUdvaE4vNzN3d0VFZVhjRnVYY1VjTHNZV1dCSFFJ?=
+ =?utf-8?B?YXFUSXBFTEFGYlc1aHpmU2xDdDhkNk5QWjZqYzh2bDVkRmtoL1dvWUVORmFX?=
+ =?utf-8?B?L0hlVUMya2tpdGQ5cFgyOWpiM25Vbm8zTTBjVkY5SU5NL2VsMitpUHJORGpo?=
+ =?utf-8?B?bURCclFUZmdKNEttWmxnbnFkM0NwejBzR3FwS1l6d29sZHRVN1BIeTJldm1Q?=
+ =?utf-8?B?RVdHeW5mTm85UllQd1NQMEdpeHNIVTBGZkJCdUtoTVYyU0pxL0ZJaUo1dW1H?=
+ =?utf-8?B?dzBrNDdhUnVBaEVWbS9uc3k5MWhJdW1mTUEySys0VFB3WTMza2cwYm0zYUtv?=
+ =?utf-8?B?OFdDVktKSkRvMFJXbmttMUl1ZkVqSzZMaXBrWElNbnhLWnhWaW1zM1JDRThR?=
+ =?utf-8?B?R0VOdmFhdXBCN3JXMWVFeFpjaitDSDVsS0EwMnExMjE2UnpYeGtVeDU0Mm9l?=
+ =?utf-8?B?MXFWSzU2SEcyTDdTU0FqbiszdmNLWit2bkN5aEs5aUJ4UVRCVE9FOG5Ucm1X?=
+ =?utf-8?Q?EjNJo3LhJLStKU1/ofYViR4TyYyW8FY1?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WkNLbUU1QkwxMzdLOGVoSngzZ3czbDUvMUhiT1cvYUNrd3F1clhyOVRDUFM2?=
+ =?utf-8?B?MEx6ME54NVhPRVNkYTI4QXpJQUdPbkdkSEpiaHJnQ2NwY1BtcStYcFpZTE9X?=
+ =?utf-8?B?d0V0cU9sbFlSZHBrcVJzczFaQnF2c2owWVJJSlQ4aFUyUUpOU0s1UTlKdE1J?=
+ =?utf-8?B?VTY0ODJmV3BPdEFLZlBtbHV5S09hZ1g4dWsxUGt5VG0yQzRDV0dnRERqdE5R?=
+ =?utf-8?B?MS9hTVlxWTd2Smk4OVVNa1RWWlVyYlR4K3g2bkE1ZmxZZC9BU0xib2FjalZw?=
+ =?utf-8?B?SDhIbitiZzZ3MDBtOE1GRStQYlJ6dTFCTHA0ZnRNTmtBT0t2QWZLSThVdTZZ?=
+ =?utf-8?B?NEsyK05aV3kxbGF1YWxCb3JOTTBsR0I5SXNJWEs4MVlmUGVlbmhJZlJlUk5o?=
+ =?utf-8?B?MWswOGU3a2tZbncvYjBrb3VnL2xFTnJ4Mk1qemFlZGtRdXc5R1RNM0M3VnZl?=
+ =?utf-8?B?VUhkMldQem9SN3k3aFpFbG0ydGR1OHYvZWg5dVFITmZnbzZxayt6RE1SR244?=
+ =?utf-8?B?OGlreWNLVjI0clUzVndMK3J6U25YQUd6NXBkekZVWml5anNvYXFVSW1IOGVJ?=
+ =?utf-8?B?OUhyUkpKcGRiekd5VXZGNFBxU1pGODFycVBjdW44THFsMTlMZ1JaU2JEQUJJ?=
+ =?utf-8?B?MnUwR2JRL1JLdUk2SWF3L0grRjJLR3RIZjVlMkQ2cnVDMS95ZzA2WE9mVTZF?=
+ =?utf-8?B?MXZJTytONzRDcXdCK3puQWtmaW14TXA4MUNzbzBxRmNyaWRqYXB4Yzh5RUVN?=
+ =?utf-8?B?Wko0WHVQMFlaOVhTdTRGNlNoa0RtaE5HTDBnMDduVkI3c2hPLzByd04va2xn?=
+ =?utf-8?B?TEV1UlNqREo2YkJZb1cwbDk5b2VHOUR3ak1vRWZveUJUU3NKK3NHVHRFZUQw?=
+ =?utf-8?B?RFY0N2t3YnlSV1FRREYrajhnUExUNGNLYStSaWljaUZ0eWF5bWloTStScXdE?=
+ =?utf-8?B?M3I5U2E4OWhKeVRYTU5VcmwrcnZtN1hydEczRCtNYngzRjRpSFppdC9JQm90?=
+ =?utf-8?B?TlgyZEtZREN2M3FZYThXck04UkFkbCtoY2xWa1FIcWNjUm9lVmhQRnFGL3lG?=
+ =?utf-8?B?M2lycEk2cmhvZy91ejVTTHhTVUNXSlY4UTBFMmJIN29NUk1ubEpoYnA0dmJZ?=
+ =?utf-8?B?T0I0cU1IT04vUzRucmtMQTZiRVRteVp4YVJYZGZScVBJTS92QWcwM1ZTUDBL?=
+ =?utf-8?B?Z0xFZmwwYlRRM1ZTTEVvVllJKzdEaDk1UWJ1V2hZM0VnMXp2RS84UExHQ2pK?=
+ =?utf-8?B?cGRncUhMUTRTdyt4UENTT1k2eXZ6NGZ5WTExOTF1Q01ZcjRVNC9DTEVUM0p1?=
+ =?utf-8?B?YlNTVmJuTGxtV0ZBOEFoT3cySlBmdEpkOWNQenQ0emZjT1BPWEJWT2NUSSt5?=
+ =?utf-8?B?L2M1eEVUbE5mUXQ1cXlxR0x2MVMxYy9zd3E5ZkhIZ3hDQ0kwME8zVEhCK1Zi?=
+ =?utf-8?B?NWtCNXVPRFpxQ0szWm5uVlV0NVV0TTZrdGhTWG5nTUJzWndsTGgyMzBjOUlV?=
+ =?utf-8?B?QlVCd21JWU03UHB5UlBtWEt5MkNvdk5zdzhMa2pka3Y0bGFsYWFYZFhRQVM5?=
+ =?utf-8?B?cGlBb1ZZQ2xpenA4RmVnakh0dG1YVXkwSWxaN2RNK0Nza2l0N3NZSUp3dlY2?=
+ =?utf-8?B?Z29ZOWhNMmFQQWt2dDNBaGc5Z0VFMUg1Zmtyd3JhaFZKN1Y4bzgwdzNlQ2xT?=
+ =?utf-8?B?NzVuUjU5YzhSZGxGVldBUG1YRGEzZ3hNYzJVREpDTDVsKys5dWlxZ2Y5YjY2?=
+ =?utf-8?B?U1VqbklNUW93RHRUbjdydjRkcS9FOENuUGlNWTg0N0liK3BQMlhCNmxxczFI?=
+ =?utf-8?B?c3JtSFJ5eW1ZbDhiS015eFA5NC9EMmNid21RNjNGNG55SzBSMVMyY044ZnNH?=
+ =?utf-8?B?RTBmMmt2OE5XaFp2dlFnZDE2NWVjNjhYbWxZSXFqMmNMdE1hRURMMXF0SlBR?=
+ =?utf-8?B?RmV4UXJIa0RsYldnbFQxUSsvVTVHYW5xaUkwejBMaGdKMEN2OS84WW80bVRM?=
+ =?utf-8?B?TWJ4QThTSXRTOVdXSUo4anFYZzFmVXBsUWJSZnQxY2NZRlNPUUF0SytSQUpo?=
+ =?utf-8?B?WU55QjRQVnI4aWZ6TXRRR3hIVmgzZ0twcHF4YTMyWU82SmxCbnNKKzdrZmJx?=
+ =?utf-8?Q?wYcD1ybTDEp2yi5APcqf59veV?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ee446e40-67f2-4d42-4559-08de19a7bb71
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2025 00:35:33.0489
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 97VR+AmhpNghIdsqe/DN2TdCz+2+pTCaYix2qA5cVg94VuIiOxPD2+7tY5LEWX2ReVv8dlkC+9gD4uX1TGv+Ug==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9421
 
-On Fri, Oct 31, 2025 at 05:35:32PM +0200, Stanimir Varbanov wrote:
-> On 10/31/25 1:45 PM, Laurent Pinchart wrote:
-> > On Fri, Aug 22, 2025 at 12:34:35PM +0300, Stanimir Varbanov wrote:
-> >> Hello,
-> >>
-> >> Changes in v2:
-> >>  - In 1/5 updates according to review comments (Nicolas)
-> >>  - In 1/5 added Fixes tag (Nicolas)
-> >>  - Added Reviewed-by and Acked-by tags.
-> >>
-> >> v1 can found at [1].
-> >>
-> >> Comments are welcome!
-> > 
-> > I'm very happy to see support for Raspberry Pi 5 progressing fast
-> > upstream.
-> > 
-> > I've tested the latest mainline kernel (v6.18-rc3) that includes this
-> > series (except for 1/5 that is replaced by
-> > https://lore.kernel.org/all/20250820-macb-fixes-v4-0-23c399429164@bootlin.com/
-> > as far as I understand). The ethernet controller is successfully
-> > detected, and so is the PHY. Link status seems to work fine too, but
-> > data doesn't seem to go through when the kernel tries to get a DHCP
-> > address (for NFS root). Here's the end of the kernel log (with the
-> > messages related to the USB controller stripped out):
-> > 
-> > [    0.896779] rp1_pci 0002:01:00.0: assign IRQ: got 27
-> > [    0.896809] rp1_pci 0002:01:00.0: enabling device (0000 -> 0002)
-> > [    0.896840] rp1_pci 0002:01:00.0: enabling bus mastering
-> > [    0.931874] macb 1f00100000.ethernet: invalid hw address, using random
-> > [    0.944448] macb 1f00100000.ethernet eth0: Cadence GEM rev 0x00070109 at 0x1f00100000 irq 95 (da:2e:6d:9d:52:a4)
-> > [    0.989067] macb 1f00100000.ethernet eth0: PHY [1f00100000.ethernet-ffffffff:01] driver [Broadcom BCM54210E] (irq=POLL)
-> > [    0.989272] macb 1f00100000.ethernet eth0: configuring for phy/rgmii-id link mode
-> > [    0.991271] macb 1f00100000.ethernet: gem-ptp-timer ptp clock registered.
-> > [    4.039490] macb 1f00100000.ethernet eth0: Link is Up - 1Gbps/Full - flow control tx
-> > [    4.062589] Sending DHCP requests .....
-> > [   40.902771] macb 1f00100000.ethernet eth0: Link is Down
-> > [   43.975334] macb 1f00100000.ethernet eth0: Link is Up - 1Gbps/Full - flow control tx
-> > 
-> > I've tried porting patches to drivers/net/phy/broadcom.c from the
-> > Raspberry Pi kernel to specifically support the BCM54213PE PHY (which is
-> > otherwise identified as a BCM54210E), but they didn't seem to help.
-> > 
-> > What's the status of ethernet support on the Pi 5, is it supposed to
-> > work upstream, or are there pieces still missing ?
+On 10/29/25 7:05 AM, Alexandre Courbot wrote:
+> On Wed Oct 29, 2025 at 12:03 PM JST, John Hubbard wrote:
+> <snip>
+> This allows the implementation of `NV_PMC_BOOT_42` to mirror that of
+> `NV_PMC_BOOT_0`:
 > 
-> We have this [1] patch queued up, could you give it a try please.
-> 
-> [1] https://www.spinics.net/lists/kernel/msg5889475.html
+>   impl NV_PMC_BOOT_42 {
+>       pub(crate) fn chipset(self) -> Result<Chipset> {
+>           self.architecture()
+>               .map(|arch| {
+>                   ((arch as u32) << Self::IMPLEMENTATION_RANGE.len())
 
-It fixes the issue, thank you ! I've sent a patch to add an ethernet0
-alias (https://lore.kernel.org/all/20251102002901.467-1-laurent.pinchart@ideasonboard.com),
-with that I get working ethernet with a stable MAC address.
+A quick note: _RANGE() and related functions are (I think?) deeply,
+madly undocumented. Not only is bitfield a macro within a macro, but
+bitfield itself leaves the user with only the following as "documentation":
 
+    ::kernel::macros::paste!(
+    const [<$field:upper _RANGE>]: ::core::ops::RangeInclusive<u8> = $lo..=$hi;
+
+The net result is that those of us who did not author or carefully
+review register!() and bitfield!() are going to have a rough time
+using these facilities.
+
+I'm not sure of the best way to add documentation here, but just
+thought I'd better give an early warning about this.
+
+
+thanks,
 -- 
-Regards,
+John Hubbard
 
-Laurent Pinchart
 
