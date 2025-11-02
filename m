@@ -1,235 +1,236 @@
-Return-Path: <linux-kernel+bounces-881631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D276C2898C
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 04:22:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A2E5C28998
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 04:34:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D39863A6750
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 03:22:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C9FC3AB3F7
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 03:34:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2FD13635E;
-	Sun,  2 Nov 2025 03:21:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4280B2264B1;
+	Sun,  2 Nov 2025 03:34:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=invisiblethingslab.com header.i=@invisiblethingslab.com header.b="Acxal4bI";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="qIRZnWUx"
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="MZdWsg09"
+Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11010048.outbound.protection.outlook.com [52.101.46.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D53F4A3C
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 03:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762053715; cv=none; b=njWVjBnq3VOa/yM/NkGIW3HkbmJRmeUnwZ4xCTdKYRDHT7khhIEEOicLIS5/2Tf0VZVqtUo5AHjd1XTWjqsw7v2Tx3YfGvmES1oMeg52FikvQSnM1lYdJ8MjjaBE0YQbV+yFIZZ47dfqd9pdmnCLIasMatq5AHTBEW+Btk/zmuA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762053715; c=relaxed/simple;
-	bh=8owp4UIl0k4qUOamyXVtzxnC1PD+ylJ+aGtGGBHL3xw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=J8RlVgfC9pfXbaXjyk22VRi5ycewTBnIG/jqWVXYr2HB64Gsl0MLfK/XeYo/G2cof/xMPhl5otxRael6aPT5SWiXifxOt0a85qaj4jAMfG2T7s9suaX1aKxoMZUWm7xIqsLbz1f33jv9ia1NOH02O43wYewe+U05oXZvY0nlEYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=invisiblethingslab.com; spf=pass smtp.mailfrom=invisiblethingslab.com; dkim=pass (2048-bit key) header.d=invisiblethingslab.com header.i=@invisiblethingslab.com header.b=Acxal4bI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=qIRZnWUx; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=invisiblethingslab.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=invisiblethingslab.com
-Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
-	by mailfout.phl.internal (Postfix) with ESMTP id 1430CEC018D;
-	Sat,  1 Nov 2025 23:21:52 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-03.internal (MEProxy); Sat, 01 Nov 2025 23:21:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	invisiblethingslab.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:from:from:in-reply-to
-	:message-id:mime-version:reply-to:subject:subject:to:to; s=fm2;
-	 t=1762053712; x=1762140112; bh=7hp+3CUJGKWZLD+hs/ZP9jRp9wO3QWsC
-	LcVGR4MJGqI=; b=Acxal4bIYVnPZ4U9m9xz1ww8MwlHQ7U2OfaYK0UOczkpcnlp
-	9WXoMQlkR/3+2NU1/4JUxeVB/BYKeyfFfTGCnQb/CzpSz+HKHCyweChjy2GOEQQm
-	Lq6tiEQudElM6ur0bEP12/VGvH0cIT3Q/WVns5bfMIznVPJZBFvDTkOlvGWzPRq+
-	1OUqYOS59vaAYKKTPO5u6LN3lUSo8yLKjVxuPRCJQ19+o4+nckvx800EON50P/gY
-	78C0N0aKYscPXkz9FtXgyz1vbqHTCB2Nrxu9WTNGGwD+c+7yqB2n6B5G0NLGPUpR
-	7tpmjIXE0UHExak2soe/zyqQ9PSoDs+XGCo5Zw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1762053712; x=1762140112; bh=7hp+3CUJGKWZLD+hs/ZP9jRp9wO3
-	QWsCLcVGR4MJGqI=; b=qIRZnWUxNNmXVVXbT2dQc2bM3+01aSp0RMwjv7xqfCge
-	sydge9N73VuOktpifnHYH/Mg3lpXbB0Bvd21BOSo1aMV4SWZJ5kR48zipRRtG1nE
-	AfSN3LMO0curC3EdmS9+qhPzTT9AvbgFzP9pGo6v8oh2DVZBI154t4wmWqQPYo7F
-	qoMWHM7mXvl5qWO8wYfLHvrj9tGPbcBwsrUb4BH/EQrSqFjyn0fnK+d+abmj6ZQJ
-	txugkoJXZgB7fkS5fwycxKU761ubmEVz1SJEi8aKkZnisJHFIJaRj+X1hNsvxK+p
-	yIr3iXOtiUm2BOnKxZ/vLdTi3e+qi5wsyeudX0iwZA==
-X-ME-Sender: <xms:T84GaQaERxFIcHrqT_-je8u5rmmiy_Wbo0MKH_et94WqwvNWdSlv-g>
-    <xme:T84Gab1QOpeX6or8XcoTcotSUwAfEarLALzBjbeFjaejUZddSNMAvj9jfN8sl7VmP
-    k5skdLIqbj0GiU8mG_27dj3kjKLFf7Ee6bOrYupBu-B329ffg>
-X-ME-Received: <xmr:T84GaboqoeW5hDCQAcjBsLzZBiEyMT4D4OGmvPTVQEHlHHzZVLBfFPbTlaXLS6PGWyRofqnwrQD4rG6uuJkXotKvnum3RjishOKjv72KoTI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujeegudeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhephffvvefufffkofggtgfgsehtkeertdertdejnecuhfhrohhmpeforghrvghkucfo
-    rghrtgiihihkohifshhkihdqifpkrhgvtghkihcuoehmrghrmhgrrhgvkhesihhnvhhish
-    hisghlvghthhhinhhgshhlrggsrdgtohhmqeenucggtffrrghtthgvrhhnpeekkeeiveek
-    ueehfeegveejveevuedtjeeiveeguefhvdffueetfedtuddvueetveenucffohhmrghinh
-    epkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehm
-    rghilhhfrhhomhepmhgrrhhmrghrvghksehinhhvihhsihgslhgvthhhihhnghhslhgrsg
-    drtghomhdpnhgspghrtghpthhtohepledpmhhouggvpehsmhhtphhouhhtpdhrtghpthht
-    oheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
-    htohepmhgrrhhmrghrvghksehinhhvihhsihgslhgvthhhihhnghhslhgrsgdrtghomhdp
-    rhgtphhtthhopehjghhrohhsshesshhushgvrdgtohhmpdhrtghpthhtohepshhsthgrsg
-    gvlhhlihhniheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohhlvghkshgrnhgurhgp
-    thihshhhtghhvghnkhhosegvphgrmhdrtghomhdprhgtphhtthhopehjihgrnhhgrdhpvg
-    hnghelseiithgvrdgtohhmrdgtnhdprhgtphhtthhopegthhgvnhhqihhujhhiieeiiees
-    ghhmrghilhdrtghomhdprhgtphhtthhopehjrghsohhnrdgrnhgurhihuhhksegrmhgurd
-    gtohhmpdhrtghpthhtohepgigvnhdquggvvhgvlheslhhishhtshdrgigvnhhprhhojhgv
-    tghtrdhorhhg
-X-ME-Proxy: <xmx:T84GaSM0Rrntpe2dpe1DelGU6fxM69KeMa2CMQMVAruIQHJzpLw5Pw>
-    <xmx:T84GacrdpdOFpJ_2MOqtxUogwmJCCMKY7CHFDycssv3dc1ghJSw8tw>
-    <xmx:T84GaVvsj_U_IiHKkM1DkZ3lW-MAjvXErrMrNPKCo3PO8DsThC7W2w>
-    <xmx:T84Gab08owYKCtGPDFJTNuKooxcK2BmWoPjzEJ-lxfWZIRTVTUUeLw>
-    <xmx:UM4GadWWm080WdXiZ630qOlPi_dAm9aP9avnDEi9X7Ez8P2_mNpwFqOB>
-Feedback-ID: i1568416f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 1 Nov 2025 23:21:49 -0400 (EDT)
-From: =?UTF-8?q?Marek=20Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>
-To: linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Marek=20Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>,
-	Juergen Gross <jgross@suse.com>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
-	Peng Jiang <jiang.peng9@zte.com.cn>,
-	Qiu-ji Chen <chenqiuji666@gmail.com>,
-	Jason Andryuk <jason.andryuk@amd.com>,
-	xen-devel@lists.xenproject.org (moderated list:XEN HYPERVISOR INTERFACE)
-Subject: [PATCH] xen/xenbus: better handle backend crash
-Date: Sun,  2 Nov 2025 04:20:12 +0100
-Message-ID: <20251102032105.772670-1-marmarek@invisiblethingslab.com>
-X-Mailer: git-send-email 2.51.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C784C70814;
+	Sun,  2 Nov 2025 03:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762054442; cv=fail; b=F0ISpJKVi06iyPxF9qYGMR/LH/RXO+MCzhsxDaWUC8gaGTLnFfxNqIIiPvaUPq1rxvfGyDK8ZkABGOgTAVNzohgQJ4P2jSHhsH2B7J/GcAi3kgY7ORzMC7LyzStrBohjvVe5z1kk/QVCQbTriLd3eHFvXpn49JD+/cs/XtpSt/k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762054442; c=relaxed/simple;
+	bh=uVm6XLgXN5MPrWSpao3kPjKB0ubl+MIN7eTt2dUhnhg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=FMd+ITUEXHOg3iiYQTXO86oLkUTwynonC3sbq4iasOkD8gXFabOe8G/l7aaNTNDxIXrTOwvbC08xeBmkjDY0wQihrpGUcuyE8voHONdNuXJa1FDSJLuNEEQ9jbENPhEgekhtu6HClQCMqXnPvmdZhgbU2nN2f3CDX+ElzzwjAI4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=MZdWsg09; arc=fail smtp.client-ip=52.101.46.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=rDwfgyFhyvyp8NYJxDZKQGx4h3FbAATf4kZ3g5tMUIubn3zWM6Cd/jOKbHCzYczTBUHmlWXkDusVNNpzim62q0q/iFlu1Kz+9K0gRpC4e9QAXjapmoOEfp2XE1T/kXfTT2Q9bNnTuML5u2qUgIFEUhti4rrQEG3Gx0ra2+EgPlzF9JglWvoKgZJSoiTsOlpvtapUItyBNlrrpmmPpbwu+fAq0DwdDsmkTKlZ0EDkCS3ShhEOpMYoTzm5s6EvNkEhl34B7GiF1a7QpkpaCaXZJNjSvJrB/lRY9tsgn9NzbmSq0/0aaNyMshbRznJfesxvSdTCcCbMTheWOImAZz5DCw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qkOf2Iw7FfZK3IuuPx5URIKpjGxPxnlN1K7+vaJGOSQ=;
+ b=JcjxWUQYaL6pSaKqhdVXf4gR5jGu7Bjtue2uNuR57AM1Glj6oUlw6kvAmgwS5+UDzRF2kys0ie8//ZS+CD6g7Gp8eB0PT/l6/H8XMgMQH4uhJQ7Nupw5tSVbxVPHCPzwTJk2dknO5g4KtqYMFKYtuO9qU/P2psiInGpIv6LVzJaHXF4X2yOEGcx3OcewPNT+M5xD1imktTAn5EWschyxnGiEKOASwUHKqFOkpqcmz8vZbD6e/Soj5OWn16I0tDz4DoqOTrliIfkOzea/ImKBbyBYpTfIaaLDZY0yvsdFNIf7mSUs9U/S3td+EJxdIya/Hl8NrdYabsCk1rScAqik0Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qkOf2Iw7FfZK3IuuPx5URIKpjGxPxnlN1K7+vaJGOSQ=;
+ b=MZdWsg094grzAm8kwi76fKxOksfPi+AYadrVj3kXrh5DKzTxwtQqjLAZ4Nk1oFFCM6CQauCDUKUl6d9mBZ/gUqKsP6eoMn08HgaVKdiCYQZML9VUitMKEmClp3AAHbYyf059vzSrnPf5NcWB6V33fXQSQTs6KRwUBHJ9RyqTVUnR5B7XBh/mma2IaYclsuZbgeYtb83+0Mg2WG4c7TBAfSSUGXVhMsnH9zQamfmVOyGW7gUhhFaBNXWbSfZGSfg6UL2Liy57hAAa9ArK7lb1DhBzCqOC+T/pevopOPC0pntw1TAfSekTKwclis7GpjVMRFQyMKy81LHd22CgOj8OFA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
+ by DS0PR12MB7928.namprd12.prod.outlook.com (2603:10b6:8:14c::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Sun, 2 Nov
+ 2025 03:33:56 +0000
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9275.013; Sun, 2 Nov 2025
+ 03:33:56 +0000
+Message-ID: <b8a8c217-954b-4ffa-bce3-9424134518c8@nvidia.com>
+Date: Sat, 1 Nov 2025 20:33:41 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] gpu: nova-core: add boot42 support for next-gen
+ GPUs
+To: Alexandre Courbot <acourbot@nvidia.com>,
+ Danilo Krummrich <dakr@kernel.org>
+Cc: Joel Fernandes <joelagnelf@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ Alistair Popple <apopple@nvidia.com>, Edwin Peer <epeer@nvidia.com>,
+ Zhi Wang <zhiw@nvidia.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Bjorn Helgaas <bhelgaas@google.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ nouveau@lists.freedesktop.org, rust-for-linux@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>,
+ Nouveau <nouveau-bounces@lists.freedesktop.org>
+References: <20251029030332.514358-1-jhubbard@nvidia.com>
+ <20251029030332.514358-3-jhubbard@nvidia.com>
+ <DDUV3MZ58O0T.229A7N13MM1HN@nvidia.com>
+ <64018a2d-1c0c-4851-95d5-989f041d220d@nvidia.com>
+ <DDXV1SHI0R3A.2A1HQNM843OR0@nvidia.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <DDXV1SHI0R3A.2A1HQNM843OR0@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR13CA0070.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c4::15) To BY5PR12MB4116.namprd12.prod.outlook.com
+ (2603:10b6:a03:210::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|DS0PR12MB7928:EE_
+X-MS-Office365-Filtering-Correlation-Id: 32a72f63-63df-4569-6652-08de19c0a718
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TitVMy81QW4zRUdaT0FHVUluL2F5UlhacnJpbEdzUGlOSU5GY21tZzljTFBl?=
+ =?utf-8?B?Mk9LRkZzVjVxaWFqRVppSStiQXJiNDFZZ01WaVk0RmFlUDB2NVBvVUFPT084?=
+ =?utf-8?B?ZzlnWkdpcXJuZHl3UUIxcHphZXF2U0JsdzV6bGNZZEpNSGtXUkorQ1ovaVgw?=
+ =?utf-8?B?Zk5rdThkZE9ReENobC9FZXlwUzF5ZjgxZUZMdVFYc0dDYVF2dEx1SVh3b3pD?=
+ =?utf-8?B?TWJwOEFOL1l4Z3dad01FSWc3OURpUURMK2hkbWVFT0QrcDRkMmlaR01MSTZq?=
+ =?utf-8?B?YktkajJCZVNnUDJzNVg2U2hTOUVjU2JQQXBTeFhLZ1RjQnBCdEExYnkrSXNN?=
+ =?utf-8?B?dTdyTm0xcXpaQlpYVzVhZE1uQTloZmtlY25oajBsTlRLZHFWK3UwUitFdnYv?=
+ =?utf-8?B?bHdaeTNEditWR2x4SGJISEpCb2pwLzdqMmkxWFZld0NZUC85Mm9Wemc0UFpX?=
+ =?utf-8?B?WGpjSERTSEt0d3BiV2tyd3RJUU1KMGVjNi9yMldZeElGL2dpU1BEWERwalU1?=
+ =?utf-8?B?SDliamtHS0Y4eEpmaVM5Um04UXU2MGtNOThZLzNYWUtjRFhDRmF0M0JZZGJq?=
+ =?utf-8?B?ejJwTXh2NFRoTU4rQnc4U1M3QWtyRmcza3VTUTNWUHVLSXhqRUhDUGdsRDFy?=
+ =?utf-8?B?d2lDZWd4RnAzd0MvQzI4UkFZSWxvdkVBRkE2VGZoZTdMUnFtcElDZWp2RjdQ?=
+ =?utf-8?B?b2JFbHR3ZnNhbU9NczRIbEFkeFlNcEpXdWhieTloYnM2eS9sVDVqRlNSbGxQ?=
+ =?utf-8?B?cU9NUU43UXFOTXNtRlM3QW96dDAxMTY5MlVpVFNidHdwMlc0YjhjYTV5dER6?=
+ =?utf-8?B?ZFBXaStvaWRhQW1YcUM2UnRRVUNhU2VaRGM2bnk3Y29POGJqNVhxMUtjcW5u?=
+ =?utf-8?B?eEcvRis2am1reXBEZTFzNGVFWGpxMFVwWHdBT3JSNzJCZ2Rrak1FSVQzVVM0?=
+ =?utf-8?B?cEpZa0xXcVlhN3VSS0ljV09CUGtIT2tBcE5pcVdjMnB0emJxb09VdjVXbjFo?=
+ =?utf-8?B?K21NMnh3OE5MWTY0ZEdmSkZNYWlUOEV6bmV0Zk9SRkNGS3Exb25pc1cyc21y?=
+ =?utf-8?B?Wm40dGVVdlY2ZFVTa3UxaCtJSThVSVJ1b0haUnpuQmVTbWduU3ZMS2pBaGV6?=
+ =?utf-8?B?OUVieDdRN2l5U1ZtQ0h0TjJMc2JiYkFmU2xWaGVYL3VvQm9FTURmQlNKSnZK?=
+ =?utf-8?B?M1dOOTBwa1JLenBVeWVvc0dxeC8wbUZ3OWFsd21WcUppbzh4alowZjVNYjl2?=
+ =?utf-8?B?K2tLUzF4QnIxeDdJd3NzQUlMNnZsaXVLRTlOczlGbEZpWGJKTFQ5SncrWHNx?=
+ =?utf-8?B?NCtQWXR1U1ZqQ3ZzdzBPRVVTSGl3QityYWtQZmJJY0dGVFBlbkpkYzNHMnZj?=
+ =?utf-8?B?YUIzN1o1Uksrb20yWTZJaEFzRmFYbW9SeVBManBEK0htQm4ra3U1SmwvOW91?=
+ =?utf-8?B?aTVYcG1yRnNPTkpjRDczcXd5bUhCL1IzWitPL2tKMk5iRytiU29hMEFBclQ3?=
+ =?utf-8?B?U2UvQnppaDJWUzJLbzVGZStuSE5iUTBNTU16UUJtLzdnakdJaTM0aFoxUGp6?=
+ =?utf-8?B?VjlFT0gxc2hiNTR0L2hVeFBYb0ViUVhGYU45dU5FU29jV0l1ME5qckRzNFVr?=
+ =?utf-8?B?MWN4OHRKdDMyNE9vM2NHMGRjVlJuQnJGQks5V092dEMwMXpkZ1AwSEZUVkRp?=
+ =?utf-8?B?OWhlQWFxQTFCSWZMdU5yWER2ajdwaFZyUWtHOG9MUi9nZEhLNnJxa0p5TGRk?=
+ =?utf-8?B?TVBibmtwc3JoL3hOMUhRMFhyTWpBV3hVQkNRTkNaM0U1SlkrZ1phSU55aHRT?=
+ =?utf-8?B?azVrcDM1YzNXK1h1WVkya08vaEpsUy9IZVIwdmlWc29tenVJRjduSEhxcUcx?=
+ =?utf-8?B?VW5kcURtSDQ5UmpmV0dUa3ZNWHdFWU9pbVEvRHdtR0hoa3VCbEplTFRVRzBJ?=
+ =?utf-8?Q?7b4JghBbV1BwekplsO3h1ZH2hQkC6b6C?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ekVxY1p6LzNYaWQrckZuYS9lUUpXVnNoaGUwM21RL3BRNnp5L1VpeDNHN1Ux?=
+ =?utf-8?B?eWZ6UFpXTnh6TGN2Tzk0UWdOK0NtYW1kRTVxNExnMGNvSi9GYmErZzVmQlI5?=
+ =?utf-8?B?aTBUeWY5cEpQTDdNMHh5UytRRHVvQUdVdkIvbGtJNk1kbXdFd0s0Tm1XVG5w?=
+ =?utf-8?B?UGc1aGhlQTNEUkdjcDdhU1V4RVlHNkwvRWxIb3BKaUtWbHFCVjh1eDZKV2Y2?=
+ =?utf-8?B?K1dxakh0OXZuNFpzaVh5WTlvZmpNM0E2blFxQ1psZnlSNGhxdk1UMXJVcHJu?=
+ =?utf-8?B?MS9JdUJQelV5QVJ1YVJRZU5taWc2TEZORlVvdnRRKzA2dXJ5SU1qR1BwSitk?=
+ =?utf-8?B?bXgvcDJYcmhoL3I4dDVUOTFsbktvNDlqMUlXM0loU3c4ZnQ5L1Rka1F1UnJ4?=
+ =?utf-8?B?Z1RJWFNXSThhY1RXeUlYQlAwMEtubFdCb2xxZ204eFMzNWpQOWh4Q3NLZkkz?=
+ =?utf-8?B?Qm41cHVKNnFWSDhXUDZyeHRUNi9CSmJXRWpFOHFLQmt5ZHZveVFLSGFhWmFM?=
+ =?utf-8?B?YTJDemdyaDN6V05yd3VZVjViRTJ0R2JPK2JjRjRpNVJPVEFHS3g1YWlVVGhh?=
+ =?utf-8?B?RlNiZVhMTnJiWmtvS2tEYjRlK1FVeWNrQU1aTllLb2JKS2lnbWpvSGZuTUZw?=
+ =?utf-8?B?MHJ3UmlWamczSXJ6N0dWYmU1aWx0anpBa1ZtWkdNNGxPVHorL3dwSTZLUGV5?=
+ =?utf-8?B?Y3pRcDNmQXdWYUsxMWNnVEVFR1VwWThNUGtiYVIyK3NkcTViU09EUGNWK3RG?=
+ =?utf-8?B?cHRsT1pLMVluemFza0pKelpNTUFxcDhDN3pEWDk0aXo3dkxpdW52R294ekQx?=
+ =?utf-8?B?MitJeTc4KzhKR1Y1NUNZbFNRYzkxMHdTcnAvWjVESDN3THpQZi83b2RtOUVY?=
+ =?utf-8?B?Z2kxM3crZnRQS095RDdWUXJKK253R0U3KzJFMHVzWGxVKzcxUXQ4MmdGamta?=
+ =?utf-8?B?YUV3YnZxYm0zU2Y3SWY5MnlUSmlKYlhmY1I0SE9wNVJ1U2RzYTJQR3BJd0tM?=
+ =?utf-8?B?TU9XaUtNZ3pQUnpBNEptcFNxKzdnOVNncThIUXFTZXMyTUZ1cGJqTDdMSHg0?=
+ =?utf-8?B?T2FRSzFUMGE2UXIrenVvY01abWN0OXlkNzZnbUVNRzBvQSsraThNOVpVNzlT?=
+ =?utf-8?B?bjhZZTgrNWNZbFkwdTBHL3UwZ2xmODRRZXpxaHV6dEU2REV4SGFYR0IyOFBY?=
+ =?utf-8?B?VGVPVGQ2dWxKcG1VeXRWbVdGM1hIZnpPSjg0T1ZqZm5MMGFFbmUzeWRIMDll?=
+ =?utf-8?B?ZmN1aWlnWHllQjFqZkY0VEZtVzl2ZTBlb1FLTDBoT0lhYTJUbW1IQUpQK2Mv?=
+ =?utf-8?B?WXBLZm1VOHV5YjI4V2lZVDRUdFNhMTk3ckYvMklXSWVJNkNSajU4eDZCa3dt?=
+ =?utf-8?B?NHpBelhNQlZvV1cxRTk4aG40NlJvdWhUaG9UcUkzQlpOTXFSMVZZSE1WZWFr?=
+ =?utf-8?B?UUZ6L2xRL0pqNU9wMk9rSWxxU2VvLzliMDVvRkJ2WHNuejh6L1ZmSnU3MTgy?=
+ =?utf-8?B?eXlGeHhpVlA5WUd5L0lpYWtGZU5jcnJ1SEJYUkNUZjhoZS9ZcnExNEFUeE1n?=
+ =?utf-8?B?dlNxRGE1YjhmRk5ubWVnRStvdWxpWVZ3cTd2Ni80Yi9WQTBEYmk1M0U4L2tV?=
+ =?utf-8?B?ZG9Xb21Nc1dkN3BtbHZlaGxBSUlSVU83aEs1Vm1LcktWbFIxVVJkb0IrZ0ZO?=
+ =?utf-8?B?bDdvZVhrSkhhc3FvVUhqdUwwQ0pVUU5KS2RrK1pQWWxreVR2OUJPV0VML1hC?=
+ =?utf-8?B?MXRkVUkwQzlGOU5EbGRSb0hFWWwrYzV3L0dnU3hxYk96NUt4RU50Tk1QYmg4?=
+ =?utf-8?B?ZmkxdjFPM2doTGJtR1Radm5SaUlpcGxWTXZZcUU3bEpSR0pFRFh2OUJLMFZz?=
+ =?utf-8?B?QU1uNENveTlPODFCTjllaDFzZVlHekwvdllleURCSHVxWWVNSTNQKzFvMDlC?=
+ =?utf-8?B?dVpjUDBtZzRJaktRbVlkRkhoRURaUkloYjhGZ0lqODZ4OHhyWEMyRkVFNVpn?=
+ =?utf-8?B?RVpMTFBtMWRNbjE3czMzUjJuSjV3a0dORWh2QU1SZ3o0Q0hmL29QOE1Uc1Yy?=
+ =?utf-8?B?MGpEL2swU2wvV0pLQ3luMTIvanJqN1N3SUJhK25NSHFPMXk2TC95aFhRekhp?=
+ =?utf-8?B?RHNXdCs2a0tTc1FFcVNKVDkvWGdxS3A5SHZGT29yU3FXSEFSRWFxYmZERVp6?=
+ =?utf-8?B?N1E9PQ==?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 32a72f63-63df-4569-6652-08de19c0a718
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2025 03:33:56.2340
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5yBYQuMPLfXT9w0XeLerQnPXimGjGoBRWvNFyPQrlFBeJEIVAQkEfGVyuAGrVg58KfZMFaV+t3KviWEOaaTPow==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7928
 
-When the backend domain crashes, coordinated device cleanup is not
-possible (as it involves waiting for the backend state change). In that
-case, toolstack forcefully removes frontend xenstore entries.
-xenbus_dev_changed() handles this case, and triggers device cleanup.
-It's possible that toolstack manages to connect new device in that
-place, before xenbus_dev_changed() notices the old one is missing. If
-that happens, new one won't be probed and will forever remain in
-XenbusStateInitialising.
+On 11/1/25 7:41 PM, Alexandre Courbot wrote:
+> On Sun Nov 2, 2025 at 9:34 AM JST, John Hubbard wrote:
+>> On 10/29/25 7:05 AM, Alexandre Courbot wrote:
+...
 
-Fix this by checking backend-id and if it changes, consider it
-unplug+plug operation. It's important that cleanup on such unplug
-doesn't modify xenstore entries (especially the "state" key) as it
-belong to the new device to be probed - changing it would derail
-establishing connection to the new backend (most likely, closing the
-device before it was even connected). Handle this case by setting new
-xenbus_device->vanished flag to true, and check it before changing state
-entry.
+> We can always add doccomments in the macro, as in the patch below. These
+> will be displayed by LSP when one highlights or tries to use one of
+> these constants.
+> 
+> If you think that's adequate, I will send a patch.
+> 
+> --- a/drivers/gpu/nova-core/bitfield.rs
+> +++ b/drivers/gpu/nova-core/bitfield.rs
+> @@ -249,7 +249,10 @@ impl $name {
+>               { $process:expr } $prim_type:tt $to_type:ty => $res_type:ty $(, $comment:literal)?;
+>       ) => {
+>           ::kernel::macros::paste!(
+> +        /// Inclusive range of the bits covered by this field.
+>           const [<$field:upper _RANGE>]: ::core::ops::RangeInclusive<u8> = $lo..=$hi;
 
-And even if xenbus_dev_changed() correctly detects the device was
-forcefully removed, the cleanup handling is still racy. Since this whole
-handling doesn't happend in a single xenstore transaction, it's possible
-that toolstack might put a new device there already. Avoid re-creating
-the state key (which in the case of loosing the race would actually
-close newly attached device).
+Will that let people know that they'll see something like
+IMPLEMENTATION_RANGE() for a corresponding .implementation field?
 
-The problem does not apply to frontend domain crash, as this case
-involves coordinated cleanup.
+I'm hoping we can somehow create clear and plain documentation for
+the various functions that the macro generates.
 
-Problem originally reported at
-https://lore.kernel.org/xen-devel/aOZvivyZ9YhVWDLN@mail-itl/T/#t,
-including reproduction steps.
-
-Signed-off-by: Marek Marczykowski-Górecki <marmarek@invisiblethingslab.com>
----
-I considered re-using one of existing fields instead of a new
-xenbus_device->vanished, but I wasn't sure if that would work better.
-Setting xenbus_device->nodename to NULL would prevent few other places
-using it (including some log messages). Setting xenbus_device->otherend
-might have less unintentional impact, but logically it doesn't feel
-correct.
-
-With this patch applied, I cannot reproduce the issue anymore - neither
-with the simplified reproducer script, nor with the full test suite.
----
- drivers/xen/xenbus/xenbus_client.c |  2 ++
- drivers/xen/xenbus/xenbus_probe.c  | 25 +++++++++++++++++++++++++
- include/xen/xenbus.h               |  1 +
- 3 files changed, 28 insertions(+)
-
-diff --git a/drivers/xen/xenbus/xenbus_client.c b/drivers/xen/xenbus/xenbus_client.c
-index e73ec225d4a61..ce2f49d9aa4ad 100644
---- a/drivers/xen/xenbus/xenbus_client.c
-+++ b/drivers/xen/xenbus/xenbus_client.c
-@@ -275,6 +275,8 @@ __xenbus_switch_state(struct xenbus_device *dev,
-  */
- int xenbus_switch_state(struct xenbus_device *dev, enum xenbus_state state)
- {
-+	if (dev->vanished)
-+		return 0;
- 	return __xenbus_switch_state(dev, state, 0);
- }
- 
-diff --git a/drivers/xen/xenbus/xenbus_probe.c b/drivers/xen/xenbus/xenbus_probe.c
-index 86fe6e7790566..3c3e56b544976 100644
---- a/drivers/xen/xenbus/xenbus_probe.c
-+++ b/drivers/xen/xenbus/xenbus_probe.c
-@@ -444,6 +444,9 @@ static void xenbus_cleanup_devices(const char *path, struct bus_type *bus)
- 		info.dev = NULL;
- 		bus_for_each_dev(bus, NULL, &info, cleanup_dev);
- 		if (info.dev) {
-+			dev_warn(&info.dev->dev,
-+			         "device forcefully removed from xenstore\n");
-+			info.dev->vanished = true;
- 			device_unregister(&info.dev->dev);
- 			put_device(&info.dev->dev);
- 		}
-@@ -659,6 +662,28 @@ void xenbus_dev_changed(const char *node, struct xen_bus_type *bus)
- 		return;
- 
- 	dev = xenbus_device_find(root, &bus->bus);
-+	/* Backend domain crash results in not coordinated frontend removal,
-+	 * without going through XenbusStateClosing. Check if the device
-+	 * wasn't replaced to point at another backend in the meantime.
-+	 */
-+	if (dev && !strncmp(node, "device/", sizeof("device/")-1)) {
-+		int backend_id;
-+		int err = xenbus_gather(XBT_NIL, root,
-+				        "backend-id", "%i", &backend_id,
-+					NULL);
-+		if (!err && backend_id != dev->otherend_id) {
-+			/* It isn't the same device, assume the old one
-+			 * vanished and new one needs to be probed.
-+			 */
-+			dev_warn(&dev->dev,
-+				 "backend-id mismatch (%d != %d), reconnecting\n",
-+				 backend_id, dev->otherend_id);
-+			dev->vanished = true;
-+			device_unregister(&dev->dev);
-+			put_device(&dev->dev);
-+			dev = NULL;
-+		}
-+	}
- 	if (!dev)
- 		xenbus_probe_node(bus, type, root);
- 	else
-diff --git a/include/xen/xenbus.h b/include/xen/xenbus.h
-index 7dab04cf4a36c..43a5335f1d5a3 100644
---- a/include/xen/xenbus.h
-+++ b/include/xen/xenbus.h
-@@ -87,6 +87,7 @@ struct xenbus_device {
- 	struct completion down;
- 	struct work_struct work;
- 	struct semaphore reclaim_sem;
-+	bool vanished;
- 
- 	/* Event channel based statistics and settings. */
- 	atomic_t event_channels;
+thanks,
 -- 
-2.51.0
+John Hubbard
+
+> +
+> +        /// Mask of the bits making up this field.
+>           const [<$field:upper _MASK>]: $storage = {
+>               // Generate mask for shifting
+>               match ::core::mem::size_of::<$storage>() {
+> @@ -260,6 +263,8 @@ impl $name {
+>                   _ => ::kernel::build_error!("Unsupported storage type size")
+>               }
+>           };
+> +
+> +        /// Shift to apply to a value to align it with the start of this field.
+>           const [<$field:upper _SHIFT>]: u32 = $lo;
+>           );
+
 
 
