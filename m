@@ -1,348 +1,209 @@
-Return-Path: <linux-kernel+bounces-881855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A213C29126
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 16:38:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91A72C29132
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 16:43:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F33694E23A4
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 15:38:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB5D73AEC36
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 15:43:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44952154BE2;
-	Sun,  2 Nov 2025 15:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 900991F03EF;
+	Sun,  2 Nov 2025 15:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XSD2UeZs"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="W5/mo3jc"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE4A1A930
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 15:37:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2029E35979
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 15:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762097875; cv=none; b=XSznFDTNJIP/86PwcW4NuHWYDpqnKwJZo0izzxcV4va1Ag77Ft7xF/veOntkw2FEMkptffQljPu5/DnNdtU58XJkA2Q+dd7pBv2SqyMROfdNQzpF7tX+7Yq0Y/nFcQaEjGKLaR10BRcF9Vrp92yrr7fCzWx3a+3VVvvWk/smm70=
+	t=1762098197; cv=none; b=IpEwEGfmQvb/+DPFiNAlKwisRaT2tSWtYrXXEPY1sTdGBS/OMH1QchC5MrP+ev9V5gzo4oHbzPEMVyCuux2PmYbe93LjXJmBuU2Tw7hyYqX0pEqC5NgvvX1b2gzhicWXSmqvoJO3SB+dl2chcfh5MnItWsWUyaj+kzsCS37JQQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762097875; c=relaxed/simple;
-	bh=9yHmdhpNZf0U+yDBBiY9IyyK1gbUDKyL8nJcBdejmEU=;
+	s=arc-20240116; t=1762098197; c=relaxed/simple;
+	bh=z+74uzTwOyQM+smLB/z8SPLxSH3L8uwlQ61epXaQDqs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q4eNJu8oD9wkeOc42xm3athC4bvRt+TumQz+5mUwR/LrScOe9hhCuWacKgzBayHDvCqMhS+gKWtjwn8WBVjBqogRvfFUM3iRM+qt/XWlteRRKokzatmjN6QoOTuGQeH903HGLYAHvg3WmDHXQM5DWRxfbzMN7cfkOW6AFu+tTNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XSD2UeZs; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2959197b68eso107655ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 07:37:53 -0800 (PST)
+	 To:Cc:Content-Type; b=HhUvrlcVV6KmI1zIz+GeGRIDZ/cqVHFbH2cdUsTaZp95iQxY1mRLdJsfsy7p+YSJQGwFnaSE2uJnKjd+kE93s+sq2QIGxaBQUqqg3rKNPiMkIu24eybpNPvqUuX+3fK+7iP8A2vl8QOy4xXI30+wh0I95CVHf/6W31F6TH2INWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=W5/mo3jc; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-330b4739538so3647197a91.3
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 07:43:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762097873; x=1762702673; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1762098195; x=1762702995; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pFYZ8T4QEJnU8ZUt8nnb7h5E7A0/jdywrA81gUOdtgc=;
-        b=XSD2UeZsYUdTuURx0EGNOpZ9LhxkSFnNqD+4d/FVYn4EWTda4c2i2GBFkQ+4XIEYTs
-         SzdigQRXasK0ZUzZW8AX5j/9kZ79ctdrKNZV4h3U/PJnsk7GWa+vklZZwmVnE67vU+9m
-         1GNRcR6jVTx8VZwZ8zJgy1EGRnEOcimgS8i4LoG/sknx4Bt0DNhtD91WSuMV8v9aWR1Q
-         A8HJ01YhVQ1Ze8Quv+KfPL9cl0goOAv8jI8hSkx7IMJD0HwMFkHT6Ga5O4dP8OoQuvya
-         FaegrrxpSkmJf0L3GMRgeTkGPz9O2KL7gKTOoN5QCN5TsiHS+vSKUTx9w2HKmUMXyX8e
-         OM+Q==
+        bh=XR4hLMCuTJEX4w71czl1e00xwifRRggH9ZtmKhZRHec=;
+        b=W5/mo3jcV+LLYgNuvlgcKBT/U2DkWk0B4bUxXDKaDSbrVNkK5NKOwxwiWgiJ5CtCJr
+         PaiNZkYcZtOkrxMFS63oUHO+0qASyjqxoIo7QP7H+/SX0eSY2eO8kpfzPZlPrSR3oeb0
+         9Dl4L2Vne59kpwaC+XYSuIfhGdXQOucIrVB0wwX14HjcnyjNGfNykofC2rRumFBe3NDR
+         tC7+jl13DrjNpaBgfB7YJEoXjhQ/yxKSKzmhhU2riamNSikfuecsEKE8gl9Dj9MrUol2
+         VyAh9RZdPHCq5C737qxQ8LII1i48RK9Jx1BRp0fUyAdJj81w71rnCmIK1mx6KMqebtop
+         XySw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762097873; x=1762702673;
+        d=1e100.net; s=20230601; t=1762098195; x=1762702995;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pFYZ8T4QEJnU8ZUt8nnb7h5E7A0/jdywrA81gUOdtgc=;
-        b=EDch7TeFADphI0b8tXWeAT2f0Z3yETY6oAJTwMlQfQXHTkZ2qg8WgkEeV8MpB4bfDT
-         jK9iewZaQbz2m/SgGZVq+cDPLGTgmVx7S4gPEvO6+oGNnGme3CxnscTuYkOcMvelvePX
-         FVIdSs8sUEA1NKDYr/3BzKB06EHtrfW8yTguLNZNnzM2aa1AdzxRo5KBtinrpaFpqRIa
-         G9g9opv3BY7xIMPGY5ruVpXr3vYdsez1MPO1OKWaiqUfGEruSo1WL1r1esdewGrRYcnt
-         dYsrmLqeklrH79dlfzmLKvov9pbbjqLmBB4fkbWLRf39qTNzUafGaRqa1+ixSSbca7V3
-         hYeA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ+xC7INL61RmPUnZVdJkOA1XRjpSIUNegNQ9Hxrrdq6uT5xzixcnBNCdjEOxBir07oo1F7pnRHF4h/Qg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzih6o2iM+CVdAUbv+iV7bO8tdQlmksR8s5ZBg5Vz9itRVmkZaE
-	ZDVtMMWGyO1nC77wZ8+6gbrzda1v98gIUG5xi7tLbodiue98G+5m8mknkNL/3W4f7iLOzXYmTWS
-	Ncl9qWYk9OnIvXpIXh+Ol0nfTuNl5KWTngnjJO5HO
-X-Gm-Gg: ASbGnctMlqXpTADe1nrH90Xcv/USXH5fRY9IRNbGpyjKIGk/TTyYSt2Lc5sjRffqfpP
-	Q3pZiBZb4CUJREripCpjuRSsIbXk+86UrFUeUKQc7DYKWNZueSKIJ5fVdJzseOjb1BaOx+1pjP0
-	4+0sAqzDnGL9/YvWSJgsu6O+fZAPq1bZLOfvYr2mu2jWEGRmDdJSTYx2lO4y2vxsFb8mvBdRIps
-	GUlHII2nbOJsfGStstej/ypR9Mzky19tHW4H/bA7RYMbvdQyCTaKb3lmJfwaK4b5M09Myxozq/p
-	kNEgY+oe
-X-Google-Smtp-Source: AGHT+IFgXwwOqLmDQ79Pmnc41XEAjHcW4kdC+C1swSAuuLDWGyEK+XFtermnUbTQaIjvlHytFHyLRkB8gbGmL4RJ3iQ=
-X-Received: by 2002:a17:902:f683:b0:293:2a8:3f9b with SMTP id
- d9443c01a7336-295565c1e2cmr4014665ad.15.1762097872429; Sun, 02 Nov 2025
- 07:37:52 -0800 (PST)
+        bh=XR4hLMCuTJEX4w71czl1e00xwifRRggH9ZtmKhZRHec=;
+        b=v3wKclm3j2G0DTz4AIuR0TTeqyXHxi1IrLPxsAdCQ4UzgyrLtIUuK5GkU4Kwe2csJX
+         WopHQViBz6rMLeL7LJhid1vL74a4JlNHL4wAYgFTGoU+yXpswln1vuSOny+CuCbhvu80
+         6HdtVqD7RmoXJQrHA0MvWx9wVDEBtWpMHFy/PEwObMjV0+DFmUWF4I4rG6timLIEi6ff
+         phsLddQGmdsw/9bGU59H65ld1j/0RbEGqhiKydOfbGUBQf9CaQBbgnaIteQzaYQM9x8V
+         f/Ehu64luJAo+dvZJ8JxZWFkspVy4uGsGtoXtLmmSiDyghJu5wnK/G6wAfO01esR17yZ
+         nxdw==
+X-Forwarded-Encrypted: i=1; AJvYcCU9LYHinsVjFN2sgzQaM1rajM/EFLuE60r/LK4ctmeeBz1lQQamUgS8hHdK4AjF456jy6D1Xh0Ypm3cm9M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWm2sOZ11bwiZGHwNSitiI8zW6tBPSIMIp4z6H3lT4m7+3asBx
+	wFY9qrTaZTRGCRlbSJoIdOwA2R8aePP53Vg3PfM2l5hfV/6wMSHs8JRkhImJ/jKc90HvWSPJ8UF
+	gt8dgyUATvja+yjtPkOil/AIB0zanQrt9x/36OWfa
+X-Gm-Gg: ASbGncuBXDeTIt6z7+f3OjmRZbwdJ6mge3gzMRROBuG7NzWPendULb/OVC8/RyaGryC
+	hty1VECKCS+slQq/p19eV9OXrS46I2ngWjX6XSqRtiAGqIRJ1RvfszDB4DBk7Nv5kKlDZYWWOSk
+	iB/SZJYMZzJdiyyPpLlSnKMQOavhrIxuV1WUgzQvGzZekt0PYUwVQNiWC8GuPgxhO9Bb66wsl5A
+	aaug3zdl+tc55DyPochJChAfX/X9nB1FNUHMaClHvB4+6jQWrL5iZVTxmX/
+X-Google-Smtp-Source: AGHT+IH+gdQyYqpCRFbM6fBI2tvP8h9njQCEvK/Ytm9+WC6sCBHRr/IlfFcCz6CZrkFk8ifrfaRZlu6u7GUboUGzPBM=
+X-Received: by 2002:a17:90b:5628:b0:32e:a54a:be4a with SMTP id
+ 98e67ed59e1d1-34082fc6369mr10716770a91.2.1762098195358; Sun, 02 Nov 2025
+ 07:43:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250826125617.1166546-1-alexander.usyskin@intel.com>
- <8deef7c4-ac75-4db8-91b7-02cf0e39e371@roeck-us.net> <CY5PR11MB6366B9836B306AD2A72BDDFEEDC6A@CY5PR11MB6366.namprd11.prod.outlook.com>
-In-Reply-To: <CY5PR11MB6366B9836B306AD2A72BDDFEEDC6A@CY5PR11MB6366.namprd11.prod.outlook.com>
-From: Guenter Roeck <groeck@google.com>
-Date: Sun, 2 Nov 2025 07:37:41 -0800
-X-Gm-Features: AWmQ_bnfvLsA1Lbuqnyc8sXQwiHxJ6NAiIB80GQvQ8vrHh4WXIebzCyxtS5Igak
-Message-ID: <CABXOdTfOfrjP40DhZaqcXXUs0PbEZwv=qcZu=k=TwaRgMhFS_g@mail.gmail.com>
-Subject: Re: [char-misc-next] mei: hook mei_device on class device
-To: "Usyskin, Alexander" <linux@roeck-us.net>
-Cc: =?UTF-8?Q?Marek_Marczykowski=2DG=C3=B3recki?= <marmarek@invisiblethingslab.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Abliyev, Reuven" <reuven.abliyev@intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250928030358.3873311-1-coxu@redhat.com> <20251031074016.1975356-1-coxu@redhat.com>
+ <CAHC9VhRBXkW+XuqhxJvEOYR_VMxFh4TRWUtXzZky=AG_nyBYEQ@mail.gmail.com> <baa39fcd1b6b485f14b8f06dcd96b81359e6e491.camel@linux.ibm.com>
+In-Reply-To: <baa39fcd1b6b485f14b8f06dcd96b81359e6e491.camel@linux.ibm.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Sun, 2 Nov 2025 10:43:04 -0500
+X-Gm-Features: AWmQ_bkhQmp1JdfxKhTFwi5MkVou1XmV320Ca5zT8aVFM_Vs-ciEtv2q9tc7P2M
+Message-ID: <CAHC9VhToe-VNqbh6TY2iYnRvqTHRfQjnHYSRWYgt8K7NcLKMdg@mail.gmail.com>
+Subject: Re: [PATCH v2] lsm,ima: new LSM hook security_kernel_module_read_file
+ to access decompressed kernel module
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Coiby Xu <coxu@redhat.com>, linux-integrity@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Karel Srot <ksrot@redhat.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
+	Daniel Gomez <da.gomez@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+	Eric Snowberg <eric.snowberg@oracle.com>, open list <linux-kernel@vger.kernel.org>, 
+	"open list:MODULE SUPPORT" <linux-modules@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Nov 2, 2025 at 7:00=E2=80=AFAM Usyskin, Alexander <linux@roeck-us.n=
-et> wrote:
-...
+On Sun, Nov 2, 2025 at 10:06=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.com> wr=
+ote:
+> On Sat, 2025-11-01 at 12:50 -0400, Paul Moore wrote:
+> > On Fri, Oct 31, 2025 at 3:41=E2=80=AFAM Coiby Xu <coxu@redhat.com> wrot=
+e:
+> > >
+> > > Currently, when in-kernel module decompression (CONFIG_MODULE_DECOMPR=
+ESS)
+> > > is enabled, IMA has no way to verify the appended module signature as=
+ it
+> > > can't decompress the module.
+> > >
+> > > Define a new LSM hook security_kernel_module_read_file which will be
+> > > called after kernel module decompression is done so IMA can access th=
+e
+> > > decompressed kernel module to verify the appended signature.
+> > >
+> > > Since IMA can access both xattr and appended kernel module signature
+> > > with the new LSM hook, it no longer uses the security_kernel_post_rea=
+d_file
+> > > LSM hook for kernel module loading.
+> > >
+> > > Before enabling in-kernel module decompression, a kernel module in
+> > > initramfs can still be loaded with ima_policy=3Dsecure_boot. So adjus=
+t the
+> > > kernel module rule in secure_boot policy to allow either an IMA
+> > > signature OR an appended signature i.e. to use
+> > > "appraise func=3DMODULE_CHECK appraise_type=3Dimasig|modsig".
+> > >
+> > > Reported-by: Karel Srot <ksrot@redhat.com>
+> > > Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+> > > Signed-off-by: Coiby Xu <coxu@redhat.com>
+> > > ---
+> > > v1: https://lore.kernel.org/linux-integrity/20250928030358.3873311-1-=
+coxu@redhat.com/
+> > >
+> > >  include/linux/lsm_hook_defs.h       |  2 ++
+> > >  include/linux/security.h            |  7 +++++++
+> > >  kernel/module/main.c                | 10 +++++++++-
+> > >  security/integrity/ima/ima_main.c   | 26 ++++++++++++++++++++++++++
+> > >  security/integrity/ima/ima_policy.c |  2 +-
+> > >  security/security.c                 | 17 +++++++++++++++++
+> > >  6 files changed, 62 insertions(+), 2 deletions(-)
+> >
+> > We don't really need a new LSM hook for this do we?  Can't we just
+> > define a new file read type, e.g.  READING_MODULE_DECOMPRESS, and do
+> > another call to security_kernel_post_read_file() after the module is
+> > unpacked?  Something like the snippet below ...
 >
-> Seems I've missed the error flow in probe (my test machines always have a=
-n ME in a good state...).
+> Yes, this is similar to my suggestion based on defining multiple enumerat=
+ions:
+> READING_MODULE, READING_COMPRESSED_MODULE, and READING_DECOMPRESSED_MODUL=
+E.
+> With this solution, IMA would need to make an exception in the post kerne=
+l
+> module read for the READING_COMPRESSED_MODULE case, since the kernel modu=
+le has
+> not yet been decompressed.
 >
-> Below patch should fix the problem, can you confirm?
+> Coiby suggested further simplification by moving the call later.  At whic=
+h point
+> either there is or isn't an appended signature for non-compressed and
+> decompressed kernel modules.
 >
-Yes, it does. With this patch applied, the log output is:
+> As long as you don't have a problem calling the security_kernel_post_read=
+_file()
+> hook again, could we move the call later and pass READING_MODULE_UNCOMPRE=
+SSED?
 
-...
-[   16.406790] mtdoops: mtd device (mtddev=3Dname/number) must be supplied
-[   18.380400] mei mei0: wait hw ready failed
-[   18.384594] mei mei0: hw_start failed ret =3D -62 fw status =3D
-00070355 002F0006 00000000 00000000 00000000 00000000
-[   20.428395] mei mei0: wait hw ready failed
-[   20.432542] mei mei0: hw_start failed ret =3D -62 fw status =3D
-00070355 002F0006 00000000 00000000 00000000 00000000
-[   22.476390] mei mei0: wait hw ready failed
-[   22.480533] mei mei0: hw_start failed ret =3D -62 fw status =3D
-00070355 002F0006 00000000 00000000 00000000 00000000
-[   22.490847] mei mei0: reset: reached maximal consecutive resets:
-disabling the device
-[   22.498718] mei mei0: reset failed ret =3D -19
-[   22.503012] mei mei0: link layer initialization failed.
-[   22.508261] mei_me 0000:00:16.0: init hw failure.
-[   22.513662] mei_me 0000:00:16.0: initialization failed.
-initramfs(out): Mounting system filesystems for initramfs init.d
-...
+It isn't clear from these comments if you are talking about moving
+only the second security_kernel_post_read_file() call that was
+proposed for init_module_from_file() to later in the function, leaving
+the call in kernel_read_file() intact, or something else?
 
-Official Tested-by: tag below. Note that it is from my Google address
-since this is where I tested the fix.
+I think we want to leave the hook calls in kernel_read_file() intact,
+in which case I'm not certain what advantage there is in moving the
+security_kernel_post_read_file() call to a location where it is called
+in init_module_from_file() regardless of if the module is compressed
+or not.  In the uncompressed case you are calling the hook twice for
+no real benefit?  It may be helpful to submit a patch with your
+proposal as a patch can be worth a thousand words ;)
 
- Thanks a lot for the quick turnaround!
+> > diff --git a/kernel/module/main.c b/kernel/module/main.c
+> > index c66b26184936..f127000d2e0a 100644
+> > --- a/kernel/module/main.c
+> > +++ b/kernel/module/main.c
+> > @@ -3693,6 +3693,14 @@ static int init_module_from_file(struct file *f,=
+ const ch
+> > ar __user * uargs, int
+> >                        mod_stat_add_long(len, &invalid_decompress_bytes=
+);
+> >                        return err;
+> >                }
+> > +
+> > +               err =3D security_kernel_post_read_file(f,
+> > +                                                    (char *)info.hdr, =
+info.len,
+> > +                                                    READING_MODULE_DEC=
+OMPRESS);
+> > +               if (err) {
+> > +                       mod_stat_inc(&failed_kreads);
+> > +                       return err;
+> > +               }
+> >        } else {
+> >                info.hdr =3D buf;
+> >                info.len =3D len;
+>
+> =3D=3D defer security_kernel_post_read_file() call to here =3D=3D
 
-Guenter
-
-> From c58f311df60f26df2efe1e0f9fc523bfa4b93936 Mon Sep 17 00:00:00 2001
-> From: Alexander Usyskin <alexander.usyskin@intel.com>
-> Date: Sun, 2 Nov 2025 10:57:22 +0200
-> Subject: [PATCH] mei: fix error flow in probe
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=3DUTF-8
-> Content-Transfer-Encoding: 8bit
->
-> Dismantle class device last in probe error flow to avoid accessing freed =
-memory like:
->
-> [   87.926774] WARNING: CPU: 9 PID: 518 at kernel/workqueue.c:4234
-> __flush_work+0x340/0x390
-> ...
-> [   87.926912] Workqueue: async async_run_entry_fn
-> [   87.926918] RIP: e030:__flush_work+0x340/0x390
-> [   87.926923] Code: 26 9d 05 00 65 48 8b 15 26 3c ca 02 48 85 db 48 8b
-> 04 24 48 89 54 24 58 0f 85 de fe ff ff e9 f6 fd ff ff 0f 0b e9 77 ff ff
-> ff <0f> 0b e9 70 ff ff ff 0f 0b e9 19 ff ff ff e8 7d 8b 0e 01 48 89 de
-> [   87.926931] RSP: e02b:ffffc900412ebc00 EFLAGS: 00010246
-> [   87.926936] RAX: 0000000000000000 RBX: ffff888103e55090 RCX: 000000000=
-0000000
-> [   87.926941] RDX: 000fffffffe00000 RSI: 0000000000000001 RDI: ffffc9004=
-12ebc60
-> [   87.926945] RBP: ffff888103e55090 R08: ffffffffc1266ec8 R09: ffff88811=
-09076e8
-> [   87.926949] R10: 0000000080040003 R11: 0000000000000000 R12: ffff88810=
-3e54000
-> [   87.926953] R13: ffffc900412ebc18 R14: 0000000000000001 R15: 000000000=
-0000000
-> [   87.926962] FS:  0000000000000000(0000) GS:ffff888233238000(0000) knlG=
-S:0000000000000000
-> [   87.926967] CS:  e030 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   87.926971] CR2: 00007e7923b32708 CR3: 00000001088df000 CR4: 000000000=
-0050660
-> [   87.926977] Call Trace:
-> [   87.926981]  <TASK>
-> [   87.926987]  ? __call_rcu_common.constprop.0+0x11e/0x310
-> [   87.926993]  cancel_work_sync+0x5e/0x80
-> [   87.926999]  mei_cancel_work+0x19/0x40 [mei]
-> [   87.927051]  mei_me_probe+0x273/0x2b0 [mei_me]
-> [   87.927060]  local_pci_probe+0x45/0x90
-> [   87.927066]  pci_call_probe+0x5b/0x180
-> [   87.927070]  pci_device_probe+0x95/0x140
-> [   87.927074]  ? driver_sysfs_add+0x57/0xc0
-> [   87.927079]  really_probe+0xde/0x340
-> [   87.927083]  ? pm_runtime_barrier+0x54/0x90
-> [   87.927087]  __driver_probe_device+0x78/0x110
-> [   87.927092]  driver_probe_device+0x1f/0xa0
-> [   87.927095]  __driver_attach_async_helper+0x5e/0xe0
-> [   87.927100]  async_run_entry_fn+0x34/0x130
-> [   87.927104]  process_one_work+0x18d/0x340
-> [   87.927108]  worker_thread+0x256/0x3a0
-> [   87.927111]  ? __pfx_worker_thread+0x10/0x10
-> [   87.927115]  kthread+0xfc/0x240
-> [   87.927120]  ? __pfx_kthread+0x10/0x10
-> [   87.927124]  ? __pfx_kthread+0x10/0x10
-> [   87.927127]  ret_from_fork+0xf5/0x110
-> [   87.927132]  ? __pfx_kthread+0x10/0x10
-> [   87.927136]  ret_from_fork_asm+0x1a/0x30
-> [   87.927141]  </TASK>
->
-> Reported-by: Marek Marczykowski-G=C3=B3recki <marmarek@invisiblethingslab=
-.com>
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-> Fixes: 7704e6be4ed2 ("mei: hook mei_device on class device")
-> Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
-
-Tested-by: Guenter Roeck <groeck@google.com>
-
->
-> ---
->  drivers/misc/mei/pci-me.c       | 13 ++++++-------
->  drivers/misc/mei/pci-txe.c      | 13 ++++++-------
->  drivers/misc/mei/platform-vsc.c | 11 +++++------
->  3 files changed, 17 insertions(+), 20 deletions(-)
->
-> diff --git a/drivers/misc/mei/pci-me.c b/drivers/misc/mei/pci-me.c
-> index b017ff29dbd1..73cad914be9f 100644
-> --- a/drivers/misc/mei/pci-me.c
-> +++ b/drivers/misc/mei/pci-me.c
-> @@ -223,6 +223,10 @@ static int mei_me_probe(struct pci_dev *pdev, const =
-struct pci_device_id *ent)
->         hw->mem_addr =3D pcim_iomap_table(pdev)[0];
->         hw->read_fws =3D mei_me_read_fws;
->
-> +       err =3D mei_register(dev, &pdev->dev);
-> +       if (err)
-> +               goto end;
-> +
->         pci_enable_msi(pdev);
->
->         hw->irq =3D pdev->irq;
-> @@ -237,13 +241,9 @@ static int mei_me_probe(struct pci_dev *pdev, const =
-struct pci_device_id *ent)
->         if (err) {
->                 dev_err(&pdev->dev, "request_threaded_irq failure. irq =
-=3D %d\n",
->                        pdev->irq);
-> -               goto end;
-> +               goto deregister;
->         }
->
-> -       err =3D mei_register(dev, &pdev->dev);
-> -       if (err)
-> -               goto release_irq;
-> -
->         if (mei_start(dev)) {
->                 dev_err(&pdev->dev, "init hw failure.\n");
->                 err =3D -ENODEV;
-> @@ -283,11 +283,10 @@ static int mei_me_probe(struct pci_dev *pdev, const=
- struct pci_device_id *ent)
->         return 0;
->
->  deregister:
-> -       mei_deregister(dev);
-> -release_irq:
->         mei_cancel_work(dev);
->         mei_disable_interrupts(dev);
->         free_irq(pdev->irq, dev);
-> +       mei_deregister(dev);
->  end:
->         dev_err(&pdev->dev, "initialization failed.\n");
->         return err;
-> diff --git a/drivers/misc/mei/pci-txe.c b/drivers/misc/mei/pci-txe.c
-> index 06b55a891c6b..98d1bc2c7f4b 100644
-> --- a/drivers/misc/mei/pci-txe.c
-> +++ b/drivers/misc/mei/pci-txe.c
-> @@ -87,6 +87,10 @@ static int mei_txe_probe(struct pci_dev *pdev, const s=
-truct pci_device_id *ent)
->         hw =3D to_txe_hw(dev);
->         hw->mem_addr =3D pcim_iomap_table(pdev);
->
-> +       err =3D mei_register(dev, &pdev->dev);
-> +       if (err)
-> +               goto end;
-> +
->         pci_enable_msi(pdev);
->
->         /* clear spurious interrupts */
-> @@ -106,13 +110,9 @@ static int mei_txe_probe(struct pci_dev *pdev, const=
- struct pci_device_id *ent)
->         if (err) {
->                 dev_err(&pdev->dev, "mei: request_threaded_irq failure. i=
-rq =3D %d\n",
->                         pdev->irq);
-> -               goto end;
-> +               goto deregister;
->         }
->
-> -       err =3D mei_register(dev, &pdev->dev);
-> -       if (err)
-> -               goto release_irq;
-> -
->         if (mei_start(dev)) {
->                 dev_err(&pdev->dev, "init hw failure.\n");
->                 err =3D -ENODEV;
-> @@ -145,11 +145,10 @@ static int mei_txe_probe(struct pci_dev *pdev, cons=
-t struct pci_device_id *ent)
->         return 0;
->
->  deregister:
-> -       mei_deregister(dev);
-> -release_irq:
->         mei_cancel_work(dev);
->         mei_disable_interrupts(dev);
->         free_irq(pdev->irq, dev);
-> +       mei_deregister(dev);
->  end:
->         dev_err(&pdev->dev, "initialization failed.\n");
->         return err;
-> diff --git a/drivers/misc/mei/platform-vsc.c b/drivers/misc/mei/platform-=
-vsc.c
-> index 288e7b72e942..9787b9cee71c 100644
-> --- a/drivers/misc/mei/platform-vsc.c
-> +++ b/drivers/misc/mei/platform-vsc.c
-> @@ -362,28 +362,27 @@ static int mei_vsc_probe(struct platform_device *pd=
-ev)
->
->         ret =3D mei_register(mei_dev, dev);
->         if (ret)
-> -               goto err_dereg;
-> +               goto err;
->
->         ret =3D mei_start(mei_dev);
->         if (ret) {
->                 dev_err_probe(dev, ret, "init hw failed\n");
-> -               goto err_cancel;
-> +               goto err;
->         }
->
->         pm_runtime_enable(mei_dev->parent);
->
->         return 0;
->
-> -err_dereg:
-> -       mei_deregister(mei_dev);
-> -
-> -err_cancel:
-> +err:
->         mei_cancel_work(mei_dev);
->
->         vsc_tp_register_event_cb(tp, NULL, NULL);
->
->         mei_disable_interrupts(mei_dev);
->
-> +       mei_deregister(mei_dev);
-> +
->         return ret;
->  }
->
-> --
-> 2.43.0
->
->
->
->
+--=20
+paul-moore.com
 
