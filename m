@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-881875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15C90C291EA
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 17:23:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9B6AC29202
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 17:23:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F236E3A89D5
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 16:23:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC847188DCF3
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 16:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE58E23C4FA;
-	Sun,  2 Nov 2025 16:23:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D5327FB3E;
+	Sun,  2 Nov 2025 16:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="h3Kecrkk"
+	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="JHK3vqs6"
 Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE37A15530C;
-	Sun,  2 Nov 2025 16:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DF08238C3A;
+	Sun,  2 Nov 2025 16:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762100588; cv=pass; b=bov15vB5urmAG1eZOo8biWecJ015/MBYIhNuhqPVT09ftGE+tU8hzX+vRAotjmiQUP3se/TYpikbIOl0ttna9oJNxdjk89gp1fNf7zpQTzjnnqXRsqA8t8AU6DPuNcn3I7fTRqLH43rRqt0RHHI5j7yB1S9ChxKGu00fr3lYRXU=
+	t=1762100589; cv=pass; b=guWYTdSthZQdaZ5vPX7oBHxA4MPpHwbIyO95wiHZTbVHxDqfyIobFkeQXgieYIE3l37sW7NsKoI+qH9EbED05SCO9q1auquuW/yCOjveaK19B8DkwsE5G8h8HFGSy/VQmd6C3pHSFGvYBuOdmPS+H8Hok4yP2S26kep1t3UWogI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762100588; c=relaxed/simple;
-	bh=oKLjK/NSBdKcNwwSIYxIn5RHUqqNednNrnl22/bEtE0=;
+	s=arc-20240116; t=1762100589; c=relaxed/simple;
+	bh=b1Bqvssg5Cc/l/cZnFZ8hmu68j1M45X9GPS34ss0NKk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WOLdaqH+YlrjLqQ44iLkf6xRJSehom6+DeG1kwJC1sAR/iDC9YTXwdMZkx7VwkQYui4u8dJJqUjITwarMTNVIv39KfuVCOWeXNT81pCJolQkokYBtaaf62cgTTiC4l4v5PoKFixn5WhW9CEYIzRwZLAk2wRtdvXMGv4gXFb2+N0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=h3Kecrkk; arc=pass smtp.client-ip=195.140.195.201
+	 MIME-Version; b=eKQDGV7/Ozu267lUiEMu9v3ayEnTtbHWX2i82L6mD1gKyfHYcDlZ3Z/yPmaGxEjsC9i0Jn0zodGzM2kvTAJVt3qubSjzyFdoQnUMZ5alV2rPvc8XHxzhoRQeUyh+Yp1nbxuFhQwSZeVcrzN/I5LBjgGmQs3h1Tgx8pPzsN7FBjw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=JHK3vqs6; arc=pass smtp.client-ip=195.140.195.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
 Received: from monolith.lan (unknown [IPv6:2a02:ed04:3581:1::d001])
@@ -35,35 +35,35 @@ Received: from monolith.lan (unknown [IPv6:2a02:ed04:3581:1::d001])
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: pav)
-	by meesny.iki.fi (Postfix) with ESMTPSA id 4d00PY1cK8z1035;
-	Sun,  2 Nov 2025 18:22:57 +0200 (EET)
+	by meesny.iki.fi (Postfix) with ESMTPSA id 4d00PZ2h5Dz104J;
+	Sun,  2 Nov 2025 18:22:58 +0200 (EET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
-	t=1762100578;
+	t=1762100579;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=9U/BbAjh/xn6PO3Jg0qRnrKxB7kTBCZUsPfq6R8y6zg=;
-	b=h3KecrkkrkYJNilgncwKlqpFrnPBPYW7etgSm2ilKPg/N/G/RfWaeRMrK2i4kQ/I4Mfbi9
-	5y2+AOsySKb0n6uiuQGtIfm7IS5aQXCFAMJUap1lE4Jy1kxDE7JjUCojp1NnIaYe8n02LO
-	2vPHFB8bukmDZf13yFMw+zpxzfaBdgE=
+	bh=BRXtUfZ8HN2xVlwrSvzPOVXF2tdZAWQwGDdWKbCSI+8=;
+	b=JHK3vqs6r7higKBWqTG0WO+ngTyu9G78Y6O+kES5O/f2hKG32gPa33lmPvQLil2IS33Iw9
+	SZqlzL64oXJNvjc9VNRfpXktZycqX5Srh+uXwALXmliBO0U1tKzcqzJmpS/J/quy+N23D3
+	DC1905cCCog0rP6m40FgZIHalnuV9e4=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=meesny; t=1762100578;
+	s=meesny; t=1762100579;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=9U/BbAjh/xn6PO3Jg0qRnrKxB7kTBCZUsPfq6R8y6zg=;
-	b=ODVtqh5dlPWkrTxnI9yr44mUlkIPUyS8o6eoN5w93U0l4vdUrQGpXogNwx1pQ2Uz1XM+mX
-	R1y8F03PB4NL9r45TIZEo018nlzSzF+WbW8B4oNUes8yu+F6vD0nl+Q221sU26PBVL/Kp2
-	xFRMZIEI2Rk82cimdLC6hcgY6eHSHN4=
+	bh=BRXtUfZ8HN2xVlwrSvzPOVXF2tdZAWQwGDdWKbCSI+8=;
+	b=w8ItkKwFgLjwnYdhUEuzg2ms8tWvcatm7zP8LrXwAu1nSiJWGAjOQFwzaUYJJEcUD3qLd+
+	bWmmxZErSRP6tOmGw7OJUOJ+4Sp1QL9YIUE73PXxrg6AvScSAIfzlq74251k015l0LB3c/
+	rGK2QS/c0b/XJhSfn7HAEmCGLaoRw3o=
 ARC-Authentication-Results: i=1;
 	ORIGINATING;
 	auth=pass smtp.auth=pav smtp.mailfrom=pav@iki.fi
-ARC-Seal: i=1; s=meesny; d=iki.fi; t=1762100578; a=rsa-sha256; cv=none;
-	b=xsQDXlcF1OK532y0mfpHrBhr82MRqfeaWAzem4fCLEI0OPLzo9+d2YpWwSHQGDRhOJrI5t
-	yBbjUphtAkQucNXHGi7LcJpMexRWo/oxG8TSRV9LgY8kmpnS4jlQkBeFgWdrztKvhhuhgc
-	BQvpLuXaAbngnymC+xV+XrApPqwRIj0=
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1762100579; a=rsa-sha256; cv=none;
+	b=Gv7mTH+fKjrswdn1aVgEWf/C7eTzBefMUm84pNjHUCEWLIT/OUhkTciAeq8vq9xV6iHORa
+	6VdLhCcXdad065wgygXQGeVtDxClbyW/QN9TAbmnfGl5ltTk7uRkFmUB9dgvon508qDpU2
+	pgEsbSfACc6L1t5MlGGkCoHRm2pEqpc=
 From: Pauli Virtanen <pav@iki.fi>
 To: linux-bluetooth@vger.kernel.org
 Cc: Pauli Virtanen <pav@iki.fi>,
@@ -71,9 +71,9 @@ Cc: Pauli Virtanen <pav@iki.fi>,
 	johan.hedberg@gmail.com,
 	luiz.dentz@gmail.com,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/8] Bluetooth: hci_conn: take hdev lock in set_cig_params_sync
-Date: Sun,  2 Nov 2025 18:19:34 +0200
-Message-ID: <e3b024f672732a8b244022f7c9ac23826a130d2a.1762100290.git.pav@iki.fi>
+Subject: [PATCH v2 3/8] Bluetooth: mgmt: take lock and hold reference when handling hci_conn
+Date: Sun,  2 Nov 2025 18:19:35 +0200
+Message-ID: <1ac16b2d328ccef42d09e875c09232bd7f0e32da.1762100290.git.pav@iki.fi>
 X-Mailer: git-send-email 2.51.1
 In-Reply-To: <cover.1762100290.git.pav@iki.fi>
 References: <cover.1762100290.git.pav@iki.fi>
@@ -85,10 +85,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Take hdev lock to prevent hci_conn from being deleted or modified
-concurrently.
+Take hdev/rcu lock to prevent concurrent deletion of the hci_conn we are
+handling.
 
-Fixes: a091289218202 ("Bluetooth: hci_conn: Fix hci_le_set_cig_params")
+When using hci_conn* pointers across critical sections, always take
+refcount to keep the pointer valid.
+
+For hci_abort_conn() only hold refcount, as the function takes
+hdev->lock itself.
+
+Fixes: 227a0cdf4a028 ("Bluetooth: MGMT: Fix not generating command complete for MGMT_OP_DISCONNECT")
 Signed-off-by: Pauli Virtanen <pav@iki.fi>
 ---
 
@@ -96,36 +102,142 @@ Notes:
     v2:
     - no change
 
- net/bluetooth/hci_conn.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ net/bluetooth/mgmt.c | 42 ++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 38 insertions(+), 4 deletions(-)
 
-diff --git a/net/bluetooth/hci_conn.c b/net/bluetooth/hci_conn.c
-index d6162a95048e..d140e5740f92 100644
---- a/net/bluetooth/hci_conn.c
-+++ b/net/bluetooth/hci_conn.c
-@@ -1825,9 +1825,13 @@ static int set_cig_params_sync(struct hci_dev *hdev, void *data)
- 	u8 aux_num_cis = 0;
- 	u8 cis_id;
+diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
+index 78b7af8bf45f..535c475c2d25 100644
+--- a/net/bluetooth/mgmt.c
++++ b/net/bluetooth/mgmt.c
+@@ -3081,6 +3081,8 @@ static int unpair_device_sync(struct hci_dev *hdev, void *data)
+ 	struct mgmt_cp_unpair_device *cp = cmd->param;
+ 	struct hci_conn *conn;
+ 
++	rcu_read_lock();
++
+ 	if (cp->addr.type == BDADDR_BREDR)
+ 		conn = hci_conn_hash_lookup_ba(hdev, ACL_LINK,
+ 					       &cp->addr.bdaddr);
+@@ -3088,6 +3090,11 @@ static int unpair_device_sync(struct hci_dev *hdev, void *data)
+ 		conn = hci_conn_hash_lookup_le(hdev, &cp->addr.bdaddr,
+ 					       le_addr_type(cp->addr.type));
+ 
++	if (conn)
++		hci_conn_get(conn);
++
++	rcu_read_unlock();
++
+ 	if (!conn)
+ 		return 0;
+ 
+@@ -3095,6 +3102,7 @@ static int unpair_device_sync(struct hci_dev *hdev, void *data)
+ 	 * will clean up the connection no matter the error.
+ 	 */
+ 	hci_abort_conn(conn, HCI_ERROR_REMOTE_USER_TERM);
++	hci_conn_put(conn);
+ 
+ 	return 0;
+ }
+@@ -3242,6 +3250,8 @@ static int disconnect_sync(struct hci_dev *hdev, void *data)
+ 	struct mgmt_cp_disconnect *cp = cmd->param;
+ 	struct hci_conn *conn;
+ 
++	rcu_read_lock();
++
+ 	if (cp->addr.type == BDADDR_BREDR)
+ 		conn = hci_conn_hash_lookup_ba(hdev, ACL_LINK,
+ 					       &cp->addr.bdaddr);
+@@ -3249,6 +3259,11 @@ static int disconnect_sync(struct hci_dev *hdev, void *data)
+ 		conn = hci_conn_hash_lookup_le(hdev, &cp->addr.bdaddr,
+ 					       le_addr_type(cp->addr.type));
+ 
++	if (conn)
++		hci_conn_get(conn);
++
++	rcu_read_unlock();
++
+ 	if (!conn)
+ 		return -ENOTCONN;
+ 
+@@ -3256,6 +3271,7 @@ static int disconnect_sync(struct hci_dev *hdev, void *data)
+ 	 * will clean up the connection no matter the error.
+ 	 */
+ 	hci_abort_conn(conn, HCI_ERROR_REMOTE_USER_TERM);
++	hci_conn_put(conn);
+ 
+ 	return 0;
+ }
+@@ -7372,6 +7388,9 @@ static void get_conn_info_complete(struct hci_dev *hdev, void *data, int err)
+ 		rp.max_tx_power = HCI_TX_POWER_INVALID;
+ 	}
+ 
++	if (conn)
++		hci_conn_put(conn);
++
+ 	mgmt_cmd_complete(cmd->sk, cmd->hdev->id, MGMT_OP_GET_CONN_INFO, status,
+ 			  &rp, sizeof(rp));
+ 
+@@ -7386,6 +7405,8 @@ static int get_conn_info_sync(struct hci_dev *hdev, void *data)
+ 	int err;
+ 	__le16   handle;
  
 +	hci_dev_lock(hdev);
 +
- 	conn = hci_conn_hash_lookup_cig(hdev, cig_id);
--	if (!conn)
-+	if (!conn) {
+ 	/* Make sure we are still connected */
+ 	if (cp->addr.type == BDADDR_BREDR)
+ 		conn = hci_conn_hash_lookup_ba(hdev, ACL_LINK,
+@@ -7393,12 +7414,16 @@ static int get_conn_info_sync(struct hci_dev *hdev, void *data)
+ 	else
+ 		conn = hci_conn_hash_lookup_ba(hdev, LE_LINK, &cp->addr.bdaddr);
+ 
+-	if (!conn || conn->state != BT_CONNECTED)
++	if (!conn || conn->state != BT_CONNECTED) {
 +		hci_dev_unlock(hdev);
- 		return 0;
+ 		return MGMT_STATUS_NOT_CONNECTED;
 +	}
  
- 	qos = &conn->iso_qos;
- 	pdu->cig_id = cig_id;
-@@ -1866,6 +1870,8 @@ static int set_cig_params_sync(struct hci_dev *hdev, void *data)
- 	}
- 	pdu->num_cis = aux_num_cis;
+-	cmd->user_data = conn;
++	cmd->user_data = hci_conn_get(conn);
+ 	handle = cpu_to_le16(conn->handle);
  
 +	hci_dev_unlock(hdev);
 +
- 	if (!pdu->num_cis)
- 		return 0;
+ 	/* Refresh RSSI each time */
+ 	err = hci_read_rssi_sync(hdev, handle);
+ 
+@@ -7532,6 +7557,9 @@ static void get_clock_info_complete(struct hci_dev *hdev, void *data, int err)
+ 	}
+ 
+ complete:
++	if (conn)
++		hci_conn_put(conn);
++
+ 	mgmt_cmd_complete(cmd->sk, cmd->hdev->id, cmd->opcode, status, &rp,
+ 			  sizeof(rp));
+ 
+@@ -7548,15 +7576,21 @@ static int get_clock_info_sync(struct hci_dev *hdev, void *data)
+ 	memset(&hci_cp, 0, sizeof(hci_cp));
+ 	hci_read_clock_sync(hdev, &hci_cp);
+ 
++	hci_dev_lock(hdev);
++
+ 	/* Make sure connection still exists */
+ 	conn = hci_conn_hash_lookup_ba(hdev, ACL_LINK, &cp->addr.bdaddr);
+-	if (!conn || conn->state != BT_CONNECTED)
++	if (!conn || conn->state != BT_CONNECTED) {
++		hci_dev_unlock(hdev);
+ 		return MGMT_STATUS_NOT_CONNECTED;
++	}
+ 
+-	cmd->user_data = conn;
++	cmd->user_data = hci_conn_get(conn);
+ 	hci_cp.handle = cpu_to_le16(conn->handle);
+ 	hci_cp.which = 0x01; /* Piconet clock */
+ 
++	hci_dev_unlock(hdev);
++
+ 	return hci_read_clock_sync(hdev, &hci_cp);
+ }
  
 -- 
 2.51.1
