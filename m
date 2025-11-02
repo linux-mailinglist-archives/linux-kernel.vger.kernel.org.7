@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-881702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0D7CC28C97
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 10:33:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC4D7C28C9A
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 10:34:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37D1F188B379
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 09:33:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A31D188F378
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 09:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F692263899;
-	Sun,  2 Nov 2025 09:33:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEDBF204F93;
+	Sun,  2 Nov 2025 09:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WgQQfaVq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bJQNzF7Z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A897D1DF25C
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 09:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B64534D3B2
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 09:33:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762075998; cv=none; b=NKeIRp31nKeySMSlLNKuPmOk2izTMdCgJlRFY8KiCipF+0MpPWfXLSz/BYCzsCk+fH0Hrrod1cUj2AyzYqE+zk6vdSi09boonriRYXMCrGgeg0EHJwf2YFiHKv9tRfoX49RsIjG/RuXJuhPLbaJmKsUTXn2w55mOVMVDsZnGL2Q=
+	t=1762076040; cv=none; b=lUCj2DMv01rSl5meMR+LA+EiC2WAnwEgTRfQnhkrPqe8GC1/xuM9ELSfNHWH0r5KUJNMLla3P4TTJo6MQ2RbVoLvl7hzZuWTHBizKJjFAvnSsnXVOWECIo+hfz2VwvHGPM4I9OWIkekGLwNsMdvuYE1Vk86kqV1yc4YT8psifAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762075998; c=relaxed/simple;
-	bh=jDo3YIewvX9sNR57D/UAxqc9SHvYj8gf6En4x71pVlE=;
+	s=arc-20240116; t=1762076040; c=relaxed/simple;
+	bh=GFuzS8yTkRy7ZaigVcCJ9u3XO0WPI9k3hJqlBwUMpLc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PHs2iTV/NJChAS3g2E0sat13ZPuWaTkNCEEq1k/b0rPj90s87DbOZUkHkbPtvQieOBOSzK2YGmFgdUDNomM6HyiLhP7geCc6ujtwHLWGsIEir88o1o7y+dkucU48ePa2h++Nn6AwYfWe6j611j4iwJsA447A5Fg01GC7IQXUdt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WgQQfaVq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55AC2C4CEF7;
-	Sun,  2 Nov 2025 09:33:15 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=Okq5fqokZ6IT+MyE6DYUkBi6ghs2ub82e6GOjr+D+NHFQzHhBXkhtk1ZJ0U1rTU/DDZ5r49z4jrNBr/QUFBZ4ZBczui9qQCf7u3fYpmqZj0vsb+OlFomm3BxHVDh/+9faG69ocq9SYafKiL8oQUIQSRT6qNw0U/Av6J2vQ7oCN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bJQNzF7Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0D03C4CEF7;
+	Sun,  2 Nov 2025 09:33:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762075998;
-	bh=jDo3YIewvX9sNR57D/UAxqc9SHvYj8gf6En4x71pVlE=;
+	s=k20201202; t=1762076039;
+	bh=GFuzS8yTkRy7ZaigVcCJ9u3XO0WPI9k3hJqlBwUMpLc=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WgQQfaVqux9fU+dw8VmFMGWPJTr1ToecIKbvoAnUotedw9VK+QYQVRoa9Y3/WAn7Q
-	 ib/WIjbsEsOtLaewgahZAMIKf5zy5Uj5SomtOpBFQP/5E7f+OMG7f0ancsk7fG6ynr
-	 TfqmBKcW6fLlO/lwJo8yJODovAv+m3i9oNxA8Yhi+HTwyoVFPGEKxI4AKoFL03HD8o
-	 43RVkZQsmJ5/Rrlksxu+/mrjQxFxy/o8khU0UzbTzbhet3YvMDfwKyf1MlJ6TviiMg
-	 xsbYE7Wol04tKrZwlLO1juYFA9XOVCJT3JqPcrP6Ac/9/1Nfec7bGhoeyo+v51bLdf
-	 yNk7/67LDN5aQ==
-Message-ID: <12c0c18f-2edf-402d-a0b6-04d8fa47693d@kernel.org>
-Date: Sun, 2 Nov 2025 10:33:13 +0100
+	b=bJQNzF7Z1yQXmCKEsCxjxjQHC5Kf3aLI6qj7ucbhdXPfqmGtC2FosgA+T6a8EncMN
+	 6RyOSQqz5OYDAa6SZrZ7wsUTCikNffEDjRzvLYu7++/vbpI/S8Sr/J1VzLk5O99x2x
+	 Zd5axR43X8ge6XZUKrMhg+7WFbq7NGhN/GE5Q3sWZPthona3FeTyK9J0Ia/ZhQvq9f
+	 RFJ99GFYhAJZJq2pJ4yXH7cwgs0MvOfEAMcHFqYGNC+LQVUdd0m+3ii7kDy3vG/VSB
+	 PBjUykVxN0oU4m8p8KKzh3bLFcKGtCai9oSXsgaDo+yIKO3SRzaZWTLnmYqpjKeA4c
+	 FSsZH7qkUZkXA==
+Message-ID: <d0517fad-9253-4c39-a063-a2c09e74237f@kernel.org>
+Date: Sun, 2 Nov 2025 10:33:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/13] platform/raspberrypi: vchiq-mmal: Add defines for
- mmal_es_format flags
+Subject: Re: [PATCH 13/13] platform/raspberrypi: vchiq: Register vc-sm-cma as
+ a platform driver
 To: Jai Luthra <jai.luthra@ideasonboard.com>,
  Florian Fainelli <florian.fainelli@broadcom.com>,
  Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
@@ -63,7 +63,7 @@ Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
  =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 References: <20251031-b4-vc-sm-cma-v1-0-0dd5c0ec3f5c@ideasonboard.com>
- <20251031-b4-vc-sm-cma-v1-12-0dd5c0ec3f5c@ideasonboard.com>
+ <20251031-b4-vc-sm-cma-v1-13-0dd5c0ec3f5c@ideasonboard.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -109,24 +109,37 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251031-b4-vc-sm-cma-v1-12-0dd5c0ec3f5c@ideasonboard.com>
+In-Reply-To: <20251031-b4-vc-sm-cma-v1-13-0dd5c0ec3f5c@ideasonboard.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 31/10/2025 18:27, Jai Luthra wrote:
 > From: Dave Stevenson <dave.stevenson@raspberrypi.com>
 > 
-> There is a flags field in struct mmal_es_format, but the defines
-> for what the bits meant weren't included in the headers.
-> For V4L2_PIX_FMT_NV12_COL128 support we need them, so add them in.
+> Register the vc-sm-cma driver as a platform driver under vchiq.
 > 
 > Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 > Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
 > ---
->  drivers/platform/raspberrypi/vchiq-mmal/mmal-msg-format.h | 10 ++++++++++
+>  drivers/platform/raspberrypi/vchiq-interface/vchiq_arm.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/platform/raspberrypi/vchiq-interface/vchiq_arm.c b/drivers/platform/raspberrypi/vchiq-interface/vchiq_arm.c
+> index 6a7b96d3dae6275a483ef15dc619c5510454765e..09d33bec46ec45175378fff8dd1084d0a8a12dd6 100644
+> --- a/drivers/platform/raspberrypi/vchiq-interface/vchiq_arm.c
+> +++ b/drivers/platform/raspberrypi/vchiq-interface/vchiq_arm.c
+> @@ -63,6 +63,7 @@
+>   * the interface.
+>   */
+>  static struct vchiq_device *bcm2835_audio;
+> +static struct vchiq_device *vcsm_cma;
 
-That's pointless change. We don't add unused header pieces. If this is
-used, add it with the user in the same commit.
+Please don't write singletons. How do you handle probe of two devices?
+
+>  
+>  static const struct vchiq_platform_info bcm2835_info = {
+>  	.cache_line_size = 32,
+> @@ -1421,6 +1422,7 @@ static int vchiq_probe(struct platform_device *pdev)
 
 
 Best regards,
