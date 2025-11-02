@@ -1,130 +1,99 @@
-Return-Path: <linux-kernel+bounces-881742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94E33C28D81
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 11:43:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D42D6C28D8A
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 11:46:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0B8234E4980
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 10:43:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 490683B3B29
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 10:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB54626CE2E;
-	Sun,  2 Nov 2025 10:43:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9296025C80E;
+	Sun,  2 Nov 2025 10:46:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YojVFjn8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=1wt.eu header.i=@1wt.eu header.b="AOMSmV1o"
+Received: from mta1.formilux.org (mta1.formilux.org [51.159.59.229])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E62534D3BA;
-	Sun,  2 Nov 2025 10:43:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1651B7F4
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 10:46:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.59.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762080222; cv=none; b=sFzI8Z+HtEjM7X8/nqWKH+K4KW/D5eaCFMBBNnJJRJy4BQZSkoGjbePVurm1YsQvWvLG9zwXvb4A9bpC8iiIMM3x3xtpFzpLL4u65KXRG+k6SUZrPlOQIISM4GZW7EjqUMP/1nL4MwDqxh7Wby2FFLAkkIelHaRea+aiE2fRNQE=
+	t=1762080384; cv=none; b=fcXVW6TDRQIYTxhkrTw0/87wWEs9uy2ABCONAQB9t/hZcVMxkJJQHRHV1yxzeSE7IS0/NTI4Si233mNZFtS6Yb8j2yGOB2iq4zCXAJ8yYHHr/jHBHbLNsl26iaIbdoSw60k/xzOZDOSKtsVMZi3zlUaVq6P6Z3p8iQa9XTS9CcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762080222; c=relaxed/simple;
-	bh=4u8d6QQgjLsALEyZL0hM355ahA8pgo9Ke2RDvhyV/FU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YcRFsyeTdzBB1FAc1+kdF1Xx7mYh/iBAnsBPke+spVFGtOJ+Gkruz8olYvwD2uH8e2GYs4NZsXIbo78AIOwtQQm3cNGb2fppvj45jwPpY1DtLjJZ7GOsFeR1Wb3QNs7xf/rWr5NNhNsUzTDJb6TmFsmLg1bCJQyC3cXcthsqb3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YojVFjn8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E047CC4CEF7;
-	Sun,  2 Nov 2025 10:43:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762080221;
-	bh=4u8d6QQgjLsALEyZL0hM355ahA8pgo9Ke2RDvhyV/FU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YojVFjn8WsOc90BQ7IjaCvSpawTY/iFM2EPhYDD5dnGWRgy1V9yvL/MEqZ0TtAlR7
-	 bOb/fXVYiil59qXvBq/U3REBPlb5nBkGwDqRIYMBz5I0KEBRnvT5ZEiaYzNyd6y9Zf
-	 5IIUOWr69e6TstOOUFAcseA/Uh3WnpVn2+gfAVjCfVQRnOUA5ypJyOfrOHReuHp7Sg
-	 WGYh/9kMA2mX62kCZYu70IxtgYDcwIcClH+HreNxArWG+BioiWd94cJCtOu6NOrbBI
-	 1yerwBgfvmBsmLmV1VasI237/BiNNQOhrrQMTL8p3/eC2uQh+6fEkO+1LfX3YVL0KT
-	 1QsxP0qktpdJg==
-Date: Sun, 2 Nov 2025 10:43:26 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre
- Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea
- <claudiu.beznea@tuxon.dev>, Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, David Miller
- <davem@davemloft.net>, Linus Walleij <linus.walleij@linaro.org>, Bartosz
- Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>, Andrew Jeffery
- <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>, Lars-Peter
- Clausen <lars@metafoo.de>, Jacky Huang <ychuang3@nuvoton.com>, Shan-Chun
- Hung <schung@nuvoton.com>, Yury Norov <yury.norov@gmail.com>, Rasmus
- Villemoes <linux@rasmusvillemoes.dk>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Johannes Berg <johannes@sipsolutions.net>,
- Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>, David Laight
- <david.laight.linux@gmail.com>, Vincent Mailhol
- <mailhol.vincent@wanadoo.fr>, Jason Baron <jbaron@akamai.com>, Borislav
- Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Kim Seer Paller
- <kimseer.paller@analog.com>, David Lechner <dlechner@baylibre.com>, Nuno
- =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Richard Genoud <richard.genoud@bootlin.com>, Cosmin Tanislav
- <demonsingur@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, Jianping
- Shen <Jianping.Shen@de.bosch.com>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org,
- linux-crypto@vger.kernel.org, linux-edac@vger.kernel.org,
- qat-linux@intel.com, linux-gpio@vger.kernel.org,
- linux-aspeed@lists.ozlabs.org, linux-iio@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next v5 10/23] iio: imu: smi330: #undef
- field_{get,prep}() before definition
-Message-ID: <20251102104326.0f1db96a@jic23-huawei>
-In-Reply-To: <97549838f28a1bb7861cfb42ee687f832942b13a.1761588465.git.geert+renesas@glider.be>
-References: <cover.1761588465.git.geert+renesas@glider.be>
-	<97549838f28a1bb7861cfb42ee687f832942b13a.1761588465.git.geert+renesas@glider.be>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762080384; c=relaxed/simple;
+	bh=Xju41OJcbcKFLggwhkocmxffXUweGOHaInq5OngF0SQ=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=NqI3L1WCzbwhEM2H2vD1w+FuL1V0ql2WrapYUVhd7pegRx3CI//jgp9Z7bjfpOnOuTabG1cm9daWWwxGcF6EuRXByftj5jDptkwQ9mCY04O4QBuEtKCcoWUbySQmxeNyO442ovDW8GtvWQbhFCMCpyPsyBT4An4/gTZv90/fMAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; dkim=pass (1024-bit key) header.d=1wt.eu header.i=@1wt.eu header.b=AOMSmV1o; arc=none smtp.client-ip=51.159.59.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=1wt.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=1wt.eu; s=mail;
+	t=1762080379; bh=kglU/XKbAYPqwRZENe12Zh7i3/LG5a/0OYN/2JQqVZ8=;
+	h=From:Message-Id:From;
+	b=AOMSmV1o3BA1JWjRqf0chUcyFny82+wjZhjecBeCR5DdsQezmRTeXInzJ8LXY8K+1
+	 CqD+O7SY9Tnj6pkTJV7c2YZQ8uXwWnyB5j9yG+ZNul2IqF7rqYqDpEnqZvQpDvHKoE
+	 7SrBj9uNt89RoQE/gP0pSRkBlPgvH9qwF5JgX/ak=
+Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
+	by mta1.formilux.org (Postfix) with ESMTP id E15EEC06EE;
+	Sun, 02 Nov 2025 11:46:19 +0100 (CET)
+Received: (from willy@localhost)
+	by pcw.home.local (8.15.2/8.15.2/Submit) id 5A2AkJIO024500;
+	Sun, 2 Nov 2025 11:46:19 +0100
+From: Willy Tarreau <w@1wt.eu>
+To: linux@weissschuh.net
+Cc: shuah@kernel.org, linux-kernel@vger.kernel.org, Willy Tarreau <w@1wt.eu>
+Subject: [PATCH v2 0/4] tools/nolibc: assorted fixes and small updates
+Date: Sun,  2 Nov 2025 11:46:07 +0100
+Message-Id: <20251102104611.24454-1-w@1wt.eu>
+X-Mailer: git-send-email 2.17.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Mon, 27 Oct 2025 19:41:44 +0100
-Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+Trying to port a program to nolibc triggered a few trivial errors that                                       
+are worth being addressed:                                                                                                                 
+  - inttypes.h is missing, while being generally recommended over stdint.h                                                                 
+    for being more portable. Here we add it, which simply includes stdint.h.                                                               
+                                                                                                                                           
+  - sys/select.h is supposed to be where struct fd_set and FD_CLR() etc                                                                    
+    are defined. Till now it was still in types.h. Let's create the file                                                                   
+    and move these definitions there.                                                                                                      
+                                                                                                                                           
+  - memchr() was still missing, thus a trivial one was added.                                                                              
+                                                                                                                                           
+Finally the help message from "make help" reported an inaccurate                                                                           
+installation path, omitting the dependency on $OUTPUT. This was                                                                            
+fixed as well.
 
-> Prepare for the advent of globally available common field_get() and
-> field_prep() macros by undefining the symbols before defining local
-> variants.  This prevents redefinition warnings from the C preprocessor
-> when introducing the common macros later.
-> 
-> Suggested-by: Yury Norov <yury.norov@gmail.com>
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2:
+  - rebase this old changeset onto latest updates from Thomas
+  - moved select() definition do sys/select.h as well and include
+    nolibc.h to avoid having just a dummy file like in v1
 
-So this is going to make a mess of merging your series given this is
-queued up for next merge window.
+Willy Tarreau (4):
+  tools/nolibc: fix misleading help message regarding installation path
+  tools/nolibc: add the more portable inttypes.h
+  tools/nolibc: add missing memchr() to string.h
+  tools/nolibc: provide the portable sys/select.h
 
-I can pick this one up perhaps and we loop back to the replacement of
-these in a future patch?  Or perhaps go instead with a rename
-of these two which is probably nicer in the intermediate state than
-undefs.
+ tools/include/nolibc/Makefile                |   4 +-
+ tools/include/nolibc/inttypes.h              |   8 ++
+ tools/include/nolibc/nolibc.h                |   1 +
+ tools/include/nolibc/string.h                |  15 +++
+ tools/include/nolibc/sys.h                   |  45 --------
+ tools/include/nolibc/sys/select.h            | 103 +++++++++++++++++++
+ tools/include/nolibc/types.h                 |  47 ---------
+ tools/testing/selftests/nolibc/nolibc-test.c |   2 +
+ 8 files changed, 132 insertions(+), 93 deletions(-)
+ create mode 100644 tools/include/nolibc/inttypes.h
+ create mode 100644 tools/include/nolibc/sys/select.h
 
-> --
-> v5:
->   - New.
-> ---
->  drivers/iio/imu/smi330/smi330_core.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/iio/imu/smi330/smi330_core.c b/drivers/iio/imu/smi330/smi330_core.c
-> index d9178725ade3da83..a79964fe68fadf47 100644
-> --- a/drivers/iio/imu/smi330/smi330_core.c
-> +++ b/drivers/iio/imu/smi330/smi330_core.c
-> @@ -68,7 +68,9 @@
->  #define SMI330_SOFT_RESET_DELAY 2000
->  
->  /* Non-constant mask variant of FIELD_GET() and FIELD_PREP() */
-> +#undef field_get
->  #define field_get(_mask, _reg) (((_reg) & (_mask)) >> (ffs(_mask) - 1))
-> +#undef field_prep
->  #define field_prep(_mask, _val) (((_val) << (ffs(_mask) - 1)) & (_mask))
->  
->  #define SMI330_ACCEL_CHANNEL(_axis) {					\
+-- 
+2.17.5
 
 
