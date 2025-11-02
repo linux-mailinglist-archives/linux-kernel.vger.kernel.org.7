@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-882106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D71B0C29A75
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 00:45:46 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C37FC29A66
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 00:44:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B598C3A8213
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 23:45:06 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CC28C347976
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 23:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850E025F98E;
-	Sun,  2 Nov 2025 23:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8540D2586C7;
+	Sun,  2 Nov 2025 23:44:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b++mgGmd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GtVTM6xJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD00E207A20;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D41B6253F2B;
 	Sun,  2 Nov 2025 23:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762127048; cv=none; b=aBNUgzJQAWEfJLClHpFSCNll1XrqRmEn6E30kndUO1y67cgDsJ/Lrf7zMJZ0CpVUKqiuFWBZsLQPOrvYQVcg1sjtu3kK4RhtVa8TB+bKztoivQ2jH2blgW/x+SVLwtu287Gl4ZTF+awY8K2YDf1vmjm60kt/58Q/nGpuifqZxcM=
+	t=1762127044; cv=none; b=OTz05cBMFtih86/TB4rSMEcNykDfuEO+LcbAfiLDe40hj1EKyhkNCBFD0XT0u/gyQXNaMpCZVzOehQKc4sm8fnfZKleDyx6d1r55aZMNrD9IsKs1SiyBvDvVQJkoH9GlLat3bhGgCK1fNbEEe7mt2UegTqWV3YDfRZTzjby0zGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762127048; c=relaxed/simple;
-	bh=k2ihRsAJpVZynwObEpw3RH70PsUdDzp23XLPstmxK9s=;
+	s=arc-20240116; t=1762127044; c=relaxed/simple;
+	bh=j+LSbTUig2K+EmVWaRZVVpXdTDuVAi/PAB71FfKJnIs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EnfF786jCbq0qmMx4wC62hMTqYuHxHCcVGzARHthhoBUDXiduQfNJkrzfu0qT+V4CSOAbae7B5K9z/ZYbgdTbSeilR/KuOdvk6/jQ1hJne1f3iWBsOHDcPYWr9/4aQ1X056dg1gyKmkq1jDff1mYE5n9pm3Pqwe0jFSkO0HwaHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b++mgGmd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E599C4CEF7;
+	 MIME-Version; b=U3UxjFKPxqdNe1QKkNUVnJucVxGEFiYUQ049pye3p2LOfYZE1CzFkwHktGI6NSwhxPbfWbXaGALJ8phynMgww2WfJf0qGO4SVM8g1EdgiTrJ1DFJhUj+qglefFh0BzMvaDkbjNWGLKTgdQHJfmklM68qbHJxHClSBCB2gwct9lI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GtVTM6xJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AC21C19423;
 	Sun,  2 Nov 2025 23:44:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1762127044;
-	bh=k2ihRsAJpVZynwObEpw3RH70PsUdDzp23XLPstmxK9s=;
+	bh=j+LSbTUig2K+EmVWaRZVVpXdTDuVAi/PAB71FfKJnIs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=b++mgGmd3lKCuPyeu8y+8WpSyacY1Vqu/yhuBtI4l2G7sishtVO+RvDhnsOb/kv3e
-	 2aPbyu7xYnV5tXFKlhlHNocVInPs8NXGwMBe8BqjU+8m6cA0+TMdL9F6bxgsuL6iUn
-	 EWIUQ3CywYaNNITcLo8bVLXW/cgABlReidQ0QfIOl5BwGl1ApF+MA1JxitMwVy9A17
-	 4ATRJPRM4Cxkhhy+x7tvfmkhXJCuTw/YTBjknHykt3Jwru0inlq5/myt77KBX1DKZA
-	 qZiddK6sA6u6XLiNlWC0o54NgdzVmLgfEmbjlTjoC0vNvsCBSy5zlANTpUwQQldqFM
-	 LIYUdfH1Yf2Vg==
+	b=GtVTM6xJL/gvPY+zJsdv8/aaTPE5/cHj/iGZYsJ0X3+DOisrk8LuSao0kmvFtknQ8
+	 Wu8fQnerrUXuSTurB7CmlXX8TfKbc0IfNJDBBNWIuCo5zAaHDmDQUvqJ1F+BYIZ5q3
+	 ZyYUg0MdounUp9QUFldvD6ITKq3E+z31/5Qk2mK9hO/EBPbBFKupJBV7b9LMUSNYH4
+	 /OIjUeQ2jhaPc+eqwrhKximaFVSi30aDC8ocVnXGCYWA6tXMUEmVeFOhnKR5gHyykv
+	 ZNOdTvGJv6KngG7E8829H437XRN8qV3lwA4dRdNP9tH+wa90yGAEcg2eRlLxVIaTFC
+	 dP+ZhJXQcHeDA==
 From: Eric Biggers <ebiggers@kernel.org>
 To: linux-crypto@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
@@ -49,9 +49,9 @@ Cc: linux-kernel@vger.kernel.org,
 	x86@kernel.org,
 	Samuel Neves <sneves@dei.uc.pt>,
 	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH 5/6] lib/crypto: x86/blake2s: Avoid writing back unchanged 'f' value
-Date: Sun,  2 Nov 2025 15:42:08 -0800
-Message-ID: <20251102234209.62133-6-ebiggers@kernel.org>
+Subject: [PATCH 6/6] lib/crypto: x86/blake2s: Use vpternlogd for 3-input XORs
+Date: Sun,  2 Nov 2025 15:42:09 -0800
+Message-ID: <20251102234209.62133-7-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.51.2
 In-Reply-To: <20251102234209.62133-1-ebiggers@kernel.org>
 References: <20251102234209.62133-1-ebiggers@kernel.org>
@@ -63,46 +63,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Just before returning, blake2s_compress_ssse3() and
-blake2s_compress_avx512() store updated values to the 'h', 't', and 'f'
-fields of struct blake2s_ctx.  But 'f' is always unchanged (which is
-correct; only the C code changes it).  So, there's no need to write to
-'f'.  Use 64-bit stores (movq and vmovq) instead of 128-bit stores
-(movdqu and vmovdqu) so that only 't' is written.
+AVX-512 supports 3-input XORs via the vpternlogd (or vpternlogq)
+instruction with immediate 0x96.  This approach, vs. the alternative of
+two vpxor instructions, is already used in the CRC, AES-GCM, and AES-XTS
+code, since it reduces the instruction count and is faster on some CPUs.
+Make blake2s_compress_avx512() take advantage of it too.
 
 Signed-off-by: Eric Biggers <ebiggers@kernel.org>
 ---
- lib/crypto/x86/blake2s-core.S | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ lib/crypto/x86/blake2s-core.S | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/lib/crypto/x86/blake2s-core.S b/lib/crypto/x86/blake2s-core.S
-index f805a49c590d..869064f6ac16 100644
+index 869064f6ac16..7b1d98ca7482 100644
 --- a/lib/crypto/x86/blake2s-core.S
 +++ b/lib/crypto/x86/blake2s-core.S
-@@ -191,11 +191,11 @@ SYM_FUNC_START(blake2s_compress_ssse3)
- 	decq		NBLOCKS
- 	jnz		.Lssse3_mainloop
+@@ -276,14 +276,12 @@ SYM_FUNC_START(blake2s_compress_avx512)
+ 	vpshufd		$0x93,%xmm2,%xmm2
+ 	decb		%cl
+ 	jne		.Lavx512_roundloop
  
- 	movdqu		%xmm0,(CTX)		// Store new h[0..3]
- 	movdqu		%xmm1,16(CTX)		// Store new h[4..7]
--	movdqu		%xmm14,32(CTX)		// Store new t and f
-+	movq		%xmm14,32(CTX)		// Store new t (f is unchanged)
- 	RET
- SYM_FUNC_END(blake2s_compress_ssse3)
- 
- //
- // void blake2s_compress_avx512(struct blake2s_ctx *ctx,
-@@ -285,9 +285,9 @@ SYM_FUNC_START(blake2s_compress_avx512)
+ 	// Compute the new h: h[0..7] ^= v[0..7] ^ v[8..15]
+-	vpxor		%xmm10,%xmm0,%xmm0
+-	vpxor		%xmm11,%xmm1,%xmm1
+-	vpxor		%xmm2,%xmm0,%xmm0
+-	vpxor		%xmm3,%xmm1,%xmm1
++	vpternlogd	$0x96,%xmm10,%xmm2,%xmm0
++	vpternlogd	$0x96,%xmm11,%xmm3,%xmm1
  	decq		NBLOCKS
  	jne		.Lavx512_mainloop
  
  	vmovdqu		%xmm0,(CTX)		// Store new h[0..3]
  	vmovdqu		%xmm1,16(CTX)		// Store new h[4..7]
--	vmovdqu		%xmm4,32(CTX)		// Store new t and f
-+	vmovq		%xmm4,32(CTX)		// Store new t (f is unchanged)
- 	vzeroupper
- 	RET
- SYM_FUNC_END(blake2s_compress_avx512)
 -- 
 2.51.2
 
