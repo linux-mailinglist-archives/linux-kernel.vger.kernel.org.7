@@ -1,122 +1,70 @@
-Return-Path: <linux-kernel+bounces-881830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B1ECC29051
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 15:32:50 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0891C29070
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 15:39:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2454F188C528
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 14:33:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 863074E558D
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 14:39:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C7B1E9919;
-	Sun,  2 Nov 2025 14:32:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523D91A3A80;
+	Sun,  2 Nov 2025 14:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="bqL5aQwn"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="XtLmj5AE"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32EAE13635C;
-	Sun,  2 Nov 2025 14:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEBC481732
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 14:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762093963; cv=none; b=crpAyvURsHYrW5qVVh3cLu8Tg7YajEuub7+a0LdshFnF1lSejHfOg0A8yJXlh8ghg/hwwfsdagBHtUHhnksLM04fSumnItURIJ0QyLRPfJp+WQZ+0aqI/5EJt3CyBa/CuaB+E29R7hCdt9VjdhuYSwBNI19YIRr6FV56y53tDsw=
+	t=1762094384; cv=none; b=Pwvy4VjfUzsTXmtg9KqkN6UIBtiMdCBKrF9e1Qp7frReI/dTTfH3pswyX9/ePz3BPCyJ17ihsHQ6+chQXh70T8xpKF/tiYt3sLYt3uc+3SyRVw8r0QB1yO7bFVXjjzw82IBky6WJ7777/8fkMCUEIiYK6b1tabubXYsoUO/Tvwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762093963; c=relaxed/simple;
-	bh=s27eGuBOjSehs2VSpjzagnyOuK168w1Km3iqgB4Axv8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gzHcY8kYqXkxgrvRglWU2aILCgvQsx5gN2rtN7prTOTQ/l1EAJQKIwDxrvitQqCoo5dExi3TAFt6yRfXaZY1ULV6cS9F/2Lzwt2yuCkP4jjfB8NBoWXNaWFU1JrWIm7MxdZDlO3xer1R5mgmvFGjtInbOzu5SutsHiXBFY/An/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=bqL5aQwn; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=SG
-	vG/fGHW1BPmlWo1ZKpiTtP2XrTKwTIg+faOGSh7vE=; b=bqL5aQwnokDGDMbQiL
-	asntsJHLLjR1xsUajOD7JWJCDBYxOos9Gurv60KYluiwNkk7bSCRhdcaufBhg1M1
-	7NhgoAqmhAk3mrFhrr6e3JdmaHnY+QY+wC/HHgUs/KBmCBDxq9huWq8kAAixFy3H
-	OtK2o7M4ZK+IXMZ5ivFGN7VGA=
-Received: from zhb.. (unknown [])
-	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wAH5VdpawdpqU+1BA--.1772S5;
-	Sun, 02 Nov 2025 22:32:12 +0800 (CST)
-From: Hans Zhang <18255117159@163.com>
-To: bhelgaas@google.com,
-	lpieralisi@kernel.org,
-	kw@linux.com,
-	kwilczynski@kernel.org,
-	mani@kernel.org,
-	ilpo.jarvinen@linux.intel.com,
-	jingoohan1@gmail.com
-Cc: robh@kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hans Zhang <18255117159@163.com>
-Subject: [PATCH v4 3/3] PCI: dwc: Use common speed conversion function
-Date: Sun,  2 Nov 2025 22:32:06 +0800
-Message-Id: <20251102143206.111347-4-18255117159@163.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251102143206.111347-1-18255117159@163.com>
-References: <20251102143206.111347-1-18255117159@163.com>
+	s=arc-20240116; t=1762094384; c=relaxed/simple;
+	bh=GM7HKA48rCIRbs2Jn7Xzx+6xVj/CBpq+3jHYLjxZ/sw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jrnW0+3soOPS28HJsL6jRF23eDy5ejxmmSQKjg2TqAr8Bb8c+zMvNPYsThcKEn/DBoj69Y0X040nTWg3sSrw9ps93s6BfNp8AXEzZLu4hMH3FgepiqDMLgQpRlukC3rUGmMod/LxNoS9bajJtkWLNY/6cP7Ol6HO1n77j/vNdC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=XtLmj5AE; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1762094380;
+	bh=GM7HKA48rCIRbs2Jn7Xzx+6xVj/CBpq+3jHYLjxZ/sw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XtLmj5AEQM3p5xND4HPP9GOKt5o9wdAdEPYmVlgycFAnTwH/GAcZlzb/3ZM3GpAmM
+	 TWZ0QQQvQciNFtcyIIYFS+YjtFMwT7Av49ts9aVGqUURBLMMm10+7nD6UUq7BNV5K6
+	 cGT20L/p0KLI9stqt3pVHvR39WMEdEwkLCW2ml28=
+Date: Sun, 2 Nov 2025 15:39:39 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Willy Tarreau <w@1wt.eu>
+Cc: shuah@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tools/nolibc: make the "headers" target install all
+ supported archs
+Message-ID: <948de1d6-22e8-421a-b9fc-f8f52de8a7e1@t-8ch.de>
+References: <20251102141045.8477-1-w@1wt.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAH5VdpawdpqU+1BA--.1772S5
-X-Coremail-Antispam: 1Uf129KBjvJXoW7uFWDZFy3tr4UWF4ftw4xZwb_yoW8Ary5pa
-	y3AF40vF18JF43ZFs0ga4kXFyUXFnxGrWDGFZ8Was3XFy2yasxWF10y34Sq34akrZ2yr1a
-	9r13JrWUG3W7tF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zR3kusUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiDwP5o2kHZmtoigAAsX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251102141045.8477-1-w@1wt.eu>
 
-Replace the private switch-based speed conversion in
-dw_pcie_link_set_max_speed() with the public pci_bus_speed2lnkctl2()
-function.
+On 2025-11-02 15:10:45+0100, Willy Tarreau wrote:
+> The efforts we go through by installing a single arch are counter
+> productive when the base directory already supports them all, and
+> the arch-specific files are really small. Let's make the "headers"
+> target simply install headers for all supported archs and stop
+> trying to build a hybrid "arch.h" file on the fly, to instead keep
+> the generic one. Now the same nolibc headers installation will be
+> usable with any arch-specific uapi installation.
+> 
+> Signed-off-by: Willy Tarreau <w@1wt.eu>
 
-This eliminates duplicate conversion logic and ensures consistency with
-other PCIe drivers, while handling invalid speeds by falling back to
-hardware capabilities.
-
-Signed-off-by: Hans Zhang <18255117159@163.com>
----
- drivers/pci/controller/dwc/pcie-designware.c | 18 +++---------------
- 1 file changed, 3 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-index c644216995f6..20ba314e82d5 100644
---- a/drivers/pci/controller/dwc/pcie-designware.c
-+++ b/drivers/pci/controller/dwc/pcie-designware.c
-@@ -717,24 +717,12 @@ static void dw_pcie_link_set_max_speed(struct dw_pcie *pci)
- 	ctrl2 = dw_pcie_readl_dbi(pci, offset + PCI_EXP_LNKCTL2);
- 	ctrl2 &= ~PCI_EXP_LNKCTL2_TLS;
- 
--	switch (pcie_link_speed[pci->max_link_speed]) {
--	case PCIE_SPEED_2_5GT:
--		link_speed = PCI_EXP_LNKCTL2_TLS_2_5GT;
--		break;
--	case PCIE_SPEED_5_0GT:
--		link_speed = PCI_EXP_LNKCTL2_TLS_5_0GT;
--		break;
--	case PCIE_SPEED_8_0GT:
--		link_speed = PCI_EXP_LNKCTL2_TLS_8_0GT;
--		break;
--	case PCIE_SPEED_16_0GT:
--		link_speed = PCI_EXP_LNKCTL2_TLS_16_0GT;
--		break;
--	default:
-+	link_speed = pcie_link_speed[pci->max_link_speed];
-+	link_speed = pci_bus_speed2lnkctl2(link_speed);
-+	if (link_speed == 0) {
- 		/* Use hardware capability */
- 		link_speed = FIELD_GET(PCI_EXP_LNKCAP_SLS, cap);
- 		ctrl2 &= ~PCI_EXP_LNKCTL2_HASD;
--		break;
- 	}
- 
- 	dw_pcie_writel_dbi(pci, offset + PCI_EXP_LNKCTL2, ctrl2 | link_speed);
--- 
-2.34.1
-
+I like it! Applied.
 
