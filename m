@@ -1,214 +1,317 @@
-Return-Path: <linux-kernel+bounces-881633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94F3CC289A1
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 04:40:44 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E583C289A4
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 05:07:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB3C6188F35D
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 03:41:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E6C444E2DC6
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 04:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BAB238159;
-	Sun,  2 Nov 2025 03:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 392BF1C4609;
+	Sun,  2 Nov 2025 04:06:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CLdrFoc6";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="DeGD1chO"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=invisiblethingslab.com header.i=@invisiblethingslab.com header.b="e33H73g+";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DCyMBLUX"
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1193224893
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 03:40:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E41B1509A0
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 04:06:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762054835; cv=none; b=VuBX19tR0JLnL3WASM2bMf3J71wwT1Lu2yOw1kiz5/l63hQ/baw9KjIl3P7nV8Qu36EL48ejC66EwWL+bXak5lDChq0QOoR+xafrwHR9p1Onpq1dw2LZtiLQcrC9sFSuOZWrx1kf4yQ5WAjBrBZ5Tuyfsj/eXgRykEH/hryzT1Q=
+	t=1762056373; cv=none; b=Yv9eoRPw53pbUaFAC7ArBoGRAnm6XL1cma5gIXHyILrZJhJaWl3GwI8u4tHsn/1CMHCmgTBFOKZINcqJ5/Ol2f57CjTAJ/iLPlwvrsY8bmNEcoozPsZoJoNZ6JyiFo50CU0mAXFEFJRMZOu9TGVYTZYecxy7fdjhLoYquE+yu7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762054835; c=relaxed/simple;
-	bh=tsTTP88YqQQw2qNCj/kySq4M0ki8akBPEdfHNXPcJ9M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=k9TuSjnesCZO6sTHCNrEpUP/aoi8KrwsEVamOLTbZ9MWG5kyaGrHitj8fuiYxYUb+WDoDXndPg65D1VE0jmEv7z5AOFNuG3N/5quLSCsy+M7MsU6tJ3mBaZeudv1BlS8RUA7EMINwYHQfnDJ2qO016cxadtIslZdPZaskMKLbno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CLdrFoc6; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=DeGD1chO; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A1MaNbp2665257
-	for <linux-kernel@vger.kernel.org>; Sun, 2 Nov 2025 03:40:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=hy9CGwxUFV2jhewlnGeGKH
-	PswSddzu4TDZNw7XBAfsw=; b=CLdrFoc6rX2dUdrMCRKv+SldbSrUfU7RxJ7bhq
-	PbjdDXOukC5/XDZ8UP46VtMiqfz/YwiayoAXHDPje9zxH9ARXao9tUPJaKQ58Ehu
-	3hgutkWrGnqOnOst6uwqNi8XW+Bu1rlnotLWhpfwIQWarfqveCwvRF+86sRjX3aj
-	BeepKm43O5bVQGu7na53Q3SyrMYIK+Wn0JYGv/RN0RxxTy1hmu2fPZ/+p4H/j38+
-	rsHtbOBytvzG/mBIMa9eQfonOw9jLPEvVwJAN53VPtXxwic3AXx6ow5NEHvpDsOY
-	/8/cxcdRahZQKVmLyOsVePDykeuVORxSta8vWKj9DFp5TP2w==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a5ae31jcg-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 03:40:31 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-277f0ea6ee6so35756005ad.0
-        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 20:40:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762054831; x=1762659631; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hy9CGwxUFV2jhewlnGeGKHPswSddzu4TDZNw7XBAfsw=;
-        b=DeGD1chOPhTGL9eXsog1x62aGJGhz0LEoaNXPFpmL5bcc5mdHMUA6i442zumVgzCxI
-         Va70t2wxQSAxrcKN/w1m+tHwvGKz/MsOuQc82abt/fRkVufhjIQSEwhtJiR8SVwUOPlQ
-         PtqgMRbJ5StXZLLj0V2kDMhWiV8MqzVY5U2PeB3MAfHOQeXiHEfezm2W08C2gbaugWvc
-         7okkmONqKUQDXWrz0xJ4NChFWRlNcUIYqRVcP2zbIjCTUKlyagJLhOwEprbTv7Nggi82
-         IGOzzerWMrgl3D62oeWKKvrV9vaIG825G6R/iuVpPIj3BWly4gD+ULK/WICwiDpuK+pT
-         DBrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762054831; x=1762659631;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hy9CGwxUFV2jhewlnGeGKHPswSddzu4TDZNw7XBAfsw=;
-        b=E2VTtYadrAeVm2YZl1XI6BSglXachGDwLU8V3rauUeFSE0y7IXbmRPCTeWrA/GIxkU
-         BjHOuaOClkYZpSkteUgQ8uT8cGMv+aoFVcWAXlAssKsEQPCabzgeMdNr+hfwzZ9qiOpE
-         fs44s01ys9bGclGD1YZ7HgL5I8HwWbX8KTh3m66SLOiexA8A/9ySWbzYyylB2KO/O3gp
-         P66JpKkuyKfkrphnRfk9gI1aK4rOR78Z5Nx1E6FJtPRQ0HX5NdDSOufNVLwB608IZHXL
-         W3d2H4Ex/0gHn9rN4bmQUBPIRAf1f7HpEa839J01B8TTGU5R2rTzoBntFztMopLnkJj7
-         O5LA==
-X-Forwarded-Encrypted: i=1; AJvYcCXO/qdKwt/arJ650mpauJcWu9tymX51NTsNNjgDDczjSBh+gyY3yr2tkB25VRE9BA1t1dALxK+q3NXGBIg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUtDUTc6n1evDTt6/OBdNRA9SQ9kcSrsnzm0mj3F/eYVIrEDcb
-	5JUygeXPCSIQZK6klikbWlcmhxIzQjhOpuO6ZRi+XAemL1TWM4PH5leFB0ZiwErnzfK5tRhj19J
-	B8j0+blXgvqlCggARzJG68ev5R+QsbSWGz+66G1xg8Kx2Ge70v/CxN5mhdDxfHy2eaTY5qArj+i
-	8=
-X-Gm-Gg: ASbGncsMkQTwX9ego/mzUMapQfRfsL77cf0kllrdXQ7XXbBZpBW+fs5GhWREQgX/Pa5
-	hN9krWShGmfOEFXIV1sSt4bI/irLvkTStJ0ePOFDIY8RdJYCyiD7A8kXK1lXbtu0nl3/JTHjKdC
-	D7xpSRd8SpwEhTF4Li37E4eIvOJOXphNYt7XM8tWmUigXxfC+thGAo209SgT1fh1NmmUhsfDUcc
-	m2g+7iDPLpnRanRgHD6KX2sITWHcEz8W1Ivo0pObQnTOYNBZhI53bt0dIfmYXtYAdVeGeWkTdHD
-	dwD8IAFrK08FANwCRkopH9wqSlKYNzFcFb/EFPymrHdXgzCvTDKzYWrDFujwJkW6WJQfKzzcSee
-	VfP3hG6z3YJCyqyzLq6RQm/gtPmpaM6Qto9NK
-X-Received: by 2002:a17:902:da88:b0:295:5805:b380 with SMTP id d9443c01a7336-2955805b770mr45636335ad.49.1762054830799;
-        Sat, 01 Nov 2025 20:40:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFn6sLOMnqKd4YQV6ffKNfc4XqFYxeONj5fp5ikFI1eo+sp04UEXUS7roUXZh8dPk87Wj6lpA==
-X-Received: by 2002:a17:902:da88:b0:295:5805:b380 with SMTP id d9443c01a7336-2955805b770mr45636085ad.49.1762054830276;
-        Sat, 01 Nov 2025 20:40:30 -0700 (PDT)
-Received: from hu-dikshita-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29526871023sm71818025ad.13.2025.11.01.20.40.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 01 Nov 2025 20:40:29 -0700 (PDT)
-From: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
-Date: Sun, 02 Nov 2025 09:10:19 +0530
-Subject: [PATCH] media: iris: remove v4l2_m2m_ioctl_{de,en}coder_cmd API
- usage during STOP handling
+	s=arc-20240116; t=1762056373; c=relaxed/simple;
+	bh=M9snj91RCqmt5uIf6sjigPVdXnqqM4+cma72gIIeiAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=VNMX0/3zRGpwwtY4hNwQLiKb0Furucm6FeSuDnkMX1nghCCZayaogt9nKbtjhtBuBWtloGih1XPDcKRvks8gIlLZdYL0eNNr28DxEG1umsOfwGh4A2M3lp0dyhluvmvxB82pcRroqgvKukUm4DYHPkBn0vEvMADTpWnr4eFHhwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=invisiblethingslab.com; spf=pass smtp.mailfrom=invisiblethingslab.com; dkim=pass (2048-bit key) header.d=invisiblethingslab.com header.i=@invisiblethingslab.com header.b=e33H73g+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DCyMBLUX; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=invisiblethingslab.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=invisiblethingslab.com
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id E02DAEC0047;
+	Sun,  2 Nov 2025 00:03:16 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Sun, 02 Nov 2025 00:03:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	invisiblethingslab.com; h=cc:cc:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm2; t=1762056196; x=1762142596; bh=zz
+	l9nCwgx2fuMgGeUyzjQaNy6rpK87nR2ySzUfdomWQ=; b=e33H73g+BcBAiR7YS1
+	D4PXbjdQ0xL8BolC2ixY0ChGmBflBu/ZAcP6Goa1Bz2rFilv05CzGcTDr+PEBhF0
+	7iHyyfsY+GaKNUsmTbre49igN+SRdcktirrhdHTPhBpeqrP/aG+GqDWO5Rx+3h70
+	Hzr3XeeMCMmQC0OVz1Y7xVfwUE85POpSj6HeLehMsprQFbOIeuDjbNKhYjzfuu+f
+	qNUXntZ/ujVH9AVEbcFCG9gLOO+ujwDLlDARYwiJ7RySxt1VasBfUSanyMXLAYjm
+	DUpaZ79aKyziL9jdxHeU8glpEhWDOyIE9QWx9eZCg1NTWzEi/tZznTiIDdDdJAxD
+	VpQQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:message-id
+	:mime-version:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762056196; x=
+	1762142596; bh=zzl9nCwgx2fuMgGeUyzjQaNy6rpK87nR2ySzUfdomWQ=; b=D
+	CyMBLUXAdb7Xe11J275HnfGqLzVPrZFDKopUb8Mxadpu5/ZuXJ55PMOqlDm+i0RI
+	7q63mmbJf6KVIpkp/irhUNRzTgTgAFXVMofMRyawHoqgUQ32xQ84pkcbn+P9oclo
+	7n1+TzxnQEl+/wrGOMuK0wcUY+OsV0sOiKE94LhglvYLSusVzwGO5WNfHomiTBR1
+	EB2SaAumBC6+74UDaDjC/LEHanzUmZPJYf2cBvOrFbhUJw4CabUOGCFJnwBFLt+h
+	1wqRHMbQV3ia1Kfa5sSweEqyOT4yhyfr0KBuHuhI8115fcVPYMVoB+y4HHwTCMbE
+	cAOKyGc2eHJEQCc5kkFeA==
+X-ME-Sender: <xms:BNgGaZvDaiW0n1qqEfIZIokoy5qQLDX7yVdSfEGwPGMCV_v98M3azw>
+    <xme:BNgGaT-1txzXVo6gSxq6k-ClPi8wqjF4KWWeZYJ8EMlujoW_jTlyrwrfKbL0WYXtW
+    NSmMpjkZJSCg8Tz8h7qZOu2NYdokVY8i0STkxtvtWYdHctbuQ>
+X-ME-Received: <xmr:BNgGac2CODSqEzREvwnbrKuPvv3pMejDg9gv9mn_zcO1eNH3P4HkjVETu9HdWZDkUFLVTv7QG82RVHeJGppjHK9qsMThVW0juq8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujeegvdegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkgggtugesghdtroertddtjeenucfhrhhomhepofgrrhgvkhcuofgr
+    rhgtiiihkhhofihskhhiqdfikphrvggtkhhiuceomhgrrhhmrghrvghksehinhhvihhsih
+    gslhgvthhhihhnghhslhgrsgdrtghomheqnecuggftrfgrthhtvghrnhepfedtieevteev
+    geffieetveegjeefhfektdfgfeejkefhleejleffvdekheetudejnecuffhomhgrihhnpe
+    hquhgsvghsqdhoshdrohhrghdpghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihii
+    vgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgrrhhmrghrvghksehinhhvihhsih
+    gslhgvthhhihhnghhslhgrsgdrtghomhdpnhgspghrtghpthhtohephedpmhhouggvpehs
+    mhhtphhouhhtpdhrtghpthhtoheprghlvgigrghnuggvrhdruhhshihskhhinhesihhnth
+    gvlhdrtghomhdprhgtphhtthhopegrrhhnugesrghrnhgusgdruggvpdhrtghpthhtohep
+    ghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheprh
+    gvghhrvghsshhiohhnsheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehl
+    ihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:BNgGaQA5jGABvUodxE-F5e-jx8z7QeT0fLnRzV1GxgKK7vfkDecDVA>
+    <xmx:BNgGaQeNI_nfgQ12JYW2KlhTNKmqELtGXgCQdyT20ArUmEB9hehilw>
+    <xmx:BNgGaV6XvBArsnMDX57Gq0KGIKJx_QdCNeKtANu2GJHBmdMdeWjxPQ>
+    <xmx:BNgGabVBtuexWK6AlgPmSuC2frPLFftA_j4ljyZcHom7jm4LxP5Zsw>
+    <xmx:BNgGaaTBNBUmzn83zLHulRRzrgTgQvHOEjrDC7U6iWYXH6hBh3lEXuCE>
+Feedback-ID: i1568416f:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 2 Nov 2025 00:03:15 -0400 (EDT)
+Date: Sun, 2 Nov 2025 05:03:13 +0100
+From: Marek =?utf-8?Q?Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>
+To: Alexander Usyskin <alexander.usyskin@intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	regressions@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: [REGRESSION] mei_me_probe NULL ptr deref on error path - 6.18-rc3
+Message-ID: <aQbYAXPADqfiXUYO@mail-itl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251102-iris-drain-fix-v1-1-7f88d187fb48@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAKLSBmkC/x2MQQqAIBAAvxJ7bsE1LOor0UFyrb1YrBCB+Pek4
- wzMFMiswhmWroDyI1mu1ID6DvbTp4NRQmOwxjoyA6GoZAzqJWGUFycXw+wME40OWnQrN/0P163
- WD+9DAwpgAAAA
-X-Change-ID: 20251031-iris-drain-fix-75fd950e1165
-To: Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bod@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@kernel.org>,
-        Stefan Schmidt <stefan.schmidt@linaro.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762054826; l=2368;
- i=dikshita.agarwal@oss.qualcomm.com; s=20240917; h=from:subject:message-id;
- bh=tsTTP88YqQQw2qNCj/kySq4M0ki8akBPEdfHNXPcJ9M=;
- b=Kc5rdsfHPSXdaj/NBj2Obv4p52uiMbY7Lmx5qo8Yp45X2l/+q2BxT5isrvQntQTZ1VlHPMQXr
- W7w4VYdqes+C7yiUcPZiVeYn+HelMrIEYwNU7WFA/Ji92LdNK9L3Isf
-X-Developer-Key: i=dikshita.agarwal@oss.qualcomm.com; a=ed25519;
- pk=EEvKY6Ar1OI5SWf44FJ1Ebo1KuQEVbbf5UNPO+UHVhM=
-X-Proofpoint-ORIG-GUID: npUc1wlkk3N7A9sKZA281a8V75QcC-GD
-X-Proofpoint-GUID: npUc1wlkk3N7A9sKZA281a8V75QcC-GD
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAyMDAzMCBTYWx0ZWRfX8AuaYPyUxqmo
- eXLaAyqvfwfTotJ0HmnOLBg1U83NPcM4bNNCYh2aPRjup5dSSt29bip9Da1X6RyXcdm6lWQgYt8
- pEQXuwySh+f/mS3yH0bc68P1IVqxabuJqSJjoSsW8KEb6RhkwHY0dStf5WNc6U7GleIiHUHVBCg
- 4TzNsY6MwBMxrXR3EPQBrqjVr1KSXCWOpsdRl6VC7pAd9+ZwiDcL+Ecy3gKRFjQYc95CM80VY3c
- gtX5qRdwvyg8AAjewCOwr97TAlL9cc9eaTCrzD4GrL0NOA9Ldz1IHN42P+srUA+M61JpNQxpg2Y
- By/FstPu5rd2l0LLdUGglzsoDfe9rqncmbH+APi8oCh0l/ziBGnXveIXO7SBW7WYS3bLlthJn63
- K8dnYPnKY531kcxrapt8593dr30tLg==
-X-Authority-Analysis: v=2.4 cv=CfUFJbrl c=1 sm=1 tr=0 ts=6906d2af cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=YXM6clFYWdcNeUECVfIA:9
- a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-02_02,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 suspectscore=0 impostorscore=0 spamscore=0 bulkscore=0
- adultscore=0 phishscore=0 lowpriorityscore=0 priorityscore=1501 clxscore=1015
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511020030
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="SstVD4tUIWzgfLQp"
+Content-Disposition: inline
 
-Currently v4l2_m2m_ioctl_{de,enc}coder_cmd is being invoked during STOP
-command handling. However, this is not required as the iris driver has
-its own drain and stop handling mechanism in place.
 
-Using the m2m command API in this context leads to incorrect behavior,
-where the LAST flag is prematurely attached to a capture buffer,
-when there are no buffers in m2m source queue. But, in this scenario
-even though the source buffers are returned to client, hardware might
-still need to process the pending capture buffers.
+--SstVD4tUIWzgfLQp
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Date: Sun, 2 Nov 2025 05:03:13 +0100
+From: Marek =?utf-8?Q?Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>
+To: Alexander Usyskin <alexander.usyskin@intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	regressions@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: [REGRESSION] mei_me_probe NULL ptr deref on error path - 6.18-rc3
 
-Attaching LAST flag prematurely can result in the capture buffer being
-removed from the destination queue before the hardware has finished
-processing it, causing issues when the buffer is eventually returned by
-the hardware.
+Hi,
 
-To prevent this, remove the m2m API usage in stop handling.
+When trying Linux 6.18-rc3, I'm hitting kernel panic in mei_me driver.
+It looks like this:
 
-Fixes: d09100763bed ("media: iris: add support for drain sequence")
-Fixes: 75db90ae067d ("media: iris: Add support for drain sequence in encoder video device")
-Signed-off-by: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
----
- drivers/media/platform/qcom/iris/iris_vidc.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+[   85.878591] mei mei0: wait hw ready failed
+[   85.878699] mei mei0: hw_start failed ret =3D -62 fw status =3D 80022054=
+ 30284100 00000020 00000000 02620000 00000000
+[   85.878769] mei mei0: H_RST is set =3D 0x800E0E31
+[   87.926419] mei mei0: wait hw ready failed
+[   87.926515] mei mei0: hw_start failed ret =3D -62 fw status =3D 80022054=
+ 30284100 00000020 00000000 02620000 00000000
+[   87.926581] mei mei0: reset: reached maximal consecutive resets: disabli=
+ng the device
+[   87.926594] mei mei0: reset failed ret =3D -19
+[   87.926598] mei mei0: link layer initialization failed.
+[   87.926603] mei_me 0000:00:16.0: init hw failure.
+[   87.926769] ------------[ cut here ]------------
+[   87.926774] WARNING: CPU: 9 PID: 518 at kernel/workqueue.c:4234 __flush_=
+work+0x340/0x390
+[   87.926785] Modules linked in: intel_rapl_msr intel_powerclamp i2c_i801 =
+intel_rapl_common snd pcspkr spi_intel_pci rfkill e1000e spi_intel processo=
+r_thermal_wt_req i2c_smbus mei_me processor_thermal_power_floor soundcore m=
+ei processor_thermal_mbox idma64 intel_pmc_core int340x_thermal_zone igen6_=
+edac pmt_telemetry pmt_discovery pmt_class intel_hid sparse_keymap intel_pm=
+c_ssram_telemetry intel_scu_pltdrv joydev fuse loop xenfs nfnetlink vsock_l=
+oopback vmw_vsock_virtio_transport_common zram vmw_vsock_vmci_transport lz4=
+hc_compress vsock vmw_vmci lz4_compress dm_thin_pool dm_persistent_data dm_=
+bio_prison dm_crypt xe drm_ttm_helper drm_suballoc_helper gpu_sched drm_gpu=
+vm drm_exec drm_gpusvm_helper nvme i915 nvme_core sdhci_pci sdhci_uhs2 i2c_=
+algo_bit nvme_keyring drm_buddy sdhci intel_pmc_mux nvme_auth ttm cqhci typ=
+ec xhci_pci hid_multitouch polyval_clmulni ghash_clmulni_intel mmc_core hkd=
+f intel_vpu intel_vsec xhci_hcd drm_display_helper i2c_hid_acpi i2c_hid thu=
+nderbolt video wmi pinctrl_meteorlake cec serio_raw
+[   87.926848]  xen_acpi_processor xen_privcmd xen_pciback xen_blkback xen_=
+gntalloc xen_gntdev xen_evtchn scsi_dh_rdac scsi_dh_emc scsi_dh_alua uinput=
+ i2c_dev
+[   87.926895] CPU: 9 UID: 0 PID: 518 Comm: kworker/u56:3 Tainted: G       =
+ W           6.18.0-0.rc3.1.qubes.1.fc41.x86_64 #1 PREEMPT(full)=20
+[   87.926903] Tainted: [W]=3DWARN
+[   87.926906] Hardware name: Notebook V54x_6x_TU/V54x_6x_TU, BIOS Dasharo =
+(coreboot+heads) v0.9.0 01/01/1970
+[   87.926912] Workqueue: async async_run_entry_fn
+[   87.926918] RIP: e030:__flush_work+0x340/0x390
+[   87.926923] Code: 26 9d 05 00 65 48 8b 15 26 3c ca 02 48 85 db 48 8b 04 =
+24 48 89 54 24 58 0f 85 de fe ff ff e9 f6 fd ff ff 0f 0b e9 77 ff ff ff <0f=
+> 0b e9 70 ff ff ff 0f 0b e9 19 ff ff ff e8 7d 8b 0e 01 48 89 de
+[   87.926931] RSP: e02b:ffffc900412ebc00 EFLAGS: 00010246
+[   87.926936] RAX: 0000000000000000 RBX: ffff888103e55090 RCX: 00000000000=
+00000
+[   87.926941] RDX: 000fffffffe00000 RSI: 0000000000000001 RDI: ffffc900412=
+ebc60
+[   87.926945] RBP: ffff888103e55090 R08: ffffffffc1266ec8 R09: ffff8881109=
+076e8
+[   87.926949] R10: 0000000080040003 R11: 0000000000000000 R12: ffff888103e=
+54000
+[   87.926953] R13: ffffc900412ebc18 R14: 0000000000000001 R15: 00000000000=
+00000
+[   87.926962] FS:  0000000000000000(0000) GS:ffff888233238000(0000) knlGS:=
+0000000000000000
+[   87.926967] CS:  e030 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   87.926971] CR2: 00007e7923b32708 CR3: 00000001088df000 CR4: 00000000000=
+50660
+[   87.926977] Call Trace:
+[   87.926981]  <TASK>
+[   87.926987]  ? __call_rcu_common.constprop.0+0x11e/0x310
+[   87.926993]  cancel_work_sync+0x5e/0x80
+[   87.926999]  mei_cancel_work+0x19/0x40 [mei]
+[   87.927051]  mei_me_probe+0x273/0x2b0 [mei_me]
+[   87.927060]  local_pci_probe+0x45/0x90
+[   87.927066]  pci_call_probe+0x5b/0x180
+[   87.927070]  pci_device_probe+0x95/0x140
+[   87.927074]  ? driver_sysfs_add+0x57/0xc0
+[   87.927079]  really_probe+0xde/0x340
+[   87.927083]  ? pm_runtime_barrier+0x54/0x90
+[   87.927087]  __driver_probe_device+0x78/0x110
+[   87.927092]  driver_probe_device+0x1f/0xa0
+[   87.927095]  __driver_attach_async_helper+0x5e/0xe0
+[   87.927100]  async_run_entry_fn+0x34/0x130
+[   87.927104]  process_one_work+0x18d/0x340
+[   87.927108]  worker_thread+0x256/0x3a0
+[   87.927111]  ? __pfx_worker_thread+0x10/0x10
+[   87.927115]  kthread+0xfc/0x240
+[   87.927120]  ? __pfx_kthread+0x10/0x10
+[   87.927124]  ? __pfx_kthread+0x10/0x10
+[   87.927127]  ret_from_fork+0xf5/0x110
+[   87.927132]  ? __pfx_kthread+0x10/0x10
+[   87.927136]  ret_from_fork_asm+0x1a/0x30
+[   87.927141]  </TASK>
+[   87.927143] ---[ end trace 0000000000000000 ]---
+=2E..
+[   87.927717] BUG: kernel NULL pointer dereference, address: 0000000000000=
+060
+[   87.927722] #PF: supervisor read access in kernel mode
+[   87.927726] #PF: error_code(0x0000) - not-present page
+[   87.927730] PGD 0 P4D 0=20
+[   87.927734] Oops: Oops: 0000 [#1] SMP NOPTI
+[   87.927739] CPU: 9 UID: 0 PID: 518 Comm: kworker/u56:3 Tainted: G       =
+ W           6.18.0-0.rc3.1.qubes.1.fc41.x86_64 #1 PREEMPT(full)=20
+[   87.927746] Tainted: [W]=3DWARN
+[   87.927749] Hardware name: Notebook V54x_6x_TU/V54x_6x_TU, BIOS Dasharo =
+(coreboot+heads) v0.9.0 01/01/1970
+[   87.927754] Workqueue: async async_run_entry_fn
+[   87.927759] RIP: e030:mei_me_probe+0x27e/0x2b0 [mei_me]
+[   87.927765] Code: 11 00 00 00 74 ac 4c 89 ef e8 8e 4f f4 bf eb a2 bb ed =
+ff ff ff eb 9d 4c 89 e7 e8 8d fa 02 00 49 8b 84 24 18 11 00 00 4c 89 e7 <48=
+> 8b 40 60 2e 2e 2e ff d0 8b bd c4 03 00 00 4c 89 e6 e8 eb 9f 41
+[   87.927774] RSP: e02b:ffffc900412ebcc8 EFLAGS: 00010296
+[   87.927778] RAX: 0000000000000000 RBX: 00000000ffffffed RCX: 000fffffffe=
+00000
+[   87.927783] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff888103e=
+54000
+[   87.927787] RBP: ffff888101e79000 R08: ffffffffc1266ec8 R09: ffff8881109=
+076e8
+[   87.927792] R10: 0000000080040003 R11: 0000000000000000 R12: ffff888103e=
+54000
+[   87.927796] R13: ffff888101e790c8 R14: ffff888112253d40 R15: 00000000000=
+00000
+[   87.927805] FS:  0000000000000000(0000) GS:ffff888233238000(0000) knlGS:=
+0000000000000000
+[   87.927810] CS:  e030 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   87.927814] CR2: 0000000000000060 CR3: 00000001088df000 CR4: 00000000000=
+50660
+[   87.927820] Call Trace:
+[   87.927823]  <TASK>
+[   87.927826]  local_pci_probe+0x45/0x90
+[   87.927831]  pci_call_probe+0x5b/0x180
+[   87.927835]  pci_device_probe+0x95/0x140
+[   87.927839]  ? driver_sysfs_add+0x57/0xc0
+[   87.927843]  really_probe+0xde/0x340
+[   87.927847]  ? pm_runtime_barrier+0x54/0x90
+[   87.927852]  __driver_probe_device+0x78/0x110
+[   87.927858]  driver_probe_device+0x1f/0xa0
+[   87.927862]  __driver_attach_async_helper+0x5e/0xe0
+[   87.927867]  async_run_entry_fn+0x34/0x130
+[   87.927872]  process_one_work+0x18d/0x340
+[   87.927876]  worker_thread+0x256/0x3a0
+[   87.927880]  ? __pfx_worker_thread+0x10/0x10
+[   87.927884]  kthread+0xfc/0x240
+[   87.927889]  ? __pfx_kthread+0x10/0x10
+[   87.927893]  ? __pfx_kthread+0x10/0x10
+[   87.927897]  ret_from_fork+0xf5/0x110
+[   87.927901]  ? __pfx_kthread+0x10/0x10
+[   87.927906]  ret_from_fork_asm+0x1a/0x30
+[   87.927910]  </TASK>
+[   87.927913] Modules linked in: intel_rapl_msr intel_powerclamp i2c_i801 =
+intel_rapl_common snd pcspkr spi_intel_pci rfkill e1000e spi_intel processo=
+r_thermal_wt_req i2c_smbus mei_me processor_thermal_power_floor soundcore m=
+ei processor_thermal_mbox idma64 intel_pmc_core int340x_thermal_zone igen6_=
+edac pmt_telemetry pmt_discovery pmt_class intel_hid sparse_keymap intel_pm=
+c_ssram_telemetry intel_scu_pltdrv joydev fuse loop xenfs nfnetlink vsock_l=
+oopback vmw_vsock_virtio_transport_common zram vmw_vsock_vmci_transport lz4=
+hc_compress vsock vmw_vmci lz4_compress dm_thin_pool dm_persistent_data dm_=
+bio_prison dm_crypt xe drm_ttm_helper drm_suballoc_helper gpu_sched drm_gpu=
+vm drm_exec drm_gpusvm_helper nvme i915 nvme_core sdhci_pci sdhci_uhs2 i2c_=
+algo_bit nvme_keyring drm_buddy sdhci intel_pmc_mux nvme_auth ttm cqhci typ=
+ec xhci_pci hid_multitouch polyval_clmulni ghash_clmulni_intel mmc_core hkd=
+f intel_vpu intel_vsec xhci_hcd drm_display_helper i2c_hid_acpi i2c_hid thu=
+nderbolt video wmi pinctrl_meteorlake cec serio_raw
+[   87.927957]  xen_acpi_processor xen_privcmd xen_pciback xen_blkback xen_=
+gntalloc xen_gntdev xen_evtchn scsi_dh_rdac scsi_dh_emc scsi_dh_alua uinput=
+ i2c_dev
+[   87.928002] CR2: 0000000000000060
+[   87.928006] ---[ end trace 0000000000000000 ]---
 
-diff --git a/drivers/media/platform/qcom/iris/iris_vidc.c b/drivers/media/platform/qcom/iris/iris_vidc.c
-index d38d0f6961cd5cb9929e2aecbec7353dcc2d4a7d..07682400de690ad29c86ab2798beea6f09fdd049 100644
---- a/drivers/media/platform/qcom/iris/iris_vidc.c
-+++ b/drivers/media/platform/qcom/iris/iris_vidc.c
-@@ -572,9 +572,10 @@ static int iris_dec_cmd(struct file *filp, void *fh,
- 
- 	mutex_lock(&inst->lock);
- 
--	ret = v4l2_m2m_ioctl_decoder_cmd(filp, fh, dec);
--	if (ret)
-+	if (dec->cmd != V4L2_DEC_CMD_STOP && dec->cmd != V4L2_DEC_CMD_START) {
-+		ret = -EINVAL;
- 		goto unlock;
-+	}
- 
- 	if (inst->state == IRIS_INST_DEINIT)
- 		goto unlock;
-@@ -605,9 +606,10 @@ static int iris_enc_cmd(struct file *filp, void *fh,
- 
- 	mutex_lock(&inst->lock);
- 
--	ret = v4l2_m2m_ioctl_encoder_cmd(filp, fh, enc);
--	if (ret)
-+	if (enc->cmd != V4L2_ENC_CMD_STOP && enc->cmd != V4L2_ENC_CMD_START) {
-+		ret = -EINVAL;
- 		goto unlock;
-+	}
- 
- 	if (inst->state == IRIS_INST_DEINIT)
- 		goto unlock;
+The ME initialization failure is expected - ME is either disabled via
+firmware (the case above), or not directly visible at all (a VM). But
+the panic ofc is not expected.
 
----
-base-commit: 163917839c0eea3bdfe3620f27f617a55fd76302
-change-id: 20251031-iris-drain-fix-75fd950e1165
+Full console log: https://openqa.qubes-os.org/tests/158203/logfile?filename=
+=3Dserial0.txt
+Some more examples in this issue (but all look pretty similar):
+https://github.com/QubesOS/qubes-issues/issues/10378
 
-Best regards,
--- 
-Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+#regzbot introduced: v6.17.4..v6.18-rc3
 
+--=20
+Best Regards,
+Marek Marczykowski-G=C3=B3recki
+Invisible Things Lab
+
+--SstVD4tUIWzgfLQp
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEhrpukzGPukRmQqkK24/THMrX1ywFAmkG2AEACgkQ24/THMrX
+1yzGigf9GIns3jw9uMIZuGTnJMFHIAQP0VZwg1MpGmGe2QC8F3h+VjsxiyxR/Fsx
+1D5tjMuFRzx24XaLVlyaEpAf6fK2P4Fq2PO6DBvxrVTXkFfqa/ChNr0VwOGhdTRE
+Sw5ZLTNqbBIAnwt3VFaa4HRidwzHXfJOeaY2N+VaIkjoIHCH/qNU+NXldTF4r2pA
+eQzebzAeNuEdeqXut8FZvZ8cTfdURpeIkqRW3Om6gyVbCdmUxFB0IV3Q7iIZP1fo
+8XZbAJ0L3Jrz70adpTLCezrSpniI79FIN/Rndiz2wBUDxFLDbaIiLjWmQhmKf7BE
+bjbM7a0Lf4BzPg72qPffJOzoFFUY0Q==
+=jPDf
+-----END PGP SIGNATURE-----
+
+--SstVD4tUIWzgfLQp--
 
