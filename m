@@ -1,133 +1,148 @@
-Return-Path: <linux-kernel+bounces-882093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 859D9C299C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 00:14:08 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 023A0C299CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 00:15:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6EBC188DE7D
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 23:14:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A2FE14E7D1D
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 23:15:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F44241664;
-	Sun,  2 Nov 2025 23:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6792D248F4D;
+	Sun,  2 Nov 2025 23:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Yt8NQl0B"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="POvKaHNI"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53AE24DCFD;
-	Sun,  2 Nov 2025 23:13:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A69148850;
+	Sun,  2 Nov 2025 23:14:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762125236; cv=none; b=emy+68LODXzfwryz+FLVZsW9bT20poEzmppwHNlWgzHXlL5ADiSmzZ9c8stAduDhjropJGAhz8fAfkPKwKRUmciW4pC9Y/FCbFd1mjap/NozYi9xhJXbPzkWbl8iHfrpiGYneaHb9nrpJ+TNe/0/HBzhc7IPCcj8Ot56KFFrmKE=
+	t=1762125298; cv=none; b=JNdf0xlo/dwBqLRIFALIjIKb854YZjEzLuKPkG0a2FcSv0i4GHO0gOcstctJXJjRrqeeRwT6bLs0GHfnjwnWSBnmjhUigiZsBW9Nn7LNm118f9GOCIOMJHcB7/1KvEHe7dkhmDoom/Js3erF/xRTYqsFiOtXz1w7oZGjdYT3qek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762125236; c=relaxed/simple;
-	bh=ME4LvPnxhDyFfIKP9x/XGoGmUz2ZHvdsiI8gRxGXlAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=RDH5CpvTdqjIQL2Fdj5lk+QKvDpr1qWLS17PsmhfUURhbklCOdymB7GAw0isuXFVQi3RarMoiZUFQRnoTzf0SApE92CVRN5T4Z5ajyFS3uCD7n8JlPbcHEuHQh/wlSeiKphHHjxwRRWbUnoqATfnw6yUBrNB2BaAhTn6E18JeFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Yt8NQl0B; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1762125231;
-	bh=UrApUplrhg650aeZjiGycPOh3SlW4EIV3RN/nqafq1E=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Yt8NQl0BCT6YyP6Ob7vUHE3jJT/zHLqfXClfbB4WesXkBOO2tzgl/AeTUbFcXcaNW
-	 vF5WawPsb2+39n/qKKELR7EYcSFRWEms+6RtK/xJBKPMOA14yRqojVY31ePzLGRfgv
-	 MeKs5Ap0F2EVAAzfqroqW1QCzhTLVC+lUADd8HUXYQQH2ux90jT4/BcuH95b6ibifO
-	 p2V2Uoq/fTS6ZmR6Hfiz7xJRWO+BxlsHqujChOZKQORAdZ8Y3frMI9Z9/JXwpLHA6S
-	 53LH2sLMw75+SssbBnKvt4mOLPZQhZMah5YnryLgw22t6L3YUaZFJQM3lEIIL3Mths
-	 Do70td8lTNP+A==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d09Wf1QQXz4w0p;
-	Mon, 03 Nov 2025 10:13:49 +1100 (AEDT)
-Date: Mon, 3 Nov 2025 10:13:49 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Simona Vetter <simona.vetter@ffwll.ch>, Jani Nikula
- <jani.nikula@linux.intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc: Jani Nikula <jani.nikula@intel.com>, Intel Graphics
- <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the drm-intel tree with the drm-misc
- tree
-Message-ID: <20251103101349.5af777a5@canb.auug.org.au>
+	s=arc-20240116; t=1762125298; c=relaxed/simple;
+	bh=kUr0faM6nmdPvF981v46JyOf4dm270I/HG8+3rNC3ok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e/xh9MYSfL30FerEzFlaITG9xcHBUY7z1jtZ66GyTyXmBGPH18ZrB9mpHP7LGZurdyvsLfIxsyL95s3JdmO+XhIKvbJIHwxMjltlBrQWNM0ic8CE421xaIDqvcgkiJrYdQSfiHR3LMMjIT+yd8HxMJQZbPT3YMAuKQ39EX8j+pE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=POvKaHNI; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (82-203-160-149.bb.dnainternet.fi [82.203.160.149])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 326738BE;
+	Mon,  3 Nov 2025 00:13:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1762125182;
+	bh=kUr0faM6nmdPvF981v46JyOf4dm270I/HG8+3rNC3ok=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=POvKaHNIoRGL2MDfaf4h+sVBVTp/25n5QTk44MkrPN+bHGnQkSvs9/xku5f1aIP93
+	 1bW22IONVmWJ4i0tgiSOBzj3GRepC2d7vjbbzqNvK3XBDWyIacsrdCmzImFAxuArkE
+	 7KtorvEnqRRHFJPWiREarPEv37ZxQLecceM0y5rY=
+Date: Mon, 3 Nov 2025 01:14:40 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: "G.N. Zhou" <guoniu.zhou@nxp.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Frank Li <frank.li@nxp.com>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [EXT] Re: [PATCH v2 2/5] media: nxp: imx8-isi: Simplify code by
+ using helper macro
+Message-ID: <20251102231440.GA1933@pendragon.ideasonboard.com>
+References: <20250905-isi_imx93-v2-0-37db5f768c57@nxp.com>
+ <20250905-isi_imx93-v2-2-37db5f768c57@nxp.com>
+ <20250921221325.GB10540@pendragon.ideasonboard.com>
+ <AS8PR04MB9080158655C3EA188BE7FE7AFA12A@AS8PR04MB9080.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/z21a/cOLsFpemMoUDjgkfrw";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <AS8PR04MB9080158655C3EA188BE7FE7AFA12A@AS8PR04MB9080.eurprd04.prod.outlook.com>
 
---Sig_/z21a/cOLsFpemMoUDjgkfrw
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Sep 22, 2025 at 02:03:44AM +0000, G.N. Zhou wrote:
+> On Monday, September 22, 2025 6:13 AM, Laurent Pinchart wrote:
+> > On Fri, Sep 05, 2025 at 02:55:59PM +0800, Guoniu Zhou wrote:
+> > > Simplify code by using helper macro FIELD_PREP() and GENMASK().
+> > 
+> > I'm not necessarily against this change, but how does it "simplify code"
+> > ? There's no change in the code beside the macros, and they don't look
+> > particularly simpler.
+> 
+> How about the message body change to " Make code more readable and easier to maintain by
+> using the FIELD_PREP and GENMASK(). macro" and title change to "Refine code by using helper macro"?
+> If you agree, I could apply it in next version.
 
-Hi all,
+No need to send a new version, I'll update the commit message myself.
 
-Today's linux-next merge of the drm-intel tree got a conflict in:
+> > > No functions changed.
+> > >
+> > > Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> > > Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
+> > > ---
+> > >  drivers/media/platform/nxp/imx8-isi/imx8-isi-gasket.c | 7 ++++---
+> > >  1 file changed, 4 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-gasket.c
+> > > b/drivers/media/platform/nxp/imx8-isi/imx8-isi-gasket.c
+> > > index
+> > >
+> > f69c3b5d478209c083738477edf380e3f280c471..2f5e7299b537d612fb1fe668
+> > 8c1b
+> > > 75bfd2d6049b 100644
+> > > --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-gasket.c
+> > > +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-gasket.c
+> > > @@ -3,6 +3,8 @@
+> > >   * Copyright 2019-2023 NXP
+> > >   */
+> > >
+> > > +#include <linux/bitfield.h>
+> > > +#include <linux/bits.h>
+> > >  #include <linux/regmap.h>
+> > >
+> > >  #include <media/mipi-csi2.h>
+> > > @@ -16,8 +18,7 @@
+> > >  #define GASKET_BASE(n)                               (0x0060 + (n) * 0x30)
+> > >
+> > >  #define GASKET_CTRL                          0x0000
+> > > -#define GASKET_CTRL_DATA_TYPE(dt)            ((dt) << 8)
+> > > -#define GASKET_CTRL_DATA_TYPE_MASK           (0x3f << 8)
+> > > +#define GASKET_CTRL_DATA_TYPE(dt)            FIELD_PREP(GENMASK(13, 8),
+> > (dt))
+> > 
+> > I think you can omit the parentheses around dt here, and around x below.
+> 
+> Ok, will apply in next version.
+> 
+> > 
+> > >  #define GASKET_CTRL_DUAL_COMP_ENABLE         BIT(1)
+> > >  #define GASKET_CTRL_ENABLE                   BIT(0)
+> > >
+> > > @@ -58,7 +59,7 @@ const struct mxc_gasket_ops mxc_imx8_gasket_ops = {
+> > >   */
+> > >
+> > >  #define DISP_MIX_CAMERA_MUX                     0x30
+> > > -#define DISP_MIX_CAMERA_MUX_DATA_TYPE(x)        (((x) & 0x3f) << 3)
+> > > +#define DISP_MIX_CAMERA_MUX_DATA_TYPE(x)
+> > FIELD_PREP(GENMASK(8, 3), (x))
+> > >  #define DISP_MIX_CAMERA_MUX_GASKET_ENABLE       BIT(16)
+> > >
+> > >  static void mxc_imx93_gasket_enable(struct mxc_isi_dev *isi,
 
-  drivers/gpu/drm/i915/gt/intel_rc6.c
+-- 
+Regards,
 
-between commit:
-
-  f6e8dc9edf96 ("drm: include drm_print.h where needed")
-
-from the drm-misc tree and commits:
-
-  8c2833ff1df3 ("drm/i915: add vlv_clock_get_czclk()")
-  5615e78e813e ("drm/i915: split out vlv_clock.[ch]")
-
-from the drm-intel tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/gpu/drm/i915/gt/intel_rc6.c
-index 13721c9081b6,932f9f1b06b2..000000000000
---- a/drivers/gpu/drm/i915/gt/intel_rc6.c
-+++ b/drivers/gpu/drm/i915/gt/intel_rc6.c
-@@@ -6,8 -6,7 +6,9 @@@
-  #include <linux/pm_runtime.h>
-  #include <linux/string_helpers.h>
- =20
- +#include <drm/drm_print.h>
- +
-+ #include "display/vlv_clock.h"
-  #include "gem/i915_gem_region.h"
-  #include "i915_drv.h"
-  #include "i915_reg.h"
-
---Sig_/z21a/cOLsFpemMoUDjgkfrw
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkH5a0ACgkQAVBC80lX
-0GwATAf+IaMAVNnjxQs9NAYsjoodKNpiqtMya/5O4WpRBOXablOVAi64oRQ1fViR
-SJJx3BBzT+wgoQOiiw8Cbt9yYumCNVAfNGfpUEBXxPbkXr4S9gioxVI88eMhn4Ob
-OjJrzUCbQFAz3yORvpZ5g/opYgkFdVQRxHtw0QgS5QOxFcIvWzWD3vFOAnuj1yL2
-Vui1+OAVM+dqVa4V2+A9ITd+KeArkOr9J220hDlx8wU7efheCh8deoHJ9nndlCl2
-lGmq92cRH0CAfjXsxq0IDnTz58//cobXBUWj2Peaxxnd52o7rfWbn9EgN/khgCHK
-EKJZs8U03LQ1G+FidjQVmPmbvWqXwQ==
-=BAmB
------END PGP SIGNATURE-----
-
---Sig_/z21a/cOLsFpemMoUDjgkfrw--
+Laurent Pinchart
 
