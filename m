@@ -1,60 +1,63 @@
-Return-Path: <linux-kernel+bounces-882348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE4E0C2A3C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 07:58:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9991C2A482
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:19:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 197E34E5C47
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 06:58:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39E3F3AFF9C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54FA4298CD5;
-	Mon,  3 Nov 2025 06:58:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A53F29D28A;
+	Mon,  3 Nov 2025 07:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="WBa9ENdC"
-Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com [113.46.200.221])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ta9J2KOm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C8A235BE2;
-	Mon,  3 Nov 2025 06:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9342D299949;
+	Mon,  3 Nov 2025 07:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762153122; cv=none; b=aeboBuusGAFt9W0MvrYqVj+rUV3yQm67d0XkKnxxznfXpTzdkw8F2GWup6w/o5FREn9kL1vtQQVgr/Hgwzr3AZS5gWy5LteJDkG1ZkuAYJZI1lhaiUH9JAzSF/UIwtv4UpigjFzboUWdhfNRKTvomcsuUpU1KED4/ydJ0u45NZU=
+	t=1762154352; cv=none; b=uyHCHzx9qTmJ+9ghmV+8JTqTxGzNC963G+3++zU0eURZWYHejTXOvL0ztvpHzgU5m4KEZ9dp6EQB6iwG5MNSJe2Y19gJPUsjv5y6tRGwYEA+2lpvwMF3igUIsSeE+J5/o5/6w6tY3Avz/6uMHlRD0gxWhPEammP6rRnt7HhitTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762153122; c=relaxed/simple;
-	bh=UaWei8lA5myvGhZlKdywonEmJPyUfL8lNDin+Txy330=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YlxEZE6vbbYGhoIcJF+QnhkK8xL6mCL9WbECXh4aXsmlFOdWnAG9eUqwPcbSGGSmyLo5ctThmJgz7yZs/rLolmXxT5+ej7yN3M0pIrrxPark6FfPx9F6EgQo9+v/xfGOX9VCsRgBmtAAAB2Mg8e3Ck7zgFugzqHv8OOIDCvwQP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=WBa9ENdC; arc=none smtp.client-ip=113.46.200.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=yZVwZ3hFajFtTCfA4Oy9TngkmWmo1DVbMQCOxbEbPSk=;
-	b=WBa9ENdCIusVS7Yn6PIdeLql7uY2GCW1aL0lcj1jm9rO+nbSQYlQVUaux0oob72av2hbwUS+Z
-	CT9zAXozdi+9Icfm9EkN1LtD3JQFJ7OlHgRffRJolmd1FINddxWmvEFP9wVUarwLTpvq48SDg0X
-	hrpo6puIIXkGpRf1u9HdbA4=
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4d0Mny5S3LzRhTT;
-	Mon,  3 Nov 2025 14:56:54 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id 343AE1402C1;
-	Mon,  3 Nov 2025 14:58:28 +0800 (CST)
-Received: from huawei.com (10.50.85.128) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 3 Nov
- 2025 14:58:27 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <horms@kernel.org>, <almasrymina@google.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yuehaibing@huawei.com>
-Subject: [PATCH net-next] net: devmem: Remove unused declaration net_devmem_bind_tx_release()
-Date: Mon, 3 Nov 2025 15:20:46 +0800
-Message-ID: <20251103072046.1670574-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1762154352; c=relaxed/simple;
+	bh=hiuAkXJp5N4WN5xE4QgqmeyHlsM9HdyJ3JawANTRqe0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=swQ2PUQZgrddiMHAea5NmXSjdliUEqpmz9CoEBNSrh8qUX8GHOBP+zQLnnsOwSIQ2h8tl6cDXm/MPEFGCZFXR01wdj3JUmGQt7QcGZ1QIS6XZYeAAvn2rXFwpWgKlSbOOokCMxzre8VS1azURwXQ3zx5w1A0LSyee2YjLlmVfww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ta9J2KOm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 319ADC4CEE7;
+	Mon,  3 Nov 2025 07:19:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762154352;
+	bh=hiuAkXJp5N4WN5xE4QgqmeyHlsM9HdyJ3JawANTRqe0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ta9J2KOmcP0dE8kT6rHXaiZCUxjI6HCmKxmOxs+Uctq/FxFOVwOfwmT+6Fd6e38YW
+	 cu0gtLntNkias2xFuULOCA7SrMeL6iQF9QYOfKRG92HVtc6mLB8Uy7I70BjLAgRr74
+	 PyCcZrFbeWppvzWAYIdEq2oOiVhxaJZNd55oLNpnqT8bOET7tGN0AXm0xSP3jYxLnP
+	 p5W3Lbp7ahOLme6SWFJnwIYXf6LMVKLIJSIhV8C9s/BshBMfLUZ+xGDYczABZAEWsl
+	 zFf9Lt+BglAZNMhLXFHLtwgyMdElbG6vyGmLB8SeO285mPXBWGAmJG/khBLYo2NBZr
+	 MGtqO2KBhW78A==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 7EA35CE0F8F; Sun,  2 Nov 2025 13:44:37 -0800 (PST)
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	rostedt@goodmis.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	bpf@vger.kernel.org
+Subject: [PATCH 03/19] rcutorture: Test srcu_expedite_current()
+Date: Sun,  2 Nov 2025 13:44:20 -0800
+Message-Id: <20251102214436.3905633-3-paulmck@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <082fb8ba-91b8-448e-a472-195eb7b282fd@paulmck-laptop>
+References: <082fb8ba-91b8-448e-a472-195eb7b282fd@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,31 +65,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- dggpemf500002.china.huawei.com (7.185.36.57)
 
-Commit bd61848900bf ("net: devmem: Implement TX path") declared this
-but never implemented it.
+This commit adds a ->exp_current member to the rcu_torture_ops structure
+to test the srcu_expedite_current() function.
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: <bpf@vger.kernel.org>
 ---
- net/core/devmem.h | 1 -
- 1 file changed, 1 deletion(-)
+ kernel/rcu/rcutorture.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/net/core/devmem.h b/net/core/devmem.h
-index 101150d761af..0b43a648cd2e 100644
---- a/net/core/devmem.h
-+++ b/net/core/devmem.h
-@@ -94,7 +94,6 @@ void net_devmem_unbind_dmabuf(struct net_devmem_dmabuf_binding *binding);
- int net_devmem_bind_dmabuf_to_queue(struct net_device *dev, u32 rxq_idx,
- 				    struct net_devmem_dmabuf_binding *binding,
- 				    struct netlink_ext_ack *extack);
--void net_devmem_bind_tx_release(struct sock *sk);
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index 72619e5e8549..aa1f8240a276 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -389,6 +389,7 @@ struct rcu_torture_ops {
+ 	void (*deferred_free)(struct rcu_torture *p);
+ 	void (*sync)(void);
+ 	void (*exp_sync)(void);
++	void (*exp_current)(void);
+ 	unsigned long (*get_gp_state_exp)(void);
+ 	unsigned long (*start_gp_poll_exp)(void);
+ 	void (*start_gp_poll_exp_full)(struct rcu_gp_oldstate *rgosp);
+@@ -857,6 +858,11 @@ static void srcu_torture_synchronize_expedited(void)
+ 	synchronize_srcu_expedited(srcu_ctlp);
+ }
  
- static inline struct dmabuf_genpool_chunk_owner *
- net_devmem_iov_to_chunk_owner(const struct net_iov *niov)
++static void srcu_torture_expedite_current(void)
++{
++	srcu_expedite_current(srcu_ctlp);
++}
++
+ static struct rcu_torture_ops srcu_ops = {
+ 	.ttype		= SRCU_FLAVOR,
+ 	.init		= rcu_sync_torture_init,
+@@ -871,6 +877,7 @@ static struct rcu_torture_ops srcu_ops = {
+ 	.deferred_free	= srcu_torture_deferred_free,
+ 	.sync		= srcu_torture_synchronize,
+ 	.exp_sync	= srcu_torture_synchronize_expedited,
++	.exp_current	= srcu_torture_expedite_current,
+ 	.same_gp_state	= same_state_synchronize_srcu,
+ 	.get_comp_state = get_completed_synchronize_srcu,
+ 	.get_gp_state	= srcu_torture_get_gp_state,
+@@ -919,6 +926,7 @@ static struct rcu_torture_ops srcud_ops = {
+ 	.deferred_free	= srcu_torture_deferred_free,
+ 	.sync		= srcu_torture_synchronize,
+ 	.exp_sync	= srcu_torture_synchronize_expedited,
++	.exp_current	= srcu_torture_expedite_current,
+ 	.same_gp_state	= same_state_synchronize_srcu,
+ 	.get_comp_state = get_completed_synchronize_srcu,
+ 	.get_gp_state	= srcu_torture_get_gp_state,
+@@ -1700,6 +1708,8 @@ rcu_torture_writer(void *arg)
+ 					ulo[i] = cur_ops->get_comp_state();
+ 				gp_snap = cur_ops->start_gp_poll();
+ 				rcu_torture_writer_state = RTWS_POLL_WAIT;
++				if (cur_ops->exp_current && !torture_random(&rand) % 0xff)
++					cur_ops->exp_current();
+ 				while (!cur_ops->poll_gp_state(gp_snap)) {
+ 					gp_snap1 = cur_ops->get_gp_state();
+ 					for (i = 0; i < ulo_size; i++)
+@@ -1720,6 +1730,8 @@ rcu_torture_writer(void *arg)
+ 					cur_ops->get_comp_state_full(&rgo[i]);
+ 				cur_ops->start_gp_poll_full(&gp_snap_full);
+ 				rcu_torture_writer_state = RTWS_POLL_WAIT_FULL;
++				if (cur_ops->exp_current && !torture_random(&rand) % 0xff)
++					cur_ops->exp_current();
+ 				while (!cur_ops->poll_gp_state_full(&gp_snap_full)) {
+ 					cur_ops->get_gp_state_full(&gp_snap1_full);
+ 					for (i = 0; i < rgo_size; i++)
 -- 
-2.34.1
+2.40.1
 
 
