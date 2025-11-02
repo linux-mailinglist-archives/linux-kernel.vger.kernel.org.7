@@ -1,179 +1,155 @@
-Return-Path: <linux-kernel+bounces-882022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B194CC29790
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 22:46:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 384C9C29757
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 22:44:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C3D03AF77B
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 21:46:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1E09D4E48A5
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 21:44:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E37323C8A1;
-	Sun,  2 Nov 2025 21:44:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0E323313E;
+	Sun,  2 Nov 2025 21:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aGROng2V"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AnEF1Qi5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5929A24E01D;
-	Sun,  2 Nov 2025 21:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CEF02F56;
+	Sun,  2 Nov 2025 21:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762119879; cv=none; b=U0quv92Kge+5odlygCt+179ZD2+qalgY04KZoWXm+DQtdT4rkdXQuoam+kY/VxUa9Z8N6SkvdaIStC1FLcKGzMVSeHZRBgORpzKClpwyy2SQno9lhDWchQ3Qi915SRxBGyDBS3kxfqWTjPOY8f3Nnao7mhM/xd2JMwx5IdL+BBQ=
+	t=1762119870; cv=none; b=RGPr+gIDNeYKMddbIxtQXzpVu/483k3L08dHhUHei7V2F2BjiZ7SAswEVkgDpttEAEefVg0naoowJRQdXnSBIdnmreFCD6Yw8ZTK2KhE1lY6toe93n3Eutr4ywGU/J9TLs2N8UCpp9ui4L202CQSuoODUe0b4BEjXzh9Rxld2X4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762119879; c=relaxed/simple;
-	bh=bdRaLOeGRlaNeOitkkHmPDSe++KDC1F2xKdPiknDIIg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sJltZwqr/Br24WD2WuhstTGGdMGftLtCrlVoKVGzcO4qGGoTlwJuC7SH2dOqfMFT5HciXC6ZwgSDoNAB+q16mZvzigO45Hu2uHDfNgFwTLKi25auxtO8s1LIurl1eVL77gogeu62q7WQV3hvj0MI3z6RbL56v/e3EjSQDP6IhfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aGROng2V; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38E93C16AAE;
-	Sun,  2 Nov 2025 21:44:39 +0000 (UTC)
+	s=arc-20240116; t=1762119870; c=relaxed/simple;
+	bh=RdNBSKVqYEgSq8FX1QqVdr66kaOaDgGlTA8bajRQyaI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=AlR/UBtyWTQH04Bkhleew2qCM2Vw2SgHBWpHXWWIO+evDS6i1uGKsoPMfNYJ3cdDuI0ITXU9xQydyXxRAmUmDMiNku2POKXfSyTOwFgnpyMyJdF1mOZLaPr6RUrHTDJ0Zme7O/jh+LogzH4j0YUbm5j7EFieNhgSmkQGkxZxUX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AnEF1Qi5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81C8EC4CEF7;
+	Sun,  2 Nov 2025 21:44:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762119879;
-	bh=bdRaLOeGRlaNeOitkkHmPDSe++KDC1F2xKdPiknDIIg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=aGROng2Vrwr7izBe1JMo0rTtk/LECrRXPoseahtv9nErOznfGE5Xvlp0yFprbemi8
-	 AAZWbrKf76/4O4Y1sXXQZIHyp+RzljtpYC6tOVU4pPgmJ8ieX5A/AYc6zk2tcjswFw
-	 nSqzJeyiuZ/WAyIFG83ufr32gH9gIpKLxXgpdta4VAJFmP4q2vJ/bQHzZtp7c+/7Kv
-	 vqkVD2tfKFW9eO3puAEvnhHfDWf70CsL4ROx/OsQ5XlaGe00mkoS9khBx95BsrCWSk
-	 hKl7y4wT4E3zLofx6Q8HfKaBfrIXr25kD8dpCZ8Z/espWEkNgRCMaPG2U21b0pifu+
-	 ibfESU8CBhx2A==
+	s=k20201202; t=1762119869;
+	bh=RdNBSKVqYEgSq8FX1QqVdr66kaOaDgGlTA8bajRQyaI=;
+	h=Date:From:To:Cc:Subject:Reply-To:From;
+	b=AnEF1Qi5lBKtUet2jLC0hwiXAchZb8gos0Oc8BxQVm3DsfPh2gbwAeSxQ9w28msP/
+	 sCTcOaKR+f9dD2VOp4zGMunVxYs8L2H5nEsvBsWpMlPTG3lM6nXfrbTi8kM6R3aF7l
+	 BWCcANoSqcNm/NLVTv651ViFHoA2IVjU/J/Ux0jZQmolOAMyWqNe/fdBFU7QPno+k/
+	 c2wVUdLmfXjBdyEX96Zxa4l8RR7SeE/0Ep1ulPafSNoU5UFuEkChLz2/ghE4xPDkWy
+	 BRelBQH0gAo7mdTg7QKPcwcAyx1bbCAEjtadPHXyJaE0EQneGA6AFJ1w20PaD2bflQ
+	 UAH2sbYbOwPFg==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 96CDECE15C3; Sun,  2 Nov 2025 13:44:37 -0800 (PST)
+	id 16A84CE0F4C; Sun,  2 Nov 2025 13:44:29 -0800 (PST)
+Date: Sun, 2 Nov 2025 13:44:29 -0800
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	rostedt@goodmis.org,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH 12/19] rcutorture: Permit kvm-again.sh to re-use the build directory
-Date: Sun,  2 Nov 2025 13:44:29 -0800
-Message-Id: <20251102214436.3905633-12-paulmck@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <082fb8ba-91b8-448e-a472-195eb7b282fd@paulmck-laptop>
-References: <082fb8ba-91b8-448e-a472-195eb7b282fd@paulmck-laptop>
+Cc: linux-kernel@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org
+Subject: [PATCH 0/18] SRCU updates for v6.19
+Message-ID: <082fb8ba-91b8-448e-a472-195eb7b282fd@paulmck-laptop>
+Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This commit adds "inplace" and "inplace-force" values to the kvm-again.sh
-"--link" argument, which causes the run's output to be placed into the
-build directory.  This could be used to save build time if the machine
-went down partway into a run, but it can also be used to do a large
-number of builds, and run the resulting kernels concurrently even if the
-builds are based on different commits.  A later commit will add this
-latter capability to kvm-series.sh in order to produce large speedups
-for branch-checking operations.
+Hello!
 
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
----
- .../selftests/rcutorture/bin/kvm-again.sh     | 56 +++++++++++++------
- 1 file changed, 40 insertions(+), 16 deletions(-)
+This series creates an srcu_expedite_current() function that allows
+after-the-fact expediting of SRCU grace periods, adds a DEFINE_SRCU_FAST()
+that further speeds things up by removing a conditional branch from
+srcu_read_lock_fast*(), updates documentation, uses SRCU-fast to guard
+event traces in PREEMPT_RT kernel (thus making such kernels safe for
+event tracing), adds srcu_read_{,un}lock_fast_updown() functions that are
+compatible with srcu_down_read() and srcu_up_read(), but do not permit
+use in NMI handlers (to permit further optimization of SRCU-fast readers
+by relieving them of the need to deal with irq/softirq/NMI handlers with
+unbalanced lock/unlock calls), and optimizes SRCU-fast-updown for large
+ARM servers that use LSE.  It is expected that this optimization will be
+obsoleted by some arm64 architecture-specific work:
 
-diff --git a/tools/testing/selftests/rcutorture/bin/kvm-again.sh b/tools/testing/selftests/rcutorture/bin/kvm-again.sh
-index 88ca4e368489..b5239b52cb5d 100755
---- a/tools/testing/selftests/rcutorture/bin/kvm-again.sh
-+++ b/tools/testing/selftests/rcutorture/bin/kvm-again.sh
-@@ -31,7 +31,7 @@ fi
- if ! cp "$oldrun/scenarios" $T/scenarios.oldrun
- then
- 	# Later on, can reconstitute this from console.log files.
--	echo Prior run batches file does not exist: $oldrun/batches
-+	echo Prior run scenarios file does not exist: $oldrun/scenarios
- 	exit 1
- fi
- 
-@@ -68,7 +68,7 @@ usage () {
- 	echo "       --datestamp string"
- 	echo "       --dryrun"
- 	echo "       --duration minutes | <seconds>s | <hours>h | <days>d"
--	echo "       --link hard|soft|copy"
-+	echo "       --link hard|soft|copy|inplace|inplace-force"
- 	echo "       --remote"
- 	echo "       --rundir /new/res/path"
- 	echo "Command line: $scriptname $args"
-@@ -121,7 +121,7 @@ do
- 		shift
- 		;;
- 	--link)
--		checkarg --link "hard|soft|copy" "$#" "$2" 'hard\|soft\|copy' '^--'
-+		checkarg --link "hard|soft|copy|inplace|inplace-force" "$#" "$2" 'hard\|soft\|copy\|inplace\|inplace-force' '^--'
- 		case "$2" in
- 		copy)
- 			arg_link="cp -R"
-@@ -132,6 +132,14 @@ do
- 		soft)
- 			arg_link="cp -Rs"
- 			;;
-+		inplace)
-+			arg_link="inplace"
-+			rundir="$oldrun"
-+			;;
-+		inplace-force)
-+			arg_link="inplace-force"
-+			rundir="$oldrun"
-+			;;
- 		esac
- 		shift
- 		;;
-@@ -172,21 +180,37 @@ fi
- 
- echo ---- Re-run results directory: $rundir
- 
--# Copy old run directory tree over and adjust.
--mkdir -p "`dirname "$rundir"`"
--if ! $arg_link "$oldrun" "$rundir"
--then
--	echo "Cannot copy from $oldrun to $rundir."
--	usage
--fi
--rm -f "$rundir"/*/{console.log,console.log.diags,qemu_pid,qemu-pid,qemu-retval,Warnings,kvm-test-1-run.sh.out,kvm-test-1-run-qemu.sh.out,vmlinux} "$rundir"/log
--touch "$rundir/log"
--echo $scriptname $args | tee -a "$rundir/log"
--echo $oldrun > "$rundir/re-run"
--if ! test -d "$rundir/../../bin"
-+if test "$oldrun" != "$rundir"
- then
--	$arg_link "$oldrun/../../bin" "$rundir/../.."
-+	# Copy old run directory tree over and adjust.
-+	mkdir -p "`dirname "$rundir"`"
-+	if ! $arg_link "$oldrun" "$rundir"
-+	then
-+		echo "Cannot copy from $oldrun to $rundir."
-+		usage
-+	fi
-+	rm -f "$rundir"/*/{console.log,console.log.diags,qemu_pid,qemu-pid,qemu-retval,Warnings,kvm-test-1-run.sh.out,kvm-test-1-run-qemu.sh.out,vmlinux} "$rundir"/log
-+	touch "$rundir/log"
-+	echo $scriptname $args | tee -a "$rundir/log"
-+	echo $oldrun > "$rundir/re-run"
-+	if ! test -d "$rundir/../../bin"
-+	then
-+		$arg_link "$oldrun/../../bin" "$rundir/../.."
-+	fi
-+else
-+	# Check for a run having already happened.
-+	find "$rundir" -name console.log -print > $T/oldrun-console.log
-+	if test -s $T/oldrun-console.log
-+	then
-+		echo Run already took place in $rundir
-+		if test "$arg_link" = inplace
-+		then
-+			usage
-+		fi
-+	fi
- fi
-+
-+# Find runs to be done based on their qemu-cmd files.
- for i in $rundir/*/qemu-cmd
- do
- 	cp "$i" $T
--- 
-2.40.1
+	https://lore.kernel.org/all/aQU7l-qMKJTx4znJ@arm.com/
 
+The patches are as follows:
+
+1.	Permit Tiny SRCU srcu_read_unlock() with interrupts disabled.
+
+2.	Create an srcu_expedite_current() function.
+
+3.	Test srcu_expedite_current().
+
+4.	Create a DEFINE_SRCU_FAST().
+
+5.	Make grace-period determination use ssp->srcu_reader_flavor.
+
+6.	Exercise DEFINE_STATIC_SRCU_FAST() and init_srcu_struct_fast().
+
+7.	Require special srcu_struct define/init for SRCU-fast readers.
+
+8.	Make SRCU-fast readers enforce use of SRCU-fast definition/init.
+
+9.	Update for SRCU-fast definitions and initialization.
+
+10.	Guard __DECLARE_TRACE() use of __DO_TRACE_CALL() with SRCU-fast.
+
+11.	Mark diagnostic functions as notrace.
+
+12.	Permit kvm-again.sh to re-use the build directory.
+
+13.	Add SRCU_READ_FLAVOR_FAST_UPDOWN CPP macro.
+
+14.	Permit negative kvm.sh --kconfig numberic arguments.
+
+15.	Create an SRCU-fast-updown API.
+
+16.	Test SRCU-fast separately from SRCU-fast-updown.
+
+17.	Optimize SRCU-fast-updown for arm64.
+
+18.	Make srcu{,d}_torture_init() announce the SRCU type.
+
+19.	Remove redundant rcutorture_one_extend() from
+	rcu_torture_one_read().
+
+Many of these patches were previously associated with another series
+that re-implemented RCU tasks trace in terms of SRCU-fast.  This work
+is being deferred pending resolution of the ARM LSE situation on the one
+hand or full debugging of the all-too-clever workaround optimization on
+the other.  ;-)
+
+https://lore.kernel.org/all/7fa58961-2dce-4e08-8174-1d1cc592210f@paulmck-laptop/
+
+						Thanx, Paul
+
+------------------------------------------------------------------------
+
+ b/Documentation/RCU/Design/Requirements/Requirements.rst |   33 +--
+ b/Documentation/RCU/checklist.rst                        |   12 -
+ b/Documentation/RCU/whatisRCU.rst                        |    3 
+ b/include/linux/notifier.h                               |    2 
+ b/include/linux/srcu.h                                   |   16 +
+ b/include/linux/srcutiny.h                               |    1 
+ b/include/linux/srcutree.h                               |    8 
+ b/include/linux/tracepoint.h                             |   45 ++--
+ b/include/trace/perf.h                                   |    4 
+ b/include/trace/trace_events.h                           |    4 
+ b/kernel/rcu/rcutorture.c                                |   12 +
+ b/kernel/rcu/srcutiny.c                                  |   13 -
+ b/kernel/rcu/srcutree.c                                  |   58 +++++
+ b/kernel/rcu/tree.c                                      |    2 
+ b/kernel/rcu/update.c                                    |    8 
+ b/kernel/tracepoint.c                                    |   21 +-
+ b/tools/testing/selftests/rcutorture/bin/kvm-again.sh    |   56 +++--
+ b/tools/testing/selftests/rcutorture/bin/kvm.sh          |    2 
+ include/linux/srcu.h                                     |  133 ++++++++++--
+ include/linux/srcutiny.h                                 |   30 ++
+ include/linux/srcutree.h                                 |  157 +++++++++++----
+ kernel/rcu/rcutorture.c                                  |   93 ++++++--
+ kernel/rcu/srcutree.c                                    |   78 ++++++-
+ 23 files changed, 624 insertions(+), 167 deletions(-)
 
