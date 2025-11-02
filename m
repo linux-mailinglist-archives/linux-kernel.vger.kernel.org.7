@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-882366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5466FC2A4B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:21:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85009C2A479
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:19:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE2063AFFFE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:21:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A405F3AB6F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E8812C21D0;
-	Mon,  3 Nov 2025 07:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D87029D270;
+	Mon,  3 Nov 2025 07:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XCWh5bCo"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gBa2rhcF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCAB29E113;
-	Mon,  3 Nov 2025 07:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933BA298CC7;
+	Mon,  3 Nov 2025 07:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762154353; cv=none; b=q/Ug7UKUK+bsHMr+MyaFKGSPgvakJ5UrZ2QPPmoGih0Kaep+P2dJ4S2re/cEjaH8SK/BU3dsHABi1BHLpYGPgia2rRCMoC+81hb04maKRukBBdklidWaI9lJrJkSLHOgdT8UlWk/ireMOoUfSu9YMcVSMMA+Xrbp4Qtp/dMDsBs=
+	t=1762154352; cv=none; b=j6Rgryl1+JifpIPqRwxeu/e5D1STbCa1u76mS4/LxeW0IyVrbWYNpEiZFk39JPOOrpaD+XZZBGY36jpAQA8xc3txp3mkc/ywlpJWnY6Nb7zTdonUN9o8IWDqeqZQyKqDclElJyTRKSjGSOk1VvRxYiXwFI9wGhQFsAN0VKl+khI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762154353; c=relaxed/simple;
-	bh=rAn+D1aKec9450avC0ni1vP7cPV1yyUFx1owntShnrM=;
+	s=arc-20240116; t=1762154352; c=relaxed/simple;
+	bh=d+Yn3i1lzgRjb0Q5CeMOtXQwj+BmYuzfNnrAziwjsOA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NNn+mBNOwu/ejc2nQ+mgqzb88Xnl+J7l3xo2bHhfjSv7znNowJgHngiZYiuyHaModkbSBoopIYT9bXB+V3+Z9g3LPK1rsPWBfc7I/GxLXTs1icK/Q335nKj2BR4mj2Mcl5Ce0r7CIhKQBt8G6HQHcOIsqMuW3G8qD3xs3ENS5Oo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XCWh5bCo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35C6BC19423;
-	Mon,  3 Nov 2025 07:19:13 +0000 (UTC)
+	 MIME-Version; b=YeFu8O+4AXbBNkShijA4zXlyeyVV/oPuUFKlp3lZpt4bbKvEmbWRQZzk4pphp1drHNH7oIC/zTcmMBpKoc3MToUwXJrk4dkZmBtN3f8a9dwHmOVkAl6y/Uney9gCvPzK/iLKIrpFJsDUb4vvQaRN2CMzfyUCZKEx64zOL7cKcFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gBa2rhcF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36172C4CEFD;
+	Mon,  3 Nov 2025 07:19:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762154353;
-	bh=rAn+D1aKec9450avC0ni1vP7cPV1yyUFx1owntShnrM=;
+	s=k20201202; t=1762154352;
+	bh=d+Yn3i1lzgRjb0Q5CeMOtXQwj+BmYuzfNnrAziwjsOA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XCWh5bCooV/BYDOiUgheIY7JAnyKGdfFKWJCw+z5Jz2LxF41Duczb2nhMfaHBjFX5
-	 R33EGyxiiY6RRSYF02QTwnAvXuJF606g3wxJR05l5yO3zjiZVzTNqm/ATCEzuCFXz2
-	 YF2d7vjgAAaHbWIXtL3j0wilbmwtG0RM0mAgOpMUAPxdgzn4fJqfIfZSbV4kNq+AnU
-	 jJYfLoGNzQGPPnisai7w/rIe8uPbrfgTNFV+hrPEoYwaO+4cX5uM2oNGVoYeTpJBCg
-	 yQSnrhTCXeKV3T42sslsIyRIQTc3Q7YFvTRCCiqx3Abe12LyjRCkXd/Ufrb6PrGlgP
-	 0gLDHv0HCzaUg==
+	b=gBa2rhcFvKwFNpcXBJrF+Z0Q2utbsvC+ckcki/Fk/XaUl816LJjpLORp38k11FxS4
+	 6cIX8pVEDaEKtrdmEjdRqnipQKoEOkmm6WSsWGHpMJDZyzSqIMZAZif2R3dchUtsYk
+	 vVvyfmGCygm+wcqOq2Pgz5utpUHvatRme9iuSfrzl6GNHe6p1VulqWelhItiMscTZ8
+	 FZfuIitkKXA5uPexsT2eVJ32T6w7tTxSfk+0IW7aXXzZuPSQD2vt3g4z/Q1IJQFOmT
+	 o2hhInf6pvZc5UeSzICOavGUMVqtZhbT0b8Ij+EyHkG4hd8Eo/NuJlsN0E22E5fLW8
+	 f/PYNWZbGb5BA==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id F33F4CE12A7; Sun,  2 Nov 2025 14:49:49 -0800 (PST)
+	id 019E0CE13CA; Sun,  2 Nov 2025 14:49:50 -0800 (PST)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
 	rostedt@goodmis.org,
 	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH 6/8] refscale: Add non-atomic per-CPU increment readers
-Date: Sun,  2 Nov 2025 14:49:46 -0800
-Message-Id: <20251102224948.3906224-6-paulmck@kernel.org>
+Subject: [PATCH 7/8] refscale: Do not diable interrupts for tests involving local_bh_enable()
+Date: Sun,  2 Nov 2025 14:49:47 -0800
+Message-Id: <20251102224948.3906224-7-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <19fae851-0c49-43d2-9bbf-913424641ff4@paulmck-laptop>
 References: <19fae851-0c49-43d2-9bbf-913424641ff4@paulmck-laptop>
@@ -62,191 +62,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This commit adds refscale readers based on READ_ONCE() and WRITE_ONCE()
-that are unprotected (can lose counts, "refscale.scale_type=incpercpu"),
-preempt-disabled ("refscale.scale_type=incpercpupreempt"),
-bh-disabled ("refscale.scale_type=incpercpubh"), and irq-disabled
-("refscale.scale_type=incpercpuirqsave").  On my x86 laptop, these are
-about 4.3ns, 3.8ns, and 7.3ns per pair, respectively.
+Some kernel configurations prohibit invoking local_bh_enable() while
+interrupts are disabled.  However, refscale disables interrupts to reduce
+OS noise during the tests, which results in splats.  This commit therefore
+adds an ->enable_irqs flag to the ref_scale_ops structure, and refrains
+from disabling interrupts when that flag is set.  This flag is set for
+the "bh" and "incpercpubh" scale_type module-parameter values.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/refscale.c | 155 +++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 153 insertions(+), 2 deletions(-)
+ kernel/rcu/refscale.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
 diff --git a/kernel/rcu/refscale.c b/kernel/rcu/refscale.c
-index 479d86cad652..2b247355de40 100644
+index 2b247355de40..7429ec9f0092 100644
 --- a/kernel/rcu/refscale.c
 +++ b/kernel/rcu/refscale.c
-@@ -389,6 +389,155 @@ static const struct ref_scale_ops percpuinc_ops = {
- 	.name		= "percpuinc"
+@@ -136,6 +136,7 @@ struct ref_scale_ops {
+ 	void (*cleanup)(void);
+ 	void (*readsection)(const int nloops);
+ 	void (*delaysection)(const int nloops, const int udl, const int ndl);
++	bool enable_irqs;
+ 	const char *name;
  };
  
-+// Note that this can lose counts in preemptible kernels.
-+static void ref_incpercpu_section(const int nloops)
-+{
-+	int i;
-+
-+	for (i = nloops; i >= 0; i--) {
-+		unsigned long *tap = this_cpu_ptr(&test_acqrel);
-+
-+		WRITE_ONCE(*tap, READ_ONCE(*tap) + 1);
-+		WRITE_ONCE(*tap, READ_ONCE(*tap) - 1);
-+	}
-+}
-+
-+static void ref_incpercpu_delay_section(const int nloops, const int udl, const int ndl)
-+{
-+	int i;
-+
-+	for (i = nloops; i >= 0; i--) {
-+		unsigned long *tap = this_cpu_ptr(&test_acqrel);
-+
-+		WRITE_ONCE(*tap, READ_ONCE(*tap) + 1);
-+		un_delay(udl, ndl);
-+		WRITE_ONCE(*tap, READ_ONCE(*tap) - 1);
-+	}
-+}
-+
-+static const struct ref_scale_ops incpercpu_ops = {
-+	.init		= rcu_sync_scale_init,
-+	.readsection	= ref_incpercpu_section,
-+	.delaysection	= ref_incpercpu_delay_section,
-+	.name		= "incpercpu"
-+};
-+
-+static void ref_incpercpupreempt_section(const int nloops)
-+{
-+	int i;
-+
-+	for (i = nloops; i >= 0; i--) {
-+		unsigned long *tap;
-+
-+		preempt_disable();
-+		tap = this_cpu_ptr(&test_acqrel);
-+		WRITE_ONCE(*tap, READ_ONCE(*tap) + 1);
-+		WRITE_ONCE(*tap, READ_ONCE(*tap) - 1);
-+		preempt_enable();
-+	}
-+}
-+
-+static void ref_incpercpupreempt_delay_section(const int nloops, const int udl, const int ndl)
-+{
-+	int i;
-+
-+	for (i = nloops; i >= 0; i--) {
-+		unsigned long *tap;
-+
-+		preempt_disable();
-+		tap = this_cpu_ptr(&test_acqrel);
-+		WRITE_ONCE(*tap, READ_ONCE(*tap) + 1);
-+		un_delay(udl, ndl);
-+		WRITE_ONCE(*tap, READ_ONCE(*tap) - 1);
-+		preempt_enable();
-+	}
-+}
-+
-+static const struct ref_scale_ops incpercpupreempt_ops = {
-+	.init		= rcu_sync_scale_init,
-+	.readsection	= ref_incpercpupreempt_section,
-+	.delaysection	= ref_incpercpupreempt_delay_section,
-+	.name		= "incpercpupreempt"
-+};
-+
-+static void ref_incpercpubh_section(const int nloops)
-+{
-+	int i;
-+
-+	for (i = nloops; i >= 0; i--) {
-+		unsigned long *tap;
-+
-+		local_bh_disable();
-+		tap = this_cpu_ptr(&test_acqrel);
-+		WRITE_ONCE(*tap, READ_ONCE(*tap) + 1);
-+		WRITE_ONCE(*tap, READ_ONCE(*tap) - 1);
-+		local_bh_enable();
-+	}
-+}
-+
-+static void ref_incpercpubh_delay_section(const int nloops, const int udl, const int ndl)
-+{
-+	int i;
-+
-+	for (i = nloops; i >= 0; i--) {
-+		unsigned long *tap;
-+
-+		local_bh_disable();
-+		tap = this_cpu_ptr(&test_acqrel);
-+		WRITE_ONCE(*tap, READ_ONCE(*tap) + 1);
-+		un_delay(udl, ndl);
-+		WRITE_ONCE(*tap, READ_ONCE(*tap) - 1);
-+		local_bh_enable();
-+	}
-+}
-+
-+static const struct ref_scale_ops incpercpubh_ops = {
-+	.init		= rcu_sync_scale_init,
-+	.readsection	= ref_incpercpubh_section,
-+	.delaysection	= ref_incpercpubh_delay_section,
-+	.name		= "incpercpubh"
-+};
-+
-+static void ref_incpercpuirqsave_section(const int nloops)
-+{
-+	int i;
-+	unsigned long flags;
-+
-+	for (i = nloops; i >= 0; i--) {
-+		unsigned long *tap;
-+
-+		local_irq_save(flags);
-+		tap = this_cpu_ptr(&test_acqrel);
-+		WRITE_ONCE(*tap, READ_ONCE(*tap) + 1);
-+		WRITE_ONCE(*tap, READ_ONCE(*tap) - 1);
-+		local_irq_restore(flags);
-+	}
-+}
-+
-+static void ref_incpercpuirqsave_delay_section(const int nloops, const int udl, const int ndl)
-+{
-+	int i;
-+	unsigned long flags;
-+
-+	for (i = nloops; i >= 0; i--) {
-+		unsigned long *tap;
-+
-+		local_irq_save(flags);
-+		tap = this_cpu_ptr(&test_acqrel);
-+		WRITE_ONCE(*tap, READ_ONCE(*tap) + 1);
-+		un_delay(udl, ndl);
-+		WRITE_ONCE(*tap, READ_ONCE(*tap) - 1);
-+		local_irq_restore(flags);
-+	}
-+}
-+
-+static const struct ref_scale_ops incpercpuirqsave_ops = {
-+	.init		= rcu_sync_scale_init,
-+	.readsection	= ref_incpercpuirqsave_section,
-+	.delaysection	= ref_incpercpuirqsave_delay_section,
-+	.name		= "incpercpuirqsave"
-+};
-+
- // Definitions for rwlock
- static rwlock_t test_rwlock;
+@@ -495,6 +496,7 @@ static const struct ref_scale_ops incpercpubh_ops = {
+ 	.init		= rcu_sync_scale_init,
+ 	.readsection	= ref_incpercpubh_section,
+ 	.delaysection	= ref_incpercpubh_delay_section,
++	.enable_irqs	= true,
+ 	.name		= "incpercpubh"
+ };
  
-@@ -1325,8 +1474,10 @@ ref_scale_init(void)
- 	int firsterr = 0;
- 	static const struct ref_scale_ops *scale_ops[] = {
- 		&rcu_ops, &srcu_ops, &srcu_fast_ops, RCU_TRACE_OPS RCU_TASKS_OPS
--		&refcnt_ops, &rwlock_ops, &rwsem_ops, &lock_ops, &lock_irq_ops,
--		&percpuinc_ops, &acqrel_ops, &sched_clock_ops, &clock_ops, &jiffies_ops,
-+		&refcnt_ops, &percpuinc_ops, &incpercpu_ops, &incpercpupreempt_ops,
-+		&incpercpubh_ops, &incpercpuirqsave_ops,
-+		&rwlock_ops, &rwsem_ops, &lock_ops, &lock_irq_ops, &acqrel_ops,
-+		&sched_clock_ops, &clock_ops, &jiffies_ops,
- 		&preempt_ops, &bh_ops, &irq_ops, &irqsave_ops,
- 		&typesafe_ref_ops, &typesafe_lock_ops, &typesafe_seqlock_ops,
- 	};
+@@ -872,6 +874,7 @@ static void ref_bh_delay_section(const int nloops, const int udl, const int ndl)
+ static const struct ref_scale_ops bh_ops = {
+ 	.readsection	= ref_bh_section,
+ 	.delaysection	= ref_bh_delay_section,
++	.enable_irqs	= true,
+ 	.name		= "bh"
+ };
+ 
+@@ -1234,15 +1237,18 @@ ref_scale_reader(void *arg)
+ 	if (!atomic_dec_return(&n_warmedup))
+ 		while (atomic_read_acquire(&n_warmedup))
+ 			rcu_scale_one_reader();
+-	// Also keep interrupts disabled.  This also has the effect
+-	// of preventing entries into slow path for rcu_read_unlock().
+-	local_irq_save(flags);
++	// Also keep interrupts disabled when it is safe to do so, which
++	// it is not for local_bh_enable().  This also has the effect of
++	// preventing entries into slow path for rcu_read_unlock().
++	if (!cur_ops->enable_irqs)
++		local_irq_save(flags);
+ 	start = ktime_get_mono_fast_ns();
+ 
+ 	rcu_scale_one_reader();
+ 
+ 	duration = ktime_get_mono_fast_ns() - start;
+-	local_irq_restore(flags);
++	if (!cur_ops->enable_irqs)
++		local_irq_restore(flags);
+ 
+ 	rt->last_duration_ns = WARN_ON_ONCE(duration < 0) ? 0 : duration;
+ 	// To reduce runtime-skew noise, do maintain-load invocations until
 -- 
 2.40.1
 
