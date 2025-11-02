@@ -1,100 +1,103 @@
-Return-Path: <linux-kernel+bounces-881998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D95B9C296BF
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 21:52:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AC11C296C8
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 21:54:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9B1384E64E2
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 20:52:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8E9C3A8E96
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 20:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A56238C2A;
-	Sun,  2 Nov 2025 20:52:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97909233140;
+	Sun,  2 Nov 2025 20:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="POaK8z3Z"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FAL7bBL+"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31742220F5C;
-	Sun,  2 Nov 2025 20:52:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D0119F12D
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 20:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762116734; cv=none; b=c52Bl7cixv4yhbqwXZK/GMbnlBOPz6oNTjw4b1nDbDblrLpe3Eg1uFLvNRxbRSlzPjyTO/log6B/dyUeaKGWmGIvH+mScbkDzmMd9f/w9XX+801LPLcGLZ+r/Z0OgevZU2zGI+vZuCEJn14N3A1ZjsujEOgUWG8GJFAIPJv1ih0=
+	t=1762116891; cv=none; b=pOy9h3RtKuJYbTLFMPag4DeSNDknDDtXgKk3n6GssX7tufeBcQl1jiVO0aOuyUd3EeoWf8zKXh/Q6Vx043ZJ6BJeJQLg5URU74DjrETAkuuZ0CouMpOWXdcIq35XE1Waf4f0E7OVfy5FCaAboG3QTwnAMHeBD14QGJ7mSpUbgUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762116734; c=relaxed/simple;
-	bh=AYbaMUup+hhbPO9ihL2r95ijCIkJnRn2AKRIPV5YsRY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=XXGjVXy8rravHHmI1vXyak4ZLIQTRCKi1ySg13kfLVRoGHwtTyppTKP1xh6KS3rjByHVWohUVStjyuRyIkn2EI5aaJg9/X6fb41fCN/zAW3aeRZepyIpEoJN4VJDfcrLZgezIQ9tRaQc4u9T2GuwCJ5Odi/zl+YRZOTHpumpC00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=POaK8z3Z; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1762116722;
-	bh=cvpykRTBeM12OrQtwjQzkcdyCZR5QmB8mJlYSQcMamM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=POaK8z3ZJdF1sYxjPtrlatT3m6amFXAqETS2+lURYweQUJ7s+lDLSaboo6M1gtGJY
-	 2QRdYGWQ1YWcJRxtDc8bXUusZviS/hGuT41jmmtXSFyK4h59/FnC/TWEvwSleN2m/x
-	 ENqeq3jj4aBHxv+6mRDugnIZWeOiiL4I/4wq/HeUPh93SSLO7eI0ptNSTncGYh+eAS
-	 Ps817iGqz3vsfTl46v6bmpX3xjOpxO+5RXIEjyAqGM0axq3udd3U41fy0PvKdLRQAI
-	 XCw8iO1SATfOkLu1Y7wNQTn9Z9v39wWI3Wcjd/BBAxvLMtF64alOsufZ2O7PGZoaxD
-	 Nu3XNlWxqVjzA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d06N11bnmz4wC8;
-	Mon, 03 Nov 2025 07:52:00 +1100 (AEDT)
-Date: Mon, 3 Nov 2025 07:52:00 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Shuah Khan <skhan@linuxfoundation.org>, Willy Tarreau <w@1wt.eu>, Thomas
- =?UTF-8?B?V2Vpw59zY2h1aA==?= <thomas@t-8ch.de>, "Paul E. McKenney"
- <paulmck@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the nolibc tree
-Message-ID: <20251103075200.7961a782@canb.auug.org.au>
+	s=arc-20240116; t=1762116891; c=relaxed/simple;
+	bh=znhB0HYu7BCHSK5WYxf36KgmWLvUZu3y3u3yHP4Ud0w=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=rTNamtBKsS7Dv6IeUAXhd556imCB7Iylb3juMc51hxZ6S4txlnD31UrRPI11nYIcFTWmi9rOjyM5kcFt7nYI9px3Auy1LFDTwmS9YnYKRen/yg1sNbfy9zl2n1D7K9lpXy+RaDAS9veeP9zkKAw1qzLxXHWhEc175HPGC5O4G3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FAL7bBL+; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762116875;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vSoLTMn7D7wRI+KcjGWMGJNZbmIDanYc/C6CsZGY6C4=;
+	b=FAL7bBL+C4exDYR5oCnLVtwAWj+9G1H9ZgsdMgNY1fT9EkYaCt1Oyygsfg30HqDWIOTChr
+	Drhu3O+o/jfQzjrcQwvyWMuxQ1W4mQNaTYonOereiy54CtofgwkshbhVvMobBUBKFZ4/6d
+	EroT4lTO5LUCSggGDgSv6KlmZ+MNLtg=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+  linux-kernel@vger.kernel.org,  Alexei Starovoitov <ast@kernel.org>,
+  Suren Baghdasaryan <surenb@google.com>,  Shakeel Butt
+ <shakeel.butt@linux.dev>,  Johannes Weiner <hannes@cmpxchg.org>,  Andrii
+ Nakryiko <andrii@kernel.org>,  JP Kobryn <inwardvessel@gmail.com>,
+  linux-mm@kvack.org,  cgroups@vger.kernel.org,  bpf@vger.kernel.org,
+  Martin KaFai Lau <martin.lau@kernel.org>,  Song Liu <song@kernel.org>,
+  Kumar Kartikeya Dwivedi <memxor@gmail.com>,  Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH v2 00/23] mm: BPF OOM
+In-Reply-To: <aQSB-BgjKmSkrSO7@tiehlicka> (Michal Hocko's message of "Fri, 31
+	Oct 2025 10:31:36 +0100")
+References: <20251027231727.472628-1-roman.gushchin@linux.dev>
+	<aQSB-BgjKmSkrSO7@tiehlicka>
+Date: Sun, 02 Nov 2025 12:53:53 -0800
+Message-ID: <87ldkonoke.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/MaZX=jXQmFdW=vyL0f848Mo";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain
+X-Migadu-Flow: FLOW_OUT
 
---Sig_/MaZX=jXQmFdW=vyL0f848Mo
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Michal Hocko <mhocko@suse.com> writes:
 
-Hi all,
+> On Mon 27-10-25 16:17:03, Roman Gushchin wrote:
+>> The second part is related to the fundamental question on when to
+>> declare the OOM event. It's a trade-off between the risk of
+>> unnecessary OOM kills and associated work losses and the risk of
+>> infinite trashing and effective soft lockups.  In the last few years
+>> several PSI-based userspace solutions were developed (e.g. OOMd [3] or
+>> systemd-OOMd [4]). The common idea was to use userspace daemons to
+>> implement custom OOM logic as well as rely on PSI monitoring to avoid
+>> stalls. In this scenario the userspace daemon was supposed to handle
+>> the majority of OOMs, while the in-kernel OOM killer worked as the
+>> last resort measure to guarantee that the system would never deadlock
+>> on the memory. But this approach creates additional infrastructure
+>> churn: userspace OOM daemon is a separate entity which needs to be
+>> deployed, updated, monitored. A completely different pipeline needs to
+>> be built to monitor both types of OOM events and collect associated
+>> logs. A userspace daemon is more restricted in terms on what data is
+>> available to it. Implementing a daemon which can work reliably under a
+>> heavy memory pressure in the system is also tricky.
+>
+> I do not see this part addressed in the series. Am I just missing
+> something or this will follow up once the initial (plugging to the
+> existing OOM handling) is merged?
 
-Commit
+Did you receive patches 11-23?
+git send-email failed on patch 10, so I had to send the second part separately.
+It seems like the second part did at least to some recipients, as I got
+feedback to some patches from that part.
 
-  926b414bee07 ("tools/nolibc: clean up outdated comments in generic arch.h=
-")
+In any case, you can find the whole series here:
+https://github.com/rgushchin/linux/tree/bpfoom.2
 
-is missing a Signed-off-by from its author.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/MaZX=jXQmFdW=vyL0f848Mo
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkHxHAACgkQAVBC80lX
-0GwaKAf9HmbZRbmqONwBzPmIo/mSry7RjQlaL0smSAPdjmcxPmKYBw+Y6uhqUzd9
-vue2XH7CabvXsteB5pYE1Ln1nWOUUGZQQE1iqF7j3RzAP7BnCnd5WoP/DDrrFF+U
-NGRNDbktKP8yGzvflp/v6oecGc7hLTcBLi+Oth/7hoffTRKQt1PUv4PZkIKMVg8d
-9ArpdApjRSvBkiqTsPoWIRsrQprTwtwMdnM0wx0y7zshdLJoX2rtXF1DPnRE4DG+
-G+PKG82gAlml+JuYdCnJAOgim3WXRE95sE/WXs6aLu2r0F+X4myhS3OGQjFVlnqw
-+DMPi4+tWyzYlSfu4yHgDQnxMAQJ3Q==
-=u+07
------END PGP SIGNATURE-----
-
---Sig_/MaZX=jXQmFdW=vyL0f848Mo--
+And thank you for reviewing the series!
 
