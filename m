@@ -1,122 +1,99 @@
-Return-Path: <linux-kernel+bounces-881889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 916D5C29271
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 17:39:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2393CC29244
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 17:34:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0361C188D0A0
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 16:40:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01A8E3ACA5C
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 16:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6AC82673BA;
-	Sun,  2 Nov 2025 16:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A19253951;
+	Sun,  2 Nov 2025 16:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UXJWD8gM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m7eRD6TV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 652EA23B615
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 16:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD763597B;
+	Sun,  2 Nov 2025 16:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762101577; cv=none; b=NeX8wEI13xvmu2hoG68zXllK23R2xD9QCpHZ0ijdkOQhkn9xPMH6WW/ZV2ZcEz6Okezm1udqQ5bN1KY30eM/wOiFmfOLtRby0jF50ae4cD9bzfnJmNkDb+Ig6fSkUgBu/HReovR1lDG2Mqg3jVm1HIXRsrMyK5ZYnMb6SCyjiuE=
+	t=1762101259; cv=none; b=JZ8YCccQHCYJwgTSwrr85xWPy4bBW2Jmmjqzmfq32AthQG1S3vV22VsaB0frHbgjXO1VkAg3SxDiLMVmcrPuTySAKOR5rlBwPzDPQZ1DZusdEMSD3ZYtz9o1y8Ebw15G0pGqXFVUWDX+rESZF960fg78N0Hvhp7x3Tw7DdTdJaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762101577; c=relaxed/simple;
-	bh=jpyxDNfZdCNZyktO+9Dc38Cd+dAAumraCzbRRsom1Hs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=OO0mFWqkombGngKliwUrfe7yezgu/z1FSrVfUZp1DWnzyGvq0cg2lGjDIfVqZgayRrvJUk3U6DXpxxTH3RrhkToNsmofZUrsihVoS+I2BqXWdY4L313YpW4i43ijHwd7tD5mnG+y/8t0pW/MpUEHh1DxghwBstF9GzO80xkGrAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UXJWD8gM; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762101575; x=1793637575;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=jpyxDNfZdCNZyktO+9Dc38Cd+dAAumraCzbRRsom1Hs=;
-  b=UXJWD8gMRJ9yia/nM3moRa3mwJ1kV3CSkFnsgKX4LIz72csjCOVBlIcV
-   2rD+ROL8dQ/DK+ECtT9NyKnZb9p+Ke5MMxp3W3idPWW6JzTjcskz5YXMf
-   gdrkDRERCh5SCSZv5meUR2jgHTiwybCdDIBEK7dBLYCRC4titnHUxUTgI
-   5fIfYyfgbC3ZSVCFesRwLv2ewwQHGVJJkAX86QEvzgRmUw9TdiPKc2N18
-   UKKSShqcTg8oeF4/qkTvwtlvZH109YHGeNZ7h+v/d9JnnfSZm5izsAMQF
-   SrUzfKUPsfSDx8dZ1rv/z0H6fUIBVJ6nGDZGvIn4WdTEjdJF0uBtgYxxA
-   A==;
-X-CSE-ConnectionGUID: oOWa+4x8SJinMsNl9Oe7CQ==
-X-CSE-MsgGUID: dtHAjZCSTpeDEKiCNdXmrQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="75542720"
-X-IronPort-AV: E=Sophos;i="6.19,274,1754982000"; 
-   d="scan'208";a="75542720"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2025 08:39:35 -0800
-X-CSE-ConnectionGUID: lWqWAaUiS9movxCgI5iTcg==
-X-CSE-MsgGUID: UyVkSAroQkCREhUmWszrHQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,274,1754982000"; 
-   d="scan'208";a="210213881"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa002.fm.intel.com with ESMTP; 02 Nov 2025 08:39:33 -0800
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vFb2M-000POA-0o;
-	Sun, 02 Nov 2025 16:35:51 +0000
-Date: Mon, 3 Nov 2025 00:27:09 +0800
-From: kernel test robot <lkp@intel.com>
-To: Marco Crivellari <marco.crivellari@suse.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	"Maciej W. Rozycki" <macro@orcam.me.uk>
-Subject: <instantiation>:7:11: error: expected an immediate
-Message-ID: <202511030036.kg3v3YEd-lkp@intel.com>
+	s=arc-20240116; t=1762101259; c=relaxed/simple;
+	bh=BMHbVQks4miUEqiNB8Bj8JUPKeAlJSJSR1yVrl8aLco=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JW1lBKWeQqU81v09kAHDiQp1dUwVhUwvaRqxzGQuXJj5izWv5bMMwx9zKBmG4ru7lZ0sZRbhd38Oy9Fv6P2jetdF+xnC2NxdEfZQOFB618LIY2UFsAtz9J9P4mtEejiAkUyTe3r+fMe1ELJ0FT8t4ov/kJX+8HGlNGAkZmks8zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m7eRD6TV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABB61C4CEF7;
+	Sun,  2 Nov 2025 16:34:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762101259;
+	bh=BMHbVQks4miUEqiNB8Bj8JUPKeAlJSJSR1yVrl8aLco=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m7eRD6TVlAfyAK/SnxypxQv2CmKl306jhXgTbNo+yEzxGzgBywD4o3XO+Kra3kmUC
+	 BHeM9hHDBMsxnas3zHbLQV+jXGd43myStuXXahsqlnh1MurcU2NGwQZgqfQ1ROV/GQ
+	 R1Pn9WDjXqwgLImO8l2p2csPYY5IvVZokYSEJGvJl6QDnPEPH2lDomh0rfaaZUlZeM
+	 GXKm1g0JlMbAHcafI/yarK+QpXQbMIsDi8O/iVF9ZvJcEBhNzY649s591I/T7XpW7k
+	 vJMX2iVXWlqbfZvVvbDLnKCpTK3ZsX6HPpK8vBbVLb8hhzsxrvKHJS6Gj0qvKfdMhp
+	 vvcH1GW9R8jLA==
+Date: Sun, 2 Nov 2025 17:34:16 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sjoerd Simons <sjoerd@collabora.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Ryder Lee <ryder.lee@mediatek.com>, 
+	Jianjun Wang <jianjun.wang@mediatek.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, Chunfeng Yun <chunfeng.yun@mediatek.com>, 
+	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Lorenzo Bianconi <lorenzo@kernel.org>, Felix Fietkau <nbd@nbd.name>, kernel@collabora.com, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org, 
+	linux-phy@lists.infradead.org, netdev@vger.kernel.org, Daniel Golle <daniel@makrotopia.org>, 
+	Bryan Hinton <bryan@bryanhinton.com>
+Subject: Re: [PATCH v2 08/15] dt-bindings: net: mediatek,net: Correct
+ bindings for MT7981
+Message-ID: <20251102-honest-jade-hedgehog-b85f0d@kuoka>
+References: <20251101-openwrt-one-network-v2-0-2a162b9eea91@collabora.com>
+ <20251101-openwrt-one-network-v2-8-2a162b9eea91@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <20251101-openwrt-one-network-v2-8-2a162b9eea91@collabora.com>
 
-Hi Marco,
+On Sat, Nov 01, 2025 at 02:32:53PM +0100, Sjoerd Simons wrote:
+> Different SoCs have different numbers of Wireless Ethernet
+> Dispatch (WED) units:
+> - MT7981: Has 1 WED unit
+> - MT7986: Has 2 WED units
+> - MT7988: Has 2 WED units
+> 
+> Update the binding to reflect these hardware differences. The MT7981
+> also uses infracfg for PHY switching, so allow that property.
+> 
+> Signed-off-by: Sjoerd Simons <sjoerd@collabora.com>
+> ---
+> V1 -> V2: Only overwrite constraints that are different from the default
 
-FYI, the error/warning still remains.
+I don't get it.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   691d401c7e0e5ea34ac6f8151bc0696db1b2500a
-commit: 56651128e2fbad80f632f388d6bf1f39c928267a MIPS: Fix idle VS timer enqueue
-date:   6 months ago
-config: mips-gpr_defconfig (https://download.01.org/0day-ci/archive/20251103/202511030036.kg3v3YEd-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251103/202511030036.kg3v3YEd-lkp@intel.com/reproduce)
+mediatek,mt7622-eth now can have 1 or 2 items, but previously it had
+strict 2. This needs explanation in commit msg.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511030036.kg3v3YEd-lkp@intel.com/
+Best regards,
+Krzysztof
 
-All errors (new ones prefixed by >>):
-
->> <instantiation>:7:11: error: expected an immediate
-    ori $26, r4k_wait_idle_size - 2
-             ^
-   <instantiation>:10:13: error: expected an immediate
-    addiu $26, r4k_wait_exit - r4k_wait_insn + 2
-               ^
-   <instantiation>:10:29: error: expected an immediate
-    addiu $26, r4k_wait_exit - r4k_wait_insn + 2
-                               ^
->> <instantiation>:7:11: error: expected an immediate
-    ori $26, r4k_wait_idle_size - 2
-             ^
-   <instantiation>:10:13: error: expected an immediate
-    addiu $26, r4k_wait_exit - r4k_wait_insn + 2
-               ^
-   <instantiation>:10:29: error: expected an immediate
-    addiu $26, r4k_wait_exit - r4k_wait_insn + 2
-                               ^
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
