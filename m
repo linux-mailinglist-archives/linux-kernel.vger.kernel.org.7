@@ -1,109 +1,189 @@
-Return-Path: <linux-kernel+bounces-881777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E36BBC28E75
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 12:48:04 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38223C28E9C
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 12:55:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AC6954E4D35
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 11:48:03 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B0E2A34702D
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 11:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D343127EFFA;
-	Sun,  2 Nov 2025 11:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 203F9298CDE;
+	Sun,  2 Nov 2025 11:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vONUFMFD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZehCutSp"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3043712D1F1;
-	Sun,  2 Nov 2025 11:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBF634D3A6
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 11:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762084077; cv=none; b=gtKeANrLCnGbMQGV7Xwye/7sOihKkM+jElGIXJP3YGV00JrMCzVz4XtoB7QFgCMEefL61SY+JSqD+vg808rf/4ICnrrLUDwsUkRj3z/FMvPZrfsDorAne75Pj1EiwcGzun7eq2S5LB9yZR+O5n3UlYyszmkD0w8L13TziEuvL0w=
+	t=1762084522; cv=none; b=PngJbTtg2/lGEeCUV0CdHBokIPaMvJEaSf5gu/68C62RI8dN+1smnP+GRMgpfK9MMGtp8MK61gOVvmVdYSGTZfcx0yXVCZV2kzRZuEUNLDxYNdjd3rLQVri5AuWY7yIbOqoWy8R1y3mxJOVvSX4NGYmM89PYDLlgeClM36ExyEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762084077; c=relaxed/simple;
-	bh=KO/jjXTKZVsrw6rCyoErvTVk/A4+o+Omg76KyraJmGc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Fl2y4z9x8TEufSZv39f4kd+M8RjtJF6/ENyUYJcjAM/kCZBObxEdminSGN07/vnVsA1OByvGgSjBQIMRvx8My8/CRJafpoc+oHV11tJaLg41VJenF60ykWEbRkRYtOmEdB7Dg6YE1fnNTJPPPSAERnhvvTqlOgM+gmVEkeW6JiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vONUFMFD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0A72C4CEF7;
-	Sun,  2 Nov 2025 11:47:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762084076;
-	bh=KO/jjXTKZVsrw6rCyoErvTVk/A4+o+Omg76KyraJmGc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=vONUFMFD94gmqI+BBnwZYmyqRc0SQOqvxiYa4hfaa3nFdqCZXkeNuWOI8JAYcLFAm
-	 SJ+5zNWokriMhORoIQLFjJpMw2DgLvoedr9g5LkmtCeGQbxel5NkeLsL43ETYXNXwe
-	 W4g5mQI6cNtXKtQq6GANilqX5fMH0szKCkjKLHKxz939xHdI6rktLayxQDI2M2Pa5Y
-	 i3L2KGtAlTkDSMTl+V8Ra0FQWi1aiFaaFuuU43VIffxfDp3rCaOD7x2nJj8tKFebzd
-	 zPHWWKW7fa4M8btqmNzkqIvf/3S4AzCQZlD3KgCxA/E+UpYDhRKDKdNsmCMl3mXhkp
-	 oXYpHIT/9piOg==
-Date: Sun, 2 Nov 2025 11:47:48 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Zhiyong Tao <zhiyong.tao@mediatek.com>, kernel@collabora.com,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] dt-bindings: iio: adc: Add compatible for MT8189 SoC
-Message-ID: <20251102114748.5b0b6da9@jic23-huawei>
-In-Reply-To: <20251029-mt8189-dt-bindings-auxadc-v1-1-cd0496527a70@collabora.com>
-References: <20251029-mt8189-dt-bindings-auxadc-v1-1-cd0496527a70@collabora.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762084522; c=relaxed/simple;
+	bh=OPEhgaehgOGN7z+b/FhHNDtFW83FLWFsNmhONap5Wlo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ac1HglRiUSnglpWAv7+W3MMIEDBZsyBfdDpNRy4wtZpVOoWtfPBpZK0V8koF86fWfmkQgpd4sJaeyaygahMdBsLWtfxTPU0DFYcecXYVvNTtubuLLJVTT2KpRJLwaOcS/N0P3XM9Vzc9rpxakf/mJqWEr0rXbKJ2RB6CAm+XhuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ZehCutSp; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A23PAC3010837;
+	Sun, 2 Nov 2025 11:54:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=iwbUwV0qr81phhc2S4PU4EBv5gS2
+	BQ5tncp35yI1I7c=; b=ZehCutSpdK6jcUcupgDQsD4xHRNOTVhV+AD/6muymKH8
+	A0mAaCn0sEpjxERG+iBHo9uikqZCulsaHByGb7sUtkewvGkqB2y+o9CHrnJ2l2hq
+	vmR3RcDKQKkAtBqi/nV42BUSO6z4oBCS1+9tvUcIqzX04DNczwbPixJmahsD9xnk
+	Mml4FNHGbcB/jC+4IPwMMPGu1ppKEWZeyFZbxMRLQg2C4S5ss4oHsMUwomNohClw
+	fqNiotBNZg+X+kfokDKTgaAq0cyEliqFoPEjCPknADHsK3orp4Yiw07L4rY1io3f
+	91i7Pxvkq92G5UiESQ2jpKM/wxLCZD5xVNw/D+9xnw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59xbka9j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 02 Nov 2025 11:54:13 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5A2BsDno026666;
+	Sun, 2 Nov 2025 11:54:13 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59xbka9f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 02 Nov 2025 11:54:13 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A2ABBum012849;
+	Sun, 2 Nov 2025 11:54:12 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a5y81h3rf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 02 Nov 2025 11:54:12 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A2Bs8RY57016828
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sun, 2 Nov 2025 11:54:08 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1E5C420043;
+	Sun,  2 Nov 2025 11:54:08 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D263F20040;
+	Sun,  2 Nov 2025 11:54:02 +0000 (GMT)
+Received: from li-ce33bfcc-25cf-11b2-a85c-dc105c39188e.ibm.com.com (unknown [9.124.213.75])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Sun,  2 Nov 2025 11:54:02 +0000 (GMT)
+From: Mukesh Kumar Chaurasiya <mkchauras@linux.ibm.com>
+To: maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, oleg@redhat.com, kees@kernel.org,
+        luto@amacapital.net, wad@chromium.org, mchauras@linux.ibm.com,
+        thuth@redhat.com, sshegde@linux.ibm.com, akpm@linux-foundation.org,
+        macro@orcam.me.uk, ldv@strace.io, deller@gmx.de, charlie@rivosinc.com,
+        bigeasy@linutronix.de, segher@kernel.crashing.org,
+        thomas.weissschuh@linutronix.de, menglong8.dong@gmail.com,
+        ankur.a.arora@oracle.com, peterz@infradead.org, namcao@linutronix.de,
+        tglx@linutronix.de, kan.liang@linux.intel.com, mingo@kernel.org,
+        atrajeev@linux.vnet.ibm.com, mark.barnett@arm.com,
+        coltonlewis@google.com, rppt@kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Cc: Mukesh Kumar Chaurasiya <mkchauras@linux.ibm.com>
+Subject: [PATCH 0/8] Generic IRQ entry/exit support for powerpc
+Date: Sun,  2 Nov 2025 17:23:50 +0530
+Message-ID: <20251102115358.1744304-1-mkchauras@linux.ibm.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAyMSBTYWx0ZWRfX9bB9TkummDLz
+ 0K3+jKC5eGYeGqrtNoSt9HHWXw3GdJKQQhdnEozFVsj8a1wu+EM4LxcnebHMujcBlVd8wKUrG7t
+ E5P6Bpd+2jP0QvdXCrzetdj/oHUknjqGafWpaKUGnbvEB7/J7rY/xepK2sK7x+WhRxHGCGc7+Cf
+ zs3T6wa8MZkLs5pyAuwpVGBHZKmvyis+UDpiuKl8JOyljpzK1B3M5vr9XaoHSphjReoJC77Ewf5
+ paM/4P12YOgoN6nYz5Wnn03hwt1h4yj83J5eRMdvX/LwQIyKw8QH+Grtioe0DqF95oEeiDqbzjt
+ ogM9fyIGGSz7VBk6XnowJiOF2zQC0+ZiJmYh+qmPoDnzfUNKCEKIWslQgzFZbLhHP60qEbqyEVd
+ chD8sMP3Z8N1K0C15O+jRXJzJ8NEzQ==
+X-Proofpoint-GUID: H-NGZMWkqSPMdIpYCeg4_tMT8AbcptMX
+X-Authority-Analysis: v=2.4 cv=OdCVzxTY c=1 sm=1 tr=0 ts=69074665 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8 a=Xpr0uQdN4OPqXG0lzrIA:9 a=QEXdDO2ut3YA:10
+ a=nl4s5V0KI7Kw-pW0DWrs:22 a=pHzHmUro8NiASowvMSCR:22 a=xoEH_sTeL_Rfw54TyV31:22
+X-Proofpoint-ORIG-GUID: Z_1dq1Gr05HlqT6afChqWd5mUQCERTIQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-02_02,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 spamscore=0 suspectscore=0 impostorscore=0
+ lowpriorityscore=0 priorityscore=1501 clxscore=1011 phishscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010021
 
-On Wed, 29 Oct 2025 15:52:53 +0100
-Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com> wrote:
+Adding support for the generic irq entry/exit handling for PowerPC. The
+goal is to bring PowerPC in line with other architectures that already
+use the common irq entry infrastructure, reducing duplicated code and
+making it easier to share future changes in entry/exit paths.
 
-> Add compatible string for MT8189 SoC.
-> The AUXADC IP in this chip is fully compatible with the one found in
-> MT8173 SoC.
-> 
-> Signed-off-by: Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
-This had me confused. I tend to review backwards in time so
-I picked up Jack Hsu's equivalent patch from the 
-[PATCH v6 00/11] Add mt8189 dts evaluation board and Makefile 
-series. v6 being posted a day after you.
+This is slightly tested of ppc64le and ppc32.
 
-Thanks
+The performance benchmarks from perf bench basic syscall are below:
 
-Jonathan
+| Metric     | W/O Generic Framework | With Generic Framework | Change |
+| ---------- | --------------------- | ---------------------- | ------ |
+| Total time | 0.939 [sec]           | 0.938 [sec]            | ~0%    |
+| usecs/op   | 0.093900              | 0.093882               | ~0%    |
+| ops/sec    | 1,06,49,615           | 1,06,51,725            | ~0%    |
 
-> ---
->  Documentation/devicetree/bindings/iio/adc/mediatek,mt2701-auxadc.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/mediatek,mt2701-auxadc.yaml b/Documentation/devicetree/bindings/iio/adc/mediatek,mt2701-auxadc.yaml
-> index 14363389f30aef85c596251fca0fe800200e2b41..d9e825e5054fe51c4010fc8a97af05c7639d4753 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/mediatek,mt2701-auxadc.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/mediatek,mt2701-auxadc.yaml
-> @@ -42,6 +42,7 @@ properties:
->                - mediatek,mt8183-auxadc
->                - mediatek,mt8186-auxadc
->                - mediatek,mt8188-auxadc
-> +              - mediatek,mt8189-auxadc
->                - mediatek,mt8195-auxadc
->                - mediatek,mt8516-auxadc
->            - const: mediatek,mt8173-auxadc
-> 
-> ---
-> base-commit: c9a389ffad27e7847c69f4d2b67ba56b77190209
-> change-id: 20251029-mt8189-dt-bindings-auxadc-89ad9e0a7834
-> 
-> Best regards,
+Thats very close to performance earlier with arch specific handling.
+
+Tests done:
+ - Build and boot on ppc64le pseries.
+ - Build and boot on ppc64le powernv8 powernv9 powernv10.
+ - Build and boot on ppc32.
+ - Performance benchmark done with perf syscall basic on pseries.
+
+Changelog:
+
+RFC -> PATCH
+ - Fix for ppc32 spitting out kuap lock warnings.
+ - ppc64le powernv8 crash fix.
+ - Review comments incorporated from previous RFC.
+RFC https://lore.kernel.org/all/20250908210235.137300-2-mchauras@linux.ibm.com/
+
+Mukesh Kumar Chaurasiya (8):
+  powerpc: rename arch_irq_disabled_regs
+  powerpc: Prepare to build with generic entry/exit framework
+  powerpc: introduce arch_enter_from_user_mode
+  powerpc: Introduce syscall exit arch functions
+  powerpc: add exit_flags field in pt_regs
+  powerpc: Prepare for IRQ entry exit
+  powerpc: Enable IRQ generic entry/exit path.
+  powerpc: Enable Generic Entry/Exit for syscalls.
+
+ arch/powerpc/Kconfig                    |   2 +
+ arch/powerpc/include/asm/entry-common.h | 539 ++++++++++++++++++++++++
+ arch/powerpc/include/asm/hw_irq.h       |   4 +-
+ arch/powerpc/include/asm/interrupt.h    | 401 +++---------------
+ arch/powerpc/include/asm/ptrace.h       |   3 +
+ arch/powerpc/include/asm/stacktrace.h   |   6 +
+ arch/powerpc/include/asm/syscall.h      |   5 +
+ arch/powerpc/include/asm/thread_info.h  |   1 +
+ arch/powerpc/include/uapi/asm/ptrace.h  |  14 +-
+ arch/powerpc/kernel/asm-offsets.c       |   1 +
+ arch/powerpc/kernel/interrupt.c         | 258 +++---------
+ arch/powerpc/kernel/ptrace/ptrace.c     | 142 +------
+ arch/powerpc/kernel/signal.c            |   8 +
+ arch/powerpc/kernel/syscall.c           | 119 +-----
+ arch/powerpc/kernel/traps.c             |   2 +-
+ arch/powerpc/kernel/watchdog.c          |   2 +-
+ arch/powerpc/perf/core-book3s.c         |   2 +-
+ 17 files changed, 693 insertions(+), 816 deletions(-)
+ create mode 100644 arch/powerpc/include/asm/entry-common.h
+
+-- 
+2.51.0
 
 
