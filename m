@@ -1,307 +1,287 @@
-Return-Path: <linux-kernel+bounces-881616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE0D5C28925
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 02:39:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1353EC2892B
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 02:44:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 975A14ED3E1
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 01:37:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8984D4E2A0A
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 01:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96003226D16;
-	Sun,  2 Nov 2025 01:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tjBLDuYj"
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012010.outbound.protection.outlook.com [52.101.53.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5F422B8BD;
+	Sun,  2 Nov 2025 01:44:34 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC6323816C;
-	Sun,  2 Nov 2025 01:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762047428; cv=fail; b=rhMVz4ue3ffgx5ITEqwj/qUxJg6fzFGPO0l65WN6kQagXuKJ24rnfMqNB6pIaAJhIJQOIFy9maduv3useTeMQsxqePoUw3EUjfySwyyQa61mPzyMkVOXiLzvN5d25tcdbf68fkHePVrbn7pFO3bbbW9Hb11ZWV9jeYaY2yzGXnA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762047428; c=relaxed/simple;
-	bh=SR3sr62UFi7imZEMXeGv50YOK2Ww5mIAHF4G2L7uhF4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=c1FG+PBujhUlCD0RNpLgvSfZEqRyUOPMa+gxqlJpIs7QBqRf6Mhazs7nE4/IkD+EGQc2lw/jXBeonadJ9GW6gXQLKM9N5j9jKjztdtlpieU/O5KKgDTHzyOFE5oBt2GGSWn5MkKmGHZq0MaSdQyiC7tE0ExRRzd82OxxAds2G1k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tjBLDuYj; arc=fail smtp.client-ip=52.101.53.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yUq3HpnP3y4yd00jCiGCfnt73HX4zILNTD9wzVpMSD1EoA5zoMCiR7PAR2BplG1zwZt8t67265peLnYN1YTuPHTX0mhAkedWf/LVaZ7EnhhYkpnPRJaVujja8O/HaGTY66HeMLBNFSf1wDAEJjPUwM/onz33+Kv2S6kzw+pLeQPxBCylI8NsN1rP/tRTsc0Zf9rRD57YzLJacOmFfQhBxoUZqkGwr1DoZz/pnf7etPhM9jXFgjbPeODJqYcoPLaB4ATYpyvAo3T8ouX4rFjOR4MAVXl+dlUaZCuITx4naMrAOau31lUQJRKWeXtSftt8zdide3tjovjx8NtMOdegdA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4Fe9YpAKdS75eQQcSJEu5xg1ez0w0FEIK2yY9Goq8+Y=;
- b=jZNxKcE4VaXbZq4/51omU+i5FLpSWXxx6vdU2oYJWwDKtnveEI6+Lh2Jjch7x5AmkPw0VsGK3yjCAYxfLL8LzVTYT8ADziSgzTBySrtobm3nBO9CPMdnyLWSLOS3v0alXqxMhJnEp2f1zw2Vcj++dJXjRLg3UiXIsxJEYp2MurdZ4nPNdnqeiu5lSKICiQTnYSlH+g5Ohujl24VfYr0gDTnddZxYVRE/ZWAp7nyZ5rP9PTqHVWcbKZ5kGkLtlGyDNw7q/FIhK+JSe60Y8YMoKDHmKwLZMhGDqwjLZUI1OJ/798uSXVkrd2nJmRiZHGt7DwsFe1FxQucPxrGpe0jNXg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4Fe9YpAKdS75eQQcSJEu5xg1ez0w0FEIK2yY9Goq8+Y=;
- b=tjBLDuYjMr2fPtCvgu3xGdtkkcToWPWrCNA0GaceozEiPrB9qiGEIcYK06EYuLBWNVI50UzG6gh2d3aqm8XjUyoLWhQ3QVzfl8tVxEfPXdgTcTblp8C+TyTghnc6DIBjtECQUtq+qkbFQ/VZ228q/RNvj6naiNQelPijZPxlD58I2mmIZZWLrUyb+GoCUN034EfreAj3HHpaCCQ40vXEfNAB96YGqqy+khevuaH3hCVrCwECKeg//g4KxegjJlk5wov8K9qX5hLnANTLjUYdKmSWCkjTGcBVT1HDkyQDC8assLjMvLYKabbfVQxKy8qjfM2MmEpb8XyuR+8CnIwXBg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
- by MW6PR12MB8916.namprd12.prod.outlook.com (2603:10b6:303:24b::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Sun, 2 Nov
- 2025 01:37:00 +0000
-Received: from BY5PR12MB4116.namprd12.prod.outlook.com
- ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
- ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9275.013; Sun, 2 Nov 2025
- 01:37:00 +0000
-From: John Hubbard <jhubbard@nvidia.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Alexandre Courbot <acourbot@nvidia.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Timur Tabi <ttabi@nvidia.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Edwin Peer <epeer@nvidia.com>,
-	Zhi Wang <zhiw@nvidia.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	nouveau@lists.freedesktop.org,
-	rust-for-linux@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH v4 3/3] gpu: nova-core: add boot42 support for next-gen GPUs
-Date: Sat,  1 Nov 2025 18:36:56 -0700
-Message-ID: <20251102013656.423235-4-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.51.2
-In-Reply-To: <20251102013656.423235-1-jhubbard@nvidia.com>
-References: <20251102013656.423235-1-jhubbard@nvidia.com>
-X-NVConfidentiality: public
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BY5PR17CA0010.namprd17.prod.outlook.com
- (2603:10b6:a03:1b8::23) To BY5PR12MB4116.namprd12.prod.outlook.com
- (2603:10b6:a03:210::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA0C221FB2
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 01:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762047874; cv=none; b=N9z0Fk7ABaiU02ed52PdyK8vPOZRcyRkVBV5HgxRDjd+AeWJmwq3CKaPT3XAyPh+pR/oMSErNadNhEkyJsJ2RJNfD6rAifRVl2qvq81rg1qiFWEXlhL+rCMvxeYqbcRV5Ju2RXG+Aq+yuxVUemlFE9MTpUV0a9wIYfOtMSN0JsY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762047874; c=relaxed/simple;
+	bh=MnHxfTe/ro3pNp+P4+5QksWyWpO2QTWHwpW8O31pDVM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ZhRMBornRwn1Yj1mlS8gZj3ZqU5EFTcm7mFbwowicqto31lTGiCDbAQdm/eXOrR7UvS3zQHkuGBlh/fDO2HKIy2xKbavxX5buPRmvD9CK0vMw4fxoK2Q83Is3w2FgLYDEe+CqZLeN2/njx+LvIiJSSmeuGhCPXx+vv1G9LL/QJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-430d7ace0ddso42500395ab.3
+        for <linux-kernel@vger.kernel.org>; Sat, 01 Nov 2025 18:44:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762047871; x=1762652671;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/xnYtSi/k4ns0oXpK2890qilXlLi2kOa/vqykwDxDXU=;
+        b=PEEYED8Nf4SqOqPg11QGRxamGTB0tJ74hO6vv/d//nMLyUPB46JoE42IusQmy7eGoL
+         H3/XHVRT8IEn6Vz+mgMzDYiEm8UsODm0UYTcWgd78zxqURBRk3l7tOZweNBdZSLc5Lh+
+         /k33xe6dWTZErO9yEeHxVAF9hBff//P0pVSl4ywYTGU9MqBwLT6nUY0JJM+LqYhyhIce
+         vuROBnLBNU6mQp9sV3rDSF9VGvfQRqp0JLo6/JNpSJJFy1aMf1mBCzKp2fEigLi5gfUT
+         Oeo4V6KJSIHB6SlEU3vlPcI+kxKQr4ZX4vsS6dzxAFHYjTF3IPWi8sB/V1egkZGlFnIq
+         ZrxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX+unVYB/rLSVKXciVALpKsbj7Zih6FdSEgAVoGO+7SMX5VVopczPVte1fi5iDPDt+F5xGm8oVJuTFmzh8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgTDySOCrPzM+Q20uJAf1eMRDkWBsxJywVTFjj8iuYqGOt7FXj
+	CYejPkFWwM9sl1/g8bK/2vLzONN65JhDm4rsTBzjaetKlOB/ZrxSmngJfDXHR95Sdp+BF6AbMSh
+	qcwkViWw9voCvTPHhLO1jdBacXnBqhXaoCtXpYVIN/QJKYLNHkYPbTC46MQ4=
+X-Google-Smtp-Source: AGHT+IGE0PjZIEcdILk0PkJlW1FXIg8kq6HbFvQSMonQMAm+0CSF6ITQ007rVNw0XtnTNgeNHx/DyPHJvJ5osKh/ID9HXaI158Nu
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|MW6PR12MB8916:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6c830051-11e0-4e1a-1b37-08de19b050d6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2a8r2U+p9DuRfL6zBQQv3iy3lQSKNH5xyrLSQWbLeIla33kToDxD7TO1oMIw?=
- =?us-ascii?Q?yP9nevEl9rHJJry3uS7rD0HGb5IEVR9YwpistXEkQ/BHEqT6R4RZTWaphGU6?=
- =?us-ascii?Q?4JRzCH+RXT3mQtdc3ON8Mwk+xYPR0kKDVHcgEUxQ2UaGoOxH2RMKvOXJQT7U?=
- =?us-ascii?Q?vsjXNUuCR71stebeGm0LDNN0ppXtx+eLkfcQtJYYyFOTvIdbm9bzSc4ksfRP?=
- =?us-ascii?Q?LoKIsz0rbAogFs73T8fvj7dBl7UV5Rq+G5oiwbIioWC6T8mKo/QbIvAQtkS4?=
- =?us-ascii?Q?kgX7PbGKh27QI8UVjlzwIuLjcm5lBqTUsTNHmkKiwHuKSxPKt/0qAsxpkoNy?=
- =?us-ascii?Q?Mtock1QIKbARpdc5JKE6VTSZLkpkRs9EgHWCBSWcfyg+/aE38Mvz1ZjUgtQK?=
- =?us-ascii?Q?6EI4ZvurqxEFv1rr4mj0dkNAx/VCvW1IJcE78RnviPutvcad3ijwoX0I1EyE?=
- =?us-ascii?Q?nbm6LMecbNEgMMPuVRDixd1h8uTSRUJwX56G5vO3n0TK3N3hwo3ObkEEvT/o?=
- =?us-ascii?Q?YSbLHHkQqH7n+g9xsaoFzTtlqWwfmpp/BUKYOdsJGyaDkOwdqDYwNh3VpHmm?=
- =?us-ascii?Q?QiJe/TykJ5ubc3mt8tnnx75m/mrvC2cbLzduJa8r7ZLaGh95Jr6YGxNj6CS9?=
- =?us-ascii?Q?Ghy06XhLDDJOMZWFkjCfUBT4j71RRLpQ/NkicfxyY2ohb9IjE/ZmbsWQC2XP?=
- =?us-ascii?Q?PQWYswX4IkbfyK29XBk7H9PV5BMUhYYMOW1UUv9PZf8NDFpfKpBf0sMb7RTX?=
- =?us-ascii?Q?IVCLOleC/xug/7K5UsTy0i8ztLy30yS2DVeGTk4J3cO24z2zDGBgPpxsD3NS?=
- =?us-ascii?Q?PTHjq8aUsAM4aZh42MouHtL75fB+7XE7zPiHceKpRD8d3WuluAqwsCpbWaOq?=
- =?us-ascii?Q?wM4xI0OuKYogaDBvJWdoYSSPlY+1ATgZFggRbXuV1V0MtEo+F+VsBubhTj9D?=
- =?us-ascii?Q?7msnn0/smWlOCrmz3R4ATbh2wMZMlUqYp7srbe3meHu5mb+4cA6QI5x/Kuvi?=
- =?us-ascii?Q?QfVATPivv3JZtmwhRj4a0D5t2xsyt6Z5hwhbG0DZKaLT6dViKrE40lFM9A1K?=
- =?us-ascii?Q?6rY6sfQZLpf7lh0d3YiVvbZs12bQijiL5myxnV8shkf3+tR+luCF7eJ2Jdjf?=
- =?us-ascii?Q?MR/fDSEtJS31HMamCEN+7ANEDlw8oC7+YtzWM1drIGjqR8xO62wFH3XoN6o0?=
- =?us-ascii?Q?Da9JB42MBcTOitohkuadavO38aNMWAfn6Xz7DqJ7Vxw7oZ+41fdWLVJL/1Jf?=
- =?us-ascii?Q?Hn9+euaATA7rkQwqeQ0PXCAGx5xo2FubHTrut1kWdO4cHvKb6H2KmzQ1WREt?=
- =?us-ascii?Q?8CiKQwiI2qS952dSbetX70s2mU1u8Kp870HrQu8GHEiqOgJjnP3pVFTzuXt7?=
- =?us-ascii?Q?iS51gn5Uyfq9VWDG42N86d6N+/4HmzoVqRI6terh9vPtnnV1YjlLJRViicyH?=
- =?us-ascii?Q?MHuiYTdxGGwf07dwqapxlC5lBi5X9XwQ?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?3ojNNmYGo+rDsj7XhEw/nBGC5s4XrRE827TM3lABzyWk2mn2k0hBt8FQP82z?=
- =?us-ascii?Q?n3Mh1Wfmj6OkU/w4SPmsProqM3KCV1MnkMWElXkLe5NadD6Mp9lhXzOM7sa1?=
- =?us-ascii?Q?Xu50L852kprfW8q6bny5l5ty9kegTHZ1AsFAbVX/++ADkTETrt0ITkoifYYq?=
- =?us-ascii?Q?jSryEOhWuHonV4iBfDVZ0paLlajBc6Y5I6Xr3WCueVgv1dnioZeebvhYz9R/?=
- =?us-ascii?Q?kERm2dIDHWmiS8eWbQ8FmDgk5a3eYAk1p0b0lbYcQ7QDq/5F6vzP1j2U22pP?=
- =?us-ascii?Q?Hlm1MvdFoBqlthXt1uT2PdyCxFg9BdbeD/Yl8JAZlsjdz/VJB/MXKfk0F/tU?=
- =?us-ascii?Q?kBsgEle8pp6XKYOdpQBohK9WHMMt5AmBM8jcY/B6GQuyEeEpEkmqpKKYKbYR?=
- =?us-ascii?Q?zyoRw4ba8vVAm+XLRYNylHbE8NuVt5TxAMUtpVJqg4GocwDt68wJ0BfySQgZ?=
- =?us-ascii?Q?XotAYVz6lmLpl0rPHx/1KvVx2opvVTrS+N+GE8/sj2bA8+T62xvyV6MYygjT?=
- =?us-ascii?Q?4oun+z7WzWMaKNTwDIt3bA3Y2n/6Fp4ENA57mkYp5R9XDNK0JRYmOqpkWKa8?=
- =?us-ascii?Q?BXd+mTcSL8O1Jj7VG1ccVKUPBeH1GWveu4i6zv+lMW7spqmPCupsRaFaBsdP?=
- =?us-ascii?Q?XTdrf0WsAWTGYri/UIwbEvoHesoAoT9XGdHb2Ti7LHlaJJotIIMaxDUHqCyO?=
- =?us-ascii?Q?yGFsrlUw1w3qtOWeppeg/ud3TUCGrEKUan/NlaMo4yY+m6DZb1vB6BkzTluh?=
- =?us-ascii?Q?jAu88e5zmOQvZZmlHJGlyez7f00KxmnikQfcNfSTYE+lwhv9WXYoiNJ1jSl+?=
- =?us-ascii?Q?bA/oePHJuWxklMXMzOz8O1NkN1GSi/XMKvb1M2kNTuJP44jh8abiCU7j8h+W?=
- =?us-ascii?Q?lbHCbCt0u8l+1XHs6rNC8QP3L8LChz67d3kFhCsMd2TRRHA6gJnj4pVsn+j+?=
- =?us-ascii?Q?XYrwLXLvjguqzh/MbKg5W9QBOlIJtrebk/BALw4cHSUbj3tGrdV0a5d6nSo9?=
- =?us-ascii?Q?d7XYdyNeFICy4J02BVJJBe83xXBTLxRlpbxNOPYA1HphBtRBm2IC7xg+5Z+n?=
- =?us-ascii?Q?yzBjf5MYrdVOYXbV7U4qNVgGiGpm/rP02PiFc7I9jAlCr615KmRAR6eHCcYR?=
- =?us-ascii?Q?U1MDEGX5sakCyq3iM6EtH/O5L+FpHcBby7Da/WHLNNz/fE1wzCmieYKv/0WB?=
- =?us-ascii?Q?XFGaAGFfVDJOQBOEP0xh+QlTupKhUcPfODOi1Tdrk9uulwJ6Fwv6p9DESgqN?=
- =?us-ascii?Q?+bIDSgQ/3LTaq5Oyo3ZLLBc+J22ogjvEmZiZFkGHMu3ekiMthy92ZFuVLkfN?=
- =?us-ascii?Q?f3BVHpwjMxxWgFRAA7tWBeSAy94/0hihIe2GO+mXWyyG7Vc8zLmrWRhL3TDa?=
- =?us-ascii?Q?xELavHm8u2Z/OFqbbrT4bYtQxvhx+DlYukp7ZcL2zUqMh8OA1owayh9sczag?=
- =?us-ascii?Q?DwPGN5KZK1TVv9PdKofiO2rV/3hF8L8OvfGMHVdt7/xCfKgtKbkZHI+MFIPo?=
- =?us-ascii?Q?a4TW/mK+3CiywFpJVROQM8c77BA3h5iLI+xW7XQWV8cwEP9xOq18r8s2nGqy?=
- =?us-ascii?Q?C5xSBZJxyA2RUjBfZYAMQI+wybPx+94/WFB3RsZt?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6c830051-11e0-4e1a-1b37-08de19b050d6
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2025 01:36:59.5699
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hc63gScGsqossfQSQQJH4o0RSO98hoUd9Dgr4hcTU/Wh+XpjyH1G3Dmp+Z+xd8ddGNIu2xrBoL2pskhf7Jqeng==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8916
+X-Received: by 2002:a05:6e02:2704:b0:425:744b:52d3 with SMTP id
+ e9e14a558f8ab-4330d138f5bmr119543815ab.11.1762047871256; Sat, 01 Nov 2025
+ 18:44:31 -0700 (PDT)
+Date: Sat, 01 Nov 2025 18:44:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6906b77f.050a0220.29fc44.0013.GAE@google.com>
+Subject: [syzbot] [io-uring?] INFO: task hung in io_uring_alloc_task_context (6)
+From: syzbot <syzbot+898dd95c02117562d35a@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, io-uring@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-NVIDIA GPUs are moving away from using NV_PMC_BOOT_0 to contain
-architecture and revision details, and will instead use NV_PMC_BOOT_42
-in the future. NV_PMC_BOOT_0 will be zeroed out.
+Hello,
 
-Change the selection logic in Nova so that it will claim Turing and
-later GPUs. This will work for the foreseeable future, without any
-further code changes here, because all NVIDIA GPUs are considered, from
-the oldest supported on Linux (NV04), through the future GPUs.
+syzbot found the following issue on:
 
-Add some comment documentation to explain, chronologically, how boot0
-and boot42 change with the GPU eras, and how that affects the selection
-logic.
+HEAD commit:    f7d2388eeec2 Add linux-next specific files for 20251028
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1389dfe2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ecdce5bceba74f
+dashboard link: https://syzkaller.appspot.com/bug?extid=898dd95c02117562d35a
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=127dc32f980000
 
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/8aa0aaa475d1/disk-f7d2388e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/fc97cba5a8b0/vmlinux-f7d2388e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/30e4617d837c/bzImage-f7d2388e.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+898dd95c02117562d35a@syzkaller.appspotmail.com
+
+INFO: task syz.1.28:6418 blocked for more than 143 seconds.
+      Not tainted syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.1.28        state:D stack:28840 pid:6418  tgid:6416  ppid:6314   task_flags:0x400040 flags:0x00080002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5254 [inline]
+ __schedule+0x17c4/0x4d60 kernel/sched/core.c:6862
+ __schedule_loop kernel/sched/core.c:6944 [inline]
+ schedule+0x165/0x360 kernel/sched/core.c:6959
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:7016
+ __mutex_lock_common kernel/locking/mutex.c:676 [inline]
+ __mutex_lock+0x7e6/0x1350 kernel/locking/mutex.c:760
+ io_init_wq_offload io_uring/tctx.c:22 [inline]
+ io_uring_alloc_task_context+0xff/0x570 io_uring/tctx.c:85
+ __io_uring_add_tctx_node+0x33e/0x4e0 io_uring/tctx.c:111
+ __io_uring_add_tctx_node_from_submit+0x91/0x120 io_uring/tctx.c:154
+ io_uring_add_tctx_node io_uring/tctx.h:32 [inline]
+ __do_sys_io_uring_enter io_uring/io_uring.c:3545 [inline]
+ __se_sys_io_uring_enter+0x2553/0x2b80 io_uring/io_uring.c:3489
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f20eb38efc9
+RSP: 002b:00007f20ec22e038 EFLAGS: 00000246 ORIG_RAX: 00000000000001aa
+RAX: ffffffffffffffda RBX: 00007f20eb5e6090 RCX: 00007f20eb38efc9
+RDX: 0000000000000000 RSI: 0000000000003516 RDI: 0000000000000003
+RBP: 00007f20eb411f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f20eb5e6128 R14: 00007f20eb5e6090 R15: 00007ffdbed8bb08
+ </TASK>
+
+Showing all locks held in the system:
+3 locks held by kworker/u8:1/13:
+ #0: ffff8880b873a018 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:638
+ #1: ffff8880b8724048 (psi_seq){-.-.}-{0:0}, at: psi_task_switch+0x53/0x880 kernel/sched/psi.c:933
+ #2: ffff8880b87401d8 (&pcp->lock){+.+.}-{3:3}, at: spin_trylock include/linux/spinlock.h:361 [inline]
+ #2: ffff8880b87401d8 (&pcp->lock){+.+.}-{3:3}, at: __free_frozen_pages+0x65e/0xd30 mm/page_alloc.c:2973
+1 lock held by khungtaskd/31:
+ #0: ffffffff8df3d620 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #0: ffffffff8df3d620 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:867 [inline]
+ #0: ffffffff8df3d620 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6775
+2 locks held by kworker/u8:2/36:
+4 locks held by kworker/u8:4/78:
+3 locks held by kworker/u8:6/3509:
+ #0: ffff88813fe69948 ((wq_completion)events_unbound#2){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3238 [inline]
+ #0: ffff88813fe69948 ((wq_completion)events_unbound#2){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3346
+ #1: ffffc9000b9d7ba0 ((linkwatch_work).work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3239 [inline]
+ #1: ffffc9000b9d7ba0 ((linkwatch_work).work){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3346
+ #2: ffffffff8f2d3ac8 (rtnl_mutex){+.+.}-{4:4}, at: linkwatch_event+0xe/0x60 net/core/link_watch.c:303
+2 locks held by getty/5585:
+ #0: ffff8880350fd0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc9000332e2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x43e/0x1400 drivers/tty/n_tty.c:2222
+7 locks held by kworker/u9:3/5945:
+ #0: ffff888055c9f948 ((wq_completion)hci19){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3238 [inline]
+ #0: ffff888055c9f948 ((wq_completion)hci19){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3346
+ #1: ffffc90003a7fba0 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3239 [inline]
+ #1: ffffc90003a7fba0 ((work_completion)(&hdev->cmd_sync_work)){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3346
+ #2: ffff88805a750dc8 (&hdev->req_lock){+.+.}-{4:4}, at: hci_cmd_sync_work+0x1d3/0x400 net/bluetooth/hci_sync.c:331
+ #3: ffff88805a7500b8 (&hdev->lock){+.+.}-{4:4}, at: hci_abort_conn_sync+0x242/0xe30 net/bluetooth/hci_sync.c:5691
+ #4: ffffffff8f43d2a8 (hci_cb_list_lock){+.+.}-{4:4}, at: hci_connect_cfm include/net/bluetooth/hci_core.h:2118 [inline]
+ #4: ffffffff8f43d2a8 (hci_cb_list_lock){+.+.}-{4:4}, at: hci_conn_failed+0x165/0x340 net/bluetooth/hci_conn.c:1331
+ #5: ffff888058307338 (&conn->lock#2){+.+.}-{4:4}, at: l2cap_conn_del+0x7b/0x5b0 net/bluetooth/l2cap_core.c:1762
+ #6: ffffffff8df430b8 (rcu_state.exp_mutex){+.+.}-{4:4}, at: exp_funnel_lock kernel/rcu/tree_exp.h:343 [inline]
+ #6: ffffffff8df430b8 (rcu_state.exp_mutex){+.+.}-{4:4}, at: synchronize_rcu_expedited+0x3b9/0x730 kernel/rcu/tree_exp.h:957
+3 locks held by kworker/u8:7/6102:
+ #0: ffff88814c4db148 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3238 [inline]
+ #0: ffff88814c4db148 ((wq_completion)ipv6_addrconf){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3346
+ #1: ffffc90003817ba0 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3239 [inline]
+ #1: ffffc90003817ba0 ((work_completion)(&(&ifa->dad_work)->work)){+.+.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3346
+ #2: ffffffff8f2d3ac8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/linux/rtnetlink.h:130 [inline]
+ #2: ffffffff8f2d3ac8 (rtnl_mutex){+.+.}-{4:4}, at: addrconf_dad_work+0x112/0x14b0 net/ipv6/addrconf.c:4194
+3 locks held by syz.1.18/6134:
+3 locks held by syz.2.19/6137:
+3 locks held by syz.4.21/6146:
+3 locks held by syz.3.20/6151:
+3 locks held by syz.0.17/6154:
+3 locks held by syz.5.22/6300:
+3 locks held by syz.6.23/6302:
+3 locks held by syz.8.27/6308:
+3 locks held by syz.7.24/6310:
+3 locks held by syz.9.26/6312:
+3 locks held by syz.1.28/6417:
+1 lock held by syz.1.28/6418:
+ #0: ffff88805b0cc0a8 (&ctx->uring_lock){+.+.}-{4:4}, at: io_init_wq_offload io_uring/tctx.c:22 [inline]
+ #0: ffff88805b0cc0a8 (&ctx->uring_lock){+.+.}-{4:4}, at: io_uring_alloc_task_context+0xff/0x570 io_uring/tctx.c:85
+3 locks held by syz.2.33/6433:
+3 locks held by syz.3.31/6435:
+3 locks held by syz.0.30/6437:
+3 locks held by syz.4.32/6439:
+3 locks held by kworker/u9:8/6447:
+3 locks held by syz.5.34/6560:
+3 locks held by syz.6.39/6589:
+3 locks held by syz.7.36/6591:
+3 locks held by syz.8.37/6593:
+3 locks held by syz.9.38/6595:
+3 locks held by syz.1.46/6686:
+3 locks held by syz.2.41/6720:
+1 lock held by syz-executor/6724:
+ #0: ffffffff8f2d3ac8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/linux/rtnetlink.h:130 [inline]
+ #0: ffffffff8f2d3ac8 (rtnl_mutex){+.+.}-{4:4}, at: inet6_rtm_newaddr+0x5b7/0xd20 net/ipv6/addrconf.c:5027
+3 locks held by syz.3.50/6737:
+3 locks held by syz.4.44/6739:
+3 locks held by syz.0.43/6743:
+3 locks held by syz-executor/6749:
+ #0: ffffffff8ea64160 (&ops->srcu#2){.+.+}-{0:0}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #0: ffffffff8ea64160 (&ops->srcu#2){.+.+}-{0:0}, at: rcu_read_lock include/linux/rcupdate.h:867 [inline]
+ #0: ffffffff8ea64160 (&ops->srcu#2){.+.+}-{0:0}, at: rtnl_link_ops_get+0x23/0x250 net/core/rtnetlink.c:570
+ #1: ffffffff8f2d3ac8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_lock net/core/rtnetlink.c:80 [inline]
+ #1: ffffffff8f2d3ac8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_nets_lock net/core/rtnetlink.c:341 [inline]
+ #1: ffffffff8f2d3ac8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_newlink+0x8e9/0x1c80 net/core/rtnetlink.c:4064
+ #2: ffffffff8df430b8 (rcu_state.exp_mutex){+.+.}-{4:4}, at: exp_funnel_lock kernel/rcu/tree_exp.h:311 [inline]
+ #2: ffffffff8df430b8 (rcu_state.exp_mutex){+.+.}-{4:4}, at: synchronize_rcu_expedited+0x2f6/0x730 kernel/rcu/tree_exp.h:957
+1 lock held by syz-executor/6764:
+ #0: ffffffff8f2d3ac8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/linux/rtnetlink.h:130 [inline]
+ #0: ffffffff8f2d3ac8 (rtnl_mutex){+.+.}-{4:4}, at: inet_rtm_newaddr+0x3b0/0x18b0 net/ipv4/devinet.c:978
+1 lock held by syz-executor/6765:
+ #0: ffffffff8f2d3ac8 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_net_lock include/linux/rtnetlink.h:130 [inline]
+ #0: ffffffff8f2d3ac8 (rtnl_mutex){+.+.}-{4:4}, at: inet_rtm_newaddr+0x3b0/0x18b0 net/ipv4/devinet.c:978
+
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 31 Comm: khungtaskd Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:337 [inline]
+ watchdog+0xfa9/0xff0 kernel/hung_task.c:500
+ kthread+0x711/0x8a0 kernel/kthread.c:463
+ ret_from_fork+0x4bc/0x870 arch/x86/kernel/process.c:158
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 6310 Comm: syz.7.24 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:memset_orig+0x15/0xb0 arch/x86/lib/memset_64.S:57
+Code: 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 49 89 fa 40 0f b6 ce 48 b8 01 01 01 01 01 01 01 01 48 0f af c1 <41> 89 f9 41 83 e1 07 75 74 48 89 d1 48 c1 e9 06 74 39 66 0f 1f 84
+RSP: 0018:ffffc900044ef7f8 EFLAGS: 00000206
+RAX: 0000000000000000 RBX: dffffc0000000000 RCX: 0000000000000000
+RDX: 0000000000000018 RSI: 0000000000000000 RDI: ffffc900044ef880
+RBP: ffffc900044ef920 R08: ffffc900044ef897 R09: 1ffff9200089df12
+R10: ffffc900044ef880 R11: fffff5200089df13 R12: ffff888033d99818
+R13: ffff888033d99818 R14: ffffc900044ef880 R15: ffff8880796160d0
+FS:  00007f56210dc6c0(0000) GS:ffff888125eeb000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fff44b6e040 CR3: 0000000011b42000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ seq_printf+0xad/0x270 fs/seq_file.c:403
+ __io_uring_show_fdinfo io_uring/fdinfo.c:142 [inline]
+ io_uring_show_fdinfo+0x734/0x17d0 io_uring/fdinfo.c:256
+ seq_show+0x5bc/0x730 fs/proc/fd.c:68
+ seq_read_iter+0x4ef/0xe20 fs/seq_file.c:230
+ seq_read+0x369/0x480 fs/seq_file.c:162
+ vfs_read+0x200/0xa30 fs/read_write.c:570
+ ksys_read+0x145/0x250 fs/read_write.c:715
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f562018efc9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f56210dc038 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+RAX: ffffffffffffffda RBX: 00007f56203e5fa0 RCX: 00007f562018efc9
+RDX: 0000000000000039 RSI: 00002000000004c0 RDI: 0000000000000004
+RBP: 00007f5620211f91 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007f56203e6038 R14: 00007f56203e5fa0 R15: 00007ffec5bbc238
+ </TASK>
+
+
 ---
- drivers/gpu/nova-core/gpu.rs  | 38 ++++++++++++++++++++++++++++++++++-
- drivers/gpu/nova-core/regs.rs | 33 ++++++++++++++++++++++++++++++
- 2 files changed, 70 insertions(+), 1 deletion(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/gpu/nova-core/gpu.rs b/drivers/gpu/nova-core/gpu.rs
-index 27b8926977da..33d96eb1d887 100644
---- a/drivers/gpu/nova-core/gpu.rs
-+++ b/drivers/gpu/nova-core/gpu.rs
-@@ -154,6 +154,17 @@ fn try_from(boot0: regs::NV_PMC_BOOT_0) -> Result<Self> {
-     }
- }
- 
-+impl TryFrom<regs::NV_PMC_BOOT_42> for Spec {
-+    type Error = Error;
-+
-+    fn try_from(boot42: regs::NV_PMC_BOOT_42) -> Result<Self> {
-+        Ok(Self {
-+            chipset: boot42.chipset()?,
-+            revision: boot42.revision(),
-+        })
-+    }
-+}
-+
- impl fmt::Display for Revision {
-     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-         write!(f, "{:x}.{:x}", self.major, self.minor)
-@@ -169,9 +180,34 @@ pub(crate) struct Spec {
- 
- impl Spec {
-     fn new(bar: &Bar0) -> Result<Spec> {
-+        // Some brief notes about boot0 and boot42, in chronological order:
-+        //
-+        // NV04 through Volta:
-+        //
-+        //    Not supported by Nova. boot0 is necessary and sufficient to identify these GPUs.
-+        //    boot42 may not even exist on some of these GPUs.boot42
-+        //
-+        // Turing through Blackwell:
-+        //
-+        //     Supported by both Nouveau and Nova. boot0 is still necessary and sufficient to
-+        //     identify these GPUs. boot42 exists on these GPUs but we don't need to use it.
-+        //
-+        // Rubin:
-+        //
-+        //     Only supported by Nova. Need to use boot42 to fully identify these GPUs.
-+        //
-+        // "Future" (after Rubin) GPUs:
-+        //
-+        //    Only supported by Nova. NV_PMC_BOOT's ARCH_0 (bits 28:24) will be zeroed out, and
-+        //    ARCH_1 (bit 8:8) will be set to 1, which will mean, "refer to NV_PMC_BOOT_42".
-+
-         let boot0 = regs::NV_PMC_BOOT_0::read(bar);
- 
--        Spec::try_from(boot0)
-+        if boot0.use_boot42_instead() {
-+            Spec::try_from(regs::NV_PMC_BOOT_42::read(bar))
-+        } else {
-+            Spec::try_from(boot0)
-+        }
-     }
- }
- 
-diff --git a/drivers/gpu/nova-core/regs.rs b/drivers/gpu/nova-core/regs.rs
-index 207b865335af..8b5ff3858210 100644
---- a/drivers/gpu/nova-core/regs.rs
-+++ b/drivers/gpu/nova-core/regs.rs
-@@ -25,6 +25,13 @@
- });
- 
- impl NV_PMC_BOOT_0 {
-+    pub(crate) fn use_boot42_instead(self) -> bool {
-+        // "Future" GPUs (some time after Rubin) will set `architecture_0`
-+        // to 0, and `architecture_1` to 1, and put the architecture details in
-+        // boot42 instead.
-+        self.architecture_0() == 0 && self.architecture_1() == 1
-+    }
-+
-     /// Combines `architecture_0` and `architecture_1` to obtain the architecture of the chip.
-     pub(crate) fn architecture(self) -> Result<Architecture> {
-         Architecture::try_from(
-@@ -51,6 +58,32 @@ pub(crate) fn revision(self) -> crate::gpu::Revision {
-     }
- }
- 
-+register!(NV_PMC_BOOT_42 @ 0x00000108, "Extended architecture information" {
-+    7:0     implementation as u8, "Implementation version of the architecture";
-+    15:8    architecture as u8 ?=> Architecture, "Architecture value";
-+    19:16   minor_revision as u8, "Minor revision of the chip";
-+    23:20   major_revision as u8, "Major revision of the chip";
-+});
-+
-+impl NV_PMC_BOOT_42 {
-+    pub(crate) fn chipset(self) -> Result<Chipset> {
-+        self.architecture()
-+            .map(|arch| {
-+                ((arch as u32) << Self::IMPLEMENTATION_RANGE.len())
-+                    | u32::from(self.implementation())
-+            })
-+            .and_then(Chipset::try_from)
-+    }
-+
-+    /// Returns the revision information of the chip.
-+    pub(crate) fn revision(self) -> crate::gpu::Revision {
-+        crate::gpu::Revision {
-+            major: self.major_revision(),
-+            minor: self.minor_revision(),
-+        }
-+    }
-+}
-+
- // PBUS
- 
- register!(NV_PBUS_SW_SCRATCH @ 0x00001400[64]  {});
--- 
-2.51.2
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
