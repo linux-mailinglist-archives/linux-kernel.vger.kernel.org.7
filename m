@@ -1,229 +1,123 @@
-Return-Path: <linux-kernel+bounces-882015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA642C29751
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 22:41:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D05BC2975A
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 22:44:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 540EF347023
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 21:41:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BED763AE4E4
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 21:44:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E852367B8;
-	Sun,  2 Nov 2025 21:41:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB8A6246797;
+	Sun,  2 Nov 2025 21:44:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="jQmS/STx"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k5l8mNeB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56FD4BA45;
-	Sun,  2 Nov 2025 21:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762119705; cv=pass; b=Jj0xSJtMgU6B+L+HzJkMkT/PXiCdPuGXUxhpH1qEKBNX40VEKTHYPYjNhmvw7wgre3ap8Nz/HKO+YPKAYaDVbfd8dIj+d++zRsEaqAPlEzFFRvVsHnsqbORrJY2TYuRqwR++7TonwQR3pU5rI174LLU/Usos755Use4g+k07vvs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762119705; c=relaxed/simple;
-	bh=yj5jv6qws0AK+OrvvRxVe3RtYYFaSHwdmeDIuoel4+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y5t9I65W6ievI3BeOwWs5wddjFnRw5Pvt6aoLoJSqKwpEAHagFuHiyVEMUsSP61vKoAozzGIpvvJqIODynIw+cgQKleCiByHYDIvaHnKRfsdTZDv0rubH4ob3mB8eBul25OGBrTX2GTvsFFcTUuy4MvECNbwSEFlJyvnTGycj5w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=jQmS/STx; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1762119687; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ABB+56HZ7qn1KmVWZZY5LRPHfTTnj6eNeEkgHRsfVe82VYvwcgyUYOltYR3PaUD9fSb+RUqWNXNtIi/sxIMHp7x9/y01JQ6SwbyP4/0XCdnBAZJzpQlTqEE/EMfKaw1TcFBYP9iFJwPJCQXbkYd2lzEqN69KvPfFqNgt6mYctZQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1762119687; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=etIaDZzEoMN+1wq9IfBUL9NKOUN82tlDPPxEr6WHWuk=; 
-	b=mxoGCDUziziLWkqOeajNg+AT0qnQfEeB01q/3yfFe0DHEJNgE26IitwyjRtPla9jNQLmD30ED18J6WaBbHBXAWepUhz5iDRMENRzgbx0gPX/KB9px5svtAffXtNeC2heklVDhQcMuzgJkKVZIUrJlLyj9eE90HFXnibL0hbYPhk=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762119687;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=etIaDZzEoMN+1wq9IfBUL9NKOUN82tlDPPxEr6WHWuk=;
-	b=jQmS/STxEIAsGCEmibOu/3+wUE84BNrhRRBFfKf9DBiv7AwryCKoRgtfogvjQxLx
-	YAnf/iKlv+EQBHxA0NgzJpUxoWp/85qCGLSwrzXktL2GH30qHMbtjsVGnXIEnd9fJLd
-	l1yorqzlve+Y3v8yKk0c+XSoMll8SIr1zfkUdB/8=
-Received: by mx.zohomail.com with SMTPS id 1762119685630153.93783567988442;
-	Sun, 2 Nov 2025 13:41:25 -0800 (PST)
-Received: by venus (Postfix, from userid 1000)
-	id 15EB4180CDA; Sun, 02 Nov 2025 22:41:15 +0100 (CET)
-Date: Sun, 2 Nov 2025 22:41:15 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Otto =?utf-8?Q?Pfl=C3=BCger?= <otto.pflueger@abscue.de>
-Cc: Lee Jones <lee@kernel.org>, Orson Zhai <orsonzhai@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-spi@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH 3/3] power: reset: sc27xx: Drop unused driver
-Message-ID: <kkmidihu45exxt35wrb4r2i4vehixsfsn6vlgmcgxocqeyno4a@uwlmcrjnqsgq>
-References: <20251007-sc27xx-mfd-poweroff-v1-0-89a2f919b731@abscue.de>
- <20251007-sc27xx-mfd-poweroff-v1-3-89a2f919b731@abscue.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51AFE1F7580;
+	Sun,  2 Nov 2025 21:44:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762119878; cv=none; b=Ro3GM1ceuZyTvOYDmVMGKqDHz4hxH8E1elRTnuRpsZFWrV4SbmqC06dAHUlRr9x+2MO9zkLJdKhwmfupBXqhY/aRaEKWvDWOJ0hcNR2pBEoCb2OVcHO4VTiiixRUj7VZX4QeWciWxcvZuPG0Pap4ayQy32jkLX0MIZZAvu0ibTc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762119878; c=relaxed/simple;
+	bh=ZFNuHVX2di4q2gqCJGVL5/EBAk3Kdb3wjGuQ316eoLk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=VglbR57XrUDFxka6XnodcI/LS/sdot+qzPvZLtFrB14l6xdSo3nPzqvbef/sFRPO9GgFV15w2Kf80jONakhbifwTPXPVXHMcB2U1XRP4Bd8TnyI8Y5IAIAS+2WW1SqllKCpibh0KeXJpahy/oSJ5Mlit0Go1Zkv6X2qnjQurJSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k5l8mNeB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCD38C4CEF7;
+	Sun,  2 Nov 2025 21:44:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762119877;
+	bh=ZFNuHVX2di4q2gqCJGVL5/EBAk3Kdb3wjGuQ316eoLk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=k5l8mNeB8i76/k6rRYPk85GRs3k5wyWNC5EF40Lq2BSQaLaROn69Vn9/Dk5FdJrX1
+	 BdArVSYGgKwzvw7tJc7DGBt9MhIf6mtxKdzWDOhkkotLRcI1EzySt1Q6M+asABprf6
+	 Bbtd5AxHH0HzcKJtHdB/okNInxXBF9Voz8w0r7o9HQHp00AQ1aXVZjn7UZxn0LwrGY
+	 GBIGI2Zo2t7QIcXMQ1QWlQEGscnxyh9KZMBvtLtriBzVH+SoRxFTCH4eBoswTTacth
+	 B8eH6xvGfRAomw9AwIxMk821+y4es6vfFES/SyG+rLizWKnPVBqS0wHk392seGEwiu
+	 R3icKwEXve95w==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 78BE0CE0F4C; Sun,  2 Nov 2025 13:44:37 -0800 (PST)
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: rcu@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	rostedt@goodmis.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	kernel test robot <oliver.sang@intel.com>,
+	Zqiang <qiang.zhang@linux.dev>
+Subject: [PATCH 01/19] srcu: Permit Tiny SRCU srcu_read_unlock() with interrupts disabled
+Date: Sun,  2 Nov 2025 13:44:18 -0800
+Message-Id: <20251102214436.3905633-1-paulmck@kernel.org>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <082fb8ba-91b8-448e-a472-195eb7b282fd@paulmck-laptop>
+References: <082fb8ba-91b8-448e-a472-195eb7b282fd@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20251007-sc27xx-mfd-poweroff-v1-3-89a2f919b731@abscue.de>
-Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
-Hi,
+The current Tiny SRCU implementation of srcu_read_unlock() awakens
+the grace-period processing when exiting the outermost SRCU read-side
+critical section.  However, not all Linux-kernel configurations and
+contexts permit swake_up_one() to be invoked while interrupts are
+disabled, and this can result in indefinitely extended SRCU grace periods.
+This commit therefore only invokes swake_up_one() when interrupts are
+enabled, and introduces polling to the grace-period workqueue handler.
 
-On Tue, Oct 07, 2025 at 08:14:21PM +0200, Otto Pfl=FCger wrote:
-> This driver was never actually probed because it was missing an OF matc=
-h
-> table and was not integrated into the MFD driver. Remove it now that th=
-e
-> power off functionality is handled directly in the MFD driver.
->=20
-> Signed-off-by: Otto Pfl=FCger <otto.pflueger@abscue.de>
+Reported-by: kernel test robot <oliver.sang@intel.com>
+Reported-by: Zqiang <qiang.zhang@linux.dev>
+Closes: https://lore.kernel.org/oe-lkp/202508261642.b15eefbb-lkp@intel.com
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+---
+ kernel/rcu/srcutiny.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+diff --git a/kernel/rcu/srcutiny.c b/kernel/rcu/srcutiny.c
+index e3b64a5e0ec7..3450c3751ef7 100644
+--- a/kernel/rcu/srcutiny.c
++++ b/kernel/rcu/srcutiny.c
+@@ -106,15 +106,15 @@ void __srcu_read_unlock(struct srcu_struct *ssp, int idx)
+ 	newval = READ_ONCE(ssp->srcu_lock_nesting[idx]) - 1;
+ 	WRITE_ONCE(ssp->srcu_lock_nesting[idx], newval);
+ 	preempt_enable();
+-	if (!newval && READ_ONCE(ssp->srcu_gp_waiting) && in_task())
++	if (!newval && READ_ONCE(ssp->srcu_gp_waiting) && in_task() && !irqs_disabled())
+ 		swake_up_one(&ssp->srcu_wq);
+ }
+ EXPORT_SYMBOL_GPL(__srcu_read_unlock);
+ 
+ /*
+  * Workqueue handler to drive one grace period and invoke any callbacks
+- * that become ready as a result.  Single-CPU and !PREEMPTION operation
+- * means that we get away with murder on synchronization.  ;-)
++ * that become ready as a result.  Single-CPU operation and preemption
++ * disabling mean that we get away with murder on synchronization.  ;-)
+  */
+ void srcu_drive_gp(struct work_struct *wp)
+ {
+@@ -141,7 +141,12 @@ void srcu_drive_gp(struct work_struct *wp)
+ 	WRITE_ONCE(ssp->srcu_idx, ssp->srcu_idx + 1);
+ 	WRITE_ONCE(ssp->srcu_gp_waiting, true);  /* srcu_read_unlock() wakes! */
+ 	preempt_enable();
+-	swait_event_exclusive(ssp->srcu_wq, !READ_ONCE(ssp->srcu_lock_nesting[idx]));
++	do {
++		// Deadlock issues prevent __srcu_read_unlock() from
++		// doing an unconditional wakeup, so polling is required.
++		swait_event_timeout_exclusive(ssp->srcu_wq,
++					      !READ_ONCE(ssp->srcu_lock_nesting[idx]), HZ / 10);
++	} while (READ_ONCE(ssp->srcu_lock_nesting[idx]));
+ 	preempt_disable();  // Needed for PREEMPT_LAZY
+ 	WRITE_ONCE(ssp->srcu_gp_waiting, false); /* srcu_read_unlock() cheap. */
+ 	WRITE_ONCE(ssp->srcu_idx, ssp->srcu_idx + 1);
+-- 
+2.40.1
 
--- Sebastian
-
->  drivers/power/reset/Kconfig           |  9 ----
->  drivers/power/reset/Makefile          |  1 -
->  drivers/power/reset/sc27xx-poweroff.c | 79 ---------------------------=
---------
->  3 files changed, 89 deletions(-)
->=20
-> diff --git a/drivers/power/reset/Kconfig b/drivers/power/reset/Kconfig
-> index 8248895ca90389c1db33c7b09e5f5925a9034cee..c4a28f6f04f6be13d20ce2b=
-08427fd1679b1df5a 100644
-> --- a/drivers/power/reset/Kconfig
-> +++ b/drivers/power/reset/Kconfig
-> @@ -320,15 +320,6 @@ config SYSCON_REBOOT_MODE
->  	  register, then the bootloader can read it to take different
->  	  action according to the mode.
-> =20
-> -config POWER_RESET_SC27XX
-> -	tristate "Spreadtrum SC27xx PMIC power-off driver"
-> -	depends on MFD_SC27XX_PMIC || COMPILE_TEST
-> -	help
-> -	  This driver supports powering off a system through
-> -	  Spreadtrum SC27xx series PMICs. The SC27xx series
-> -	  PMICs includes the SC2720, SC2721, SC2723, SC2730
-> -	  and SC2731 chips.
-> -
->  config NVMEM_REBOOT_MODE
->  	tristate "Generic NVMEM reboot mode driver"
->  	depends on OF
-> diff --git a/drivers/power/reset/Makefile b/drivers/power/reset/Makefil=
-e
-> index 51da87e05ce76bc608d961485063555c3ba5d96c..cabaa0de2de68794bea5f95=
-23855bb9ef0083ef0 100644
-> --- a/drivers/power/reset/Makefile
-> +++ b/drivers/power/reset/Makefile
-> @@ -37,6 +37,5 @@ obj-$(CONFIG_POWER_RESET_SYSCON_POWEROFF) +=3D syscon=
--poweroff.o
->  obj-$(CONFIG_POWER_RESET_RMOBILE) +=3D rmobile-reset.o
->  obj-$(CONFIG_REBOOT_MODE) +=3D reboot-mode.o
->  obj-$(CONFIG_SYSCON_REBOOT_MODE) +=3D syscon-reboot-mode.o
-> -obj-$(CONFIG_POWER_RESET_SC27XX) +=3D sc27xx-poweroff.o
->  obj-$(CONFIG_NVMEM_REBOOT_MODE) +=3D nvmem-reboot-mode.o
->  obj-$(CONFIG_POWER_MLXBF) +=3D pwr-mlxbf.o
-> diff --git a/drivers/power/reset/sc27xx-poweroff.c b/drivers/power/rese=
-t/sc27xx-poweroff.c
-> deleted file mode 100644
-> index 90287c31992c4889f9241e82a21a1949ecca7702..00000000000000000000000=
-00000000000000000
-> --- a/drivers/power/reset/sc27xx-poweroff.c
-> +++ /dev/null
-> @@ -1,79 +0,0 @@
-> -// SPDX-License-Identifier: GPL-2.0
-> -/*
-> - * Copyright (C) 2018 Spreadtrum Communications Inc.
-> - * Copyright (C) 2018 Linaro Ltd.
-> - */
-> -
-> -#include <linux/cpu.h>
-> -#include <linux/kernel.h>
-> -#include <linux/module.h>
-> -#include <linux/platform_device.h>
-> -#include <linux/pm.h>
-> -#include <linux/regmap.h>
-> -#include <linux/syscore_ops.h>
-> -
-> -#define SC27XX_PWR_PD_HW	0xc2c
-> -#define SC27XX_PWR_OFF_EN	BIT(0)
-> -#define SC27XX_SLP_CTRL		0xdf0
-> -#define SC27XX_LDO_XTL_EN	BIT(3)
-> -
-> -static struct regmap *regmap;
-> -
-> -/*
-> - * On Spreadtrum platform, we need power off system through external S=
-C27xx
-> - * series PMICs, and it is one similar SPI bus mapped by regmap to acc=
-ess PMIC,
-> - * which is not fast io access.
-> - *
-> - * So before stopping other cores, we need release other cores' resour=
-ce by
-> - * taking cpus down to avoid racing regmap or spi mutex lock when powe=
-roff
-> - * system through PMIC.
-> - */
-> -static void sc27xx_poweroff_shutdown(void)
-> -{
-> -#ifdef CONFIG_HOTPLUG_CPU
-> -	int cpu;
-> -
-> -	for_each_online_cpu(cpu) {
-> -		if (cpu !=3D smp_processor_id())
-> -			remove_cpu(cpu);
-> -	}
-> -#endif
-> -}
-> -
-> -static struct syscore_ops poweroff_syscore_ops =3D {
-> -	.shutdown =3D sc27xx_poweroff_shutdown,
-> -};
-> -
-> -static void sc27xx_poweroff_do_poweroff(void)
-> -{
-> -	/* Disable the external subsys connection's power firstly */
-> -	regmap_write(regmap, SC27XX_SLP_CTRL, SC27XX_LDO_XTL_EN);
-> -
-> -	regmap_write(regmap, SC27XX_PWR_PD_HW, SC27XX_PWR_OFF_EN);
-> -}
-> -
-> -static int sc27xx_poweroff_probe(struct platform_device *pdev)
-> -{
-> -	if (regmap)
-> -		return -EINVAL;
-> -
-> -	regmap =3D dev_get_regmap(pdev->dev.parent, NULL);
-> -	if (!regmap)
-> -		return -ENODEV;
-> -
-> -	pm_power_off =3D sc27xx_poweroff_do_poweroff;
-> -	register_syscore_ops(&poweroff_syscore_ops);
-> -	return 0;
-> -}
-> -
-> -static struct platform_driver sc27xx_poweroff_driver =3D {
-> -	.probe =3D sc27xx_poweroff_probe,
-> -	.driver =3D {
-> -		.name =3D "sc27xx-poweroff",
-> -	},
-> -};
-> -module_platform_driver(sc27xx_poweroff_driver);
-> -
-> -MODULE_DESCRIPTION("Power off driver for SC27XX PMIC Device");
-> -MODULE_AUTHOR("Baolin Wang <baolin.wang@unisoc.com>");
-> -MODULE_LICENSE("GPL v2");
->=20
-> --=20
-> 2.50.0
->=20
 
