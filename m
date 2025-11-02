@@ -1,105 +1,479 @@
-Return-Path: <linux-kernel+bounces-881738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3973C28D5D
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 11:31:01 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02636C28D60
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 11:32:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9E2024E41CC
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 10:31:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A25394E4122
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 10:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6EF222581;
-	Sun,  2 Nov 2025 10:30:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A121F4617;
+	Sun,  2 Nov 2025 10:32:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="A30COFrS"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="MmLTQp9M";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="MmLTQp9M"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013018.outbound.protection.outlook.com [40.107.162.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6309BEEBA;
-	Sun,  2 Nov 2025 10:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762079453; cv=none; b=jM4eNN/vDvjV4aO/Z9GqzwrKrZCGjgqPbvucjdg5Eyk+bRSOL9ZnIm40i5FfZtNWGLyo3f+6dOZKqEirC0vCizeFnmWgf5C65dnol/LNi5SoMuaqft0n01ZB50XgCW4F7O/qgUpLQF+N83cus3iUFRQahsMuBntfEQgAFMRV8sE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762079453; c=relaxed/simple;
-	bh=/eTUWNLEuW15TNhOpvTGamGJwqGMonDuLgwNQnPI66A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Br6Aflf/5N/E1xYzx7zU9KaPr6lQKh/X/Bt1SOSvog12OM9SAw3Hrae8Um/xOYkVOVmDOhR937isNyGukrtPqPF9IjeHBzqkuQy9X5xUPT2bkPSJr7OJqSYCnK6Qvw5AP1BSvlUnQy7B4yG35Rx9f/1EfsNc/BlxbBMX6/KK+ZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=A30COFrS; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (mob-5-90-50-232.net.vodafone.it [5.90.50.232])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A0F25B3;
-	Sun,  2 Nov 2025 11:28:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1762079337;
-	bh=/eTUWNLEuW15TNhOpvTGamGJwqGMonDuLgwNQnPI66A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A30COFrSpocPoKE55eSER1Vs4wcXxJ/AcLKQwG4k9OvMPlYiiU3d+uzGdJa7v3PMN
-	 XoSgLTxHXtODdhTxDJesS/V8mjZL+pbQT1AKxX/N2AaKcIUenRCDft56wsUxVelCoY
-	 dRoqwEsRKINYa/uL2SpAsgHQeAT8nXfbpQUAgbas=
-Date: Sun, 2 Nov 2025 11:30:46 +0100
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, Jacopo Mondi <jacopo@jmondi.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Kieran Bingham <kieran.bingham@ideasonboard.com>, 
-	David Plowman <david.plowman@raspberrypi.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Peter Robinson <pbrobinson@gmail.com>, Stefan Wahren <wahrenst@gmx.net>, 
-	"Ivan T. Ivanov" <iivanov@suse.de>
-Subject: Re: [PATCH 03/13] media: i2c: ov5647: Correct minimum VBLANK value
-Message-ID: <j455sc3wtbk36h6klwslvj4wtp5d2juf536a2wddsxi4vymmie@r2zuyksljmup>
-References: <20251028-b4-rpi-ov5647-v1-0-098413454f5e@ideasonboard.com>
- <20251028-b4-rpi-ov5647-v1-3-098413454f5e@ideasonboard.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACCAE34D3BA
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 10:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.18
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762079534; cv=fail; b=Q2UHOfan83mSQbsBfT5CS6b95ihs6AlgivrZoh7XxdkuFel60rqY2VfN2/8MzwB/MUD4Xw8tee+JJf3F302Jxhti+WlxPJlELiwc0k38LgxpSL3cPkjlwBi0u1KJL2rAV17dEuyouAS5S6vVHisGowOtOI3U56qeVHDDoSXxraQ=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762079534; c=relaxed/simple;
+	bh=ZcnK6HjT+fb4c1U/olvPsUV+/ycNqf3KkA76+5zq+2A=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=MEIbfX7MsSCxhbOxajNLC5SA9O9GmhlfSJbBAznuhyqdOe91BKZroVQNLwvWsWwzLgavcYqKqKZjcP3lX3NGzZiLcIHomWv4yKUpkSeD7Kxhwfu05glEdy2PHkvCvWoxbG6jTFr2m/MG8wfkH36qtz4nHhZ0mMaNlgQjwkhxG6E=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=MmLTQp9M; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=MmLTQp9M; arc=fail smtp.client-ip=40.107.162.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=YmFMC08PDMzgNZRViD2kEfiob5Fi/ofrAv/JXiaY8pt4bcT/tzQ5yyziYymtnFj6e2Vka5KmfY1YRE5jZTxF2SEsrscaompTPcSWtiCT3673v1qWFXeXQUEzxXpiu/Isw6z69eJr+iPK6cdEs0EzemvEhwLkGBqUFNgt68YHzYSaDhPuK6QRd+ax3jZ5iJON7vMSl7j605kTJqVoBTErB8W4aBxpXcP1tOICb4YFxlgO1PWyAThfkzeFnVFURrP9Fct9OhRtpiwAe6rQuFq7M/Ry8nMEogR54NzEWlAQ1JmUj6uK9RvxiK0g/C4gDzCKTJavfmkvKTBqvLSYKR0FQw==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ebsofgis/vx3L2rnF2yxCHPJKi4DV4XMBauYvrzG7fE=;
+ b=lQIoqvTJhJRkpQO3N1L+G8R+ue/VFtRB48B2cdg/87ZfEa0JqIe/Re8wZJWsH+CMIdHznRCHxki8DW7moDu3jOA9wfD7EyFPe9yeuWdSw3Ktb8HyxusyfPAFSHJN6kltVQ//JRieWhKZUjITICORj6W1OgwQLZYJa480jQAtDnwVGKljZIZQWn/6yUPGlu7wmecL2cRs+NFv5pf/7KO61r65hfWfmFhsXXz6laSEofcPfoabbgqQaciAy/v6y0ypLwS2iANR4JEKslT9U+FPM+El1jKS0C1jyjs/S5TivIHdUCzblCMr2lx+/G4Ma/lXTzoZWygodnjrABeytrbunQ==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=roeck-us.net smtp.mailfrom=arm.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
+ (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ebsofgis/vx3L2rnF2yxCHPJKi4DV4XMBauYvrzG7fE=;
+ b=MmLTQp9MuYopB1seDzkbPoHKzBIcEJEE7i8zaKXlZR3ghS+OK8c1PIM84ZGWYk+TFB6SzmMqhJQYB8+6LVA0CJEcRVoM1+lgSNIkrMn+vxskh2sGqt8nquBib7v62qp1pMnW0zwlz73Ct1ztLi6q3YLUK7uLl9eAxCiq1rsYCgU=
+Received: from DU2PR04CA0166.eurprd04.prod.outlook.com (2603:10a6:10:2b0::21)
+ by DB4PR08MB8055.eurprd08.prod.outlook.com (2603:10a6:10:388::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Sun, 2 Nov
+ 2025 10:32:01 +0000
+Received: from DB5PEPF00014B8E.eurprd02.prod.outlook.com
+ (2603:10a6:10:2b0:cafe::83) by DU2PR04CA0166.outlook.office365.com
+ (2603:10a6:10:2b0::21) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.16 via Frontend Transport; Sun,
+ 2 Nov 2025 10:32:01 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ DB5PEPF00014B8E.mail.protection.outlook.com (10.167.8.202) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.6
+ via Frontend Transport; Sun, 2 Nov 2025 10:32:01 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=U0+UFdTL/EilBSsuroLlVY69UqSIcvgJjP5PODiI+V8ysc7cbz2Xs4eJ6zpFk/jFspflayQwUBtsUPoIOuaKgcGWNsAOHl3xPU0LuMKBRo6h+H25E9GDb4nC9crHPbwpP/1fR0MZKplwNXbAx4vO+tsz3KRwD319VWh+PK1y4YCf6jp+UfuWsNkTYTo//YTygiMXQPyncttTJdT9LOkuI1gM8zQSfaOLc734SGnULQIJvE5bb3dcL5J0eHmdd2BepzckfGgul+2UkPVIDKiqsf1GQCYK6lFOAGKiTGK3RY8MJ6HrAtBex9PUWvfIwfnnbTT8/pkqmWv8S2BaevxHRg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ebsofgis/vx3L2rnF2yxCHPJKi4DV4XMBauYvrzG7fE=;
+ b=LTy/5wNOVyNTJsJhMgwDtg0o0NxZ5U87ex2yn2Q9ZckV/9z5P8bX5zFwu+Iffa+TaC5H2xxR2ZJvkU6lqUtPat9CgldfsLlWFDGplkPZbkeoBwIEQL4FijdRlratdKRnvGSxdEsclwaHVaSDGuFhc98COZIXKTYGlNCmx4Me+4iRMyuUDqM34J+HNd0Qt23ru9Uns+gaaTG2dRzxDIseaAZu06g9VJUZlF/JsfzzNFwx6EKinhWw1Iiy1loLkTn+ycTLRl0w6NIb0G9ddPoI83a65kxHp8cP139Q7a2N69LZ2vIWGtrC3hCdmAXNa3rhnSU0C9+H8H4W3h3g02XsEw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ebsofgis/vx3L2rnF2yxCHPJKi4DV4XMBauYvrzG7fE=;
+ b=MmLTQp9MuYopB1seDzkbPoHKzBIcEJEE7i8zaKXlZR3ghS+OK8c1PIM84ZGWYk+TFB6SzmMqhJQYB8+6LVA0CJEcRVoM1+lgSNIkrMn+vxskh2sGqt8nquBib7v62qp1pMnW0zwlz73Ct1ztLi6q3YLUK7uLl9eAxCiq1rsYCgU=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from GVXPR08MB11445.eurprd08.prod.outlook.com
+ (2603:10a6:150:2c0::19) by AS2PR08MB9074.eurprd08.prod.outlook.com
+ (2603:10a6:20b:5fc::18) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Sun, 2 Nov
+ 2025 10:31:28 +0000
+Received: from GVXPR08MB11445.eurprd08.prod.outlook.com
+ ([fe80::fa0f:733c:3b98:b13b]) by GVXPR08MB11445.eurprd08.prod.outlook.com
+ ([fe80::fa0f:733c:3b98:b13b%7]) with mapi id 15.20.9275.013; Sun, 2 Nov 2025
+ 10:31:27 +0000
+Message-ID: <933a2eff-1e06-451e-9994-757d66f4b985@arm.com>
+Date: Sun, 2 Nov 2025 10:31:25 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 3/5] arm64: mm: support large block mapping when
+ rodata=full
+Content-Language: en-GB
+To: Guenter Roeck <linux@roeck-us.net>, Yang Shi <yang@os.amperecomputing.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, akpm@linux-foundation.org,
+ david@redhat.com, lorenzo.stoakes@oracle.com, ardb@kernel.org,
+ dev.jain@arm.com, scott@os.amperecomputing.com, cl@gentwo.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, nd@arm.com
+References: <20250917190323.3828347-1-yang@os.amperecomputing.com>
+ <20250917190323.3828347-4-yang@os.amperecomputing.com>
+ <f24b9032-0ec9-47b1-8b95-c0eeac7a31c5@roeck-us.net>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <f24b9032-0ec9-47b1-8b95-c0eeac7a31c5@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P265CA0264.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:37c::15) To GVXPR08MB11445.eurprd08.prod.outlook.com
+ (2603:10a6:150:2c0::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251028-b4-rpi-ov5647-v1-3-098413454f5e@ideasonboard.com>
+X-MS-TrafficTypeDiagnostic:
+	GVXPR08MB11445:EE_|AS2PR08MB9074:EE_|DB5PEPF00014B8E:EE_|DB4PR08MB8055:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6b5ebcc2-6150-4d94-f0cf-08de19fb0f1f
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?utf-8?B?V0xmVVd0Y0krM1pqMmVRWXJMMDV3MmEyTE92RnUxZnNFbjlCLzJSSGRYeUlI?=
+ =?utf-8?B?MUVmWHZHS0xJTkN3WWpaUW9oVzl0YUJ0UXJWdDU3N2U5enJCdHRQREFnOTlx?=
+ =?utf-8?B?bDlEVUNEMjBVbXBsbTBseUd3Z3IxVFhvUmJpazBSaWtJYlJ3ZGdiQnRBdmQ1?=
+ =?utf-8?B?aUVVSkl4NWxmTENybkt0RGozMlphUi9NdStsaW05WTA4SURGSGpEdmpyaEUv?=
+ =?utf-8?B?TnpYQkZ2cy94bTZsR3liL3R4L3BKeXUyckgrYWFPMkJIb3NzUnBFN1BzeGVs?=
+ =?utf-8?B?aWREdk1KdEg5QVVlbjhQcHZRZlIyV1lzV3Y5a2xxQlRxZkZySE8wWmN1WGV2?=
+ =?utf-8?B?Sk9qSHFIdzJXQldXNElLeWJGNkdjVTNZMjl1a2dSZDZ6d1YyVFU0R1dJcFZn?=
+ =?utf-8?B?UTJ6Z2FKUWtieDJDa2lkOFdiSDFVTDJCelBYTGdxUFZ3ZUltcG81Ui9JMHll?=
+ =?utf-8?B?VkFuZFMyRldiUnMramVnc3EwblpkZGJuN0RNcXpaa0NQRjhTRlZ0bEZON3RO?=
+ =?utf-8?B?cmV6NjBNTjdZSTdKZnB0UkFBMWM4V0F3cU1RZVdURFFGSG9pMWpXYWZqNzMv?=
+ =?utf-8?B?OWphOEcwZGdDUWQ3Wmd4a2NVSkZnaGliWnhER0dHM2VvcVRBRWFtMTlkeERF?=
+ =?utf-8?B?UXZyNU1yWCs1eTBCaHY5ZzN4WTVEdEh1aUJNUFZUemhoRDlDM1BtMXI1aGxO?=
+ =?utf-8?B?a09JK0JYT0dHWmZGN3NmejVySndlNVJzSSswLzBGeHdXK05pekpWT0Y4QUtL?=
+ =?utf-8?B?aVEzZFpkNDlTUFBzNjRsZER5aitSdFFDbVEzYzZqdklCRWdXVU5ZaXladUh6?=
+ =?utf-8?B?SjRwUTFEeFJwclB0UWdaZ1huWTFBY2RjMnZXR09lRjJTSUg1bi9MT3FYVlJN?=
+ =?utf-8?B?WUFCTkpTQWNOdHRadEoxTFRxbXR4M2xIU3ZBVWNBMmhvUjdJNjFld3FpYjRq?=
+ =?utf-8?B?cXFkd2w0RVczTVRGSVFZTEd3bWpUN0UrZDl3em1rcEFQbkdTdnhLbFk3K1pD?=
+ =?utf-8?B?NVhaK3p5NWdHWktHU1VFMXROdFRSeVBCWDhhRzBES05WU2lNaEhHWitjNXBC?=
+ =?utf-8?B?QWNxcUhJSzVWdHlZL1BGUThPMXlVMm9hWVo5dWdxS3Z1bDI2Z1RQbUp5SlVD?=
+ =?utf-8?B?YkcwRjNvcmdoYjFFQ2lKUG82d2VEUklSQXpXbDUyYlNlOTA4cXFrRDJKZFBt?=
+ =?utf-8?B?czhZV0ZPK2t1bzk2bGVEMEpYNE5TY1JTNjhFYmNYdGswZlV3bnk1MUtXR1FW?=
+ =?utf-8?B?NjVuS25DMFB4ZXJtRTNNaGZWQ2lzUGpBcm45TTdneGR5cmFteC84SXROVHBT?=
+ =?utf-8?B?UkRtK21pWWJ1RUFFTTZxM1ZKdEZIbmhvUXBzUUU1VjhlemxDanpjL21jUVZR?=
+ =?utf-8?B?YTZtOWxWQk5USHBleFZxRTRLdkJMeWNKWXBaTlY3WjJqVXR0ZUtocldJQWZK?=
+ =?utf-8?B?ckx5clVwcVFsUUxNM3pzQ2wzMjhLT1crdmdOOFlxSGl0dEZhaE9Ma2E3Wll2?=
+ =?utf-8?B?SytEVXBjeFZnQ3VXNjdKc1F6Nnp5TFBzd21QNnZmV0NteUhvaFN2ck9Vc240?=
+ =?utf-8?B?WVBhNlpOaFl4YlRsenlod3BHOFhUclRUZXgzV1p1VnFLUjVUeFlQdHlYYlU4?=
+ =?utf-8?B?TitmS0E1WFMzVGZiOWJqWmpFR3Rua0diMDJDQzg3a1RFazN2NFlDdWh5ODV6?=
+ =?utf-8?B?YzhFNERvTE9PRFkyREtvcVhBQVV5VjJWQ2xaVksvZDNaWHJGZENHd0t0d1U5?=
+ =?utf-8?B?RWU5azlrZ2RGalFHcmRRN2lvdnF2V3pLZ2lNZS9ZYUIzcFVzSVJuZHc1bEg2?=
+ =?utf-8?B?azJxNEZSRkQrUG10ODdQODRWbDE0OVVjYjV4TTVvSENJN2ltWXJJUHJ6dS85?=
+ =?utf-8?B?TG9paldyL1E5NVhBb2xybFc0Z0pRRWloZWdsNkJEclRxRmc9PQ==?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GVXPR08MB11445.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS2PR08MB9074
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ DB5PEPF00014B8E.eurprd02.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	04508013-c66d-4317-6620-08de19fafada
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|35042699022|7416014|376014|14060799003|1800799024|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WTlIbE84MjdibG5sd2VKd3VlcGp1S0VFV3l4TVJDNm5HQ2FtcHFRdlpkeEYr?=
+ =?utf-8?B?aFBQeHlLSVRUK2wxYnFsZSt0RW9ybi9lZVh1WE0zOXB1WVJKbUtmSytiT3RC?=
+ =?utf-8?B?WEx4NWZjQXpHSFZNek5PWWNneVNDc254VnVxMzdlR1IwQ3RFSjBlQUdZKzRU?=
+ =?utf-8?B?RVRQdSttYjJZa1Z6VXRKcnRyODRhS2hoQmEwdVE2WWVkWG0wTEF0MmtXeFVU?=
+ =?utf-8?B?WVoxOGZqOFEybUxjUjd1TG5MZ01NMmFXbkd1VGQ3ZGJkTm9vcExYcWI0K3FM?=
+ =?utf-8?B?aHZCRDNxUURBSjNCS0N1dXYvYmtkYXVxaG14a3dJbTd6OGR1T2Y3SUVDUnNz?=
+ =?utf-8?B?N0lKVzdHamt5QTBQV1prbmpwMElxMEpZTWp6MVNmU21ZeEdjMWhDQk4yaXZh?=
+ =?utf-8?B?NjFveHlhOHpYSXJQaDY2OE83ZUJWTHV2alV5ZmhVOVY3U0Vkb3FabFNMWmlo?=
+ =?utf-8?B?UUdtbUxGSGV5U0xRV2xTMDlVOW81REUxZklTMUVEMENpWXBTVTRzbUtpQzJ5?=
+ =?utf-8?B?a3NHd3lVdmFXbWtUS2NlODNzWWhVUkZaTjZzWUIrSUxnajl3b2dtNnpTaU9I?=
+ =?utf-8?B?ekFsQ1pwbmhJM1gwVVFkcCtZVzV5SS9mZnQxdHVkWEV6aSs4RXR6Vlh3MjlE?=
+ =?utf-8?B?Qnh4cUExd2wxbjA2TC9UUWk2UnhyTTQ5aTNQZGoxNGxJTDNUTE5XSEdSbGlx?=
+ =?utf-8?B?YWJ4SGdTRFZSemhuazI2c0JhZlpuMUErQWh2YWp4bVZXRWU3U082Y3M4NXVG?=
+ =?utf-8?B?NG0zRFMyb2F3RHF6WGRtbUVVcjlUVmxUWjJVVC9EaGsySFFXcUc0RVN5UXR3?=
+ =?utf-8?B?SnpzN1NMUHBDQ2NSSjZNNjNPMmJ6SGs2Wm5yeGgzMWlJcURPNTBNbEEyZzdH?=
+ =?utf-8?B?TlZ4eTR6d1ZzaS9MR3lEN3RzS0VIWFJLdWF1c1NjcEYyOVJYR2R5bDFpYnl6?=
+ =?utf-8?B?T3NhZFVOSGdwUnV2Zm9JT2hWL0tsbzdMbk5LWGhKbFEwTGpxQkNNK2E2QUc4?=
+ =?utf-8?B?cXdNdHRkSmxaa2NvVTFsdUFlTnpTdHlqNFVpQmZDS1Qvc3Zab240bStwWXBD?=
+ =?utf-8?B?WkJrUzdxeHBPdVdDbVprWjdWZGtBZlJFckpCM3VRMTdGS2VsNVhVdjU4Z0Uv?=
+ =?utf-8?B?T2xUQXF3YVp5akczU3gveFM3NFdaU2FTV1dwaWFoVHJxMGtCV0RQZDFVZ2o4?=
+ =?utf-8?B?c2RTc05wc1dkdWcwVklublIxRlNKWUg1S2gxdU9odzM4bHMwejdDaUQzUzJS?=
+ =?utf-8?B?WFkvc0VYczNrcDJsVFFPVTVGNkhIblFwdkYxdm5wOEp2MXo4ZXVBWlhqa0dY?=
+ =?utf-8?B?cWMyUmFIUW1xVEttanVzUmNlUXkvd1d5cEZ0Nzk2K1djTWhoNDhlMTJuVXpO?=
+ =?utf-8?B?ZjhoNGlmcjVnMjAwRFRxaCtwS3o2R2hFSEJVeWFlTy9rTk0yaFQ2Q1l1akd6?=
+ =?utf-8?B?LzJGeEJlbDNWTjZCVjZJNWZaM3ZPM25mbkFTQU9BQ0RERWxnWGJ3Njg0ZjR0?=
+ =?utf-8?B?akRXUnJzb1lTeE1QVTlmaGZuK0JicWhhUnd1QjZIdUhObGhrMGRhZ2UzKzdt?=
+ =?utf-8?B?QW1BTnE5a3dxUTZqOVZoOXo2RlViTDFtdXdzSU9iV0tKU2l4UzVrNHF4dXdp?=
+ =?utf-8?B?OHFtb2FZemR6YW9mWElURHJZcE9LN3JQNExYVEpFUlFyTmU5aCtSMkVEOG8w?=
+ =?utf-8?B?VDZlTmZjN3pvVHphSlRuMTdEUUFBY3YzcVMyckRacU4rTVA0a2srYWppZnky?=
+ =?utf-8?B?UlM3eDhNK2dIbXFPQWhmSXU3SGdGSjVXVUVCemxaQmtzb212MVlnemdSKzVN?=
+ =?utf-8?B?dzVPUHBtb3JxYzZmRjJtT0ZEdWFPdVRRVkMwRkVxdWhZaGIxRWRSWHhhYWJQ?=
+ =?utf-8?B?cXg0dEZibnVkWEx1YUE3d3pybThSUnFCNkRORlAzYnluUzl3dHBDRElIdUxF?=
+ =?utf-8?B?SG12SGNUbnR2WU94T2RSTXVzVFFveXVFaCt1ejRaRVRncVEvSlp2SGF2Ky8z?=
+ =?utf-8?B?eXpCeGlWRmdqTmpwVVdhd1RtVG5EenZ2ZStoQXExYzM5RTZaSS9QS1FKNEJ1?=
+ =?utf-8?Q?enTEHN?=
+X-Forefront-Antispam-Report:
+	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(35042699022)(7416014)(376014)(14060799003)(1800799024)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2025 10:32:01.3324
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6b5ebcc2-6150-4d94-f0cf-08de19fb0f1f
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB5PEPF00014B8E.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB4PR08MB8055
 
-Hi Jai
+On 01/11/2025 16:14, Guenter Roeck wrote:
+> Hi,
+> 
+> On Wed, Sep 17, 2025 at 12:02:09PM -0700, Yang Shi wrote:
+>> When rodata=full is specified, kernel linear mapping has to be mapped at
+>> PTE level since large page table can't be split due to break-before-make
+>> rule on ARM64.
+>>
+>> This resulted in a couple of problems:
+>>   - performance degradation
+>>   - more TLB pressure
+>>   - memory waste for kernel page table
+>>
+>> With FEAT_BBM level 2 support, splitting large block page table to
+>> smaller ones doesn't need to make the page table entry invalid anymore.
+>> This allows kernel split large block mapping on the fly.
+>>
+>> Add kernel page table split support and use large block mapping by
+>> default when FEAT_BBM level 2 is supported for rodata=full.  When
+>> changing permissions for kernel linear mapping, the page table will be
+>> split to smaller size.
+>>
+>> The machine without FEAT_BBM level 2 will fallback to have kernel linear
+>> mapping PTE-mapped when rodata=full.
+>>
+>> With this we saw significant performance boost with some benchmarks and
+>> much less memory consumption on my AmpereOne machine (192 cores, 1P)
+>> with 256GB memory.
+>>
+>> * Memory use after boot
+>> Before:
+>> MemTotal:       258988984 kB
+>> MemFree:        254821700 kB
+>>
+>> After:
+>> MemTotal:       259505132 kB
+>> MemFree:        255410264 kB
+>>
+>> Around 500MB more memory are free to use.  The larger the machine, the
+>> more memory saved.
+>>
+>> * Memcached
+>> We saw performance degradation when running Memcached benchmark with
+>> rodata=full vs rodata=on.  Our profiling pointed to kernel TLB pressure.
+>> With this patchset we saw ops/sec is increased by around 3.5%, P99
+>> latency is reduced by around 9.6%.
+>> The gain mainly came from reduced kernel TLB misses.  The kernel TLB
+>> MPKI is reduced by 28.5%.
+>>
+>> The benchmark data is now on par with rodata=on too.
+>>
+>> * Disk encryption (dm-crypt) benchmark
+>> Ran fio benchmark with the below command on a 128G ramdisk (ext4) with
+>> disk encryption (by dm-crypt).
+>> fio --directory=/data --random_generator=lfsr --norandommap            \
+>>     --randrepeat 1 --status-interval=999 --rw=write --bs=4k --loops=1  \
+>>     --ioengine=sync --iodepth=1 --numjobs=1 --fsync_on_close=1         \
+>>     --group_reporting --thread --name=iops-test-job --eta-newline=1    \
+>>     --size 100G
+>>
+>> The IOPS is increased by 90% - 150% (the variance is high, but the worst
+>> number of good case is around 90% more than the best number of bad
+>> case). The bandwidth is increased and the avg clat is reduced
+>> proportionally.
+>>
+>> * Sequential file read
+>> Read 100G file sequentially on XFS (xfs_io read with page cache
+>> populated). The bandwidth is increased by 150%.
+>>
+> 
+> With lock debugging enabled, we see a large number of "BUG: sleeping
+> function called from invalid context at kernel/locking/mutex.c:580"
+> and "BUG: Invalid wait context:" backtraces when running v6.18-rc3.
+> Please see example below.
+> 
+> Bisect points to this patch.
+> 
+> Please let me know if there is anything I can do to help tracking
+> down the problem.
 
-On Tue, Oct 28, 2025 at 12:57:14PM +0530, Jai Luthra wrote:
-> From: David Plowman <david.plowman@raspberrypi.com>
->
-> Trial and error reveals that the minimum vblank value appears to be 24
+Thanks for the report - ouch!
 
-I can only trust your trial and errors here!
-Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+I expect you're running on a system that supports BBML2_NOABORT, based on the
+stack trace, I expect you have CONFIG_DEBUG_PAGEALLOC enabled? That will cause
+permission tricks to be played on the linear map at page allocation and free
+time, which can happen in non-sleepable contexts. And with this patch we are
+taking pgtable_split_lock (a mutex) in split_kernel_leaf_mapping(), which is
+called as a result of the permission change request.
 
-> (the OV5647 data sheet does not give any clues). This fixes streaming
-> lock-ups in full resolution mode.
->
-> Fixes: 2512c06441e3 ("media: ov5647: Support V4L2_CID_VBLANK control")
-> Signed-off-by: David Plowman <david.plowman@raspberrypi.com>
-> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+However, when CONFIG_DEBUG_PAGEALLOC enabled we always force-map the linear map
+by PTE so split_kernel_leaf_mapping() is actually unneccessary and will return
+without actually having to split anything. So we could add an early "if
+(force_pte_mapping()) return 0;" to bypass the function entirely in this case,
+and I *think* that should solve it.
+
+But I'm also concerned about KFENCE. I can't remember it's exact semantics off
+the top of my head, so I'm concerned we could see similar problems there (where
+we only force pte mapping for the KFENCE pool).
+
+I'll investigate fully tomorrow and hopefully provide a fix.
+
+Yang Shi, Do you have any additional thoughts?
+
+Thanks,
+Ryan
+
+> 
+> Thanks,
+> Guenter
+> 
 > ---
->  drivers/media/i2c/ov5647.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/media/i2c/ov5647.c b/drivers/media/i2c/ov5647.c
-> index 4fed655f5a11c38e76d1ccc9ae9155cf945684ab..dfe36116e6d3936aa0568f172c79ad4dad21f8c2 100644
-> --- a/drivers/media/i2c/ov5647.c
-> +++ b/drivers/media/i2c/ov5647.c
-> @@ -73,7 +73,7 @@
->  #define OV5647_PIXEL_ARRAY_WIDTH	2592U
->  #define OV5647_PIXEL_ARRAY_HEIGHT	1944U
->
-> -#define OV5647_VBLANK_MIN		4
-> +#define OV5647_VBLANK_MIN		24
->  #define OV5647_VTS_MAX			32767
->
->  #define OV5647_EXPOSURE_MIN		4
->
-> --
-> 2.51.0
->
->
+> Example log:
+> 
+> [    0.537499] BUG: sleeping function called from invalid context at kernel/locking/mutex.c:580
+> [    0.537501] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 1, name: swapper/0
+> [    0.537502] preempt_count: 1, expected: 0
+> [    0.537504] 2 locks held by swapper/0/1:
+> [    0.537505]  #0: ffffb60b01211960 (sched_domains_mutex){+.+.}-{4:4}, at: sched_domains_mutex_lock+0x24/0x38
+> [    0.537510]  #1: ffffb60b01595838 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire+0x0/0x40
+> [    0.537516] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.18.0-dbg-DEV #1 NONE
+> [    0.537517] Call trace:
+> [    0.537518]  show_stack+0x20/0x38 (C)
+> [    0.537520]  __dump_stack+0x28/0x38
+> [    0.537522]  dump_stack_lvl+0xac/0xf0
+> [    0.537525]  dump_stack+0x18/0x3c
+> [    0.537527]  __might_resched+0x248/0x2a0
+> [    0.537529]  __might_sleep+0x40/0x90
+> [    0.537531]  __mutex_lock_common+0x70/0x1818
+> [    0.537533]  mutex_lock_nested+0x34/0x48
+> [    0.537534]  split_kernel_leaf_mapping+0x74/0x1a0
+> [    0.537536]  update_range_prot+0x40/0x150
+> [    0.537537]  __change_memory_common+0x30/0x148
+> [    0.537538]  __kernel_map_pages+0x70/0x88
+> [    0.537540]  __free_frozen_pages+0x6e4/0x7b8
+> [    0.537542]  free_frozen_pages+0x1c/0x30
+> [    0.537544]  __free_slab+0xf0/0x168
+> [    0.537547]  free_slab+0x2c/0xf8
+> [    0.537549]  free_to_partial_list+0x4e0/0x620
+> [    0.537551]  __slab_free+0x228/0x250
+> [    0.537553]  kfree+0x3c4/0x4c0
+> [    0.537555]  destroy_sched_domain+0xf8/0x140
+> [    0.537557]  cpu_attach_domain+0x17c/0x610
+> [    0.537558]  build_sched_domains+0x15a4/0x1718
+> [    0.537560]  sched_init_domains+0xbc/0xf8
+> [    0.537561]  sched_init_smp+0x30/0x98
+> [    0.537562]  kernel_init_freeable+0x148/0x230
+> [    0.537564]  kernel_init+0x28/0x148
+> [    0.537566]  ret_from_fork+0x10/0x20
+> [    0.537569] =============================
+> [    0.537569] [ BUG: Invalid wait context ]
+> [    0.537571] 6.18.0-dbg-DEV #1 Tainted: G        W
+> [    0.537572] -----------------------------
+> [    0.537572] swapper/0/1 is trying to lock:
+> [    0.537573] ffffb60b011f3830 (pgtable_split_lock){+.+.}-{4:4}, at: split_kernel_leaf_mapping+0x74/0x1a0
+> [    0.537576] other info that might help us debug this:
+> [    0.537577] context-{5:5}
+> [    0.537578] 2 locks held by swapper/0/1:
+> [    0.537579]  #0: ffffb60b01211960 (sched_domains_mutex){+.+.}-{4:4}, at: sched_domains_mutex_lock+0x24/0x38
+> [    0.537582]  #1: ffffb60b01595838 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire+0x0/0x40
+> [    0.537585] stack backtrace:
+> [    0.537585] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Tainted: G        W           6.18.0-dbg-DEV #1 NONE
+> [    0.537587] Tainted: [W]=WARN
+> [    0.537588] Call trace:
+> [    0.537589]  show_stack+0x20/0x38 (C)
+> [    0.537591]  __dump_stack+0x28/0x38
+> [    0.537593]  dump_stack_lvl+0xac/0xf0
+> [    0.537596]  dump_stack+0x18/0x3c
+> [    0.537598]  __lock_acquire+0x980/0x2a20
+> [    0.537600]  lock_acquire+0x124/0x2b8
+> [    0.537602]  __mutex_lock_common+0xd8/0x1818
+> [    0.537604]  mutex_lock_nested+0x34/0x48
+> [    0.537605]  split_kernel_leaf_mapping+0x74/0x1a0
+> [    0.537607]  update_range_prot+0x40/0x150
+> [    0.537608]  __change_memory_common+0x30/0x148
+> [    0.537609]  __kernel_map_pages+0x70/0x88
+> [    0.537610]  __free_frozen_pages+0x6e4/0x7b8
+> [    0.537613]  free_frozen_pages+0x1c/0x30
+> [    0.537615]  __free_slab+0xf0/0x168
+> [    0.537617]  free_slab+0x2c/0xf8
+> [    0.537619]  free_to_partial_list+0x4e0/0x620
+> [    0.537621]  __slab_free+0x228/0x250
+> [    0.537623]  kfree+0x3c4/0x4c0
+> [    0.537625]  destroy_sched_domain+0xf8/0x140
+> [    0.537627]  cpu_attach_domain+0x17c/0x610
+> [    0.537628]  build_sched_domains+0x15a4/0x1718
+> [    0.537630]  sched_init_domains+0xbc/0xf8
+> [    0.537631]  sched_init_smp+0x30/0x98
+> [    0.537632]  kernel_init_freeable+0x148/0x230
+> [    0.537633]  kernel_init+0x28/0x148
+> [    0.537635]  ret_from_fork+0x10/0x20
+> 
+> ---
+> bisect:
+> 
+> # bad: [3a8660878839faadb4f1a6dd72c3179c1df56787] Linux 6.18-rc1
+> # good: [e5f0a698b34ed76002dc5cff3804a61c80233a7a] Linux 6.17
+> git bisect start 'v6.18-rc1' 'v6.17'
+> # bad: [58809f614e0e3f4e12b489bddf680bfeb31c0a20] Merge tag 'drm-next-2025-10-01' of https://gitlab.freedesktop.org/drm/kernel
+> git bisect bad 58809f614e0e3f4e12b489bddf680bfeb31c0a20
+> # bad: [a8253f807760e9c80eada9e5354e1240ccf325f9] Merge tag 'soc-newsoc-6.18' of git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc
+> git bisect bad a8253f807760e9c80eada9e5354e1240ccf325f9
+> # bad: [4b81e2eb9e4db8f6094c077d0c8b27c264901c1b] Merge tag 'timers-vdso-2025-09-29' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+> git bisect bad 4b81e2eb9e4db8f6094c077d0c8b27c264901c1b
+> # bad: [f1004b2f19d7e9add9d707f64d9fcbc50f67921b] Merge tag 'm68k-for-v6.18-tag1' of git://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k
+> git bisect bad f1004b2f19d7e9add9d707f64d9fcbc50f67921b
+> # good: [a9401710a5f5681abd2a6f21f9e76bc9f2e81891] Merge tag 'v6.18-rc-part1-smb3-common' of git://git.samba.org/ksmbd
+> git bisect good a9401710a5f5681abd2a6f21f9e76bc9f2e81891
+> # good: [fe68bb2861808ed5c48d399bd7e670ab76829d55] Merge tag 'microblaze-v6.18' of git://git.monstr.eu/linux-2.6-microblaze
+> git bisect good fe68bb2861808ed5c48d399bd7e670ab76829d55
+> # bad: [f2d64a22faeeecff385b4c91fab5fe036ab00162] Merge branch 'for-next/perf' into for-next/core
+> git bisect bad f2d64a22faeeecff385b4c91fab5fe036ab00162
+> # good: [30f9386820cddbba59b48ae0670c3a1646dd440e] Merge branch 'for-next/misc' into for-next/core
+> git bisect good 30f9386820cddbba59b48ae0670c3a1646dd440e
+> # good: [43de0ac332b815cf56dbdce63687de9acfd35d49] drivers/perf: hisi: Relax the event ID check in the framework
+> git bisect good 43de0ac332b815cf56dbdce63687de9acfd35d49
+> # good: [5973a62efa34c80c9a4e5eac1fca6f6209b902af] arm64: map [_text, _stext) virtual address range non-executable+read-only
+> git bisect good 5973a62efa34c80c9a4e5eac1fca6f6209b902af
+> # good: [b3abb08d6f628a76c36bf7da9508e1a67bf186a0] drivers/perf: hisi: Refactor the event configuration of L3C PMU
+> git bisect good b3abb08d6f628a76c36bf7da9508e1a67bf186a0
+> # good: [6d2f913fda5683fbd4c3580262e10386c1263dfb] Documentation: hisi-pmu: Add introduction to HiSilicon V3 PMU
+> git bisect good 6d2f913fda5683fbd4c3580262e10386c1263dfb
+> # good: [2084660ad288c998b6f0c885e266deb364f65fba] perf/dwc_pcie: Fix use of uninitialized variable
+> git bisect good 2084660ad288c998b6f0c885e266deb364f65fba
+> # bad: [77dfca70baefcb988318a72fe69eb99f6dabbbb1] Merge branch 'for-next/mm' into for-next/core
+> git bisect bad 77dfca70baefcb988318a72fe69eb99f6dabbbb1
+> # first bad commit: [77dfca70baefcb988318a72fe69eb99f6dabbbb1] Merge branch 'for-next/mm' into for-next/core
+> 
+> ---
+> bisect into branch:
+> 
+> - git checkout -b testing 77dfca70baefcb988318a72fe69eb99f6dabbbb1
+> - git rebase 77dfca70baefcb988318a72fe69eb99f6dabbbb1~1
+>   [ fix minor conflict similar to the conflict resolution in 77dfca70baefc]
+> - git diff 77dfca70baefcb988318a72fe69eb99f6dabbbb1
+>   [ confirmed that there are no differences ]
+> - confirm that the problem is still seen at the tip of the rebase
+> - git bisect start HEAD 77dfca70baefcb988318a72fe69eb99f6dabbbb1~1
+> - run bisect
+> 
+> Results:
+> 
+> # bad: [47fc25df1ae3ae8412f1b812fb586c714d04a5e6] arm64: map [_text, _stext) virtual address range non-executable+read-only
+> # good: [30f9386820cddbba59b48ae0670c3a1646dd440e] Merge branch 'for-next/misc' into for-next/core
+> git bisect start 'HEAD' '77dfca70baefcb988318a72fe69eb99f6dabbbb1~1'
+> # good: [805491d19fc21271b5c27f4602f8f66b625c110f] arm64/Kconfig: Remove CONFIG_RODATA_FULL_DEFAULT_ENABLED
+> git bisect good 805491d19fc21271b5c27f4602f8f66b625c110f
+> # bad: [13c7d7426232cc4489df7cd2e1f646a22d3f6172] arm64: mm: support large block mapping when rodata=full
+> git bisect bad 13c7d7426232cc4489df7cd2e1f646a22d3f6172
+> # good: [a4d9c67e503f2b73c2d89d8e8209dfd241bdc8d8] arm64: Enable permission change on arm64 kernel block mappings
+> git bisect good a4d9c67e503f2b73c2d89d8e8209dfd241bdc8d8
+> # first bad commit: [13c7d7426232cc4489df7cd2e1f646a22d3f6172] arm64: mm: support large block mapping when rodata=full
+
 
