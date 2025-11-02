@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-881655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01F99C28A75
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 08:34:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D85AC28A7E
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 08:34:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A6C0188D7C0
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 07:33:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA3E3188D9A1
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 07:33:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12916266B6C;
-	Sun,  2 Nov 2025 07:32:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8114F26A0DB;
+	Sun,  2 Nov 2025 07:32:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SXLAYjWi"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Ia633YEm"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1A0264638
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 07:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32412266B6F
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 07:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762068752; cv=none; b=bGRjDh8iRjxGbJxZezXKO8JlUhgsLtxrc86baAMBTyXoyb1caUnwAgn0EDMg9METxz1HCOvOtteN/LUtMgoCwfSn1mxkNeNT90j4NyGeai6n9f/vL7Pz38zGLXrY6kKa39oLvhj0hmzKRSxBs6JUbER+1sYEImC3hMGWuzQWZ1A=
+	t=1762068754; cv=none; b=ks0xTvL/+DwYJuQzk03ikTtqBxVrVjkqijNex4svvv3diTcXpkanNDMbXGCPSRuoqEB1eW2rkd4HckPzt2qNvVpLeDKXERIUcLmS3tv7pYVpUStF8ApHub0j0Ry3OrmaX1FVIzN/2bdCG463/z32W9pfneHMeQsUR/4v3H0615c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762068752; c=relaxed/simple;
-	bh=dndL03p7rRbhKx5ViGo9nW4QO3MeiGD4iWOFiG9NRq0=;
+	s=arc-20240116; t=1762068754; c=relaxed/simple;
+	bh=0/6q2C6ehyRwr9T4Tp/tUTqnjpKl+as+r0wsXQQYwUA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LbAWNM7C/fGLl5xSEyTjQJlZzQvzOHmrH3APIxmL9Je9Rr7+o8bYkw/j1PD0Y0JADmGQ5Xwfv7y2kXjoZIxo8mPE8ZTIoXzfJlAfq6L8XpZezfHhrh7yykcT9asCEq0xs3kZlr5sCIW0U730N8eg3OP1eAjZDGhIl8r28+AvN9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SXLAYjWi; arc=none smtp.client-ip=91.218.175.183
+	 MIME-Version; b=ZbIvhS/lRoYsqz7nMzYQNH7f/0/rN04UZuQIYdvbWnMhsVyS8zYN4Wl32gaoakj6w/I7AvrbRQGByZor0fnFmzOKBUy1JOObm8Rr9uQPoMG9XIPFbW3+K7rAIgNs+O9lgn80d/ldWk7xrq5UdnsyrDP8Do0ByUi+ChxfzM57YoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Ia633YEm; arc=none smtp.client-ip=91.218.175.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762068748;
+	t=1762068751;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Ufdq4aNwPnUC0XnIBJYqN4y6PY/tZMqt0u26zaoa1S0=;
-	b=SXLAYjWirfKZYgjC0sRd28OETDzhvQKoFON1GVJchOg8CiN9q0Bv5ZXzyhQd2b+XAdmUbj
-	J/urY3aoiz3/dR6eteSNbLizRuhujOd4tnbaTBFprg+Vj/ccr5eVhus1lHEVyPQd67byG2
-	zd3HVVk+8ppedsYc3VwL/+gSzJv38kY=
+	bh=Yjl/bhHhHfCb9ypAHpnQxPBT5SeWGv+8sMRDL0lfiTc=;
+	b=Ia633YEmt+KUaAd51bbFVQ6a1+gZUT+0SkhK6rXRPnSyWexf3JVxsq0GgLARqwJd4fssTk
+	dzqz8wYtHw68H9tSbjux3aBREJ0/gBb5vu2Y4sOcqNH7sdy7XoIr/KZSt3+Yz/kzMpR8kw
+	HnjuNktcYHbR+ObY/+t/IcWGgCkINIE=
 From: chenxiaosong.chenxiaosong@linux.dev
 To: sfrench@samba.org,
 	smfrench@gmail.com,
@@ -50,9 +50,9 @@ To: sfrench@samba.org,
 Cc: linux-cifs@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	ChenXiaoSong <chenxiaosong@kylinos.cn>
-Subject: [PATCH v5 05/14] smb: move create_durable_rsp_v2 to common/smb2pdu.h
-Date: Sun,  2 Nov 2025 15:30:50 +0800
-Message-ID: <20251102073059.3681026-6-chenxiaosong.chenxiaosong@linux.dev>
+Subject: [PATCH v5 06/14] smb/server: remove create_durable_reconn_req
+Date: Sun,  2 Nov 2025 15:30:51 +0800
+Message-ID: <20251102073059.3681026-7-chenxiaosong.chenxiaosong@linux.dev>
 In-Reply-To: <20251102073059.3681026-1-chenxiaosong.chenxiaosong@linux.dev>
 References: <20251102073059.3681026-1-chenxiaosong.chenxiaosong@linux.dev>
 Precedence: bulk
@@ -66,140 +66,83 @@ X-Migadu-Flow: FLOW_OUT
 
 From: ChenXiaoSong <chenxiaosong@kylinos.cn>
 
-Modify the following places:
+The fields in struct create_durable_reconn_req and struct create_durable
+are exactly the same.
 
-  - some fields in "struct create_durable_v2_rsp" ->
-                       struct durable_context_v2_rsp
-  - durable_reconnect_context_v2_rsp -> durable_context_v2_rsp
-  - create_durable_v2_rsp -> create_durable_rsp_v2
+The documentation references are:
 
-Then move them to common header file.
+  - SMB2_CREATE_DURABLE_HANDLE_REQUEST   in MS-SMB2 2.2.13.2.3
+  - SMB2_CREATE_DURABLE_HANDLE_RECONNECT in MS-SMB2 2.2.13.2.4
+  - SMB2_FILEID in MS-SMB2 2.2.14.1
+
+We can give these two structs a uniform name: create_durable.
+
+Descriptions of the struct fields:
+
+  - __u8  Reserved[16]: DurableRequest field of SMB2_CREATE_DURABLE_HANDLE_REQUEST.
+                        A 16-byte field that MUST be reserved.
+  - __u64 PersistentFileId: Persistent field of 2.2.14.1 SMB2_FILEID
+  - __u64 VolatileFileId: Volatile field of 2.2.14.1 SMB2_FILEID
+  - struct Fid: Data field of SMB2_CREATE_DURABLE_HANDLE_RECONNECT.
+                An SMB2_FILEID structure, as specified in section 2.2.14.1.
 
 Signed-off-by: ChenXiaoSong <chenxiaosong@kylinos.cn>
 ---
- fs/smb/client/smb2pdu.h |  6 ------
- fs/smb/common/smb2pdu.h | 12 ++++++++++++
- fs/smb/server/oplock.c  |  8 ++++----
- fs/smb/server/smb2ops.c |  6 +++---
- fs/smb/server/smb2pdu.h |  6 ------
- 5 files changed, 19 insertions(+), 19 deletions(-)
+ fs/smb/server/smb2pdu.c |  6 +++---
+ fs/smb/server/smb2pdu.h | 12 ------------
+ 2 files changed, 3 insertions(+), 15 deletions(-)
 
-diff --git a/fs/smb/client/smb2pdu.h b/fs/smb/client/smb2pdu.h
-index 741ceabc3bba..32da7a4773e1 100644
---- a/fs/smb/client/smb2pdu.h
-+++ b/fs/smb/client/smb2pdu.h
-@@ -138,12 +138,6 @@ struct share_redirect_error_context_rsp {
- /* Flags */
- #define SMB2_DHANDLE_FLAG_PERSISTENT	0x00000002
+diff --git a/fs/smb/server/smb2pdu.c b/fs/smb/server/smb2pdu.c
+index c972b2dd62cd..b95ca0de60c3 100644
+--- a/fs/smb/server/smb2pdu.c
++++ b/fs/smb/server/smb2pdu.c
+@@ -2766,7 +2766,7 @@ static int parse_durable_handle_context(struct ksmbd_work *work,
+ 		}
+ 		case DURABLE_RECONN:
+ 		{
+-			struct create_durable_reconn_req *recon;
++			struct create_durable *recon;
  
--/* See MS-SMB2 2.2.14.2.12 */
--struct durable_reconnect_context_v2_rsp {
--	__le32 Timeout;
--	__le32 Flags; /* see above DHANDLE_FLAG_PERSISTENT */
--} __packed;
--
- /* See MS-SMB2 2.2.13.2.5 */
- struct crt_twarp_ctxt {
- 	struct create_context_hdr ccontext;
-diff --git a/fs/smb/common/smb2pdu.h b/fs/smb/common/smb2pdu.h
-index 77b1b8eb9c0e..4ea515732b38 100644
---- a/fs/smb/common/smb2pdu.h
-+++ b/fs/smb/common/smb2pdu.h
-@@ -1320,6 +1320,18 @@ struct create_durable_handle_reconnect_v2 {
- 	struct durable_reconnect_context_v2 dcontext;
- } __packed;
+ 			if (dh_info->type == DURABLE_RECONN_V2 ||
+ 			    dh_info->type == DURABLE_REQ_V2) {
+@@ -2776,12 +2776,12 @@ static int parse_durable_handle_context(struct ksmbd_work *work,
  
-+/* See MS-SMB2 2.2.14.2.12 */
-+struct durable_context_v2_rsp {
-+	__le32 Timeout;
-+	__le32 Flags; /* see SMB2_DHANDLE_FLAG_PERSISTENT */
-+} __packed;
-+
-+struct create_durable_rsp_v2 {
-+	struct create_context_hdr ccontext;
-+	__u8   Name[8];
-+	struct durable_context_v2_rsp dcontext;
-+} __packed;
-+
- /* See MS-SMB2 2.2.14.2.5 */
- struct create_mxac_rsp {
- 	struct create_context_hdr ccontext;
-diff --git a/fs/smb/server/oplock.c b/fs/smb/server/oplock.c
-index a04d5702820d..1f07ebf431d7 100644
---- a/fs/smb/server/oplock.c
-+++ b/fs/smb/server/oplock.c
-@@ -1617,9 +1617,9 @@ void create_durable_rsp_buf(char *cc)
-  */
- void create_durable_v2_rsp_buf(char *cc, struct ksmbd_file *fp)
- {
--	struct create_durable_v2_rsp *buf;
-+	struct create_durable_rsp_v2 *buf;
+ 			if (le16_to_cpu(context->DataOffset) +
+ 				le32_to_cpu(context->DataLength) <
+-			    sizeof(struct create_durable_reconn_req)) {
++			    sizeof(struct create_durable)) {
+ 				err = -EINVAL;
+ 				goto out;
+ 			}
  
--	buf = (struct create_durable_v2_rsp *)cc;
-+	buf = (struct create_durable_rsp_v2 *)cc;
- 	memset(buf, 0, sizeof(struct create_durable_rsp));
- 	buf->ccontext.DataOffset = cpu_to_le16(offsetof
- 			(struct create_durable_rsp, Data));
-@@ -1633,9 +1633,9 @@ void create_durable_v2_rsp_buf(char *cc, struct ksmbd_file *fp)
- 	buf->Name[2] = '2';
- 	buf->Name[3] = 'Q';
- 
--	buf->Timeout = cpu_to_le32(fp->durable_timeout);
-+	buf->dcontext.Timeout = cpu_to_le32(fp->durable_timeout);
- 	if (fp->is_persistent)
--		buf->Flags = cpu_to_le32(SMB2_DHANDLE_FLAG_PERSISTENT);
-+		buf->dcontext.Flags = cpu_to_le32(SMB2_DHANDLE_FLAG_PERSISTENT);
- }
- 
- /**
-diff --git a/fs/smb/server/smb2ops.c b/fs/smb/server/smb2ops.c
-index bcf05caa2304..edd7eca0714a 100644
---- a/fs/smb/server/smb2ops.c
-+++ b/fs/smb/server/smb2ops.c
-@@ -59,7 +59,7 @@ static struct smb_version_values smb30_server_values = {
- 	.cap_large_files = SMB2_LARGE_FILES,
- 	.create_lease_size = sizeof(struct create_lease_v2),
- 	.create_durable_size = sizeof(struct create_durable_rsp),
--	.create_durable_v2_size = sizeof(struct create_durable_v2_rsp),
-+	.create_durable_v2_size = sizeof(struct create_durable_rsp_v2),
- 	.create_mxac_size = sizeof(struct create_mxac_rsp),
- 	.create_disk_id_size = sizeof(struct create_disk_id_rsp),
- 	.create_posix_size = sizeof(struct create_posix_rsp),
-@@ -86,7 +86,7 @@ static struct smb_version_values smb302_server_values = {
- 	.cap_large_files = SMB2_LARGE_FILES,
- 	.create_lease_size = sizeof(struct create_lease_v2),
- 	.create_durable_size = sizeof(struct create_durable_rsp),
--	.create_durable_v2_size = sizeof(struct create_durable_v2_rsp),
-+	.create_durable_v2_size = sizeof(struct create_durable_rsp_v2),
- 	.create_mxac_size = sizeof(struct create_mxac_rsp),
- 	.create_disk_id_size = sizeof(struct create_disk_id_rsp),
- 	.create_posix_size = sizeof(struct create_posix_rsp),
-@@ -113,7 +113,7 @@ static struct smb_version_values smb311_server_values = {
- 	.cap_large_files = SMB2_LARGE_FILES,
- 	.create_lease_size = sizeof(struct create_lease_v2),
- 	.create_durable_size = sizeof(struct create_durable_rsp),
--	.create_durable_v2_size = sizeof(struct create_durable_v2_rsp),
-+	.create_durable_v2_size = sizeof(struct create_durable_rsp_v2),
- 	.create_mxac_size = sizeof(struct create_mxac_rsp),
- 	.create_disk_id_size = sizeof(struct create_disk_id_rsp),
- 	.create_posix_size = sizeof(struct create_posix_rsp),
+-			recon = (struct create_durable_reconn_req *)context;
++			recon = (struct create_durable *)context;
+ 			persistent_id = recon->Data.Fid.PersistentFileId;
+ 			dh_info->fp = ksmbd_lookup_durable_fd(persistent_id);
+ 			if (!dh_info->fp) {
 diff --git a/fs/smb/server/smb2pdu.h b/fs/smb/server/smb2pdu.h
-index d4026d313d67..46e14bd4f2da 100644
+index 46e14bd4f2da..7758aa01034d 100644
 --- a/fs/smb/server/smb2pdu.h
 +++ b/fs/smb/server/smb2pdu.h
-@@ -98,12 +98,6 @@ struct create_durable_rsp {
- /* See MS-SMB2 2.2.13.2.11 */
- /* Flags */
- #define SMB2_DHANDLE_FLAG_PERSISTENT	0x00000002
--struct create_durable_v2_rsp {
+@@ -68,18 +68,6 @@ struct preauth_integrity_info {
+ 
+ #define DURABLE_HANDLE_MAX_TIMEOUT	300000
+ 
+-struct create_durable_reconn_req {
 -	struct create_context_hdr ccontext;
 -	__u8   Name[8];
--	__le32 Timeout;
--	__le32 Flags;
+-	union {
+-		__u8  Reserved[16];
+-		struct {
+-			__u64 PersistentFileId;
+-			__u64 VolatileFileId;
+-		} Fid;
+-	} Data;
 -} __packed;
- 
- /* equivalent of the contents of SMB3.1.1 POSIX open context response */
- struct create_posix_rsp {
+-
+ struct create_alloc_size_req {
+ 	struct create_context_hdr ccontext;
+ 	__u8   Name[8];
 -- 
 2.43.0
 
