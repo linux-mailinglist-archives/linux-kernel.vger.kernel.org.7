@@ -1,153 +1,166 @@
-Return-Path: <linux-kernel+bounces-882012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1FCEC29733
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 22:30:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61479C29739
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 22:36:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4B3834E5F84
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 21:30:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38DC53AD985
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 21:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9358218AA0;
-	Sun,  2 Nov 2025 21:30:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496AD22172E;
+	Sun,  2 Nov 2025 21:36:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WNK58TLC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uWjkOvIW"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1B1E1F37D4;
-	Sun,  2 Nov 2025 21:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B07A1D5ADE
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 21:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762119008; cv=none; b=n81yNzALCJC1bnHz1BvW7TGPD8KJvLsHPzUNfk+7s21VauvAg2ozuMxs2cbrnskEP3/UMskG2r4vYLKGy5sLyH0x0HnwPEcocH/2DojBhaizdrEtAg5QWZP4Pqv3D7OPD5w1woCPUm/Fd04muqdOyuADmTmbVOvbMnyjS3cvmEw=
+	t=1762119408; cv=none; b=s3yu5WO8DqfP3BZOpj7VN9vRp8R8suMqHsrfHNIDI6cQektJn+JY6ydoCJJFU5DlKSvsxIEylRAUiIxg57W9EGkv6Fw1hzFMw1r3kU8Q+T7h7feiPMLto9J0oFqbrfS9Fzbjll0/BcynwB2BlsTOSxIeE3tZh7tnMXGVal71v+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762119008; c=relaxed/simple;
-	bh=CMt3hSc6+1N7XcmiQfEo1ARISxV/1YKl1tb5rGl5dzs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WhCKr2pZ5N/iknJNHcboHf48fj6NcmtCzk4wiNwSq3cxTn2eRmRcZCXdcAELM3QoAB2o0GhMsGnwWPIVowJRAY7nu5+lPwQGqsfka803lbP/QBfs/BFhYqIzpztPXlVvGgaLitMfaRwOSanOLPLQUrTYh4G0lElmyix2mWr2A8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WNK58TLC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B6F8C4CEF7;
-	Sun,  2 Nov 2025 21:30:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762119005;
-	bh=CMt3hSc6+1N7XcmiQfEo1ARISxV/1YKl1tb5rGl5dzs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=WNK58TLCLVVgs2Y6/dXmejeCtwjSc7J6bYXdG09ehTGfHxrJQNLUVtNRX3KdWIUy7
-	 pJFK5FU3sj8csv2FFPJwRav1Vw+mYjqZbHHJciQpjLLJKuvCP26DyQWeraZ8CHk88A
-	 NUgsZjrRb+HY3X521YN5LxsveUu1IFO1AOcSmleKf68dhyw2gw8uEb5PKAGvd1KJ05
-	 EPmNYOTf0CntKpp6v2UGPhAf1Msl1UMhavd3g2msCWXQVBydI/M9v5uVzkKJT69JWj
-	 gxWqYCRpK4Fpw+cdk4BjH2GhXr8cYkdN0oTnf2ERF7pRRcw6LZ6lNKqur3ESwg0Qgj
-	 xvpq4aRRcCvcw==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	rust-for-linux@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	stable@vger.kernel.org
-Subject: [PATCH 2/2] rust: kbuild: workaround `rustdoc` doctests modifier bug
-Date: Sun,  2 Nov 2025 22:28:53 +0100
-Message-ID: <20251102212853.1505384-2-ojeda@kernel.org>
-In-Reply-To: <20251102212853.1505384-1-ojeda@kernel.org>
-References: <20251102212853.1505384-1-ojeda@kernel.org>
+	s=arc-20240116; t=1762119408; c=relaxed/simple;
+	bh=i3EklB5KO1R4QxKOcGYeVk40OcIAul9sYhoKiHZt5NM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Fk1QtWTgfJGhmqogpwbxL1Fk/OnlUVgxyawdgHBGo4sdMHyQ6zA9KVpr7e+dVWPGQGNMqn9mIMF0CvBItEoh0Ol7J8JkH5nXYkmq52IPh5QiXApHx+Ixhwh9ZeXINhBW+zB+zjPjloiP/xk5KrEJ20SYQAb8w9uo/bjbpgMB32U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uWjkOvIW; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762119394;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qcGx6i/+++ufNscO90BKEs/b8++kUKzaqmiZ//H9ISU=;
+	b=uWjkOvIWS/CmQ5V4hKpdOf06Eo4ZAkvv91DlTySCJ+m53/jNAeeaZdCBfaDTh6/k+AtkyR
+	OVFVRg96tGQ0GJMt7tJOycDaK3A5j0R8batwvzteEfJiSGDHZ8F1jonFIuRsADZ6tdXsD3
+	F1obi2np1FqjXVQ+3cEKvINCpn4xOk4=
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+  linux-kernel@vger.kernel.org,  Alexei Starovoitov <ast@kernel.org>,
+  Suren Baghdasaryan <surenb@google.com>,  Shakeel Butt
+ <shakeel.butt@linux.dev>,  Johannes Weiner <hannes@cmpxchg.org>,  Andrii
+ Nakryiko <andrii@kernel.org>,  JP Kobryn <inwardvessel@gmail.com>,
+  linux-mm@kvack.org,  cgroups@vger.kernel.org,  bpf@vger.kernel.org,
+  Martin KaFai Lau <martin.lau@kernel.org>,  Song Liu <song@kernel.org>,
+  Kumar Kartikeya Dwivedi <memxor@gmail.com>,  Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH v2 06/23] mm: introduce BPF struct ops for OOM handling
+In-Reply-To: <aQR7HIiQ82Ye2UfA@tiehlicka> (Michal Hocko's message of "Fri, 31
+	Oct 2025 10:02:20 +0100")
+References: <20251027231727.472628-1-roman.gushchin@linux.dev>
+	<20251027231727.472628-7-roman.gushchin@linux.dev>
+	<aQR7HIiQ82Ye2UfA@tiehlicka>
+Date: Sun, 02 Nov 2025 13:36:25 -0800
+Message-ID: <875xbsglra.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Migadu-Flow: FLOW_OUT
 
-The `rustdoc` modifiers bug [1] was fixed in Rust 1.90.0 [2], for which
-we added a workaround in commit abbf9a449441 ("rust: workaround `rustdoc`
-target modifiers bug").
+Michal Hocko <mhocko@suse.com> writes:
 
-However, `rustdoc`'s doctest generation still has a similar issue [3],
-being fixed at [4], which does not affect us because we apply the
-workaround to both, and now, starting with Rust 1.91.0 (released
-2025-10-30), `-Zsanitizer` is a target modifier too [5], which means we
-fail with:
+> On Mon 27-10-25 16:17:09, Roman Gushchin wrote:
+>> Introduce a bpf struct ops for implementing custom OOM handling
+>> policies.
+>> 
+>> It's possible to load one bpf_oom_ops for the system and one
+>> bpf_oom_ops for every memory cgroup. In case of a memcg OOM, the
+>> cgroup tree is traversed from the OOM'ing memcg up to the root and
+>> corresponding BPF OOM handlers are executed until some memory is
+>> freed. If no memory is freed, the kernel OOM killer is invoked.
+>
+> Do you have any usecase in mind where parent memcg oom handler decides
+> to not kill or cannot kill anything and hand over upwards in the
+> hierarchy?
 
-      RUSTDOC TK rust/kernel/lib.rs
-    error: mixing `-Zsanitizer` will cause an ABI mismatch in crate `kernel`
-     --> rust/kernel/lib.rs:3:1
-      |
-    3 | //! The `kernel` crate.
-      | ^
-      |
-      = help: the `-Zsanitizer` flag modifies the ABI so Rust crates compiled with different values of this flag cannot be used together safely
-      = note: unset `-Zsanitizer` in this crate is incompatible with `-Zsanitizer=kernel-address` in dependency `core`
-      = help: set `-Zsanitizer=kernel-address` in this crate or unset `-Zsanitizer` in `core`
-      = help: if you are sure this will not cause problems, you may use `-Cunsafe-allow-abi-mismatch=sanitizer` to silence this error
+I believe that in most cases bpf handlers will handle ooms themselves,
+but because strictly speaking I don't have control over what bpf
+programs do or do not, the kernel should provide the fallback mechanism.
+This is a common practice with bpf, e.g. sched_ext falls back to
+CFS/EEVDF in case something is wrong.
 
-A simple way around is to add the sanitizer to the list in the existing
-workaround (especially if we had not started to pass the sanitizer
-flags in the previous commit, since in that case that would not be
-necessary). However, that still applies the workaround in more cases
-than necessary.
+Specifically to OOM case, I believe someone might want to use bpf
+programs just for monitoring/collecting some information, without
+trying to actually free some memory.
 
-Instead, only modify the doctests flags to ignore the check for
-sanitizers, so that it is more local (and thus the compiler keeps checking
-it for us in the normal `rustdoc` calls). Since the previous commit
-already treated the `rustdoc` calls as kernel objects, this should allow
-us in the future to easily remove this workaround when the time comes.
+>> The struct ops provides the bpf_handle_out_of_memory() callback,
+>> which expected to return 1 if it was able to free some memory and 0
+>> otherwise. If 1 is returned, the kernel also checks the bpf_memory_freed
+>> field of the oom_control structure, which is expected to be set by
+>> kfuncs suitable for releasing memory. If both are set, OOM is
+>> considered handled, otherwise the next OOM handler in the chain
+>> (e.g. BPF OOM attached to the parent cgroup or the in-kernel OOM
+>> killer) is executed.
+>
+> Could you explain why do we need both? Why is not bpf_memory_freed
+> return value sufficient?
 
-By the way, the `-Cunsafe-allow-abi-mismatch` flag overwrites previous
-ones rather than appending, so it needs to be all done in the same flag.
-Moreover, unknown modifiers are rejected, and thus we have to gate based
-on the version too.
+Strictly speaking, bpf_memory_freed should be enough, but because
+bpf programs have to return an int and there is no additional cost
+to add this option (pass to next or in-kernel oom handler), I thought
+it's not a bad idea. If you feel strongly otherwise, I can ignore
+the return value on rely on bpf_memory_freed only.
 
-Finally, `-Zsanitizer-cfi-normalize-integers` is not affected, so it is
-not needed in the workaround.
+>
+>> The bpf_handle_out_of_memory() callback program is sleepable to enable
+>> using iterators, e.g. cgroup iterators. The callback receives struct
+>> oom_control as an argument, so it can determine the scope of the OOM
+>> event: if this is a memcg-wide or system-wide OOM.
+>
+> This could be tricky because it might introduce a subtle and hard to
+> debug lock dependency chain. lock(a); allocation() -> oom -> lock(a).
+> Sleepable locks should be only allowed in trylock mode.
 
-Cc: stable@vger.kernel.org # Needed in 6.12.y and later (Rust is pinned in older LTSs).
-Link: https://github.com/rust-lang/rust/issues/144521 [1]
-Link: https://github.com/rust-lang/rust/pull/144523 [2]
-Link: https://github.com/rust-lang/rust/issues/146465 [3]
-Link: https://github.com/rust-lang/rust/pull/148068 [4]
-Link: https://github.com/rust-lang/rust/pull/138736 [5]
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
- rust/Makefile | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Agree, but it's achieved by controlling the context where oom can be
+declared (e.g. in bpf_psi case it's done from a work context).
 
-diff --git a/rust/Makefile b/rust/Makefile
-index 5de103e20841..ce6d9c9d9727 100644
---- a/rust/Makefile
-+++ b/rust/Makefile
-@@ -69,6 +69,9 @@ core-edition := $(if $(call rustc-min-version,108700),2024,2021)
- # the time being (https://github.com/rust-lang/rust/issues/144521).
- rustdoc_modifiers_workaround := $(if $(call rustc-min-version,108800),-Cunsafe-allow-abi-mismatch=fixed-x18)
- 
-+# Similarly, for doctests (https://github.com/rust-lang/rust/issues/146465).
-+doctests_modifiers_workaround := $(rustdoc_modifiers_workaround)$(if $(call rustc-min-version,109100),$(comma)sanitizer)
-+
- # `rustc` recognizes `--remap-path-prefix` since 1.26.0, but `rustdoc` only
- # since Rust 1.81.0. Moreover, `rustdoc` ICEs on out-of-tree builds since Rust
- # 1.82.0 (https://github.com/rust-lang/rust/issues/138520). Thus workaround both
-@@ -236,7 +239,7 @@ quiet_cmd_rustdoc_test_kernel = RUSTDOC TK $<
- 		--extern bindings --extern uapi \
- 		--no-run --crate-name kernel -Zunstable-options \
- 		--sysroot=/dev/null \
--		$(rustdoc_modifiers_workaround) \
-+		$(doctests_modifiers_workaround) \
- 		--test-builder $(objtree)/scripts/rustdoc_test_builder \
- 		$< $(rustdoc_test_kernel_quiet); \
- 	$(objtree)/scripts/rustdoc_test_gen
--- 
-2.51.2
+>
+>> The callback is executed just before the kernel victim task selection
+>> algorithm, so all heuristics and sysctls like panic on oom,
+>> sysctl_oom_kill_allocating_task and sysctl_oom_kill_allocating_task
+>> are respected.
+>
+> I guess you meant to say and sysctl_panic_on_oom.
 
+Yep, fixed.
+>
+>> BPF OOM struct ops provides the handle_cgroup_offline() callback
+>> which is good for releasing struct ops if the corresponding cgroup
+>> is gone.
+>
+> What kind of synchronization is expected between handle_cgroup_offline
+> and bpf_handle_out_of_memory?
+
+You mean from a user's perspective? E.g. can these two callbacks run in
+parallel? Currently yes, but it's a good question, I haven't thought
+about it, maybe it's better to synchronize them.
+Internally both rely on srcu to pin bpf_oom_ops in memory.
+
+>  
+>> The struct ops also has the name field, which allows to define a
+>> custom name for the implemented policy. It's printed in the OOM report
+>> in the oom_policy=<policy> format. "default" is printed if bpf is not
+>> used or policy name is not specified.
+>
+> oom_handler seems like a better fit but nothing I would insist on. Also
+> I would just print it if there is an actual handler so that existing
+> users who do not use bpf oom killers do not need to change their
+> parsers.
+
+Sure, works for me too.
+
+>
+> Other than that this looks reasonable to me.
+
+Sound great, thank you for taking a look!
 
