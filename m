@@ -1,343 +1,287 @@
-Return-Path: <linux-kernel+bounces-881971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81F4AC29578
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 19:46:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 324A2C295A3
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 20:02:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E7AF188B9C7
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 18:47:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 17A2C188CD57
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 19:03:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4236191F84;
-	Sun,  2 Nov 2025 18:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCBE91F4CBB;
+	Sun,  2 Nov 2025 19:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="ViGITAx3"
-Received: from relay14.grserver.gr (relay14.grserver.gr [46.224.16.114])
+	dkim=pass (1024-bit key) header.d=rong.moe header.i=i@rong.moe header.b="W26AloMC"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA6D2940B
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 18:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.224.16.114
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762109196; cv=none; b=t5hm03z+/aAzwkmNVB5EOPK1ltSfyLPuhN99B/O31SgKiQ7/QDNRrqc9Lt1aKXtQy9sNfMAgnV5eaSoBrHBSArZD+d4ag7s8wXZRsR1Uk7SkkuEAqM5zBqCsA9NQn+2qkV3NJgep3OWjPGvro/ynqG9V3oGA5w5HeQLzNQUoVWE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762109196; c=relaxed/simple;
-	bh=r0/zDrVbRSccubM3wNfWk9xxOqcjL68deL73qOUc0eU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qthR1BmtfQV1M9PbRdSjIO86GrFyo9QGI03Yta0IjfTcq3kegs+x8bnujp7gNlnuFN3SLbP+Lk59pFu3xBzFOy0bMjl+BV7G8ETg71JE7JbyB+0bFzP3mynn4sXcGiN/LbH6tr+K8aJE9ZJfWHo17mk7FrxXyDZWB3Gq3P12n/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=ViGITAx3; arc=none smtp.client-ip=46.224.16.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from relay14 (localhost [127.0.0.1])
-	by relay14.grserver.gr (Proxmox) with ESMTP id 6E55043E90
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 18:46:30 +0000 (UTC)
-Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by relay14.grserver.gr (Proxmox) with ESMTPS id 75BC243EA0
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 18:46:29 +0000 (UTC)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	by linux3247.grserver.gr (Postfix) with ESMTPSA id BA07A1FE1D1
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 20:46:28 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1762109189;
-	bh=DG6IjzWim5LfmOq1HhbzVZ7NPGAMuHmOdTowhSECY34=;
-	h=Received:From:Subject:To;
-	b=ViGITAx3pKY+NJksaFlOMVRu4JxTbRbQOmp91lbGBTPA6/ySUpbaHLyHWoippoU11
-	 9ZNlF332qg78RjmCe4BoX7H+6QRRAziSRFIBQbl74hqMQYNXGY3v7PA6nHskLbXe9S
-	 lqf3KkAr8Jp7JSI2E6R60sN9URV3loIPXMbjcm3F1ZZxEDhYlf1bpfF3nShNYmhBl9
-	 IJ45qIAkQfGc/Y3h5JPgD2Steos975TVYWuxP9qcxqAylwTVBfZnaI/L8Rxi4e29Pb
-	 i7L04NLGjFul+hItgkIgHbH9Kbu9+qaK4bS4jidqVNx+SJVGhnzTtu7gD1GlQxLTVD
-	 BaxwECNhV6Q8g==
-Authentication-Results: linux3247.grserver.gr;
-        spf=pass (sender IP is 209.85.208.169) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f169.google.com
-Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
-Received: by mail-lj1-f169.google.com with SMTP id
- 38308e7fff4ca-378d6fa5aebso38082191fa.2
-        for <linux-kernel@vger.kernel.org>;
- Sun, 02 Nov 2025 10:46:28 -0800 (PST)
-X-Forwarded-Encrypted: i=1;
- AJvYcCVKELIO/ZyPTwW4O8C/s20EHD5MsmU+FDPDaIWbkDqg9J3J0Fb8bcBhwqRV7wgslVrjnZbWE0DtKYE+KaE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqNjwEU203aC5Da3I3p86gv5eQIfPKEQkHzlEoe5wecLAkzwuq
-	IO2jb5TuAGEixVtGoylS6WRtUusXOIpbdyW/2xpIvK1EA6Xc46Hl8uBroSQhmFUeWNgI5GHIE0o
-	/rUuiPa2hOup/flfJ93jL4oMBffC1p8c=
-X-Google-Smtp-Source: 
- AGHT+IGdsDLsNbeHnejPidq2OjBRvs02gr0Inko+9F7RnDGPN8GlnEDJ/D3HXG4ZMarMKwmfzKHuLr/cWAYdvwRmWAk=
-X-Received: by 2002:a2e:b050:0:b0:378:e12f:e5ed with SMTP id
- 38308e7fff4ca-37a18dd3837mr24847101fa.39.1762109188140; Sun, 02 Nov 2025
- 10:46:28 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4879F79F2;
+	Sun,  2 Nov 2025 19:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762110148; cv=pass; b=RSyUglEXXKc0asqIcJqMbfYkDPm2qZVa4lXd76E4KgOzGpS5QOPKXmleCMJwKrFJjwb0pQwFjKVtr4w45HdkXvHYlz20HN/4rdEZFJ3VJuF2ptLKFSkfu+Px7ZydNIbBetSdYcP/v0LLXrEErnzYYGWndlMaQBjfMnRC9MNkhPg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762110148; c=relaxed/simple;
+	bh=uW41SGp+KLAtrXCBgHOFhuCPtjHCnsJ0Ik2QgG6MNDc=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=iksfQ2mP4cp/tRHaj9utIYTbmqPn28IrU/YbsWJp1fYVb/A6hcCz+KiE96Rr01Bi6GgSew2RFrwNrXu93A3rDXTrdSCjZLnZN21xAHZtvQBnmczTGGal24eGADBzYYZiM+fYc0wTNAJzrdgMLk9jQ2EalLXLobRuyF2NiIiFlOs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (1024-bit key) header.d=rong.moe header.i=i@rong.moe header.b=W26AloMC; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
+ARC-Seal: i=1; a=rsa-sha256; t=1762110132; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=CD4tDJpCukeJezFEw2kSzhiRKB8iv8iNRALUAxENoGypRv6J+g5A7Go3/SKKtm5LjIMfSSGtO182S7dpKMwcFAc9MoUdHxdehQceesl/DIXpRmRlHZzLKJVnndpLr5OtuRKt35HNUh755QJk2cBKefY7SzGJNSaj005ujlg+mFQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1762110132; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ZY6jDkRPdA6CWdxMWs9aEGnkJdWPXA4kDIjAJU/tycs=; 
+	b=QMwSx2kbci5go+ZH4c1RtA5CFOdp23sqk7c7vx9fzV0kYgVuC4fY+6a/uHn4sbRqAw7x/+wCK6eNWo6MAHNTDsl+gcEL0k6jMb7z7NF3Cu6M3bJfpyCFc1jWXNu0UPTHk97bWIq2b2mgGVBSlabo8o6FvI1s6n9fZHofNRbEmDk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=rong.moe;
+	spf=pass  smtp.mailfrom=i@rong.moe;
+	dmarc=pass header.from=<i@rong.moe>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762110132;
+	s=zmail; d=rong.moe; i=i@rong.moe;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date:Date:MIME-Version:Message-Id:Reply-To;
+	bh=ZY6jDkRPdA6CWdxMWs9aEGnkJdWPXA4kDIjAJU/tycs=;
+	b=W26AloMCqplQav8MABHSJasbcZ9s/6Wvx8Xt16nUxqYmhaFgIysOzO5Csdloj+Nx
+	nJ8TnkYXDXIuVwqE3xtYtIuXM1GSkcCT6T3vcjC6WIlI6VfsYS9ovbjrPnUH5DU9+FH
+	SYaeGPomTP5P20cngTkXoNGjp6l9xqvgKviZQ7Lk=
+Received: by mx.zohomail.com with SMTPS id 1762110129191488.5069062313564;
+	Sun, 2 Nov 2025 11:02:09 -0800 (PST)
+Message-ID: <5d1ae6eb34378570ed1f9b62d945c95bda8a5b86.camel@rong.moe>
+Subject: Re: [PATCH 0/2] platform/x86: ideapad-laptop: Add
+ charge_types:Fast (Rapid Charge)
+From: Rong Zhang <i@rong.moe>
+To: Jelle van der Waa <jelle@vdwaa.nl>, Ilpo =?ISO-8859-1?Q?J=E4rvinen?=
+	 <ilpo.jarvinen@linux.intel.com>
+Cc: Ike Panhc <ikepanhc@gmail.com>, Mark Pearson
+ <mpearson-lenovo@squebb.ca>,  "Derek J. Clark" <derekjohn.clark@gmail.com>,
+ Hans de Goede <hansg@kernel.org>, platform-driver-x86@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+In-Reply-To: <dfa70284-04ce-482d-8d79-cc0ee8b4bf6d@vdwaa.nl>
+References: <20251020192443.33088-1-i@rong.moe>
+	 <dfa70284-04ce-482d-8d79-cc0ee8b4bf6d@vdwaa.nl>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Date: Mon, 03 Nov 2025 02:57:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251031163651.1465981-1-lkml@antheas.dev>
- <20251031163651.1465981-5-lkml@antheas.dev>
- <7c521e72-1b32-4172-90ec-6e793941a8ed@gmx.de>
-In-Reply-To: <7c521e72-1b32-4172-90ec-6e793941a8ed@gmx.de>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Sun, 2 Nov 2025 19:46:16 +0100
-X-Gmail-Original-Message-ID: 
- <CAGwozwFRF11dH02SRRNCyiYW7dNuoYoGWfPdEWPoim2r-KoZ0g@mail.gmail.com>
-X-Gm-Features: AWmQ_blC-EtmU16ailXtQLIdZ7cMoZmtleYvZfMH9MLu3V1CIJ8yh8dA6hYDegc
-Message-ID: 
- <CAGwozwFRF11dH02SRRNCyiYW7dNuoYoGWfPdEWPoim2r-KoZ0g@mail.gmail.com>
-Subject: Re: [PATCH v3 4/6] platform/x86: ayaneo-ec: Add controller power and
- modules attributes
-To: Armin Wolf <W_Armin@gmx.de>
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, Hans de Goede <hansg@kernel.org>,
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Derek John Clark <derekjohn.clark@gmail.com>,
-	=?UTF-8?Q?Joaqu=C3=ADn_Ignacio_Aramend=C3=ADa?= <samsagax@gmail.com>,
-	Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-X-PPP-Message-ID: 
- <176210918901.1966177.15338757356978541322@linux3247.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
-X-Virus-Status: Clean
+User-Agent: Evolution 3.56.2-5 
+X-ZohoMailClient: External
 
-On Sun, 2 Nov 2025 at 19:30, Armin Wolf <W_Armin@gmx.de> wrote:
->
-> Am 31.10.25 um 17:36 schrieb Antheas Kapenekakis:
->
-> > The Ayaneo 3 features hot-swappable controller modules. The ejection
-> > and management is done through HID. However, after ejecting the modules,
-> > the controller needs to be power cycled via the EC to re-initialize.
-> >
-> > For this, the EC provides a variable that holds whether the left or
-> > right modules are connected, and a power control register to turn
-> > the controller on or off. After ejecting the modules, the controller
-> > should be turned off. Then, after both modules are reinserted,
-> > the controller may be powered on again to re-initialize.
-> >
-> > This patch introduces two new sysfs attributes:
-> >   - `controller_modules`: a read-only attribute that indicates whether
-> >     the left and right modules are connected (none, left, right, both).
-> >   - `controller_power`: a read-write attribute that allows the user
-> >     to turn the controller on or off (with '1'/'0').
-> >
-> > Therefore, after ejection is complete, userspace can power off the
-> > controller, then wait until both modules have been reinserted
-> > (`controller_modules` will return 'both') to turn on the controller.
-> >
-> > Reviewed-by: Armin Wolf <W_Armin@gmx.de>
-> > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
-> > ---
-> >   .../ABI/testing/sysfs-platform-ayaneo-ec      |  19 ++++
-> >   MAINTAINERS                                   |   1 +
-> >   drivers/platform/x86/ayaneo-ec.c              | 106 ++++++++++++++++++
-> >   3 files changed, 126 insertions(+)
-> >   create mode 100644 Documentation/ABI/testing/sysfs-platform-ayaneo-ec
-> >
-> > diff --git a/Documentation/ABI/testing/sysfs-platform-ayaneo-ec b/Documentation/ABI/testing/sysfs-platform-ayaneo-ec
-> > new file mode 100644
-> > index 000000000000..3c9c3580c685
-> > --- /dev/null
-> > +++ b/Documentation/ABI/testing/sysfs-platform-ayaneo-ec
-> > @@ -0,0 +1,19 @@
-> > +What:                /sys/devices/platform/ayaneo-ec/controller_power
-> > +Date:                Oct 2025
->
-> I think you need to update those dates.
->
-> > +KernelVersion:       6.19
-> > +Contact:     "Antheas Kapenekakis" <lkml@antheas.dev>
-> > +Description:
-> > +             Current controller power state. Allows turning on and off
-> > +             the controller power (e.g. for power savings). Write 1 to
-> > +             turn on, 0 to turn off. File is readable and writable.
-> > +
-> > +What:                /sys/devices/platform/ayaneo-ec/controller_modules
-> > +Date:                Oct 2025
-> > +KernelVersion:       6.19
-> > +Contact:     "Antheas Kapenekakis"  <lkml@antheas.dev>
-> > +Description:
-> > +             Shows which controller modules are currently connected to
-> > +             the device. Possible values are "left", "right" and "both".
-> > +             File is read-only. The Windows software for this device
-> > +             will only set controller power to 1 if both module sides
-> > +             are connected (i.e. this file returns "both").
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index da9498d8cc89..b4d62ea9a926 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -4191,6 +4191,7 @@ AYANEO PLATFORM EC DRIVER
-> >   M:  Antheas Kapenekakis <lkml@antheas.dev>
-> >   L:  platform-driver-x86@vger.kernel.org
-> >   S:  Maintained
-> > +F:   Documentation/ABI/testing/sysfs-platform-ayaneo
-> >   F:  drivers/platform/x86/ayaneo-ec.c
-> >
-> >   AZ6007 DVB DRIVER
-> > diff --git a/drivers/platform/x86/ayaneo-ec.c b/drivers/platform/x86/ayaneo-ec.c
-> > index 697bb053a7d6..0652c044ad76 100644
-> > --- a/drivers/platform/x86/ayaneo-ec.c
-> > +++ b/drivers/platform/x86/ayaneo-ec.c
-> > @@ -8,6 +8,7 @@
-> >    */
-> >
-> >   #include <linux/acpi.h>
-> > +#include <linux/bits.h>
-> >   #include <linux/dmi.h>
-> >   #include <linux/err.h>
-> >   #include <linux/hwmon.h>
-> > @@ -16,6 +17,7 @@
-> >   #include <linux/module.h>
-> >   #include <linux/platform_device.h>
-> >   #include <linux/power_supply.h>
-> > +#include <linux/sysfs.h>
-> >   #include <acpi/battery.h>
-> >
-> >   #define AYANEO_PWM_ENABLE_REG        0x4A
-> > @@ -32,9 +34,17 @@
-> >   #define AYANEO_CHARGE_VAL_AUTO              0xaa
-> >   #define AYANEO_CHARGE_VAL_INHIBIT   0x55
-> >
-> > +#define AYANEO_POWER_REG     0x2d
-> > +#define AYANEO_POWER_OFF     0xfe
-> > +#define AYANEO_POWER_ON              0xff
-> > +#define AYANEO_MODULE_REG    0x2f
-> > +#define AYANEO_MODULE_LEFT   BIT(0)
-> > +#define AYANEO_MODULE_RIGHT  BIT(1)
->
-> Using GENMASK() would make sense here.
+Hi Jelle,
 
-Only a single bit is being used though? GENMASK is used for a contiguous series?
+On Sun, 2025-11-02 at 17:09 +0100, Jelle van der Waa wrote:
+> On 10/20/25 21:24, Rong Zhang wrote:
+> > The GBMD/SBMC interface on IdeaPad/ThinkBook supports Rapid Charge mode
+> > (charge_types: Fast) in addition to Conservation Mode (charge_types:
+> > Long_Life).
+> >=20
+> > This patchset exposes these two modes while carefully maintaining their
+> > mutually exclusive state, which aligns with the behavior of manufacture=
+r
+> > utilities on Windows.
+> >=20
+> > Tested on ThinkBook 14 G7+ ASP.
+>=20
+> Tested this patch on my Lenovo Ideapad U330p, it now advertises that=20
+> `Fast` is a supported charge_type although my laptop does not seem to=20
+> support it:
+>=20
+> [root@archlinux jelle]# cat /sys/class/power_supply/BAT1/charge_types
+> Fast [Standard] Long_Life
+> [root@archlinux jelle]# echo 'Fast' >=20
+> /sys/class/power_supply/BAT1/charge_types
+> [root@archlinux jelle]# cat /sys/class/power_supply/BAT1/charge_types
+> Fast [Standard] Long_Life
 
-> With those issues being fixed:
-> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
->
-> > +
-> >   struct ayaneo_ec_quirk {
-> >       bool has_fan_control;
-> >       bool has_charge_control;
-> > +     bool has_magic_modules;
-> >   };
-> >
-> >   struct ayaneo_ec_platform_data {
-> > @@ -46,6 +56,7 @@ struct ayaneo_ec_platform_data {
-> >   static const struct ayaneo_ec_quirk quirk_ayaneo3 = {
-> >       .has_fan_control = true,
-> >       .has_charge_control = true,
-> > +     .has_magic_modules = true,
-> >   };
-> >
-> >   static const struct dmi_system_id dmi_table[] = {
-> > @@ -266,6 +277,100 @@ static int ayaneo_remove_battery(struct power_supply *battery,
-> >       return 0;
-> >   }
-> >
-> > +static ssize_t controller_power_store(struct device *dev,
-> > +                                   struct device_attribute *attr,
-> > +                                   const char *buf,
-> > +                                   size_t count)
-> > +{
-> > +     bool value;
-> > +     int ret;
-> > +
-> > +     ret = kstrtobool(buf, &value);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     ret = ec_write(AYANEO_POWER_REG, value ? AYANEO_POWER_ON : AYANEO_POWER_OFF);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     return count;
-> > +}
-> > +
-> > +static ssize_t controller_power_show(struct device *dev,
-> > +                                  struct device_attribute *attr,
-> > +                                  char *buf)
-> > +{
-> > +     int ret;
-> > +     u8 val;
-> > +
-> > +     ret = ec_read(AYANEO_POWER_REG, &val);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     return sysfs_emit(buf, "%d\n", val == AYANEO_POWER_ON);
-> > +}
-> > +
-> > +static DEVICE_ATTR_RW(controller_power);
-> > +
-> > +static ssize_t controller_modules_show(struct device *dev,
-> > +                                    struct device_attribute *attr, char *buf)
-> > +{
-> > +     char *out;
-> > +     int ret;
-> > +     u8 val;
-> > +
-> > +     ret = ec_read(AYANEO_MODULE_REG, &val);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     switch (~val & (AYANEO_MODULE_LEFT | AYANEO_MODULE_RIGHT)) {
-> > +     case AYANEO_MODULE_LEFT | AYANEO_MODULE_RIGHT:
-> > +             out = "both";
-> > +             break;
-> > +     case AYANEO_MODULE_LEFT:
-> > +             out = "left";
-> > +             break;
-> > +     case AYANEO_MODULE_RIGHT:
-> > +             out = "right";
-> > +             break;
-> > +     default:
-> > +             out = "none";
-> > +             break;
-> > +     }
-> > +
-> > +     return sysfs_emit(buf, "%s\n", out);
-> > +}
-> > +
-> > +static DEVICE_ATTR_RO(controller_modules);
-> > +
-> > +static struct attribute *aya_mm_attrs[] = {
-> > +     &dev_attr_controller_power.attr,
-> > +     &dev_attr_controller_modules.attr,
-> > +     NULL
-> > +};
-> > +
-> > +static umode_t aya_mm_is_visible(struct kobject *kobj,
-> > +                              struct attribute *attr, int n)
-> > +{
-> > +     struct device *dev = kobj_to_dev(kobj);
-> > +     struct platform_device *pdev = to_platform_device(dev);
-> > +     struct ayaneo_ec_platform_data *data = platform_get_drvdata(pdev);
-> > +
-> > +     if (data->quirks->has_magic_modules)
-> > +             return attr->mode;
-> > +     return 0;
-> > +}
-> > +
-> > +static const struct attribute_group aya_mm_attribute_group = {
-> > +     .is_visible = aya_mm_is_visible,
-> > +     .attrs = aya_mm_attrs,
-> > +};
-> > +
-> > +static const struct attribute_group *ayaneo_ec_groups[] = {
-> > +     &aya_mm_attribute_group,
-> > +     NULL
-> > +};
-> > +
-> >   static int ayaneo_ec_probe(struct platform_device *pdev)
-> >   {
-> >       const struct dmi_system_id *dmi_entry;
-> > @@ -307,6 +412,7 @@ static int ayaneo_ec_probe(struct platform_device *pdev)
-> >   static struct platform_driver ayaneo_platform_driver = {
-> >       .driver = {
-> >               .name = "ayaneo-ec",
-> > +             .dev_groups = ayaneo_ec_groups,
-> >       },
-> >       .probe = ayaneo_ec_probe,
-> >   };
->
+Ahh, then we need an approach to determine if it is supported on a
+specific device.
 
+Glancing at the disassembled DSDT.dsl of my device, I found:
+
+   Method (GBMD, 0, NotSerialized)
+   {
+   	[...]
+   	If ((One =3D=3D QCGS))
+   	{
+   		Local0 |=3D 0x00020000
+   	}
+   	[...]
+   }
+
+BIT(17) of GBMD is 1 on my device. Maybe QCGS means "Quick CharGe
+Supported?"
+
+With this assumption, I did some random Internet digging. The same bit
+on other devices is called QKSP ("QuicK charge SuPported?"), SQCG
+("Support Quick CharGe?"), or QCBX (see below).
+
+   Method (GBMD, 0, NotSerialized)
+   {
+   	[...]
+   	If ((One =3D=3D QCBX))
+   	{
+   		If ((One =3D=3D QCHO))
+   		{
+   			Local0 |=3D 0x04
+   		}
+   	}
+   	[...]
+   	If ((One =3D=3D QCBX))
+   	{
+   		Local0 |=3D 0x00020000
+   	}
+   	[...]
+   }
+
+https://badland.io/static/acpidump.txt
+
+0x04 is BIT(2)/GBMD_RAPID_CHARGE_STATE_BIT. With all these pieces of
+information, I presume BIT(17) of GBMD is what we are searching for.
+
+> I'm wondering if the battery extension API allows to not advertise a=20
+> property if it isn't supported or if it should at least return -EINVAL.
+
+We can achieve this by defining multiple struct power_supply_ext. See
+drivers/power/supply/cros_charge-control.c.
+
+Could you test the patch below (based on "review-ilpo-next")?
+
+@Ilpo:
+
+This patch series has been merge into your "review-ilpo-next" branch.
+
+Should I reorganize the series and send a [PATCH v2]? Or should I just
+send the patch below (after adding a commit message, ofc)?
+
+> Greetings,
+>=20
+> Jelle van der Waa
+
+Thanks,
+Rong
+
+---
+diff --git a/drivers/platform/x86/lenovo/ideapad-laptop.c b/drivers/platfor=
+m/x86/lenovo/ideapad-laptop.c
+index 931a72a2a487..b9927493cb93 100644
+--- a/drivers/platform/x86/lenovo/ideapad-laptop.c
++++ b/drivers/platform/x86/lenovo/ideapad-laptop.c
+@@ -75,6 +75,7 @@ enum {
+ enum {
+ 	GBMD_RAPID_CHARGE_STATE_BIT =3D 2,
+ 	GBMD_CONSERVATION_STATE_BIT =3D 5,
++	GBMD_RAPID_CHARGE_SUPPORTED_BIT =3D 17,
+ };
+=20
+ enum {
+@@ -180,6 +181,7 @@ struct ideapad_private {
+ 	struct ideapad_dytc_priv *dytc;
+ 	struct dentry *debug;
+ 	struct acpi_battery_hook battery_hook;
++	const struct power_supply_ext *battery_ext;
+ 	unsigned long cfg;
+ 	unsigned long r_touchpad_val;
+ 	struct {
+@@ -2119,30 +2121,42 @@ static const enum power_supply_property ideapad_pow=
+er_supply_props[] =3D {
+ 	POWER_SUPPLY_PROP_CHARGE_TYPES,
+ };
+=20
+-static const struct power_supply_ext ideapad_battery_ext =3D {
+-	.name			=3D "ideapad_laptop",
+-	.properties		=3D ideapad_power_supply_props,
+-	.num_properties		=3D ARRAY_SIZE(ideapad_power_supply_props),
+-	.charge_types		=3D (BIT(POWER_SUPPLY_CHARGE_TYPE_STANDARD) |
+-				   BIT(POWER_SUPPLY_CHARGE_TYPE_FAST) |
+-				   BIT(POWER_SUPPLY_CHARGE_TYPE_LONGLIFE)),
+-	.get_property		=3D ideapad_psy_ext_get_prop,
+-	.set_property		=3D ideapad_psy_ext_set_prop,
+-	.property_is_writeable	=3D ideapad_psy_prop_is_writeable,
+-};
++#define DEFINE_IDEAPAD_POWER_SUPPLY_EXTENSION(_name, _charge_types)			\
++	static const struct power_supply_ext _name =3D {					\
++		.name			=3D "ideapad_laptop",				\
++		.properties		=3D ideapad_power_supply_props,			\
++		.num_properties		=3D ARRAY_SIZE(ideapad_power_supply_props),	\
++		.charge_types		=3D _charge_types,				\
++		.get_property		=3D ideapad_psy_ext_get_prop,			\
++		.set_property		=3D ideapad_psy_ext_set_prop,			\
++		.property_is_writeable	=3D ideapad_psy_prop_is_writeable,		\
++	}
++
++DEFINE_IDEAPAD_POWER_SUPPLY_EXTENSION(ideapad_battery_ext_v1,
++	(BIT(POWER_SUPPLY_CHARGE_TYPE_STANDARD) |
++	 BIT(POWER_SUPPLY_CHARGE_TYPE_LONGLIFE))
++);
++
++DEFINE_IDEAPAD_POWER_SUPPLY_EXTENSION(ideapad_battery_ext_v2,
++	(BIT(POWER_SUPPLY_CHARGE_TYPE_STANDARD) |
++	 BIT(POWER_SUPPLY_CHARGE_TYPE_FAST) |
++	 BIT(POWER_SUPPLY_CHARGE_TYPE_LONGLIFE))
++);
+=20
+ static int ideapad_battery_add(struct power_supply *battery, struct acpi_b=
+attery_hook *hook)
+ {
+ 	struct ideapad_private *priv =3D container_of(hook, struct ideapad_privat=
+e, battery_hook);
+=20
+-	return power_supply_register_extension(battery, &ideapad_battery_ext,
++	return power_supply_register_extension(battery, priv->battery_ext,
+ 					       &priv->platform_device->dev, priv);
+ }
+=20
+ static int ideapad_battery_remove(struct power_supply *battery,
+ 				  struct acpi_battery_hook *hook)
+ {
+-	power_supply_unregister_extension(battery, &ideapad_battery_ext);
++	struct ideapad_private *priv =3D container_of(hook, struct ideapad_privat=
+e, battery_hook);
++
++	power_supply_unregister_extension(battery, priv->battery_ext);
+=20
+ 	return 0;
+ }
+@@ -2167,14 +2181,22 @@ static int ideapad_check_features(struct ideapad_pr=
+ivate *priv)
+ 		priv->features.fan_mode =3D true;
+=20
+ 	if (acpi_has_method(handle, "GBMD") && acpi_has_method(handle, "SBMC")) {
+-		priv->features.conservation_mode =3D true;
+-		priv->battery_hook.add_battery =3D ideapad_battery_add;
+-		priv->battery_hook.remove_battery =3D ideapad_battery_remove;
+-		priv->battery_hook.name =3D "Ideapad Battery Extension";
+-
+-		err =3D devm_battery_hook_register(&priv->platform_device->dev, &priv->b=
+attery_hook);
+-		if (err)
+-			return err;
++		/* Not acquiring gbmd_sbmc_mutex as race condition is impossible on init=
+ */
++		if (!eval_gbmd(handle, &val)) {
++			priv->features.conservation_mode =3D true;
++			priv->battery_ext =3D test_bit(GBMD_RAPID_CHARGE_SUPPORTED_BIT, &val)
++					  ? &ideapad_battery_ext_v2
++					  : &ideapad_battery_ext_v1;
++
++			priv->battery_hook.add_battery =3D ideapad_battery_add;
++			priv->battery_hook.remove_battery =3D ideapad_battery_remove;
++			priv->battery_hook.name =3D "Ideapad Battery Extension";
++
++			err =3D devm_battery_hook_register(&priv->platform_device->dev,
++							 &priv->battery_hook);
++			if (err)
++				return err;
++		}
+ 	}
+=20
+ 	if (acpi_has_method(handle, "DYTC"))
 
