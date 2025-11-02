@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-882034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81349C297AB
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 22:49:29 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E237EC297AE
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 22:50:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1849188E7C7
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 21:47:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 58F194EF1D6
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 21:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B142E8B73;
-	Sun,  2 Nov 2025 21:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5742E7622;
+	Sun,  2 Nov 2025 21:44:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H2fw3VdO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b1EMTg8l"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF37260583;
-	Sun,  2 Nov 2025 21:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E2425D1E9;
+	Sun,  2 Nov 2025 21:44:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762119881; cv=none; b=dVJwu2IEFJ7Dnx3zwphPwX/dDifK7+aEY2RsrmgTuXmS0brN1bDDlC+Xj+RAC0472EOczunc6qY2g/m94KcM+6zs5De8TIwaQcXbvLcDEZoyMsT0RYgu3qkdWpZMm2jgOVHsF5olU929sOCH1RI76BPL7lU2ZOZsJyeR8M38CeI=
+	t=1762119880; cv=none; b=Bhzu9wXM5CPmKOCrYdu4RwVDPMxrF8j39S7iEcoIeruWPIVbfySKu8Cd9X5Ik8NeragMp0TCJ+JxL3ittvaiWLQlISE/gqndSzv2w5YIB55YXQzgFTtTHG0hJQ7E0YxNDpDXekllg+kWvO8j8Fr1jcq1qM8329MYYTL6zDbNw8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762119881; c=relaxed/simple;
-	bh=rZXvfrA3YGviZHzZMYqMHXTK7X68+gQX9VG+uQe++ZM=;
+	s=arc-20240116; t=1762119880; c=relaxed/simple;
+	bh=/aBUUqkdfQzZ+qxvU0KljxF2xX83n5VIIQG+jKSVdFg=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=RRRwlqtkgC7po2gfv6dunZDiwoDy9+pK4Vfjwy/J9YQ1eLxA4mYffKuumSdhnm0yyEhuidd5Pq/ASLpnjcoKmlh5XW1AyyM8y46WYHGwjFaakRUBAwHvoUI/r2mGSbvyqz2v4fIhXMONhB2dCnsnwmkKlvx0IHo+fx3Um+xdxhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H2fw3VdO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCFE0C116D0;
-	Sun,  2 Nov 2025 21:44:40 +0000 (UTC)
+	 MIME-Version; b=CYQgeO9N5nv7EiIFd5WAHNTBoMg6789MEPwbQMYh25PmpnQ8fFcL3oCCozptPVES4EqG/h/gvFnqe9KkZvSZSvi8w7vB6wheuLP5uNgo1Gpp4MlXk19oJ1l99QFMYw5/ssnKGDrScZS9DDri3Ymfi7Fxid/x0r+iogo8u1vxThM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b1EMTg8l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D540BC19421;
+	Sun,  2 Nov 2025 21:44:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762119880;
-	bh=rZXvfrA3YGviZHzZMYqMHXTK7X68+gQX9VG+uQe++ZM=;
+	s=k20201202; t=1762119879;
+	bh=/aBUUqkdfQzZ+qxvU0KljxF2xX83n5VIIQG+jKSVdFg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=H2fw3VdOZzJ3lx/k31T7AdEtUPtF3EaPp5nk7XbSiaHqrmOfOqhvyEhs7IS1orJyz
-	 K4Ifyqtsaqq9VwDUE+J62RCtf8KIsNtBMon+Urt/UsuAGPu6oQL07JSUSfR0z4IVfa
-	 zuAnUw/MN7lpnQrE4hJrISU6GI1E0p6Wws1bJ6cQzHBydGHEIPenfBFrxw+8VYE27S
-	 +ZOdO4fgXBpFKbEFfe9buSD06zCCP5EtskfVsQJP36/SogSeT8Qk/vB4EYj087TvwC
-	 g6alcrj5qE9DIXs0YVAA2ovQ3a5BPcAi/0Dmthy7QH9JSqYOeHuPM0rz5ZA4f687H4
-	 forJg0cQ0ovfQ==
+	b=b1EMTg8lMaI3kCLR83XoezsSTL6mrs8DEEBygsr+3BXTpFSs3kLPOVCML1iT8EATe
+	 yp6jClEyIv+rwQmjWwSBVJ9HRudvPCrEznxW2GU59oRlNVAl+jh/bEr+a9xt+qYrfn
+	 XQLngiIwZpC8d6xcvz+vQomUMCAVJAWT9MfbsxXLr4AKPv4Ow1YcE6xLaoW9g10aRv
+	 LDNFcEStfXlPpZYU7hgqmhY0riU3dQt19CNZbFXKEuoenI+t+7um0bmbbeDQ2GdR1j
+	 t2L+urzjZUpI7Q576QcRrTU4m6o86+kgSwn/YAxexaecZX4XFb5y0lkBzfKqwYZUmE
+	 IAUiGqdnalnbw==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id A80C6CE16CA; Sun,  2 Nov 2025 13:44:37 -0800 (PST)
+	id AA4BCCE16DB; Sun,  2 Nov 2025 13:44:37 -0800 (PST)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
 	rostedt@goodmis.org,
 	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: [PATCH 18/19] rcutorture: Make srcu{,d}_torture_init() announce the SRCU type
-Date: Sun,  2 Nov 2025 13:44:35 -0800
-Message-Id: <20251102214436.3905633-18-paulmck@kernel.org>
+Subject: [PATCH 19/19] rcutorture: Remove redundant rcutorture_one_extend() from rcu_torture_one_read()
+Date: Sun,  2 Nov 2025 13:44:36 -0800
+Message-Id: <20251102214436.3905633-19-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <082fb8ba-91b8-448e-a472-195eb7b282fd@paulmck-laptop>
 References: <082fb8ba-91b8-448e-a472-195eb7b282fd@paulmck-laptop>
@@ -62,79 +62,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This commit causes rcutorture's srcu_torture_init() and
-srcud_torture_init() functions to announce on the console log
-which variant of SRCU is being tortured, for example: "torture:
-srcud_torture_init fast SRCU".
+This commit removes a harmless but potentially confusing invocation of
+rcutorture_one_extend() within rcu_torture_one_read().  The immediately
+preceding call to rcu_torture_one_read_start() already does this cleanup,
+and the other call to rcu_torture_one_read_start() already relies on this.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/rcu/rcutorture.c | 34 ++++++++++++++++++++++++++++------
- 1 file changed, 28 insertions(+), 6 deletions(-)
+ kernel/rcu/rcutorture.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
 diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index 4a9b6866c0cc..820c5e5b106b 100644
+index 820c5e5b106b..423c4bddd17c 100644
 --- a/kernel/rcu/rcutorture.c
 +++ b/kernel/rcu/rcutorture.c
-@@ -701,10 +701,20 @@ static struct rcu_torture_ops srcud_ops;
- static void srcu_torture_init(void)
- {
- 	rcu_sync_torture_init();
--	if (reader_flavor & SRCU_READ_FLAVOR_FAST)
-+	if (!reader_flavor || (reader_flavor & SRCU_READ_FLAVOR_NORMAL)) {
-+		VERBOSE_TOROUT_STRING("srcu_torture_init normal SRCU");
-+	}
-+	if (reader_flavor & SRCU_READ_FLAVOR_NMI) {
-+		VERBOSE_TOROUT_STRING("srcu_torture_init NMI-safe SRCU");
-+	}
-+	if (reader_flavor & SRCU_READ_FLAVOR_FAST) {
- 		srcu_ctlp = &srcu_ctlf;
--	if (reader_flavor & SRCU_READ_FLAVOR_FAST_UPDOWN)
-+		VERBOSE_TOROUT_STRING("srcu_torture_init fast SRCU");
-+	}
-+	if (reader_flavor & SRCU_READ_FLAVOR_FAST_UPDOWN) {
- 		srcu_ctlp = &srcu_ctlfud;
-+		VERBOSE_TOROUT_STRING("srcu_torture_init fast-up/down SRCU");
-+	}
- }
- 
- static void srcu_get_gp_data(int *flags, unsigned long *gp_seq)
-@@ -920,12 +930,21 @@ static struct rcu_torture_ops srcu_ops = {
- static void srcud_torture_init(void)
- {
- 	rcu_sync_torture_init();
--	if (reader_flavor & SRCU_READ_FLAVOR_FAST_UPDOWN)
--		WARN_ON(init_srcu_struct_fast_updown(&srcu_ctld));
--	else if (reader_flavor & SRCU_READ_FLAVOR_FAST)
-+	if (!reader_flavor || (reader_flavor & SRCU_READ_FLAVOR_NORMAL)) {
-+		WARN_ON(init_srcu_struct(&srcu_ctld));
-+		VERBOSE_TOROUT_STRING("srcud_torture_init normal SRCU");
-+	} else if (reader_flavor & SRCU_READ_FLAVOR_NMI) {
-+		WARN_ON(init_srcu_struct(&srcu_ctld));
-+		VERBOSE_TOROUT_STRING("srcud_torture_init NMI-safe SRCU");
-+	} else if (reader_flavor & SRCU_READ_FLAVOR_FAST) {
- 		WARN_ON(init_srcu_struct_fast(&srcu_ctld));
--	else
-+		VERBOSE_TOROUT_STRING("srcud_torture_init fast SRCU");
-+	} else if (reader_flavor & SRCU_READ_FLAVOR_FAST_UPDOWN) {
-+		WARN_ON(init_srcu_struct_fast_updown(&srcu_ctld));
-+		VERBOSE_TOROUT_STRING("srcud_torture_init fast-up/down SRCU");
-+	} else {
- 		WARN_ON(init_srcu_struct(&srcu_ctld));
-+	}
- 	srcu_ctlp = &srcu_ctld;
- }
- 
-@@ -2440,6 +2459,9 @@ static DEFINE_TORTURE_RANDOM_PERCPU(rcu_torture_timer_rand);
-  */
- static void rcu_torture_timer(struct timer_list *unused)
- {
-+	WARN_ON_ONCE(!in_serving_softirq());
-+	WARN_ON_ONCE(in_hardirq());
-+	WARN_ON_ONCE(in_nmi());
- 	atomic_long_inc(&n_rcu_torture_timers);
- 	(void)rcu_torture_one_read(this_cpu_ptr(&rcu_torture_timer_rand), -1);
- 
+@@ -2440,10 +2440,8 @@ static bool rcu_torture_one_read(struct torture_random_state *trsp, long myid)
+ 	newstate = rcutorture_extend_mask(rtors.readstate, trsp);
+ 	WARN_ON_ONCE(newstate & RCUTORTURE_RDR_UPDOWN);
+ 	rcutorture_one_extend(&rtors.readstate, newstate, trsp, rtors.rtrsp++);
+-	if (!rcu_torture_one_read_start(&rtors, trsp, myid)) {
+-		rcutorture_one_extend(&rtors.readstate, 0, trsp, rtors.rtrsp);
++	if (!rcu_torture_one_read_start(&rtors, trsp, myid))
+ 		return false;
+-	}
+ 	rtors.rtrsp = rcutorture_loop_extend(&rtors.readstate, trsp, rtors.rtrsp);
+ 	rcu_torture_one_read_end(&rtors, trsp);
+ 	return true;
 -- 
 2.40.1
 
