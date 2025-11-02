@@ -1,109 +1,90 @@
-Return-Path: <linux-kernel+bounces-881765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E179C28E0A
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 12:20:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF523C28E15
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 12:23:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D77394E42D7
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 11:20:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4125F3AA07B
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 11:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 094DD2BF015;
-	Sun,  2 Nov 2025 11:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D5E2C0F7D;
+	Sun,  2 Nov 2025 11:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="M4mtYi6G"
-Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y0lmWSxI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0742BE658
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 11:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D5A2C0F60;
+	Sun,  2 Nov 2025 11:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762082424; cv=none; b=BW+tStJ6Rsu1rZIFysHUpYkf/c7T3tmRuh3kDAUONax5HsSyI4JPUnGGlYcRxP1cAgiQMmR4i++CdXO7fH0KS3aC0zks/xeyFIpY/KLl3BlWwoHPH7sqXQ5gHOC6IMyvc8c3nqhIZXg1RMiB3aR+JH3SvL+ezGQ7S0RBUSZf1Wg=
+	t=1762082584; cv=none; b=GwjaMIBsYGdYHhNDJxecVtsnJ6fe0APR8UL8C8y3Qizyh8YZWjZ3W++sa7ixAxjrk/+dZQRwqRidlBXcanQGVF7Ty61Ay2pkmCpih+hycpgBwme7g3LkhwRpI+54CsZYsPKocCfQAvrEZqPwSSKQt4370sFluxuoNJMcOvpESXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762082424; c=relaxed/simple;
-	bh=EFafSP3HIrxQTM7cLUtbO4phMNjZKXUmKRZYEqMGerg=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=L2X92PoLImJx1DcvIQBV2HT4iHPVjiNBen7t5BGnGCD7exSm3nrPthvPbbyNLAZ7Pg30quCkI10Xfw8kqo988YqJbwBYkrQ6x8WKc7eBXQ5GYyer4deTBDQ0j+/SizwgDSxjFFcTyidMsgllsmmTvj//HnSr0A4sF+8pIHR3DZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=M4mtYi6G; arc=none smtp.client-ip=202.12.124.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-02.internal (phl-compute-02.internal [10.202.2.42])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 95FBE7A012A;
-	Sun,  2 Nov 2025 06:20:20 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Sun, 02 Nov 2025 06:20:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1762082420; x=1762168820; bh=6m3o1ByUcKnQCCidqvOiypzSMNc/FU4EBRX
-	ilWZnF/0=; b=M4mtYi6GOiUwEVnU1+rp8S1+RWIJN7w9+1BjzGQdMoyziBKJGgD
-	2ptYd+fCMVtnc5kj5IVMIkfTzcnpce3FEGPicmp6MdCYamhMEYYAg6QGzqBifnNx
-	P2PJ+UT+B9pvCdK4oyZohHB52qbq6hlt3Q3rvWq26Qx/zzVuN15NIvoqDcDqqcYh
-	tdcnXZP9nzJf6vTa/KQSfjeQUSJonM9XzNLRJbk+hebpV0duTWj+ytPdPUysh6FY
-	xdiZabPXizWF1xdMGYxw+mnCZS4wpmILMf150HZmUWlGpzBylO6RvWIsPu36ZO0E
-	s031OQYw0LUezL4HgeJQ0DzO/6G6K0QgVIA==
-X-ME-Sender: <xms:cD4Had3xlIZ7JJVEZAgthSzOTzG5aRZwet_IKoQJTTkt0Lh8qux75Q>
-    <xme:cD4HaYfCxIQjW-rBRFcvcy4LiXxOhK6P4DVyJsHI4zsFdIfoZuGrKjtXjE8JQDmx-
-    eiBvm3HzbioIVc_GjGL8ZQyEXzyR9f7xZD97KPB4a8Q3ijnGfU_Zx2M>
-X-ME-Received: <xmr:cD4HabxarueTcmYJSXQp7nVaC2tYA678m8CmEtLIHfi6W26TjUpDKyLzkd4sOXFjBtrps4ojTFw-IwYwAV_3b0flP4Rchox1HHs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujeehudduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcuvfhh
-    rghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtth
-    gvrhhnpeevtddtudfgvddtteeuvdffheegffefhffgjeefueevkeeutdeuleffheevffeh
-    ueenucffohhmrghinhepohiilhgrsghsrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomhepfhhthhgrihhnsehlihhnuhigqdhmieekkhdr
-    ohhrghdpnhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpohhuthdprhgtphhtth
-    hopehushgvrhhmheejseihrghhohhordgtohhmpdhrtghpthhtoheplhhinhhugiesthhr
-    vggslhhighdrohhrghdprhgtphhtthhopehmphgvsegvlhhlvghrmhgrnhdrihgurdgruh
-    dprhgtphhtthhopehnphhighhgihhnsehgmhgrihhlrdgtohhmpdhrtghpthhtoheptghh
-    rhhishhtohhphhgvrdhlvghrohihsegtshhgrhhouhhprdgvuhdprhgtphhtthhopehsrg
-    hmsehrrghvnhgsohhrghdrohhrghdprhgtphhtthhopegsvghnhheskhgvrhhnvghlrdgt
-    rhgrshhhihhnghdrohhrghdprhgtphhtthhopehlihhnuhigphhptgdquggvvheslhhish
-    htshdrohiilhgrsghsrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehv
-    ghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:cD4HaYwgnD4En5T6PukYGLYuHvhmlS4V4xGeBrg1H-OefOcz2iYG1w>
-    <xmx:cD4HaUZ1xoEon8SCoRYTLcm3mYv8kkfOXWTN_VTplSyxSjRUt05uXQ>
-    <xmx:cD4HaZ3g_ShkIhJBpRCAUBfIGl9qdN6HefMepaqX3visPr7_BJofXA>
-    <xmx:cD4HaWcvDBVMPJGqSlnVhvfU3Sbw-T3YSM0zrT22ITL3TeNGF1lQ3Q>
-    <xmx:dD4HadRWn_csD9ONZJatBy_oC7DaG66d3enfO9Lm-3K-4kBm9nbh2o0F>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 2 Nov 2025 06:20:14 -0500 (EST)
-Date: Sun, 2 Nov 2025 22:20:22 +1100 (AEDT)
-From: Finn Thain <fthain@linux-m68k.org>
-To: Stan Johnson <userm57@yahoo.com>
-cc: linux@treblig.org, mpe@ellerman.id.au, npiggin@gmail.com, 
-    christophe.leroy@csgroup.eu, sam@ravnborg.org, benh@kernel.crashing.org, 
-    linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
-    rdunlap@infradead.org, Cedar Maxwell <cedarmaxwell@mac.com>
-Subject: Re: [PATCH v4] powerpc: Use shared font data
-In-Reply-To: <d81ddca8-c5ee-d583-d579-02b19ed95301@yahoo.com>
-Message-ID: <b657eaa6-e027-4ec4-d6c4-e053cdeb1631@linux-m68k.org>
-References: <20230825142754.1487900-1-linux@treblig.org> <d81ddca8-c5ee-d583-d579-02b19ed95301@yahoo.com>
+	s=arc-20240116; t=1762082584; c=relaxed/simple;
+	bh=f7AGp89xtG2umal3kofhTXQmZHfJxW/OjnpUSWAEZVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QI+CTmVv1U6cGnzz4K9RhHAu4fC9Wz4GhMCdPfVQgXaIJoaApy6n9HVzAyMvZb26bZbQNaV3K/T5RfvlQqc1hUpAze20lgDeTSplKJmpnIs+8p2hRduuf9wuAZw33P594cKcgRtKjqF2eoery2AVt5OmwUv5S+6IcF1ngRRp7YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y0lmWSxI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFE70C4CEF7;
+	Sun,  2 Nov 2025 11:23:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762082583;
+	bh=f7AGp89xtG2umal3kofhTXQmZHfJxW/OjnpUSWAEZVU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Y0lmWSxIt9+Zs8GyAfCSdMfmBtpXChLYy+oncuDS0GRjG38C+D/3iz6nxEHD8U90P
+	 WBcddS035n2bD3U0yykKEjEKkuHhyygwB7zKPhWw+jvgUaP5iPzsxZK138dvY1oPPT
+	 2avFzedWEL/eCq+mLDCMwcmSAcslsULDfI4ngJTKG3pzL2ZUa7AHkWdMBwUV3ufs5Q
+	 bAZTts8FJgFCoBTpUCfgh+W4k6AI3OG+bshYIVPi/tvSybgSrPY7HvKUemFjChIxG7
+	 w/r18lMsjNPAta7io7X3OuB7CEk6IavQm9Bm5D+iuIAS0AZTWTQgTINoVdX4CBnrh+
+	 JFPSwn3emQuCg==
+Date: Sun, 2 Nov 2025 11:22:52 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Francesco Lavra <flavra@baylibre.com>
+Cc: Lorenzo Bianconi <lorenzo@kernel.org>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/9] iio: imu: st_lsm6dsx: dynamically allocate
+ iio_event_spec structs
+Message-ID: <20251102112252.24138fce@jic23-huawei>
+In-Reply-To: <20251030072752.349633-5-flavra@baylibre.com>
+References: <20251030072752.349633-1-flavra@baylibre.com>
+	<20251030072752.349633-5-flavra@baylibre.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Thu, 30 Oct 2025 08:27:47 +0100
+Francesco Lavra <flavra@baylibre.com> wrote:
 
-On Sat, 1 Nov 2025, Stan Johnson wrote:
-
+> In preparation for adding support for more event types, drop the
+> static declaration of a single struct iio_event_spec variable, in
+> favor of allocating and initializing the iio_event_spec array
+> dynamically, so that it can contain more than one entry if a given
+> sensor supports more than one event source.
 > 
-> The problem also occurs on a PowerBook 3400c.
-> 
+> Signed-off-by: Francesco Lavra <flavra@baylibre.com>
 
-Not quite. On the 3400, it's not a regression, because CONFIG_BOOTX_TEXT=y 
-never worked, AFAIK, as far back as 2.6.8. So I think that's unrelated to 
-the regression at hand.
-https://lists.ozlabs.org/pipermail/linuxppc-dev/2008-August/061792.html
+Similar comment for this to the dynamic channel creation.
+Unless it is really quite a large number of combinations I'd normally go
+for separate iio_chan_spec structures with pointers to separate iio_event_spec
+structures.  Whilst this adds a fair bit of data it is easy to review
+as set of such structures for each device against the datasheet.
+The code to do it dynamically often gets really fiddly as it has to translate
+between different representations of the same thing.
+
+You tend to get a device model specific iio_chan_spec structure array (or a set
+of related devices share one).
+
+Jonathan
+
 
