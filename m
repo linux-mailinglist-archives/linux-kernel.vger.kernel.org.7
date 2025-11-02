@@ -1,55 +1,59 @@
-Return-Path: <linux-kernel+bounces-881861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C1B2C29165
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 16:57:40 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CE49C29174
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 17:04:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DCE68346EDD
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 15:57:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E50824E3DEA
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 16:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F0E2309B2;
-	Sun,  2 Nov 2025 15:57:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0442264D9;
+	Sun,  2 Nov 2025 16:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NEPRP3Tp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LXhs0E7Q"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C54CA930;
-	Sun,  2 Nov 2025 15:57:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C24381C4;
+	Sun,  2 Nov 2025 16:04:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762099051; cv=none; b=RjOViH03mZHk+2HXAF+UBGOamoNpklMm//YJX9Yl6GNSwdX++1K8qg2wiA4IOpwhF5rbwucM2tMXif/iGaX0O/RPmk2xxRTteyVGknvVcl0tkWjFw9VTkkCS3WwCpC/Bw+s4vmoxCo3jh6ORRYIZo0UUGw6m0IN+YPCYqq+2VLA=
+	t=1762099476; cv=none; b=temMZVICra9j+k0ppItQHrW8NN8gBQ/ujRrqsqFdwHrZctsd8LVvGgC6OPIO7G4CGIo51vjxNJDbJXf1ZqqyLPoCuEjY9TTw2+TaJRmm+UJxbPsG0t9YovSnd0azYsjh5H2eWvvQy4fJGwZH3mCpYMHzvrhYJFpW4//AJH6kI2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762099051; c=relaxed/simple;
-	bh=EU7EOUKW2UD7yGw95HbiRqLMQJ39AgWO60fDnALC1tg=;
+	s=arc-20240116; t=1762099476; c=relaxed/simple;
+	bh=LDVvvx4d31uLUm6uFJRNmDhHPt6c/ETBVWcMM1W43j0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hzxuv7q+LAMfwmw6P2Q4h6dHWf0biLV460wDRodLIVxGkjTFksNF9pqrWikf6f50YqU5KTvxrVF0gGJzzTHQxp3MhKE/hGssDGqrF5uq5J51U56kbMAQnOQ3veXrOROfsZqMroFRnpRKz2pZa+srX/H9enPVsikNSTn4gCwBZk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NEPRP3Tp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70ECCC4CEF7;
-	Sun,  2 Nov 2025 15:57:30 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=FH8RUItmsugBQ+1EpfSJoFgEncoVFkpNqLOnXZtv7P+7+tD5tmU+jSNHq7wb3pZP500OHItoFV/bezDmNk3Y0Jl0FMX+FMEWEbvbM1orFFBHoyokQJBp57VMmEX4/aVT2AI7h+/lSl4S6JOlxb4NFHf4RX7rCuhnnf0JBnJg8Gs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LXhs0E7Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FABEC4CEF7;
+	Sun,  2 Nov 2025 16:04:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762099051;
-	bh=EU7EOUKW2UD7yGw95HbiRqLMQJ39AgWO60fDnALC1tg=;
+	s=k20201202; t=1762099475;
+	bh=LDVvvx4d31uLUm6uFJRNmDhHPt6c/ETBVWcMM1W43j0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NEPRP3TpeewKbLsAnT4QwPwbODGvtZZt0C6CX9IjihTBZeXPQKU+IudSJMs19ipA/
-	 wpS1pttvYXSx0CvjiFqeJo2L4L4CaWXE7UWpFOEaJsCTaCIMeCtgYF5flRA+Bgy4mR
-	 UNMRNLaOopEycnUdzT5Ya/M+TndYmgfPKY3viJacgWPYvrmPNjX4/MJeBbWlNV745P
-	 Z/TPtQYCrcxW1M3qA2GcnpqscuvtQgU5ZsXGI6Y9FOf/uU5BhY+qTjZIfcDZ3OPwFn
-	 ZlL/wHo9Kt6zz2dvKRbndD59xNwPPNEj8BZPG/wAshSHyzE3iGioqMMC4WXNmtcQEO
-	 sB28s6s+gmaTw==
-Date: Sun, 2 Nov 2025 16:57:28 +0100
+	b=LXhs0E7QOaDTPLyzD8sh/jKT2Lz+iJJI6iYwTOW9F8nF60mefcKIvxTvQ63fAj9lV
+	 yC/ha9bLOKwUfgg4yyx8MbxaPZTQNCsPyrEnf9qZbFHkSpJuQL+nVECb+iEDNk3un5
+	 3ZQ1hqAVbhb8YasBBjC8vp88snPxhgN9yV06v8vIGm8pbvggNmh9qIzIhQKZMl8tvE
+	 GlAYumEoNncebVpQCc+LrXzrQpraQmPERM9dgM6bZGaPV0CTvaE328gAQoFiWrOkqX
+	 nMSxdODCL8ahHVpU6MGMrUBaYU20ezVq2hMZfRvnAb97pskQHt6UoGb6x71fV7qlJt
+	 P4wLy5vt+5kDQ==
+Date: Sun, 2 Nov 2025 17:04:33 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: victor.duicu@microchip.com
-Cc: linux@roeck-us.net, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, corbet@lwn.net, marius.cristea@microchip.com, 
-	linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v1 0/2] add support in hwmon for MCP998X
-Message-ID: <20251102-calm-fractal-labrador-cde4f0@kuoka>
-References: <20251031155831.42763-1-victor.duicu@microchip.com>
+To: Richard Zhu <hongxing.zhu@nxp.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	bhelgaas@google.com, frank.li@nxp.com, l.stach@pengutronix.de, lpieralisi@kernel.org, 
+	kwilczynski@kernel.org, mani@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
+	kernel@pengutronix.de, festevam@gmail.com, linux-pci@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v9 2/3] dt-bindings: PCI: pci-imx6: Add external
+ reference clock input
+Message-ID: <20251102-complex-placid-frog-09cbed@kuoka>
+References: <20251031031907.1390870-1-hongxing.zhu@nxp.com>
+ <20251031031907.1390870-3-hongxing.zhu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,35 +62,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251031155831.42763-1-victor.duicu@microchip.com>
+In-Reply-To: <20251031031907.1390870-3-hongxing.zhu@nxp.com>
 
-On Fri, Oct 31, 2025 at 05:58:29PM +0200, victor.duicu@microchip.com wrote:
-> From: Victor Duicu <victor.duicu@microchip.com>
+On Fri, Oct 31, 2025 at 11:19:06AM +0800, Richard Zhu wrote:
+> i.MX95 PCIes have two reference clock inputs: one from internal PLL, the
+> other from off chip crystal oscillator. The "extref" clock refers to a
+> reference clock from an external crystal oscillator.
 > 
-> Add support in hwmon for Microchip MCP998X/33 and MCP998XD/33D
-> Multichannel Automotive Temperature Monitor Family.
+> Add external reference clock input for i.MX95 PCIes.
 > 
-> The chips in the family have different numbers of external channels,
-> ranging from 1 (MCP9982) to 4 channels (MCP9985).
-> Reading diodes in anti-parallel connection is supported by MCP9984/85/33
-> and MCP9984D/85D/33D. Dedicated hardware shutdown circuitry is present
-> only in MCP998XD and MCP9933D.
+> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.yaml | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 > 
-> The driver was tested on MCP9984 and MCP9985.
-> The driver supports reading temperature channels and setting
-> the update interval.
-> 
-> Differences related to previous patch:
-> v1:
-> - initial version for review.
+> diff --git a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.yaml b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.yaml
+> index ca5f2970f217c..703c776d28e6f 100644
+> --- a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.yaml
+> +++ b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie.yaml
+> @@ -44,7 +44,7 @@ properties:
+>  
+>    clock-names:
+>      minItems: 3
+> -    maxItems: 5
+> +    maxItems: 6
+>  
+>    interrupts:
+>      minItems: 1
+> @@ -212,14 +212,17 @@ allOf:
+>      then:
+>        properties:
+>          clocks:
+> -          maxItems: 5
+> +          minItems: 4
+> +          maxItems: 6
+>          clock-names:
+> +          minItems: 4
+>            items:
+>              - const: pcie
+>              - const: pcie_bus
+>              - const: pcie_phy
+>              - const: pcie_aux
+>              - const: ref
 
-Huh? That's v1. What are you comparing?
+This was required last time. Nothing in commit msg explained changing
+that.
 
+> +            - const: extref  # Optional
 
->   This is a continuation of the IIO driver:
->   https://lore.kernel.org/all/20250930133131.13797-1-victor.duicu@microchip.com/
+Drop the comment, do not repeat the schema. And why only this is marked
+as optional if 'ref' is optional as well now.
 
-So v7?
+It is v9, can you please really think thoroughly what you are sending,
+so obvious issues won't be there?
 
 Best regards,
 Krzysztof
