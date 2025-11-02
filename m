@@ -1,123 +1,159 @@
-Return-Path: <linux-kernel+bounces-881868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01099C291AA
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 17:12:14 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E6E4C291B0
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 17:13:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A9E9D347642
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 16:12:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5D3BD4E6BDA
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 16:13:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3462224B1F;
-	Sun,  2 Nov 2025 16:12:09 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BDB1230D14;
+	Sun,  2 Nov 2025 16:13:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="WZ/EhAIF"
+Received: from mail-pl1-f227.google.com (mail-pl1-f227.google.com [209.85.214.227])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA47134D3BD
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 16:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003261F936
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 16:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762099929; cv=none; b=MNrQALwLJGPGM4GEFe7lAXHrnMW0WkJgKoE9q17pKaNQsnkfrI1F66yEil3oEzCKJDIdrW+qeuw3iKZA4MzXBs3dscZeW/tw96ldSqEl6XjKOCKFdNNhDvws+uImhw0F3ElLqjvpw/znrXYKeW3GODf8pO1tSoAwU4BTgJtgKVI=
+	t=1762099981; cv=none; b=fVMpcxHfzwLaRht/JkGcZlSjDWYSXzMJPwKK0EcPi4cDj9MkAYseIlhNqwkq15Hh04yc3CYDZhI43Qj+m7r0Q72MW3hvC26g8rLAMTtjesdQoikQ9O6ia/QRxaO1F1LmLaFatWG1PaWEEF1U9UCS0fSTCmi8Mti2w8vOqTnE0Ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762099929; c=relaxed/simple;
-	bh=uM18kc2ZM4sZ4LvqUqOHsCF2x/JnWt+Wtz2HECvfUiQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=uf/2RqSEWViff+FHwvYDInE4zC/heA79GmxsU3TdSzpIdQ38gXaIPoPLOH+Lt5XSbHUCvJlMtcZ5k68FT/TKDbMUSjR7tMCYpD/S7Ueoz97SVmGv8/7fpjqqer7TJoJtqZSiB0FUGUEkKuQQdVu0DcaGPYJkaXDdVG4870HxWok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-937e5f9ea74so514100739f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 08:12:04 -0800 (PST)
+	s=arc-20240116; t=1762099981; c=relaxed/simple;
+	bh=BO/j7N0IDWYCOEC3h7SRnqnJC86TVXmlOFAlu09y82A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=COcVv0uMYBjh9SPWgKveEN3PqlfQvWMmk5HsYNPOd8eMBngC/1K1Ff2BUksu+yGl3o87TGeHHuVicFW+PHE5p/GqUm57ujWUbQdJj9PAOyo1ovOheuNQP9yK8bPc7b6O8b0WeBCIDmKdQtTxDSjUPQZsaNk8u9rnZYkCvJ3Qxt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=WZ/EhAIF; arc=none smtp.client-ip=209.85.214.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f227.google.com with SMTP id d9443c01a7336-294df925292so32146705ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 08:12:59 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762099924; x=1762704724;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TCbKtKemi+gmlwMzoNrJ2zPYZkwedy4TXqKQRGEKjlA=;
-        b=omvTeHzRpenq9Jb/FZFbjvqU5moSg9DPT+8q7eG0C4TCQqfmZOFrRp/Sn05aovgn5f
-         pH/6BTuJy1ZIOqV+XfLBB7ID2XBu/aArWbiMbCXAG9uptJC88OMWFEObgfIvWO/G7EE2
-         KOOsbB5G6BntdmsldqS+406MecSvfdaQdtOgioELa0gYfgUyeR/z0udDoP/kfHa3UtwH
-         ksAXFm/36MDO3wOD+OIVV1Ah4Z3zNZASBezL4LgKy4TAoRpvzdp+DyHlo8lUIhEAFMH9
-         ZpKDxphzK4dQS7jws4uQfT7sdANfNxOixqPg2DPLv8iWvT0KMD8wnsSSJmrSyhDqzDrj
-         L4BQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFPKNa71HuEf9oiy8iAsdDH7qHxO5sa69VHyEwlmEXhlIfki8w/LRReHyA8U2AbJp1GX8vvUE6kf6v1Y8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvHemngIwAy5j2x6dnd3YBjS4ne6kk48i8q6iPo2NeXsHiiNfe
-	WJ1jO5mttHEKighqwubRzOpeWTVq28cb+VBdxtl2yiuTf4bye5k1z0r7J//oNRiIN4Qxbrd2quH
-	EJzfWaZQ6gVJ3owDE6ZvOluwXGcDogmnMbt8/tc8eATfcRavT0PTLbiSNWGc=
-X-Google-Smtp-Source: AGHT+IFM7bvQLEsyqxzKU/JVsGiXvvabpnDsHjnZTGZj1mnVxocf+6E9wvmwMCBiX+N1029X0kC9s/co9a9ZbrRQZG/lunUtwjav
+        d=1e100.net; s=20230601; t=1762099979; x=1762704779;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:dkim-signature:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nXWXoVbPyV5eU1syuugBzDzD0q+1nlVhslmOyClyUcE=;
+        b=kRmua9b5GAQUrPyavE8kFLrqANInGR5q5HIoKVTumD77g7tqV0gOchsr49Lvsjd95j
+         EIeqaHZzTl7nqX2mXngbujEYNzka6gkqbGJSTZgcc2HLMhO1rgh1OIXlLWfTf81GgboB
+         VWSyvt83IWwYj0QT0Pl8GAJvv3oFqXcnTYau+/kjfWOEJhPB4z8Wle2jGmJvlndkBDav
+         YEkaeHtXGurt5iTDXsuJHltMbWwgsoOqcREHut1Upn2MU+4xeUUVAOUeEwJQH35EAgpJ
+         WILgCv5vidYRKq+glFgpDVVzhYld5lGMCYjUsLJoBKnvtK6awijUZWHKT0v2UIWNwAZp
+         PPQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVecXv2IcAIXcAWb9S7CBUXxUOujfyWpDI09TGeyLMXiAXmGIGFzBgovXEfO2CQJIVnyZcs1ybE7EEhTi0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAS+c7t5kBUxaVgcJvtJvnE4e/CAiPctsLLrzyoahI61KHR+pW
+	iBLB0VGUnHvlIIcTX7yrH4p32A00xoXjbLNbd0s9NFqGo9nrgfCKi+hp109Gk6cEeETMFRDNShd
+	iY7gld1d9/asX2CqypDqiRtkL+iVyn1QrDtgfooEsz9QAxRCTg0xQUMi+tg4FZueqoqosUbrvFp
+	bBsbn99MxmAii/PIUXZC96BdyK89W4pp5HVM2v8qIe8yF7i8HQz2+lV8/MnxJQ++s2E9+OHX7Vt
+	GWaQL4pxmdO5E/ccpTifc1k
+X-Gm-Gg: ASbGnctUGDhpjtEeVxUw7pHKXcTrJev3FrpBVRx8g092AZvV8YUqgLx1S1Rg1qZXzwM
+	0Np4KDWpvrzBThtN9AJcZmumh8lGce1Ll5sIV89xJ0hEb+rFtMUcfSkdl2PK7ovlHrYsBprsGG8
+	jY48Rm6VaXvxnYJ65K1xlciNfX9yDQ7GhViO8hiKy4z2Gkf/4/8y916EAn6mfR6rZQBZ5/BnPjV
+	v03rpKXAR5FyoMcj4akI/1EmQj1axIM+8skrvwM1yEGa9hd/QGGThc9XO2Y7SqIL1R8IJ/bV2Db
+	C6COX0OxOO0+O4CE98AwJmx6ZIjS/AQOfq+xCmEMCMAkJ/F9PTyI4FMGL0JimbRdvT+AxhwtVs2
+	GUHbJzv1bY6ufs0+Agve4fkkecH/lCDHhOsYIQMEQ2D41yRmal0b70Ou3cOGb3nEffIx8bGX1N1
+	mWktxd3vn276q+rHvj/u//LJzS6JEqW0dAIq1mGRg=
+X-Google-Smtp-Source: AGHT+IEK+A40U6dScRT6FI1caUNsXFRv8PUUQ6ZlxC/SZBgZ/2DRU+NrruycFpciO2otdO0QhwmYPJ6js6s2
+X-Received: by 2002:a17:903:8cc:b0:27e:c27f:b834 with SMTP id d9443c01a7336-2951a52a983mr121633355ad.56.1762099979027;
+        Sun, 02 Nov 2025 08:12:59 -0800 (PST)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-14.dlp.protect.broadcom.com. [144.49.247.14])
+        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-29526982903sm7339795ad.45.2025.11.02.08.12.58
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 02 Nov 2025 08:12:59 -0800 (PST)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-272b7bdf41fso44931565ad.0
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 08:12:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1762099977; x=1762704777; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=nXWXoVbPyV5eU1syuugBzDzD0q+1nlVhslmOyClyUcE=;
+        b=WZ/EhAIFUdcCkvMJBrjYbQ9EqzOyV40/ddKbHVX8QZctDA9IRyTNkILt2gpM4dmKNz
+         s8K6XMzCnvR/3AuAQ/GPVZCrGmYTZgb0Wl/PaZi7yN9p/y135C/1cMf6pX+qGOEUx+U0
+         R0+eQZMEaysTFa9YzbPYb3jns/pYJfwr56E5w=
+X-Forwarded-Encrypted: i=1; AJvYcCWbbUR+A7hpKegdVqXN5gRHqI+AmiLk0Rm+KIhZvDMdCeXqv4p0bcf54JGdOfALgm1Yp3j+w4i7LdsZR/M=@vger.kernel.org
+X-Received: by 2002:a17:902:ea0e:b0:269:a23e:9fd7 with SMTP id d9443c01a7336-2951a3c0348mr128650255ad.26.1762099977239;
+        Sun, 02 Nov 2025 08:12:57 -0800 (PST)
+X-Received: by 2002:a17:902:ea0e:b0:269:a23e:9fd7 with SMTP id d9443c01a7336-2951a3c0348mr128650015ad.26.1762099976810;
+        Sun, 02 Nov 2025 08:12:56 -0800 (PST)
+Received: from ?IPV6:2600:8802:b00:ba1:a836:3070:f827:ce5b? ([2600:8802:b00:ba1:a836:3070:f827:ce5b])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-295424bcc39sm70137005ad.17.2025.11.02.08.12.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 02 Nov 2025 08:12:54 -0800 (PST)
+Message-ID: <f39415a8-350d-4ceb-b36f-917f6f082454@broadcom.com>
+Date: Sun, 2 Nov 2025 08:12:53 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3498:b0:433:2597:8cc with SMTP id
- e9e14a558f8ab-433259711f3mr61058085ab.29.1762099923824; Sun, 02 Nov 2025
- 08:12:03 -0800 (PST)
-Date: Sun, 02 Nov 2025 08:12:03 -0800
-In-Reply-To: <857840797.3476876.1762098642816@kpc.webmail.kpnmail.nl>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <690782d3.050a0220.29fc44.0026.GAE@google.com>
-Subject: Re: [syzbot] [fs?] WARNING in minix_rename
-From: syzbot <syzbot+a65e824272c5f741247d@syzkaller.appspotmail.com>
-To: jkoolstra@xs4all.nl, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in minix_unlink
-
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 6330 at fs/inode.c:417 drop_nlink+0xc5/0x110 fs/inode.c:417
-Modules linked in:
-CPU: 1 UID: 0 PID: 6330 Comm: syz-executor Not tainted syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:drop_nlink+0xc5/0x110 fs/inode.c:417
-Code: 70 07 00 00 be 08 00 00 00 e8 47 dc e7 ff f0 48 ff 83 70 07 00 00 5b 41 5c 41 5e 41 5f 5d e9 d2 6f f2 08 cc e8 7c cf 82 ff 90 <0f> 0b 90 eb 81 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c 5b ff ff ff
-RSP: 0018:ffffc90002f27c50 EFLAGS: 00010293
-RAX: ffffffff823cd494 RBX: ffff8880741d9a58 RCX: ffff888026821e40
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff8f5a5977 R09: 1ffffffff1eb4b2e
-R10: dffffc0000000000 R11: fffffbfff1eb4b2f R12: 1ffff1100e83b354
-R13: ffffea0001c8f900 R14: ffff8880741d9aa0 R15: dffffc0000000000
-FS:  00005555875cf500(0000) GS:ffff8881264c8000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555587602688 CR3: 00000000336f8000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- inode_dec_link_count include/linux/fs.h:2655 [inline]
- minix_unlink+0x1de/0x290 fs/minix/namei.c:157
- vfs_unlink+0x394/0x650 fs/namei.c:4673
- do_unlinkat+0x345/0x560 fs/namei.c:4737
- __do_sys_unlink fs/namei.c:4783 [inline]
- __se_sys_unlink fs/namei.c:4781 [inline]
- __x64_sys_unlink+0x47/0x50 fs/namei.c:4781
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f7a5978ded7
-Code: 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 57 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffdec37a198 EFLAGS: 00000206 ORIG_RAX: 0000000000000057
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f7a5978ded7
-RDX: 00007ffdec37a1c0 RSI: 00007ffdec37a250 RDI: 00007ffdec37a250
-RBP: 00007ffdec37a250 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000100 R11: 0000000000000206 R12: 00007ffdec37b340
-R13: 00007f7a59810925 R14: 000000000001ff83 R15: 00007ffdec37d500
- </TASK>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] MAINTAINERS: add brcm tag driver to b53
+To: Jonas Gorski <jonas.gorski@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+ Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251101103954.29816-1-jonas.gorski@gmail.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20251101103954.29816-1-jonas.gorski@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
 
-Tested on:
 
-commit:         691d401c Merge tag 'spi-fix-v6.18-rc3' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16fda342580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=824b00f06adfda3c
-dashboard link: https://syzkaller.appspot.com/bug?extid=a65e824272c5f741247d
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=133f9012580000
+On 11/1/2025 3:39 AM, Jonas Gorski wrote:
+> The b53 entry was missing the brcm tag driver, so add it.
+> 
+> Reported-by: Jakub Kicinski <kuba@kernel.org>
+> Link: https://lore.kernel.org/netdev/20251029181216.3f35f8ba@kernel.org/
+> Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
 
