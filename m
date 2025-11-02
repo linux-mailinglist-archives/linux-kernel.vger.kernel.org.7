@@ -1,164 +1,123 @@
-Return-Path: <linux-kernel+bounces-881961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44897C29515
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 19:33:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7960AC29518
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 19:33:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6D3E3ABF7C
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 18:33:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F33D5188DF4D
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 18:33:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C08C322A;
-	Sun,  2 Nov 2025 18:32:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF0B31A9F87;
+	Sun,  2 Nov 2025 18:33:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SseFiSB+"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pA89bNGj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC0C17AE1D
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 18:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5B1322A;
+	Sun,  2 Nov 2025 18:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762108369; cv=none; b=fLbBGkbVSp6p4cYYTib6RyeD2VVJPPi+ck3SpRhjqBE01DwZg+f3JBysDMWlmm1b7JzHk5EjdOqrUwBiW20yZLpyodfA/OqWnFihkNO9Hs2gBJKi4g96Sqj0cgHglQr8lZd6jfB5k5tpxWFfQ6UVZkH6F9d77Qblu7qDOa+krvA=
+	t=1762108397; cv=none; b=Z3Lgzf7F6G3bHwjrwH4txJrxFt371fScqQTCQn5m4Xa2M+5n+shmabcB5Yp2v5DZcegEXxR1mLITF0sVJ4KkCUVvQAqBhjylK1HftrB6zqoUJmtUmAEfx1fPG1044y3r+H4UeG9nF7ri9vt4/fp9IUB3S6Qke3oTaiZ3Ql+rxhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762108369; c=relaxed/simple;
-	bh=nc2++xXfXSNSf2spqDOarMEVxJj2fA11fvBUYumIbvI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QfI4Qpzqmb/eNYYHBytXTggkUcDOjwgenr8zKsfYkLGFCXTuoJ8OvDWI3vKDag2owchALbhqDSmZcgfj9uwrKJu4wbJmfBYfE2HTda33DdG4m+j3GtyTzIht9y4zFgsJlPWXx+CjBIWb3aWjBO/42h4ALz7uYM8hkKYTU7Zi3JI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SseFiSB+; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-339a0b9ed6cso793429a91.3
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 10:32:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762108367; x=1762713167; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tah9ug5YH2dA1hXGYNiPSkVqoLrBjvr01zemW2oIgBU=;
-        b=SseFiSB+RktYHwBR7BfGEi39i7tPKFoAbwXv+sOSMXjPSx21Ge2zECjDp2iSHvsZRw
-         Xxv5qj/SAGpZCfsK8IfLLyY1uCU4yFsy3AfeqX/+y7LwmzDFN+U9IcDE9mZ/JV3hgYLp
-         61SsHZxArIjOHeN7E9oOLE1v2qrGrJCf+NJai+JW5oEcxOPAThoY4SwQQhsqidqCm1Dj
-         mQAwH4YwC8wrs710pu9fVwT+XphQfarM6BVVsasd7/PHlM8DM4hVkRrlM04MtGAX5A2k
-         j//Ax2G3+JkMI/2xwggHQg8BLmC7J9iH97qVXZ6R/uWuGnT/bmzfLzxhJ5KJcEax6ZO8
-         zaQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762108367; x=1762713167;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tah9ug5YH2dA1hXGYNiPSkVqoLrBjvr01zemW2oIgBU=;
-        b=UfmdbB/Sn5sCpRRbtrddhpQQ1VZp+kQoArh9GkVsIF7+NyCSgYnXqTjWyZTk6PzRdJ
-         cPBwgtzYVxwgpS1Jm/eUTC93TgugvC4NFAcV6TBKmRpdkdO3s3bHEpq0kDEw1vRIsu0U
-         QCVpiC1bJRR9oyNEKdFdq6lbEYA9gPzNl7d4/5t/8BS/DQ+vYIapLdQbWR9PgdGwMLEz
-         WgabuC15omCadyOurN6v9j1EeSSa09rcyZB3DJuTrXSRLB7ffsk9m7Utrc2s0LkiNtGs
-         ZD7YuDCFOPwDpBFI4awWNMgn+RGk/BTnZPQl2qGLkTobyBQNWShAT0HX8rl8Nno6TnNl
-         8ejQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVRhyqo3Jo2CTplhJnbrtGpsI2+lVF0PzUEzp5JDH197mjJUBtQPDUaEDRoxgMZQIzTMtFssrnata5TC4w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydvbZ3nN5OgouMmNeTAJ9VU/W6HICwLjsLG4U7HAxM+Z+07r30
-	5qn6Zg3XesNhiF/yMpsA/OBsElNFPjJe9bThlJ2IPimp4bCs3HoXphT8
-X-Gm-Gg: ASbGncsIkptXHA7Mc0PmN9i1Ls6Ode4AsyoEUO7LjbsnkvFr0VJNuFBmddrMA3I5FG5
-	9URX14rcHbLz+UA6vpN53iJ+GrthnNOFEsvhu/Vxfj3BYUH+8SYVLaBLvSogzW6Poh1Q8gda7vg
-	3Ic7mrrD8fozstE8AeDXg74oOjE28boZwDoaQg82d3gvctwjFgxX8BWL4FNUhzmyQ3ryfGmsH6W
-	P+dP56bIyLXViC5OD9cIDamGsIvno/5bUFIdd4Dap/KyXlYdXg0JoeeIh/r39kgOxGd0zH6VL8T
-	TYWGSluSpED/YCHfi0sr2Jrh8iEAtI6JPKjcYmMYZu6jx2cnVBwPBv7ZapjOIZXF++Jl6C56mOk
-	Sr3NeC2sGq8J96rJvnY2DYQQWOvz6AjWSzeu0FmYWbzwS1u9e0tcI+fahPjIgX9ADhLg77R4dss
-	XG3S7YZ/LETFQ+BB0QsV51zq+hoDQ7nPOET4Xu5X9LaTGEvwZSiySo
-X-Google-Smtp-Source: AGHT+IFc+aKzDeWFK07Ta0xgexELL2T5DExEWac5veVvAY0bVCmw7+fr2CTwMx1DbeSSkLy2g8ghBw==
-X-Received: by 2002:a17:90b:38c7:b0:340:b501:3ae4 with SMTP id 98e67ed59e1d1-340b5013ce7mr4678749a91.8.1762108366910;
-        Sun, 02 Nov 2025 10:32:46 -0800 (PST)
-Received: from [127.0.1.1] ([2406:7400:10c:9fcf:ccb6:5cf2:6acd:f65e])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b93b8aa3ff1sm7874079a12.14.2025.11.02.10.32.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Nov 2025 10:32:46 -0800 (PST)
-From: Ranganath V N <vnranganath.20@gmail.com>
-Date: Mon, 03 Nov 2025 00:02:36 +0530
-Subject: [PATCH] net: wireless: util: Fix uninitialized header access in
- cfg80211_classify8021d
+	s=arc-20240116; t=1762108397; c=relaxed/simple;
+	bh=IpKqz0qzKjLklmzfJcV0mhsV3DqQL5aAEwvbVr4a4Gg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
+	 References:In-Reply-To; b=F20hLGeNqJoPLjzaj/7Xck0T2Na+nn/+8DHEU3IHIja96S2/Z/UcmUF/ErcyuGqRaiVNXk7HSWogkI2RJHczEK3oA97+rkrnHzAVNCom62kKpo/PhdRowVDIuGzFMouzHeSVuC6EfYh1ArG5zvOHTisSQi4wzwZ0ibHdJcL+ABw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pA89bNGj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C490C4CEF7;
+	Sun,  2 Nov 2025 18:33:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762108397;
+	bh=IpKqz0qzKjLklmzfJcV0mhsV3DqQL5aAEwvbVr4a4Gg=;
+	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
+	b=pA89bNGjSPGe6V9305nxlysAdhy6gtdZi5AkGclGlsXJPQFMsRHLt9jqUyz8C9elX
+	 YzURNxnMHd2hJsnSGgOo5LC5pjFGG11VqMmqRG48CwpjnidTuCjf4Oi+yM5d4cIBBY
+	 s1IGlx3n30opzuCDMajkG29yduEQ5iarmnbeW9CmuLamnVRIHkUKWKLy2wm49Ey5Jq
+	 1X6CdQ6CNvLq6JwQOPwcI/pH8Pe7Pj3l+vw4VFAg4iTo9y2cGmJXQ/yq5x8xn6p5zY
+	 SsWXVaaWlBJbbd9TiY9SVC6KFgEZlQzU4jab0ZImK28IpVKPykJpmoNPYG0/2jrHUi
+	 UjSyjhTtwh71A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251103-fifth-v1-1-4a221737ddfe@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAMOjB2kC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1NDQwND3bTMtJIMXQuTZFNLy9SUNFNLEyWg2oKi1LTMCrA50bG1tQBD+PF
- dVwAAAA==
-To: Johannes Berg <johannes@sipsolutions.net>, 
- =?utf-8?q?Dave_T=C3=A4ht?= <dave.taht@bufferbloat.net>, 
- "John W. Linville" <linville@tuxdriver.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
- skhan@linuxfoundation.org, david.hunter.linux@gmail.com, khalid@kernel.org, 
- syzbot+878ddc3962f792e9af59@syzkaller.appspotmail.com, 
- Ranganath V N <vnranganath.20@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762108363; l=2187;
- i=vnranganath.20@gmail.com; s=20250816; h=from:subject:message-id;
- bh=nc2++xXfXSNSf2spqDOarMEVxJj2fA11fvBUYumIbvI=;
- b=mKMLKbUTq87I1QT0cHj4HyZmAtc+FkU3sNM9lExLaQ6r8MB1TpvSn8YVXZI8ENGtTboCYL06s
- bbXL11fijWlAfrnAiWmMFMZMuHsWCFO893fnDVOcOU5lz/W5hup2v9J
-X-Developer-Key: i=vnranganath.20@gmail.com; a=ed25519;
- pk=7mxHFYWOcIJ5Ls8etzgLkcB0M8/hxmOh8pH6Mce5Z1A=
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 02 Nov 2025 19:33:10 +0100
+Message-Id: <DDYFAJCBT3UR.10Y0XJDLPKYZ6@kernel.org>
+To: "Zhi Wang" <zhiw@nvidia.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [RFC 1/2] rust: introduce abstractions for fwctl
+Cc: <rust-for-linux@vger.kernel.org>, <bhelgaas@google.com>,
+ <kwilczynski@kernel.org>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
+ <boqun.feng@gmail.com>, <gary@garyguo.net>, <bjorn3_gh@protonmail.com>,
+ <lossin@kernel.org>, <a.hindborg@kernel.org>, <aliceryhl@google.com>,
+ <tmgross@umich.edu>, <linux-kernel@vger.kernel.org>, <cjia@nvidia.com>,
+ <smitra@nvidia.com>, <ankita@nvidia.com>, <aniketa@nvidia.com>,
+ <kwankhede@nvidia.com>, <targupta@nvidia.com>, <zhiwang@kernel.org>,
+ <alwilliamson@nvidia.com>, <acourbot@nvidia.com>, <joelagnelf@nvidia.com>,
+ <jhubbard@nvidia.com>, <jgg@nvidia.com>
+References: <20251030160315.451841-1-zhiw@nvidia.com>
+ <20251030160315.451841-2-zhiw@nvidia.com>
+In-Reply-To: <20251030160315.451841-2-zhiw@nvidia.com>
 
-Fix an issue detected by  syzbot with KMSAN
-BUG: KMSAN: uninit-value in cfg80211_classify8021d+0x99d/0x12b0
-net/wireless/util.c:1027
+On Thu Oct 30, 2025 at 5:03 PM CET, Zhi Wang wrote:
+> +/// Static vtable mapping Rust trait methods to C callbacks.
+> +pub struct FwCtlVTable<T: FwCtlOps>(PhantomData<T>);
+> +
+> +impl<T: FwCtlOps> FwCtlVTable<T> {
+> +    /// Static instance of `fwctl_ops` used by the C core to call into R=
+ust.
+> +    pub const VTABLE: bindings::fwctl_ops =3D bindings::fwctl_ops {
+> +        device_type: T::DEVICE_TYPE,
+> +        uctx_size: core::mem::size_of::<FwCtlUCtx<T::UCtx>>(),
 
-The function accessed DSCP fields from IP and IPv6 headers without first
-verifying that sufficient header data was present in the skb. When a
-packet reaches this path, the header dereference could access
-uninitialized memory, as reported by KMSAN under fuzzing with syzkaller.
+The fwctl code uses this size to allocate memory for both, struct fwctl_uct=
+x and
+the driver's private data at the end of the allocation.
 
-Add explicit pskb_may_pull() checks for both IPv4 and IPv6 headers to
-ensure that the required header data is available before extracting the
-DSCP field. This prevents uninitialized memory reads while preserving
-existing behavior for valid packets
+This means that it is not enough to just consider the size of T::UCtx, you =
+also
+have to consider its required alignment, and, if required, allocate more me=
+mory.
 
-This fix has been tested and validated by syzbot. This patch closes the
-bug reported at the following syzkaller link.Fixes the uninitialized
-header access.
+> +        open_uctx: Some(Self::open_uctx_callback),
+> +        close_uctx: Some(Self::close_uctx_callback),
+> +        info: Some(Self::info_callback),
+> +        fw_rpc: Some(Self::fw_rpc_callback),
+> +    };
+> +
+> +    /// Called when a new user context is opened by userspace.
+> +    unsafe extern "C" fn open_uctx_callback(uctx: *mut bindings::fwctl_u=
+ctx) -> ffi::c_int {
+> +        // SAFETY: `uctx` is guaranteed by the fwctl subsystem to be a v=
+alid pointer.
+> +        let ctx =3D unsafe { FwCtlUCtx::<T::UCtx>::from_raw(uctx) };
 
-Reported-by: syzbot+878ddc3962f792e9af59@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com./bug?extid=878ddc3962f792e9af59
-Tested-by: syzbot+878ddc3962f792e9af59@syzkaller.appspotmail.com
-Fixes: b156579b1404 ("Treat IPv6 diffserv the same as IPv4 for 802.11e")
-Signed-off-by: Ranganath V N <vnranganath.20@gmail.com>
----
-validate header before DSCP read in cfg80211_classify8021d().
-pskb_may_pull() checks before accessing header structures to ensure
-safe and fully initialized data access.
----
- net/wireless/util.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Considering the above, this is incorrect for two reasons.
 
-diff --git a/net/wireless/util.c b/net/wireless/util.c
-index 56724b33af04..23bca5e687c1 100644
---- a/net/wireless/util.c
-+++ b/net/wireless/util.c
-@@ -963,9 +963,13 @@ unsigned int cfg80211_classify8021d(struct sk_buff *skb,
- 
- 	switch (skb->protocol) {
- 	case htons(ETH_P_IP):
-+		if (!pskb_may_pull(skb, sizeof(struct iphdr)))
-+			return 0;
- 		dscp = ipv4_get_dsfield(ip_hdr(skb)) & 0xfc;
- 		break;
- 	case htons(ETH_P_IPV6):
-+		if (!pskb_may_pull(skb, sizeof(struct ipv6hdr)))
-+			return 0;
- 		dscp = ipv6_get_dsfield(ipv6_hdr(skb)) & 0xfc;
- 		break;
- 	case htons(ETH_P_MPLS_UC):
+  (1) FwCtlUCtx::uctx might not be aligned correctly.
 
----
-base-commit: ba36dd5ee6fd4643ebbf6ee6eefcecf0b07e35c7
-change-id: 20251101-fifth-84c599edf594
+  (2) FwCtlUCtx::uctx is not initialized, hence creating a reference might =
+be
+      undefined behavior.
 
-Best regards,
--- 
-Ranganath V N <vnranganath.20@gmail.com>
+I think the correct way to fix (2) is to only provide an abstraction of str=
+uct
+fwctl_uctx as argument to T::open_uctx() and let T::open_uctx() return an
+initializer for FwCtlUCtx::uctx, i.e. impl PinInit<T::UCtx, Error>.
 
+All other callbacks should be correct as they are once the alignment is
+considered.
+
+> +        match T::open_uctx(ctx) {
+> +            Ok(()) =3D> 0,
+> +            Err(e) =3D> e.to_errno(),
+> +        }
+> +    }
 
