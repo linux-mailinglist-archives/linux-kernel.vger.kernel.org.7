@@ -1,131 +1,285 @@
-Return-Path: <linux-kernel+bounces-882061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8944EC29869
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 23:21:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22FFFC29878
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 23:21:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3518F344813
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 22:21:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B73DC3AE1E7
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 22:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63ACD9460;
-	Sun,  2 Nov 2025 22:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2C91DE8AF;
+	Sun,  2 Nov 2025 22:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X9oUVqV7"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fDKimwy2";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="czp78i7z"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56BC41DE8AF
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 22:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A10401A9F84
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 22:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762122052; cv=none; b=nwflfIlM02SnxVQ98knlaghh9XjoMi706+IdN19qYPtOkkWAcAdWfcdG/qikh/XlUQDGtD6s5jAPPKqFEslp68HawqX4dT9ALbg5XNbNMukoRgVpl3cSaylDMZsgVfU45n+8J0LyZUlWheuSNB+ZNY8vc8/aHsKpEF2ppp+sh2o=
+	t=1762122100; cv=none; b=A/yP0zBrkzteBIN2YK24PLJdTwDhhiFQ6LPAr6fq905qEbcApiyc0wJTdizbIIXMIo/Ue/1VuBbf/AMC79jNIpz6LoeXbCFMri467e83tdrsz6w2x18RcafhL+izy1ENkUiTmO3JyEDfShaTM3BOawmYuSnodbETjZ1rgbFBXUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762122052; c=relaxed/simple;
-	bh=WT7V+mIh7biSb9hoQQKTPcN5LrBBwROnmw3huldzWHY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vvn6a3QlyWJTtN+Omov2LogrRJckQCGWAN74N1sRqCaMOZtNN8LlSZQj8yxfDXPyXytxUeTQ8x4a2jsMHC5Upn63PKkN5n68chGT4fsataUdCWzVUms3rLnjU+LUkEY0ok4RgVzDZq2Jrlpjx2iivEFYy1FrBlzL0qCXDfVah6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X9oUVqV7; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-33257e0fb88so596846a91.1
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 14:20:51 -0800 (PST)
+	s=arc-20240116; t=1762122100; c=relaxed/simple;
+	bh=gbVoUCYvZOZMTIY2Rtk2MuTaedqMcgW8WWB/h7K2CsM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uk8mRfwRerlKKmcKhP4unb7hMZURLFcFvvcgGCL5pkcnlX+l4FqbXy9DpUNn6kn/3J2EaZ5Af+7ioa57GY9ZaaAiQZQDAz+kmRh53BVIB382zS510FKPbOWuD6VEaNUzncZ/v11yyQqgdc6XlqsLnpU3KF1SHAGK77mEYhZzGcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fDKimwy2; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=czp78i7z; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A2KlY031046162
+	for <linux-kernel@vger.kernel.org>; Sun, 2 Nov 2025 22:21:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=Fy0+zB1zFcmNDPBHzfEZnFa8
+	agZt/sFQo0/x5Ko7o68=; b=fDKimwy2eBdQWL3qZfpEPPgtkkMfxroO9fm5czNR
+	Z4vkwatgq5iq9X2qfJL0bNDe2cnzUfGl9fZcnpjki6bMvkee9o5Q7fnR2vaFS8+V
+	B5OWZTgy/9+mRIg1FHcTaC7iPdT+xV9yNbJh+28yqJZ2GZwsjdnowkuKXVrQeCuM
+	9Edd09cghNSyCbdYyUOtFbcTMPjYiuXTlDGgszfFIxnnSYz07hAxJhq1lBPD0+TN
+	1Ev8Cc/+A5YWXTMnZIaZdI2lob6OYMld9ebE8n+qQ6sMb4P2I1T9UdANZS7AePIb
+	p+0apkQSA4XWuMPzxlUC2uxAL3QukEEb2ulViBBZTb0pCw==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a5bcm2nes-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 22:21:37 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4ecf77618a5so127401881cf.3
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 14:21:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762122051; x=1762726851; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ldh/rrZAKoIw8nkk3grHKnCTpuj+wVkO9BtM8FlPSJs=;
-        b=X9oUVqV7P1rOUBrqf086oFJ51nz318w3F3ADuNBXg/gWop7pmvDi34Sq9j/PWbDrmx
-         cgRUQD0YzJNi13LkMEYb++llpAt0BteLJpoyTbHfeABNE3AyFMPjkJG1rbI06lxkniZP
-         NgSnoKp6tLGjLAL2Q0MVtOZKacBQwyXZriOu6K5fqSdtW1GlAVJQiwgHYJ0gM19XOnW0
-         qDZutohzS7lzLziaPN0GCwRN8Mh2/Obky1ZNSOL5c+U10tAQTs3D28oeShHE4N9qY1E9
-         /KOfiDqtCyZk+Ko8JMN0QEuCCUnYnFMfCDTueaZxkvUrdMKltok28ktEbeLYXnNwOIlR
-         e7ZA==
+        d=oss.qualcomm.com; s=google; t=1762122097; x=1762726897; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fy0+zB1zFcmNDPBHzfEZnFa8agZt/sFQo0/x5Ko7o68=;
+        b=czp78i7zLFO6nbV15V5pF1ECraf3RO13Ic3Go/kEgn+FGu/kHf+WKgyx0thBowm0Uf
+         8YXGdiOUzsGjR5VCeGXRmlTT1JWrmhmBFtBdetnIVmBepii2XQcypx/c1FPJwJ6ELXMy
+         7CD+gnHF/1dc/BEGKS6ToEl6TNEHPvtMf2qymeIR9x4UjXqgH13USl9nv2/CQ1T0aHHN
+         LYovirol+z+HBsRbl24SZVF2+8of05G6MIq6EJJi7olGGTR9CV6zLkfNQpA4ugCvQfNQ
+         OQHzaqnBV0Iy74bzUPxGrROBTtn3YyyIGP9eK03ffcURHoEv70+JiUOsJSMAAymIAvVH
+         z/qA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762122051; x=1762726851;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ldh/rrZAKoIw8nkk3grHKnCTpuj+wVkO9BtM8FlPSJs=;
-        b=B/MQvdM5O8I/YaPWVgKUMx41c+WafBKGWnSgS1O34gNkYz8R233J6BesO2ngnKXqvZ
-         JvbjMgaBRVn8CqsFMWnUGR/pknTOy7KgW0MyvHKi0ek20almDPYBOenr80I2ZEdIkPMZ
-         XntWXClrQ1BXM4EoE0OV92anBpMhc4Zn/X/DbIYo1cYB+zWrao4laXuaIREq2C0iRu9x
-         4/gu4Ke7bYjryntpQtINbrzGDZQgTpHL+hMO23MqZqDneyBot7PuO6ogI6bZYK3uHJJp
-         Xbhoy+3Z4lRwOGLbs6mT6loH5Tu7iGKumHjEM23gSA0zuWNT8b74UycwKeqXACa14PVs
-         JTlw==
-X-Forwarded-Encrypted: i=1; AJvYcCWdEBJyX/JBIhght4j2jpVepgubl/GJBIZUQNdOJFfq1QdU6pREroP3K84ZOND36jGhlbpYcf8me1CSiDs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSbKAJKxRIiWtBF+sRDRJGuQArhmMfuyql8oy9S/r84sc8SGjm
-	fxHIxtfWEVf3Up5WOgR+2Msrq0pZ/qYltng1Mwc2aKsQsAtUJEpjhjg6bQ4B1N0k24MsQTHH/BR
-	TMjJa3Beku+g0UkOa9DDCowmwiRhpLBA=
-X-Gm-Gg: ASbGnctpJu4cnGHGJdJt+gnDmoqQn/kl2FxRoccghLzG3mG2EnRGxyeFDSYx6ELpFcT
-	/EkJWFhhxBRFSztnkxOcXntcKoZckxOOEiNPb4XxslxoiZs4CH1ZJuURrARUCSWOZ4zfqzfmGtS
-	aBU1zYupxXMc4UPmFPGJS0r637ZrPRev2eqW2Gi/SQlwVWJoLEsJWNzAHqduwePPLRnZeixzveY
-	ShFx6vwd8My+P16hGNn3E+7Rw5REQPHXEygUYanrABA/6HtFfQQS9FVvEfK1chnC7Vy4UbB4upY
-	n6K3Cz107UUFhNoI/alcG/ieO2k3+P8vP1Dpi3Lf/hyeJ7Zq6/qU+0wID0/4k3LJvpPETQHZ59N
-	6BBM=
-X-Google-Smtp-Source: AGHT+IHryhoTOrFuU+nX2/XXVf7kh67HIj6pJAwGZM07cNYk4Ch5KXgJowgB3YhvDy4LBmrqXMtVIjcCmU0HL6FeUno=
-X-Received: by 2002:a17:903:188f:b0:27a:186f:53ec with SMTP id
- d9443c01a7336-2951a4da98fmr50067215ad.9.1762122050659; Sun, 02 Nov 2025
- 14:20:50 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762122097; x=1762726897;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fy0+zB1zFcmNDPBHzfEZnFa8agZt/sFQo0/x5Ko7o68=;
+        b=FdCH4zbV2wYqG3DzyVuvrtmaMOiawsbbhlPTNVVnvgt8MGCNgco4JE6TgKIoKy5APM
+         eNidYkbvXBqDHQ4HcwZSTW1dj3p8OlE2Sse3YduHTdQgcOQNOFofXlzBWcynSty5MSt2
+         HbLxb5q6TTWoOPpOoabDgPe0SApJxzbzZ5Qwx/r8tsdZO4Xbpt/OfFaMoHELSfPMO+ur
+         +aBej975WAFz8sW5BPg3/veQiHB99jGNj7Gn5SuhXg1NYJnPWFl8r/2au2VI66c7i7Cg
+         HlLRZqHjKg8e/pmNEX93KOI/WPHoorO5HOLgwqk7pfL4B+XqXomRHm3BlNFW7G2qHoUv
+         pi3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUcKCEfmcNqwFdnlri5px9R57jh6lmprncflfFma5bQX/kTKVQF7w+Lxg28GFf+Zd2dRHGDSHn0807bfWI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEftbo8SRekHMlI6pI4rNNKedPB/FWqtiqebYgLq6nzGD+C9NV
+	3FXaLIbg480/FIoS8lliijTb23UK8TrsblX19NuGGxb7cpGvWcSJwS4+bF9sbp0iGz5ziySIqtt
+	tR02Z2Bit699/wm+7bVGBTOhdldtlABb+7EjDma6Ajtd+NQD78mx7ltBjOfobCTXBetM=
+X-Gm-Gg: ASbGnct+zzA2/JQNUYZ2Ei8EBhwY02PSFkLyCRKpd0O2Dd3wWnuyKpj3w+8dDoLMqqC
+	2CHB6Vlf9eRkTWsT/xvuEwQE9sI8PwQbxpZJQybYUh05Sfgj95TrCfecnqAcIx4upCbjziaApLo
+	gCwps7aKEPL6VzXv/pFCb0FVuP/v6zdosLyDClxtaaDzrt7mYsATI22RAFa092ZR0pUNbsmEc+5
+	WnKnngWUB43uxiN1EEIazWSXM9gljVipoCGW3p2FN4GCdmAA8h87LOUG5rnj9JKjk+du2fkg4aP
+	T4Rs3rwgljltZpUFvbG/0bqaciQ4oePw2n7u0UOnaRI/81gPgN8rdyZMph7ZW8uH0ZhEFN45yIR
+	gxabC0fqleJUcKI+psaOjgFu3XfnKJfryr+KO4XyQG+wXbWKGy4JhaJ14JzOSDldciLbTozfwk2
+	HLxjsLJIvEnPGG
+X-Received: by 2002:ac8:58c6:0:b0:4ec:f156:883d with SMTP id d75a77b69052e-4ed30f873a3mr150821611cf.43.1762122096610;
+        Sun, 02 Nov 2025 14:21:36 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEKSuBp5T5gQKe8Rxj77+3COdbWI4x8CvKxpNjeJKe55iGjnrgP/lpO6D3eNUdIWsNdHSe8Ig==
+X-Received: by 2002:ac8:58c6:0:b0:4ec:f156:883d with SMTP id d75a77b69052e-4ed30f873a3mr150821431cf.43.1762122096189;
+        Sun, 02 Nov 2025 14:21:36 -0800 (PST)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5942e83f33asm136383e87.49.2025.11.02.14.21.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Nov 2025 14:21:34 -0800 (PST)
+Date: Mon, 3 Nov 2025 00:21:31 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: maud_spierings@hotmail.com
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH 3/6] arm64: dts: qcom: x1e80100-vivobook-s15: enable
+ ps8830 retimers
+Message-ID: <vijkpvomiv3nonumyqoeut2k3ajftf7cafx56ngjlc3uuwqfcb@7o75sm3kh36d>
+References: <20251101-asus_usbc_dp-v1-0-9fd4eb9935e8@hotmail.com>
+ <20251101-asus_usbc_dp-v1-3-9fd4eb9935e8@hotmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029071406.324511-1-ojeda@kernel.org>
-In-Reply-To: <20251029071406.324511-1-ojeda@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 2 Nov 2025 23:20:38 +0100
-X-Gm-Features: AWmQ_bmo-1G4gStAz5BNMs8sUlqk3doCuOqq-d5OyHMqc8oaNkX_-Dz-ZcwIf5I
-Message-ID: <CANiq72k-7f91kNrAAnwFoRYyFYjRB+mo3PCRFzTkn7E-7xrCNw@mail.gmail.com>
-Subject: Re: [PATCH] rust: devres: fix private intra-doc link
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251101-asus_usbc_dp-v1-3-9fd4eb9935e8@hotmail.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAyMDIwNyBTYWx0ZWRfX5TXIyFMyOCKV
+ 7jLM1Cd2Tsdz5qwrtMW03gIiMH3XJlmrf11QJr6caKpgqc1Y0PqVsxIQu97zXvubNYkLDRUSgsl
+ 9kVaJBhW7pfzMWzlSjH6sO3VrQh1soN0cxGAUAL66BopCtHJzXmqrx81QeVxUNANA9h8K1UiZna
+ +5EUppEDYhSgrOKddnzA90QiQzeUtJcDg/MXYHcPI+1uCGvbS8pMSSr3PjxgvnZz1Vlqrew+cFT
+ 4/siXTXCSxw53PfrgkVbPblODDenY5gjnFv1NNIsaSivUQABGerYL62fwQA79Go5fZ5fVK0H7jE
+ YoTkF/TBG+2pMWigIgyYtjtfh7c+1V1grzhiJR3XReJPJ8hmIXAr3v5TPtzzgx50SkK9fEhnV7G
+ n44Ky2u5J6GmugzB5KFxflAnmo0kHw==
+X-Authority-Analysis: v=2.4 cv=EszfbCcA c=1 sm=1 tr=0 ts=6907d971 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=69EAbJreAAAA:8 a=pijrH-o4oxMIDQe8xl8A:9 a=CjuIK1q_8ugA:10
+ a=a_PwQJl-kcHnX1M80qC6:22
+X-Proofpoint-GUID: yjbsdLcaDKtkHKjOSG-7Z5fOmuD1ou6V
+X-Proofpoint-ORIG-GUID: yjbsdLcaDKtkHKjOSG-7Z5fOmuD1ou6V
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-02_02,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 adultscore=0 priorityscore=1501 spamscore=0 phishscore=0
+ malwarescore=0 lowpriorityscore=0 suspectscore=0 clxscore=1015
+ impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511020207
 
-On Wed, Oct 29, 2025 at 8:15=E2=80=AFAM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
->
-> The future move of pin-init to `syn` uncovers the following private
-> intra-doc link:
->
->     error: public documentation for `Devres` links to private item `Self:=
-:inner`
->        --> rust/kernel/devres.rs:106:7
->         |
->     106 | /// [`Self::inner`] is guaranteed to be initialized and is alwa=
-ys accessed read-only.
->         |       ^^^^^^^^^^^ this item is private
->         |
->         =3D note: this link will resolve properly if you pass `--document=
--private-items`
->         =3D note: `-D rustdoc::private-intra-doc-links` implied by `-D wa=
-rnings`
->         =3D help: to override `-D warnings` add `#[allow(rustdoc::private=
-_intra_doc_links)]`
->
-> Currently, when rendered, the link points to "nowhere" (an inexistent
-> anchor for a "method").
->
-> Thus fix it.
->
-> Cc: stable@vger.kernel.org
-> Fixes: f5d3ef25d238 ("rust: devres: get rid of Devres' inner Arc")
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+On Sat, Nov 01, 2025 at 01:54:14PM +0100, Maud Spierings via B4 Relay wrote:
+> From: Maud Spierings <maud_spierings@hotmail.com>
+> 
+> The Asus vivobook s15 has two usb type c ports on the left side, these
+> use parade ps8830 retimers like the others, enable them to also enable
+> dp altmode
+> 
+> Signed-off-by: Maud Spierings <maud_spierings@hotmail.com>
+> ---
+>  .../boot/dts/qcom/x1e80100-asus-vivobook-s15.dts   | 310 ++++++++++++++++++++-
+>  1 file changed, 302 insertions(+), 8 deletions(-)
+> 
+> @@ -158,6 +174,102 @@ vph_pwr: regulator-vph-pwr {
+>  		regulator-boot-on;
+>  	};
+>  
+> +	vreg_rtmr0_1p15: regulator-rtmr0-1p15 {
 
-Applied to `rust-fixes` -- thanks!
+'vph-pwr' > 'rtmr0'
 
-Cheers,
-Miguel
+> +		compatible = "regulator-fixed";
+> +
+> +		regulator-name = "VREG_RTMR0_1P15";
+> +		regulator-min-microvolt = <1150000>;
+> +		regulator-max-microvolt = <1150000>;
+> +
+> +		gpio = <&pmc8380_5_gpios 8 GPIO_ACTIVE_HIGH>;
+> +		enable-active-high;
+> +
+> +		pinctrl-0 = <&usb0_pwr_1p15_reg_en>;
+> +		pinctrl-names = "default";
+> +
+> +		regulator-boot-on;
+> +	};
+> +
+> +	vreg_rtmr0_1p8: regulator-rtmr0-1p8 {
+> +		compatible = "regulator-fixed";
+> +
+> +		regulator-name = "VREG_RTMR0_1P8";
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <1800000>;
+> +
+> +		gpio = <&pm8550ve_9_gpios 8 GPIO_ACTIVE_HIGH>;
+> +		enable-active-high;
+> +
+> +		pinctrl-0 = <&usb0_1p8_reg_en>;
+> +		pinctrl-names = "default";
+> +
+> +		regulator-boot-on;
+> +	};
+> +
+> +	vreg_rtmr0_3p3: regulator-rtmr0-3p3 {
+> +		compatible = "regulator-fixed";
+> +
+> +		regulator-name = "VREG_RTMR0_3P3";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +
+> +		gpio = <&pm8550_gpios 11 GPIO_ACTIVE_HIGH>;
+> +		enable-active-high;
+> +
+> +		pinctrl-0 = <&usb0_3p3_reg_en>;
+> +		pinctrl-names = "default";
+> +
+> +		regulator-boot-on;
+> +	};
+> +
+> +	vreg_rtmr1_1p15: regulator-rtmr1-1p15 {
+> +		compatible = "regulator-fixed";
+> +
+> +		regulator-name = "VREG_RTMR1_1P15";
+> +		regulator-min-microvolt = <1150000>;
+> +		regulator-max-microvolt = <1150000>;
+> +
+> +		gpio = <&tlmm 188 GPIO_ACTIVE_HIGH>;
+> +		enable-active-high;
+> +
+> +		pinctrl-0 = <&usb1_pwr_1p15_reg_en>;
+> +		pinctrl-names = "default";
+> +
+> +		regulator-boot-on;
+> +	};
+> +
+> +	vreg_rtmr1_1p8: regulator-rtmr1-1p8 {
+> +		compatible = "regulator-fixed";
+> +
+> +		regulator-name = "VREG_RTMR1_1P8";
+> +		regulator-min-microvolt = <1800000>;
+> +		regulator-max-microvolt = <1800000>;
+> +
+> +		gpio = <&tlmm 175 GPIO_ACTIVE_HIGH>;
+> +		enable-active-high;
+> +
+> +		pinctrl-0 = <&usb1_pwr_1p8_reg_en>;
+> +		pinctrl-names = "default";
+> +
+> +		regulator-boot-on;
+> +	};
+> +
+> +	vreg_rtmr1_3p3: regulator-rtmr1-3p3 {
+> +		compatible = "regulator-fixed";
+> +
+> +		regulator-name = "VREG_RTMR1_3P3";
+> +		regulator-min-microvolt = <3300000>;
+> +		regulator-max-microvolt = <3300000>;
+> +
+> +		gpio = <&tlmm 186 GPIO_ACTIVE_HIGH>;
+> +		enable-active-high;
+> +
+> +		pinctrl-0 = <&usb1_pwr_3p3_reg_en>;
+> +		pinctrl-names = "default";
+> +
+> +		regulator-boot-on;
+> +	};
+> +
+>  	/*
+>  	 * TODO: These two regulators are actually part of the removable M.2
+>  	 * card and not the CRD mainboard. Need to describe this differently.
+> @@ -506,15 +618,62 @@ touchpad@15 {
+>  &i2c1 {
+>  	clock-frequency = <400000>;
+>  	status = "okay";
+> -
+> -	/* PS8830 USB4 Retimer? @ 0x8 */
+
+No retimer on this bus?
+
+>  };
+>  
+
+-- 
+With best wishes
+Dmitry
 
