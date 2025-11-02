@@ -1,167 +1,133 @@
-Return-Path: <linux-kernel+bounces-882092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 686CEC2997F
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 00:12:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 859D9C299C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 00:14:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5A593AC83D
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 23:12:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6EBC188DE7D
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 23:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B8F248F4F;
-	Sun,  2 Nov 2025 23:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F44241664;
+	Sun,  2 Nov 2025 23:13:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="H56NZ9kx"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Yt8NQl0B"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF14148850;
-	Sun,  2 Nov 2025 23:12:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762125147; cv=pass; b=o446el9PdWtK4ejtE5JRxKeYsQ4yNqrc0CYlxCiX1icz+iX8Nd6IvmjjjRtWKBbzey5eqgJFZPBAL8c1qF6tPxvGYOt0xcLuqnHpFBUMMp95c/Jp74zWWAsRgHdzbpRTXduCLhAMLAGCF+GS5jXur4/VKdI1s67Z6lAaoxDfw+A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762125147; c=relaxed/simple;
-	bh=/I7IzlSpR4PhZPVQQEaWMofel6wmantN5OvKHYzkmvQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=biRAER8TIssf71OXqmqilwyaNXSv1C9LJ5wUAVlsoObdAro2u5czOdzqcTW982tEYB9mN7zXNI7nmO3t5rwU8rkuqGJVOFwFo31t8Q/kIlLvC5rVip8CxJMITOexZEksRL+Lp8XYPNgPE+J4LDH+U12xxNr/y1cS+I6zRlwtVtI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=H56NZ9kx; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1762125132; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ayHSoO8mmqJf6BpyOjVPFOjzRHu1WL3LnRrZaK8Pxss8qw9RqmiwBJUjwAmlIDsMeQnQqsCdodhkM+118cH86lu2c6ugvpYdWhiKVqy7vEj3258SwG8eDdqgt62QeRCVGcsg4wZGR0IkKE7/AeWH/1nZyxRdOaijcNYzCMEvPG0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1762125132; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=ZQyV7+HH5+eyEXPG+O2c+IhWlprTdduqC8iGfXHsZNk=; 
-	b=clccRMONHLMHPkLA5tA5Rftdar2TecDMeXdnud831QIBjDB//IlPDNMKnOIgLtz+ntjnRZFEuTtn3lSQqhdHen1ckE0GLxw/ScztgDH55oBuJdzqIZ4o4QrRZLMuzgV/B3KMHaJW9Cb/r2rNCIoFKvh0/+pZkq64vGU1/Kk84Ns=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762125132;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
-	bh=ZQyV7+HH5+eyEXPG+O2c+IhWlprTdduqC8iGfXHsZNk=;
-	b=H56NZ9kxWSHWpyt0trC8Z8jveyB6zse0BEvnPj9CQLsSQVd31Yrs1H7bSFSQCI08
-	R772ZTJ0lHvKTF2poe32NVwN88wYaKhxNkNk6HhLiTJ/kItNzS7gd8B78vX0z/+70P1
-	q/mLphXYH1Yw8Rw5WEd+5HUBCdZ2J3abRyClJBvs=
-Received: by mx.zohomail.com with SMTPS id 1762125130375852.2930709562752;
-	Sun, 2 Nov 2025 15:12:10 -0800 (PST)
-Received: by venus (Postfix, from userid 1000)
-	id DD16D180CDA; Mon, 03 Nov 2025 00:11:54 +0100 (CET)
-Date: Mon, 3 Nov 2025 00:11:54 +0100
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Jameson Thies <jthies@google.com>
-Cc: heikki.krogerus@linux.intel.com, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dmitry.baryshkov@oss.qualcomm.com, bleung@chromium.org, 
-	gregkh@linuxfoundation.org, akuchynski@chromium.org, abhishekpandit@chromium.org, 
-	kenny@panix.com, linux-pm@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2] usb: typec: ucsi: psy: Set max current to zero when
- disconnected
-Message-ID: <ew2yygmisdxp5jlefbg64abxzjp5wpxvwnmlhcwedgnzzr2qzs@huem73pm7sr5>
-References: <20251017223053.2415243-1-jthies@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53AE24DCFD;
+	Sun,  2 Nov 2025 23:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762125236; cv=none; b=emy+68LODXzfwryz+FLVZsW9bT20poEzmppwHNlWgzHXlL5ADiSmzZ9c8stAduDhjropJGAhz8fAfkPKwKRUmciW4pC9Y/FCbFd1mjap/NozYi9xhJXbPzkWbl8iHfrpiGYneaHb9nrpJ+TNe/0/HBzhc7IPCcj8Ot56KFFrmKE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762125236; c=relaxed/simple;
+	bh=ME4LvPnxhDyFfIKP9x/XGoGmUz2ZHvdsiI8gRxGXlAo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=RDH5CpvTdqjIQL2Fdj5lk+QKvDpr1qWLS17PsmhfUURhbklCOdymB7GAw0isuXFVQi3RarMoiZUFQRnoTzf0SApE92CVRN5T4Z5ajyFS3uCD7n8JlPbcHEuHQh/wlSeiKphHHjxwRRWbUnoqATfnw6yUBrNB2BaAhTn6E18JeFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Yt8NQl0B; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1762125231;
+	bh=UrApUplrhg650aeZjiGycPOh3SlW4EIV3RN/nqafq1E=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Yt8NQl0BCT6YyP6Ob7vUHE3jJT/zHLqfXClfbB4WesXkBOO2tzgl/AeTUbFcXcaNW
+	 vF5WawPsb2+39n/qKKELR7EYcSFRWEms+6RtK/xJBKPMOA14yRqojVY31ePzLGRfgv
+	 MeKs5Ap0F2EVAAzfqroqW1QCzhTLVC+lUADd8HUXYQQH2ux90jT4/BcuH95b6ibifO
+	 p2V2Uoq/fTS6ZmR6Hfiz7xJRWO+BxlsHqujChOZKQORAdZ8Y3frMI9Z9/JXwpLHA6S
+	 53LH2sLMw75+SssbBnKvt4mOLPZQhZMah5YnryLgw22t6L3YUaZFJQM3lEIIL3Mths
+	 Do70td8lTNP+A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d09Wf1QQXz4w0p;
+	Mon, 03 Nov 2025 10:13:49 +1100 (AEDT)
+Date: Mon, 3 Nov 2025 10:13:49 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Simona Vetter <simona.vetter@ffwll.ch>, Jani Nikula
+ <jani.nikula@linux.intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Jani Nikula <jani.nikula@intel.com>, Intel Graphics
+ <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the drm-intel tree with the drm-misc
+ tree
+Message-ID: <20251103101349.5af777a5@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rdmgxygmaxf4b76y"
-Content-Disposition: inline
-In-Reply-To: <20251017223053.2415243-1-jthies@google.com>
-X-Zoho-Virus-Status: 1
-X-Zoho-Virus-Status: 1
-X-Zoho-AV-Stamp: zmail-av-1.4.3/262.86.93
-X-ZohoMailClient: External
+Content-Type: multipart/signed; boundary="Sig_/z21a/cOLsFpemMoUDjgkfrw";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-
---rdmgxygmaxf4b76y
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+--Sig_/z21a/cOLsFpemMoUDjgkfrw
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v2] usb: typec: ucsi: psy: Set max current to zero when
- disconnected
-MIME-Version: 1.0
 
-Hi,
+Hi all,
 
-On Fri, Oct 17, 2025 at 10:30:53PM +0000, Jameson Thies wrote:
-> The ucsi_psy_get_current_max function defaults to 0.1A when it is not
-> clear how much current the partner device can support. But this does
-> not check the port is connected, and will report 0.1A max current when
-> nothing is connected. Update ucsi_psy_get_current_max to report 0A when
-> there is no connection.
->=20
-> v2 changes:
-> - added cc stable tag to commit message
->=20
-> Fixes: af833e7f7db3 ("usb: typec: ucsi: psy: Set current max to 100mA for=
- BC 1.2 and Default")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jameson Thies <jthies@google.com>
-> Reviewed-by: Benson Leung <bleung@chromium.org>
-> Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> Tested-by: Kenneth R. Crudup <kenny@panix.com>
-> ---
+Today's linux-next merge of the drm-intel tree got a conflict in:
 
-With the changelog moved under ---:
+  drivers/gpu/drm/i915/gt/intel_rc6.c
 
-Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+between commit:
 
-Greetings,
+  f6e8dc9edf96 ("drm: include drm_print.h where needed")
 
--- Sebastian
+from the drm-misc tree and commits:
 
->  drivers/usb/typec/ucsi/psy.c | 5 +++++
->  1 file changed, 5 insertions(+)
->=20
-> diff --git a/drivers/usb/typec/ucsi/psy.c b/drivers/usb/typec/ucsi/psy.c
-> index 62a9d68bb66d..8ae900c8c132 100644
-> --- a/drivers/usb/typec/ucsi/psy.c
-> +++ b/drivers/usb/typec/ucsi/psy.c
-> @@ -145,6 +145,11 @@ static int ucsi_psy_get_current_max(struct ucsi_conn=
-ector *con,
->  {
->  	u32 pdo;
-> =20
-> +	if (!UCSI_CONSTAT(con, CONNECTED)) {
-> +		val->intval =3D 0;
-> +		return 0;
-> +	}
-> +
->  	switch (UCSI_CONSTAT(con, PWR_OPMODE)) {
->  	case UCSI_CONSTAT_PWR_OPMODE_PD:
->  		if (con->num_pdos > 0) {
->=20
-> base-commit: e40b984b6c4ce3f80814f39f86f87b2a48f2e662
-> --=20
-> 2.51.0.858.gf9c4a03a3a-goog
->=20
->=20
+  8c2833ff1df3 ("drm/i915: add vlv_clock_get_czclk()")
+  5615e78e813e ("drm/i915: split out vlv_clock.[ch]")
 
---rdmgxygmaxf4b76y
-Content-Type: application/pgp-signature; name="signature.asc"
+from the drm-intel tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/gpu/drm/i915/gt/intel_rc6.c
+index 13721c9081b6,932f9f1b06b2..000000000000
+--- a/drivers/gpu/drm/i915/gt/intel_rc6.c
++++ b/drivers/gpu/drm/i915/gt/intel_rc6.c
+@@@ -6,8 -6,7 +6,9 @@@
+  #include <linux/pm_runtime.h>
+  #include <linux/string_helpers.h>
+ =20
+ +#include <drm/drm_print.h>
+ +
++ #include "display/vlv_clock.h"
+  #include "gem/i915_gem_region.h"
+  #include "i915_drv.h"
+  #include "i915_reg.h"
+
+--Sig_/z21a/cOLsFpemMoUDjgkfrw
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmkH5TMACgkQ2O7X88g7
-+pqi+Q/+Pltm/IIiUpzgPlhsQz6XHkNwE/kGgNAA1AUNm1BibTCQMpPd7D7t4g/e
-b67zrwhpZDeEAZpBHB/fzihFNZhlBLSivKAESxC+zPgvAFXPdZbLJxImRpKj622x
-qbOpyGCljdTsL/Sc8/dK6KE3QSvSwmiijezde6e7QCd2Oxw7gro/ZLBrLEcEDagG
-BgyyP3NbEAHhBPK8tThJZnnxWyqEuw5kCn1ZHuErfis7rBC8zapH6OvRD+pPajlg
-mj7g6MIZl7mr2mun/TDeU0FK3iPj/jrGdH9hHk9/ZVWGhY0B+OgPE1ERnMaPXwUd
-Sut2arlKZZojRiUcW9j+Hk8EsPGyVXxSG+5aezWJvNCNSo5/PVgEnLfb5uWeO64v
-0RIHEad95tG3/qqiJWkm+yE2xX6gMUcKXzLeG2keG0Nm1MOQg/wnM/2ZU9XLlR5q
-lhACnE7PYGUwYmGqCDrqnjrhWIDGTYNit4Vw8wj935r+UFnvdl5bqSG2l6byZhb9
-1I8nhht0gW/sABKJXuQ/kOo99GSWy3b7XIG8yqtN3yLDfcgUVl190jsA/dtHYRlm
-WuijbVSz83exJI769xt/BU3PMOz9rslEKRWDLLhge+7irftCgPpP0S+wZq6pJIcg
-xHT6zH4l7nfVvRISQ4d3y6b+/+P5lAlaeO2vdSDIysJ19phznMk=
-=XP49
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkH5a0ACgkQAVBC80lX
+0GwATAf+IaMAVNnjxQs9NAYsjoodKNpiqtMya/5O4WpRBOXablOVAi64oRQ1fViR
+SJJx3BBzT+wgoQOiiw8Cbt9yYumCNVAfNGfpUEBXxPbkXr4S9gioxVI88eMhn4Ob
+OjJrzUCbQFAz3yORvpZ5g/opYgkFdVQRxHtw0QgS5QOxFcIvWzWD3vFOAnuj1yL2
+Vui1+OAVM+dqVa4V2+A9ITd+KeArkOr9J220hDlx8wU7efheCh8deoHJ9nndlCl2
+lGmq92cRH0CAfjXsxq0IDnTz58//cobXBUWj2Peaxxnd52o7rfWbn9EgN/khgCHK
+EKJZs8U03LQ1G+FidjQVmPmbvWqXwQ==
+=BAmB
 -----END PGP SIGNATURE-----
 
---rdmgxygmaxf4b76y--
+--Sig_/z21a/cOLsFpemMoUDjgkfrw--
 
