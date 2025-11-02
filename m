@@ -1,311 +1,211 @@
-Return-Path: <linux-kernel+bounces-881913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C251C2934A
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 18:14:53 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72F68C29397
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 18:22:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8DF43A9619
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 17:14:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 144A64E59CF
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 17:22:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 533012DC33B;
-	Sun,  2 Nov 2025 17:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F8EE2DCF50;
+	Sun,  2 Nov 2025 17:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gTD3espe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aTiAtuIs";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="SzYH39o5"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D609381C4;
-	Sun,  2 Nov 2025 17:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43BF34D3BF
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 17:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762103683; cv=none; b=S0vRkUaCdyu2j/LmTcn6nuuTV+DtK9zuC7wwwhZwaP4u5glXMNS4c5m3Cm3g1FD9geUPaWdTpbns2bVU4tcAkc4q34mNU1hAl5vVGla7n41ggGuyQwnHA+qrSIR7kwRv0bvnbjCi/AJypf9xYHksiTrPWWqDb39lWFSK2yIHaPc=
+	t=1762104145; cv=none; b=NfD6/O9NweYBDLSA7GiIKqxn0rOypGtW7TLjo+FEezFgf4BOlPE+WgUzkkvyaM124dF7408/ZHtdPbnEgeLVj0NFDuyXQjkSJj/byxOQCpNXzfDua4uBzTXEUWKqNyKZd+UQRIBmLWaQd1nAyoVypWTLSymP5ok2Xas7qyt3hcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762103683; c=relaxed/simple;
-	bh=5tX4+Z1yR5D2LYRPowSb74lTMeMAZWfqZKcZiPrnMtE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UGgreWBTCiYcftU0bnlL9X4HiST+EE1SlMCjtsDyVkQkot6AP5EnPLZJdobKABLDGOIhQ7ZKYyK6AnBm/PLUJThAvEk3cSZtOLqYUoJ1tPIaFBXojKTMWQMgrG9vYj3UQuthtgjNKxixzzDMzMgeNRSFcyIqBWX76UnX+NHkjLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gTD3espe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A42AC4CEF7;
-	Sun,  2 Nov 2025 17:14:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762103683;
-	bh=5tX4+Z1yR5D2LYRPowSb74lTMeMAZWfqZKcZiPrnMtE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gTD3espeP3KSgAEbP7TUfsRSZcgBz15FzoIZOw+KepVB1xcwMxACbalS1iq3NwPMJ
-	 AwKyM/MaLPvwlSE4O8P6ZfupyVsRrVqzT7i4sH70zQ2wH+0GL+Yk9GJy8xe3qZ8/xV
-	 xtDAl+dGjSzx0Upy7xZUcWPC5oBcHbpqPDm/yGeDxC3zJIb1pvc56vv3l+RwuWVvF+
-	 lN8jpV43lYtf748Pl5f58Nr8bXzRtxFXsz5srfCX1dcapS+7eKbVoLWwkwuvkGeoiE
-	 EwW+MVv/fbxdbvptwXobyhkcyLVHPHPljdTV6aYWim+0eFbf7fbN0z91HPCDvCfHI7
-	 /B3hgZMzBvpjA==
-Date: Sun, 2 Nov 2025 11:18:08 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4] arm64: dts: qcom: lemans-evk: Add OTG support for
- primary USB controller
-Message-ID: <3mmdcmpzfwamtwe6i7v4vcyis4zjhlz6j7ej2w7se2ehd4wja6@ss3ykc35skhp>
-References: <20251102165126.2799143-1-krishna.kurapati@oss.qualcomm.com>
+	s=arc-20240116; t=1762104145; c=relaxed/simple;
+	bh=GUi0VvoAqlJtK8mZQS2GJfgbc8dbqvZZhbH6IMuUl/A=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PcPWKr4uBCbUWjxY02YOLK5HZdREqjYAFCBdDsyRzBBqPStwluwaqcFw7xkvkxjJ1FQvl8t4Pb7GzQGumgUCCZ91X+QqRhOETJR99fIOsfCMynbTSo0ojTyGgRXA7T3S3KvvbAeRtiBlb5pcn2zxic1L4KYpzSrDhqgwUkBlGHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aTiAtuIs; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=SzYH39o5; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A2GfUdp631308
+	for <linux-kernel@vger.kernel.org>; Sun, 2 Nov 2025 17:22:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=hmNgUEvgxKylekid8MxysP
+	Hp/0OWG6pTbfmNdeFNquw=; b=aTiAtuIsbyPnQHWqzMjnGED1/QcqaIjqyPDlXt
+	2NjJCXPDkMZ/fwOnKw6uFGbsTNRd3f953oXALPAn49wgJB769rmJu/kQ1M749M5T
+	MB4gg6yMfH31TnedvwLoIYGeCnI+TT8b72FLqqoxW4M4bwLELecb6wPK6m9P07Dr
+	IkPJEhskXv4NkeGF1VmzYG9jxDSnwMBhOR7AEF5/QMpmB+BjzWUxgdb7GX7Sa+Tc
+	NDcKy36rUUSug3bIfPBx0aPqeM+yQS/f6cJHVcJz4/3evi9RcVt6ndEB/rq6JHjk
+	5x+UsW5B2iwI5H4BMJ/GWrJuC3v98hjDIV0ArnbQO35ADS0g==
+Received: from mail-ot1-f71.google.com (mail-ot1-f71.google.com [209.85.210.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a57weakv0-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 17:22:23 +0000 (GMT)
+Received: by mail-ot1-f71.google.com with SMTP id 46e09a7af769-7c6a9a61e27so1358807a34.0
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 09:22:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762104142; x=1762708942; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hmNgUEvgxKylekid8MxysPHp/0OWG6pTbfmNdeFNquw=;
+        b=SzYH39o5iSLEgx+qy+bp8/+EG+0Z2P4PtU/wcVRVwnAEsBT/Sp/XeITsbFkoX/8gzC
+         AoWkD/qxH82piDreHPUtxKaUP3K1aSmUrW5IHBLQuePyIstouqDuCGZM/XQLT2JENv60
+         Vip6+KfUFNWDoGGUzfeU+pBYwRxG0HE962V4usGoaH+4MnzssQ75qNTGSw1lLsc9YUmb
+         WD07MHgJ6utE45iqf/iaqlANbWGXNw8+ckiVwfnOfhAKJmVexZBe7kexnAgVL77iJF8Z
+         YUGRZ1BYR2qg3zN1gsyLIM4iJCclmubAtlPGE4xWVkzREXEm/2jrFEGHs1Km6KhqG4wU
+         3ycg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762104142; x=1762708942;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hmNgUEvgxKylekid8MxysPHp/0OWG6pTbfmNdeFNquw=;
+        b=pD7bBs09SkfLSD46eQRGX6xNgAY8XspTZtPizjJksbt8olt4wMPrTHMnYeHV5h/E2c
+         OEqMfKr3YLcFNL6yxF+Dw9lZ6d1nbzQeD1D4LaFPeLYFvPVmiXcs/x0xsSmUpy9UBfEM
+         vp2BkwlxEa530OUKUGvhFauESptN44Tnh200SrZ9Uc5NPW56YsR2j0xRjNeZ41V9lqYX
+         X4lc7a3P8MBnDYTlyZg54TeuHf0D2v3QrrJhW9n4v1DzszNVb2D1b5tEvOORXHEQFKnG
+         VUUmJ6j5cJh/EDuHwecStkdQ+a81irwMlczGun/U7vEUYPSaxn7C3vyyJTDPs/IDqISo
+         mxOw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQ1iKX35UI5tDftPAQivOSuVDDgFazkzoUcCt9J3wewkcqJBgOd/Z18ObC39mfsi3c00L3X+HAgH+NfFQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCvLd/LAeyJnssvdvS7sGaXp08JScIep7WoVJ1oVwNBNarnFWE
+	B+lDoCMCFEqrW0hGxaxAF1KVaBrQi+1oXbuFN+O4yhbRFFDb0JEw/8iDHZ9K2FEzpB6I5dN2cwl
+	x2jk6cqCI3qZ/TAigd7O8pj6RNmWiXPiaRKi1c066tKxLXLSb1NMrSRoeOBqGXXgCXRY=
+X-Gm-Gg: ASbGnctgkjznh1GIM6TYbGwoLJdeFOVsOBD6sfrRBbGuKlJ51jBBXDfB0iXWb3lh8gA
+	ScUItjNafeNSO/YQ0LXsOVWVC/juBoaaMo42Io9qZeeGcFhsWuvw0XFVb5A/UwWfgRBpKBlgBSK
+	uVz7cnfL/IaEKoR4+Mc7PlcaWZbu8G4suql2MSb0xNBbmNzSCEguNEqSjMavj3z74NpJBkSJOFq
+	c9439b1Adurd1Xup/4S82MdsxpfA3fo89mMqbFH6hUfbHe11SiFaHQsxl1z9w9wLa6meO9TofL/
+	O2TNXeJytfM/CJLKZUOMmB5b2f2MBPBh3fT5T2DCJDkcGJ8d4iTZ68HvGvc//7EciGY2RtT3s0o
+	4mfbjHPBysniGs/pFOcv4VmW17JOrCEehpY0I+mcbghYZMkVykSr7a+s61U4E7zREG8khytR9ZQ
+	==
+X-Received: by 2002:a05:6830:4905:b0:745:9769:ea51 with SMTP id 46e09a7af769-7c69638422dmr5290701a34.9.1762104142341;
+        Sun, 02 Nov 2025 09:22:22 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGqsjDHsH/k3fTsIN2LZFLLEZQO/NJGaFN3F6Y/2a/SSBeC3fVxBDVK6n46HYSsBm4W+AcEiw==
+X-Received: by 2002:a05:6830:4905:b0:745:9769:ea51 with SMTP id 46e09a7af769-7c69638422dmr5290679a34.9.1762104141931;
+        Sun, 02 Nov 2025 09:22:21 -0800 (PST)
+Received: from [192.168.86.59] (104-57-184-186.lightspeed.austtx.sbcglobal.net. [104.57.184.186])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7c699bea5a1sm2253213a34.2.2025.11.02.09.22.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Nov 2025 09:22:21 -0800 (PST)
+From: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+Date: Sun, 02 Nov 2025 11:22:20 -0600
+Subject: [PATCH] arm64: dts: qcom: qcs6490-rb3gen2: Rename vph-pwr
+ regulator node
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251102165126.2799143-1-krishna.kurapati@oss.qualcomm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251102-rb3gen2-regulator-sort-v1-1-908879d240be@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAEuTB2kC/x2MQQqAIBAAvxJ7TlDLg30lOlSuthAaa0Ug/T3pN
+ MxhpkBGJswwNAUYb8qUYhXVNrBucwwoyFUHLbVRSmrBSxcwVmK49vlMLHLiU7jeKGud9NKuUOO
+ D0dPzj8fpfT+f8CaYaAAAAA==
+X-Change-ID: 20251102-rb3gen2-regulator-sort-d45199d0f09c
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1582;
+ i=bjorn.andersson@oss.qualcomm.com; h=from:subject:message-id;
+ bh=GUi0VvoAqlJtK8mZQS2GJfgbc8dbqvZZhbH6IMuUl/A=;
+ b=owEBgwJ8/ZANAwAKAQsfOT8Nma3FAcsmYgBpB5NM/ghXXaghVExwcNKDvS/q4V2Ol2XfhcoHp
+ XoiECwIdBaJAkkEAAEKADMWIQQF3gPMXzXqTwlm1SULHzk/DZmtxQUCaQeTTBUcYW5kZXJzc29u
+ QGtlcm5lbC5vcmcACgkQCx85Pw2ZrcWSmhAArXO3PmJw+OUHs8lStADJNC3lnRAecqhFkIs5vi0
+ X1ov19t2W5sB/2i7E1EjOEMrIz2hSCSykwJF+ukBL2Yi2P88OT1cKu7bBpNPVaRC8ZTQsXzi8R9
+ 1NH7yN/+WkAN0chwt7Kz6FHQULTTUzKI1plsxUHfkNsaW9qlADgI5h1ftwKEPnC+1S/J/0kUIjX
+ E53ybV4wwBn1udSRuVX/zg+Aqqb9Dg2ixZOKwA+jUSbRve8gAMf9HrzEb355oxgr4Yd93ogzi4C
+ bbTwonL++3hh2gjgh21Vr5amfi59Y98uuj/xys+STsySSsXQUSoDMeDgFl6jkqSl9kUMCV3sAYB
+ 6FZP5wTs+jk4fWB1lT3it+XEfKo72QaB7BOgfMyZCW4if6ZYOIsLF9+VjHo0vhi6PX+I3RCkQ9y
+ +RpX6VCOpYjPC0TIRtd2U8O7DhHuD0Ey9dZxm20tzlPKt/nm5iKh7RkEuY2zjBAPImm4s3PGx9i
+ Okc9/dvcNtsthAhiQinwgUuIPQBksijydaPfkmScexrb0ckaEewxBFne97IxS2546kT0BxbWZk8
+ gOvTVAFs/rTAQfn4Rdis4T9Q90kPo1bpHYiZMRC2wGzJB9N2IlNCjpFd2nGJzvgabcfCv2m19+4
+ iqmZGtzTZ3HZIt+Fv5a9eXw9vh11x+D1FTbgLKYxe7wU=
+X-Developer-Key: i=bjorn.andersson@oss.qualcomm.com; a=openpgp;
+ fpr=05DE03CC5F35EA4F0966D5250B1F393F0D99ADC5
+X-Authority-Analysis: v=2.4 cv=M85A6iws c=1 sm=1 tr=0 ts=6907934f cx=c_pps
+ a=OI0sxtj7PyCX9F1bxD/puw==:117 a=DaeiM5VmU20ml6RIjrOvYw==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=dOedmflVD102KoYFdoYA:9
+ a=QEXdDO2ut3YA:10 a=Z1Yy7GAxqfX1iEi80vsk:22
+X-Proofpoint-ORIG-GUID: LGSgSSklGkDxNZ4ZU6u7i2EuPHlgfvSx
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAyMDE2MSBTYWx0ZWRfX6hYoSM3+Du2+
+ 4hQR4G/DziegQrGZHzb8WR86Kxy1zw4sfe498bD0+LhOMnJT22wXXm99t5L5RKpYPGsNt7ZuONv
+ Pk2tahPJuKYjZQHisVC+E0wnoZreIJY25wYIsCbZLxMMgUDKS5/kAaMrOjgzZNImjDLdai/DVJB
+ u5KbJUqjy+kIXgq4HUA19B2ygGvqm48qC0+A9YeaT/J/2dEdPlGniFc/sCUGxMNfeCmG7fj1Zxt
+ qTQpUYjyda9rGXEDed6GIZmdEThy1V87KzNnEELhyqIjdBIfrXcy1R7HSawNxuPTwUJwbOl9Zzo
+ d1X+9iK0Te85LlElkAYRR/a/Ixn5fOhbh7472SeUQInGv+KF8HgO0A8pC9Nl8UI0nWfO04OSbYv
+ BQV6ifYRsDIxlhsYNTnjDFnwnmCRDA==
+X-Proofpoint-GUID: LGSgSSklGkDxNZ4ZU6u7i2EuPHlgfvSx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-02_02,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 suspectscore=0 clxscore=1015 priorityscore=1501 impostorscore=0
+ malwarescore=0 bulkscore=0 lowpriorityscore=0 phishscore=0 spamscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511020161
 
-On Sun, Nov 02, 2025 at 10:21:26PM +0530, Krishna Kurapati wrote:
-> Enable OTG support for primary USB controller on EVK Platform. Add
-> HD3SS3220 Type-C port controller present between Type-C port and SoC
-> that provides role switch notifications to controller.
-> 
-> Signed-off-by: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>
-> ---
-> Changes in v4:
-> - Moved remote endpoints to SoC file.
-> - Renamed vbus regulator name.
-> - Moved usb-role-swich property to SoC file.
-> 
-> Changes in v3:
-> - Moved "usb-role-switch" to lemans dtsi file
-> - Moved vbus supply to connector node
-> 
-> Link to v3 DT:
-> https://lore.kernel.org/all/20251024182138.2744861-1-krishna.kurapati@oss.qualcomm.com/
-> 
-> Link to v2:
-> https://lore.kernel.org/all/20251008180036.1770735-1-krishna.kurapati@oss.qualcomm.com/
+When fixed regulators are not named with "regulator-" prefix, they can
+not be neatly grouped and sorted together.
 
-"Link to v3 DT", "Link to v2", no link to v1? No changelog for v2?
+Rename the vph-pwr-regulator, to facilitate the incoming addition of
+additional fixed regulators.
 
-There is a clean and easy to follow format for how to write the
-changelog, which b4 implements entirely for free (free as in both cost
-and effort on your behalf).
+Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+---
+ arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Please stop doing your own thing...and adopt b4.
+diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+index a36961d55e41e0666cdf5dcd49500a23bf104d4c..f29a352b0288e9ef554ecfff59820ba39bf2cdb1 100644
+--- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
++++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+@@ -217,6 +217,13 @@ pmic_glink_sbu_in: endpoint {
+ 		};
+ 	};
+ 
++	vph_pwr: regulator-vph-pwr {
++		compatible = "regulator-fixed";
++		regulator-name = "vph_pwr";
++		regulator-min-microvolt = <3700000>;
++		regulator-max-microvolt = <3700000>;
++	};
++
+ 	thermal-zones {
+ 		sdm-skin-thermal {
+ 			thermal-sensors = <&pmk8350_adc_tm 3>;
+@@ -255,13 +262,6 @@ active-config0 {
+ 		};
+ 	};
+ 
+-	vph_pwr: vph-pwr-regulator {
+-		compatible = "regulator-fixed";
+-		regulator-name = "vph_pwr";
+-		regulator-min-microvolt = <3700000>;
+-		regulator-max-microvolt = <3700000>;
+-	};
+-
+ 	wcn6750-pmu {
+ 		compatible = "qcom,wcn6750-pmu";
+ 		pinctrl-0 = <&bt_en>;
 
-> 
-> Link to v6 bindings and driver changes:
-> https://lore.kernel.org/all/20251102164819.2798754-1-krishna.kurapati@oss.qualcomm.com/
-> 
+---
+base-commit: 98bd8b16ae57e8f25c95d496fcde3dfdd8223d41
+change-id: 20251102-rb3gen2-regulator-sort-d45199d0f09c
 
-Another way to say this would be: "this patch can not be merged", but
-you didn't say that, you gave me the opportunity to apply the patch, run
-dtbs_check, and then go look at this link to determine why there is a
-check failure in your patch.
+Best regards,
+-- 
+Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
 
-This also means that you have now sent me 4 versions of this patch, none
-of which I could have merged, each time suggesting that I should figure
-that out myself.
-
-Please stop sending me patches that can't be merged!
-
-
-To be clear, I'm rejecting this patch and expect you to send v5 once the
-dependencies are in linux-next.
-
-Regards,
-Bjorn
-
->  arch/arm64/boot/dts/qcom/lemans-evk.dts | 108 +++++++++++++++++++++++-
->  arch/arm64/boot/dts/qcom/lemans.dtsi    |  20 +++++
->  2 files changed, 126 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/lemans-evk.dts b/arch/arm64/boot/dts/qcom/lemans-evk.dts
-> index b40fa203e4a2..b96d667f1b40 100644
-> --- a/arch/arm64/boot/dts/qcom/lemans-evk.dts
-> +++ b/arch/arm64/boot/dts/qcom/lemans-evk.dts
-> @@ -38,6 +38,35 @@ chosen {
->  		stdout-path = "serial0:115200n8";
->  	};
->  
-> +	connector-0 {
-> +		compatible = "usb-c-connector";
-> +		label = "USB0-Type-C";
-> +		data-role = "dual";
-> +		power-role = "dual";
-> +
-> +		vbus-supply = <&vbus_supply_regulator_0>;
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@0 {
-> +				reg = <0>;
-> +
-> +				usb0_con_hs_ep: endpoint {
-> +					remote-endpoint = <&usb3_0_hs_ep>;
-> +				};
-> +			};
-> +			port@1 {
-> +				reg = <1>;
-> +
-> +				usb0_con_ss_ep: endpoint {
-> +					remote-endpoint = <&hd3ss3220_in_ep>;
-> +				};
-> +			};
-> +		};
-> +	};
-> +
->  	edp0-connector {
->  		compatible = "dp-connector";
->  		label = "EDP0";
-> @@ -102,6 +131,15 @@ platform {
->  		};
->  	};
->  
-> +	vbus_supply_regulator_0: regulator-vbus-supply-0 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "vbus_supply_0";
-> +		gpio = <&expander1 2 GPIO_ACTIVE_HIGH>;
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +		enable-active-high;
-> +	};
-> +
->  	vmmc_sdc: regulator-vmmc-sdc {
->  		compatible = "regulator-fixed";
->  
-> @@ -454,6 +492,53 @@ &gpi_dma2 {
->  	status = "okay";
->  };
->  
-> +&pmm8654au_2_gpios {
-> +	usb0_intr_state: usb0-intr-state {
-> +		pins = "gpio5";
-> +		function = "normal";
-> +		input-enable;
-> +		bias-pull-up;
-> +		power-source = <0>;
-> +	};
-> +};
-> +
-> +&i2c11 {
-> +	status = "okay";
-> +
-> +	hd3ss3220@67 {
-> +		compatible = "ti,hd3ss3220";
-> +		reg = <0x67>;
-> +
-> +		interrupts-extended = <&pmm8654au_2_gpios 5 IRQ_TYPE_EDGE_FALLING>;
-> +
-> +		id-gpios = <&tlmm 50 GPIO_ACTIVE_HIGH>;
-> +
-> +		pinctrl-0 = <&usb_id>, <&usb0_intr_state>;
-> +		pinctrl-names = "default";
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@0 {
-> +				reg = <0>;
-> +
-> +				hd3ss3220_in_ep: endpoint {
-> +					remote-endpoint = <&usb0_con_ss_ep>;
-> +				};
-> +			};
-> +
-> +			port@1 {
-> +				reg = <1>;
-> +
-> +				hd3ss3220_out_ep: endpoint {
-> +					remote-endpoint = <&usb3_0_ss_ep>;
-> +				};
-> +			};
-> +		};
-> +	};
-> +};
-> +
->  &i2c18 {
->  	status = "okay";
->  
-> @@ -746,11 +831,24 @@ wake-pins {
->  		};
->  	};
->  
-> +	qup_i2c11_default: qup-i2c11-state {
-> +		pins = "gpio48", "gpio49";
-> +		function = "qup1_se4";
-> +		drive-strength = <2>;
-> +		bias-pull-up;
-> +	};
-> +
->  	sd_cd: sd-cd-state {
->  		pins = "gpio36";
->  		function = "gpio";
->  		bias-pull-up;
->  	};
-> +
-> +	usb_id: usb-id-state {
-> +		pins = "gpio50";
-> +		function = "gpio";
-> +		bias-pull-up;
-> +	};
->  };
->  
->  &uart10 {
-> @@ -779,11 +877,17 @@ &ufs_mem_phy {
->  };
->  
->  &usb_0 {
-> -	dr_mode = "peripheral";
-> -
->  	status = "okay";
->  };
->  
-> +&usb3_0_hs_ep {
-> +	remote-endpoint = <&usb0_con_hs_ep>;
-> +};
-> +
-> +&usb3_0_ss_ep {
-> +	remote-endpoint = <&hd3ss3220_out_ep>;
-> +};
-> +
->  &usb_0_hsphy {
->  	vdda-pll-supply = <&vreg_l7a>;
->  	vdda18-supply = <&vreg_l6c>;
-> diff --git a/arch/arm64/boot/dts/qcom/lemans.dtsi b/arch/arm64/boot/dts/qcom/lemans.dtsi
-> index 0b154d57ba24..5fa4a43a7350 100644
-> --- a/arch/arm64/boot/dts/qcom/lemans.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/lemans.dtsi
-> @@ -4026,7 +4026,27 @@ usb_0: usb@a600000 {
->  			snps,dis-u1-entry-quirk;
->  			snps,dis-u2-entry-quirk;
->  
-> +			usb-role-switch;
->  			status = "disabled";
-> +
-> +			ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
-> +					reg = <0>;
-> +
-> +					usb3_0_hs_ep: endpoint {
-> +					};
-> +				};
-> +
-> +				port@1 {
-> +					reg = <1>;
-> +
-> +					usb3_0_ss_ep: endpoint {
-> +					};
-> +				};
-> +			};
->  		};
->  
->  		usb_1: usb@a800000 {
-> -- 
-> 2.34.1
-> 
 
