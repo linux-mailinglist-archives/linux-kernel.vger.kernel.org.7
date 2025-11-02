@@ -1,63 +1,56 @@
-Return-Path: <linux-kernel+bounces-882031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 289EBC29799
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 22:47:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81349C297AB
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 22:49:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7329E3A2952
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 21:47:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1849188E7C7
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 21:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA16A2E5B0D;
-	Sun,  2 Nov 2025 21:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B142E8B73;
+	Sun,  2 Nov 2025 21:44:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HoNbtz9G"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H2fw3VdO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB07D25949A;
-	Sun,  2 Nov 2025 21:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF37260583;
+	Sun,  2 Nov 2025 21:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762119880; cv=none; b=A343iKnfkZUN1SvVl800zdC5P84VrzkB3zevoJt017aUBrGRLv4F4841bmYSc9zYMYGkWQ3b3E0S9dokaR8TLPKhv61Vt20Gw0GM8HIczMJLY2CF/mVjzX5r+8wAz/Iimg74SS7UfwLM7j6VISvk70pOawz9giO7CLSAL/zkRLw=
+	t=1762119881; cv=none; b=dVJwu2IEFJ7Dnx3zwphPwX/dDifK7+aEY2RsrmgTuXmS0brN1bDDlC+Xj+RAC0472EOczunc6qY2g/m94KcM+6zs5De8TIwaQcXbvLcDEZoyMsT0RYgu3qkdWpZMm2jgOVHsF5olU929sOCH1RI76BPL7lU2ZOZsJyeR8M38CeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762119880; c=relaxed/simple;
-	bh=R4kFwOOFYwrXB688uqk8xRjU0CSAKW/oggKTVNMYKqU=;
+	s=arc-20240116; t=1762119881; c=relaxed/simple;
+	bh=rZXvfrA3YGviZHzZMYqMHXTK7X68+gQX9VG+uQe++ZM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=i8+P1i9c6CINaOli3CpIrH8gi072+6nrQKnOQxZlDMvh8kxs+6TLUnBHOMqC4/3mtYX2+dOnLz+n5HeHyqL7RqENwCRmZyI5ZiLU4JsNWnNzdRXJaLLayjqZZCNB/QhzfqqHRxWCjmI/r6Cw+DSfMKaNrI9n+0z2oz3loX+EdKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HoNbtz9G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF40DC113D0;
-	Sun,  2 Nov 2025 21:44:39 +0000 (UTC)
+	 MIME-Version; b=RRRwlqtkgC7po2gfv6dunZDiwoDy9+pK4Vfjwy/J9YQ1eLxA4mYffKuumSdhnm0yyEhuidd5Pq/ASLpnjcoKmlh5XW1AyyM8y46WYHGwjFaakRUBAwHvoUI/r2mGSbvyqz2v4fIhXMONhB2dCnsnwmkKlvx0IHo+fx3Um+xdxhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H2fw3VdO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCFE0C116D0;
+	Sun,  2 Nov 2025 21:44:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762119879;
-	bh=R4kFwOOFYwrXB688uqk8xRjU0CSAKW/oggKTVNMYKqU=;
+	s=k20201202; t=1762119880;
+	bh=rZXvfrA3YGviZHzZMYqMHXTK7X68+gQX9VG+uQe++ZM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HoNbtz9GmnNxGwEWhNeSECkfCd8sjgQCadJgzAA8UCnfQpFu6H3nb5u7Mu09hr3/H
-	 oDptY4r0jGPfbbBmnOWcIHnRO1ND4GZKuFryKo1F7WcjLo0XxfZhj14m4j8ja1+clz
-	 Kj4hMfmB7dfSCRkBumoIUpiiehB85RLARaOBJKGtvIgumrCsbHtZgZE9wvsyQxjkI0
-	 IfFxwva1a3PCHz8tWgLhuesiBr5xEXhVSSpSzNBrfnacmGtLPk45VI3oUECeKwQw7y
-	 +DdGvbjaNmNsAwmZicXIeDmgfOx9HWlX5sdGAu8hSCrgjGLdgsej49rRGAo973lskN
-	 2qr32duqsG/Xw==
+	b=H2fw3VdOZzJ3lx/k31T7AdEtUPtF3EaPp5nk7XbSiaHqrmOfOqhvyEhs7IS1orJyz
+	 K4Ifyqtsaqq9VwDUE+J62RCtf8KIsNtBMon+Urt/UsuAGPu6oQL07JSUSfR0z4IVfa
+	 zuAnUw/MN7lpnQrE4hJrISU6GI1E0p6Wws1bJ6cQzHBydGHEIPenfBFrxw+8VYE27S
+	 +ZOdO4fgXBpFKbEFfe9buSD06zCCP5EtskfVsQJP36/SogSeT8Qk/vB4EYj087TvwC
+	 g6alcrj5qE9DIXs0YVAA2ovQ3a5BPcAi/0Dmthy7QH9JSqYOeHuPM0rz5ZA4f687H4
+	 forJg0cQ0ovfQ==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id A58B2CE16C7; Sun,  2 Nov 2025 13:44:37 -0800 (PST)
+	id A80C6CE16CA; Sun,  2 Nov 2025 13:44:37 -0800 (PST)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
 	rostedt@goodmis.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-arm-kernel@lists.infradead.org,
-	bpf@vger.kernel.org
-Subject: [PATCH 17/19] srcu: Optimize SRCU-fast-updown for arm64
-Date: Sun,  2 Nov 2025 13:44:34 -0800
-Message-Id: <20251102214436.3905633-17-paulmck@kernel.org>
+	"Paul E. McKenney" <paulmck@kernel.org>
+Subject: [PATCH 18/19] rcutorture: Make srcu{,d}_torture_init() announce the SRCU type
+Date: Sun,  2 Nov 2025 13:44:35 -0800
+Message-Id: <20251102214436.3905633-18-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <082fb8ba-91b8-448e-a472-195eb7b282fd@paulmck-laptop>
 References: <082fb8ba-91b8-448e-a472-195eb7b282fd@paulmck-laptop>
@@ -69,123 +62,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Some arm64 platforms have slow per-CPU atomic operations, for example,
-the Neoverse V2.  This commit therefore moves SRCU-fast from per-CPU
-atomic operations to interrupt-disabled non-read-modify-write-atomic
-atomic_read()/atomic_set() operations.  This works because
-SRCU-fast-updown is not invoked from read-side primitives, which
-means that if srcu_read_unlock_fast() NMI handlers.  This means that
-srcu_read_lock_fast_updown() and srcu_read_unlock_fast_updown() can
-exclude themselves and each other
-
-This reduces the overhead of calls to srcu_read_lock_fast_updown() and
-srcu_read_unlock_fast_updown() from about 100ns to about 12ns on an ARM
-Neoverse V2.  Although this is not excellent compared to about 2ns on x86,
-it sure beats 100ns.
-
-This command was used to measure the overhead:
-
-tools/testing/selftests/rcutorture/bin/kvm.sh --torture refscale --allcpus --duration 5 --configs NOPREEMPT --kconfig "CONFIG_NR_CPUS=64 CONFIG_TASKS_TRACE_RCU=y" --bootargs "refscale.loops=100000 refscale.guest_os_delay=5 refscale.nreaders=64 refscale.holdoff=30 torture.disable_onoff_at_boot refscale.scale_type=srcu-fast-updown refscale.verbose_batched=8 torture.verbose_sleep_frequency=8 torture.verbose_sleep_duration=8 refscale.nruns=100" --trust-make
+This commit causes rcutorture's srcu_torture_init() and
+srcud_torture_init() functions to announce on the console log
+which variant of SRCU is being tortured, for example: "torture:
+srcud_torture_init fast SRCU".
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: <linux-arm-kernel@lists.infradead.org>
-Cc: <bpf@vger.kernel.org>
 ---
- include/linux/srcutree.h | 56 ++++++++++++++++++++++++++++++++++++----
- 1 file changed, 51 insertions(+), 5 deletions(-)
+ kernel/rcu/rcutorture.c | 34 ++++++++++++++++++++++++++++------
+ 1 file changed, 28 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/srcutree.h b/include/linux/srcutree.h
-index d6f978b50472..70560dc4636c 100644
---- a/include/linux/srcutree.h
-+++ b/include/linux/srcutree.h
-@@ -253,6 +253,34 @@ static inline struct srcu_ctr __percpu *__srcu_ctr_to_ptr(struct srcu_struct *ss
- 	return &ssp->sda->srcu_ctrs[idx];
- }
- 
-+/*
-+ * Non-atomic manipulation of SRCU lock counters.
-+ */
-+static inline struct srcu_ctr __percpu notrace *__srcu_read_lock_fast_na(struct srcu_struct *ssp)
-+{
-+	atomic_long_t *scnp;
-+	struct srcu_ctr __percpu *scp;
-+
-+	lockdep_assert_preemption_disabled();
-+	scp = READ_ONCE(ssp->srcu_ctrp);
-+	scnp = raw_cpu_ptr(&scp->srcu_locks);
-+	atomic_long_set(scnp, atomic_long_read(scnp) + 1);
-+	return scp;
-+}
-+
-+/*
-+ * Non-atomic manipulation of SRCU unlock counters.
-+ */
-+static inline void notrace
-+__srcu_read_unlock_fast_na(struct srcu_struct *ssp, struct srcu_ctr __percpu *scp)
-+{
-+	atomic_long_t *scnp;
-+
-+	lockdep_assert_preemption_disabled();
-+	scnp = raw_cpu_ptr(&scp->srcu_unlocks);
-+	atomic_long_set(scnp, atomic_long_read(scnp) + 1);
-+}
-+
- /*
-  * Counts the new reader in the appropriate per-CPU element of the
-  * srcu_struct.  Returns a pointer that must be passed to the matching
-@@ -327,12 +355,23 @@ __srcu_read_unlock_fast(struct srcu_struct *ssp, struct srcu_ctr __percpu *scp)
- static inline
- struct srcu_ctr __percpu notrace *__srcu_read_lock_fast_updown(struct srcu_struct *ssp)
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index 4a9b6866c0cc..820c5e5b106b 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -701,10 +701,20 @@ static struct rcu_torture_ops srcud_ops;
+ static void srcu_torture_init(void)
  {
--	struct srcu_ctr __percpu *scp = READ_ONCE(ssp->srcu_ctrp);
-+	struct srcu_ctr __percpu *scp;
- 
--	if (!IS_ENABLED(CONFIG_NEED_SRCU_NMI_SAFE))
-+	if (IS_ENABLED(CONFIG_ARM64) && IS_ENABLED(CONFIG_ARM64_USE_LSE_PERCPU_ATOMICS)) {
-+		unsigned long flags;
-+
-+		local_irq_save(flags);
-+		scp = __srcu_read_lock_fast_na(ssp);
-+		local_irq_restore(flags); /* Avoids leaking the critical section. */
-+		return scp;
+ 	rcu_sync_torture_init();
+-	if (reader_flavor & SRCU_READ_FLAVOR_FAST)
++	if (!reader_flavor || (reader_flavor & SRCU_READ_FLAVOR_NORMAL)) {
++		VERBOSE_TOROUT_STRING("srcu_torture_init normal SRCU");
 +	}
-+
-+	scp = READ_ONCE(ssp->srcu_ctrp);
-+	if (!IS_ENABLED(CONFIG_NEED_SRCU_NMI_SAFE)) {
- 		this_cpu_inc(scp->srcu_locks.counter); // Y, and implicit RCU reader.
--	else
-+	} else {
- 		atomic_long_inc(raw_cpu_ptr(&scp->srcu_locks));  // Y, and implicit RCU reader.
++	if (reader_flavor & SRCU_READ_FLAVOR_NMI) {
++		VERBOSE_TOROUT_STRING("srcu_torture_init NMI-safe SRCU");
 +	}
- 	barrier(); /* Avoid leaking the critical section. */
- 	return scp;
++	if (reader_flavor & SRCU_READ_FLAVOR_FAST) {
+ 		srcu_ctlp = &srcu_ctlf;
+-	if (reader_flavor & SRCU_READ_FLAVOR_FAST_UPDOWN)
++		VERBOSE_TOROUT_STRING("srcu_torture_init fast SRCU");
++	}
++	if (reader_flavor & SRCU_READ_FLAVOR_FAST_UPDOWN) {
+ 		srcu_ctlp = &srcu_ctlfud;
++		VERBOSE_TOROUT_STRING("srcu_torture_init fast-up/down SRCU");
++	}
  }
-@@ -350,10 +389,17 @@ static inline void notrace
- __srcu_read_unlock_fast_updown(struct srcu_struct *ssp, struct srcu_ctr __percpu *scp)
+ 
+ static void srcu_get_gp_data(int *flags, unsigned long *gp_seq)
+@@ -920,12 +930,21 @@ static struct rcu_torture_ops srcu_ops = {
+ static void srcud_torture_init(void)
  {
- 	barrier();  /* Avoid leaking the critical section. */
--	if (!IS_ENABLED(CONFIG_NEED_SRCU_NMI_SAFE))
-+	if (IS_ENABLED(CONFIG_ARM64)) {
-+		unsigned long flags;
-+
-+		local_irq_save(flags);
-+		 __srcu_read_unlock_fast_na(ssp, scp);
-+		local_irq_restore(flags);
-+	} else if (!IS_ENABLED(CONFIG_NEED_SRCU_NMI_SAFE)) {
- 		this_cpu_inc(scp->srcu_unlocks.counter);  // Z, and implicit RCU reader.
+ 	rcu_sync_torture_init();
+-	if (reader_flavor & SRCU_READ_FLAVOR_FAST_UPDOWN)
+-		WARN_ON(init_srcu_struct_fast_updown(&srcu_ctld));
+-	else if (reader_flavor & SRCU_READ_FLAVOR_FAST)
++	if (!reader_flavor || (reader_flavor & SRCU_READ_FLAVOR_NORMAL)) {
++		WARN_ON(init_srcu_struct(&srcu_ctld));
++		VERBOSE_TOROUT_STRING("srcud_torture_init normal SRCU");
++	} else if (reader_flavor & SRCU_READ_FLAVOR_NMI) {
++		WARN_ON(init_srcu_struct(&srcu_ctld));
++		VERBOSE_TOROUT_STRING("srcud_torture_init NMI-safe SRCU");
++	} else if (reader_flavor & SRCU_READ_FLAVOR_FAST) {
+ 		WARN_ON(init_srcu_struct_fast(&srcu_ctld));
 -	else
++		VERBOSE_TOROUT_STRING("srcud_torture_init fast SRCU");
++	} else if (reader_flavor & SRCU_READ_FLAVOR_FAST_UPDOWN) {
++		WARN_ON(init_srcu_struct_fast_updown(&srcu_ctld));
++		VERBOSE_TOROUT_STRING("srcud_torture_init fast-up/down SRCU");
 +	} else {
- 		atomic_long_inc(raw_cpu_ptr(&scp->srcu_unlocks));  // Z, and implicit RCU reader.
+ 		WARN_ON(init_srcu_struct(&srcu_ctld));
 +	}
+ 	srcu_ctlp = &srcu_ctld;
  }
  
- void __srcu_check_read_flavor(struct srcu_struct *ssp, int read_flavor);
+@@ -2440,6 +2459,9 @@ static DEFINE_TORTURE_RANDOM_PERCPU(rcu_torture_timer_rand);
+  */
+ static void rcu_torture_timer(struct timer_list *unused)
+ {
++	WARN_ON_ONCE(!in_serving_softirq());
++	WARN_ON_ONCE(in_hardirq());
++	WARN_ON_ONCE(in_nmi());
+ 	atomic_long_inc(&n_rcu_torture_timers);
+ 	(void)rcu_torture_one_read(this_cpu_ptr(&rcu_torture_timer_rand), -1);
+ 
 -- 
 2.40.1
 
