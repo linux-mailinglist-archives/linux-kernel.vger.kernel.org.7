@@ -1,101 +1,148 @@
-Return-Path: <linux-kernel+bounces-881729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07D34C28D27
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 11:17:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BD3CC28D2D
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 11:20:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9518A4E3AAD
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 10:17:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3B9C64E37D0
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 10:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BBF124EA81;
-	Sun,  2 Nov 2025 10:17:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630FB248883;
+	Sun,  2 Nov 2025 10:20:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s0N5iF32"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="TID74gAb"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6DB38C1F;
-	Sun,  2 Nov 2025 10:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 966131B87C0;
+	Sun,  2 Nov 2025 10:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762078641; cv=none; b=RfEQ98CzFXP/XlVVEuwrpR8bgfPJuNewQTSdsLrv6AdZGh06FUhJf7rcfwzUrx8jJj9HEZ0JZAys8QE0dzdSs6t6FZdm35h8ITr+O6q+LpDWqhklL8/pf/tr/PLq/LxwOxa23BRttIChdUfMWUvvkAovGdRDII70jxjv7OF5Ooc=
+	t=1762078847; cv=none; b=gibGU4UaxaJLgFfYWkFcUMRKGDyjWMM7v7q1Y8zNdinJRosW00/SACcku7nSZ0psULLUpzHEk8ARjb+153xA11Gqzv2wwWg+h3BQrP0eC3rmdWOKfI4lomhI328Q92MECG3cFnGxW+eZACCwZjLo85cJawy8+kQaerVP8zJ6eDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762078641; c=relaxed/simple;
-	bh=2astGPBTqePob/d8q9xvK33xSRSffAq1TL6qpck7WAg=;
+	s=arc-20240116; t=1762078847; c=relaxed/simple;
+	bh=+7r27NXXnEAHRJP1WOERJ4p0P/EaUvrkwyF+vMVZqh4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iFW0TZjVK8uxGp9aZBfLIUQn3LTmAmBARoi2+PsSZ/ATkEvGy9m3lDcmXtqyoYAV0ixoL0uFn9JgDTJtf18SsKrgdY8hfywzgluSgf5ubT+deplNpnpB3b13V6qy+e5gtIsiRnrcHNbXkVKvlYDNaJ7JsDi48H1eGTzfECyQpJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s0N5iF32; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A812AC4CEF7;
-	Sun,  2 Nov 2025 10:17:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762078640;
-	bh=2astGPBTqePob/d8q9xvK33xSRSffAq1TL6qpck7WAg=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=IL3wITPr7uMSNMM5AlM8iUzrgdCRYkOl7EmWrxpNwmae/hJYL0qJcUE/sw1J4QS3soTxOSiJxFJ1143uoppa/Xg8uUhA0J0DKAfIxU3CZxWI987Jm4cdbdZSbikDqS24VNdR+xbGeEG9pfqsCrC98BBNVVMSjz7Mj9Vxp99UGgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=TID74gAb; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (mob-5-90-50-232.net.vodafone.it [5.90.50.232])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5671EE1F;
+	Sun,  2 Nov 2025 11:18:49 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1762078729;
+	bh=+7r27NXXnEAHRJP1WOERJ4p0P/EaUvrkwyF+vMVZqh4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s0N5iF32iZdt8/mJtoWR59MSKK8++7UQjQjnKLRW5GbVCmhC0erDTeTG/u4a9FIrt
-	 xKfmUdQbUg4xUTCnHBMbFVSxQ+CPINfupN0Kytrf+Tbf7Ov44JZo/6pYMzMUV3qmlD
-	 ZtMAoxS669sVgx8X539WZ8Kd4Uv+EHEjI2G8M2Bl/Bqg5TFBQ2t7mBvjyJvhHPPigN
-	 rLLVnKlFgNUtqi44kO2GYhzt06w5seylnGbOCmdPsxqWUPA8oTWVDXWRfFS10crzfK
-	 eNrrHYIzase/2PYr6Ck1yhlLAQXIf3COKz97T8r5erYt3VbsftSQ3EakcjvplBHf6t
-	 3NG5N+fOGnU/w==
-Date: Sun, 2 Nov 2025 12:17:14 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Bjorn Helgaas <bhelgaas@google.com>, Saeed Mahameed <saeedm@nvidia.com>,
-	Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Edward Srouji <edwards@nvidia.com>
-Subject: Re: [PATCH mlx5-next 1/2] PCI/TPH: Expose pcie_tph_get_st_table_loc()
-Message-ID: <20251102101714.GA17533@unreal>
-References: <20251027-st-direct-mode-v1-0-e0ad953866b6@nvidia.com>
- <20251027-st-direct-mode-v1-1-e0ad953866b6@nvidia.com>
+	b=TID74gAbyzOmx34aDKDvaVByltxT71s8sp47T5Lsfb01MBLaVBXeBbhR+rfxL/twr
+	 bgTTFI/c4cgBJ57XlxIHcLCOdJQk0rsjOwesVfnRWlfQMfPPZDLMAVYgclk89Uz/HC
+	 cKPnx2ihUECi0DfojAwYRieQS7fFpC98DtvH9yCo=
+Date: Sun, 2 Nov 2025 11:20:38 +0100
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Jai Luthra <jai.luthra@ideasonboard.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, Jacopo Mondi <jacopo@jmondi.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Kieran Bingham <kieran.bingham@ideasonboard.com>, 
+	David Plowman <david.plowman@raspberrypi.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Peter Robinson <pbrobinson@gmail.com>, Stefan Wahren <wahrenst@gmx.net>, 
+	"Ivan T. Ivanov" <iivanov@suse.de>
+Subject: Re: [PATCH 01/13] media: i2c: ov5647: Parse and register properties
+Message-ID: <qoxea2nxh24cprpt7mcnuv5ksx6ylxvpno7tlwgsinxkeu35sq@xf3uyciyn3df>
+References: <20251028-b4-rpi-ov5647-v1-0-098413454f5e@ideasonboard.com>
+ <20251028-b4-rpi-ov5647-v1-1-098413454f5e@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251027-st-direct-mode-v1-1-e0ad953866b6@nvidia.com>
+In-Reply-To: <20251028-b4-rpi-ov5647-v1-1-098413454f5e@ideasonboard.com>
 
-On Mon, Oct 27, 2025 at 11:34:01AM +0200, Leon Romanovsky wrote:
-> From: Yishai Hadas <yishaih@nvidia.com>
-> 
-> Expose pcie_tph_get_st_table_loc() to be used by drivers as will be done
-> in the next patch from the series.
-> 
-> Signed-off-by: Yishai Hadas <yishaih@nvidia.com>
-> Signed-off-by: Edward Srouji <edwards@nvidia.com>
-> Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+Hi Jai
+
+On Tue, Oct 28, 2025 at 12:57:12PM +0530, Jai Luthra wrote:
+> From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>
+> Parse device properties and register controls for them using the V4L2
+> fwnode properties helpers.
+>
+> Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
 > ---
->  drivers/pci/tph.c       | 7 ++++---
->  include/linux/pci-tph.h | 1 +
->  2 files changed, 5 insertions(+), 3 deletions(-)
-
-<...>
-
-> -static u32 get_st_table_loc(struct pci_dev *pdev)
-> +u32 pcie_tph_get_st_table_loc(struct pci_dev *pdev)
+>  drivers/media/i2c/ov5647.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/media/i2c/ov5647.c b/drivers/media/i2c/ov5647.c
+> index e193fef4fcedf4661564c032cd7dbd80a9fd30a6..985a8e81529d2f88cb38ccb8c94f8605026a28a9 100644
+> --- a/drivers/media/i2c/ov5647.c
+> +++ b/drivers/media/i2c/ov5647.c
+> @@ -1284,10 +1284,11 @@ static const struct v4l2_ctrl_ops ov5647_ctrl_ops = {
+>  	.s_ctrl = ov5647_s_ctrl,
+>  };
+>
+> -static int ov5647_init_controls(struct ov5647 *sensor)
+> +static int ov5647_init_controls(struct ov5647 *sensor, struct device *dev)
 >  {
->  	u32 reg;
->  
-> @@ -163,6 +163,7 @@ static u32 get_st_table_loc(struct pci_dev *pdev)
->  
->  	return FIELD_GET(PCI_TPH_CAP_LOC_MASK, reg);
->  }
-> +EXPORT_SYMBOL(pcie_tph_get_st_table_loc);
+>  	struct i2c_client *client = v4l2_get_subdevdata(&sensor->sd);
+>  	int hblank, exposure_max, exposure_def;
+> +	struct v4l2_fwnode_device_properties props;
 
-Bjorn,
+Since I have other comments, let me annoying and suggest moving this
+up to maintain line length ordering in variables declaration.
 
-Are you ok with this change?
+>
+>  	v4l2_ctrl_handler_init(&sensor->ctrls, 9);
+
+Should we make this 11 ? With this change we can end up registering 2
+additional controls.
+
+>
+> @@ -1338,6 +1339,11 @@ static int ov5647_init_controls(struct ov5647 *sensor)
+>  				     ARRAY_SIZE(ov5647_test_pattern_menu) - 1,
+>  				     0, 0, ov5647_test_pattern_menu);
+>
+> +	v4l2_fwnode_device_parse(dev, &props);
+> +
+> +	v4l2_ctrl_new_fwnode_properties(&sensor->ctrls, &ov5647_ctrl_ops,
+> +					&props);
+> +
+>  	if (sensor->ctrls.error)
+>  		goto handler_free;
+>
+> @@ -1420,7 +1426,7 @@ static int ov5647_probe(struct i2c_client *client)
+>
+>  	sensor->mode = OV5647_DEFAULT_MODE;
+>
+> -	ret = ov5647_init_controls(sensor);
+> +	ret = ov5647_init_controls(sensor, dev);
+
+You know, I think we have a bug that went unnoticed..
+
+ov5647_init_controls() retrieves the i2c client with
+
+	struct i2c_client *client = v4l2_get_subdevdata(&sensor->sd);
+
+but v4l2_set_subdevdata() is called by v4l2_i2c_subdev_init() which is
+called after  ov5647_init_controls(). We don't hit a segfault because
+client so far as only be used in the error path.
+
+If you move init_controls() after v4l2_i2c_subdev_init() you can
+access dev from the i2c_client instead of passing it to the function ?
 
 Thanks
+  j
+
+>  	if (ret)
+>  		goto mutex_destroy;
+>
+>
+> --
+> 2.51.0
+>
 
