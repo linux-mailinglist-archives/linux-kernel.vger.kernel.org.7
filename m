@@ -1,111 +1,154 @@
-Return-Path: <linux-kernel+bounces-881645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BD42C28A16
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 07:15:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDAC4C28A29
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 07:52:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEE573AE6CB
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 06:15:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 86CD94E4C03
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 06:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A26A260583;
-	Sun,  2 Nov 2025 06:14:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9270218AAB;
+	Sun,  2 Nov 2025 06:51:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="SP139NaS"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=kumba.dev header.i=@kumba.dev header.b="bgLG4Qja";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Yq1tYrnM"
+Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40E82566;
-	Sun,  2 Nov 2025 06:14:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A1C15D1;
+	Sun,  2 Nov 2025 06:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762064094; cv=none; b=M5Yv7EHbeSwZQRgHr0w3Nqj+aT4ebQjhd6dv1eONrYFCPuGHk41yibM9qjTDOFPfaX11wLIsnHLzGC7jD9zu8bDUBoaUkaN1ZXOgAvqzckqfiH1W2SkzmYMuMg/SrTbaSk3u2LltPdDSuxeuESIU9Xcziwlw3+PmZK0DjTkxmtY=
+	t=1762066309; cv=none; b=NzqZ11dvhPcnKFKSCiFBi6AYttMEEdH+eH6LgcHyxTQhz29vNtWOxYGVTp+myaGGGNG1/0yy8Peof7qwmBKJkkAtlveI6nYbmnpT+qow9aXByOYhGrEjMatD9igXVwp9O0K/vi9GdLWPTV/VdhN/41CJkZfnT5aaENFWxwiQy1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762064094; c=relaxed/simple;
-	bh=YXSM2YQ9C3fmfUg9hMzz3r6GrWcyrqSt4GI6duBohBM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HGmElIqiY5u3AIfio1dSaoub6cMlMPPcBQur/K0y3nQOHXtZD6mgBrfGVfvbUbc3nMFC4K0/1YJad4OaJwgytod0GOI45loXPBJlgklksi98NRCTI7lGF1S+BNYpQOS0OJ/dm61VRFduadwbovi6GEjU26YKyHIrNjL2H70csaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=SP139NaS; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-	bh=TBJzu2vu0tgjqlqrzAAeyyr7iAbz2rADLICsDuA9jlg=; b=SP139NaSEP/CV4zc7fdo/HWw19
-	LdEcTS+XN4gvDwzYjd6zP8PAat+EMKuNuAqFyvU4RwO0kFp3VbFppSp5PnN+BCmHZXUs7ND3Xbd93
-	KcvzcVZ/mKPzDZRRlZ0m4JTHjS37zXTNSVLB3tOwI5YkJJbfUdq0qFqhPRSZo8L5KA/UtIksgO28s
-	Va7WqW5cmuvX4/a2rpHlYRCK7PEayKVkszdQFqC/rNCm19fvPDCzzIMfhQYmr1BmMwcWOkvkwe4C6
-	WNJozKE1FDToujZqMMN0p/lBFf4rHR4j5um12vz4eatanN6xH/db8O43jLbXjKiSHuZFbipvzyd49
-	zpSqzlHA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vFRMR-0000000Ds6v-1iYN;
-	Sun, 02 Nov 2025 06:14:43 +0000
-Date: Sun, 2 Nov 2025 06:14:43 +0000
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: touch up predicts in putname()
-Message-ID: <20251102061443.GE2441659@ZenIV>
-References: <20251029134952.658450-1-mjguzik@gmail.com>
- <20251031201753.GD2441659@ZenIV>
- <20251101060556.GA1235503@ZenIV>
- <CAGudoHHno74hGjwu7rryrS4x2q2W8=SwMwT9Lohjr4mBbAg+LA@mail.gmail.com>
+	s=arc-20240116; t=1762066309; c=relaxed/simple;
+	bh=jrQu8QUh8d9O2x9Oj7sYWD8ZIaTpf5wTovtM+X5aN5M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n6onsYHQs5GlXtEoHn0b1uVnSf/ThFbHWHcAW0f+yy+WyJZeC0Va0Iz0QiPyF+TgYEbDwFu3wClwmoghlBWvrsfUcfIQhG95BoFJgvxTUMeMSW4elAcGoiUgLyqzCbcYV99aeZhfp4HEaXIg/ZWeXysv8YkILvuvO8OVbHZuRQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kumba.dev; spf=pass smtp.mailfrom=kumba.dev; dkim=pass (2048-bit key) header.d=kumba.dev header.i=@kumba.dev header.b=bgLG4Qja; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Yq1tYrnM; arc=none smtp.client-ip=202.12.124.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kumba.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kumba.dev
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 4B4147A00DA;
+	Sun,  2 Nov 2025 01:51:45 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Sun, 02 Nov 2025 01:51:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kumba.dev; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1762066305;
+	 x=1762152705; bh=2MPoV+MTAdGoRJUdgFuhFNIxbSRUWNHncLFL41VMeVI=; b=
+	bgLG4Qja5OnD5U6AJfeiez9W8Tx1w22un38jRl8aDxiaf8DT41k1wm0bBpka5auI
+	15XNH7NnzWSjZ0uteB8K7u7SU/+CYrhyLjK/3XVXPpFCswYhtdJwPkohwNDkFgoD
+	Iw8eikKNv2ni+vCZjVMd7o1mxIkTJfita29xtuoc/sUSFQKoA1z2W9GnDd/F0jAF
+	VhCeF3QXwWyLk1Tq0hEEDPUjVgn0ICabLkUPW925ru0sTzMxzEAiSwRx9XyguMrB
+	rlkhDDDlc0n+n+BeSDc+6PcawMvd3oU3WEWd4j+x1NfPD/zNyJKcBPIS0K3viGbO
+	xzVS87oyjRLB32Ok5/Uovg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762066305; x=
+	1762152705; bh=2MPoV+MTAdGoRJUdgFuhFNIxbSRUWNHncLFL41VMeVI=; b=Y
+	q1tYrnM/DwhjUUX2Uo9uL+j37KHKS+O1XNKI86MNDTi3lrtKL+z2Q7ZNM0D12Kky
+	Z9MWWfDvDW4tp2mh0qe49yeK/aDK+TMdRS11+yjUbPLJ8wFC5ZipmtWY2yxn2EvT
+	45zx3nkPX6Mg5r3zOh5KbyKfN7dgmYNV1khbVzgW9y5xKJapFgudbiMocM7lAlMU
+	2RudV4i+aFWOANPkpryTyuoffDUuTlWLMe7OzFzqFSZJQaTZpT/kheYYuMlDBgXb
+	L+uT2mKPpw3sE8J/dHX9eUMQIXvz7EC/pFJyEGc8uyK5YoAVSRjt6b0/WBFoIwSa
+	CHkRkH6hl94cAcaGqgTJQ==
+X-ME-Sender: <xms:f_8GacToOqqDkX8FnORik7POSADPdu1c7Bd4chgW2UKC_9mH3Ia0Mw>
+    <xme:f_8GacA3s_NZ8ZZXvjVuiCB4_fy89L1jut19wfcyG7cSM7mnKfZ3bdqwSYJ3LyxQM
+    gvXyFKoSDS8Agt9KQ3bmlwEGA67B4In1Orb_zvzkci_tE6Lub1ZyeA>
+X-ME-Received: <xmr:f_8GacEYqZeZRqwVuK44Nko6PYwld2ooYVoOM4cJnnwkSIB8RBRNc_PB4TL3oj3yj6ldhMUL8rPbS63Y94MQAupBPNJ2J-kOlV12vl5-yE2X53w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujeegheekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeflohhshhhu
+    rgcumfhinhgrrhguuceolhhinhhugieskhhumhgsrgdruggvvheqnecuggftrfgrthhtvg
+    hrnhepjeffueffheevgeffudekuefggeettdetvdegveeuhfetgffhgfeileetkeekieeu
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheplhhinh
+    hugieskhhumhgsrgdruggvvhdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphho
+    uhhtpdhrtghpthhtoheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinh
+    drtghomhdprhgtphhtthhopegtlhgruhguihhurdgsvgiinhgvrgdruhhjsegsphdrrhgv
+    nhgvshgrshdrtghomhdprhgtphhtthhopehovhhiughiuhdrphgrnhgrihhtrdhrsgesrh
+    gvnhgvshgrshdrtghomhdprhgtphhtthhopehlihhnuhigqdhrthgtsehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhgvnhgvshgrshdqshhotges
+    vhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:f_8GaWBe2D1Np_ZackpGo2PL236JhFQlJ8TzRy_sCjnM8jNzsNFzEQ>
+    <xmx:f_8GaUVDH0JOoFayYAmlkq-4CP0DmTIL00SVK72eFDvvt5SdAjGu-A>
+    <xmx:f_8GaSoCqWkpn4s7rHzDUmZb2nLB_VMUBP09kUVNTQe1loM_rv21aw>
+    <xmx:f_8GaYQDerOmRrn5qOhAvUu8tOdLNsgWuSDZq6XFx8Cz2zfytj9GNQ>
+    <xmx:gf8GaRkKax8YkJaGdqcxuAxR4uZCblVa13OL7fwq5d1JDk0gtWMUPUf1>
+Feedback-ID: if8114916:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 2 Nov 2025 01:51:43 -0500 (EST)
+Message-ID: <ac3e483d-6784-4acc-9fcc-b3bb605ab0c1@kumba.dev>
+Date: Sun, 2 Nov 2025 01:51:19 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHHno74hGjwu7rryrS4x2q2W8=SwMwT9Lohjr4mBbAg+LA@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/11] rtc: ds1685: stop setting max_user_freq
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+ Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org
+References: <20251101-max_user_freq-v1-0-c9a274fd6883@bootlin.com>
+ <20251101-max_user_freq-v1-2-c9a274fd6883@bootlin.com>
+Content-Language: en-US
+From: Joshua Kinard <linux@kumba.dev>
+In-Reply-To: <20251101-max_user_freq-v1-2-c9a274fd6883@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Nov 01, 2025 at 09:19:21AM +0100, Mateusz Guzik wrote:
-> On Sat, Nov 1, 2025 at 7:05 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > On Fri, Oct 31, 2025 at 08:17:53PM +0000, Al Viro wrote:
-> >
-> > > 0) get rid of audit_reusename() and aname->uptr (I have that series,
-> > > massaging it for posting at the moment).  Basically, don't have
-> > > getname et.al. called in retry loops - there are few places doing
-> > > that, and they are not hard to fix.
-> >
-> > See #work.filename-uptr; I'll post individual patches tomorrow morning,
-> > hopefully along with getname_alien()/take_filename() followups, including
-> > the removal of atomic (still not settled on the calling conventions for
-> > getname_alien()).
-> >
+On 10/31/2025 20:45, Alexandre Belloni wrote:
+> max_user_freq has not been related to the hardware RTC since commit
+> 6610e0893b8b ("RTC: Rework RTC code to use timerqueue for events"). Stop
+> setting it from individual driver to avoid confusing new contributors.
 > 
-> Ok, in that case I think it will be most expedient if my patch gets
-> dropped and you just fold the updated predicts into your patchset
-> somewhere. I don't need any credit.
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> ---
+>   drivers/rtc/rtc-ds1685.c   | 3 ---
+>   include/linux/rtc/ds1685.h | 1 -
+>   2 files changed, 4 deletions(-)
+> 
+> diff --git a/drivers/rtc/rtc-ds1685.c b/drivers/rtc/rtc-ds1685.c
+> index 97423f1d0361..5fc8e36b1abf 100644
+> --- a/drivers/rtc/rtc-ds1685.c
+> +++ b/drivers/rtc/rtc-ds1685.c
+> @@ -1268,9 +1268,6 @@ ds1685_rtc_probe(struct platform_device *pdev)
+>   	rtc_dev->range_min = RTC_TIMESTAMP_BEGIN_2000;
+>   	rtc_dev->range_max = RTC_TIMESTAMP_END_2099;
+>   
+> -	/* Maximum periodic rate is 8192Hz (0.122070ms). */
+> -	rtc_dev->max_user_freq = RTC_MAX_USER_FREQ;
+> -
+>   	/* See if the platform doesn't support UIE. */
+>   	if (pdata->uie_unsupported)
+>   		clear_bit(RTC_FEATURE_UPDATE_INTERRUPT, rtc_dev->features);
+> diff --git a/include/linux/rtc/ds1685.h b/include/linux/rtc/ds1685.h
+> index 01da4582db6d..8ec0ebfaef04 100644
+> --- a/include/linux/rtc/ds1685.h
+> +++ b/include/linux/rtc/ds1685.h
+> @@ -324,7 +324,6 @@ struct ds1685_rtc_platform_data {
+>   #define RTC_SQW_2HZ		0x0f	/*  0    1   1   1   1  */
+>   #define RTC_SQW_0HZ		0x00	/*  0    0   0   0   0  */
+>   #define RTC_SQW_32768HZ		32768	/*  1    -   -   -   -  */
+> -#define RTC_MAX_USER_FREQ	8192
+>   
+>   
+>   /*
+> 
 
-See #work.filename-refcnt.  I'm not entirely happy about the API, if you
-see a saner way to do it, I'd really like to hear it.  Stuff in the series:
+Acked-by: Joshua Kinard <linux@kumba.dev>
 
-	* get rid of getname in retry loops.  Only 9 places like that left,
-massaged out of existence one by one.  (##1..9)
-	* drop audit_reusename() and filename->uptr (#10)
-	* get rid of mixing LOOKUP_EMPTY with the rest of the flags -
-very few places do that at this point and they are not hard to take
-care of (##11..15)
-	* take LOOKUP_EMPTY out of LOOKUP_... space entirely - make it
-GETNAME_EMPTY and have it passed only to getname_flags() (#16)
-	* add GETNAME_NOAUDIT for "don't call audit_getname() there" (#17).
-Helpers: getname_alien()/getname_uflags_alien() being wrappers for
-that; io-uring switched to those for filename import (in ->prep()).
-take_filename(): take a reference to struct filename, leaving NULL
-behind, feed it to audit_getname() and return to caller.   Used by
-io-uring ->issue() instances that feed an imported filename to
-do_{mkdir,mknod...}() - the stuff that does actual work, done in the
-thread that will do that work.
-	* make filename->refcnt non-atomic; now it can be done (#19,
-on top of merge from vfs-common/vfs-6.19.misc to bring your commit
-in).
 
