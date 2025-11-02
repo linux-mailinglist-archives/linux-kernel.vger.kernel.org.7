@@ -1,136 +1,84 @@
-Return-Path: <linux-kernel+bounces-881842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3399C290D1
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 16:08:34 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B480C290D4
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 16:08:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10A5E188C92A
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 15:08:59 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 204C53465B1
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 15:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA24A223DF6;
-	Sun,  2 Nov 2025 15:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F97321C16E;
+	Sun,  2 Nov 2025 15:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XF/tw33G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=1wt.eu header.i=@1wt.eu header.b="E016+jRE"
+Received: from mta1.formilux.org (mta1.formilux.org [51.159.59.229])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BFF31C5D59;
-	Sun,  2 Nov 2025 15:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C676B1C5D59
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 15:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.59.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762096107; cv=none; b=J1lofNmpwl0xQq+JzVgMhXueCbvFTaZbvi/hyTGZvsydM/ePcCoGlHlWW3YTallxt2s46lWJYXjPuCoOOEoKYstr/OuePigI0b1P8sJeEZHxHOausvJJE/aVeAt+jALhpEL2p6SwYfKYSBnfOdeOJgVR11rMuEiCw2OzkhcCkys=
+	t=1762096113; cv=none; b=QYF/4urbC14twN3Zrin6b6phmdpqmU6KFS3A59H0zs2+pZs2jUph1lpj6Fhg1KGcBA5MNSAOPYUh1hLKjF+ZJNDDTAsGL+4lvnNDfed0xmTWJBaOYkVrriAaRFYqK8rAfIWHeMk9Jwbc6q/t0eCYBNQEmwQ9+bz6cRGnIKE7uK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762096107; c=relaxed/simple;
-	bh=FH0BzuS1tbXUJxSwIHQjZhrYUg0CGD4OU9FMRivhPYQ=;
+	s=arc-20240116; t=1762096113; c=relaxed/simple;
+	bh=AKqCQhDjUshJCJqtE1SK0pSWGEuyvW0L1NbySwhbYso=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dYI5a1Rvuc4OevKPDTEe+QAO3XzxYBJek2UPuBwce4mopH5qlr7kXjVkw/y4j8g1JMBhpOnMtHTIKIQ91Wxm52TrHH7Ye6q8GQBpi3wjSw9C2EBlFB6Wb6LkZZBJwhZetfmXTm3l6J4S0jZmlIXHoGzVLAYDCXSyRoWj80Fld08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XF/tw33G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D98D0C4CEF7;
-	Sun,  2 Nov 2025 15:08:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762096107;
-	bh=FH0BzuS1tbXUJxSwIHQjZhrYUg0CGD4OU9FMRivhPYQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XF/tw33GPXN5g9nb4CnSO3suUvGDUbsKEOQvCm/4UTFbCA7N6iQ49Dx5bfu9su//X
-	 2M+CHsI7bfJDi7tceiNfXgSNsKEF2x9Rh6yyPmjIHX7KpW6OyoaC+OjcpRSwKR2I5B
-	 6LX8ZGqHBUCwZoY6bCUXbzUN/U90i1NmAnNXA6q5fyBnFXGutrymoJFPRznw1+8K00
-	 mEdWRmrOCoP/Bgbb8OFMZBBK8NIGoumCBzu53Cz5d6W0hnOwAV0xWLq8MICbOKdDLH
-	 AX8Xz07KghkXhHy1+N0h5RzJcadcKZ8HCurkctWO4h8tj4W9mXFVUGUQmBMhjc7d2R
-	 DjZuKNJEx7DbQ==
-Date: Sun, 2 Nov 2025 20:38:15 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Manikandan Karunakaran Pillai <mpillai@cadence.com>
-Cc: "hans.zhang@cixtech.com" <hans.zhang@cixtech.com>, 
-	"bhelgaas@google.com" <bhelgaas@google.com>, "helgaas@kernel.org" <helgaas@kernel.org>, 
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>, "kw@linux.com" <kw@linux.com>, 
-	"robh@kernel.org" <robh@kernel.org>, "kwilczynski@kernel.org" <kwilczynski@kernel.org>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"fugang.duan@cixtech.com" <fugang.duan@cixtech.com>, "guoyin.chen@cixtech.com" <guoyin.chen@cixtech.com>, 
-	"peter.chen@cixtech.com" <peter.chen@cixtech.com>, 
-	"cix-kernel-upstream@cixtech.com" <cix-kernel-upstream@cixtech.com>, "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v10 04/10] PCI: cadence: Add support for High Perf
- Architecture (HPA) controller
-Message-ID: <jmxdju5aon3biunji6rplxmapb6j7ozet37olxtcknznqekw7p@a3bj7glbxc4n>
-References: <20251020042857.706786-1-hans.zhang@cixtech.com>
- <20251020042857.706786-5-hans.zhang@cixtech.com>
- <u7g4b4cgh4usmndpzatfg24x37sabd7psxik6pxmbpu2764d6s@zczbojakk4c4>
- <CH2PPF4D26F8E1CFC4FF273AA07E283BBF3A2C6A@CH2PPF4D26F8E1C.namprd07.prod.outlook.com>
- <2aanerkp7c4qd4mukz6oaxafe22assjyah2kdbdmyuich5hzha@k6hlzvarixxo>
- <CH2PPF4D26F8E1C0BE70D4B6BB9B3A334D9A2C6A@CH2PPF4D26F8E1C.namprd07.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=NaleTvyeOo/YP+GxiPN9vYPW5KIFbySsWX7As5RSODHT7xixqmJ3VUbBkxpu/Fuww73mMBchp63+RTCxBvkBIeUqNU7OrjH1GvWuaYjU0ETw+LJF+epN7DUg/P/E6h2UB0bWMKU1esdoqEJPZZPUonIwWc/GB9TdOMb4sYNvio0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; dkim=pass (1024-bit key) header.d=1wt.eu header.i=@1wt.eu header.b=E016+jRE; arc=none smtp.client-ip=51.159.59.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=1wt.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=1wt.eu; s=mail;
+	t=1762096108; bh=pu+1tA7/AXaZcXGdEmKIjWhntUC6sLACkAYiGrcTazQ=;
+	h=From:Message-ID:From;
+	b=E016+jREzjMAu1n/wSISrFqxCco8jOSPkKXSH/1Vig5++j3wSWqSuHzSNJSFAjKv9
+	 E5g4deKwKATmYs3/4fZLA68z9mRoualyN6yjiLkxa5Qi5BQo6XrDwL6CkG/vSvFTD3
+	 gFi0KcbqfhjkiI/dictqzifMkZkEpuTLaFKORtoA=
+Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
+	by mta1.formilux.org (Postfix) with ESMTP id 768DFC06EE;
+	Sun, 02 Nov 2025 16:08:28 +0100 (CET)
+Received: (from willy@localhost)
+	by pcw.home.local (8.15.2/8.15.2/Submit) id 5A2F8S1B017035;
+	Sun, 2 Nov 2025 16:08:28 +0100
+Date: Sun, 2 Nov 2025 16:08:28 +0100
+From: Willy Tarreau <w@1wt.eu>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Cc: shuah@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] tools/nolibc: clean up outdated comments in generic
+ arch.h
+Message-ID: <20251102150828.GA16950@1wt.eu>
+References: <20251102142548.15482-1-w@1wt.eu>
+ <ba29f952-eb42-4361-b0d8-6a70fc4be6ba@t-8ch.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CH2PPF4D26F8E1C0BE70D4B6BB9B3A334D9A2C6A@CH2PPF4D26F8E1C.namprd07.prod.outlook.com>
+In-Reply-To: <ba29f952-eb42-4361-b0d8-6a70fc4be6ba@t-8ch.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Sun, Nov 02, 2025 at 05:51:05AM +0000, Manikandan Karunakaran Pillai wrote:
-> Hi Mani,
+On Sun, Nov 02, 2025 at 03:40:32PM +0100, Thomas Wei�schuh wrote:
+> On 2025-11-02 15:25:48+0100, Willy Tarreau wrote:
+> > Along the code reorganizations, the file has been keeping the original
+> > comments about argv and envp which are no longer relevant to this file
+> > anymore. Let's just drop them.
+> > ---
+> >  tools/include/nolibc/arch.h | 9 ---------
+> >  1 file changed, 9 deletions(-)
 > 
-> Pls find my comments below.
-> 
-> >> >> +			value |=
-> >> >HPA_LM_RC_BAR_CFG_CTRL_PREF_MEM_64BITS(bar);
-> >> >> +	} else {
-> >> >> +		value |= HPA_LM_RC_BAR_CFG_CTRL_MEM_32BITS(bar);
-> >> >> +		if ((flags & IORESOURCE_PREFETCH))
-> >> >> +			value |=
-> >> >HPA_LM_RC_BAR_CFG_CTRL_PREF_MEM_32BITS(bar);
-> >> >> +	}
-> >> >> +
-> >> >> +	value |= HPA_LM_RC_BAR_CFG_APERTURE(bar, aperture);
-> >> >> +	cdns_pcie_hpa_writel(pcie, REG_BANK_IP_CFG_CTRL_REG,
-> >> >CDNS_PCIE_HPA_LM_RC_BAR_CFG, value);
-> >> >> +
-> >> >> +	return 0;
-> >> >> +}
-> >> >> +
-> >> >> +static int cdns_pcie_hpa_host_bar_config(struct cdns_pcie_rc *rc,
-> >> >> +					 struct resource_entry *entry)
-> >> >
-> >> >This and other functions are almost same as in 'pcie-cadence-host'. Why
-> >don't
-> >> >you reuse them in a common library?
-> >>
-> >> The function cdns_pcie_hpa_host_bar_config() calls functions
-> >cdns_pcie_hpa_host_bar_ib_config()
-> >> which is not common. All functions that are common between the two
-> >architecture are moved to the
-> >> common library file based on earlier comments.
-> >>
-> >
-> >This is not a good reason to duplicate the whole function. You could just make
-> >the common function accept the callback ib_config() and pass either
-> >cdns_pcie_host_bar_ib_config() or cdns_pcie_hpa_host_bar_ib_config().
-> >
-> >This pattern could be done for other functions as well. Please audit all of them
-> >and move them to common library. Currently, I could see a lot of duplications
-> >that could be avoided.
-> 
-> The very first patch  for this feature included an ops struct  which was registered (very similar to a callback). Are are asking me to again implement the same design which was earlier rejected ?
-> 
+> Thanks, applied.
+> FYI it seems patch 2 never got sent.
 
-You didn't provide any link to the discussion, so how can I decide without
-looking into it?
+Sorry, I now found how I messed up. There's indeed a single one (my
+git format-patch command also took an experimental one that was on top
+and not to be sent).
 
-> Secondly except the names of the functions, the registers and their offset written and the sequence also changes for the implementations.
-> 
-
-I don't think so. From a quick look, at least cdns_pcie_hpa_host_bar_config(),
-cdns_pcie_hpa_host_map_dma_ranges() are mostly similar. You can keep the
-functions having different register configurations, but should try to move
-others.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+Thanks for picking them, that's always less patches in my local tree!
+Willy
 
