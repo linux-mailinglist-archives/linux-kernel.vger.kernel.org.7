@@ -1,134 +1,383 @@
-Return-Path: <linux-kernel+bounces-881914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AC82C29356
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 18:15:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24898C29326
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 18:05:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA0DB3A97A3
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 17:15:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 624CB188C044
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 17:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5731A2DC32A;
-	Sun,  2 Nov 2025 17:15:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE972DA774;
+	Sun,  2 Nov 2025 17:05:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="UvXRZ7bD"
-Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eGu/5isI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD0BC1DFF7;
-	Sun,  2 Nov 2025 17:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6BC1F4169;
+	Sun,  2 Nov 2025 17:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762103728; cv=none; b=DS0RlE6bB3XzML+udCeB4YB8Xt2BvQqUbHQ53bxa1Gm8FBG6W+BP2R7xD73Ogsyix1GXq1gM7sz3Ffm0gYQSdxXQYEu4B2hkw+62ZJy8k7qlL0M2Yh9Ei4r8MluxKZeAsraZU7w6rC+eUpgp/gpQLIEq/PV75Ir+05eDz8Pijnk=
+	t=1762103122; cv=none; b=FQivOvQiAcadRZN8gHxcR3alC7ESvRxSR/R1Iyw0TBZadmKzhrLMzQJNeDIuGDzrlxg1ts/CC02cBo/MfLmhmtr6ENRsUUn7g6iqfKTlzyUfHHjjczCohvAK3X7jeIA+LOwbZDc2RTD1i9LL6m3UXSmzcReEf/t9f9gVfT4oQ80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762103728; c=relaxed/simple;
-	bh=/QhroAsSo0Y2EwqhxEnrjVx8V0/aRjNyFLOtqeiTt94=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZeifYaAk9vpJIBZbPXiFqyK6P24A910cz+CmW+3KpEHNpGG/A4woT+GAC+Ojb4Y1D+IPulpFnG+rt4biRySf1Oewme+wxoQPWkXSAKAN83ZojL4AgI3wPphYLgwZpStzXLrgk61OJp+vLGVn+vYgMfZ/6PJfnjUo6OIjQhkuXEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=UvXRZ7bD; arc=none smtp.client-ip=80.241.56.161
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4d01Z20q5Tz9slM;
-	Sun,  2 Nov 2025 18:15:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1762103722;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BFpdLMII0EG/uXMQS+E4Vw7nKG+ReHRISfwxssVFI9s=;
-	b=UvXRZ7bDu9O4ZrHV72XvvB6yU3Z5LI+jaMxZyKdMUO3KU2hA46wC+PxOVP9bzqNXvsneUs
-	sl9HWw55Jlu4y11sF+dvaApaLFTp1oQVtMVHy2yA3AZt0K3Kh0b7dCpzsPydXqYbwCjFrU
-	okvozNZIQgwpk/q1LcTaDYx/QIMOxKxcvhul3wifKN2qeUb0cgEI7dduhm6a3fW1k4lVdu
-	A+CW9EgF0cmJ67bNJ8laI/8XlP5xaK4zEybXOCxsVG0R9vukPlju6vxyI3GjM/+iquR91V
-	tuLoIL2I8aQLwgBt+kfOI0MXZc6BrnLQCuGQNOjQLl5zVGs9eoFpMXkaMcS3Ig==
-Message-ID: <500852c9-2cd5-4897-a139-4e93988f5469@mailbox.org>
-Date: Sun, 2 Nov 2025 17:14:05 +0100
+	s=arc-20240116; t=1762103122; c=relaxed/simple;
+	bh=QNBa3Nxs4amYOkNF63vxcYItGKzAfFD2qH5ijbBlKxg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k6GtHoZRKezfEn75re/oemmLP9nei06SR94IM46Vv6hTL0ZHE6tICEzhCW/7bRs8wTW8ybA1Ya6QoT734ef28TaD+fvg7zxuBQ1wx9ElJwmTMCdMdKIKy/y+WEZ9EYnL7e3/dC/yXZLlhKo/VwYAQidJI7EDtUYg9Sc4g3l+U0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eGu/5isI; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762103120; x=1793639120;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=QNBa3Nxs4amYOkNF63vxcYItGKzAfFD2qH5ijbBlKxg=;
+  b=eGu/5isIX+rs3cGSJV72Wo9rsdhDl2OW1iNwcslnx8xkVCZVfQLolg6x
+   S8vaNeFeRZY6edGZ6u2JuK8hi8CFo66hSA3F/uAPoa2TTWGIImFUCiYPv
+   fvpv1blJ7PYUNYF5DicwS+3ZjBJD8eJxKGhhwf/8eafPJLbuHGAsNsVt4
+   p96mhDTke96xTlHh/MQloQ20l9ou2NYnvSH5QYiXzeo1HP/RghPfqYJ+o
+   Y2OZBR8i2craGoNVGXjVieaDuoE4dxdy3A7WHPX0RUiJG14RnzfvpbsJc
+   LKfShDGMuYMfoL8u9oRb+h4fnIsS4PSA6iULbQJzprGb5q2Wjf+fLWFys
+   Q==;
+X-CSE-ConnectionGUID: j74HTt6rSdGE5FIKYNxxZg==
+X-CSE-MsgGUID: elvPVWhoQFehne7i068sCQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="66807190"
+X-IronPort-AV: E=Sophos;i="6.19,274,1754982000"; 
+   d="scan'208";a="66807190"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2025 09:05:20 -0800
+X-CSE-ConnectionGUID: wvh7ORnySqujkXE1EoAYqg==
+X-CSE-MsgGUID: 0IrIttudS9+ELI6ZydVArQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,274,1754982000"; 
+   d="scan'208";a="186826615"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 02 Nov 2025 09:05:17 -0800
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vFbUq-000PRM-0f;
+	Sun, 02 Nov 2025 17:04:24 +0000
+Date: Mon, 3 Nov 2025 01:03:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Mikko Perttunen <mperttunen@nvidia.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Jonathan Hunter <jonathanh@nvidia.com>
+Cc: oe-kbuild-all@lists.linux.dev, dri-devel@lists.freedesktop.org,
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Aaron Kling <webgeek1234@gmail.com>
+Subject: Re: [PATCH] drm/tegra: Enable cmu for Tegra186 and Tegra194
+Message-ID: <202511030007.5ksWfboC-lkp@intel.com>
+References: <20251101-tegra-drm-cmu-v1-1-211799755ab8@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v4 07/14] drm/imx: dc: Add DPR channel support
-To: Liu Ying <victor.liu@nxp.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Dmitry Baryshkov <lumag@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Frank Li <Frank.Li@nxp.com>
-References: <20251016-imx8-dc-prefetch-v4-0-dfda347cb3c5@nxp.com>
- <20251016-imx8-dc-prefetch-v4-7-dfda347cb3c5@nxp.com>
- <174bdb5a-b5a8-4856-a0ac-8caaaefde136@mailbox.org>
- <24f99c46-ca5d-43cc-a2eb-a6e5029e9f86@nxp.com>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <24f99c46-ca5d-43cc-a2eb-a6e5029e9f86@nxp.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-MBO-RS-META: 3sitdqczazy5k6eyore371b5sdu9hua4
-X-MBO-RS-ID: 505e1783efc7f667bb3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251101-tegra-drm-cmu-v1-1-211799755ab8@gmail.com>
 
-On 10/20/25 4:47 AM, Liu Ying wrote:
+Hi Aaron,
 
-Hello Liu,
+kernel test robot noticed the following build warnings:
 
-sorry for my late reply.
+[auto build test WARNING on dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa]
 
->>> +++ b/drivers/gpu/drm/imx/dc/Kconfig
->>> @@ -1,6 +1,7 @@
->>>    config DRM_IMX8_DC
->>>        tristate "Freescale i.MX8 Display Controller Graphics"
->>>        depends on DRM && COMMON_CLK && OF && (ARCH_MXC || COMPILE_TEST)
->>> +    depends on IMX_SCU
->> Can the SCU dependency be made optional,
-> 
-> I don't think this can be done.  If you grep 'depends on IMX_SCU' in
-> kernel, you may find a handful of existing dependancies.
+url:    https://github.com/intel-lab-lkp/linux/commits/Aaron-Kling-via-B4-Relay/drm-tegra-Enable-cmu-for-Tegra186-and-Tegra194/20251102-071726
+base:   dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
+patch link:    https://lore.kernel.org/r/20251101-tegra-drm-cmu-v1-1-211799755ab8%40gmail.com
+patch subject: [PATCH] drm/tegra: Enable cmu for Tegra186 and Tegra194
+config: arm-randconfig-002-20251102 (https://download.01.org/0day-ci/archive/20251103/202511030007.5ksWfboC-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 10.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251103/202511030007.5ksWfboC-lkp@intel.com/reproduce)
 
-Sure, I do not dispute this part.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511030007.5ksWfboC-lkp@intel.com/
 
-But the SCU dependency can be contained in a component of this driver, 
-which is not used by MX95, and used only by MX8Q . Then there will be no 
-problem.
+All warnings (new ones prefixed by >>):
 
->> or per-module,
-> 
-> Well, DRM_IMX8_DC(for the imx8_dc_drm module) depends on IMX_SCU just as
-> this patch does.
+   drivers/gpu/drm/tegra/sor.c: In function 'tegra_sor_hdmi_enable':
+>> drivers/gpu/drm/tegra/sor.c:2757:50: warning: right shift count >= width of type [-Wshift-count-overflow]
+    2757 |   tegra_dc_writel(dc, (u32)(sor->cmu_output_phys >> 32),
+         |                                                  ^~
 
-I assume it shouldn't have to, because the SCU dependency is only 
-relevant for the prefetch engine ?
 
->> or somehow abstracted out (via regmap?),
-> 
-> Like I replied to your i.MX95 DC patch series's cover letter, SCU accesses
-> registers via Cortex-M core instead of Cortex-A core IIUC.  I really don't
-> know how to abstract IMX_SCU out, especially via regmap.
+vim +2757 drivers/gpu/drm/tegra/sor.c
 
-The simplest way would be to use regmap_config .reg_read and .reg_write 
-, if there is no better way.
+  2590	
+  2591		/* switch the SOR clock to the pad clock */
+  2592		err = tegra_sor_set_parent_clock(sor, sor->clk_pad);
+  2593		if (err < 0) {
+  2594			dev_err(sor->dev, "failed to select SOR parent clock: %d\n",
+  2595				err);
+  2596			return;
+  2597		}
+  2598	
+  2599		/* switch the output clock to the parent pixel clock */
+  2600		err = clk_set_parent(sor->clk, sor->clk_parent);
+  2601		if (err < 0) {
+  2602			dev_err(sor->dev, "failed to select output parent clock: %d\n",
+  2603				err);
+  2604			return;
+  2605		}
+  2606	
+  2607		/* adjust clock rate for HDMI 2.0 modes */
+  2608		rate = clk_get_rate(sor->clk_parent);
+  2609	
+  2610		if (mode->clock >= 340000)
+  2611			rate /= 2;
+  2612	
+  2613		DRM_DEBUG_KMS("setting clock to %lu Hz, mode: %lu Hz\n", rate, pclk);
+  2614	
+  2615		clk_set_rate(sor->clk, rate);
+  2616	
+  2617		if (!sor->soc->has_nvdisplay) {
+  2618			value = SOR_INPUT_CONTROL_HDMI_SRC_SELECT(dc->pipe);
+  2619	
+  2620			/* XXX is this the proper check? */
+  2621			if (mode->clock < 75000)
+  2622				value |= SOR_INPUT_CONTROL_ARM_VIDEO_RANGE_LIMITED;
+  2623	
+  2624			tegra_sor_writel(sor, value, SOR_INPUT_CONTROL);
+  2625		}
+  2626	
+  2627		max_ac = ((mode->htotal - mode->hdisplay) - SOR_REKEY - 18) / 32;
+  2628	
+  2629		value = SOR_HDMI_CTRL_ENABLE | SOR_HDMI_CTRL_MAX_AC_PACKET(max_ac) |
+  2630			SOR_HDMI_CTRL_AUDIO_LAYOUT | SOR_HDMI_CTRL_REKEY(SOR_REKEY);
+  2631		tegra_sor_writel(sor, value, SOR_HDMI_CTRL);
+  2632	
+  2633		if (!dc->soc->has_nvdisplay) {
+  2634			/* H_PULSE2 setup */
+  2635			pulse_start = h_ref_to_sync +
+  2636				      (mode->hsync_end - mode->hsync_start) +
+  2637				      (mode->htotal - mode->hsync_end) - 10;
+  2638	
+  2639			value = PULSE_LAST_END_A | PULSE_QUAL_VACTIVE |
+  2640				PULSE_POLARITY_HIGH | PULSE_MODE_NORMAL;
+  2641			tegra_dc_writel(dc, value, DC_DISP_H_PULSE2_CONTROL);
+  2642	
+  2643			value = PULSE_END(pulse_start + 8) | PULSE_START(pulse_start);
+  2644			tegra_dc_writel(dc, value, DC_DISP_H_PULSE2_POSITION_A);
+  2645	
+  2646			value = tegra_dc_readl(dc, DC_DISP_DISP_SIGNAL_OPTIONS0);
+  2647			value |= H_PULSE2_ENABLE;
+  2648			tegra_dc_writel(dc, value, DC_DISP_DISP_SIGNAL_OPTIONS0);
+  2649		}
+  2650	
+  2651		/* infoframe setup */
+  2652		err = tegra_sor_hdmi_setup_avi_infoframe(sor, mode);
+  2653		if (err < 0)
+  2654			dev_err(sor->dev, "failed to setup AVI infoframe: %d\n", err);
+  2655	
+  2656		/* XXX HDMI audio support not implemented yet */
+  2657		tegra_sor_hdmi_disable_audio_infoframe(sor);
+  2658	
+  2659		/* use single TMDS protocol */
+  2660		value = tegra_sor_readl(sor, SOR_STATE1);
+  2661		value &= ~SOR_STATE_ASY_PROTOCOL_MASK;
+  2662		value |= SOR_STATE_ASY_PROTOCOL_SINGLE_TMDS_A;
+  2663		tegra_sor_writel(sor, value, SOR_STATE1);
+  2664	
+  2665		/* power up pad calibration */
+  2666		value = tegra_sor_readl(sor, sor->soc->regs->dp_padctl0);
+  2667		value &= ~SOR_DP_PADCTL_PAD_CAL_PD;
+  2668		tegra_sor_writel(sor, value, sor->soc->regs->dp_padctl0);
+  2669	
+  2670		/* production settings */
+  2671		settings = tegra_sor_hdmi_find_settings(sor, mode->clock * 1000);
+  2672		if (!settings) {
+  2673			dev_err(sor->dev, "no settings for pixel clock %d Hz\n",
+  2674				mode->clock * 1000);
+  2675			return;
+  2676		}
+  2677	
+  2678		value = tegra_sor_readl(sor, sor->soc->regs->pll0);
+  2679		value &= ~SOR_PLL0_ICHPMP_MASK;
+  2680		value &= ~SOR_PLL0_FILTER_MASK;
+  2681		value &= ~SOR_PLL0_VCOCAP_MASK;
+  2682		value |= SOR_PLL0_ICHPMP(settings->ichpmp);
+  2683		value |= SOR_PLL0_FILTER(settings->filter);
+  2684		value |= SOR_PLL0_VCOCAP(settings->vcocap);
+  2685		tegra_sor_writel(sor, value, sor->soc->regs->pll0);
+  2686	
+  2687		/* XXX not in TRM */
+  2688		value = tegra_sor_readl(sor, sor->soc->regs->pll1);
+  2689		value &= ~SOR_PLL1_LOADADJ_MASK;
+  2690		value &= ~SOR_PLL1_TMDS_TERMADJ_MASK;
+  2691		value |= SOR_PLL1_LOADADJ(settings->loadadj);
+  2692		value |= SOR_PLL1_TMDS_TERMADJ(settings->tmds_termadj);
+  2693		value |= SOR_PLL1_TMDS_TERM;
+  2694		tegra_sor_writel(sor, value, sor->soc->regs->pll1);
+  2695	
+  2696		value = tegra_sor_readl(sor, sor->soc->regs->pll3);
+  2697		value &= ~SOR_PLL3_BG_TEMP_COEF_MASK;
+  2698		value &= ~SOR_PLL3_BG_VREF_LEVEL_MASK;
+  2699		value &= ~SOR_PLL3_AVDD10_LEVEL_MASK;
+  2700		value &= ~SOR_PLL3_AVDD14_LEVEL_MASK;
+  2701		value |= SOR_PLL3_BG_TEMP_COEF(settings->bg_temp_coef);
+  2702		value |= SOR_PLL3_BG_VREF_LEVEL(settings->bg_vref_level);
+  2703		value |= SOR_PLL3_AVDD10_LEVEL(settings->avdd10_level);
+  2704		value |= SOR_PLL3_AVDD14_LEVEL(settings->avdd14_level);
+  2705		tegra_sor_writel(sor, value, sor->soc->regs->pll3);
+  2706	
+  2707		value = settings->drive_current[3] << 24 |
+  2708			settings->drive_current[2] << 16 |
+  2709			settings->drive_current[1] <<  8 |
+  2710			settings->drive_current[0] <<  0;
+  2711		tegra_sor_writel(sor, value, SOR_LANE_DRIVE_CURRENT0);
+  2712	
+  2713		value = settings->preemphasis[3] << 24 |
+  2714			settings->preemphasis[2] << 16 |
+  2715			settings->preemphasis[1] <<  8 |
+  2716			settings->preemphasis[0] <<  0;
+  2717		tegra_sor_writel(sor, value, SOR_LANE_PREEMPHASIS0);
+  2718	
+  2719		value = tegra_sor_readl(sor, sor->soc->regs->dp_padctl0);
+  2720		value &= ~SOR_DP_PADCTL_TX_PU_MASK;
+  2721		value |= SOR_DP_PADCTL_TX_PU_ENABLE;
+  2722		value |= SOR_DP_PADCTL_TX_PU(settings->tx_pu_value);
+  2723		tegra_sor_writel(sor, value, sor->soc->regs->dp_padctl0);
+  2724	
+  2725		value = tegra_sor_readl(sor, sor->soc->regs->dp_padctl2);
+  2726		value &= ~SOR_DP_PADCTL_SPAREPLL_MASK;
+  2727		value |= SOR_DP_PADCTL_SPAREPLL(settings->sparepll);
+  2728		tegra_sor_writel(sor, value, sor->soc->regs->dp_padctl2);
+  2729	
+  2730		/* power down pad calibration */
+  2731		value = tegra_sor_readl(sor, sor->soc->regs->dp_padctl0);
+  2732		value |= SOR_DP_PADCTL_PAD_CAL_PD;
+  2733		tegra_sor_writel(sor, value, sor->soc->regs->dp_padctl0);
+  2734	
+  2735		if (!dc->soc->has_nvdisplay) {
+  2736			/* miscellaneous display controller settings */
+  2737			value = VSYNC_H_POSITION(1);
+  2738			tegra_dc_writel(dc, value, DC_DISP_DISP_TIMING_OPTIONS);
+  2739		}
+  2740	
+  2741		value = tegra_dc_readl(dc, DC_DISP_DISP_COLOR_CONTROL);
+  2742		value &= ~DITHER_CONTROL_MASK;
+  2743		value &= ~BASE_COLOR_SIZE_MASK;
+  2744	
+  2745		if (dc->soc->has_nvdisplay) {
+  2746			sor->cmu_output_lut =
+  2747				dma_alloc_coherent(dc->dev, ARRAY_SIZE(default_srgb_lut) * sizeof(u64),
+  2748						   &sor->cmu_output_phys, GFP_KERNEL);
+  2749	
+  2750			for (i = 0; i < ARRAY_SIZE(default_srgb_lut); i++) {
+  2751				r = default_srgb_lut[i];
+  2752				sor->cmu_output_lut[i] = (r << 32) | (r << 16) | r;
+  2753			}
+  2754	
+  2755			tegra_dc_writel(dc, (u32)(sor->cmu_output_phys & 0xffffffff),
+  2756					DC_DISP_COREPVT_HEAD_SET_OUTPUT_LUT_BASE);
+> 2757			tegra_dc_writel(dc, (u32)(sor->cmu_output_phys >> 32),
+  2758					DC_DISP_COREPVT_HEAD_SET_OUTPUT_LUT_BASE_HI);
+  2759	
+  2760			tegra_dc_writel(dc, OUTPUT_LUT_MODE_INTERPOLATE | OUTPUT_LUT_SIZE_SIZE_1025,
+  2761					DC_DISP_CORE_HEAD_SET_CONTROL_OUTPUT_LUT);
+  2762	
+  2763			value |= CMU_ENABLE_ENABLE;
+  2764		}
+  2765	
+  2766		switch (state->bpc) {
+  2767		case 6:
+  2768			value |= BASE_COLOR_SIZE_666;
+  2769			break;
+  2770	
+  2771		case 8:
+  2772			value |= BASE_COLOR_SIZE_888;
+  2773			break;
+  2774	
+  2775		case 10:
+  2776			value |= BASE_COLOR_SIZE_101010;
+  2777			break;
+  2778	
+  2779		case 12:
+  2780			value |= BASE_COLOR_SIZE_121212;
+  2781			break;
+  2782	
+  2783		default:
+  2784			WARN(1, "%u bits-per-color not supported\n", state->bpc);
+  2785			value |= BASE_COLOR_SIZE_888;
+  2786			break;
+  2787		}
+  2788	
+  2789		tegra_dc_writel(dc, value, DC_DISP_DISP_COLOR_CONTROL);
+  2790	
+  2791		/* XXX set display head owner */
+  2792		value = tegra_sor_readl(sor, SOR_STATE1);
+  2793		value &= ~SOR_STATE_ASY_OWNER_MASK;
+  2794		value |= SOR_STATE_ASY_OWNER(1 + dc->pipe);
+  2795		tegra_sor_writel(sor, value, SOR_STATE1);
+  2796	
+  2797		err = tegra_sor_power_up(sor, 250);
+  2798		if (err < 0)
+  2799			dev_err(sor->dev, "failed to power up SOR: %d\n", err);
+  2800	
+  2801		/* configure dynamic range of output */
+  2802		value = tegra_sor_readl(sor, sor->soc->regs->head_state0 + dc->pipe);
+  2803		value &= ~SOR_HEAD_STATE_RANGECOMPRESS_MASK;
+  2804		value &= ~SOR_HEAD_STATE_DYNRANGE_MASK;
+  2805		tegra_sor_writel(sor, value, sor->soc->regs->head_state0 + dc->pipe);
+  2806	
+  2807		/* configure colorspace */
+  2808		value = tegra_sor_readl(sor, sor->soc->regs->head_state0 + dc->pipe);
+  2809		value &= ~SOR_HEAD_STATE_COLORSPACE_MASK;
+  2810		value |= SOR_HEAD_STATE_COLORSPACE_RGB;
+  2811		tegra_sor_writel(sor, value, sor->soc->regs->head_state0 + dc->pipe);
+  2812	
+  2813		tegra_sor_mode_set(sor, mode, state);
+  2814	
+  2815		tegra_sor_update(sor);
+  2816	
+  2817		/* program preamble timing in SOR (XXX) */
+  2818		value = tegra_sor_readl(sor, SOR_DP_SPARE0);
+  2819		value &= ~SOR_DP_SPARE_DISP_VIDEO_PREAMBLE;
+  2820		tegra_sor_writel(sor, value, SOR_DP_SPARE0);
+  2821	
+  2822		err = tegra_sor_attach(sor);
+  2823		if (err < 0)
+  2824			dev_err(sor->dev, "failed to attach SOR: %d\n", err);
+  2825	
+  2826		/* enable display to SOR clock and generate HDMI preamble */
+  2827		value = tegra_dc_readl(dc, DC_DISP_DISP_WIN_OPTIONS);
+  2828	
+  2829		if (!sor->soc->has_nvdisplay)
+  2830			value |= SOR1_TIMING_CYA;
+  2831	
+  2832		value |= SOR_ENABLE(sor->index);
+  2833	
+  2834		tegra_dc_writel(dc, value, DC_DISP_DISP_WIN_OPTIONS);
+  2835	
+  2836		if (dc->soc->has_nvdisplay) {
+  2837			value = tegra_dc_readl(dc, DC_DISP_CORE_SOR_SET_CONTROL(sor->index));
+  2838			value &= ~PROTOCOL_MASK;
+  2839			value |= PROTOCOL_SINGLE_TMDS_A;
+  2840			tegra_dc_writel(dc, value, DC_DISP_CORE_SOR_SET_CONTROL(sor->index));
+  2841		}
+  2842	
+  2843		tegra_dc_commit(dc);
+  2844	
+  2845		err = tegra_sor_wakeup(sor);
+  2846		if (err < 0)
+  2847			dev_err(sor->dev, "failed to wakeup SOR: %d\n", err);
+  2848	
+  2849		tegra_sor_hdmi_scdc_start(sor);
+  2850		tegra_sor_audio_prepare(sor);
+  2851	}
+  2852	
 
->> so iMX95 support can be added into the driver easily too ?
-> 
-> Like I replied to your i.MX95 DC patch series, I think i.MX95 DC support
-> can be in drivers/gpu/drm/imx/dc, but it should be in a separate module
-> (something like imx95_dc_drm) plus an additional common module(like
-> imx_dc_drm_common).
-This design part is something I do not fully understand. Sure, it can be 
-two modules, but in the end, the result would have to be capable of 
-being compiled into single kernel binary if both modules would be =y in 
-Kconfig anyway.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
