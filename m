@@ -1,58 +1,60 @@
-Return-Path: <linux-kernel+bounces-882017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D05BC2975A
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 22:44:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4193FC29793
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 22:46:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BED763AE4E4
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 21:44:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C83243AF6E2
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 21:46:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB8A6246797;
-	Sun,  2 Nov 2025 21:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7E4F27FB3E;
+	Sun,  2 Nov 2025 21:44:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k5l8mNeB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y59alB+C"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51AFE1F7580;
-	Sun,  2 Nov 2025 21:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77484253B5C;
+	Sun,  2 Nov 2025 21:44:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762119878; cv=none; b=Ro3GM1ceuZyTvOYDmVMGKqDHz4hxH8E1elRTnuRpsZFWrV4SbmqC06dAHUlRr9x+2MO9zkLJdKhwmfupBXqhY/aRaEKWvDWOJ0hcNR2pBEoCb2OVcHO4VTiiixRUj7VZX4QeWciWxcvZuPG0Pap4ayQy32jkLX0MIZZAvu0ibTc=
+	t=1762119879; cv=none; b=F++xHgP+ZVncwpbjvHtMX/Z64jElmquaJgyiwtgBJqtqBQtdfCJts5P+Cx6XfkL7k2O5ST81QU/M7IwIhH319BYbCfTC6g47HgSLXXuO/Exeb25nz0ZAfAqhy6TSRlcz9P54Z2V53pvOvhmtKQDWooqMicoQPr1xDkR1gd0NHb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762119878; c=relaxed/simple;
-	bh=ZFNuHVX2di4q2gqCJGVL5/EBAk3Kdb3wjGuQ316eoLk=;
+	s=arc-20240116; t=1762119879; c=relaxed/simple;
+	bh=nCGLsD7q2HOJPiSlnIStGPVemKa7l7hTEsNDv1pJevc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VglbR57XrUDFxka6XnodcI/LS/sdot+qzPvZLtFrB14l6xdSo3nPzqvbef/sFRPO9GgFV15w2Kf80jONakhbifwTPXPVXHMcB2U1XRP4Bd8TnyI8Y5IAIAS+2WW1SqllKCpibh0KeXJpahy/oSJ5Mlit0Go1Zkv6X2qnjQurJSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k5l8mNeB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCD38C4CEF7;
-	Sun,  2 Nov 2025 21:44:37 +0000 (UTC)
+	 MIME-Version; b=T6/KDLwGk6BAQjtvK73Kif/PNT6LHsXEzbVq/Nuv9YqhFZXabT5oaUbgpRhD1YqMNYTj+cXgdXUqMwZBRmMm9H1QfPa2ikH/stnO2/mbhTjW/9ojckU79GzqNmc4Muplr7b0n0S8RqHSqi2+6Tf57mGVIu533EkEt4mgjJpM/Jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y59alB+C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 050D9C19421;
+	Sun,  2 Nov 2025 21:44:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762119877;
-	bh=ZFNuHVX2di4q2gqCJGVL5/EBAk3Kdb3wjGuQ316eoLk=;
+	s=k20201202; t=1762119879;
+	bh=nCGLsD7q2HOJPiSlnIStGPVemKa7l7hTEsNDv1pJevc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=k5l8mNeB8i76/k6rRYPk85GRs3k5wyWNC5EF40Lq2BSQaLaROn69Vn9/Dk5FdJrX1
-	 BdArVSYGgKwzvw7tJc7DGBt9MhIf6mtxKdzWDOhkkotLRcI1EzySt1Q6M+asABprf6
-	 Bbtd5AxHH0HzcKJtHdB/okNInxXBF9Voz8w0r7o9HQHp00AQ1aXVZjn7UZxn0LwrGY
-	 GBIGI2Zo2t7QIcXMQ1QWlQEGscnxyh9KZMBvtLtriBzVH+SoRxFTCH4eBoswTTacth
-	 B8eH6xvGfRAomw9AwIxMk821+y4es6vfFES/SyG+rLizWKnPVBqS0wHk392seGEwiu
-	 R3icKwEXve95w==
+	b=Y59alB+CHMcEw0H2sjInl49oEyk3z0Ql/twC/hBSNaLA4pedhttOz/dPuiwUAkXpg
+	 C3OnLaa9OZA+B9CjBl7H5M4FN7CHJFEY+OZN6QULo4MH5yXBJluZoNz6DMuvRkH3RB
+	 2PUV5OW/MTnXEEXrIKNjGwEI3zY1CdLzmtJblSeKsw4bGs2q240URRZO7uHI6UPYsj
+	 T/DUuPWVYGE8mH+rISnFt65i78JSbUq21or5iP3cGexS4AqXlBeNqHGdxLUbjAoC+t
+	 LwL7Ib/gZlVij6UYfulGK0BTY6+bVC4X58oqiQ7zb5U+Tfx21QDd8pKBNgGLQALKnS
+	 xfxW94zd4fvnQ==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 78BE0CE0F4C; Sun,  2 Nov 2025 13:44:37 -0800 (PST)
+	id 7BD65CE0F65; Sun,  2 Nov 2025 13:44:37 -0800 (PST)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
 	rostedt@goodmis.org,
 	"Paul E. McKenney" <paulmck@kernel.org>,
-	kernel test robot <oliver.sang@intel.com>,
-	Zqiang <qiang.zhang@linux.dev>
-Subject: [PATCH 01/19] srcu: Permit Tiny SRCU srcu_read_unlock() with interrupts disabled
-Date: Sun,  2 Nov 2025 13:44:18 -0800
-Message-Id: <20251102214436.3905633-1-paulmck@kernel.org>
+	Andrii Nakryiko <andrii@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	bpf@vger.kernel.org
+Subject: [PATCH 02/19] srcu: Create an srcu_expedite_current() function
+Date: Sun,  2 Nov 2025 13:44:19 -0800
+Message-Id: <20251102214436.3905633-2-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <082fb8ba-91b8-448e-a472-195eb7b282fd@paulmck-laptop>
 References: <082fb8ba-91b8-448e-a472-195eb7b282fd@paulmck-laptop>
@@ -64,59 +66,142 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The current Tiny SRCU implementation of srcu_read_unlock() awakens
-the grace-period processing when exiting the outermost SRCU read-side
-critical section.  However, not all Linux-kernel configurations and
-contexts permit swake_up_one() to be invoked while interrupts are
-disabled, and this can result in indefinitely extended SRCU grace periods.
-This commit therefore only invokes swake_up_one() when interrupts are
-enabled, and introduces polling to the grace-period workqueue handler.
+This commit creates an srcu_expedite_current() function that expedites
+the current (and possibly the next) SRCU grace period for the specified
+srcu_struct structure.  This functionality will be inherited by RCU
+Tasks Trace courtesy of its mapping to SRCU fast.
 
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Reported-by: Zqiang <qiang.zhang@linux.dev>
-Closes: https://lore.kernel.org/oe-lkp/202508261642.b15eefbb-lkp@intel.com
+If the current SRCU grace period is already waiting, that wait will
+complete before the expediting takes effect.  If there is no SRCU grace
+period in flight, this function might well create one.
+
+[ paulmck: Apply Zqiang feedback for PREEMPT_RT use. ]
+
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: <bpf@vger.kernel.org>
 ---
- kernel/rcu/srcutiny.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ include/linux/srcutiny.h |  1 +
+ include/linux/srcutree.h |  8 ++++++
+ kernel/rcu/srcutree.c    | 58 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 67 insertions(+)
 
-diff --git a/kernel/rcu/srcutiny.c b/kernel/rcu/srcutiny.c
-index e3b64a5e0ec7..3450c3751ef7 100644
---- a/kernel/rcu/srcutiny.c
-+++ b/kernel/rcu/srcutiny.c
-@@ -106,15 +106,15 @@ void __srcu_read_unlock(struct srcu_struct *ssp, int idx)
- 	newval = READ_ONCE(ssp->srcu_lock_nesting[idx]) - 1;
- 	WRITE_ONCE(ssp->srcu_lock_nesting[idx], newval);
- 	preempt_enable();
--	if (!newval && READ_ONCE(ssp->srcu_gp_waiting) && in_task())
-+	if (!newval && READ_ONCE(ssp->srcu_gp_waiting) && in_task() && !irqs_disabled())
- 		swake_up_one(&ssp->srcu_wq);
+diff --git a/include/linux/srcutiny.h b/include/linux/srcutiny.h
+index 51ce25f07930..3bfbd44cb1b3 100644
+--- a/include/linux/srcutiny.h
++++ b/include/linux/srcutiny.h
+@@ -103,6 +103,7 @@ static inline void srcu_barrier(struct srcu_struct *ssp)
+ 	synchronize_srcu(ssp);
  }
- EXPORT_SYMBOL_GPL(__srcu_read_unlock);
  
++static inline void srcu_expedite_current(struct srcu_struct *ssp) { }
+ #define srcu_check_read_flavor(ssp, read_flavor) do { } while (0)
+ #define srcu_check_read_flavor_force(ssp, read_flavor) do { } while (0)
+ 
+diff --git a/include/linux/srcutree.h b/include/linux/srcutree.h
+index 42098e0fa0b7..93ad18acd6d0 100644
+--- a/include/linux/srcutree.h
++++ b/include/linux/srcutree.h
+@@ -42,6 +42,8 @@ struct srcu_data {
+ 	struct timer_list delay_work;		/* Delay for CB invoking */
+ 	struct work_struct work;		/* Context for CB invoking. */
+ 	struct rcu_head srcu_barrier_head;	/* For srcu_barrier() use. */
++	struct rcu_head srcu_ec_head;		/* For srcu_expedite_current() use. */
++	int srcu_ec_state;			/*  State for srcu_expedite_current(). */
+ 	struct srcu_node *mynode;		/* Leaf srcu_node. */
+ 	unsigned long grpmask;			/* Mask for leaf srcu_node */
+ 						/*  ->srcu_data_have_cbs[]. */
+@@ -135,6 +137,11 @@ struct srcu_struct {
+ #define SRCU_STATE_SCAN1	1
+ #define SRCU_STATE_SCAN2	2
+ 
++/* Values for srcu_expedite_current() state (->srcu_ec_state). */
++#define SRCU_EC_IDLE		0
++#define SRCU_EC_PENDING		1
++#define SRCU_EC_REPOST		2
++
  /*
-  * Workqueue handler to drive one grace period and invoke any callbacks
-- * that become ready as a result.  Single-CPU and !PREEMPTION operation
-- * means that we get away with murder on synchronization.  ;-)
-+ * that become ready as a result.  Single-CPU operation and preemption
-+ * disabling mean that we get away with murder on synchronization.  ;-)
-  */
- void srcu_drive_gp(struct work_struct *wp)
- {
-@@ -141,7 +141,12 @@ void srcu_drive_gp(struct work_struct *wp)
- 	WRITE_ONCE(ssp->srcu_idx, ssp->srcu_idx + 1);
- 	WRITE_ONCE(ssp->srcu_gp_waiting, true);  /* srcu_read_unlock() wakes! */
- 	preempt_enable();
--	swait_event_exclusive(ssp->srcu_wq, !READ_ONCE(ssp->srcu_lock_nesting[idx]));
-+	do {
-+		// Deadlock issues prevent __srcu_read_unlock() from
-+		// doing an unconditional wakeup, so polling is required.
-+		swait_event_timeout_exclusive(ssp->srcu_wq,
-+					      !READ_ONCE(ssp->srcu_lock_nesting[idx]), HZ / 10);
-+	} while (READ_ONCE(ssp->srcu_lock_nesting[idx]));
- 	preempt_disable();  // Needed for PREEMPT_LAZY
- 	WRITE_ONCE(ssp->srcu_gp_waiting, false); /* srcu_read_unlock() cheap. */
- 	WRITE_ONCE(ssp->srcu_idx, ssp->srcu_idx + 1);
+  * Values for initializing gp sequence fields. Higher values allow wrap arounds to
+  * occur earlier.
+@@ -210,6 +217,7 @@ struct srcu_struct {
+ int __srcu_read_lock(struct srcu_struct *ssp) __acquires(ssp);
+ void synchronize_srcu_expedited(struct srcu_struct *ssp);
+ void srcu_barrier(struct srcu_struct *ssp);
++void srcu_expedite_current(struct srcu_struct *ssp);
+ void srcu_torture_stats_print(struct srcu_struct *ssp, char *tt, char *tf);
+ 
+ // Converts a per-CPU pointer to an ->srcu_ctrs[] array element to that
+diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+index 1ff94b76d91f..38b440b0b0c8 100644
+--- a/kernel/rcu/srcutree.c
++++ b/kernel/rcu/srcutree.c
+@@ -1688,6 +1688,64 @@ void srcu_barrier(struct srcu_struct *ssp)
+ }
+ EXPORT_SYMBOL_GPL(srcu_barrier);
+ 
++/* Callback for srcu_expedite_current() usage. */
++static void srcu_expedite_current_cb(struct rcu_head *rhp)
++{
++	unsigned long flags;
++	bool needcb = false;
++	struct srcu_data *sdp = container_of(rhp, struct srcu_data, srcu_ec_head);
++
++	spin_lock_irqsave_sdp_contention(sdp, &flags);
++	if (sdp->srcu_ec_state == SRCU_EC_IDLE) {
++		WARN_ON_ONCE(1);
++	} else if (sdp->srcu_ec_state == SRCU_EC_PENDING) {
++		sdp->srcu_ec_state = SRCU_EC_IDLE;
++	} else {
++		WARN_ON_ONCE(sdp->srcu_ec_state != SRCU_EC_REPOST);
++		sdp->srcu_ec_state = SRCU_EC_PENDING;
++		needcb = true;
++	}
++	spin_unlock_irqrestore_rcu_node(sdp, flags);
++	// If needed, requeue ourselves as an expedited SRCU callback.
++	if (needcb)
++		__call_srcu(sdp->ssp, &sdp->srcu_ec_head, srcu_expedite_current_cb, false);
++}
++
++/**
++ * srcu_expedite_current - Expedite the current SRCU grace period
++ * @ssp: srcu_struct to expedite.
++ *
++ * Cause the current SRCU grace period to become expedited.  The grace
++ * period following the current one might also be expedited.  If there is
++ * no current grace period, one might be created.  If the current grace
++ * period is currently sleeping, that sleep will complete before expediting
++ * will take effect.
++ */
++void srcu_expedite_current(struct srcu_struct *ssp)
++{
++	unsigned long flags;
++	bool needcb = false;
++	struct srcu_data *sdp;
++
++	migrate_disable();
++	sdp = this_cpu_ptr(ssp->sda);
++	spin_lock_irqsave_sdp_contention(sdp, &flags);
++	if (sdp->srcu_ec_state == SRCU_EC_IDLE) {
++		sdp->srcu_ec_state = SRCU_EC_PENDING;
++		needcb = true;
++	} else if (sdp->srcu_ec_state == SRCU_EC_PENDING) {
++		sdp->srcu_ec_state = SRCU_EC_REPOST;
++	} else {
++		WARN_ON_ONCE(sdp->srcu_ec_state != SRCU_EC_REPOST);
++	}
++	spin_unlock_irqrestore_rcu_node(sdp, flags);
++	// If needed, queue an expedited SRCU callback.
++	if (needcb)
++		__call_srcu(ssp, &sdp->srcu_ec_head, srcu_expedite_current_cb, false);
++	migrate_enable();
++}
++EXPORT_SYMBOL_GPL(srcu_expedite_current);
++
+ /**
+  * srcu_batches_completed - return batches completed.
+  * @ssp: srcu_struct on which to report batch completion.
 -- 
 2.40.1
 
