@@ -1,226 +1,370 @@
-Return-Path: <linux-kernel+bounces-882009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 435EDC29708
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 22:16:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74741C2971B
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 22:19:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 490A9188C480
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 21:16:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B43023ABC9D
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 21:19:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F9217C211;
-	Sun,  2 Nov 2025 21:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2E22367B8;
+	Sun,  2 Nov 2025 21:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cRVQjGPu"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NccM65dZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AEEEF9EC
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 21:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6138F9EC;
+	Sun,  2 Nov 2025 21:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762118180; cv=none; b=SxOoeQSdppIaMDdqiEHjQk6/FPB3VjxhabX0eG7yHOnqKe7Fnil0VZ/yEX+1o3xBZOsp8SyEKPG8Vlmcp432hcHb7GgYgmB4HdKZJv2eTAs6Lh0q9/VRBzlunGQxKIY8+e5l3N8Ny8qc4/2QnfLwF2jaSS2ONScdbT8VxAum6ng=
+	t=1762118352; cv=none; b=UJZpgMcRvLeTj4yD+WJVcy16tA002OnY85o+tbBSFKbbJOoP1n9P2TBqjdIpUuWhfdf0uEj1Pm1uhTAvr1AN7pewMdSdQsXnbl9aZT0dRXYwXx3Ineem+cA5GZwk7ObDsgmINgOjzK5iOazUaIFsRzRO9S/jb3j05WGBNJf6W/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762118180; c=relaxed/simple;
-	bh=49fDOQlVVQrH97mZ33vWhz1qt/nmq7lFUqqvkQBJ2V4=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=oOBF7a/3MT2m9aj3PsbW4RBBgPBKUTTncxwOW4zuH0tHY3pMeq7Zi06+CiALYcwYZSmumD1yOGFUemEEOW0lK8TCHMe+q1ZRNi8kIyXgwGRZ6YsGlWbgQmXxfXufQHlgdHNakXbaQrqPQVYgypBu752muHN0v/gFgL3tPWfbjGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cRVQjGPu; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762118178; x=1793654178;
-  h=date:from:to:cc:subject:message-id;
-  bh=49fDOQlVVQrH97mZ33vWhz1qt/nmq7lFUqqvkQBJ2V4=;
-  b=cRVQjGPufTE62zAqfxHeLLBIy+rjuJzF+pR4hcILmyzVk+SFlPMmsjcm
-   DbwuYIjyfLBWY25XQnIf+i+mGOPNOB+qEXpXb12YBtUvmcH3cBFBZKTGV
-   8jXu04tdsjGEgLcSQD69L+yfMp3CG8YZaObFW1B2MULkhNCXZrUWI79zA
-   RJfuJJr0am8zVwPmsS43gm0w8OUEpSNx5abD2K1Wy+qt2OJW4xAE8JEXM
-   TBAfeI/seMHDQOavhd+W11yS4jw4IqNEMV4+dPeruSbwau5oV+h0BaPQV
-   ZJq3AtNxvVjMKEcljtpX8eq+fsSJ/Zx+1809aDPNWBp24NlfZg7exLPNC
-   g==;
-X-CSE-ConnectionGUID: 5roI4wF2QYOMRra+86WfKw==
-X-CSE-MsgGUID: b1SxlF7PTWuC8zMFBP9vXA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="51770181"
-X-IronPort-AV: E=Sophos;i="6.19,274,1754982000"; 
-   d="scan'208";a="51770181"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2025 13:16:17 -0800
-X-CSE-ConnectionGUID: ws6guCO0T4in0WnONRcZ7g==
-X-CSE-MsgGUID: prQL7DwfQpCaEA8opD22tA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,274,1754982000"; 
-   d="scan'208";a="186587155"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 02 Nov 2025 13:16:16 -0800
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vFfQs-000PZ6-27;
-	Sun, 02 Nov 2025 21:16:14 +0000
-Date: Mon, 03 Nov 2025 05:15:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:irq/core] BUILD SUCCESS
- 51d0656959bcdb743232f9b530b4cca569e74e7f
-Message-ID: <202511030526.F5qAzzdO-lkp@intel.com>
-User-Agent: s-nail v14.9.25
+	s=arc-20240116; t=1762118352; c=relaxed/simple;
+	bh=34GY/EryjbHN5WFBiDBi5ct9qc1OmmQhzgRsTlTXYwM=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=lHBO3vystXEZ+Vf89fr+oG5226K3IwShtYHkt7U1S46e3i65KPKzDkHeqs0/qnSyQs50ZWPxAZRQEvchroz9QyL74MVUyMIu+DOW4ZEyuj7hZj+F0bCim7aN6OwlCAr/fnDRtshv5tYao4eEaHrdqBM2l3muOxC2cBPMrr7+PLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NccM65dZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75CD4C4CEF7;
+	Sun,  2 Nov 2025 21:19:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762118350;
+	bh=34GY/EryjbHN5WFBiDBi5ct9qc1OmmQhzgRsTlTXYwM=;
+	h=Date:From:Subject:Reply-To:To:Cc:References:In-Reply-To:From;
+	b=NccM65dZGg165dqrDeKOS5CWrDvwh1qIrgVMIYtXEXEZnEVqGZtEOqMuMrUWP/wCv
+	 HloZm/gSD6DJWVQtc/bcM1bcKh8cG4SsXI+5qPJcUA71w08r5EMU86UYCoMnX31j+E
+	 bHMWIcalk2XIDKsSMx8UgbyYVRLTtYPdZC/rpKgqAttoWF1Roy8h0yGCkvtSk8POct
+	 vacwRG/YQKRWOij0QW1NudOMumMonsEBWbbvjI4VjJnePDGSz2QIB+dp3j4Kh9dXUX
+	 uEuvCt8lRiDezYp+jMGh5rCohNr/B41G6JjMkcPtTr+1y2TnKbgew55ka2ewlLLHVz
+	 s4sIcgo3t5IWA==
+Message-ID: <e74f2c14-2642-4d5c-a076-adee8506d2c5@kernel.org>
+Date: Sun, 2 Nov 2025 22:19:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Daniel Gomez <da.gomez@kernel.org>
+Subject: Re: [PATCH v18 0/7] rust: extend `module!` macro with integer
+ parameter support
+Reply-To: Daniel Gomez <da.gomez@kernel.org>
+To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda
+ <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Alice Ryhl <aliceryhl@google.com>, Masahiro Yamada <masahiroy@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
+ Danilo Krummrich <dakr@kernel.org>, Benno Lossin <lossin@kernel.org>,
+ Nicolas Schier <nicolas.schier@linux.dev>,
+ Michal Wilczynski <m.wilczynski@samsung.com>,
+ Trevor Gross <tmgross@umich.edu>, Adam Bratschi-Kaye <ark.email@gmail.com>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kbuild@vger.kernel.org, Petr Pavlu <petr.pavlu@suse.com>,
+ Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
+ <da.gomez@samsung.com>, Simona Vetter <simona.vetter@ffwll.ch>,
+ Greg KH <gregkh@linuxfoundation.org>, Fiona Behrens <me@kloenk.dev>,
+ Daniel Almeida <daniel.almeida@collabora.com>,
+ linux-modules@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>,
+ linux-next@vger.kernel.org
+References: <20250924-module-params-v3-v18-0-bf512c35d910@kernel.org>
+ <49af6d76-bcb7-4343-8903-390040e2c49b@kernel.org>
+ <er7h34im2rk627usnvbre3clqvsx3uzev7kboy33pd7oac747c@nvtl7y2mmdde>
+Content-Language: en-US
+Organization: kernel.org
+In-Reply-To: <er7h34im2rk627usnvbre3clqvsx3uzev7kboy33pd7oac747c@nvtl7y2mmdde>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/core
-branch HEAD: 51d0656959bcdb743232f9b530b4cca569e74e7f  genirq/manage: Reduce priority of forced secondary interrupt handler
+On 02/11/2025 10.56, Uwe Kleine-KÃ¶nig wrote:
+> Hello Daniel,
+> 
+> [Adding Stephen and linux-next to Cc]
+> 
+> On Sat, Nov 01, 2025 at 10:39:08PM +0100, Daniel Gomez wrote:
+>> On 24/09/2025 14.39, Andreas Hindborg wrote:
+>>> Extend the `module!` macro with support module parameters. Also add some
+>>> string to integer parsing functions.
+>>>
+>>> Based on the original module parameter support by Miguel [1],
+>>> later extended and generalized by Adam for more types [2][3].
+>>> Originally tracked at [4].
+>>>
+>>> Link: https://github.com/Rust-for-Linux/linux/pull/7 [1]
+>>> Link: https://github.com/Rust-for-Linux/linux/pull/82 [2]
+>>> Link: https://github.com/Rust-for-Linux/linux/pull/87 [3]
+>>> Link: https://github.com/Rust-for-Linux/linux/issues/11 [4]
+>>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>>
+>> I tested this series with rust_minimal module. They LGTM,
+>>
+>> Tested-by: Daniel Gomez <da.gomez@samsung.com>
+>>
+>> The patches did not apply cleanly to v6.18-rc3, at least not when using b4.
+>> However, when applying them to the base commit and then rebasing onto v6.18-rc3,
+>> I didn't see any conflicts.
+> 
+> I don't know how you use b4, but
+> 
+> 	git checkout v6.18-rc3
+> 	b4 am -3 49af6d76-bcb7-4343-8903-390040e2c49b@kernel.org
+> 	git am -3 ./v18_20250924_a_hindborg_rust_extend_module_macro_with_integer_parameter_support.mbx
+> 
+> works fine on my end. Using `-3` should have the same effect as applying
+> the series on top of the original base and rebase it.
 
-elapsed time: 1453m
+Right, that's what I did but manually. I didn't know about that argument :).
 
-configs tested: 134
-configs skipped: 4
+> 
+> 	git fetch https://git.kernel.org/pub/scm/linux/kernel/git/modules/linux.git rebase/20250924-module-params-v3-v18-0-bf512c35d910@kernel.org
+> 	git range-diff FETCH_HEAD...HEAD
+> 
+> confirms that.
+>  
+>> I've created a temporary branch with this rebase here:
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/modules/linux.git/log/?h=rebase/20250924-module-params-v3-v18-0-bf512c35d910@kernel.org
+>>
+>> Can you take a look when you can? I'll merge this shortly after checking with
+>> Uwe, as there are some minor conflicts with his tree.
+>>
+>> + Uwe
+>>
+>> These are the conflicts I see when merging the patch series from Michal [1]
+>> (Introduce import_ns support for Rust). I believe these are trivial things that
+>> we will get notified from linux-next merging. But let me know what you think as
+>> you have requested in that thread.
+>>
+>> [1] Link: https://lore.kernel.org/all/20251028-pwm_fixes-v1-0-25a532d31998@samsung.com/
+> 
+> Yeah, I expect that Stephen will highlight the conflicts, but I prefer
+> to not be surprised by that and consider linux-next more a fallback
+> security net that I don't want to use. I like it to be the other way
+> round and tell Stephen about conflicts to expect :-)
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+Please Stephen, check the proposed changes below. I plan to merge this series in
+modules' tree and it will conflict with Uwe's tree on rust/macros/module.rs file.
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    gcc-15.1.0
-alpha                               defconfig    gcc-15.1.0
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                              allyesconfig    gcc-15.1.0
-arc                                 defconfig    gcc-15.1.0
-arc                   randconfig-001-20251102    gcc-8.5.0
-arc                   randconfig-002-20251102    gcc-14.3.0
-arm                               allnoconfig    clang-22
-arm                        neponset_defconfig    gcc-15.1.0
-arm                         orion5x_defconfig    clang-22
-arm                   randconfig-001-20251102    gcc-15.1.0
-arm                   randconfig-002-20251102    gcc-10.5.0
-arm                   randconfig-003-20251102    gcc-8.5.0
-arm                   randconfig-004-20251102    gcc-14.3.0
-arm                           spitz_defconfig    gcc-15.1.0
-arm64                             allnoconfig    gcc-15.1.0
-arm64                            allyesconfig    clang-22
-arm64                 randconfig-001-20251103    clang-22
-arm64                 randconfig-002-20251103    gcc-13.4.0
-arm64                 randconfig-003-20251103    gcc-14.3.0
-arm64                 randconfig-004-20251103    gcc-8.5.0
-csky                             allmodconfig    gcc-15.1.0
-csky                              allnoconfig    gcc-15.1.0
-csky                             allyesconfig    gcc-15.1.0
-csky                                defconfig    gcc-15.1.0
-csky                  randconfig-001-20251103    gcc-15.1.0
-csky                  randconfig-002-20251103    gcc-15.1.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-22
-hexagon                          allyesconfig    clang-22
-hexagon                             defconfig    clang-22
-hexagon               randconfig-001-20251102    clang-22
-hexagon               randconfig-002-20251102    clang-22
-i386                              allnoconfig    gcc-14
-i386        buildonly-randconfig-001-20251102    gcc-14
-i386        buildonly-randconfig-003-20251102    gcc-14
-i386                                defconfig    clang-20
-i386                  randconfig-001-20251103    clang-20
-i386                  randconfig-002-20251103    gcc-14
-i386                  randconfig-003-20251103    gcc-14
-i386                  randconfig-004-20251103    clang-20
-i386                  randconfig-005-20251103    gcc-14
-i386                  randconfig-006-20251103    clang-20
-i386                  randconfig-007-20251103    gcc-14
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-loongarch                        allyesconfig    clang-22
-loongarch                           defconfig    clang-19
-loongarch             randconfig-001-20251102    gcc-15.1.0
-loongarch             randconfig-002-20251102    gcc-15.1.0
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-m68k                                defconfig    gcc-15.1.0
-m68k                        mvme147_defconfig    gcc-15.1.0
-m68k                            q40_defconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-mips                             allmodconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-mips                             allyesconfig    gcc-15.1.0
-nios2                            allmodconfig    gcc-11.5.0
-nios2                             allnoconfig    gcc-11.5.0
-nios2                            allyesconfig    gcc-11.5.0
-nios2                               defconfig    gcc-11.5.0
-nios2                 randconfig-001-20251102    gcc-11.5.0
-nios2                 randconfig-002-20251102    gcc-11.5.0
-openrisc                         alldefconfig    gcc-15.1.0
-openrisc                         allmodconfig    gcc-15.1.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-openrisc                            defconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20251102    gcc-8.5.0
-parisc                randconfig-002-20251102    gcc-14.3.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                        fsp2_defconfig    gcc-15.1.0
-powerpc                  mpc866_ads_defconfig    clang-22
-powerpc               randconfig-001-20251102    gcc-9.5.0
-powerpc               randconfig-002-20251102    clang-18
-powerpc64             randconfig-001-20251102    gcc-14.3.0
-powerpc64             randconfig-002-20251102    gcc-8.5.0
-riscv                             allnoconfig    gcc-15.1.0
-riscv                               defconfig    clang-22
-riscv                 randconfig-001-20251102    gcc-13.4.0
-riscv                 randconfig-002-20251102    gcc-14.3.0
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                  randconfig-002-20251102    gcc-11.5.0
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                                  defconfig    gcc-15.1.0
-sh                    randconfig-001-20251102    gcc-13.4.0
-sh                    randconfig-002-20251102    gcc-15.1.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                            allyesconfig    gcc-15.1.0
-sparc                 randconfig-001-20251103    gcc-15.1.0
-sparc                 randconfig-002-20251103    gcc-11.5.0
-sparc64                             defconfig    clang-20
-sparc64               randconfig-001-20251103    clang-22
-sparc64               randconfig-002-20251103    gcc-8.5.0
-um                                allnoconfig    clang-22
-um                                  defconfig    clang-22
-um                             i386_defconfig    gcc-14
-um                    randconfig-001-20251103    clang-19
-um                    randconfig-002-20251103    clang-22
-um                           x86_64_defconfig    clang-22
-x86_64                            allnoconfig    clang-20
-x86_64      buildonly-randconfig-001-20251102    gcc-14
-x86_64      buildonly-randconfig-002-20251102    clang-20
-x86_64      buildonly-randconfig-003-20251102    clang-20
-x86_64      buildonly-randconfig-004-20251102    clang-20
-x86_64      buildonly-randconfig-005-20251102    gcc-14
-x86_64      buildonly-randconfig-006-20251102    gcc-14
-x86_64                              defconfig    gcc-14
-x86_64                randconfig-011-20251102    gcc-14
-x86_64                randconfig-012-20251102    gcc-14
-x86_64                randconfig-013-20251102    gcc-12
-x86_64                randconfig-014-20251102    gcc-14
-x86_64                randconfig-015-20251102    gcc-14
-x86_64                randconfig-016-20251102    gcc-14
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20251103    gcc-13.4.0
-xtensa                randconfig-002-20251103    gcc-8.5.0
+> 
+>> ...
+>> Applying: rust: macros: Add support for 'imports_ns' to module!
+>> Patch failed at 0008 rust: macros: Add support for 'imports_ns' to module!
+>> error: patch failed: rust/macros/module.rs:98
+>> error: rust/macros/module.rs: patch does not apply
+>> hint: Use 'git am --show-current-patch=diff' to see the failed patch
+>> hint: When you have resolved this problem, run "git am --continue".
+>> hint: If you prefer to skip this patch, run "git am --skip" instead.
+>> hint: To restore the original branch and stop patching, run "git am --abort".
+>> hint: Disable this message with "git config set advice.mergeConflict false"
+>>
+>> git am --show-current-patch=diff
+> 
+> That command shows the patch to apply, but not the conflict, let alone
+> your resolution.
+> 
+>> ---
+>>  rust/macros/module.rs | 8 ++++++++
+>>  1 file changed, 8 insertions(+)
+>> ---
+>>  rust/macros/module.rs | 8 ++++++++
+>>  1 file changed, 8 insertions(+)
+>>
+>> diff --git a/rust/macros/module.rs b/rust/macros/module.rs
+>> index 5ee54a00c0b65699596e660b2d4d60e64be2a50c..408cd115487514c8be79724d901c676435696376 100644
+>> --- a/rust/macros/module.rs
+>> +++ b/rust/macros/module.rs
+>> @@ -98,6 +98,7 @@ struct ModuleInfo {
+>>      description: Option<String>,
+>>      alias: Option<Vec<String>>,
+>>      firmware: Option<Vec<String>>,
+>> +    imports_ns: Option<Vec<String>>,
+>>  }
+> 
+> So here the addition of `params` is missing.
+> 
+>> [...]
+> 
+> When I merge your branch mentioned above with my pwm/for-next and
+> resolve the merge conflicts, the resolution looks as follows. The only
+> non-trivial thing is that
+> 
+> 	if let Some(imports) = info.imports_ns {
+> 
+> now needs a & for `info`.
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Correct.
+
+In case it's necessary, I've merged your changes into the modules's -next
+branch and attach the diff for you and Stephen. Not sure which order trees are
+taken/merged, though.
+
+> 
+> Best regards
+> Uwe
+> 
+> diff --cc rust/macros/module.rs
+> index d62e9c1e2a89,408cd1154875..000000000000
+> --- a/rust/macros/module.rs
+> +++ b/rust/macros/module.rs
+> @@@ -205,50 -98,7 +205,51 @@@ struct ModuleInfo 
+>       description: Option<String>,
+>       alias: Option<Vec<String>>,
+>       firmware: Option<Vec<String>>,
+> +     imports_ns: Option<Vec<String>>,
+>  +    params: Option<Vec<Parameter>>,
+>  +}
+>  +
+>  +#[derive(Debug)]
+>  +struct Parameter {
+>  +    name: String,
+>  +    ptype: String,
+>  +    default: String,
+>  +    description: String,
+>  +}
+>  +
+>  +fn expect_params(it: &mut token_stream::IntoIter) -> Vec<Parameter> {
+>  +    let params = expect_group(it);
+>  +    assert_eq!(params.delimiter(), Delimiter::Brace);
+>  +    let mut it = params.stream().into_iter();
+>  +    let mut parsed = Vec::new();
+>  +
+>  +    loop {
+>  +        let param_name = match it.next() {
+>  +            Some(TokenTree::Ident(ident)) => ident.to_string(),
+>  +            Some(_) => panic!("Expected Ident or end"),
+>  +            None => break,
+>  +        };
+>  +
+>  +        assert_eq!(expect_punct(&mut it), ':');
+>  +        let param_type = expect_ident(&mut it);
+>  +        let group = expect_group(&mut it);
+>  +        assert_eq!(group.delimiter(), Delimiter::Brace);
+>  +        assert_eq!(expect_punct(&mut it), ',');
+>  +
+>  +        let mut param_it = group.stream().into_iter();
+>  +        let param_default = expect_param_default(&mut param_it);
+>  +        let param_description = expect_string_field(&mut param_it, "description");
+>  +        expect_end(&mut param_it);
+>  +
+>  +        parsed.push(Parameter {
+>  +            name: param_name,
+>  +            ptype: param_type,
+>  +            default: param_default,
+>  +            description: param_description,
+>  +        })
+>  +    }
+>  +
+>  +    parsed
+>   }
+>   
+>   impl ModuleInfo {
+> @@@ -263,7 -113,7 +264,8 @@@
+>               "license",
+>               "alias",
+>               "firmware",
+> +             "imports_ns",
+>  +            "params",
+>           ];
+>           const REQUIRED_KEYS: &[&str] = &["type", "name", "license"];
+>           let mut seen_keys = Vec::new();
+> @@@ -289,7 -139,7 +291,8 @@@
+>                   "license" => info.license = expect_string_ascii(it),
+>                   "alias" => info.alias = Some(expect_string_array(it)),
+>                   "firmware" => info.firmware = Some(expect_string_array(it)),
+> +                 "imports_ns" => info.imports_ns = Some(expect_string_array(it)),
+>  +                "params" => info.params = Some(expect_params(it)),
+>                   _ => panic!("Unknown key \"{key}\". Valid keys are: {EXPECTED_KEYS:?}."),
+>               }
+>   
+> @@@ -329,25 -179,30 +332,30 @@@ pub(crate) fn module(ts: TokenStream) -
+>       // Rust does not allow hyphens in identifiers, use underscore instead.
+>       let ident = info.name.replace('-', "_");
+>       let mut modinfo = ModInfoBuilder::new(ident.as_ref());
+>  -    if let Some(authors) = info.authors {
+>  +    if let Some(authors) = &info.authors {
+>           for author in authors {
+>  -            modinfo.emit("author", &author);
+>  +            modinfo.emit("author", author);
+>           }
+>       }
+>  -    if let Some(description) = info.description {
+>  -        modinfo.emit("description", &description);
+>  +    if let Some(description) = &info.description {
+>  +        modinfo.emit("description", description);
+>       }
+>       modinfo.emit("license", &info.license);
+>  -    if let Some(aliases) = info.alias {
+>  +    if let Some(aliases) = &info.alias {
+>           for alias in aliases {
+>  -            modinfo.emit("alias", &alias);
+>  +            modinfo.emit("alias", alias);
+>           }
+>       }
+>  -    if let Some(firmware) = info.firmware {
+>  +    if let Some(firmware) = &info.firmware {
+>           for fw in firmware {
+>  -            modinfo.emit("firmware", &fw);
+>  +            modinfo.emit("firmware", fw);
+>           }
+>       }
+>  -    if let Some(imports) = info.imports_ns {
+> ++    if let Some(imports) = &info.imports_ns {
+> +         for ns in imports {
+> +             modinfo.emit("import_ns", &ns);
+> +         }
+> +     }
+>   
+>       // Built-in modules also export the `file` modinfo string.
+>       let file =
+
+The resolution looks good to me.
+
+As I applied Michal's patch on top of Andreas changes, it looks like this on
+my side:
+
+diff --git a/rust/macros/module.rs b/rust/macros/module.rs
+index d62e9c1e2a89..5bf0a487de50 100644
+--- a/rust/macros/module.rs
++++ b/rust/macros/module.rs
+@@ -206,6 +206,7 @@ struct ModuleInfo {
+     alias: Option<Vec<String>>,
+     firmware: Option<Vec<String>>,
+     params: Option<Vec<Parameter>>,
++    imports_ns: Option<Vec<String>>,
+ }
+
+ #[derive(Debug)]
+@@ -264,6 +265,7 @@ fn parse(it: &mut token_stream::IntoIter) -> Self {
+             "alias",
+             "firmware",
+             "params",
++            "imports_ns",
+         ];
+         const REQUIRED_KEYS: &[&str] = &["type", "name", "license"];
+         let mut seen_keys = Vec::new();
+@@ -290,6 +292,7 @@ fn parse(it: &mut token_stream::IntoIter) -> Self {
+                 "alias" => info.alias = Some(expect_string_array(it)),
+                 "firmware" => info.firmware = Some(expect_string_array(it)),
+                 "params" => info.params = Some(expect_params(it)),
++                "imports_ns" => info.imports_ns = Some(expect_string_array(it)),
+                 _ => panic!("Unknown key \"{key}\". Valid keys are: {EXPECTED_KEYS:?}."),
+             }
+
+@@ -348,6 +351,11 @@ pub(crate) fn module(ts: TokenStream) -> TokenStream {
+             modinfo.emit("firmware", fw);
+         }
+     }
++    if let Some(imports) = &info.imports_ns {
++        for ns in imports {
++            modinfo.emit("import_ns", &ns);
++        }
++    }
+
+     // Built-in modules also export the `file` modinfo string.
+     let file =
 
