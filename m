@@ -1,51 +1,55 @@
-Return-Path: <linux-kernel+bounces-881636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F4233C289B3
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 05:56:21 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD2ABC289BE
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 06:00:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 035DC3AF18A
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 04:56:20 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 387974E229D
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 05:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0211A1C84B8;
-	Sun,  2 Nov 2025 04:56:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B0E52C181;
+	Sun,  2 Nov 2025 05:00:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UxSRBHlh"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=bit-tao.eu header.i=@bit-tao.eu header.b="trZIve/j"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9552A1C7;
-	Sun,  2 Nov 2025 04:56:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC6534D3A7
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 05:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762059373; cv=none; b=IQpCRFdyfSJWtOWYoAVDT0q9/Cu5Nqp93W5kK1Y+vjdf0piQM9bx4rkrz5aRTBHve2yDGWsc/TAHzlvdqzGoSf3cGRyJGx2fkPxQbFCVJQIH/JLqtks2tgKKZfGTbbBXEcdklzV2ag+I+2tCV0Em1KUlOnpJcD54PISddf3RQRY=
+	t=1762059624; cv=none; b=UbLbcJDLOFMHJ/dlS0ejOd+ftLFcjSF4Hm96ZDKNMwQHYltMQnixbRm4LeCO1AORCBVVz96AVtJXtc2zq3EoTmrqKa/+h7O787CJ1S6ap0cx5bT7Rky4ctejxrhS7wutVbtTp27zAORsVAHAZfhrGnZQzdfkH5UbT4ahwPp8NB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762059373; c=relaxed/simple;
-	bh=UKwMVO2jsy2bTC3jNyXPK8/hJrNqCl+KM/9kHX5Htmg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bb1i7feDrE8iwztSX5539yfLWKgyXySloXzKoOGoRdFZvS1nQMakRntDv/aUh3m/yXw0ZKA8hXwdnqYCTL/OTDTZ7gKkvzwuFjBRjtk9iqxViYJeP+cgTBFXoWbeWJ26+Yw3iokfBSStW1KkxPVEH+AdWUluChzEOP74fNhvyRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UxSRBHlh; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=Vb+txYW6y/jeP+lYT4EqkhxrKccykT/2pDwBZC5uhYM=; b=UxSRBHlh2I7n33THM6g0bha6f2
-	03l6hGtc+mGJHFWikUg6dOkMcbnx/e8Fe9ssNvOvn5ViinI0qgz6av5yDNoJqfmldN62nLU4DyPi6
-	14lkHsKOJW7LDhwVqgWg6GG4A9/buvy7lJlY2xIFa6vlCShFEjXbTj6SxXAqvbFSJZ0+btAsWwgGN
-	3rEaZev/Nvz3xSbS9ucvK4ngsvr3MqpKYATpVp3EzkftFxWzlNt5OsnxZ6tOa73JXMnnjEbrbo6Q5
-	yAirW/Qz+NsFl9POO2iRONeXWIxGLzpqIWct1sFu9mH66raZ/Ra6Svh/2WKsTVmdWvWCwTvxbGTVc
-	d4otM+pw==;
-Received: from [50.53.43.113] (helo=[192.168.254.34])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vFQ8M-00000008Ioo-2o3C;
-	Sun, 02 Nov 2025 04:56:06 +0000
-Message-ID: <d5584bfb-d138-451b-96e8-02347886349f@infradead.org>
-Date: Sat, 1 Nov 2025 21:56:05 -0700
+	s=arc-20240116; t=1762059624; c=relaxed/simple;
+	bh=Mn//TadgrMRAsx5HYO2uQnPSB2p90LTfLPqR7IBXjSY=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=LI9I2fp8O7bLrYxc9FuIYRGy5zKyPtKV8pWoX8PbkA/m8f8WPAu1qLktMTM7JWVh6SALwxh8HCHwVcAJ1Ehv5b5RuWEUpAJNKjOmQ+0Qc3zfk25IMTTcl7XRf2/rWIlQFUTT6NnSLcTxYGRrSQU5+k7FHa38hkc72U3ALYwwCag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-tao.eu; spf=pass smtp.mailfrom=bit-tao.eu; dkim=pass (2048-bit key) header.d=bit-tao.eu header.i=@bit-tao.eu header.b=trZIve/j; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bit-tao.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bit-tao.eu
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=bit-tao.eu;
+	s=ds202510; h=Content-Transfer-Encoding:Content-Type:Subject:From:To:
+	MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:
+	Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=W51CoW71UpWmv8Z+UU8iLapunGZow3WYNRNiY0VaKPA=; b=trZIve/jl4xBhFwgaS81YZlm1u
+	J+WH1u6ya9Rzv6wXu8kyGoxbsohwszwrshhlIjA7k2hSvC+NEnL4kesoq7x1bSdOHRlkP9DVVO1gJ
+	E2HFsesaV6oMMD65pQKTYM5R9tNkMPI3YwI6Uh2lYQFzANCQGff34YYjNuQ6Rry2zsPq6DXHTLykb
+	AdxPecJjQgK+on7TXAE3GOQAtjYOTB95iA7Dp2YHe8iO4bZTiP5gjR5nLiYRhFv+c/wfZHCewihfq
+	dlo+ZF7a6EA+ffZMMWG3IQKrNe8XMSt0MMUjFA9c5W7Xpk5Z1zilysW+IG6BbhUFRsbjbdrGmyUqY
+	MS9H2ArQ==;
+Received: from smtp
+	by smtp.domeneshop.no with esmtpsa (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	id 1vFQCS-0012mN-NT
+	for linux-kernel@vger.kernel.org;
+	Sun, 02 Nov 2025 06:00:20 +0100
+Message-ID: <1a8ef1ca-8d0d-4de4-86b9-91b0c0d84a7a@bit-tao.eu>
+Date: Sun, 2 Nov 2025 06:00:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,46 +57,36 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation: intel-pstate: Use :ref: directive for
- internal linking
-To: Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Documentation <linux-doc@vger.kernel.org>,
- Linux Power Management <linux-pm@vger.kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>, Jonathan Corbet <corbet@lwn.net>
-References: <20251101055614.32270-1-bagasdotme@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20251101055614.32270-1-bagasdotme@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+To: linux-kernel@vger.kernel.org
+From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <budi@bit-tao.eu>
+Subject: Bit Bros (was Fair Pay Philosophy, Unification in Bitstreams System,
+ Low Jitter)
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+
+Updated group name to Bit Bros. (Better than "Geek").
+
+Updated mascot project channel graphics, with more Islamic themes. 
+https://www.youtube.com/@BUDI__Bit_Bros
+
+The big one now is breaking down misconceptions about Islam, enough for 
+a smooth ride. I think this will happen with this. Linus seems not with 
+it, but I do not schism-attack a Nerd (SABIAN in CORAN) with ALLA like that.
+
+Islamic culture and wellknown flags really want a good OS. Christian 
+culture and the American flag, really is about Windows.
+
+There needs to be more Islamic elements for a good OS.
+
+Amiga workers rejected MUSLIM management. Did not use Gayle chip. Not 
+following school on Cache.
+
+  -- "Satan cannot Do". MUSLIM must fix. --
+
+Light!
+Ywe Cærlyn
+Budi,
+Bit Bros.
 
 
-
-On 10/31/25 10:56 PM, Bagas Sanjaya wrote:
-> pstate docs uses standard reST construct (`Section title`_) for
-> cross-referencing sections (internal linking), rather than for external
-> links. Incorrect cross-references are not caught when these are written
-> in that syntax, however (fortunately docutils 0.22 raise duplicate
-> target warnings that get fixed in cb908f8b0acc7e ("Documentation:
-> intel_pstate: fix duplicate hyperlink target errors")).
-> 
-> Convert the cross-references to use :ref: directive, which doesn't
-> exhibit this problem.
-> 
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-
-LGTM. Thanks.
-
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-
-> ---
->  Documentation/admin-guide/pm/intel_pstate.rst | 133 +++++++++---------
->  1 file changed, 70 insertions(+), 63 deletions(-)
-> 
-
--- 
-~Randy
 
