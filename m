@@ -1,286 +1,367 @@
-Return-Path: <linux-kernel+bounces-881802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B64CDC28F36
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 13:35:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7378CC28F42
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 13:37:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 59AE74E3535
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 12:35:21 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0D0504E63B0
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 12:37:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D047227EFFA;
-	Sun,  2 Nov 2025 12:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017012C325F;
+	Sun,  2 Nov 2025 12:37:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="JYHEE1KI"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IGDrS39r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8CC11548C;
-	Sun,  2 Nov 2025 12:35:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8FB1F5F6;
+	Sun,  2 Nov 2025 12:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762086914; cv=none; b=KLrp2krCxWw4gPd+TeivuUbTFdD2NDWu0hhvKPSTDZ0jx8RbL/Nws+USa9Ol4ns/EUkguDleqQIzV3PRgphTb8g3/+M9ZcxYTnq/qwjImBXRS3g+6Kw8wWN4Xi0Afsn09ncDmT6wDDoau79Hq7cpWA5eubVtihKuPjt3aNURL84=
+	t=1762087055; cv=none; b=nTGahLPJ9xqw63NAkaii0fFlRJjTQqg7hCLNRYbGrJjVrDy8ntQkz2tgkdGie6kyiwC/Vt8Z0Kov4YxoVRlX2INbyfT6JHTIcE1nABddlETXj2K50dk/+wurR0K9gpcNS0Plc/8tO/2XM5wR1D5kIfImp8+STNdlkss342EwshU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762086914; c=relaxed/simple;
-	bh=7vHBY4nK0hV74/I4z4Z/9SvK8bwEIxBa8Nwebg+feXs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GoeGibHxm97ap9XrF2U4PIyyQsAn3oTaJpII66x8klLTrwmDCIcqqaktGMJd26IcFEFx6FDKlu+liAc08SUtLPHbOfoTBsBVdimHV1mv0L5NG8xfGRuecNe5e01enMfB5plfZNoq5FcLWOm+rsfQWboXjN1UwTTV77kPV6FYGg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=JYHEE1KI; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1762086908; x=1762691708; i=wahrenst@gmx.net;
-	bh=qi2rYUH1D4aFQhbxPx+PkHOYho576tVd1qChnz4cPCQ=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=JYHEE1KI4I0EqKPmG7O/U2O9cbITWMdvaOwifqf6/8jhKvlU6Xjwa1/Ye5ao+WW+
-	 vRg/wCz85MC6lUVLOG7KNZkWf0oA0Y4HefptSPqoY+y/thgcczvQtYmd7qWyKUEtX
-	 L0r05vEOCj3o7Ja08h5tMsVCR/9KJWcbwjtCaTzmTFGtEcLxtGit92a10k/8bkUuK
-	 xvbEuFcdebkwspOAhKzYBjOXYOpy4W2KEiUnAQA6lcUFdcRwEeI24Hh6omYbioicy
-	 AClPOq07I80m5+nZ2P92J1uAGVxH+HCbdhzCWAGXFbFWkVE5vM8Q3V2hEv3HgJhik
-	 3eeqc5azcGPbT+EVLQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.156] ([91.41.217.223]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N8XTv-1wJNJl0SUz-00zIy3; Sun, 02
- Nov 2025 13:35:08 +0100
-Message-ID: <bf9f4a7f-3758-4877-8985-75bfe566745c@gmx.net>
-Date: Sun, 2 Nov 2025 13:35:06 +0100
+	s=arc-20240116; t=1762087055; c=relaxed/simple;
+	bh=rP3Ut9VUZbK8NEAr9WzP7R+2DKbuOFd36IZ2axgA4CE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SyLUKiRGLw2TJvl90veQ2NGsGFH/Xih2jxIrxxzjX5KTse2bOzW00CgxacnH/r7t3lJiHEhlATrZzAPDS3xAlsh+/PYWfxin/tTxK/x3WvkM6mYoU4R2SYkR873QNdEMvATbHWMcfMTdMbp5NdheIrXoQU2J6DzIZuSnbT6m5hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IGDrS39r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E105C4CEF7;
+	Sun,  2 Nov 2025 12:37:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762087054;
+	bh=rP3Ut9VUZbK8NEAr9WzP7R+2DKbuOFd36IZ2axgA4CE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IGDrS39rRKOdQS534H9pfRnMLOKskZ6BlsEsJpHb9NFfxFsdEDsmq6jVaBG6Gk1dT
+	 Kflluz9IKa6Xhf7bM1cWupwOG1FWja6h7QwJjcfHfArxEoeUGAFraUkQnBeccLZoSJ
+	 48ci5fxBknFPxSxJ3y41a2ruPWAfB4r/iITlc6JpW+mf/KFy8VXjVebdkFSp8g7V/G
+	 xYZDqzqxCW5bX8YOx3iuJkhb08AE8qyOab9D2T6Ish9LfKKHSeUgiN8xVTSleNxcfe
+	 f3+fKispkOb1kD3neKelQhuM4oVXEI/dgpSQgbFHMqDV/7zfp+hRX6M9gt/R+ISvmv
+	 Vv+aUx7P6e6gg==
+Date: Sun, 2 Nov 2025 12:37:27 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Jorge Marques <gastmaier@gmail.com>
+Cc: Jorge Marques <jorge.marques@analog.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, David
+ Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 2/7] docs: iio: New docs for ad4062 driver
+Message-ID: <20251102123727.0aa4c031@jic23-huawei>
+In-Reply-To: <skcjf6tdo7bktdx4g2bm42gkzd5vdtckxsxzgu7s6dwmiwfdpw@hxhol4g4adcs>
+References: <20251013-staging-ad4062-v1-0-0f8ce7fef50c@analog.com>
+	<20251013-staging-ad4062-v1-2-0f8ce7fef50c@analog.com>
+	<20251018162113.002d92f7@jic23-huawei>
+	<skcjf6tdo7bktdx4g2bm42gkzd5vdtckxsxzgu7s6dwmiwfdpw@hxhol4g4adcs>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/13] media: i2c: ov5647: Add support for regulator
- control.
-To: Jai Luthra <jai.luthra@ideasonboard.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Jacopo Mondi <jacopo@jmondi.org>, Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- David Plowman <david.plowman@raspberrypi.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Peter Robinson <pbrobinson@gmail.com>, "Ivan T. Ivanov" <iivanov@suse.de>
-References: <20251028-b4-rpi-ov5647-v1-0-098413454f5e@ideasonboard.com>
- <20251028-b4-rpi-ov5647-v1-7-098413454f5e@ideasonboard.com>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-Autocrypt: addr=wahrenst@gmx.net; keydata=
- xjMEZ1dOJBYJKwYBBAHaRw8BAQdA7H2MMG3q8FV7kAPko5vOAeaa4UA1I0hMgga1j5iYTTvN
- IFN0ZWZhbiBXYWhyZW4gPHdhaHJlbnN0QGdteC5uZXQ+wo8EExYIADcWIQT3FXg+ApsOhPDN
- NNFuwvLLwiAwigUCZ1dOJAUJB4TOAAIbAwQLCQgHBRUICQoLBRYCAwEAAAoJEG7C8svCIDCK
- JQ4BAP4Y9uuHAxbAhHSQf6UZ+hl5BDznsZVBJvH8cZe2dSZ6AQCNgoc1Lxw1tvPscuC1Jd1C
- TZomrGfQI47OiiJ3vGktBc44BGdXTiQSCisGAQQBl1UBBQEBB0B5M0B2E2XxySUQhU6emMYx
- f5QR/BrEK0hs3bLT6Hb9WgMBCAfCfgQYFggAJhYhBPcVeD4Cmw6E8M000W7C8svCIDCKBQJn
- V04kBQkHhM4AAhsMAAoJEG7C8svCIDCKJxoA/i+kqD5bphZEucrJHw77ujnOQbiKY2rLb0pE
- aHMQoiECAQDVbj827W1Yai/0XEABIr8Ci6a+/qZ8Vz6MZzL5GJosAA==
-In-Reply-To: <20251028-b4-rpi-ov5647-v1-7-098413454f5e@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:5C9sLmuZ8zzleCHN2mveV0CRC3xrM1VNl9OSKEq3agJUXpn/ptq
- 11SaAPZj4phezXjP4eO6vJ6hzEs1+QGdk/ug+DxxuPPfJIQFEh6lT4DLF/dLayRYCmBNG2K
- YpnAVpujnww1a++DE5rXmYa3DyofkGlNEQ10v+FyiXKJ80j3RlqEmYV7IAzJ0X2BHqZpuKC
- Bj7j6fti9zenrWAXaQNAQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:OqEPg47s7yo=;KP8rBbmJdYHRTxMBniKvOOhpyaF
- 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
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Am 28.10.25 um 08:27 schrieb Jai Luthra:
-> From: Dave Stevenson <dave.stevenson@raspberrypi.com>
->
-> The driver supported using GPIOs to control the shutdown line,
-> but no regulator control.
->
-> Add regulator hooks.
->
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
-> ---
->   drivers/media/i2c/ov5647.c | 37 +++++++++++++++++++++++++++++++++++++
->   1 file changed, 37 insertions(+)
->
-> diff --git a/drivers/media/i2c/ov5647.c b/drivers/media/i2c/ov5647.c
-> index a33e2d8edc114d302e830639cb7cb161f16a6208..598764638d518a28c8ac61ea=
-590b996f09ecd45c 100644
-> --- a/drivers/media/i2c/ov5647.c
-> +++ b/drivers/media/i2c/ov5647.c
-> @@ -20,6 +20,7 @@
->   #include <linux/module.h>
->   #include <linux/of_graph.h>
->   #include <linux/pm_runtime.h>
-> +#include <linux/regulator/consumer.h>
->   #include <linux/slab.h>
->   #include <linux/videodev2.h>
->   #include <media/v4l2-ctrls.h>
-> @@ -83,6 +84,15 @@
->   #define OV5647_EXPOSURE_DEFAULT		1000
->   #define OV5647_EXPOSURE_MAX		65535
->  =20
-> +/* regulator supplies */
-> +static const char * const ov5647_supply_names[] =3D {
-> +	"avdd",		/* Analog power */
-> +	"dovdd",	/* Digital I/O power */
-> +	"dvdd",		/* Digital core power */
-> +};
-> +
-> +#define OV5647_NUM_SUPPLIES ARRAY_SIZE(ov5647_supply_names)
-> +
->   struct regval_list {
->   	u16 addr;
->   	u8 data;
-> @@ -104,6 +114,7 @@ struct ov5647 {
->   	struct mutex			lock;
->   	struct clk			*xclk;
->   	struct gpio_desc		*pwdn;
-> +	struct regulator_bulk_data supplies[OV5647_NUM_SUPPLIES];
->   	bool				clock_ncont;
->   	struct v4l2_ctrl_handler	ctrls;
->   	const struct ov5647_mode	*mode;
-> @@ -781,6 +792,12 @@ static int ov5647_power_on(struct device *dev)
->  =20
->   	dev_dbg(dev, "OV5647 power on\n");
->  =20
-> +	ret =3D regulator_bulk_enable(OV5647_NUM_SUPPLIES, sensor->supplies);
-> +	if (ret < 0) {
-> +		dev_err(dev, "Failed to enable regulators\n");
-In case we want to log this, please add the return code as well
-> +		return ret;
-> +	}
-> +
->   	if (sensor->pwdn) {
->   		gpiod_set_value_cansleep(sensor->pwdn, 0);
->   		msleep(PWDN_ACTIVE_DELAY_MS);
-> @@ -812,6 +829,7 @@ static int ov5647_power_on(struct device *dev)
->   	clk_disable_unprepare(sensor->xclk);
->   error_pwdn:
->   	gpiod_set_value_cansleep(sensor->pwdn, 1);
-> +	regulator_bulk_disable(OV5647_NUM_SUPPLIES, sensor->supplies);
->  =20
->   	return ret;
->   }
-> @@ -841,6 +859,7 @@ static int ov5647_power_off(struct device *dev)
->  =20
->   	clk_disable_unprepare(sensor->xclk);
->   	gpiod_set_value_cansleep(sensor->pwdn, 1);
-> +	regulator_bulk_disable(OV5647_NUM_SUPPLIES, sensor->supplies);
->  =20
->   	return 0;
->   }
-> @@ -1341,6 +1360,18 @@ static const struct v4l2_ctrl_ops ov5647_ctrl_ops=
- =3D {
->   	.s_ctrl =3D ov5647_s_ctrl,
+On Tue, 28 Oct 2025 16:31:46 +0100
+Jorge Marques <gastmaier@gmail.com> wrote:
+
+> On Sat, Oct 18, 2025 at 04:21:13PM +0100, Jonathan Cameron wrote:
+> > On Mon, 13 Oct 2025 09:28:00 +0200
+> > Jorge Marques <jorge.marques@analog.com> wrote:
+> >   
+> > > This adds a new page to document how to use the ad4062 ADC driver.
+> > > 
+> > > Signed-off-by: Jorge Marques <jorge.marques@analog.com>  
+> > Hi Jorge,
+> > 
+> > Various comments inline.
+> > 
+> > Thanks,
+> > 
+> > Jonathan
+> >   
+> 
+> Hi Jonathan,
+> 
+> > > ---
+> > >  Documentation/iio/ad4062.rst | 89 ++++++++++++++++++++++++++++++++++++++++++++
+> > >  MAINTAINERS                  |  1 +
+> > >  2 files changed, 90 insertions(+)
+> > > 
+> > > diff --git a/Documentation/iio/ad4062.rst b/Documentation/iio/ad4062.rst
+> > > new file mode 100644
+> > > index 0000000000000000000000000000000000000000..b486d7fe1916d2963c94581be3696cf58d51ca48
+> > > --- /dev/null
+> > > +++ b/Documentation/iio/ad4062.rst
+> > > @@ -0,0 +1,89 @@
+> > > +.. SPDX-License-Identifier: GPL-2.0-only
+> > > +
+> > > +=============
+> > > +AD4062 driver
+> > > +=============
+> > > +
+> > > +ADC driver for Analog Devices Inc. AD4060/AD4062 devices. The module name is
+> > > +``ad4062``.
+> > > +
+> > > +Supported devices
+> > > +=================
+> > > +
+> > > +The following chips are supported by this driver:
+> > > +
+> > > +* `AD4060 <https://www.analog.com/AD4060>`_
+> > > +* `AD4062 <https://www.analog.com/AD4062>`_
+> > > +
+> > > +Wiring modes
+> > > +============
+> > > +
+> > > +The ADC is interfaced through an I3C bus, and contains two programmable GPIOs.  
+> > This raises a question on whether it makes sense for the binding to support providing
+> > gpios from the start (as alternative to interrupts).  Seems like the two pins
+> > are completely interchangeable so one might well be 'left' for use by some other
+> > device that needs a gpio pin.
+> > 
+> > I don't mind that much if we want to leave the binding support for that for later
+> > but in the ideal case we'd have it from the start (even if the driver doesn't
+> > support it until we have a user).  
+> 
+> Yep, they are almost interchangeable except GP0 cannot be DEV_DRY (device is
+> ready to accept serial interface communications). The question is how to
+> represent that in the devicetree.
+> 
+> I am ok with adding `gpio-controller` as an optional property. If
+> present, and if the gp0/1 is not taken by the interrupt-names property,
+> it fallback to expose as a gpo0 (they cannot be set as gpi).
+> 
+> For the other roles, based on
+> https://elixir.bootlin.com/linux/v6.18-rc3/source/Documentation/devicetree/bindings/hwmon/adi,ltc4282.yaml#L109
+> We would have
+> 
+>   adi,gp0-mode = "dev-en";
+>   adi,gp1-mode = "rdy";
+> 
+> Some examples:
+> 
+>   // gp0: threshold-either (default), gp1: data ready (default)
+>   adc@0,2ee007c0000 {
+>       reg = <0x0 0x2ee 0x7c0000>;
+>       vdd-supply = <&vdd>;
+>       vio-supply = <&vio>;
+>       ref-supply = <&ref>;
+> 
+>       interrupt-parent = <&gpio>;
+>       interrupts = <0 0 IRQ_TYPE_EDGE_RISING>,
+>                    <0 1 IRQ_TYPE_EDGE_FALLING>;
+>       interrupt-names = "gp0", "gp1";
 >   };
->  =20
-> +static int ov5647_configure_regulators(struct device *dev,
-> +				       struct ov5647 *sensor)
-> +{
-> +	unsigned int i;
-> +
-> +	for (i =3D 0; i < OV5647_NUM_SUPPLIES; i++)
-> +		sensor->supplies[i].supply =3D ov5647_supply_names[i];
-> +
-> +	return devm_regulator_bulk_get(dev, OV5647_NUM_SUPPLIES,
-> +				       sensor->supplies);
-> +}
-> +
->   static int ov5647_init_controls(struct ov5647 *sensor, struct device *=
-dev)
->   {
->   	struct i2c_client *client =3D v4l2_get_subdevdata(&sensor->sd);
-> @@ -1489,6 +1520,12 @@ static int ov5647_probe(struct i2c_client *client=
-)
->   		return -EINVAL;
->   	}
->  =20
-> +	ret =3D ov5647_configure_regulators(dev, sensor);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to get power regulators\n");
-Please use dev_err_probe here
-> +		return ret;
-> +	}
-> +
->   	mutex_init(&sensor->lock);
->  =20
->   	sensor->mode =3D OV5647_DEFAULT_MODE;
->
+> 
+>   // gp0: user GPO, gp1: data ready
+>   adc@0,2ee007c0000 {
+>       reg = <0x0 0x2ee 0x7c0000>;
+>       vdd-supply = <&vdd>;
+>       vio-supply = <&vio>;
+>       ref-supply = <&ref>;
+> 
+>       gpio-controller;
+> 
+>       interrupt-parent = <&gpio>;
+>       interrupts = <0 1 IRQ_TYPE_EDGE_FALLING>;
+>       interrupt-names = "gp1";
+>   };
+> 
+>   // gp0: threshold crossed high value, g1: unused
+>   adc@0,2ee007c0000 {
+>       reg = <0x0 0x2ee 0x7c0000>;
+>       vdd-supply = <&vdd>;
+>       vio-supply = <&vio>;
+>       ref-supply = <&ref>;
+> 
+>       interrupt-parent = <&gpio>;
+>       interrupts = <0 0 IRQ_TYPE_EDGE_FALLING>;
+>       interrupt-names = "gp0";
+> 
+>       adi,gp0-mode = "thresh-high"
+>   };
+> 
+> 
+> And the driver constraints the valid configurations.
+
+More or less looks good  We have other drivers effectively doing this.
+Whether we actively handle the final case or not in driver probably doesn't matter.
+Wtihout the gpio-controller specified nothing can use the gpios anyway so
+if we support them they simply won't get used.
+
+I'm not sure on the gpi0-mode though.  Why is that useful? That feels like
+a choice the driver should make dependent on what is available to it.
+So if we've specified it is in interrupt, only the modes that might be
+an interrupt are available to the driver.
+
+The only case I can see being useful is dev_en as that's a specifically timed
+control signal for the analog front end.
+
+So a specific flag for that probably makes sense - I'm not sure if we'd
+ever have an AFE where it would make sense to drive it from a hardware
+signal on the ADC like this one AND from a gpio, so I don't think we need
+to support binding this as a gpio in that case.
+
+> 
+> >   
+> > > +
+> > > +The ADC convert-start happens on the SDA rising edge of the I3C stop (P) bit
+> > > +at the end of the read command.
+> > > +
+> > > +The two programmable GPIOS are optional and have a role assigned if present in
+> > > +the devicetree:
+> > > +
+> > > +- GP1: Is assigned the role of Data Ready signal.  
+> > 
+> > I assume that's only the case if GP1 is provided?  If GP0 is the only one
+> > we should allow use that for data ready.  As long as the DT allows that it is
+> > permissible for the driver to not do so for now.
+> >   
+> 
+> Suggested `adi,gp*-mode` should solve.
+> 
+> > > +
+> > > +Device attributes
+> > > +=================
+> > > +
+> > > +The ADC contains only one channel with following attributes:
+> > > +
+> > > +.. list-table:: Channel attributes
+> > > +   :header-rows: 1
+> > > +
+> > > +   * - Attribute
+> > > +     - Description
+> > > +   * - ``in_voltage_calibscale``
+> > > +     - Sets the scale factor to multiply the raw value.  
+> > That's confusing.  This should be hardware 'tweak' to compensate for
+> > calibration or similar.  The text doesn't make it clear where that multiply
+> > is happening. Sounds too much like _scale.  
+> 
+> The user does raw * _scale * _calibscale to get the value in volts.
+
+That's not ABI compliant so no general purpose user space is going to do that.
+So a hard no for this being what userspace needs to apply.
+
+I'm not particularly keen on calibscale for things other than tweaking so
+that raw * _scale is in milivolts.
+
+Normally if we have other forms of controllable scaling it's a question
+of wrapping up any such scan factors into a writeable _scale.
+
+> 
+> _calibscale is 1 by default and serves two purposes:
+> 
+> * small hw corrections (matches ABI); or 
+> * an arbitrary user set scale, ideally also for corrections, but not
+>   constrained.
+> 
+> For the prior, the device does support computing the appropriate
+> _calibscale value, but it is not implemented.
+> 
+> If it was implemented, it would occur once during driver initialization
+> and then _calibscale default value would be approximately 1, (e.g.,
+> 0.997).
+> 
+> >   
+> > > +   * - ``in_voltage_oversampling_ratio``
+> > > +     - Sets device's burst averaging mode to over sample using the
+> > > +       internal sample rate. Value 1 disable the burst averaging mode.
+> > > +   * - ``in_voltage_oversampling_ratio_available``
+> > > +     - List of available oversampling values.
+> > > +   * - ``in_voltage_raw``
+> > > +     - Returns the raw ADC voltage value.
+> > > +   * - ``in_voltage_scale``
+> > > +     - Returs the channel scale in reference to the reference voltage  
+> > 
+> > Spell check needed.  Also this describes why it might take different values
+> > but not the bit users care about which is the standard ABI thing of
+> > Real value in mV = _raw * _scale 
+> >   
+> Ack, will describe
+> 
+>  raw * _scale * _calibscale
+
+As above, no to this.  It must be just raw * _scale.
+
+> 
+> > > +       ``ref-supply``.
+> > > +
+> > > +Also contain the following device attributes:
+> > > +
+> > > +.. list-table:: Device attributes
+> > > +   :header-rows: 1
+> > > +
+> > > +   * - Attribute
+> > > +     - Description
+> > > +   * - ``samling_frequency``  
+> > 
+> > Check these.. sampling_frequency.
+> >   
+> > > +     - Sets the sets the device internal sample rate, used in the burst
+> > > +       averaging mode.  
+> > 
+> > It's not use otherwise?  That's unusual ABI.  I'd expect it to give
+> > the right value at least when burst mode isn't used. Or is burst mode
+> > the only way we do buffered capture?
+> >   
+> 
+> It is not used otherwise, the device internal sample rate is used only
+> to evenly distribute readings used in the burst averaging mode.
+> There is no sampling trigger to evenly space the adc conversion reading,
+
+In event of no internal trigger, sampling_frequency is normally
+1/duration of a single scan (or sample if a per channel attribute).
+
+
+> e.g.,:
+> 
+>   Oversampling 4, sampling ratio 2Hz
+>   Sampling trigger |        |        |        |        |
+>   ADC conversion   ++++     ++++     ++++     ++++     ++++
+>   ADC data ready      *        *        *        *        *
+> 
+>   Oversampling 4, sampling ratio 1Hz
+>   Sampling trigger |        |        |        |        |
+>   ADC conversion   + + + +  + + + +  + + + +  + + + +  + + + +
+>   ADC data ready         *        *        *        *        *
+> 
+> For this driver, the sampling trigger is a register access (the stop bit
+> of the i3c transfer to be exact), so in buffer mode it reads as fast as
+> possible.
+> 
+> > > +   * - ``sampling_frequency_available``
+> > > +     - Lists the available device internal sample rates.
+> > > +
+> > > +Interrupts
+> > > +==========
+> > > +
+> > > +The interrupts are mapped through the ``interrupt-names`` and ``interrupts``
+> > > +properties.
+> > > +
+> > > +The ``interrupt-names`` ``gp1`` entry sets the role of Data Ready signal.
+> > > +If it is not present, the driver fallback to enabling the same role as an
+> > > +I3C IBI.  
+> > 
+> > It feels like it should be easy to use the other GPO pin in this case if that
+> > is present. 
+> >   
+> adi-gp0-mode should solve.
+> 
+> I wouldn't auto-set the mode by the position in the interrupt-names
+> array, but let me know your opinion.
+
+Mode when multiple are equally valid (for a given device wiring)
+is purely down to what the driver wants to do. There is no benefit in
+encoding that in dt.
+Thanks,
+
+Jonathan
 
 
