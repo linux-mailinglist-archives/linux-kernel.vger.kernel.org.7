@@ -1,108 +1,166 @@
-Return-Path: <linux-kernel+bounces-881839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38DEAC2909D
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 15:56:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B1C5C290AE
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 16:02:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E55F23AD322
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 14:56:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 431FD3A5E83
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 15:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F1C2236FD;
-	Sun,  2 Nov 2025 14:56:41 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE31623314B;
+	Sun,  2 Nov 2025 15:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=shazbot.org header.i=@shazbot.org header.b="TDBBXL62";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="1LVX56yf"
+Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E86F7E555
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 14:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A7E78F26;
+	Sun,  2 Nov 2025 15:01:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762095401; cv=none; b=R7R5cPTMDZf2crM/o8tj50LSKrQP/fxpcxCDxLF9QBr//ao0/brezCSEheT0pEYLfpDX9W8XR2KIc/yAdKFoX/e+uVkuJGjbu9zjKjRk7U7jA2BcYJjf0vdhH359O2dL12rH2hCKEMS6Wps6Ay18qkFPPLfMTRV0+x9na9Aj94A=
+	t=1762095710; cv=none; b=K0xjKN1rQALY4tyJAJZZXA5OAvj7uAQdNT8iLPEuE5KaieuoMPcxvMMXl+6QINm1Ba3wUhIOm7CV8N1YYWeCxv6xXPFBL6r+782DXRhSKT13ffZHgqE4n1p/T7TsP284c1YcA620Db8HrjSk5MCNK57sQIcJt9rilNDl8llE5yE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762095401; c=relaxed/simple;
-	bh=JaoJPGRUtwpCMkrmZPNmOtEuxsF52Ext86L+14IrcxA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=RCM6x2s8t4+2tYS5zRpN0j49SzmVPoOMDw5+U9fISxGCB1eumf4ENv4Bs2QpRYorg6UhkgwWZnU3uE3JuNwyAb+vUafUA3dRxgVtCAhGWIwAUWdWq9y3vGsUs3FSvfEpbSBdxeWuiOvlW4tJaMfzvk6SMpc4ZOped10Z3jH99qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-43321627eabso56161845ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 06:56:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762095399; x=1762700199;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VCzN/OKAI/d+RhcGHL8OyS8BRPptFXoLgo6Qiq8kwtw=;
-        b=inFlE9hrB/O1cONVA894o9BYUlqBkdf0+asUcPblVpZrTcQ47Xq9DiABrl9++1EwB8
-         02yOdDyUhynnc1SCsIveXqzN9xeH/qXPNp2sMFhE+M2nBLUoYIDA6klVyNOD1+9L3WSZ
-         R9YXuraNBKnDcVEt/h2gtmsvMyqhc+li9d2e5RvRoDnblMJr+zzyAdE9fOsEowhkrUo2
-         OvMx7FUDX8DqsmSW703kgAOwdQbnUTKi7UGQuQWMSlkCa3y57adZTCpbWXQkjiOi2uds
-         thnsRneTloLoKgdgDvIjD60eLX+lDJwkwaWX2sK+gKtbt7VxU/tiq/8Xlndd433R5FxV
-         bDYw==
-X-Gm-Message-State: AOJu0Yyb9rgbMtUGfO7XnIeSriYZHECydyreJ0uAeLQWuA7GFRxUMf1M
-	CsFCSCO54ys5dHDp+bdGcmN8wydZMqisVL7selBxoMMPr/6YKQdsrGv8nUg3HBiKqVQl6IdK9CL
-	pZWIvssHOdSI+AkrUxKoGf7oTLC7jYKlkmbyT4Cx8WGksCf3wXsTT/CDXH/U=
-X-Google-Smtp-Source: AGHT+IHH4KhLbnMzdr0YWp1yNJZfZ0O7arMvJ0cUIn3+aQsg0fD1ddTL8PcRG5E/qFswgnzU2M18wJCWK0QNwd6DUKEenseZq7UU
+	s=arc-20240116; t=1762095710; c=relaxed/simple;
+	bh=ygOZeXNo5dmpIzzDntq9AED2T39Ukb8mSYN4YQ/d+2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Tp089Gq6e2mZIQxAGANRuJIrAB1+aQ1uvqd28cOlUFAy8XX1YpyDyEgbhV21QjkFZIuStxPEB9wMhg9MoD7+tgyKx1CWvO1kOkCDE7uLkPaUPoLXA7sTYomyHFhAyfxM07rP9ADf8eND1R32m6K09PdtzDxlae2tEclFTagUVWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shazbot.org; spf=pass smtp.mailfrom=shazbot.org; dkim=pass (2048-bit key) header.d=shazbot.org header.i=@shazbot.org header.b=TDBBXL62; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=1LVX56yf; arc=none smtp.client-ip=103.168.172.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shazbot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shazbot.org
+Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id 5A52EEC00FA;
+	Sun,  2 Nov 2025 10:01:46 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Sun, 02 Nov 2025 10:01:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shazbot.org; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1762095706;
+	 x=1762182106; bh=0d6OEFnYJ2V3XAULn/TZmZlWcybfhiFmQJo6mbyVvXM=; b=
+	TDBBXL627U62EbSvE9rFypOnDsF59crhLTr4X2QKEvliSdqCxPjUyGG2gU1rfyy6
+	KFAxwA1gTIMopje4193uHXPRW+ufV9dJZdKqHBRfwc/N4IBiaOR98b4eAXEH0znN
+	TGEm6RPZFvDOWz2t1+XG+tu8SlR7C3lIquO0xndqYyPCLJ47ZApUOwrZ+fL1v05Y
+	UO6kQ6QwKw94v0SpG2cVHhgdcGhgAbGr8yyVtoD/NNB4QwWq9iuTPgKYtfwDhnMp
+	zc4DNh9MkV7/Al+RIrs1DZduD58Ug0u+UsN5KgH6wUZEtxvKc9YwIHTm4hVd6tSs
+	0CyeiKlKqOJyqaNciuiXOQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762095706; x=
+	1762182106; bh=0d6OEFnYJ2V3XAULn/TZmZlWcybfhiFmQJo6mbyVvXM=; b=1
+	LVX56yfNDSpIjbdRvoJO/pVaXhalPLO9zDUW46RhJ+NIFwjTzsxKz0U4lLijuDiE
+	/J3coBRe5aiRdAgOPuppxezWF1Kn0vGtaRJ50DbviHDspFXvN4/CsZxDPYFdrTQE
+	rQTnMDPaU17wxuuSeRSLCIFoTsQyLhm25SgJgE5MCtd6olWZ3wnfxKjXIlHhXu8w
+	AAt1cjfsRLEfHZrrZDRyeCx3bzQMm2DgNgFc3x8D1rq3/SGQUf0gVyKY6ZUAHtAk
+	GMrN0tWn0OhqQOH1gi2ycbisP7rKgjkeGTT6oLypSJHXOoGRXO+1vl0LQkXCAw2d
+	qLCgYO+qQmzuvtppNv+Cw==
+X-ME-Sender: <xms:V3IHacICu8ulgNi7o_gOHA7n7OIXpJl_EkrwhFpTuoWMNbSElXRs6g>
+    <xme:V3IHaS_eEi56epCAR71Ow3AZO5YiCeI-oW6OtskAXSaFLFE3lJ3Znpd7T6hKXX39l
+    jB_EqBTEDIfpaRz-GdwttQNDa_LzOaDIwPhNt2bHOF7kJ6YFJwVHA>
+X-ME-Received: <xmr:V3IHaVpqiAR7FIyLA4s1kUh8xeOXyBaoUionVfff_VNmwkaMImllMw6SCTs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujeehheeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkjghfgggtgfesthejredttddtvdenucfhrhhomheptehlvgigucgh
+    ihhllhhirghmshhonhcuoegrlhgvgiesshhhrgiisghothdrohhrgheqnecuggftrfgrth
+    htvghrnhepteetudelgeekieegudegleeuvdffgeehleeivddtfeektdekkeehffehudet
+    hffhnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hlvgigsehshhgriigsohhtrdhorhhgpdhnsggprhgtphhtthhopeefgedpmhhouggvpehs
+    mhhtphhouhhtpdhrtghpthhtoheplhgvohhnsehkvghrnhgvlhdrohhrghdprhgtphhtth
+    hopegshhgvlhhgrggrshesghhoohhglhgvrdgtohhmpdhrtghpthhtoheplhhoghgrnhhg
+    seguvghlthgrthgvvgdrtghomhdprhgtphhtthhopegrgigsohgvsehkvghrnhgvlhdrug
+    hkpdhrtghpthhtoheprhhosghinhdrmhhurhhphhihsegrrhhmrdgtohhmpdhrtghpthht
+    ohepjhhorhhoseeksgihthgvshdrohhrghdprhgtphhtthhopeifihhllheskhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtohepmhdrshiihihprhhofihskhhisehsrghmshhunhhgrdgt
+    ohhmpdhrtghpthhtohepjhhgghesiihivghpvgdrtggr
+X-ME-Proxy: <xmx:V3IHacPvm6yYAGFkJOoCwJMSLlRkDxe2mP1wwPGKFs_yQdMVw0EBhA>
+    <xmx:V3IHaXrLQtlZj7fWGRlOfeH0EMNmKki9CCwP4XF51mbUGiN7MdHcbQ>
+    <xmx:V3IHaTinpkeptwnvtlt4p2ISS1nkQs5QM83RIoLIlJ1Tl7W2DA4-lA>
+    <xmx:V3IHaY2_kf5P8v7ucB2Tj-fdZ8lmkzXzEpiEchjKzUpwizU-U37EHw>
+    <xmx:WnIHaYlbGcSJfLIFOTNM9Y5mg_T2bF-aTHDN-65hDt2_atGb1QiAIi8U>
+Feedback-ID: i03f14258:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 2 Nov 2025 10:01:41 -0500 (EST)
+Date: Sun, 2 Nov 2025 08:01:37 -0700
+From: Alex Williamson <alex@shazbot.org>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+ Logan Gunthorpe <logang@deltatee.com>, Jens Axboe <axboe@kernel.dk>,
+ Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Jonathan Corbet <corbet@lwn.net>, Sumit Semwal <sumit.semwal@linaro.org>,
+ Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+ Alex Williamson <alex.williamson@redhat.com>,
+ Kees Cook <kees@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Ankit Agrawal <ankita@nvidia.com>, Yishai Hadas <yishaih@nvidia.com>,
+ Shameer Kolothum <skolothumtho@nvidia.com>,
+ Kevin Tian <kevin.tian@intel.com>, Krishnakant Jaju <kjaju@nvidia.com>,
+ Matt Ochs <mochs@nvidia.com>, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+ iommu@lists.linux.dev, linux-mm@kvack.org, linux-doc@vger.kernel.org,
+ linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linaro-mm-sig@lists.linaro.org, kvm@vger.kernel.org,
+ linux-hardening@vger.kernel.org,
+ Vivek Kasireddy <vivek.kasireddy@intel.com>
+Subject: Re: [PATCH v6 10/11] vfio/pci: Add dma-buf export support for MMIO
+ regions
+Message-ID: <20251102080137.209aa567@shazbot.org>
+In-Reply-To: <20251102-dmabuf-vfio-v6-10-d773cff0db9f@nvidia.com>
+References: <20251102-dmabuf-vfio-v6-0-d773cff0db9f@nvidia.com>
+	<20251102-dmabuf-vfio-v6-10-d773cff0db9f@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:17cd:b0:430:a530:ede2 with SMTP id
- e9e14a558f8ab-4330d1db6a3mr120157365ab.24.1762095399149; Sun, 02 Nov 2025
- 06:56:39 -0800 (PST)
-Date: Sun, 02 Nov 2025 06:56:39 -0800
-In-Reply-To: <685ada22.a00a0220.2e5631.0089.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69077127.050a0220.29fc44.0023.GAE@google.com>
-Subject: Forwarded: 
-From: syzbot <syzbot+a65e824272c5f741247d@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Sun,  2 Nov 2025 10:00:58 +0200
+Leon Romanovsky <leon@kernel.org> wrote:
+> @@ -2391,6 +2403,7 @@ static int vfio_pci_dev_set_hot_reset(struct vfio_device_set *dev_set,
+>  				      struct iommufd_ctx *iommufd_ctx)
+>  {
+>  	struct vfio_pci_core_device *vdev;
+> +	bool restore_revoke = false;
+>  	struct pci_dev *pdev;
+>  	int ret;
+>  
+> @@ -2459,6 +2472,8 @@ static int vfio_pci_dev_set_hot_reset(struct vfio_device_set *dev_set,
+>  			break;
+>  		}
+>  
+> +		vfio_pci_dma_buf_move(vdev, true);
+> +		restore_revoke = true;
+>  		vfio_pci_zap_bars(vdev);
+>  	}
+>  
+> @@ -2486,6 +2501,12 @@ static int vfio_pci_dev_set_hot_reset(struct vfio_device_set *dev_set,
+>  			       struct vfio_pci_core_device, vdev.dev_set_list);
+>  
+>  err_undo:
+> +	if (restore_revoke) {
+> +		list_for_each_entry(vdev, &dev_set->device_list, vdev.dev_set_list)
+> +			if (__vfio_pci_memory_enabled(vdev))
+> +				vfio_pci_dma_buf_move(vdev, false);
+> +	}
+> +
+>  	list_for_each_entry_from_reverse(vdev, &dev_set->device_list,
+>  					 vdev.dev_set_list)
 
-***
+We don't need the separate loop or flag, and adding it breaks the
+existing reverse list walk.  Thanks,
 
-Subject: 
-Author: jkoolstra@xs4all.nl
-
-#syz test
-
----
-diff --git a/fs/minix/minix.h b/fs/minix/minix.h
-index d54273c3c9ff..ce62cb61186d 100644
---- a/fs/minix/minix.h
-+++ b/fs/minix/minix.h
-@@ -168,4 +168,6 @@ static inline int minix_test_bit(int nr, const void *vaddr)
- 
- #endif
- 
-+#define EFSCORRUPTED   EUCLEAN         /* Filesystem is corrupted */
-+
- #endif /* FS_MINIX_H */
-
-diff --git a/fs/minix/namei.c b/fs/minix/namei.c
-index a8d5a7e22b7b..8648d860ef0c 100644
---- a/fs/minix/namei.c
-+++ b/fs/minix/namei.c
-@@ -218,6 +218,13 @@ static int minix_rename(struct mnt_idmap *idmap,
-                if (dir_de && !minix_empty_dir(new_inode))
-                        goto out_dir;
- 
-+               err = -EFSCORRUPTED;
-+               if (dir_de && new_inode->i_nlink != 2) {
-+                       printk(KERN_CRIT "minix-fs error: directory inode has "
-+                              "corrupted nlink");
-+                       goto out_dir;
-+               }
-+
-                err = -ENOENT;
-                new_de = minix_find_entry(new_dentry, &new_folio);
-                if (!new_de)
+Alex
 
