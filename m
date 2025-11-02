@@ -1,284 +1,80 @@
-Return-Path: <linux-kernel+bounces-881883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D27E3C29211
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 17:24:55 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E8EAC291D8
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 17:21:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 58AB44E9EAD
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 16:24:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 210394E6DA5
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 16:21:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE4A2DEA76;
-	Sun,  2 Nov 2025 16:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C088E23AB9C;
+	Sun,  2 Nov 2025 16:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="ooPYsFBj"
-Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ozV/egWw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17722D9482;
-	Sun,  2 Nov 2025 16:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762100592; cv=pass; b=MR+indJbdRkmYcJE8HkX7hcrMrvk2cRS0y8qm+495jpm4Acqd24Z4Xbd8ccWDqNq21SJz9Wj31bjOxeUHIwJDal1FzqghjgtODL+qSuWFAK3ToEIuQ0fPigvesjL+/21f0oqIJ0/U8WiKILozOm08v7OdNRq9u+VC1B37vpO5wg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762100592; c=relaxed/simple;
-	bh=vqHSxlN8vW0IkYc9EJdmBchIKyWnN2BFQ2urrmra6ZI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Z9zZ0WkeOPoBi5WUJHKOuzmpslQRNLGiPxiCFRrLF/ngo8vy95sTSmAFgArWO2EL79Tau0GiY8d3rgWfCLYJVfMbp/wK4T5u5qovuNVgxQX6RUCWwO+nZ+A340S+zGGPfd96dc6xAreS2XWcIe8tRbiuJ+gdEtfazSw7RYfqNr8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=ooPYsFBj; arc=pass smtp.client-ip=195.140.195.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from monolith.lan (unknown [IPv6:2a02:ed04:3581:1::d001])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pav)
-	by meesny.iki.fi (Postfix) with ESMTPSA id 4d00Pg1dVkz1064;
-	Sun,  2 Nov 2025 18:23:03 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
-	t=1762100583;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Bp0L8CrmTikzBpE/RQPCqJwcoGrZ9MB/Tpu/IkmyOiI=;
-	b=ooPYsFBjXYBKBPevx7ySOJKLVRHr+0Ey3veZomA3VdYQZQlsghNrIbokARz4mc/xmGDSbL
-	Zh0BP7ikFNRRItzKQNvsmemk4i/IBJnNuWccr5UTKQ5XSF4btlo2pP48tsxa8sIhqkR/Zb
-	wJyvWx+scCBpB6JMkyEn2yeZPV72QYY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=meesny; t=1762100583;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Bp0L8CrmTikzBpE/RQPCqJwcoGrZ9MB/Tpu/IkmyOiI=;
-	b=aBBZSbSqKcotsgm7DPczOniUwJuQ89rsqxgY6yMHxSm42WHlnTq1VrGkbasU+UTfSEpO7R
-	AP5fU033idhVw+c7Fi3JCj3mFFPy2meGHRl5+f6BgC+QhukOD5rNKAaa5JoyWGdym2MxvS
-	s6Ac8DAvzx+DJU+Dji97IlzE9RlVaq0=
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=pav smtp.mailfrom=pav@iki.fi
-ARC-Seal: i=1; s=meesny; d=iki.fi; t=1762100583; a=rsa-sha256; cv=none;
-	b=wbc4d0UsTBtEJaa5gTLsqvJXVQc4tVy7WF8F14IKfBhp+eoPw7Dp9Gt+vqCm47o29Q7B4w
-	CtqL/5eegG8ZOveCdwbdHiSqoLUI1oTFgN7ftsAQ9gepLZqFJv62UbmbK/CONe+FGQA40o
-	KE+O/QvUSRzV9LBq37mkLFlQGlc3e7I=
-From: Pauli Virtanen <pav@iki.fi>
-To: linux-bluetooth@vger.kernel.org
-Cc: Pauli Virtanen <pav@iki.fi>,
-	marcel@holtmann.org,
-	johan.hedberg@gmail.com,
-	luiz.dentz@gmail.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 8/8] Bluetooth: hci_sync: hold references in hci_sync callbacks
-Date: Sun,  2 Nov 2025 18:19:40 +0200
-Message-ID: <e18591f264c50e15917cb8b9e5f9798d9880979d.1762100290.git.pav@iki.fi>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <cover.1762100290.git.pav@iki.fi>
-References: <cover.1762100290.git.pav@iki.fi>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 122A8EEBB;
+	Sun,  2 Nov 2025 16:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762100511; cv=none; b=TNh0Eb9y8/MXM1phnexQxv+CVv/Kef2C7PdIZnywoDbWFLvvGRlfPBb128EAccXAw5RmV7ajLVI6xCblHT4BddKOsPO+PFWNNndboagwEvHQdsKNK0HSX8J5XDezlBtYmdmBGggDJhJaTKNKoMHDIl6BRQwiSexL86xs7HfLH+U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762100511; c=relaxed/simple;
+	bh=gXqeffdC8YCM73WvgyFam5X3GEJR3b/ZWga15myZ0ao=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YTVAHFmQJ0NYE6r3mesK3otAE4V5Kj/aSJlPXc8hy+4qTVSyBz1GJd6oDg9SpQiMFYBHiwkOBRAHH34xAfKmM/jH/QVdnIlnd/SiM/ro2yqaHEKN1YJSGEsNEZcgZdDmSp1J6zC/OrcmpojhoL6BNDR8+aKI/B6JurDFh3U0rC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ozV/egWw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 061F7C4CEF7;
+	Sun,  2 Nov 2025 16:21:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762100510;
+	bh=gXqeffdC8YCM73WvgyFam5X3GEJR3b/ZWga15myZ0ao=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ozV/egWwWWjEgttFFRrDHfN4+CI7z1KSbwsf8mTNn5O6nSJZsOY5B5UakhAU46dtz
+	 K2liNHU/UTW+Cf4d+gcM2aD2g3u5b++oyAHPyCkKYaIISLbk8usv470oQqCay6GKGh
+	 UdwG/a06A64/GC9+D8fQUei463UfxyI+q9zVMHmvw0dqWs3fQISZdFoeVOyMhL0jZC
+	 fi9CW6UcTUlTpUKx4DadW8u5g4T1iXi8BzvAF/mOadr3mEvgb4kkn9red2IMFm3qmJ
+	 ydNFHgE6XrYAyObtMWW1xFpoUtp/Z9p8+ttHrambma5JOUF9cPXaJneR97ilv9dZuK
+	 50bSSaBs9IhVQ==
+Date: Sun, 2 Nov 2025 17:21:48 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+Cc: robh@kernel.org, broonie@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, devicetree@vger.kernel.org, perex@perex.cz, tiwai@suse.com, 
+	srini@kernel.org, linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, alexey.klimov@linaro.org, konradybcio@kernel.org
+Subject: Re: [PATCH v3 2/6] ASoC: dt-bindings: qcom,lpass-rx-macro: Add
+ sm6115 LPASS RX
+Message-ID: <20251102-glaring-cooperative-woodpecker-fdcacb@kuoka>
+References: <20251031120703.590201-1-srinivas.kandagatla@oss.qualcomm.com>
+ <20251031120703.590201-3-srinivas.kandagatla@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251031120703.590201-3-srinivas.kandagatla@oss.qualcomm.com>
 
-hci_conn_valid() should not be used on potentially freed hci_conn
-pointers, as relying on kmalloc not reusing addresses is bad practice.
+On Fri, Oct 31, 2025 at 12:06:59PM +0000, Srinivas Kandagatla wrote:
+> Add bindings for Qualcomm SM6115 SoC Low Power Audio SubSystem (LPASS)
+> RX macro codec. This SoC does not provide macro clock so reflect that in
+> the bindings.
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@oss.qualcomm.com>
+> ---
+>  .../bindings/sound/qcom,lpass-rx-macro.yaml    | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
 
-Hold a hci_conn reference for queued jobs so the pointers are not freed
-too early.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-This also avoids potential UAF if the conn would be freed while the jobs
-are running.
-
-Signed-off-by: Pauli Virtanen <pav@iki.fi>
----
-
-Notes:
-    v2:
-    - fix also hci_past_sync()
-
- net/bluetooth/hci_sync.c | 66 +++++++++++++++++++++++++++++++---------
- 1 file changed, 51 insertions(+), 15 deletions(-)
-
-diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
-index dc95a1ebe65e..d4420d5882d6 100644
---- a/net/bluetooth/hci_sync.c
-+++ b/net/bluetooth/hci_sync.c
-@@ -6962,12 +6962,23 @@ static int hci_acl_create_conn_sync(struct hci_dev *hdev, void *data)
- 					conn->conn_timeout, NULL);
- }
- 
-+static void hci_acl_create_conn_sync_complete(struct hci_dev *hdev, void *data,
-+					      int err)
-+{
-+	struct hci_conn *conn = data;
-+
-+	hci_conn_put(conn);
-+}
-+
- int hci_connect_acl_sync(struct hci_dev *hdev, struct hci_conn *conn)
- {
- 	int err;
- 
--	err = hci_cmd_sync_queue_once(hdev, hci_acl_create_conn_sync, conn,
--				      NULL);
-+	err = hci_cmd_sync_queue_once(hdev, hci_acl_create_conn_sync,
-+				      hci_conn_get(conn),
-+				      hci_acl_create_conn_sync_complete);
-+	if (err)
-+		hci_conn_put(conn);
- 	return (err == -EEXIST) ? 0 : err;
- }
- 
-@@ -6978,36 +6989,41 @@ static void create_le_conn_complete(struct hci_dev *hdev, void *data, int err)
- 	bt_dev_dbg(hdev, "err %d", err);
- 
- 	if (err == -ECANCELED)
--		return;
-+		goto done;
- 
- 	hci_dev_lock(hdev);
- 
- 	if (!hci_conn_valid(hdev, conn))
--		goto done;
-+		goto unlock;
- 
- 	if (!err) {
- 		hci_connect_le_scan_cleanup(conn, 0x00);
--		goto done;
-+		goto unlock;
- 	}
- 
- 	/* Check if connection is still pending */
- 	if (conn != hci_lookup_le_connect(hdev))
--		goto done;
-+		goto unlock;
- 
- 	/* Flush to make sure we send create conn cancel command if needed */
- 	flush_delayed_work(&conn->le_conn_timeout);
- 	hci_conn_failed(conn, bt_status(err));
- 
--done:
-+unlock:
- 	hci_dev_unlock(hdev);
-+done:
-+	hci_conn_put(conn);
- }
- 
- int hci_connect_le_sync(struct hci_dev *hdev, struct hci_conn *conn)
- {
- 	int err;
- 
--	err = hci_cmd_sync_queue_once(hdev, hci_le_create_conn_sync, conn,
-+	err = hci_cmd_sync_queue_once(hdev, hci_le_create_conn_sync,
-+				      hci_conn_get(conn),
- 				      create_le_conn_complete);
-+	if (err)
-+		hci_conn_put(conn);
- 	return (err == -EEXIST) ? 0 : err;
- }
- 
-@@ -7055,7 +7071,7 @@ static void create_pa_complete(struct hci_dev *hdev, void *data, int err)
- 	bt_dev_dbg(hdev, "err %d", err);
- 
- 	if (err == -ECANCELED)
--		return;
-+		goto done;
- 
- 	hci_dev_lock(hdev);
- 
-@@ -7079,6 +7095,8 @@ static void create_pa_complete(struct hci_dev *hdev, void *data, int err)
- 
- unlock:
- 	hci_dev_unlock(hdev);
-+done:
-+	hci_conn_put(conn);
- }
- 
- static int hci_le_past_params_sync(struct hci_dev *hdev, struct hci_conn *conn,
-@@ -7217,8 +7235,11 @@ int hci_connect_pa_sync(struct hci_dev *hdev, struct hci_conn *conn)
- {
- 	int err;
- 
--	err = hci_cmd_sync_queue_once(hdev, hci_le_pa_create_sync, conn,
-+	err = hci_cmd_sync_queue_once(hdev, hci_le_pa_create_sync,
-+				      hci_conn_get(conn),
- 				      create_pa_complete);
-+	if (err)
-+		hci_conn_put(conn);
- 	return (err == -EEXIST) ? 0 : err;
- }
- 
-@@ -7229,10 +7250,17 @@ static void create_big_complete(struct hci_dev *hdev, void *data, int err)
- 	bt_dev_dbg(hdev, "err %d", err);
- 
- 	if (err == -ECANCELED)
--		return;
-+		goto done;
-+
-+	hci_dev_lock(hdev);
- 
- 	if (hci_conn_valid(hdev, conn))
- 		clear_bit(HCI_CONN_CREATE_BIG_SYNC, &conn->flags);
-+
-+	hci_dev_unlock(hdev);
-+
-+done:
-+	hci_conn_put(conn);
- }
- 
- static int hci_le_big_create_sync(struct hci_dev *hdev, void *data)
-@@ -7283,8 +7311,11 @@ int hci_connect_big_sync(struct hci_dev *hdev, struct hci_conn *conn)
- {
- 	int err;
- 
--	err = hci_cmd_sync_queue_once(hdev, hci_le_big_create_sync, conn,
-+	err = hci_cmd_sync_queue_once(hdev, hci_le_big_create_sync,
-+				      hci_conn_get(conn),
- 				      create_big_complete);
-+	if (err)
-+		hci_conn_put(conn);
- 	return (err == -EEXIST) ? 0 : err;
- }
- 
-@@ -7299,6 +7330,8 @@ static void past_complete(struct hci_dev *hdev, void *data, int err)
- 
- 	bt_dev_dbg(hdev, "err %d", err);
- 
-+	hci_conn_put(past->conn);
-+	hci_conn_put(past->le);
- 	kfree(past);
- }
- 
-@@ -7363,8 +7396,8 @@ int hci_past_sync(struct hci_conn *conn, struct hci_conn *le)
- 	if (!data)
- 		return -ENOMEM;
- 
--	data->conn = conn;
--	data->le = le;
-+	data->conn = hci_conn_get(conn);
-+	data->le = hci_conn_get(le);
- 
- 	if (conn->role == HCI_ROLE_MASTER)
- 		err = hci_cmd_sync_queue_once(conn->hdev,
-@@ -7374,8 +7407,11 @@ int hci_past_sync(struct hci_conn *conn, struct hci_conn *le)
- 		err = hci_cmd_sync_queue_once(conn->hdev, hci_le_past_sync,
- 					      data, past_complete);
- 
--	if (err)
-+	if (err) {
-+		hci_conn_put(data->conn);
-+		hci_conn_put(data->le);
- 		kfree(data);
-+	}
- 
- 	return (err == -EEXIST) ? 0 : err;
- }
--- 
-2.51.1
+Best regards,
+Krzysztof
 
 
