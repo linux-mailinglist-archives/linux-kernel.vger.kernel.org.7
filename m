@@ -1,110 +1,98 @@
-Return-Path: <linux-kernel+bounces-881635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6496C289AB
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 05:20:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F4233C289B3
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 05:56:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7238E4E1689
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 04:20:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 035DC3AF18A
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 04:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C68BC221FB2;
-	Sun,  2 Nov 2025 04:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0211A1C84B8;
+	Sun,  2 Nov 2025 04:56:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GnqVasat"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UxSRBHlh"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A7A60B8A;
-	Sun,  2 Nov 2025 04:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9552A1C7;
+	Sun,  2 Nov 2025 04:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762057221; cv=none; b=JmgdexFS3tznrWmkdw58JhE3jh5q6rgAl4z+mkc+OeSgguWoOL5pGFSgcOPElOnXM4zQs0ON0I355sM9c4KQcU+9FM3wYhR2LrwU0OhB/8afb1X0e7SBven+DN/oOImIMoSht5q657l8CoPJotxvOS01kmVmQ03ZF3GBnm15wYc=
+	t=1762059373; cv=none; b=IQpCRFdyfSJWtOWYoAVDT0q9/Cu5Nqp93W5kK1Y+vjdf0piQM9bx4rkrz5aRTBHve2yDGWsc/TAHzlvdqzGoSf3cGRyJGx2fkPxQbFCVJQIH/JLqtks2tgKKZfGTbbBXEcdklzV2ag+I+2tCV0Em1KUlOnpJcD54PISddf3RQRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762057221; c=relaxed/simple;
-	bh=y5TVxKAyOCgMFvGo0rlHMg0W+6136/YlZOdBdVBVzes=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g+sLYMriXRVu7W4jYQlNeVlYKvBT77HieWBBXSQaSx5+QzgFii8eh1aUQyrFTRRe5HJwhaqpq6gtRk/lxqatT45AGAA7Fd/Cto/2ej4h5YOKOhIY5pez6hTMfgmHhfAi2+e12Gh1tmOrtg6ycNy9lC0r2D9AW6Bu5iWnu8sxKvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GnqVasat; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 669D9C4CEFB;
-	Sun,  2 Nov 2025 04:20:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762057220;
-	bh=y5TVxKAyOCgMFvGo0rlHMg0W+6136/YlZOdBdVBVzes=;
-	h=From:To:Cc:Subject:Date:From;
-	b=GnqVasatwpBHetXBEchw/OTJEe3fRKD7SUPVTBZFySb/AdIqUF90X7OXvSf0EZJ7k
-	 203o6tq9E1btrtC/CkmxasNmEXPosY9TV0zvkH/J1U/EKlt5b+GKAZ1yBawhS034iK
-	 Qyu4tBYWOModqcxt2H0On5tXwjIAaDhxtH7wzbQdTDRdQNByaLDqcu0P+dC+KMX4hB
-	 k8V5GNG7SY407fi8+zpsl86p46ofPSgC3rGa/CQkudKNd6W8Gt/PDJQbs4MLTj2ejU
-	 Y5uQX2aiVk5B8BsnPB+0meJKR0NW5IO5fXuON3yQacnpyL+bACB4KbIvGFpUtejOam
-	 3kJ20Yijn8lzQ==
-From: Eric Biggers <ebiggers@kernel.org>
-To: "Jason A . Donenfeld" <Jason@zx2c4.com>,
-	Theodore Ts'o <tytso@mit.edu>
-Cc: linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH] random: remove unused get_random_var_wait functions
-Date: Sat,  1 Nov 2025 21:19:41 -0700
-Message-ID: <20251102041941.74095-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.51.2
+	s=arc-20240116; t=1762059373; c=relaxed/simple;
+	bh=UKwMVO2jsy2bTC3jNyXPK8/hJrNqCl+KM/9kHX5Htmg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bb1i7feDrE8iwztSX5539yfLWKgyXySloXzKoOGoRdFZvS1nQMakRntDv/aUh3m/yXw0ZKA8hXwdnqYCTL/OTDTZ7gKkvzwuFjBRjtk9iqxViYJeP+cgTBFXoWbeWJ26+Yw3iokfBSStW1KkxPVEH+AdWUluChzEOP74fNhvyRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UxSRBHlh; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=Vb+txYW6y/jeP+lYT4EqkhxrKccykT/2pDwBZC5uhYM=; b=UxSRBHlh2I7n33THM6g0bha6f2
+	03l6hGtc+mGJHFWikUg6dOkMcbnx/e8Fe9ssNvOvn5ViinI0qgz6av5yDNoJqfmldN62nLU4DyPi6
+	14lkHsKOJW7LDhwVqgWg6GG4A9/buvy7lJlY2xIFa6vlCShFEjXbTj6SxXAqvbFSJZ0+btAsWwgGN
+	3rEaZev/Nvz3xSbS9ucvK4ngsvr3MqpKYATpVp3EzkftFxWzlNt5OsnxZ6tOa73JXMnnjEbrbo6Q5
+	yAirW/Qz+NsFl9POO2iRONeXWIxGLzpqIWct1sFu9mH66raZ/Ra6Svh/2WKsTVmdWvWCwTvxbGTVc
+	d4otM+pw==;
+Received: from [50.53.43.113] (helo=[192.168.254.34])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vFQ8M-00000008Ioo-2o3C;
+	Sun, 02 Nov 2025 04:56:06 +0000
+Message-ID: <d5584bfb-d138-451b-96e8-02347886349f@infradead.org>
+Date: Sat, 1 Nov 2025 21:56:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Documentation: intel-pstate: Use :ref: directive for
+ internal linking
+To: Bagas Sanjaya <bagasdotme@gmail.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Documentation <linux-doc@vger.kernel.org>,
+ Linux Power Management <linux-pm@vger.kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>, Jonathan Corbet <corbet@lwn.net>
+References: <20251101055614.32270-1-bagasdotme@gmail.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20251101055614.32270-1-bagasdotme@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-None of these functions are used, so remove them.
 
-This renders the two bugs moot:
 
-- get_random_u64_wait() used the wrong pointer type, making it provide
-  only 32 bits.
+On 10/31/25 10:56 PM, Bagas Sanjaya wrote:
+> pstate docs uses standard reST construct (`Section title`_) for
+> cross-referencing sections (internal linking), rather than for external
+> links. Incorrect cross-references are not caught when these are written
+> in that syntax, however (fortunately docutils 0.22 raise duplicate
+> target warnings that get fixed in cb908f8b0acc7e ("Documentation:
+> intel_pstate: fix duplicate hyperlink target errors")).
+> 
+> Convert the cross-references to use :ref: directive, which doesn't
+> exhibit this problem.
+> 
+> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 
-- The '#undef' directive used the wrong identifier, leaving the helper
-  macro defined.
+LGTM. Thanks.
 
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
----
- include/linux/random.h | 15 ---------------
- 1 file changed, 15 deletions(-)
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
 
-diff --git a/include/linux/random.h b/include/linux/random.h
-index 333cecfca93f..8a8064dc3970 100644
---- a/include/linux/random.h
-+++ b/include/linux/random.h
-@@ -128,25 +128,10 @@ static inline int get_random_bytes_wait(void *buf, size_t nbytes)
- 	int ret = wait_for_random_bytes();
- 	get_random_bytes(buf, nbytes);
- 	return ret;
- }
- 
--#define declare_get_random_var_wait(name, ret_type) \
--	static inline int get_random_ ## name ## _wait(ret_type *out) { \
--		int ret = wait_for_random_bytes(); \
--		if (unlikely(ret)) \
--			return ret; \
--		*out = get_random_ ## name(); \
--		return 0; \
--	}
--declare_get_random_var_wait(u8, u8)
--declare_get_random_var_wait(u16, u16)
--declare_get_random_var_wait(u32, u32)
--declare_get_random_var_wait(u64, u32)
--declare_get_random_var_wait(long, unsigned long)
--#undef declare_get_random_var
--
- #ifdef CONFIG_SMP
- int random_prepare_cpu(unsigned int cpu);
- int random_online_cpu(unsigned int cpu);
- #endif
- 
+> ---
+>  Documentation/admin-guide/pm/intel_pstate.rst | 133 +++++++++---------
+>  1 file changed, 70 insertions(+), 63 deletions(-)
+> 
 
-base-commit: 691d401c7e0e5ea34ac6f8151bc0696db1b2500a
 -- 
-2.51.2
-
+~Randy
 
