@@ -1,88 +1,99 @@
-Return-Path: <linux-kernel+bounces-881706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF044C28CA9
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 10:49:57 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3647DC28CAF
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 10:50:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F41E3ACD50
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 09:49:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 18B8A4E11C6
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 09:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34BFD1F4617;
-	Sun,  2 Nov 2025 09:49:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E30C426A088;
+	Sun,  2 Nov 2025 09:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TrwTANdO"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cs4UtvcD"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C00764A02
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 09:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8B32264CC
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 09:49:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762076991; cv=none; b=ZAEZdSAX9Rsltfd6CFxBXIgjSZ/4zCY/fewSEgAaW4cPM80PpPSXrCfW6g8SVO8cfz3l1qfWQsWNeXOfxkSN5+1RjAe3ZI1Y8U5VbqSTwC8s1psFFuanSCRKyVbls9QMT4zdqpGHe6XN/V+ZGZNWZ2luw3udqnagFSoz6vYo8vY=
+	t=1762076994; cv=none; b=VIQ/utcM/U5oTh5cwRETZ85LV9A3kXPCSbu0vDhmXvjNXZL8/GUK6XjVjv9cFxSn3eLzC1+4BdqTmJjv0CcCFaPSjepNE14wxxVyQi/efbqJUWy6s2bjrWt2KNI6djuUfxAfXQMedvtsMZ+Wq48+9QlLilxG1vFQvwkPZ8IaRiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762076991; c=relaxed/simple;
-	bh=uDhFaZn/7RLLiPI6WQyfElG0+z+PheaKLEArbrCc+iU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=V9H9fwMz7Ky3uj98E4v24MyBHg1l70Lm9T/IR1ONDpax4LU/5rK6rbQ0GWZXSmyN5Q9DbLAF6vMPTAvRbe0/oK6z5/R+rPAH8pdqRuzyQLhBTaHiIEhP9J/aiITM9AMoI1IRsQHgQRVC0SdA0WGbn7GxibXJYJoC1yDba+qvOEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TrwTANdO; arc=none smtp.client-ip=209.85.215.179
+	s=arc-20240116; t=1762076994; c=relaxed/simple;
+	bh=vzlHvi1hpehuDtzoLI80fmGg0yF2KnaOx/kv6IzWt0k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=sRF6oxg3cEfbEdvwmNq34WJBoWzSglOR+4FejQ6aVxfREc2lpP9DiOLTbKFeAEAp8Xi2UgIobus2Ek/kX3uDAFbOyUNO4Xw468/eKe0VsQQGzCoZ9LLSs4rKXumGJFS9W3xwpuYrKqtxRTel0dckUPLTTnXJR32gyj23ny0VPqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cs4UtvcD; arc=none smtp.client-ip=209.85.210.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b5a631b9c82so2211948a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 01:49:49 -0800 (PST)
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7a435a3fc57so3308587b3a.1
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 01:49:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762076989; x=1762681789; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CTo/fO8AwTUlnERfKnS0Hq9g4pzw1jJNDet5wuDWHQk=;
-        b=TrwTANdOOSO15q0RLyW+zaZbgl6XTHH5zBaOnCWIrD5biPG3L6gZe0aBysKITu8Zej
-         iVuJDBa6ldazaOrgtliUGxjrUxKH1u4LM8nuMN4sFsWXT+nHC4+SNkkArnE/DmQ1X2vN
-         +a10CT70PpIVyVdVewT0h8yjoxn4Doc+804YQWDGzV12zUnp+8PDimu5JhHhI5wuBArv
-         zBXr1ft0c56YT9G4Q4LeO4J/OMwGYrEVv2T0IOii59gSPc7COpIxRVDL6cAHD7njebUi
-         EWNylh87Dm2/X/oGxuN90CQ273RQOmH33D5/jFljDlufZ9z1Vnhw2AlWIhsBd2N2CXLn
-         C/TA==
+        d=gmail.com; s=20230601; t=1762076992; x=1762681792; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7GAo7QPFRSMtQ+F+v51lXmGXWMCiRMzi5C8xvTtplUQ=;
+        b=cs4UtvcDGXTvL6TbJgVEIK56EgbSZ8sB+rNtGI6/iKvRuGqIH33Bhl6XOD1cyL0kc4
+         FL+EFAGGx6zs19kz+G5X9X3nTVb2BVC3XD0oeoMeMBICYBpVB21R1DDTzmW5OEa2P793
+         NFBAWz87Z3OTE2VDYDkQp4cR4VUrJhXFaALegcYv60R6sEPPNTC9z6gxnbmGhlZe5VGp
+         1yJFAoZ0kTZtJ8ApMGOFSD1nR3LQ5eAj64ecm8bMAHrWsWHjvduDz+GkADcR7kyqog1A
+         00PQ73zo8HMUT80gdTT6bVXssDXq8GxaYl5vJfrImCL3nVtHsAzmTFxZ5cJbaNyBUh68
+         xLcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762076989; x=1762681789;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CTo/fO8AwTUlnERfKnS0Hq9g4pzw1jJNDet5wuDWHQk=;
-        b=aWUbwI6D+zhiBneH0jvkbr+GG8xHGU+d9lMrapfbUw+9PlEQaaqCWVyyJWVhX/qMUf
-         fEEfhNESgWipux7wdZ97Ylw+uGnyx6HODS8+TnlqL1L3fL85tPoaOt7Ggk/L8NEiwoVX
-         zec6f1bPn3gOZGFV+1nfInGpz7sWgGiUMceLueZgSUQnB9zgOpdFLnYTedGR4p+mz2b7
-         /dWKB8/zKeUD8OmfOGld54PP/oRCXCRKfjA7qmPnESzDAz4bfqDk6FgEm/8qQEgBOLrT
-         m2mkGYkRE1MECEcPdaFdBSmTn5ifelu29mzESTyOioaeUi6kC/5Fwq4Gkew06XzVvSoI
-         3zug==
-X-Forwarded-Encrypted: i=1; AJvYcCVxkkt9c+ljuK7C9IOtSe/1LSLgpzLvksiAeGR6W3VGMDG1k7XQZt8PncbTbm/pw9Ehdr7tJ80T0bWctpo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxK2Isj2HzyVPuDMuFZrd3Ci3duUA/dPKHk9+WhEQiAtmoeT8oE
-	6voLElFYLhzTgRP4crezEHYPxxxjDMKMtCaZBKz09m5MQEbBLzpfY8Hp
-X-Gm-Gg: ASbGncv2Mf720PA14w/EStldSkq3CyC2bV2gcQmvYA6ZqFx3kcVzj4ncJ80PDcCvA+H
-	TM4KVSitSi2WJnaWfcZBlFcTYpGD1NR7Z79Nwi3CrAbnWHENZaQhKs7zupNF8LYgDYkIRejQQZF
-	G3FXiR9PJsl+rJ+RaeoAvOEeCzh3v6wKvA53i4qIOJheKD2hLMB19QuPZdgy5pkznB26r42ofpP
-	bjIGWsm8KgBmn/6kSOI0hAOv8JMsp3MyKFJzWnsumSDkm5FKPJqstq0vsSgGkVkrchs1rcZP66O
-	C3T5oG22CnJ45Tp+yqOr8fjhNDKvxTdeatFL1Mvp982qqx7Ulft3PbqDNTTYtcSY93dlKeELYkQ
-	iVycOnTj26S2TCbPVSd5cGPf16ETQeXJQ8yDOrzGbv2iijLzQUTRpDbZxmJyU3GyHlrrEfGmiFn
-	LGkxhDRX4oKF5DwzaJ7nZk8pllJA1is5ec+9rcN3X3EM+Lhg==
-X-Google-Smtp-Source: AGHT+IG5uEZuIhw9XthpVR/gauM2QFGD0azbjoJ+g93MQt9Wwqr6xtlh/sIZ+JQcm6X627sSMbAf5A==
-X-Received: by 2002:a17:903:41c7:b0:295:62d:4ffa with SMTP id d9443c01a7336-2951a3b12dfmr134893555ad.21.1762076988895;
-        Sun, 02 Nov 2025 01:49:48 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762076992; x=1762681792;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7GAo7QPFRSMtQ+F+v51lXmGXWMCiRMzi5C8xvTtplUQ=;
+        b=Yo0LiOHuLYJL5T5kDFHIAyw1qpHTIhigUjDV3KLvb9fgj+KonclcpfvXNFHFsjr+ZJ
+         mBOFBxOvzdCuUCX/ibDu6hO1jH7ZTzkN1R2XkicNzGEiHFSL8xP2hPy2AKWQLjQQtr1j
+         vZtAOv/UC5zZnSXY0eLWYnIUlV8YDadDlK3aqkc0eJ5ScOyIP9QM8txLOIQrS/vGYxaM
+         q5K6pPrQU5n6UXDdgjhs8bIc/3WagJc+iVO4qiOqcpAtlIds938oVc0gfNsfnIBft4Ng
+         DAYMkyHue73SCujlDVx6+FMxJhG65d66bqXBPd3+eNasHPC7Rpyk1VeVw+e/h1NMe7Sp
+         RQig==
+X-Forwarded-Encrypted: i=1; AJvYcCUPLX8xNS/kez0deT/AULvtdIr8WlR9kKATUFp3Kin4NUbYsZyOg3I5v/4E71mNzG8+58MYfFD9AtsVb9U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzChAh1Zx3x0onJA1zNrcqWMFiKrZZfMNhrwM3pNfbr4v37ao2l
+	rAVzI9Tf+xJVuB9V8enWUYuNbJdnrMOjjO23v5+X0T7cRy7TnDF9b0mU
+X-Gm-Gg: ASbGnctow+NnXi8afKo2GPTlkFlhkhzw1F7PmL0ZCCQRHX9Kb/sFn0+7zJuDkKcloUZ
+	IpwsvgxMMuvNf4Lq0T40Srk55UySu3Ja0wXvOAvzDYrEMyOx/l1WKXw4p/kmtDaXP+LtSrSNabS
+	G5yMOwk3fSC+BvAizneHZcLXcGu3bReCA7ZhNzhL7TqSXIZVA9rYwtqlzf3uJFYXyMB8/wYbrLw
+	u81LeWvfiRg0PuBXYosQlNbmAuMCZP/3BIpb/hsRwS9hqcV7ZXGcqHHYYiInQN0SDhtSY/BXXH5
+	ouo+fVuzlY8kKoCsb4hqFiZgFEm6rWKb/DC9De9UMTD367KPVfxiFTC+V0xnhYH8AtVpQtQ0Rru
+	PC3Rbxf9XZ3uxDl+WEs3evJrZB5jryZLX5mxAhKAim7qZQnyofoDP+sBF6rhDIqODAb3oIjfy3e
+	ah4adnGF4G9c5RzV70W9G6iV3sOEyYs2L1U4twfHJK5bs7gw==
+X-Google-Smtp-Source: AGHT+IFjPZCZPoz2w60NDnASz0MjN7TYV8NIqgCnj6gVUAWRi7VL8ewmGqOYXuj4ykHVff4Lv7oBqw==
+X-Received: by 2002:a05:6a00:1793:b0:7aa:d434:69d6 with SMTP id d2e1a72fcca58-7aad443af35mr506394b3a.10.1762076991691;
+        Sun, 02 Nov 2025 01:49:51 -0800 (PST)
 Received: from ikb-h07-29-noble.in.iijlab.net ([202.214.97.5])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b9b8f2b5403sm812430a12.17.2025.11.02.01.49.47
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a9bad978c4sm2738154b3a.13.2025.11.02.01.49.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Nov 2025 01:49:48 -0800 (PST)
+        Sun, 02 Nov 2025 01:49:50 -0800 (PST)
 Received: by ikb-h07-29-noble.in.iijlab.net (Postfix, from userid 1010)
-	id 0F85011237FC; Sun,  2 Nov 2025 18:49:41 +0900 (JST)
+	id 0072711237FF; Sun,  2 Nov 2025 18:49:42 +0900 (JST)
 From: Hajime Tazaki <thehajime@gmail.com>
 To: linux-um@lists.infradead.org
 Cc: thehajime@gmail.com,
 	ricarkol@google.com,
 	Liam.Howlett@oracle.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v12 00/13] nommu UML
-Date: Sun,  2 Nov 2025 18:49:25 +0900
-Message-ID: <cover.1762075876.git.thehajime@gmail.com>
+	linux-kernel@vger.kernel.org,
+	Eric Biederman <ebiederm@xmission.com>,
+	Kees Cook <kees@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v12 01/13] x86/um: nommu: elf loader for fdpic
+Date: Sun,  2 Nov 2025 18:49:26 +0900
+Message-ID: <d0537389ac18acb03ae3bdaf25473d56f7e74f4f.1762075876.git.thehajime@gmail.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1762075876.git.thehajime@gmail.com>
+References: <cover.1762075876.git.thehajime@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,186 +102,100 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patchset is another spin of nommu mode addition to UML.  It would
-be nice to hear about your opinions on that.
+As UML supports CONFIG_MMU=n case, it has to use an alternate ELF
+loader, FDPIC ELF loader.  In this commit, we added necessary
+definitions in the arch, as UML has not been used so far.  It also
+updates Kconfig file to use BINFMT_ELF_FDPIC under !MMU environment.
 
-There are still several limitations/issues which we already found;
-here is the list of those issues.
+Cc: Eric Biederman <ebiederm@xmission.com>
+Cc: Kees Cook <kees@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: linux-mm@kvack.org
+Cc: linux-fsdevel@vger.kernel.org
+Acked-by: Kees Cook <kees@kernel.org>
+Signed-off-by: Hajime Tazaki <thehajime@gmail.com>
+Signed-off-by: Ricardo Koller <ricarkol@google.com>
+---
+ arch/um/include/asm/mmu.h            | 5 +++++
+ arch/um/include/asm/ptrace-generic.h | 6 ++++++
+ arch/x86/um/asm/elf.h                | 8 ++++++--
+ fs/Kconfig.binfmt                    | 2 +-
+ 4 files changed, 18 insertions(+), 3 deletions(-)
 
-- memory mapped by loadable modules are not distinguished from
-  userspace memory.
-- CONFIG_SMP is disabled as host_fs handling doesn't work with thread
-  local storage.
-
--- Hajime
-
-v12:
-- rebase with the latest uml/next branch
-- disable SMP and tls as those doesn't work with host_fs handling ([11/13])
-
-v11:
-- clean up userspace return routine and integrate to userspace() ([04/13])
-- fix direction flag issue on using nolibc memcpy ([04/13])
-- fix a crash issue when using usermode helper ([06/13])
-- test with out-of-tree kunit-uapi patches (which uses umh)
- - https://lore.kernel.org/all/20250626-kunit-kselftests-v4-0-48760534fef5@linutronix.de/
- - https://lore.kernel.org/all/20250626195714.2123694-3-benjamin@sipsolutions.net/
-- https://lore.kernel.org/all/cover.1758181109.git.thehajime@gmail.com/
-
-v10:
-- fix wrong comment on gs register handling ([09/13])
-- remove unnecessary code of early syscall implementation ([04/13])
-- https://lore.kernel.org/all/cover.1750594487.git.thehajime@gmail.com/
-
-v9:
-- rebase with the latest uml/next branch
-- add performance numbers of new SECCOMP mode, and update results ([12/13])
-- add a workaround for upstream change on MMU depedency to PCI drivers ([10/13])
-- https://lore.kernel.org/all/cover.1750294482.git.thehajime@gmail.com/
-
-v8:
-- rebase with the latest uml/next branch
-- clean up segv_handler to align with the latest uml ([9/12])
-- https://lore.kernel.org/all/cover.1745980082.git.thehajime@gmail.com/
-
-v7:
-- properly handle FP register upon signal delivery [10/13]
-- update benchmark result with new FP register handling [12/13]
-- fix arch_has_single_step() for !MMU case [07/13]
-- revert stack alignment as it is in uml/fixes tree [10/13]
-- https://lore.kernel.org/all/cover.1737348399.git.thehajime@gmail.com/
-
-v6:
-- rebase to the latest uml/next tree
-- more clean up on mmu/nommu for signal handling [10/13]
-- rename functions of mcontext routines [06,10/13]
-- added Acked-by tag for binfmt_elf_fdpic [02/13]
-- https://lore.kernel.org/linux-um/cover.1736853925.git.thehajime@gmail.com/
-
-v5:
-- clean up stack manipulation code [05,06,07,10/13]
-- https://lore.kernel.org/linux-um/cover.1733998168.git.thehajime@gmail.com/
-
-v4:
-- add arch/um/nommu, arch/x86/um/nommu to contain !MMU specific codes
-- remove zpoline patch
-- drop binfmt_elf_fdpic patch
-- reduce ifndef CONFIG_MMU if possible
-- split to elf header cleanup patch [01/13]
-- fix kernel test robot warnings [06/13]
-- fix coding styles [07/13]
-- move task_top_of_stack definition [05/13]
-- https://lore.kernel.org/linux-um/cover.1733652929.git.thehajime@gmail.com/
-
-v3:
-- https://lore.kernel.org/linux-um/cover.1733199769.git.thehajime@gmail.com/
-- add seccomp-based syscall hook in addition to zpoline [06/13]
-- remove RFC, add a line to MAINTAINERS file
-- fix kernel test robot warnings [02/13,08/13,10/13]
-- add base-commit tag to cover letter
-- pull the latest uml/next
-- clean up SIGSEGV handling [10/13]
-- detect fsgsbase availability with elf aux vector [08/13]
-- simplify vdso code with macros [09/13]
-
-RFC v2:
-- https://lore.kernel.org/linux-um/cover.1731290567.git.thehajime@gmail.com/
-- base branch is now uml/linux.git instead of torvalds/linux.git.
-- reorganize the patch series to clean up
-- fixed various coding styles issues
-- clean up exec code path [07/13]
-- fixed the crash/SIGSEGV case on userspace programs [10/13]
-- add seccomp filter to limit syscall caller address [06/13]
-- detect fsgsbase availability with sigsetjmp/siglongjmp [08/13]
-- removes unrelated changes
-- removes unneeded ifndef CONFIG_MMU
-- convert UML_CONFIG_MMU to CONFIG_MMU as using uml/linux.git
-- proposed a patch of maple-tree issue (resolving a limitation in RFC v1)
-  https://lore.kernel.org/linux-mm/20241108222834.3625217-1-thehajime@gmail.com/
-
-RFC:
-- https://lore.kernel.org/linux-um/cover.1729770373.git.thehajime@gmail.com/
-
-Hajime Tazaki (13):
-  x86/um: nommu: elf loader for fdpic
-  um: decouple MMU specific code from the common part
-  um: nommu: memory handling
-  x86/um: nommu: syscall handling
-  um: nommu: seccomp syscalls hook
-  x86/um: nommu: process/thread handling
-  um: nommu: configure fs register on host syscall invocation
-  x86/um/vdso: nommu: vdso memory update
-  x86/um: nommu: signal handling
-  um: change machine name for uname output
-  um: nommu: disable SMP on nommu UML
-  um: nommu: add documentation of nommu UML
-  um: nommu: plug nommu code into build system
-
- Documentation/virt/uml/nommu-uml.rst   | 180 ++++++++++++++++++++++
- MAINTAINERS                            |   1 +
- arch/um/Kconfig                        |  14 +-
- arch/um/Makefile                       |  10 ++
- arch/um/configs/x86_64_nommu_defconfig |  54 +++++++
- arch/um/include/asm/futex.h            |   4 +
- arch/um/include/asm/mmu.h              |   8 +
- arch/um/include/asm/mmu_context.h      |   2 +
- arch/um/include/asm/ptrace-generic.h   |   8 +-
- arch/um/include/asm/uaccess.h          |   7 +-
- arch/um/include/shared/kern_util.h     |   6 +
- arch/um/include/shared/os.h            |  16 ++
- arch/um/kernel/Makefile                |   5 +-
- arch/um/kernel/mem-pgtable.c           |  55 +++++++
- arch/um/kernel/mem.c                   |  38 +----
- arch/um/kernel/process.c               |  38 +++++
- arch/um/kernel/skas/process.c          |  37 -----
- arch/um/kernel/um_arch.c               |   3 +
- arch/um/nommu/Makefile                 |   3 +
- arch/um/nommu/os-Linux/Makefile        |   7 +
- arch/um/nommu/os-Linux/seccomp.c       |  87 +++++++++++
- arch/um/nommu/os-Linux/signal.c        |  24 +++
- arch/um/nommu/trap.c                   | 201 +++++++++++++++++++++++++
- arch/um/os-Linux/Makefile              |   3 +-
- arch/um/os-Linux/internal.h            |   8 +
- arch/um/os-Linux/mem.c                 |   4 +
- arch/um/os-Linux/process.c             | 139 ++++++++++++++++-
- arch/um/os-Linux/signal.c              |  11 +-
- arch/um/os-Linux/skas/process.c        | 127 ----------------
- arch/um/os-Linux/start_up.c            |  25 ++-
- arch/um/os-Linux/util.c                |   3 +-
- arch/x86/um/Kconfig                    |   2 +-
- arch/x86/um/Makefile                   |   7 +-
- arch/x86/um/asm/elf.h                  |   8 +-
- arch/x86/um/asm/syscall.h              |   6 +
- arch/x86/um/nommu/Makefile             |   8 +
- arch/x86/um/nommu/do_syscall_64.c      |  75 +++++++++
- arch/x86/um/nommu/entry_64.S           | 114 ++++++++++++++
- arch/x86/um/nommu/os-Linux/Makefile    |   6 +
- arch/x86/um/nommu/os-Linux/mcontext.c  |  26 ++++
- arch/x86/um/nommu/syscalls.h           |  18 +++
- arch/x86/um/nommu/syscalls_64.c        | 121 +++++++++++++++
- arch/x86/um/shared/sysdep/mcontext.h   |   5 +
- arch/x86/um/shared/sysdep/ptrace.h     |   2 +-
- arch/x86/um/vdso/vma.c                 |  17 ++-
- fs/Kconfig.binfmt                      |   2 +-
- 46 files changed, 1322 insertions(+), 223 deletions(-)
- create mode 100644 Documentation/virt/uml/nommu-uml.rst
- create mode 100644 arch/um/configs/x86_64_nommu_defconfig
- create mode 100644 arch/um/kernel/mem-pgtable.c
- create mode 100644 arch/um/nommu/Makefile
- create mode 100644 arch/um/nommu/os-Linux/Makefile
- create mode 100644 arch/um/nommu/os-Linux/seccomp.c
- create mode 100644 arch/um/nommu/os-Linux/signal.c
- create mode 100644 arch/um/nommu/trap.c
- create mode 100644 arch/x86/um/nommu/Makefile
- create mode 100644 arch/x86/um/nommu/do_syscall_64.c
- create mode 100644 arch/x86/um/nommu/entry_64.S
- create mode 100644 arch/x86/um/nommu/os-Linux/Makefile
- create mode 100644 arch/x86/um/nommu/os-Linux/mcontext.c
- create mode 100644 arch/x86/um/nommu/syscalls.h
- create mode 100644 arch/x86/um/nommu/syscalls_64.c
-
-
-base-commit: 8e03c195cc4d82100291500f772f85c686653748
+diff --git a/arch/um/include/asm/mmu.h b/arch/um/include/asm/mmu.h
+index 07d48738b402..82a919132aff 100644
+--- a/arch/um/include/asm/mmu.h
++++ b/arch/um/include/asm/mmu.h
+@@ -21,6 +21,11 @@ typedef struct mm_context {
+ 	spinlock_t sync_tlb_lock;
+ 	unsigned long sync_tlb_range_from;
+ 	unsigned long sync_tlb_range_to;
++
++#ifdef CONFIG_BINFMT_ELF_FDPIC
++	unsigned long   exec_fdpic_loadmap;
++	unsigned long   interp_fdpic_loadmap;
++#endif
+ } mm_context_t;
+ 
+ #define INIT_MM_CONTEXT(mm)						\
+diff --git a/arch/um/include/asm/ptrace-generic.h b/arch/um/include/asm/ptrace-generic.h
+index 86d74f9d33cf..62e9916078ec 100644
+--- a/arch/um/include/asm/ptrace-generic.h
++++ b/arch/um/include/asm/ptrace-generic.h
+@@ -29,6 +29,12 @@ struct pt_regs {
+ 
+ #define PTRACE_OLDSETOPTIONS 21
+ 
++#ifdef CONFIG_BINFMT_ELF_FDPIC
++#define PTRACE_GETFDPIC		31
++#define PTRACE_GETFDPIC_EXEC	0
++#define PTRACE_GETFDPIC_INTERP	1
++#endif
++
+ struct task_struct;
+ 
+ extern long subarch_ptrace(struct task_struct *child, long request,
+diff --git a/arch/x86/um/asm/elf.h b/arch/x86/um/asm/elf.h
+index 62ed5d68a978..33f69f1eac10 100644
+--- a/arch/x86/um/asm/elf.h
++++ b/arch/x86/um/asm/elf.h
+@@ -9,6 +9,7 @@
+ #include <skas.h>
+ 
+ #define CORE_DUMP_USE_REGSET
++#define ELF_FDPIC_CORE_EFLAGS  0
+ 
+ #ifdef CONFIG_X86_32
+ 
+@@ -190,8 +191,11 @@ extern int arch_setup_additional_pages(struct linux_binprm *bprm,
+ 
+ extern unsigned long um_vdso_addr;
+ #define AT_SYSINFO_EHDR 33
+-#define ARCH_DLINFO	NEW_AUX_ENT(AT_SYSINFO_EHDR, um_vdso_addr)
+-
++#define ARCH_DLINFO						\
++do {								\
++	NEW_AUX_ENT(AT_SYSINFO_EHDR, um_vdso_addr);		\
++	NEW_AUX_ENT(AT_MINSIGSTKSZ, 0);			\
++} while (0)
+ #endif
+ 
+ typedef unsigned long elf_greg_t;
+diff --git a/fs/Kconfig.binfmt b/fs/Kconfig.binfmt
+index 1949e25c7741..0a92bebd5f75 100644
+--- a/fs/Kconfig.binfmt
++++ b/fs/Kconfig.binfmt
+@@ -58,7 +58,7 @@ config ARCH_USE_GNU_PROPERTY
+ config BINFMT_ELF_FDPIC
+ 	bool "Kernel support for FDPIC ELF binaries"
+ 	default y if !BINFMT_ELF
+-	depends on ARM || ((M68K || RISCV || SUPERH || XTENSA) && !MMU)
++	depends on ARM || ((M68K || RISCV || SUPERH || UML || XTENSA) && !MMU)
+ 	select ELFCORE
+ 	help
+ 	  ELF FDPIC binaries are based on ELF, but allow the individual load
 -- 
 2.43.0
 
