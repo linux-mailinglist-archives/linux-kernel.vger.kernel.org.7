@@ -1,103 +1,184 @@
-Return-Path: <linux-kernel+bounces-882087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CBAAC29953
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 00:04:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC582C29970
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 00:05:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E2E83A3DAC
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 23:04:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 897173A3565
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 23:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF69723D29A;
-	Sun,  2 Nov 2025 23:04:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C937B21D3E8;
+	Sun,  2 Nov 2025 23:05:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="GVZ31j4j"
-Received: from hall.aurel32.net (hall.aurel32.net [195.154.113.88])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aLkdI3On"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC94846F;
-	Sun,  2 Nov 2025 23:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.113.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913181494CC
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 23:05:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762124657; cv=none; b=f+Nw6XTWtou/qOSSTTwZLer7j77v6/XuNd0Yimy+FeYA8tdpEpP09uSUbMuTz1OvydW795a6zkpxsmJUFtlDnHfc6DE5VRX9VirbQ3C3oTroUtgmqPdSEjtViq3ikWLpsZxluTYnzUpwcYK/1JrtsPp6oWVK5lx/Hix3VmEL2xw=
+	t=1762124718; cv=none; b=Lc63ZTYCpJasPAla/I3dxSIY1o4ZqCpkpXpQgOCyi8tYF+cVOli4IABLWl5kAXKqEz3o7DM6NR5aOMpbEZSiSpEYLQQdEr3HE0nSbR4l/BvXrUeGkxTMeHtV4KtwsfiT2sJRe7Ji3EZpMBMiR/FSnNd/T41x97nFoLZMWdJQSUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762124657; c=relaxed/simple;
-	bh=t28XyJHhYqsEmY/twa7Txt1DmZbhP56O7Q0XUm71p9w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=odnL6AEnsBg3WG58gncvBexc5UI/qCdfkWhO2pY5xxOs9qy6GWr9+TNwnuRbEiYgcSFHcD/HmbLaj7T5PqXpXUqhBb4hp0KjH6kyjZ68eJzqXBwk8HwpObbHZOCz1DbkeZYjZ5JJeMpubock2807M2JfCwT9oSZt6TCuOOfMX8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=GVZ31j4j; arc=none smtp.client-ip=195.154.113.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
-	; s=202004.hall; h=Content-Transfer-Encoding:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Content-Type:From:Reply-To:
-	Subject:Content-ID:Content-Description:X-Debbugs-Cc;
-	bh=hql68ROiQCHicq3ZGKu3LUefXDb5IsbisbAg9bD5eXA=; b=GVZ31j4joqWfYmv2qfzUWYuTzl
-	FvYMq7y+iDON7MAqRHqiwoXxxgVAFnK4foK4USdvf0wSofOva8eY8ghFWij3fRats5SSaSN1xrKzD
-	aS0EgXHAfYS6QBeDWDuCBPVQ6Hf83IRygZF79xXP0QX0qtd6dZKIDUE6zFNE1ClJjvzGSpw223kIl
-	CWZ1ouRqaZzqrtECsFNwLfpnvK9zZp+4qmXO7u2viZC6EGw8sHZKTPdJVm3kN/kS/2UUfnlSJ0pA/
-	6pfnDF294odgdQF6A6nxXP0zmnrZkV29dzReKTdHwpUoM4y/vVX4qbopj/jdr4y+hcnD8psVh0SjO
-	LmSn8kdg==;
-Received: from [2a01:e34:ec5d:a741:1ee1:92ff:feb4:5ec0] (helo=ohm.rr44.fr)
-	by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <aurelien@aurel32.net>)
-	id 1vFh7A-00000006eMI-0qhm;
-	Mon, 03 Nov 2025 00:04:00 +0100
-From: Aurelien Jarno <aurelien@aurel32.net>
-To: linux-kernel@vger.kernel.org,
-	Lee Jones <lee@kernel.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Yixun Lan <dlan@gentoo.org>,
-	Paul Walmsley <pjw@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	linux-riscv@lists.infradead.org (open list:RISC-V ARCHITECTURE:Keyword:riscv),
-	spacemit@lists.linux.dev (open list:RISC-V SPACEMIT SoC Support:Keyword:spacemit)
-Cc: Aurelien Jarno <aurelien@aurel32.net>,
-	linux-pm@vger.kernel.org (open list:SYSTEM RESET/SHUTDOWN DRIVERS),
-	linux-riscv@lists.infradead.org (open list:RISC-V SPACEMIT SoC Support),
-	spacemit@lists.linux.dev (open list:RISC-V SPACEMIT SoC Support)
-Subject: [PATCH v5 2/2] mfd: simple-mfd-i2c: add a reboot cell for the SpacemiT P1 chip
-Date: Mon,  3 Nov 2025 00:02:00 +0100
-Message-ID: <20251102230352.914421-3-aurelien@aurel32.net>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20251102230352.914421-1-aurelien@aurel32.net>
-References: <20251102230352.914421-1-aurelien@aurel32.net>
+	s=arc-20240116; t=1762124718; c=relaxed/simple;
+	bh=wG/TB/yBUOa5PfKMTvyXFGJg1zEUMEZaOs6dpKyYV7A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=r6o4PftsnhwlQTHju/dtDpxWDRDW94wbJIbwrLzPty1R0sf//EWbCsLJrQi7rAGQjLw0hsLw83fdmvTT3Zf4jkbn3AaQv6X+M0w8pLnmEsWql6L8uulV4c57DhF3diaF6PV3khpuipixqFGk3p0gIwBFmQ8y18rONHMkC9QilDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aLkdI3On; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-781206cce18so4099407b3a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 15:05:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762124715; x=1762729515; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=G9e650DG6U+kXqpscGtLd6L6xEiKmB25aynSmc10qEE=;
+        b=aLkdI3OnCtFO0HXjkzM6imiwinX3OSIMU9W7MD233HjHOQzdmKhFOtyFsBOWXmh0li
+         7snj5gN9mpKhfq4eot96hmrO85CDmaFFVZnBRVdq8sa1aDVBX8Pe5bUDAMrJ/j0uwjzI
+         4/Miq1eknCSpiDcV+9pufXRVDUSouDqr6iNmAjB0wSjvsInUFT7zV9gJW1sNgquen1lG
+         +nh5DjooAOZCIjkcMafdCiBWgeOo7P2q8M3x8UgE9OxzUVjFO89iShnI398MWOANyiiv
+         D+lBfXeAslxj39DN8GBKx8X9gKTMFe0rFxl59mHm5e+t1e+ai+qkMGBkPeWs13LAiOxT
+         tzog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762124715; x=1762729515;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G9e650DG6U+kXqpscGtLd6L6xEiKmB25aynSmc10qEE=;
+        b=KDvO2FFnT4p9i1DZmKR6+lZFbrYPer23jf646qOImfD8MDhCyI44ZLkOqq82szpz6w
+         GSa6e6wDWR5fxfc7QTMOLBtZ7X3kJLh1j3pZ2cviFCA6bSulw3hVxlk9dKnexpUsPXsA
+         qITpvVX3I2cy3u2P8iHusI1Y6QOzrMPv493FihO2cg8B9bOTX8lOS1QaJA1UZojQNWRm
+         K2Rd53kgOeZwLcahtMos3EPUJHnrSZ1wVeQgShknPHDNmtfJ24r4mn221JO1qqgR+nrA
+         5dicVORfDTDKy10ohhv5Ce2/t9ZXUETUR8UNO0oHjypTfzrrTgAc58+1v17+Hl+OxZDN
+         VlNA==
+X-Forwarded-Encrypted: i=1; AJvYcCXQ+5flV0YuDDpeLQ4LZcqqp+YlsBWZ70ZgZ8PBMpDXITYm6umJMRo+xEiRGEpz1dHJFzSY0/FbNqREN+o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPMcvq2+S33ZmGr4M9UhAbEhVKbW3k0VbfxIH3wtrZtzC0fLqA
+	429ATADNFPeJ0YJ+OOiSYBQ9lQCgKD5dtvb9ZV1q5PEeJIdePltuT+xN0uCAzQ==
+X-Gm-Gg: ASbGncte8oIfrDQu2oYI+QDyBR4slp8VIsktP4oE96wOpaTLvIQ+s6bGV6q53A+n0L1
+	m1r55AR9ofeNxFrhCPuLv+bsenuC85O9/MMrNen5BKDOB6qBEB4rHpdoT1HNNv5ZjfScpk4Agf7
+	SXcR54eg0W7W9Hr4ShQrAUgw5CYGN/7FI1P3qkNFXPKLna8CeMjpAjJfrwZfz0d2SdZW5NAfPTb
+	vM3dxSWLOdsLRKlNnlj4uQzxaUbz/CAkwJRj7Zw4jTuhN09V+loGO0S7LIX3hh5hRd29BdPyqQ8
+	a1pagW6evXIFJlxTSgpisn0n1IDYkcZ21Iew1zgfdcLcM9iU0gVaDO1uzHYdEeK+F9MuwyuHCyP
+	mM6o/+d66lZ/wvvihtsE5O8x/jys/2feILDjxcNO/VJF57yOD+pI4pSfYfClI1tPMgMgJ78Zjdx
+	BYfBBl1PniK5aGOXd+Q0EUWik+6ev+cFHUYvP6rqqJqQvMf5DZoJ8+zkNqrXA=
+X-Google-Smtp-Source: AGHT+IGlJTgyGSsMQo9sCsFMIGOIdR99/zS9ytPFEE1UNZomlcRHBMl9rppbeMpOnObIopGkj8r8XQ==
+X-Received: by 2002:a05:6a00:2d11:b0:7aa:1e36:207 with SMTP id d2e1a72fcca58-7aa1e3610efmr3976233b3a.15.1762124714851;
+        Sun, 02 Nov 2025 15:05:14 -0800 (PST)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a7d897e764sm9005578b3a.3.2025.11.02.15.05.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 02 Nov 2025 15:05:14 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <4a11992c-023e-4d8d-859f-9abb659ed4c1@roeck-us.net>
+Date: Sun, 2 Nov 2025 15:05:13 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] watchdog/diag288: Fix module comment typos
+To: Zoe Gates <zoe.blair.gates@icloud.com>, hca@linux.ibm.com,
+ gor@linux.ibm.com, agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+ svens@linux.ibm.com, wim@linux-watchdog.org, linux-s390@vger.kernel.org,
+ linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <fe09cb336dca5f277769b115dae55b9639dc92a7.camel@icloud.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <fe09cb336dca5f277769b115dae55b9639dc92a7.camel@icloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add a "spacemit-p1-reboot" cell for the SpacemiT P1 chip.
+On 10/27/25 21:01, Zoe Gates wrote:
+>  From ebec904b22077c3ebd0a18956397a9b0540a2714 Mon Sep 17 00:00:00 2001
+> From: Zoe Gates <zoe@zeocities.dev>
+> Date: Mon, 27 Oct 2025 22:14:50 -0500
+> Subject: [PATCH 2/3] watchdog/diag288: Fix module comment typos
+> 
+> Correct spelling and capitalizaion in the header comment so the
+> documentation reads cleanly.
+> 
+> Signed-off-by: Zoe Gates <zoe@zeocities.dev>
 
-Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
----
-v5: no changes
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
 
- drivers/mfd/simple-mfd-i2c.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/mfd/simple-mfd-i2c.c b/drivers/mfd/simple-mfd-i2c.c
-index 0a607a1e3ca1d..542d378cdcd1f 100644
---- a/drivers/mfd/simple-mfd-i2c.c
-+++ b/drivers/mfd/simple-mfd-i2c.c
-@@ -99,6 +99,7 @@ static const struct regmap_config spacemit_p1_regmap_config = {
- };
- 
- static const struct mfd_cell spacemit_p1_cells[] = {
-+	{ .name = "spacemit-p1-reboot", },
- 	{ .name = "spacemit-p1-regulator", },
- 	{ .name = "spacemit-p1-rtc", },
- };
--- 
-2.47.2
+> ---
+>   drivers/watchdog/diag288_wdt.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/watchdog/diag288_wdt.c
+> b/drivers/watchdog/diag288_wdt.c
+> index 887d5a6c155b..656b937f7653 100644
+> --- a/drivers/watchdog/diag288_wdt.c
+> +++ b/drivers/watchdog/diag288_wdt.c
+> @@ -6,10 +6,10 @@
+>    * to CP.
+>    *
+>    * The command can be altered using the module parameter "cmd". This
+> is
+> - * not recommended because it's only supported on z/VM but not whith
+> LPAR.
+> + * not recommended because it's only supported on z/VM but not with
+> LPAR.
+>    *
+> - * On LPAR, the watchdog will always trigger a system restart. the
+> module
+> - * paramter cmd is meaningless here.
+> + * On LPAR, the watchdog will always trigger a system restart. The
+> module
+> + * parameter cmd is meaningless here.
+>    *
+>    *
+>    * Copyright IBM Corp. 2004, 2013
 
 
