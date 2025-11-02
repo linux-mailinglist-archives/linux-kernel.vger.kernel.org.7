@@ -1,265 +1,134 @@
-Return-Path: <linux-kernel+bounces-881629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0922C2897F
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 04:00:49 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D5B9C28986
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 04:19:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 297891892D9B
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 03:01:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 075EF4E16F4
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 03:19:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0BF4223710;
-	Sun,  2 Nov 2025 03:00:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B94A12C544;
+	Sun,  2 Nov 2025 03:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="YQebKXkr"
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azon11012017.outbound.protection.outlook.com [40.107.209.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ba+ni+Nk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4254A1397;
-	Sun,  2 Nov 2025 03:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.209.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762052441; cv=fail; b=UOR4SIIDFCMaOJLjUdBfGbaC7zOAHLo05nMsKj6Spiy1vj9mEOpZjL6Y3irj8gIgaf/UhH88W9HtXf/0/O2DWt0IItOqEoG0uICVkNx8R5txng8xzoWUBT4pPHBehGs47hCHw9czoC10bCsS54MG01B5ZlO3lHa5+cU1/xvOClM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762052441; c=relaxed/simple;
-	bh=H/+Px0jz2H86allKxixMh8eMnrs0FqdK/wHJwZjZxCw=;
-	h=Content-Type:Date:Message-Id:From:To:Cc:Subject:References:
-	 In-Reply-To:MIME-Version; b=timAdmu3rLPuYYJ1/K0LGva6kXtUgsqKn0RYM6AwS7XbY45rxCVjUsrxgywHXgc3nDreMOKi+YO8/u8XotIlOHfsrIX12rBbRelAZGd2xEg2hSRSKmXhh+5X+q5Nxvq1d3Tx+wCwvws35lNFrhErSTYMkRHJPJgq/YRe8VidOfM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=YQebKXkr; arc=fail smtp.client-ip=40.107.209.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OhOff9TbWHNg/YjRAr0LxrlR1MSgtzRYjfqwXx/Y9Mh24BqLtNnWWinyOo1NUd+V2000l6b9WvuRBQt98IBowl4s2dUveP6DMrUTmdGmFF0u03WnPWJwWZWHnpq6YbCeDaXPeUpYiZSVAkgGjyob4yRspZlhH2aWl46B6UwJazvu/2RW71/yKos98LTLDrFrfXDVOEyh+Pir9eqeRdXr4H2qPYsjnuHFQvBYY1/7jWKBkqynbx3zXRB3baJCTb4yrgjpATJm2cpEoG6JuD9uEFzLNzPxtrqWykYi0X0JXsy1M72R7bLaxReD8w/hBqf4yzKyfi59242AHa+3r4w4pg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GXVN12ewAb5GAPuAyyS9dirvGhoP6iO5hk0VFw+0Dl0=;
- b=cZ0Z2RvGE7wfbAZ1X8P69y40N6FIWHL1RRurpfLj3Ui85LZQFaqrgEQTyQdpdSqPPNzUaWmaOepjBsyRqpEKkFKTD+PY7pVosUFrxgO4fodIQ4nBhl62FhNBl2m8NE1mR8W6Too+FvuVc1dP7/ZN8/yixgfgQvIBWyftwf5E+2bZ6IioO4iCGULkX7bdtsg1mpPa1cELCgpLVNoH8Va9t9tDbQVAHpgjcTf6pLgKHDSr5gRhhJNeLkUUfFWRZcUs7pCvOGObBqyQE08mrrDEMDJyJ9rkDRh4pbC/wYdnA+Fvq//CQvIvjTphrn/UmMPxVHK7naAzoz6NHYOIEEvzXg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GXVN12ewAb5GAPuAyyS9dirvGhoP6iO5hk0VFw+0Dl0=;
- b=YQebKXkrqvK1UXvzeX+FQnQbbOMLxxx9+m7dZt0B6FjGOR3fehWugLd7qmFJ9EfLnZPHG2jShklFM6ObOqXZ1OSZMkHgTAY50ym8w8QY8RNqNzDRp08u2FuSzfbamjpbfHb7T3NC7wF1ulh4NJBER2gFt8q3TBuRRUNDVqlev6ZVzHVXsGs4ZVfSNQE5IecYhWdTAw/m4TSNbL2MUYByWH9vwWseEKQt7/SOzCCt3/X7e2SqJ5cG5xsdWlrdMC5XcyxTTe4IarkwWxlcsHQwd4Eij1IVOfOzViOadBg24ZX4Y0gm/Eh2+beigF8q8oXsv2Aq9l0H1jOBkJYHq0TcBg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by DS7PR12MB9476.namprd12.prod.outlook.com (2603:10b6:8:250::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Sun, 2 Nov
- 2025 03:00:37 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9275.013; Sun, 2 Nov 2025
- 03:00:37 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 02 Nov 2025 12:00:33 +0900
-Message-Id: <DDXVGH53P7OW.1UWNG3SM9S0A1@nvidia.com>
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Dirk Behme" <dirk.behme@gmail.com>, "Alexandre Courbot"
- <acourbot@nvidia.com>, "Danilo Krummrich" <dakr@kernel.org>, "Joel
- Fernandes" <joelagnelf@nvidia.com>
-Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <dri-devel@lists.freedesktop.org>, "Alistair Popple" <apopple@nvidia.com>,
- "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
- "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "David Airlie" <airlied@gmail.com>,
- "Simona Vetter" <simona@ffwll.ch>, "Maarten Lankhorst"
- <maarten.lankhorst@linux.intel.com>, "Maxime Ripard" <mripard@kernel.org>,
- "Thomas Zimmermann" <tzimmermann@suse.de>, "John Hubbard"
- <jhubbard@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>,
- <joel@joelfernandes.org>, "Elle Rhumsaa" <elle@weathered-steel.dev>, "Yury
- Norov" <yury.norov@gmail.com>, "Daniel Almeida"
- <daniel.almeida@collabora.com>, "Andrea Righi" <arighi@nvidia.com>,
- <nouveau@lists.freedesktop.org>, "Dirk Behme" <dirk.behme@de.bosch.com>,
- "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-Subject: Re: [PATCH v6 4/5] rust: Move register and bitfield macros out of
- Nova
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20251003154748.1687160-1-joelagnelf@nvidia.com>
- <20251003154748.1687160-5-joelagnelf@nvidia.com>
- <5a5bd549-f5b7-41ec-b493-bda427d1218f@de.bosch.com>
- <DDDQZ8LM2OGP.VSEG03ZE0K04@kernel.org>
- <DDDR8DIW6K4L.21F81P26KM64W@nvidia.com>
- <7dd6c190-2598-4a68-8431-e03e41b276ea@gmail.com>
-In-Reply-To: <7dd6c190-2598-4a68-8431-e03e41b276ea@gmail.com>
-X-ClientProxiedBy: TY4P286CA0045.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:405:36e::12) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AE7D4A3C
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 03:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762053576; cv=none; b=ZD2nSCU9U4X1ghyg3lZJFUgreef2Blpm7gmSRhxipfI46w96pGV35R/enQ6G+DHxcUNZ7HUEs7zd4zV4yOnl2XDbakzea7g0T9gKzP+u69kXh/VqBcLzXmWq3ctqEbAlG1G7A7rGEDere7whnL+W20xnZu9AFwkR6hLiQoEC/SE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762053576; c=relaxed/simple;
+	bh=OpfpPIF0FAOQIQ6J9k/BzwstL3azrmYNk+tF3wh9dfw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Od9uJT4q0UpiWSltdszwfKud0k9t4E9dvm/cIxMu1I43RUjyNc0t8yLk2R/enOeID9a/7ptuAYqqNrJtHXUFiHZLLYRLq1AhvRj0RNqJiDD20d5bh/rpSemwiZxqwN7knOCVmaASM+uE/Og788/S2WOE3zynJnnyo4L0r+EHnK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ba+ni+Nk; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762053575; x=1793589575;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=OpfpPIF0FAOQIQ6J9k/BzwstL3azrmYNk+tF3wh9dfw=;
+  b=Ba+ni+Nk9f1dyPr//Ksu82bT0DDIX5SFQKtmbZQrp9gDUUfvvFhcybfD
+   z9ExDxVJDEUnMvK9ifyEfd0luzEx6WiulTiESmV0N8+CmltQyJ7w2QlGu
+   bdoM5I/SThseJSXMtH27lI+ZsqdaiXUQyzNdCeH0NqHFrWTiJBhsHxlTq
+   ARyaRrD6nLRpB913I91xb4Jj+J9GCZp/Ou9WsB01eEyusXlvndZjTg4Cq
+   7ZR/14FalyUeYmwE0yVb38zbFdbu8YBC+6UlLjHiK/r0GKuQaRi+fv3E+
+   09kcVqe+Enb/+a+Xpz8ToHT4Gfa9nrqn2LGV1Cnu3Nwq9L11jc01ry3Da
+   w==;
+X-CSE-ConnectionGUID: Dkzcj54AQqCGPdC4aqeHsg==
+X-CSE-MsgGUID: pnJOPkJYTjS4APvb9uFytQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11600"; a="74462361"
+X-IronPort-AV: E=Sophos;i="6.19,273,1754982000"; 
+   d="scan'208";a="74462361"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2025 20:19:34 -0700
+X-CSE-ConnectionGUID: bmCNi3uWRMKvOsBgy1+5Sg==
+X-CSE-MsgGUID: /+w3pXMMT2mYSFdhF3gSCg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,273,1754982000"; 
+   d="scan'208";a="187295258"
+Received: from kvalverd-mobl1.amr.corp.intel.com ([10.125.182.77])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2025 20:19:33 -0700
+From: Marc Herbert <marc.herbert@linux.intel.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>,  Thomas Gleixner <tglx@linutronix.de>,
+  Ingo Molnar <mingo@redhat.com>,  Dave Hansen
+ <dave.hansen@linux.intel.com>,  x86@kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86/msr: add CPU_OUT_OF_SPEC taint name to
+ "unrecognized" pr_warn(msg)
+In-Reply-To: <20251101100325.GAaQXa7UF-Ru2yqdI1@fat_crate.local> (Borislav
+	Petkov's message of "Sat, 1 Nov 2025 11:03:25 +0100")
+References: <20251101-tainted-msr-v1-1-e00658ba04d4@linux.intel.com>
+	<20251101100325.GAaQXa7UF-Ru2yqdI1@fat_crate.local>
+Date: Sat, 01 Nov 2025 20:19:27 -0700
+Message-ID: <m2bjll15q8.fsf@kvalverd-mobl1.amr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|DS7PR12MB9476:EE_
-X-MS-Office365-Filtering-Correlation-Id: f53dfb75-3469-4644-ddc4-08de19bbff79
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|10070799003|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?MXVoanljZHNHYm1xeXdOY0V3a2VyYytjNkRjbDBJL2JKcGZucXptVVNXTmda?=
- =?utf-8?B?Y2dZMStKNHdWK2QvNTRKeG1jYXlCbmFPR3p1TlJFbU5PZ05Sd1hCNk5PbVlV?=
- =?utf-8?B?d3d0RzdCMFpuRk5rQlljYzExNkZObUF1U09qczV6bUtwT2cxeDdUc0k3MGgr?=
- =?utf-8?B?K3o2SENvVXZhUk53OVpjcVJPSkpmSHNydW1Xcm0zOStpbjNFSW1qK0IybUlj?=
- =?utf-8?B?NDVRRUMwSlBpcXM0Sk1PRDhCbGlMc0U0a3M1bXJFRUNKd2E4LzNLUEtQVnRm?=
- =?utf-8?B?Uit3UFBhd3gzY3BqNEJNWEo0OG9vYThEYjkvcG5EaTVnaEllbU5kMnNKU2dZ?=
- =?utf-8?B?QjdVZjd1VldkeEtzMXhuVzk1RHl4Y1liZUtKMFFLT0pVTmVEUkZ0Rkc3djh4?=
- =?utf-8?B?eWFCUFA1TDZuM2Z4U0poK2RFakpLMHlIazc5dXR3K3pPVTNxS3RlN2dWTzk3?=
- =?utf-8?B?WWtaYUhNc1JFaE02V2xDQWRnUkt6S1hHalBiaHAwejBmNUtFY2RNUEZpUmRB?=
- =?utf-8?B?c2dvTHhYN20zcDdJTmpVbnR2aHpIWHpZekY2bjh1YzFNdk1nSFVPKytFeGpI?=
- =?utf-8?B?Rk1tMjRmTUt5Yk1GdHJZYmdwKzZTNE5GSTBkSjFuVmRKdG52eS9VWHB3WTFq?=
- =?utf-8?B?NGNBZ1p2bXcyYll3MWp2Z2hIMjZ1VXIyVTdHQ3JKU291R1p6WVAyRFd0c1ho?=
- =?utf-8?B?aGs0MTZWdDRTaHVYQmRrTi8xS08welhiYnhLVG5hUjdMQ09TUFdaWkorK3B4?=
- =?utf-8?B?YlNTajR6eStlMkJoSTVGZnp2MzVUS2dnNWZPd0dQaytEVmNUdHVaTW1ORjE2?=
- =?utf-8?B?VTdWYlc5VnlkT1kzdTY3d1I3a2JhOTBiRU9UVld5dkYvdHdpTC80ak9qL01v?=
- =?utf-8?B?R2E0cWdGd2JSWjA1RWtjeTNFZTdXUTJiVXJ3VUhoUDdJcUNBTWZLVkZHTkg3?=
- =?utf-8?B?UXVnR0lYYXFGS2lFc2lYVDBMWU00Z1dyTHpxVFp3ajVOTFpIeHl0L1l4TTVl?=
- =?utf-8?B?MWxWblk4RU44N0RhUGJzUk42S0dSL1lJUlZyK3FYMnlHYUpUSjY1eUpOLzRu?=
- =?utf-8?B?eXFHc1hMNVJBKzZqTE8rSUJINDNhQWJmZU41WTNFaVBGMGNtZVNtTjVlV0hP?=
- =?utf-8?B?L3lMSzNqcG9zU0JWVkY4V2luT1FvSHVoRTh5eHd5UGRhY3poaUxidFlnUk9F?=
- =?utf-8?B?UGI3dzdZSU9FalhITE9xTWZRaVdqdU91cFBsM1RQeVhIeG02RWwrZy84NnNO?=
- =?utf-8?B?VnlyQVl5SjVMRFNmeDhlUERTSkE5T0hyY2t3UldPb3IrTUJ1V3ZCK2hNdVE0?=
- =?utf-8?B?bEpWTjZLRGNBci82dldVWnozSWdHSmFkS0JEaGNOczNrTU9zRHpzcFk3ZzV1?=
- =?utf-8?B?Z29wUTA5a3ZsQkp0Tzk0UXZXOVZEQTcyTzRXREMrOHFabC9panlaWVBPU2U3?=
- =?utf-8?B?bE9LQXRlcDEvT3RiN1p4dEZSRk42TmVZYnM2YnRTRFR0YlJEWWgyRzVxUm82?=
- =?utf-8?B?UXNCZXU5ZTRuK0ZiYlU3c2ZwSm5ZQUhoVlN3b09KcTZoQjkzRnNsSklMMjlu?=
- =?utf-8?B?S0tpNituampEOTRtRUxtS3N2MXgzaDJFdmRsQVBOdlRJSDRYcGhBRm9vd2pZ?=
- =?utf-8?B?MDdRZ3dvcUNBZ1RPMjNET2kwcC94U3U4NlhVRGFiR1dPZ2pnYlFsNVJIVWJa?=
- =?utf-8?B?aUJVdU15Vlppb1U4bWRnZWNvNUQ3cmFPREl3U2dac1pVVnVBMWhXeEtuMlY4?=
- =?utf-8?B?ditNNWRZd2hYUFF4OWN4RHVHamFLaW41cThscHZOTnJoVFNNdUExOEFsTk1l?=
- =?utf-8?B?UGtIM1Q1WndhK3MwZG5ONFVrc2tPL0VpZkRUZ3BQaEdlelVzKzVKeWYrajRr?=
- =?utf-8?B?SlgyQlBISHJickQ4c05xbFVZMElkRkhrdElFbWVEbUszbGlkMW11VFVGVFBJ?=
- =?utf-8?Q?ZnE+owbcqrPdy+v8eH7i/7P/Td2Io4En?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aU5ORmhzSWQ2eXdONkV6TnJPY2tleXJ4VnlsR0VLb2djWVN2YUlDOVBSMGha?=
- =?utf-8?B?Tkx3b1dXdENEZk1wb0loWVpmWWFCbkt0WlFoMGZwMitmMzdsUlZ2bFlyOXRj?=
- =?utf-8?B?WVdxVEhpYXN0L24yZUpMeTlvait6cjZpOVVKQk1LM3JBQmZDMnBxdGFVVHpK?=
- =?utf-8?B?U2RUVVNBZ0kzMVhNR0JZK21XYVVSKzFNbmV1bnBRQk5qeTJDKzNiT2N2cjEw?=
- =?utf-8?B?QW42N0p4dWN2cHFJZ3JXK3BZbkFPVEZpSGczRE53dVh0UzRWQ28zL2s1NGNE?=
- =?utf-8?B?TVM0UllWa1EyeS9sR1JJNi9WK1JhaUtSSWN1SUo3MVBJK1lhSnJBaUhRVVdw?=
- =?utf-8?B?NDYvaGlDaHJrVXVqR1ZETGFsQS9DNnBpR0dQSkNUOHJBL2NxbDJPMTlORzVF?=
- =?utf-8?B?NVpEdm5Hb0pGQStVbitsUXZDVmcrTkx2WDRhbGcyTFJGYVdPemF0SzcydjdT?=
- =?utf-8?B?K1NqS0U1clU2UUR1dW1tNDh6NWtPN2tqS2ZSSXB1ajJ0UGdkUWxJNnVxT1BB?=
- =?utf-8?B?ZDJDczVZdFZKSVFJTnJ3d2duOG55ZHJzbys4eStKSmtadE9CcGo5Q1B0amJE?=
- =?utf-8?B?Vk5sMW5CQkVMc3JvUm94RitYWnN2c2tlbmFmU0pvUWJxcHV4dlovYnVJRGtK?=
- =?utf-8?B?S1BvajkwdUVLV3RESzFibEttNjZIdjhLeFdIMlphUkFuV2xvWUUzTjYzZmhj?=
- =?utf-8?B?MTQzRG9GMFo0Z2VJMWk1WDArdnFtMzZjOVg2MU40eFNDdE53KzlqYUVaL2po?=
- =?utf-8?B?Q0l4aFd1L0doS3pjblBmUzhRQmlmYm9IZEY1RGNYYWx1dkNENE9lYjFsbHRJ?=
- =?utf-8?B?eWZwNU1xWGcxM0JwV2FtbmkzT3ZCK1NuL1ROUmRvSFVOMlp0UVlpaWU0RUNL?=
- =?utf-8?B?RjlxSmQvck1ETHhLQ1ZVTHFVRHZJRmxLekFNRnFkRklQV0dvSDJIbGhBQXRI?=
- =?utf-8?B?MkR0aFdmNE1GZzl3YzFRREtBenNIcVRWMjBMWDgwN0E4bThxMzBZSzlNRlZz?=
- =?utf-8?B?REUvRUFFNWJybzZUcWxwSGRCZ3N3T0dWcjc1bHhFZXo0NkVEN1RFaWQ5QVND?=
- =?utf-8?B?azFQTFh6TnV6ZXY2b2lhUnd0QVBrVEYrWm9FN1dEMHFYaE5qSFRxMUpkbm9J?=
- =?utf-8?B?N2VjYkhYRFA3TGE5akkwNitDMjNzU055Q2xhaXY3UWNXM1FkdUhFWk0yVm1k?=
- =?utf-8?B?UFB5MFpuVHB2MlFWWE40eHl2TkhERnl5d01vNEhzZG1OajZwN29Qd2I3bEww?=
- =?utf-8?B?M0RoTGxXY1kyZ3czOE9EMWlzOURLZ2o5M21uK0psdXE4cEw1WXh1SEYwdTN4?=
- =?utf-8?B?R1ZFY295eHVsUnVweVFRR2dzMnNnMXZsQWRaaGFTbTFFRU50M3o2ZERqeDNX?=
- =?utf-8?B?RWFUUGsrc0s5ZGVVTE0yQ2NMenl3c0szdThwUkp5VFc1UUdOdGZnWEowc2li?=
- =?utf-8?B?a2lyL3BrZTVod1R1MjRTT0hmYlJvZXkwTzVVRVZxZXo1QzgzQlhGTE10S011?=
- =?utf-8?B?bHE2ZHZSbDBlODl4MS8vQnhlaXgySHVaOVJZamdodFdWUCsvVEtGQm9GbWMr?=
- =?utf-8?B?RHVmdVo5UEVTZjJxZmdsRlBLOU5JRngrS1RPcjZDcGdWeUlZdDRpekplRVho?=
- =?utf-8?B?aXJrb0NtbkZzdnlwekFTWnBSMkpmaUxNSHJqTytSd0J1bmFweW40NGpHQWJt?=
- =?utf-8?B?dHllcnhRdW1xcFJIVjhNbFVLT3JLcDh0M01URk85VmlkeXBHcHJyYis5Vjc1?=
- =?utf-8?B?ckg3d2RZZ1QxSmtJSjYzVVpuVjhoUjUxUWpWQnlaWXBFcytnbndoV0kxd0xO?=
- =?utf-8?B?dmZvZ05ZZ1NnMWxwMy8xKzh6Sk10cU5HWUFYL2MveUpVb2hsYk9RL2FtNlV5?=
- =?utf-8?B?SExoT3UzWmt6eStDaStvQlc4UVVJMHFiL1hJaXFPQkRBQUt5UFVORzhiMURs?=
- =?utf-8?B?SzZLeTR6Q0dKNzYrVXQrWVdUMFBHZkNMOVZxc0lyaHM0TXZlOVRjU3V3RGtC?=
- =?utf-8?B?a0l2U2E4dUlPWTYwMmdzWGZvUlFjQThVSnRTSFUwSGdDeXBoMjhxZUZhQlJ5?=
- =?utf-8?B?M21qTjVpZDlUV1NKZUoxYkpFd1JkcEVETXBvUDRFSDVWZzFXbkwxdDcyNTRu?=
- =?utf-8?B?K3RVNlJ5RUlxSTFJdTV5OU9jdS9Vc3k1OThKZzFuQkEzNnBXcnFROGV4b2ZT?=
- =?utf-8?Q?7gQKxxJlUpTiT0uQ9Shm9P+DoiEBafj/Ao5+zUzmv53z?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f53dfb75-3469-4644-ddc4-08de19bbff79
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2025 03:00:37.1003
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2ayH3KxVjirYFekxGhUrCq2XnVDjwbRf5tcFI2FZN2SlRJi5lw+RsxpdVekDlPA7E1xW2tG5VvAm5amMBN13iQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB9476
+Content-Type: text/plain
 
-On Sun Nov 2, 2025 at 3:51 AM JST, Dirk Behme wrote:
-> On 09.10.25 13:28, Alexandre Courbot wrote:
->> On Thu Oct 9, 2025 at 8:16 PM JST, Danilo Krummrich wrote:
->>> On Thu Oct 9, 2025 at 8:59 AM CEST, Dirk Behme wrote:
->>>> Assuming that register.rs is supposed to become the "generic" way to=20
->>>> access hardware registers I started to have a look to it. Some weeks=20
->>>> back testing interrupts I used some quite simple timer with 4 register=
-s=20
->>>> [1]. Now, thinking about converting it to register!() I have three=20
->>>> understanding / usage questions:
->>>>
->>>> * At the moment register!() is for 32-bit registers, only? So it can't=
-=20
->>>> be used for my example having 8-bit and 16-bit registers as well?
->>>
->>> Yes, currently the register!() macro always generates a 32-bit register=
- type
->>> (mainly because nova-core did not need anything else). However, this wi=
-ll of
->>> course be generalized (which should be pretty straight forward).
->>>
->>> Having a brief look at the TMU datasheet it looks like you should be ab=
-le to
->>> treat TSTR and TCR as 32-bit registers without any issues for testing t=
-he
->>> register!() macro today. I.e. you can just define it as:
->>>
->>> 	register!(TSTR @ 0x04, "Timer Start Register" {
->>> 	    2:2    str2 as bool, "Specifies whether TCNT2 is operated or stopp=
-ed.";
->>> 	    1:1    str1 as bool, "Specifies whether TCNT1 is operated or stopp=
-ed.";
->>> 	    0:0    str0 as bool, "Specifies whether TCNT0 is operated or stopp=
-ed.";
->>> 	});
->>>
->>> Same for TCR.
->>=20
->> Patch 2 of this series actually adds support for 16 and 8 bit register
->> storage.
->
-> Hmm, how to use that with the register!() macro? I mean patch 2 adds
-> support for different storage widths for *bitfields*. But looking at
-> patch 4 [2] it looks like *register!()* still uses $name(u32)? With
-> that it looks like that the register!() macro still just supports 32
-> bit registers? Or what have I missed?
->
-> What I'm looking for is a way to specify if a register is 8, 16 or 32
-> bit. Using the example from above something like
->
-> register!(TSTR<u8> @ ....
+Thanks Boris for looking at this!
 
-Errr indeed, you are correct. The `register` macro's syntax has not been
-updated to take advantage of `bitfield`'s storage types, and `u32` is
-still hardcoded as of this series.
+Borislav Petkov <bp@alien8.de> writes:
+> Taint flags are expensive and we don't have flag for everything. And when
+> userspace is poking at MSRs, that's similar to putting the CPU in
+> a out-of-specification mode of sorts. So I took what's closest.
 
-This looks like an oversight - a register is basically a bitfield with
-some I/O, so making it support storage types should be trivial. I guess
-this hasn't been done yet because Nova is the only user so far, and we
-don't need/want to explicitly specify a type for each register since
-they are invariably `u32`.
+I tried to be very thorough to justify the change but I did not mean
+some alternative implementation was available, sorry if I gave that
+impression. I just struggled to make sense of some unrelated crash logs
+and that's really all from my point of view. I mean all for now at
+least.
 
-But it wouldn't look good to change the syntax of `register` after
-moving it out, so I agree this should take place before the move. The
-same applies to the visiblity feature.
+> What is not clear to me is why do you need to dump the fact that it tainted
+> here and dump the taint flag too?
 
-One way to avoid a update all the declarations so far would be to give
-Nova its own `register` macro that invokes the one in `kernel` with
-the relevant parameters hardcoded.
+You mean the "%s", tainted_flags[OOSPEC].desc bit? Not sure I understand
+your question. That was just a way to re-use the existing string. But as
+found by the kernel test robot, that was a mistake because
+tainted_flags[] is not exported to modules. I missed that msr.c could be
+compiled as a module, apologies. I've removed that in v2, I want to make
+this change even simpler and append this instead:
+
+  pr_warn( "... (pid: %d), tainting CPU_OUT_OF_SPEC.\n",
+
+> Also, why aren't you using print_tainted()... 
+
+AFAIK print_tainted() shows all current flags, not just
+CPU_OUT_OF_SPEC. So a full print_tainted() display would not make
+unambiguous which specific flag is being set, even more so considering
+writing MSRs can happen a very long time after boot. But, much worse:
+the CPU_OUT_OF_SPEC taint loop has not even been set yet when this
+pr_warn() is run...
+
+> ...  if that is really necessary?
+
+This patch is not "really necessary". Its purpose is only to save hours
+or even days for people trying to make sense of crash logs. In my ideal
+world, it should always be easy to tell "who tainted what when" from the
+logs without an corresponding expert and/or searching the source code. I
+admit this could harm job security ;-)
+
+This is not unusual, for instance TAINT_OOT_MODULE is not printed
+literally in the logs yet this other pr_warn() clearly points the finger
+at mod->name(s) in the logs:
+
+  pr_warn("%s: loading out-of-tree module taints kernel, mod->name);
+
+Some other flags have a much narrower range which makes the lack of
+finger pointing a non-issue.
+
 
