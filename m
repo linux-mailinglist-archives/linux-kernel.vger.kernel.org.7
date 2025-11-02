@@ -1,166 +1,106 @@
-Return-Path: <linux-kernel+bounces-881751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 797A3C28DA8
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 11:57:52 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35723C28DB4
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 11:58:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 854844E3397
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 10:57:49 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6C178342501
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 10:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0B526CE33;
-	Sun,  2 Nov 2025 10:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB0226CE33;
+	Sun,  2 Nov 2025 10:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NyHvOvgA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="NRmcqafn"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B80D1F03D7;
-	Sun,  2 Nov 2025 10:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6E41E2858;
+	Sun,  2 Nov 2025 10:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762081064; cv=none; b=dEGBtAaLfDMsvAySeZqbXIxz6M82u0QJjNIPAeSHsJlktfEGu3mJWf7FVGzY64vmw3EDoLhoy1oYlr+Gar9Moe8jNHsv9pkrkoRAQYZvT+q5x0qtpa6ViNVpo1K1JcQ28XNeXtOJEXsYsX7zCAzwzNmOaoh8IRy9YfSRNetc6sY=
+	t=1762081117; cv=none; b=l5RIcR5vivj5SgqQ/LHT3gNj8e4HHA12Hgegzc5HbSc+nyVHSisHRWiaJkTstiN1/59iZOGG2/YTk77Ujgw9oWbXUgsiGco98gU0ZPw3bJ5DIkIm35khBpCl9HdhePeaI+fsQbW7qc6B1d42qEnGSpYg1DLeSxnUcuR/+wdw3+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762081064; c=relaxed/simple;
-	bh=uLQa0+JNOtcBBJFSW4uRxnOcmxwG+4MK7ICI1UcB7FM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LaTwO1tyTJGThdvM+AToUrMKF9eUbAoKyEL4WhG+dIpjocfz82pojMuisNIJi1yfVepGbRf5RGj0dxB0ZE4n+5aNZh4JyvsC6ggJ2cpIGhBBA6d7/+fQ2rDFI+ucrSo+LnFADLt7uABX+XjdMxRt1F4Izu24JbAiDvpvYXTM2K4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NyHvOvgA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B448C4CEF7;
-	Sun,  2 Nov 2025 10:57:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762081063;
-	bh=uLQa0+JNOtcBBJFSW4uRxnOcmxwG+4MK7ICI1UcB7FM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NyHvOvgAhU7NRbPMmOZHtGqriqvGcdznEjucjpaALtEnC1Of/Q2lAbkiXXDVdjc0L
-	 5EgVBRiCK6FzwbaJrvdbWyOmrqQltEUYfbEmArtylxBHKMpHhTSyfN27objDzdvgi7
-	 Vortwa6I/2via68fJ/Y2LkhsvGIFHq+52g4wy5Wq1is487vYXrMhmfCzH+g6a9LIdO
-	 0J9p5pVerl58yfSJVhVG0NUg8k1fxdP48gVdfxhIlpKoUJKnfitMNKXXgnpbxV3d0Y
-	 nRVg91+nYVFq3r+ciYuSB0Pv4Vd2CCsb7F9Ax8+9CuaS+qYeXHnILyGa3Sq7PwYVFO
-	 Vx23Rf008d+Jw==
-Date: Sun, 2 Nov 2025 10:57:11 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: <robh@kernel.org>, <conor+dt@kernel.org>, <linux-iio@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 1/3] dt-bindings: iio: amplifiers: add adl8113
-Message-ID: <20251102105653.09941b27@jic23-huawei>
-In-Reply-To: <20251031160405.13286-2-antoniu.miclaus@analog.com>
-References: <20251031160405.13286-1-antoniu.miclaus@analog.com>
-	<20251031160405.13286-2-antoniu.miclaus@analog.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762081117; c=relaxed/simple;
+	bh=aew/h4VxOgs+yx33tXMMjIxjaK3UGZB4L/7TZnoTK10=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XS2E/nxL6i5Qp5f0J89bBDVv61YH1K2I58VGo99mS262RG6oeiva2BB/IvuXozd8HssqXKfev3nhnNCN4t6RkDJDvI96tuq9VtrYTRO1iIZlz8eRPLIieSx6h3hjMvOZoCp3LjlzyV4wPMvPeJLxc339ykajL7zk8XYqN+IF/Qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=NRmcqafn; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from ideasonboard.com (mob-5-90-50-232.net.vodafone.it [5.90.50.232])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id EE22BB3;
+	Sun,  2 Nov 2025 11:56:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1762081002;
+	bh=aew/h4VxOgs+yx33tXMMjIxjaK3UGZB4L/7TZnoTK10=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NRmcqafnP0Gn+sVodLttrO6V0YW8XPT0aR630x3HiRNPg4MuQI5loklvhj/4osyBl
+	 maCSealrJ7jnVm2J+9iZZmiqM8S1JYTmtviPqIi/fJwbYWOBu6lDP8yCSTcKPOZg3Y
+	 w2tzrxKf2s/kSeSkURjVtfoHPAC8Bovbp5OpLhAI=
+Date: Sun, 2 Nov 2025 11:58:30 +0100
+From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+To: Jai Luthra <jai.luthra@ideasonboard.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, Jacopo Mondi <jacopo@jmondi.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Kieran Bingham <kieran.bingham@ideasonboard.com>, 
+	David Plowman <david.plowman@raspberrypi.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Peter Robinson <pbrobinson@gmail.com>, Stefan Wahren <wahrenst@gmx.net>, 
+	"Ivan T. Ivanov" <iivanov@suse.de>
+Subject: Re: [PATCH 08/13] media: i2c: ov5647: Use
+ v4l2_async_register_subdev_sensor for lens binding
+Message-ID: <go2qjnab52g77anasw27xwr734lz6mhsmxwlgaus652aptg5ei@zyvtaxtxitkz>
+References: <20251028-b4-rpi-ov5647-v1-0-098413454f5e@ideasonboard.com>
+ <20251028-b4-rpi-ov5647-v1-8-098413454f5e@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251028-b4-rpi-ov5647-v1-8-098413454f5e@ideasonboard.com>
 
-On Fri, 31 Oct 2025 16:04:03 +0000
-Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
-
-> Add devicetree bindings for adl8113.
-> 
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+On Tue, Oct 28, 2025 at 12:57:19PM +0530, Jai Luthra wrote:
+> From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+>
+> v4l2_async_register_subdev doesn't bind in lens or flash drivers,
+> but v4l2_async_register_subdev_sensor does.
+> Switch to using v4l2_async_register_subdev_sensor.
+>
+> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
 > ---
->  .../bindings/iio/amplifiers/adi,adl8113.yaml  | 76 +++++++++++++++++++
->  1 file changed, 76 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/amplifiers/adi,adl8113.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/amplifiers/adi,adl8113.yaml b/Documentation/devicetree/bindings/iio/amplifiers/adi,adl8113.yaml
-> new file mode 100644
-> index 000000000000..4cc21c93233c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/amplifiers/adi,adl8113.yaml
-> @@ -0,0 +1,76 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/amplifiers/adi,adl8113.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Analog Devices ADL8113 Low Noise Amplifier with integrated bypass switches
-> +
-> +maintainers:
-> +  - Antoniu Miclaus <antoniu.miclaus@analog.com>
-> +
-> +description: |
-> +  The ADL8113 is a 10MHz to 12GHz Low Noise Amplifier with integrated bypass
-> +  switches controlled by two GPIO pins (VA and VB). The device supports four
-> +  operation modes:
-> +    - Internal Amplifier: VA=0, VB=0 - Signal passes through the internal LNA
-> +    - Internal Bypass: VA=1, VB=1 - Signal bypasses through internal path
-> +    - External Bypass A: VA=0, VB=1 - Signal routes through external bypass path A
-> +    - External Bypass B: VA=1, VB=0 - Signal routes through external bypass path B
+>  drivers/media/i2c/ov5647.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/media/i2c/ov5647.c b/drivers/media/i2c/ov5647.c
+> index 598764638d518a28c8ac61ea590b996f09ecd45c..3aad3dc9b5cd0c24c07a37e2567e3c61c52e4fc2 100644
+> --- a/drivers/media/i2c/ov5647.c
+> +++ b/drivers/media/i2c/ov5647.c
+> @@ -1553,7 +1553,7 @@ static int ov5647_probe(struct i2c_client *client)
+>  	if (ret < 0)
+>  		goto power_off;
+>
+> -	ret = v4l2_async_register_subdev(sd);
+> +	ret = v4l2_async_register_subdev_sensor(sd);
 
-These two external paths are a problem for description because there could be
-literally anything between those OUT_A and IN_A etc.  To be useful it might be necessary
-to describe that circuitry. 
+We're really good at names :)
 
-> +
-> +    https://www.analog.com/en/products/adl8113.html
-> +
-> +properties:
-> +  compatible:
-> +    const: adi,adl8113
-> +
-> +  vdd1-supply: true
-> +
-> +  vdd2-supply: true
-> +
-> +  vss2-supply: true
-> +
-> +  va-gpios:
-> +    description:
-> +      GPIO connected to the VA control pin. Must be specified as GPIO_ACTIVE_HIGH.
-> +    maxItems: 1
-> +
-> +  vb-gpios:
-> +    description:
-> +      GPIO connected to the VB control pin. Must be specified as GPIO_ACTIVE_HIGH.
-> +    maxItems: 1
-> +
-> +  adi,initial-mode:
-> +    description: |
-> +      Initial operation mode after device initialization
-> +        0 - Internal Amplifier (default)
-> +        1 - Internal Bypass
-> +        2 - External Bypass A
-> +        3 - External Bypass B
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [0, 1, 2, 3]
-> +    default: 0
+Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 
-Given this only takes affect when the driver loads anyway, why have
-an initial mode in DT?
+Thanks
+  j
 
-> +
-> +required:
-> +  - compatible
-> +  - va-gpios
-> +  - vb-gpios
-> +  - vdd1-supply
-> +  - vdd2-supply
-> +  - vss2-supply
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/gpio/gpio.h>
-> +    amplifier {
-> +        compatible = "adi,adl8113";
-> +        va-gpios = <&gpio 22 GPIO_ACTIVE_HIGH>;
-> +        vb-gpios = <&gpio 23 GPIO_ACTIVE_HIGH>;
-> +        vdd1-supply = <&vdd1_5v>;
-> +        vdd2-supply = <&vdd2_3v3>;
-> +        vss2-supply = <&vss2_neg>;
-> +        adi,initial-mode = <0>;
-> +    };
-> +...
-
+>  	if (ret < 0)
+>  		goto power_off;
+>
+>
+> --
+> 2.51.0
+>
 
