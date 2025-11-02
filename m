@@ -1,124 +1,141 @@
-Return-Path: <linux-kernel+bounces-881668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F19B5C28AC6
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 08:55:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AC3CC28ACF
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 08:58:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38BC01891EF0
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 07:55:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E2821891FFF
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 07:59:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF9D42620DE;
-	Sun,  2 Nov 2025 07:55:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC842638AF;
+	Sun,  2 Nov 2025 07:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qjI9akxu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b="mSQt7UJy"
+Received: from inert-arianrhow.relay-egress.a.mail.umich.edu (relay-egress-host.us-east-2.a.mail.umich.edu [18.216.144.57])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D8C21420B;
-	Sun,  2 Nov 2025 07:55:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812E225DAFF;
+	Sun,  2 Nov 2025 07:58:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.216.144.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762070105; cv=none; b=frhqGSUbak69Q31qdaxJKG24iYZ9Acryjuh+6aap1fCvRJyNgFv+27PpHFvL+W7l0SXrSaHKCS62cfT488gqV/mDXky8+EHCAL3m5W3ocqXpIcw1rPbcCVeI3HgPtldqZuEFDokteE+oPnqNAGzO6ZLSq2aHfmgegjekjY/s4NA=
+	t=1762070310; cv=none; b=dktesLf8pfy+CYSey2dume1RP4xOhbOQljtgH+GZINAkPdO4JcJyD69NMSlyFPS1CxSl++UP+ur9j0hFllU87/F5VnUJxH7OfDFwrSfWqtyBOx8yG2iTXSR/bKWAnM3UoKQniIUw0f4CwiiOszLOsobOVtuxSyvAMs/P+Rz3YSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762070105; c=relaxed/simple;
-	bh=LlgUpsO61kbnzvZFYvuKOYMhH74tjyorDBNhHylD6qY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aTI6YdzofvUhgNyCXGIXgd6gB3cHz4PpNpn67foa3P7lJLOqQJT/pjh943GnKBeMSQAdhyYz+1e4kSIv85DKvkinKSBZV6Z+HukZqE8xPvYMwsrO6zdt+Hsop4sTVpHWNxcUArY5vOsyBZKPPpuBCx2agXy7hGkMtRO8dUXUDIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qjI9akxu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08B15C4CEF7;
-	Sun,  2 Nov 2025 07:55:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762070103;
-	bh=LlgUpsO61kbnzvZFYvuKOYMhH74tjyorDBNhHylD6qY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qjI9akxuoyIk5MzuLGcowIIu08zFrz4FdgkZO9p4RdtRHZwa6o63rlunr01esQvPS
-	 EUR/i7fO7kCf2Z2uiXroDA7qI4ketheAujNtrTiPqCRRBP75WqyGVLbY0lpKXGPYiA
-	 fXCi0b/cuzg4D/vzOc4VQWA9uWz3mYVLwb6TNWvCNoD4ioze4SPZ4/q8Sapbj4u69c
-	 lKP3DW7Ws2ghNnKzEJykPpLsi4lb1dd60g1Ix0gDVyKWzh5mo2KEVs+XGbi/tQsAQ4
-	 eghaEwbLfKut/KgDBCsPzB2ZRWSEbZr80TPIfGY4CZYUlmZIYgWvTVLB+Vqi4hhvFJ
-	 PpSMc6Fj+x6mA==
-Date: Sun, 2 Nov 2025 08:54:46 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: Kees Cook <kees@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 4/7] sysctl: Move jiffies converters to
- kernel/time/jiffies.c
-Message-ID: <2kjr6dfppy55j54isxxpusuhrbx2vovo2svico5w5k4vqwgadn@xgiza635ugbk>
-References: <20251017-jag-sysctl_jiffies-v1-0-175d81dfdf82@kernel.org>
- <20251017-jag-sysctl_jiffies-v1-4-175d81dfdf82@kernel.org>
+	s=arc-20240116; t=1762070310; c=relaxed/simple;
+	bh=GnZVaprzaUNXLrszhG+AfitqnH/3NOGgJ9lds690guY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=mWHoqDvlH9+AjAHXxV27It2W8RIC2+30DgGY4vrokgWcPBo99MEWRfzkjBztr5CqsKABH4U/+FLQVDf+yq9Cm1YfADVzXpekBP0Qvywc5tnz7wAHyD3u5Z/pbnewJ330bQpAwLmj7fLLL3BosgO9bxUvjUah7caTT1hZkSyrefA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu; spf=pass smtp.mailfrom=umich.edu; dkim=pass (2048-bit key) header.d=umich.edu header.i=@umich.edu header.b=mSQt7UJy; arc=none smtp.client-ip=18.216.144.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=umich.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=umich.edu
+Received: from fond-ellyllon.authn-relay.a.mail.umich.edu (ip-10-0-74-91.us-east-2.compute.internal [10.0.74.91])
+	by inert-arianrhow.relay-egress.a.mail.umich.edu with ESMTPS
+	id 69070F05.25C6ECA1.3F784CED.974104;
+	Sun, 02 Nov 2025 02:57:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=umich.edu;
+	s=relay-2; t=1762070274;
+	bh=JOCHX5StUrYQWAzbdTyea3OJMkuVyGm3IZMtYYvHQ5s=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To;
+	b=mSQt7UJysnXvFKKXtAnGgrl2JQEi0272axO6sMubWvJ4yV12qGYdhWJmwWnTl3BgJ
+	 p3G+Z8eaz6ymweRctxWkxYSUI+YNiogXWcZdi+t16S7uI7Q1ELmHfM7Ktu0p/SaYh7
+	 fdGcQF5UU+F6ADFDyPzFgpzgsy4vREG76fNIK+gwyzno+MafApTBCiHyMGu1TYkYPt
+	 5m+2vtf9E8BRpmUcnwI+wrdPVVUuLMHIGqLZdMHVOmZZkW2UlQZTIt8GUUrkiuk6xG
+	 TUqt5mg0LWxTSVxjyZcUt9oqysgcZxEgpBL0bpp0/CZTA+zMP7w5PTEMW92yMq968W
+	 4jfVzaqv5op0Q==
+Authentication-Results: fond-ellyllon.authn-relay.a.mail.umich.edu; 
+	iprev=fail policy.iprev=73.110.187.65 (Mismatch);
+	auth=pass smtp.auth=tmgross
+Received: from localhost (Mismatch [73.110.187.65])
+	by fond-ellyllon.authn-relay.a.mail.umich.edu with ESMTPSA
+	id 69070F01.33BAC196.2EB97120.90244;
+	Sun, 02 Nov 2025 02:57:54 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="oezjmypfczi54fqe"
-Content-Disposition: inline
-In-Reply-To: <20251017-jag-sysctl_jiffies-v1-4-175d81dfdf82@kernel.org>
-
-
---oezjmypfczi54fqe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sun, 02 Nov 2025 01:57:52 -0600
+Message-Id: <DDY1S4C4NY54.1S5RB5BI48AEJ@umich.edu>
+Subject: Re: [PATCH] rust: kbuild: support `-Cjump-tables=n` for Rust 1.93.0
+From: "Trevor Gross" <tmgross@umich.edu>
+To: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Nathan Chancellor" <nathan@kernel.org>, "Nicolas
+ Schier" <nicolas@fjasle.eu>, "Huacai Chen" <chenhuacai@kernel.org>, "Thomas
+ Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>, "Borislav
+ Petkov" <bp@alien8.de>, "Dave Hansen" <dave.hansen@linux.intel.com>,
+ <x86@kernel.org>
+Cc: "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
+ <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
+ Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Danilo
+ Krummrich" <dakr@kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <linux-kbuild@vger.kernel.org>, "WANG Xuerui" <kernel@xen0n.name>,
+ <loongarch@lists.linux.dev>, "H. Peter Anvin" <hpa@zytor.com>,
+ <linux-kernel@vger.kernel.org>, <patches@lists.linux.dev>
+X-Mailer: aerc 0.21.0
+References: <20251101094011.1024534-1-ojeda@kernel.org>
+In-Reply-To: <20251101094011.1024534-1-ojeda@kernel.org>
 
-On Fri, Oct 17, 2025 at 10:32:14AM +0200, Joel Granados wrote:
-> Move integer jiffies converters (proc_dointvec{_,_ms_,_userhz_}jiffies
-> and proc_dointvec_ms_jiffies_minmax) to kernel/time/jiffies.c. Error
-> stubs for when CONFIG_PRCO_SYSCTL is not defined are not reproduced
-> because all the jiffies converters go through proc_dointvec_conv which
-> is already stubbed. This is part of the greater effort to move sysctl
-> logic out of kernel/sysctl.c thereby reducing merge conflicts in
-> kernel/sysctl.c.
+On Sat Nov 1, 2025 at 4:40 AM CDT, Miguel Ojeda wrote:
+> Rust 1.93.0 (expected 2026-01-22) is stabilizing `-Zno-jump-tables`
+> [1][2] as `-Cjump-tables=3Dn` [3].
+>
+> Without this change, one would eventually see:
+>
+>       RUSTC L rust/core.o
+>     error: unknown unstable option: `no-jump-tables`
+>
+> Thus support the upcoming version.
+>
+> Link: https://github.com/rust-lang/rust/issues/116592 [1]
+> Link: https://github.com/rust-lang/rust/pull/105812 [2]
+> Link: https://github.com/rust-lang/rust/pull/145974 [3]
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-Had a warning on linux-next with this. Going to fix it with this
+Reviewed-by: Trevor Gross <tmgross@umich.edu>
 
-  diff --git i/include/linux/jiffies.h w/include/linux/jiffies.h
-  index 57da8eff94d3..fdef2c155c27 100644
-  --- i/include/linux/jiffies.h
-  +++ w/include/linux/jiffies.h
-  @@ -611,6 +611,7 @@ extern unsigned long nsecs_to_jiffies(u64 n);
+> ---
+>  arch/loongarch/Makefile | 2 +-
+>  arch/x86/Makefile       | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/loongarch/Makefile b/arch/loongarch/Makefile
+> index dc5bd3f1b8d2..96ca1a688984 100644
+> --- a/arch/loongarch/Makefile
+> +++ b/arch/loongarch/Makefile
+> @@ -109,7 +109,7 @@ endif
+>  ifdef CONFIG_RUSTC_HAS_ANNOTATE_TABLEJUMP
+>  KBUILD_RUSTFLAGS		+=3D -Cllvm-args=3D--loongarch-annotate-tablejump
+>  else
+> -KBUILD_RUSTFLAGS		+=3D -Zno-jump-tables # keep compatibility with older =
+compilers
+> +KBUILD_RUSTFLAGS		+=3D $(if $(call rustc-min-version,109300),-Cjump-tabl=
+es=3Dn,-Zno-jump-tables) # keep compatibility with older compilers
+>  endif
+>  ifdef CONFIG_LTO_CLANG
+>  # The annotate-tablejump option can not be passed to LLVM backend when L=
+TO is enabled.
+> diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+> index 4db7e4bf69f5..c60371db49d9 100644
+> --- a/arch/x86/Makefile
+> +++ b/arch/x86/Makefile
+> @@ -98,7 +98,7 @@ ifeq ($(CONFIG_X86_KERNEL_IBT),y)
+>  #   https://gcc.gnu.org/bugzilla/show_bug.cgi?id=3D104816
+>  #
+>  KBUILD_CFLAGS +=3D $(call cc-option,-fcf-protection=3Dbranch -fno-jump-t=
+ables)
+> -KBUILD_RUSTFLAGS +=3D -Zcf-protection=3Dbranch -Zno-jump-tables
+> +KBUILD_RUSTFLAGS +=3D -Zcf-protection=3Dbranch $(if $(call rustc-min-ver=
+sion,109300),-Cjump-tables=3Dn,-Zno-jump-tables)
+>  else
+>  KBUILD_CFLAGS +=3D $(call cc-option,-fcf-protection=3Dnone)
+>  endif
+>
+> base-commit: dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
 
-   #define TIMESTAMP_SIZE 30
-
-  +struct ctl_table;
-   int proc_dointvec_jiffies(const struct ctl_table *table, int dir, void *=
-buffer,
-                            size_t *lenp, loff_t *ppos);
-   int proc_dointvec_ms_jiffies_minmax(const struct ctl_table *table, int d=
-ir,
-  lines 1-12/12 (END)
-
-Will not resend a V2 since it is such a small change.
-
-Best
-
---=20
-
-Joel Granados
-
---oezjmypfczi54fqe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmkHDjQACgkQupfNUreW
-QU9JiAv+IPmi2e+etp5uYg1o4pPNKWT/6JU1oqbM3Va3vvb4PEWgaFj5FwZ3laka
-/dXq+scwuLOD1uqfhbkHZL+FgFn3f9VonlLhiDavAZ4Cl4AfQgQNrHtjY2YyBEUL
-kbk3hRG+7b6S5AXd0W9hMZdrSeqqoLtzAvAXfsCt42ONiIiixPYchgW3LoYLbwa3
-M+laB8ccUafuoXRE5WSN2Lza7/uyIW6jmT4V9CBYubR3GXbrcFHdqjrNl7OQe+zJ
-4EFcVa4sOZsPqdfYPCqVg+pOqtCaaMc1PN7+7i62PDYgq+isptmH5UIU8BPa1+mz
-uxq/LDIs0AzUwKROYyaGDDog1bl4A5FjhsG/M8uvWQnHa7QEG9dUQIOBNgP6L1/K
-5v0zcpNLZQ2mMN9AGA1l5BB4jT2X5F+i+zoO28LIucjLJrXPVRjc9a6ZqEEaRLM5
-UTWdhGNqu6t8jPUTJ0fMP+bL93UFAmPC4WJs4DaCsToRg51kMXo1r5jP0c+oe20n
-0+dY7uxj
-=Tqc9
------END PGP SIGNATURE-----
-
---oezjmypfczi54fqe--
 
