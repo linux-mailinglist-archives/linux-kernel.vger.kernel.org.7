@@ -1,160 +1,91 @@
-Return-Path: <linux-kernel+bounces-881860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A61BC29153
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 16:51:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46456C2914D
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 16:49:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5475D3AFB49
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 15:51:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 35F2F4E5778
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 15:49:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A3022424C;
-	Sun,  2 Nov 2025 15:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A05B3229B38;
+	Sun,  2 Nov 2025 15:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VQf9zryt"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NOk4P0dV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387D0EEBB
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 15:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECEAEEBB;
+	Sun,  2 Nov 2025 15:49:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762098677; cv=none; b=Icda/w2LXpEyjigBr052G5UXFsiV++uwygxud7vwYVN514JHuKmCPtNMomjjCV/C5AU7X9kdiyV+AXlah27Ia4QQt1P+2/5mmcAo84o5DbodS6+QCNy6EUTGZocFCpgtumOS2MVfcFhs6xDf+2c9R8tHro6pCfRRAll9rrqZrac=
+	t=1762098578; cv=none; b=ZJU3TFvjBQDglVwAT9j7nYHtAsDj+tuQ/lnQI4hMOFrtNZxU/bmQkoNbteaIyjdZzhPT20O2r3im+0VZRv95/ikwLyx1iT8LDDMX1EEvykgsRnBTR4pnvDxRJFfG0sXdVk6EVFHb8WoVvSrCG1x8/BJTc2NMRhDfjnq0vDqIvhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762098677; c=relaxed/simple;
-	bh=IVGRhEx6SwwcuiB/43BUyx3KBlWNJ/Z9V62kRKtkTWU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pTqYAouLQytYn6j5oUgtuIdarykI+FJC+3SN7FtprWj/+MvOJjTUO+cTvZHYdrSHyeYBGlvWwcCtlrPcm4swEV5mXdKoCew6cDO+6YWzsnG7uDqKM2w5apZYvJ1s5Rj0i9TKALxJ5YobScOVDFGYsRHYzuL99t2IEu7qbJQDPiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VQf9zryt; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-340cccf6956so587030a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 07:51:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762098675; x=1762703475; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M8zabFFXO/kK05h5IRuopTuEr8QgfbyLWlJrEPONgeY=;
-        b=VQf9zrytheMhxs5YMPKkJdiLX1HAcVEvvMLEaqi1y4ix0raiW5BBki5mdeHWMTBaG2
-         5kKdbiEKBw6fUP8n0euuwvs2ukubvZO4ZHYrc4TSTqOid6X5TQVfCSTMLaU8l42fDuRS
-         h1w59tpgsMJBSwff1LbdKkI+USEoYRP7WXnKuumYDvyewtrhbFJRNaw8GhI33si5dqzt
-         HZ67jLhNwEXkGZxrW0KZ11fe1T6QB6hNk34r3Mg1lOb+fg8EqatHxcqu1jyq3nG+raQB
-         J+OPQbkCewc3jylay35DVrfIkP10k9JJvxRXmczhR6DnnVPdHUblSSIYeVH8YnRgSCcv
-         7+dQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762098675; x=1762703475;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M8zabFFXO/kK05h5IRuopTuEr8QgfbyLWlJrEPONgeY=;
-        b=S6kmyRKkVf1RVtaCZmdS/kBlnbV1ir1NZBKevCKO0sy3N3eeocX99j6J71puNcCANL
-         cigVDM2v0ZEMO6Gpz/Z+5M+r192Rd0XBS14e/47xe3t7WqvGVAp+uJ0m6V61+JBClZrk
-         LCeynnNX43v7zbiMX/p63Jj+ojSX67NqqsR258vJ2XfK3qDTKwCihJYaIuLUDHerDWif
-         TwKOwzZOEvKCBBZqU3CNpx/sbmNM/KeIbL0qgYCcBo4ZHPhKiqXJxP8iKXl9/CqaCgPg
-         20OwINR18wef6NasUW04jeClOvKqyNH6EgMGsgkwGPUgb6ZCpPauLVhdEYwsQ/b45Ido
-         J57w==
-X-Forwarded-Encrypted: i=1; AJvYcCWUEjCcbrUT/Q2iVIiAqQRB672aGQFrPxDUQxgKuAkezNfi5ELemkV6Kkhj+SgOiNkZsvHEvLfmoWgO3kQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6qQ1iHJI4d68JyDXzJ6Bs8pxi+4HAj020YGj773OJgGUHxk2/
-	NYQGm8hAS9Gg9210nQK2mvE/BIO4Wl6FixgDqxCz2G/7IJqKhNZZ4HtxkT7EG3+Qp59MZi2BnbR
-	2kxIecENEdurY3em63o/D4yQUn1/gTkq1VA==
-X-Gm-Gg: ASbGncsuFkFqTh9AiKjeewaxP2x1lkUTNOpMBugPz+paNUzJpCiphMOLnc1cpK0gasm
-	TRn4Tm7Ej7ZYGzWl4kFOok86CbHHuOTrOPrnrmFwkNeigVAW6+bZy3rWR0m/NYBuYkQc3t7eYSj
-	8r/3+804peyJsxJwsa5CVxfRN9QPs7wAkUgu2daxDqee2+656eTtQC5YuTlMmenOwaHbpKM9HW7
-	jYk6eMZg2urnTdiC2zDA3ZwIyKIo13N4FjoPnYnVDQBfkHM6Y8QLPE5VaaWIQX7yqEmKfTxbw==
-X-Google-Smtp-Source: AGHT+IFTwYjObHjVACXx+yKhmx3nHerpwqmx/UegK6/vDIN0wNRsze92crbnrrslfRfu6uaTLgeVSRptXrdqwClZN5M=
-X-Received: by 2002:a17:90b:2e07:b0:341:194:5e71 with SMTP id
- 98e67ed59e1d1-34101945f39mr2615733a91.29.1762098675493; Sun, 02 Nov 2025
- 07:51:15 -0800 (PST)
+	s=arc-20240116; t=1762098578; c=relaxed/simple;
+	bh=k6CW04MKlxo92ul/DQACn80/W691w1AykhYdtrusY7U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P6c0aj2yYjgY63cHYvSc2eYd5qoohgiV2EvPTtlL20w9drd8CWCNBN15RL4hus6JYdZy6lRpaWmeLrTV0YtPlOEjP07asF+1p+3YO4evNXHVwFCeqkekxlMFWcMVLsnlb2E8vqEn6C+G2LzeaKONl22sAjnGENO/b4MqMFtNV1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NOk4P0dV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 908D9C4CEF7;
+	Sun,  2 Nov 2025 15:49:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762098577;
+	bh=k6CW04MKlxo92ul/DQACn80/W691w1AykhYdtrusY7U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NOk4P0dVFEcBCYXyS7R/cHGF1Y89fYT/X8o8xGUh4W+E2rdfo2FthD/BsfZneqeCM
+	 xjQqaoODuecOzfcp9kG6CKCY70AFgTD3q+BcuyMCnFGO0HdfwpvQrd9iezJPqf0xz0
+	 Ofpfm5boJZ3819TtnKzWypVoZ7z5zwrzvUi2eeVJbvdX86SUydEhvCZ58Y6O5FsFy0
+	 MJMh8E+nN+iEbqSZiRMngnnvs/x/lRGoszK8WSd26AOKhVf4X8Wn+KCFJ1fQYw0Pd0
+	 yXC8dCo4bZrs5oL/BhMKAgSRUwWHmqxWxCpmpjxiC0LmPeOtxCAVwUsfcFJGQBBOTW
+	 2pRNTvDEXmtRg==
+Date: Sun, 2 Nov 2025 09:53:01 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+Cc: Krishna Kurapati <krishna.kurapati@oss.qualcomm.com>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Wesley Cheng <wesley.cheng@oss.qualcomm.com>, 
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v11 1/3] arm64: dts: qcom: sm8750: Add USB support to
+ SM8750 SoCs
+Message-ID: <ev5gosxqguzdbufy72gcjmt4m4z6kc67jcaznrhvvjldcps4g5@fntcevrjpqsh>
+References: <20251101174437.1267998-1-krishna.kurapati@oss.qualcomm.com>
+ <20251101174437.1267998-2-krishna.kurapati@oss.qualcomm.com>
+ <f2724aed-c39c-4793-9522-bae08ea97a05@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251101163656.585550-1-hehuiwen@kylinos.cn>
-In-Reply-To: <20251101163656.585550-1-hehuiwen@kylinos.cn>
-From: Xin Long <lucien.xin@gmail.com>
-Date: Sun, 2 Nov 2025 10:51:04 -0500
-X-Gm-Features: AWmQ_bmS4T2uL37JePpWdJiTenPBPVlMVaI2XJrFASO8Jy7GhhDEL4pW3BmfvMc
-Message-ID: <CADvbK_cUA1TR2+=-k8iUu=y6rxEj7Qn+EcvRzKy7xkAhGrE6Ww@mail.gmail.com>
-Subject: Re: [PATCH] sctp: make sctp_transport_init() void
-To: Huiwen He <hehuiwen@kylinos.cn>
-Cc: marcelo.leitner@gmail.com, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
-	linux-sctp@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f2724aed-c39c-4793-9522-bae08ea97a05@oss.qualcomm.com>
 
-On Sat, Nov 1, 2025 at 12:37=E2=80=AFPM Huiwen He <hehuiwen@kylinos.cn> wro=
-te:
->
-> sctp_transport_init() is static and never returns NULL. It is only
-> called by sctp_transport_new(), so change it to void and remove the
-> redundant return value check.
->
-> Signed-off-by: Huiwen He <hehuiwen@kylinos.cn>
-> ---
->  net/sctp/transport.c | 16 +++++-----------
->  1 file changed, 5 insertions(+), 11 deletions(-)
->
-> diff --git a/net/sctp/transport.c b/net/sctp/transport.c
-> index 4d258a6e8033..97da92390aa7 100644
-> --- a/net/sctp/transport.c
-> +++ b/net/sctp/transport.c
-> @@ -37,10 +37,10 @@
->  /* 1st Level Abstractions.  */
->
->  /* Initialize a new transport from provided memory.  */
-> -static struct sctp_transport *sctp_transport_init(struct net *net,
-> -                                                 struct sctp_transport *=
-peer,
-> -                                                 const union sctp_addr *=
-addr,
-> -                                                 gfp_t gfp)
-> +static void sctp_transport_init(struct net *net,
-> +                               struct sctp_transport *peer,
-> +                               const union sctp_addr *addr,
-> +                               gfp_t gfp)
->  {
->         /* Copy in the address.  */
->         peer->af_specific =3D sctp_get_af_specific(addr->sa.sa_family);
-> @@ -83,8 +83,6 @@ static struct sctp_transport *sctp_transport_init(struc=
-t net *net,
->         get_random_bytes(&peer->hb_nonce, sizeof(peer->hb_nonce));
->
->         refcount_set(&peer->refcnt, 1);
-> -
-> -       return peer;
->  }
->
->  /* Allocate and initialize a new transport.  */
-> @@ -98,16 +96,12 @@ struct sctp_transport *sctp_transport_new(struct net =
-*net,
->         if (!transport)
->                 goto fail;
-I think you can return NULL; here, and delete the 'fail:' path below now.
+On Sun, Nov 02, 2025 at 12:43:07AM +0530, Akhil P Oommen wrote:
+> On 11/1/2025 11:14 PM, Krishna Kurapati wrote:
+> > From: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
+> > diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
+[..]
+> > +			power-domains = <&gcc GCC_USB30_PRIM_GDSC>;
+> > +			required-opps = <&rpmhpd_opp_nom>;
+> 
+> Probably I am missing something, but which power domain associated to a
+> rail is scaled to NOM corner here?
+> 
 
-Thanks.
->
-> -       if (!sctp_transport_init(net, transport, addr, gfp))
-> -               goto fail_init;
-> +       sctp_transport_init(net, transport, addr, gfp);
->
->         SCTP_DBG_OBJCNT_INC(transport);
->
->         return transport;
->
-> -fail_init:
-> -       kfree(transport);
-> -
->  fail:
->         return NULL;
->  }
-> --
-> 2.25.1
->
+That would be the parent of the GCC_USB30_PRIM_GDSC, which should be the
+CX rail. We currently have a NOM requirement here just in case we're
+going to operate a SuperSpeed link, and the driver doesn't scale.
+
+
+That said, your question is very much valid, because on SM8750 GCC
+doesn't specify CX as a power-domain of &gcc, this vote goes into the
+void.
+
+Regards,
+Bjorn
 
