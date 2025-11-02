@@ -1,151 +1,136 @@
-Return-Path: <linux-kernel+bounces-881666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5938CC28ABD
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 08:39:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6040C28AC3
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 08:47:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CC43188E472
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 07:40:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70CC1189131F
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 07:48:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E66259CA7;
-	Sun,  2 Nov 2025 07:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E00238C2A;
+	Sun,  2 Nov 2025 07:47:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mail.selcloud.ru header.i=@mail.selcloud.ru header.b="JKibTKdR";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="uJ2IYfGQ";
-	dkim=pass (2048-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="lkl5+76r";
-	dkim=permerror (0-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="POdbh/k2"
-Received: from sender6.mail.selcloud.ru (sender6.mail.selcloud.ru [5.8.75.169])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Mm1MGUeW"
+Received: from out162-62-57-137.mail.qq.com (out162-62-57-137.mail.qq.com [162.62.57.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4743136658;
-	Sun,  2 Nov 2025 07:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.8.75.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82EECEACD
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 07:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762069188; cv=none; b=DTUwGEEYxCQUYCaLvxd5L78NuCHea5Q9k7lRlT1E4Bl+VzbWHa+OAt2JFVb5GN7oWL04GtFYiDdqqLaHYa2FR6GqkCiN2kHckdI0FEHdf5Gxm4UH5Qxxx/4X+E9RgxrJomwZmqo5eCDnyG7Qo45w10EjvXnTccCzsnDZRmRFSP4=
+	t=1762069651; cv=none; b=XJdgXgXAxcdGx3Yc+OVfvZCOsyUFMePSXmPCc9Fwppj65VcBvFo8BilBIb1nhpnEzbFRZIR1tyOopZPvuHXT2/tUDvg3gutjT0prgECpq7EksAm9SYvWUSpyG4DYgl9s7AIgPxLXkXO1gfwpZvsGgWqp6u/lPOtcjXj2zMb8aoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762069188; c=relaxed/simple;
-	bh=eLYKpA2M2bNBddBLyNndMvM8FJM1mDsigEhFCCBvXzM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FnbJPEJVW/nx1gDeXlF4m4p1DcA3Frhy4fjfaRKfqNpFrvg23ACRMcgOaDG22m6PgkSq5JVTCrRbXXcOotaPu/42D/SBjdfCr5iExIU2s2Fl3DCqaloryTIQXgr/GzlbC3BdpUs4dAwvm2sTBLvYfHnBhid3BjSdovqj5Eg8fLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=foxido.dev; spf=pass smtp.mailfrom=mail.selcloud.ru; dkim=pass (1024-bit key) header.d=mail.selcloud.ru header.i=@mail.selcloud.ru header.b=JKibTKdR; dkim=pass (1024-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=uJ2IYfGQ; dkim=pass (2048-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=lkl5+76r; dkim=permerror (0-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=POdbh/k2; arc=none smtp.client-ip=5.8.75.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=foxido.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.selcloud.ru
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=mail.selcloud.ru; s=selcloud; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:List-id:List-Unsubscribe:Sender:Reply-To:
-	Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
-	List-Help:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=xyX37y0QHKkl6URbf2G3KEuVSSvC55xkAI8knVnPPW0=; t=1762069184; x=1762241984;
-	 b=JKibTKdRki2uuoPv4FzqKbgfRPCLgsylQ8t6UreQwpNbp/KaRO7Cw32S6JXmfUbPAp9AdUmvxK
-	z8HyWA71ReHTgbVDvVNJW/VoiQ16gNE15I+7PX5xfm1tziNNfkkQwJX/sdNw5GMvsjWsGLGUGn6SL
-	5SiVkQZCyVky0903EeRU=;
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=foxido.dev;
-	 s=selcloud; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject
-	:Cc:To:From:List-id:List-Unsubscribe:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Help:List-Subscribe:List-Post:
-	List-Owner:List-Archive; bh=xyX37y0QHKkl6URbf2G3KEuVSSvC55xkAI8knVnPPW0=;
-	t=1762069184; x=1762241984; b=uJ2IYfGQ3WSxeO3pyDOwqTwuV9tVDOkdMK2PJBUa3EAZaFr
-	oxsXCB7VYEoLlVFyinN6VeLKcybk67v8GEYjwDMk7KJimvsSHl+vhYywX7Xqm9+e+Xi7ZTc4nArRk
-	iuhQqDmqYeMr913Z5gRI/6Rr0cq8uIC2sq79UR5qC3natXI=;
-Precedence: bulk
-X-Issuen: 1402959
-X-User: 149890965
-X-Postmaster-Msgtype: 3849
-Feedback-ID: 1402959:15965:3849:samotpravil
-X-From: foxido.dev
-X-from-id: 15965
-X-MSG-TYPE: bulk
-List-Unsubscribe-Post: List-Unsubscribe=One-Click
-X-blist-id: 3849
-X-Gungo: 20251029.201254
-X-SMTPUID: mlgnr60
-DKIM-Signature: v=1; a=rsa-sha256; s=202508r; d=foxido.dev; c=relaxed/relaxed;
-	h=Message-ID:Date:Subject:To:From; t=1762069174; bh=xyX37y0QHKkl6URbf2G3KEu
-	VSSvC55xkAI8knVnPPW0=; b=lkl5+76rn8jhNBcJsG3ROCixwYDlV+ShD8oFSPzCagXQNxlNWK
-	7BYAI2t52Ye3FKusKmpROiHq6B9BJ1rnvtEFWzK1Col2goxpTGrZtHHCFht6EchCp4irB/652iy
-	fy3zWkJKm+HP7TFcHji3UKsjQjO0Qc1848HKF/YQtKGoOjL5HpTFDGJ+2DS6zYA3t/Y7vEjLpyq
-	gflW+DJRYFC4PMjUN5hmal/VVf/jNlOc51f3roSmFPIawELW6kkAPjwiMRvyyc0NYyJ6Fh8eJbK
-	g/jAYQsZeiPJkGx/JG7CL9QzWMt8wAZCgJhhNTSPMz9zzDfjx3Z3ItbvwNkthoaW/Vw==;
-DKIM-Signature: v=1; a=ed25519-sha256; s=202508e; d=foxido.dev; c=relaxed/relaxed;
-	h=Message-ID:Date:Subject:To:From; t=1762069174; bh=xyX37y0QHKkl6URbf2G3KEu
-	VSSvC55xkAI8knVnPPW0=; b=POdbh/k2luigw82WnO9sAWv9IWUPaTkCFW+EDUQfZOGVg8ClKb
-	0feJ8JwD1OusEfcGzzI7td2dCS36jlgu1BAw==;
-From: Gladyshev Ilya <foxido@foxido.dev>
-To: foxido@foxido.dev
-Cc: Chris Mason <clm@fb.com>,
-	David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] btrfs: make ASSERT no-op in release builds
-Date: Sun,  2 Nov 2025 10:38:52 +0300
-Message-ID: <20251102073904.2149103-1-foxido@foxido.dev>
-X-Mailer: git-send-email 2.51.1.dirty
+	s=arc-20240116; t=1762069651; c=relaxed/simple;
+	bh=Wts90KexOPFzNhNpSUlyId+A6koKIDjXs6MsB9WBB68=;
+	h=Message-ID:Date:From:To:Cc:Subject:MIME-Version:Content-Type:
+	 Content-Disposition; b=pSHgB+qPwg5jfhKjUJWXFUwzPCwgiuXnq1Q8mo6m40lTdYeFuYmR+2Cxej0YvHuEuetdHIAI9ODT0f6SyWacK3vo8EXIvBG5n/DuKsnfAx1j0PKpJ4wsNHZivEasKoZiaJd1qrMN2P5kAcTUEwhVxBBQtz6NanlM/WPozc0nhfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Mm1MGUeW; arc=none smtp.client-ip=162.62.57.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1762069337; bh=OwLLO9u7zjgV8Npw0fyKmCcgGeBPAcYrcMqAxRm+IwI=;
+	h=Date:From:To:Cc:Subject;
+	b=Mm1MGUeW3VNeqEUjnM6V7w0V1/JEUtKiY+llyVa14jcQkQAmRGLJUNK4eO9+UYUu8
+	 2ZFs2RMmqK+TnZYk2n7OCRg0TrPr/qVkd+p5+0HSwk5zmAMuR6zirT/FcRjIHcrFQY
+	 rFiOIo42SA+cDNX88sIMk7CyCNV1GS8BPJv+FOVk=
+Received: from cjz-VMware-Virtual-Platform ([110.176.80.146])
+	by newxmesmtplogicsvrszb20-1.qq.com (NewEsmtp) with SMTP
+	id A8F83257; Sun, 02 Nov 2025 15:42:15 +0800
+X-QQ-mid: xmsmtpt1762069335tiaovwavc
+Message-ID: <tencent_08373024EBB5D2D03BAB7518F6F51D212907@qq.com>
+X-QQ-XMAILINFO: NAuAIaytDrXptuEDgsGUxpTST5U6St7pWbSKw6ccosjzwtWyKAa4/6nHEPTDNl
+	 eXog0TaFwcPkJK9R3o5rSk54CTeSp1ePWjiL2MbT5n67zV1RQsbRlUWm59TxFw2rt6giCThok9C2
+	 ZJVym3YTJEmSnASz2GWMNKgp5AvaHH5la5xjBW0ZFqt+pBESNDxGdLylQYhW8cUF+nWbg54EXlf3
+	 PccrsaGXZLefhub3+7lbzFPjdQZXEw3tiFGCNv7Z6ubfHOUsiHBst9f2pZ42XY5RQIbfnyBgih8M
+	 /OqDbXCZbmiyhgCQmobLyjVY7ZgIqrYflVM8Mor1qzcVJabMD2/GD1JnfZA27uYye8WN4a/+QRZO
+	 CWktNVpKQd1budDFRGxVxvNiROorrbs56IYsDDX5dhTKxvoxwe/vPrCIHdSK0/+yWTnUAoAh5m6u
+	 mKq6Lt3T0YeHN3Opc0HpvS+Rry6OjYANwvYq/jKWsWqj5IIE9d5aIy2rbu9Koyp5SLqW50HzDyX6
+	 rsBuQeCTtLR8BTQqU7qXlUCM2fIUBkKLW5j4QC+otN1xShd7LpCI18rY+50Tb9W7lJlw8MCZZCHB
+	 bvTPuutmo9QQcRqluHS6yJH/3roPRlWG9bka4Jxh+nG3XxsW/8Io/2oZ0jr9hibJjp+W90Ag6g4d
+	 cfzaIpGGk79BNdJBKEFr8hQmEFQjM0m4I5Q+TWnRNejuduMhVUumOVRWPlEYJOaofSP6dejL8zqi
+	 Ly8uxaDG9OxmnYvMwKwj9WI2sKcUT2HKZqS2zlGt6y8hf6BPSOqTEQOrR0QeHwWORky+0t0hu938
+	 Y2KO21ZPzCL+Lqun+hoxbvnaGP+T8xt4SCc2cOIRb6dsi+bFYVvjqsosSodjy4eEvaxS+HTDRPOE
+	 fIqBn4aHP860f21Pv0sFqnV2shN+fjlxYysZU14V73IqoAZjcK7mvxtoEd70PL5EIdfcBRjdoDWT
+	 u2Cb/zjBJ21kS2yn1NV6GlryMH6m4hlV822SlZH4M=
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+Date: Sun, 2 Nov 2025 15:42:15 +0800
+From: Chang Junzheng <guagua210311@qq.com>
+To: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: fix various code style issues
+X-OQ-MSGID: <aQcLV5I8OFcULE8X@cjz-VMware-Virtual-Platform>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The current definition of `ASSERT(cond)` as `(void)(cond)` is redundant,
-since these checks have no side effects and don't affect code logic.
+Fix trailing whitespace in rtl8723bs driver and add missing
+newlines at end of file in multiple staging drivers.
 
-However, some checks contain READ_ONCE or other compiler-unfriendly
-constructs. For example, ASSERT(list_empty) in btrfs_add_dealloc_inode
-was compiled to a redundant mov instruction due to this issue.
+Changes include:
+- Remove trailing whitespace from rtl8723bs/core/rtw_mlme.c
+- Add missing newline at EOF for vme_user/vme.c
+- Add missing newline at EOF for vme_user/vme_fake.c
+- Add missing newline at EOF for vme_user/vme_tsi148.c
 
-This patch defines ASSERT as BUILD_BUG_ON_INVALID for !CONFIG_BTRFS_ASSERT
-builds. It also marks `full_page_sectors_uptodate` as __maybe_unused to
-suppress "unneeded declaration" warning (it's needed in compile time)
+This addresses checkpatch.pl warnings about code style compliance.
 
-Signed-off-by: Gladyshev Ilya <foxido@foxido.dev>
+Signed-off-by: Chang Junzheng <guagua210311@qq.com>
 ---
-Changes from v1:
-- Annotate full_page_sectors_uptodate as __maybe_unused to avoid
-  compiler warning
+ drivers/staging/rtl8723bs/core/rtw_mlme.c | 2 +-
+ drivers/staging/vme_user/vme.c            | 1 +
+ drivers/staging/vme_user/vme_fake.c       | 1 +
+ drivers/staging/vme_user/vme_tsi148.c     | 1 +
+ 4 files changed, 4 insertions(+), 1 deletion(-)
 
-Link to v1: https://lore.kernel.org/linux-btrfs/20251030182322.4085697-1-foxido@foxido.dev/
----
- fs/btrfs/messages.h | 2 +-
- fs/btrfs/raid56.c   | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/btrfs/messages.h b/fs/btrfs/messages.h
-index 4416c165644f..f80fe40a2c2b 100644
---- a/fs/btrfs/messages.h
-+++ b/fs/btrfs/messages.h
-@@ -168,7 +168,7 @@ do {										\
- #endif
- 
- #else
--#define ASSERT(cond, args...)			(void)(cond)
-+#define ASSERT(cond, args...)			BUILD_BUG_ON_INVALID(cond)
- #endif
- 
- #ifdef CONFIG_BTRFS_DEBUG
-diff --git a/fs/btrfs/raid56.c b/fs/btrfs/raid56.c
-index 0135dceb7baa..302f20d8c335 100644
---- a/fs/btrfs/raid56.c
-+++ b/fs/btrfs/raid56.c
-@@ -299,8 +299,8 @@ static int rbio_bucket(struct btrfs_raid_bio *rbio)
- 	return hash_64(num >> 16, BTRFS_STRIPE_HASH_TABLE_BITS);
+diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+index c06d990350e6..778b8715cdb2 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
++++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+@@ -2024,7 +2024,7 @@ int rtw_restruct_wmm_ie(struct adapter *adapter, u8 *in_ie, u8 *out_ie, uint in_
+ 	return ielength;
  }
  
--static bool full_page_sectors_uptodate(struct btrfs_raid_bio *rbio,
--				       unsigned int page_nr)
-+static __maybe_unused bool full_page_sectors_uptodate(struct btrfs_raid_bio *rbio,
-+						      unsigned int page_nr)
- {
- 	const u32 sectorsize = rbio->bioc->fs_info->sectorsize;
- 	const u32 sectors_per_page = PAGE_SIZE / sectorsize;
-
-base-commit: e53642b87a4f4b03a8d7e5f8507fc3cd0c595ea6
+-/* Ported from 8185: IsInPreAuthKeyList(). 
++/* Ported from 8185: IsInPreAuthKeyList().
+  * (Renamed from SecIsInPreAuthKeyList(), 2006-10-13.)
+  * Added by Annie, 2006-05-07.
+  *
+diff --git a/drivers/staging/vme_user/vme.c b/drivers/staging/vme_user/vme.c
+index 2095de72596a..3f6fb0543e1e 100644
+--- a/drivers/staging/vme_user/vme.c
++++ b/drivers/staging/vme_user/vme.c
+@@ -1975,3 +1975,4 @@ static int __init vme_init(void)
+ 	return bus_register(&vme_bus_type);
+ }
+ subsys_initcall(vme_init);
++
+diff --git a/drivers/staging/vme_user/vme_fake.c b/drivers/staging/vme_user/vme_fake.c
+index 731fbba17dfd..7647dea15f75 100644
+--- a/drivers/staging/vme_user/vme_fake.c
++++ b/drivers/staging/vme_user/vme_fake.c
+@@ -1296,3 +1296,4 @@ MODULE_LICENSE("GPL");
+ 
+ module_init(fake_init);
+ module_exit(fake_exit);
++
+diff --git a/drivers/staging/vme_user/vme_tsi148.c b/drivers/staging/vme_user/vme_tsi148.c
+index 733594dde9ae..1c5389020924 100644
+--- a/drivers/staging/vme_user/vme_tsi148.c
++++ b/drivers/staging/vme_user/vme_tsi148.c
+@@ -2634,3 +2634,4 @@ module_param(geoid, uint, 0);
+ 
+ MODULE_DESCRIPTION("VME driver for the Tundra Tempe VME bridge");
+ MODULE_LICENSE("GPL");
++
 -- 
-2.51.1.dirty
+2.43.0
 
 
