@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-881697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44FCDC28C79
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 10:20:20 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95341C28C7C
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 10:21:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E92364E1A6C
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 09:20:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BB5714E3B4F
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 09:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DE341EB19B;
-	Sun,  2 Nov 2025 09:20:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29EAD1EB19B;
+	Sun,  2 Nov 2025 09:21:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TqLcKvv4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TedjdeMN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ACBA12B93
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 09:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC4F12B93
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 09:21:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762075215; cv=none; b=G7hKSpZdsvpz+0eqOKhYKWenDhaD39DNnd3Kw4y71Imj2xSweTYr8DW9bZCUNOX8sOhTfhGBXS498Vj739fvIe4l8ESSNM9ISSdlBqqBA5MupzHoxS8yhkLmWhoxG2L6g5QZYJV0rk3rWvg61rrkUNSkGIa75PpfPepX0mSFwhM=
+	t=1762075262; cv=none; b=ChomVCPUIpg5N6P7kmDmBRsXJD3W7KHFJhS2rS3AHW6OvPTSLuL1W4SxqGNKvSKdKlBw9eIwSR73Hky+GCCHHIL5s546Xj2HBcFaCgojcr7meBwmnzxXvXIG8VwPBuuIEStmVNcsawHszQIag/pmWvqCuTlW7/m+6XuPuoTRjBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762075215; c=relaxed/simple;
-	bh=pyPMPfw5g+OAn7dl14HD31xlMCUdXrsjIvLCv/41+Z4=;
+	s=arc-20240116; t=1762075262; c=relaxed/simple;
+	bh=4352pat9trxL/UfOsnYXUembv1P/0iG2g4kLRXaJLSQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B5g5sjp7MxQlvvy86p3CzqUXeow8MERfqo+vqWFlPGnFfxyZY9PB7HBnUcAXeVq+06/lvoVjNTKnXI70QAlk0ta52ZJdrV0LMFykRs9sLti6Vs+APHZX3i23DSANv9LPyiICTWtbm3pNFV2tjQiFNO4QMDD6fdaJ1fN+Z0b5Opo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TqLcKvv4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D4F3C4CEF7;
-	Sun,  2 Nov 2025 09:20:11 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=VsqUVgLNWOEeP/jWCFWIlkZ7HlGejwTInYKu+mbHNf0pP+2dYcLJggIzpS+KkElmfryb4OZwOg1FiR6EFAAhIk8jcY5XGbAwotVuCzXj0ddCixJlwccPwmxaSh9FezmVWPjGCyeFrXdctEnCCK+Lo8hKmFbtgDr8WaBHQDO0mgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TedjdeMN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01E10C4CEF7;
+	Sun,  2 Nov 2025 09:20:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762075215;
-	bh=pyPMPfw5g+OAn7dl14HD31xlMCUdXrsjIvLCv/41+Z4=;
+	s=k20201202; t=1762075261;
+	bh=4352pat9trxL/UfOsnYXUembv1P/0iG2g4kLRXaJLSQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TqLcKvv4TQ8MsFVWjkzZqG4InscFxrWF0/6kzNX/CgU8+zaz5nFXppiqEsYDFvIeJ
-	 2fQNu8fbCVVi2/sBUXXTBEswUIr2z2K9EH15qG1w3s0rid8kMYpDp0G+MijXfqBAsN
-	 W5iL3hIoNxuTV5P00JYanim6a9zR9Lu9Jtmqik5Dw9xfK0gyjNa1KmngG4f0TyYWQg
-	 0hrG8WR77ARKguDm0UaomxPqG0se6fsEZyFpBu75dExEu9oGW5RiiPjG/wkokbFJ3S
-	 /TQbJjqcqJSFwau+88G9N1K1ntGF9XEfq7+bJgo6PvbBZBK+CQVX+Z4HTigu2YSEU5
-	 WhrQpha4Blq0g==
-Message-ID: <0e612ed0-705e-423f-8051-70fcd6df38ae@kernel.org>
-Date: Sun, 2 Nov 2025 10:20:10 +0100
+	b=TedjdeMN/5Pxq71vW3cJkPI5c3Fl9n6esUdSsvW4chGMw8UGxrX+gQL/aRHjlkt+E
+	 hUSHNZvy7qPqajco2mK2q33egabZqyF9A4E1Rdc+zMVijk0ORyko9zzFAgBXuwPUXL
+	 2bq1r++LDGhHDth8+iDoSIzWzZzG07mxc20iR/iqT9c8SKLk9agAnT4K+0qRk8INEe
+	 7W3dhWqHPdFy7pZ2Iz6QWihs7S3l+YRfNTFO1CPThnDi8V/ik/9ZtbE17cqcv4Nw4o
+	 MglAoKqEIkyqvMSfgFeyvKn1l8I3fnVtOrDNUX/O7ileQHeRAHtrPyTTMYrkITche6
+	 hz+tWxM5Kk9xg==
+Message-ID: <ca0c3c87-b703-4d97-a9fb-d55ec29725fa@kernel.org>
+Date: Sun, 2 Nov 2025 10:20:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/13] platform/raspberrypi: vchiq-mmal: Avoid use of bool
- in structures
+Subject: Re: [PATCH 07/13] platform/raspberrypi: vchiq-mmal: Free the event
+ context for control ports
 To: Jai Luthra <jai.luthra@ideasonboard.com>,
  Florian Fainelli <florian.fainelli@broadcom.com>,
  Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
@@ -64,7 +64,7 @@ Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
  Dave Stevenson <dave.stevenson@raspberrypi.org>
 References: <20251031-b4-vc-sm-cma-v1-0-0dd5c0ec3f5c@ideasonboard.com>
- <20251031-b4-vc-sm-cma-v1-1-0dd5c0ec3f5c@ideasonboard.com>
+ <20251031-b4-vc-sm-cma-v1-7-0dd5c0ec3f5c@ideasonboard.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -110,36 +110,25 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20251031-b4-vc-sm-cma-v1-1-0dd5c0ec3f5c@ideasonboard.com>
+In-Reply-To: <20251031-b4-vc-sm-cma-v1-7-0dd5c0ec3f5c@ideasonboard.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 31/10/2025 18:27, Jai Luthra wrote:
 > From: Dave Stevenson <dave.stevenson@raspberrypi.org>
 > 
-> Fixes up a checkpatch error "Avoid using bool structure members
-> because of possible alignment issues".
+> vchiq_mmal_component_init calls init_event_context for the
+> control port, but vchiq_mmal_component_finalise didn't free
+> it, causing a memory leak..
+> 
+> Add the free call.
 > 
 > Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.org>
 > Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
-> ---
->  drivers/platform/raspberrypi/vchiq-mmal/mmal-vchiq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/platform/raspberrypi/vchiq-mmal/mmal-vchiq.c b/drivers/platform/raspberrypi/vchiq-mmal/mmal-vchiq.c
-> index cd073ed3ea2dd9c45b137f1a32e236e520b7b320..82c2c261fd9cf0669cbd2ca7c814e0703317885a 100644
-> --- a/drivers/platform/raspberrypi/vchiq-mmal/mmal-vchiq.c
-> +++ b/drivers/platform/raspberrypi/vchiq-mmal/mmal-vchiq.c
-> @@ -1776,7 +1776,7 @@ int vchiq_mmal_component_enable(struct vchiq_mmal_instance *instance,
->  
->  	ret = enable_component(instance, component);
->  	if (ret == 0)
-> -		component->enabled = true;
-> +		component->enabled = 1;
->  
 
-I see no change from bool to unsigned int at all here, so commit msg is
-inaccurate or even misleading.
+Missing fixes tag, Cc stable. Also fixes should not be mixed up with
+regular patchset (at all) and for sure not in the middle of the patchset.
+
 
 Best regards,
 Krzysztof
