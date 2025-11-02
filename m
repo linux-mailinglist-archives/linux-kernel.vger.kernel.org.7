@@ -1,148 +1,143 @@
-Return-Path: <linux-kernel+bounces-882094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 023A0C299CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 00:15:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89BE5C299E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 00:15:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A2FE14E7D1D
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 23:15:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6B20E4E7192
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 23:15:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6792D248F4D;
-	Sun,  2 Nov 2025 23:14:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0167D29CE1;
+	Sun,  2 Nov 2025 23:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="POvKaHNI"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="veGqDOkc"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A69148850;
-	Sun,  2 Nov 2025 23:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1E7253957
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 23:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762125298; cv=none; b=JNdf0xlo/dwBqLRIFALIjIKb854YZjEzLuKPkG0a2FcSv0i4GHO0gOcstctJXJjRrqeeRwT6bLs0GHfnjwnWSBnmjhUigiZsBW9Nn7LNm118f9GOCIOMJHcB7/1KvEHe7dkhmDoom/Js3erF/xRTYqsFiOtXz1w7oZGjdYT3qek=
+	t=1762125307; cv=none; b=Il+0Sv6b9KQzAoZP+1Ahbu4COgu85c/Mu5aJsr/cyFilJLOCpQBJH/EwKHuHrki0PVHJR+5UEg6Cw3TgP66x4zueurnldboLk6L3cUptWjIDqgfj1ElvfHTKZklM1Ta3Y/+kOW6jLxbfPiXkuvW4iEQPR7ZBcSiF2GdEKuS0cGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762125298; c=relaxed/simple;
-	bh=kUr0faM6nmdPvF981v46JyOf4dm270I/HG8+3rNC3ok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e/xh9MYSfL30FerEzFlaITG9xcHBUY7z1jtZ66GyTyXmBGPH18ZrB9mpHP7LGZurdyvsLfIxsyL95s3JdmO+XhIKvbJIHwxMjltlBrQWNM0ic8CE421xaIDqvcgkiJrYdQSfiHR3LMMjIT+yd8HxMJQZbPT3YMAuKQ39EX8j+pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=POvKaHNI; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (82-203-160-149.bb.dnainternet.fi [82.203.160.149])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 326738BE;
-	Mon,  3 Nov 2025 00:13:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1762125182;
-	bh=kUr0faM6nmdPvF981v46JyOf4dm270I/HG8+3rNC3ok=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=POvKaHNIoRGL2MDfaf4h+sVBVTp/25n5QTk44MkrPN+bHGnQkSvs9/xku5f1aIP93
-	 1bW22IONVmWJ4i0tgiSOBzj3GRepC2d7vjbbzqNvK3XBDWyIacsrdCmzImFAxuArkE
-	 7KtorvEnqRRHFJPWiREarPEv37ZxQLecceM0y5rY=
-Date: Mon, 3 Nov 2025 01:14:40 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: "G.N. Zhou" <guoniu.zhou@nxp.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Frank Li <frank.li@nxp.com>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [EXT] Re: [PATCH v2 2/5] media: nxp: imx8-isi: Simplify code by
- using helper macro
-Message-ID: <20251102231440.GA1933@pendragon.ideasonboard.com>
-References: <20250905-isi_imx93-v2-0-37db5f768c57@nxp.com>
- <20250905-isi_imx93-v2-2-37db5f768c57@nxp.com>
- <20250921221325.GB10540@pendragon.ideasonboard.com>
- <AS8PR04MB9080158655C3EA188BE7FE7AFA12A@AS8PR04MB9080.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1762125307; c=relaxed/simple;
+	bh=gJ+z+fSwzGRoLTASac48Xt/red+jojCgmvvYT9GdSRk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AMJigBWv4oqASTfDDZKovm/N9vgVrR5j3m4+DpVHppiwfkazzK9wI8vR/E8aaeUvxk8U6eXiSmuVBAW3WtulWy02TZgM3QaLaO8rH+WDrRwFRcrknJ0iGpBS5GXQMHKPNK7xsDGDSVUhvWeX34bisFo8B2NzX1CZlfGMHdKpEEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=veGqDOkc; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-37902f130e1so39803771fa.1
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 15:15:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762125301; x=1762730101; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yhefXJf25nlZX433BsR2ypBCZ8ChrLrkfTMoigu+ucU=;
+        b=veGqDOkc2KbhhYjsZ6lnbXmmedGeZoZMglsu3m9z2Ag0Z0bdrOYId3GZuEWhYWx0wI
+         QEl0Q9LXRGXaHhR55y8x6ETnqRedFkOF1K1RR49+BaYHgSdEqcTfNCnEhQt7o6Je59Cf
+         KVvfDY/Kk/QDbmSmB9l2fTmu3WGrWtGh5AOzwj9esPRfhpfNIkiz3MlTjJg+M+N/ndpa
+         geV2axmVI2rxVLB6HmhRYF8WTJ7KIFl1p7BcApKDg8NPbtSvw53jfFdBap4gPtbQ0+Hb
+         QYdytI+Gj6ya4I1KUy/71GBHTtwcAGNq9roNc6o/vDW32qf0M8U5G9RKh2EfePP2Cxni
+         qfqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762125301; x=1762730101;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yhefXJf25nlZX433BsR2ypBCZ8ChrLrkfTMoigu+ucU=;
+        b=YRunp5ot1iBlO9sX2tIYBZShA0x+vWDj1NU5xxX80HS8rNt1dEOuV2SV+lxA7A6EjR
+         iRzlre0TQIvEFjC+juW3AdehS5/xuRDEMGKSxhev1LLTtprnX+PNaWBdyfS2hhjcU4d4
+         elQPtS775KmNbwBkblAy+5KOG2jY+Rujo24HNMzNG6GiFXR4H91r8d0GKZNH3GhDdylZ
+         HFd5g+MWAUXsFrYEvaBzJBSdgwia6U1j8JV1M6wikSCLWu6BjCXr27nNTAufqT4F+aSq
+         T+Lm87ONBRSFHvtYXFAyrKH5IO3DSDyFWCno8+PcCggW+1JLkWFeZBVn+IIgByVvlVms
+         kkvg==
+X-Forwarded-Encrypted: i=1; AJvYcCXZ/lSwuTjYJwTbNpTifV0xb31jD1pLPXNrMYHguHYPU4yopjRmy+MgwTys1DD35ry3ubP+PwQJVRWRlS4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmrLuaiJAMsbxrtXQSt8debuYTMlJ23JPm3iyylBLcR2hZxldF
+	LkqauRDTKcVBydj7hIyFqQxdEBhyqvNwlYEKcVFniiKTRWORQz//8IzgBtzdpBoGZMjCGPAFquw
+	7aHySV/zJr3BZScaqVLvHyF6Caj7l6Yvd8S3GT+VsQA==
+X-Gm-Gg: ASbGncvhF4MhtR4kzCGQ3sucUDajTTgA+QqvEywWIg1kKdgVaCypXKTsqhlAtNqaql2
+	Aw0FFquUVRzHCIWU+bCbLL06h/GfGQYDquI89TzHfwkCDiP/68ooeLcIHunzuOFRBFvF685tKAb
+	u03X/bN/+/I9LKQ/ET5KVyeGiKq3El/ao33lNwMIgGeMO3fUjiqUW3ZuG/xE4qVgaLnY766PzNu
+	8bcSnCVWa+caN2kvVkynWEdZzZVnkbzlAtYHsct7eOWFfe6b2kxpH8T6mcQbB6WgnWe5Cc0bFJ8
+	vBEl9g==
+X-Google-Smtp-Source: AGHT+IHNOSftU4LA4kaZ2zit5fbsUjeer+Cqtnxd6HV9vMAwCSf0ZxvdazFj8kc8iFBA+Oyhy9hRt9pMH+krWfgjY8s=
+X-Received: by 2002:a05:6512:1453:20b0:594:2646:2350 with SMTP id
+ 2adb3069b0e04-594264628f8mr1107502e87.21.1762125301355; Sun, 02 Nov 2025
+ 15:15:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <AS8PR04MB9080158655C3EA188BE7FE7AFA12A@AS8PR04MB9080.eurprd04.prod.outlook.com>
+References: <cover.1761588465.git.geert+renesas@glider.be> <03a492c8af84a41e47b33c9a974559805d070d8d.1761588465.git.geert+renesas@glider.be>
+ <CACRpkda6ykSZ0k9q4ChBW5NuPZvmjVjH2LPxyp3RB-=fJLBPFg@mail.gmail.com> <CAMuHMdWriu9eUHMSKcv7ojSqbquP3=z2oaquQZLx5nmN0EcGaA@mail.gmail.com>
+In-Reply-To: <CAMuHMdWriu9eUHMSKcv7ojSqbquP3=z2oaquQZLx5nmN0EcGaA@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 3 Nov 2025 00:14:50 +0100
+X-Gm-Features: AWmQ_bkG07aYa3yfLgn8mo--U0KGtThYfcOHYFtKUjSupbZy0y5m0bQWTypUrbs
+Message-ID: <CACRpkdbR+5jh+OqYAU4vyUP-aQSjgMG3RRBkUTWnWz=VEy2Oew@mail.gmail.com>
+Subject: Re: [PATCH v5 07/23] pinctrl: ma35: #undef field_{get,prep}() before
+ local definition
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	David Miller <davem@davemloft.net>, Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>, 
+	Andrew Jeffery <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, Jacky Huang <ychuang3@nuvoton.com>, 
+	Shan-Chun Hung <schung@nuvoton.com>, Yury Norov <yury.norov@gmail.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>, 
+	David Laight <david.laight.linux@gmail.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Kim Seer Paller <kimseer.paller@analog.com>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Richard Genoud <richard.genoud@bootlin.com>, 
+	Cosmin Tanislav <demonsingur@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Jianping Shen <Jianping.Shen@de.bosch.com>, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, linux-edac@vger.kernel.org, qat-linux@intel.com, 
+	linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org, 
+	linux-iio@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Sep 22, 2025 at 02:03:44AM +0000, G.N. Zhou wrote:
-> On Monday, September 22, 2025 6:13 AM, Laurent Pinchart wrote:
-> > On Fri, Sep 05, 2025 at 02:55:59PM +0800, Guoniu Zhou wrote:
-> > > Simplify code by using helper macro FIELD_PREP() and GENMASK().
-> > 
-> > I'm not necessarily against this change, but how does it "simplify code"
-> > ? There's no change in the code beside the macros, and they don't look
-> > particularly simpler.
-> 
-> How about the message body change to " Make code more readable and easier to maintain by
-> using the FIELD_PREP and GENMASK(). macro" and title change to "Refine code by using helper macro"?
-> If you agree, I could apply it in next version.
+On Wed, Oct 29, 2025 at 3:59=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+> On Wed, 29 Oct 2025 at 15:20, Linus Walleij <linus.walleij@linaro.org> wr=
+ote:
+> > On Mon, Oct 27, 2025 at 7:43=E2=80=AFPM Geert Uytterhoeven
+> > <geert+renesas@glider.be> wrote:
+> >
+> > > Prepare for the advent of globally available common field_get() and
+> > > field_prep() macros by undefining the symbols before defining local
+> > > variants.  This prevents redefinition warnings from the C preprocesso=
+r
+> > > when introducing the common macros later.
+> > >
+> > > Suggested-by: Yury Norov <yury.norov@gmail.com>
+> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> >
+> > Do you want me to just merge this patch to the pinctrl tree or do
+> > you have other plans?
+>
+> My plan (cfr. cover letter) was to take it myself, as this is a hard
+> dependency for 11/23.
 
-No need to send a new version, I'll update the commit message myself.
+OK go ahead:
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-> > > No functions changed.
-> > >
-> > > Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> > > Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
-> > > ---
-> > >  drivers/media/platform/nxp/imx8-isi/imx8-isi-gasket.c | 7 ++++---
-> > >  1 file changed, 4 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-gasket.c
-> > > b/drivers/media/platform/nxp/imx8-isi/imx8-isi-gasket.c
-> > > index
-> > >
-> > f69c3b5d478209c083738477edf380e3f280c471..2f5e7299b537d612fb1fe668
-> > 8c1b
-> > > 75bfd2d6049b 100644
-> > > --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-gasket.c
-> > > +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-gasket.c
-> > > @@ -3,6 +3,8 @@
-> > >   * Copyright 2019-2023 NXP
-> > >   */
-> > >
-> > > +#include <linux/bitfield.h>
-> > > +#include <linux/bits.h>
-> > >  #include <linux/regmap.h>
-> > >
-> > >  #include <media/mipi-csi2.h>
-> > > @@ -16,8 +18,7 @@
-> > >  #define GASKET_BASE(n)                               (0x0060 + (n) * 0x30)
-> > >
-> > >  #define GASKET_CTRL                          0x0000
-> > > -#define GASKET_CTRL_DATA_TYPE(dt)            ((dt) << 8)
-> > > -#define GASKET_CTRL_DATA_TYPE_MASK           (0x3f << 8)
-> > > +#define GASKET_CTRL_DATA_TYPE(dt)            FIELD_PREP(GENMASK(13, 8),
-> > (dt))
-> > 
-> > I think you can omit the parentheses around dt here, and around x below.
-> 
-> Ok, will apply in next version.
-> 
-> > 
-> > >  #define GASKET_CTRL_DUAL_COMP_ENABLE         BIT(1)
-> > >  #define GASKET_CTRL_ENABLE                   BIT(0)
-> > >
-> > > @@ -58,7 +59,7 @@ const struct mxc_gasket_ops mxc_imx8_gasket_ops = {
-> > >   */
-> > >
-> > >  #define DISP_MIX_CAMERA_MUX                     0x30
-> > > -#define DISP_MIX_CAMERA_MUX_DATA_TYPE(x)        (((x) & 0x3f) << 3)
-> > > +#define DISP_MIX_CAMERA_MUX_DATA_TYPE(x)
-> > FIELD_PREP(GENMASK(8, 3), (x))
-> > >  #define DISP_MIX_CAMERA_MUX_GASKET_ENABLE       BIT(16)
-> > >
-> > >  static void mxc_imx93_gasket_enable(struct mxc_isi_dev *isi,
+I see there are other review comments, I trust you will fix them up
+and merge the result nicely.
 
--- 
-Regards,
-
-Laurent Pinchart
+Yours,
+Linus Walleij
 
