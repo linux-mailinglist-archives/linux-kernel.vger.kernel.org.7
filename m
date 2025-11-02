@@ -1,184 +1,167 @@
-Return-Path: <linux-kernel+bounces-882090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC582C29970
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 00:05:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6012C29976
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 00:08:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 897173A3565
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 23:05:22 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 58D084E766C
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 23:08:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C937B21D3E8;
-	Sun,  2 Nov 2025 23:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D6E223DDF;
+	Sun,  2 Nov 2025 23:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aLkdI3On"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ni3GNGq8"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913181494CC
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 23:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169F8846F;
+	Sun,  2 Nov 2025 23:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762124718; cv=none; b=Lc63ZTYCpJasPAla/I3dxSIY1o4ZqCpkpXpQgOCyi8tYF+cVOli4IABLWl5kAXKqEz3o7DM6NR5aOMpbEZSiSpEYLQQdEr3HE0nSbR4l/BvXrUeGkxTMeHtV4KtwsfiT2sJRe7Ji3EZpMBMiR/FSnNd/T41x97nFoLZMWdJQSUQ=
+	t=1762124883; cv=none; b=pyD0MdZD8l2GOw2fzIEJxbs4fEVjnob0dLNwB2aqr0wOn7YK0M7GIBzk0QUAvf6jvszNyv2nCVXeYskDn0ZTvzfor7AxkONN8JQis3qWfGvpRwqQJV21TyUwFUvdfFDGJuuZlOLMXSxolMjQg5UU9zLvbfhB5DSNjdlqRpF+f54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762124718; c=relaxed/simple;
-	bh=wG/TB/yBUOa5PfKMTvyXFGJg1zEUMEZaOs6dpKyYV7A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=r6o4PftsnhwlQTHju/dtDpxWDRDW94wbJIbwrLzPty1R0sf//EWbCsLJrQi7rAGQjLw0hsLw83fdmvTT3Zf4jkbn3AaQv6X+M0w8pLnmEsWql6L8uulV4c57DhF3diaF6PV3khpuipixqFGk3p0gIwBFmQ8y18rONHMkC9QilDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aLkdI3On; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-781206cce18so4099407b3a.0
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 15:05:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762124715; x=1762729515; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=G9e650DG6U+kXqpscGtLd6L6xEiKmB25aynSmc10qEE=;
-        b=aLkdI3OnCtFO0HXjkzM6imiwinX3OSIMU9W7MD233HjHOQzdmKhFOtyFsBOWXmh0li
-         7snj5gN9mpKhfq4eot96hmrO85CDmaFFVZnBRVdq8sa1aDVBX8Pe5bUDAMrJ/j0uwjzI
-         4/Miq1eknCSpiDcV+9pufXRVDUSouDqr6iNmAjB0wSjvsInUFT7zV9gJW1sNgquen1lG
-         +nh5DjooAOZCIjkcMafdCiBWgeOo7P2q8M3x8UgE9OxzUVjFO89iShnI398MWOANyiiv
-         D+lBfXeAslxj39DN8GBKx8X9gKTMFe0rFxl59mHm5e+t1e+ai+qkMGBkPeWs13LAiOxT
-         tzog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762124715; x=1762729515;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G9e650DG6U+kXqpscGtLd6L6xEiKmB25aynSmc10qEE=;
-        b=KDvO2FFnT4p9i1DZmKR6+lZFbrYPer23jf646qOImfD8MDhCyI44ZLkOqq82szpz6w
-         GSa6e6wDWR5fxfc7QTMOLBtZ7X3kJLh1j3pZ2cviFCA6bSulw3hVxlk9dKnexpUsPXsA
-         qITpvVX3I2cy3u2P8iHusI1Y6QOzrMPv493FihO2cg8B9bOTX8lOS1QaJA1UZojQNWRm
-         K2Rd53kgOeZwLcahtMos3EPUJHnrSZ1wVeQgShknPHDNmtfJ24r4mn221JO1qqgR+nrA
-         5dicVORfDTDKy10ohhv5Ce2/t9ZXUETUR8UNO0oHjypTfzrrTgAc58+1v17+Hl+OxZDN
-         VlNA==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ+5flV0YuDDpeLQ4LZcqqp+YlsBWZ70ZgZ8PBMpDXITYm6umJMRo+xEiRGEpz1dHJFzSY0/FbNqREN+o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPMcvq2+S33ZmGr4M9UhAbEhVKbW3k0VbfxIH3wtrZtzC0fLqA
-	429ATADNFPeJ0YJ+OOiSYBQ9lQCgKD5dtvb9ZV1q5PEeJIdePltuT+xN0uCAzQ==
-X-Gm-Gg: ASbGncte8oIfrDQu2oYI+QDyBR4slp8VIsktP4oE96wOpaTLvIQ+s6bGV6q53A+n0L1
-	m1r55AR9ofeNxFrhCPuLv+bsenuC85O9/MMrNen5BKDOB6qBEB4rHpdoT1HNNv5ZjfScpk4Agf7
-	SXcR54eg0W7W9Hr4ShQrAUgw5CYGN/7FI1P3qkNFXPKLna8CeMjpAjJfrwZfz0d2SdZW5NAfPTb
-	vM3dxSWLOdsLRKlNnlj4uQzxaUbz/CAkwJRj7Zw4jTuhN09V+loGO0S7LIX3hh5hRd29BdPyqQ8
-	a1pagW6evXIFJlxTSgpisn0n1IDYkcZ21Iew1zgfdcLcM9iU0gVaDO1uzHYdEeK+F9MuwyuHCyP
-	mM6o/+d66lZ/wvvihtsE5O8x/jys/2feILDjxcNO/VJF57yOD+pI4pSfYfClI1tPMgMgJ78Zjdx
-	BYfBBl1PniK5aGOXd+Q0EUWik+6ev+cFHUYvP6rqqJqQvMf5DZoJ8+zkNqrXA=
-X-Google-Smtp-Source: AGHT+IGlJTgyGSsMQo9sCsFMIGOIdR99/zS9ytPFEE1UNZomlcRHBMl9rppbeMpOnObIopGkj8r8XQ==
-X-Received: by 2002:a05:6a00:2d11:b0:7aa:1e36:207 with SMTP id d2e1a72fcca58-7aa1e3610efmr3976233b3a.15.1762124714851;
-        Sun, 02 Nov 2025 15:05:14 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a7d897e764sm9005578b3a.3.2025.11.02.15.05.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 02 Nov 2025 15:05:14 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <4a11992c-023e-4d8d-859f-9abb659ed4c1@roeck-us.net>
-Date: Sun, 2 Nov 2025 15:05:13 -0800
+	s=arc-20240116; t=1762124883; c=relaxed/simple;
+	bh=Mmsz4AsAPrgzvy+/DPeF0gUarOJZ9zlb61UAEWNeghM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=XJOeVLQCuQV3cElsxxbrFCxml5oOY04vHXPTF4OG9uf6GT7679gLbTwqu5JpmOKpyNQGFnzEWVaSmg9dF0RfwmIRWB2JlTnuJrBG4xFDYil1lSuPHdAC5qcwmJJ3zZ7b0kiE+1aoT8RKH2tTm+pYSoOMoRjvD0GlKDfJszZCdLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ni3GNGq8; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1762124873;
+	bh=fCH5++WfvKpTknvdl0m4vyQqVpmFKtADZZLeJc7HYao=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ni3GNGq8yTM2J5vHa6ElQMcricCHBD4aHfX+WPxXSplgOo3+5LNmtuEVbAUkEC8v9
+	 6HsGPjGhhN4gbHSY4MB2WKcf0e3GaZRHyj2v4Gue6iaCpScx2/Xlo9ctu4KeUdZbV8
+	 9z07GkkuCbPcWM5ker+chfgy1z5rX7qYW9LrvJMO8QE8+GQaVjb00IUN1rm3VnWeoX
+	 MKHnxyOX9sgt2lCjgP4hr4QWNhHmq6uLLEFjMC9T4axRfxly/nWrKNib9/XRrDw/k/
+	 rLL5eLI/f02Dt7od1wJdUFje3MMa/rkWC+mThNo0kk3UbeAkWj1cW1Qj63WFZEkOwb
+	 QfIgi2ekKJCUA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d09Nl6dM1z4w93;
+	Mon, 03 Nov 2025 10:07:51 +1100 (AEDT)
+Date: Mon, 3 Nov 2025 10:07:50 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@de.ibm.com>, Andrew Morton
+ <akpm@linux-foundation.org>
+Cc: Israel Batista <linux@israelbatista.dev.br>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Sumanth Korikkar <sumanthk@linux.ibm.com>
+Subject: linux-next: manual merge of the s390 tree with the mm-unstable tree
+Message-ID: <20251103100750.4522060e@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] watchdog/diag288: Fix module comment typos
-To: Zoe Gates <zoe.blair.gates@icloud.com>, hca@linux.ibm.com,
- gor@linux.ibm.com, agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
- svens@linux.ibm.com, wim@linux-watchdog.org, linux-s390@vger.kernel.org,
- linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <fe09cb336dca5f277769b115dae55b9639dc92a7.camel@icloud.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <fe09cb336dca5f277769b115dae55b9639dc92a7.camel@icloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/e429RH3BDT+DdvNkIbp8xSw";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 10/27/25 21:01, Zoe Gates wrote:
->  From ebec904b22077c3ebd0a18956397a9b0540a2714 Mon Sep 17 00:00:00 2001
-> From: Zoe Gates <zoe@zeocities.dev>
-> Date: Mon, 27 Oct 2025 22:14:50 -0500
-> Subject: [PATCH 2/3] watchdog/diag288: Fix module comment typos
-> 
-> Correct spelling and capitalizaion in the header comment so the
-> documentation reads cleanly.
-> 
-> Signed-off-by: Zoe Gates <zoe@zeocities.dev>
+--Sig_/e429RH3BDT+DdvNkIbp8xSw
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Hi all,
 
-> ---
->   drivers/watchdog/diag288_wdt.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/watchdog/diag288_wdt.c
-> b/drivers/watchdog/diag288_wdt.c
-> index 887d5a6c155b..656b937f7653 100644
-> --- a/drivers/watchdog/diag288_wdt.c
-> +++ b/drivers/watchdog/diag288_wdt.c
-> @@ -6,10 +6,10 @@
->    * to CP.
->    *
->    * The command can be altered using the module parameter "cmd". This
-> is
-> - * not recommended because it's only supported on z/VM but not whith
-> LPAR.
-> + * not recommended because it's only supported on z/VM but not with
-> LPAR.
->    *
-> - * On LPAR, the watchdog will always trigger a system restart. the
-> module
-> - * paramter cmd is meaningless here.
-> + * On LPAR, the watchdog will always trigger a system restart. The
-> module
-> + * parameter cmd is meaningless here.
->    *
->    *
->    * Copyright IBM Corp. 2004, 2013
+Today's linux-next merge of the s390 tree got a conflict in:
 
+  include/linux/memory.h
+
+between commit:
+
+  074be77d684a ("mm: convert memory block states (MEM_*) macros to enum")
+
+from the mm-unstable tree and commit:
+
+  300709fbefd1 ("mm/memory_hotplug: Remove MEM_PREPARE_ONLINE/MEM_FINISH_OF=
+FLINE notifiers")
+
+from the s390 tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc include/linux/memory.h
+index ca3eb1db6cc8,ba1515160894..000000000000
+--- a/include/linux/memory.h
++++ b/include/linux/memory.h
+@@@ -64,21 -64,9 +64,19 @@@ struct memory_group=20
+  	};
+  };
+ =20
+ +enum memory_block_state {
+ +	/* These states are exposed to userspace as text strings in sysfs */
+ +	MEM_ONLINE,		/* exposed to userspace */
+ +	MEM_GOING_OFFLINE,	/* exposed to userspace */
+ +	MEM_OFFLINE,		/* exposed to userspace */
+ +	MEM_GOING_ONLINE,
+ +	MEM_CANCEL_ONLINE,
+ +	MEM_CANCEL_OFFLINE,
+- 	MEM_PREPARE_ONLINE,
+- 	MEM_FINISH_OFFLINE,
+ +};
+ +
+  struct memory_block {
+  	unsigned long start_section_nr;
+ -	unsigned long state;		/* serialized by the dev->lock */
+ +	enum memory_block_state state;	/* serialized by the dev->lock */
+  	int online_type;		/* for passing data to online routine */
+  	int nid;			/* NID for this memory block */
+  	/*
+@@@ -101,14 -89,15 +99,7 @@@ int arch_get_memory_phys_device(unsigne
+  unsigned long memory_block_size_bytes(void);
+  int set_memory_block_size_order(unsigned int order);
+ =20
+ -/* These states are exposed to userspace as text strings in sysfs */
+ -#define	MEM_ONLINE		(1<<0) /* exposed to userspace */
+ -#define	MEM_GOING_OFFLINE	(1<<1) /* exposed to userspace */
+ -#define	MEM_OFFLINE		(1<<2) /* exposed to userspace */
+ -#define	MEM_GOING_ONLINE	(1<<3)
+ -#define	MEM_CANCEL_ONLINE	(1<<4)
+ -#define	MEM_CANCEL_OFFLINE	(1<<5)
+ -
+  struct memory_notify {
+- 	/*
+- 	 * The altmap_start_pfn and altmap_nr_pages fields are designated for
+- 	 * specifying the altmap range and are exclusively intended for use in
+- 	 * MEM_PREPARE_ONLINE/MEM_FINISH_OFFLINE notifiers.
+- 	 */
+- 	unsigned long altmap_start_pfn;
+- 	unsigned long altmap_nr_pages;
+  	unsigned long start_pfn;
+  	unsigned long nr_pages;
+  };
+
+--Sig_/e429RH3BDT+DdvNkIbp8xSw
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkH5EYACgkQAVBC80lX
+0GxwXwf9GP9Y8nYvm1QzAV/4Vfn3V/zgZaKDAnm9ZZyhlhEEcor6nLGXIfAhPHV8
+HGY3KAhogff6vCGY5YNQxaa8HuVnK+hId8dKzpFcvORe5DgmvzpdFs2+jepKPNBK
+GmNuz7bN3AyJOVAVyOV2ceuvUe4nV7AgH220J1r5JggkaUDsPQWfzTYtw+5tjfIK
+3gF2pMpQyP02q924YnjBENtZXOKDmuLHYNqkcU9JiH/QAXXJvMh7I/GmykWIkmog
+/VaFwmBcx3DDZXxTMDIE2WvUwnThKzjgVb7ly3raGgp6kLDwRTdaFCJ3eHAM7gsO
+GQf5wHdVBGv6Cmyzxe6sRBba69sGQA==
+=vbzc
+-----END PGP SIGNATURE-----
+
+--Sig_/e429RH3BDT+DdvNkIbp8xSw--
 
