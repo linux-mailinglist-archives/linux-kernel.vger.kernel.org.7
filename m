@@ -1,126 +1,153 @@
-Return-Path: <linux-kernel+bounces-881940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58CA2C29466
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 19:02:24 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA414C294AB
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 19:10:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C400A188AAE3
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 18:02:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 59C9B4E8291
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 18:07:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51BE523C8A1;
-	Sun,  2 Nov 2025 18:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p1Vb2X85"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C79D6221FB2;
+	Sun,  2 Nov 2025 18:07:53 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5233E214210;
-	Sun,  2 Nov 2025 18:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A9D1ACEDA
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 18:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762106528; cv=none; b=abtS1/Kw2qSBJPwQqq842vM3qPNJyGw4T+04KJcRXsrjOHYt3f5K+7IG+i1Yo8zxR+iTmyX8zlcfCch08SxDgGXo8+k/FJ46uQ1Y9TvSKYeYBve/qAaL1rfJgnb0tHOvjfzk0FOUE8KO3JP/z1pb3iilC0tfSDaV3WPdsWF0Ewg=
+	t=1762106873; cv=none; b=V7PhHjledQ31w74PPw5jJ9d0K79C1egTbbqxYzhr8c2QCKVQLV7S4eGDf56zNm526tDW0krwct84qt/lOKx2xzivbbyh8jNHqGsS0FMtTK+NsIujtXcvyIausopE3BbZ9dcutZQhB4lQm+KkyqTEFP2T8BHxmBMyAjGG9L1FSNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762106528; c=relaxed/simple;
-	bh=4gIPtJsfD1XgT7Ae6+RlrfvJUzVyHyS27YURP6HOnzY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=Iz6A7VYpAcw/fYfylJmSlbzq5IZ53BtmJfVi9C5EoId3fFNkVfPcU4X11QBx96OPugxlakkLWNMn/pUK9B12l/zX7uKmKv8+mLnspPUQt8iEiouHJ92jkYXU6ZNI1U1YMGh6dF5RshbxBCTH7ynPbZdGoa4PdtwZ3x4PgTEOT6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p1Vb2X85; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F9C1C4CEF7;
-	Sun,  2 Nov 2025 18:02:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762106528;
-	bh=4gIPtJsfD1XgT7Ae6+RlrfvJUzVyHyS27YURP6HOnzY=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=p1Vb2X85yQJrZdfORQKtYM4TLphDPgsdVpSpjkWj7E8nzlTihAPiE0CmbO9aOirfS
-	 cy8g7vyg8GKS6dxqtYvU++A/shDn3/pBWmxuwZoROZkKBd/IzjjiCWMuCjn6P4rmNh
-	 1Litn7rwkm5S8e/ftm48dnlYccbVb4jG4u+Wp4o2X64mcO9On9c/MkPnujEXOIBpN4
-	 j3MU2jCgPB6iBrRuo/hJ3P4mkeDUYXrKPbPD62O8IahBxOPuc5BX25RYrNLz4qN3Qp
-	 gHmH13q0mLM8DVvZelkPU1xSgzSy0v5kXwWPCDW4cKsA7SXdwvrgBUq6CnJ6E8Or2V
-	 vON5VtB8zpENw==
+	s=arc-20240116; t=1762106873; c=relaxed/simple;
+	bh=zgTtF9jRRBY+HRWQgiVGw4DKJ8kGILP2jbnc6Q4sdXg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=oW/MpTgB9YhpifomYLTgnc0AAiZj/AHXi8fQaC9FAhJghaai4U4/elHaGokJZHhpeLO8JvxK0CACSlbzJEbkPLJn/uNgwsaadVBvxHc3lQhDXUCSaS8ItVtQvMiD5WTD+pdl1LgCirMNhK+fmLkr3m+CdUj5SRftfMG2jQj1iTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-945a5690cb4so1236211939f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 10:07:51 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762106871; x=1762711671;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GXb0d1mbKK0MZiOX5W+56pzGry52mbHKe4supDsmUOU=;
+        b=gnDWAp+23YNYkT6P1Xo1Z0rc0CTl/Arp2KLtjJuNVMJhoNKM/juL3CEEoCXbPslHNM
+         RtPWSKIiv64s+666Ff8hYAW0/+k7fgzd5146uY4SqltxowMxTAPbo499buQL0iQv6qZ8
+         bX40ORhOhreb+eKdFCKaIwkKNjDu6l2oaY7E8s9e3AQ/ZHaMY82H3csxBYl4wtR+yYgj
+         /nxX1GTbNv+RD5RQ0HjjhWuVkwj5US5su12EZpPxJ1aWccTbfJOTl6+t6sTIraTQisKT
+         jJS1/xlGm0XyNJGDNcjZ6OOJ5urVAw2+K54IruEueaavtIpPDwdT/PUWC7Neo5Vwt4yi
+         bYWA==
+X-Gm-Message-State: AOJu0YzKQ25faa3R/W6PQr4pGV/GIUDpH/7HxUJaal5oAcAOoJg6vg8e
+	jObeCLOQ0Uwz8uKGO1rY85jqtPgMBaJI8KZOV02NzQXmYxxlMOmExJYPtK7ldMCH90g17OmlQc0
+	8meFcEt+YHTq0UaLxQg/hsYkwkJ0WLpP/+GkhG0QguGl+FBZ042HTDDnSfns=
+X-Google-Smtp-Source: AGHT+IGN/ZMnxI/8alzKq9FB6Fn0GMJn98Av40uh2aFA5YiJEQX5CEimOmxCAkSLLBsR6ymAAAwyxixAyR1fvEP+52DB4SWQJYt8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sun, 02 Nov 2025 19:02:02 +0100
-Message-Id: <DDYEMP51XH3M.2XLXW0BRQVQVV@kernel.org>
-Subject: Re: [PATCH v6 2/3] rust: i2c: Add basic I2C driver abstractions
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Wolfram Sang" <wsa+renesas@sang-engineering.com>,
- "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Benno Lossin"
- <lossin@kernel.org>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Alice
- Ryhl" <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Viresh Kumar"
- <viresh.kumar@linaro.org>, "Asahi Lina" <lina+kernel@asahilina.net>,
- "Wedson Almeida Filho" <wedsonaf@gmail.com>, "Alex Hung"
- <alex.hung@amd.com>, "Tamir Duberstein" <tamird@gmail.com>, "Xiangfei Ding"
- <dingxiangfei2009@gmail.com>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <linux-i2c@vger.kernel.org>
-To: "Igor Korotin" <igor.korotin.linux@gmail.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <508bd9a1-c75a-4d1d-bed7-ee759ac5a701@kernel.org>
- <20251026184143.280797-1-igor.korotin.linux@gmail.com>
- <4568187f-ab63-4c86-b327-90720ad20ac9@kernel.org>
- <30fbb191-5300-45e9-93d3-8b2ef5cf18ef@gmail.com>
- <DDTFXY5VJCS2.1ZB9EPNLDTPAC@kernel.org>
- <860306dd-b3b1-4eeb-b8b1-d09f2f7e028d@gmail.com>
-In-Reply-To: <860306dd-b3b1-4eeb-b8b1-d09f2f7e028d@gmail.com>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:2683:b0:433:231e:9bf with SMTP id
+ e9e14a558f8ab-433232d4ec3mr74723655ab.25.1762106871141; Sun, 02 Nov 2025
+ 10:07:51 -0800 (PST)
+Date: Sun, 02 Nov 2025 10:07:51 -0800
+In-Reply-To: <68f9bea1.a70a0220.3bf6c6.0032.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69079df7.a70a0220.37351b.000c.GAE@google.com>
+Subject: Forwarded: 
+From: syzbot <syzbot+17cc9bb6d8d69b4139f0@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun Nov 2, 2025 at 6:45 PM CET, Igor Korotin wrote:
-> Hello Danilo
->
-> On 10/27/2025 10:00 PM, Danilo Krummrich wrote:
->> It's called from other drivers (e.g. DRM drivers [1] or network drivers =
-[2])
->> that are bound to some bus device themselves, e.g. a platform device or =
-a PCI
->> device.
->>=20
->> This is the device that we can give to i2c:Registration::new() and use f=
-or the
->> internal call to devres.
->
-> After the recent change where i2c::Registration::new() returns impl=20
-> PinInit<Devres<Self>, Error> instead of Result<Self>, I=E2=80=99m unsure =
-how to=20
-> adapt the Rust I2C sample driver. The sample doesn=E2=80=99t have a paren=
-t=20
-> device available.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Indeed, and that's a good thing that this doesn't work now. :)
+***
 
-I think the best course of action is to make the sample driver closer to a =
-real
-driver.
+Subject: 
+Author: jkoolstra@xs4all.nl
 
-For this you can do what the debugfs sample (samples/rust/rust_debugfs.rs) =
-does
-and use a platform driver with either ACPI
+#syz test
 
-	kernel::acpi_device_table!(
-	    ACPI_TABLE,
-	    MODULE_ACPI_TABLE,
-	    <RustDebugFs as platform::Driver>::IdInfo,
-	    [(acpi::DeviceId::new(c_str!("LNUXBEEF")), ())]
-	);
+---
 
-or OF
-
-	kernel::of_device_table!(
-	    OF_TABLE,
-	    MODULE_OF_TABLE,
-	    <SampleDriver as platform::Driver>::IdInfo,
-	    [(of::DeviceId::new(c_str!("test,rust-device")), Info(42))]
-	);
-
-and then create an i2c::Registration from platform::Driver::probe().
-
-- Danilo
+diff --git a/fs/hfs/dir.c b/fs/hfs/dir.c
+index 86a6b317b474..ee1760305380 100644
+--- a/fs/hfs/dir.c
++++ b/fs/hfs/dir.c
+@@ -196,8 +196,8 @@ static int hfs_create(struct mnt_idmap *idmap, struct inode *dir,
+        int res;
+ 
+        inode = hfs_new_inode(dir, &dentry->d_name, mode);
+-       if (!inode)
+-               return -ENOMEM;
++       if (IS_ERR(inode))
++               return PTR_ERR(inode);
+ 
+        res = hfs_cat_create(inode->i_ino, dir, &dentry->d_name, inode);
+        if (res) {
+@@ -226,8 +226,8 @@ static struct dentry *hfs_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+        int res;
+ 
+        inode = hfs_new_inode(dir, &dentry->d_name, S_IFDIR | mode);
+-       if (!inode)
+-               return ERR_PTR(-ENOMEM);
++       if (IS_ERR(inode))
++               return ERR_CAST(inode);
+ 
+        res = hfs_cat_create(inode->i_ino, dir, &dentry->d_name, inode);
+        if (res) {
+diff --git a/fs/hfs/hfs_fs.h b/fs/hfs/hfs_fs.h
+index fff149af89da..6808b1316b60 100644
+--- a/fs/hfs/hfs_fs.h
++++ b/fs/hfs/hfs_fs.h
+@@ -273,4 +273,6 @@ static inline void hfs_bitmap_dirty(struct super_block *sb)
+        __bh;                                           \
+ })
+ 
++#define EFSCORRUPTED   EUCLEAN         /* Filesystem is corrupted */
++
+ #endif
+diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
+index 9cd449913dc8..ef46a2d29d6a 100644
+--- a/fs/hfs/inode.c
++++ b/fs/hfs/inode.c
+@@ -188,7 +188,7 @@ struct inode *hfs_new_inode(struct inode *dir, const struct qstr *name, umode_t
+        s64 folder_count;
+ 
+        if (!inode)
+-               return NULL;
++               return ERR_PTR(-ENOMEM);
+ 
+        mutex_init(&HFS_I(inode)->extents_lock);
+        INIT_LIST_HEAD(&HFS_I(inode)->open_dir_list);
+@@ -209,7 +209,10 @@ struct inode *hfs_new_inode(struct inode *dir, const struct qstr *name, umode_t
+        if (S_ISDIR(mode)) {
+                inode->i_size = 2;
+                folder_count = atomic64_inc_return(&HFS_SB(sb)->folder_count);
+-               BUG_ON(folder_count > U32_MAX);
++               if (folder_count > U32_MAX) {
++                       printk(KERN_CRIT "hfs error: folder count on super block is corrupt");
++                       return ERR_PTR(-EFSCORRUPTED);
++               }
+                if (dir->i_ino == HFS_ROOT_CNID)
+                        HFS_SB(sb)->root_dirs++;
+                inode->i_op = &hfs_dir_inode_operations;
+@@ -219,7 +222,10 @@ struct inode *hfs_new_inode(struct inode *dir, const struct qstr *name, umode_t
+        } else if (S_ISREG(mode)) {
+                HFS_I(inode)->clump_blocks = HFS_SB(sb)->clumpablks;
+                file_count = atomic64_inc_return(&HFS_SB(sb)->file_count);
+-               BUG_ON(file_count > U32_MAX);
++               if (file_count > U32_MAX) {
++                       printk(KERN_CRIT "hfs error: file count on super block is corrupt");
++                       return ERR_PTR(-EFSCORRUPTED);
++               }
+                if (dir->i_ino == HFS_ROOT_CNID)
+                        HFS_SB(sb)->root_files++;
+                inode->i_op = &hfs_file_inode_operations;
 
