@@ -1,184 +1,98 @@
-Return-Path: <linux-kernel+bounces-881761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29FC2C28DEE
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 12:13:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64C5BC28E07
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 12:19:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0AEB188CB8A
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 11:13:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECFB53A4AA0
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 11:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59CC7273803;
-	Sun,  2 Nov 2025 11:13:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A4429ACCD;
+	Sun,  2 Nov 2025 11:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="H2HBU0jG"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TnjBl1yu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6D82727F3;
-	Sun,  2 Nov 2025 11:13:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78BE3299AB4;
+	Sun,  2 Nov 2025 11:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762081996; cv=none; b=mRoHk9zbeAj7b6bJmW+L4VGaiFD4FXxZj9LiZgO0ziAZhgB3tP4j7FsbQ2yjmnes2COdJPYk9DcUN7dhwicER/Hbsq+hpHA/QbqnvCicrTkPB81DLc8BIHDtq1B/HfsctyLaA/ON4eGbgxmm+w/klxK9pVmgVvfBRJ+g6qJ6bsk=
+	t=1762082219; cv=none; b=Zm9uf/zWwj93l3PxnBe8WEjooGojuMIXZhoKQOGH+kxZr3PYqSaS/p12yuZG3ToHOgiaHGyFm0NPX+J4Sdix2HKOViLZsdztcFKVtVVPS0nqWSBvM3T4ubIvIQXi7xxJrgugd9ichkp9muPFff8GffZyLF5mYvDWQ5ah/aITYjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762081996; c=relaxed/simple;
-	bh=CTzZumIdt3Y2Z/TlJG+uGpWaRv+q3wKsvQqXSHC+Ns4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mCdmE/dcjBw49Mouy3SPgXNzIYMnZnVBRUG8NredPhIH8gHnm6r+zGoAidlVuBhLGceLHpTwAZZNkZGzz+6SXQ48PIyt/ywS0qC+rVffd7YybqeBZLJtcdyzqqIG7o6UYPrpaeSpW85+c3OZpIxxiW4I/5eglsg8j1P0fKf13r8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=H2HBU0jG; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from ideasonboard.com (mob-5-90-50-232.net.vodafone.it [5.90.50.232])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4931AA98;
-	Sun,  2 Nov 2025 12:11:21 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1762081881;
-	bh=CTzZumIdt3Y2Z/TlJG+uGpWaRv+q3wKsvQqXSHC+Ns4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H2HBU0jGvIEH46avUViYqFWXoV9L0FP+sa3WhBWOOupp0b6wSb2d2ypZzN2qPDLWu
-	 aX9hd8z9QMyiMYuEBFbyebQTkWW9kCxyE0Ao0ty1t+guBaIqtgcFQp8WJK7rJc/JnV
-	 9CHwoC1s0VdO0/UV9cQ2Oc5oHxWfBfWc9jvUTI7c=
-Date: Sun, 2 Nov 2025 12:13:10 +0100
-From: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-To: Jai Luthra <jai.luthra@ideasonboard.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, Jacopo Mondi <jacopo@jmondi.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Kieran Bingham <kieran.bingham@ideasonboard.com>, 
-	David Plowman <david.plowman@raspberrypi.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Peter Robinson <pbrobinson@gmail.com>, Stefan Wahren <wahrenst@gmx.net>, 
-	"Ivan T. Ivanov" <iivanov@suse.de>
-Subject: Re: [PATCH 10/13] media: i2c: ov5647: Tidy up mode registers to make
- the order common
-Message-ID: <g2hffsvecnuogwfeouewmtudk6rt5vbi77kcr5wji4ketgiqji@ahpz3iqgsvqd>
-References: <20251028-b4-rpi-ov5647-v1-0-098413454f5e@ideasonboard.com>
- <20251028-b4-rpi-ov5647-v1-10-098413454f5e@ideasonboard.com>
+	s=arc-20240116; t=1762082219; c=relaxed/simple;
+	bh=+55SDzzuC1w7VAx3o43TzO3mcMJJORGrhXePDlw6MA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RfSrXLqyIImhXYhlvABCH1QxJ5pCOD56OJGUu2IwmDCobQnyuFTSzAM0+AbD6/uY5q57dI+j4A372zyWtJbc4FNwtLQVX0DlH9qU35ZDjSqYPYO/l4zOTHGV1aHMOSA0Z/hi9SwujUTbHomIYJMH8SmY+UortZ3AMLEgHLDAQDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TnjBl1yu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68CBAC4CEF7;
+	Sun,  2 Nov 2025 11:16:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762082219;
+	bh=+55SDzzuC1w7VAx3o43TzO3mcMJJORGrhXePDlw6MA0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TnjBl1yuXVUCC94ifK2T1mm2FcRJqaPi7NF6bABto/Wsd7XjTAu5ENcFrcHXi51UD
+	 wrTBFwzU8QyYnUC88L3yrfYs0VW2vEGTWvGLACF3q+9aKGQvACiXlK/SN+8D+Qjerz
+	 aZ7XH+p6QhZkqgdftv3x4wA4Y4hh5JjXIGhpnXyYF9EIDx43fM6m+KTghcEJFIJeFg
+	 s5oeKScF62OYZAat1WdAh/vKwRIG30/eDtM6fn3zfWLsVJ4RAKSZcibSrkOXW7B4CS
+	 ZwmlYj7zzBnG4CSOCtQp8LBQFDPhq6/9zBsQdxkqEZDJEbBMvw1Al0lBqkZLQ5z7VX
+	 WDjSHMJWD2jdQ==
+Date: Sun, 2 Nov 2025 11:16:48 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Francesco Lavra <flavra@baylibre.com>
+Cc: Lorenzo Bianconi <lorenzo@kernel.org>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/9] iio: imu: st_lsm6dsx: dynamically initialize
+ iio_chan_spec data
+Message-ID: <20251102111648.73422267@jic23-huawei>
+In-Reply-To: <20251030072752.349633-2-flavra@baylibre.com>
+References: <20251030072752.349633-1-flavra@baylibre.com>
+	<20251030072752.349633-2-flavra@baylibre.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251028-b4-rpi-ov5647-v1-10-098413454f5e@ideasonboard.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Jai
+On Thu, 30 Oct 2025 08:27:44 +0100
+Francesco Lavra <flavra@baylibre.com> wrote:
 
-On Tue, Oct 28, 2025 at 12:57:21PM +0530, Jai Luthra wrote:
-> From: Dave Stevenson <dave.stevenson@raspberrypi.com>
->
-> To make comparisons of the mode registers easier, put the registers
-> for the binned and VGA modes in the same order as the others.
->
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
-> ---
->  drivers/media/i2c/ov5647.c | 33 ++++++++++++++-------------------
->  1 file changed, 14 insertions(+), 19 deletions(-)
->
-> diff --git a/drivers/media/i2c/ov5647.c b/drivers/media/i2c/ov5647.c
-> index 59c21b91d09d79f073a54871221f197a0bcf3aa2..2c9f50fd20d99f2adce2a1fbe4289cf7aeea2ba4 100644
-> --- a/drivers/media/i2c/ov5647.c
-> +++ b/drivers/media/i2c/ov5647.c
-> @@ -343,6 +343,8 @@ static struct regval_list ov5647_2x2binned_10bpp[] = {
->  	{0x3036, 0x62},
->  	{0x303c, 0x11},
->  	{0x3106, 0xf5},
-> +	{0x3821, 0x01},
-> +	{0x3820, 0x41},
->  	{0x3827, 0xec},
->  	{0x370c, 0x03},
->  	{0x3612, 0x59},
-> @@ -415,8 +417,6 @@ static struct regval_list ov5647_2x2binned_10bpp[] = {
->  	{0x4837, 0x16},
->  	{0x4800, 0x24},
->  	{0x3503, 0x03},
-> -	{0x3820, 0x41},
-> -	{0x3821, 0x01},
->  	{0x350a, 0x00},
->  	{0x350b, 0x10},
->  	{0x3500, 0x00},
-> @@ -429,20 +429,27 @@ static struct regval_list ov5647_2x2binned_10bpp[] = {
->  static struct regval_list ov5647_640x480_10bpp[] = {
->  	{0x0100, 0x00},
->  	{0x0103, 0x01},
-> -	{0x3035, 0x11},
-> +	{0x3034, 0x1a},
-> +	{0x3035, 0x21},
+> Using the ST_LSM6DSX_CHANNEL_ACC() macro as a static initializer
+> for the iio_chan_spec struct arrays makes all sensors advertise
+> channel event capabilities regardless of whether they actually
+> support event generation. And if userspace tries to configure
+> accelerometer wakeup events on a sensor device that does not
+> support them (e.g. LSM6DS0), st_lsm6dsx_write_event() dereferences
+> a NULL pointer when trying to write to the wakeup register.
+> Replace usage of the ST_LSM6DSX_CHANNEL_ACC() and
+> ST_LSM6DSX_CHANNEL() macros with dynamic allocation and
+> initialization of struct iio_chan_spec arrays, where the
+> st_lsm6dsx_event structure is only used for sensors that support
+> wakeup events; besides fixing the above bug, this serves as a
+> preliminary step for adding support for more event types.
+> 
+> Signed-off-by: Francesco Lavra <flavra@baylibre.com>
 
-Why has the register value changed ?
+In cases where there are only a small number of options for what the channel
+arrays should contain, my normal preference would be more data over moving
+the complexity into code.  That is have two struct iio_chan_spec arrays and
+pick between them based on availability of the interrupt.
 
->  	{0x3036, 0x46},
->  	{0x303c, 0x11},
-> +	{0x3106, 0xf5},
->  	{0x3821, 0x01},
->  	{0x3820, 0x41},
-> +	{0x3827, 0xec},
->  	{0x370c, 0x03},
->  	{0x3612, 0x59},
->  	{0x3618, 0x00},
->  	{0x5000, 0x06},
->  	{0x5003, 0x08},
->  	{0x5a00, 0x08},
-> -	{0x3000, 0xff},
-> -	{0x3001, 0xff},
-> -	{0x3002, 0xff},
-> +	{0x3000, 0x00},
-> +	{0x3001, 0x00},
-> +	{0x3002, 0x00},
+I haven't checked the whole series yet, but how many channel arrays
+would we need to support the features you are introducing here? That is
+how many different combinations exist in the supported chips?
 
-Uh these ones changed as well, is it intentional ?
+Jonathan
 
-> +	{0x3016, 0x08},
-> +	{0x3017, 0xe0},
-> +	{0x3018, 0x44},
-> +	{0x301c, 0xf8},
->  	{0x301d, 0xf0},
->  	{0x3a18, 0x00},
->  	{0x3a19, 0xf8},
-> @@ -468,6 +475,7 @@ static struct regval_list ov5647_640x480_10bpp[] = {
->  	{0x3632, 0xe2},
->  	{0x3633, 0x23},
->  	{0x3634, 0x44},
-> +	{0x3636, 0x06},
->  	{0x3620, 0x64},
->  	{0x3621, 0xe0},
->  	{0x3600, 0x37},
-> @@ -496,19 +504,6 @@ static struct regval_list ov5647_640x480_10bpp[] = {
->  	{0x4001, 0x02},
->  	{0x4004, 0x02},
->  	{0x4000, 0x09},
-> -	{0x3000, 0x00},
-> -	{0x3001, 0x00},
-> -	{0x3002, 0x00},
 
-Ah, that's why!
 
-> -	{0x3017, 0xe0},
-> -	{0x301c, 0xfc},
-> -	{0x3636, 0x06},
-> -	{0x3016, 0x08},
-> -	{0x3827, 0xec},
-> -	{0x3018, 0x44},
-> -	{0x3035, 0x21},
-> -	{0x3106, 0xf5},
-> -	{0x3034, 0x1a},
-> -	{0x301c, 0xf8},
-
-Nice tidy up
-Reviewed-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-
-Thanks
-  j
-
->  	{0x4800, 0x34},
->  	{0x3503, 0x03},
->  	{0x0100, 0x01},
->
-> --
-> 2.51.0
->
 
