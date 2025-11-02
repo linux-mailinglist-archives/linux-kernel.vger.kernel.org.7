@@ -1,156 +1,239 @@
-Return-Path: <linux-kernel+bounces-881612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE1A7C2890D
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 02:36:44 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1AF3C2891C
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 02:37:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DF833B14D5
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 01:36:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D0DDE4E3A4C
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 01:37:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16590221275;
-	Sun,  2 Nov 2025 01:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C8132264C7;
+	Sun,  2 Nov 2025 01:37:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cZsn7xze"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NWAMyYgH"
+Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012010.outbound.protection.outlook.com [52.101.53.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEA1482EB
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 01:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762047399; cv=none; b=KgNyrnOfeGrBMlWLKXOFixcjQqQNMOiDV5lkSxeyXVTMCqcyCcTu4+6Qn9SfjihRTWEHI7z4RgYeMl/Mk+AX0o3u1UOuRJv6EQ20g7L/JUjjpNqkRuKeCnx3CCAUv7qQZ8+2tF1US449m1NAgMClmEUMUgS9bvl5xLypuZo3Os8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762047399; c=relaxed/simple;
-	bh=ekE/yMIQIzZSmj3WTw8LwBt5UHgpRYTc43aORyiYF7A=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=FVl+zdiSXbtHqRSOiqF8ky/Jjz41mESWUy8vUzsUhkyr0FnrMTuYyHc4qsX/c8lnB3bc5b7fXIQYupl/cvA5eCsOEIslcV/jnOnU437bzIbfpel1qO1CEgW5ENR+XdC9ukYs15DQjXdbbWVhVKXeyCQopUcR5+T3k3harMsyGpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cZsn7xze; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762047398; x=1793583398;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ekE/yMIQIzZSmj3WTw8LwBt5UHgpRYTc43aORyiYF7A=;
-  b=cZsn7xzeI8+sBPEysNSI4L0jX4/2msFEMPBMwMfu7jl8w6ISNmfuj1Rh
-   o1U32A74wv1tlOas4qroAFbGufH9bOFwJfhJXQ3GJbRtobittDPK+gPyV
-   RZ80lhlK+LIisd6K5ZZ12gGSrN6uQ1jjtQOGfHJygpV2bYMGpBzK+Sdz5
-   vfhPWMI9R1UsIxO1XdrnvfOSU02VEUQb5iRU6qd45sX0E147jnVpUszh3
-   uvH4/q32kc+2RzYhd0dAwxTOeLeeU2Jb2Y1hvBbKI8tinUxser0+GefH4
-   hL/HMFvnVFWwkiIAskKiwD82/r908WWVzvKIXQSRu8Wdv3zc+ugUAqTHZ
-   g==;
-X-CSE-ConnectionGUID: Y5tEEijpTnOWRUo94Avibw==
-X-CSE-MsgGUID: XVm2I9FAR1SDoyogjVMmoA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11600"; a="64316862"
-X-IronPort-AV: E=Sophos;i="6.19,273,1754982000"; 
-   d="scan'208";a="64316862"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2025 18:36:37 -0700
-X-CSE-ConnectionGUID: oshbK108Twuj7cCaXehmmw==
-X-CSE-MsgGUID: bJiMJLZHRAikaUbtjPowWA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,273,1754982000"; 
-   d="scan'208";a="217191444"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa002.jf.intel.com with ESMTP; 01 Nov 2025 18:36:35 -0700
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vFN1F-000Osu-2M;
-	Sun, 02 Nov 2025 01:36:33 +0000
-Date: Sun, 2 Nov 2025 09:36:22 +0800
-From: kernel test robot <lkp@intel.com>
-To: LiangCheng Wang <zaq14760@gmail.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Thomas Zimmermann <tzimmermann@suse.de>
-Subject: drivers/gpu/drm/drm_gem_shmem_helper.c:560:undefined reference to
- `vmf_insert_pfn'
-Message-ID: <202511020901.GlNgowuw-lkp@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC371DF985;
+	Sun,  2 Nov 2025 01:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762047422; cv=fail; b=Byz5+kAUCZmxwvgw9Yd0TIqkEZEWtmpd4qgdUfRrzdT6YkW+VkqKLYrnUPba5+71vtFbFD9xhnW7s28YX0DFM1x8cYnMGsVcPS6V0mhZLMFJGHb7XGG4qP6W34Bd83oVFzAiNeycSf3ThnWVAboe83j9aM6bpNlKHpiLHshF5zs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762047422; c=relaxed/simple;
+	bh=wYnE6xxaJibKOA5ERCLIocrzHrn0ysJa3k/NDJ20eRw=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=p2w3yhr0swMK3li7+X2NlPwTQQwWZKQ9y5Pz5UV0eeokd6pfmHtTkPDXbDN2vjin47t6PSJpsoolBk2kz7+baEowyXP5c0TruDDRK8V6pnUAeTZexHMBRUsSSF8G9nCfnvEj03rcC9inFfJkuqLhJp21NcJLsiu9+FEx1OQTPHs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NWAMyYgH; arc=fail smtp.client-ip=52.101.53.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=a9VKxCDnwp7D4+WBycB0E2geHzvMgDKMxd/DqO6yIIC4v44q8Rj+louxpAXmaZMepg+Y9RgXnbE+c1vshE6qCvPaI75Gc6MC98GwstRc4N/OCgfTsFyhB+A+sQGy8Rgqm9sbjjJ8WMypQu2YBYe6ra04ZEGoRbqbN6ulhfcsvYBI147agdoxsh5l1Y0v6OB/34iDi7x6pDQoHPek17Lcy0YuSLtZVDt5Lku11sNq4DMaUZbO4bF4diOjFSE96CQ019hzOxoKaquv8wIgJbTNXM+trCSquwI/QFTiKZNRKbHL3Iu+LNb2gdtDhT/ysrpGol01i/p02sn6r20dNJfUeg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hRkLeH9Y9LRGXzREpAK4ZpC4Dgi7JVWg6rgxSoX9ePM=;
+ b=XXRPHUPGlvX/aETsE5Fv3BD6rNbbIK+58/I2y7rhjaw32AatFcw9kX9kT+WSBH35VseyPCoCFwyKHCpMCbKsU6+GlpexC/cpn8FYKb8gs6v+sDhPHpO2qdEEpISkUEovohZ8YpL4guQd0Hu1uuQyy55cvjUu0DmotEfLYWCdSlqv3AJf/zZGcCXPZqOY5EUWIOL7hAkrDzyOGSoYMzyT9BPavES40Vvez/ofRRFT5LJGTGEOMzFjyPK/enAl33ShDGLwtGvXo3hcf3sLWFaXAOpqfGdIaNsWL8x5XSfncLOnMgLY5Lr/EppTfAPTY8ro8qcNPhbrfC/5V58rzEjrTQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hRkLeH9Y9LRGXzREpAK4ZpC4Dgi7JVWg6rgxSoX9ePM=;
+ b=NWAMyYgH+1QNuR6QQwwxrWUh+WC6Vc8WJwJVk7lFiOP3wXKJ/2S8tKP1vVPlfhrPY9W2/RY07y9U3wGKD4lj/2xm3/T8XcVwDEdW+T60OK4YeM3myviIyas9+dF+oVFU0KLdCOjWVTQ/qLjvjbSOUOpuLUrGA8NrwV06ElH88JMnO1GU22nS7d2yAXQL+pWdk9JiAyAM1ESmAbt9X+IsIU9OMMohnI/cRlKBCqT0MMmJUf1pqku6S4NO0lzlDtIQJOo2AG08fcIKwab1OmRGB+5csr9/w+3IZeHguPVISvrfmyLGveugTGDc6soJBafGiPpjb72o5z6rhTiOYqUarw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
+ by MW6PR12MB8916.namprd12.prod.outlook.com (2603:10b6:303:24b::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Sun, 2 Nov
+ 2025 01:36:57 +0000
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9275.013; Sun, 2 Nov 2025
+ 01:36:57 +0000
+From: John Hubbard <jhubbard@nvidia.com>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Alexandre Courbot <acourbot@nvidia.com>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Timur Tabi <ttabi@nvidia.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Edwin Peer <epeer@nvidia.com>,
+	Zhi Wang <zhiw@nvidia.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	nouveau@lists.freedesktop.org,
+	rust-for-linux@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	John Hubbard <jhubbard@nvidia.com>
+Subject: [PATCH v4 0/3] gpu: nova: add boot42 support for next-gen GPUs
+Date: Sat,  1 Nov 2025 18:36:53 -0700
+Message-ID: <20251102013656.423235-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.51.2
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BY5PR17CA0007.namprd17.prod.outlook.com
+ (2603:10b6:a03:1b8::20) To BY5PR12MB4116.namprd12.prod.outlook.com
+ (2603:10b6:a03:210::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|MW6PR12MB8916:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0e1e83a5-68a3-418e-5506-08de19b04f93
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?0MVBHDeEmLPuq2If+RaJVpjXOt3ulThCxphr0QYh0gDUTY8FOIFvVWuOi7sj?=
+ =?us-ascii?Q?F8U99mhMlCFwIW5dHcold03HCUM8rRjg2iOlLo2AdV/i4DJn4cTEptFSvaXl?=
+ =?us-ascii?Q?APtPxhCdKKsr6x50gWooXt27u/KKlZfKdy5chhQk0YNZG1HVwf1V04VN1AXU?=
+ =?us-ascii?Q?f/TrQaHiuJszQtzQy4Kc1AgFsulrX9LjZg5lf4lmXdfagYpuUheqBETx3sQ/?=
+ =?us-ascii?Q?fBmcWjj8xvzJQxNdhM8+bcR3Hpm89h9eoZUOL/5ogbXt701awo31SZjPI1c5?=
+ =?us-ascii?Q?DGLyk0VADs4Lqcuu1Tldh2KYGzDxLmhukNBtwKEKUHCrwOJZ34HQ53xsBgYT?=
+ =?us-ascii?Q?Pa0v9/s3k4dICn9GC93i1ACEyAvySWDGoHtqhlRrLlV2fiH6zujwlIbDzDxA?=
+ =?us-ascii?Q?M7z8Yn7NFx6jpMvPxz9NyNt+2Qlz8tnt8/KcbKJOAHuWwxgAAnPrSAw9hDxj?=
+ =?us-ascii?Q?QVEiEMuAOoGClUFItg5vP55gQsaI8eZ9pUY9CgJ+sb6HxBoJJRgFrqJsLKi3?=
+ =?us-ascii?Q?OpD06m8VO94G48bD3M0djKnbn3LzdTEmUBmJhgPZyHKq2MhAy2hMu2xZkdJC?=
+ =?us-ascii?Q?zlB2hU91y4lyT23XdSFN3hEmgADGaud2+NPgCR1pd1Eie+WyKOdsC1CH219M?=
+ =?us-ascii?Q?b70j2KPsoal2WNb4chbYBYSc8tFhSfKYdJIkjaN4xOw5zJykGJxO5rmhXlmr?=
+ =?us-ascii?Q?RV0wbHbQUbAiusu/bYUDunRoXcjmbq05896I5/PaM6I2G6nUl3OGXd0X4W/H?=
+ =?us-ascii?Q?cO/nRcVsyOE4/9dZvsUzLdBmXFU95VZTBgjnhAG5OAjoZTK0pYaeeVtUMmCU?=
+ =?us-ascii?Q?5vTrn6U+l6aaGjNvHFi+tBLQOEXJ2e9JFHdi4W6c3XldJtbjXz3IZ/z2c0j7?=
+ =?us-ascii?Q?VjYvHQzbJdFxd/rSh5KHjffW9rw5z6VKe87d3CWfRfBuweczLzichhoPUBn2?=
+ =?us-ascii?Q?clPB2ElEBZbANgxuSZTIWKYQ4Ei1MQKTDEFuspaZel0ctBibAAqQLwZcLVoQ?=
+ =?us-ascii?Q?4Gocf+udrHoF8BfGkWCSmdgZNzdaMfstlrzEoBxQbgGjrv0H/fcRI34FL2sg?=
+ =?us-ascii?Q?SUEBdsTOyDXDSY17tiG+8HV06WgXnqYDqOMj2uZLZ1/5L6qLzkC/B4oaz+UO?=
+ =?us-ascii?Q?bG4uQ3WGrQ/X9jpy4oBFFF3lM9EA0oDZorF5rntQ6BKqCYG5BEkvypjIH0zL?=
+ =?us-ascii?Q?h9JovCzNhvXQJro4WiG65Ig1+y9bseI1sTs/oPgPpXOawFvGU0XM/5uA04Tx?=
+ =?us-ascii?Q?c6EOTX3kCSeBzCkcs0xHc8zdNuEbFdt5zPa81QCFGTBDpYhd3d2mU5Mc41H/?=
+ =?us-ascii?Q?M9Zjr7pMjLfhrzDhEkMtdj4l3stRryLBIO0yBz4y0b6OY5mNtHocbljY38q1?=
+ =?us-ascii?Q?7lSoelZQKrHDNmk0NMja4Qoahp7Nx39+Vu6GmrXlTAU5dRIDgh5mU91cEq5o?=
+ =?us-ascii?Q?7f+lT4SAfaloFH2RVBw4f+zKUoB+3hC0?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?lyEtr3vfg2nm2HW3Q0JuVQLn9HzGIx21nIzzyyHbK0rHsvMdhAh8bvYzH7Z9?=
+ =?us-ascii?Q?J9ug4YM7y70TeM1Y6j+64g6cscyt77cYa3Cqk+OCFREXOXTWAsoVTzTOxQwS?=
+ =?us-ascii?Q?08IGmNPQ/ClpPXScKR/8OPeO3i8UtOCPQLKbdVKGgZI0ccrSqPQUX0qgHAwq?=
+ =?us-ascii?Q?zrypig2CQGbGWb1ee6CiZ620MMcJwrM+yQ1NaFc9Sn+0ggIZd9Y7S2cLgyzf?=
+ =?us-ascii?Q?B9ylvcc/IB72mcK66FJDTsaxWS8VWItMufL6GoqeQi2k5quAIZEZ4eT+lkMK?=
+ =?us-ascii?Q?H4b8JhtSrTK0lDmUS5VL4ySJbfsUe3Y40eLCX4kWzr1CqUr21v9OTUXUHqhX?=
+ =?us-ascii?Q?Xu2kezh0o+vd5CPDAHaTbGdQ4Q1akz1wwJ82Y72CVAY9HRY1s6pX4G41pirn?=
+ =?us-ascii?Q?spEPjEebOIl5cd3rvhHGaFND50rrTOBVsDz1oJMn5AuoF+2Zb80Zp09PiGR2?=
+ =?us-ascii?Q?k7DyjaqSfzMbIBzvn25xzzCVfLYyjBJTPUBWePuVqyj8oW4uCC3YYMnnPPoJ?=
+ =?us-ascii?Q?A6d8CGNVUjGxwPbnIEGaoTIJwcqHERz7INYNqgcBUknQ6NyTfz54PoUNrIO6?=
+ =?us-ascii?Q?6qIVsOEPwZGJSBA1zLrX2qLAylfm/ke2H7Z+UJT4wq93lxwMJJz66pBv2qFL?=
+ =?us-ascii?Q?mvkHJUp4t56UbdY0584acRHRS+bK1rCU7YZktFMSQUO3MmJFsIZGqAwx7UhL?=
+ =?us-ascii?Q?AHBryY6PmIMsEUIbtgQUCGTk9i7V+AUU/qSu3CFdI6OeJ1dbLQotnOHuBGso?=
+ =?us-ascii?Q?9DkR1kqgoh5PLKe8CEyvGeCk2GoM8aqF9bqUmp7olloQpIDg0tNDLIH9x1DN?=
+ =?us-ascii?Q?Mdv/i5GucLZk+gVUYVEgqniDxaqvv91O2cNvM6srzwEowF0XJ3EavPJ0lhxT?=
+ =?us-ascii?Q?Nl6LemQGg9Qh3rtZkm92vNyjnstmPgicrG9yAz7em0z+mxZz3znnl7r0MmSx?=
+ =?us-ascii?Q?K/q68uMNfJkFGZlr2Zce8EZEfTNpjFAdOcGUV5+YXoujWRDR386AYF80bLyc?=
+ =?us-ascii?Q?32I13AJvrX0dUQ+h2YxJwe+kKmm+/ux2pq4GSVQh0CLMNS9Dh6HDwkfsvcsO?=
+ =?us-ascii?Q?pxnmLt6iUvhq41moUabw0nBfC6KgRERzwKuOokGg9Rlus1MxyjJV2169bM8a?=
+ =?us-ascii?Q?MToBukMLI6GJIDuNvHxqTfpKcd4IzhW4CCDU3S9DVk4CoR0mQT6tcynGp67C?=
+ =?us-ascii?Q?iGsA/N9JkRFfN9g4dTajDFfEkcBFxcR/TvvbIZHF/ctk40NBEKKvRqO4BDs6?=
+ =?us-ascii?Q?AwqVpJe5oBi6Zy2EVzL4TIhT5SJUL3XxSuZTO1+nfU8hittBiSxphHS1Srru?=
+ =?us-ascii?Q?2RDlNUeHkYMVBAaDMUFWEjeMkweyKzXGXlKI4Tn9iD0sFXN2uduD95PXRSox?=
+ =?us-ascii?Q?tThlfWPikVDgJczBB0v23mf6Gsh5WRZeFmCAK3TrhHzQKGD+cw2a1lTQf2L5?=
+ =?us-ascii?Q?KSCcxpaO0IwfiYYRnlJpYOV6YBVI7W+RcQW09PfMPDN+Rarbw/c72xhCY8pQ?=
+ =?us-ascii?Q?KC+KUp23xzkDOa2Lb+uRlWHSKgk4YEieDHj9PIeR+E6ABpeTx6+tEDoAZf82?=
+ =?us-ascii?Q?9jWcJ20eZ78dKSyCD8Im8bvml9B1dZkHyEGkd0+v?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0e1e83a5-68a3-418e-5506-08de19b04f93
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2025 01:36:57.4675
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: frWi9zhHx9ZfdFcDPO2IeDKOcAWklvJu6BUXOtk7AM+R6HsE0UGlmLOEdIlBmusP/QBdqqr69sFS5iOX5gciSA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8916
 
-Hi LiangCheng,
+Changes in v4:
 
-First bad commit (maybe != root cause):
+1) Simplified and improved the decision logic: reads both arch_0 and
+arch_1 fields in boot0, and skips the unnecessary is_nv04() logic as
+well. Thanks to Timur Tabi and Danilo for noticing these issues.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   691d401c7e0e5ea34ac6f8151bc0696db1b2500a
-commit: 0c4932f6ddf815618fa34f7403df682aed7862b5 drm/tiny: pixpaper: Fix missing dependency on DRM_GEM_SHMEM_HELPER
-date:   6 weeks ago
-config: arm-randconfig-004-20251102 (https://download.01.org/0day-ci/archive/20251102/202511020901.GlNgowuw-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251102/202511020901.GlNgowuw-lkp@intel.com/reproduce)
+2) Added a patch to represent Architecture as a u8. This simplifies a
+few things. (Thanks to Alex Courbot. I added your Suggested-by to that
+patch.)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511020901.GlNgowuw-lkp@intel.com/
+3) Enhanced the Revision type to do more, which simplifies the callers.
+(Thanks to Danilo.)
 
-All errors (new ones prefixed by >>):
+Changes in v3:
 
-   arm-linux-gnueabi-ld: drivers/gpu/drm/drm_gem_shmem_helper.o: in function `drm_gem_shmem_fault':
->> drivers/gpu/drm/drm_gem_shmem_helper.c:560:(.text+0x1a2): undefined reference to `vmf_insert_pfn'
-   arm-linux-gnueabi-ld: (vmf_insert_pfn): Unknown destination type (ARM/Thumb) in drivers/gpu/drm/drm_gem_shmem_helper.o
->> drivers/gpu/drm/drm_gem_shmem_helper.c:560:(.text+0x1a2): dangerous relocation: unsupported relocation
+1) Restored the Revision type as recommended by Danilo, but decoupled it
+from boot0.
 
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for DRM_GEM_SHMEM_HELPER
-   Depends on [n]: HAS_IOMEM [=y] && DRM [=y] && MMU [=n]
-   Selected by [y]:
-   - DRM_PIXPAPER [=y] && HAS_IOMEM [=y] && DRM [=y] && SPI [=y]
+2) Applied Alex Courbot's suggestion to use TryFrom<NV_PMC_BOOT_0/42>
+for Spec.
+
+3) Reflowed the new comment documentation to 100 cols, to avoid wasting
+a few vertical lines.
+
+Changes in v2:
+
+1) Restored the Spec type, and used that to encapsulate the subsequent
+   boot42 enhancements. Thanks to Danilo Krummrich's feedback for that
+   improvement.
+
+v1 cover letter:
+
+NVIDIA GPUs are moving away from using NV_PMC_BOOT_0 to contain
+architecture and revision details, and will instead use NV_PMC_BOOT_42
+in the future. NV_PMC_BOOT_0 will be zeroed out.
+
+Change the selection logic in Nova so that it will claim Turing and
+later GPUs. This will work for the foreseeable future, without any
+further code changes here, because all NVIDIA GPUs are considered, from
+the oldest supported on Linux (NV04), through the future GPUs.
+
+Add some comment documentation to explain, chronologically, how boot0
+and boot42 change with the GPU eras, and how that affects the selection
+logic.
+
+Also, remove the Revision type, because Revision is no longer valuable
+as a stand-alone type, because we only ever want the full information
+that Spec provides.
+
+This is based on today's drm-rust-next, which in turn is based on
+Linux 6.18-rc2.
+
+John Hubbard (3):
+  gpu: nova-core: prepare Spec and Revision types for boot0/boot42
+  gpu: nova-core: make Architecture behave as a u8 type
+  gpu: nova-core: add boot42 support for next-gen GPUs
+
+ drivers/gpu/nova-core/gpu.rs  | 92 +++++++++++++++++++++++++++--------
+ drivers/gpu/nova-core/regs.rs | 41 ++++++++++++++++
+ 2 files changed, 112 insertions(+), 21 deletions(-)
 
 
-vim +560 drivers/gpu/drm/drm_gem_shmem_helper.c
+base-commit: 9a3c2f8a4f84960a48c056d0da88de3d09e6d622
+--
+2.51.2
 
-2194a63a818db71 Noralf Trønnes  2019-03-12  537  
-2194a63a818db71 Noralf Trønnes  2019-03-12  538  static vm_fault_t drm_gem_shmem_fault(struct vm_fault *vmf)
-2194a63a818db71 Noralf Trønnes  2019-03-12  539  {
-2194a63a818db71 Noralf Trønnes  2019-03-12  540  	struct vm_area_struct *vma = vmf->vma;
-2194a63a818db71 Noralf Trønnes  2019-03-12  541  	struct drm_gem_object *obj = vma->vm_private_data;
-2194a63a818db71 Noralf Trønnes  2019-03-12  542  	struct drm_gem_shmem_object *shmem = to_drm_gem_shmem_obj(obj);
-2194a63a818db71 Noralf Trønnes  2019-03-12  543  	loff_t num_pages = obj->size >> PAGE_SHIFT;
-d611b4a0907cece Neil Roberts    2021-02-23  544  	vm_fault_t ret;
-2194a63a818db71 Noralf Trønnes  2019-03-12  545  	struct page *page;
-11d5a4745e00e73 Neil Roberts    2021-02-23  546  	pgoff_t page_offset;
-11d5a4745e00e73 Neil Roberts    2021-02-23  547  
-11d5a4745e00e73 Neil Roberts    2021-02-23  548  	/* We don't use vmf->pgoff since that has the fake offset */
-11d5a4745e00e73 Neil Roberts    2021-02-23  549  	page_offset = (vmf->address - vma->vm_start) >> PAGE_SHIFT;
-2194a63a818db71 Noralf Trønnes  2019-03-12  550  
-21aa27ddc582693 Dmitry Osipenko 2023-05-30  551  	dma_resv_lock(shmem->base.resv, NULL);
-2194a63a818db71 Noralf Trønnes  2019-03-12  552  
-11d5a4745e00e73 Neil Roberts    2021-02-23  553  	if (page_offset >= num_pages ||
-3f6a1e22fae95a5 Dmitry Osipenko 2022-11-16  554  	    drm_WARN_ON_ONCE(obj->dev, !shmem->pages) ||
-d611b4a0907cece Neil Roberts    2021-02-23  555  	    shmem->madv < 0) {
-d611b4a0907cece Neil Roberts    2021-02-23  556  		ret = VM_FAULT_SIGBUS;
-d611b4a0907cece Neil Roberts    2021-02-23  557  	} else {
-11d5a4745e00e73 Neil Roberts    2021-02-23  558  		page = shmem->pages[page_offset];
-2194a63a818db71 Noralf Trønnes  2019-03-12  559  
-8b93d1d7dbd578f Simona Vetter   2021-08-12 @560  		ret = vmf_insert_pfn(vma, vmf->address, page_to_pfn(page));
-d611b4a0907cece Neil Roberts    2021-02-23  561  	}
-d611b4a0907cece Neil Roberts    2021-02-23  562  
-21aa27ddc582693 Dmitry Osipenko 2023-05-30  563  	dma_resv_unlock(shmem->base.resv);
-d611b4a0907cece Neil Roberts    2021-02-23  564  
-d611b4a0907cece Neil Roberts    2021-02-23  565  	return ret;
-2194a63a818db71 Noralf Trønnes  2019-03-12  566  }
-2194a63a818db71 Noralf Trønnes  2019-03-12  567  
-
-:::::: The code at line 560 was first introduced by commit
-:::::: 8b93d1d7dbd578fd296e70008b29c0f62d09d7cb drm/shmem-helper: Switch to vmf_insert_pfn
-
-:::::: TO: Daniel Vetter <daniel.vetter@ffwll.ch>
-:::::: CC: Daniel Vetter <daniel.vetter@ffwll.ch>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
