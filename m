@@ -1,176 +1,152 @@
-Return-Path: <linux-kernel+bounces-881871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCFAAC291BF
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 17:15:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7D3DC291E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 17:22:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 253C0188BEE0
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 16:16:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29C053AEED5
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 16:22:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8EB21CFFA;
-	Sun,  2 Nov 2025 16:15:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C982239E9D;
+	Sun,  2 Nov 2025 16:22:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Jlf+iMAh"
-Received: from mail-pl1-f228.google.com (mail-pl1-f228.google.com [209.85.214.228])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T7bcgaGe"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D153EA8D
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 16:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.228
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24536502BE
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 16:22:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762100152; cv=none; b=qGCVWgx6t5ZbX5U7DZ+Qewmk18QkVbzG8Had4WG28oqHn40lFhn1Fq/1A/m5HdwuRYlfFI+aGQvxBxti64k+fpRy/IuT3Taii0phVRfdC8EnosCe6894OYPf7Ce7mvxGyUyruu06JoScPB9RyN59N45+OUM9z/az2PaNsineBmQ=
+	t=1762100554; cv=none; b=MNu+tIKQMSib0tnqIn5+PmmiWBtIBVuU/h07qFUIzwP9c0Wfs0QISSiz58CGURNC/JKIrFsdYQviyPQxIUWsYStOGgZqiXjOzIcsE7V/4LcS/6JkQufOMHxMjnl1up8lJBgWZ5uiT0/n6sgVLfKPcgmxNPbXzzhBgZMywaCNgA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762100152; c=relaxed/simple;
-	bh=Js+HbjVMxuG/sMlxV2M2pVXUI7MWwejp/2QFZAhXhxE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hNw/rVzLXzWUdu5BNfU58haE/fITvxr8baxIBewMrCW6gJHFfrWlfoD8gsy5F+o+PO5digronm993CgOhMy64bxtxKVsJsVaxabVSLfXBxJFXpuGUjN196xeCCD1MTMt8o5dhl4cKn5DgtXH8xU5Wja2OShPKeqzd7G7nnfj1/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Jlf+iMAh; arc=none smtp.client-ip=209.85.214.228
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pl1-f228.google.com with SMTP id d9443c01a7336-29570bcf220so10842585ad.3
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 08:15:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762100151; x=1762704951;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:dkim-signature:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qPD7JpL9+HSnLwUj7wrXGanSQ2vbBMEr+pV52clH7sk=;
-        b=GjQHekWtNpGUeG8uCHYGPFqWj7yr8yeryB3ad3okWW1O+Hp8v6+BZvrCa8qc/iInr3
-         HBFLkhvmHDbVNDDkj/YQOFfnBffpxR+eAH1xnrhNYMBXZGL6ka7WIyax/l4yC4zx6Bqs
-         qLtVdBOPg5OH1Iwh6dx4GOZhPDifwkcqCDjccDWzotM5fAjAl9nhTVMngq2I2EYeoW0V
-         x5Zh62cDBvCRzJiYhcJI5Kl6vPXA4wM5iKeplyAx+8SC9kNt5LCyT3OtffX5W63HiV+A
-         2Ku/kEVi0pZuqpSA0z1CZp70Eu7oWk/AOjRSzcIwtJtUZP5baS2Lpu/va0+jkB6tz4gP
-         iz4g==
-X-Forwarded-Encrypted: i=1; AJvYcCXS9ewvKWxzDx8FdpOiRwipxXAeBftDRbCzIZQusUJ0PDfaeObruIb/ia6DC492FV3eXnErVTbCBahSQDk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+DCptZiY2Ab1FdOvlN8Cyo7p+2mq96I7sityEpQ/QOUohVaWL
-	GBjObvy/lCAPOgmFV8427nPtfOVfmNsjZxqiPyh2UA3vePU4Fl1uTS5l2NFF5DNZNyFLwjISRh/
-	f8o94tF7yz7BBmkGecqeYIrGaI4qVhGjQdimYotKe6miF5EEI62CDzSqHR/IoHiqJOkBw7tXhQP
-	l2ixuDhALfw+/qM5eX19xGVi7I8qp8kDlmPPZ4kM46L2ejNDThChHsTZHgVjHymEveIHKnG0Rtk
-	mip6nWW2QEBCYgqXfDdTXBo
-X-Gm-Gg: ASbGncu0ufh2ZSGvpgCelbw87GZdsbTFRh3YUHnj0XXBZc+p1IkkQmqN/9xVLIJ+5Bm
-	EGwI+k6P5fkaErozuxA9smralGnR3V4w6G8IGiaNJZL8SoGVGTxIpCjvIByhpOFN16tPc5ORS/n
-	UBP4wcGxqTOF6+NzECAWutQo7UyuZa1MX4jyMGaYLKhiwuv0LfInKvV2LiXwYHlEZQDN/H9aY49
-	6F6GUsTyWdmB4SeTvkQcsf5SrBNK3Zu+vCJoWf/CO8vxquAKfxOdWrJApXoYRTycpe2D8ShSMR0
-	cTgZw8CnB63xYovyiYVi+rTYFnKww/jLMrUOnoKMyGCIRUQ8iKi7p+t7t/3DYauRqO1J1YC9Juc
-	ATONbUvSCwPHJFc9+QWeRGyJ3lzVC4A813VXPDEkr6cvztRVRgsFFw0KxXb7raFJkLZfbo2o/sa
-	SzfeOf+93dRofnAlG07T+xtqjxYO2flnI1+LrgDsHLsw==
-X-Google-Smtp-Source: AGHT+IGtSRaMhaXfLBQy5DCiQWZ3KU9lvUXfsyC+Qc8wLMHxixQ8HaHVE0N76FOPDwxfHwuv3mtJmebz3BjE
-X-Received: by 2002:a17:902:db08:b0:295:3584:1bb7 with SMTP id d9443c01a7336-295358424d4mr108221875ad.46.1762100150761;
-        Sun, 02 Nov 2025 08:15:50 -0800 (PST)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-101.dlp.protect.broadcom.com. [144.49.247.101])
-        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-295269a01fbsm6927645ad.56.2025.11.02.08.15.50
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 02 Nov 2025 08:15:50 -0800 (PST)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b99f6516262so1521476a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 08:15:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1762100149; x=1762704949; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=qPD7JpL9+HSnLwUj7wrXGanSQ2vbBMEr+pV52clH7sk=;
-        b=Jlf+iMAh8r+XN+GOuQ5UJt0/ccxNCQT86/NDahopy9TcArq+I0r+d7fzb9riRGK6UY
-         bpD5DhRMxNQriMrWJgM54U2Dg0qat3leNkSRtIJh2gSz9LrQpDt0C1w+U7xBi5uX09ol
-         WPDLj8ipxUiJokCH2vSOXDumuOZleBg627GZo=
-X-Forwarded-Encrypted: i=1; AJvYcCXcxc6YBa75UXhihuLGF8AysG/mHN4gR80eEmpGNlmUPXtkCluX7p5Fl2oR6Qh5HgNg7fc7BoIqb0IMvr8=@vger.kernel.org
-X-Received: by 2002:a17:902:da82:b0:295:3ad7:9485 with SMTP id d9443c01a7336-2953ad7955amr87084965ad.14.1762100149058;
-        Sun, 02 Nov 2025 08:15:49 -0800 (PST)
-X-Received: by 2002:a17:902:da82:b0:295:3ad7:9485 with SMTP id d9443c01a7336-2953ad7955amr87084665ad.14.1762100148664;
-        Sun, 02 Nov 2025 08:15:48 -0800 (PST)
-Received: from ?IPV6:2600:8802:b00:ba1:a836:3070:f827:ce5b? ([2600:8802:b00:ba1:a836:3070:f827:ce5b])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2958dd23059sm26988335ad.47.2025.11.02.08.15.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 02 Nov 2025 08:15:47 -0800 (PST)
-Message-ID: <f2828be4-b31d-4fcb-a132-d6991b0c1780@broadcom.com>
-Date: Sun, 2 Nov 2025 08:15:46 -0800
+	s=arc-20240116; t=1762100554; c=relaxed/simple;
+	bh=iG2KQ8qLy8NEMm7RGCihOKaL+oJ1qpZrxyH3HsoBnsE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pDPM4tunNTkSIfmXDUPa11sxy5XNYm9IULLi/VKC65jpr9NCRt4ApHLzaglCrWarWOchkkIw3xJf8x0Ul7oQZhmaNXZgjSG83QkKnnv/hD6s+1HcoXMKFLxvhellj6ELRse4OFIaC1Nj7pbZkYhTwPPQkLtflEhBAOviriq0MXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T7bcgaGe; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762100551;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zbrG4ZmxeWTi8gs7vSwXBAYrF+YpwtGZmkJmucMkWII=;
+	b=T7bcgaGe3TXi/TA48YwDLHF+h6syDsmon9KvjyEHB0ih54xoZnKsoSjjzVe2PVVC/JQYQZ
+	U5pU+6snGUW73yZNocD8EL/WLU8l9aomc1VoE5mrn8uGXle1mFVhzqvrUzgCe5HRwBi+6v
+	RTLBSEif9HUWOpFxNsryw3MSciLRsrM=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-146-jWQHTZ-9OWOK6wI4YNnlSw-1; Sun,
+ 02 Nov 2025 11:21:57 -0500
+X-MC-Unique: jWQHTZ-9OWOK6wI4YNnlSw-1
+X-Mimecast-MFC-AGG-ID: jWQHTZ-9OWOK6wI4YNnlSw_1762100336
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BB13719560B3;
+	Sun,  2 Nov 2025 16:18:52 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.84])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 7E3DF1800579;
+	Sun,  2 Nov 2025 16:18:30 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sun,  2 Nov 2025 17:17:35 +0100 (CET)
+Date: Sun, 2 Nov 2025 17:17:12 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Bernd Edlinger <bernd.edlinger@hotmail.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Alexey Dobriyan <adobriyan@gmail.com>, Kees Cook <kees@kernel.org>,
+	Andy Lutomirski <luto@amacapital.net>,
+	Will Drewry <wad@chromium.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Michal Hocko <mhocko@suse.com>, Serge Hallyn <serge@hallyn.com>,
+	James Morris <jamorris@linux.microsoft.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Yafang Shao <laoar.shao@gmail.com>, Helge Deller <deller@gmx.de>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Adrian Reber <areber@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Jens Axboe <axboe@kernel.dk>,
+	Alexei Starovoitov <ast@kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+	linux-security-module@vger.kernel.org,
+	tiozhang <tiozhang@didiglobal.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Paulo Alcantara (SUSE)" <pc@manguebit.com>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	YueHaibing <yuehaibing@huawei.com>,
+	Paul Moore <paul@paul-moore.com>, Aleksa Sarai <cyphar@cyphar.com>,
+	Stefan Roesch <shr@devkernel.io>, Chao Yu <chao@kernel.org>,
+	xu xin <xu.xin16@zte.com.cn>, Jeff Layton <jlayton@kernel.org>,
+	Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>,
+	Dave Chinner <dchinner@redhat.com>, Shuah Khan <shuah@kernel.org>,
+	Elena Reshetova <elena.reshetova@intel.com>,
+	David Windsor <dwindsor@gmail.com>,
+	Mateusz Guzik <mjguzik@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
+	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Hans Liljestrand <ishkamiel@gmail.com>,
+	Penglei Jiang <superman.xpt@gmail.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Adrian Ratiu <adrian.ratiu@collabora.com>,
+	Ingo Molnar <mingo@kernel.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Cyrill Gorcunov <gorcunov@gmail.com>,
+	Eric Dumazet <edumazet@google.com>
+Subject: Re: [PATCH v17] exec: Fix dead-lock in de_thread with ptrace_attach
+Message-ID: <20251102161712.GA4273@redhat.com>
+References: <AM8PR10MB470801D01A0CF24BC32C25E7E40E9@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <AM8PR10MB470875B22B4C08BEAEC3F77FE4169@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+ <AS8P193MB1285DF698D7524EDE22ABFA1E4A1A@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB12851AC1F862B97FCE9B3F4FE4AAA@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285FF445694F149B70B21D0E46C2@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <AS8P193MB1285937F9831CECAF2A9EEE2E4752@AS8P193MB1285.EURP193.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEEEDE0B9742310DE91E9A7E431A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+ <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net 2/3] net: dsa: b53: stop reading ARL entries if search
- is done
-To: Jonas Gorski <jonas.gorski@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
- Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Vivien Didelot <vivien.didelot@gmail.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251102100758.28352-1-jonas.gorski@gmail.com>
- <20251102100758.28352-3-jonas.gorski@gmail.com>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20251102100758.28352-3-jonas.gorski@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <GV2PPF74270EBEE9EF78827D73D3D7212F7E432A@GV2PPF74270EBEE.EURP195.PROD.OUTLOOK.COM>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
+On 08/21, Bernd Edlinger wrote:
+>
+> v16: rebased to 6.17-rc2, fixed some minor merge conflicts.
+>
+> v17: avoid use of task->in_execve in ptrace_attach.
 
+So I guess this version doesn't really differ from v14 I tried to review...
+(yes, iirc my review wasn't really good, sorry).
 
-On 11/2/2025 2:07 AM, Jonas Gorski wrote:
-> The switch clears the ARL_SRCH_STDN bit when the search is done, i.e. it
-> finished traversing the ARL table.
-> 
-> This means that there will be no valid result, so we should not attempt
-> to read and process any further entries.
-> 
-> We only ever check the validity of the entries for 4 ARL bin chips, and
-> only after having passed the first entry to the b53_fdb_copy().
-> 
-> This means that we always pass an invalid entry at the end to the
-> b53_fdb_copy(). b53_fdb_copy() does check the validity though before
-> passing on the entry, so it never gets passed on.
-> 
-> On < 4 ARL bin chips, we will even continue reading invalid entries
-> until we reach the result limit.
-> 
-> Fixes: 1da6df85c6fb ("net: dsa: b53: Implement ARL add/del/dump operations")
-> Signed-off-by: Jonas Gorski <jonas.gorski@gmail.com>
+Perhaps I am wrong, but I still think we need another approach. de_thread()
+should not wait until all sub-threads are reaped, it should drop cred_guard_mutex
+earlier.
 
-Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+I mean, something like
+
+	[PATCH V2 1/2] exec: don't wait for zombie threads with cred_guard_mutex held
+	https://lore.kernel.org/lkml/20170213180454.GA2858@redhat.com/
+
+which is hopelessly outdated now.
+
+Again, perhaps I am wrong. I'll try to take another look next week.
+
+Oleg.
 
 
