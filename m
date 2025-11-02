@@ -1,167 +1,167 @@
-Return-Path: <linux-kernel+bounces-882091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6012C29976
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 00:08:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 686CEC2997F
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 00:12:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 58D084E766C
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 23:08:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5A593AC83D
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 23:12:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D6E223DDF;
-	Sun,  2 Nov 2025 23:08:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B8F248F4F;
+	Sun,  2 Nov 2025 23:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ni3GNGq8"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="H56NZ9kx"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169F8846F;
-	Sun,  2 Nov 2025 23:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762124883; cv=none; b=pyD0MdZD8l2GOw2fzIEJxbs4fEVjnob0dLNwB2aqr0wOn7YK0M7GIBzk0QUAvf6jvszNyv2nCVXeYskDn0ZTvzfor7AxkONN8JQis3qWfGvpRwqQJV21TyUwFUvdfFDGJuuZlOLMXSxolMjQg5UU9zLvbfhB5DSNjdlqRpF+f54=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762124883; c=relaxed/simple;
-	bh=Mmsz4AsAPrgzvy+/DPeF0gUarOJZ9zlb61UAEWNeghM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=XJOeVLQCuQV3cElsxxbrFCxml5oOY04vHXPTF4OG9uf6GT7679gLbTwqu5JpmOKpyNQGFnzEWVaSmg9dF0RfwmIRWB2JlTnuJrBG4xFDYil1lSuPHdAC5qcwmJJ3zZ7b0kiE+1aoT8RKH2tTm+pYSoOMoRjvD0GlKDfJszZCdLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ni3GNGq8; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1762124873;
-	bh=fCH5++WfvKpTknvdl0m4vyQqVpmFKtADZZLeJc7HYao=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ni3GNGq8yTM2J5vHa6ElQMcricCHBD4aHfX+WPxXSplgOo3+5LNmtuEVbAUkEC8v9
-	 6HsGPjGhhN4gbHSY4MB2WKcf0e3GaZRHyj2v4Gue6iaCpScx2/Xlo9ctu4KeUdZbV8
-	 9z07GkkuCbPcWM5ker+chfgy1z5rX7qYW9LrvJMO8QE8+GQaVjb00IUN1rm3VnWeoX
-	 MKHnxyOX9sgt2lCjgP4hr4QWNhHmq6uLLEFjMC9T4axRfxly/nWrKNib9/XRrDw/k/
-	 rLL5eLI/f02Dt7od1wJdUFje3MMa/rkWC+mThNo0kk3UbeAkWj1cW1Qj63WFZEkOwb
-	 QfIgi2ekKJCUA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d09Nl6dM1z4w93;
-	Mon, 03 Nov 2025 10:07:51 +1100 (AEDT)
-Date: Mon, 3 Nov 2025 10:07:50 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Christian Borntraeger <borntraeger@de.ibm.com>, Andrew Morton
- <akpm@linux-foundation.org>
-Cc: Israel Batista <linux@israelbatista.dev.br>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Sumanth Korikkar <sumanthk@linux.ibm.com>
-Subject: linux-next: manual merge of the s390 tree with the mm-unstable tree
-Message-ID: <20251103100750.4522060e@canb.auug.org.au>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF14148850;
+	Sun,  2 Nov 2025 23:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762125147; cv=pass; b=o446el9PdWtK4ejtE5JRxKeYsQ4yNqrc0CYlxCiX1icz+iX8Nd6IvmjjjRtWKBbzey5eqgJFZPBAL8c1qF6tPxvGYOt0xcLuqnHpFBUMMp95c/Jp74zWWAsRgHdzbpRTXduCLhAMLAGCF+GS5jXur4/VKdI1s67Z6lAaoxDfw+A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762125147; c=relaxed/simple;
+	bh=/I7IzlSpR4PhZPVQQEaWMofel6wmantN5OvKHYzkmvQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=biRAER8TIssf71OXqmqilwyaNXSv1C9LJ5wUAVlsoObdAro2u5czOdzqcTW982tEYB9mN7zXNI7nmO3t5rwU8rkuqGJVOFwFo31t8Q/kIlLvC5rVip8CxJMITOexZEksRL+Lp8XYPNgPE+J4LDH+U12xxNr/y1cS+I6zRlwtVtI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=H56NZ9kx; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1762125132; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ayHSoO8mmqJf6BpyOjVPFOjzRHu1WL3LnRrZaK8Pxss8qw9RqmiwBJUjwAmlIDsMeQnQqsCdodhkM+118cH86lu2c6ugvpYdWhiKVqy7vEj3258SwG8eDdqgt62QeRCVGcsg4wZGR0IkKE7/AeWH/1nZyxRdOaijcNYzCMEvPG0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1762125132; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ZQyV7+HH5+eyEXPG+O2c+IhWlprTdduqC8iGfXHsZNk=; 
+	b=clccRMONHLMHPkLA5tA5Rftdar2TecDMeXdnud831QIBjDB//IlPDNMKnOIgLtz+ntjnRZFEuTtn3lSQqhdHen1ckE0GLxw/ScztgDH55oBuJdzqIZ4o4QrRZLMuzgV/B3KMHaJW9Cb/r2rNCIoFKvh0/+pZkq64vGU1/Kk84Ns=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762125132;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=ZQyV7+HH5+eyEXPG+O2c+IhWlprTdduqC8iGfXHsZNk=;
+	b=H56NZ9kxWSHWpyt0trC8Z8jveyB6zse0BEvnPj9CQLsSQVd31Yrs1H7bSFSQCI08
+	R772ZTJ0lHvKTF2poe32NVwN88wYaKhxNkNk6HhLiTJ/kItNzS7gd8B78vX0z/+70P1
+	q/mLphXYH1Yw8Rw5WEd+5HUBCdZ2J3abRyClJBvs=
+Received: by mx.zohomail.com with SMTPS id 1762125130375852.2930709562752;
+	Sun, 2 Nov 2025 15:12:10 -0800 (PST)
+Received: by venus (Postfix, from userid 1000)
+	id DD16D180CDA; Mon, 03 Nov 2025 00:11:54 +0100 (CET)
+Date: Mon, 3 Nov 2025 00:11:54 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Jameson Thies <jthies@google.com>
+Cc: heikki.krogerus@linux.intel.com, linux-usb@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dmitry.baryshkov@oss.qualcomm.com, bleung@chromium.org, 
+	gregkh@linuxfoundation.org, akuchynski@chromium.org, abhishekpandit@chromium.org, 
+	kenny@panix.com, linux-pm@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2] usb: typec: ucsi: psy: Set max current to zero when
+ disconnected
+Message-ID: <ew2yygmisdxp5jlefbg64abxzjp5wpxvwnmlhcwedgnzzr2qzs@huem73pm7sr5>
+References: <20251017223053.2415243-1-jthies@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/e429RH3BDT+DdvNkIbp8xSw";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="rdmgxygmaxf4b76y"
+Content-Disposition: inline
+In-Reply-To: <20251017223053.2415243-1-jthies@google.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.4.3/262.86.93
+X-ZohoMailClient: External
 
---Sig_/e429RH3BDT+DdvNkIbp8xSw
-Content-Type: text/plain; charset=US-ASCII
+
+--rdmgxygmaxf4b76y
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2] usb: typec: ucsi: psy: Set max current to zero when
+ disconnected
+MIME-Version: 1.0
 
-Hi all,
+Hi,
 
-Today's linux-next merge of the s390 tree got a conflict in:
+On Fri, Oct 17, 2025 at 10:30:53PM +0000, Jameson Thies wrote:
+> The ucsi_psy_get_current_max function defaults to 0.1A when it is not
+> clear how much current the partner device can support. But this does
+> not check the port is connected, and will report 0.1A max current when
+> nothing is connected. Update ucsi_psy_get_current_max to report 0A when
+> there is no connection.
+>=20
+> v2 changes:
+> - added cc stable tag to commit message
+>=20
+> Fixes: af833e7f7db3 ("usb: typec: ucsi: psy: Set current max to 100mA for=
+ BC 1.2 and Default")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Jameson Thies <jthies@google.com>
+> Reviewed-by: Benson Leung <bleung@chromium.org>
+> Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> Tested-by: Kenneth R. Crudup <kenny@panix.com>
+> ---
 
-  include/linux/memory.h
+With the changelog moved under ---:
 
-between commit:
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 
-  074be77d684a ("mm: convert memory block states (MEM_*) macros to enum")
+Greetings,
 
-from the mm-unstable tree and commit:
+-- Sebastian
 
-  300709fbefd1 ("mm/memory_hotplug: Remove MEM_PREPARE_ONLINE/MEM_FINISH_OF=
-FLINE notifiers")
+>  drivers/usb/typec/ucsi/psy.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>=20
+> diff --git a/drivers/usb/typec/ucsi/psy.c b/drivers/usb/typec/ucsi/psy.c
+> index 62a9d68bb66d..8ae900c8c132 100644
+> --- a/drivers/usb/typec/ucsi/psy.c
+> +++ b/drivers/usb/typec/ucsi/psy.c
+> @@ -145,6 +145,11 @@ static int ucsi_psy_get_current_max(struct ucsi_conn=
+ector *con,
+>  {
+>  	u32 pdo;
+> =20
+> +	if (!UCSI_CONSTAT(con, CONNECTED)) {
+> +		val->intval =3D 0;
+> +		return 0;
+> +	}
+> +
+>  	switch (UCSI_CONSTAT(con, PWR_OPMODE)) {
+>  	case UCSI_CONSTAT_PWR_OPMODE_PD:
+>  		if (con->num_pdos > 0) {
+>=20
+> base-commit: e40b984b6c4ce3f80814f39f86f87b2a48f2e662
+> --=20
+> 2.51.0.858.gf9c4a03a3a-goog
+>=20
+>=20
 
-from the s390 tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc include/linux/memory.h
-index ca3eb1db6cc8,ba1515160894..000000000000
---- a/include/linux/memory.h
-+++ b/include/linux/memory.h
-@@@ -64,21 -64,9 +64,19 @@@ struct memory_group=20
-  	};
-  };
- =20
- +enum memory_block_state {
- +	/* These states are exposed to userspace as text strings in sysfs */
- +	MEM_ONLINE,		/* exposed to userspace */
- +	MEM_GOING_OFFLINE,	/* exposed to userspace */
- +	MEM_OFFLINE,		/* exposed to userspace */
- +	MEM_GOING_ONLINE,
- +	MEM_CANCEL_ONLINE,
- +	MEM_CANCEL_OFFLINE,
-- 	MEM_PREPARE_ONLINE,
-- 	MEM_FINISH_OFFLINE,
- +};
- +
-  struct memory_block {
-  	unsigned long start_section_nr;
- -	unsigned long state;		/* serialized by the dev->lock */
- +	enum memory_block_state state;	/* serialized by the dev->lock */
-  	int online_type;		/* for passing data to online routine */
-  	int nid;			/* NID for this memory block */
-  	/*
-@@@ -101,14 -89,15 +99,7 @@@ int arch_get_memory_phys_device(unsigne
-  unsigned long memory_block_size_bytes(void);
-  int set_memory_block_size_order(unsigned int order);
- =20
- -/* These states are exposed to userspace as text strings in sysfs */
- -#define	MEM_ONLINE		(1<<0) /* exposed to userspace */
- -#define	MEM_GOING_OFFLINE	(1<<1) /* exposed to userspace */
- -#define	MEM_OFFLINE		(1<<2) /* exposed to userspace */
- -#define	MEM_GOING_ONLINE	(1<<3)
- -#define	MEM_CANCEL_ONLINE	(1<<4)
- -#define	MEM_CANCEL_OFFLINE	(1<<5)
- -
-  struct memory_notify {
-- 	/*
-- 	 * The altmap_start_pfn and altmap_nr_pages fields are designated for
-- 	 * specifying the altmap range and are exclusively intended for use in
-- 	 * MEM_PREPARE_ONLINE/MEM_FINISH_OFFLINE notifiers.
-- 	 */
-- 	unsigned long altmap_start_pfn;
-- 	unsigned long altmap_nr_pages;
-  	unsigned long start_pfn;
-  	unsigned long nr_pages;
-  };
-
---Sig_/e429RH3BDT+DdvNkIbp8xSw
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--rdmgxygmaxf4b76y
+Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkH5EYACgkQAVBC80lX
-0GxwXwf9GP9Y8nYvm1QzAV/4Vfn3V/zgZaKDAnm9ZZyhlhEEcor6nLGXIfAhPHV8
-HGY3KAhogff6vCGY5YNQxaa8HuVnK+hId8dKzpFcvORe5DgmvzpdFs2+jepKPNBK
-GmNuz7bN3AyJOVAVyOV2ceuvUe4nV7AgH220J1r5JggkaUDsPQWfzTYtw+5tjfIK
-3gF2pMpQyP02q924YnjBENtZXOKDmuLHYNqkcU9JiH/QAXXJvMh7I/GmykWIkmog
-/VaFwmBcx3DDZXxTMDIE2WvUwnThKzjgVb7ly3raGgp6kLDwRTdaFCJ3eHAM7gsO
-GQf5wHdVBGv6Cmyzxe6sRBba69sGQA==
-=vbzc
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmkH5TMACgkQ2O7X88g7
++pqi+Q/+Pltm/IIiUpzgPlhsQz6XHkNwE/kGgNAA1AUNm1BibTCQMpPd7D7t4g/e
+b67zrwhpZDeEAZpBHB/fzihFNZhlBLSivKAESxC+zPgvAFXPdZbLJxImRpKj622x
+qbOpyGCljdTsL/Sc8/dK6KE3QSvSwmiijezde6e7QCd2Oxw7gro/ZLBrLEcEDagG
+BgyyP3NbEAHhBPK8tThJZnnxWyqEuw5kCn1ZHuErfis7rBC8zapH6OvRD+pPajlg
+mj7g6MIZl7mr2mun/TDeU0FK3iPj/jrGdH9hHk9/ZVWGhY0B+OgPE1ERnMaPXwUd
+Sut2arlKZZojRiUcW9j+Hk8EsPGyVXxSG+5aezWJvNCNSo5/PVgEnLfb5uWeO64v
+0RIHEad95tG3/qqiJWkm+yE2xX6gMUcKXzLeG2keG0Nm1MOQg/wnM/2ZU9XLlR5q
+lhACnE7PYGUwYmGqCDrqnjrhWIDGTYNit4Vw8wj935r+UFnvdl5bqSG2l6byZhb9
+1I8nhht0gW/sABKJXuQ/kOo99GSWy3b7XIG8yqtN3yLDfcgUVl190jsA/dtHYRlm
+WuijbVSz83exJI769xt/BU3PMOz9rslEKRWDLLhge+7irftCgPpP0S+wZq6pJIcg
+xHT6zH4l7nfVvRISQ4d3y6b+/+P5lAlaeO2vdSDIysJ19phznMk=
+=XP49
 -----END PGP SIGNATURE-----
 
---Sig_/e429RH3BDT+DdvNkIbp8xSw--
+--rdmgxygmaxf4b76y--
 
