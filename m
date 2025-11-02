@@ -1,99 +1,112 @@
-Return-Path: <linux-kernel+bounces-881921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE22CC293B8
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 18:28:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57F22C29403
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 18:33:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FEFF188C5BA
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 17:29:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2CE6188D015
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 17:34:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D40F2DEA61;
-	Sun,  2 Nov 2025 17:28:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6282DFA2D;
+	Sun,  2 Nov 2025 17:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VoGdl9ap"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b="lUZEjoEf"
+Received: from mail-05.mail-europe.com (mail-05.mail-europe.com [85.9.206.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61AED21A459;
-	Sun,  2 Nov 2025 17:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6F315CD7E
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 17:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.9.206.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762104519; cv=none; b=hs1L4AOuRt6xeXQCQarZfNPyRvUjHzt2i5nyJ4LRnNmZg1qeaGM8k+xQSWZL6fIQ+NlbgIcfEWkY/aFU2nih/l9aCo35keQhGxF6DB14E9TxlrQn604YsbDyjcLlRcGtChpTWbIDnVHDWXCzkBQUQRroasF1/UgQz5qZ4ZItgnQ=
+	t=1762104813; cv=none; b=icTYOClh6ZuQA+yuoq4Tkv9LYW2hNi+VBnExPqJHjH3iBlCwFQ8+F3hHxlczO2xa6xNq+fL1n/TfP8GyjWksqS396r1DvlCSIv33cLZE3jik37Vv7xOthpZQ4FgjS209vJ3dy+09KcwKhHEyY1pLQvjO8Pmsjg+3UY2VTYe9F8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762104519; c=relaxed/simple;
-	bh=OcFwHvlXYWH66gsDoECiVrdxJwq5gFiy4jrIhapatU0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K7w5PP2fOmxLIsypbpbgMXJXbWNR2JAwzDtGVKirP7oYH2ivF1TcOdzE07OFFgwFkJWG++3BWbNMaKCRyc3lgD62TjLKOpWgkYz3ADM6lHh3PPD4G1oND+R2RJyW1G2Wcd2xVPtU32zx8HDHrO3AQ0V08bxZOcO+6V5o00erARQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VoGdl9ap; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCAF0C4CEF7;
-	Sun,  2 Nov 2025 17:28:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762104518;
-	bh=OcFwHvlXYWH66gsDoECiVrdxJwq5gFiy4jrIhapatU0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VoGdl9ap/snoiJrAUypQcBLQieAI1kXPRAY5K6/H4I3uKEc0buc5743hmDZLNyBqU
-	 Uw+J7+LiK2od6QFY5rgnanBBLhF1L6urlzd/Irul0fTO2rUAHJfRhE+OGbl7ADTDSF
-	 m8lI7B7kDllFxpjQf+H06vEFf0Lmrxx/5Nq96kXL6uQpZKAxjJKAKc1htLOPvI6wv3
-	 RzKdEBpI7QDygJPs2MvXWpbioN2uQiaO4NU0zlk5tgbPYg/u+cYgpFXWCOP2f7RfZk
-	 1CM1loBJfqr+EyJBi9R0pt54Xqu+eCpntlw1hUTCIyavChXBczD4ra2MowkMwcEnNE
-	 Byy0ZMXdssctw==
-Date: Sun, 2 Nov 2025 11:32:03 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, ~postmarketos/upstreaming@lists.sr.ht, 
-	phone-devel@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3 1/2] dt-bindings: mfd: qcom,spmi-pmic: Document
- PMIV0104
-Message-ID: <ivfeokfjdtdmdctjpk2ckxdumefj6ff3q2rycbrqwo5ewq4x4k@az7wisyy2xa6>
-References: <20251023-sm7635-pmiv0104-v3-0-27f1c417376d@fairphone.com>
- <20251023-sm7635-pmiv0104-v3-1-27f1c417376d@fairphone.com>
+	s=arc-20240116; t=1762104813; c=relaxed/simple;
+	bh=ItKqm3nWeBkxJvaQ4qqyFN0riJaMo4uvQgoneJyURW0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WQ7stxDb3T1Uy5/2Gn+HwXc9oHYfZWFe7epY9A/XdZ+VLMwbnYQfWAmpyV4sGi44/2gg3Gp99af1u0RtgUI61QTc+1mh9gcw1UHb5pB0y85kzdofiBMXsGSlj354JkkMSM14CAO734jkUvhV/FYfGdZ4u0MdHH8rUNPguz94Hoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com; spf=pass smtp.mailfrom=geanix.com; dkim=pass (2048-bit key) header.d=geanix.com header.i=@geanix.com header.b=lUZEjoEf; arc=none smtp.client-ip=85.9.206.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=geanix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=geanix.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=geanix.com;
+	s=protonmail2; t=1762104791; x=1762363991;
+	bh=Eg42W12IHvXKvQJqsT1U3vWkwNQoWbyboJvu+N96zJ0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=lUZEjoEfkt3P4WpsWN2l7VXrjmFtrmjJwV8XH0hxNUkLxj62S36Ec0djTSulQ+bXs
+	 wmIAjPM8RYSnhIeFVDtDFpXKSpJC5fxiy+tCajMLJ5I0CvzYngcz9mQP/sNL0EbcbW
+	 biBaIE0O/xfBh9Ko+fMbrRYL8Nvk9vVhgDLl918bkJWl5aMZkL0a5lPhhRI6MjJf/Z
+	 hKSQASuzmG1iENTGpGwkfP3P6Vyjm/SFPhsFEe1GRFD4ARJAFGGpHnwIGsVbZdNaRB
+	 eCtA+DOW17uYcbDjGLssHJlPkEE6FEQDUYRnxXN84GkITMXmWkf7WDmtnfuD6o2mGS
+	 cVPkKcE9B7/Ow==
+Date: Sun, 02 Nov 2025 17:33:03 +0000
+To: Samuel Kayode <samkay014@gmail.com>
+From: Sean Nyekjaer <sean@geanix.com>
+Cc: Lee Jones <lee@kernel.org>, Lukas Bulwahn <lbulwahn@redhat.com>, Jerome Oufella <jerome.oufella@savoirfairelinux.com>, Frank Li <Frank.Li@nxp.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] MAINTAINERS: update PF1550 driver email address
+Message-ID: <zn6q6dsdihb6grnl6qllh26wegtcteh22fn6n6js334kwj2ea5@k2koqqtcvqg7>
+In-Reply-To: <20251101-update-email-v2-1-175d221ec40f@gmail.com>
+References: <20251101-update-email-v2-1-175d221ec40f@gmail.com>
+Feedback-ID: 134068486:user:proton
+X-Pm-Message-ID: c1b32b10e2c177c0cddfded102c9d2d7a64016a3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251023-sm7635-pmiv0104-v3-1-27f1c417376d@fairphone.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 23, 2025 at 01:29:01PM +0200, Luca Weiss wrote:
-> Add the PMIV0104 PMIC which is found on e.g. boards with Milos SoCs.
-> 
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+On Sat, Nov 01, 2025 at 04:28:47PM +0100, Samuel Kayode wrote:
+> Update Sam's email address for the PF1550 PMIC driver.
+>=20
 
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+Hi Sam,
 
-Regards,
-Bjorn
+Maybe update the .mailmap file with the new mail address?
 
+/Sean
+
+> Signed-off-by: Samuel Kayode <samkay014@gmail.com>
 > ---
->  Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml b/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml
-> index 078a6886f8b1..c416f25c90d6 100644
-> --- a/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/qcom,spmi-pmic.yaml
-> @@ -84,6 +84,7 @@ properties:
->            - qcom,pmi8994
->            - qcom,pmi8998
->            - qcom,pmih0108
-> +          - qcom,pmiv0104
->            - qcom,pmk8002
->            - qcom,pmk8350
->            - qcom,pmk8550
-> 
-> -- 
-> 2.51.1
-> 
+> Changes in v2:
+> - rebase on ib-mfd-input-power-regulator-v6.19
+> - Link to v1: https://lore.kernel.org/r/20251029-update-email-v1-1-f38f45=
+aac2e8@gmail.com
+> ---
+> I left Savoir-faire Linux but I do intend to continue maintaining this
+> driver.
+> ---
+>  MAINTAINERS | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 2a9330f05e2fca6b8661bb698dea17dcfd7fc254..c44d2cf7e7b85104a6eb09142=
+da8ef3d9fa7e55d 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -18608,7 +18608,7 @@ F:=09Documentation/devicetree/bindings/regulator/=
+nxp,pf5300.yaml
+>  F:=09drivers/regulator/pf530x-regulator.c
+>=20
+>  NXP PF1550 PMIC MFD DRIVER
+> -M:=09Samuel Kayode <samuel.kayode@savoirfairelinux.com>
+> +M:=09Samuel Kayode <samkay014@gmail.com>
+>  L:=09imx@lists.linux.dev
+>  S:=09Maintained
+>  F:=09Documentation/devicetree/bindings/mfd/nxp,pf1550.yaml
+>=20
+> ---
+> base-commit: a7d6255a0bf302c028ac680564633a6aac5f611d
+> change-id: 20251029-update-email-f8ab42d1a5e9
+>=20
+> Best regards,
+> --
+> Samuel Kayode <samkay014@gmail.com>
+>=20
+
 
