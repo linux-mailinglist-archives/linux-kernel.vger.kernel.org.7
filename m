@@ -1,144 +1,104 @@
-Return-Path: <linux-kernel+bounces-881800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDD40C28F27
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 13:25:33 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEEC6C28F2D
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 13:32:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 953A53AC28C
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 12:25:32 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 932983476C8
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 12:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B46026E158;
-	Sun,  2 Nov 2025 12:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F832343BE;
+	Sun,  2 Nov 2025 12:32:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kk0Sp/EN"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="TbxfNeCd"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF9022156B
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 12:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83381FDD;
+	Sun,  2 Nov 2025 12:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762086327; cv=none; b=RL4Xnrx/t43WZyP3wY8LKBJDm9uXCxaMGWnVyJRBz7k3sCB9RplxPpM0TuWrujowqdlD1n7H+NC1am6vjIzljVJV3LXDaAhBXmbW9Fr/N1rKMeVhWNrKDzZd/0Y3Q+IbMgkR2rJF8XqqLOFQaMMUjvxbpjk4645E0J2XGzC3gYE=
+	t=1762086760; cv=none; b=IsdtrH1y/AYyQsIkXUTyzKqPOs5JC+a/wKN1J4sFecKwcy3mb04vvyJUyZjYfRsR+czsZDDi7T4nkSCwhdiCvHm+ooI0FdoIZjke0r4JS2p9a/XxABUT5JmZoHl4OZ1QRm5gUh6IZKOaipsB81sHZeps1wQuc4hcZeYD3KIGJ2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762086327; c=relaxed/simple;
-	bh=yZF+WLgpFJwG6Ifdb4BMMXdhCX9I6hZsJpmlieiQnIY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PlOT33dSeYCGZCcgf6Er9xIFPCaDppIafODS1qbXSbnt+7IvsGa2WRAwiftVU7/EtB/kc7TK0sNBkJmR60zzOYL/xMPOwv3U+1PpUw7myVLnueuOBy5Lin0HqRlW3ZTs/qke29nc/CS/WnwiWBhCqinIx+NdMSokFSuGphiGTIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kk0Sp/EN; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-33be037cf73so3756790a91.2
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 04:25:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762086325; x=1762691125; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HPAITQnPT8f3NoA/GWdr7roKgAtVZtrGCy1Wj82OPuM=;
-        b=Kk0Sp/EN7GJn3uzS71DJbsPWve5EiSF/YqWmZhjNuVatDK9ZK9TiKyCsNipbTw7fB9
-         OjDJVzyoj34zWU9Y6trqGXVPSN/zPm93Ox7mLd29OryfvEOqwrqE2FhjhS7sfG/e/QaF
-         T7JRXVz3BhtHb/fAEtAfC1D6UAWliaU4qm3mSRalKdgrv8nRU9GBhjUMOnjd9eCrH7FS
-         jaa9p1ZiOL+QKDG077essFOibtT/5BiwmwxwK/Y3lQTZcxnEwMrqJGeROndw7YRBk3ld
-         QGcmzskE4SMupTrmc56fck6sJuIiM6vfjfgm7TpeXpU6lEI1ruuQwkZ0eKUzePNYI/Hc
-         9oJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762086325; x=1762691125;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HPAITQnPT8f3NoA/GWdr7roKgAtVZtrGCy1Wj82OPuM=;
-        b=G3i9VEKvblrKWFHzgti0vs1TehSwTd/5GT2928IN+fwEJ8BRkaRlSSi8oB7JH6OdjU
-         sjhciUCnhG7ZhNNOOU6ZgRpXIW94IDxbsT+qGkmqs2JbAuVwbGwtKL2ypJWZE3hKgphB
-         SWgghzH1+KbAOBehymcHwqptLOzDD8k39QC4gmv7JnSlZoBadTPlfj+lrk38CW/br4rw
-         8F6NF2ngzCXWxSLtyUuPsZ1ekFthQxF/RaF6th2tDLBHn5NfuVEnHzNk0NOTzoRKi1j6
-         TYJG+WLZwoRbWiepHAe1kbHQVTaDA0D7thsG59DoFMjgeC5uKHWEWwse0ozzp+pr3Byo
-         jeoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXkEXxroYAt55c51+hhlI3qJ9RblZ5Mbm2rxZonBQvCzIQo5Eu5klNVy2l4ALGdZKrNd+Dp0rCDVsiYh78=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC++4OY0Q/DSBxYZCyIirWgpTikr04pEqLXDo0YKI7CnpwrWGc
-	0wUgm7j1rRbzGmKZYRO+U/Lse9tHIXESWhTJhWcgqUf8ucDluKQ4N/wBvYAqvQ==
-X-Gm-Gg: ASbGnctoE65jjJjiXkrrrb2uJUn/5fQFTI828P8oBrn4NWfFzHiS7CS+aoP0ptjkDeK
-	iJJiOJO1wrp6R7iuLXFt117ZMUWQ+9t209cQd/Qb2mw+Jkb8LKU3Y/PSopdu2qZ1XGENa4TK7u2
-	9JZxbh5Y4XGjfIAZJa9EFz94JENm+TGXVlEnhrUdP/TUgw3wbOi0SvcpKrrQghL8AEyfDByo7Do
-	CY488hr1tkSCvWihWNCTuEAztEzUhrV5oxAnGVPQv7IUvw+o0LZuYfLfolN6Gpt8GFphFfkgOLc
-	2ykd09VUkOFjkCNABMXMOsQ2Dj19G2kyS2ilnZsSZPem99TKo1AbyFuDpDMkHnrXKasgcXpTGC3
-	UHa6IOtTmtwRXpLNSzmAw35pB/SAVkaGf0YCcRq6RBpNWp0/HUUxBfAzBSYVkKl14RgDj8eXGVI
-	0CIS5pCaKEE8Bt
-X-Google-Smtp-Source: AGHT+IFUI2gNHERa8lGBYVJ/VPD+f7hRdUsFXFRALpACNDsX30CRFcgPNcaVtF1ojHFvmr9u62IrKQ==
-X-Received: by 2002:a17:903:41d0:b0:295:5116:6a7d with SMTP id d9443c01a7336-29551166bf6mr61961075ad.4.1762086325495;
-        Sun, 02 Nov 2025 04:25:25 -0800 (PST)
-Received: from fedora ([2401:4900:1c6a:b269:720c:17be:423d:a240])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2959e4e598csm14094225ad.36.2025.11.02.04.25.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Nov 2025 04:25:25 -0800 (PST)
-From: Shi Hao <i.shihao.999@gmail.com>
-To: koby.elbaz@intel.com
-Cc: konstantin.sinyuk@intel.com,
-	ogabbay@kernel.org,
-	gregkh@linuxfoundation.org,
-	linux@weissschuh.net,
-	akpm@linux-foundation.org,
-	tomer.tayar@intel.com,
-	easwar.hariharan@linux.microsoft.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	i.shihao.999@gmail.com
-Subject: [PATCH] accel: habanalabs: use alloc_ordered_workqueue()
-Date: Sun,  2 Nov 2025 17:55:11 +0530
-Message-ID: <20251102122511.21141-1-i.shihao.999@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1762086760; c=relaxed/simple;
+	bh=f2sVVIMBHfKOhT4D+1goGS9xBz95JWAfpWeVV+K1ReE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FUC2Djkq4Z7efoAEYyLbLx9oeWzoYTE5RHvG1gDqapL0100h2M90kgjL5Vvg7Xyc73TYpVWb5z5OLIyVOtEZUtZhxXcn/FzLO7p5a0fd/Lq4xVRfYmjVyi2MqznuIfstOXfIdmaDSDSlDy9IiYbn8yMleIX3qSH/ge/RhPk5aZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=TbxfNeCd; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id EF88840E00DA;
+	Sun,  2 Nov 2025 12:32:33 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id oOHUlStEH83J; Sun,  2 Nov 2025 12:32:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1762086747; bh=8RDLjRzC6Vx8GvHTKmNC9E43ohdNrQP1eOECZohar6I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TbxfNeCdaKrhqI44uPSqoV9T3E3k6fDNP8NGWfdSqEeG7eElf16RE3BdZWa92KhAy
+	 6boaQBZSEgaqcdQiUP/OhggynQ6eMJF0LwI7oeVwVfvKIHl424w3DME7pK1YbsE3+7
+	 EaEgkxD7R0syh4VUspU+PbEemlhGCwKmmWawWZU3fHobjX1+IJqtpfWjyrY3NNizAL
+	 C4XI88ofY+j8srl5ZNZZfDYi9D/uUWqOVRpn/Kfk5NyAQjx4K0dCdJtthf1WxilWb2
+	 mbuemC5CLCnD/+AWXSHa8m9Pv1knISlah5na0s5daueWAkCfIe4QBnLyDsUfKLW/7y
+	 EYJqR4k9Uze9q7gdbZ3xd+zFAGiXPpdCVF8Hoc/TaD5o3S2q9W8oo6brL029Tgmirh
+	 S253Y0CiRPmi2sA3+OBkf1EEHPabInQpvEkmgbxyiyDf2bqJ9LHpSbzDYf4ufdww43
+	 QBPROhTM2RMochlF6ZLosEjC82CwiP94WlQZELZHjnQK8UGsLHyamWktk9MuzpnKrJ
+	 aPDpjnaWW9obNBcQZK8tpKID1g3mK1NzxE6TVC9u965lChCfAXLS9tiEfjT1J12bVF
+	 mY0XErexynvFevkFsp45K2/oqdgHcXTtqkUMs5pAylXQ4KS+7sXtk/0fqeTVHRhFXf
+	 uRAp4pSZ41XuCUj+9YfCXXmM=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 8BCE740E01A5;
+	Sun,  2 Nov 2025 12:32:15 +0000 (UTC)
+Date: Sun, 2 Nov 2025 13:32:07 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: x86@kernel.org, Tony Luck <tony.luck@intel.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-edac@vger.kernel.org, Smita.KoralahalliChannabasappa@amd.com,
+	Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Bert Karwatzki <spasswolf@web.de>, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH v7 8/8] x86/mce: Save and use APEI corrected threshold
+ limit
+Message-ID: <20251102123207.GNaQdPRy5uZWtz3Bfz@fat_crate.local>
+References: <20251016-wip-mca-updates-v7-0-5c139a4062cb@amd.com>
+ <20251016-wip-mca-updates-v7-8-5c139a4062cb@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251016-wip-mca-updates-v7-8-5c139a4062cb@amd.com>
 
-Replace the deprecated create_singlethread_workqueue() functions with
-alloc_ordered_workqueue() since it aligns with current workqueue API
-modernization efforts. The conversion is safe since destroy_workqueue()
-is used for cleanup in both cases.
+On Thu, Oct 16, 2025 at 04:37:53PM +0000, Yazen Ghannam wrote:
+> +void mce_save_apei_thr_limit(u32 thr_limit)
+> +{
+> +	mce_apei_thr_limit = thr_limit;
+> +	pr_info("HEST: Corrected error threshold limit = %u\n", thr_limit);
 
-No functional changes intended.
+pr_info("HEST corrected error threshold limit: %u\n", thr_limit);
 
-Signed-off-by: Shi Hao <i.shihao.999@gmail.com>
----
- drivers/accel/habanalabs/common/device.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+You can send a new revision now.
 
-diff --git a/drivers/accel/habanalabs/common/device.c b/drivers/accel/habanalabs/common/device.c
-index 999c92d7036e..d100a59c31fb 100644
---- a/drivers/accel/habanalabs/common/device.c
-+++ b/drivers/accel/habanalabs/common/device.c
-@@ -903,7 +903,7 @@ static int device_early_init(struct hl_device *hdev)
+Thx.
 
- 	for (i = 0 ; i < hdev->asic_prop.completion_queues_count ; i++) {
- 		snprintf(workq_name, 32, "hl%u-free-jobs-%u", hdev->cdev_idx, (u32) i);
--		hdev->cq_wq[i] = create_singlethread_workqueue(workq_name);
-+		hdev->cq_wq[i] = alloc_ordered_workqueue(workq_name, 0);
- 		if (hdev->cq_wq[i] == NULL) {
- 			dev_err(hdev->dev, "Failed to allocate CQ workqueue\n");
- 			rc = -ENOMEM;
-@@ -912,7 +912,7 @@ static int device_early_init(struct hl_device *hdev)
- 	}
+-- 
+Regards/Gruss,
+    Boris.
 
- 	snprintf(workq_name, 32, "hl%u-events", hdev->cdev_idx);
--	hdev->eq_wq = create_singlethread_workqueue(workq_name);
-+	hdev->eq_wq = alloc_ordered_workqueue(workq_name, 0);
- 	if (hdev->eq_wq == NULL) {
- 		dev_err(hdev->dev, "Failed to allocate EQ workqueue\n");
- 		rc = -ENOMEM;
-@@ -958,7 +958,7 @@ static int device_early_init(struct hl_device *hdev)
- 	hl_mem_mgr_init(hdev->dev, &hdev->kernel_mem_mgr);
-
- 	snprintf(workq_name, 32, "hl%u_device_reset", hdev->cdev_idx);
--	hdev->reset_wq = create_singlethread_workqueue(workq_name);
-+	hdev->reset_wq = alloc_ordered_workqueue(workq_name, 0);
- 	if (!hdev->reset_wq) {
- 		rc = -ENOMEM;
- 		dev_err(hdev->dev, "Failed to create device reset WQ\n");
---
-2.51.0
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
