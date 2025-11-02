@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-881909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24898C29326
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 18:05:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FD13C29329
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 18:06:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 624CB188C044
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 17:05:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A23C188AF6F
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 17:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE972DA774;
-	Sun,  2 Nov 2025 17:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44CE42D9EEA;
+	Sun,  2 Nov 2025 17:06:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eGu/5isI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gL8puQUG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6BC1F4169;
-	Sun,  2 Nov 2025 17:05:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138D11F4169
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 17:06:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762103122; cv=none; b=FQivOvQiAcadRZN8gHxcR3alC7ESvRxSR/R1Iyw0TBZadmKzhrLMzQJNeDIuGDzrlxg1ts/CC02cBo/MfLmhmtr6ENRsUUn7g6iqfKTlzyUfHHjjczCohvAK3X7jeIA+LOwbZDc2RTD1i9LL6m3UXSmzcReEf/t9f9gVfT4oQ80=
+	t=1762103205; cv=none; b=tRh9jhKkdzkMCnZ8AGV99uy1Hn7u1LU4yH1aPiNo0Rfe5T+z0ellXdE9pC12q5tmG35nWsK3zsYyLOnvmzaRZyk30tVwMpBoWRBiKrIiG8JPqbOMd2lD1SBFwA/dSX/rIMCJah5YdfDfsJNhQjEkdZ7tcesWPnag6QD25AnObLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762103122; c=relaxed/simple;
-	bh=QNBa3Nxs4amYOkNF63vxcYItGKzAfFD2qH5ijbBlKxg=;
+	s=arc-20240116; t=1762103205; c=relaxed/simple;
+	bh=oedeZmsFxLhCFl1kUSF9/KJ/zIF/AaWI2eynqQGqXh4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k6GtHoZRKezfEn75re/oemmLP9nei06SR94IM46Vv6hTL0ZHE6tICEzhCW/7bRs8wTW8ybA1Ya6QoT734ef28TaD+fvg7zxuBQ1wx9ElJwmTMCdMdKIKy/y+WEZ9EYnL7e3/dC/yXZLlhKo/VwYAQidJI7EDtUYg9Sc4g3l+U0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eGu/5isI; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762103120; x=1793639120;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=QNBa3Nxs4amYOkNF63vxcYItGKzAfFD2qH5ijbBlKxg=;
-  b=eGu/5isIX+rs3cGSJV72Wo9rsdhDl2OW1iNwcslnx8xkVCZVfQLolg6x
-   S8vaNeFeRZY6edGZ6u2JuK8hi8CFo66hSA3F/uAPoa2TTWGIImFUCiYPv
-   fvpv1blJ7PYUNYF5DicwS+3ZjBJD8eJxKGhhwf/8eafPJLbuHGAsNsVt4
-   p96mhDTke96xTlHh/MQloQ20l9ou2NYnvSH5QYiXzeo1HP/RghPfqYJ+o
-   Y2OZBR8i2craGoNVGXjVieaDuoE4dxdy3A7WHPX0RUiJG14RnzfvpbsJc
-   LKfShDGMuYMfoL8u9oRb+h4fnIsS4PSA6iULbQJzprGb5q2Wjf+fLWFys
-   Q==;
-X-CSE-ConnectionGUID: j74HTt6rSdGE5FIKYNxxZg==
-X-CSE-MsgGUID: elvPVWhoQFehne7i068sCQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="66807190"
-X-IronPort-AV: E=Sophos;i="6.19,274,1754982000"; 
-   d="scan'208";a="66807190"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2025 09:05:20 -0800
-X-CSE-ConnectionGUID: wvh7ORnySqujkXE1EoAYqg==
-X-CSE-MsgGUID: 0IrIttudS9+ELI6ZydVArQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,274,1754982000"; 
-   d="scan'208";a="186826615"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 02 Nov 2025 09:05:17 -0800
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vFbUq-000PRM-0f;
-	Sun, 02 Nov 2025 17:04:24 +0000
-Date: Mon, 3 Nov 2025 01:03:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Jonathan Hunter <jonathanh@nvidia.com>
-Cc: oe-kbuild-all@lists.linux.dev, dri-devel@lists.freedesktop.org,
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Aaron Kling <webgeek1234@gmail.com>
-Subject: Re: [PATCH] drm/tegra: Enable cmu for Tegra186 and Tegra194
-Message-ID: <202511030007.5ksWfboC-lkp@intel.com>
-References: <20251101-tegra-drm-cmu-v1-1-211799755ab8@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PLkqEECE4fNQl2quk01PLsj2N3fUOJ7EW79KCzwSTXeL355lplrzwm5f/pdy2UVomiJfjEmLjrjwd/sOyxbZMC6nFShcBVMRrtGDdYO3QrPUqVjK5lBXF52roDlod4RgxkJyHhjo1yfRE02RaNM6M/E2IkbKX7JR20um0q/Kw+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gL8puQUG; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762103203;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KP4XinEpyvd8kaWWhUtBs6CxqYLY+EFwwqKCaZv/Q+U=;
+	b=gL8puQUG2PxaMa95iJohbu51mNsYSyGK362eMsSHhlOgpan1Nl80F/YcBZDnP4P2WtSz78
+	yHt++fXEugeeH6LgkmwBOIPh0YsdDrfJq3FkjN8n/xiBxs39QNwyot3ew10VJctV8Q1DTb
+	kcLjQ+D4TaymY7kqW7qG315GfvpU/Z4=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-98--iPxFb9KM8WqsRCXT3-xOQ-1; Sun,
+ 02 Nov 2025 12:06:07 -0500
+X-MC-Unique: -iPxFb9KM8WqsRCXT3-xOQ-1
+X-Mimecast-MFC-AGG-ID: -iPxFb9KM8WqsRCXT3-xOQ_1762103120
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BB6A619541B5;
+	Sun,  2 Nov 2025 17:05:18 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.84])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id B31AD1800576;
+	Sun,  2 Nov 2025 17:05:12 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sun,  2 Nov 2025 18:04:01 +0100 (CET)
+Date: Sun, 2 Nov 2025 18:03:54 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	Yu Watanabe <watanabe.yu+github@gmail.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Jeff Layton <jlayton@kernel.org>, Jann Horn <jannh@google.com>,
+	Luca Boccassi <luca.boccassi@gmail.com>,
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>,
+	linux-kernel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Lennart Poettering <lennart@poettering.net>,
+	Mike Yuan <me@yhndnzj.com>,
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>
+Subject: Re: [PATCH 00/22] coredump: cleanups & pidfd extension
+Message-ID: <20251102170353.GA3837@redhat.com>
+References: <20251028-work-coredump-signal-v1-0-ca449b7b7aa0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,302 +83,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251101-tegra-drm-cmu-v1-1-211799755ab8@gmail.com>
+In-Reply-To: <20251028-work-coredump-signal-v1-0-ca449b7b7aa0@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Hi Aaron,
+On 10/28, Christian Brauner wrote:
+>
+> Christian Brauner (22):
+>       pidfs: use guard() for task_lock
+>       pidfs: fix PIDFD_INFO_COREDUMP handling
+>       pidfs: add missing PIDFD_INFO_SIZE_VER1
+>       pidfs: add missing BUILD_BUG_ON() assert on struct pidfd_info
+>       pidfd: add a new supported_mask field
+>       pidfs: prepare to drop exit_info pointer
+>       pidfs: drop struct pidfs_exit_info
+>       pidfs: expose coredump signal
 
-kernel test robot noticed the following build warnings:
+I don't think these changes need my review... but FWIW, I see nothing
+wrong in 1-8. For 1-8:
 
-[auto build test WARNING on dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa]
+Reviewed-by: Oleg Nesterov <oleg@redhat.com>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Aaron-Kling-via-B4-Relay/drm-tegra-Enable-cmu-for-Tegra186-and-Tegra194/20251102-071726
-base:   dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
-patch link:    https://lore.kernel.org/r/20251101-tegra-drm-cmu-v1-1-211799755ab8%40gmail.com
-patch subject: [PATCH] drm/tegra: Enable cmu for Tegra186 and Tegra194
-config: arm-randconfig-002-20251102 (https://download.01.org/0day-ci/archive/20251103/202511030007.5ksWfboC-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 10.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251103/202511030007.5ksWfboC-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511030007.5ksWfboC-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   drivers/gpu/drm/tegra/sor.c: In function 'tegra_sor_hdmi_enable':
->> drivers/gpu/drm/tegra/sor.c:2757:50: warning: right shift count >= width of type [-Wshift-count-overflow]
-    2757 |   tegra_dc_writel(dc, (u32)(sor->cmu_output_phys >> 32),
-         |                                                  ^~
-
-
-vim +2757 drivers/gpu/drm/tegra/sor.c
-
-  2590	
-  2591		/* switch the SOR clock to the pad clock */
-  2592		err = tegra_sor_set_parent_clock(sor, sor->clk_pad);
-  2593		if (err < 0) {
-  2594			dev_err(sor->dev, "failed to select SOR parent clock: %d\n",
-  2595				err);
-  2596			return;
-  2597		}
-  2598	
-  2599		/* switch the output clock to the parent pixel clock */
-  2600		err = clk_set_parent(sor->clk, sor->clk_parent);
-  2601		if (err < 0) {
-  2602			dev_err(sor->dev, "failed to select output parent clock: %d\n",
-  2603				err);
-  2604			return;
-  2605		}
-  2606	
-  2607		/* adjust clock rate for HDMI 2.0 modes */
-  2608		rate = clk_get_rate(sor->clk_parent);
-  2609	
-  2610		if (mode->clock >= 340000)
-  2611			rate /= 2;
-  2612	
-  2613		DRM_DEBUG_KMS("setting clock to %lu Hz, mode: %lu Hz\n", rate, pclk);
-  2614	
-  2615		clk_set_rate(sor->clk, rate);
-  2616	
-  2617		if (!sor->soc->has_nvdisplay) {
-  2618			value = SOR_INPUT_CONTROL_HDMI_SRC_SELECT(dc->pipe);
-  2619	
-  2620			/* XXX is this the proper check? */
-  2621			if (mode->clock < 75000)
-  2622				value |= SOR_INPUT_CONTROL_ARM_VIDEO_RANGE_LIMITED;
-  2623	
-  2624			tegra_sor_writel(sor, value, SOR_INPUT_CONTROL);
-  2625		}
-  2626	
-  2627		max_ac = ((mode->htotal - mode->hdisplay) - SOR_REKEY - 18) / 32;
-  2628	
-  2629		value = SOR_HDMI_CTRL_ENABLE | SOR_HDMI_CTRL_MAX_AC_PACKET(max_ac) |
-  2630			SOR_HDMI_CTRL_AUDIO_LAYOUT | SOR_HDMI_CTRL_REKEY(SOR_REKEY);
-  2631		tegra_sor_writel(sor, value, SOR_HDMI_CTRL);
-  2632	
-  2633		if (!dc->soc->has_nvdisplay) {
-  2634			/* H_PULSE2 setup */
-  2635			pulse_start = h_ref_to_sync +
-  2636				      (mode->hsync_end - mode->hsync_start) +
-  2637				      (mode->htotal - mode->hsync_end) - 10;
-  2638	
-  2639			value = PULSE_LAST_END_A | PULSE_QUAL_VACTIVE |
-  2640				PULSE_POLARITY_HIGH | PULSE_MODE_NORMAL;
-  2641			tegra_dc_writel(dc, value, DC_DISP_H_PULSE2_CONTROL);
-  2642	
-  2643			value = PULSE_END(pulse_start + 8) | PULSE_START(pulse_start);
-  2644			tegra_dc_writel(dc, value, DC_DISP_H_PULSE2_POSITION_A);
-  2645	
-  2646			value = tegra_dc_readl(dc, DC_DISP_DISP_SIGNAL_OPTIONS0);
-  2647			value |= H_PULSE2_ENABLE;
-  2648			tegra_dc_writel(dc, value, DC_DISP_DISP_SIGNAL_OPTIONS0);
-  2649		}
-  2650	
-  2651		/* infoframe setup */
-  2652		err = tegra_sor_hdmi_setup_avi_infoframe(sor, mode);
-  2653		if (err < 0)
-  2654			dev_err(sor->dev, "failed to setup AVI infoframe: %d\n", err);
-  2655	
-  2656		/* XXX HDMI audio support not implemented yet */
-  2657		tegra_sor_hdmi_disable_audio_infoframe(sor);
-  2658	
-  2659		/* use single TMDS protocol */
-  2660		value = tegra_sor_readl(sor, SOR_STATE1);
-  2661		value &= ~SOR_STATE_ASY_PROTOCOL_MASK;
-  2662		value |= SOR_STATE_ASY_PROTOCOL_SINGLE_TMDS_A;
-  2663		tegra_sor_writel(sor, value, SOR_STATE1);
-  2664	
-  2665		/* power up pad calibration */
-  2666		value = tegra_sor_readl(sor, sor->soc->regs->dp_padctl0);
-  2667		value &= ~SOR_DP_PADCTL_PAD_CAL_PD;
-  2668		tegra_sor_writel(sor, value, sor->soc->regs->dp_padctl0);
-  2669	
-  2670		/* production settings */
-  2671		settings = tegra_sor_hdmi_find_settings(sor, mode->clock * 1000);
-  2672		if (!settings) {
-  2673			dev_err(sor->dev, "no settings for pixel clock %d Hz\n",
-  2674				mode->clock * 1000);
-  2675			return;
-  2676		}
-  2677	
-  2678		value = tegra_sor_readl(sor, sor->soc->regs->pll0);
-  2679		value &= ~SOR_PLL0_ICHPMP_MASK;
-  2680		value &= ~SOR_PLL0_FILTER_MASK;
-  2681		value &= ~SOR_PLL0_VCOCAP_MASK;
-  2682		value |= SOR_PLL0_ICHPMP(settings->ichpmp);
-  2683		value |= SOR_PLL0_FILTER(settings->filter);
-  2684		value |= SOR_PLL0_VCOCAP(settings->vcocap);
-  2685		tegra_sor_writel(sor, value, sor->soc->regs->pll0);
-  2686	
-  2687		/* XXX not in TRM */
-  2688		value = tegra_sor_readl(sor, sor->soc->regs->pll1);
-  2689		value &= ~SOR_PLL1_LOADADJ_MASK;
-  2690		value &= ~SOR_PLL1_TMDS_TERMADJ_MASK;
-  2691		value |= SOR_PLL1_LOADADJ(settings->loadadj);
-  2692		value |= SOR_PLL1_TMDS_TERMADJ(settings->tmds_termadj);
-  2693		value |= SOR_PLL1_TMDS_TERM;
-  2694		tegra_sor_writel(sor, value, sor->soc->regs->pll1);
-  2695	
-  2696		value = tegra_sor_readl(sor, sor->soc->regs->pll3);
-  2697		value &= ~SOR_PLL3_BG_TEMP_COEF_MASK;
-  2698		value &= ~SOR_PLL3_BG_VREF_LEVEL_MASK;
-  2699		value &= ~SOR_PLL3_AVDD10_LEVEL_MASK;
-  2700		value &= ~SOR_PLL3_AVDD14_LEVEL_MASK;
-  2701		value |= SOR_PLL3_BG_TEMP_COEF(settings->bg_temp_coef);
-  2702		value |= SOR_PLL3_BG_VREF_LEVEL(settings->bg_vref_level);
-  2703		value |= SOR_PLL3_AVDD10_LEVEL(settings->avdd10_level);
-  2704		value |= SOR_PLL3_AVDD14_LEVEL(settings->avdd14_level);
-  2705		tegra_sor_writel(sor, value, sor->soc->regs->pll3);
-  2706	
-  2707		value = settings->drive_current[3] << 24 |
-  2708			settings->drive_current[2] << 16 |
-  2709			settings->drive_current[1] <<  8 |
-  2710			settings->drive_current[0] <<  0;
-  2711		tegra_sor_writel(sor, value, SOR_LANE_DRIVE_CURRENT0);
-  2712	
-  2713		value = settings->preemphasis[3] << 24 |
-  2714			settings->preemphasis[2] << 16 |
-  2715			settings->preemphasis[1] <<  8 |
-  2716			settings->preemphasis[0] <<  0;
-  2717		tegra_sor_writel(sor, value, SOR_LANE_PREEMPHASIS0);
-  2718	
-  2719		value = tegra_sor_readl(sor, sor->soc->regs->dp_padctl0);
-  2720		value &= ~SOR_DP_PADCTL_TX_PU_MASK;
-  2721		value |= SOR_DP_PADCTL_TX_PU_ENABLE;
-  2722		value |= SOR_DP_PADCTL_TX_PU(settings->tx_pu_value);
-  2723		tegra_sor_writel(sor, value, sor->soc->regs->dp_padctl0);
-  2724	
-  2725		value = tegra_sor_readl(sor, sor->soc->regs->dp_padctl2);
-  2726		value &= ~SOR_DP_PADCTL_SPAREPLL_MASK;
-  2727		value |= SOR_DP_PADCTL_SPAREPLL(settings->sparepll);
-  2728		tegra_sor_writel(sor, value, sor->soc->regs->dp_padctl2);
-  2729	
-  2730		/* power down pad calibration */
-  2731		value = tegra_sor_readl(sor, sor->soc->regs->dp_padctl0);
-  2732		value |= SOR_DP_PADCTL_PAD_CAL_PD;
-  2733		tegra_sor_writel(sor, value, sor->soc->regs->dp_padctl0);
-  2734	
-  2735		if (!dc->soc->has_nvdisplay) {
-  2736			/* miscellaneous display controller settings */
-  2737			value = VSYNC_H_POSITION(1);
-  2738			tegra_dc_writel(dc, value, DC_DISP_DISP_TIMING_OPTIONS);
-  2739		}
-  2740	
-  2741		value = tegra_dc_readl(dc, DC_DISP_DISP_COLOR_CONTROL);
-  2742		value &= ~DITHER_CONTROL_MASK;
-  2743		value &= ~BASE_COLOR_SIZE_MASK;
-  2744	
-  2745		if (dc->soc->has_nvdisplay) {
-  2746			sor->cmu_output_lut =
-  2747				dma_alloc_coherent(dc->dev, ARRAY_SIZE(default_srgb_lut) * sizeof(u64),
-  2748						   &sor->cmu_output_phys, GFP_KERNEL);
-  2749	
-  2750			for (i = 0; i < ARRAY_SIZE(default_srgb_lut); i++) {
-  2751				r = default_srgb_lut[i];
-  2752				sor->cmu_output_lut[i] = (r << 32) | (r << 16) | r;
-  2753			}
-  2754	
-  2755			tegra_dc_writel(dc, (u32)(sor->cmu_output_phys & 0xffffffff),
-  2756					DC_DISP_COREPVT_HEAD_SET_OUTPUT_LUT_BASE);
-> 2757			tegra_dc_writel(dc, (u32)(sor->cmu_output_phys >> 32),
-  2758					DC_DISP_COREPVT_HEAD_SET_OUTPUT_LUT_BASE_HI);
-  2759	
-  2760			tegra_dc_writel(dc, OUTPUT_LUT_MODE_INTERPOLATE | OUTPUT_LUT_SIZE_SIZE_1025,
-  2761					DC_DISP_CORE_HEAD_SET_CONTROL_OUTPUT_LUT);
-  2762	
-  2763			value |= CMU_ENABLE_ENABLE;
-  2764		}
-  2765	
-  2766		switch (state->bpc) {
-  2767		case 6:
-  2768			value |= BASE_COLOR_SIZE_666;
-  2769			break;
-  2770	
-  2771		case 8:
-  2772			value |= BASE_COLOR_SIZE_888;
-  2773			break;
-  2774	
-  2775		case 10:
-  2776			value |= BASE_COLOR_SIZE_101010;
-  2777			break;
-  2778	
-  2779		case 12:
-  2780			value |= BASE_COLOR_SIZE_121212;
-  2781			break;
-  2782	
-  2783		default:
-  2784			WARN(1, "%u bits-per-color not supported\n", state->bpc);
-  2785			value |= BASE_COLOR_SIZE_888;
-  2786			break;
-  2787		}
-  2788	
-  2789		tegra_dc_writel(dc, value, DC_DISP_DISP_COLOR_CONTROL);
-  2790	
-  2791		/* XXX set display head owner */
-  2792		value = tegra_sor_readl(sor, SOR_STATE1);
-  2793		value &= ~SOR_STATE_ASY_OWNER_MASK;
-  2794		value |= SOR_STATE_ASY_OWNER(1 + dc->pipe);
-  2795		tegra_sor_writel(sor, value, SOR_STATE1);
-  2796	
-  2797		err = tegra_sor_power_up(sor, 250);
-  2798		if (err < 0)
-  2799			dev_err(sor->dev, "failed to power up SOR: %d\n", err);
-  2800	
-  2801		/* configure dynamic range of output */
-  2802		value = tegra_sor_readl(sor, sor->soc->regs->head_state0 + dc->pipe);
-  2803		value &= ~SOR_HEAD_STATE_RANGECOMPRESS_MASK;
-  2804		value &= ~SOR_HEAD_STATE_DYNRANGE_MASK;
-  2805		tegra_sor_writel(sor, value, sor->soc->regs->head_state0 + dc->pipe);
-  2806	
-  2807		/* configure colorspace */
-  2808		value = tegra_sor_readl(sor, sor->soc->regs->head_state0 + dc->pipe);
-  2809		value &= ~SOR_HEAD_STATE_COLORSPACE_MASK;
-  2810		value |= SOR_HEAD_STATE_COLORSPACE_RGB;
-  2811		tegra_sor_writel(sor, value, sor->soc->regs->head_state0 + dc->pipe);
-  2812	
-  2813		tegra_sor_mode_set(sor, mode, state);
-  2814	
-  2815		tegra_sor_update(sor);
-  2816	
-  2817		/* program preamble timing in SOR (XXX) */
-  2818		value = tegra_sor_readl(sor, SOR_DP_SPARE0);
-  2819		value &= ~SOR_DP_SPARE_DISP_VIDEO_PREAMBLE;
-  2820		tegra_sor_writel(sor, value, SOR_DP_SPARE0);
-  2821	
-  2822		err = tegra_sor_attach(sor);
-  2823		if (err < 0)
-  2824			dev_err(sor->dev, "failed to attach SOR: %d\n", err);
-  2825	
-  2826		/* enable display to SOR clock and generate HDMI preamble */
-  2827		value = tegra_dc_readl(dc, DC_DISP_DISP_WIN_OPTIONS);
-  2828	
-  2829		if (!sor->soc->has_nvdisplay)
-  2830			value |= SOR1_TIMING_CYA;
-  2831	
-  2832		value |= SOR_ENABLE(sor->index);
-  2833	
-  2834		tegra_dc_writel(dc, value, DC_DISP_DISP_WIN_OPTIONS);
-  2835	
-  2836		if (dc->soc->has_nvdisplay) {
-  2837			value = tegra_dc_readl(dc, DC_DISP_CORE_SOR_SET_CONTROL(sor->index));
-  2838			value &= ~PROTOCOL_MASK;
-  2839			value |= PROTOCOL_SINGLE_TMDS_A;
-  2840			tegra_dc_writel(dc, value, DC_DISP_CORE_SOR_SET_CONTROL(sor->index));
-  2841		}
-  2842	
-  2843		tegra_dc_commit(dc);
-  2844	
-  2845		err = tegra_sor_wakeup(sor);
-  2846		if (err < 0)
-  2847			dev_err(sor->dev, "failed to wakeup SOR: %d\n", err);
-  2848	
-  2849		tegra_sor_hdmi_scdc_start(sor);
-  2850		tegra_sor_audio_prepare(sor);
-  2851	}
-  2852	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
