@@ -1,67 +1,68 @@
-Return-Path: <linux-kernel+bounces-881825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CC0EC2902F
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 15:25:32 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 203D8C29032
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 15:25:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2659C188D882
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 14:25:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9A3964E6DF3
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 14:25:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B012B22422D;
-	Sun,  2 Nov 2025 14:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B712D34D3BD;
+	Sun,  2 Nov 2025 14:25:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="llrfeenl"
-Received: from SN4PR2101CU001.outbound.protection.outlook.com (mail-southcentralusazon11012053.outbound.protection.outlook.com [40.93.195.53])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="W0LvYwLo"
+Received: from PH0PR06CU001.outbound.protection.outlook.com (mail-westus3azon11011037.outbound.protection.outlook.com [40.107.208.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C835C34D3A0;
-	Sun,  2 Nov 2025 14:25:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.195.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C0F8224B1F;
+	Sun,  2 Nov 2025 14:25:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.208.37
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762093517; cv=fail; b=O0Q0V90gz+04aNX7p4BWn8fVTWlmUz9841JARFFAW5nQy3pjrTOJXXSEUgodfwtHbGSjy0JtdPBOFj5afUwpjHZwvx8apPOrzA9lW/i0jHyNwhXSnAyqtFSIl+WYgv8jmpJVyvUTCXVQGYg/uMet9nBIoZzWK+ZiQOiFJHS0lbE=
+	t=1762093522; cv=fail; b=DK69LOpvgNnfZnY/M28HDn0ysnG8ltjAVvrnqKO1TPfnXR/e+jnmDWTqSL+AHsbvTmdMdsWMfSrg0rZTDmCAsBwV5tVb16f61Xa+zMbuUN+B/Nrgp/gf34wUCEpjEPqtFJ7CbHokjSMneGcLVUSwW82KEBhEwr/qQPbgj+RLCfM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762093517; c=relaxed/simple;
-	bh=zbboSyRfjjV3Fmd0/YwB+e4Og3YSayeSXX7Gya8tycU=;
+	s=arc-20240116; t=1762093522; c=relaxed/simple;
+	bh=mvCHnJ8QIKt9y4WMUtv6Dp3/q2ua9a9Rax2VrIDcDEc=;
 	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=ByLLIMaVkvNHEoWyZEFqeuC8YdB7IabC2EATLOeto43QQr6vFKCyLPf/IAI90F+I0RQd/nQdfg6bvp+XLDfunQX85uJyzJjAg5gXb5TAXJkfDGvdsLaGjQXYLSGVuaR2bCq8YdRoLbCE27NWUUAqJrAi6xvVxMvbEER1s8IheYY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=llrfeenl; arc=fail smtp.client-ip=40.93.195.53
+	 To:Cc:MIME-Version; b=pbOiVdzAf/fZSDDMtStAaT/xI2JUVwqUjbt/p75I7Iwo0oAg4uwteOT1N30Hl4izy7L4d7T6dCILdmkjDN1pUmBDfNryjiXxBtMgnKhd0TZP9BoiT1kUsoTD5p0QE1iZQzRFxpeFJfuhoLfBWTLjVK8MoFqs6eia+Wn2p4mlZ3o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=W0LvYwLo; arc=fail smtp.client-ip=40.107.208.37
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=crkk5b2eC+oePSRgylANlVQ1L6ShtBVmX2qfKLmHVBczZQnYyxvAeX/zLpmlmguiWMxn+PfGpLJMt4RtecrVMlmoGVNCe66xoVA+3GpAibIMus2GVNrZBOzz2GF1xyf9FzEdEPdXZmtLVVoEDC4Z7s+HqYYB6JAJsGJh8h6820tyEAeevR+f7wEkUxaPKc9EEvhqnrj6NVxe6CcRKwvK3/7o4trWSsHELW1ZuRezyNX9/qHR27XlzGhcPIhszmTvsLkfc4zsmY+2j+PsyxtE/2OgnIqVmm7wh57LvnV5G6oa1Hk4RQPVYjYk4VAgrCOvkyeYNaXpqwANcS8Y5kQpLg==
+ b=NdaVvN7eBLi14dWCuJFcykU5sv5Ln8DW3NbHicHUx0Ab/vZdZu2vxtjayFPsCYqYVzlosCEhchb4fJuwoy49HO3CF/D8mybu3lVDcLWb9rSAXd5j3snqjpIuCDkeh1Pmzj/lZKvgmRqpH6wgsCXpmcB9tb4OWX8kuCTgSTGQTTIa3j6r+SeeZRPqNY4x1pXgWab7X5uSxIzHuEb8+5Z8KT6dZ4HgFS3c4aRGQ9v2UHy4zFBlOGBTt0co1tzXoVTsAttImp9J75RrAIqY/7aCRvx8dOdC/wrt0+POd4oDHejDsTSDFqpFX8MVmKNDABPTPniRAWfSPmekSZF4WLY6mg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qJKAkwRN8ZIPrpmXlO1m3kWfPPrqCjRQdU86seNj1CY=;
- b=msHHA/cncak/SOMH/fbDwrKv4VVt2QSi2OzVhrf4bcgG0xiVwudP9sIFC6EC6cScHREnSBEfqh42Oe0/ILmHVbbdvjwqxT7Zt30qPys+iFYrgEgj+HCIE0383SkgkS6uI0pPgHrJIsUwRbIB712HDpJWx3hapV9zuhExfnxsp4DjcI78eG5IYv52dXmdjs5KAF2aKqzohbnvu1hjVWpiVnRAuhhquZIVI9e8mL8ees2m3QJ3Fs5tqGmOpgZ7WLMbHxDSmZKrkZD+2BeWVJVa8L1rTjpoigDyRkjNE9Tv+YMnYuTRKz7+7gDHXU2dEv6stjzSIqwKNT9W1wvCjLA5/A==
+ bh=Xp1jw3iRJOrwhtQkQuGuuC3G6+pMABMDsAxcn9gdpQo=;
+ b=LqI5SwBgT5hHkmbXr1DjWT+v9l5iSaglM1r4b3EAYcEjF2U5jf2DSX2012ELG+LUsaN7rTOuif3M5Ao3iLnDdJGCyA3rvIKELYF/HQEzLoA16FkP33qiLiGUXNsxBZl5mzOLBd6A9EW7mkOduIjLgkSlsSml9yc0rCUQLirdlWNyHcdlAJ9tFEByK1eG14ICGRaN1GMr/9iH2rsK1SyiNAFfkfTgaXj6KKVnIQne+/edvWT5LJX7qe/0ZbfSofymp4QqWOUeei1nT0RK08tEt2XqT2kjp7MvB2MqOVCK0STV3jcetPu7jcdOt6aJpEAr5R6RBSoYecnufIgnooxCtA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qJKAkwRN8ZIPrpmXlO1m3kWfPPrqCjRQdU86seNj1CY=;
- b=llrfeenlvXeGkbGBvK1wPWHgQXBtpwvuRg42T8MHQKXj6y3PNbDjbu2MqIqwgS8hFQ0IwcV04ZsDJ4KEXWVljVr27qYJwJTyKW8tt3+Aoq/O7ktiO+ocCIY9N/ewsAe62XOr1p2/JtW8DIGiVjlI02dAgSdOCMdbFRPcvPZUUatcGIua+kTQfuh/CApkHqyo/fs3C4azfGK6gwY6DdLhYk2PuUN+VFaBmTA7AJE9ybsm49HzPeKGpcI4tUtB2WApzQums3z/iMr9rAkCyXmAOVLbhQT2NtGs+e5mzsCWbAnlVbBvTl/POoXtmul3drXOLlJYiHIrIZfH+o6iizPYEQ==
+ bh=Xp1jw3iRJOrwhtQkQuGuuC3G6+pMABMDsAxcn9gdpQo=;
+ b=W0LvYwLohMezV+cj1yaessH1i22MVrExj+ZCQQls7lyjY/zXHi4OiovluODcQkZejECvgTiVjaaF/Qjwniq6Mpuu2LMuZK5Qgwi8hos/tmATFoh+JQcilJIVVn4DDy+ErFv6/RHbJmK8nkhK9T+stYmWxi224R5BVinyPPQhW9s+c1S7vsSCr90kIcA0KFrL99Hc7ws4TsxLNQ6qeVbPG/i9M6BLQQl1BwkXeUBLXjUkBNHVjFyfOEKKn5Y+WEWDqk4FVLJbW/siduMqNudxhXwzBwspVSLcg1c7jaLG9wL2T/iwfxgDUeXGA6FCQ7aOtaZFx3U3ULNUjU3c/Kt9NA==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
  by PH8PR12MB7158.namprd12.prod.outlook.com (2603:10b6:510:22a::8) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Sun, 2 Nov
- 2025 14:25:05 +0000
+ 2025 14:25:08 +0000
 Received: from CH2PR12MB3990.namprd12.prod.outlook.com
  ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
  ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9275.013; Sun, 2 Nov 2025
- 14:25:04 +0000
+ 14:25:08 +0000
 From: Alexandre Courbot <acourbot@nvidia.com>
-Date: Sun, 02 Nov 2025 23:24:42 +0900
-Subject: [PATCH v2 1/2] rust: add BitInt integer wrapping type
+Date: Sun, 02 Nov 2025 23:24:43 +0900
+Subject: [PATCH FOR REFERENCE v2 2/2] gpu: nova-core: use BitInt for
+ bitfields
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251102-bounded_ints-v2-1-7ef0c26b1d36@nvidia.com>
+Message-Id: <20251102-bounded_ints-v2-2-7ef0c26b1d36@nvidia.com>
 References: <20251102-bounded_ints-v2-0-7ef0c26b1d36@nvidia.com>
 In-Reply-To: <20251102-bounded_ints-v2-0-7ef0c26b1d36@nvidia.com>
 To: Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@kernel.org>, 
@@ -74,8 +75,8 @@ To: Alice Ryhl <aliceryhl@google.com>, Danilo Krummrich <dakr@kernel.org>,
 Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
  Alexandre Courbot <acourbot@nvidia.com>
 X-Mailer: b4 0.14.3
-X-ClientProxiedBy: TY4PR01CA0071.jpnprd01.prod.outlook.com
- (2603:1096:405:370::6) To CH2PR12MB3990.namprd12.prod.outlook.com
+X-ClientProxiedBy: TYCP286CA0241.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:456::6) To CH2PR12MB3990.namprd12.prod.outlook.com
  (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -85,1191 +86,1310 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|PH8PR12MB7158:EE_
-X-MS-Office365-Filtering-Correlation-Id: df69ae45-deb0-4e02-e1fa-08de1a1b9d8b
+X-MS-Office365-Filtering-Correlation-Id: b131db71-3a3c-4b37-1263-08de1a1b9fba
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|10070799003|921020;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Tkp6QWJ0VHZvU2RYNE5JamVoRDJiQldrcHZvcjhBbnBiQXJFamdJZ1l3K0No?=
- =?utf-8?B?RDUrcmd3cThJTjFucEY3ZWUvSDJGR3NTTlo1OXNhL1MvUzV2dEpOd0tDZ3RQ?=
- =?utf-8?B?eWVxQ2ZrbzJvbDc3MjdOUnVHMjJPTkFISTZMRDFuRWRpNlRVaU1XUGZyTTE5?=
- =?utf-8?B?U3c3Lzc4ZWNYYU5tblZBb0h0U0hXeWZyYXVsVHI2M1kwTGFaWTlwTU9pUXpl?=
- =?utf-8?B?R0Y0eEJ5T3lDT3BDdXMvLzh1TSs4MWI5aW5MVDIyTG5xMjd1VW9GWUlJQStH?=
- =?utf-8?B?RUM4YnZIcE9oUjRBeFhzcm9SQ2dxbXhSWFlJcGZBMUQ0RjgxVllKRzkyWWtD?=
- =?utf-8?B?V1h1eDR6M0NUTFFUMTllL1BPbm1aQ2R0b2dBbndHc3pUeGJBRGhJNk42bmN4?=
- =?utf-8?B?WEx3aVIvRUV3ZitkWFFRQXNmWDNmVFZQWTN6QXJKK3A5eTZpb2wyU0lIbEJH?=
- =?utf-8?B?emFnTkFHck51VkFEREoydFFBWi9Md3BaVXljTnlzQmhRN2RVTE9KN1JEQko0?=
- =?utf-8?B?QXNhOGFiVVdGSS9LY3RrMzJWa09PeUtqKzhjZCtjZXc5UnJ0ZDhtVWtERFM2?=
- =?utf-8?B?RjNZTUVEa2lUTlVYeFhlb1VhclFXWFozdysyUCtycmorTDdPSnpsMlgyRU5M?=
- =?utf-8?B?L2d4eTFCZG56YVNTOEd2bGZjTjFuejEvVTluakRVN3doUDJzZnJwdExVQ3Zk?=
- =?utf-8?B?bFg4WGVMMzE1cW5lVEVzd3J2U3VPbWFGOXJxWnhHa01Ta1hkRFhTRmJUNEZi?=
- =?utf-8?B?am1zTDNDZndEOXFKaWxTZGNHdnF5Z0w3L3NZUTZIdWdjQjh4MmZobkVwSE9K?=
- =?utf-8?B?RlBhL0Yvd1p5QURNRFRZbXpOVXR3bEJHSnpPYlRzQkhPZGZvYXBoTW9yRFJN?=
- =?utf-8?B?MVBZVGZQci9yZ2pvNzRNdXFvL1NkcXhGYllSdmJzemdLYnZ1SUtoTmtMZkkz?=
- =?utf-8?B?NmFlWTlhMU1HMjJOSW9oaXBnVUg2QnJQZXFRVDdFbEdhdHRSZURMWFUxbFha?=
- =?utf-8?B?aitFVFNqS1Yzejd2OVFkeUVNS2c1ckpwRFhZMmNPMFdodXN6ZnpRcHB4cDZ1?=
- =?utf-8?B?T0t5WElBWlZvUUhjeWxHSHB6T3ptL1lJUHNzZzlINDBTeWZjS1BZOWlSRGpO?=
- =?utf-8?B?YkxYcVN0cERHVVRFaTNkM0NITDJJaWVFUCttWTFseFRDaE5aNVc5dDlhUDd0?=
- =?utf-8?B?ekt2M1hwWWliR1I5TTJzaXMyRXBnSFllcHVZdE5uU1BjUklsMXFlR1JBVTdh?=
- =?utf-8?B?S09wY0pITVNUS3g4bVdBYnEwR3hzbnc2L2YvQTRZTHZFREVLbXFBRmRocWpn?=
- =?utf-8?B?Q1hOeTFOdW45WTVZUzIrTmI0MVZqZFZjemlobzlZUFZKSk9LcU5HekEvQ1JZ?=
- =?utf-8?B?ckZiZHdtNk5xcGk1N0FiWjdqLzMxTFVIQ2dzQ05jaE9HRXpkdVBQZzR1L3ph?=
- =?utf-8?B?SlppUThyMU5uckcrVktEeE04eitBTSs4WUtybHR6OTFGUGh3WDA4cWdxOUpl?=
- =?utf-8?B?SXlLeVA0aWsxZHBYL1laVS9qYlpmSkkvS3pZVTVBdE91cWNINHdab3VEanox?=
- =?utf-8?B?YWlCSUl4dVE4K1lZUm1CMUpQeEVZUzFRL2diU1FSNEEyTHl0cW1lMXhiOHMy?=
- =?utf-8?B?U2JLdnRVaTczL08yMjdZOHp0NXhJS3pqY2ZRMmZ0Qi96ZThFQ2RsYzdhNUhI?=
- =?utf-8?B?ZjRmVmZKbnRHakNOSno2cTFZeXVnU1E3ekJmUHYvMUJtRjVkamtNSWxWUjVH?=
- =?utf-8?B?aWdDdU8ybDJ4SHBEYjFkZ3kzUmlVWW1mSWRDd2dkU3BkYm1BaFROdVlNL1B3?=
- =?utf-8?B?eGNUbWNyTW1GMVl0QXdza1AzczJ1NTlHcytYS0VObTczSnZQOVpFbFpZR2Yx?=
- =?utf-8?B?RkphY3QrTkNoMXNNQ2tneWRqaDVTenlORW92N214bm54cmNkQjA0YWNzb05W?=
- =?utf-8?B?Q29PVG4xeloyTHhrL1NQY3dYcVlFVW1oblVXSmRzTzF0Zm1qeE9ZTzJ1Nlpq?=
- =?utf-8?Q?M79ZsYx9jLq0as5hSHDBpQ7GoMUAM0=3D?=
+	=?utf-8?B?UVRqVlRnR0hVMnFmWGxCQVRJTzU4ZHBDM2NWYXVJcURqdnF6K09WUWZTVHh0?=
+ =?utf-8?B?N0I1UmhZSTREZDlYSklncDBKd2ZiMWsyQkpuUmxaTEpQZ05qc1F4MlNmelg5?=
+ =?utf-8?B?alhVTE9jREJUdVYycmFEU3VDZzVXWE1RSkdoZ3drQ3JFZW5uVDFEbmllMG9J?=
+ =?utf-8?B?cVk1d3BPWlBQSUd6NVVOWXYraTRUUS9pbnhEbVFlMlBKcE1LSlZOdEIrbUtY?=
+ =?utf-8?B?cHBWYnZWVHVTN25QSkFpRU9tYlNac2ZMRUNiclBrR0NWRGlmT29Ia09HR2c3?=
+ =?utf-8?B?RzVnamJGalhzSisrTVgxWTdqaHJqcFZEUFo5WEtXTUZPNEw0dXkzQXRKWlFq?=
+ =?utf-8?B?QjU5ZWpCRWdHakE5akgrRW1oUHJGbUZ3ZERNVU9VWHFMZFU3U2l1c0RDWUxL?=
+ =?utf-8?B?UWtrL3dUdG1CbUpXc3FwZ25OcTFndllkbmlUeWdHTm1MZ1I5ZldNaHlkeWsz?=
+ =?utf-8?B?UFpzbFZueE0wSDc2V1ZHVEVxQytnRkU4ckdBQ2poSzRnZnVTeTQzRVo5SERF?=
+ =?utf-8?B?TVVZVW5wWnZadThOZmNQZEhwZ3FSRysxOVZBTVBiYjl2dnhnbDUrb1hQQmpU?=
+ =?utf-8?B?ZHNJczlmT2k5SUQwMC9idDVWSDVMZThUbFZjTElMdmQyVmtXV2txQXQ1a0I4?=
+ =?utf-8?B?MDYxSGpvVnl6SHNUekJUR2I5WS84UElDSVNCOFVXbG9rSzFyUWdBOFE0OTgx?=
+ =?utf-8?B?SDdpVlo3cGJCU0M1dzZKcjNnbk0xQW1LV1BzSG5ZMjZFK2pDc2t1M21JWkJS?=
+ =?utf-8?B?dnVVdEk0Tk1MUTRTQ1R0MFNpblVRZGtLZ0Rvd0h2RnUwSEpQaUIvWVlWV1Zm?=
+ =?utf-8?B?Ull1UXc0Unc1Z2tYNzc5cUZIWVJVbGRGWjdHU3hWSmlYeC9Ub3N1UWJwR0dt?=
+ =?utf-8?B?eC9MMVQ1RkxoZVVBamlKVnJXQWZFMzJvTUc1SHlrS3Rwanp6cmFqb0VZWjRq?=
+ =?utf-8?B?cnk3OWdBOEp4QTZ2YjhvWE5VSTNJWmd1UHJQdy8ySkFjRm1pRi9MU3UycW9o?=
+ =?utf-8?B?eTJ6aHFQbno3Y1o5MVowSlY5bk5OUURmU3hkMzYyNzdYVG54T21EbmF6eXFz?=
+ =?utf-8?B?NzNWWUdJN1p5OUxZU1BWcUJmZUdNWjFVbGRxemFtUUt6a3ROQnNTdGhWSm5W?=
+ =?utf-8?B?TnRDblNuYkpkZTJUdDNQZExFQnQ0bWQ0Z0xIUjcyRG1KUmtXS2IwNE03dUtU?=
+ =?utf-8?B?Y05IYk1ic1JXYStsZVRxbTNsZHRTQ05UMTBPM0Zva2RyVGxlYlJxcFBSRUl4?=
+ =?utf-8?B?TlY4am1WY1B2cko4NnRBZE5OelJ1TjRkTG84di9hOUZORTRMbFRZV01kWG9w?=
+ =?utf-8?B?bTZXZzZac2lTMURFanFOanNMQzFvTGlSNnhtbVU5bEZlWlBVTm1VbnB6eW1y?=
+ =?utf-8?B?cWkxMTVjY1dyTVVXeUUyZFdNZmtPZmwxUWNYekE2T2ExSE9qZExwaCtDMnBD?=
+ =?utf-8?B?RHdwWDFBWmV4ZDB2NWl6d1ZlT2pGQllFV3dUVXVBcSt6MVA2TUxpbk1YQ1Qz?=
+ =?utf-8?B?STArZis2eDZOdTU2UG1VSk1SY3lJSnFSQ25WN3VMTWNYNTNTS3dJeWlUSkg1?=
+ =?utf-8?B?TXBtQmpHcE9ab0pBYWdvYUlEMWhwOXdLWnc2VjJZMlR2VnliMHlrcExnNklo?=
+ =?utf-8?B?VmVxS2taNHAxd2tXYXlGMkk4T2pqa3lFVERCeU5PQjFlVVFlTWExYnZVaVBm?=
+ =?utf-8?B?ZFdON1FDU1FueHd3a1JqWmdtYVYxeEdJZUhmRHZMbkl0VUN5MG5aV0dpaTBM?=
+ =?utf-8?B?b2crUHJmRnlKNFI1anlFUmZJMktRT1Jmd29qTVoyTjQ0UFpkR0ViWDg3dElI?=
+ =?utf-8?B?eTN6NktsRXlrdGEvTWVpeFpyK3VYbVFzcUhyc0t5UTI1VzE0S3NsYnFoS05K?=
+ =?utf-8?B?L2F6blk5TVhNZG1Dd3pQZGpmbDlWRE1ZQXBJWk01TUwvUm1xQlpmNkk2alRi?=
+ =?utf-8?B?NG5Pa0xVRW9xZ0srV1cwQUF4T2R2ZTZ3dFExQnl1c3ZVRDhNV2Y1YlQ1aGFl?=
+ =?utf-8?B?eENPdWRUdlVSL0VDdUxEbU9NYTJMdE9NekV1QzE0S3lpTTBuVkYwQW5XUlJI?=
+ =?utf-8?Q?9L4PVO?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(10070799003)(921020);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NGF4cC9WSS9ZR2w4WWlaVlZYVjBveVkrNFhUTGl4VGRSMHBWNjc4bVFnSzdw?=
- =?utf-8?B?dFYva2NGMC9OVGdzc21HdlNSQ01pcExGYklvNnZydC9NY2JUeFJaNklkKzlO?=
- =?utf-8?B?VmFibTA2VVVmQVpmN1RyN2hRNnJJRWphL0E0dk1aMFZNc3J6ZlFrN2p0NEN5?=
- =?utf-8?B?b2ovWGpXV1JVaEVObnkvVkdnendBQlBkbTdCN2VuUTdFRDgybWpPZ3NXY2c2?=
- =?utf-8?B?ZHJVVlBWYTZvRkRCNzFUb2R3UGlLZ1FoT25zSC8xeC9KNWlkdjZUTi9EcGNm?=
- =?utf-8?B?UE9hSmxhcWhjNHgvQlFEbytrUUh0TnBJTEszNkNXUGlCYnlxTklmY2xwT0ho?=
- =?utf-8?B?djYwSVRZLzEwZXFzc21FV2xYa29xWFl5Qlh3NEs0NFR2ODF2RnpvWlQ1QXFD?=
- =?utf-8?B?bC9HUVpKZWN2aEhjYTloVVZzV0NzcVFWVGV3ajdjMGdLMEdPU284eXlmMUJX?=
- =?utf-8?B?bFlPUCtzbmVZcDZxSjdSejZpUkdIT24xOHhLSG9oS091QVhTa0tMSDZuektR?=
- =?utf-8?B?TWV6ZGlUbnlLdUVTbHhWT3lCbEhna3FEeVBxTUgreHBPcEZMUkV4Y1liUmdV?=
- =?utf-8?B?ak9JMDNGaDExZitxdk9mM3dlbFlVY1p5NmtiT2VxSThKMnpTSlIyVm85NXFo?=
- =?utf-8?B?c2tOTDB3VzRRY1dzV25mYUY2WlVKbG9zT0tib2xzMGVtUzh1SXZ4Z0hlbzhN?=
- =?utf-8?B?Mk1Bei9WTVlCbjZnbzFXMEc3dDhNT3lCQm84WjlYbitaN2hoZ01HR0RlL2t4?=
- =?utf-8?B?R3FSUFcwZ2V2UTFLOVlFTGZqYTUyMDB2TFlsR1VUWWxZMTltbVB1clpFNHlp?=
- =?utf-8?B?bUtyNFNNZGFrcCt5bXltd3NPRlRZbFMxQmdaMXd2Z1ovc01PdEpNOFRSQ2Nr?=
- =?utf-8?B?WkIwcUVXS2IvTTVZMko5eTZHdWYwbStiYU5pSDZQbmJNSjg0dHpXelRIaGUw?=
- =?utf-8?B?S21TQ1d6NmN4K09pMUxqNkFkS2ZNSXlBTWVpNVdHVjBsQjJINHBZY3ZEQkpN?=
- =?utf-8?B?SUhZMzJKUTdoQUVCdkN0TUkyWVBTamhXQ1NuQURYU0tOd1VObVRzUkI1bDhC?=
- =?utf-8?B?Ukt0ZUcvL2g0VkdCaTd1NUR3Y1hZNnI2OW1TRk42aEV1em52WFNlcFBWb1VN?=
- =?utf-8?B?eExUV0VzaC9RaWJucFZPOUwrZzlRUEJjZDg1V1htNHFZRCsyd003RWVzL2xZ?=
- =?utf-8?B?aFFUN3h2K0ZEZzJiTVk0bmRGcmU4aEMxaFlrT2V1YTNtK2E4a2w1Y3RrN09B?=
- =?utf-8?B?Q3R3QjlzZUtNN0JRKzhBTXB4eDNScjFiWC9iYmlETEZTbEtvTlJxZ3RhbHJt?=
- =?utf-8?B?QytXTmhjQktSTjl6SUJjS29nMll4Wk9GTEE1Q09McTJzWUYyMmp0aWJDS3dP?=
- =?utf-8?B?Yi9lR2VhYkhlUzErVlhEQ0pFK2VIOWU4WDQ0ZG9HWTZVUHVMeFpEUmdIZ2Rl?=
- =?utf-8?B?anNzU09ZSzQ1WEVWZTVBVWlLTEVja3NuNVlGZ1VnSnAvQzZOc1FEbzkxZSs0?=
- =?utf-8?B?Y0IzcFBraEVDRmphQit3dGZ0aFQ0UERlMU4wNUMrRWh4aEhybjBiMFhXMjhk?=
- =?utf-8?B?WTBQNVRxT0tITit4NnNvd3djYjFmUnp0Wm9CK2xxZVRhVksyRzlKdzNVOGlB?=
- =?utf-8?B?RjByVzhNZCtMOW1wR2NVYk1XNmJnK3FHc2oycXV2RklqVk9ZNDRFTDFLaGdu?=
- =?utf-8?B?STdoV2dzUXpXQW9TRU1rTnFzTmkya1NQbmM2aytNM0YxcGhKMC9mOUozUVpt?=
- =?utf-8?B?Rk8vUkRZUEZMWVBiQ295N1M0Y0xPSE5tK3Y1Vll2bTQ4aytoV3p6cTZmY2Qy?=
- =?utf-8?B?aVVocmVpcU1OMHd1WXF6U2t1MFM2TU9tU2tHS29wbDdMajliaU1mN0QxTjRW?=
- =?utf-8?B?YTJqOHl3Z3oxd3A2SjdnZ2U5aVpOOW5aanBRaW0wa2xxblBhMnk2ZnhURU1L?=
- =?utf-8?B?dTRMcWpMMEFMNUc0eFFkOHNLV1NKTk4zMmRkaVVCZTM5S1ZDbmY3dlF6OVFS?=
- =?utf-8?B?b1NLdmRsS1FuSGNNditoOWZVblNWcktndTg1N2lZOHBGTmR5cEMzSnZKMFdo?=
- =?utf-8?B?Sm1TelQycGV4NlhVMFpJYXhPc2lzK3hMR0tmaldFeWxYQ092ekk3WVI4aDg1?=
- =?utf-8?B?Qlc2d3NpYVF5RkJ5cjluR0o4ejNRb0FMNDd4c1hPcFBiZEdwS0o3b2hPR1dD?=
- =?utf-8?Q?7wB3FIWcTieKCFCLXve9g6ecIM9N4z0DwjoYj62VQGAB?=
+	=?utf-8?B?WFhRS3E5RVBOZWJpMm9pY21UZ0lIVDQ1NTBzQUtETnJpb25ybU1Vc0pYVkNM?=
+ =?utf-8?B?UjkwVzI1NExuVHl0OGFxVTZ4QzZReUhMMHdSbDV5azlsK2lyZ2xEK3R4RFll?=
+ =?utf-8?B?bHBXaUhvN21pV0VGdDMvSmNrRVJDb2NNTkZ5dlhyajFONVdUZXhuV0hWVVIy?=
+ =?utf-8?B?a3RoTGlBa1BqeHk2QmRGSDhCMGl4dDlScjZyMVVwdmp6VEs5czZHc1hkQ2tW?=
+ =?utf-8?B?MDFvMWRrY3NNQ3gyTkVnd1JDa2xTMUxSWlh6U2VLMzVyaUpUZTI2aElQdzlz?=
+ =?utf-8?B?eDE0SEFlZ2N1c2ZNR296cVM1blZyUGxXRkl0T1d1YkRDV0Z0N3RpenVQaVNG?=
+ =?utf-8?B?RGt1Zjl1NzFiRWRPNVQ3NzBpMGdyMHI4R3BKZVVJOC9HM0FYSmo2WnJkeHNa?=
+ =?utf-8?B?MjlXSTBUT1poYmp3cU9BSjdHZXU3Z1E2RDg2QjgzdUh3NW1reDErT3JEWFgx?=
+ =?utf-8?B?dzdnb0pyRHNpOU5vUGZBSU5Eekw3UFl4U3g5RmhWV3J6c0xWbDBFc3pGa0Vv?=
+ =?utf-8?B?RFdSbVhudkFiVjZzV21lUzlOdUFyeG9QWC9VVy9PbitHKy9KaXFZNTFpRXMv?=
+ =?utf-8?B?QXg1L1JWSkgwYWluckh0QytpYVV4VGtGRUIrNnhSak5aSFczZ00wbzZVUm9z?=
+ =?utf-8?B?Y0U1ZUhuZTlIQVgrb3FtNFV5ZkZybkJySEJ3OWhNb3hrbVBPYWZZMXR4MXVU?=
+ =?utf-8?B?S0lON3pGTThYQTVnSGRFaEFINnh1dklhSzk0aUtLcTBIVyt6aUdXcjVLSEQy?=
+ =?utf-8?B?UGlzaXorWHZ5VkxUZWN3enNzZkFETVhGM1hGcElkN1FXTTZUTkFzV3YwN3A0?=
+ =?utf-8?B?Qlh2S3pWUFBSd2ZvNzlQMUpUT0l1V3FSaFVFMXdqMkVTeTI2UThpODNPZ3lQ?=
+ =?utf-8?B?TEIvRTRwU3BkNFQzQU02Z2EvQ2VsbEdZREgxbWdGVk9yOWEzWGpEQmxhWDBn?=
+ =?utf-8?B?cHRGTFNiRUhldUhTV1U3aTFUYTBFWEJBWmhQSzdTWjBMYnlWcDVxRTNGcUg0?=
+ =?utf-8?B?Umc3c2ZWT3plcm4wenFPZENuSmNoWUp6QnQydEREdERkZGx4bm56UnZ2aVVY?=
+ =?utf-8?B?Q2F3WmRlWWl2YUUwNmNNZFlqQ0Q2aVUwSjllRDJ5TXhnQnd6TGFEQnp6T0F2?=
+ =?utf-8?B?SGZpeFRMa0VhRDVtdWE1RVJlYVpscXBEQk01UzFuekF5Ym5sRkloQlZmWGtI?=
+ =?utf-8?B?M1RDOVZBUTJnNkwwdUNiTnU0R1pWTmdYUEtUVWVpQ0t0T01JRUMrYUVSVkQ1?=
+ =?utf-8?B?SUlEZU1vZVZ1dHlOcVJMblUxcGRFbndKUXVJaXhYN2lYZzluSFZ5RDRYWWF4?=
+ =?utf-8?B?dmhkK2x2K2E2TEFRTDJEMXBGRllVdEZsRVhna3ZuSlY2cndJYVJzQWlZeWRx?=
+ =?utf-8?B?WGdkbkxRZ3V0YllGU0tUT0RCSW9KRC9TNEtJeGcwWnRaWXlGZjZMclM0aDI4?=
+ =?utf-8?B?YW9nSk1LdWV1UkIwcENxZGtLaTkvWEFjejVjMW1tUENYeVVtNGZOTnVKakpF?=
+ =?utf-8?B?bmJQWlFaOG52ZEhndWdtYVRTZmtsVS9QdnRneG5tVkp1cldmd1JYbmRvMTZU?=
+ =?utf-8?B?enAwRXA3SGc0OUF0SUM1ZXpteUxCMkRUZWpkdllsSlJaOVR6alcwZkliQUxz?=
+ =?utf-8?B?dVZ3TjFNR05EUmhRck5kdmdIL0xDOGNQSnAxcDFlZjREMVBTNy9HT05FbmJs?=
+ =?utf-8?B?UDhuYm84Z0NKN09vN2xOdUo2SnZaM2JFRkFpZ0JBeGoxNHBKT3dZNUh0RE95?=
+ =?utf-8?B?NnJ4TG5KL0tVK21oYWdkU1RNSjJRYUJHN0VjdzV2eVFvaW8xdHdMZG1SQ2Rp?=
+ =?utf-8?B?RThycXZOUWtReTZvVVliY21TSGJYU09TemRZWDJkNkJ4TUNlUi9ZMEw0OHFa?=
+ =?utf-8?B?Sm1OUWNVempueHBobGxWeVMzT2xYdFIzZmRqVzRWUVRVUmpPTTdFRWhSREg4?=
+ =?utf-8?B?OGFsOFQ2VnE4T3I0REQxVWdaNDZXcTlYUi93RW1hVHBpOG9xeWFvTTdtOUY3?=
+ =?utf-8?B?NlFaOXgyekhrT2cvUGh4M0IvY0NWTnRUMzRHWjFEUWtOQkVWZTBVMW5DRW1H?=
+ =?utf-8?B?bWFVcTYzYjFIYTBhWVFvdGVSYnFNOFRhUlYrOWJQMTdwd3lHd04xOGc5dXBv?=
+ =?utf-8?B?RXFneUg0Z0tpZGZCcWlzV0NvdFlPN2lsMVpwS0lwckhDYVlrenFTazFTWVRo?=
+ =?utf-8?Q?jLS1kGkt3t7bO9EMKcSaTEd6bUIA52pUOIJxWPl7WQzN?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: df69ae45-deb0-4e02-e1fa-08de1a1b9d8b
+X-MS-Exchange-CrossTenant-Network-Message-Id: b131db71-3a3c-4b37-1263-08de1a1b9fba
 X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2025 14:25:04.5927
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2025 14:25:08.2099
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WfnDlQhSDDmzIHICC4dCtN1BwfDHY4quVhn5cmU1JjXZDw+GnjjQkj3NxETARQ/9IZCkeZ2GMKVW8hUXitp3ww==
+X-MS-Exchange-CrossTenant-UserPrincipalName: sgQgNrWT5aM/e7WsLjxfMl7oEZp9C3NUzUIk8k3qj7RVNyr0RdvqtULUzsj0YkqAl1bfrhjkcJA0k82ma6Xxyw==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7158
 
-Add the `BitInt` type, which is an integer on which the number of bits
-allowed to be used is restricted, capping its maximal value below that
-of primitive type is wraps.
+Use BitInt with the bitfield!() and register!() macros and adapt the
+nova-core code accordingly.
 
-This is useful to e.g. enforce guarantees when working with bit fields.
+This makes it impossible to trim values when setting a register field,
+because either the value of the field has been inferred at compile-time
+to fit within the bounds of the field, or the user has been forced to
+check at runtime that it does indeed fit.
 
-Alongside this type, provide many `From` and `TryFrom` implementations
-are to reduce friction when using with regular integer types. Proxy
-implementations of common integer traits are also provided.
+The use of BitInt actually simplifies register fields definitions,
+as they don't need an intermediate storage type (the "as ..." part of
+fields definitions). Instead, the internal storage type for each field
+is now the bounded integer of its width in bits, which can optionally be
+converted to another type that implements `From`` or `TryFrom`` for that
+bounded integer type.
+
+This means that something like
+
+  register!(NV_PDISP_VGA_WORKSPACE_BASE @ 0x00625f04 {
+      3:3     status_valid as bool,
+      31:8    addr as u32,
+  });
+
+Now becomes
+
+  register!(NV_PDISP_VGA_WORKSPACE_BASE @ 0x00625f04 {
+      3:3     status_valid => bool,
+      31:8    addr,
+  });
+
+(here `status_valid` is infallibly converted to a bool for convenience
+and to remain compatible with the previous semantics)
+
+The field setter/getters are also simplified. If a field has no target
+type, then its setter expects any type that implements `Into` to the
+field's bounded integer type. Due to the many `From` implementations for
+primitive types, this means that most calls can be left unchanged. If
+the caller passes a value that is potentially larger than the field's
+capacity, it must use the `try_` variant of the setter, which returns an
+error if the value cannot be converted at runtime.
+
+For fields that use `=>` to convert to another type, both setter and
+getter are always infallible.
+
+For fields that use `?=>` to fallibly convert to another type, only the
+getter needs to be fallible as the setter always provide valid values by
+design.
+
+Outside of the register macro, the biggest changes occur in `falcon.rs`,
+which defines many enums for fields - their conversion implementations
+need to be changed from the original primitive type of the field to the
+new corresponding bounded int type. Hopefully the TryFrom/Into derive
+macros [1] can take care of implementing these, but it will need to be
+adapted to support bounded integers... :/
+
+But overall, I am rather happy at how simple it was to convert the whole
+of nova-core to this.
+
+Note: This RFC uses nova-core's register!() macro for practical
+purposes, but the hope is to move this patch on top of the bitfield
+macro after it is split out [2].
+
+[1]
+https://lore.kernel.org/rust-for-linux/cover.1755235180.git.y.j3ms.n@gmail.com/
+[2]
+https://lore.kernel.org/rust-for-linux/20251003154748.1687160-1-joelagnelf@nvidia.com/
 
 Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- rust/kernel/lib.rs        |    1 +
- rust/kernel/num.rs        |   50 +++
- rust/kernel/num/bitint.rs | 1001 +++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 1052 insertions(+)
+ drivers/gpu/nova-core/bitfield.rs         | 366 ++++++++++++++++--------------
+ drivers/gpu/nova-core/falcon.rs           | 134 ++++++-----
+ drivers/gpu/nova-core/falcon/hal/ga102.rs |   5 +-
+ drivers/gpu/nova-core/fb/hal/ga100.rs     |   3 +-
+ drivers/gpu/nova-core/gpu.rs              |   9 +-
+ drivers/gpu/nova-core/regs.rs             | 139 ++++++------
+ 6 files changed, 353 insertions(+), 303 deletions(-)
 
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 3dd7bebe7888..235d0d8b1eff 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -109,6 +109,7 @@
- pub mod mm;
- #[cfg(CONFIG_NET)]
- pub mod net;
-+pub mod num;
- pub mod of;
- #[cfg(CONFIG_PM_OPP)]
- pub mod opp;
-diff --git a/rust/kernel/num.rs b/rust/kernel/num.rs
-new file mode 100644
-index 000000000000..21a4b8e14098
---- /dev/null
-+++ b/rust/kernel/num.rs
-@@ -0,0 +1,50 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Numerical features for the kernel.
-+
-+pub mod bitint;
-+pub use bitint::*;
-+
-+/// Type used to designate unsigned primitive types.
-+pub struct Unsigned;
-+
-+/// Type used to designate signed primitive types.
-+pub struct Signed;
-+
-+/// Trait describing properties of integer types.
-+pub trait Integer {
-+    /// Whether this type is [`Signed`] or [`Unsigned`].
-+    type Signedness;
-+
-+    /// Number of bits used for value representation.
-+    const BITS: u32;
-+}
-+
-+impl Integer for bool {
-+    type Signedness = Unsigned;
-+
-+    const BITS: u32 = 1;
-+}
-+
-+macro_rules! impl_integer {
-+    ($($type:ty: $signedness:ty), *) => {
+diff --git a/drivers/gpu/nova-core/bitfield.rs b/drivers/gpu/nova-core/bitfield.rs
+index 16e143658c51..c75d95ef1ae9 100644
+--- a/drivers/gpu/nova-core/bitfield.rs
++++ b/drivers/gpu/nova-core/bitfield.rs
+@@ -19,21 +19,21 @@
+ ///     Auto = 2,
+ /// }
+ ///
+-/// impl TryFrom<u8> for Mode {
+-///     type Error = u8;
+-///     fn try_from(value: u8) -> Result<Self, Self::Error> {
+-///         match value {
++/// impl TryFrom<BitInt<u32, 4>> for Mode {
++///     type Error = u32;
++///     fn try_from(value: BitInt<u32, 4>) -> Result<Self, Self::Error> {
++///         match *value {
+ ///             0 => Ok(Mode::Low),
+ ///             1 => Ok(Mode::High),
+ ///             2 => Ok(Mode::Auto),
+-///             _ => Err(value),
++///             value => Err(value),
+ ///         }
+ ///     }
+ /// }
+ ///
+-/// impl From<Mode> for u8 {
+-///     fn from(mode: Mode) -> u8 {
+-///         mode as u8
++/// impl From<Mode> for BitInt<u32, 4> {
++///     fn from(mode: Mode) -> BitInt<u32, 4> {
++///         BitInt::from_expr(mode as u32)
+ ///     }
+ /// }
+ ///
+@@ -44,25 +44,29 @@
+ ///     Active = 1,
+ /// }
+ ///
+-/// impl From<bool> for State {
+-///     fn from(value: bool) -> Self {
+-///         if value { State::Active } else { State::Inactive }
++/// impl From<BitInt<u32, 1>> for State {
++///     fn from(value: BitInt<u32, 1>) -> Self {
++///         if bool::from(value) {
++///             State::Active
++///         } else {
++///             State::Inactive
++///         }
+ ///     }
+ /// }
+ ///
+-/// impl From<State> for bool {
+-///     fn from(state: State) -> bool {
++/// impl From<State> for BitInt<u32, 1> {
++///     fn from(state: State) -> BitInt<u32, 1> {
+ ///         match state {
+-///             State::Inactive => false,
+-///             State::Active => true,
++///             State::Inactive => false.into(),
++///             State::Active => true.into(),
+ ///         }
+ ///     }
+ /// }
+ ///
+ /// bitfield! {
+ ///     pub struct ControlReg(u32) {
+-///         7:7 state as bool => State;
+-///         3:0 mode as u8 ?=> Mode;
++///         7:7 state => State;
++///         3:0 mode ?=> Mode;
+ ///     }
+ /// }
+ /// ```
+@@ -112,12 +116,9 @@ fn from(val: $name) -> $storage {
+         bitfield!(@fields_dispatcher $vis $name $storage { $($fields)* });
+     };
+ 
+-    // Captures the fields and passes them to all the implementers that require field information.
+-    //
+-    // Used to simplify the matching rules for implementers, so they don't need to match the entire
+-    // complex fields rule even though they only make use of part of it.
++    // Dispatch fields depending on the syntax used.
+     (@fields_dispatcher $vis:vis $name:ident $storage:ty {
+-        $($hi:tt:$lo:tt $field:ident as $type:tt
++        $($hi:tt:$lo:tt $field:ident
+             $(?=> $try_into_type:ty)?
+             $(=> $into_type:ty)?
+             $(, $comment:literal)?
+@@ -125,173 +126,208 @@ fn from(val: $name) -> $storage {
+         )*
+     }
+     ) => {
+-        bitfield!(@field_accessors $vis $name $storage {
+-            $(
+-                $hi:$lo $field as $type
+-                $(?=> $try_into_type)?
+-                $(=> $into_type)?
+-                $(, $comment)?
+-            ;
+-            )*
+-        });
+-        bitfield!(@debug $name { $($field;)* });
+-        bitfield!(@default $name { $($field;)* });
+-    };
+-
+-    // Defines all the field getter/setter methods for `$name`.
+-    (
+-        @field_accessors $vis:vis $name:ident $storage:ty {
+-        $($hi:tt:$lo:tt $field:ident as $type:tt
+-            $(?=> $try_into_type:ty)?
+-            $(=> $into_type:ty)?
+-            $(, $comment:literal)?
+-        ;
+-        )*
+-        }
+-    ) => {
+-        $(
+-            bitfield!(@check_field_bounds $hi:$lo $field as $type);
+-        )*
+-
+         #[allow(dead_code)]
+         impl $name {
+-            $(
+-            bitfield!(@field_accessor $vis $name $storage, $hi:$lo $field as $type
+-                $(?=> $try_into_type)?
+-                $(=> $into_type)?
+-                $(, $comment)?
+-                ;
+-            );
+-            )*
 +        $(
-+        impl Integer for $type {
-+            type Signedness = $signedness;
-+
-+            const BITS: u32 = <$type>::BITS;
-+        }
-+        )*
-+    };
-+}
-+
-+impl_integer!(
-+    u8: Unsigned,
-+    u16: Unsigned,
-+    u32: Unsigned,
-+    u64: Unsigned,
-+    i8: Signed,
-+    i16: Signed,
-+    i32: Signed,
-+    i64: Signed
-+);
-diff --git a/rust/kernel/num/bitint.rs b/rust/kernel/num/bitint.rs
-new file mode 100644
-index 000000000000..9228c1da7733
---- /dev/null
-+++ b/rust/kernel/num/bitint.rs
-@@ -0,0 +1,1001 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! [`BitInt`], a primitive integer type with a limited set of bits usable to represent values.
-+
-+use core::ops::Deref;
-+
-+use kernel::num::Integer;
-+use kernel::prelude::*;
-+
-+/// Evaluates to `true` if `$value` can be represented using at most `$num_bits` on `$type`.
-+///
-+/// Can be used in const context.
-+macro_rules! fits_within {
-+    ($value:expr, $type:ty, $num_bits:expr) => {{
-+        let shift: u32 = <$type>::BITS - $num_bits;
-+
-+        // The value fits within `NUM_BITS` if shifting it left by the number of unused bits,
-+        // then right by the same number, doesn't change the value.
-+        //
-+        // This method has the benefit of working with both unsigned and signed integers.
-+        ($value << shift) >> shift == $value
-+    }};
-+}
-+
-+/// Trait for primitive integer types that can be used to back a [`BitInt`].
-+///
-+/// This is mostly used to lock all the operations we need for [`BitInt`] in a single trait.
-+pub trait Boundable
-+where
-+    Self: Integer
-+        + Sized
-+        + Copy
-+        + core::ops::Shl<u32, Output = Self>
-+        + core::ops::Shr<u32, Output = Self>
-+        + core::cmp::PartialEq,
-+    Self: TryInto<u8> + TryInto<u16> + TryInto<u32> + TryInto<u64>,
-+    Self: TryInto<i8> + TryInto<i16> + TryInto<i32> + TryInto<i64>,
-+{
-+    /// Returns `true` if `value` can be represented with at most `NUM_BITS` on `T`.
-+    fn fits_within(value: Self, num_bits: u32) -> bool {
-+        fits_within!(value, Self, num_bits)
-+    }
-+}
-+
-+/// Implement `Boundable` for all integer types.
-+impl<T> Boundable for T
-+where
-+    T: Integer
-+        + Sized
-+        + Copy
-+        + core::ops::Shl<u32, Output = Self>
-+        + core::ops::Shr<u32, Output = Self>
-+        + core::cmp::PartialEq,
-+    Self: TryInto<u8> + TryInto<u16> + TryInto<u32> + TryInto<u64>,
-+    Self: TryInto<i8> + TryInto<i16> + TryInto<i32> + TryInto<i64>,
-+{
-+}
-+
-+/// Integer type for which only the `NUM_BITS` less significant bits can ever be set.
-+///
-+/// # Invariants
-+///
-+/// - `NUM_BITS` is greater than `0`.
-+/// - `NUM_BITS` is less or equal to `T::BITS`.
-+/// - Stored values are represented with at most `NUM_BITS` bits.
-+///
-+/// # Examples
-+///
-+/// The preferred way to create values is through constants and the [`BitInt::new`] family of
-+/// constructors, as they trigger a build error if the type invariants cannot be withheld.
-+///
-+/// ```
-+/// use kernel::num::BitInt;
-+///
-+/// // An unsigned 8-bit integer, of which only the 4 LSBs can ever be set.
-+/// // The value `15` is statically validated to fit that constraint at build time.
-+/// let v = BitInt::<u8, 4>::new::<15>();
-+/// assert_eq!(v.get(), 15);
-+///
-+/// // Same using signed values.
-+/// let v = BitInt::<i8, 4>::new::<-8>();
-+/// assert_eq!(v.get(), -8);
-+///
-+/// // This doesn't build: a `u8` is smaller than the requested 9 bits.
-+/// // let _ = BitInt::<u8, 9>::new::<10>();
-+///
-+/// // This also doesn't build: the requested value doesn't fit within 4 signed bits.
-+/// // let _ = BitInt::<i8, 4>::new::<8>();
-+/// ```
-+/// Values can also be validated at runtime with [`BitInt::try_new`].
-+///
-+/// ```
-+/// use kernel::num::BitInt;
-+///
-+/// //  This succeeds because `15` can be represented with 4 unsigned bits.
-+/// assert!(BitInt::<u8, 4>::try_new(15).is_some());
-+/// // This fails because `16` cannot be represented with 4 unsigned bits.
-+/// assert!(BitInt::<u8, 4>::try_new(16).is_none());
-+/// ```
-+///
-+/// Non-constant expressions can be validated at build-time thanks to compiler optimizations. This
-+/// should be used as a last resort though.
-+///
-+/// ```
-+/// use kernel::num::BitInt;
-+/// # fn some_number() -> u32 { 0xffffffff }
-+///
-+/// // Here the compiler can infer from the mask that the type invariants are not violated, even
-+/// // though the value returned by `some_number` is not known.
-+/// let v = BitInt::<u32, 4>::from_expr(some_number() & 0xf);
-+/// ```
-+///
-+/// [`BitInt`]s can be compared regardless of their number of valid bits, as long as their backing
-+/// types can be compared.
-+///
-+/// ```
-+/// use kernel::num::BitInt;
-+///
-+/// let v1 = BitInt::<u32, 8>::new::<4>();
-+/// let v2 = BitInt::<u32, 4>::new::<15>();
-+///
-+/// assert!(v1 != v2);
-+/// assert!(v1 < v2);
-+/// ```
-+///
-+/// Common integer operations are supported between a [`BitInt`] and its backing type.
-+///
-+/// ```
-+/// use kernel::num::BitInt;
-+///
-+/// let v = BitInt::<u8, 4>::new::<15>();
-+///
-+/// assert_eq!(v + 5, 20);
-+/// assert_eq!(v / 3, 5);
-+/// assert!(v == 15);
-+/// assert!(v > 12);
-+/// ```
-+///
-+/// Conversion is possible between backing types using [`BitInt::cast`], and the number of valid
-+/// bits can be extended or reduced with [`BitInt::extend`] and [`BitInt::try_shrink`].
-+///
-+/// ```
-+/// use kernel::num::BitInt;
-+///
-+/// let v = BitInt::<u32, 12>::new::<127>();
-+///
-+/// // Changes backing type from `u32` to `u16`.
-+/// let _: BitInt<u16, 12> = v.cast();
-+///
-+/// // This does not build, as `u8` is smaller than 12 bits.
-+/// // let _: BitInt<u8, 12> = v.cast();
-+///
-+/// // We can safely extend the number of bits...
-+/// let _ = v.extend::<15>();
-+///
-+/// // ... to the limits of the backing type. This doesn't build as a `u32` cannot contain 33 bits.
-+/// // let _ = v.extend::<33>();
-+///
-+/// // Reducing the number of bits is validated at runtime. This works because `127` can be
-+/// // represented with 8 bits.
-+/// assert!(v.try_shrink::<8>().is_some());
-+///
-+/// // ... but not with 6, so this fails.
-+/// assert!(v.try_shrink::<6>().is_none());
-+/// ```
-+///
-+/// Infallible conversions from a primitive integer to a large-enough [`BitInt`] are supported.
-+///
-+/// ```
-+/// use kernel::num::BitInt;
-+///
-+/// // This unsigned `BitInt` has 8 bits, so it can represent any `u8`.
-+/// let v = BitInt::<u32, 8>::from(128u8);
-+/// assert_eq!(v.get(), 128);
-+///
-+/// // This signed `BitInt` has 8 bits, so it can represent any `i8`.
-+/// let v = BitInt::<i32, 8>::from(-128i8);
-+/// assert_eq!(v.get(), -128);
-+///
-+/// // This doesn't build, as this 6-bit `BitInt` does not have enough capacity to represent a
-+/// // `u8` (regardless of the passed value).
-+/// // let _ = BitInt::<u32, 6>::from(10u8);
-+///
-+/// // Booleans can be converted into single-bit `BitInt`s.
-+///
-+/// let v = BitInt::<u64, 1>::from(false);
-+/// assert_eq!(v.get(), 0);
-+///
-+/// let v = BitInt::<u64, 1>::from(true);
-+/// assert_eq!(v.get(), 1);
-+/// ```
-+///
-+/// Infallible conversions from a [`BitInt`] to a primitive integer is also supported, and
-+/// dependent on the number of bits used for value representation, not on the backing type.
-+///
-+/// ```
-+/// use kernel::num::BitInt;
-+///
-+/// // Even though its backing type is `u32`, this `BitInt` only uses 6 bits and thus can safely
-+/// // be converted to a `u8`.
-+/// let v = BitInt::<u32, 6>::new::<63>();
-+/// assert_eq!(u8::from(v), 63);
-+///
-+/// // Same using signed values.
-+/// let v = BitInt::<i32, 8>::new::<-128>();
-+/// assert_eq!(i8::from(v), -128);
-+///
-+/// // This however does not build, as 10 bits won't fit into a `u8` (regardless of the actually
-+/// // contained value).
-+/// let _v = BitInt::<u32, 10>::new::<10>();
-+/// // assert_eq!(u8::from(_v), 10);
-+///
-+/// // Single-bit `BitInt`s can be converted into a boolean.
-+/// let v = BitInt::<u8, 1>::new::<1>();
-+/// assert_eq!(bool::from(v), true);
-+///
-+/// let v = BitInt::<u8, 1>::new::<0>();
-+/// assert_eq!(bool::from(v), false);
-+/// ```
-+///
-+/// Fallible conversions from any primitive integer to any [`BitInt`] are also supported using the
-+/// [`TryIntoBitInt`] trait.
-+///
-+/// ```
-+/// use kernel::num::{BitInt, TryIntoBitInt};
-+///
-+/// // Succeeds because `128` fits into 8 bits.
-+/// let v: Option<BitInt<u16, 8>> = 128u32.try_into_bitint();
-+/// assert_eq!(v.as_deref().copied(), Some(128));
-+///
-+/// // Fails because `128` doesn't fits into 6 bits.
-+/// let v: Option<BitInt<u16, 6>> = 128u32.try_into_bitint();
-+/// assert_eq!(v, None);
-+/// ```
-+#[repr(transparent)]
-+#[derive(Clone, Copy, Debug, Default, Hash)]
-+pub struct BitInt<T: Boundable, const NUM_BITS: u32>(T);
-+
-+/// Validating the value as a const expression cannot be done as a regular method, as the
-+/// arithmetic operations we rely on to check the bounds are not const. Thus, implement
-+/// [`BitInt::new`] using a macro.
-+macro_rules! impl_const_new {
-+    ($($type:ty)*) => {
-+        $(
-+        impl<const NUM_BITS: u32> BitInt<$type, NUM_BITS> {
-+            /// Creates a [`BitInt`] for the constant `VALUE`.
-+            ///
-+            /// Fails at build time if `VALUE` cannot be represented with `NUM_BITS`.
-+            ///
-+            /// This method should be preferred to [`Self::from_expr`] whenever possible.
-+            ///
-+            /// # Examples
-+            /// ```
-+            /// use kernel::num::BitInt;
-+            ///
-+            #[doc = ::core::concat!(
-+                "let v = BitInt::<",
-+                ::core::stringify!($type),
-+                ", 4>::new::<7>();")]
-+            /// assert_eq!(v.get(), 7);
-+            /// ```
-+            pub const fn new<const VALUE: $type>() -> Self {
-+                // Statically assert that `VALUE` fits within the set number of bits.
-+                const {
-+                    build_assert!(fits_within!(VALUE, $type, NUM_BITS));
-+                }
-+
-+                // INVARIANT: `fits_within` confirmed that `value` can be represented within
-+                // `NUM_BITS`.
-+                Self::__new(VALUE)
-+            }
-+        }
-+        )*
-+    };
-+}
-+
-+impl_const_new!(u8 u16 u32 u64);
-+impl_const_new!(i8 i16 i32 i64);
-+
-+impl<T, const NUM_BITS: u32> BitInt<T, NUM_BITS>
-+where
-+    T: Boundable,
-+{
-+    /// Private constructor enforcing the type invariants.
-+    ///
-+    /// All instances of [`BitInt`] must be created through this method as it enforces most of the
-+    /// type invariants.
-+    ///
-+    /// The caller remains responsible for checking, either statically or dynamically, that `value`
-+    /// can be represented as a `T` using at most `NUM_BITS` bits.
-+    const fn __new(value: T) -> Self {
-+        // Enforce the type invariants.
-+        const {
-+            // `NUM_BITS` cannot be zero.
-+            build_assert!(NUM_BITS != 0);
-+            // The backing type is at least as large as `NUM_BITS`.
-+            build_assert!(NUM_BITS <= T::BITS);
-+        }
-+
-+        Self(value)
-+    }
-+
-+    /// Attempts to turn `value` into a `BitInt` using `NUM_BITS`.
-+    ///
-+    /// Returns [`None`] if `value` doesn't fit within `NUM_BITS`.
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```
-+    /// use kernel::num::BitInt;
-+    ///
-+    /// let v = BitInt::<u8, 1>::try_new(1);
-+    /// assert_eq!(v.as_deref().copied(), Some(1));
-+    ///
-+    /// let v = BitInt::<i8, 4>::try_new(-2);
-+    /// assert_eq!(v.as_deref().copied(), Some(-2));
-+    ///
-+    /// // `0x1ff` doesn't fit into 8 unsigned bits.
-+    /// let v = BitInt::<u32, 8>::try_new(0x1ff);
-+    /// assert_eq!(v, None);
-+    ///
-+    /// // `8` doesn't fit into 4 signed bits.
-+    /// let v = BitInt::<i8, 4>::try_new(8);
-+    /// assert_eq!(v, None);
-+    /// ```
-+    pub fn try_new(value: T) -> Option<Self> {
-+        T::fits_within(value, NUM_BITS).then(|| {
-+            // INVARIANT: `fits_within` confirmed that `value` can be represented within `NUM_BITS`.
-+            Self::__new(value)
-+        })
-+    }
-+
-+    /// Checks that `expr` is valid for this type at compile-time and build a new value.
-+    ///
-+    /// This relies on [`build_assert!`] and guaranteed optimization to perform validation at
-+    /// compile-time. If `expr` cannot be proved to be within the requested bounds at compile-time,
-+    /// use the fallible [`Self::try_new`] instead.
-+    ///
-+    /// Whenever possible, use one of the [`Self::new`] constructors instead of this one as it
-+    /// statically validates `expr` instead of relying on compiler optimizations.
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```
-+    /// use kernel::num::BitInt;
-+    ///
-+    /// # fn some_number() -> u32 { 0xffffffff }
-+    ///
-+    /// // Some undefined number.
-+    /// let v: u32 = some_number();
-+    ///
-+    /// // Triggers a build error as `v` cannot be asserted to fit within 4 bits...
-+    /// // let _ = BitInt::<u32, 4>::from_expr(v);
-+    ///
-+    /// // ... but this works as the compiler can assert the range from the mask.
-+    /// let _ = BitInt::<u32, 4>::from_expr(v & 0xf);
-+    ///
-+    /// // These expressions are simple enough to be proven correct, but since they are static the
-+    /// // `new` constructor should be preferred.
-+    /// assert_eq!(BitInt::<u8, 1>::from_expr(1).get(), 1);
-+    /// assert_eq!(BitInt::<u16, 8>::from_expr(0xff).get(), 0xff);
-+    /// ```
-+    pub fn from_expr(expr: T) -> Self {
-+        crate::build_assert!(
-+            T::fits_within(expr, NUM_BITS),
-+            "Requested value larger than maximal representable value."
++        bitfield!(@private_field_accessors $name $storage : $hi:$lo $field);
++        bitfield!(@public_field_accessors $vis $name $storage : $hi:$lo $field
++            $(?=> $try_into_type)?
++            $(=> $into_type)?
++            $(, $comment)?
 +        );
-+
-+        // INVARIANT: `fits_within` confirmed that `expr` can be represented within `NUM_BITS`.
-+        Self::__new(expr)
-+    }
-+
-+    /// Returns the contained value as the backing type.
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```
-+    /// use kernel::num::BitInt;
-+    ///
-+    /// let v = BitInt::<u32, 4>::new::<7>();
-+    /// assert_eq!(v.get(), 7u32);
-+    /// ```
-+    pub fn get(self) -> T {
-+        *self.deref()
-+    }
-+
-+    /// Increases the number of bits usable for `self`.
-+    ///
-+    /// This operation cannot fail.
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```
-+    /// use kernel::num::BitInt;
-+    ///
-+    /// let v = BitInt::<u32, 4>::new::<7>();
-+    /// let larger_v = v.extend::<12>();
-+    /// // The contained values are equal even though `larger_v` has a bigger capacity.
-+    /// assert_eq!(larger_v, v);
-+    /// ```
-+    pub const fn extend<const NEW_NUM_BITS: u32>(self) -> BitInt<T, NEW_NUM_BITS> {
-+        const {
-+            build_assert!(
-+                NEW_NUM_BITS >= NUM_BITS,
-+                "Requested number of bits is less than the current representation."
-+            );
-+        }
-+
-+        // INVARIANT: the value did fit within `NUM_BITS`, so it will all the more fit within
-+        // the larger `NEW_NUM_BITS`.
-+        BitInt::__new(self.0)
-+    }
-+
-+    /// Attempts to shrink the number of bits usable for `self`.
-+    ///
-+    /// Returns [`None`] if the value of `self` cannot be represented within `NEW_NUM_BITS`.
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```
-+    /// use kernel::num::BitInt;
-+    ///
-+    /// let v = BitInt::<u32, 12>::new::<7>();
-+    ///
-+    /// // `7` can be represented using 3 unsigned bits...
-+    /// let smaller_v = v.try_shrink::<3>();
-+    /// assert_eq!(smaller_v.as_deref().copied(), Some(7));
-+    ///
-+    /// // ... but doesn't fit within `2` bits.
-+    /// assert_eq!(v.try_shrink::<2>(), None);
-+    /// ```
-+    pub fn try_shrink<const NEW_NUM_BITS: u32>(self) -> Option<BitInt<T, NEW_NUM_BITS>> {
-+        BitInt::<T, NEW_NUM_BITS>::try_new(self.get())
-+    }
-+
-+    /// Casts `self` into a [`BitInt`] backed by a different storage type, but using the same
-+    /// number of bits for value representation.
-+    ///
-+    /// Both `T` and `U` must be of same signedness, and `U` must be at least as large as
-+    /// `NUM_BITS`, or a build error will occur.
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```
-+    /// use kernel::num::BitInt;
-+    ///
-+    /// let v = BitInt::<u32, 12>::new::<127>();
-+    ///
-+    /// let u16_v: BitInt<u16, 12> = v.cast();
-+    /// assert_eq!(u16_v.get(), 127);
-+    ///
-+    /// // This won't build: a `u8` is smaller than the required 12 bits.
-+    /// // let _: BitInt<u8, 12> = v.cast();
-+    /// ```
-+    pub fn cast<U>(self) -> BitInt<U, NUM_BITS>
-+    where
-+        U: TryFrom<T> + Boundable,
-+        T: Integer,
-+        U: Integer<Signedness = T::Signedness>,
-+    {
-+        // SAFETY: the converted value is represented using `NUM_BITS`, `U` is larger than
-+        // `NUM_BITS`, and `U` and `T` have the same sign, hence this conversion cannot fail.
-+        let value = unsafe { U::try_from(self.get()).unwrap_unchecked() };
-+
-+        // INVARIANT: although the storage type has changed, the value is still represented within
-+        // `NUM_BITS`, and with the same signedness.
-+        BitInt::__new(value)
-+    }
-+}
-+
-+impl<T, const NUM_BITS: u32> core::ops::Deref for BitInt<T, NUM_BITS>
-+where
-+    T: Boundable,
-+{
-+    type Target = T;
-+
-+    fn deref(&self) -> &Self::Target {
-+        // Enforce the invariant to inform the compiler of the bounds of the value.
-+        if !T::fits_within(self.0, NUM_BITS) {
-+            // SAFETY: Per the `BitInt` invariants, `fits_within` can never return `false` on the
-+            // value of a valid instance
-+            unsafe { core::hint::unreachable_unchecked() }
-+        }
-+
-+        &self.0
-+    }
-+}
-+
-+/// Trait similar to [`TryInto`] but for `BitInt`, to avoid conflicting implementations errors.
-+///
-+/// # Examples
-+///
-+/// ```
-+/// use kernel::num::{BitInt, TryIntoBitInt};
-+///
-+/// // Succeeds because `128` fits into 8 bits.
-+/// let v: Option<BitInt<u16, 8>> = 128u32.try_into_bitint();
-+/// assert_eq!(v.as_deref().copied(), Some(128));
-+///
-+/// // Fails because `128` doesn't fits into 6 bits.
-+/// let v: Option<BitInt<u16, 6>> = 128u32.try_into_bitint();
-+/// assert_eq!(v, None);
-+/// ```
-+pub trait TryIntoBitInt<T: Boundable, const NUM_BITS: u32> {
-+    /// Attempts to convert `self` into a [`BitInt`] using `NUM_BITS`.
-+    fn try_into_bitint(self) -> Option<BitInt<T, NUM_BITS>>;
-+}
-+
-+/// Any value can be attempted to be converted into a [`BitInt`] of any size.
-+impl<T, U, const NUM_BITS: u32> TryIntoBitInt<T, NUM_BITS> for U
-+where
-+    T: Boundable,
-+    U: TryInto<T>,
-+{
-+    fn try_into_bitint(self) -> Option<BitInt<T, NUM_BITS>> {
-+        self.try_into().ok().and_then(BitInt::try_new)
-+    }
-+}
-+
-+/// Compares between two [`BitInt`]s, even if their number of valid bits differ.
-+///
-+/// # Examples
-+///
-+/// ```
-+/// use kernel::num::BitInt;
-+///
-+/// let v1 = BitInt::<u32, 8>::new::<15>();
-+/// let v2 = BitInt::<u32, 4>::new::<15>();
-+/// assert_eq!(v1, v2);
-+/// ```
-+impl<T, U, const NUM_BITS: u32, const NUM_BITS_U: u32> PartialEq<BitInt<U, NUM_BITS_U>>
-+    for BitInt<T, NUM_BITS>
-+where
-+    T: Boundable,
-+    U: Boundable,
-+    T: PartialEq<U>,
-+{
-+    fn eq(&self, other: &BitInt<U, NUM_BITS_U>) -> bool {
-+        self.get() == other.get()
-+    }
-+}
-+
-+impl<T, const NUM_BITS: u32> Eq for BitInt<T, NUM_BITS> where T: Boundable {}
-+
-+/// Does partial ordering between [`BitInt`]s, even if their number of valid bits differ.
-+///
-+/// # Examples
-+///
-+/// ```
-+/// use kernel::num::BitInt;
-+///
-+/// let v1 = BitInt::<u32, 8>::new::<4>();
-+/// let v2 = BitInt::<u32, 4>::new::<15>();
-+/// assert!(v1 < v2);
-+/// ```
-+impl<T, U, const NUM_BITS: u32, const NUM_BITS_U: u32> PartialOrd<BitInt<U, NUM_BITS_U>>
-+    for BitInt<T, NUM_BITS>
-+where
-+    T: Boundable,
-+    U: Boundable,
-+    T: PartialOrd<U>,
-+{
-+    fn partial_cmp(&self, other: &BitInt<U, NUM_BITS_U>) -> Option<core::cmp::Ordering> {
-+        self.get().partial_cmp(&other.get())
-+    }
-+}
-+
-+/// Does full ordering between [`BitInt`]s.
-+///
-+/// # Examples
-+///
-+/// ```
-+/// use core::cmp::Ordering;
-+/// use kernel::num::BitInt;
-+///
-+/// let v1 = BitInt::<u32, 8>::new::<4>();
-+/// let v2 = BitInt::<u32, 8>::new::<15>();
-+/// assert_eq!(v1.cmp(&v2), Ordering::Less);
-+/// ```
-+impl<T, const NUM_BITS: u32> Ord for BitInt<T, NUM_BITS>
-+where
-+    T: Boundable,
-+    T: Ord,
-+{
-+    fn cmp(&self, other: &Self) -> core::cmp::Ordering {
-+        self.get().cmp(&other.get())
-+    }
-+}
-+
-+/// Compares between a [`BitInt`] and its backing type.
-+///
-+/// # Examples
-+///
-+/// ```
-+/// use kernel::num::BitInt;
-+///
-+/// let v = BitInt::<u32, 8>::new::<15>();
-+/// assert_eq!(v, 15);
-+/// ```
-+impl<T, const NUM_BITS: u32> PartialEq<T> for BitInt<T, NUM_BITS>
-+where
-+    T: Boundable,
-+    T: PartialEq,
-+{
-+    fn eq(&self, other: &T) -> bool {
-+        self.get() == *other
-+    }
-+}
-+
-+/// Does partial ordering between a [`BitInt`] and its backing type.
-+///
-+/// # Examples
-+///
-+/// ```
-+/// use kernel::num::BitInt;
-+///
-+/// let v = BitInt::<u32, 8>::new::<4>();
-+/// assert!(v < 15);
-+/// ```
-+impl<T, const NUM_BITS: u32> PartialOrd<T> for BitInt<T, NUM_BITS>
-+where
-+    T: Boundable,
-+    T: PartialOrd,
-+{
-+    fn partial_cmp(&self, other: &T) -> Option<core::cmp::Ordering> {
-+        self.get().partial_cmp(other)
-+    }
-+}
-+
-+// Implementations of `core::ops` between a `BitInt` and its backing type.
-+
-+impl<T, const NUM_BITS: u32> core::ops::Add<T> for BitInt<T, NUM_BITS>
-+where
-+    T: Boundable,
-+    T: core::ops::Add<Output = T>,
-+{
-+    type Output = T;
-+
-+    fn add(self, rhs: T) -> Self::Output {
-+        self.get() + rhs
-+    }
-+}
-+
-+impl<T, const NUM_BITS: u32> core::ops::BitAnd<T> for BitInt<T, NUM_BITS>
-+where
-+    T: Boundable,
-+    T: core::ops::BitAnd<Output = T>,
-+{
-+    type Output = T;
-+
-+    fn bitand(self, rhs: T) -> Self::Output {
-+        self.get() & rhs
-+    }
-+}
-+
-+impl<T, const NUM_BITS: u32> core::ops::BitOr<T> for BitInt<T, NUM_BITS>
-+where
-+    T: Boundable,
-+    T: core::ops::BitOr<Output = T>,
-+{
-+    type Output = T;
-+
-+    fn bitor(self, rhs: T) -> Self::Output {
-+        self.get() | rhs
-+    }
-+}
-+
-+impl<T, const NUM_BITS: u32> core::ops::BitXor<T> for BitInt<T, NUM_BITS>
-+where
-+    T: Boundable,
-+    T: core::ops::BitXor<Output = T>,
-+{
-+    type Output = T;
-+
-+    fn bitxor(self, rhs: T) -> Self::Output {
-+        self.get() ^ rhs
-+    }
-+}
-+
-+impl<T, const NUM_BITS: u32> core::ops::Div<T> for BitInt<T, NUM_BITS>
-+where
-+    T: Boundable,
-+    T: core::ops::Div<Output = T>,
-+{
-+    type Output = T;
-+
-+    fn div(self, rhs: T) -> Self::Output {
-+        self.get() / rhs
-+    }
-+}
-+
-+impl<T, const NUM_BITS: u32> core::ops::Mul<T> for BitInt<T, NUM_BITS>
-+where
-+    T: Boundable,
-+    T: core::ops::Mul<Output = T>,
-+{
-+    type Output = T;
-+
-+    fn mul(self, rhs: T) -> Self::Output {
-+        self.get() * rhs
-+    }
-+}
-+
-+impl<T, const NUM_BITS: u32> core::ops::Neg for BitInt<T, NUM_BITS>
-+where
-+    T: Boundable,
-+    T: core::ops::Neg<Output = T>,
-+{
-+    type Output = T;
-+
-+    fn neg(self) -> Self::Output {
-+        -self.get()
-+    }
-+}
-+
-+impl<T, const NUM_BITS: u32> core::ops::Not for BitInt<T, NUM_BITS>
-+where
-+    T: Boundable,
-+    T: core::ops::Not<Output = T>,
-+{
-+    type Output = T;
-+
-+    fn not(self) -> Self::Output {
-+        !self.get()
-+    }
-+}
-+
-+impl<T, const NUM_BITS: u32> core::ops::Rem<T> for BitInt<T, NUM_BITS>
-+where
-+    T: Boundable,
-+    T: core::ops::Rem<Output = T>,
-+{
-+    type Output = T;
-+
-+    fn rem(self, rhs: T) -> Self::Output {
-+        self.get() % rhs
-+    }
-+}
-+
-+impl<T, const NUM_BITS: u32> core::ops::Sub<T> for BitInt<T, NUM_BITS>
-+where
-+    T: Boundable,
-+    T: core::ops::Sub<Output = T>,
-+{
-+    type Output = T;
-+
-+    fn sub(self, rhs: T) -> Self::Output {
-+        self.get() - rhs
-+    }
-+}
-+
-+// Proxy implementations of `core::fmt`.
-+
-+impl<T, const NUM_BITS: u32> core::fmt::Display for BitInt<T, NUM_BITS>
-+where
-+    T: Boundable,
-+    T: core::fmt::Display,
-+{
-+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-+        self.get().fmt(f)
-+    }
-+}
-+
-+impl<T, const NUM_BITS: u32> core::fmt::Binary for BitInt<T, NUM_BITS>
-+where
-+    T: Boundable,
-+    T: core::fmt::Binary,
-+{
-+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-+        self.get().fmt(f)
-+    }
-+}
-+
-+impl<T, const NUM_BITS: u32> core::fmt::LowerExp for BitInt<T, NUM_BITS>
-+where
-+    T: Boundable,
-+    T: core::fmt::LowerExp,
-+{
-+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-+        self.get().fmt(f)
-+    }
-+}
-+
-+impl<T, const NUM_BITS: u32> core::fmt::LowerHex for BitInt<T, NUM_BITS>
-+where
-+    T: Boundable,
-+    T: core::fmt::LowerHex,
-+{
-+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-+        self.get().fmt(f)
-+    }
-+}
-+
-+impl<T, const NUM_BITS: u32> core::fmt::Octal for BitInt<T, NUM_BITS>
-+where
-+    T: Boundable,
-+    T: core::fmt::Octal,
-+{
-+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-+        self.get().fmt(f)
-+    }
-+}
-+
-+impl<T, const NUM_BITS: u32> core::fmt::UpperExp for BitInt<T, NUM_BITS>
-+where
-+    T: Boundable,
-+    T: core::fmt::UpperExp,
-+{
-+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-+        self.get().fmt(f)
-+    }
-+}
-+
-+impl<T, const NUM_BITS: u32> core::fmt::UpperHex for BitInt<T, NUM_BITS>
-+where
-+    T: Boundable,
-+    T: core::fmt::UpperHex,
-+{
-+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-+        self.get().fmt(f)
-+    }
-+}
-+
-+/// Implements `$trait` for all [`BitInt`] types represented using `$num_bits`.
-+///
-+/// This is used to declare size properties as traits that we can constrain against in impl blocks.
-+macro_rules! impl_size_rule {
-+    ($trait:ty, $($num_bits:literal)*) => {
-+        $(
-+        impl<T> $trait for BitInt<T, $num_bits> where T: Boundable {}
 +        )*
+         }
++
++        bitfield!(@debug $name { $($field;)* });
++        bitfield!(@default $name { $($field;)* });
++
+     };
+ 
+-    // Boolean fields must have `$hi == $lo`.
+-    (@check_field_bounds $hi:tt:$lo:tt $field:ident as bool) => {
+-        #[allow(clippy::eq_op)]
+-        const _: () = {
+-            ::kernel::build_assert!(
+-                $hi == $lo,
+-                concat!("boolean field `", stringify!($field), "` covers more than one bit")
+-            );
+-        };
+-    };
+-
+-    // Non-boolean fields must have `$hi >= $lo`.
+-    (@check_field_bounds $hi:tt:$lo:tt $field:ident as $type:tt) => {
+-        #[allow(clippy::eq_op)]
+-        const _: () = {
+-            ::kernel::build_assert!(
+-                $hi >= $lo,
+-                concat!("field `", stringify!($field), "`'s MSB is smaller than its LSB")
+-            );
+-        };
+-    };
+-
+-    // Catches fields defined as `bool` and convert them into a boolean value.
+     (
+-        @field_accessor $vis:vis $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as bool
+-            => $into_type:ty $(, $comment:literal)?;
+-    ) => {
+-        bitfield!(
+-            @leaf_accessor $vis $name $storage, $hi:$lo $field
+-            { |f| <$into_type>::from(f != 0) }
+-            bool $into_type => $into_type $(, $comment)?;
+-        );
+-    };
+-
+-    // Shortcut for fields defined as `bool` without the `=>` syntax.
+-    (
+-        @field_accessor $vis:vis $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as bool
+-            $(, $comment:literal)?;
+-    ) => {
+-        bitfield!(
+-            @field_accessor $vis $name $storage, $hi:$lo $field as bool => bool $(, $comment)?;
+-        );
+-    };
+-
+-    // Catches the `?=>` syntax for non-boolean fields.
+-    (
+-        @field_accessor $vis:vis $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as $type:tt
+-            ?=> $try_into_type:ty $(, $comment:literal)?;
+-    ) => {
+-        bitfield!(@leaf_accessor $vis $name $storage, $hi:$lo $field
+-            { |f| <$try_into_type>::try_from(f as $type) } $type $try_into_type =>
+-            ::core::result::Result<
+-                $try_into_type,
+-                <$try_into_type as ::core::convert::TryFrom<$type>>::Error
+-            >
+-            $(, $comment)?;);
+-    };
+-
+-    // Catches the `=>` syntax for non-boolean fields.
+-    (
+-        @field_accessor $vis:vis $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as $type:tt
+-            => $into_type:ty $(, $comment:literal)?;
+-    ) => {
+-        bitfield!(@leaf_accessor $vis $name $storage, $hi:$lo $field
+-            { |f| <$into_type>::from(f as $type) } $type $into_type => $into_type $(, $comment)?;);
+-    };
+-
+-    // Shortcut for non-boolean fields defined without the `=>` or `?=>` syntax.
+-    (
+-        @field_accessor $vis:vis $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident as $type:tt
+-            $(, $comment:literal)?;
+-    ) => {
+-        bitfield!(
+-            @field_accessor $vis $name $storage, $hi:$lo $field as $type => $type $(, $comment)?;
+-        );
+-    };
+-
+-    // Generates the accessor methods for a single field.
+-    (
+-        @leaf_accessor $vis:vis $name:ident $storage:ty, $hi:tt:$lo:tt $field:ident
+-            { $process:expr } $prim_type:tt $to_type:ty => $res_type:ty $(, $comment:literal)?;
++        @private_field_accessors $name:ident $storage:ty : $hi:tt:$lo:tt $field:ident
+     ) => {
+         ::kernel::macros::paste!(
+         const [<$field:upper _RANGE>]: ::core::ops::RangeInclusive<u8> = $lo..=$hi;
+-        const [<$field:upper _MASK>]: $storage = {
+-            // Generate mask for shifting
+-            match ::core::mem::size_of::<$storage>() {
+-                1 => ::kernel::bits::genmask_u8($lo..=$hi) as $storage,
+-                2 => ::kernel::bits::genmask_u16($lo..=$hi) as $storage,
+-                4 => ::kernel::bits::genmask_u32($lo..=$hi) as $storage,
+-                8 => ::kernel::bits::genmask_u64($lo..=$hi) as $storage,
+-                _ => ::kernel::build_error!("Unsupported storage type size")
+-            }
+-        };
++        const [<$field:upper _MASK>]: u32 = ((((1 << $hi) - 1) << 1) + 1) - ((1 << $lo) - 1);
+         const [<$field:upper _SHIFT>]: u32 = $lo;
+         );
+ 
++        ::kernel::macros::paste!(
++        fn [<$field _internal>](self) ->
++            ::kernel::num::BitInt<$storage, { $hi + 1 - $lo }> {
++            const MASK: u32 = $name::[<$field:upper _MASK>];
++            const SHIFT: u32 = $name::[<$field:upper _SHIFT>];
++
++            let field = ((self.0 & MASK) >> SHIFT);
++
++            ::kernel::num::BitInt::<$storage, { $hi + 1 - $lo }>::from_expr(field)
++        }
++
++        fn [<set_ $field _internal>](
++            mut self,
++            value: ::kernel::num::BitInt<$storage, { $hi + 1 - $lo }>,
++        ) -> Self
++        {
++            const MASK: u32 = $name::[<$field:upper _MASK>];
++            const SHIFT: u32 = $name::[<$field:upper _SHIFT>];
++
++            let value = (value.get() << SHIFT) & MASK;
++            self.0 = (self.0 & !MASK) | value;
++
++            self
++        }
++
++        fn [<try_set_ $field _internal>]<T>(
++            mut self,
++            value: T,
++        ) -> ::kernel::error::Result<Self>
++            where T: ::kernel::num::TryIntoBitInt<$storage, { $hi + 1 - $lo }>,
++        {
++            const MASK: u32 = $name::[<$field:upper _MASK>];
++            const SHIFT: u32 = $name::[<$field:upper _SHIFT>];
++
++            let value = (
++                value.try_into_bitint().ok_or(::kernel::error::code::EOVERFLOW)?.get() << SHIFT
++            ) & MASK;
++
++            self.0 = (self.0 & !MASK) | value;
++
++            Ok(self)
++        }
++        );
 +    };
-+}
 +
-+/// Local trait expressing the fact that a given [`BitInt`] has at least `N` bits used for value
-+/// representation.
-+trait AtLeastXBits<const N: usize> {}
++    // Generates the public accessors for fields infallibly (`=>`) converted to a type.
++    (
++        @public_field_accessors $vis:vis $name:ident $storage:ty : $hi:tt:$lo:tt $field:ident
++            => $into_type:ty $(, $comment:literal)?
++    ) => {
++        ::kernel::macros::paste!(
 +
-+/// Implementations for infallibly converting a primitive type into a [`BitInt`] that can contain
-+/// it.
-+///
-+/// Put into their own module for readability, and to avoid cluttering the rustdoc of the parent
-+/// module.
-+mod atleast_impls {
-+    use super::*;
-+
-+    // Number of bits at least as large as 64.
-+    impl_size_rule!(AtLeastXBits<64>, 64);
-+
-+    // Anything 64 bits or more is also larger than 32.
-+    impl<T> AtLeastXBits<32> for T where T: AtLeastXBits<64> {}
-+    // Other numbers of bits at least as large as 32.
-+    impl_size_rule!(AtLeastXBits<32>,
-+        32 33 34 35 36 37 38 39
-+        40 41 42 43 44 45 46 47
-+        48 49 50 51 52 53 54 55
-+        56 57 58 59 60 61 62 63
-+    );
-+
-+    // Anything 32 bits or more is also larger than 16.
-+    impl<T> AtLeastXBits<16> for T where T: AtLeastXBits<32> {}
-+    // Other numbers of bits at least as large as 16.
-+    impl_size_rule!(AtLeastXBits<16>,
-+        16 17 18 19 20 21 22 23
-+        24 25 26 27 28 29 30 31
-+    );
-+
-+    // Anything 16 bits or more is also larger than 8.
-+    impl<T> AtLeastXBits<8> for T where T: AtLeastXBits<16> {}
-+    // Other numbers of bits at least as large as 8.
-+    impl_size_rule!(AtLeastXBits<8>, 8 9 10 11 12 13 14 15);
-+
-+    // Anything 8 bits or more is also larger than 1.
-+    impl<T> AtLeastXBits<1> for T where T: AtLeastXBits<8> {}
-+    // Other numbers of bits at least as large as 1.
-+    impl_size_rule!(AtLeastXBits<1>, 1 2 3 4 5 6 7);
-+}
-+
-+/// Generates `From` implementations from a primitive type into a [`BitInt`] with
-+/// enough bits to store any value of that type.
-+///
-+/// Note: The only reason for having this macro is that if we pass `$type` as a generic
-+/// parameter, we cannot use it in the const context of [`AtLeastXBits`]'s generic parameter. This
-+/// can be fixed once the `generic_const_exprs` feature is usable, and this macro replaced by a
-+/// regular `impl` block.
-+macro_rules! impl_from_primitive {
-+    ($($type:ty),*) => {
-+        $(
-+        #[doc = ::core::concat!(
-+            "Conversion from a [`",
-+            ::core::stringify!($type),
-+            "`] into a [`BitInt`] of same signedness with enough bits to store it.")]
-+        impl<T, const NUM_BITS: u32> From<$type> for BitInt<T, NUM_BITS>
-+        where
-+            $type: Integer,
-+            T: From<$type> + Boundable + Integer<Signedness = <$type as Integer>::Signedness>,
-+            Self: AtLeastXBits<{ <$type as Integer>::BITS as usize }>,
+         $(
+         #[doc="Returns the value of this field:"]
+         #[doc=$comment]
+         )?
+         #[inline(always)]
+-        $vis fn $field(self) -> $res_type {
+-            ::kernel::macros::paste!(
+-            const MASK: $storage = $name::[<$field:upper _MASK>];
+-            const SHIFT: u32 = $name::[<$field:upper _SHIFT>];
+-            );
+-            let field = ((self.0 & MASK) >> SHIFT);
+-
+-            $process(field)
++        $vis fn $field(self) -> $into_type
 +        {
-+            fn from(value: $type) -> Self {
-+                // INVARIANT: The trait bound on `Self` guarantees that `NUM_BITS` is large
-+                // enough to hold any value of the source type.
-+                Self::__new(T::from(value))
-+            }
-+        }
-+        )*
-+    }
-+}
-+
-+impl_from_primitive!(bool, u8, i8, u16, i16, u32, i32, u64, i64);
-+
-+/// Local trait expressing the fact that a given [`BitInt`] fits into a primitive type of `N` bits,
-+/// provided they have the same signedness.
-+trait FitsInXBits<const N: usize> {}
-+
-+/// Implementations for infallibly converting a [`BitInt`] into a primitive type that can contain
-+/// it.
-+///
-+/// Put into their own module for readability, and to avoid cluttering the rustdoc of the parent
-+/// module.
-+mod fits_impls {
-+    use super::*;
-+
-+    // Number of bits that fit into a primitive with 1 bit.
-+    impl_size_rule!(FitsInXBits<1>, 1);
-+
-+    // Anything that fits into 1 bit also fits into 8.
-+    impl<T> FitsInXBits<8> for T where T: FitsInXBits<1> {}
-+    // Other numbers of bits that fit into a 8-bits primitive.
-+    impl_size_rule!(FitsInXBits<8>, 2 3 4 5 6 7 8);
-+
-+    // Anything that fits into 8 bits also fits into 16.
-+    impl<T> FitsInXBits<16> for T where T: FitsInXBits<8> {}
-+    // Other numbers of bits that fit into a 16-bits primitive.
-+    impl_size_rule!(FitsInXBits<16>, 9 10 11 12 13 14 15 16);
-+
-+    // Anything that fits into 16 bits also fits into 32.
-+    impl<T> FitsInXBits<32> for T where T: FitsInXBits<16> {}
-+    // Other numbers of bits that fit into a 32-bits primitive.
-+    impl_size_rule!(FitsInXBits<32>,
-+        17 18 19 20 21 22 23 24
-+        25 26 27 28 29 30 31 32
-+    );
-+
-+    // Anything that fits into 32 bits also fits into 64.
-+    impl<T> FitsInXBits<64> for T where T: FitsInXBits<32> {}
-+    // Other numbers of bits that fit into a 64-bits primitive.
-+    impl_size_rule!(FitsInXBits<64>,
-+        33 34 35 36 37 38 39 40
-+        41 42 43 44 45 46 47 48
-+        49 50 51 52 53 54 55 56
-+        57 58 59 60 61 62 63 64
-+    );
-+}
-+
-+/// Generates [`From`] implementations from a [`BitInt`] into a primitive type that is
-+/// guaranteed to contain it.
-+///
-+/// Note: The only reason for having this macro is that if we pass `$type` as a generic
-+/// parameter, we cannot use it in the const context of `AtLeastXBits`'s generic parameter. This
-+/// can be fixed once the `generic_const_exprs` feature is usable, and this macro replaced by a
-+/// regular `impl` block.
-+macro_rules! impl_into_primitive {
-+    ($($type:ty),*) => {
-+        $(
-+        #[doc = ::core::concat!(
-+            "Conversion from a [`BitInt`] with no more bits than a [`",
-+            ::core::stringify!($type),
-+            "`] and of same signedness into [`",
-+            ::core::stringify!($type),
-+            "`]")]
-+        impl<T, const NUM_BITS: u32> From<BitInt<T, NUM_BITS>> for $type
-+        where
-+            $type: Integer,
-+            T: Boundable + Integer<Signedness = <$type as Integer>::Signedness>,
-+            BitInt<T, NUM_BITS>: FitsInXBits<{ <$type as Integer>::BITS as usize }>,
++            self.[<$field _internal>]().into()
+         }
+ 
+-        ::kernel::macros::paste!(
+         $(
+         #[doc="Sets the value of this field:"]
+         #[doc=$comment]
+         )?
+         #[inline(always)]
+-        $vis fn [<set_ $field>](mut self, value: $to_type) -> Self {
+-            const MASK: $storage = $name::[<$field:upper _MASK>];
+-            const SHIFT: u32 = $name::[<$field:upper _SHIFT>];
+-            let value = ($storage::from($prim_type::from(value)) << SHIFT) & MASK;
+-            self.0 = (self.0 & !MASK) | value;
+-
+-            self
++        $vis fn [<set_ $field>](self, value: $into_type) -> Self
 +        {
-+            fn from(value: BitInt<T, NUM_BITS>) -> $type {
-+                // SAFETY: The trait bound on `BitInt` ensures that any value it holds (which
-+                // is constrained to `NUM_BITS`) can fit into the destination type, so this
-+                // conversion cannot fail.
-+                unsafe { value.get().try_into().unwrap_unchecked() }
-+            }
++            self.[<set_ $field _internal>](value.into())
+         }
++
++        /// Private method, for use in the [`Default`] implementation.
++        fn [<$field _default>]() -> $into_type {
++            Default::default()
 +        }
-+        )*
-+    }
-+}
 +
-+impl_into_primitive!(u8, i8, u16, i16, u32, i32, u64, i64);
++        );
++    };
 +
-+/// Conversion to boolean is handled separately as it does not have a [`TryFrom`] implementation
-+/// from integers.
-+impl<T> From<BitInt<T, 1>> for bool
++    // Generates the public accessors for fields fallibly (`?=>`) converted to a type.
++    (
++        @public_field_accessors $vis:vis $name:ident $storage:ty : $hi:tt:$lo:tt $field:ident
++            ?=> $try_into_type:ty $(, $comment:literal)?
++    ) => {
++        ::kernel::macros::paste!(
++
++        $(
++        #[doc="Returns the value of this field:"]
++        #[doc=$comment]
++        )?
++        #[inline(always)]
++        $vis fn $field(self) ->
++            Result<
++                $try_into_type,
++                <$try_into_type as ::core::convert::TryFrom<
++                    ::kernel::num::BitInt<$storage, { $hi + 1 - $lo }>
++                >>::Error
++            >
++        {
++            self.[<$field _internal>]().try_into()
++        }
++
++        $(
++        #[doc="Sets the value of this field:"]
++        #[doc=$comment]
++        )?
++        #[inline(always)]
++        $vis fn [<set_ $field>](self, value: $try_into_type) -> Self
++        {
++            self.[<set_ $field _internal>](value.into())
++        }
++
++        /// Private method, for use in the [`Default`] implementation.
++        fn [<$field _default>]() -> $try_into_type {
++            Default::default()
++        }
++
++        );
++    };
++
++    // Generates the public accessors for fields not converted to a type.
++    (
++        @public_field_accessors $vis:vis $name:ident $storage:ty : $hi:tt:$lo:tt $field:ident
++            $(, $comment:literal)?
++    ) => {
++        ::kernel::macros::paste!(
++
++        $(
++        #[doc="Returns the value of this field:"]
++        #[doc=$comment]
++        )?
++        #[inline(always)]
++        $vis fn $field(self) ->
++            ::kernel::num::BitInt<$storage, { $hi + 1 - $lo }>
++        {
++            self.[<$field _internal>]()
++        }
++
++        $(
++        #[doc="Sets the value of this field:"]
++        #[doc=$comment]
++        )?
++        #[inline(always)]
++        $vis fn [<set_ $field>]<T>(
++            self,
++            value: T,
++        ) -> Self
++            where T: Into<::kernel::num::BitInt<$storage, { $hi + 1 - $lo }>>,
++        {
++            self.[<set_ $field _internal>](value.into())
++        }
++
++        $(
++        #[doc="Attempts to set the value of this field:"]
++        #[doc=$comment]
++        )?
++        #[inline(always)]
++        $vis fn [<try_set_ $field>]<T>(
++            self,
++            value: T,
++        ) -> ::kernel::error::Result<Self>
++            where T: ::kernel::num::TryIntoBitInt<$storage, { $hi + 1 - $lo }>,
++        {
++            Ok(
++                self.[<set_ $field _internal>](
++                    value.try_into_bitint().ok_or(::kernel::error::code::EOVERFLOW)?
++                )
++            )
++        }
++
++        /// Private method, for use in the [`Default`] implementation.
++        fn [<$field _default>]() -> ::kernel::num::BitInt<$storage, { $hi + 1 - $lo }> {
++            Default::default()
++        }
++
+         );
+     };
+ 
+@@ -319,7 +355,7 @@ fn default() -> Self {
+ 
+                 ::kernel::macros::paste!(
+                 $(
+-                value.[<set_ $field>](Default::default());
++                value.[<set_ $field>](Self::[<$field _default>]());
+                 )*
+                 );
+ 
+diff --git a/drivers/gpu/nova-core/falcon.rs b/drivers/gpu/nova-core/falcon.rs
+index fb3561cc9746..7d85a01ea06e 100644
+--- a/drivers/gpu/nova-core/falcon.rs
++++ b/drivers/gpu/nova-core/falcon.rs
+@@ -7,6 +7,7 @@
+ use kernel::device;
+ use kernel::dma::DmaAddress;
+ use kernel::io::poll::read_poll_timeout;
++use kernel::num::{self, BitInt};
+ use kernel::prelude::*;
+ use kernel::sync::aref::ARef;
+ use kernel::time::delay::fsleep;
+@@ -23,11 +24,14 @@
+ pub(crate) mod sec2;
+ 
+ // TODO[FPRI]: Replace with `ToPrimitive`.
+-macro_rules! impl_from_enum_to_u8 {
+-    ($enum_type:ty) => {
+-        impl From<$enum_type> for u8 {
++macro_rules! impl_from_enum_to_bounded {
++    ($enum_type:ty, $length:literal) => {
++        impl<T> From<$enum_type> for BitInt<T, $length>
++        where
++            T: From<u8> + num::Boundable,
++        {
+             fn from(value: $enum_type) -> Self {
+-                value as u8
++                BitInt::from_expr(T::from(value as u8))
+             }
+         }
+     };
+@@ -47,16 +51,19 @@ pub(crate) enum FalconCoreRev {
+     Rev6 = 6,
+     Rev7 = 7,
+ }
+-impl_from_enum_to_u8!(FalconCoreRev);
++impl_from_enum_to_bounded!(FalconCoreRev, 4);
+ 
+ // TODO[FPRI]: replace with `FromPrimitive`.
+-impl TryFrom<u8> for FalconCoreRev {
++impl<T> TryFrom<BitInt<T, 4>> for FalconCoreRev
 +where
-+    T: Boundable,
-+    BitInt<T, 1>: FitsInXBits<1>,
-+    T: PartialEq + Zeroable,
++    T: num::Boundable + num::Integer<Signedness = num::Unsigned>,
++{
+     type Error = Error;
+ 
+-    fn try_from(value: u8) -> Result<Self> {
++    fn try_from(value: BitInt<T, 4>) -> Result<Self> {
+         use FalconCoreRev::*;
+ 
+-        let rev = match value {
++        let rev = match u8::from(value) {
+             1 => Rev1,
+             2 => Rev2,
+             3 => Rev3,
+@@ -82,24 +89,25 @@ pub(crate) enum FalconCoreRevSubversion {
+     Subversion2 = 2,
+     Subversion3 = 3,
+ }
+-impl_from_enum_to_u8!(FalconCoreRevSubversion);
++impl_from_enum_to_bounded!(FalconCoreRevSubversion, 2);
+ 
+ // TODO[FPRI]: replace with `FromPrimitive`.
+-impl TryFrom<u8> for FalconCoreRevSubversion {
+-    type Error = Error;
+-
+-    fn try_from(value: u8) -> Result<Self> {
++impl<T> From<BitInt<T, 2>> for FalconCoreRevSubversion
++where
++    T: num::Boundable + num::Integer<Signedness = num::Unsigned>,
++{
++    fn from(value: BitInt<T, 2>) -> Self {
+         use FalconCoreRevSubversion::*;
+ 
+-        let sub_version = match value & 0b11 {
++        match u8::from(value) {
+             0 => Subversion0,
+             1 => Subversion1,
+             2 => Subversion2,
+             3 => Subversion3,
+-            _ => return Err(EINVAL),
+-        };
+-
+-        Ok(sub_version)
++            // TODO: somehow the compiler cannot infer that `value` cannot be > 3. Find a way to
++            // handle this gracefully, or switch back to fallible ops.
++            _ => panic!(),
++        }
+     }
+ }
+ 
+@@ -126,16 +134,19 @@ pub(crate) enum FalconSecurityModel {
+     /// Also known as High-Secure, Privilege Level 3 or PL3.
+     Heavy = 3,
+ }
+-impl_from_enum_to_u8!(FalconSecurityModel);
++impl_from_enum_to_bounded!(FalconSecurityModel, 2);
+ 
+ // TODO[FPRI]: replace with `FromPrimitive`.
+-impl TryFrom<u8> for FalconSecurityModel {
++impl<T> TryFrom<BitInt<T, 2>> for FalconSecurityModel
++where
++    T: num::Boundable + num::Integer<Signedness = num::Unsigned>,
++{
+     type Error = Error;
+ 
+-    fn try_from(value: u8) -> Result<Self> {
++    fn try_from(value: BitInt<T, 2>) -> Result<Self> {
+         use FalconSecurityModel::*;
+ 
+-        let sec_model = match value {
++        let sec_model = match u8::from(value) {
+             0 => None,
+             2 => Light,
+             3 => Heavy,
+@@ -158,14 +169,17 @@ pub(crate) enum FalconModSelAlgo {
+     #[default]
+     Rsa3k = 1,
+ }
+-impl_from_enum_to_u8!(FalconModSelAlgo);
++impl_from_enum_to_bounded!(FalconModSelAlgo, 8);
+ 
+ // TODO[FPRI]: replace with `FromPrimitive`.
+-impl TryFrom<u8> for FalconModSelAlgo {
++impl<T> TryFrom<BitInt<T, 8>> for FalconModSelAlgo
++where
++    T: num::Boundable + num::Integer<Signedness = num::Unsigned>,
++{
+     type Error = Error;
+ 
+-    fn try_from(value: u8) -> Result<Self> {
+-        match value {
++    fn try_from(value: BitInt<T, 8>) -> Result<Self> {
++        match u8::from(value) {
+             1 => Ok(FalconModSelAlgo::Rsa3k),
+             _ => Err(EINVAL),
+         }
+@@ -180,14 +194,17 @@ pub(crate) enum DmaTrfCmdSize {
+     #[default]
+     Size256B = 0x6,
+ }
+-impl_from_enum_to_u8!(DmaTrfCmdSize);
++impl_from_enum_to_bounded!(DmaTrfCmdSize, 3);
+ 
+ // TODO[FPRI]: replace with `FromPrimitive`.
+-impl TryFrom<u8> for DmaTrfCmdSize {
++impl<T> TryFrom<BitInt<T, 3>> for DmaTrfCmdSize
++where
++    T: num::Boundable + num::Integer<Signedness = num::Unsigned>,
++{
+     type Error = Error;
+ 
+-    fn try_from(value: u8) -> Result<Self> {
+-        match value {
++    fn try_from(value: BitInt<T, 3>) -> Result<Self> {
++        match u8::from(value) {
+             0x6 => Ok(Self::Size256B),
+             _ => Err(EINVAL),
+         }
+@@ -203,25 +220,20 @@ pub(crate) enum PeregrineCoreSelect {
+     /// RISC-V core is active.
+     Riscv = 1,
+ }
++impl_from_enum_to_bounded!(PeregrineCoreSelect, 1);
+ 
+-impl From<bool> for PeregrineCoreSelect {
+-    fn from(value: bool) -> Self {
+-        match value {
++impl<T> From<BitInt<T, 1>> for PeregrineCoreSelect
++where
++    T: num::Boundable + Zeroable,
 +{
 +    fn from(value: BitInt<T, 1>) -> Self {
-+        value.get() != Zeroable::zeroed()
++        match bool::from(value) {
+             false => PeregrineCoreSelect::Falcon,
+             true => PeregrineCoreSelect::Riscv,
+         }
+     }
+ }
+ 
+-impl From<PeregrineCoreSelect> for bool {
+-    fn from(value: PeregrineCoreSelect) -> Self {
+-        match value {
+-            PeregrineCoreSelect::Falcon => false,
+-            PeregrineCoreSelect::Riscv => true,
+-        }
+-    }
+-}
+-
+ /// Different types of memory present in a falcon core.
+ #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+ pub(crate) enum FalconMem {
+@@ -245,14 +257,17 @@ pub(crate) enum FalconFbifTarget {
+     /// Non-coherent system memory (System DRAM).
+     NoncoherentSysmem = 2,
+ }
+-impl_from_enum_to_u8!(FalconFbifTarget);
++impl_from_enum_to_bounded!(FalconFbifTarget, 2);
+ 
+ // TODO[FPRI]: replace with `FromPrimitive`.
+-impl TryFrom<u8> for FalconFbifTarget {
++impl<T> TryFrom<BitInt<T, 2>> for FalconFbifTarget
++where
++    T: num::Boundable + num::Integer<Signedness = num::Unsigned>,
++{
+     type Error = Error;
+ 
+-    fn try_from(value: u8) -> Result<Self> {
+-        let res = match value {
++    fn try_from(value: BitInt<T, 2>) -> Result<Self> {
++        let res = match u8::from(value) {
+             0 => Self::LocalFb,
+             1 => Self::CoherentSysmem,
+             2 => Self::NoncoherentSysmem,
+@@ -272,26 +287,21 @@ pub(crate) enum FalconFbifMemType {
+     /// Physical memory addresses.
+     Physical = 1,
+ }
++impl_from_enum_to_bounded!(FalconFbifMemType, 1);
+ 
+ /// Conversion from a single-bit register field.
+-impl From<bool> for FalconFbifMemType {
+-    fn from(value: bool) -> Self {
+-        match value {
++impl<T> From<BitInt<T, 1>> for FalconFbifMemType
++where
++    T: num::Boundable + Zeroable,
++{
++    fn from(value: BitInt<T, 1>) -> Self {
++        match bool::from(value) {
+             false => Self::Virtual,
+             true => Self::Physical,
+         }
+     }
+ }
+ 
+-impl From<FalconFbifMemType> for bool {
+-    fn from(value: FalconFbifMemType) -> Self {
+-        match value {
+-            FalconFbifMemType::Virtual => false,
+-            FalconFbifMemType::Physical => true,
+-        }
+-    }
+-}
+-
+ /// Type used to represent the `PFALCON` registers address base for a given falcon engine.
+ pub(crate) struct PFalconBase(());
+ 
+@@ -414,7 +424,7 @@ pub(crate) fn reset(&self, bar: &Bar0) -> Result {
+         self.reset_wait_mem_scrubbing(bar)?;
+ 
+         regs::NV_PFALCON_FALCON_RM::default()
+-            .set_value(regs::NV_PMC_BOOT_0::read(bar).into())
++            .set_value(u32::from(regs::NV_PMC_BOOT_0::read(bar)))
+             .write(bar, &E::ID);
+ 
+         Ok(())
+@@ -481,18 +491,18 @@ fn dma_wr<F: FalconFirmware<Target = E>>(
+             .set_base((dma_start >> 8) as u32)
+             .write(bar, &E::ID);
+         regs::NV_PFALCON_FALCON_DMATRFBASE1::default()
+-            .set_base((dma_start >> 40) as u16)
++            .try_set_base(dma_start >> 40)?
+             .write(bar, &E::ID);
+ 
+         let cmd = regs::NV_PFALCON_FALCON_DMATRFCMD::default()
+             .set_size(DmaTrfCmdSize::Size256B)
+             .set_imem(target_mem == FalconMem::Imem)
+-            .set_sec(if sec { 1 } else { 0 });
++            .set_sec(BitInt::from_expr(if sec { 1 } else { 0 }));
+ 
+         for pos in (0..num_transfers).map(|i| i * DMA_LEN) {
+             // Perform a transfer of size `DMA_LEN`.
+             regs::NV_PFALCON_FALCON_DMATRFMOFFS::default()
+-                .set_offs(load_offsets.dst_start + pos)
++                .try_set_offs(load_offsets.dst_start + pos)?
+                 .write(bar, &E::ID);
+             regs::NV_PFALCON_FALCON_DMATRFFBOFFS::default()
+                 .set_offs(src_start + pos)
+diff --git a/drivers/gpu/nova-core/falcon/hal/ga102.rs b/drivers/gpu/nova-core/falcon/hal/ga102.rs
+index afed353b24d2..c43e48823eff 100644
+--- a/drivers/gpu/nova-core/falcon/hal/ga102.rs
++++ b/drivers/gpu/nova-core/falcon/hal/ga102.rs
+@@ -51,7 +51,7 @@ fn signature_reg_fuse_version_ga102(
+ 
+     // `ucode_idx` is guaranteed to be in the range [0..15], making the `read` calls provable valid
+     // at build-time.
+-    let reg_fuse_version = if engine_id_mask & 0x0001 != 0 {
++    let reg_fuse_version: u16 = if engine_id_mask & 0x0001 != 0 {
+         regs::NV_FUSE_OPT_FPF_SEC2_UCODE1_VERSION::read(bar, ucode_idx).data()
+     } else if engine_id_mask & 0x0004 != 0 {
+         regs::NV_FUSE_OPT_FPF_NVDEC_UCODE1_VERSION::read(bar, ucode_idx).data()
+@@ -60,7 +60,8 @@ fn signature_reg_fuse_version_ga102(
+     } else {
+         dev_err!(dev, "unexpected engine_id_mask {:#x}", engine_id_mask);
+         return Err(EINVAL);
+-    };
 +    }
-+}
++    .into();
+ 
+     // TODO[NUMM]: replace with `last_set_bit` once it lands.
+     Ok(u16::BITS - reg_fuse_version.leading_zeros())
+diff --git a/drivers/gpu/nova-core/fb/hal/ga100.rs b/drivers/gpu/nova-core/fb/hal/ga100.rs
+index 871c42bf033a..5b55ca8aaddb 100644
+--- a/drivers/gpu/nova-core/fb/hal/ga100.rs
++++ b/drivers/gpu/nova-core/fb/hal/ga100.rs
+@@ -2,6 +2,7 @@
+ 
+ struct Ga100;
+ 
++use kernel::num::BitInt;
+ use kernel::prelude::*;
+ 
+ use crate::driver::Bar0;
+@@ -18,7 +19,7 @@ pub(super) fn read_sysmem_flush_page_ga100(bar: &Bar0) -> u64 {
+ 
+ pub(super) fn write_sysmem_flush_page_ga100(bar: &Bar0, addr: u64) {
+     regs::NV_PFB_NISO_FLUSH_SYSMEM_ADDR_HI::default()
+-        .set_adr_63_40((addr >> FLUSH_SYSMEM_ADDR_SHIFT_HI) as u32)
++        .set_adr_63_40(BitInt::from_expr(addr >> FLUSH_SYSMEM_ADDR_SHIFT_HI).cast())
+         .write(bar);
+     regs::NV_PFB_NISO_FLUSH_SYSMEM_ADDR::default()
+         .set_adr_39_08((addr >> FLUSH_SYSMEM_ADDR_SHIFT) as u32)
+diff --git a/drivers/gpu/nova-core/gpu.rs b/drivers/gpu/nova-core/gpu.rs
+index 9d182bffe8b4..2db3e48ea59f 100644
+--- a/drivers/gpu/nova-core/gpu.rs
++++ b/drivers/gpu/nova-core/gpu.rs
+@@ -1,5 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ 
++use kernel::num::BitInt;
+ use kernel::{device, devres::Devres, error::code::*, fmt, pci, prelude::*, sync::Arc};
+ 
+ use crate::driver::Bar0;
+@@ -130,15 +131,15 @@ fn try_from(value: u8) -> Result<Self> {
+ }
+ 
+ pub(crate) struct Revision {
+-    major: u8,
+-    minor: u8,
++    major: BitInt<u8, 4>,
++    minor: BitInt<u8, 4>,
+ }
+ 
+ impl Revision {
+     fn from_boot0(boot0: regs::NV_PMC_BOOT_0) -> Self {
+         Self {
+-            major: boot0.major_revision(),
+-            minor: boot0.minor_revision(),
++            major: boot0.major_revision().cast(),
++            minor: boot0.minor_revision().cast(),
+         }
+     }
+ }
+diff --git a/drivers/gpu/nova-core/regs.rs b/drivers/gpu/nova-core/regs.rs
+index 206dab2e1335..1542d72e4a65 100644
+--- a/drivers/gpu/nova-core/regs.rs
++++ b/drivers/gpu/nova-core/regs.rs
+@@ -17,18 +17,19 @@
+ // PMC
+ 
+ register!(NV_PMC_BOOT_0 @ 0x00000000, "Basic revision information about the GPU" {
+-    3:0     minor_revision as u8, "Minor revision of the chip";
+-    7:4     major_revision as u8, "Major revision of the chip";
+-    8:8     architecture_1 as u8, "MSB of the architecture";
+-    23:20   implementation as u8, "Implementation version of the architecture";
+-    28:24   architecture_0 as u8, "Lower bits of the architecture";
++    3:0     minor_revision, "Minor revision of the chip";
++    7:4     major_revision, "Major revision of the chip";
++    8:8     architecture_1, "MSB of the architecture";
++    23:20   implementation, "Implementation version of the architecture";
++    28:24   architecture_0, "Lower bits of the architecture";
+ });
+ 
+ impl NV_PMC_BOOT_0 {
+     /// Combines `architecture_0` and `architecture_1` to obtain the architecture of the chip.
+     pub(crate) fn architecture(self) -> Result<Architecture> {
+         Architecture::try_from(
+-            self.architecture_0() | (self.architecture_1() << Self::ARCHITECTURE_0_RANGE.len()),
++            u8::from(self.architecture_0())
++                | (u8::from(self.architecture_1()) << Self::ARCHITECTURE_0_RANGE.len()),
+         )
+     }
+ 
+@@ -49,7 +50,7 @@ pub(crate) fn chipset(self) -> Result<Chipset> {
+ 
+ register!(NV_PBUS_SW_SCRATCH_0E_FRTS_ERR => NV_PBUS_SW_SCRATCH[0xe],
+     "scratch register 0xe used as FRTS firmware error code" {
+-    31:16   frts_err_code as u16;
++    31:16   frts_err_code;
+ });
+ 
+ // PFB
+@@ -58,17 +59,17 @@ pub(crate) fn chipset(self) -> Result<Chipset> {
+ // GPU to perform sysmembar operations (see `fb::SysmemFlush`).
+ 
+ register!(NV_PFB_NISO_FLUSH_SYSMEM_ADDR @ 0x00100c10 {
+-    31:0    adr_39_08 as u32;
++    31:0    adr_39_08;
+ });
+ 
+ register!(NV_PFB_NISO_FLUSH_SYSMEM_ADDR_HI @ 0x00100c40 {
+-    23:0    adr_63_40 as u32;
++    23:0    adr_63_40;
+ });
+ 
+ register!(NV_PFB_PRI_MMU_LOCAL_MEMORY_RANGE @ 0x00100ce0 {
+-    3:0     lower_scale as u8;
+-    9:4     lower_mag as u8;
+-    30:30   ecc_mode_enabled as bool;
++    3:0     lower_scale;
++    9:4     lower_mag;
++    30:30   ecc_mode_enabled => bool;
+ });
+ 
+ impl NV_PFB_PRI_MMU_LOCAL_MEMORY_RANGE {
+@@ -87,7 +88,7 @@ pub(crate) fn usable_fb_size(self) -> u64 {
+ }
+ 
+ register!(NV_PFB_PRI_MMU_WPR2_ADDR_LO@0x001fa824  {
+-    31:4    lo_val as u32, "Bits 12..40 of the lower (inclusive) bound of the WPR2 region";
++    31:4    lo_val, "Bits 12..40 of the lower (inclusive) bound of the WPR2 region";
+ });
+ 
+ impl NV_PFB_PRI_MMU_WPR2_ADDR_LO {
+@@ -98,7 +99,7 @@ pub(crate) fn lower_bound(self) -> u64 {
+ }
+ 
+ register!(NV_PFB_PRI_MMU_WPR2_ADDR_HI@0x001fa828  {
+-    31:4    hi_val as u32, "Bits 12..40 of the higher (exclusive) bound of the WPR2 region";
++    31:4    hi_val, "Bits 12..40 of the higher (exclusive) bound of the WPR2 region";
+ });
+ 
+ impl NV_PFB_PRI_MMU_WPR2_ADDR_HI {
+@@ -123,7 +124,7 @@ pub(crate) fn higher_bound(self) -> u64 {
+ // `PGC6_AON_SECURE_SCRATCH_GROUP_05` register (which it needs to read GFW_BOOT).
+ register!(NV_PGC6_AON_SECURE_SCRATCH_GROUP_05_PRIV_LEVEL_MASK @ 0x00118128,
+           "Privilege level mask register" {
+-    0:0     read_protection_level0 as bool, "Set after FWSEC lowers its protection level";
++    0:0     read_protection_level0 => bool, "Set after FWSEC lowers its protection level";
+ });
+ 
+ // OpenRM defines this as a register array, but doesn't specify its size and only uses its first
+@@ -133,7 +134,7 @@ pub(crate) fn higher_bound(self) -> u64 {
+ register!(
+     NV_PGC6_AON_SECURE_SCRATCH_GROUP_05_0_GFW_BOOT => NV_PGC6_AON_SECURE_SCRATCH_GROUP_05[0],
+     "Scratch group 05 register 0 used as GFW boot progress indicator" {
+-        7:0    progress as u8, "Progress of GFW boot (0xff means completed)";
++        7:0    progress, "Progress of GFW boot (0xff means completed)";
+     }
+ );
+ 
+@@ -145,13 +146,13 @@ pub(crate) fn completed(self) -> bool {
+ }
+ 
+ register!(NV_PGC6_AON_SECURE_SCRATCH_GROUP_42 @ 0x001183a4 {
+-    31:0    value as u32;
++    31:0    value;
+ });
+ 
+ register!(
+     NV_USABLE_FB_SIZE_IN_MB => NV_PGC6_AON_SECURE_SCRATCH_GROUP_42,
+     "Scratch group 42 register used as framebuffer size" {
+-        31:0    value as u32, "Usable framebuffer size, in megabytes";
++        31:0    value, "Usable framebuffer size, in megabytes";
+     }
+ );
+ 
+@@ -165,8 +166,8 @@ pub(crate) fn usable_fb_size(self) -> u64 {
+ // PDISP
+ 
+ register!(NV_PDISP_VGA_WORKSPACE_BASE @ 0x00625f04 {
+-    3:3     status_valid as bool, "Set if the `addr` field is valid";
+-    31:8    addr as u32, "VGA workspace base address divided by 0x10000";
++    3:3     status_valid => bool, "Set if the `addr` field is valid";
++    31:8    addr, "VGA workspace base address divided by 0x10000";
+ });
+ 
+ impl NV_PDISP_VGA_WORKSPACE_BASE {
+@@ -185,40 +186,40 @@ pub(crate) fn vga_workspace_addr(self) -> Option<u64> {
+ pub(crate) const NV_FUSE_OPT_FPF_SIZE: usize = 16;
+ 
+ register!(NV_FUSE_OPT_FPF_NVDEC_UCODE1_VERSION @ 0x00824100[NV_FUSE_OPT_FPF_SIZE] {
+-    15:0    data as u16;
++    15:0    data;
+ });
+ 
+ register!(NV_FUSE_OPT_FPF_SEC2_UCODE1_VERSION @ 0x00824140[NV_FUSE_OPT_FPF_SIZE] {
+-    15:0    data as u16;
++    15:0    data;
+ });
+ 
+ register!(NV_FUSE_OPT_FPF_GSP_UCODE1_VERSION @ 0x008241c0[NV_FUSE_OPT_FPF_SIZE] {
+-    15:0    data as u16;
++    15:0    data;
+ });
+ 
+ // PFALCON
+ 
+ register!(NV_PFALCON_FALCON_IRQSCLR @ PFalconBase[0x00000004] {
+-    4:4     halt as bool;
+-    6:6     swgen0 as bool;
++    4:4     halt => bool;
++    6:6     swgen0 => bool;
+ });
+ 
+ register!(NV_PFALCON_FALCON_MAILBOX0 @ PFalconBase[0x00000040] {
+-    31:0    value as u32;
++    31:0    value => u32;
+ });
+ 
+ register!(NV_PFALCON_FALCON_MAILBOX1 @ PFalconBase[0x00000044] {
+-    31:0    value as u32;
++    31:0    value => u32;
+ });
+ 
+ register!(NV_PFALCON_FALCON_RM @ PFalconBase[0x00000084] {
+-    31:0    value as u32;
++    31:0    value => u32;
+ });
+ 
+ register!(NV_PFALCON_FALCON_HWCFG2 @ PFalconBase[0x000000f4] {
+-    10:10   riscv as bool;
+-    12:12   mem_scrubbing as bool, "Set to 0 after memory scrubbing is completed";
+-    31:31   reset_ready as bool, "Signal indicating that reset is completed (GA102+)";
++    10:10   riscv => bool;
++    12:12   mem_scrubbing => bool, "Set to 0 after memory scrubbing is completed";
++    31:31   reset_ready => bool, "Signal indicating that reset is completed (GA102+)";
+ });
+ 
+ impl NV_PFALCON_FALCON_HWCFG2 {
+@@ -229,101 +230,101 @@ pub(crate) fn mem_scrubbing_done(self) -> bool {
+ }
+ 
+ register!(NV_PFALCON_FALCON_CPUCTL @ PFalconBase[0x00000100] {
+-    1:1     startcpu as bool;
+-    4:4     halted as bool;
+-    6:6     alias_en as bool;
++    1:1     startcpu => bool;
++    4:4     halted => bool;
++    6:6     alias_en => bool;
+ });
+ 
+ register!(NV_PFALCON_FALCON_BOOTVEC @ PFalconBase[0x00000104] {
+-    31:0    value as u32;
++    31:0    value => u32;
+ });
+ 
+ register!(NV_PFALCON_FALCON_DMACTL @ PFalconBase[0x0000010c] {
+-    0:0     require_ctx as bool;
+-    1:1     dmem_scrubbing as bool;
+-    2:2     imem_scrubbing as bool;
+-    6:3     dmaq_num as u8;
+-    7:7     secure_stat as bool;
++    0:0     require_ctx => bool;
++    1:1     dmem_scrubbing => bool;
++    2:2     imem_scrubbing => bool;
++    6:3     dmaq_num;
++    7:7     secure_stat => bool;
+ });
+ 
+ register!(NV_PFALCON_FALCON_DMATRFBASE @ PFalconBase[0x00000110] {
+-    31:0    base as u32;
++    31:0    base => u32;
+ });
+ 
+ register!(NV_PFALCON_FALCON_DMATRFMOFFS @ PFalconBase[0x00000114] {
+-    23:0    offs as u32;
++    23:0    offs;
+ });
+ 
+ register!(NV_PFALCON_FALCON_DMATRFCMD @ PFalconBase[0x00000118] {
+-    0:0     full as bool;
+-    1:1     idle as bool;
+-    3:2     sec as u8;
+-    4:4     imem as bool;
+-    5:5     is_write as bool;
+-    10:8    size as u8 ?=> DmaTrfCmdSize;
+-    14:12   ctxdma as u8;
+-    16:16   set_dmtag as u8;
++    0:0     full => bool;
++    1:1     idle => bool;
++    3:2     sec;
++    4:4     imem => bool;
++    5:5     is_write => bool;
++    10:8    size ?=> DmaTrfCmdSize;
++    14:12   ctxdma;
++    16:16   set_dmtag;
+ });
+ 
+ register!(NV_PFALCON_FALCON_DMATRFFBOFFS @ PFalconBase[0x0000011c] {
+-    31:0    offs as u32;
++    31:0    offs => u32;
+ });
+ 
+ register!(NV_PFALCON_FALCON_DMATRFBASE1 @ PFalconBase[0x00000128] {
+-    8:0     base as u16;
++    8:0     base;
+ });
+ 
+ register!(NV_PFALCON_FALCON_HWCFG1 @ PFalconBase[0x0000012c] {
+-    3:0     core_rev as u8 ?=> FalconCoreRev, "Core revision";
+-    5:4     security_model as u8 ?=> FalconSecurityModel, "Security model";
+-    7:6     core_rev_subversion as u8 ?=> FalconCoreRevSubversion, "Core revision subversion";
++    3:0     core_rev ?=> FalconCoreRev, "Core revision";
++    5:4     security_model ?=> FalconSecurityModel, "Security model";
++    7:6     core_rev_subversion => FalconCoreRevSubversion, "Core revision subversion";
+ });
+ 
+ register!(NV_PFALCON_FALCON_CPUCTL_ALIAS @ PFalconBase[0x00000130] {
+-    1:1     startcpu as bool;
++    1:1     startcpu => bool;
+ });
+ 
+ // Actually known as `NV_PSEC_FALCON_ENGINE` and `NV_PGSP_FALCON_ENGINE` depending on the falcon
+ // instance.
+ register!(NV_PFALCON_FALCON_ENGINE @ PFalconBase[0x000003c0] {
+-    0:0     reset as bool;
++    0:0     reset => bool;
+ });
+ 
+ register!(NV_PFALCON_FBIF_TRANSCFG @ PFalconBase[0x00000600[8]] {
+-    1:0     target as u8 ?=> FalconFbifTarget;
+-    2:2     mem_type as bool => FalconFbifMemType;
++    1:0     target ?=> FalconFbifTarget;
++    2:2     mem_type => FalconFbifMemType;
+ });
+ 
+ register!(NV_PFALCON_FBIF_CTL @ PFalconBase[0x00000624] {
+-    7:7     allow_phys_no_ctx as bool;
++    7:7     allow_phys_no_ctx => bool;
+ });
+ 
+ /* PFALCON2 */
+ 
+ register!(NV_PFALCON2_FALCON_MOD_SEL @ PFalcon2Base[0x00000180] {
+-    7:0     algo as u8 ?=> FalconModSelAlgo;
++    7:0     algo ?=> FalconModSelAlgo;
+ });
+ 
+ register!(NV_PFALCON2_FALCON_BROM_CURR_UCODE_ID @ PFalcon2Base[0x00000198] {
+-    7:0    ucode_id as u8;
++    7:0    ucode_id => u8;
+ });
+ 
+ register!(NV_PFALCON2_FALCON_BROM_ENGIDMASK @ PFalcon2Base[0x0000019c] {
+-    31:0    value as u32;
++    31:0    value => u32;
+ });
+ 
+ // OpenRM defines this as a register array, but doesn't specify its size and only uses its first
+ // element. Be conservative until we know the actual size or need to use more registers.
+ register!(NV_PFALCON2_FALCON_BROM_PARAADDR @ PFalcon2Base[0x00000210[1]] {
+-    31:0    value as u32;
++    31:0    value => u32;
+ });
+ 
+ // PRISCV
+ 
+ register!(NV_PRISCV_RISCV_BCR_CTRL @ PFalconBase[0x00001668] {
+-    0:0     valid as bool;
+-    4:4     core_select as bool => PeregrineCoreSelect;
+-    8:8     br_fetch as bool;
++    0:0     valid => bool;
++    4:4     core_select => PeregrineCoreSelect;
++    8:8     br_fetch => bool;
+ });
+ 
+ // The modules below provide registers that are not identical on all supported chips. They should
+@@ -333,7 +334,7 @@ pub(crate) mod gm107 {
+     // FUSE
+ 
+     register!(NV_FUSE_STATUS_OPT_DISPLAY @ 0x00021c04 {
+-        0:0     display_disabled as bool;
++        0:0     display_disabled => bool;
+     });
+ }
+ 
+@@ -341,6 +342,6 @@ pub(crate) mod ga100 {
+     // FUSE
+ 
+     register!(NV_FUSE_STATUS_OPT_DISPLAY @ 0x00820c04 {
+-        0:0     display_disabled as bool;
++        0:0     display_disabled => bool;
+     });
+ }
 
 -- 
 2.51.2
