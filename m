@@ -1,90 +1,182 @@
-Return-Path: <linux-kernel+bounces-881766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF523C28E15
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 12:23:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EA01C28E1B
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 12:25:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4125F3AA07B
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 11:23:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18A693B0275
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 11:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D5E2C0F7D;
-	Sun,  2 Nov 2025 11:23:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C1012C21CB;
+	Sun,  2 Nov 2025 11:25:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y0lmWSxI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="fwI58T5k";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tx54dOdu"
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D5A2C0F60;
-	Sun,  2 Nov 2025 11:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79F82C15A6
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 11:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762082584; cv=none; b=GwjaMIBsYGdYHhNDJxecVtsnJ6fe0APR8UL8C8y3Qizyh8YZWjZ3W++sa7ixAxjrk/+dZQRwqRidlBXcanQGVF7Ty61Ay2pkmCpih+hycpgBwme7g3LkhwRpI+54CsZYsPKocCfQAvrEZqPwSSKQt4370sFluxuoNJMcOvpESXw=
+	t=1762082745; cv=none; b=dj748LOW+auqwzA+m6Yk7OnV5gGxzHI+BpiQKhyoWzfcYgkBozTDAbwvaDNepWLx6jCD5NVatVY7RXcM/UqKFRB5GcXE584uUbWvl+7+RaH17DN8+XEeua8uK9lhBot2g0EcSdRmuX71iqm5jqwyefKDjqDwuqPepCQ5SHfAtDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762082584; c=relaxed/simple;
-	bh=f7AGp89xtG2umal3kofhTXQmZHfJxW/OjnpUSWAEZVU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QI+CTmVv1U6cGnzz4K9RhHAu4fC9Wz4GhMCdPfVQgXaIJoaApy6n9HVzAyMvZb26bZbQNaV3K/T5RfvlQqc1hUpAze20lgDeTSplKJmpnIs+8p2hRduuf9wuAZw33P594cKcgRtKjqF2eoery2AVt5OmwUv5S+6IcF1ngRRp7YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y0lmWSxI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFE70C4CEF7;
-	Sun,  2 Nov 2025 11:23:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762082583;
-	bh=f7AGp89xtG2umal3kofhTXQmZHfJxW/OjnpUSWAEZVU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Y0lmWSxIt9+Zs8GyAfCSdMfmBtpXChLYy+oncuDS0GRjG38C+D/3iz6nxEHD8U90P
-	 WBcddS035n2bD3U0yykKEjEKkuHhyygwB7zKPhWw+jvgUaP5iPzsxZK138dvY1oPPT
-	 2avFzedWEL/eCq+mLDCMwcmSAcslsULDfI4ngJTKG3pzL2ZUa7AHkWdMBwUV3ufs5Q
-	 bAZTts8FJgFCoBTpUCfgh+W4k6AI3OG+bshYIVPi/tvSybgSrPY7HvKUemFjChIxG7
-	 w/r18lMsjNPAta7io7X3OuB7CEk6IavQm9Bm5D+iuIAS0AZTWTQgTINoVdX4CBnrh+
-	 JFPSwn3emQuCg==
-Date: Sun, 2 Nov 2025 11:22:52 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Francesco Lavra <flavra@baylibre.com>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>, David Lechner
- <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
- Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/9] iio: imu: st_lsm6dsx: dynamically allocate
- iio_event_spec structs
-Message-ID: <20251102112252.24138fce@jic23-huawei>
-In-Reply-To: <20251030072752.349633-5-flavra@baylibre.com>
-References: <20251030072752.349633-1-flavra@baylibre.com>
-	<20251030072752.349633-5-flavra@baylibre.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762082745; c=relaxed/simple;
+	bh=XvRRFIyXMVgoW0JPn7Re0Z9W5NmAex+lHucp9Kd3mJc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GMywgV65drWPewz1EDiR6NFX71yio6j6M0c52s53Iug+xgwYtCWu1s17WFNbrfRX9x2MxwyScc9PVCm+vPaTHG8K6Ys74FxCVRxrxs9WArNylpWEq1Z+iFwv591Mnvh9R/eHBVb97zcqVOztKCQTlU7JhIz8K7/VexExZPGCIlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=fwI58T5k; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=tx54dOdu; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from phl-compute-11.internal (phl-compute-11.internal [10.202.2.51])
+	by mailfout.phl.internal (Postfix) with ESMTP id A74B4EC02EF;
+	Sun,  2 Nov 2025 06:25:41 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-11.internal (MEProxy); Sun, 02 Nov 2025 06:25:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1762082741; x=1762169141; bh=eMgNMqqqsn
+	q9Z9xVXUVGiUsUCvTB6a5jHhl12aqMYsY=; b=fwI58T5kC21xw28hnOM2bDBfP9
+	i4fhJQiWRL9gmdgsfc1I76B1YN0NvGhj5K3bds0ec9988rtSyLEKfSIxTkQK19hO
+	aAZ1//vH8V61T3blxCC7murYstNsQFjGl2wgztbjSRqaieBolPUoba252cg/YwyD
+	2DU9cnGdT7k4NCVAPFZmbnOGc0IvrE5Ug/c1lzPBPJfomw4ITP2v6qZoRpa7Wt5l
+	IXG1eKzHbQoqot2Xc1hS1TUk3aBVFxvGOxChAkAwNKEr+TymSzVg1/C8f5BEsbFO
+	fHVA2QyPiF8YKp+Bl8/qndav2viWBSOzG070eAAVBRebRE5SH6DdJ4fM0j/g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1762082741; x=1762169141; bh=eMgNMqqqsnq9Z9xVXUVGiUsUCvTB6a5jHhl
+	12aqMYsY=; b=tx54dOduKRGVmqPcP1CamcSbZlfGoZfjDTaYVLd/Pt05WLoE9Ds
+	TBLJnbCZwPNavtBZugjKW8txjgwmVoy3cqk9yfGf0nuANo1dYDnZ8U2zEdqxR5f5
+	Aum/58h2F2jra37bfrXvy39bm3DqSVXK16kqqO94MseZlRXvoXaAln14xszpP3Bn
+	NHrJkzKA3QzZtlC4ck90R+2m20eK89p9nfQmCPF23qF/yIfyiBDY2rOCgpDTODdV
+	HKbOghY8sd9/lSOI4hYWFeWYh3VWJhuhPQZOuqKZBiA4wJPJwO5bl/3zxI/3t6so
+	KnWcnZd83TSVM4XcO1ueIbmDaMj045r0HMQ==
+X-ME-Sender: <xms:tT8HaXU_a5ED4WGX0x-iDq2BzaVpMG_pFbC-ln8f0rKrcbseS4NR5w>
+    <xme:tT8HaSIDPW4l1jsYpNZd_q5R2GPrk_Fd1bS5kPWpvfsHDUwuBkC0jBNikm4HEUAF_
+    jGzidqy58k-RgkM5JRSHDSLye9962AVuCaf584PjWiooLhqMg>
+X-ME-Received: <xmr:tT8HaXC2QKeTetomvDHJnxEn2NF16AZ_n5n9PRpK4n7r6HhLkBaxucJ00CKM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujeehuddvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucenucfjughrpeffhffvvefukfhfgggtuggjsehttdertd
+    dttddvnecuhfhrohhmpefirhgvghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeen
+    ucggtffrrghtthgvrhhnpeehgedvvedvleejuefgtdduudfhkeeltdeihfevjeekjeeuhf
+    dtueefhffgheekteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhl
+    fhhrohhmpehgrhgvgheskhhrohgrhhdrtghomhdpnhgspghrtghpthhtohepkedpmhhoug
+    gvpehsmhhtphhouhhtpdhrtghpthhtohepvhgrtggrtggrgiduieesghhmrghilhdrtgho
+    mhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopehgrhgvhigsuhhsqdguvghvsehlihhsthhsrdhlihhnrghrohdr
+    ohhrghdprhgtphhtthhopehvshgvohhkrghkthhushgrhhejsehgmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:tT8HaScDQ7cyA2QizXH-dAySO6kdKKhTPlbGuaomgEWCBvC8HVaNpA>
+    <xmx:tT8HaW2R0XdPQIXl9y_ap2zPlJR_hTdrmtR2NPYNBKfDpFwLX3RB7g>
+    <xmx:tT8HaZiPAPXgR2GqBf1vJzHTJ0q8GlI8P3Ciwg6Fa34huqvTnneGRA>
+    <xmx:tT8HafmvZsssvm0bMnWq3OaOoL9k2Awhzp4npjITxOdn8WIjmxr0hg>
+    <xmx:tT8HaTIqTDsasSZwnCsrwdGK5VjmDUn8kFa27q7JOgLi9NPeGUCN4EPO>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 2 Nov 2025 06:25:40 -0500 (EST)
+Date: Sun, 2 Nov 2025 20:25:36 +0900
+From: Greg KH <greg@kroah.com>
+To: zntsproj <vacacax16@gmail.com>
+Cc: linux-kernel@vger.kernel.org, greybus-dev@lists.linaro.org,
+	zntsproj <vseokaktusah7@gmail.com>
+Subject: Re: [greybus-dev] [PATCH v3] Fix tiny typo in firmware-management
+ docs
+Message-ID: <2025110200-announcer-handful-fc5d@gregkh>
+References: <20251101075247.11415-1-vseokaktusah7@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251101075247.11415-1-vseokaktusah7@gmail.com>
 
-On Thu, 30 Oct 2025 08:27:47 +0100
-Francesco Lavra <flavra@baylibre.com> wrote:
-
-> In preparation for adding support for more event types, drop the
-> static declaration of a single struct iio_event_spec variable, in
-> favor of allocating and initializing the iio_event_spec array
-> dynamically, so that it can contain more than one entry if a given
-> sensor supports more than one event source.
+On Sat, Nov 01, 2025 at 10:52:47AM +0300, zntsproj wrote:
+> Signed-off-by: zntsproj <vseokaktusah7@gmail.com>
+> ---
+>  .../staging/greybus/Documentation/firmware/firmware-management  | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Signed-off-by: Francesco Lavra <flavra@baylibre.com>
+> diff --git a/drivers/staging/greybus/Documentation/firmware/firmware-management b/drivers/staging/greybus/Documentation/firmware/firmware-management
+> index 7918257e5..393455557 100644
+> --- a/drivers/staging/greybus/Documentation/firmware/firmware-management
+> +++ b/drivers/staging/greybus/Documentation/firmware/firmware-management
+> @@ -193,7 +193,7 @@ Identifying the Character Device
+>  
+>  There can be multiple devices present in /dev/ directory with name
+>  gb-authenticate-N and user first needs to identify the character device used for
+> -authentication a of particular interface.
+> +authentication of a particular interface.
+>  
+>  The Authentication core creates a device of class 'gb_authenticate', which shall
+>  be used by the user to identify the right character device for it. The class
+> -- 
+> 2.51.2
+> 
+> _______________________________________________
+> greybus-dev mailing list -- greybus-dev@lists.linaro.org
+> To unsubscribe send an email to greybus-dev-leave@lists.linaro.org
 
-Similar comment for this to the dynamic channel creation.
-Unless it is really quite a large number of combinations I'd normally go
-for separate iio_chan_spec structures with pointers to separate iio_event_spec
-structures.  Whilst this adds a fair bit of data it is easy to review
-as set of such structures for each device against the datasheet.
-The code to do it dynamically often gets really fiddly as it has to translate
-between different representations of the same thing.
+Hi,
 
-You tend to get a device model specific iio_chan_spec structure array (or a set
-of related devices share one).
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-Jonathan
+You are receiving this message because of the following common error(s)
+as indicated below:
 
+- You sent multiple patches, yet no indication of which ones should be
+  applied in which order.  Greg could just guess, but if you are
+  receiving this email, he guessed wrong and the patches didn't apply.
+  Please read the section entitled "The canonical patch format" in the
+  kernel file, Documentation/process/submitting-patches.rst for a
+  description of how to do this so that Greg has a chance to apply these
+  correctly.
+
+- You did not specify a description of why the patch is needed, or
+  possibly, any description at all, in the email body.  Please read the
+  section entitled "The canonical patch format" in the kernel file,
+  Documentation/process/submitting-patches.rst for what is needed in
+  order to properly describe the change.
+
+- You did not write a descriptive Subject: for the patch, allowing Greg,
+  and everyone else, to know what this patch is all about.  Please read
+  the section entitled "The canonical patch format" in the kernel file,
+  Documentation/process/submitting-patches.rst for what a proper
+  Subject: line should look like.
+
+- It looks like you did not use your "real" name for the patch on either
+  the Signed-off-by: line, or the From: line (both of which have to
+  match).  Please read the kernel file,
+  Documentation/process/submitting-patches.rst for how to do this
+  correctly.
+
+- This looks like a new version of a previously submitted patch, but you
+  did not list below the --- line any changes from the previous version.
+  Please read the section entitled "The canonical patch format" in the
+  kernel file, Documentation/process/submitting-patches.rst for what
+  needs to be done here to properly describe this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
