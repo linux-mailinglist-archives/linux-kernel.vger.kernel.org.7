@@ -1,104 +1,172 @@
-Return-Path: <linux-kernel+bounces-881845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B313DC290DD
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 16:11:21 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C209C290EF
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 16:13:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52F903A985E
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 15:11:20 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DC7DE346B2C
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 15:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71BD5220F3E;
-	Sun,  2 Nov 2025 15:11:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA0B0239E9D;
+	Sun,  2 Nov 2025 15:13:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tRPE7+8X"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CT9wGfoA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4C41E9B1C
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 15:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ECC9EEBB;
+	Sun,  2 Nov 2025 15:13:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762096276; cv=none; b=HeHXRrsptlGWVsRnySq95Kp3aXEui6GhieaZxemeLTjvOGfSYs5QhOivdfJJm9WFWyLOLQ5U4lyaSwXi01ye6TAwXYqpAZ0UkcSVcrjf005NPn0bZ4i5yxEg8eMKHpT1Yb/m5x5EpZGQoFk8DBmVrER8z4k7zSYfXdiSbctFsnM=
+	t=1762096381; cv=none; b=iHhpzD380uQ1/d97XO0JBfphjM0HqCfgIp8kw8HkMpuePldKmBAgrl++XxolfFNGG5ntj+iBovfa+I9Sqo7K0P7g85XXXy4wcwmnjfetJAefgAO7/xi+Q3MIFiXhkQ07clDNvaZdD9Qi7HasG6piA6b0QgqgRBR7MHPFucAo724=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762096276; c=relaxed/simple;
-	bh=A0aoWXU60Hd4meD21jQel/DOJpC5UpQ5yvBIUwRxGi0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Yd55UPAPqpw7kXn1nWAC07aaXuRVTvadEhjeYt7kZ/J8Ynl7F0bRpOxO3bx9BOIjJPdJcS1lo+Q4PoPXWFYtSDQOWcu+2NSV49+HMOcukPV/OLijGKqsjOF/7wCYfpNYWwPyfRH6VUQpSR/zP1jQ+XlAaD0OO4tcBdWPiYEugHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tRPE7+8X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6DA4C4CEF7;
-	Sun,  2 Nov 2025 15:11:14 +0000 (UTC)
+	s=arc-20240116; t=1762096381; c=relaxed/simple;
+	bh=tizBF6oQAn/Y3qWcygtT9HOK6tA8tcWjX6+eHwzztHc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sKqrUK6jBFB0C3GKdX+bBfl9zxvRMQGYqJTKiXP5mlEoZz+ocrmLu4LxOwRq7tOY9PReF6UnYRVmPMB9P4bgwNsNNYtuWWui0jh4mu2q3d1wzmJScDq6iP5Qf9teQ2YerSs5c6CJxdBc11IHeiIWkHeAAiEACBWIBS14sagvfzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CT9wGfoA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAABBC4CEF7;
+	Sun,  2 Nov 2025 15:12:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762096275;
-	bh=A0aoWXU60Hd4meD21jQel/DOJpC5UpQ5yvBIUwRxGi0=;
-	h=From:Date:Subject:To:Cc:From;
-	b=tRPE7+8XfS/EkvzHOtjZx3T84AShgQcj176E4gqaecQVzcAn1d56oBd4jOIbXMTpA
-	 3FeF/SzNcUjo1cutuaIZ7Kmo0H02E4y38URPFND8An3ba/h6ulasXjAu89b6idm0WB
-	 i1JSEWsE6SwzwkQ6Euze5VKWSoraYH32dSTpo+byFNsSaDJCmZNOamietzsTAjUlkQ
-	 kNnJIeELtzSuUZf/pXQjVbgjRoj9JuKlHEEKvnoZwBQ6c4ivvU6XIN8uEb8rs5hl/z
-	 SSZZicAXU3B5ihH1TmOQrPLZFHOMbID2f3n/xZSmqfmofQsmpoOFHZoP2j2q8EBwM7
-	 8csxy0d6Q4CRw==
-From: Chris Li <chrisl@kernel.org>
-Date: Sun, 02 Nov 2025 07:11:07 -0800
-Subject: [PATCH] MAINTAINERS: add Chris and Kairui as the swap maintainer
+	s=k20201202; t=1762096380;
+	bh=tizBF6oQAn/Y3qWcygtT9HOK6tA8tcWjX6+eHwzztHc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CT9wGfoAiCv2vOtEIQkZsX5as/tdAoLN3LndZfBArHXUFA/Zw6aiiZ8s7L1ItFwnS
+	 J44TfxOhI/HBSPQzjPfDdOnuTocQGDHYR0rQS/QWk/RFyc2i6YnIcrq0bR37G55zSN
+	 cRUJYZHLWZuU9uME66gb8xkP50ARR5vellQ8rh2cps+8y1z5a6FXx1Bm7+UKl4xykw
+	 BKzX1CHLdgL5P2L7bHPJvSRCjuzG6pnNETHYekFTtAy6gY2hQ8xQ2LYlmtydkaNOmU
+	 IDJqI0JxojL60OTRm80nOQSmOqRXrUZh51uEpe4MhDqcBvu3YYEuSQHoFo9Sv5xLDN
+	 7aBCzDPV1VG1g==
+Date: Sun, 2 Nov 2025 17:12:53 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Alex Williamson <alex@shazbot.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>, Jens Axboe <axboe@kernel.dk>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Ankit Agrawal <ankita@nvidia.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <skolothumtho@nvidia.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Krishnakant Jaju <kjaju@nvidia.com>, Matt Ochs <mochs@nvidia.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-block@vger.kernel.org, iommu@lists.linux.dev,
+	linux-mm@kvack.org, linux-doc@vger.kernel.org,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, kvm@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	Vivek Kasireddy <vivek.kasireddy@intel.com>
+Subject: Re: [PATCH v6 10/11] vfio/pci: Add dma-buf export support for MMIO
+ regions
+Message-ID: <20251102151253.GA50752@unreal>
+References: <20251102-dmabuf-vfio-v6-0-d773cff0db9f@nvidia.com>
+ <20251102-dmabuf-vfio-v6-10-d773cff0db9f@nvidia.com>
+ <20251102080137.209aa567@shazbot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251102-swap-m-v1-1-582f275d5bce@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAIp0B2kC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1NDQwMj3eLyxALdXF1zSwPzNCOTVBNjw0QloOKCotS0zAqwQdGxtbUA2kA
- b/FgAAAA=
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
- Kairui Song <kasong@tencent.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
- Nhat Pham <nphamcs@gmail.com>, Baoquan He <bhe@redhat.com>, 
- Barry Song <baohua@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
- Yosry Ahmed <yosry.ahmed@linux.dev>, Minchan Kim <minchan@kernel.org>, 
- Suren Baghdasaryan <surenb@google.com>, 
- Roman Gushchin <roman.gushchin@linux.dev>, Michal Hocko <mhocko@kernel.org>, 
- SeongJae Park <sj@kernel.org>, Chris Li <chrisl@kernel.org>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251102080137.209aa567@shazbot.org>
 
-We have been collaborating on a systematic effort to clean up and improve
-the Linux swap system, and might as well take responsibility for it.
+On Sun, Nov 02, 2025 at 08:01:37AM -0700, Alex Williamson wrote:
+> On Sun,  2 Nov 2025 10:00:58 +0200
+> Leon Romanovsky <leon@kernel.org> wrote:
+> > @@ -2391,6 +2403,7 @@ static int vfio_pci_dev_set_hot_reset(struct vfio_device_set *dev_set,
+> >  				      struct iommufd_ctx *iommufd_ctx)
+> >  {
+> >  	struct vfio_pci_core_device *vdev;
+> > +	bool restore_revoke = false;
+> >  	struct pci_dev *pdev;
+> >  	int ret;
+> >  
+> > @@ -2459,6 +2472,8 @@ static int vfio_pci_dev_set_hot_reset(struct vfio_device_set *dev_set,
+> >  			break;
+> >  		}
+> >  
+> > +		vfio_pci_dma_buf_move(vdev, true);
+> > +		restore_revoke = true;
+> >  		vfio_pci_zap_bars(vdev);
+> >  	}
+> >  
+> > @@ -2486,6 +2501,12 @@ static int vfio_pci_dev_set_hot_reset(struct vfio_device_set *dev_set,
+> >  			       struct vfio_pci_core_device, vdev.dev_set_list);
+> >  
+> >  err_undo:
+> > +	if (restore_revoke) {
+> > +		list_for_each_entry(vdev, &dev_set->device_list, vdev.dev_set_list)
+> > +			if (__vfio_pci_memory_enabled(vdev))
+> > +				vfio_pci_dma_buf_move(vdev, false);
+> > +	}
+> > +
+> >  	list_for_each_entry_from_reverse(vdev, &dev_set->device_list,
+> >  					 vdev.dev_set_list)
+> 
+> We don't need the separate loop or flag, and adding it breaks the
+> existing reverse list walk.  Thanks,
 
-Signed-off-by: Chris Li <chrisl@kernel.org>
----
- MAINTAINERS | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Do you want me to send v7? I have a feeling that v6 is good to be merged.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2628431dcdfe..8b5af318a0c8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16497,12 +16497,12 @@ F:	mm/secretmem.c
+Thanks
+
+diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
+index 24204893e221..51a3bcc26f8b 100644
+--- a/drivers/vfio/pci/vfio_pci_core.c
++++ b/drivers/vfio/pci/vfio_pci_core.c
+@@ -2403,7 +2403,6 @@ static int vfio_pci_dev_set_hot_reset(struct vfio_device_set *dev_set,
+                                      struct iommufd_ctx *iommufd_ctx)
+ {
+        struct vfio_pci_core_device *vdev;
+-       bool restore_revoke = false;
+        struct pci_dev *pdev;
+        int ret;
  
- MEMORY MANAGEMENT - SWAP
- M:	Andrew Morton <akpm@linux-foundation.org>
-+M:	Chris Li <chrisl@kernel.org>
-+M:	Kairui Song <kasong@tencent.com>
- R:	Kemeng Shi <shikemeng@huaweicloud.com>
--R:	Kairui Song <kasong@tencent.com>
- R:	Nhat Pham <nphamcs@gmail.com>
- R:	Baoquan He <bhe@redhat.com>
- R:	Barry Song <baohua@kernel.org>
--R:	Chris Li <chrisl@kernel.org>
- L:	linux-mm@kvack.org
- S:	Maintained
- F:	Documentation/mm/swap-table.rst
+@@ -2473,7 +2472,6 @@ static int vfio_pci_dev_set_hot_reset(struct vfio_device_set *dev_set,
+                }
+ 
+                vfio_pci_dma_buf_move(vdev, true);
+-               restore_revoke = true;
+                vfio_pci_zap_bars(vdev);
+        }
+ 
+@@ -2501,15 +2499,12 @@ static int vfio_pci_dev_set_hot_reset(struct vfio_device_set *dev_set,
+                               struct vfio_pci_core_device, vdev.dev_set_list);
+ 
+ err_undo:
+-       if (restore_revoke) {
+-               list_for_each_entry(vdev, &dev_set->device_list, vdev.dev_set_list)
+-                       if (__vfio_pci_memory_enabled(vdev))
+-                               vfio_pci_dma_buf_move(vdev, false);
+-       }
+-
+        list_for_each_entry_from_reverse(vdev, &dev_set->device_list,
+-                                        vdev.dev_set_list)
++                                        vdev.dev_set_list) {
++               if (__vfio_pci_memory_enabled(vdev))
++                       vfio_pci_dma_buf_move(vdev, false);
+                up_write(&vdev->memory_lock);
++       }
+ 
+        list_for_each_entry(vdev, &dev_set->device_list, vdev.dev_set_list)
+                pm_runtime_put(&vdev->pdev->dev);
 
----
-base-commit: 9ef7b034116354ee75502d1849280a4d2ff98a7c
-change-id: 20251102-swap-m-7907f24e431a
 
-Best regards,
--- 
-Chris Li <chrisl@kernel.org>
-
+> 
+> Alex
+> 
 
