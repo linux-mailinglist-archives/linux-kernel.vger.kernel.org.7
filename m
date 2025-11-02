@@ -1,122 +1,154 @@
-Return-Path: <linux-kernel+bounces-881820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10C85C2900D
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 15:11:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5508C29019
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 15:14:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EFC6188CFDD
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 14:11:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F87A188D0BD
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 14:14:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD9C219303;
-	Sun,  2 Nov 2025 14:10:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B12219E8C;
+	Sun,  2 Nov 2025 14:14:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=1wt.eu header.i=@1wt.eu header.b="gk8Y9jmf"
-Received: from mta1.formilux.org (mta1.formilux.org [51.159.59.229])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N1yrFrh9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1549D20C004
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 14:10:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.59.229
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88AA772610;
+	Sun,  2 Nov 2025 14:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762092655; cv=none; b=kwIRNqyjrpJywcHlTlnnrKnzYztFf75ZeCCS8A/3id/gTN70mXE51tfdRnW4QbMtbCfTbG4TiNzI7cgTu1iva6WIBOULri6eSH3ILfADPaAC48wWxjCRnbXlviwRkS1w7h1jcg/s77TZvazZL6CIsbKqjmGO+T/MLG8yoM5VO6Y=
+	t=1762092860; cv=none; b=jyLgPv9AxpWNM0jExK8gij6CWjU1/ezNUE0IABFmehOnPM0l2qq9OpX/Jstg+yAKJvdf5Vw23z8xgXIAiQOzQ71pMq1SRoMddzORY90JF5PAro4PdYSjOCjRjEya1JspP7IxoYv0EVIIYECPjwA7Ad1g85AjD+UWcv6MfwLKOaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762092655; c=relaxed/simple;
-	bh=lCHlPHkdv1/NXawJHpuwj6rJ7BRsvDNM7ZuBARFoTO8=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=PwGKy8mSyFULSyjLtphog9umGHn7mrEo7iI4B4jjXt5Ao1IBplLzUnrm6SOR+e2TngxYrIm7/bTW9h9TWKQ0TX91GShnn8dpL7COTGdPmazAhzBeW9Jk8j9qdN2kTIGiwdxcVLP6jqZUk/sbHaETaLk1oxBFlSbbXk45NuE+J9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; dkim=pass (1024-bit key) header.d=1wt.eu header.i=@1wt.eu header.b=gk8Y9jmf; arc=none smtp.client-ip=51.159.59.229
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=1wt.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=1wt.eu; s=mail;
-	t=1762092651; bh=3u4DfFO7kxUBf/y4/6YgRuX8bP9V6GRcADka+B5z5GU=;
-	h=From:Message-Id:From;
-	b=gk8Y9jmfwNGpnCPu6qnh/q+PJxM4yawI77mFThbZ9KS7Rt5adB/HJrP7B0350NLAq
-	 ellXS8Kv3Kym4PQKQfNk2nx0772Hz18HRRSwNeMSW01JONgCLfYtPBLFaYBdOgnC5n
-	 oRknHxrZzjesYQr0KqKTbILcKy5V5O/Dsf+Tw4P8=
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-	by mta1.formilux.org (Postfix) with ESMTP id 3289DC06EE;
-	Sun, 02 Nov 2025 15:10:51 +0100 (CET)
-Received: (from willy@localhost)
-	by pcw.home.local (8.15.2/8.15.2/Submit) id 5A2EAoKu008519;
-	Sun, 2 Nov 2025 15:10:50 +0100
-From: Willy Tarreau <w@1wt.eu>
-To: linux@weissschuh.net
-Cc: shuah@kernel.org, linux-kernel@vger.kernel.org, Willy Tarreau <w@1wt.eu>
-Subject: [PATCH] tools/nolibc: make the "headers" target install all supported archs
-Date: Sun,  2 Nov 2025 15:10:45 +0100
-Message-Id: <20251102141045.8477-1-w@1wt.eu>
-X-Mailer: git-send-email 2.17.5
+	s=arc-20240116; t=1762092860; c=relaxed/simple;
+	bh=37V5674L4iSlmwmX1WKaEKq5LWlrQ37iJ549idwApFg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A6rzmfUHKQFLI1lQ+icNK2GPy6DSeyJFSZO8d5b5iCTiDOst2iFBBltunRZ2agVTDpWvna00tQibySQqvZKnjstjh9UdRGRTsdLtUMdI7LL4QUuM+Ykw2wvE5C6NbT9FINKYaAoMh1g4+eNc6pEeV0tUJQD9FqmOpeVKGVCVjj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N1yrFrh9; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762092859; x=1793628859;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=37V5674L4iSlmwmX1WKaEKq5LWlrQ37iJ549idwApFg=;
+  b=N1yrFrh9wnJzA/YG8Sz/2xW/qnM6joMnCI+8uOtQ2X0krLavWf+syrVw
+   S1yk33Q7nfidJ7xDsJsjQ7Sx/jvns3OKZSe9uzYXSHdoY91X7oEUQZeLO
+   IP+bvmidVT71Pgq2fB+CC6eG39luqvxUBKBbMB9oKPCjcY+Z8pJ8sbuxb
+   4nGWRHyiR9lDUbV4N6GlqCX1h5xxGXy8OsHQrzxdtJ8Apn/lle5nUExcB
+   JLgblwmWL9HBnwY6FcadLQUYjyTzpqxkovmC27RM/S64a1PF0/ouUDmsY
+   twnlpb9dLaYGerR/yhr1QNBeMlRJJM2qLHZY8STKRyIajE/roaC+OQSg5
+   g==;
+X-CSE-ConnectionGUID: dhyz7f8DRS+C+iGIycW/lA==
+X-CSE-MsgGUID: EN7mRigVSiCTK1syxjUqKQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="64285538"
+X-IronPort-AV: E=Sophos;i="6.19,274,1754982000"; 
+   d="scan'208";a="64285538"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2025 06:14:18 -0800
+X-CSE-ConnectionGUID: hHrgI88dRcO1f3ZEFdjbBA==
+X-CSE-MsgGUID: ctZC3L/uT3O2PD1m6SSX4w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,274,1754982000"; 
+   d="scan'208";a="186533464"
+Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 02 Nov 2025 06:14:14 -0800
+Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1vFYqS-000PIW-26;
+	Sun, 02 Nov 2025 14:14:12 +0000
+Date: Sun, 2 Nov 2025 22:13:42 +0800
+From: kernel test robot <lkp@intel.com>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	muislam@microsoft.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, kys@microsoft.com,
+	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+	longli@microsoft.com, mhklinux@outlook.com,
+	skinsburskii@linux.microsoft.com, romank@linux.microsoft.com,
+	Jinank Jain <jinankjain@microsoft.com>,
+	Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Subject: Re: [PATCH v2] mshv: Extend create partition ioctl to support cpu
+ features
+Message-ID: <202511022246.Tn2DmYLd-lkp@intel.com>
+References: <1761860431-11208-1-git-send-email-nunodasneves@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1761860431-11208-1-git-send-email-nunodasneves@linux.microsoft.com>
 
-The efforts we go through by installing a single arch are counter
-productive when the base directory already supports them all, and
-the arch-specific files are really small. Let's make the "headers"
-target simply install headers for all supported archs and stop
-trying to build a hybrid "arch.h" file on the fly, to instead keep
-the generic one. Now the same nolibc headers installation will be
-usable with any arch-specific uapi installation.
+Hi Nuno,
 
-Signed-off-by: Willy Tarreau <w@1wt.eu>
----
-v2:
-- updated to recent updates and new archs
-- use only files instead of an explicit list of supported archs
----
- tools/include/nolibc/Makefile | 19 ++++++-------------
- 1 file changed, 6 insertions(+), 13 deletions(-)
+kernel test robot noticed the following build warnings:
 
-diff --git a/tools/include/nolibc/Makefile b/tools/include/nolibc/Makefile
-index 6e31187c89aa..8118e22844f1 100644
---- a/tools/include/nolibc/Makefile
-+++ b/tools/include/nolibc/Makefile
-@@ -23,7 +23,7 @@ else
- Q=@
- endif
- 
--arch_file := arch-$(ARCH).h
-+arch_files := arch.h $(wildcard arch-*.h)
- all_files := \
- 		compiler.h \
- 		crt.h \
-@@ -82,7 +82,7 @@ help:
- 	@echo "Supported targets under nolibc:"
- 	@echo "  all                 call \"headers\""
- 	@echo "  clean               clean the sysroot"
--	@echo "  headers             prepare a sysroot in \$${OUTPUT}sysroot"
-+	@echo "  headers             prepare a multi-arch sysroot in \$${OUTPUT}sysroot"
- 	@echo "  headers_standalone  like \"headers\", and also install kernel headers"
- 	@echo "  help                this help"
- 	@echo ""
-@@ -93,18 +93,11 @@ help:
- 	@echo "  OUTPUT  = $(OUTPUT)"
- 	@echo ""
- 
-+# installs headers for all archs at once.
- headers:
--	$(Q)mkdir -p $(OUTPUT)sysroot
--	$(Q)mkdir -p $(OUTPUT)sysroot/include
--	$(Q)cp --parents $(all_files) $(OUTPUT)sysroot/include/
--	$(Q)if [ "$(ARCH)" = "i386" -o "$(ARCH)" = "x86_64" ]; then \
--		cat arch-x86.h;                 \
--	elif [ -e "$(arch_file)" ]; then        \
--		cat $(arch_file);               \
--	else                                    \
--		echo "Fatal: architecture $(ARCH) not yet supported by nolibc." >&2; \
--		exit 1;                         \
--	fi > $(OUTPUT)sysroot/include/arch.h
-+	$(Q)mkdir -p "$(OUTPUT)sysroot"
-+	$(Q)mkdir -p "$(OUTPUT)sysroot/include"
-+	$(Q)cp --parents $(arch_files) $(all_files) "$(OUTPUT)sysroot/include/"
- 
- headers_standalone: headers
- 	$(Q)$(MAKE) -C $(srctree) headers
+[auto build test WARNING on linus/master]
+[also build test WARNING on v6.18-rc3 next-20251031]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Nuno-Das-Neves/mshv-Extend-create-partition-ioctl-to-support-cpu-features/20251031-054134
+base:   linus/master
+patch link:    https://lore.kernel.org/r/1761860431-11208-1-git-send-email-nunodasneves%40linux.microsoft.com
+patch subject: [PATCH v2] mshv: Extend create partition ioctl to support cpu features
+config: arm64-randconfig-001-20251102 (https://download.01.org/0day-ci/archive/20251102/202511022246.Tn2DmYLd-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project d2625a438020ad35330cda29c3def102c1687b1b)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251102/202511022246.Tn2DmYLd-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202511022246.Tn2DmYLd-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/hv/mshv_root_main.c:1875:47: warning: unused variable 'disabled_xsave' [-Wunused-variable]
+    1875 |         union hv_partition_processor_xsave_features *disabled_xsave;
+         |                                                      ^~~~~~~~~~~~~~
+   1 warning generated.
+
+
+vim +/disabled_xsave +1875 drivers/hv/mshv_root_main.c
+
+  1864	
+  1865	static_assert(MSHV_NUM_CPU_FEATURES_BANKS <=
+  1866		      HV_PARTITION_PROCESSOR_FEATURES_BANKS);
+  1867	
+  1868	static long mshv_ioctl_process_pt_flags(void __user *user_arg, u64 *pt_flags,
+  1869						struct hv_partition_creation_properties *cr_props,
+  1870						union hv_partition_isolation_properties *isol_props)
+  1871	{
+  1872		int i;
+  1873		struct mshv_create_partition_v2 args;
+  1874		union hv_partition_processor_features *disabled_procs;
+> 1875		union hv_partition_processor_xsave_features *disabled_xsave;
+  1876	
+  1877		/* First, copy orig struct in case user is on previous versions */
+  1878		if (copy_from_user(&args, user_arg,
+  1879				   sizeof(struct mshv_create_partition)))
+  1880			return -EFAULT;
+  1881	
+  1882		if ((args.pt_flags & ~MSHV_PT_FLAGS_MASK) ||
+  1883		     args.pt_isolation >= MSHV_PT_ISOLATION_COUNT)
+  1884			return -EINVAL;
+  1885	
+  1886		disabled_procs = &cr_props->disabled_processor_features;
+  1887	
+  1888		/* Disable all processor features first */
+  1889		for (i = 0; i < HV_PARTITION_PROCESSOR_FEATURES_BANKS; i++)
+  1890			disabled_procs->as_uint64[i] = -1;
+  1891	
+
 -- 
-2.17.5
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
