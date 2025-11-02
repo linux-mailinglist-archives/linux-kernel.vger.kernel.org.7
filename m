@@ -1,58 +1,57 @@
-Return-Path: <linux-kernel+bounces-882006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0B96C296F0
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 22:06:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB19FC296ED
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 22:06:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1C343AF073
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 21:05:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B75A73AF4CB
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 21:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3F222A7E5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418DB226D00;
 	Sun,  2 Nov 2025 21:05:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OFj+LG1Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XJWJ6IlB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0E31F418F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9309718CC13;
 	Sun,  2 Nov 2025 21:05:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762117551; cv=none; b=CS+lGrjTa5d7JEn+WfBSV3/A6dbz/U0b/xUTFaZIjb3Vy+7ZdNx/sxzIPeNr9kXYoNakZkA4fPPY8JlAUVdouVmnyPJ8/J107jDZQZw9CPl0pC5owDNPH34PYXF0U6pC7Ma2qJ6etgiCcyHh+EcN9HddlfY1n0G1vCokVUeKVZA=
+	t=1762117551; cv=none; b=r4h0rkE05hLpLU9nJxIY/AALA72HheuubmqWOfzU4zyL962gxwWVosF1xkRpTXCW2tC7BG2NqSF5Ar2mdPT5omr7pSKL+RCoQtTBSqu2MLh+rHwSuZs7vBgIlqfqlg8r2MhSjry5sCJHSSUBGDK85/34bk6q0vi7yX65gBoaD88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762117551; c=relaxed/simple;
-	bh=nTHX1YfCh7X8t+gy7/mwsMUuWMwgp6cK39S8CemYIGw=;
+	bh=4KUUrYSVLSgf7AtIDUdA8yD1hmE5D2On1prenhy0yxs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MbDRwwUxoB31wLKPSuW6bLNeenD9TwufDset/qEAnLDV6MVSo3pEi4PxdikyHtQbId+fjvD/d9fgiWHNkXhtehCZ2QcQxj9N1lCnHqW3DVKN1bkWtSlFDQejtWI2Y35o1X1yohj9bgZMyChQbAVTOIYk3UD3Vpdol5hVvFSsh6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OFj+LG1Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58283C4CEF7;
+	 MIME-Version; b=puuKzLHhtoKZl0SIzwdNkOaIMh5GPsI4GKzSpfMTKEHxNJggPfCyrNIVFF3s8hwudxuvc/TpCjsM1EGJD7JSl81aBlRbI697XOiEvQvbDOLOQ7XhDW07QbxyU6h4ac5hYYy0312lQiGqzCZNxPv0cAf8kHI6TalJk878hyr5f68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XJWJ6IlB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D30AC113D0;
 	Sun,  2 Nov 2025 21:05:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1762117551;
-	bh=nTHX1YfCh7X8t+gy7/mwsMUuWMwgp6cK39S8CemYIGw=;
+	bh=4KUUrYSVLSgf7AtIDUdA8yD1hmE5D2On1prenhy0yxs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OFj+LG1Qvk7YNodw8pQtzv2vnJKRnj9xVaY0axOQSaDzpCPJV8DgA/C1c7Hm5zUQa
-	 JGI3dMin4BaQD3IEM5kDqUog9AAkE5lzu/cxxx+4H0Z5X8ixaiVcY5hZNpKFzM0NTj
-	 YeJzHFr4Ksxhu9l8/8RYaqdKsOwFfAOe5+7UNmECedngREaJryK62Ff22ie0L3bLbh
-	 OngBPm2t8ISRF8FbARoj2ZdoVb0CuHrzcP3AuPK3//jx30/pe2Cf10Pc9Djul5Krg4
-	 VUBYf4FLR/mUrag+Dvnv+aUTSqEvNJuC77VyJeDmYVDu0TC2Zih+gk6LCkF6teRenx
-	 tTk23700Sgz4Q==
+	b=XJWJ6IlBiI0ol/o2uOH/A1eSEfRCMM+oV6C/50NzpBRqhJA761koPotXwi8+IhBbm
+	 1OEzM3+xTsF6+jy+LzYRm9iIFknvOWBO6+PNvBAwpetWnjv38m4jeno+2wp2e2aUhF
+	 1Smr2Hs8MS5VjqioOCBV29moh8BTjlbHn7ZLJYyZY5h05bNE+An3F8sznSWbjb/t1o
+	 IhtNs4klYScYAgcadXOIbTESIirfyxbWlM4BBg+pTXYVxMe9MQmbU0M6fbLcH65A3H
+	 L2o9wFVhdo+qNjCEgBFkQQGCLiw7oI3lwLg2/o3vyX7bv1R9eM7hkpssj0cguqmfkj
+	 lwtizZao6d+2w==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 37630CE0F4C; Sun,  2 Nov 2025 13:05:50 -0800 (PST)
+	id 3A489CE0F65; Sun,  2 Nov 2025 13:05:50 -0800 (PST)
 From: "Paul E. McKenney" <paulmck@kernel.org>
 To: rcu@vger.kernel.org
 Cc: linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
 	rostedt@goodmis.org,
-	Wang Liang <wangliang74@huawei.com>,
-	Zhang Changzhong <zhangchangzhong@huawei.com>,
+	Xuanqiang Luo <luoxuanqiang@kylinos.cn>,
 	"Paul E . McKenney" <paulmck@kernel.org>
-Subject: [PATCH 1/3] locktorture: Fix memory leak in param_set_cpumask()
-Date: Sun,  2 Nov 2025 13:05:45 -0800
-Message-Id: <20251102210547.3898972-1-paulmck@kernel.org>
+Subject: [PATCH 2/3] rcu: use WRITE_ONCE() for ->next and ->pprev of hlist_nulls
+Date: Sun,  2 Nov 2025 13:05:46 -0800
+Message-Id: <20251102210547.3898972-2-paulmck@kernel.org>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <6eb0d40f-9776-412a-9ab4-2d3298ead766@paulmck-laptop>
 References: <6eb0d40f-9776-412a-9ab4-2d3298ead766@paulmck-laptop>
@@ -64,78 +63,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Wang Liang <wangliang74@huawei.com>
+From: Xuanqiang Luo <luoxuanqiang@kylinos.cn>
 
-With CONFIG_CPUMASK_OFFSTACK=y, the 'bind_writers' buffer is allocated via
-alloc_cpumask_var() in param_set_cpumask(). But it is not freed, when
-setting the module parameter multiple times by sysfs interface or removing
-module.
+In rculist_nulls.h we can still see ordinary assignments to ->pprev and
+->next of hlist_nulls.
 
-Below kmemleak trace is seen for this issue:
+As noted in the two patches below:
+commit efd04f8a8b45 ("rcu: Use WRITE_ONCE() for assignments to ->next for
+rculist_nulls")
+commit 860c8802ace1 ("rcu: Use WRITE_ONCE() for assignments to ->pprev for
+hlist_nulls")
 
-unreferenced object 0xffff888100aabff8 (size 8):
-  comm "bash", pid 323, jiffies 4295059233
-  hex dump (first 8 bytes):
-    07 00 00 00 00 00 00 00                          ........
-  backtrace (crc ac50919):
-    __kmalloc_node_noprof+0x2e5/0x420
-    alloc_cpumask_var_node+0x1f/0x30
-    param_set_cpumask+0x26/0xb0 [locktorture]
-    param_attr_store+0x93/0x100
-    module_attr_store+0x1b/0x30
-    kernfs_fop_write_iter+0x114/0x1b0
-    vfs_write+0x300/0x410
-    ksys_write+0x60/0xd0
-    do_syscall_64+0xa4/0x260
-    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+We should use WRITE_ONCE().
 
-This issue can be reproduced by:
-  insmod locktorture.ko bind_writers=1
-  rmmod locktorture
-
-or:
-  insmod locktorture.ko bind_writers=1
-  echo 2 > /sys/module/locktorture/parameters/bind_writers
-
-Considering that setting the module parameter 'bind_writers' or
-'bind_readers' by sysfs interface has no real effect, set the parameter
-permissions to 0444. To fix the memory leak when removing module, free
-'bind_writers' and 'bind_readers' memory in lock_torture_cleanup().
-
-Fixes: 73e341242483 ("locktorture: Add readers_bind and writers_bind module parameters")
-Suggested-by: Zhang Changzhong <zhangchangzhong@huawei.com>
-Signed-off-by: Wang Liang <wangliang74@huawei.com>
+Signed-off-by: Xuanqiang Luo <luoxuanqiang@kylinos.cn>
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
 ---
- kernel/locking/locktorture.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ include/linux/rculist_nulls.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/locking/locktorture.c b/kernel/locking/locktorture.c
-index ce0362f0a871..6567e5eeacc0 100644
---- a/kernel/locking/locktorture.c
-+++ b/kernel/locking/locktorture.c
-@@ -103,8 +103,8 @@ static const struct kernel_param_ops lt_bind_ops = {
- 	.get = param_get_cpumask,
- };
+diff --git a/include/linux/rculist_nulls.h b/include/linux/rculist_nulls.h
+index 89186c499dd4..d5a656cc4c6a 100644
+--- a/include/linux/rculist_nulls.h
++++ b/include/linux/rculist_nulls.h
+@@ -138,7 +138,7 @@ static inline void hlist_nulls_add_tail_rcu(struct hlist_nulls_node *n,
  
--module_param_cb(bind_readers, &lt_bind_ops, &bind_readers, 0644);
--module_param_cb(bind_writers, &lt_bind_ops, &bind_writers, 0644);
-+module_param_cb(bind_readers, &lt_bind_ops, &bind_readers, 0444);
-+module_param_cb(bind_writers, &lt_bind_ops, &bind_writers, 0444);
- 
- long torture_sched_setaffinity(pid_t pid, const struct cpumask *in_mask, bool dowarn);
- 
-@@ -1211,6 +1211,10 @@ static void lock_torture_cleanup(void)
- 			cxt.cur_ops->exit();
- 		cxt.init_called = false;
- 	}
-+
-+	free_cpumask_var(bind_readers);
-+	free_cpumask_var(bind_writers);
-+
- 	torture_cleanup_end();
+ 	if (last) {
+ 		WRITE_ONCE(n->next, last->next);
+-		n->pprev = &last->next;
++		WRITE_ONCE(n->pprev, &last->next);
+ 		rcu_assign_pointer(hlist_nulls_next_rcu(last), n);
+ 	} else {
+ 		hlist_nulls_add_head_rcu(n, h);
+@@ -148,8 +148,8 @@ static inline void hlist_nulls_add_tail_rcu(struct hlist_nulls_node *n,
+ /* after that hlist_nulls_del will work */
+ static inline void hlist_nulls_add_fake(struct hlist_nulls_node *n)
+ {
+-	n->pprev = &n->next;
+-	n->next = (struct hlist_nulls_node *)NULLS_MARKER(NULL);
++	WRITE_ONCE(n->pprev, &n->next);
++	WRITE_ONCE(n->next, (struct hlist_nulls_node *)NULLS_MARKER(NULL));
  }
  
+ /**
 -- 
 2.40.1
 
