@@ -1,269 +1,343 @@
-Return-Path: <linux-kernel+bounces-881970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 069F5C2956F
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 19:45:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81F4AC29578
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 19:46:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 926D24E9003
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 18:45:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E7AF188B9C7
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 18:47:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 984B72586C8;
-	Sun,  2 Nov 2025 18:45:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4236191F84;
+	Sun,  2 Nov 2025 18:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Gw7rISxJ"
-Received: from BL0PR03CU003.outbound.protection.outlook.com (mail-eastusazon11012017.outbound.protection.outlook.com [52.101.53.17])
+	dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="ViGITAx3"
+Received: from relay14.grserver.gr (relay14.grserver.gr [46.224.16.114])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D42D12472BB;
-	Sun,  2 Nov 2025 18:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.53.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762109101; cv=fail; b=j6s6x6QDmNEwGuWFS/bIQjDRiL8H9F8vQZ/YVEpy3AlF2BpMLu8lBYZc3Qq99oKnsSfYAmu1+mW28Vd10AG71dvIGqBjHjMBBEV2HIO1BiC2c+0xK/c4dpAx50PGzOSKXBXDeAFMVTGy7oT0yfz4c3rAdGk5Jct6y/twKb3FNzc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762109101; c=relaxed/simple;
-	bh=wuCKEicDcIsv1O+0qRo5ntlItvTTh/31+SqaSS6tYyI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CPjnrQAKMgsePEy+nBerL7BRGPHv2EWSE+D/4CDPiZuklBrpCeMSgsvh84GaBaVvwUJXv1pHfGNV7oM3hMbmxlbFpGDhFzYCBXxZecyd96qsJK7kyCvsHdU/ZKhJrujAkGNMLhujntJgxp9P/2RiWCyTGibjDIJ48pADpilLRKE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Gw7rISxJ; arc=fail smtp.client-ip=52.101.53.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IInk9iO+mKsZC2etefRQSca9KUITU8TAPyoXJoMrI+KexRVV2dv34W3yWT/TaxQAB8TsLSST1MUJvYyhI79xsWYNoof8qZ0WSDroYJXBHOr6Rn3ITv3aHiK40ZR9oeOiH8ayb0Xl5z0fRlyUvSRofw/Fl2wX8EkGTq5A1a1eqxbr3Et9DjhIqN4lnRKKB+EnkQ0BwA85R6H8VfhuTp4o3U2Y+h2SXe7yzpTKh6jKtvyrty9I5hGKFNzxf/I/LyJczvA5NGG+2RXcusW7Z3kXjMtTExzPEYP3sBcQXJCMjVsJ5o4IweqQBnJ4p9OPwTS+h3l42ZZFzM/HYmh1VoIWjw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=l+PoeFQBtdd6tvq+PxWLLVPThcvfQiPhoI1YysoCFeo=;
- b=Jq6ohgMcVi5w8bvw32N0kqlwzyaQxQRHGWTwi7Zc8RsaUJD535ptmFqpSn8+BnyEeVyn9Fvm5G97gQvYpOcHR/v0Rop9Ou8zxG/CcxMIH5yJvslUmLrS29GKPuyB16o1wVn2xPbSgKPGc01n0XJbNoESnyXpymQC2eSsEkWEcTNwbD7h7bAxkv7FrexT8oKvdXvtXANkbHd4hQSvg1kIsj2I0PLLRvBtCcaCQVh3YYkTgv3FnuXVtK9ut1CMZU5PZyR4fAJThXWyhuFPxNNHiwzT/ec6OIAEnq0x8nvL/CQ9sd4bpB8hZt+HPDSnV1bJz1TGvTbGqVcVuoySGnqqGg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=l+PoeFQBtdd6tvq+PxWLLVPThcvfQiPhoI1YysoCFeo=;
- b=Gw7rISxJVtSYinqKAVxLlBEdnhKp5njHn4GWfojrflYf1GKdFfzASBkf8t7j/stEeJT7c8mVsaFDG/yIYg3hDZXaNPjuJJ2sA3vCxzmbVpnqPG/3xZPzjZREsWCYFM30rA6tiKshrKzOrKw3ChaCvpSKo1XYhO48UiEQqw3i4idSVCkTBmsCpICSab0zvgTxpbKyI9MeE5PWIKpdWImcDEmbMVWpNjWq4m2lM0YovvxYiNBsPc7my245Pmw8kDP06j6I4OKAKyma8JUUL8C6F4C1G60VUG42qq6c0zMeE3V8fxTqOcMFvcSY2sJShTA/r5JNl0Db4iGZ4VbSgbw2lQ==
-Received: from MW4P221CA0030.NAMP221.PROD.OUTLOOK.COM (2603:10b6:303:8b::35)
- by CYYPR12MB8963.namprd12.prod.outlook.com (2603:10b6:930:c3::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Sun, 2 Nov
- 2025 18:44:55 +0000
-Received: from MWH0EPF000A6734.namprd04.prod.outlook.com
- (2603:10b6:303:8b:cafe::89) by MW4P221CA0030.outlook.office365.com
- (2603:10b6:303:8b::35) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.16 via Frontend Transport; Sun,
- 2 Nov 2025 18:44:54 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- MWH0EPF000A6734.mail.protection.outlook.com (10.167.249.26) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.6 via Frontend Transport; Sun, 2 Nov 2025 18:44:54 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Sun, 2 Nov
- 2025 10:44:43 -0800
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 2 Nov
- 2025 10:44:42 -0800
-Received: from localhost.nvidia.com (10.127.8.12) by mail.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Sun, 2 Nov 2025 10:44:41 -0800
-From: <ankita@nvidia.com>
-To: <ankita@nvidia.com>, <aniketa@nvidia.com>, <vsethi@nvidia.com>,
-	<jgg@nvidia.com>, <mochs@nvidia.com>, <skolothumtho@nvidia.com>,
-	<linmiaohe@huawei.com>, <nao.horiguchi@gmail.com>,
-	<akpm@linux-foundation.org>, <david@redhat.com>,
-	<lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
-	<rppt@kernel.org>, <surenb@google.com>, <mhocko@suse.com>,
-	<tony.luck@intel.com>, <bp@alien8.de>, <rafael@kernel.org>,
-	<guohanjun@huawei.com>, <mchehab@kernel.org>, <lenb@kernel.org>,
-	<kevin.tian@intel.com>, <alex@shazbot.org>
-CC: <cjia@nvidia.com>, <kwankhede@nvidia.com>, <targupta@nvidia.com>,
-	<zhiw@nvidia.com>, <dnigam@nvidia.com>, <kjaju@nvidia.com>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-edac@vger.kernel.org>, <Jonathan.Cameron@huawei.com>,
-	<ira.weiny@intel.com>, <Smita.KoralahalliChannabasappa@amd.com>,
-	<u.kleine-koenig@baylibre.com>, <peterz@infradead.org>,
-	<linux-acpi@vger.kernel.org>, <kvm@vger.kernel.org>
-Subject: [PATCH v5 3/3] vfio/nvgrace-gpu: register device memory for poison handling
-Date: Sun, 2 Nov 2025 18:44:34 +0000
-Message-ID: <20251102184434.2406-4-ankita@nvidia.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251102184434.2406-1-ankita@nvidia.com>
-References: <20251102184434.2406-1-ankita@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BA6D2940B
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 18:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.224.16.114
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762109196; cv=none; b=t5hm03z+/aAzwkmNVB5EOPK1ltSfyLPuhN99B/O31SgKiQ7/QDNRrqc9Lt1aKXtQy9sNfMAgnV5eaSoBrHBSArZD+d4ag7s8wXZRsR1Uk7SkkuEAqM5zBqCsA9NQn+2qkV3NJgep3OWjPGvro/ynqG9V3oGA5w5HeQLzNQUoVWE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762109196; c=relaxed/simple;
+	bh=r0/zDrVbRSccubM3wNfWk9xxOqcjL68deL73qOUc0eU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qthR1BmtfQV1M9PbRdSjIO86GrFyo9QGI03Yta0IjfTcq3kegs+x8bnujp7gNlnuFN3SLbP+Lk59pFu3xBzFOy0bMjl+BV7G8ETg71JE7JbyB+0bFzP3mynn4sXcGiN/LbH6tr+K8aJE9ZJfWHo17mk7FrxXyDZWB3Gq3P12n/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=temperror (0-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=ViGITAx3; arc=none smtp.client-ip=46.224.16.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
+Received: from relay14 (localhost [127.0.0.1])
+	by relay14.grserver.gr (Proxmox) with ESMTP id 6E55043E90
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 18:46:30 +0000 (UTC)
+Received: from linux3247.grserver.gr (linux3247.grserver.gr [213.158.90.240])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by relay14.grserver.gr (Proxmox) with ESMTPS id 75BC243EA0
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 18:46:29 +0000 (UTC)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	by linux3247.grserver.gr (Postfix) with ESMTPSA id BA07A1FE1D1
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 20:46:28 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
+	s=default; t=1762109189;
+	bh=DG6IjzWim5LfmOq1HhbzVZ7NPGAMuHmOdTowhSECY34=;
+	h=Received:From:Subject:To;
+	b=ViGITAx3pKY+NJksaFlOMVRu4JxTbRbQOmp91lbGBTPA6/ySUpbaHLyHWoippoU11
+	 9ZNlF332qg78RjmCe4BoX7H+6QRRAziSRFIBQbl74hqMQYNXGY3v7PA6nHskLbXe9S
+	 lqf3KkAr8Jp7JSI2E6R60sN9URV3loIPXMbjcm3F1ZZxEDhYlf1bpfF3nShNYmhBl9
+	 IJ45qIAkQfGc/Y3h5JPgD2Steos975TVYWuxP9qcxqAylwTVBfZnaI/L8Rxi4e29Pb
+	 i7L04NLGjFul+hItgkIgHbH9Kbu9+qaK4bS4jidqVNx+SJVGhnzTtu7gD1GlQxLTVD
+	 BaxwECNhV6Q8g==
+Authentication-Results: linux3247.grserver.gr;
+        spf=pass (sender IP is 209.85.208.169) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lj1-f169.google.com
+Received-SPF: pass (linux3247.grserver.gr: connection is authenticated)
+Received: by mail-lj1-f169.google.com with SMTP id
+ 38308e7fff4ca-378d6fa5aebso38082191fa.2
+        for <linux-kernel@vger.kernel.org>;
+ Sun, 02 Nov 2025 10:46:28 -0800 (PST)
+X-Forwarded-Encrypted: i=1;
+ AJvYcCVKELIO/ZyPTwW4O8C/s20EHD5MsmU+FDPDaIWbkDqg9J3J0Fb8bcBhwqRV7wgslVrjnZbWE0DtKYE+KaE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqNjwEU203aC5Da3I3p86gv5eQIfPKEQkHzlEoe5wecLAkzwuq
+	IO2jb5TuAGEixVtGoylS6WRtUusXOIpbdyW/2xpIvK1EA6Xc46Hl8uBroSQhmFUeWNgI5GHIE0o
+	/rUuiPa2hOup/flfJ93jL4oMBffC1p8c=
+X-Google-Smtp-Source: 
+ AGHT+IGdsDLsNbeHnejPidq2OjBRvs02gr0Inko+9F7RnDGPN8GlnEDJ/D3HXG4ZMarMKwmfzKHuLr/cWAYdvwRmWAk=
+X-Received: by 2002:a2e:b050:0:b0:378:e12f:e5ed with SMTP id
+ 38308e7fff4ca-37a18dd3837mr24847101fa.39.1762109188140; Sun, 02 Nov 2025
+ 10:46:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000A6734:EE_|CYYPR12MB8963:EE_
-X-MS-Office365-Filtering-Correlation-Id: 839be808-df8a-4910-f006-08de1a3fea27
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|82310400026|1800799024|36860700013|921020|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0MTTMYc95tKexXH+nsaEtf5T1LmfXWjaOsX+9WecLhLLaa0EjucticDUA2Pj?=
- =?us-ascii?Q?CFqZXzKjmwGJuIauQkXLU1I2aql/KxfCxq9E9mAjZL1KcwbruEaCmOgmFXni?=
- =?us-ascii?Q?M3qs6tDHlVmQfzOmlY1T2mmQPzWeimZ6wL73Cgf2A3WRK8aLg1PEZzg04mME?=
- =?us-ascii?Q?dDkoM6GxcrF9WZ9fxjlGrJQxD7tmwB672KlpgmhFgnXhj92NceYL/8fYhvYB?=
- =?us-ascii?Q?xNHHIIYKrw4woTxLp73SU9lW5NE+DQuYbs+l41MTanCcNxzocdPQirINSTOB?=
- =?us-ascii?Q?1SyGajjvwOU5kPyC9IDAvowJ4pWYPo70wjMSdDJSRcLP7yQf2pez/R3lNvWS?=
- =?us-ascii?Q?+KuLjp/VFXTzchusG8YiooTvSXsx/IpguuPvAvugZ4Fr2km8+Kw5uLYwQ+Ux?=
- =?us-ascii?Q?o0L5MHfDW8y7wW84kdRf70CQVD/DaAwJauZIadyfqtoJJwlhc7KNZlCR+bVk?=
- =?us-ascii?Q?pbSIH8aFy5tXARWG/B6CWqRwfHUler6iPRwdAkIXFSrSl9a0SPnjkFeQIR1G?=
- =?us-ascii?Q?UltQG9Gx3qJtjAj+pqc0xynMQW1s7w7I5yjR1ar82UP4qYBWR7XuZbDecwip?=
- =?us-ascii?Q?VEvzBzmmoGLyzcp3QaBR9PBkzPa3DYHnF5EgEr1D6aN/9ZB/7yS2l8CEUMfj?=
- =?us-ascii?Q?IswzjSoIMqwRpNpObvTnrmsfzLeyvFNeHTqHdRR9vyfCuwU6Hq/MNtwzoxFB?=
- =?us-ascii?Q?3LzyRWlWb3EXShI739S8UCW6+92cwrfIim55QhKc6gSJ6ha48HOhfumT7sWu?=
- =?us-ascii?Q?gG90rwciCpyy02/Km+pY204uCxpnBsO+BJvTdZb4Lbzu5YgexEJDHXYCERlW?=
- =?us-ascii?Q?ckxkO7D9vqrQAw0sIjFzSFBQ6YtK4wkCKFVG2vx9obgJIa2cJ+YeqIewXMtA?=
- =?us-ascii?Q?LdugQ4isK8t3bC5NXq9om9TGAWFKizi2w9e9RpKITQopBdAg1hVzMORbS5N/?=
- =?us-ascii?Q?rn+6Uz0y38jJ4Cjgwqg3sw0s3O/xVu/5UU6fdZN88ALPeZIG4KOe/Zo77+i1?=
- =?us-ascii?Q?byhuSHA8qGvCXWWXIuHrGrrfmvpNiWf2XURFnSb6sojD9yosatWsb2iTWnD3?=
- =?us-ascii?Q?UbGpl3nehJPBNce5Rl/98Nc2bLEHmBBxj7siD+R2g1Z6rhIs9o0URCAkjORz?=
- =?us-ascii?Q?hOJ/+UWkqBa9Mmkcu1Kt44/KDxChEjyWeJP8+Jrrq8qE/Lw0+V11Lmrs6VSu?=
- =?us-ascii?Q?jWrja/Jj30GQQoR4LWKfbw0/Aqy5X/Uk7dGpAEognHS/6783CQstKbmaNPWi?=
- =?us-ascii?Q?IxZo88BGxedjNNybEO/SzJM34VDXMdpjSFYa6PiLI+d2fQf5LYkkQ1kkSOIS?=
- =?us-ascii?Q?f92OjP13Ml9oPUSkTFlJG+uAz+ezRGAnrSFLWVeJu56AQROVMT/R9GwLcX7v?=
- =?us-ascii?Q?c3VIESBRE9ojbPO9Eb8H4H8Ojv6+pJiAnz30A8qya+krzqeUoW6EVv0NtRps?=
- =?us-ascii?Q?UeHBy3H4ozWtTYh5SrrIhQCWcBH+WEDTHYhRHLyWnG5Hfnq0P2ECRIJe3AYZ?=
- =?us-ascii?Q?gxPZ1FUmHR2/4K2PbjFOkKZyLMqTKVvFZm2D96b8DwbWT3wTtkyy3KLUipUA?=
- =?us-ascii?Q?6RFHLn1G9G2PYeAyJ2GjO5c0e3b/sBDXK72+8tiG?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(1800799024)(36860700013)(921020)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2025 18:44:54.6331
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 839be808-df8a-4910-f006-08de1a3fea27
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000A6734.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8963
+References: <20251031163651.1465981-1-lkml@antheas.dev>
+ <20251031163651.1465981-5-lkml@antheas.dev>
+ <7c521e72-1b32-4172-90ec-6e793941a8ed@gmx.de>
+In-Reply-To: <7c521e72-1b32-4172-90ec-6e793941a8ed@gmx.de>
+From: Antheas Kapenekakis <lkml@antheas.dev>
+Date: Sun, 2 Nov 2025 19:46:16 +0100
+X-Gmail-Original-Message-ID: 
+ <CAGwozwFRF11dH02SRRNCyiYW7dNuoYoGWfPdEWPoim2r-KoZ0g@mail.gmail.com>
+X-Gm-Features: AWmQ_blC-EtmU16ailXtQLIdZ7cMoZmtleYvZfMH9MLu3V1CIJ8yh8dA6hYDegc
+Message-ID: 
+ <CAGwozwFRF11dH02SRRNCyiYW7dNuoYoGWfPdEWPoim2r-KoZ0g@mail.gmail.com>
+Subject: Re: [PATCH v3 4/6] platform/x86: ayaneo-ec: Add controller power and
+ modules attributes
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, Hans de Goede <hansg@kernel.org>,
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Derek John Clark <derekjohn.clark@gmail.com>,
+	=?UTF-8?Q?Joaqu=C3=ADn_Ignacio_Aramend=C3=ADa?= <samsagax@gmail.com>,
+	Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
+X-PPP-Message-ID: 
+ <176210918901.1966177.15338757356978541322@linux3247.grserver.gr>
+X-PPP-Vhost: antheas.dev
+X-Virus-Scanned: clamav-milter 1.4.3 at linux3247.grserver.gr
+X-Virus-Status: Clean
 
-From: Ankit Agrawal <ankita@nvidia.com>
+On Sun, 2 Nov 2025 at 19:30, Armin Wolf <W_Armin@gmx.de> wrote:
+>
+> Am 31.10.25 um 17:36 schrieb Antheas Kapenekakis:
+>
+> > The Ayaneo 3 features hot-swappable controller modules. The ejection
+> > and management is done through HID. However, after ejecting the modules,
+> > the controller needs to be power cycled via the EC to re-initialize.
+> >
+> > For this, the EC provides a variable that holds whether the left or
+> > right modules are connected, and a power control register to turn
+> > the controller on or off. After ejecting the modules, the controller
+> > should be turned off. Then, after both modules are reinserted,
+> > the controller may be powered on again to re-initialize.
+> >
+> > This patch introduces two new sysfs attributes:
+> >   - `controller_modules`: a read-only attribute that indicates whether
+> >     the left and right modules are connected (none, left, right, both).
+> >   - `controller_power`: a read-write attribute that allows the user
+> >     to turn the controller on or off (with '1'/'0').
+> >
+> > Therefore, after ejection is complete, userspace can power off the
+> > controller, then wait until both modules have been reinserted
+> > (`controller_modules` will return 'both') to turn on the controller.
+> >
+> > Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+> > Signed-off-by: Antheas Kapenekakis <lkml@antheas.dev>
+> > ---
+> >   .../ABI/testing/sysfs-platform-ayaneo-ec      |  19 ++++
+> >   MAINTAINERS                                   |   1 +
+> >   drivers/platform/x86/ayaneo-ec.c              | 106 ++++++++++++++++++
+> >   3 files changed, 126 insertions(+)
+> >   create mode 100644 Documentation/ABI/testing/sysfs-platform-ayaneo-ec
+> >
+> > diff --git a/Documentation/ABI/testing/sysfs-platform-ayaneo-ec b/Documentation/ABI/testing/sysfs-platform-ayaneo-ec
+> > new file mode 100644
+> > index 000000000000..3c9c3580c685
+> > --- /dev/null
+> > +++ b/Documentation/ABI/testing/sysfs-platform-ayaneo-ec
+> > @@ -0,0 +1,19 @@
+> > +What:                /sys/devices/platform/ayaneo-ec/controller_power
+> > +Date:                Oct 2025
+>
+> I think you need to update those dates.
+>
+> > +KernelVersion:       6.19
+> > +Contact:     "Antheas Kapenekakis" <lkml@antheas.dev>
+> > +Description:
+> > +             Current controller power state. Allows turning on and off
+> > +             the controller power (e.g. for power savings). Write 1 to
+> > +             turn on, 0 to turn off. File is readable and writable.
+> > +
+> > +What:                /sys/devices/platform/ayaneo-ec/controller_modules
+> > +Date:                Oct 2025
+> > +KernelVersion:       6.19
+> > +Contact:     "Antheas Kapenekakis"  <lkml@antheas.dev>
+> > +Description:
+> > +             Shows which controller modules are currently connected to
+> > +             the device. Possible values are "left", "right" and "both".
+> > +             File is read-only. The Windows software for this device
+> > +             will only set controller power to 1 if both module sides
+> > +             are connected (i.e. this file returns "both").
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index da9498d8cc89..b4d62ea9a926 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -4191,6 +4191,7 @@ AYANEO PLATFORM EC DRIVER
+> >   M:  Antheas Kapenekakis <lkml@antheas.dev>
+> >   L:  platform-driver-x86@vger.kernel.org
+> >   S:  Maintained
+> > +F:   Documentation/ABI/testing/sysfs-platform-ayaneo
+> >   F:  drivers/platform/x86/ayaneo-ec.c
+> >
+> >   AZ6007 DVB DRIVER
+> > diff --git a/drivers/platform/x86/ayaneo-ec.c b/drivers/platform/x86/ayaneo-ec.c
+> > index 697bb053a7d6..0652c044ad76 100644
+> > --- a/drivers/platform/x86/ayaneo-ec.c
+> > +++ b/drivers/platform/x86/ayaneo-ec.c
+> > @@ -8,6 +8,7 @@
+> >    */
+> >
+> >   #include <linux/acpi.h>
+> > +#include <linux/bits.h>
+> >   #include <linux/dmi.h>
+> >   #include <linux/err.h>
+> >   #include <linux/hwmon.h>
+> > @@ -16,6 +17,7 @@
+> >   #include <linux/module.h>
+> >   #include <linux/platform_device.h>
+> >   #include <linux/power_supply.h>
+> > +#include <linux/sysfs.h>
+> >   #include <acpi/battery.h>
+> >
+> >   #define AYANEO_PWM_ENABLE_REG        0x4A
+> > @@ -32,9 +34,17 @@
+> >   #define AYANEO_CHARGE_VAL_AUTO              0xaa
+> >   #define AYANEO_CHARGE_VAL_INHIBIT   0x55
+> >
+> > +#define AYANEO_POWER_REG     0x2d
+> > +#define AYANEO_POWER_OFF     0xfe
+> > +#define AYANEO_POWER_ON              0xff
+> > +#define AYANEO_MODULE_REG    0x2f
+> > +#define AYANEO_MODULE_LEFT   BIT(0)
+> > +#define AYANEO_MODULE_RIGHT  BIT(1)
+>
+> Using GENMASK() would make sense here.
 
-The nvgrace-gpu-vfio-pci module [1] maps the device memory to the user VA
-(Qemu) using remap_pfn_range() without adding the memory to the kernel.
-The device memory pages are not backed by struct page. The previous
-patch implements the mechanism to handle ECC/poison on memory page without
-struct page. This new mechanism is being used here.
+Only a single bit is being used though? GENMASK is used for a contiguous series?
 
-The module registers its memory region and the address_space with the
-kernel MM for ECC handling using the register_pfn_address_space()
-registration API exposed by the kernel.
-
-Link: https://lore.kernel.org/all/20240220115055.23546-1-ankita@nvidia.com/ [1]
-
-Signed-off-by: Ankit Agrawal <ankita@nvidia.com>
----
- drivers/vfio/pci/nvgrace-gpu/main.c | 45 ++++++++++++++++++++++++++++-
- 1 file changed, 44 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/vfio/pci/nvgrace-gpu/main.c b/drivers/vfio/pci/nvgrace-gpu/main.c
-index d95761dcdd58..80b3ed63c682 100644
---- a/drivers/vfio/pci/nvgrace-gpu/main.c
-+++ b/drivers/vfio/pci/nvgrace-gpu/main.c
-@@ -8,6 +8,10 @@
- #include <linux/delay.h>
- #include <linux/jiffies.h>
- 
-+#ifdef CONFIG_MEMORY_FAILURE
-+#include <linux/memory-failure.h>
-+#endif
-+
- /*
-  * The device memory usable to the workloads running in the VM is cached
-  * and showcased as a 64b device BAR (comprising of BAR4 and BAR5 region)
-@@ -47,6 +51,9 @@ struct mem_region {
- 		void *memaddr;
- 		void __iomem *ioaddr;
- 	};                      /* Base virtual address of the region */
-+#ifdef CONFIG_MEMORY_FAILURE
-+	struct pfn_address_space pfn_address_space;
-+#endif
- };
- 
- struct nvgrace_gpu_pci_core_device {
-@@ -60,6 +67,28 @@ struct nvgrace_gpu_pci_core_device {
- 	bool has_mig_hw_bug;
- };
- 
-+#ifdef CONFIG_MEMORY_FAILURE
-+
-+static int
-+nvgrace_gpu_vfio_pci_register_pfn_range(struct mem_region *region,
-+					struct vm_area_struct *vma)
-+{
-+	unsigned long nr_pages;
-+	int ret = 0;
-+
-+	nr_pages = region->memlength >> PAGE_SHIFT;
-+
-+	region->pfn_address_space.node.start = vma->vm_pgoff;
-+	region->pfn_address_space.node.last = vma->vm_pgoff + nr_pages - 1;
-+	region->pfn_address_space.mapping = vma->vm_file->f_mapping;
-+
-+	ret = register_pfn_address_space(&region->pfn_address_space);
-+
-+	return ret;
-+}
-+
-+#endif
-+
- static void nvgrace_gpu_init_fake_bar_emu_regs(struct vfio_device *core_vdev)
- {
- 	struct nvgrace_gpu_pci_core_device *nvdev =
-@@ -127,6 +156,13 @@ static void nvgrace_gpu_close_device(struct vfio_device *core_vdev)
- 
- 	mutex_destroy(&nvdev->remap_lock);
- 
-+#ifdef CONFIG_MEMORY_FAILURE
-+	if (nvdev->resmem.memlength)
-+		unregister_pfn_address_space(&nvdev->resmem.pfn_address_space);
-+
-+	unregister_pfn_address_space(&nvdev->usemem.pfn_address_space);
-+#endif
-+
- 	vfio_pci_core_close_device(core_vdev);
- }
- 
-@@ -202,7 +238,14 @@ static int nvgrace_gpu_mmap(struct vfio_device *core_vdev,
- 
- 	vma->vm_pgoff = start_pfn;
- 
--	return 0;
-+#ifdef CONFIG_MEMORY_FAILURE
-+	if (nvdev->resmem.memlength && index == VFIO_PCI_BAR2_REGION_INDEX)
-+		ret = nvgrace_gpu_vfio_pci_register_pfn_range(&nvdev->resmem, vma);
-+	else if (index == VFIO_PCI_BAR4_REGION_INDEX)
-+		ret = nvgrace_gpu_vfio_pci_register_pfn_range(&nvdev->usemem, vma);
-+#endif
-+
-+	return ret;
- }
- 
- static long
--- 
-2.34.1
+> With those issues being fixed:
+> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+>
+> > +
+> >   struct ayaneo_ec_quirk {
+> >       bool has_fan_control;
+> >       bool has_charge_control;
+> > +     bool has_magic_modules;
+> >   };
+> >
+> >   struct ayaneo_ec_platform_data {
+> > @@ -46,6 +56,7 @@ struct ayaneo_ec_platform_data {
+> >   static const struct ayaneo_ec_quirk quirk_ayaneo3 = {
+> >       .has_fan_control = true,
+> >       .has_charge_control = true,
+> > +     .has_magic_modules = true,
+> >   };
+> >
+> >   static const struct dmi_system_id dmi_table[] = {
+> > @@ -266,6 +277,100 @@ static int ayaneo_remove_battery(struct power_supply *battery,
+> >       return 0;
+> >   }
+> >
+> > +static ssize_t controller_power_store(struct device *dev,
+> > +                                   struct device_attribute *attr,
+> > +                                   const char *buf,
+> > +                                   size_t count)
+> > +{
+> > +     bool value;
+> > +     int ret;
+> > +
+> > +     ret = kstrtobool(buf, &value);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     ret = ec_write(AYANEO_POWER_REG, value ? AYANEO_POWER_ON : AYANEO_POWER_OFF);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     return count;
+> > +}
+> > +
+> > +static ssize_t controller_power_show(struct device *dev,
+> > +                                  struct device_attribute *attr,
+> > +                                  char *buf)
+> > +{
+> > +     int ret;
+> > +     u8 val;
+> > +
+> > +     ret = ec_read(AYANEO_POWER_REG, &val);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     return sysfs_emit(buf, "%d\n", val == AYANEO_POWER_ON);
+> > +}
+> > +
+> > +static DEVICE_ATTR_RW(controller_power);
+> > +
+> > +static ssize_t controller_modules_show(struct device *dev,
+> > +                                    struct device_attribute *attr, char *buf)
+> > +{
+> > +     char *out;
+> > +     int ret;
+> > +     u8 val;
+> > +
+> > +     ret = ec_read(AYANEO_MODULE_REG, &val);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     switch (~val & (AYANEO_MODULE_LEFT | AYANEO_MODULE_RIGHT)) {
+> > +     case AYANEO_MODULE_LEFT | AYANEO_MODULE_RIGHT:
+> > +             out = "both";
+> > +             break;
+> > +     case AYANEO_MODULE_LEFT:
+> > +             out = "left";
+> > +             break;
+> > +     case AYANEO_MODULE_RIGHT:
+> > +             out = "right";
+> > +             break;
+> > +     default:
+> > +             out = "none";
+> > +             break;
+> > +     }
+> > +
+> > +     return sysfs_emit(buf, "%s\n", out);
+> > +}
+> > +
+> > +static DEVICE_ATTR_RO(controller_modules);
+> > +
+> > +static struct attribute *aya_mm_attrs[] = {
+> > +     &dev_attr_controller_power.attr,
+> > +     &dev_attr_controller_modules.attr,
+> > +     NULL
+> > +};
+> > +
+> > +static umode_t aya_mm_is_visible(struct kobject *kobj,
+> > +                              struct attribute *attr, int n)
+> > +{
+> > +     struct device *dev = kobj_to_dev(kobj);
+> > +     struct platform_device *pdev = to_platform_device(dev);
+> > +     struct ayaneo_ec_platform_data *data = platform_get_drvdata(pdev);
+> > +
+> > +     if (data->quirks->has_magic_modules)
+> > +             return attr->mode;
+> > +     return 0;
+> > +}
+> > +
+> > +static const struct attribute_group aya_mm_attribute_group = {
+> > +     .is_visible = aya_mm_is_visible,
+> > +     .attrs = aya_mm_attrs,
+> > +};
+> > +
+> > +static const struct attribute_group *ayaneo_ec_groups[] = {
+> > +     &aya_mm_attribute_group,
+> > +     NULL
+> > +};
+> > +
+> >   static int ayaneo_ec_probe(struct platform_device *pdev)
+> >   {
+> >       const struct dmi_system_id *dmi_entry;
+> > @@ -307,6 +412,7 @@ static int ayaneo_ec_probe(struct platform_device *pdev)
+> >   static struct platform_driver ayaneo_platform_driver = {
+> >       .driver = {
+> >               .name = "ayaneo-ec",
+> > +             .dev_groups = ayaneo_ec_groups,
+> >       },
+> >       .probe = ayaneo_ec_probe,
+> >   };
+>
 
 
