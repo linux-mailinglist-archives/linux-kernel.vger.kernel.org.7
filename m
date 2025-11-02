@@ -1,108 +1,63 @@
-Return-Path: <linux-kernel+bounces-881979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06A2AC295DA
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 20:10:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C068C295E0
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 20:19:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 424083AE6CA
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 19:10:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A712188DAFA
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 19:19:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1DC823814D;
-	Sun,  2 Nov 2025 19:10:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="GOJ4qg5B"
-Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1019823C4FA;
+	Sun,  2 Nov 2025 19:19:17 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B38D1E98E3;
-	Sun,  2 Nov 2025 19:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762110645; cv=pass; b=RaEgZbki8mar6uZtUa11DRciMrfyGq3dXdvCaA1ghEzXsnChpcxj3qtt4iiDAJpO8OLn4zpnku6XwkzavSu8un1OKE7529ZPiHIqCgGQDi2VDy22WelWcXlmUsfiLhHNqjCkw/G85LG1HpBRn4G8fTqKqCWwOkxjR6GUxq+qUYo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762110645; c=relaxed/simple;
-	bh=85YAsu0JXmPoJve1uWT8OdsdgthE9YF5aeTRmOu1n84=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hKw/Jk3GP81rWm1bJ1md59LNxxmm0OhVQaNKA0shWe+Isgx+C9MSNr46qi50t8S2xVosd01gOApQGVrU8p7nor3dfoxWEpFcJwIO3BaSePX3pGrq4q29KfWRFHRWpdLkYEKL8YM69hOjVXsf7hw/nX4CZEojhdWnCl/S2xKwEJ8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=GOJ4qg5B; arc=pass smtp.client-ip=195.140.195.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from monolith.lan (unknown [IPv6:2a02:ed04:3581:1::d001])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pav)
-	by meesny.iki.fi (Postfix) with ESMTPSA id 4d04735mh8zyTf;
-	Sun,  2 Nov 2025 21:10:39 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
-	t=1762110640;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=TyDz8UTU1XS+dg3StBHEDETctWzgVmHJp0QgzB1R4XU=;
-	b=GOJ4qg5BPXFl9NvfONQWRPdfYq9NPlVya0MXnyd60bqgLmzzm/WRS++9zp0onYtmdR7nXl
-	wkdHp3djBLysesrvof7NfOSW3rCn6rOUjIVWszfgFMReWxmL7+V+2z3G5LWyXAx0nRYbzg
-	V7mZ3kvlsjRPgI/FV/dzYpB9yEa3TpA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=meesny; t=1762110640;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=TyDz8UTU1XS+dg3StBHEDETctWzgVmHJp0QgzB1R4XU=;
-	b=mfgsIAjb8Y713rwLtDERPSQG7MjSC5bSS6D/henf9LT2xvTrqSnJnToA0xoyMpLdavOUfC
-	f/xYNi2YlzCkRY4Zbuqyn2UEZbHYJSYiOWhTVs8ot+eFAe60USJMhfBfO988dFE0jH+lsb
-	TMwPiTXNqJRX/Nu7LPnHfphJdXBFrpc=
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=pav smtp.mailfrom=pav@iki.fi
-ARC-Seal: i=1; s=meesny; d=iki.fi; t=1762110640; a=rsa-sha256; cv=none;
-	b=U6PXPD9ly/NC3XaXhOxIr+BO5yQAKEJImjaKaQ+rEyvZ22s9nnbIdhJyK/DaqP8eTOKnt9
-	gHtcd1wsuPo88ff/K+sJt3eyf7YRExwMJk+oNnnO5Qd6cc8gH6acmVPO/78726b6xwXs+g
-	fnh8lFlBOs5yh78uXhZt4i4TSiMH1y0=
-From: Pauli Virtanen <pav@iki.fi>
-To: linux-bluetooth@vger.kernel.org
-Cc: Pauli Virtanen <pav@iki.fi>,
-	perex@perex.cz,
-	tiwai@suse.com,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: usb-audio: add min_mute quirk for SteelSeries Arctis
-Date: Sun,  2 Nov 2025 21:10:15 +0200
-Message-ID: <a83f2694b1f8c37e4667a3cf057ffdc408b0f70d.1762108507.git.pav@iki.fi>
-X-Mailer: git-send-email 2.51.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD3F74C14;
+	Sun,  2 Nov 2025 19:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762111156; cv=none; b=d+k0hLMd49Qifm8dtofrOzqMzLlOtSUtlKWIQGvU2g6Aj/Wt8JJsIJGGht4XbvmfiM0FOkBWkt1P9gHHBBN5oGi4U/tT1gosOQ6GcEHJKtkuEl8rUihxBbsOmlEDIFCgsqyrMzBUWZEdvh/1boqKDt6HRaqgkHIZcQ1KZ35dfO4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762111156; c=relaxed/simple;
+	bh=XLk2Ubn0X3Mq+svGI/FMiBCcXW3Q+78IWCLc0zoOmdQ=;
+	h=From:Subject:Date:Message-ID:To; b=Bcqk6ktAcOIGmGsv9fSdi1cfwgK+acW2kEEjY6UZgyifuFrQNRfVGD3vozkcPHBJcWNvvl5EkmdKDGEQnNm6VkfLZCSB1lgyJVHyWFusgaO4SerCeubLpPp8V3QImxLDvCNQjWqYEC6oY9BIftn1uoXDEASxmKURfAD7WXGJpvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2100C4CEF7;
+	Sun,  2 Nov 2025 19:19:15 +0000 (UTC)
+From: Clark Williams <williams@redhat.com>
+Subject: [ANNOUNCE] 6.6.116-rt66
+Date: Sun, 02 Nov 2025 19:18:24 -0000
+Message-ID: <176211110436.3177369.3476597062115119817@demetrius>
+To: LKML <linux-kernel@vger.kernel.org>,linux-rt-users <linux-rt-users@vger.kernel.org>,Steven Rostedt <rostedt@goodmis.org>,Thomas Gleixner <tglx@linutronix.de>,Carsten Emde <C.Emde@osadl.org>,John Kacur <jkacur@redhat.com>,Sebastian Andrzej Siewior <bigeasy@linutronix.de>,Daniel Wagner <daniel.wagner@suse.com>,Tom Zanussi <tom.zanussi@linux.intel.com>,Clark Williams <williams@redhat.com>,Pavel Machek <pavel@denx.de>,Joseph Salisbury <joseph.salisbury@oracle.com>,Luis Claudio R. Goncalves <lgoncalv@redhat.com>,Stable RT List <stable-rt@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-ID 1038:1294 SteelSeries ApS Arctis Pro Wireless
-is reported to have muted min playback volume. Apply quirk for that.
+Hello RT-list!
 
-Link: https://gitlab.freedesktop.org/pipewire/pipewire/-/issues/4229#note_3174448
-Signed-off-by: Pauli Virtanen <pav@iki.fi>
----
- sound/usb/quirks.c | 2 ++
- 1 file changed, 2 insertions(+)
+I'm pleased to announce the 6.6.116-rt66 stable release.
 
-diff --git a/sound/usb/quirks.c b/sound/usb/quirks.c
-index 71638e6dfb20..e5b857129caf 100644
---- a/sound/usb/quirks.c
-+++ b/sound/usb/quirks.c
-@@ -2267,6 +2267,8 @@ static const struct usb_audio_quirk_flags_table quirk_flags_table[] = {
- 		   QUIRK_FLAG_FIXED_RATE),
- 	DEVICE_FLG(0x0fd9, 0x0008, /* Hauppauge HVR-950Q */
- 		   QUIRK_FLAG_SHARE_MEDIA_DEVICE | QUIRK_FLAG_ALIGN_TRANSFER),
-+	DEVICE_FLG(0x1038, 0x1294, /* SteelSeries Arctis Pro Wireless */
-+		   QUIRK_FLAG_MIXER_PLAYBACK_MIN_MUTE),
- 	DEVICE_FLG(0x1101, 0x0003, /* Audioengine D1 */
- 		   QUIRK_FLAG_GET_SAMPLE_RATE),
- 	DEVICE_FLG(0x12d1, 0x3a07, /* Huawei Technologies Co., Ltd. */
--- 
-2.51.1
+You can get this release via the git tree at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
+
+  branch: v6.6-rt
+  Head SHA1: 313a4080dc9299b2cc50f5b84ef0ccacd4b3b24a
+
+Or to build 6.6.116-rt66 directly, the following patches should be applied:
+
+  https://www.kernel.org/pub/linux/kernel/v6.x/linux-6.6.tar.xz
+
+  https://www.kernel.org/pub/linux/kernel/v6.x/patch-6.6.116.xz
+
+  https://www.kernel.org/pub/linux/kernel/projects/rt/6.6/patch-6.6.116-rt66.patch.xz
+
+
+Enjoy!
+Clark
 
