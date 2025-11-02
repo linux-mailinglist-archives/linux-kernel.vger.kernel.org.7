@@ -1,111 +1,123 @@
-Return-Path: <linux-kernel+bounces-881848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44901C290FB
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 16:14:40 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B98BC29102
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 16:20:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 115EB4E258E
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 15:14:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 683AB4E3289
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 15:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41A0E22422D;
-	Sun,  2 Nov 2025 15:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GcbQ0vlb"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6243D1A3154;
+	Sun,  2 Nov 2025 15:20:07 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA481E521E
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 15:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 665F24C6E
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 15:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762096474; cv=none; b=F4ZYnWYDEedlhQ2ibHs7i7Lcm28fcc0VtCKlb4iP94X1w3Wd/wGdkyQCvLfUjdceRAgixpYHvIivmG5mAN77sM/7zSGDtHCqVw17MHEMGktL6VvM27XMMIKT0gLlkq+ALMozTS7+tw9TyrENWa/X4Ku5fEFKJ6TU/s1JQ7/c044=
+	t=1762096807; cv=none; b=R5IHETg8/qdaisB9D+R3CYyXzEB8Szsorz/X9KhK+tAbmp93GAinpKBzoOV3cTduQ+pdNF76dlfNToEThDY+Sne3Lwz+6T9lVEmRu+fozww3tillYOAgiz/m56J6QBim++9tQ/jQRZeDDeeCmaBPOf6BotaknXCGe1EmZLN2nak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762096474; c=relaxed/simple;
-	bh=DH/e7zqZAn5aW+XdqAJw4teChyFGjZ0UfNvcB4iILP0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AlHi8YUk+r15fDMPBML0xdaS1rq5ZYmM0h3S7LcVx8OaIm7ZjOjXXZNtrixtmigf51mEaDQzj5YrZrOf7N9uJ2sXniFWKe4p1wfpCTXW15GfGCAiP9CFAGEbkv4Y/tqvin+idhUbydtl/TR/MY2jeRY+cLwIxJAT9aKW1QDO2uE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GcbQ0vlb; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-29516a36affso23478495ad.3
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 07:14:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762096472; x=1762701272; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bze7Pu1Q5jiroPk+WcGwRDVKrtNLhv0ax/B2LBPCx/U=;
-        b=GcbQ0vlbmOk5sj2/ud1XAPXaPkjoYFj+mL0WeERpJxEce/V8ufQz+fdNi8x+OAZeRk
-         P4V+cETzz7qQtFBSwQpqNAyQM7U8H98aj8mg1wQgJb0fyZQlf1MMx9+UPgiLFrgoue9A
-         D9uo6vE5lqqRAA1pztsOj9YtjVdKrn/jqBTFwpbY5Bett+0JKQAg2jJ7tO7TAmobyHIW
-         uwZOjjSoXO+xGRprA8EhUrT8bWwB3KpJa8mi63xPmhuZUPJ4sEocbykOGDVOfAr/S4Cg
-         fA7jiBLzvcZ1Hui37wgIb91/pwIgwxfQDo2PD3me4dsHrAQZ1iyn2KRjdknBuQP1HlVP
-         5LzA==
+	s=arc-20240116; t=1762096807; c=relaxed/simple;
+	bh=hO7IEwGd60ovJLXkE2tRuuw1PoUh9J9QHWtp2+Ang0Q=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=tc6mEtetZkFBv76OVfD0ZS+dRuYdQoCIuM4qr6xxpfPPF0QzY1VZsZaIHWrYXTFlLmYtjM/B8tZ25wyEFzMcag3ZjmsovSyjPXGEU0CgMu/LV04e/Rr8PxjbjT+LyGzzu+TZWORZrBz3vWFc/gUXuMIA5mPdr9Udv2HqCsSnwuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-940e4cf730aso1074741439f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 07:20:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762096472; x=1762701272;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bze7Pu1Q5jiroPk+WcGwRDVKrtNLhv0ax/B2LBPCx/U=;
-        b=A13e2Fo2mZa/NNc2dsZoXloZAjID75eIvmEkPKJdcdpN8bzTd7h380YClP6NMnUmC9
-         NePbbquWBihv+zF2bxWfsOiFCXOhmqlc+iwOMQpCaop0aFwYMuyb3pXMF+DdC3LvtoZD
-         0fyJGofAGBqBv3ZcWfhkG+FMnICMGmlXWinX1fXqTCKFUyXjvHoTFzdvxEPIKSti3ZWc
-         GYFRdnBm3/dUOcwUZK3i5QKj397W6g6TwXyVgahjibRiPt54n8EuDJlXkWqGUYFZ4nTV
-         YwgSHz3hfh1GaFwKqkxYpFjp9JdJ6UNbrHIs4URS75S6T7po+HmJySUfhpViU1wTOkGe
-         CGYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUyr1T63ZIJzbwRfx39xlp0gF2yAM88kNQcsu+W8JGr90GEfpHB8Mx5QKcVogtX93B0ysC8e4bbMHUrWtQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxReYeqTvKqua/kmjk5kRC/3bvwdKPfpk7IhjZmZw7BPUzfivyp
-	OGj+I/HzgHvfAHrYCHIOMJ2njdqumSDrPkH/yL5nA8I+W2+JwvN7c0mF5nFZwA==
-X-Gm-Gg: ASbGncsONakO3iZSAVqlyzz8IvHhFnz2sNdg9TFU23t9mpo1d/+xv06c3hKROFDbOJj
-	tv9fu5rIIKVly8+bI18K837dF5HbbO+wLuDC5lrUnqAxSScVkkdYSOjovRIxF+6vsmM3uRcEyNm
-	Jl9gRgdF76bpWUvj3Iu9MK1wf3dDVmCtKQ1CCcme51ZidhJbWnM5r0Vz3gUwStwvrg02+sQ0jhM
-	ksSiY7/9TVH/uBbcltN2vdj+nsKChqErGJNOeIVaUhHqrNWRfTzfmywbID7sFswcUJLbPdgiZV4
-	okQUk1WUrKfj+puJe+GKzhHJzG95TQFKpegqEl4AILqXphpjeCxt8AY+hkAoycf78o5JJd6S1D4
-	8tfgl3KheIjDACeZ7mUOl6re9uNfKwffazmOHM4aDrsGkYXNRosq9rYqGKz+77h3k34FA8jhXf6
-	YRoIG9rYBDMz3tPjd+5IZvyAk=
-X-Google-Smtp-Source: AGHT+IG8wWnRxtd3UncXE06Ni2I7cYOWztoDXNF78/nv2l+HTNruSmDscdo1rwnVIAjgYb+/nbcYzQ==
-X-Received: by 2002:a17:903:2d1:b0:294:cc8d:c0c2 with SMTP id d9443c01a7336-2951a3a7bf7mr136268075ad.27.1762096472539;
-        Sun, 02 Nov 2025 07:14:32 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2952699c62csm89792325ad.74.2025.11.02.07.14.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Nov 2025 07:14:32 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Sun, 2 Nov 2025 07:14:31 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: "Usyskin, Alexander" <alexander.usyskin@intel.com>
-Cc: Marek =?iso-8859-1?Q?Marczykowski-G=F3recki?= <marmarek@invisiblethingslab.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Abliyev, Reuven" <reuven.abliyev@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [char-misc-next] mei: hook mei_device on class device
-Message-ID: <501acd49-b8ab-4fd4-85d3-79ca3deca034@roeck-us.net>
-References: <20250826125617.1166546-1-alexander.usyskin@intel.com>
- <8deef7c4-ac75-4db8-91b7-02cf0e39e371@roeck-us.net>
- <CY5PR11MB6366B9836B306AD2A72BDDFEEDC6A@CY5PR11MB6366.namprd11.prod.outlook.com>
+        d=1e100.net; s=20230601; t=1762096803; x=1762701603;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XRTsd+Zhc/a2fpgymWBHlQsL6ixf4JOp/SzLVhw0CDk=;
+        b=BHKwNMmZOKod3gQgiADr7MYwvga3AmDEdqF5Zfp0Xj5mI/UtCf8DYQBbyATfL8A8ZD
+         Gdvyp8IAhtc/Z57sRv0SjKu35qRmUm3u0P9nnIq0rwLw98FPQ4b8CUc5nEK1U6pAobHM
+         x4FgNiRPP8GtmgYZkKT1CViQZWxiDa6LPGE8lG1GMwE/RbCiSuL8C9pzlSdNnj26czve
+         z74H5owsTcFmWRaHK56hBTxLcqMjwHnp+qDwnigBfK2OGkH/WqLC/VfDs1bOuyK1bAMw
+         BVkn6FZRUWJTTcoKxonnn00At+ZpHyFuHwT4+IEXcD7ShwaJ8a/aKYYPZU1JW2BCMImD
+         k9+w==
+X-Forwarded-Encrypted: i=1; AJvYcCV27J51Fcp0o6v72nn9xDnYURn15akiLqCwb+uBeDDbuKlFCx6No5o+0CL8dEAq4H6EOeqWKNWSeqMnx2k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0Ge40tEwFe10fqzxwWzvgz90btiUeDjtPgryTKIAfyRNuLUo/
+	yDoeDy5DABWoSZR1Fgv3qSmGxfD2SR1NajOyxLKhMF1s5FG/P9UF8BgCAZ5tk0n4gdsx6v2gM0d
+	PjGw6v8lL8Ksz1vycbql0AqRXibH3N0OZIAmRK/a4WyYQcNE+U0gStYry3zs=
+X-Google-Smtp-Source: AGHT+IFI+fZEincqhV5iHRZlobngghn5YCNeYwxvAP9nLuM+QKweIzGaqyzCa0+Pf8Cu7ezQ8tH0NjJzxnUieYJLue1Sz60KBfR2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CY5PR11MB6366B9836B306AD2A72BDDFEEDC6A@CY5PR11MB6366.namprd11.prod.outlook.com>
+X-Received: by 2002:a05:6e02:2701:b0:433:377:abd with SMTP id
+ e9e14a558f8ab-4330d1c8c26mr136457985ab.22.1762096803558; Sun, 02 Nov 2025
+ 07:20:03 -0800 (PST)
+Date: Sun, 02 Nov 2025 07:20:03 -0800
+In-Reply-To: <74426506.3493273.1762095398029@kpc.webmail.kpnmail.nl>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <690776a3.a70a0220.eb9ff.036b.GAE@google.com>
+Subject: Re: [syzbot] [fs?] WARNING in minix_rename
+From: syzbot <syzbot+a65e824272c5f741247d@syzkaller.appspotmail.com>
+To: jkoolstra@xs4all.nl, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Nov 02, 2025 at 10:12:56AM +0000, Usyskin, Alexander wrote:
-...
-> 
-> Seems I've missed the error flow in probe (my test machines always have an ME in a good state...).
-> 
-> Below patch should fix the problem, can you confirm?
+Hello,
 
-testing.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in minix_rename
 
-Thanks!
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 6413 at fs/inode.c:417 drop_nlink+0xc5/0x110 fs/inode.c:417
+Modules linked in:
+CPU: 0 UID: 0 PID: 6413 Comm: syz.3.19 Not tainted syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
+RIP: 0010:drop_nlink+0xc5/0x110 fs/inode.c:417
+Code: 70 07 00 00 be 08 00 00 00 e8 47 dc e7 ff f0 48 ff 83 70 07 00 00 5b 41 5c 41 5e 41 5f 5d e9 d2 6f f2 08 cc e8 7c cf 82 ff 90 <0f> 0b 90 eb 81 44 89 f1 80 e1 07 80 c1 03 38 c1 0f 8c 5b ff ff ff
+RSP: 0018:ffffc90004097a30 EFLAGS: 00010293
+RAX: ffffffff823cd494 RBX: ffff88805b449520 RCX: ffff88802e99bc80
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff8f5a5977 R09: 1ffffffff1eb4b2e
+R10: dffffc0000000000 R11: fffffbfff1eb4b2f R12: 1ffff1100b6892ad
+R13: ffff88805b449520 R14: ffff88805b449568 R15: dffffc0000000000
+FS:  00007faba32196c0(0000) GS:ffff8881263c8000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f2c64da1440 CR3: 0000000060b56000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ inode_dec_link_count include/linux/fs.h:2655 [inline]
+ minix_rename+0x44e/0x7d0 fs/minix/namei.c:229
+ vfs_rename+0xb34/0xe80 fs/namei.c:5216
+ do_renameat2+0x6a2/0xa50 fs/namei.c:5364
+ __do_sys_rename fs/namei.c:5411 [inline]
+ __se_sys_rename fs/namei.c:5409 [inline]
+ __x64_sys_rename+0x82/0x90 fs/namei.c:5409
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7faba238e929
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007faba3219038 EFLAGS: 00000246 ORIG_RAX: 0000000000000052
+RAX: ffffffffffffffda RBX: 00007faba25b6080 RCX: 00007faba238e929
+RDX: 0000000000000000 RSI: 00002000000001c0 RDI: 0000200000001980
+RBP: 00007faba2410b39 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007faba25b6080 R15: 00007ffc2921a008
+ </TASK>
 
-Guenter
+
+Tested on:
+
+commit:         691d401c Merge tag 'spi-fix-v6.18-rc3' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=122ab258580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=824b00f06adfda3c
+dashboard link: https://syzkaller.appspot.com/bug?extid=a65e824272c5f741247d
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=137ad704580000
+
 
