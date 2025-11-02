@@ -1,129 +1,152 @@
-Return-Path: <linux-kernel+bounces-881797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-881798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7AE3C28F0E
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 13:15:27 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E92A8C28F14
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 13:15:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F1523B2C4F
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 12:15:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B45214E659E
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 12:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 453D027EFFA;
-	Sun,  2 Nov 2025 12:14:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65022D8768;
+	Sun,  2 Nov 2025 12:15:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ew1P6w8W"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TY9v5a2w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE75A2C327C
-	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 12:14:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3442528FD;
+	Sun,  2 Nov 2025 12:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762085693; cv=none; b=jErVRd7ZJ4QB5BASpPfV/YtyKEUgFzf2ZTU5Jb7obR6JhFIEoA8yPj20XEf+xaGNqetA0qndYWtunybYc6ygYMt09tDCH0CqCTUS8OhyD3G2i2p+om52HSL51+O+IFHHqRnRnpuiD4yfkIpecf8aFNcufYB3fEgxnCf9AzuQoJE=
+	t=1762085731; cv=none; b=sEDdghVauYNo0Y6lEElzLVaMSQJvqvrikmqzElscq6rReEj1zjkQHx/6R5087NakKhspBISBEJy88P7EOL4oXTiKCFIvK5SOYjtRBpNTZ/X+FPQqMfpZdo+JIQWn4HEUDJk5HrSk8bXEoI18qNHskhiqCM4+iEuOmIGPpA0ijKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762085693; c=relaxed/simple;
-	bh=LMNeTSPwxETdBy0HzCt2lQzCrYmDYnoVXAlFu6pBI0I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ayAxqQ7SmcLh0h8a0KuiaTHaRiOV15+lNM62QCA2b2BlqsshmNPktH1DTPuCEkgnelmLbc1vgnAOgjmLXplivxB0p/vnk6YW3iE9YvGgtddBuPUWfNOsDPnAxmHa3b+Z1s27Ah8w7r1X94JkfU/sgx2DeJlsPMHmv8GIk5COlWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ew1P6w8W; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-475dc6029b6so32538135e9.0
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 04:14:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762085690; x=1762690490; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GTHylYesgJBra3YugE8dFYJP8cm0/3QzxwX2tCmUu3A=;
-        b=Ew1P6w8Wlypkp1BDo883I9Z3CaApYqjQpMNSAVAqsiG59AOtFCa+JGFdgdScdR1UHV
-         xn7hWp36cVtEgbpok062AJwkKJRJOkEbezdk4/eTVPZh+68DM5eed98FwW4D5cWUl1Mg
-         DWS4WwddQglE+FU6GC2T7LWq7whMQRvqjkzEqipBsWjspG8z8v1jE6XLUGijiAfuI86g
-         6uUSAz+XTIUOHh/ZBnlxWPCrkfVj3QqYQE6uoaQ5kUm8SfQ/SgjQIL+OeD5tkcEb+TkP
-         6eQ/w+TWCZqUZFOvSk0Xf3n21SVfKYrpr+ZtzlLWS6JxH5Fj5JeBsksMsiqYb3Sd0C1N
-         sXdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762085690; x=1762690490;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GTHylYesgJBra3YugE8dFYJP8cm0/3QzxwX2tCmUu3A=;
-        b=OT8mvoz+bU6hih9BMqnG9wvJgBPSS+/2kPFFNA63PqN5ZsbG/MVZ7NFAD/IcQN2LdU
-         dD3Q8dwIfseYEyrdlEWvdOypDSLCBhtoCuCWAvLubEaIwlVMEW58ZautN9XcYxQbjZwR
-         W3CNzKdeUMFCfS8Ham4wRYSEbdzsSYJVpX8Q0VkIwjy7w35vot9KowufoBrxXc4ymDB+
-         oCZgtKo3jz4jw+kaPQ5FVK5MGMdifK3yno5e1O/VxzcYnYXvoVdmeDh0S6WHlUMs7msm
-         AempXhsIa+9ibw093WEXmU0pf69LDvWR+xLM6mY6Prc2GoytRG1FqYtrqEK5zHfZudNe
-         F5Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCUExxcWKjVyV5AMGABZvBMASyKuYPaLST6NtJ3YUuF9c/JLXPDZ+L+SQS0/I3WZ/kyrlkKSV/mlf5jWoHs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0KqHU5BPCSAYZUtFfzJumJ/dQT74MpVBYvaSeACw2Hv+Dz4JM
-	zxBkbatGNqSNxYeeyRz1sNxEHJJisxS01Aud6/oSE/OUbUZHJuBIHVs5
-X-Gm-Gg: ASbGncvJs0H3M7pb9RZEwBsK34Iz8zh3wUc45VUYKrvsOlnzAzLsSbpMyjIs1C1rbVW
-	YsVkvTKe7FHWdD8ehb6KdtlWLp3c5pVM4q3/Chtb7shwutBQRv/clG7GCDPGIDNB8r+S2s4PYQr
-	qTjYPynrEcMISKXtb/RI4r8FFe12IHKUb7lDIbgCiF2Mxqo2OttI/cEPvSHh3C5qogQ1ZS16EcT
-	DUVw5T3sOJxShpZyTeNuPHDyD05/xbASDc0KtkO9aBsJLeiVI44up6DgJihpwDf654CbFAJnyUz
-	kUJoYJ8qu8+CnB9PKBDFNZk8J0vjis+XaTCohpDXqbTrByOO4efkULYwlnNvo5eC4CX0HBkYO0t
-	z6Jk3v13np2CTcTewM4y3PvIqrEfDNZPTjBJ4g8JuNoZ7M9+9S3Z3OQz+ef68Nh40dIK+FfEQzS
-	zocMHDXiSEWCuQRo2LxqhTkkgS8IAWKx4S
-X-Google-Smtp-Source: AGHT+IH1p6Ca+IRbV9+qKgOA2mVZT+HdAJKOwMyPbywz/Oxjd+UMOv1XaOrufqQeUV4NaEMHxeB90w==
-X-Received: by 2002:a05:600c:3e07:b0:471:a96:d1b6 with SMTP id 5b1f17b1804b1-4773b1f9db7mr62398135e9.7.1762085690093;
-        Sun, 02 Nov 2025 04:14:50 -0800 (PST)
-Received: from [10.221.203.8] ([165.85.126.46])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c102dfd2sm14345862f8f.0.2025.11.02.04.14.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 02 Nov 2025 04:14:49 -0800 (PST)
-Message-ID: <4d9a2c4c-373a-4ab5-af8d-474212e21762@gmail.com>
-Date: Sun, 2 Nov 2025 14:14:47 +0200
+	s=arc-20240116; t=1762085731; c=relaxed/simple;
+	bh=3k97OTELKzAVCJ9qui84cL+tLyGh4k0aajyBkqcVMDc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=aLuCixuwCf9ss41JLdVrpyYTf+Ek208QGiHG8yukGurO405ogmk3QFQu//eQBHjsm8YuSLX5hMCu3OVh+1BNfJYN0FEz6du3iY7F95cerbvNNcRjCVMURMx4lJ9mB3XKx8SMeAV39VkA6+NPvMZ4j6BAe3ffYWLJ44H4myvYl3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TY9v5a2w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93125C4CEF7;
+	Sun,  2 Nov 2025 12:15:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762085730;
+	bh=3k97OTELKzAVCJ9qui84cL+tLyGh4k0aajyBkqcVMDc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TY9v5a2wf7T+BQlpIFHnasE5REPJXcYtG/9R4/cj4nEnmE1FzcC74GQiclyw3DbyJ
+	 Es7NvRYumCu8SXJ2FrmjQX80yPCbb3pRwe84uMvOnADUlcaDQicHwrx6MXY+O5jx2H
+	 kBPw/TA3f4meltpe7L4VaDElAgWbkDEuagyWXU6Uob8ib0kE8nXUGQo5+MGC7gD2eM
+	 MxlB8+9dVgWXN4I9hU/KgKBIcPxEsrjPO/q327hjuygsM2ZY5+Puj/0BygksCMb09m
+	 AjeN6TIzyyEuI0QPM6vzfjVGfGYU3MdySzV6Rdr+6lL0bgiz81N0WEXMCd9oLdE3hc
+	 VTDw8wHW5oHDA==
+Date: Sun, 2 Nov 2025 12:15:24 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Remi Buisson <Remi.Buisson@tdk.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, David Lechner
+ <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy
+ Shevchenko <andy@kernel.org>, "linux-iio@vger.kernel.org"
+ <linux-iio@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "kernel-janitors@vger.kernel.org"
+ <kernel-janitors@vger.kernel.org>
+Subject: Re: [PATCH next] iio: imu: inv_icm45600: Add a missing return
+ statement in probe()
+Message-ID: <20251102121524.7f9729ea@jic23-huawei>
+In-Reply-To: <FR2PPF4571F02BCBB9894C421F5472EDE968CF8A@FR2PPF4571F02BC.DEUP281.PROD.OUTLOOK.COM>
+References: <aPi5vEp75jH0imQc@stanley.mountain>
+	<20251027142331.29725dfe@jic23-huawei>
+	<FR2PPF4571F02BCBB9894C421F5472EDE968CF8A@FR2PPF4571F02BC.DEUP281.PROD.OUTLOOK.COM>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.51; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 6/6] net/mlx5e: Convert to new hwtstamp_get/set
- interface
-To: Jakub Kicinski <kuba@kernel.org>, Tariq Toukan <tariqt@nvidia.com>
-Cc: Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Saeed Mahameed <saeedm@nvidia.com>,
- Leon Romanovsky <leon@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
- Mark Bloch <mbloch@nvidia.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>,
- Richard Cochran <richardcochran@gmail.com>, linux-rdma@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, bpf@vger.kernel.org,
- Gal Pressman <gal@nvidia.com>, Carolina Jubran <cjubran@nvidia.com>,
- Cosmin Ratiu <cratiu@nvidia.com>
-References: <1761819910-1011051-1-git-send-email-tariqt@nvidia.com>
- <1761819910-1011051-7-git-send-email-tariqt@nvidia.com>
- <20251031164208.7917f929@kernel.org>
-Content-Language: en-US
-From: Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <20251031164208.7917f929@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, 31 Oct 2025 09:56:45 +0000
+Remi Buisson <Remi.Buisson@tdk.com> wrote:
 
+> >
+> >
+> >From: Jonathan Cameron <jic23@kernel.org>=20
+> >Sent: Monday, October 27, 2025 3:24 PM
+> >To: Dan Carpenter <dan.carpenter@linaro.org>
+> >Cc: Remi Buisson <Remi.Buisson@tdk.com>; David Lechner <dlechner@baylibr=
+e.com>; Nuno S=C3=A1 <nuno.sa@analog.com>; Andy Shevchenko <andy@kernel.org=
+>; linux-iio@vger.kernel.org; linux-kernel@vger.kernel.org; kernel-janitors=
+@vger.kernel.org
+> >Subject: Re: [PATCH next] iio: imu: inv_icm45600: Add a missing return s=
+tatement in probe()
+> >
+> >On Wed, 22 Oct 2025 14:=E2=80=8A02:=E2=80=8A20 +0300 Dan Carpenter <dan.=
+=E2=80=8Acarpenter@=E2=80=8Alinaro.=E2=80=8Aorg> wrote: > The intention her=
+e was clearly to return -ENODEV but the return statement > was missing. It =
+would result in an off by one read in i3c_chip_info[]
+> >On Wed, 22 Oct 2025 14:02:20 +0300
+> >Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> > =20
+> >> The intention here was clearly to return -ENODEV but the return statem=
+ent
+> >> was missing.  It would result in an off by one read in i3c_chip_info[]=
+ on
+> >> the next line.  Add the return statement.
+> >>=20
+> >> Fixes: 1bef24e9007e ("iio: imu: inv_icm45600: add I3C driver for inv_i=
+cm45600 driver")
+> >> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> >> ---
+> >>  drivers/iio/imu/inv_icm45600/inv_icm45600_i3c.c | 3 ++-
+> >>  1 file changed, 2 insertions(+), 1 deletion(-)
+> >>=20
+> >> diff --git a/drivers/iio/imu/inv_icm45600/inv_icm45600_i3c.c b/drivers=
+/iio/imu/inv_icm45600/inv_icm45600_i3c.c
+> >> index b5df06b97d44..9247eae9b3e2 100644
+> >> --- a/drivers/iio/imu/inv_icm45600/inv_icm45600_i3c.c
+> >> +++ b/drivers/iio/imu/inv_icm45600/inv_icm45600_i3c.c
+> >> @@ -57,7 +57,8 @@ static int inv_icm45600_i3c_probe(struct i3c_device =
+*i3cdev)
+> >>  	}
+> >> =20
+> >>  	if (chip =3D=3D nb_chip)
+> >> -		dev_err_probe(&i3cdev->dev, -ENODEV, "Failed to match part id %d\n"=
+, whoami);
+> >> +		return dev_err_probe(&i3cdev->dev, -ENODEV,
+> >> +				     "Failed to match part id %d\n", whoami);
+> >> =20
+> >>  	return inv_icm45600_core_probe(regmap, i3c_chip_info[chip], false, N=
+ULL);
+> >>  } =20
+> >
+> >I'm going to apply this but the resulting code is still wrong (even if n=
+ot
+> >a true bug after this fix).
+> >
+> >A hard ID match like this breaks use of dt fallback compatibles.
+> >What this should do is 'give it a go' on matching, but if there no match=
+ it should
+> >carry on as if the match was to whatever the compatible that was supplie=
+d was.
+> >When that happens a dev_info() is appropriate but not error out as this =
+does.
+> >
+> >Remi, if possible could you look at adding such a patch on top of this?
+> >
+> >Thanks,
+> >
+> >Jonathan
+> > =20
+> Thanks Jonathan, the fix is correct.
+> The problem is that I3C don't specify any device in the device tree,
+> and these sensors cannot be identified by their I3C IDs neither.
+> So, the driver cannot fallbacks to any compatible device, other than pick=
+ing one, more or less, at random.
+> Do you see any way to work around this limitation?
 
-On 01/11/2025 1:42, Jakub Kicinski wrote:
-> On Thu, 30 Oct 2025 12:25:10 +0200 Tariq Toukan wrote:
->> -		err = mlx5e_hwstamp_config_no_ptp_rx(priv,
->> -						     config.rx_filter != HWTSTAMP_FILTER_NONE);
->> +		err = mlx5e_hwstamp_config_no_ptp_rx(
->> +			priv, config->rx_filter != HWTSTAMP_FILTER_NONE);
-> 
-> FWIW I think this formatting is even worse than going over 80 :(
-> 
+Ah.  I'd missed that. Fair enough, sounds like nothing we can do
+if the driver doesn't know the ID.
 
-I'm trying to minimize checkpatch warnings while preserving code 
-readability.
-
-IIRC, clang-format produces such open ended code lines, so I thought 
-this would be more acceptable.
-
-In any case, I don't mind going with the over 80 option next time.
-
+Jonathan
 
