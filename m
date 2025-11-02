@@ -1,157 +1,122 @@
-Return-Path: <linux-kernel+bounces-882052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9BC0C29820
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 23:03:45 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E2B1C29808
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 23:01:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B82004EBFC7
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 22:02:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E6E714E5C5E
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 22:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBBC22561B6;
-	Sun,  2 Nov 2025 22:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2EFE21B191;
+	Sun,  2 Nov 2025 22:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vMWbf1++"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="A212CoPs"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F6C238D52;
-	Sun,  2 Nov 2025 22:02:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D15B1E9B3D
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 22:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762120950; cv=none; b=cW4s82nK1FJ0yDjyLt/o+rC7bXLUHXo4Q1tV+0/5RvaF5AAFMN++RlzLrrMTbx7p4tBIfdPHK+TaWak7vBvZ+kbt5RDxJ398uJDZ2q/oFlufD/uI+XV6xOSpV4kYcqBMVVukDMULslQMYu3d4HjCUSuJu5TxzN2DKl81yavsTP8=
+	t=1762120912; cv=none; b=cRT+PUP2pNCKK3jZqsJUNYHEvsQOd9okUgh2IarZbUdELralS7VB+EgsLV1D71DwY61XmErNaIoeTxSwsmAwhWlIE1DVShNBEO148Ns9cjF8N8BFwLKefp4Q+vi8gMozYUGdk1wOL62+NBDgsbEyXcu6jNDINYNota8gq5ANnVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762120950; c=relaxed/simple;
-	bh=XO1jxK3wpk3B6QjmDfGFENG9FHZAlijBivkjQ2ozt0Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OHJXnFX/zeMb3HPBsjZqxJ+5QgW1djlDHaDGDRs6Zmaf8MJHnBJx/qA0zcYzdS6V5c+GrayeXaaw2ULof+JSfJC0al5p8oPvfcbLALvD+vwGIQ2baExb+eVxFJWo6snq9cqwAfD7tQxESrEAHBXzKPzkXtZoN6ZkQnBjm+n/q2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vMWbf1++; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 337B0C4CEF7;
-	Sun,  2 Nov 2025 22:02:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762120949;
-	bh=XO1jxK3wpk3B6QjmDfGFENG9FHZAlijBivkjQ2ozt0Y=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=vMWbf1++15n+uIQxaFdYe35bpBijFwfYQ7ZdgiTPJYpb4z9tGNaqagmNaxLB04aa9
-	 rZTS+6Jitw5ELb+50P+Z+20Ay5QcnNBt1jaNQEaE+ZbZtQ7YEUmSw9S3cgqPB+C7DJ
-	 o0ULcC0eYZQOM+O4lF6ud7Wr8Yh6PLaygSUH49dEG/rp4JmMS3tuBKq5P/i1+q8N2o
-	 irJhbcSYIfMlsZ1/y1324wNRNIEsNZWvJkQw+in92zAEnpzJpSnaVTF+brPXRPwGZW
-	 mvIQtS0Dcv2U5ubRThJ9qtHtgcYQZvQjgD7f1OOWYwapk0MfhfI+mHQRCJQu/2ro85
-	 Rhm/zynmr2itw==
-From: Vincent Mailhol <mailhol@kernel.org>
-Date: Sun, 02 Nov 2025 23:01:24 +0100
-Subject: [PATCH RFC 3/3] can: calc_bittiming: add
- can_calc_sample_point_pwm()
+	s=arc-20240116; t=1762120912; c=relaxed/simple;
+	bh=fwI4Uz1dEpekCxgjP9+8d/MXbZ+zSRXywbMk9z2OhVI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=I8ige9wcO0FJKAKE2CXbz6PVioQMPhPMt4ZkxWYAv+H9LXt95ODh2ALrBik6r0ytgrn6uCJP60Bf2GHdHxXK5niHkereyfVOQmfXwEzBZE/08Lfrqc62j3al8zuRFPKziN0XMkFNSY9EKZuzkcS4FmscFsAV5nxJ3duOhSw8pcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=A212CoPs; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id EF5432C0992;
+	Mon,  3 Nov 2025 11:01:44 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1762120904;
+	bh=fwI4Uz1dEpekCxgjP9+8d/MXbZ+zSRXywbMk9z2OhVI=;
+	h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+	b=A212CoPs+JJOFqBUImbq+24mACwzoVRw+40KFOuQ+ALRWJsWgn8R3Hg/15WSmQ5dC
+	 sph3C+Ok1AJjSgUcSn2jbNgWFap/4zR38SYiQcUvnU1y+WxKMRDiuFgNezNEgMMfmh
+	 tAR+H36yRcj8w/qgZcUSRFMiEeV78v5NzsBxv6FUEYbCt1PYx5tB0WaTp5yfJ2g2PG
+	 rGIRXTt7hSBqZAHGlZ+PcOnfUJVO8jzo2517Se7I3KUv0PHo9yhathWor5Lpg7h11o
+	 euPGtzcMIql57v8CxFn3VeF9oXDy97yIyvIboz3rzaSpGAPsvRvxlQVXbkvhdzfnX8
+	 pdLdBdRw5TZeg==
+Received: from svr-chch-ex2.atlnz.lc (Not Verified[2001:df5:b000:bc8::76]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B6907d4c80001>; Mon, 03 Nov 2025 11:01:44 +1300
+Received: from svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) by
+ svr-chch-ex2.atlnz.lc (2001:df5:b000:bc8::76) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.39; Mon, 3 Nov 2025 11:01:44 +1300
+Received: from svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567]) by
+ svr-chch-ex2.atlnz.lc ([fe80::a9eb:c9b7:8b52:9567%15]) with mapi id
+ 15.02.1748.039; Mon, 3 Nov 2025 11:01:44 +1300
+From: Chris Packham <Chris.Packham@alliedtelesis.co.nz>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>, "jpoimboe@kernel.org"
+	<jpoimboe@kernel.org>, "peterz@infradead.org" <peterz@infradead.org>
+CC: "OCP-ONIE@OCP-All.groups.io" <OCP-ONIE@OCP-All.groups.io>
+Subject: Re: vmlinux.o: warning: objtool: elf_update: invalid section
+ alignment
+Thread-Topic: vmlinux.o: warning: objtool: elf_update: invalid section
+ alignment
+Thread-Index: AQHcTDQMd9kEIf9faEqFI8ZJY4aLc7TfFjcA
+Date: Sun, 2 Nov 2025 22:01:44 +0000
+Message-ID: <8e5d1a33-ff5f-41ec-86a7-b93d44aed287@alliedtelesis.co.nz>
+References: <9024a693-d300-4428-ae11-b5a852113e25@alliedtelesis.co.nz>
+In-Reply-To: <9024a693-d300-4428-ae11-b5a852113e25@alliedtelesis.co.nz>
+Accept-Language: en-NZ, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6EC717864901A142A2C380EA8BCC671C@atlnz.lc>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251102-pwm_sample_point-v1-3-3bbea180f59e@kernel.org>
-References: <20251102-pwm_sample_point-v1-0-3bbea180f59e@kernel.org>
-In-Reply-To: <20251102-pwm_sample_point-v1-0-3bbea180f59e@kernel.org>
-To: Marc Kleine-Budde <mkl@pengutronix.de>, 
- Oliver Hartkopp <socketcan@hartkopp.net>
-Cc: linux-can@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Vincent Mailhol <mailhol@kernel.org>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3006; i=mailhol@kernel.org;
- h=from:subject:message-id; bh=XO1jxK3wpk3B6QjmDfGFENG9FHZAlijBivkjQ2ozt0Y=;
- b=owGbwMvMwCV2McXO4Xp97WbG02pJDJnsV17fnCorNXd26c/dEr4HeBNzxYrXrxa1nsUS0ZE15
- ZJfN093RykLgxgXg6yYIsuyck5uhY5C77BDfy1h5rAygQxh4OIUgImE5TMynNafntm+ZJ7DNk3J
- SUqzyg5I/exM9N4w+8+5hu1lEa/snzD8s376IvZW5LL++A/Vp6R/aPI4ePZevCp64W1otNLLSnY
- NdgA=
-X-Developer-Key: i=mailhol@kernel.org; a=openpgp;
- fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=HOlgFZtv c=1 sm=1 tr=0 ts=6907d4c8 a=Xf/6aR1Nyvzi7BryhOrcLQ==:117 a=xqWC_Br6kY4A:10 a=drD7vYo3kbIA:10 a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=xNf9USuDAAAA:8 a=nFlqbC9Y3rml_YqO7y8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-SEG-SpamProfiler-Score: 0
 
-The optimum sample point value depends on the bit symmetry. The more
-asymmetric the bit is, the more the sample point would be located
-towards the end of the bit. On the contrary, if the transceiver only
-has a small asymmetry, the optimal sample point would be slightly
-after the centre of the bit.
-
-For NRZ encoding (used by Classical CAN, CAN FD and CAN XL with TMS
-off), the optimum sample points values are above 70% as implemented in
-can_calc_sample_point_nrz().
-
-When TMS is on, CAN XL optimum sample points are near to 50% or
-60% [1]. Add can_calc_sample_point_pwm() which returns a sample point
-which is suitable for PWM encoding. We crafted the formula to make it
-return the same values as below table (source: table 3 of [1]).
-
-       Bit rate (Mbits/s)	Sample point
-       -------------------------------------
-         2.0			 51.3%
-         5.0			 53.1%
-         8.0			 55.0%
-        10.0			 56.3%
-        12.3			 53.8%
-        13.3			 58.3%
-        14.5			 54.5%
-        16.0			 60.0%
-        17.7			 55.6%
-        20.0			 62.5%
-
-The calculation simply consists of setting a slightly too high sample
-point and then letting can_update_sample_point() correct the values.
-
-For now, it is just a formula up our sleeves which matches the
-empirical observations of [1]. Once CiA recommendations become
-available, can_calc_sample_point_pwm() should be updated accordingly.
-
-[1] CAN XL system design: Clock tolerances and edge deviations edge
-    deviations
-Link: https://www.can-cia.org/fileadmin/cia/documents/publications/cnlm/december_2024/cnlm_24-4_p18_can_xl_system_design_clock_tolerances_and_edge_deviations_dr_arthur_mutter_bosch.pdf
-
-Signed-off-by: Vincent Mailhol <mailhol@kernel.org>
----
- drivers/net/can/dev/calc_bittiming.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
-
-diff --git a/drivers/net/can/dev/calc_bittiming.c b/drivers/net/can/dev/calc_bittiming.c
-index 9b2d0e458518..be6726dcd7e7 100644
---- a/drivers/net/can/dev/calc_bittiming.c
-+++ b/drivers/net/can/dev/calc_bittiming.c
-@@ -22,6 +22,21 @@ static int can_calc_sample_point_nrz(const struct can_bittiming *bt)
- 	return 875;
- }
- 
-+/* Sample points for Pulse-Width Modulation encoding. */
-+static int can_calc_sample_point_pwm(const struct can_bittiming *bt)
-+{
-+	if (bt->bitrate > 15 * MEGA /* BPS */)
-+		return 625;
-+
-+	if (bt->bitrate > 9 * MEGA /* BPS */)
-+		return 600;
-+
-+	if (bt->bitrate > 4 * MEGA /* BPS */)
-+		return 560;
-+
-+	return 520;
-+}
-+
- /* Bit-timing calculation derived from:
-  *
-  * Code based on LinCAN sources and H8S2638 project
-@@ -92,6 +107,10 @@ int can_calc_bittiming(const struct net_device *dev, struct can_bittiming *bt,
- 
- 	if (bt->sample_point)
- 		sample_point = bt->sample_point;
-+
-+	else if (btc == priv->xl.data_bittiming_const &&
-+		 (priv->ctrlmode & CAN_CTRLMODE_XL_TMS))
-+		sample_point = can_calc_sample_point_pwm(bt);
- 	else
- 		sample_point = can_calc_sample_point_nrz(bt);
- 
-
--- 
-2.51.0
-
+DQpPbiAwMy8xMS8yMDI1IDA5OjA1LCBDaHJpcyBQYWNraGFtIHdyb3RlOg0KPiBIaSwNCj4NCj4g
+SSdtIGludmVzdGlnYXRpbmcgYnJpbmdpbmcgT05JRVsxXSB1cCB0byBkYXRlIHdpdGggcmVzcGVj
+dCB0byBrZXJuZWwgDQo+IGFuZCB0b29sY2hhaW4gdmVyc2lvbnMuDQo+DQo+IEkndmUgdXBkYXRl
+ZCB0aGUgdG9vbGNoYWluIGFuZCB0aGluZ3Mgc2VlbSBoYXBweSB3aXRoIGxpbnV4LTUuNC44Ni4g
+DQo+IEJ1dCB3aGVuIEkgdHJ5IGxpbnV4LTYuMTIuNTUgSSBoaXQgdGhlIGZvbGxvd2luZyBlcnJv
+ciBmcm9tIG9ianRvb2wNCj4NCj4gdm1saW51eC5vOiB3YXJuaW5nOiBvYmp0b29sOiBlbGZfdXBk
+YXRlOiBpbnZhbGlkIHNlY3Rpb24gYWxpZ25tZW50DQo+IG1ha2VbM106ICoqKiBbc2NyaXB0cy9N
+YWtlZmlsZS52bWxpbnV4X286NjU6IHZtbGludXgub10gRXJyb3IgMjU1DQo+IG1ha2VbM106ICoq
+KiBEZWxldGluZyBmaWxlICd2bWxpbnV4Lm8nDQo+IG1ha2VbMl06ICoqKiANCj4gWy9ob21lL2No
+cmlzcC9zcmMvb25pZS9idWlsZC9hbGxpZWR0ZWxlc2lzX3g5ODBfMzJjcS1yMC9rZXJuZWwvbGlu
+dXgtNi4xMi41NS9NYWtlZmlsZToxMTYxOiANCj4gdm1saW51eF9vXSBFcnJvciAyDQo+IG1ha2Vb
+MV06ICoqKiBbTWFrZWZpbGU6MjI0OiBfX3N1Yi1tYWtlXSBFcnJvciAyDQo+IG1ha2VbMV06IExl
+YXZpbmcgZGlyZWN0b3J5IA0KPiAnL2hvbWUvY2hyaXNwL3NyYy9vbmllL2J1aWxkL2FsbGllZHRl
+bGVzaXNfeDk4MF8zMmNxLXIwL2tlcm5lbC9saW51eC02LjEyLjU1Jw0KPiBtYWtlOiAqKiogW21h
+a2Uva2VybmVsLm1ha2U6MTIwOiANCj4gL2hvbWUvY2hyaXNwL3NyYy9vbmllL2J1aWxkL2FsbGll
+ZHRlbGVzaXNfeDk4MF8zMmNxLXIwL3N0YW1wL2tlcm5lbC1idWlsZF0gDQo+IEVycm9yIDINCj4N
+Cj4gSSBhbHNvIHRyaWVkIDYuNi4xMTUgYW5kIGdldCB0aGUgc2FtZSBlcnJvcg0KPg0KPiBEb2Vz
+IHRoaXMgcmluZyBhbnkgYmVsbHM/DQo+DQo+IEknbSBidWlsZGluZyBpbnNpZGUgYSBkb2NrZXIg
+Y29udGFpbmVyIGJhc2VkIG9uIGRlYmlhbiAxMS4NCj4NCj4gUFJFVFRZX05BTUU9IkRlYmlhbiBH
+TlUvTGludXggMTEgKGJ1bGxzZXllKSINCj4gTkFNRT0iRGViaWFuIEdOVS9MaW51eCINCj4gVkVS
+U0lPTl9JRD0iMTEiDQo+IFZFUlNJT049IjExIChidWxsc2V5ZSkiDQo+IFZFUlNJT05fQ09ERU5B
+TUU9YnVsbHNleWUNCj4gSUQ9ZGViaWFuDQo+IEhPTUVfVVJMPSJodHRwczovL3d3dy5kZWJpYW4u
+b3JnLyINCj4gU1VQUE9SVF9VUkw9Imh0dHBzOi8vd3d3LmRlYmlhbi5vcmcvc3VwcG9ydCINCj4g
+QlVHX1JFUE9SVF9VUkw9Imh0dHBzOi8vYnVncy5kZWJpYW4ub3JnLyINCj4NCj4gSSdtIGFibGUg
+dG8gcmVwcm9kdWNlIHRoZSBpc3N1ZSBidWlsZGluZyB0aGUga2VybmVsIHVzaW5nIHRoZSBPTklF
+IA0KPiBidWlsdCBjcm9zcy1jb21waWxlciAodXNpbmcgY3Jvc3N0b29sLW5nIHVuZGVyIHRoZSBo
+b29kKSBidXQgbm90IHdpdGggDQo+IHRoZSBuYXRpdmUgb25lLiBIb3dldmVyIEkgZG9uJ3Qgc2Vl
+IGFuIGlzc3VlIGluIGFub3RoZXIgY3Jvc3N0b29sLW5nIA0KPiBlbnZpcm9ubWVudCBidWlsZGlu
+ZyB0aGUgc2FtZSB0b29scyAoYmFzZWQgb24gZGViaWFuIDEyIHNvIGl0IG1pZ2h0IA0KPiBub3Qg
+YmUgYSBmYWlyIGNvbXBhcmlzb24pLg0KDQpCaXQgb2YgYW4gdXBkYXRlLiBJIGNyZWF0ZWQgYSBm
+cmVzaCBkZWJpYW4gMTEgYmFzZWQgY29udGFpbmVyIGFuZCBhbSANCmFibGUgdG8gcmVwcm9kdWNl
+IHRoZSBwcm9ibGVtIHdpdGggdGhlIG9uaWUgdG9vbGNoYWluIGNvbmZpZywgdGhlIA0KZGVmYXVs
+dCBjcm9zc3Rvb2wtbmcgeDg2XzY0LXVua25vd24tbGludXgtdWNsaWJjIHNhbXBsZSBhbmQgdGhl
+IGRlZmF1bHQgDQpjcm9zc3Rvb2wtbmcgeDg2XzY0LXVua25vd24tbGludXgtZ251IHNhbXBsZS4=
 
