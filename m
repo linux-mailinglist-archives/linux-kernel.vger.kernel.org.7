@@ -1,164 +1,180 @@
-Return-Path: <linux-kernel+bounces-882066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98983C29898
-	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 23:38:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8FC7C2989E
+	for <lists+linux-kernel@lfdr.de>; Sun, 02 Nov 2025 23:42:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A44B1883F2B
-	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 22:37:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B04C13AEA06
+	for <lists+linux-kernel@lfdr.de>; Sun,  2 Nov 2025 22:42:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A49F1E9B3D;
-	Sun,  2 Nov 2025 22:36:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E13E235045;
+	Sun,  2 Nov 2025 22:42:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LaUNwA+e"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BnDb2/S7"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C41F19F12D;
-	Sun,  2 Nov 2025 22:36:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420D51A9F84
+	for <linux-kernel@vger.kernel.org>; Sun,  2 Nov 2025 22:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762122995; cv=none; b=Bm71ZFSv0Y7bHNjWsIih7axmd84NpoNxoqALnudkNfsyWAky4j6kjHp3TUzMId+6cZdg8dQf51gDwb+eCm1AagYWvJZWtAhrtAUlREuvxspudltTlbVtfj+hWIJx1/qnmFveug6ec/D1Z9QOaq0m1Qx5ClI7LfY9zDg+GRlzOeI=
+	t=1762123344; cv=none; b=o7slIbUPf4HWPeO9tafpCYZ7z8byzDa+b5QqoJAG4k72k+rZ0hJTmHsJg0aQPqB9GXCOempnbbjt7eTdXUVxOe957tdsy2K2sHfPXUBqih229/NNzdKo6mocrbM5F1hCVmYtPJeU/EvAnptqEFiwz+KYjwXpp6iPsAzEcB/lAHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762122995; c=relaxed/simple;
-	bh=iq1XjN1uIbCOZ40g5V9sS6uD1iDH7HWDpQxEZoG8uD8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SNod/lo9tJiXDTaNVcMa0PuoL5bbExvMcHkYjX4hgxAhZTKJ9ZORba58W2hTJ4suzxJLfgxlaX1v2tyqySegz/ssVUVlcoWmGIx+c6vmlYN/ELepYnAL3I8Uu3qFgOZgAVA0koJvmso1F6WuZ6RDHJGuMkRTrGcvvITvTkrbsno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LaUNwA+e; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762122993; x=1793658993;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=iq1XjN1uIbCOZ40g5V9sS6uD1iDH7HWDpQxEZoG8uD8=;
-  b=LaUNwA+ew8GikvLw/oyFA9stsjtJIItDKE2Pnn26aFX4ik1nV/VUmPxq
-   zFamNL3FaVY0PiA82eFlOEU8wwWUXw03RFz0jXWQHwLK/kE974k3OAvHW
-   0e8ifAv8zIqnPOt0VXitt7IqWHE4Awja1LKr1nfMevXiO2llqcmAelCmd
-   P958P2EEQRF74Y52GRGw/vSZrhUr4V8Zq3Z42nnduHioPKU7aGbIf6+ld
-   57sGBQi2UG1m/bb6NTdT5w1G3zcxfdLbYSPYkEqtcYUjWC4l/lDmE/poB
-   a/xxXSMtFESvgDze57xC1jxnLkX+sGAoarqCdYdrsPNNFni8rs1v9zuFl
-   g==;
-X-CSE-ConnectionGUID: eM6BkLIdSHaXe9w6wgyThw==
-X-CSE-MsgGUID: QgNPIP3OTDyh3P8Z9Wh8pw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="75552523"
-X-IronPort-AV: E=Sophos;i="6.19,274,1754982000"; 
-   d="scan'208";a="75552523"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2025 14:36:32 -0800
-X-CSE-ConnectionGUID: /dCbar9yStSnUxO7aVokZw==
-X-CSE-MsgGUID: Tl1sQCR2Rai6Szb1MJT+qw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,274,1754982000"; 
-   d="scan'208";a="191873979"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa005.jf.intel.com with ESMTP; 02 Nov 2025 14:36:30 -0800
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vFggW-000Pci-0n;
-	Sun, 02 Nov 2025 22:36:28 +0000
-Date: Mon, 3 Nov 2025 06:35:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jisheng Zhang <jszhang@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] gpio: fxl6408: Add optional reset gpio control
-Message-ID: <202511030655.OCHXbHnE-lkp@intel.com>
-References: <20251102100515.9506-2-jszhang@kernel.org>
+	s=arc-20240116; t=1762123344; c=relaxed/simple;
+	bh=M4DLyPtKAG4hUy09HpTn7RAH0C/FAWWfO+9/yTnCGo0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dYI/i82eqWJMSRJWzc48LPolkRnUJyqluN3djbbd0SHNWOcOOLJtC7pERLMN6wPcMsCeX4QZG+1xDGhalCGh1R5MnWIjdn0h2Sj6GsDZ1YZOUUqUP3+o6JN43mWdYmdnPAFQ9bEsL4iX9pUqScnJ5UoJjx+4u3S4x73LQV+JJFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BnDb2/S7; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-640c3940649so528366a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 14:42:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762123336; x=1762728136; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wo2OFYV/wEp3t0RjDyHu79SQW6Mhe5lX0Ph2SYlbthY=;
+        b=BnDb2/S72ph7mh5k5H6Yh2XkW2Noodkaf2s/9GlnMvSv9tSTEGNMEyQ5Pmy2iSgvo9
+         MQ+l5MxEvEG71ITjEhSaWAXKaJbHlStQ0clATs7+N2m+m3+srsXYhEoZ9Btu7PU0Q2/8
+         qpm5kxcD2WYtK6vgRAPQVK4JN+/ROUu8B7j1odPFQ7IAE/J5oqp9KuK0lL8w2h9HPpcL
+         Pnfu0yW1br8dsXJu3itJthua7x9c7ygO2+uoq+9TYmrq/ijEDfIJtUjI7kvcT1gFZnXz
+         4+nH7QYeSzOH0vwoQ45f+Uq5UTlOpxEOB07tEJGEPN5IzgtOn+Tnmf6C0fy7fYfec1nt
+         Dx/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762123336; x=1762728136;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wo2OFYV/wEp3t0RjDyHu79SQW6Mhe5lX0Ph2SYlbthY=;
+        b=B9fXmuBoo2x1sHNGZ4xAWwoN1CA3RMEGyUNlTRgCq74spdgRW709HBFOPHMSInMKr4
+         TtEjgCDiy7BeIPNfZyHxokfAcfRI2ZwxdXi63WmGMfZ9UIG9TMo2ZAYJKntOOmN50csw
+         W/WIEZzdMS3W5LR8p3dAJlFxsL84uOCq+SXCIIbHo+LDk872vuBbypYy9CzrhQUTp27C
+         Vm4DJGLLB2jC3zwff+fjsyaRvV1wfEefztIK0sXa1PNNtpPtg6voTlKGYYmuZ/niC2EN
+         +UhHv25or2cew8W171Kl/p+8jhy5aRy06A7lEV9PIbN0fLGUI352MGw3+Do6pBR59vGN
+         q6hA==
+X-Forwarded-Encrypted: i=1; AJvYcCWHdu5i1pFsivCZQWAPAKk4fo9jSFJpSR5yqaeH1R9dE6R7/3BOY1GcJx/x/VJ5tZXZtW1agYl9TH74hPc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzlv0sEdKKhVTO/LQnNjNe3XD9RdxQ0tp10XFlWMsZSUaYfoQDP
+	E1UaEdMNVFaPqHvWTCglALXzGVCfzhAPo7aXDpEXFUCq1lCNO5sLB3yhNcDMetHWuxVUdDcMqvD
+	9fEJ01UatCDXR4rc0/uvQtkOIuaqPQLY=
+X-Gm-Gg: ASbGncv3dWpWMLvqftNP4vtt5UnrokTpuv3gvIuaFmhfDWFfHvkFvchFrQuhjxltPUm
+	A5T3C+3P9sMsaFEQhV5W2mxtaazoBrf465QD3xrBP6h2hvx5ppOjxjKLYKyWBIVvRGXwqwnsCOa
+	zCDBE4NIF34PRFUEsiF5vtiXEqtpTnt4NIbdNqWMzJqTSJLnw5rNnarr+jKaC2JgC1tfFihs5Ug
+	9fTK6E7m7e/t8E0pDKswa2g0qr/4uKMeNVGH2qukYDhsSfcMsN1CoJS4TDAPQhrxLGFkRd/lw+B
+	3KR4e0tlFJ8f4KGOcfyqU6/Ptw==
+X-Google-Smtp-Source: AGHT+IGW2RmYQH4CiK5DjHuoP9I+feAku0BV6oGxWMBtYtdC7DiABnzxoNVKGDIG+p+H/ZDBw7z59EZUNr+SDNhbEy4=
+X-Received: by 2002:a17:907:7e9b:b0:b70:b98a:79 with SMTP id
+ a640c23a62f3a-b70b98a0359mr172851466b.35.1762123336347; Sun, 02 Nov 2025
+ 14:42:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251102100515.9506-2-jszhang@kernel.org>
+References: <20251029134952.658450-1-mjguzik@gmail.com> <20251031201753.GD2441659@ZenIV>
+ <20251101060556.GA1235503@ZenIV> <CAGudoHHno74hGjwu7rryrS4x2q2W8=SwMwT9Lohjr4mBbAg+LA@mail.gmail.com>
+ <20251102061443.GE2441659@ZenIV>
+In-Reply-To: <20251102061443.GE2441659@ZenIV>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Sun, 2 Nov 2025 23:42:03 +0100
+X-Gm-Features: AWmQ_blxU-3h6xM1s5XbBXMknB2-7Awn4NFuGm_9MvHWgFSeOlSGF0oFXfLbeKk
+Message-ID: <CAGudoHFDAPEYoC8RAPuPVkcsHsgpdJtQh91=8wRgMAozJyYf2w@mail.gmail.com>
+Subject: Re: [PATCH] fs: touch up predicts in putname()
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jisheng,
+On Sun, Nov 2, 2025 at 7:14=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> wr=
+ote:
+>
+> On Sat, Nov 01, 2025 at 09:19:21AM +0100, Mateusz Guzik wrote:
+> > On Sat, Nov 1, 2025 at 7:05=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk=
+> wrote:
+> > >
+> > > On Fri, Oct 31, 2025 at 08:17:53PM +0000, Al Viro wrote:
+> > >
+> > > > 0) get rid of audit_reusename() and aname->uptr (I have that series=
+,
+> > > > massaging it for posting at the moment).  Basically, don't have
+> > > > getname et.al. called in retry loops - there are few places doing
+> > > > that, and they are not hard to fix.
+> > >
+> > > See #work.filename-uptr; I'll post individual patches tomorrow mornin=
+g,
+> > > hopefully along with getname_alien()/take_filename() followups, inclu=
+ding
+> > > the removal of atomic (still not settled on the calling conventions f=
+or
+> > > getname_alien()).
+> > >
+> >
+> > Ok, in that case I think it will be most expedient if my patch gets
+> > dropped and you just fold the updated predicts into your patchset
+> > somewhere. I don't need any credit.
+>
+> See #work.filename-refcnt.  I'm not entirely happy about the API, if you
+> see a saner way to do it, I'd really like to hear it.  Stuff in the serie=
+s:
+>
+>         * get rid of getname in retry loops.  Only 9 places like that lef=
+t,
+> massaged out of existence one by one.  (##1..9)
+>         * drop audit_reusename() and filename->uptr (#10)
+>         * get rid of mixing LOOKUP_EMPTY with the rest of the flags -
+> very few places do that at this point and they are not hard to take
+> care of (##11..15)
+>         * take LOOKUP_EMPTY out of LOOKUP_... space entirely - make it
+> GETNAME_EMPTY and have it passed only to getname_flags() (#16)
+>         * add GETNAME_NOAUDIT for "don't call audit_getname() there" (#17=
+).
+> Helpers: getname_alien()/getname_uflags_alien() being wrappers for
+> that; io-uring switched to those for filename import (in ->prep()).
+> take_filename(): take a reference to struct filename, leaving NULL
+> behind, feed it to audit_getname() and return to caller.   Used by
+> io-uring ->issue() instances that feed an imported filename to
+> do_{mkdir,mknod...}() - the stuff that does actual work, done in the
+> thread that will do that work.
+>         * make filename->refcnt non-atomic; now it can be done (#19,
+> on top of merge from vfs-common/vfs-6.19.misc to bring your commit
+> in).
 
-kernel test robot noticed the following build errors:
+I think the take_filename business invites misuse in the long run and
+the API has no way of pointing out it happened.
 
-[auto build test ERROR on brgl/gpio/for-next]
-[also build test ERROR on linus/master v6.18-rc4 next-20251031]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Even ignoring the fact that there is a refcount and people may be
+inclined to refname(name) + take_filename(name), the following already
+breaks:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jisheng-Zhang/gpio-fxl6408-Add-optional-reset-gpio-control/20251102-182544
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git gpio/for-next
-patch link:    https://lore.kernel.org/r/20251102100515.9506-2-jszhang%40kernel.org
-patch subject: [PATCH 1/2] gpio: fxl6408: Add optional reset gpio control
-config: arm-randconfig-001-20251103 (https://download.01.org/0day-ci/archive/20251103/202511030655.OCHXbHnE-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project d2625a438020ad35330cda29c3def102c1687b1b)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251103/202511030655.OCHXbHnE-lkp@intel.com/reproduce)
+foo() {
+    name =3D getname(...);
+    if (!IS_ERR_OR_NULL(name))
+        bar(name);
+    putname(name);
+}
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511030655.OCHXbHnE-lkp@intel.com/
+bar(struct filename *name)
+{
+    baz(take_filename(&name));
+}
 
-All errors (new ones prefixed by >>):
+While the code as proposed in the branch does not do it, it is a
+matter of time before something which can be distilled to the above
+shows up.
 
->> drivers/gpio/gpio-fxl6408.c:118:15: error: call to undeclared function 'devm_gpiod_get_optional'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     118 |         reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
-         |                      ^
-   drivers/gpio/gpio-fxl6408.c:118:15: note: did you mean 'devm_regulator_get_optional'?
-   include/linux/regulator/consumer.h:163:32: note: 'devm_regulator_get_optional' declared here
-     163 | struct regulator *__must_check devm_regulator_get_optional(struct device *dev,
-         |                                ^
->> drivers/gpio/gpio-fxl6408.c:118:53: error: use of undeclared identifier 'GPIOD_OUT_LOW'
-     118 |         reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
-         |                                                            ^~~~~~~~~~~~~
-   2 errors generated.
+I think the core idea of having io_uring bugger off from freeing the
+filename thing has legs. I *suspect* the way forward is to implement
+audit_delegate_free() or similar which would assert refcount =3D=3D 1 and
+would denote with a flag that audit takes ownership of freeing. Then
+the regular putname() yells the flag when compiled with
+CONFIG_DEBUG_VFS, catching regular misuse. audit itself, when done
+with the buffer, would clear the flag and calls putname().
 
-
-vim +/devm_gpiod_get_optional +118 drivers/gpio/gpio-fxl6408.c
-
-   103	
-   104	static int fxl6408_probe(struct i2c_client *client)
-   105	{
-   106		struct device *dev = &client->dev;
-   107		struct gpio_desc *reset_gpio;
-   108		int ret;
-   109		struct gpio_regmap_config gpio_config = {
-   110			.parent = dev,
-   111			.ngpio = FXL6408_NGPIO,
-   112			.reg_dat_base = GPIO_REGMAP_ADDR(FXL6408_REG_INPUT_STATUS),
-   113			.reg_set_base = GPIO_REGMAP_ADDR(FXL6408_REG_OUTPUT),
-   114			.reg_dir_out_base = GPIO_REGMAP_ADDR(FXL6408_REG_IO_DIR),
-   115			.ngpio_per_reg = FXL6408_NGPIO,
-   116		};
-   117	
- > 118		reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
-   119		if (IS_ERR(reset_gpio))
-   120			return dev_err_probe(dev, PTR_ERR(reset_gpio), "Failed to get reset gpio\n");
-   121	
-   122		gpio_config.regmap = devm_regmap_init_i2c(client, &regmap);
-   123		if (IS_ERR(gpio_config.regmap))
-   124			return dev_err_probe(dev, PTR_ERR(gpio_config.regmap),
-   125					     "failed to allocate register map\n");
-   126	
-   127		ret = fxl6408_identify(dev, gpio_config.regmap);
-   128		if (ret)
-   129			return ret;
-   130	
-   131		/* Disable High-Z of outputs, so that our OUTPUT updates actually take effect. */
-   132		ret = regmap_write(gpio_config.regmap, FXL6408_REG_OUTPUT_HIGH_Z, 0);
-   133		if (ret)
-   134			return dev_err_probe(dev, ret, "failed to write 'output high Z' register\n");
-   135	
-   136		return PTR_ERR_OR_ZERO(devm_gpio_regmap_register(dev, &gpio_config));
-   137	}
-   138	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+This is from top of my head, I would need to dig into it to validate
+the above is feasible.
 
