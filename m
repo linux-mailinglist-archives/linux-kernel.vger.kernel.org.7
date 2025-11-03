@@ -1,162 +1,287 @@
-Return-Path: <linux-kernel+bounces-882301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 448F4C2A1DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 06:58:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B4B1C2A1F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 06:59:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 263A74ED075
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 05:57:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D10403ADC72
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 05:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703FE28D8F1;
-	Mon,  3 Nov 2025 05:56:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E1328D8DB;
+	Mon,  3 Nov 2025 05:57:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="s/88iQW+"
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NmUV17Rm"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2D828C871;
-	Mon,  3 Nov 2025 05:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD60285CAE
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 05:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762149415; cv=none; b=q86Q2oldahZxPkwT2M6bRqFrLDnOG1TUtC6qFzXNgWxl8mg5AvID+u79nI4y2IuMMIC5r6mGvr9pZIhMMkXt1cJVk/6ot916qmxvKA3TLqJIejSiJhtahh+X8topf82ml8D4zC7c7Vg4VqZLR+NWf3/y+FIkszsZn06w9StU+8s=
+	t=1762149444; cv=none; b=EMKoZ0ox2lYfA7DEZ8Ik/I8TLLHA8Hnk0OZpCzzkJ6PLU4vI+WLAJ8pQjVjY9ZuHdnb/a55+CfShXUP4jAEWQtDe4vVfTuEfEpNLTSainO+DTfCGiulFM71H4ifT/IcqT4uBhc+9oKIw66PVwfpiYRnFQvH9GiFHDW7HMX+mF0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762149415; c=relaxed/simple;
-	bh=UMPaZUWzV3Sm6RTTcZV+IfJzOzax8Ccpxq+TavsawBQ=;
-	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=VB6Ux3zdPivD9dZoMd6KuPl/JEBgyPnPC3j3Sh1aDvvNCKJ+g/eueUFyD292e68NNtK5LcuYPEl+SJ9jyY0se3IKVavnyrK7YSHeLSrASybHk/RyXNdtES0rxDk/+Wpe7wwxy9GcOCWPDOiuwkeTghcsELBG3w9HMEWxfjQfnlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=s/88iQW+; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1762149409; h=Message-ID:Subject:Date:From:To;
-	bh=Wf5UamBtc1C2iB7hfBSedWXwlFsIRhKJbTDCZQ1GFNQ=;
-	b=s/88iQW+/Ol68Cbcq5mxlTeIt+MudLEXEbUbZp1PfzBL1nk92NpRGz5c1prUOpM2fY62NiPnr1+OWk+nffUKimxL6JaqSb8j5xsP2BZGdsqtrGax+5Mkg9rUq/hDWw2v+5bKqOLPjFZY4Q1iX9rY8+JoDP8a7Fqoq+Wyh4IX0Ic=
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0WrXoEDB_1762149408 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 03 Nov 2025 13:56:48 +0800
-Message-ID: <1762149401.6256416-7-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH net v7] virtio-net: fix received length check in big packets
-Date: Mon, 3 Nov 2025 13:56:41 +0800
-From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To: Bui Quang Minh <minhquangbui99@gmail.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>,
- Jason Wang <jasowang@redhat.com>,
- =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>,
- Gavin Li <gavinl@nvidia.com>,
- Gavi Teitz <gavi@nvidia.com>,
- Parav Pandit <parav@nvidia.com>,
- virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org,
- Bui Quang Minh <minhquangbui99@gmail.com>,
- stable@vger.kernel.org,
- netdev@vger.kernel.org
-References: <20251030144438.7582-1-minhquangbui99@gmail.com>
-In-Reply-To: <20251030144438.7582-1-minhquangbui99@gmail.com>
+	s=arc-20240116; t=1762149444; c=relaxed/simple;
+	bh=MQV8jD27ZG+yZve5+9joqOYFG9IDBUKao+l7F/BRtLY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QuOvIaW5xRWxzSdNmvDkK8CZARCN2W1QKx34ZvhX6UwScuuogE224TMpfnnjLIdOjvJryVcEDMkobHuhxvbOup1nVTyDPjStzi4WjFce8hTjN2B+Fwg9UPmxoI2Rr2ckK3yCzKybTNy9YCePmLyiDiWPvIyTGAFmtGMVZcBlxYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NmUV17Rm; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-29470bc80ceso43981215ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 21:57:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762149442; x=1762754242; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cGP4x/41RYIg15mQcXh3AwtklkR1Te1lPQnjCYwhFmM=;
+        b=NmUV17RmAW8NlDQC0Tg18rVoqYMw9cahXBNnb86pYKrEwR0h+H0vPnrA6oksyMjqQs
+         syMs6KPkP4+yRRTp6PWh8Nw8ivtN32Dgl42YczDGXQQGpCoCS1Z2wGfXDddNjvvhdfUg
+         AiEWlYs5Ynym3gHo3v33TTEPyYr1Et+MEGhQ/QBdqDwrq37pWnM8+GYCJlSfUDBdSzEd
+         b2duJ8p1b1+183vnpwHun2eyt2fSARidnNWc8zvWAn3Pp8obMAlXDNveB67sVPC6J76z
+         wqEg35+ySauigJvx69/UbuGRqhL9zrvuHyZs9Q2Qs1bmRmJ0pXY0drgg5XmAHRgbQxo4
+         LQ9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762149442; x=1762754242;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cGP4x/41RYIg15mQcXh3AwtklkR1Te1lPQnjCYwhFmM=;
+        b=lSuytse7m65F7vGbGumRoVYLjP2JwUly/QLdb1OJe5WplNh8veL0bbpiNMS8hP5de+
+         fP8qjBoPCIvJ5vXxZsFM8p0BjrJKbb+uxCWc91fBiWsq0e5tquOh6LrrOtX0/u6wWTFb
+         mEeza3En/lrTEu2bCBobErprDuCCc7VedR/GQcFw2c2aXxjsJ0WGNIznf+2KfuYh/jJH
+         zfkG/b8fRTZRJyPdR/4bsKNozpqQfxtriwUtt0M/z1eND3MXtVuTuWCwmkr0nPgHWaXt
+         6WH0YN0GbA05gOJFohczP/WMow4iGs140x42W6+0ry+55DbTD4dG9LwfkKVVRHZvEVOB
+         QgLw==
+X-Forwarded-Encrypted: i=1; AJvYcCWmlURQsI0BJ1w/f87HukhWfvtXwfWCAa5AQpxwpGhU1Vca/tXCuElZHMq7QtUzY+9Xx5F/bNE3pa7wvoo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxADT96p8gTytZI0IiV33DFwAMBMv2Wcdv30NU4DnCJH6zsmLHP
+	YCsTo+fzYwnWIhtn0cFVfwDYoDUgZhmIfJ/aatahehh0Usray3rLlKhC
+X-Gm-Gg: ASbGncsLoF0Lc8CkS7OrWYLky4r6KUUysoAak2ZGEHkvwaDZVwnJ3sfXDSdWvN7Txfz
+	2/srY3yjS9xdnO0NzcOc/6nmhwqOF06lmJIgCrMSNxOzDd0wxK9Yx0kDH45Q42JvX1IfEBvMEF3
+	577XdgszPtVsP20X+STRBu0nnuETohOE8mp0j4SgZwZ3AGGVJAFFt2BAUAkzZ98SFg+7IyiR+Cs
+	7PpqIjPHcldPlhb6Nk1qg85QKu1q9pcCpscvMN+aE0TRdesgGek1ZVvBaTtNhBFhMxdsHfb5nBD
+	KmxxI8q93tS9znOVTAquygLmjLkjqRf+4BZjfQr7MfjW6SmWapKSC3Af2UUzeGbYq4FG7QA6Dy1
+	UA/qwv5Qs5u0tgseeley5whmDP4ZJ7dSXswBkIW8lN5bjXUnBM3uTSWgoMT7/H46yO5Yz9Rn/GZ
+	TDNGN4Y/0zpRxWoDsgPiPV70GORwCalWwOBekulxLEmiwo5zXOkY72B5t4QxWQVATvcSc56JQi5
+	rT96qJkhvdimw8=
+X-Google-Smtp-Source: AGHT+IH1lBFIhyJby/nizHMzTdE7QLj8MvERYVwOXJceUEvmMI5EfyCVP73jaq2qIMw9B4K/+LD0mQ==
+X-Received: by 2002:a17:902:d4ce:b0:295:6b98:6d65 with SMTP id d9443c01a7336-2956b986f84mr71412435ad.22.1762149441675;
+        Sun, 02 Nov 2025 21:57:21 -0800 (PST)
+Received: from opensource206.. ([106.222.234.180])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29577d90896sm51830755ad.34.2025.11.02.21.57.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Nov 2025 21:57:21 -0800 (PST)
+From: Pavan Bobba <opensource206@gmail.com>
+To: skhan@linuxfoundation.org,
+	kieran.bingham@ideasonboard.com,
+	mchehab@kernel.org
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pavan Bobba <opensource206@gmail.com>
+Subject: [PATCH] media: vimc: debayer: add support for multiple RGB formats
+Date: Mon,  3 Nov 2025 11:27:16 +0530
+Message-ID: <20251103055716.29537-1-opensource206@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 30 Oct 2025 21:44:38 +0700, Bui Quang Minh <minhquangbui99@gmail.com> wrote:
-> Since commit 4959aebba8c0 ("virtio-net: use mtu size as buffer length
-> for big packets"), when guest gso is off, the allocated size for big
-> packets is not MAX_SKB_FRAGS * PAGE_SIZE anymore but depends on
-> negotiated MTU. The number of allocated frags for big packets is stored
-> in vi->big_packets_num_skbfrags.
->
-> Because the host announced buffer length can be malicious (e.g. the host
-> vhost_net driver's get_rx_bufs is modified to announce incorrect
-> length), we need a check in virtio_net receive path. Currently, the
-> check is not adapted to the new change which can lead to NULL page
-> pointer dereference in the below while loop when receiving length that
-> is larger than the allocated one.
->
-> This commit fixes the received length check corresponding to the new
-> change.
->
-> Fixes: 4959aebba8c0 ("virtio-net: use mtu size as buffer length for big packets")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Bui Quang Minh <minhquangbui99@gmail.com>
+Enhance the vimc debayer subdevice to support multiple RGB output
+formats and improve its format negotiation behavior.
 
-Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+This patch introduces the following changes:
+ - Adds ARGB8888_1X32 to the list of supported source pad mbus codes.
+ - Allows userspace to select any valid RGB code on the source pad
+   through set_fmt().
+ - Propagates width, height, and field settings from sink to source
+   while preserving the selected RGB code.
+ - Sets appropriate default colorimetry for RGB output (sRGB, full-range).
+ - Updates vimc_debayer_process_rgb_frame() to handle RGB24, BGR24,
+   and ARGB32 pixel formats with proper channel ordering and alpha fill.
+ - Adds debug and warning logs for invalid or unsupported formats.
 
-> ---
-> Changes in v7:
-> - Fix typos
-> - Link to v6: https://lore.kernel.org/netdev/20251028143116.4532-1-minhquangbui99@gmail.com/
-> Changes in v6:
-> - Fix the length check
-> - Link to v5: https://lore.kernel.org/netdev/20251024150649.22906-1-minhquangbui99@gmail.com/
-> Changes in v5:
-> - Move the length check to receive_big
-> - Link to v4: https://lore.kernel.org/netdev/20251022160623.51191-1-minhquangbui99@gmail.com/
-> Changes in v4:
-> - Remove unrelated changes, add more comments
-> - Link to v3: https://lore.kernel.org/netdev/20251021154534.53045-1-minhquangbui99@gmail.com/
-> Changes in v3:
-> - Convert BUG_ON to WARN_ON_ONCE
-> - Link to v2: https://lore.kernel.org/netdev/20250708144206.95091-1-minhquangbui99@gmail.com/
-> Changes in v2:
-> - Remove incorrect give_pages call
-> - Link to v1: https://lore.kernel.org/netdev/20250706141150.25344-1-minhquangbui99@gmail.com/
-> ---
->  drivers/net/virtio_net.c | 25 ++++++++++++-------------
->  1 file changed, 12 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-> index a757cbcab87f..421b9aa190a0 100644
-> --- a/drivers/net/virtio_net.c
-> +++ b/drivers/net/virtio_net.c
-> @@ -910,17 +910,6 @@ static struct sk_buff *page_to_skb(struct virtnet_info *vi,
->  		goto ok;
->  	}
->
-> -	/*
-> -	 * Verify that we can indeed put this data into a skb.
-> -	 * This is here to handle cases when the device erroneously
-> -	 * tries to receive more than is possible. This is usually
-> -	 * the case of a broken device.
-> -	 */
-> -	if (unlikely(len > MAX_SKB_FRAGS * PAGE_SIZE)) {
-> -		net_dbg_ratelimited("%s: too much data\n", skb->dev->name);
-> -		dev_kfree_skb(skb);
-> -		return NULL;
-> -	}
->  	BUG_ON(offset >= PAGE_SIZE);
->  	while (len) {
->  		unsigned int frag_size = min((unsigned)PAGE_SIZE - offset, len);
-> @@ -2107,9 +2096,19 @@ static struct sk_buff *receive_big(struct net_device *dev,
->  				   struct virtnet_rq_stats *stats)
->  {
->  	struct page *page = buf;
-> -	struct sk_buff *skb =
-> -		page_to_skb(vi, rq, page, 0, len, PAGE_SIZE, 0);
-> +	struct sk_buff *skb;
-> +
-> +	/* Make sure that len does not exceed the size allocated in
-> +	 * add_recvbuf_big.
-> +	 */
-> +	if (unlikely(len > (vi->big_packets_num_skbfrags + 1) * PAGE_SIZE)) {
-> +		pr_debug("%s: rx error: len %u exceeds allocated size %lu\n",
-> +			 dev->name, len,
-> +			 (vi->big_packets_num_skbfrags + 1) * PAGE_SIZE);
-> +		goto err;
-> +	}
->
-> +	skb = page_to_skb(vi, rq, page, 0, len, PAGE_SIZE, 0);
->  	u64_stats_add(&stats->bytes, len - vi->hdr_len);
->  	if (unlikely(!skb))
->  		goto err;
-> --
-> 2.43.0
->
+These changes make the virtual debayer pipeline more flexible and
+realistic for testing RGB/ARGB camera capture paths.
+
+Signed-off-by: Pavan Bobba <opensource206@gmail.com>
+---
+ .../media/test-drivers/vimc/vimc-debayer.c    | 113 ++++++++++++++----
+ 1 file changed, 90 insertions(+), 23 deletions(-)
+
+diff --git a/drivers/media/test-drivers/vimc/vimc-debayer.c b/drivers/media/test-drivers/vimc/vimc-debayer.c
+index bbb7c7a86df0..0fa1cb8d3be1 100644
+--- a/drivers/media/test-drivers/vimc/vimc-debayer.c
++++ b/drivers/media/test-drivers/vimc/vimc-debayer.c
+@@ -15,9 +15,6 @@
+ 
+ #include "vimc-common.h"
+ 
+-/* TODO: Add support for more output formats, we only support RGB888 for now. */
+-#define VIMC_DEBAYER_SOURCE_MBUS_FMT	MEDIA_BUS_FMT_RGB888_1X24
+-
+ enum vimc_debayer_rgb_colors {
+ 	VIMC_DEBAYER_RED = 0,
+ 	VIMC_DEBAYER_GREEN = 1,
+@@ -73,6 +70,7 @@ static const u32 vimc_debayer_src_mbus_codes[] = {
+ 	MEDIA_BUS_FMT_RGB888_1X7X4_SPWG,
+ 	MEDIA_BUS_FMT_RGB888_1X7X4_JEIDA,
+ 	MEDIA_BUS_FMT_RGB888_1X32_PADHI,
++	MEDIA_BUS_FMT_ARGB8888_1X32,
+ };
+ 
+ static const struct vimc_debayer_pix_map vimc_debayer_pix_map_list[] = {
+@@ -170,7 +168,7 @@ static int vimc_debayer_init_state(struct v4l2_subdev *sd,
+ 
+ 	mf = v4l2_subdev_state_get_format(sd_state, 1);
+ 	*mf = sink_fmt_default;
+-	mf->code = VIMC_DEBAYER_SOURCE_MBUS_FMT;
++	mf->code = vimc_debayer_src_mbus_codes[0];
+ 
+ 	return 0;
+ }
+@@ -239,6 +237,14 @@ static void vimc_debayer_adjust_sink_fmt(struct v4l2_mbus_framefmt *fmt)
+ 	vimc_colorimetry_clamp(fmt);
+ }
+ 
++static void vimc_debayer_set_rgb_mbus_fmt_default(struct v4l2_mbus_framefmt *fmt)
++{
++	fmt->colorspace = V4L2_COLORSPACE_SRGB;
++	fmt->quantization = V4L2_QUANTIZATION_FULL_RANGE;
++	fmt->xfer_func = V4L2_XFER_FUNC_SRGB;
++	fmt->ycbcr_enc = V4L2_YCBCR_ENC_DEFAULT;
++}
++
+ static int vimc_debayer_set_fmt(struct v4l2_subdev *sd,
+ 				struct v4l2_subdev_state *sd_state,
+ 				struct v4l2_subdev_format *fmt)
+@@ -250,12 +256,30 @@ static int vimc_debayer_set_fmt(struct v4l2_subdev *sd,
+ 	if (fmt->which == V4L2_SUBDEV_FORMAT_ACTIVE && vdebayer->src_frame)
+ 		return -EBUSY;
+ 
+-	/*
+-	 * Do not change the format of the source pad, it is propagated from
+-	 * the sink.
+-	 */
+-	if (VIMC_IS_SRC(fmt->pad))
+-		return v4l2_subdev_get_fmt(sd, sd_state, fmt);
++	if (VIMC_IS_SRC(fmt->pad)) {
++		struct v4l2_mbus_framefmt *source_fmt;
++		struct v4l2_mbus_framefmt *sink_fmt;
++
++		/* Validate the requested source format */
++		if (!vimc_debayer_src_code_is_valid(fmt->format.code))
++			return -EINVAL;
++
++		/* Get current formats */
++		source_fmt = v4l2_subdev_state_get_format(sd_state, 1);
++		sink_fmt = v4l2_subdev_state_get_format(sd_state, 0);
++
++		/* Update source format with appropriate properties for RGB output */
++		source_fmt->code = fmt->format.code;
++		source_fmt->width = sink_fmt->width;   /* Size should match */
++		source_fmt->height = sink_fmt->height; /* Size should match */
++		source_fmt->field = sink_fmt->field;   /* Field handling should match */
++
++		/* Set appropriate colorimetry for RGB output */
++		vimc_debayer_set_rgb_mbus_fmt_default(source_fmt);
++
++		fmt->format = *source_fmt;
++		return 0;
++	}
+ 
+ 	/* Set the new format in the sink pad. */
+ 	vimc_debayer_adjust_sink_fmt(&fmt->format);
+@@ -278,8 +302,25 @@ static int vimc_debayer_set_fmt(struct v4l2_subdev *sd,
+ 
+ 	/* Propagate the format to the source pad. */
+ 	format = v4l2_subdev_state_get_format(sd_state, 1);
+-	*format = fmt->format;
+-	format->code = VIMC_DEBAYER_SOURCE_MBUS_FMT;
++
++	/* Propagate size and field from sink, but maintain source code */
++	format->width = fmt->format.width;
++	format->height = fmt->format.height;
++	format->field = fmt->format.field;
++
++	/*
++	 * Source code should always be valid (set during init or via set_fmt).
++	 * If somehow it's not, this is a bug - log warning and fix it.
++	 */
++	if (!vimc_debayer_src_code_is_valid(format->code)) {
++		dev_warn(vdebayer->ved.dev,
++			 "%s: Invalid source code 0x%x, resetting to default\n",
++			 vdebayer->sd.name, format->code);
++		format->code = vimc_debayer_src_mbus_codes[0];
++	}
++
++	/* Set appropriate colorimetry for RGB output */
++	vimc_debayer_set_rgb_mbus_fmt_default(format);
+ 
+ 	return 0;
+ }
+@@ -297,19 +338,45 @@ static void vimc_debayer_process_rgb_frame(struct vimc_debayer_device *vdebayer,
+ 					   unsigned int rgb[3])
+ {
+ 	const struct vimc_pix_map *vpix;
+-	unsigned int i, index;
++	unsigned int index;
+ 
+ 	vpix = vimc_pix_map_by_code(vdebayer->hw.src_code);
+-	index = VIMC_FRAME_INDEX(lin, col, vdebayer->hw.size.width, 3);
+-	for (i = 0; i < 3; i++) {
+-		switch (vpix->pixelformat) {
+-		case V4L2_PIX_FMT_RGB24:
+-			vdebayer->src_frame[index + i] = rgb[i];
+-			break;
+-		case V4L2_PIX_FMT_BGR24:
+-			vdebayer->src_frame[index + i] = rgb[2 - i];
+-			break;
+-		}
++	if (!vpix) {
++		dev_dbg(vdebayer->ved.dev, "Invalid source code: 0x%x\n",
++			vdebayer->hw.src_code);
++		return;
++	}
++
++	index = VIMC_FRAME_INDEX(lin, col, vdebayer->hw.size.width, vpix->bpp);
++
++	switch (vpix->pixelformat) {
++	case V4L2_PIX_FMT_RGB24:
++		/* RGB24: R-G-B */
++		vdebayer->src_frame[index + 0] = rgb[0]; /* Red */
++		vdebayer->src_frame[index + 1] = rgb[1]; /* Green */
++		vdebayer->src_frame[index + 2] = rgb[2]; /* Blue */
++		break;
++
++	case V4L2_PIX_FMT_BGR24:
++		/* BGR24: B-G-R */
++		vdebayer->src_frame[index + 0] = rgb[2]; /* Blue */
++		vdebayer->src_frame[index + 1] = rgb[1]; /* Green */
++		vdebayer->src_frame[index + 2] = rgb[0]; /* Red */
++		break;
++
++	case V4L2_PIX_FMT_ARGB32:
++		/* ARGB32: A-R-G-B (set alpha to 255) */
++		vdebayer->src_frame[index + 0] = 255;    /* Alpha */
++		vdebayer->src_frame[index + 1] = rgb[0]; /* Red */
++		vdebayer->src_frame[index + 2] = rgb[1]; /* Green */
++		vdebayer->src_frame[index + 3] = rgb[2]; /* Blue */
++		break;
++
++	default:
++		dev_dbg(vdebayer->ved.dev,
++			"Unsupported pixel format for debayer: 0x%x\n",
++			vpix->pixelformat);
++		break;
+ 	}
+ }
+ 
+-- 
+2.43.0
+
 
