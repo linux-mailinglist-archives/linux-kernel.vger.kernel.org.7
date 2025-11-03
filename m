@@ -1,220 +1,170 @@
-Return-Path: <linux-kernel+bounces-882856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F40DC2BA9E
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:29:04 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CD69C2BB10
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:35:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 380A63B630C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:27:34 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 86E474F3D73
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:27:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF4A3009C4;
-	Mon,  3 Nov 2025 12:27:30 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 435923009C4;
+	Mon,  3 Nov 2025 12:27:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="UxFSrtPC"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F5F2C11E3
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 12:27:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 982432D0C97
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 12:27:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762172850; cv=none; b=F867Z8wSwB2CvXfq8lSdt0Lju/vDCNTroGHbuY22q3nVz0ClNr5RJrUXFI2nGk4lPyKjHXgLW5/HGoClpnA5y/CM0gylIDMi88qw5vKHtwsXI3oyBPZxnnzTFKDEwfFfgMtm8l1D4x+YSis5z9+7PxiJZZfeL8ph8FElRvTWdaQ=
+	t=1762172859; cv=none; b=raw2XfUsAm+bqBhFjgIu/oJRd1s6ZmotFCY5nwRTt+53oPShkoo5GatRVHTNcdXLnbNXjcLpufdX2F63pfKZfnQTpcrJ8HaYQzTmf82lsBI69hso65yj4ZhMLkLIDyY2LDCxfWEda+l2jeNqfm4MvY7ONAvvYxiG9FPxeFIaXhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762172850; c=relaxed/simple;
-	bh=+15zIbNViZ4XL+cMnxpcCxrp4LCfdB61mQOv4JI043I=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Jqx9+VEPDf8MFqnxsFzkTaUBIwZoGlmA3SZFSHjJnfHWVh+LMf5AKmsEFgajEzU7ifzggF8luc0wRMGE8NYpl1RlB7Z9doWP3XA66XVTvBJxCW9NkDGZ6qtSUWEVe/VbDhoDE0sVB1bUAxNv1UybleUIG57jcWsIZuWQTxrRKIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-945a94ceab8so423007639f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 04:27:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762172847; x=1762777647;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1762172859; c=relaxed/simple;
+	bh=yaE3waDSHbugCSGkUwyAGQoN36hcWzHi1nzoJVJHs4Q=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=LqHg5LU4TDGeoFszlZYjo191nDql3uEoGixb9mzVXY9Ttyk17syYCxtstuzbQjH3YWsO2pnW6yEKjosGRLMfg4o5TJQycAHWcRelIfAk0P7kvUOjhMDTAk32tgLqJYdb0bNXB4T56scjc0l16pYVnGBiLH4y+tBJDwupSBChpmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=UxFSrtPC; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b6d78062424so864122866b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 04:27:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1762172856; x=1762777656; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gcFzHSRmL/0D+githRCOBVLKtkFMDqSyAYU/V3luQWE=;
-        b=wzmrUG1gy98D3w2Vhxoe62nATMjigWWaPTEa4Ru7M95Sp1Vbv/uhWpzw+dfCgdqFdt
-         /GzhPlaJeUQ3UMybDcGQPpzNpkemCHj+dE9B9yvdLhrhEDLsEefzc/gaRKWQbf7DvgId
-         +OdGt4xqB0Xk3ZP+4gqYdNooee7pUaGlQGpoudbzzRBgZbUOBBev+sIgF6eMzc7e2BMc
-         CEwjRT6r/ET79nmt1txA5vWULltgvR4dTm1Vm0ts9rA5h+a1SGeOCTLi5J9hF0nEzSSp
-         o1Joh6ce9yfZpwh+aFoCZx7D6/nv66BxxYPEPFKW6mDs6L0RTZvqRQ8V2E81VY7Eko7f
-         UVmg==
-X-Gm-Message-State: AOJu0YxIwRU8HEN+aUxWgjcY4OMyj0IHmAveARPx96FC1dAmI5+hfCSH
-	l7xqrmDeUu9kyz/YTRS/mb9MFpNJPhjWkCfW4MZnuCN1USg0/2x8chM2x9XMNX9fha8u/D51GEn
-	NvdoFl/uej4AyS0UMEkFVOd166jgYG+430YLkLK8fE69O/jbGl13sodrYL3s=
-X-Google-Smtp-Source: AGHT+IE6eSgNgM/UJhRkcOyp8JNkIz6mRq4+Cph0Gi4skeHWTPNsp1YtHaqJke9PxIvAf+MDyLRJkAB5mnUVpuJcbMKuBbaliSYR
+        bh=IoGEKixiOf6+YbSpHpvXgbHu1MiS0fbcnkKp3M0gywo=;
+        b=UxFSrtPCRZaQCPRwxdSo0StEpyhByP8lFVh5QezkmgLTDerEbkDiptJ3fT6m7zxCzK
+         +SNntZ/+EUssDvJYH7p+1YbyrR3XwIPqiEW2OmiCnnrGaaDjcrCHlnvEEqEbL2GGP4Xb
+         VYmAu4unJod26yp+USib1mgLcxXa1zwJ9ymZmxNySAIIDLpN2YbZf/E/x25+J7aYaatu
+         Syb3ezcve0bZ7F0FrP6XIw1momDtIxd3UOO08lRjUidVeC6HadchyelzLtzZYNSLJG8Y
+         ZOPPqdZtNymtL3QMBPUcG/K/Pjlc+qHnii1aAUSqU/iXwUb0dHukHRYxqbnl/7a88Q2N
+         08KQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762172856; x=1762777656;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=IoGEKixiOf6+YbSpHpvXgbHu1MiS0fbcnkKp3M0gywo=;
+        b=wGLTvJKnQ6zgypJoXCU9pPx5BJT8cX0RGzT4jUmvuFQK/gH4lkmXubWqRzgbQK7Jx6
+         osyxQaHooHZf8FHUJaj7QanaxOcznc7uOxvYWr/YCTCBV00BVXhkwGc0syE1NG9WwkJx
+         ninW5Tl3mF58ZYPccDFNMmH7WfFYYBYRbivhH2rzThDwIymX92cKJkVHT1xqf0vBGDDB
+         XHS6fwI6kh3DHPtoi/ewL2XKeiIFvSur0X8XyYEdvd8t7ftNKFN62ZIOvBa67j1gi5kK
+         alpDVnmG+E8BJrqxTPJ1kZvlVnhQphYMSMqFyD5a3Vz+Ayvk6wDzZzLtvDoswzYZ8oaR
+         Z/rQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU+iuWMkxhxZOMsiidwznT8OiXtnTl0M12Q6SAg0oP+73lkATr9ebo0+1WfBtrza53qDmwYm6QJnjM0LEU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzgr92Do9TLVJTJuLkVhDfwMVnLk33Sqm3pHftk4a0/BZRY30TP
+	IJeEbwnxYTPdeMzWoSvS3SMttOpAfuokbAvBmP+aKGS92GUM4KBPf9y++bjIW5fQmpA=
+X-Gm-Gg: ASbGncsWkj2g7FJ1XV1A3Tlx+zwTJp0N3qV1YZax7FJP0NPrTd5NGGnRHn8/Q0tWhbB
+	9t4vebCa6cBJ0Gf1rzoiL532OZuLE8Y6Lpvyd8c8RfJwWGaosAa1M54blIxsDWDNgv47VN1DIgU
+	qYgnJ1FagHIwlP8ZgWGMxTqaujagqDPgNDhVBBqmqDthAlKEEnL/+9VnISGK8IR9SrNGtUx8dg4
+	ICQQlLa4Bhnnu8PMA7RDcueRMosRuN1lvZFaShi6pgwFM0Jfy8fzJ3iK9eHrpXwUa/YRahGFbJ6
+	d10BU23w6PzG5D/N7PaGPrk+A1IVClQlzqM8Ky7oFs7BSSpe0iDj5/ghmvp0mCX1IWqMnrFvrkf
+	34ceTY3wxwxaBU02PZKICoJeZjbJIRPqoBoLtoOVDIMpzCDGr0C/5Ir5K0rV8ErJmdCDCTtl4qI
+	qlBdcQ1PFkyF4dwx61jox50YGeF4qn59nJ0S6xCXBfhYMgyw==
+X-Google-Smtp-Source: AGHT+IEDliw+6lMJHirYDXmx61WJGlCahIYt8y75zXE63Jfyn2/OoGc7w3DNRT31bKf1ipSgsYdjnQ==
+X-Received: by 2002:a17:906:c10b:b0:b6d:8e29:8f67 with SMTP id a640c23a62f3a-b70701ae016mr1324652566b.26.1762172855980;
+        Mon, 03 Nov 2025 04:27:35 -0800 (PST)
+Received: from localhost (144-178-202-139.static.ef-service.nl. [144.178.202.139])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b70a9fb80e2sm548025366b.69.2025.11.03.04.27.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Nov 2025 04:27:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:4807:b0:433:2711:c5cc with SMTP id
- e9e14a558f8ab-4332711ca14mr67921125ab.32.1762172847022; Mon, 03 Nov 2025
- 04:27:27 -0800 (PST)
-Date: Mon, 03 Nov 2025 04:27:27 -0800
-In-Reply-To: <68f9bea1.a70a0220.3bf6c6.0032.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69089faf.050a0220.29fc44.003f.GAE@google.com>
-Subject: Forwarded: 
-From: syzbot <syzbot+17cc9bb6d8d69b4139f0@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 03 Nov 2025 13:27:35 +0100
+Message-Id: <DDZ2560R89E4.2A538CLIBA9B2@fairphone.com>
+Cc: <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
+ <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+ <linux-crypto@vger.kernel.org>
+Subject: Re: [PATCH v3 0/7] Various dt-bindings for Milos and The Fairphone
+ (Gen. 6) addition
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Konrad Dybcio" <konrad.dybcio@oss.qualcomm.com>, "Luca Weiss"
+ <luca.weiss@fairphone.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ "Viresh Kumar" <viresh.kumar@linaro.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
+ <conor+dt@kernel.org>, "Manivannan Sadhasivam" <mani@kernel.org>, "Herbert
+ Xu" <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
+ "Vinod Koul" <vkoul@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>,
+ "Bjorn Andersson" <andersson@kernel.org>, "Konrad Dybcio"
+ <konradybcio@kernel.org>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20250905-sm7635-fp6-initial-v3-0-0117c2eff1b7@fairphone.com>
+ <c93afd94-9d94-42fb-a312-df6e26bb2bc8@oss.qualcomm.com>
+ <DDZ1X799V2KV.269J9YL1AGCIF@fairphone.com>
+ <0fd020e4-636a-4bb3-9c22-7a5b16e4d3c3@oss.qualcomm.com>
+ <89d1eaba-557c-4df6-b65c-b2105ec20788@oss.qualcomm.com>
+In-Reply-To: <89d1eaba-557c-4df6-b65c-b2105ec20788@oss.qualcomm.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Mon Nov 3, 2025 at 1:24 PM CET, Konrad Dybcio wrote:
+> On 11/3/25 1:23 PM, Konrad Dybcio wrote:
+>> On 11/3/25 1:17 PM, Luca Weiss wrote:
+>>> On Mon Nov 3, 2025 at 1:14 PM CET, Konrad Dybcio wrote:
+>>>> On 9/5/25 12:40 PM, Luca Weiss wrote:
+>>>>> Document various bits of the Milos SoC in the dt-bindings, which don'=
+t
+>>>>> really need any other changes.
+>>>>>
+>>>>> Then we can add the dtsi for the Milos SoC and finally add a dts for
+>>>>> the newly announced The Fairphone (Gen. 6) smartphone.
+>>>>>
+>>>>> Dependencies:
+>>>>> * The dt-bindings should not have any dependencies on any other patch=
+es.
+>>>>> * The qcom dts bits depend on most other Milos patchsets I have sent =
+in
+>>>>>   conjuction with this one. The exact ones are specified in the b4 de=
+ps.
+>>>>>
+>>>>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+>>>>> ---
+>>>>
+>>>> FWIW this looks good.. where are we with regards to the dependencies?
+>>>>
+>>>> Are we waiting for anything else than the PMIV0104 (as part of glymur/
+>>>> kaanapali)?
+>>>
+>>> Hi,
+>>>
+>>> From my side, I'm not aware of any patches that have any unresolved
+>>> comments, so I'm essentially just waiting for the correct maintainers t=
+o
+>>> pick up the variety of dt-bindings patches in this series, and the
+>>> PMIV0104 and PM7550 series.
+>>>
+>>> Any advice to make this actually proceed would be appreciated since mos=
+t
+>>> have been waiting for quite a while.
+>>=20
+>> Apparently I misremembered, kaanapali actually uses PMH0101 and PMH0110
+>> and PMH0104, whereas glymur uses pmh0101, pmcx0102, pmh0110 and pmh0104
+>>=20
+>> (it is not easy indeed)
+>>=20
+>> so it looks like PMIV0104 only showed up with your series.. and I'm not
+>> opposed to it, let me leave some review tags there, and I suppose I'll
+>> just ask you to rebase this series on next & make sure the bindings
+>> checker is happy
+>
+> Well I apparently already left the review tags there.. please resend
+> all of them (2 pmics + this one) as a single v4
 
-***
+Will this help with anything though? Most/all dt-bindings patches have
+been unmodified since v2 and haven't been picked up since 13 July...
 
-Subject:=20
-Author: jkoolstra@xs4all.nl
+I can try if you really think it could help...
 
-#syz test
-
----
-
-diff --git a/fs/hfs/dir.c b/fs/hfs/dir.c
-index 86a6b317b474..ee1760305380 100644
---- a/fs/hfs/dir.c
-+++ b/fs/hfs/dir.c
-@@ -196,8 +196,8 @@ static int hfs_create(struct mnt_idmap *idmap, struct i=
-node *dir,
- 	int res;
-=20
- 	inode =3D hfs_new_inode(dir, &dentry->d_name, mode);
--	if (!inode)
--		return -ENOMEM;
-+	if (IS_ERR(inode))
-+		return PTR_ERR(inode);
-=20
- 	res =3D hfs_cat_create(inode->i_ino, dir, &dentry->d_name, inode);
- 	if (res) {
-@@ -226,8 +226,8 @@ static struct dentry *hfs_mkdir(struct mnt_idmap *idmap=
-, struct inode *dir,
- 	int res;
-=20
- 	inode =3D hfs_new_inode(dir, &dentry->d_name, S_IFDIR | mode);
--	if (!inode)
--		return ERR_PTR(-ENOMEM);
-+	if (IS_ERR(inode))
-+		return ERR_CAST(inode);
-=20
- 	res =3D hfs_cat_create(inode->i_ino, dir, &dentry->d_name, inode);
- 	if (res) {
-diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
-index 9cd449913dc8..beec6fe7e801 100644
---- a/fs/hfs/inode.c
-+++ b/fs/hfs/inode.c
-@@ -186,16 +186,23 @@ struct inode *hfs_new_inode(struct inode *dir, const =
-struct qstr *name, umode_t
- 	s64 next_id;
- 	s64 file_count;
- 	s64 folder_count;
-+	int err =3D -ENOMEM;
-=20
- 	if (!inode)
--		return NULL;
-+		goto out_err;
-+
-+	err =3D -ENOSPC;
-=20
- 	mutex_init(&HFS_I(inode)->extents_lock);
- 	INIT_LIST_HEAD(&HFS_I(inode)->open_dir_list);
- 	spin_lock_init(&HFS_I(inode)->open_dir_lock);
- 	hfs_cat_build_key(sb, (btree_key *)&HFS_I(inode)->cat_key, dir->i_ino, na=
-me);
- 	next_id =3D atomic64_inc_return(&HFS_SB(sb)->next_id);
--	BUG_ON(next_id > U32_MAX);
-+	if (next_id > U32_MAX) {
-+		pr_err("hfs: next file ID exceeds 32-bit limit =E2=80=94 possible "
-+		       "superblock corruption");
-+		goto out_discard;
-+	}
- 	inode->i_ino =3D (u32)next_id;
- 	inode->i_mode =3D mode;
- 	inode->i_uid =3D current_fsuid();
-@@ -209,7 +216,11 @@ struct inode *hfs_new_inode(struct inode *dir, const s=
-truct qstr *name, umode_t
- 	if (S_ISDIR(mode)) {
- 		inode->i_size =3D 2;
- 		folder_count =3D atomic64_inc_return(&HFS_SB(sb)->folder_count);
--		BUG_ON(folder_count > U32_MAX);
-+		if (folder_count > U32_MAX) {
-+			pr_err("hfs: folder count exceeds 32-bit limit =E2=80=94 possible "
-+			       "superblock corruption");
-+			goto out_discard;
-+		}
- 		if (dir->i_ino =3D=3D HFS_ROOT_CNID)
- 			HFS_SB(sb)->root_dirs++;
- 		inode->i_op =3D &hfs_dir_inode_operations;
-@@ -219,7 +230,11 @@ struct inode *hfs_new_inode(struct inode *dir, const s=
-truct qstr *name, umode_t
- 	} else if (S_ISREG(mode)) {
- 		HFS_I(inode)->clump_blocks =3D HFS_SB(sb)->clumpablks;
- 		file_count =3D atomic64_inc_return(&HFS_SB(sb)->file_count);
--		BUG_ON(file_count > U32_MAX);
-+		if (file_count > U32_MAX) {
-+			pr_err("hfs: file count exceeds 32-bit limit =E2=80=94 possible "
-+			       "superblock corruption");
-+			goto out_discard;
-+		}
- 		if (dir->i_ino =3D=3D HFS_ROOT_CNID)
- 			HFS_SB(sb)->root_files++;
- 		inode->i_op =3D &hfs_file_inode_operations;
-@@ -243,6 +258,11 @@ struct inode *hfs_new_inode(struct inode *dir, const s=
-truct qstr *name, umode_t
- 	hfs_mark_mdb_dirty(sb);
-=20
- 	return inode;
-+
-+	out_discard:
-+		iput(inode);=09
-+	out_err:
-+		return ERR_PTR(err);=20
- }
-=20
- void hfs_delete_inode(struct inode *inode)
-@@ -251,7 +271,6 @@ void hfs_delete_inode(struct inode *inode)
-=20
- 	hfs_dbg("ino %lu\n", inode->i_ino);
- 	if (S_ISDIR(inode->i_mode)) {
--		BUG_ON(atomic64_read(&HFS_SB(sb)->folder_count) > U32_MAX);
- 		atomic64_dec(&HFS_SB(sb)->folder_count);
- 		if (HFS_I(inode)->cat_key.ParID =3D=3D cpu_to_be32(HFS_ROOT_CNID))
- 			HFS_SB(sb)->root_dirs--;
-@@ -260,7 +279,6 @@ void hfs_delete_inode(struct inode *inode)
- 		return;
- 	}
-=20
--	BUG_ON(atomic64_read(&HFS_SB(sb)->file_count) > U32_MAX);
- 	atomic64_dec(&HFS_SB(sb)->file_count);
- 	if (HFS_I(inode)->cat_key.ParID =3D=3D cpu_to_be32(HFS_ROOT_CNID))
- 		HFS_SB(sb)->root_files--;
-diff --git a/fs/hfs/mdb.c b/fs/hfs/mdb.c
-index 53f3fae60217..1c3fb631cc8e 100644
---- a/fs/hfs/mdb.c
-+++ b/fs/hfs/mdb.c
-@@ -273,15 +273,12 @@ void hfs_mdb_commit(struct super_block *sb)
- 		/* These parameters may have been modified, so write them back */
- 		mdb->drLsMod =3D hfs_mtime();
- 		mdb->drFreeBks =3D cpu_to_be16(HFS_SB(sb)->free_ablocks);
--		BUG_ON(atomic64_read(&HFS_SB(sb)->next_id) > U32_MAX);
- 		mdb->drNxtCNID =3D
- 			cpu_to_be32((u32)atomic64_read(&HFS_SB(sb)->next_id));
- 		mdb->drNmFls =3D cpu_to_be16(HFS_SB(sb)->root_files);
- 		mdb->drNmRtDirs =3D cpu_to_be16(HFS_SB(sb)->root_dirs);
--		BUG_ON(atomic64_read(&HFS_SB(sb)->file_count) > U32_MAX);
- 		mdb->drFilCnt =3D
- 			cpu_to_be32((u32)atomic64_read(&HFS_SB(sb)->file_count));
--		BUG_ON(atomic64_read(&HFS_SB(sb)->folder_count) > U32_MAX);
- 		mdb->drDirCnt =3D
- 			cpu_to_be32((u32)atomic64_read(&HFS_SB(sb)->folder_count));
-=20
---=20
-2.51.1.dirty
+Regards
+Luca
 
