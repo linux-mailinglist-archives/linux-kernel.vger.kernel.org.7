@@ -1,158 +1,112 @@
-Return-Path: <linux-kernel+bounces-883464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13DA4C2D857
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:45:41 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB841C2D854
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:45:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50C323B1ABF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:45:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 125104EA16D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:45:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94F521E47A5;
-	Mon,  3 Nov 2025 17:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 921601D63F3;
+	Mon,  3 Nov 2025 17:45:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D/EJDKWk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="G/S3guJ9"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75AA1917FB;
-	Mon,  3 Nov 2025 17:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90F613D503
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 17:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762191915; cv=none; b=Hlfl6XFO3zaEosqeCP3v3feYmtWn+AbwnIb6JbdbYkR/XplNhvra/98s9mPG0EkpWwX5u98UGkHswttxE2JXhMKxC1+Zxkwto1OotYqM8MW1bhnQX03+Bt4VaXz9Pr3De2gGxSimYopNBNDOfJuI6M5aHSBPmIX7NO1KYph3CJo=
+	t=1762191926; cv=none; b=E6Boaa7ieMNRk3QX3RUq9mkpr/MBackif8q+8RcUx3yLR/uY798NuXNE1Juet2pySsQb9LhtXQ433O8bp+i8NLv2/vr1lT2otBk+reYU1jm+zhZdlcSoxOxglS7SYx1JO8jy/1EdlW4tq0T5gMRhXLQ1tekeIj/7GzaV3BO1Ntg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762191915; c=relaxed/simple;
-	bh=W+qr5DwMeVjhNwTz4GD8p3W4iUptYbkU5ExtMChr/xo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sW4JM6OIiGyEFdMc4/76VkX1GuId/UF7fB7QVytxdfUuETQDVps9ZUZziA0LSxo1QxCq3uv6b7mYlk7k3/BzrMdNKeNJVmnBHgydc8PFhIy7jCXuSOJNy8tpmGcNnw2GdIV6l4GKkCp4MHErDKrt4nTLgcapRdZkSsRnkcSKAjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D/EJDKWk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E09D4C4CEF8;
-	Mon,  3 Nov 2025 17:45:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762191914;
-	bh=W+qr5DwMeVjhNwTz4GD8p3W4iUptYbkU5ExtMChr/xo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=D/EJDKWk966ytiAE0+j5TuPyzBCXXDpboYv3OUu2QbF7sd8Ee5gkdzs9sS1n8zWSk
-	 vK1mdIM1LCd2RxmfwB/X0UwPPwBQR/UIFyddjyGJcGcgJWTAM11cf24B1QlNtADpT1
-	 y9WR+I8EtyRz/fiomZ9jwWKv6uI2nuWgOije/uYCeUIqRTTu3tBHClKPW88zgmG+/t
-	 OSxgWAwzyEqm9DEP9/x0D1byujZlePfo3lL0LyOTjWj0rs9OxtSsbBrcOFDDB8Y3l8
-	 YTMpthcTueMGrU11TO4d59WlF7c5j7oDsg5267Koxw/yaQs6fbhVO0pp44ZgVwR7pf
-	 pkWR85TYbXAzg==
-Message-ID: <a0802bd3-2998-4149-8035-4fbd73ce911f@kernel.org>
-Date: Mon, 3 Nov 2025 11:45:11 -0600
+	s=arc-20240116; t=1762191926; c=relaxed/simple;
+	bh=lPzxmPWkKKlL56a0yA3jmqyHVglIIZ8sGtfuWP9LymA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UfzWFpSl1dIuBq75In/DaKtI1XrUDx78zC59sjfyxK/89yZWNROqVJfN3H2sfHTPRV4eesOEOtrsEHjVXwgRo5qh8L/Tw45sfYeFseEN9C0oH1oNDUsqK1KNmmuooBruRZqtUWGMCVrjMYI6TvReE9fNWt2CcrzcNcQnXatA2Rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=G/S3guJ9; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b7042e50899so802667766b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 09:45:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762191922; x=1762796722; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WjhEEmFz/bm/iYe2xYA7wYjyftdhc9sgCWZzWyyshqg=;
+        b=G/S3guJ9tN+cvrwKUW1TYLT4oM4zVRgIyTEBk9Rbcggos9+Rn72UnH/ARhY0Doby4k
+         aUAUjH3Y/ae71aKi52IOnD7hpaRE1oUTxUTPAwvZSx22WR7WXzHK3U2zAZjyJQEaPidx
+         yJUC8XjuiW7cTyg1CTG+a/NDMN8GM9oBGAxLHwOG9ziLd/Ktwn/hm8REAvtueClysGdp
+         yKsfR2MQDRdSFPVDT8COJlxFLL1IXK9gwbdo+BPjLkefWQGyNdw96984H1quqxB91GeX
+         Clg1VgNj+0vsTinbhs/KKJqNp8iFa/0eF4azSaQMJLySGhVueSflREzZFVD+a/QXzuQR
+         s+3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762191922; x=1762796722;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WjhEEmFz/bm/iYe2xYA7wYjyftdhc9sgCWZzWyyshqg=;
+        b=E9CsBLFgLpCPJYcr2jnWf+jhOSLV1UUqy6YKze14zV3L4Z6m/zGCXZJZ0uJo3y3yXE
+         6EAwYBwevOWdYk3BUoY4LePPDwCcuGJQeDtUk13htn6lLPGERU4DQSkLvg59d+9mD2tq
+         jjq/pNS+OWyFnabu/FwOg6r1ZVuAm1rpwFW5VZ9nx9blk24GYBK0GoIFZfr+tTA+nM3f
+         kweoZfPfObyiAuQUzQF/0KKFe9nOaMOKOWia5WS7nvAII/RCpuqgL5GrOLha1Ywt6D/w
+         gWWWD1Vxp85SGhHMMzIrXjgKkmIHlQm6qwNaKxFWVlYhhG1P1axh+WWIecBt0ZfR0ydu
+         dbRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZSGBTe3JZR7agdB2F316O3LzkFJurJAQdp2HVK40+oYp0Pja96RStwum5ismZg7bizxyyDvG+fTCdUyc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/66/EJVnhG/rSXJUSeekAXH0Ken4GzDC8qetoTUL08+1ZcW6y
+	S3b6hTbvPEhWmuM7oPP5SSgBKWUZlhHYgDCUz6wkOyjPCYltnXUJ0TIr2Bz6iRtISBc=
+X-Gm-Gg: ASbGnctzu2dNNWZ8Vj26PyNDge/rE72Zr0pxzTjAOiX/sFoRZ8aWDgQX7s0x48fk+8m
+	El/a0D0KKq66VQa92IIi2AwmBVZOttcQMEPfylawPAlR1BNfAbEVM2316JPa4ORn9+VV4MhDDAD
+	zMUqIBfSKPQDRxfJOCcZdgHOiBJNpAy6rARQnK6rU+BVBvBmonBc8kL+Bwq6eRpMvv5bwv2IzQz
+	jWhfQXH9p6PhJ8TTA1xLYle24T1UbItkICNvKDJ+uWHH3jVIgD7Zek6iqgO9AZNHiFTCYJkBfUY
+	B92CbScrj1yIupz7Y6HZCI2VgGczgEa3BQIu+YO4AMRrq+E4ehh+jqoBw2W4xFgPKyb6Z0jyy6G
+	zI02VVPZWKB0n01WFUTyt0f3YqUHYCPf2V3dbvNSHnxCHAcSk0d7pr7hyw4ZZVCjeOeV4vI/Jbn
+	YD1Qia/6h0ZqSF3g==
+X-Google-Smtp-Source: AGHT+IGo5tJKewrI4RaiW9B0KqjqGv4KjNOjijo3dJIfIFw9bBjNUSdfnkNr8uqL2+pKOQTmyq7C5A==
+X-Received: by 2002:a17:906:f58a:b0:b6d:babd:97a1 with SMTP id a640c23a62f3a-b707061bddamr1409156066b.41.1762191922249;
+        Mon, 03 Nov 2025 09:45:22 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7077975dfdsm1076420766b.13.2025.11.03.09.45.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Nov 2025 09:45:21 -0800 (PST)
+Date: Mon, 3 Nov 2025 18:45:19 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND] lib/vsprintf: Improve vsprintf + sprintf function
+ comments
+Message-ID: <aQjqL7t2WfMfq-3B@pathway.suse.cz>
+References: <20251103090913.2066-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] Documentation/amdgpu: Add UMA carveout details
-To: "Yo-Jung Leo Lin (AMD)" <Leo.Lin@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Jonathan Corbet <corbet@lwn.net>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, anson.tsao@amd.com
-References: <20251103-vram-carveout-tuning-for-upstream-v1-0-17e2a72639c5@amd.com>
- <20251103-vram-carveout-tuning-for-upstream-v1-5-17e2a72639c5@amd.com>
-Content-Language: en-US
-From: "Mario Limonciello (AMD) (kernel.org)" <superm1@kernel.org>
-In-Reply-To: <20251103-vram-carveout-tuning-for-upstream-v1-5-17e2a72639c5@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251103090913.2066-2-thorsten.blum@linux.dev>
 
-
-
-On 11/3/2025 1:51 AM, Yo-Jung Leo Lin (AMD) wrote:
-> Add documentation for the uma_carveout_options and uma_carveout
-> attributes in sysfs
+On Mon 2025-11-03 10:09:13, Thorsten Blum wrote:
+> Clarify that the return values of vsprintf() and sprintf() exclude the
+> trailing NUL character.
 > 
-> Signed-off-by: Yo-Jung Leo Lin (AMD) <Leo.Lin@amd.com>
-> ---
->   Documentation/gpu/amdgpu/driver-misc.rst     | 26 ++++++++++++++++++++++++++
->   drivers/gpu/drm/amd/amdgpu/amdgpu_atombios.c | 17 +++++++++++++++++
->   2 files changed, 43 insertions(+)
-> 
-> diff --git a/Documentation/gpu/amdgpu/driver-misc.rst b/Documentation/gpu/amdgpu/driver-misc.rst
-> index 25b0c857816e..5a71fa9c6782 100644
-> --- a/Documentation/gpu/amdgpu/driver-misc.rst
-> +++ b/Documentation/gpu/amdgpu/driver-misc.rst
-> @@ -128,3 +128,29 @@ smartshift_bias
->   
->   .. kernel-doc:: drivers/gpu/drm/amd/pm/amdgpu_pm.c
->      :doc: smartshift_bias
-> +
-> +UMA Carveout
-> +============
-> +
-> +Some versions of Atom ROM expose available options for the VRAM carveout sizes,
-> +and allow changes to the carveout size via the ATCS function code 0xA on supported
-> +BIOS implementation.
-> +
-> +For those platforms, users can use the following file to set the carveout size,
-> +in a way similar to what Windows users can do in the "Tuning" tab in AMD
-> +Adrenalin.
-> +
-> +Note that for BIOS implementations that don't support this, these files will not
-> +get created at all.
-> +
-> +uma_carveout_options
-> +--------------------
-> +
-> +.. kernel-doc:: drivers/gpu/drm/amd/amdgpu/amdgpu_atombios.c
-> +   :doc: uma_carveout_options
-> +
-> +uma_carveout
-> +--------------------
-> +
-> +.. kernel-doc:: drivers/gpu/drm/amd/amdgpu/amdgpu_atombios.c
-> +   :doc: uma_carveout
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 
-How do you feel about adding some sample output from a test system for 
-both files?  This might make it easier for userspace to implement 
-parsing it.
+JFYI, the patch has been comitted into printk/linux.git,
+branch for-6.19.
 
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_atombios.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_atombios.c
-> index 1ebfd925b761..e9f71888ce57 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_atombios.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_atombios.c
-> @@ -1855,6 +1855,17 @@ const struct attribute_group amdgpu_vbios_version_attr_group = {
->   	.is_visible = amdgpu_vbios_version_attrs_is_visible,
->   };
->   
-> +/**
-> + * DOC: uma_carveout
-> + *
-> + * This file is both readable and writable. When read, it shows the
-> + * index of the current setting. Writing a valid index to this file
-> + * allows users to change the UMA carveout size to the selected option
-> + * on the next boot.
-> + *
-> + * The available options and their corresponding indices can be read
-> + * from the uma_carveout_options file.
-> + */
->   static ssize_t uma_carveout_show(struct device *dev,
->   				 struct device_attribute *attr,
->   				 char *buf)
-> @@ -1904,6 +1915,12 @@ static ssize_t uma_carveout_store(struct device *dev,
->   }
->   static DEVICE_ATTR_RW(uma_carveout);
->   
-> +/**
-> + * DOC: uma_carveout_options
-> + *
-> + * This is a read-only file that lists all available UMA allocation
-> + * options and their corresponding indices.
-> + */
->   static ssize_t uma_carveout_options_show(struct device *dev,
->   					 struct device_attribute *attr,
->   					 char *buf)
-> 
+Best Regards,
+Petr
 
+PS: The patch was trivial so I was not waiting for any additional
+    feedback. And better to do not forget about the patch again ;-)
 
