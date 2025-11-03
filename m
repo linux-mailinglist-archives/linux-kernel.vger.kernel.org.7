@@ -1,157 +1,100 @@
-Return-Path: <linux-kernel+bounces-883773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28D1BC2E630
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:16:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 110DBC2E63D
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:20:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 33CED34BBF4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:16:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF9DA188812A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:20:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B882D8395;
-	Mon,  3 Nov 2025 23:16:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BD0D2FDC4B;
+	Mon,  3 Nov 2025 23:19:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="auEBmJSJ"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F258218AA0
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 23:16:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="mrCBe199"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1090719DF6A;
+	Mon,  3 Nov 2025 23:19:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762211801; cv=none; b=R9N1+5Ddb4rGc1nWqMJrcrCpTxbM51INTk69LKF/Yle/w2i5CFk6HJVkJ0wmuEIQ/ifVF4djqLrq37i6Q1qBYL71rKXlNfPBl6MfMUkUjIi0tVXD0UCmBcI3W2tSc0b2s59lJ/77DbU4sREpwSkM6gB589PZ0xq30ZQNhOtzJbU=
+	t=1762211995; cv=none; b=n0fnvF03BOLxLKYX3my9o75m1gCPB3k89yaSXlsO/qPaNLrqbhKS24VIxULhfjK48MaNv4qRBYNm5JaFZ0ShZPpgOg2xBPAGZpkSaf/rLuZr2XRKraEo5GYEf15vYYQhajIqwHNC7HiY96mF7WW+uN9Fydc06xZQwcfnmQNvufA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762211801; c=relaxed/simple;
-	bh=layV8a/eSfEJHAorhxoLXgjYYWppCbPhwTIpTKL2sbM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qZqUDUb6xbcULvk5Gwmjchd0vZzlLc1W5FFP4+I43ao1QOzs3gaF2426TNiXQAb8hiy1wabxPoUKNHTUIDeBxGbb8XISNm3M2rZX4oNlIVP1SIcKsPgjIDsx0CEzJkNx5WocioBWePFGW2NhXkU+/g3rmK7fIlHcEPmidcfn1Kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=auEBmJSJ; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from localhost (unknown [20.236.11.102])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 5B1AE2012087;
-	Mon,  3 Nov 2025 15:16:32 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5B1AE2012087
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1762211792;
-	bh=Yo/btQCGKfEDVe5aBR9fTocjuGyxyeQcgsG9HlUVYWs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=auEBmJSJ7MV4XjrDOfXAGCYoN9Wpug7JZcztqCUelMDTH/I3SxtbRYacmuHsheSUZ
-	 XK3hwfbaC1N2Hx1Y97BWsu6NaGwAFM7739MWoN/dAugQMte+YcJLpZ4upR4uURar9i
-	 m+k9cWD0VgDmMweDk2Y6jkBmsQJjKZudGuOFvXTQ=
-Date: Mon, 3 Nov 2025 15:16:31 -0800
-From: Jacob Pan <jacob.pan@linux.microsoft.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: <linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
- <iommu@lists.linux.dev>, Will Deacon <will@kernel.org>, Joerg Roedel
- <joro@8bytes.org>, Mostafa Saleh <smostafa@google.com>, Jason Gunthorpe
- <jgg@nvidia.com>, Robin Murphy <robin.murphy@arm.com>, Zhang Yu
- <zhangyu1@linux.microsoft.com>, Jean Philippe-Brucker
- <jean-philippe@linaro.org>, Alexander Grest <Alexander.Grest@microsoft.com>
-Subject: Re: [PATCH v2 1/2] iommu/arm-smmu-v3: Fix CMDQ timeout warning
-Message-ID: <20251103151631.0000703a@linux.microsoft.com>
-In-Reply-To: <aQPptXsqzt6kJS7f@Asurada-Nvidia>
-References: <20251020224353.1408-1-jacob.pan@linux.microsoft.com>
-	<20251020224353.1408-2-jacob.pan@linux.microsoft.com>
-	<aQPptXsqzt6kJS7f@Asurada-Nvidia>
-Organization: LSG
-X-Mailer: Claws Mail 3.21.0 (GTK+ 2.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1762211995; c=relaxed/simple;
+	bh=jQ4BS96WpnCqZ8yMQu9OiWZG4tSyc3T6/W3hS4aV8ys=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pa68KIXsSI8fHck9vJtAVZ9WKhBWdDUoaVKJAGKH1ryATtxhI4XwTr/jfYb7W7+blWzoQGzW4i2fk9nTiyawv86ROFAcZiVHbEI5hUTKBQXkiR7cg2V7YDKZik4RkjpvhO7Na0yI7NR0r3Y50pZP4gJuvG1tKu2011XOG63N1Lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=mrCBe199; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 28B9440AED
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1762211993; bh=BGwsk1zAMqN7vjrmOd5deVThA6svDd8H5pqB119acV4=;
+	h=From:To:Subject:In-Reply-To:References:Date:From;
+	b=mrCBe199pKBJFyiENmaiB807Erbcp8EWgXA3qeMMUgP5r9moHrfUMoQ5B3ixqP1o5
+	 9q1SfMqX/K+WlFEkP6ynotPScNdXcWX8EpROKtWSdQBlsInCx+GNyBrx9GQvRZFWRf
+	 hIduYW4rssf0FGGSxZtGzGXjjW+g3PQueOchkhxBU9OgtLJLwVDF1UHs6bMgH1QgGz
+	 eILBl8PQZk8LCFrzY3yyWXDnJa/hworeQmgK42LhcO3hutM6/CbOGJM3liBRwbMxhk
+	 oCW+qe0HYSortKVDvcPvCT4DVQ6bvpuBJ0HIZNxhAs0wUkMoKEVgZOnBfT79qSXh/b
+	 /ILnauHxEFQuA==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 28B9440AED;
+	Mon,  3 Nov 2025 23:19:53 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Alex Shi <seakeel@gmail.com>, Linux Doc Mailing List
+ <linux-doc@vger.kernel.org>, Yanteng Si <si.yanteng@linux.dev>, LKML
+ <linux-kernel@vger.kernel.org>, Dongliang Mu <dzm91@hust.edu.cn>
+Subject: Re: [GIT PULL] Chinese-docs changs for v6.18
+In-Reply-To: <CAJy-Am=qL9xYM-q+ciYfhj2ez-8Go8W19mNxXwOxZT=4=wT_4g@mail.gmail.com>
+References: <CAJy-Am=qL9xYM-q+ciYfhj2ez-8Go8W19mNxXwOxZT=4=wT_4g@mail.gmail.com>
+Date: Mon, 03 Nov 2025 16:19:52 -0700
+Message-ID: <87seeubt5z.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-Hi Nicolin,
+Alex Shi <seakeel@gmail.com> writes:
 
-On Thu, 30 Oct 2025 15:41:57 -0700
-Nicolin Chen <nicolinc@nvidia.com> wrote:
+> The following changes since commit f44a29784f685804d9970cfb0d3439c9e30981d7:
+>
+>   Documentation: update maintainer-pgp-guide for latest best practices
+> (2025-09-09 13:43:55 -0600)
+>
+> are available in the Git repository at:
+>
+>   git@gitolite.kernel.org:pub/scm/linux/kernel/git/alexs/linux.git
+> tags/Chinese-docs-6.18
+>
+> for you to fetch changes up to 6fc05a144c12305a54f1707edc407d4137fef742:
+>
+>   Revert "Docs/zh_CN: Translate skbuff.rst to Simplified Chinese"
+> (2025-10-31 14:01:35 +0800)
+>
+> ----------------------------------------------------------------
+> Chinese translation docs for 6.18
+>
+> This is the Chinese translation subtree for 6.18. It includes
+> the following changes:
+>         - docs/zh_CN: Add rust Chinese translations
+>         - docs/zh_CN: Add scsi Chinese translations
+>         - docs/zh_CN: Add gfs2 Chinese translations
+>         - Add some other Chinese translations and fixes
+>
+> Above patches are tested by 'make htmldocs'
+>
+> Signed-off-by: Alex Shi <alexs@kernel.org>
 
-> On Mon, Oct 20, 2025 at 03:43:52PM -0700, Jacob Pan wrote:
-> > @@ -785,10 +748,33 @@ static int arm_smmu_cmdq_issue_cmdlist(struct
-> > arm_smmu_device *smmu, do {
-> >  		u64 old;
-> >  
-> > +		queue_poll_init(smmu, &qp);
-> >  		while (!queue_has_space(&llq, n + sync)) {
-> > +			unsigned long iflags;
-> > +
-> >  			local_irq_restore(flags);
-> > -			if
-> > (arm_smmu_cmdq_poll_until_not_full(smmu, cmdq, &llq))
-> > -				dev_err_ratelimited(smmu->dev,
-> > "CMDQ timeout\n");
-> > +			/*
-> > +			 * Try to update our copy of cons by
-> > grabbing exclusive cmdq access. If
-> > +			 * that fails, spin until somebody else
-> > updates it for us.
-> > +			 */
-> > +			if
-> > (arm_smmu_cmdq_exclusive_trylock_irqsave(cmdq, iflags)) {
-> > +				WRITE_ONCE(cmdq->q.llq.cons,
-> > readl_relaxed(cmdq->q.cons_reg));
-> > +
-> > arm_smmu_cmdq_exclusive_unlock_irqrestore(cmdq, iflags);
-> > +				llq.val =
-> > READ_ONCE(cmdq->q.llq.val);
-> > +				local_irq_save(flags);  
-> 
-> I don't quite get the reason why it moves queue_poll_init() and
-> add local_irq_save(). It's quite different than what the driver
-> has, so it's nicer to explain in the commit message at least.
+OK, looks like we're good this time ... pulled, thanks.
 
-Let me add the following to the commit message.
-
-The original code has three nested while loops,
-do {
-	while (!queue_has_space(&llq, n + sync)) {
-		// inside arm_smmu_cmdq_poll_until_not_full
-		queue_poll_init(smmu, &qp);
-		do {
-			if(!queue_full(llq))
-				break;
-			ret = queue_poll(&qp);
-
-		}while (!ret);
-	}
-	check exit condition
-
-} while (1);
-
-Now, with this patch we reduced to two nested while loops and
-calling queue_has_space() only without checking queue_full.
-
-do {
-	queue_poll_init(smmu, &qp);
-	while (!queue_has_space(&llq, n + sync)) {
-		ret = queue_poll(&qp);
-		if (ret == -ETIMEDOUT) {
-			dev_err();
-			queue_poll_init(smmu, &qp);
-		} 
-	}
-	check exit condition
-} while (1);
-
-An additional queue_poll_init is added outside inner while loop to arm
-the timer. We can merge the two queue_poll_init with a local bool
-variable to track whether init is needed, but IMHO it is not any better.
-
-Adding local_irq_save() just to make sure it pairs up with
-local_irq_restore(), no functional changes.
-
-> I still feel that we could just replace the _until_not_full()
-> with a _until_has_space()?
-Since the current code uses three nested while loops, replacing the
-inner _until_not_full() function means means retaining all three nested
-while loops and calling queue_has_space in two places - once in the
-middle while loop then again in this _until_has_space() function.
-
-I tried to extract the inner loop into a function but it requires
-passing in irqflags to restore. Not pretty.
-
+jon
 
