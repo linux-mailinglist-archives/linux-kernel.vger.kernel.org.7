@@ -1,136 +1,139 @@
-Return-Path: <linux-kernel+bounces-883615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85034C2DE39
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 20:22:45 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 642C7C2DE18
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 20:21:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A55E3A8777
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 19:20:11 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0FB0834C16A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 19:21:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE77928A704;
-	Mon,  3 Nov 2025 19:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD5A295DBD;
+	Mon,  3 Nov 2025 19:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RxDbbKHa"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Da4+Jzq9"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940B14502A
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 19:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB405224B1F;
+	Mon,  3 Nov 2025 19:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762197607; cv=none; b=Aztx1KZVCExYYFvyKRDTJJPrdHl+9Ji0f4I+Fy0GSZGIdUNdtDXT/bamta4hDFaoXu4Yhd7/8z02jQ1osbyAlMAywFgPX066UKO2/Yx9GOdyQDbLf/+ShsjesaZSISnFM4/6ZNjq+ayp3rjBR6+rg1Z2DMd0UNyL+ARFyC/Fvuk=
+	t=1762197688; cv=none; b=C5yqc4aa5+Qi0aOl8HwvVd9imUbTmmv8pupvzg3znGjncLTcdMrktqt8e4ipHvbMAnDo18YtHJCxyMUbXFZSQZNlmOMPQEENt+xiKa8AR9J3Y9byHNOyGY5ZVdJhZWqpMtj2oNZStAqX8hIs5z/YynuPpWFPMO08Qalja+YAueE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762197607; c=relaxed/simple;
-	bh=TaZ8VgcWPtgQM1En6kezQIgJCGrgiPugVdB3W0Sr/3o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=IxuYVfv6B9dKnmFH4I5cz1HsIlLxzFYWvk5Z75lfv+3k0o1tZgaXc+QG3BZ3mkohdJf++pfOraT1uF3cost6JRo/ETMgKuD25hYWXrkd/NjhvmB/DkNa7eGz23+XvvbfxUcgoaEEyn8vrgEWCqTBysP1N823r203GtTfNPdHdzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RxDbbKHa; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762197603;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BSxeyNIhJ0/LZwJpQYCXx38W3Gj9Tp+hUkja7RtNKNs=;
-	b=RxDbbKHaIyXKXbaNjCvW+iKQl70f+4BEbXemOQ4+Ug79fL9i7GIUSMp30E0OAoxnYlcwxc
-	dU/9oOsvqQmlnkbiI91lmJN7Mc8L2e74UyY5sskx3U4SdeZZXFkmpw5xOMkqwEzFg38LN7
-	eZqHjC2fX6AW0uyHq/rqs/P+hKqrTCw=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-554-QbTa9iZDODOfs6_KuNvrow-1; Mon,
- 03 Nov 2025 14:20:00 -0500
-X-MC-Unique: QbTa9iZDODOfs6_KuNvrow-1
-X-Mimecast-MFC-AGG-ID: QbTa9iZDODOfs6_KuNvrow_1762197597
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9F6F81800654;
-	Mon,  3 Nov 2025 19:19:55 +0000 (UTC)
-Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.45.224.48])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B5E021956056;
-	Mon,  3 Nov 2025 19:19:49 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,  LKML
- <linux-kernel@vger.kernel.org>,  Peter Zijlstra <peterz@infradead.org>,
-  "Paul E. McKenney" <paulmck@kernel.org>,  Boqun Feng
- <boqun.feng@gmail.com>,  Jonathan Corbet <corbet@lwn.net>,  Prakash
- Sangappa <prakash.sangappa@oracle.com>,  Madadi Vineeth Reddy
- <vineethr@linux.ibm.com>,  K Prateek Nayak <kprateek.nayak@amd.com>,
-  Steven Rostedt <rostedt@goodmis.org>,  Sebastian Andrzej Siewior
- <bigeasy@linutronix.de>,  Arnd Bergmann <arnd@arndb.de>,
-  linux-arch@vger.kernel.org,  "carlos@redhat.com" <carlos@redhat.com>,
-  Dmitry Vyukov <dvyukov@google.com>,  Marco Elver <elver@google.com>,
-  Peter Oskolkov <posk@posk.io>
-Subject: Re: [patch V3 02/12] rseq: Add fields and constants for time slice
- extension
-In-Reply-To: <8181a3e3-f49f-4278-9b15-67211d6151e0@efficios.com> (Mathieu
-	Desnoyers's message of "Mon, 3 Nov 2025 12:00:30 -0500")
-References: <20251029125514.496134233@linutronix.de>
-	<20251029130403.542731428@linutronix.de>
-	<7e44ca0b-e898-4b7f-aaaa-30d8ac52c643@efficios.com>
-	<87bjlmss8j.ffs@tglx>
-	<8181a3e3-f49f-4278-9b15-67211d6151e0@efficios.com>
-Date: Mon, 03 Nov 2025 20:19:46 +0100
-Message-ID: <lhu8qgm7wkt.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1762197688; c=relaxed/simple;
+	bh=XIKZfpbWhIczx+zfqu9he4VYj9BcO79XICH9IZJazMQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W+r5qB9nebiyS0hdFXCLv2oq2a2q6z88756Q1px80B1lCynnZSojNWUwXlyEd8Z7ejOjlbfR5milLexM6tJjGKensAfbcqrm1KhIOMkbGzcYiJi9aYisMXcBeypxs7URJIXk4x7zQmt+dP9d1k+sytt/w9JzNLcIlmB0BTD/Vow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Da4+Jzq9; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=bApFsiCh5GhK1LrnE+wALM58Na/7RmLhN4XmrqINttw=; b=Da4+Jzq9hAP4ZVsMeffgtRao6u
+	xWPp3cQ4ny2634aCIWw8HMHQtw3eQnPiGuAao+sPnye+9Pjsh+fZJETDK40F/RgoWiCvS4fQOyBzy
+	rsnz9h7ZWkx/9mtH3nU6qeY6sRGuhiKfMqO1z1eOnXRyyTAWoS4vl1ANoQ2PnMu86u6gf6skx65XG
+	HqGSYBRmGR/ZWuvhe+TJ6Y8nXPSSVYpYYj8caAM8EpUtj0M9Anb6e3YJNDMEwMLRobjw9WLbyqv+t
+	/j7wrKfU1XO9D2HCN7AGKeBG6guRpSSNANim/uSnoG6iEkDbqeOCjmZs6cYPsU0hCmxnjI452AlrR
+	SMCUGfUg==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vG07E-0000000FtOT-09nn;
+	Mon, 03 Nov 2025 19:21:21 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 1E29C300230; Mon, 03 Nov 2025 20:21:20 +0100 (CET)
+Date: Mon, 3 Nov 2025 20:21:20 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Guangbo Cui <jckeep.cuiguangbo@gmail.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Waiman Long <longman@redhat.com>, linux-rt-devel@lists.linux.dev,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] PCI/aer_inject: Convert inject_lock to
+ raw_spinlock_t
+Message-ID: <20251103192120.GJ3419281@noisy.programming.kicks-ass.net>
+References: <20251102105706.7259-1-jckeep.cuiguangbo@gmail.com>
+ <20251102105706.7259-3-jckeep.cuiguangbo@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251102105706.7259-3-jckeep.cuiguangbo@gmail.com>
 
-* Mathieu Desnoyers:
+On Sun, Nov 02, 2025 at 10:57:06AM +0000, Guangbo Cui wrote:
+> The AER injection path may run in interrupt-disabled context while
+> holding inject_lock. On PREEMPT_RT kernels, spinlock_t becomes a
+> sleeping lock, so it must not be taken while a raw_spinlock_t is held.
+> Doing so violates lock ordering rules and trigger lockdep reports
+> such as “Invalid wait context”.
+> 
+> Convert inject_lock to raw_spinlock_t to ensure non-sleeping locking
+> semantics. The protected list is bounded and used only for debugging,
+> so raw locking will not cause latency issues.
 
-> On 2025-10-31 16:58, Thomas Gleixner wrote:
->> On Fri, Oct 31 2025 at 15:31, Mathieu Desnoyers wrote:
->>> On 2025-10-29 09:22, Thomas Gleixner wrote:
->>> [...]
->>>> +
->>>> +The thread has to enable the functionality via prctl(2)::
->>>> +
->>>> +    prctl(PR_RSEQ_SLICE_EXTENSION, PR_RSEQ_SLICE_EXTENSION_SET,
->>>> +          PR_RSEQ_SLICE_EXT_ENABLE, 0, 0);
->>>
->>> Enabling specifically for each thread requires hooking into thread
->>> creation, and is not a good fit for enabling this from executable or
->>> library constructor function.
->> Where is the problem? It's not rocket science to handle that in user
->> space.
->
-> Overhead at thread creation is a metric that is closely followed
-> by glibc developers. If we want a fine-grained per-thread control over
-> the slice extension mechanism, it would be good if we can think of a way
-> to allow userspace to enable it through either clone3 or rseq so
-> we don't add another round-trip to the kernel at thread creation.
-> This could be done either as an addition to this prctl, or as a
-> replacement if we don't want to add two ways to do the same thing.
+Bounded how?
 
-I think this is a bit exaggerated. 8-)
+Also,
 
-I'm more concerned about this: If it's a separate system call like the
-quoted prctl, we'll likely have cases where the program launches and
-this feature automatically gets enabled for the main thread by glibc.
-Then the application installs a seccomp filter that doesn't allow the
-prctl, and calls pthread_create.  At this point we either end up with a
-partially enabled feature (depending on which thread the code runs), or
-we have to fail the pthread_create call.  Neither option is great.
+---
 
-So something enabled by rseq flags seems better to me.  Maybe
-default-enable and disable with a non-zero flag if backwards
-compatibility is sufficient?  As far I understand it, this series has
-performance improvements that more than offset the slice extension cost?
-
-Thanks,
-Florian
-
+--- a/drivers/pci/pcie/aer_inject.c
++++ b/drivers/pci/pcie/aer_inject.c
+@@ -85,12 +85,13 @@ static void aer_error_init(struct aer_er
+ 	err->pos_cap_err = pos_cap_err;
+ }
+ 
+-/* inject_lock must be held before calling */
+ static struct aer_error *__find_aer_error(u32 domain, unsigned int bus,
+ 					  unsigned int devfn)
+ {
+ 	struct aer_error *err;
+ 
++	lockdep_assert_held(&inject_lock);
++
+ 	list_for_each_entry(err, &einjected, list) {
+ 		if (domain == err->domain &&
+ 		    bus == err->bus &&
+@@ -100,20 +101,24 @@ static struct aer_error *__find_aer_erro
+ 	return NULL;
+ }
+ 
+-/* inject_lock must be held before calling */
+ static struct aer_error *__find_aer_error_by_dev(struct pci_dev *dev)
+ {
+-	int domain = pci_domain_nr(dev->bus);
++	int domain;
++
++	lockdep_assert_held(&inject_lock);
++
++	domain = pci_domain_nr(dev->bus);
+ 	if (domain < 0)
+ 		return NULL;
+ 	return __find_aer_error(domain, dev->bus->number, dev->devfn);
+ }
+ 
+-/* inject_lock must be held before calling */
+ static struct pci_ops *__find_pci_bus_ops(struct pci_bus *bus)
+ {
+ 	struct pci_bus_ops *bus_ops;
+ 
++	lockdep_assert_held(&inject_lock);
++
+ 	list_for_each_entry(bus_ops, &pci_bus_ops_list, list) {
+ 		if (bus_ops->bus == bus)
+ 			return bus_ops->ops;
 
