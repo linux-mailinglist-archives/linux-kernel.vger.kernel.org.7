@@ -1,135 +1,173 @@
-Return-Path: <linux-kernel+bounces-883782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E03AC2E67F
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:33:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8316C2E685
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:34:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9F183BA11B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:33:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9CE03B9E80
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770BD2D3EE4;
-	Mon,  3 Nov 2025 23:33:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053DC23BD02;
+	Mon,  3 Nov 2025 23:34:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="A4WT2590"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="IfFmt32l"
+Received: from mail-vk1-f227.google.com (mail-vk1-f227.google.com [209.85.221.227])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77C2523BD02;
-	Mon,  3 Nov 2025 23:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE9F34D380
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 23:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762212803; cv=none; b=g4DQWfoxxEFWaQPLQlnuCfME6s07ZRhtdaVMkVI6Swlagpirjv35KEb19XzD/GbJe9LIyhXPvytjzhe/FPqLiI6puLrHx4EJL02J26zUu5ZD/XCBhz2ipOuDXwyoJyZK5VvWUS+6TenNbkFogKfFFUFDpRqyfuAvaCSrO3cbhtM=
+	t=1762212863; cv=none; b=g/ihqWyRhQuCioKAl83mEqf/eG4XXreL/1/ZfnJWeZNCabMNyl4NlK3w+bQi0NwjZ/rvK+36GrqlxABS+rTRmu7ZRCVrd0TAgACHSekZxvp42kzSY/m3VMFltVDlIzSo0yOSzctEP9ykQy5Zfz1keS/NxjGqhcXOXX/SOH3/R/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762212803; c=relaxed/simple;
-	bh=Pl6H9vJe7acg1O6MR3J9UUbyidoSPhERCxM1FXyC3PI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tnWb7gVLxr7vZIiRk6ukaeazUitrUwLiD6uvA8zkfVgi86PRnXDOF9LWSqLmRa7HgSZnDsECGvGpa0cSFyxH7vN+Nk0MhNdluTaq7eJZmR5BKzJzVPIa07uuBA8vZMNm/uj10VSdVMGOQHnaQfODxu1xd927PCqmfW3nR/+7WLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=A4WT2590; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 8AED740AED
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1762212801; bh=7hPQDATXasc6TszX/hLxGIMFy6caQRz+O9eoOhPx3gQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=A4WT2590Lleb50KL0+rBO6gEF+qB7LQt6icP7bKDRUeFvjydw4dbSTh7IhXGdGmKK
-	 6yQpp9qiUpeniNy5O89XYhE5ZVyRT46czJpKyRsaokPYfY01iknOSI8gkljfm7z4eG
-	 9UurPhH9LkjrGOITX8GKqOikuQUlBEklN5uKiYMYpoSecqQxSJuCnZ1jqNJA6r2Si5
-	 xy3UN3iuDWGEaCe9QaloP92godZR6czpJhZdgJoX4sAzPegUtOMh91KEGIjOPFu+Tm
-	 Dv0v/jlNJBjjsXml61Ak/athlvDT59w1AltRz0Xc6aVMb9MTd1AbEf3qghPX+XXSsv
-	 Ff1DE0VboRV6g==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 8AED740AED;
-	Mon,  3 Nov 2025 23:33:21 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Bagas Sanjaya <bagasdotme@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Documentation
- <linux-doc@vger.kernel.org>, Linux Serial <linux-serial@vger.kernel.org>
-Cc: Cengiz Can <cengiz@kernel.wtf>, Bagas Sanjaya <bagasdotme@gmail.com>,
- Tomas Mudrunka <tomas.mudrunka@gmail.com>, Jiri Slaby
- <jirislaby@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Anselm =?utf-8?Q?Sch=C3=BCler?= <mail@anselmschueler.com>, Randy Dunlap
- <rdunlap@infradead.org>
-Subject: Re: [PATCH v3] Documentation: sysrq: Rewrite /proc/sysrq-trigger usage
-In-Reply-To: <20251023014102.16777-1-bagasdotme@gmail.com>
-References: <20251023014102.16777-1-bagasdotme@gmail.com>
-Date: Mon, 03 Nov 2025 16:33:20 -0700
-Message-ID: <87jz06bsjj.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1762212863; c=relaxed/simple;
+	bh=Hot0o9tYfiyQ3AUGU/S1GcdeBP5xB4rS/PNdZqyYWH4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CkMee/e3c0reJS5ML5IJTuvJu34waseaNpaeRG0qXQGRV4x5AjbMZ81U1A/EEV1tULMn/lVpmMnJ95m+lRCwgludyRUlukPCophA1W3wEzDYIniTFX12SeIzODsVFtW+Ygc0UiqfU6rDEXIwiF2eEMXe2tC8Lj63/OjtGJQ7v7E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=IfFmt32l; arc=none smtp.client-ip=209.85.221.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-vk1-f227.google.com with SMTP id 71dfb90a1353d-5597330a34fso526062e0c.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 15:34:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762212860; x=1762817660;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:dkim-signature:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+P0KIIygy/NSL1zmH+oUDan0k+tOj8G3m0CQiMdVHAU=;
+        b=fvTiC282DwJjYYsTYUKQoN9NVgKM3zKDDBgp35Pvzp/ygxOg92henzf0WneAyKvwNy
+         DYruvR3Ge0RbGhU+2nR+518gAcynLldZoK+pCeca/q3hjbp46izIpEUYigoik3MZg+VI
+         5IYYjECSHvjxK8TlG7hEFQ2NeHBfH+EGoSiIhPPCtrP9WOadmBBaDb0a7EXmzKJltK6G
+         ZV2qMieicE4nk2GRyhOYsHnIHr1yunO1Ok+gQJW0QgxPJ/Qlp+LeXZb6zGljCJToPeaH
+         rLU8iyNjNeH0Rz2pZT+sUSwvILDANxo/dh5mcGKnUte6rbIN0UgRlqCus7c5UifWBlOX
+         xjag==
+X-Forwarded-Encrypted: i=1; AJvYcCWTjAzayQnGX8g/0+l7QAC7vrY8m/ipKQcya84w7HXj4ggkgCy4hEd2CxAmMVHeT5J7G1Ej+84bcdqcMg0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPx7vj6oSg/JMiVhOM4VxyL1av1SfJkNCzYtbsO6i6IvzWYOvx
+	cTiFITQxqbn6vWhWdIZxwWmxSTCBzm6L9Pc1B4bhZ0+vtWBtUfZFoVgXUnQZAVk2Xg+dPFQtgSF
+	PD73Tdw+b/XsuZ9pL2m8MPPS5qIjGZYR5qfk2jc3FF3qnYvjKykVHmOlgqKt2LiwBAkFbqXavp0
+	fKJEGXcvinnw3w87EiJT/AYeN0nPONfCg3ErfYBXf3dPg5qTg3+LMXc6lGsOUiBJNIivr3/qmDs
+	GQV9NGFGKqsu9zmzwliWJd+
+X-Gm-Gg: ASbGncuVexfDLhf2ytM6VN8bhiIBfU+Y8qwFLZ8XmpSes04SDdpzIp9bTCy/y/Ss0Pi
+	72SqvB7CzwbrSRIjzf9nfnIKljUuaG7U4V7w3/kaiBrGRKaqR585+IJKFNaevBKahvFxKkJvR4u
+	eAGVcyICwEyk/nh78MBVUt9S2K7K0DQwpdSDrAI40Wy1/rxi8xPCRBBY1jL6nGHygUQH2zkUNcJ
+	jM8g2S6JnrECkj3zQdu8PKYYIrRTotvDJkPRgVwKN2qp1fcc2GFA8DJw/spWIF6La+pbzVkaVVO
+	Pl2r8ew6+bxAlez05iK7oQHULa/TQPetCEtIHomiEgBlFY01/BxNlkURnHEUKBM+oFNtszMz4x+
+	k021SSxb0adbBJJ5Z9uNwReYy8wFiamqLuMnQPk+3hlm8wU/e1ibc0SsNsBiOMRGW2Fe1+y9VxD
+	VmGwfQDaGqn6H24tpW0n/g4IEr3wG4zBM0p1xrRFM=
+X-Google-Smtp-Source: AGHT+IFDvrvb0qgjhV1OOOxZHQ6nod1shxA1BS9F/iDD3Imp8PCKE0Imy4tKguz+sp6cn6Cs5xctyDaX2knA
+X-Received: by 2002:a05:6122:3d0f:b0:559:3d59:1fdc with SMTP id 71dfb90a1353d-5593e42365bmr5309746e0c.14.1762212860310;
+        Mon, 03 Nov 2025 15:34:20 -0800 (PST)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-12.dlp.protect.broadcom.com. [144.49.247.12])
+        by smtp-relay.gmail.com with ESMTPS id 71dfb90a1353d-55973bd3e90sm147155e0c.2.2025.11.03.15.34.20
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Nov 2025 15:34:20 -0800 (PST)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-3405c46a22eso5053460a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 15:34:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1762212859; x=1762817659; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=+P0KIIygy/NSL1zmH+oUDan0k+tOj8G3m0CQiMdVHAU=;
+        b=IfFmt32l2CDY7s4uBvE91sEArkjV5etRDgddRaUlYQC60E8ukHmfZ5rkW/GtY+WsHA
+         2ajFkBuMQkQyXxSSkzpqR3t4FvT7EgHqwRVspjHeCm4Ua8/BvDb7IyVOaGpsGz+RtvQX
+         VkPGt61uQ6BkV/9M+EMTeMuxuZIbpZBkDvKvQ=
+X-Forwarded-Encrypted: i=1; AJvYcCXaju1b9lwAqpkLIj3D7SENFwm9WNrALpifU+leQwhnIhpbDnJkIR2qofH/NNBRygNuqldbFOJqIdfenQ8=@vger.kernel.org
+X-Received: by 2002:a17:90b:584b:b0:340:b152:efe7 with SMTP id 98e67ed59e1d1-340b152f234mr15279095a91.11.1762212859281;
+        Mon, 03 Nov 2025 15:34:19 -0800 (PST)
+X-Received: by 2002:a17:90b:584b:b0:340:b152:efe7 with SMTP id 98e67ed59e1d1-340b152f234mr15279070a91.11.1762212858917;
+        Mon, 03 Nov 2025 15:34:18 -0800 (PST)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3415c69fd56sm2257488a91.14.2025.11.03.15.34.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Nov 2025 15:34:18 -0800 (PST)
+Message-ID: <ad5d4ba5-bd30-429d-9c5c-86b3d6abe232@broadcom.com>
+Date: Mon, 3 Nov 2025 15:34:15 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 0/2] Allow disabling pause frames on panic
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+ Doug Berger <opendmb@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Antoine Tenart <atenart@kernel.org>,
+ Kuniyuki Iwashima <kuniyu@google.com>, Yajun Deng <yajun.deng@linux.dev>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20251103194631.3393020-1-florian.fainelli@broadcom.com>
+ <20251103152257.2f858240@kernel.org>
+Content-Language: en-US, fr-FR
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20251103152257.2f858240@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-Bagas Sanjaya <bagasdotme@gmail.com> writes:
+On 11/3/25 15:22, Jakub Kicinski wrote:
+> On Mon,  3 Nov 2025 11:46:29 -0800 Florian Fainelli wrote:
+>> This patch set allows disabling pause frame generation upon encountering
+>> a kernel panic. This has proven to be helpful in lab environments where
+>> devices are still being worked on, will panic for various reasons, and
+>> will occasionally take down the entire Ethernet switch they are attached
+>> to.
+> 
+> Could you explain in more detail? What does it mean that a pause frame
+> takes down an Ethernet switch?
 
-> /proc/sysrq-trigger usage documentation (in "On all" section) states
-> that it is not recommended to write extra characters to it. The sentence
-> may imply a contradiction to previous sentence which writes that such
-> characters are ignored.
->
-> Rewrite the description.
->
-> Link: https://lore.kernel.org/lkml/7ca05672-dc20-413f-a923-f77ce0a9d307@anselmschueler.com/
-> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> ---
-> Changes since v2 [1]:
->
->   - Keep /proc/sysrq-trigger future API change note (Tomas)
->
-> Anselm: Do you object to the rewrite?
+One of our devices crashed and kept on sending pause frames to its link 
+partner which is an Ethernet router. Rather than continue to forward 
+traffic between other LAN ports and Wi-Fi, that router just stopped 
+doing that and the other devices were frozen. I don't have the exact 
+model yet because this was on a different site/team but I will try to 
+get that. This should obviously be treated as a router bug and its 
+firmware should be updated, if there is an update available.
 
-It still seems confusing...
-
-> [1]: https://lore.kernel.org/linux-doc/20251016103609.33897-2-bagasdotme@gmail.com/
->
->  Documentation/admin-guide/sysrq.rst | 13 ++++++-------
->  1 file changed, 6 insertions(+), 7 deletions(-)
->
-> diff --git a/Documentation/admin-guide/sysrq.rst b/Documentation/admin-guide/sysrq.rst
-> index 9c7aa817adc72d..a88266b171aa17 100644
-> --- a/Documentation/admin-guide/sysrq.rst
-> +++ b/Documentation/admin-guide/sysrq.rst
-> @@ -75,16 +75,15 @@ On other
->  	submit a patch to be included in this section.
->  
->  On all
-> -	Write a single character to /proc/sysrq-trigger.
-> -	Only the first character is processed, the rest of the string is
-> -	ignored. However, it is not recommended to write any extra characters
-> -	as the behavior is undefined and might change in the future versions.
-> -	E.g.::
-> +	Write a single character to /proc/sysrq-trigger. E.g.::
->  
->  		echo t > /proc/sysrq-trigger
->  
-> -	Alternatively, write multiple characters prepended by underscore.
-> -	This way, all characters will be processed. E.g.::
-> +	Only the first character is processed; any following characters are
-> +	ignored for now, which might change in the future.
-> +
-> +	Alternatively, to write multiple characters, prepend them with an
-> +	underscore so that these all will be processed. E.g.::
-
-You're still saying that following characters are ignored, then give an
-example where they are not:
-
->  		echo _reisub > /proc/sysrq-trigger
-
-So, for me, this still isn't really right.
-
-This, I think, is a holdover from before, but I have to point out that:
-
->  		echo t > /proc/sysrq-trigger
-
-Does *not* write a single character: it writes "t\n".
-
-jon
+I have seen it happen a bunch of times at home as well with an unmanaged 
+5-port TP-Link switch and a crashed laptop.
+-- 
+Florian
 
