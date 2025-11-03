@@ -1,135 +1,112 @@
-Return-Path: <linux-kernel+bounces-882462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3F44C2A84A
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:15:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90FA7C2A899
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:19:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 68A8E4E1D60
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:15:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E019C3A8E68
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 344472D94A2;
-	Mon,  3 Nov 2025 08:15:07 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA862D876A;
+	Mon,  3 Nov 2025 08:15:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FvbJ0XVG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022572D879C
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 08:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630E715530C;
+	Mon,  3 Nov 2025 08:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762157706; cv=none; b=Zkzk+PrNEeu/3Xi+HQswHygKuShwV/26mDU8tg0rXgmy5uv6cRr4X4b8nJ1dsSPxjg6IM+HSmQjmVZkoJCtfWERdN/3pAE3PxxuGb6Pvvr8ItjyBEGUwXr3j9nEGYEBIQGnN+waICbTHQdAHamau7d6i8CQWu+Mp2ke335zgSns=
+	t=1762157726; cv=none; b=teNbtnKtFThw0aqM+ZO8rqXp/6bGI22hVHtKcy8H9XBpnNGwqNqJnAb/MSZGpf8DQ40xR5HAisCXc0QqtYcKEkGo+Yp/cAHhkv0fZc0ATCT5+9SuvwUk7cA+lRdWPvR3IQZtEJVbam2+bl2ynCdKrvLY3LQa9YpOiFGvGCpL47Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762157706; c=relaxed/simple;
-	bh=bZEA471zCgAF4gjsMtkrrk90WpX3fVKd8IdRRUTzAh0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=P7QQhLDyczVbWa8hWmbghuAD7ekF4wf3kVAbtoDt/1X5AL8Sk84AaHiAeF+aWhKmWBeBMllhtAqQHlpddsWBEG4uOsSNF3e8aygQ4K2fVuHE9r6F47Vv3E4LrGLarchuim2cQM6sEyKjtQrz8IRGVqDN4PB7tnNNsGggBC7EvoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-432f8352633so120709585ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 00:15:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762157704; x=1762762504;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=A7Mp2x/t1WVI7p41xyEH55Yf/RBW+4oZEe83BuIzBQQ=;
-        b=q502gA5Ct9TBHmOimRm99Gi2SgyV0UbACjWevaHibtez/jzhHBMFyr8zxsJs7IvakI
-         3iPTycbT8yHDic2aJvVYhhzgAqvGmZFmbhB5+7zTeKIkAZHkcF4EnuPidS9y4UU+ZMOe
-         1hbnQmweNrugAhQXCp+ryje7fhDuyz4wvDN/E2ZARZpeCQ6RVxi8fNzy+03OhO8FQoXM
-         NIC2tILLdDxVDA5YVK7YW8Qhz6ohPsQfOoXQ4zCODoHJtedwPmoA/5dwd99MXc0ZaH8D
-         oACzL/R0xJEK5ADWIG4wVMqJ+Sxp8dCe1uC/ddEibVLV0zoXUooBoinwvdaXt3/LIHQx
-         Qb7Q==
-X-Gm-Message-State: AOJu0YwRXkaIcyMz+vQqyMGik0j87V1jnTcWGTS5jbwJ0+hpY3YBWDEN
-	4LsFieqn4Mzb2agEYJKaMeG70CwmxHsgBiSHDF1S4XE8u3NIRRXZQ3pUjRwSKXZYOflAU6n+3n+
-	W9T2Tmawun6+r8FLQE4feE2l6dmT8Ejx+8TJ3wdG2gCuwnsXf6APLnjGFC98=
-X-Google-Smtp-Source: AGHT+IFIdXg7yMlW4FDL5eXNwhLrMgPxT2qi5aoAdLT3SCzQVZASL7wBbZ91VS8AhtymN9NGSEJjW66LLj+H/frccFbzBemRZppA
+	s=arc-20240116; t=1762157726; c=relaxed/simple;
+	bh=VufkWrtuA/KSjpuq1x6sOOrO8BVr8XELL5F/FJgAris=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YsDnmWzniEG7L8NYWmI+OosmtPLW0vG3SYAbdOrbGqpbZZWgQC9JssbXcfUBVSt/82TKrJWlIHrnAIh87NwmRyyu2g4vnULDlz6IcbX8pzAIwOdPNyIv+UQl3hRlaxEsW6w6IKAT+dCzdNJ/J3WXFHeocYw0+j+esJL1Iqp5yL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FvbJ0XVG; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762157725; x=1793693725;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VufkWrtuA/KSjpuq1x6sOOrO8BVr8XELL5F/FJgAris=;
+  b=FvbJ0XVGV9OnfSQKa5ZuSA7EpIJynLhwJovU8+G7nBsbe8I65lFDWNJo
+   DEIsGIyxzXgdiboGxgyYPNPpSFCP3qLMDAlwzvZiru9uYpe7dRsPJJY4t
+   rg8vO0VAaumtq5uhMdzEe2mL6sFXxECagL3Cjcxi5V0uf0bBr1Vn5DvKt
+   OR6wbqkOHW+mm8PzCZ0MjZkMt7UDl39fq93RNnLnfrzkOLkNtLmMJML6g
+   82QpViBRb0VEQM7IdM+Kcm9ADWQVW+4r1f5NMjH5kObSIr/TiBDqEzsUm
+   wWsMNR/bFsD9nLNA7rPpfDs+sVXRn0NZC77w0ky7bmSmT1QDojsQLRJAp
+   A==;
+X-CSE-ConnectionGUID: 4fh5oSLYSAqVNJYqo2i8vg==
+X-CSE-MsgGUID: afaiU5vbSY+0FZhR8MWz1w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="74830750"
+X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
+   d="scan'208";a="74830750"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 00:15:24 -0800
+X-CSE-ConnectionGUID: xxrSDRuvS4a2Km8/zCjM/A==
+X-CSE-MsgGUID: jgG0tFbES6C1Q/WdN6bt/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
+   d="scan'208";a="191914908"
+Received: from smoehrl-linux.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.216])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 00:15:20 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vFpib-000000055PN-1HjE;
+	Mon, 03 Nov 2025 10:15:13 +0200
+Date: Mon, 3 Nov 2025 10:15:12 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Frank Li <Frank.Li@nxp.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-i3c@lists.infradead.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-iio@vger.kernel.org, joshua.yeong@starfivetech.com,
+	devicetree@vger.kernel.org, linux@roeck-us.net,
+	Carlos Song <carlos.song@nxp.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Adrian Fluturel <fluturel.adrian@gmail.com>
+Subject: Re: [PATCH v9 0/6] i3c: Add basic HDR mode support
+Message-ID: <aQhkkEh5C6vl2nbT@smile.fi.intel.com>
+References: <20251031-i3c_ddr-v9-0-f1e523ebaf78@nxp.com>
+ <20251101162525.44c9862b@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:97:b0:430:cf18:e1e5 with SMTP id
- e9e14a558f8ab-4330d206074mr170832085ab.31.1762157704179; Mon, 03 Nov 2025
- 00:15:04 -0800 (PST)
-Date: Mon, 03 Nov 2025 00:15:04 -0800
-In-Reply-To: <20251103074641.4160652-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69086488.050a0220.29fc44.0036.GAE@google.com>
-Subject: Re: [syzbot] [ext4?] WARNING in ext4_xattr_inode_update_ref (2)
-From: syzbot <syzbot+76916a45d2294b551fd9@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251101162525.44c9862b@jic23-huawei>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Hello,
+On Sat, Nov 01, 2025 at 04:25:25PM +0000, Jonathan Cameron wrote:
+> On Fri, 31 Oct 2025 12:39:12 -0400
+> Frank Li <Frank.Li@nxp.com> wrote:
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in ext4_xattr_inode_update_ref
+> Assuming everyone is happy with this version,
 
-loop0: detected capacity change from 0 to 512
-EXT4-fs warning (device loop0): ext4_xattr_inode_get:546: inode #11: comm syz.0.17: ea_inode file size=0 entry size=6
-EXT4-fs warning (device loop0): ext4_expand_extra_isize_ea:2860: Unable to expand inode 15. Delete some EAs or run e2fsck.
-------------[ cut here ]------------
-EA inode 11 i_nlink=2
-WARNING: CPU: 0 PID: 6571 at fs/ext4/xattr.c:1065 ext4_xattr_inode_update_ref+0x51a/0x5b0 fs/ext4/xattr.c:1063
-Modules linked in:
-CPU: 0 UID: 0 PID: 6571 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT_{RT,(full)} 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/02/2025
-RIP: 0010:ext4_xattr_inode_update_ref+0x51a/0x5b0 fs/ext4/xattr.c:1063
-Code: 48 b8 00 00 00 00 00 fc ff df 41 0f b6 04 06 84 c0 0f 85 80 00 00 00 41 8b 17 48 c7 c7 00 9b ff 8a 4c 89 e6 e8 97 9a 03 ff 90 <0f> 0b 90 90 4c 8b 6c 24 28 e9 59 fe ff ff e8 33 f6 40 08 44 89 f9
-RSP: 0018:ffffc90004067240 EFLAGS: 00010246
-RAX: 07a0f86583ac9f00 RBX: 0000000000000001 RCX: ffff888026411e00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90004067330 R08: 0000000000000000 R09: 0000000000000000
-R10: dffffc0000000000 R11: ffffed101710487b R12: 000000000000000b
-R13: ffff8880412ca7d8 R14: 1ffff110082594e1 R15: ffff8880412ca708
-FS:  00007f06408966c0(0000) GS:ffff888126df9000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f186f706000 CR3: 0000000053790000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- ext4_xattr_inode_dec_ref fs/ext4/xattr.c:1088 [inline]
- ext4_xattr_inode_dec_ref_all+0x867/0xda0 fs/ext4/xattr.c:1230
- ext4_xattr_delete_inode+0xa4c/0xc10 fs/ext4/xattr.c:2954
- ext4_evict_inode+0xac9/0xee0 fs/ext4/inode.c:271
- evict+0x504/0x9c0 fs/inode.c:810
- ext4_orphan_cleanup+0xc20/0x1460 fs/ext4/orphan.c:470
- __ext4_fill_super fs/ext4/super.c:5617 [inline]
- ext4_fill_super+0x593b/0x61f0 fs/ext4/super.c:5736
- get_tree_bdev_flags+0x40e/0x4d0 fs/super.c:1691
- vfs_get_tree+0x92/0x2b0 fs/super.c:1751
- fc_mount fs/namespace.c:1208 [inline]
- do_new_mount_fc fs/namespace.c:3651 [inline]
- do_new_mount+0x302/0xa10 fs/namespace.c:3727
- do_mount fs/namespace.c:4050 [inline]
- __do_sys_mount fs/namespace.c:4238 [inline]
- __se_sys_mount+0x313/0x410 fs/namespace.c:4215
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f064123076a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f0640895e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f0640895ef0 RCX: 00007f064123076a
-RDX: 0000200000000180 RSI: 00002000000001c0 RDI: 00007f0640895eb0
-RBP: 0000200000000180 R08: 00007f0640895ef0 R09: 0000000000800700
-R10: 0000000000800700 R11: 0000000000000246 R12: 00002000000001c0
-R13: 00007f0640895eb0 R14: 000000000000046c R15: 0000200000000680
- </TASK>
+Almost. Some nit-picks, but the main comments are:
+1) arrays out of a single entry;
+2) seems unneeded calls to regmap_dev_attach().
 
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Tested on:
-
-commit:         6146a0f1 Linux 6.18-rc4
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10037932580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=41ad820f608cb833
-dashboard link: https://syzkaller.appspot.com/bug?extid=76916a45d2294b551fd9
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11386012580000
 
 
