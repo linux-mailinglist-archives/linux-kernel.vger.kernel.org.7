@@ -1,245 +1,122 @@
-Return-Path: <linux-kernel+bounces-882157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22A33C29C70
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 02:21:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44911C29C5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 02:20:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9AF79347E18
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 01:21:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 411FC3A58AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 01:17:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2CD2727E0;
-	Mon,  3 Nov 2025 01:21:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F297827146B;
+	Mon,  3 Nov 2025 01:17:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="MhC1aMzT"
-Received: from mail-m49233.qiye.163.com (mail-m49233.qiye.163.com [45.254.49.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="bpfadUeE"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6AC2F5E;
-	Mon,  3 Nov 2025 01:21:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DF7086334;
+	Mon,  3 Nov 2025 01:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762132880; cv=none; b=IKvT+PwnF/NotEt/d7sKJ6jiQNnidA0YUPMfnqKR2GzOsmGY0cXrozluMTswht83d1zjZ+Dk9LaMpQvMiRHhCHZlhMK9l1GAaKUabgv8KfOm36Iewl1y2CfB+Y8Su15P2R/ayQpAr+0RC0BnVRWEQkDzGVMvGkWtT6WG0BP69U4=
+	t=1762132636; cv=none; b=kjbSTb0Wbv2fdcpBzt4C4mlk2wve71SR1dePgv1rNTzAQnEDaFS2VzdoeG69jNCRvmzFVCajR8ZwthOANke/mDCP0nj8RTgoJOgOMeB3fhaJs7ifYdXmWDknohstxHjTF16tUdo4lei1RdnPHx5dv1TapCFgYeS67Q6qTAmgkbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762132880; c=relaxed/simple;
-	bh=pyWf35LHN5TIqm6EHCgotvWd6u976BQiDxWXwC9gg9o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AQhOllZ6G0qDlUlCGEgxFAqRjDfEq8MOp4pk3mhmJYzPuY0MRX6YJW/Z+5X9WwJ+YIHilPrf6mN08ujMSky4AaCTNrw4pjdQT0vObGVU3ZkT7NrEBErtHtTjyS+nLcEyutHPIcYZHRCUPpH/FR1s80ALOFWhBobQgESYID+p+jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=MhC1aMzT; arc=none smtp.client-ip=45.254.49.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.149] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 2818daae2;
-	Mon, 3 Nov 2025 09:15:57 +0800 (GMT+08:00)
-Message-ID: <48b9ae2c-7cc5-430d-94c0-e49d341a4b14@rock-chips.com>
-Date: Mon, 3 Nov 2025 09:15:55 +0800
+	s=arc-20240116; t=1762132636; c=relaxed/simple;
+	bh=4R7tTrPB599Lq1pscObtmhgAovA9NIF1vQfHeXM8dpc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=iiMFX4iuFHP/ZvRTEl5FDfD8C14SYy51ae6GRv3q9mTlIDaOtjwSUmFX0tXV6vXFiPhYDSE2KRPwJ0X/u4PbwOkx1TM7a33e1dcVTsQJV8gi6AqFIsC6grU/pUw6iSgA9fzdVXLwo4ZgkOrMoGn0xkD8tmV3TC5oE2HmFshwJXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=bpfadUeE; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 5A31H7F20538960, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1762132627; bh=UuF+p8aMoeYMKRW3GJPXUnskNsyDTfAWc5P8vQuQO9g=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=bpfadUeEhHGjmwdJogrpLzWHKVeE6BdKoQ/u9+3rMuG9piESZbousx9DuiPchxg0g
+	 iAaf3ypIUaMDrDap8M1lLQsFGtY9s443BhXGMV74x3zCaEOdGrzWcNiunlzI8NZZtf
+	 eErkK4mICBp2IixLOWw2B2Q/SQeHFsRtjTwSEWrqXKHz88cSklX6UTEbeUP4jWRYt1
+	 Zao3/h+uICEqJ/trIyCuXtbth5UACp3bssScGZNR/G0YePtEWJATNDaFeyXJhL1V/u
+	 d7DCEf1FFDVycHYXV2Z4kwtLUkz7acBz7dmfTkJ/e2GS1gn7/KPOhhVFN4DEKwxf/K
+	 UW1uy0ilfAyxA==
+Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 5A31H7F20538960
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 3 Nov 2025 09:17:07 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Mon, 3 Nov 2025 09:17:07 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS06.realtek.com.tw (10.21.1.56) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Mon, 3 Nov 2025 09:17:07 +0800
+Received: from RTKEXHMBS06.realtek.com.tw ([::1]) by
+ RTKEXHMBS06.realtek.com.tw ([fe80::744:4bc9:832c:9b7e%10]) with mapi id
+ 15.02.1544.027; Mon, 3 Nov 2025 09:17:07 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+        Harshit Mogalapalli
+	<harshit.m.mogalapalli@gmail.com>
+CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
+Subject: RE: [PATCH] rtlwifi: rtl8188ee: remove an accidental '-' character
+Thread-Topic: [PATCH] rtlwifi: rtl8188ee: remove an accidental '-' character
+Thread-Index: AQHcSmbpgJ0klacK4UCTMB6Tyko8vbTgKWCw
+Date: Mon, 3 Nov 2025 01:17:07 +0000
+Message-ID: <8d6962531a9545fd8279fbc7cd04340c@realtek.com>
+References: <aQSz3KnK4wFIJoe3@stanley.mountain>
+In-Reply-To: <aQSz3KnK4wFIJoe3@stanley.mountain>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 03/10] drm/bridge: Implement generic USB Type-C DP HPD
- bridge
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Chaoyi Chen <kernel@airkyi.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner
- <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
- Andy Yan <andy.yan@rock-chips.com>,
- Yubing Zhang <yubing.zhang@rock-chips.com>,
- Frank Wang <frank.wang@rock-chips.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Amit Sunil Dhamne <amitsd@google.com>, Dragan Simic <dsimic@manjaro.org>,
- Johan Jonker <jbx6244@gmail.com>, Diederik de Haas <didi.debian@cknow.org>,
- Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
-References: <20251029071435.88-1-kernel@airkyi.com>
- <20251029071435.88-4-kernel@airkyi.com> <aQTAdaIgjgTRSgxL@kuha.fi.intel.com>
-Content-Language: en-US
-From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-In-Reply-To: <aQTAdaIgjgTRSgxL@kuha.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Tid: 0a9a4748ff7903abkunm80e48559945672
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGUlNTVYYS05PH0hMS0hMTRhWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpOTE
-	5VSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=MhC1aMzTcbPCb2GjvXUVWVpijnqhAyuKlMB6iEaiyJGduWsVfghOz7b2U3nUfv8Mj0E35szVjd5jTralNiiLCaQdj9D5G7m7Qs5XWRHxfl1qXlNyLyigt/zY5uzcO1bqg1vdcVzL/VjRyP0YS3mSEae+ibuPs+XQeTNHJ1KiXT8=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
-	bh=5pRPING1gapH7HdR50g5wH/mDEvyo4qh8YXcAm7Fee8=;
-	h=date:mime-version:subject:message-id:from;
 
-On 10/31/2025 9:58 PM, Heikki Krogerus wrote:
+Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> Sent: Friday, October 31, 2025 9:04 PM
+> The "->allstasleep" variable is a 1 bit bitfield.  It can only be
+> 0 or 1.  This "=3D -1" assignement was supposed to be "=3D 1".  This
+> doesn't change how the code works, it's just a cleanup.
 
-> Wed, Oct 29, 2025 at 03:14:28PM +0800, Chaoyi Chen kirjoitti:
->> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
->>
->> Several USB-C controller drivers have already implemented the DP HPD
->> bridge function provided by aux-hpd-bridge.c, but there are still
->> some USB-C controller driver that have not yet implemented it.
->>
->> This patch implements a generic DP HPD bridge based on aux-hpd-bridge.c,
->> so that other USB-C controller drivers don't need to implement it again.
->>
->> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
->> ---
->>
->> Changes in v8:
->> - Merge generic DP HPD bridge into one module.
->>
->>   drivers/gpu/drm/bridge/Kconfig                |  5 +-
->>   drivers/gpu/drm/bridge/Makefile               |  8 +++-
->>   drivers/gpu/drm/bridge/aux-hpd-bridge.c       | 23 ++++++++-
->>   drivers/gpu/drm/bridge/aux-hpd-bridge.h       | 13 +++++
->>   .../gpu/drm/bridge/aux-hpd-typec-dp-bridge.c  | 47 +++++++++++++++++++
->>   5 files changed, 93 insertions(+), 3 deletions(-)
->>   create mode 100644 drivers/gpu/drm/bridge/aux-hpd-bridge.h
->>   create mode 100644 drivers/gpu/drm/bridge/aux-hpd-typec-dp-bridge.c
->>
->> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
->> index a250afd8d662..17257b223a28 100644
->> --- a/drivers/gpu/drm/bridge/Kconfig
->> +++ b/drivers/gpu/drm/bridge/Kconfig
->> @@ -23,13 +23,16 @@ config DRM_AUX_BRIDGE
->>   	  build bridges chain.
->>   
->>   config DRM_AUX_HPD_BRIDGE
->> -	tristate
->> +	tristate "AUX HPD bridge support"
-> Don't you now need:
->
->          depends on TYPEC || !TYPEC
->
->>   	depends on DRM_BRIDGE && OF
->>   	select AUXILIARY_BUS
->>   	help
->>   	  Simple bridge that terminates the bridge chain and provides HPD
->>   	  support.
->>   
->> +	  Specifically, if you want a default Type-C DisplayPort HPD bridge for
->> +	  each port of the Type-C controller, say Y here.
->> +
->>   menu "Display Interface Bridges"
->>   	depends on DRM && DRM_BRIDGE
->>   
->> diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
->> index c7dc03182e59..2998937444bc 100644
->> --- a/drivers/gpu/drm/bridge/Makefile
->> +++ b/drivers/gpu/drm/bridge/Makefile
->> @@ -1,6 +1,12 @@
->>   # SPDX-License-Identifier: GPL-2.0
->>   obj-$(CONFIG_DRM_AUX_BRIDGE) += aux-bridge.o
->> -obj-$(CONFIG_DRM_AUX_HPD_BRIDGE) += aux-hpd-bridge.o
->> +
->> +hpd-bridge-y := aux-hpd-bridge.o
->> +ifneq ($(CONFIG_TYPEC),)
->> +hpd-bridge-y += aux-hpd-typec-dp-bridge.o
->> +endif
->> +obj-$(CONFIG_DRM_AUX_HPD_BRIDGE) += hpd-bridge.o
->> +
->>   obj-$(CONFIG_DRM_CHIPONE_ICN6211) += chipone-icn6211.o
->>   obj-$(CONFIG_DRM_CHRONTEL_CH7033) += chrontel-ch7033.o
->>   obj-$(CONFIG_DRM_CROS_EC_ANX7688) += cros-ec-anx7688.o
->> diff --git a/drivers/gpu/drm/bridge/aux-hpd-bridge.c b/drivers/gpu/drm/bridge/aux-hpd-bridge.c
->> index 2e9c702c7087..11ad6dc776c7 100644
->> --- a/drivers/gpu/drm/bridge/aux-hpd-bridge.c
->> +++ b/drivers/gpu/drm/bridge/aux-hpd-bridge.c
->> @@ -12,6 +12,8 @@
->>   #include <drm/drm_bridge.h>
->>   #include <drm/bridge/aux-bridge.h>
->>   
->> +#include "aux-hpd-bridge.h"
->> +
->>   static DEFINE_IDA(drm_aux_hpd_bridge_ida);
->>   
->>   struct drm_aux_hpd_bridge_data {
->> @@ -204,7 +206,26 @@ static struct auxiliary_driver drm_aux_hpd_bridge_drv = {
->>   	.id_table = drm_aux_hpd_bridge_table,
->>   	.probe = drm_aux_hpd_bridge_probe,
->>   };
->> -module_auxiliary_driver(drm_aux_hpd_bridge_drv);
->> +
->> +static int drm_aux_hpd_bridge_mod_init(void)
->> +{
->> +	int ret;
->> +
->> +	ret = auxiliary_driver_register(&drm_aux_hpd_bridge_drv);
->> +	if (ret)
->> +		return ret;
->> +
->> +	return drm_aux_hpd_typec_dp_bridge_init();
->> +}
->> +
->> +static void drm_aux_hpd_bridge_mod_exit(void)
->> +{
->> +	drm_aux_hpd_typec_dp_bridge_exit();
->> +	auxiliary_driver_unregister(&drm_aux_hpd_bridge_drv);
->> +}
->> +
->> +module_init(drm_aux_hpd_bridge_mod_init);
->> +module_exit(drm_aux_hpd_bridge_mod_exit);
->>   
->>   MODULE_AUTHOR("Dmitry Baryshkov <dmitry.baryshkov@linaro.org>");
->>   MODULE_DESCRIPTION("DRM HPD bridge");
->> diff --git a/drivers/gpu/drm/bridge/aux-hpd-bridge.h b/drivers/gpu/drm/bridge/aux-hpd-bridge.h
->> new file mode 100644
->> index 000000000000..69364731c2f1
->> --- /dev/null
->> +++ b/drivers/gpu/drm/bridge/aux-hpd-bridge.h
->> @@ -0,0 +1,13 @@
->> +/* SPDX-License-Identifier: GPL-2.0-only */
->> +#ifndef AUX_HPD_BRIDGE_H
->> +#define AUX_HPD_BRIDGE_H
->> +
->> +#if IS_REACHABLE(CONFIG_TYPEC)
->> +int drm_aux_hpd_typec_dp_bridge_init(void);
->> +void drm_aux_hpd_typec_dp_bridge_exit(void);
->> +#else
->> +static inline int drm_aux_hpd_typec_dp_bridge_init(void) { return 0; }
->> +static inline void drm_aux_hpd_typec_dp_bridge_exit(void) { }
->> +#endif /* IS_REACHABLE(CONFIG_TYPEC) */
->> +
->> +#endif /* AUX_HPD_BRIDGE_H */
->> diff --git a/drivers/gpu/drm/bridge/aux-hpd-typec-dp-bridge.c b/drivers/gpu/drm/bridge/aux-hpd-typec-dp-bridge.c
->> new file mode 100644
->> index 000000000000..6f2a1fca0fc5
->> --- /dev/null
->> +++ b/drivers/gpu/drm/bridge/aux-hpd-typec-dp-bridge.c
->> @@ -0,0 +1,47 @@
->> +// SPDX-License-Identifier: GPL-2.0+
->> +#include <linux/of.h>
->> +#include <linux/usb/typec_altmode.h>
->> +#include <linux/usb/typec_dp.h>
->> +#include <linux/usb/typec_notify.h>
->> +
->> +#include <drm/bridge/aux-bridge.h>
->> +
->> +#include "aux-hpd-bridge.h"
->> +
->> +#if IS_REACHABLE(CONFIG_TYPEC)
-> You don't need that. You should not use ifdefs in .c files.
->
-Oh yes, this should be handled by depend on. I will fix it in v9.
+Yes, this patch doesn't change logic at all. However, it looks like existin=
+g
+code is wrong, since other places in the same pattern in this driver set to=
+ 0.
+More, I check vendor driver which also sets this value to 0.
 
--- 
-Best,
-Chaoyi
+>=20
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> Found with a static checker rule that Harshit and I wrote.
+>=20
+>  drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c
+> b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c
+> index 7252bc621211..7ef57b1c674c 100644
+> --- a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c
+> +++ b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/fw.c
+> @@ -694,7 +694,7 @@ void rtl88e_set_p2p_ps_offload_cmd(struct ieee80211_h=
+w *hw, u8 p2p_ps_state)
+>=20
+>                         if (P2P_ROLE_GO =3D=3D rtlpriv->mac80211.p2p) {
+>                                 p2p_ps_offload->role =3D 1;
+> -                               p2p_ps_offload->allstasleep =3D -1;
+> +                               p2p_ps_offload->allstasleep =3D 1;
+>                         } else {
+>                                 p2p_ps_offload->role =3D 0;
+>                         }
+> --
+> 2.51.0
 
 
