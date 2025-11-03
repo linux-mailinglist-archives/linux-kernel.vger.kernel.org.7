@@ -1,63 +1,54 @@
-Return-Path: <linux-kernel+bounces-882335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2141C2A34F
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 07:39:55 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0FDDC2A33D
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 07:39:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A4373B2E52
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 06:38:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D463D4ED170
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 06:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 305D4299A9E;
-	Mon,  3 Nov 2025 06:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="gavmX8c3"
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C934A298CCF;
+	Mon,  3 Nov 2025 06:38:34 +0000 (UTC)
+Received: from ssh247.corpemail.net (ssh247.corpemail.net [210.51.61.247])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A3E2309B2
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 06:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68BAA296BBD;
+	Mon,  3 Nov 2025 06:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.247
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762151917; cv=none; b=LfMNmdhFsVymYiHOEQNwIcnhIEHFqO3bN8QtAwooCf9c8bB5z0E5C8BhJZe7gWut57uTHqcGtAaUeNERDr6jTh+34gYyd2phh9Mfg1tObA140vKCRnOMh1/H4T86gcPeuNThL509pLSZrGcEyL7oppj80NABTYvVOxEzqXP8xqs=
+	t=1762151914; cv=none; b=s7HwiPItwcKZd+jPEmRLg3f9UU0/jx3kLSbDJrgTc1Qh6k85Yh5l4Iu5HUkrGpWULYyn5OKTT8SJicMy7z9eNzwjjNuBfEAokcW9Kzl4BpbzQgvDXfU2A81eYzcEuhJ+P5kuPhrkIG+pGUtAjP16Cnp2PJmlmOgPhhZM4KgMO5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762151917; c=relaxed/simple;
-	bh=zqhMDdQxfNUUFJxdkwAqmdIiGvK7f0u85p1ipRNchH8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=J82CrJp3MjG5LZWD3ULHBDnCIqoH0AM4l6j4b/ba8e71nyLPbdmXEYWSASb0Z+0d/rR+I53qCkRZ8SNBFSGaIXJStSSgSDqfvjojFnzberiQmf0GBLJJBbEdhAM25oThArrqFtweArz3Rhh0F43g/GF8yG+zOGShCR5PAORGWWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=gavmX8c3; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1762151863;
-	bh=bCRxv5EtM0tvDW4JhQ+LpOOVgm4zkB9w1mcNoEZGj5U=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=gavmX8c3736K0IC+EbaGnB1ajjL7znUfFRFS5p8qM5br3WRxMtW7KsBeO3FOS/xVN
-	 iLdHB8xO78wHrLSbbhgDjVM875M56YGPETeiEpq6wNOxdGvA23sWc1hUmwG+p3bf9t
-	 eB/sbNrkv39AOHixrJq9RbGJL9UolSetxZhMaNI8=
-X-QQ-mid: zesmtpgz4t1762151859td14c1dbe
-X-QQ-Originating-IP: RhqAIz/08Wyxiq6Fw68hfnrDcEIHZXXUupI08eRw7Mc=
-Received: from localhost.localdomain ( [123.114.60.34])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 03 Nov 2025 14:37:34 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 10891316942982493356
-EX-QQ-RecipientCnt: 5
-From: Qiang Ma <maqianga@uniontech.com>
-To: akpm@linux-foundation.org,
-	bhe@redhat.com
-Cc: kexec@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Qiang Ma <maqianga@uniontech.com>
-Subject: [PATCH v2 4/4] kexec_file: Fix the issue of mismatch between loop variable types
-Date: Mon,  3 Nov 2025 14:34:40 +0800
-Message-Id: <20251103063440.1681657-5-maqianga@uniontech.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20251103063440.1681657-1-maqianga@uniontech.com>
-References: <20251103063440.1681657-1-maqianga@uniontech.com>
+	s=arc-20240116; t=1762151914; c=relaxed/simple;
+	bh=mqtTEHnfdDj7ufOnIaA3taPobJloaDUr/In/jZdqmZQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B3kpoePP96JcF3TGSCLT6A0gdAcfZk9YX54oeIcFTyMStRVVao43JIfqMfsXHjSRLP2pYG4XEB0C4lbZ9Lm/WoQNxbBxSNglVT/mNjwv2/22XdLOnuSg7mlBO/YaO/q79QLLra7nhCt68Pb7hPpmGluWGnprmZwdnimQlRP6NJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.247
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from Jtjnmail201616.home.langchao.com
+        by ssh247.corpemail.net ((D)) with ASMTP (SSL) id 202511031438248582;
+        Mon, 03 Nov 2025 14:38:24 +0800
+Received: from jtjnmailAR01.home.langchao.com (10.100.2.42) by
+ Jtjnmail201616.home.langchao.com (10.100.2.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Mon, 3 Nov 2025 14:38:23 +0800
+Received: from inspur.com (10.100.2.107) by jtjnmailAR01.home.langchao.com
+ (10.100.2.42) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Mon, 3 Nov 2025 14:38:23 +0800
+Received: from localhost.com (unknown [10.94.13.117])
+	by app3 (Coremail) with SMTP id awJkCsDwEPneTQhpgL0JAA--.13964S4;
+	Mon, 03 Nov 2025 14:38:22 +0800 (CST)
+From: Chu Guangqing <chuguangqing@inspur.com>
+To: <"mst@redhat.comjasowang@redhat.comxuanzhuo@linux.alibaba.comeperezma@redhat.comandrew+netdev@lunn.chdavem@davemloft.netedumazet@google.comkuba@kernel.orgpabeni"@redhat.com>
+CC: <xuanzhuo@linux.alibaba.com>, <eperezma@redhat.com>,
+	<virtualization@lists.linux.dev>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Chu Guangqing <chuguangqing@inspur.com>
+Subject: [PATCH] virtio_net: Fix a typo error in virtio_net
+Date: Mon, 3 Nov 2025 14:36:33 +0800
+Message-ID: <20251103063633.4295-1-chuguangqing@inspur.com>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,59 +56,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpgz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz3a-1
-X-QQ-XMAILINFO: M/NR0wiIuy70E515xT9T6A/bvLkicHDLC/2+af/Gk9QQa4J1wPG/EEQG
-	xr1Sodyf5gFjBymm74UzOogkv8TIv521xHSGvART/m2LW3MjQ2dgkckBIDlzu3k3MWjAz54
-	0j+MA8Io/1vfL0aPnCpMz6VO2MOQsx8g5mHMIFXTZFLOBxuo8K3TRpnfyIMzMOwKJmKvpom
-	yYTyG9jLz+vm0hLYVehK0RjwAaHjtazAgrCUnHn7TNwuGkhRElpib1kWTyOvTEk2iTX0Cmz
-	xiAGT97IoBmfVkuH9iiSzYF4NIYHZRPFQJscUhWLMJ8NNX/Pgndav7LVR+Agq9nMbPDzt9X
-	N0QNxOv3tabvvxvVReHMvtzrFw/C7Fs7hDGpk7ZYqh8i27rwGWm/ZqflLHYbiuYgJZWpzqK
-	dR3oStu7T2xMyBr4sEnu8ZcxGNBc4GF6qiC+5KAMmItZAIqVrdziwyRYQpcOYkywt9YKmw5
-	gr7Y17qnNLh1cH+LW7hSs4OnLcrbfasEjggLgBUH+4SvV+GVaZx8YzO5sX1UZ13WZiDtbLW
-	341cI878p85PyrMdl2G2NJ3OtfUYvCTBbld/XNXL3e+ewjAhzEORwSspYOH61dUIpYK9W6g
-	UWgbnlTeSi1aRd2wSO9L589KWcmUFTzFFRP+x/3Oj2ql5UbDGnmE/yub/YWFpaBMizdnum6
-	E3B8R9pRkMWb4FpIfvZ2UHq0iw8goD1lgCpr/lXng9G5jYchihmaIqL4XWbC1bmBwfr0siu
-	f6n5/IrXDn+oV2O5IDdi6SFC9cyF38h2Xn2O0CxL0MaWIIDVd8vvdWVGbGqrlptUHmaFjxm
-	g6MpEhBk6rHC0TEGKnGFb90FPXMoWEalPRR1z/P2QM2TaussWgm4ZvDA1D64vBMQNvep7jR
-	rXKYqHAEfs5teIvlBBvwrD1maTbdyZQ5FxXlMKPP9rKlBZ4gWISMf8l+2bcuxyVrqhJVHlP
-	nh3k6kHAov36ayRFIFWzMVi05YrFLgpoFU3Ld3mCFUhJjU12gGnJ4pmffKCLqrigldJthcu
-	YOJ4vDsAJEXBMD6PlpvrDK6vQE6lkKC0j8OAZxINVmKddtwToO
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
+X-CM-TRANSID: awJkCsDwEPneTQhpgL0JAA--.13964S4
+X-Coremail-Antispam: 1UD129KBjvdXoWrKw4DZw45uw1fAr48GryDWrg_yoWfurc_uw
+	1UZr43tws5Kr4Y9ay5Cw4rAFW5Ka1kWF4kGF9xK3ySkF98uF13WF9FvFyDGFZrX39Fyr1r
+	GFsxGFn8A34fZjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbVkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_GcCE
+	3s1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
+	1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0
+	cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8Jw
+	ACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_Jw0_
+	GFylc7CjxVAKzI0EY4vE52x082I5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
+	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
+	b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
+	vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
+	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7VUjHmh7UUUUU==
+X-CM-SenderInfo: 5fkxw35dqj1xlqj6x0hvsx2hhfrp/
+X-CM-DELIVERINFO: =?B?DKTVVJRRTeOiUs3aOqHZ50hzsfHKF9Ds6CbXmDm38RucXu3DYXJR7Zlh9zE0nt/Iac
+	D+KWEkofU1bJvebEtZkuG4YLrU+vTWs0UaMZjN3SDVnrRYNjwvvyPu2AsqKRdyaiTde6PO
+	b7yM2pVqj+AYQqHbEW8=
+Content-Type: text/plain
+tUid: 202511031438248c7be716b006c143bcb8f91c6232ec2c
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-The type of the struct kimage member variable nr_segments is unsigned long.
-Correct the loop variable i and the print format specifier type.
+Fix the spelling error of "separate".
 
-Signed-off-by: Qiang Ma <maqianga@uniontech.com>
+Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
 ---
- kernel/kexec_file.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/virtio_net.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index 4a24aadbad02..7afdaa0efc50 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -366,7 +366,8 @@ SYSCALL_DEFINE5(kexec_file_load, int, kernel_fd, int, initrd_fd,
- 	int image_type = (flags & KEXEC_FILE_ON_CRASH) ?
- 			 KEXEC_TYPE_CRASH : KEXEC_TYPE_DEFAULT;
- 	struct kimage **dest_image, *image;
--	int ret = 0, i;
-+	int ret = 0;
-+	unsigned long i;
- 
- 	/* We only trust the superuser with rebooting the system. */
- 	if (!kexec_load_permitted(image_type))
-@@ -432,7 +433,7 @@ SYSCALL_DEFINE5(kexec_file_load, int, kernel_fd, int, initrd_fd,
- 		struct kexec_segment *ksegment;
- 
- 		ksegment = &image->segment[i];
--		kexec_dprintk("segment[%d]: buf=0x%p bufsz=0x%zx mem=0x%lx memsz=0x%zx\n",
-+		kexec_dprintk("segment[%lu]: buf=0x%p bufsz=0x%zx mem=0x%lx memsz=0x%zx\n",
- 			      i, ksegment->buf, ksegment->bufsz, ksegment->mem,
- 			      ksegment->memsz);
- 
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index 8e8a179aaa49..1e6f5e650f11 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -3760,7 +3760,7 @@ static int virtnet_set_queues(struct virtnet_info *vi, u16 queue_pairs)
+ 	 * (2) no user configuration.
+ 	 *
+ 	 * During rss command processing, device updates queue_pairs using rss.max_tx_vq. That is,
+-	 * the device updates queue_pairs together with rss, so we can skip the sperate queue_pairs
++	 * the device updates queue_pairs together with rss, so we can skip the separate queue_pairs
+ 	 * update (VIRTIO_NET_CTRL_MQ_VQ_PAIRS_SET below) and return directly.
+ 	 */
+ 	if (vi->has_rss && !netif_is_rxfh_configured(dev)) {
 -- 
-2.20.1
+2.43.7
 
 
