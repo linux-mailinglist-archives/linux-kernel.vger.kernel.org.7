@@ -1,126 +1,131 @@
-Return-Path: <linux-kernel+bounces-883385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCA2BC2D4BD
+	by mail.lfdr.de (Postfix) with ESMTPS id 31FA1C2D4BA
 	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:57:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E22064228D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:51:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4A7A4638AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9379331A579;
-	Mon,  3 Nov 2025 16:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A4FC31A550;
+	Mon,  3 Nov 2025 16:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ahf2wRrU"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LwXOJc1f"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7913E31A562
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3EB5319877
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:51:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762188652; cv=none; b=F4zjEnHI0o+EhPh8bnWlvrxa8VemZEz1Sw/xvGN5cqevZIJfghvB79tC1W7+tRC9GAZCN65bDK5br8vtJ5n8ZxIpslOuwku8i0icuiI87ZFCXPwpMut4jFWGSKJ09Pr1+nOvz0vZfUGTdk6l5wyC5Pm7TYThXeqhPkJrZLEM354=
+	t=1762188672; cv=none; b=iB4ws75PdbuySVut+ujxk6PjNt0rKVWRzpFauuKkf/Ts5cSULAM0BfVIiqvOK1jRiM5CpYzr0fnMTXYb9ZVx0L1URxnc4itckqVFrq197T7ZaeQvj41l5HO/TXFnnbxSS+7MIfW6xqvC4WPCbCIQMC3cZMlyIDEgTcIVqzo1VGk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762188652; c=relaxed/simple;
-	bh=r+grU7PC+G6N92zehaPAAv5rPvbu0LMva4wOUJ4SsF8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oIpyM3LdgFgKndLaua/wB5nfEzI20DqjLkcC5FTsWzaI8ZVB8EhptpL4iP2vprLfj4FAT1s2GqYZSmuXoKBxApYUZ3QcxqkuATZztxEmEoZ7L6OxsF6mwwrZzsuvCGyOE+VqhbZp9lN4lZPPy6TKgaLbiX46Yf6o19Dfzm89+iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ahf2wRrU; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4ecee585f23so29880041cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 08:50:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762188648; x=1762793448; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dtnw78k2roy5z/99UbrJhP9TDpGnLB7iULXtjAYqrvo=;
-        b=Ahf2wRrU0O9HDb+5EMSrNy0YqsswKVqP6erDFCz3XGA7ugtSxy9yK07Xbt3YNW98zo
-         wfqLxY78QezcIvWMG79rzUBxFUa2fIsJ+to7FPuZahXv5PDsBPooK3sxblXX4REvz1hr
-         +tFScsszP900QPGdQq+l83TW5z0LGMyXkV4gg+YnONCLXJmNIo/4jxXbBE7OrrwczOvX
-         eSvxSQyALC4EfYuT0QJRbsnme1I+iAgpCtd2Nw7WajVwQu9l8MuqzGzCaipcV6IMQuWT
-         bUQ4aUAIczAslULVYpmDrpBU8wNH3vsHeTiIavkVxfpj53NIzSrDSO5pm7u7/K4FkONx
-         SGZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762188648; x=1762793448;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dtnw78k2roy5z/99UbrJhP9TDpGnLB7iULXtjAYqrvo=;
-        b=kP6v2rdX6khFHgB0UhFAu91kq81onW3BfEvkRMzLTWfRMK0FzQQ9Wdz5dnqyN1HvNf
-         C6fsVcmkrcuDKNlHY9HAkNniGRjfDNHovYL4D6A3NuFS9G7JqknaBsfVGz6kK/9OQ36e
-         G/Zi3vgebYkghyPoG+QENnxoOx8l4hhmJ4ErdgSW69xpVjIJSpFhhkGlOTODAwQ8m8Li
-         HZ2zLqUd498Z2WxZdnvOeFKgQ6nyQ+cQYb+NtUrXkG6vv1jncJoSwbs/XmnAybXApXsM
-         xiTvBFUi4PFBjKyqIYsU2ZmbzoCy2cxQd/cD2Qdqanr6d/KxyY229c5E9QaTgTGSTHes
-         Bfqg==
-X-Forwarded-Encrypted: i=1; AJvYcCVRKUEthIJovhyDCce/x+dDBHl1Slko/iF7+z3SkSrT+zyngHdy8ac4Ieheg96xTYnv6xgjvtrs2J8grgE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZ29niQsLLf+Nz32Gll2YUeSbp1K10kklw5YyClnn36gDWdsvd
-	nlgZ4+W0u16gzAk+ZmyFM0Fc9bxQ3dFCVA+tpHhhVsBmjfA/PsKHuIUJ
-X-Gm-Gg: ASbGnctUtlmjWLDddSddZG9F1HoEXcLf49aUKCGSj0xlZKLcXNS9i6ULY/1G4imTT9k
-	HxNlm0MJ5W2OEbKHjO/U5IMsXV9IRfrZQDIuyEg9GNVSgeRusoKxKo5XLBkRIaOAEWY0Qqy3g9v
-	ilz02B77Spwf7xLXmYA2tJn+WUDgNfoCsCmOSXPS16StQwUHjdT6KogAnrZfU16bzptwzYm5ved
-	FjkqDHi+ZhtccZaYscVHgEe2yL6ysn5ao8mT2SIFuF0uykA3I4FSosIxPyNEXtUzJpluTxuQc8q
-	MEvN81gGMUP1GR1ck4FMQoM9hJkp0hAhLtIJSVCKqfmTavuRGwlk8xBHthzSEwOfWHoBrNjh7CX
-	MdG3vtn/Vfij686P6iVeGycYepOry4U2iOmNNyp1cD7khVNoguBeb1jWFUjJuxUbeHuiqbRRBJ3
-	jbVwH23rnhElDn0AMvAKU44TEEkGA=
-X-Google-Smtp-Source: AGHT+IGaidtdD1Dp1nbq6fggrdpMGwWINS1Q04b+SNwTiL6KnHfGQj14i1rEtQip7/fmniLspjP4Ig==
-X-Received: by 2002:ac8:5fd0:0:b0:4ed:2fde:d0b3 with SMTP id d75a77b69052e-4ed30d91bbbmr155504711cf.6.1762188648327;
-        Mon, 03 Nov 2025 08:50:48 -0800 (PST)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ed5fbdf2b1sm1644631cf.17.2025.11.03.08.50.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Nov 2025 08:50:45 -0800 (PST)
-Message-ID: <65b0f959-7f5b-49ec-8e9a-3be884af0cbd@gmail.com>
-Date: Mon, 3 Nov 2025 08:50:40 -0800
+	s=arc-20240116; t=1762188672; c=relaxed/simple;
+	bh=U1CZQvGZlStQTkWZUdO8PikaUYvoR7RVMCWF9NnIGm0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UPgckkPOFCe9bTx/lFa23K+NWJoTV6i3IbmH2C89CYh759NfGa8tJEIpp8z93UPevzzmlKLbHhTR8xgoii1yBfZssagx6iDRCWuAi6BQ+7YVluHxCHgE+Pydl9ugf6QoRpWt6yZWi0mkX73gJ0nIoyek6A1w1Zmqvn4RhpbWg8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LwXOJc1f; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 3 Nov 2025 16:50:48 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762188664;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K607a5Gs7qbahtSC1e+NSqHSnCO3TxUx9UKukeyvNPg=;
+	b=LwXOJc1f/K6nb9wVO4GrLcftfn/ho3nwgJUxumOCpurUvQXx/93i+UNBV5Yq2bbZt7nvAw
+	fMmzfMUc1I/3+ppcS733aXLz+px5KKfFl/WleoOFYiWgdyYLV+Z7APCP8bdRcshyLwBq9s
+	F69Azfl+0DfAJts9qaYrtJW/yoECpf0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Kairui Song <ryncsn@gmail.com>
+Cc: Barry Song <baohua@kernel.org>, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>, 
+	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
+	David Hildenbrand <david@redhat.com>, Youngjun Park <youngjun.park@lge.com>, 
+	Hugh Dickins <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	"Huang, Ying" <ying.huang@linux.alibaba.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/19] mm/swap: rename __read_swap_cache_async to
+ swap_cache_alloc_folio
+Message-ID: <2gzofxcv3vbfd5l22drj6p67huf533nq6g2hnurr74ewbrp2gx@f7i6qabbuxng>
+References: <20251029-swap-table-p2-v1-0-3d43f3b6ec32@tencent.com>
+ <20251029-swap-table-p2-v1-1-3d43f3b6ec32@tencent.com>
+ <ufy26fqfvaxqjywneec3hcuky7ozpa2fm63pxcuuberrvicffv@bkblomeix35w>
+ <CAGsJ_4x1P0ypm70De7qDcDxqvY93GEPW6X2sBS_xfSUem5_S2w@mail.gmail.com>
+ <CAMgjq7A+OBoH71qo=Vt65BeV7M9uOvkJ+9pQX2eq4-tqcKwVwg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.17 00/35] 6.17.7-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, rwarsow@gmx.de, conor@kernel.org,
- hargar@microsoft.com, broonie@kernel.org, achill@achill.org,
- sr@sladewatkins.com
-References: <20251031140043.564670400@linuxfoundation.org>
-Content-Language: en-US, fr-FR
-From: Florian Fainelli <f.fainelli@gmail.com>
-In-Reply-To: <20251031140043.564670400@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMgjq7A+OBoH71qo=Vt65BeV7M9uOvkJ+9pQX2eq4-tqcKwVwg@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On 10/31/25 07:01, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.17.7 release.
-> There are 35 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Mon, Nov 03, 2025 at 05:02:28PM +0800, Kairui Song wrote:
+> On Mon, Nov 3, 2025 at 4:28 PM Barry Song <baohua@kernel.org> wrote:
+> > > > +/**
+> > > > + * swap_cache_alloc_folio - Allocate folio for swapped out slot in swap cache.
+> > > > + * @entry: the swapped out swap entry to be binded to the folio.
+> > > > + * @gfp_mask: memory allocation flags
+> > > > + * @mpol: NUMA memory allocation policy to be applied
+> > > > + * @ilx: NUMA interleave index, for use only when MPOL_INTERLEAVE
+> > > > + * @new_page_allocated: sets true if allocation happened, false otherwise
+> > > > + * @skip_if_exists: if the slot is a partially cached state, return NULL.
+> > > > + *                  This is a workaround that would be removed shortly.
+> > > > + *
+> > > > + * Allocate a folio in the swap cache for one swap slot, typically before
+> > > > + * doing IO (swap in or swap out). The swap slot indicated by @entry must
+> > > > + * have a non-zero swap count (swapped out). Currently only supports order 0.
 > 
-> Responses should be made by Sun, 02 Nov 2025 14:00:34 +0000.
-> Anything received after that time might be too late.
+> Hi Yosry and Barry, thanks for the review.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.17.7-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.17.y
-> and the diffstat can be found below.
+> > >
+> > > Is it used for swap in? That's confusing because the next sentence
+> > > mention that it needs to be already swapped out.
 > 
-> thanks,
+> Yes, swap in is the typical user, swap_vma_readahead calls this
+> function directly, allocate a folio then initiate the swap in IO.
 > 
-> greg k-h
+> I'm not sure why it is confusing. A swapped out slot getting swapped
+> in seems a very common thing?
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+I mixed up swapping in and swapping out :) I was complaining about
+mentioning "swapping out", not vice versa. Sorry for the confusion.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+> 
+> > >
+> > > I suspect you're referring to the zswap writeback use case, but in this
+> > > case we're still "swapping-in" the folio from zswap to swap it out to
+> > > disk. I'd avoid mentioning swap in here because it's confusing.
+> 
+> Oh, I thought the zswap writeback is considered a kind of swap out :),
+> since it's technically writing data from ram to swap device.
+
+We do swap the page out, but we use __read_swap_cache_async() to "swap
+in" the page from zswap first.
+
+> 
+> >
+> > I assume you mean avoiding any mention of swap-out? As for swap-out, we’re
+> > swapping a folio out from the LRU — we’re not allocating a new folio.
+> >
+> > BTW, this sentence also feels a bit odd to me. I’d prefer removing
+> > “swap out” from
+> > “doing IO (swap in or swap out)”.
+> 
+> How about "doing IO (e.g. swap in or zswap writeback)"? Swap-in is a
+> very common user, and zswap writeback can be mentioned explicitly.
+
+Looks good to me. Thanks.
 
