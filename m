@@ -1,263 +1,251 @@
-Return-Path: <linux-kernel+bounces-882242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 234A6C29F76
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 04:32:48 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E406C29F79
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 04:33:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53C66188CC1E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 03:33:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 865784E3E72
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 03:33:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD8B1C6FE8;
-	Mon,  3 Nov 2025 03:32:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5101684B0;
+	Mon,  3 Nov 2025 03:33:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="YWyitl8g"
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023123.outbound.protection.outlook.com [52.101.127.123])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="f1GN3GoF"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E439460;
-	Mon,  3 Nov 2025 03:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.123
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762140761; cv=fail; b=pWIOm4/L3UR0n6UjAUYhiA/g9E/K2Wrc89L3OazIgCmLy5E8NnzJp7XohTIuRn6rUnWqy4RpTLNaBuaBLOIl5M7IMSnkdL1qk/fZiUXaOUrsO0yUvPv1xzY9lFqLN50brFeiMQOsxRpt8MrTvkZD3Ljh8BkOi04CF+iQpd24jcU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762140761; c=relaxed/simple;
-	bh=ij8cXeXiFbxNqWKA5t/myIao0D5OVnkGPlzltlVaDS4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=nC3ohqk6KeXlQrvjSa/8FJqRlDjY0Q2wbJLVl0w/fD8PKR+sbzbo/rG2iAA+QALja8LJGcHUQXSYqfvdCTmnlwLomsPcz+tFZqCu3wEGoYM+349YMXFufnEhuwbC3OYuX19pG2Rm6XqQ67CRjz+xBRXF3pyvdD4k4d0iFNQM+MQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=YWyitl8g; arc=fail smtp.client-ip=52.101.127.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sCVG4QlddrOpxV9XDEz4aiZltS4157pV/h9zfstTLr0liHzd2RmSqNVlLXq9QG54SeGwuqWfpN7fHc44m9uy8zCs8ZfQhmmPFSoS23voriwfcxhceFJDKlwoXAa8igsrKgT/zX7ikRz/9BADZtn14I/IVS4Hx97c/xHt+tOP5mGstE1kX0sTbHS4jmmHWHjgLomjMJoy8QwZnMSfpMWzIRWHVoM7lWhWiBYD1yAmaqzeIlNgoxqsVOlN+u26csCbslPdZJScktulW0gyvSx+X+wOtxiGqE+S+dpzFErso0k7H9Ths15XuoKOk9f/TqpAbB19krJT87h8tWAo3AxgRw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5zZg8qKmaRMJCdUptNrnit+n+xtlsJinKxuZYZ1AGPc=;
- b=n+hsk+7mI7/5lMezq5qz0aooTWzk+pECylWS4xqQbW+IiJet7vCw35QcIO5fcvJ9ujSXsKslJ8ifXNKzDRv7Uh4q3V5ZQbtZpLcH5Lx4U+I3gv9VGqY1ZgmDTFpoUG6Om+qv1b8OjCcnHpCnj3OTOAxRe4tD7uKBXkzLukqh+33GmYvBY06ftykzNv4SuIMtNi2Oei+RBxtwWeU6hAOXZm4u65+LMxxmkmIh8BYC32LR1aMkErgrk1btJWC/GIYR1mRjzDdO8QBXa4x6V1Yarp4Czq+kgIpFC/Yb46y/DXHkvJ/CGF1Jw2mmylyy80t68uRR+dwYkO/fw/lesLdXog==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5zZg8qKmaRMJCdUptNrnit+n+xtlsJinKxuZYZ1AGPc=;
- b=YWyitl8gF+6+lEcuYssHOqALiucIhOOYFA5Go1IyV0/J0Mpnyx6IqADEGIBTjYUdz7fuWsovqlOofPVv+vGhvntVMorM6sxDyjs7rkdD7JhFx9JNU0KMzRRyxZAO2MRBu0AcJoxDbUpalT7o+1qodoNAnVZzQuUZ6uecJG4/+MTAttwFX/Gfn3yrQVWJRnmusdnu7gOOE++6nj7H+TSOmc3Wbp++Cgk7QdndAqqxQWq6oczeJHwHeSOPtP8Kod/qD9bdu2M1jmTs2cUt2hm2H18exC081725qCU2zJA+foZrbYtdQQtRKHRHdKsr34+qRKB3m/srLdoPL0vSXHEUNA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from PUZPR03MB6888.apcprd03.prod.outlook.com (2603:1096:301:100::7)
- by TYPPR03MB9424.apcprd03.prod.outlook.com (2603:1096:405:318::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Mon, 3 Nov
- 2025 03:32:35 +0000
-Received: from PUZPR03MB6888.apcprd03.prod.outlook.com
- ([fe80::57d0:f9e6:1d9f:91f]) by PUZPR03MB6888.apcprd03.prod.outlook.com
- ([fe80::57d0:f9e6:1d9f:91f%4]) with mapi id 15.20.9275.015; Mon, 3 Nov 2025
- 03:32:35 +0000
-Message-ID: <eef59589-5d52-41d6-a9db-abed2ddf9149@amlogic.com>
-Date: Mon, 3 Nov 2025 11:32:32 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] rtc: amlogic-a4: simplify probe
-To: alexandre.belloni@bootlin.com, Yiting Deng <yiting.deng@amlogic.com>
-Cc: linux-amlogic@lists.infradead.org, linux-rtc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251031204724.756857-1-alexandre.belloni@bootlin.com>
-Content-Language: en-US
-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-In-Reply-To: <20251031204724.756857-1-alexandre.belloni@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR02CA0099.apcprd02.prod.outlook.com
- (2603:1096:4:92::15) To PUZPR03MB6888.apcprd03.prod.outlook.com
- (2603:1096:301:100::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02BB29460
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 03:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762140824; cv=none; b=CWSbAEzbwRSRwk0kDJgFEKZA2yt6pemYLsZyFluK8nlQAz9i2rqjAXZCemdKoAFEqe9TsfDWJu2DZihtFFBoJkdrOwFSNY/QJ/96D7Yg5NdbfCJNEtp75Vz66X4WiVdOvEKhx63xn8H75vvrZkopmZxNILo9sxJnUVJQ3GcnlEM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762140824; c=relaxed/simple;
+	bh=Iv5n6JgKV74s1bA+dqSTVjN31fde/U68dLHF88pXAv8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XcnjIwOrzfx+lUPH8QNbiuJYpHi+VIYTx4eMvN6K1J1fth+CBQSDFeFM1gmpNq8pX9k/02N46rQvkpoSG2jhxUwC9u2CMcFXdVF84STYD1udQq4ovQGWunRKgRbLjVNgCturvBF2/2PPfiS4X8O+c6pYgCif2EXuHGg9vNhLL1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=f1GN3GoF; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <6893294b-41bf-44a1-baae-1bb3a6034777@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762140818;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=07ypOvsfQH+I/btG1VSjUxVXQmcWpU4TWlpvVvH8A8s=;
+	b=f1GN3GoFEkv8j01/V6a0IpuPCpZ44/TmH9s5oyNcHNEU0McpLPw7qgMdJdCN2H1e6dJZAl
+	WEw34ysi508mSirjzIDBngFc0Mpsqi+Q6pIeipZU5yExbK4ZPWBnrMusXfYREDpBas2RRB
+	p1lzvBuF7cy/FDYh0kyo/Ch+pELHpOY=
+Date: Mon, 3 Nov 2025 11:33:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PUZPR03MB6888:EE_|TYPPR03MB9424:EE_
-X-MS-Office365-Filtering-Correlation-Id: 51c2da0c-4c4e-475e-b702-08de1a89a13e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?b0VsN0YzMGhPUlBQSUorR3BYQlAzUFdlTGF0Zi9SUmhxY1hjNkNXZXNYNFo4?=
- =?utf-8?B?cG1rdUQ4VUZ2QmlhbnBaWnNSZzExckR6RUVydUZNdmM4RjNZbkNEN0JXNHhJ?=
- =?utf-8?B?NGVuVkFkQ3pKOVpFUW4wc25jNFU0RGZZRytwL29UTlZtNThKakVwaWxIUkJX?=
- =?utf-8?B?Q1BDRWU3UXhIcTlpeDNpbW9UUTVYOGs1d0ZXME0vSmlROUtIM3Jqbk5uVk5w?=
- =?utf-8?B?bzk2OXhiaXVuUFlOd2hYV3dDUWdMRlRxMElUT1FZRnlmNjljNUc3VDNBU1Jz?=
- =?utf-8?B?V0t2elh2bVFrcEIvQ3BORDdCYXZxUzNremw3WEllZUpGdkkvRmFXWGh3bjRZ?=
- =?utf-8?B?Qkl4Tnlra2trUXEzeVBWaG5CdXFNV1dPWHU0UVI0MTZDVUNVZEpUVTVYYUI1?=
- =?utf-8?B?dGpPMmFlaHhDZ3ZFUVhLVXVLTEtlTVdxRGdkUm4zMEFnN2xzSUJ2NGVOUldN?=
- =?utf-8?B?VzNpcGozMXg4Uk96YUVhTUQvYUZPdEhrdUtQQjFZYmgzRkFiWHJIRitZZHNo?=
- =?utf-8?B?RWRra1dMQXlRM20wMkJ1c0YzRjJObGVNRGVteFpwWW5mV3dJdm1PYnd6MTRQ?=
- =?utf-8?B?d3pqTGQzbzg5ZlkxYzJ5bk42YXhSbE5QdEMwbUJwWHlwdlFQTEtaczdtbUVo?=
- =?utf-8?B?RzFHb1FSWko3YjF3L3c5MkFTOHVlZGswMGdpTDdLZmsrVTFVaHpTMTJzdGRz?=
- =?utf-8?B?NDkwdTQ0eUpvM2ovTFJPcnNRdnBwZ0I0VWxnVkpzSUVsOVAwSVRsL2lzY29w?=
- =?utf-8?B?dER5SnczM3JoMEFFNGNVa0ZjRzNrZjRXQzFFdkRURTRoTXBIOG1vUmR4R01x?=
- =?utf-8?B?QmVob0h2VG1mWkNFb2d5cWFpQlJFN25LcnFXeDVGcm5ES0gyNXFqbVRaYmdq?=
- =?utf-8?B?TUkydTVmMWhWY2FETGMybitJNTBKdVNPSDV1Z0p2TUJjMk1PL25EeUF5dXN2?=
- =?utf-8?B?eTVkWGNJREpiZmZrbDY1YXlaZHcraWx5U2p4R0pISE9wU0FrbDYzQkxVT2Yr?=
- =?utf-8?B?V2VrWDhrR2xwY3R0T3RjNTZnb3QrRUtYNDB6elJNUXRSV2c1Vlk3dUF2WUhS?=
- =?utf-8?B?SmFpVklScXVmaVNCRSs0ZTU1Q1NhSGFPYWpqdm43NjlyS0NYMmhLRE9QZkhE?=
- =?utf-8?B?NGFiaG8rTGo5ME5ITHptYlBuN3IwMVQxTllMOHM1Z3REQVZBbFRkV2xyTkZQ?=
- =?utf-8?B?K0o2TDFqa1RUNXR6UG9nTlVuN0lTalJIZGl5L09ra0JsY1ZQbmFZWXhvUzBT?=
- =?utf-8?B?NEw4ZmVIcXpJUjg0SHBkRVZtemlRcmwyVlU1K2RtZ2RHcHdWeGtYVDZpcFVP?=
- =?utf-8?B?aVJJYWt2TFNXMG1yaVpBSmNhMjR6U0V5WTFNcWd4ZCtZaW1nZkxSTTErSFVj?=
- =?utf-8?B?aG1WMlRxTG1RcklyUEFMUmxka2JJUUdoMkd2Qkp5T1VlczA5ZCtlTHN3WnlG?=
- =?utf-8?B?djV5Ymo2SDRpZkkzbnVjbCtNWUMweGE4ZzdRZllUaGJQZElQM1N3ZitVL1Yv?=
- =?utf-8?B?L2tRdzBNenFPTjNWQkV6SDg0bjhWeFBIOERjRjdiKzIvZ2VBblUzcklCTGx5?=
- =?utf-8?B?R2V5d0lDMGswRVpKS0MvcC81bldVWTl0UncvMSs2djhTa3pCMnlicHk0RjdY?=
- =?utf-8?B?eVVqZWhWemdhUzArdXNQTFVFMmI1YktoK29WN20xQXJ2OW5oWGY1L3JjY3BF?=
- =?utf-8?B?RlpBYWtSc204Wm9WeEFXY0kzcHhZUUE4akxXUm9uNU5rdG4xN1ZVajlhQzJJ?=
- =?utf-8?B?VVJxa1l5bXZuNlljZXdxMjFmYUZFK1ZDdTRqaE5ySTVicFpQRnZUUzZ1TXAv?=
- =?utf-8?B?TGR5UWRFczlleGF2dUJLQ0lvUUMzekZqQTl6dEVLdm5ZQW05elNGTXRFWWY3?=
- =?utf-8?B?YXhsMFhCR3lTZkYvcWVIczkrMExjZm9lRmVYQUFqb3UwdWdDYzlzNEMrcUpJ?=
- =?utf-8?Q?iV4NlOjkhPbfrdfSjs1fn++Caz0Pucuw?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR03MB6888.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Vno2YWEyWnNzUkRjWXZuNDdGd3VIWjZNSnphS1BtTGpzcnBYMGk0TGhoUkhZ?=
- =?utf-8?B?M3ZnL2tMREwyZ1hDeDZwUEFYaVNVcEZJVFY4bFE3VVhNZE0yQ0dHMGFzRyty?=
- =?utf-8?B?UHovR2Nyck80a3hFNytnVTBCMklJbitaYUMvclNqWUR5aWZ3ZFpGbUdIeVBp?=
- =?utf-8?B?S3lwSXhjK21mVHR6aGQ1YnNIaEhyTGRmNGw5RGJKUDVWZWs5cFYrdHh5NERt?=
- =?utf-8?B?cXR1R08vSlpLZW1aVS95OXp0WGJ0QXRrRDh4UmFja29nSzI2WUpzR000aTVz?=
- =?utf-8?B?dDVOSDhldzBCVllwbUtjZWUvQkEvbFFjOHdRL2RJVkVaVEhSdjNNTGt3dHJL?=
- =?utf-8?B?aFV6TysrZE5ub0NTQVlWdXFxd3JadXlVSDlTMmJUb2lON1ZnRGFIS3RRR01w?=
- =?utf-8?B?Vzc4cEZrVWowVmg4cWlMckdZb2ZKWXlhZHdUbDU3cnA5UW1RY1dvMXdwY3dU?=
- =?utf-8?B?YUJOSENxV1ZmbTlKaWwweXJFaVV5NjVka3FDenI0VUVTb0MvbGpPTVJuMWp2?=
- =?utf-8?B?cGxib1NyOEdyN1ZlKzlBby91c3dIYTZ6M3l6b0IvaUlzUVlNc0hGRlpRejVN?=
- =?utf-8?B?NVVoT0NXY3lEa1hTSzlFZ1BTSWZTNkxXRzFYcUpWUDQyc3hUU2hucWVRZCtK?=
- =?utf-8?B?TkZNbG95cSs1VTNqUlpNYXFLQW9KZnRpMWJlUEZkdVg5YXBJVWQ1TXpObngv?=
- =?utf-8?B?cVlEdjBmeGxkeVBOZXRDV2RyQ2grVDduMXVvaExrTk5VUzd4akFzQ2FnUUZo?=
- =?utf-8?B?K081RGZvajRLbFdzTVZZSWI0WEovb2NwNTJpSGRwOVdjbHQxWEE4MnpIUGlO?=
- =?utf-8?B?RG9FYmJlYjVUK1Fabi9RUHd3bWlLRTAxT21NSnV6MUZ3aXlhQlE4NlRZYzZt?=
- =?utf-8?B?UjE5ZlpMaWVLdnVSOEs3NmtqU0cwWUJiU0hjWjNBZmpGc25heFY4WWxWMUZT?=
- =?utf-8?B?R3o1U05SRFpPR3BhUUl2OFdraGR5eThYVG93ZktnQ2tZY0JrR0xiSlU2cFVU?=
- =?utf-8?B?YlNvOFJPaVJKTlpoNWZmbXIzL1k2aFlaQVN4Y2h4djRKbms5SkhwQTAwaXlz?=
- =?utf-8?B?YjB5K1dZSE85QVE0clI3ZmVRR3pqaisxU2d1TTNOR2duWmFkTU1yNitVRnhB?=
- =?utf-8?B?RmFEUHo2ZnlDVklmNk5uNDNkRFhSS01ZSDVTYlc1Yzl3SHFON3RncVYydXVY?=
- =?utf-8?B?ZDY2dVpkaThtR0txbklmdUhvQUt4amxvWDI5K1N5OUV0b2tkc3RUOE90N0Zw?=
- =?utf-8?B?Ryt1S2dibzZ2a0J0bGFJcTlnU0d1K0FJcjJ4N28rbGprNThxRU55K0VjR3NJ?=
- =?utf-8?B?cHF2VEoxWFJGeUtSblMyeWVqNFRVaktlazg2Wkw0OE0rZ1B5ZjdLcnc2dlpo?=
- =?utf-8?B?eFVWcDQ1K0hYbXRlUXBsTDFTZEVMS0RkWHB6bUhqWDU4ZFdYNXdpcm83Uy9r?=
- =?utf-8?B?ZWRCb1Q1WEdxSDNXeEQvYzNISGhzc001Q2lRQXFYYW9xNFFVZlBNaklyTzQ1?=
- =?utf-8?B?bzd6MTFWRzRGWVpCRlprcXRqL1hzZlA2RmNjWWQ2ZkJ1UG5vTkdvemcxazY4?=
- =?utf-8?B?dk1mK0VYSEhReTJUU0FJYU1OSys3b0pxWGFXTll6WGpsQXQwYjRqK3YrZVZD?=
- =?utf-8?B?SmdyTjYzdnRyTDNHdjYvaWRxejBEdFRvcHJjRXJKTHJmOHVUcjgvWDNhZjdv?=
- =?utf-8?B?L2dKbWsxTTdxdUdKRjd1aTc3Z29vcG9lWm5ESG9XSzFQQ0F0bCtEaTlMclJx?=
- =?utf-8?B?NWo2ajdsRTFmTm9rNHBOM2Z5ZmRBSDFkdTJVb0N2RzFDNW9Rb0JWck45dUM5?=
- =?utf-8?B?b3QyRU40bVk0UUx1NUlzSDlyc1NRSkcwbDVMT0pmNzJBRTVMTUZWdVFPQjZX?=
- =?utf-8?B?ZlVFK3FpL01yNGxrOVNyTjlDL2tJOWhBTlNaSnBXaGpTMFpWeTNuTzVwZnUv?=
- =?utf-8?B?VWx3QXVWWnBUMzNUeXRweGo5V3VsdWI2K2FpT0ovLy9SdWVIU1dHa1M4QnpE?=
- =?utf-8?B?TlY1Uzh3S1hWN0lKRm5FMHIrMHZhZGo2eWhud2lZRmdscDI5djJZb2Y5TXVB?=
- =?utf-8?B?WUhQYzUrQjlibG9QUDZvT0tvRUtnU2dmOW5wdE9lc1hYb0JVajYvczc0UXRT?=
- =?utf-8?B?MmhVV2FLU1ZmUldKS09Ua3JUZDQ1UkhtNE5Vd3NOZ1ZkK3ZOOWpSSkJST2lP?=
- =?utf-8?B?VkE9PQ==?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 51c2da0c-4c4e-475e-b702-08de1a89a13e
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR03MB6888.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 03:32:35.4235
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: iZq4mHocXoVsKpXbiRGjW7s68o1pY7VhQBi6FxqEgN2zlVnFuGIijeWAbtP4FcvtQ1GFmMv+kkf49Eeu8BhMSogu6VQe3xRJc3jogYIjdGc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYPPR03MB9424
+Subject: Re: [PATCH v1 00/26] Eliminate Dying Memory Cgroup
+To: Michal Hocko <mhocko@suse.com>
+Cc: hannes@cmpxchg.org, hughd@google.com, roman.gushchin@linux.dev,
+ shakeel.butt@linux.dev, muchun.song@linux.dev, david@redhat.com,
+ lorenzo.stoakes@oracle.com, ziy@nvidia.com, harry.yoo@oracle.com,
+ imran.f.khan@oracle.com, kamalesh.babulal@oracle.com,
+ axelrasmussen@google.com, yuanchu@google.com, weixugc@google.com,
+ akpm@linux-foundation.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org
+References: <cover.1761658310.git.zhengqi.arch@bytedance.com>
+ <aQHIDWDx3puT5XZd@tiehlicka> <8edf2f49-54f6-4604-8d01-42751234bee9@linux.dev>
+ <aQSRBjdhdMR8iD6n@tiehlicka>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Qi Zheng <qi.zheng@linux.dev>
+In-Reply-To: <aQSRBjdhdMR8iD6n@tiehlicka>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
+
+Hi Michal,
+
+On 10/31/25 6:35 PM, Michal Hocko wrote:
+> On Wed 29-10-25 16:05:16, Qi Zheng wrote:
+>> Hi Michal,
+>>
+>> On 10/29/25 3:53 PM, Michal Hocko wrote:
+>>> On Tue 28-10-25 21:58:13, Qi Zheng wrote:
+>>>> From: Qi Zheng <zhengqi.arch@bytedance.com>
+>>>>
+>>>> Hi all,
+>>>>
+>>>> This series aims to eliminate the problem of dying memory cgroup. It completes
+>>>> the adaptation to the MGLRU scenarios based on the Muchun Song's patchset[1].
+>>>
+>>> I high level summary and main design decisions should be describe in the
+>>> cover letter.
+>>
+>> Got it. Will add it in the next version.
+>>
+>> I've pasted the contents of Muchun Song's cover letter below:
+>>
+>> ```
+>> ## Introduction
+>>
+>> This patchset is intended to transfer the LRU pages to the object cgroup
+>> without holding a reference to the original memory cgroup in order to
+>> address the issue of the dying memory cgroup. A consensus has already been
+>> reached regarding this approach recently [1].
+> 
+> Could you add those referenced links as well please?
+
+Oh, I missed that.
+
+[1]. https://lore.kernel.org/linux-mm/Z6OkXXYDorPrBvEQ@hm-sls2/
+
+> 
+>> ## Background
+>>
+>> The issue of a dying memory cgroup refers to a situation where a memory
+>> cgroup is no longer being used by users, but memory (the metadata
+>> associated with memory cgroups) remains allocated to it. This situation
+>> may potentially result in memory leaks or inefficiencies in memory
+>> reclamation and has persisted as an issue for several years. Any memory
+>> allocation that endures longer than the lifespan (from the users'
+>> perspective) of a memory cgroup can lead to the issue of dying memory
+>> cgroup. We have exerted greater efforts to tackle this problem by
+>> introducing the infrastructure of object cgroup [2].
+
+[2]. https://lwn.net/Articles/895431/
+
+>>
+>> Presently, numerous types of objects (slab objects, non-slab kernel
+>> allocations, per-CPU objects) are charged to the object cgroup without
+>> holding a reference to the original memory cgroup. The final allocations
+>> for LRU pages (anonymous pages and file pages) are charged at allocation
+>> time and continues to hold a reference to the original memory cgroup
+>> until reclaimed.
+>>
+>> File pages are more complex than anonymous pages as they can be shared
+>> among different memory cgroups and may persist beyond the lifespan of
+>> the memory cgroup. The long-term pinning of file pages to memory cgroups
+>> is a widespread issue that causes recurring problems in practical
+>> scenarios [3]. File pages remain unreclaimed for extended periods.
+
+[3]. https://github.com/systemd/systemd/pull/36827
+
+>> Additionally, they are accessed by successive instances (second, third,
+>> fourth, etc.) of the same job, which is restarted into a new cgroup each
+>> time. As a result, unreclaimable dying memory cgroups accumulate,
+>> leading to memory wastage and significantly reducing the efficiency
+>> of page reclamation.
+> 
+> Very useful introduction to the problem. Thanks!
+> 
+>> ## Fundamentals
+>>
+>> A folio will no longer pin its corresponding memory cgroup. It is necessary
+>> to ensure that the memory cgroup or the lruvec associated with the memory
+>> cgroup is not released when a user obtains a pointer to the memory cgroup
+>> or lruvec returned by folio_memcg() or folio_lruvec(). Users are required
+>> to hold the RCU read lock or acquire a reference to the memory cgroup
+>> associated with the folio to prevent its release if they are not concerned
+>> about the binding stability between the folio and its corresponding memory
+>> cgroup. However, some users of folio_lruvec() (i.e., the lruvec lock)
+>> desire a stable binding between the folio and its corresponding memory
+>> cgroup. An approach is needed to ensure the stability of the binding while
+>> the lruvec lock is held, and to detect the situation of holding the
+>> incorrect lruvec lock when there is a race condition during memory cgroup
+>> reparenting. The following four steps are taken to achieve these goals.
+>>
+>> 1. The first step  to be taken is to identify all users of both functions
+>>     (folio_memcg() and folio_lruvec()) who are not concerned about binding
+>>     stability and implement appropriate measures (such as holding a RCU read
+>>     lock or temporarily obtaining a reference to the memory cgroup for a
+>>     brief period) to prevent the release of the memory cgroup.
+>>
+>> 2. Secondly, the following refactoring of folio_lruvec_lock() demonstrates
+>>     how to ensure the binding stability from the user's perspective of
+>>     folio_lruvec().
+>>
+>>     struct lruvec *folio_lruvec_lock(struct folio *folio)
+>>     {
+>>             struct lruvec *lruvec;
+>>
+>>             rcu_read_lock();
+>>     retry:
+>>             lruvec = folio_lruvec(folio);
+>>             spin_lock(&lruvec->lru_lock);
+>>             if (unlikely(lruvec_memcg(lruvec) != folio_memcg(folio))) {
+>>                     spin_unlock(&lruvec->lru_lock);
+>>                     goto retry;
+>>             }
+>>
+>>             return lruvec;
+>>     }
+>>
+>>     From the perspective of memory cgroup removal, the entire reparenting
+>>     process (altering the binding relationship between folio and its memory
+>>     cgroup and moving the LRU lists to its parental memory cgroup) should be
+>>     carried out under both the lruvec lock of the memory cgroup being removed
+>>     and the lruvec lock of its parent.
+>>
+>> 3. Thirdly, another lock that requires the same approach is the split-queue
+>>     lock of THP.
+>>
+>> 4. Finally, transfer the LRU pages to the object cgroup without holding a
+>>     reference to the original memory cgroup.
+>> ```
+>>
+>> And the details of the adaptation are below:
+>>
+>> ```
+>> Similar to traditional LRU folios, in order to solve the dying memcg
+>> problem, we also need to reparenting MGLRU folios to the parent memcg when
+>> memcg offline.
+>>
+>> However, there are the following challenges:
+>>
+>> 1. Each lruvec has between MIN_NR_GENS and MAX_NR_GENS generations, the
+>>     number of generations of the parent and child memcg may be different,
+>>     so we cannot simply transfer MGLRU folios in the child memcg to the
+>>     parent memcg as we did for traditional LRU folios.
+>> 2. The generation information is stored in folio->flags, but we cannot
+>>     traverse these folios while holding the lru lock, otherwise it may
+>>     cause softlockup.
+>> 3. In walk_update_folio(), the gen of folio and corresponding lru size
+>>     may be updated, but the folio is not immediately moved to the
+>>     corresponding lru list. Therefore, there may be folios of different
+>>     generations on an LRU list.
+>> 4. In lru_gen_del_folio(), the generation to which the folio belongs is
+>>     found based on the generation information in folio->flags, and the
+>>     corresponding LRU size will be updated. Therefore, we need to update
+>>     the lru size correctly during reparenting, otherwise the lru size may
+>>     be updated incorrectly in lru_gen_del_folio().
+>>
+>> Finally, this patch chose a compromise method, which is to splice the lru
+>> list in the child memcg to the lru list of the same generation in the
+>> parent memcg during reparenting. And in order to ensure that the parent
+>> memcg has the same generation, we need to increase the generations in the
+>> parent memcg to the MAX_NR_GENS before reparenting.
+>>
+>> Of course, the same generation has different meanings in the parent and
+>> child memcg, this will cause confusion in the hot and cold information of
+>> folios. But other than that, this method is simple enough, the lru size
+>> is correct, and there is no need to consider some concurrency issues (such
+>> as lru_gen_del_folio()).
+>> ```
+> 
+> Thanks you this is very useful.
+> 
+> A high level overview on how the patch series (of this size) would be
+> appreaciate as well.
+
+OK. Will add this to the cover letter in the next version.
+
+Thanks,
+Qi
 
 
-Reviewed-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
-On 2025/11/1 04:47, alexandre.belloni@bootlin.com wrote:
-> [ EXTERNAL EMAIL ]
-> 
-> From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> 
-> Use devm_device_init_wakeup to simplify probe and remove .remove as it is now
-> empty.
-> 
-> Also remove the unnecessary error string as there are no error path without an
-> error message in devm_rtc_register_device.
-> 
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> ---
->   drivers/rtc/rtc-amlogic-a4.c | 28 +++++-----------------------
->   1 file changed, 5 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/rtc/rtc-amlogic-a4.c b/drivers/rtc/rtc-amlogic-a4.c
-> index a993d35e1d6b..123fb372fc9f 100644
-> --- a/drivers/rtc/rtc-amlogic-a4.c
-> +++ b/drivers/rtc/rtc-amlogic-a4.c
-> @@ -361,38 +361,26 @@ static int aml_rtc_probe(struct platform_device *pdev)
->                                       "failed to get_enable rtc sys clk\n");
->          aml_rtc_init(rtc);
-> 
-> -       device_init_wakeup(dev, true);
-> +       devm_device_init_wakeup(dev);
->          platform_set_drvdata(pdev, rtc);
-> 
->          rtc->rtc_dev = devm_rtc_allocate_device(dev);
-> -       if (IS_ERR(rtc->rtc_dev)) {
-> -               ret = PTR_ERR(rtc->rtc_dev);
-> -               goto err_clk;
-> -       }
-> +       if (IS_ERR(rtc->rtc_dev))
-> +               return PTR_ERR(rtc->rtc_dev);
-> 
->          ret = devm_request_irq(dev, rtc->irq, aml_rtc_handler,
->                                 IRQF_ONESHOT, "aml-rtc alarm", rtc);
->          if (ret) {
->                  dev_err_probe(dev, ret, "IRQ%d request failed, ret = %d\n",
->                                rtc->irq, ret);
-> -               goto err_clk;
-> +               return ret;
->          }
-> 
->          rtc->rtc_dev->ops = &aml_rtc_ops;
->          rtc->rtc_dev->range_min = 0;
->          rtc->rtc_dev->range_max = U32_MAX;
-> 
-> -       ret = devm_rtc_register_device(rtc->rtc_dev);
-> -       if (ret) {
-> -               dev_err_probe(&pdev->dev, ret, "Failed to register RTC device: %d\n", ret);
-> -               goto err_clk;
-> -       }
-> -
-> -       return 0;
-> -err_clk:
-> -       device_init_wakeup(dev, false);
-> -
-> -       return ret;
-> +       return devm_rtc_register_device(rtc->rtc_dev);
->   }
-> 
->   #ifdef CONFIG_PM_SLEEP
-> @@ -420,11 +408,6 @@ static int aml_rtc_resume(struct device *dev)
->   static SIMPLE_DEV_PM_OPS(aml_rtc_pm_ops,
->                           aml_rtc_suspend, aml_rtc_resume);
-> 
-> -static void aml_rtc_remove(struct platform_device *pdev)
-> -{
-> -       device_init_wakeup(&pdev->dev, false);
-> -}
-> -
->   static const struct aml_rtc_config a5_rtc_config = {
->   };
-> 
-> @@ -447,7 +430,6 @@ MODULE_DEVICE_TABLE(of, aml_rtc_device_id);
-> 
->   static struct platform_driver aml_rtc_driver = {
->          .probe = aml_rtc_probe,
-> -       .remove = aml_rtc_remove,
->          .driver = {
->                  .name = "aml-rtc",
->                  .pm = &aml_rtc_pm_ops,
-> --
-> 2.51.1
-> 
+
 
