@@ -1,192 +1,156 @@
-Return-Path: <linux-kernel+bounces-883397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0473C2D5E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:10:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B07CC2D64D
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:13:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F5223AA7C5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:00:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78EBF4229A2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC5531C59B;
-	Mon,  3 Nov 2025 16:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF6931CA59;
+	Mon,  3 Nov 2025 17:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oeUPv9lO"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D69JAPRU"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D3431B11F
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A68631B81B
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 17:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762189075; cv=none; b=mYM9ipBnw818qqn2E54Pn5XcPe7nBrHvA63xB9UmyYpYCFyG/8VALaNiQeFs+hPr940QIHhEyVkVHWfpKArg8FhWxhQ0Tvy2WKMSGDG7nuNCfioEqPKF3npcUqoyUGfLtO5c0pf1fJ0VI2aCcZS/m9G2quyc58bwfxY4hJEppMA=
+	t=1762189228; cv=none; b=QIip/ejunC5oJDH6FZPsc62zsiR0zcX1yPYk5/XyOylGn+2nCpWk63z5toqhIgcRfrYt4AoIe8mP/eYnl2ZbH7jmH+9TneUVF7uCFOlhYt+BRXH76MhRJg1UbN4vl5T/DZ6maMhPMeFpXenkC44Mn7MD9RVwo2qtAvlM03DZkcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762189075; c=relaxed/simple;
-	bh=8QZMELXENbunUYpr28WqprFjzAksKDqeP0VLh+0+HBE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=B7KmLAKerYGPrR13gKjD4vwzHf9jOwqJ//zfij4TlPTvdSugZXCKzRa7XbBPGXAPGnzIxgE++i5+WvzblfXWUoolhcZFk9W2D48xtGeKmICACLuT53hKQ4tesl27C+j2BwAmv2WSHtkcvU3YmeQvTl0e/i2orjpJhLmbOaLYxPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oeUPv9lO; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-340e10797a8so1618226a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 08:57:53 -0800 (PST)
+	s=arc-20240116; t=1762189228; c=relaxed/simple;
+	bh=eDMngs17dgbpDGMncsMV59kp9bJ9LsOsJv1AKcqo4oA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cz6ToVTG6YwNT00bd4siQh5VkQpjG+PD3vyN8qFF8pohGGK1CTrpECYObvGRiRJxS5lbLAsU6z7ARf6OQEMXroj/cQNwVAVH41R35+IHnbnaEGfoFsENvve7+jR/I912AI+6AW/xkb9tgkt8aorHIFV8b1N2s6iMepaDZu7mxmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D69JAPRU; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4710683a644so36975515e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 09:00:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762189073; x=1762793873; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KgHCRB+iOhQXBR2DJ3UKt+ri7IzX08+hr1DQhDLbsGo=;
-        b=oeUPv9lOtOFFcTCXXx73+qQHLeGQdoIKmtLtfdAco9WN6qOFn56grch2nwnNSVD9M9
-         tavasGV0VNjLhrJpBaC5yTq7YVD6tv46LLzSIlFbZl2YoyvRcZTG23WioFeGFE/yibOv
-         O2J0qhdeorK89aTivvkWtEzkCwGgoMYk9dPYnTfMeg7VxQTmOUx66DlfnYkWxTY1f3o3
-         I+iSgAhsEim66RmAE7uSXkrFD4pfQS897HnVNBWT9gxE78QnAatBE6EaJfvEWjBje9+d
-         z7WGLhbSKonl+JqWVODRjETfaZoyyNM5G8Nmz+ZKHW/ciLutNNNGOvEUVp7LKX7jbajW
-         /1fg==
+        d=linaro.org; s=google; t=1762189224; x=1762794024; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=e8+SCTcWg0iEZ5Ozc/rYo37su+YkvO2pg3K/UcQo9S0=;
+        b=D69JAPRUGqGkhFpL8pK3uQO+DkrZWS2Rje2RL3faVoO4Kpd8TtqxkzEK/5H3QHFAj/
+         o7RX9BcN8MxAo70Su7ezh8IcwAj2PzC0R9jzEKiYTiMA5l7FHozKiSODdGzHH/iO26Dl
+         m3iT0Ytvli49we0woJKNRZ+mD2Yk/fsQaUTo+jkdFwtOl3GAwXUlzuOk0BkJWoQNbZqr
+         86f52n9c+/L0FRhD3x7xLyLKSzGmZJrQar8WZnJTAGX/wlmQMrtNlh3HqEmkGOhbnIy8
+         IrLVz7uRZXKA+1CD3Oj9HDeHX6SrTGWIXG/NVgSI+NIhgfBe+yckQG0PtbDu71u5cVFu
+         giAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762189073; x=1762793873;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=KgHCRB+iOhQXBR2DJ3UKt+ri7IzX08+hr1DQhDLbsGo=;
-        b=lsZAhMRP/zr+kE0WDNDeYNp6L0qStLLk1d0ewDz6+CPuJEdwJ3/94EH5LhfVfBUJx3
-         m58/CKqUvKhKhHwSGUo7cXVKZ/DLNquOYdNPBsxH6YZ4XpgtRD3RCyoCvP0fcxZMqF/b
-         b9A1DDJ0LhLTD0qW8k/cVvb+LrmkfL8GtAMlDXihKGoqrawoOA0Rg5dC9kp4ItNXcV77
-         Lb8Mx+ZZbaQUfdOLTyAju/0zs3iTF2Rt750Y/1O+4Gv8b4es+/z7JOkbzXKlHO3fbLnF
-         TYDkgcjQ1KAVnUEuq98RJhuaA/bafF/Ak3pVMqcQYv3gJlJGpCcpCZQmEinr4SorCV72
-         DWYw==
-X-Forwarded-Encrypted: i=1; AJvYcCVZ5uqjyhjVdwumntCh77Cb1bVC5YW1ItnyhaI3JYoV/OPzy21euxgMB+W6UGknKIX91Ya7TC5yALf7d0U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxz4L0Qonpv1grzR05SJuKTCmaC2VjhkRBdl/Gft8mtQvsZLy5L
-	HSIcpqxSnxVvlI/frZXtd9xEJ6HhYGfXRYCPi5XXCAZvskBCW8kBRFdsyVKh7iQZBFQ0WH6dDLY
-	vOGHPNQ==
-X-Google-Smtp-Source: AGHT+IFOpWte/V7QEZNwmFK3W3HK1rZFTmmKzEm/d2Hx1LQQlueXjMmVSeG9D67BxqXsCpRIlefh72yq0PE=
-X-Received: from pjpe14.prod.google.com ([2002:a17:90a:9a8e:b0:340:92f6:5531])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3e8e:b0:332:3515:3049
- with SMTP id 98e67ed59e1d1-34082fc930bmr15533204a91.4.1762189072869; Mon, 03
- Nov 2025 08:57:52 -0800 (PST)
-Date: Mon, 3 Nov 2025 08:57:51 -0800
-In-Reply-To: <80691865-7295-44C9-9967-5E5B744EB5D4@nutanix.com>
+        d=1e100.net; s=20230601; t=1762189224; x=1762794024;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e8+SCTcWg0iEZ5Ozc/rYo37su+YkvO2pg3K/UcQo9S0=;
+        b=AcDg1WuSpM75IPkIqrrDFqcKtazKc08nav++kbaDmkJ01U4usGRNfKiOLby/2WxCZU
+         1mt2WXGlyyzjJvvvUaxhumWHUgzf9edTysTnjEMLrsQ9JWDyF/nRMAbyag8JwfVlX49W
+         HqxruSiNIMC/EegRHm4zgWE46WiA1kLPd634biWHjEGbMuIdHI5KgxEID293jL7jRdmu
+         AJM8B8DojXZEnsUQM8D+oqPwu+gzycwR3n2oUAyhz7DBfItz+/0xthrfSZ5R9g2eceG7
+         YJTsnfqHH6rMOfXKQNneHYfhzZFsFhffcm7G5aoc5LefymBc2d6TsF2bQw/3mSdYTZOH
+         FeLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX+eyBS9mbxr92Ec5IUD+Pq4WZFX8PopjX6NGN6ljcZ0CkFz5zl87KesGwAPCyxJeJNKhH1q6Z93pB+Y1s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwK01Y1ZTR3aJdg45LLLzMvXMtget+fSzAIaoNsnTPID8W09t7M
+	Ai4S6EQt6pXjF4+9imMkRza/RAvcYRWgblFvvXgmC+7hA6F6I+UQ33Ie7eW/LmYVUxM=
+X-Gm-Gg: ASbGncuU/K1YeyKSNEN89yUQh85jXoh/MaKLRQ1hMOtF75/3la+igkooU+BztTYXPKD
+	7YozKX1EDEWCXi8Zv+L31BzK+mg5XcWYIn/POgdSSnS7zjSw7MRslzRjqp+2UZsYtHwjP1L+Dnz
+	CLn+fwbqPRiKdi/qbWpW7OCS4KZMbNE6NRXn7gYVb9HnVmYGH6JZ3yunOUl1DXtKUYguJsZqXVI
+	IqIbs04hh5qhkcBfM4fOpw+SySsZ0dtu3kTG4F9pHUiNpWSPMpCWh6AmKcORqt0UKELenVReNaY
+	y9pDE5wCDVYqBnQEE1AxOE0F+g/DyyLUZLIop2GjZv1aOIwdFy5aREf7plfaNvjPZyTqbEG4iYq
+	gctif8JMgl/MXfYqZBhAp4tAgNaN3y9JE6Oc+X9j6yr+REuaZx1NDDczgqw9ZgJLRH8lUJDSrj9
+	llxUoQREI=
+X-Google-Smtp-Source: AGHT+IELaFHSzBiO9AXPyBzLS0c7LY682782xN/+qHy88yBVFrN1pt7Y6DspDHfXPEXO6vZLrDUSeg==
+X-Received: by 2002:a05:600c:548f:b0:477:25c0:798c with SMTP id 5b1f17b1804b1-47754c46ac2mr951505e9.20.1762189224236;
+        Mon, 03 Nov 2025 09:00:24 -0800 (PST)
+Received: from linaro.org ([86.121.7.169])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429ce80df16sm10787228f8f.2.2025.11.03.09.00.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Nov 2025 09:00:23 -0800 (PST)
+Date: Mon, 3 Nov 2025 19:00:21 +0200
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Wesley Cheng <wesley.cheng@oss.qualcomm.com>
+Subject: Re: [PATCH 23/24] arm64: dts: qcom: glymur: Add USB support
+Message-ID: <bfi6mobf77gevht5em4kzp4lylvcrxttfyptm77itqqhz6sskq@jq7w5jvjncou>
+References: <20250925-v3_glymur_introduction-v1-0-24b601bbecc0@oss.qualcomm.com>
+ <20250925-v3_glymur_introduction-v1-23-24b601bbecc0@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250918162529.640943-1-jon@nutanix.com> <aNHE0U3qxEOniXqO@google.com>
- <7F944F65-4473-440A-9A2C-235C88672E36@nutanix.com> <B116CE75-43FD-41C4-BB3A-9B0A52FFD06B@nutanix.com>
- <aPvf5Y7qjewSVCom@google.com> <EFA9296F-14F7-4D78-9B7C-1D258FF0A97A@nutanix.com>
- <aQTxoX4lB_XtZM-w@google.com> <80691865-7295-44C9-9967-5E5B744EB5D4@nutanix.com>
-Message-ID: <aQjd1q5jF5uSTfmu@google.com>
-Subject: Re: [PATCH] KVM: x86: skip userspace IOAPIC EOI exit when Directed
- EOI is enabled
-From: Sean Christopherson <seanjc@google.com>
-To: Khushit Shah <khushit.shah@nutanix.com>
-Cc: Jon Kohler <jon@nutanix.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
-	"H. Peter Anvin" <hpa@zytor.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250925-v3_glymur_introduction-v1-23-24b601bbecc0@oss.qualcomm.com>
 
-On Mon, Nov 03, 2025, Khushit Shah wrote:
-> Hi Sean,=20
->=20
-> > On 31 Oct 2025, at 10:58=E2=80=AFPM, Sean Christopherson <seanjc@google=
-.com> wrote:
-> >=20
-> >> Hi Sean,
-> >>=20
-> >> Thanks for the reply.
-> >>=20
-> >>> On 25 Oct 2025, at 1:51=E2=80=AFAM, Sean Christopherson <seanjc@googl=
-e.com> wrote:
-> >>>=20
-> >>> Make it a quirk instead of a capability.  This is definitely a KVM bu=
-g, it's just
-> >>> unfortunately one that we can't fix without breaking userspace :-/
-> >>=20
-> >> I don=E2=80=99t think this approach fully addresses the issue.
-> >>=20
-> >> For example, consider the same Windows guest running with a userspace
-> >> I/O APIC that has no EOI registers. The guest will set the Suppress EO=
-I
-> >> Broadcast bit because KVM advertises support for it (see=20
-> >> kvm_apic_set_version).
-> >>=20
-> >> If the quirk is enabled, an interrupt storm will occur.
-> >> If the quirk is disabled, userspace will never receive the EOI
-> >> notification.
-> >=20
-> > Uh, why not?
-> >=20
-> >> For context, Windows with CG the interrupt in the following order:
-> >>  1. Interrupt for L2 arrives.
-> >>  2. L1 APIC EOIs the interrupt.
-> >>  3. L1 resumes L2 and injects the interrupt.
-> >>  4. L2 EOIs after servicing.
-> >>  5. L1 performs the I/O APIC EOI.
-> >=20
-> > And at #5, the MMIO access to the I/O APIC gets routed to userspace for=
- emulation.
->=20
-> Yes, but the userspace does not have I/O APIC EOI register and so it will=
- just be a
-> meaningless MMIO write, resulting in the the IRQ line being kept masked.
+On 25-09-25 12:02:31, Pankaj Patil wrote:
+> From: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
+> 
+> The Glymur USB system contains 3 USB type C ports, and 1 USB multiport
+> controller.  This encompasses 5 SS USB QMP PHYs (3 combo and 2 uni) and 5
+> M31 eUSB2 PHYs.  The controllers are SNPS DWC3 based, and will use the
+> flattened DWC3 QCOM design.
+> 
+> Signed-off-by: Wesley Cheng <wesley.cheng@oss.qualcomm.com>
+> Signed-off-by: Pankaj Patil <pankaj.patil@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/glymur-crd.dts | 243 ++++++++++++++
+>  arch/arm64/boot/dts/qcom/glymur.dtsi    | 569 ++++++++++++++++++++++++++++++++
+>  2 files changed, 812 insertions(+)
+> 
 
-Why on earth would userspace disable the quirk without proper support?
+[...]
 
-> > On 31 Oct 2025, at 10:58=E2=80=AFPM, Sean Christopherson <seanjc@google=
-.com> wrote:
-> >=20
-> > That's the whole point of the quirk; userspace should disable the quirk=
- if and
-> > only if it supports the I/O APIC EOI extension.
->=20
->=20
-> Sadly, so if the quirk is kept enabled (no I/O APIC EOI extension) and if=
- we do
-> not want a guest reboot, the original windows interrupt storm bug will pe=
-rsist?
+> diff --git a/arch/arm64/boot/dts/qcom/glymur.dtsi b/arch/arm64/boot/dts/qcom/glymur.dtsi
+> index 8a563d55bdd4902222039946dd75eaf4d3a4895b..c48d3a70820e551822c5322761528159da127ca6 100644
+> --- a/arch/arm64/boot/dts/qcom/glymur.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/glymur.dtsi
 
-Well, yeah, if you don't fix the bug it'll keep causing problems.
+[...]
 
-> Unless we also update the userspace to handle the EOI register write none=
-theless,
-> as damage has been done on the time of power on.
->=20
-> > On 31 Oct 2025, at 10:58=E2=80=AFPM, Sean Christopherson <seanjc@google=
-.com> wrote:
-> >=20
-> >> and updated userspace can opt in when it truly supports EOI broadcast
-> >> suppression.
-> >>=20
-> >> Am I missing something?
-> >=20
-> > I think so?  It's also possible I'm missing something :-)
->=20
-> I am just thinking that the original Windows bug is not solved for all th=
-e cases,
-> i.e A powered on Windows guest with userspace I/O APIC that does not have
-> EOI register.=20
+> +
+> +		usb_1_ss1_hsphy: phy@fdd000  {
+> +			compatible = "qcom,glymur-m31-eusb2-phy",
+> +				     "qcom,sm8750-m31-eusb2-phy";
+> +
+> +			reg = <0 0x00fdd000 0 0x29c>;
+> +			#phy-cells = <0>;
+> +
+> +			resets = <&gcc GCC_QUSB2PHY_SEC_BCR>;
+> +
+> +			status = "disabled";
+> +		};
+> +
+> +		usb_1_ss1_qmpphy: phy@fde000 {
+> +			compatible = "qcom,glymur-qmp-usb3-dp-phy";
+> +			reg = <0 0x00fde000 0 0x8000>;
+> +
+> +			clocks = <&gcc GCC_USB3_SEC_PHY_AUX_CLK>,
+> +				 <&rpmhcc RPMH_CXO_CLK>,
+> +				 <&gcc GCC_USB3_SEC_PHY_COM_AUX_CLK>,
+> +				 <&gcc GCC_USB3_SEC_PHY_PIPE_CLK>,
+> +				 <&tcsrcc TCSR_USB4_1_CLKREF_EN>;
 
-Userspace _must_ change one way or the other.  Either that or you livepatch=
- your
-kernel to carry an out-of-tree hack-a-fix to avoid updating userspace.=20
+So I think this clock is actually needed, but I think it should
+replace the RPMG_CXO_CLK above and then no need for "clkref" below.
 
-> Also, in the patch instead of a knob to disable suppress EOI broadcast, I=
- think
-> we should have a knob to enable, this way at least for unmodified userspa=
-ce=20
-> the buggy situation is never reached.
+The reason this works is because the bi_tcxo is already the parent of
+this ref clock.
 
-No.  Having a bug that prevents booting certain guests is bad.  Introducing=
- a
-change that potentially breaks existing setups is worse.  Yes, it's unfortu=
-nate
-that userspace needs to be updated to fully remedy the issue.  But unless y=
-ou're
-livepatching the kernel, userspace should be updated anyways on a full rebo=
-ot.
+I did something similar on x1e just now:
+https://lore.kernel.org/all/20251103-dts-qcom-x1e80100-fix-combo-ref-clks-v1-1-f395ec3cb7e8@linaro.org/
+
+Still don't get why the SS0 doesn't have/need such a ref clock.
+On both hamoa and glymur.
 
