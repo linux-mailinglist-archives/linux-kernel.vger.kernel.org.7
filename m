@@ -1,144 +1,165 @@
-Return-Path: <linux-kernel+bounces-882638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DB90C2AF84
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:16:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9E1DC2AFD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:18:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 975301891FDB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:16:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BA98189357E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:17:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9162FE072;
-	Mon,  3 Nov 2025 10:15:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A9C2FD670;
+	Mon,  3 Nov 2025 10:17:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hH1Dit0w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=barre.sh header.i=@barre.sh header.b="JzXT9LVr";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bvlCS3qH"
+Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A4E2FD677;
-	Mon,  3 Nov 2025 10:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 605021C8606
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 10:17:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762164953; cv=none; b=UG0kpuPrJLYXs1CWy6BddJOJT/QJD3cOBR+DupfjvUEj0kpuiuVJ7ZGogvefYC+VJcek+Dn8aAlw/XcLP82qdjAXA0nyPWdDhL0hDslwopCTDF5Z3nYOC3Q5VNWD/dyLh8iBNs8pEbz+/2usn8URwuCbtsp4FkERLA9Igxp1asQ=
+	t=1762165028; cv=none; b=lSqOOU2FlvRmAQGhOjUkUZfFN1Dfs1Ot567Y2DGjpQkU4D3djRncVdQkSnbmNmPxdlal2qCvjnu95lKOPCKwN9wg+njEPLve8A/c/NtP3WkKZcFOdLHyWbVc56Gz+oyfEWiX5BplPKJfecGee60QTmoedwa/t8LTekyzhnU6Fe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762164953; c=relaxed/simple;
-	bh=dm7oH3nTgvJPBFEPHOn1ekJrOzWA9gbujJ2NtsgHXr4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qzn1ZNCTX17PLzJyBDt28jh+FarONQdvExvWWxH+XPTeG5X5yzcwLtrZstdXoPx+06leV2PH6ibSDRrujVxbOj2Ceurc+l6onq0e2ln8gM86DXwRRVYhIyX5QGjECRCW/n4cgODGGFTiCGGpYnwU4UXWtzE6XLOYoyIwVSRyQVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hH1Dit0w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD967C4CEE7;
-	Mon,  3 Nov 2025 10:15:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762164953;
-	bh=dm7oH3nTgvJPBFEPHOn1ekJrOzWA9gbujJ2NtsgHXr4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hH1Dit0wk9oiesrLwFJAlNmPS6aQvL3139fH7tJ34UCj2WovwcCoi9NLoPf2ixyro
-	 2cRSsoSPwhvmhbgNM3oj989qyG+26Otryd/Z9ZvdhUUM0SYOrkolWmH86RJnwFRcnc
-	 NavM7BTs9daY3y5gvblFMepkEsDBbnEJXfHPeKV9l3KxW9k3FpG+Rx3jg/MoQxYkY+
-	 21XAIXykHIp7FFno9j7elmercX3zpYmZilRJZmGwUkI4/BGNuDKnUAHVyr9+qdRBgS
-	 dmcycU6x/9I7LbITL272PNTxYhUkK88IkzThwCPV7bvsPdJlDh7hIxbQymY1wXFpaE
-	 1PuIrt49nIbnQ==
-Date: Mon, 3 Nov 2025 11:15:50 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, 
-	=?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, semen.protsenko@linaro.org, willmcvicker@google.com, 
-	kernel-team@android.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/11] soc: samsung: exynos-chipid: introduce
- match_data->get_chipid_info()
-Message-ID: <20251103-polar-wasp-of-chivalry-9cd93f@kuoka>
-References: <20251031-gs101-chipid-v1-0-d78d1076b210@linaro.org>
- <20251031-gs101-chipid-v1-5-d78d1076b210@linaro.org>
+	s=arc-20240116; t=1762165028; c=relaxed/simple;
+	bh=jreKh7UoXms/zPvts4j5vSExLuNfxgKkq7HIyMMt1fI=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=h0hqxNOuUgcwW8zL2rCuFixPrPRzed23LniHT2WxJ1odgqvUuCgafW+FhKynEjp988pIz6fOiGJ8msWub8FdpV3w44mnauVhaix/0zNaSaNC9hVwUoaBhDObAId49CxATPIXxdV6fSlemHr/R3peeZ/paZnPOACoW2D4GUGnets=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=barre.sh; spf=pass smtp.mailfrom=barre.sh; dkim=pass (2048-bit key) header.d=barre.sh header.i=@barre.sh header.b=JzXT9LVr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bvlCS3qH; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=barre.sh
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=barre.sh
+Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 67D101400100;
+	Mon,  3 Nov 2025 05:17:05 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Mon, 03 Nov 2025 05:17:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=barre.sh; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1762165025;
+	 x=1762251425; bh=8I8MpOPXB7ZcC9lpAikBwCbV7Q54AcJYFLWaDJzNxFU=; b=
+	JzXT9LVrpaasboYIyHoeBInG0Y1m1DTbVNj0OgpOlsoQtMW8fl3EXavj6x3s9F1p
+	gbqfZuEU3hJTkp8uBhLcAVE4rDUxVKlOSzSQHSNtAejeasAFM+J5JpuM6LcfI6xZ
+	x92UAlkRpdG0wWcf0N97ygN1JcZAiLPTNevPjC0su+hybfD48RR1qAy485gsgqSr
+	VKwkyHGmTcwcmVVJ7NS6yAZnTmcslx1/nqQagImgXPjvGZjlXtwNf7Hv9i2rQ3J8
+	ZgKxH0c2m9AsT3KnJ0RioIqFeCRElSetJ7VGfVMoZQhCj9dba0j+45MK4eJpFh5Z
+	gPUxFKv4o6QDojVFX820lQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762165025; x=
+	1762251425; bh=8I8MpOPXB7ZcC9lpAikBwCbV7Q54AcJYFLWaDJzNxFU=; b=b
+	vlCS3qHuss8Tnk2IRihXwx8P0rzzuySNtK/JOV03kRbQACeAfc8q30+ElgK0uXuj
+	wKBb7ZoRTeBrL5ue+XSjUAbpSTeBenxFMCzrIjOnGycZ8K62TB7sYhAB1U+VLXhi
+	+UyttRGL62r93Y2mf9pw9C4B7kDC/Eynsk9m3+9+EDX19/kdUpvibG07Qd+l0W5f
+	33Olf+r2qqKIXBfgNLpasQ4oX0GbGRGiH3mB3OHjMtSjFYAwPxPeYANrn7k4dhSw
+	dRHr5BnNB5um3L2yJRyIgwc4OjDNFyE1H+6b77wnYkMXN1r556zTiBW/PDxPHfXG
+	45GukHbNzNOHoHFrUSFVw==
+X-ME-Sender: <xms:IIEIaalGrS96Pih8mg678jxD1RmJqEzg1W28Zli8JWzce37V8mhVLA>
+    <xme:IIEIaShavjrd7uZbH4XX4CXnF34HH3yvv9g8KA_rY-A0WZ-J7Nwb-r5t6M4ZCojtf
+    U1448AGCba9hQy9mMPpMXFOPiQuj-4LceuUDASIcdxYZ8Nu5nI_KPs>
+X-ME-Received: <xmr:IIEIaW0noRwE8rVozzo53q6WgUFcFmYChR7kJb51rv02f73EiNKw_bEGF0oTpUkcmOqKS69r8xhFkgJSywbyzi1jam7306-7_iPr3BVZAqVJuyovew>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujeejkeejucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucenucfjughrpegtggfuhfgjffevgffkfhfvofesthejmh
+    dthhdtvdenucfhrhhomheprfhivghrrhgvuceurghrrhgvuceophhivghrrhgvsegsrghr
+    rhgvrdhshheqnecuggftrfgrthhtvghrnhepkefgleegkeduffekheeigfelfeeffffgud
+    dtgfevjefhtdduieevuedtgfejgeeinecuffhomhgrihhnpehgihhthhhusgdrtghomhen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehpihgvrh
+    hrvgessggrrhhrvgdrshhhpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhpohhu
+    thdprhgtphhtthhopegrshhmrgguvghushestghouggvfihrvggtkhdrohhrghdprhgtph
+    htthhopehlihhnuhigpghoshhssegtrhhuuggvsgihthgvrdgtohhmpdhrtghpthhtohep
+    fihilhhlhiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehvlehfsheslhhish
+    htshdrlhhinhhugidruggvvhdprhgtphhtthhopegvrhhitghvhheskhgvrhhnvghlrdho
+    rhhgpdhrtghpthhtoheplhhutghhohesihhonhhkohhvrdhnvghtpdhrtghpthhtoheplh
+    hinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:IIEIaTIX0yrE9Gx-PdY2Ran_BXcFenwz5NUM69TlmrYbWIdxDXviBA>
+    <xmx:IIEIaewnqhTFCMhfmjMI7WXKcXna4GO7Bnp4tYNx1KdeOcTvet73Ig>
+    <xmx:IIEIaZUCSrApZAJX3_3EvJTConRJwp4C8eOoQSSuSMwMEHKLoc90Jw>
+    <xmx:IIEIaWi1vbjTztGU43h3Yf5v_rZTsOh418bZWb-pBN4hEwQVip51DQ>
+    <xmx:IYEIadKz9Rb-WX9av3LmYDEyFH-v7xQEt02kKzkSsLSpuXNff7Wo3XZ5>
+Feedback-ID: i97614980:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 3 Nov 2025 05:17:03 -0500 (EST)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251031-gs101-chipid-v1-5-d78d1076b210@linaro.org>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.100.1.1.5\))
+Subject: Re: [PATCH v3] 9p: Use kvmalloc for message buffers on supported
+ transports
+From: Pierre Barre <pierre@barre.sh>
+In-Reply-To: <aQhfVa_jdI_1kQwB@codewreck.org>
+Date: Mon, 3 Nov 2025 11:16:51 +0100
+Cc: Christian Schoenebeck <linux_oss@crudebyte.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ v9fs@lists.linux.dev,
+ ericvh@kernel.org,
+ lucho@ionkov.net,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <42356AE9-D6F7-425C-BCAE-8DB19A7E0629@barre.sh>
+References: <1fb9c439-73f3-4a00-8a8b-45eeb85883eb@app.fastmail.com>
+ <8602724.2ttRNpPraX@silver>
+ <7005d8d9-d42d-409f-b8e3-cd7207059eee@app.fastmail.com>
+ <5019358.GXAFRqVoOG@silver>
+ <d2017c29-11fb-44a5-bd0f-4204329bbefb@app.fastmail.com>
+ <aQhfVa_jdI_1kQwB@codewreck.org>
+To: asmadeus <asmadeus@codewreck.org>
+X-Mailer: Apple Mail (2.3864.100.1.1.5)
 
-On Fri, Oct 31, 2025 at 12:56:04PM +0000, Tudor Ambarus wrote:
-> Newer SoCs, like GS101, don't have a dedicated Chip ID controller.
 
-This would suggest that these are completely different devices and
-should not be part of the same bindings. Actually bindings also
-suggested this - changing programming model.
 
-> The GS101 Chip ID info is available as part of the OTP controller
-> registers, among other things. For GS101 we will read the Chip ID from
-> the OTP controller using the nvmem API.
+> On 3 Nov 2025, at 08:52, asmadeus <asmadeus@codewreck.org> wrote:
 > 
-> Extend the match_data with a get_chipid_info() method, to allow nvmem
-> integration.
+> Pierre Barre wrote on Thu, Oct 16, 2025 at 03:58:36PM +0200:
+>> While developing a 9P server (https://github.com/Barre/ZeroFS) and
+>> testing it under high-load, I was running into allocation failures.
+>> The failures occur even with plenty of free memory available because
+>> kmalloc requires contiguous physical memory.
+>> 
+>> This results in errors like:
+>> ls: page allocation failure: order:7, mode:0x40c40(GFP_NOFS|__GFP_COMP)
+>> 
+>> This patch introduces a transport capability flag (supports_vmalloc)
+>> that indicates whether a transport can work with vmalloc'd buffers
+>> (non-physically contiguous memory). Transports requiring DMA should
+>> leave this flag as false.
+>> 
+>> The fd-based transports (tcp, unix, fd) set this flag to true, and
+>> p9_fcall_init will use kvmalloc instead of kmalloc for these
+>> transports. This allows the allocator to fall back to vmalloc when
+>> contiguous physical memory is not available.
+>> 
+>> Additionally, if kmem_cache_alloc fails, the code falls back to
+>> kvmalloc for transports that support it.
+>> 
+>> Signed-off-by: Pierre Barre <pierre@barre.sh>
 > 
-> `struct exynos_chipid_info` is moved to the top of the file to avoid a
-> forward declaration. The structure is extended with pointers to device
-> and regmap to allow current implementation to obtain the regmap in the
-> newly introduced exynos_chipid_get_regmap_chipid_info() method. The
-> nvmem consumer support that will follow won't use the regmap, and
-> instead will use the nvmem API. It will need the pointer to the device
-> to report errors.
+> Thanks, it's now picked up and queued in -next -- will send to Linus in
+> a couple of months.
 > 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
->  drivers/soc/samsung/exynos-chipid.c | 35 ++++++++++++++++++++++-------------
->  1 file changed, 22 insertions(+), 13 deletions(-)
+> FWIW, I prefer (and I think it's the norm in the linux world) if patches
+> new versions aren't sent as a reply to previous version, it confuses
+> tools like b4 that fetch the patch thread for version operations.
+> If you send patches again please just send later versions without
+> using --in-reply-to :)
+
+Got it, thank you!
+
+Best,
+Pierre
 > 
-> diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
-> index ab6bdf24a754a0faf974190c1fa1f99735cbef8e..7b1951f28e8d4958ab941af91dab4b0183ceda5f 100644
-> --- a/drivers/soc/samsung/exynos-chipid.c
-> +++ b/drivers/soc/samsung/exynos-chipid.c
-> @@ -26,17 +26,21 @@
->  
->  #include "exynos-asv.h"
->  
-> +struct exynos_chipid_info {
-> +	struct regmap *regmap;
-> +	struct device *dev;
-> +	u32 product_id;
-> +	u32 revision;
-> +};
-> +
->  struct exynos_chipid_variant {
-> +	int (*get_chipid_info)(const struct exynos_chipid_variant *data,
-> +			       struct exynos_chipid_info *exynos_chipid);
->  	unsigned int rev_reg;		/* revision register offset */
->  	unsigned int main_rev_shift;	/* main revision offset in rev_reg */
->  	unsigned int sub_rev_shift;	/* sub revision offset in rev_reg */
->  };
->  
-> -struct exynos_chipid_info {
-> -	u32 product_id;
-> -	u32 revision;
-> -};
-> -
->  static const struct exynos_soc_id {
->  	const char *name;
->  	unsigned int id;
-> @@ -80,13 +84,19 @@ static const char *product_id_to_soc_id(unsigned int product_id)
->  	return NULL;
->  }
->  
-> -static int exynos_chipid_get_chipid_info(struct regmap *regmap,
-> -		const struct exynos_chipid_variant *data,
-> +static int exynos_chipid_get_regmap_chipid_info(const struct exynos_chipid_variant *data,
->  		struct exynos_chipid_info *exynos_chipid)
->  {
-
-This function now gets both regmap and chip info, that's too much.
-Probably all ASV and regmap getting should be somehow split/customized
-per variant.
-
-I don't know yet, need to read rest of patches.
-
-Best regards,
-Krzysztof
+> Cheers,
+> -- 
+> Dominique Martinet | Asmadeus
 
 
