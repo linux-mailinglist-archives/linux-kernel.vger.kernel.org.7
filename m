@@ -1,51 +1,86 @@
-Return-Path: <linux-kernel+bounces-882219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 482A8C29E7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 04:04:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B603C29E74
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 04:02:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEDA13B29A6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 03:04:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40B71188A0B4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 03:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55AD522F74D;
-	Mon,  3 Nov 2025 03:04:38 +0000 (UTC)
-Received: from smtpbguseast2.qq.com (smtpbguseast2.qq.com [54.204.34.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6358B27FB10;
+	Mon,  3 Nov 2025 03:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KM9uaXTl"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5D234D3BE
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 03:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E4034D3BE
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 03:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762139078; cv=none; b=AwokCu7hkoeb4VM+7lfUt4nwdsz7pLlk3d1v+qMiDHWxtAKddSHPJN77m6XiiKi3gTQaZUf5n3bpEED7/WRMKsokvg20CYO+m/htKYRZ5ZIbXKuv1a5ThKY2J2GSPRwkKXmeH5GHOpUPZaFcR+p645PYUevQ6QrLlrnpZ58goKk=
+	t=1762138964; cv=none; b=VcAJChGrYiwNINaB9Ld6hOuc4wi2QAM5eYmk8QTURIA6PSC3PL41JJP6L3Dqm5QGHXPFnW03y/kxieLebkm613qwy9X4r44BcoubSbEGZlwtx8uSC8tksywXRbdJ2pHt4OXzYZJtRwjuErf0+vDsGXLZlg5ztDGC2XLzfofLcys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762139078; c=relaxed/simple;
-	bh=2eMwIGG5G7tc7p2ezU8hbP3iP/eu8l4H8O+ZvnJYjtk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=txkIMGzej0Lq/0YyoaXQnoS+C5IMD38R9tvrKRYPmuvzkC/nAdDcHGLpCszbevplIl+IOqO2a/xFhr/2bj7L+6ZtREZZ6mw3iJjYBNUZwbJA8jlgEGIvgsmWX+qJgJt8ihWafTJ3V1eUi6heyFURLKlntWU1jNmDJORo7pM77b8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinsec.com.cn; spf=pass smtp.mailfrom=kylinsec.com.cn; arc=none smtp.client-ip=54.204.34.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinsec.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinsec.com.cn
-X-QQ-mid: zesmtpip4t1762138939t50954df2
-X-QQ-Originating-IP: yf/9pMu/pH6gfdXwOAOQ32Zqxze4ngRaUEZV17TOkx4=
-Received: from arch ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 03 Nov 2025 11:02:17 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 1809871534851727734
-From: Luo Qiu <luoqiu@kylinsec.com.cn>
-To: Jay Fang <f.fangjian@huawei.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] logic_pio: change return type of ins() to void
-Date: Mon,  3 Nov 2025 11:02:21 +0800
-Message-ID: <20651DB6AB935008+20251103030221.18672-1-luoqiu@kylinsec.com.cn>
+	s=arc-20240116; t=1762138964; c=relaxed/simple;
+	bh=+n6+4nE3QxNSj3LhmiOGy3NDJYbLSK9GFP1yPyxnvMM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UfZrqOW9t6f3AMxShJOHUZuyfA33DZ9Zj/2bNWqUGdQ012S5QmI7zLf+Jl+XymQ0wwYFnuF6RN5/A9rZcsXV9XMxWrsKjUR56Iga7sy5Upfiekv/E6odahmXBxo6wQTPOxutSdzaZuKU7tUy8rk6wzvs40MHzumg/C6MY+gKsSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KM9uaXTl; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-89f07fee490so543251685a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 19:02:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762138962; x=1762743762; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lVneWAcxAYuvydSEWTaX0/jj6CVEKTN4CESDRja7lcY=;
+        b=KM9uaXTlrDt3k+HcRLuXgxOV5CET1GOdyHGS2KQm3DXMD04rTiZKWK9df1abQM0S2D
+         qbr+tAaQ8WeD/BybPpUQ7ZTbjZpdXeP6lQ6N517cZ69qOllDo/J4y8ZHh7Vr7b5roj7J
+         kOMlPPsxfMCJnptYJ4RVqJ2KjAeFrNBTYfrDPfoc4RNPdgUClfBZtZY3g1gxfvASwGve
+         kK+JnYotfjNfkab7v32Y+aweBXfsScLu3pK9muhflWgqT2aNf9iewFko17B6RrP0osQ1
+         xG/okFRFGcrbl1BuLshX9Qi9myr0BD/KdUMtWxj5bUsBUjX4o8g9dsYd+3PnlYW2+SmW
+         Flhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762138962; x=1762743762;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lVneWAcxAYuvydSEWTaX0/jj6CVEKTN4CESDRja7lcY=;
+        b=TnAlI8/tAeLrG6v23GLFPMTUGWfkzcR1LhLOL4uFSLMy0uQGd0hYE0YNz6+4970z1V
+         MSZ93zy7rsU5m6JvV2KFBl9jHCQjEz2mQgmDXeBx+ndWI2vAj2h6eqxIVTtoLqddijVc
+         oYmKr/azlvBpW2RmQFXGV6Z13DRxtmisvXXFfkFeOzJDM+xIEA5HCIQHFdRXTFuq5h6M
+         o/vVWv0JDs1Jcyb8lLCNZc/vUHZ7VmpbBfmAtuzXfEQ6Yc5NPIHV0BNxNxu/hmwetZoN
+         9VLDQxVPseu69smnEhrQ54NpVD/K+nyIJiP/IVXOYk2s7CGqKBcy6GD+s9czQtH4d87s
+         TDZg==
+X-Gm-Message-State: AOJu0YycXRrOEzzNMqqzvdFufF8e2wSFqLbToyPmeRLLLNI2Mevx/yfM
+	Oeqlm1Ibu9Vet7dhn/ttdDn4Rb3O5A+cLcAL4e6XK96+ZhSfgmxrtsPW
+X-Gm-Gg: ASbGncu69rUPnmdMxGspfMajJkI/RKjN5f//UJ+4wg4K2E7y8rQqmjUSLWhoO1d5JFA
+	XNSRDN6kX1l6DVocFE84Yg6hIEtPXCJJ+5EOBI09UspLdwf0yaAAOB6ENVUkRwG10X0gNvTt3hQ
+	3ndKJvwWwuRxfwiqYISeff3EOLD9C0QvvuMOWDYdjVsoBZPVLMCcA3MhrK2SLYKXY+Q7JVUyjR3
+	HghGy17WoTjzsCrQUnwkQnGkp1yM3LTmI62bxNmFJO+v0hJLNITjPgUJE6YsupuBRJNCl9F4FSe
+	b3HyKfLHHm2P/jH6HrxYjdm0SWRdy+6kqVbJFrH6CDSYO+PZwkBo3SfGcQvEQJa+HcHsywiQkNb
+	u+nMq6dWDmP0FWyVTLNF6aPUk1BVec3UvtJuaFKX0Ovx7zSngQyxi2/uLdWGZWK3uC+eIAEHrlI
+	1MlOm2hB2eqZs=
+X-Google-Smtp-Source: AGHT+IGGeXxzdrJf3WBZprdJQL4BoPwcya2voHi92nYt51/9Z4IG3Yj5hi6Em4B2KfrTkq2T/EWYEg==
+X-Received: by 2002:a05:620a:454e:b0:89f:8bb8:c103 with SMTP id af79cd13be357-8ab9ade53aamr1428944885a.49.1762138962093;
+        Sun, 02 Nov 2025 19:02:42 -0800 (PST)
+Received: from archie.me ([210.87.74.117])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ed3528968csm48936171cf.21.2025.11.02.19.02.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Nov 2025 19:02:41 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id 5D6AD41C0600; Mon, 03 Nov 2025 10:02:38 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>
+Cc: Jacob Keller <jacob.e.keller@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: [PATCH] Documentation: pldmfw: Demote library overview section
+Date: Mon,  3 Nov 2025 10:02:28 +0700
+Message-ID: <20251103030228.23851-1-bagasdotme@gmail.com>
 X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -53,96 +88,35 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=871; i=bagasdotme@gmail.com; h=from:subject; bh=+n6+4nE3QxNSj3LhmiOGy3NDJYbLSK9GFP1yPyxnvMM=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDJkc0k4fvJ50+e2tLTBRve7VXXGGdeIZJbGcet2ol4/33 F/uaHOqo5SFQYyLQVZMkWVSIl/T6V1GIhfa1zrCzGFlAhnCwMUpABOZ1M3wP+aH8etFO7azpEU8 3rFVbYkvc+zy28dYmtdOF/3ycL3dYhOG/2nnlh6Zb3ljYcDbc0aSbRuePnQSWXazyN0kQ/vS3zu u/3gA
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:kylinsec.com.cn:qybglogicsvrgz:qybglogicsvrgz3a-0
-X-QQ-XMAILINFO: MTlwlXBsL2CfYnUWgl7f4Y9a+FInZyDK36uejGO72kAsmzkWpyDA7utX
-	YUatLqACSq6kbe3sFUvbDFyrrdNEfX4M8wnZJ2zS5WF8Jo6NGIDnCCjKLsHovVF9NlRRrcQ
-	i+renwCIW8o51HF63xFpoatSXc5Fx+WciJ0oY0SiMeltkFCeE2OxC5zmw4Eg789qv8ycUyJ
-	pJfnhn0SdNwk8UPrWl5tzUCNTGir3NW8+ZZM/OitdoYVOc7hH+KbEUCfcrzRCVUHhG8ewXm
-	xr60abTpjwVkJsaHrgXdx+IlhCOMVJc+WdEs6mMUmKFkV57c291akmjsCLDEr67qRmfsMEF
-	sMQBXDflZB5cVlA1oFE79o2b5pszuHzhwNPrYJRTa3LzmQQKN5uDVofc442ZG4wDVqeuEjU
-	Vv0aoPUVhmq7E1PG0UkV1nRfgd62yhxjSX9C8mtgupmBV+/Ql2X01lw0Nx9eCCUjNcQyNAQ
-	ZL/h+eTRL8/tKS3JB7fU9x90j7M8Qs2DCmgExBkoCVZgc6eyOeaflGoP+YvZ4tNi91/lNil
-	EhA8feeuQaLJ8++KTav5pO/qV/OzRZujR36PdTqYmVJNkmO+aTlgCII3GWrZliq8T7s4u9y
-	cQsGkeADhYLibC2pFartoSAsDe/co4ONuEEch1hAD/K+7sd76kUxaWudzKbCTfydAQVCFy9
-	H/zUF9kO6PRBBj4IRKfI923oiFJm9yUkx++wmdh2z+xLIpJdSFdm8HkNU6/eX0QEkCqkLHC
-	+usEkdHSu5gZWKGEy2mLSsYUIQCGBWJgg7ag7l/PgkbpPWMJv+M+k5dhlTS/vmt8mypRBo+
-	KJ6XTRq7eH1BwGhLLtZDEVdCA+k1o5njh8sPYao0e0Jz+OIK5vQiMdm1Tf6yGDsRbMT3Qwy
-	0Tq0By1mAEjsMGOFdIwUjR14rmztSQlATVGmSHKFL/uC5YGm/86ZRYzT4XXPuiwXdVXHjYE
-	/aEeT/hFOyPG7qRHAU2oYwbWdukcg+8uYMDg+q4h8GPH+ywnyREthg3E4bpqDaSbelvk=
-X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
-X-QQ-RECHKSPAM: 0
 
-The ins operation in logic_pio_host_ops should return void instead of u32,
-as it performs bulk input operations to a buffer and doesn't need to
-return a value. This matches the semantics of the corresponding outs
-operation and fixes a type inconsistency with logic_ins{bwl}.
+pldmfw library overview section is formatted as title heading (the
+second title of index.rst), making it listed in driver-api toctree.
 
-Signed-off-by: Luo Qiu <luoqiu@kylinsec.com.cn>
+Demote the section.
+
+Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 ---
- drivers/bus/hisi_lpc.c    | 13 +++++--------
- include/linux/logic_pio.h |  4 ++--
- 2 files changed, 7 insertions(+), 10 deletions(-)
+ Documentation/driver-api/pldmfw/index.rst | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/bus/hisi_lpc.c b/drivers/bus/hisi_lpc.c
-index 53dd1573e323..a212fd39cf24 100644
---- a/drivers/bus/hisi_lpc.c
-+++ b/drivers/bus/hisi_lpc.c
-@@ -265,12 +265,9 @@ static void hisi_lpc_comm_out(void *hostdata, unsigned long pio,
-  * @buffer: a buffer where read/input data bytes are stored
-  * @dwidth: the data width required writing to the target I/O port
-  * @count: how many data units whose length is dwidth will be read
-- *
-- * When success, the data read back is stored in buffer pointed by buffer.
-- * Returns 0 on success, -errno otherwise.
-  */
--static u32 hisi_lpc_comm_ins(void *hostdata, unsigned long pio, void *buffer,
--			     size_t dwidth, unsigned int count)
-+static void hisi_lpc_comm_ins(void *hostdata, unsigned long pio, void *buffer,
-+			      size_t dwidth, unsigned int count)
- {
- 	struct hisi_lpc_dev *lpcdev = hostdata;
- 	unsigned char *buf = buffer;
-@@ -278,7 +275,7 @@ static u32 hisi_lpc_comm_ins(void *hostdata, unsigned long pio, void *buffer,
- 	unsigned long addr;
+diff --git a/Documentation/driver-api/pldmfw/index.rst b/Documentation/driver-api/pldmfw/index.rst
+index fd871b83f34f3a..e59beca374c1fa 100644
+--- a/Documentation/driver-api/pldmfw/index.rst
++++ b/Documentation/driver-api/pldmfw/index.rst
+@@ -14,7 +14,6 @@ the PLDM for Firmware Update standard
+    file-format
+    driver-ops
  
- 	if (!lpcdev || !buf || !count || !dwidth || dwidth > LPC_MAX_DWIDTH)
--		return -EINVAL;
-+		return;
+-==================================
+ Overview of the ``pldmfw`` library
+ ==================================
  
- 	iopara.opflags = 0;
- 	if (dwidth > 1)
-@@ -292,11 +289,11 @@ static u32 hisi_lpc_comm_ins(void *hostdata, unsigned long pio, void *buffer,
- 
- 		ret = hisi_lpc_target_in(lpcdev, &iopara, addr, buf, dwidth);
- 		if (ret)
--			return ret;
-+			return;
- 		buf += dwidth;
- 	} while (--count);
- 
--	return 0;
-+	return;
- }
- 
- /*
-diff --git a/include/linux/logic_pio.h b/include/linux/logic_pio.h
-index 8f1a9408302f..9f27d9374f71 100644
---- a/include/linux/logic_pio.h
-+++ b/include/linux/logic_pio.h
-@@ -31,8 +31,8 @@ struct logic_pio_host_ops {
- 	u32 (*in)(void *hostdata, unsigned long addr, size_t dwidth);
- 	void (*out)(void *hostdata, unsigned long addr, u32 val,
- 		    size_t dwidth);
--	u32 (*ins)(void *hostdata, unsigned long addr, void *buffer,
--		   size_t dwidth, unsigned int count);
-+	void (*ins)(void *hostdata, unsigned long addr, void *buffer,
-+		    size_t dwidth, unsigned int count);
- 	void (*outs)(void *hostdata, unsigned long addr, const void *buffer,
- 		     size_t dwidth, unsigned int count);
- };
+
+base-commit: e5e7ca66a7fc6b8073c30a048e1157b88d427980
 -- 
-2.51.2
+An old man doll... just what I always wanted! - Clara
 
 
