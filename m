@@ -1,202 +1,199 @@
-Return-Path: <linux-kernel+bounces-882727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED3BAC2B40B
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:09:32 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DA71C2B3FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:09:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D63418941A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:08:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E66A04F2BD1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ADE030149D;
-	Mon,  3 Nov 2025 11:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF8C301704;
+	Mon,  3 Nov 2025 11:07:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g5XCUbDF"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O3UfXCBT"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB16D30170F
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 11:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A6112FE58F
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 11:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762168029; cv=none; b=UdMRS1lG/L8bLkfxMzN/FRBLu36CxLcXCE4F+7Gc2aES3FYqRuMU7kRMlERqhtwCwLmy4zDDJSOFbWRFLtXRqNuT3A0ryKoBGsvUZEn30xYFmrD+9FMmHScBxFswS0oorP61cpgBsj/M8+vXOxaJhouow3zF78LJPa5MpaU3gtc=
+	t=1762168052; cv=none; b=Y3quuRtN3WNEWqxWmcJWkSLqWOmT9ur7lCVCpbI7L9cypCZDse3eD2fgM54BTw8kXAIlHfJJnL/fORarHTHfONH44avuvysuumFY6RoUXVUVb0j8KJZ+vRiCffFcNk/v41q55OdeRGZz8y40X/Om0MMRtDZ9Hks2ZOgbEKeh8M4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762168029; c=relaxed/simple;
-	bh=q+/7P1zjDNlXzpHg/WHOYRPHMq1JrxDvGxq4KhF0LWI=;
+	s=arc-20240116; t=1762168052; c=relaxed/simple;
+	bh=mA9KY7uIbnEgVR1SSsuX7u/ye9v5ngsAxc98lcuXZH8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vBpt9vtxIuViw3aOyKJj4kiICflIJQfs18HBV4a10aNysUkNR+9TMbYpJQborcBOige81Vdt6gjanmB4seetjnM+FF0RYrPAV4OOwYSTbeMYa+vQufHXHpsAWzDN45r3gpFPsBTtNPMyFlI4E/GNwrEyjVMR09r/CCeMjFO0yaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g5XCUbDF; arc=none smtp.client-ip=209.85.128.46
+	 Content-Type:Content-Disposition:In-Reply-To; b=kNfovDh9qUdaZeQxVk25IPhAvkWQRSbkOKX63bUptKTWPadQ8kmUZPJWS3f/E9F2hrWxqRWn60KSLRgFko7znvCbtqyIlfp9rXw6/5P0DzlHVd41C2kEqG7lN78fFK0PIuxy6/XTuw3I9/ZrrfQQlKohd0ewc9N4fnNtqm3SC1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O3UfXCBT; arc=none smtp.client-ip=209.85.216.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4770c2cd96fso27436385e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 03:07:07 -0800 (PST)
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3402942e79cso6019873a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 03:07:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762168026; x=1762772826; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762168050; x=1762772850; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=N2y6g7iCZxSFCzS+WqvERQWzckHfYQBOBr5pYtme7K0=;
-        b=g5XCUbDFVvMZDFMAZkg0EciVb6shPWDgLUFDgBsPBChVCp1VD1sgs+kXR/65HYChxI
-         enVDu7+CF+3yGpvzhFWqC7y7y5PFkbnrFO5lysja/y3/NfcAYak/uylgb1r2Q7UXo/3b
-         hhCU4cd5zbMRfoRccx4ISKtuMRLqp+XSTNvJV/Qhr/wbTCCv4Bvi3FCcPWusJTjYNYTM
-         2qljBFd6xxgr7p21TekFvkZH3v18RIUqj3B8kP6ky9eKKvtH63IZMbUgavbAP7bWZG4W
-         Ol1Pj62M0sEQTNqWX7Y7wz2nY+j2ERYsqlerVHQIBumT6PRC4uxAI/SU3vFeNwhXYthN
-         XM+Q==
+        bh=vd+5KBI+DcPHKtaahVWDgGYJD9ObtH7hyDt+uX2+Cpo=;
+        b=O3UfXCBTarRt8XRvzh0S/4L1Y/dWHF1ZHDWIHX8SM33zfclszl7OUDhBtlIeihohf/
+         hVOOnVcEC1VwBGjRyLOuU7m+rdVEamTTVxZxXx8sSw7mmqTQ80QlynmOozD65EovddkK
+         fu1vkzrhGvzdLhBQFx+WSXE0md678a5lSCFKyCblshPVupCBVp90sBy6CQ96OwjPkjLR
+         rhsvgLuS8lWbAqLoNvZprMWHomoWhp0L2Zs2bkqTVOuscTCzlCN6Ef1tK/idiBRSln96
+         XsxEEtoTa/Ls2S6OWhADBVRUeOdIvopTAmoFkv110Krpshr9syxCgNFdk9SGj3weT8G7
+         Oa3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762168026; x=1762772826;
+        d=1e100.net; s=20230601; t=1762168050; x=1762772850;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=N2y6g7iCZxSFCzS+WqvERQWzckHfYQBOBr5pYtme7K0=;
-        b=VYMBLCBz3jHd/LjNs0ENbvHigLLj0u6ZCsID9GoGZGbMgeCTB8JKFVX1zRKZnbGZoq
-         3+gtUCXtVkRngb64UKhvXjD9ArOrlA59BolK/I8l8inloEwJkygTGxlUuWmbVwdOUAXf
-         4aHn0l7HUg67aSaww1qgm9v8MqESFgG0paqfy4IDnMZRfD5S5rupYEEHDJhdFSqyIjS0
-         Q3qTwq9qFmP597xHA/72y8ouSbXYGY5wGg6mB2t4tAIU4dAjLdG0gqekoXcg4jgvzgLq
-         kLLyxPRFYPxMtjWRtT5m+uTydeemkiclx/7FrvgeqiNXZDyDvUoV7P7w4yPKluvKAtKO
-         RynQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXzDEIzkdtydtc106XdGnthksR13jVMPdnpl8eh+v20MpXDew4iByKof8enWKR1FJ8O9Dxc4PHyGF8dYJE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMCLc5z8LJexjsIQ2rMMNN0fCZF5fGLNJzwXhcSn/5QdpxpNYK
-	sEpNj6HI5+LleHzvlLjBSj74z3qAg4BXjAtbinDNPS2LpyMZRCNB00hz
-X-Gm-Gg: ASbGncuv6GnT2EPRwTE9oMfEbibrrSZO7dB2/1Blk1l3rNtIcMRQzvgA1lZQsxyALoC
-	2Nb21h4Xl7o0gg/8ZF51voS4WJajV2XOal4bRcvBj4nrlxs/CDAtEuy9zIBA5vqBaUcljri6uxg
-	KwNZ73zxSb1su6TfYs6s/3YL9u5o1bguEvwnz/rCiF9QlM0/pLGE+wV2JLFpXsFM5tsAIW6mBJX
-	82Lp0QcTb43pDwc53RcKU3WqddxRxQ0rYAHmPUQJjarmFgVSBEGUeEg5oA1ezvECcfKlmVWWmJv
-	ZWA2C/L1i5MVgKUZwXMr6zM82qM69oqGn6coB6YSVSzNcEITD8ZrgPSKbVFKZcuLIKfP6M4kO8P
-	tQWZ1n4dTJ1NXPugyPi3giU2crCONkJqXSFWSpVYh8iyw8kZT7buSf9yBr7O/LSxpNUCGKapLhl
-	oGM+/81TRFHPJoaknxGngQAVs3tzpyVT099G5Hy4dgCsRcBiUbBryYQIev8KDH65/LXc1OQrV3s
-	Q==
-X-Google-Smtp-Source: AGHT+IGk/+fNIDU5GS9Y0bSDOMPL/NMDFiVPvFYi1ymJ4WbTOeaX7Ll11twoeCz4N6itkrGu72//OA==
-X-Received: by 2002:a05:600c:3511:b0:476:4efc:8edc with SMTP id 5b1f17b1804b1-477307d9920mr99026625e9.15.1762168025714;
-        Mon, 03 Nov 2025 03:07:05 -0800 (PST)
-Received: from orome (p200300e41f274600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f27:4600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c2e677csm149805495e9.3.2025.11.03.03.07.03
+        bh=vd+5KBI+DcPHKtaahVWDgGYJD9ObtH7hyDt+uX2+Cpo=;
+        b=CR1usqddCtH1WhotvyMrjkRq+YbGwg13poEkFHd20amEInzIAimbF69LE2cn5wgT6/
+         a7z2cKY4OQEHkahGMkV8YHmadz8HSQgbVp6mQtBxFxpU02VS0Tf3zbl40AI5HEJuenPJ
+         /5Jx2BOYCTXnW5r3Ec+MIXBoS9eJe/mWRnHbrQxoELAHD0oBK8cdI1jOM9OImYO0BSdp
+         JSFEQ6QFCqs8/Q9PS+Un6a0Cc4OQpzm7QZ2vzrxJsP4OeAvRvndzp+oTEjiqniXRFIly
+         XLx+52Jm/tdfnO2ne9rUukvhoksd0MfDs2JlARcPfTDeutyGvn++BSlLk5XiJBNrVUCu
+         W7rg==
+X-Forwarded-Encrypted: i=1; AJvYcCVBpI/y0TFL6BkApPgRpD+I8kaplC58Sn097irpp40J8qDpURRbh7IsU/Vc+HIXznWHGVrsbsm6qa794Ys=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuQ2GiRvwd7fy9uBk8+lijO9ozUQJ/IfngorGkFTPMvyKu8X0C
+	DLNq6pzaS1IHy//jeB8KrKqbo7FSAlnhInWOh0CBw7MAljvOB9eO2YE5
+X-Gm-Gg: ASbGncuK+HYXJhjHQaNvbnN51TuabnLXrC7pppddtIs9QWVusnuUc+nSo9AHfQyoG3p
+	IMJco/IfvXpd/iCQqhKXtFP3Li2gsmcUlTzBT7pe8HJ4EmqIPm8BeN5g7jQuKNE3mWxkVz5pdRw
+	z3nn84PSAU4/HqD3jM/cMLvgS3tkOiXcyvvriD8bpNNMbltnFTgksF+zE1ji2k3QGJvJ2ws7+Ny
+	4R3a+kKne7IBbuqevzH94gxdf1MGVG+tE7vO5B/CDlcqllA2c11FQqFGAZ1LcGhKTIoD/06QFBy
+	WoI4WZGPId1Hi2lYOWgUzC0ipLAF7evKrvpmaBWDCIO8dHNaIyeRFabMvIyZMW2FxPIzKaIDFu9
+	eAuC3RJnF1jb6LysGpA67yFjI19sYg8T/hZ4KUEW/fM7CXEQB2iHC4shFhROXK4zVpWb0gLAGi5
+	fB07g8ins7QENpXXkuLTnj3QBee65nZzGIEr3hyQfxiBceHx+n9F01Ao7cw89VNxUMXeA=
+X-Google-Smtp-Source: AGHT+IH4+9frysi9DNFV/2/WAly7wk4mYQWIlTpjWZue0G81QDWwZ4rfIb4hTAprNc33o6VQINfi4w==
+X-Received: by 2002:a17:90b:314e:b0:340:d511:e15f with SMTP id 98e67ed59e1d1-340d511e56fmr7617741a91.18.1762168050210;
+        Mon, 03 Nov 2025 03:07:30 -0800 (PST)
+Received: from google.com (114-39-189-33.dynamic-ip.hinet.net. [114.39.189.33])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b93bf44e233sm10126135a12.34.2025.11.03.03.07.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 03:07:04 -0800 (PST)
-Date: Mon, 3 Nov 2025 12:07:02 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Aaron Kling <webgeek1234@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] Revert "arm64: tegra: Disable ISO SMMU for Tegra194"
-Message-ID: <ehkwvvmvk4mddxtcmne5jrex2rfq4phqsa5zifxdslrpvdl2ir@3zlwejmx5f5f>
-References: <20251101-tegra194-dc-mmu-v1-0-8401c45d8f13@gmail.com>
- <20251101-tegra194-dc-mmu-v1-1-8401c45d8f13@gmail.com>
- <CALHNRZ_QrQHCmF7f1z29tAmuNR-=rG1SgYJ1sssK3VXiQqURYg@mail.gmail.com>
+        Mon, 03 Nov 2025 03:07:29 -0800 (PST)
+Date: Mon, 3 Nov 2025 19:07:24 +0800
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>,
+	David Laight <david.laight.linux@gmail.com>,
+	Guan-Chun Wu <409411716@gms.tku.edu.tw>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Guan-Chun Wu <409411716@gms.tku.edu.tw>, ebiggers@kernel.org,
+	tytso@mit.edu, jaegeuk@kernel.org, xiubli@redhat.com,
+	idryomov@gmail.com, kbusch@kernel.org, axboe@kernel.dk, hch@lst.de,
+	sagi@grimberg.me, home7438072@gmail.com,
+	linux-nvme@lists.infradead.org, linux-fscrypt@vger.kernel.org,
+	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] lib/base64: add generic encoder/decoder, migrate
+ users
+Message-ID: <aQiM7OWWM0dXTT0J@google.com>
+References: <20251029101725.541758-1-409411716@gms.tku.edu.tw>
+ <20251031210947.1d2b028da88ef526aebd890d@linux-foundation.org>
+ <aQiC4zrtXobieAUm@black.igk.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="rhigqaftdyzecuql"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALHNRZ_QrQHCmF7f1z29tAmuNR-=rG1SgYJ1sssK3VXiQqURYg@mail.gmail.com>
+In-Reply-To: <aQiC4zrtXobieAUm@black.igk.intel.com>
 
++Cc David
 
---rhigqaftdyzecuql
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/2] Revert "arm64: tegra: Disable ISO SMMU for Tegra194"
-MIME-Version: 1.0
+Hi Guan-Chun,
 
-On Sat, Nov 01, 2025 at 06:13:26PM -0500, Aaron Kling wrote:
-> On Sat, Nov 1, 2025 at 6:01=E2=80=AFPM Aaron Kling via B4 Relay
-> <devnull+webgeek1234.gmail.com@kernel.org> wrote:
-> >
-> > From: Aaron Kling <webgeek1234@gmail.com>
-> >
-> > This reverts commit ebea268ea583ba4970df425dfef8c8e21d0a4e12.
-> >
-> > Mmu is now being enabled for the display controllers.
-> >
-> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > ---
-> >  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot=
-/dts/nvidia/tegra194.dtsi
-> > index 1399342f23e1c4f73b278adc66dfb948fc30d326..854ed6d46aa1d8eedcdfbae=
-1fdde1374adf40337 100644
-> > --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> > +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-> > @@ -1807,7 +1807,7 @@ iommu@10000000 {
-> >                         #iommu-cells =3D <1>;
-> >
-> >                         nvidia,memory-controller =3D <&mc>;
-> > -                       status =3D "disabled";
-> > +                       status =3D "okay";
-> >                 };
-> >
-> >                 smmu: iommu@12000000 {
-> >
-> > --
-> > 2.51.0
-> >
-> >
->=20
-> Question for Jon as the author of the commit being reverted. The
-> commit message states "we do not have a way to pass frame-buffer
-> memory from the bootloader to the kernel". If I understand this
-> correctly, this is talking about seamless handoff. What does this have
-> to do with enabling mmu on the display controllers? Seamless does not
-> work on any tegra arch as far as I'm aware, but Tegra194 is the only
-> one that doesn't have mmu enabled for the dc's. But enabling mmu
-> allows for better and faster memory allocation. My initial attempts to
-> enable this didn't work because I tried to attach them to the main mmu
-> unit, see the related freedesktop issue [0]. After noticing in the
-> downstream dt that the dc's are on a separate unit, I made it work.
-> And so far, it seems to work just as well as Tegra186. Then when I was
-> packaging up the change to submit, I found that this had been
-> explicitly disabled. But I'm not seeing why. Am I missing some
-> additional factors?
+If we need to respin this series, please Cc David when sending the next
+version.
 
-This isn't seamless handoff to the Tegra DRM driver for display, but
-rather to simple-framebuffer. While this does technically work, it also
-causes a spew of SMMU faults during early boot because the firmware does
-not properly pass the SMMU mapping information to the kernel.
+On Mon, Nov 03, 2025 at 11:24:35AM +0100, Andy Shevchenko wrote:
+> On Fri, Oct 31, 2025 at 09:09:47PM -0700, Andrew Morton wrote:
+> > On Wed, 29 Oct 2025 18:17:25 +0800 Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:
+> > 
+> > > This series introduces a generic Base64 encoder/decoder to the kernel
+> > > library, eliminating duplicated implementations and delivering significant
+> > > performance improvements.
+> > > 
+> > > The Base64 API has been extended to support multiple variants (Standard,
+> > > URL-safe, and IMAP) as defined in RFC 4648 and RFC 3501. The API now takes
+> > > a variant parameter and an option to control padding. As part of this
+> > > series, users are migrated to the new interface while preserving their
+> > > specific formats: fscrypt now uses BASE64_URLSAFE, Ceph uses BASE64_IMAP,
+> > > and NVMe is updated to BASE64_STD.
+> > > 
+> > > On the encoder side, the implementation processes input in 3-byte blocks,
+> > > mapping 24 bits directly to 4 output symbols. This avoids bit-by-bit
+> > > streaming and reduces loop overhead, achieving about a 2.7x speedup compared
+> > > to previous implementations.
+> > > 
+> > > On the decoder side, replace strchr() lookups with per-variant reverse tables
+> > > and process input in 4-character groups. Each group is mapped to numeric values
+> > > and combined into 3 bytes. Padded and unpadded forms are validated explicitly,
+> > > rejecting invalid '=' usage and enforcing tail rules.
+> > 
+> > Looks like wonderful work, thanks.  And it's good to gain a selftest
+> > for this code.
+> > 
+> > > This improves throughput by ~43-52x.
+> > 
+> > Well that isn't a thing we see every day.
+> 
+> I agree with the judgement, the problem is that this broke drastically a build:
+> 
+> lib/base64.c:35:17: error: initializer overrides prior initialization of this subobject [-Werror,-Winitializer-overrides]
+>    35 |         [BASE64_STD] = BASE64_REV_INIT('+', '/'),
+>       |                        ^~~~~~~~~~~~~~~~~~~~~~~~~
+> lib/base64.c:26:11: note: expanded from macro 'BASE64_REV_INIT'
+>    26 |         ['A'] =  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, \
+>       |                  ^
+> lib/base64.c:35:17: note: previous initialization is here
+>    35 |         [BASE64_STD] = BASE64_REV_INIT('+', '/'),
+>       |                        ^~~~~~~~~~~~~~~~~~~~~~~~~
+> lib/base64.c:25:16: note: expanded from macro 'BASE64_REV_INIT'
+>    25 |         [0 ... 255] = -1, \
+>       |                       ^~
+> ...
+> fatal error: too many errors emitted, stopping now [-ferror-limit=]
+> 20 errors generated.
+> 
+Since I didn't notice this build failure, I guess this happens during a
+W=1 build? Sorry for that. Maybe I should add W=1 compilation testing
+to my checklist before sending patches in the future. I also got an
+email from the kernel test robot with a duplicate initialization
+warning from the sparse tool [1], pointing to the same code.
 
-In a nutshell what happens is that the firmware sets up the display
-controller to scan out from a reserved memory region, but it does so
-without involving the SMMU, so it uses physical addresses directly. When
-the kernel boots and the SMMU is enabled the continued accesses from
-display hardware cause SMMU faults (because there is no mapping for the
-framebuffer addresses).
+This implementation was based on David's previous suggestion [2] to
+first default all entries to -1 and then set the values for the 64
+character entries. This was to avoid expanding the large 256 * 3 table
+and improve code readability.
 
-That said, we did solve these issues and this may not be happening
-anymore with the most recent L4T releases, so it may be okay to revert
-this now. We should find out exactly which release includes all the
-needed changes so that it can be referenced in the commit message. I
-want to avoid people running new kernels with an old L4T release and
-then seeing these errors without any reference as to why that might
-suddenly happen.
+Hi David,
 
-Thierry
+Since I believe many people test and care about W=1 builds, I think we
+need to find another way to avoid this warning? Perhaps we could
+consider what you suggested:
 
---rhigqaftdyzecuql
-Content-Type: application/pgp-signature; name="signature.asc"
+#define BASE64_REV_INIT(val_plus, val_comma, val_minus, val_slash, val_under) { \
+	[ 0 ... '+'-1 ] = -1, \
+	[ '+' ] = val_plus, val_comma, val_minus, -1, val_slash, \
+	[ '0' ] = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, \
+	[ '9'+1 ... 'A'-1 ] = -1, \
+	[ 'A' ] = 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, \
+		  23, 24, 25, 26, 27, 28, 28, 30, 31, 32, 33, 34, 35, \
+	[ 'Z'+1 ... '_'-1 ] = -1, \
+	[ '_' ] = val_under, \
+	[ '_'+1 ... 'a'-1 ] = -1, \
+	[ 'a' ] = 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, \
+		  49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, \
+	[ 'z'+1 ... 255 ] = -1 \
+}
 
------BEGIN PGP SIGNATURE-----
+Or should we just expand the 256 * 3 table as it was before?
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmkIjNUACgkQ3SOs138+
-s6EPdA/+KQRZ+i4hpf5+vNtlPCdkDropF79/cCV7LCIDkl2R/QE3dVZfnEYL7cv+
-UTq5OQ8ht9NdSGNKqWLqHc+z0SupjcZSuI7740Fb3eiMVft9CbyHLzJ+W4B4FkHF
-pWfw47jVEeUhkKs2Dwt37DiMjw58qml70Vuh9iaCE5uN8zNcTosJEmM2pqIDTGqP
-7inkRXmegFXW2fd+l2cCtu6hK9xJ/B5SajKs+njoUNfXnIGUPqJwkv5WITl4LQNB
-m/0ZGC/zsaD8IihEZtOmcvSeBS7silmJeJW8FSbbbxFn4LsiRkV9KudKukCsnAgy
-eiOsspNAjkgzcwW7pKaF558ZxGUPsQqRuc7CEju575amijmUeDJI+B/y+MW0mKGw
-urkXpl+4OiTth7E3I1eqY8xr52AMwMDWr9VpzukUVr4z+J5ScY2ENTz7hmCgVRMD
-IzCrRSPrKvD0NJ+0+aI6CSLAlen3Cd8wiGQ5vzj6zSuA9cXG3o8vBNB2w5tTGfm1
-zUckLwcEfNgBbQ5q2zXfCa7Ky5tAyLqiSN+wMVE3h/BjVVsG6vbzSZOxWbQ4rqJA
-lBITs1fe5pJw2EdlbMenggIzUQ+/G2s6Eg+b3ihwLEaxGaBy27qooXl6PKwFY00P
-8JmPOJjjgVavEzsPBml5Lx0dfSDkCMvrcgCGa3Vpk2vELUFjADc=
-=BR5A
------END PGP SIGNATURE-----
+[1]: https://lore.kernel.org/oe-kbuild-all/202511021343.107utehN-lkp@intel.com/
+[2]: https://lore.kernel.org/lkml/20250928195736.71bec9ae@pumpkin/
 
---rhigqaftdyzecuql--
+Regards,
+Kuan-Wei
 
