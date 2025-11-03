@@ -1,121 +1,136 @@
-Return-Path: <linux-kernel+bounces-882169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3C8BC29CCD
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 02:46:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43ECBC29CE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 02:49:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBB6D3AEB8C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 01:46:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DDB21889417
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 01:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E652749D7;
-	Mon,  3 Nov 2025 01:46:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B4E27B4F7;
+	Mon,  3 Nov 2025 01:47:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="y3FUNARC"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RxdxtUAg"
+Received: from mail-yx1-f52.google.com (mail-yx1-f52.google.com [74.125.224.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971DB3A1B5;
-	Mon,  3 Nov 2025 01:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79DCF1898E9
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 01:47:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762134412; cv=none; b=HkS9Jl+8kIZvA1xA6zEAGmUI1pUTIf1mYKP2+p6twOF2hp/YUE2eM/1Cd8pwZygBRWAgyPuieozlQg31kROfzC3GNhQDrswhbpn9dFZ52JUxQwAJ5kXhA0ts6kVpm56hnFo5xzgZM+ALEvOcvJPg/qr+ETrOutU4iTqNrCpnyfU=
+	t=1762134474; cv=none; b=CTf3rbeWE3zjFW8vb7TCqFKFtFxVQnXUWqjmk/+540PT3CB8XqVk/ZboVSWYw50WewnrjhtDzJL3AM6086xLBWjY9+lyNwIaB2vg2xKviDZwWSP7NUfmo8ngr/hbKPecqV1798N0Vb2nYzH521JIK/NhyM2Z6H7E3dG8yaweYiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762134412; c=relaxed/simple;
-	bh=tz/3X5TX5Scv+lrlmT6dDipvwCHULnwEEad+kU5oR4o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E8niRLnjzjfHRsQhwKYc2+gSBTIecDslEqrrzE3eK/JPG/f3uC/TzsyVpVwmSTHGuUDqCMp6QGDSFRYNipyhIRBtigyboYTMZddUl+MF1ic27s5o+CF5PORmF2vPDAMaBpXvGb741pGQLkewIaVRMsLsapCpfPtF/UsIglix/Hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=y3FUNARC; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=0WzumnM/hhduantBwY/kZRPJeZB7TIntXpGq+DNWcfs=; b=y3FUNARCE8EbRsUDEQDx8ZwINf
-	FrCYQeEdVKLsuu3Eea3no9qdg/k3loiiM5eAruaeI8339VLkBqd/tWUyeF5a7+R9ShRQ1W6S5g6sx
-	M21lmDj0km8MNhGb0I7CfzJoKJs0D1b9yLSejAhNqhXvEDc39MshTVV+xoIEYoxrmj9Bl+u2qbHQE
-	PJlYcetVeWA6BF8f+epjyJ65dFpTMJehIOdYvEZ+V1+6O8GpDjOK9u/oz29kr5j6IhhQcY36xUr3W
-	EuuSkENwZER0l+auT2QnSVHPSjbIJKsOttY6rb8sHt+eexS2NkZzYde/GVPbI4gNE8dDQOcBTx9gU
-	1bEZ3O6w==;
-Received: from [50.53.43.113] (helo=bombadil.infradead.org)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vFjec-000000091d4-1SQs;
-	Mon, 03 Nov 2025 01:46:42 +0000
-From: Randy Dunlap <rdunlap@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: Randy Dunlap <rdunlap@infradead.org>,
-	Thorsten Leemhuis <linux@leemhuis.info>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org
-Subject: [PATCH v3] kernel-chktaint: add reporting for tainted modules
-Date: Sun,  2 Nov 2025 17:46:41 -0800
-Message-ID: <20251103014641.669126-1-rdunlap@infradead.org>
-X-Mailer: git-send-email 2.51.1
+	s=arc-20240116; t=1762134474; c=relaxed/simple;
+	bh=YZ3yBN4jr1x/fUb9ZCVQSzD4SuGYjPdfzr1ToxdWkys=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QZpf7/Xaj+PN5riXuhybbUFhX0bHMVHqfZuvxQxduT4v3KNWzxK546xKYPuwfeRBRgdCv17mmFtjc3NU8538VoQgJHVFL5hgZuHR2mrNRkzvc9ii2WeEqyk7IzXf2d9Mo0yBjy6yhLJ4hlyY/ey0wWFjj/jy7wTEYnQegR2S2LA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RxdxtUAg; arc=none smtp.client-ip=74.125.224.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yx1-f52.google.com with SMTP id 956f58d0204a3-63e16fbdd50so3349559d50.2
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 17:47:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762134471; x=1762739271; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iiTjJNto5b180B3ollqzmYVOhF8fUFEDZCeDW5FJ6nM=;
+        b=RxdxtUAg4GrI6PKybPvc3vqk8rBR4uoF+IMYUN+Q16wQNDj0bmTyAdtwzqHOECdmyg
+         Lm50VqmG5XV55KlZxtX+f9aACe0G7CQoRpbzDLiIJ3d0GBaF31S3TyJm+zq+O0lGLxvM
+         3ZVmdAe1IgvPZA5gf0/+JWxcExaSva2IzSEMxmqbQKxWjwl+gU0Jh6+9L40uCHPmXDp8
+         784u12lZEIfrHTGkFjcTprPkzLeLB02nFfokjXPd83eD9t+LVGJNTI9VLEX7CSjHkvyD
+         H9RLYNt3Fb55NkhePHc3YzvsB71j3yEKXS2XcCwdFxPAj4Rb3FY46AA66h7BDm3HTK9X
+         QYQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762134471; x=1762739271;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iiTjJNto5b180B3ollqzmYVOhF8fUFEDZCeDW5FJ6nM=;
+        b=BNqWoriStbLqcHHEja6oUvUXmKorc8bG3knTkwHSFtcxyog/fWmcezMuVSPdLM/NyG
+         lMI4pCmQP8oY5btRR7rbeuWqp939ors2ORuOLaFjID5Yu8hwPQtl70QRixv+LABaW+33
+         ITCI9duiItvLv9yEC0WLTRv3nmbFDVq0oVaTdkn5VAH55O8qHgdg/C2iaWjvxWic6yZe
+         GQ+qoXKf4ZpyowzKUKvAJ77NQGnekKXXFPicC6Q7Y6cg+ZdXjbmaZMBa3etJpGMKSHCq
+         iTSGx9wOpdHzHO/UKS4fSBOl2VO2sTizpk+bpwBPXWIdA6KXjyZ5wlhKHvlt3S9Y7Yfp
+         O8DA==
+X-Forwarded-Encrypted: i=1; AJvYcCUN+OFuxZkAkdCMp7ICtw42nkFisUZpZlaDNfVaqkOZfm1A0xVFQ3xVPwjeEn2BTGbBiQmRKkmAq/dVshg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0y68JEBDwOOxWCtPjx9LnDPxd1w7WiVrPNwK83ly5ZaCGhi2/
+	pXBfKEMvEfBcVDVFnNR8plPDXQ2Omqlb6lOisKiBZoFgEgglkV3lak2GDAImAB3TytfR22hyIkg
+	VnwgS5q+EQ55+Fwez8vEKP7UqR0U8aYo=
+X-Gm-Gg: ASbGnctmrGlkiQ+NsjeRNNZYA1lcckZBieLvL+TUE8PzdBAQiFHS75G6CaWGWoSe+1C
+	oWpJqeRDX6YtN1fcQIQDS8xUX+X1l9TAjJ2M2LyG8DFitLbbjc31LFOu4+sKz8XP9me0Gu+REEK
+	uc9D7EK/hBv910Z3TL/BZwvFTmq9tp+Zc+9xr+3/gMYBokYVKoSOrgSqw6yCh8tiqXxlVnPZnso
+	3E0zOkf6VxWZEe1WXv8GI8S54zuFF3g7kcnVQhg49b658LJyG2H1LnPuFDDs9xPw+7zyk9tuUGv
+	8g82+1lTe+baJmAMJMhBirPWFg==
+X-Google-Smtp-Source: AGHT+IHg3lV1tdMCqLOA4qQhZkQr0Tb0A3ETymH2M9xcUgAC/jEFPsBSuTrEOCTZ5597TZoN572CBcmPgfOPlOu5mOo=
+X-Received: by 2002:a05:690e:1518:b0:63f:b082:4d5a with SMTP id
+ 956f58d0204a3-63fb0825418mr2711835d50.57.1762134471396; Sun, 02 Nov 2025
+ 17:47:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251030035114.16840-1-alistair.francis@wdc.com>
+ <20251030035114.16840-4-alistair.francis@wdc.com> <20251031140541.GB17006@lst.de>
+In-Reply-To: <20251031140541.GB17006@lst.de>
+From: Alistair Francis <alistair23@gmail.com>
+Date: Mon, 3 Nov 2025 11:47:23 +1000
+X-Gm-Features: AWmQ_bmAc1hVM3wcde6ERYGL7zprBagyx13YvD6LBE2RcY5YlTixr9EGWA5Kzqk
+Message-ID: <CAKmqyKNr8N4r=9RvgErr-zj929gd8oRfdKGgrhVajK_UxR828g@mail.gmail.com>
+Subject: Re: [PATCH 3/3] nvme: Allow reauth from sysfs
+To: Christoph Hellwig <hch@lst.de>
+Cc: kbusch@kernel.org, axboe@kernel.dk, sagi@grimberg.me, hare@suse.de, 
+	kch@nvidia.com, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Alistair Francis <alistair.francis@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Check all loaded modules and report any that have their 'taint'
-flags set.  The tainted module output format is:
- * <module_name> (<taint_flags>)
+On Sat, Nov 1, 2025 at 12:05=E2=80=AFAM Christoph Hellwig <hch@lst.de> wrot=
+e:
+>
+> On Thu, Oct 30, 2025 at 01:51:14PM +1000, alistair23@gmail.com wrote:
+> > From: Alistair Francis <alistair.francis@wdc.com>
+> >
+> > Allow userspace to trigger a reauth (REPLACETLSPSK) from sysfs.
+> > This can be done by writing the queue ID to te sysfs file.
+> >
+> > echo 0 > /sys/devices/virtual/nvme-fabrics/ctl/nvme0/replace_psk
+> >
+> > Note that only QID 0 (admin queue) is supported.
+>
+> Why pass the queue ID then instead of a boolean value?
 
-Example output:
+I liked the explicitness of passing a queue ID instead of a bool and
+it allows supporting more queues in the future if that changes in the
+spec.
 
-Kernel is "tainted" for the following reasons:
- * externally-built ('out-of-tree') module was loaded  (#12)
- * unsigned module was loaded (#13)
-Raw taint value as int/string: 12288/'G           OE      '
+I can change it to a bool instead if that's preferred?
 
-Tainted modules:
- * dump_test (OE)
+Alistair
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Acked-by: Thorsten Leemhuis <linux@leemhuis.info>
----
-v2: change tainted modules output a bit (Thorsten);
-v3: add Acked-by from Thorsten (forgot it on v2);
-    more changes as suggested by Thorsten;
-
-Cc: Thorsten Leemhuis <linux@leemhuis.info>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org
----
- tools/debugging/kernel-chktaint |   18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
-
---- linux-next-20251031.orig/tools/debugging/kernel-chktaint
-+++ linux-next-20251031/tools/debugging/kernel-chktaint
-@@ -211,9 +211,25 @@ else
- 	addout "J"
- 	echo " * fwctl's mutating debug interface was used (#19)"
- fi
-+echo "Raw taint value as int/string: $taint/'$out'"
-+
-+# report on any tainted loadable modules
-+[ "$1" = "" ] && [ -r /sys/module/ ] && \
-+	cnt=`grep [A-Z] /sys/module/*/taint | wc -l` || cnt=0
- 
-+if [ $cnt -ne 0 ]; then
-+	echo
-+	echo "Tainted modules:"
-+	for dir in `ls /sys/module` ; do
-+		if [ -r /sys/module/$dir/taint ]; then
-+			modtnt=`cat /sys/module/$dir/taint`
-+			[ "$modtnt" = "" ] || echo " * $dir ($modtnt)"
-+		fi
-+	done
-+fi
-+
-+echo
- echo "For a more detailed explanation of the various taint flags see"
- echo " Documentation/admin-guide/tainted-kernels.rst in the Linux kernel sources"
- echo " or https://kernel.org/doc/html/latest/admin-guide/tainted-kernels.html"
--echo "Raw taint value as int/string: $taint/'$out'"
- #EOF#
+>
+> > +static ssize_t nvme_sysfs_replace_psk(struct device *dev,
+> > +                                   struct device_attribute *attr, cons=
+t char *buf,
+> > +                                   size_t count)
+>
+> Overly long line.  And very inefficient annoyoing to modify indentation
+> compared to:
+>
+> static ssize_t nvme_sysfs_replace_psk(struct device *dev,
+>                 struct device_attribute *attr, const char *buf, size_t co=
+unt)
+>
+> > +     rc =3D kstrtoint(buf, 10, &qid);
+> > +     if (rc)
+> > +             return rc;
+>
+> Nitpick, but nvme style is to use the slightly more descriptive
+> error and not "rc" which doesn't mean much in general.
+>
 
