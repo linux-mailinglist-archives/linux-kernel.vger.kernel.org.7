@@ -1,279 +1,191 @@
-Return-Path: <linux-kernel+bounces-882622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CE82C2AED6
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:10:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF326C2AEDF
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:10:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BAC33B81A5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:08:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD0433B8976
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:09:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716CB2FD7CF;
-	Mon,  3 Nov 2025 10:08:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E28A72FC870;
+	Mon,  3 Nov 2025 10:08:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Tmo27wNw"
-Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013044.outbound.protection.outlook.com [52.101.72.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DMNO6Hbf"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C9A2FD682;
-	Mon,  3 Nov 2025 10:08:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762164502; cv=fail; b=GgWhcp299CWh8/Z0ecRdQa9Oc3RhUFGp5GakX2MHSQ2j7pAEr5nS0NlXyC45NOPZkT8mooc+V0LmQO66mRXTzzSHfeyHJktCDlKyGrUlVQQk0jpizekNOnUTR+ZuFQR0fqVGs2T+GdNWmOfzJpDIrGYF8mF9HM5c4gWBxzgqlPI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762164502; c=relaxed/simple;
-	bh=pkKSSxFGWTei+bLmiottuJYERlzSp00rNaEjiYLMi+o=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=WJk9xsUY7yD3l5BkIkNhOG0pecT7bmtEyI9osV2VpgGRhswFDH8eWAUUyX8WTZ6kFlvq5te9i7XOiECX5DJT1gM/VUSmMUhMvdvrT4Bhzu4HFjN7T1oyrlGL6jBW+tK39fmN1uTz1JznsiFSFTOSP2O3UfYneKPtluMRm1SP9ns=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Tmo27wNw; arc=fail smtp.client-ip=52.101.72.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iDCERVEq+uEV1x3TzZ93g0VMk38qGfNIYvhT2xYjMuoS6GJYN43ikmU4py3uziFwRr230U0slTPlpXs/X408aYEH5xXq5CQ7HRn82vc5BkgPyvbMa1CX+LSgfhHnUO/LFRgOCW2jTZqO8mgmRTm+MP0JSeQXYWkABJlZywthPx91KbcCrnbUx1CkkPTnpM9u/rpIV5RL1l5i0zpZ4z+Bq+8FpVhv2kgEJtHf7qnyhG9aIfFtG8fTaomTseJHCci3pByOXVnX4FzuC0/cXhi7c3slfuIzBzlfL+S/nTCxqL11eyKEjA20mHoO6GKu0i+JAokIiPi2xKDL1X/jTaXRKQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=efzoit/cX6vzWHCCKyuR/7QxlNHG0mr+AYzdFq71akQ=;
- b=mO59pwC9ee2Gb1CwnAw2tORSYWvyhZ4DOT+rgvuaLZ3T8FA4cHEnKAMxghIlaEigjlAfi2ke7A0bq50jkP+Tt4Yw4eUpTUd81bVgnsofL9P5Kjo6TVp8ZlRU6vRVw248xLIFonAH6F0fDO6j0nufBs6MvLS/SG2jTdWLhrxspdzVgeFQJn16Bj6k0E6pc7REG+Kof2UHTJ4scb74fL2P+4ZkFQbUhGko1q15IqMGfZUY/jZBUSMD43P0MulBtj6PWcGOHqpegCffx1POenLK6+dr2XMaIwERzSdlckiZKccYWy9Kr4LWXs1aalktURX0oE4GLkf2r0UjosmB8yBevw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=efzoit/cX6vzWHCCKyuR/7QxlNHG0mr+AYzdFq71akQ=;
- b=Tmo27wNwkV+XYDNyL+V9dXpkdPdZBwjDb8kdvU+jQhV/lYNml6LfLD3DOX6ZusfhfovbXxYK8HbxqlOyb6Gk3rqFumTiNDvecqOnoAjzudnQxbWnbSR9NSKPc7FSnsMF2d+/7E7VkvYG3VDqBN4HJPJ+lOjGlBwUc0wgGC9jM4ofACuw02RTJd9qikGqG4ooNs7iWUpKBW3TxbL9Bkbd3ykaqVol+Q//kzsgbRJUoRqxg929nwfL72OIonGhebWYlOeThsICxctGIiCyIBqybaqh5JDW85wJ33Lfv9DdOTIrkNGSIJgoeufYeclxz3b4P1hCWJgeGaSjV94CTANckw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB8829.eurprd04.prod.outlook.com (2603:10a6:102:20c::17)
- by DB8PR04MB6891.eurprd04.prod.outlook.com (2603:10a6:10:112::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Mon, 3 Nov
- 2025 10:08:17 +0000
-Received: from PAXPR04MB8829.eurprd04.prod.outlook.com
- ([fe80::cdc5:713a:9592:f7ad]) by PAXPR04MB8829.eurprd04.prod.outlook.com
- ([fe80::cdc5:713a:9592:f7ad%7]) with mapi id 15.20.9275.015; Mon, 3 Nov 2025
- 10:08:17 +0000
-From: Xu Yang <xu.yang_2@nxp.com>
-Date: Mon, 03 Nov 2025 18:08:34 +0800
-Subject: [PATCH v3 3/4] phy: fsl-imx8mq-usb: support alternate reference
- clock
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251103-usb-phy-alt-clk-support-v3-3-18b8bd4f01b0@nxp.com>
-References: <20251103-usb-phy-alt-clk-support-v3-0-18b8bd4f01b0@nxp.com>
-In-Reply-To: <20251103-usb-phy-alt-clk-support-v3-0-18b8bd4f01b0@nxp.com>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, Li Jun <jun.li@nxp.com>, 
- Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
- Frank Li <Frank.Li@nxp.com>, Xu Yang <xu.yang_2@nxp.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762164524; l=2764;
- i=xu.yang_2@nxp.com; s=20250815; h=from:subject:message-id;
- bh=pkKSSxFGWTei+bLmiottuJYERlzSp00rNaEjiYLMi+o=;
- b=pXEWYgaHJyQftWBELXAsaXvm9vDWghC84Sw8h+izfDyYJDzcsk/sBVSzk/rO0XVTsJH5zh2FV
- 38wv5OtmjVODHoPzlSLSGHeUjDinqhYpmZt8yqMVM8FgKvEXX4/mJff
-X-Developer-Key: i=xu.yang_2@nxp.com; a=ed25519;
- pk=5c2HwftfKxFlMJboUe40+xawMtfnp5F8iEiv5CiKS+4=
-X-ClientProxiedBy: SGBP274CA0010.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b0::22)
- To PAXPR04MB8829.eurprd04.prod.outlook.com (2603:10a6:102:20c::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486D82FBE08
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 10:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762164529; cv=none; b=ZVbiwEA7AgKNx13x8OtHpD58R2vVJDQ6amFtgeXw5wSVqRjhPKyjNMlZBZG3TeogGCakuHljjfE0H7dcnpaPVFujOaEFnRKDOmJ8woK+0v2ZiELNTmK59L24eaESfDCn6qIlke0S6M5aAY3h/37jHCA4vhT3ogLSLiELioGA7qE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762164529; c=relaxed/simple;
+	bh=YsTF68mjR39B/r/G6EPCUdpxSXCB8HJ4vZ+J81ZFViU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type; b=qxGWT/GurrHuICV1zwtTDZIauIblt0qNJ3279IQAJrXAWg17dNh2YFUOeXy5G9YYcaLpbpQMuhzGJZrNPzXKA7e92TY/eN5OPR3oJh+M8zh8IWe6IdxsH25954/gRmubGaPhXXKmYs63cim4WiKivR2GvF4n8yGA4Tx2Ue+lnqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DMNO6Hbf; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b6dbb4a209aso753946666b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 02:08:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762164526; x=1762769326; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:in-reply-to:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tLS6qgKRGlV1tkSNCOlSCrCisKumvAST+7mt3QUKFME=;
+        b=DMNO6HbfY7/ZVxGwmvwUUzErGvh8CWY+wb/crRNs3uS/5/PkUFPWJhyGKWEt1IgKv2
+         WbsPLhnvK8r/Kq6gNTAcTnmAExm6HgmdDaasRENjtlVfvbEPhVRJ+S5Kg+2ullVMdpSm
+         cSIZRXF0SbA+q8HzSaKcJgfZ2dtT6dQwRU5R0mj8/Plx9PeCp10G4BgUXS0C7CA8h7R5
+         6z6WFB21x+xXrSyRbJQXQbTUtrCBTptX9FvVX7d2DUCO3KydSkvRjYGD+WDXisVosTGB
+         8ITCH6tNmhaXOGLiJeIww35gaRvT6n7WsDYKZDt9YmB4vfPmU9aBTOg5A7BIy3C5B9I+
+         1dvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762164526; x=1762769326;
+        h=content-transfer-encoding:mime-version:in-reply-to:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tLS6qgKRGlV1tkSNCOlSCrCisKumvAST+7mt3QUKFME=;
+        b=j0djxytAy4zOt67dVVWsE/q0adImmTYK+0Q+xqMs8OaqqNReJAXtNZ0rp6HmLhkk9V
+         7qu0Y5WqnfyyLUrcakqD8lH9/IvkE84Xn2PTPvnAxiyfXruKMvjJhIIhWj0QcGe4cRGl
+         8+Wb3CzCB66KdXYkwfveU4fYRbW4xRf6/uZj0RvimU0GqVcxD5g8NXnCz//jALiWiQr3
+         DruUPodjNWt56SBch0GgDO+xow6Re1Aqdv3Llcx+WS7FGcpQcWmL47nLyLWa2pw/5TnA
+         QvSYbKpHmK9TAVf96SmjXP807JYwxSU3xAU5s8cLRIZvq6J5ZQWsqVxYPKYNiFp70wCD
+         r6hg==
+X-Forwarded-Encrypted: i=1; AJvYcCX557c+gaS17dx0wRiSFVKsfFepKXTitRLy4RGW1oKn1MoL3FTGPxxQ8Yrjzv+EIOKwcXdK2x9azmxMIxE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweYa8f+HvyQC6WLDgk0vwVEGXD1GFsPaMa2PzBqVkvYogUxESd
+	695pUbHmvRtmmoPXkEHAU6Iou3PJLDWXlV4lFb+siOJQ0sIHUsRbIi6g
+X-Gm-Gg: ASbGncvpyE1sUaKxErKEyPRanLEOJjIMt9PFnI1b9ZpcgVt4slr+83vReccmuSyBc9C
+	RxPNuf2feamPtbNwo6ubuuGc2e87/7A1oyZegyfvJWm9nsCgDWs7dxMyLICqhA1oIDqAHUcZvMn
+	SKf3tQzryAjdzsfN7m09hv5w9yB0PVxDBlNY+GinFxZI3YH7MKuM2thh1a7OqJYLQs4sSM4O5rh
+	KiPna8kobgcGuFSkXWSY/ZnW2DV1lUzkyOd7nNRbWtglKB9bXSNtKEWnuYHcqzpUdCvdianu6KZ
+	5OxL8ahJFPuMHv/lTfR66KpLazzWCawp2gl9KiCmysbt1Xj2uNBCPSULK+BIgbqyHKh8Pf/4iUN
+	94pDTWPdBrsywiL4s+beOGre5fVMUPVEIHkmWmC/jDLHtZXHgUq8yVToVcqbOCX10ll1+nWS2/9
+	TyRfSYPGRJgdVG
+X-Google-Smtp-Source: AGHT+IEv5yXN9Rq+z/PHyS8obHrzjUW6HYGA45FU+WSNF/Zev/u9SGVmMPbE9+9XkPkG1FxuYOM0eQ==
+X-Received: by 2002:a17:907:3d4f:b0:b70:6d3a:a08b with SMTP id a640c23a62f3a-b70700ad4dfmr1388461366b.10.1762164525413;
+        Mon, 03 Nov 2025 02:08:45 -0800 (PST)
+Received: from foxbook (bgu110.neoplus.adsl.tpnet.pl. [83.28.84.110])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b718a2dd982sm74711866b.49.2025.11.03.02.08.43
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Mon, 03 Nov 2025 02:08:45 -0800 (PST)
+Date: Mon, 3 Nov 2025 11:08:35 +0100
+From: Michal Pecio <michal.pecio@gmail.com>
+To: bigeasy@linutronix.de
+Cc: bp@alien8.de, da.gomez@samsung.com, dave.hansen@linux.intel.com,
+ hpa@zytor.com, jpoimboe@kernel.org, linux-kernel@vger.kernel.org,
+ linux-modules@vger.kernel.org, mcgrof@kernel.org, mingo@redhat.com,
+ paulmck@kernel.org, peterz@infradead.org, petr.pavlu@suse.com,
+ samitolvanen@google.com, tglx@linutronix.de, x86@kernel.org
+Subject: Re: [PATCH v3 22/28] x86: Use RCU in all users of
+ __module_address().
+Message-ID: <20251103110835.1dca378c.michal.pecio@gmail.com>
+In-Reply-To: <20250108090457.512198-23-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8829:EE_|DB8PR04MB6891:EE_
-X-MS-Office365-Filtering-Correlation-Id: ed7957de-b393-4985-7a51-08de1ac0e8a4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|52116014|366016|1800799024|19092799006|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OVZkdUJYUjlqd1BNZzZxOFhpMnpZUkM1SWgxNUlxRnJEb3BjTnhIcmhrcGdG?=
- =?utf-8?B?QmZyaW9jcWxRZXNJMG1HVzk0OWgzeGhUcFN3UVZMbDFmWDNUaVdWVGtxWjk3?=
- =?utf-8?B?TnY4T1g3QlpnbzZMeTBXZ2E1TlAySG1YelRhSm5qSDNuQWxvNCtxOVhxREtD?=
- =?utf-8?B?LzhrdU96Vmp3TlIyRUpsN2tSVmZ0MWtkWGtnMmh2ZzFYaEpMcXJQZFJtcUlu?=
- =?utf-8?B?U3FqWmVJWHdMaWxtN2hNZnVTaE9XVzUwMnlCRkg5TGI5Yis5Q0ZZVytWRWxR?=
- =?utf-8?B?dkxSTldXVzNNS2FuamNvWlVTbFo0NzdVNUpxM0F0Zmp0VHBydFo0UlByeVZ0?=
- =?utf-8?B?c3g3Zk85ek5UTEhZRmdPUS9RcU9IaG0wZ3RTZi9OenRpbXBDRENtMGZvc283?=
- =?utf-8?B?elNpZ0ZicXVwZlhESHZUTFJIRk9RSm5DSUNrdHNPTFBSSWRqTTJJZEJVMXdS?=
- =?utf-8?B?TjVsY2R6emV2djZUY3BiRkpuMDRsdWw3MEZSUlFPbXc1Rjd6STluU05ocWV0?=
- =?utf-8?B?S3dqVEwvV2FaUzFNU0VSSElOMHFLYWJBRWJnVHdYWm1oaHM0MUlQVDhpcmpB?=
- =?utf-8?B?WlZYRTd6RTNZOFoweW04dXVoQ2NNLzR1QmRnQlVxRE02eHI4d00vbjJkRXI4?=
- =?utf-8?B?OVJXV0ZYMFJoZ0xyU1U0OWgxbjMyWG95SmN3OGM1TXlKRmFQMU1RU1dMK1py?=
- =?utf-8?B?MWJvZlNoblFWOWVFUzIrQU5zc05vV1ZhbWIzcEh3V0x3WmV4bU1KdVpKN3Nj?=
- =?utf-8?B?RmdjN2dhcG5rZWkraXp6MThYWWVvZ2lzcy8zdkdZTEw4cEhCUXpJNFM4QTNl?=
- =?utf-8?B?OWRYRkVDaEM1RGgrUElKeFAvNGVxSFg0blNJSFM0MG0xQmRaME13OGJrclhK?=
- =?utf-8?B?Q0tuaUVURzY3U1lzNm54RHptN2gvSDQxT2h6bnFTdnJXYTU1dXR2eVRpc29i?=
- =?utf-8?B?am9QTURqUXNrSHBWdWRwcVFKdlo2S1p5dGVSSDlmOXNEdkUwYmxTVDVzZnlI?=
- =?utf-8?B?Rnc0b0hHNUtYTU1kaWc4VVV0bHE3aVFxMEZqSXhQdkptWGZHTW1nR1RvNWp3?=
- =?utf-8?B?WkJVelBvTnJkbUNYZGV3eW9uWVZYL2FUUVVOSWhpcklaM2xaek5Oc3V3eUds?=
- =?utf-8?B?UitGeEFhTmt0YTdib3FLNzZEYWtLS0lFdjhpZkFuU2VycWM2U1gwVUhZMjNt?=
- =?utf-8?B?WnR0NTNZTVZZems0SWJuNElGZ3VsUktFY1BJVDFEM0NKTXltSzFLUTlkeXI3?=
- =?utf-8?B?TWFzUlhLQWN3cVMyRi9DS1FVMnV4dXJDdWpvbkIvWG5qbTBuYk5GamRvR1dM?=
- =?utf-8?B?WElCQS9IcFcvKzdrMXVwMDkySDB2di8rNUx5QzZmZ2FldTlXWFFpTERWL1Zr?=
- =?utf-8?B?RE5yazlERDBSbURDOUtrY2pSQjlLMXNXanZUamtYTCs3Sy9iMzFHZFNDNnVS?=
- =?utf-8?B?cU1zckZrVnVwZ0tMV1NNeDNlaWphajlaZkNmVThaK0oxaThTcll6VHlaMDdr?=
- =?utf-8?B?YVBHRENGNks1S01Fajg5bEFHVzdNVlhTSlRMYVF6Q3lwT1RUSTNmeG1vdWlu?=
- =?utf-8?B?WjV6cUxOUHF4V3d3TElQQ0tBMm9naWh4N2h4OUxoWTdpcVp1ZDZ6SmxCTmxq?=
- =?utf-8?B?U01PbG81TEJWcmNXVnJRMk1PRGhXbHNnWWZGYnZoUmVCZGR1M3BvckxCMmNz?=
- =?utf-8?B?MEtLU2MwQlVmUm51S09VL3RNeko3NzFjdGVEdXJmRW5tb3JZc3F1RlR5bG1Z?=
- =?utf-8?B?emVSYnVzR1ArYzN0blR3SVA4aTQvOWQ1TjhxaFE3bTZiMzFod056a29FaFV3?=
- =?utf-8?B?WUlOd0FzMzNQUFYrYmVoUzhEci9UcWpmNW5kWER1clFFRzhhNzl5ODlYQ0Nn?=
- =?utf-8?B?dVBQMVNoVU1tR0ZHUFdscDJ2aXBhOGszdGQydEhFNVpFeDdrMlF1UkowT1dx?=
- =?utf-8?B?dE9yNmpUR1hRN0VWVXNja1hTQUtBUjl2WlpBUVR0Q3RtZWhBU3FRZVNLaWx4?=
- =?utf-8?B?RzdFR0JCSWVuM2RVUy80TFZURG96dzlObXMxN1FIRmNUVDhlRktNVlAzOTZ3?=
- =?utf-8?B?d2FPTS9MQ3Bsc3BHRDhaZFJHVzUwSDVLNWRQdz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8829.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(366016)(1800799024)(19092799006)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?R1BMaWpQU2xuUmExaFM4RmZtNUlqWjk1L2J4VE4rMjIvUVdzWUxWeEg2eURR?=
- =?utf-8?B?aXFydldRVytGSDVlM1poaUZhYnYrMTAyNVN6WFBFU2lxRFZOK3doR0pjRjJq?=
- =?utf-8?B?YitBb0w5aVR3czM5Q0QzSCthREYxZVYvdldwQ0toRFJzZHZYWlg1aGdvMTZ5?=
- =?utf-8?B?Sk4vYU9mSUc3b3VieFNRdnYzMnVmVTlhWXZ0VmNXaERyaEJGZ0dpc1kxWGJV?=
- =?utf-8?B?alozMzB4Q1ROYTlPNm1QcXU5eWljSXNESmgwQ0hXNDY3d1ZnM0hSWkNXQ3la?=
- =?utf-8?B?SnJ1SzhOWmpTYVZwWkFaRUlreUxqYUVWREpJa2htVCttaFpOR1EwYVpzbEY2?=
- =?utf-8?B?dEd0NzBFUU5peU93SG5MK0pHZStZOUozOEVaNGFFUFdKZDhTcnExejU1OEdj?=
- =?utf-8?B?K2Y1bjNWV2gxRGk5VmJLREUyakxFK0cwS2ZaZkxDZERkUmdtczRyMGhSUzhR?=
- =?utf-8?B?T0piNFVERmMvVjY2djhnUUJTWFAvSGl4YzVZZjJnTTdvdWRVbHlXZjFRQ04v?=
- =?utf-8?B?ejNTam1vc3hBME52NDN4SjQrWndGdS9RWEpzdUhBRk1DUW54NGlPdjh2a3k0?=
- =?utf-8?B?bW0vS0hIUG5aYzh4VW1RSkpRTitHV0FkemQyMzhuc2o4YUl6eW9iS1RpdEsx?=
- =?utf-8?B?N0JDcm51WFR0VzgxYmN0TFFkQlpZZGdTODVyRWthcmMzc2pyT0pXdm8wQnRB?=
- =?utf-8?B?Sk5VMGJjNXZhVTBVMVA2UGQvaG1qYU9rK2hMcHozNWxXWG4vR21KY2dHSUtw?=
- =?utf-8?B?OC82VTBrSlNRR3lRaHBNdnZtUGpNajVsRGY1L21mUVFBQ3ZrZllvaUJXQ1No?=
- =?utf-8?B?aVQ5a2RTTnF0T0U4VVNOak0vbkVYNi8zL1NWcWcrN0l2YkcvWnVyNFFENzY4?=
- =?utf-8?B?SmhjMXBURVowdEhITXhuR2xOay9MYkd2NFN2V0xGcFQ1V3VxQmoxQytkTTRm?=
- =?utf-8?B?VTQrd3orbUFjVDR6OVN6b1ZZWGtmNkU5bExRYXQ5bmVMMnI0aXVzVGo0QXN6?=
- =?utf-8?B?WS9mdS80cWdaaFdHVGwrNG40N0ZLNzZMeWk4Y1FZc2NJMG05OHVpZEZBL2JB?=
- =?utf-8?B?ckw1UTdkMUQxUVRGMCtUcmxlM0xGcW1pVTVqb3dla0l6SDA2dVFaNElOVzlz?=
- =?utf-8?B?T2ZOV09TVGZYZmpaUDYzMEpzaXNwVEtsYzYzWmNmd1RYKzRYemdsN3ZvQ3d0?=
- =?utf-8?B?K2U1NXpBY1Y5SXZxL1pMVUwzUzE2TTBiaklITlo2aHlOclBjeTVPSS83WDkz?=
- =?utf-8?B?Zk1uTWtrcmszNzNkU3I1WXl6R3M5YVczdTZJZlRDakRwWHNPNzR4TG4vaEZy?=
- =?utf-8?B?VDZlZzhGYytZRW1HaVoxYVBoVWVnbGwxNDMvckZaSloramQ3UmFpSkhweGRQ?=
- =?utf-8?B?SXloVDYyenBIQm1WT3QvbEJHOFJqQVlWKzF2aWd6M3NER3JyZEVJTVN1RlY2?=
- =?utf-8?B?U2l0U1dObDJIQXNnKzRrMlhFSVBrK2RCSTNZWHJHVFo0cHRWYVU4dVB1Skl0?=
- =?utf-8?B?ZDVnRCtMM1RxWXhkWmVvRjRpSVpxclBRTDNVdlFGSlRSY1A3aFZrWmRMUHhG?=
- =?utf-8?B?OFR4aDN5MlgyNjNaRVpXVmI1eitCOFJmL2pSVWpJNVRQSlNncWFRcGk5UG0v?=
- =?utf-8?B?RnNLQnN2TDZCNTF3Wk90eVdHZmZuVE5MZXRkUndOUllscUZ0bDZ2N2NrK3Z3?=
- =?utf-8?B?QUFseDM3MXl1ZnVDTzRDbWx4KzlWM09kVThXc0x0QjVpUlhnZzNveTM3c1lo?=
- =?utf-8?B?VURSZTVzdmlvcDlRM0dwdFVSR2JPQzZ4RnFuL29pcjh0THFLTUMza09ZcHRD?=
- =?utf-8?B?NzBkTUVsTGVNR1lDOCt4ckhuYTVHSGI0SVVaSEtvbmprcWRGRzB6TE9YckNs?=
- =?utf-8?B?d1ZiajhJWTlIQkJONUg3NVJYRzZJT0sxUDExWmlaWk1Bd1hHVGtVdzZmeTE1?=
- =?utf-8?B?R2k3cVpmMHUxaytIeXppK0l1bWFKWXluMzFSZldjd2ZCaDVyR1hrZm14N3lQ?=
- =?utf-8?B?ckJLelFtSkZza2YzaDBKVjNaM0VCUjhmYjMrc20xdmhxd04yK1lMTUZiU2JL?=
- =?utf-8?B?OVFwckFUNjQ1MzFUQWxJNjNYMzZydG9qeWhiUUdyczJtZlkwSlVySTFScDRq?=
- =?utf-8?Q?dGkgUs6Z36E/obLOQ0EsZ8UFj?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ed7957de-b393-4985-7a51-08de1ac0e8a4
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8829.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 10:08:17.4029
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HQRzGIPqTN2/meOj9cyk3noa6XuLDTXANwMCRYxCN88namx09Il9OGujml12BKFEakRfMrW+MeR9UdM9xaNg5A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB6891
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-This phy supports both 24MHz and 100MHz clock inputs. By default it's
-using XTAL 24MHz and the 100MHz clock is a alternate reference clock.
-Add supports to use alternate reference clock in case 24MHz clock
-can't work well.
+> x86: Use RCU in all users of __module_address().
+>
+> __module_address() can be invoked within a RCU section, there is no
+> requirement to have preemption disabled.
+> 
+> Replace the preempt_disable() section around __module_address() with
+> RCU.
+> 
+> Cc: H. Peter Anvin <hpa@zytor.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Josh Poimboeuf <jpoimboe@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: x86@kernel.org
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+>  arch/x86/kernel/callthunks.c | 3 +--
+>  arch/x86/kernel/unwind_orc.c | 4 +---
+>  2 files changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/callthunks.c b/arch/x86/kernel/callthunks.c
+> index f17d166078823..276b5368ff6b0 100644
+> --- a/arch/x86/kernel/callthunks.c
+> +++ b/arch/x86/kernel/callthunks.c
+> @@ -98,11 +98,10 @@ static inline bool within_module_coretext(void *addr)
+>  #ifdef CONFIG_MODULES
+>  	struct module *mod;
+>  
+> -	preempt_disable();
+> +	guard(rcu)();
+>  	mod = __module_address((unsigned long)addr);
+>  	if (mod && within_module_core((unsigned long)addr, mod))
+>  		ret = true;
+> -	preempt_enable();
+>  #endif
+>  	return ret;
+>  }
+> diff --git a/arch/x86/kernel/unwind_orc.c b/arch/x86/kernel/unwind_orc.c
+> index d4705a348a804..977ee75e047c8 100644
+> --- a/arch/x86/kernel/unwind_orc.c
+> +++ b/arch/x86/kernel/unwind_orc.c
+> @@ -476,7 +476,7 @@ bool unwind_next_frame(struct unwind_state *state)
+>  		return false;
+>  
+>  	/* Don't let modules unload while we're reading their ORC data. */
+> -	preempt_disable();
+> +	guard(rcu)();
+>  
+>  	/* End-of-stack check for user tasks: */
+>  	if (state->regs && user_mode(state->regs))
+> @@ -669,14 +669,12 @@ bool unwind_next_frame(struct unwind_state *state)
+>  		goto err;
+>  	}
+>  
+> -	preempt_enable();
+>  	return true;
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
-Signed-off-by: Xu Yang <xu.yang_2@nxp.com>
+Hi,
 
----
-Changes in v2:
- - add Rb tag
----
- drivers/phy/freescale/phy-fsl-imx8mq-usb.c | 23 +++++++++++++++++++++--
- 1 file changed, 21 insertions(+), 2 deletions(-)
+There is a regression report on a distribution forum which involves
+an out of tree module on a patched kernel (yes, I know) calling
+stack_trace_save() in task context, which arrives here and apparently
+calls the various deref_stack_xxx() functions with preemption enabled,
+which in turn call stack_access_ok() leading to a BUG:
 
-diff --git a/drivers/phy/freescale/phy-fsl-imx8mq-usb.c b/drivers/phy/freescale/phy-fsl-imx8mq-usb.c
-index b94f242420fc733cd75abef8ba1cd4f59ac18eb5..ad8a55012e42f2c15496955d00c6d5fd85c5beb2 100644
---- a/drivers/phy/freescale/phy-fsl-imx8mq-usb.c
-+++ b/drivers/phy/freescale/phy-fsl-imx8mq-usb.c
-@@ -16,6 +16,7 @@
- #define PHY_CTRL0_REF_SSP_EN		BIT(2)
- #define PHY_CTRL0_FSEL_MASK		GENMASK(10, 5)
- #define PHY_CTRL0_FSEL_24M		0x2a
-+#define PHY_CTRL0_FSEL_100M		0x27
- 
- #define PHY_CTRL1			0x4
- #define PHY_CTRL1_RESET			BIT(0)
-@@ -108,6 +109,7 @@ struct tca_blk {
- struct imx8mq_usb_phy {
- 	struct phy *phy;
- 	struct clk *clk;
-+	struct clk *alt_clk;
- 	void __iomem *base;
- 	struct regulator *vbus;
- 	struct tca_blk *tca;
-@@ -582,7 +584,8 @@ static int imx8mp_usb_phy_init(struct phy *phy)
- 	/* USB3.0 PHY signal fsel for 24M ref */
- 	value = readl(imx_phy->base + PHY_CTRL0);
- 	value &= ~PHY_CTRL0_FSEL_MASK;
--	value |= FIELD_PREP(PHY_CTRL0_FSEL_MASK, PHY_CTRL0_FSEL_24M);
-+	value |= FIELD_PREP(PHY_CTRL0_FSEL_MASK, imx_phy->alt_clk ?
-+			    PHY_CTRL0_FSEL_100M : PHY_CTRL0_FSEL_24M);
- 	writel(value, imx_phy->base + PHY_CTRL0);
- 
- 	/* Disable alt_clk_en and use internal MPLL clocks */
-@@ -626,13 +629,24 @@ static int imx8mq_phy_power_on(struct phy *phy)
- 	if (ret)
- 		return ret;
- 
--	return clk_prepare_enable(imx_phy->clk);
-+	ret = clk_prepare_enable(imx_phy->clk);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_prepare_enable(imx_phy->alt_clk);
-+	if (ret) {
-+		clk_disable_unprepare(imx_phy->clk);
-+		return ret;
-+	}
-+
-+	return ret;
- }
- 
- static int imx8mq_phy_power_off(struct phy *phy)
- {
- 	struct imx8mq_usb_phy *imx_phy = phy_get_drvdata(phy);
- 
-+	clk_disable_unprepare(imx_phy->alt_clk);
- 	clk_disable_unprepare(imx_phy->clk);
- 	regulator_disable(imx_phy->vbus);
- 
-@@ -681,6 +695,11 @@ static int imx8mq_usb_phy_probe(struct platform_device *pdev)
- 		return PTR_ERR(imx_phy->clk);
- 	}
- 
-+	imx_phy->alt_clk = devm_clk_get_optional(dev, "alt");
-+	if (IS_ERR(imx_phy->alt_clk))
-+		return dev_err_probe(dev, PTR_ERR(imx_phy->alt_clk),
-+				    "Failed to get alt clk\n");
-+
- 	imx_phy->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(imx_phy->base))
- 		return PTR_ERR(imx_phy->base);
+Nov 02 21:44:30 ArchBasement kernel: BUG: using smp_processor_id() in preemptible [00000000] code: Xorg/1183
+Nov 02 21:44:30 ArchBasement kernel: caller is in_entry_stack+0x11/0x60
+Nov 02 21:44:30 ArchBasement kernel: CPU: 0 UID: 1000 PID: 1183 Comm: Xorg Tainted: P           OE       6.16.12-hardened1-1-hardened #1 PREEMPT(full)  6edb90a7a07fab33bbee72d6d5ef53ba6eec3b9c
+Nov 02 21:44:30 ArchBasement kernel: Tainted: [P]=PROPRIETARY_MODULE, [O]=OOT_MODULE, [E]=UNSIGNED_MODULE
+Nov 02 21:44:30 ArchBasement kernel: Hardware name: ASUS All Series/Z97-E, BIOS 0803 02/23/2016
+Nov 02 21:44:30 ArchBasement kernel: Call Trace:
+Nov 02 21:44:30 ArchBasement kernel:  <TASK>
+Nov 02 21:44:30 ArchBasement kernel:  dump_stack_lvl+0x5d/0x80
+Nov 02 21:44:30 ArchBasement kernel:  check_preemption_disabled+0xe5/0xf0
+Nov 02 21:44:30 ArchBasement kernel:  in_entry_stack+0x11/0x60
+Nov 02 21:44:30 ArchBasement kernel:  get_stack_info+0x2c/0x80
+Nov 02 21:44:30 ArchBasement kernel:  stack_access_ok+0x51/0xa0
+Nov 02 21:44:30 ArchBasement kernel:  unwind_next_frame+0x1cb/0x7b0
+Nov 02 21:44:30 ArchBasement kernel:  ? _nv003168kms+0x42/0x50 [nvidia_modeset 90775ea8a26c5e58b97ef4b3f46eb45efa040eb2]
+Nov 02 21:44:30 ArchBasement kernel:  ? __pfx_stack_trace_consume_entry+0x10/0x10
+Nov 02 21:44:30 ArchBasement kernel:  arch_stack_walk+0xa6/0x110
+Nov 02 21:44:30 ArchBasement kernel:  ? _nv003168kms+0x42/0x50 [nvidia_modeset 90775ea8a26c5e58b97ef4b3f46eb45efa040eb2]
+Nov 02 21:44:30 ArchBasement kernel:  stack_trace_save+0x4d/0x70
 
--- 
-2.34.1
+Is this nvidia doing something wrong, or a problem with this commit?
 
+The removed code suggests that preemption is allowed here, and as far
+as I see, this call trace is still possible on vanilla 6.18. Perhaps
+preempt_disable() needs to be restored around this code?
+
+Regards,
+Michal
 
