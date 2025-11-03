@@ -1,136 +1,164 @@
-Return-Path: <linux-kernel+bounces-882527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB262C2AAA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:59:21 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD7E5C2A9FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:46:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 05FC04ECF85
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:59:11 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CE79A4F1406
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9362E7652;
-	Mon,  3 Nov 2025 08:58:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ED042E2667;
+	Mon,  3 Nov 2025 08:44:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cewlsmQm"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BWIJmt80"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8EEF2E1C6F;
-	Mon,  3 Nov 2025 08:58:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02372E0928;
+	Mon,  3 Nov 2025 08:44:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762160335; cv=none; b=lAJEKPsH/Ye1nuy0vzQKijljq7ggy7nby33RObRI9ieG0EyFFQOR9wL6LouyDr2tlnL4mPahUP5o5ISI9UPnB/0aQp0XUGz2IjsCgCS9OTh46z0f+1pLs2tLCamp8A8y56XiSgCRtcNm1N+doEapmUE8KtloL+t89N9jFgmwKqA=
+	t=1762159472; cv=none; b=tYaTsJhRu5kkawCneyN8AHIlcvhckOP8TUCrHwNE3BTrRtahdhcjPhK0oQSHPXtMBnCHTcP8tk/ZYo/FU2JtSfcCsA1mpDl63wgxuu6dJMcQyPBvOJQgWO5qO+ndEyK1RB/YpG7YmzObQlCV4Qq3fOkSjQ7odV7aCWOqGIBGhDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762160335; c=relaxed/simple;
-	bh=kyXRFhNZF3YdGGUinVbbVFRuVlkKQVdWx2ofydZcw6w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m2EIMj69T46dI7m2SwZnjcX2nljitit3KcNJ3ExHQFJQBlBCbVrV84MIl3rqOVjsct+d3/N48M5FM/XFH0Ld6eaQbMM8UdEPHDm6hVtcZ+bHykEBhkKJAv5zf1V1YZMM9Dw70BVYHTy6reYMNh4gfIOkkh1BGzkDLWrbxqgFlX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cewlsmQm; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762160334; x=1793696334;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=kyXRFhNZF3YdGGUinVbbVFRuVlkKQVdWx2ofydZcw6w=;
-  b=cewlsmQmU/XiJaL7zkQrQCFgEiAwyrw7qEuWwBazc7RnOcjkGcLPsBXz
-   7G2wTCzgHVcjRxkA8ro5V/2KaIRQiFwCGra5qf37k7tQDdUy948a7Sc5z
-   7AQVXL5jqhEh7AS91h6LTIqrpSKq5dnP1IuHn8IqjK2EnnbQmGNPH69yS
-   aUU4+z283FdOdCNM4fIZX23nYWg2ByhfIBofNV+NpqmYFYH1jFY8WrZrh
-   PjNhkgYsW1xDaCwDY5e2ZCVmA44fEzyZPGLxksuDl/PFRqkfKQOspCQgq
-   ZNbzxTri3dzCGcTGd8l31vjiGcvX+54i987FvA6E7rDr6r6zTbS1UCRlj
-   w==;
-X-CSE-ConnectionGUID: HwQi7OKZQ0qd1ijGoiVF2g==
-X-CSE-MsgGUID: ESWMJK/jSEumc0mSLVBaLQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="75582384"
-X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
-   d="scan'208";a="75582384"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 00:58:22 -0800
-X-CSE-ConnectionGUID: Zz5XKvBGQQCxotpwplrFhA==
-X-CSE-MsgGUID: 2Hdrn2n3QxOtDLyPS5vWCw==
-X-ExtLoop1: 1
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by fmviesa003.fm.intel.com with ESMTP; 03 Nov 2025 00:58:20 -0800
-Date: Mon, 3 Nov 2025 16:44:18 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@altera.com>
-Cc: Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>,
-	Tom Rix <trix@redhat.com>, linux-fpga@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RESEND][PATCH 1/1] fpga: altera-cvp: Limit driver registration
- to specific device ID
-Message-ID: <aQhrYucpkGBWI2zL@yilunxu-OptiPlex-7050>
-References: <cover.1761764670.git.kuhanh.murugasen.krishnan@altera.com>
- <0b6877dd7422e8c797bb42bf071fd85cf8a0af09.1761764670.git.kuhanh.murugasen.krishnan@altera.com>
+	s=arc-20240116; t=1762159472; c=relaxed/simple;
+	bh=pcZ33mdM8HReLodUv0lZriPlCCx/Bf24CmKMc0Svvy8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gmFGmuCTj/4x89Seyw2dqq2wgHQ9OzSJlB3LtseLe2gJP/Fn9CvKDCFBVm+PhVgE0TcavjD9f8G7Pz8AZKwgT4Cm04IZNa0nTSurqbfqCHlRP9E5BRfk3pfXUYI7B/Dv67WvxdwJL5bSmL5RD3b28aT+FhpZZ4yQX/7i8pOPgZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BWIJmt80; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1762159469;
+	bh=pcZ33mdM8HReLodUv0lZriPlCCx/Bf24CmKMc0Svvy8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BWIJmt80XBuwFXq8VSpppUMxGRo2XS0HDV66ojU1NOb7prrkEmP7cxOqiD5li7Ofg
+	 RgTMmjXCKyLnfQWUzoy5k95p4uyVasN03CIsB8HyhIyk4cDQXGc3j2YhzfsFsv9+17
+	 8HAEmCaxNSOjGxMQpErDjoLxCXjsd8QefCQrZwI7u3DiGaEZ4YgihN2UCDGopCuHrk
+	 vvQx3qo51DkK9E63L9jbn5O/qC+D2aNqj69rUOM5oCXZz+IDCm3lPdnk7ssUT7l19n
+	 53582eSur4BENwCS1yBKOI6W0kugUddjopf79Vi4SvtZzJ7MaT0Tvx05Bw/c+gRfz9
+	 FTpwcyHQcGLFA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id D772817E1299;
+	Mon,  3 Nov 2025 09:44:27 +0100 (CET)
+Message-ID: <9cba2013-0f01-40ab-9d3b-10f4bc3f02f3@collabora.com>
+Date: Mon, 3 Nov 2025 09:44:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0b6877dd7422e8c797bb42bf071fd85cf8a0af09.1761764670.git.kuhanh.murugasen.krishnan@altera.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 14/15] arm64: dts: mediatek: mt7981b-openwrt-one:
+ Enable wifi
+To: Sjoerd Simons <sjoerd@collabora.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Ryder Lee <ryder.lee@mediatek.com>, Jianjun Wang
+ <jianjun.wang@mediatek.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>,
+ Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Lee Jones <lee@kernel.org>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Lorenzo Bianconi <lorenzo@kernel.org>, Felix Fietkau <nbd@nbd.name>
+Cc: kernel@collabora.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+ linux-phy@lists.infradead.org, netdev@vger.kernel.org,
+ Daniel Golle <daniel@makrotopia.org>, Bryan Hinton <bryan@bryanhinton.com>
+References: <20251101-openwrt-one-network-v2-0-2a162b9eea91@collabora.com>
+ <20251101-openwrt-one-network-v2-14-2a162b9eea91@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20251101-openwrt-one-network-v2-14-2a162b9eea91@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 30, 2025 at 03:05:44AM +0800, Kuhanh Murugasen Krishnan wrote:
-> From: "Murugasen Krishnan, Kuhanh" <kuhanh.murugasen.krishnan@altera.com>
-
-Is this your first post?
-
-https://lore.kernel.org/all/20250212223553.2717304-1-kuhanh.murugasen.krishnan@intel.com/
-
-Please mark the patch v2 if this patch is for the same issue. And please
-firstly response the talk and make clear all previous concerns, rather than
-just sent the patch and left.
-
+Il 01/11/25 14:32, Sjoerd Simons ha scritto:
+> Enable Dual-band WiFI 6 functionality on the Openwrt One
 > 
-> The Altera CvP driver previously used PCI_ANY_ID, which caused it to
-> bind to all PCIe devices with the Altera vendor ID. This led to
-> incorrect driver association when multiple PCIe devices with different
-> device IDs were present on the same platform.
-> 
-> Update the device ID table to use 0x00 instead of PCI_ANY_ID so that
-> the driver only attaches to the intended device.
-
-So could you please answer the previous concern here?
-
-Does dev_id 0x00 covers all supported devices? Do you have any DOC for
-this?
-
-> 
-> Reviewed-by: Dinh Nguyen <dinguyen@kernel.org>
-
-I didn't see where the tag is from. Generally we don't prefer a
-Reviewed-by tag firstly appear from other than the person named.
-
-Thanks,
-Yilun
-
-> Signed-off-by: Ang Tien Sung <tien.sung.ang@altera.com>
-> Signed-off-by: Murugasen Krishnan, Kuhanh <kuhanh.murugasen.krishnan@altera.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> Signed-off-by: Sjoerd Simons <sjoerd@collabora.com>
 > ---
->  drivers/fpga/altera-cvp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> V1 -> V2: Update eeprom node label
+> ---
+>   .../boot/dts/mediatek/mt7981b-openwrt-one.dts      | 24 ++++++++++++++++++++++
+>   arch/arm64/boot/dts/mediatek/mt7981b.dtsi          |  2 +-
+>   2 files changed, 25 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
-> index 5af0bd33890c..97e9d4d981ad 100644
-> --- a/drivers/fpga/altera-cvp.c
-> +++ b/drivers/fpga/altera-cvp.c
-> @@ -560,7 +560,7 @@ static int altera_cvp_probe(struct pci_dev *pdev,
->  static void altera_cvp_remove(struct pci_dev *pdev);
->  
->  static struct pci_device_id altera_cvp_id_tbl[] = {
-> -	{ PCI_VDEVICE(ALTERA, PCI_ANY_ID) },
-> +	{ PCI_VDEVICE(ALTERA, 0x00) },
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(pci, altera_cvp_id_tbl);
-> -- 
-> 2.25.1
+> diff --git a/arch/arm64/boot/dts/mediatek/mt7981b-openwrt-one.dts b/arch/arm64/boot/dts/mediatek/mt7981b-openwrt-one.dts
+> index 90edb9f493c6d..b13f16d7816bf 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt7981b-openwrt-one.dts
+> +++ b/arch/arm64/boot/dts/mediatek/mt7981b-openwrt-one.dts
+> @@ -129,6 +129,22 @@ conf-pd {
+>   			pins = "SPI2_CLK", "SPI2_MOSI", "SPI2_MISO";
+>   		};
+>   	};
+> +
+> +	wifi_dbdc_pins: wifi-dbdc-pins {
+> +		mux {
+> +			function = "eth";
+> +			groups = "wf0_mode1";
+> +		};
+> +
+> +		conf {
+> +			pins = "WF_HB1", "WF_HB2", "WF_HB3", "WF_HB4",
+> +			       "WF_HB0", "WF_HB0_B", "WF_HB5", "WF_HB6",
+> +			       "WF_HB7", "WF_HB8", "WF_HB9", "WF_HB10",
+> +			       "WF_TOP_CLK", "WF_TOP_DATA", "WF_XO_REQ",
+> +			       "WF_CBA_RESETB", "WF_DIG_RESETB";
+> +			drive-strength = <MTK_DRIVE_4mA>;
+
+You forgot to address my comment here. drive-strength = <4>;
+
+Regards,
+Angelo
+
+> +		};
+> +	};
+>   };
+>   
+>   &spi2 {
+> @@ -200,6 +216,14 @@ &usb_phy {
+>   	status = "okay";
+>   };
+>   
+> +&wifi {
+> +	nvmem-cells = <&wifi_factory_calibration>;
+> +	nvmem-cell-names = "eeprom";
+> +	pinctrl-names = "dbdc";
+> +	pinctrl-0 = <&wifi_dbdc_pins>;
+> +	status = "okay";
+> +};
+> +
+>   &xhci {
+>   	phys = <&u2port0 PHY_TYPE_USB2>;
+>   	vusb33-supply = <&reg_3p3v>;
+> diff --git a/arch/arm64/boot/dts/mediatek/mt7981b.dtsi b/arch/arm64/boot/dts/mediatek/mt7981b.dtsi
+> index eb2effb3c1ed2..17dd13d4c0015 100644
+> --- a/arch/arm64/boot/dts/mediatek/mt7981b.dtsi
+> +++ b/arch/arm64/boot/dts/mediatek/mt7981b.dtsi
+> @@ -490,7 +490,7 @@ wo_ccif0: syscon@151a5000 {
+>   			interrupts = <GIC_SPI 211 IRQ_TYPE_LEVEL_HIGH>;
+>   		};
+>   
+> -		wifi@18000000 {
+> +		wifi: wifi@18000000 {
+>   			compatible = "mediatek,mt7981-wmac";
+>   			reg = <0 0x18000000 0 0x1000000>,
+>   			      <0 0x10003000 0 0x1000>,
 > 
-> 
+
+
 
