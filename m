@@ -1,54 +1,74 @@
-Return-Path: <linux-kernel+bounces-883303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C468AC2D14C
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:22:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94BF1C2D078
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:15:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAEFA3B63DC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:10:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C184188C3A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:11:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 173DB315D56;
-	Mon,  3 Nov 2025 16:09:57 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95C3315D41;
+	Mon,  3 Nov 2025 16:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EXuFZ2pz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D2A313285;
-	Mon,  3 Nov 2025 16:09:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A984315794
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:10:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762186196; cv=none; b=EmI8pzwU/EiMTvEl6akZ8hYLkLS+z+TzRvtDgkJy1GjTg+dw8smm0huWWlfMWFYR2MSDo+BECUMyOy4i+HVeMvEhi/UsAqvY77wkCk1F7zuRrYcyw31dL/kG2cC1Vy1z/AtNxWSxeSqxw+uMV6iPPSGtY6lO53+CTkb1EyMQQLs=
+	t=1762186238; cv=none; b=jH75lAMZsIn24Z7G/Cx+HMsOBAimRIpCYeHACehlSSA0Xoni4bAbaNg6WsgP8NILEH47wAiDBRosLz/MEuZhQRGRlBawSGTvTqfLWz1YNfgQzMQjnjBCq1yPrK4LhR+/xVkb0BqshTkalJAhfzmDjsyd5V1k+Vz7cU/5LkhwtZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762186196; c=relaxed/simple;
-	bh=xrxwG32n/y2oy1YHTu3G6RDWmunQWMgWRiwV4cS732s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l84mKzEjjQ5PFyBts8qGnpqfyiqRmyyCH65hA9dglaDh5jRISTBBmCfUVQFG+QeknFX1NY1ptoALaQWoB+dU78Fl2fJvsRXSypdGckZIOAz2x4DXmjuslt6ymZk1Ue+Xg5Aamvh7FC9jiG792Yl+EDuAwcyfj7EZuQ1WyWbfdjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf07.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id C84CD12ACEE;
-	Mon,  3 Nov 2025 16:09:45 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf07.hostedemail.com (Postfix) with ESMTPA id E4D1E20024;
-	Mon,  3 Nov 2025 16:09:42 +0000 (UTC)
-Date: Mon, 3 Nov 2025 11:09:46 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-aio@kvack.org, linux-unionfs@vger.kernel.org,
- linux-erofs@lists.ozlabs.org, linux-nfs@vger.kernel.org,
- linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
- cgroups@vger.kernel.org, netdev@vger.kernel.org,
- linux-crypto@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/12] trace: use prepare credential guard
-Message-ID: <20251103110946.063f53da@gandalf.local.home>
-In-Reply-To: <20251103-work-creds-guards-prepare_creds-v1-11-b447b82f2c9b@kernel.org>
-References: <20251103-work-creds-guards-prepare_creds-v1-0-b447b82f2c9b@kernel.org>
-	<20251103-work-creds-guards-prepare_creds-v1-11-b447b82f2c9b@kernel.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762186238; c=relaxed/simple;
+	bh=hcEECQpZnZYS+rrOjcFLuMdTrw1oSE8F4CuJwKX2TsQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=YP9kMKuSSoNnM0Jz8imMOH9rHxBHUhmBBopVqQZBB9fjS0sNV8V3W/nglIAqnhY2jGaS+xRLt4FbMWb2S3jTsiWANpbTPwb0E07KpZadu3ekzdVpFmOaS5Ldbe06Nv+crbA5JjEhCR8Cw9hx4wIQfEoBCUbulp0VjhYKsRJQoho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EXuFZ2pz; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762186235;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FL9HmwdZD0MRguLtDcdVu1gP15j2MVs0YK7L0sC7zis=;
+	b=EXuFZ2pzIu7jdpFj1OeSdEsGFQre6ryxIUoYijKaLJnIdKLfX5i9f8nltiEq1uT2z4jhPm
+	G7JsnRICXvDYUx6xisRlGKRiYrD+3627fL1TmBJrhmk1WmyTTJ8KZmDH1kWKKPWJrXez9W
+	VxxOviKZURDSdrj3Lr7H+W5NkQpo4Rk=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-298-Ja4YJYB_MMKjHiKZqOES1Q-1; Mon,
+ 03 Nov 2025 11:10:30 -0500
+X-MC-Unique: Ja4YJYB_MMKjHiKZqOES1Q-1
+X-Mimecast-MFC-AGG-ID: Ja4YJYB_MMKjHiKZqOES1Q_1762186227
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 565381956095;
+	Mon,  3 Nov 2025 16:10:27 +0000 (UTC)
+Received: from [10.45.225.163] (unknown [10.45.225.163])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DAD571800451;
+	Mon,  3 Nov 2025 16:10:23 +0000 (UTC)
+Date: Mon, 3 Nov 2025 17:10:15 +0100 (CET)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+cc: dm-devel@lists.linux.dev, Alasdair Kergon <agk@redhat.com>, 
+    Heinz Mauelshagen <heinzm@redhat.com>, Josef Bacik <jbacik@fb.com>, 
+    Mike Snitzer <snitzer@kernel.org>, 
+    Ross Zwisler <ross.zwisler@linux.intel.com>, Zach Brown <zab@zabbo.net>, 
+    LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, 
+    Miaoqian Lin <linmq006@gmail.com>
+Subject: Re: [PATCH] dm-log-writes: Use pointers from memcpy() calls for
+ assignments in two functions
+In-Reply-To: <b803a5a1-c2bf-4aad-9527-198e8a8046ca@web.de>
+Message-ID: <85eba740-899c-6884-93b4-aa441436db97@redhat.com>
+References: <b803a5a1-c2bf-4aad-9527-198e8a8046ca@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,28 +76,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: f3a1jbh7gz5tygnr9ophixt6pum6i47w
-X-Rspamd-Server: rspamout07
-X-Rspamd-Queue-Id: E4D1E20024
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18u0U/NQFwhYc5xAY2TcmGwcG1D2BgWoTc=
-X-HE-Tag: 1762186182-249034
-X-HE-Meta: U2FsdGVkX1/oN4yafgD+MyqaAV3m0VoVtYRzu0D3nhVrjp7q8uA8Uc/g3Y1973pDGRtBMJFIpQ7B0O+F37rmbF8kIjhS7YPoQfvuYhqXbP66FkjkDqcxlSq/f9rE0VLfodvjXBeCq8tk6S9A50kqMRPnFBqoeWWggpvhArKEUJcxWbwhtGBUJA9D9GDy2rYSO7wzCitOaHdm8UT261o9vVM0wBxFfhfhIDvg4yDkUhUWC4l4RdGwq0vyz6roxCpZv5oWzdyX4MkQM3lYByyuZonkzkJpT2nT1UIISYlOxhoA6jv36VwIlmUVdl8Rp2E7rl7MGO6o9ABv2Rp0ARVpE/1Y8CPdK53RazVlow3RlyHTtAdeg3sjiAKEZ+dX7QrpdQ7cwXCa90kYxiksyJez7g==
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Mon, 03 Nov 2025 15:57:37 +0100
-Christian Brauner <brauner@kernel.org> wrote:
+Hi
 
-> Use the prepare credential guard for allocating a new set of
-> credentials.
+I think that the code is more readable as it is.
+
+Putting two function calls on one line doesn't make it easier to read.
+
+Mikulas
+
+
+On Fri, 31 Oct 2025, Markus Elfring wrote:
+
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Fri, 31 Oct 2025 20:20:56 +0100
 > 
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> A pointer was assigned to a variable in two function implementations.
+> The same pointer was used for the destination parameter of a memcpy() call.
+> This function is documented in the way that the same value is returned.
+> Thus convert separate statements into a direct variable assignment for
+> the return value from a memory copy action.
+> 
+> The source code was transformed by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
->  kernel/trace/trace_events_user.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
+>  drivers/md/dm-log-writes.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/md/dm-log-writes.c b/drivers/md/dm-log-writes.c
+> index 7bb7174f8f4f..b450bdadfaf2 100644
+> --- a/drivers/md/dm-log-writes.c
+> +++ b/drivers/md/dm-log-writes.c
+> @@ -232,8 +232,7 @@ static int write_metadata(struct log_writes_c *lc, void *entry,
+>  		goto error;
+>  	}
+>  
+> -	ptr = kmap_local_page(page);
+> -	memcpy(ptr, entry, entrylen);
+> +	ptr = memcpy(kmap_local_page(page), entry, entrylen);
+>  	if (datalen)
+>  		memcpy(ptr + entrylen, data, datalen);
+>  	memset(ptr + entrylen + datalen, 0,
+> @@ -287,8 +286,7 @@ static int write_inline_data(struct log_writes_c *lc, void *entry,
+>  				goto error_bio;
+>  			}
+>  
+> -			ptr = kmap_local_page(page);
+> -			memcpy(ptr, data, pg_datalen);
+> +			ptr = memcpy(kmap_local_page(page), data, pg_datalen);
+>  			if (pg_sectorlen > pg_datalen)
+>  				memset(ptr + pg_datalen, 0, pg_sectorlen - pg_datalen);
+>  			kunmap_local(ptr);
+> -- 
+> 2.51.1
 > 
 
-Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-
--- Steve
 
