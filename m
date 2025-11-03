@@ -1,193 +1,226 @@
-Return-Path: <linux-kernel+bounces-882717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77E48C2B3A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:03:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDB50C2B3AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:04:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DB113A2028
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:03:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4E4C3A847E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 425B5301038;
-	Mon,  3 Nov 2025 11:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7368D301039;
+	Mon,  3 Nov 2025 11:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O0BJESTa"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eCv5i1OR";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="hCkvRS/R"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7D9221DB5;
-	Mon,  3 Nov 2025 11:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C81603009E4
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 11:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762167797; cv=none; b=EcPhA27DV1k25UAdcLciyMmXB5rlFNmdKZ2mCUXQSNvQbYMJx1ynWX++2q/l9DIDDYesrVhlf+NbouDBRyijf7+Q0fLocquKBJ6Ozgr2VDowt7+zEwn2BG/rFU5IBrjnbhZVackBAPjrZ1VtLGYgKZR1COz+wIXNwg1Jcn27YNc=
+	t=1762167819; cv=none; b=B5+5J8eotjuFGO1oLSycxPgc684YtqSxYjEhWalT2PvoNXIRD46N9gQ0BUsbgazpAuswn0LCIAy2EZ0J+HncFutab/UinrH2zNNpFabB7gIWgxF4IfSjl464I65GTh6i+SE2tVc9OXi+ty1zL7mxMwufIupsP+sdlIApP3jIXBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762167797; c=relaxed/simple;
-	bh=OcFWZgFQi1jbSgi3vJIscFKU3cesWdTxmnLHUWmBSwE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gKrZCCtNeGxyLYHzM5EfALTz7REI9ZtPPR/M7ADOXceUMikDOPyNaGoqC/xZMcFvQ4h+3ercQueCUmcQV3X3TdVNOu1G+5Gpyd5Mw94u7N2vHk1504ZA3Jog7XEdNz3TUVa2Og5JxP9Y97zNsqeiiCZSvbDmXqFKFlUjgQWUw9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O0BJESTa; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762167796; x=1793703796;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=OcFWZgFQi1jbSgi3vJIscFKU3cesWdTxmnLHUWmBSwE=;
-  b=O0BJESTarp/8AXirfORuiYC7G1J0pq4fOfCCl8kz7+ykyN6sAZoVP2hB
-   otytKWl1L8rV5vDG9/1ErTBncL3E+qjhZmIEg1bH+o1Ka61cFd+cFn+An
-   Skmc+PgrNa6WWFrP89AU8vphtosJLL4AztiaWOQk4Nnsu6dbwbhHyxzIG
-   rKqS2hoOPU+Jd4kPKahwJuHQpzQIREQej3OeZsZURWH0eXswItgmw4CHb
-   Zfro7J0889iJDyqIqZAjQ4ag7KjHVvEaIaSTHtManUfXhvL0MF2tQN/ED
-   1YdMcdrR3ToaZn6daBAOBrq6jidTYsWANQmwx30ZlbLWjJZRVUfIWhIvK
-   A==;
-X-CSE-ConnectionGUID: V4B7qe6JQpSDOdmJRRz25A==
-X-CSE-MsgGUID: 4KsXFtqvRFuy272T7WmSbw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="63255253"
-X-IronPort-AV: E=Sophos;i="6.19,276,1754982000"; 
-   d="scan'208";a="63255253"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 03:03:15 -0800
-X-CSE-ConnectionGUID: 4WwVDGt7T+SRBR7pKsReRA==
-X-CSE-MsgGUID: MbU9IwdmSs+S4cFW+H/EtA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,276,1754982000"; 
-   d="scan'208";a="186518074"
-Received: from vpanait-mobl.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.27])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 03:03:09 -0800
-Received: from kekkonen.localdomain (localhost [IPv6:::1])
-	by kekkonen.fi.intel.com (Postfix) with ESMTP id 91D43120D07;
-	Mon, 03 Nov 2025 13:02:47 +0200 (EET)
-Date: Mon, 3 Nov 2025 13:02:47 +0200
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Matthias Fend <matthias.fend@emfend.at>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Hans Verkuil <hverkuil@kernel.org>,
-	Hans de Goede <hansg@kernel.org>,
-	Ricardo Ribalda <ribalda@chromium.org>,
-	=?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>,
-	Tarang Raval <tarang.raval@siliconsignals.io>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
-	Sylvain Petinot <sylvain.petinot@foss.st.com>,
-	Dongcheng Yan <dongcheng.yan@intel.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Jingjing Xiong <jingjing.xiong@intel.com>,
-	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
-	Mehdi Djait <mehdi.djait@linux.intel.com>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
-	linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Hao Yao <hao.yao@intel.com>,
-	bsp-development.geo@leica-geosystems.com
-Subject: Re: [PATCH v4 2/2] media: i2c: add Himax HM1246 image sensor driver
-Message-ID: <aQiL111bKgKE6M22@kekkonen.localdomain>
-References: <20251017-hm1246-v4-0-e3388ea2f08c@emfend.at>
- <20251017-hm1246-v4-2-e3388ea2f08c@emfend.at>
- <aPec0SRvDlqtVKIJ@kekkonen.localdomain>
- <6e7a63b1-6aee-4b4f-9fb9-2f2df92782b4@emfend.at>
- <85df7f30-e9ac-422e-8ab5-7c6b82774aaf@emfend.at>
+	s=arc-20240116; t=1762167819; c=relaxed/simple;
+	bh=ZWKf1U4K8p8K7ajfbNKacDFOZXuDZuDDSYcIrkzA/N0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fiP5hSooizu2DpksggsniBFB5q0S3kQsjjt/QIugocbujbV/gmhnRB/xt7IOWnv/awvN5Tz7xbWmwu2FuZwgIlTVdRiBrJ9xPrd7K7zMtLmnxSnMpUKlAYEGjCoB6klmRfplyt2wevFy4Drx9y1ZdLVL2vmXPhmgQ8E3Wc6BGh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eCv5i1OR; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=hCkvRS/R; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762167816;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zhTdrnjfA8ppQxzFb9fDiTAH4jVhlOQqvIRjACG6oMI=;
+	b=eCv5i1ORlbybQ6Q4g7cwrCix9jLd2QdyO63zsqQ5zkJGW3UA/U62s1453YgFLtGeTp3cc4
+	X+cGnJfx4YipgwPxgMZQYhH0u7mb6rEXt2K3kfTQtnQMvBTp96kucYbSNTq5nUyC7bO9wV
+	9CzXHFHlkDC64Pa2w9RVKXhAvNGD68s=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-157-t2MKeOKiPxiATcxH6e5Rrw-1; Mon, 03 Nov 2025 06:03:35 -0500
+X-MC-Unique: t2MKeOKiPxiATcxH6e5Rrw-1
+X-Mimecast-MFC-AGG-ID: t2MKeOKiPxiATcxH6e5Rrw_1762167814
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-b5a8827e692so310856566b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 03:03:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1762167814; x=1762772614; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zhTdrnjfA8ppQxzFb9fDiTAH4jVhlOQqvIRjACG6oMI=;
+        b=hCkvRS/Ribp6ASBG1FHRVpshS7QKtRzANGVovMCtgfsDKFgyKH6ynspCdCfnFL0pYZ
+         JA6gUnKnDOPD1NYjeOkNXO/+B3RVifOFy5iqe+fY4ZDkmxXtUYh844dbDKJ67EAjmCR1
+         zgw3ON9BvrOm0ofo/uW7WDyuM8KUlW8tm/ZhOXrOBdwJRwEqcjpu0o6dSiN5pxMxZeGZ
+         LcuI2K0Q93la+pdqIiC5OUxRIWGaVbBCoxXgGb2Fj4XrHKQ9MTVoVYVSq7baXsz/qJ3w
+         h4O2Wgvv0XkuKD9T2oSg9HMdOhxxT1+lIoJFkbFKO9i/dm5Eb2rCypx/W4b6wlK9U8mR
+         Tzgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762167814; x=1762772614;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zhTdrnjfA8ppQxzFb9fDiTAH4jVhlOQqvIRjACG6oMI=;
+        b=Py9lWS5r9ouR8imVSpnHzU5rpAt55YTIos+gizM7QRurjgY2/TDdH9KEtXjywc7kLP
+         jlxTk9ybBKA2tLNq+FdeJIVgP7314s04Iic5dCpkUXsAgN0Vur5MYJZTQQSZQLBU2WeD
+         MAzbKlMOEirfSheTHqwb3fliL/zBni465P+Cu+g4RzuBFu8fmg/8FvGDJX7lMLSlX4h+
+         oEPuvmEimtx3fFt7iCxzrBzN9AsaFLT53lg0yxIHsFNCsGtud7ZLARrhljOO7ZW6tHYH
+         nnJWhb5vef85rZdE7/gIUkIFC1k7r/Ky3bauSjGSqzw3nEiEQM8SkiE565Dmdn2heHZ4
+         bkpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXsxBZc71I9uwhHS1Cv3QAd0j/+H5u+ye+RwmL10exDVEjcCRYGx4n4V0WGRpx5bfvJacjW963ddhtiREI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHDTjMAkQwigmwDBGU2aonfGsQHELeCzJgv70VxJuiMFQY46ZK
+	2eV9AOJFK+W8RW2WWPV0QHS6Q8b4wS18XudNIvWgw2w+R2iLQgGys8rf7HxdpYNCeD//WC2aVAe
+	mH+lQwu3vkwFQysVH8aq0on8r+YrogNSCM8YTrSjudeKUQ8lke4Mgxrke3LERR+4jjK0RZmJbyF
+	38cKKLg15OhXi307Ka5Y9w66kwZ9/MLX0V5O8EWMxa
+X-Gm-Gg: ASbGncvZdvi+N550nGmhaagJjq0ULo/eHPBJNuoXPCeQzfrwtUtly+p4ZGKEDZzn2dB
+	teGYQ3ehUK5Jvf3ECcxBlaPxoGw1Quaeq7zKT+vcjYJ6hOYpWSZYLW4optqCUr74qtNWph2pIk+
+	m7nzGC/NVoF4UO723KUEKNSDGPelv/QWhAaEU3dc7QXFe21+B7PAugm4o=
+X-Received: by 2002:a17:907:1c93:b0:b40:8deb:9cbe with SMTP id a640c23a62f3a-b70700bad7dmr1398096466b.2.1762167814117;
+        Mon, 03 Nov 2025 03:03:34 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF70Lv5L7m6M605bcYwYl5gdYYQmJQe9fOmppY9gxiQqdJv0qTmTVSWhGn8kw4mBFNTlWE3YlDmM/dVhBYh+OE=
+X-Received: by 2002:a17:907:1c93:b0:b40:8deb:9cbe with SMTP id
+ a640c23a62f3a-b70700bad7dmr1398093866b.2.1762167813668; Mon, 03 Nov 2025
+ 03:03:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <85df7f30-e9ac-422e-8ab5-7c6b82774aaf@emfend.at>
+References: <cfafc5247fbfcd2561de16bcff67c1afd5676c9e.1761918165.git.rrobaina@redhat.com>
+ <202511012016.TaXzGDDi-lkp@intel.com>
+In-Reply-To: <202511012016.TaXzGDDi-lkp@intel.com>
+From: Ricardo Robaina <rrobaina@redhat.com>
+Date: Mon, 3 Nov 2025 08:03:22 -0300
+X-Gm-Features: AWmQ_bnNelXrYhZN2hvHONfShTGA5EvaaCJcqVosrEermFLRrvdG6VLVDrGvFk4
+Message-ID: <CAABTaaCf+5mY8gze4Ojy2fttEuuEtjj3Zm1dHScXVfWtKAQbSQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] audit: add audit_log_packet_ip4 and
+ audit_log_packet_ip6 helper functions
+To: kernel test robot <lkp@intel.com>
+Cc: audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
+	oe-kbuild-all@lists.linux.dev, paul@paul-moore.com, eparis@redhat.com, 
+	fw@strlen.de, pablo@netfilter.org, kadlec@netfilter.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Matthias,
+I didn't get these warning messages in my local build. I'll fix it and
+submit a new version.
 
-Thanks for the ping.
+On Sat, Nov 1, 2025 at 10:15=E2=80=AFAM kernel test robot <lkp@intel.com> w=
+rote:
+>
+> Hi Ricardo,
+>
+> kernel test robot noticed the following build errors:
+>
+> [auto build test ERROR on pcmoore-audit/next]
+> [also build test ERROR on netfilter-nf/main nf-next/master linus/master v=
+6.18-rc3 next-20251031]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Ricardo-Robaina/au=
+dit-add-audit_log_packet_ip4-and-audit_log_packet_ip6-helper-functions/2025=
+1031-220605
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git=
+ next
+> patch link:    https://lore.kernel.org/r/cfafc5247fbfcd2561de16bcff67c1af=
+d5676c9e.1761918165.git.rrobaina%40redhat.com
+> patch subject: [PATCH v4 1/2] audit: add audit_log_packet_ip4 and audit_l=
+og_packet_ip6 helper functions
+> config: m68k-defconfig (https://download.01.org/0day-ci/archive/20251101/=
+202511012016.TaXzGDDi-lkp@intel.com/config)
+> compiler: m68k-linux-gcc (GCC) 15.1.0
+> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
+ve/20251101/202511012016.TaXzGDDi-lkp@intel.com/reproduce)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202511012016.TaXzGDDi-lkp=
+@intel.com/
+>
+> All errors (new ones prefixed by >>):
+>
+>    net/netfilter/nft_log.c: In function 'nft_log_eval_audit':
+> >> net/netfilter/nft_log.c:48:31: error: implicit declaration of function=
+ 'audit_log_packet_ip4'; did you mean 'audit_log_capset'? [-Wimplicit-funct=
+ion-declaration]
+>       48 |                         fam =3D audit_log_packet_ip4(ab, skb) =
+? NFPROTO_IPV4 : -1;
+>          |                               ^~~~~~~~~~~~~~~~~~~~
+>          |                               audit_log_capset
+> >> net/netfilter/nft_log.c:51:31: error: implicit declaration of function=
+ 'audit_log_packet_ip6'; did you mean 'audit_log_capset'? [-Wimplicit-funct=
+ion-declaration]
+>       51 |                         fam =3D audit_log_packet_ip6(ab, skb) =
+? NFPROTO_IPV6 : -1;
+>          |                               ^~~~~~~~~~~~~~~~~~~~
+>          |                               audit_log_capset
+>
+>
+> vim +48 net/netfilter/nft_log.c
+>
+>     28
+>     29  static void nft_log_eval_audit(const struct nft_pktinfo *pkt)
+>     30  {
+>     31          struct sk_buff *skb =3D pkt->skb;
+>     32          struct audit_buffer *ab;
+>     33          int fam =3D -1;
+>     34
+>     35          if (!audit_enabled)
+>     36                  return;
+>     37
+>     38          ab =3D audit_log_start(NULL, GFP_ATOMIC, AUDIT_NETFILTER_=
+PKT);
+>     39          if (!ab)
+>     40                  return;
+>     41
+>     42          audit_log_format(ab, "mark=3D%#x", skb->mark);
+>     43
+>     44          switch (nft_pf(pkt)) {
+>     45          case NFPROTO_BRIDGE:
+>     46                  switch (eth_hdr(skb)->h_proto) {
+>     47                  case htons(ETH_P_IP):
+>   > 48                          fam =3D audit_log_packet_ip4(ab, skb) ? N=
+FPROTO_IPV4 : -1;
+>     49                          break;
+>     50                  case htons(ETH_P_IPV6):
+>   > 51                          fam =3D audit_log_packet_ip6(ab, skb) ? N=
+FPROTO_IPV6 : -1;
+>     52                          break;
+>     53                  }
+>     54                  break;
+>     55          case NFPROTO_IPV4:
+>     56                  fam =3D audit_log_packet_ip4(ab, skb) ? NFPROTO_I=
+PV4 : -1;
+>     57                  break;
+>     58          case NFPROTO_IPV6:
+>     59                  fam =3D audit_log_packet_ip6(ab, skb) ? NFPROTO_I=
+PV6 : -1;
+>     60                  break;
+>     61          }
+>     62
+>     63          if (fam =3D=3D -1)
+>     64                  audit_log_format(ab, " saddr=3D? daddr=3D? proto=
+=3D-1");
+>     65
+>     66          audit_log_end(ab);
+>     67  }
+>     68
+>
+> --
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
+>
 
-On Mon, Nov 03, 2025 at 07:54:52AM +0100, Matthias Fend wrote:
-> Hi Sakari,
-> 
-> Am 23.10.2025 um 11:00 schrieb Matthias Fend:
-> > Hi Sakari,
-> > 
-> > thanks a lot for your feedback.
-> 
-> I had two follow-up questions regarding your feedback, but I suspect they
-> got lost in all the code. I've cleaned up this mail a bit to make the
-> questions more visible.
-> 
-> > > > +
-> > > > +static int hm1246_update_controls(struct hm1246 *hm1246,
-> > > > +                  const struct hm1246_mode *mode)
-> > > > +{
-> > > > +    s64 pixel_rate, exposure_max, vblank, hblank;
-> > > > +    int ret;
-> > > > +
-> > > > +    ret = __v4l2_ctrl_s_ctrl(hm1246->link_freq_ctrl, mode-
-> > > > >link_freq_index);
-> > > 
-> > > Does this do something? There's only a single link frequency value (and
-> > > index) supported.
-> > 
-> > You're right. Even though hm1246_update_controls() isn't exactly wrong,
-> > I could currently remove this function completely. The sensor supports
-> > various modes (which result in different clock rates), and I've already
-> > started implementing more of them. With multiple modes the controls need
-> > to be updated. However, since there were still some internal sensor
-> > issues to be addressed and I haven't been able to fully test them, I've
-> > decided to use only the presumably most common RAW mode for now.
-> > 
-> > Should I remove the function now and add it back once more modes are
-> > implemented?
-
-I think it'd be better to postpone adding this. I think you'll need further
-logic to support this and it'd be better to review this in conjunction with
-the additional features.
-
-> > 
-> ...
-> > > > +static int hm1246_parse_fwnode(struct hm1246 *hm1246)
-> > > > +{
-> > > > +    struct fwnode_handle *endpoint;
-> > > > +    struct v4l2_fwnode_endpoint bus_cfg = {
-> > > > +        .bus_type = V4L2_MBUS_PARALLEL,
-> > > > +    };
-> > > > +    int ret;
-> > > > +
-> > > > +    endpoint =
-> > > > fwnode_graph_get_endpoint_by_id(dev_fwnode(hm1246- >dev), 0,
-> > > > +                           0,
-> > > > +                           FWNODE_GRAPH_ENDPOINT_NEXT);
-> > > > +    if (!endpoint)
-> > > > +        return dev_err_probe(hm1246->dev, -EINVAL,
-> > > > +                     "missing endpoint node\n");
-> > > > +
-> > > > +    ret = v4l2_fwnode_endpoint_parse(endpoint, &bus_cfg);
-> > > 
-> > > What about validating the link frequencies? You can use
-> > > v4l2_link_freq_to_bitmap(), too.
-> > 
-> > I was under the impression that for sensors with a parallel interface,
-> > no frequency information is provided in the device tree (because there's
-> > no need for it). Since there are no frequency entries, they can't be
-> > verified.
-> > 
-> > Am I wrong, or did you perhaps mean something else?
-
-The current documentation
-<URL:https://hverkuil.home.xs4all.nl/spec/driver-api/camera-sensor.html>
-doesn't distinguish CSI-2 and parallel interfaces in this respect. It's a
-good idea to ensure a safe frequency is used as the driver works the same
-way in all cases, whether or not using one is mandatory.
-
--- 
-Kind regards,
-
-Sakari Ailus
 
