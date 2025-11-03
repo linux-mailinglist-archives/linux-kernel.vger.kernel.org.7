@@ -1,204 +1,91 @@
-Return-Path: <linux-kernel+bounces-882126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6E10C29B3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 01:24:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0127CC29B3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 01:26:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E90CE3AB537
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 00:24:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B535F3AC4DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 00:26:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDA5A18FDDE;
-	Mon,  3 Nov 2025 00:24:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0023C157493;
+	Mon,  3 Nov 2025 00:25:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="H9heTeJr"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KyJfI+xq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01CBC2C187;
-	Mon,  3 Nov 2025 00:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D732C187
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 00:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762129468; cv=none; b=VL6k2ATtEB5t8gd0bsJCpaBX8k/nQxwZwg6IU8DMSkhgIb/bOhsmPvUb8x64qJESsjWhOYbLjKs/+i8atlv36C2qNh5UKW65aLDwNr8jW2w464jQ8ONehGkjUhM4NhPk6oOLYEQ88Jng69hxbC66/JdSN40DD9UBAs8eCC4vaYk=
+	t=1762129557; cv=none; b=J6CSUSJGPRTnSLRay4nsHDY2KSO9HNdMACzqeFTjnV2WNorCPk1pW6BwSIwNNRkul3WdxdUSVIZRwF//iYixr5hIijd0Z+DbWRW5aDr0vLo8Grcwy5Nl90N3fv5rffDfxZCkZd+1hFF07JdndXyV9IKIxbFx4LqvSgOWa5FQrs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762129468; c=relaxed/simple;
-	bh=I1kKg7Jf/3Bvuqw1eNF30CYq1tGsJdIWQLSp2eOR+/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=HsnlXCKk5eTEMdnoAfWbMq9wRshtEnvZRirmibtXxQorBMJYkveRwR1xg8aSHZJjjAvrYbcGJBXSFQaF5DmAQj1EFLdKobx0WwEss0YSNsqnTo+uqXrQELWjrqHq8TtwdD5akCjlNV2htHLvIQnt9lwxUD5u0Py4STRNVPSfMeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=H9heTeJr; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1762129459;
-	bh=Iy94SWbg1+RQ4Kuynk8DOKGrvK0LPLOCMyntYUWRNLQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=H9heTeJrqmE8UuajRxoJsONK2bQsP8jqTOFQ35+XxoSgcyR2QFPxDg6qXBYBHx2jz
-	 68texnh7DpH2jRsHC/9x3tcgBaZ5u4apJWc3fjFaEgJK5Tn5M5bwGE1Dr8G8RFFiZq
-	 VSez0aOBaB5VG0a3e705BwOp1AvdM7hANCoUsy5e83byHoVT46kn0dkULI//njub5P
-	 jPQgOp77Dn3KBuV7d+qEoyA3rsc3m5UwgnExhWSdovjOGCLl6kBrdWCCzObj8i1IGP
-	 CAW/Zv2q9OxORRj4ZgrBlhs2UfyzfhP1+gp+Nv/ip97DLlFiv1lPx/Qb6/9gzUwkSD
-	 Q8V/oZ7G6Z3tQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d0C4z2VW2z4w9q;
-	Mon, 03 Nov 2025 11:24:19 +1100 (AEDT)
-Date: Mon, 3 Nov 2025 11:24:18 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Simona Vetter <simona.vetter@ffwll.ch>, Intel Graphics
- <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
-Cc: Jani Nikula <jani.nikula@intel.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the drm-misc tree
-Message-ID: <20251103112418.031b3f8c@canb.auug.org.au>
+	s=arc-20240116; t=1762129557; c=relaxed/simple;
+	bh=k7limerRYI7P30epLI9uBlnb/xDp9fAPN983ra12iYo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TiUG10KesSDFrVfAZA/2b8DiaYWf8fSA8LkjMWvjfM6yP16zk3u4EF3+uSnpBytWu+6dwB2xf94JF6rspWmdDmAzcoIWJQHX/rHHUydviMAfL99qpT4TxgqsiafshWjJTGBbiA9U8DK6eTlDTsCBkhwgC44Xcat4iFHHZ6jdp9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KyJfI+xq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79C8BC4CEF7;
+	Mon,  3 Nov 2025 00:25:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1762129556;
+	bh=k7limerRYI7P30epLI9uBlnb/xDp9fAPN983ra12iYo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KyJfI+xqZOrm4JLjKRPjBNogHvGEXeGWDwyNI+HjaDY4gJGVR5H/084LQ4xjbcHOc
+	 NnHqdxKReU8RVqT0HSAkELx5/Xm9i5yZnfsKU6uxvWKtT2htyebERc4Md8dPxjqI/0
+	 zbb/9ycYqtcOG114pHVjjQfMUtJ+YPAvaRseXF10=
+Date: Mon, 3 Nov 2025 09:25:52 +0900
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Zhongqiu Han <zhongqiu.han@oss.qualcomm.com>
+Cc: alexander.usyskin@intel.com, arnd@arndb.de,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mei: bus: Add newline to sysfs attribute outputs
+Message-ID: <2025110319-activist-register-d119@gregkh>
+References: <20251030123000.1701700-1-zhongqiu.han@oss.qualcomm.com>
+ <2025103052-taking-shredding-c77a@gregkh>
+ <83d8d2bb-767a-4dd6-8e1b-de96164cad4c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/KlBPDI1Nmz+Tm.siOFEFuQt";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <83d8d2bb-767a-4dd6-8e1b-de96164cad4c@oss.qualcomm.com>
 
---Sig_/KlBPDI1Nmz+Tm.siOFEFuQt
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Oct 30, 2025 at 09:11:34PM +0800, Zhongqiu Han wrote:
+> On 10/30/2025 8:32 PM, Greg KH wrote:
+> > On Thu, Oct 30, 2025 at 08:30:00PM +0800, Zhongqiu Han wrote:
+> > > Append newline characters to sysfs_emit() outputs in func max_conn_show(),
+> > > fixed_show(), and vtag_show(). This aligns with common kernel conventions
+> > > and improves readability for userspace tools that expect
+> > > newline-terminated values.
+> > 
+> > What userspace tool reads these values today?  Will this user/kernel api
+> > break them?  How was this tested?
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> 
+> Hi Greg,
+> Thanks for your review~
+> 
+> Apologies for the confusion in the commit message — there isn't
+> actually a userspace tool that depends on the newline in this case. I
+> just made the change to follow common sysfs formatting practices and
+> improve consistency.
 
-Hi all,
+That's fine, but please work with the people that wrote the tools that
+depend on these files today to verify it will not break anything, and
+then resubmit the patch with that information in the changelog.
 
-After merging the drm-misc tree, today's linux-next build (x86_64
-allmodconfig) failed like this:
+thanks,
 
-drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c: In function 'rzg2l_du_probe':
-drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c:173:9: error: implicit declara=
-tion of function 'drm_info'; did you mean 'pr_info'? [-Wimplicit-function-d=
-eclaration]
-  173 |         drm_info(&rcdu->ddev, "Device %s probed\n", dev_name(&pdev-=
->dev));
-      |         ^~~~~~~~
-      |         pr_info
-
-Presumably caused by commit
-
-  9695c143b72a ("drm/buddy: replace drm_print.h include with a forward decl=
-aration")
-or
-  ea722522d505 ("drm/mm: replace drm_print.h include with a forward declara=
-tion")
-or
-  d7a849d126d0 ("drm/ttm: replace drm_print.h include with a forward declar=
-ation")
-
-I have applied the following fix patch for today:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 3 Nov 2025 11:12:27 +1100
-Subject: [PATCH] fix up for dropping drm_print.h includes
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c b/drivers/gpu/drm=
-/renesas/rz-du/rzg2l_du_drv.c
-index e1aa6a719529..c34b1a13e685 100644
---- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c
-+++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c
-@@ -18,6 +18,7 @@
- #include <drm/drm_fbdev_dma.h>
- #include <drm/drm_gem_dma_helper.h>
- #include <drm/drm_probe_helper.h>
-+#include <drm/drm_print.h>
-=20
- #include "rzg2l_du_drv.h"
- #include "rzg2l_du_kms.h"
---=20
-2.51.1
-
-Which lead to this:
-
-drivers/gpu/drm/rockchip/rockchip_drm_vop2.c: In function 'vop2_convert_for=
-mat':
-drivers/gpu/drm/rockchip/rockchip_drm_vop2.c:215:17: error: implicit declar=
-ation of function 'DRM_ERROR'; did you mean 'SO_ERROR'? [-Wimplicit-functio=
-n-declaration]
-  215 |                 DRM_ERROR("unsupported format[%08x]\n", format);
-      |                 ^~~~~~~~~
-      |                 SO_ERROR
-drivers/gpu/drm/rockchip/rockchip_drm_vop2.c: In function 'rockchip_vop2_mo=
-d_supported':
-drivers/gpu/drm/rockchip/rockchip_drm_vop2.c:395:33: error: implicit declar=
-ation of function 'drm_dbg_kms' [-Wimplicit-function-declaration]
-  395 |                                 drm_dbg_kms(vop2->drm,
-      |                                 ^~~~~~~~~~~
-drivers/gpu/drm/rockchip/rockchip_drm_vop2.c: In function 'vop2_setup_scale=
-':
-drivers/gpu/drm/rockchip/rockchip_drm_vop2.c:602:25: error: implicit declar=
-ation of function 'drm_dbg'; did you mean 'dev_dbg'? [-Wimplicit-function-d=
-eclaration]
-  602 |                         drm_dbg(vop2->drm, "%s dst_w[%d] should ali=
-gn as 2 pixel\n",
-      |                         ^~~~~~~
-      |                         dev_dbg
-drivers/gpu/drm/rockchip/rockchip_drm_vop2.c: In function 'vop2_core_clks_p=
-repare_enable':
-drivers/gpu/drm/rockchip/rockchip_drm_vop2.c:763:17: error: implicit declar=
-ation of function 'drm_err'; did you mean 'pr_err'? [-Wimplicit-function-de=
-claration]
-  763 |                 drm_err(vop2->drm, "failed to enable hclk - %d\n", =
-ret);
-      |                 ^~~~~~~
-      |                 pr_err
-drivers/gpu/drm/rockchip/rockchip_drm_vop2.c: In function 'vop2_crtc_atomic=
-_disable':
-drivers/gpu/drm/rockchip/rockchip_drm_vop2.c:967:17: error: implicit declar=
-ation of function 'drm_info'; did you mean 'pr_info'? [-Wimplicit-function-=
-declaration]
-  967 |                 drm_info(vop2->drm, "wait for vp%d dsp_hold timeout=
-\n", vp->id);
-      |                 ^~~~~~~~
-      |                 pr_info
-drivers/gpu/drm/rockchip/rockchip_drm_vop2.c: In function 'vop2_crtc_atomic=
-_enable':
-drivers/gpu/drm/rockchip/rockchip_drm_vop2.c:1758:41: error: implicit decla=
-ration of function 'drm_warn'; did you mean 'dev_warn'? [-Wimplicit-functio=
-n-declaration]
- 1758 |                                         drm_warn(vop2->drm,
-      |                                         ^~~~~~~~
-      |                                         dev_warn
-drivers/gpu/drm/rockchip/rockchip_drm_vop2.c: In function 'rk3576_vp_isr':
-drivers/gpu/drm/rockchip/rockchip_drm_vop2.c:2198:17: error: implicit decla=
-ration of function 'drm_err_ratelimited'; did you mean 'pr_err_ratelimited'=
-? [-Wimplicit-function-declaration]
- 2198 |                 drm_err_ratelimited(vop2->drm, "POST_BUF_EMPTY irq =
-err at vp%d\n", vp->id);
-      |                 ^~~~~~~~~~~~~~~~~~~
-      |                 pr_err_ratelimited
-
-So, I have instead used the drm-misc tree from next-20251031 for today.
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/KlBPDI1Nmz+Tm.siOFEFuQt
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkH9jIACgkQAVBC80lX
-0GyxLwf+K1ygjtBBNcNgTPWtGNQp75QVY0hRVBj1BczKJcoXQ8OjJHdIP7UfCaz6
-kjmLSWm19LAx2XwKNgf+S4OqGAmWDHxXM3eHIPrGrYcy+B7udmXdN8EYClaj+qlH
-I+V/II8nUI5lqDNFrJnSMGClVJLYmkiKlT3Bf2pB6Y3mnxyCApxsGZGXJ9lV5jZ7
-1mRw94CMV+WQrsI4nke4e6jxo7OoLTk68Lr4GtviGzF9XVpUhOIQzDEl5pN3MWdL
-aoMsKfT8XBo5iZ84yXUL0hB05PTLkxO1KMpgzIFrrOVwf8/6DBoCJQaEA/Wc/jrR
-zD5Y1te9+YDa1/O07EppD5U1YXsbqg==
-=waFo
------END PGP SIGNATURE-----
-
---Sig_/KlBPDI1Nmz+Tm.siOFEFuQt--
+greg k-h
 
