@@ -1,165 +1,110 @@
-Return-Path: <linux-kernel+bounces-882639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9E1DC2AFD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:18:51 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1107EC2AFE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:19:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BA98189357E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:17:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 755174F14DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:17:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A9C2FD670;
-	Mon,  3 Nov 2025 10:17:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99DCC2F39D0;
+	Mon,  3 Nov 2025 10:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=barre.sh header.i=@barre.sh header.b="JzXT9LVr";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bvlCS3qH"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u2iuyYRl"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 605021C8606
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 10:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6348B1DED42
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 10:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762165028; cv=none; b=lSqOOU2FlvRmAQGhOjUkUZfFN1Dfs1Ot567Y2DGjpQkU4D3djRncVdQkSnbmNmPxdlal2qCvjnu95lKOPCKwN9wg+njEPLve8A/c/NtP3WkKZcFOdLHyWbVc56Gz+oyfEWiX5BplPKJfecGee60QTmoedwa/t8LTekyzhnU6Fe4=
+	t=1762165073; cv=none; b=bSigMCGsV3+ONzXLN8fKwQv/rxZZLYmiQBMPNIpsLY6DieSw9QJTUWsdntFvASgmu3y361TR6NEOTm6wxHrVyo2wmf84c6g/2LaYN2r5UEOEn3qZf+wV26eBgen5nbgSxY3Xiht70o1UNZOwwUCGYgJLbnqBJH9VLEIV/1YVpyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762165028; c=relaxed/simple;
-	bh=jreKh7UoXms/zPvts4j5vSExLuNfxgKkq7HIyMMt1fI=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=h0hqxNOuUgcwW8zL2rCuFixPrPRzed23LniHT2WxJ1odgqvUuCgafW+FhKynEjp988pIz6fOiGJ8msWub8FdpV3w44mnauVhaix/0zNaSaNC9hVwUoaBhDObAId49CxATPIXxdV6fSlemHr/R3peeZ/paZnPOACoW2D4GUGnets=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=barre.sh; spf=pass smtp.mailfrom=barre.sh; dkim=pass (2048-bit key) header.d=barre.sh header.i=@barre.sh header.b=JzXT9LVr; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bvlCS3qH; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=barre.sh
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=barre.sh
-Received: from phl-compute-05.internal (phl-compute-05.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 67D101400100;
-	Mon,  3 Nov 2025 05:17:05 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Mon, 03 Nov 2025 05:17:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=barre.sh; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1762165025;
-	 x=1762251425; bh=8I8MpOPXB7ZcC9lpAikBwCbV7Q54AcJYFLWaDJzNxFU=; b=
-	JzXT9LVrpaasboYIyHoeBInG0Y1m1DTbVNj0OgpOlsoQtMW8fl3EXavj6x3s9F1p
-	gbqfZuEU3hJTkp8uBhLcAVE4rDUxVKlOSzSQHSNtAejeasAFM+J5JpuM6LcfI6xZ
-	x92UAlkRpdG0wWcf0N97ygN1JcZAiLPTNevPjC0su+hybfD48RR1qAy485gsgqSr
-	VKwkyHGmTcwcmVVJ7NS6yAZnTmcslx1/nqQagImgXPjvGZjlXtwNf7Hv9i2rQ3J8
-	ZgKxH0c2m9AsT3KnJ0RioIqFeCRElSetJ7VGfVMoZQhCj9dba0j+45MK4eJpFh5Z
-	gPUxFKv4o6QDojVFX820lQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762165025; x=
-	1762251425; bh=8I8MpOPXB7ZcC9lpAikBwCbV7Q54AcJYFLWaDJzNxFU=; b=b
-	vlCS3qHuss8Tnk2IRihXwx8P0rzzuySNtK/JOV03kRbQACeAfc8q30+ElgK0uXuj
-	wKBb7ZoRTeBrL5ue+XSjUAbpSTeBenxFMCzrIjOnGycZ8K62TB7sYhAB1U+VLXhi
-	+UyttRGL62r93Y2mf9pw9C4B7kDC/Eynsk9m3+9+EDX19/kdUpvibG07Qd+l0W5f
-	33Olf+r2qqKIXBfgNLpasQ4oX0GbGRGiH3mB3OHjMtSjFYAwPxPeYANrn7k4dhSw
-	dRHr5BnNB5um3L2yJRyIgwc4OjDNFyE1H+6b77wnYkMXN1r556zTiBW/PDxPHfXG
-	45GukHbNzNOHoHFrUSFVw==
-X-ME-Sender: <xms:IIEIaalGrS96Pih8mg678jxD1RmJqEzg1W28Zli8JWzce37V8mhVLA>
-    <xme:IIEIaShavjrd7uZbH4XX4CXnF34HH3yvv9g8KA_rY-A0WZ-J7Nwb-r5t6M4ZCojtf
-    U1448AGCba9hQy9mMPpMXFOPiQuj-4LceuUDASIcdxYZ8Nu5nI_KPs>
-X-ME-Received: <xmr:IIEIaW0noRwE8rVozzo53q6WgUFcFmYChR7kJb51rv02f73EiNKw_bEGF0oTpUkcmOqKS69r8xhFkgJSywbyzi1jam7306-7_iPr3BVZAqVJuyovew>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujeejkeejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucenucfjughrpegtggfuhfgjffevgffkfhfvofesthejmh
-    dthhdtvdenucfhrhhomheprfhivghrrhgvuceurghrrhgvuceophhivghrrhgvsegsrghr
-    rhgvrdhshheqnecuggftrfgrthhtvghrnhepkefgleegkeduffekheeigfelfeeffffgud
-    dtgfevjefhtdduieevuedtgfejgeeinecuffhomhgrihhnpehgihhthhhusgdrtghomhen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehpihgvrh
-    hrvgessggrrhhrvgdrshhhpdhnsggprhgtphhtthhopeejpdhmohguvgepshhmthhpohhu
-    thdprhgtphhtthhopegrshhmrgguvghushestghouggvfihrvggtkhdrohhrghdprhgtph
-    htthhopehlihhnuhigpghoshhssegtrhhuuggvsgihthgvrdgtohhmpdhrtghpthhtohep
-    fihilhhlhiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehvlehfsheslhhish
-    htshdrlhhinhhugidruggvvhdprhgtphhtthhopegvrhhitghvhheskhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtoheplhhutghhohesihhonhhkohhvrdhnvghtpdhrtghpthhtoheplh
-    hinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:IIEIaTIX0yrE9Gx-PdY2Ran_BXcFenwz5NUM69TlmrYbWIdxDXviBA>
-    <xmx:IIEIaewnqhTFCMhfmjMI7WXKcXna4GO7Bnp4tYNx1KdeOcTvet73Ig>
-    <xmx:IIEIaZUCSrApZAJX3_3EvJTConRJwp4C8eOoQSSuSMwMEHKLoc90Jw>
-    <xmx:IIEIaWi1vbjTztGU43h3Yf5v_rZTsOh418bZWb-pBN4hEwQVip51DQ>
-    <xmx:IYEIadKz9Rb-WX9av3LmYDEyFH-v7xQEt02kKzkSsLSpuXNff7Wo3XZ5>
-Feedback-ID: i97614980:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 3 Nov 2025 05:17:03 -0500 (EST)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1762165073; c=relaxed/simple;
+	bh=8MiCb/wkimzT9J7ynbKauVkA4ev6a3Tt3Yba+gQGitY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=gjVxVYVHX08nkvZ7n/x2cHDkBNVHGgNvjwRtFG9gWdVoPw3YumuysJ8gD+wFjOtllVXeSBzqUv17Jv+93XEzwt4jXTj8pymel24dcycFmhhGe/9bOe3lm9uXgk/q78Dj4ornhqJUd9xGxiwY0OHu30Loq1MRMrH90g7f/KB3C0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u2iuyYRl; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-476b8c02445so33789295e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 02:17:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762165069; x=1762769869; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oOgM8WNLkc6Tm8aSr853varn89fMEi98z7ILIYLUAHI=;
+        b=u2iuyYRlALb/4MtI3k+vG70n2zuOdQKOw/wm3ErRBGVp4XSJiZTSO4NfZtID3KJ5SN
+         9O1X4PXRkucTU1DBaMMyF2qNXqG4vnqnDSUqTxV+664p3WIR9n0ipVVaWX2HBGo23+a2
+         2kw0upQBFBm46vGDz6y+kQPVp+TXVXsHDKms1jB9a/DvODyBSNoOMEIAkVMjRmsCcP2b
+         mevbCGOtAGRTPiKeUfKCkzqFpfp6XgZE/9d4Kzv4uetAvyJYiIskWlzl2Vhq1CKVanXr
+         cmpZxfcocIgvsTg6EAt5wft2Nc8kTfJ2zzve7mJ3zpiZib/R3c8oV7sSSWeUSTk+whHu
+         yYjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762165069; x=1762769869;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oOgM8WNLkc6Tm8aSr853varn89fMEi98z7ILIYLUAHI=;
+        b=VRh5lh7dudJPAa6xvEiWoWsZa7BDgcJMloUHDrxjN5A4ij5oZ9XbxerCije5CtELQR
+         nV9p3+jh6mSIxOrK8yXTrJFZFz9u3H51gp4i7opwf+/7wIdoGB2JzXHf9rsBPUlNfWIg
+         AL4NzZjYmtVIIHCSR2yEDulVbIhkgaIEtTN1vityH4/DAwsrFS7YglJ0iz6HexBr/WGA
+         TmokzdOOvG1g+3lrI97nwuCl5fZGmM4bYbg707/IbJuiLn+nr+n4dRETZ52FfBEglS6o
+         4u4fY/oeSS+qzppQ1qFD02szDPNO5HjSFLPHV/rZfHWcGPjwA8Jw6UtSQRgoyMJyrk29
+         ga3g==
+X-Forwarded-Encrypted: i=1; AJvYcCWzoMhwDeov1Zz5XI/AKs9UsohayNtknkzAzLRFIzpash7F6CaIapwAbKp1dUjzcTmU6sOPt11UqxrApqc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpsJJjxwpoEXkbcB0aOo55ON+SsYh0ujZegjgS/HlnABya4Zvl
+	94ON3vDs/1G7rDp//qnDSDe0xHvSymlSBbgYE/6N5d/J5qYCY26r3XaK88N7wLmSp+muiDHMdEe
+	G367jBFrcwH4FCif0FQ==
+X-Google-Smtp-Source: AGHT+IEGgSk8YGC/S8q02Xem2EpZ8CGSxhkfBY/COwRI6jkeUuW6v2BW/B/8X3uqJpmloBszvSIHf8ynay12SJQ=
+X-Received: from wmbg22.prod.google.com ([2002:a05:600c:a416:b0:477:14b8:19f6])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:190e:b0:471:669:ec1f with SMTP id 5b1f17b1804b1-47730791083mr125439425e9.8.1762165069626;
+ Mon, 03 Nov 2025 02:17:49 -0800 (PST)
+Date: Mon, 3 Nov 2025 10:17:48 +0000
+In-Reply-To: <20251102-bounded_ints-v2-1-7ef0c26b1d36@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.100.1.1.5\))
-Subject: Re: [PATCH v3] 9p: Use kvmalloc for message buffers on supported
- transports
-From: Pierre Barre <pierre@barre.sh>
-In-Reply-To: <aQhfVa_jdI_1kQwB@codewreck.org>
-Date: Mon, 3 Nov 2025 11:16:51 +0100
-Cc: Christian Schoenebeck <linux_oss@crudebyte.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- v9fs@lists.linux.dev,
- ericvh@kernel.org,
- lucho@ionkov.net,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <42356AE9-D6F7-425C-BCAE-8DB19A7E0629@barre.sh>
-References: <1fb9c439-73f3-4a00-8a8b-45eeb85883eb@app.fastmail.com>
- <8602724.2ttRNpPraX@silver>
- <7005d8d9-d42d-409f-b8e3-cd7207059eee@app.fastmail.com>
- <5019358.GXAFRqVoOG@silver>
- <d2017c29-11fb-44a5-bd0f-4204329bbefb@app.fastmail.com>
- <aQhfVa_jdI_1kQwB@codewreck.org>
-To: asmadeus <asmadeus@codewreck.org>
-X-Mailer: Apple Mail (2.3864.100.1.1.5)
+Mime-Version: 1.0
+References: <20251102-bounded_ints-v2-0-7ef0c26b1d36@nvidia.com> <20251102-bounded_ints-v2-1-7ef0c26b1d36@nvidia.com>
+Message-ID: <aQiBTOj1jl4xM3pJ@google.com>
+Subject: Re: [PATCH v2 1/2] rust: add BitInt integer wrapping type
+From: Alice Ryhl <aliceryhl@google.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Yury Norov <yury.norov@gmail.com>, 
+	Jesung Yang <y.j3ms.n@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-
-
-> On 3 Nov 2025, at 08:52, asmadeus <asmadeus@codewreck.org> wrote:
+On Sun, Nov 02, 2025 at 11:24:42PM +0900, Alexandre Courbot wrote:
+> Add the `BitInt` type, which is an integer on which the number of bits
+> allowed to be used is restricted, capping its maximal value below that
+> of primitive type is wraps.
 > 
-> Pierre Barre wrote on Thu, Oct 16, 2025 at 03:58:36PM +0200:
->> While developing a 9P server (https://github.com/Barre/ZeroFS) and
->> testing it under high-load, I was running into allocation failures.
->> The failures occur even with plenty of free memory available because
->> kmalloc requires contiguous physical memory.
->> 
->> This results in errors like:
->> ls: page allocation failure: order:7, mode:0x40c40(GFP_NOFS|__GFP_COMP)
->> 
->> This patch introduces a transport capability flag (supports_vmalloc)
->> that indicates whether a transport can work with vmalloc'd buffers
->> (non-physically contiguous memory). Transports requiring DMA should
->> leave this flag as false.
->> 
->> The fd-based transports (tcp, unix, fd) set this flag to true, and
->> p9_fcall_init will use kvmalloc instead of kmalloc for these
->> transports. This allows the allocator to fall back to vmalloc when
->> contiguous physical memory is not available.
->> 
->> Additionally, if kmem_cache_alloc fails, the code falls back to
->> kvmalloc for transports that support it.
->> 
->> Signed-off-by: Pierre Barre <pierre@barre.sh>
+> This is useful to e.g. enforce guarantees when working with bit fields.
 > 
-> Thanks, it's now picked up and queued in -next -- will send to Linus in
-> a couple of months.
+> Alongside this type, provide many `From` and `TryFrom` implementations
+> are to reduce friction when using with regular integer types. Proxy
+> implementations of common integer traits are also provided.
 > 
-> FWIW, I prefer (and I think it's the norm in the linux world) if patches
-> new versions aren't sent as a reply to previous version, it confuses
-> tools like b4 that fetch the patch thread for version operations.
-> If you send patches again please just send later versions without
-> using --in-reply-to :)
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 
-Got it, thank you!
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
-Best,
-Pierre
-> 
-> Cheers,
-> -- 
-> Dominique Martinet | Asmadeus
+> +                // Statically assert that `VALUE` fits within the set number of bits.
+> +                const {
+> +                    build_assert!(fits_within!(VALUE, $type, NUM_BITS));
+> +                }
 
+Since it's in a const block, this can just be an assert!.
+
+Alice
 
