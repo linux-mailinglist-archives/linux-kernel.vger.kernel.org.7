@@ -1,114 +1,174 @@
-Return-Path: <linux-kernel+bounces-882818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 782AEC2B944
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:13:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFCE5C2B95C
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:14:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4FD6188DEC3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:13:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 231F63B58FF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB9E93093C6;
-	Mon,  3 Nov 2025 12:13:15 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F69D1DE3B5
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 12:13:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20E0309EE4;
+	Mon,  3 Nov 2025 12:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OUzK5wEF";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="UNAx7P27"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371861DE3B5
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 12:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762171995; cv=none; b=Z5oqhAgbuqAnh8wI5GQka66k9ufnciE41Y+X0obc/JZv3f4ko2soD7tBg3O7qbJTjyk9dvEr3tH920yuZrZlcA4DG2kCKw+KrBOQVF9/YZ1xCveLz9B5NRnU2MJ4RGpAqFtHMhjNVsv0N9Jf9RQyEJFYmnIRKtDUhs66HpVx1tQ=
+	t=1762172068; cv=none; b=D+eyqP6zPD8bCMBbfPf1yGRN5Hf69wqFf3GvuxWyVzdryS/lgX7dk2LdkUeEebbRV1J5A7ud4q8sxwbbRKOqCWfkucSB137UdEC3obJwQfz6b5zD/j0ekV+XdLSK1sr68wx3QKg7RLL0hmyflUNkZ5cfrScuvemF7DINUhfmM68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762171995; c=relaxed/simple;
-	bh=cKDv2X4DK0tbk0FPi80niRf4hyzMN/offfJRi+lWso0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AIawt+qsSB3nDEdTZC0s6qLFTi7oT/l9bF8OK1UzA95Vl5ugUpfO23jJR4AnAqZX9ZBLhTxT8TrLsbR9aHxhTG9dvSc3K2BbsNEbrROvhEdBZPGV+z2EF5LsHwRDivLABR8l5AVv2glrNk4VJzV/3U1xATw6w1ZISiYMUeJ8Qbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2EAE61D13
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 04:12:57 -0800 (PST)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AC8233F694
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 04:13:04 -0800 (PST)
-Date: Mon, 3 Nov 2025 12:12:50 +0000
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: Ketil Johnsen <ketil.johnsen@arm.com>
-Cc: Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Heiko Stuebner <heiko@sntech.de>, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] drm/panthor: Fix UAF race between device unplug and
- FW event processing
-Message-ID: <aQicQqpYYRvukRM0@e110455-lin.cambridge.arm.com>
-References: <20251027140217.121274-1-ketil.johnsen@arm.com>
+	s=arc-20240116; t=1762172068; c=relaxed/simple;
+	bh=JTYZcKugNZOA0vYR2o3dVvUjZjHQpyWvNa4nAUsB1/w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OHgJ0VaPaPMTv5DueOH6Pnx4+9DJEkih40uKi0xy9GHZFJJjAEz35sNn67DYaom4M/FTS82Lwhfay9a/tmkECu9cP+AfHqqECBU6W/GdUKE+Z2jPWlpVE8amZ/aXwK8dQG+XBasaBO00K66TPHOQ1jwRL/i9DF7bZMkAfIhglB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OUzK5wEF; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=UNAx7P27; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A39AHip1507187
+	for <linux-kernel@vger.kernel.org>; Mon, 3 Nov 2025 12:14:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	6PPtwZvy+gqvwwYYjdp01cD8qHwlSUjev3sm8V5A7n8=; b=OUzK5wEFC9V0CHDj
+	GQ43SzIWe1qeGLVQY1cULEJLKVNG0kDOlmmNJ18aN7Jh1VKQFeWE0iBawNDgzRUx
+	5OH8EQEKRP+LE3BFKvwnlUHHXB2ySN/OQblyq4oUHHCOrU7PNDJunlAWBN+YGOoY
+	jJM/nEhg3WZEhd0dQkaEYj+rZVD9oy1tWqIsnTJI/x3K3UYTo47za0JAPamLkPeW
+	+vcz12BHIqe+vyrzAxRPtvBk6XJaxKJM9ESxX/G/QMfT3EPrJ7YPCAvEwGYSg590
+	KnC8hHSzVjq4OhpvUHLsC9tB8X9pXAIffG+/kXv7oWZPQXyseiwP6bWfYRWerTg/
+	kdkz2w==
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a5ak8mjnj-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 12:14:25 +0000 (GMT)
+Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-8ad3adb1f15so74317785a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 04:14:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762172064; x=1762776864; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6PPtwZvy+gqvwwYYjdp01cD8qHwlSUjev3sm8V5A7n8=;
+        b=UNAx7P27BAiYPYoUMw1t1o//wNODLItHFD3I3YJ1N+I16WRTusSztY8NG6+WgTT01a
+         5VXDffrNTz9IDmZiUipzBRBTMapqZXnCkGXq1aQW7KrqyfkhKQIoCwPf5Zkx5m2Qs8BH
+         G5sN4+W9ok9UyDoPX4wktKIMJMjHpH3FPe0UdvDNqNTY12fCKzzbuFEzlY0hdwc5DgwX
+         aOl9VYPaFkXvTGmWMvSM8T+ZSHIL9kfInFwiDWashP+KljOBAp7qBZ2K2LQMNNSSI708
+         bhpDJS+8JqitBgf2EvlKbL5L2dvX7Zcfoh3+BCI5RmWI1EPfpGfb46kmdxJYuOncqOxe
+         FnTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762172064; x=1762776864;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6PPtwZvy+gqvwwYYjdp01cD8qHwlSUjev3sm8V5A7n8=;
+        b=K5smicYH/k97POtIR+gCOsaSDkJAivtDqr4xwlBKdrbfTy9yOkJlbWJdB91Wu9BByw
+         AzCrLPiJ/bKJaFjj/gg1JUcDyP8uTQntuGEj7SpDUStA1nUzvuS1d8rNAC0dhELG8208
+         +8vxkzjxQxptdAmb8q8I+Si/xsaPoLoOVFQZPuVSYm715tA2vOodV24FuIn5Xfy14on4
+         3vimsurNcm8rEvmsbpg4v37pxXEy4uLqGmPcZIUm6rRfwceEYnEok7U6EF7bjqOKR8NX
+         UqT2VpH+/rMVa2A6Nkk7ltIxrH8KR1nnpebDWbPHd7VdNOMTnVm9SEAd2TMpb62w3CEW
+         wlPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVLL34Ok7U1kv3z7AV299eIFMZHuE0fIqiqanhBRdOxHHmQa22wg8uU+2iJLRO9eGmKqi07YbOwyIFIOqc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPgW6N68lTq4YK3IGfKJptA3gtPXSakmXq2CURhozmc2cinEWh
+	imhbzPJvj/j+7x6OR5N3ydG5FhPhCoA9JTn1cm+HtmP7BiTarQvnJWUiLzaAMD6xHqK+ik9dcZM
+	j4zL6u5ciZ8eT91It8vltF6Q9aeTxoRzj//nBIbuY+X6o9wy71Nzt5jA/R0uxmiVTmOs=
+X-Gm-Gg: ASbGncvQgbfZdFGGCUwSA2mlN+dTq0EsCZUlcIuJmgZc1fmtBgNc42zXxc7zCpGBvrI
+	1bhZTaYHQJjwTZjdmqOE6sK04OpynDmQG4nl33dVR9ezZR8hhSr2IDOquWHeL6BZCF95FaK4xpf
+	d4vi0L3TDxM5w8AGkM2lzspL0pziUyX9Vryc3zdfft359qre1Ta2jIUbmVd7Z2v0SIz6OE3l248
+	KfaLnds12UE6F9a9SqO1DrWxo1Itcf6hOZpG3zuXEg7ziSVqBANp8gsvD8cD/P0Oi+FR1853qvl
+	iIwkbDDNYItHGVQut+wtvlDdp/aszVpzlWAF5p8ptWav7iYf2uRFCvF+3DW224pveMvDYDgVq1q
+	AqOwHUyQsj4312Lc2WTQjVfds/H5DqWQbaapOB7MgRe2Immcy1p1A6Qgx
+X-Received: by 2002:a05:622a:14c:b0:4ec:f7e4:8a0e with SMTP id d75a77b69052e-4ed30f84d8bmr115447981cf.9.1762172064488;
+        Mon, 03 Nov 2025 04:14:24 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFojfDNx4zUtTBFnI84zhhJWl5ScbUrZr2SjZmrkUFo9wwBQljbRwY0JohB1/KDEp4gMP6DxQ==
+X-Received: by 2002:a05:622a:14c:b0:4ec:f7e4:8a0e with SMTP id d75a77b69052e-4ed30f84d8bmr115447551cf.9.1762172063877;
+        Mon, 03 Nov 2025 04:14:23 -0800 (PST)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5941f5bc248sm2843451e87.91.2025.11.03.04.14.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Nov 2025 04:14:23 -0800 (PST)
+Message-ID: <c93afd94-9d94-42fb-a312-df6e26bb2bc8@oss.qualcomm.com>
+Date: Mon, 3 Nov 2025 13:14:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251027140217.121274-1-ketil.johnsen@arm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/7] Various dt-bindings for Milos and The Fairphone
+ (Gen. 6) addition
+To: Luca Weiss <luca.weiss@fairphone.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>, Vinod Koul <vkoul@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Bjorn Andersson
+ <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-crypto@vger.kernel.org
+References: <20250905-sm7635-fp6-initial-v3-0-0117c2eff1b7@fairphone.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250905-sm7635-fp6-initial-v3-0-0117c2eff1b7@fairphone.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: KO88KZwrZKFPnIqvpEBCStXww9GLr3Ed
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAzMDExMSBTYWx0ZWRfX4d7/zP9nn4KG
+ jLBpMAUYHnAKYKYw53STDcgUpYCBZCmWv37R81bAZ1k8YKBUyqkF9YHBj6zrfg04+ZAGktUyFFj
+ r7gM7XKwxeNPmc/hhyyD/GnuyY3IThp+JXNfqKn4XWgNglgkODvtkg4CBcAvYWsNLMKPXnJjvOp
+ gSqBrNs0vDiPgydVKm6ePh6DmtrnzNQ3iPY4NIJEfdbuwv80CJOrH1U05fBC21Uj5FG3I7tYYjn
+ TuGeW21qmT/FpkNgrR5vsg5iVAmHHM3rX1X8p1g1H052ppFYPfq9FC652hpKK4sWyI/hUooDU81
+ lXK1lF6yd1/jRlGiUgJytpj3krskdWvm2mdcSh91UPAjiZqzvYV2wAXa1QPkyBhMSzHs7zUAUP9
+ ukOG0ptCD5PLiWyp1XfPD4apFTNmlg==
+X-Authority-Analysis: v=2.4 cv=ZZEQ98VA c=1 sm=1 tr=0 ts=69089ca1 cx=c_pps
+ a=50t2pK5VMbmlHzFWWp8p/g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=6H0WHjuAAAAA:8 a=PtzdWR5wS_Xl21Jse7IA:9
+ a=QEXdDO2ut3YA:10 a=IoWCM6iH3mJn3m4BftBB:22 a=Soq9LBFxuPC4vsCAQt-j:22
+X-Proofpoint-GUID: KO88KZwrZKFPnIqvpEBCStXww9GLr3Ed
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-03_01,2025-11-03_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ priorityscore=1501 spamscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0
+ adultscore=0 bulkscore=0 impostorscore=0 suspectscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511030111
 
-On Mon, Oct 27, 2025 at 03:02:15PM +0100, Ketil Johnsen wrote:
-> The function panthor_fw_unplug() will free the FW memory sections.
-> The problem is that there could still be pending FW events which are yet
-> not handled at this point. process_fw_events_work() can in this case try
-> to access said freed memory.
+On 9/5/25 12:40 PM, Luca Weiss wrote:
+> Document various bits of the Milos SoC in the dt-bindings, which don't
+> really need any other changes.
 > 
-> Simply call disable_work_sync() to both drain and prevent future
-> invocation of process_fw_events_work().
+> Then we can add the dtsi for the Milos SoC and finally add a dts for
+> the newly announced The Fairphone (Gen. 6) smartphone.
 > 
-> Signed-off-by: Ketil Johnsen <ketil.johnsen@arm.com>
-> Fixes: de85488138247 ("drm/panthor: Add the scheduler logical block")
-
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
-
-Best regards,
-Liviu
-
+> Dependencies:
+> * The dt-bindings should not have any dependencies on any other patches.
+> * The qcom dts bits depend on most other Milos patchsets I have sent in
+>   conjuction with this one. The exact ones are specified in the b4 deps.
+> 
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 > ---
-> v2:
-> - Followed Boris's advice and handle the race purely within the
->   scheduler block (by adding a destroyed state)
-> 
-> v3:
-> - New approach, one single call to disable_work_sync()
-> ---
->  drivers/gpu/drm/panthor/panthor_sched.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
-> index 0cc9055f4ee52..b7595beaa0205 100644
-> --- a/drivers/gpu/drm/panthor/panthor_sched.c
-> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
-> @@ -3880,6 +3880,7 @@ void panthor_sched_unplug(struct panthor_device *ptdev)
->  	struct panthor_scheduler *sched = ptdev->scheduler;
->  
->  	cancel_delayed_work_sync(&sched->tick_work);
-> +	disable_work_sync(&sched->fw_events_work);
->  
->  	mutex_lock(&sched->lock);
->  	if (sched->pm.has_ref) {
-> -- 
-> 2.47.2
-> 
 
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+FWIW this looks good.. where are we with regards to the dependencies?
+
+Are we waiting for anything else than the PMIV0104 (as part of glymur/
+kaanapali)?
+
+Konrad
 
