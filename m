@@ -1,244 +1,177 @@
-Return-Path: <linux-kernel+bounces-882403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8AD6C2A60C
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:42:40 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F883C2A608
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:42:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B5513B51D6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:41:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4EE0B4EC620
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1220E2C0F81;
-	Mon,  3 Nov 2025 07:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D879C2BEFE7;
+	Mon,  3 Nov 2025 07:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i9bhxGfR"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Fco/1o4Y";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="36nnXm7N";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nz0e0JhF";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ruSI0m/z"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468832C0F73
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 07:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC202BEFFF
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 07:41:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762155630; cv=none; b=YFqifapPZu9IyyHF79PVzHp+6qQQ86/vFY6TzWrVd4MsIpi5Te+OC8TRr423rxTjZalDxGpbuPqXAXXvlnTrPijkjm4jfAGxKu/rSQmR0dXpt6McKp9xkZaHP1jhTHnqn7xWfHKdPRjY9mAL2+4d1Jt8PstydWT+x9h06Q7bgds=
+	t=1762155712; cv=none; b=t+hiuC94s42WYLCaFtCs0uHyNRTBaqUK/QJdm49M2QGbJgUz8W14Px6XtiwlvwEMTBnxQ46qWhlJM1LlK2cK2mDruSzijEEmoGbwfCjkKVnUafSv+hTt362bYO2NzHqGZ4E7+VJ3/XT1d/PRTWvKmdrGUtmCub9b1034rFgnM8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762155630; c=relaxed/simple;
-	bh=SlYci0dHrICe6IYWx0Y+e0NJm66MSzaFWjZ4oIwtkgM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Lbvwl8KEgMk09P6PbJi88bLoUhQ9QPK7enxyjZ1qqecY/SPoEIE6pYRivAhaw9Ox4VALj/E8+5+LPavUjN3tvbcGwWcFbVgF9Ze/g9pKnbvZvcXQELs/qpCpTyRQR7A62G86pcZ18A5yLyLbjo7xfXw0K/sRZk6zvAZ8Fl9JTrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i9bhxGfR; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b713c7096f9so51849566b.3
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 23:40:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762155626; x=1762760426; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j2AFHpbxsNUgkkbbq9RMTdgycoyfFsp4yUttyYC4IbY=;
-        b=i9bhxGfRytoa+8P67zy5qKnoV+M4B/nJwKWsp89XkE4Gc3/IF15NtPFYFJC0J9rFiJ
-         UoLT/gekVSfPJUQe7OZSqBM+kDaJOphcEQH3pm2YrHuu8UtU5gxoaQN03DfwBZ8RoOxD
-         LWUNoI08sp0ZVSp1hQuM0eCWlydQAeoYsaaJausQNUfoQijpNG++KF53wz3vepZjmdXu
-         GPsRiwyzMM0JryLhZ2dBGIZ3lOblMIPOUM+aujhMc6HPRC+6w617Owdgz/ZW177ZCYad
-         P3moLp6s2XbSrHqDd1dEouMJhGsrtWunRVYALiqKleBjRgFq3AdoiD4Mf1X8AbnV1Z6g
-         XiBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762155626; x=1762760426;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j2AFHpbxsNUgkkbbq9RMTdgycoyfFsp4yUttyYC4IbY=;
-        b=PeYyurr5ZjdQ1gEogBVvE3u7Kag+ohMahmAlrUHgpz9Fk1eGZmmn8OYibI6CEkUjiZ
-         w09wCQLoWCCSSobVfSkBIYSvR8iNOnwoc7JBaJwB1C9FxXGkXlEeuZLPAP+nCbUUkRVe
-         4hkJvBxUh2XWOwz1exv27j8owsl/eI6ax23Wds7fSs4F9smK0ZBvGV+0ZdGIg18F3M7t
-         lPjrM1mvMEP+jnxNGEy+VFU7UFagVo/cJ4qKsD2rynWKSVU9adhMELdMhxya7OZZe3bz
-         Y25AYxy1zmagmWcssiV6xi9FEyJ6Jdjqp/gYrHz+0mh0FPUFYG+5X4FaRNx5r9txLr1F
-         ka6g==
-X-Forwarded-Encrypted: i=1; AJvYcCXCP+9mFRTsopC5rLAtZRF5zh4LUi9E95YRA3aNTBLxQiudCPkmtKlIqEsvbI10VIj+STOGwDVmEMMAmm4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxhozg4dhCjmkbL5x/r+s246r85aNImN5lG8JQj23JyjCGIO68Q
-	SP2fPXQAxcXMHA1VQE5+2u5n3G59xrpyz/vPtHtrP+dAZehHI+ezkLF8
-X-Gm-Gg: ASbGncvn/aRlNBCF7uQiwp9yVDaIHT4DVtPfkXiCeNFkwaS7BWlWlx3i4QDeDfFmEMY
-	z3/0cYNveJ51rYwGyww10O2GQXdB9Kyiq2SH+ju3/5WyNOMuJpXQe2KgGWzlChOIvxULcSbQpQD
-	8aQ9XiAovI0Xjjgbd4AqS4kTWbnjnOUmunggyvLys3Gb1Op4nK7QMYHP89J/joqvVro3/r1EZWr
-	ZMnuu68N5OE7gOc2USFsyNEPQvNzcDqqr++NvVP4xxrxC6Iwtn/U5ua3NblhXkJygkH2JfvwdaD
-	kG9S5lYlCDOxW07YvBxsbLASn3ISQ8x0kaJQ0rk+Se4krJIVu3Eg72I7GVaDTd61zBeTBphe19q
-	DNO6dJd5dQ5hmS/0jyQSBOd5hwOpF0pUGqTLs0Bc1zUacu6Gnrmk38vh6qIoAzrPV/mElW2khYe
-	5q9TVonTFc3FAteTUO5WLbM+I=
-X-Google-Smtp-Source: AGHT+IGKT2y7pvRw9Ei6hvplikIPDxCl0VQxMHigFaaEnt+tk1MLnjtl0oCPOkTCngJEh5b5IFkpeA==
-X-Received: by 2002:a17:907:7f0f:b0:b6d:536f:ada with SMTP id a640c23a62f3a-b7070627837mr1069754166b.43.1762155626262;
-        Sun, 02 Nov 2025 23:40:26 -0800 (PST)
-Received: from foxbook (bgu110.neoplus.adsl.tpnet.pl. [83.28.84.110])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7077c3ad94sm963280266b.47.2025.11.02.23.40.25
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Sun, 02 Nov 2025 23:40:25 -0800 (PST)
-Date: Mon, 3 Nov 2025 08:40:21 +0100
-From: Michal Pecio <michal.pecio@gmail.com>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: x86@kernel.org, regressions@lists.linux.dev, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
- <bp@alien8.de>, Mario Limonciello <mario.limonciello@amd.com>, Eric
- DeVolder <eric.devolder@oracle.com>, linux-kernel@vger.kernel.org
-Subject: Re: AMD topology broken on various 754/AM2+/AM3/AM3+ systems causes
- NB/EDAC/GART regression since 6.14
-Message-ID: <20251103084021.61971a89.michal.pecio@gmail.com>
-In-Reply-To: <20251024213204.GA311478@yaz-khff2.amd.com>
-References: <20251024204658.3da9bf3f.michal.pecio@gmail.com>
-	<20251024213204.GA311478@yaz-khff2.amd.com>
+	s=arc-20240116; t=1762155712; c=relaxed/simple;
+	bh=eP192i3l/QqHyo+S9e/JNIQT+fCbHSmrMaT6+p6HfBY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fCFOcQLOQgJN64uKJO2rxErnU9WwWiNYOP9sMwPwulHf/H7ZB7PgvBNY6ds0YtsSzoJwlBFPwZ/xXy9untwrjS6U7gfJKosvorMu9ak5revkjd8887FLvMC4I0IJXCvca1+Sieb9BhOIuq5KsIBsK3BR4R9RHrqKCIHB8u/Yzv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Fco/1o4Y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=36nnXm7N; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nz0e0JhF; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ruSI0m/z; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D309D1F787;
+	Mon,  3 Nov 2025 07:41:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762155703; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Uf4jQTpB9VGe8rGSo1CupspYWZxA+nV5Rkk/NcNgaTk=;
+	b=Fco/1o4YyB8iS5bcU70L/XwLCQmi7qhWcwRKdn0IP7ikTW2SnYYMejZHOhFOlJkj2aqbYv
+	7Og4UdFt3FYyg0RAaJiJd87MyeKJqIMGRah3xgjwru1mrFcbM71/MRFI61T4CNKbQ/sX/a
+	tExDc26+tFJuMH/kJjt8STWfE9jf66s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762155703;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Uf4jQTpB9VGe8rGSo1CupspYWZxA+nV5Rkk/NcNgaTk=;
+	b=36nnXm7NdXBObt6o7MmXBreIjaTra9Fc9Esd6P/Sn6DNWcwYHVi8j93/BIkgjqD+wt54Zp
+	zJn9a7o979ZCSOAw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762155702; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Uf4jQTpB9VGe8rGSo1CupspYWZxA+nV5Rkk/NcNgaTk=;
+	b=nz0e0JhFowNrzf/aSLze8jAtlvEedLy3sCYQJeKOvmoebvnHAa0rrjsHlx4/ew7ybr+Hus
+	DaS7mMAkVoD6YCAlLaA0sqopXJS8OVwxLjz1cDgKMnO9Hhgwt88xOvdli9dLflEd33tppW
+	k14iL1q7Be1O1sFP4KIK6EZX/kj7JAc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762155702;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Uf4jQTpB9VGe8rGSo1CupspYWZxA+nV5Rkk/NcNgaTk=;
+	b=ruSI0m/zQZfLi+kTpwut7bmbwxLnOc9AATOzXEy5HyIzV774iyAoJsuyYLIBARDgakIh0N
+	CJXb55htoN3cmbAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B7B4813A88;
+	Mon,  3 Nov 2025 07:41:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id F6rPLLZcCGlVQgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 03 Nov 2025 07:41:42 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 24BF0A2A61; Mon,  3 Nov 2025 08:41:42 +0100 (CET)
+Date: Mon, 3 Nov 2025 08:41:42 +0100
+From: Jan Kara <jack@suse.cz>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
+	jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com, 
+	mcgrof@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com, 
+	libaokun1@huawei.com
+Subject: Re: [PATCH 01/25] ext4: remove page offset calculation in
+ ext4_block_zero_page_range()
+Message-ID: <w7dawsu3tli23h6ezt4u7evprczgbezylnbyh3sqhv5rfimg4q@5vqelz5hsev6>
+References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
+ <20251025032221.2905818-2-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251025032221.2905818-2-libaokun@huaweicloud.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-0.24 / 50.00];
+	SEM_URIBL(3.50)[huaweicloud.com:email];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.14)[-0.682];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_NONE(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -0.24
 
-On Fri, 24 Oct 2025 17:32:04 -0400, Yazen Ghannam wrote:
-> So far, I think the way to go is add explicit quirk for known issues.
+On Sat 25-10-25 11:21:57, libaokun@huaweicloud.com wrote:
+> From: Zhihao Cheng <chengzhihao1@huawei.com>
 > 
-> Please see the patch below.
+> For bs <= ps scenarios, calculating the offset within the block is
+> sufficient. For bs > ps, an initial page offset calculation can lead to
+> incorrect behavior. Thus this redundant calculation has been removed.
 > 
-> Thanks,
-> Yazen
-> 
-> 
-> From eeb0745e973055d8840b536cfa842d6f2bf4ac52 Mon Sep 17 00:00:00 2001
-> From: Yazen Ghannam <yazen.ghannam@amd.com>
-> Date: Fri, 24 Oct 2025 21:19:26 +0000
-> Subject: [PATCH] x86/topology: Add helper to ignore bogus MADT entries
-> 
-> Some older Intel and AMD systems include bogus ACPI MADT entries. These
-> entries show as "disabled". And it's not clear if they are physically
-> present but offline, i.e halted. Or if they are not physically present
-> at all.
-> 
-> Ideally, if they are not physically present, then they should not be
-> listed in MADT. There doesn't seem to be any explicit x86 topology info
-> that can be used to verify if the entries are bogus or not.
-> 
-> Add a  helper function to collect vendor-specific checks to ignore bogus
-> APIC IDs. Start with known quirks for an Intel SNB model and older AMD
-> K10 models.
-> 
-> Fixes: f0551af02130 ("x86/topology: Ignore non-present APIC IDs in a present package")
-> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
 > ---
->  arch/x86/kernel/cpu/topology.c | 52 ++++++++++++++++++++++++++--------
->  1 file changed, 40 insertions(+), 12 deletions(-)
+>  fs/ext4/inode.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
-> diff --git a/arch/x86/kernel/cpu/topology.c b/arch/x86/kernel/cpu/topology.c
-> index 6073a16628f9..704788b92395 100644
-> --- a/arch/x86/kernel/cpu/topology.c
-> +++ b/arch/x86/kernel/cpu/topology.c
-> @@ -219,6 +219,45 @@ static unsigned int topo_unit_count(u32 lvlid, enum x86_topology_domains at_leve
->  	return cnt;
->  }
->  
-> +/*
-> + * Some older BIOSes include extra entries in MADT.
-> + * Do some vendor-specific checks to ignore them.
-> + */
-> +static bool ignore_extra_apic_entry(u32 apic_id)
-> +{
-> +	u32 pkgid = topo_apicid(apic_id, TOPO_PKG_DOMAIN);
-> +	struct cpuinfo_x86 *c = &boot_cpu_data;
-> +
-> +	/* Allow "physically not possible" cases if in a guest. */
-> +	if (!hypervisor_is_type(X86_HYPER_NATIVE))
-> +	       return false;
-> +
-> +	/* This model only supports 8 threads in a package. */
-> +	if (c->x86_vendor == X86_VENDOR_INTEL &&
-> +	    c->x86 == 0x6 && c->x86_model == 0x2d) {
-> +		if (topo_unit_count(pkgid, TOPO_PKG_DOMAIN, phys_cpu_present_map) >= 8)
-
-Looks like possible functional change compared to the code it replaces,
-perhaps it should be a separate patch?
-
-> +			goto reject;
-> +	}
-> +
-> +	/*
-> +	 * Various older models have extra entries. A common trait is that the
-> +	 * package ID derived from the APIC ID would be more than was ever supported.
-> +	 */
-> +	if (c->x86_vendor == X86_VENDOR_AMD && c->x86 < 0x17) {
-> +		pkgid >>= x86_topo_system.dom_shifts[TOPO_PKG_DOMAIN - 1];
-> +
-> +		if (pkgid >= 8)
-> +			goto reject;
-
-Yes, this works. The excess entries are counted as "rejected" rather
-than "hotpluggable", package count is correct and EDAC/GART are back.
-
-But to be exact, the known case is (apic_id >= 0x80) rather than
-(pkgid >= 8). The latter assumes not only that there are no more than
-8 packages, but also that their IDs start from zero.
-
-I have this AM4 system with some proprietary HP BIOS:
-
-[02Fh 0047 001h]               Local Apic ID : 10
-[037h 0055 001h]               Local Apic ID : 11
-[03Fh 0063 001h]               Local Apic ID : 12
-[047h 0071 001h]               Local Apic ID : 13
-
-domain: Thread     shift: 0 dom_size:     1 max_threads:     1
-domain: Core       shift: 4 dom_size:    16 max_threads:    16
-domain: Module     shift: 4 dom_size:     1 max_threads:    16
-domain: Tile       shift: 4 dom_size:     1 max_threads:    16
-domain: Die        shift: 4 dom_size:     1 max_threads:    16
-domain: DieGrp     shift: 4 dom_size:     1 max_threads:    16
-domain: Package    shift: 4 dom_size:     1 max_threads:    16
-
-It seems that pkgid is 0x1 here, which is not a problem because
-it's single socket, but dunno if HP or somebody else couldn't do
-similar things in an 8-socket system and end up with pkgid > 8.
-
-
-By the way, do you know what's the reason I don't have /sys directories
-for those phantom CPUs (before this patch) and should I have them if
-they were legitimate hotplug CPUs?
-
-Maybe there is already some check performed in other part of the kernel
-which rejects those CPUs and which could be replicated here.
-
-> +	}
-> +
-> +	return false;
-> +
-> +reject:
-> +	pr_info_once("Ignoring hot-pluggable APIC ID %x.\n", apic_id);
-> +	topo_info.nr_rejected_cpus++;
-> +	return true;
-> +}
-> +
->  static __init void topo_register_apic(u32 apic_id, u32 acpi_id, bool present)
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index e99306a8f47c..0742039c53a7 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -4157,9 +4157,8 @@ static int ext4_block_zero_page_range(handle_t *handle,
+>  		struct address_space *mapping, loff_t from, loff_t length)
 >  {
->  	int cpu, dom;
-> @@ -240,19 +279,8 @@ static __init void topo_register_apic(u32 apic_id, u32 acpi_id, bool present)
->  		cpuid_to_apicid[cpu] = apic_id;
->  		topo_set_cpuids(cpu, apic_id, acpi_id);
->  	} else {
-> -		u32 pkgid = topo_apicid(apic_id, TOPO_PKG_DOMAIN);
-> -
-> -		/*
-> -		 * Check for present APICs in the same package when running
-> -		 * on bare metal. Allow the bogosity in a guest.
-> -		 */
-> -		if (hypervisor_is_type(X86_HYPER_NATIVE) &&
-> -		    topo_unit_count(pkgid, TOPO_PKG_DOMAIN, phys_cpu_present_map)) {
-> -			pr_info_once("Ignoring hot-pluggable APIC ID %x in present package.\n",
-> -				     apic_id);
-> -			topo_info.nr_rejected_cpus++;
-> +		if (ignore_extra_apic_entry(apic_id))
->  			return;
-> -		}
+>  	struct inode *inode = mapping->host;
+> -	unsigned offset = from & (PAGE_SIZE-1);
+>  	unsigned blocksize = inode->i_sb->s_blocksize;
+> -	unsigned max = blocksize - (offset & (blocksize - 1));
+> +	unsigned int max = blocksize - (from & (blocksize - 1));
 >  
->  		topo_info.nr_disabled_cpus++;
->  	}
+>  	/*
+>  	 * correct length if it does not fall between
 > -- 
-> 2.51.1
+> 2.46.1
 > 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
