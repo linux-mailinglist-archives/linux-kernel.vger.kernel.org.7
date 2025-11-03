@@ -1,199 +1,187 @@
-Return-Path: <linux-kernel+bounces-882728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DA71C2B3FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:09:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFAD4C2B6F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:38:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E66A04F2BD1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:08:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70E4418981E8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF8C301704;
-	Mon,  3 Nov 2025 11:07:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25D7E305949;
+	Mon,  3 Nov 2025 11:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O3UfXCBT"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="FxDwCxq/"
+Received: from server.couthit.com (server.couthit.com [162.240.164.96])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A6112FE58F
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 11:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A4C3054CE;
+	Mon,  3 Nov 2025 11:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762168052; cv=none; b=Y3quuRtN3WNEWqxWmcJWkSLqWOmT9ur7lCVCpbI7L9cypCZDse3eD2fgM54BTw8kXAIlHfJJnL/fORarHTHfONH44avuvysuumFY6RoUXVUVb0j8KJZ+vRiCffFcNk/v41q55OdeRGZz8y40X/Om0MMRtDZ9Hks2ZOgbEKeh8M4=
+	t=1762169408; cv=none; b=dE3HKoRDKDX210XAh0I+MkoYuIP5zL91NKBBqthcd8QfzVv/IquGDe2xXOksPxTiboekSVBwu+D6kF9QpK8q9BsFdtGaxyGFwqmYcCyhQCu2lbvlZA6ky16RlueZCHVK4YBIXDD6NR8y3SNs+VZMgqrM3pHKmQFO7DiPyGYjAQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762168052; c=relaxed/simple;
-	bh=mA9KY7uIbnEgVR1SSsuX7u/ye9v5ngsAxc98lcuXZH8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kNfovDh9qUdaZeQxVk25IPhAvkWQRSbkOKX63bUptKTWPadQ8kmUZPJWS3f/E9F2hrWxqRWn60KSLRgFko7znvCbtqyIlfp9rXw6/5P0DzlHVd41C2kEqG7lN78fFK0PIuxy6/XTuw3I9/ZrrfQQlKohd0ewc9N4fnNtqm3SC1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O3UfXCBT; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-3402942e79cso6019873a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 03:07:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762168050; x=1762772850; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vd+5KBI+DcPHKtaahVWDgGYJD9ObtH7hyDt+uX2+Cpo=;
-        b=O3UfXCBTarRt8XRvzh0S/4L1Y/dWHF1ZHDWIHX8SM33zfclszl7OUDhBtlIeihohf/
-         hVOOnVcEC1VwBGjRyLOuU7m+rdVEamTTVxZxXx8sSw7mmqTQ80QlynmOozD65EovddkK
-         fu1vkzrhGvzdLhBQFx+WSXE0md678a5lSCFKyCblshPVupCBVp90sBy6CQ96OwjPkjLR
-         rhsvgLuS8lWbAqLoNvZprMWHomoWhp0L2Zs2bkqTVOuscTCzlCN6Ef1tK/idiBRSln96
-         XsxEEtoTa/Ls2S6OWhADBVRUeOdIvopTAmoFkv110Krpshr9syxCgNFdk9SGj3weT8G7
-         Oa3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762168050; x=1762772850;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vd+5KBI+DcPHKtaahVWDgGYJD9ObtH7hyDt+uX2+Cpo=;
-        b=CR1usqddCtH1WhotvyMrjkRq+YbGwg13poEkFHd20amEInzIAimbF69LE2cn5wgT6/
-         a7z2cKY4OQEHkahGMkV8YHmadz8HSQgbVp6mQtBxFxpU02VS0Tf3zbl40AI5HEJuenPJ
-         /5Jx2BOYCTXnW5r3Ec+MIXBoS9eJe/mWRnHbrQxoELAHD0oBK8cdI1jOM9OImYO0BSdp
-         JSFEQ6QFCqs8/Q9PS+Un6a0Cc4OQpzm7QZ2vzrxJsP4OeAvRvndzp+oTEjiqniXRFIly
-         XLx+52Jm/tdfnO2ne9rUukvhoksd0MfDs2JlARcPfTDeutyGvn++BSlLk5XiJBNrVUCu
-         W7rg==
-X-Forwarded-Encrypted: i=1; AJvYcCVBpI/y0TFL6BkApPgRpD+I8kaplC58Sn097irpp40J8qDpURRbh7IsU/Vc+HIXznWHGVrsbsm6qa794Ys=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuQ2GiRvwd7fy9uBk8+lijO9ozUQJ/IfngorGkFTPMvyKu8X0C
-	DLNq6pzaS1IHy//jeB8KrKqbo7FSAlnhInWOh0CBw7MAljvOB9eO2YE5
-X-Gm-Gg: ASbGncuK+HYXJhjHQaNvbnN51TuabnLXrC7pppddtIs9QWVusnuUc+nSo9AHfQyoG3p
-	IMJco/IfvXpd/iCQqhKXtFP3Li2gsmcUlTzBT7pe8HJ4EmqIPm8BeN5g7jQuKNE3mWxkVz5pdRw
-	z3nn84PSAU4/HqD3jM/cMLvgS3tkOiXcyvvriD8bpNNMbltnFTgksF+zE1ji2k3QGJvJ2ws7+Ny
-	4R3a+kKne7IBbuqevzH94gxdf1MGVG+tE7vO5B/CDlcqllA2c11FQqFGAZ1LcGhKTIoD/06QFBy
-	WoI4WZGPId1Hi2lYOWgUzC0ipLAF7evKrvpmaBWDCIO8dHNaIyeRFabMvIyZMW2FxPIzKaIDFu9
-	eAuC3RJnF1jb6LysGpA67yFjI19sYg8T/hZ4KUEW/fM7CXEQB2iHC4shFhROXK4zVpWb0gLAGi5
-	fB07g8ins7QENpXXkuLTnj3QBee65nZzGIEr3hyQfxiBceHx+n9F01Ao7cw89VNxUMXeA=
-X-Google-Smtp-Source: AGHT+IH4+9frysi9DNFV/2/WAly7wk4mYQWIlTpjWZue0G81QDWwZ4rfIb4hTAprNc33o6VQINfi4w==
-X-Received: by 2002:a17:90b:314e:b0:340:d511:e15f with SMTP id 98e67ed59e1d1-340d511e56fmr7617741a91.18.1762168050210;
-        Mon, 03 Nov 2025 03:07:30 -0800 (PST)
-Received: from google.com (114-39-189-33.dynamic-ip.hinet.net. [114.39.189.33])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b93bf44e233sm10126135a12.34.2025.11.03.03.07.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 03:07:29 -0800 (PST)
-Date: Mon, 3 Nov 2025 19:07:24 +0800
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>,
-	David Laight <david.laight.linux@gmail.com>,
-	Guan-Chun Wu <409411716@gms.tku.edu.tw>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Guan-Chun Wu <409411716@gms.tku.edu.tw>, ebiggers@kernel.org,
-	tytso@mit.edu, jaegeuk@kernel.org, xiubli@redhat.com,
-	idryomov@gmail.com, kbusch@kernel.org, axboe@kernel.dk, hch@lst.de,
-	sagi@grimberg.me, home7438072@gmail.com,
-	linux-nvme@lists.infradead.org, linux-fscrypt@vger.kernel.org,
-	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/6] lib/base64: add generic encoder/decoder, migrate
- users
-Message-ID: <aQiM7OWWM0dXTT0J@google.com>
-References: <20251029101725.541758-1-409411716@gms.tku.edu.tw>
- <20251031210947.1d2b028da88ef526aebd890d@linux-foundation.org>
- <aQiC4zrtXobieAUm@black.igk.intel.com>
+	s=arc-20240116; t=1762169408; c=relaxed/simple;
+	bh=hjqkskP7rEKOpC0HAWlWuk9UR+qmbWyNfX49a8doCqI=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=k6sOHmnm56FI/KaHJ7AwvvZpCxU0T7i3D/N+3gMOclWXghx0CdfVt4hCWt4v65IzIKy5NGs/pxXLhmjryWHYHq/tOE2IGhcpQcIjblS+t8CqcsILa7fPmeeqzcNUSkqa6RwKuhOpBpZqeFbbKp4xPABzCF5Hdsa6p8JnoEHhwVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=FxDwCxq/; arc=none smtp.client-ip=162.240.164.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
+	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
+	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=pO1e3BxesOLdXFEMiUspsLON2Xgnazr0oTkpXmKAlXc=; b=FxDwCxq/M161NLrVbAViDNd8lQ
+	2j9qnONIOgOVEimJgVCyJbB1vse1/oEIP5AWFuE8ZycmGTQw5B43b+PGAVsOJTcMZhO23oEaAQwhZ
+	k07V3tshvT8pQyDdkaOK7DGSCC7BQSEKgS9XrV0qfsmK4kYhEHWUP7IjUZOsQgRPQ/GXIM7Byw5BI
+	E8HbXLvPLRo/5kL7E8yF1TgK5rxEinLcwa9uyCQbo4NZSTyz6ALv4Y2jxvBTUpU1OCcN1UhKgFzF2
+	QGfZ+czSAR4V2yBFWm1SQi/OhpdII0jhWNByO0kmu90W8OyifHI4y2PMLfwRoO27ULhPOBSi2b8Ip
+	iqAADrxg==;
+Received: from [122.175.9.182] (port=20643 helo=zimbra.couthit.local)
+	by server.couthit.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <parvathi@couthit.com>)
+	id 1vFsQO-00000006Pzf-2Y0s;
+	Mon, 03 Nov 2025 06:08:37 -0500
+Received: from zimbra.couthit.local (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTPS id 7A72F1784032;
+	Mon,  3 Nov 2025 16:38:31 +0530 (IST)
+Received: from localhost (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTP id 65CF21781F6A;
+	Mon,  3 Nov 2025 16:38:31 +0530 (IST)
+Received: from zimbra.couthit.local ([127.0.0.1])
+	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id hg8Tri1-CFlx; Mon,  3 Nov 2025 16:38:31 +0530 (IST)
+Received: from zimbra.couthit.local (zimbra [10.10.10.103])
+	by zimbra.couthit.local (Postfix) with ESMTP id 3EC801781698;
+	Mon,  3 Nov 2025 16:38:31 +0530 (IST)
+Date: Mon, 3 Nov 2025 16:38:31 +0530 (IST)
+From: Parvathi Pudi <parvathi@couthit.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: tony <tony@atomide.com>, robh <robh@kernel.org>, 
+	krzk+dt <krzk+dt@kernel.org>, conor+dt <conor+dt@kernel.org>, 
+	richardcochran <richardcochran@gmail.com>, 
+	linux-omap <linux-omap@vger.kernel.org>, 
+	devicetree <devicetree@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	netdev <netdev@vger.kernel.org>, danishanwar <danishanwar@ti.com>, 
+	pratheesh <pratheesh@ti.com>, Prajith Jayarajan <prajith@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, praneeth <praneeth@ti.com>, 
+	srk <srk@ti.com>, rogerq <rogerq@ti.com>, 
+	krishna <krishna@couthit.com>, mohan <mohan@couthit.com>, 
+	pmohan <pmohan@couthit.com>, basharath <basharath@couthit.com>, 
+	afd <afd@ti.com>, m-karicheri2 <m-karicheri2@ti.com>
+Message-ID: <1460283559.152037.1762168111145.JavaMail.zimbra@couthit.local>
+In-Reply-To: <1064878067.81811.1760534965853.JavaMail.zimbra@couthit.local>
+References: <20251013125401.1435486-1-parvathi@couthit.com> <20251013125401.1435486-2-parvathi@couthit.com> <8cfc5ece-6c2e-48d9-a65c-3edbcc9edc39@lunn.ch> <1064878067.81811.1760534965853.JavaMail.zimbra@couthit.local>
+Subject: Re: [PATCH 1/2] arm: dts: ti: Adds device tree nodes for PRU Cores,
+ IEP and eCAP modules of PRU-ICSS2 Instance.
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQiC4zrtXobieAUm@black.igk.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - GC141 (Mac)/8.8.15_GA_3968)
+Thread-Topic: Adds device tree nodes for PRU Cores, IEP and eCAP modules of PRU-ICSS2 Instance.
+Thread-Index: E3LIn1f4mOg6FaK5tJjNCk6cQUoE5cdujhE/
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server.couthit.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - couthit.com
+X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: smtp@couthit.com
+X-Authenticated-Sender: server.couthit.com: smtp@couthit.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-+Cc David
+Hi,
 
-Hi Guan-Chun,
-
-If we need to respin this series, please Cc David when sending the next
-version.
-
-On Mon, Nov 03, 2025 at 11:24:35AM +0100, Andy Shevchenko wrote:
-> On Fri, Oct 31, 2025 at 09:09:47PM -0700, Andrew Morton wrote:
-> > On Wed, 29 Oct 2025 18:17:25 +0800 Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:
-> > 
-> > > This series introduces a generic Base64 encoder/decoder to the kernel
-> > > library, eliminating duplicated implementations and delivering significant
-> > > performance improvements.
-> > > 
-> > > The Base64 API has been extended to support multiple variants (Standard,
-> > > URL-safe, and IMAP) as defined in RFC 4648 and RFC 3501. The API now takes
-> > > a variant parameter and an option to control padding. As part of this
-> > > series, users are migrated to the new interface while preserving their
-> > > specific formats: fscrypt now uses BASE64_URLSAFE, Ceph uses BASE64_IMAP,
-> > > and NVMe is updated to BASE64_STD.
-> > > 
-> > > On the encoder side, the implementation processes input in 3-byte blocks,
-> > > mapping 24 bits directly to 4 output symbols. This avoids bit-by-bit
-> > > streaming and reduces loop overhead, achieving about a 2.7x speedup compared
-> > > to previous implementations.
-> > > 
-> > > On the decoder side, replace strchr() lookups with per-variant reverse tables
-> > > and process input in 4-character groups. Each group is mapped to numeric values
-> > > and combined into 3 bytes. Padded and unpadded forms are validated explicitly,
-> > > rejecting invalid '=' usage and enforcing tail rules.
-> > 
-> > Looks like wonderful work, thanks.  And it's good to gain a selftest
-> > for this code.
-> > 
-> > > This improves throughput by ~43-52x.
-> > 
-> > Well that isn't a thing we see every day.
+>>> +				interrupt-names = "rx", "emac_ptp_tx",
+>>> +								"hsr_ptp_tx";
+>> 
+>> Something looks wrong with the indentation here. The same happens in
+>> at least one other place.
+>> 
 > 
-> I agree with the judgement, the problem is that this broke drastically a build:
+> we will correct the indentation of the interrupt-names property to properly
+> align the continuation line as shown below.
 > 
-> lib/base64.c:35:17: error: initializer overrides prior initialization of this subobject [-Werror,-Winitializer-overrides]
->    35 |         [BASE64_STD] = BASE64_REV_INIT('+', '/'),
->       |                        ^~~~~~~~~~~~~~~~~~~~~~~~~
-> lib/base64.c:26:11: note: expanded from macro 'BASE64_REV_INIT'
->    26 |         ['A'] =  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, \
->       |                  ^
-> lib/base64.c:35:17: note: previous initialization is here
->    35 |         [BASE64_STD] = BASE64_REV_INIT('+', '/'),
->       |                        ^~~~~~~~~~~~~~~~~~~~~~~~~
-> lib/base64.c:25:16: note: expanded from macro 'BASE64_REV_INIT'
->    25 |         [0 ... 255] = -1, \
->       |                       ^~
-> ...
-> fatal error: too many errors emitted, stopping now [-ferror-limit=]
-> 20 errors generated.
+> interrupt-names = "rx", "emac_ptp_tx",
+>                  "hsr_ptp_tx";
 > 
-Since I didn't notice this build failure, I guess this happens during a
-W=1 build? Sorry for that. Maybe I should add W=1 compilation testing
-to my checklist before sending patches in the future. I also got an
-email from the kernel test robot with a duplicate initialization
-warning from the sparse tool [1], pointing to the same code.
+> We will make sure to address this in all the applicable places and include
+> this fix in the next version.
+> 
+> 
+>>> +&pruss2_mdio {
+>>> +	status = "okay";
+>>> +	pruss2_eth0_phy: ethernet-phy@0 {
+>>> +		reg = <0>;
+>>> +		interrupt-parent = <&gpio3>;
+>>> +		interrupts = <30 IRQ_TYPE_EDGE_FALLING>;
+>>> +	};
+>>> +
+>>> +	pruss2_eth1_phy: ethernet-phy@1 {
+>>> +		reg = <1>;
+>>> +		interrupt-parent = <&gpio3>;
+>>> +		interrupts = <31 IRQ_TYPE_EDGE_FALLING>;
+>>> +	};
+>> 
+>> 
+>> PHY interrupts are 99% level, not edge, because they represent an
+>> interrupt controller in the PHY, and you need to clear all the
+>> interrupts in the controller before it deasserts the interrupt pin.
+>> 
+>>    Andrew
+> 
+> 
+> Sure, we will check and come back with more details on this.
+> 
+> 
 
-This implementation was based on David's previous suggestion [2] to
-first default all entries to -1 and then set the values for the 64
-character entries. This was to avoid expanding the large 256 * 3 table
-and improve code readability.
+We have reviewed and analysed the code, and confirmed that level
+low can be used for the PHY interrupt, which seems to be a better
+option than using the edge falling.
 
-Hi David,
+As shown below, the current interrupt configuration reflects a
+level-triggered setup:
 
-Since I believe many people test and care about W=1 builds, I think we
-need to find another way to avoid this warning? Perhaps we could
-consider what you suggested:
+root@am57xx-evm:~# cat /proc/interrupts
+           CPU0       CPU1    
+163:          2          0 48057000.gpio  30 Level     4b2b2400.mdio:00
+164:          2          0 48057000.gpio  31 Level     4b2b2400.mdio:01
 
-#define BASE64_REV_INIT(val_plus, val_comma, val_minus, val_slash, val_under) { \
-	[ 0 ... '+'-1 ] = -1, \
-	[ '+' ] = val_plus, val_comma, val_minus, -1, val_slash, \
-	[ '0' ] = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, \
-	[ '9'+1 ... 'A'-1 ] = -1, \
-	[ 'A' ] = 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, \
-		  23, 24, 25, 26, 27, 28, 28, 30, 31, 32, 33, 34, 35, \
-	[ 'Z'+1 ... '_'-1 ] = -1, \
-	[ '_' ] = val_under, \
-	[ '_'+1 ... 'a'-1 ] = -1, \
-	[ 'a' ] = 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, \
-		  49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, \
-	[ 'z'+1 ... 255 ] = -1 \
-}
+We can see the IRQ has been changed to Level and the count is incremented
+for every link event.
 
-Or should we just expand the 256 * 3 table as it was before?
+We will update the interrupt type to IRQ_TYPE_LEVEL_LOW as shown below and
+share the next version.
 
-[1]: https://lore.kernel.org/oe-kbuild-all/202511021343.107utehN-lkp@intel.com/
-[2]: https://lore.kernel.org/lkml/20250928195736.71bec9ae@pumpkin/
++&pruss2_mdio {
++       status = "okay";
++       pruss2_eth0_phy: ethernet-phy@0 {
++               reg = <0>;
++               interrupt-parent = <&gpio3>;
++               interrupts = <30 IRQ_TYPE_LEVEL_LOW>;
++       };
++
++       pruss2_eth1_phy: ethernet-phy@1 {
++               reg = <1>;
++               interrupt-parent = <&gpio3>;
++               interrupts = <31 IRQ_TYPE_LEVEL_LOW>;
++       };
++};
 
-Regards,
-Kuan-Wei
+
+Thanks and Regards,
+Parvathi.
 
