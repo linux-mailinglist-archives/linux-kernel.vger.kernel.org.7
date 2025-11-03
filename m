@@ -1,134 +1,85 @@
-Return-Path: <linux-kernel+bounces-883448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63D62C2D7E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:37:05 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A398FC2D7B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:33:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E18773B4F2D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:33:20 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4918B34A38B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C785E31B81D;
-	Mon,  3 Nov 2025 17:33:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D112EDD71;
+	Mon,  3 Nov 2025 17:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J2QMDBEn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l64bn1uh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2699326AA88;
-	Mon,  3 Nov 2025 17:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46393191D2
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 17:33:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762191194; cv=none; b=PxLCMJejy2cJ1DLEH35EwWQETs9idfs9bpiCVmthX2QPx5nf4SqH4aC/C4DZiKwIkOiR2oAu1wIuFYcIVbmr9Ca5ynK6HY9z+QXr0dJJTPFyEqe8fx/efej131D2kvA4Cs9y1boPxi3U37AaVwj41lNexizl5T0lKLNHGeTK+TA=
+	t=1762191212; cv=none; b=rYynBvXE14/9QoLrH3O1cJYm15TgURcS7vSUpqpgqcBjr2KjoGu0ch8/K0RDxCTRn7hhY3dK13c/Lciev0/Ifri4gLoDv1fJ2ki+aMOyjPHMFB3sJd4CZ8eYZVdEMisc4EglGIZmklkrU+De3USZkHxl4iz2sMn7/7NscLQH8e0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762191194; c=relaxed/simple;
-	bh=ImfEpuEvGJzHfdHEbBZTkOKQ3ljJuF84xb7AnSHfJw8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=hdtBeFGwNGT7YDBvyPQXsFKgDlHQTj7gibgCTlXtkGIewO7ZG5C5Yz+unPBUUJnl7NcMqE+dpPBvrnNK+K/Ib8Atmue1Za9M+EHArdibOts4WfoBoBQ09jEtEczz2pj5ZrjUreEwJlvPi0DcYIFEjSXoWhhaE6YbrC4gyskhRbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J2QMDBEn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70DA6C4CEE7;
-	Mon,  3 Nov 2025 17:33:13 +0000 (UTC)
+	s=arc-20240116; t=1762191212; c=relaxed/simple;
+	bh=+o5dV5iJcb6acg+vuRYXWjvoxYCIxuxArBBgYrKL5qg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XzKP+azfDlxo/jIq02RETbqU7frO3V9PAlNPke8/zFU8fEct54dk0jGwftPW6sP9CvN0+2m8w7e3I+SYhPhbIu1z0sSg6Cm24YCyeFMRfqm971TJvjAIVzlewIZn+f6rIF4FSzjWMiV02wVoIaWWWV4HuQ9B+mz/EUnGoDBXoNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l64bn1uh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73409C4CEFD
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 17:33:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762191193;
-	bh=ImfEpuEvGJzHfdHEbBZTkOKQ3ljJuF84xb7AnSHfJw8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=J2QMDBEnApSK6PZOoQQd55IADOsIBlUF1lqh49U7/S8kw+ZxJ7glSoiE2wuHus2gv
-	 Tr8bzP5T1jy9RX7+t9zn/oeq3n3DO8VymhKPgFgSfOXWTdnIavStEaNG21bXp45rzA
-	 ADoT26ePv/KV4u14iu1cwQ6G1oeebjWqplvXYx2CAcIkSJzN5FI5JbIOXND0h6Hym7
-	 87J7bBZ7jAModgZD6m+QWcd+Xug2LeIvuopUqkJuwRjLzPf2fMTQccsBo1LQEn9YuW
-	 4rqoaaOEmHF2BJySQjZ80+QjeV6pcaM+iEoISlAhgMfYR2CsKzvIvvib6SzfnK4gVD
-	 HLI3HbOa/P4xQ==
-Date: Mon, 3 Nov 2025 11:33:12 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: =?utf-8?B?UMOpdGVy?= Ujfalusi <peter.ujfalusi@linux.intel.com>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, linux-sound@vger.kernel.org,
-	kai.vehmanen@linux.intel.com, ranjani.sridharan@linux.intel.com,
-	yung-chuan.liao@linux.intel.com, pierre-louis.bossart@linux.dev,
-	bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kw@linux.com
-Subject: Re: [PATCH 1/7] PCI: Add Intel Nova Lake S audio Device ID
-Message-ID: <20251103173312.GA1811842@bhelgaas>
+	s=k20201202; t=1762191212;
+	bh=+o5dV5iJcb6acg+vuRYXWjvoxYCIxuxArBBgYrKL5qg=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=l64bn1uhzi4UXNLPwabx0bXjOyAkO9VVfL0LTdtFR/2gX7cNFuxjdk8tlJHEMHpyM
+	 owLu67ClCwCfmon160zMBZN1i+AStX68zSifyc49ftP6AKQnREwma9qBU5iB1lNU9V
+	 16vZhgTAVAA/uuZRiWm6J8hR8zpZEqyVMOUJfKLNMe+KK9VNvR+MyORJ3OnJrCl9QS
+	 P6P4/MfQvzG7x0E0bAAoNX5iHdEHDxx3wQiGF2s/bnV19PgVmeuSMHc5as3RajIj/l
+	 THOP74aC6hSLmKPl0TVEtuuJZN+Nyu95idQzisimIplPIKvPC/3rQoOMfciCDKHKzW
+	 Z8VQYd2IIwA2Q==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-592f22b1e49so4288376e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 09:33:32 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU++m2w95XbK4fmOTg0KLD5+piTIYAwD5B7pfqwy1UIKq1FrxibCeV7g0C9tGpXZ6/MjMU5sNszpJkPaF4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaSGxmqj9VdVYYPuAePj7L70/Es6QrtaAgrFkUxrDWRM86Vmkr
+	mDSFVCc/CpiGWBm3ou1HqvjwZg+HGHgTlFwBVeopK6Dpcf5sm+OQWaVU8cULI4aP7T2Nd0jFYUw
+	cvlQfXIUo5ocIRXpjEsGZ3xHhLxACrIk=
+X-Google-Smtp-Source: AGHT+IHeAV6gvUZakhroG+cdQ4cS//FtPIAPmnBlEfHgFaH6azoAUjYMPV9zLQGb7u1TcrlPCM1uYxkpaGVsOmKJEms=
+X-Received: by 2002:a05:6512:63cb:b0:594:253c:209a with SMTP id
+ 2adb3069b0e04-594253c245fmr1658107e87.14.1762191210885; Mon, 03 Nov 2025
+ 09:33:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ef97aef3-e837-4c88-84e7-33afbc8ac150@linux.intel.com>
+References: <20251012192330.6903-1-jernej.skrabec@gmail.com> <20251012192330.6903-30-jernej.skrabec@gmail.com>
+In-Reply-To: <20251012192330.6903-30-jernej.skrabec@gmail.com>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Tue, 4 Nov 2025 01:33:18 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66+oGwTnu_wtLwjcR4R6Owpb3PY5YTAoN0VUReB5+JePQ@mail.gmail.com>
+X-Gm-Features: AWmQ_bkzN1dsVffW7_6vHF-fIc5cl498aftDpvEUp2fdEJedEOeYbOYD0a_NxwI
+Message-ID: <CAGb2v66+oGwTnu_wtLwjcR4R6Owpb3PY5YTAoN0VUReB5+JePQ@mail.gmail.com>
+Subject: Re: [PATCH 29/30] drm/sun4i: vi_scaler: Find mixer from crtc
+To: Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: mripard@kernel.org, maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
+	airlied@gmail.com, simona@ffwll.ch, samuel@sholland.org, 
+	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 03, 2025 at 06:27:16PM +0200, Péter Ujfalusi wrote:
-> On 03/11/2025 18:02, Bjorn Helgaas wrote:
-> > On Mon, Nov 03, 2025 at 02:43:57PM +0200, Péter Ujfalusi wrote:
-> >> On 02/10/2025 11:42, Peter Ujfalusi wrote:
-> >>> Add Nova Lake S (NVL-S) audio Device ID
-> >>
-> >> Can you check this patch so Takashi-san can pick the series up?
-> > 
-> > We have a long history of adding these Intel audio device IDs that are
-> > only used once, which is not our usual practice per the comment at the
-> > top of the file:
-> > 
-> >  *      Do not add new entries to this file unless the definitions
-> >  *      are shared between multiple drivers.
-> > 
-> > Generally speaking, if an ID is used by only a single driver, we
-> > either use the plain hex ID or add the #define to the driver that uses
-> > it.
-> 
-> In this case the ID is used by two different driver stack, the
-> legacy HDA and SOF.
+On Mon, Oct 13, 2025 at 3:24=E2=80=AFAM Jernej Skrabec <jernej.skrabec@gmai=
+l.com> wrote:
+>
+> With "floating" planes in DE33, mixer can't be stored in layer structure
+> anymore. Find mixer using currently bound crtc.
+>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
-Sigh.  I looked through the patch series, searching for
-PCI_DEVICE_ID_INTEL_HDA_NVL_S, but of course there's only one instance
-of *that*, but two others constructed via PCI_DEVICE_DATA() where only
-"HDA_NVL_S" is mentioned.
-
-Can you include some hint about that in the commit log so I don't have
-to go through this whole exercise every time?  I want pci_ids.h
-changes to mention the multiple places a new ID is used so I know that
-the "multiple uses" rule has been observed.
-
-With that:
-
-Acked-by: Bjorn Helgaas <bhelgaas@google.com>
-
-> > Have we been operating under some special exception for the Intel
-> > audio IDs?  I see that I acked some of these additions in the past,
-> > but I don't remember why.
-> 
-> The HDA audio entries were moved here by v4 of this series:
-> https://www.spinics.net/lists/alsa-devel/msg161995.html
-> 
-> (I cannot find link to v4, only this:
-> https://patchwork.ozlabs.org/project/linux-pci/list/?series=364212)
-> >>> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
-> >>> Reviewed-by: Kai Vehmanen <kai.vehmanen@linux.intel.com>
-> >>> Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
-> >>> ---
-> >>>  include/linux/pci_ids.h | 1 +
-> >>>  1 file changed, 1 insertion(+)
-> >>>
-> >>> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-> >>> index 92ffc4373f6d..a9a089566b7c 100644
-> >>> --- a/include/linux/pci_ids.h
-> >>> +++ b/include/linux/pci_ids.h
-> >>> @@ -3075,6 +3075,7 @@
-> >>>  #define PCI_DEVICE_ID_INTEL_5100_22	0x65f6
-> >>>  #define PCI_DEVICE_ID_INTEL_IOAT_SCNB	0x65ff
-> >>>  #define PCI_DEVICE_ID_INTEL_HDA_FCL	0x67a8
-> >>> +#define PCI_DEVICE_ID_INTEL_HDA_NVL_S	0x6e50
-> >>>  #define PCI_DEVICE_ID_INTEL_82371SB_0	0x7000
-> >>>  #define PCI_DEVICE_ID_INTEL_82371SB_1	0x7010
-> >>>  #define PCI_DEVICE_ID_INTEL_82371SB_2	0x7020
-> >>
-> >>
-> 
-> -- 
-> Péter
-> 
+Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
 
