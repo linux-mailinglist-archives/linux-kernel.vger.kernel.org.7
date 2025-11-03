@@ -1,127 +1,100 @@
-Return-Path: <linux-kernel+bounces-883799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9B9BC2E752
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:44:30 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AC88C2E764
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:45:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42A15189A8CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:44:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C03904F118B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0ECF2FFFB3;
-	Mon,  3 Nov 2025 23:44:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886BF3002B7;
+	Mon,  3 Nov 2025 23:44:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DnhZdf1r"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g4PwfPNf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A022FE593;
-	Mon,  3 Nov 2025 23:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5714A72614;
+	Mon,  3 Nov 2025 23:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762213465; cv=none; b=RiwMx9s0KVlUm2ZyU2fcj6OdIcwcyMeAfhXETRKBSSRox0y8RjFKooXrRBybyOByg5cWH7G8Qh3M0ONVDkahX5bnqE0NajeirstyHfosePVi4MGOivV/trcVTq/XUkiAcKU4tyWq3pPxYTIRZWi4Tf9X76EhDaMErEjKiKFEuEk=
+	t=1762213478; cv=none; b=s6rY3A4pcJ+AE9XSOj4j43sSboUKiGld5QlSc2GBCJMwXzGt/j0/JJjgtRNjmcIAvxUa56GQxds/K5gqTzMUM51P8cCOB+G8bGTdnIcLcGycS5qoAc6HZeQCoFp4PfvZPnhwQ47BIuXXXfa6wcVCC3xERyAiqojUeN4o1RWJpB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762213465; c=relaxed/simple;
-	bh=4p1XAIgil+xci6N2vO4OA62EVqXe4tJ+TRXALK+NU6g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EGIXlW0W9Kr8eRMfF/cshB4jUDM6b5KINu8deiiIt/XoaYHKr7dXz5owMzrG1XA+vWvSNcGxoRj2toz+y7KGLILUF05CdUP3B5/oL39xcunPn7xR0PBMgYR6ON0KgqdZ1WBdBch0P85aGyd3MtvVE7xap45VucFx/XIlVoXGMWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DnhZdf1r; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1762213478; c=relaxed/simple;
+	bh=4zlAndWqArVrtRye/SjHxQy3Eu33EhiAlDQI/abNLSI=;
+	h=Subject:To:Cc:From:Date:Message-Id; b=EHqck/hWeHOsGubZofFtq3ZIupeT75jcg3P8pgawaxZdYiu9snvuVWUxcq1XlJhMvpOaDuQRbjMKqKQ2xvLYgnJZeK/n0fCYiMQrShDNrmFcKeMLPzIcoQeIDHlaRy8BygRH5DbrzTt3ZfTf3bbtFtudAh6HXn4lSAeHOQrVwC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g4PwfPNf; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762213463; x=1793749463;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=4p1XAIgil+xci6N2vO4OA62EVqXe4tJ+TRXALK+NU6g=;
-  b=DnhZdf1rBH9GgJU8Q1/MSnKZgoq7FqGwlyEJ0v7CfCwsh+2Kn50iQA/u
-   Bx8V+2aaUEoCtE9ILudoj/S+dKlahaEIeLyLI3CJbnWDhT4sA8OoKa254
-   x+5os7wWTf2XnSSWeKZitRED3uomVavAwWC+5clNtKg4ihXlTKvHwilyJ
-   mHQMfNwDzpAJl+5SL7jvfEyL3R/r2sWvBY7jVp0Mxk/WkGzQYX7zutb3P
-   C5AYlNsc7kUFrLTH0vxNSzXWFz9uXBT9wluLdMHxL++DeZhzsb+fp87FZ
-   CANoeJ0J1INQm/h1WX1o+6q4bohlzw9+eOqlYLOST7i24/1U/aIAGstNO
-   g==;
-X-CSE-ConnectionGUID: mZdyP9ocSyeM5GWUd/u+bg==
-X-CSE-MsgGUID: fzYXH5AGQ0mrp5e8F/FYSg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="81707363"
+  t=1762213476; x=1793749476;
+  h=subject:to:cc:from:date:message-id;
+  bh=4zlAndWqArVrtRye/SjHxQy3Eu33EhiAlDQI/abNLSI=;
+  b=g4PwfPNflCGn4NL1vOXaH7y0Mz5qGdtJKVU88J2iRRSGtTlox+vKCT2s
+   jI8G+TVPf0TzuPLwfqtSzNVU0jp4KDFYYckLGYdCiq/UYduGZNHiNWvcr
+   gisy7OqSll5mW0IaeHyJYFS1RW6omVQDBf2lN9jAaAOwTCH+SzXyunqEP
+   hELfDrsJN+vI6UIlfigexll4lyOUu6ZEZqeY4nJpRW8OW1WaBjjYiGsl9
+   Qy/gbgiGPMUyFFpPs/6dX+W8yTxUzqr6OUIA6doFE9jzEd0+98JnUXrGw
+   kw2X/SdBMjyvff1A7behb9f9Rh3U5p8OGZpIs/HDjw/xM2Gt4c0Wsy21o
+   w==;
+X-CSE-ConnectionGUID: RyKkQrS1TluViZ273TJL2w==
+X-CSE-MsgGUID: C3mFVX/NT8ueC6dN76PHhA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="64217933"
 X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="81707363"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 15:44:16 -0800
-X-CSE-ConnectionGUID: Rhfyo2cgTZ+9jsGylf4fdg==
-X-CSE-MsgGUID: CaywF8dgSwO88EnWyneC9Q==
+   d="scan'208";a="64217933"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 15:44:35 -0800
+X-CSE-ConnectionGUID: RPXljUSGTFyAdjiWzQb47w==
+X-CSE-MsgGUID: 0zDh9bGTThaE2oa1aKFFpA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="186678565"
-Received: from dwesterg-mobl1.amr.corp.intel.com (HELO [10.125.110.133]) ([10.125.110.133])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 15:44:15 -0800
-Message-ID: <ce2f5f34-8855-41eb-9f4e-6bdaaaae90b4@intel.com>
-Date: Mon, 3 Nov 2025 16:44:14 -0700
+   d="scan'208";a="187150880"
+Received: from davehans-spike.ostc.intel.com (HELO localhost.localdomain) ([10.165.164.11])
+  by orviesa008.jf.intel.com with ESMTP; 03 Nov 2025 15:44:35 -0800
+Subject: [v2][PATCH 0/2] x86/virt/tdx: Minor sparse fixups
+To: linux-kernel@vger.kernel.org
+Cc: Dave Hansen <dave.hansen@linux.intel.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>, kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, Sean Christopherson <seanjc@google.com>, Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org, Xiaoyao Li <xiaoyao.li@intel.com>
+From: Dave Hansen <dave.hansen@linux.intel.com>
+Date: Mon, 03 Nov 2025 15:44:35 -0800
+Message-Id: <20251103234435.0850400B@davehans-spike.ostc.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] cxl/pci: replace use of system_wq with system_percpu_wq
-To: Marco Crivellari <marco.crivellari@suse.com>,
- linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>,
- Frederic Weisbecker <frederic@kernel.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Michal Hocko <mhocko@suse.com>, Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>
-References: <20251030163839.307752-1-marco.crivellari@suse.com>
-From: Dave Jiang <dave.jiang@intel.com>
-Content-Language: en-US
-In-Reply-To: <20251030163839.307752-1-marco.crivellari@suse.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
+Changs from v1:
 
+ * Add Fixes/Reviewed-by tags (Rick)
+ * Add some "backwards" KVM changelog blurbs
 
-On 10/30/25 9:38 AM, Marco Crivellari wrote:
-> Currently if a user enqueue a work item using schedule_delayed_work() the
-> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
-> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
-> schedule_work() that is using system_wq and queue_work(), that makes use
-> again of WORK_CPU_UNBOUND.
-> 
-> This lack of consistency cannot be addressed without refactoring the API.
-> 
-> system_wq should be the per-cpu workqueue, yet in this name nothing makes
-> that clear, so replace system_wq with system_percpu_wq.
-> 
-> The old wq (system_wq) will be kept for a few release cycles.
-> 
-> Suggested-by: Tejun Heo <tj@kernel.org>
-> Signed-off-by: Marco Crivellari <marco.crivellari@suse.com>
+--
 
-Applied to cxl/next
-952e9057e66c17a9718232664368ffdaca468f93
+Sean recently suggested relying on sparse to add type safety in TDX code,
+hoping that the robots would notice and complain. Well, that plan is not
+working out so great. TDX is not even sparse clean today and nobody seems
+to have noticed or cared.
 
-> ---
->  drivers/cxl/pci.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
-> index bd100ac31672..0be4e508affe 100644
-> --- a/drivers/cxl/pci.c
-> +++ b/drivers/cxl/pci.c
-> @@ -136,7 +136,7 @@ static irqreturn_t cxl_pci_mbox_irq(int irq, void *id)
->  	if (opcode == CXL_MBOX_OP_SANITIZE) {
->  		mutex_lock(&cxl_mbox->mbox_mutex);
->  		if (mds->security.sanitize_node)
-> -			mod_delayed_work(system_wq, &mds->security.poll_dwork, 0);
-> +			mod_delayed_work(system_percpu_wq, &mds->security.poll_dwork, 0);
->  		mutex_unlock(&cxl_mbox->mbox_mutex);
->  	} else {
->  		/* short-circuit the wait in __cxl_pci_mbox_send_cmd() */
+I can see how folks might ignore the 0 vs. NULL complaints. But the
+misplaced __user is actually bad enough it should be fixed no matter
+what.
 
+Might as well fix it all up.
+
+Cc: Xiaoyao Li <xiaoyao.li@intel.com>
+Cc: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: x86@kernel.org
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: "Kirill A. Shutemov" <kas@kernel.org>
+Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc: kvm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 
