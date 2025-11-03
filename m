@@ -1,122 +1,162 @@
-Return-Path: <linux-kernel+bounces-882458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C20CC2A832
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:14:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 29E3CC2A83E
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:14:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 89B314E22FB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:14:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 18BE14E2E71
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:14:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2E92D7DDC;
-	Mon,  3 Nov 2025 08:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74682D8DD0;
+	Mon,  3 Nov 2025 08:14:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="oNyzKVTn"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GKdcCZ3h"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3D828DF07;
-	Mon,  3 Nov 2025 08:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFDD623ABB0;
+	Mon,  3 Nov 2025 08:14:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762157643; cv=none; b=DfFUf6j4PvxzFDzCWWgF4zQau/cnmnTsaDWFJ/1Rk/+TJgCLLq1CY/+9Q2R33J2zFD94jGL60bzgQFJrK+s9xhnmeGIwGCIblmOfd8fvGDhxK5asl6xgswlDfj+Wt7KJLgizfLOBAIRDIVYlkNDLZys3SuMAhSHesK1vmUtvAUg=
+	t=1762157659; cv=none; b=AsfJm5TjYwCGxJHZFThCSu7M884ezbj1c3JqNw3py0fo7WS2diZxTWnjGNj3wq2SGvu1yDmUknFwG7xYBz3ZfyiPBr499alyYH/aUIt4rtuqjv5OJzHkPyCW3Vw5Iq1aUWoq8dGYbwp70R76uMT0K1Opp+SS+dwLSKybWW7coYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762157643; c=relaxed/simple;
-	bh=54n85ZwyayArP7yhougQewaTm0CQee0hnxz3GHcV5Cg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PqfEUKf4mxuLuyYMB/uN0MXmuGJSpI+WCtB6dayKio5HD0jxqIR+9+xD4fl8MVatdH6f4LpzllnnNazt4ETeEwJfay2z5+F6EjwAPL6hHQrx24BasDd3010kEcVc6lpYblFN8nuu4UKZY3lU2cXkmCDKu4cAAYHYkS5ejcqvSgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=oNyzKVTn; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id E81CAA0A96;
-	Mon,  3 Nov 2025 09:13:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=gw0/qyfr1zOYI5nSB/iu
-	m7AsYKgJjol2bq0uNTSmVDo=; b=oNyzKVTndUf6k4MmwLMb9UdLqY3qOueDGlmA
-	iAX37ynu3OZJab5CFUdMPhwsfkpXkXbOjUWCqOFZRVsDfvAACCTdhC4c5FXS09Gj
-	h+gVgxj0c5y8iMPFrdD9GJyil/+V+BQYRcsBdq9x8C0QVztbhRbbbvycZV0ygGpF
-	y16UXT+suwjmftg3ItVDXLGsFWltnMf9+8N5QcL5/ABlTZj0FMUFaXGMPIRh/MDS
-	QV8fDzZNdljuujhy9SC6e4HbMe80m/d0LFj4pciU8/eqRKKogSROnL4DA8eHLYw7
-	renehLdWFzvyccBD2W1aPSJpaNKibGC0R4WEuvXw91STG9yc3U1sMfPhZt51vf5u
-	y1Zt0m26ZehAt9KvrJxhwHNi0l04kvrxMw+xuIzUUad5rhOUrCo0Hux+pWC8rKjr
-	ZBI2VONAzieF66uKbgf/TXqeKLJbpw9uyW8fa4OiqPIpayZoUrpeoeQSU7s9k4aV
-	/cY6dGL4O/eS2sb4ZwbQt9N42wJ7iwJ5QCClzGwgzAMNK9SEAenCj3/wZOVI0ZKN
-	3KQ2mg57r4htDM1Kevb0yTmcf8XjsQy1MAYunu+ekjvdTPiOSAh6yGanBl1+GKFM
-	RokppcrenaqVqyGcg2xpgbr6gg9P0oQ3VaztgLLWZFjhe8Z34TkcGaLkwwNc/hdV
-	iL5MD00=
-From: Buday Csaba <buday.csaba@prolan.hu>
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>,
-	<netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Buday Csaba <buday.csaba@prolan.hu>
-Subject: [PATCH v2 1/1] dt-bindings: net: ethernet-phy: clarify when compatible must specify PHY ID
-Date: Mon, 3 Nov 2025 09:13:42 +0100
-Message-ID: <64c52d1a726944a68a308355433e8ef0f82c4240.1762157515.git.buday.csaba@prolan.hu>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <b8613028fb2f7f69e2fa5e658bd2840c790935d4.1761898321.git.buday.csaba@prolan.hu>
-References: <b8613028fb2f7f69e2fa5e658bd2840c790935d4.1761898321.git.buday.csaba@prolan.hu>
+	s=arc-20240116; t=1762157659; c=relaxed/simple;
+	bh=eUC7CdLY2n+Ok064KsLsxj3DXcXd7nr4SrWNiG96MhI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bjoDwpayvq1gBvzKYQ2mWbHJnrQRxBTcgAoBuPd07kWzFTPVL3FPn1Nm4x2B2mmmF+W8i7333tx5BKz4E0Fb8tPBQHs5GnMTpSgWhy+7U+wfLimRh5Q4G+AHQEonqRqe6/xuQTIMfLloCadfEtieYaFmZFIv0eL7nimfjtREO9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GKdcCZ3h; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762157657; x=1793693657;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=eUC7CdLY2n+Ok064KsLsxj3DXcXd7nr4SrWNiG96MhI=;
+  b=GKdcCZ3hykFCqqjx0d5xZgRTqOvVh2YmhIJyZ77ZtG1+IG7xue1769Jv
+   iVqbdaznpbH8oy+RY+36UtNZYvWCZUtIjgt8Oo+yLhobS6zNQVXxCLSA5
+   q+MC7dHZp+WaVhH7hnKs9OtTU1KCK6numfhV2fNDND3M5Iy7eFeYMUf8U
+   AQZOsLTqHaqHOK5CKtqh7zUrzuSJU9L8SvQ80PWiJ5APrPSENCVXHhJIV
+   XYPr3bi4Ga2KewS40OQ3I/G4eqY+s0UKx0h4sbAyY3DdK/HY6jj0EQBc2
+   qUSzUablhkpvtGuuJEcIU4vQqonIjcMx0c+VS7mHRLe4E6dwJtOUyT4uh
+   A==;
+X-CSE-ConnectionGUID: h3TKMb65TPC7s0sVTt+jHw==
+X-CSE-MsgGUID: mJMnrLKTTgelXqTBjIIyHQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="75579235"
+X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
+   d="scan'208";a="75579235"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 00:14:09 -0800
+X-CSE-ConnectionGUID: ndL/zb5NTZGkQ8kBQOxdhw==
+X-CSE-MsgGUID: wc3i3tJZR1O9K3nOaBqx6Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
+   d="scan'208";a="186952919"
+Received: from smoehrl-linux.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.216])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 00:14:06 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vFphP-000000055OO-0fwu;
+	Mon, 03 Nov 2025 10:13:59 +0200
+Date: Mon, 3 Nov 2025 10:13:58 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-i3c@lists.infradead.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-iio@vger.kernel.org, joshua.yeong@starfivetech.com,
+	devicetree@vger.kernel.org, linux@roeck-us.net,
+	Carlos Song <carlos.song@nxp.com>,
+	Adrian Fluturel <fluturel.adrian@gmail.com>
+Subject: Re: [PATCH v9 6/6] iio: magnetometer: Add mmc5633 sensor
+Message-ID: <aQhkRmtJMoB7vv8U@smile.fi.intel.com>
+References: <20251031-i3c_ddr-v9-0-f1e523ebaf78@nxp.com>
+ <20251031-i3c_ddr-v9-6-f1e523ebaf78@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1762157629;VERSION=8001;MC=2379286761;ID=111644;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2998FD515F66756A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251031-i3c_ddr-v9-6-f1e523ebaf78@nxp.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Change PHY ID description in ethernet-phy.yaml to clarify that a
-PHY ID is required (may -> must) when the PHY requires special
-initialization sequence.
+On Fri, Oct 31, 2025 at 12:39:18PM -0400, Frank Li wrote:
+> Add mmc5633 sensor basic support.
+> - Support read 20 bits X/Y/Z magnetic.
+> - Support I3C HDR mode to send start measurememt command.
+> - Support I3C HDR mode to read all sensors data by one command.
 
-Link: https://lore.kernel.org/netdev/20251026212026.GA2959311-robh@kernel.org/
-Link: https://lore.kernel.org/netdev/aQIZvDt5gooZSTcp@debianbuilder/
+...
 
-Signed-off-by: Buday Csaba <buday.csaba@prolan.hu>
----
-V1 -> V2: Changed wording on maintainer request.
----
- .../devicetree/bindings/net/ethernet-phy.yaml          | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+> - 1 -> ARRAY_SIZE()
 
-diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-index 2ec2d9fda..bb4c49fc5 100644
---- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-+++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
-@@ -35,9 +35,13 @@ properties:
-         description: PHYs that implement IEEE802.3 clause 45
-       - pattern: "^ethernet-phy-id[a-f0-9]{4}\\.[a-f0-9]{4}$"
-         description:
--          If the PHY reports an incorrect ID (or none at all) then the
--          compatible list may contain an entry with the correct PHY ID
--          in the above form.
-+          PHYs contain identification registers. These will be read to
-+          identify the PHY. If the PHY reports an incorrect ID, or the
-+          PHY requires a specific initialization sequence (like a
-+          particular order of clocks, resets, power supplies), in
-+          order to be able to read the ID registers, then the
-+          compatible list must contain an entry with the correct PHY
-+          ID in the above form.
-           The first group of digits is the 16 bit Phy Identifier 1
-           register, this is the chip vendor OUI bits 3:18. The
-           second group of digits is the Phy Identifier 2 register,
+Maybe I missed the answer, but why are the arrays to begin with?
 
-base-commit: 0d0eb186421d0886ac466008235f6d9eedaf918e
+...
+
+> +#define MMC5633_REG_YOUT_H	0x03
+> +#define MMC5633_REG_ZOUT_L	0x04
+> +#define MMC5633_REG_ZOUT_H	0x05
+> +#define MMC5633_REG_XOUT_2	0x06
+> +#define MMC5633_REG_YOUT_2	0x07
+> +#define MMC5633_REG_ZOUT_2	0x08
+> +#define MMC5633_REG_TOUT	0x09
+
+Are those _L, _H, _2 come from the datasheet?
+
+...
+
+> +struct mmc5633_data {
+> +	struct i3c_device *i3cdev;
+> +	struct mutex mutex; /* protect to finish one whole measurement */
+> +	struct regmap *regmap;
+
+Btw, have you experimented to shuffle this to put regmap to be the first
+member, for example? Does it affect the binary (compiled object) size?
+
+> +};
+
+...
+
+> +	regmap = devm_regmap_init_i2c(client, &mmc5633_regmap_config);
+> +	if (IS_ERR(regmap))
+> +		return dev_err_probe(dev, PTR_ERR(regmap), "regmap init failed");
+
+Missing trailing \n. Please, double check all messages for this.
+
+...
+
+> +	ret = regmap_attach_dev(dev, regmap, &mmc5633_regmap_config);
+> +	if (ret)
+> +		return ret;
+
+Why?
+
+...
+
+> +	ret = regmap_attach_dev(dev, regmap, &mmc5633_regmap_config);
+> +	if (ret)
+> +		return ret;
+
+
+Ditto.
+
 -- 
-2.39.5
+With Best Regards,
+Andy Shevchenko
 
 
 
