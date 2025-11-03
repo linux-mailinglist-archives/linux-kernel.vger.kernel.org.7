@@ -1,54 +1,39 @@
-Return-Path: <linux-kernel+bounces-882514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C528C2AA28
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:50:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 010A5C2A9E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:44:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 481CE4EE43D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:49:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49B431892121
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:44:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5082E5B21;
-	Mon,  3 Nov 2025 08:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="kB+jhMCM"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF202DC348;
-	Mon,  3 Nov 2025 08:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B982E228D;
+	Mon,  3 Nov 2025 08:44:08 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523E953363
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 08:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762159786; cv=none; b=jeg6FReZOqw+f0s0X6QmTWTjyqJR+jmHfm/Low5PYOrS+GiPs3SNrYBkOTt8xu4GoXJYDuoN4LjyybIbFiDg8Xe6rbKdB4Q/Vji7TCQFyPrm9FfKBik6LlbzMEvvYMPSoWHZnVhiWxC2W1Nz12gPOjd4Hbmo5/1CeGjXneCo5KQ=
+	t=1762159447; cv=none; b=KkdlTnLhHqT5Cm1Q9mNs2zirFNqUWjrT+4EVg9EpyOMCJk8E+oXCZWPpJr4CivDDoLtV/p9AeByvj4iqF+6c0l/HHATNH4ZESCCl4BgKhsoUAyBF8A8CL5pXb1RXbAG+R6lERatOPMau6YGxxQUs8i9J8Tw0iPa3zqMEqDyc/Gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762159786; c=relaxed/simple;
-	bh=8tuJsROwI2VzZ5xr0xXLp3Zh781ZfsXiSloTIPD4CrM=;
+	s=arc-20240116; t=1762159447; c=relaxed/simple;
+	bh=ErdmyhYmbu+Q9MnDZ2ZB5VBnhzRHqOJACZeTJaH+/b4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M4v9DBaJpz65OGLPHNxJZIRqDUddv+aNw8YGIi5/hKpt9TTsP0g29jD27E7xKJWul2kV+uTxoRwcZmAFtBZGEkrqReJFPKBSPeBSUxqVsQZwhKp8R6JMPfbKdnN/TiS9stahbh/z5CwcoCHYgXdMoM11Lp70IbjqqLmZUCBNY+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=kB+jhMCM; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1762159427;
-	bh=8tuJsROwI2VzZ5xr0xXLp3Zh781ZfsXiSloTIPD4CrM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kB+jhMCM1GHi+MeyUo5A2D2Nl2Zaj4w0rJ0MtcoWUiZRrLwlQXY18GUWmUIdC6Qtz
-	 Hm/2tah1AkhRImWrzcwBH9eWu8zkbl6eoxm70yGutoNNZlNjJCGFifITnFUw3mT2Nc
-	 wvb59Iqh937c9S4bPXnwsRXxFoFpIxLcxdkjc7b7uCuWLmtQQ69tzgsoc9IPU5ye2s
-	 XppA6l5hCm/mMApe2zwkPeLlLikVgqeG3BBy5A5U6I3IUXSSaq8es3RhhKEeGctTIM
-	 XTtMgYmMybm2OXIsUt3yIYx9aU3EgPTJ0RcA5cEgcIIKJ96gyL1PExd9QVNV+8UQzQ
-	 1z2HMVD+If0Ng==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id ECECB17E090D;
-	Mon,  3 Nov 2025 09:43:45 +0100 (CET)
-Message-ID: <75a89547-6f21-4f89-8091-375e7013c26d@collabora.com>
-Date: Mon, 3 Nov 2025 09:43:45 +0100
+	 In-Reply-To:Content-Type; b=RUfqDOQ5cOmNSKUy7U5lu0oBFevxzB/BBFhpHPGj1cj0FBlCrv/5xl4/yHC+DzsMauql8fRdioOP2wlgGT2MPsXWktbUf9z6YP+anLTaJsGF78RXWPrntIA99aP+L+42o5qyskLDTJv2aJbkStuXOZ6KmToYEiUzKBt2SZrRW1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BF88A1D13;
+	Mon,  3 Nov 2025 00:43:56 -0800 (PST)
+Received: from [10.164.136.41] (unknown [10.164.136.41])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3999F3F694;
+	Mon,  3 Nov 2025 00:43:57 -0800 (PST)
+Message-ID: <666e012e-0b13-4def-82de-55ccd5868d36@arm.com>
+Date: Mon, 3 Nov 2025 14:13:55 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,48 +41,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/15] dt-bindings: net: mediatek,net: Correct bindings
- for MT7981
-To: Sjoerd Simons <sjoerd@collabora.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Ryder Lee <ryder.lee@mediatek.com>, Jianjun Wang
- <jianjun.wang@mediatek.com>, Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
- Manivannan Sadhasivam <mani@kernel.org>,
- Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Lee Jones <lee@kernel.org>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Felix Fietkau <nbd@nbd.name>
-Cc: kernel@collabora.com, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
- linux-phy@lists.infradead.org, netdev@vger.kernel.org,
- Daniel Golle <daniel@makrotopia.org>, Bryan Hinton <bryan@bryanhinton.com>
-References: <20251101-openwrt-one-network-v2-0-2a162b9eea91@collabora.com>
- <20251101-openwrt-one-network-v2-8-2a162b9eea91@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [RFC PATCH] mm: Enable CONFIG_PT_RECLAIM on all architectures
+To: Qi Zheng <zhengqi.arch@bytedance.com>, tglx@linutronix.de,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+ catalin.marinas@arm.com, will@kernel.org, akpm@linux-foundation.org,
+ david@redhat.com, hannes@cmpxchg.org
+Cc: ryan.roberts@arm.com, hpa@zytor.com, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, vbabka@suse.cz, ppt@kernel.org, surenb@google.com,
+ mhocko@suse.com, shakeel.butt@linux.dev, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20251103063718.90743-1-dev.jain@arm.com>
+ <044e3f9a-3de2-4939-afff-3bb527eb024b@bytedance.com>
 Content-Language: en-US
-In-Reply-To: <20251101-openwrt-one-network-v2-8-2a162b9eea91@collabora.com>
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <044e3f9a-3de2-4939-afff-3bb527eb024b@bytedance.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-
-Il 01/11/25 14:32, Sjoerd Simons ha scritto:
-> Different SoCs have different numbers of Wireless Ethernet
-> Dispatch (WED) units:
-> - MT7981: Has 1 WED unit
-> - MT7986: Has 2 WED units
-> - MT7988: Has 2 WED units
-> 
-> Update the binding to reflect these hardware differences. The MT7981
-> also uses infracfg for PHY switching, so allow that property.
-> 
-> Signed-off-by: Sjoerd Simons <sjoerd@collabora.com>
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Transfer-Encoding: 8bit
 
 
+On 03/11/25 12:33 pm, Qi Zheng wrote:
+> Hi Dev,
+>
+> On 11/3/25 2:37 PM, Dev Jain wrote:
+>> The implementation of CONFIG_PT_RECLAIM is completely contained in 
+>> generic
+>> mm code. It depends on the RCU callback which will reclaim the 
+>> pagetables -
+>> there is nothing arch-specific about that. So, enable this config for
+>> all architectures.
+>
+> Thanks for doing this!
+>
+> But unfortunately, not all architectures call tlb_remove_ptdesc() in
+> __pte_free_tlb(). Some architectures directly call pte_free() to
+> free PTE pages (without RCU).
+
+Thanks! This was not obvious to figure out.
+
+Is there an arch bottleneck because of which they do this? I mean to say,
+
+is something stopping us from simply redirecting __pte_free_tlb to 
+tlb_remove_ptdesc
+
+or pte_free_defer?
+
+
+I am looking to enable this config at least on arm64 by default, I 
+believe it will be legal
+
+to do this at least here.
+
+
+>
+> We need to modify these architectures first, otherwise it will
+> lead to UAF. This approach is feasible because Hugh provides similar
+> support in pte_free_defer().
+>
+> Enabling PT_RECLAIM on all architecture has always been on my
+> TODO list, but it's been blocked by other things. :(
+>
+> Thanks,
+> Qi
+>
+>>
+>> Signed-off-by: Dev Jain <dev.jain@arm.com>
+>> ---
+>>   arch/x86/Kconfig | 1 -
+>>   mm/Kconfig       | 5 +----
+>>   mm/pt_reclaim.c  | 2 +-
+>>   3 files changed, 2 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+>> index fa3b616af03a..5681308a5650 100644
+>> --- a/arch/x86/Kconfig
+>> +++ b/arch/x86/Kconfig
+>> @@ -327,7 +327,6 @@ config X86
+>>       select FUNCTION_ALIGNMENT_4B
+>>       imply IMA_SECURE_AND_OR_TRUSTED_BOOT    if EFI
+>>       select HAVE_DYNAMIC_FTRACE_NO_PATCHABLE
+>> -    select ARCH_SUPPORTS_PT_RECLAIM        if X86_64
+>>       select ARCH_SUPPORTS_SCHED_SMT        if SMP
+>>       select SCHED_SMT            if SMP
+>>       select ARCH_SUPPORTS_SCHED_CLUSTER    if SMP
+>> diff --git a/mm/Kconfig b/mm/Kconfig
+>> index 0e26f4fc8717..903c37d02555 100644
+>> --- a/mm/Kconfig
+>> +++ b/mm/Kconfig
+>> @@ -1355,13 +1355,10 @@ config ARCH_HAS_USER_SHADOW_STACK
+>>         The architecture has hardware support for userspace shadow call
+>>             stacks (eg, x86 CET, arm64 GCS or RISC-V Zicfiss).
+>>   -config ARCH_SUPPORTS_PT_RECLAIM
+>> -    def_bool n
+>> -
+>>   config PT_RECLAIM
+>>       bool "reclaim empty user page table pages"
+>>       default y
+>> -    depends on ARCH_SUPPORTS_PT_RECLAIM && MMU && SMP
+>> +    depends on MMU && SMP
+>>       select MMU_GATHER_RCU_TABLE_FREE
+>>       help
+>>         Try to reclaim empty user page table pages in paths other 
+>> than munmap
+>> diff --git a/mm/pt_reclaim.c b/mm/pt_reclaim.c
+>> index 7e9455a18aae..049e17f08c6a 100644
+>> --- a/mm/pt_reclaim.c
+>> +++ b/mm/pt_reclaim.c
+>> @@ -1,6 +1,6 @@
+>>   // SPDX-License-Identifier: GPL-2.0
+>>   #include <linux/hugetlb.h>
+>> -#include <asm-generic/tlb.h>
+>> +#include <asm/tlb.h>
+>>   #include <asm/pgalloc.h>
+>>     #include "internal.h"
+>
 
