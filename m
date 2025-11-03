@@ -1,75 +1,78 @@
-Return-Path: <linux-kernel+bounces-883763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C7D9C2E5BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:02:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B9FCC2E5D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:04:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1B10189059A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:03:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 025964E1967
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:04:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D9BF2FD1D0;
-	Mon,  3 Nov 2025 23:02:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FBF2FD1D9;
+	Mon,  3 Nov 2025 23:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="icGdeO6b"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lFRU1VPc"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E1623184F
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 23:02:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1459A23184F;
+	Mon,  3 Nov 2025 23:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762210957; cv=none; b=aeFp5OUb1/q/n8afpb99sZmkfzI92iz2ajfSpPYwrYHnjE6pjVQ3sozre+Fz8CdV0n2BR+SPnQLHDEgzB+te6ibRNBdG7h+8V9nBJBcDMEo6oljJC2ZukXotiBlKvgiKVYsyYymNsGcdBW7F3CqGQhIzkq1UTvl6JdCFZGK0HkQ=
+	t=1762211042; cv=none; b=Sa2eQQDIIC5qFKqvTLuA9ANszaknbRRVKU3inhbc5OtJvtCncCsPOqTKlnbJ29M6uI4q39bmZFsglvWwDwGzoPGWaF+nuE56FXztlQvoSqn6R+S0zW/zvs4F+XMpj+HHrYigyWxBSqGcsaB69AJUiBg6dKs0YHxLVhlUF2dsLcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762210957; c=relaxed/simple;
-	bh=ol0xGUVXjreC2pqQIbNikjtDqRI23mUHgPA4ks/7abQ=;
+	s=arc-20240116; t=1762211042; c=relaxed/simple;
+	bh=8P1KEoLVfyK8ttLf3HKtbNioD47MCP5kf76Tz9Ckmr4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SrH8l/Rf/hFlr09B6yvLaDVSELZDUiIseH8x2vbhFX90oiL1BWwAIePkU7t6bxOu8U9x24a5m54QIVX/MY9xlRgyG34m8d+5lfwlV6UElnKIi97EWcsA1VF3wF8wh4/sXkWQRW/rfo0x8gfwv2YtpC9TGAPyg+7G+K+yXQWhjBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=icGdeO6b; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=h5oFDQT9afM3zQmcCmEe6PBeGTXU1ZMwArmTPhMIqlt5yyu8xDHVRm8nXVGEmEXx1TXQxKYswPgHVC3nCnoMWIoLkW0YCwuP79LxUIM408wdgzvnRZRty4YpMmHHG3P/0W/+Ac65eRn8tkcWVYZe0QFvRRwDUg4QLTPwDrDU6Jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lFRU1VPc; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762210956; x=1793746956;
+  t=1762211040; x=1793747040;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=ol0xGUVXjreC2pqQIbNikjtDqRI23mUHgPA4ks/7abQ=;
-  b=icGdeO6bsQKf2OdDASWifHH1K4JIQyQdu6m7Tk23MjzGMXCXgF0kBrBu
-   NfImTkfx5YlyKF2z4mf2vrxJsCQN0z9dLhJvF9/yPZkRYhiDbLJZexfMQ
-   vqNZ2k6vsbcQGzoI3XPhPacMxIxaZtDMeQsL8v8BksnzrnjrkyPKvr7WA
-   /LOuQ2+IEtKlWAld/yBsxpQ/9FKc3RG8WCWwbGte9FIjRy7wdlDm8iHgT
-   J6RfqgKH27/BmE84AeOjohGpg3JvX0mp2x9n7mC5GlhEqTRHL8JrL03rr
-   8U6QS3mfl5o1wB5TduT3PWe0qSmDKqNglMNKiRvyRvEZy9ldnBrtLwpDn
-   g==;
-X-CSE-ConnectionGUID: +oXQhmT1TEO4t+8T4t1LDA==
-X-CSE-MsgGUID: H/9/GqALSXWlyYTGJPzPCQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="51867301"
-X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="51867301"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 15:02:35 -0800
-X-CSE-ConnectionGUID: 7+tr4xMtR7SwdtQst+rOYw==
-X-CSE-MsgGUID: 5wjyYfJsRf6oCa3jYu2VNw==
+  bh=8P1KEoLVfyK8ttLf3HKtbNioD47MCP5kf76Tz9Ckmr4=;
+  b=lFRU1VPcCGO+6taK0LSWLDMMB5BGfaHUzQbrZ/tAYFYR+x3t3MAIjBcd
+   sUiKdHlw1zZDICtlpGRIIhhKNxHPonUicsegjahU0ZFJDtgMDDY+F+roR
+   Y9Q/vXy6IHW4I36Ousl6JzpygZ+1Gd+JHnenLJiNcG+JQkVhGtjQMLVuJ
+   ZFTa4r6dHdSeXrBq5xwRqj8Ywqbb7f+zs2d6Yv0QyU7B2taTYVyNPJFfj
+   w4Fb3Hht4xjCg43O41/tydBX8fG1cSJjFT+0qRAQmr9U1f5EmgDtQ7Am+
+   idosryQR2ZheLkya1ShqPIWgMaI+vsgwjHigZ0c5w3WQOqA8xL5km798s
+   w==;
+X-CSE-ConnectionGUID: MHz4pe/USX2XNCVwtDq2Ow==
+X-CSE-MsgGUID: zxl4TQNsReS1y8kupYKjxA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64201870"
+X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
+   d="scan'208";a="64201870"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 15:04:00 -0800
+X-CSE-ConnectionGUID: TNdubzDBTJ2A08ogQgtZ7w==
+X-CSE-MsgGUID: 9aW3zwC0SE6LSE7U86DUNA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="187144068"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 03 Nov 2025 15:02:34 -0800
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vG3Yg-000QbE-0n;
-	Mon, 03 Nov 2025 23:02:05 +0000
-Date: Tue, 4 Nov 2025 07:00:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: Heiko Stuebner <heiko@sntech.de>, lee@kernel.org, srini@kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, heiko@sntech.de,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] nvmem: Add driver for the eeprom in qnap-mcu
- controllers
-Message-ID: <202511040659.c2R6OqbJ-lkp@intel.com>
-References: <20251102163955.294427-2-heiko@sntech.de>
+   d="scan'208";a="186856262"
+Received: from mgerlach-mobl1.amr.corp.intel.com (HELO desk) ([10.124.220.244])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 15:03:59 -0800
+Date: Mon, 3 Nov 2025 15:03:53 -0800
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	David Kaplan <david.kaplan@amd.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	Asit Mallick <asit.k.mallick@intel.com>,
+	Tao Zhang <tao1.zhang@intel.com>
+Subject: Re: [PATCH v3 0/3] VMSCAPE optimization for BHI variant
+Message-ID: <20251103230353.ifsayclvtw7bzyga@desk>
+References: <20251027-vmscape-bhb-v3-0-5793c2534e93@linux.intel.com>
+ <f07e3144-edcd-4b5c-8b4a-fb6bdd90943b@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,78 +81,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251102163955.294427-2-heiko@sntech.de>
+In-Reply-To: <f07e3144-edcd-4b5c-8b4a-fb6bdd90943b@intel.com>
 
-Hi Heiko,
+On Mon, Nov 03, 2025 at 12:07:30PM -0800, Dave Hansen wrote:
+> On 10/27/25 16:43, Pawan Gupta wrote:
+> > | iPerf user-net | IBPB    | BHB Clear |
+> > |----------------|---------|-----------|
+> > | UDP 1-vCPU_p1  | -12.5%  |   1.3%    |
+> ...
+> 
+> Could you clarify what "1.3%" means? Is that relative to the baseline,
+> or relative to the IBPB number?
 
-kernel test robot noticed the following build errors:
+This is relative to the baseline, sorry I didn't mention that explicitly.
 
-[auto build test ERROR on lee-leds/for-leds-next]
-[also build test ERROR on lee-mfd/for-mfd-next lee-mfd/for-mfd-fixes linus/master v6.18-rc4 next-20251103]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> If it's relative to the baseline, then this data either looks wrong or
+> noisy since there are a lot of places where adding the BHB Clear loop
+> makes things faster.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Heiko-Stuebner/nvmem-Add-driver-for-the-eeprom-in-qnap-mcu-controllers/20251103-004523
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/lee/leds.git for-leds-next
-patch link:    https://lore.kernel.org/r/20251102163955.294427-2-heiko%40sntech.de
-patch subject: [PATCH v3 1/2] nvmem: Add driver for the eeprom in qnap-mcu controllers
-config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20251104/202511040659.c2R6OqbJ-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251104/202511040659.c2R6OqbJ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511040659.c2R6OqbJ-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> drivers/nvmem/qnap-mcu-eeprom.c:28:10: error: call to undeclared function 'kzalloc'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      28 |         reply = kzalloc(bytes + sizeof(cmd), GFP_KERNEL);
-         |                 ^
->> drivers/nvmem/qnap-mcu-eeprom.c:28:8: error: incompatible integer to pointer conversion assigning to 'u8 *' (aka 'unsigned char *') from 'int' [-Wint-conversion]
-      28 |         reply = kzalloc(bytes + sizeof(cmd), GFP_KERNEL);
-         |               ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/nvmem/qnap-mcu-eeprom.c:45:2: error: call to undeclared function 'kfree'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-      45 |         kfree(reply);
-         |         ^
-   3 errors generated.
-
-
-vim +/kzalloc +28 drivers/nvmem/qnap-mcu-eeprom.c
-
-    20	
-    21	static int qnap_mcu_eeprom_read_block(struct qnap_mcu *mcu, unsigned int offset,
-    22					      void *val, size_t bytes)
-    23	{
-    24		const u8 cmd[] = { 0xf7, 0xa1, offset, bytes };
-    25		u8 *reply;
-    26		int ret = 0;
-    27	
-  > 28		reply = kzalloc(bytes + sizeof(cmd), GFP_KERNEL);
-    29		if (!reply)
-    30			return -ENOMEM;
-    31	
-    32		ret = qnap_mcu_exec(mcu, cmd, sizeof(cmd), reply, bytes + sizeof(cmd));
-    33		if (ret)
-    34			goto out;
-    35	
-    36		/* First bytes must mirror the sent command */
-    37		if (memcmp(cmd, reply, sizeof(cmd))) {
-    38			ret = -EIO;
-    39			goto out;
-    40		}
-    41	
-    42		memcpy(val, reply + sizeof(cmd), bytes);
-    43	
-    44	out:
-  > 45		kfree(reply);
-    46		return ret;
-    47	}
-    48	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+I will double check, but I am fairly positive that this wasn't noisy.
+Surprisingly, there were a few other cases where the BHB-clearing was
+performing better than the baseline.
 
