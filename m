@@ -1,116 +1,172 @@
-Return-Path: <linux-kernel+bounces-883498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2BA5C2D9B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:10:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D441C2D9BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:11:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4C5984EB578
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:10:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 336F91899E9C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:11:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B96E31BCA6;
-	Mon,  3 Nov 2025 18:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B823C3195FC;
+	Mon,  3 Nov 2025 18:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LwB/JXL4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AVjTmFo6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDFA2BE7C2;
-	Mon,  3 Nov 2025 18:10:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F1123101DE
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 18:10:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762193440; cv=none; b=YAPjTLnOy/VEjh++hlTB/gA265oY1m2ROX/zLYNiFDJ2MDWTYglhXDYaKsp8/SBvuPoNVeM3fATorH3tq083L+k+K4LGYIcop48czNSQecNh0oOLOTRzW1pnukg6UOnjuBAyn0cCLyMnYjUn2AGPiKmxcqMCDssJvMQ3z6T5AaM=
+	t=1762193460; cv=none; b=kfx3dp0xxKRqgp0duD9Q7OiTjFfA1Bs6ZwXEPKi0Jv9vXkxv6g/c47LbP8MosHNrnBWfUpTlKVclPgd2wWkXjbqBRRy5if6H/IOtvff9cRvVrQ/9rzWkaQh0THkarlAH4MoLt/MAEqZensbNEQIrdjL7xgk21UC4h1jcF2t8pGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762193440; c=relaxed/simple;
-	bh=dZ5DzmV8v+EdzX/v24I9P1Dtpu2Lj+7owRynAELiKHQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=RT7c+z7fjofJclUChLdytbRCWzKCrKLaqPD7dkm8li6FLDVbMSUQxKhBY6pMWt0IlXwLhynrNGDZNEuRD2Q+VvB0viBvdegtFkLEi0W3bizPcdkjTLCu9oHOGZtyex+uXoJJr/6DFr6+tauvsZ8vJgCuDxP4NHhbZuTegTtNEpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LwB/JXL4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03921C4CEE7;
-	Mon,  3 Nov 2025 18:10:39 +0000 (UTC)
+	s=arc-20240116; t=1762193460; c=relaxed/simple;
+	bh=F1cyaRwXuuiAD27jN50XcYaxxfBoxB5Wu4eUm8fx+uA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HIm6aw85CokRd4Ypix8sP8jnGsH/GhQ9f3LbWXYZbZiYGIrXagkBntqLnjDJRbQcuZfj2TV/H5/Q7f/7m+QLT2Zw1cvmkITg2CxOomMnhUBDgmh0emPab+GJs46Y8kU5cvSqQ2kdTEHzkPJ9HExVUtvGQ635J3FHz4qfrHxJP6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AVjTmFo6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAF63C4CEF8
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 18:10:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762193440;
-	bh=dZ5DzmV8v+EdzX/v24I9P1Dtpu2Lj+7owRynAELiKHQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=LwB/JXL47a6IAwbTm9xSakkJCGfu82fn/vpMMT6GFWRB6cQ0dL2vEVWxPkGkmN+N/
-	 1EkdRhwDrAHXkytiFeIwv/kWUcnqe1++yX7rQ2xrNS6MoNfcRMuoVUIXLkO546Edak
-	 EGkq79cEE0iemsqGiiDdxOTQZgkTya6f4jriLo0bfK2vQso/PHIHxYRjm1BIMXbLkw
-	 MRYd/0ugIMaWgcmpGmednsEbbBZYJFD4BBdr5HPZvtN/nk7/C/+VSM0f+h1zscxvHE
-	 kuXtZQ32SPf/HLrlhA7hUUtHooqG67Z7hW6Dc/Ez7IRSAiCGEP46p6X0vPqoYkmPaJ
-	 FB1RjwG24qhMQ==
-Date: Mon, 3 Nov 2025 12:10:38 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Geraldo Nascimento <geraldogabriel@gmail.com>
-Cc: linux-rockchip@lists.infradead.org,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Johan Jonker <jbx6244@gmail.com>
-Subject: Re: [RFC PATCH 2/2] PCI: rockchip-host: drop wait on PERST# toggle
-Message-ID: <20251103181038.GA1814635@bhelgaas>
+	s=k20201202; t=1762193459;
+	bh=F1cyaRwXuuiAD27jN50XcYaxxfBoxB5Wu4eUm8fx+uA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=AVjTmFo6eE2n7m9U4FxE+w8fgmU1/VSrNVelJszu9r30YaFM3Pjg79naCLqYaplHL
+	 07yBns7mFoTpFZJFC2ZuttemVcD9KlnlAopPxKS4qIkie0scId2nZCKGn3NCkrnCQo
+	 QWIzef7Hc/gEWNxnzBQU7YvPcxgU9WRzC7mbwWxq+OIkibajVwjLjihrug3QbXZ/90
+	 uhbNfNw2masPZYk9JNX+v23EPFsBn3bKRMsrPaWizycKbQ5ieVpdz3DkMKCeqP65hR
+	 sy+oxBgqjQrTYoyzaf7iZ9a2ok8H9/tC5Xrs+amI7zrUxcN/T9VNtbR+jX8KXmRah3
+	 yGOUapH7vuAww==
+Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-44fa06c8975so1202952b6e.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 10:10:59 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV+JttOzC5984ve3RmtMCkC8NgahEFLpgrLMsTZCxCC6kmKKZACbFE2ujaWbCh0sMHTlI73qjvSqOWEYOk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw11TQhUwm0QFC1TPo1RkeB1JAdD22U9UDV+vW51y+0dBCzDOyw
+	/RjtXBvdSVKM73qACn1jmzDLKYNZaJPLSqA6RwdYYJiM+OfgBTKsmg9mitniUCtpLIhUXhcszDb
+	1/IGNNmL8VjZyQncOBwk4D+KpPT5yQv8=
+X-Google-Smtp-Source: AGHT+IERn6uEe1JRDuOSy89W8uoKbaW2TvHTNbgPSoGwUcM6iCWeIBZxgdOrz7EQeB+XzOWr1sYvL5eZMZFEJqP8g1E=
+X-Received: by 2002:a05:6808:1a1c:b0:43b:2829:e643 with SMTP id
+ 5614622812f47-44f95e93ac6mr6027362b6e.25.1762193459096; Mon, 03 Nov 2025
+ 10:10:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d3d0c3a387ff461e62bbd66a0bde654a9a17761e.1762150971.git.geraldogabriel@gmail.com>
+References: <20251103084244.2654432-1-lihuisong@huawei.com> <20251103084244.2654432-6-lihuisong@huawei.com>
+In-Reply-To: <20251103084244.2654432-6-lihuisong@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 3 Nov 2025 19:10:48 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0ifcuqF7=+NowYOfPbKfGq5XCe4+mg_9Sv8gRHyMZ0gNQ@mail.gmail.com>
+X-Gm-Features: AWmQ_bkRcMul9OXlVST-nV0lHS9Uqs3aBiK8rz7lypqaN1KzWZulxPX6I3uuvhg
+Message-ID: <CAJZ5v0ifcuqF7=+NowYOfPbKfGq5XCe4+mg_9Sv8gRHyMZ0gNQ@mail.gmail.com>
+Subject: Re: [PATCH v2 5/7] ACPI: processor: idle: Remove useless codes about
+ the verification of cstate count
+To: Huisong Li <lihuisong@huawei.com>
+Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Sudeep.Holla@arm.com, linuxarm@huawei.com, 
+	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
+	yubowen8@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 03, 2025 at 03:27:25AM -0300, Geraldo Nascimento wrote:
-> With this change PCIe will complete link-training with a known quirky
-> device - Samsung OEM PM981a SSD. This is completely against the PCIe
-> spec and yet it works as long as the power regulator for 3v3 PCIe
-> power is not defined as always-on or boot-on.
-
-What is against the spec?  In what way is this SSD "known quirky"?  Is
-there a published erratum for it?
-
-Removing this delay might make this SSD work, but if this delay is
-required per PCIe spec, how can we be confident that other devices
-will still work?
-
-Reports of devices that still work is not really enough to move this
-from the "hack that makes one device work" column to the "safe and
-effective for all devices" column.
-
-It's easy to see how *lack* of a delay can break something, but much
-harder to imagine how *removing* a delay can make something work.
-Devices must be able to tolerate pretty much arbitrary delays.
-
-> Signed-off-by: Geraldo Nascimento <geraldogabriel@gmail.com>
+On Mon, Nov 3, 2025 at 9:42=E2=80=AFAM Huisong Li <lihuisong@huawei.com> wr=
+ote:
+>
+> The acpi_processor_setup_cstates and acpi_processor_setup_cpuidle_cx will
+> be called after successfully obtaining the power information. These setup
+> functions have their own main role, but also verify the validity of cstat=
+e
+> count.
+>
+> Actually, the acpi_processor_get_power_info_cst will return failure if th=
+e
+> cstate count is zero and acpi_processor_get_power_info will return failur=
+e.
+>
+> So the verification of cstate count in these functions are useless.
+>
+> No intentional functional impact.
+>
+> Signed-off-by: Huisong Li <lihuisong@huawei.com>
 > ---
->  drivers/pci/controller/pcie-rockchip-host.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/pcie-rockchip-host.c b/drivers/pci/controller/pcie-rockchip-host.c
-> index ee1822ca01db..6add0faf6dc9 100644
-> --- a/drivers/pci/controller/pcie-rockchip-host.c
-> +++ b/drivers/pci/controller/pcie-rockchip-host.c
-> @@ -314,7 +314,6 @@ static int rockchip_pcie_host_init_port(struct rockchip_pcie *rockchip)
->  	rockchip_pcie_write(rockchip, PCIE_CLIENT_LINK_TRAIN_ENABLE,
->  			    PCIE_CLIENT_CONFIG);
->  
-> -	msleep(PCIE_T_PVPERL_MS);
->  	gpiod_set_value_cansleep(rockchip->perst_gpio, 1);
->  
->  	msleep(PCIE_RESET_CONFIG_WAIT_MS);
-> -- 
-> 2.49.0
-> 
-> 
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+>  drivers/acpi/processor_idle.c | 22 +++++++---------------
+>  1 file changed, 7 insertions(+), 15 deletions(-)
+>
+> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.=
+c
+> index 4627b00257e6..1f332f02d273 100644
+> --- a/drivers/acpi/processor_idle.c
+> +++ b/drivers/acpi/processor_idle.c
+> @@ -732,8 +732,8 @@ static int __cpuidle acpi_idle_enter_s2idle(struct cp=
+uidle_device *dev,
+>         return 0;
+>  }
+>
+> -static int acpi_processor_setup_cpuidle_cx(struct acpi_processor *pr,
+> -                                          struct cpuidle_device *dev)
+> +static void acpi_processor_setup_cpuidle_cx(struct acpi_processor *pr,
+> +                                           struct cpuidle_device *dev)
+>  {
+>         int i, count =3D ACPI_IDLE_STATE_START;
+>         struct acpi_processor_cx *cx;
+> @@ -753,14 +753,9 @@ static int acpi_processor_setup_cpuidle_cx(struct ac=
+pi_processor *pr,
+>                 if (count =3D=3D CPUIDLE_STATE_MAX)
+>                         break;
+>         }
+> -
+> -       if (!count)
+> -               return -EINVAL;
+> -
+> -       return 0;
+>  }
+>
+> -static int acpi_processor_setup_cstates(struct acpi_processor *pr)
+> +static void acpi_processor_setup_cstates(struct acpi_processor *pr)
+>  {
+>         int i, count;
+>         struct acpi_processor_cx *cx;
+> @@ -822,11 +817,6 @@ static int acpi_processor_setup_cstates(struct acpi_=
+processor *pr)
+>         }
+>
+>         drv->state_count =3D count;
+> -
+> -       if (!count)
+> -               return -EINVAL;
+> -
+> -       return 0;
+>  }
+>
+>  static inline void acpi_processor_cstate_first_run_checks(void)
+> @@ -1248,7 +1238,8 @@ static int acpi_processor_setup_cpuidle_states(stru=
+ct acpi_processor *pr)
+>         if (pr->flags.has_lpi)
+>                 return acpi_processor_setup_lpi_states(pr);
+>
+> -       return acpi_processor_setup_cstates(pr);
+> +       acpi_processor_setup_cstates(pr);
+> +       return 0;
+>  }
+>
+>  /**
+> @@ -1268,7 +1259,8 @@ static int acpi_processor_setup_cpuidle_dev(struct =
+acpi_processor *pr,
+>         if (pr->flags.has_lpi)
+>                 return 0;
+>
+> -       return acpi_processor_setup_cpuidle_cx(pr, dev);
+> +       acpi_processor_setup_cpuidle_cx(pr, dev);
+> +       return 0;
+>  }
+>
+>  static int acpi_processor_get_power_info(struct acpi_processor *pr)
+> --
+
+Does this patch depend on the previous patches in the series?  If it
+doesn't, why don't you send it independently?
 
