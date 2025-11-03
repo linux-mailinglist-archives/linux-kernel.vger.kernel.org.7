@@ -1,126 +1,201 @@
-Return-Path: <linux-kernel+bounces-882245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2737C29F88
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 04:36:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34791C29FBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 04:44:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 7E9C0348274
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 03:36:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 651B7188F928
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 03:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DCB2874E1;
-	Mon,  3 Nov 2025 03:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BF722882A9;
+	Mon,  3 Nov 2025 03:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="cAsCMg1B"
-Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com [113.46.200.223])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rFn57gkF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E221E1339B1;
-	Mon,  3 Nov 2025 03:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779FE1684B0
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 03:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762140958; cv=none; b=bldSJQNTbCEoJKFWPS3PjoDFK6s1I/u5q/B9+57p+OZ9bSqgvyiNtxkO9WytlZPUOiLr15UKOE1B1CoV4vZdgPQgtb/Ng2ttceWSbJ9QQS72U+p7+2bFzeRnYKMpHdT+3dofzkPhO3GLekwYIp/2cps8dSgcsKjElKeuYFnsC/s=
+	t=1762141469; cv=none; b=Q3MNiiw99cwZ5Cqi2ab7NDoRHwcPkxOA8Oe4u3p1i3F6eDzt5QM9ca6e9dS4OXq1PPrkHFLUdtYhdseE7prnkCFmnZD/1nHunXE6SnTrqyNs4SMndk9qe2AWiKVQZyiuwtE0S5LqFc8R3fSqrC80VMteW81JCg4dMzJvaqS597k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762140958; c=relaxed/simple;
-	bh=6SFg1x6PoSrmi6rv0iLomf8vqw2/CViQpjBOtbhVtz4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OF1r+9T8v1kkHA7+1+tJg7wfO1akBTAZFOGuFWk12+sx7rMnorBf6LNGKLBaCJLrQ9Lm6IDw88dJ+Wj/pYl2KabBHz+aF0G2md7oZhc7brQ5wlAdwmv+zQb87yivwF+QUncQ7QmR72p6m+qII3Dp/RVfbRTS+84/ULISWUbNH/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=cAsCMg1B; arc=none smtp.client-ip=113.46.200.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=5iAlRuAIsi2GE5ItcdrGuYTZod15rl8M0hhAckNHMcs=;
-	b=cAsCMg1BrDm96i8ognht4vAKSaZKt8SVQAMotpszTJBJw3IMv69XAQmpy1g5RnlhCc2rIjwzt
-	gXbsfEiX7W4ucdEJCpVZk59tAx3Xu8OTPFH61xGh3ZdGoquc2Z3PrYVIwpxPVPxTNV+VtESZRrv
-	ODY/L0Sak3nX9dqGFpx0wgg=
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4d0HJ63dr3zmV8P;
-	Mon,  3 Nov 2025 11:34:14 +0800 (CST)
-Received: from kwepemj100009.china.huawei.com (unknown [7.202.194.3])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7950E140277;
-	Mon,  3 Nov 2025 11:35:48 +0800 (CST)
-Received: from DESKTOP-A37P9LK.huawei.com (10.67.109.17) by
- kwepemj100009.china.huawei.com (7.202.194.3) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 3 Nov 2025 11:35:47 +0800
-From: Xie Yuanbin <xieyuanbin1@huawei.com>
-To: <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <hpa@zytor.com>, <akpm@linux-foundation.org>,
-	<david@redhat.com>, <lorenzo.stoakes@oracle.com>, <Liam.Howlett@oracle.com>,
-	<vbabka@suse.cz>, <rppt@kernel.org>, <surenb@google.com>, <mhocko@suse.com>,
-	<linmiaohe@huawei.com>, <nao.horiguchi@gmail.com>, <luto@kernel.org>,
-	<peterz@infradead.org>, <tony.luck@intel.com>
-CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-edac@vger.kernel.org>, <will@kernel.org>, <liaohua4@huawei.com>,
-	<lilinjie8@huawei.com>, Xie Yuanbin <xieyuanbin1@huawei.com>
-Subject: [PATCH 2/2] mm/memory-failure: remove the selection of RAS
-Date: Mon, 3 Nov 2025 11:35:36 +0800
-Message-ID: <20251103033536.52234-2-xieyuanbin1@huawei.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251103033536.52234-1-xieyuanbin1@huawei.com>
-References: <20251103033536.52234-1-xieyuanbin1@huawei.com>
+	s=arc-20240116; t=1762141469; c=relaxed/simple;
+	bh=gdUkQPTJ/VPhEpfeRnKn2z1gE2JqH/SrDbDMetRQfZk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rw5Z4fz2k/zgQHqE7gXkjAMeEiPUPHaweGqzU2uBoDgcL5rALA1fKlfjoYNvAeXdOX9E5J2oHm0apNlFSyCUbIsYFjaHXeSWQtZ6qkw2GI+m0kl9N2X2IPnGE5UKwkvG54xxqOwaKSlyBVUERoJqGyPwzfYhtITlyib7DAYXcAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rFn57gkF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1A04C4CEF8
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 03:44:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762141468;
+	bh=gdUkQPTJ/VPhEpfeRnKn2z1gE2JqH/SrDbDMetRQfZk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=rFn57gkFOYHOJYiPiDrpFN7XEkqaE2BJq+5anLEYB8G6l66AA3IUCvyJMwDaOjEoK
+	 3B0E7UJ61AaYjkaEnYJbQT23ySeTKck+dZgA7OqoJRM0qLJ8PDpjH8nb74MSJH+Gk2
+	 phLG7W6t64H8JC1MVlzZEnqVRVQ0gi1L6q9fOjmZliQn5L2oqrxPDYEmWJicRkBC5I
+	 2dUC441hdBc8FX4eXS7re4yHoCgyQnlK8G9dDH4iYkYfOdr5pkdf6eCbYc5qv8OTPq
+	 c9ob5gNZQZZdZFSAXEMuMypKFePK1Nc4xV+xE/6kIgH8znRmGu8+F/LyQ6GhaHs2zI
+	 RrvNx4ah/+oTA==
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-470ffbf2150so27393515e9.1
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 19:44:28 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUwySmmUpdHytAvYgHG9JR8QbqjvUUuif2kVYhRq3j7NhtRyhANBx8UaO/D67+7QKv+pkI7TtRRY+fKV9E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJlOXh1nxEiN/Ol6pmV3KdwGGosih7AuFSrw6XuowCAnWy7qQA
+	qJHTRbAj7Zu8JzI4p6ZDzbGdJm5ykwF5iNirjOL61IqBDnXR6XJqNXhMcZ8gCpTzBU2/Qmv/sw6
+	p2RZ2N6YbeL0dJGXUOhE2G4Am+p+z5yM=
+X-Google-Smtp-Source: AGHT+IHrpYfgDGvlMRoqjzYnuod0FjOaTVgsVNAdM4ECirng3fTqP+kR1omSMgHtLa5e0wNZ4Y8EENS3Is6VetOLc7A=
+X-Received: by 2002:a05:6000:25c2:b0:429:b8c7:1848 with SMTP id
+ ffacd0b85a97d-429bcd5c6ccmr9547366f8f.19.1762141467311; Sun, 02 Nov 2025
+ 19:44:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemj100009.china.huawei.com (7.202.194.3)
+References: <20251030135652.63837-1-luxu.kernel@bytedance.com> <20251030135652.63837-5-luxu.kernel@bytedance.com>
+In-Reply-To: <20251030135652.63837-5-luxu.kernel@bytedance.com>
+From: Guo Ren <guoren@kernel.org>
+Date: Mon, 3 Nov 2025 11:44:15 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTQXunyTdwKrLF2By13u3-n3LRNpC8j2Pnv6umCh89wCJQ@mail.gmail.com>
+X-Gm-Features: AWmQ_blAzsZQaFgVv69HaEet96wXDSYvFZq30UlZuizoCFkbz_N3fvc6h5ZzmcA
+Message-ID: <CAJF2gTQXunyTdwKrLF2By13u3-n3LRNpC8j2Pnv6umCh89wCJQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 4/4] riscv: mm: Perform tlb flush during context_switch
+To: Xu Lu <luxu.kernel@bytedance.com>
+Cc: pjw@kernel.org, palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr, 
+	apatel@ventanamicro.com, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The commit 97f0b13452198290799f ("tracing: add trace event for
-memory-failure") introduces the selection of RAS in memory-failure.
-This commit is just a tracing feature; in reality, there is no dependency
-between memory-failure and RAS. RAS increases the size of the bzImage
-image by 8k, which is very valuable for embedded devices.
+On Thu, Oct 30, 2025 at 9:57=E2=80=AFPM Xu Lu <luxu.kernel@bytedance.com> w=
+rote:
+>
+> During context_switch, check the percpu tlb flush queue and lazily
+> perform tlb flush.
+>
+> Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
+> ---
+>  arch/riscv/include/asm/tlbflush.h |  4 ++++
+>  arch/riscv/mm/context.c           |  6 ++++++
+>  arch/riscv/mm/tlbflush.c          | 34 +++++++++++++++++++++++++++++++
+>  3 files changed, 44 insertions(+)
+>
+> diff --git a/arch/riscv/include/asm/tlbflush.h b/arch/riscv/include/asm/t=
+lbflush.h
+> index eed0abc405143..7735c36f13d9f 100644
+> --- a/arch/riscv/include/asm/tlbflush.h
+> +++ b/arch/riscv/include/asm/tlbflush.h
+> @@ -66,6 +66,10 @@ void arch_tlbbatch_add_pending(struct arch_tlbflush_un=
+map_batch *batch,
+>  void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch);
+>
+>  extern unsigned long tlb_flush_all_threshold;
+> +
+> +DECLARE_PER_CPU(bool, need_tlb_flush);
+> +void local_tlb_flush_queue_drain(void);
+> +
+>  #else /* CONFIG_MMU */
+>  #define local_flush_tlb_all()                  do { } while (0)
+>  #endif /* CONFIG_MMU */
+> diff --git a/arch/riscv/mm/context.c b/arch/riscv/mm/context.c
+> index 4d5792c3a8c19..82b743bc81e4c 100644
+> --- a/arch/riscv/mm/context.c
+> +++ b/arch/riscv/mm/context.c
+> @@ -199,6 +199,12 @@ static void set_mm_asid(struct mm_struct *mm, unsign=
+ed int cpu)
+>
+>         if (need_flush_tlb)
+>                 local_flush_tlb_all();
+> +
+> +       /* Paired with RISCV_FENCE in should_ipi_flush() */
+> +       RISCV_FENCE(w, r);
+> +
+> +       if (this_cpu_read(need_tlb_flush))
+> +               local_tlb_flush_queue_drain();
+>  }
+>
+>  static void set_mm_noasid(struct mm_struct *mm)
+> diff --git a/arch/riscv/mm/tlbflush.c b/arch/riscv/mm/tlbflush.c
+> index f4333c3a6d251..6592f72354df9 100644
+> --- a/arch/riscv/mm/tlbflush.c
+> +++ b/arch/riscv/mm/tlbflush.c
+> @@ -115,6 +115,8 @@ DEFINE_PER_CPU(struct tlb_flush_queue, tlb_flush_queu=
+e) =3D {
+>         .len =3D 0,
+>  };
+>
+> +DEFINE_PER_CPU(bool, need_tlb_flush) =3D false;
+> +
+>  static bool should_ipi_flush(int cpu, void *info)
+>  {
+>         struct tlb_flush_queue *queue =3D per_cpu_ptr(&tlb_flush_queue, c=
+pu);
+> @@ -134,6 +136,14 @@ static bool should_ipi_flush(int cpu, void *info)
+>         }
+>         raw_spin_unlock_irqrestore(&queue->lock, flags);
+>
+> +       /* Ensure tlb flush info is queued before setting need_tlb_flush =
+flag */
+> +       smp_wmb();
+> +
+> +       per_cpu(need_tlb_flush, cpu) =3D true;
+> +
+> +       /* Paired with RISCV_FENCE in set_mm_asid() */
+> +       RISCV_FENCE(w, r);
+> +
+>         /* Recheck whether loaded_asid changed during enqueueing task */
+>         if (per_cpu(loaded_asid, cpu) =3D=3D d->asid)
+>                 return true;
+> @@ -146,6 +156,9 @@ static void __ipi_flush_tlb_range_asid(void *info)
+>         struct flush_tlb_range_data *d =3D info;
+>
+>         local_flush_tlb_range_asid(d->start, d->size, d->stride, d->asid)=
+;
+> +
+> +       if (this_cpu_read(need_tlb_flush))
+> +               local_tlb_flush_queue_drain();
+>  }
+>
+>  static inline unsigned long get_mm_asid(struct mm_struct *mm)
+> @@ -280,3 +293,24 @@ void arch_tlbbatch_flush(struct arch_tlbflush_unmap_=
+batch *batch)
+>                           0, FLUSH_TLB_MAX_SIZE, PAGE_SIZE);
+>         cpumask_clear(&batch->cpumask);
+>  }
+> +
+> +void local_tlb_flush_queue_drain(void)
+> +{
+> +       struct tlb_flush_queue *queue =3D this_cpu_ptr(&tlb_flush_queue);
+> +       struct flush_tlb_range_data *d;
+> +       unsigned int i;
+> +
+> +       this_cpu_write(need_tlb_flush, false);
+> +
+> +       /* Ensure clearing the need_tlb_flush flags before real tlb flush=
+ */
+> +       smp_wmb();
+> +
+> +       raw_spin_lock(&queue->lock);
+> +       for (i =3D 0; i < queue->len; i++) {
+> +               d =3D &queue->tasks[i];
+> +               local_flush_tlb_range_asid(d->start, d->size, d->stride,
+> +                                          d->asid);
+Here, do we need an accurate flush for a delay flush?
 
-Signed-off-by: Xie Yuanbin <xieyuanbin1@huawei.com>
----
- mm/Kconfig          | 1 -
- mm/memory-failure.c | 2 ++
- 2 files changed, 2 insertions(+), 1 deletion(-)
+> +       }
+> +       queue->len =3D 0;
+> +       raw_spin_unlock(&queue->lock);
+> +}
+> --
+> 2.20.1
+>
 
-diff --git a/mm/Kconfig b/mm/Kconfig
-index a5a90b169435..c3a8e0ba1ac1 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -738,11 +738,10 @@ config ARCH_SUPPORTS_MEMORY_FAILURE
- 
- config MEMORY_FAILURE
- 	depends on MMU
- 	depends on ARCH_SUPPORTS_MEMORY_FAILURE
- 	bool "Enable recovery from hardware memory errors"
--	select RAS
- 	help
- 	  Enables code to recover from some memory failures on systems
- 	  with MCA recovery. This allows a system to continue running
- 	  even when some of its memory has uncorrected errors. This requires
- 	  special hardware support and typically ECC memory.
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index f698df156bf8..baf2bd79b2fb 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -1276,11 +1276,13 @@ static void update_per_node_mf_stats(unsigned long pfn,
-  * setting PG_dirty outside page lock. See also comment above set_page_dirty().
-  */
- static int action_result(unsigned long pfn, enum mf_action_page_type type,
- 			 enum mf_result result)
- {
-+#ifdef CONFIG_RAS
- 	trace_memory_failure_event(pfn, type, result);
-+#endif
- 
- 	if (type != MF_MSG_ALREADY_POISONED) {
- 		num_poisoned_pages_inc(pfn);
- 		update_per_node_mf_stats(pfn, result);
- 	}
--- 
-2.51.0
 
+--=20
+Best Regards
+ Guo Ren
 
