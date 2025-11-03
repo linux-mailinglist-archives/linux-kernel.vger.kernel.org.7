@@ -1,202 +1,238 @@
-Return-Path: <linux-kernel+bounces-883512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01EB2C2DA77
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:22:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8F3AC2D9E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:16:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D46CF18845AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:22:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8500018953DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C9B280035;
-	Mon,  3 Nov 2025 18:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0A82253B0;
+	Mon,  3 Nov 2025 18:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rong.moe header.i=i@rong.moe header.b="RuIUaip0"
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="a35T0c46"
+Received: from YQZPR01CU011.outbound.protection.outlook.com (mail-canadaeastazon11020085.outbound.protection.outlook.com [52.101.191.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59DE11A9F94;
-	Mon,  3 Nov 2025 18:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E84217C21C;
+	Mon,  3 Nov 2025 18:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.191.85
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762194089; cv=pass; b=nQfXDkr+WaW6No9f00kAzm6C00vPFAONFNA2AVjaAEQmNarJ4aPZ3uGVEc0k8bCwUXEnY/q6FYbTZGMFNGdb3Rte3MXuSnY7UA48+4PsrYBIl2YtDrwx3BsOMVDT6ZYLa3/38z+PZWBjXNOKM6tYNkDFjZ0ltErzuEXEr56+XG8=
+	t=1762193792; cv=fail; b=hcXlgDveZ6S3PcxpJH6auYKXuWoRGnwLuptYzsvUUevi03MiV46IQMPLQy9BJjLmZHuq+MgNV7S8OCXTC90iXcFUc1lXK/6K46L8TAQuggftqheJAgQQ1RA+mPcBe6wL1ivO8/EqcDoLof9AMcCJ3ZxUe9PHZRu66nkT2NfM/cs=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762194089; c=relaxed/simple;
-	bh=PmWZVCBb+tahmE7RsCBi8HotepYlI2NXl+9qAvVys6Q=;
-	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
-	 Date:MIME-Version; b=BFwIgtIHUq+JVhzvvouVQrwy62+/2VH3fo7VYNo5mY31nAlT+moOAuQKcEWor/LH7i+/Hl+CQUVGryCRJz+XcJEsCVOEw1PpDcd3ekELROkp8KEWGcvHi/dz7G4cbjccLYorjhtwfh77hEVcmMduNS/2wXcIVbX4eXD/9sAzdUo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe; spf=pass smtp.mailfrom=rong.moe; dkim=pass (1024-bit key) header.d=rong.moe header.i=i@rong.moe header.b=RuIUaip0; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rong.moe
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rong.moe
-ARC-Seal: i=1; a=rsa-sha256; t=1762194071; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=VddSQLqbswyJo4B/inOXjFVXf41QdgWVdnm3KTuTq4/Fc1VOTr5XZ9DXOjMzVF7Jkw4xyovwzcya9hylBSOar4hvriLDy3tJvu5/9Oeuzl3DBvO1wB2XEmoN7Heow9rEDmYk5TwskCD2z+oFGqtW565HrimOHrnhDgBXGeJgzBY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1762194071; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Gyw06T/5m9Cp2WllVa8zW2c87rrQdcGV+9Fj1/2v7UM=; 
-	b=Qo3AV0asi7gaN9ihTI42cHHjVbyLbADc5xpx14n/FcNEiRZGVbaDf5+9DO+P4E3MvevbLo7tb61++DtE+y1D6y5YfEuAEbUQNh636X/R/07FmGPQ9fvmO/Hv+3Nq7rdPlQrUG466z2ZzJSJD6idfGrqnQgFibWvXp2U03gFpf7U=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=rong.moe;
-	spf=pass  smtp.mailfrom=i@rong.moe;
-	dmarc=pass header.from=<i@rong.moe>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762194071;
-	s=zmail; d=rong.moe; i=i@rong.moe;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:Date:Date:MIME-Version:Message-Id:Reply-To;
-	bh=Gyw06T/5m9Cp2WllVa8zW2c87rrQdcGV+9Fj1/2v7UM=;
-	b=RuIUaip0XeMyHjvjsjdiJOvSBMpY8sbMlOXFFT1ty5tx/FODwZ2xL6jJ0IHUCWWS
-	f/dgLdWTP7ycUS1UnAEtGfR2bXToxiWUFCE7/sShEZp0yEN6/p29u5+3hiVDz2W/4wB
-	cAtJQSLradY1YBj/dMkS2zz76KLGXePLewoqiflM=
-Received: by mx.zohomail.com with SMTPS id 1762194068066262.1453735507406;
-	Mon, 3 Nov 2025 10:21:08 -0800 (PST)
-Message-ID: <7ef252405946f6ab3feff38cc4bd9ddcc49bad56.camel@rong.moe>
-Subject: Re: [PATCH] drm/amd/display: Fix NULL deref in debugfs
- odm_combine_segments
-From: Rong Zhang <i@rong.moe>
-To: Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
- Rodrigo Siqueira <siqueira@igalia.com>, Alex Deucher
- <alexander.deucher@amd.com>, Christian =?ISO-8859-1?Q?K=F6nig?=	
- <christian.koenig@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter
-	 <simona@ffwll.ch>
-Cc: Roman Li <roman.li@amd.com>, "ChiaHsuan (Tom) Chung"	
- <chiahsuan.chung@amd.com>, Ray Wu <ray.wu@amd.com>, Mario Limonciello	
- <mario.limonciello@amd.com>, Wenjing Liu <wenjing.liu@amd.com>, Hamza
- Mahfooz	 <hamzamahfooz@linux.microsoft.com>, Aurabindo Pillai
- <aurabindo.pillai@amd.com>, 	amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, 	linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-In-Reply-To: <20251013164742.24660-1-i@rong.moe>
-References: <20251013164742.24660-1-i@rong.moe>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Date: Tue, 04 Nov 2025 02:15:59 +0800
+	s=arc-20240116; t=1762193792; c=relaxed/simple;
+	bh=ZLjzPdiIlS19B6rLQqfrDc1+jE+HRWhMOd3LSfCrp0I=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=iBFXIBCVfVfAtQI6p91NTZfg3TcZOxKJglRakJ1NZC/bvgFaDQSUlSzc4geGajSo5O6m42St59mItMSCUTBTKahTnydFdFZphmllfYJ7/CPKLtZdqkeqHKiTTKy6dr7vy3skKbvf7ef5DievW5u0cmDKJJ/NJprmVnysptSoPbs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=a35T0c46; arc=fail smtp.client-ip=52.101.191.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CkrqKlOFl1KTNxLCZkpIEe2T2GR3a5P0No/UIk6lEXcmWAfsLUNIKr0PTXS7Fr+lmXWxZiay9TgEya52r+hyIOmYE26zwshghZWXMr23EdmcMZwze6T/7p3ZXPwDvML1HgiYSsczykfDxyI7bRYeQDXRulo3pQyv7J8ogsK+eMgIotbi3DjH6FtQfWQ0Cg6vLB4uGcMNQrB/5zspC1DkwiHi/I0XMaz8tbAyeHNeZHX3ls38ggCaO+cpmRSohftkFpJENZYgTrd513F/Z1/tOjQTJolswnnj/QpMwGckFddEklJVHyTTOjPuBeMzAKjaHS4+X7c/30MUP2gJxWM03w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OjA+tCkVv7HMBopE4CROfapBNMNTcsB8iFYjRUDIDVI=;
+ b=xJF6aPXS1EAtcur17GvS28TVCQU8aJmGPCkLvnBIY+TxmiLLRKSlLMMXz2rs+UovwMxX3dQqo0mOL48oRMbQpXSHiitJyiliG2HE8OgdJmMOfzqBRAYgd8ww++JvKXBUGsHaYDbMYSN6cIz40o1aKofHQuMrHAqGQ40haIRGaV6hH0/eHe6rjx9iR3rp365qRzFO4+8RFthQplsVSDn9E8ouORYWv448Ivpeu0phbdPgPyiOykhViMZfV3vNha3FV6/eE7JJaz4K7m1YgLRmpaYl/MjshTLFJ7RoXgil8QGONXbOOAvOgQpxEnhP0xs5VQpfOD2WSfChGmZ8JKw3ZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OjA+tCkVv7HMBopE4CROfapBNMNTcsB8iFYjRUDIDVI=;
+ b=a35T0c46utUuk06XBVZNlbbjtYU/Et/qRmzQxkEo8NBWfnWURuA9ES6p+gCLFhOgfm5BhFZ4X3Tr8VmZTr3x+Lh4fuyUZUuaoAs4gALk+gpr2xOPHW0ZwfzFE5MtV78BRtf/9dMVJc8Otp30wkHyfKIuJ89+xmwO14hVeFdim0FayWV639oaxgW4LTnL6b8aSItlRk9xWsoCz264VsS0PhMl+y6sKvSQYHGonihlrPyWcWyAZbIwjNkDnp49sCS4nu/4RcwQKVr8cYe6r6POym7jHW5d3Y3q+FLLF6Q5Qr1Qur68De/MyLJKyMNwdZrKTlT0akVAQKKGJXIPUlalgw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
+ by YQBPR0101MB5959.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01:36::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Mon, 3 Nov
+ 2025 18:16:24 +0000
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4%2]) with mapi id 15.20.9275.015; Mon, 3 Nov 2025
+ 18:16:24 +0000
+Message-ID: <7cdecba1-2b30-4296-9862-3dd7bcc013d8@efficios.com>
+Date: Mon, 3 Nov 2025 13:16:23 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 17/19] srcu: Optimize SRCU-fast-updown for arm64
+To: paulmck@kernel.org
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+ rostedt@goodmis.org, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
+References: <082fb8ba-91b8-448e-a472-195eb7b282fd@paulmck-laptop>
+ <20251102214436.3905633-17-paulmck@kernel.org>
+ <b2fb5a99-8dc2-440b-bf52-1dbcf3d7d9a7@efficios.com>
+ <f89a3a56-e48a-4975-b67b-9387fe2e48c6@paulmck-laptop>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <f89a3a56-e48a-4975-b67b-9387fe2e48c6@paulmck-laptop>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YQZPR01CA0123.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:87::28) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Evolution 3.56.2-5 
-X-ZohoMailClient: External
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YQBPR0101MB5959:EE_
+X-MS-Office365-Filtering-Correlation-Id: ef9db93c-b335-4394-1002-08de1b051917
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Rk1sb0ZFbUhHVkNxUCtoNVllT1Iwdm8yL3hQclFpZkVLMjcxR1g2Rm0xbmNF?=
+ =?utf-8?B?WUd3OHhyZEVac3VublN4dSthMWFJQXhiYUVVSHVtcmQwNmRrL2JybkQwdDZD?=
+ =?utf-8?B?bW5vTysrWENqVVEwbzB6NVNHVFNXOFdNcjhIK0tKUjNTK2M0SU1OdmNGcXl3?=
+ =?utf-8?B?b2hoMUtteDZhb1dkZ1dNN2E3QnZ5UU5TZmM0ZG5rQzFPbXB3Q0hmNUxadE5y?=
+ =?utf-8?B?MWNDWkdSbWtvN09qbGpZSFBnZEVabkhoRGhhNU9zUC91cDd4NFRPRXF1RjFB?=
+ =?utf-8?B?UTlOeW5UT2dKajJadjgwQk9GdzZDRFVWdk1CamVwVks4VEpZS29tNGJ1Z0xx?=
+ =?utf-8?B?SmMzK0Ewd0JWTS93TDNabDI5aVFwV1hKNHk5WTRhODNYRyt0eW15dVNkN3dI?=
+ =?utf-8?B?SDZoZFJTSmJYTlp0emc1aGFjMjF4SjNyMVZvVVNwTURVK3lVQkxoa0FXSjhI?=
+ =?utf-8?B?ZHBjN3B4djhJMlJYM1B3MnJmSjFZNGhnTndmNFhkSDMxU3ZSeVhrYjRWRGpE?=
+ =?utf-8?B?ZVRGSE9CeFFpaGtTZ3RDcmZLd01MZkd1dnZjZDJPbzF3QUlyTWdpMkcrME1h?=
+ =?utf-8?B?Ykd6TXdkeG92aXBvcm9PSjk4VnNzdlhEb3B0Q1JMK2VyS3ROVjVuWmM2N1dn?=
+ =?utf-8?B?d3JXWU4xNnphZDFHSzcwTE9kOXdxSElaUnZDRm1Rcm51b1h5b0ljYUtPMVhw?=
+ =?utf-8?B?U01kbFVQNEEybWNsdjc0R1lteW1vZm5RdndhQi9Dc3BDakg1eEg2U0xEKzI1?=
+ =?utf-8?B?MTZ2S2NXc3lIWmxoZ3NOcVkrdmYxOFk0S014bVBhZWJBeFFpbUx1R2Q1cVF4?=
+ =?utf-8?B?ZUtlaHp4NzlQWGV0SlFhWFlMbEZRaTVUODBjeEhRWFg3QVROVnIwdWtBalZ5?=
+ =?utf-8?B?RUpVajJ0bEZNUFhndzNYK3IxejdBc3NhQlRodEZJaWRjNXZVN1gzYWx2eDFJ?=
+ =?utf-8?B?cVZOQVJTeVNBNkF3ZnYxajlLMW9wTVIwSFlkUGszYVJxd1JNcmVFV200UzlM?=
+ =?utf-8?B?TFJ3ektJa09GclVLd1JMQnpQVnBwTW1vOFpsNUJhSWpabkxEYU9SRUhLa2tS?=
+ =?utf-8?B?WThJL3pFTzFyLzBkczJWVUd1YVNvQlU1Q1AxQ0lMLzRqK25WdE5hZjB6WXU4?=
+ =?utf-8?B?NnNqUm1FY204VFV0UityQkpvdWVWTURjVU5DMm1jK3VGN0dsYzBFTG9URVdj?=
+ =?utf-8?B?WEtxYTRCYVhWdnZPUXhXcE9sSkkwZ2g4RnVyNGJCb01QL1c4QklqOG05SjRt?=
+ =?utf-8?B?OSsxeEtKZGFyVzZnb2FLVlcrNTY5TXEzUndFNVdrTmtMbVM2VGZQbzFyWFNr?=
+ =?utf-8?B?dXgyQWIzM05FcWJvdXk3dXRORXJPK1FKMzZPLzNNSE5mN3ZsdU11NFFLYUdH?=
+ =?utf-8?B?NlBtMzNCZUVWZTlOT0hlYmNFNFBIVUwvaTdNUm0xSmJiRUlaSmhwYlpwNG9n?=
+ =?utf-8?B?eFR1T01tamZVZThlaDdkTGlhUEswU0F0MkZGMm9Oam44NUxKb1k1bnRwMFh5?=
+ =?utf-8?B?OG1YWVFyK0V0d3MvTXo5SGU3eHlJMjRWbGtuM2RYejVPUVR2eW01NFFUSTBm?=
+ =?utf-8?B?VzRMMVVxdlprV0xtVnptVnY2M3B0M0xTd3lTV3h4WVpZdlRPK2NOT25FZ3Ix?=
+ =?utf-8?B?eTlLN0svbHdKKzdpUzl4eUNMTmd4QUdGK2lCTWpBa3ZQL3VVd1pUSHcwaUVB?=
+ =?utf-8?B?QWRncUYzYmN0bENzMytRMlkrSXhhWlY0TWEycVFwODF4NzdCMjUvZkZDZ21r?=
+ =?utf-8?B?Ulo4UVkzb25lMG9XNmNkejFxUzg0RldSQkpocExZdDgwTHM1ZGgwaXM0ZS9Q?=
+ =?utf-8?B?cjdaSUoyaG9ZeEpReldzYVlrVmY3b1p1MlQvUHhIQ3NCL1RMTXpET3NzMStS?=
+ =?utf-8?B?MGpreC82QlprL3pGYWFvN3h0Ylo5VVBnMlBaQmlQTUdTQlE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SE1JQldUNHYzaXh2ZXcrNlJ3RUhHMTVieEFTeEcwMytJY0d0aXh2SE45Smox?=
+ =?utf-8?B?WHQ3RmFwYm1FYkVOQjB4UlF0WkVSb2RINlkyRUJta09DQi8zR3hwSGtBUysx?=
+ =?utf-8?B?MjlhVkQvZkhTTy9pd215NWZKcTFldlhId0JGcS9iUXdaak91Q0hZSmxkdVQ4?=
+ =?utf-8?B?STlhTmhvZzhrek5TZ3hsSi9xNUlXUHRWd2hUS1hicHoyRFpMOVNuQmFoR2pw?=
+ =?utf-8?B?V0V4dEorQlJ4bnhnaXJNUENVaitZVjBxVUdOSU8yZi9qcmphODI5d2l5OG1k?=
+ =?utf-8?B?d3FCd2hJVWYzNjJuODRmdGp3VTZTZWx3SThQdUVGcXdsSEppcU5vS2pLWEhT?=
+ =?utf-8?B?K0loa1NzdDJBQ3Y1UGhVTldFZjFObHNQYWZLd3krRWlKZDdMZit1Nm8wUDJt?=
+ =?utf-8?B?R1dTVWRUbis0VjJVeE9VRHZETXI5VzdOTUYwVlBMcTdyeHVtUVo0UUZrbndE?=
+ =?utf-8?B?RXNKTWJCUzdKUEJhZUJjRnRSZjd0RXllQjN2Q3lGZ2cwdVdDY3ozRU8zNE1W?=
+ =?utf-8?B?RElXcEdrMk1xVm9GdmNRQmxSdkdTS0x3YVFBOWt2dVptRkxLK0VkaWxsUzJR?=
+ =?utf-8?B?K1o4QkNnbkhLeXJwazJGMzhsd2xXc1RPV21WbGJsVUpiaGF1WS8yMDF0TG1u?=
+ =?utf-8?B?TjV1OEVxUVVEck1SemZwdmJmeHkwWjdERFVoZFljWDZOdVhWQ2E0MlIyVzdW?=
+ =?utf-8?B?K2lkcWRoR1hMRG1ZN29qV0Q0VS8zUWZheWZReitFQTJjNmk3eDZIK3VlMWNz?=
+ =?utf-8?B?M0JJSkZMdmpoSGQ5dFN0UWlBTU8wQlhod0g4Y3lOdzBkcUFWczI0T3M4T3JJ?=
+ =?utf-8?B?RmpXWU9vTitHRjRlQlJZR01qZmZuVWJ3OEJ5cHBhbVBhRWRXWWdNRWp5QmJF?=
+ =?utf-8?B?Sjc0YiswcUFwRVJmNjdoaTZYV2JZbDdOM2JVVDB0Sm9va0hPMHJhTFRqMlF2?=
+ =?utf-8?B?Y1hlSmpsTXprczBzblZRNFRCSkw4VmRhUEN3Ri95L3ZZa0FMZkZaTzNvSUFF?=
+ =?utf-8?B?UkJqaVc5Nm5kWm1kTFpCcU9sekJPYzJDb1dKZG9UN2FVZGtBSjVrc3Z0eUtt?=
+ =?utf-8?B?UldsaFF2RENMS2cya1dqN0ViYWF1NG1QaURaR3R1NDFKdGJWMm1tbzhBUjZm?=
+ =?utf-8?B?Wmp1ckRrK0lsSk1KVjAxV2dvcTlEaGRQQlF6cTlTSG9GeURqS3FLenowVUNh?=
+ =?utf-8?B?SytHNHZabUhGcE1iZ2JyNFBhY2JGZ1RCVmhIWEVQZUpKcGR6N21ZNy80RmhZ?=
+ =?utf-8?B?bXVTTWZNT2t1VytFZlVjRlJqclZlVDFza3Z1NHFoSVBRRit0UVJPS0V4Vnpl?=
+ =?utf-8?B?NlZYWlJpOTVaWWxRVUZnc2JrQnZaZlE3Z0EvdTZOUXdQMTFiSEowNkxkWUN3?=
+ =?utf-8?B?QjUxTFBoUVBoNGw4Tm8wSldSV1pPdXlLVk83WlZoS2NRWFlwU2JCQ3dSaWZx?=
+ =?utf-8?B?OWwreWZqZXhmcUZCVXBXU3BJUlNyZTM1RDhCTTFJREFNTUgvN1hQSWhHR3ND?=
+ =?utf-8?B?YnkyZFJ1Tm53eFdvbDR0WlNvZVVIWEo5Um9pT0VubW9XN1NxLytuVnMwc0E1?=
+ =?utf-8?B?aytMWDBMR0d2UWZ2ZDZUbE9XMzZLWVRBUTJRNk0wOTVuUURiTzVGYVM3UXJ2?=
+ =?utf-8?B?UWJzNzZmQVJpb2xiZWdvTmZqRWJnM3h2THIwZmNKZWx0NTVkN1E2WWpGeisr?=
+ =?utf-8?B?ZDJQd0NqSTJSb3kxUXBpcnhKWDdzM05ZektZalU3NGsvSFRLWEtGYTZ2Q29E?=
+ =?utf-8?B?US9xTDkrSWtXRXVONHFvZWl0RnBJKzRkY2cweTV1V3pXMXFrMy8yblZCbUtQ?=
+ =?utf-8?B?TTBMUmpoQk1aQ1QwWTRPdzNoWDhsTFFuM1ltYUl1b3lSWWVvbENkaWlEanlI?=
+ =?utf-8?B?SXJVUXZET25XZHNZSThPWkt4QXNqbC80OGFob21jNW85NUJOaEpVbVpaRnZa?=
+ =?utf-8?B?RThaRHBsdDRaVkJuWnM4M1RZNUJRQnZ4bWQ4OHRKK1cwVnYxZ3oxUnc0TThC?=
+ =?utf-8?B?dDFzckhnVXdidnVyMitvamkrenY1dXM2Y0dHWDJTWnpBc0p4WmlmYy9tQnMz?=
+ =?utf-8?B?cjc5b0dWcEg1dHdBNHl4a3NPUlpUYzVHckFnQmFHUGE5Vk9qUHd0eVMweUpQ?=
+ =?utf-8?B?N1lzcE1TSzNKaGFVOEs2MG00OFRjcldzT09OQ1diNG0rVnY4TkxWUmdiNWRU?=
+ =?utf-8?Q?9KlYXnmlHINB70ksJdz469g=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ef9db93c-b335-4394-1002-08de1b051917
+X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 18:16:24.4534
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XzuvIG3nz/X8kdkvgFgGiX5pvQXS5seXX3NuN82cJuETFtevMhG55gdWQssiotfb7JyrL+YSr74bMzahOEu6FG+NFWGFXP9f0rZrxMwAMKU=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQBPR0101MB5959
 
-Hi all,
+On 2025-11-03 12:08, Paul E. McKenney wrote:
+> On Mon, Nov 03, 2025 at 08:34:10AM -0500, Mathieu Desnoyers wrote:
+[...]
 
-On Tue, 2025-10-14 at 00:47 +0800, Rong Zhang wrote:
-> When a connector is connected but inactive (e.g., disabled by desktop
-> environments), pipe_ctx->stream_res.tg will be destroyed. Then, reading
-> odm_combine_segments causes kernel NULL pointer dereference.
->=20
->  BUG: kernel NULL pointer dereference, address: 0000000000000000
->  #PF: supervisor read access in kernel mode
->  #PF: error_code(0x0000) - not-present page
->  PGD 0 P4D 0
->  Oops: Oops: 0000 [#1] SMP NOPTI
->  CPU: 16 UID: 0 PID: 26474 Comm: cat Not tainted 6.17.0+ #2 PREEMPT(lazy)=
-  e6a17af9ee6db7c63e9d90dbe5b28ccab67520c6
->  Hardware name: LENOVO 21Q4/LNVNB161216, BIOS PXCN25WW 03/27/2025
->  RIP: 0010:odm_combine_segments_show+0x93/0xf0 [amdgpu]
->  Code: 41 83 b8 b0 00 00 00 01 75 6e 48 98 ba a1 ff ff ff 48 c1 e0 0c 48 =
-8d 8c 07 d8 02 00 00 48 85 c9 74 2d 48 8b bc 07 f0 08 00 00 <48> 8b 07 48 8=
-b 80 08 02 00>
->  RSP: 0018:ffffd1bf4b953c58 EFLAGS: 00010286
->  RAX: 0000000000005000 RBX: ffff8e35976b02d0 RCX: ffff8e3aeed052d8
->  RDX: 00000000ffffffa1 RSI: ffff8e35a3120800 RDI: 0000000000000000
->  RBP: 0000000000000000 R08: ffff8e3580eb0000 R09: ffff8e35976b02d0
->  R10: ffffd1bf4b953c78 R11: 0000000000000000 R12: ffffd1bf4b953d08
->  R13: 0000000000040000 R14: 0000000000000001 R15: 0000000000000001
->  FS:  00007f44d3f9f740(0000) GS:ffff8e3caa47f000(0000) knlGS:000000000000=
-0000
->  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->  CR2: 0000000000000000 CR3: 00000006485c2000 CR4: 0000000000f50ef0
->  PKRU: 55555554
->  Call Trace:
->   <TASK>
->   seq_read_iter+0x125/0x490
->   ? __alloc_frozen_pages_noprof+0x18f/0x350
->   seq_read+0x12c/0x170
->   full_proxy_read+0x51/0x80
->   vfs_read+0xbc/0x390
->   ? __handle_mm_fault+0xa46/0xef0
->   ? do_syscall_64+0x71/0x900
->   ksys_read+0x73/0xf0
->   do_syscall_64+0x71/0x900
->   ? count_memcg_events+0xc2/0x190
->   ? handle_mm_fault+0x1d7/0x2d0
->   ? do_user_addr_fault+0x21a/0x690
->   ? exc_page_fault+0x7e/0x1a0
->   entry_SYSCALL_64_after_hwframe+0x6c/0x74
->  RIP: 0033:0x7f44d4031687
->  Code: 48 89 fa 4c 89 df e8 58 b3 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 =
-fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 8=
-0 00 00 00 00>
->  RSP: 002b:00007ffdb4b5f0b0 EFLAGS: 00000202 ORIG_RAX: 0000000000000000
->  RAX: ffffffffffffffda RBX: 00007f44d3f9f740 RCX: 00007f44d4031687
->  RDX: 0000000000040000 RSI: 00007f44d3f5e000 RDI: 0000000000000003
->  RBP: 0000000000040000 R08: 0000000000000000 R09: 0000000000000000
->  R10: 0000000000000000 R11: 0000000000000202 R12: 00007f44d3f5e000
->  R13: 0000000000000003 R14: 0000000000000000 R15: 0000000000040000
->   </TASK>
->  Modules linked in: tls tcp_diag inet_diag xt_mark ccm snd_hrtimer snd_se=
-q_dummy snd_seq_midi snd_seq_oss snd_seq_midi_event snd_rawmidi snd_seq snd=
-_seq_device x>
->   snd_hda_codec_atihdmi snd_hda_codec_realtek_lib lenovo_wmi_helpers thin=
-k_lmi snd_hda_codec_generic snd_hda_codec_hdmi snd_soc_core kvm snd_compres=
-s uvcvideo sn>
->   platform_profile joydev amd_pmc mousedev mac_hid sch_fq_codel uinput i2=
-c_dev parport_pc ppdev lp parport nvme_fabrics loop nfnetlink ip_tables x_t=
-ables dm_cryp>
->  CR2: 0000000000000000
->  ---[ end trace 0000000000000000 ]---
->  RIP: 0010:odm_combine_segments_show+0x93/0xf0 [amdgpu]
->  Code: 41 83 b8 b0 00 00 00 01 75 6e 48 98 ba a1 ff ff ff 48 c1 e0 0c 48 =
-8d 8c 07 d8 02 00 00 48 85 c9 74 2d 48 8b bc 07 f0 08 00 00 <48> 8b 07 48 8=
-b 80 08 02 00>
->  RSP: 0018:ffffd1bf4b953c58 EFLAGS: 00010286
->  RAX: 0000000000005000 RBX: ffff8e35976b02d0 RCX: ffff8e3aeed052d8
->  RDX: 00000000ffffffa1 RSI: ffff8e35a3120800 RDI: 0000000000000000
->  RBP: 0000000000000000 R08: ffff8e3580eb0000 R09: ffff8e35976b02d0
->  R10: ffffd1bf4b953c78 R11: 0000000000000000 R12: ffffd1bf4b953d08
->  R13: 0000000000040000 R14: 0000000000000001 R15: 0000000000000001
->  FS:  00007f44d3f9f740(0000) GS:ffff8e3caa47f000(0000) knlGS:000000000000=
-0000
->  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->  CR2: 0000000000000000 CR3: 00000006485c2000 CR4: 0000000000f50ef0
->  PKRU: 55555554
->=20
-> Fix this by checking pipe_ctx->stream_res.tg before dereferencing.
->=20
-> Fixes: 07926ba8a44f ("drm/amd/display: Add debugfs interface for ODM comb=
-ine info")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Rong Zhang <i@rong.moe>
-> ---
->  drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c b/=
-drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c
-> index f263e1a4537e1..00dac862b665a 100644
-> --- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c
-> +++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_debugfs.c
-> @@ -1302,7 +1302,8 @@ static int odm_combine_segments_show(struct seq_fil=
-e *m, void *unused)
->  	if (connector->status !=3D connector_status_connected)
->  		return -ENODEV;
-> =20
-> -	if (pipe_ctx !=3D NULL && pipe_ctx->stream_res.tg->funcs->get_odm_combi=
-ne_segments)
-> +	if (pipe_ctx && pipe_ctx->stream_res.tg &&
-> +	    pipe_ctx->stream_res.tg->funcs->get_odm_combine_segments)
->  		pipe_ctx->stream_res.tg->funcs->get_odm_combine_segments(pipe_ctx->str=
-eam_res.tg, &segments);
-> =20
->  	seq_printf(m, "%d\n", segments);
->=20
-> base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+>> One example is the libside (user level) rcu implementation which uses
+>> two counters per cpu [1]. One counter is the rseq fast path, and the
+>> second counter is for atomics (as fallback).
+>>
+>> If the typical scenario we want to optimize for is thread context, we
+>> can probably remove the atomic from the fast path with just preempt off
+>> by partitioning the per-cpu counters further, one possibility being:
+>>
+>> struct percpu_srcu_fast_pair {
+>> 	unsigned long lock, unlock;
+>> };
+>>
+>> struct percpu_srcu_fast {
+>> 	struct percpu_srcu_fast_pair thread;
+>> 	struct percpu_srcu_fast_pair irq;
+>> };
+>>
+>> And the grace period sums both thread and irq counters.
+>>
+>> Thoughts ?
+> 
+> One complication here is that we need srcu_down_read() at task level
+> and the matching srcu_up_read() at softirq and/or hardirq level.
+> 
+> Or am I missing a trick in your proposed implementation?
 
-Gentle ping.
+I think you are indeed missing the crux of the solution here.
+
+Each of task level and soft/hard irq level increments will be
+dispatched into different counters (thread vs irq). But the
+grace period will sum, for each the the two periods one after the
+next, the unlock counts and then the lock counts. It will consider
+the period as quiescent if the delta between the two sums is zero,
+e.g.
+
+   (count[period].irq.unlock + count[period].thread.unlock -
+    count[period].irq.lock - count[period].thread.lock) == 0
+
+so the sum does not care how the counters were incremented
+(it just does a load-relaxed), but each counter category
+have its own way of dealing with concurrency (thread: percpu
+ops, irq: atomics).
+
+This is effectively a use of split-counters, but the split
+is across concurrency handling mechanisms rather than across
+CPUs.
 
 Thanks,
-Rong
+
+Mathieu
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
