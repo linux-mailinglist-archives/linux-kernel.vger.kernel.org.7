@@ -1,900 +1,110 @@
-Return-Path: <linux-kernel+bounces-882908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FF3AC2BD1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:49:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 502D1C2BD4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:51:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0F859344BBD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:49:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5684188A2F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4804C30DEAA;
-	Mon,  3 Nov 2025 12:49:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD1813009C4;
+	Mon,  3 Nov 2025 12:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="CWxYuwQg"
-Received: from server.couthit.com (server.couthit.com [162.240.164.96])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CvrAwKd4"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52402D8360;
-	Mon,  3 Nov 2025 12:49:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE2D2DA759
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 12:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762174153; cv=none; b=g5JzgkarWyGe9K3/8KsKezmxRs48miPoBBzRfnWwJCxKqTdZfkuXNVrG0cxHcKkybjQtvn9vGlaZCRu4EDGAzyTwmjkm9Ib3V961TjxS1y+fiXC/zlh7wrcX0lyBHAvUWPdTL68ldMsmCE3ol8wMRvXqoK1m7E4ZizGUtVsZI7s=
+	t=1762174236; cv=none; b=fq5y3Y0j4efJZeyyygHgOP7J82sUUZgTPJTA1qKHjbS39B6jYEEnVd7JDCEMHq3PhvZMPh2Ub0W8Dp5cvoxUnDC6LcnZdwOgASIUqDyNr8ZSkbKSGaTbe6ifQJKQPCixSei2xuyNfz84peBlBle+ZAazgzRMMgeAjgtLoi0Uu6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762174153; c=relaxed/simple;
-	bh=H6UNm9NoXsYXscvzDJ/BV3SpuhknqfLJYUkEvpYekqw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ENY/vWGbhQh68G7X0oFIkW5kcPtLQw7acgJFw8rDrVcEMv54Ep2fKRA2wEd8FrzEWafiPCKp0W9ZPkKIMHhN2rSuBSo7ukfNWee5mjf92Z3FH3eL8h8ThXr889WloXxwi6C/5hPTQtiOIG7+Nk+JElXmU47CcdgOMncAiZWjzK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=CWxYuwQg; arc=none smtp.client-ip=162.240.164.96
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
-	; s=default; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=SV5ACp/ywfEDoHqSQQnPVYTC0PfJoB0JNPhXJlBz5bM=; b=CWxYuwQgLT3N1BPbJyo5mXxF1L
-	BgZnpSP2vTLgVKTrsSyAyqdRxz2pVZHnmj1XDJc8aq613z1AYacK5CzOARbOEI2Q/y1R+bNgOrwwP
-	9Ja/OqRn+M3dnZaXCe7RYfjynllZwxTeRNTgtiApiMY3sz9gUDhoWKnerjvOtXno0ZrP2WBfEVhkj
-	K0/utNoCWc9qpmHCnP42xzWAGmgWYnFPgYie+pbTVCRfYyNlkugIHXgFjpfeT0p8lWTlb19iDKIov
-	enrcbl9qiDvfp95vUDvyh5/Wvbi6pPe/1Z+pIaeEgwlRKMDRMTHkitRvvGN0iMeH5FKJsZos8/2kZ
-	2qyK6EkA==;
-Received: from [122.175.9.182] (port=21157 helo=cypher.couthit.local)
-	by server.couthit.com with esmtpa (Exim 4.98.1)
-	(envelope-from <parvathi@couthit.com>)
-	id 1vFtzh-00000006SBs-01B8;
-	Mon, 03 Nov 2025 07:49:09 -0500
-From: Parvathi Pudi <parvathi@couthit.com>
-To: nm@ti.com,
-	vigneshr@ti.com,
-	tony@atomide.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	richardcochran@gmail.com
-Cc: linux-omap@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	andrew@lunn.ch,
-	danishanwar@ti.com,
-	pratheesh@ti.com,
-	j-rameshbabu@ti.com,
-	praneeth@ti.com,
-	srk@ti.com,
-	rogerq@ti.com,
-	krishna@couthit.com,
-	mohan@couthit.com,
-	pmohan@couthit.com,
-	basharath@couthit.com,
-	parvathi@couthit.com,
-	"Andrew F . Davis" <afd@ti.com>,
-	Murali Karicheri <m-karicheri2@ti.com>
-Subject: [PATCH v2 2/2] arm: dts: ti: Adds support for AM335x and AM437x
-Date: Mon,  3 Nov 2025 18:17:24 +0530
-Message-ID: <20251103124820.1679167-3-parvathi@couthit.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251103124820.1679167-1-parvathi@couthit.com>
-References: <20251103124820.1679167-1-parvathi@couthit.com>
+	s=arc-20240116; t=1762174236; c=relaxed/simple;
+	bh=nKQ87BqZEp5fZCIHzdaIWwzLb+XkHwNqcYDs0+6IYD8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RzQvukafwBCy87y0HKAXU0Nm4G4JBXSD5Dv2nw4BPFyNDYDcYMqNIy9mmZtvkqNdh9Xa5FmhrWbfharB5yHShWa1S30hQxdHZJ1jnqRJ8vsENYyHOmVGzOGh1WtFpZ5sX269b9+rbKy0FzbXfz0o4jELekUxNZw6v10EhlCquTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CvrAwKd4; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762174234; x=1793710234;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=nKQ87BqZEp5fZCIHzdaIWwzLb+XkHwNqcYDs0+6IYD8=;
+  b=CvrAwKd4icGLiQXUvY+QDZyh9UkiIT3jd1nFQKidke2f5SEQTpNuKLTr
+   sVDB120647/nEdhaJPExIzFhBQ2iceGoA8aTN6v0dfXYZAi0QYBj/4dSu
+   V7iG5E1PL/6ap6icnk4ySGdM9XNfTz4zMCSkYWOQ8cBcNtO9HCgZsdWdi
+   /rJHZl2rem28Hvu0ip7ml33Uq099+Rhz0oFdeZILMWsYTNNUlcQnQjaHU
+   62Uf6vBcKC7OFOK+KU6eBCRvaS4m+eE9lmgQvapznrM4KDeQxXVTkQphc
+   GxMcv+8FnfdIKmkvdbkZAgY94BBwq24mLI5rW0zjI9UlWTOMHHAWBpjl0
+   w==;
+X-CSE-ConnectionGUID: +CBUCq+iS+yyOzu+GiaO0Q==
+X-CSE-MsgGUID: nB2mtmDnQTiTvr8DwVVyBA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="89709859"
+X-IronPort-AV: E=Sophos;i="6.19,276,1754982000"; 
+   d="scan'208";a="89709859"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 04:50:33 -0800
+X-CSE-ConnectionGUID: oYiqQey5RfWlxWenBS9wEg==
+X-CSE-MsgGUID: VjgDbsSTRo2RvDueQK5X5Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,276,1754982000"; 
+   d="scan'208";a="224102482"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 04:50:31 -0800
+Date: Mon, 3 Nov 2025 13:50:29 +0100
+From: Raag Jadav <raag.jadav@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, kees@kernel.org,
+	broonie@kernel.org, arnd@arndb.de, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] mod_devicetable: Bump auxiliary_device_id name size
+Message-ID: <aQilFRQYQVy-OEna@black.igk.intel.com>
+References: <20251031190234.224813-1-raag.jadav@intel.com>
+ <2025110105-upright-dinginess-3b2c@gregkh>
+ <aQhk-lQSDhzRmqHu@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - server.couthit.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - couthit.com
-X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: parvathi@couthit.com
-X-Authenticated-Sender: server.couthit.com: parvathi@couthit.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQhk-lQSDhzRmqHu@smile.fi.intel.com>
 
-From: Roger Quadros <rogerq@ti.com>
+On Mon, Nov 03, 2025 at 10:16:58AM +0200, Andy Shevchenko wrote:
+> On Sat, Nov 01, 2025 at 07:18:22AM +0100, Greg KH wrote:
+> > On Sat, Nov 01, 2025 at 12:32:34AM +0530, Raag Jadav wrote:
+> > > Since auxiliary device id string is formed using the combination of parent
+> > > and child device names, it may require more than 32 bytes if both the names
+> > > are long enough. Bump the size to 40 bytes to satisfy such cases.
+> > 
+> > What in-kernel users need such a larger name?  If we allow larger names,
+> > people will try to do crazy things and use memory addresses in them (has
+> > happened already...)
+> > 
+> > > Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > > Signed-off-by: Raag Jadav <raag.jadav@intel.com>
+> > > ---
+> > > Triggered by [1].
+> > > 
+> > > [1] https://lore.kernel.org/r/aQSwWLVKH_3TthTW@smile.fi.intel.com
+> > 
+> > How long would this driver submission's name be?  I couldn't figure it
+> > out, and really, any device with a huge name is going to be a pain...
+> 
+> Right, Raag, please describe a use case.
 
-PRU-ICSS instance consists of two PRU cores along with various
-peripherals such as the Interrupt Controller (PRU_INTC), the Industrial
-Ethernet Peripheral(IEP), the Real Time Media Independent Interface
-controller (MII_RT), and the Enhanced Capture (eCAP) event module.
+The driver linked above compiles to intel_ehl_pse_io, so the child will
+match against "intel_ehl_pse_io.gpio-elkhartlake" which is 34 bytes
+(including termination).
 
-The TI Sitara AM335x ICE-V2 consists of single PRU-ICSS instance,
-This patch adds the new device tree source file in-order to use
-PRU-ICSS instance, along with makefile changes to add the new DTS
-file for PRUSS.
+Would that be sufficient or did I miss something?
 
-The TI Sitara AM437x series of devices consists of 2 PRU-ICSS instances
-(PRU-ICSS0 and PRU-ICSS1). This patch adds the device tree nodes for the
-PRU-ICSS1 instance to support DUAL-MAC mode of operation. Support for
-Ethernet over PRU is available only for ICSS1 instance.
-
-am33xx-l4.dtsi, am4372.dtsi - Adds IEP and eCAP peripheral as child nodes
-of the PRUSS subsystem node.
-
-am335x-icev2-prueth.dts, am437x-idk-evm.dts - Adds PRU-ICSS
-instance node along with PRU eth port information and corresponding
-port configuration. It includes interrupt mapping for packet reception,
-HW timestamp collection, and PRU Ethernet ports in MII mode,
-
-GPIO configuration, boot strapping along with delay configuration for
-individual PRU Ethernet port and other required nodes.
-
-Signed-off-by: Roger Quadros <rogerq@ti.com>
-Signed-off-by: Andrew F. Davis <afd@ti.com>
-Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
-Signed-off-by: Basharath Hussain Khaja <basharath@couthit.com>
-Signed-off-by: Parvathi Pudi <parvathi@couthit.com>
----
- arch/arm/boot/dts/ti/omap/Makefile            |   1 +
- .../boot/dts/ti/omap/am335x-icev2-prueth.dts  | 533 ++++++++++++++++++
- arch/arm/boot/dts/ti/omap/am33xx-l4.dtsi      |  11 +
- arch/arm/boot/dts/ti/omap/am4372.dtsi         |  11 +
- arch/arm/boot/dts/ti/omap/am437x-idk-evm.dts  | 137 ++++-
- 5 files changed, 692 insertions(+), 1 deletion(-)
- create mode 100644 arch/arm/boot/dts/ti/omap/am335x-icev2-prueth.dts
-
-diff --git a/arch/arm/boot/dts/ti/omap/Makefile b/arch/arm/boot/dts/ti/omap/Makefile
-index 1aef60eef671..d06dd31d0bb6 100644
---- a/arch/arm/boot/dts/ti/omap/Makefile
-+++ b/arch/arm/boot/dts/ti/omap/Makefile
-@@ -100,6 +100,7 @@ dtb-$(CONFIG_SOC_AM33XX) += \
- 	am335x-evmsk.dtb \
- 	am335x-guardian.dtb \
- 	am335x-icev2.dtb \
-+	am335x-icev2-prueth.dtb \
- 	am335x-lxm.dtb \
- 	am335x-moxa-uc-2101.dtb \
- 	am335x-moxa-uc-8100-me-t.dtb \
-diff --git a/arch/arm/boot/dts/ti/omap/am335x-icev2-prueth.dts b/arch/arm/boot/dts/ti/omap/am335x-icev2-prueth.dts
-new file mode 100644
-index 000000000000..c41c40297b22
---- /dev/null
-+++ b/arch/arm/boot/dts/ti/omap/am335x-icev2-prueth.dts
-@@ -0,0 +1,533 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com/
-+ */
-+
-+/*
-+ * AM335x ICE V2 board
-+ * http://www.ti.com/tool/tmdsice3359
-+ */
-+
-+/dts-v1/;
-+
-+#include "am33xx.dtsi"
-+
-+/ {
-+	model = "TI AM3359 ICE-V2 - dual PRUETH";
-+	compatible = "ti,am3359-icev2", "ti,am33xx";
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x80000000 0x10000000>; /* 256 MB */
-+	};
-+
-+	chosen {
-+		stdout-path = &uart3;
-+	};
-+
-+	vbat: fixedregulator0 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vbat";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-boot-on;
-+	};
-+
-+	vtt_fixed: fixedregulator1 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vtt";
-+		regulator-min-microvolt = <1500000>;
-+		regulator-max-microvolt = <1500000>;
-+		gpio = <&gpio0 18 GPIO_ACTIVE_HIGH>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+		enable-active-high;
-+	};
-+
-+	/* Tricolor status LEDs */
-+	leds1 {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&user_leds>;
-+
-+		led0 {
-+			label = "status0:red:cpu0";
-+			gpios = <&gpio0 17 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+			linux,default-trigger = "cpu0";
-+		};
-+
-+		led1 {
-+			label = "status0:green:usr";
-+			gpios = <&gpio0 16 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+
-+		led2 {
-+			label = "status0:yellow:usr";
-+			gpios = <&gpio3 9 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+
-+		led3 {
-+			label = "status1:red:mmc0";
-+			gpios = <&gpio1 30 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+			linux,default-trigger = "mmc0";
-+		};
-+
-+		led4 {
-+			label = "status1:green:usr";
-+			gpios = <&gpio0 20 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+
-+		led5 {
-+			label = "status1:yellow:usr";
-+			gpios = <&gpio0 19 GPIO_ACTIVE_HIGH>;
-+			default-state = "off";
-+		};
-+	};
-+
-+	gpio-decoder {
-+		compatible = "gpio-decoder";
-+		gpios = <&pca9536 3 GPIO_ACTIVE_HIGH>,
-+			<&pca9536 2 GPIO_ACTIVE_HIGH>,
-+			<&pca9536 1 GPIO_ACTIVE_HIGH>,
-+			<&pca9536 0 GPIO_ACTIVE_HIGH>;
-+		linux,axis = <0>; /* ABS_X */
-+		decoder-max-value = <9>;
-+	};
-+
-+	/* Dual-MAC Ethernet application node on PRU-ICSS */
-+	pruss_eth: pruss-eth {
-+		compatible = "ti,am3359-prueth";
-+		ti,prus = <&pru0>, <&pru1>;
-+		sram = <&ocmcram>;
-+		ti,mii-rt = <&pruss_mii_rt>;
-+		ti,iep = <&pruss_iep>;
-+		ti,ecap = <&pruss_ecap>;
-+		interrupts = <20 2 2>, <21 3 3>;
-+		interrupt-names = "rx_hp", "rx_lp";
-+		interrupt-parent = <&pruss_intc>;
-+
-+		pinctrl-0 = <&pruss_eth_default>;
-+		pinctrl-names = "default";
-+
-+		ethernet-ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			pruss_emac0: ethernet-port@0 {
-+				reg = <0>;
-+				phy-handle = <&pruss_eth0_phy>;
-+				phy-mode = "mii";
-+				interrupts = <20 2 2>, <26 6 6>, <23 6 6>;
-+				interrupt-names = "rx", "emac_ptp_tx",
-+						  "hsr_ptp_tx";
-+				/* Filled in by bootloader */
-+				local-mac-address = [00 00 00 00 00 00];
-+			};
-+
-+			pruss_emac1: ethernet-port@1 {
-+				reg = <1>;
-+				phy-handle = <&pruss_eth1_phy>;
-+				phy-mode = "mii";
-+				interrupts = <21 3 3>, <27 9 7>, <24 9 7>;
-+				interrupt-names = "rx", "emac_ptp_tx",
-+						  "hsr_ptp_tx";
-+				/* Filled in by bootloader */
-+				local-mac-address = [00 00 00 00 00 00];
-+			};
-+		};
-+	};
-+};
-+
-+&am33xx_pinmux {
-+    user_leds: user-leds-pins {
-+		pinctrl-single,pins = <
-+			/* (J18) gmii1_txd3.gpio0[16] */
-+			AM33XX_PADCONF(AM335X_PIN_MII1_TXD3, PIN_OUTPUT,
-+				       MUX_MODE7)
-+			 /* (K15) gmii1_txd2.gpio0[17] */
-+			AM33XX_PADCONF(AM335X_PIN_MII1_TXD2, PIN_OUTPUT,
-+				       MUX_MODE7)
-+			/* (A15) xdma_event_intr0.gpio0[19] */
-+			AM33XX_PADCONF(AM335X_PIN_XDMA_EVENT_INTR0, PIN_OUTPUT,
-+				       MUX_MODE7)
-+			/* (D14) xdma_event_intr1.gpio0[20] */
-+			AM33XX_PADCONF(AM335X_PIN_XDMA_EVENT_INTR1, PIN_OUTPUT,
-+				       MUX_MODE7)
-+			/* (U9) gpmc_csn1.gpio1[30] */
-+			AM33XX_PADCONF(AM335X_PIN_GPMC_CSN1, PIN_OUTPUT,
-+				       MUX_MODE7)
-+			/* (K18) gmii1_txclk.gpio3[9] */
-+			AM33XX_PADCONF(AM335X_PIN_MII1_TX_CLK, PIN_OUTPUT,
-+				       MUX_MODE7)
-+		>;
-+	};
-+
-+	mmc0_pins_default: mmc0-default-pins {
-+		pinctrl-single,pins = <
-+			AM33XX_PADCONF(AM335X_PIN_MMC0_DAT3, PIN_INPUT_PULLUP,
-+				       MUX_MODE0)
-+			AM33XX_PADCONF(AM335X_PIN_MMC0_DAT2, PIN_INPUT_PULLUP,
-+				       MUX_MODE0)
-+			AM33XX_PADCONF(AM335X_PIN_MMC0_DAT1, PIN_INPUT_PULLUP,
-+				       MUX_MODE0)
-+			AM33XX_PADCONF(AM335X_PIN_MMC0_DAT0, PIN_INPUT_PULLUP,
-+				       MUX_MODE0)
-+			AM33XX_PADCONF(AM335X_PIN_MMC0_CLK, PIN_INPUT_PULLUP,
-+				       MUX_MODE0)
-+			AM33XX_PADCONF(AM335X_PIN_MMC0_CMD, PIN_INPUT_PULLUP,
-+				       MUX_MODE0)
-+		>;
-+	};
-+
-+	i2c0_pins_default: i2c0-default-pins {
-+		pinctrl-single,pins = <
-+			AM33XX_PADCONF(AM335X_PIN_I2C0_SDA, PIN_INPUT,
-+				       MUX_MODE0)
-+			AM33XX_PADCONF(AM335X_PIN_I2C0_SCL, PIN_INPUT,
-+				       MUX_MODE0)
-+		>;
-+	};
-+
-+	spi0_pins_default: spi0-default-pins {
-+		pinctrl-single,pins = <
-+			AM33XX_PADCONF(AM335X_PIN_SPI0_SCLK, PIN_INPUT_PULLUP,
-+				       MUX_MODE0)
-+			AM33XX_PADCONF(AM335X_PIN_SPI0_D0, PIN_INPUT_PULLUP,
-+				       MUX_MODE0)
-+			AM33XX_PADCONF(AM335X_PIN_SPI0_D1, PIN_INPUT_PULLUP,
-+				       MUX_MODE0)
-+			AM33XX_PADCONF(AM335X_PIN_SPI0_CS0, PIN_INPUT_PULLUP,
-+				       MUX_MODE0)
-+			AM33XX_PADCONF(AM335X_PIN_SPI0_CS1, PIN_INPUT_PULLUP,
-+				       MUX_MODE0)
-+			/* (B12) mcasp0_aclkr.gpio3[18] */
-+			AM33XX_PADCONF(AM335X_PIN_MCASP0_ACLKR,
-+				       PIN_INPUT_PULLUP,
-+				       MUX_MODE7)
-+		>;
-+	};
-+
-+	uart3_pins_default: uart3-default-pins {
-+		pinctrl-single,pins = <
-+			/* (L17) gmii1_rxd3.uart3_rxd */
-+			AM33XX_PADCONF(AM335X_PIN_MII1_RXD3, PIN_INPUT_PULLUP,
-+				       MUX_MODE1)
-+			/* (L16) gmii1_rxd2.uart3_txd */
-+			AM33XX_PADCONF(AM335X_PIN_MII1_RXD2, PIN_OUTPUT_PULLUP,
-+				       MUX_MODE1)
-+		>;
-+	};
-+
-+	pruss_mdio_default: pruss_mdio_default {
-+		pinctrl-single,pins = <
-+			/* gpmc_clk.pr1_mdio_mdclk */
-+			AM33XX_PADCONF(0x88c, PIN_OUTPUT, MUX_MODE5)
-+			/* gpmc_csn3.pr1_mdio_data */
-+			AM33XX_PADCONF(0x888, PIN_INPUT, MUX_MODE5)
-+			/* gpmc_ben0_cle.gpio2_5 */
-+			AM33XX_PADCONF(0x89c, PIN_INPUT_PULLUP, MUX_MODE7)
-+			/* disable CPSW MDIO */
-+			/* mdio_data.gpio0_0 */
-+			AM33XX_PADCONF(0x948, PIN_INPUT_PULLUP, MUX_MODE7)
-+			/* mdio_clk.gpio0_1 */
-+			AM33XX_PADCONF(0x94c, PIN_INPUT_PULLUP, MUX_MODE7)
-+		>;
-+	};
-+
-+	pruss_eth_default: pruss_eth_default {
-+		pinctrl-single,pins = <
-+			/* dss_data0.pr1_mii_mt0_clk */
-+			AM33XX_PADCONF(0x8a0, PIN_INPUT,   MUX_MODE2)
-+			/* dss_data5.pr1_mii0_txd0 */
-+			AM33XX_PADCONF(0x8b4, PIN_OUTPUT,  MUX_MODE2)
-+			/* dss_data4.pr1_mii0_txd1 */
-+			AM33XX_PADCONF(0x8b0, PIN_OUTPUT,  MUX_MODE2)
-+			/* dss_data3.pr1_mii0_txd2 */
-+			AM33XX_PADCONF(0x8ac, PIN_OUTPUT,  MUX_MODE2)
-+			/* dss_data2.pr1_mii0_txd3 */
-+			AM33XX_PADCONF(0x8a8, PIN_OUTPUT,  MUX_MODE2)
-+			/* dss_data11.pr1_mii0_rxd0 */
-+			AM33XX_PADCONF(0x8cc, PIN_INPUT,   MUX_MODE5)
-+			/* dss_data10.pr1_mii0_rxd1 */
-+			AM33XX_PADCONF(0x8c8, PIN_INPUT,   MUX_MODE5)
-+			/* dss_data9.pr1_mii0_rxd2 */
-+			AM33XX_PADCONF(0x8c4, PIN_INPUT,   MUX_MODE5)
-+			/* dss_data8.pr1_mii0_rxd3 */
-+			AM33XX_PADCONF(0x8c0, PIN_INPUT,   MUX_MODE5)
-+			/* dss_data1.pr1_mii0_txen */
-+			AM33XX_PADCONF(0x8a4, PIN_OUTPUT,  MUX_MODE2)
-+			/* dss_data14.pr1_mii_mr0_clk */
-+			AM33XX_PADCONF(0x8d8, PIN_INPUT,   MUX_MODE5)
-+			/* dss_data15.pr1_mii0_rxdv */
-+			AM33XX_PADCONF(0x8dc, PIN_INPUT,   MUX_MODE5)
-+			/* dss_data13.pr1_mii0_rxer */
-+			AM33XX_PADCONF(0x8d4, PIN_INPUT,   MUX_MODE5)
-+			/* dss_data12.pr1_mii0_rxlink */
-+			AM33XX_PADCONF(0x8d0, PIN_INPUT,   MUX_MODE5)
-+			/* dss_pclk.pr1_mii0_crs */
-+			AM33XX_PADCONF(0x8e8, PIN_INPUT,   MUX_MODE2)
-+
-+			/* gpmc_a0.pr1_mii_mt1_clk */
-+			AM33XX_PADCONF(0x840, PIN_INPUT,   MUX_MODE5)
-+			/* gpmc_a4.pr1_mii1_txd0 */
-+			AM33XX_PADCONF(0x850, PIN_OUTPUT,  MUX_MODE5)
-+			/* gpmc_a3.pr1_mii1_txd1 */
-+			AM33XX_PADCONF(0x84c, PIN_OUTPUT,  MUX_MODE5)
-+			/* gpmc_a2.pr1_mii1_txd2 */
-+			AM33XX_PADCONF(0x848, PIN_OUTPUT,  MUX_MODE5)
-+			/* gpmc_a1.pr1_mii1_txd3 */
-+			AM33XX_PADCONF(0x844, PIN_OUTPUT,  MUX_MODE5)
-+			/* gpmc_a8.pr1_mii1_rxd0 */
-+			AM33XX_PADCONF(0x860, PIN_INPUT,   MUX_MODE5)
-+			/* gpmc_a7.pr1_mii1_rxd1 */
-+			AM33XX_PADCONF(0x85c, PIN_INPUT,   MUX_MODE5)
-+			/* gpmc_a6.pr1_mii1_rxd2 */
-+			AM33XX_PADCONF(0x858, PIN_INPUT,   MUX_MODE5)
-+			/* gpmc_a5.pr1_mii1_rxd3 */
-+			AM33XX_PADCONF(0x854, PIN_INPUT,   MUX_MODE5)
-+			/* gpmc_wpn.pr1_mii1_txen */
-+			AM33XX_PADCONF(0x874, PIN_OUTPUT,  MUX_MODE5)
-+			/* gpmc_a9.pr1_mii_mr1_clk */
-+			AM33XX_PADCONF(0x864, PIN_INPUT,   MUX_MODE5)
-+			/* gpmc_a10.pr1_mii1_rxdv */
-+			AM33XX_PADCONF(0x868, PIN_INPUT,   MUX_MODE5)
-+			/* gpmc_a11.pr1_mii1_rxer */
-+			AM33XX_PADCONF(0x86c, PIN_INPUT,   MUX_MODE5)
-+			/* gpmc_ben1.pr1_mii1_rxlink */
-+			AM33XX_PADCONF(0x878, PIN_INPUT,   MUX_MODE5)
-+			/* lcd_ac_bias_en.pr1_mii1_crs */
-+			AM33XX_PADCONF(0x8ec, PIN_INPUT,   MUX_MODE2)
-+			/* gpmc_wait0.pr1_mii1_col */
-+			AM33XX_PADCONF(0x870, PIN_INPUT,   MUX_MODE5)
-+		>;
-+	};
-+
-+};
-+
-+&i2c0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c0_pins_default>;
-+
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	tps: power-controller@2d {
-+		reg = <0x2d>;
-+	};
-+
-+	tpic2810: gpio@60 {
-+		compatible = "ti,tpic2810";
-+		reg = <0x60>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
-+
-+	pca9536: gpio@41 {
-+		compatible = "ti,pca9536";
-+		reg = <0x41>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
-+
-+};
-+
-+&spi0 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&spi0_pins_default>;
-+
-+	sn65hvs882@1 {
-+		compatible = "pisosr-gpio";
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+
-+		load-gpios = <&gpio3 18 GPIO_ACTIVE_LOW>;
-+
-+		reg = <1>;
-+		spi-max-frequency = <1000000>;
-+		spi-cpol;
-+	};
-+
-+	spi_nor: flash@0 {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "winbond, w25q64", "jedec,spi-nor";
-+		spi-max-frequency = <80000000>;
-+		m25p,fast-read;
-+		reg = <0>;
-+
-+		partition@0 {
-+			label = "u-boot-spl";
-+			reg = <0x0 0x80000>;
-+			read-only;
-+		};
-+
-+		partition@1 {
-+			label = "u-boot";
-+			reg = <0x80000 0x100000>;
-+			read-only;
-+		};
-+
-+		partition@2 {
-+			label = "u-boot-env";
-+			reg = <0x180000 0x20000>;
-+			read-only;
-+		};
-+
-+		partition@3 {
-+			label = "misc";
-+			reg = <0x1A0000 0x660000>;
-+		};
-+	};
-+
-+};
-+
-+&tscadc {
-+	status = "okay";
-+	adc {
-+		ti,adc-channels = <1 2 3 4 5 6 7>;
-+	};
-+};
-+
-+#include "../../tps65910.dtsi"
-+
-+&tps {
-+	vcc1-supply = <&vbat>;
-+	vcc2-supply = <&vbat>;
-+	vcc3-supply = <&vbat>;
-+	vcc4-supply = <&vbat>;
-+	vcc5-supply = <&vbat>;
-+	vcc6-supply = <&vbat>;
-+	vcc7-supply = <&vbat>;
-+	vccio-supply = <&vbat>;
-+
-+	regulators {
-+		vrtc_reg: regulator@0 {
-+			regulator-always-on;
-+		};
-+
-+		vio_reg: regulator@1 {
-+			regulator-always-on;
-+		};
-+
-+		vdd1_reg: regulator@2 {
-+			regulator-name = "vdd_mpu";
-+			regulator-min-microvolt = <912500>;
-+			regulator-max-microvolt = <1326000>;
-+			regulator-boot-on;
-+			regulator-always-on;
-+		};
-+
-+		vdd2_reg: regulator@3 {
-+			regulator-name = "vdd_core";
-+			regulator-min-microvolt = <912500>;
-+			regulator-max-microvolt = <1144000>;
-+			regulator-boot-on;
-+			regulator-always-on;
-+		};
-+
-+		vdd3_reg: regulator@4 {
-+			regulator-always-on;
-+		};
-+
-+		vdig1_reg: regulator@5 {
-+			regulator-always-on;
-+		};
-+
-+		vdig2_reg: regulator@6 {
-+			regulator-always-on;
-+		};
-+
-+		vpll_reg: regulator@7 {
-+			regulator-always-on;
-+		};
-+
-+		vdac_reg: regulator@8 {
-+			regulator-always-on;
-+		};
-+
-+		vaux1_reg: regulator@9 {
-+			regulator-always-on;
-+		};
-+
-+		vaux2_reg: regulator@10 {
-+			regulator-always-on;
-+		};
-+
-+		vaux33_reg: regulator@11 {
-+			regulator-always-on;
-+		};
-+
-+		vmmc_reg: regulator@12 {
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <3300000>;
-+			regulator-always-on;
-+		};
-+	};
-+};
-+
-+&mmc1 {
-+	status = "okay";
-+	vmmc-supply = <&vmmc_reg>;
-+	bus-width = <4>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc0_pins_default>;
-+};
-+
-+&gpio0_target {
-+	/* Do not idle the GPIO used for holding the VTT regulator */
-+	ti,no-reset-on-init;
-+	ti,no-idle-on-init;
-+};
-+
-+&uart3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart3_pins_default>;
-+	status = "okay";
-+};
-+
-+&gpio3 {
-+	pr1-mii-ctl-hog {
-+		gpio-hog;
-+		gpios = <4 GPIO_ACTIVE_HIGH>;
-+		output-high;
-+		line-name = "PR1_MII_CTRL";
-+	};
-+
-+	mux-mii-hog {
-+		gpio-hog;
-+		gpios = <10 GPIO_ACTIVE_HIGH>;
-+		/* ETH1 mux: Low for MII-PRU, high for RMII-CPSW */
-+		output-low;
-+		line-name = "MUX_MII_CTL1";
-+	};
-+};
-+
-+&pruss_tm {
-+	status = "okay";
-+};
-+
-+&pruss_mdio {
-+	pinctrl-0 = <&pruss_mdio_default>;
-+	pinctrl-names = "default";
-+	reset-gpios = <&gpio2 5 GPIO_ACTIVE_LOW>;
-+	reset-delay-us = <2>; /* PHY datasheet states 1uS min */
-+	status = "okay";
-+
-+	pruss_eth0_phy: ethernet-phy@1 {
-+		 reg = <1>;
-+	};
-+
-+	pruss_eth1_phy: ethernet-phy@3 {
-+		 reg = <3>;
-+	};
-+};
-+
-+&rtc {
-+	system-power-controller;
-+};
-diff --git a/arch/arm/boot/dts/ti/omap/am33xx-l4.dtsi b/arch/arm/boot/dts/ti/omap/am33xx-l4.dtsi
-index 18ad52e93955..498bda321b75 100644
---- a/arch/arm/boot/dts/ti/omap/am33xx-l4.dtsi
-+++ b/arch/arm/boot/dts/ti/omap/am33xx-l4.dtsi
-@@ -896,6 +896,17 @@ pruss_mii_rt: mii-rt@32000 {
- 					reg = <0x32000 0x58>;
- 				};
- 
-+				pruss_iep: iep@2e000 {
-+					compatible = "ti,am3356-icss-iep";
-+					reg = <0x2e000 0x31c>;
-+					clocks = <&pruss_iepclk_mux>;
-+				};
-+
-+				pruss_ecap: ecap@30000 {
-+					compatible = "ti,pruss-ecap";
-+					reg = <0x30000 0x60>;
-+				};
-+
- 				pruss_intc: interrupt-controller@20000 {
- 					compatible = "ti,pruss-intc";
- 					reg = <0x20000 0x2000>;
-diff --git a/arch/arm/boot/dts/ti/omap/am4372.dtsi b/arch/arm/boot/dts/ti/omap/am4372.dtsi
-index 0a1df30f2818..7836aca7f954 100644
---- a/arch/arm/boot/dts/ti/omap/am4372.dtsi
-+++ b/arch/arm/boot/dts/ti/omap/am4372.dtsi
-@@ -477,6 +477,17 @@ pruss1_mii_rt: mii-rt@32000 {
- 					reg = <0x32000 0x58>;
- 				};
- 
-+				pruss1_iep: iep@2e000 {
-+					compatible = "ti,am4376-icss-iep";
-+					reg = <0x2e000 0x31c>;
-+					clocks = <&pruss1_iepclk_mux>;
-+				};
-+
-+				pruss1_ecap: ecap@30000 {
-+					compatible = "ti,pruss-ecap";
-+					reg = <0x30000 0x60>;
-+				};
-+
- 				pruss1_intc: interrupt-controller@20000 {
- 					compatible = "ti,pruss-intc";
- 					reg = <0x20000 0x2000>;
-diff --git a/arch/arm/boot/dts/ti/omap/am437x-idk-evm.dts b/arch/arm/boot/dts/ti/omap/am437x-idk-evm.dts
-index 826f687c368a..3d755d875a70 100644
---- a/arch/arm/boot/dts/ti/omap/am437x-idk-evm.dts
-+++ b/arch/arm/boot/dts/ti/omap/am437x-idk-evm.dts
-@@ -168,6 +168,48 @@ led-out7 {
- 			default-state = "off";
- 		};
- 	};
-+
-+	/* Dual-MAC Ethernet application node on PRU-ICSS1 */
-+	pruss1_eth: pruss1-eth {
-+		compatible = "ti,am4376-prueth";
-+		ti,prus = <&pru1_0>, <&pru1_1>;
-+		sram = <&ocmcram>;
-+		ti,mii-rt = <&pruss1_mii_rt>;
-+		ti,iep = <&pruss1_iep>;
-+		ti,ecap = <&pruss1_ecap>;
-+		interrupts = <20 2 2>, <21 3 3>;
-+		interrupt-names = "rx_hp", "rx_lp";
-+		interrupt-parent = <&pruss1_intc>;
-+
-+		pinctrl-0 = <&pruss1_eth_default>;
-+		pinctrl-names = "default";
-+
-+		ethernet-ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			pruss1_emac0: ethernet-port@0 {
-+				reg = <0>;
-+				phy-handle = <&pruss1_eth0_phy>;
-+				phy-mode = "mii";
-+				interrupts = <20 2 2>, <26 6 6>, <23 6 6>;
-+				interrupt-names = "rx", "emac_ptp_tx",
-+						  "hsr_ptp_tx";
-+				/* Filled in by bootloader */
-+				local-mac-address = [00 00 00 00 00 00];
-+			};
-+
-+			pruss1_emac1: ethernet-port@1 {
-+				reg = <1>;
-+				phy-handle = <&pruss1_eth1_phy>;
-+				phy-mode = "mii";
-+				interrupts = <21 3 3>, <27 9 5>, <24 9 5>;
-+				interrupt-names = "rx", "emac_ptp_tx",
-+						  "hsr_ptp_tx";
-+				/* Filled in by bootloader */
-+				local-mac-address = [00 00 00 00 00 00];
-+			};
-+		};
-+	};
- };
- 
- &am43xx_pinmux {
-@@ -303,6 +345,86 @@ AM4372_IOPAD(0x94c, PIN_INPUT_PULLDOWN | MUX_MODE7)
- 		>;
- 	};
- 
-+	pruss1_mdio_default: pruss1_mdio_default {
-+		pinctrl-single,pins = <
-+			/* gpmc_clk.pr1_mdio_mdclk */
-+			AM4372_IOPAD(0x88c, (PIN_OUTPUT | MUX_MODE5))
-+			/* xdma_event_intr0.pr1_mdio_data */
-+			AM4372_IOPAD(0xa70, (PIN_INPUT  | MUX_MODE8))
-+			/* cam1_data6.gpio4_20 */
-+			AM4372_IOPAD(0xa00, (PIN_INPUT_PULLUP | MUX_MODE7))
-+		>;
-+	};
-+
-+	pruss1_eth_default: pruss1_eth_default {
-+		pinctrl-single,pins = <
-+			/* dss_data0.pr1_mii_mt0_clk */
-+			AM4372_IOPAD(0x8a0, (PIN_INPUT  | MUX_MODE2))
-+			/* dss_data5.pr1_mii0_txd0 */
-+			AM4372_IOPAD(0x8b4, (PIN_OUTPUT | MUX_MODE2))
-+			/* dss_data4.pr1_mii0_txd1 */
-+			AM4372_IOPAD(0x8b0, (PIN_OUTPUT | MUX_MODE2))
-+			/* dss_data3.pr1_mii0_txd2 */
-+			AM4372_IOPAD(0x8ac, (PIN_OUTPUT | MUX_MODE2))
-+			/* dss_data2.pr1_mii0_txd3 */
-+			AM4372_IOPAD(0x8a8, (PIN_OUTPUT | MUX_MODE2))
-+			/* dss_data11.pr1_mii0_rxd0 */
-+			AM4372_IOPAD(0x8cc, (PIN_INPUT  | MUX_MODE5))
-+			/* dss_data10.pr1_mii0_rxd1 */
-+			AM4372_IOPAD(0x8c8, (PIN_INPUT  | MUX_MODE5))
-+			/* dss_data9.pr1_mii0_rxd2 */
-+			AM4372_IOPAD(0x8c4, (PIN_INPUT  | MUX_MODE5))
-+			/* dss_data8.pr1_mii0_rxd3 */
-+			AM4372_IOPAD(0x8c0, (PIN_INPUT  | MUX_MODE5))
-+			/* dss_data1.pr1_mii0_txen */
-+			AM4372_IOPAD(0x8a4, (PIN_OUTPUT | MUX_MODE2))
-+			/* dss_data14.pr1_mii_mr0_clk */
-+			AM4372_IOPAD(0x8d8, (PIN_INPUT  | MUX_MODE5))
-+			/* dss_data15.pr1_mii0_rxdv */
-+			AM4372_IOPAD(0x8dc, (PIN_INPUT  | MUX_MODE5))
-+			/* dss_data13.pr1_mii0_rxer */
-+			AM4372_IOPAD(0x8d4, (PIN_INPUT  | MUX_MODE5))
-+			/* dss_data12.pr1_mii0_rxlink */
-+			AM4372_IOPAD(0x8d0, (PIN_INPUT  | MUX_MODE5))
-+			/* gpio5_10.pr1_mii0_crs */
-+			AM4372_IOPAD(0xa40, (PIN_INPUT  | MUX_MODE5))
-+			/* gpio5_8.pr1_mii0_col */
-+			AM4372_IOPAD(0xa38, (PIN_INPUT  | MUX_MODE5))
-+			/* gpmc_a6.pr1_mii_mt1_clk */
-+			AM4372_IOPAD(0x858, (PIN_INPUT  | MUX_MODE5))
-+			/* gpmc_a5.pr1_mii1_txd0 */
-+			AM4372_IOPAD(0x854, (PIN_OUTPUT | MUX_MODE5))
-+			/* gpmc_a4.pr1_mii1_txd1 */
-+			AM4372_IOPAD(0x850, (PIN_OUTPUT | MUX_MODE5))
-+			/* gpmc_a3.pr1_mii1_txd2 */
-+			AM4372_IOPAD(0x84c, (PIN_OUTPUT | MUX_MODE5))
-+			/* gpmc_a2.pr1_mii1_txd3 */
-+			AM4372_IOPAD(0x848, (PIN_OUTPUT | MUX_MODE5))
-+			/* gpmc_a11.pr1_mii1_rxd0 */
-+			AM4372_IOPAD(0x86c, (PIN_INPUT  | MUX_MODE5))
-+			/* gpmc_a10.pr1_mii1_rxd1 */
-+			AM4372_IOPAD(0x868, (PIN_INPUT  | MUX_MODE5))
-+			/* gpmc_a9.pr1_mii1_rxd2 */
-+			AM4372_IOPAD(0x864, (PIN_INPUT  | MUX_MODE5))
-+			/* gpmc_a8.pr1_mii1_rxd3 */
-+			AM4372_IOPAD(0x860, (PIN_INPUT  | MUX_MODE5))
-+			/* gpmc_a0.pr1_mii1_txen */
-+			AM4372_IOPAD(0x840, (PIN_OUTPUT | MUX_MODE5))
-+			/* gpmc_a7.pr1_mii_mr1_clk */
-+			AM4372_IOPAD(0x85c, (PIN_INPUT  | MUX_MODE5))
-+			/* gpmc_a1.pr1_mii1_rxdv */
-+			AM4372_IOPAD(0x844, (PIN_INPUT  | MUX_MODE5))
-+			/* gpmc_wpn.pr1_mii1_rxer */
-+			AM4372_IOPAD(0x874, (PIN_INPUT  | MUX_MODE5))
-+			/* gpio5_13.pr1_mii1_rxlink */
-+			AM4372_IOPAD(0xa4c, (PIN_INPUT  | MUX_MODE5))
-+			/* gpio5_11.pr1_mii1_crs */
-+			AM4372_IOPAD(0xa44, (PIN_INPUT  | MUX_MODE5))
-+			/* gpmc_be1n.pr1_mii1_col */
-+			AM4372_IOPAD(0x878, (PIN_INPUT  | MUX_MODE5))
-+		>;
-+	};
-+
- 	qspi_pins_default: qspi-default-pins {
- 		pinctrl-single,pins = <
- 			AM4372_IOPAD(0x87c, PIN_OUTPUT_PULLUP | MUX_MODE3)	/* gpmc_csn0.qspi_csn */
-@@ -539,5 +661,18 @@ opp-100-600000000 {
- };
- 
- &pruss1_mdio {
--	status = "disabled";
-+	pinctrl-0 = <&pruss1_mdio_default>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+
-+	reset-gpios = <&gpio4 20 GPIO_ACTIVE_LOW>;
-+	reset-delay-us = <2>;	/* PHY datasheet states 1uS min */
-+
-+	pruss1_eth0_phy: ethernet-phy@0 {
-+		reg = <0>;
-+	};
-+
-+	pruss1_eth1_phy: ethernet-phy@1 {
-+		reg = <1>;
-+	};
- };
--- 
-2.43.0
-
+Raag
 
