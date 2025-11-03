@@ -1,149 +1,121 @@
-Return-Path: <linux-kernel+bounces-883494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AF18C2D99B
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:09:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8867AC2D99E
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:10:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B1A11899D96
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:10:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C6A654EC798
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF3621E0BB;
-	Mon,  3 Nov 2025 18:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F281315D2C;
+	Mon,  3 Nov 2025 18:09:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UnKrqmyv"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jwdf1mLw"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B902313273
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 18:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560EE3054D4
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 18:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762193369; cv=none; b=RYQ2SWiWUDbcX421Th0kfeaWB/XF9ZBuFDxptlNl3VRuSiUxkl5rXuzX63FwaMpC7qtl4OfAeO9JQ3dCGmumFQh3b07KKOmZ6xmnh5iUaDCm7iiYwObSN2eClmb0/fH6Jd97cbzs5XZYER4S3xq9IXh6SyySBrYDNdUPk9cH4CQ=
+	t=1762193393; cv=none; b=SwRDathQzld2JSJg7OcK/LoTi0enbwNUb7RF1sMZbOdu0AEU+sghcVt2oBm6NQtRosmLjvFK5jy4xqckyXBk1w7KdVeF0i8FyOQAhTKq5ywIbI20NtbG0ROK+rFPD5Wvibpu3etP7mmCjCsBHdhvCGoKs1CI2GM1OXIdFPv1ncU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762193369; c=relaxed/simple;
-	bh=dSZOek6ygkyM8kMLRCDVZKMdCPYWkaopn/XnCYI/Vb8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WUavSwq0lvwC9faf/rpbgLaWMtLMteda7r96R4QKuf8wLUgYjI3TFc+jtJ5NZk8D4lCdLrfN9J1tbHUvWUwSqq22BvceS1PAYBjSaSs7Dv21a6xtVYhUiD+pTUP5LVFGVVRpNHh+3Qj8Fgm98FcYCKdSNC1yKTbFaqa7YVlMXTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UnKrqmyv; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2951a817541so48437215ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 10:09:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762193367; x=1762798167; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6GMq24IVk2F3a28aOoFMSN6wPIMIYmOKkHFdluZNlp8=;
-        b=UnKrqmyvy6DUp++piPtr188PfaI7oNGWMAM7vbHHUoa8Z9eZ0AnIrrEfDDpRdehICM
-         SoAstZCyWWNpzruPp7eFAMTwRquJwBlqtZL56KudJ8l8Kb3l90Nkx4vxII++gEAjpC90
-         wkr+DtJr11CPMuL+LYZFP70v+H3ETgpNRqooepuWnrSZlFGu3OuFUkfcYWLnM9hNW+QU
-         S8XAKoQ9pJq4TB+PeDtcBwoAZGrKV9T6HI3AJx2PPG1HqBz4Yhd8M0NDjAeDYdhdFIqr
-         wJBRtfK87pOqOYL5EnjZWVoBQrCIMbKE/PacszEDIpNKzu2Yrs7zQOMPSNXizjJtOZQB
-         mwJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762193367; x=1762798167;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6GMq24IVk2F3a28aOoFMSN6wPIMIYmOKkHFdluZNlp8=;
-        b=F7mr16AyxS0YH47KE76j4GesZxhffJSRuCu3r41BxWjUUDVaB/tPb0RqDH8oF5kpGN
-         hIQp1i43wLEy7+EvAJ60iH1YKPiMnKuoKkYxS15NhJN82+olcNJrZ/D+Ht9RKke60pTD
-         0YNZyy32lwguRRkmnbt8Aty15Qkuqvmi5IPUHnknmxsfZb37LzVvKwSI+BaSajrEM3iD
-         9IMn03jtAgYn8anxjWePG57q9FZrTs/DDmNVTZI+U9MDnfegvTejgINtkY0n2vmlmdi1
-         F8PkIFUt/Abykc5HCKR01vdB6/XztTfTCR0/Ug51qUVFsTS0Fyn+IESvmlc3OrCzt7q9
-         GBow==
-X-Forwarded-Encrypted: i=1; AJvYcCX7gLCqHxql8NSLQ5Dg827SME6HUVKxol1iemykdSjwM24mNgVPPxlXD9WpbqswKFx85oc6+Iprcv1HkPc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWYycLEEre9OcJrEfVzq08wbstdAu/WjJfGxX4IZTNyZmj0g78
-	yahpO7dpLtvPZSJ9tOh+JP7rxJzQXY38cpI0P/4DlBmowMajQNDwDK0+
-X-Gm-Gg: ASbGnctUFkH+a3I2GFBIOhkHvzZRvPmwTuI04va4/qmeDM7oE5olJZ3U8opED2GocDJ
-	jLfxCA43LBb14YDlKq3MvwnK0CItVhR+tPxaEPqypIQIgn/chLjvXAf/jP6SWeNaZlEv8btpNHh
-	QL4i4iNa2FWjPlVw0pWoIPOc6jWiGBmmtLlI0aJSuqr9zqylHGQWJfn2s5sIX8X9xbuMIkbgkf6
-	YJj9oxees+/EMKC23iQ2p94SXhoaonqv3VNq8kh/qXoxwIlwiOqjz5Rzs8kea8VxMznkhwNAGk4
-	yK5RXGMFCUyed+mhSD1spP8mx0marLScbIMVWdORW5PyYYz0UHHy1iVvK93ZUwca0RdK363JGFN
-	HEO0WLZg/ACDZv6NonUM8yjFZ9w2jR9xciUBTDPBlDpwhpmpD391S50A8yzp9avzkR7NzpXTY1N
-	PtfEj22kG9aAeXnVYgjdUgAk0yag==
-X-Google-Smtp-Source: AGHT+IGZrfXVBo54SYedR/Q9MDC4tdP/p2CLo6tbKfTLBQnHa03b/gxt/4AS9fp/eW4cLQ/lJm333A==
-X-Received: by 2002:a17:902:da87:b0:290:c94b:8381 with SMTP id d9443c01a7336-2951a3905e9mr148631275ad.7.1762193367176;
-        Mon, 03 Nov 2025 10:09:27 -0800 (PST)
-Received: from ?IPv6:2a03:83e0:115c:1:3eb6:963c:67a2:5992? ([2620:10d:c090:500::5:d721])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341760c9476sm14136a91.4.2025.11.03.10.09.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 10:09:26 -0800 (PST)
-Message-ID: <a584d6e00a7b78927debb828f252280777d2da6a.camel@gmail.com>
-Subject: Re: [PATCH bpf-next v4 1/2] bpf: Skip bounds adjustment for
- conditional jumps on same scalar register
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: KaFai Wan <kafai.wan@linux.dev>, ast@kernel.org, daniel@iogearbox.net, 
-	john.fastabend@gmail.com, andrii@kernel.org, martin.lau@linux.dev,
- song@kernel.org, 	yonghong.song@linux.dev, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, 	jolsa@kernel.org, shuah@kernel.org,
- paul.chaignon@gmail.com, m.shachnai@gmail.com, 
-	harishankar.vishwanathan@gmail.com, colin.i.king@gmail.com,
- luis.gerhorst@fau.de, 	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Cc: Kaiyan Mei <M202472210@hust.edu.cn>, Yinhao Hu <dddddd@hust.edu.cn>
-Date: Mon, 03 Nov 2025 10:09:23 -0800
-In-Reply-To: <20251103063108.1111764-2-kafai.wan@linux.dev>
-References: <20251103063108.1111764-1-kafai.wan@linux.dev>
-	 <20251103063108.1111764-2-kafai.wan@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1762193393; c=relaxed/simple;
+	bh=iXPfZ5FY+zUIYrHLJwoGCYyUEKkk49FEF+D5zZmcY8Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RnJr0DOgdhHuwpzcJefMp+8N1qgnu5jPO8zlQzA/ECtDg+Luct/wUxVw1NSnnMcKK0Ul1NYoWY2+vpTTZgC/xq/+DG/TYcnDEbCJhd5ZiwDwut0nt10sIcRWojPY7d/e8cAaQ8KxdfkkicGWMHXFA+tULVMSQHvs6/jUKWjyswI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jwdf1mLw; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762193392; x=1793729392;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=iXPfZ5FY+zUIYrHLJwoGCYyUEKkk49FEF+D5zZmcY8Y=;
+  b=Jwdf1mLwtO4KOz/uczo6xflSfTeaFRzrFWuFlQPwj5/3sJhGJ60H2S9L
+   co1UO7wdeHZ11XqBkwOp2ZItg3aCuLDNHBofrbvWdOkTCOCjpOHC6hUj+
+   1y/P3B5BAkSYj0O9mIOgAe+Q+jlcGJfLRzT7N4WC5VfWRciaweIsFJLiC
+   w5vARRrQQUigSmMU5a6mS/phaFnP3PusEfI//fkegou4mvNU8GWxPD05M
+   ZnovK1J7SjCVCrMhj9DYNwD1gFzDUed4XzNkDT8ftxb0V2NnwK6CMAtZ6
+   3qmrE/LL6ngdm7zd5IA0z7FgkP8n1KiALD/4Wz9FlHwa6lg6jAN1EiAbX
+   g==;
+X-CSE-ConnectionGUID: 6rvFmY4qQ5aRytZsr3p6hA==
+X-CSE-MsgGUID: mU13AKjcQvWhx1zvpnACsA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="67932148"
+X-IronPort-AV: E=Sophos;i="6.19,276,1754982000"; 
+   d="scan'208";a="67932148"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 10:09:51 -0800
+X-CSE-ConnectionGUID: Owwezh3xSDSuJccpkl+PTQ==
+X-CSE-MsgGUID: rdYlV66HSTW0GDa8LD5Ncw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,276,1754982000"; 
+   d="scan'208";a="187247324"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa008.fm.intel.com with ESMTP; 03 Nov 2025 10:09:49 -0800
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id 9C25C95; Mon, 03 Nov 2025 19:09:48 +0100 (CET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Cc: Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH v1 1/1] regmap: i3c: Use ARRAY_SIZE()
+Date: Mon,  3 Nov 2025 19:09:46 +0100
+Message-ID: <20251103180946.604127-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2025-11-03 at 14:31 +0800, KaFai Wan wrote:
-> When conditional jumps are performed on the same scalar register
-> (e.g., r0 <=3D r0, r0 > r0, r0 < r0), the BPF verifier incorrectly
-> attempts to adjust the register's min/max bounds. This leads to
-> invalid range bounds and triggers a BUG warning.
->=20
-> The problematic BPF program:
->    0: call bpf_get_prandom_u32
->    1: w8 =3D 0x80000000
->    2: r0 &=3D r8
->    3: if r0 > r0 goto <exit>
->=20
-> The instruction 3 triggers kernel warning:
->    3: if r0 > r0 goto <exit>
->    true_reg1: range bounds violation u64=3D[0x1, 0x0] s64=3D[0x1, 0x0] u3=
-2=3D[0x1, 0x0] s32=3D[0x1, 0x0] var_off=3D(0x0, 0x0)
->    true_reg2: const tnum out of sync with range bounds u64=3D[0x0, 0xffff=
-ffffffffffff] s64=3D[0x8000000000000000, 0x7fffffffffffffff] var_off=3D(0x0=
-, 0x0)
->=20
-> Comparing a register with itself should not change its bounds and
-> for most comparison operations, comparing a register with itself has
-> a known result (e.g., r0 =3D=3D r0 is always true, r0 < r0 is always fals=
-e).
->=20
-> Fix this by:
-> 1. Enhance is_scalar_branch_taken() to properly handle branch direction
->    computation for same register comparisons across all BPF jump operatio=
-ns
-> 2. Adds early return in reg_set_min_max() to avoid bounds adjustment
->    for unknown branch directions (e.g., BPF_JSET) on the same register
->=20
-> The fix ensures that unnecessary bounds adjustments are skipped, preventi=
-ng
-> the verifier bug while maintaining correct branch direction analysis.
->=20
-> Reported-by: Kaiyan Mei <M202472210@hust.edu.cn>
-> Reported-by: Yinhao Hu <dddddd@hust.edu.cn>
-> Closes: https://lore.kernel.org/all/1881f0f5.300df.199f2576a01.Coremail.k=
-aiyanm@hust.edu.cn/
-> Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
-> ---
+Use ARRAY_SIZE() instead of hard coded numbers to show the intention
+and make code robust against potential changes.
 
-Acked-by: Eduard Zingerman <eddyz87@gmail.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+ drivers/base/regmap/regmap-i3c.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-[...]
+diff --git a/drivers/base/regmap/regmap-i3c.c b/drivers/base/regmap/regmap-i3c.c
+index b5300b7c477e..6a0f6c826980 100644
+--- a/drivers/base/regmap/regmap-i3c.c
++++ b/drivers/base/regmap/regmap-i3c.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ // Copyright (c) 2018 Synopsys, Inc. and/or its affiliates.
+ 
++#include <linux/array_size.h>
+ #include <linux/regmap.h>
+ #include <linux/i3c/device.h>
+ #include <linux/i3c/master.h>
+@@ -18,7 +19,7 @@ static int regmap_i3c_write(void *context, const void *data, size_t count)
+ 		},
+ 	};
+ 
+-	return i3c_device_do_priv_xfers(i3c, xfers, 1);
++	return i3c_device_do_priv_xfers(i3c, xfers, ARRAY_SIZE(xfers));
+ }
+ 
+ static int regmap_i3c_read(void *context,
+@@ -37,7 +38,7 @@ static int regmap_i3c_read(void *context,
+ 	xfers[1].len = val_size;
+ 	xfers[1].data.in = val;
+ 
+-	return i3c_device_do_priv_xfers(i3c, xfers, 2);
++	return i3c_device_do_priv_xfers(i3c, xfers, ARRAY_SIZE(xfers));
+ }
+ 
+ static const struct regmap_bus regmap_i3c = {
+-- 
+2.50.1
+
 
