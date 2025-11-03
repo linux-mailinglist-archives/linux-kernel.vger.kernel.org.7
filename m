@@ -1,208 +1,155 @@
-Return-Path: <linux-kernel+bounces-883205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24F76C2D01F
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:11:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E363C2CF73
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:04:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D7B6566112
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:24:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D0B0462190
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7762E32863E;
-	Mon,  3 Nov 2025 15:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FBE332C930;
+	Mon,  3 Nov 2025 15:15:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fmTi+U07"
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010059.outbound.protection.outlook.com [52.101.85.59])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nPHXyoKT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FBD9326D5C
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 15:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762182908; cv=fail; b=f4AsS1zb+JRgWfjAbr3xzf5JFUGFAVGsTNFVKhOv0zdYeNc9NtYFQecC4sF7IXZvLbup34LkNRhJSWzeX3FyyJ7/VhvKifVYDQZoazMTeDLGPwE3fSExflnaG21eny9EGXZZ+oydJOxMYUgAEVu/QNQ3WF+gkGtd2dr4LtT3WTo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762182908; c=relaxed/simple;
-	bh=rLC4O/kLlbSXnAZwyBUcQNgZFy/bbcLfSy4vw1I1bvs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Cz2hF54DyAa2g3Y14t7+nuoW0YCBkul4U0TdP0rtgvj2Gav2IAzmzn2PzNbi4OuTqBYcDEIkeO5+NgNs9iFavryAgOEPs4kWb5mBW8xnvVyN3oXUA1R6tYbKHhSBw9YR0lg0GSQvJKT+k9Om/8XIbJHZMi9lHJUZAIB8p8vpLLU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fmTi+U07; arc=fail smtp.client-ip=52.101.85.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CT+ooJGklcHQOlGVfPXc7WmCdUklBCkIPGihW4yFZXN3BLGj3ux5EjXIWohbk0DIXmwLpbGfr0Z8A2P3ICWeI7ZyBNbwE/PQ5GpvwnT8oRLrmLi9Iw5qNvpGF+VqWyTZPqNQ08b2Udb1re/fhnuQsCGRHbuUVDwGCefKZ3xbRC95fYutG2nRAUlSiiEoFOl7fCjcuccsyxcobolJM1WJ8CixqlY9pHkuKSaJzZgn7g5okaCx3JwraH3iIT4fc3CdBru79AjtE1U3yWhpPuAAarL3lCf2xQqXUqJfTDYtVLB0FFca5AFFnbEX8kKEUJIXWAad2AM6iuKIWbDcm8Iujg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=f1YXNIVu4F7PeIM/myo7/Iqc6fAs5G0bcqdkExPd5Ww=;
- b=J9BX8DWQKsvMpnCO6f3X1JStOCvC1wT5LCfoorjkMuNftJJ7KdcQ5FtALT9Vu/Gi0UhQC4tZiPEqIXv0zX+AnxQ0EwJrI+ncukeabPK5PEzCCr73meb5mkXMtjBOl0yAQYC0mvlWMY9L8tlh4qlouyhiirHAW6gqTpxJG78nb3wX179ukyn+GGTdPPZBpVGzDBMj+a/jU3q/wyq5iOUqsn8KrBwTpw7LZXPJIRFllB/xUIdRpENGWod0sccrBXnpyoShM6RwOJW4Xx7bQUL9Tdmeck1FhfPjcLKsXlvxmcVGZY5zLx+/HsFulJLnDgyP4VoHq1eKtr7lf2nAueIiOw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.23.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f1YXNIVu4F7PeIM/myo7/Iqc6fAs5G0bcqdkExPd5Ww=;
- b=fmTi+U07KC0AbsrCongZaDoFFLqxbUJZEwyAp/2tu0lH27/xrT6YOf+LwhFuc9d02FFcUZhyJID9dhglJIZlzS+ZtgSKS2f313prp1oG1nGhlBf6Yhx/Q53NaMdEQzW2OvtXa+Q+dKGljJ5+Ebzi/i2/UXompj74bQwb1PftDGA=
-Received: from CYZPR20CA0009.namprd20.prod.outlook.com (2603:10b6:930:a2::20)
- by DS0PR10MB7317.namprd10.prod.outlook.com (2603:10b6:8:f8::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Mon, 3 Nov
- 2025 15:14:59 +0000
-Received: from CY4PEPF0000E9D7.namprd05.prod.outlook.com
- (2603:10b6:930:a2:cafe::a8) by CYZPR20CA0009.outlook.office365.com
- (2603:10b6:930:a2::20) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.16 via Frontend Transport; Mon,
- 3 Nov 2025 15:14:53 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.194)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.23.194 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.23.194; helo=lewvzet200.ext.ti.com; pr=C
-Received: from lewvzet200.ext.ti.com (198.47.23.194) by
- CY4PEPF0000E9D7.mail.protection.outlook.com (10.167.241.70) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.6 via Frontend Transport; Mon, 3 Nov 2025 15:14:58 +0000
-Received: from DLEE209.ent.ti.com (157.170.170.98) by lewvzet200.ext.ti.com
- (10.4.14.103) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 3 Nov
- 2025 09:14:55 -0600
-Received: from DLEE215.ent.ti.com (157.170.170.118) by DLEE209.ent.ti.com
- (157.170.170.98) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 3 Nov
- 2025 09:14:55 -0600
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE215.ent.ti.com
- (157.170.170.118) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Mon, 3 Nov 2025 09:14:55 -0600
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5A3FEtrV325063;
-	Mon, 3 Nov 2025 09:14:55 -0600
-From: Nishanth Menon <nm@ti.com>
-To: Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
-	"Thomas Richard (TI.com)" <thomas.richard@bootlin.com>
-CC: Nishanth Menon <nm@ti.com>, Thomas Petazzoni
-	<thomas.petazzoni@bootlin.com>, Gregory CLEMENT
-	<gregory.clement@bootlin.com>, Richard Genoud <richard.genoud@bootlin.com>,
-	Udit Kumar <u-kumar1@ti.com>, Prasanth Mantena <p-mantena@ti.com>, "Abhash
- Kumar" <a-kumar2@ti.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] firmware: ti_sci: set IO Isolation only if the firmware is capable
-Date: Mon, 3 Nov 2025 09:14:53 -0600
-Message-ID: <176218288382.3559260.12524155435608432109.b4-ty@ti.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20251031-ti-sci-io-isolation-v2-1-60d826b65949@bootlin.com>
-References: <20251031-ti-sci-io-isolation-v2-1-60d826b65949@bootlin.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32514329E51
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 15:15:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762182921; cv=none; b=ddUwaPPRAd+/ZDSMl5rAdKJKIYAKTaCK0hyJi9xnRiYBufmQ/HDRK2E+Fnvl65cmduNURquR8HQ/+yQTxY6lDvhi/inIvJfcY5jFPf/18BaQV67RTJt9lN2ra28NnQyoxG4aZ0W4EvIS7SP63P+/Dkpt6LiYJ1YMXh9gSnkZx9w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762182921; c=relaxed/simple;
+	bh=RonmCY/g3g2ajug217LDcsL+qF/MLKQoyvWwQC4pCvE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=m7SleuzSx8L4aEeFG5x6HL8w3vLD9VRJwaRTbTJzIcrKEfzarE0Yimj6V6SMizf137epteD5NGzu4EjyxBclbIng2F/6BhbrTL1VFxx2CTV1imTaVHplR1BrAV6FW6udr89TnqAbCnQiT7M+psxfEo7BhZrO9bvjjjk2o3+lyRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nPHXyoKT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0598AC2BCFA;
+	Mon,  3 Nov 2025 15:15:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762182920;
+	bh=RonmCY/g3g2ajug217LDcsL+qF/MLKQoyvWwQC4pCvE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=nPHXyoKTnWu5StYm8lVPAZGPq3IUj9iL8vUjyFEXzt+6EM0jA6Ej2J62G3SfFllma
+	 VWY8xvCvI7E8oCC0OjzIDgwWsteD62UmEGq7c7hGAG188yYhBBVT2+xlgBjx0vUePb
+	 aGjAELA/WqL3iTsHaRhwaubTjnrk6n3V4age4+E2gJKZPUJ79bnI81kXdhI2/jpB/W
+	 rXETYTmUIcvodPS0mPRgmQuiWugrQeGJ+EpFvHAfG8zdHWIihwCiHKhNGE3Kklu8/Q
+	 tlq7qI/ANjofJVQPpDwrnOzRiGgspimHQqsCJBvKxPV4V/oxZZM0vm6CBmVLU5ZmzZ
+	 k8dr9cPyBfQuA==
+Date: Mon, 3 Nov 2025 12:15:16 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Sean Christopherson <seanjc@google.com>,
+	Yang Weijiang <weijiang.yang@intel.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ian Rogers <irogers@google.com>,
+	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>
+Subject: [PATCH 1/1] tools headers UAPI: Sync x86's asm/kvm.h with the kernel
+ sources
+Message-ID: <aQjHBMAslfvIksxs@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D7:EE_|DS0PR10MB7317:EE_
-X-MS-Office365-Filtering-Correlation-Id: 89da82d9-03d3-473d-688a-08de1aebc082
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|34020700016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Mi8vcXMzVFI5NVdjd0VmNlEyYTRDZnNOOHBKVlZicVlwY1QzUzU4bkppK3Ur?=
- =?utf-8?B?UFBBQm9sUWlYUUpuZEhvbWpwTS96aFBERXIrT3ZaUGtrQ0JZMkV4RHlKY1VM?=
- =?utf-8?B?ZXBYSXQvNmxuWXNwQTdNVk1xNGdHSThBZFJKNkRmaW1IMWcwd1RtdGQ2REdV?=
- =?utf-8?B?UTZ6V0paVldvZEQ2UDhCQkFQQXozaDJ2YlQweEl4SWhMTCt4M1NucXlOQm85?=
- =?utf-8?B?bEZRQXF5ckpHMFp2eGFxcGVLWkpHSFhVajA5SmxMRWo1MkVpd3VvZVh1TXpu?=
- =?utf-8?B?UHlTTVRtNFlDRU1NR3NVbGY0TkF3SmNLYXQ4TTB5NFl3NnFJMmZZUVNnUTZ3?=
- =?utf-8?B?K2NjdnRkbkxEaHk0dEJGcE1iT2pNNk5jckc2YTZUN0k4ODJGWW5rMVFuUkk3?=
- =?utf-8?B?cWJwejZSZTNxdzNmVlhuQW1TS2FWZnlWUTV1eDBoTWV6b0xUamw3SEc0TEsx?=
- =?utf-8?B?VFIzSDI2aWZtanVJVmFEOHk0enpWNjZMcWlqaEl2TlJCa1lNblMzK3RRdW1Y?=
- =?utf-8?B?WHFZRmgxSG1Tclo3bCtCdDh2S21EVWFvaE1tRStzTHlxVkFEdTA3MFRNeWQr?=
- =?utf-8?B?dUdxMEo2Nm9JZHZUUEpVOUdhWmFDZnJvNXBtVHpoNjlrTW54MENjN3I0a1kr?=
- =?utf-8?B?dC9lTFF5VXhkM2ovTTAwbHU4THNaR2p1RXoxSEVPQjdGUDR4YXFBYW02RGJO?=
- =?utf-8?B?YjVMbWFybVdkRVdnemI2WlRkOU9lSHFLbURpTk9BRlh5dmh6dzlKanVuT09s?=
- =?utf-8?B?RGZFa1lLZnByekVjQmxXQ1V0dkFGYXBUMDMvSWZ2Z09WYklVeEh5c3pMMTRN?=
- =?utf-8?B?eXg2bFFIN3NtdzR6SDBhRVlRaXF2TllwR1B0UzJNUWp2bXUwT3FheVQrR3B1?=
- =?utf-8?B?RS81UmVnRE1OZndJNTBvMWhHU3NSeDNEZlgxaHZYT3RlaHhYNUJvSUwxSU5U?=
- =?utf-8?B?RXVWQjBnK056TlBVbmpIcDFreHd2VlVHYXlUbkNtR1RXSDgzNmc1QnpVYmNZ?=
- =?utf-8?B?OGZqY2tSZStxZHE1ZTlKMmlVdWd1Rld3OHFudlBXSk1PMkpIeW4wVFpxamFH?=
- =?utf-8?B?M21IQ3FzMWpic3NDelY1MTJsRk9CU1ByT2grV3RkdXdJYUNIbGVudnM0d2tN?=
- =?utf-8?B?TGQwaTlpZDN3NDdqbzBrSi93ZGVUWG9aQ1Q1Rkd4c3NEbmM4eHRuYWp2dHl3?=
- =?utf-8?B?RDVpZklvd2I2YnpidFJ3NXJ3NGpqaXhuNll1MFhSRTFtUndxaGwwcEhTZW82?=
- =?utf-8?B?N0RmTkI0bnAzR0NBZVpTYjBUNG5UbU0yaEE2cTNQSUw3UENOQTBaV2xNV2F6?=
- =?utf-8?B?OGJDdnRiMVR2WGJuemU2M0ZYVUhDd0RXeTBScnVyeDZkTzREOTRBTUkwNHY4?=
- =?utf-8?B?RjdyMklNM0VWQXM1ejUxZXc5TmtQMFNJN3NhYWk2U1VCcXVUb1dhNkpQMFRJ?=
- =?utf-8?B?OGJnQkNxTkU5eDNTS1Z2KzUyY1dBMHBCRm5talhCeTI5NDVmeEp1cXkrMkh3?=
- =?utf-8?B?QjRvU0E1d0VIaUplNVd0cVRUa0xBVXpQajRKejVLTUE2cStPbUZiVmJrVXhT?=
- =?utf-8?B?NGhObWpsczlUY1lnNWtxMUlXZmVhby9WMmZlbFFrNHFsdS9xZGF3TVlKU2Np?=
- =?utf-8?B?U1hnbm9FTzJsenJqSVpIUk9EVXdMQTJVZGF5U2lOMVZXVE5WbXhEU0tBWnZm?=
- =?utf-8?B?WEpWdDk2NFUwTEk4OEhOVnhLMU9veHIwRWJBR2oyOFdtQkpOemNZWnNBQ3VD?=
- =?utf-8?B?N296SU1sbnQ0ME1Sa0cvOEQzei9Oako4bmNwNTh4aXJwTmM1VzJsZi9kRjdp?=
- =?utf-8?B?YUNoSnpNYmkrNmxxOU1tZGx3K2Z6ekRLcitodG92V3FvWllwdndmRmJNQVBl?=
- =?utf-8?B?VmE3UUl6b3p5Tmc2aThkR2s2Z3JYaHVYbmphdkpEdzVsOW12azB4TEJZUXJC?=
- =?utf-8?B?dVgyWXBkMXNvMXFyZW1JUy81a2RsVUQ2V1diOTNlNWQzYlBhVXpTNkV3d2hP?=
- =?utf-8?B?WUV3aDJHLzJQY1YrRHNUQmltN1krTXplalR1c01Ia05xUjNrTWJFU1hFM21B?=
- =?utf-8?B?Z0d6NEVkUUpwMzR2T1BRSXpabHRYNWFndlNrenRrb2hmN0wwZ1IrbVlBYU1s?=
- =?utf-8?Q?ydFA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:198.47.23.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet200.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(34020700016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 15:14:58.1704
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89da82d9-03d3-473d-688a-08de1aebc082
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.194];Helo=[lewvzet200.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000E9D7.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7317
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Thomas Richard (TI.com),
+tldr; Just FYI, I'm carrying this on the perf tools tree.
 
-On Fri, 31 Oct 2025 13:44:56 +0100, Thomas Richard (TI.com) wrote:
-> Prevent calling ti_sci_cmd_set_io_isolation() on firmware that does not
-> support the IO_ISOLATION capability. Add the MSG_FLAG_CAPS_IO_ISOLATION
-> capability flag and check it before attempting to set IO isolation during
-> suspend/resume operations.
-> 
-> Without this check, systems with older firmware may experience undefined
-> behavior or errors when entering/exiting suspend states.
-> 
-> [...]
+Full explanation:
 
-I have applied the following to branch ti-drivers-soc-next on [1].
-Thank you!
+There used to be no copies, with tools/ code using kernel headers
+directly. From time to time tools/perf/ broke due to legitimate kernel
+hacking. At some point Linus complained about such direct usage. Then we
+adopted the current model.
 
-[1/1] firmware: ti_sci: set IO Isolation only if the firmware is capable
-      commit: 999e9bc953e321651d69556fdd5dfd178f96f128
+See further details at:
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+ https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/include/uapi/README
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+To pick the changes in:
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+  fddd07626baa419c ("KVM: x86: Define AMD's #HV, #VC, and #SX exception vectors")
+  f2f5519aa4e3ec4e ("KVM: x86: Define Control Protection Exception (#CP) vector")
+  9d6812d415358372 ("KVM: x86: Enable guest SSP read/write interface with new uAPIs")
+  06f2969c6a1237f0 ("KVM: x86: Introduce KVM_{G,S}ET_ONE_REG uAPIs support")
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+That just rebuilds kvm-stat.c on x86, no change in functionality.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+This silences these perf build warning:
+
+  Warning: Kernel ABI header differences:
+    diff -u tools/arch/x86/include/uapi/asm/kvm.h arch/x86/include/uapi/asm/kvm.h
+
+Please see tools/include/uapi/README for further details.
+
+Cc: Sean Christopherson <seanjc@google.com>
+Cc: Yang Weijiang <weijiang.yang@intel.com>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/arch/x86/include/uapi/asm/kvm.h | 34 +++++++++++++++++++++++++++
+ 1 file changed, 34 insertions(+)
+
+diff --git a/tools/arch/x86/include/uapi/asm/kvm.h b/tools/arch/x86/include/uapi/asm/kvm.h
+index 0f15d683817d6a77..d420c9c066d48c98 100644
+--- a/tools/arch/x86/include/uapi/asm/kvm.h
++++ b/tools/arch/x86/include/uapi/asm/kvm.h
+@@ -35,6 +35,11 @@
+ #define MC_VECTOR 18
+ #define XM_VECTOR 19
+ #define VE_VECTOR 20
++#define CP_VECTOR 21
++
++#define HV_VECTOR 28
++#define VC_VECTOR 29
++#define SX_VECTOR 30
+ 
+ /* Select x86 specific features in <linux/kvm.h> */
+ #define __KVM_HAVE_PIT
+@@ -411,6 +416,35 @@ struct kvm_xcrs {
+ 	__u64 padding[16];
+ };
+ 
++#define KVM_X86_REG_TYPE_MSR		2
++#define KVM_X86_REG_TYPE_KVM		3
++
++#define KVM_X86_KVM_REG_SIZE(reg)						\
++({										\
++	reg == KVM_REG_GUEST_SSP ? KVM_REG_SIZE_U64 : 0;			\
++})
++
++#define KVM_X86_REG_TYPE_SIZE(type, reg)					\
++({										\
++	__u64 type_size = (__u64)type << 32;					\
++										\
++	type_size |= type == KVM_X86_REG_TYPE_MSR ? KVM_REG_SIZE_U64 :		\
++		     type == KVM_X86_REG_TYPE_KVM ? KVM_X86_KVM_REG_SIZE(reg) :	\
++		     0;								\
++	type_size;								\
++})
++
++#define KVM_X86_REG_ID(type, index)				\
++	(KVM_REG_X86 | KVM_X86_REG_TYPE_SIZE(type, index) | index)
++
++#define KVM_X86_REG_MSR(index)					\
++	KVM_X86_REG_ID(KVM_X86_REG_TYPE_MSR, index)
++#define KVM_X86_REG_KVM(index)					\
++	KVM_X86_REG_ID(KVM_X86_REG_TYPE_KVM, index)
++
++/* KVM-defined registers starting from 0 */
++#define KVM_REG_GUEST_SSP	0
++
+ #define KVM_SYNC_X86_REGS      (1UL << 0)
+ #define KVM_SYNC_X86_SREGS     (1UL << 1)
+ #define KVM_SYNC_X86_EVENTS    (1UL << 2)
 -- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
-https://ti.com/opensource
+2.51.1
 
 
