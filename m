@@ -1,136 +1,172 @@
-Return-Path: <linux-kernel+bounces-883813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C36EC2E7DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:55:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BE18C2E7E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:56:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2B4BB4E6197
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:55:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFEA1189AF76
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6053093C3;
-	Mon,  3 Nov 2025 23:55:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 809C33093D1;
+	Mon,  3 Nov 2025 23:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PH9jXvkV"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kode54.net header.i=@kode54.net header.b="X7I1CAL6";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jiMPU27/"
+Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF8C26B0BE;
-	Mon,  3 Nov 2025 23:55:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8986126B0BE;
+	Mon,  3 Nov 2025 23:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762214121; cv=none; b=J8LI5yRGtfGZKpBu8bHZEnyMV7GODdlz6+DVtCWXzCmZC1C/89Eieyh6pzp3hjK/EPE8Rp3JEjjfCD489Eo7bMQCMpWmkcvJbi4D/vr7qcZ6GbWNAeSBEbmtPdwnAh90UqXMnH4eMDnSrLzdN6naJnFugF8dmiu3ySZBUv0MPyI=
+	t=1762214159; cv=none; b=HdcQXY/iGJALTxYc15nDdZHl4wKpeZ/PCGiqnx++xFu/3Y7ytG+EMhe31JAAz/NAiqimOKVuOvSMfS7twAqu7nFccZkcykmRejKet3ghJx5gboK4ydcjXyqRVMC+Bf33N2ZrzTThsDXgqOK5xoZ2njlXmdq8ek1IcAVnpIn4UfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762214121; c=relaxed/simple;
-	bh=JJBgM5CvHVCDWAdWTxqUDuJihJDMQJY77z8w4AlpCRU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=R97kjJTKswEWZcT0M+i9+6PHrAyEyoXNvJyVwMegd3XdlSzfCKsDu7lItPYvXIuO35WlA1tw44hYfyK0pvgejB5toMWiK5wS6h+N+RLuRmQ5rWQxo9VQ2Jhu29USx5KccNmVs0w8ItILfqHI+7C8v8NMjCHiOCPUXtNHJiyEVQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=PH9jXvkV; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1762214117;
-	bh=auoeln3sGEB/pA2yTGvig5iDdccpG3DjuzkFF+RieQc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=PH9jXvkV+owRtRpGfcVOPyYjWZrE3K2wBDRo4UeMAJ4Sq7clKa76IpfuCKwaTKqCa
-	 7KeMO6HZG0y32gwH7Dx7UfG79MLDsGHa4GrQRUpMop74AImefjJ+g3N0S/wBKYn3vY
-	 RV/HitaV5QPY0yjkG+tvNoyEnNzPBnhmIBVI4eGelwfxm8l0eHazvr98y0SU+WHGUq
-	 KEFVCz5cZ5bxMeJ3fUFkYZX/KeyVnVillRRA42kMDzPdpkADK6Zoa5Y5UsWNTirTV4
-	 NQ9rExFf5V5eBYset0zO0F/IlqGK3+/SW3MMAgEleSaQ/OFgWuK9JhKoXwNU6GWTxA
-	 m1pr0eGoof8ng==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d0pP0704gz4wBD;
-	Tue, 04 Nov 2025 10:55:16 +1100 (AEDT)
-Date: Tue, 4 Nov 2025 10:55:16 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miguel Ojeda <ojeda@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
- Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>,
- Daniel Gomez <da.gomez@samsung.com>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>, Daniel Gomez
- <da.gomez@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Tamir Duberstein <tamird@gmail.com>
-Subject: linux-next: manual merge of the rust tree with the modules tree
-Message-ID: <20251104105516.40fea116@canb.auug.org.au>
+	s=arc-20240116; t=1762214159; c=relaxed/simple;
+	bh=pLsqA+GwaWiZlSQ5uO0bqASXcT+6PYL/oODkRhTBhbI=;
+	h=From:To:Cc:Subject:Message-ID:Date:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=D5G3X/a0gnCMVo/+mK7QMaOLf1OV3L3A8bA7cxrafDBN9eG1akweXfl96mzjJH7wP5AE+9criVv1TSLrG5wsIenfcSjD+5UQPAGO01USSMvXURV/RwGiNP6IfRagiUVcdqBD3XkM6WzBX5seREvhyIvrBjA3d7qX6WLoXTiWBRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kode54.net; spf=pass smtp.mailfrom=kode54.net; dkim=pass (2048-bit key) header.d=kode54.net header.i=@kode54.net header.b=X7I1CAL6; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jiMPU27/; arc=none smtp.client-ip=202.12.124.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kode54.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kode54.net
+Received: from phl-compute-01.internal (phl-compute-01.internal [10.202.2.41])
+	by mailfout.stl.internal (Postfix) with ESMTP id 467461D002CF;
+	Mon,  3 Nov 2025 18:55:56 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Mon, 03 Nov 2025 18:55:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kode54.net; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1762214156; x=1762300556; bh=GPFpyT0a3P
+	jc96u0CnhKSUFWAsYD2jF3Fi4Un6BtxyY=; b=X7I1CAL64ZFMNxatSzvGBpCMUY
+	NnVjUow9HjTDGr3ezRFPXVzwGncmt2HYvBdpk2URzaaZpgEU7MY2Qqx1XYQ1p7k9
+	ci8NJGxmGmdbhVoFLBqQgVwtI1vam+cBGtzmQ3AHIpcFHZ6ed4T+7wiQXvIFtZ8k
+	jEAjUFsoG88AB2bDfU4DVUEjR/QK15axSXlSn1IoemCVmKdYsUEyP8O3E8DbCw2f
+	lYH4jZxADt1+ikLG0b2Ueqi/rBo/d8+ryZUC0mHLLydUAzU9vY4aPDGtE/YR7mjB
+	zQhwmai8U/jjNa7U5+ijAtL9/j9v3QJxUJzskHYHmoGlBVIeGIRjQWUC0BbQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1762214156; x=1762300556; bh=GPFpyT0a3Pjc96u0CnhKSUFWAsYD2jF3Fi4
+	Un6BtxyY=; b=jiMPU27/rU9x4ZA3NXMGwKont9eOfkPwcnzNVzT9JctUY5dmVka
+	GhDnWSVvJBiHXJKP6we6YI3sCiOMDD+x5m+lu30NE0djFfzqQ69wGZbCbnnqHUoF
+	kMiUG1Le86UhEUR4bwAIJUkZv5sMVqoLoIJN9UE8/WCGtA2EyXHaVij1m7a+UXz6
+	ooj8g75nqX1Lz/qpAoE3R16vt8mv2m7SDGf+bnToLLNOEr6beMXaUyfoib1+8ggj
+	gbPVY0XhfsXo2IpH8cIE92oETZuVnWzDSIvcKwNgjHDOFI3C3k5P3Js+52RJN+jW
+	dmZzznxsKRPVwu78LckGFhTXStWWsP6lkAw==
+X-ME-Sender: <xms:C0EJaaYY9NvCybuntHrfRJNMauDMpx_uz8qflLAnd5p_T0OBipeb-A>
+    <xme:C0EJaYF7wcQZrkAgR5Q4mjDnq3e8XLXrGibdKwAZt18Pf8iy45nF_3WqqKQV3KpSa
+    HqdGpjkoDXZMgbUvCa8047xdTGGdmQlYwEm22ZWnBujbibvNzOqLq1R>
+X-ME-Received: <xmr:C0EJabkuA2E-CaEI7GYuQ43CJcbyjbAnCpbg-8s8mA2DBzBHfy1W81BrdFM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujeelhedtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhephffvvefukfgfffgjfhggtgesghdtreertderjeenucfhrhhomhepvehhrhhishht
+    ohhphhgvrhcuufhnohifhhhilhhluceotghhrhhisheskhhouggvheegrdhnvghtqeenuc
+    ggtffrrghtthgvrhhnpedvueffffdvkeduleduueekveduteeivdetgfffiedvueeikeek
+    leeujeetuefhheenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrh
+    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheptghhrhhisheskhhouggvheeg
+    rdhnvghtpdhnsggprhgtphhtthhopedukedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
+    htohepsghpsegrlhhivghnkedruggvpdhrtghpthhtohepjhgrshhonhesiiigvdgtgedr
+    tghomhdprhgtphhtthhopehgohhurhhrhiesghhouhhrrhihrdhnvghtpdhrtghpthhtoh
+    epgiekieeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghl
+    sehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhglhigsehlihhnuhhtrh
+    honhhigidruggvpdhrtghpthhtohepmhhinhhgohesrhgvughhrghtrdgtohhmpdhrtghp
+    thhtohepuggrvhgvrdhhrghnshgvnheslhhinhhugidrihhnthgvlhdrtghomhdprhgtph
+    htthhopehhphgrseiihihtohhrrdgtohhm
+X-ME-Proxy: <xmx:C0EJaXm2CUimv6B8V8i8eS-P8xRtu0feZL2mAiCIlVUnSClJTYZ5bA>
+    <xmx:C0EJaQWHPtY1cjnvzi5vYlEBHOEPaT_kigUKjPOzeCZDHaOlCnkmNg>
+    <xmx:C0EJaV-SpJZCQiKEnF58hMae1ii7RZDFLiJ8Ev0H17ViXomNH147tQ>
+    <xmx:C0EJadpr3uy0GDuE_Ha-ZaymAbW2mXFF-d_1B1wkJUvD0lfJ1jNJPw>
+    <xmx:DEEJaS1MrZvmzqQnZVpI1iTe2ZKyja2kOFBFmayak1_HIDl1JRJ8inzc>
+Feedback-ID: i9ec6488d:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 3 Nov 2025 18:55:54 -0500 (EST)
+From: Christopher Snowhill <chris@kode54.net>
+To: Borislav Petkov <bp@alien8.de>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>, Gregory Price <gourry@gourry.net>,
+ x86@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+ mingo@redhat.com, dave.hansen@linux.intel.com, hpa@zytor.com,
+ peterz@infradead.org, mario.limonciello@amd.com, riel@surriel.com,
+ yazen.ghannam@amd.com, me@mixaill.net, kai.huang@intel.com,
+ sandipan.das@amd.com, darwi@linutronix.de, stable@vger.kernel.org
+Subject:
+ Re: [PATCH v2] x86/amd: Disable RDSEED on AMD Zen5 because of an error.
+Message-ID: <176221415302.318632.4870393502359325240@copycat>
+User-Agent: Dodo
+Date: Mon, 03 Nov 2025 15:55:53 -0800
+In-Reply-To: <20251103120319.GAaQiaB3PnMKXfCj3Z@fat_crate.local>
+References: <aPT9vUT7Hcrkh6_l@zx2c4.com>
+ <176216536464.37138.975167391934381427@copycat>
+ <20251103120319.GAaQiaB3PnMKXfCj3Z@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/wUe=rvqNh60xUE/B/Xqx1+9";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: multipart/signed; protocol="application/pgp-signature";
+ micalg="pgp-sha512"; boundary="===============0180112485978267985=="
 
---Sig_/wUe=rvqNh60xUE/B/Xqx1+9
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+--===============0180112485978267985==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hi all,
 
-Today's linux-next merge of the rust tree got a conflict in:
 
-  rust/kernel/str.rs
+On Mon 03 Nov 2025 01:03:19 PM , Borislav Petkov wrote:
+> On Mon, Nov 03, 2025 at 02:22:44AM -0800, Christopher Snowhill wrote:
+> > Although apparently, the patch does break userspace for any distribution
+> > building packages with -march=znver4
+> 
+> Care to elaborate?
 
-between commit:
+Sorry for the HTML before, apparently I'm not supposed to try writing
+replies from my tablet, because it will interpret the quote indenting as
+formatting and forcibly send HTML mail.
 
-  51d9ee90ea90 ("rust: str: add radix prefixed integer parsing functions")
+Anyway. A bug report was sent here:
 
-from the modules tree and commit:
+https://lore.kernel.org/lkml/9a27f2e6-4f62-45a6-a527-c09983b8dce4@cachyos.org/
 
-  3b83f5d5e78a ("rust: replace `CStr` with `core::ffi::CStr`")
+Qt is built with -march=znver4, which automatically enables -mrdseed.
+This is building rdseed 64 bit, but then the software is also performing
+kernel feature checks on startup. There is no separate feature flag for
+16/32/64 variants.
 
-from the rust tree.
+> 
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> https://people.kernel.org/tglx/notes-about-netiquette
 
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc rust/kernel/str.rs
-index a1a3581eb546,7593d758fbb7..000000000000
---- a/rust/kernel/str.rs
-+++ b/rust/kernel/str.rs
-@@@ -10,11 -10,11 +10,13 @@@ use crate::
-  };
-  use core::{
-      marker::PhantomData,
--     ops::{self, Deref, DerefMut, Index},
-+     ops::{Deref, DerefMut, Index},
-  };
- =20
-+ pub use crate::prelude::CStr;
-+=20
- +pub mod parse_int;
- +
-  /// Byte string without UTF-8 validity guarantee.
-  #[repr(transparent)]
-  pub struct BStr([u8]);
-
---Sig_/wUe=rvqNh60xUE/B/Xqx1+9
+--===============0180112485978267985==
 Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="signature.asc"
+MIME-Version: 1.0
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkJQOQACgkQAVBC80lX
-0GylnQf9GuT0f6yRBpil/2XW210lgXxsXzfHZg9ZOQ5ZiVfxGqtkSJWIbUE6bXhj
-hNs0D1dOKdiuhen52Hs5qLcZvYcVM+D+81APeia4YWJGlFRv3v+zFQM5diD7Pe+9
-7yky2vRa3RfS00bbGml3oZ7Oy87LIFA1JQCOHCtN02JVCRRDC1y5R0yVgrRp19LA
-mh9d/1mSG4jhsJi9bXNeiUWHXImbgZmmFKve2Mp78pFYxr0i+gttI4/MU00Gl8Ug
-L41IHCJ61MOyzKw66g8cd/bI0jOzFe7Dc0ZxcRIdl2CFdO29W7qxyEtXYqQKSg71
-44B0EWH+XoQKC7g9QP0K2zz8AbJdRQ==
-=JtDj
+iQIzBAABCgAdFiEEdiLr51NrDwQ29PFjjWyYR59K3nEFAmkJQQkACgkQjWyYR59K
+3nG/xQ/+KxtWw2uOep/MmIDfo4AvP//rkBJqVKx0RKZ515PoqRYrT5PvUIFi37Oz
+ue2pYzmn5mlfW1rHmAZgDIQKuF1ahtmxArqluFi4pUI97rIbq1rtUwzAuy2jqPoy
+3t746D5fq7zMs79kwsc6IGeGJjgCnbKm3nvqnqJGhz/eIVoMWInaFWwZtdqwvmrc
+LcFJT41WW+K286Oask25aqBLP5c/eGcM/4I0loPFbP1iREZLdtqSSUAdywXCc1Th
+4cemnPM3WsleUsc06gqVp3xZN7tUz/mtnwW8n2J6w8YIxsitMflYZ6x11AS/LKjL
+Y0YM106uQeWl08csTaVszxTSyFlgjlFO5PYS9+qmnzP3gSAQnmrho1+uj9RT+JqL
+X4OL/FZHvVAhMbPJcScSc0StpLz7/yUiBnlH0AJ+FMkWKDvDtgmCewxWUeikkp33
+r0iKqKGzsOIaIzg4CgtGg/YseNoxHN3ZpjocXIYgoBIdkP6Qwn5AcBWVEYxDHjep
+BR16dpUiztQ28zyJjgII9YIUW6+Gw2Bg5ZtRIMYciVtOZ2uaADunQQLBsVqmXQQN
+HOda9c1S6m0tNNafpboJGtd6GnxPgGC6727urr7lJ4r4NE/4gOF8JaYZGBiEllIo
+LQd4F8pOuwAybQP6bsaUyU8tfgkeujndURSjcH0qTuRTP73B5sc=
+=Xwm4
 -----END PGP SIGNATURE-----
 
---Sig_/wUe=rvqNh60xUE/B/Xqx1+9--
+--===============0180112485978267985==--
 
