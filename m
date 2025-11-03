@@ -1,154 +1,128 @@
-Return-Path: <linux-kernel+bounces-883629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56AD1C2DEAB
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 20:38:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C8DBC2DEC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 20:44:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A34E44F1ADF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 19:37:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21987188A061
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 19:42:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40ED4280017;
-	Mon,  3 Nov 2025 19:37:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8B63203B6;
+	Mon,  3 Nov 2025 19:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OiCwAPOM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SAdLwYPM"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F093164A0;
-	Mon,  3 Nov 2025 19:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196F029BD8E
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 19:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762198650; cv=none; b=KCc8P5cWi8LTncOlaoBgrqc9jd8Qt2T+JGCFbGtUwkz0d+7tGqC3w4k5Dma6iATU/3wy5a7ry7z7VB72+Kp6i+ywmj5Jg4HQiZPrwAv4GDucNHnx1GKKFQ/BfM4GIVbTRFhRZHH8ftMIDcr5O5PMhXuCdUtR0xldGailGbtTqSE=
+	t=1762198919; cv=none; b=mrkzoUPbEqKlNE5E/qbiXSvRT2C9Nm3zQS0+r/6XwN9pnfV0YpZQd/cvqe71ecOIwrGv4WLMw4a9OieGIMT6PavUsunwOhlaEau9usHVzuek+Z9HwmPyM1FZatKP3A16xj1+yunGf2WJNWVMqLE9trAW93UcdjmRvJ7+sIUIcGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762198650; c=relaxed/simple;
-	bh=hgEOeQ/NAx7WrRk1gHE8VihYRMACDTSdXchi5b7f89Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pNYMFlCNFPhKYVcXyXCwXLDZvgZuqw9Lz4APo5owDnI31boldr5DEEzeyIgE2VCKT3Cr70tWH9M18lwIjm9AcYVLEuPxJvsuoxh25exsuP6eRZ1oNx2G6z/MX0cIOqwvzcTPM4XeH1xxyTxr1fJ/owDn16MB2pobIeRXl/8P/nI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OiCwAPOM; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762198649; x=1793734649;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=hgEOeQ/NAx7WrRk1gHE8VihYRMACDTSdXchi5b7f89Q=;
-  b=OiCwAPOMpzh/PIf2gcXm0dH7NHAO8X6KuaoGzwqI/5PHhvm49eKiLp/n
-   qEWhILJM2Od1BMEqzgLc9nVnvXC7d20FvsKMYuyiwHspJMhAgflumSgTF
-   rmq1c1R4qHpEH8Tdtq2uAkewxdmuVW4l/RFFuXqUzkRivqj6y8grXXACs
-   jiOBS1g2HraLFxnauD94abSGlZIAYq3oBXfbx7BwLPwq2m9Bym78Z1bDn
-   Sk5sOwUB1HUnmf8IrvxDPGeP69bKi0i1gDtrCpWLZx0DDqIkw3KxKNJbG
-   LrgMuhS42Vt+H1PY0tcg2XblaFy3YKsfiP7pIqHvopQImFvHn0DJpVDAG
-   w==;
-X-CSE-ConnectionGUID: Y2Ak0VAcTfaxNzD+6Jz9Eg==
-X-CSE-MsgGUID: UE76sayrSuWgxKAZVcnPFQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="51853517"
-X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="51853517"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 11:37:28 -0800
-X-CSE-ConnectionGUID: IkgWZNzwSI6gCDkNlx30xg==
-X-CSE-MsgGUID: A5QP/6+iRmurKpAVKqzaQQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="187674793"
-Received: from smoehrl-linux.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.216])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 11:37:25 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vG0Mg-00000005FeO-1lqu;
-	Mon, 03 Nov 2025 21:37:18 +0200
-Date: Mon, 3 Nov 2025 21:37:17 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Kuan-Wei Chiu <visitorckw@gmail.com>,
-	Guan-Chun Wu <409411716@gms.tku.edu.tw>,
-	Andrew Morton <akpm@linux-foundation.org>, ebiggers@kernel.org,
-	tytso@mit.edu, jaegeuk@kernel.org, xiubli@redhat.com,
-	idryomov@gmail.com, kbusch@kernel.org, axboe@kernel.dk, hch@lst.de,
-	sagi@grimberg.me, home7438072@gmail.com,
-	linux-nvme@lists.infradead.org, linux-fscrypt@vger.kernel.org,
-	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/6] lib/base64: add generic encoder/decoder, migrate
- users
-Message-ID: <aQkEbZrabOzPBClg@smile.fi.intel.com>
-References: <20251029101725.541758-1-409411716@gms.tku.edu.tw>
- <20251031210947.1d2b028da88ef526aebd890d@linux-foundation.org>
- <aQiC4zrtXobieAUm@black.igk.intel.com>
- <aQiM7OWWM0dXTT0J@google.com>
- <20251103132213.5feb4586@pumpkin>
- <aQi_JHjSi46uUcjB@smile.fi.intel.com>
- <aQjxjlJvLnx_zRx8@smile.fi.intel.com>
- <20251103192908.1d716a7b@pumpkin>
+	s=arc-20240116; t=1762198919; c=relaxed/simple;
+	bh=ytOAUmNRkyNrb+8SNM2LQjWX8qc1SfKmf5XVP7jIKcs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kw+P3W1ci82kOHvXHjqPoPqoseQE7577ibUbqiUFnern7L72fJMEIfRqPcpcss4vS86OOHtGYlx/rhP/qyONxVtfmxjxXKrLGdl5zD6Qa8cGRjOlt5EqURNcBCnbPMam921/dXtQ1WCv0b1yTBG1YOq7pWHcln3NVCLKj/Mg+3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SAdLwYPM; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-34101107cc8so1589246a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 11:41:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762198917; x=1762803717; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3RbFOj80zs/7n03tE8N1wEZb2vM09ZvVsc7QoNx1ezY=;
+        b=SAdLwYPMVlamNqGleD5GADzeZti3STqcp1hg3KPkwHcWqbWRmapVv1qUphJv4+chTe
+         IsqapZOkAYB8wg/emd8YLxsHAyweMz+h0mfCLmgqUpjWw+x1qeAsEj9D6D2GxIbr6BYC
+         s6fOmVFOdTpv7qYbBWR6uTXPB+sB6N8vcBnjgPIj8ilLW0McyHdtHwmY276gwBLvSfFM
+         4KFow4Kqi3sGYcrnIRmzo0Gv08mjwMI7+8U/Wngr8xGgKte4EwbNkBZK7GlHJWv+8iW/
+         6JnUH3wz/9dJhFTYD4eD57SNrKAqYIKC+rrqdLK+75G+8K5vduiHp8Ebc0i4qVnO/bTV
+         qpzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762198917; x=1762803717;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3RbFOj80zs/7n03tE8N1wEZb2vM09ZvVsc7QoNx1ezY=;
+        b=mw2x179coalTWl52+hGvwOvwns7/Q1JvBh9X54Toltgiij40P3/5gMkwP8Ia8aY9dp
+         lU2Yw6o4/BSKjlyup8uFwrMlY44aJcL8BgWcQUyXE76HSgi4RvJXOafRhi6GtP6QzO7x
+         fHDmivxL7+x1t8zLE9u49jCbNb0xDn9P81qQctGYCMnHiv5USBluXzadP5ODssinYVi7
+         VtG+GDvhNFa/gscEE1meNHOG+b9BnxSTWoArxD/i0aFvNY3TcnnXg6YGPlsFtU4r4V94
+         RTRFs6rtU5wfXI6litp+ITDTV0HiGZTvO1G6dmfO+1r+/61B+5xLiLQ+oJ8WQgThWojZ
+         UMQg==
+X-Forwarded-Encrypted: i=1; AJvYcCUlCZq4dZ81gObM/GZ+vlrh9hZ/tgKdaB2aTSMPsAwVI3Wi9rCHFbRflxtO24P4JbM3zpoR8bkq8v2ADP0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwC1DI3QVIGf5DhCJ6FW7ncO8dzSNI+RaD8nROwVEpOwSoEvfce
+	8ssCncRfHs8XcS6jy7Cn9f6FJuWCwvux3RcBWo3CX4B9i9I5yPYkCsyZo7gUCldzhe+j2mYzoe4
+	lAtv09qQn5xDnxr/MH3oDjUNX9NdgZ54=
+X-Gm-Gg: ASbGncusZG5tCN7/ekl5fN2qyFgKSqeezx7oMdb7HJ+PX7BU7NNbUBNLzCX617mx+T1
+	dZfvl4Ic35rF2XwbtQVW0pO5hO0V4EJiG12rHKIVwpHlTxp8joRLcBWeqIFVe7BOtwqJ6GJ3XyU
+	OrJWeip+w/Ux3mD6C3FoNShAN3UyuH4dMVYUf1th8GQAFMZyitfum+/hBPKqykEyT8BhyBab3r1
+	oiweCNxIT/dQPXxziDGjIwM7TdRe7SSPXaX/wE1TZUdgOa1lMn9wt2+1iADETvIECxgZAo=
+X-Google-Smtp-Source: AGHT+IFF702hXzMq3F2a8uGm8E60svn1HEyf0oLw6pQ2hliT+hDxZq38YemBD8AMk5LJLMgs3f8KaJ09KIEXyWShNJM=
+X-Received: by 2002:a17:90b:38d0:b0:341:25a:ad4 with SMTP id
+ 98e67ed59e1d1-341025a122fmr7788990a91.37.1762198917347; Mon, 03 Nov 2025
+ 11:41:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251103192908.1d716a7b@pumpkin>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+References: <20251028161506.3294376-1-stefan.wiehler@nokia.com>
+In-Reply-To: <20251028161506.3294376-1-stefan.wiehler@nokia.com>
+From: Xin Long <lucien.xin@gmail.com>
+Date: Mon, 3 Nov 2025 14:41:45 -0500
+X-Gm-Features: AWmQ_bnY9CHWjDcwZC0Iq3uTXqVqXa1nB6j2AnO1OSN-u6hNqbFa3oymkdmy2U4
+Message-ID: <CADvbK_cFoj7Y81dGTmBzY4BOyZrkdoSa37zkeavRy4gaMEKRwg@mail.gmail.com>
+Subject: Re: [PATCH net v3 0/3] Fix SCTP diag locking issues
+To: Stefan Wiehler <stefan.wiehler@nokia.com>
+Cc: "David S . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Kuniyuki Iwashima <kuniyu@google.com>, linux-sctp@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 03, 2025 at 07:29:08PM +0000, David Laight wrote:
-> On Mon, 3 Nov 2025 20:16:46 +0200
-> Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
-> > On Mon, Nov 03, 2025 at 04:41:41PM +0200, Andy Shevchenko wrote:
-> > > On Mon, Nov 03, 2025 at 01:22:13PM +0000, David Laight wrote:  
+On Tue, Oct 28, 2025 at 12:15=E2=80=AFPM Stefan Wiehler
+<stefan.wiehler@nokia.com> wrote:
+>
+> - Hold RCU read lock while iterating over address list in
+>   inet_diag_msg_sctpaddrs_fill()
+> - Prevent TOCTOU out-of-bounds write
+> - Hold sock lock while iterating over address list in sctp_sock_dump_one(=
+)
+>
+> v3:
+> - Elaborate on TOCTOU call path
+> - Merge 3 patches into series
+> v2:
+> - Add changelog and credit, release sock lock in ENOMEM error path:
+>   https://patchwork.kernel.org/project/netdevbpf/patch/20251027102541.232=
+0627-2-stefan.wiehler@nokia.com/
+> - Add changelog and credit:
+>   https://patchwork.kernel.org/project/netdevbpf/patch/20251027101328.231=
+2025-2-stefan.wiehler@nokia.com/
+> v1:
+> - https://patchwork.kernel.org/project/netdevbpf/patch/20251023191807.740=
+06-2-stefan.wiehler@nokia.com/
+> - https://patchwork.kernel.org/project/netdevbpf/patch/20251027084835.225=
+7860-1-stefan.wiehler@nokia.com/
+> - https://patchwork.kernel.org/project/netdevbpf/patch/20251027085007.225=
+9265-1-stefan.wiehler@nokia.com/
+>
+> Stefan Wiehler (3):
+>   sctp: Hold RCU read lock while iterating over address list
+>   sctp: Prevent TOCTOU out-of-bounds write
+>   sctp: Hold sock lock while iterating over address list
+>
+Series
+Acked-by: Xin Long <lucien.xin@gmail.com>
 
-...
-
-> > > Pragma will be hated.
-> 
-> They have been used in a few other places.
-> and to disable more 'useful' warnings.
-
-You can go with pragma, but even though it just hides the potential issues.
-Not my choice.
-
-> > > I believe there is a better way to do what you want. Let me cook a PoC.  
-> > 
-> > I tried locally several approaches and the best I can come up with is the pre-generated
-> > (via Python script) pieces of C code that we can copy'n'paste instead of that shortened
-> > form. So basically having a full 256 tables in the code is my suggestion to fix the build
-> > issue. Alternatively we can generate that at run-time (on the first run) in
-> > the similar way how prime_numbers.c does. The downside of such an approach is loosing
-> > the const specifier, which I consider kinda important.
-> > 
-> > Btw, in the future here might be also the side-channel attack concerns appear, which would
-> > require to reconsider the whole algo to get it constant-time execution.
-> 
-> The array lookup version is 'reasonably' time constant.
-
-The array doesn't fit the cacheline.
-
-> One option is to offset all the array entries by 1 and subtract 1 after reading the entry.
-
-Yes, I was thinking of it, but found a bit weird.
-
-> That means that the 'error' characters have zero in the array (not -1).
-> At least the compiler won't error that!
-> The extra 'subtract 1' is probably just measurable.
-
-> But I'd consider raising a bug on gcc :-)
-
-And clang? :-)
-
-> One of the uses of ranged designated initialisers for arrays is to change the
-> default value - as been done here.
-> It shouldn't cause a warning.
-
-This is prone to mistakes when it's not the default rewrite. I fixed already
-twice such an issue in drivers/hid in the past few months.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Thanks.
 
