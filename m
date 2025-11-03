@@ -1,155 +1,85 @@
-Return-Path: <linux-kernel+bounces-882191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A342C29D85
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 03:11:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C893BC29D8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 03:14:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 861A6348083
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 02:11:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 395E6188F679
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 02:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB3B280CF6;
-	Mon,  3 Nov 2025 02:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20E70280035;
+	Mon,  3 Nov 2025 02:14:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="JveC5ruZ"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011010.outbound.protection.outlook.com [52.101.70.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="TeFxzFxM"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D59E27587E;
-	Mon,  3 Nov 2025 02:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762135885; cv=fail; b=qWwTMnFqQfYZU9J9pSBrzxVBzKb4G2MlJkzxROOER/Nzxur/FGDYyyWo2PeGM/ehSbXAXb4I8S+GzIp2WcSxotGSOb4gqijAIkj2dopBwwPTftAqdQOyLPb7xK9K1J6GMOd75jO1RWTvw64eidmny9D969aDg5AIJI19TVyIL40=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762135885; c=relaxed/simple;
-	bh=iAw9k3lZinP9Zp/LEoRkQdCwVLrdVomOudqiM2K6i8w=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CC94A41;
+	Mon,  3 Nov 2025 02:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762136066; cv=none; b=Mdr2l6c3dhxt79rIsdx5Zm7nsMwWn3y+DHdk6c8z1ohzenOAxVWXe36Qcm4qCnZP9uJwVlGvPJAyHXPPS0j4qJzD9+tmsliGkrsJ1CEQA69vlwM6b6xiF4FFso/9stqwOrJAhwFlfMswpTh/JUb5EMH1YMf6veYnwakOKVuImgU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762136066; c=relaxed/simple;
+	bh=V7q8dMbBRBJhmlhhedhlsnpQTrZWu1L0BrwBtxpkgH4=;
 	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=MaMBUy+GwOxpyHX55Q5HPQps55SpqAw9sDc6x0UdiUpkO7DqQIG3S4xCBjYCHMs2vSGuKnAWY47jDvcOpK07KTgUN2/mlFmhJ8j13IgXBQ/poPm/vvXbdpRw3aJpHTHTGvNtiDelk2vP0cuoyNTGpnfabKDlURt0WWcD7qsR9nI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=JveC5ruZ; arc=fail smtp.client-ip=52.101.70.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Nbd+1ZUyzE2tDfv1iCmNFvWHp39c/JTX2CEXB7EW6nZdCff4W+qbGV+/+SHA4YXyU5ty8dX3w0NyCCrFCh/egXo94wAuxnRWFqnW8QX+LlAyUoXewA/3I1UqP+3aP1ZKlhNSdmjEIbZNl8l0xCTxbhtQexgVONNPGlqD8OZfV3Yjvm0IS/WkK15kLvcMXSILxhowHa7Y4rSwaR3ews+QO+J+ynxNW5GWYrM2HCjxK42yKOyceoMQJqYGs7XLh4XWdvw8HUs7vru1jx+yMKMccvGqZVW4u0J4OZ/8g2chRnicTOUL8qEQHbIIQEhAfk/6GTwKmBhoZDVvIDWAVIxwtw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iAw9k3lZinP9Zp/LEoRkQdCwVLrdVomOudqiM2K6i8w=;
- b=ol9GJcJLOqgb1Fext4KqXik1Etp9MTsPqV4z2OuHcjVnkaU/No56QYj7MLyiO8Sfk6wkWTyp4m+kZerXxBZZX/Og7nfFobECFKaE6GSDnLfHmbzRav6X0dpLdMuvGLKtjThL+QEgg+XXECUvZDYcfmGzfEWvl4s470PK4zjzxIUZMflGMgKyfFTpbFiWwiPTGlndaqS8L4izPccP9fcw2EkrlpPAMzbTyP3QfFCGvJZ7Lvp3sNpRgz2ZD+iXlo2kvQ4NL68um+vxeMbM9eTNzFHBxONUmjF54UqMhZ3bOCMY8tVwmQjFWhSTLDc/RFI98W/fsZIwmf5MmerBXKX4Ow==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iAw9k3lZinP9Zp/LEoRkQdCwVLrdVomOudqiM2K6i8w=;
- b=JveC5ruZ9VavxppH6Pw7grHcBiQ3qBmHh679S5oYJppbJmTFxDaGcKGPvsOp/S1FGi98EIfMqhDMHIf+mj+XPEiN8Bb2QDdlKm3fMPTAb8bW+XYnmc2zSiZ4V3wMvF55xM+3J+GM6uJ2WFt5OJsOQMSiCUVpsnKcCxZteZesSR4FdOOxrNUsSj724IcI2B23QxsoKOqD9MgUObEBUidWNYHm+IX2Az+sVZBoBKtqySaVbLS77YIRguta2wFQR/+z2D0QJeNFDzy4DBU/fVR4sJdCeFC+gUbuMzOdOZIjAdva/gSpO7VjWI04FhCJVlOGhE5ud9H/PpsrUtvquhm6Rw==
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
- by VE1PR04MB7406.eurprd04.prod.outlook.com (2603:10a6:800:1ae::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Mon, 3 Nov
- 2025 02:11:20 +0000
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db%4]) with mapi id 15.20.9275.015; Mon, 3 Nov 2025
- 02:11:20 +0000
-From: Wei Fang <wei.fang@nxp.com>
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Claudiu Manoil <claudiu.manoil@nxp.com>, Vladimir Oltean
-	<vladimir.oltean@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>,
-	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>, "davem@davemloft.net"
-	<davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
-	Aziz Sellami <aziz.sellami@nxp.com>, "imx@lists.linux.dev"
-	<imx@lists.linux.dev>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH net-next 0/3] net: enetc: add port MDIO support for both
- i.MX94 and i.MX95
-Thread-Topic: [PATCH net-next 0/3] net: enetc: add port MDIO support for both
- i.MX94 and i.MX95
-Thread-Index:
- AQHcSYDXkRjFYTA/aU2GC/wHEDze/bTa9nwAgACBd7CAALmQAIAAv5SggAD3rACAAkwcQA==
-Date: Mon, 3 Nov 2025 02:11:19 +0000
-Message-ID:
- <PAXPR04MB8510D431ACAF445F8E516A0288C7A@PAXPR04MB8510.eurprd04.prod.outlook.com>
-References: <20251030091538.581541-1-wei.fang@nxp.com>
- <f6db67ec-9eb0-4730-af18-31214afe2e09@lunn.ch>
- <PAXPR04MB8510744BB954BB245FA7A4A088F8A@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <fef3dbdc-50e4-4388-a32e-b5ae9aaaed6d@lunn.ch>
- <PAXPR04MB85101E443E1489D07927BCFE88F9A@PAXPR04MB8510.eurprd04.prod.outlook.com>
- <157cf60d-5fc2-4da0-be71-3c495e018c3d@lunn.ch>
-In-Reply-To: <157cf60d-5fc2-4da0-be71-3c495e018c3d@lunn.ch>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|VE1PR04MB7406:EE_
-x-ms-office365-filtering-correlation-id: 977c8239-47b2-4db1-de7c-08de1a7e476d
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|366016|1800799024|19092799006|38070700021;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?NJ9XQmmTWHnbEsFp6tCSjP8Pi1dlhwdOMydo6ky6nHrZkdWrVAKbicW0hUGn?=
- =?us-ascii?Q?z6gfk/r1xxMDpubZGZULsV7bVRVGBsc9fh9PdDqB8pF20gFUNA7H88wI0kbp?=
- =?us-ascii?Q?3c3NmezcIdZqhDljc2vEbtfPdcM04PNkKYooGph62aReas51QEcCfDPWqmXB?=
- =?us-ascii?Q?KhVPzf0hN1Arypy1utSwK+g3giYYtm1eLS76BFvcOVKs/iS05q65I6gZYFYd?=
- =?us-ascii?Q?mHIrqizN3u5iGI+LNvFFyZSqMN+Vi6W8TBoeCEtLpY3HEB125ngHIVQz2QRN?=
- =?us-ascii?Q?DsWUGGYTK326IrKx6yemPbwoOFgQ9/7+g5dCD4+6T/BfQthxAg9iTeIu4AFX?=
- =?us-ascii?Q?SmarMlLRp9sja6S/EGaaYdfaB/CfTCzjAEd6AyFZhAPz8UMQzlnCcw8T6Qsr?=
- =?us-ascii?Q?nByUq2gutQI76yLbSsgffXkO9yKPYFY6Zay7tO5NL5wotdRS98tKTImJFMqu?=
- =?us-ascii?Q?xuTKBhDbmPN091dA+u26JX0eR7NR0MF6kOak8DIDRLCR4PShlLS82toe0kZ8?=
- =?us-ascii?Q?+pXe4cRgHrosgWpQ8vL28ZSEdtSokuPZssbT48m6OYfFxjMm71lWRSLkZOxZ?=
- =?us-ascii?Q?tRSeAyiPMC9IQHIlzDNvclC4HLfPV7pdSzr5o8Zb/yj0WtXcJ0gp2Sq9u1K7?=
- =?us-ascii?Q?cSb7seZnMgv1U9yMcDMfk+0BvgN50Pg95Gg78IqyWxi56oOrwgW5GA5kEYbb?=
- =?us-ascii?Q?35qEPP7sW2tq6WWnKbs9twu62karf/QV+nXdgcjMsfaWQIxSdwnpz7ceFLY8?=
- =?us-ascii?Q?BByeH0i7ISnyOE5VJydI8tFQIegVxeHn1FOgKcWTPumm7HdwNfBJuZI0PqK9?=
- =?us-ascii?Q?xNdh4RrDIbUX/D9FeT7/5yac+VX+bwOrpNiDIsH/LNMgbOPal8uAhBba3bxi?=
- =?us-ascii?Q?SKDlr+eW+/UEjlg1Yw+hGA0sEV1kN4XlOJ0xG7F1Za2USpk90y1oDMsbR01g?=
- =?us-ascii?Q?JzO+qv2/LHs/qgVbndJcQTfDa2qHH3DEat2VeX9+uEycMsxaVxe3xU0mMA3Z?=
- =?us-ascii?Q?NCO6Mn2SHr1T96Gq4hFF182w4yklw6FulOCNw86EmX7y1+tXeNHxN2UIjARD?=
- =?us-ascii?Q?n+y7IudUGb0dW09bzGcMZKtB91dUU5ADyBvEdVTDFVE9mD+2RLfPGo6iAny3?=
- =?us-ascii?Q?A7gBErFUQgjV8cQm/RR/sWf6O8N1qi7BuT/fJnK9vqhlHwdXuJyvn9t9Yy5K?=
- =?us-ascii?Q?HjaTvhAFiuFO9arJjaCtzHXayCLAoou1ha2I7idBH6uuzvVmInpNiPERZqp8?=
- =?us-ascii?Q?DnhuPya7yPYR5g1OqBLXkRGZFnddIYwTLYNJPfykU2XrfjWkfrTVarEBYOxQ?=
- =?us-ascii?Q?LTlozoUA8paFi+cIbSHcFysbOtKPxV89dq/ODEgQauc7iyO1oUbt9nqfnnmE?=
- =?us-ascii?Q?tHLI3D2+/WvymQvbHGp9GdjFsCZ7aoxft7eTwrZdxAd216ihYKnmvvlgjuDY?=
- =?us-ascii?Q?tspFWKTUkE3O/XXzEZMbo9pep9b777v58mZmETiSDcjYz941OC8ZZzQfax0Z?=
- =?us-ascii?Q?GUZHD9VW/hO0cc/2jt0yBO8HTN4KksieLna0?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(19092799006)(38070700021);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?Ob0CYKeuj/5DMvj/+nANhrz/9jX+wWt5a6IahrDdOLmL6GhjFOY46zdky1Yx?=
- =?us-ascii?Q?jwkxw2/f2kCfqPgYvxnHM9thCSEPT7xyWVntU5r9b1duH8lGY/mS/iwVrQg3?=
- =?us-ascii?Q?/Pgr6240Nqe4xQYn7Y2MF4Md9uT6lRmSWSZVCJ+MzIACLDgAA91Hn+5qD/7p?=
- =?us-ascii?Q?XcwlNlKHWD8d6t+WmOWspDr+OOwx64L2B3gWE9NaTxuK1m/Ugy72e85TAovW?=
- =?us-ascii?Q?LxWaoHJ+axeOzn+4PoggYuav1vGvolU91JU0okdFWKkmEDMENIDcW/pPSRMo?=
- =?us-ascii?Q?WMQ2X9ZmJi9/9tt8kxujPwIn+eTuvDCfRmaMVXR+hNX8XBhulL6IKmFjBbxX?=
- =?us-ascii?Q?xzagt9qty+HWV1DV3Kl/Fw0qPuOVdbmXJd456czNEUCi+UUu+Od2HJHTQzvO?=
- =?us-ascii?Q?gOLL5+r9An+U5VenQcmMWjyp3FFuG7L0ExHfblIut0jq3d6Od1piYqaEZI9r?=
- =?us-ascii?Q?x44l2O4amyxJDFIQ+BUEzJT2qeTVyxr4Z6ytIjmw6rFq6rzEoKnnpeJugbQP?=
- =?us-ascii?Q?denIxJYhjaOekRwZ68ZktU2ImKXQqIMmqsDSGTPzRccWT5SZt1VA3JJB6+r2?=
- =?us-ascii?Q?K5vES/zxvrbvWAB905ULuuTC3ptYiDpmNdAGJTg06HOuLELzGDpPYFw7IbcT?=
- =?us-ascii?Q?HYxgbVcVy6olZP5BnVVCjfLPRW+sHJ5H6wyNQSysD0EZ9UyLHBze7Hw280PL?=
- =?us-ascii?Q?60chH+1cLzsVMJ1dM5VRvoH8/1TpMPe1qk3xJPjzVNzZE9if64ggywyfgd98?=
- =?us-ascii?Q?oUt3CQLKKWVCEzhsLcJUP1HjTEWGaWB53kAdYT8/5hTiQCrDPf5ZfYq3s3bv?=
- =?us-ascii?Q?F1GgMN0/W+OLQrmzHkf0A5C2QA5LIidUbD4sgXfdldexaF7R7jiJhRohnn9B?=
- =?us-ascii?Q?y8CRu6+NK39eUn9i7XcacfG0JQcC1FL5x8/BfdMYjqZ1uWZGqCCwGStmL36b?=
- =?us-ascii?Q?jaiOJHKjz+BHh4kONVvW6FGcr5UL/73486Wq/wPN+2OXTggkgT+f9AySpBAG?=
- =?us-ascii?Q?IOLxQPW4qXBbMX5EIl/HK4hZ2muPUvI0dS5APU4e9HZ2dE3B7JQWm4p71ayZ?=
- =?us-ascii?Q?q1+TUcrk8WyZ8Rw3HyvmhH37Q0+6rjTqHcgwXl8U9FvZvNLfSjFlNYLIoSOI?=
- =?us-ascii?Q?oUQMGJgMwbhw5zXOkznql9Vz5ZfCr67egEhaj1O9AN/VhzzBL5s19qtVbm/0?=
- =?us-ascii?Q?6udmBKF4zpREGLmZ86M6BFDNZIlKjpB+4G5cophLV3pcsm94eelC+rzJt1qU?=
- =?us-ascii?Q?ehYba2bciGvdgrkvgGF9GbBLH8wALWSpPfG61Vw3ZEdKvBEwaICq/CrpbhuB?=
- =?us-ascii?Q?hIpy6aPkw9ZzeoKPNDnGt8b4/rSQzMW6NRLAZaC9zpAhVwmRUjtksOj15coJ?=
- =?us-ascii?Q?X+XJHDjhVBdyQ0SvrTTfkA8ifySBFqv4DaaWu8Cxsf+Z02DJuyVCUTr+PWor?=
- =?us-ascii?Q?Cob2GSL+NAtJzafq7qacDqgNMb0kHnGWWyLrCaAvaErfCW6H2FjQo+BYNu8X?=
- =?us-ascii?Q?PEW+JEZ7xqEh1DkSmyXfUVFQ15tvYWEcyG95ymi7/zbJs0Bx4EKj89WPBtzy?=
- =?us-ascii?Q?m0ioI6AD31M+yy2PJp4=3D?=
+	 Content-Type:MIME-Version; b=RPbULGGG0WJGeWzZ15SNMcRvIa88et/hnO6zRkFcfblDNRDgsVZqbbMDeLopT9M/QxSJW7yUL7SszVoh/a4gpxcYRduzptZZE2pFHaHSgnV0tWQLtiFVU5xYhPJwHBwfyBNF/+UWsnlup567FIe7TZHQAH9FwSG5MgpPDSEY4dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=TeFxzFxM; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 5A32Dt932631767, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1762136035; bh=oEqygZUZSObWSYBzYpNswYiI26vNwy5Iz7QvFGvSuRc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=TeFxzFxM9q9F2GFZe7xJrmzeL1gGdYQMb7vdqhdb5y6mN/A3tGxFGwiZJxygPxGGz
+	 Entyklu2Vlu2nK6JL0pz4DsU9vIObatj+6itZDjX0BtNHtoN3M5vXOJmpxucIsQx3T
+	 cfxeCA85+sVyefOeB4/WyqydgUyX4lZw9BnijCh7vvg1yfxjIhpTlRjQxT+85HPrS6
+	 0gFLvOcr4KP+T1omN/eVyZXsYoQHIR3VYIs1D+ijGuVRhur0tYew6kPcTVcZ72hyoO
+	 cB4zgzptBjcxBwwpvU2QRb6Eh8t8mh3jD08RuhYy5FXBCww+5tlJk+2Hz1AMa0iNy5
+	 oDwO8+rE0piiA==
+Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 5A32Dt932631767
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 3 Nov 2025 10:13:55 +0800
+Received: from RTKEXHMBS05.realtek.com.tw (10.21.1.55) by
+ RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Mon, 3 Nov 2025 10:13:56 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS05.realtek.com.tw (10.21.1.55) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.27; Mon, 3 Nov 2025 10:13:55 +0800
+Received: from RTKEXHMBS06.realtek.com.tw ([::1]) by
+ RTKEXHMBS06.realtek.com.tw ([fe80::744:4bc9:832c:9b7e%10]) with mapi id
+ 15.02.1544.027; Mon, 3 Nov 2025 10:13:55 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Fedor Pchelkin <pchelkin@ispras.ru>,
+        Bitterblue Smith
+	<rtl8821cerfe2@gmail.com>
+CC: Zong-Zhe Yang <kevin_yang@realtek.com>,
+        Bernie Huang
+	<phhuang@realtek.com>,
+        "linux-wireless@vger.kernel.org"
+	<linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "lvc-project@linuxtesting.org"
+	<lvc-project@linuxtesting.org>
+Subject: RE: [PATCH rtw-next v4 05/10] wifi: rtw89: implement C2H TX report handler
+Thread-Topic: [PATCH rtw-next v4 05/10] wifi: rtw89: implement C2H TX report
+ handler
+Thread-Index: AQHcSQcnNmvbei7UcEqbtRr1PbBdMbTgPNUQ
+Date: Mon, 3 Nov 2025 02:13:55 +0000
+Message-ID: <ae325e6c63604498b3bd2836f9662d23@realtek.com>
+References: <20251029190241.1023856-1-pchelkin@ispras.ru>
+ <20251029190241.1023856-6-pchelkin@ispras.ru>
+In-Reply-To: <20251029190241.1023856-6-pchelkin@ispras.ru>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -158,100 +88,29 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 977c8239-47b2-4db1-de7c-08de1a7e476d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Nov 2025 02:11:19.9608
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: hww0ThbxwzQKYgisvUVpcdlIwfUsRYG/9EVC9LUQjeOp2Xv7RwVIi6E/hFaVKnO9wmn4D6xB9jgdhRlMlUUoQQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7406
 
-> > > > What we get from the DT is the external PHY address, just like the =
-mdio
-> > > > driver, this external PHY address based on the board, ENETC needs t=
-o
-> > > > know its external PHY address so that its port MIDO can work proper=
-ly.
-> > >
-> > > So i don't get this. MDIO is just a bus, two lines. It can have up to
-> > > 32 devices on it. The bus master should not need to have any idea wha=
-t
-> > > devices are on it, it just twiddles the lines as requested.
-> > >
-> > > Why does it need to know the external PHY address? In general, the
-> > > only thing which needs to know the PHY address is phylib.
-> > >
-> >
-> > >From the hardware perspective, NETC IP has only one external master MD=
-IO
-> > interface (eMDIO) for managing external PHYs. The 'EMDIO function' and =
-the
-> > ENETC port MDIO are all virtual ports of the eMDIO.
-> >
-> > The difference is that 'EMDIO function' is a 'global port', it can acce=
-ss and
-> > control all the PHYs on the eMDIO, so it provides a means for different
-> > software modules to share a single set of MDIO signals to access their =
-PHYs.
-> >
-> > But for ENETC port MDIO, each ENETC can access its set of registers to
-> > initiate accesses on the MDIO and the eMDIO arbitrates between them,
-> > completing one access before proceeding with the next. It is required t=
-hat
-> > each ENETC port MDIO has exclusive access and control of its PHY. That =
-is
-> > why we need to set the external PHY address for ENETCs, so that its por=
-t
-> > MDIO can only access its PHY. If the PHY address accessed by the port
-> > MDIO is different from the preset PHY address, the MDIO access will be
-> > invalid.
-> >
-> > Normally, all ENETCs use the interfaces provided by the 'EMDIO function=
-'
-> > to access their PHYs, provided that the ENETC and EMDIO are on the same
-> > OS. If an ENETC is assigned to a guest OS, it will not be able to use t=
-he
-> > interfaces provided by EMDIO, so it must uses its port MDIO to access a=
-nd
-> > manage its PHY.
+Fedor Pchelkin <pchelkin@ispras.ru> wrote:
+> rtw89 has several ways of handling TX status report events.  The first on=
+e
+> is based on RPP feature which is used by PCIe HCI.  The other one depends
+> on firmware sending a corresponding C2H message, quite similar to what
+> rtw88 has.
 >=20
-> So you have up to 32 virtual MDIO busses stacked on top of one
-
-Theoretically, there are up to 33 virtual MDIO buses, 32 port MDIO +
-1 'EMDIO function'. The EMDIO function can access all the PHYs on
-the physical MDUO bus.
-
-> physical MDIO bus. When creating the virtual MDIO bus, you need to
-> tell it what address it should allow through and which it should
-> block?
+> Toggle a bit in the TX descriptor to indicate to the firmware that TX
+> report for the frame is expected.   This will allow handling TX wait skbs
+> and the ones flagged with IEEE80211_TX_CTL_REQ_TX_STATUS correctly.
 >=20
-
-Correct, ENETC can only access its own PHY when using its port MDIO.
-
-> If what i'm saying is correct, please make the commit message a lot
-> easier to understand.
+> Do the bulk of the patch according to the vendor driver for RTL8851BU.
+> However, there are slight differences in C2H message format between
+> different types of chips.  RTL885xB ones follow format V0.  RTL8852C has
+> format V1, and RTL8922AU has format V2.
 >=20
-
-Okay, I will improve the commit message.
-
-> But this is still broken. Linux has no restrictions on the number of
-> PHYs on an MDIO bus. It also does not limit the MDIO bus to only
-> PHYs. It could be an Ethernet switch on the bus, using a number of
-> addresses on the bus. So its not an address you need to program into
-> the virtual MDIO bus, it is a bitmap of addresses.
+> Found by Linux Verification Center (linuxtesting.org).
 >=20
+> Suggested-by: Bitterblue Smith <rtl8821cerfe2@gmail.com>
+> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
 
-No, as I aforementioned, the 'EMDIO function' can access all the PHYs
-on the physical MDIO bus, so for a third-party switch, we can use the
-EMDIO function to manage all the PHYs of the switch. Of course, this
-requires that both the EMDIO function and switch be controlled by the
-same OS.
+Acked-by: Ping-Ke Shih <pkshih@realtek.com>
 
-For NETC switch, each switch user port also has its port MDIO, the switch
-can use port MDIO or the EMDIO function to manage its PHYs.
 
 
