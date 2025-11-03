@@ -1,1300 +1,173 @@
-Return-Path: <linux-kernel+bounces-882565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5638C2AC18
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 10:34:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6559C2AC54
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 10:36:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C65041891064
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 09:34:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19ED23B588B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 09:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E2C32EB874;
-	Mon,  3 Nov 2025 09:34:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA89C2EB841;
+	Mon,  3 Nov 2025 09:34:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Da0U4K29"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="DhkIGDo5"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B422EBBA6
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 09:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C8E2EB84F
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 09:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762162442; cv=none; b=shvloJlzFIFcW3tCANC8/HqiJ05WJlXA2P1VZOgirWgZsEdLbXeChjsNR7MdV3VyFHGdsobmBJzA4U00wIHbSzpNpALZfziTDDVxLVvtYV+olO/Dur0GCklwQDaM09wZV/kCLL4ZopypXHufIlUdlufx/fizgBOeDILyuIdX17U=
+	t=1762162475; cv=none; b=RlRpZMf8TU6b0/fMcHJc26X4WK/9zMrOQGOoRZsdPlSeWHtjPIQ72SHiwCch2eUaOft+BqpDxMx2Qltsbrf1QsYSnbYurSJIgxegdP6JJCoqJegEY94l3VgpzE+DCvH2kQwcTWOn4KglWBpZt37cAfnKEj79XKZbQDl/TLVX4nY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762162442; c=relaxed/simple;
-	bh=nlUVgFDQDAXYxdfVPP8DV3gMbPRQouMyoCcEYGnE3DE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=V5wldYJOqWdKvXaabQMGH53l6ao2VaXFsJtjnzziWZ9zQGMLfdU6/t6XF1QifNlEohaB+dXxIZIswfxEZ4GG3+JQmh82FVPLnl45RrjVzqeL+xTuksdKQtASNR7d8XxyiivBKj1GgzSqENJv0MViDoi3EJMETl3m9HCwv1b+ECg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Da0U4K29; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2952048eb88so40997005ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 01:33:59 -0800 (PST)
+	s=arc-20240116; t=1762162475; c=relaxed/simple;
+	bh=i7DOvgsvt3ZQmezVkp8vi6qSNyStUcEGPJnNb6H63Pw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=iPg3w1MuisPwH9G26BtUHJzm+kl4RASNgZyodOuxjZThorIAFAa/ERqrbAuZ+HNRkysDsunugeRSGxOdEwU6bar5qXM9xwQoZrn0VuoNsnLS1ZnMJG0N9LCodOEP1KQWzpakAb8GnLPjOzQCXhxOCzfCsrdBQCCSMQRD/PQ3VdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=DhkIGDo5; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-640aa1445c3so1947906a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 01:34:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762162439; x=1762767239; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZxQvaJ9Xfp6gM82qSqYEVFCEJwP6wYYszui8KSBNVjM=;
-        b=Da0U4K29CYWKNDGoBXcKSC0PUPor4bc8SOjP8Is5+QR2CkGSWaijVCP3g3eSsiFpZS
-         8RSE+iNY3L1kaXNTsV/PU8lfuIlfRip1Mj3m1Msf3DyOLjpSdqUWMwIbKMrs1xEfc0FJ
-         3Y5xCuLBXVwTGiErKm7S4GxCxU8IBN6k4giuUPbEv1lziSt5QjC1MyhOs/UP95d7hrYx
-         cN+J2JrSkdQEe4OPS+nIMwlNz1d3b6XM5zuZ8BaYi1W00PSCEDJWidogif9mMUdGqKwJ
-         5X1dU+/9ot4O5c7/OAeHMD8lXaesda4p9aQnCv01DKNPgjZi3N1R7Bae0OMHG+VS72lG
-         1qKQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1762162471; x=1762767271; darn=vger.kernel.org;
+        h=mime-version:user-agent:organization:references:in-reply-to:date:cc
+         :to:from:subject:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i7DOvgsvt3ZQmezVkp8vi6qSNyStUcEGPJnNb6H63Pw=;
+        b=DhkIGDo5S2BVh7xneec4YlTW1Nx83x4WZp0g1tx1sZZBxyNLQpgfocqgjic7rHgNMm
+         qA3CTCHtKCPDpDotM8ka4ghjYAmpoxbBNqp3YTn7DiT3PEKovRh43gVFNC5eQ22qdWJ8
+         8d8RPWYfcPSwr8tuFqyZE7nITz1XWDJgUjAKDzHy2r8tHhqeSY2Wxg5BW9+9Axt+nK3S
+         /bH8tYobIoBsokzH5yZebNuaWRAtEjTuFXF+wO8n+eKN45kBorP669ouWWWuCZh9Pnha
+         EfpS79BZv02PrVW/4UFMndCTGpPzn+V2Opbxr8L5UDhF+FDE5QztYFXlepA1FrD6qMNJ
+         CYuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762162439; x=1762767239;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZxQvaJ9Xfp6gM82qSqYEVFCEJwP6wYYszui8KSBNVjM=;
-        b=vZdRgtFxeveVJk5goJ0PlXBpVP8TvbOMvGEEBTNyCV/s2BYX+3ca+Q/rup777np6Ph
-         KOKl2whUe0p4kwK86bwJvxHR+Tl/oEzHg6pqgY3/dTAlTnJyT/yEb9ot20hOWzM4zoIE
-         QVdOlkCcu+E+h5qVmsObURi9peE6p9lHZ61BTdPY5lBFgeWI6Tvs1cw/ifdU0dYYjz+S
-         aCLmqBbzfQf+o29azu/lPJj3wd36DAPEZ6v1NOk17oFNS2Jx4Eihqx+8mgz6evSmNW+k
-         p0lKRlzHMTVIlvcbYNMzY3Ul5WIN6gcWpM7XndZrE6BNVvC4eZgABpUqPAGBeHa2vLXc
-         bQIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQR7K8qaubTUHtGe9aWQQDxajPcJ8hbh2smt+dGxlTbtn3MFHg2zxnmurq0HSwZcbFzCQ32SwlKHc/bNM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgZdlNG81UimszvtsO6Wtp5V8XkDLJrROtXzU3Yz1qg+GuWUmA
-	aqoV1SImFSAZE3JPM5Yv9WLy2BEwD0s2w4ZqlqGTQ4FDPZEjr0tI49Bp
-X-Gm-Gg: ASbGnctBRGTAsp4rjPqEOAILhJ6Q/gUWd4f5VDz5x2BX55k8IZEeRH0Ogrd929FdnPv
-	7iVhBudiOrl3fcdRdz2GfUT7PTZVO6SmbgsY0oqDH9cugp7KQV/fMLSOY8nJFeL91NKxcmoRzW1
-	RQZgvvsY1Ao76H3H63kusBaS8lm8hFnZkMDzGAumZNcXdlf3m7ikByhwu56M6TwVTbKu6s1aZCv
-	JC6ihQE5HI4PWva/IAJzMQj8rXd/gVmKaafY1woSlFBAu5wKoItyA+bI+hHMaiM0bXXJmRuK6Yp
-	g2ywW9Jlgaw6066oqzyLKkpIYAZivX10wvnn+429czKp3X0bSa7IX4m/xir91c0JZiZ6ftU8+IZ
-	OpISzH8jjfo7CRp2RZIuQbLY7Tz/RjirpVXlQGXjRp+IVSwE1AvItJgBDUYSu4XGvDYM2NQ==
-X-Google-Smtp-Source: AGHT+IHU4UCQLJEfZ1jP+EhSQlHY0RvmZYIj5uOnsonIn2uB1AGNBmy8UpgT6XM8rWYZV/JLhdXo8w==
-X-Received: by 2002:a17:902:d505:b0:290:c0ed:de42 with SMTP id d9443c01a7336-2951a4dfc4fmr164229935ad.36.1762162439153;
-        Mon, 03 Nov 2025 01:33:59 -0800 (PST)
-Received: from gmail.com ([218.32.81.133])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2952696ea51sm112351435ad.57.2025.11.03.01.33.56
+        d=1e100.net; s=20230601; t=1762162471; x=1762767271;
+        h=mime-version:user-agent:organization:references:in-reply-to:date:cc
+         :to:from:subject:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=i7DOvgsvt3ZQmezVkp8vi6qSNyStUcEGPJnNb6H63Pw=;
+        b=sE29b7yW4vjtpfCj6DRFxbW6vzUqnqFXOaM9vcwiH+QYeI21GX578zTdUgyaiWTBtL
+         QAtJaDSNa8+8FZHoo/b7lp+ehcJTdO+v+BkGkM17ZQG5uVqNwNibbpHuNzVxJsap3MoO
+         Ad5ykLMkgsdr32HqibP+FZ9eQ4eaNHNvtnc57a4Slf/WOgtitlfqbSArM7qcEpW/MXM7
+         g9ZPGiEv4MVK3f1cyBojS/kqXPr+GTcpPsMqFhezYomCJ6jjpSJvl+uG0y7aTnmsTCGl
+         K/QEU2kIkzY2MvBXJSst/Ns39k+fK4cCCR4vl41No5GXAFeHr+9xfVwGF+65/3p5X3dq
+         7Tsw==
+X-Forwarded-Encrypted: i=1; AJvYcCVRnZ8SmbSFNNFwxYSH3Nz0zy/cqZmULXFeK534JZJl0CT2gZCXxQOudo1lU2NGrPsniVLY2zum6g7GSsQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykGZHQ/CeykDIDSB4PiHvMF1gBL8pHXjaS5c3yA03U6UlX6+Z1
+	+Y0f1XRZgKMvYH3Ut8tnUc1vOAWM88sGEWxhKTIzrrSDOEPjLcNgfTBrZj2IMkvRvdI=
+X-Gm-Gg: ASbGncvh6fYrohrps3wInULCIuD/IRQhWL3XAfc33EUc8aemRkah0RhoRLEBvfLF7ld
+	L3ObDsAKLpeO51GRtrm3lMt33rZnLocL2WCgtNWeGeYs8gXmSUrzAtRPR/SKEDTzvE0pcsXBV7o
+	L64vGVPjtLY6fKCkPytVxQgJxf+OP2wt91JK8GCLjERylZVQdcTe059w7lPhIZXn9mWDzWjTHY/
+	zmyOqR12fKa4kdV+j0RNkCRd1kPmbn4ERQWruppKuKcoUs6nZvYteE6zkYzV2+Uf2yl76sjp0sZ
+	HcYYlQlhMsDBqWi3LBpumwdSnQdaRVQ/JkBoFnauHCv8+Gpun6nXjMMvyud/ncoH3p6YXpUx0Rb
+	FxDzBUuvULmKauSVGFCtvu274+I/Qw5jynWIPPxj1qd6Q9uSZqoTrfzPE0QlGh5TWWZ9y9FM2rf
+	IASdGA4lU33twzkBI6kh4rqoD25Ss7AR+B1PIVp4VmuFLQx7HW3Q==
+X-Google-Smtp-Source: AGHT+IGnMLRGHhpO38MioC8H/phmYtpI9tWiHTI1pjfDUHvbCJftgf1K8ac1oy3OCTnGcK6thqrCtw==
+X-Received: by 2002:a17:907:7f13:b0:b6d:5718:d43f with SMTP id a640c23a62f3a-b70705ea525mr1074949666b.39.1762162471439;
+        Mon, 03 Nov 2025 01:34:31 -0800 (PST)
+Received: from [10.203.83.103] (mob-176-247-82-42.net.vodafone.it. [176.247.82.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7077975d24sm994396166b.1.2025.11.03.01.34.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 01:33:58 -0800 (PST)
-From: Peter Shen <sjg168@gmail.com>
-X-Google-Original-From: Peter Shen <peter.shen@amd.com>
-To: Andrew Jeffery <andrew@codeconstruct.com.au>
-Cc: Joel Stanley <joel@jms.id.au>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	peter.shen@amd.com
-Subject: [PATCH v3 2/2] ARM: dts: aspeed: Add Device Tree for Facebook Anacapa BMC
-Date: Mon,  3 Nov 2025 17:33:20 +0800
-Message-Id: <20251103093320.1392256-3-peter.shen@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251103093320.1392256-1-peter.shen@amd.com>
-References: <20251103093320.1392256-1-peter.shen@amd.com>
+        Mon, 03 Nov 2025 01:34:30 -0800 (PST)
+Message-ID: <25732d2be08156b4f55e97f5306d1fd080255ae7.camel@baylibre.com>
+Subject: Re: [PATCH 6/9] iio: imu: st_lsm6dsx: remove event_threshold field
+ from hw struct
+From: Francesco Lavra <flavra@baylibre.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>, Jonathan Cameron
+	 <jic23@kernel.org>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, Lorenzo Bianconi
+	 <lorenzo@kernel.org>, David Lechner <dlechner@baylibre.com>, Nuno
+	=?ISO-8859-1?Q?S=E1?=
+	 <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 03 Nov 2025 10:34:28 +0100
+In-Reply-To: <CAHp75Ve2+eU2X30EvC8dOuhEo3XZBwFrUH60itEYdYdGM7HvOA@mail.gmail.com>
+References: <20251030072752.349633-1-flavra@baylibre.com>
+	 <20251030072752.349633-7-flavra@baylibre.com>
+	 <aQMbb6BUBHQUXX9y@smile.fi.intel.com>
+	 <32a7741bc568243c8a19d691b922d9a8c2cba429.camel@baylibre.com>
+	 <aQNs8VVoStUJ6YHB@smile.fi.intel.com>
+	 <20251102112958.435688d5@jic23-huawei>
+	 <CAHp75Ve2+eU2X30EvC8dOuhEo3XZBwFrUH60itEYdYdGM7HvOA@mail.gmail.com>
+Organization: BayLibre
+Content-Type: multipart/signed; micalg="pgp-sha512";
+	protocol="application/pgp-signature"; boundary="=-Zznj8JQRuN4PD+b2+6iB"
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Add the initial device tree source file for the Facebook Anacapa BMC
-platform, based on the Aspeed AST2600 SoC.
 
-This device tree configures the platform-specific peripherals and
-aliases for OpenBMC usage.
+--=-Zznj8JQRuN4PD+b2+6iB
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Peter Shen <peter.shen@amd.com>
----
- arch/arm/boot/dts/aspeed/Makefile             |    1 +
- .../aspeed/aspeed-bmc-facebook-anacapa.dts    | 1165 +++++++++++++++++
- 2 files changed, 1166 insertions(+)
- create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-anacapa.dts
+On Sun, 2025-11-02 at 15:45 +0200, Andy Shevchenko wrote:
+> On Sun, Nov 2, 2025 at 1:30=E2=80=AFPM Jonathan Cameron <jic23@kernel.org=
+> wrote:
+> > On Thu, 30 Oct 2025 15:49:37 +0200
+> > Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
+> > > On Thu, Oct 30, 2025 at 12:10:08PM +0100, Francesco Lavra wrote:
+> > > > On Thu, 2025-10-30 at 10:01 +0200, Andy Shevchenko wrote:
+> > > > > On Thu, Oct 30, 2025 at 08:27:49AM +0100, Francesco Lavra wrote:
+>=20
+> ...
+>=20
+> > > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 *val =3D (data & reg->mas=
+k) >> __ffs(reg->mask);
+> > > > >=20
+> > > > > Seems like yet another candidate for field_get() macro.
+> > > >=20
+> > > > FIELD_GET() can only be used with compile-time constant masks.
+> > > > And apparently this is the case with u8_get_bits() too, because you
+> > > > get a
+> > > > "bad bitfield mask" compiler error if you try to use u8_get_bits().
+> > >=20
+> > > We are talking about different things.
+> > > Here are the pointers to what I'm talking:
+> > >=20
+> > > - git grep -n -w 'field_get'
+> > > -
+> > > https://lore.kernel.org/linux-gpio/cover.1761588465.git.geert+renesas=
+@glider.be/
+> > >=20
+> > True that it will be a usecase for that, but given plan is to merge
+> > that through
+> > a different tree in next merge window, it's not available for us yet.=
+=C2=A0
+> > Hence would
+> > be a follow up patch next cycle.
+>=20
+> Yes, but we can still define them here. Dunno either with #under or
+> under (namespaced) names, but still possible to use now.
 
-diff --git a/arch/arm/boot/dts/aspeed/Makefile b/arch/arm/boot/dts/aspeed/Makefile
-index 0f0b5b707654..e1b2fc7b8c08 100644
---- a/arch/arm/boot/dts/aspeed/Makefile
-+++ b/arch/arm/boot/dts/aspeed/Makefile
-@@ -17,6 +17,7 @@ dtb-$(CONFIG_ARCH_ASPEED) += \
- 	aspeed-bmc-asus-x4tf.dtb \
- 	aspeed-bmc-bytedance-g220a.dtb \
- 	aspeed-bmc-delta-ahe50dc.dtb \
-+	aspeed-bmc-facebook-anacapa.dtb \
- 	aspeed-bmc-facebook-bletchley.dtb \
- 	aspeed-bmc-facebook-catalina.dtb \
- 	aspeed-bmc-facebook-clemente.dtb \
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-anacapa.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-anacapa.dts
-new file mode 100644
-index 000000000000..d67c7698acf9
---- /dev/null
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-anacapa.dts
-@@ -0,0 +1,1165 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+
-+/dts-v1/;
-+#include "aspeed-g6.dtsi"
-+#include <dt-bindings/gpio/aspeed-gpio.h>
-+#include <dt-bindings/i2c/i2c.h>
-+
-+/ {
-+	model = "Facebook Anacapa BMC";
-+	compatible = "facebook,anacapa-bmc", "aspeed,ast2600";
-+
-+	aliases {
-+		serial0 = &uart1;
-+		serial2 = &uart3;
-+		serial3 = &uart4;
-+		serial4 = &uart5;
-+		i2c16 = &i2c0mux0ch0;
-+		i2c17 = &i2c0mux0ch1;
-+		i2c18 = &i2c0mux0ch2;
-+		i2c19 = &i2c0mux0ch3;
-+		i2c20 = &i2c1mux0ch0;
-+		i2c21 = &i2c1mux0ch1;
-+		i2c22 = &i2c1mux0ch2;
-+		i2c23 = &i2c1mux0ch3;
-+		i2c24 = &i2c4mux0ch0;
-+		i2c25 = &i2c4mux0ch1;
-+		i2c26 = &i2c4mux0ch2;
-+		i2c27 = &i2c4mux0ch3;
-+		i2c28 = &i2c4mux0ch4;
-+		i2c29 = &i2c4mux0ch5;
-+		i2c30 = &i2c4mux0ch6;
-+		i2c31 = &i2c4mux0ch7;
-+		i2c32 = &i2c8mux0ch0;
-+		i2c33 = &i2c8mux0ch1;
-+		i2c34 = &i2c8mux0ch2;
-+		i2c35 = &i2c8mux0ch3;
-+		i2c36 = &i2c10mux0ch0;
-+		i2c37 = &i2c10mux0ch1;
-+		i2c38 = &i2c10mux0ch2;
-+		i2c39 = &i2c10mux0ch3;
-+		i2c40 = &i2c10mux0ch4;
-+		i2c41 = &i2c10mux0ch5;
-+		i2c42 = &i2c10mux0ch6;
-+		i2c43 = &i2c10mux0ch7;
-+		i2c44 = &i2c11mux0ch0;
-+		i2c45 = &i2c11mux0ch1;
-+		i2c46 = &i2c11mux0ch2;
-+		i2c47 = &i2c11mux0ch3;
-+		i2c48 = &i2c11mux0ch4;
-+		i2c49 = &i2c11mux0ch5;
-+		i2c50 = &i2c11mux0ch6;
-+		i2c51 = &i2c11mux0ch7;
-+		i2c52 = &i2c13mux0ch0;
-+		i2c53 = &i2c13mux0ch1;
-+		i2c54 = &i2c13mux0ch2;
-+		i2c55 = &i2c13mux0ch3;
-+		i2c56 = &i2c13mux0ch4;
-+		i2c57 = &i2c13mux0ch5;
-+		i2c58 = &i2c13mux0ch6;
-+		i2c59 = &i2c13mux0ch7;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial4:57600n8";
-+	};
-+
-+	iio-hwmon {
-+		compatible = "iio-hwmon";
-+		io-channels = <&adc0 0>, <&adc0 1>, <&adc0 2>, <&adc0 3>,
-+				  <&adc0 4>, <&adc0 5>, <&adc0 6>, <&adc0 7>,
-+				  <&adc1 2>;
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led-0 {
-+			label = "bmc_heartbeat_amber";
-+			gpios = <&gpio0 ASPEED_GPIO(P, 7) GPIO_ACTIVE_LOW>;
-+			linux,default-trigger = "heartbeat";
-+		};
-+
-+		led-1 {
-+			label = "fp_id_amber";
-+			default-state = "off";
-+			gpios = <&gpio0 ASPEED_GPIO(B, 5) GPIO_ACTIVE_HIGH>;
-+		};
-+
-+		led-2 {
-+			label = "power_blue";
-+			default-state = "off";
-+			gpios = <&gpio0 ASPEED_GPIO(P, 4) GPIO_ACTIVE_HIGH>;
-+		};
-+	};
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x80000000 0x80000000>;
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		video_engine_memory: video {
-+			size = <0x02c00000>;
-+			alignment = <0x00100000>;
-+			compatible = "shared-dma-pool";
-+			reusable;
-+		};
-+
-+		gfx_memory: framebuffer {
-+			size = <0x01000000>;
-+			alignment = <0x01000000>;
-+			compatible = "shared-dma-pool";
-+			reusable;
-+		};
-+
-+		pcc_memory: pccbuffer {
-+			no-map;
-+			reg = <0xE0000000 0x00001000>; /* 4K */
-+		};
-+	};
-+
-+	p3v3_bmc_aux: regulator-p3v3-bmc-aux {
-+		compatible = "regulator-fixed";
-+		regulator-name = "p3v3_bmc_aux";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+	};
-+
-+	spi_gpio: spi {
-+		compatible = "spi-gpio";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		sck-gpios = <&gpio0 ASPEED_GPIO(Z, 3) GPIO_ACTIVE_HIGH>;
-+		mosi-gpios = <&gpio0 ASPEED_GPIO(Z, 4) GPIO_ACTIVE_HIGH>;
-+		miso-gpios = <&gpio0 ASPEED_GPIO(Z, 5) GPIO_ACTIVE_HIGH>;
-+		num-chipselects = <1>;
-+		cs-gpios = <&gpio0 ASPEED_GPIO(Z, 0) GPIO_ACTIVE_LOW>;
-+		status = "okay";
-+
-+		tpm@0 {
-+			compatible = "infineon,slb9670", "tcg,tpm_tis-spi";
-+			spi-max-frequency = <33000000>;
-+			reg = <0>;
-+		};
-+	};
-+};
-+
-+&adc0 {
-+	aspeed,int-vref-microvolt = <2500000>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_adc0_default &pinctrl_adc1_default
-+		&pinctrl_adc2_default &pinctrl_adc3_default
-+		&pinctrl_adc4_default &pinctrl_adc5_default
-+		&pinctrl_adc6_default &pinctrl_adc7_default>;
-+	status = "okay";
-+};
-+
-+&adc1 {
-+	aspeed,int-vref-microvolt = <2500000>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_adc10_default>;
-+	status = "okay";
-+};
-+
-+&ehci1 {
-+	status = "okay";
-+};
-+
-+&uhci {
-+	status = "okay";
-+};
-+
-+&fmc {
-+	status = "okay";
-+
-+	flash@0 {
-+		status = "okay";
-+		m25p,fast-read;
-+		label = "bmc";
-+		spi-max-frequency = <50000000>;
-+#include "openbmc-flash-layout-128.dtsi"
-+	};
-+
-+	flash@1 {
-+		status = "okay";
-+		m25p,fast-read;
-+		label = "alt-bmc";
-+		spi-max-frequency = <50000000>;
-+	};
-+};
-+
-+&gpio0 {
-+	gpio-line-names =
-+
-+	/*A0-A7*/   //"","","","","","","","",
-+	"SMB_BMC_MM11_SCL","SMB_BMC_MM11_SDA",
-+	"SMB_BMC_MM12_SCL","SMB_BMC_MM12_SDA",
-+	"SMB_BMC_MM13_SCL","SMB_BMC_MM13_SDA",
-+	"SMB_BMC_MM14_SCL","SMB_BMC_MM14_SDA",
-+
-+	/*B0-B7*/   //"rtc-battery-voltage-read-enable","","","BMC_READY","","led-identify","","",
-+	"BATTERY_DETECT","BMC_GPIOB1",
-+	"BMC_I2C1_FPGA_ALERT","BMC_READY",
-+	"IOEXP_INT_3V3","FM_ID_LED",
-+	"UART_BMC_4_TXD","UART_BMC_4_RXD",
-+
-+
-+	/*C0-C7*/   //"","","","","","","","",
-+	"BMC_GPIOC0","NCSI0_SCM_HPM_TX_EN",
-+	"NCSI0_SCM_HPM_D0","NCSI0_SCM_HPM_D1",
-+	"PMBUS_REQ_N","PSU_FW_UPDATE_REQ_N",
-+	"NCSI0_HPM_SCM_CLK","BMC_I2C_SSIF_ALERT",
-+
-+	/*D0-D7*/   //"","","","","","","","",
-+	"NCSI0_HPM_SCM_D0","NCSI0_HPM_SCM_D1",
-+	"NCSI0_HPM_SCM_CRS_DV","NCSI0_RXER",
-+	"BMC_GPIOD4","BMC_GPIOD5",
-+	"BMC_GPIOD6","BMC_GPIOD7",
-+
-+	/*E0-E7*/   //"","","","","","","","",
-+	"BMC_GPIOE0","BMC_GPIOE1",
-+	"BMC_GPIOE1","PD_RGMII4_RXCTL",
-+	"BMC_GPIOE1","BMC_GPIOE1",
-+	"BMC_GPIOE1","NCSI1_RXER",
-+
-+	/*F0-F7*/   //"","","","","","","","",
-+	"BMC_EMMC_CLK","BMC_EMMC_CMD",
-+	"BMC_EMMC_DT0","BMC_EMMC_DT1",
-+	"BMC_EMMC_DT2","BMC_EMMC_DT3",
-+	"BMC_EMMC_CD_N","BMC_EMMC_WP_N",
-+
-+	/*G0-G7*/   //"FM_MUX1_SEL_R","","","","","","","",
-+	"FM_MUX1_SEL","BMC_GPIOG1",
-+	"BMC_EMMC_DT4","BMC_EMMC_DT5",
-+	"BMC_EMMC_DT6","BMC_EMMC_DT7",
-+	"FM_DEBUG_PORT_PRSNT_N","FM_BMC_DBP_PRESENT_N",
-+
-+	/*H0-H7*/   //"","","","","","","","",
-+	"SGPIO_CLK_1","SGPIO_LD_1",
-+	"SGPIO_DO_1","SGPIO_DI_1",
-+	"SMB_BMC_MM15_SCL","SMB_BMC_MM15_SDA",
-+	"SMB_BMC_MM16_SCL","SMB_BMC_MM16_SDA",
-+
-+	/*I0-I7*/   //"","","","","","","","",
-+	"JTAG_1_BMC_TRST","JTAG_1_BMC_TCK",
-+	"JTAG_1_BMC_TMS","JTAG_1_BMC_TDI",
-+	"JTAG_1_BMC_TDO","FLASH_WP_STATUS",
-+	"BMC_JTAG_MUX_SEL","BMC_GPIOI7",
-+
-+	/*J0-J7*/   //"","","","","","","","",
-+	"SMB_BMC_MM1_SCL","SMB_BMC_MM1_SDA",
-+	"SMB_BMC_MM2_SCL","SMB_BMC_MM2_SDA",
-+	"I3C_5_HV18_SCL","I3C_5_HV18_SDA",
-+	"I3C_6_HV18_SCL","I3C_6_HV18_SDA",
-+
-+	/*K0-K7*/   //"","","","","","","","",
-+	"SMB_BMC_MM5_SCL","SMB_BMC_MM5_SDA",
-+	"SMB_BMC_MM6_SCL","SMB_BMC_MM6_SDA",
-+	"SMB_BMC_MM7_SCL","SMB_BMC_MM7_SDA",
-+	"SMB_BMC_MM8_SCL","SMB_BMC_MM8_SDA",
-+
-+	/*L0-L7*/   //"","","","","","","","",
-+	"SMB_BMC_MM9_SCL","SMB_BMC_MM9_SDA",
-+	"SMB_BMC_MM10_SCL","SMB_BMC_MM10_SDA",
-+	"UART_BMC_3_TXD","UART_BMC_3_RXD",
-+	"V_VGAHS","V_VGAVS",
-+
-+	/*M0-M7*/   //"","","","","","","","",
-+	"PCIE_EP_RST_EN","BMC_FRU_WP",
-+	"SCM_HPM_STBY_RST_N","SCM_HPM_STBY_EN",
-+	"STBY_POWER_PG_3V3","TH500_SHDN_OK",
-+	"UART_BMC_1_TXD","UART_BMC_1_RXD",
-+
-+	/*N0-N7*/   //"led-postcode-0","led-postcode-1","led-postcode-2","led-postcode-3","led-postcode-4","led-postcode-5","led-postcode-6","led-postcode-7",
-+	"LED_POSTCODE_0","LED_POSTCODE_1",
-+	"LED_POSTCODE_2","LED_POSTCODE_3",
-+	"LED_POSTCODE_4","LED_POSTCODE_5",
-+	"LED_POSTCODE_6","LED_POSTCODE_7",
-+
-+	/*O0-O7*/   //"","","","","","","","",
-+	"RUN_POWER_PG","PWR_BRAKE",
-+	"CHASSIS_AC_LOSS","BSM_PRSNT_N",
-+	"PSU_SMB_ALERT","FM_TPM_PRSNT_0_N",
-+	"PSU_FW_UPDATING_N","BMC_GPIOO7",
-+
-+	/*P0-P7*/   //"power-button","","reset-button","","led-power","","","",
-+	"PWR_BTN_BMC_BUF_N","IPEX_CABLE_PRSNT",
-+	"ID_RST_BTN_BMC_N","RST_BMC_RSTBTN_OUT_N",
-+	"PWR_LED","RUN_POWER_EN",
-+	"SHDN_FORCE","BMC_HEARTBEAT_N",
-+
-+	/*Q0-Q7*/   //"","","","","","","","",
-+	"IRQ_PCH_TPM_SPI_LV3_N","USB_OC0_REAR_N",
-+	"UART_MUX_SEL","I2C_MUX_RESET",
-+	"RSVD_NV_PLT_DETECT","SPI_TPM_INT",
-+	"CPU_JTAG_MUX_SELECT","THERM_BB_OVERT",
-+
-+	/*R0-R7*/   //"","","","","","","","",
-+	"THERM_BB_WARN","SPI_BMC_FPGA_INT",
-+	"CPU_BOOT_DONE","PMBUS_GNT",
-+	"CHASSIS_PWR_BRK","PCIE_WAKE",
-+	"PDB_THERM_OVERT","SHDN_REQ",
-+
-+	/*S0-S7*/   //"","","power-host-control","","","","","",
-+	"MDC1_BMC","MDIO1_BMC",
-+	"SYS_BMC_PWRBTN_N","FM_TPM_PRSNT_1_N",
-+	"FM_BMC_DEBUG_SW_N","UID_LED_N",
-+	"SYS_FAULT_LED_N","RUN_POWER_FAULT",
-+
-+	/*T0-T7*/   "","","","","","","","",
-+
-+	/*U0-U7*/   "","","","","","","","",
-+
-+	/*V0-V7*/   //"","","","","","","","",
-+	"L2_RST_REQ_OUT","L0L1_RST_REQ_OUT",
-+	"BMC_ID_BEEP_SEL","BMC_I2C0_FPGA_ALERT",
-+	"SMB_BMC_TMP_ALERT","PWR_LED_N",
-+	"SYS_RST_OUT","IRQ_TPM_SPI_N",
-+
-+	/*W0-W7*/   "","","","","","","","",
-+	"ESPI_LPC_D0_IO0","ESPI_LPC_D1_IO1",
-+	"ESPI_LPC_D2_IO2","ESPI_LPC_D3_IO3",
-+	"ESPI_HOST_LPC_BMC_CLK","ESPI_HOST_LPC_BMC_LFRAME_N",
-+	"IRQ_ESPI_LPC_SERIRQ_ALERT0_N","RST_ESPI_LPC_BMC_N",
-+
-+	/*X0-X7*/   //"","","","","","","","",
-+	"BMC_GPIOX0","BMC_GPIOX1",
-+	"BMC_GPIOX2","SPI_BMC_OOB_0_CLK",
-+	"SPI_BMC_OOB_0_IO0","SPI_BMC_OOB_0_IO1",
-+	"SPI_BMC_OOB_0_IO2","SPI_BMC_OOB_0_IO3",
-+
-+	/*Y0-Y7*/   //"","","","","","","","",
-+	"RST_WDTRST_PLD_N","RST_BMC_SELF_HW",
-+	"FM_FLASH_LATCH_N","BMC_EMMC_RST_N",
-+	"BMC_GPIOY4","BMC_GPIOY5",
-+	"PU_BMC_FWSPIABR_N","PU_FWSPIWP_N",
-+
-+	/*Z0-Z7*/   //"","","","","","","","";
-+	"SPI_BMC_TPM_CS2_N","PU_SPI1ABR",
-+	"PU_SPI1WP_N","SPI_BMC_TPM_CLK",
-+	"SPI_BMC_TPM_MOSI","SPI_BMC_TPM_MISO",
-+	"BMC_GPIOZ6","BMC_GPIOZ7";
-+
-+};
-+
-+&gpio1 {
-+	gpio-line-names =
-+	/*18A0-18A7*/   //"","","","","","","","",
-+	"RGMII1TXCK","RGMII1TXCTL",
-+	"RGMII1TXD0","RGMII1TXD1",
-+	"RGMII1TXD2","RGMII1TXD3",
-+	"RGMII1RXCK","RGMII1RXCTL",
-+
-+	/*18B0-18B7*/   //"","","","","FM_BOARD_BMC_REV_ID0","FM_BOARD_BMC_REV_ID1","FM_BOARD_BMC_REV_ID2","",
-+	"RGMII1RXD0","RGMII1RXD1",
-+	"RGMII1RXD2","RGMII1RXD3",
-+	"FM_BOARD_BMC_REV_ID0","FM_BOARD_BMC_REV_ID1",
-+	"FM_BOARD_BMC_REV_ID2","BMC_GPIO18B7",
-+
-+	/*18C0-18C7*/   //"SPI_BMC_BIOS_ROM_IRQ0_R_N","","","","","","","",
-+	"BMC_GPIO18C0","BMC_GPIO18C1",
-+	"SPI_BMC_BIOS_ROM_IRQ0_N","BMC_GPIO18C3",
-+	"BMC_GPIO18C4","BMC_GPIO18C5",
-+	"BMC_GPIO18C6","BMC_GPIO18C7",
-+
-+	/*18D0-18D7*/   //"","","","","","","","",
-+	"BMC_GPIO18D0","BMC_GPIO18D1",
-+	"BMC_GPIO18D2","BMC_GPIO18D3",
-+	"BMC_GPIO18D4","BMC_GPIO18D5",
-+	"BMC_GPIO18D6","BMC_GPIO18D7",
-+
-+	/*18E0-18E3*/   //"FM_BMC_PROT_LS_EN","AC_PWR_BMC_BTN_R_N","","";
-+	"FM_BMC_PROT_LS_EN","AC_PWR_BMC_BTN_N",
-+	"BMC_GPIO18E2","BMC_GPIO18E3";
-+};
-+
-+// L Bridge Board
-+&i2c0 {
-+	status = "okay";
-+
-+	i2c-mux@70 {
-+		compatible = "nxp,pca9546";
-+		reg = <0x70>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		i2c-mux-idle-disconnect;
-+
-+		i2c0mux0ch0: i2c@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c0mux0ch1: i2c@1 {
-+			reg = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c0mux0ch2: i2c@2 {
-+			reg = <2>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c0mux0ch3: i2c@3 {
-+			reg = <3>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+	};
-+};
-+
-+// R Bridge Board
-+&i2c1 {
-+	status = "okay";
-+
-+	i2c-mux@70 {
-+		compatible = "nxp,pca9546";
-+		reg = <0x70>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		i2c-mux-idle-disconnect;
-+
-+		i2c1mux0ch0: i2c@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c1mux0ch1: i2c@1 {
-+			reg = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c1mux0ch2: i2c@2 {
-+			reg = <2>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c1mux0ch3: i2c@3 {
-+			reg = <3>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+	};
-+};
-+
-+// MB - E1.S
-+&i2c4 {
-+	status = "okay";
-+
-+	i2c-mux@70 {
-+		compatible = "nxp,pca9548";
-+		reg = <0x70>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		i2c-mux-idle-disconnect;
-+
-+		i2c4mux0ch0: i2c@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c4mux0ch1: i2c@1 {
-+			reg = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c4mux0ch2: i2c@2 {
-+			reg = <2>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c4mux0ch3: i2c@3 {
-+			reg = <3>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c4mux0ch4: i2c@4 {
-+			reg = <4>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c4mux0ch5: i2c@5 {
-+			reg = <5>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c4mux0ch6: i2c@6 {
-+			reg = <6>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c4mux0ch7: i2c@7 {
-+			reg = <7>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+	};
-+};
-+
-+// AMC
-+&i2c5 {
-+	status = "okay";
-+};
-+
-+// MB
-+&i2c6 {
-+	status = "okay";
-+
-+	gpio@20 {
-+		compatible = "amd,helios_cpld";
-+		reg = <0x20>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
-+
-+	// HPM FRU
-+	eeprom@50 {
-+		compatible = "atmel,24c256";
-+		reg = <0x50>;
-+	};
-+};
-+
-+// SCM
-+&i2c7 {
-+	status = "okay";
-+
-+
-+};
-+
-+// MB - PDB
-+&i2c8 {
-+	status = "okay";
-+
-+	i2c-mux@72 {
-+		compatible = "nxp,pca9546";
-+		reg = <0x72>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		i2c-mux-idle-disconnect;
-+
-+		i2c8mux0ch0: i2c@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			gpio@22 {
-+				compatible = "nxp,pca9555";
-+				reg = <0x22>;
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+
-+				gpio-line-names =
-+					"RPDB_FAN_FULL_SPEED_R_N","RPDB_I2C_TEMP75_U8_ALERT_R_N",
-+					"RPDB_I2C_TMP432_U29_ALERT_R_N","RPDB_GLOBAL_WP",
-+					"RPDB_FAN_CT_FAN_FAIL_R_N","",
-+					"","",
-+					"RPDB_ALERT_P50V_HSC2_R_N","RPDB_ALERT_P50V_HSC3_R_N",
-+					"RPDB_ALERT_P50V_HSC4_R_N","RPDB_ALERT_P50V_STBY_R_N",
-+					"RPDB_I2C_P12V_MB_VRM_ALERT_R_N","RPDB_I2C_P12V_STBY_VRM_ALERT_R_N",
-+					"RPDB_PGD_P3V3_STBY_PWRGD_R","RPDB_P12V_STBY_VRM_PWRGD_BUF_R";
-+			};
-+
-+			gpio@24 {
-+				compatible = "nxp,pca9555";
-+				reg = <0x24>;
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+
-+				gpio-line-names =
-+					"RPDB_EAM2_PRSNT_MOS_N_R","RPDB_EAM3_PRSNT_MOS_N_R",
-+					"RPDB_PWRGD_P50V_HSC4_SYS_R","RPDB_PWRGD_P50V_STBY_SYS_BUF_R",
-+					"RPDB_P50V_FAN1_R2_PG","RPDB_P50V_FAN2_R2_PG",
-+					"RPDB_P50V_FAN3_R2_PG","RPDB_P50V_FAN4_R2_PG",
-+					"","RPDB_FAN1_PRSNT_N_R",
-+					"","RPDB_FAN2_PRSNT_N_R",
-+					"RPDB_FAN3_PRSNT_N_R","RPDB_FAN4_PRSNT_N_R",
-+					"","";
-+			};
-+
-+			// R-PDB FRU
-+			eeprom@50 {
-+				compatible = "atmel,24c128";
-+				reg = <0x50>;
-+			};
-+		};
-+		i2c8mux0ch1: i2c@1 {
-+			reg = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			gpio@22 {
-+				compatible = "nxp,pca9555";
-+				reg = <0x22>;
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+
-+				gpio-line-names =
-+					"LPDB_FAN_FULL_SPEED_R_N","LPDB_I2C_TEMP75_U8_ALERT_R_N",
-+					"LPDB_I2C_TMP432_U29_ALERT_R_N","LPDB_GLOBAL_WP",
-+					"LPDB_FAN_CT_FAN_FAIL_R_N","",
-+					"","",
-+					"LPDB_ALERT_P50V_HSC0_R_N","LPDB_ALERT_P50V_HSC1_R_N",
-+					"LPDB_ALERT_P50V_HSC5_R_N","LPDB_I2C_P12V_SW_VRM_ALERT_R_N",
-+					"LPDB_EAM0_PRSNT_MOS_N_R","LPDB_EAM1_PRSNT_MOS_N_R",
-+					"LPDB_PWRGD_P50V_HSC5_SYS_R","";
-+			};
-+
-+			gpio@24 {
-+				compatible = "nxp,pca9555";
-+				reg = <0x24>;
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+
-+				gpio-line-names =
-+					"LPDB_P50V_FAN1_R2_PG","LPDB_P50V_FAN2_R2_PG",
-+					"LPDB_P50V_FAN3_R2_PG","LPDB_P50V_FAN4_R2_PG",
-+					"LPDB_P50V_FAN5_R2_PG","LPDB_FAN1_PRSNT_N_R",
-+					"LPDB_FAN2_PRSNT_N_R","LPDB_FAN3_PRSNT_N_R",
-+					"LPDB_FAN4_PRSNT_N_R","LPDB_FAN5_PRSNT_N_R",
-+					"","",
-+					"","",
-+					"","";
-+			};
-+
-+			// L-PDB FRU
-+			eeprom@50 {
-+				compatible = "atmel,24c128";
-+				reg = <0x50>;
-+			};
-+		};
-+		i2c8mux0ch2: i2c@2 {
-+			reg = <2>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c8mux0ch3: i2c@3 {
-+			reg = <3>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+	};
-+};
-+
-+// SCM
-+&i2c9 {
-+	status = "okay";
-+
-+	// SCM FRU
-+	eeprom@50 {
-+		compatible = "atmel,24c128";
-+		reg = <0x50>;
-+	};
-+
-+	// BSM FRU
-+	eeprom@56 {
-+		compatible = "atmel,24c64";
-+		reg = <0x56>;
-+	};
-+};
-+
-+// R Bridge Board
-+&i2c10 {
-+	status = "okay";
-+
-+	i2c-mux@71 {
-+		compatible = "nxp,pca9548";
-+		reg = <0x71>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		i2c-mux-idle-disconnect;
-+
-+		i2c10mux0ch0: i2c@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c10mux0ch1: i2c@1 {
-+			reg = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c10mux0ch2: i2c@2 {
-+			reg = <2>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c10mux0ch3: i2c@3 {
-+			reg = <3>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c10mux0ch4: i2c@4 {
-+			reg = <4>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c10mux0ch5: i2c@5 {
-+			reg = <5>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			gpio@22 {
-+				compatible = "nxp,pca9555";
-+				reg = <0x22>;
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+
-+				gpio-line-names =
-+					"","",
-+					"","RBB_CPLD_REFRESH_IN_PRGRS_R_L",
-+					"RBB_EAM0_NIC_CBL_PRSNT_R_L","RBB_EAM1_NIC_CBL_PRSNT_R_L",
-+					"RBB_AINIC_JTAG_MUX_R2_SEL","RBB_SPI_MUX0_R2_SEL",
-+					"RBB_AINIC_PRSNT_R_L","RBB_AINIC_OE_R_N",
-+					"RBB_AINIC_BOARD_R2_ID","RBB_RST_USB2_HUB_R_N",
-+					"RBB_RST_FT4222_R_N","RBB_RST_MCP2210_R_N",
-+					"","";
-+			};
-+
-+			// R Bridge Board FRU
-+			eeprom@52 {
-+				compatible = "atmel,24c256";
-+				reg = <0x52>;
-+			};
-+		};
-+		i2c10mux0ch6: i2c@6 {
-+			reg = <6>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c10mux0ch7: i2c@7 {
-+			reg = <7>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+	};
-+};
-+
-+// L Bridge Board
-+&i2c11 {
-+	status = "okay";
-+
-+	i2c-mux@71 {
-+		compatible = "nxp,pca9548";
-+		reg = <0x71>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		i2c-mux-idle-disconnect;
-+
-+		i2c11mux0ch0: i2c@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c11mux0ch1: i2c@1 {
-+			reg = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c11mux0ch2: i2c@2 {
-+			reg = <2>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c11mux0ch3: i2c@3 {
-+			reg = <3>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c11mux0ch4: i2c@4 {
-+			reg = <4>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c11mux0ch5: i2c@5 {
-+			reg = <5>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			gpio@22 {
-+				compatible = "nxp,pca9555";
-+				reg = <0x22>;
-+				gpio-controller;
-+				#gpio-cells = <2>;
-+
-+				gpio-line-names =
-+					"","",
-+					"","LBB_CPLD_REFRESH_IN_PRGRS_R_L",
-+					"LBB_EAM0_NIC_CBL_PRSNT_R_L","LBB_EAM1_NIC_CBL_PRSNT_R_L",
-+					"LBB_AINIC_JTAG_MUX_R2_SEL","LBB_SPI_MUX0_R2_SEL",
-+					"LBB_AINIC_PRSNT_R_L","LBB_AINIC_OE_R_N",
-+					"LBB_AINIC_BOARD_R2_ID","LBB_RST_USB2_HUB_R_N",
-+					"LBB_RST_FT4222_R_N","LBB_RST_MCP2210_R_N",
-+					"","";
-+			};
-+
-+			// L Bridge Board FRU
-+			eeprom@52 {
-+				compatible = "atmel,24c256";
-+				reg = <0x52>;
-+			};
-+		};
-+		i2c11mux0ch6: i2c@6 {
-+			reg = <6>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c11mux0ch7: i2c@7 {
-+			reg = <7>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+	};
-+};
-+
-+// Debug Card
-+&i2c12 {
-+	status = "okay";
-+};
-+
-+// MB
-+&i2c13 {
-+	status = "okay";
-+
-+	i2c-mux@70 {
-+		compatible = "nxp,pca9548";
-+		reg = <0x70>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		i2c-mux-idle-disconnect;
-+
-+		i2c13mux0ch0: i2c@0 {
-+			reg = <0>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c13mux0ch1: i2c@1 {
-+			reg = <1>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			// RSVD FRU
-+			/*eeprom@53 {
-+				compatible = "atmel,24c256";
-+				reg = <0x53>;
-+			};*/
-+		};
-+		i2c13mux0ch2: i2c@2 {
-+			reg = <2>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c13mux0ch3: i2c@3 {
-+			reg = <3>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			adc@1f {
-+				compatible = "ti,adc128d818";
-+				reg = <0x1f>;
-+				ti,mode = /bits/ 8 <1>;
-+			};
-+		};
-+		i2c13mux0ch4: i2c@4 {
-+			reg = <4>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			// HPM BRD ID FRU
-+			eeprom@51 {
-+				compatible = "atmel,24c256";
-+				reg = <0x51>;
-+			};
-+		};
-+		i2c13mux0ch5: i2c@5 {
-+			reg = <5>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c13mux0ch6: i2c@6 {
-+			reg = <6>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+		i2c13mux0ch7: i2c@7 {
-+			reg = <7>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+		};
-+	};
-+};
-+
-+// SCM
-+&i2c14 {
-+	status = "okay";
-+};
-+
-+&i2c15 {
-+	status = "okay";
-+};
-+
-+&lpc_ctrl {
-+	status = "okay";
-+};
-+
-+&kcs2 {
-+	aspeed,lpc-io-reg = <0xca8>;
-+	status = "okay";
-+};
-+
-+&kcs3 {
-+	aspeed,lpc-io-reg = <0xca2>;
-+	status = "okay";
-+};
-+
-+&pinctrl {
-+	pinctrl_ncsi3_default: ncsi3_default {
-+		function = "RMII3";
-+		groups = "NCSI3";
-+	};
-+};
-+
-+&mac2 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_ncsi3_default>;
-+	use-ncsi;
-+};
-+
-+&sgpiom0 {
-+	ngpios = <128>;
-+	bus-frequency = <2000000>;
-+	gpio-line-names =
-+	/*in - out - in - out */
-+	/*A0-A3 line 0-7*/
-+	"","FM_CPU0_SYS_RESET_N",
-+	"","CPU0_KBRST_N",
-+	"","FM_CPU0_PROCHOT_trigger_N",
-+	"","FM_CLR_CMOS_R_P0",
-+	/*A4-A7 line 8-15*/
-+	"","Force_I3C_SEL",
-+	"","SYSTEM_Force_Run_AC_Cycle",
-+	"","",
-+	"","",
-+	/*B0-B3 line 16-23*/
-+	"Channel0_leakage_EAM3","FM_CPU_FPGA_JTAG_MUX_SEL",
-+	"Channel1_leakage_EAM0","FM_SCM_JTAG_MUX_SEL",
-+	"Channel2_leakage_Manifold1","FM_BRIDGE_JTAG_MUX_SEL",
-+	"Channel3_leakage","FM_CPU0_NMI_SYNC_FLOOD_N",
-+	/*B4-B7 line 24-31*/
-+	"Channel4_leakage_Manifold2","",
-+	"Channel5_leakage_EAM1","",
-+	"Channel6_leakage_CPU_DIMM","",
-+	"Channel7_leakage_EAM2","",
-+	/*C0-C3 line 32-39*/
-+	"RSVD_RMC_GPIO3","",
-+	"LEAK_DETECT_RMC_N","",
-+	"","",
-+	"","",
-+	/*C4-C7 line 40-47*/
-+	"","",
-+	"","",
-+	"","",
-+	"","",
-+	/*D0-D3 line 48-55*/
-+	"PWRGD_PDB_EAMHSC0_CPLD_PG_R","",
-+	"PWRGD_PDB_EAMHSC1_CPLD_PG_R","",
-+	"PWRGD_PDB_EAMHSC2_CPLD_PG_R","",
-+	"PWRGD_PDB_EAMHSC3_CPLD_PG_R","",
-+	/*D4-D7 line 56-63*/
-+	"AMC_BRD_PRSNT_CPLD_L","",
-+	"","",
-+	"","",
-+	"","",
-+	/*E0-E3 line 64-71*/
-+	"AMC_PDB_EAMHSC0_CPLD_EN_R","",
-+	"AMC_PDB_EAMHSC1_CPLD_EN_R","",
-+	"AMC_PDB_EAMHSC2_CPLD_EN_R","",
-+	"AMC_PDB_EAMHSC3_CPLD_EN_R","",
-+	/*E4-E7 line 72-79*/
-+	"","",
-+	"","",
-+	"","",
-+	"","",
-+	/*F0-F3 line 80-87*/
-+	"PWRGD_PVDDCR_CPU1_P0","SGPIO_READY",
-+	"PWRGD_PVDDCR_CPU0_P0","",
-+	"","",
-+	"","",
-+	/*F4-F7 line 88-95*/
-+	"","",
-+	"","",
-+	"","",
-+	"","",
-+	/*G0-G3 line 96-103*/
-+	"PWRGD_PVDDCR_SOC_P0","",
-+	"PWRGD_PVDDIO_P0","",
-+	"PWRGD_PVDDIO_MEM_S3_P0","",
-+	"PWRGD_CHMP_CPU0_FPGA","",
-+	/*G4-G7 line 104-111*/
-+	"PWRGD_CHIL_CPU0_FPGA","",
-+	"PWRGD_CHEH_CPU0_FPGA","",
-+	"PWRGD_CHAD_CPU0_FPGA","FM_BMC_READY_PLD",
-+	"","",
-+	/*H0-H3 line 112-119*/
-+	"PWRGD_P3V3","",
-+	"P12V_DDR_IP_PWRGD_R","",
-+	"P12V_DDR_AH_PWRGD_R","",
-+	"PWRGD_P12V_VRM1_CPLD_PG_R","",
-+	/*H4-H7 line 120-127*/
-+	"PWRGD_P12V_VRM0_CPLD_PG_R","",
-+	"PWRGD_PDB_HSC4_CPLD_PG_R","",
-+	"PWRGD_PVDD18_S5_P0_PG","",
-+	"PWRGD_PVDD33_S5_P0_PG","",
-+	/*I0-I3 line 128-135*/
-+	"EAM0_BRD_PRSNT_R_L","",
-+	"EAM1_BRD_PRSNT_R_L","",
-+	"EAM2_BRD_PRSNT_R_L","",
-+	"EAM3_BRD_PRSNT_R_L","",
-+	/*I4-I7 line 136-143*/
-+	"EAM0_CPU_MOD_PWR_GD_R","",
-+	"EAM1_CPU_MOD_PWR_GD_R","",
-+	"EAM2_CPU_MOD_PWR_GD_R","",
-+	"EAM3_CPU_MOD_PWR_GD_R","",
-+	/*J0-J3 line 144-151*/
-+	"PRSNT_L_BIRDGE_R","",
-+	"PRSNT_R_BIRDGE_R","",
-+	"BRIDGE_L_MAIN_PG_R","",
-+	"BRIDGE_R_MAIN_PG_R","",
-+	/*J4-J7 line 152-159*/
-+	"BRIDGE_L_STBY_PG_R","",
-+	"BRIDGE_R_STBY_PG_R","",
-+	"","",
-+	"","",
-+	/*K0-K3 line 160-167*/
-+	"ADC_I2C_ALERT_N","",
-+	"TEMP_I2C_ALERT_R_L","",
-+	"CPU0_VR_SMB_ALERT_CPLD_N","",
-+	"COVER_INTRUDER_R_N","",
-+	/*K4-K7 line 168-175*/
-+	"HANDLE_INTRUDER_CPLD_N","",
-+	"IRQ_MCIO_CPLD_WAKE_R_N","",
-+	"APML_CPU0_ALERT_R_N","",
-+	"PDB_ALERT_R_N","",
-+	/*L0-L3 line 176-183*/
-+	"CPU0_SP7R1","",
-+	"CPU0_SP7R2","",
-+	"CPU0_SP7R3","",
-+	"CPU0_SP7R4","",
-+	/*L4-L7 line 184-191*/
-+	"CPU0_CORETYPE0","",
-+	"CPU0_CORETYPE1","",
-+	"CPU0_CORETYPE2","",
-+	"FM_BIOS_POST_CMPLT_R_N","",
-+	/*M0-M3 line 192-199*/
-+	"EAM0_SMERR_CPLD_R_L","",
-+	"EAM1_SMERR_CPLD_R_L","",
-+	"EAM2_SMERR_CPLD_R_L","",
-+	"EAM3_SMERR_CPLD_R_L","",
-+	/*M4-M7 line 200-207*/
-+	"CPU0_SMERR_N_R","",
-+	"CPU0_NV_SAVE_N_R","",
-+	"PDB_PWR_LOSS_CPLD_N","",
-+	"IRQ_BMC_SMI_ACTIVE_R_N","",
-+	/*N0-N3 line 208-215*/
-+	"AMCROT_BMC_S5_RDY_R","",
-+	"AMC_RDY_R","",
-+	"AMC_STBY_PGOOD_R","",
-+	"CPU_AMC_SLP_S5_R_L","",
-+	/*N4-N7 line 216-223*/
-+	"AMC_CPU_EAMPG_R","",
-+	"","",
-+	"","",
-+	"","",
-+	/*O0-O3 line 224-231*/
-+	"HPM_PWR_FAIL","Port80_b0",
-+	"FM_DIMM_IP_FAIL","Port80_b1",
-+	"FM_DIMM_AH_FAIL","Port80_b2",
-+	"HPM_AMC_THERMTRIP_R_L","Port80_b3",
-+	/*O4-O7 line 232-239*/
-+	"FM_CPU0_THERMTRIP_N","Port80_b4",
-+	"PVDDCR_SOC_P0_OCP_L","Port80_b5",
-+	"CPLD_SGPIO_RDY","Port80_b6",
-+	"","Port80_b7",
-+	/*P0-P3 line 240-247*/
-+	"CPU0_SLP_S5_N_R","NFC_VEN",
-+	"CPU0_SLP_S3_N_R","",
-+	"FM_CPU0_PWRGD","",
-+	"PWRGD_RMC","",
-+	/*P4-P7 line 248-255*/
-+	"FM_RST_CPU0_RESET_N","",
-+	"FM_PWRGD_CPU0_PWROK","",
-+	"wS5_PWR_Ready","",
-+	"wS0_ON_N","PWRGD_P1V0_AUX";
-+	status = "okay";
-+};
-+
-+// BIOS Flash
-+&spi2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_spi2_default>;
-+	status = "okay";
-+	reg = <0x1e631000 0xc4>, <0x50000000 0x8000000>;
-+
-+	flash@0 {
-+		compatible = "jedec,spi-nor";
-+		label = "pnor";
-+		spi-max-frequency = <12000000>;
-+		spi-tx-bus-width = <2>;
-+		spi-rx-bus-width = <2>;
-+		status = "okay";
-+	};
-+};
-+
-+// HOST BIOS Debug
-+&uart1 {
-+	status = "okay";
-+};
-+
-+&uart3 {
-+	status = "okay";
-+};
-+
-+&uart4 {
-+	status = "okay";
-+};
-+
-+// BMC Debug Console
-+&uart5 {
-+	status = "okay";
-+};
-+
-+&uart_routing {
-+	status = "okay";
-+};
-+
-+&wdt1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_wdtrst1_default>;
-+	aspeed,reset-type = "soc";
-+	aspeed,external-signal;
-+	aspeed,ext-push-pull;
-+	aspeed,ext-active-high;
-+	aspeed,ext-pulse-duration = <256>;
-+	status = "okay";
-+};
-+
-+&vhub {
-+	status = "okay";
-+	pinctrl-names = "default";
-+};
-+
-+&video {
-+	status = "okay";
-+	memory-region = <&video_engine_memory>;
-+};
-+
-+&gfx {
-+	status = "okay";
-+	memory-region = <&gfx_memory>;
-+};
--- 
-2.34.1
+OK, I will define an ST_LSM6DSX_FIELD_GET() macro.
 
+--=-Zznj8JQRuN4PD+b2+6iB
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iQGzBAABCgAdFiEEhleFT5U73KMewxTm7fE7c86UNl8FAmkIdyQACgkQ7fE7c86U
+Nl+4oQv/f0YDTxKPnmDQtZLAMR1rSQ09I8ZI5A77NP5H9+zOBl/32hcta/Z0ouua
+Eg/D1CS3D6dzKddOtET0ZHTN6pH83uLRf45ItatUhBpdtSoBs1WGJaWMveIgixVU
+Ls2WK2onK7krHRYNtjMnH0WKsWdFiU8IYRrs0vdJfOncCsAJkIjtnz+geQvMSLSi
+E4q6hElEDAtd/jvTwf3WFIeRAXEgcY1nlBnSVIuETjjaNChJ+U4MasoN7L9K2cwy
+wV72ImowIft5kxrj2HZRx9jwlvv3oyyt3pggFHbp2Q21YRSF8TWeypVIK6aQ0YVp
+/ZIREHvhNqnZQHMl1fMiifzaW4z58bJAU6Raq7AOhG4Wa6t83ajDGZrXki2lhQrs
+gYX4i68dSZ84ujA3S/JXpROnc/Udb8RyGYvYZtZXUKKXEY8irlPd0KuHFYOGcKPI
+s11blc3Qfl9Omaz1II1g9pT0mdFOYqhIVzaLAu1v2EWNXi4KNkgSi6XXUaEIBjWR
+sFNThTOi
+=Wfrg
+-----END PGP SIGNATURE-----
+
+--=-Zznj8JQRuN4PD+b2+6iB--
 
