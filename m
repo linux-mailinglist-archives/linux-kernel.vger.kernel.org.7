@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-882139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A21A6C29BAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 01:50:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58B4FC29BB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 01:50:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEA84188F5D6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 00:50:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED6B23B1B20
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 00:50:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E3423D7F0;
-	Mon,  3 Nov 2025 00:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC69261B70;
+	Mon,  3 Nov 2025 00:48:43 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9413221DB4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8A92248BE;
 	Mon,  3 Nov 2025 00:48:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762130920; cv=none; b=YNA7lUj47Oj5kSnwvQpdHFb5bpsXK5fKVq8U30HYrotUcMukdZTH38o7FGUinIv4mSnENwvgfMyY3Ybmr2AKPcUQbuusqxIoI+kfisdkSqgj96j0nXXmUUYvFK3N5expesJW7IwuLvyaCkmglppSkIuAsIayFEP5zSWYQFtk550=
+	t=1762130921; cv=none; b=aTwP3WkdCqhgG5fp0vT55kF89W3f+tyk3QOwgo4YMoLmiPQFAzUkkfFNEx+UAVjAJSQPire6Ilnr0nipDdDVmNTbxebNmDRAfLAzNfxuunP59rSG87j93nX5qs4PXu3Z3TitzLqLVQSTkI1wasJxSxmU1EKDu2TYjtkhl7udsoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762130920; c=relaxed/simple;
-	bh=nOFN6vfcMqilST2zNVsxQcVLExMZvz9mpz5z12p8XFE=;
+	s=arc-20240116; t=1762130921; c=relaxed/simple;
+	bh=EFJ2AFXJrCDVQFWhIyCOr+o/n0I5wJxHqPSflH+/EC8=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ftWl5X6UtfmLYxBqfamArcgGifK3hR/iGGG60anm7dTJ0eNzQxShNrqKOcs0tXu/bkaQtVYTsZToE1AtaEgzl4L/jYnmr2S+N1M4DzOZzCzKqgPLVxiS8zZFmx5y8MEOkYFIelmKNIDmV4RpVB05Zn40uZwy0amFtlM5J4RwswU=
+	 MIME-Version:Content-Type; b=FvrvMBa/UprURDW7Ji+k94mG48EhNMZvzSqO4sEoYPmRmBOY1+MciuUbWQcviVyUxMz4FqZhb8C1TRWHz3AnSLdUAPvjgBMvKLl+TTnd0wOjPJybu+roVX7D3JFF+uOov0EMR7MUFifm79Q6yKk+xqL6L3d+dE+bNKs1IoxIywY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83EE3C19421;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CBB0C19425;
 	Mon,  3 Nov 2025 00:48:40 +0000 (UTC)
 Received: by venus (Postfix, from userid 1000)
-	id 4E67318157B; Mon, 03 Nov 2025 01:48:33 +0100 (CET)
+	id 4B6171811F8; Mon, 03 Nov 2025 01:48:33 +0100 (CET)
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
 To: Sebastian Reichel <sre@kernel.org>, 
- Murad Masimov <m.masimov@mt-integration.ru>
-Cc: ChiYuan Huang <cy_huang@richtek.com>, ChiaEn Wu <chiaen_wu@richtek.com>, 
+ Ivan Abramov <i.abramov@mt-integration.ru>
+Cc: ChiaEn Wu <chiaen_wu@richtek.com>, ChiYuan Huang <cy_huang@richtek.com>, 
  linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
  lvc-project@linuxtesting.org
-In-Reply-To: <20251009145308.1830893-1-m.masimov@mt-integration.ru>
-References: <20251009145308.1830893-1-m.masimov@mt-integration.ru>
-Subject: Re: [PATCH] power: supply: rt9467: Prevent using uninitialized
- local variable in rt9467_set_value_from_ranges()
-Message-Id: <176213091331.301408.12846671531653101740.b4-ty@collabora.com>
+In-Reply-To: <20251009144725.562278-1-i.abramov@mt-integration.ru>
+References: <20251009144725.562278-1-i.abramov@mt-integration.ru>
+Subject: Re: [PATCH v2 1/1] power: supply: rt9467: Return error on failure
+ in rt9467_set_value_from_ranges()
+Message-Id: <176213091329.301408.1063635478051970242.b4-ty@collabora.com>
 Date: Mon, 03 Nov 2025 01:48:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -53,18 +53,20 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.3
 
 
-On Thu, 09 Oct 2025 17:53:08 +0300, Murad Masimov wrote:
-> There is a typo in rt9467_set_value_from_ranges() that can cause leaving local
-> variable sel with an undefined value which is then used in regmap_field_write().
+On Thu, 09 Oct 2025 17:47:24 +0300, Ivan Abramov wrote:
+> The return value of rt9467_set_value_from_ranges() when setting AICL VTH is
+> not checked, even though it may fail.
+> 
+> Log error and return from rt9467_run_aicl() on fail.
 > 
 > Found by Linux Verification Center (linuxtesting.org) with SVACE.
 > 
-> 
+> [...]
 
 Applied, thanks!
 
-[1/1] power: supply: rt9467: Prevent using uninitialized local variable in rt9467_set_value_from_ranges()
-      commit: 15aca30cc6c69806054b896a2ccf7577239cb878
+[1/1] power: supply: rt9467: Return error on failure in rt9467_set_value_from_ranges()
+      commit: 8b27fe2d8d2380118c343629175385ff587e2fe4
 
 Best regards,
 -- 
