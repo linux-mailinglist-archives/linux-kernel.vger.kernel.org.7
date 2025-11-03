@@ -1,112 +1,147 @@
-Return-Path: <linux-kernel+bounces-882203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 189D8C29DEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 03:35:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23E97C29DE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 03:35:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC8DA188D38E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 02:35:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 049DE188D4F8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 02:35:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB18C286889;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B8128642D;
 	Mon,  3 Nov 2025 02:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="giJExO9c"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DRIHBj45"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3985F285C8D;
-	Mon,  3 Nov 2025 02:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B811C5D77
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 02:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762137322; cv=none; b=WNq/dMvCLmOcaibA1RaWnSEvocsn/7vQgPkmIhshtQUEMpbdnpHKoE2weOYcP+kzjEMJC57ZjEQMMrYNVJIe1i7O0V8FXg3HjOsNhIL1nJ9SlWLRW7XU23MkqcusJI8fSSDPEUF9t3Oo1XFMA3rK5c/7/ub30iqxcXPwR1MLZ7s=
+	t=1762137322; cv=none; b=Ii4fgWOF9wc86B2TRdnX0fKqHXcledrhfpwVG/qvBCXcbn7oy3g1XIWRGFwe4zcnmeNF1zVdFO++m9CG/mLGVR7UJdjluUW1+ynKKuqzCImBkcCtsEkwnDMkSGrh+3AShU9t5jrwItVId51b4wj6FzYKg7gf4zbVsfwxXAy1GZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762137322; c=relaxed/simple;
-	bh=HN74kdnoxGftT5uGY7CIrbimSmHE7k+Bss9Q2BwLzvs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=skTaRIOOugKVf9BRHmN+iYH7bmtLJJFPqtFkQlIBNuDQERxNVTaYS9YYYBpCg7RijHiQq+NGP+8ibWTdNHRe4YJtUIT/wA7Ak1wnPnBBBm5XWKfC89pjS7deZC4/krv4eojN22p0NNB3VgfsV1RKWnQ5Zae4jg4G1jN8UmX6PIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=giJExO9c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C066C4CEFB;
+	bh=Po4FITX4drt+WLGHqKt44ddsd+cJ95meWgcRiywsgWI=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=MU0akZLk473YqVals2GYPMWmGCXw70unBbx5+5fAGHQW3QIlUE1PIS11i0bHG+aHF56Qfi9ks+UnztHe7yS7Xw6tm/VjVX6n/lJqpI8bzjjBX8vYU7RTUeIp9sznXS2ZpqJg2B19w/I1q6PfHmzQNxAAgSpqmMwkFfSpr0gkJk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DRIHBj45; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2C65C4CEF7;
 	Mon,  3 Nov 2025 02:35:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1762137321;
-	bh=HN74kdnoxGftT5uGY7CIrbimSmHE7k+Bss9Q2BwLzvs=;
-	h=From:Date:Subject:To:Cc:From;
-	b=giJExO9cukbKjVO0Y3qTRbFBvpXuyVgHqbgptvGgS4HFwJWKy22SQB5ZzEAOT04I/
-	 BEi8/h2KwSt8sFBEnJXFRXPB4ybzbY5PpCat+C3jebZ+qNhNgdQrFNLb3dQTqeLZtE
-	 5UXZuOCsC2ZJwDa/i2qm1E03gdwJqmvuGC8VwVpkQrh7dhHmjHspiwVf0u9c+m7RLF
-	 oe+S5dGWwrBGfxVKhlMMMDkrRy1iSaK0tryzKJpVo3ryy/ly6WAg4vlRrX9FtjakQ3
-	 vQy/KNN36kvUIaUsDkMu6ycc6dVc31SB3SzMaUoeO31uDg3fO2Ihlc+C1G3OuT5nXc
-	 pxMbi9Dt8RHsg==
-From: Nathan Chancellor <nathan@kernel.org>
-Date: Sun, 02 Nov 2025 21:35:03 -0500
-Subject: [PATCH] lib/crypto: curve25519-hacl64: Fix older clang KASAN
- workaround for GCC
+	bh=Po4FITX4drt+WLGHqKt44ddsd+cJ95meWgcRiywsgWI=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=DRIHBj45SABwSm7nwmUPGcarQCoImukTtihhrTOlN0GxOb5ugziEHQIBW08lK7/3e
+	 pPmKR5koEcyIlpD/luPAhyXTUhG4Gxx60kS4TnNHQrNynJ2vmc8Y6qRaWZ7GK/wGSR
+	 Tb7BkHsCqQtwne2k4McY/9c0vYiDMXvwsh6wYwulir4II4U9TlmofcKNM4x8Dzi6Uc
+	 MU38ocx8yNVBXw1YAHsvHV5eF6myK0ukRKv36E9EdF1ESD2lljE6WrWz8QK8J7Ko6b
+	 BePDcVrp/Lvo0JP/IcpcASn3LpIPFNL0VtBu5fcdaRJSDq3jiN7W/E/bcL0XfD8m8V
+	 T+g/LSC4L3AxQ==
+Message-ID: <ea38e464-a28a-4b06-8046-5b62f7172875@kernel.org>
+Date: Mon, 3 Nov 2025 10:35:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+ david.hunter.linux@gmail.com,
+ linux-kernel-mentees@lists.linuxfoundation.org, khalid@kernel.org,
+ syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
+Subject: Re: [PATCH v2 2/2] f2fs: Add sanity checks before unlinking and
+ loading inodes
+To: "Nikola Z. Ivanov" <zlatistiv@gmail.com>, jaegeuk@kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+References: <cover.1761993022.git.zlatistiv@gmail.com>
+ <55522ef8f3424e563ff18a720c709dcb065091af.1761993022.git.zlatistiv@gmail.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <55522ef8f3424e563ff18a720c709dcb065091af.1761993022.git.zlatistiv@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251102-curve25519-hacl64-fix-kasan-workaround-v1-1-6ec6738f9741@kernel.org>
-X-B4-Tracking: v=1; b=H4sIANYUCGkC/x2NQQqDMBAAvyJ77kISmlb7leJhTTZ1sSRlg1YQ/
- 97Q48Awc0BlFa7w6A5Q3qRKyQ3spYMwU34xSmwMzjhvrXEYVt3YeW8HnCm8b1dMsuNClTJ+iy6
- kZc0R7z7FqQ9m6FOEFvsoN+8/eo7n+QPdYBYaeAAAAA==
-X-Change-ID: 20251102-curve25519-hacl64-fix-kasan-workaround-75fdb8c098fd
-To: Eric Biggers <ebiggers@kernel.org>, 
- "Jason A. Donenfeld" <Jason@zx2c4.com>, Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Nathan Chancellor <nathan@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1470; i=nathan@kernel.org;
- h=from:subject:message-id; bh=HN74kdnoxGftT5uGY7CIrbimSmHE7k+Bss9Q2BwLzvs=;
- b=owGbwMvMwCUmm602sfCA1DTG02pJDJkcIs+7q6Z4zrzSsbXzraym5/Nmj+dy0RoRxRvKTDa8P
- TxzzZRHHaUsDGJcDLJiiizVj1WPGxrOOct449QkmDmsTCBDGLg4BWAi6+sZ/kflK0xpue/U6ndX
- UER3Qcyml/dk52n3Zv05edUxue3W1okM/90j9phrdyyZtGi/1g5D63IN86WPuy9GaHzsuzN1S2X
- Cc1YA
-X-Developer-Key: i=nathan@kernel.org; a=openpgp;
- fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-Commit 2f13daee2a72 ("lib/crypto/curve25519-hacl64: Disable KASAN with
-clang-17 and older") inadvertently disabled KASAN in curve25519-hacl64.o
-for GCC unconditionally because clang-min-version will always evaluate
-to nothing for GCC. Add a check for CONFIG_CC_IS_GCC to avoid the
-workaround, which is only needed for clang-17 and older.
+On 11/1/25 20:56, Nikola Z. Ivanov wrote:
+> Add check for inode->i_nlink == 1 for directories during unlink,
+> as their value is decremented twice, which can trigger a warning in
+> drop_nlink. In such case mark the filesystem as corrupted and return
+> from the function call with the relevant failure return value.
+> 
+> Additionally add the 2 checks for i_nlink == 0 and i_nlink == 1 in
+> sanity_check_inode in order to detect on-disk corruption early.
+> 
+> Reported-by: syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=c07d47c7bc68f47b9083
+> Tested-by: syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
+> Signed-off-by: Nikola Z. Ivanov <zlatistiv@gmail.com>
+> ---
+>  fs/f2fs/inode.c | 10 ++++++++++
+>  fs/f2fs/namei.c | 15 +++++++++++----
+>  2 files changed, 21 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index 8c4eafe9ffac..089cbf3646f0 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -294,6 +294,16 @@ static bool sanity_check_inode(struct inode *inode, struct folio *node_folio)
+>  		return false;
+>  	}
+>  
+> +	if (unlikely(inode->i_nlink == 0)) {
 
-Additionally, invert the 'ifeq (...,)' into 'ifneq (...,y)', as it is a
-little easier to read and understand the intention ("if not GCC or at
-least clang-18, disable KASAN").
+This is a possible case, as an orphan inode may exist in filesystem after sudden
+power-cut.
 
-Cc: stable@vger.kernel.org
-Fixes: 2f13daee2a72 ("lib/crypto/curve25519-hacl64: Disable KASAN with clang-17 and older")
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
----
- lib/crypto/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks,
 
-diff --git a/lib/crypto/Makefile b/lib/crypto/Makefile
-index bded351aeace..372b7a12b371 100644
---- a/lib/crypto/Makefile
-+++ b/lib/crypto/Makefile
-@@ -90,7 +90,7 @@ else
- libcurve25519-$(CONFIG_CRYPTO_LIB_CURVE25519_GENERIC) += curve25519-fiat32.o
- endif
- # clang versions prior to 18 may blow out the stack with KASAN
--ifeq ($(call clang-min-version, 180000),)
-+ifneq ($(CONFIG_CC_IS_GCC)$(call clang-min-version, 180000),y)
- KASAN_SANITIZE_curve25519-hacl64.o := n
- endif
- 
-
----
-base-commit: 6146a0f1dfae5d37442a9ddcba012add260bceb0
-change-id: 20251102-curve25519-hacl64-fix-kasan-workaround-75fdb8c098fd
-
-Best regards,
---  
-Nathan Chancellor <nathan@kernel.org>
+> +		f2fs_warn(F2FS_I_SB(inode), "%s: inode (ino=%lx) has zero i_nlink",
+> +			  __func__, inode->i_ino);
+> +		return false;
+> +	} else if (S_ISDIR(inode->i_mode) && inode->i_nlink == 1) {
+> +		f2fs_warn(F2FS_I_SB(inode), "%s: directory inode (ino=%lx) has a single i_nlink",
+> +			  __func__, inode->i_ino);
+> +		return false;
+> +	}
+> +
+>  	if (f2fs_has_extra_attr(inode)) {
+>  		if (!f2fs_sb_has_extra_attr(sbi)) {
+>  			f2fs_warn(sbi, "%s: inode (ino=%lx) is with extra_attr, but extra_attr feature is off",
+> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
+> index 40cf80fd9d9a..d13077bad482 100644
+> --- a/fs/f2fs/namei.c
+> +++ b/fs/f2fs/namei.c
+> @@ -572,10 +572,11 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
+>  	if (unlikely(inode->i_nlink == 0)) {
+>  		f2fs_warn(F2FS_I_SB(inode), "%s: inode (ino=%lx) has zero i_nlink",
+>  			  __func__, inode->i_ino);
+> -		err = -EFSCORRUPTED;
+> -		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
+> -		f2fs_folio_put(folio, false);
+> -		goto out;
+> +		goto corrupted;
+> +	} else if (S_ISDIR(inode->i_mode) && inode->i_nlink == 1) {
+> +		f2fs_warn(F2FS_I_SB(inode), "%s: directory inode (ino=%lx) has a single i_nlink",
+> +			  __func__, inode->i_ino);
+> +		goto corrupted;
+>  	}
+>  
+>  	f2fs_balance_fs(sbi, true);
+> @@ -601,6 +602,12 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
+>  
+>  	if (IS_DIRSYNC(dir))
+>  		f2fs_sync_fs(sbi->sb, 1);
+> +
+> +	goto out;
+> +corrupted:
+> +	err = -EFSCORRUPTED;
+> +	set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
+> +	f2fs_folio_put(folio, false);
+>  out:
+>  	trace_f2fs_unlink_exit(inode, err);
+>  	return err;
 
 
