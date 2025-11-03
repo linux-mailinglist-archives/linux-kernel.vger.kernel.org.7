@@ -1,335 +1,330 @@
-Return-Path: <linux-kernel+bounces-883348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13419C2D20A
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:29:22 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14146C2D213
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:29:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D49854E2694
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:28:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 732554E266B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:29:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03DF8315D2D;
-	Mon,  3 Nov 2025 16:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="utaKonUx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA294314B7F
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:28:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5973317706;
+	Mon,  3 Nov 2025 16:29:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4471C3019D6
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762187318; cv=none; b=Rats9yqbti4wXi9M77whQtbxGwzzCioy8YXLwC7FI8+9sX3ZpeIbMJ1GMHVYGe4+onyeXb0eKSdXzDkrabcFjdCqiDtWKpYuNN+fqtivF6YQALxsqfe9cxQMAegepzUbhDIUYJzipZ+LQd7pFUwreDKj8C9wqo2fJFYD6Ahf6mM=
+	t=1762187353; cv=none; b=DPoA1KSIrphQLzsKfUmbVMKjMU7GGjktfcmPLFe75JRyhltGTYu+507Mq7264V3Xk4cUZtBC5HswAvsMSopOtO47cp1xP/4RDFyVtxgORh1X6wWFbqCANQGS3A2FSpq0iEU8kQPZRpecLvBi1B+KBZSBXZrFgVYv4mwdDfKMhxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762187318; c=relaxed/simple;
-	bh=kDQK0tWCaUtfY/gG/35h4LlsYBz6zej1PGAS1i3xiWo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SnXSfnrrDNIriWWZPKP2+XSV63al8JxDTZreLlPzmslX1MNX42PHfP/R57p3jW/NWuZ85uqVz45DwvrrkjsPwUu9GaaQzTypLMgaNqq6TkbT6XwHOP3WRSQPzAJRrRtmWh647PH+VkQgH96JzgHgsFtt4im7L9gRnqALJEWRHsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=utaKonUx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94293C116C6
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:28:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762187317;
-	bh=kDQK0tWCaUtfY/gG/35h4LlsYBz6zej1PGAS1i3xiWo=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-	b=utaKonUxy/85t1kOpEY0ubm+fmvIXgKGDwwaAXdF2j5c7g2Rvn3Fe6P1PJrNLg0Ph
-	 BCkNh6LZC5eGCsRdh+5J47Ge8WRAVJJ3Yl4geurR3jygwGygrQBDY/t4YzXunj6y8h
-	 tgCnOf3T3QESGFbCFZTqDH4+XwSYdMp+oAkA4QUybwrsX5KlvpeuJmpycLlmhmfLU5
-	 ZyAqhH/dGJf8nCj6KDfbxJ/9vGd+Nop7OTLzC8nH+hLW3P6VYRTFzNQRiiitWZttCE
-	 AfolvP2eO3QxqJQ3eiRYTPI71LIZmgaIT090MtX+c0JLSUTVeY4MkSPXnb1BP2tCt1
-	 /3lGJF15i+3yg==
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-378e8d10494so48292281fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 08:28:37 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX+Pf3vu0c9U2z1XNygK8TR9HfiDHIORdx0jvj0wtcQFflMAL0cO7+t2DmJov3ZVqi5XiWV2RWcIoyQklw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3Yf6jqPq44Fuf22h2zGNM1NLxjwbeWU82DE1qWsQUji7yXkzV
-	ZLhGCcnMU3CqcyR6vV9GPQBd0NsKcL35NHXwtRZCKdaIYiQ2X+JV6kF0yaUsSfugl1zqyrGoagH
-	adDClwuDRZ+NGSNOGlL1Ak+nsZ+89gTs=
-X-Google-Smtp-Source: AGHT+IEJw3ZDPZnMpT7G5gC3dsRUQ0QBWfYVrDtBIFys4f9z3gARwYMbMmV/c59TFAss1io4XgNidT6RU3Za8tDoZwE=
-X-Received: by 2002:a05:651c:198d:b0:37a:29b5:e62c with SMTP id
- 38308e7fff4ca-37a29b5ea04mr22389251fa.5.1762187315858; Mon, 03 Nov 2025
- 08:28:35 -0800 (PST)
+	s=arc-20240116; t=1762187353; c=relaxed/simple;
+	bh=hSKSIxgb4ATVBcIKJmHMZLuvWXl6sz19dNlgOflkiIo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J20RyG9UFKIIxFVw7udR/42Cc7rmqJ2CpAKLsS5ii1+7nsFMoK2w8Qf4MVMG5fORhnHiG7nyk2l+YR8Uam1T7K4x1J0U2Ss9hpAkWSXpG33kFhulwDyCEYq8BnhpMkI5M6JC9iW1IQ6LpW7iLwr/62X7hYIyF/45pbGuPPfcUCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 737191D14;
+	Mon,  3 Nov 2025 08:29:02 -0800 (PST)
+Received: from [10.1.36.161] (XHFQ2J9959.cambridge.arm.com [10.1.36.161])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A13F63F694;
+	Mon,  3 Nov 2025 08:29:07 -0800 (PST)
+Message-ID: <3611cfeb-53d5-4db5-95a1-1d095edfc3c9@arm.com>
+Date: Mon, 3 Nov 2025 16:28:44 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021112013.2710903-1-andre.przywara@arm.com>
- <20251021112013.2710903-4-andre.przywara@arm.com> <20251022001420-GYA1522542@gentoo.org>
-In-Reply-To: <20251022001420-GYA1522542@gentoo.org>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Tue, 4 Nov 2025 00:28:22 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66_KdBqcN95mUNRfc99XQpCtzFS95ZbQHf+23fz=KS3Fw@mail.gmail.com>
-X-Gm-Features: AWmQ_blX9ENYCANsCL_UZyz3OhgNWAwqItq2RjR0rojS-yYywilcuTafker68VU
-Message-ID: <CAGb2v66_KdBqcN95mUNRfc99XQpCtzFS95ZbQHf+23fz=KS3Fw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] regulator: axp20x: add support for the AXP318W
-To: Yixun Lan <dlan@gentoo.org>
-Cc: Andre Przywara <andre.przywara@arm.com>, Lee Jones <lee@kernel.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Samuel Holland <samuel@sholland.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	devicetree@vger.kernel.org, linux-sunxi@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] arm64: mm: Don't sleep in split_kernel_leaf_mapping()
+ when in atomic context
+Content-Language: en-GB
+To: Will Deacon <will@kernel.org>
+Cc: catalin.marinas@arm.com, yang@os.amperecomputing.com, david@redhat.com,
+ ardb@kernel.org, dev.jain@arm.com, scott@os.amperecomputing.com,
+ cl@gentwo.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Guenter Roeck <groeck@google.com>
+References: <20251103125738.3073566-1-ryan.roberts@arm.com>
+ <aQjMUhspJrRQn5Ew@willie-the-truck>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <aQjMUhspJrRQn5Ew@willie-the-truck>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 22, 2025 at 8:14=E2=80=AFAM Yixun Lan <dlan@gentoo.org> wrote:
->
-> Hi Andre,
->
-> On 12:20 Tue 21 Oct     , Andre Przywara wrote:
-> > The X-Powers AXP318W is a typical PMIC from X-Powers, featuring nine
-> > DC/DC converters and 28 LDOs, on the regulator side.
-> >
-> > Describe the chip's voltage settings and switch registers, how the
-> > voltages are encoded, and connect this to the MFD device via its
-> > regulator ID.
-> > We use just "318" for the internal identifiers, for easier typing and
-> > less churn. If something else other than the "AXP318W" shows up, that's
-> > an easy change, externally visible strings carry the additional letter
-> > already.
-> >
-> > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> > ---
-> >  drivers/regulator/axp20x-regulator.c | 170 ++++++++++++++++++++++++++-
-> >  include/linux/mfd/axp20x.h           |  43 +++++++
-> >  2 files changed, 211 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/a=
-xp20x-regulator.c
-> > index da891415efc0b..1576bf4178f8f 100644
-> > --- a/drivers/regulator/axp20x-regulator.c
-> > +++ b/drivers/regulator/axp20x-regulator.c
-> > @@ -138,6 +138,15 @@
-> >  #define AXP313A_DCDC_V_OUT_MASK              GENMASK(6, 0)
-> >  #define AXP313A_LDO_V_OUT_MASK               GENMASK(4, 0)
-> >
-> > +#define AXP318_DCDC1_V_OUT_MASK              GENMASK(4, 0)
-> > +#define AXP318_DCDC2_V_OUT_MASK              GENMASK(6, 0)
-> > +#define AXP318_LDO_V_OUT_MASK                GENMASK(4, 0)
-> > +#define AXP318_ELDO_V_OUT_MASK               GENMASK(5, 0)
-> > +#define AXP318_DCDC2_NUM_VOLTAGES    88
-> > +#define AXP318_DCDC6_NUM_VOLTAGES    128
-> > +#define AXP318_DCDC7_NUM_VOLTAGES    103
-> > +#define AXP318_DCDC8_NUM_VOLTAGES    119
-> > +
-> >  #define AXP717_DCDC1_NUM_VOLTAGES    88
-> >  #define AXP717_DCDC2_NUM_VOLTAGES    107
-> >  #define AXP717_DCDC3_NUM_VOLTAGES    103
-> > @@ -765,6 +774,155 @@ static const struct regulator_desc axp313a_regula=
-tors[] =3D {
-> >       AXP_DESC_FIXED(AXP313A, RTC_LDO, "rtc-ldo", "vin1", 1800),
-> >  };
-> >
-> > +static const struct linear_range axp318_dcdc2_ranges[] =3D {
-> > +     REGULATOR_LINEAR_RANGE(500000,   0, 70, 10000),
-> > +     REGULATOR_LINEAR_RANGE(1220000, 71, 87, 20000),
-> > +};
-> > +
-> ..
-> > +static const struct linear_range axp318_dcdc6_ranges[] =3D {
-> > +     REGULATOR_LINEAR_RANGE(500000,    0,  70,  10000),
-> > +     REGULATOR_LINEAR_RANGE(1220000,  71,  87,  20000),
-> > +     REGULATOR_LINEAR_RANGE(1800000,  88, 118,  20000),
-> > +     REGULATOR_LINEAR_RANGE(2440000, 119, 127,  40000),
-> > +};
-> > +
-> > +static const struct linear_range axp318_dcdc7_ranges[] =3D {
-> > +     REGULATOR_LINEAR_RANGE(500000,   0,  70, 10000),
-> > +     REGULATOR_LINEAR_RANGE(1220000, 71, 102, 20000),
-> > +};
-> > +
-> > +static const struct linear_range axp318_dcdc8_ranges[] =3D {
-> > +     REGULATOR_LINEAR_RANGE(500000,    0,  70,  10000),
-> > +     REGULATOR_LINEAR_RANGE(1220000,  71, 102,  20000),
-> > +     REGULATOR_LINEAR_RANGE(1900000, 103, 118, 100000),
-> > +};
->
-> In the AXP318W datasheet, it says:
-> section 7.1 DCDC/LCO desgin
->  8. DCDC6/7/8/9 only able to tune at two voltage ranges which are
->  <1.54v and >1.54v, the tuning voltage should not step cross 1.54v
->  (I translate the original doc into english)
->
-> so, with this restricition, should we split the range into two?
-> one is dcdc6_lo_range, another dcdc6_hi_range
->
-> or what do you think?
-
-I understand it like this:
-
-DCDC2~9 support DVM or dynamic voltage scaling management. Not sure
-what the actual thing is, but it at least it provides controlled
-ramp rate. So the change of the voltage while the regulator is on
-shall not cross the 1.54v boundary; however it is fine to set any
-voltage when the regulator is off.
-
-Maybe without DVM the voltage would just jump over and even potentially
-overshoot. We would need an oscilloscope to check the actual behavior
-though.
-
-So perhaps it would be better to enable DVM by default for all capable
-ones, and model in the ramp delay as well? Andre?
-
-As for not crossing 1.54v, I think you can just wrap the current
-.set_voltage helper with a check that fails when the regulator is
-on and it is crossing?
-
-> > +
-> > +static const struct regulator_desc axp318_regulators[] =3D {
-> > +     AXP_DESC(AXP318, DCDC1, "dcdc1", "vin19", 1000, 3400, 100,
-> > +              AXP318_DCDC1_CONTROL, AXP318_DCDC1_V_OUT_MASK,
-> > +              AXP318_DCDC_OUTPUT_CONTROL1, BIT(0)),
-> > +     AXP_DESC_RANGES(AXP318, DCDC2, "dcdc2", "vin23",
-> > +                     axp318_dcdc2_ranges, AXP318_DCDC2_NUM_VOLTAGES,
-> > +                     AXP318_DCDC2_CONTROL, AXP318_DCDC2_V_OUT_MASK,
-> > +                     AXP318_DCDC_OUTPUT_CONTROL1, BIT(1)),
-> > +     AXP_DESC_RANGES(AXP318, DCDC3, "dcdc3", "vin23",
-> > +                     axp318_dcdc2_ranges, AXP318_DCDC2_NUM_VOLTAGES,
-> > +                     AXP318_DCDC3_CONTROL, AXP318_DCDC2_V_OUT_MASK,
-> > +                     AXP318_DCDC_OUTPUT_CONTROL1, BIT(2)),
-> > +     AXP_DESC_RANGES(AXP318, DCDC4, "dcdc4", "vin45",
-> > +                     axp318_dcdc2_ranges, AXP318_DCDC2_NUM_VOLTAGES,
-> > +                     AXP318_DCDC4_CONTROL, AXP318_DCDC2_V_OUT_MASK,
-> > +                     AXP318_DCDC_OUTPUT_CONTROL1, BIT(3)),
-> > +     AXP_DESC_RANGES(AXP318, DCDC5, "dcdc5", "vin45",
-> > +                     axp318_dcdc2_ranges, AXP318_DCDC2_NUM_VOLTAGES,
-> > +                     AXP318_DCDC5_CONTROL, AXP318_DCDC2_V_OUT_MASK,
-> > +                     AXP318_DCDC_OUTPUT_CONTROL1, BIT(4)),
-> > +     AXP_DESC_RANGES(AXP318, DCDC6, "dcdc6", "vin678",
-> > +                     axp318_dcdc6_ranges, AXP318_DCDC6_NUM_VOLTAGES,
-> > +                     AXP318_DCDC6_CONTROL, AXP318_DCDC2_V_OUT_MASK,
-> > +                     AXP318_DCDC_OUTPUT_CONTROL1, BIT(5)),
-> > +     AXP_DESC_RANGES(AXP318, DCDC7, "dcdc7", "vin678",
-> > +                     axp318_dcdc7_ranges, AXP318_DCDC7_NUM_VOLTAGES,
-> > +                     AXP318_DCDC7_CONTROL, AXP318_DCDC2_V_OUT_MASK,
-> > +                     AXP318_DCDC_OUTPUT_CONTROL1, BIT(6)),
-> > +     AXP_DESC_RANGES(AXP318, DCDC8, "dcdc8", "vin678",
-> > +                     axp318_dcdc8_ranges, AXP318_DCDC8_NUM_VOLTAGES,
-> > +                     AXP318_DCDC8_CONTROL, AXP318_DCDC2_V_OUT_MASK,
-> > +                     AXP318_DCDC_OUTPUT_CONTROL1, BIT(7)),
-> > +     AXP_DESC_RANGES(AXP318, DCDC9, "dcdc9", "vin19",
-> > +                     axp318_dcdc8_ranges, AXP318_DCDC8_NUM_VOLTAGES,
-> > +                     AXP318_DCDC9_CONTROL, AXP318_DCDC2_V_OUT_MASK,
-> > +                     AXP318_DCDC_OUTPUT_CONTROL2, BIT(0)),
-> > +     AXP_DESC_SW(AXP318, SWOUT1, "swout1", NULL,
-> > +                 AXP318_DCDC_OUTPUT_CONTROL2, BIT(3)),
-> > +     AXP_DESC_SW(AXP318, SWOUT2, "swout2", NULL,
-> > +                 AXP318_DCDC_OUTPUT_CONTROL2, BIT(4)),
-> > +     AXP_DESC(AXP318, ALDO1, "aldo1", "aldo156in", 500, 3400, 100,
-> > +              AXP318_ALDO1_CONTROL, AXP318_LDO_V_OUT_MASK,
-> > +              AXP318_LDO_OUTPUT_CONTROL1, BIT(0)),
-> > +     AXP_DESC(AXP318, ALDO2, "aldo2", "aldo234in", 500, 3400, 100,
-> > +              AXP318_ALDO2_CONTROL, AXP318_LDO_V_OUT_MASK,
-> > +              AXP318_LDO_OUTPUT_CONTROL1, BIT(1)),
-> > +     AXP_DESC(AXP318, ALDO3, "aldo3", "aldo234in", 500, 3400, 100,
-> > +              AXP318_ALDO3_CONTROL, AXP318_LDO_V_OUT_MASK,
-> > +              AXP318_LDO_OUTPUT_CONTROL1, BIT(2)),
-> > +     AXP_DESC(AXP318, ALDO4, "aldo4", "aldo234in", 500, 3400, 100,
-> > +              AXP318_ALDO4_CONTROL, AXP318_LDO_V_OUT_MASK,
-> > +              AXP318_LDO_OUTPUT_CONTROL1, BIT(3)),
-> > +     AXP_DESC(AXP318, ALDO5, "aldo5", "aldo156in", 500, 3400, 100,
-> > +              AXP318_ALDO5_CONTROL, AXP318_LDO_V_OUT_MASK,
-> > +              AXP318_LDO_OUTPUT_CONTROL1, BIT(4)),
-> > +     AXP_DESC(AXP318, ALDO6, "aldo6", "aldo156in", 500, 3400, 100,
-> > +              AXP318_ALDO6_CONTROL, AXP318_LDO_V_OUT_MASK,
-> > +              AXP318_LDO_OUTPUT_CONTROL1, BIT(5)),
-> > +     AXP_DESC(AXP318, BLDO1, "bldo1", "bldoin", 500, 3400, 100,
-> > +              AXP318_BLDO1_CONTROL, AXP318_LDO_V_OUT_MASK,
-> > +              AXP318_LDO_OUTPUT_CONTROL1, BIT(6)),
-> > +     AXP_DESC(AXP318, BLDO2, "bldo2", "bldoin", 500, 3400, 100,
-> > +              AXP318_BLDO2_CONTROL, AXP318_LDO_V_OUT_MASK,
-> > +              AXP318_LDO_OUTPUT_CONTROL1, BIT(7)),
-> > +     AXP_DESC(AXP318, BLDO3, "bldo3", "bldoin", 500, 3400, 100,
-> > +              AXP318_BLDO3_CONTROL, AXP318_LDO_V_OUT_MASK,
-> > +              AXP318_LDO_OUTPUT_CONTROL2, BIT(0)),
-> > +     AXP_DESC(AXP318, BLDO4, "bldo4", "bldoin", 500, 3400, 100,
-> > +              AXP318_BLDO4_CONTROL, AXP318_LDO_V_OUT_MASK,
-> > +              AXP318_LDO_OUTPUT_CONTROL2, BIT(1)),
-> > +     AXP_DESC(AXP318, BLDO5, "bldo5", "bldoin", 500, 3400, 100,
-> > +              AXP318_BLDO5_CONTROL, AXP318_LDO_V_OUT_MASK,
-> > +              AXP318_LDO_OUTPUT_CONTROL2, BIT(2)),
-> > +     AXP_DESC(AXP318, CLDO1, "cldo1", "cldoin", 500, 3400, 100,
-> > +              AXP318_CLDO1_CONTROL, AXP318_LDO_V_OUT_MASK,
-> > +              AXP318_LDO_OUTPUT_CONTROL2, BIT(3)),
-> > +     AXP_DESC(AXP318, CLDO2, "cldo2", "cldoin", 500, 3400, 100,
-> > +              AXP318_CLDO2_CONTROL, AXP318_LDO_V_OUT_MASK,
-> > +              AXP318_LDO_OUTPUT_CONTROL2, BIT(4)),
-> > +     AXP_DESC(AXP318, CLDO3, "cldo3", "cldoin", 500, 3400, 100,
-> > +              AXP318_CLDO3_CONTROL, AXP318_LDO_V_OUT_MASK,
-> > +              AXP318_LDO_OUTPUT_CONTROL2, BIT(5)),
-> > +     AXP_DESC(AXP318, CLDO4, "cldo4", "cldoin", 500, 3400, 100,
-> > +              AXP318_CLDO4_CONTROL, AXP318_LDO_V_OUT_MASK,
-> > +              AXP318_LDO_OUTPUT_CONTROL2, BIT(6)),
-> > +     AXP_DESC(AXP318, CLDO5, "cldo5", "cldoin", 500, 3400, 100,
-> > +              AXP318_CLDO5_CONTROL, AXP318_LDO_V_OUT_MASK,
-> > +              AXP318_LDO_OUTPUT_CONTROL2, BIT(7)),
-> > +     AXP_DESC(AXP318, DLDO1, "dldo1", "dldoin", 500, 3400, 100,
-> > +              AXP318_DLDO1_CONTROL, AXP318_LDO_V_OUT_MASK,
-> > +              AXP318_LDO_OUTPUT_CONTROL3, BIT(0)),
-> > +     AXP_DESC(AXP318, DLDO2, "dldo2", "dldoin", 500, 3400, 100,
-> > +              AXP318_DLDO2_CONTROL, AXP318_LDO_V_OUT_MASK,
-> > +              AXP318_LDO_OUTPUT_CONTROL3, BIT(1)),
-> > +     AXP_DESC(AXP318, DLDO3, "dldo3", "dldoin", 500, 3400, 100,
-> > +              AXP318_DLDO3_CONTROL, AXP318_LDO_V_OUT_MASK,
-> > +              AXP318_LDO_OUTPUT_CONTROL3, BIT(2)),
-> > +     AXP_DESC(AXP318, DLDO4, "dldo4", "dldoin", 500, 3400, 100,
-> > +              AXP318_DLDO4_CONTROL, AXP318_LDO_V_OUT_MASK,
-> > +              AXP318_LDO_OUTPUT_CONTROL3, BIT(3)),
-> > +     AXP_DESC(AXP318, DLDO5, "dldo5", "dldoin", 500, 3400, 100,
-> > +              AXP318_DLDO5_CONTROL, AXP318_LDO_V_OUT_MASK,
-> > +              AXP318_LDO_OUTPUT_CONTROL3, BIT(4)),
-> > +     AXP_DESC(AXP318, DLDO6, "dldo6", "dldoin", 500, 3400, 100,
-> > +              AXP318_DLDO6_CONTROL, AXP318_LDO_V_OUT_MASK,
-> > +              AXP318_LDO_OUTPUT_CONTROL3, BIT(5)),
-> ..
-> > +     AXP_DESC(AXP318, ELDO1, "eldo1", "eldoin", 500, 1500, 25,
-> > +              AXP318_ELDO1_CONTROL, AXP318_ELDO_V_OUT_MASK,
-> > +              AXP318_LDO_OUTPUT_CONTROL3, BIT(6)),
-> > +     AXP_DESC(AXP318, ELDO2, "eldo2", "eldoin", 500, 1500, 25,
-> > +              AXP318_ELDO2_CONTROL, AXP318_ELDO_V_OUT_MASK,
-> > +              AXP318_LDO_OUTPUT_CONTROL3, BIT(7)),
-> > +     AXP_DESC(AXP318, ELDO3, "eldo3", "eldoin", 500, 1500, 25,
-> > +              AXP318_ELDO3_CONTROL, AXP318_ELDO_V_OUT_MASK,
-> > +              AXP318_LDO_OUTPUT_CONTROL4, BIT(0)),
-> > +     AXP_DESC(AXP318, ELDO4, "eldo4", "eldoin", 500, 1500, 25,
-> > +              AXP318_ELDO4_CONTROL, AXP318_ELDO_V_OUT_MASK,
-> > +              AXP318_LDO_OUTPUT_CONTROL4, BIT(1)),
-> > +     AXP_DESC(AXP318, ELDO5, "eldo5", "eldoin", 500, 1500, 25,
-> > +              AXP318_ELDO5_CONTROL, AXP318_ELDO_V_OUT_MASK,
-> > +              AXP318_LDO_OUTPUT_CONTROL4, BIT(2)),
-> > +     AXP_DESC(AXP318, ELDO6, "eldo6", "eldoin", 500, 1500, 25,
-> > +              AXP318_ELDO6_CONTROL, AXP318_ELDO_V_OUT_MASK,
-> > +              AXP318_LDO_OUTPUT_CONTROL4, BIT(3)),
->
-> also, in section 7.1 DCDC/LCO desgin
->  3. ELDOIN can use DCDC's output as the voltage input, once in this case,
->  the LDO (output?) config voltage should lower than DCDC input voltage.
->
-> Note: ELDOIN can use PS(Power Supply, should be equal to DCIN) or DCDC as=
- input
->
-> in case of Radxa A7A (A733) board, it use DCDC9 as ELDOIN,
-> Should we do something in the driver level? or leave up to user
-
-That's up to the designer. They should be aware of any restrictions.
-Like, it doesn't make sense to set a voltage higher than the supply
-for an LDO...
-
-There's two options here. First, a wrapper for the .set_voltage callback
-(again) that checks the requested voltage against the supply voltage,
-and returns something like -EINVAL if that check fails.
-
-Second, we could set the .min_dropout_uV field. That would make the core
-try to raise the supply voltage to satisfy the minimum dropout voltage
-constraint.
-
-Both require knowing the actual minimum dropout value, which doesn't seem
-to be provided in the datasheet.
+Thanks for the fast review!
 
 
-ChenYu
+On 03/11/2025 15:37, Will Deacon wrote:
+> On Mon, Nov 03, 2025 at 12:57:37PM +0000, Ryan Roberts wrote:
+>> It has been reported that split_kernel_leaf_mapping() is trying to sleep
+>> in non-sleepable context. It does this when acquiring the
+>> pgtable_split_lock mutex, when either CONFIG_DEBUG_PAGEALLOC or
+>> CONFIG_KFENCE are enabled, which change linear map permissions within
+>> softirq context during memory allocation and/or freeing. All other paths
+>> into this function are called from sleepable context and so are safe.
+>>
+>> But it turns out that the memory for which these 2 features may attempt
+>> to modify the permissions is always mapped by pte, so there is no need
+>> to attempt to split the mapping. So let's exit early in these cases and
+>> avoid attempting to take the mutex.
+>>
+>> There is one wrinkle to this approach; late-initialized kfence allocates
+>> it's pool from the buddy which may be block mapped. So we must hook that
+>> allocation and convert it to pte-mappings up front. Previously this was
+>> done as a side-effect of kfence protecting all the individual pages in
+>> its pool at init-time, but this no longer works due to the added early
+>> exit path in split_kernel_leaf_mapping().
+>>
+>> So instead, do this via the existing arch_kfence_init_pool() arch hook,
+>> and reuse the existing linear_map_split_to_ptes() infrastructure. This
+>> will now also be more efficient as a result.
+>>
+>> Closes: https://lore.kernel.org/all/f24b9032-0ec9-47b1-8b95-c0eeac7a31c5@roeck-us.net/
+>> Fixes: a166563e7ec3 ("arm64: mm: support large block mapping when rodata=full")
+>> Tested-by: Guenter Roeck <groeck@google.com>
+>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+>> ---
+>>
+>> Hi All,
+>>
+>> This is a fuller fix than the suggestion I sent yesterday, and works correctly
+>> with late-init kfence (thanks to Yang Shi for pointing that out).
+>>
+>> I've verified this on AmpereOne with CONFIG_DEBUG_PAGEALLOC and CONFIG_KFENCE
+>> individually, and I've also forced it to take the linear_map_split_to_ptes() to
+>> verify that I haven't broken it during the refactoring.
+>>
+>> I've kept Guenter's T-b since the early-init kfence path that he was testing is
+>> unchanged.
+>>
+>> Assuming nobody spots any issues, I'fd like to get it into the next round of
+>> arm64 bug fixes for this cycle.
+>>
+>> Thanks,
+>> Ryan
+>>
+>>
+>>  arch/arm64/include/asm/kfence.h |  4 +-
+>>  arch/arm64/mm/mmu.c             | 92 +++++++++++++++++++++++----------
+>>  2 files changed, 68 insertions(+), 28 deletions(-)
+>>
+>> diff --git a/arch/arm64/include/asm/kfence.h b/arch/arm64/include/asm/kfence.h
+>> index a81937fae9f6..4a921e06d750 100644
+>> --- a/arch/arm64/include/asm/kfence.h
+>> +++ b/arch/arm64/include/asm/kfence.h
+>> @@ -10,8 +10,6 @@
+>>
+>>  #include <asm/set_memory.h>
+>>
+>> -static inline bool arch_kfence_init_pool(void) { return true; }
+>> -
+>>  static inline bool kfence_protect_page(unsigned long addr, bool protect)
+>>  {
+>>  	set_memory_valid(addr, 1, !protect);
+>> @@ -25,8 +23,10 @@ static inline bool arm64_kfence_can_set_direct_map(void)
+>>  {
+>>  	return !kfence_early_init;
+>>  }
+>> +bool arch_kfence_init_pool(void);
+>>  #else /* CONFIG_KFENCE */
+>>  static inline bool arm64_kfence_can_set_direct_map(void) { return false; }
+>> +static inline bool arch_kfence_init_pool(void) { return false; }
+> 
+> Why do we need this for the !KFENCE case?
+
+We don't, my bad. I'll remove.
+
+> 
+>>  #endif /* CONFIG_KFENCE */
+>>
+>>  #endif /* __ASM_KFENCE_H */
+>> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+>> index b8d37eb037fc..0385e9b17ab0 100644
+>> --- a/arch/arm64/mm/mmu.c
+>> +++ b/arch/arm64/mm/mmu.c
+>> @@ -708,6 +708,16 @@ static int split_kernel_leaf_mapping_locked(unsigned long addr)
+>>  	return ret;
+>>  }
+>>
+>> +static inline bool force_pte_mapping(void)
+>> +{
+>> +	bool bbml2 = system_capabilities_finalized() ?
+>> +		system_supports_bbml2_noabort() : cpu_supports_bbml2_noabort();
+>> +
+>> +	return (!bbml2 && (rodata_full || arm64_kfence_can_set_direct_map() ||
+>> +			   is_realm_world())) ||
+>> +		debug_pagealloc_enabled();
+>> +}
+>> +
+>>  static DEFINE_MUTEX(pgtable_split_lock);
+>>
+>>  int split_kernel_leaf_mapping(unsigned long start, unsigned long end)
+>> @@ -723,6 +733,16 @@ int split_kernel_leaf_mapping(unsigned long start, unsigned long end)
+>>  	if (!system_supports_bbml2_noabort())
+>>  		return 0;
+>>
+>> +	/*
+>> +	 * If the region is within a pte-mapped area, there is no need to try to
+>> +	 * split. Additionally, CONFIG_DEBUG_PAGEALLOC and CONFIG_KFENCE may
+>> +	 * change permissions from softirq context so for those cases (which are
+>> +	 * always pte-mapped), we must not go any further because taking the
+>> +	 * mutex below may sleep.
+>> +	 */
+>> +	if (force_pte_mapping() || is_kfence_address((void *)start))
+>> +		return 0;
+>> +
+>>  	/*
+>>  	 * Ensure start and end are at least page-aligned since this is the
+>>  	 * finest granularity we can split to.
+>> @@ -758,30 +778,30 @@ int split_kernel_leaf_mapping(unsigned long start, unsigned long end)
+>>  	return ret;
+>>  }
+>>
+>> -static int __init split_to_ptes_pud_entry(pud_t *pudp, unsigned long addr,
+>> -					  unsigned long next,
+>> -					  struct mm_walk *walk)
+>> +static int split_to_ptes_pud_entry(pud_t *pudp, unsigned long addr,
+>> +				   unsigned long next, struct mm_walk *walk)
+>>  {
+>> +	gfp_t gfp = *(gfp_t *)walk->private;
+>>  	pud_t pud = pudp_get(pudp);
+>>  	int ret = 0;
+>>
+>>  	if (pud_leaf(pud))
+>> -		ret = split_pud(pudp, pud, GFP_ATOMIC, false);
+>> +		ret = split_pud(pudp, pud, gfp, false);
+>>
+>>  	return ret;
+>>  }
+>>
+>> -static int __init split_to_ptes_pmd_entry(pmd_t *pmdp, unsigned long addr,
+>> -					  unsigned long next,
+>> -					  struct mm_walk *walk)
+>> +static int split_to_ptes_pmd_entry(pmd_t *pmdp, unsigned long addr,
+>> +				   unsigned long next, struct mm_walk *walk)
+>>  {
+>> +	gfp_t gfp = *(gfp_t *)walk->private;
+>>  	pmd_t pmd = pmdp_get(pmdp);
+>>  	int ret = 0;
+>>
+>>  	if (pmd_leaf(pmd)) {
+>>  		if (pmd_cont(pmd))
+>>  			split_contpmd(pmdp);
+>> -		ret = split_pmd(pmdp, pmd, GFP_ATOMIC, false);
+>> +		ret = split_pmd(pmdp, pmd, gfp, false);
+>>
+>>  		/*
+>>  		 * We have split the pmd directly to ptes so there is no need to
+>> @@ -793,9 +813,8 @@ static int __init split_to_ptes_pmd_entry(pmd_t *pmdp, unsigned long addr,
+>>  	return ret;
+>>  }
+>>
+>> -static int __init split_to_ptes_pte_entry(pte_t *ptep, unsigned long addr,
+>> -					  unsigned long next,
+>> -					  struct mm_walk *walk)
+>> +static int split_to_ptes_pte_entry(pte_t *ptep, unsigned long addr,
+>> +				   unsigned long next, struct mm_walk *walk)
+>>  {
+>>  	pte_t pte = __ptep_get(ptep);
+>>
+>> @@ -805,12 +824,24 @@ static int __init split_to_ptes_pte_entry(pte_t *ptep, unsigned long addr,
+>>  	return 0;
+>>  }
+>>
+>> -static const struct mm_walk_ops split_to_ptes_ops __initconst = {
+>> +static const struct mm_walk_ops split_to_ptes_ops = {
+>>  	.pud_entry	= split_to_ptes_pud_entry,
+>>  	.pmd_entry	= split_to_ptes_pmd_entry,
+>>  	.pte_entry	= split_to_ptes_pte_entry,
+>>  };
+>>
+>> +static int range_split_to_ptes(unsigned long start, unsigned long end, gfp_t gfp)
+>> +{
+>> +	int ret;
+>> +
+>> +	arch_enter_lazy_mmu_mode();
+>> +	ret = walk_kernel_page_table_range_lockless(start, end,
+>> +					&split_to_ptes_ops, NULL, &gfp);
+>> +	arch_leave_lazy_mmu_mode();
+> 
+> Why are you entering/leaving lazy mode now? linear_map_split_to_ptes()
+> calls flush_tlb_kernel_range() right after this so now it looks like
+> we have more barriers than we need there.
+
+Without the lazy mmu block, every write to every pte (or pmd/pud) will cause a
+dsb and isb to be emitted. With the lazy mmu block, we only emit a single
+dsb/isb at the end of the block.
+
+linear_map_split_to_ptes() didn't previously have a lazy mmu block; that was an
+oversight, I believe. So when refactoring I thought it made sense to make it
+common for both cases.
+
+Yes, the flush_tlb_kernel_range() also has the barriers, so the lazy mmu mode is
+reducing from a gazillion barriers to 2. We could further optimize from 2 to 1,
+but I doubt the performance improvement will be measurable.
+
+Perhaps I've misunderstood your point...?
+
+> 
+>> +
+>> +	return ret;
+>> +}
+>> +
+>>  static bool linear_map_requires_bbml2 __initdata;
+>>
+>>  u32 idmap_kpti_bbml2_flag;
+>> @@ -847,11 +878,9 @@ static int __init linear_map_split_to_ptes(void *__unused)
+>>  		 * PTE. The kernel alias remains static throughout runtime so
+>>  		 * can continue to be safely mapped with large mappings.
+>>  		 */
+>> -		ret = walk_kernel_page_table_range_lockless(lstart, kstart,
+>> -						&split_to_ptes_ops, NULL, NULL);
+>> +		ret = range_split_to_ptes(lstart, kstart, GFP_ATOMIC);
+>>  		if (!ret)
+>> -			ret = walk_kernel_page_table_range_lockless(kend, lend,
+>> -						&split_to_ptes_ops, NULL, NULL);
+>> +			ret = range_split_to_ptes(kend, lend, GFP_ATOMIC);
+>>  		if (ret)
+>>  			panic("Failed to split linear map\n");
+>>  		flush_tlb_kernel_range(lstart, lend);
+>> @@ -1002,6 +1031,27 @@ static void __init arm64_kfence_map_pool(phys_addr_t kfence_pool, pgd_t *pgdp)
+>>  	memblock_clear_nomap(kfence_pool, KFENCE_POOL_SIZE);
+>>  	__kfence_pool = phys_to_virt(kfence_pool);
+>>  }
+>> +
+>> +bool arch_kfence_init_pool(void)
+>> +{
+>> +	unsigned long start = (unsigned long)__kfence_pool;
+>> +	unsigned long end = start + KFENCE_POOL_SIZE;
+>> +	int ret;
+>> +
+>> +	/* Exit early if we know the linear map is already pte-mapped. */
+>> +	if (!system_supports_bbml2_noabort() || force_pte_mapping())
+>> +		return true;
+>> +
+>> +	/* Kfence pool is already pte-mapped for the early init case. */
+>> +	if (kfence_early_init)
+>> +		return true;
+>> +
+>> +	mutex_lock(&pgtable_split_lock);
+>> +	ret = range_split_to_ptes(start, end, GFP_PGTABLE_KERNEL);
+>> +	mutex_unlock(&pgtable_split_lock);
+>> +
+>> +	return ret ? false : true;
+> 
+> return !ret
+
+Yes good point - will fix in the next spin.
+
+Thanks,
+Ryan
+
+> 
+> Will
+
 
