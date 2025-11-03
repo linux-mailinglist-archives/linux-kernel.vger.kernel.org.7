@@ -1,206 +1,359 @@
-Return-Path: <linux-kernel+bounces-882262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEA3BC2A02B
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 05:01:48 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E7FEC2A027
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 05:01:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C09318899CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 04:02:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D01584EAC2E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 04:01:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1A2280035;
-	Mon,  3 Nov 2025 04:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700B3289374;
+	Mon,  3 Nov 2025 04:01:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rRfTcdTR"
-Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010035.outbound.protection.outlook.com [52.101.85.35])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="OtM8VIIu";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Ayl8dtNe"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A02286334;
-	Mon,  3 Nov 2025 04:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.35
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762142501; cv=fail; b=DN6iApCR7DY2CmYJHByJzEeBmc8K+omhkQqeO1JJzPwbtTqNkNxjZCwgJt1HUDMpeOvkhkJvlQU1KHEDX4yywlZptd4hcHDiRBpgVIFuD2UpR+RP+iASPn+kJvDgVDlWrznuuay5IVxl/8QEQ7skQAxYsvG/BPest3QpHDbOOvU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762142501; c=relaxed/simple;
-	bh=q3wG50m68bThI2EJgtOIDHynswfXzzGjt/P4MyN83MA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WGPAPQVVvr0HQUUvzNO8zZvSPS6/V1wEV0RQBCrxcmMtrT9fs6Urx3vwqx+8VdNaOn2HeR55Tu8bepIqAGqeRiGN3EPJfI7Ee1fGjVwT9buB9SOYHbojWRGFcdBEMp4ShMzakhj6dQEgwar8c62wgkn/UJLYOjhjLXLAlSGw9ts=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=rRfTcdTR; arc=fail smtp.client-ip=52.101.85.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kf9AnvaGvlVWdlPLuRtnTkCRZ81+V3omyAWFZJoRPimCri6ZuEbVLzZ5qWfSCbG5UZh5vRTXzZyEPu7g37Kw5SVElvGTIw9zB1t1j+WYZnwGc282nFxVi40Y6FPjogfjvIhQjUDFgh6dSzygepRiLd/tnT35SzH3f8oIF2/6/SvGjy5ZHxnvT2eyoUsMBwpb07WOzUE6nXs6HN4yQahXQLlKu58J5Y4oIHgYz3mVGVqZWRUJmtp7Is/+RPds1kwEmynilx23ghqIxn+rCCQY3qoqBpxR3BIMyzlvUmzASkiPZu71PS3uECN7xSsnpW+cKhN3a2oYVY6l3Oal43xJyA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wn4j80hA7XgX5eoS4TefDL2BpHUckUSEMt/txSYf9UA=;
- b=TfDmYcqHB881ONeOmI+47UEDMG+KUe/h6aBHxaEtZpDlSViMiF2fySDbMEU/7+kuAgnWtiwnf46IK+Zleg2CPjjM0hAI7/9Upy9eE7cfzqX/uhznml1OCKa3yzL4Q9zs5wn8u/Ew3kMrr5y2peaSZBTyHHLUxOSyfLlJSp/KasOEaYfBx8Mrebs1VkNo/+na1f4lMdHCkmUuiXdbrYxZWVO8dDiG3ZAY8K5RfdwjcCZkVobB2XIYFDr1EXZaGNbtQA7//pxKr70Aq6evl9ORRpbgNUKgRsFhoqXKPbfl2ueGL8wURJdzu1O7+b8sMOBh71v5Xoeq8di0/y9CfiroWw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.23.194) smtp.rcpttodomain=lists.infradead.org smtp.mailfrom=ti.com;
- dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wn4j80hA7XgX5eoS4TefDL2BpHUckUSEMt/txSYf9UA=;
- b=rRfTcdTRlT4XZzvPT8FSkA8T8r7E02fb561uKLpRNmoASd6v4VgMKrKVbCgUs8/9pqtOdhJwL/UObG7dpQVLr2pRzrlO2UCgSUdKqXzVSKB/Ut1T6PEWttB9IlZIXtwztkHl/19uDsj5BKwE1RNNSc/pcicTgsT6eda7pDOsl24=
-Received: from BY3PR05CA0004.namprd05.prod.outlook.com (2603:10b6:a03:254::9)
- by SJ5PPF8337777B9.namprd10.prod.outlook.com (2603:10b6:a0f:fc02::7b0) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Mon, 3 Nov
- 2025 04:01:37 +0000
-Received: from BY1PEPF0001AE16.namprd04.prod.outlook.com
- (2603:10b6:a03:254:cafe::ad) by BY3PR05CA0004.outlook.office365.com
- (2603:10b6:a03:254::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.7 via Frontend Transport; Mon, 3
- Nov 2025 04:01:23 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.194)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.23.194 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.23.194; helo=lewvzet200.ext.ti.com; pr=C
-Received: from lewvzet200.ext.ti.com (198.47.23.194) by
- BY1PEPF0001AE16.mail.protection.outlook.com (10.167.242.104) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.6 via Frontend Transport; Mon, 3 Nov 2025 04:01:35 +0000
-Received: from DLEE211.ent.ti.com (157.170.170.113) by lewvzet200.ext.ti.com
- (10.4.14.103) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 2 Nov
- 2025 22:01:34 -0600
-Received: from DLEE214.ent.ti.com (157.170.170.117) by DLEE211.ent.ti.com
- (157.170.170.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 2 Nov
- 2025 22:01:34 -0600
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE214.ent.ti.com
- (157.170.170.117) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Sun, 2 Nov 2025 22:01:34 -0600
-Received: from [172.24.233.103] (uda0132425.dhcp.ti.com [172.24.233.103])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5A341U323454910;
-	Sun, 2 Nov 2025 22:01:30 -0600
-Message-ID: <ed1317ad-72a2-478d-b931-8f08d8c7e159@ti.com>
-Date: Mon, 3 Nov 2025 09:30:00 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DAE9AD2C
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 04:01:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762142466; cv=none; b=YImDTnOLl/ZJLNcr5bqiWj/DDOTekREnTggR3s4pxGKl4gBfoIKx/4L+yoEnxT1gQwgZMCptnF9AqXIE6n0PylZJMyu1xmXbN1G2gHbLXj1/q9z3W0NGf3iHWN5u3g9JjTSI5gRkYAG+68SJcBzCvFvJIHNyijnbo0pftnabbyU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762142466; c=relaxed/simple;
+	bh=KTCHBedtUTHPyNKGUiRPC+ZB2Ima8y1JyHWnOajzTUg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZDPK9qza/vIrqOdxgoIXMtYlStOPUZUEeeJh+psp1JEqWoyE7sylvBYfdiDkcvX7B0ktQcoK3EEjS6MlPY6xSPbUfFOIxHiaFmRVVGurK42vnkB5qBAdm8tQB6XeL6MvCVVWKW88/jsWXL0ihaffwtojpNwPTygQ5Wb7KvmmC0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=OtM8VIIu; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Ayl8dtNe; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A2M8vux1224589
+	for <linux-kernel@vger.kernel.org>; Mon, 3 Nov 2025 04:01:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=BqZVWtvZB01lHMDhWvhuziwX
+	8RpB8DpNtZTndZIHXgg=; b=OtM8VIIu6EV3q/gqLC//i4PeKqEI+2AfaAF8ucL3
+	S66Amy+FETzxX+5JJll3ntgww8612f4zgviKNMywRr7jJU+4qRSIcI6N4OIU2m1b
+	zrxujBLtb8L5V7+I3Es8WP/bLNViZsE9LvMnO0E8RtkH4DuzwekgqUJ4BdVohf45
+	qYy54hUio7x+YtsvAMk5G6hLved7G9UORlagsuhq4X77FZ5VfMh0IIFQaNfMAY3R
+	eEFVJLAVkOXsCXIRXOB1TzZCT2Yu95JMOiAa1Pxwr/XS6/cIFz4RZJM6xvn8n9zt
+	+YWXUTeGOynuPD8POgLOThRtnoUrESjo9Jf4i6oHsWRd7A==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a6f0w8hub-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 04:01:02 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4eb9e480c15so60791111cf.1
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 20:01:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762142461; x=1762747261; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BqZVWtvZB01lHMDhWvhuziwX8RpB8DpNtZTndZIHXgg=;
+        b=Ayl8dtNevrPJ84j984oSFdmPuuqLOElWMxEPBVX47vDAW26Zbk5O2pM0MRsmcAo6HN
+         CKWXqshz05X0DGHjxAOVFzobBiV+iRxaDwR5AcdB+R+RKEels/KFUFn2c7WcHVA45tzz
+         10QetpimPTWvd/hxPur0+pbfHser2IxRxpgxa6A8RtsXl8mKbArsvA2bjOXeVHXZxxrH
+         +7FEkb44VIP1IXjnrR+KhMS9NvOgYj29oFao/bdprsgaUNpRIRv7DeEEt3oCmxbuXZdn
+         prh5+JZ+7zLXmaQkhN5vQugnfbrgKgw5OPtVs3XkKiTPgsBUrOvxdZnxNuplokbyVTRb
+         FEQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762142461; x=1762747261;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BqZVWtvZB01lHMDhWvhuziwX8RpB8DpNtZTndZIHXgg=;
+        b=Av8IM3zmNshGEzOKmxxuUiLeYnm/n2Oxox4yRROntPyw81foevzTS1B2+PuRJwbUJu
+         z8v0RqbgYIwFCpaM+0lEfotrt5hf7JNFBNZOWWACaKIxX+dEzMKINv9Ik6N+iyTjyjTd
+         lz0LjE9i1N/AyHsWBex3nQYYa+p8njMF/2wZQlJ2RBbK39W3E2vYTym4cbfBPjIaflew
+         0JPn5t5PLeGlF1zJL3/gGdArIvlx8BW74w5NqmKl6q5ZVn53TsaPdi0ShmS6eNr10nBg
+         BDYdUlbJWpgCIzwIYD7MLFqgMFvDflN2nzO8WgEq2FVdsthKSlvj1FjP/xg6siduJVmu
+         qYEA==
+X-Forwarded-Encrypted: i=1; AJvYcCWAkD/rlPn2OWfgd4jCQUx22C3iJlc3an5SfusGg82poiLlfNHR+D4n41+EJ4q7AiLtx2+/fWONd20Frf4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznA/ZOzHL6pxdsXFlSelBv5xlVPcOSB1PNJ4OYUXPxpGc+qtdy
+	DuHyR8T6D3YariNHfnP7B8OejMKwozfnlxR9qhaSUDw6zyEb65CHmDtfHTNdq/ZRqzxrbUM+Cyc
+	3SJQurTqojeVaFrDZgZ0PtT6mxiz6xuIVE2E7Lf0o0Mt/5GMZHOn0rS8brcA17sbsNfo=
+X-Gm-Gg: ASbGnctSRSfDw+XmGVn85iY96ggUvWQuIFYb5fLNVVo2+lmUyoIb7fvDDWfPMtoFfhy
+	qdgcSKZPnjZL0prT6WRpukhZ/kvZ5caYXIMiorJ9VOjhlonw8krCzLoYCOPGC0phkF/zt+m9wI1
+	OPtxdujx2pBtSQhrm64ZE57VB2p3uRj9zk0wQ23pJKDIGjtem1qz0kthT/xq1bpiigBmcqoyy2g
+	T6OqJS9C/TRMudnE3DDmhCVvYwemuB2johTGB2tLyH6VRcpaowP2qB416y7UJ3ZwolzZfSOrG1e
+	K3E5HUYB2iZNghPu32L64BgA+jwaOAtUnFQBTa7GeOBSwzx5hdTAsTvDMeIpxh6C/a18bPvTMcm
+	0u5uY5nf3lYVIN9wvnHrPJw6ftjc1bx4x3tf6mXrmvmmIjUWYz+1mBubA9Jm8axuIgAcq3yDJAo
+	rJyRc77qSyB78T
+X-Received: by 2002:a05:622a:986:b0:4e7:2844:b5ba with SMTP id d75a77b69052e-4ed30df358amr162632171cf.27.1762142461163;
+        Sun, 02 Nov 2025 20:01:01 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFgslzu3J94CkQXnMCfCenunuSO8sFC/hoLWJyhjIPrs3wspZRnHXndVjUUPy44N7dZHlcIHA==
+X-Received: by 2002:a05:622a:986:b0:4e7:2844:b5ba with SMTP id d75a77b69052e-4ed30df358amr162631081cf.27.1762142460117;
+        Sun, 02 Nov 2025 20:01:00 -0800 (PST)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-37a1c0baabcsm20998571fa.43.2025.11.02.20.00.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Nov 2025 20:00:59 -0800 (PST)
+Date: Mon, 3 Nov 2025 06:00:57 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Chaoyi Chen <kernel@airkyi.com>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Yubing Zhang <yubing.zhang@rock-chips.com>,
+        Frank Wang <frank.wang@rock-chips.com>,
+        Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Amit Sunil Dhamne <amitsd@google.com>,
+        Chaoyi Chen <chaoyi.chen@rock-chips.com>,
+        Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
+        Diederik de Haas <didi.debian@cknow.org>,
+        Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v8 03/10] drm/bridge: Implement generic USB Type-C DP HPD
+ bridge
+Message-ID: <rzozpbqmymdczerh3iijxxtz3xnsznoku7w2mquikwv6u5osvo@7h43hwc2fpzm>
+References: <20251029071435.88-1-kernel@airkyi.com>
+ <20251029071435.88-4-kernel@airkyi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: ti: k3-*: Replace rgmii-rxid with rgmii-id
- for CPSW ports
-To: Siddharth Vadapalli <s-vadapalli@ti.com>, <nm@ti.com>,
-	<kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, Francesco Dolcini <francesco@dolcini.it>, Wadim Egorov
-	<w.egorov@phytec.de>, Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-	Daniel Schultz <d.schultz@phytec.de>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
-References: <20251025073802.1790437-1-s-vadapalli@ti.com>
-From: Vignesh Raghavendra <vigneshr@ti.com>
-Content-Language: en-US
-In-Reply-To: <20251025073802.1790437-1-s-vadapalli@ti.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY1PEPF0001AE16:EE_|SJ5PPF8337777B9:EE_
-X-MS-Office365-Filtering-Correlation-Id: cf1d0340-b680-436f-f6f6-08de1a8daeaf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|7416014|1800799024|34020700016|36860700013|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?a05wSXo2YThqRkp2d1RiWkVwNTFpT2xhbDYxblB5a1hYckZlMGJIYWM4RVQ4?=
- =?utf-8?B?b20vWDhwbTYyemNFUHZncVlKTjNrWXMwbkRRVEI2ZTVGbHdvcVovMWh0TWhQ?=
- =?utf-8?B?WVBRdVVXNUJXZDJQMERMeDc0MnZNWlY3LzQ4aXZJRjJEaHdZK1JMdGpDTGlE?=
- =?utf-8?B?VjQrVzNwMGZOUmo2YW9MejdLOFpTdEV5Z0VpRFgxYzdiQ3pRV0todmFEY3Ji?=
- =?utf-8?B?M0htTmQxQkFWVVdMVHZuVmd5Uld4OC94dzVjMGRTeVFMWFJsK1dpUjY3UlFx?=
- =?utf-8?B?NlpOMjBld2V1cUNWTG54ZDBHNkxlN3ZBdVVuK29oSVpZdTRNejRqZ1ZqRTc5?=
- =?utf-8?B?NnhtZnBDUVQ2OHdmbjJQTjAvVUxzbUtKQXIzQlJqK2FjM0xmR205dlR1RjR2?=
- =?utf-8?B?aGVXakd4V2pvQ3JrZTA4L0tCaGJENHBZaFRDSVd2d1Zsams5ekxva08xbHhM?=
- =?utf-8?B?dThac2puT29OL0NnZHcxVm85S1pmcjh6TEhYMC9DWUFQWU0vWUR3N09KQUtN?=
- =?utf-8?B?TmcxZXBHZVB2QmNRYTlsMTlCbDNvczIzRkQ2MEpHd0lEZ2s5TklaYjdwV3RS?=
- =?utf-8?B?aW4zUTNRRGY4cXVJV09tYTk5cENrTzJnelhPSlpnZkh1QjRWVzgxMnlmVDJt?=
- =?utf-8?B?bFI2TUxFZkZUUktqYnVLc2JyZk5zZUU0QlJZWk9oOVZTYzJ5UG1iUEVjK3dL?=
- =?utf-8?B?c09paUtvQ25LaG02QjZXUlFtNEtKTlhGbVFHVUI0NVdBT1g1d3dSWVEvK1dH?=
- =?utf-8?B?dUgyQW1CQldTZlRNMi8zVld2ekNzb2FORC8xNE9DbXJLM3VXRWFsK1FjblFW?=
- =?utf-8?B?RytDTHVKWWlHYUlRa3hVb283NmJDb1JRYkZkejJHV0Z5YmNXZVN4MTZ3RTZl?=
- =?utf-8?B?dlh0elplY1RnajkyWVZyZnFoVWJhcWNWc2p4Z2V5RkVRWHVTZmR4MVVudWY4?=
- =?utf-8?B?Zm9LWGdGZ1VqVnZxaTR4amlnZnZXY255KzFpa2NqUHprNDRIejdiN3FiTmtW?=
- =?utf-8?B?R28xb1dpTklPQkhDN2twWDI4UmFuWFBSdlZrbXZLNnlmSUhJbjZIYThVd2tW?=
- =?utf-8?B?UHphSnUyZFdkbW9OSDdoS3V0L3VBdDhYaVFQZitJcWpsckUxaGs3UVNzelpm?=
- =?utf-8?B?Zyt0QWpiYWgrdTVsQi9SaFh4Rk5PNDJUeVdWMGxuWEJIK1UzbDI0ZzRnNzIz?=
- =?utf-8?B?WUJlTDRvUzdYK2ViT0lQR21IeXFTZExBTVRBTmttSzVnVm9LdjltUk80Ukp0?=
- =?utf-8?B?K2dpd3NnanUwRzB4VTUzK01EZWJMVEs5R1Q2azdPRERNejB3dFQ1M284NnZl?=
- =?utf-8?B?OS9CR0l3U3RjNjZtQ24xM0x6REl0WGlTUnE0ZXFYdTJkREpxWW9CdmttdW5G?=
- =?utf-8?B?L1JFUHowcTBXaVVJN2dLUUxJUUw5V0JTbFlHMHljMktRcEc1VzU1Vk0rWFAr?=
- =?utf-8?B?N0kzWWZUbDJnL1k5cmYvbDVVcjdxdkdORjZEYmxZdzYydWZRTGQxV3MxZ0hx?=
- =?utf-8?B?bGREalBnTTNFR0Zua2g2ejRBR3ZPYkNJSWVnUmIxbU0zNjdGVGJjMEhFSFdB?=
- =?utf-8?B?ZGFobjFDQmJFZDlQZFI3bmRpazQyNEtPUGNYQ2xBT2JvT1c0dm5wNEpUa1Y3?=
- =?utf-8?B?UHNoWWF1T1BLQ2MzMHlaVVFXVWx2RUFmMTFZU3I3eGd2c25ZeVk3MVFaT2o4?=
- =?utf-8?B?SElSZVBzUDBLTkwydlNaUmNiS2hqVWFDeFFUTVFIRUtqN1ErQ3l1bll0RGZS?=
- =?utf-8?B?RjhPWjBtZkUzNGF0Q3RvcFhqUjdtRXZXYVAycVpiaTRUYkp3MkpxeDIwMUEy?=
- =?utf-8?B?ckhBdmhSb1dkUXhHbWFSRVZtNmFxRmNxNUZObU1sV255K1Z0S1I4YXBmODdr?=
- =?utf-8?B?Ynh4Q0pqaE9yN1YySzh4SWF2ZXl4OG5GdkF2YTd1NWM1N2lqZ2N2a2greTRG?=
- =?utf-8?B?MzBOSVhCdHdmWFNaMk4vTHlPR1FJVTJNNHk2SmU3cEk1OXRZTHpVZXBRTk1n?=
- =?utf-8?B?c1M3RGptbU1kS3J5UHBFSEhYL2x4WmpJUGJMMmZNanpSWVQvK3RKYWVIa3c4?=
- =?utf-8?B?c2xLSjA0ZWFXZlB6djJCVWIvK3hObUJRQmtaZ3c0K1ZBaHZXcHhUVDBJeFlL?=
- =?utf-8?Q?316THWfCEvbD9iKM8FrYWRkyL?=
-X-Forefront-Antispam-Report:
-	CIP:198.47.23.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet200.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(1800799024)(34020700016)(36860700013)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 04:01:35.5796
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cf1d0340-b680-436f-f6f6-08de1a8daeaf
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.194];Helo=[lewvzet200.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BY1PEPF0001AE16.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF8337777B9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251029071435.88-4-kernel@airkyi.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAzMDAzNCBTYWx0ZWRfX+gc+s1dRa1al
+ SfwcygrggpUy7O4xTAzRhJG6HZVp+5NFHQWPjCbb7oICifm1a9hEVd5xqnZeZPRaJlAGpkhDprj
+ 3YLH0kvKFJIDYu6qSwTN2NFPsYZlSYypzM80gQLzDadZuJahTknWk3thmz0+WLLyZzG6YE9tPo1
+ bszwbffW4FVYVDZziP8oyd0eu7CSYyIkHydYc5umOXEE9OZEbbv/NeR6hmtra22BOFrYVyj9vtA
+ 7qPTWDBUBtYBTBPF0ohEX5XnuiE/HoovQkZW8O74xEk7Z66umXFpQQmPhXDksfFSHLOhaMQfrUz
+ SNGnPZyk54p1pVvXaCQHjaPE0N/TMniGkZ+U+VR6gHmTHSlu40r5F/d1oRg+dm+Tq8YOQS8fqep
+ 9nhV2HTf0pDmFEuwj5/0KT05u0CgQQ==
+X-Authority-Analysis: v=2.4 cv=LcAxKzfi c=1 sm=1 tr=0 ts=690828fe cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=s8YR1HE3AAAA:8 a=KKAkSRfTAAAA:8 a=GMWCpaOuOXG1PATvt-oA:9 a=CjuIK1q_8ugA:10
+ a=dawVfQjAaf238kedN5IG:22 a=jGH_LyMDp9YhSvY-UuyI:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-ORIG-GUID: lYHQNbtg7217PlWqMMpKCozlpA3Pa9o_
+X-Proofpoint-GUID: lYHQNbtg7217PlWqMMpKCozlpA3Pa9o_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-02_02,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 impostorscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015
+ priorityscore=1501 bulkscore=0 phishscore=0 suspectscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511030034
 
-+ Francesco, Wadim, Daniel, Matthias
-
-Please test/review
-
-Hi Siddharth,
-
-On 25/10/25 13:07, Siddharth Vadapalli wrote:
-> The MAC Ports across all of the CPSW instances (CPSW2G, CPSW3G, CPSW5G and
-> CPSW9G) present in various K3 SoCs only support the 'RGMII-ID' mode. This
-> correction has been implemented/enforced by the updates to:
-> a) Device-Tree binding for CPSW [0]
-> b) Driver for CPSW [1]
-> c) Driver for CPSW MAC Port's GMII [2]
+On Wed, Oct 29, 2025 at 03:14:28PM +0800, Chaoyi Chen wrote:
+> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
 > 
-> To complete the transition from 'RGMII-RXID' to 'RGMII-ID', update the
-> 'phy-mode' property for all CPSW ports by replacing 'rgmii-rxid' with
-> 'rgmii-id'.
+> Several USB-C controller drivers have already implemented the DP HPD
+> bridge function provided by aux-hpd-bridge.c, but there are still
+> some USB-C controller driver that have not yet implemented it.
 > 
-> [0]: commit 9b357ea52523 ("dt-bindings: net: ti: k3-am654-cpsw-nuss: update phy-mode in example")
-> [1]: commit ca13b249f291 ("net: ethernet: ti: am65-cpsw: fixup PHY mode for fixed RGMII TX delay")
-> [2]: commit a22d3b0d49d4 ("phy: ti: gmii-sel: Always write the RGMII ID setting")
-> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> This patch implements a generic DP HPD bridge based on aux-hpd-bridge.c,
+> so that other USB-C controller drivers don't need to implement it again.
+
+This doesn't describe the problem that you are trying to solve.
+
+> 
+> Signed-off-by: Chaoyi Chen <chaoyi.chen@rock-chips.com>
 > ---
 > 
-> Hello,
+> Changes in v8:
+> - Merge generic DP HPD bridge into one module.
 > 
-> This patch is based on linux-next tagged next-20251024.
+>  drivers/gpu/drm/bridge/Kconfig                |  5 +-
+>  drivers/gpu/drm/bridge/Makefile               |  8 +++-
+>  drivers/gpu/drm/bridge/aux-hpd-bridge.c       | 23 ++++++++-
+>  drivers/gpu/drm/bridge/aux-hpd-bridge.h       | 13 +++++
+>  .../gpu/drm/bridge/aux-hpd-typec-dp-bridge.c  | 47 +++++++++++++++++++
+>  5 files changed, 93 insertions(+), 3 deletions(-)
+>  create mode 100644 drivers/gpu/drm/bridge/aux-hpd-bridge.h
+>  create mode 100644 drivers/gpu/drm/bridge/aux-hpd-typec-dp-bridge.c
+> 
+> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+> index a250afd8d662..17257b223a28 100644
+> --- a/drivers/gpu/drm/bridge/Kconfig
+> +++ b/drivers/gpu/drm/bridge/Kconfig
+> @@ -23,13 +23,16 @@ config DRM_AUX_BRIDGE
+>  	  build bridges chain.
+>  
+>  config DRM_AUX_HPD_BRIDGE
+> -	tristate
+> +	tristate "AUX HPD bridge support"
 
+Why? No, this is supposed to be selected by other drivers. Users don't
+know an wouldn't know what is this.
 
-What boards have been tested?
+>  	depends on DRM_BRIDGE && OF
+>  	select AUXILIARY_BUS
+>  	help
+>  	  Simple bridge that terminates the bridge chain and provides HPD
+>  	  support.
+>  
+> +	  Specifically, if you want a default Type-C DisplayPort HPD bridge for
+> +	  each port of the Type-C controller, say Y here.
+> +
+>  menu "Display Interface Bridges"
+>  	depends on DRM && DRM_BRIDGE
+>  
+> diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
+> index c7dc03182e59..2998937444bc 100644
+> --- a/drivers/gpu/drm/bridge/Makefile
+> +++ b/drivers/gpu/drm/bridge/Makefile
+> @@ -1,6 +1,12 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  obj-$(CONFIG_DRM_AUX_BRIDGE) += aux-bridge.o
+> -obj-$(CONFIG_DRM_AUX_HPD_BRIDGE) += aux-hpd-bridge.o
+> +
+> +hpd-bridge-y := aux-hpd-bridge.o
+> +ifneq ($(CONFIG_TYPEC),)
+> +hpd-bridge-y += aux-hpd-typec-dp-bridge.o
+> +endif
+> +obj-$(CONFIG_DRM_AUX_HPD_BRIDGE) += hpd-bridge.o
+> +
+>  obj-$(CONFIG_DRM_CHIPONE_ICN6211) += chipone-icn6211.o
+>  obj-$(CONFIG_DRM_CHRONTEL_CH7033) += chrontel-ch7033.o
+>  obj-$(CONFIG_DRM_CROS_EC_ANX7688) += cros-ec-anx7688.o
+> diff --git a/drivers/gpu/drm/bridge/aux-hpd-bridge.c b/drivers/gpu/drm/bridge/aux-hpd-bridge.c
+> index 2e9c702c7087..11ad6dc776c7 100644
+> --- a/drivers/gpu/drm/bridge/aux-hpd-bridge.c
+> +++ b/drivers/gpu/drm/bridge/aux-hpd-bridge.c
+> @@ -12,6 +12,8 @@
+>  #include <drm/drm_bridge.h>
+>  #include <drm/bridge/aux-bridge.h>
+>  
+> +#include "aux-hpd-bridge.h"
+> +
+>  static DEFINE_IDA(drm_aux_hpd_bridge_ida);
+>  
+>  struct drm_aux_hpd_bridge_data {
+> @@ -204,7 +206,26 @@ static struct auxiliary_driver drm_aux_hpd_bridge_drv = {
+>  	.id_table = drm_aux_hpd_bridge_table,
+>  	.probe = drm_aux_hpd_bridge_probe,
+>  };
+> -module_auxiliary_driver(drm_aux_hpd_bridge_drv);
+> +
+> +static int drm_aux_hpd_bridge_mod_init(void)
+> +{
+> +	int ret;
+> +
+> +	ret = auxiliary_driver_register(&drm_aux_hpd_bridge_drv);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return drm_aux_hpd_typec_dp_bridge_init();
+> +}
+> +
+> +static void drm_aux_hpd_bridge_mod_exit(void)
+> +{
+> +	drm_aux_hpd_typec_dp_bridge_exit();
+> +	auxiliary_driver_unregister(&drm_aux_hpd_bridge_drv);
+> +}
+> +
+> +module_init(drm_aux_hpd_bridge_mod_init);
+> +module_exit(drm_aux_hpd_bridge_mod_exit);
+>  
+>  MODULE_AUTHOR("Dmitry Baryshkov <dmitry.baryshkov@linaro.org>");
+>  MODULE_DESCRIPTION("DRM HPD bridge");
+> diff --git a/drivers/gpu/drm/bridge/aux-hpd-bridge.h b/drivers/gpu/drm/bridge/aux-hpd-bridge.h
+> new file mode 100644
+> index 000000000000..69364731c2f1
+> --- /dev/null
+> +++ b/drivers/gpu/drm/bridge/aux-hpd-bridge.h
+> @@ -0,0 +1,13 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +#ifndef AUX_HPD_BRIDGE_H
+> +#define AUX_HPD_BRIDGE_H
+> +
+> +#if IS_REACHABLE(CONFIG_TYPEC)
+> +int drm_aux_hpd_typec_dp_bridge_init(void);
+> +void drm_aux_hpd_typec_dp_bridge_exit(void);
+> +#else
+> +static inline int drm_aux_hpd_typec_dp_bridge_init(void) { return 0; }
+> +static inline void drm_aux_hpd_typec_dp_bridge_exit(void) { }
+> +#endif /* IS_REACHABLE(CONFIG_TYPEC) */
+> +
+> +#endif /* AUX_HPD_BRIDGE_H */
+> diff --git a/drivers/gpu/drm/bridge/aux-hpd-typec-dp-bridge.c b/drivers/gpu/drm/bridge/aux-hpd-typec-dp-bridge.c
+> new file mode 100644
+> index 000000000000..6f2a1fca0fc5
+> --- /dev/null
+> +++ b/drivers/gpu/drm/bridge/aux-hpd-typec-dp-bridge.c
+> @@ -0,0 +1,47 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +#include <linux/of.h>
+> +#include <linux/usb/typec_altmode.h>
+> +#include <linux/usb/typec_dp.h>
+> +#include <linux/usb/typec_notify.h>
+> +
+> +#include <drm/bridge/aux-bridge.h>
+> +
+> +#include "aux-hpd-bridge.h"
+> +
+> +#if IS_REACHABLE(CONFIG_TYPEC)
+> +static int drm_typec_bus_event(struct notifier_block *nb,
+> +			       unsigned long action, void *data)
+> +{
 
-[...]
+This feels like this should be a part of the Type-C subsystem rather
+than DRM.
 
+> +	struct typec_altmode *alt = (struct typec_altmode *)data;
+> +
+> +	if (action != TYPEC_ALTMODE_REGISTERED)
+> +		goto done;
+> +
+> +	if (is_typec_partner(&alt->dev) || alt->svid != USB_TYPEC_DP_SID)
+> +		goto done;
+> +
+> +	/*
+> +	 * alt->dev.parent->parent : USB-C controller device
+> +	 * alt->dev.parent         : USB-C connector device
+> +	 */
+> +	drm_dp_hpd_bridge_register(alt->dev.parent->parent,
+> +				   to_of_node(alt->dev.parent->fwnode));
+> +
+> +done:
+> +	return NOTIFY_OK;
+> +}
+> +
+> +static struct notifier_block drm_typec_event_nb = {
+> +	.notifier_call = drm_typec_bus_event,
+> +};
+> +
+> +int drm_aux_hpd_typec_dp_bridge_init(void)
+> +{
+> +	return typec_altmode_register_notify(&drm_typec_event_nb);
+> +}
+> +
+> +void drm_aux_hpd_typec_dp_bridge_exit(void)
+> +{
+> +	typec_altmode_unregister_notify(&drm_typec_event_nb);
+> +}
+> +#endif
+> -- 
+> 2.49.0
+> 
 
 -- 
-Regards
-Vignesh
-https://ti.com/opensource
-
+With best wishes
+Dmitry
 
