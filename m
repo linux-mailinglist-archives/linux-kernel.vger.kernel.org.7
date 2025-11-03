@@ -1,119 +1,395 @@
-Return-Path: <linux-kernel+bounces-882971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D956C2C12E
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 14:28:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32C31C2C14C
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 14:29:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B7FF4E58C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 13:24:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AD383BA146
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 13:24:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5926260569;
-	Mon,  3 Nov 2025 13:24:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C234E26056A;
+	Mon,  3 Nov 2025 13:24:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="XN2VxKRZ"
-Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com [113.46.200.221])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="RWtX3PyC";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="kjNzHAVI"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8EB25393E;
-	Mon,  3 Nov 2025 13:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.221
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7492260592
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 13:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762176252; cv=none; b=e2bg1Uvt7FbE+xNXwciGtVYIC17S4RlJdPUrCOJzKDF5tT1VHhcrj6ak4zL3GIGDfKG2yoY7f20xtpmu/Osl0/lmirt/CDAH3jVDSMpLf3J8UYzFXg0Jm4FLjSs+1GtXKsZ4t5nRucf8cirqGH9trC2Z6PyIVzoi5hldTTp5jQ0=
+	t=1762176262; cv=none; b=HmtRRCjQ5IgQlRoBzYOHaZfoUrEw/ufUwwmvQGlhyhYvXtDuFaMCI7EVENFU2+LVGfgwkyVrlHDUd4hGCoLnLO04YXOswyvgH/ch4CTfPLSh/SJFd3pHsDmtdlqG8rB2WAQ5XVRpS1glfDHqm8Gd6y8W8al9NRmqTDicFkj6DZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762176252; c=relaxed/simple;
-	bh=MW0QQtvUuz61MW0vqnGbwGynelcszYrrI9irHuPD5SM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BmhoTi9MDBKTsMIRnc+vLn/aOXlv9mehvA6s1yLZA1Y4eVS1K+0ErYBVW7Ryi+xsj/VyOhQyyFdmnIobe+pba0sDF5DkPKLwK6bTfubU9B3OYxZLnEd6Kj26aBYBFTIdELz5YbtGLlS/z7T1izyyAnpIDt2++/Y6PjK9ETwTyYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=XN2VxKRZ; arc=none smtp.client-ip=113.46.200.221
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=mAK4GGZ6Wc0AlGtkULkNF5rra7UyoEYfK4R4QDVlWWY=;
-	b=XN2VxKRZ3crT5GYeeWcFkjt4OALy8Rp9wM7ylmTQFH7kUhZ88qzDVCE5n8pywkFL/nevUvLYE
-	BwLJxMPgMSFxeY3ZRf2IwNogn4eKh8IPohQlk3UBi7gNesWUVZl/0GcQ6vIZC2tpJj5Zoi4FPnt
-	npWYlwA07OCHYgkB/eN8ZX4=
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4d0XLt3rgWzRhQp;
-	Mon,  3 Nov 2025 21:22:30 +0800 (CST)
-Received: from kwepemj100009.china.huawei.com (unknown [7.202.194.3])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1D4CA180491;
-	Mon,  3 Nov 2025 21:24:04 +0800 (CST)
-Received: from DESKTOP-A37P9LK.huawei.com (10.67.109.17) by
- kwepemj100009.china.huawei.com (7.202.194.3) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 3 Nov 2025 21:24:03 +0800
-From: Xie Yuanbin <xieyuanbin1@huawei.com>
-To: <tglx@linutronix.de>, <david@redhat.com>, <mingo@redhat.com>,
-	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
-	<akpm@linux-foundation.org>, <lorenzo.stoakes@oracle.com>,
-	<Liam.Howlett@oracle.com>, <vbabka@suse.cz>, <rppt@kernel.org>,
-	<surenb@google.com>, <mhocko@suse.com>, <linmiaohe@huawei.com>,
-	<nao.horiguchi@gmail.com>, <luto@kernel.org>, <peterz@infradead.org>,
-	<tony.luck@intel.com>
-CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-edac@vger.kernel.org>, <will@kernel.org>, <liaohua4@huawei.com>,
-	<lilinjie8@huawei.com>, Xie Yuanbin <xieyuanbin1@huawei.com>
-Subject: Re: [PATCH 1/2] x86/mm: support memory-failure on 32-bits with SPARSEMEM
-Date: Mon, 3 Nov 2025 21:23:58 +0800
-Message-ID: <20251103132358.79766-1-xieyuanbin1@huawei.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <5ace86cc-0b2d-4306-8bc1-dfc34cccef1a@redhat.com>
-References: <5ace86cc-0b2d-4306-8bc1-dfc34cccef1a@redhat.com>
+	s=arc-20240116; t=1762176262; c=relaxed/simple;
+	bh=4GiV1leOvjQf6LQXwmXmu6W51LCKiEyR5Xm/WJswbxM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=nmnlDmtot68bC72EXL6UZfJheLIMLwWVeS6+etH9/rPkCzC/QREmkqGsyWPDvlAY9Pb4M+3DTSfpJPInEqwmEiY4v+m2wsa0D68RZeZlo7HUmhTcgjk/suwshenei7Zuv95QfSclFoIWbLDpCCHlpX7EAs3v9VZPN+nKLakfick=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=RWtX3PyC; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=kjNzHAVI; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A3AIpW92756448
+	for <linux-kernel@vger.kernel.org>; Mon, 3 Nov 2025 13:24:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=iJRs/EDNyyv08MDiIiSOAv
+	pzehctYeiqFguWrB54Vp0=; b=RWtX3PyCwaUlOkGx+p32S4nNG9Kj8RHvrpVUqC
+	QdjSJHgeaw+OgyntRyTc7B7LLfwIy53al8Ssx71F/jqVO0BGCXxuJ5fjX+JqRkFs
+	i1fHj8KMSvpjam5wFuzFB72ht7Sy8TeoX0HEJHXJ9/mKvhUTRvYZ2ophQgLutQlq
+	/9Qgy2FrWCYRhCr29aktxivCR7VMs07uB253iFHrWC1xmVfTTsKJCsJPf8xznj5L
+	j9Z2SX3Ig76Xp3RDs+H+Kq2xQ/GruGM9hSxLaBx6X6C6Jl9Yf4t0UPNNrToS9JUk
+	Wf4wwxzbAPwNhKW5Yz8dDPeLX3+XHCmwkDNIQqTq+f3pWa2w==
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a6th9req9-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 13:24:18 +0000 (GMT)
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-34067037f86so984099a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 05:24:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762176258; x=1762781058; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iJRs/EDNyyv08MDiIiSOAvpzehctYeiqFguWrB54Vp0=;
+        b=kjNzHAVIAgoH/5lB7Juvo4ihg1BjQNnhi4uYBUPQ4ZnrpM6XSe0GJZ5wUf1jvN+6y+
+         O609Qf4HhaKwtxWnb/A7J06avZAaXnZouNF8xCNhj6RkGmenKShpqU38ajuRdULPwOHi
+         b2nQ6PaBdo6piG5gLnBie3hdy1YjHZowErB2zZq7jysXgJ/uvZ84X+lVXEEAlVXwDIVZ
+         /nKp0h21zc0wd1t8kJOvwamy/+wIclVfJ3l5WqlZYBHxIJugynzr19hObM+vaJ0pjUYF
+         ySRlGKaGQHn1srq/M46nkPPg0gcloeX4gi1qRabjMCjDQt0NRd5FIZFJbgU+fNcRuN8q
+         /Vag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762176258; x=1762781058;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iJRs/EDNyyv08MDiIiSOAvpzehctYeiqFguWrB54Vp0=;
+        b=ht+MBuvhbP+IBm+33jNAbng/Yh3ULHZ4Rsx3b1UVVVMnGdtJ9gp7T8tdhvNV+x5nIn
+         SolddsusiaM2Ws/jIQNL/QRlPS8T3oVlBCI5g+kMexSU+9ejB/q868MlZRvG4VsdJd01
+         6c4MQAihmAWTbSTih9OJvcdo+Cmo47vp75PFVw+/pRr4JSRowUVL5O430+9z/wSOgEZp
+         eqVDlG4RVuH/WeiBG6/KwmAEB07rqcPEZWMqMzb5aTM4eZ2+M0VKrb2CczvbDnAd03Fz
+         m6TZyULBbeCIbqYn99eD8I1b4MyTPaGIJJke/zSAPMLOs/hOItlO+ePuy/EVuS2hGcaC
+         7m5A==
+X-Forwarded-Encrypted: i=1; AJvYcCVHGKgL2N1yhPOgJ7wYJ5zSkjNG76dFS+hP6FvZBLErhpilgLSXJX1TNdDTrMeLJwLQWSRMAqYjyjIs5Gs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyt7Jwy7vMbZZLH/6J9wECwql9thmnlk9KfSc/oWJ4RSWuEp8HW
+	BEqqIvBHGCCeC9qOydVxKWE7mTezWhFRGMw3TbrlBnnVFheh6/huakToITEFbKsczACCFSEcY+L
+	YmTkDWX1dEpLE54KHINNWbSblQfjoRGL7gksuASamovYP4DsaNox0VASIkfU5bIe5jVE=
+X-Gm-Gg: ASbGncsG/23RCadkLuPjcs3+uMyUYAkR+k+0W9Liirxqv83p2sp32/F07YVjlfgvPge
+	rmi4sEyOkEt743Q6w7oZpApyc5WiExR4NMyECG/WVG0FVlowJrjd9QmVBDFJE92IGxKyfTrYBOw
+	Ojj+DsT+4ND/gFMuSMDOXWDHeLePj2iaX+ATNMzCmvir5k0xR+qhtRku15vRMFwA6zGPG6Z46Ek
+	KnQhoj81DLRRUFU5DVcHSQkNmubNUOVdoyrKlKQ3oAAG59/G+Te5foDI12Mv4Nz//ziOjWZBFwV
+	E5S11kkrPvwQzHND8I/T9KzZYTlEZA8GmxCb6t0MpdRnjTBlimFq+MEbzjE2ElOoT7c07RmYV49
+	rwsS3IOEIPGaVSk5Hpsdw/2YtU7wume52xebpOX3OnKMSp7ZyzBL39vMpBgY=
+X-Received: by 2002:a17:90b:1644:b0:341:124f:4745 with SMTP id 98e67ed59e1d1-341124f559bmr2586286a91.6.1762176257993;
+        Mon, 03 Nov 2025 05:24:17 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGWD1W7mBnryxkMQuODP/QY8ikkuWvdNGBhIUkx/asALxNhVx7uiUYNfLWCK7uQ6/F3E2Et+Q==
+X-Received: by 2002:a17:90b:1644:b0:341:124f:4745 with SMTP id 98e67ed59e1d1-341124f559bmr2586242a91.6.1762176257270;
+        Mon, 03 Nov 2025 05:24:17 -0800 (PST)
+Received: from gu-dmadival-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3407ec24330sm6614812a91.2.2025.11.03.05.24.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Nov 2025 05:24:16 -0800 (PST)
+From: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>
+Subject: [PATCH v4 0/5] Enable support for AV1 stateful decoder
+Date: Mon, 03 Nov 2025 05:24:04 -0800
+Message-Id: <20251103-av1d_stateful_v3-v4-0-33cc1eaa83f2@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- kwepemj100009.china.huawei.com (7.202.194.3)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPWsCGkC/2WPzWrDMBCEXyXoXAWt5P9T36OEsJZ2G4FjJ5Ktt
+ gS/e2X70ENhWZiB/XbmJSIFT1F0p5cIlHz005hF8XYS9objJ0nvshZa6RKUbiUmcNc440y8DNd
+ kpO25ZXIA6KzIZ49A7L935Mfl0IGeSybPh/kH7jaqaqGRyTuapA8+yqX/spJG7AeSTU1oKy6As
+ eiS3vA9RpJ2ut/93EFlWqgb01pFhKZ3TKbSinXNFdRYluzqyigtthw3H+cp/OxNk9mDHKWM+l8
+ qT3YBmsJRqdkW71OM5+eCw/b6nJe4rOv6C0UnrJY/AQAA
+X-Change-ID: 20251029-av1d_stateful_v3-cbf9fed11adc
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
+        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Bryan O'Donoghue <bod@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, kernel test robot <lkp@intel.com>,
+        Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Nicolas Dufresne <nicolas.dufresne@collabora.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762176256; l=8613;
+ i=deepa.madivalara@oss.qualcomm.com; s=20250814; h=from:subject:message-id;
+ bh=4GiV1leOvjQf6LQXwmXmu6W51LCKiEyR5Xm/WJswbxM=;
+ b=nHu+ZhjG8/wAnQ8v+hzeMpavu7CWYCS9J4/mWdhV0Gg/QQqWZ/4xgPfShDGGjsKk9SiK36I+K
+ wYH0OpaAVY4AHB5k77aRAvup1+hS/y7ElR12zvL9eROVUcn8UAO9O2w
+X-Developer-Key: i=deepa.madivalara@oss.qualcomm.com; a=ed25519;
+ pk=MOEXgyokievn+bgpHdS6Ixh/KQYyS90z2mqIbQ822FQ=
+X-Proofpoint-GUID: XFSypxY3SItRPhSGWTymaH5v1HjwtqTw
+X-Authority-Analysis: v=2.4 cv=ea8wvrEH c=1 sm=1 tr=0 ts=6908ad02 cx=c_pps
+ a=0uOsjrqzRL749jD1oC5vDA==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=QyXUC8HyAAAA:8
+ a=e5mUnYsNAAAA:8 a=rSFLfVtXdW1OZ3NksNsA:9 a=QEXdDO2ut3YA:10
+ a=mQ_c8vxmzFEMiUWkPHU9:22 a=Vxmtnl_E_bksehYqCbjh:22
+X-Proofpoint-ORIG-GUID: XFSypxY3SItRPhSGWTymaH5v1HjwtqTw
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAzMDEyMSBTYWx0ZWRfX0Fe06nutCnyr
+ 3ZiVZ5tVb3DvHKxF2NwqqHv+pk0q3vmft8IlWtPd8fHINmAhxPhEZudtgO3p0EjyfRCieY8x+LT
+ mTY+T7We0kYphgrajyD/xatJCR9WGy5KnfmnHUjzL6Ap0QJiX35oInJQujmVnhRHJmT0RDLhmWp
+ krp7blwGPXg+QuTA0OG1itOhHZXaUVLwMBMMQzQoaznEPJreDkkYEWNgYUOD9VV3kYxcNzkvNKc
+ f7vC+E2KdqCvT14zNbe5yuDQDsS73WGLyK6wNy+YqJp+A+W1r4Qr+6VBq0FA30aD5GAAvXtqa+a
+ KXYq9OX1t01ALqWnkn5MT8aTOKbOIkjq2AWCIucJQ2A6+//ReV+yKX+sgv8jMN69IGYliTUOgaK
+ 902nTn9q74UGZAal/hm0ak/Doftz9w==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-03_02,2025-11-03_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 impostorscore=0 suspectscore=0 lowpriorityscore=0 bulkscore=0
+ adultscore=0 spamscore=0 priorityscore=1501 phishscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511030121
 
-On Mon, 3 Nov 2025 13:08:38 +0100, David Hildenbrand wrote:
->> The historical commit d949f36f1865c60239d4 ("x86: Fix hwpoison code
->> related build failure on 32-bit NUMAQ"), disabled x86_32's
->> memory-failure when SPARSEMEM is enabled, because the number of
->> page-flags are insufficient.
->> 
->> The commit 09022bc196d23484a7a5 ("mm: remove PG_error") removes a
->> page flag, so memory-failure can now be enable now.
->
-> In the meantime, we added PG_dropbehind
+Hi all,
 
-Okay, I completely understand now.
+This patch series adds initial support for the AV1 stateful decoder
+codecs in iris decoder. Also it adds support for AV1 stateful decoder
+in V4l2. The objective of this work is to extend the Iris decoder's
+capabilities to handle AV1 format codec streams, including necessary
+format handling and buffer management.
 
-For historical versions, MEMORY_FAILURE cannot be enabled with x86_32 &&
-SPARSEMEM because the number of page-flags are insufficient. At least it
-has been so from 5.10.x to 6.9.x.
+These patches also address the comments and feedback received from the
+patches previously sent. I have made the necessary improvements
+based on the community's suggestions.
 
-The commit 46df8e73a4a3f1445f2a ("mm: free up PG_slab") from 6.10-rc1
-remove a flag that allows MEMORY_FAILURE to be enabled from here on.
+Changes in v4:
+- Reuse sm8550_vdec_output_config_params (Dikshita)
+- Add definition for 256 (Bryan)
+- Fix identation (Bryan)
+- Link to v3:
+  https://lore.kernel.org/r/20251030-av1d_stateful_v3-v3-0-a1184de52fc4@oss.qualcomm.com
 
-The commit 09022bc196d23484a7a5 ("mm: remove PG_error") from 6.12-rc1
-remove another flag.
+Changes in v3:
+- Updated fourcc could be to match the ISO specification (Nicolas)
+- Addressed comments and rebased changes to resolve potential merge
+  conflicts (Dikshita)
+- Updated GST MR
+- Link to v2:
+  https://lore.kernel.org/r/20251017-av1_irisdecoder-v2-0-964a5478139e@oss.qualcomm.com
 
-The commit cceba6f7e46c48deca43 ("mm: add PG_dropbehind folio flag") from
-6.14-rc1 add a flag, but MEMORY_FAILURE can still be enabled.
+Changes in v2:
+- Updated documentation to target AV1 codec, not just AV1 decoder
+  (Nicolas)
+- Updated description for V4L2_PIX_FMT_AV1 (Nicolas)
+- Simplified buffer calculations and replaced numbers with relevant
+  enums (Bryan, Nicolas)
+- Improved commit text for patch 5/5
+- Fix for kernel test robot failure
+  Reported-by: kernel test robot <lkp@intel.com>
+  Closes:
+  https://lore.kernel.org/oe-kbuild-all/202510021620.4BVCZwgf-lkp@intel.com/
+- Link to v1:
+  https://lore.kernel.org/r/20251001-av1_irisdecoder-v1-0-9fb08f3b96a0@oss.qualcomm.com
 
-At least for the current version, memory-failure can be safely enabled.
-The number of pageflags reaches its maximum value under the following
-conditions: HIGHMEM && SPARSEMEM && X86_PAE && X86_PAT. In this case, if
-MEMORY_FAILURE is enabled, the number of pageflags just reached the limit
-of 32.
+Changes since RFC:
+- Addressed CRC issues seen during fluster testing which
+  are fixed with firmware fix [1]
+- Added Documentation for AV1 stateful uapi [Nicholas]
+- Resolved issues reported by static tool analyzers
+- RFC:
+  https://lore.kernel.org/linux-media/20250902-rfc_split-v1-0-47307a70c061@oss.qualcomm.com/
 
-I will update the V2 patch to describe it.
+[1]:
+https://lore.kernel.org/linux-firmware/ff27f712-a96e-4fa6-7572-a0091537d8ac@oss.qualcomm.com/
 
-> Cheers
->
-> David / dhildenb
+These patches are tested on SM8550 for AV1 decoder while
+ensuring other codecs are not affected.
 
-Thanks!
+Gstreamer testing:
+Gstreamer MR for enabling AV1 stateful decoder:
+https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/9892
 
-Xie Yuanbin
+Fluster testing:
+Test suite: AV1-TEST-VECTORS
+The result of fluster test on SM8550:
+135/242 testcases passed while testing AV1-TEST-VECTORS with
+GStreamer-AV1-V4L2-Gst1.0
+
+failing tests:
+unsupported content with bitdepth 10 (66 tests)
+Iris decoder supports only 8bit NV12
+av1-1-b10-00-quantizer-*
+
+Unsupported resolution (36 tests).
+Iris hardware decoder supports min resolution of 96x96
+av1-1-b8-01-size-*
+
+Unsupported colorformat (1 test)
+av1-1-b8-24-monochrome
+
+Unsupported SVC tests (2tests)
+av1-1-b8-22-svc-L2T1
+av1-1-b8-22-svc-L2T2
+
+Bitstream corruption issue: (2tests)
+av1-1-b8-03-sizeup
+av1-1-b8-03-sizedown
+
+Testsuite: CHROMIUM-8bit-AV1-TEST-VECTORS
+13/13 testcases passed while testing CHROMIUM-8bit-AV1-TEST-VECTORS with
+GStreamer-AV1-V4L2-Gst1.0
+
+Following the RFC feedback, focused on only IVF/MKV content
+as AV1 parser lacks support for below content
+AV1-ARGON-PROFILE0-CORE-ANNEX-B
+AV1-ARGON-PROFILE0-NON-ANNEX-B
+AV1-ARGON-PROFILE0-NON-ANNEX-B
+
+Unsupported test suites:
+Iris Decoder supports only PROFILE0/V4L2_MPEG_VIDEO_AV1_PROFILE_MAIN
+and 8 bit, 420 only
+AV1-ARGON-PROFILE1-CORE-ANNEX-B
+AV1-ARGON-PROFILE1-NON-ANNEX-B
+AV1-ARGON-PROFILE1-STRESS-ANNEX-B
+AV1-ARGON-PROFILE2-CORE-ANNEX-B
+AV1-ARGON-PROFILE2-NON-ANNEX-B
+AV1-ARGON-PROFILE2-STRESS-ANNEX-B
+CHROMIUM-10bit-AV1-TEST-VECTORS
+
+Compliance test for iris_driver device /dev/video0:
+
+Driver Info:
+		Driver name      : iris_driver
+		Card type        : Iris Decoder
+		Bus info         : platform:aa00000.video-codec
+		Driver version   : 6.17.0
+		Capabilities     : 0x84204000
+				Video Memory-to-Memory Multiplanar
+				Streaming
+				Extended Pix Format
+				Device Capabilities
+		Device Caps      : 0x04204000
+				Video Memory-to-Memory Multiplanar
+				Streaming
+				Extended Pix Format
+		Detected Stateful Decoder
+
+Required ioctls:
+		test VIDIOC_QUERYCAP: OK
+		test invalid ioctls: OK
+
+Allow for multiple opens:
+		test second /dev/video0 open: OK
+		test VIDIOC_QUERYCAP: OK
+		test VIDIOC_G/S_PRIORITY: OK
+		test for unlimited opens: OK
+
+Debug ioctls:
+		test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+		test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+		test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not
+Supported)
+		test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+		test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+		test VIDIOC_ENUMAUDIO: OK (Not Supported)
+		test VIDIOC_G/S/ENUMINPUT: OK (Not Supported)
+		test VIDIOC_G/S_AUDIO: OK (Not Supported)
+		Inputs: 0 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+		test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+		test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+		test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+		test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+		test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+		Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+		test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+		test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not
+Supported)
+		test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+		test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls:
+		test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+		test VIDIOC_QUERYCTRL: OK
+		test VIDIOC_G/S_CTRL: OK
+		test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+		test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+		test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+		Standard Controls: 12 Private Controls: 0
+
+Format ioctls:
+		test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+		test VIDIOC_G/S_PARM: OK (Not Supported)
+		test VIDIOC_G_FBUF: OK (Not Supported)
+		test VIDIOC_G_FMT: OK
+		test VIDIOC_TRY_FMT: OK
+		test VIDIOC_S_FMT: OK
+		test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+		test Cropping: OK
+		test Composing: OK
+		test Scaling: OK (Not Supported)
+
+Codec ioctls:
+		test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+		test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+		test VIDIOC_(TRY_)DECODER_CMD: OK
+
+Buffer ioctls:
+		test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+		test CREATE_BUFS maximum buffers: OK
+		test VIDIOC_REMOVE_BUFS: OK
+		test VIDIOC_EXPBUF: OK
+		test Requests: OK (Not Supported)
+		test blocking wait: OK
+
+Total for iris_driver device /dev/video0: 48, Succeeded: 48, Failed: 0,
+Warnings: 0
+
+Thanks,
+Deepa
+
+Signed-off-by: Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>
+---
+Deepa Guthyappa Madivalara (5):
+      media: uapi: videodev2: Add support for AV1 stateful decoder
+      media: v4l2: Add description for V4L2_PIX_FMT_AV1 in v4l_fill_fmtdesc()
+      media: iris: Add support for AV1 format in iris decoder
+      media: iris: Define AV1-specific platform capabilities and properties
+      media: iris: Add internal buffer calculation for AV1 decoder
+
+ .../userspace-api/media/v4l/pixfmt-compressed.rst  |   8 +
+ drivers/media/platform/qcom/iris/iris_buffer.h     |   2 +
+ drivers/media/platform/qcom/iris/iris_ctrls.c      |   8 +
+ drivers/media/platform/qcom/iris/iris_hfi_common.h |   3 +
+ .../platform/qcom/iris/iris_hfi_gen2_command.c     |  85 +++++-
+ .../platform/qcom/iris/iris_hfi_gen2_defines.h     |  11 +-
+ .../platform/qcom/iris/iris_hfi_gen2_response.c    |  22 ++
+ drivers/media/platform/qcom/iris/iris_instance.h   |   1 +
+ .../platform/qcom/iris/iris_platform_common.h      |  13 +
+ .../media/platform/qcom/iris/iris_platform_gen2.c  | 142 +++++++++-
+ .../platform/qcom/iris/iris_platform_sm8250.c      |  17 ++
+ drivers/media/platform/qcom/iris/iris_vdec.c       |  23 +-
+ drivers/media/platform/qcom/iris/iris_vidc.c       |   1 +
+ drivers/media/platform/qcom/iris/iris_vpu_buffer.c | 299 ++++++++++++++++++++-
+ drivers/media/platform/qcom/iris/iris_vpu_buffer.h | 116 ++++++++
+ drivers/media/v4l2-core/v4l2-ioctl.c               |   1 +
+ include/uapi/linux/videodev2.h                     |   1 +
+ 17 files changed, 726 insertions(+), 27 deletions(-)
+---
+base-commit: 163917839c0eea3bdfe3620f27f617a55fd76302
+change-id: 20251029-av1d_stateful_v3-cbf9fed11adc
+prerequisite-change-id:20250918-video-iris-ubwc-enable-87eac6f41fa4:v2
+prerequisite-patch-id: 11fd97eabf65d22120ff89985be5510599eb4159
+prerequisite-patch-id: aea5a497f31db23a05424fe2cddedec613571f2a
+prerequisite-patch-id: e3b10c34426c33432208e120a3e1239630893d88
+
+Best regards,
+-- 
+Deepa Guthyappa Madivalara <deepa.madivalara@oss.qualcomm.com>
+
 
