@@ -1,63 +1,59 @@
-Return-Path: <linux-kernel+bounces-883012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48BFFC2C3F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 14:51:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2563DC2C483
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 14:58:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E9C3B349792
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 13:51:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 454773B9F18
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 13:51:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A90A27510B;
-	Mon,  3 Nov 2025 13:51:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E8E302770;
+	Mon,  3 Nov 2025 13:51:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JZw19uBW"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bmiRX0tr"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE74E24729D;
-	Mon,  3 Nov 2025 13:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A786F272E63
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 13:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762177868; cv=none; b=QfOu5rhIZ44r3dzKxoKbeGlTIICEwxuvBF3nXndj7mBlYw4Jls1w1+Lej4aNoj3RgfAO03x5/8aTdu4NzGmPqMvhXe3I2LWyQTf47R2UjRxikR1gWoewN38OmFsEtvoUjXmvk6lSMijCg5GcTOr4uLMLL5Pj2Hy08Ny5qnggSFI=
+	t=1762177869; cv=none; b=gh0GN1j+yHTPx4F441TZy9VrOOPK5PD9b3SsSvB9YRjlN0iJugtG0TwokBgPrGAPVhKqxA6/nI96kjn8AXFzX6BHtIocSVSf0Xm94s7xLLhbYft/w5J183JicN+4mgQeUDl0S1AKpJLgRhKOdN/a6qMfCHSybqn/RfgbJeN7zx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762177868; c=relaxed/simple;
-	bh=TxvgFbg/Vb1N8ju1lnv4lDKIlNnF76z1sLY8MZjKXBQ=;
+	s=arc-20240116; t=1762177869; c=relaxed/simple;
+	bh=uSJ5MFtzv8QRsnhy/ddyi/son0cmHhiAqNrZLpnU6G8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TXBIUZsGH54nKQJBmKdb8mMX5wLyuVhrF7/XvyssPi5JbT5NGqBk57CFKNjxhKrvPzMLa44KmzCxnBJ7q3eR1xdU1qJElBcSdmMI7ZGRjUGN4yUbPT2S62/jFcztnrseLL9oXCpnX85IEbiLnwaITnmsSIusGJ/GbDxkOAlponk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JZw19uBW; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id ED2A94E414C6;
-	Mon,  3 Nov 2025 13:51:01 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id B41A560628;
-	Mon,  3 Nov 2025 13:51:01 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4AE5710B500C8;
-	Mon,  3 Nov 2025 14:50:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762177860; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=/m8rdeLKaA4WSLoHrSxLT8BCucA4Ov5kAuCE4vkVBmg=;
-	b=JZw19uBWN9H93Zlsnaefmm1F3+OYAFHdSbmgwNCA+91R26VmQzMnCXVehwgiPLqCAmiJi2
-	vppKyryVq4Bntsq6+sFD7VY119Q5rbRRUf4fvRljrlRqj/v4/dszd8A0vf5QEOmkJG9Uk0
-	XuqNWp4spnvX2W2PXRczW1d/uYV1iE7kDrrzpJ54WVg3lnCeXb1R9YQVa3/vcaVFEDAD1I
-	KBmNwg+ruYPk9iAIjju4tDk0lllhBs9ogOeUTESd+Dix/EJbwRqI1vAwcu/hf88AOFQSH5
-	FErrvO24KOlB522dg/CgtSOS+t/fM5ndhrvfAwcIEbBLb/h6VRl/KP+Oz6C5wg==
-Date: Mon, 3 Nov 2025 14:50:58 +0100
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: claudiu.beznea.uj@bp.renesas.com, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
-	p.zabel@pengutronix.de,
-	Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-Cc: linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH v3 0/4] Add RTC support for the Renesas RZ/V2H
- SoC
-Message-ID: <176217780890.386697.14373281518311620724.b4-ty@bootlin.com>
-References: <20251103121848.6539-1-ovidiu.panait.rb@renesas.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=U4O2SE+FvIdWV60EbSEcAVRF+XnCAeK0fqG8Go4m22ATz44yuILZVhgJVLwKcakNOvH80GDZF0LKy4mJ1Jb1iZ214lIXx5bP+H3oW9qP7rNxohWNTMAgP/8LQGIEnICY7E48CxtwOjx/qG8PFSnTNGE/gQ48VMaCoSJbB84Qvfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bmiRX0tr; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=uSJ5MFtzv8QRsnhy/ddyi/son0cmHhiAqNrZLpnU6G8=; b=bmiRX0trHcMFvaR7QUOgLfSZ3X
+	Ns8Gpd/T/XZxm3vPareoub6JhZ1fweJZoAD6gvUKMrSoWfppLk1XnZAlCFhhhNZIF78W+FWPwpH/M
+	sqcBljkLPcLnlLQdVBh4FS9JjOn7sqfj41XT6KQNpM/3Y1Intsgl0NraZ1ns9gFKY31qM2v4kQRrK
+	I/40C89vXsKeKM1uaXpVADfAewVaoZ9UaZ8fL+2AnLfk41YHBXDABfytqmxBZIaqIriattecpHaWK
+	IhCcgpy3mDnWbP1vzlvJZQ4+Cy657bMf89UR8gD0N/YEQEou8liJF2OTOjfSzNciStuHV3j6QiTIN
+	1OgSN+Lg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vFuxc-00000009xaT-3sdc;
+	Mon, 03 Nov 2025 13:51:04 +0000
+Date: Mon, 3 Nov 2025 05:51:04 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@infradead.org>
+Subject: Re: [RFC PATCH 0/4] make vmalloc gfp flags usage more apparent
+Message-ID: <aQizSPAvNGmgpnxa@infradead.org>
+References: <20251030164330.44995-1-vishal.moola@gmail.com>
+ <aQimnV815XIjV2JT@pc636>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,32 +62,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251103121848.6539-1-ovidiu.panait.rb@renesas.com>
-X-Last-TLS-Session-Version: TLSv1.3
+In-Reply-To: <aQimnV815XIjV2JT@pc636>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Mon, 03 Nov 2025 12:18:44 +0000, Ovidiu Panait wrote:
-> This series adds RTC support for the Renesas RZ/V2H SoC.
-> 
-> The Renesas RZ/V2H RTC IP is based on the same RTCA3 IP as RZ/G3S
-> (r9a08g045), with the following differences:
-> - it lacks the time capture functionality
-> - the maximum supported periodic interrupt frequency is 128Hz instead
->   of 256Hz
-> - it requires two reset lines instead of one
-> 
-> [...]
+On Mon, Nov 03, 2025 at 01:57:01PM +0100, Uladzislau Rezki wrote:
+> > I did some digging and am not entirely sure what flags vmalloc does NOT
+> > support. Is a better idea is to have explicitly supported flags and drop
+> > all others?
+> >
+> Maybe we should look at it vice versa. Focus on supported flags. In the
+> slab there is an adjust function which modifies the gfp and emits the warning
+> if passed GFP is part of buggy mask.
 
-Applied, thanks!
+Yes, explicitly whitelisting the (component)flags supported seems like
+a much more maintainable approach.
 
-[1/4] dt-bindings: rtc: renesas,rz-rtca3: Add RZ/V2H support
-      https://git.kernel.org/abelloni/c/8056f175606a
-[2/4] rtc: renesas-rtca3: Add support for multiple reset lines
-      https://git.kernel.org/abelloni/c/d034c9ca6a47
-
-Best regards,
-
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
