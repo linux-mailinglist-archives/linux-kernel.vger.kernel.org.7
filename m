@@ -1,230 +1,177 @@
-Return-Path: <linux-kernel+bounces-883328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D6A5C2D143
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:22:16 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE11DC2CDA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:45:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 073F7188AB06
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:21:25 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 63C953419A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:45:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD433191DC;
-	Mon,  3 Nov 2025 16:20:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05DCC286D40;
+	Mon,  3 Nov 2025 15:45:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="fSK6Uii9"
-Received: from mail.cybernetics.com (mail.cybernetics.com [173.71.130.66])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="FJVI24MD"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010035.outbound.protection.outlook.com [52.101.85.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99EA83176F8
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.71.130.66
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762186808; cv=none; b=JZUY+PMwy7CQJttiIo8F1Cc30auEeApy1otq1q/Sw4VJbNaKFiaNlrm6Xl373MHxJBY/iRqAEO15E/hc3pzsHsuhP7QPNY7NxxbtIzPns9Wu3s+63N0YSTJAV3+NgiYDGLu9QNTjWMYp/QxgnkQedmTJgr8KFElYTXJJdtKEmTs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762186808; c=relaxed/simple;
-	bh=O90G56kfFPOri4qrEzK7YFsjB71EfKrK9p+F43qIGxo=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=kDqvP1L4cR6/pf+uryfc2uNXRJrHZWU++MBnKbNDoQ8U80yTPOoFadcvmBlzzmHo7VBsgbp3dKPFCSWTDMXEDPf9nBsKzdpf58/RYukz7q89jVO4GbvOJjpwvO3FfioLviLuSgkXi4RuZ+njPSe1jsKdNHLRy61i6f+bVhM9nvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=fail (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=fSK6Uii9 reason="signature verification failed"; arc=none smtp.client-ip=173.71.130.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
-Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id lo2q1DQROCs0AcPw; Mon, 03 Nov 2025 10:44:32 -0500 (EST)
-X-Barracuda-Envelope-From: tonyb@cybernetics.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
-X-ASG-Whitelist: Client
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
-	bh=LMOi7QMdqqg2dcOiYEuZyKjhgoKOfOH88JRSzJLVSto=;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
-	Content-Language:Subject:MIME-Version:Date:Message-ID; b=fSK6Uii94NJBFtwTZXnv
-	WsLzglkByqRc42/NavSOP+sWtiK3JLTYl2AFAGIpfpqANBT8FcRumrdnzzZPdGRGs/uBdp44s203k
-	GsT/NOw7Ncv0cQWrOwd8YOcUcCoUyrws7ndUa6WQvr7JFrmrx1r+TMzdiAKojvM6Ev+rzvSKLk=
-Received: from [10.157.2.224] (HELO [192.168.200.1])
-  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
-  with ESMTPS id 14263426; Mon, 03 Nov 2025 10:44:32 -0500
-Message-ID: <a6b8713e-c499-4fce-9964-9f277b24ebe9@cybernetics.com>
-X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
-Date: Mon, 3 Nov 2025 10:44:32 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9CA1A9F8D
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 15:45:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.35
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762184742; cv=fail; b=rrPv3APyNyR6ToWkjltkGEFGMkg3jScnMp49GzLGRrfblYTjXBGohKEPMBO8BKBcwrtclOPGNYFdP4evioHVZb0NHf34kupSK9BvpTAUHDtprQJ87oNln/z4kFV3gxlfOgInPgUsVy+k3lWBYo+ddSpH6Apl2bFpKVSi6pzZNqQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762184742; c=relaxed/simple;
+	bh=kxKOUtWEUyO2V874r5Gekxgzg0HFoKQRVY2OjVIgpqk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KhE+ziJQD2QtEdsAw8ySfVgcZ6vxyrqBqBvkZvx35tVyFq9HgbMTBbFF2Aq7XEPLUvpwiz1k+wEJvgk7CcJHFvVta55v8VO10yQtVIwIHvjPNlnxtwFMW4pKjqp4CSYQO9sb9l7IVGu0WI8YtVb5/AFqWPcSUM5e6uhGh7L+1mk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=FJVI24MD; arc=fail smtp.client-ip=52.101.85.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dEY0CJXOFazDV5KUa/Ap6eK38xo9+SMlzXKSA8pkJXcN4VnrYm5qhPgpsaMGS3Jn5BXUW6a1d180XastSUralURSV/hPccydOIG4KeZK8UyYu5Q0WwmU2qZWahbUVqbppYucwPHBJ6WmAurpGw3s8/YbU2WyhwhpTyzVx6WrzAgLDFsJXi2P9fBBV28Jk+eyvM4u9uNSZZ3+xUtoHk94opJyWO6+W0cu1RzZJuk/clBMLcuPiAbuT2V1etLOgX26Wkoks8NoQcWOhvk4KfJq3l+Gp0LComeO0/K27EBySDvZd5t0Sq3TK4sCNQD9SPlHmQ+w689ZCA0bLwvTukv3nw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=y2HjS41PJQbFoV0LqxXtT+0M30byhgXU2NRk6PIlO2M=;
+ b=AID5hgM74L5+QZmo3B5OQwwrRAtdDJT/dg0XJPdSr6gQRm9B8gL5XPNHamYbfsWZwlTby858dGtHejVQlelw9PbE1B/pqvwG76g3zJlPViKs3nYkWEQZeEFyBu9uR0tN4La9LeiODCXPvJfot/eLy0H/frsVJcMN4xJ+pWIP1vJHjWcs21Z5E2VhcOvyUD7RkWnOZnMIv6XO/S4J26he76tKMe0a9xRLrqAJzOJs1ukNIjf/mKUCogTDyztm4lNupSrJ8yv52kHVSPde3/P/xZVTepp4H2TgcVDODcp5eDkwpUNDkfniqaLBuVSW9bIp0olEljqsc4KrKLO0iN5Ixg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.233) smtp.rcpttodomain=google.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=y2HjS41PJQbFoV0LqxXtT+0M30byhgXU2NRk6PIlO2M=;
+ b=FJVI24MD9lZVW/AX2qE1dMXOUc8Ct+aARnmKbo1qf26yhKKx/dWAog4THgu+A3avlFsOM7t49AQ2fR2k8GKTq78HvLBi5wvxGG88aLMqtbs2plcjL5TadWvFmjxsULrP5LZL1p8Lfu4Cy9Qx1FcPR69yd/c7NNS26ggeHRAabcZ+h4ci2DftjHj/gCTXrgRZLCEDpArIGuFPYNmjwBOmV4Y8mxJ9rCl6dYHWXeZELpFshtOf8xwIIlIDRfexwT2ebT3O+SgNY+BZW4FP/YyksXRQOtwyCAcb718ZmZluz/5DsUvxyrXeYqhM3LT3VGlebc76uECrhThS2IXJUUegrQ==
+Received: from DS7PR05CA0010.namprd05.prod.outlook.com (2603:10b6:5:3b9::15)
+ by DS0PR12MB7704.namprd12.prod.outlook.com (2603:10b6:8:138::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Mon, 3 Nov
+ 2025 15:45:38 +0000
+Received: from DS1PEPF00017094.namprd03.prod.outlook.com
+ (2603:10b6:5:3b9:cafe::c5) by DS7PR05CA0010.outlook.office365.com
+ (2603:10b6:5:3b9::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.7 via Frontend Transport; Mon, 3
+ Nov 2025 15:45:38 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.233) by
+ DS1PEPF00017094.mail.protection.outlook.com (10.167.17.137) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.6 via Frontend Transport; Mon, 3 Nov 2025 15:45:38 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Mon, 3 Nov
+ 2025 07:45:24 -0800
+Received: from drhqmail202.nvidia.com (10.126.190.181) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.20; Mon, 3 Nov 2025 07:45:23 -0800
+Received: from Asurada-Nvidia (10.127.8.11) by mail.nvidia.com
+ (10.126.190.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Mon, 3 Nov 2025 07:45:23 -0800
+Date: Mon, 3 Nov 2025 07:45:21 -0800
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Pranjal Shrivastava <praan@google.com>
+CC: <jgg@nvidia.com>, <will@kernel.org>, <robin.murphy@arm.com>,
+	<joro@8bytes.org>, <kevin.tian@intel.com>,
+	<linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <skolothumtho@nvidia.com>
+Subject: Re: [PATCH] iommu/arm-smmu-v3-iommufd: Allow attaching nested domain
+ for GBPA cases
+Message-ID: <aQjOEQOPP2p1KsIX@Asurada-Nvidia>
+References: <20251024040551.1711281-1-nicolinc@nvidia.com>
+ <aQi8TivdgmtAyb7v@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/16] qla2xxx target mode improvements
-Content-Language: en-US
-X-ASG-Orig-Subj: Re: [PATCH v2 00/16] qla2xxx target mode improvements
-From: Tony Battersby <tonyb@cybernetics.com>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
- scst-devel@lists.sourceforge.net,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Dmitry Bogdanov <d.bogdanov@yadro.com>,
- Xose Vazquez Perez <xose.vazquez@gmail.com>,
- GR-QLogic-Storage-Upstream@marvell.com, Nilesh Javali <njavali@marvell.com>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
-References: <e95ee7d0-3580-4124-b854-7f73ca3a3a84@cybernetics.com>
-In-Reply-To: <e95ee7d0-3580-4124-b854-7f73ca3a3a84@cybernetics.com>
-Content-Type: text/plain; charset=UTF-8
-X-Barracuda-Connect: UNKNOWN[10.10.4.126]
-X-Barracuda-Start-Time: 1762184672
-X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
-X-Barracuda-BRTS-Status: 1
-X-Virus-Scanned: by bsmtpd at cybernetics.com
-X-Barracuda-Scan-Msg-Size: 6032
-Content-Transfer-Encoding: quoted-printable
-X-ASG-Debug-ID: 1762184672-1cf4391391a8580001-xx1T2L
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <aQi8TivdgmtAyb7v@google.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS1PEPF00017094:EE_|DS0PR12MB7704:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7fe64727-4d83-46e6-fc1f-08de1af0098a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?GYq5KTL9+YSsMXB2tb01sKgmuDOjcYM2PBWjl5Xzg58wGJIkhondlryAi3Qy?=
+ =?us-ascii?Q?fyyu10VxPw85WE2V9yjnWYasCX3pR5fXA/Ph1T459UVpbXssnMgRW3gupPUt?=
+ =?us-ascii?Q?wqcb8z0kFRqoN4DZhrsYsFcBBlh6QQJtqOXsDVC7XcTpbV591F8bYh3+z4np?=
+ =?us-ascii?Q?90lWvqmd4SvkHgYA1uikgH4fYI9m7jph/+FbtsV0/TdIRlmU5SMPbE9ukIDq?=
+ =?us-ascii?Q?USAOGQO63irYQYM2RiXEBDZlh2QhS6gWkZiM7i3xIAmnpr+56ZYrvEAhN8oR?=
+ =?us-ascii?Q?8XFYD+IfmDjk2OjL/n4UF/Gt4t69BI1Pm6bzws7YD6s2YAn77KwzdtxXLkGQ?=
+ =?us-ascii?Q?uuzVsqh95Aqq6sM3ME2lYp30LhnoPF6NFAJPP+oEzUwgnWnHaQ7wlhgYXB5x?=
+ =?us-ascii?Q?vVdc1BO/iFVcXtsmtCMEsUIATCYlQlrOC9GjpWFhhPqag5VXjjKPqfduSz5p?=
+ =?us-ascii?Q?/fFJz6W8WABReXUyN7AfsVQh7BIa7WVbhtTPStD62RqZ5nvLvIHhRAbPfVwA?=
+ =?us-ascii?Q?ijR8xPWZBq5GaiNkzvuHzENrc0JlQZjgNDP9jbdv67aVz+wIbSDzxhygJ/wy?=
+ =?us-ascii?Q?nNXy9mZP6n9YTgpgkynnWGsktDSkbynTWfKxpiigL9Z0/ZglwDX1LznNFZjO?=
+ =?us-ascii?Q?U/epwwpziDbpaLmpjCmpg6r4UE+NawxFPsBmfUQ//rbxHKUviguv6OiTmgSx?=
+ =?us-ascii?Q?z3iXL+gQSJjvNMjNx0defp5A+mSt1hB6NDGgq3RTxAgeX5V8j8680dkJPwGe?=
+ =?us-ascii?Q?AfMJq8jd2kEi0eesmz+pGSHD6fciemXJSYkHhubytOAaz8IE0VGEhzA8dEmq?=
+ =?us-ascii?Q?bc9YoqtogIuYc+aZpIm93qF1+AGFRf3imojf+GJ94wdem4krOxsxHAKBuTuL?=
+ =?us-ascii?Q?/X+QSaOAjJpzVfub23tNCV6rc4MOpVA/WzdeSNfIgy5L7r5E7FQ/kK1BLHh6?=
+ =?us-ascii?Q?vp/zHq/oGIUAtSR57Ptt7PVcwO92vLGOEgS98gafcLXrR8ZiFdZwO15qPTgT?=
+ =?us-ascii?Q?lfGo204surKwPRNFTKYjXfBKmTACqkDawkWQwDgANc0+dyhtaCbKl3tyTIKr?=
+ =?us-ascii?Q?6pP+TM/Uj98QIHfLppSzE42xT6bhaf+QgZfvL7g4hHLPVYtSQs4mT22PKx9e?=
+ =?us-ascii?Q?JkhsJ1lM0hKINYvX20fc4M0d30eVNtEufTzZlp/HcDxchQqaDNjFLi0Wu8ev?=
+ =?us-ascii?Q?cu94Ld6pm7ZgZ0GdYVx7vSrMQa5fD8TnJ84sDuHykXQZF9fwj6Ga5MZFL/Tp?=
+ =?us-ascii?Q?cEE4C/76xC2LXJAMFERZncTSf7Sp2T7BndBqZMJrUHzkHQcDwZzCHwyqteq8?=
+ =?us-ascii?Q?EHlKVJmX3S+T4DVWF2Bg+Uik4ak8sHvU5KE5lxjnPNcr4LdchO5eBk725ROl?=
+ =?us-ascii?Q?+/wjUGcIPSoGojICDqHzCajRRzAYphfmZ7upf84ug4n83CTHloLwe8lpM7u8?=
+ =?us-ascii?Q?+LmsjcZM5HTLRxPC760QCZ8y1ZPQaZh4/jujlp/C8s0+He2ZkD8QbtvDBtlj?=
+ =?us-ascii?Q?D3JZxR7XrgjtFbP50B1llfAcjo1H4WZLjB3JnAVI3/cl45/A1IdscKf8KCOp?=
+ =?us-ascii?Q?LWo//YJn7d2muR1mOS0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 15:45:38.6404
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7fe64727-4d83-46e6-fc1f-08de1af0098a
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS1PEPF00017094.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7704
 
-On 9/29/25 10:28, Tony Battersby wrote:
-> v1 -> v2
-> - Add new patch "scsi: qla2xxx: clear cmds after chip reset" suggested
-> by Dmitry Bogdanov.
-> - Rename "scsi: qla2xxx: fix oops during cmd abort" to "scsi: qla2xxx:
-> fix races with aborting commands" and make SCST reset the ISP on a HW
-> timeout instead of unmapping DMA that might still be in use.
-> - Fix "scsi: qla2xxx: fix TMR failure handling" to free mcmds properly
-> for LIO.
-> - In "scsi: qla2xxx: add back SRR support", detect more buggy HBA fw
-> versions based on the fw release notes.
-> - Shorten code comment in "scsi: qla2xxx: improve safety of cmd lookup
-> by handle" and improve patch description.
-> - Rebase other patches as needed.
->
-> v1:
-> https://lore.kernel.org/r/f8977250-638c-4d7d-ac0c-65f742b8d535@cybernet=
-ics.com/
->
-> This patch series improves the qla2xxx FC driver in target mode.=C2=A0 =
-I
-> developed these patches using the out-of-tree SCST target-mode subsyste=
-m
-> (https://scst.sourceforge.net/), although most of the improvements will
-> also apply to the other target-mode subsystems such as the in-tree LIO.=
-=C2=A0
-> Unfortunately qla2xxx+LIO does not pass all of my tests, but my patches
-> do not make it any worse (results below).=C2=A0 These patches have been
-> well-tested at my employer with qla2xxx+SCST in both initiator mode and
-> target mode and with a variety of FC HBAs and initiators.=C2=A0 Since S=
-CST is
-> out-of-tree, some of the patches have parts that apply in-tree and othe=
-r
-> parts that apply out-of-tree to SCST.=C2=A0 I am going to include the
-> out-of-tree SCST patches to provide additional context; feel free to
-> ignore them if you are not interested.
->
-> All patches apply to linux 6.17 and SCST 3.10 master branch.
->
-> Summary of patches:
-> - bugfixes
-> - cleanups
-> - improve handling of aborts and task management requests
-> - improve log message
-> - add back SLER / SRR support (removed in 2017)
->
-> Some of these patches improve handling of aborts and task management
-> requests.=C2=A0 This is some of the testing that I did:
->
-> Test 1: Use /dev/sg to queue random disk I/O with short timeouts; make
-> sure cmds are aborted successfully.
-> Test 2: Queue lots of disk I/O, then use "sg_reset -N -d /dev/sg" on
-> initiator to reset logical unit.
-> Test 3: Queue lots of disk I/O, then use "sg_reset -N -t /dev/sg" on
-> initiator to reset target.
-> Test 4: Queue lots of disk I/O, then use "sg_reset -N -b /dev/sg" on
-> initiator to reset bus.
-> Test 5: Queue lots of disk I/O, then use "sg_reset -N -H /dev/sg" on
-> initiator to reset host.
-> Test 6: Use fiber channel attenuator to trigger SRR during
-> write/read/compare test; check data integrity.
->
-> With my patches, SCST passes all of these tests.
->
-> Results with in-tree LIO target-mode subsystem:
->
-> Test 1: Seems to abort the same cmd multiple times (both
-> qlt_24xx_retry_term_exchange() and __qlt_send_term_exchange()).=C2=A0 B=
-ut
-> cmds get aborted, so give it a pass?
->
-> Test 2: Seems to work; cmds are aborted.
->
-> Test 3: Target reset doesn't seem to abort cmds, instead, a few seconds
-> later:
-> qla2xxx [0000:04:00.0]-f058:9: qla_target(0): tag 1314312, op 2a: CTIO
-> with TIMEOUT status 0xb received (state 1, port 51:40:2e:c0:18:1d:9f:cc=
-,
-> LUN 0)
->
-> Tests 4 and 5: The initiator is unable to log back in to the target; th=
-e
-> following messages are repeated over and over on the target:
-> qla2xxx [0000:04:00.0]-e01c:9: Sending TERM ELS CTIO (ha=3D00000000f881=
-1390)
-> qla2xxx [0000:04:00.0]-f097:9: Linking sess 000000008df5aba8 [0] wwn
-> 51:40:2e:c0:18:1d:9f:cc with PLOGI ACK to wwn 51:40:2e:c0:18:1d:9f:cc
-> s_id 00:00:01, ref=3D2 pla 00000000835a9271 link 0
->
-> Test 6: passes with my patches; SRR not supported previously.
->
-> So qla2xxx+LIO seems a bit flaky when handling exceptions, but my
-> patches do not make it any worse.=C2=A0 Perhaps someone who is more fam=
-iliar
-> with LIO can look at the difference between LIO and SCST and figure out
-> how to improve it.
->
-> Tony Battersby
-> https://www.cybernetics.com/
->
-> Tony Battersby (16):
->   Revert "scsi: qla2xxx: Perform lockless command completion in abort
->     path"
->   scsi: qla2xxx: fix initiator mode with qlini_mode=3Dexclusive
->   scsi: qla2xxx: fix lost interrupts with qlini_mode=3Ddisabled
->   scsi: qla2xxx: use reinit_completion on mbx_intr_comp
->   scsi: qla2xxx: remove code for unsupported hardware
->   scsi: qla2xxx: improve debug output for term exchange
->   scsi: qla2xxx: fix term exchange when cmd_sent_to_fw =3D=3D 1
->   scsi: qla2xxx: clear cmds after chip reset
->   scsi: qla2xxx: fix races with aborting commands
->   scsi: qla2xxx: improve checks in qlt_xmit_response / qlt_rdy_to_xfer
->   scsi: qla2xxx: fix TMR failure handling
->   scsi: qla2xxx: fix invalid memory access with big CDBs
->   scsi: qla2xxx: add cmd->rsp_sent
->   scsi: qla2xxx: improve cmd logging
->   scsi: qla2xxx: add back SRR support
->   scsi: qla2xxx: improve safety of cmd lookup by handle
->
->  drivers/scsi/qla2xxx/qla_dbg.c     |    3 +-
->  drivers/scsi/qla2xxx/qla_def.h     |    1 -
->  drivers/scsi/qla2xxx/qla_gbl.h     |    2 +-
->  drivers/scsi/qla2xxx/qla_init.c    |    1 +
->  drivers/scsi/qla2xxx/qla_isr.c     |   32 +-
->  drivers/scsi/qla2xxx/qla_mbx.c     |    2 +
->  drivers/scsi/qla2xxx/qla_mid.c     |    4 +-
->  drivers/scsi/qla2xxx/qla_os.c      |   35 +-
->  drivers/scsi/qla2xxx/qla_target.c  | 1775 +++++++++++++++++++++++-----
->  drivers/scsi/qla2xxx/qla_target.h  |  112 +-
->  drivers/scsi/qla2xxx/tcm_qla2xxx.c |   17 +
->  11 files changed, 1646 insertions(+), 338 deletions(-)
->
->
-> base-commit: e5f0a698b34ed76002dc5cff3804a61c80233a7a
+On Mon, Nov 03, 2025 at 02:29:34PM +0000, Pranjal Shrivastava wrote:
+> On Thu, Oct 23, 2025 at 09:05:51PM -0700, Nicolin Chen wrote:
+> >  int arm_smmu_attach_prepare_vmaster(struct arm_smmu_attach_state *state,
+> >  				    struct arm_smmu_nested_domain *nested_domain)
+> >  {
+> > +	unsigned int cfg =
+> > +		FIELD_GET(STRTAB_STE_0_CFG, le64_to_cpu(nested_domain->ste[0]));
+> >  	struct arm_smmu_vmaster *vmaster;
+> > -	unsigned long vsid;
+> > +	unsigned long vsid = 0;
+> 
+> I'm a little confused here, can we not have a vDEVICE allocated with
+> vSID = 0 ?
 
-Martin,
+Ah, good catch..
 
-Could you apply this patch series for 6.19?=C2=A0 I have addressed all re=
-view
-comments and no one has given me any objections.=C2=A0 All patches are on=
- v2
-except patch #11 which is on v3.
+> Perhaps a separate bool has_vdevice flag in struct arm_smmu_vmaster
+> would be clearer and avoid this ambiguity, allowing vsid = 0 to be a
+> valid ID for an allocated vdevice when user-space explicitly requests it?
 
-https://lore.kernel.org/linux-scsi/e95ee7d0-3580-4124-b854-7f73ca3a3a84@c=
-ybernetics.com/
+Yes. I will send a v2.
 
-Thanks,
-Tony Battersby
-https://www.cybernetics.com/
-
+Thanks
+Nicolin
 
