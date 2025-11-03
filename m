@@ -1,114 +1,203 @@
-Return-Path: <linux-kernel+bounces-882851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72C6DC2BA6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:25:35 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E15CC2BB3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:35:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 529F0349B83
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:25:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E88FE4F5A61
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:26:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E183F30E0D9;
-	Mon,  3 Nov 2025 12:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5E030EF64;
+	Mon,  3 Nov 2025 12:24:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WxubiSl6"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="o14NnLdn";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Mq4f+xmE";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="o14NnLdn";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Mq4f+xmE"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DA330B502
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 12:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940B630CDB6
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 12:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762172655; cv=none; b=tmB+N036R+584dNdQL9OEOfICSQ/QKwaHuGIsDSv795ChdsogkPA3HB76uvM/mOO+iCGON6/dcKUvifO8T4ltO8I0EfQS4TLaNBwys7OnViRJKCLc9WRIJ2SmA9PNCn3xQVU3kMTN2InEYQ/J2tsjHpsI60PItR7mwCTXna2WMk=
+	t=1762172690; cv=none; b=gM8s6CtdTWbn3+lOGCAZAmf5zTmF5tJgmDdD+Ry+P7UZe3lb04b5HYaKrRc+U1pN4zzFdo4LpWbPQSOmaUHWWrxCzHDV206pT09vdFg3TdaMa6qGVnsV350T7TRatDdtmzuoB41+IfjS8tnzLy7lf85ywegXIceula1hjJdYuBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762172655; c=relaxed/simple;
-	bh=ORdNUFW2zEJlWs19F6Wve3Y3tfAR17V4MJgrWtqk7Qo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jkt1TpeJURNT48BBsziMm9T30nV8pKn9YJk/xwfgrxRF4/9aEBLAR9S60yPXtknSXWp8lYes7qIs2+PwUCYKnrUS1EsuyueOIOM8Cvvh9R14e9Bko2OugELrl409ckmbs6FQBkfWRbEJlu/ubMoUJR25+loROgtvZdnxCUHMETw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WxubiSl6; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-33ba5d8f3bfso3709493a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 04:24:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762172651; x=1762777451; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ORdNUFW2zEJlWs19F6Wve3Y3tfAR17V4MJgrWtqk7Qo=;
-        b=WxubiSl6aC1/hr2QZS8A/XlfeSHNAvdoknP45WE0Di9Mzvl+JVqk8ixCvSmV/lCFt3
-         4zAg6ourZin6RO4+LMsDjJMOvaltHtp1rnyuwGMjQfixNw21SfdMi6Wub8YzcTlgj+Fy
-         MEvrFXkp7RL/0QNC89JvHAwrrZLiWIsVPTwl/SeU95cnUTrbrdTo7JZkivWv9NhjK5IJ
-         2mLnJsEVrkrJzYxh5htnio94RHP/Zt6F/OxgDCVlq0WfOCOV6UDHRutywoIViDqDdd/K
-         vyoO45iiHqj0YrvNBblyjgfL2hHiMM2Uc9VyHCEPw1pQLNSO+MCcPr3XZI/0BASvJgq4
-         bHqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762172651; x=1762777451;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ORdNUFW2zEJlWs19F6Wve3Y3tfAR17V4MJgrWtqk7Qo=;
-        b=oeTItBQp+P/TZCLL/hKQhozGXQvD0rJ9gqZ6qFMVcY41MT9nssHVHWk1ZAHNXXCPUC
-         jICw04DM7Q1b+YfvlGQ+oxcGVCvxF9eoBD/nvJ2deqLZ6jfyQh/wXdiRTMDqwAI41/x/
-         s+txnRXNv6FvZ5n73XjkAcrSJks2IatweKbjcGaVee1dhIgUmQhlFJY1FZ9YkuEc1FI+
-         dyhkIFtNI4cjI6icpHC934RtrWUQsiDP7dUvj9qG45JJPVy1zwDQVmczWy9Zbra559ml
-         QxtislykXq9Z1ra11NVaH5acWZPweQB+FjqE8VOyeFwHcLMIL/0KlToJ3xX0z7sSloQz
-         +kqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWytFsUnhdROzrNr543fwvYrQk6upqBIFFmlfUX4W2BDzCrJf6S8CWT/2eRsWlUbSYmBWR8wGzTmoozt/U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTaeiWRliC1/uvU+HKs9FNy69vTjYdjBvKny/5FSEKnGc1mm1U
-	cZeATjE1oB87n2i2T/cTgPcmmcegbnPLZuPX8LcAAIHf2MdH1z9xv0Wy
-X-Gm-Gg: ASbGncv2ILWg/ItgtYNCcVsJo0UujNX4O9pUda4fiPkbb3rXRB5HrVom5Ze7SIAycbG
-	hcTLWQH8v8ZaW4AIuiV8Pp+dJMyLk1vlXRxPy9SXyAB/Ouq4WBFXcOEUZd+fxLPLWUlwynxG6YM
-	rb6nDSamcJxZiftsMgfi2sRm97iIUdb2IsoYVoWnbRZ8PIS/jrvShInSfh2OY2c3STC8vaAZzGC
-	LI98vACU57Zuq3Qurjc67S9bMt/7R81bDbajTey4E07ukZ76VJJ270jdt7D524SAqhuUT8YbDtS
-	tr6yH05spp2PHpZtqio6I9yQXl6cc/uO2Q8UreS3K1BNEEkdk0wTetY/AJfZUbX7yhOn8oDimFm
-	w35Ndfl0yQtoGWga++ZedRmu2RSMsv9NgnX/8XIAYpJfyfg3mBnk3ZSk03rIadru2lpPsTpPPej
-	5f+tMk8g/K1omFhbYT7HPiMdxQmgGm59mJCwO/1CBumeqwAJWpNKdrk8S8YNTi1vk=
-X-Google-Smtp-Source: AGHT+IESpNdOSIFJ0AvELFe2mn5VOX5nqvF9BWuKg9gD11/Sqoj1Pk/e1iUdylQepkg9PBFjDt6oNg==
-X-Received: by 2002:a17:90b:2b48:b0:340:b572:3b7d with SMTP id 98e67ed59e1d1-340b5723c4fmr10683210a91.19.1762172651160;
-        Mon, 03 Nov 2025 04:24:11 -0800 (PST)
-Received: from DESKTOP-RD0GVCL.localdomain (124-218-195-161.cm.dynamic.apol.com.tw. [124.218.195.161])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3415c8b78f8sm842554a91.20.2025.11.03.04.24.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 04:24:10 -0800 (PST)
-From: LiangCheng Wang <zaq14760@gmail.com>
-To: nathan@kernel.org
-Cc: jani.nikula@linux.intel.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH] drm/tiny: pixpaper: Prevent inlining of send helpers to reduce stack usage
-Date: Mon,  3 Nov 2025 20:24:04 +0800
-Message-ID: <20251103122406.741-1-zaq14760@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251031203446.GD2486902@ax162>
-References: <20251031203446.GD2486902@ax162>
+	s=arc-20240116; t=1762172690; c=relaxed/simple;
+	bh=wQdnkU9hNx/O4Iwg0uQ2HzLaNraSVxoh2c1MXQVwov4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hQ4cwF/42Yna2dzPm1I0+gBRvB4IxwgnD34Hgbr6KEdPyPzlR0pB4H0Z8QnmjXQO1a8Kpqjma0zfgFrnlzDVu3xrQyRceFKYAjZq9uSgcBHZvV+BUHgmuHsN3gZ5DXoMVTfqWZlnUxvPbUh8Z0bDjyu+p3x4Z0pow/R64TTtPBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=o14NnLdn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Mq4f+xmE; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=o14NnLdn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Mq4f+xmE; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 959DA21AEF;
+	Mon,  3 Nov 2025 12:24:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762172685; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KeTeEG4nIfVPoLqtZ97rZ2qT6HDW8DCj4q3+dHrn6T4=;
+	b=o14NnLdnAVsjOy91XWmxGYFTuSPv0bs/u1WOMDep7I6oNp8H2jdMPMiKYg14S4OnOnbRck
+	oIorCN6CHKv6IE17DLsT23MKW9tkzPzVZVuFLAnfKW2Z6YEUIcWxEHuiYMvQvUFOifGoxv
+	Se/tNlAIr4qi7kHuszt+r5ZMOplphI8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762172685;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KeTeEG4nIfVPoLqtZ97rZ2qT6HDW8DCj4q3+dHrn6T4=;
+	b=Mq4f+xmEVxf/WJUXohVFol7JKlziud7xcsKC6v4UfMNxcPCN/LGTmFOQ2EAfnO3Cy1/PM0
+	l4oxEzyVW2ZGfIBg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=o14NnLdn;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Mq4f+xmE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762172685; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KeTeEG4nIfVPoLqtZ97rZ2qT6HDW8DCj4q3+dHrn6T4=;
+	b=o14NnLdnAVsjOy91XWmxGYFTuSPv0bs/u1WOMDep7I6oNp8H2jdMPMiKYg14S4OnOnbRck
+	oIorCN6CHKv6IE17DLsT23MKW9tkzPzVZVuFLAnfKW2Z6YEUIcWxEHuiYMvQvUFOifGoxv
+	Se/tNlAIr4qi7kHuszt+r5ZMOplphI8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762172685;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KeTeEG4nIfVPoLqtZ97rZ2qT6HDW8DCj4q3+dHrn6T4=;
+	b=Mq4f+xmEVxf/WJUXohVFol7JKlziud7xcsKC6v4UfMNxcPCN/LGTmFOQ2EAfnO3Cy1/PM0
+	l4oxEzyVW2ZGfIBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7CDC81364F;
+	Mon,  3 Nov 2025 12:24:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id BjdoHQ2fCGmOWQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 03 Nov 2025 12:24:45 +0000
+From: Vlastimil Babka <vbabka@suse.cz>
+Date: Mon, 03 Nov 2025 13:24:15 +0100
+Subject: [PATCH] slab: prevent infinite loop in kmalloc_nolock() with
+ debugging
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251103-fix-nolock-loop-v1-1-6e2b3e82b9da@suse.cz>
+X-B4-Tracking: v=1; b=H4sIAO6eCGkC/x2MSQqAMAwAv1JyNtDUFb8iHqRGDUojLYgg/t3ic
+ WBmHkgchRP05oHIlyTRkIEKA36bwsooc2Zw1tVEtsRFbgx6qN/xUD2xqyu2ZKlp3QK5OiNn5T8
+ O4/t+xNOKgmEAAAA=
+X-Change-ID: 20251103-fix-nolock-loop-854e0101672f
+To: Harry Yoo <harry.yoo@oracle.com>, Alexei Starovoitov <ast@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+ Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>, 
+ Roman Gushchin <roman.gushchin@linux.dev>, linux-mm@kvack.org, 
+ linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>
+X-Mailer: b4 0.14.3
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1904; i=vbabka@suse.cz;
+ h=from:subject:message-id; bh=wQdnkU9hNx/O4Iwg0uQ2HzLaNraSVxoh2c1MXQVwov4=;
+ b=owGbwMvMwMG4+8GG0kuuHbMYT6slMWRyzPuadbBx5/ulLL5bhM5remqunmjx3N2uOuDJLw7R9
+ N3nir+2djL6szAwcjBYiimyVO8+4Sg6U9ljmofvR5hBrEwgU6RFGhiAgIWBLzcxr9RIx0jPVNtQ
+ z9BQB8hk4OIUgKnmF2T/K+dpcSq46m6IiEnI+wwVy06xpIWzpnWZRL6f5ba1TsF1a/HXtMR1F9c
+ Wf/LqN0vPPdhmeyDEO7a38d6HaTvaFUpf/ZmWFeX5/qmaA58Y92O/aLXlM5OunbP+7XTu41cvvT
+ NhooU5m+3nT7pdO+351nSv2OyLea/bfDjS0ovfr3TX+Lrkd02h8pwwjrkuEnHccxm3Ke5d8uzS2
+ 7CPNUZ13y68uay9rpTHuG2muvrcS9a3LbPMpJNuzwg1WDPtwMnUJzVhzRck9qq6L7KfI5b/Xcr5
+ 4rHW0jnrXPb1PWfvflHJ9ExKp+mGVZvMqVtBf+K1q98KXNwfKROwYoleYNmUp1ezvf4aZLBaz1j
+ 7WTURAA==
+X-Developer-Key: i=vbabka@suse.cz; a=openpgp;
+ fpr=A940D434992C2E8E99103D50224FA7E7CC82A664
+X-Rspamd-Queue-Id: 959DA21AEF
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -4.51
+X-Spam-Level: 
 
-Hi Nathan, Jani,
+In review of a followup work, Harry noticed a potential infinite loop.
+Upon closed inspection, it already exists for kmalloc_nolock() on a
+cache with debugging enabled, since commit af92793e52c3 ("slab:
+Introduce kmalloc_nolock() and kfree_nolock().")
 
-Thanks for the detailed explanation.
+When alloc_single_from_new_slab() fails to trylock node list_lock, we
+keep retrying to get partial slab or allocate a new slab. If we indeed
+interrupted somebody holding the list_lock, the trylock fill fail
+deterministically and we end up allocating and defer-freeing slabs
+indefinitely with no progress.
 
-Understood — if this only happens when CONFIG_KASAN_STACK is enabled
-with clang, it doesn’t look like something that needs to be addressed in
-the driver itself.
+To fix it, fail the allocation if spinning is not allowed. This is
+acceptable in the restricted context of kmalloc_nolock(), especially
+with debugging enabled.
 
-Thanks everyone for helping clarify this!
+Reported-by: Harry Yoo <harry.yoo@oracle.com>
+Closes: https://lore.kernel.org/all/aQLqZjjq1SPD3Fml@hyeyoo/
+Fixes: af92793e52c3 ("slab: Introduce kmalloc_nolock() and kfree_nolock().")
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+---
+as we discussed in the linked thread, 6.18 hotfix to be included in
+slab/for-next-fixes
+---
+ mm/slub.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/mm/slub.c b/mm/slub.c
+index d4367f25b20d..f1a5373eee7b 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -4666,8 +4666,12 @@ static void *___slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
+ 	if (kmem_cache_debug(s)) {
+ 		freelist = alloc_single_from_new_slab(s, slab, orig_size, gfpflags);
+ 
+-		if (unlikely(!freelist))
++		if (unlikely(!freelist)) {
++			/* This could cause an endless loop. Fail instead. */
++			if (!allow_spin)
++				return NULL;
+ 			goto new_objects;
++		}
+ 
+ 		if (s->flags & SLAB_STORE_USER)
+ 			set_track(s, freelist, TRACK_ALLOC, addr,
+
+---
+base-commit: 6146a0f1dfae5d37442a9ddcba012add260bceb0
+change-id: 20251103-fix-nolock-loop-854e0101672f
 
 Best regards,
-LiangCheng
+-- 
+Vlastimil Babka <vbabka@suse.cz>
+
 
