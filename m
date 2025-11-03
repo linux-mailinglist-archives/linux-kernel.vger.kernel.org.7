@@ -1,45 +1,50 @@
-Return-Path: <linux-kernel+bounces-882141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1A30C29BB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 01:51:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CB51C29BBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 01:51:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53BF018915DD
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B77F6188602F
 	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 00:51:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50297261B78;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5377B261B8C;
 	Mon,  3 Nov 2025 00:48:43 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24F0221FCC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9282253EF;
 	Mon,  3 Nov 2025 00:48:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762130921; cv=none; b=enmqFFdymTC8MVlmZ0UrhN41pz09e2QHfLdfdG6leSjR0C2wDWiZdOIIhb8fnolhJl8bHitWZhxIm5fZGh9Q/mRpvPtbTeGp4dpvcbq4wal/kr0z9eCbbmPTAYLbJEsw2vhMtoF+9BghCawqF7wGnFaPA826AeEDfoHBSBnIlhY=
+	t=1762130921; cv=none; b=Ke7Yllblyl5vm3iBq9fOddryfPMScjljqx1+HHWHS+o/r1FDBGCtphnvLqNCvEhwUxgZ5dPZsSriRjRc77TaXn/Ij3etIe/o/61bOrujoz8R1n/efhP4S+BTtQKNzcl5k16yE/Wzo1NDNgdIGYP0wkeqLZ5N0ZIwhB0NctF2WB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762130921; c=relaxed/simple;
-	bh=T5SKyj/KBZJLYia9w+Z+IRgphx8Opd9vj4VsWxl2ZKk=;
+	bh=LKDibR5PiwX9DKk8uCq2qfo8M+DSlz4ZgYHoGEMG7+w=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=RkNplQFXEAIpTOmTL4BklreK3hBG+bs1q+ZJncTyGGI/uPGnR4ARaGhk0BdrT5LtNdEy0p6HWE2itIqIv8kfdjC2jOT9Tdv28bgYOL0Vla3l3gTN4XgCb+cHzcLjej/N3VTFLzNtuREZhrFYErcimkUsIKG3lfYxepmUIm+iKrs=
+	 MIME-Version:Content-Type; b=lQPKE+ijHiGpJ9BI83PBl3YWlrgQIBQZ+TrlvNZ7u1X3zcGTTvl8sX46hfFFykaXh7Q9BW4HWckvRh7UGobw7O+UJvrxxj/yvFZDc78vweE+5hyOdpIiU33POsTZHtOc8aycyf2Zax3N9XAnz/G/O7CTg/C7olEPkye1fRZQww0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F7EBC19422;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2F55C2BCB0;
 	Mon,  3 Nov 2025 00:48:40 +0000 (UTC)
 Received: by venus (Postfix, from userid 1000)
-	id 66C111822D8; Mon, 03 Nov 2025 01:48:33 +0100 (CET)
+	id 76FAD1822DA; Mon, 03 Nov 2025 01:48:33 +0100 (CET)
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org, 
- Michal Kubecek <mkubecek@suse.cz>
-Cc: Hans de Goede <hansg@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
-In-Reply-To: <20251015075957.8F40620057@lion.mk-sys.cz>
-References: <20251015075957.8F40620057@lion.mk-sys.cz>
-Subject: Re: [PATCH] power: supply: use ktime_divns() to avoid 64-bit
- division
-Message-Id: <176213091341.301408.15461245832294334915.b4-ty@collabora.com>
+To: linux-kernel@vger.kernel.org, Lee Jones <lee@kernel.org>, 
+ Sebastian Reichel <sre@kernel.org>, 
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
+ Yixun Lan <dlan@gentoo.org>, Paul Walmsley <pjw@kernel.org>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Alexandre Ghiti <alex@ghiti.fr>, linux-riscv@lists.infradead.org, 
+ spacemit@lists.linux.dev, Aurelien Jarno <aurelien@aurel32.net>
+Cc: linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ spacemit@lists.linux.dev
+In-Reply-To: <20251102230352.914421-1-aurelien@aurel32.net>
+References: <20251102230352.914421-1-aurelien@aurel32.net>
+Subject: Re: (subset) [PATCH v5 0/2] driver: reset: spacemit-p1: add driver
+ for poweroff/reboot
+Message-Id: <176213091347.301408.11587695003687450479.b4-ty@collabora.com>
 Date: Mon, 03 Nov 2025 01:48:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -52,21 +57,20 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.3
 
 
-On Wed, 15 Oct 2025 09:56:31 +0200, Michal Kubecek wrote:
-> The build of intel_dc_ti_battery module on i386 (32-bit) fails with
+On Mon, 03 Nov 2025 00:01:58 +0100, Aurelien Jarno wrote:
+> This adds poweroff/reboot support for the SpacemiT P1 PMIC chip, which is
+> commonly paired with the SpacemiT K1 SoC.
 > 
-> ERROR: modpost: "__udivdi3" [drivers/power/supply/intel_dc_ti_battery.ko]
-> 
-> This is caused by 64-bit division of ktime values by NSEC_PER_USEC. Use
-> ktime_divns() helper which handles the division correctly on 32-bit
-> architectures.
+> Note: For reliable operation, this driver depends on a this patch that adds
+> atomic transfer support to the SpacemiT I2C controller driver:
+>   https://lore.kernel.org/spacemit/20251009-k1-i2c-atomic-v4-1-a89367870286@linux.spacemit.com/
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] power: supply: use ktime_divns() to avoid 64-bit division
-      commit: 3fd1695f5da0538ef72e1268baa00528b589347a
+[1/2] driver: reset: spacemit-p1: add driver for poweroff/reboot
+      commit: 28124cc0fb8c7dc01a6834d227351e25d9a92c58
 
 Best regards,
 -- 
