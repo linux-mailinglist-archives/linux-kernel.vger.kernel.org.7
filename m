@@ -1,209 +1,149 @@
-Return-Path: <linux-kernel+bounces-883674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3E8AC2E09B
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 21:32:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DDE4C2E0B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 21:33:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 994E81882793
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 20:32:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 047914E23AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 20:33:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8CE22BE7B1;
-	Mon,  3 Nov 2025 20:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B3822BEC42;
+	Mon,  3 Nov 2025 20:33:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="N47k4JJB"
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012031.outbound.protection.outlook.com [52.101.48.31])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lEfWB4g1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8839C29BD96;
-	Mon,  3 Nov 2025 20:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.31
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762201910; cv=fail; b=ivv0f2I36b8ikPdomaK9Gh5zuofO6bdnkEjpw5+Wl5V3YolsHEgcDbU+qdDLcTG8BujqwbZS4BRHd1VBn+YgmA7MqdWqwx5JxHwCG80ytVWD4xcly/Vt6kE/k2fsToqqXiBraME1XkSNpmh1n1GxXYVY+j23hngGM9VkSOJuk7o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762201910; c=relaxed/simple;
-	bh=vS0zrWi1XhLcSlN/s+uJo3VHH+Ci7vKGhjjPilV7W1U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=AM8WOo+2TcbSVvHlpcPmgLJKGbLFdFpBPxoCWgvic1NIZn2tFHa/eap1soSpN4n0RPAkJZdjdc92xTHTDBPiPHv9hZP+RLcxV8RmlIN1m4FQqYYeHr37mx35hg6gSRM3iQVIMuX09dwb3h9hG/7qnTQhYtntraV790kuidGgcFI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=N47k4JJB; arc=fail smtp.client-ip=52.101.48.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Jffyqra5lyRjpyvIiKSTLnE6LOCvsqWFt7MNk0A4KyMoVPxn6hiNUmt7K7MbSinbT7cw3DNc6RefJlqHL3lxg3OhquTgEXlYG6XyfyBSDmCRVyC3pKBMzz+qpdAQm/VOTurC6/FFlT6H1kBvOsHVCzv0fFnWF+P0GOb7tNtRi59cVyCg9AGBo6OPBNXN2h3+BcRRie7QHDs4wb1Uw+NXDAs8At9UpK2PgqWbO0Afp+FRviSU8BnNWSYTs5efbRLxe+/1viPjXWtk5Ul58/Psiot0DB1xbY4gL3vGnxmQ+0h/MYNLIQf/4yTjXXCr5tGywSJ43MGc5Tb1Dc8FaDP10Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wGGrH8OTlnR+fi4sdHexJKfzEL4GeVHbDJCizjQkStg=;
- b=vwTDr2kE3FbGgSiUeHOF1m2fqM/9G4GZh5irQeLKM6GpOVjkwm1ECq2ria+VwI3SnwCWq++yWapTrb73FZyoxtxyTnANpMQWhnsK4cswYQx1IoV1efYV/7Ug5h8XXBY6NAki6/mXDgv82tnzOcqEYH5eJSO1MbvzK5NourQHlE+V4JiTu2QLcC9X4JGmLgi6cidZPi8MVM+pfzIc7oYVlsT3J3fO8SQmriwPNo7zA1FCCevYZg3evq+k+m2e+772QME5DiLRgq5Hd2D5JRVIMgBXT4UyUEcBh3vQytZiyljPlBl+82VpEuyWS2EGfY9AyWobYEKB7K8aTAVB4Vvpjg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wGGrH8OTlnR+fi4sdHexJKfzEL4GeVHbDJCizjQkStg=;
- b=N47k4JJBGp+WAeOASPThzNaiXhkzfhTWEhYtHNayevZcAD7CmaB0Puqb/EXnLiS4Cpkm52fMCxaXnrvzxrzpkiOE/8Brr1EcyxxI5JTP1g2T70Q86MYf4qeRh7ZBWqU1skGa8gRrMN5F3qkfumEe8u2GrsI9PWQaVtlZ5UWYyVXeSlOMf9akNVsqeyfKHF95r5aINg2Lvem6CktzXsWIV/crfalkKxLQxAfl43oclnuiZEWGC13qvnDnxN0LR71xbRhFL8L5TYrzyeMxngO50ViNDRzKJOx+jFxmBnGyf1IpskQxMZezC6U7jOBQ+L6OVnMTPX8Y4Yi6YXuhr8aUvQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by MW6PR12MB8950.namprd12.prod.outlook.com (2603:10b6:303:24a::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Mon, 3 Nov
- 2025 20:31:39 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9275.015; Mon, 3 Nov 2025
- 20:31:39 +0000
-Date: Mon, 3 Nov 2025 15:31:38 -0500
-From: Joel Fernandes <joelagnelf@nvidia.com>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Alistair Popple <apopple@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
-	Edwin Peer <epeer@nvidia.com>, nouveau@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org, Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH v3 2/6] gpu: nova-core: vbios: do not use `as` when
- comparing BiosImageType
-Message-ID: <20251103203138.GA2098593@joelbox2>
-References: <20251029-nova-as-v3-0-6a30c7333ad9@nvidia.com>
- <20251029-nova-as-v3-2-6a30c7333ad9@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251029-nova-as-v3-2-6a30c7333ad9@nvidia.com>
-X-ClientProxiedBy: BN9PR03CA0752.namprd03.prod.outlook.com
- (2603:10b6:408:13a::7) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818363D561;
+	Mon,  3 Nov 2025 20:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762202004; cv=none; b=EGW66gDr6IM37fB/SPziiqDi81keC/Z0DbrAS+fsR63/6jSAll6kJ7VH+h070y6c8GBelbE5E3wsYwJFD9YnqSHTXsDgP7YAE1XHTSARbcGmY+PADe0e/Mh9rW00SYk7qv2ev9DnWsivozKwlsntU/lfNJFnstQI74F6Nwy2a3A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762202004; c=relaxed/simple;
+	bh=KFUkblgsEEN8vjzJcuGJbVZaQoZIH0aQ8mp6eqbsoos=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M+GsK+s0y3r50dJOCrEvxE2JcCpo+Ne/CnpnIq3t3R6lg7MTTNPHVn9xO1m5FJK7wtVOgHZ4DA1ZExOXBjYiaYa25GwrQEiHXD36Al/w10TWUAO/BtJbReFJusS39ts8UHOTARiVkAogtSwFxFb1krYhq3xJr2vp3MIg1GmAhT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lEfWB4g1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8219EC4CEE7;
+	Mon,  3 Nov 2025 20:33:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762202004;
+	bh=KFUkblgsEEN8vjzJcuGJbVZaQoZIH0aQ8mp6eqbsoos=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lEfWB4g1GdxFAt8hlanFY7fEBht94H5mGkqLwHdxhsLsE2X0yixYFGj0GpmBcyoWd
+	 L7z2RcQferEDtJl/EEiGHiFLXzA2w1iFMy8zvcZKZb8I08Q9Hub5F7JMAF2Qma6pj9
+	 2l19cmg7+ecolAxCb7+81aubrLESR9IR1fP3TCcYqzW6F9MJMeKVIAezxZYkB/0Vu0
+	 MsBkrWlFEsqu2wWhjBvMwyAPfFCBtvCsccaUIxmTbjroOSBkCXTyMwpE9E/VJc6OWu
+	 gTURDw3pn5LcsqKwQbaQGeAEM6MmOI98DU/kOkc5zvWtKGMzWjnYG6/zA22JUiAmx/
+	 aEli4xMn44xiQ==
+Date: Mon, 3 Nov 2025 17:33:20 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Chu Guangqing <chuguangqing@inspur.com>
+Cc: john.g.garry@oracle.com, will@kernel.org, james.clark@linaro.org,
+	mike.leach@linaro.org, leo.yan@linux.dev, peterz@infradead.org,
+	mingo@redhat.com, namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] perf vendor events arm64 AmpereOneX: Fix spelling
+ typo in the metrics file
+Message-ID: <aQkRkLMYTGLVJAuZ@x1>
+References: <20251103014633.1213-1-chuguangqing@inspur.com>
+ <20251103014633.1213-2-chuguangqing@inspur.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|MW6PR12MB8950:EE_
-X-MS-Office365-Filtering-Correlation-Id: ffe0a89b-595b-4094-4265-08de1b17fe15
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?FZXIlwsBCHF58C0hHGxk9ZLCazH4ZYxsgqXREdNGakebVGuXIm9d5G1qLSJT?=
- =?us-ascii?Q?EAE0HA6826+Q8Sd3yIfwOH9Rc+PUnb3ph8tt/2op6IgmbzvEQQcU2mbQPf1m?=
- =?us-ascii?Q?YDGwvdEBIv9iHildTRAB8ELLLAokQIoRBiIXzT2/HOshwbEn6Jw9RD8g09CL?=
- =?us-ascii?Q?e2FnkXq1gOk6m7z/RSutbyeTSrMCWrkWEd4v4G4oKaFgRSzyj5xKWGMZ/PQ7?=
- =?us-ascii?Q?5UIJu2SZ3JtD0fh4nuwRbmW/PNyjVmjXd526Z+BTAQF1hGuXV4Ycl6GMy/mf?=
- =?us-ascii?Q?3J3577QKcNBh55AybDL1v5hqo1A4w5+i1y1WfnDboqWfaXfgxP24CllA5sah?=
- =?us-ascii?Q?6LxGdQmzt5ucU0PjT/5DBr4n6LueWwXnG23asO9q9t+u31IeDw7kHV4kuulf?=
- =?us-ascii?Q?1LuJpNVudYw1i9J1jZEuwfLLVA/oMMthyKsbG8xjd+28s/Wu/NdeaAoZ9aqE?=
- =?us-ascii?Q?Pier5DJilB1F9+z4vFZhNAt3EsgaNqCsXP0O2mUDh5hExpY6ohuMLA4hxGK6?=
- =?us-ascii?Q?rgt5iYH809P2NNFANTD86qkwrn+JI3s+Y7Fr+C56cIrnDF3qCtzrBDCMaRPc?=
- =?us-ascii?Q?5zPlXeKKh3+31ZYj0TCeaArOyn5s+iTeAXgwprVkJLLvneIAsNUOVnH2Ppg5?=
- =?us-ascii?Q?Rfd3x72rWHFBFKcepsEcQUnB9OWKoMFVF/qmVXUpaps2wODE6EaEtNhABmRW?=
- =?us-ascii?Q?guogv6RTcE2x/A+B3iuAo8z/i53DCMAL8oXkEW9uWrPtay1xnSxgs3TQF2pA?=
- =?us-ascii?Q?NzQQp3y/qVDC1iXj7q7QbLsfSVhhYbasS7XFoMwgf8hgAvlmGaXz0wDTpl1b?=
- =?us-ascii?Q?/ImwBD3WfRjTB9zC1unwXAeiLWKk5opnvjp5sUyFh3cETsbehld8NE1Kpjj7?=
- =?us-ascii?Q?imWytUQrlSTu2wIEw2znAar7RK5Nm2z8zOYwJKFeOvrG/O1CKkdqyW+YwBBN?=
- =?us-ascii?Q?RXkfptyxKX97i2dQzezvw0ag2RHkmxkxEhvwHi3PZhgsnhA86JXbCMiiOyTX?=
- =?us-ascii?Q?N2ALg717IVwzR4CGxTzvhhDTEX2mO2ub+mJNDea6qZl9ZfOWzs/5TNd8mypn?=
- =?us-ascii?Q?q/Ep41GQjZDtC7Sg6uS/aY+TKtJjJ2Jjhb+HsSRLxp0RkpOpGfIagVBRldMy?=
- =?us-ascii?Q?ppsu0uIr/ejO5InSpBm5fAYWuj2Zr0NAUDoT9Kr/2x92ptOcHAymAfsUv46n?=
- =?us-ascii?Q?BF7iuTX+4pjWcN4h1qHVOmcmUZV/yLwrwOV8Pz94RsAACwdDZ9luUmCHj4nm?=
- =?us-ascii?Q?a1WtsNi/0Fzbkr88e432hWBv2lE38XRE1WXxTCZ0EdaBgh3bUZiCJMdaxnlh?=
- =?us-ascii?Q?Iqrg5DFf7E3FKSlGaaey2JC3yPsS09FWCT5HUUL7eDpMWCn/woXfEWVYRLpk?=
- =?us-ascii?Q?5hxPqSejowLvk+C3rWf9N8iGo+qTKpNzM9Ce2YJ3LQ+YD+i8IYtCBuxdw3SS?=
- =?us-ascii?Q?/lidIYkyuzTvhG7z35VjTYcHEgHqQqH+?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?SUj6eR6YsmFitAJ3pf0K167SEYaDn1RTaifvDQzvwdKqt80lrCnkq3oNyc0i?=
- =?us-ascii?Q?CgZIp0xKxqZKdVhPpMx+y72JMf9e2q9ix8aaYKPOpO1ZtlxupuL3D7VDCSEK?=
- =?us-ascii?Q?hjaSCdYnYnKgisHOq7SlYiYPiVdkatPNplX1sqKsE6ufknlxG1Ndh+l7YHNE?=
- =?us-ascii?Q?WjNgbJE0qvn6XGV51MGbxJkdvrhzIXW2nyHGYhPkU8aUFJuiQtR9t+JXRabD?=
- =?us-ascii?Q?W4YkFJqGoUmBpuJPh73gK9QlwFFyv075F7VKqdWJjac4k6YAmFybjUuHtNCM?=
- =?us-ascii?Q?J1fFE16v6HaK4oUJ2UN1c+ep9bSq1PEkmIst0s5i6pAz6tSP0AJiUeFORmgz?=
- =?us-ascii?Q?Ll8YZoEs/WS8l8MjBlSEwFRcAG9aOMlr4X0j4jVRFKKCvL4tYb7PZqydaJ8l?=
- =?us-ascii?Q?sn04OutlSIU5dDctVjt0b3UNIDUQJ4rzCFxN1WbkKA/J3hc8rMZuv4I7/D3A?=
- =?us-ascii?Q?iTCx8r58Z3e8fC9c/FpC92B2sqnXzXa+ed+2iYZp38obHKF7tmFA1/di9AI/?=
- =?us-ascii?Q?+MtziuBjd6ooEvDWMkCRtBB02tjmsdpFz6hwy7QVDaMuSGP0qUEuirlOPjno?=
- =?us-ascii?Q?qNbRX12aqvj8jiMa0xq8omAwPzZsmmCkPYSztdiqJUhZpeeF2KpW/RUE4kIy?=
- =?us-ascii?Q?B/XMXh3wJPc2+Q/JT1iC6jnfQODhfWZf7Aq9CB3OGAh9yT34rZvWQTVVPggb?=
- =?us-ascii?Q?06S0DXM9Y1HMH03+KhSRz/a8BHbrg46JJw4GTrdr2Qfv8NCWxFqSG+KA+QQL?=
- =?us-ascii?Q?K8gnNZXto57biM/C5jCuiTTGDArH3ELHYZXwXoE24BwW7dZVrYtKsF9x/acD?=
- =?us-ascii?Q?Y+10+o4+J1L6EPr2rjpaVDMtRrZFR/dVUx/Xl0peXGeC5nmAMr1xmEdn+v+q?=
- =?us-ascii?Q?Y4JpulyjA18HtP8LWdj5K4+8FdK7Mi+5TwflafalZlaJYLD4hMQj6+agMUQM?=
- =?us-ascii?Q?XxMAQdH5NL+zgJgIkvWW1txnu7LOSNFG2YDpOJJjnQRIukfQLhRTRToTtQD9?=
- =?us-ascii?Q?oDhWscHCgwz6jF8LqDyVew+gSxGII03+d1buZdjKS1dpUctxLP7y81OZHym0?=
- =?us-ascii?Q?3MEZ6rtGjEmGMiSuDMdw5VCLSBM+0lysgBmqX/E0us0odMxTv8wVEdnVs3X6?=
- =?us-ascii?Q?PmMTWJNLIbiW5EuQAGKXapN526KcNTgwHGqvU03iUuE622dKqsmECtCVgBEG?=
- =?us-ascii?Q?xJhZWFalRWtZm0AmU79OTdvEiYn8fiQYcrhfng3GZ3CGTzUPFxnhQyFIXQK9?=
- =?us-ascii?Q?lfndjS3VtKBy+P8raB2X3nGN4rNfVN3CVNYb9kv0i28GwLzWa4qX8UBVxAzT?=
- =?us-ascii?Q?Lv1AmKlg3H83x+fhQIFIMGeME0qIiowXIFqizHp76cyCIxXX+tjMLqyQE81Y?=
- =?us-ascii?Q?2KVtUjp8H1OlTDEfV9YOsxVdIkvYy3Ig4sj1z34K43LFZN2+tNoUAnZ21h1m?=
- =?us-ascii?Q?/Wr+szfPbkBLVQFPa7/GnVcy2EY94K1R6CwWyJQFJ7+mDrYtLuOMuhTwcvw8?=
- =?us-ascii?Q?Gtv8gKCWmMaYY3QhcuiQofEzb9a+4zGyUp4AzxZhJgt9CfYzJ1ImkofTr/TV?=
- =?us-ascii?Q?dCIPxTbjdWD5k8OQ1qkXrfKPJJOVBeUZicywXj9M?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ffe0a89b-595b-4094-4265-08de1b17fe15
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 20:31:39.5933
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dPfd+hdCXvpIoymD2LCWk3qqMmGLBEKBCRppGVJtXGPsrLUeyRnAGlPBab6h6Ii7huNe6nzrU5gVVB4vYrukaQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8950
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251103014633.1213-2-chuguangqing@inspur.com>
 
-On Wed, Oct 29, 2025 at 08:12:10AM +0900, Alexandre Courbot wrote:
-> Use the `image_type` method and compare its result to avoid using `as`.
-> 
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+On Mon, Nov 03, 2025 at 09:46:33AM +0800, Chu Guangqing wrote:
+> The json file incorrectly used "acceses" instead of "accesses".
+
+Acked-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+ 
+> Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
 > ---
->  drivers/gpu/nova-core/vbios.rs | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+>  .../arch/arm64/ampere/ampereonex/metrics.json    | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
 > 
-> diff --git a/drivers/gpu/nova-core/vbios.rs b/drivers/gpu/nova-core/vbios.rs
-> index 74ed6d61e6cc..7c1bf10b2eac 100644
-> --- a/drivers/gpu/nova-core/vbios.rs
-> +++ b/drivers/gpu/nova-core/vbios.rs
-> @@ -709,9 +709,8 @@ fn image_type(&self) -> Result<BiosImageType> {
->  
->      /// Check if this is the last image.
->      fn is_last(&self) -> bool {
-> -        // For NBSI images (type == 0x70), return true as they're
-> -        // considered the last image
-> -        if self.pcir.code_type == BiosImageType::Nbsi as u8 {
-> +        // For NBSI images, return true as they're considered the last image
-> +        if self.image_type() == Ok(BiosImageType::Nbsi) {
-
-nit: Could you add period at the end of the comment sentence as Miguel
-suggested in the other thread (which I admit the initial code also didn't
-have)?
-
-With that change,
-
-Reviewed-by: Joel Fernandes <joelagnelf@nvidia.com>
-
-thanks,
-
- - Joel
-
-
->              return true;
->          }
->  
-> 
+> diff --git a/tools/perf/pmu-events/arch/arm64/ampere/ampereonex/metrics.json b/tools/perf/pmu-events/arch/arm64/ampere/ampereonex/metrics.json
+> index 6817cac149e0..a29aadc9b2e3 100644
+> --- a/tools/perf/pmu-events/arch/arm64/ampere/ampereonex/metrics.json
+> +++ b/tools/perf/pmu-events/arch/arm64/ampere/ampereonex/metrics.json
+> @@ -388,55 +388,55 @@
+>          "MetricExpr": "L1D_CACHE_RW / L1D_CACHE",
+>          "BriefDescription": "L1D cache access - demand",
+>          "MetricGroup": "Cache",
+> -        "ScaleUnit": "100percent of cache acceses"
+> +        "ScaleUnit": "100percent of cache accesses"
+>      },
+>      {
+>          "MetricName": "l1d_cache_access_prefetches",
+>          "MetricExpr": "L1D_CACHE_PRFM / L1D_CACHE",
+>          "BriefDescription": "L1D cache access - prefetch",
+>          "MetricGroup": "Cache",
+> -        "ScaleUnit": "100percent of cache acceses"
+> +        "ScaleUnit": "100percent of cache accesses"
+>      },
+>      {
+>          "MetricName": "l1d_cache_demand_misses",
+>          "MetricExpr": "L1D_CACHE_REFILL_RW / L1D_CACHE",
+>          "BriefDescription": "L1D cache demand misses",
+>          "MetricGroup": "Cache",
+> -        "ScaleUnit": "100percent of cache acceses"
+> +        "ScaleUnit": "100percent of cache accesses"
+>      },
+>      {
+>          "MetricName": "l1d_cache_demand_misses_read",
+>          "MetricExpr": "L1D_CACHE_REFILL_RD / L1D_CACHE",
+>          "BriefDescription": "L1D cache demand misses - read",
+>          "MetricGroup": "Cache",
+> -        "ScaleUnit": "100percent of cache acceses"
+> +        "ScaleUnit": "100percent of cache accesses"
+>      },
+>      {
+>          "MetricName": "l1d_cache_demand_misses_write",
+>          "MetricExpr": "L1D_CACHE_REFILL_WR / L1D_CACHE",
+>          "BriefDescription": "L1D cache demand misses - write",
+>          "MetricGroup": "Cache",
+> -        "ScaleUnit": "100percent of cache acceses"
+> +        "ScaleUnit": "100percent of cache accesses"
+>      },
+>      {
+>          "MetricName": "l1d_cache_prefetch_misses",
+>          "MetricExpr": "L1D_CACHE_REFILL_PRFM / L1D_CACHE",
+>          "BriefDescription": "L1D cache prefetch misses",
+>          "MetricGroup": "Cache",
+> -        "ScaleUnit": "100percent of cache acceses"
+> +        "ScaleUnit": "100percent of cache accesses"
+>      },
+>      {
+>          "MetricName": "ase_scalar_mix",
+>          "MetricExpr": "ASE_SCALAR_SPEC / OP_SPEC",
+>          "BriefDescription": "Proportion of advanced SIMD data processing operations (excluding DP_SPEC/LD_SPEC) scalar operations",
+>          "MetricGroup": "Instructions",
+> -        "ScaleUnit": "100percent of cache acceses"
+> +        "ScaleUnit": "100percent of cache accesses"
+>      },
+>      {
+>          "MetricName": "ase_vector_mix",
+>          "MetricExpr": "ASE_VECTOR_SPEC / OP_SPEC",
+>          "BriefDescription": "Proportion of advanced SIMD data processing operations (excluding DP_SPEC/LD_SPEC) vector operations",
+>          "MetricGroup": "Instructions",
+> -        "ScaleUnit": "100percent of cache acceses"
+> +        "ScaleUnit": "100percent of cache accesses"
+>      }
+>  ]
 > -- 
-> 2.51.0
+> 2.43.7
 > 
 
