@@ -1,202 +1,92 @@
-Return-Path: <linux-kernel+bounces-882351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id B291EC2A3DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:04:13 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE4E0C2A3C7
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 07:58:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id EC897348447
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:04:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 197E34E5C47
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 06:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3DA38BEC;
-	Mon,  3 Nov 2025 07:04:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54FA4298CD5;
+	Mon,  3 Nov 2025 06:58:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l0KcvUD4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="WBa9ENdC"
+Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com [113.46.200.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07FA13635E;
-	Mon,  3 Nov 2025 07:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C8A235BE2;
+	Mon,  3 Nov 2025 06:58:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762153446; cv=none; b=hsgvcwZRj/K4RTpct83rW7Jm57N1mygPI37QU57rrOe4HG+tahZ1TdUNZ0Z+3invaIf01exp+A7sruQCJgUnHV12gskvmHyIYfAFolLpJVHC5Ts1CcmUwvP9hnqtbdXd02jMhsUVa3SrDtnhih0/TsGGeXNR3SvNWn1zbtiLB9s=
+	t=1762153122; cv=none; b=aeboBuusGAFt9W0MvrYqVj+rUV3yQm67d0XkKnxxznfXpTzdkw8F2GWup6w/o5FREn9kL1vtQQVgr/Hgwzr3AZS5gWy5LteJDkG1ZkuAYJZI1lhaiUH9JAzSF/UIwtv4UpigjFzboUWdhfNRKTvomcsuUpU1KED4/ydJ0u45NZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762153446; c=relaxed/simple;
-	bh=Bl5tzp+0IXBLOhlXIXp+qC72NWAu/2B3Wzn/AiXlTNM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Lncv0T9Hu2f8cXv+LuIvKCv8HCJF/0KmVn5IKBpoQhZAx5xZMBGv0YimyAv/ziMTZhsQXd3CuFhJxkrv8BiHqklwS+uBnja1mj5SPNVEBdhg4B2SeUn+fpPwr9L+rNEvEJDEIq3qHTCNAB8fUjJaiGiQ4DBppF3hDyZR4lNmtzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l0KcvUD4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF637C4CEE7;
-	Mon,  3 Nov 2025 07:04:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762153443;
-	bh=Bl5tzp+0IXBLOhlXIXp+qC72NWAu/2B3Wzn/AiXlTNM=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=l0KcvUD4tAtYvGHMTf8/ECvfP8JA5mcEaec/NXQNezu6eICvMuslMAYoiDj81RfBr
-	 WWn7l943cTEfRvwkaHqP5++sSmY0jK5rl1DFHDcrhs0U9uPxV5iejEqWC1dROxM3pc
-	 w5qcUTV1BaohCkgb+zmswJ11pvIzrBhARzLffZl41t0lx35aUlA/eMpWvMQX+qBwHb
-	 VJTQGBs9tSVb8c4xuPPqozC80LqgyPx2IdVboQ4N/QiDhr8ohwlhtDydpX2Ntgs79V
-	 WizFpZ1hjLCEpkPq4Sf3FslHNmi9r4J4RIkgdtoaE0NnorWYt1T67YCWZSg+3P3S4X
-	 MjfxIfOLxe92g==
-Message-ID: <c41cf4eb-cabc-4345-8476-cd7a4d2c4202@kernel.org>
-Date: Mon, 3 Nov 2025 08:04:00 +0100
+	s=arc-20240116; t=1762153122; c=relaxed/simple;
+	bh=UaWei8lA5myvGhZlKdywonEmJPyUfL8lNDin+Txy330=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YlxEZE6vbbYGhoIcJF+QnhkK8xL6mCL9WbECXh4aXsmlFOdWnAG9eUqwPcbSGGSmyLo5ctThmJgz7yZs/rLolmXxT5+ej7yN3M0pIrrxPark6FfPx9F6EgQo9+v/xfGOX9VCsRgBmtAAAB2Mg8e3Ck7zgFugzqHv8OOIDCvwQP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=WBa9ENdC; arc=none smtp.client-ip=113.46.200.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=yZVwZ3hFajFtTCfA4Oy9TngkmWmo1DVbMQCOxbEbPSk=;
+	b=WBa9ENdCIusVS7Yn6PIdeLql7uY2GCW1aL0lcj1jm9rO+nbSQYlQVUaux0oob72av2hbwUS+Z
+	CT9zAXozdi+9Icfm9EkN1LtD3JQFJ7OlHgRffRJolmd1FINddxWmvEFP9wVUarwLTpvq48SDg0X
+	hrpo6puIIXkGpRf1u9HdbA4=
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4d0Mny5S3LzRhTT;
+	Mon,  3 Nov 2025 14:56:54 +0800 (CST)
+Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 343AE1402C1;
+	Mon,  3 Nov 2025 14:58:28 +0800 (CST)
+Received: from huawei.com (10.50.85.128) by dggpemf500002.china.huawei.com
+ (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 3 Nov
+ 2025 14:58:27 +0800
+From: Yue Haibing <yuehaibing@huawei.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <horms@kernel.org>, <almasrymina@google.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yuehaibing@huawei.com>
+Subject: [PATCH net-next] net: devmem: Remove unused declaration net_devmem_bind_tx_release()
+Date: Mon, 3 Nov 2025 15:20:46 +0800
+Message-ID: <20251103072046.1670574-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: UBSAN array-index-out-of-bounds in ath5k driver
-From: Jiri Slaby <jirislaby@kernel.org>
-To: Salvatore Bonaccorso <carnil@debian.org>,
- Nick Kossifidis <mickflemm@gmail.com>, Luis Chamberlain <mcgrof@kernel.org>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
- Vincent Danjean <vdanjean@debian.org>, 1119093@bugs.debian.org
-References: <aQYUkIaT87ccDCin@eldamar.lan>
- <791a9e59-7819-4d63-b737-65ff1de6d73d@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <791a9e59-7819-4d63-b737-65ff1de6d73d@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ dggpemf500002.china.huawei.com (7.185.36.57)
 
-On 03. 11. 25, 8:00, Jiri Slaby wrote:
-> Hi,
-> 
-> On 01. 11. 25, 15:09, Salvatore Bonaccorso wrote:
->> In Debian, https://bugs.debian.org/1119093, Vincent Danjean reported
->> the following:
->>>    The ath5k driver seems to do an array-index-out-of-bounds access
->>> as shown by the UBSAN kernel message.
->>> [   17.954484] ------------[ cut here ]------------
->>> [   17.954487] UBSAN: array-index-out-of-bounds in /build/ 
->>> reproducible-path/linux-6.16.3/drivers/net/wireless/ath/ath5k/ 
->>> base.c:1741:20
->>> [   17.955289] index 4 is out of range for type 'ieee80211_tx_rate [4]'
->>> [   17.956134] CPU: 1 UID: 0 PID: 1745 Comm: 16 Not tainted 
->>> 6.16.3+deb13-amd64 #1 PREEMPT(lazy)  Debian 6.16.3-1~bpo13+1
->>> [   17.956137] Hardware name: Gigabyte Technology Co., Ltd. H67A- 
->>> UD3H-B3/H67A-UD3H-B3, BIOS F8 03/27/2012
->>> [   17.956139] Call Trace:
->>> [   17.956142]  <TASK>
->>> [   17.956145]  dump_stack_lvl+0x5d/0x80
->>> [   17.956154]  ubsan_epilogue+0x5/0x2b
->>> [   17.956158]  __ubsan_handle_out_of_bounds.cold+0x46/0x4b
->>> [   17.956162]  ath5k_tasklet_tx+0x4e0/0x560 [ath5k]
->>> [   17.956173]  tasklet_action_common+0xb5/0x1c0
->>> [   17.956178]  handle_softirqs+0xdf/0x320
->>> [   17.956181]  __irq_exit_rcu+0xbc/0xe0
->>> [   17.956184]  common_interrupt+0x47/0xa0
->>> [   17.956188]  asm_common_interrupt+0x26/0x40
->>> [   17.956191] RIP: 0033:0x7f4fa439067d
->>> [   17.956204] Code: 0f b6 14 16 45 85 c0 74 01 92 29 d0 c3 48 8d 3c 
->>> 07 48 8d 34 0e 45 85 c0 74 03 48 87 f7 48 0f bc d2 49 29 d3 76 0b 0f 
->>> b6 0c 16 <0f> b6 04 17 29 c8 c3 31 c0 c3 66 0f 1f 84 00 00 00 00 00 
->>> 0f b6 0e
->>> [   17.956206] RSP: 002b:00007ffd8cc32f08 EFLAGS: 00000212
->>> [   17.956209] RAX: 0000000000000020 RBX: 0000556dfab414a0 RCX: 
->>> 0000000000000070
->>> [   17.956210] RDX: 000000000000000d RSI: 00007f4fa4b7a05f RDI: 
->>> 0000556dfab414a0
->>> [   17.956211] RBP: 00007f4fa4b7a05f R08: 0000000000000400 R09: 
->>> 0000000000000008
->>> [   17.956213] R10: fffffffffffff4b8 R11: 000000000000000e R12: 
->>> 000000000000001b
->>> [   17.956214] R13: 0000556dfab412c0 R14: 00007ffd8cc32f80 R15: 
->>> 00007f4fa4b79eaf
->>> [   17.956217]  </TASK>
->>> [   17.956217] ---[ end trace ]---
->>>
->>> It occurs once at each boot.
->>> According to
->>> https://kernel.googlesource.com/pub/scm/linux/kernel/git/stable/ 
->>> linux-stable/+blame/master/drivers/net/wireless/ath/ath5k/base.c
->>> the line of code has not changed for about 15 years.
->>> And I'm using this driver for more than 10 years.
->>> So, the array-index-out-of-bounds does not seem to
->>> have hard consequences for now (by luck?)
->>
->> Does that ring any bell?
-> 
-> No, but it is real. ts_final_idx is at most 3 on 5212, so:
->    info->status.rates[ts->ts_final_idx + 1].idx = -1;
-> with:
->    struct ieee80211_tx_rate rates[IEEE80211_TX_MAX_RATES];
-> and:
->    #define IEEE80211_TX_MAX_RATES  4
-> is indeed bogus.
-> 
-> IMO we should just *not* set idx = -1 if ts->ts_final_idx is >= 3. As 
-> mac80211 won't look at rates beyond IEEE80211_TX_MAX_RATES.
+Commit bd61848900bf ("net: devmem: Implement TX path") declared this
+but never implemented it.
 
-This™:
---- a/drivers/net/wireless/ath/ath5k/base.c
-+++ b/drivers/net/wireless/ath/ath5k/base.c
-@@ -1738,7 +1738,8 @@ ath5k_tx_frame_completed(struct ath5k_hw *ah, 
-struct sk_buff *skb,
-         }
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+ net/core/devmem.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-         info->status.rates[ts->ts_final_idx].count = ts->ts_final_retry;
--       info->status.rates[ts->ts_final_idx + 1].idx = -1;
-+       if (ts->ts_final_idx + 1 < IEEE80211_TX_MAX_RATES)
-+               info->status.rates[ts->ts_final_idx + 1].idx = -1;
-
-         if (unlikely(ts->ts_status)) {
-                 ah->stats.ack_fail++;
-
-Vincent, can you test this?
-
-> FWIW, the effect of the UB is it just overwrites the next member of 
-> info->status, i.e. ack_signal.
-> 
-> thanks,
-
+diff --git a/net/core/devmem.h b/net/core/devmem.h
+index 101150d761af..0b43a648cd2e 100644
+--- a/net/core/devmem.h
++++ b/net/core/devmem.h
+@@ -94,7 +94,6 @@ void net_devmem_unbind_dmabuf(struct net_devmem_dmabuf_binding *binding);
+ int net_devmem_bind_dmabuf_to_queue(struct net_device *dev, u32 rxq_idx,
+ 				    struct net_devmem_dmabuf_binding *binding,
+ 				    struct netlink_ext_ack *extack);
+-void net_devmem_bind_tx_release(struct sock *sk);
+ 
+ static inline struct dmabuf_genpool_chunk_owner *
+ net_devmem_iov_to_chunk_owner(const struct net_iov *niov)
 -- 
-js
-suse labs
+2.34.1
 
 
