@@ -1,323 +1,86 @@
-Return-Path: <linux-kernel+bounces-883409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6846C2D626
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:13:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C910C2D665
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:14:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D2343BB3D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:05:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54273427324
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F26853191D6;
-	Mon,  3 Nov 2025 17:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B081331A7F2;
+	Mon,  3 Nov 2025 17:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wbmhutg6"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EaY6Tv7c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409E422ACEB
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 17:05:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1778B31A545
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 17:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762189544; cv=none; b=s4u07Z7emGoY4dlT/n+5oD0eaQQCY7Ua8lr+nZWyRVcdto3tySnir3dP54JmN5Gt+FO1KDHz3I7IN+LgRc86wARUhPhZWMJSdTao14YEti/5XGpZkcZPA6Q/aEW5xar37CJG7MPJ1sZKRpbqSakuTRWvCH19LMhUK1r/tEvO5RU=
+	t=1762189549; cv=none; b=THZU1fc3SiXANiP6vnRuCA6Mp9lnJqxrfW3+tv4pKR4VX6xwl3A78E6BkHyMBcCKODr8OTrZaZis9I3OlnaCtTp2GXUhPRMJ7Cr6zA0yDHaRTmIlXZ4kI1h6tMZ3D4AcGRThGAG3WaT+uTgxlhJ2c2k7OcEHnXnlJBIRn9maAL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762189544; c=relaxed/simple;
-	bh=Gtw8Ji0MiooGRLuhUMWiu8mUFCkokp2oJT0BpGYlqo8=;
+	s=arc-20240116; t=1762189549; c=relaxed/simple;
+	bh=R8/epIwjK6bK49ZWSDEUOL8uhBPyT7+iUssIctqWPwM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=GRHqd/s3NmoFSCwqxNMHXg++xhkLWf3dJb+6/OvUZ5vpjIassi5P42Sj/JQU/P+hADgGrLUC9KHTU53wdOnzMH4FsDAXbtmDQmPIB3M1Ly9C6wr/txQP78pneOqDZr6s4OXaQz8srUP5BZfesdI6Yz4QqNWyIJrvlV6NPZpApvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wbmhutg6; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-27d67abd215so508205ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 09:05:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762189541; x=1762794341; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=USUP+G8rxPZSNWnfCQ4g/UgmX4j5eyp+wl5nNOkjPO8=;
-        b=wbmhutg6GTX5gA00DZN5WT8VxmyYkBIBTB/Bbv8ZmJmuk4r8esc3wOR6c8d3VcptWs
-         JX1T6SM/idyvUsOxghKpru5RfsD7qEGunA+OQcboJ0v8CWDOdGEsdWDxRs+EsWakRJct
-         OEN46KULt1x+VKLEL1B1nVE4ypmct/nUngpILeyCKKHpdvK1/chwdOBxEftLdQqa+tmq
-         CCNvnYA6iHbCf5Sl+8jo0knP1TszONJzc38W57yr0qtvijWfcEw8hsusdSUmgMlkUWZx
-         Jy2aWbFxVs8RSCYbxZY6lOOMpkIRVa5shuVWqN57wjO7DqJuikygcJ2Z3x/88VuLn1gu
-         2HIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762189541; x=1762794341;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=USUP+G8rxPZSNWnfCQ4g/UgmX4j5eyp+wl5nNOkjPO8=;
-        b=JK8KhWdDqDGbKpz3DDd5K0pQmK51jQzk8TUQaY52edn1jIfN4k+ZKUHnfz9I/1KcmN
-         rd7b6PwL5CgeHlKJEkwxqY1lSYUmF8+OlC465ZfhPO+INxezyrgfQECiK9WlvpEKyJCl
-         YYRtb/75HabiTQptYDchZwPEPaDwlE+pxxmTnbxOKOeo7rZLPubQR9MyXH9M2RFuYLCh
-         eXr2BAsTcinY/tamzOy1fK0PIpapFXS6C0r+WNSZcFPWGfEyjAE0kzAzfp0FWkDiT4dl
-         Ublmti1132ci0EfBnDtKgcvqJtvgUDS2DWPBivpFRthHvQgzF+xUEOZk4/55DqArsNvl
-         9G7w==
-X-Forwarded-Encrypted: i=1; AJvYcCWqIRQ9j4ujIH462ioVk9hWNI+lCoavPY6gOaphI7Yrv/UAReWvZ9cIgpLffcKcGXKgVLCMnsXwueGdyTI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9ozcQ4AFomEo7UTIibibql2+rWEW+mSfT/4MCpiUGLKqLZLZD
-	Pg3NLf5BS1qEFr7bH1bNFUQ9s0kmn7u6QuqlaQn9JRcH+2yUFBBzdTXMSp0Fto6Rl8JDluQo81C
-	H8WroT4ol7bk0nECulg0NBVAb6N6otgb5AkJEBGfi
-X-Gm-Gg: ASbGnct8HSh2vuxBxmDY+WmCkvkVg3aPM1+Eh8Iy5NnNEq6FgvEGxizGJcfAzucxp5U
-	6aQ5oNV2rYOwkc/qOjiFRwdxIYzyuFgt8b34HKlBsy2Udggic+vGS6lehgp1tF3P0vqujBZEI8M
-	WMpFKyHCM0vNSNRoU/mz5iDaXX7uYoWC5w0+t2gE8FzK+XUmeCGlJIz7CkhKPICEqnxG4XJ3Jwg
-	w3kYvk/rYaIRLF/uEf7cGK/4YWA+usOD3R4zvyAM6Z51xW9fzpUyBKjNMu3X3b9K9A0PRKu55YJ
-	aaMoyYDcw2h+YEedPL59CjLofg==
-X-Google-Smtp-Source: AGHT+IHUeJcXwth7WRuC/KtMXBd3AMpZZeAdXfIIk2Se/ptAhSSZ9BwxoPHztazmcH/OCEMedqk7rDIm4KTR0FQtNfA=
-X-Received: by 2002:a17:902:ea11:b0:293:e5f:85c8 with SMTP id
- d9443c01a7336-295f8d2ed8fmr420065ad.9.1762189540911; Mon, 03 Nov 2025
- 09:05:40 -0800 (PST)
+	 To:Cc:Content-Type; b=bEJOjLxwnveMH8WUGsvijyPWlm7g2Ghn7By3ME8dQktDw39RpS+HeAqCuu/Pnh0vcIgCC4/t5tCycjFzNV1ypN8D8EcyMHcKEs168E0TlOiw+wf+TJZZ9pyXG94aud6R5pe3T7jCzZ7/VLGAXNZpZr+KyTZqVyC5osLZEmciKMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EaY6Tv7c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9BAFC19421
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 17:05:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762189548;
+	bh=R8/epIwjK6bK49ZWSDEUOL8uhBPyT7+iUssIctqWPwM=;
+	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
+	b=EaY6Tv7cHr4o4Vfi3GSo8Tkg1iZPjIh2CtCdICyPQfWzhfho3O8ACsyEJNXCcU1f3
+	 D0LWz0bttvecSDQLjs1boz1AEPsi98IlZT/T6MOs97sSv2Lf4zuv3p9LD7jpM/N89E
+	 o4Xbilz+6y7+bCiNnviZq2GSlOI904Ai1Ea9/gOJgpw0Ht19WCfrD+i3pFUeZusmEJ
+	 ZnjlKzoIjaezB8RYWF0m9qincwp49CKthFdx41zFzi3kR/Z7H9xhltClZkWSzYMv5C
+	 D9zU0PTPDK21/3gwmirE7CXW9svxQo/d+TviHxm2ryicvJ0TWXZsdTCtpIa4jrRiYF
+	 NF0ZcMjCfN/GQ==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-37a38e56dd5so8298151fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 09:05:48 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUL8WKTZQd+YUlG+aus18dbCvWpv4LFT0zY6pFxswK+PkWb7DwA7lUH0VVAsAWUvuF15gNR/8xYCYRzM+w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJbYalEjcgTStyxHNGqmS6c2DSgK+rxXATdtd7uTweqYfSe/o6
+	c/R6i84c6KRKqDPvK0BjRhg7ANyoQ/phZqns091HzLgngh5imDqRJCBmHTQlKjtGVgHG3bcBIm6
+	GlzS2iZr1o+fuJI3IASLIoJVodVYiCBc=
+X-Google-Smtp-Source: AGHT+IFFN6zMGk4DLXEheEbfJ2wV+RhlYINJykEwMAz/aoaR1rEWNKZw5HxZGXozvXgetNVLf4i7Wb4fjcgrBvfmKaU=
+X-Received: by 2002:a2e:7c1a:0:b0:350:adaa:6b93 with SMTP id
+ 38308e7fff4ca-37a18da8ba6mr26603351fa.6.1762189547139; Mon, 03 Nov 2025
+ 09:05:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251024175857.808401-1-irogers@google.com> <CAP-5=fUsK9+d0=f2RuTQBfooVZ6qTPZ=XQZ_z7DaH08FG6tV9w@mail.gmail.com>
-In-Reply-To: <CAP-5=fUsK9+d0=f2RuTQBfooVZ6qTPZ=XQZ_z7DaH08FG6tV9w@mail.gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 3 Nov 2025 09:05:29 -0800
-X-Gm-Features: AWmQ_bnCAOr91Os-HV-KKQ9l0h7G6XIzrQgrelPTuAef_aa802XCUTm0fnnNYA8
-Message-ID: <CAP-5=fVd5OD2=hhfmGVLGXmnA6BbaSHkvOu5cAKOjV1UkUqxyw@mail.gmail.com>
-Subject: Re: [PATCH v1 00/22] Switch the default perf stat metrics to json
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	James Clark <james.clark@linaro.org>, Xu Yang <xu.yang_2@nxp.com>, 
-	Chun-Tse Shao <ctshao@google.com>, Thomas Richter <tmricht@linux.ibm.com>, 
-	Sumanth Korikkar <sumanthk@linux.ibm.com>, Collin Funk <collin.funk1@gmail.com>, 
-	Thomas Falcon <thomas.falcon@intel.com>, Howard Chu <howardchu95@gmail.com>, 
-	Dapeng Mi <dapeng1.mi@linux.intel.com>, Levi Yun <yeoreum.yun@arm.com>, 
-	Yang Li <yang.lee@linux.alibaba.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>, 
-	Weilin Wang <weilin.wang@intel.com>
+References: <20251012192330.6903-1-jernej.skrabec@gmail.com> <20251012192330.6903-26-jernej.skrabec@gmail.com>
+In-Reply-To: <20251012192330.6903-26-jernej.skrabec@gmail.com>
+Reply-To: wens@kernel.org
+From: Chen-Yu Tsai <wens@kernel.org>
+Date: Tue, 4 Nov 2025 01:05:34 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67=Qd1G8JyR=5TABHf0uzoiJAw2-TkG_zMKyB0UEnOevw@mail.gmail.com>
+X-Gm-Features: AWmQ_bn81nvhbH0jeJNTVxHpTlgEQh8OpKt7eJ5AA-3FjjmbBjHnZ0HpUXyPv1g
+Message-ID: <CAGb2v67=Qd1G8JyR=5TABHf0uzoiJAw2-TkG_zMKyB0UEnOevw@mail.gmail.com>
+Subject: Re: [PATCH 25/30] drm/sun4i: ui_scaler: drop sanity checks
+To: Jernej Skrabec <jernej.skrabec@gmail.com>
+Cc: mripard@kernel.org, maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
+	airlied@gmail.com, simona@ffwll.ch, samuel@sholland.org, 
+	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 30, 2025 at 1:51=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
-te:
+On Mon, Oct 13, 2025 at 3:24=E2=80=AFAM Jernej Skrabec <jernej.skrabec@gmai=
+l.com> wrote:
 >
-> On Fri, Oct 24, 2025 at 10:59=E2=80=AFAM Ian Rogers <irogers@google.com> =
-wrote:
-> >
-> > Prior to this series stat-shadow would produce hard coded metrics if
-> > certain events appeared in the evlist. This series produces equivalent
-> > json metrics and cleans up the consequences in tests and display
-> > output. A before and after of the default display output on a
-> > tigerlake is:
-> >
-> > Before:
-> > ```
-> > $ perf stat -a sleep 1
-> >
-> >  Performance counter stats for 'system wide':
-> >
-> >     16,041,816,418      cpu-clock                        #   15.995 CPU=
-s utilized
-> >              5,749      context-switches                 #  358.376 /se=
-c
-> >                121      cpu-migrations                   #    7.543 /se=
-c
-> >              1,806      page-faults                      #  112.581 /se=
-c
-> >        825,965,204      instructions                     #    0.70  ins=
-n per cycle
-> >      1,180,799,101      cycles                           #    0.074 GHz
-> >        168,945,109      branches                         #   10.532 M/s=
-ec
-> >          4,629,567      branch-misses                    #    2.74% of =
-all branches
-> >  #     30.2 %  tma_backend_bound
-> >                                                   #      7.8 %  tma_bad=
-_speculation
-> >                                                   #     47.1 %  tma_fro=
-ntend_bound
-> >  #     14.9 %  tma_retiring
-> > ```
-> >
-> > After:
-> > ```
-> > $ perf stat -a sleep 1
-> >
-> >  Performance counter stats for 'system wide':
-> >
-> >              2,890      context-switches                 #    179.9 cs/=
-sec  cs_per_second
-> >     16,061,923,339      cpu-clock                        #     16.0 CPU=
-s  CPUs_utilized
-> >                 43      cpu-migrations                   #      2.7 mig=
-rations/sec  migrations_per_second
-> >              5,645      page-faults                      #    351.5 fau=
-lts/sec  page_faults_per_second
-> >          5,708,413      branch-misses                    #      1.4 %  =
-branch_miss_rate         (88.83%)
-> >        429,978,120      branches                         #     26.8 K/s=
-ec  branch_frequency     (88.85%)
-> >      1,626,915,897      cpu-cycles                       #      0.1 GHz=
-  cycles_frequency       (88.84%)
-> >      2,556,805,534      instructions                     #      1.5 ins=
-tructions  insn_per_cycle  (88.86%)
-> >                         TopdownL1                 #     20.1 %  tma_bac=
-kend_bound
-> >                                                   #     40.5 %  tma_bad=
-_speculation      (88.90%)
-> >                                                   #     17.2 %  tma_fro=
-ntend_bound       (78.05%)
-> >                                                   #     22.2 %  tma_ret=
-iring             (88.89%)
-> >
-> >        1.002994394 seconds time elapsed
-> > ```
-> >
-> > Having the metrics in json brings greater uniformity, allows events to
-> > be shared by metrics, and it also allows descriptions like:
-> > ```
-> > $ perf list cs_per_second
-> > ...
-> >   cs_per_second
-> >        [Context switches per CPU second]
-> > ```
-> >
-> > A thorn in the side of doing this work was that the hard coded metrics
-> > were used by perf script with '-F metric'. This functionality didn't
-> > work for me (I was testing `perf record -e instructions,cycles` and
-> > then `perf script -F metric` but saw nothing but empty lines) but
-> > anyway I decided to fix it to the best of my ability in this
-> > series. So the script side counters were removed and the regular ones
-> > associated with the evsel used. The json metrics were all searched
-> > looking for ones that have a subset of events matching those in the
-> > perf script session, and all metrics are printed. This is kind of
-> > weird as the counters are being set by the period of samples, but I
-> > carried the behavior forward. I suspect there needs to be follow up
-> > work to make this better, but what is in the series is superior to
-> > what is currently in the tree. Follow up work could include finding
-> > metrics for the machine in the perf.data rather than using the host,
-> > allowing multiple metrics even if the metric ids of the events differ,
-> > fixing pre-existing `perf stat record/report` issues, etc.
-> >
-> > There is a lot of stat tests that, for example, assume '-e
-> > instructions,cycles' will produce an IPC metric. These things needed
-> > tidying as now the metric must be explicitly asked for and when doing
-> > this ones using software events were preferred to increase
-> > compatibility. As the test updates were numerous they are distinct to
-> > the patches updating the functionality causing periods in the series
-> > where not all tests are passing. If this is undesirable the test fixes
-> > can be squashed into the functionality updates.
+> They can't be triggered if mixer configuration is properly specified in
+> quirks. Additionally, number of VI channels won't be available in future
+> due to rework for DE33 support.
 >
-> Hi,
->
-> no comments on this series yet, please help! I'd like to land this
-> work and then rebase the python generating metric work [1] on it. The
-> metric generation work is largely independent of everything else but
-> there are collisions in the json Makefile/Build files.
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
-Just to also add that the default perf stat output in perf-tools-next
-looks like this on an Alderlake:
-```
-$ perf stat -a sleep 1
-
-Performance counter stats for 'system wide':
-
-                0      cpu-clock                        #    0.000
-CPUs utilized
-           19,362      context-switches
-              874      cpu-migrations
-           10,194      page-faults
-      633,489,938      cpu_atom/instructions/           #    0.69
-insn per cycle              (87.25%)
-    3,738,623,788      cpu_core/instructions/           #    2.05
-insn per cycle
-      923,779,727      cpu_atom/cycles/
-                        (87.28%)
-    1,821,165,755      cpu_core/cycles/
-      102,969,608      cpu_atom/branches/
-                        (87.41%)
-      594,784,374      cpu_core/branches/
-        4,376,709      cpu_atom/branch-misses/          #    4.25% of
-all branches             (87.66%)
-        7,886,194      cpu_core/branch-misses/          #    1.33% of
-all branches
-#     10.4 %  tma_bad_speculation
-                                                 #     21.5 %
-tma_frontend_bound
-#     34.5 %  tma_backend_bound
-                                                 #     33.5 %
-tma_retiring
-#     17.7 %  tma_bad_speculation
-                                                 #     17.8 %
-tma_retiring             (87.64%)
-#     33.4 %  tma_backend_bound
-                                                 #     31.1 %
-tma_frontend_bound       (87.67%)
-
-      1.004970242 seconds time elapsed
-```
-and this with the series:
-```
-$ perf stat -a sleep 1
- Performance counter stats for 'system wide':
-
-            21,198      context-switches                 #      nan
-cs/sec  cs_per_second
-                 0      cpu-clock                        #      0.0
-CPUs  CPUs_utilized
-               989      cpu-migrations                   #      nan
-migrations/sec  migrations_per_second
-             6,642      page-faults                      #      nan
-faults/sec  page_faults_per_second
-         6,966,308      cpu_core/branch-misses/          #      1.3 %
-branch_miss_rate
-       517,064,969      cpu_core/branches/               #      nan
-K/sec  branch_frequency
-     1,602,405,292      cpu_core/cpu-cycles/             #      nan
-GHz  cycles_frequency
-     3,012,408,051      cpu_core/instructions/           #      1.9
-instructions  insn_per_cycle
-         4,727,342      cpu_atom/branch-misses/          #      4.8 %
-branch_miss_rate         (49.79%)
-        94,075,578      cpu_atom/branches/               #      nan
-K/sec  branch_frequency     (50.14%)
-       922,932,356      cpu_atom/cpu-cycles/             #      nan
-GHz  cycles_frequency       (50.36%)
-       513,356,622      cpu_atom/instructions/           #      0.6
-instructions  insn_per_cycle  (50.36%)
-             TopdownL1 (cpu_core)                 #     10.4 %
-tma_bad_speculation
-                                                  #     24.0 %
-tma_frontend_bound
-                                                  #     35.2 %
-tma_backend_bound
-                                                  #     30.4 %
-tma_retiring
-             TopdownL1 (cpu_atom)                 #     36.1 %
-tma_backend_bound        (59.76%)
-                                                  #     38.7 %
-tma_frontend_bound       (59.57%)
-                                                  #      8.8 %
-tma_bad_speculation
-                                                  #     16.4 %
-tma_retiring             (59.57%)
-
-       1.006937573 seconds time elapsed
-```
-That is the TopdownL1 default group name is missing in the current
-tree, etc. So just fixing the default perf stat output would be a good
-reason to land this. The also broken output at the top is from a
-tigerlake non-hybrid system.
-
-Thanks,
-Ian
-
-> [1]
-> * Foundations: https://lore.kernel.org/lkml/20240228175617.4049201-1-irog=
-ers@google.com/
-> * AMD: https://lore.kernel.org/lkml/20240229001537.4158049-1-irogers@goog=
-le.com/
-> * Intel: https://lore.kernel.org/lkml/20240229001806.4158429-1-irogers@go=
-ogle.com/
-> * ARM: https://lore.kernel.org/lkml/20240229001325.4157655-1-irogers@goog=
-le.com/
+Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
 
