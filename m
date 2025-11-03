@@ -1,201 +1,205 @@
-Return-Path: <linux-kernel+bounces-882863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA949C2BB2E
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:35:43 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95E0FC2BBBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:40:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C07BE3B87C5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:34:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 316304F5CC7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D0A30DEB0;
-	Mon,  3 Nov 2025 12:34:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0E530CDBB;
+	Mon,  3 Nov 2025 12:34:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1yIt+xuO"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fMqS4Eq3"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2035530C638
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 12:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ABDF30CDB1
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 12:34:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762173244; cv=none; b=q1tLajr9eyArPSKc9+dZ2jDJVNSTnTEAARhgIP/+rMcvRF0CyFsxPOFpH5KZdykBzZZviiVtqN847BE4SGGwqv23bqzs1UlC1oYsHyLLGUbaatR9jSGU8HTHEQjruDxvDeMjT+BKp38v4ofG79O6joDGI5ahwmJ3weP9ljr/ffQ=
+	t=1762173247; cv=none; b=Y0MlLeI1AIk9RsjS61JsAeY0z3nUfs2U471/2Iy56BhHs26oG4BDLJQuNSOfAGnUb6h1td72BXGRyxvZBcjHkFJpBwB6iobpCvmdewrPi87Oz0tIReeC2K6dzX2ewiZEO8q7CP4vqXgVI91OdXiNB8t5XhHBHm9zC69kCyn4PRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762173244; c=relaxed/simple;
-	bh=w36KW/wPb3cVagvybLftrF4CjYrWqxSZqwj4SEHtr88=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=kwZZRUIVV5V1N6ZIhzp0nA5ENFRKL+4hj6E+fTV1H+cuGmErLVlsZ+md8cosl8GHj9vMEvpx6tr/KoGIk6UQKddDMAIIVRJi0qGxfjCeSaK6jrGvkBO0DqSEofG559yskYjlHFY7S0e6+A8KUCz1MQBsdeIEXgTXijkJ29v4crE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1yIt+xuO; arc=none smtp.client-ip=209.85.128.73
+	s=arc-20240116; t=1762173247; c=relaxed/simple;
+	bh=vjkrYPoAZlHM7oLJ+7JDcEL1NOqCh0147DxJfPx6SrY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=n8cyyVuY5ASG7elzR4zhp58FnSpyQgeDbb/k6s6ukX4wERP1plCLC+50M3yHKbqOCyUcoQbxY51tyH10MeJ6hlD2pw0beR9LhNlYErC43IUZnoM4JxicwpVKTOKfcITMhCahEulbW/9p4ttV9x8gBneW23PaamBJ1NbjbSWngbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fMqS4Eq3; arc=none smtp.client-ip=209.85.221.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-477212937eeso31012745e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 04:34:02 -0800 (PST)
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-429c17b29f3so1896601f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 04:34:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762173241; x=1762778041; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MSAYutkZ7+a569qs6E4HPdsGwXOmRZ2wAq/f2x6mExQ=;
-        b=1yIt+xuOYwX5i7ODDEsQ5NbdkV5bYpYInTeM+iGri5xNow1udp+RYn2hFjNS07sg8S
-         M9Mxl48IvlYQD8UbDzMFMef84CajUNmyxGW597yAomAmZjK8lo3w/+EKRufRXf88ITgG
-         MdVa6m/pvXjIe8DpQYSHSdv4Vjf9nGQDnZIgxVcomYjBvBCmHrdi9uyIlCBfr/UNmRoj
-         W/zDbgkMgHdI/6cVnLx2iXxePNuOOhIthKCVBAIq02ow0IcrCFs1jwcOguu6/NX3HtkB
-         C16tB9C30AnFKkUoM68d8gaTsrXQfj/uZBPAmpJlYSblCZuKJALqCQ8AND3xcWpqiUvN
-         sEBA==
+        d=google.com; s=20230601; t=1762173242; x=1762778042; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ux05tU7+D0B7IZxmyew0p2paYr4GUNmlb17Kgdor7nc=;
+        b=fMqS4Eq3HJp9zVaTcXRIialbtNgUgM18eQ1tx9Z39NHcEM/DQXAZapq2DberUzizcj
+         vWTFpioo0hTknvYf+xco4qKNrJgN5FimXnhLsvnL0oTnKZ8JiXA1EsDRkNuzhfnkstC2
+         5kydMoZ/TDMovzyhfAbFllnx+BgXjBC7nfLlinEl5gaGRJ5VRitKr/QhzF/1BnIF3JTZ
+         AM4kkm15fZZ+WPZgpOKUlvD81B0ZbqxrwzGqcdWg6ZjiWnBkvWQW3dzH4T30RAtydMSa
+         WJu0UqwZGJlKIKEMNliItkf6tpM2b0leluZZY067+thUrgwxx2pCjbjzjS1Ab5c2h8oi
+         esQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762173241; x=1762778041;
-        h=content-transfer-encoding:cc:to:from:subject:message-id
-         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MSAYutkZ7+a569qs6E4HPdsGwXOmRZ2wAq/f2x6mExQ=;
-        b=i3IxFjidOczd7dnH+RVnIAOxk9reGB8h9iNoKRs69mnJR8S+MWv6APmqKx/jdPbaQ4
-         XQIrnas5U1dwLnX9DoAOkK+NvFMIFXsife2x6P+jMW4Oo5rsyhXZ25r8/x9/P11UbmHo
-         ZE8mpDks1p6EJHYQSXLxQ+V6y4sY0h0z23ZrSXGTdQq8XRqspG4BdqNP9RYBLC3R01RC
-         ZCSgwE5OaTG80OLYSYmwqY/Yz7XtYCt/KQadMikVd6/OkcnDyWDbWZ19rWHggyWm9TxJ
-         HhZSwhhf5Rtnj/JduXzugmsg5qCchV+k7id976dKstqK8cTizs2qDSOOXWPhyc83MsfY
-         o98g==
-X-Forwarded-Encrypted: i=1; AJvYcCWSanfs4hOjkbzkm6yt05gQD9gz4Lp6g2vxJdT33xxTOhgZGAH+erScFlaoH3PnDA/pTIdkYIjFyOsYE/0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzf/KFUdK7UKyAasY6kudLqSoM1NfiH3VAqbE2DJVpW/7uHvN0w
-	YZigoeihbvGJ8F1l+TkptbiYYTtYgu4/PaaLTLxMBXCmMDm5B6WUuwzrfUIJ6ezlYwQBJUvj74q
-	S7ULDWc3JjtDAig==
-X-Google-Smtp-Source: AGHT+IE3BVSRA1xaeeR33gXX0nVF0a1SF+382+YyhshPRNKnmANoXw9zOSGPxjdhjzWLcN6ym2yRotwlAcsWrA==
-X-Received: from wmbgz3.prod.google.com ([2002:a05:600c:8883:b0:477:df7:b01a])
+        d=1e100.net; s=20230601; t=1762173242; x=1762778042;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ux05tU7+D0B7IZxmyew0p2paYr4GUNmlb17Kgdor7nc=;
+        b=pmSQ7FUACJMjlffXPiV72IFHSr+8eSo2znK2LDA0CxtRAtBjr/K0em/SXu4tyEgOj8
+         0vSnLmSPjKpd3CYpnqDr0zI59mpAQ7I1k8tSoi/+9JIVACkRxKYh1BLAmK69JtDqa4x2
+         HeJZXoV9G5I0ficeHgAcw3fk0DbsP/ONhoa0bRVaxDSWU0hCZgQonIYesQdn3acx0k3Q
+         jxaHKAirzOPcCkTj0UV+RQGKaIXPXUbRq2TIMKNYKnFB8/5ofkwBVFEL4/bDFtfQd95u
+         ihqS2cWjFSqCqumNfM7WoDkc80typY/kS/YenPLCxO+ay8a5LK51jX31FoME1ZWw0pOv
+         A+Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCV8zPMUhzb//gh9NntfoW7i/u5NA4xq8pnQRq9l1L0bqRRNl6yx3vtla+YmdS6Mo0Uu37z8Z/eUA+t7xpc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1sODuZ4mNVTPMZ+4a/E1PUJQfQmbRyvB49W+v3hp5ceZX4Plx
+	L1jsQ3JkoxVXIs+MDlecaVNvirLwFKpcnGc/AAyssfX4Aol0kVl3VraPOmyd6fk3CW5PmEbOS/h
+	mkznIyWp1TKMVvQ==
+X-Google-Smtp-Source: AGHT+IGrApuZXSqW3lxjcwRKlTmVFlztNd2Jc9n1hjMR+iMt6HX4Z1G6N1X7IymUPj+PYiV5MnuQog6Tf7KgIg==
+X-Received: from wmfv2.prod.google.com ([2002:a05:600c:15c2:b0:475:d804:bfd2])
  (user=smostafa job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:4e08:b0:471:3b6:f2d with SMTP id 5b1f17b1804b1-477308aeaeamr104092065e9.38.1762173241601;
- Mon, 03 Nov 2025 04:34:01 -0800 (PST)
-Date: Mon,  3 Nov 2025 12:33:48 +0000
+ 2002:a05:6000:2301:b0:429:bcd7:ac9f with SMTP id ffacd0b85a97d-429bd6ac60fmr10501171f8f.53.1762173242489;
+ Mon, 03 Nov 2025 04:34:02 -0800 (PST)
+Date: Mon,  3 Nov 2025 12:33:49 +0000
+In-Reply-To: <20251103123355.1769093-1-smostafa@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20251103123355.1769093-1-smostafa@google.com>
 X-Mailer: git-send-email 2.51.1.930.gacf6e81ea2-goog
-Message-ID: <20251103123355.1769093-1-smostafa@google.com>
-Subject: [PATCH v6 0/4] Move io-pgtable-arm selftest to KUnit
+Message-ID: <20251103123355.1769093-2-smostafa@google.com>
+Subject: [PATCH v6 1/4] iommu/io-pgtable-arm: Remove arm_lpae_dump_ops()
 From: Mostafa Saleh <smostafa@google.com>
 To: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
 	linux-kernel@vger.kernel.org
 Cc: robin.murphy@arm.com, will@kernel.org, joro@8bytes.org, jgg@ziepe.ca, 
 	praan@google.com, Mostafa Saleh <smostafa@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-This is a small series to clean up the io-pgtable-arm library.
+At the moment, if the selftest fails it prints a lot of information
+about the page table (size, levels...) this requires access to many
+internals, which has to be exposed in the next patch moving the
+tests out.
 
-The first patch is a small clean up to reduce the depedencies of the
-test before moving it.
+Instead, we can simplify the print to only print the fmt and
+for each test ias, oas and pgsize_bitmap are already printed.
+That is enough to identify the failed case, and the rest can
+be deduced from the code.
 
-The second patch was originally part of the SMMUv3 KVM driver support[1],
-which needed to factor out the kernel code from the io-pgtable-arm
-library, and based on Jason=E2=80=99s suggestion this can be taken out as a
-cleanup, and a step further to convert it to kunit.
+Signed-off-by: Mostafa Saleh <smostafa@google.com>
+---
+ drivers/iommu/io-pgtable-arm.c | 41 ++++++++++++----------------------
+ 1 file changed, 14 insertions(+), 27 deletions(-)
 
-The second patch just moves the code to a new file with no other changes,
-so it can be easier to review with =E2=80=9C--color-moved=E2=80=9D
-
-The third patch converts the sefltest to be modular, that is useful as
-kunit can be a module and it can run anytime after boot.
-
-The fourth patch registers the test using kunit, and converges some of
-the APIs, some notes about that:
-
-Granularity of tests:
----------------------
-To make the series easier to review, the series changes the test to run in
-kunit without making intrusive changes to the test itself.
-It=E2=80=99s possible to refactor the tests to have smaller granularity (al=
-though
-I think that would make it less efficient as we might create the same io-pg=
-table
-config multiple times) and integrate them in kunit as multiple tests, that
-change would be more intrusive, if you think that is the right approach,
-I can add a couple of more patches re-writing the tests.
-
-Other changes:
---------------
-- Also, to make the test changes minimal, and the fail messages similar,
-  =E2=80=9CKUNIT_FAIL()=E2=80=9D is used to fail all tests instead of using=
- KUNIT specific
-  assertions.
-
-- Instead of using faux device, we rely on kunit_device_register()
-
-- The WARN is removed when a test fails, as that doesn=E2=80=99t seem to be=
- a pattern
-  used with kunit.
-
-
-You can find the instructions on how to run kunit in the last patch commit =
-message.
-
-A failure at the test with the new implementation look as
-[   55.631877]     # arm_lpae_do_selftests: pgsize_bitmap 0x20010000, IAS 4=
-4 OAS 48
-[   55.632135]     # arm_lpae_do_selftests: EXPECTATION FAILED at drivers/i=
-ommu/io-pgtable-arm-selftests.c:144
-[   55.632135] test failed for fmt idx 0
-
-Changes in v6:
---------------
-- Remove arm_lpae_dump_ops()
-- Simplify __FAIL()
-
-v5: https://lore.kernel.org/linux-iommu/20250929155001.3287719-1-smostafa@g=
-oogle.com/
-
-Changes in v5:
---------------
-- Rebase on iommu/next tree
-- Collected Jason and Praan Rbs
-- Move back #include <slab.h> to the main file.
-
-v4: https://lore.kernel.org/linux-iommu/20250922090003.686704-1-smostafa@go=
-ogle.com/
-
-Main changes in v4:
--------------------
-- Remove one missed __init.
-- Change the kconfig dependencies back as it broke ARM
-https://lore.kernel.org/all/202509201819.f369wBHc-lkp@intel.com/
-
-v3: https://lore.kernel.org/all/20250919133316.2741279-1-smostafa@google.co=
-m/
-
-Main changes in v3:
--------------------
-- Move back unused code
-- Simplify printing based on Jason comments + some renames
-- Collect Jasons Rb
-v2: https://lore.kernel.org/all/20250917191143.3847487-1-smostafa@google.co=
-m/
-
-Main changes in v2:
--------------------
-- Make the test modular
-v1: https://lore.kernel.org/linux-iommu/20250917140216.2199055-1-smostafa@g=
-oogle.com/
-
-[1] https://lore.kernel.org/all/20250819215156.2494305-5-smostafa@google.co=
-m/
-
-
-Mostafa Saleh (4):
-  iommu/io-pgtable-arm: Remove arm_lpae_dump_ops()
-  iommu/io-pgtable-arm: Move selftests to a separate file
-  iommu/io-pgtable-arm-selftests: Modularize the test
-  iommu/io-pgtable-arm-selftests: Use KUnit
-
- drivers/iommu/Kconfig                    |  11 +-
- drivers/iommu/Makefile                   |   1 +
- drivers/iommu/io-pgtable-arm-selftests.c | 214 +++++++++++++++++++++++
- drivers/iommu/io-pgtable-arm.c           | 203 ---------------------
- 4 files changed, 221 insertions(+), 208 deletions(-)
- create mode 100644 drivers/iommu/io-pgtable-arm-selftests.c
-
-
-base-commit: 6146a0f1dfae5d37442a9ddcba012add260bceb0
---=20
+diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
+index 7e8e2216c294..7d6d7221f540 100644
+--- a/drivers/iommu/io-pgtable-arm.c
++++ b/drivers/iommu/io-pgtable-arm.c
+@@ -1297,21 +1297,8 @@ static const struct iommu_flush_ops dummy_tlb_ops __initconst = {
+ 	.tlb_add_page	= dummy_tlb_add_page,
+ };
+ 
+-static void __init arm_lpae_dump_ops(struct io_pgtable_ops *ops)
+-{
+-	struct arm_lpae_io_pgtable *data = io_pgtable_ops_to_data(ops);
+-	struct io_pgtable_cfg *cfg = &data->iop.cfg;
+-
+-	pr_err("cfg: pgsize_bitmap 0x%lx, ias %u-bit\n",
+-		cfg->pgsize_bitmap, cfg->ias);
+-	pr_err("data: %d levels, 0x%zx pgd_size, %u pg_shift, %u bits_per_level, pgd @ %p\n",
+-		ARM_LPAE_MAX_LEVELS - data->start_level, ARM_LPAE_PGD_SIZE(data),
+-		ilog2(ARM_LPAE_GRANULE(data)), data->bits_per_level, data->pgd);
+-}
+-
+-#define __FAIL(ops, i)	({						\
++#define __FAIL(i) ({							\
+ 		WARN(1, "selftest: test failed for fmt idx %d\n", (i));	\
+-		arm_lpae_dump_ops(ops);					\
+ 		-EFAULT;						\
+ })
+ 
+@@ -1340,13 +1327,13 @@ static int __init arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
+ 		 * Empty page tables shouldn't provide any translations.
+ 		 */
+ 		if (ops->iova_to_phys(ops, 42))
+-			return __FAIL(ops, i);
++			return __FAIL(i);
+ 
+ 		if (ops->iova_to_phys(ops, SZ_1G + 42))
+-			return __FAIL(ops, i);
++			return __FAIL(i);
+ 
+ 		if (ops->iova_to_phys(ops, SZ_2G + 42))
+-			return __FAIL(ops, i);
++			return __FAIL(i);
+ 
+ 		/*
+ 		 * Distinct mappings of different granule sizes.
+@@ -1359,16 +1346,16 @@ static int __init arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
+ 					   IOMMU_READ | IOMMU_WRITE |
+ 					   IOMMU_NOEXEC | IOMMU_CACHE,
+ 					   GFP_KERNEL, &mapped))
+-				return __FAIL(ops, i);
++				return __FAIL(i);
+ 
+ 			/* Overlapping mappings */
+ 			if (!ops->map_pages(ops, iova, iova + size, size, 1,
+ 					    IOMMU_READ | IOMMU_NOEXEC,
+ 					    GFP_KERNEL, &mapped))
+-				return __FAIL(ops, i);
++				return __FAIL(i);
+ 
+ 			if (ops->iova_to_phys(ops, iova + 42) != (iova + 42))
+-				return __FAIL(ops, i);
++				return __FAIL(i);
+ 
+ 			iova += SZ_1G;
+ 		}
+@@ -1379,18 +1366,18 @@ static int __init arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
+ 			size = 1UL << j;
+ 
+ 			if (ops->unmap_pages(ops, iova, size, 1, NULL) != size)
+-				return __FAIL(ops, i);
++				return __FAIL(i);
+ 
+ 			if (ops->iova_to_phys(ops, iova + 42))
+-				return __FAIL(ops, i);
++				return __FAIL(i);
+ 
+ 			/* Remap full block */
+ 			if (ops->map_pages(ops, iova, iova, size, 1,
+ 					   IOMMU_WRITE, GFP_KERNEL, &mapped))
+-				return __FAIL(ops, i);
++				return __FAIL(i);
+ 
+ 			if (ops->iova_to_phys(ops, iova + 42) != (iova + 42))
+-				return __FAIL(ops, i);
++				return __FAIL(i);
+ 
+ 			iova += SZ_1G;
+ 		}
+@@ -1406,11 +1393,11 @@ static int __init arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
+ 				   IOMMU_READ | IOMMU_WRITE |
+ 				   IOMMU_NOEXEC | IOMMU_CACHE,
+ 				   GFP_KERNEL, &mapped))
+-			return __FAIL(ops, i);
++			return __FAIL(i);
+ 		if (mapped != size)
+-			return __FAIL(ops, i);
++			return __FAIL(i);
+ 		if (ops->unmap_pages(ops, iova, size, 1, NULL) != size)
+-			return __FAIL(ops, i);
++			return __FAIL(i);
+ 
+ 		free_io_pgtable_ops(ops);
+ 	}
+-- 
 2.51.1.930.gacf6e81ea2-goog
 
 
