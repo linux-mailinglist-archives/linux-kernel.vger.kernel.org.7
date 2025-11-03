@@ -1,74 +1,54 @@
-Return-Path: <linux-kernel+bounces-883305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94BF1C2D078
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:15:09 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF70AC2D012
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:10:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C184188C3A9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:11:27 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 599433492F9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:10:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95C3315D41;
-	Mon,  3 Nov 2025 16:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EXuFZ2pz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743C03148BC;
+	Mon,  3 Nov 2025 16:10:23 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A984315794
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0DA8314B7F;
+	Mon,  3 Nov 2025 16:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762186238; cv=none; b=jH75lAMZsIn24Z7G/Cx+HMsOBAimRIpCYeHACehlSSA0Xoni4bAbaNg6WsgP8NILEH47wAiDBRosLz/MEuZhQRGRlBawSGTvTqfLWz1YNfgQzMQjnjBCq1yPrK4LhR+/xVkb0BqshTkalJAhfzmDjsyd5V1k+Vz7cU/5LkhwtZw=
+	t=1762186222; cv=none; b=dtdGY32zxoKqVJa0uRdbNewXMo+/gdwE5AXOeJAtVVvjJrAQcPvogD1F6SXmQuV42dBZO+/cXikmry5NMfHz4xvXFgg+qx+eu9yB8PZepFBz7PTPw5j680/NQrOZalOVkXCPOqtnbvb1qFihyDrl8pKdfiE5Ly6wtysL6xBKC0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762186238; c=relaxed/simple;
-	bh=hcEECQpZnZYS+rrOjcFLuMdTrw1oSE8F4CuJwKX2TsQ=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=YP9kMKuSSoNnM0Jz8imMOH9rHxBHUhmBBopVqQZBB9fjS0sNV8V3W/nglIAqnhY2jGaS+xRLt4FbMWb2S3jTsiWANpbTPwb0E07KpZadu3ekzdVpFmOaS5Ldbe06Nv+crbA5JjEhCR8Cw9hx4wIQfEoBCUbulp0VjhYKsRJQoho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EXuFZ2pz; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762186235;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FL9HmwdZD0MRguLtDcdVu1gP15j2MVs0YK7L0sC7zis=;
-	b=EXuFZ2pzIu7jdpFj1OeSdEsGFQre6ryxIUoYijKaLJnIdKLfX5i9f8nltiEq1uT2z4jhPm
-	G7JsnRICXvDYUx6xisRlGKRiYrD+3627fL1TmBJrhmk1WmyTTJ8KZmDH1kWKKPWJrXez9W
-	VxxOviKZURDSdrj3Lr7H+W5NkQpo4Rk=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-298-Ja4YJYB_MMKjHiKZqOES1Q-1; Mon,
- 03 Nov 2025 11:10:30 -0500
-X-MC-Unique: Ja4YJYB_MMKjHiKZqOES1Q-1
-X-Mimecast-MFC-AGG-ID: Ja4YJYB_MMKjHiKZqOES1Q_1762186227
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 565381956095;
-	Mon,  3 Nov 2025 16:10:27 +0000 (UTC)
-Received: from [10.45.225.163] (unknown [10.45.225.163])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id DAD571800451;
-	Mon,  3 Nov 2025 16:10:23 +0000 (UTC)
-Date: Mon, 3 Nov 2025 17:10:15 +0100 (CET)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-cc: dm-devel@lists.linux.dev, Alasdair Kergon <agk@redhat.com>, 
-    Heinz Mauelshagen <heinzm@redhat.com>, Josef Bacik <jbacik@fb.com>, 
-    Mike Snitzer <snitzer@kernel.org>, 
-    Ross Zwisler <ross.zwisler@linux.intel.com>, Zach Brown <zab@zabbo.net>, 
-    LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, 
-    Miaoqian Lin <linmq006@gmail.com>
-Subject: Re: [PATCH] dm-log-writes: Use pointers from memcpy() calls for
- assignments in two functions
-In-Reply-To: <b803a5a1-c2bf-4aad-9527-198e8a8046ca@web.de>
-Message-ID: <85eba740-899c-6884-93b4-aa441436db97@redhat.com>
-References: <b803a5a1-c2bf-4aad-9527-198e8a8046ca@web.de>
+	s=arc-20240116; t=1762186222; c=relaxed/simple;
+	bh=PIZ4DoMJooALmRRVauNj4A/92u4T3LrS3MaC+zSCVos=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=INO79ymRvzStf0ENJqFJxQ/iA8rPSv0RbWoPB1sb+xcpYdmjhNYNGVPnsXf7FVXJJsunTh4CqgQ0hh6xLYVXJrvatmnXsSHz+ue3dHvRLB/AqN2LiUCcwQpo2VFQrVqTMMTl5wlfzxy/7dTVHZ7e2vfg3x8WL9Byrbux4loZiV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf20.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay02.hostedemail.com (Postfix) with ESMTP id ACF47139E08;
+	Mon,  3 Nov 2025 16:10:17 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf20.hostedemail.com (Postfix) with ESMTPA id D4E0A20026;
+	Mon,  3 Nov 2025 16:10:14 +0000 (UTC)
+Date: Mon, 3 Nov 2025 11:10:18 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-aio@kvack.org, linux-unionfs@vger.kernel.org,
+ linux-erofs@lists.ozlabs.org, linux-nfs@vger.kernel.org,
+ linux-cifs@vger.kernel.org, samba-technical@lists.samba.org,
+ cgroups@vger.kernel.org, netdev@vger.kernel.org,
+ linux-crypto@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH 12/12] trace: use override credential guard
+Message-ID: <20251103111018.1a063e6f@gandalf.local.home>
+In-Reply-To: <20251103-work-creds-guards-prepare_creds-v1-12-b447b82f2c9b@kernel.org>
+References: <20251103-work-creds-guards-prepare_creds-v1-0-b447b82f2c9b@kernel.org>
+	<20251103-work-creds-guards-prepare_creds-v1-12-b447b82f2c9b@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,61 +56,27 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Server: rspamout08
+X-Rspamd-Queue-Id: D4E0A20026
+X-Stat-Signature: 9i8cwffmtnwb5s6qrjb8xtgzkiwywx5n
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19W/8xN94pNILmfZfTWKaYA/3XQ1AXwuhQ=
+X-HE-Tag: 1762186214-326372
+X-HE-Meta: U2FsdGVkX187oVSDRmUrDkx/y/qOH8UZf0p4/Uberk79CvGGM3PB+bS4hFQMtMBRnStKU7tlXn/ljHIltb999OspMxf1AbgAdGJ4HELAt2d5MaZ3fPZKklFy28lWO7r0IfW2NHvpDWpAzd6euKudbGYI+fHpMHhDMkXFuPEqjUv0+MRdLzcQFruKvrL4Gl9DwYesxzucXQGzI2pHTBcEz6bFpl9Bi1TKKSPcL3Nt+jnhVL/ZY4VjnpDa6O+uTo/zuM+YOrGhZidshqQRODml/FXmO4hQP0LvRRP2OeH65EderoO+6Iw5sJs9vuJe8U2RHjqtb5RfJ+b+TBT13gA7yEo+MTIUsNTsghvG0w3kvqWdz/+jfR9m7Faf4VcYB3h/KdOAB3mXHBvjf7jof/ORBw==
 
-Hi
+On Mon, 03 Nov 2025 15:57:38 +0100
+Christian Brauner <brauner@kernel.org> wrote:
 
-I think that the code is more readable as it is.
-
-Putting two function calls on one line doesn't make it easier to read.
-
-Mikulas
-
-
-On Fri, 31 Oct 2025, Markus Elfring wrote:
-
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Fri, 31 Oct 2025 20:20:56 +0100
+> Use override credential guards for scoped credential override with
+> automatic restoration on scope exit.
 > 
-> A pointer was assigned to a variable in two function implementations.
-> The same pointer was used for the destination parameter of a memcpy() call.
-> This function is documented in the way that the same value is returned.
-> Thus convert separate statements into a direct variable assignment for
-> the return value from a memory copy action.
-> 
-> The source code was transformed by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 > ---
->  drivers/md/dm-log-writes.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/md/dm-log-writes.c b/drivers/md/dm-log-writes.c
-> index 7bb7174f8f4f..b450bdadfaf2 100644
-> --- a/drivers/md/dm-log-writes.c
-> +++ b/drivers/md/dm-log-writes.c
-> @@ -232,8 +232,7 @@ static int write_metadata(struct log_writes_c *lc, void *entry,
->  		goto error;
->  	}
->  
-> -	ptr = kmap_local_page(page);
-> -	memcpy(ptr, entry, entrylen);
-> +	ptr = memcpy(kmap_local_page(page), entry, entrylen);
->  	if (datalen)
->  		memcpy(ptr + entrylen, data, datalen);
->  	memset(ptr + entrylen + datalen, 0,
-> @@ -287,8 +286,7 @@ static int write_inline_data(struct log_writes_c *lc, void *entry,
->  				goto error_bio;
->  			}
->  
-> -			ptr = kmap_local_page(page);
-> -			memcpy(ptr, data, pg_datalen);
-> +			ptr = memcpy(kmap_local_page(page), data, pg_datalen);
->  			if (pg_sectorlen > pg_datalen)
->  				memset(ptr + pg_datalen, 0, pg_sectorlen - pg_datalen);
->  			kunmap_local(ptr);
-> -- 
-> 2.51.1
-> 
+>  kernel/trace/trace_events_user.c | 11 +++--------
+>  1 file changed, 3 insertions(+), 8 deletions(-)
 
+Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+
+-- Steve
 
