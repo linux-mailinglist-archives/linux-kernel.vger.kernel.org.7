@@ -1,217 +1,255 @@
-Return-Path: <linux-kernel+bounces-883810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EFDEC2E7C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:50:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E545C2E7CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:53:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E475B189AD38
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:51:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 495513B48CF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:53:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAEFA30DEB5;
-	Mon,  3 Nov 2025 23:50:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5100E30147A;
+	Mon,  3 Nov 2025 23:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="D7lAsr7g"
-Received: from MW6PR02CU001.outbound.protection.outlook.com (mail-westus2azon11012024.outbound.protection.outlook.com [52.101.48.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UPU8cHco"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9EF26E143;
-	Mon,  3 Nov 2025 23:50:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.48.24
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762213838; cv=fail; b=UwPwe/txxP2q++gOdRhimZbM4c/JJqNkEZDcjV+abqqdjh1qwnt113kQ5MHo+Or/6RdE6eraekgtAFfL565xeTvsCdtwSnG3ciwl7Jjrof88j8nDBBJE1/Lq5fyrnBvo8mYkdjZT0cHefKSNMnqZa+06GfPTp8JO+uoG9oVlWAs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762213838; c=relaxed/simple;
-	bh=t6cN8gZayGl34iMlSi4WP3Ysp+YxmiGa/Qj+Mj9AEj8=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=TwQ+67XsCHDWFxgGP6Rd/X+jLS3pQitV8e4+p/WDI3PE/Su2TkIN4F9cvRGVriXRJyM5PTwhO6VerZwK6aQFT39RAxpaZ6tA7hhTtRQE/em+qFJ4NS0YkQxPNqHqDw8flZzhKnaEEiS1xXh30Yp4ZVXXW/xJaX0x2gFDVSbu46E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=D7lAsr7g; arc=fail smtp.client-ip=52.101.48.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=f4SVbiShM9KhYNLFfPg/NfItib6Ls+z/wmPYEkuJKW0oowCFQJ7LWgru0y283etXUXqD4pQTarsIWxcy0LHNNCKELp7G0uZneXco8jwpyvRfMkCdGMH6odDDTGWOTM2DoAlTHLBIT5uYKQm2zwFTPwFqERLSbDXixMwO+VdHqJvSWHkAipo6Kyez1u45ZymAIFQWUDLfWt82m1ScMdTnHYepUMHcNMBubVQB++PrD8w0WbeGxjLXi1VJN9ZV653pzZLBvtpiZuUFm2+O+jLQKlyi89fFmWGlrvgLODv0r4LGjWOT5/GzUnpNUzagEJyZwwlO72u8xXaGoTZuHh08KA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ewow2yVr0+iVEs7CaiICZtZnTxdJo/7AcX87ggY7w3k=;
- b=cG19hLhUSAib5xxi7pG+EpCtmcknDRbkYJ+3asMUBYJMAFTSWILiYEZJ3KZv8G8WSIXhLCxuZA8iTHKhGGStmiWXj8UiWB3en/7Xw+C0nfPtOGRt2TOQ6vHBuGcy8vIgEt0+/7S+kzRq5muO4uQ2omuZA3q3vHGuWowP0o/Qf+tShxQ6nv0nuQ5yZC8Tskoj7U6ViL6/awbtz1dPAW1A/mmHDT5nzxEqW46xmeue8v3u0r7Nv2s6mP5OiiZ6pnBoYf8XZKKNyj7LyzX3yoWOVcDT7e2bN4BtFNTGHXbe7HYsppJuDJ+8u0UDTFKwJctRXBYcP4jh0ZWMqaeIGJh5XQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ewow2yVr0+iVEs7CaiICZtZnTxdJo/7AcX87ggY7w3k=;
- b=D7lAsr7gg5erGl/Yw5w/QMXQNmeL7m4RJlmavBzzk7UAMvjIUTCMdLYNZiXsPKvZFj3LE6A/kIgONS7gPlKWwpNIySMKtmAeLrVkGuT/NWQvi09QhFSlCVp78mzxVIV0fZlXJHCK2dQ3WdM3x7ePoa9zS7gI2DzSN8NOKbBR9JyvHmf3Zi6o5IjzvPHvN6Arzjnm29aoybNZikP/jR57B6osMLEOqBpt0pzhKdCSUua3vk3VSOR5xy+CdkPIE/FQH9OQD7YiP4IpTY2ZspaeN3jtP0k0c5AFE9UOHn0NytluBf2gwDUesE0QFXLeB/+sPsQ8uP2nwvay9ZYtZxPIbg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by DS0PR12MB7898.namprd12.prod.outlook.com (2603:10b6:8:14c::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Mon, 3 Nov
- 2025 23:50:34 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9275.015; Mon, 3 Nov 2025
- 23:50:34 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 04 Nov 2025 08:50:30 +0900
-Message-Id: <DDZGO1JLDCCU.249NOQLOZBW6R@nvidia.com>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
- "David Airlie" <airlied@gmail.com>, "Simona Vetter" <simona@ffwll.ch>,
- "John Hubbard" <jhubbard@nvidia.com>, "Alistair Popple"
- <apopple@nvidia.com>, "Timur Tabi" <ttabi@nvidia.com>, "Edwin Peer"
- <epeer@nvidia.com>, <rust-for-linux@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
- <dri-devel@lists.freedesktop.org>, "Nouveau"
- <nouveau-bounces@lists.freedesktop.org>
-Subject: Re: [PATCH 2/5] gpu: nova-core: vbios: use FromBytes for
- PmuLookupTable header
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Joel Fernandes" <joelagnelf@nvidia.com>, "Alexandre Courbot"
- <acourbot@nvidia.com>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20251029-nova-vbios-frombytes-v1-0-ac441ebc1de3@nvidia.com>
- <20251029-nova-vbios-frombytes-v1-2-ac441ebc1de3@nvidia.com>
- <20251103200416.GA2097762@joelbox2>
-In-Reply-To: <20251103200416.GA2097762@joelbox2>
-X-ClientProxiedBy: TY4PR01CA0122.jpnprd01.prod.outlook.com
- (2603:1096:405:379::13) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AAE126F0A
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 23:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762214027; cv=none; b=G1LbR9dRFIz/tjewlW4Xf7e98KhwX0TI/qQbp1Df7ZZu4z513vcO/SB6d7uKzmHX3Hyd/T2l/1gjI9t8GIbmTMvSbjcIKf0wC/RBY4ZNojeI8T2laSe5OJy/APbomg4RKZ39aP7JYjiYxAYu0+a73lQm9GohVrRf8BYbuY/4OKA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762214027; c=relaxed/simple;
+	bh=lATDq3/M9pfPxFBynTedjEEBJifdEQUpyUvP8lpjLgc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ci162TChOUfn1eTtMPkNzNCnAZWUECaLBsFrDrtapDMwTBcqTQIpqULMQ06V3Eg6QiZ80D2qcKV9XjOEBTDdxRHSE/RCqwKKcfDGo4PA7Yrzc+DPXpm5Nt7O6/Cb4Sxm3aGRVrY7QRRAQsQcT5fL1jPo5TAINO6VD2ohAiQdnJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UPU8cHco; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b99bfb451e5so1271087a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 15:53:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762214025; x=1762818825; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yLjxRtSfyBJOMagychkpTepNRla4EVPcURJSVrcQeQY=;
+        b=UPU8cHcoWqCAz9gjw1NchpbsuFCJKX5S33o67qk8hDAn8sBj9c9I9bfl7MART6FjCU
+         7Men0lchVDtS/favjV7nTZMyMfbBKkBa3EPFUjLFZ0nFQFzCcBHgdHhVUQnz0C4NvaUj
+         jWXIOCfU8fFB/epFjy/aw/fPrzICwhuJFlJJldx4PDbw6eSuUIIz7duSJGvX49nQ6hys
+         t+aGMlgBEhlXVzlT7uPlz5+uTjA7NPU+3WSAwex8wX+8WPR2cehiXBLYpKLt4QnyeyNf
+         4WxqbqJ9BxPLvKERCSJcHvTESTWztj8ciG8F3dwSAWKID3tDB4AVpFkSkg4vNqI4Vz6m
+         tIwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762214025; x=1762818825;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yLjxRtSfyBJOMagychkpTepNRla4EVPcURJSVrcQeQY=;
+        b=ncnoTLhJWiIbLOMWJsSyBLYR/Ry+m4t3NjG1UYz2vy5EWJIpUetZY3MRWYyOU3Tqn3
+         u3AHuwiufECVhoKRr3rFcT6gtuhAjKPhRgEcZnEA9alhNSuRVohjz+gSOPeX+S94SK0L
+         ILqW8B0kvrdg7/axHHFe5j+aGKGczygKOinTnWUalTkI1Jx0gizBiSVDu76tU5K6yIwb
+         wzoWnZTFnZSj/BeM981jFzB7ZESpvdAhNC6LwjYjvXJ5m3yMrZKA4xjMgX2uWN1BsR3n
+         a88N16kyS4IYAZJ6nBMz44SoJMyRLsPlr9JC5x5dyGmWZe2FBBEB2fmbncgVSvIOoe4s
+         +eZw==
+X-Gm-Message-State: AOJu0YzDWRQwaLetBIJll01vJofveBJsEmpG6/+ciNw2XeqsX2TAkDTa
+	EAsI7GlO+N/qA34YisuzoDp3DtcRM89+8mPaauGPdOhx5WVmVGKWjy7cS5TJRFT5xxnNTTQjMeR
+	IcETUpVR4LVRAd8HSxOIJOKiqLOTqKtU=
+X-Gm-Gg: ASbGnctuqasVpeXahN11RRL3KyjwEFT6K1r+Ce+Kap7A8nTihsAH3Yo7b4lNoRFJEGI
+	C4cFirzxYud9gWAC1A9pyUVpPbpjeGu83DpHDOGgk9s1fjAf/92LTUV2xJvxnXM0GlPHGXJCXJY
+	fH/YZIx9aFa9vfI94ALan2tUuF0Pg90YQI4RTPB3p18+HoqGZok8u/s4RG6ft2nvaIenXunw31D
+	hsp8ICzBeR45pgDaZKz9hxtytfjZS7lJVHXRxb5QHN/TcR0W9gX2vSIKUwUk6Pl0dc0dFCGcg==
+X-Google-Smtp-Source: AGHT+IFjJMuWOmDjj0eb6+pcmZCA68pLvX3OxhDBYHicRd6uUs/i7l+bHxwzshvHtyXhYzBsiR+VQipKQQKkZ83KoZQ=
+X-Received: by 2002:a17:902:e842:b0:295:5a06:308d with SMTP id
+ d9443c01a7336-2955a063493mr111188005ad.14.1762214024930; Mon, 03 Nov 2025
+ 15:53:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|DS0PR12MB7898:EE_
-X-MS-Office365-Filtering-Correlation-Id: e5a47d6c-a1cd-4d90-d24d-08de1b33c7c5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N2pZQjB5T1J2ZGRPQmQ3R08xSDZWNXNHWmRUbjFtbFYvL254MGlZdk1KQTRk?=
- =?utf-8?B?ay9XbGVXYSthTWJyckZnaGk1d09TQVNZNHNLbERYS0ZaRjZGcHErUmx6TkpE?=
- =?utf-8?B?WDJGWDYwWlpKbGl5c2h4TGJlbGRyZXJKdlJOSms1ai8rNzFjSTZteklCTGFv?=
- =?utf-8?B?UTV6QlI1K3JyQ1NvWStSNzRJS0lCeStzL1lOdHBrTWNjUFAwYXhkcytRNFlG?=
- =?utf-8?B?S0MzaGczRWVtT1lWd0NCRytUNFZRMlFCMkQvb1V1Z3dFa2VhR3gxejZSMzBk?=
- =?utf-8?B?L3RoNHZNdlQzVkdhd3NyQ0ZJbWRjSHg4YzkxNlJySGcrZWdhS0NwdTFNU3VK?=
- =?utf-8?B?ek9jS1BHekFhakFzUUllWGdCZWtDckJ2OThLWFVXZ1oySFVXRGVFVnlXNFNL?=
- =?utf-8?B?SktOaU5SREZrVEdqeGM0US9JTHFReW5MRzEvM2RObVJ2YUZkYVg2NVlLVzQr?=
- =?utf-8?B?eTU2enpESGY3SEc1Q09vR0RuckNka1NxVU9MZ0grWmdkeFptSW5aZG9CWkhB?=
- =?utf-8?B?dlZRTUxUbjBYT29IblpkSDZseUhwSWJ5SU5sT0djRXJqQmZpUThqQWFrMFpw?=
- =?utf-8?B?czlvT2JKRDZNR3VtSkxENzBZMEFGVkZxQkVEalNnMG9FdVROdVQvK1NJcGdM?=
- =?utf-8?B?QlMwYTJxdHRROHVEWnJMd05oemlRM0dKbXY2d3FReDhjRlNqNjlRcjdTN1FC?=
- =?utf-8?B?Z0RBbUE4UDZIOGFZcERaVDhRR09hQzJ2ekhKOW9RYXB4MUhzbDB3WmJYRkdk?=
- =?utf-8?B?TUNtSzBFOUNvcUNzS0pRcHpXUnJHeUk3cWkzcGxPUCt2aThFYWs0NC81cm9O?=
- =?utf-8?B?cEp2dzRVb0xwVWhtck5mbUIyU3d2TjZrS0NGaU9Bek5OUWdtZmhpak5PY2tJ?=
- =?utf-8?B?YzliSTRUZ2E5U3BJbVprSXNoaERJdlJDMHZDcHlLZEFxN2RjZy9Ua0t0M1hw?=
- =?utf-8?B?Sm52S1ZmbXVlWlhIVzIxR252TTJUY1EzOTBVak13RkQ0Z1dWbGtlQWJ6Rysv?=
- =?utf-8?B?U3paOGJZa2o4VjV2SlcwVFFWK2grVGJ0bWhlS3JiU2gvQy9IdktGSGJsQTM1?=
- =?utf-8?B?ZzBxYVRQOWNtMGd3U3QzNjVxSStTVDcyd1BlMkNSb05uaWtkclhiMHg0YjEy?=
- =?utf-8?B?RVVXT1BYb2I0SFdKM2JBSkNWdnNaN2I1SjhmQjRFY1F4VkxNZmJVY2ZCMjlR?=
- =?utf-8?B?b3Flcm9Dcy9qV29pS2ZEakdtV29ER084TmhDV1V1MHdTdC9jWjdOK2dtY3Vz?=
- =?utf-8?B?VzlXZWRpZng4bGtJbFRQcFZFRVRibGFNcnRsN01vMXhZQ0JtRHl0ZnV2cUJs?=
- =?utf-8?B?eHMyY2QrNUtRTjZxYzVaYkZqT05yM2xQam1CSkdkaS9vbFBxcHJ1LzNKWFAy?=
- =?utf-8?B?NjVFN0o4ZllDTEZaYncxK1Q5VnhBdk9sQmhqMXFJaG5TNjFBa2UrUGdRelBC?=
- =?utf-8?B?bXVvV1p4WnVJRTdxa0pld0lLN21YZWpUeUhrTWhtc3B3MFp5c0gxSXlCRm90?=
- =?utf-8?B?dUZhcVQxbGNIUHEzSE51YnlYRlhyeURPZ3pSUG1CMHhTdGdpOUttd0ZOL3Jo?=
- =?utf-8?B?ZzBzMWpRcFlZN3R2OFhZZEZvM2RnNVVLTTIzNlBFZzI4MS9aaVNGdk14QWM5?=
- =?utf-8?B?VWQ4RldERlpVWjBjdkZCVlVzSW16U1BqaXlRK3MvVVlubm1PY1JzRGxBdVIx?=
- =?utf-8?B?SCtLM2dVQW54WityeFV1V3VsVWJFcGQwVStralN1K3BkaEQrQVIrZHhLalhM?=
- =?utf-8?B?Ti8wTmt4eFpCbU44R2R1T2p3bENKZDA3UW1hbHFKbmNEck1HYUN5UXY4R1NO?=
- =?utf-8?B?UkhaNi91MFdxTk1ac3RBSUtEOWtLRFZBOFliOHplK3hYQ2tpMGdWbE5GSndJ?=
- =?utf-8?B?ZGkrZ0ZpcE9PUlRBNkJDQ1QxcFpWRWVpWWJOQlFoYlNWcHNNOWpkTVBDM1c4?=
- =?utf-8?Q?2SqseYtpZwP9dQlE39ynVWftXQ7dA7JJ?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dnZCOTVhd0EzSXh2anNydHpmN2VVdkZKUjhaaDZDM2FXZVJQRTJWRG04a21X?=
- =?utf-8?B?NVBhVDc0ODRaNEFZSXNzVXJranBocGgyakNvVGpmRzQxaGJMOGtpdWVVUkZY?=
- =?utf-8?B?M3htMXdFNm91eGNwa3V2UDg1NXpyL1p1TnJ2ekhTR0xVZEVXeFR3aDJpY3J3?=
- =?utf-8?B?UHRxVWtMMmowbkdHRHczRDBSTm0vK205bGRkeis3amx6NFdqUU9TS0J4RlZp?=
- =?utf-8?B?a3d6VE9NTFdUSy9JamRKVi9uc1NjUlVYS3dyS29aeUkxNmFFQVV4M0RhWGJD?=
- =?utf-8?B?cmlkYlJWNy9DTkJLU3JwQ25ORmZXdW40NkNyWWY5RlBHWWlwNjhsa2NLTE1z?=
- =?utf-8?B?eUtOSVhZQ3JFQ09kZkEyNlBGSnRTQy9RQVpHVlFmZmt1YTFSMUxTMGwySHN3?=
- =?utf-8?B?cFdVY05INHlydUVLSzlaT3ljNVB4dFlNV1RZOGNzdUN4bHUzdTlNOVltVVBB?=
- =?utf-8?B?N0R0THZmdk96UDhmTXF1SzNqSGVBSGNnUHVJRi9MTTd3UTY2L2k1bHpSUFg1?=
- =?utf-8?B?Q0V1R3JVbXhnTnhMUTVxdEtGN1QvZW16cFpIdmhSRWZBTzNVVEgvNHRseENp?=
- =?utf-8?B?ZWxmMXl1djc3ZDU1a3FHQTNhWjdkOFE0K0JPU0tydnQ5RURBZzViNUF2QXgx?=
- =?utf-8?B?UVk1Mmtqb3JSODMvblEybUViUEhMZXJ1ejJWQUUwV0NqUVJFMzM3Tmx3RDRv?=
- =?utf-8?B?ek9wanRCUUkvcnVWTFVGS2pzR3pKZVBmek1sODVPQ0pnSXlTS3ptSnlkak05?=
- =?utf-8?B?b1pXY0tKOUNpeUpQNTZ5N0Y1MzlpZXA3VlkzckloKzNYcDBtandkN1FyK1RC?=
- =?utf-8?B?em96cDlXMTRubzFhVlFiUVRmY3pxR0FYMHAweW80bXd0dE5PM29aaUExZlE1?=
- =?utf-8?B?SjVvZzJycHhPK3h1S1BDVVN6dStrL0RXV2cwSEpKbkVoLzZKRVJKeVNOTWxS?=
- =?utf-8?B?TXFIa3Y5cS9lQitaQXBKcTQ1ZE9QbE5xR2RiVzlNT1NHbXVSNURxRWdickl5?=
- =?utf-8?B?VDBYTHVEN1o5MnkySDV5clZzaTlDcG9XZGI1ekZ1Z1EvNUF1bDJEeVZlWEtr?=
- =?utf-8?B?SWxGZWNkczRGVU9uby91ZEtBRVNSOW1Ec3lCSGMyZHZURDNwWlBSaFQ4Z24y?=
- =?utf-8?B?S1NHR3ZGdEwvSnlDbitiWFl1V1NMMzI3TXF2bnB0NVRkR2ZZQWVRc085b2Zm?=
- =?utf-8?B?dVVNeklNek5JTFF6NnZUQWJNcEhGSE9BQ3ZxclRVRk5XSFdwN1h1aDFEWWts?=
- =?utf-8?B?WVNBWkpNN2xaWUFXdG1XaUE1MXFhRGZFUWxzV3dYUHVWUXJ2UXpJTm1QaXBJ?=
- =?utf-8?B?U29KeSt6SGswTVpxVFRjY1d2V0hzUXk2Z2FaVmhpQWVjbmhhNGkwc05wQ3NW?=
- =?utf-8?B?VktMUi8xRTlhMUhlY3FLR3h1dmRnRDIzREJsdS9KUmlFWXhlczBUWmRPUjQw?=
- =?utf-8?B?UzRTN2pqNkt1ZlhsTUhKRUJDNGVmSElIM0ZJNEFPRUN5eVVtVUNKWExBSW9r?=
- =?utf-8?B?azFKN0lpeDRBQ1d5TVhCbXMyTStrK2gyU3ZaeXlJOTNRN0dINzJTT0JJa1R2?=
- =?utf-8?B?WHdheE9ZY25iZWpPS1dueFRLRlNBRXdiMTVZYUJTNzdGWVZDNXd5MEhHbWp5?=
- =?utf-8?B?djB3NHJCNFdmaWlVMDh2a1I0alRRL0ZXV0l6OWN2N25hQXNUK2RCUVdWSkti?=
- =?utf-8?B?TnRqS0NtRDZzZjhsZm52eDMrZjFLcWxRaHcwVTkxb2QwSjU2TFEya2prb2Fp?=
- =?utf-8?B?RGQ2Zy9KMXV6QWtOMFZJejZGTEFydlRTRlhHL0k0anZmVllBYWxsZktiQVhr?=
- =?utf-8?B?azNuWDhxOEhRSFQzRFJRQUdwVlBTQzlZR2RnaSs0aklobHZZa0tZZ2p5STlP?=
- =?utf-8?B?N1drTkxPbXNGeWVoNlVNd0hyWUE4RkJTWU53VTFndU42TXUyVkI4eUswS2R4?=
- =?utf-8?B?U1luNnFFcmtBR1lhUEgrZmVyRkwzVmVIRllKckxxM2ljem1jTFJnT1Y5TDAv?=
- =?utf-8?B?L1V0bElIdzVCZStjeGNrZzdnNUMzRGl6Y3d3b3RyZXp2ZjNZaW82TGdWajlq?=
- =?utf-8?B?Nm5lVElBSDc5NXhCV0kzQnRKUU5VeklpMFZjZjdwdUNiRktGaGpQQ3BiQW9U?=
- =?utf-8?B?Mk01SzkzS0h1MnVWZkU5Z0cxanVVZGZRa0JwYkI4MHQyTzExNmI5VHpMY0o4?=
- =?utf-8?Q?Ol/s4unWjwtz2DrsHxhUABpkSTF4dS0Ohg5EW2YeQ/aA?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e5a47d6c-a1cd-4d90-d24d-08de1b33c7c5
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 23:50:34.4411
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fkBXIZIX/9oClsoCqdF+iOWhFf0kY7y9GKzYx3V7AIe/FcLHBWIl+zOYmf3XaIl8hS9gVI8cZxPFqVRUUQkBkw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7898
+References: <20251031104924.10631-1-mohamedahmedegypt2001@gmail.com>
+ <20251031104924.10631-3-mohamedahmedegypt2001@gmail.com> <0bffd718-3659-4add-90fc-fb0e098f2897@nvidia.com>
+In-Reply-To: <0bffd718-3659-4add-90fc-fb0e098f2897@nvidia.com>
+From: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
+Date: Tue, 4 Nov 2025 01:53:33 +0200
+X-Gm-Features: AWmQ_blaOgJXhX7FTUGULCEM7fLqKNjCy5MDT2wZ0GCoGUGz9IYwhuxzFGdEeJk
+Message-ID: <CAA+WOBtmbPHigscFQCFgDo=9WSM6V-JMXGCO7orP=01XOqTPHQ@mail.gmail.com>
+Subject: Re: [PATCH v4 2/5] drm/nouveau/uvmm: Allow larger pages
+To: James Jones <jajones@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	Mary Guillemard <mary@mary.zone>, Faith Ekstrand <faith.ekstrand@collabora.com>, 
+	Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	nouveau@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue Nov 4, 2025 at 5:04 AM JST, Joel Fernandes wrote:
-> Hi Alex,
-> Nice improvement, a nit:
->
-> On Wed, Oct 29, 2025 at 12:07:37AM +0900, Alexandre Courbot wrote:
-> [..]
->>  impl PmuLookupTable {
->>      fn new(dev: &device::Device, data: &[u8]) -> Result<Self> {
->> -        if data.len() < 4 {
->> -            return Err(EINVAL);
->> -        }
->> +        let header =3D PmuLookupTableHeader::from_bytes_copy_prefix(dat=
-a)
->> +            .ok_or(EINVAL)?
->> +            .0;
->
-> Can we change to the following, it is easier to read than using `.0` IMO.
->
->  let (header, _rest) =3D PmuLookupTableHeader::from_bytes_copy_prefix(dat=
-a)
->       .ok_or(EINVAL)?;
->
-> (and similarly in the other patches).
+Thanks a lot for the shout out! Looking more at things, the logic here
+is actually redundant. It was originally copied over directly from the
+bo allocation code to stay on the safer side (basically the idea back
+then was to make both the bo and vmm sides match exactly). We aren't
+at risk of having an aligned address that is in the wrong memory type
+because the bo allocation code (nouveau_bo.c:321) forces anything that
+has the GART flag to have a page size of 4K. Anything getting a page
+size higher than that is exclusively VRAM only. Additionally,
+currently things marked VRAM only don't get evicted to host memory
+except under high memory pressure and in that case, the context is
+paused until the objects in question are paged back in, so we also
+don't have to worry about memory placement there.
 
-We can use `let (header, _) =3D` to make sure the unused remainder is not
-bound to any variable. That also turns that statement into a one-liner.
+The memory placement check in the vmm code could be removed but I am
+leaning more towards leaving it as is just to stay on the safer side.
+At the same time, it would be more useful to keep it for the future as
+one of the future investigation targets that we want to look into is
+all the memory placement rules because the "only 4K is allowed for
+host memory" limit that nouveau imposes is a source of many pains in
+userspace (originally thought to be a HW thing but seems it's actually
+not), and having the checks on both bo and vmm paths would help
+starting out with that.
 
-Thanks!
+Thanks a lot again,
+Mohamed
+
+On Fri, Oct 31, 2025 at 7:01=E2=80=AFPM James Jones <jajones@nvidia.com> wr=
+ote:
+>
+> On 10/31/25 03:49, Mohamed Ahmed wrote:
+> > From: Mary Guillemard <mary@mary.zone>
+> >
+> > Now that everything in UVMM knows about the variable page shift, we can
+> > select larger values.
+> >
+> > The proposed approach relies on nouveau_bo::page unless if it would cau=
+se
+> > alignment issues (in which case we fall back to searching for an
+> > appropriate shift)
+> >
+> > Signed-off-by: Mary Guillemard <mary@mary.zone>
+> > Co-developed-by: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
+> > Signed-off-by: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
+> > ---
+> >   drivers/gpu/drm/nouveau/nouveau_uvmm.c | 60 +++++++++++++++++++++++++=
+-
+> >   1 file changed, 58 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/nouveau/nouveau_uvmm.c b/drivers/gpu/drm/n=
+ouveau/nouveau_uvmm.c
+> > index 2cd0835b05e8..ab8933b88337 100644
+> > --- a/drivers/gpu/drm/nouveau/nouveau_uvmm.c
+> > +++ b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
+> > @@ -454,6 +454,62 @@ op_unmap_prepare_unwind(struct drm_gpuva *va)
+> >       drm_gpuva_insert(va->vm, va);
+> >   }
+> >
+> > +static bool
+> > +op_map_aligned_to_page_shift(const struct drm_gpuva_op_map *op, u8 pag=
+e_shift)
+> > +{
+> > +     u64 non_page_bits =3D (1ULL << page_shift) - 1;
+> > +
+> > +     return (op->va.addr & non_page_bits) =3D=3D 0 &&
+> > +            (op->va.range & non_page_bits) =3D=3D 0 &&
+> > +            (op->gem.offset & non_page_bits) =3D=3D 0;
+> > +}
+> > +
+> > +static u8
+> > +select_page_shift(struct nouveau_uvmm *uvmm, struct drm_gpuva_op_map *=
+op)
+> > +{
+> > +     struct nouveau_bo *nvbo =3D nouveau_gem_object(op->gem.obj);
+> > +
+> > +     /* nouveau_bo_fixup_align() guarantees that the page size will be=
+ aligned
+> > +      * for most cases, but it can't handle cases where userspace allo=
+cates with
+> > +      * a size and then binds with a smaller granularity. So in order =
+to avoid
+> > +      * breaking old userspace, we need to ensure that the VA is actua=
+lly
+> > +      * aligned before using it, and if it isn't, then we downgrade to=
+ the first
+> > +      * granularity that will fit, which is optimal from a correctness=
+ and
+> > +      * performance perspective.
+> > +      */
+> > +     if (op_map_aligned_to_page_shift(op, nvbo->page))
+> > +             return nvbo->page;
+> > +
+> > +     struct nouveau_mem *mem =3D nouveau_mem(nvbo->bo.resource);
+> > +     struct nvif_vmm *vmm =3D &uvmm->vmm.vmm;
+> > +     int i;
+> > +
+> > +     /* If the given granularity doesn't fit, let's find one that will=
+ fit. */
+> > +     for (i =3D 0; i < vmm->page_nr; i++) {
+> > +             /* Ignore anything that is bigger or identical to the BO =
+preference. */
+> > +             if (vmm->page[i].shift >=3D nvbo->page)
+> > +                     continue;
+> > +
+> > +             /* Skip incompatible domains. */
+> > +             if ((mem->mem.type & NVIF_MEM_VRAM) && !vmm->page[i].vram=
+)
+> > +                     continue;
+> > +             if ((mem->mem.type & NVIF_MEM_HOST) &&
+> > +                 (!vmm->page[i].host || vmm->page[i].shift > PAGE_SHIF=
+T))
+> > +                     continue;
+>
+> This logic doesn't seem correct. I'm not sure why there's a need to
+> limit the page size on the host memory type, but assuming there is due
+> to nouveau architecture or HW limitations I'm not aware of, it should be
+> applied universally, not just when falling back due to misaligned
+> addresses. You can get lucky and have aligned addresses regardless of
+> the target page size. Hence, this check would need to precede the above
+> early-out for the case where op_map_aligned_to_page_shift() succeeds.
+>
+> Thanks,
+> -James
+>
+> > +             /* If it fits, return the proposed shift. */
+> > +             if (op_map_aligned_to_page_shift(op, vmm->page[i].shift))
+> > +                     return vmm->page[i].shift;
+> > +     }
+> > +
+> > +     /* If we get here then nothing can reconcile the requirements. Th=
+is should never
+> > +      * happen.
+> > +      */
+> > +     WARN_ON(1);
+> > +
+> > +     return PAGE_SHIFT;
+> > +}
+> > +
+> >   static void
+> >   nouveau_uvmm_sm_prepare_unwind(struct nouveau_uvmm *uvmm,
+> >                              struct nouveau_uvma_prealloc *new,
+> > @@ -506,7 +562,7 @@ nouveau_uvmm_sm_prepare_unwind(struct nouveau_uvmm =
+*uvmm,
+> >                       if (vmm_get_range)
+> >                               nouveau_uvmm_vmm_put(uvmm, vmm_get_start,
+> >                                                    vmm_get_range,
+> > -                                                  PAGE_SHIFT);
+> > +                                                  select_page_shift(uv=
+mm, &op->map));
+> >                       break;
+> >               }
+> >               case DRM_GPUVA_OP_REMAP: {
+> > @@ -599,7 +655,7 @@ op_map_prepare(struct nouveau_uvmm *uvmm,
+> >
+> >       uvma->region =3D args->region;
+> >       uvma->kind =3D args->kind;
+> > -     uvma->page_shift =3D PAGE_SHIFT;
+> > +     uvma->page_shift =3D select_page_shift(uvmm, op);
+> >
+> >       drm_gpuva_map(&uvmm->base, &uvma->va, op);
+> >
+>
 
