@@ -1,203 +1,116 @@
-Return-Path: <linux-kernel+bounces-883185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F5ACC2CFE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:09:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2E12C2CBC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:30:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37ED4424595
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:17:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9074842820B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C41A31B830;
-	Mon,  3 Nov 2025 15:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2990731D741;
+	Mon,  3 Nov 2025 15:11:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DMZQtR3C"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Gb/b64iU"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C715931B807
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 15:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E186B3176F4
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 15:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762182651; cv=none; b=bbxCMC6G29wSwpZKPL3ggIRwbKLFS9HrO+crFQycvuU/TRI3w74lrrXvFVcN4UZV5DA445BDe8C9XI8hP0otu9SRfDAwWhzzGug8PrcwehkLs1Q+Z7pmLaWxWHmPjGuIWBHA4FePaUdaAUia2gNbSsRG40O9Ipm7tb/Y4QQ7SJQ=
+	t=1762182684; cv=none; b=JidiyWx0qZiyIzezlKVmFGhtvVybq0qIJSidQO+NLeDXwmrkX84r4kWSFQ7+ncK+LzvBLajEn2hnlqg/S+ZlMp5DSU9jKeJm4sSCeXaLYh73goxfeq/VrMFl5V8MmaLww1cwRYOYzHmhJ7KmXK+oyrRPOMZQe9BIsRXVJrJx590=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762182651; c=relaxed/simple;
-	bh=LLHqC3l86SAf4eQgDTCXXldbB1yoNhfIN8WdNZReQ3E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lJe86K5Ytr77XexklYaUm7J+tlBISnNBPVFHf508JNfnG63sL3zdWgHy3V+DgVjsXPWDTVwo2c7nTiRb0Impmr251J5AoHvfAEgDFGxqtU3m630UtjfG4nyVN4gnSGjLWXDZDge32Q+8zvRp1qQ0ZedwQqhpR/vuq5KcNd9Ap7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DMZQtR3C; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762182648;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FjH26HUdRaQN1OwrdsvI3tdNLG3MV3oKiNFyejczIQQ=;
-	b=DMZQtR3CYxJGcgfMCiRRPAZdgR/L+38tMN4PantnLbxjcqscEyaYoyHNYb3EgGJKkYsnP3
-	18R7M+Uu0rue98G6HboX/4EGSDoFpaMw3MceqLUQ57mEsfdH587rzj7EZAJPK07Odq0y5r
-	KfhGEWnv2zuB5VjqMc0P5Fh4FL4/Vto=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-653-pSjm5ei8MzS8IPzH0CXRgQ-1; Mon,
- 03 Nov 2025 10:10:47 -0500
-X-MC-Unique: pSjm5ei8MzS8IPzH0CXRgQ-1
-X-Mimecast-MFC-AGG-ID: pSjm5ei8MzS8IPzH0CXRgQ_1762182646
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 96B9418009C2;
-	Mon,  3 Nov 2025 15:10:46 +0000 (UTC)
-Received: from wcosta-thinkpadt14gen4.rmtbr.csb (unknown [10.22.88.143])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A405219540DB;
-	Mon,  3 Nov 2025 15:10:41 +0000 (UTC)
-Date: Mon, 3 Nov 2025 12:10:39 -0300
-From: Wander Lairson Costa <wander@redhat.com>
-To: Tomas Glozar <tglozar@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, 
-	John Kacur <jkacur@redhat.com>, Luis Goncalves <lgoncalv@redhat.com>, 
-	Costa Shulyupin <costa.shul@redhat.com>, Crystal Wood <crwood@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>
-Subject: Re: [PATCH v3 4/7] rtla/tests: Test BPF action program
-Message-ID: <u4jf3ut26njnm63qgyfhq5xik7zhioecjzffok2h6jmd5utd7g@2ptjrmuvbehq>
-References: <20251027153401.1039217-1-tglozar@redhat.com>
- <20251027153401.1039217-5-tglozar@redhat.com>
+	s=arc-20240116; t=1762182684; c=relaxed/simple;
+	bh=ppU8+0KMVjssDLeGA5ZQKn/3oy/3w+zGpv5OB2K4V3k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DMfCDSe4DC52kAvvz5MeDlAz9fJHSNU156ZpcxOlYJSHpaMvww3klOLdAO4jTR6TSgLL8NRB7XMq9LFEi8aHF/sdQvxkSxGAleO400V2B2tc2It9ikzqo+F0juIrwzVkD9BIxkeDMcE7+WicEd0Clw4nzyBoxD0a17/O2BeXR+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Gb/b64iU; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-429c7e438a8so1742595f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 07:11:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1762182680; x=1762787480; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DazVAKjsIrcYtXlfdeVBEA2qvrz0reDmGQp37QD+7+U=;
+        b=Gb/b64iU9sw7VSFoVkB5F16FNE5yKfRRDeeDIDeH9s1gYU+9Irvxuvjr9YaCjXvDdW
+         mcrNHchJVA//oe4ZSOpcxKm7jx0NIdAV9DnrNzKBjugd+MZPMhk7Y0vmx2w7YxQAG4eN
+         cQa+glDSTKBRmjyiszLz3BoA4vxgWJWHYqhCK5LiLXcQgCewvOKE7UepFuvK8QR0oaKS
+         fySqzsyKl536O6d5zIRhFFhjVg6krMtNz123HvhP36BnmESiJLv5lzTo43+Ihh1Gw12a
+         c+oX7NR/2nZ10ZChftAWvHM84IlmZ5YP+w41fhbFAG67n4kUrjvEbQ5WxdFEWZ8Qmips
+         co0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762182680; x=1762787480;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DazVAKjsIrcYtXlfdeVBEA2qvrz0reDmGQp37QD+7+U=;
+        b=O5/u9EZvrEi1uW2M8wm62METW+xwobn1WV+lkmojOGmka73SIw+RGoBvT4bvVWuhY7
+         U0nVFHbpC3NgOjg1orr87zUmSEzC8kON6V/DicYSqGyaRxR1b5UELuqgocTVhpFFONBZ
+         Vq1v25O2vx27KvuqaBOJdDSRiMt7RUjm8t7KnFbr2ou6Y7YcCtF6aVqkeTrg71jCBGzS
+         Kyb47+KFhrt+yl/d433qVdIcxY4QhWdoGRqUAs64i6JBahNOCh60kyqGMmkOQI8UYlQV
+         N8MiGl2lX+puhToSdj4F227QXzj6kqYQTt78z7GdmW2zp3CfnPnq50Bd5Tr/osgW7C1A
+         +/rg==
+X-Forwarded-Encrypted: i=1; AJvYcCXt3CnVT0ioRzJBdHlbmyRr6fnJiG2hT+WnWK5tAokHt0jyQWvXyt5b/4V6cQYJqTt5yG+p+fPXsKgTs64=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7a7HOVn4BkK3UWqwoZIzKEdIcWH2PsDZqdsijNh9IjaN73AwR
+	H8D0zc74dyodei+xxdCINI0ouQhS5N5oi/s7cYhuUOWwUh3YTzwBe+jbj8eppN+C9Sc=
+X-Gm-Gg: ASbGncv4c5+ADx4PoLqmQReEfHEXrB064BTp1ymPfFNcgf0im3SP6bJQyBiwm1j19If
+	ps6dJLMydIAPG8HYckgxDfW62F5XH6Vd24X3G2x4yDTWdjYn3XkyMLAsFHBF3msWRuGVmjudSOI
+	eHpQFgPq9Oi8rQapCyfbTMj7Yn5yX0CyVil0cYr7jI/64KF4GO7rP1kE5yFnf4F4eRgkcbSTZbC
+	jZ9jdOhbnlvp2GJa+OmA/5V0VONs6ZjFScuoqfZfJczAzvW+JE2sEcw0y/flRRhZGtIeq7VPBBk
+	36CiuN4mbN5EkOaZ0a00WtfN0t+7SXiqnZUB4sPjwP4MSx6jo4uGv1LyTA8pS+shbGoW79d1lL7
+	1fCBAEX93nSbT9MrUVRFhu79DbOB6E0pP8fHLCOYPnDCnoduGj6ywRRFVj+OhyegCSoK3zg8=
+X-Google-Smtp-Source: AGHT+IEK9m5S4OyAt+8+jqF9utRaLNjHjz1A1Pnmz56EXWQk8b3s9Aud4E7X4OrR8HH/uvBllI7Qvg==
+X-Received: by 2002:a05:6000:22c7:b0:429:d79f:c86b with SMTP id ffacd0b85a97d-429d79fcb0cmr2028605f8f.58.1762182680270;
+        Mon, 03 Nov 2025 07:11:20 -0800 (PST)
+Received: from brgl-uxlite ([2a01:cb1d:dc:7e00:e6eb:2a19:143f:b127])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c11182e3sm21317427f8f.11.2025.11.03.07.11.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Nov 2025 07:11:19 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] gpiolib: fix invalid pointer access in debugfs
+Date: Mon,  3 Nov 2025 16:11:18 +0100
+Message-ID: <176218266920.62377.10595261785996832493.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251103141132.53471-1-brgl@bgdev.pl>
+References: <20251103141132.53471-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251027153401.1039217-5-tglozar@redhat.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 27, 2025 at 04:33:58PM +0100, Tomas Glozar wrote:
-> Add a test that implements a BPF program writing to a test map, which
-> is attached to RTLA via --bpf-action to be executed on theshold
-> overflow.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
+
+On Mon, 03 Nov 2025 15:11:32 +0100, Bartosz Golaszewski wrote:
+> If the memory allocation in gpiolib_seq_start() fails, the s->private
+> field remains uninitialized and is later dereferenced without checking
+> in gpiolib_seq_stop(). Initialize s->private to NULL before calling
+> kzalloc() and check it before dereferencing it.
 > 
-> A combination of --on-threshold shell with bpftool (which is always
-> present if BPF support is enabled) is used to check whether the BPF
-> program has executed successfully.
-> 
-> Suggested-by: Crystal Wood <crwood@redhat.com>
-> Signed-off-by: Tomas Glozar <tglozar@redhat.com>
-> ---
->  tools/tracing/rtla/Makefile                   | 10 ++++++--
->  tools/tracing/rtla/tests/bpf/bpf_action_map.c | 25 +++++++++++++++++++
->  tools/tracing/rtla/tests/timerlat.t           | 15 +++++++++++
->  3 files changed, 48 insertions(+), 2 deletions(-)
->  create mode 100644 tools/tracing/rtla/tests/bpf/bpf_action_map.c
-> 
-> diff --git a/tools/tracing/rtla/Makefile b/tools/tracing/rtla/Makefile
-> index 5f1529ce3693..aef814b639b7 100644
-> --- a/tools/tracing/rtla/Makefile
-> +++ b/tools/tracing/rtla/Makefile
-> @@ -76,12 +76,18 @@ src/timerlat.skel.h: src/timerlat.bpf.o
->  
->  example/timerlat_bpf_action.o: example/timerlat_bpf_action.c
->  	$(QUIET_CLANG)$(CLANG) -g -O2 -target bpf -c $(filter %.c,$^) -o $@
-
-I didn't understand why the filter function is needed. $< or $^ seems
-enough.
-
-> +
-> +tests/bpf/bpf_action_map.o: tests/bpf/bpf_action_map.c
-> +	$(QUIET_CLANG)$(CLANG) -g -O2 -target bpf -c $(filter %.c,$^) -o $@
->  else
->  src/timerlat.skel.h:
->  	$(Q)echo '/* BPF skeleton is disabled */' > src/timerlat.skel.h
->  
->  example/timerlat_bpf_action.o: example/timerlat_bpf_action.c
->  	$(Q)echo "BPF skeleton support is disabled, skipping example/timerlat_bpf_action.o"
-> +
-> +tests/bpf/bpf_action_map.o: tests/bpf/bpf_action_map.c
-> +	$(Q)echo "BPF skeleton support is disabled, skipping tests/bpf/bpf_action_map.o"
-
-Why not just not creating the targets if BPF is not enabled?
-
->  endif
->  
->  $(RTLA): $(RTLA_IN)
-> @@ -103,7 +109,7 @@ clean: doc_clean fixdep-clean
->  	$(Q)rm -f rtla rtla-static fixdep FEATURE-DUMP rtla-*
->  	$(Q)rm -rf feature
->  	$(Q)rm -f src/timerlat.bpf.o src/timerlat.skel.h example/timerlat_bpf_action.o
-> -check: $(RTLA)
-> -	RTLA=$(RTLA) prove -o -f tests/
-> +check: $(RTLA) tests/bpf/bpf_action_map.o
-
-Will this work if BPF is disabled?
-
-> +	RTLA=$(RTLA) BPFTOOL=$(SYSTEM_BPFTOOL) prove -o -f tests/
->  examples: example/timerlat_bpf_action.o
->  .PHONY: FORCE clean check
-> diff --git a/tools/tracing/rtla/tests/bpf/bpf_action_map.c b/tools/tracing/rtla/tests/bpf/bpf_action_map.c
-> new file mode 100644
-> index 000000000000..1686e0b858e6
-> --- /dev/null
-> +++ b/tools/tracing/rtla/tests/bpf/bpf_action_map.c
-> @@ -0,0 +1,25 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#include <linux/bpf.h>
-> +#include <bpf/bpf_tracing.h>
-> +
-> +char LICENSE[] SEC("license") = "GPL";
-> +
-> +struct {
-> +	__uint(type, BPF_MAP_TYPE_ARRAY);
-> +	__uint(max_entries, 1);
-> +	__type(key, unsigned int);
-> +	__type(value, unsigned long long);
-> +} rtla_test_map SEC(".maps");
-> +
-> +struct trace_event_raw_timerlat_sample;
-> +
-> +SEC("tp/timerlat_action")
-> +int action_handler(struct trace_event_raw_timerlat_sample *tp_args)
-> +{
-> +	unsigned int key = 0;
-> +	unsigned long long value = 42;
-> +
-> +	bpf_map_update_elem(&rtla_test_map, &key, &value, BPF_ANY);
-> +
-> +	return 0;
-> +}
-> diff --git a/tools/tracing/rtla/tests/timerlat.t b/tools/tracing/rtla/tests/timerlat.t
-> index b5d1e7260a9b..89e28cc6df82 100644
-> --- a/tools/tracing/rtla/tests/timerlat.t
-> +++ b/tools/tracing/rtla/tests/timerlat.t
-> @@ -67,6 +67,21 @@ check "hist with trace output at end" \
->  	"timerlat hist -d 1s --on-end trace" 0 "^  Saving trace to timerlat_trace.txt$"
->  check "top with trace output at end" \
->  	"timerlat top -d 1s --on-end trace" 0 "^  Saving trace to timerlat_trace.txt$"
-> +
-> +# BPF action program tests
-> +if [ "$option" -eq 0 ]
-> +then
-> +	# Test BPF action program properly in BPF mode
-> +	[ -z "$BPFTOOL" ] && BPFTOOL=bpftool
-> +	check "hist with BPF action program (BPF mode)" \
-> +		"timerlat hist -T 2 --bpf-action tests/bpf/bpf_action_map.o --on-threshold shell,command='$BPFTOOL map dump name rtla_test_map'" \
-> +		2 '"value": 42'
-> +else
-> +	# Test BPF action program failure in non-BPF mode
-> +	check "hist with BPF action program (non-BPF mode)" \
-> +		"timerlat hist -T 2 --bpf-action tests/bpf/bpf_action_map.o" \
-> +		1 "BPF actions are not supported in tracefs-only mode"
-> +fi
->  done
->  
->  test_end
-> -- 
-> 2.51.0
 > 
 
+Applied, thanks!
+
+[1/1] gpiolib: fix invalid pointer access in debugfs
+      https://git.kernel.org/brgl/linux/c/2f6115ad8864cf3f48598f26c74c7c8e5c391919
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
