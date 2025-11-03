@@ -1,635 +1,192 @@
-Return-Path: <linux-kernel+bounces-883435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20014C2D73E
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:22:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0473C2D5E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:10:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 336F84F06AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:20:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F5223AA7C5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C6E319879;
-	Mon,  3 Nov 2025 17:20:11 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C5EA31B131
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 17:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC5531C59B;
+	Mon,  3 Nov 2025 16:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oeUPv9lO"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D3431B11F
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:57:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762190409; cv=none; b=SReXsAaVh6Gv7e97tL5NIHm98W/O1Jiq9E1RWKuBSySahSIVqsekKHdpGrMTnuMR9jJhmP5zqIcBoSpAynnFaoVZJawnlpBCjuKjRXv6IwqxZMltJS+okMtpSq6n0lAtg7fu59m+EE94BZt3q2dLFQ5nqRPUgt9NxctxVfSW/DM=
+	t=1762189075; cv=none; b=mYM9ipBnw818qqn2E54Pn5XcPe7nBrHvA63xB9UmyYpYCFyG/8VALaNiQeFs+hPr940QIHhEyVkVHWfpKArg8FhWxhQ0Tvy2WKMSGDG7nuNCfioEqPKF3npcUqoyUGfLtO5c0pf1fJ0VI2aCcZS/m9G2quyc58bwfxY4hJEppMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762190409; c=relaxed/simple;
-	bh=iPsSg+6ROvhsKOw9Kqw/bzzE/3jf9p/iP09Ji91izB0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=PFtFY+zsvVZR+DwCEkg5BJO8ErtrokSuBdOHUC2qD+MZMIW0W61013sqpqTCyM+W5JSPivuwMI77AD1MqW+gTFuPcrsUDoi3BMmkt/Yu7Rm9vhVPwSjFLH9AYRYkW87y8Okbvg1SRnGsWfXg63sQMfrd8c0cqzQnKPDCzLwMJMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4d0cbQ4cjFz9sSS;
-	Mon,  3 Nov 2025 17:33:38 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id fRZStHgNzP7K; Mon,  3 Nov 2025 17:33:38 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4d0cbQ3XYJz9sS8;
-	Mon,  3 Nov 2025 17:33:38 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6A4758B76C;
-	Mon,  3 Nov 2025 17:33:38 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 91LYCDNnqPSW; Mon,  3 Nov 2025 17:33:38 +0100 (CET)
-Received: from [192.168.202.221] (unknown [192.168.202.221])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 81FBC8B763;
-	Mon,  3 Nov 2025 17:33:35 +0100 (CET)
-Message-ID: <638496dd-ec60-4e53-bad7-eb657f67d580@csgroup.eu>
-Date: Mon, 3 Nov 2025 17:33:34 +0100
+	s=arc-20240116; t=1762189075; c=relaxed/simple;
+	bh=8QZMELXENbunUYpr28WqprFjzAksKDqeP0VLh+0+HBE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=B7KmLAKerYGPrR13gKjD4vwzHf9jOwqJ//zfij4TlPTvdSugZXCKzRa7XbBPGXAPGnzIxgE++i5+WvzblfXWUoolhcZFk9W2D48xtGeKmICACLuT53hKQ4tesl27C+j2BwAmv2WSHtkcvU3YmeQvTl0e/i2orjpJhLmbOaLYxPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oeUPv9lO; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-340e10797a8so1618226a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 08:57:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762189073; x=1762793873; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KgHCRB+iOhQXBR2DJ3UKt+ri7IzX08+hr1DQhDLbsGo=;
+        b=oeUPv9lOtOFFcTCXXx73+qQHLeGQdoIKmtLtfdAco9WN6qOFn56grch2nwnNSVD9M9
+         tavasGV0VNjLhrJpBaC5yTq7YVD6tv46LLzSIlFbZl2YoyvRcZTG23WioFeGFE/yibOv
+         O2J0qhdeorK89aTivvkWtEzkCwGgoMYk9dPYnTfMeg7VxQTmOUx66DlfnYkWxTY1f3o3
+         I+iSgAhsEim66RmAE7uSXkrFD4pfQS897HnVNBWT9gxE78QnAatBE6EaJfvEWjBje9+d
+         z7WGLhbSKonl+JqWVODRjETfaZoyyNM5G8Nmz+ZKHW/ciLutNNNGOvEUVp7LKX7jbajW
+         /1fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762189073; x=1762793873;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=KgHCRB+iOhQXBR2DJ3UKt+ri7IzX08+hr1DQhDLbsGo=;
+        b=lsZAhMRP/zr+kE0WDNDeYNp6L0qStLLk1d0ewDz6+CPuJEdwJ3/94EH5LhfVfBUJx3
+         m58/CKqUvKhKhHwSGUo7cXVKZ/DLNquOYdNPBsxH6YZ4XpgtRD3RCyoCvP0fcxZMqF/b
+         b9A1DDJ0LhLTD0qW8k/cVvb+LrmkfL8GtAMlDXihKGoqrawoOA0Rg5dC9kp4ItNXcV77
+         Lb8Mx+ZZbaQUfdOLTyAju/0zs3iTF2Rt750Y/1O+4Gv8b4es+/z7JOkbzXKlHO3fbLnF
+         TYDkgcjQ1KAVnUEuq98RJhuaA/bafF/Ak3pVMqcQYv3gJlJGpCcpCZQmEinr4SorCV72
+         DWYw==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ5uqjyhjVdwumntCh77Cb1bVC5YW1ItnyhaI3JYoV/OPzy21euxgMB+W6UGknKIX91Ya7TC5yALf7d0U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxz4L0Qonpv1grzR05SJuKTCmaC2VjhkRBdl/Gft8mtQvsZLy5L
+	HSIcpqxSnxVvlI/frZXtd9xEJ6HhYGfXRYCPi5XXCAZvskBCW8kBRFdsyVKh7iQZBFQ0WH6dDLY
+	vOGHPNQ==
+X-Google-Smtp-Source: AGHT+IFOpWte/V7QEZNwmFK3W3HK1rZFTmmKzEm/d2Hx1LQQlueXjMmVSeG9D67BxqXsCpRIlefh72yq0PE=
+X-Received: from pjpe14.prod.google.com ([2002:a17:90a:9a8e:b0:340:92f6:5531])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3e8e:b0:332:3515:3049
+ with SMTP id 98e67ed59e1d1-34082fc930bmr15533204a91.4.1762189072869; Mon, 03
+ Nov 2025 08:57:52 -0800 (PST)
+Date: Mon, 3 Nov 2025 08:57:51 -0800
+In-Reply-To: <80691865-7295-44C9-9967-5E5B744EB5D4@nutanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-Subject: Re: [PATCH] eeprom: at25: convert to spi-mem API
-To: "A. Sverdlin" <alexander.sverdlin@siemens.com>,
- linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Michael Walle <mwalle@kernel.org>, Hui Wang <hui.wang@canonical.com>,
- TRINH THAI Florent <florent.trinh-thai@cs-soprasteria.com>
-References: <20250702222823.864803-1-alexander.sverdlin@siemens.com>
-Content-Language: fr-FR
-In-Reply-To: <20250702222823.864803-1-alexander.sverdlin@siemens.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250918162529.640943-1-jon@nutanix.com> <aNHE0U3qxEOniXqO@google.com>
+ <7F944F65-4473-440A-9A2C-235C88672E36@nutanix.com> <B116CE75-43FD-41C4-BB3A-9B0A52FFD06B@nutanix.com>
+ <aPvf5Y7qjewSVCom@google.com> <EFA9296F-14F7-4D78-9B7C-1D258FF0A97A@nutanix.com>
+ <aQTxoX4lB_XtZM-w@google.com> <80691865-7295-44C9-9967-5E5B744EB5D4@nutanix.com>
+Message-ID: <aQjd1q5jF5uSTfmu@google.com>
+Subject: Re: [PATCH] KVM: x86: skip userspace IOAPIC EOI exit when Directed
+ EOI is enabled
+From: Sean Christopherson <seanjc@google.com>
+To: Khushit Shah <khushit.shah@nutanix.com>
+Cc: Jon Kohler <jon@nutanix.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"H. Peter Anvin" <hpa@zytor.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, Nov 03, 2025, Khushit Shah wrote:
+> Hi Sean,=20
+>=20
+> > On 31 Oct 2025, at 10:58=E2=80=AFPM, Sean Christopherson <seanjc@google=
+.com> wrote:
+> >=20
+> >> Hi Sean,
+> >>=20
+> >> Thanks for the reply.
+> >>=20
+> >>> On 25 Oct 2025, at 1:51=E2=80=AFAM, Sean Christopherson <seanjc@googl=
+e.com> wrote:
+> >>>=20
+> >>> Make it a quirk instead of a capability.  This is definitely a KVM bu=
+g, it's just
+> >>> unfortunately one that we can't fix without breaking userspace :-/
+> >>=20
+> >> I don=E2=80=99t think this approach fully addresses the issue.
+> >>=20
+> >> For example, consider the same Windows guest running with a userspace
+> >> I/O APIC that has no EOI registers. The guest will set the Suppress EO=
+I
+> >> Broadcast bit because KVM advertises support for it (see=20
+> >> kvm_apic_set_version).
+> >>=20
+> >> If the quirk is enabled, an interrupt storm will occur.
+> >> If the quirk is disabled, userspace will never receive the EOI
+> >> notification.
+> >=20
+> > Uh, why not?
+> >=20
+> >> For context, Windows with CG the interrupt in the following order:
+> >>  1. Interrupt for L2 arrives.
+> >>  2. L1 APIC EOIs the interrupt.
+> >>  3. L1 resumes L2 and injects the interrupt.
+> >>  4. L2 EOIs after servicing.
+> >>  5. L1 performs the I/O APIC EOI.
+> >=20
+> > And at #5, the MMIO access to the I/O APIC gets routed to userspace for=
+ emulation.
+>=20
+> Yes, but the userspace does not have I/O APIC EOI register and so it will=
+ just be a
+> meaningless MMIO write, resulting in the the IRQ line being kept masked.
 
-Le 03/07/2025 à 00:28, A. Sverdlin a écrit :
-> From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
-> 
-> Replace the RAW SPI accesses with spi-mem API. The latter will fall back to
-> RAW SPI accesses if spi-mem callbacks are not implemented by a controller
-> driver.
+Why on earth would userspace disable the quirk without proper support?
 
-With this patch (kernel v6.17.1) our powerpc boards are totally 
-unstable, we get multiple random Oops due to bad memory accesses.
+> > On 31 Oct 2025, at 10:58=E2=80=AFPM, Sean Christopherson <seanjc@google=
+.com> wrote:
+> >=20
+> > That's the whole point of the quirk; userspace should disable the quirk=
+ if and
+> > only if it supports the I/O APIC EOI extension.
+>=20
+>=20
+> Sadly, so if the quirk is kept enabled (no I/O APIC EOI extension) and if=
+ we do
+> not want a guest reboot, the original windows interrupt storm bug will pe=
+rsist?
 
-With this commit reverted the board is stable again.
+Well, yeah, if you don't fix the bug it'll keep causing problems.
 
-The SPI driver is:
+> Unless we also update the userspace to handle the EOI register write none=
+theless,
+> as damage has been done on the time of power on.
+>=20
+> > On 31 Oct 2025, at 10:58=E2=80=AFPM, Sean Christopherson <seanjc@google=
+.com> wrote:
+> >=20
+> >> and updated userspace can opt in when it truly supports EOI broadcast
+> >> suppression.
+> >>=20
+> >> Am I missing something?
+> >=20
+> > I think so?  It's also possible I'm missing something :-)
+>=20
+> I am just thinking that the original Windows bug is not solved for all th=
+e cases,
+> i.e A powered on Windows guest with userspace I/O APIC that does not have
+> EOI register.=20
 
-CONFIG_SPI=y
-CONFIG_SPI_MASTER=y
-CONFIG_SPI_MEM=y
-CONFIG_SPI_FSL_LIB=y
-CONFIG_SPI_FSL_CPM=y
-CONFIG_SPI_FSL_SPI=y
+Userspace _must_ change one way or the other.  Either that or you livepatch=
+ your
+kernel to carry an out-of-tree hack-a-fix to avoid updating userspace.=20
 
-How can we further investigate the issue ?
+> Also, in the patch instead of a knob to disable suppress EOI broadcast, I=
+ think
+> we should have a knob to enable, this way at least for unmodified userspa=
+ce=20
+> the buggy situation is never reached.
 
-Thanks
-Christophe
-
-> 
-> Notable advantages:
-> - read function now allocates a bounce buffer for SPI DMA compatibility,
->    similar to write function;
-> - the driver can now be used in conjunction with SPI controller drivers
->    providing spi-mem API only, e.g. spi-nxp-fspi.
-> - during the initial probe the driver polls busy/ready status bit for 25ms
->    instead of giving up instantly and hoping that the FW didn't write the
->    EEPROM
-> 
-> Notes:
-> - mutex_lock() has been dropped from fm25_aux_read() because the latter is
->    only being called in probe phase and therefore cannot race with
->    at25_ee_read() or at25_ee_write()
-> 
-> Quick 4KB block size test with CY15B102Q 256KB F-RAM over spi_omap2_mcspi
-> driver (no spi-mem ops provided, fallback to raw SPI inside spi-mem):
-> 
-> OP	| throughput, KB/s	| change
-> --------+-----------------------+-------
-> write	| 1717.847 -> 1656.684	| -3.6%
-> read	| 1115.868 -> 1059.367	| -5.1%
-> 
-> The lower throughtput probably comes from the 3 messages per SPI transfer
-> inside spi-mem instead of hand-crafted 2 messages per transfer in the
-> former at25 code. However, if the raw SPI access is not preserved, then
-> the driver doesn't grow from the lines-of-code perspective and subjectively
-> could be considered even a bit simpler.
-> 
-> Higher performance impact on the read operation could be explained by the
-> newly introduced bounce buffer in read operation. I didn't find any
-> explanation or guarantee, why would a bounce buffer be not needed on the
-> read side, so I assume it's a pure luck that nobody read EEPROM into
-> some variable on stack on an architecture where kernel stack would be
-> not DMA-able.
-> 
-> Cc: Michael Walle <mwalle@kernel.org>
-> Cc: Hui Wang <hui.wang@canonical.com>
-> Link: https://lore.kernel.org/all/28ab8b72afee1af59b628f7389f0d7f5@kernel.org/
-> Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
-> ---
->   drivers/misc/eeprom/Kconfig |   1 +
->   drivers/misc/eeprom/at25.c  | 321 ++++++++++++++++++------------------
->   2 files changed, 162 insertions(+), 160 deletions(-)
-> 
-> diff --git a/drivers/misc/eeprom/Kconfig b/drivers/misc/eeprom/Kconfig
-> index cb1c4b8e7fd37..0bef5b93bd6dc 100644
-> --- a/drivers/misc/eeprom/Kconfig
-> +++ b/drivers/misc/eeprom/Kconfig
-> @@ -37,6 +37,7 @@ config EEPROM_AT25
->   	depends on SPI && SYSFS
->   	select NVMEM
->   	select NVMEM_SYSFS
-> +	select SPI_MEM
->   	help
->   	  Enable this driver to get read/write support to most SPI EEPROMs
->   	  and Cypress FRAMs,
-> diff --git a/drivers/misc/eeprom/at25.c b/drivers/misc/eeprom/at25.c
-> index 595ceb9a71261..20611320e7152 100644
-> --- a/drivers/misc/eeprom/at25.c
-> +++ b/drivers/misc/eeprom/at25.c
-> @@ -7,8 +7,10 @@
->    */
->   
->   #include <linux/bits.h>
-> +#include <linux/cleanup.h>
->   #include <linux/delay.h>
->   #include <linux/device.h>
-> +#include <linux/iopoll.h>
->   #include <linux/kernel.h>
->   #include <linux/module.h>
->   #include <linux/property.h>
-> @@ -17,6 +19,7 @@
->   
->   #include <linux/spi/eeprom.h>
->   #include <linux/spi/spi.h>
-> +#include <linux/spi/spi-mem.h>
->   
->   #include <linux/nvmem-provider.h>
->   
-> @@ -35,13 +38,12 @@
->   
->   struct at25_data {
->   	struct spi_eeprom	chip;
-> -	struct spi_device	*spi;
-> +	struct spi_mem		*spimem;
->   	struct mutex		lock;
->   	unsigned		addrlen;
->   	struct nvmem_config	nvmem_config;
->   	struct nvmem_device	*nvmem;
->   	u8 sernum[FM25_SN_LEN];
-> -	u8 command[EE_MAXADDRLEN + 1];
->   };
->   
->   #define	AT25_WREN	0x06		/* latch the write enable */
-> @@ -74,20 +76,29 @@ struct at25_data {
->   
->   #define	io_limit	PAGE_SIZE	/* bytes */
->   
-> +/* Handle the address MSB as part of instruction byte */
-> +static u8 at25_instr(struct at25_data *at25, u8 instr, unsigned int off)
-> +{
-> +	if (!(at25->chip.flags & EE_INSTR_BIT3_IS_ADDR))
-> +		return instr;
-> +	if (off < BIT(at25->addrlen * 8))
-> +		return instr;
-> +	return instr | AT25_INSTR_BIT3;
-> +}
-> +
->   static int at25_ee_read(void *priv, unsigned int offset,
->   			void *val, size_t count)
->   {
-> +	u8 *bounce __free(kfree) = kmalloc(min(count, io_limit), GFP_KERNEL);
->   	struct at25_data *at25 = priv;
->   	char *buf = val;
-> -	size_t max_chunk = spi_max_transfer_size(at25->spi);
->   	unsigned int msg_offset = offset;
->   	size_t bytes_left = count;
->   	size_t segment;
-> -	u8			*cp;
-> -	ssize_t			status;
-> -	struct spi_transfer	t[2];
-> -	struct spi_message	m;
-> -	u8			instr;
-> +	int status;
-> +
-> +	if (!bounce)
-> +		return -ENOMEM;
->   
->   	if (unlikely(offset >= at25->chip.byte_len))
->   		return -EINVAL;
-> @@ -97,87 +108,67 @@ static int at25_ee_read(void *priv, unsigned int offset,
->   		return -EINVAL;
->   
->   	do {
-> -		segment = min(bytes_left, max_chunk);
-> -		cp = at25->command;
-> +		struct spi_mem_op op;
->   
-> -		instr = AT25_READ;
-> -		if (at25->chip.flags & EE_INSTR_BIT3_IS_ADDR)
-> -			if (msg_offset >= BIT(at25->addrlen * 8))
-> -				instr |= AT25_INSTR_BIT3;
-> +		segment = min(bytes_left, io_limit);
->   
-> -		mutex_lock(&at25->lock);
-> +		op = (struct spi_mem_op)SPI_MEM_OP(SPI_MEM_OP_CMD(at25_instr(at25, AT25_READ,
-> +									     msg_offset), 1),
-> +						   SPI_MEM_OP_ADDR(at25->addrlen, msg_offset, 1),
-> +						   SPI_MEM_OP_NO_DUMMY,
-> +						   SPI_MEM_OP_DATA_IN(segment, bounce, 1));
->   
-> -		*cp++ = instr;
-> -
-> -		/* 8/16/24-bit address is written MSB first */
-> -		switch (at25->addrlen) {
-> -		default:	/* case 3 */
-> -			*cp++ = msg_offset >> 16;
-> -			fallthrough;
-> -		case 2:
-> -			*cp++ = msg_offset >> 8;
-> -			fallthrough;
-> -		case 1:
-> -		case 0:	/* can't happen: for better code generation */
-> -			*cp++ = msg_offset >> 0;
-> -		}
-> -
-> -		spi_message_init(&m);
-> -		memset(t, 0, sizeof(t));
-> -
-> -		t[0].tx_buf = at25->command;
-> -		t[0].len = at25->addrlen + 1;
-> -		spi_message_add_tail(&t[0], &m);
-> -
-> -		t[1].rx_buf = buf;
-> -		t[1].len = segment;
-> -		spi_message_add_tail(&t[1], &m);
-> -
-> -		status = spi_sync(at25->spi, &m);
-> +		status = spi_mem_adjust_op_size(at25->spimem, &op);
-> +		if (status)
-> +			return status;
-> +		segment = op.data.nbytes;
->   
-> +		mutex_lock(&at25->lock);
-> +		status = spi_mem_exec_op(at25->spimem, &op);
->   		mutex_unlock(&at25->lock);
-> -
->   		if (status)
->   			return status;
-> +		memcpy(buf, bounce, segment);
->   
->   		msg_offset += segment;
->   		buf += segment;
->   		bytes_left -= segment;
->   	} while (bytes_left > 0);
->   
-> -	dev_dbg(&at25->spi->dev, "read %zu bytes at %d\n",
-> +	dev_dbg(&at25->spimem->spi->dev, "read %zu bytes at %d\n",
->   		count, offset);
->   	return 0;
->   }
->   
-> -/* Read extra registers as ID or serial number */
-> +/*
-> + * Read extra registers as ID or serial number
-> + *
-> + * Allow for the callers to provide @buf on stack (not necessary DMA-capable)
-> + * by allocating a bounce buffer internally.
-> + */
->   static int fm25_aux_read(struct at25_data *at25, u8 *buf, uint8_t command,
->   			 int len)
->   {
-> +	u8 *bounce __free(kfree) = kmalloc(len, GFP_KERNEL);
-> +	struct spi_mem_op op;
->   	int status;
-> -	struct spi_transfer t[2];
-> -	struct spi_message m;
-> -
-> -	spi_message_init(&m);
-> -	memset(t, 0, sizeof(t));
->   
-> -	t[0].tx_buf = at25->command;
-> -	t[0].len = 1;
-> -	spi_message_add_tail(&t[0], &m);
-> -
-> -	t[1].rx_buf = buf;
-> -	t[1].len = len;
-> -	spi_message_add_tail(&t[1], &m);
-> +	if (!bounce)
-> +		return -ENOMEM;
->   
-> -	mutex_lock(&at25->lock);
-> +	op = (struct spi_mem_op)SPI_MEM_OP(SPI_MEM_OP_CMD(command, 1),
-> +					   SPI_MEM_OP_NO_ADDR,
-> +					   SPI_MEM_OP_NO_DUMMY,
-> +					   SPI_MEM_OP_DATA_IN(len, bounce, 1));
->   
-> -	at25->command[0] = command;
-> +	status = spi_mem_exec_op(at25->spimem, &op);
-> +	dev_dbg(&at25->spimem->spi->dev, "read %d aux bytes --> %d\n", len, status);
-> +	if (status)
-> +		return status;
->   
-> -	status = spi_sync(at25->spi, &m);
-> -	dev_dbg(&at25->spi->dev, "read %d aux bytes --> %d\n", len, status);
-> +	memcpy(buf, bounce, len);
->   
-> -	mutex_unlock(&at25->lock);
-> -	return status;
-> +	return 0;
->   }
->   
->   static ssize_t sernum_show(struct device *dev, struct device_attribute *attr, char *buf)
-> @@ -195,14 +186,47 @@ static struct attribute *sernum_attrs[] = {
->   };
->   ATTRIBUTE_GROUPS(sernum);
->   
-> +/*
-> + * Poll Read Status Register with timeout
-> + *
-> + * Return:
-> + * 0, if the chip is ready
-> + * [positive] Status Register value as-is, if the chip is busy
-> + * [negative] error code in case of read failure
-> + */
-> +static int at25_wait_ready(struct at25_data *at25)
-> +{
-> +	u8 *bounce __free(kfree) = kmalloc(1, GFP_KERNEL);
-> +	struct spi_mem_op op;
-> +	int status;
-> +
-> +	if (!bounce)
-> +		return -ENOMEM;
-> +
-> +	op = (struct spi_mem_op)SPI_MEM_OP(SPI_MEM_OP_CMD(AT25_RDSR, 1),
-> +					   SPI_MEM_OP_NO_ADDR,
-> +					   SPI_MEM_OP_NO_DUMMY,
-> +					   SPI_MEM_OP_DATA_IN(1, bounce, 1));
-> +
-> +	read_poll_timeout(spi_mem_exec_op, status,
-> +			  status || !(bounce[0] & AT25_SR_nRDY), false,
-> +			  USEC_PER_MSEC, USEC_PER_MSEC * EE_TIMEOUT,
-> +			  at25->spimem, &op);
-> +	if (status < 0)
-> +		return status;
-> +	if (!(bounce[0] & AT25_SR_nRDY))
-> +		return 0;
-> +
-> +	return bounce[0];
-> +}
-> +
->   static int at25_ee_write(void *priv, unsigned int off, void *val, size_t count)
->   {
-> +	u8 *bounce __free(kfree) = kmalloc(min(count, io_limit), GFP_KERNEL);
->   	struct at25_data *at25 = priv;
-> -	size_t maxsz = spi_max_transfer_size(at25->spi);
->   	const char *buf = val;
-> -	int			status = 0;
-> -	unsigned		buf_size;
-> -	u8			*bounce;
-> +	unsigned int buf_size;
-> +	int status;
->   
->   	if (unlikely(off >= at25->chip.byte_len))
->   		return -EFBIG;
-> @@ -211,11 +235,8 @@ static int at25_ee_write(void *priv, unsigned int off, void *val, size_t count)
->   	if (unlikely(!count))
->   		return -EINVAL;
->   
-> -	/* Temp buffer starts with command and address */
->   	buf_size = at25->chip.page_size;
-> -	if (buf_size > io_limit)
-> -		buf_size = io_limit;
-> -	bounce = kmalloc(buf_size + at25->addrlen + 1, GFP_KERNEL);
-> +
->   	if (!bounce)
->   		return -ENOMEM;
->   
-> @@ -223,85 +244,64 @@ static int at25_ee_write(void *priv, unsigned int off, void *val, size_t count)
->   	 * For write, rollover is within the page ... so we write at
->   	 * most one page, then manually roll over to the next page.
->   	 */
-> -	mutex_lock(&at25->lock);
-> +	guard(mutex)(&at25->lock);
->   	do {
-> -		unsigned long	timeout, retries;
-> -		unsigned	segment;
-> -		unsigned	offset = off;
-> -		u8		*cp = bounce;
-> -		int		sr;
-> -		u8		instr;
-> -
-> -		*cp = AT25_WREN;
-> -		status = spi_write(at25->spi, cp, 1);
-> -		if (status < 0) {
-> -			dev_dbg(&at25->spi->dev, "WREN --> %d\n", status);
-> -			break;
-> -		}
-> -
-> -		instr = AT25_WRITE;
-> -		if (at25->chip.flags & EE_INSTR_BIT3_IS_ADDR)
-> -			if (offset >= BIT(at25->addrlen * 8))
-> -				instr |= AT25_INSTR_BIT3;
-> -		*cp++ = instr;
-> +		struct spi_mem_op op = SPI_MEM_OP(SPI_MEM_OP_CMD(AT25_WREN, 1),
-> +						  SPI_MEM_OP_NO_ADDR,
-> +						  SPI_MEM_OP_NO_DUMMY,
-> +						  SPI_MEM_OP_NO_DATA);
-> +		unsigned int segment;
->   
-> -		/* 8/16/24-bit address is written MSB first */
-> -		switch (at25->addrlen) {
-> -		default:	/* case 3 */
-> -			*cp++ = offset >> 16;
-> -			fallthrough;
-> -		case 2:
-> -			*cp++ = offset >> 8;
-> -			fallthrough;
-> -		case 1:
-> -		case 0:	/* can't happen: for better code generation */
-> -			*cp++ = offset >> 0;
-> +		status = spi_mem_exec_op(at25->spimem, &op);
-> +		if (status < 0) {
-> +			dev_dbg(&at25->spimem->spi->dev, "WREN --> %d\n", status);
-> +			return status;
->   		}
->   
->   		/* Write as much of a page as we can */
-> -		segment = buf_size - (offset % buf_size);
-> +		segment = buf_size - (off % buf_size);
->   		if (segment > count)
->   			segment = count;
-> -		if (segment > maxsz)
-> -			segment = maxsz;
-> -		memcpy(cp, buf, segment);
-> -		status = spi_write(at25->spi, bounce,
-> -				segment + at25->addrlen + 1);
-> -		dev_dbg(&at25->spi->dev, "write %u bytes at %u --> %d\n",
-> -			segment, offset, status);
-> -		if (status < 0)
-> -			break;
-> +		if (segment > io_limit)
-> +			segment = io_limit;
-> +
-> +		op = (struct spi_mem_op)SPI_MEM_OP(SPI_MEM_OP_CMD(at25_instr(at25, AT25_WRITE, off),
-> +								  1),
-> +						   SPI_MEM_OP_ADDR(at25->addrlen, off, 1),
-> +						   SPI_MEM_OP_NO_DUMMY,
-> +						   SPI_MEM_OP_DATA_OUT(segment, bounce, 1));
-> +
-> +		status = spi_mem_adjust_op_size(at25->spimem, &op);
-> +		if (status)
-> +			return status;
-> +		segment = op.data.nbytes;
-> +
-> +		memcpy(bounce, buf, segment);
-> +
-> +		status = spi_mem_exec_op(at25->spimem, &op);
-> +		dev_dbg(&at25->spimem->spi->dev, "write %u bytes at %u --> %d\n",
-> +			segment, off, status);
-> +		if (status)
-> +			return status;
->   
->   		/*
->   		 * REVISIT this should detect (or prevent) failed writes
->   		 * to read-only sections of the EEPROM...
->   		 */
->   
-> -		/* Wait for non-busy status */
-> -		timeout = jiffies + msecs_to_jiffies(EE_TIMEOUT);
-> -		retries = 0;
-> -		do {
-> -
-> -			sr = spi_w8r8(at25->spi, AT25_RDSR);
-> -			if (sr < 0 || (sr & AT25_SR_nRDY)) {
-> -				dev_dbg(&at25->spi->dev,
-> -					"rdsr --> %d (%02x)\n", sr, sr);
-> -				/* at HZ=100, this is sloooow */
-> -				msleep(1);
-> -				continue;
-> -			}
-> -			if (!(sr & AT25_SR_nRDY))
-> -				break;
-> -		} while (retries++ < 3 || time_before_eq(jiffies, timeout));
-> -
-> -		if ((sr < 0) || (sr & AT25_SR_nRDY)) {
-> -			dev_err(&at25->spi->dev,
-> +		status = at25_wait_ready(at25);
-> +		if (status < 0) {
-> +			dev_err_probe(&at25->spimem->spi->dev, status,
-> +				      "Read Status Redister command failed\n");
-> +			return status;
-> +		}
-> +		if (status) {
-> +			dev_dbg(&at25->spimem->spi->dev,
-> +				"Status %02x\n", status);
-> +			dev_err(&at25->spimem->spi->dev,
->   				"write %u bytes offset %u, timeout after %u msecs\n",
-> -				segment, offset,
-> -				jiffies_to_msecs(jiffies -
-> -					(timeout - EE_TIMEOUT)));
-> -			status = -ETIMEDOUT;
-> -			break;
-> +				segment, off, EE_TIMEOUT);
-> +			return -ETIMEDOUT;
->   		}
->   
->   		off += segment;
-> @@ -310,9 +310,6 @@ static int at25_ee_write(void *priv, unsigned int off, void *val, size_t count)
->   
->   	} while (count > 0);
->   
-> -	mutex_unlock(&at25->lock);
-> -
-> -	kfree(bounce);
->   	return status;
->   }
->   
-> @@ -429,31 +426,33 @@ static const struct spi_device_id at25_spi_ids[] = {
->   };
->   MODULE_DEVICE_TABLE(spi, at25_spi_ids);
->   
-> -static int at25_probe(struct spi_device *spi)
-> +static int at25_probe(struct spi_mem *mem)
->   {
-> -	struct at25_data	*at25 = NULL;
-> -	int			err;
-> -	int			sr;
-> +	struct spi_device *spi = mem->spi;
->   	struct spi_eeprom *pdata;
-> +	struct at25_data *at25;
->   	bool is_fram;
-> +	int err;
-> +
-> +	at25 = devm_kzalloc(&spi->dev, sizeof(*at25), GFP_KERNEL);
-> +	if (!at25)
-> +		return -ENOMEM;
-> +
-> +	at25->spimem = mem;
->   
->   	/*
->   	 * Ping the chip ... the status register is pretty portable,
-> -	 * unlike probing manufacturer IDs. We do expect that system
-> -	 * firmware didn't write it in the past few milliseconds!
-> +	 * unlike probing manufacturer IDs.
->   	 */
-> -	sr = spi_w8r8(spi, AT25_RDSR);
-> -	if (sr < 0 || sr & AT25_SR_nRDY) {
-> -		dev_dbg(&spi->dev, "rdsr --> %d (%02x)\n", sr, sr);
-> +	err = at25_wait_ready(at25);
-> +	if (err < 0)
-> +		return dev_err_probe(&spi->dev, err, "Read Status Register command failed\n");
-> +	if (err) {
-> +		dev_err(&spi->dev, "Not ready (%02x)\n", err);
->   		return -ENXIO;
->   	}
->   
-> -	at25 = devm_kzalloc(&spi->dev, sizeof(*at25), GFP_KERNEL);
-> -	if (!at25)
-> -		return -ENOMEM;
-> -
->   	mutex_init(&at25->lock);
-> -	at25->spi = spi;
->   	spi_set_drvdata(spi, at25);
->   
->   	is_fram = fwnode_device_is_compatible(dev_fwnode(&spi->dev), "cypress,fm25");
-> @@ -514,17 +513,19 @@ static int at25_probe(struct spi_device *spi)
->   
->   /*-------------------------------------------------------------------------*/
->   
-> -static struct spi_driver at25_driver = {
-> -	.driver = {
-> -		.name		= "at25",
-> -		.of_match_table = at25_of_match,
-> -		.dev_groups	= sernum_groups,
-> +static struct spi_mem_driver at25_driver = {
-> +	.spidrv = {
-> +		.driver = {
-> +			.name		= "at25",
-> +			.of_match_table = at25_of_match,
-> +			.dev_groups	= sernum_groups,
-> +		},
-> +		.id_table	= at25_spi_ids,
->   	},
->   	.probe		= at25_probe,
-> -	.id_table	= at25_spi_ids,
->   };
->   
-> -module_spi_driver(at25_driver);
-> +module_spi_mem_driver(at25_driver);
->   
->   MODULE_DESCRIPTION("Driver for most SPI EEPROMs");
->   MODULE_AUTHOR("David Brownell");
-
+No.  Having a bug that prevents booting certain guests is bad.  Introducing=
+ a
+change that potentially breaks existing setups is worse.  Yes, it's unfortu=
+nate
+that userspace needs to be updated to fully remedy the issue.  But unless y=
+ou're
+livepatching the kernel, userspace should be updated anyways on a full rebo=
+ot.
 
