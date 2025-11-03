@@ -1,80 +1,61 @@
-Return-Path: <linux-kernel+bounces-882270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7AF2C2A08B
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 05:43:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7077C2A08E
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 05:46:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E2D944E1BC9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 04:43:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C4153ADCDE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 04:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 181BC2882A9;
-	Mon,  3 Nov 2025 04:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A3BB72618;
+	Mon,  3 Nov 2025 04:45:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f6tuKXzI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="AkFiOWiu"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1591B23D7DA
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 04:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C61E33F3;
+	Mon,  3 Nov 2025 04:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762145023; cv=none; b=KuEs0rjMyoNLZp8u1YAxM2ksWlZlJTiCZhonGm3DZyh2xMazg9+w06kOo6sEaQcUDDzbYxshhTvDbGgeJ55588Pgfe3Y8ZAefZ323xn28CDDhhwzcs3BHhFTivOGuqkNuu+CZCg6welFn9SlILEnNarjL7F8hHwWEDTzk/Ko1QU=
+	t=1762145158; cv=none; b=kF7TmWvrv+Nve57MCZhILCDlWZuYTfzPReRnv+B3lc6VphdtNGRt70z7Ldlhl6w4fJd1QUOF6RGikYXuaVu/B5RbvWQ+SesnvDgUmbWZUQoPvN8GjdPn7ZeL6vEBNU7W0TuKY1rrmj0j9uhNFigkpKS2BvjPYxuuowFqbcxtLZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762145023; c=relaxed/simple;
-	bh=33d+YZiDWFuxAUM/paTRrQcWI1uv6sSqzObX9bH5epU=;
+	s=arc-20240116; t=1762145158; c=relaxed/simple;
+	bh=BrxaAHcqR6T+eaK3F6c+swlP1+unyURDr55nnhidFjY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IUpZca9VI1oxyM5SbVQzYuRkL19kmV/NDLId6e6n2FfnoC2BkyfQr0INhfMh9IcL2n4Gh0B5mB1t0o058FKEmdrYDet4t+6OWNrKh9OpNJ3XT83uPPwSiXsZl+NxMOycjuG0JW1Bf3iqMT1UyuahqbKu4i0PbJGgJeLyNXj4le4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f6tuKXzI; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762145022; x=1793681022;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=33d+YZiDWFuxAUM/paTRrQcWI1uv6sSqzObX9bH5epU=;
-  b=f6tuKXzITzBqcPoe0mR7Z8Ra7uZrqc8t4d0K7v/gr3yPb1UqzAu7X4ez
-   QZgGD6CMSlhDQE83hHn5spuXedBK/IAiBMzOHq25LNwkPHoKteUbGHcMR
-   +e3WM9aE7VmOOlYSILtqu/N3LuKBOtc7/fNIb1C2n3sNAPQOfz9zML5sg
-   XIjn6z11W8eDS6E+qrYor3X2oEBJFrmVPuoL/mrUEcXCD865KLhhzwakS
-   GH7L8g96EvTGtiaCmVjOY27Olc7WleNuTe/GvhDe/HgrFFF/7G4RNmT7t
-   qYTWey/TSjt1MMIEs+1BKucEqnNQolOwkSvy6qZQ85k/7O8dkzAokE7t8
-   w==;
-X-CSE-ConnectionGUID: euA5nO9SRj6BZRimB1uBPQ==
-X-CSE-MsgGUID: Ys91YkCPQaOCDjBPjQpMxA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="86839335"
-X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
-   d="scan'208";a="86839335"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2025 20:43:41 -0800
-X-CSE-ConnectionGUID: uoKtMhQ+QHiICLbXNcjvvg==
-X-CSE-MsgGUID: 5T0fYuxtTsGWN/krlxXtiQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
-   d="scan'208";a="191098982"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 02 Nov 2025 20:43:38 -0800
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vFmPn-000PpY-2q;
-	Mon, 03 Nov 2025 04:43:35 +0000
-Date: Mon, 3 Nov 2025 12:42:37 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jori Koolstra <jkoolstra@xs4all.nl>,
-	Christian Brauner <brauner@kernel.org>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Taotao Chen <chentaotao@didiglobal.com>,
-	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>,
-	NeilBrown <neil@brown.name>
-Cc: oe-kbuild-all@lists.linux.dev, jkoolstra@xs4all.nl,
-	linux-kernel@vger.kernel.org,
-	syzbot+a65e824272c5f741247d@syzkaller.appspotmail.com
-Subject: Re: [PATCH] Fix a drop_nlink warning in minix_rename
-Message-ID: <202511031229.rqpKLU46-lkp@intel.com>
-References: <20251102182532.2442670-1-jkoolstra@xs4all.nl>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bkSIxfwgWI4JOtkm6R/IxdQyEBeVbm9Vds0IR+2X/IB6pnw3wp7PU7xg/wR/1/aUu//SeGX2hDBUGIFf4bXG6p95OUGQ7Sqg9t3lf1KxIEnHxzALPkH+NDJ2iJ3X6V0M2oetYL4iUuU6SpskR7CT7q7jKEU7bPVPt/qrJGr+65M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=AkFiOWiu; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=QUADFDv4ActFiyAXojXkc92OQd6pHGgvzY2aMQ+ZVog=; b=AkFiOWiuzdC8mCCG8B0qm6JAFi
+	+1QKLyrd/jpq218sDy/4XpLbKTdrFojieSFpi3nEn7gk8QEBoDCWi+GCWmhv/rZSKWptvDkxCl+c4
+	zrzhrXHd4OD9mKuu25cRrXM5ia/AmacVGeQmSApr83vLjQuzLIK3uYK8rMziibPHp2NUe2e3CWmT8
+	LD3TL3Ed8ezN47RqPeBPxapLszeUnh7utU5OAfR7x0+KnDG1JAIC3tNrYMXaTksGC0/+GFiIwdpLL
+	r6JKY7+qwptASQw8h4bC+EbqcBibKrxWMtcMQ74QSCK6M7QOKilUcruMtPUtMDNPwhAhGaF0HCnpQ
+	F/kPrtlg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vFmS1-0000000GFqL-1Ym8;
+	Mon, 03 Nov 2025 04:45:53 +0000
+Date: Mon, 3 Nov 2025 04:45:53 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: touch up predicts in putname()
+Message-ID: <20251103044553.GF2441659@ZenIV>
+References: <20251029134952.658450-1-mjguzik@gmail.com>
+ <20251031201753.GD2441659@ZenIV>
+ <20251101060556.GA1235503@ZenIV>
+ <CAGudoHHno74hGjwu7rryrS4x2q2W8=SwMwT9Lohjr4mBbAg+LA@mail.gmail.com>
+ <20251102061443.GE2441659@ZenIV>
+ <CAGudoHFDAPEYoC8RAPuPVkcsHsgpdJtQh91=8wRgMAozJyYf2w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,77 +64,119 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251102182532.2442670-1-jkoolstra@xs4all.nl>
+In-Reply-To: <CAGudoHFDAPEYoC8RAPuPVkcsHsgpdJtQh91=8wRgMAozJyYf2w@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Hi Jori,
+On Sun, Nov 02, 2025 at 11:42:03PM +0100, Mateusz Guzik wrote:
 
-kernel test robot noticed the following build errors:
+> Even ignoring the fact that there is a refcount and people may be
+> inclined to refname(name) + take_filename(name), the following already
+> breaks:
 
-[auto build test ERROR on brauner-vfs/vfs.all]
-[also build test ERROR on linus/master v6.18-rc4 next-20251031]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Er...  refname() doesn't need to be seen for anyone other than auditsc.c
+and core part of filename handling in fs/namei.c (I'd like to move it
+to fs/filename.c someday)...
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jori-Koolstra/Fix-a-drop_nlink-warning-in-minix_rename/20251103-022646
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
-patch link:    https://lore.kernel.org/r/20251102182532.2442670-1-jkoolstra%40xs4all.nl
-patch subject: [PATCH] Fix a drop_nlink warning in minix_rename
-config: arc-randconfig-r073-20251103 (https://download.01.org/0day-ci/archive/20251103/202511031229.rqpKLU46-lkp@intel.com/config)
-compiler: arc-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251103/202511031229.rqpKLU46-lkp@intel.com/reproduce)
+> foo() {
+>     name = getname(...);
+>     if (!IS_ERR_OR_NULL(name))
+>         bar(name);
+>     putname(name);
+> }
+> 
+> bar(struct filename *name)
+> {
+>     baz(take_filename(&name));
+> }
+> 
+> While the code as proposed in the branch does not do it, it is a
+> matter of time before something which can be distilled to the above
+> shows up.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511031229.rqpKLU46-lkp@intel.com/
+Breaks in which case, exactly?  If baz() consumes its argument, we are
+fine, if it does we have a leak...
 
-All errors (new ones prefixed by >>):
+I agree that 'take_filename' is inviting wrong connotations, though.
 
-   fs/minix/namei.c: In function 'minix_unlink':
->> fs/minix/namei.c:151:11: error: 'EFSCORRUPTED' undeclared (first use in this function); did you mean 'FS_NRSUPER'?
-      return -EFSCORRUPTED;
-              ^~~~~~~~~~~~
-              FS_NRSUPER
-   fs/minix/namei.c:151:11: note: each undeclared identifier is reported only once for each function it appears in
-   fs/minix/namei.c: In function 'minix_rename':
-   fs/minix/namei.c:217:10: error: 'EFSCORRUPTED' undeclared (first use in this function); did you mean 'FS_NRSUPER'?
-      err = -EFSCORRUPTED;
-             ^~~~~~~~~~~~
-             FS_NRSUPER
+Hell knows - it might be worth thinking of that as claiming ownership.
+Or, perhaps, transformation of the original object, if we separate
+the notion of 'active filename' (absolutely tied to one thread, not
+allowed to be reachable from any data structures shared with other
+threads, etc.) from 'embryonic filename' (no refcounting whatsoever,
+no copying of references, etc., consumed on transformation into
+'active filename').  Then getname_alien() would create an embryo,
+to be consumed before doing actual work.  That could be expressed
+in C type system...  Need to think about that.
 
+One possibility would be something like
 
-vim +151 fs/minix/namei.c
+struct alien_filename {
+	struct filename *__dont_touch_that;
+};
 
-   140	
-   141	static int minix_unlink(struct inode * dir, struct dentry *dentry)
-   142	{
-   143		struct inode * inode = d_inode(dentry);
-   144		struct folio *folio;
-   145		struct minix_dir_entry * de;
-   146		int err;
-   147	
-   148		if (inode->i_nlink < 1) {
-   149			printk(KERN_CRIT "minix-fs error: inode (ino: %ld) "
-   150			       "has corrupted nlink", inode->i_ino);
- > 151			return -EFSCORRUPTED;
-   152		}
-   153	
-   154		de = minix_find_entry(dentry, &folio);
-   155		if (!de)
-   156			return -ENOENT;
-   157		err = minix_delete_entry(de, folio);
-   158		folio_release_kmap(folio, de);
-   159	
-   160		if (err)
-   161			return err;
-   162		inode_set_ctime_to_ts(inode, inode_get_ctime(dir));
-   163		inode_dec_link_count(inode);
-   164		return 0;
-   165	}
-   166	
+int getname_alien(struct alien_filename *v, const char __user *string)
+{
+	struct filename *res;
+	if (WARN_ON(v->__dont_touch_that))
+		return -EINVAL;
+	res = getname_flags(string, GETNAME_NOAUDIT);
+	if (IS_ERR(res))
+		return PTR_ERR(res);
+	v->__done_touch_that = res;
+	return 0;
+}
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+void destroy_alien_filename(struct alient_filename *v)
+{
+	putname(no_free_ptr(v->__dont_touch_that));
+}
+
+struct filename *claim_filename(struct alien_filename *v)
+{
+	struct filename *res = no_free_ptr(v->__dont_touch_that);
+	if (!IS_ERR(res))
+		audit_getname(res);
+	return res;
+}
+
+and e.g.
+
+struct io_rename {
+        struct file                     *file;
+	int                             old_dfd;
+	int                             new_dfd;
+	struct alien_filename           oldpath;
+	struct alien_filename           newpath;
+	int                             flags;
+};
+
+...
+	err = getname_alien(&ren->oldpath);
+	if (unlikely(err))
+		return err;
+	err = getname_alien(&ren->newpath);
+	if (unlikely(err)) {
+		destroy_alien_filename(&ren->oldpath);
+		return err;
+	}
+
+...
+	/* note that do_renameat2() consumes filename references */
+        ret = do_renameat2(ren->old_dfd, claim_filename(&ren->oldpath),
+			   ren->new_dfd, claim_filename(&ren->newpath),
+			   ren->flags);
+...
+
+void io_renameat_cleanup(struct io_kiocb *req)
+{
+        struct io_rename *ren = io_kiocb_to_cmd(req, struct io_rename);
+	 
+	destroy_alien_filename(&ren->oldpath);
+	destroy_alien_filename(&ren->newpath);
+}
+
+Might work...  Anyone found adding any instances of __dont_touch_that anywhere in
+the kernel would be obviously doing something fishy (and if they are playing silly
+buggers with obfuscating that, s/doing something fishy/malicious/), so C typechecking
++ git grep once in a while should suffice for safety.
 
