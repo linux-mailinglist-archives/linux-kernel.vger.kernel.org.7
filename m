@@ -1,206 +1,129 @@
-Return-Path: <linux-kernel+bounces-882625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74D7CC2AEE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:11:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BF719C2AF09
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:13:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C64163ACFBB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:10:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 293D23B240F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:13:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5FBD2FC013;
-	Mon,  3 Nov 2025 10:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABDD2FC029;
+	Mon,  3 Nov 2025 10:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WDTS+oto";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="c1jYj1FO"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eI+/sVQ9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE5F14A60F;
-	Mon,  3 Nov 2025 10:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4941F19309C;
+	Mon,  3 Nov 2025 10:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762164614; cv=none; b=ahAAt0pb5gjWlpeYhY22vyLXPjUO7Ex8NerA6RSDOx28lpZVNrUTWHVV3iQBDl6Np/Bo0kiBWVtJ2mAsvOjO/vH5W7dkg429vC2OJSF12AZGxINGkr5fDC9ItWb4f/K+SmnfJ16oeHt6B1x0bkHQILQg0W55C/C3+oq/xxiB34M=
+	t=1762164790; cv=none; b=rY71Fmqjvqnj5TQ9rhliBkvzEO9NNHOKdYGggw4ByhPBFjm6WxrKCvjCzLz8/sTzEL5apP9PKWiRjar2+22jxTB5aynJ2A5Xni4UYK1Vzwi5S8KAGILlJMgDY7xXpmA0l5HevRuf1L3/dYdvSWrNG6AVuwowR9oGwpJERvowkvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762164614; c=relaxed/simple;
-	bh=V9YvBpMPCeKQCzNbxg+VMyRL1o9qkLYfE8o0iwL3+zc=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=dlSUYMoiv7kbrbjxoj4i3TqX4aa1nhcAjjw9owKkm75lK19yek4NUr0bSym1mTGFjBH1stjzk0B1roUqeKnnn9Mth5mmJus06rY4z8eKPwQASyQ8V0EhX6smKdJXsQ4FDIGViplOqAnIbDgSOyhFq9TWZ07jXk1dB1byTo7J6vs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WDTS+oto; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=c1jYj1FO; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 03 Nov 2025 10:10:07 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762164609;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EVarb4so6O4MwXTO1StH9mqdDIEJ8bBowHieREy6Bmc=;
-	b=WDTS+otoJGs9JUVMwGDiZb4X9t2w66jh27JH1erGHwxnx1wyPzuaO8WSU8l1kZEC5iguiX
-	xi4xU2y9Zfde1f+VBvbW/4N+sSouNb5EDUmoHXUF9hlTClTpObqA9+6rbVVe3QfbyhURql
-	PXUJAavbS0miXeTsNhM+mbTeA7AORXFGLlbLCkFg4kTfwHcZKXQ67YGf5hFJdjEZWJ9Bau
-	/8FMxaTxp7urCpePoW+KMZ46zipujK/rdkCnRIqEUOuy7fKVdvh3kNrhDlU3+CJRamIVhv
-	MY87b+wSDItuQPyvifjY/hmgDlS0UefsXRFMRxf+vs6gOfR01LfWxlKVLVujyA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762164609;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EVarb4so6O4MwXTO1StH9mqdDIEJ8bBowHieREy6Bmc=;
-	b=c1jYj1FOzfS2Oh+G+d4joM69VSOA1AcsXexEXnMzdyjI8aWvJR8QjHhD1LQK3N0AmfBOIf
-	Q/gU3DR1TFTX++BA==
-From: "tip-bot2 for Dapeng Mi" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: perf/urgent] perf/core: Fix system hang caused by cpu-clock usage
-Cc: Octavia Togami <octavia.togami@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Dapeng Mi <dapeng1.mi@linux.intel.com>,
- Ingo Molnar <mingo@kernel.org>, stable@vger.kernel.org, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20251015051828.12809-1-dapeng1.mi@linux.intel.com>
-References: <20251015051828.12809-1-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1762164790; c=relaxed/simple;
+	bh=3HvSwd3Hdi/gWECtVw0p3KFzqcxgB2PNYUbt+Yyqiyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YL17AY7l591OG+qnZTODdIxn8BoyZQiAm8R6lJXkHJzg7W/NOJf3RlHy/P+jKgJY83Req/T7+GMwGs7KXL52nEFcxnR6Vpdgi1IbaYCQQojf9Nb+bSbFHm1GZxam9Q+fLZwMYr3es5dnwr6fowdZiwifBLRsS/Lu61d2N+KVPFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eI+/sVQ9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DCD2C4CEE7;
+	Mon,  3 Nov 2025 10:13:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762164788;
+	bh=3HvSwd3Hdi/gWECtVw0p3KFzqcxgB2PNYUbt+Yyqiyk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eI+/sVQ9SlsH4jxh7ldDJPSzl9u1cyTsFagb7+gvmUh4ExL/zDq0bf1Gbvmp5sPSx
+	 PxOyHzDt9E/jVv2OmRkPvGEqzu1k2oujSXANHPm55HKlbab005K9610paGE/jgx9TW
+	 M6hQTPI06hlYMNQX/ikArLJ0f1JHblDl5xEcz9EXYY7E798ASikJD+vbmD2II+gdxg
+	 PBGbA1BQfNdMFMtvDfCgz/DPrYIJFUoPL1O4ODwd2uR7tdRhknbXeVXvi5vkO2eNxI
+	 q0s58Y/m24NQnWTfX5sgkHF3IP/b2lDmSmuoX9GhlxwpFYy386TOHtXf9vpc/W15tl
+	 h9byOjeJtFrUQ==
+Date: Mon, 3 Nov 2025 15:42:58 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Hanjie Lin <hanjie.lin@amlogic.com>, Yue Wang <yue.wang@amlogic.com>, 
+	Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Andrew Murray <amurray@thegoodpenguin.co.uk>, 
+	Jingoo Han <jingoohan1@gmail.com>, Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH RESEND 1/3] dt-bindings: PCI: amlogic: Fix the register
+ name of the DBI region
+Message-ID: <rguwscxck7vel3hjdd2hlkypzdbwdvafdryxtz5benweduh4eg@sny4rr2nx5aq>
+References: <20251101-pci-meson-fix-v1-0-c50dcc56ed6a@oss.qualcomm.com>
+ <20251101-pci-meson-fix-v1-1-c50dcc56ed6a@oss.qualcomm.com>
+ <31271df3-73e1-4eea-9bba-9e5b3bf85409@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176216460800.2601451.733142302683512228.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <31271df3-73e1-4eea-9bba-9e5b3bf85409@linaro.org>
 
-The following commit has been merged into the perf/urgent branch of tip:
+On Mon, Nov 03, 2025 at 10:47:36AM +0100, Neil Armstrong wrote:
+> Hi Mani,
+> 
+> On 11/1/25 05:29, Manivannan Sadhasivam wrote:
+> > Binding incorrectly specifies the 'DBI' region as 'ELBI'. DBI is a must
+> > have region for DWC controllers as it has the Root Port and controller
+> > specific registers, while ELBI has optional registers.
+> > 
+> > Hence, fix the binding. Though this is an ABI break, this change is needed
+> > to accurately describe the PCI memory map.
+> 
+> Not fan of this ABI break, the current bindings should be marked as deprecated instead.
+> 
 
-Commit-ID:     eb3182ef0405ff2f6668fd3e5ff9883f60ce8801
-Gitweb:        https://git.kernel.org/tip/eb3182ef0405ff2f6668fd3e5ff9883f60c=
-e8801
-Author:        Dapeng Mi <dapeng1.mi@linux.intel.com>
-AuthorDate:    Wed, 15 Oct 2025 13:18:28 +08:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 03 Nov 2025 11:04:19 +01:00
+Fair enough. Will make it as deprecated.
 
-perf/core: Fix system hang caused by cpu-clock usage
+- Mani
 
-cpu-clock usage by the async-profiler tool can trigger a system hang,
-which got bisected back to the following commit by Octavia Togami:
+> > 
+> > Fixes: 7cd210391101 ("dt-bindings: PCI: meson: add DT bindings for Amlogic Meson PCIe controller")
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> > ---
+> >   Documentation/devicetree/bindings/pci/amlogic,axg-pcie.yaml | 6 +++---
+> >   1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/pci/amlogic,axg-pcie.yaml b/Documentation/devicetree/bindings/pci/amlogic,axg-pcie.yaml
+> > index 79a21ba0f9fd62804ba95fe8a6cc3252cf652197..c8258ef4032834d87cf3160ffd1d93812801b62a 100644
+> > --- a/Documentation/devicetree/bindings/pci/amlogic,axg-pcie.yaml
+> > +++ b/Documentation/devicetree/bindings/pci/amlogic,axg-pcie.yaml
+> > @@ -36,13 +36,13 @@ properties:
+> >     reg:
+> >       items:
+> > -      - description: External local bus interface registers
+> > +      - description: Data Bus Interface registers
+> >         - description: Meson designed configuration registers
+> >         - description: PCIe configuration space
+> >     reg-names:
+> >       items:
+> > -      - const: elbi
+> > +      - const: dbi
+> >         - const: cfg
+> >         - const: config
+> > @@ -113,7 +113,7 @@ examples:
+> >       pcie: pcie@f9800000 {
+> >           compatible = "amlogic,axg-pcie", "snps,dw-pcie";
+> >           reg = <0xf9800000 0x400000>, <0xff646000 0x2000>, <0xf9f00000 0x100000>;
+> > -        reg-names = "elbi", "cfg", "config";
+> > +        reg-names = "dbi", "cfg", "config";
+> >           interrupts = <GIC_SPI 177 IRQ_TYPE_EDGE_RISING>;
+> >           clocks = <&pclk>, <&clk_port>, <&clk_phy>;
+> >           clock-names = "pclk", "port", "general";
+> > 
+> 
 
-  18dbcbfabfff ("perf: Fix the POLL_HUP delivery breakage") causes this issue
-
-The root cause of the hang is that cpu-clock is a special type of SW
-event which relies on hrtimers. The __perf_event_overflow() callback
-is invoked from the hrtimer handler for cpu-clock events, and
-__perf_event_overflow() tries to call cpu_clock_event_stop()
-to stop the event, which calls htimer_cancel() to cancel the hrtimer.
-
-But that's a recursion into the hrtimer code from a hrtimer handler,
-which (unsurprisingly) deadlocks.
-
-To fix this bug, use hrtimer_try_to_cancel() instead, and set
-the PERF_HES_STOPPED flag, which causes perf_swevent_hrtimer()
-to stop the event once it sees the PERF_HES_STOPPED flag.
-
-[ mingo: Fixed the comments and improved the changelog. ]
-
-Closes: https://lore.kernel.org/all/CAHPNGSQpXEopYreir+uDDEbtXTBvBvi8c6fYXJvc=
-eqtgTPao3Q@mail.gmail.com/
-Fixes: 18dbcbfabfff ("perf: Fix the POLL_HUP delivery breakage")
-Reported-by: Octavia Togami <octavia.togami@gmail.com>
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Tested-by: Octavia Togami <octavia.togami@gmail.com>
-Cc: stable@vger.kernel.org
-Link: https://github.com/lucko/spark/issues/530
-Link: https://patch.msgid.link/20251015051828.12809-1-dapeng1.mi@linux.intel.=
-com
----
- kernel/events/core.c | 20 +++++++++++++++-----
- 1 file changed, 15 insertions(+), 5 deletions(-)
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 177e57c..1fd347d 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -11773,7 +11773,8 @@ static enum hrtimer_restart perf_swevent_hrtimer(stru=
-ct hrtimer *hrtimer)
-=20
- 	event =3D container_of(hrtimer, struct perf_event, hw.hrtimer);
-=20
--	if (event->state !=3D PERF_EVENT_STATE_ACTIVE)
-+	if (event->state !=3D PERF_EVENT_STATE_ACTIVE ||
-+	    event->hw.state & PERF_HES_STOPPED)
- 		return HRTIMER_NORESTART;
-=20
- 	event->pmu->read(event);
-@@ -11819,15 +11820,20 @@ static void perf_swevent_cancel_hrtimer(struct perf=
-_event *event)
- 	struct hw_perf_event *hwc =3D &event->hw;
-=20
- 	/*
--	 * The throttle can be triggered in the hrtimer handler.
--	 * The HRTIMER_NORESTART should be used to stop the timer,
--	 * rather than hrtimer_cancel(). See perf_swevent_hrtimer()
-+	 * Careful: this function can be triggered in the hrtimer handler,
-+	 * for cpu-clock events, so hrtimer_cancel() would cause a
-+	 * deadlock.
-+	 *
-+	 * So use hrtimer_try_to_cancel() to try to stop the hrtimer,
-+	 * and the cpu-clock handler also sets the PERF_HES_STOPPED flag,
-+	 * which guarantees that perf_swevent_hrtimer() will stop the
-+	 * hrtimer once it sees the PERF_HES_STOPPED flag.
- 	 */
- 	if (is_sampling_event(event) && (hwc->interrupts !=3D MAX_INTERRUPTS)) {
- 		ktime_t remaining =3D hrtimer_get_remaining(&hwc->hrtimer);
- 		local64_set(&hwc->period_left, ktime_to_ns(remaining));
-=20
--		hrtimer_cancel(&hwc->hrtimer);
-+		hrtimer_try_to_cancel(&hwc->hrtimer);
- 	}
- }
-=20
-@@ -11871,12 +11877,14 @@ static void cpu_clock_event_update(struct perf_even=
-t *event)
-=20
- static void cpu_clock_event_start(struct perf_event *event, int flags)
- {
-+	event->hw.state =3D 0;
- 	local64_set(&event->hw.prev_count, local_clock());
- 	perf_swevent_start_hrtimer(event);
- }
-=20
- static void cpu_clock_event_stop(struct perf_event *event, int flags)
- {
-+	event->hw.state =3D PERF_HES_STOPPED;
- 	perf_swevent_cancel_hrtimer(event);
- 	if (flags & PERF_EF_UPDATE)
- 		cpu_clock_event_update(event);
-@@ -11950,12 +11958,14 @@ static void task_clock_event_update(struct perf_eve=
-nt *event, u64 now)
-=20
- static void task_clock_event_start(struct perf_event *event, int flags)
- {
-+	event->hw.state =3D 0;
- 	local64_set(&event->hw.prev_count, event->ctx->time);
- 	perf_swevent_start_hrtimer(event);
- }
-=20
- static void task_clock_event_stop(struct perf_event *event, int flags)
- {
-+	event->hw.state =3D PERF_HES_STOPPED;
- 	perf_swevent_cancel_hrtimer(event);
- 	if (flags & PERF_EF_UPDATE)
- 		task_clock_event_update(event, event->ctx->time);
+-- 
+மணிவண்ணன் சதாசிவம்
 
