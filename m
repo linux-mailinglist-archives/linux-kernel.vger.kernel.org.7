@@ -1,180 +1,110 @@
-Return-Path: <linux-kernel+bounces-883459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42458C2D830
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:43:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B636C2D82D
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:42:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD1643BFD4D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:38:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F9813BDCA2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624EF3191D9;
-	Mon,  3 Nov 2025 17:38:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C372331C595;
+	Mon,  3 Nov 2025 17:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iRY5OW2v"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aCK5WYt3"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9065431D726
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 17:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B31731B10E
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 17:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762191491; cv=none; b=u9RH1+OUZcTd8017afBcpXpVBeSGnADblzL+7ZkH5ghEDnoxGKdfCw7wF4rTm0pgOBJRILPdrc9A63bU/CyEdAPkxQSyoSiyA7atW3LXVtIho1PgWWok0TVvmjPgu2Ir8bfoNipdvn8ajMAbrtrQ62B8j4vxOAV2cGKD2Gdkgmo=
+	t=1762191484; cv=none; b=ZDawFVyoOpqq002sGi+H8dnd8e5Ufqg11/Z591sL2oTbvfsEJLelPaV7ToYHBwDGcy45seVDV3L+OAsA8FVTM/u7gGdceg37/2Ogvnl7eUDJposbPM7R/VWCdc6M5sZJhtkLE3mw2WoCBzRJ0HKLtf4uI34l7ttu9TPcsOLuDZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762191491; c=relaxed/simple;
-	bh=xqz4WzvJURSvMfg4fXw5jdyzp2LCtNwdfxevWCUymCA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JgYeepmn+OExSQxzYvB6gZwKo12jbmo+FtxLYGd/NRUjrBA1SvA/jhg/GMW1JS/OhJVamQLzhblg+fD6TCbLJRKAbDuCd69Bp6Ia1FOfkyS4JhfMKjLRXM3yZEfwXIDL7fqNX+dOxpAE2AUT0yxKkx0B7Sl4b1ykydDcvi9KE2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iRY5OW2v; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 3 Nov 2025 17:37:42 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762191473;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UrXJcvJ5q+6UswBqh5m9xLcbLR++GyO51UqODPezDQQ=;
-	b=iRY5OW2veAytDt6YKC+QDL9mjOXLqZN5eEw5PbPMeswV+RE7fnv6+1JJZix5sMw9kJmdqP
-	lSt41DS34E51ef0b+nHzvO2FyM+/7dU7vsxVvSyoyvy1nAVx4phC1Pp1jRpLHZo2dfJYwj
-	rlBWCwx4At8R2rBJzylcwLm/BIZBu2Y=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] KVM: x86: Add a helper to dedup reporting of unhandled
- VM-Exits
-Message-ID: <ojg5bq2guzb6hk7q7n2przo2ygkra6boavhhq7u5kptygu6jij@5nvgdi3preqg>
-References: <20251030185004.3372256-1-seanjc@google.com>
+	s=arc-20240116; t=1762191484; c=relaxed/simple;
+	bh=hQ5VC0/dQba0Gh3YD68I7IxwQy+aFc0CdnyEKTGdTOs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CmB5bBUnx3CTZ9Sm2rp5bgO7vLomSCJjKwl028XDQPLa1rU876GQrr7sGTa5pwHa2AnUdpZuO5dCmaJ0N1MaIPyTSVOqk4TnvBXaJsTnHFeZzPZXxl+/KFMvjfcTnftgkzW51jqopm3TgrxyWMsipRZD7sNSIwCszcZ5qtpkCNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aCK5WYt3; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-587bdad8919so186e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 09:38:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762191481; x=1762796281; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hQ5VC0/dQba0Gh3YD68I7IxwQy+aFc0CdnyEKTGdTOs=;
+        b=aCK5WYt3HoYb0663kEDpCRDGETHcfJD/jiE9V8KRvBdV0ZTF7e+KiPYZRqEbCP/xaj
+         /nxRF2k+XYnArCNY4yd2AVtOlOTShM68tahAb7ixIwPmEAXHGr+H57J4c75+Eumbj3oI
+         8n36RE3AKH/QwVv8I1LTNpV59Ak2qgse2x/Th9VOLThFoYFlyO8vLd+7aF8sHEz6GogM
+         UahDmU3Gie0FkqwIKmnzZ538GKGqnR58JFaKB9NPgrB3pXIftNwwA6xg87PVkmpoQ0Hy
+         UVmLTDYUxCH9WA8Aud/3ZgbWLfVyHxDnNfmLraCc+fevwcP1qespG1CjFze9RJoFuqQS
+         +jBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762191481; x=1762796281;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hQ5VC0/dQba0Gh3YD68I7IxwQy+aFc0CdnyEKTGdTOs=;
+        b=o34w6BOboZCa8wQyvFmTC2kBeey1iGDUj+LZrxHat+Zb3W8cWvZ6/pZT3mFPLeXxFe
+         EHRk75d4uoDWlhcxU8mXDCWVhIlAk6ObFaXvjumxalhqVUcH6iFdemFVqmuOM6rxkhEP
+         8SH00mGOeHbz7zYagav5TVujIW2xrkLiBrXSFu2Z4475H2DkTGQpzDE+VdhHFds6MmMB
+         CJ7JAk/K2KqkvDQTONtFSI929yqwZELTGXTCIR/DShb1RIueFvWBSonP024XaDHiqqE6
+         tpT8d5UTKSma1KkBUqLvEO+QefPJv3WewiNLhLktlQwTkf8P9Dsg8J8tiZ2XwBcUuAVY
+         YVhA==
+X-Forwarded-Encrypted: i=1; AJvYcCWAYDOsuq2eqezLifOQnnWTjDPRUZ1snfHC3mmHbKSoqPbtRfplx+ulUEgP0XScnPYKoQ8Tg+JZv/S0CuQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9w5NWomzAgprK3JRPtj/KFGdvD1Bp6mmmzNRW/YbJFpV5nF/O
+	RjWoc/p7DXJxDGlFlYvGArRfVO4jYj6F5POxcVkgpWm5R3U/D3e2jo8eWxJszGZLEvCv8IQqYlG
+	ZBHVROPJMH1RFenwW/JNa96X+ZY0G+6ecH/4TqIS8
+X-Gm-Gg: ASbGnct+NRZAevdgzW00fm0NATLFga90OQsJ/AHdF//2PngwUWzpRsUzBGP1d7+Wdj2
+	LJybPmwrF7mUrj5MryyQGoDbFtVbbZB2PEBzucFWgKEsFMRorZ5P/sM882dQELNKXUXFSx+8lmZ
+	pnaG4yue+gJeA9ef0UZ8PeqlBijdFMwnJ+5dJeLs6IkcwZHS1JTE8nWFXLb5NOIMwdN1gi6c2/b
+	YF0nh/UmkqMrIGNXBTQsikfaifaog1nYh7iqh/R7/NIG7AXj6vqGMLs4C+DxTVD/9XXIi4SSz9K
+	HvqMP59TIZJbSxbs/ZjojGozJmBC+rCMhM0A
+X-Google-Smtp-Source: AGHT+IE9UCICLFPcWntGA18am6x99K6fPgsXAsFiBEHX+FYgiyl8C/S7j9hn6Tifv1E1doUNTdSI8Mntwe4yrMFluYQ=
+X-Received: by 2002:ac2:5e31:0:b0:594:24e2:54e5 with SMTP id
+ 2adb3069b0e04-59434541f82mr35129e87.5.1762191480263; Mon, 03 Nov 2025
+ 09:38:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251030185004.3372256-1-seanjc@google.com>
-X-Migadu-Flow: FLOW_OUT
+References: <20251103072046.1670574-1-yuehaibing@huawei.com>
+In-Reply-To: <20251103072046.1670574-1-yuehaibing@huawei.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Mon, 3 Nov 2025 09:37:48 -0800
+X-Gm-Features: AWmQ_bmjeIWccYnCsAlpHCIicEVqLOMZ8MWgDqZ2I-CyDLIm1J3m7sQO4camekE
+Message-ID: <CAHS8izPf5+97rtUiknXKkxpBUu4ENPUb=-MyeBD=eEAay6NwUQ@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: devmem: Remove unused declaration net_devmem_bind_tx_release()
+To: Yue Haibing <yuehaibing@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, horms@kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 30, 2025 at 11:50:03AM -0700, Sean Christopherson wrote:
-> Add and use a helper, kvm_prepare_unexpected_reason_exit(), to dedup the
-> code that fills the exit reason and CPU when KVM encounters a VM-Exit that
-> KVM doesn't know how to handle.
-> 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->  arch/x86/include/asm/kvm_host.h |  1 +
->  arch/x86/kvm/svm/svm.c          |  7 +------
->  arch/x86/kvm/vmx/tdx.c          |  6 +-----
->  arch/x86/kvm/vmx/vmx.c          |  9 +--------
->  arch/x86/kvm/x86.c              | 12 ++++++++++++
->  5 files changed, 16 insertions(+), 19 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 48598d017d6f..4fbe4b7ce1da 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -2167,6 +2167,7 @@ void __kvm_prepare_emulation_failure_exit(struct kvm_vcpu *vcpu,
->  void kvm_prepare_emulation_failure_exit(struct kvm_vcpu *vcpu);
->  
->  void kvm_prepare_event_vectoring_exit(struct kvm_vcpu *vcpu, gpa_t gpa);
-> +void kvm_prepare_unexpected_reason_exit(struct kvm_vcpu *vcpu, u64 exit_reason);
->  
->  void kvm_enable_efer_bits(u64);
->  bool kvm_valid_efer(struct kvm_vcpu *vcpu, u64 efer);
-> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> index f14709a511aa..83e0d4d5f4c5 100644
-> --- a/arch/x86/kvm/svm/svm.c
-> +++ b/arch/x86/kvm/svm/svm.c
-> @@ -3451,13 +3451,8 @@ static bool svm_check_exit_valid(u64 exit_code)
->  
->  static int svm_handle_invalid_exit(struct kvm_vcpu *vcpu, u64 exit_code)
->  {
-> -	vcpu_unimpl(vcpu, "svm: unexpected exit reason 0x%llx\n", exit_code);
->  	dump_vmcb(vcpu);
-> -	vcpu->run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
-> -	vcpu->run->internal.suberror = KVM_INTERNAL_ERROR_UNEXPECTED_EXIT_REASON;
-> -	vcpu->run->internal.ndata = 2;
-> -	vcpu->run->internal.data[0] = exit_code;
-> -	vcpu->run->internal.data[1] = vcpu->arch.last_vmentry_cpu;
-> +	kvm_prepare_unexpected_reason_exit(vcpu, exit_code);
->  	return 0;
->  }
+On Sun, Nov 2, 2025 at 10:58=E2=80=AFPM Yue Haibing <yuehaibing@huawei.com>=
+ wrote:
+>
+> Commit bd61848900bf ("net: devmem: Implement TX path") declared this
+> but never implemented it.
+>
+> Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
 
-We can probably drop svm_handle_invalid_exit() entirely now, but looks
-good either way:
+Thank you.
 
-Reviewed-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+Reviewed-by: Mina Almasry <almasrymina@google.com>
 
->  
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index 326db9b9c567..079d9f13eddb 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -2145,11 +2145,7 @@ int tdx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t fastpath)
->  	}
->  
->  unhandled_exit:
-> -	vcpu->run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
-> -	vcpu->run->internal.suberror = KVM_INTERNAL_ERROR_UNEXPECTED_EXIT_REASON;
-> -	vcpu->run->internal.ndata = 2;
-> -	vcpu->run->internal.data[0] = vp_enter_ret;
-> -	vcpu->run->internal.data[1] = vcpu->arch.last_vmentry_cpu;
-> +	kvm_prepare_unexpected_reason_exit(vcpu, vp_enter_ret);
->  	return 0;
->  }
->  
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 1021d3b65ea0..08f7957ed4c3 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -6642,15 +6642,8 @@ static int __vmx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
->  	return kvm_vmx_exit_handlers[exit_handler_index](vcpu);
->  
->  unexpected_vmexit:
-> -	vcpu_unimpl(vcpu, "vmx: unexpected exit reason 0x%x\n",
-> -		    exit_reason.full);
->  	dump_vmcs(vcpu);
-> -	vcpu->run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
-> -	vcpu->run->internal.suberror =
-> -			KVM_INTERNAL_ERROR_UNEXPECTED_EXIT_REASON;
-> -	vcpu->run->internal.ndata = 2;
-> -	vcpu->run->internal.data[0] = exit_reason.full;
-> -	vcpu->run->internal.data[1] = vcpu->arch.last_vmentry_cpu;
-> +	kvm_prepare_unexpected_reason_exit(vcpu, exit_reason.full);
->  	return 0;
->  }
->  
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index b4b5d2d09634..c826cd05228a 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -9110,6 +9110,18 @@ void kvm_prepare_event_vectoring_exit(struct kvm_vcpu *vcpu, gpa_t gpa)
->  }
->  EXPORT_SYMBOL_FOR_KVM_INTERNAL(kvm_prepare_event_vectoring_exit);
->  
-> +void kvm_prepare_unexpected_reason_exit(struct kvm_vcpu *vcpu, u64 exit_reason)
-> +{
-> +	vcpu_unimpl(vcpu, "unexpected exit reason 0x%llx\n", exit_reason);
-> +
-> +	vcpu->run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
-> +	vcpu->run->internal.suberror = KVM_INTERNAL_ERROR_UNEXPECTED_EXIT_REASON;
-> +	vcpu->run->internal.ndata = 2;
-> +	vcpu->run->internal.data[0] = exit_reason;
-> +	vcpu->run->internal.data[1] = vcpu->arch.last_vmentry_cpu;
-> +}
-> +EXPORT_SYMBOL_FOR_KVM_INTERNAL(kvm_prepare_unexpected_reason_exit);
-> +
->  static int handle_emulation_failure(struct kvm_vcpu *vcpu, int emulation_type)
->  {
->  	struct kvm *kvm = vcpu->kvm;
-> 
-> base-commit: 4cc167c50eb19d44ac7e204938724e685e3d8057
-> -- 
-> 2.51.1.930.gacf6e81ea2-goog
-> 
+I thought about asking for a fixes tag, but this seems trivial enough
+that it does not need to be backported to stable or anything.
+
+--=20
+Thanks,
+Mina
 
