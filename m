@@ -1,161 +1,105 @@
-Return-Path: <linux-kernel+bounces-883337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25A79C2D1A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:25:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9AACC2D1BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:26:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4FD194EA590
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:24:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56B79188C783
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09BD13164B4;
-	Mon,  3 Nov 2025 16:24:20 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2D61314B66;
-	Mon,  3 Nov 2025 16:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 593E13161A4;
+	Mon,  3 Nov 2025 16:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="efrspeYY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5827302CB2
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:25:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762187059; cv=none; b=SPeHa6RPlXWsHuRhAa8wfHk7TFki0cDDO/UqirFYk2UarXkr7a9Lbp1Tkt6y4MMM+RdKHDMVBRlrVY7HGHZnErH6KR/U7L9UHg3vb2tjZygQqxnGt68Mro6sK9bLSdhiz+zon9EC87t6iKGBYncw4WDozjWtI1yzzsdthHSIJls=
+	t=1762187100; cv=none; b=t+K40POjz8HbmnRvyihZbOCFggTs1K/C/wEexaSRwrKQXoqETVY0m7Eim4kKBLIkzkuwrm0V+mRmFkMoCGqyiA1t5fHYiPzsmuEX7bbjU5GJK49Y/b56K5JrypyJ7HLaae8xfuIvxn9lN29rxBe9TBW2nYeh1hQrHAGD5V1zlpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762187059; c=relaxed/simple;
-	bh=hXs+xAyEZF81W8cTRopgPmrYNWCpMOoEma/6SFBEXZg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s0CewrNHRsRGBm9Dj1S+i7EoUxKZ9iXXVfT7IDuJ947yqjCvxqK5VdrFL2A1F9Y7jLYRfpiJnTUo7odaaTJ4qK2nILQH1hYw0LHfSx1wYQLBgieuNt0QvOLLav5g74RsmFlKNhF2ZXoBid0qzVAWPGmklOf0k6D/MQvEKjT1DK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 538361D14;
-	Mon,  3 Nov 2025 08:24:09 -0800 (PST)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.68])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CA9593F694;
-	Mon,  3 Nov 2025 08:24:15 -0800 (PST)
-Date: Mon, 3 Nov 2025 16:24:12 +0000
-From: Dave Martin <Dave.Martin@arm.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Tony Luck <tony.luck@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	James Morse <james.morse@arm.com>, Babu Moger <babu.moger@amd.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] fs/resctrl: Slightly optimize cbm_validate()
-Message-ID: <aQjXLOHQevfQDhL0@e133380.arm.com>
-References: <c5807e73e0f4068392036a867d24a8e21c200421.1761464280.git.christophe.jaillet@wanadoo.fr>
- <aP9a9ZtigAWCWSWk@e133380.arm.com>
- <7776eb1c-418a-444b-aa24-0dfb23f05a2a@wanadoo.fr>
+	s=arc-20240116; t=1762187100; c=relaxed/simple;
+	bh=AHuFY9xO+A63UmFyS210/4TY04941JIQj5CIWs6/YUs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NBVUDR0MTx+cgpjcPjZliZv/DxMQiir6AsHJIinUwaOX83ODkKXEy1cRbO/DISJioYap1sy5RUnn0iOY0Ac9NAbYbqP/xpSKDl+Yqi1AfVeUaMp2loukRdBgB7IZqq+NyjF4vKaqR8qV0EEjb83TknNN4+VLQ7VrdEwsxAFRzc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=efrspeYY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88992C4CEFD
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:25:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762187100;
+	bh=AHuFY9xO+A63UmFyS210/4TY04941JIQj5CIWs6/YUs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=efrspeYYlN91uFxlgNfqcsLywdGs0TPacQA/M8791NnWH3fukwY0rBOeT8+eWTVKg
+	 vcvVJsnmrAjXgGTOxVZwfD/nPIdReArj5DU54NLpuTOkDph6G8lF5ms7HET/C0ohIg
+	 eGkR8LfSGkxlw6nLgqev8jy0hAt1NJqvkcaQ0QOA01Khv4eckUc315q4RjnA3Z3RxK
+	 bTWR60pqdYIg/PTuEFAyX8rpNnPFH3KmEDBhEqGDSraoq6lt+kAS5mGUZOcI6nD5S5
+	 66+w+01Yg4ulbM92sZf4jGaBPQ+Xl0L2dfPcU7cq2gNzGdp//k7zhkIPJa2ncqs/Cx
+	 grr5xmIJN6/uw==
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-3d1cf5c2805so5476077fac.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 08:25:00 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVTI2BHqg2h4vds6JRWW9+MF7avdwCDSUJblonAJQ80b2GaJlVi/KuxNsQS2gmEswHNPPn6bIiqEKsiuUs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzyIgI45gr67YuDPJnIoAl+C8yN2edLnQn8Mq5EBe0JpvGtBGo2
+	px/RXpGh3C/EaFJJwglcNKxaaVIALKEOWyci6EiqkpDM56yJoe8sFh/Ehu857nD31K5rMap1qzE
+	wuEzDMxiifOD3GhjhPOYTYSa1VCPNj9s=
+X-Google-Smtp-Source: AGHT+IEf4PcRjvwRSJTmh34zMmlTzmMI8gkWOvhnI9v4RtrHXDFj1hiNW5j3HkHqu2dVd9x9esCxguwYsP5kG9RwS1Y=
+X-Received: by 2002:a05:6870:e0d1:b0:3c9:79f5:470e with SMTP id
+ 586e51a60fabf-3dacdb72630mr6578654fac.34.1762187099896; Mon, 03 Nov 2025
+ 08:24:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7776eb1c-418a-444b-aa24-0dfb23f05a2a@wanadoo.fr>
+References: <20251031055240.2791-1-chuguangqing@inspur.com>
+In-Reply-To: <20251031055240.2791-1-chuguangqing@inspur.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 3 Nov 2025 17:24:47 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0jB4Q=1d6dLLmRrUAYjfT7TcprE0946itrT3gimJEfh+A@mail.gmail.com>
+X-Gm-Features: AWmQ_bkLSz07d3TndpqT-Zqb4Lv6xZYP5eBY_GUjapgrNNGkY_nqh5rYNLBHMNg
+Message-ID: <CAJZ5v0jB4Q=1d6dLLmRrUAYjfT7TcprE0946itrT3gimJEfh+A@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: CPPC: Fix a typo error
+To: Chu Guangqing <chuguangqing@inspur.com>
+Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Fri, Oct 31, 2025 at 6:53=E2=80=AFAM Chu Guangqing <chuguangqing@inspur.=
+com> wrote:
+>
+> The correct term here should be "package"
+>
+> Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
+> ---
+>  drivers/acpi/cppc_acpi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+> index ab4651205e8a..6c684e54fe01 100644
+> --- a/drivers/acpi/cppc_acpi.c
+> +++ b/drivers/acpi/cppc_acpi.c
+> @@ -750,7 +750,7 @@ int acpi_cppc_processor_probe(struct acpi_processor *=
+pr)
+>         }
+>
+>         /*
+> -        * Disregard _CPC if the number of entries in the return pachage =
+is not
+> +        * Disregard _CPC if the number of entries in the return package =
+is not
+>          * as expected, but support future revisions being proper superse=
+ts of
+>          * the v3 and only causing more entries to be returned by _CPC.
+>          */
+> --
 
-On Sat, Nov 01, 2025 at 02:40:58PM +0100, Christophe JAILLET wrote:
-> Le 27/10/2025 à 12:43, Dave Martin a écrit :
-> > Hi,
-> > 
-> > [Tony, I have a side question on min_cbm_bits -- see below.]
-> > 
-> > On Sun, Oct 26, 2025 at 08:39:52AM +0100, Christophe JAILLET wrote:
-> > > 'first_bit' is known to be 1, so it can be skipped when searching for the
-> > > next 0 bit. Doing so mimics bitmap_next_set_region() and can save a few
-> > > cycles.
-> > 
-> > This seems reasonable, although:
-> > 
-> > Nit: missing statement of what the patch does.  (Your paragraph
-> > describes only something that _could_ be done and gives rationale for
-> > it.)
-> 
-> Will add it in v2.
+Applied as 6.18-rc material with modified subject and changelog.
 
-Thanks
-
-[...]
-
-> > > For the records, on x86, the diff of the asm code is:
-> > > --- fs/resctrl/ctrlmondata.s.old        2025-10-26 08:21:46.928920563 +0100
-> > > +++ fs/resctrl/ctrlmondata.s    2025-10-26 08:21:40.864024143 +0100
-> > > @@ -1603,11 +1603,12 @@
-> > >          call    _find_first_bit
-> > >   # ./include/linux/find.h:192:  return _find_next_zero_bit(addr, size, offset);
-> > >          movq    %r12, %rsi
-> > > -       leaq    48(%rsp), %rdi
-> > > -       movq    %rax, %rdx
-> > > +# fs/resctrl/ctrlmondata.c:133:        zero_bit = find_next_zero_bit(&val, cbm_len, first_bit + 1);
-> > > +       leaq    1(%rax), %rdx
-> > >   # ./include/linux/find.h:214:  return _find_first_bit(addr, size);
-> > >          movq    %rax, 8(%rsp)
-> > >   # ./include/linux/find.h:192:  return _find_next_zero_bit(addr, size, offset);
-> > > +       leaq    48(%rsp), %rdi
-> > 
-> > (This is really only showing that the compiler works.  The real
-> > question is whether the logic is still sound after this change to the
-> > arguments of _find_first_bit()...)
-> 
-> Will remove in v2, if not useful.
-
-It's harmless, but a bit of a distraction...
-
-> > >          call    _find_next_zero_bit
-> > >   # fs/resctrl/ctrlmondata.c:136:        if (!r->cache.arch_has_sparse_bitmasks &&
-> > >          leaq    28(%rbx), %rdi
-> > > ---
-> > >   fs/resctrl/ctrlmondata.c | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/fs/resctrl/ctrlmondata.c b/fs/resctrl/ctrlmondata.c
-> > > index 0d0ef54fc4de..1ff479a2dbbc 100644
-> > > --- a/fs/resctrl/ctrlmondata.c
-> > > +++ b/fs/resctrl/ctrlmondata.c
-> > > @@ -130,7 +130,7 @@ static bool cbm_validate(char *buf, u32 *data, struct rdt_resource *r)
-> > >   	}
-> > >   	first_bit = find_first_bit(&val, cbm_len);
-> > > -	zero_bit = find_next_zero_bit(&val, cbm_len, first_bit);
-> > > +	zero_bit = find_next_zero_bit(&val, cbm_len, first_bit + 1);
-> > 
-> > Does this definitely do the right thing if val was zero?
-> 
-> Yes, IMHO, it does.
-> 
-> If val is zero, first_bit will be assigned to cbm_len (see [1]).
-> Then, find_next_zero_bit() will do the same because 'first_bit + 1' will
-> overflow the size of the bitmap. (see [2] and [3])
-
-Right, I think that works.
-
-> The only case were we could have trouble would be to have 'first_bit + 1'
-> overflow and be equal to 0. I don't think that such a case is possible.
-
-I looks impossible to me: first_bit comes from
-find_first_bit(..., cbm_len), so I don't think it can be greater than
-cbm_len.
-
-> > >   	/* Are non-contiguous bitmasks allowed? */
-> > >   	if (!r->cache.arch_has_sparse_bitmasks &&
-> > 
-> > Also, what about the find_first_bit() below?
-> 
-> Should be updated as well.
-> Will send a v2.
-
-OK, sounds fair.
-
-Cheers
----Dave
-
-[...]
-
-> [1]:
-> https://elixir.bootlin.com/linux/v6.18-rc3/source/include/linux/find.h#L203
-> [2]:
-> https://elixir.bootlin.com/linux/v6.18-rc3/source/include/linux/find.h#L185
-> [3]: https://elixir.bootlin.com/linux/v6.18-rc3/source/lib/find_bit.c#L55
+Thanks!
 
