@@ -1,127 +1,119 @@
-Return-Path: <linux-kernel+bounces-883228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FFB6C2CF64
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:03:37 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5970C2CBDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:31:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1602D620E9A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:31:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 82C0534ABF1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:31:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8A1283FF9;
-	Mon,  3 Nov 2025 15:22:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F07313538;
+	Mon,  3 Nov 2025 15:23:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zzhajc3L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="MmEjov3S"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA23818EFD1
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 15:22:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E38A30BF73
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 15:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762183331; cv=none; b=mEu5zZKQuRAMUZEr5upS0RdXpg17nbWwU2VoUu+WpkHR5ftwk2dl3yRMFVY5cPKtQJxttuZ0UQf9U9jGR4Y53UubST1aaCHJZkjqu7yhHUfxGoA2Bp+Ro3d3EmWj7v61uFz8KmwElv6aSaMiTfVWBBtfS6ACc+wQiof4hyy97zs=
+	t=1762183387; cv=none; b=mqCRb/UFGdYyNQaMu+XVKNXsT9aWhmUBFtIjvl4Y9zi3poWvKB2KEQz1hBJVh5dXw9GjEAxARuj0JkVZZySU2sbD4HohGouokDWeKoat3PFqDRYjdG/rrBuGTdvBY1K4aLbHdr1ac7/XodfmnHYNv8ieGE0fZ8v+vmo6A0IB+9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762183331; c=relaxed/simple;
-	bh=5khjE9Wr9VYi984UYLWA8s+1bl7n3Pz2O2JZ0gCcz/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=idIP0KNaqfDM6jvwk8m0URU+JJ+BdDZkKNw8TCnjkZLpbLFPMEJllS4u0UAI+YDbj/Ps445ODMeui2eS0Yu0tI/bkrQAPQdHlhHSaRlVxs3gjEx/xGXh3P5tB9LFxkMDWYpGWwBMjZqjrYyJExcThdL6vEh87Aim8UwqgbtHd3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zzhajc3L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C894DC4CEE7;
-	Mon,  3 Nov 2025 15:22:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762183331;
-	bh=5khjE9Wr9VYi984UYLWA8s+1bl7n3Pz2O2JZ0gCcz/s=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Zzhajc3LuJCLiGNi9T7RXcRe+mx/I4cXmuWILsX8e9CxmcxhI4PGTi479apG7YI3H
-	 ni22VwrBdVEBpzOcQFXAyXTOjjzLqECtXfwETL0I/ZDkXGi+B0rZWI4jzqYm+oatQk
-	 X7n1qDJK84mtonK32k160JX2IjqbTlJ0W8d6G+qQS1TH2SlAZQ+LGNtugoObOwhWa6
-	 flOO0Q3doxt3sxoWR9NLLPHQjCz4mDcuCnz2jw5D9cXFuUcBfWqcCiTEfkd4UXv0XI
-	 +Ka2G3sTsM3rpBEoDPIIqKeQj6fWKE+PHdZA1y0FU/Yhs1Dj92vPTmdbHPtjNR9WOh
-	 lpUECJMCZwVoA==
-Date: Mon, 3 Nov 2025 12:22:08 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Borislav Petkov <bp@alien8.de>,
-	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>,
-	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>
-Subject: [PATCH 1/1] tools headers svm: Sync svm headers with the kernel
- sources
-Message-ID: <aQjIoIDY94n336Hw@x1>
+	s=arc-20240116; t=1762183387; c=relaxed/simple;
+	bh=yHDBgbpa9bCMN8LXx/Vq8O5VD7Cdb0L0jjUmq+4QPZg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fMDSe2vCMG3gO7wtf8d9dhuuv7Ltgo7AujyhyiWs+ZkvUPWxs+Znkg4rfKRdsPYyTi53VlUE3aF6pUfFfGXYEauZlwQRUdPoE1LZlyVJkGQlqLCxsOuPM/lsIYZZRt2YNK4ncsBN5rqZ6QIe88f3wxDEN6TLLatQN5Z7RTsT03k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=MmEjov3S; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=yHDB
+	gbpa9bCMN8LXx/Vq8O5VD7Cdb0L0jjUmq+4QPZg=; b=MmEjov3SJxhTme/OsL0y
+	oiduaAYpAlhqXtvJBOAW7zzpoaZNMYInjE666oJ1bXfwxxSFBqYAqkbcch31XXnm
+	Spjasl0JlYmavdu6XdcgYKLWmj2K87SoXy2zpHkfiL1cyMTr/qlV032KNGJq7l5K
+	xMNS5iIkwyNWytBYUmP/G/4KynhvQF7P38rzy9zLxegGZctW6GS+PoMovKxuSLoM
+	yAb77TegJNc5h7k+vQSvhIf9tMPTZJvALw090A5zGjqDIwOVmWNIDoTgcWtszkiF
+	C26qZMtIjPX5/2nSLYDjXc1j+GIYbmvFhv+8kEnVz7QtPiBdSIB63Vc9awO6V5Wt
+	uA==
+Received: (qmail 2268408 invoked from network); 3 Nov 2025 16:23:02 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Nov 2025 16:23:02 +0100
+X-UD-Smtp-Session: l3s3148p1@oE+JSrJCAVFtKPNt
+Date: Mon, 3 Nov 2025 16:23:02 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	linux-kernel@vger.kernel.org,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH v2 0/2] reset: handle RESET_GPIO better to provide the
+ fallback
+Message-ID: <aQjI1m0yYs2t1hYq@shikoro>
+References: <20251015205919.12678-4-wsa+renesas@sang-engineering.com>
+ <e1fd975c-56ef-442b-8617-d63237bf795a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Qp8UMBI+Dd1+y4QJ"
+Content-Disposition: inline
+In-Reply-To: <e1fd975c-56ef-442b-8617-d63237bf795a@linaro.org>
+
+
+--Qp8UMBI+Dd1+y4QJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-tldr; Just FYI, I'm carrying this on the perf tools tree.
 
-Full explanation:
+> You removed RFC and entire rationale. Your earlier commit - 690de2902dca
+> - is broken. You must not do that.
 
-There used to be no copies, with tools/ code using kernel headers
-directly. From time to time tools/perf/ broke due to legitimate kernel
-hacking. At some point Linus complained about such direct usage. Then we
-adopted the current model.
+Wojciech was told to do exactly what he did. Dunno by whom, I trusted
+that after seeing the handling code in reset core. Is the required
+fallback documented somewhere?
 
-See further details at:
+> Broken 690de2902dca leads to this broken patchset, but that is not a
+> correct fix. You need to fix the source - revert 690de2902dca, because
+> it is obviously wrong. You MUST ave fallback to reset-gpios, that was
+> the entire concept how this driver was written.
 
- https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/include/uapi/README
+What is the benefit of having reset-gpios handling in the reset core
+optionally and required as a fallback?
 
-To pick the changes in:
+What is the drawback of having this tiny driver in the core and provide
+the core-based reset-gpios handling as a way to prevent open coded
+solutions?
 
-  b8c3c9f5d0505905 ("x86/apic: Initialize Secure AVIC APIC backing page")
+Sure, I can revert the changes to avoid problems for users, and will
+probably do so, but it still feels all very strange to me.
 
-That triggers:
 
-  CC      /tmp/build/perf-tools/arch/x86/util/kvm-stat.o
-  LD      /tmp/build/perf-tools/arch/x86/util/perf-util-in.o
-  LD      /tmp/build/perf-tools/arch/x86/perf-util-in.o
-  LD      /tmp/build/perf-tools/arch/perf-util-in.o
-  LD      /tmp/build/perf-tools/perf-util-in.o
-  AR      /tmp/build/perf-tools/libperf-util.a
-  LINK    /tmp/build/perf-tools/perf
+--Qp8UMBI+Dd1+y4QJ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-But this time causes no changes in tooling results, as the introduced
-SVM_VMGEXIT_SAVIC exit reason wasn't added to SVM_EXIT_REASONS, that is
-used in kvm-stat.c.
+-----BEGIN PGP SIGNATURE-----
 
-And addresses this perf build warning:
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmkIyNUACgkQFA3kzBSg
+KbZArxAAsj8/fFVv6DM8kCt/GBjwz0IG6WilLeCCGE/s5mDh59OLH3vglWyxgh8j
+9KkTKRQA4hthZAlNSktEzF4mBQsNAKLsuBQqcw68UXA8b70I4qHoqSZang5PMs9b
+6HyOZJbTdqe9TAQurmYJPsFowHjEnp2k/MablNQqW5+1ph/BbjklL4CeM7dBY6Cg
+cLjCA+lAaSLOAlmOmaauclUfx7CwEHtCFKz9zTBwB5CBlfJbvpe+Q7jcvf4IcZR4
+vRHceULLZ8xbwxBSsQcsOjxsnP0thKUpthzac4rPV5Zuukw/HmcSh9LlSH2h+/hi
+TxyN62bhm0wJSA72PsPic9LXuCp+wHobKFcbZesoYjmlZhlAfXm1EUahOW5hUYAz
+LjbMCYOMgFgIT/oKTWKIxT0ZjS8bFhCrJHvB2HMwDXi2/FdBSRHuXynAdIu017KO
+tWpjtSS7FaBg9EpgfDU4YDunnostU/d1x9Jw3Ox1UyiwoRdYLVyrv8DTNV+GtpLQ
+Iz8m1ynCB9hpdEQaP+GI95af3j8faYZXtnp2oq9dqLP676POfyG+ngAaMUqHSvqI
+R9VvGwrZe0BOwm3P5dqJc9EgKCXp3AkfwsKRh6iuiLz7nXdz/EYfQ4kUH2SYYhRU
+NonnPg+1iJYAdEiSlHv3JWm3z1MQKQw+ctd+arlfVp6oZCYi984=
+=eORx
+-----END PGP SIGNATURE-----
 
-  Warning: Kernel ABI header differences:
-    diff -u tools/arch/x86/include/uapi/asm/svm.h arch/x86/include/uapi/asm/svm.h
-
-Please see tools/include/uapi/README for further details.
-
-Cc: Borislav Petkov (AMD) <bp@alien8.de>
-Cc: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/arch/x86/include/uapi/asm/svm.h | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/tools/arch/x86/include/uapi/asm/svm.h b/tools/arch/x86/include/uapi/asm/svm.h
-index 9c640a521a67006d..650e3256ea7d7339 100644
---- a/tools/arch/x86/include/uapi/asm/svm.h
-+++ b/tools/arch/x86/include/uapi/asm/svm.h
-@@ -118,6 +118,10 @@
- #define SVM_VMGEXIT_AP_CREATE			1
- #define SVM_VMGEXIT_AP_DESTROY			2
- #define SVM_VMGEXIT_SNP_RUN_VMPL		0x80000018
-+#define SVM_VMGEXIT_SAVIC			0x8000001a
-+#define SVM_VMGEXIT_SAVIC_REGISTER_GPA		0
-+#define SVM_VMGEXIT_SAVIC_UNREGISTER_GPA	1
-+#define SVM_VMGEXIT_SAVIC_SELF_GPA		~0ULL
- #define SVM_VMGEXIT_HV_FEATURES			0x8000fffd
- #define SVM_VMGEXIT_TERM_REQUEST		0x8000fffe
- #define SVM_VMGEXIT_TERM_REASON(reason_set, reason_code)	\
--- 
-2.51.1
-
+--Qp8UMBI+Dd1+y4QJ--
 
