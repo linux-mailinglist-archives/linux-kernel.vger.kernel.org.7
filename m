@@ -1,96 +1,300 @@
-Return-Path: <linux-kernel+bounces-883317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32F39C2D244
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:31:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5401C2D201
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:28:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74AFD3BFA88
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:18:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 651B542058B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:18:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139063168E6;
-	Mon,  3 Nov 2025 16:18:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EA3E313E01;
+	Mon,  3 Nov 2025 16:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A5I2M9rv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JEi4t0pu"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazhn15013061.outbound.protection.outlook.com [52.102.133.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FE43161B0;
-	Mon,  3 Nov 2025 16:18:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762186682; cv=none; b=X1JSz3zFMP4O1/XZTJagpO6v3xu4sm4GF665YZn0szCYFoi40KfEfz5o/cjf1qz/YrWKKhwuqp5ow8uTXJdCBW+6j25HD6thTtpdpqZxATVfQa4uNjivgC4emh9ZFYzjzwodwvXkzxnSc46fS3zn7CvC41XmrLlnSuFyrRnDQf8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762186682; c=relaxed/simple;
-	bh=1jqhRNkAoXZW07AubL5jUqcArPCGQen9XHdy6CfaED0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r9EWzQZDqyx8dZrQHNuFlLG0yOIdaTxLE1dJe7clN6mHizgfqXBAGIgYv+bEZFxp7Da+zb3OiagyOCBHPuwhSeLFZiZkh84toL8mt5/+MK8k7ef+SEWuNqfU2dl39cbiOypr3uHflWx+bdoiRAVE64550iZY/TfM3dVpg2Fk7II=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A5I2M9rv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AC88C4CEFD;
-	Mon,  3 Nov 2025 16:17:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762186681;
-	bh=1jqhRNkAoXZW07AubL5jUqcArPCGQen9XHdy6CfaED0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=A5I2M9rvFYRg13EhCdpGlmy1zwLxcweioaogE4dBkh+X/AZwYatEQYQQjQ2rNiRZY
-	 ArpouXhz1v0ai7R6xUlYKN1rLsx4HVtlsbKZJmCCcYr+brf3tRJlzVhE0SFoH7E0c3
-	 UNf0baNdwP9XqGX+c9v/Hj1nywOv0WHShBcZ03uKYL5wYOBzF53ec+CAB1dcKtl5Y0
-	 oPXrrl31A9ac2gVAr3vpG4KaCCp9kwGuHjzrFEC60au8TuqjegzbIwK0AJbiCFWlCK
-	 XzYXRcp2Rh2eqcbvNeP/g34Kz6F36/59BFV9DMk07pxd3X3kVo+EMF8RouqPxv8BTx
-	 Z7uFrx8vWCx5A==
-From: Will Deacon <will@kernel.org>
-To: Robin Murphy <robin.murphy@arm.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jingyi Wang <jingyi.wang@oss.qualcomm.com>
-Cc: catalin.marinas@arm.com,
-	kernel-team@android.com,
-	Will Deacon <will@kernel.org>,
-	aiqun.yu@oss.qualcomm.com,
-	tingwei.zhang@oss.qualcomm.com,
-	trilok.soni@oss.qualcomm.com,
-	yijie.yang@oss.qualcomm.com,
-	linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Pankaj Patil <pankaj.patil@oss.qualcomm.com>
-Subject: Re: [PATCH v2] dt-bindings: arm-smmu: Add compatible for Kaanapali and Glymur SoCs
-Date: Mon,  3 Nov 2025 16:17:50 +0000
-Message-Id: <176218530799.3313037.12661315019771733776.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20251021-b4-knp-smmu-v2-1-88774e6d2def@oss.qualcomm.com>
-References: <20251021-b4-knp-smmu-v2-1-88774e6d2def@oss.qualcomm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E3B274B3C
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.102.133.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762186703; cv=fail; b=Rf4a+zjd+UEfzMmMiBBQ7QayGulvNo9fRs5en1Bj7/lroeC0j3CPtT7pt1ehzmNCylzzzXCeFHtHQM/R+6Y0KMI3/jqG7ZAavkJhkYeyAsRv+N/55c2as1IBvrK+OCAoXfvEIJYA59N53uBiw4unHpYbJE5l2HXATQJX6n+yiJA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762186703; c=relaxed/simple;
+	bh=+G2j3Me/1Z+ICbBqe0CGj2R4gD+CUuDr1yZpPn79bl0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Tj9N7h+1qQu9dGhssNSdmymr/3EBFldSUAC/Nl84Y8GuNcMY+kUFokMR0VpF5+kc5iO8sFKMgxK4AuiQqo6weWnOFTdYR0ZQJm5UkmxCwow6s1EWfpoi3MdeOftq2W5CyJVO0ROfWZre6VaPruqBkU4ZKv0dRgZv8N7QnCMTjOs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=JEi4t0pu; arc=fail smtp.client-ip=52.102.133.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=njJJQ+WcUofK7S0zhc3NsmKRV50s1hYLpfsjoFGiP8ylmsR99GVCuiPZZz8ctQJ4wP1Y5fagmVjI9pIUGW23eQbh1XzIiuPeulrQWOa5qeGffbeYPfh4dhjbyL42DkWdOHqZXwdEpmp2/vOwyJDXjU6zXlEuKgUSuXdc8Or5FxyFKGYBD4Td5vYlqEaty7Z1oBlQE/ACGdfBAxgFXanZQ0AP8WQKv6xr/MqnvjU5BX+nLOtSiVEsZdeZc9zQFJzDYEEF2Cfpj5qmSeGlCs5rJVKpcYYO0TIxnXK3r/kpAjFgcFYigM/czup2wSLp/2PkuHIMBX5XLk2P1jN9TM1iEA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xzQRfpcxJNHR8SE5mOfxjtVbnDZhPUNKomziJiBPbyk=;
+ b=QOvoQ/dCMukJZOEnsd5MaYzkWc4bR2wD2EG6eyWUxjgr8vWBkCoKTBrQQh8Vrr48cUOhGu96bb3sqn7bMpuBXLeyCrXv26K8Q0YuUQ749R9rdsJl4Iu/xyI2BZuijHKzHRT7lLBykDHJQAqwZy66lMO8XuEw4CojpKRE1NsebtP+j29b2cWC54reRmAEVEEGxw6yLhGdDUY1ydACpFMI+f6wcesBIi/Pi6E5wpPXWcHCwgPK6SLzCldji6yyG9ZcPvvFGDwuI1L5AfMi9PfyysWF+BLaYOjtweQpcYXOSq622GaHFT+SuJf+sMSJV171sRmyUzif5PzHDg2PZ0NM8A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.21.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xzQRfpcxJNHR8SE5mOfxjtVbnDZhPUNKomziJiBPbyk=;
+ b=JEi4t0puYHhslog71OAZKVpe/YNfMhaOPrGeTpYHbpCByF6zbCxwBe1N0Sf+DGqDTGmzOMiG9XvdLvXLo+aKucXSiIqOtUxJ1jJbdamCrPLt+NfQVFYCNzfRc76/umXrCrHf8KEbBiuuXzBSgB0VQ3lyDGYpI4U85Hcn6tjPjn4=
+Received: from BYAPR05CA0052.namprd05.prod.outlook.com (2603:10b6:a03:74::29)
+ by SN7PR10MB7076.namprd10.prod.outlook.com (2603:10b6:806:329::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Mon, 3 Nov
+ 2025 16:18:16 +0000
+Received: from SJ1PEPF00002319.namprd03.prod.outlook.com
+ (2603:10b6:a03:74:cafe::87) by BYAPR05CA0052.outlook.office365.com
+ (2603:10b6:a03:74::29) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.7 via Frontend Transport; Mon, 3
+ Nov 2025 16:18:14 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
+Received: from flwvzet200.ext.ti.com (198.47.21.194) by
+ SJ1PEPF00002319.mail.protection.outlook.com (10.167.242.229) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.6 via Frontend Transport; Mon, 3 Nov 2025 16:18:14 +0000
+Received: from DFLE201.ent.ti.com (10.64.6.59) by flwvzet200.ext.ti.com
+ (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 3 Nov
+ 2025 10:18:11 -0600
+Received: from DFLE203.ent.ti.com (10.64.6.61) by DFLE201.ent.ti.com
+ (10.64.6.59) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 3 Nov
+ 2025 10:18:11 -0600
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE203.ent.ti.com
+ (10.64.6.61) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Mon, 3 Nov 2025 10:18:11 -0600
+Received: from [10.249.128.225] ([10.249.128.225])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5A3GI6Hj411107;
+	Mon, 3 Nov 2025 10:18:07 -0600
+Message-ID: <486f2a39-90bd-493f-89ad-4f7060fc8158@ti.com>
+Date: Mon, 3 Nov 2025 21:48:05 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH v7 2/2] drm/tidss: Move OLDI mode validation to
+ OLDI bridge mode_valid hook
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	<aradhya.bhatia@linux.dev>, <devarsht@ti.com>, <mripard@kernel.org>,
+	<jyri.sarha@iki.fi>, <maarten.lankhorst@linux.intel.com>, <simona@ffwll.ch>,
+	<airlied@gmail.com>, <tzimmermann@suse.de>, <h-shenoy@ti.com>
+CC: <praneeth@ti.com>, <u-kumar1@ti.com>, <vigneshr@ti.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20251028033958.369100-1-s-jain1@ti.com>
+ <20251028033958.369100-3-s-jain1@ti.com>
+ <5c080bb8-2745-4765-abc4-2a46ca40916b@ideasonboard.com>
+Content-Language: en-US
+From: Swamil Jain <s-jain1@ti.com>
+In-Reply-To: <5c080bb8-2745-4765-abc4-2a46ca40916b@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002319:EE_|SN7PR10MB7076:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1015e645-38ee-4626-9a50-08de1af4977f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|82310400026|1800799024|36860700013|34020700016|921020|12100799066;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dHBxZFdGaStBbzVmeXI2WnJ2L0VDNW84RUIrM3E1VEpGUk9Tc2ZFVTJOcDBh?=
+ =?utf-8?B?bS9oMnZLNDByMnErR1ZqVmRUNDQ1bXBQSGtlQ2R2Ulo5cEFNaExISTIrSmRT?=
+ =?utf-8?B?TDFMeEZBL0xZT0Rhc0pCQnNSV2NzWjdBVnhLR3VDMHN3QUM0MlpwSU5iKzg1?=
+ =?utf-8?B?M0dTUjB2UWRpMlVOcFE1d2l1NVVPTkprRDArR3pTL283TlQrS2pwblBxNXZ5?=
+ =?utf-8?B?SU41cWFxVk5USEdaa2ZqWEs5ZjFtMDdsUmw1NHRGMDI1ck8veUEyVytIV0lN?=
+ =?utf-8?B?YmxHb1k1MnpwSGdTTGVMR1k5RTdOdUkwRHZ6R01uZG13STBEVlRRWjUwaUFZ?=
+ =?utf-8?B?V1A3T1NzbEYrOGMvY2pLS3hCcXFNeUlCVlMyMDNDZkNobHcwazY1ZFFoMUg1?=
+ =?utf-8?B?cEhYVno5RnpKdEh3OHNnMDQxRVBwRHhUMjNiUUZ3NzhGMnJmYXptcC9OS3Z2?=
+ =?utf-8?B?ZnZJZnN6dytJd3BUT2liRGF0V0ZvVG9zSXZ6NzRtdUhtRVh1RU80OWpzeTZV?=
+ =?utf-8?B?ZlJLRlRKTmpxWHJPOWFuNUZiK0NUVHNxbXVrejVsTkdWMW1xK0twSUV5ckI1?=
+ =?utf-8?B?WnlFOTRacVlOMnBtSDZjSWJ6MFMwR01FaUxobEZNOWhvTE42UEF4U1pSNDB2?=
+ =?utf-8?B?ZVZ6dHByb2M1YTAyaGdrTXpWRzR6WkFCZXBKOUZpa2oyZmpGUEh2RjREZFRu?=
+ =?utf-8?B?VE5nOGw5UHpuWWNDMFhUZ1VnNnBzQkVFZ2liM2ZLcTVNZGVGV1FNbUpIaEYx?=
+ =?utf-8?B?czk4WkZFMTB0NXJrSW9CTHVnRmJxQW56YWZtQ0QzUzM2N1VuT1VLZmd1eVpG?=
+ =?utf-8?B?enlQdWFFdUtTWXdGM3g0MTdxL3pxMS9hYmNHaWdLd1ZiY0NGOFpPTmRkYk5K?=
+ =?utf-8?B?TUc0MWExclArOHVEOFdtRnhKZ2RWT3RFMXI2eHVOS1NIVXdjVE51bEJYanZY?=
+ =?utf-8?B?M1NFd2NIdTNiQ2lUcHRrN3FOQmFrR2lQcVV4STZaZCtCZW9tS1dJU2JKYU1L?=
+ =?utf-8?B?eWhoclA0dDFKbVV1TmVnVExEMjg2NDZTajdsL3lPOG0vaXZETUI0REpNcDE5?=
+ =?utf-8?B?a091dTlRSWdTT0NIMDN2OUk4d2RyV1FuMWRpalR6VUVIejNCS1hZaEdCSU9i?=
+ =?utf-8?B?RW1LVzk5WG54NGVxa25zczZQNG5QUER3YnNJNTlnKzRQS29ZbWJjdk5zbnI0?=
+ =?utf-8?B?UXd4OWpsZzUvMGlWY2lLNGNzTCtyWjBGUVZtSkRpME40SGFpY2pCeFo1MC9o?=
+ =?utf-8?B?bXVpOTBYYXM0TWVWeTNzK3N5dEZuand1bllQWmtaRGxRVFY0a3liNWxxNEo3?=
+ =?utf-8?B?Si9FbHdvamJjSnJud1AydzMvRHRnVjFxMTFLUktTNld6T1hHV0FhcFN5VzZv?=
+ =?utf-8?B?bzA4K3hOL0tSNStldjFhRmg2T29BR2I5WnJWTGZFUXppQWNCeWVIaG5jYk83?=
+ =?utf-8?B?WTdDVkFBN1JQNVRMaG9PVVlRanlWRktHbUhueDdMMHRGbjh4cFB4VkJlb1Nx?=
+ =?utf-8?B?UExOcHpEcWs5YkxtdGsrbWk5SlpPNmZZcVJFZWdHSndZRW9oZUpzL3NwVVhT?=
+ =?utf-8?B?ZThZMWFSYWJFWTJ6V0tFMWk5Wm16S0IySnhiU1JxSDlFKzJRb3F1bEZGazJh?=
+ =?utf-8?B?VmhFZmpDRGhaV2EwcE9JWjE5WGwxVU1oYnR0SGlDa2kvQlg0Wmw5cnlUWHA4?=
+ =?utf-8?B?aXQzREEwUmdYUzlmVE9oTTRRNnp5bVF2eFE2dkhyTmNycXMxQ050T1hwQnF1?=
+ =?utf-8?B?LzhEOEQ4WG8rWHIvL0ZodVRxMnBvcDZRLzM2TzRma0I3MDRUaW9EaU1JU282?=
+ =?utf-8?B?UjdONGZ1WjU1UHJtSVhOU0VZdUpTVVhuV2s5OTIySGFqOWhWUStwWnVjaFRP?=
+ =?utf-8?B?TE1zVEc1a2pCK2prWHZYbUZIWTlEdmtsQWF0Nm5BOUhOdWZCbjUydWpXcVhN?=
+ =?utf-8?B?QXRMNEwwU3VjalR4dTVMVkdFdUJzaGJDUXJvRnJjSzNEMWx6UEIwckdKb3Ra?=
+ =?utf-8?B?RGpNLzkyTXZDZ1lyRVJ3em4wa09xQlMvVm9jNUNtb2lleWkvTi85VVZIODZP?=
+ =?utf-8?B?Y1RpSjVVc09tdjZ4TXlNdkhqeGtJZXN3V2dmZVpBNDJKRThsYlYrajlJRkNJ?=
+ =?utf-8?Q?Y9Os8ZP4fPo/B6yNWLOlm4RMS?=
+X-Forefront-Antispam-Report:
+	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(1800799024)(36860700013)(34020700016)(921020)(12100799066);DIR:OUT;SFP:1501;
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 16:18:14.8098
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1015e645-38ee-4626-9a50-08de1af4977f
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00002319.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR10MB7076
 
-On Tue, 21 Oct 2025 23:15:54 -0700, Jingyi Wang wrote:
-> Qualcomm Kaanapali and Glymur SoCs include apps smmu that implements
-> arm,mmu-500, which is used to translate device-visible virtual addresses
-> to physical addresses. Add compatible for these items.
+Hi Tomi,
+
+On 03-11-2025 13:35, Tomi Valkeinen wrote:
+> Hi,
 > 
+> On 28/10/2025 05:39, Swamil Jain wrote:
+>> From: Jayesh Choudhary <j-choudhary@ti.com>
+>>
+>> After integrating OLDI support[0], it is necessary to identify which VP
+>> instances use OLDI, since the OLDI driver owns the video port clock
+>> (as a serial clock). Clock operations on these VPs must be delegated to
+>> the OLDI driver, not handled by the TIDSS driver. This issue also
+>> emerged in upstream discussions when DSI-related clock management was
+>> attempted in the TIDSS driver[1].
+>>
+>> To address this, add an 'is_ext_vp_clk' array to the 'tidss_device'
+>> structure, marking a VP as 'true' during 'tidss_oldi_init()' and as
+>> 'false' during 'tidss_oldi_deinit()'. TIDSS then uses 'is_ext_vp_clk'
+>> to skip clock validation checks in 'dispc_vp_mode_valid()' for VPs
+>> under OLDI control.
+>>
+>> Since OLDI uses the DSS VP clock directly as a serial interface and
+>> manages its own rate, mode validation should be implemented in the OLDI
+>> bridge's 'mode_valid' hook. This patch adds that logic, ensuring proper
+>> delegation and avoiding spurious clock handling in the TIDSS driver.
+>>
+>> [0]: https://lore.kernel.org/all/20250528122544.817829-1-aradhya.bhatia@linux.dev/
+>> [1]: https://lore.kernel.org/all/DA6TT575Z82D.3MPK8HG5GRL8U@kernel.org/
+>>
+>> Fixes: 7246e0929945 ("drm/tidss: Add OLDI bridge support")
+>> Tested-by: Michael Walle <mwalle@kernel.org>
+>> Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
+>> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+>> Signed-off-by: Swamil Jain <s-jain1@ti.com>
+>> ---
+>>   drivers/gpu/drm/tidss/tidss_dispc.c |  2 ++
+>>   drivers/gpu/drm/tidss/tidss_drv.h   |  2 ++
+>>   drivers/gpu/drm/tidss/tidss_oldi.c  | 21 +++++++++++++++++++++
+>>   3 files changed, 25 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
+>> index 07731b02490f..0c3337a7b163 100644
+>> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
+>> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
+>> @@ -1315,6 +1315,8 @@ static int check_pixel_clock(struct dispc_device *dispc,
+>>   {
+>>   	unsigned long round_clock;
+>>   
+>> +	if (dispc->tidss->is_ext_vp_clk[hw_videoport])
+>> +		return 0;
+> 
+> Add empty line here. Also, add a short comment what this check is about.
+> 
+>>   	round_clock = clk_round_rate(dispc->vp_clk[hw_videoport], clock);
+>>   	/*
+>>   	 * To keep the check consistent with dispc_vp_set_clk_rate(), we
+>> diff --git a/drivers/gpu/drm/tidss/tidss_drv.h b/drivers/gpu/drm/tidss/tidss_drv.h
+>> index 84454a4855d1..e1c1f41d8b4b 100644
+>> --- a/drivers/gpu/drm/tidss/tidss_drv.h
+>> +++ b/drivers/gpu/drm/tidss/tidss_drv.h
+>> @@ -24,6 +24,8 @@ struct tidss_device {
+>>   
+>>   	const struct dispc_features *feat;
+>>   	struct dispc_device *dispc;
+>> +	bool is_ext_vp_clk[TIDSS_MAX_PORTS];
+>> +
+>>   
+>>   	unsigned int num_crtcs;
+>>   	struct drm_crtc *crtcs[TIDSS_MAX_PORTS];
+>> diff --git a/drivers/gpu/drm/tidss/tidss_oldi.c b/drivers/gpu/drm/tidss/tidss_oldi.c
+>> index 7688251beba2..d1a5fdac93ff 100644
+>> --- a/drivers/gpu/drm/tidss/tidss_oldi.c
+>> +++ b/drivers/gpu/drm/tidss/tidss_oldi.c
+>> @@ -309,6 +309,24 @@ static u32 *tidss_oldi_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
+>>   	return input_fmts;
+>>   }
+>>   
+>> +static enum drm_mode_status
+>> +tidss_oldi_mode_valid(struct drm_bridge *bridge,
+>> +		      const struct drm_display_info *info,
+>> +		      const struct drm_display_mode *mode)
+>> +{
+>> +	struct tidss_oldi *oldi = drm_bridge_to_tidss_oldi(bridge);
+>> +	unsigned long round_clock;
+>> +
+>> +	round_clock = clk_round_rate(oldi->serial, mode->clock * 7 * 1000);
+>> +	/*
+>> +	 * To keep the check consistent with dispc_vp_set_clk_rate(),
+>> +	 * we use the same 5% check here.
+>> +	 */
+>> +	if (dispc_pclk_diff(mode->clock * 7 * 1000, round_clock) > 5)
+>> +		return -EINVAL;
+> 
+> Add an empty line here.
+Sure, will add and respin. Thanks for reviewing.
+
+Regards,
+Swamil>
+> Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> 
+>> +	return 0;
+>> +}
+>> +
+>>   static const struct drm_bridge_funcs tidss_oldi_bridge_funcs = {
+>>   	.attach	= tidss_oldi_bridge_attach,
+>>   	.atomic_pre_enable = tidss_oldi_atomic_pre_enable,
+>> @@ -317,6 +335,7 @@ static const struct drm_bridge_funcs tidss_oldi_bridge_funcs = {
+>>   	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
+>>   	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
+>>   	.atomic_reset = drm_atomic_helper_bridge_reset,
+>> +	.mode_valid = tidss_oldi_mode_valid,
+>>   };
+>>   
+>>   static int get_oldi_mode(struct device_node *oldi_tx, int *companion_instance)
+>> @@ -430,6 +449,7 @@ void tidss_oldi_deinit(struct tidss_device *tidss)
+>>   	for (int i = 0; i < tidss->num_oldis; i++) {
+>>   		if (tidss->oldis[i]) {
+>>   			drm_bridge_remove(&tidss->oldis[i]->bridge);
+>> +			tidss->is_ext_vp_clk[tidss->oldis[i]->parent_vp] = false;
+>>   			tidss->oldis[i] = NULL;
+>>   		}
+>>   	}
+>> @@ -580,6 +600,7 @@ int tidss_oldi_init(struct tidss_device *tidss)
+>>   		oldi->bridge.timings = &default_tidss_oldi_timings;
+>>   
+>>   		tidss->oldis[tidss->num_oldis++] = oldi;
+>> +		tidss->is_ext_vp_clk[oldi->parent_vp] = true;
+>>   		oldi->tidss = tidss;
+>>   
+>>   		drm_bridge_add(&oldi->bridge);
 > 
 
-Applied to iommu (arm/smmu/bindings), thanks!
-
-[1/1] dt-bindings: arm-smmu: Add compatible for Kaanapali and Glymur SoCs
-      https://git.kernel.org/iommu/c/45859c059c20
-
-Cheers,
--- 
-Will
-
-https://fixes.arm64.dev
-https://next.arm64.dev
-https://will.arm64.dev
 
