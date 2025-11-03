@@ -1,56 +1,53 @@
-Return-Path: <linux-kernel+bounces-882150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5342AC29C21
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 02:05:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 671B3C29C24
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 02:06:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 564563AC3AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 01:05:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9006F3AC69C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 01:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78DDD2652A4;
-	Mon,  3 Nov 2025 01:05:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF7F2652A6;
+	Mon,  3 Nov 2025 01:06:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ePe9WMQM"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NMP2C1gC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3559469D;
-	Mon,  3 Nov 2025 01:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3454C469D;
+	Mon,  3 Nov 2025 01:06:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762131934; cv=none; b=a446Wd4EK1rfl+vAwL6qULtPf88FIyKEGkIrUJlh3MKwMnCpYdNCLAgk4at6SkicaoL51kpdsPJRWgk1J/n7dR0yFOZ/tDA1sEWNYOwzLd1ZnN2BaqaZMqnDIrtdYKwM/Fi/vrqnd/tRB7u5RJnxOvXIhT41iHFY03efsDahyf4=
+	t=1762131971; cv=none; b=C8rCIlX2YsWMVgxIZw7aCF6mEo7I1CpLs5rGBlbcQSwDiwlDZXN8EnlFFYDg9If8KMpcm/1nm+7StMuHPLM64B0uF1X1kbxi4SxCjEPAAsqep6Gnw/f+3QKCkJIBrHZuyQf+3FQB6TPLLbUlYsbfHXOSRB3xuirVLAtEwMJdr/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762131934; c=relaxed/simple;
-	bh=t4CMx/PQ3CV9US9oD0nskeFMR2z4iplh7kwDMnHyRTU=;
+	s=arc-20240116; t=1762131971; c=relaxed/simple;
+	bh=pq9XYg7ZzklhQuFvWF8rStUN/jnF9XAaSO0rWhh/SH4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s8sr4UUlE7zcKPDoVsxaKGtGngJy8R8/yA8A4QBb8S5fubKEC08NdrWj9OUnQQD2qlXIrHgeHlCCzyz8LJHHZWbGW8KN9l5ZP0qoQQm9RLR2unbyIZ5wdST0ZQL3hNfUFcmPHgJpEv3Ktgy+Y2ryndM5rnegTm7sFaZkWcT7sGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ePe9WMQM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B488C4CEF7;
-	Mon,  3 Nov 2025 01:05:32 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=BiHWJ1xA3BDGK8oL9SAzQmHcfQCX7bpeHKE+lbIDHqV51HLgnLmN4x/Lnvdi4nb9WX1DpmD/rv7KqG9IYlmYauzwmdFlM+kTompZ3DGTzIfovV3ldsBs8zZB9zyO2bn8aylnqK/FKSTL0SfJwr25a0/Bm9Jyiq1qC3czYDdPs2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NMP2C1gC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75347C4CEF7;
+	Mon,  3 Nov 2025 01:06:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1762131933;
-	bh=t4CMx/PQ3CV9US9oD0nskeFMR2z4iplh7kwDMnHyRTU=;
+	s=korg; t=1762131970;
+	bh=pq9XYg7ZzklhQuFvWF8rStUN/jnF9XAaSO0rWhh/SH4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ePe9WMQMuR1WpDTXlyHED+8bBel8CeeDofq/YwfE7BbHkk/3qszMJcIvDqacyii/+
-	 N5oQIY6VUzNIJUqluJZR2KlutR1IVDlGejcoTYdASdXQJhQYpEZaostTMPGs69gBz9
-	 NJ9sOO+TQK9N7tV8EalVRc4I65PZDeSL0aYVsA3A=
-Date: Mon, 3 Nov 2025 10:05:31 +0900
+	b=NMP2C1gCMFDnWrBng+EJyj8LSpUNopkvjo1NS68jhWKfWQENYxgP+PAR36nVmSyL0
+	 ReOvE4R8phSp6P7XMCQFoPwvbJyYYWZhESnPwUUz1+hPjNP/mp/dQyufaf4+j9P2Rc
+	 2WfRt/rPShxfpuPhG7fdIW4pmvT8tpBsl4HUR2FE=
+Date: Mon, 3 Nov 2025 10:06:08 +0900
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Miaoqian Lin <linmq006@gmail.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Ruan Jinjie <ruanjinjie@huawei.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] misc: eeprom/idt_89hpesx: prevent bad user input in
- idt_dbgfs_csr_write()
-Message-ID: <2025110351-mountain-absently-f9f1@gregkh>
-References: <20251030052834.97991-1-linmq006@gmail.com>
- <0f712780-8af0-4894-b75c-44fd7390dc3e@app.fastmail.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Arnd Bergmann <arnd@arndb.de>, Bjorn Helgaas <bhelgaas@google.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: Re: [PATCH v2] misc: rp1: Fix a reference leak
+Message-ID: <2025110353-whoops-concert-5d18@gregkh>
+References: <8f55f8866a6680830c9d318201a29293ac50a591.1761334487.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,34 +56,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0f712780-8af0-4894-b75c-44fd7390dc3e@app.fastmail.com>
+In-Reply-To: <8f55f8866a6680830c9d318201a29293ac50a591.1761334487.git.christophe.jaillet@wanadoo.fr>
 
-On Thu, Oct 30, 2025 at 09:47:22AM +0100, Arnd Bergmann wrote:
-> On Thu, Oct 30, 2025, at 06:28, Miaoqian Lin wrote:
-> > A malicious user could pass an arbitrarily bad value
-> > to memdup_user_nul(), potentially causing kernel crash.
+On Fri, Oct 24, 2025 at 09:36:11PM +0200, Christophe JAILLET wrote:
+> The reference taken by of_find_node_by_name() in the probe is not released
+> in the remove function.
 > 
-> I think you should be more specific than 'kernel crash' here.
-> As far as I can tell, the worst case would be temporarily
-> consuming a MAX_ORDER_NR_PAGES allocation, leading to out-of-memory.
+> In order to avoid a reference leak, use cleanup.h to automatically
+> release the reference at the end of the probe when it is not needed
+> anymore.
+> 
+> In order to do so, a reference also needs to be taken when DT is not used.
+> 
+> This simplifies the error handling path and makes direct returns possible
+> in several places.
+> 
+> While at it, also add a missing \n at the end of an error message.
 
-I think we already limit the size of writes so this shouldn't happen,
-but a real trace would be good to see.
-
-> > Fixes: 183238ffb886 ("misc: eeprom/idt_89hpesx: Switch to 
-> > memdup_user_nul() helper")
-> 
-> I don't think that patch changed anything, the same thing
-> would have happened with kmalloc()+copy_from_user().
-> Am I missing something?
-> 
-> > +	if (count == 0 || count > PAGE_SIZE)
-> > +		return -EINVAL;
-> > +
-> 
-> How did you pick PAGE_SIZE as the maximum here?
-
-I agree, that seems very very small.
+This means this should be 2 different patches :)
 
 thanks,
 
