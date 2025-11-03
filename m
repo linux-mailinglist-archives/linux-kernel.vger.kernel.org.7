@@ -1,110 +1,100 @@
-Return-Path: <linux-kernel+bounces-882881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C3A5C2BCCA
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:46:26 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80F18C2BCFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:48:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 10BE64F55B1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:40:32 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9403A4F7011
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D313064BC;
-	Mon,  3 Nov 2025 12:38:07 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 416DD310651;
+	Mon,  3 Nov 2025 12:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="bTzr4D7Q"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC51328EA56;
-	Mon,  3 Nov 2025 12:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD8230E856;
+	Mon,  3 Nov 2025 12:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762173487; cv=none; b=IszigxUHGwowuojacmBL+jEK5EUmP3pT1kZv8WotI73MQga7Zl4PZ+9rclAw6e9LZqLG3cEcMfvSQVi8MYjA1THtz8E1tKj12TqoUh59RurN1Svtvujn6ovZmvCTZ8Ts7715/Fq+/C0ksqsff/Z3xyq0CAvv9yzggjn6h388QVY=
+	t=1762173606; cv=none; b=Ufi5Lr0yLCnO5hVjVRDxYYk9e3KA+2FqvvsBZKQ5da6Lv5kAmY7v2PD1lsW5uvXu245kuij/DoSiw0Us+dJFnFdYzKfZ+byIynBj2HAWDcLlLJF/xon/c/xzSDfeLsmanRdjD6C8L1dnBWuCfu+q8lAvDeDkLbWPR2xtItkt0kQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762173487; c=relaxed/simple;
-	bh=6g3+T2jQ7KEd3azolW+M64sXtwp3Q4SlTlLhI8uimYc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HIfpVNRivvQU5bHz7OUvaAk1qNMB489UK5MHoAgmQvPqJULleRSaevIg+LGjpt31H3YlSdsXMGTOdd+/YQHYpLcr5XI4C/n+mAUBveuFu0zGQt0SL4fngdayBN8JaKTr7fJnZGuhKk8T/eBj2jkZsqCExtbRVree1feIujxDpzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from DESKTOP-L0HPE2S (unknown [114.245.38.183])
-	by APP-05 (Coremail) with SMTP id zQCowABXwvAfoghpvcs8AQ--.25013S2;
-	Mon, 03 Nov 2025 20:37:51 +0800 (CST)
-From: Haotian Zhang <vulab@iscas.ac.cn>
-To: herve.codina@bootlin.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	thomas.petazzoni@bootlin.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Haotian Zhang <vulab@iscas.ac.cn>
-Subject: [PATCH v2] net: wan: framer: pef2256: Switch to devm_mfd_add_devices()
-Date: Mon,  3 Nov 2025 20:37:41 +0800
-Message-ID: <20251103123741.721-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1.windows.1
-In-Reply-To: <20251103111844.271-1-vulab@iscas.ac.cn>
-References: <20251103111844.271-1-vulab@iscas.ac.cn>
+	s=arc-20240116; t=1762173606; c=relaxed/simple;
+	bh=cCg/Acg0fGzyosLAg5+VW7InPIAAvH/46BuTOCSh9ko=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=amJJr2X+xveYzXpTTXIOr1+XDm14+6K+pQVyqb3uWMSzPisqJuHKSbXuW20p+pLRYmW9YyhzK8077JnGPvmetl0IXSpB3K7RjCLZMk8bh4KyOBzuOMK2kHwJ9+E0/dxNGPEY9m7vvttScDJTxyHrSn+qqVKbvbS+iIUk4KiDgqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=bTzr4D7Q; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 604D840E00DA;
+	Mon,  3 Nov 2025 12:39:55 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id KtrrO9iIlOm3; Mon,  3 Nov 2025 12:39:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1762173591; bh=FFLwKgwx6WFvJkW1SsKMkTkIEWPqVqozlHZeum7DzeM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bTzr4D7Q9+R8M2HmUNps/SjaU1a4dLaSFPp04M573KsTmbE0ij51zExSOukKSk4S0
+	 DP94WNtHHPKkSinM4l8W8pf8mQ7AbLqEdnghTE+kTAjGl/QPTDihnlr69s7/3LjOz/
+	 ZY92w1g3PJH9Pg/MKQY8wl5LZfI+VqGcSC6Lqp/T4m0mBf6DtpObIeSD1ONlzfQolG
+	 RIDo/NMQc9wKm0/OGVAbu1G6ui4DsAWKh89LlScXzVH9/lAOsipQEOuXLYjkCFUG0c
+	 Br4iUhT6qLiLZpvbca1ivrqE4Z3yq2RTAsU6sYT3mjZ5W2wilHvFxwK3EEgNVhDp9j
+	 /b7xfTr8WLRBwisU9zbd4sJbafD15zbyV+FNUDW+Hc8KS1AxxZtDP2S0htntKOEswf
+	 UXAXHompzT7Na3DM6/uzbokyfnJ/B7T6bPk+5HDmZs3R0XgWEsmT/LsIvAAuXhOI4+
+	 A6fKJ5ZOZD+Xx86G/jTuyZ6jvVjjZPJwsTXsKlpwfIgWCW45a18KsKc+7KATcsgasc
+	 FGaSbQm98KSLWWT3nKQ8ZO2gYtrJAbrwarUAC9DeHJCO5WEH2ueYYQ4i79u6+NZI9T
+	 Ho43YZd4DjmHkb7nsGe5S2FaqtOG91C9pVK912aY0UpHX0+byeWKxeNE7v8JKYpwpF
+	 f+0t9hMU6aTP6YzxBKVDzOeo=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 4B2AB40E01FA;
+	Mon,  3 Nov 2025 12:39:26 +0000 (UTC)
+Date: Mon, 3 Nov 2025 13:39:20 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: David Hildenbrand <david@redhat.com>
+Cc: Xie Yuanbin <xieyuanbin1@huawei.com>, tglx@linutronix.de,
+	mingo@redhat.com, dave.hansen@linux.intel.com, hpa@zytor.com,
+	akpm@linux-foundation.org, lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+	surenb@google.com, mhocko@suse.com, linmiaohe@huawei.com,
+	nao.horiguchi@gmail.com, luto@kernel.org, peterz@infradead.org,
+	tony.luck@intel.com, x86@kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-edac@vger.kernel.org, will@kernel.org,
+	liaohua4@huawei.com, lilinjie8@huawei.com
+Subject: Re: [PATCH 2/2] mm/memory-failure: remove the selection of RAS
+Message-ID: <20251103123920.GCaQiieAtEGz1nspWZ@fat_crate.local>
+References: <20251103033536.52234-1-xieyuanbin1@huawei.com>
+ <20251103033536.52234-2-xieyuanbin1@huawei.com>
+ <341ff738-255f-41c7-8b23-48aac4cf51e3@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowABXwvAfoghpvcs8AQ--.25013S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7uw1xJrW3KFyxXryrZry3XFb_yoW8GF1Dpw
-	47Aa9YkrW5Gw40k3WUZw4xuFyrX3Z2k3WxWr4UXrya9w45JFWrtryUWF12yw45J3yxJa17
-	XFWftryrCFn8W3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r1q
-	6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
-	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y
-	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
-	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
-	IxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUU
-	U==
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCQ4PA2kIkWweoAABso
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <341ff738-255f-41c7-8b23-48aac4cf51e3@redhat.com>
 
-The driver calls mfd_add_devices() but fails to call mfd_remove_devices()
-in error paths after successful MFD device registration and in the remove
-function. This leads to resource leaks where MFD child devices are not
-properly unregistered.
+On Mon, Nov 03, 2025 at 01:15:58PM +0100, David Hildenbrand wrote:
+> I rather wonder whether the memory-tracing code should live in a
+> memory-failure.h instead.
 
-Replace mfd_add_devices with devm_mfd_add_devices to automatically
-manage the device resources.
+Yah, move it pls. It doesn't belong there.
 
-Fixes: c96e976d9a05 ("net: wan: framer: Add support for the Lantiq PEF2256 framer")
-Suggested-by: Herve Codina<herve.codina@bootlin.com>
-Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
----
-Changes in v2:
-  - Use devm_mfd_add_devices() instead of manual cleanup
----
- drivers/net/wan/framer/pef2256/pef2256.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/wan/framer/pef2256/pef2256.c b/drivers/net/wan/framer/pef2256/pef2256.c
-index 1e4c8e85d598..4f4433560964 100644
---- a/drivers/net/wan/framer/pef2256/pef2256.c
-+++ b/drivers/net/wan/framer/pef2256/pef2256.c
-@@ -812,7 +812,7 @@ static int pef2256_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, pef2256);
- 
--	ret = mfd_add_devices(pef2256->dev, 0, pef2256_devs,
-+	ret = devm_mfd_add_devices(pef2256->dev, 0, pef2256_devs,
- 			      ARRAY_SIZE(pef2256_devs), NULL, 0, NULL);
- 	if (ret) {
- 		dev_err(pef2256->dev, "add devices failed (%d)\n", ret);
 -- 
-2.50.1.windows.1
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
