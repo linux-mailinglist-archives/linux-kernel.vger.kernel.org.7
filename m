@@ -1,189 +1,186 @@
-Return-Path: <linux-kernel+bounces-883029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EE12C2C4F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:03:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88A27C2C561
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:11:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 932B54EF538
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:00:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B78493A7B8B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:01:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2040B272818;
-	Mon,  3 Nov 2025 14:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68792765DF;
+	Mon,  3 Nov 2025 14:01:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sUw80VCp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="EaON4hOM"
+Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazolkn19012055.outbound.protection.outlook.com [52.103.66.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C1CC15539A
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 14:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762178417; cv=none; b=H2MS5oIRPgi+UYmur0OvOBE7oBkkfSquFXWmdGbZnmq22ba8HycumRpMuz97GP/O0zpEygJPI8RNaZ+FjrJF09pNmgTOuAgaXgL1sV5k2j//j1s48DVbJcqzXaIUrM1ikM7unx6RqZf7CyJ/DXTyP7HLv6ssEfF94ecdNHOWml0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762178417; c=relaxed/simple;
-	bh=08PC3/AvFg4BABny9/8my4vAacX9aJRn5UW8imC12P4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RAKt7+0NSuU2UGVxnyhxHBwDMXwLn68kjARmu9oUSlMl2q1lvjBDvMIYAkCUyT5YlMYHCENL7AEZNlzSO6YEmToyUKIMY9k5rKimPEtwq0ERITvjm4zD2gV4wUgdGcTNIehi9glvDxsy5zTpDGfjMw3ETRmuL1SxODoiHknQh2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sUw80VCp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EF79C4CEE7;
-	Mon,  3 Nov 2025 14:00:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762178416;
-	bh=08PC3/AvFg4BABny9/8my4vAacX9aJRn5UW8imC12P4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sUw80VCpomPZrm81732UjVojj5Qvf3UxuVADgq1JY2zGk2KPxO4eQGAjSigELTMDi
-	 H1s7fZiywF7FXUP/yldLUH6X7YGVxy46h8HfBHiuCqG0dayMJ+XLLkW6MLgqsrSaNC
-	 3AnGk1eX+Z0wdrYNTWJUBIAASenX3gNm/KyqiI49n8ayxRy1v0OFR7cnqKyp2+ILUV
-	 +RTd11iKudbDIzDZIMRUy57Z8Z+2lbSVw1om5A7ifi8HTP89ipZvJOFXSceNweH4NQ
-	 yxbTi5ErQnmxPsIDKjiFJVR2cpmlyfWNOYcBs+1WndiNmD6Q++pIy2JYEmFYSQkGct
-	 au4jlnQVSWbzg==
-Message-ID: <79d45a6d-df37-475a-9edd-57e7a06155e3@kernel.org>
-Date: Mon, 3 Nov 2025 15:00:11 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5BD274650
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 14:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.66.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762178463; cv=fail; b=sOOghznyZk0mVe4ccFB/QC0Fqf0olLZ4wMPtkeDeYAmP63DyO32vGwhnutryoch7ESV6T+y4nB43F+q1Rff4uVHe947hMgDYulfMWFZo8A5AOMS7sj3SK4xnCNdSeQuQtlG1FdT6n3dY+9ZsHJsaua7/9lJqr3FwlrvYf5i6OfQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762178463; c=relaxed/simple;
+	bh=MstXaMTQI67lSbemV0PhZpSB4xVHpSWSnq2Fq734xI0=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=YEq04YVORO3jw5F4aNaA+0/mn2dRAAtLmUg4xPnM9ScNP6st4WXXIfP9OmcLfkFLNCvIza93KithCsu3lD0i0cl+nZIoGdNTzRvseY6Z7RtJhc2N7qhyAobQThBcEbyUa4XClJDJnZb0RmSJa/2dC66W3uxKjjxDL8GbkwP86Qg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=EaON4hOM; arc=fail smtp.client-ip=52.103.66.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kTNqo2G/vxSePyn06PXl8GO6Abm6ESpsj0CEnBv/AyszO7p0oDa93OeG2/OVyIrvdIrW5VseUDnhHiEGQaSc+z6nucvzEw0USrHBSlsMfr/8w6GG+lOYgIQGZuOdHxAK5n9vrRPlTsuJL/hsO7GwoGGu+4HgUhSzfeE/eVO6T+7h7gAXSPv7aAXyPiUWnl0/FNOdoeYyIxf0tn2udFrdVKo4PmgdB/uC6YZ32ofBBGDYRJiUy1WpX5yNTJjYsAs43QzCUvlnMRcyiumcaUV6s+2HSpS2BCoYK0hFGg7Iy3g9HwVjOaqKaidUheWf108l5Zc16FxsC0AWWogbcBFgdA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=MIL3eE5NMKknL7ijmnS2WLNpaRKVzpiCE9/+hQnB7NY=;
+ b=WkyoKZZLfKRuVGqrOr+BI3MyzHXudz5WRNmZDb+Ec4djLQFa4OCLiWDFEeKJlEZUR4Ed61/qoMp/0KpAH8Ywo9lJDWXEXoN0khztT4X7eGz9NtPiCzbDU/NQrqbtMvOPSUXo2OBbDFg8d2xsR+KNT3+SyD3cie89+ndadw+xevtIEFbydIBpLr58WHUD+KgILOVXssvAtgRTe9/V0WdpsIgxlaMRAfQB00/PX003JC9xfxXC5JkA7lg3P3xJhISTToeo6Dm+qOe6ZdbGI9+RqO051tEtCFjO6xodiXt8OOluJLQOlFgHAIRym7r6/RBXwlbTeiCJyYecGo0admu6dQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=MIL3eE5NMKknL7ijmnS2WLNpaRKVzpiCE9/+hQnB7NY=;
+ b=EaON4hOMD7a13Y2FaHXgTpDhlveaJSRdpWalQTmk9HpFLQF/7W/AbhVwALCzxUTeSMiexZ7dw7TgYIQHpSo+tIZreIMzo/EsBPVIKABaloVRHnyM4z3N0LAU0GJoy8FTuN+75OAfwwvKRZwl2/ej+MXe9JyFMPeKR+Yt3J0Y0cAoX+EgZCbKUA17U/M2lUYQBlr4WYDZj1yp3F0eYU0mog++TD6rFVFrt3DLXFrFSYoXXwWTOGIiqJi6pmiVQs9juk3ZWKFV0BuCCfAD9sctFpR9qrLrVm1NpbXug+wZw2q3NigEwLM60UbakZFhHXH2x2zzuH45n8izvE7FDALYlg==
+Received: from SI2PR01MB4393.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:1b0::7) by SEZPR01MB4597.apcprd01.prod.exchangelabs.com
+ (2603:1096:101:90::12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Mon, 3 Nov
+ 2025 14:00:56 +0000
+Received: from SI2PR01MB4393.apcprd01.prod.exchangelabs.com
+ ([fe80::5e86:f04a:37e5:64f1]) by SI2PR01MB4393.apcprd01.prod.exchangelabs.com
+ ([fe80::5e86:f04a:37e5:64f1%5]) with mapi id 15.20.9275.015; Mon, 3 Nov 2025
+ 14:00:55 +0000
+From: Wei Wang <wei.w.wang@hotmail.com>
+To: alex@shazbot.org,
+	jgg@nvidia.com,
+	suravee.suthikulpanit@amd.com,
+	thomas.lendacky@amd.com,
+	joro@8bytes.org
+Cc: kevin.tian@intel.com,
+	wei.w.wang@hotmail.com,
+	linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev
+Subject: [PATCH v2 0/2] iommu/amd: Avoid setting C-bit for MMIO addresses
+Date: Mon,  3 Nov 2025 22:00:32 +0800
+Message-ID:
+ <SI2PR01MB439373CA7A023D8EC4C42040DCC7A@SI2PR01MB4393.apcprd01.prod.exchangelabs.com>
+X-Mailer: git-send-email 2.51.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0345.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:38e::6) To SI2PR01MB4393.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:1b0::7)
+X-Microsoft-Original-Message-ID:
+ <20251103140035.762861-1-wei.w.wang@hotmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/13] platform/raspberrypi: Add new vc-sm-cma driver
-To: Jai Luthra <jai.luthra@ideasonboard.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- bcm-kernel-feedback-list@broadcom.com
-Cc: Phil Elwell <phil@raspberrypi.com>, Stefan Wahren <wahrenst@gmx.net>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Dom Cobley <popcornmix@gmail.com>,
- Alexander Winkowski <dereference23@outlook.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Juerg Haefliger <juerg.haefliger@canonical.com>
-References: <20251031-b4-vc-sm-cma-v1-0-0dd5c0ec3f5c@ideasonboard.com>
- <20251031-b4-vc-sm-cma-v1-9-0dd5c0ec3f5c@ideasonboard.com>
- <cc7edba3-af91-44ef-9899-18c21a3f33bd@kernel.org>
- <176217777617.8690.2075618272816893198@freya>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <176217777617.8690.2075618272816893198@freya>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR01MB4393:EE_|SEZPR01MB4597:EE_
+X-MS-Office365-Filtering-Correlation-Id: f1a1a8c1-4da5-49bc-2a61-08de1ae167ce
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|41001999006|23021999003|461199028|5072599009|8060799015|15080799012|19110799012|10112599003|1602099012|13041999003|51005399003|40105399003|10035399007|440099028|3412199025|4302099013|1710799026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?OtO56DFnMpaJpVJQ5R2yD3wsi4d8IsefsuKGgnR10BlKYvwSYzFzwdEaSAci?=
+ =?us-ascii?Q?Kwey/Mb1WucjuurErJLDhtYQV63YGVu0dH0C69f0NYCU1Li64hFqbCLT8PVS?=
+ =?us-ascii?Q?lj71d4JZLqCMjDKxbY1gvwnwVaGeVptaE3a1LmZGAn+NDWxvwIVXZPW3/C+Z?=
+ =?us-ascii?Q?f0hWp5kH03UshdulT/aBPi1n1aOTKG4Rr4SM7/YYG/4nHKwEeX1sHde+qXOL?=
+ =?us-ascii?Q?bNTmnn81X0V/BWPZIqg/NItBzERFUxYs531aHHVhn+ajVlhpSPpHCbYbLLxH?=
+ =?us-ascii?Q?/ZXiNrfZ4Un63u6XAo1P7w4I/H6mJ6C7YiZKKDeH2IonT6rRYIc8JEdb5FrO?=
+ =?us-ascii?Q?LuuWISw25kdYPSZw/TaqK9O7CM08mNmtJhv7xL3EGz4xGJ/horf/macnUHm2?=
+ =?us-ascii?Q?SFTPh3V5XPn3OJJyen+U6tjQzsrINTZfue6JWVVuN6n5S0Sb/phbBkhhLM2C?=
+ =?us-ascii?Q?w0wE2uoSkHEXnv/0LZCQQ4ug5SR0IDl4fDmmYwwAc6Z2/iv9ufMcUiMThGw9?=
+ =?us-ascii?Q?oCji64vSynb+7unuRntAv0XpOkqxuTHsDZJ6KrI1UXAzT8aq6m0r4xLxrHyG?=
+ =?us-ascii?Q?G52+X1VTEq0fBi+s6Qg3g8RBxD+yvcADxvqoFopmh5TshWiX3+nca135yCNM?=
+ =?us-ascii?Q?JuXX4X5ic7XYezLHPt/ZaplBVtbFInO5WY9irdyDd5FyTj64Nq3px47jPDZi?=
+ =?us-ascii?Q?TEGtyuZaEOWEDidckiLh4Rd5wB36VL0L4c2REcU8IWNWv9+EpGj+CpfTKAxl?=
+ =?us-ascii?Q?kI8HDhR7KLisspyZRbn0aNcmmI0JZ7q+Em88Fr+aIS6v9ukiTWXixmufUVm+?=
+ =?us-ascii?Q?x/Twc1Zvx7w1qXm4XgByQqVsBFIc0p3puTFJ06G3gDyCOx9dc/5cqgFSGLEc?=
+ =?us-ascii?Q?rdrOsgj6p/2Ge8icg31L8SkdmWK7c4yE9E0Cw/FMj06PUMX4HvDy43jnkyLl?=
+ =?us-ascii?Q?v+2rOKvTm6PG2jihM4Qe8vD4rKQOHoVHRKrTnrUDTpHhu/N8tz6vy4+ns9sP?=
+ =?us-ascii?Q?L6WCxSM7VbtvPXAYhklDjrxJyT4VctFj7iNNyd1ZnhbAtzzxr4M1dhgDvACJ?=
+ =?us-ascii?Q?yqlmEAVRNxq5NkPXxVnqZUPoGxc+/63zFbRe9N7gohLJfmmQeAINRyJ5y/0l?=
+ =?us-ascii?Q?1tlPeAzp/Z/QS5OCNAqJSpjdx7Ob5ocPMOrcMJR3gZ4zi/Ypo53RuxJd431Q?=
+ =?us-ascii?Q?/pNvvO9+xD1d7bfGaj9aIfFjiNAO+PcpyPTO1eCJ40hXGXxwLC0hgYpcael0?=
+ =?us-ascii?Q?2C6nGsAQnCJAw6wHdTbJvkod9PgjZV/WItSKf/exJJRJ5kwQL0w7sDVcbhXX?=
+ =?us-ascii?Q?6wgeNdSzjoV1RUoQzmuTZ9r2TL+lvugxlqKBPSnNV3yye191AiMzRy7K42nT?=
+ =?us-ascii?Q?CQ5OIq+69MF85AwhkuHWMbeRyphOlsrm7uDeqsZCVAdrDjt4UyrbUvy+YuYh?=
+ =?us-ascii?Q?e+8qQ1LVgEWxUDwAuODHEykTK41K22GV?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?gmZl543zACEqWSbNwR3+0FypfdUKvT4tirhj2OATCfbcT6eW7KeexVSJUmTA?=
+ =?us-ascii?Q?IdYQ8Dmhujo99c86sF9gc7P4BY8je2qgs5/b8CuuV+1e16vOJQWxyprx0Sjq?=
+ =?us-ascii?Q?P8ICV2NHZLOA+HhXWhK8IHWZhAvFxaiZx2ZaR1OyqDkLTPLI2mKQcyeUsZXC?=
+ =?us-ascii?Q?lVXrcEA1ePfr0+EopJm8CmtUiKNRpASlp+z+exuhNnNNi9mN0yd3WZMa67xW?=
+ =?us-ascii?Q?nzrVJlrYkZV45tNlTySTnqfJa5mcaqQfVUvyxVyn6Qi3xwRg4bdAkZiW+Muv?=
+ =?us-ascii?Q?j7kk/qsf7ghzC9xDA5U3eYUx4a1WCCljUIDZfIDLa5rMXS8aG7pmRJPDDQhI?=
+ =?us-ascii?Q?/+XzrdZHyGb58Rixg3NnxXF6+J/ksseHh4oimdT5DlIRdbtl56yELkPqMt0g?=
+ =?us-ascii?Q?PTHOSVCYaHZ33j4M2maD2PZIn1HYRHEUH4JYZctyNgx3V0iO9OLzDki4VLfP?=
+ =?us-ascii?Q?nSDfCyarS+iwBcecMbX7Qnkab7B35iMxnG9REU94H+RRHwpujRyCQtPkuORx?=
+ =?us-ascii?Q?m2wUYZAWfiVyAR/FJb0YtfGcov9r45k2T2RN0GRwaw5vHPZ4AsQfECtD14la?=
+ =?us-ascii?Q?1L19r9vLAs+irsutA2YOoxSoOHLsM36YYvl6T2BrWScvQCbDqisPV9hCOZDW?=
+ =?us-ascii?Q?SBstatPQ6eFRKD+ghJHPis0IXplwaoNfwgh3Ss0KdKGAur0jOFPkNYlRTWwn?=
+ =?us-ascii?Q?7Q4QZZMArMWVj77EYskySWz5qIEFKCyCvIpLIqhgFC7fS2CLhgHJUQz+7JlR?=
+ =?us-ascii?Q?6la2eQ+VH2E7Fx4wh1HujYwVZXc1yG6kcqBTuA5I4O4pfrFStUarSx99PBhg?=
+ =?us-ascii?Q?0LePd8HJMA/6zIPqxvoAJqo2SW7dBluryUf3JwsneHWyJ5TXuWMKyW6F0Q1W?=
+ =?us-ascii?Q?MGyBrgGzlD322UgRZ2dIZcIi7n0mvLchB1kB/bY+Fg/zvNEIdx2A/bvBw/Vf?=
+ =?us-ascii?Q?32xom3SORgymFC3vgGIfF52NJbh8400rCtVEkQ888pfOpvSr3pMDW8lV9OKR?=
+ =?us-ascii?Q?Us+dvVX7e5WK1We8mFWMZ63hvgTEBKMS2Xm59XPDzftnN+705FeEGw3BtkI0?=
+ =?us-ascii?Q?N5v3Trd5DPSNFLGCvPWZkDOkMAHw+riVQOCPw/JZ3QAo3T4jqOa8NslT/HaF?=
+ =?us-ascii?Q?Wpr4j1vJRbpCuOsxAZjsxINOEBaox2tl1PIrtdBJ/FWmtWvKK5Q/Yh7Ren11?=
+ =?us-ascii?Q?lr9OB6hzM+YOk6eAJyz+F9pUDSYF0vL3o+1adfGjhCRxgOMmqUvjkSTmpAI?=
+ =?us-ascii?Q?=3D?=
+X-OriginatorOrg: sct-15-20-9052-0-msonline-outlook-827b9.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: f1a1a8c1-4da5-49bc-2a61-08de1ae167ce
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR01MB4393.apcprd01.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 14:00:54.9415
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR01MB4597
 
-On 03/11/2025 14:49, Jai Luthra wrote:
-> Hi Krzysztof,
-> 
-> 
-> Thanks for the review.
-> 
-> Quoting Krzysztof Kozlowski (2025-11-02 15:00:58)
->> On 31/10/2025 18:27, Jai Luthra wrote:
->>> From: Dave Stevenson <dave.stevenson@raspberrypi.com>
->>>
->>> Add Broadcom VideoCore Shared Memory support.
->>
->> You will have to come with really, really good argument why CMA is not
->> working for you. This is how you write commit msgs. All further is not
->> really helpful.
->>
-> 
-> From my limited understanding, this driver allows sharing buffers between
-> the kernel and the firmware that controls the ISP and codec on the remote
-> VideoCore VPU.
-> 
-> Maybe Dave can comment better on the historical reasons of this approach
-> versus other DMA buffer sharing mechanisms available in the kernel, and if
-> it is feasible/possible to make that change today.
+When SME is enabled, iommu_v1_map_pages() currently sets the C-bit for
+all physical addresses. This is correct for system RAM, since the C-bit is
+required by SME to indicate encrypted memory and ensure proper
+encryption/decryption.
 
-You are upstreaming this so you have to come with rationale and detailed
-analysis why existing infrastructure cannot work here.
+However, applying the C-bit to MMIO addresses is incorrect. Devices and
+PCIe switches do not interpret the C-bit currently, and doing so can break
+PCIe peer-to-peer communication. To prevent this, avoid setting the C-bit
+when the physical address is backed by MMIO.
 
-Of course maybe it's just commit description which needs improvement.
+Note: this patchset only updates vfio_iommu_type1. Corresponding changes
+to iommufd to pass the IOMMU_MMIO prot flag will be added if this approach
+is accepted.
 
-But anyway, please do not send downstream Rpi drivers to us just because
-downstream has them. That's never a good enough reason. And that is the
-only impression you are making here.
+v1->v2 changes:
+- 1 used page_is_ram() in the AMD IOMMU driver to detect non-RAM
+  addresses, avoiding changes to upper-layer callers (vfio and iommufd).
+  v2 instead lets upper layers explicitly indicate MMIO mappings via the
+  IOMMU_MMIO prot flag. This avoids the potential overhead of
+  page_is_ram(). (suggested by Jason Gunthorpe) 
+  v1 link: https://lkml.org/lkml/2025/10/23/1211
 
+Wei Wang (2):
+  iommu/amd: Add IOMMU_PROT_IE flag for memory encryption
+  vfio/type1: Set IOMMU_MMIO in dma->prot for MMIO-backed addresses
 
-...
+ drivers/iommu/amd/amd_iommu_types.h |  3 ++-
+ drivers/iommu/amd/io_pgtable.c      |  7 +++++--
+ drivers/iommu/amd/iommu.c           |  2 ++
+ drivers/vfio/vfio_iommu_type1.c     | 14 +++++++++-----
+ 4 files changed, 18 insertions(+), 8 deletions(-)
 
->>> +
->>> +module_vchiq_driver(bcm2835_vcsm_cma_driver);
->>> +
->>> +MODULE_AUTHOR("Dave Stevenson");
->>> +MODULE_DESCRIPTION("VideoCore CMA Shared Memory Driver");
->>> +MODULE_LICENSE("GPL");
->>> +MODULE_ALIAS("vcsm-cma");
->>
->> Why don't you have proper ID table? How this driver is supposed to be
->> instantiated?
->>
-> 
-> Sorry, I was unaware of this discussion:
-> https://lore.kernel.org/linux-media/2023100955-stunt-equate-c6fa@gregkh/
-> 
-> I will switch to using an ID table.
-> 
-> This and other drivers for audio, isp, codec are all instantiated as
-> platform drivers under the VCHIQ bus (PATCH 13/13).
+-- 
+2.51.1
 
-
-If you have a bus, not some sort of MFD device, then you should use bus
-way of binding, which means in almost all cases providing an ID table,
-which will generate proper aliases.
-
-MODULE_ALIAS is basically only for the few cases where platform driver
-registers another platform device or for MFD (and even then only for few
-MFD cases).
-
-Best regards,
-Krzysztof
 
