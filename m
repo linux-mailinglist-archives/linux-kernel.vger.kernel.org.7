@@ -1,119 +1,157 @@
-Return-Path: <linux-kernel+bounces-883084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88B4CC2C710
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:41:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB094C2C751
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:46:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD5141892FEC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:41:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F2D73A3902
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C052836B1;
-	Mon,  3 Nov 2025 14:41:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C352E7F1A;
+	Mon,  3 Nov 2025 14:41:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sj8qVCEU"
-Received: from mail-wr1-f66.google.com (mail-wr1-f66.google.com [209.85.221.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="VeYd96dS"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84780280332
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 14:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.66
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762180863; cv=none; b=n2MeR0WRsj84aT0WcwXsRDeud2pvsG1gvNzKtcjPs0q6/S1pCM1n51hmUOgJpOlregA9SBL77STYgwkErm0OyyVQa7DgIJjy5rbzHJTONcs6WTklMPcWZFImMqHZxxwHKXzHxk+eh8G+Hs3VvNPEv6hTAobrhBO3YUqg43cjkNg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762180863; c=relaxed/simple;
-	bh=eWQeiP2zrgkz9osY0cSaodeycX0GFcYa/gGTxashC7s=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A08280332;
+	Mon,  3 Nov 2025 14:41:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762180912; cv=pass; b=nhDzq3ulEOgRF4eGBYuqRmFA+w9CObQuIzD1UBRPZ2VouwES4n2/wyqgCdaYbMmuuRrAm7bDE14awDFifK9vZDTVV42DFqqbJZgdKex1/2Ex3onyCao2KH7sOl5Byv6fhVU898rXEuTbubjfwwCfDuDvji/hp/6WRlaTmVGzHbc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762180912; c=relaxed/simple;
+	bh=BUl4881EemL8NcxQjWfrxFrtq5eOPgoL55eAIrCawk4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mI7reyp9nSaaLOHfUme2x5UUqojw53ZR347q1GnwD0GdYhA6TKWMjoRZBrSMBkE3S9/AXGjIWqt6dvh9BI6TSJWBvffm1H9/cJ4ODZvcCxNuCYFpiGsrlnoi0mP1qYmMl+ffexMG+ijHGHINvXPdBjniUUlGjFgOU5Qh4Z+OvK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sj8qVCEU; arc=none smtp.client-ip=209.85.221.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f66.google.com with SMTP id ffacd0b85a97d-429cf861327so1091018f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 06:41:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762180860; x=1762785660; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nhnWCeGj7VSUUXora3GrZpUnZAZG0ncmkOPbfdU7JnI=;
-        b=Sj8qVCEUHq+xVD89nZZlQYDWpgbAnq60qhc9SiXS/hgQZD9jFCHMFEOltneCfqR/rD
-         qfCQqSiIRSV2Iv3+tgLg5vE98Ek8rIYZL+wx/9SqwNuYKFyUG3KOCjotOOg77hF2Kx0x
-         IW//bb0wOyxEGLQIlOT8Xp3IRjtKAMvjx6okpi0+cR2BX2rtl07aVEg7r+1OCTU13aVc
-         jiIJrcRfY3/ZMKSd4YJZkew5U/lQNW2yFNP2FcTbZeyJV3bL01xSXoQtRjx25LkCukjQ
-         ByOkz0Z4H+RyCpC9pxTyj0G/9lMz1d9tsj6elwuzKL6uzkL2yIIZHXzpsZkMhdpihBfn
-         LrVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762180860; x=1762785660;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nhnWCeGj7VSUUXora3GrZpUnZAZG0ncmkOPbfdU7JnI=;
-        b=Mah5iH+9qLOVCGevLIXTaNztfkkLij1dRHGpQE/jE9AySURxjHXotHQvadjanZSWR+
-         1H/+jbWq1He2G7wAXNyfhkBG6jfgXUkhc0d5UlBp3P+wm1zXuLCZ0puj0iJjYMU3mKHd
-         v6HRlz5FXFbcxYiG8tshAxboSnsPpGDrpxm01kqnFK8NRofwAGNXgsERE3iz5kKyFmyT
-         yCd9c18yS/k/1bf30jqByogI904yJMDuBNWYFEi6+wJl2oZ8Vv0TWTVlCjx2SWS4y/Lk
-         W/NRM5P5r3FAk9Az+LV5gxmv0pu9jM+T13RFjWcWq6hzER9EH3dRqQd5xZLmIUyIenv0
-         1BEw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmmg8vYA+HJzmreJeN8lAyEbq6+O8h1imAeUh2GvIlNSO51uw22KM4EGIKFPdLHy3BWGvPPJTlwn3Eb6E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/OgL3ocOyM+kM4/zgkoyAdO9VR4Ffw8n5N7Be93xsHj5gxGeI
-	B0GUiZH3Chw2wARebYdFsOyXlHfnupxf4vDthxGpekgWZbIy9GEnNM3W
-X-Gm-Gg: ASbGnctOPi05wimhI83/6mTR1HZqhzjIBS90smYjVwGBH5Dqh9TnmigaorbxG+Xj+Ll
-	rwF3iv5RMZeav+LNqEx1l750ELMgy/dpDRDkKd/CepvTS06NsBrT0otGiFDmp+9N0XD1VNJvozz
-	KRAJ8CXwIVZnBYuTNs6t3cwuyvShYQmZnf9g6WIQvr7P4wBLg4Qhz7/tsOeJmoUpfYOYA5xU0zl
-	MIB3ikbvgjuj1z53jxEe+SyVYwMYMxE6aaVq0iC0WFbfAL2JZhmitzl0jo+y4df1RqqNmlu1fmF
-	UIzpy+1cWSQgZ6pACkNAR964fflRSIP6kD5QH0IT50lyAq3r910NiUsKJXBeRxU9frBAd3cvZKJ
-	rz0BStH2kHISCY0XlnewI+wnBxVY6A5KGjsHvuscKQRTKvy1JTujzg9SNYkSSEdSUxcBN8FRBMK
-	e7ry4nXvmGhkVGF0rkxKZkjZcoKaAC7pwf+XinwfL0disrfwoiigXt
-X-Google-Smtp-Source: AGHT+IH/4xizOy+DuRDg4T/+1/r/B0yFQ05VGmFHc5NJhCGA96e19qMqEBWxN2MdSABc4RNojADaRw==
-X-Received: by 2002:a05:6000:178d:b0:429:b6e2:1ecf with SMTP id ffacd0b85a97d-429bd682973mr11766202f8f.22.1762180859783;
-        Mon, 03 Nov 2025 06:40:59 -0800 (PST)
-Received: from workstation (ip7-114-231-195.pool-bba.aruba.it. [195.231.114.7])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c48ee52sm162113385e9.2.2025.11.03.06.40.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 06:40:59 -0800 (PST)
-Date: Mon, 3 Nov 2025 15:40:58 +0100
-From: Francesco Pompo' <francescopompo2@gmail.com>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] efistub/x86: Add fallback for SMBIOS record lookup
-Message-ID: <pt44dx2hnzvqrqsboa53p67qw4dhkslo3xme4uu5r333ygei2m@czvvf5btllhq>
-References: <20251103123335.1089483-1-francescopompo2@gmail.com>
- <CAMj1kXHO8Mxk+zPEwx2+VP1FF_LoDu58tbDOm+-Y8m07d3nitw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=G4apDUwHBOackVLXXl3O6lfRC4pjZBpephyWDS36/hGXpWxmSUOe5SY+/5pt9TegLB62biwzVc6/f+3zDhP8vBmEjySFOkKbUPR5xR5c3NfXq7AF31v1TV6b0nqcC30f3yIZ3N63oVRv0XJ2hFrg0PRX6PraVgUqGV8VBqkWj4Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=VeYd96dS; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1762180904; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=OlKkFhWTkkZmHDRb7PemfXYw1xb1t5cwjCkAoGPiLLeS6ZxLAoiqRtfWJhipl9/1fkVIw7MVd6RpBrmZRiijQbXg12AVF/qL/m2t4hvG1emCRz4sA+qRSEBPwFkdcp9RNZkYxNrDK0OIlmj413oF7UpY/ap0GSdjgRBWRTLkNe4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1762180904; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=CFrpz06o4t32EOpXiL8ubv+Q3woK4DQ1oFqsHtdiZec=; 
+	b=YXjkVHlhXsHdABlm8TETglEK+4r0xGY7J5QyJvgGHlPigO1oJyFxdP7+AohBdPdiDmONh8V2n5V0t8r/SlHvnMI1Y5RLuBQafZIjyhbqnBwraBpAaoI2NwX+xOe4KzcaA73kKkW14wxr67IgaIJx87gjI68mrUaurh+ZveK9khY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762180904;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=CFrpz06o4t32EOpXiL8ubv+Q3woK4DQ1oFqsHtdiZec=;
+	b=VeYd96dSXPT6JQzaR2aiEzRpoywFReKq7haWEhOYFMYfz7a4gckgZljsCh8N9Hdd
+	e2k0D8vkL7p/Jf+MRulSPQo96n1w4qmobo2NOonGOiFjO82Yc/ALAwtYttlvoa+rom7
+	H+kICzSsXW9z3CD8E3pfmzxiZx3bPtO8hdSDyYrM=
+Received: by mx.zohomail.com with SMTPS id 1762180900981611.5667236444241;
+	Mon, 3 Nov 2025 06:41:40 -0800 (PST)
+Received: by venus (Postfix, from userid 1000)
+	id 5BEDD182F6C; Mon, 03 Nov 2025 15:41:35 +0100 (CET)
+Date: Mon, 3 Nov 2025 15:41:35 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Val Packett <val@packett.cool>
+Cc: Fenglin Wu <fenglin.wu@oss.qualcomm.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] power: supply: qcom_battmgr: improve charge control
+ threshold handling
+Message-ID: <3nauihzsyl2flnwiim7e42dhitoubhuzimrbdddasy4z7abqyi@sjm4gd3jtjpy>
+References: <20251012233333.19144-2-val@packett.cool>
+ <176213091335.301408.9120443011267055817.b4-ty@collabora.com>
+ <8f003bfb-8279-4c65-a271-c1e4a029043d@packett.cool>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="amxtoasgmrgegheu"
 Content-Disposition: inline
-In-Reply-To: <CAMj1kXHO8Mxk+zPEwx2+VP1FF_LoDu58tbDOm+-Y8m07d3nitw@mail.gmail.com>
+In-Reply-To: <8f003bfb-8279-4c65-a271-c1e4a029043d@packett.cool>
+X-Zoho-Virus-Status: 1
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.5.1/262.144.53
+X-ZohoMailClient: External
 
-On Mon, Nov 03, 2025 at 02:47:22PM +0100, Ard Biesheuvel wrote:
-> On Mon, 3 Nov 2025 at 13:33, Francesco Pompo <francescopompo2@gmail.com> wrote:
-> >
-> > Some Apple EFI firmwares do not provide the SMBIOS Protocol,
-> > causing efi_get_smbios_record() to fail. This prevents retrieval of
-> > system information such as product name, which is needed by
-> > apple_set_os() to enable the integrated GPU on dual-graphics Intel
-> > MacBooks.
-> >
-> > Add a fallback that directly parses the SMBIOS entry point table when
-> > the protocol is unavailable.
-> >
-> > Signed-off-by: Francesco Pompo <francescopompo2@gmail.com>
-> > ---
-> >  drivers/firmware/efi/libstub/x86-stub.c | 107 +++++++++++++++++++++++-
-> >  1 file changed, 106 insertions(+), 1 deletion(-)
-> >
-> 
-> OK, I've pushed this to the efi/next branch now. I did apply some
-> cosmetic tweaks, though, so please double check that I did not break
-> anything.
 
-Seems fine to me. I compiled it and it's working correctly on my
-hardware.
+--amxtoasgmrgegheu
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 0/2] power: supply: qcom_battmgr: improve charge control
+ threshold handling
+MIME-Version: 1.0
 
-Thank you! :)
+Hi,
+
+On Mon, Nov 03, 2025 at 12:46:13AM -0300, Val Packett wrote:
+> On 11/2/25 9:48 PM, Sebastian Reichel wrote:
+>=20
+> > On Sun, 12 Oct 2025 20:32:17 -0300, Val Packett wrote:
+> > > Currently, upowerd is unable to turn off the battery preservation mod=
+e[1]
+> > > on Qualcomm laptops, because it does that by setting the start thresh=
+old to
+> > > zero and the driver returns an error:
+> > >=20
+> > > pmic_glink.power-supply.0: charge control start threshold exceed rang=
+e: [50 - 95]
+> > >=20
+> > > Kernel documentation says the end threshold must be clamped[2] but do=
+es
+> > > not say anything about the start threshold.
+> > >=20
+> > > [...]
+> > Applied, thanks!
+> >=20
+> > [1/2] power: supply: qcom_battmgr: clamp charge control thresholds
+> >        commit: 8809980fdc8a86070667032fa4005ee83f1c62f3
+> > [2/2] power: supply: qcom_battmgr: support disabling charge control
+> >        commit: 446fcf494691da4e685923e5fad02b163955fc0e
+>=20
+>=20
+> Woahh.. please revert the second one.
+>=20
+> I'm sorry, I thought this was discussed here but apparently it was only on
+> IRC and I must've assumed that the patches weren't going anywhere because=
+ of
+> the lack of R-b..
+>=20
+> The disable bit was acting rather strange after all, we'd need more work =
+to
+> figure out if that's even possible. Let's leave it at the clamp only.
+
+DONE.
+
+Greetings,
+
+-- Sebastian
+
+--amxtoasgmrgegheu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmkIvxsACgkQ2O7X88g7
++prgiA//ftqPbxE2sIyhCq0WRMBAt1kjIgiF/UrKpgrgSHNrW97LCCAq/ZfT+at3
+zWb0tiy0xblcgrrg4Uyq7qOoCJitoS3HoJeRAzboIAPZ9BTm8a2MNP9b+4uvCD8O
+w8Cc2mejVj1nYWaFRClhHtYS5rrXZYF+xUCOweGIzrSeqiBgaRBTaQYKHK3iMnuT
+tFCDEfrr92CJ3z3geOEPbiAf/rsxxoOhkARa347YTJr+fU4F3j4Jv7S2KKfKTjd4
+w14yqkiRBiQQODJjM4jTZpoR1nT/AfIbOb868Mxb5x/cTYEY/+BjyfAHhM/xlzqa
+vP0eMQQZw366b9Q6kPm0YSipxc1LI9Ci7OotPKn5Nj4V4d0zEC5jFPnwmxJgMY+a
+TgIxZkB4CWZtOknWqtQ5zPTB2shabJNrK9GhBCfAec/h+TySxXzv/fF8bRx63DXn
+YtP3Zs7m/mJ2jN4EaKUEz3BSSCTGGnYz+eULSxgNQtEh1zHxVl/yrmBwBtRhxTCV
+29DKKG3lJiIqp4sAixdsL11X1K4moff2sJHneG78QCOoFfqBR+R3cxv0dVTW1gCL
+rrYBehwolL/BG1xtOiDI4wq3QYZTDxUBwlKB3piZ9zIw75/JfL1IFF7hN1+qTwIw
+Y33jWKbCcHUWMLvv+QCylgEepaCTfpeSoYEJkpxicDX3c9u1IuQ=
+=2Ym3
+-----END PGP SIGNATURE-----
+
+--amxtoasgmrgegheu--
 
