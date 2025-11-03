@@ -1,93 +1,120 @@
-Return-Path: <linux-kernel+bounces-883676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0779CC2E0C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 21:38:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B8A37C2E0D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 21:39:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52BA71897F71
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 20:38:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 35B5F1899FEE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 20:40:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88942C031B;
-	Mon,  3 Nov 2025 20:38:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507C52C031B;
+	Mon,  3 Nov 2025 20:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SA4SnDMc"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CtAllsmY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215DF2BEC55;
-	Mon,  3 Nov 2025 20:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4902BE62C;
+	Mon,  3 Nov 2025 20:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762202290; cv=none; b=usT61abZNRk4NBrj3iEAFQaLmQ0AzgmTzeunnRzJsrVpBttsUrO05iqUYP009LswuFOdYwq8j/vs+qcWORbNsxBqHxz89drZXocWAM09CPuBc/Ukqk+HpsTjkeS+P79WKMsZcrQSMQMTdUEZE37PteZ2tQjLMkizOd5D7qiVTzs=
+	t=1762202387; cv=none; b=aP0Mhm8wYAkny49N63t6IAorrp9nT2AJNZC66CJukHhmIbCUZqX2fgcq44FAYEeDO4PT8bi47x4Z20lcQex59aSHIc2imha6bOS97jig8r0gVG1Wgo1DvPPj8e21ofjkcGShsW6JQqtocgpQ3oa9BbzoW5iV3pZSQMeKFuudQeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762202290; c=relaxed/simple;
-	bh=d8F8UsdnvnUaoWsHfsOrnVhY0t5k0fgj3679PdZsIgw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fF5VCqwtYS+as0EDC2EYRDbKLNYau4mQn2JK7uzK/xzkG+yxsOtIIpoy9s4nNzB+BPU8KIAqb21E9YDQRMkmQALlc5Qv5dReXng8WRcLWgiGCCqYDaUno9T5mzcrpGpgk/CMtZGj4MjQkXxEBDeplhAIeMkMaCvGMc7C4ccmsYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SA4SnDMc; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=HgugKP+2Af+SGnfyPg20MYT0WaZn1lZL22X8t1CwrtA=; b=SA4SnDMcf9d9Gy8fXmB6zQqsi0
-	Kk9GK9ozxMCRr8OJPra4qeiXvL7IfOiR1mgZdp3LXzq36Kt7yzoRNZxFE+c8VApcB11LfM6nafl3K
-	8v4U6c8kVfPFq4L9jkC5DAXl6GFuwvrLktEYAVHlFdsJ0NzAAsC6jhibbRi9buvSFeanqU5xa4NX9
-	LDzylYByveQH+hiXHCTC6yW+t7h+ImDtEUE7OvDHVZhAbyGXPzPzBbNIsvuPuAL4VBPmaJ4ICxT8T
-	35pTokqifFp3g7O+24qFKZOLlsixKuAkCs+lbCbkGDtX50RMrxH69Sq9zuWwWMEo/x28Fobfwp4IX
-	leKFSl8A==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vG1JU-00000000AjS-2ENs;
-	Mon, 03 Nov 2025 20:38:05 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 3D66D300230; Mon, 03 Nov 2025 21:38:05 +0100 (CET)
-Date: Mon, 3 Nov 2025 21:38:05 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>, Andrea Righi <arighi@nvidia.com>,
-	Changwoo Min <changwoo@igalia.com>,
-	Dan Schatzberg <dschatzberg@meta.com>, linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org, sched-ext@lists.linux.dev
-Subject: Re: [PATCH v2 4/4] sched_ext: Fix cgroup exit ordering by moving
- sched_ext_free() to finish_task_switch()
-Message-ID: <20251103203805.GH3245006@noisy.programming.kicks-ass.net>
-References: <20251029061918.4179554-1-tj@kernel.org>
- <20251029061918.4179554-5-tj@kernel.org>
- <aQkPqUSMr5L0spd8@slm.duckdns.org>
- <20251103202843.GF3245006@noisy.programming.kicks-ass.net>
- <aQkRKC15ta5Wo-lU@slm.duckdns.org>
+	s=arc-20240116; t=1762202387; c=relaxed/simple;
+	bh=CKJ2dWX29pHh2c/Go2eprsCctu1UnilG+O/Qxm33fRA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tbt3YV92wN6Dcn9NuRrOzrN7+EZyNeqwosq3sSMd8nrlqd9Oy3i8+yJc3S6ro6sECNzIHmOC4eh5cWByutWCMl2CNlHBP/DO8bAzmm3oM/myOloVIqV2DxKkGXVontpoj5QnWtzZx1yLOkC6Q4jx8TWtcDUFNjUhW5Dgeccx2PQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CtAllsmY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F4FFC4CEF8;
+	Mon,  3 Nov 2025 20:39:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762202387;
+	bh=CKJ2dWX29pHh2c/Go2eprsCctu1UnilG+O/Qxm33fRA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=CtAllsmYimFLNBJQZsNdA6iwh16lghl252i+v5lbfgcn6FKDIdS9GhQVS4gJqKNB8
+	 qDy2MdyUsjeFc9OsQ0GoKeVd3hN9QO3nTedxbR/hI3h4fbOTV2FYk4z/P7fptyNbGb
+	 8GBHV4pVcI026seepRe/KEcZW4zd1r7SQEeKBiYoXkFOJOLQV3cuUoQ7a7hynu7983
+	 t9UZYC8vfIxjx/LsioG57G4SC6y5HSanQ8a88ozOvq1BIEru4NJfxB0SeSH9wjvZoF
+	 e8CykFicE3JwTVpdZaT5GKGIaUR7/7iokB6UmUsRt7a/BK+OKgljUAzSPH+wbUsLi/
+	 zeyVpZN2ZAs0g==
+From: Danilo Krummrich <dakr@kernel.org>
+To: gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	david.m.ertman@intel.com,
+	ira.weiny@intel.com,
+	leon@kernel.org,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	lossin@kernel.org,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu
+Cc: linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH] rust: auxiliary: fix false positive warning for missing a safety comment
+Date: Mon,  3 Nov 2025 21:39:18 +0100
+Message-ID: <20251103203932.2361660-1-dakr@kernel.org>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aQkRKC15ta5Wo-lU@slm.duckdns.org>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 03, 2025 at 10:31:36AM -1000, Tejun Heo wrote:
-> Hello,
-> 
-> On Mon, Nov 03, 2025 at 09:28:43PM +0100, Peter Zijlstra wrote:
-> > > @@ -5222,6 +5222,12 @@ static struct rq *finish_task_switch(str
-> > >  		if (prev->sched_class->task_dead)
-> > >  			prev->sched_class->task_dead(prev);
-> > 
-> > ^^^ can you not use task_dead_scx() ?
-> 
-> Unfortunately not. Because sched class switches are atomic infallible
-> operations, all tasks in the system must be prepped on scheduler attach &
-> fork regardless of their current sched class and thus have to be cleaned up
-> in the same way on detach & exit.
+Some older (yet supported) versions of clippy throw a false positive
+warning for missing a safety comment when the safety comment is on a
+multiline statement.
 
-Ah, I see scx_post_fork() and sched_ext_free^H^H^H^Hdead() effectively
-duplicate the tasklist.
+warning: unsafe block missing a safety comment
+   --> rust/kernel/auxiliary.rs:351:22
+    |
+351 |                 Self(unsafe { NonNull::new_unchecked(adev) }),
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: consider adding a safety comment on the preceding line
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#undocumented_unsafe_blocks
+    = note: requested on the command line with `-W clippy::undocumented-unsafe-blocks`
 
-Oh well.
+warning: 1 warning emitted
+
+Fix this by placing the safety comment right on top of the same line
+introducing the unsafe block.
+
+Fixes: e4e679c8608e ("rust: auxiliary: unregister on parent device unbind")
+Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+---
+ rust/kernel/auxiliary.rs | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/rust/kernel/auxiliary.rs b/rust/kernel/auxiliary.rs
+index cc67fa5ddde3..618eeeec2bd0 100644
+--- a/rust/kernel/auxiliary.rs
++++ b/rust/kernel/auxiliary.rs
+@@ -341,13 +341,12 @@ pub fn new<'a>(
+                 return Err(Error::from_errno(ret));
+             }
+ 
+-            // SAFETY: `adev` is guaranteed to be non-null, since the `KBox` was allocated
+-            // successfully.
+-            //
+             // INVARIANT: The device will remain registered until `auxiliary_device_delete()` is
+             // called, which happens in `Self::drop()`.
+             Ok(Devres::new(
+                 parent,
++                // SAFETY: `adev` is guaranteed to be non-null, since the `KBox` was allocated
++                // successfully.
+                 Self(unsafe { NonNull::new_unchecked(adev) }),
+             ))
+         })
+-- 
+2.51.0
+
 
