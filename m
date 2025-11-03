@@ -1,226 +1,248 @@
-Return-Path: <linux-kernel+bounces-883727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDCE4C2E32B
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 22:53:07 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6CF3C2E331
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 22:53:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6425C4E3C33
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 21:52:59 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1E3734E10D1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 21:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAD612D6E48;
-	Mon,  3 Nov 2025 21:52:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBCA82D5A0C;
+	Mon,  3 Nov 2025 21:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F0F5J5rR"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gsny5fU9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569072C15BA
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 21:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B0F28C871;
+	Mon,  3 Nov 2025 21:53:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762206772; cv=none; b=fKiw8Rjt6YlZQU4Ty8qPyp1trzQHuvoPk92m7GxIZsxHWvGOXJsMZqzVRxSHuG0y8nVzjXxnpMk9hHfR2OCTrgOK0LYQjGBdH3O3m7+wqs8c6RXwLS/CYXO7bY9GK5MKIpUkXZKqJ74MfK5C+ogbts9Tkb+8vvrDvXVRQgrnOrg=
+	t=1762206824; cv=none; b=Uw7D569yCRVkGtOK7HRQpy+CO0hImvNgOFzyVWqAV7Nij7ts0xs5eyMoh1VWFuIfE3lnLaFJT1y18pAozePt/O3LbtteyJDyut1/JCxEnkgqDvn8zAPDJIjXOFeeNxp5/bvsa2/lyyD94SbvWMMRQKf0WL7ydi4xx4eUV7yY970=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762206772; c=relaxed/simple;
-	bh=IlggUArbQTDTduC0g9V/2wl5U3zKtqFiADzR9hIxB3g=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=KLkkd03vJX0O8J76PFazz7+Y+/3ApeffWcSwGZtEOGRn6mTBQe+rMhR49c4Mok5/Mcj1wxx/4feYJqdOxjGWqEcSLYuT2pJRXanpSRTmNcfFsz+onWNwx3GtcRQtDGV35CIvCYBdG7WNpE7lstKP+vY1zbRnDye3pkZ+TaWqQnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--xur.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=F0F5J5rR; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--xur.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-7864cc72141so48689597b3.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 13:52:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762206769; x=1762811569; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lmZROG5/WoXSOPz2A/xpuNPLNUZgkFep1sfBodhmhFU=;
-        b=F0F5J5rRSW2lGjcRNp0s1jnewK4CMuwCXJ+Lo3Lx9pJgwLkgasj3Nymnfi9Mu4+JZM
-         FcU6Z31v/KveIw6GZeOMSGzuTbe4E2LqIL+Izo9dYQVc9R0JsMCQrpafeJDEpY3SSbGI
-         ddppL3q0uCSrNaNX5L5GxAigLs571721aiEn2jEP3OsaA++PmAdncz7mm8egcp5Pq/Kd
-         KPX5vZsXEx6MTO7r3T++JCaWHIQo+qNfz7M+8iE1+NfWSQbQKEqaGpbKLof5UYuvsrcC
-         gqbDcRK5iRiEqeWClY1MmHiaCvpLtBcXp/vEkfPaMZJ0PehqwVi1SCmA7TraeaSjxxI+
-         F79g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762206769; x=1762811569;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lmZROG5/WoXSOPz2A/xpuNPLNUZgkFep1sfBodhmhFU=;
-        b=fwfN4lrRobN3OXQw5Ku0kL2j4io/eIu+eH/lTg7tCljoRov2NwBpZNOgROyBxWUfZI
-         ze8xnQM71LnV6IOc/+fudkWBDNs4bftbYzz+ct326uGaFEsanTTogfsoOWZ6KZvwjv8h
-         QHZQjmb68p4zehpyENAEMVCbVlN26MFWY5208r/Ury2me+hOBA4fRvWNE6NgXV9urPA0
-         F23ahD0iSywVh1dHlWuJ5GlD6rfHFDWE118gUBuoeyqTwfjdLN+5CDfGLyuZWY2ziVzS
-         pvSp4rinvjuTDRqSVC9FquBegyhyxgfFQ/22hEY91Vrf3zwpSpEZ54KN2bopgP21LK92
-         MZ4Q==
-X-Gm-Message-State: AOJu0YyycHECDzb5fJdDa44iqFwKLO4rdGyPAVv6bM2s8K+zGdIsuSZt
-	r0OMHoSnFKYyDbMBGsi1nHmWBG6lLD81hPSZpDJcKLGeGej1Fn/kSplMTPCcvBbJqL5OhA==
-X-Google-Smtp-Source: AGHT+IE6DX3HBwLA27RLX1QPiH1AvOeFq4K5YgoBG0GcqWZ92945ttonTEIiMR+dfZu0kJcJ29YMxhA=
-X-Received: from ybbcf18.prod.google.com ([2002:a05:6902:1812:b0:ebc:882c:90e5])
- (user=xur job=prod-delivery.src-stubby-dispatcher) by 2002:a05:690c:909:b0:785:d173:7d0f
- with SMTP id 00721157ae682-786485575d3mr127972087b3.52.1762206769195; Mon, 03
- Nov 2025 13:52:49 -0800 (PST)
-Date: Mon,  3 Nov 2025 21:52:44 +0000
-In-Reply-To: <20251103215244.2080638-1-xur@google.com>
+	s=arc-20240116; t=1762206824; c=relaxed/simple;
+	bh=MyymXxDlxmAVglrubFk2bhJA+1zPzOalG3vPbTgwEIo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GvOY4D9SmqQn0ni5sJxxfsWVSvXlpKvF58TtpkJsoI0zalgh/pkzWQWOoDh//CQwb2SnEDGnL/Sueb/IZ6KKk7KeohPMPs3wyrJNblfhVdK8z4JH+yyWWLhI/OMGUUnKHLMKUUtZgfpDx8784jNbIHlEpcV8IduGq6GJ8XYX+GA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gsny5fU9; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762206822; x=1793742822;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=MyymXxDlxmAVglrubFk2bhJA+1zPzOalG3vPbTgwEIo=;
+  b=gsny5fU9aBPUV7AXQt3J6wsQ9DvwYxB8LZKz6cVkOt5vTkqr/9FHiGzD
+   d6kjacgqWzm/2T3Cr/dSMNWN1cXcKbdMv8Ff/Ah3A2E5gPLSFvyKniyJk
+   a30aDiKAzBc3ajUGDymU5ejjsgA47/ft/7Jh6AyqIYzOBRY/tGhuM4Ae9
+   oS7HDP45LZn/T1Muov8SBS7pntEj9BKk2siH6qpiSeoKjGz/4neGRcmu/
+   BJrXEJzvFC0WEqIhi39pidELCrG5c4uj6+40R17Zqf53t/T96xiFzXCJZ
+   k6vNXcNXjX7NhEhg+rFqfAeByzOe6j/WPw4+In79s/OVz1/HKzykHv63x
+   g==;
+X-CSE-ConnectionGUID: grjB4QAHRxewZrYOW68hsw==
+X-CSE-MsgGUID: qg+ea1UwShmOsG1ZsUetEA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="51863379"
+X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
+   d="scan'208";a="51863379"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 13:53:42 -0800
+X-CSE-ConnectionGUID: myKvn5TcRU+wmQqUP0BiLQ==
+X-CSE-MsgGUID: jW0lQ96EQaiU1rz3unSZEw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
+   d="scan'208";a="186658732"
+Received: from dwesterg-mobl1.amr.corp.intel.com (HELO [10.125.110.133]) ([10.125.110.133])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 13:53:40 -0800
+Message-ID: <1ef139d0-2a27-40aa-8b08-09d9ec89791d@intel.com>
+Date: Mon, 3 Nov 2025 14:53:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251103215244.2080638-1-xur@google.com>
-X-Mailer: git-send-email 2.51.2.997.g839fc31de9-goog
-Message-ID: <20251103215244.2080638-2-xur@google.com>
-Subject: [PATCH v2 2/2] objtool: dead_end function change for split functions
-From: xur@google.com
-To: Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Rong Xu <xur@google.com>
-Cc: linux-kernel@vger.kernel.org, Sriraman Tallam <tmsriram@google.com>, 
-	Han Shen <shenhan@google.com>, Krzysztof Pszeniczny <kpszeniczny@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 05/14] cxl: Simplify cxl_root_ops allocation and
+ handling
+To: Robert Richter <rrichter@amd.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Davidlohr Bueso <dave@stgolabs.net>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Gregory Price <gourry@gourry.net>,
+ "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+ Terry Bowman <terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
+References: <20251103184804.509762-1-rrichter@amd.com>
+ <20251103184804.509762-6-rrichter@amd.com>
+From: Dave Jiang <dave.jiang@intel.com>
+Content-Language: en-US
+In-Reply-To: <20251103184804.509762-6-rrichter@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Rong Xu <xur@google.com>
 
-Function Splitting can potentially move all return instructions
-into the cold (infrequently executed) section of the function.
-If this happens, the original function might be incorrectly
-flagged as a dead-end function.
 
-The consequence is an incomplete ORC table, which leads to an unwind
-error, and subsequently, a livepatch failure.
+On 11/3/25 11:47 AM, Robert Richter wrote:
+> A root port's callback handlers are collected in struct cxl_root_ops.
+> The structure is dynamically allocated, though it contains only a
+> single pointer in it. This also requires to check two pointers to
+> check for the existance of a callback.
+> 
+> Simplify the allocation, release and handler check by embedding the
+> ops statical in struct cxl_root.
+> 
+> Signed-off-by: Robert Richter <rrichter@amd.com>
 
-This patch adds the support of the dead_end_function check for
-split function.
-
-Signed-off-by: Rong Xu <xur@google.com>
-Reviewed-by: Sriraman Tallam <tmsriram@google.com>
-Reviewed-by: Han Shen <shenhan@google.com>
-Reviewed-by: Krzysztof Pszeniczny <kpszeniczny@google.com>
-
-ChangeLOG:
- v2: Coding style changes suggested by Peter Zijlstra.
----
- tools/objtool/check.c | 91 ++++++++++++++++++++++++++++++++++---------
- 1 file changed, 72 insertions(+), 19 deletions(-)
-
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index c2ee3c3a84a62..4864d54cdd79e 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -237,6 +237,76 @@ static bool is_rust_noreturn(const struct symbol *func)
- 		str_ends_with(func->name, "_fail"));
- }
- 
-+static bool __dead_end_function(struct objtool_file *, struct symbol *, int);
-+
-+/*
-+ * Check if the target of a sibling_call instruction is a dead_end function.
-+ * Note insn must be a sibling call.
-+ */
-+static inline bool __dead_end_sibling_call(struct objtool_file *file,
-+					   struct instruction *insn,
-+					   int recursion) {
-+	struct instruction *dest = insn->jump_dest;
-+
-+	if (!dest) {
-+		/* sibling call to another file */
-+		return false;
-+	}
-+
-+	/* local sibling call */
-+	if (recursion == 5) {
-+		/*
-+		 * Infinite recursion: two functions have
-+		 * sibling calls to each other.  This is a very
-+		 * rare case.  It means they aren't dead ends.
-+		 */
-+		return false;
-+	}
-+
-+	return __dead_end_function(file, insn_func(dest), recursion+1);
-+}
-+
-+/*
-+ * Handling split functions. Mimic the workflow in __dead_end_function.
-+ */
-+static bool __dead_end_split_func(struct objtool_file *file,
-+				  struct symbol *func, int recursion)
-+{
-+	char section_name[256];
-+	struct section *sec;
-+	struct instruction *insn;
-+	int n;
-+
-+	/*
-+	 * Use a fixed-size buffer (max 256) to avoid malloc. If the section
-+	 * length exceeds this limit, we return a conservative value. This is
-+	 * a safe fallback and does not compromise functional correctness.
-+	 */
-+	n = sizeof(section_name);
-+	if (snprintf(section_name, n, ".text.split.%s", func->name) >= n) {
-+		fprintf(stderr, "Error: Function name '%s' too long.\n", func->name);
-+		return false;
-+	}
-+
-+	sec = find_section_by_name(file->elf, section_name);
-+	if (!sec)
-+		return false;
-+
-+	sec_for_each_insn(file, sec, insn) {
-+		if (insn->type == INSN_RETURN)
-+			return false;
-+	}
-+
-+	sec_for_each_insn(file, sec, insn) {
-+		if (is_sibling_call(insn)) {
-+			if (!__dead_end_sibling_call(file, insn, recursion))
-+				return false;
-+		}
-+	}
-+
-+	return true;
-+}
-+
- /*
-  * This checks to see if the given function is a "noreturn" function.
-  *
-@@ -298,33 +368,16 @@ static bool __dead_end_function(struct objtool_file *file, struct symbol *func,
- 	 */
- 	func_for_each_insn(file, func, insn) {
- 		if (is_sibling_call(insn)) {
--			struct instruction *dest = insn->jump_dest;
--
--			if (!dest)
--				/* sibling call to another file */
--				return false;
--
--			/* local sibling call */
--			if (recursion == 5) {
--				/*
--				 * Infinite recursion: two functions have
--				 * sibling calls to each other.  This is a very
--				 * rare case.  It means they aren't dead ends.
--				 */
--				return false;
--			}
--
- 			/*
- 			 * A function can have multiple sibling calls. All of
- 			 * them need to be dead ends for the function to be a
- 			 * dead end too.
- 			 */
--			if (!__dead_end_function(file, insn_func(dest), recursion+1))
-+			if (!__dead_end_sibling_call(file, insn, recursion))
- 				return false;
- 		}
- 	}
--
--	return true;
-+	return __dead_end_split_func(file, func, recursion);
- }
- 
- static bool dead_end_function(struct objtool_file *file, struct symbol *func)
--- 
-2.51.2.997.g839fc31de9-goog
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>> ---
+>  drivers/cxl/acpi.c      |  7 ++-----
+>  drivers/cxl/core/cdat.c |  8 ++++----
+>  drivers/cxl/core/port.c |  9 ++-------
+>  drivers/cxl/cxl.h       | 19 ++++++++++---------
+>  4 files changed, 18 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
+> index bd2e282ca93a..1ab780edf141 100644
+> --- a/drivers/cxl/acpi.c
+> +++ b/drivers/cxl/acpi.c
+> @@ -299,10 +299,6 @@ static int cxl_acpi_qos_class(struct cxl_root *cxl_root,
+>  	return cxl_acpi_evaluate_qtg_dsm(handle, coord, entries, qos_class);
+>  }
+>  
+> -static const struct cxl_root_ops acpi_root_ops = {
+> -	.qos_class = cxl_acpi_qos_class,
+> -};
+> -
+>  static void del_cxl_resource(struct resource *res)
+>  {
+>  	if (!res)
+> @@ -914,9 +910,10 @@ static int cxl_acpi_probe(struct platform_device *pdev)
+>  	cxl_res->end = -1;
+>  	cxl_res->flags = IORESOURCE_MEM;
+>  
+> -	cxl_root = devm_cxl_add_root(host, &acpi_root_ops);
+> +	cxl_root = devm_cxl_add_root(host);
+>  	if (IS_ERR(cxl_root))
+>  		return PTR_ERR(cxl_root);
+> +	cxl_root->ops.qos_class = cxl_acpi_qos_class;
+>  	root_port = &cxl_root->port;
+>  
+>  	rc = bus_for_each_dev(adev->dev.bus, NULL, root_port,
+> diff --git a/drivers/cxl/core/cdat.c b/drivers/cxl/core/cdat.c
+> index c4bd6e8a0cf0..b84a9b52942c 100644
+> --- a/drivers/cxl/core/cdat.c
+> +++ b/drivers/cxl/core/cdat.c
+> @@ -213,7 +213,7 @@ static int cxl_port_perf_data_calculate(struct cxl_port *port,
+>  	if (!cxl_root)
+>  		return -ENODEV;
+>  
+> -	if (!cxl_root->ops || !cxl_root->ops->qos_class)
+> +	if (!cxl_root->ops.qos_class)
+>  		return -EOPNOTSUPP;
+>  
+>  	xa_for_each(dsmas_xa, index, dent) {
+> @@ -221,9 +221,9 @@ static int cxl_port_perf_data_calculate(struct cxl_port *port,
+>  
+>  		cxl_coordinates_combine(dent->coord, dent->cdat_coord, ep_c);
+>  		dent->entries = 1;
+> -		rc = cxl_root->ops->qos_class(cxl_root,
+> -					      &dent->coord[ACCESS_COORDINATE_CPU],
+> -					      1, &qos_class);
+> +		rc = cxl_root->ops.qos_class(cxl_root,
+> +					     &dent->coord[ACCESS_COORDINATE_CPU],
+> +					     1, &qos_class);
+>  		if (rc != 1)
+>  			continue;
+>  
+> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
+> index 8128fd2b5b31..2338d146577c 100644
+> --- a/drivers/cxl/core/port.c
+> +++ b/drivers/cxl/core/port.c
+> @@ -459,7 +459,6 @@ static void cxl_root_decoder_release(struct device *dev)
+>  	if (atomic_read(&cxlrd->region_id) >= 0)
+>  		memregion_free(atomic_read(&cxlrd->region_id));
+>  	__cxl_decoder_release(&cxlrd->cxlsd.cxld);
+> -	kfree(cxlrd->ops);
+>  	kfree(cxlrd);
+>  }
+>  
+> @@ -955,19 +954,15 @@ struct cxl_port *devm_cxl_add_port(struct device *host,
+>  }
+>  EXPORT_SYMBOL_NS_GPL(devm_cxl_add_port, "CXL");
+>  
+> -struct cxl_root *devm_cxl_add_root(struct device *host,
+> -				   const struct cxl_root_ops *ops)
+> +struct cxl_root *devm_cxl_add_root(struct device *host)
+>  {
+> -	struct cxl_root *cxl_root;
+>  	struct cxl_port *port;
+>  
+>  	port = devm_cxl_add_port(host, host, CXL_RESOURCE_NONE, NULL);
+>  	if (IS_ERR(port))
+>  		return ERR_CAST(port);
+>  
+> -	cxl_root = to_cxl_root(port);
+> -	cxl_root->ops = ops;
+> -	return cxl_root;
+> +	return to_cxl_root(port);
+>  }
+>  EXPORT_SYMBOL_NS_GPL(devm_cxl_add_root, "CXL");
+>  
+> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+> index b57cfa4273b9..9a381c827416 100644
+> --- a/drivers/cxl/cxl.h
+> +++ b/drivers/cxl/cxl.h
+> @@ -638,6 +638,14 @@ struct cxl_port {
+>  	resource_size_t component_reg_phys;
+>  };
+>  
+> +struct cxl_root;
+> +
+> +struct cxl_root_ops {
+> +	int (*qos_class)(struct cxl_root *cxl_root,
+> +			 struct access_coordinate *coord, int entries,
+> +			 int *qos_class);
+> +};
+> +
+>  /**
+>   * struct cxl_root - logical collection of root cxl_port items
+>   *
+> @@ -646,7 +654,7 @@ struct cxl_port {
+>   */
+>  struct cxl_root {
+>  	struct cxl_port port;
+> -	const struct cxl_root_ops *ops;
+> +	struct cxl_root_ops ops;
+>  };
+>  
+>  static inline struct cxl_root *
+> @@ -655,12 +663,6 @@ to_cxl_root(const struct cxl_port *port)
+>  	return container_of(port, struct cxl_root, port);
+>  }
+>  
+> -struct cxl_root_ops {
+> -	int (*qos_class)(struct cxl_root *cxl_root,
+> -			 struct access_coordinate *coord, int entries,
+> -			 int *qos_class);
+> -};
+> -
+>  static inline struct cxl_dport *
+>  cxl_find_dport_by_dev(struct cxl_port *port, const struct device *dport_dev)
+>  {
+> @@ -755,8 +757,7 @@ struct cxl_port *devm_cxl_add_port(struct device *host,
+>  				   struct device *uport_dev,
+>  				   resource_size_t component_reg_phys,
+>  				   struct cxl_dport *parent_dport);
+> -struct cxl_root *devm_cxl_add_root(struct device *host,
+> -				   const struct cxl_root_ops *ops);
+> +struct cxl_root *devm_cxl_add_root(struct device *host);
+>  struct cxl_root *find_cxl_root(struct cxl_port *port);
+>  
+>  DEFINE_FREE(put_cxl_root, struct cxl_root *, if (_T) put_device(&_T->port.dev))
 
 
