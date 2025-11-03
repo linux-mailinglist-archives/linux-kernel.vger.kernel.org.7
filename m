@@ -1,109 +1,132 @@
-Return-Path: <linux-kernel+bounces-883521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF2ADC2DADA
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:29:52 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C2E9C2DAE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:30:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D11918947F4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:29:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 30C674E5A48
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A7128C862;
-	Mon,  3 Nov 2025 18:29:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7329F248F4D;
-	Mon,  3 Nov 2025 18:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762194552; cv=none; b=AIb9DcDt70q0kIgb+941hM7cLYqA22GcWKwzFdmxqa+/inKxhdsouEYuyIvhpvMxe/BApEOMTHUBT6e67X+FE1rQ8ijmHpDeS97mCvWEY5kqhbxoAIt+0+2OyuSjaCnXHkqmJZDBVa+6sn8uTovHpnbIbFrkwwrGwR07EIew9Lc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762194552; c=relaxed/simple;
-	bh=PejloQnKGuK3bpH0pnM/kdDvHB2ShDka/sYljxbJywo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AdHucotwj6ylNmn4Pp4IJOI/Lk8iAKtKIw5Wq7z8zqMkeCZBh5tVm7cwHgTKWgCUX8bTmXOlAKovz3u6rs2oOAZ2cPN2n7j+0kJzDGlni6xSUELHOuXvKFiqDPvj+3J6cWSzS896qkq2iH7CIQxTuQVm4/6EeiFIZabBd7R9fcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DD0752A6B;
-	Mon,  3 Nov 2025 10:29:02 -0800 (PST)
-Received: from [10.1.30.16] (unknown [10.1.30.16])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 191F33F694;
-	Mon,  3 Nov 2025 10:29:02 -0800 (PST)
-Message-ID: <285faae4-dab6-4819-847a-889bdf87d5d7@arm.com>
-Date: Mon, 3 Nov 2025 18:29:00 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F2031B13A;
+	Mon,  3 Nov 2025 18:30:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="hTpfaXXU"
+Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5033191BE;
+	Mon,  3 Nov 2025 18:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762194609; cv=pass; b=YMt+h3/rXlU4ecmWvZIohdIubMDMxbDIEWza43mPOlrvk7oM0PNGERIQ3ETfNBGXwYX8L+hDEeVGWlCs4fz9o9GbH76B8Ft29LMbAe7QIzRKzWR3YzRJjbe9Udj9V9A8Doa6fbZYaaiHz7taTcXhrsi3K3q8tckyzHJcbRN5ncw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762194609; c=relaxed/simple;
+	bh=zv0gKD/j2UCGGjns0g8GmhckBkJTGfzoNfR0PPE3+0M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nk0Z0XxOLM7oSBagHmDEEkvXNHs48n7f/KSpuL+1mGP9UNKYbq7PfI2rubQQFSAF4HO7XsKr6FaZblg5OnzrPzafRqS8vMe1R0/FBbw6s05t68N/pMa+sERQ4AljBnhT/B5Ry+WLsPBlfKNQxFp/5QCJ0dkss/bCIazpCUS+W4c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=hTpfaXXU; arc=pass smtp.client-ip=195.140.195.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
+Received: from monolith.lan (unknown [IPv6:2a02:ed04:3581:3::d001])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pav)
+	by meesny.iki.fi (Postfix) with ESMTPSA id 4d0g9b3b1QzyW3;
+	Mon,  3 Nov 2025 20:29:55 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
+	t=1762194596;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gOeRgg8+DiILvbZr6t4qjobZPBFwYKrN2a8qo0BZFMI=;
+	b=hTpfaXXUaxrxQn2BC5tn+iX598cyQ0wJUjO16ada8qKLf/C3yVJH61BlmUzkWZEHW5LQHC
+	mC3h4vv/C4tfCMgxGbIbqvr9A8r/yRzbHTXXp76HXRm0PxCXeFcosjl10ipQruCNquUdll
+	fq+b65NZPuvmZDxvtyc4O1t7Fg1ompg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
+	s=meesny; t=1762194596;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=gOeRgg8+DiILvbZr6t4qjobZPBFwYKrN2a8qo0BZFMI=;
+	b=x+M0tkstS2vWo0ci0rx/mF+chqRqD6KzpsP64udSITlwt98cxaQ4fzHpLf6XaHnsYYTMiL
+	i8XqIhjmVzsC5gItIz2BQH9l8qC3yvRN9wYyPiIIfl/kZ1rkP01itDfWZHXu1QQ0NROk8G
+	/rDEeYuBC+CXsrclfluZ3/yk1KzLChk=
+ARC-Authentication-Results: i=1;
+	ORIGINATING;
+	auth=pass smtp.auth=pav smtp.mailfrom=pav@iki.fi
+ARC-Seal: i=1; s=meesny; d=iki.fi; t=1762194596; a=rsa-sha256; cv=none;
+	b=HCrmmgtX+1UfToW57SgP2UoIXqUmnTWUp5Z5PltNKa4a2srX9uinhw5D7JdH+crKad2lTA
+	hXhKurLS3mdKPwqYDR18N3wbsobszrvQXEf6daTEOP/E9m3YLwzokNQ3S9pBJ7lTTo+rpf
+	TNgHoZxEKAxdPnfyp0tKUx+QMX8FEzk=
+From: Pauli Virtanen <pav@iki.fi>
+To: linux-bluetooth@vger.kernel.org
+Cc: Pauli Virtanen <pav@iki.fi>,
+	marcel@holtmann.org,
+	johan.hedberg@gmail.com,
+	luiz.dentz@gmail.com,
+	linux-kernel@vger.kernel.org,
+	Paul Menzel <pmenzel@molgen.mpg.de>
+Subject: [PATCH v2 1/5] Bluetooth: 6lowpan: reset link-local header on ipv6 recv path
+Date: Mon,  3 Nov 2025 20:29:46 +0200
+Message-ID: <467024bf1ba60184bff304d23de33abb0ed2384f.1762194056.git.pav@iki.fi>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 11/12] x86/xen: use lazy_mmu_state when
- context-switching
-To: "David Hildenbrand (Red Hat)" <david@kernel.org>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- David Hildenbrand <david@redhat.com>, "David S. Miller"
- <davem@davemloft.net>, David Woodhouse <dwmw2@infradead.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
- Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
-References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
- <20251029100909.3381140-12-kevin.brodsky@arm.com>
- <c7c8a233-2103-4b48-b65e-ec81666d20e4@kernel.org>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <c7c8a233-2103-4b48-b65e-ec81666d20e4@kernel.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 03/11/2025 16:15, David Hildenbrand (Red Hat) wrote:
-> On 29.10.25 11:09, Kevin Brodsky wrote:
->> [...]
->>
->> @@ -437,7 +436,7 @@ static void xen_end_context_switch(struct
->> task_struct *next)
->>         xen_mc_flush();
->>       leave_lazy(XEN_LAZY_CPU);
->> -    if (test_and_clear_ti_thread_flag(task_thread_info(next),
->> TIF_LAZY_MMU_UPDATES))
->> +    if (next->lazy_mmu_state.active)
->
-> This is nasty. If in_lazy_mmu_mode() is not sufficient, we will want
-> to have a separate helper that makes it clear what the difference
-> between both variants is.
+Bluetooth 6lowpan.c netdev has header_ops, so it must set link-local
+header for RX skb, otherwise things crash, eg. with AF_PACKET SOCK_RAW
 
-in_lazy_mmu_mode() operates on current, but here we're operating on a
-different task. The difference is more fundamental than just passing a
-task_struct * or not: in_lazy_mmu_mode() is about whether we're
-currently in lazy MMU mode, i.e. not paused and not in interrupt
-context. A task that isn't scheduled is never in lazy MMU mode -
-lazy_mmu_state.active is just the saved state to be restored when
-scheduled again.
+Add missing skb_reset_mac_header() for uncompressed ipv6 RX path.
 
-My point here is that we could have a helper for this use-case, but it
-should not be used in other situations (at least not on current). Maybe
-__task_lazy_mmu_active(task)? I do wonder if accessing lazy_mmu_state
-directly isn't expressing the intention well enough though (checking the
-saved state).
+For the compressed one, it is done in lowpan_header_decompress().
 
-- Kevin
+Log: (BlueZ 6lowpan-tester Client Recv Raw - Success)
+------
+kernel BUG at net/core/skbuff.c:212!
+Call Trace:
+<IRQ>
+...
+packet_rcv (net/packet/af_packet.c:2152)
+...
+<TASK>
+__local_bh_enable_ip (kernel/softirq.c:407)
+netif_rx (net/core/dev.c:5648)
+chan_recv_cb (net/bluetooth/6lowpan.c:294 net/bluetooth/6lowpan.c:359)
+------
+
+Fixes: 18722c247023 ("Bluetooth: Enable 6LoWPAN support for BT LE devices")
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+Signed-off-by: Pauli Virtanen <pav@iki.fi>
+---
+
+Notes:
+    v2:
+    - no changes
+
+ net/bluetooth/6lowpan.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/net/bluetooth/6lowpan.c b/net/bluetooth/6lowpan.c
+index f0c862091bff..f1d29fa4b411 100644
+--- a/net/bluetooth/6lowpan.c
++++ b/net/bluetooth/6lowpan.c
+@@ -289,6 +289,7 @@ static int recv_pkt(struct sk_buff *skb, struct net_device *dev,
+ 		local_skb->pkt_type = PACKET_HOST;
+ 		local_skb->dev = dev;
+ 
++		skb_reset_mac_header(local_skb);
+ 		skb_set_transport_header(local_skb, sizeof(struct ipv6hdr));
+ 
+ 		if (give_skb_to_upper(local_skb, dev) != NET_RX_SUCCESS) {
+-- 
+2.51.1
+
 
