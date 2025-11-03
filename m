@@ -1,106 +1,321 @@
-Return-Path: <linux-kernel+bounces-883657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1EBBC2DFD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 21:07:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7A2EC2E001
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 21:09:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDA413BA772
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 20:07:14 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B54184ED512
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 20:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D2829AAF7;
-	Mon,  3 Nov 2025 20:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86D32BE642;
+	Mon,  3 Nov 2025 20:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Pv+l/PiT"
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="Y5TYvio2"
+Received: from mx0a-00082601.pphosted.com (mx0a-00082601.pphosted.com [67.231.145.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679DB298CCF
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 20:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2358C245005;
+	Mon,  3 Nov 2025 20:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.145.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762200429; cv=none; b=U/C33fJFx3yCoVpkq8Io25amEh8U8WMrU0VICoN3r5AYddRg40xNZVGxASCuWzdktjrcY1peUbkCRu+Wm6tCWDDPtlPSsUjcf0OQK+g4QB2hRgS5CJDr4KjYhCIz+N99iWJ78gwAQOpp0RsvbeDLq17abY81hnNjs8vAkDHjXP4=
+	t=1762200488; cv=none; b=b4AgGXutBmeomyZ9jcgHDoxIV2iHnjKYFhs/p7uyVQymG+N9b6foZZLSQcfSVXVZYkAZd9FCuGnPnozncOglYPsdkUZbimxeTBwcpJuxfA4UM/MTIlJwv3FYkBnBowSnUpPkyvgpFgtDL8zwlJHD84d0UuE3LdoS2cMM8xH74J8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762200429; c=relaxed/simple;
-	bh=GiKgec7ngTikHOHSjKx6BwDm2EjHZWFr9d2CqhfP/bU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qi2Vl7Az98T+DG4bxSsXve3yxSCA1HL/ZDX46BrTDaLHuAzFi22Hp05LAG5pRZLKPezFKaufbiAuufhKfMK1MVKTGS0KKFk7kaFnFt1H5YYF25+e9n9Mn0Jb0LQ1lR7PrRJc8vqMMDrhehUGfiMkevFW61leDfIuk6RL8kv+q20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Pv+l/PiT; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-92aee734585so206391139f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 12:07:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1762200426; x=1762805226; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aAEX0koCAPFxvjYuXW2W3bjaZICrr2wnGcmP7E7k/4s=;
-        b=Pv+l/PiTGUgNeBNreiSgWtwrhMmv1fFl5o8MtdFj1py1JGjm5DjFtIFCE/da1AQrCN
-         2CKlumMP5ofoqP8Qay7Q0MCQtrqKXNRRDjQ8wdo/cokvb06ecQdg/394/Dtn4Mc6rKe0
-         E8E7d+Nbf1W4wcK8ZPSsUsI+HM+ZywO2TuwxwDxJWxCsEPznWe6gKoQU9wsbrkgXIclO
-         clgY6DtvGcTUv9CZeNk9hV5QGefwj8BLLBy9smG7kt9sCz6Dg5KsDqy2RboFLzEjB4ZX
-         AX4PF9nywL9iIB7eNG4sWwNtgY8sC2f70/kBvHOP+ULS0QsDzidfqAeXmw0AhG2c7RnO
-         WSdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762200426; x=1762805226;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aAEX0koCAPFxvjYuXW2W3bjaZICrr2wnGcmP7E7k/4s=;
-        b=uO+qRfSseLTjPWmjnWoQZF6GSlikfuxZ20sFL6exvFOiQJcl1f+PlyR5yiRE9ECexp
-         wG5OocdmX1zW9PZ6R/a78Sc3Totu3PBFaX0VZfkVV9rKDIBW+7JvRJUsCdig4I2KwiMg
-         OV8Zr//SI4YkCHovOVcwrl89qqyc5TNLx6MHCTHQxCOVJo5uDHH+pnTWTYZ8IU8iKhhP
-         7fBbOk/rbHs9IxS482QrH7dPmKxRIOBqstkQCcHVHge5TsCCkAFzNprlyw0BnaQoBgsV
-         GJ8iEe7oknwPp9EyS3RiGkb2qWSiJVNNqTzfqwqPLHIf367Pi1/qdcZgazx6BNjzF/ME
-         xwCw==
-X-Forwarded-Encrypted: i=1; AJvYcCXPkBuPtdGws/1jXqHqWOPX5B9SDysqnzq4x/fMJHilMLMLBt/FbFN6leQXU8/RA50Gs1GnqsY6VSLfVLw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxs/Uv4THs6fyCRLDAWIP1IyKVMOAKcFj2SKuurwryl+vlhCj22
-	k4YwmdTH759Rc2i+MvR03I+7HnJ+5wOd+UVxMSsp8VvwKV5kFtHvDdbnxKuU23fH/v9BxH7gOvN
-	Kuqwy
-X-Gm-Gg: ASbGncugZQYvztUrKD9qfxL2EwMwihVGM2fCYsLy47UYtHtZ79vceqQtk9o7GxauqDp
-	M/w18IkLpGQLMzAIqhZKIHqdap8smqrR8yEemewY0EdCIdRIg/AWq7EwraQDOqGx2kGA2ZwuUoG
-	LUsIf8pld6SLq7/HSTTQJ+XhYANS/NwubQrKziv62zI5Ql1S5jQR6ZFYF6h1KA87mkGo73dgl1+
-	dos9b+Lfuz0vpTL1acDVrXq8z5O+yWxdJz0scciF5Ij6k1RWKC2YfbCwVl33iMQtfhZi7hmX10A
-	i2/QUNbwUD0QK/1dFYsmJfraxx9H691wGbG4qgPiYm3AzH1reYGLd/SWzLMLFrzliGOcK3I8Zfb
-	d0gIo0w4ZYuQrIxrY6zD0BOLcec83jpJpGIbLZ+CvlnCpfD09e6mBHKYlzFPfj+BPUhqKr9pO
-X-Google-Smtp-Source: AGHT+IGH8toKxw75e9lks1D1eLczCWJzuOJzKorNF7XgrQzKNt3gJl8ETsv0rH+NVLYkwtk59SitZA==
-X-Received: by 2002:a92:ca49:0:b0:433:2df8:5dcb with SMTP id e9e14a558f8ab-4332df85f7fmr61837955ab.17.1762200426405;
-        Mon, 03 Nov 2025 12:07:06 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-43335a91913sm5061305ab.3.2025.11.03.12.07.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Nov 2025 12:07:05 -0800 (PST)
-Message-ID: <2352e59f-0555-4318-820f-4d075acdda07@kernel.dk>
-Date: Mon, 3 Nov 2025 13:07:05 -0700
+	s=arc-20240116; t=1762200488; c=relaxed/simple;
+	bh=bOZFIe2RQWsHY3f7hDWHXpv++tj6j9WWgZ4tTtaKlRA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S5pFkc59spoeIdRnn37DrwArmI1at8FtCNXp4s58ISK1PSC5ZJCL1D1dzY8aq223C9FIoMBaM42qZw1YWd6i6z4buGcyUUZJSVbFkMIYTJG8yy0a+wmiWiWPtYNTQU+Js+2WH8PjstPHCpNNUs7G5aygnc8HBO4SAUnWQsVLneA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=Y5TYvio2; arc=none smtp.client-ip=67.231.145.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A3HSUl13368916;
+	Mon, 3 Nov 2025 12:07:21 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=s2048-2025-q2; bh=n9Hp+W96E82ffeM9TGY/
+	T64q12eMoTlbRaWkBHrOVhQ=; b=Y5TYvio2wy42a6OuNV1jizo/aQU5rL6HohWI
+	OdRswHnuwgKDGg4PRZorsSwOwSWNepxL3lv6e92F0ZZiEQOO8ZMDqwElBWya7VYx
+	yHZJ1Bg/rdGSvGKN1xCect7aLk4BJP3dFq0W4bRU4thNy47l/7qf6QCLDdrJWuYT
+	ttchffm5fJ8azlwk2GD5NtPH33FSvCNhfhPKLPVh0Qs6M/RaBFY1LsIhyFIHXKOv
+	PPwMbL4I1eFF62/08bb33eCUiaTLoRka7NFBHCCzuXtuZDc3HhRZW8A7Jd4FsCBj
+	aU36aw88WsqWA0jpB+Nf9LOBQRQOfcCvornGVmHGoYNGSzpsQw==
+Received: from mail.thefacebook.com ([163.114.134.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 4a6yfe2849-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Mon, 03 Nov 2025 12:07:21 -0800 (PST)
+Received: from devgpu015.cco6.facebook.com (2620:10d:c085:208::7cb7) by
+ mail.thefacebook.com (2620:10d:c08b:78::c78f) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.20; Mon, 3 Nov 2025 20:07:19 +0000
+Date: Mon, 3 Nov 2025 12:07:12 -0800
+From: Alex Mastro <amastro@fb.com>
+To: Leon Romanovsky <leon@kernel.org>
+CC: Bjorn Helgaas <bhelgaas@google.com>,
+        Logan Gunthorpe
+	<logang@deltatee.com>, Jens Axboe <axboe@kernel.dk>,
+        Robin Murphy
+	<robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+        Will Deacon
+	<will@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Jason
+ Gunthorpe <jgg@ziepe.ca>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan
+ Corbet <corbet@lwn.net>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Christian
+ =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Alex Williamson
+	<alex.williamson@redhat.com>,
+        Kees Cook <kees@kernel.org>,
+        "Gustavo A. R.
+ Silva" <gustavoars@kernel.org>,
+        Ankit Agrawal <ankita@nvidia.com>, Yishai
+ Hadas <yishaih@nvidia.com>,
+        Shameer Kolothum <skolothumtho@nvidia.com>,
+        Kevin
+ Tian <kevin.tian@intel.com>,
+        Krishnakant Jaju <kjaju@nvidia.com>, Matt Ochs
+	<mochs@nvidia.com>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-block@vger.kernel.org>, <iommu@lists.linux.dev>,
+        <linux-mm@kvack.org>, <linux-doc@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <linaro-mm-sig@lists.linaro.org>, <kvm@vger.kernel.org>,
+        <linux-hardening@vger.kernel.org>,
+        Vivek Kasireddy
+	<vivek.kasireddy@intel.com>
+Subject: Re: [PATCH v6 00/11] vfio/pci: Allow MMIO regions to be exported
+ through dma-buf
+Message-ID: <aQkLcAxEn4qmF3c4@devgpu015.cco6.facebook.com>
+References: <20251102-dmabuf-vfio-v6-0-d773cff0db9f@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] io_uring/memmap: return bool from io_mem_alloc_compound()
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20251015172555.2797238-1-csander@purestorage.com>
- <CADUfDZq807sZ5ZMeX3adbV70Pjjbn299kTwyADhEiJqcxMO6xA@mail.gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CADUfDZq807sZ5ZMeX3adbV70Pjjbn299kTwyADhEiJqcxMO6xA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20251102-dmabuf-vfio-v6-0-d773cff0db9f@nvidia.com>
+X-Authority-Analysis: v=2.4 cv=G9QR0tk5 c=1 sm=1 tr=0 ts=69090b79 cx=c_pps
+ a=CB4LiSf2rd0gKozIdrpkBw==:117 a=CB4LiSf2rd0gKozIdrpkBw==:17
+ a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=FOH2dFAWAAAA:8 a=b_Saz7MSmFOFN_6dvx4A:9 a=CjuIK1q_8ugA:10
+ a=DXsff8QfwkrTrK3sU8N1:22 a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=bWyr8ysk75zN3GCy5bjg:22
+X-Proofpoint-ORIG-GUID: F1nk6hmysPbKhKVQa_mqqIFKqOIt2lHM
+X-Proofpoint-GUID: F1nk6hmysPbKhKVQa_mqqIFKqOIt2lHM
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAzMDE3OSBTYWx0ZWRfX6SW28Xvycs0O
+ YOKukhqpHcTfkYNeGRk02UVQnYAieNl0FPP5nyOoQsMjQfkPKcUonaa3EWc/tqdoAAQyhyOyp0d
+ /JHwcN3QLYQ/+EZJhZ2InHvQ5+q0ThEzTdyBEGsfGK6Opxy38U0CpsznUzKLwU/5Eqh1l493VDE
+ PyTsfwJm0au//MmeaXH4NXKBaJs6mnL334sMoj6rtJQYWDX5DKMNRtgxvcMAQid95nsgniy4DYE
+ +umaq/vNBvV3b0K6HXe0s/cT+YOR8m2DkpctVf5zXXorytYnhbn1vV3nGRWxaQ24cLeCzQnNSqB
+ UmVF2ZqiQwbE9Yb71RMC4EJcfgbsbmodipz9oljstvRLhQ7lzspcSOdC0w5Z4QcLNUWGre4urgV
+ ZaziQQl4T7tsVkAKgmifB2A8A6gzCQ==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-03_04,2025-11-03_03,2025-10-01_01
 
-On 11/3/25 1:03 PM, Caleb Sander Mateos wrote:
-> Hi Jens,
-> Any comments on this minor cleanup?
+On Sun, Nov 02, 2025 at 10:00:48AM +0200, Leon Romanovsky wrote:
+> Changelog:
+> v6:
+>  * Fixed wrong error check from pcim_p2pdma_init().
+>  * Documented pcim_p2pdma_provider() function.
+>  * Improved commit messages.
+>  * Added VFIO DMA-BUF selftest.
+>  * Added __counted_by(nr_ranges) annotation to struct vfio_device_feature_dma_buf.
+>  * Fixed error unwind when dma_buf_fd() fails.
+>  * Document latest changes to p2pmem.
+>  * Removed EXPORT_SYMBOL_GPL from pci_p2pdma_map_type.
+>  * Moved DMA mapping logic to DMA-BUF.
+>  * Removed types patch to avoid dependencies between subsystems.
+>  * Moved vfio_pci_dma_buf_move() in err_undo block.
+>  * Added nvgrace patch.
 
-Looks fine, arrived while I was on PTO and apparently got lost in
-the noise... Applied now.
+Thanks Leon. Attaching a toy program which sanity tests the dma-buf export UAPI
+by feeding the allocated dma-buf into an dma-buf importer (libibverbs + CX-7).
+ 
+Tested-by: Alex Mastro <amastro@fb.com>
 
--- 
-Jens Axboe
+$ cc -Og -Wall -Wextra $(pkg-config --cflags --libs libibverbs) test_dmabuf.c -o test_dmabuf
+$ ./test_dmabuf 0000:05:00.0 3 4 0 0x1000
+opening 0000:05:00.0 via /dev/vfio/56
+allocating dma_buf bar_idx=4, bar_offset=0x0, size=0x1000
+allocated dma_buf fd=6
+discovered 4 ibv devices: mlx5_0 mlx5_1 mlx5_2 mlx5_3
+opened ibv device 3: mlx5_3
+registered dma_buf
+unregistered dma_buf
+closed dma_buf fd
 
+---
+#include <fcntl.h>
+#include <infiniband/verbs.h>
+#include <libgen.h>
+#include <linux/limits.h>
+#include <linux/types.h>
+#include <linux/vfio.h>
+#include <stdbool.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/ioctl.h>
+#include <unistd.h>
+
+#define ensure(cond)                                                             \
+	do {                                                                     \
+		if (!(cond)) {                                                   \
+			fprintf(stderr,                                          \
+				"%s:%d Condition failed: '%s' (errno=%d: %s)\n", \
+				__FILE__, __LINE__, #cond, errno,                \
+				strerror(errno));                                \
+			exit(EXIT_FAILURE);                                      \
+		}                                                                \
+	} while (0)
+
+#ifndef VFIO_DEVICE_FEATURE_DMA_BUF
+#define VFIO_DEVICE_FEATURE_DMA_BUF 11
+
+struct vfio_region_dma_range {
+	__u64 offset;
+	__u64 length;
+};
+
+struct vfio_device_feature_dma_buf {
+	__u32 region_index;
+	__u32 open_flags;
+	__u32 flags;
+	__u32 nr_ranges;
+	struct vfio_region_dma_range dma_ranges[];
+};
+#endif
+
+static uint32_t group_for_bdf(const char *bdf)
+{
+	char path[PATH_MAX];
+	char link[PATH_MAX];
+	int ret;
+
+	snprintf(path, sizeof(path), "/sys/bus/pci/devices/%s/iommu_group",
+		 bdf);
+	ret = readlink(path, link, sizeof(link));
+	ensure(ret > 0);
+
+	const char *filename = basename(link);
+	ensure(filename);
+
+	return strtoul(filename, NULL, 0);
+}
+
+int main(int argc, char **argv)
+{
+	int ret;
+
+	if (argc != 6) {
+		printf("usage: %s <vfio_bdf> <ibv_device_idx> <bar_idx> <bar_offset> <size>\n",
+		       argv[0]);
+		printf("example: %s 0000:05:00.0 3 2 0x20000 0x1000\n",
+		       argv[0]);
+		return 1;
+	}
+
+	const char *bdf = argv[1];
+	uint32_t ibv_idx = strtoul(argv[2], NULL, 0);
+	uint32_t bar_idx = strtoul(argv[3], NULL, 0);
+	uint64_t bar_offs = strtoull(argv[4], NULL, 0);
+	uint64_t dmabuf_len = strtoull(argv[5], NULL, 0);
+
+	uint32_t group_num = group_for_bdf(bdf);
+	char group_path[PATH_MAX];
+	snprintf(group_path, sizeof(group_path), "/dev/vfio/%u", group_num);
+
+	int container_fd = open("/dev/vfio/vfio", O_RDWR);
+	ensure(container_fd >= 0);
+
+	printf("opening %s via %s\n", bdf, group_path);
+	int group_fd = open(group_path, O_RDWR);
+	ensure(group_fd >= 0);
+
+	ret = ioctl(group_fd, VFIO_GROUP_SET_CONTAINER, &container_fd);
+	ensure(!ret);
+
+	ret = ioctl(container_fd, VFIO_SET_IOMMU, VFIO_TYPE1v2_IOMMU);
+	ensure(!ret);
+
+	int device_fd = ioctl(group_fd, VFIO_GROUP_GET_DEVICE_FD, bdf);
+	ensure(device_fd >= 0);
+
+	uint8_t buf[sizeof(struct vfio_device_feature) +
+		    sizeof(struct vfio_device_feature_dma_buf) +
+		    sizeof(struct vfio_region_dma_range)]
+		__attribute__((aligned(32)));
+
+	struct vfio_device_feature *ft = (struct vfio_device_feature *)buf;
+	*ft = (struct vfio_device_feature){
+		.argsz = sizeof(buf),
+		.flags = VFIO_DEVICE_FEATURE_GET | VFIO_DEVICE_FEATURE_DMA_BUF,
+	};
+
+	struct vfio_device_feature_dma_buf *ft_dma_buf =
+		(struct vfio_device_feature_dma_buf *)ft->data;
+	*ft_dma_buf = (struct vfio_device_feature_dma_buf){
+		.region_index = bar_idx,
+		.open_flags = O_RDWR,
+		.nr_ranges = 1,
+	};
+
+	ft_dma_buf->dma_ranges[0] = (struct vfio_region_dma_range){
+		.length = dmabuf_len,
+		.offset = bar_offs,
+	};
+
+	printf("allocating dma_buf bar_idx=%u, bar_offset=0x%lx, size=0x%lx\n",
+	       bar_idx, bar_offs, dmabuf_len);
+	int dmabuf_fd = ioctl(device_fd, VFIO_DEVICE_FEATURE, buf);
+	ensure(dmabuf_fd >= 0);
+	printf("allocated dma_buf fd=%d\n", dmabuf_fd);
+
+	int num;
+	struct ibv_device **devs = ibv_get_device_list(&num);
+	ensure(devs && num > 0);
+	printf("discovered %d ibv devices:", num);
+	for (int i = 0; i < num; i++) {
+		printf(" %s", ibv_get_device_name(devs[i]));
+	}
+	printf("\n");
+	ensure(ibv_idx < (uint32_t)num);
+
+	struct ibv_context *ctx = ibv_open_device(devs[ibv_idx]);
+	ensure(ctx);
+	printf("opened ibv device %d: %s\n", ibv_idx,
+	       ibv_get_device_name(devs[ibv_idx]));
+
+	struct ibv_pd *pd = ibv_alloc_pd(ctx);
+	ensure(pd);
+
+	uint64_t offset = 0;
+	uint64_t iova = 0;
+	int access = IBV_ACCESS_LOCAL_WRITE | IBV_ACCESS_REMOTE_READ |
+		     IBV_ACCESS_REMOTE_WRITE;
+
+	struct ibv_mr *mr = ibv_reg_dmabuf_mr(pd, offset, dmabuf_len, iova,
+					      dmabuf_fd, access);
+	ensure(mr);
+	printf("registered dma_buf\n");
+
+	ret = ibv_dereg_mr(mr);
+	ensure(!ret);
+	printf("unregistered dma_buf\n");
+
+	ret = close(dmabuf_fd);
+	ensure(!ret);
+	printf("closed dma_buf fd\n");
+
+	return 0;
+}
+---
 
