@@ -1,164 +1,163 @@
-Return-Path: <linux-kernel+bounces-882734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D85E1C2B479
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:19:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE951C2B480
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:19:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 051F23B0E40
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:19:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84A6918937C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:20:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8B1301489;
-	Mon,  3 Nov 2025 11:19:00 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15E83019AF;
+	Mon,  3 Nov 2025 11:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gWmjxYjN"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344F22E1EE7;
-	Mon,  3 Nov 2025 11:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B721E30171C;
+	Mon,  3 Nov 2025 11:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762168739; cv=none; b=YLfLUVMYNS0vVfHRDmHrd5exd9kJiHhxR0dFESDDZqfdhUDVePNL3BrcLaz8UnWVn3hKRkrbHgRymtGGjVxs1YimMAtf3QA8a71a5DxGOtDFUFbZVS3UDsLsX75o+EFKgFqiSaABRZL7SMUtiXUS4DLr0SCWnuo2Y2OFNDWj6WE=
+	t=1762168768; cv=none; b=bb3vDnnBfIKMaHPOyvDW56ooqMuHzyzCyBqRNVpWRPs/KN5OMXdFI3U1QfVAPsi2b9IU4VrlZ2RORpZwk8RxC8LtpeiHk1wLR9JkCQjYgaTRFAETLFfQ2gC73rfsSVYmi+SDwbTPpuVKlUKoKQdcJ4sIX5aJZM3P/3Med3LO2+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762168739; c=relaxed/simple;
-	bh=taFBnJJqqaEpZM3jo5utaLQzQlREaiFFTxcTAHk/CIA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=qo/4XeyRTkYn7QxAWhyKvKXMF7O9Uts17zAce6cnfUZ9Gfm1aT3whJ6tUIBlFEkKNqSfaSY7IsGY3hCfE+ZKKkxYJEOlgBNc20W/SmMBIHAikOBgWWRgn1f3Hr4shPO36Dmkf4kbvbaudW9EnzDBvHPZ+nZGs5iSOYGUmH1l2+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d0Tc11XnHzYQttL;
-	Mon,  3 Nov 2025 19:18:41 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 7AB231A0C73;
-	Mon,  3 Nov 2025 19:18:54 +0800 (CST)
-Received: from [10.67.111.176] (unknown [10.67.111.176])
-	by APP3 (Coremail) with SMTP id _Ch0CgDHWt+djwhp8cQMCg--.64504S2;
-	Mon, 03 Nov 2025 19:18:54 +0800 (CST)
-Message-ID: <31b58b15-0b46-4eba-bd50-afc99203695a@huaweicloud.com>
-Date: Mon, 3 Nov 2025 19:18:52 +0800
+	s=arc-20240116; t=1762168768; c=relaxed/simple;
+	bh=yukxgMAsSBJ5Nf0ZrBGRjjTWREkkghe10V+XHbWxlL8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TfLUsBc/RIUFjP7WroR9xOKmUF95O90uhepcS1EzXaTK20zO7ye9sefD5XRc0zrigvlek0QuCI53a27ldxfcmK/0NvyhQ7F+SXg61hB9wUmJF3AiVTNNBbQVb+HO5SpkqYF4nfWidkWZMJzk9JNiV9f3Cudu85MMhsGDCj0Erb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gWmjxYjN; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A2LRFH5020916;
+	Mon, 3 Nov 2025 11:19:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=lwPkE0AArYlkJRtiXQlbKSo3l6vWp3
+	//7R6WjErqhLM=; b=gWmjxYjNrELCHnyDBdHl8ooyl2gsuAk0lKqQP7abBkO9fs
+	snMmM3+gcMQwRy3AdrTNGnXjWfOjofULupQM7hoHDEtMGPfsCbjJTC3bqUPACokD
+	wyU+g2D+sfdkxMce+tLU7Ay7cxNKSmkw5VImEGIx9jteh3wp4Pd892WcVC0esV/o
+	Ll3AR+mwy4qT0xhkz3TSj8E0yrvDnQGIHCfBigJXVWRX6AvhYYPHeXVgwyqQ3csE
+	q4EW727EwZBA8WOLWukhleXZLoWp599rs7m0v3WPKUmMkKBE5DKVl5Paak4bieK2
+	goYT0fT89jfzowAOFAogB3ZxJkR6vE2ymTxhQV8g==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59q8p9b8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Nov 2025 11:19:22 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A3AGPiY025556;
+	Mon, 3 Nov 2025 11:19:21 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a5vhsdfxd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Nov 2025 11:19:21 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A3BJHnM11600152
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 3 Nov 2025 11:19:17 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5B6742004B;
+	Mon,  3 Nov 2025 11:19:17 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C0CBB20049;
+	Mon,  3 Nov 2025 11:19:16 +0000 (GMT)
+Received: from osiris (unknown [9.111.61.175])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon,  3 Nov 2025 11:19:16 +0000 (GMT)
+Date: Mon, 3 Nov 2025 12:19:15 +0100
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Duoming Zhou <duoming@zju.edu.cn>, Jan Hoeppner <hoeppner@linux.ibm.com>
+Cc: linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        gor@linux.ibm.com, agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+        svens@linux.ibm.com, mingo@kernel.org, tglx@linutronix.de
+Subject: Re: [PATCH] s390/tape: fix use-after-free bugs caused by tape_dnr
+ delayed work
+Message-ID: <20251103111915.18191A14-hca@linux.ibm.com>
+References: <20251103060544.22720-1-duoming@zju.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 00/22] cpuset: rework local partition logic
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: longman@redhat.com, tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- lujialin4@huawei.com, chenridong@huawei.com
-References: <20251025064844.495525-1-chenridong@huaweicloud.com>
-Content-Language: en-US
-In-Reply-To: <20251025064844.495525-1-chenridong@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_Ch0CgDHWt+djwhp8cQMCg--.64504S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxuF1kWFWruFWDKr15tFW3GFg_yoW5tw4kpF
-	98GaySyryUGry5C3srJFs7Aw4rWwsrJFyUtwnxu348Xr17Aw1vvayIy395Za47XryDZryU
-	Z3ZrWr4xX3W7C3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
-	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
-	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
-	14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU8YYLPUUUUU==
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251103060544.22720-1-duoming@zju.edu.cn>
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=StmdKfO0 c=1 sm=1 tr=0 ts=69088fba cx=c_pps
+ a=bLidbwmWQ0KltjZqbj+ezA==:117 a=bLidbwmWQ0KltjZqbj+ezA==:17
+ a=kj9zAlcOel0A:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=pBTJcwekMGGDtO02zGIA:9 a=CjuIK1q_8ugA:10 a=cPQSjfK2_nFv0Q5t_7PE:22
+X-Proofpoint-ORIG-GUID: 3byK_aW4tFw9iyp-MNLo4HpiuD2-nlTX
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAxOCBTYWx0ZWRfX0Nqianh8vm6P
+ JvxIhmJeOVTzihQvYUcF56bO5l29G2qtZ31gzHExTor5jpDzgois9J11zAgW7FasMhxMAOe589A
+ v3cOdX+ULeDkKWfoJVPCfghtgRvEnaUeY6rjVc97kndVsYWaQAo1WpxOazMjFNIAq9A4+q5znoY
+ T1eOsGhADtzPgKED/wrO3Z9A6cOTEw4AaaU4lJGZo9j41ywYUTuEdKML2LVTkz+EowB/SZFdsp7
+ hDe99SS4k+9okuYCzZmrg5kQuw1Jg2L6DuH9it35w9vatTpg14xtfXD+Uzmt3aj6gK0+MFlKDtE
+ 7wcgkNaMpqJfrZbDyiGVt0qeDnZv7xT72rUvKc0p+aweaxJKhvVkJ6QNiz3MyGOEDilP02JPNyT
+ LMmskc6q60tewCJ1iylwKgEuZ4cCEg==
+X-Proofpoint-GUID: 3byK_aW4tFw9iyp-MNLo4HpiuD2-nlTX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-03_01,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 suspectscore=0 phishscore=0 impostorscore=0 priorityscore=1501
+ malwarescore=0 clxscore=1011 adultscore=0 bulkscore=0 lowpriorityscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010018
 
+[full quote below - adding Jan]
 
-
-On 2025/10/25 14:48, Chen Ridong wrote:
-> From: Chen Ridong <chenridong@huawei.com>
+On Mon, Nov 03, 2025 at 02:05:44PM +0800, Duoming Zhou wrote:
+> The delayed work tape_dnr is initialized in tape_alloc_device(), which
+> is called from tape_generic_probe(), and is scheduled in the following
+> scenarios:
 > 
-> The current local partition implementation consolidates all operations
-> (enable, disable, invalidate, and update) within the large
-> update_parent_effective_cpumask() function, which exceeds 300 lines.
-> This monolithic approach has become increasingly difficult to understand
-> and maintain. Additionally, partition-related fields are updated in
-> multiple locations, leading to redundant code and potential corner case
-> oversights.
+> 1. Starting an I/O operation fails with -EBUSY in __tape_start_io().
+> 2. Canceling an I/O operation fails with -EBUSY in __tape_cancel_io().
+> 3. A deferred error condition is detected in __tape_do_irq().
 > 
-> This patch series refactors the local partition logic by separating
-> operations into dedicated functions: local_partition_enable(),
-> local_partition_disable(), and local_partition_update(), creating
-> symmetry with the existing remote partition infrastructure.
+> When the tape device is detached via tape_generic_remove(), the
+> tape_device structure might be deallocated after the final call to
+> tape_put_device(). However, if the delayed work tape_dnr is still
+> pending or executing at the time of detachment, it could lead to
+> use-after-free bugs when the work function tape_delayed_next_request()
+> accesses the already freed tape_device memory.
 > 
-> The series is organized as follows:
+> The race condition can occur as follows:
 > 
-> 1. Fix a bug that isolcpus stat in root partition.
+> CPU 0(detach thread)      | CPU 1 (delayed work)
+> tape_generic_remove()     |
+>   tape_put_device(device) | tape_delayed_next_request
+>                           |   device = container_of(...) // USE
+>                           |   device-> // USE
 > 
-> 2. Infrastructure Preparation (Patches 2-3):
->    - Code cleanup and preparation for the refactoring work
+> Add disable_delayed_work_sync() in tape_generic_remove() to guarantee
+> proper cancellation of the delayed work item before tape_device is
+> deallocated.
 > 
-> 3. Introduce partition operation helpers (Patches 4-6):
->    - Intoduce out partition_enable(), partition_disable(), and
->      partition_update() functions.
+> This bug is identified by static analysis.
 > 
-> 4. Use new helpers for remote partition (Patches 7-9)
-> 
-> 5. Local Partition Implementation (Patches 10-13):
->    - Separate update_parent_effective_cpumask() into dedicated functions:
->      * local_partition_enable()
->      * local_partition_disable()
->      * local_partition_invalidate()
->      * local_partition_update()
-> 
-> 6. Optimization and Cleanup (Patches 14-22):
->    - Remove redundant partition-related operations
->    - Additional optimizations based on the new architecture
-> 
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
 > ---
+>  drivers/s390/char/tape_core.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Changes in v2:
-> - Added bugfix for root partition isolcpus at series start.
-> - Completed helper function implementations when first introduced.
-> - Split larger patches into smaller, more reviewable units.
-> - Incorporated feedback from Longman.
-> 
-> Chen Ridong (22):
->   cpuset: fix isolcpus stay in root when isolated partition changes to
->     root
->   cpuset: add early empty cpumask check in partition_xcpus_add/del
->   cpuset: generalize validate_partition() interface
->   cpuset: introduce partition_enable()
->   cpuset: introduce partition_disable()
->   cpuset: introduce partition_update()
->   cpuset: use partition_enable() for remote partition enablement
->   cpuset: use partition_disable() for remote partition disablement
->   cpuset: use partition_update() for remote partition update
->   cpuset: introduce local_partition_enable()
->   cpuset: introduce local_partition_disable()
->   cpuset: introduce local_partition_invalidate()
->   cpuset: introduce local_partition_update()
->   cpuset: remove update_parent_effective_cpumask
->   cpuset: remove redundant partition field updates
->   cpuset: simplify partition update logic for hotplug tasks
->   cpuset: unify local partition disable and invalidate
->   cpuset: use partition_disable for compute_partition_effective_cpumask
->   cpuset: use validate_local_partition in local_partition_enable
->   cpuset: introduce validate_remote_partition
->   cpuset: simplify update_prstate() function
->   cpuset: remove prs_err clear when notify_partition_change
-> 
->  kernel/cgroup/cpuset.c | 1000 +++++++++++++++++++---------------------
->  1 file changed, 463 insertions(+), 537 deletions(-)
-> 
+> diff --git a/drivers/s390/char/tape_core.c b/drivers/s390/char/tape_core.c
+> index 6ec812280221..722dc4737a87 100644
+> --- a/drivers/s390/char/tape_core.c
+> +++ b/drivers/s390/char/tape_core.c
+> @@ -625,6 +625,7 @@ tape_generic_remove(struct ccw_device *cdev)
+>  	}
+>  	DBF_LH(3, "(%08x): tape_generic_remove(%p)\n", device->cdev_id, cdev);
+>  
+> +	disable_delayed_work_sync(&device->tape_dnr);
+>  	spin_lock_irq(get_ccwdev_lock(device->cdev));
+>  	switch (device->tape_state) {
+>  		case TS_INIT:
 
-Hi Longman,
-
-I'd appreciate it if you could have a look at this series when you have a moment.
-
--- 
-Best regards,
-Ridong
-
+Jan, could you please have a look at this?
 
