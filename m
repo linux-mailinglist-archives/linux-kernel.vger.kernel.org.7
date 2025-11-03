@@ -1,151 +1,123 @@
-Return-Path: <linux-kernel+bounces-882197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B312C29DBF
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 03:29:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AEB1C29DC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 03:29:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20A60188AE0E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 02:29:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ED4B04E28AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 02:29:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 453272820AC;
-	Mon,  3 Nov 2025 02:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25020283140;
+	Mon,  3 Nov 2025 02:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dax810Rp"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="KJXbNtmb"
+Received: from canpmsgout03.his.huawei.com (canpmsgout03.his.huawei.com [113.46.200.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0110F158DA3
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 02:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A732158DA3;
+	Mon,  3 Nov 2025 02:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762136913; cv=none; b=qdl2CuBr/EM3aBWwrU8xZRJWvaYHhf87VT1UIgEGZVkTyYyyiZz15HT35xpuandWcR90BzzR/CKr34uCCnBixItl+14BWXSamlsfzRGwQFwAtER+dbUhCacgjQ5amo0ATSMTc0KcANGXRrSG/7cQQ311+XqHdimGcGzGvPZEAm0=
+	t=1762136960; cv=none; b=A9GUmP5cG3lk2PCJCvLGhlEGZ7OlWL4DPS8AnY+BWrnlrwIbOjhiGbolON9gmJEMkwRBl0mAKAHSXaTI5IrP7QdZrkgw+YBsyS3DufJSqDPrMTEBAWbC7aQLqDMrheatAreMCNK9VWjPPKHp/M9YfWCfEQkpKf33WLZ4EkB5zG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762136913; c=relaxed/simple;
-	bh=wiyr5ZZl75Lfa/+EPqDHBz9yJzZ7Dh9+fBf91IEQM8U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PUfuJ8KbxTrg15WGcqQV4JnMRHLtXjDHeF+TcjTVlP68mKBgGAlvDBtINavrpZ6h34YKiPIZwmTDqpFRJ/d891WV3TXE8mjks2FYCETtAQ7UaOo+07sNjzLaHsMPNSRWX9UUgWasbmBzvm8rCiY1xkruaxoOl/xBNyJBffZBLpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dax810Rp; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-7866dcf50b1so6365177b3.3
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 18:28:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762136911; x=1762741711; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nMfJ5Y5GGur5h0c/aW8X7+pRDgjg9Cbc6huo+2E9Af0=;
-        b=dax810Rplo9t5nJEOL7/hA+XWeWZ5Gn29KwewgfJRS4Sjoq2XnDGCkwSy7bRZyRhfs
-         7ZEzOILiat8Wg4aga9uNU0RrFqGzgk42FcWjrQvqM+6t9tEut/vnTmuGyIETncylaqKv
-         g5iVSBIBPGuk6vNKL5WgavUbpvLLvg+KHznPKX/P6DLifaSB33ZUsKXj3mXQRovtj81F
-         UVw9M/3qDe1zSkRRFuhp6tLOy9SfAPRN8aTNFF/nFS6Kwx+6GY7x6uOr/5uoxceMdshs
-         yZX8rUzOQgOnzo/VAgl8cs3BP9ON8/7Ml6z9sk+4Zf7RysC2tgJGZlco074MoYz3uWrO
-         3Ifw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762136911; x=1762741711;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nMfJ5Y5GGur5h0c/aW8X7+pRDgjg9Cbc6huo+2E9Af0=;
-        b=HFx70odiTXNpMj/lHZIhlxGGjyXwSuN3iXJaZuO0ch4YXc+vGVqs+Rdsic9VRbDFa/
-         zztU1vHXgD80zsTj3bb3tgNwOp1qbLYK6At7iZV1ltOC8otEUeZmLhwcj0kIgNOyuW78
-         qnvUhXqlLl5hfrWOnvA+jyfQkBYoTsp5+uDEEFTT0kfycxXpC+v4ahl/+1elPfYNe1rR
-         Z3p4D0WTLaINPK5rKKG9V5druo1Jzz1SpsPdu8Pem8ulFWpbhjkiMrqhc34oxocMD4Ao
-         JVC2CriHOKSeCGIMPwCzG/TwTv/rORPBnQaGG5B2PwfUT1Pp8F+yrIsO/EMDUlnpwKNf
-         zt2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWPdUa5+4N/+WaZxq5Kqc6qRj1/AtiXT6awyinz9fus6AS1G3wmyZShgiJaCJ2czqDmGzcEbA/VRzi6/no=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywpu4S/ChcfrsNXLTaGB4lC49yZMVlm2YyvIqy9LzJ/jCUCWBRG
-	o1D55I3mpaVLTsn6UPnHmY2tfHEu3rA6SrMf/dEyPDj1dI2IMxztdobW5oX8RfdyzdO1lege3F/
-	j3+9rXiToQ1PkJVSP9QJstJoCthLWKMk=
-X-Gm-Gg: ASbGncvn6/q50GY+Sk85ybf5EZmxoyu1+6Le9QM0Sy7+6o9NUv4+YExBFdsbDLRFUI9
-	dxuGiPVwvhUk8KIBG95XLjLPqZANHQ3uGsHCsuDot+iiM8La3sk8vE1lOjxY+hErVreZK5peULX
-	ypdq4bClnv9DIaFqc5q6g86KDK3BpP051l7iN0W6whkGi2IxkkeANteK3EqUD0VO2CjK6pwdc+G
-	3dX+7OlT4uKHrQg/o+7rT3dwwNQZmfD3P2RKE6sLxkfEBLu79Qqq0sbTWKhyE7iMPAVYmcXi2k2
-	JNoBNq4x4Q9sdBQ=
-X-Google-Smtp-Source: AGHT+IHLrHOzvNAokMB1WbxB3gJAY2GfR94UQgKc5aQuYuGXPTzrOGeNvX8ZsL33JxhJZTCgkZ3zL0L7/ZwqDEsTyqc=
-X-Received: by 2002:a05:690c:3606:b0:786:59d3:49cc with SMTP id
- 00721157ae682-78659d36afdmr72041127b3.7.1762136910786; Sun, 02 Nov 2025
- 18:28:30 -0800 (PST)
+	s=arc-20240116; t=1762136960; c=relaxed/simple;
+	bh=fJ2ruscm7I3Xohe37RN2AI4TRhVZHxRLydfYSkkz3u8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TFnPYZtoIBh3JLO43M/zCnutJF2dzXS6XyK4rBHGF4I2skQZVXSaitQ7JVctMyajJ2/6A5jmjjsZqWwbuP7gw9tqos8zcmZHlAWKKs7Hdv8aTcTASlANFA6QK34Ao3HDhTAjZ7SL/uUhT3/YtjbTqN8IhRsyYEPiAXskh2pgHz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=KJXbNtmb; arc=none smtp.client-ip=113.46.200.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=2FIFKl4Ynnc+iqkNHSte7fiKEcb41ATkE5hAwgWBU9A=;
+	b=KJXbNtmb56EtHFpnd5u341hyFmFf3AMfX8FWvhZ6DKQI4lkRoEhXy2iV+lVAvWlGTY7U1aC1K
+	OZQlloeezykOpQ7kvHK4JwWmEyFgK75WCaBtc0JscJhCECeI/Hpxk6eOpS4SPuyygqA/Yl9XPxo
+	LZ03V7dYAZem0Jfp59MqJ8s=
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4d0FqR4X1WzpSt8;
+	Mon,  3 Nov 2025 10:27:47 +0800 (CST)
+Received: from kwepemr200004.china.huawei.com (unknown [7.202.195.241])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5D1FB180B62;
+	Mon,  3 Nov 2025 10:29:14 +0800 (CST)
+Received: from [10.67.121.62] (10.67.121.62) by kwepemr200004.china.huawei.com
+ (7.202.195.241) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 3 Nov
+ 2025 10:29:13 +0800
+Message-ID: <68936aeb-20d7-429c-af5a-590b765f7351@huawei.com>
+Date: Mon, 3 Nov 2025 10:29:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029045327.2035337-1-alistair.francis@wdc.com>
- <9b8d8baf-022a-49a9-b8b9-db699125e064@suse.de> <CAKmqyKMH4dNGP0aW1ufkHKXuzNGjixAQrMwFd0QjCy9UT00KTw@mail.gmail.com>
- <72c291ff-8295-4bef-b368-68c24aa983ec@suse.de>
-In-Reply-To: <72c291ff-8295-4bef-b368-68c24aa983ec@suse.de>
-From: Alistair Francis <alistair23@gmail.com>
-Date: Mon, 3 Nov 2025 12:28:03 +1000
-X-Gm-Features: AWmQ_bm0033VA11fAAliIqWqNlgaySqgCy5jRslUcbH5deTIdxZpTm8NuB4pXQU
-Message-ID: <CAKmqyKN=XmcsAh2M_ocpbZAWKf5OuK0YvTLE_0hb1QpMhw+pqQ@mail.gmail.com>
-Subject: Re: [PATCH] nvmet-auth: update sc_c in target host hash calculation
-To: Hannes Reinecke <hare@suse.de>
-Cc: kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, sagi@grimberg.me, 
-	kch@nvidia.com, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Alistair Francis <alistair.francis@wdc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] PM / devfreq: use _visible attribute to replace
+ create/remove_sysfs_files()
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+CC: <myungjoo.ham@samsung.com>, <kyungmin.park@samsung.com>,
+	<cw00.choi@samsung.com>, <linux-pm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <zhanjie9@hisilicon.com>,
+	<zhenglifeng1@huawei.com>, <lihuisong@huawei.com>, <yubowen8@huawei.com>,
+	<linhongye@h-partners.com>, <linuxarm@huawei.com>
+References: <20251028022458.2824872-1-zhangpengjie2@huawei.com>
+ <20251031144157.00000e51@huawei.com>
+From: "zhangpengjie (A)" <zhangpengjie2@huawei.com>
+In-Reply-To: <20251031144157.00000e51@huawei.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemr200004.china.huawei.com (7.202.195.241)
 
-On Wed, Oct 29, 2025 at 9:33=E2=80=AFPM Hannes Reinecke <hare@suse.de> wrot=
-e:
+On 10/31/2025 10:41 PM, Jonathan Cameron wrote:
+> On Tue, 28 Oct 2025 10:24:58 +0800
+> Pengjie Zhang <zhangpengjie2@huawei.com> wrote:
 >
-> On 10/29/25 12:20, Alistair Francis wrote:
-> > On Wed, Oct 29, 2025 at 6:10=E2=80=AFPM Hannes Reinecke <hare@suse.de> =
-wrote:
-> >>
-> >> On 10/29/25 05:53, alistair23@gmail.com wrote:
-> >>> From: Alistair Francis <alistair.francis@wdc.com>
-> >>>
-> >>> Commit 7e091add9c43 "nvme-auth: update sc_c in host response" added
-> >>> the sc_c variable to the dhchap queue context structure which is
-> >>> appropriately set during negotiate and then used in the host response=
-.
-> >>>
-> >>> This breaks secure concat connections with a Linux target as the targ=
-et
-> >>> code wasn't updated at the same time. This patch fixes this by adding=
- a
-> >>> new sc_c variable to the host hash calculations.
-> >>>
-> >>> Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
-> >>> ---
-> >>>    drivers/nvme/host/auth.c               | 1 +
-> >>>    drivers/nvme/target/auth.c             | 3 ++-
-> >>>    drivers/nvme/target/fabrics-cmd-auth.c | 1 +
-> >>>    drivers/nvme/target/nvmet.h            | 1 +
-> >>>    4 files changed, 5 insertions(+), 1 deletion(-)
-> >>>
-> >> I've already send a similar patch for this, which actually should
-> >> already have been merged.
-> >> Can you check if that works for you?
-> >
-> > I checked master when I sent this and there was nothing applied. Is it
-> > in a different tree?
-> >
+>>   static ssize_t polling_interval_store(struct device *dev,
+>> @@ -1828,15 +1831,22 @@ static ssize_t polling_interval_store(struct device *dev,
+>>   	unsigned int value;
+>>   	int ret;
+>>   
+>> -	if (!df->governor)
+>> +	mutex_lock(&devfreq_list_lock);
+> As below I'd use guard() to simplify this.  Applies in various other places in this
+> patch.
+>>   
+>> -/* Remove the specific sysfs files which depend on each governor. */
+>> -static void remove_sysfs_files(struct devfreq *devfreq,
+>> -				const struct devfreq_governor *gov)
+>> +static bool gov_group_visible(struct kobject *kobj)
+>>   {
+>> -	if (IS_SUPPORTED_ATTR(gov->attrs, POLLING_INTERVAL))
+>> -		sysfs_remove_file(&devfreq->dev.kobj,
+>> -				&dev_attr_polling_interval.attr);
+>> -	if (IS_SUPPORTED_ATTR(gov->attrs, TIMER))
+>> -		sysfs_remove_file(&devfreq->dev.kobj, &dev_attr_timer.attr);
+>> +	struct device *dev = kobj_to_dev(kobj);
+>> +	struct devfreq *df;
+>> +
+>> +	if (!dev)
+>> +		return false;
+>> +
+>> +	df = to_devfreq(dev);
+>> +	if (!df)
+>> +		return false;
+> Isn't to_devfreq() just a container_of() wrapper?
+> If that's the case it will always be there if dev is not NULL.
 >
-> https://lore.kernel.org/linux-nvme/aPl4-6WQ940kUso7@kbusch-mbp/T/#t
-
-Thanks.
-
-Your patch is now in master, but doesn't fix the issue for me. I still
-get failures with a secure concat connection.
-
-My patch (rebased on top of yours) fixes the issue for me
-
-Alistair
-
+> As such I not seeing how this group is likely to ever be
+> invisible.
 >
-> Cheers,
->
-> Hannes
-> --
-> Dr. Hannes Reinecke                  Kernel Storage Architect
-> hare@suse.de                                +49 911 74053 688
-> SUSE Software Solutions GmbH, Frankenstr. 146, 90461 N=C3=BCrnberg
-> HRB 36809 (AG N=C3=BCrnberg), GF: I. Totev, A. McDonald, W. Knoblich
+Thank you for your review and comments.  I will address all your feedback
+
+in the necessary revisions and submit the third version shortly.
+
+Best regards,
+
+Pengjie Zhang
+
 
