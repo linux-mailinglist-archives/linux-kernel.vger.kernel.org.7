@@ -1,153 +1,433 @@
-Return-Path: <linux-kernel+bounces-883526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A7BAC2DB07
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:31:14 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48C27C2DB0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:31:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2EEC420095
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:30:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AE4F74F3260
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:30:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209B7320A34;
-	Mon,  3 Nov 2025 18:30:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD96943147;
+	Mon,  3 Nov 2025 18:30:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="kbGU1G0h"
-Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KWCipa2A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C3331B130;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9352A296BAF;
+	Mon,  3 Nov 2025 18:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762194614; cv=none; b=ih+R74GYTvuEDhr/+crmAexoHKTDjVoEiAB2pFn3sg9McxW0fZp88AZbVXMqmP5FBErK83hs+wTE8yDO/dpMcWEFSzDsaxZuKoVFEUsfjMX2b0NKUzN1qWTxdJwwHOeRflKCu1PKhNeabNUZgvxvdZq9x2YT7VI5ySG02d71T9Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762194614; c=relaxed/simple;
+	bh=p5RCbLI/JZME/BXrpaCLBzn+rMvXLjGUod7ozI9yzUg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QpIUklGmU/gSI91up7P1bZDy2fMMENx5E8ywTYp92MSaDl5uu4rky6r0VYgHnOJepDdhyZl1zHHcHxPp6nP0a0U1Q19pcK/x7Bm2jzF4t02fVX7PG0v94XnHoFYvm/UjFJlI93OvClQzmANRm0C8KfGGdXpk0Gt2f3LyWyQsIiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KWCipa2A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A52ABC4CEE7;
 	Mon,  3 Nov 2025 18:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762194612; cv=pass; b=aeFOzhygyjbyMoyQmHfFF2zh/1yl6HOWQNC0otWkriCb9DL8JNAs2u5+z1/0IqVx7ASA4GAB8Mbu7DIjFS2eAN+Bw2Fd2LcCMlNHOs7sN04u2IZ9Cs4Ougm7qPb+oN51tW/GXgiO5Lwb+zYGi1XRS/BJFFtEVOl8YSpTFb6uyzA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762194612; c=relaxed/simple;
-	bh=atvZJ8CkCzW97NKy8pOlNZusVm+AhUwVn0j2cmZ+cKI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=C0POL+CsZ0C7bzq6Gt7vAAgXRlhrPCVxz39AWOECulT47RNh/H21FgjKAo3EDJjyEIqHlmZeLfnsEHb1fLhfzf6gN9qGB6FA8nyKwjmADsHgqgaNLA3nPRhYxH+5tK3Zv2cBkrdmvD/Ga/lgrVep8yDDLY9f0xjBHYiyCzVPj0E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=kbGU1G0h; arc=pass smtp.client-ip=195.140.195.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from monolith.lan (unknown [IPv6:2a02:ed04:3581:3::d001])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pav)
-	by meesny.iki.fi (Postfix) with ESMTPSA id 4d0g9j24D6z104b;
-	Mon,  3 Nov 2025 20:30:01 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
-	t=1762194602;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SvZ5AiVPOBPxjqtAUTKJ6M1RJfARMunzyvtjLpk4QSU=;
-	b=kbGU1G0heR2XyEqwWN57Oe0p/hH4XujmyEK6TcWzpy1iXdxP5eaBdQ7r5XjK0b36KLDDAd
-	tdjEb2cu8c4kxRZyrYH6x832q035VsTZDMOw048GGKWNOAAMyGG89ibTD9DxmU1uHmFnff
-	9GdpWscF2Ky3N2YaPlgGp7BJZXiJUgA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=meesny; t=1762194602;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SvZ5AiVPOBPxjqtAUTKJ6M1RJfARMunzyvtjLpk4QSU=;
-	b=T0OWvLJIEy0BZSoXDg9fMVvBem3wpMW+ls8FpCyoqulxQlWqoWUZ782e0o4JYNNYChR7f8
-	07kCc8py4WqU3OGbi7unH17mEd+ohZkLIe6wOG9Ekzcp1Wpxi0OmzJK96o1xistr8Yvc86
-	YvJHQMdLv1bYGqSzQrWx5NOHfXL0Xqk=
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=pav smtp.mailfrom=pav@iki.fi
-ARC-Seal: i=1; s=meesny; d=iki.fi; t=1762194602; a=rsa-sha256; cv=none;
-	b=fLc1il+HoAZOOJZ8b094ddj+6NGQcoAIu31zfkVaASUn1lthT2WpMk9U7gowq9aSPmVI8y
-	47izCdl0/tPpy8Ua7ZCtI8w3Zc79cE5GWLIxdvYFBd87fSBMutkmoo/l4tvsUF/HRa+xcs
-	NaAsd4jVALMNLkVDrhQdlL+V82t/MRE=
-From: Pauli Virtanen <pav@iki.fi>
-To: linux-bluetooth@vger.kernel.org
-Cc: Pauli Virtanen <pav@iki.fi>,
-	marcel@holtmann.org,
-	johan.hedberg@gmail.com,
-	luiz.dentz@gmail.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 5/5] Bluetooth: 6lowpan: add missing l2cap_chan_lock()
-Date: Mon,  3 Nov 2025 20:29:50 +0200
-Message-ID: <d9cdd58f4ff5b26f0c501f1b2b8636bff6839f61.1762194056.git.pav@iki.fi>
-X-Mailer: git-send-email 2.51.1
-In-Reply-To: <467024bf1ba60184bff304d23de33abb0ed2384f.1762194056.git.pav@iki.fi>
-References: <467024bf1ba60184bff304d23de33abb0ed2384f.1762194056.git.pav@iki.fi>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762194613;
+	bh=p5RCbLI/JZME/BXrpaCLBzn+rMvXLjGUod7ozI9yzUg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KWCipa2AhHlbH2bbNBsSRXCPmr3Etm0cqqYKgXj2glu6cyYAKblurxWjEZRnLALpa
+	 9+keL7+82qpDpMQPuhDPIiyq9EZD+/H+H+MCF9PGEv88gGe36I8mW1qX2mv+IcBCiP
+	 l5LRm+RibeBX9KU2464JLd3JdDwe6ePNpBwrwunT3N/6C+TqlHJsu34vckaJQpzofN
+	 m6lTwP2m5RdoMbxHdPbkYrzU0eoE23mE94kOt9ANsiRNVul8c/CKR6S3d7WWm2MHYb
+	 ebSMpOHy3QhBVujSxc7mzHS/9t6nqxHFqbE9+vsBe4GSyK4qSIAx4oXRys4fQYQasv
+	 1zs43LAqAEILw==
+Date: Mon, 3 Nov 2025 20:30:05 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>
+Cc: jane.chu@oracle.com,
+	=?utf-8?B?TWljaGHFgiBDxYJhcGnFhHNraQ==?= <mclapinski@google.com>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Tyler Hicks <code@tyhicks.com>, linux-kernel@vger.kernel.org,
+	nvdimm@lists.linux.dev
+Subject: Re: [PATCH v3 1/1] nvdimm: allow exposing RAM carveouts as NVDIMM
+ DIMM devices
+Message-ID: <aQj0rV6R_KCgzr42@kernel.org>
+References: <20251026153841.752061-1-rppt@kernel.org>
+ <20251026153841.752061-2-rppt@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251026153841.752061-2-rppt@kernel.org>
 
-l2cap_chan_close() needs to be called in l2cap_chan_lock(), otherwise
-l2cap_le_sig_cmd() etc. may run concurrently.
+Gentle ping?
 
-Add missing locks around l2cap_chan_close().
+On Sun, Oct 26, 2025 at 05:38:41PM +0200, Mike Rapoport wrote:
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+> 
+> There are use cases, for example virtual machine hosts, that create
+> "persistent" memory regions using memmap= option on x86 or dummy
+> pmem-region device tree nodes on DT based systems.
+> 
+> Both these options are inflexible because they create static regions and
+> the layout of the "persistent" memory cannot be adjusted without reboot
+> and sometimes they even require firmware update.
+> 
+> Add a ramdax driver that allows creation of DIMM devices on top of
+> E820_TYPE_PRAM regions and devicetree pmem-region nodes.
+> 
+> The DIMMs support label space management on the "device" and provide a
+> flexible way to access RAM using fsdax and devdax.
+> 
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> ---
+>  drivers/nvdimm/Kconfig  |  19 +++
+>  drivers/nvdimm/Makefile |   1 +
+>  drivers/nvdimm/ramdax.c | 282 ++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 302 insertions(+)
+>  create mode 100644 drivers/nvdimm/ramdax.c
+> 
+> diff --git a/drivers/nvdimm/Kconfig b/drivers/nvdimm/Kconfig
+> index fde3e17c836c..44ab929a1ad5 100644
+> --- a/drivers/nvdimm/Kconfig
+> +++ b/drivers/nvdimm/Kconfig
+> @@ -97,6 +97,25 @@ config OF_PMEM
+>  
+>  	  Select Y if unsure.
+>  
+> +config RAMDAX
+> +	tristate "Support persistent memory interfaces on RAM carveouts"
+> +	depends on X86_PMEM_LEGACY || OF || COMPILE_TEST
+> +	default LIBNVDIMM
+> +	help
+> +	  Allows creation of DAX devices on RAM carveouts.
+> +
+> +	  Memory ranges that are manually specified by the
+> +	  'memmap=nn[KMG]!ss[KMG]' kernel command line or defined by dummy
+> +	  pmem-region device tree nodes would be managed by this driver as DIMM
+> +	  devices with support for dynamic layout of namespaces.
+> +	  The driver steals 128K in the end of the memmap range for the
+> +	  namespace management. This allows supporting up to 509 namespaces
+> +	  (see 'ndctl create-namespace --help').
+> +	  The driver should be force bound to e820_pmem or pmem-region platform
+> +	  devices using 'driver_override' device attribute.
+> +
+> +	  Select N if unsure.
+> +
+>  config NVDIMM_KEYS
+>  	def_bool y
+>  	depends on ENCRYPTED_KEYS
+> diff --git a/drivers/nvdimm/Makefile b/drivers/nvdimm/Makefile
+> index ba0296dca9db..8c268814936c 100644
+> --- a/drivers/nvdimm/Makefile
+> +++ b/drivers/nvdimm/Makefile
+> @@ -5,6 +5,7 @@ obj-$(CONFIG_ND_BTT) += nd_btt.o
+>  obj-$(CONFIG_X86_PMEM_LEGACY) += nd_e820.o
+>  obj-$(CONFIG_OF_PMEM) += of_pmem.o
+>  obj-$(CONFIG_VIRTIO_PMEM) += virtio_pmem.o nd_virtio.o
+> +obj-$(CONFIG_RAMDAX) += ramdax.o
+>  
+>  nd_pmem-y := pmem.o
+>  
+> diff --git a/drivers/nvdimm/ramdax.c b/drivers/nvdimm/ramdax.c
+> new file mode 100644
+> index 000000000000..63cf05791829
+> --- /dev/null
+> +++ b/drivers/nvdimm/ramdax.c
+> @@ -0,0 +1,282 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2025, Mike Rapoport, Microsoft
+> + *
+> + * Based on e820 pmem driver:
+> + * Copyright (c) 2015, Christoph Hellwig.
+> + * Copyright (c) 2015, Intel Corporation.
+> + */
+> +#include <linux/platform_device.h>
+> +#include <linux/memory_hotplug.h>
+> +#include <linux/libnvdimm.h>
+> +#include <linux/module.h>
+> +#include <linux/numa.h>
+> +#include <linux/slab.h>
+> +#include <linux/io.h>
+> +#include <linux/of.h>
+> +
+> +#include <uapi/linux/ndctl.h>
+> +
+> +#define LABEL_AREA_SIZE	SZ_128K
+> +
+> +struct ramdax_dimm {
+> +	struct nvdimm *nvdimm;
+> +	void *label_area;
+> +};
+> +
+> +static void ramdax_remove(struct platform_device *pdev)
+> +{
+> +	struct nvdimm_bus *nvdimm_bus = platform_get_drvdata(pdev);
+> +
+> +	nvdimm_bus_unregister(nvdimm_bus);
+> +}
+> +
+> +static int ramdax_register_region(struct resource *res,
+> +		struct nvdimm *nvdimm,
+> +		struct nvdimm_bus *nvdimm_bus)
+> +{
+> +	struct nd_mapping_desc mapping;
+> +	struct nd_region_desc ndr_desc;
+> +	struct nd_interleave_set *nd_set;
+> +	int nid = phys_to_target_node(res->start);
+> +
+> +	nd_set = kzalloc(sizeof(*nd_set), GFP_KERNEL);
+> +	if (!nd_set)
+> +		return -ENOMEM;
+> +
+> +	nd_set->cookie1 = 0xcafebeefcafebeef;
+> +	nd_set->cookie2 = nd_set->cookie1;
+> +	nd_set->altcookie = nd_set->cookie1;
+> +
+> +	memset(&mapping, 0, sizeof(mapping));
+> +	mapping.nvdimm = nvdimm;
+> +	mapping.start = 0;
+> +	mapping.size = resource_size(res) - LABEL_AREA_SIZE;
+> +
+> +	memset(&ndr_desc, 0, sizeof(ndr_desc));
+> +	ndr_desc.res = res;
+> +	ndr_desc.numa_node = numa_map_to_online_node(nid);
+> +	ndr_desc.target_node = nid;
+> +	ndr_desc.num_mappings = 1;
+> +	ndr_desc.mapping = &mapping;
+> +	ndr_desc.nd_set = nd_set;
+> +
+> +	if (!nvdimm_pmem_region_create(nvdimm_bus, &ndr_desc))
+> +		goto err_free_nd_set;
+> +
+> +	return 0;
+> +
+> +err_free_nd_set:
+> +	kfree(nd_set);
+> +	return -ENXIO;
+> +}
+> +
+> +static int ramdax_register_dimm(struct resource *res, void *data)
+> +{
+> +	resource_size_t start = res->start;
+> +	resource_size_t size = resource_size(res);
+> +	unsigned long flags = 0, cmd_mask = 0;
+> +	struct nvdimm_bus *nvdimm_bus = data;
+> +	struct ramdax_dimm *dimm;
+> +	int err;
+> +
+> +	dimm = kzalloc(sizeof(*dimm), GFP_KERNEL);
+> +	if (!dimm)
+> +		return -ENOMEM;
+> +
+> +	dimm->label_area = memremap(start + size - LABEL_AREA_SIZE,
+> +				    LABEL_AREA_SIZE, MEMREMAP_WB);
+> +	if (!dimm->label_area) {
+> +		err = -ENOMEM;
+> +		goto err_free_dimm;
+> +	}
+> +
+> +	set_bit(NDD_LABELING, &flags);
+> +	set_bit(NDD_REGISTER_SYNC, &flags);
+> +	set_bit(ND_CMD_GET_CONFIG_SIZE, &cmd_mask);
+> +	set_bit(ND_CMD_GET_CONFIG_DATA, &cmd_mask);
+> +	set_bit(ND_CMD_SET_CONFIG_DATA, &cmd_mask);
+> +	dimm->nvdimm = nvdimm_create(nvdimm_bus, dimm,
+> +				     /* dimm_attribute_groups */ NULL,
+> +				     flags, cmd_mask, 0, NULL);
+> +	if (!dimm->nvdimm) {
+> +		err = -ENOMEM;
+> +		goto err_unmap_label;
+> +	}
+> +
+> +	err = ramdax_register_region(res, dimm->nvdimm, nvdimm_bus);
+> +	if (err)
+> +		goto err_remove_nvdimm;
+> +
+> +	return 0;
+> +
+> +err_remove_nvdimm:
+> +	nvdimm_delete(dimm->nvdimm);
+> +err_unmap_label:
+> +	memunmap(dimm->label_area);
+> +err_free_dimm:
+> +	kfree(dimm);
+> +	return err;
+> +}
+> +
+> +static int ramdax_get_config_size(struct nvdimm *nvdimm, int buf_len,
+> +		struct nd_cmd_get_config_size *cmd)
+> +{
+> +	if (sizeof(*cmd) > buf_len)
+> +		return -EINVAL;
+> +
+> +	*cmd = (struct nd_cmd_get_config_size){
+> +		.status = 0,
+> +		.config_size = LABEL_AREA_SIZE,
+> +		.max_xfer = 8,
+> +	};
+> +
+> +	return 0;
+> +}
+> +
+> +static int ramdax_get_config_data(struct nvdimm *nvdimm, int buf_len,
+> +		struct nd_cmd_get_config_data_hdr *cmd)
+> +{
+> +	struct ramdax_dimm *dimm = nvdimm_provider_data(nvdimm);
+> +
+> +	if (sizeof(*cmd) > buf_len)
+> +		return -EINVAL;
+> +	if (struct_size(cmd, out_buf, cmd->in_length) > buf_len)
+> +		return -EINVAL;
+> +	if (cmd->in_offset + cmd->in_length > LABEL_AREA_SIZE)
+> +		return -EINVAL;
+> +
+> +	memcpy(cmd->out_buf, dimm->label_area + cmd->in_offset, cmd->in_length);
+> +
+> +	return 0;
+> +}
+> +
+> +static int ramdax_set_config_data(struct nvdimm *nvdimm, int buf_len,
+> +		struct nd_cmd_set_config_hdr *cmd)
+> +{
+> +	struct ramdax_dimm *dimm = nvdimm_provider_data(nvdimm);
+> +
+> +	if (sizeof(*cmd) > buf_len)
+> +		return -EINVAL;
+> +	if (struct_size(cmd, in_buf, cmd->in_length) > buf_len)
+> +		return -EINVAL;
+> +	if (cmd->in_offset + cmd->in_length > LABEL_AREA_SIZE)
+> +		return -EINVAL;
+> +
+> +	memcpy(dimm->label_area + cmd->in_offset, cmd->in_buf, cmd->in_length);
+> +
+> +	return 0;
+> +}
+> +
+> +static int ramdax_nvdimm_ctl(struct nvdimm *nvdimm, unsigned int cmd,
+> +		void *buf, unsigned int buf_len)
+> +{
+> +	unsigned long cmd_mask = nvdimm_cmd_mask(nvdimm);
+> +
+> +	if (!test_bit(cmd, &cmd_mask))
+> +		return -ENOTTY;
+> +
+> +	switch (cmd) {
+> +	case ND_CMD_GET_CONFIG_SIZE:
+> +		return ramdax_get_config_size(nvdimm, buf_len, buf);
+> +	case ND_CMD_GET_CONFIG_DATA:
+> +		return ramdax_get_config_data(nvdimm, buf_len, buf);
+> +	case ND_CMD_SET_CONFIG_DATA:
+> +		return ramdax_set_config_data(nvdimm, buf_len, buf);
+> +	default:
+> +		return -ENOTTY;
+> +	}
+> +}
+> +
+> +static int ramdax_ctl(struct nvdimm_bus_descriptor *nd_desc,
+> +		struct nvdimm *nvdimm, unsigned int cmd, void *buf,
+> +		unsigned int buf_len, int *cmd_rc)
+> +{
+> +	/*
+> +	 * No firmware response to translate, let the transport error
+> +	 * code take precedence.
+> +	 */
+> +	*cmd_rc = 0;
+> +
+> +	if (!nvdimm)
+> +		return -ENOTTY;
+> +	return ramdax_nvdimm_ctl(nvdimm, cmd, buf, buf_len);
+> +}
+> +
+> +#ifdef CONFIG_OF
+> +static const struct of_device_id ramdax_of_matches[] = {
+> +	{ .compatible = "pmem-region", },
+> +	{ },
+> +};
+> +#endif
+> +
+> +static int ramdax_probe_of(struct platform_device *pdev,
+> +		struct nvdimm_bus *bus, struct device_node *np)
+> +{
+> +	int err;
+> +
+> +	if (!of_match_node(ramdax_of_matches, np))
+> +		return -ENODEV;
+> +
+> +	for (int i = 0; i < pdev->num_resources; i++) {
+> +		err = ramdax_register_dimm(&pdev->resource[i], bus);
+> +		if (err)
+> +			goto err_unregister;
+> +	}
+> +
+> +	return 0;
+> +
+> +err_unregister:
+> +	/*
+> +	 * FIXME: should we unregister the dimms that were registered
+> +	 * successfully
+> +	 */
+> +	return err;
+> +}
+> +
+> +static int ramdax_probe(struct platform_device *pdev)
+> +{
+> +	static struct nvdimm_bus_descriptor nd_desc;
+> +	struct device *dev = &pdev->dev;
+> +	struct nvdimm_bus *nvdimm_bus;
+> +	struct device_node *np;
+> +	int rc = -ENXIO;
+> +
+> +	nd_desc.provider_name = "ramdax";
+> +	nd_desc.module = THIS_MODULE;
+> +	nd_desc.ndctl = ramdax_ctl;
+> +	nvdimm_bus = nvdimm_bus_register(dev, &nd_desc);
+> +	if (!nvdimm_bus)
+> +		goto err;
+> +
+> +	np = dev_of_node(&pdev->dev);
+> +	if (np)
+> +		rc = ramdax_probe_of(pdev, nvdimm_bus, np);
+> +	else
+> +		rc = walk_iomem_res_desc(IORES_DESC_PERSISTENT_MEMORY_LEGACY,
+> +					 IORESOURCE_MEM, 0, -1, nvdimm_bus,
+> +					 ramdax_register_dimm);
+> +	if (rc)
+> +		goto err;
+> +
+> +	platform_set_drvdata(pdev, nvdimm_bus);
+> +
+> +	return 0;
+> +err:
+> +	nvdimm_bus_unregister(nvdimm_bus);
+> +	return rc;
+> +}
+> +
+> +static struct platform_driver ramdax_driver = {
+> +	.probe = ramdax_probe,
+> +	.remove = ramdax_remove,
+> +	.driver = {
+> +		.name = "ramdax",
+> +	},
+> +};
+> +
+> +module_platform_driver(ramdax_driver);
+> +
+> +MODULE_DESCRIPTION("NVDIMM support for e820 type-12 memory and OF pmem-region");
+> +MODULE_LICENSE("GPL");
+> +MODULE_AUTHOR("Microsoft Corporation");
+> -- 
+> 2.50.1
+> 
 
-Fixes: 6b8d4a6a0314 ("Bluetooth: 6LoWPAN: Use connected oriented channel instead of fixed one")
-Signed-off-by: Pauli Virtanen <pav@iki.fi>
----
-
-Notes:
-    v2:
-    - no changes
-    
-    l2cap_chan_send() has same issue, but harder to fix so leave for later
-
- net/bluetooth/6lowpan.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/net/bluetooth/6lowpan.c b/net/bluetooth/6lowpan.c
-index 588d7e94e606..2c21ae8abadc 100644
---- a/net/bluetooth/6lowpan.c
-+++ b/net/bluetooth/6lowpan.c
-@@ -927,7 +927,9 @@ static int bt_6lowpan_disconnect(struct l2cap_conn *conn, u8 dst_type)
- 
- 	BT_DBG("peer %p chan %p", peer, peer->chan);
- 
-+	l2cap_chan_lock(peer->chan);
- 	l2cap_chan_close(peer->chan, ENOENT);
-+	l2cap_chan_unlock(peer->chan);
- 
- 	return 0;
- }
-@@ -1089,7 +1091,9 @@ static void do_enable_set(struct work_struct *work)
- 
- 	mutex_lock(&set_lock);
- 	if (listen_chan) {
-+		l2cap_chan_lock(listen_chan);
- 		l2cap_chan_close(listen_chan, 0);
-+		l2cap_chan_unlock(listen_chan);
- 		l2cap_chan_put(listen_chan);
- 	}
- 
-@@ -1148,7 +1152,9 @@ static ssize_t lowpan_control_write(struct file *fp,
- 
- 		mutex_lock(&set_lock);
- 		if (listen_chan) {
-+			l2cap_chan_lock(listen_chan);
- 			l2cap_chan_close(listen_chan, 0);
-+			l2cap_chan_unlock(listen_chan);
- 			l2cap_chan_put(listen_chan);
- 			listen_chan = NULL;
- 		}
-@@ -1310,7 +1316,9 @@ static void __exit bt_6lowpan_exit(void)
- 	debugfs_remove(lowpan_control_debugfs);
- 
- 	if (listen_chan) {
-+		l2cap_chan_lock(listen_chan);
- 		l2cap_chan_close(listen_chan, 0);
-+		l2cap_chan_unlock(listen_chan);
- 		l2cap_chan_put(listen_chan);
- 	}
- 
 -- 
-2.51.1
-
+Sincerely yours,
+Mike.
 
