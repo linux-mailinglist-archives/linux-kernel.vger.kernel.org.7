@@ -1,134 +1,112 @@
-Return-Path: <linux-kernel+bounces-883607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 899D2C2DDFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 20:18:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71CFAC2DE15
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 20:21:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 053264207C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 19:17:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADCD04201AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 19:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47ECD32BF58;
-	Mon,  3 Nov 2025 19:15:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A99296BB7;
+	Mon,  3 Nov 2025 19:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ixb4czkH"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GI4IEceT"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D08B931D747
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 19:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2488126ED31
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 19:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762197300; cv=none; b=KRdGbleTNgqA/X/sKm8nSX5E4erdf7vrYtuexnoDCdLejjdG1Meb5be1skdLbjqDKXX9P9JcREXMEzQDkhS2WmqKLxkGB5im6z9iq88y2OySkxSPStNnjsTUYRlgKaOIiO4K/vW0rTKW8hCeW3Jrkf0QtGqaMPOXO9kX3Ewgiik=
+	t=1762197456; cv=none; b=mcbbTFT2FZBhZ7Mq1koa3l6MXeCC6HepVVvFQv7dgbftUPGOkiJoWD3rv05bQp5wMGsdghQ9plvALlIVjh5cKmvRxlW105L5pPugXbWyXDH/rDqonV8K+Xp+bP589ZZxz1A0sMW5lkCOXUYVyzbe6nB3uoWOYr9OFit1vvWI5Eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762197300; c=relaxed/simple;
-	bh=2sTVmTa86pv8fJgdD5xjz3zgzXpYVywXrSd1pVhx6YM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=R6DqoyT2f1KuGenZCZ3J+WRJ/r0vKWtXq2gGM8HLWhgtMR4CgwyTwXH6rOBlPCfp3zdeokEPJsYNhAkDSPPmMtDtVIfBeJwIRfca8mUaQhkn+jrpyBj1fkoAVZgTYdQgiOyp/ONGVcUQR3FucWh9otaBtbZyxk+33iIxgSeReE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ixb4czkH; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-b71397df721so202827166b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 11:14:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762197293; x=1762802093; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=swaPnlZ0H028w7OC5FVRDI8/szcqshYIBFL4ftY69C8=;
-        b=Ixb4czkHCp76ittYEZ60gpEpQMoN0MUKFJEh0y/qG/qRr4oCt0gHjh56+u4bzCj9rV
-         d7IUlkOzUVM0D7mamTzdY1kTIoJFCJONBnkqhLa9m+YaDJyWXjTym+o2Zq1inP2VeJjc
-         L7Vw/deuhmRQRP44YJL8c7IsgprjmpbGsJo2HdWGWwhO/auHWaia9owRMq8Y03CKFYOc
-         CVINsRzDV0CYuQjuli5EvJoN5NAnwQ2VcBXRM2mfpjh7lYacJG/kfkWlasbPz6nYzXg1
-         SzxEiOr4OErPXv8t1qgpR0aGmaPbXAbzxttGoqkC+YzO1N4I4OnHE9EXVR4G9esrJgME
-         Cvew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762197293; x=1762802093;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=swaPnlZ0H028w7OC5FVRDI8/szcqshYIBFL4ftY69C8=;
-        b=lqUGc2rtieK03HUFKL2ZOfh1A4qjENYV4OFpJ0r/MkBnMqRSJuCyqofb1fzzHawpw+
-         AIEfA5qItIOV5Ka9gX+yrn/aIRWnQM6R5egOvZToGhjACOviCbfDt10cjKF2v4IHimVV
-         6ngswjgFRvIo3SHxJ4R7scAR6Hj/rOq3APVF/JDUO3F6ZOqh/OQ7nRZQKnC+uzycZkwa
-         TTDIXrpnBdWF9S3OYboi7a2wp/UBnhtRUnQ5Tso9j0miW/aEPDfGCRZ+lxPF36xy+rZZ
-         hEmmWKJ45djWFS7HKHWu4k2XzKoHt7y0tVnofU9aI/3v+nTU3fW+2qYK0kVl7dwDW5m9
-         E4kA==
-X-Forwarded-Encrypted: i=1; AJvYcCUXtrdT7lbQ3JpRJDTdmPfMrDT/IUAU2qyRBbE1WtTAjl6T4z6smf/y8eLgi+YDu2S9bYamO8ZSGPmACyc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx93xJEz4s/b7bckPBvBe9dkOxlyUk5Tmt32VHLysIZVUAmJj8L
-	ytmWWUvVnDjgjqUamOo2wnEN9V/6SMLvzxP4UXbedm4DehW7T3G6/hVzP7itwpujgek=
-X-Gm-Gg: ASbGncso/TE969wYU9EVv7p04EQKky/rPqCcK7FAk9UUidDAAZSzuY4MF6q/gJIY0Qx
-	C9exrx/n/9/TwrWNCFU64i8OnIC9JOEMsNOtLj1yOxqovJavp0A3LVq+r9sip1IYFZ7+ZgRhglA
-	KiTsoDjVVneI7IK0lpBdezAGwq37+NqSkioOVOyA3+Zs7LPehY1bOsFoqAiQLqD8Vg8RgdW1xUS
-	NVtEpnSwIurOdhqjvPAtxCcy0zVuopUIiOouZAo1IjBxvru1/rcBc8V8yO0Hfy9EvPdlf3h2M5g
-	QGHX8TipCVPJuukIQ3eJixY8fIBLnOzCnWudTDjSjbOSydgs+kIqm776S2Da4qMPRKC+D6bsX0U
-	apdjFBeA9MkJKPOAPWW6nehPkvYe1hDhFKAIh8VfMjHRv8KkQ2wYLRcw8bs1dup3Lt+ND9AFcDj
-	vH/yiygwVIJmVtp6E+l8YomF1oyizN2LSGAELI+tadGIUYGaWkWQlCDK30H5Bdo5NFI/kWmmY=
-X-Google-Smtp-Source: AGHT+IHiNqxvdvsqsXOblsPDou25GeBmEyZiMxNTIJQm/CkhHutRBIYZb/OdlmtQUhYFXs6N4+W+Ow==
-X-Received: by 2002:a17:907:6d08:b0:b6d:3a00:983a with SMTP id a640c23a62f3a-b70705ea59dmr1451359566b.38.1762197293134;
-        Mon, 03 Nov 2025 11:14:53 -0800 (PST)
-Received: from puffmais2.c.googlers.com (254.48.34.34.bc.googleusercontent.com. [34.34.48.254])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b70b9f29c8asm466765066b.8.2025.11.03.11.14.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 11:14:52 -0800 (PST)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Mon, 03 Nov 2025 19:14:59 +0000
-Subject: [PATCH v3 20/20] regulator: s2mps11: more descriptive gpio
- consumer name
+	s=arc-20240116; t=1762197456; c=relaxed/simple;
+	bh=ZdQu9jWeg5RJ3g3Vn7fsPI9e2L5ti/jaJi2n3TjztDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QhXTWFjGWCsT4Nq0HO8AC6+Dy51coZeBBs3yPTc5dGiCy6PkCF0AeazsiXRPTi/nxgSFFiE6XbW+b9KqDM5SDr5krm3+JNSQi0jxi1GaJvJxpRvqGQpYJcUwmyzMGPFSiFDwljLUTqVGhyqs0BvKiFuBsq3gghKiVgAXr5WryxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GI4IEceT; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762197455; x=1793733455;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ZdQu9jWeg5RJ3g3Vn7fsPI9e2L5ti/jaJi2n3TjztDg=;
+  b=GI4IEceT3JfWCraZG+Wa7u9+eNsB2hfOb2hojvBPaVokeq/oaPXHdNhr
+   vXk7h2AjjUlD4gJovRHJ6OBYsHRuxWoEY4mYzzMt3iHQYYmBwE/KGcxRc
+   wBs8nhP+zGx6QwVvPe81AapovnKfGqUtNAsuhL01YPyxsi810eJjuYy45
+   cwMNSk8Ag8yX0W48OJ46jmrOwV2UXI8S8dhE/k+iBilHyGV400X6FWIF5
+   tqqAyMcmZP1lXdKGGGTGZW7vgQ6lqVDN0s2Tijyui3PlbvXqo6szpNybx
+   W01o2oMlChLmamEHuLBEmZpMjodXWt0B7HAN1DTttbYwERQPV3i88cI/j
+   A==;
+X-CSE-ConnectionGUID: blajTX8CTByJ2t+Y0NbakA==
+X-CSE-MsgGUID: ku+AjgrOQs+KEJ1CjVf5GQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="64169642"
+X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
+   d="scan'208";a="64169642"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 11:17:33 -0800
+X-CSE-ConnectionGUID: T1h0BkvHTouCBCid8I+S+A==
+X-CSE-MsgGUID: z+Eg9sO0R8mYDwDt2vM18A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
+   d="scan'208";a="186635625"
+Received: from smoehrl-linux.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.216])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 11:17:31 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vG03T-00000005FP1-0ds0;
+	Mon, 03 Nov 2025 21:17:27 +0200
+Date: Mon, 3 Nov 2025 21:17:26 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Guan-Chun Wu <409411716@gms.tku.edu.tw>,
+	Kuan-Wei Chiu <visitorckw@gmail.com>, linux-kernel@vger.kernel.org
+Cc: David Laight <david.laight.linux@gmail.com>
+Subject: Re: [PATCH v1 1/1] base64: Unroll the tables initialisers
+Message-ID: <aQj_xgm5_dnyJ2cc@smile.fi.intel.com>
+References: <20251103190510.627314-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20251103-s2mpg1x-regulators-v3-20-b8b96b79e058@linaro.org>
-References: <20251103-s2mpg1x-regulators-v3-0-b8b96b79e058@linaro.org>
-In-Reply-To: <20251103-s2mpg1x-regulators-v3-0-b8b96b79e058@linaro.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251103190510.627314-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Currently, GPIOs claimed by this driver for external rail control
-all show up with "s2mps11-regulator" as consumer, which is not
-very informative.
+On Mon, Nov 03, 2025 at 08:05:10PM +0100, Andy Shevchenko wrote:
+> Currently the initialisers of the tables have duplicate indices.
+> This prevents from building with `make W=1`.
+> 
+> To address the issue, unroll the table initialisers with generated
+> arrays by the following Python excerpt:
+> 
+> CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+> 
+> def gen_table(ch62, ch63):
+>     table = [ 0xff ] * 256
+>     for idx, char in enumerate(CHARS):
+>         table[ord(char)] = idx
+>     table[ord(ch62)] = 62
+>     table[ord(ch63)] = 63
+> 
+>     for i in range(0, len(table), 8):
+>         print (f"\t{', '.join(f"0x{c:02x}" for c in table[i:i+8])},\t/* {i:-3d} - {i+7:-3d} */")
 
-Switch to using the regulator name via desc->name instead, using the
-device name as fallback.
-
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
----
- drivers/regulator/s2mps11.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index f19140e97b9d7a5e7c07cdc5e002de345aad32d9..3e9da15081e680d7660c60270af54ba2a4f8da1d 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -363,7 +363,8 @@ static int s2mps11_of_parse_gpiod(struct device_node *np,
- 	ena_gpiod = fwnode_gpiod_get_index(of_fwnode_handle(np), con_id, 0,
- 					   GPIOD_OUT_HIGH |
- 					   GPIOD_FLAGS_BIT_NONEXCLUSIVE,
--					   "s2mps11-regulator");
-+					   desc->name
-+					   ? : dev_name(config->dev));
- 	if (IS_ERR(ena_gpiod)) {
- 		ret = PTR_ERR(ena_gpiod);
- 
+I haven't added a Fixes tag as the idea to fold this to the initial
+contribution.
 
 -- 
-2.51.2.997.g839fc31de9-goog
+With Best Regards,
+Andy Shevchenko
+
 
 
