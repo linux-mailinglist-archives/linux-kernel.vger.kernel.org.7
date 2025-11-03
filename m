@@ -1,164 +1,114 @@
-Return-Path: <linux-kernel+bounces-883040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEF50C2C558
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:10:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65D6EC2C55B
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:10:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6A436349AC2
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:10:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A3171897A45
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:11:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7411B30E827;
-	Mon,  3 Nov 2025 14:10:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997C9311976;
+	Mon,  3 Nov 2025 14:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c4QrUr0k"
-Received: from mail-yx1-f49.google.com (mail-yx1-f49.google.com [74.125.224.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mDnnWtQs"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33CE12D8DB8
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 14:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADFE330CDBF
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 14:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762179010; cv=none; b=MP4doX4WhhuwfZgfHvhMmbWq3AQ1WaukKmCF9NIUTx3b/n6VQ7/kfGHFdKZZCDXJCeSAcHUebgG4gPVkaLJnZZTocMhqWIm/DJLB8JDCtA10+gWvuKPzLjlTmtJJgckxV/pDMQbFrYmDmYtvWkon6ciAVU9RB3CHzDwupSsh320=
+	t=1762179016; cv=none; b=jV/COZ4XDamPXwtLrzVybcO/pwCy9bH7nuWJrJwrl5rrGWRBQLRxKrIzGqZk6QQ0cwWv9giZTERpX5BmE8TdgLw+/6jp8iatvJRBCYFnIeSrbP8Q0TSVmV5bx5Q0yLcwjO6c8Cm1V+5mB4ebnp3B1H1vOFsndq3CufKigQ7HVZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762179010; c=relaxed/simple;
-	bh=nU7SRhisp51jqv6vpBzE4wByVuhH4GMe1baLCOf5/no=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PlPNqi+MHY9c5mCp7uAT6i54RiuTuSHZ1hI9lxwXR5PGrHzKNP8297Wop/sdn/nADgBNf582re2rVY+D0sP7CbVoT1PgrOJeU7Gr87LXC6g8O0rvG7Mn2HLYzZuMkOULSKQrHQ7IlU7mn8XBFWIQmzgHC4MtlRSelhxG5NKxX5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c4QrUr0k; arc=none smtp.client-ip=74.125.224.49
+	s=arc-20240116; t=1762179016; c=relaxed/simple;
+	bh=/MSFS9mN161JdJ6hiSa2/SgnqSacyhFr/nNU6+KwahY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Bio6O9R1FnfwYwjOJvJ6lCFSvxpJ9SJ1znQB220pB6hYH3Hh4eN1v6ITyBHqt3m5DZlBXxZU5G+xlSMY9UvKIXj3HaMYVediILOfGgidhplaSIGGdXJNmGEgUL0GtWsIxOn0yGfsX980QrKlKKWLs3BPLafyV06snRPOtoaC4jE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mDnnWtQs; arc=none smtp.client-ip=209.85.215.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yx1-f49.google.com with SMTP id 956f58d0204a3-63e393c49f1so3987169d50.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 06:10:08 -0800 (PST)
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b9a5f4435adso201953a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 06:10:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762179008; x=1762783808; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1762179014; x=1762783814; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RffJKsZYwfIeClOJutqJXe8g4YN0czoTWsjwNOQNhJQ=;
-        b=c4QrUr0kvtiEEvbenCUDibongxs2H9HPXrYxaf4YD4Ufa8hvjEbGS2EO6sKH3dx7Ug
-         2VtpYSbFpGWGt488uCK/HRzjP40kEpgPBCajBOJg+/fY3lJ71AWpN9vfDvvxxQkDM77q
-         l5AzGy/xw8f4Bcx4AeJhNQrdcODna5houEPJNXhnuKBNP6ntiPt+K3AEjREyL0LN8/ai
-         eyfBKkAj3l+gNvz6ev5X+KswyDMn2c1aw1bEo0Wj2DpDx7VBJj06MNc52O8SqTqsAsDN
-         bnCtCxMVP7jJZBQ+ceyc+JELUavAUDxP8WfoWp26pOgDf63wk2yWx5s2/aedwmnZ2zJ1
-         sb3w==
+        bh=/MSFS9mN161JdJ6hiSa2/SgnqSacyhFr/nNU6+KwahY=;
+        b=mDnnWtQsFb7VhhmJjnaQyHKkRmqtLLoGSuYi1Hu6KjDt+Vt2J3twNs7xkYdzeQIuc8
+         8kSeYrlgYUOHNFV4E9SNOJBTnCEGWaYnnf6fKIcuOcKc2xwnlREWIXkZdAvahcUx5JIX
+         lbaEOSpkXhz1qcgS+TuEA4oU464Wz3SmFlIcxAYaXcS0YSxC/OXHq5B7fiaBCbKVXxyT
+         yegzvoWYeUb1Nl3Bhtg9Imf1n5Yeod1YjxjgJIt/5qH2bUQmbzg64/Rub8vqex5f0k2+
+         4rPgXpBzd/DiDxhQ5UQ5joS0x63kq4/E099IwqKPJk6RQcmPSphs3y975TbYeu2uR6A8
+         t77Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762179008; x=1762783808;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1762179014; x=1762783814;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RffJKsZYwfIeClOJutqJXe8g4YN0czoTWsjwNOQNhJQ=;
-        b=p4vvcWSR11GlStotCUa054X3QihCX2tEsywguUX9gH+d+4bNX6mM87gvNjZgUswHYj
-         5ExG/VmzjJhSTLUGj/0eCTFjkKGAdl+XyXkJ7kL5N2mi1xHqcfZpcLWHV3utpJHKP2cc
-         HPKuC5p2JmupXEMuCIMZkAIrKbrWmOOC0yifUAkmK9m5NxUfDTJ3sCKx86TA2ilW/4su
-         jVdH1u31gwx8AwxmiZT6bgV8V7rf/c6GEtl82LyMScY2rcntkwhBJ7puKxtxsb+aPL4w
-         ooyqTKoM+UV0N2mcb7oTHMF+XPoV9Ws6vkEfSbcN0Qjb8XYfhLcDT85VS6u1c819Ng24
-         Mijg==
-X-Forwarded-Encrypted: i=1; AJvYcCVCPMJVZ9KZhJb011w3l3uT53Z2fQDvNSVxeMWidNsAsuXmpzepwt1teP5uQyr2OVgU62A2QUCkri1/irk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxcw/0czWpOUuUQ9R/0VN7BjMCTD2rVLLUDWE254AkIxel62Fsd
-	ZF1gvs3PQAPUqRm+S9lzzywG+JDQoNLr0H5En1rTdfICca5OTekonuNn
-X-Gm-Gg: ASbGnctpwe24S+Iks7l1gXEaZxqXVFzIWm5j5CJOVckdlDYcDaSHzLgflQP7lGzxzQL
-	YZxvtVgXJ/2Kk9GEhfblSjJy24VraUbrThi2V/PR/OgRhjLHu098ryTwKhL/w+MTvo1UEDvpICP
-	kvUYlCW/uU5hvRDoJ7YiQzeB/xyHsLT4SlOEUuhP3X/4vaGbd4W+MNESaRwgGVtXtcoF0zvgq9J
-	xQDi3LJjewqMoA652RHfZJSqRe2XJDKED8bngTKR6G61iqMXwfwyPWlhxOybI3JWgpZEmtp+6Oi
-	bPrKaSwB/J1oyzoGEL2Hb5dcKuODVUJeqSedMjquR5CsIpaXNbQ+U1TVzhoI/MxG2D/8aryH351
-	C563KjO+Xcr+caiA9Cx4oIibfqhl93RgiC4+rxnLXPrsmrj2DZ+qOMAkBJSDiAk0XDEgIOgaWv7
-	saZDaiLE5ozQ==
-X-Google-Smtp-Source: AGHT+IEtG1QUz22cT4bcrn+HqayTfLH7U7XmUZhV5JmnvGzOafUB3S8cEy747cA45LmQRirnSkaaQA==
-X-Received: by 2002:a05:690e:d8d:b0:63f:96d7:a350 with SMTP id 956f58d0204a3-63f96d7a4f4mr7403217d50.66.1762179007954;
-        Mon, 03 Nov 2025 06:10:07 -0800 (PST)
-Received: from localhost ([2a03:2880:25ff:50::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-78691db135esm935267b3.14.2025.11.03.06.10.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 06:10:07 -0800 (PST)
-From: Usama Arif <usamaarif642@gmail.com>
-To: dwmw@amazon.co.uk,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	ardb@kernel.org,
-	hpa@zytor.com
-Cc: x86@kernel.org,
-	apopple@nvidia.com,
-	thuth@redhat.com,
-	nik.borisov@suse.com,
-	kas@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-efi@vger.kernel.org,
-	kernel-team@meta.com,
-	Usama Arif <usamaarif642@gmail.com>,
-	Michael van der Westhuizen <rmikey@meta.com>,
-	Tobias Fleig <tfleig@meta.com>
-Subject: [PATCH v3 2/2] efi/libstub: Fix page table access in 5-level to 4-level paging transition
-Date: Mon,  3 Nov 2025 14:09:23 +0000
-Message-ID: <20251103141002.2280812-3-usamaarif642@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20251103141002.2280812-1-usamaarif642@gmail.com>
-References: <20251103141002.2280812-1-usamaarif642@gmail.com>
+        bh=/MSFS9mN161JdJ6hiSa2/SgnqSacyhFr/nNU6+KwahY=;
+        b=rY5qNfHAq6ZYgRO7VaM9vt4jal8UYrQYlhUcZ1ui33hWCZATt5EDgQVFtqMG7MXWTY
+         icoTAvXEcYGfrghQajmM/MfliBmjJX6SB8h3tyAX+ZYbWu1c38AvXS76l+HxA0mUjSzE
+         3htp3KgR05U45iMdxQU1WqhVKUfSgM6UAacORjgOvLESkaF/ZqFsZKQ3q7TLj22lFx9u
+         6Kjygs8P2G0WvSVaHtfP1N2YiQxMuhF8k7p2BVcAg3MimqNb2zGrnEObaYpDBqUYORZ9
+         vIQbtkWNJW/M+xAu3YTJIloPU12ffPh3mABqx7ese4rk/i9KpCBLYzXw96ZJZCi3DMfr
+         jTgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXxPayIz6cnPI2ynOh2PBTOKWd2ziVz1uawV02BK2c0f2XVGgBV/5YDWNlYCoTjtNH+iJhS1Q1HdPrd2q0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYRi1my6T9/NDLA24H8vHM49ZCh+td3L1sxszQmTeL2as/aKOR
+	IPmRMYyffO8S5vdY78giJWElPqegisDNh8ZvwhlzTQmEOy/IZEDnWTeifSB0rCzXOtBK/X6Y5EY
+	oFmkr6jDWwfG9HkpgKjeD1Yk4J6yaKHc=
+X-Gm-Gg: ASbGncsBwsgrvKg7E9ae+kQ0erv0S79CKmAnn2VvUIY2dzZJNm6mtpT8RUKp4k7knSx
+	3qizdNmuMWsIsHn65YBweigwRYI2vF39w1s9bkfZ2bI9rR/BGKcEeCPt8F81PGhtAPteM0saqCR
+	Xw0hjYJWME/+V31tw+CjfdBBtJRycK+53+ZCkC6Ug7GhT+JUOIC2+wSDYlONtLsFor/15/QkqOf
+	q+MKWSBQM6oZZzQbx4YHg3u0sN7ArlMDSalT2Gv759bKYD4XbO9TkbZuJ+FxGREWN5G2e5fzANQ
+	avXw+X4V2OxZKlq0J7TM4JjLQSWEyYHD5eC6hSXU4nnBTSOZqida5Ji6fEkBrehISbxwbQZVVi4
+	lB2ZiVCEIJpC1Jg==
+X-Google-Smtp-Source: AGHT+IERZ1iyJZBPeT0YVQfb2PVMv4VFMRw0yRH9plwNDgHK1xJwSS9mH2Mrbs451CWBH4ib61IvfZSbmjYWHG0a5Zg=
+X-Received: by 2002:a17:902:e891:b0:272:2bf1:6a1f with SMTP id
+ d9443c01a7336-295558d2f6fmr51352725ad.4.1762179013733; Mon, 03 Nov 2025
+ 06:10:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251031-bounded_ints-v1-0-e2dbcd8fda71@nvidia.com>
+ <20251031-bounded_ints-v1-1-e2dbcd8fda71@nvidia.com> <aQgQv6F0Ao4DH6U0@yury>
+In-Reply-To: <aQgQv6F0Ao4DH6U0@yury>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 3 Nov 2025 15:10:01 +0100
+X-Gm-Features: AWmQ_blqWQMEWzphBo6SNEUKCAPDaHlP1S6OkyILvvvtbDdStxg5wvCs5HYRH4c
+Message-ID: <CANiq72mg-NntJLf_jbigz++0hK7G3WAxbvejRq1EzOc7GE+doA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] rust: add BitInt integer wrapping type
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Alice Ryhl <aliceryhl@google.com>, 
+	Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Joel Fernandes <joelagnelf@nvidia.com>, Jesung Yang <y.j3ms.n@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When transitioning from 5-level to 4-level paging, the existing code
-incorrectly accesses page table entries by directly dereferencing CR3
-and applying PAGE_MASK. This approach has several issues:
+On Mon, Nov 3, 2025 at 3:17=E2=80=AFAM Yury Norov <yury.norov@gmail.com> wr=
+ote:
+>
+> Rust _must_ do the same thing to at least be arithmetically
+> compatible to the big brother.
 
-- __native_read_cr3() returns the raw CR3 register value, which on
-  x86_64 includes not just the physical address but also flags Bits
-  above the physical address width of the system (i.e. above
-  __PHYSICAL_MASK_SHIFT) are also not masked.
-- The pgd value is masked by PAGE_SIZE which doesn't take into account
-  the higher bits such as _PAGE_BIT_NOPTISHADOW.
+No, Rust doesn't need to do anything of the sort, sorry.
 
-Replace this with proper accessor functions:
-- native_read_cr3_pa(): Uses CR3_ADDR_MASK to additionally mask
-  metadata out of CR3 (like SME or LAM bits). All remaining bits are
-  real address bits or reserved and must be 0.
-- mask pgd value with PTE_PFN_MASK instead of PAGE_MASK, accounting for
-  flags above bit 51 (_PAGE_BIT_NOPTISHADOW in particular). Bits below
-  51, but above the max physical address are reserved and must be 0.
+The point here is not to copy what C does, but to improve on it.
 
-Fixes: cb1c9e02b0c1 ("x86/efistub: Perform 4/5 level paging switch from the stub")
-Co-developed-by: Kiryl Shutsemau <kas@kernel.org>
-Signed-off-by: Kiryl Shutsemau <kas@kernel.org>
-Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-Reported-by: Michael van der Westhuizen <rmikey@meta.com>
-Reported-by: Tobias Fleig <tfleig@meta.com>
-Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
----
- drivers/firmware/efi/libstub/x86-5lvl.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+In particular, we definitely do not want to have anything like integer
+promotions and arithmetic conversions from C.
 
-diff --git a/drivers/firmware/efi/libstub/x86-5lvl.c b/drivers/firmware/efi/libstub/x86-5lvl.c
-index f1c5fb45d5f7c..c00d0ae7ed5d5 100644
---- a/drivers/firmware/efi/libstub/x86-5lvl.c
-+++ b/drivers/firmware/efi/libstub/x86-5lvl.c
-@@ -66,7 +66,7 @@ void efi_5level_switch(void)
- 	bool have_la57 = native_read_cr4() & X86_CR4_LA57;
- 	bool need_toggle = want_la57 ^ have_la57;
- 	u64 *pgt = (void *)la57_toggle + PAGE_SIZE;
--	u64 *cr3 = (u64 *)__native_read_cr3();
-+	pgd_t *cr3 = (pgd_t *)native_read_cr3_pa();
- 	u64 *new_cr3;
- 
- 	if (!la57_toggle || !need_toggle)
-@@ -82,7 +82,7 @@ void efi_5level_switch(void)
- 		new_cr3[0] = (u64)cr3 | _PAGE_TABLE_NOENC;
- 	} else {
- 		/* take the new root table pointer from the current entry #0 */
--		new_cr3 = (u64 *)(cr3[0] & PAGE_MASK);
-+		new_cr3 = (u64 *)(native_pgd_val(cr3[0]) & PTE_PFN_MASK);
- 
- 		/* copy the new root table if it is not 32-bit addressable */
- 		if ((u64)new_cr3 > U32_MAX)
--- 
-2.47.3
-
+Cheers,
+Miguel
 
