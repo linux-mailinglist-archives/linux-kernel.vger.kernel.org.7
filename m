@@ -1,81 +1,128 @@
-Return-Path: <linux-kernel+bounces-882151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 671B3C29C24
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 02:06:18 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F531C29C2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 02:12:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9006F3AC69C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 01:06:16 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5BD0E4E4185
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 01:12:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF7F2652A6;
-	Mon,  3 Nov 2025 01:06:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C249269D17;
+	Mon,  3 Nov 2025 01:11:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NMP2C1gC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="WhfNGhW5"
+Received: from canpmsgout03.his.huawei.com (canpmsgout03.his.huawei.com [113.46.200.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3454C469D;
-	Mon,  3 Nov 2025 01:06:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A495B26CE0F;
+	Mon,  3 Nov 2025 01:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762131971; cv=none; b=C8rCIlX2YsWMVgxIZw7aCF6mEo7I1CpLs5rGBlbcQSwDiwlDZXN8EnlFFYDg9If8KMpcm/1nm+7StMuHPLM64B0uF1X1kbxi4SxCjEPAAsqep6Gnw/f+3QKCkJIBrHZuyQf+3FQB6TPLLbUlYsbfHXOSRB3xuirVLAtEwMJdr/o=
+	t=1762132318; cv=none; b=jmCmMEtU9/MEVuCxsnx0A6lTd09IV/H4EMcTZ4EkYYAChxmdbSwMv7UejAKKhPCMZOiSLJK+I3Ke31oVpcT53Wt8quVgyrRJ8E+FAydvrIyHkmzQpX3xtnpEuMCAK0uMpGjppQe/1X6RWdReKfq5aJGYSk22TsUPmiNCGZJs5Vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762131971; c=relaxed/simple;
-	bh=pq9XYg7ZzklhQuFvWF8rStUN/jnF9XAaSO0rWhh/SH4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BiHWJ1xA3BDGK8oL9SAzQmHcfQCX7bpeHKE+lbIDHqV51HLgnLmN4x/Lnvdi4nb9WX1DpmD/rv7KqG9IYlmYauzwmdFlM+kTompZ3DGTzIfovV3ldsBs8zZB9zyO2bn8aylnqK/FKSTL0SfJwr25a0/Bm9Jyiq1qC3czYDdPs2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NMP2C1gC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75347C4CEF7;
-	Mon,  3 Nov 2025 01:06:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1762131970;
-	bh=pq9XYg7ZzklhQuFvWF8rStUN/jnF9XAaSO0rWhh/SH4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NMP2C1gCMFDnWrBng+EJyj8LSpUNopkvjo1NS68jhWKfWQENYxgP+PAR36nVmSyL0
-	 ReOvE4R8phSp6P7XMCQFoPwvbJyYYWZhESnPwUUz1+hPjNP/mp/dQyufaf4+j9P2Rc
-	 2WfRt/rPShxfpuPhG7fdIW4pmvT8tpBsl4HUR2FE=
-Date: Mon, 3 Nov 2025 10:06:08 +0900
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Arnd Bergmann <arnd@arndb.de>, Bjorn Helgaas <bhelgaas@google.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: [PATCH v2] misc: rp1: Fix a reference leak
-Message-ID: <2025110353-whoops-concert-5d18@gregkh>
-References: <8f55f8866a6680830c9d318201a29293ac50a591.1761334487.git.christophe.jaillet@wanadoo.fr>
+	s=arc-20240116; t=1762132318; c=relaxed/simple;
+	bh=OObnbOurmUBnsR8DdU+LSqR9KziWySdWAuiFPthEiNQ=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=P1ruxb4zA96cO/DzhBEMLwpfRJpe9qDWFNG1AYa2v/IeL3PvGWZ6PtBgkr/j0dmt27B4jk1x00ehrGw0mSu6il8aYgG/JKvsaQqffiP3xc4jUqF+uE1CFhcWp/5udAdGEya5s5skDhZbG9Wfk5ab6zx2yi/PwA24UnBDHs1rus0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=WhfNGhW5; arc=none smtp.client-ip=113.46.200.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=hcU1uo2c5xmsCi47GF3xOFBCAX+ntvxmuboNdEVPJjc=;
+	b=WhfNGhW5pbA13j4FcbvRpvaV5jG+MxO6z83P6yzBRwCZQmplC5JJ/zfT/Tr/dLYJ2S0XHf9Vi
+	n+y2/9jZAovM1vsV5Kc5iKhD3OwyFQsJ2pOGRmzAPcpVcWtaI5wjLALkkAN44VpJJV751cLZUW6
+	D+v6BeuIXgOBTDRnYGh4uRA=
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4d0D6368NZzpStg;
+	Mon,  3 Nov 2025 09:10:19 +0800 (CST)
+Received: from dggpemf500015.china.huawei.com (unknown [7.185.36.143])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8355A140276;
+	Mon,  3 Nov 2025 09:11:46 +0800 (CST)
+Received: from [10.67.121.110] (10.67.121.110) by
+ dggpemf500015.china.huawei.com (7.185.36.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 3 Nov 2025 09:11:45 +0800
+Subject: Re: [PATCH] vfio: Fix ksize arg while copying user struct in
+ vfio_df_ioctl_bind_iommufd()
+To: Raghavendra Rao Ananta <rananta@google.com>
+CC: Jason Gunthorpe <jgg@ziepe.ca>, David Matlack <dmatlack@google.com>, Josh
+ Hilke <jrhilke@google.com>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <alex@shazbot.org>
+References: <20251030171238.1674493-1-rananta@google.com>
+ <5e24cb1e-4ee8-166b-48c7-88fa6857c8dc@huawei.com>
+ <CAJHc60yak=kOQmap7Tmp=84cx7Z=h_15K_ZP9kdvxBc1h15rgg@mail.gmail.com>
+From: liulongfang <liulongfang@huawei.com>
+Message-ID: <9a153cfc-3c41-398b-4682-6d04e1880cc9@huawei.com>
+Date: Mon, 3 Nov 2025 09:11:45 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8f55f8866a6680830c9d318201a29293ac50a591.1761334487.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <CAJHc60yak=kOQmap7Tmp=84cx7Z=h_15K_ZP9kdvxBc1h15rgg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ dggpemf500015.china.huawei.com (7.185.36.143)
 
-On Fri, Oct 24, 2025 at 09:36:11PM +0200, Christophe JAILLET wrote:
-> The reference taken by of_find_node_by_name() in the probe is not released
-> in the remove function.
-> 
-> In order to avoid a reference leak, use cleanup.h to automatically
-> release the reference at the end of the probe when it is not needed
-> anymore.
-> 
-> In order to do so, a reference also needs to be taken when DT is not used.
-> 
-> This simplifies the error handling path and makes direct returns possible
-> in several places.
-> 
-> While at it, also add a missing \n at the end of an error message.
+On 2025/11/1 1:09, Raghavendra Rao Ananta wrote:
+> On Thu, Oct 30, 2025 at 6:34 PM liulongfang <liulongfang@huawei.com> wrote:
+>>
+>> On 2025/10/31 1:12, Raghavendra Rao Ananta wrote:
+>>> For the cases where user includes a non-zero value in 'token_uuid_ptr'
+>>> field of 'struct vfio_device_bind_iommufd', the copy_struct_from_user()
+>>> in vfio_df_ioctl_bind_iommufd() fails with -E2BIG. For the 'minsz' passed,
+>>> copy_struct_from_user() expects the newly introduced field to be zero-ed,
+>>> which would be incorrect in this case.
+>>>
+>>> Fix this by passing the actual size of the kernel struct. If working
+>>> with a newer userspace, copy_struct_from_user() would copy the
+>>> 'token_uuid_ptr' field, and if working with an old userspace, it would
+>>> zero out this field, thus still retaining backward compatibility.
+>>>
+>>> Fixes: 86624ba3b522 ("vfio/pci: Do vf_token checks for VFIO_DEVICE_BIND_IOMMUFD")
+>>
+>> Hi Ananta,
+>>
+>> This patch also has another bug: in the hisi_acc_vfio_pci.c driver, It have two "struct vfio_device_ops"
+>> Only one of them, "hisi_acc_vfio_pci_ops" has match_token_uuid added,
+>> while the other one, "hisi_acc_vfio_pci_migrn_ops", is missing it.
+>> This will cause a QEMU crash (call trace) when QEMU tries to start the device.
+>>
+>> Could you please help include this fix in your patchset as well?
+>>
+>> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+>> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
+>> @@ -1637,6 +1637,7 @@ static const struct vfio_device_ops hisi_acc_vfio_pci_migrn_ops = {
+>>         .mmap = hisi_acc_vfio_pci_mmap,
+>>         .request = vfio_pci_core_request,
+>>         .match = vfio_pci_core_match,
+>> +       .match_token_uuid = vfio_pci_core_match_token_uuid,
+>>         .bind_iommufd = vfio_iommufd_physical_bind,
+>>         .unbind_iommufd = vfio_iommufd_physical_unbind,
+>>         .attach_ioas = vfio_iommufd_physical_attach_ioas,
+>>
+> Sent as a separate patch in v2:
+> https://lore.kernel.org/all/20251031170603.2260022-3-rananta@google.com/
+> (untested).
+>
 
-This means this should be 2 different patches :)
+I've tested this patch locally, and after applying it, QEMU no longer fails to start
+and the functionality works as expected.
 
-thanks,
+Thanks.
+Longfang.
 
-greg k-h
+> Thank you.
+> Raghavendra
+> .
+> 
 
