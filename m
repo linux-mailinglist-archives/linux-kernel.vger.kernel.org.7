@@ -1,47 +1,39 @@
-Return-Path: <linux-kernel+bounces-883490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF34C2D97D
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:08:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0281EC2D986
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:09:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2B92E4F20D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:06:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A87F18994DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939E7283FF0;
-	Mon,  3 Nov 2025 18:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qsRz6HJR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F1041C72
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 18:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738843054D4;
+	Mon,  3 Nov 2025 18:08:58 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8953285CA4;
+	Mon,  3 Nov 2025 18:08:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762193189; cv=none; b=m2YiKsRC9zBWdionadOOJMwEw8VSGWALJTbTzyeyQmEyOt6BQeQ14CfHw/va2eMjYSueXnfNWz65CwPpvDpJXJzJZkOpTG0KnAjtt5mm+W1Cs4VFLKmg9ya+v38xL3vkuSu/FpfTFHiMHmy1wdLOOYEG0xujtNyO1GBAX3qobrY=
+	t=1762193338; cv=none; b=MwcCzFCDhgXOIO6nlWArroFR0sHv65fnuIWn/TzkSIdcyKmTopiW6ApTgduo8TfRZ0KuXF67rRIvA3eOVBAXhBkTyaTxJmjYZhrlAUWLnSHjrZOyAHd9kJ/mH3ooEh6cuXycrYn5hXPRvLQjXE3wB1qZtPI5K5XuO7GikxeekJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762193189; c=relaxed/simple;
-	bh=AnbfUwPzkbHols+QiT2l5c4xTQZEscZ7pxRKBf3sdYM=;
+	s=arc-20240116; t=1762193338; c=relaxed/simple;
+	bh=oMupISCSYd/eNzrdMLFaLu2UlclpMU6/awU7/8GJBY0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iDrKDg2+8Mt53VXoko7TXhjRSjXxNC3wz0hFeGLhXc3hYd6dhNAQpO0ICIz1zkidPU+tglpqCUpUXRcCTKQ1LZ7qhrn4kpIjWF4Z9KhpZ6RbiInwcX1nMU1HkK3eVTuzAW7/6CSYzsjvv3cMxPdEH9ZEeOqnIC/c0tP1/GY32Rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qsRz6HJR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDF47C4CEE7;
-	Mon,  3 Nov 2025 18:06:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762193188;
-	bh=AnbfUwPzkbHols+QiT2l5c4xTQZEscZ7pxRKBf3sdYM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qsRz6HJRxpQGx9VQ8+UjPgABTqHGOwBwaVGe22cJ6Ie0R+SJmoWPXMvJ+ypcmAZzL
-	 rWRXW0IMFLZ+lQZut8028LHNqCrMNVf3bBB/+9LkBCjPlK6Tqu33AcnclRvzwHZOHb
-	 2DBxizgEOHFVrPNl9FgyxyxDg33F4b/Te9VmocyQHmjXU1rCr9TLN64SWohgZtG2lj
-	 +0bUCjj14/4gJ30GUDWDRFjnVhYDFhDKdyeMeC0xQyS5ZBBLQU3lEmbSEbgNlTWdKJ
-	 10dd568pgIFgTPug9DUhnf1NoCbXqfacF+0+UmPt/MSv23X8H9QBWVf4+wbDN70vUx
-	 ZTF30IA6wUplg==
-Message-ID: <f6ee43c3-7175-48a5-a483-f89650ce02bc@kernel.org>
-Date: Mon, 3 Nov 2025 19:06:24 +0100
+	 In-Reply-To:Content-Type; b=hkvtxROnV9n1eKH4RjN7bMByxbka6c6Vnk0Ejs5pmgrF97/3PEWHxwamPJSr6DYgG2qx0zdV8CZMm7ZiwWfNdmBNACwXtc8mJOjgzn8CokZJrGeY+pPJyjBG4WuuCRYqyVae6d7rgiFDxDkRb9cdA6VwF99gSvLzCkPn/pCm+uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4DBAF2A6B;
+	Mon,  3 Nov 2025 10:08:48 -0800 (PST)
+Received: from [10.1.30.16] (unknown [10.1.30.16])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 463A43F694;
+	Mon,  3 Nov 2025 10:08:48 -0800 (PST)
+Message-ID: <1965fe85-3734-45e9-af89-651c65845e8a@arm.com>
+Date: Mon, 3 Nov 2025 18:08:45 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,114 +41,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] arm64: mm: Don't sleep in split_kernel_leaf_mapping()
- when in atomic context
-To: Ryan Roberts <ryan.roberts@arm.com>, catalin.marinas@arm.com,
- will@kernel.org, yang@os.amperecomputing.com, ardb@kernel.org,
- dev.jain@arm.com, scott@os.amperecomputing.com, cl@gentwo.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Guenter Roeck <groeck@google.com>
-References: <20251103125738.3073566-1-ryan.roberts@arm.com>
- <e5fee14a-4569-49c8-9f42-844839e51e85@kernel.org>
- <8df1d593-f176-422d-8b87-844986ac38a6@arm.com>
-From: "David Hildenbrand (Red Hat)" <david@kernel.org>
-Content-Language: en-US
-In-Reply-To: <8df1d593-f176-422d-8b87-844986ac38a6@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v4 07/12] mm: enable lazy_mmu sections to nest
+To: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ David Woodhouse <dwmw2@infradead.org>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+ Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
+References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
+ <20251029100909.3381140-8-kevin.brodsky@arm.com>
+ <ae1236da-2647-4d53-bf4d-ff8fc32eb734@redhat.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <ae1236da-2647-4d53-bf4d-ff8fc32eb734@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 03.11.25 18:28, Ryan Roberts wrote:
-> On 03/11/2025 15:38, David Hildenbrand (Red Hat) wrote:
->>
->>>    }
->>>
->>> +static inline bool force_pte_mapping(void)
->>> +{
->>> +    bool bbml2 = system_capabilities_finalized() ?
->>> +        system_supports_bbml2_noabort() : cpu_supports_bbml2_noabort();
->>
->> You are only moving this function. Still, there is some room for improvement I
->> want to point out :)
->>
->> bbml2 could be a const (or a helper function like bbml2_supported).
->>
->>> +
->>> +    return (!bbml2 && (rodata_full || arm64_kfence_can_set_direct_map() ||
->>> +               is_realm_world())) ||
->>> +        debug_pagealloc_enabled();
->>
->>
->> I suspect this could be made a bit easier to read.
->>
->>      if (debug_pagealloc_enabled())
->>          return true;
->>      if (bbml2)
->>          return false;
->>      return rodata_full || arm64_kfence_can_set_direct_map() || is_realm_world();
-> 
-> Yeah, I guess that's a bit nicer. I'd prefer to tidy it up in as separate commit
-> though. (feel free ;-) )
+On 01/11/2025 12:22, David Hildenbrand wrote:
+>
+>>   static inline void lazy_mmu_mode_pause(void)
+>>   {
+>> +    struct lazy_mmu_state *state = &current->lazy_mmu_state;
+>> +
+>> +    VM_WARN_ON(state->nesting_level == 0 || !state->active);
+>> +
+>> +    state->active = false;
+>>       arch_leave_lazy_mmu_mode();
+>
+> Just one question:
+>
+> Don't we want to allow for pause/resume when not enabled? Would seem
+> valid to me, because pause/resume code should actually not worry about
+> that, right?
 
-Separate commit is fine (hoping you can do it once this lands :P ).
+This does sound sensible, thanks for the suggestion. The initial goal
+was to allow functions that know they're called with lazy MMU enabled to
+be able to pause it temporarily if they need batching disabled. But we
+could generalise this to: if you know batching would break things, then
+you can preemptively add a pause/resume pair, and it won't do anything
+unless you're called with lazy MMU enabled.
 
-> 
->>
->>
->>> +}
->>> +
->>>    static DEFINE_MUTEX(pgtable_split_lock);
->>>
->>>    int split_kernel_leaf_mapping(unsigned long start, unsigned long end)
->>> @@ -723,6 +733,16 @@ int split_kernel_leaf_mapping(unsigned long start,
->>> unsigned long end)
->>>        if (!system_supports_bbml2_noabort())
->>>            return 0;
->>>
->>> +    /*
->>> +     * If the region is within a pte-mapped area, there is no need to try to
->>> +     * split. Additionally, CONFIG_DEBUG_PAGEALLOC and CONFIG_KFENCE may
->>> +     * change permissions from softirq context so for those cases (which are
->>> +     * always pte-mapped), we must not go any further because taking the
->>> +     * mutex below may sleep.
->>> +     */
->>> +    if (force_pte_mapping() || is_kfence_address((void *)start))
->>> +        return 0;
->>> +
->>
->> We're effectively performing two system_supports_bbml2_noabort() checks,
->> similarly in
->> arch_kfence_init_pool().
->>
->> I wonder if there is a clean way to avoid that.
-> 
-> I thought about this too. But system_supports_bbml2_noabort() is actually a
-> magic alternatives patching thing; 
+I also like this as this removes an invalid usage situation - now as
+long as you have balanced enable/disable and pause/resume calls, you're
+good. Will make that change in v5.
 
-Makes sense, so likely just another nop in the final code.
+- Kevin
 
-> the code is updated so it's zero overhead. I
-> decided this was the simplest and clearest way to do it. But I'm open to other
-> ideas...
-
-Given that we have two such call sequences, I was wondering if we could 
-have a helper that better expresses+documents the desired semantics.
-
-static bool pte_leaf_split_possible()
-{
-	/*
-	 * !BBML2_NOABORT systems should never run into scenarios where
-          * we would have to split. So exit early and let calling code
-	 * detect it + raise a warning.
-	 */
-	if (!system_supports_bbml2_noabort())
-		return false;
-	return force_pte_mapping();
-}
-
-Something like that maybe.
-
--- 
-Cheers
-
-David
+>
+> if (!state->nesting_level) {
+>     VM_WARN_ON(state->active);
+>     return;
+> }
+> VM_WARN_ON(!state->active);
+> state->active = false;
+> arch_leave_lazy_mmu_mode();
+>
 
