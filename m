@@ -1,206 +1,263 @@
-Return-Path: <linux-kernel+bounces-883067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16F89C2C695
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:29:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C469C2C699
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:30:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E76954E3BC6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:29:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B688189099D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A803128D8;
-	Mon,  3 Nov 2025 14:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DE3B27FB32;
+	Mon,  3 Nov 2025 14:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f1YNP1cE"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EpEIaSFv"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F54311976
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 14:29:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403A027281D
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 14:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762180182; cv=none; b=MWxEa+ZYyjx3qvOUewysIpzrVAIOE7XNfXZe1wtfK99QjuqNfXzJ5EzIGaUUIrU7vlS9M50MDf6ygUOVcO9W/z5p2Uo49Dcx7z6XKXly8qhiRjy8yrI4no5OkgBH9YgkDPjgLjuCVSZ2JaOf/QfGXBPi53esa9I8b48OMC+50Nw=
+	t=1762180225; cv=none; b=FskAvJksBRjgTn9ubNWkvn9eK6cGZZ0ymPTOWLQuAQzgWpeZ8CUDaTlfArYnvI4x4e5MM288nCiByfQbo1OT2aY6KTra+HrOQC9tD+S3ASPIdyAEJ7VTHXuIa9a56PrUGtx880wEiDedUOaxb0ccxmeJlzSaS5jbk2w660+j3AY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762180182; c=relaxed/simple;
-	bh=kopMZhSSVjSpU7vbwiXfUO/3/NCj6jgZ4saCZU03NSs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sb9pXH14XHlExM+3MLUzUgwRq4gAkjzehxoI39KJEMvTgMTXVdD/Y/xVgC1wtqXA1D9jDzUBmlcDXxPQPnbmZiOp50nLrUhGwOtbNd1UuWs7WOey/3ZD/FEiQmFncN+oBB4FjnxBb1wQh9HPuMIfdT+Tgjh+u9gMPZdlmgYAmEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f1YNP1cE; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2959197b68eso279155ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 06:29:40 -0800 (PST)
+	s=arc-20240116; t=1762180225; c=relaxed/simple;
+	bh=d5SlSmgj+KYxoqS8LOdHefpz54HfTiu7PunihQHNVXo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hclF6VGw11lNSSZ1Bfdod4Bzf0V/gR86wR+zKh+0sZDjsMSSit14pilBpzMv7ShRmvZunfec+yZRFeB/ab77VVpDUVa50FOmKVPtRUZ1fA0cuYcISSK8PAxh01hV3ZlsHsGiZKqIHPC2ineNyHpfT1gLv0766cG0D8nfm6IFLqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EpEIaSFv; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-47710acf715so22194735e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 06:30:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762180180; x=1762784980; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=h2ss4O/i4KxhkbN9o8nJ4rRjGt4fkGep+vaOCctZv7Y=;
-        b=f1YNP1cEaMPE5m0oiVJeEfxerb1ZgrveP/HD4+83zyNOIQ6pkKYSPRYNYLumT1uCQ6
-         a7c6TjNNYCblweRZCysFJJbPI0yX2uhHg3JhCHDBRnJMIbokKUibPAl4q7XxKx5k8WA9
-         rbPsolVrQV7thK570BgZnmyJokCkZFBPyeKmtltgcbJZrPX5Wr3TlAnRDE5qyXYO4lxF
-         5vMEmfQ9+AFRoESzkiScUFBYKKLT2wN0Gp//ZdHXG7otzZ044OtzoSWQzHJZl3Ht/AMc
-         KA8VfHt2q7cqqfWt1NHM3TFVvmytZCcAEy+YrLvVi0ToCPNWfVjIX8R6WO6goM60otqq
-         48uw==
+        d=gmail.com; s=20230601; t=1762180221; x=1762785021; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=d5SlSmgj+KYxoqS8LOdHefpz54HfTiu7PunihQHNVXo=;
+        b=EpEIaSFvQ374C26Ke9OIpPr+INg+Co8YbU8sq/pLZUlb+hPZs/Vf6kFvhiIYFSkODM
+         M48H3Vh8OzhlU1q0gkN6Rz8RbnU2d/uTWdvuai9wTchrTp3ZQomRlxxzWcPMzauAtYN2
+         cYvfSvk52VEYx+kNXsbhqRlsXSxOGhyC3MY6jv/W11ACKMcIUnGfa+SiaDUuaPBcJaGu
+         Ch8KBtKOHMT1ul8BGNDPhAoZDtxQrXqjliEg2/aZFXVfIbCkWaGRkOV7osocEBEuPdn9
+         BNkBrGfjZtOrSNKncWWzVIU1366f/vHmUcwMJC7POqKEP4OyKtvBDOQLt7G0zzM6fzn2
+         ArHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762180180; x=1762784980;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h2ss4O/i4KxhkbN9o8nJ4rRjGt4fkGep+vaOCctZv7Y=;
-        b=UNJkRdffwS9cdUz1n2ekvRwzfjnuAPyRKCeTldyPEi/yYYpAzva4ozGvXp2FW9XxnZ
-         cn1yb4c/59N5Opq6TfBzAIC+LqcnOYPxYzi8NeMTGrKPkRle3Wz35+98QwLJ8BPYq5vS
-         c5kXPNyhOmX7dEt81FF7ToQ0gJUK9QrJEfT+gh5V+LO/j+Bu6Vtk/DaIpcQD3rf4x1Xe
-         pU2IN3imF7Ctuhwy+BOzidt7G57ERdLegDN9fvj8eUC2aVWE4kL7ixt4A7hppZvchDGA
-         gNyNraCooUvLzFU8WDaELyetyJRjOsnu9tBzm4/sALuzFd5MTMmV5Rys/Z6CDeTJ5BVl
-         85HQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXiBid7jvOpdTaAroPPc1K1T9K6Sfzh/9UIjDmNERyNA8lnVJjZZHh2FJu3fPN7x4b+456V3usbWwl3LQA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQZybnWC3TjON00NK52gACcceQBM8HigoMX0nWBf1nXdK48ozE
-	+S7j7m32Uo3ojv5piyZKPPH9C/JYVLvXiYD2qiqSXGFehxGYCtsLutQsSt4jluV4Ww==
-X-Gm-Gg: ASbGncv3uKi/1coHDbcDEPF45dX89UOi8tKn1pfNrBrl5AagLtdkU4iKKrrQYlMuOHC
-	FnikPNRhTPScADULVQl/aOcH8+uK1jbqEWzrmwdHshirp5oWB6zaPNnrLhLHQG9aZ4BOB6Bgydj
-	Nbc+S8yP9AofM1ImkVjkxt82bRKAf5mQjyBhk49JSL9rMvZwO9Cuic/Zmc7evuehC+c1fpc+1rK
-	ouQ+oADU+MILvPIOTr60OEpfkmg50RnyvGZD1TsAmFyDITM/ZUr9XAYFSeN+h5r9ZW6UWTw3+Fv
-	HwzFDgOsAE8movmi0cLy/Q9cyjZ/GflH3KDseiyDnW50IGFYRW3y46RPitH7b/Q0+YWBS0CwQKV
-	MoySGUw9w1uVH4XnY4CAWEWHo60t65+F53F0Lb8o13E4ZyRLSxBdtMqTHLaji/MmfUbEY8JE4sX
-	btinDYdoqOSVNEjp71AYFIB9WAd/oBYG7tWyA69A==
-X-Google-Smtp-Source: AGHT+IGgprIYvEObzhmjpC9qpNiNgXC4S+j2D9xeUV3N2fiXTSvqkcZt/SDTOp4IK0p25zBW1FXM7Q==
-X-Received: by 2002:a17:902:e548:b0:26a:befc:e7e1 with SMTP id d9443c01a7336-29554bab74amr6694685ad.12.1762180179869;
-        Mon, 03 Nov 2025 06:29:39 -0800 (PST)
-Received: from google.com (164.210.142.34.bc.googleusercontent.com. [34.142.210.164])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29556d61c4dsm87954645ad.56.2025.11.03.06.29.37
+        d=1e100.net; s=20230601; t=1762180221; x=1762785021;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=d5SlSmgj+KYxoqS8LOdHefpz54HfTiu7PunihQHNVXo=;
+        b=BlwZotJi8UIMThzKC9vzHh6en4wu/aLiSV3887nx/INHn0fvqSIXpXdI98y0ZheoYc
+         a2jYhla1Zxz14vREzvDQmXidAOi5kJoIoej3RKI3nFtABSnxS57zSeWAFgMT5R87mhnS
+         OCghBvS0g+t65M04KvZgvWwB0AU+r6ufzrVIXOvhpgPLp4lO5CmPaCph2cJIX6plQ7Jm
+         4yGTq2NmPDGLxndfj2mI04gspyWattoeU6t8tn+zX0MlzDzRC3RpHB+mOO1PPKLcdEGh
+         Yiy1Ry2edn0H5+Bv98uC2cNTczK0DLPahzCDmbhO/ANVjnPeHU9c4nX2NgaEoUxHLAfK
+         lSpg==
+X-Forwarded-Encrypted: i=1; AJvYcCWXuahs8oDmh9IEmdG2Wgj5RgKjts6J5F6DBX01g8jOh1Tdxz/0qmyZQ1BoEPYG57nGZcS8FzqpdGwX1R0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzXGpAHJItCocUaodTsklXdPKQfJneCLFKSmwUoGEwekkbgjeR
+	Ig1OgrzqHJ7GFgUxg9qkGpBWxlSridfFJMr2j+hxqCQseRfdfsjAJ4g0
+X-Gm-Gg: ASbGncuz7I+7QXE6eC8HCgRKDUwq/w7POqXIIJSCFGjD8S27WOCluIgqfxvMRiILNFL
+	J9pjC7MKZRTsR/nm808dmHL00HZhRRVmJY5M98v2eNEQ5loWHIxDWeLI/17Q6NSI0FD9RFhGM0l
+	AcDV84QovHAZ977ORlwobqjCUYqZPXqP1rQYsHdoLSH0HjDPqJuaRD96CYEVVRmaa1mpwRlfSfA
+	Py9SBmBXfS1xLkfiNpB/25onbooxJoMYNpJoGO7F44lYebf9DLt3LKa97zRWfDgAqUi0I41nTdY
+	qT/HLr8lDAO3hkQRt9/txTKVx0oeuRPelbsE0HWP6tbBPk+eKJyvvL599TcUy9b2nbk6PnK/GN/
+	hUyz/MW4igORmDiC07auhFVTu9sgZW2+wKGY7MyuN7sWmiMskTQZeOb5xsCLx7WVq4ac+aPNd4p
+	E5Jl+Vpjhwlht95QAzTOU=
+X-Google-Smtp-Source: AGHT+IEplJ4I66QnrFQ6IexEu0lm2qZpLG+9kBXJImu7awVRriBW7b1SWrjgxOO9Yk6R6iWrwFjEbQ==
+X-Received: by 2002:a05:600c:4e05:b0:475:de14:db1f with SMTP id 5b1f17b1804b1-477308b4d29mr120402465e9.30.1762180221180;
+        Mon, 03 Nov 2025 06:30:21 -0800 (PST)
+Received: from [192.168.1.187] ([161.230.67.253])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c44de707sm19098975f8f.14.2025.11.03.06.30.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 06:29:39 -0800 (PST)
-Date: Mon, 3 Nov 2025 14:29:34 +0000
-From: Pranjal Shrivastava <praan@google.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: jgg@nvidia.com, will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
-	kevin.tian@intel.com, linux-arm-kernel@lists.infradead.org,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	skolothumtho@nvidia.com
-Subject: Re: [PATCH] iommu/arm-smmu-v3-iommufd: Allow attaching nested domain
- for GBPA cases
-Message-ID: <aQi8TivdgmtAyb7v@google.com>
-References: <20251024040551.1711281-1-nicolinc@nvidia.com>
+        Mon, 03 Nov 2025 06:30:20 -0800 (PST)
+Message-ID: <1c3712b9b5313ed6c9d07c1acbc9b918a4883056.camel@gmail.com>
+Subject: Re: [PATCH v6 8/8] iio: adc: ad4030: Support common-mode channels
+ with SPI offloading
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Marcelo Schmitt	
+ <marcelo.schmitt@analog.com>, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, michael.hennerich@analog.com,
+ nuno.sa@analog.com, 	eblanc@baylibre.com, dlechner@baylibre.com,
+ andy@kernel.org, robh@kernel.org, 	krzk+dt@kernel.org, conor+dt@kernel.org,
+ corbet@lwn.net
+Date: Mon, 03 Nov 2025 14:30:56 +0000
+In-Reply-To: <aQisqe5EWARTwpQq@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1760984107.git.marcelo.schmitt@analog.com>
+	 <3fadbf22973098c4be9e5f0edd8c22b8b9b18ca6.1760984107.git.marcelo.schmitt@analog.com>
+	 <20251027140423.61d96e88@jic23-huawei>
+	 <aQJY7XizVWbE68ll@debian-BULLSEYE-live-builder-AMD64>
+	 <ca6760182b4662c96df6204bae903d8affa6a8e3.camel@gmail.com>
+	 <aQisqe5EWARTwpQq@debian-BULLSEYE-live-builder-AMD64>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251024040551.1711281-1-nicolinc@nvidia.com>
 
-On Thu, Oct 23, 2025 at 09:05:51PM -0700, Nicolin Chen wrote:
-> A vDEVICE has been a hard requirement for attaching a nested domain to the
-> device. This makes sense when installing a guest STE, since a vSID must be
-> present and given to the kernel during the vDEVICE allocation.
-> 
-> But, when CR0.SMMUEN is disabled, VM doesn't really need a vSID to program
-> the vSMMU behavior as GBPA will take effect, in which case the vSTE in the
-> nested domain could have carried the bypass or abort configuration in GBPA
-> register. Thus, having such a hard requirement doesn't work well for GBPA.
-> 
-> Add an additional condition in arm_smmu_attach_prepare_vmaster(), to allow
-> a bypass or abort vSTE working for a GBPA setup. And do not forget to skip
-> vsid=0 when reporting vevents, since the guest SMMU in this setup will not
-> report event anyway.
-> 
-> Update the uAPI doc accordingly.
-> 
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> ---
->  .../iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c    | 14 ++++++++++++--
->  include/uapi/linux/iommufd.h                       |  7 +++++++
->  2 files changed, 19 insertions(+), 2 deletions(-)
-> 
+On Mon, 2025-11-03 at 10:22 -0300, Marcelo Schmitt wrote:
+> On 10/30, Nuno S=C3=A1 wrote:
+> > On Wed, 2025-10-29 at 15:11 -0300, Marcelo Schmitt wrote:
+> > > On 10/27, Jonathan Cameron wrote:
+> > > > On Mon, 20 Oct 2025 16:15:39 -0300
+> > > > Marcelo Schmitt <marcelo.schmitt@analog.com> wrote:
+> > > >=20
+> > > > > AD4030 and similar devices can read common-mode voltage together =
+with
+> > > > > ADC sample data. When enabled, common-mode voltage data is provid=
+ed in a
+> > > > > separate IIO channel since it measures something other than the p=
+rimary
+> > > > > ADC input signal and requires separate scaling to convert to volt=
+age
+> > > > > units. The initial SPI offload support patch for AD4030 only prov=
+ided
+> > > > > differential channels. Now, extend the AD4030 driver to also prov=
+ide
+> > > > > common-mode IIO channels when setup with SPI offloading capabilit=
+y.
+> > > > >=20
+> > > > > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> > > > > ---
+> > > > > New patch.
+> > > > > I hope this works for ADCs with two channels. It's not clear if w=
+orks as
+> > > > > expected with current HDL and single-channel ADCs (like ADAQ4216)=
+.
+> > > > >=20
+> > > > > The ad4630_fmc HDL project was designed for ADCs with two channel=
+s and
+> > > > > always streams two data channels to DMA (even when the ADC has on=
+ly one
+> > > > > physical channel). Though, if the ADC has only one physical chann=
+el, the
+> > > > > data that would come from the second ADC channel comes in as nois=
+e and
+> > > > > would have to be discarded. Because of that, when using single-ch=
+annel
+> > > > > ADCs, the ADC driver would need to use a special DMA buffer to fi=
+lter out
+> > > > > half of the data that reaches DMA memory. With that, the ADC samp=
+le data
+> > > > > could be delivered to user space without any noise being added to=
+ the IIO
+> > > > > buffer. I have implemented a prototype of such specialized buffer
+> > > > > (industrialio-buffer-dmaengine-filtered), but it is awful and onl=
+y worked
+> > > > > with CONFIG_IIO_DMA_BUF_MMAP_LEGACY (only present in ADI Linux tr=
+ee). Usual
+> > > > > differential channel data is also affected by the extra 0xFFFFFFF=
+F data
+> > > > > pushed to DMA. Though, for the differential channel, it's easier =
+to see it
+> > > > > shall work for two-channel ADCs (the sine wave appears "filled" i=
+n
+> > > > > iio-oscilloscope).
+> > > > >=20
+> > > > > So, I sign this, but don't guarantee it to work.
+> > > >=20
+> > > > So what's the path to resolve this?=C2=A0 Waiting on HDL changes or=
+ not support
+> > > > those devices until we have a clean solution?
+> > >=20
+> > > Waiting for HDL to get updated I'd say.
+> >=20
+> > Agree. We kind of control the IP here so why should we do awful tricks =
+in
+> > SW right :)? At the very least I would expect hdl to be capable to disc=
+ard the
+> > data in HW.
+> >=20
+> > >=20
+> > > >=20
+> > > > Also, just to check, is this only an issue with the additional stuf=
+f this
+> > > > patch adds or do we have a problem with SPI offload in general (+ t=
+his
+> > > > IP) and those single channel devices?
+> > >=20
+> > > IMO, one solution would be to update the HDL project for AD4630 and s=
+imilar ADCs
+> > > to not send data from channel 2 to DMA memory when single-channel ADC=
+s are
+> > > connected. Another possibility would be to intercept and filter out t=
+he extra
+> > > data before pushing it to user space. My first attempt of doing that =
+didn't
+> > > work out with upstream kernel but I may revisit that.
+> >=20
+> > I'm also confused. Is this also an issue with the current series withou=
+t common mode?
+> >=20
+> > If I'm getting things right, one channel ADCs pretty much do not work r=
+ight now with
+> > spi offload?
+>=20
+> Yes, that's correct. It kind of works for single-channel ADCs, but half o=
+f the
+> data we see in user space is valid and the other half is not. For two-cha=
+nnel
+> ADCs, everything should be fine.
 
-Overall, the approach seems fine as it adds value since we can't have
-vSMMUs with ABORT / BYPASS config with the current code.
+To me that is something that does not work eheheh :). I mean, going with al=
+l this trouble
+to sample as fast as we can just so we have to discard (or mask out) half o=
+f every sample
+in userspace (even though I can imagine we still get better performance vs =
+non offload case).
 
-> diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
-> index 8cd8929bbfdf8..7d13b9f55512e 100644
-> --- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
-> +++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c
-> @@ -99,15 +99,22 @@ static void arm_smmu_make_nested_domain_ste(
->  int arm_smmu_attach_prepare_vmaster(struct arm_smmu_attach_state *state,
->  				    struct arm_smmu_nested_domain *nested_domain)
->  {
-> +	unsigned int cfg =
-> +		FIELD_GET(STRTAB_STE_0_CFG, le64_to_cpu(nested_domain->ste[0]));
->  	struct arm_smmu_vmaster *vmaster;
-> -	unsigned long vsid;
-> +	unsigned long vsid = 0;
+>=20
+> >=20
+> > If the above is correct I would just not support it for 1 channel ADCs.
+>=20
+> Currently, it's just one part that is single-channel (AD4030). If patches=
+ 6 and
+> 7 were accepted, it would be 3 single-channel parts supported. I can add =
+an `if`
+> somewhere to check the number of channel, but it will eventually have to =
+be
+> removed when HDL gets fixed.
 
-I'm a little confused here, can we not have a vDEVICE allocated with
-vSID = 0 ?
+I would probably do the above or maybe we just need to push for an hdl fix =
+or some
+final conclusion (like if they cannot fix it for some reason) and act accor=
+dingly.
 
-IIRC, vsid is given the value of vdev->virt_id, whereas vdev->virt_id is
-allocated in iommufd_vdevice_alloc_ioctl() using the user-provided
-cmd->virt_id.
+>=20
+> Or, if HDL can't be fixed, then we'll need the `if` now and something els=
+e
+> latter to filter out extra data before pushing to IIO buffers as mentione=
+d
+> above. Though, this scenario seems odd to me as I think the HDL wouldn't =
+be 100%
+> compatible with single-channel AD4030-like parts. We would be writing cod=
+e to
+> support AD4030 _and_ a peculiar data stream from this specific HDL projec=
+t?
+>=20
+> My suggestion is to apply all patches except patch 8. IMHO, SPI offload
+> single-channel ADC support is broken due to HDL IP data stream not being
+> compatible with single-channel parts. That's not a Linux driver issue.
 
-Thus, should we mention this in the uAPI that vdev->virt_id 0 is reserved?
+Well, it's not a SW issue but we are driving the HW and we know it's broken=
+ so I
+don't see a point in having something that does not work. Given that this i=
+s so
+connected to the HDL part of it I'm not sure it's fine to ignore that offlo=
+ad does
+not work for 1 channel parts.=20
 
-Because otherwise, a VMM may actually allocate a vDEVICE with vSID = 0
-(which iommufd currently allows) and we'll start dropping its events
-due to the if (!vmaster->vsid) check below. This would be a functional 
-regression for such a VMM.
+Anyways, it's odd to me but ultimately if Jonathan is fine with it, I won't=
+ object :)
 
-Perhaps a separate bool has_vdevice flag in struct arm_smmu_vmaster
-would be clearer and avoid this ambiguity, allowing vsid = 0 to be a
-valid ID for an allocated vdevice when user-space explicitly requests it?
 
->  	int ret;
->  
->  	iommu_group_mutex_assert(state->master->dev);
->  
->  	ret = iommufd_viommu_get_vdev_id(&nested_domain->vsmmu->core,
->  					 state->master->dev, &vsid);
-> -	if (ret)
-> +	/*
-> +	 * Attaching to a translate nested domain must allocate a vDEVICE prior,
-> +	 * as CD/ATS invalidations and vevents require a vSID to work properly.
-> +	 * A bypass/abort domain is allowed to attach with vsid=0 for GBPA case.
-> +	 */
-> +	if (ret && cfg == STRTAB_STE_0_CFG_S1_TRANS)
->  		return ret;
->  
->  	vmaster = kzalloc(sizeof(*vmaster), GFP_KERNEL);
-> @@ -460,6 +467,9 @@ int arm_vmaster_report_event(struct arm_smmu_vmaster *vmaster, u64 *evt)
->  
->  	lockdep_assert_held(&vmaster->vsmmu->smmu->streams_mutex);
->  
-> +	if (!vmaster->vsid)
-> +		return -ENOENT;
-> +
->  	vevt.evt[0] = cpu_to_le64((evt[0] & ~EVTQ_0_SID) |
->  				  FIELD_PREP(EVTQ_0_SID, vmaster->vsid));
->  	for (i = 1; i < EVTQ_ENT_DWORDS; i++)
-> diff --git a/include/uapi/linux/iommufd.h b/include/uapi/linux/iommufd.h
-> index c218c89e0e2eb..a2527425f398b 100644
-> --- a/include/uapi/linux/iommufd.h
-> +++ b/include/uapi/linux/iommufd.h
-> @@ -450,6 +450,13 @@ struct iommu_hwpt_vtd_s1 {
->   * nested domain will translate the same as the nesting parent. The S1 will
->   * install a Context Descriptor Table pointing at userspace memory translated
->   * by the nesting parent.
-> + *
-> + * Notes
-> + * - when Cfg=translate, a vdevice must be allocated prior to attaching to the
-> + *   allocated nested domain, as CD/ATS invalidations and vevents need a vSID.
-> + * - when Cfg=bypass/abort, vdevice is not required to attach to the allocated
-> + *   nested domain. This particularly works for a GBPA case, when CR0.SMMUEN=0
-> + *   in the guest VM.
->   */
->  struct iommu_hwpt_arm_smmuv3 {
->  	__aligned_le64 ste[2];
-> -- 
-> 2.43.0
-> 
-
-Thanks,
-Praan
-
+- Nuno S=C3=A1
 
