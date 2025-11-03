@@ -1,115 +1,194 @@
-Return-Path: <linux-kernel+bounces-883761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93556C2E57D
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 23:59:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DAFEC2E597
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:00:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 135A54F46A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 22:56:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 213173A5719
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:00:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BB7130DD2E;
-	Mon,  3 Nov 2025 22:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3081F2FC037;
+	Mon,  3 Nov 2025 23:00:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vvceWtYI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="VNu3ql3y"
+Received: from mail-qv1-f100.google.com (mail-qv1-f100.google.com [209.85.219.100])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B77412FCBEB;
-	Mon,  3 Nov 2025 22:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65631221FBD
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 23:00:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762210575; cv=none; b=NkkwTiP9tfsBp3Rm6t7Okhp6Hy7led0cEFCWsILNJ/gARrNCJ8KzJI81jUZwYHkTk0DTzNTQ4lHd/uByjtXn1L4gJ4fm0iA+h6ZWbwewZVnqLY23skw49RHqFrlkQYjmVerFFg1EBkSLE36avkkP9J2QBT9uW+d2PRB7n1K8vec=
+	t=1762210831; cv=none; b=svL/F01u+2wBSXTSTM6XcdvkjX5fr9SF3PEqt5xQSRsRIZSdFTi3Ri6xZvcDR3RHJpdsJikNXIj+tr07j8aQrmeiCZEuQWZG1FORTblg0GzQ2H9DU7v/ssxcn+TzE+UVU3uKm1euOPnig76ns7TYWV8SXa5Xg/InwxcSyIe2+Os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762210575; c=relaxed/simple;
-	bh=tZjuupDokyVtBMg2J4kf8xpoDWHId4P1oabPdgWcRuc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TjJxveIspu5hAhuqJpUvkAw1sYaFb4LOyutyyd1mk6T1pEcmH66RWfYNAaupNCEBPLbAiN5Yzzb82mmML3GzJGPiMoLsLEagNZlYtBG7GSVrx3Z5PH2FaXH+7Rem/GAgnnVP7LmZHIZmzWH1A8XXBKvgPhNOJW0sZkckjNa9Or8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vvceWtYI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7CD9C4CEE7;
-	Mon,  3 Nov 2025 22:56:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1762210575;
-	bh=tZjuupDokyVtBMg2J4kf8xpoDWHId4P1oabPdgWcRuc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vvceWtYItlsMk9PBMjurODOZgswob6hJdhymkvIj4F4WGw54yqLJSLjr9fKRDYHgp
-	 Ytt8vGvm2EdVPXuE/J9uYHWQ4UzGRuawQ7ziVbSfNs0En/u1U7LyuYgtAYaCfVmNp1
-	 XjhYHN7rwcXdvsBWkf1hZKTOPbYFwzpt5Y6aF/uc=
-Date: Tue, 4 Nov 2025 07:56:13 +0900
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: rafael@kernel.org, david.m.ertman@intel.com, ira.weiny@intel.com,
-	leon@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	lossin@kernel.org, a.hindborg@kernel.org, aliceryhl@google.com,
-	tmgross@umich.edu, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH] rust: auxiliary: fix false positive warning for missing
- a safety comment
-Message-ID: <2025110402-careless-upstroke-4d35@gregkh>
-References: <20251103203932.2361660-1-dakr@kernel.org>
+	s=arc-20240116; t=1762210831; c=relaxed/simple;
+	bh=/lW1HzddLQUZKeF4KgnyJzqj0WHWuf2zCzjsyTOf8II=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PBZxNhteCHlB8P171wvFRW8RuoBjHYG9PrrhbvSzMRRMmhvuXAYW9NqPT9xG+GBbvmTASEPd+8NCkOezkHEQtBdpQWpaiKGR3ZT7iuZm2KH5AaIRyT2IJHYnyE5YYFO82vOVdTzJYE5PX8Mr2OWtA1bzSrsfoVC27YOafE7QzVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=VNu3ql3y; arc=none smtp.client-ip=209.85.219.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qv1-f100.google.com with SMTP id 6a1803df08f44-88033f09ffeso38466376d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 15:00:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762210827; x=1762815627;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:dkim-signature:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K0id5Lo+9IJ6LPYuXiU1WqYasBQQKw7fISIlar/OOWY=;
+        b=QlRWEF5dOZfyCdyCuQ63UG01mrhtkfbMwuwjObrw9hORD6U5ZBApWtAYtqBnoKQt8r
+         XybnOUS90Kb7KoZUP2r0Sx01ZnRfPS/kGYEtqwgTOS8biggNOwZMHa+fR98SJQdxZPlT
+         K5J422V0veCPgYOM3Hg+ndSNS/xgPb+gvOrzwjFl3YUoDPYdX/5V/EWx2qfghvsDLXWt
+         CVSgsgVjgLV3/LU+HeMA+y3+u3gg8yYXtI4mz9m6a6kb/0sIX5v1KuxuLxY1ilUj/d9o
+         7LNuUvPVenM/gaucxOQfvOUYFQUEDENgUq2af3S1y/A3T2bq47Iav5OmOvaxai+48h8y
+         1oUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWI4eGsFWLSVdCbYOyuFnnwCmhG02lgab6H6VyltpF0wfD3ngO+77819fXN1mw89bi7yJM9feTwSJ76QSs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2hYQFJzhGLq36hrPici4PQ3/WoVtRV1fA3T783Bkb8yYeiHQh
+	Zmenv7abCp0ffdneh/nAkxytoI0tUtDdpnzwymehFtzGKkqZub2kSNsSNudEC10o1moIefM5y7i
+	kBiPbP4JqJk1fNSO+x3JzUAQunGmtTygVp11iv8GZbjAXx/4kjxTUMtdHwhJhtJdfV8OTNhv3AT
+	WXTLKXL1/IRISTLT66K+swDaZIwrkjwv7w5pFhc0SLRikRInSNDPt5B5ih5LdNI3g/k4IFbh5Q9
+	/qOQzboBFwdMWfyY9E9EHII
+X-Gm-Gg: ASbGncvRjJVA9VzPpXiW7F34MLmGPI4bptfZzsE8+Rw+vqCN+KlKxn7TuemRZn7ZX0d
+	1iaWW8mEd18Y1wQi1wrjZ9hDPehFX42F3CKuaM4lI6xQEk7puEwiJeQlk8ErK4W12LQeSKrO2d6
+	IR9Ovbc9/rad33+woUk1Z/kj4QbS1Rup8BP+y3F14ed01My3sxeSpkB4f0LRWOi+Rrs8Cqt4p7K
+	piVwXfntEHWTTB4DFwmfVovmyl0qtnfTejMQCYOFu6D1a6nHxr9pKWYJrP3N6e8Op/e3SF7vvT0
+	arqAmaH5oOqrBeUdoSoVYPnKnDgeF6EFb8xg53+cQ/CfOlmsd04piXpdg7yad9OdlfBowxg3926
+	JaaDGKQWlfmOOYU7wJHUkJ/JlorUipE3iiqoD8rVFIVZjNdOuqyygM0L1tRoib7EfGg42IPeXW/
+	+jHWQgVMuzNSBBJuP5j9Er8+f3gQJsfRtZuLZjJDI=
+X-Google-Smtp-Source: AGHT+IFHYomdQIuTaElNAbCKfdrwhP9xPFRmxpbzPhlRpUZo1BlQ8pCW2bTuQLlB0oIO78ON5rogPk7+5FTQ
+X-Received: by 2002:a05:6214:23cb:b0:87c:81f:6200 with SMTP id 6a1803df08f44-8802f2fc737mr199482866d6.28.1762210827069;
+        Mon, 03 Nov 2025 15:00:27 -0800 (PST)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-12.dlp.protect.broadcom.com. [144.49.247.12])
+        by smtp-relay.gmail.com with ESMTPS id 6a1803df08f44-88060e6b603sm1152986d6.31.2025.11.03.15.00.26
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Nov 2025 15:00:27 -0800 (PST)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-3408686190eso8164202a91.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 15:00:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1762210826; x=1762815626; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=K0id5Lo+9IJ6LPYuXiU1WqYasBQQKw7fISIlar/OOWY=;
+        b=VNu3ql3yF8SSISfjeMpLYfivd5rcw9bI9vtjhG77AtnS/+0wl+5A0Bynp4+5SmDdH5
+         O/OD17FHe6LbNe9VjDnPl/3HC4cceSz5DeuplLSpAG5bgQ7Yo5SgNM4pb9AgLjZE8f08
+         mccfalVNK3wrKHPsQZxrBaqLj4RlKydsfIh/w=
+X-Forwarded-Encrypted: i=1; AJvYcCU18KwrbQVrMtvC33QgNNPyxxQK3ozW5TZ0PXKwZxVOnDy1QJXLluxkus4sbYLUS1hOsP6ifp5/ln9qHYg=@vger.kernel.org
+X-Received: by 2002:a17:90b:50c3:b0:33e:30b2:d20 with SMTP id 98e67ed59e1d1-3408309e698mr16646443a91.33.1762210825700;
+        Mon, 03 Nov 2025 15:00:25 -0800 (PST)
+X-Received: by 2002:a17:90b:50c3:b0:33e:30b2:d20 with SMTP id 98e67ed59e1d1-3408309e698mr16646400a91.33.1762210825276;
+        Mon, 03 Nov 2025 15:00:25 -0800 (PST)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3417bcb9faasm155726a91.1.2025.11.03.15.00.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Nov 2025 15:00:24 -0800 (PST)
+Message-ID: <1ce81ce5-1c09-4663-915b-16ee58e19035@broadcom.com>
+Date: Mon, 3 Nov 2025 15:00:21 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251103203932.2361660-1-dakr@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 2/2] net: bcmgenet: Support calling
+ set_pauseparam from panic context
+To: Andrew Lunn <andrew@lunn.ch>,
+ Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: netdev@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+ Doug Berger <opendmb@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+ Antoine Tenart <atenart@kernel.org>, Kuniyuki Iwashima <kuniyu@google.com>,
+ Yajun Deng <yajun.deng@linux.dev>, open list <linux-kernel@vger.kernel.org>
+References: <20251103194631.3393020-1-florian.fainelli@broadcom.com>
+ <20251103194631.3393020-3-florian.fainelli@broadcom.com>
+ <f9a32e33-9481-4fb7-8834-b36d88147dc2@lunn.ch>
+Content-Language: en-US, fr-FR
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <f9a32e33-9481-4fb7-8834-b36d88147dc2@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-On Mon, Nov 03, 2025 at 09:39:18PM +0100, Danilo Krummrich wrote:
-> Some older (yet supported) versions of clippy throw a false positive
-> warning for missing a safety comment when the safety comment is on a
-> multiline statement.
-> 
-> warning: unsafe block missing a safety comment
->    --> rust/kernel/auxiliary.rs:351:22
->     |
-> 351 |                 Self(unsafe { NonNull::new_unchecked(adev) }),
->     |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->     |
->     = help: consider adding a safety comment on the preceding line
->     = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#undocumented_unsafe_blocks
->     = note: requested on the command line with `-W clippy::undocumented-unsafe-blocks`
-> 
-> warning: 1 warning emitted
-> 
-> Fix this by placing the safety comment right on top of the same line
-> introducing the unsafe block.
-> 
-> Fixes: e4e679c8608e ("rust: auxiliary: unregister on parent device unbind")
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  rust/kernel/auxiliary.rs | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/rust/kernel/auxiliary.rs b/rust/kernel/auxiliary.rs
-> index cc67fa5ddde3..618eeeec2bd0 100644
-> --- a/rust/kernel/auxiliary.rs
-> +++ b/rust/kernel/auxiliary.rs
-> @@ -341,13 +341,12 @@ pub fn new<'a>(
->                  return Err(Error::from_errno(ret));
->              }
->  
-> -            // SAFETY: `adev` is guaranteed to be non-null, since the `KBox` was allocated
-> -            // successfully.
-> -            //
->              // INVARIANT: The device will remain registered until `auxiliary_device_delete()` is
->              // called, which happens in `Self::drop()`.
->              Ok(Devres::new(
->                  parent,
-> +                // SAFETY: `adev` is guaranteed to be non-null, since the `KBox` was allocated
-> +                // successfully.
->                  Self(unsafe { NonNull::new_unchecked(adev) }),
->              ))
->          })
-> -- 
-> 2.51.0
+On 11/3/25 14:19, Andrew Lunn wrote:
+>> @@ -139,7 +141,8 @@ void bcmgenet_phy_pause_set(struct net_device *dev, bool rx, bool tx)
+>>   	linkmode_mod_bit(ETHTOOL_LINK_MODE_Pause_BIT, phydev->advertising, rx);
+>>   	linkmode_mod_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, phydev->advertising,
+>>   			 rx | tx);
+>> -	phy_start_aneg(phydev);
+>> +	if (!panic_in_progress())
+>> +		phy_start_aneg(phydev);
 > 
 > 
+> That does not look correct. If pause autoneg is off, there is no need
+> to trigger an autoneg.
+> 
+> This all looks pretty messy.
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+That is pre-existing code, so it would be a separate path in order to 
+fix, though point taken.
+
+> 
+> Maybe rather than overload set_pauseparams, maybe add a new ethtool
+> call to force pause off?
+
+Yes, I like that idea, that way it is clear which drivers support 
+disabling pause from a panic context.
+
+> 
+> It looks like it would be something like:
+> 
+> struct bcmgenet_priv *priv = netdev_priv(dev);
+> u32 reg;
+> 
+> reg = bcmgenet_umac_readl(priv, UMAC_CMD);
+> reg &= ~(CMD_RX_PAUSE_IGNORE| CMD_TX_PAUSE_IGNORE);
+> bcmgenet_umac_writel(priv, reg, UMAC_CMD);
+
+Yes, that is essentially what needs to be done.
+
+Thanks!
+-- 
+Florian
+
 
