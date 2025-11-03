@@ -1,113 +1,130 @@
-Return-Path: <linux-kernel+bounces-883049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2625C2C5A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:16:06 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE9D9C2C594
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:14:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF5191899441
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:13:27 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9C85534A588
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB680305056;
-	Mon,  3 Nov 2025 14:12:54 +0000 (UTC)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF27C30103F;
+	Mon,  3 Nov 2025 14:14:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="0MmbxGZi"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E059B2765C0
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 14:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680CA18C933
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 14:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762179174; cv=none; b=RmsUzuFXEDdFZWuKgkRzzUYYHnEIJH7HyKMsEYQX6lNwYaFLzxhjuLgeK49C5dq2vTCpj2dCkWLEdp8UrT++kEx6aIvbNJ9wN8Qlfe50pQG4RmV9vUfRzMPF8T8K467s7r9sKfQVpMpOt17rLv6xgU3p2qmTdxWmvBMpBbP2BXc=
+	t=1762179261; cv=none; b=WSWea51OXVOAbKjSFKXXW2ew0FYKJOBQCQC5CsKCuA99K2U5sSfu5oYV946DeMT9Jfwb3cXXZZwNawMOinLXpTTZwBUaNKcSuk8ZOJzvdxt1BndhzaMOkvQQYDEtA7168EhV34LvxJ1VkRtsY9+8sOgu/KgJOuiCFeDP4WoUawo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762179174; c=relaxed/simple;
-	bh=258lH97XXGC28+Dowc301BofiuoERGUxThhiNcWo3Gk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YQF//zw3Wn+MIPcLfzNFNNjrG5x3OWnsG6E5rnLeo8B/hh8wKZ2E42UWr+CI7d5lHKqB/POAIRizMj8tWh3TbMBtPigaXSlkRE193YlhxLrgi97REsuaVoP0u3vonTG0zLH94j3S19T3sqH7+LpG3FN9wi0Zr/ImZMBc+LboTf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-640aa1445c3so2442558a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 06:12:51 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762179170; x=1762783970;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1762179261; c=relaxed/simple;
+	bh=qNpCvuLCPjVhSPOY/TTr8xx/nFAJiYYYEoTJa8eEaaI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=p74LACI8Ng+aEe31G4ksPDsJKrew7ElSv/6WuTQccIWLgBJGz9psTgpPt/1TRT4rNcXOyKx7RehQY0EWMb3Xw+pzdozL2I1ogVROxVmqN4EbsVcyZfi9qx6/+A+Huq4myqVEHA5yaDOvaM043rSMuZf/dTpLHTjQhqGH8sKKCNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=0MmbxGZi; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-474975af41dso33493305e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 06:14:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1762179257; x=1762784057; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RV+XrmcKqNPHxmqSNaEdiGohivcDhtAS62RzzygEyEI=;
-        b=lKB32+EQl56V+oVmzbopJ8LDvN3eUgYxNy+qhJsPGHgIUsltimX6mxzJAsU6e3j5lr
-         FTbr3oHIGzkmqn68No7GDG/vhGFNXHqIzkI//YPkwqaZmUMwnIs7d/DhDeQWHuxxtKOV
-         GN0MXlWudS7Pv5drcJR3/blZzABdKvseAlsjl/SlgjlMTt2U+G1J6KcLCk5cuUWjrjr4
-         7Jqo0Hl0GOu5a7VSzIDo52pIk9xXQjszwf595vCqkHbzI2TTLZeKTh7hmRN9NP5+8cBM
-         7XWlkavwCQ+xlBNNK21tkM5mWMoGi7f3w1keyU/f0bClTsXwBe/Q3wSgD92Z9X+Ld6n7
-         alLA==
-X-Forwarded-Encrypted: i=1; AJvYcCXXbNW/yAL9DXTaPcbEbGLW1xIa26ZMx7figvTe9HYGhdkmvB1dnOGaet/vPvcuViLLcDaOQxoVQa8osLU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8QX68oY8fol+edYhyz0s6jb2y/FVb/DRGI0nsrO91+663f2XT
-	QKgKCGf8v7KWcBb9VIJd84r9drE7r1qg/eNil9yAdS9Z3dzlG7tpaU0K
-X-Gm-Gg: ASbGncsTBvV2xt+bPVw3H8++oM72RwYC8qvfJyqPRgbtyKL8qhIFTY7SZnatizqNZjF
-	ZG3gIUpe4v4w4An2mkjI876A1cujUxcw5Js4x1iVy0ox1zDRf1BCL5MUoqg13Tzt9ESpvfq8a6D
-	SNYirGT8o35a3LqeU8eNao7a4CtIKR/fwgqRgzUbQd/XjsQi3lTJHzu6iM/3ZY0/rieNCUEfIHE
-	LEvxQ4icgzt+ol9X/MQwnLLwHwEvDBeExuG7A+wGj/jGmFfkmT2YqJ/RQ+jc6qGVuxaxaPuiOJz
-	/aiuG7toD2mg0s4ToWrzrUfmNgtmPUZ/M8nLgDSoJCtNyS5V67XGR2dbwviecNd7KBkot1VFqLW
-	cEhe/yV80YfQIm0wg1XdIN+GhES7aeVYSy7DrHnypMac5DJixP90X5gcKQnxHnwUtHPQ=
-X-Google-Smtp-Source: AGHT+IFWQEa+DoidWBa5kIJMKwLnZxsoTwKivdYX0YUChjS3vOZrQe3uWz6GQ2+eSv3jDr2kvuo3fg==
-X-Received: by 2002:a05:6402:1ec5:b0:640:93b2:fd1e with SMTP id 4fb4d7f45d1cf-64093b2fe28mr7493506a12.17.1762179170035;
-        Mon, 03 Nov 2025 06:12:50 -0800 (PST)
-Received: from gmail.com ([2a03:2880:30ff:46::])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6407b42821bsm9761512a12.22.2025.11.03.06.12.48
+        bh=EoMAIDiy80JlZ2DMoz5nEEW7dOP5ZblOtmfc/TQFMxo=;
+        b=0MmbxGZi13Xt0Gijo4wZKWclxbyoLYC+/bfMtIgewcYC3H3i1Pu0fhPprY5+wPBwyE
+         Q1Sw+Ot18WOUk8PKIgJ/Wv4JDKoStxltKBRHR9KxKuagbcP0pchNeiI7odxE1KFRL+Gz
+         rTEOuqa2YCz/J+OX70vPRv1CEbYS5oUZ6uKNU4C6jEaf1to5W9Hj2LXgxQ1bYDYQDcIe
+         yFq3ZYHIfai2lZiMWWkRCsO7rEP5mOzzyuap0FT3FNuYhVJqMpXArdqAoQXbk6GECMyl
+         qMURQMP4x/NZK4DWe6k5fp4GVDbtYbm6sYee8RtcPYnR9Bu0xWRa5cjcaZw2IQ87kANM
+         g4ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762179257; x=1762784057;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EoMAIDiy80JlZ2DMoz5nEEW7dOP5ZblOtmfc/TQFMxo=;
+        b=PQ3SGFZsvtz9YheJCXspIzLToTIjz1RRmkzeYaqiIkg2lTfGsJxYzzsmwXHnCypXpz
+         jExIMDrogdzu8fRyIVu80gbSgDxWJbRiUskBlIOefYFLNFAUXDmQdPJeQ99va4Ce+mk7
+         CVx3JCm2Zy2F3afz/sQcB3NT/eUFuCyMsMy+qAfm/ZR46p9AI8lkV25OoWYcwffe+k3m
+         416cuqtBazVpd3VENzgBdlgHDFgBT7mifokNuW2jYnwjAKg2zgdXlY8/H2tUEmlGiQyX
+         Y1zPrI85mYbK1t+Zd1BvpiCWylzjFMhy2pneOgmuE3OTx1hKohlF5ga0AjQVs+fHVUBp
+         L8dA==
+X-Forwarded-Encrypted: i=1; AJvYcCXVORDmS45Kdoh/2Cep377v9QY6Ofa9Po/qMfHUAWE8baLdlVnPBkDMyN94ES/ZQ2TIgjRAiqcOP/I9iio=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsXlDsvbDWJJJsQBrsU5hVm+um8+V9f2WisBwbuTl8xKguZeFH
+	2vB5H8d+b/JsHSeComvix4vz/OZUHh8RZZM26PUV9Gusm7Jegx1XSOqzFumMOvtdz2A=
+X-Gm-Gg: ASbGncvQezLkUrsP1JER9bHDt2WaA9TWk8CpL4bHeqAM/jGhe//mc7jVrphdPRQ04z4
+	yHQIiA8XWJKK1lQAKkOvOtGfOGV5F4pOWw2OPVC7jahxJYqGrC5AclndzylqkFFyu/z1THYt9tw
+	4rjTXcXksqgeyxfpo1nUTehu0UGuytEyevvyZWBGWvMKD5+OeqDhhGp47qLeIvXwaNjbMVfZvK9
+	JgLXH6vnicVBnTa2NxTaUxqOcAf7N1rYs8ERRw/sI9f32/xQ9w0bJBM1nlcSJepyAhc4/Wiq53v
+	/GkqQbCsobFFOMeuZ16cdot+VdNOSdAotItPcDVn8RHT3/kfhWKU//cuCsPCVGWV+8yDM5dCj4J
+	Eg94ihtwB18/ByNskILy4D4SZgPiZqUGb/oBrRXoyAT3nDzxIUBwJVoCzaZ25nP5l7l2FwQ==
+X-Google-Smtp-Source: AGHT+IHLTxJUWh2BXzgbxjWcAhT+fbvRofGiksQw6Mxx2/kQAdhUW2RWaozukFUQgF4dPtsxkYVg5w==
+X-Received: by 2002:a05:600c:3548:b0:477:171f:65f with SMTP id 5b1f17b1804b1-477308aa6a1mr118209365e9.38.1762179256644;
+        Mon, 03 Nov 2025 06:14:16 -0800 (PST)
+Received: from brgl-uxlite ([2a01:cb1d:dc:7e00:e6eb:2a19:143f:b127])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4772fc52378sm86531405e9.6.2025.11.03.06.14.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 06:12:49 -0800 (PST)
-Date: Mon, 3 Nov 2025 06:12:46 -0800
-From: Breno Leitao <leitao@debian.org>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH net v3] netpoll: Fix deadlock in memory allocation under
- spinlock
-Message-ID: <vrb6p4usfynhdlyf2u5frg57ppoc6umvg5we25cshlvudpvl5c@slq27s6cohbx>
-References: <20251014-fix_netpoll_aa-v3-1-bff72762294e@debian.org>
- <20251016162323.176561bd@kernel.org>
+        Mon, 03 Nov 2025 06:14:16 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org
+Subject: Re: (subset) [PATCH v4 00/10] reset: rework reset-gpios handling
+Date: Mon,  3 Nov 2025 15:14:12 +0100
+Message-ID: <176217924320.53912.4328025839514313502.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251103-reset-gpios-swnodes-v4-0-6461800b6775@linaro.org>
+References: <20251103-reset-gpios-swnodes-v4-0-6461800b6775@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251016162323.176561bd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 16, 2025 at 04:23:23PM -0700, Jakub Kicinski wrote:
-> On Tue, 14 Oct 2025 09:37:50 -0700 Breno Leitao wrote:
-> > +	while (1) {
-> > +		spin_lock_irqsave(&skb_pool->lock, flags);
-> > +		if (skb_pool->qlen >= MAX_SKBS)
-> > +			goto unlock;
-> > +		spin_unlock_irqrestore(&skb_pool->lock, flags);
-> 
-> No need for the lock here:
-> 
-> 	if (READ_ONCE(..) >= MAX_SKBS)
-> 
-> >  		skb = alloc_skb(MAX_SKB_SIZE, GFP_ATOMIC);
-> >  		if (!skb)
-> > -			break;
-> > +			return;
-> >  
-> > +		spin_lock_irqsave(&skb_pool->lock, flags);
-> > +		if (skb_pool->qlen >= MAX_SKBS)
-> > +			/* Discard if len got increased (TOCTOU) */
-> > +			goto discard;
-> 
-> Not sure this is strictly needed, the number 32 (MAX_SKBS) was not
-> chosen super scientifically anyway, doesn't matter if we go over a
-> little. 
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Agree. I will take this approach them, since it is not going to hurt at
-all.
 
-Thanks for the review,
---breno
+On Mon, 03 Nov 2025 10:35:20 +0100, Bartosz Golaszewski wrote:
+> Software node maintainers: if this versions is good to go, can you leave
+> your Acks under patches 1-3 and allow Philipp to take it through the
+> reset tree, provided he creates an immutable branch you can pull from
+> for v6.19?
+> 
+> Machine GPIO lookup is a nice, if a bit clunky, mechanism when we have
+> absolutely no idea what the GPIO provider is or when it will be created.
+> However in the case of reset-gpios, we not only know if the chip is
+> there - we also already hold a reference to its firmware node.
+> 
+> [...]
+
+Applied, thanks!
+
+[04/10] gpio: swnode: don't use the swnode's name as the key for GPIO lookup
+        https://git.kernel.org/brgl/linux/c/e5d527be7e6984882306b49c067f1fec18920735
+
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
