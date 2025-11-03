@@ -1,310 +1,172 @@
-Return-Path: <linux-kernel+bounces-883352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC996C2D337
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:41:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D2D64C2D370
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:45:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E7D23BBB96
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:30:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5EA63B78BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E5C3191C5;
-	Mon,  3 Nov 2025 16:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="F4kAPPtc"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C55318156
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B04A3191D3;
+	Mon,  3 Nov 2025 16:32:32 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A18930DEDE;
+	Mon,  3 Nov 2025 16:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762187412; cv=none; b=hEwvv/r8uKe4U+6HFMPE5NznKcN5f3JVvifES1zI3552Qy7nPh5lqPMKymHjyknDchzY958KIR0saB1zXpl9/QlHG3psXv1ezHe99QDLOQ4WDfdKkB1YbDfpHu+brnArcq8Dd83dwl9SldAKrkvB7NWNwhU/UgSaIJl43S3LVlo=
+	t=1762187552; cv=none; b=g75xWO7ewIC71h4aomhC3YnIOTR6eZ49b3YCktf5F7XRqeLBZ2bBSdcMXerOFjUtigIZjrmxns2fpInn1CXLmBkY0XPY5lI0yoX9c89bqvic35meZ0tg0w+GzCex5t7/QljXs2ZbaCQxOl1MiUABk2Tf/jXdX1ck2V4zhr4DjtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762187412; c=relaxed/simple;
-	bh=bEvIZ6b3ZPoI56NZVv/yoSC/UVLKTxOb/khDUfqNXZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VZVKQcmClWhXn3UWJyNJ/o2QS+3sjInYy2WhJxLGxl87DkZ9A38F81WVvTjglXakwMZQx2mLRKwXHsnrG/NPxJ1uAW6koU9EOHgxT/mMu8WSS2kwKCfrJMFZVgtHhBoeOvt9O1JrGCO7z2Zz1qcCDSpVoFo8Aq/fMwLDrIN63CU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=F4kAPPtc; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4711810948aso32901395e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 08:30:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1762187408; x=1762792208; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=84F0QgR4+jds+lqPjKDSBSqClUiU/2oz/AngUspSNH8=;
-        b=F4kAPPtcZZVu3wZgcaCHUtPsottZ6u5GzyBptAODlIGAnm6CnH8jVIRrOuWQQhFnMa
-         QMwF2YkaQbr7Ueoos65dmmiVbIAiWoHhovBuJtX87K7P6salpJ4umMAuQnoKQwmDKJrQ
-         Q+e1h9Lz5t2GBN+zV5niKSJMRype73Dfc20Fi89W7AL4zRfpOwcXwBsLxLukaFDdHVPU
-         aNlarHPqZ18b0cchO1o7jyP9gfnTpuxsJjslNYHo83/O3UmMOds/HqnOlysK32c2VhLJ
-         x5Zu2Rbiq4Xb/qUlSZ4IoxBwsz05zqNLTHPWJf4Om2J1HZVT2WSd9aAU+zitlHijKgeX
-         Hs3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762187408; x=1762792208;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=84F0QgR4+jds+lqPjKDSBSqClUiU/2oz/AngUspSNH8=;
-        b=GOhd5bWrFKY28TCIdTF0YYwC2OZ/Z6ZqdMCG6nhQDtOE57vvddnOiyrFTJD+FXiPiO
-         OupieU6K/sJOFctfs2zeIJXWMS0Sl4VU9IOdRL0LGzo7J9cChISezKpMJhFzk0CLlsAf
-         TFz4KjppIjUrhR36DnfMP2qW3Lj204yCC7i5n8uiVeZ4F6ingMQiu7xwVAwUw3f72Z36
-         BizGENdS/jPMyKu7/QNINEpajCAbEUT438MeidVWnLRajhD75jKm6CYxRYIIdDnOXycK
-         nsfe3jibGWZR0Wj4l6XHrHXjZMHyFHvfCjp9RaLiG0cxfyBndzbPKTDRupVhNoctDvwl
-         9EmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWTv3zqQyP0X/xdl4lBdM7GowPGEW5ylTnSsx69hl6/iN2jWAZFpVX9iZH5EKoWAmVrxuG10biOYdi6kKQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVHbNmRzN0l3r2UuWaJaefh9Zm2scbqdNvJLKG/v6QjbvYHUna
-	XOKs43vVC+XsR4IW90TrNZCfINfIfggBQsFfEae69zJ6JTiM7ByS4Ph0hc97X2CC2LY=
-X-Gm-Gg: ASbGnctIj01MZsUKf8W3tGmTR1j+hknA+wq7+dWhu3HDhcV7m/ZdIanJliDTDwPFRY9
-	Mjtf5xsSPf30gN0z68fqEpV63RvKs9hlimsSdAaumqX3xaSVhO1WjDladhHFJNb1RVsO/2Mx9cd
-	W8G/C5adyTqWIzE51glRjGnZbcRiRLUi9ffGPqZQC3EQjuuBDD90O3M2DWC4nu6pXWH0o+aH7dz
-	y6IDpk/JWQkB6SXIugHKcCyvazTGL83lMz7IkF3n/IP6Tu+un9LlJ1YtT2HYx6oOfd9IgEVyBv9
-	xCT2kXnqXThweNjhs+UGBCPf9RS5aXE2LxuFJGgUPXnEDyVp45FFtVMQA6Pa5GVj5SS2lx5HkXL
-	i/mjDwj8Zq++VjCaC4aBR0rRBG57iKBaDIfS/xwu1drwWW0JPZrIQvXPU/V+fFCw/1nUFEbP7Bn
-	soJDxTgP01NsFMxAyO5/cOtERbVL7alVNHLvFwfS/x07ufu9rLI/hV2GwkHb+uukod4nn/VA==
-X-Google-Smtp-Source: AGHT+IF/kGs5jea5FahI1rZFZGhV1Eh4Fy1sLd4uiFaXvIWVe3vieePJLCoPtu7DkEqIeKjkJL2wCg==
-X-Received: by 2002:a05:600c:83ce:b0:471:989:9d85 with SMTP id 5b1f17b1804b1-47730871fa6mr144953305e9.19.1762187406607;
-        Mon, 03 Nov 2025 08:30:06 -0800 (PST)
-Received: from aspen.lan (aztw-34-b2-v4wan-166919-cust780.vm26.cable.virginm.net. [82.37.195.13])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429d1061efasm9781324f8f.24.2025.11.03.08.30.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 08:30:05 -0800 (PST)
-Date: Mon, 3 Nov 2025 16:31:35 +0000
-From: Daniel Thompson <daniel@riscstar.com>
-To: Junjie Cao <caojunjie650@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
-	dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fbdev@vger.kernel.org, Pengyu Luo <mitltlatltl@gmail.com>
-Subject: Re: [PATCH v2 2/2] backlight: aw99706: Add support for Awinic
- AW99706 backlight
-Message-ID: <aQjY5_uEaTv4_L2s@aspen.lan>
-References: <20251103110648.878325-1-caojunjie650@gmail.com>
- <20251103110648.878325-3-caojunjie650@gmail.com>
+	s=arc-20240116; t=1762187552; c=relaxed/simple;
+	bh=VQ0WiX1TW6oTI7NKhfbFYkDH+GwDeBBWv2ibDv8P4hM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=L3v0rqAbm7fbGdiJyylW24oF21N1qixiSGJl1/zcSvA6cqSJufMTDa5ONMXqCvJf8wsYOxuzJjewN3faTPam9B3mN8AxjGOcOni8/5FpwGEL2v30/bGQhczUfeBDkaM0pObZ/5AfzPNGNRVJeZSj0iD2NxxYERhM7n3PAnc6Xgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0BE2B1D14;
+	Mon,  3 Nov 2025 08:32:22 -0800 (PST)
+Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A43833F694;
+	Mon,  3 Nov 2025 08:32:26 -0800 (PST)
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: catalin.marinas@arm.com,
+	will@kernel.org,
+	maz@kernel.org,
+	broonie@kernel.org,
+	oliver.upton@linux.dev,
+	miko.lenczewski@arm.com,
+	kevin.brodsky@arm.com,
+	ardb@kernel.org,
+	suzuki.poulose@arm.com,
+	lpieralisi@kernel.org,
+	yangyicong@hisilicon.com,
+	scott@os.amperecomputing.com,
+	joey.gouly@arm.com,
+	yuzenghui@huawei.com,
+	pbonzini@redhat.com,
+	shuah@kernel.org,
+	mark.rutland@arm.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	kvm@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: [PATCH v10 0/9] support FEAT_LSUI
+Date: Mon,  3 Nov 2025 16:32:15 +0000
+Message-Id: <20251103163224.818353-1-yeoreum.yun@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251103110648.878325-3-caojunjie650@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 03, 2025 at 07:06:48PM +0800, Junjie Cao wrote:
-> From: Pengyu Luo <mitltlatltl@gmail.com>
->
-> Add support for Awinic AW99706 backlight, which can be found in
-> tablet and notebook backlight, one case is the Lenovo Legion Y700
-> Gen4. This driver refers to the official datasheets and android
-> driver, they can be found in [1].
->
-> [1] https://www.awinic.com/en/productDetail/AW99706QNR
->
-> Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
-> Signed-off-by: Junjie Cao <caojunjie650@gmail.com>
-> ---
-> Changes in v2:
-> - add handler for max-brightness and default-brightness
-> - use proper units for properties (Krzysztof)
-> - drop non-fixed properties (Krzysztof)
-> - include default values in the aw99706_dt_props table (Daniel)
-> - warn when a property value from DT is invalid (Daniel)
-> - drop warning when optional properties are missing (Daniel)
-> - add a function pointer into the aw99706_dt_props table to handle lookup (Daniel)
-> - use a lookup function instead of hardcoding the formula for the iLED max (Daniel)
-> - move BL enalbe handler into aw99706_update_brightness (Daniel)
-> - Link to v1: https://lore.kernel.org/linux-leds/20251026123923.1531727-3-caojunjie650@gmail.com
+Since Armv9.6, FEAT_LSUI supplies the load/store instructions for
+previleged level to access to access user memory without clearing
+PSTATE.PAN bit.
 
-Thanks for the changes.
-
-I'm afraid I don't like encoding the `shift` in the DT properties table.
-Caching something that is so easy to recalculate makes no sense to me.
-See below:
+This patchset support FEAT_LSUI and applies in futex atomic operation
+and user_swpX emulation where can replace from ldxr/st{l}xr
+pair implmentation with clearing PSTATE.PAN bit to correspondant
+load/store unprevileged atomic operation without clearing PSTATE.PAN bit.
 
 
-> +struct aw99706_dt_prop {
-> +	const char * const name;
-> +	int (*lookup)(const struct aw99706_dt_prop *prop, u32 dt_val, u8 *val);
-> +	const u32 * const lookup_tbl;
-> +	u8 tbl_size;
-> +	u8 reg;
-> +	u8 mask;
-> +	u8 shift;
+Patch Sequences
+================
 
-There should bee no need to record `shift` here. It's just a
-duplicating information already held in `mask`.
+Patch #1 adds cpufeature for FEAT_LSUI
 
+Patch #2-#3 expose FEAT_LSUI to guest
 
-> +	u32 def_val;
-> +};
-> +
-> +static int aw99706_dt_property_lookup(const struct aw99706_dt_prop *prop,
-> +				      u32 dt_val, u8 *val)
-> +{
-> +	int i;
-> +
-> +	if (!prop->lookup_tbl) {
-> +		*val = dt_val;
-> +		return 0;
-> +	}
-> +
-> +	for (i = 0; i < prop->tbl_size; i++)
-> +		if (prop->lookup_tbl[i] == dt_val)
-> +			break;
-> +
-> +	*val = i;
-> +
-> +	return i == prop->tbl_size ? -1 : 0;
-> +}
-> +
-> +#define MIN_ILED_MAX	5000
-> +#define MAX_ILED_MAX	50000
-> +#define STEP_ILED_MAX	500
-> +
-> +static int
-> +aw99706_dt_property_iled_max_convert(const struct aw99706_dt_prop *prop,
-> +				     u32 dt_val, u8 *val)
-> +{
-> +	if (dt_val > MAX_ILED_MAX || dt_val < MIN_ILED_MAX)
-> +		return -1;
-> +
-> +	*val = (dt_val - MIN_ILED_MAX) / STEP_ILED_MAX;
-> +
-> +	return (dt_val - MIN_ILED_MAX) % STEP_ILED_MAX;
-> +}
-> +
-> +static const struct aw99706_dt_prop aw99706_dt_props[] = {
-> +	{
-> +		"awinic,dim-mode", aw99706_dt_property_lookup,
-> +		NULL, 0,
-> +		AW99706_CFG0_REG,
-> +		AW99706_DIM_MODE_MASK, __builtin_ctz(AW99706_DIM_MODE_MASK),
+Patch #4 adds Kconfig for FEAT_LSUI
 
-These __builtin_ctz() calls shouldn't be in the lookup table (if they
-are not in the lookup table then can never be inconsistant with the
-mask).
+Patch #5-#6 support futex atomic-op with FEAT_LSUI
+
+Patch #7-#9 support user_swpX emulation with FEAT_LSUI
 
 
-> +		1,
-> +	},
-<snip>
-> +	{
-> +		"awinic,ramp-ctl", aw99706_dt_property_lookup,
-> +		NULL, 0,
-> +		AW99706_CFG6_REG,
-> +		AW99706_RAMP_CTL_MASK, __builtin_ctz(AW99706_RAMP_CTL_MASK),
-> +		2,
-> +	},
-> +};
-> +
-> +struct reg_init_data {
-> +	u8 reg;
-> +	u8 mask;
-> +	u8 val;
-> +};
-> +
-> +static struct reg_init_data reg_init_tbl[ARRAY_SIZE(aw99706_dt_props)];
-> +
-> +static void aw99706_dt_parse(struct aw99706_device *aw,
-> +			     struct backlight_properties *bl_props)
-> +{
-> +	const struct aw99706_dt_prop *prop;
-> +	u32 dt_val;
-> +	int ret, i;
-> +	u8 val;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(aw99706_dt_props); i++) {
-> +		prop = &aw99706_dt_props[i];
-> +		ret = device_property_read_u32(aw->dev, prop->name, &dt_val);
-> +		if (ret < 0)
-> +			dt_val = prop->def_val;
-> +
-> +		if (prop->lookup(prop, dt_val, &val)) {
-> +			dev_warn(aw->dev, "invalid value %d for property %s, using default value %d\n",
-> +				 dt_val, prop->name, prop->def_val);
-> +
-> +			prop->lookup(prop, prop->def_val, &val);
-> +		}
-> +
-> +		reg_init_tbl[i].reg = prop->reg;
-> +		reg_init_tbl[i].mask = prop->mask;
-> +		reg_init_tbl[i].val = val << prop->shift;
+Patch History
+==============
+from v9 to v10:
+  - apply FEAT_LSUI to user_swpX emulation.
+  - add test coverage for LSUI bit in ID_AA64ISAR3_EL1
+  - rebase to v6.18-rc4
+  - https://lore.kernel.org/all/20250922102244.2068414-1-yeoreum.yun@arm.com/
 
-Can't you just use FIELD_PREP() to set val (either here or at the point
-the init table is consumed)? That why there's no ffs() or clz() at all.
+from v8 to v9:
+  - refotoring __lsui_cmpxchg64()
+  - rebase to v6.17-rc7
+  - https://lore.kernel.org/all/20250917110838.917281-1-yeoreum.yun@arm.com/
 
+from v7 to v8:
+  - implements futex_atomic_eor() and futex_atomic_cmpxchg() with casalt
+    with C helper.
+  - Drop the small optimisation on ll/sc futex_atomic_set operation.
+  - modify some commit message.
+  - https://lore.kernel.org/all/20250816151929.197589-1-yeoreum.yun@arm.com/
 
-> +	}
-> +
-> +	aw->init_tbl = reg_init_tbl;
-> +	aw->init_tbl_size = ARRAY_SIZE(reg_init_tbl);
+from v6 to v7:
+  - wrap FEAT_LSUI with CONFIG_AS_HAS_LSUI in cpufeature
+  - remove unnecessary addition of indentation.
+  - remove unnecessary mte_tco_enable()/disable() on LSUI operation.
+  - https://lore.kernel.org/all/20250811163635.1562145-1-yeoreum.yun@arm.com/
 
-Copying a pointer to a single instance static data buffer into a
-dynamically allocated data structure isn't right.
+from v5 to v6:
+  - rebase to v6.17-rc1
+  - https://lore.kernel.org/all/20250722121956.1509403-1-yeoreum.yun@arm.com/
 
-You should include the init table as part of `struct aw99706_device`.
+from v4 to v5:
+  - remove futex_ll_sc.h futext_lsui and lsui.h and move them to futex.h
+  - reorganize the patches.
+  - https://lore.kernel.org/all/20250721083618.2743569-1-yeoreum.yun@arm.com/
+
+from v3 to v4:
+  - rebase to v6.16-rc7
+  - modify some patch's title.
+  - https://lore.kernel.org/all/20250617183635.1266015-1-yeoreum.yun@arm.com/
+
+from v2 to v3:
+  - expose FEAT_LUSI to guest
+  - add help section for LUSI Kconfig
+  - https://lore.kernel.org/all/20250611151154.46362-1-yeoreum.yun@arm.com/
+
+from v1 to v2:
+  - remove empty v9.6 menu entry
+  - locate HAS_LUSI in cpucaps in order
+  - https://lore.kernel.org/all/20250611104916.10636-1-yeoreum.yun@arm.com/
 
 
-> +
-> +	bl_props->brightness = AW99706_MAX_BRT_LVL >> 1;
-> +	bl_props->max_brightness = AW99706_MAX_BRT_LVL;
-> +	device_property_read_u32(aw->dev, "default-brightness",
-> +				 &bl_props->brightness);
-> +	device_property_read_u32(aw->dev, "max-brightness",
-> +				 &bl_props->max_brightness);
-> +
-> +	if (bl_props->max_brightness > AW99706_MAX_BRT_LVL)
-> +		bl_props->max_brightness = AW99706_MAX_BRT_LVL;
-> +
-> +	if (bl_props->brightness > bl_props->max_brightness)
-> +		bl_props->brightness = bl_props->max_brightness;
-> +}
-> +
-> +static int aw99706_hw_init(struct aw99706_device *aw)
-> +{
-> +	int ret, i;
-> +
-> +	gpiod_set_value_cansleep(aw->hwen_gpio, 1);
-> +
-> +	for (i = 0; i < aw->init_tbl_size; i++) {
-> +		ret = aw99706_i2c_update_bits(aw, aw->init_tbl[i].reg,
-> +					      aw->init_tbl[i].mask,
-> +					      aw->init_tbl[i].val);
-> +		if (ret < 0) {
-> +			dev_err(aw->dev, "Failed to write init data %d\n", ret);
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int aw99706_bl_enable(struct aw99706_device *aw, bool en)
-> +{
-> +	int ret;
-> +	u8 val;
-> +
-> +	FIELD_MODIFY(AW99706_BACKLIGHT_EN_MASK, &val, en);
+Yeoreum Yun (9):
+  arm64: cpufeature: add FEAT_LSUI
+  KVM: arm64: expose FEAT_LSUI to guest
+  KVM: arm64: kselftest: set_id_regs: add test for FEAT_LSUI
+  arm64: Kconfig: Detect toolchain support for LSUI
+  arm64: futex: refactor futex atomic operation
+  arm64: futex: support futex with FEAT_LSUI
+  arm64: separate common LSUI definitions into lsui.h
+  arm64: armv8_deprecated: convert user_swpX to inline function
+  arm64: armv8_deprecated: apply FEAT_LSUI for swpX emulation.
 
-This should use FIELD_PREP() not FIELD_MODIFY();
+ arch/arm64/Kconfig                            |   5 +
+ arch/arm64/include/asm/futex.h                | 291 +++++++++++++++---
+ arch/arm64/include/asm/lsui.h                 |  25 ++
+ arch/arm64/kernel/armv8_deprecated.c          |  86 +++++-
+ arch/arm64/kernel/cpufeature.c                |  10 +
+ arch/arm64/kvm/sys_regs.c                     |   3 +-
+ arch/arm64/tools/cpucaps                      |   1 +
+ .../testing/selftests/kvm/arm64/set_id_regs.c |   1 +
+ 8 files changed, 360 insertions(+), 62 deletions(-)
+ create mode 100644 arch/arm64/include/asm/lsui.h
 
 
-> +	ret = aw99706_i2c_update_bits(aw, AW99706_CFGD_REG,
-> +				      AW99706_BACKLIGHT_EN_MASK, val);
-> +	if (ret)
-> +		dev_err(aw->dev, "Failed to enable backlight!\n");
-> +
-> +	return ret;
-> +}
+base-commit: 6146a0f1dfae5d37442a9ddcba012add260bceb0
+--
+LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
 
-
-Daniel.
 
