@@ -1,149 +1,183 @@
-Return-Path: <linux-kernel+bounces-883056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33B26C2C662
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:25:37 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1550C2C5DE
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:20:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2685423261
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:16:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6ABA64E335B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:19:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0B830C620;
-	Mon,  3 Nov 2025 14:16:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A0E8311976;
+	Mon,  3 Nov 2025 14:19:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lTdhDetG"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pXn7t8Sa"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9999035962
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 14:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9862230E842
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 14:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762179413; cv=none; b=YKmFTgnw3ryu2r3M6BxGdOukfw282svFO7K0kmgIRMPSA7Y7SL/Yvl4d66RLaGoolrj1zcZcWm5DA4x89CSzM5+oH9KITBq9omC5+QqdpSiYx5foIDF4upqm9y/p9c93VEiSPfLXExfZHW/11TZydHdnm0i8TmG28fJESTuPy5g=
+	t=1762179580; cv=none; b=I02emAQYS/YDsb+3Puog7jLpJXLv1YLQeXYeAD7BCqg3YG/mVgvXaxZB6RCbcO8uH7BhfU4QVqEZz4CavmyPSCHrfti5lhyGGl0C9E3BfWMwhvITtpLU6uPrdGd6BATlxM60bD8Imfrg+fTq5DPiVbCjrtkXHDYE6jdIZwPz20U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762179413; c=relaxed/simple;
-	bh=wZ6rUp95l1VI3OxxaYss9GPCFbABLcXZVNiUabj2IeY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=btQ82A8mgnmjj5HV+WOwIrdC4zI/dtVJVWV9Y1Jh1w1VlQ5mWXzmgE588aCEC81MYGlhzoJX9lPTLQ/56EanaVtHiiAG6lA0EilHsXAGwAEXYJEUbByF1fjply7lPJLLoklgw1lCCeNOTqzRF9+2FBnMy5UYlmaCzXGX4/rcVlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lTdhDetG; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-429c2f6a580so2472944f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 06:16:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762179410; x=1762784210; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AK6B3GPgKTLS+sYJ2QFwdaDDOy+dXg0ukpEcj9To1Xk=;
-        b=lTdhDetGKWmH4U2jeiuvPUG2Bb62TTFHQaa6mHXbJsAdJpUdJIcvg2N6uczqNnWKhn
-         lrTMYHNng+EdajPYwRvm6UVc7VemjefXLslrz5y9Cn6erziUy8isQmeXSSltyhBzxBP1
-         lbh1CKY4IraYfppGPIDerS4IVurGqu9hHt1cHmimKIffdkF6kp2J4No1JOT+9sx+FKJN
-         Ii3m1n6YWeFJxsw7JMHe1+Yoc/Bfo1YFoHGVfXurap/O2In1VHi6IOuajUUgJaG1I/Dl
-         6T4dWnGAn0+lqQ3AV8pv7tC+WS5ZWK1DIkRD3vtZv5kTQhJ5KGkEszPiljHRX7lgm7TU
-         qXSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762179410; x=1762784210;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AK6B3GPgKTLS+sYJ2QFwdaDDOy+dXg0ukpEcj9To1Xk=;
-        b=EmvZLtY7riWiunfxigyirYDfsQbkJ6Of+Kkprr0F5sUeAVXja5kp4Ovax1+ORxuGI8
-         VnR/szB914qs7JhXiST8piRaOYwh0l4YQDqL2+bf18Gw59bKBa2dvInV5OWN+K6MFMyi
-         3FKcx/0rZqOiWdNUAzo4O6Y1XlZ2VM2dWUi1lPQjasP/0v9ZLcYN2hDDKDa7CpOGQCvV
-         cy8Uu5iL1tFBRiJvhpi8VxK55yAMnYc/87fbH4h7N/iCa5i6pqXazYHhQxCDwRbpvZju
-         9rDnCm2+aoq9LFgbemOC0ag5O7d2pKELN9Q5I8VlcN0B+nBEmnvvEFTZBZ+P8I1CokCO
-         wPOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXvkPHYjjYX4+9Qmqsr4e1J1cZm9Y07L49zhnEonzZ3P4l8AZgTnRZEJF1ZPMwqVMiY86ZzGd8UKOBQvsY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYXMABh05vRoNQtYEmCheAXqiD1uypLwIiJpQgfNWjSpgT/DTZ
-	gOMDjaNW+foZdGu4+n98bvUzJj2yCNBqbLGJ49HdRuUrfQMwwB4XYOae
-X-Gm-Gg: ASbGnct8SYJQppMTs3QyfYJ2/I+s+/U7mxDmWddbl3LhKMK/LBVR+hg0aBzc86adPHE
-	/JzEYkmpwKaXumM7Aq0TG/UdYjvC8ZQu9N14VGrrQSWw1P/cKPIZturh4Y4Mk4ZYWBEguVHC1MT
-	gofZZJpYzYR5S3JjDUKQ68ZctBz9h1Wp7Xj8CSXXi/CAtaDXGjIX3yY2lzY5RwZQeuXHqs1dSPr
-	1gj1jBev696G//3ZWCdnaB1wcLoh6QB7DA+Xq2RDVrNPaCthL5UPXUUQE9QMhJggx8EtocZH47t
-	MAWnEapGbscUy4pqLlsijqYijDKkuewgZuK9D1ZSin0gCRne9tA9USijpyPwZJIJfTkhETKbE/e
-	wQabWvmpqmZrJRg1JlkP4qYZcx6N6OaDICyPyFON/0itEKtWzJj5T2+XEinmpX6fz765walNTys
-	yLMf4jPESJiN0T0LtZoU8Grd2Zr2AuYlktzlFObsLbpM9p1dYcGI88EG8kwEv6WKslpDDzhg6Yn
-	ESvwRiTISZB
-X-Google-Smtp-Source: AGHT+IFLLHTGHcAuIPyGKMZXwN/E6JsPzYuvadEdbaB5JanFKglVSWXPVxk4ppTMgy82SxhKIiaxmw==
-X-Received: by 2002:a05:6000:268a:b0:429:d426:fb9 with SMTP id ffacd0b85a97d-429d4261238mr2280493f8f.34.1762179409528;
-        Mon, 03 Nov 2025 06:16:49 -0800 (PST)
-Received: from orome (p200300e41f274600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f27:4600:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429cdf42104sm10403042f8f.3.2025.11.03.06.16.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 06:16:48 -0800 (PST)
-Date: Mon, 3 Nov 2025 15:16:46 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Vishwaroop A <va@nvidia.com>
-Cc: Mark Brown <broonie@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Sowjanya Komatineni <skomatineni@nvidia.com>, 
-	Laxman Dewangan <ldewangan@nvidia.com>, smangipudi@nvidia.com, kyarlagadda@nvidia.com, 
-	linux-spi@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 3/3] spi: tegra210-quad: Check hardware status on
- timeout
-Message-ID: <wo3oezxxxqbld326h7736lzyspgk7odvvvcamgp5wemtxsnzee@ybl3kg54arvy>
-References: <20251028155703.4151791-1-va@nvidia.com>
- <20251028155703.4151791-4-va@nvidia.com>
+	s=arc-20240116; t=1762179580; c=relaxed/simple;
+	bh=9NiifvQJi8D1KvjCjQtiU4LSXpQp9V0YKrqUXTw7HDE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iYM6/RM/BdhdbW4buYjA/3mxZSoac5kgcii+9tqxblvUlksRiYDdBvn3UK1GTpmAPJbSC1YTOwyfR+6hYg+vglbhHPJSz41Q1bDlmuEZirh0iJdqsRFjsQipsfbflQA2SxX5WWkTPXkYdaL9cYqtnhubd965jRj9F6JRO7q0ps4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pXn7t8Sa; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id DF2384E414C8;
+	Mon,  3 Nov 2025 14:19:35 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id A20EE60628;
+	Mon,  3 Nov 2025 14:19:35 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4068310B50120;
+	Mon,  3 Nov 2025 15:19:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762179574; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding; bh=IUwcGtE/38Ac68OwdWyQjp0g7+BDVo54gGgBsB+Ixrc=;
+	b=pXn7t8SaZk1pj8aMpOpnGjVSQpfL/F0eUznTpgzzpQHiAoNq1AQtoEjsA8C3XvxNPcKo2U
+	NG+kkHKUyr48pQ15jPdyKHKnww7OyGH12JYV3auzyG8dGDX9jGrh50sRoZWb0ab+6kxqkO
+	5r6G08UwbV58XZTYP281dKE51UgIP0fSQN+US5V9Ve1FWgMevB7udPkJX5LVtF66OKIjBH
+	9wgXfnMm5UNETRXl12BgyJtx/7K8lE2uOzhIBP/wa4guqe+sOd2Qx/bNdraAfQGdBaJtc8
+	4NkQ+mUlOOErOk/XcUDxACY8OZqU0G0Z+S8FVm3SRmT1jNwjcqu+JW72tdrRgA==
+From: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Cc: linux-iio@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Pascal Eberhard <pascal.eberhard@se.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: [PATCH v3 0/4] Add support for the Renesas RZ/N1 ADC
+Date: Mon,  3 Nov 2025 15:18:30 +0100
+Message-ID: <20251103141834.71677-1-herve.codina@bootlin.com>
+X-Mailer: git-send-email 2.51.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="gzoofza66yihpibs"
-Content-Disposition: inline
-In-Reply-To: <20251028155703.4151791-4-va@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
+Hi,
 
---gzoofza66yihpibs
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 3/3] spi: tegra210-quad: Check hardware status on
- timeout
-MIME-Version: 1.0
+The Renesas RZ/N1 ADC controller is the ADC controller available in the
+Renesas RZ/N1 SoCs family.
 
-On Tue, Oct 28, 2025 at 03:57:03PM +0000, Vishwaroop A wrote:
-> Under high system load, QSPI interrupts can be delayed or blocked on the
-> target CPU, causing wait_for_completion_timeout() to report failure even
-> though the hardware successfully completed the transfer.
->=20
-> When a timeout occurs, check the QSPI_RDY bit in QSPI_TRANS_STATUS to
-> determine if the hardware actually completed the transfer. If so, manually
-> invoke the completion handler to process the transfer successfully instead
-> of failing it.
->=20
-> This distinguishes lost/delayed interrupts from real hardware timeouts,
-> preventing unnecessary failures of transfers that completed successfully.
->=20
-> Signed-off-by: Vishwaroop A <va@nvidia.com>
-> ---
->  drivers/spi/spi-tegra210-quad.c | 100 +++++++++++++++++++++++++-------
->  1 file changed, 80 insertions(+), 20 deletions(-)
+It can use up to two internal ADC cores (ADC1 and ADC2) those internal
+cores are handled through ADC controller virtual channels.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Best regards,
+Herve Codina
 
---gzoofza66yihpibs
-Content-Type: application/pgp-signature; name="signature.asc"
+Changes v2 -> v3:
 
------BEGIN PGP SIGNATURE-----
+v2: https://lore.kernel.org/lkml/20251029144644.667561-1-herve.codina@bootlin.com/
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmkIuU4ACgkQ3SOs138+
-s6FGmA//foQG6+9yuS/wubcK2SRlH+jBiF4e521dUqV22u1TxiW6hnbBogOH3lW7
-Bejz5Qa05wuRQfz1V0yIlZuc137y/LhqjwN5rnkktOd1eVIsIy2gQdan28iMzlAq
-5949P75ohtNWxwRNwero9W6W8cyV7ZZymdW4w8yxdSBlhhIy8UOQZEi4xecsxoOV
-qhmUAenz74bkcJWwtJ+3noqxouJwi8+EwBe4m7vPwHCaVj4F8n87JrYjUQr0Yn9W
-s/iobChVpC2fEFWKScg3iwACpn1IefAVGgNmH0kI5koYSxIbUdZvmNcrKj3sXvC6
-FPrdv/sd4EeVbRgzy5ipWh8JcsgQnbhBbO7cawogGu/cry8JMHVN7CgJ0wDZ03W9
-OptTKOgr9/7KBsMdZwqeEsVkzRDnhksSSh8IUT3RaMMEQBEENf+cYNRslDjEY0Zz
-VEwRuUdpdi6ciNpm8p9Z1z2GDF/r1syb++z63AVLefUCxtApwI505ljqf42uNppU
-3XZ8VkjK8ToRBLDRxfas/0RvFjrUVTku/Gh2sOWPP0h5Pn5jyBKgKVUYgJQhLbiT
-JWBYo/c/1jqRYwc4o8Fk/M8wxpoTjq9a9MRYbt9+hEpTTB8nIceKhRwPtwi/BOUR
-DkovGIAcINw/zIY4frjEjiHia1lKqlWLYpRjy3uuXws9wQgProA=
-=UHnL
------END PGP SIGNATURE-----
+  Patch 1:
+    - Add 'Reviewed-by: Rob Herring'.
 
---gzoofza66yihpibs--
+  Patch 2:
+    - Add missing header files.
+    - Use fixed-width values for register definitions.
+    - Split comments and remove a redundant 'else'.
+    - Return the error in the 'switch case' default statement.
+    - Leave a trailing comma in struct iio_info.
+    - Move *_vref_mv to *_vref_mV.
+    - Split the DEFINE_RUNTIME_DEV_PM_OPS().
+    - Update error code handling in rzn1_adc_core_get_regulators().
+    - Pass rzn1_adc in platform_set_drvdata(), update suspend/resume
+      function accordingly.
+    - Add 'Reviewed-by: Nuno Sá'
+
+  Patches 3 and 4:
+    No change.
+
+Changes v1 -> v2:
+
+v1: https://lore.kernel.org/lkml/20251015142816.1274605-1-herve.codina@bootlin.com/
+
+  Rebase on top of v6.18-rc3 to have commit db82b8dbf5f0 ("PM: runtime:
+  Fix conditional guard definitions")
+
+  Patch 1:
+    - Remove unneeded 'dependencies' part.
+    - Rename "adc-clk" clock to "adc".
+    - Move 'additionalProperties: false' just before the example.
+    - Use const instead of enum for the "renesas,r9a06g032-adc"
+      compatible string.
+    - Fix the ACD typo.
+
+  Patch 2:
+    - Fix the ACD typo.
+    - Rename "adc-clk" clock to "adc".
+    - Update included headers and sort them.
+    - Align register definitions at the same column.
+    - Inline the FIELD_GET() instead of having macros.
+    - Introduce RZN1_ADC_NO_CHANNEL
+    - Get Vref voltage value at probe().
+    - Remove the bitmap in rzn1_adc_set_iio_dev_channels().
+    - Use dev_err_probe() in rzn1_adc_set_iio_dev_channels().
+    - Use auto-cleanup variant for PM runtime "resume and get".
+    - Use scoped_guard() for mutex.
+    - Use devm_mutex_init().
+    - Use the fixed "rzn1-adc" string for indio_dev->name.
+    - Use DEFINE_RUNTIME_DEV_PM_OPS().
+    - Fix rzn1_adc_of_match table and remove of_match_ptr().
+    - Add a comment related to decoupling between IIO chans and ADC1 or
+      ADC2 core chans
+    - Update and add several comments related to ADC core usage and the
+      relationship with ADC core regulator presence.
+    - Remove clocks and regulators handling from PM runtime
+      suspend()/remove().
+    - Simplify the driver removing the no more relevant struct
+      rzn1_adc_core.
+
+  Patch 3:
+    - Rename "adc-clk" clock to "adc".
+    - Add 'Reviewed-by: Wolfram Sang'
+
+  Patch 4
+    - Removed the linux-iio list
+
+Herve Codina (Schneider Electric) (4):
+  dt-bindings: iio: adc: Add the Renesas RZ/N1 ADC
+  iio: adc: Add support for the Renesas RZ/N1 ADC
+  ARM: dts: renesas: r9a06g032: Add the ADC device
+  MAINTAINERS: Add the Renesas RZ/N1 ADC driver entry
+
+ .../bindings/iio/adc/renesas,rzn1-adc.yaml    | 111 ++++
+ MAINTAINERS                                   |   7 +
+ arch/arm/boot/dts/renesas/r9a06g032.dtsi      |  10 +
+ drivers/iio/adc/Kconfig                       |  10 +
+ drivers/iio/adc/Makefile                      |   1 +
+ drivers/iio/adc/rzn1-adc.c                    | 490 ++++++++++++++++++
+ 6 files changed, 629 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/renesas,rzn1-adc.yaml
+ create mode 100644 drivers/iio/adc/rzn1-adc.c
+
+-- 
+2.51.0
+
 
