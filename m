@@ -1,231 +1,202 @@
-Return-Path: <linux-kernel+bounces-882725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4D62C2B40A
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED3BAC2B40B
 	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:09:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3719E3A550D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:07:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D63418941A3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:08:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2A230103F;
-	Mon,  3 Nov 2025 11:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ADE030149D;
+	Mon,  3 Nov 2025 11:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PSaL5qiU"
-Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g5XCUbDF"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D2E301700
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 11:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB16D30170F
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 11:07:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762168025; cv=none; b=pHpj+qP1zETIgOAtmKlnLnsbGhEpx9kv8MICZppFV3Wwnhc5aMeFEJsdVcWB/sFnqYbFE8ys+uPGKu5MR3mU/xWw7HIfuIyWc5ALpDP4PLWw9aatJmRSbxzXY9sUP4OIv8rsoOLWFnXhbNTQVWIKDEH62BAvJPcWXmJGZeN4JUk=
+	t=1762168029; cv=none; b=UdMRS1lG/L8bLkfxMzN/FRBLu36CxLcXCE4F+7Gc2aES3FYqRuMU7kRMlERqhtwCwLmy4zDDJSOFbWRFLtXRqNuT3A0ryKoBGsvUZEn30xYFmrD+9FMmHScBxFswS0oorP61cpgBsj/M8+vXOxaJhouow3zF78LJPa5MpaU3gtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762168025; c=relaxed/simple;
-	bh=U2S1xSihT43zwJfSjpJYIZmqbEiWaSbNbBj+0gTTbSw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OfDcCW2s+fslUh8plcRVzbuW3uwDzaRP6kctTOYy21nowRyo+0PBWa0iuD3w0yzCM6hB6rZ7tXXvUxpMQDKZB39BEVN6i1GLLnX9ZpvknbWRtBOQ1lp8ECRu3BctoNlip8aayMKEMelO0fpw9l/cdczTF7Rg5VHoiPfnBtdz558=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PSaL5qiU; arc=none smtp.client-ip=209.85.214.194
+	s=arc-20240116; t=1762168029; c=relaxed/simple;
+	bh=q+/7P1zjDNlXzpHg/WHOYRPHMq1JrxDvGxq4KhF0LWI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vBpt9vtxIuViw3aOyKJj4kiICflIJQfs18HBV4a10aNysUkNR+9TMbYpJQborcBOige81Vdt6gjanmB4seetjnM+FF0RYrPAV4OOwYSTbeMYa+vQufHXHpsAWzDN45r3gpFPsBTtNPMyFlI4E/GNwrEyjVMR09r/CCeMjFO0yaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g5XCUbDF; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-294df925292so37397625ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 03:07:02 -0800 (PST)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4770c2cd96fso27436385e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 03:07:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762168022; x=1762772822; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Vwqxs3pFPgUNdzREwICsv/UCTbRI0baMAHgNVcVWKho=;
-        b=PSaL5qiUcpMiwwN6Z+iZaZe5A3Ze+E9ajOL6GFzvw1com9pJfxR6HTTLSftCHpFMY4
-         hlf12EjNXCbBxGYGEYRy1I/qImxGXYIF6tSqYais1oO5gBcSPth9o0ej8utTHGWk6Kco
-         jk+V6cg5GBOAAfHWdARx+iiJOB+bFrqmNUEA1qiE0LTGN3NWOO60BMTwsmTK4LBulSdP
-         DTPtLh4pmBkx+Emd3TaMw7QjNY0WMepAJwDhyoT4N+HGb7cXVKfdesYsQ1JuO1Ac5+hj
-         uCLvX3wOdB/7dMEN1yyA+yS4G9Lx/CVSDJWMETEGSLw3/PSZI7WekJyJuZ1bOU/fOjjW
-         E2wA==
+        d=gmail.com; s=20230601; t=1762168026; x=1762772826; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=N2y6g7iCZxSFCzS+WqvERQWzckHfYQBOBr5pYtme7K0=;
+        b=g5XCUbDFVvMZDFMAZkg0EciVb6shPWDgLUFDgBsPBChVCp1VD1sgs+kXR/65HYChxI
+         enVDu7+CF+3yGpvzhFWqC7y7y5PFkbnrFO5lysja/y3/NfcAYak/uylgb1r2Q7UXo/3b
+         hhCU4cd5zbMRfoRccx4ISKtuMRLqp+XSTNvJV/Qhr/wbTCCv4Bvi3FCcPWusJTjYNYTM
+         2qljBFd6xxgr7p21TekFvkZH3v18RIUqj3B8kP6ky9eKKvtH63IZMbUgavbAP7bWZG4W
+         Ol1Pj62M0sEQTNqWX7Y7wz2nY+j2ERYsqlerVHQIBumT6PRC4uxAI/SU3vFeNwhXYthN
+         XM+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762168022; x=1762772822;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Vwqxs3pFPgUNdzREwICsv/UCTbRI0baMAHgNVcVWKho=;
-        b=dyHgjF2mAyLP44szVmdDfxeYOdyva8pd1Sthg5sv903KIKMzDnLLCjPEtpKO/4abW0
-         bhpVmia66Y6t0ttjUz9dpx3atpvmcph95o44cWdaYrfkYt8ojgha0jFbjJp5yQWllRhp
-         C5QoVyMjw3SNO5B4e5jmHj3Jm1F9tAlMHhbH5yazExCWK/fMhnxXOX8lrI8V2Ds/suFj
-         OXQ59QEqst4VdxJ/rVkOf9ay66vBy/0PnmKR7z6reApOXBZNp+4B8Ub4WqoC74XnFxg4
-         ogEz4OdGH1IeiXB5ZB9TgcdC4QSvr6kQaYd/8/zivdp3608l79lG0rrCp+R0o+epdFWz
-         4p3w==
-X-Forwarded-Encrypted: i=1; AJvYcCVU11iX0LZ8N8K1T93mUL6rd+Sb5xK86hwl58Tsx5YXpXvqHlUZCjSLubcLpZDi6ADceofLHmW4yZUhT4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyK/n7cHHOooomH3eC4ki7xrbNdzZwyKEtia9x+3VrrvlNKRDSE
-	VqsCTV6+hXpiETsT9w/fb4s2eM722m71wv2B1jp0PFmtakoyhhoGj+kJ
-X-Gm-Gg: ASbGncvcR+Swl08boVlEC1EoKfshYxmBbplf5AiV+RD9lKDfX122Owqp4sGwVr4mOe7
-	IZObwCbjEt9M5j/lWZ0PRrVM7BHi3Zwvf0F9MJXChQk1N9gUJG/Xjxeb0pCplGFU7pLYGRLXym9
-	VQaGSBh6C8kEdXD9AHhpN98yRrblZInYpTRpcFjjgz+yVevK/YXMaGBuqSJLzPshWSIEFwSUb70
-	UPSsEPcPbHLsg4Wq7jzlsnsbGvLA24GFIT4RFFohkj3zLrNbw+0ySTHb+/wH3J0yqBDytrwHVbj
-	KfIKGnORhosN7MRMVtnLa36+5lgpc3nWI5vqtTK845Ujoh/DcejAd7sFT9h+C4SNOONMOpduUlK
-	fxWf33m9l4LAYrnouI2QsOW90nSHOtjhDbIpByPVQD9kZM4djc4ZEWXrMbX2W+KHBVuI4UaudUl
-	6EDfKKkS5TXgUk8OOUgQ==
-X-Google-Smtp-Source: AGHT+IED1NK8Nun74yVDxcwX2L2vPElvPQSyImAaJGU2myF3ZiOioVg5mqtofEuE0gFzFHfeDCXjwQ==
-X-Received: by 2002:a17:902:f682:b0:295:8db9:305f with SMTP id d9443c01a7336-2958db93392mr64853685ad.34.1762168021882;
-        Mon, 03 Nov 2025 03:07:01 -0800 (PST)
-Received: from VM-0-14-ubuntu.. ([43.134.26.72])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2955615d720sm84025575ad.65.2025.11.03.03.06.58
+        d=1e100.net; s=20230601; t=1762168026; x=1762772826;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N2y6g7iCZxSFCzS+WqvERQWzckHfYQBOBr5pYtme7K0=;
+        b=VYMBLCBz3jHd/LjNs0ENbvHigLLj0u6ZCsID9GoGZGbMgeCTB8JKFVX1zRKZnbGZoq
+         3+gtUCXtVkRngb64UKhvXjD9ArOrlA59BolK/I8l8inloEwJkygTGxlUuWmbVwdOUAXf
+         4aHn0l7HUg67aSaww1qgm9v8MqESFgG0paqfy4IDnMZRfD5S5rupYEEHDJhdFSqyIjS0
+         Q3qTwq9qFmP597xHA/72y8ouSbXYGY5wGg6mB2t4tAIU4dAjLdG0gqekoXcg4jgvzgLq
+         kLLyxPRFYPxMtjWRtT5m+uTydeemkiclx/7FrvgeqiNXZDyDvUoV7P7w4yPKluvKAtKO
+         RynQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXzDEIzkdtydtc106XdGnthksR13jVMPdnpl8eh+v20MpXDew4iByKof8enWKR1FJ8O9Dxc4PHyGF8dYJE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMCLc5z8LJexjsIQ2rMMNN0fCZF5fGLNJzwXhcSn/5QdpxpNYK
+	sEpNj6HI5+LleHzvlLjBSj74z3qAg4BXjAtbinDNPS2LpyMZRCNB00hz
+X-Gm-Gg: ASbGncuv6GnT2EPRwTE9oMfEbibrrSZO7dB2/1Blk1l3rNtIcMRQzvgA1lZQsxyALoC
+	2Nb21h4Xl7o0gg/8ZF51voS4WJajV2XOal4bRcvBj4nrlxs/CDAtEuy9zIBA5vqBaUcljri6uxg
+	KwNZ73zxSb1su6TfYs6s/3YL9u5o1bguEvwnz/rCiF9QlM0/pLGE+wV2JLFpXsFM5tsAIW6mBJX
+	82Lp0QcTb43pDwc53RcKU3WqddxRxQ0rYAHmPUQJjarmFgVSBEGUeEg5oA1ezvECcfKlmVWWmJv
+	ZWA2C/L1i5MVgKUZwXMr6zM82qM69oqGn6coB6YSVSzNcEITD8ZrgPSKbVFKZcuLIKfP6M4kO8P
+	tQWZ1n4dTJ1NXPugyPi3giU2crCONkJqXSFWSpVYh8iyw8kZT7buSf9yBr7O/LSxpNUCGKapLhl
+	oGM+/81TRFHPJoaknxGngQAVs3tzpyVT099G5Hy4dgCsRcBiUbBryYQIev8KDH65/LXc1OQrV3s
+	Q==
+X-Google-Smtp-Source: AGHT+IGk/+fNIDU5GS9Y0bSDOMPL/NMDFiVPvFYi1ymJ4WbTOeaX7Ll11twoeCz4N6itkrGu72//OA==
+X-Received: by 2002:a05:600c:3511:b0:476:4efc:8edc with SMTP id 5b1f17b1804b1-477307d9920mr99026625e9.15.1762168025714;
+        Mon, 03 Nov 2025 03:07:05 -0800 (PST)
+Received: from orome (p200300e41f274600f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f27:4600:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c2e677csm149805495e9.3.2025.11.03.03.07.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 03:07:01 -0800 (PST)
-From: Junjie Cao <caojunjie650@gmail.com>
-To: Lee Jones <lee@kernel.org>,
-	Daniel Thompson <danielt@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Pavel Machek <pavel@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Helge Deller <deller@gmx.de>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fbdev@vger.kernel.org,
-	Pengyu Luo <mitltlatltl@gmail.com>,
-	Junjie Cao <caojunjie650@gmail.com>
-Subject: [PATCH v2 1/2] dt-bindings: leds: backlight: Add Awinic AW99706 backlight
-Date: Mon,  3 Nov 2025 19:06:47 +0800
-Message-ID: <20251103110648.878325-2-caojunjie650@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251103110648.878325-1-caojunjie650@gmail.com>
-References: <20251103110648.878325-1-caojunjie650@gmail.com>
+        Mon, 03 Nov 2025 03:07:04 -0800 (PST)
+Date: Mon, 3 Nov 2025 12:07:02 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Aaron Kling <webgeek1234@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] Revert "arm64: tegra: Disable ISO SMMU for Tegra194"
+Message-ID: <ehkwvvmvk4mddxtcmne5jrex2rfq4phqsa5zifxdslrpvdl2ir@3zlwejmx5f5f>
+References: <20251101-tegra194-dc-mmu-v1-0-8401c45d8f13@gmail.com>
+ <20251101-tegra194-dc-mmu-v1-1-8401c45d8f13@gmail.com>
+ <CALHNRZ_QrQHCmF7f1z29tAmuNR-=rG1SgYJ1sssK3VXiQqURYg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="rhigqaftdyzecuql"
+Content-Disposition: inline
+In-Reply-To: <CALHNRZ_QrQHCmF7f1z29tAmuNR-=rG1SgYJ1sssK3VXiQqURYg@mail.gmail.com>
 
-From: Pengyu Luo <mitltlatltl@gmail.com>
 
-Add Awinic AW99706 backlight binding documentation.
+--rhigqaftdyzecuql
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/2] Revert "arm64: tegra: Disable ISO SMMU for Tegra194"
+MIME-Version: 1.0
 
-Signed-off-by: Junjie Cao <caojunjie650@gmail.com>
----
-Changes in v2:
-- use proper units for properties (Krzysztof)
-- drop non-fixed properties (Krzysztof)
-- add properties(max-brightness, default-brightness) (Krzysztof)
-- Link to v1: https://lore.kernel.org/linux-leds/20251026123923.1531727-2-caojunjie650@gmail.com
+On Sat, Nov 01, 2025 at 06:13:26PM -0500, Aaron Kling wrote:
+> On Sat, Nov 1, 2025 at 6:01=E2=80=AFPM Aaron Kling via B4 Relay
+> <devnull+webgeek1234.gmail.com@kernel.org> wrote:
+> >
+> > From: Aaron Kling <webgeek1234@gmail.com>
+> >
+> > This reverts commit ebea268ea583ba4970df425dfef8c8e21d0a4e12.
+> >
+> > Mmu is now being enabled for the display controllers.
+> >
+> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> > ---
+> >  arch/arm64/boot/dts/nvidia/tegra194.dtsi | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot=
+/dts/nvidia/tegra194.dtsi
+> > index 1399342f23e1c4f73b278adc66dfb948fc30d326..854ed6d46aa1d8eedcdfbae=
+1fdde1374adf40337 100644
+> > --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+> > +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
+> > @@ -1807,7 +1807,7 @@ iommu@10000000 {
+> >                         #iommu-cells =3D <1>;
+> >
+> >                         nvidia,memory-controller =3D <&mc>;
+> > -                       status =3D "disabled";
+> > +                       status =3D "okay";
+> >                 };
+> >
+> >                 smmu: iommu@12000000 {
+> >
+> > --
+> > 2.51.0
+> >
+> >
+>=20
+> Question for Jon as the author of the commit being reverted. The
+> commit message states "we do not have a way to pass frame-buffer
+> memory from the bootloader to the kernel". If I understand this
+> correctly, this is talking about seamless handoff. What does this have
+> to do with enabling mmu on the display controllers? Seamless does not
+> work on any tegra arch as far as I'm aware, but Tegra194 is the only
+> one that doesn't have mmu enabled for the dc's. But enabling mmu
+> allows for better and faster memory allocation. My initial attempts to
+> enable this didn't work because I tried to attach them to the main mmu
+> unit, see the related freedesktop issue [0]. After noticing in the
+> downstream dt that the dc's are on a separate unit, I made it work.
+> And so far, it seems to work just as well as Tegra186. Then when I was
+> packaging up the change to submit, I found that this had been
+> explicitly disabled. But I'm not seeing why. Am I missing some
+> additional factors?
 
- .../leds/backlight/awinic,aw99706.yaml        | 100 ++++++++++++++++++
- 1 file changed, 100 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/backlight/awinic,aw99706.yaml
+This isn't seamless handoff to the Tegra DRM driver for display, but
+rather to simple-framebuffer. While this does technically work, it also
+causes a spew of SMMU faults during early boot because the firmware does
+not properly pass the SMMU mapping information to the kernel.
 
-diff --git a/Documentation/devicetree/bindings/leds/backlight/awinic,aw99706.yaml b/Documentation/devicetree/bindings/leds/backlight/awinic,aw99706.yaml
-new file mode 100644
-index 000000000..9b7266e61
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/backlight/awinic,aw99706.yaml
-@@ -0,0 +1,100 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/leds/backlight/awinic,aw99706.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Awinic AW99706 6-channel WLED Backlight Driver
-+
-+maintainers:
-+  - Junjie Cao <caojunjie650@gmail.com>
-+
-+allOf:
-+  - $ref: common.yaml#
-+
-+properties:
-+  compatible:
-+    const: awinic,aw99706
-+
-+  reg:
-+    maxItems: 1
-+
-+  enable-gpios:
-+    description: GPIO to use to enable/disable the backlight (HWEN pin).
-+    maxItems: 1
-+
-+  awinic,dim-mode:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: >
-+      Select dimming mode of the device.
-+        0 = Bypass mode.
-+        1 = DC mode.
-+        2 = MIX mode(PWM at low brightness and DC at high brightness).
-+        3 = MIX-26k mode(MIX mode with different PWM frequency).
-+    enum: [ 0, 1, 2, 3 ]
-+    default: 1
-+
-+  awinic,sw-freq-hz:
-+    description: Boost switching frequency in Hz.
-+    enum: [ 300000, 400000, 500000, 600000, 660000, 750000, 850000, 1000000, 1200000, 1330000, 1500000, 1700000 ]
-+    default: 750000
-+
-+  awinic,sw-ilmt-microamp:
-+    description: Switching current limitation in uA.
-+    enum: [ 1500000, 2000000, 2500000, 3000000 ]
-+    default: 3000000
-+
-+  awinic,iled-max-microamp:
-+    description: Maximum LED current setting in uA.
-+    minimum: 5000
-+    maximum: 50000
-+    multipleOf: 500
-+    default: 20000
-+
-+  awinic,uvlo-thres-microvolt:
-+    description: UVLO(Under Voltage Lock Out) in uV.
-+    enum: [ 2200000, 5000000 ]
-+    default: 2200000
-+
-+  awinic,ramp-ctl:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description: >
-+      Select ramp control and filter of the device.
-+        0 = Fade in/fade out.
-+        1 = Light filter.
-+        2 = Medium filter.
-+        3 = Heavy filter.
-+    enum: [ 0, 1, 2, 3 ]
-+    default: 2
-+
-+required:
-+  - compatible
-+  - reg
-+  - enable-gpios
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        aw99706@76 {
-+            compatible = "awinic,aw99706";
-+            reg = <0x76>;
-+            enable-gpios = <&tlmm 88 GPIO_ACTIVE_HIGH>;
-+            default-brightness = <2047>;
-+            max-brightness = <4095>;
-+            awinic,dim-mode = <1>;
-+            awinic,sw-freq-hz = <750000>;
-+            awinic,sw-ilmt-microamp = <3000000>;
-+            awinic,uvlo-thres-microvolt = <2200000>;
-+            awinic,iled-max-microamp = <20000>;
-+            awinic,ramp-ctl = <2>;
-+        };
-+    };
-+
-+...
--- 
-2.51.1.dirty
+In a nutshell what happens is that the firmware sets up the display
+controller to scan out from a reserved memory region, but it does so
+without involving the SMMU, so it uses physical addresses directly. When
+the kernel boots and the SMMU is enabled the continued accesses from
+display hardware cause SMMU faults (because there is no mapping for the
+framebuffer addresses).
 
+That said, we did solve these issues and this may not be happening
+anymore with the most recent L4T releases, so it may be okay to revert
+this now. We should find out exactly which release includes all the
+needed changes so that it can be referenced in the commit message. I
+want to avoid people running new kernels with an old L4T release and
+then seeing these errors without any reference as to why that might
+suddenly happen.
+
+Thierry
+
+--rhigqaftdyzecuql
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmkIjNUACgkQ3SOs138+
+s6EPdA/+KQRZ+i4hpf5+vNtlPCdkDropF79/cCV7LCIDkl2R/QE3dVZfnEYL7cv+
+UTq5OQ8ht9NdSGNKqWLqHc+z0SupjcZSuI7740Fb3eiMVft9CbyHLzJ+W4B4FkHF
+pWfw47jVEeUhkKs2Dwt37DiMjw58qml70Vuh9iaCE5uN8zNcTosJEmM2pqIDTGqP
+7inkRXmegFXW2fd+l2cCtu6hK9xJ/B5SajKs+njoUNfXnIGUPqJwkv5WITl4LQNB
+m/0ZGC/zsaD8IihEZtOmcvSeBS7silmJeJW8FSbbbxFn4LsiRkV9KudKukCsnAgy
+eiOsspNAjkgzcwW7pKaF558ZxGUPsQqRuc7CEju575amijmUeDJI+B/y+MW0mKGw
+urkXpl+4OiTth7E3I1eqY8xr52AMwMDWr9VpzukUVr4z+J5ScY2ENTz7hmCgVRMD
+IzCrRSPrKvD0NJ+0+aI6CSLAlen3Cd8wiGQ5vzj6zSuA9cXG3o8vBNB2w5tTGfm1
+zUckLwcEfNgBbQ5q2zXfCa7Ky5tAyLqiSN+wMVE3h/BjVVsG6vbzSZOxWbQ4rqJA
+lBITs1fe5pJw2EdlbMenggIzUQ+/G2s6Eg+b3ihwLEaxGaBy27qooXl6PKwFY00P
+8JmPOJjjgVavEzsPBml5Lx0dfSDkCMvrcgCGa3Vpk2vELUFjADc=
+=BR5A
+-----END PGP SIGNATURE-----
+
+--rhigqaftdyzecuql--
 
