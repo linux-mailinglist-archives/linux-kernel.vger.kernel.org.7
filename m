@@ -1,122 +1,153 @@
-Return-Path: <linux-kernel+bounces-883466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CADF4C2D866
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:46:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65BBBC2D86F
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:47:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 304203AFAA4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:46:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7DC81897DC0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E25011EC018;
-	Mon,  3 Nov 2025 17:46:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D8E22A4FE;
+	Mon,  3 Nov 2025 17:47:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AflPVl88"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MTYX6k4M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66B472618;
-	Mon,  3 Nov 2025 17:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C1FF1E47A5
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 17:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762191976; cv=none; b=LsS+Af2MvI29scFc7pI2buX6UQ9HSs56wbYFERmH44i1rk+0zm6jqKNTASYiFpKk4HWpZK0+uvvknt4i12IFVmuDeVr2tjpC4WeSS6bhJ4vRztoe7AQ63rf/3LNtrhxshQ88Xc0pIv8+Qua0GHmx/Jo5jLElT4/qI/qVQ8toDcE=
+	t=1762192050; cv=none; b=XMIYP3IPWrhdyhKPRxJfRe18cikMVWCUDRJn2uzAddwSY+Ea5FPppiLGJgaUZ5TI6f8S7gbmDpxoe80BKVIUlnVeDd5awEcaRO9YciWTQDazD1RVgdQOTWb3pmZvMXaVZfXHEQW26Scqn8tVXxU+e1sMv5gLDmeZaz1+5aTMgl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762191976; c=relaxed/simple;
-	bh=+iaaWRw8B4NvnWOTSfgkouB60zccA7A8ZPnoe7ymArs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l1Ji96YAz2lvf8ip0crslTL7q1mUGd6eP2Z6WQsfNYUe5xfG6ZAy7WYYjHO17yFBkOPj7sN2jSxePKrH+JecVfrFLo98ny0DVPsCKg1iKC63PpCiRpdiaF4ni5RcvTeo2haU90xgx1He8Y5o0ddIK0WM6vlK/zFXfkxnE0mGoio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AflPVl88; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762191974; x=1793727974;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+iaaWRw8B4NvnWOTSfgkouB60zccA7A8ZPnoe7ymArs=;
-  b=AflPVl88c6JjHYYfLX59Qd7YGL+jvJ3jKfQD38QgrCMAFHQMEpFJ5WeE
-   FKzBUhfUPR2QZZoKuh4MOsYKJ3oJefX/gMfS7n1JJ//CAxmQNMaDgQP7i
-   s4gBtOxTTWcJH2zXhkhi2RD5xZrQ2VaPcFiEyshCPuhjITIP10JE+te0O
-   Pu7QmBYRuTlHx1gvmYC4c1oIaWFswhh1U56B6L4rGNwZei/GpO2UFD0CK
-   2GFKnovjZ9ZRALCcW3lS50eL+HyiyYLiqNGYFWQ29yuh6kWtDR7OMIYDS
-   0GgTqt6jWANvrlNxXwaTbR79CLaXhbkMG3IkkuR7SFABUJmOC9//uoP/C
-   g==;
-X-CSE-ConnectionGUID: vqa74VqLRki2TsF1NmZtUQ==
-X-CSE-MsgGUID: l6YLO66hQEug39syBvE+yA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="86900573"
-X-IronPort-AV: E=Sophos;i="6.19,276,1754982000"; 
-   d="scan'208";a="86900573"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 09:46:14 -0800
-X-CSE-ConnectionGUID: 9+1oGi0QRhu7GEJpo3hShg==
-X-CSE-MsgGUID: IcB7kOkoTJClOOC1GbIaxw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,276,1754982000"; 
-   d="scan'208";a="191273506"
-Received: from mgerlach-mobl1.amr.corp.intel.com (HELO desk) ([10.124.220.244])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 09:46:14 -0800
-Date: Mon, 3 Nov 2025 09:46:08 -0800
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
-Subject: Re: [PATCH v4 4/8] KVM: VMX: Handle MMIO Stale Data in VM-Enter
- assembly via ALTERNATIVES_2
-Message-ID: <20251103174608.lfghes3daaxvejxj@desk>
-References: <20251031003040.3491385-1-seanjc@google.com>
- <20251031003040.3491385-5-seanjc@google.com>
+	s=arc-20240116; t=1762192050; c=relaxed/simple;
+	bh=/v5xe9gXlgRwnb5z+EQqvVUyqtF5SUP5i/ucoB9KhPk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SdH+lW/udSqpxGOaGSpNKRsZtD3QrWpWBHyG0Z//tHlD2aYE4Eolw91ESc6OU3fVFN66/wJHCa9Zv2mC5qoS97uqldpZDewrwkbwdHjg5bt2YBuWKpNTGf91VYiawmz2ric7cv821UNLIwvKh4XiZBqxPr/6e7zjJn2WeV8plMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MTYX6k4M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DDBAC19424
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 17:47:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762192050;
+	bh=/v5xe9gXlgRwnb5z+EQqvVUyqtF5SUP5i/ucoB9KhPk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=MTYX6k4M0aXfIzu2/9Gm5A8vRvBcjx7fGj5GL1+Oy6ehYyiWk5Dji0efgcO4T4LEI
+	 ddnNKP+VofanLS90/+TCkj6IXfCZgH/Tly+UH6EAkeVxFBIO1K3uYV5NcG7WzrNGeI
+	 SZyt9MC2tXOJ8cR9nOGeQgaEiuo3SJgPyL4nzsmVbS8OIItbMmuy7dKZfnQ0hzdcUZ
+	 CWWpvQwh2xaE98yWsR7LFk/WwMssdjpUkRdFHbOQTeJ5QpusdJyxaRGHV8Er70iGwm
+	 SDUohxPd2fuY6bOJssSy/UCf249HeDYODS4ZG9l6ZvXJujsMYitxoCtW01LbacUGBT
+	 4jMvx7QlUuOZw==
+Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-651cda151f0so2462825eaf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 09:47:30 -0800 (PST)
+X-Gm-Message-State: AOJu0YwVownOgNLuXqkDFYkPqf/DD4P/SHFXkM5bE3jSMVxmlcQ1w2J8
+	LcxvOM9OfqmooNN1qyoH7NKaqqsRzrvF8Q1HqCf0tk9SEWy8NtBP7xxp3cKGgq0+c+38sF/Fqcy
+	GMZVXbEus3m7Bo8TYw2WMuHn1tu099lQ=
+X-Google-Smtp-Source: AGHT+IE4L3o+lIRJYdTyQS84AKrYMoOeLr9a6vDWtGi4zCyNaMlw1fjD6CI5TAFL4qf8LIz2/AwrvzPKb//5dRw1soE=
+X-Received: by 2002:a4a:d457:0:b0:656:9b34:fe30 with SMTP id
+ 006d021491bc7-6569b3505a8mr2622473eaf.3.1762192049542; Mon, 03 Nov 2025
+ 09:47:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251031003040.3491385-5-seanjc@google.com>
+References: <20251030154739.262582-1-marco.crivellari@suse.com>
+In-Reply-To: <20251030154739.262582-1-marco.crivellari@suse.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 3 Nov 2025 18:47:18 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0gV_6+3WC6eLe3nGagx+NbmqsOFtDGFnBhyrU=H+_=+dQ@mail.gmail.com>
+X-Gm-Features: AWmQ_bks6K4KxS97f1RRgDjxwfQ-c3_xrYYoD1VtwNGJM39Be2IAeeENJ5Stc58
+Message-ID: <CAJZ5v0gV_6+3WC6eLe3nGagx+NbmqsOFtDGFnBhyrU=H+_=+dQ@mail.gmail.com>
+Subject: Re: [PATCH 0/5] replace old wq(s), added WQ_PERCPU to alloc_workqueue
+To: Marco Crivellari <marco.crivellari@suse.com>
+Cc: linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, 
+	Tejun Heo <tj@kernel.org>, Lai Jiangshan <jiangshanlai@gmail.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Michal Hocko <mhocko@suse.com>, "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 30, 2025 at 05:30:36PM -0700, Sean Christopherson wrote:
-> Rework the handling of the MMIO Stale Data mitigation to clear CPU buffers
-> immediately prior to VM-Enter, i.e. in the same location that KVM emits a
-> VERW for unconditional (at runtime) clearing.  Co-locating the code and
-> using a single ALTERNATIVES_2 makes it more obvious how VMX mitigates the
-> various vulnerabilities.
-> 
-> Deliberately order the alternatives as:
-> 
->  0. Do nothing
->  1. Clear if vCPU can access MMIO
->  2. Clear always
-> 
-> since the last alternative wins in ALTERNATIVES_2(), i.e. so that KVM will
-> honor the strictest mitigation (always clear CPU buffers) if multiple
-> mitigations are selected.  E.g. even if the kernel chooses to mitigate
-> MMIO Stale Data via X86_FEATURE_CLEAR_CPU_BUF_MMIO, some other mitigation
-> may enable X86_FEATURE_CLEAR_CPU_BUF_VM, and that other thing needs to win.
-> 
-> Note, decoupling the MMIO mitigation from the L1TF mitigation also fixes
-> a mostly-benign flaw where KVM wouldn't do any clearing/flushing if the
-> L1TF mitigation is configured to conditionally flush the L1D, and the MMIO
-> mitigation but not any other "clear CPU buffers" mitigation is enabled.
-> For that specific scenario, KVM would skip clearing CPU buffers for the
-> MMIO mitigation even though the kernel requested a clear on every VM-Enter.
-> 
-> Note #2, the flaw goes back to the introduction of the MDS mitigation.  The
-> MDS mitigation was inadvertently fixed by commit 43fb862de8f6 ("KVM/VMX:
-> Move VERW closer to VMentry for MDS mitigation"), but previous kernels
-> that flush CPU buffers in vmx_vcpu_enter_exit() are affected (though it's
-> unlikely the flaw is meaningfully exploitable even older kernels).
-> 
-> Fixes: 650b68a0622f ("x86/kvm/vmx: Add MDS protection when L1D Flush is not active")
-> Suggested-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
+On Thu, Oct 30, 2025 at 4:47=E2=80=AFPM Marco Crivellari
+<marco.crivellari@suse.com> wrote:
+>
+> Hi,
+>
+> =3D=3D=3D Current situation: problems =3D=3D=3D
+>
+> Let's consider a nohz_full system with isolated CPUs: wq_unbound_cpumask =
+is
+> set to the housekeeping CPUs, for !WQ_UNBOUND the local CPU is selected.
+>
+> This leads to different scenarios if a work item is scheduled on an
+> isolated CPU where "delay" value is 0 or greater then 0:
+>         schedule_delayed_work(, 0);
+>
+> This will be handled by __queue_work() that will queue the work item on t=
+he
+> current local (isolated) CPU, while:
+>
+>         schedule_delayed_work(, 1);
+>
+> Will move the timer on an housekeeping CPU, and schedule the work there.
+>
+> Currently if a user enqueue a work item using schedule_delayed_work() the
+> used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+> WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+> schedule_work() that is using system_wq and queue_work(), that makes use
+> again of WORK_CPU_UNBOUND.
+>
+> This lack of consistency cannot be addressed without refactoring the API.
+>
+> =3D=3D=3D Recent changes to the WQ API =3D=3D=3D
+>
+> The following, address the recent changes in the Workqueue API:
+>
+> - commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq=
+")
+> - commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+>
+> The old workqueues will be removed in a future release cycle.
+>
+> =3D=3D=3D Introduced Changes by this series =3D=3D=3D
+>
+> 1) [P 1-2]  Replace uses of system_wq and system_unbound_wq
+>
+>         system_wq is a per-CPU workqueue, but his name is not clear.
+>         system_unbound_wq is to be used when locality is not required.
+>
+>         Because of that, system_wq has been replaced with system_percpu_w=
+q, and
+>         system_unbound_wq has been replaced with system_dfl_wq.
+>
+> 2) [P 3-4-5] WQ_PERCPU added to alloc_workqueue()
+>
+>         This change adds a new WQ_PERCPU flag to explicitly request
+>         alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been spec=
+ified.
+>
+>
+> Thanks!
+>
+> Marco Crivellari (5):
+>   ACPI: scan: replace use of system_unbound_wq with system_dfl_wq
+>   ACPI: OSL: replace use of system_wq with system_percpu_wq
+>   ACPI: EC: WQ_PERCPU added to alloc_workqueue users
+>   ACPI: OSL: WQ_PERCPU added to alloc_workqueue users
+>   ACPI: thermal: WQ_PERCPU added to alloc_workqueue users
+>
+>  drivers/acpi/ec.c      | 3 ++-
+>  drivers/acpi/osl.c     | 6 +++---
+>  drivers/acpi/scan.c    | 2 +-
+>  drivers/acpi/thermal.c | 3 ++-
+>  4 files changed, 8 insertions(+), 6 deletions(-)
+>
+> --
 
-Reviewed-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+All applied as 6.19 material with minor tweaks in some subjects.
+
+Thanks!
 
