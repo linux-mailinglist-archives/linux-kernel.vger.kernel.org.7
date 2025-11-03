@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-882183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AF87C29D5D
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 02:54:40 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2DCCC29D39
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 02:53:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 155593B3A78
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 01:52:30 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DADCD4EDA20
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 01:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD0928AAEE;
-	Mon,  3 Nov 2025 01:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3042857F6;
+	Mon,  3 Nov 2025 01:51:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lES07R3Y"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fcOMsllB"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA93727B4EB
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 01:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169A5280A3B
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 01:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762134672; cv=none; b=ephPLN5XNAlBFvzVYokmdDaRQH0pbZkCoAgKmILlAq7J9eWRfUG0fV08uhlcQt1vVDKifZh8hG8SB73pdAvm5cDtug6xsnBn4VT4APtRU0c+/vxnTexyksqzd6ZgFcoVDx9ZX7OktLkTfIEi+3SC4q1XiPDbO/SAJMXvL9uwebg=
+	t=1762134669; cv=none; b=E6CXmykXUUpAO4kAXlnAOoclTpSsC+rLYOz5lO85LY6SPRuiGx4nBEMSozU7nS8/znqZZt1M1V0n+dQGVc7Gclu2TPSVbuzdxGuT1mb/czb8Km7pAq1sX+sAbtQ4FrlSLWXshMcxF7D/2l0UHEE/CVXxQs3qcARi66XTzTueKKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762134672; c=relaxed/simple;
-	bh=sfgU5y2QPjvrAXbG+U0LiiWgUg/Fuf6oZn2j1UBM6ow=;
+	s=arc-20240116; t=1762134669; c=relaxed/simple;
+	bh=JgWKdvcJvzVSKPKbVkwTpRFKNunmCel1aIpuFYtAqbI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HM9TvfQJ+HDUpPQxWdRNmQFkD1JoUEf4ay6min8ZJDUMD8445yEbJlMP5oHDgRs0ZG650dEOTO6xR4gKE7ftGghQB+MoZyqd3dqTitSrKKG+2AhO3YWpOYKYUbL2mBuJHF2MV334jEdpJ+XrsjCZWbYcP/qMG2DuGBj2rMiQ4W4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lES07R3Y; arc=none smtp.client-ip=209.85.214.181
+	 MIME-Version; b=hkTzkkobrG1ypcQO7qYS78/p8iu/Zf1cm9L93ye5i/9NNl/YwRFvRzcl26ylcQ6KX5koxf1gp6qaKoyiSN9VxcJNa93Af9W068E0p2rHPPBg0Ek85HvNFNSfB8PZJk/aqHiivlsCzUuNrhOy+qB+5LKxWED1Y1IAOta73KVv/CU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fcOMsllB; arc=none smtp.client-ip=209.85.215.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-294fe7c2e69so33817455ad.0
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 17:51:10 -0800 (PST)
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b99bfb451e5so409462a12.2
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 17:51:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762134670; x=1762739470; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762134667; x=1762739467; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=g0sO15jizAVsKQGPETfERnCJBpOXGRp0v1lRQCXQwiw=;
-        b=lES07R3YbE8ojmo+4SEozXLt2VsYvvanu32C1uE5lWszukD4GmT9gbkr4XHUGTTB+q
-         oTHYwj0IYh3UglEzdTrMq3L0aKtGZoRhnlhDnJZ+jogu6GZzIUTCdTUNn2Tc9iN0P4vN
-         +EskWGSSTJr+HUYkAu7b0HJlmV63schH2kUfn0bO+mJo0dGtc6lZWhd3N5NsqPQcn/XH
-         mhTOOGdKiE2BqxCuRcs3t3U3r9jkSGiQGS6evh3/cav4cGfd2ieTK5I+xqMhvm55z7JV
-         deM4VuvjWLGzTzR6WLaXul0hOkl804lXBhy+K/tYE3dtosvn6pZJ+NNg2T34i9HKaylm
-         tvkA==
+        bh=zdMfHyt22jO9oNsfKfRQneP/eHVIzzFGDxzlaqt91u0=;
+        b=fcOMsllBoSxFLcrw0bhBQeE1o8UyaHgdLU+4Eqawv56q/xsZn96TxTBOLoOR8RsEm3
+         /LyhIq59Cli5PeowcWb/L3ESjkt/GVGckKpw44chP9FKuJPWZMNKPyvGeqjurD8NiG/9
+         2UJv5r/CfWbgT29hzex+L4edKGx48HF8VaNjkfo2CFXfKpCOYcsofzF3vmIHePnyn4Ev
+         XL/g6OseJYOrypQ8a3t4bL6bIchS/7P+y+aS7XcPpcPTmPvnokZxXYvT/sWhky1iKF2K
+         nq7FeQjnv+ireJQaSfejjf3WVQ7fqahT5vBZfvDEeJuwm8pO59S4RP4JLgrJhjFJdU8D
+         I9Sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762134670; x=1762739470;
+        d=1e100.net; s=20230601; t=1762134667; x=1762739467;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=g0sO15jizAVsKQGPETfERnCJBpOXGRp0v1lRQCXQwiw=;
-        b=dQzM68kE1YRSWa3uriLOS4Gxvnrk9mjVbhWz8EKZQK/tU44bCZN3TXyzUlqIhC/QR0
-         6/t8Ag+dKi4JwACD3pkpXGhvMIqRp7XDuHGSXZsqOJFu2ZuMgMGLiPNijSF2bWJp/pGl
-         /rpkwxnAGZtWQkNSBE7kySKLFU3m2rPqlwawx9ZfsOJdnYU7zLQTl6aoUOujfymXzdUE
-         WRim4B08kd2SXMo/G/c+Lb+8V0m11lYdrHS5P3KuY3T4+WQCVb/qZ4isdOghq6q0h/75
-         HZwXkKCIA5zDYPUqqN/b6WazR000M6wRc0G9AVszj4ns8ETlxkO6NLp3xOXpGcrKb62N
-         rnqQ==
-X-Gm-Message-State: AOJu0Yw0Zqd534T5DZzVrWCQi4PvNEk4K5sZzx6iuwgXGnhqaiIU0/yj
-	O9FgGSSyoZJC3GhhmHLCJEQrzAb2OG2oxyY6zl8g5uciFUMuyPKTiINT
-X-Gm-Gg: ASbGncucCN5kWftG130NCDAZyaBTWyhml44E7mjkyBSvBsmi32OvByLnuakrg7Bvz25
-	ptWxa3tztOw40Xleow/c72XsrqgKiMjyMEmyRBjvhdHVMOV5x0/jvPJbvFVazELngGVk0o8YXoF
-	jQ8zHjoAKdZMZpnhyPKv28dCEdbO/WmnuaJzGubKg3vzbu3ZSxogjIXcJyG+mDd+xwUuKxTiXgc
-	l19lYxLOgxIIR4ctOd+84r0AIN4IJbMG2zaORukMkTpEQ+vUbyENBAS+OmmvXQ7M970zoRte0ot
-	8/nH/UifLCqqw4faIsjnBnS2UBrnXPuU+XxtqIqkxWqt8RxFgqFAWBkgb96jy3G52+aAw4XEmel
-	M7oyyO4MPYKRoxXwgj9Z5BmH5My2fCNJ4LbncXeyeHO1CMImQ69M1jQ+AStS2P9Uj2Fq3LpMyku
-	KsrQT5es3aNsU/b+E4vGhPVg==
-X-Google-Smtp-Source: AGHT+IGnO7VQHFBrQJzosLohIa8HzbwgIqW4t6VCicsh6dui2sLEi2qdtR2544cc3QnT7CIjAJoUOA==
-X-Received: by 2002:a17:902:d492:b0:295:b490:94bb with SMTP id d9443c01a7336-295b49094fdmr18206025ad.50.1762134669825;
-        Sun, 02 Nov 2025 17:51:09 -0800 (PST)
+        bh=zdMfHyt22jO9oNsfKfRQneP/eHVIzzFGDxzlaqt91u0=;
+        b=WuvblBazd7njWxbM+2RIJBHNNBAUmL6L+39rQmMemCc/0XiFV6pMJljE/0CDNGs4JK
+         Op5aJJzIzBxhittC7JPX4c17uhmYCWbJxPIf1UNkXrJAm5Il1Hz9I587YtcH+cOL1BR9
+         m47dJImAgVe5yscq5RplYjjhiGaguVcg4GSsaPIbDdcRwIVfMwAx3pfjxKy1GPxKP1jI
+         JhSiXEybm4faCvksJnyEu/Q02tOBM0rtWGZPyGZWDXXo+YnNGeLVuvHIEcYddo7JJ/L9
+         baYEnk3E1i7dOu7DNhh6/mUnt6fDHEYHAKGlfFFStjTN5UsBfgGN+5MZ1RTxJN0V6wZc
+         ZwKg==
+X-Gm-Message-State: AOJu0Yy6vPXflPmsyOEJacaPhPD/lnlcSfBJB2uYyJX6zToVtabJLAUe
+	8EIatxQYqGzzoG6XTkotR5Tp63Wml+xi+MWi0K+oelvLeMsxAFZyD2fr
+X-Gm-Gg: ASbGncv4zga/5QYPmR/yCHLFfgS61++iO7peUPSzsF4bDxRItxmhM5ubt3rua7goDjT
+	oJkn3PoKxasqMGmxt1/sidrW7CnDZmKSF3288RKxUHM0c1j1qczAbEd2Ud/4FOxmeOtjQndHXqy
+	CA8PolAJ614Wtnix4F4sCKIqXZrOShP7j1ve0+aKBATt8NL7SYoUquisi5E3xYZ+WThctCz8I4L
+	Dop0w4XCupvGre9jMLEkT/s9LYoGB2x/4+oVQcl08QiPpVvQNlq9oG0VzKGlc+9Nhv9hniqgzB9
+	SW9iJlLu25QdXPfH7iUps/C7KyJ3UMdPvoGaVxK82CH8mpWHXE2LeyMtWVTeBxpo37yg23yLXXs
+	wszr7UeyBwYkfykYs8OF5kL3azcHMJRfqoDo6P16vtYReMFAtgpxywyPVeyYBVl6wjoMiHuRuLa
+	4lx7wwW6HpMOY=
+X-Google-Smtp-Source: AGHT+IGtPDnXRLhodOzWjKVorBLmZZArqq6WrtuVpT1PUyswb5XRTNwPthjwi7QHLJB2VwQx55kp+A==
+X-Received: by 2002:a17:903:2348:b0:272:c95c:866 with SMTP id d9443c01a7336-2951a3b6b8amr157826915ad.20.1762134667238;
+        Sun, 02 Nov 2025 17:51:07 -0800 (PST)
 Received: from archie.me ([210.87.74.117])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b93b8aa2a7bsm8311062a12.12.2025.11.02.17.51.05
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2952699b785sm99883215ad.78.2025.11.02.17.51.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Sun, 02 Nov 2025 17:51:05 -0800 (PST)
 Received: by archie.me (Postfix, from userid 1000)
-	id 45B99426D9CE; Mon, 03 Nov 2025 08:50:59 +0700 (WIB)
+	id 50982426D9DE; Mon, 03 Nov 2025 08:50:59 +0700 (WIB)
 From: Bagas Sanjaya <bagasdotme@gmail.com>
 To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Documentation <linux-doc@vger.kernel.org>,
@@ -88,9 +88,9 @@ Cc: "David S. Miller" <davem@davemloft.net>,
 	Herbert Xu <herbert@gondor.apana.org.au>,
 	Bagas Sanjaya <bagasdotme@gmail.com>,
 	Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH net-next v3 6/9] Documentation: xfrm_sysctl: Trim trailing colon in section heading
-Date: Mon,  3 Nov 2025 08:50:27 +0700
-Message-ID: <20251103015029.17018-8-bagasdotme@gmail.com>
+Subject: [PATCH net-next v3 7/9] Documentation: xfrm_sync: Number the fifth section
+Date: Mon,  3 Nov 2025 08:50:28 +0700
+Message-ID: <20251103015029.17018-9-bagasdotme@gmail.com>
 X-Mailer: git-send-email 2.51.2
 In-Reply-To: <20251103015029.17018-2-bagasdotme@gmail.com>
 References: <20251103015029.17018-2-bagasdotme@gmail.com>
@@ -100,34 +100,36 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=908; i=bagasdotme@gmail.com; h=from:subject; bh=sfgU5y2QPjvrAXbG+U0LiiWgUg/Fuf6oZn2j1UBM6ow=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDJkcnJUHzKNE3jJLCJxdMFPJ4sHmd2mL7svNrNyrf9eyr zapjkG/o5SFQYyLQVZMkWVSIl/T6V1GIhfa1zrCzGFlAhnCwMUpABP5VsbI8E3ba7Huh0sHTE+U 9LpIdE589K2XoXLy342sni8WCen7NjH8L6qftth175q1P6Zbr+gLEWg/3clvWCgurPhy6pyeigX X2AE=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1196; i=bagasdotme@gmail.com; h=from:subject; bh=JgWKdvcJvzVSKPKbVkwTpRFKNunmCel1aIpuFYtAqbI=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDJkcnJXLzFoSvTxdT4tf5Gt8qq61wtnvZvDSB8WNEfuTw 7b1v1/TUcrCIMbFICumyDIpka/p9C4jkQvtax1h5rAygQxh4OIUgIkU1zIy3Nr86VWXxiSxXIXP KU/l/ph3F+y+KCJolzZtt2PJvVqh4wz/a6STl/YFPtXpOMDksGpRzOwTbLmPTI+Y967UnhnxJWY pHwA=
 X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
 Content-Transfer-Encoding: 8bit
 
-The sole section heading ("/proc/sys/net/core/xfrm_* Variables") has
-trailing colon. Trim it.
+Number the fifth section ("Exception to threshold settings") to be
+consistent with the rest of sections.
 
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
 Suggested-by: Randy Dunlap <rdunlap@infradead.org>
 Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 ---
- Documentation/networking/xfrm_sysctl.rst | 4 ++--
+ Documentation/networking/xfrm_sync.rst | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/networking/xfrm_sysctl.rst b/Documentation/networking/xfrm_sysctl.rst
-index 47b9bbdd017977..7d0c4b17c0bdf1 100644
---- a/Documentation/networking/xfrm_sysctl.rst
-+++ b/Documentation/networking/xfrm_sysctl.rst
-@@ -4,8 +4,8 @@
- XFRM Syscall
- ============
+diff --git a/Documentation/networking/xfrm_sync.rst b/Documentation/networking/xfrm_sync.rst
+index de4da4707037ea..112f7c102ad043 100644
+--- a/Documentation/networking/xfrm_sync.rst
++++ b/Documentation/networking/xfrm_sync.rst
+@@ -179,8 +179,8 @@ happened) is set to inform the user what happened.
+ Note the two flags are mutually exclusive.
+ The message will always have XFRMA_LTIME_VAL and XFRMA_REPLAY_VAL TLVs.
  
--/proc/sys/net/core/xfrm_* Variables:
--====================================
-+/proc/sys/net/core/xfrm_* Variables
-+===================================
+-Exceptions to threshold settings
+---------------------------------
++5) Exceptions to threshold settings
++-----------------------------------
  
- xfrm_acq_expires - INTEGER
- 	default 30 - hard timeout in seconds for acquire requests
+ If you have an SA that is getting hit by traffic in bursts such that
+ there is a period where the timer threshold expires with no packets
 -- 
 An old man doll... just what I always wanted! - Clara
 
