@@ -1,203 +1,205 @@
-Return-Path: <linux-kernel+bounces-882854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E15CC2BB3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:35:51 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 048DEC2BA7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:26:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E88FE4F5A61
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:26:35 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 481CD349AD3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:26:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D5E030EF64;
-	Mon,  3 Nov 2025 12:24:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E97FC30C602;
+	Mon,  3 Nov 2025 12:24:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="o14NnLdn";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Mq4f+xmE";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="o14NnLdn";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Mq4f+xmE"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LPf1DRAK";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="jz3hwTdL"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940B630CDB6
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 12:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D534305058
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 12:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762172690; cv=none; b=gM8s6CtdTWbn3+lOGCAZAmf5zTmF5tJgmDdD+Ry+P7UZe3lb04b5HYaKrRc+U1pN4zzFdo4LpWbPQSOmaUHWWrxCzHDV206pT09vdFg3TdaMa6qGVnsV350T7TRatDdtmzuoB41+IfjS8tnzLy7lf85ywegXIceula1hjJdYuBY=
+	t=1762172682; cv=none; b=SczpDv7QNMnzji1ho4rJNrkUy6QmoeTWrpytYKnxHOiaYwZ4cI++jfoDDl/PhV4pqq4sVRHyB1quEhtMNQhzCBwV26WJ48hjrU834sxLUKYr0bPO/tyvq+m2aKYTf7DaQs72obQ1M09WvpafS7gPm8+tJ5mSLjjfdCuU/0mDb3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762172690; c=relaxed/simple;
-	bh=wQdnkU9hNx/O4Iwg0uQ2HzLaNraSVxoh2c1MXQVwov4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=hQ4cwF/42Yna2dzPm1I0+gBRvB4IxwgnD34Hgbr6KEdPyPzlR0pB4H0Z8QnmjXQO1a8Kpqjma0zfgFrnlzDVu3xrQyRceFKYAjZq9uSgcBHZvV+BUHgmuHsN3gZ5DXoMVTfqWZlnUxvPbUh8Z0bDjyu+p3x4Z0pow/R64TTtPBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=o14NnLdn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Mq4f+xmE; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=o14NnLdn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Mq4f+xmE; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 959DA21AEF;
-	Mon,  3 Nov 2025 12:24:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762172685; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=KeTeEG4nIfVPoLqtZ97rZ2qT6HDW8DCj4q3+dHrn6T4=;
-	b=o14NnLdnAVsjOy91XWmxGYFTuSPv0bs/u1WOMDep7I6oNp8H2jdMPMiKYg14S4OnOnbRck
-	oIorCN6CHKv6IE17DLsT23MKW9tkzPzVZVuFLAnfKW2Z6YEUIcWxEHuiYMvQvUFOifGoxv
-	Se/tNlAIr4qi7kHuszt+r5ZMOplphI8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762172685;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=KeTeEG4nIfVPoLqtZ97rZ2qT6HDW8DCj4q3+dHrn6T4=;
-	b=Mq4f+xmEVxf/WJUXohVFol7JKlziud7xcsKC6v4UfMNxcPCN/LGTmFOQ2EAfnO3Cy1/PM0
-	l4oxEzyVW2ZGfIBg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=o14NnLdn;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Mq4f+xmE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762172685; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=KeTeEG4nIfVPoLqtZ97rZ2qT6HDW8DCj4q3+dHrn6T4=;
-	b=o14NnLdnAVsjOy91XWmxGYFTuSPv0bs/u1WOMDep7I6oNp8H2jdMPMiKYg14S4OnOnbRck
-	oIorCN6CHKv6IE17DLsT23MKW9tkzPzVZVuFLAnfKW2Z6YEUIcWxEHuiYMvQvUFOifGoxv
-	Se/tNlAIr4qi7kHuszt+r5ZMOplphI8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762172685;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=KeTeEG4nIfVPoLqtZ97rZ2qT6HDW8DCj4q3+dHrn6T4=;
-	b=Mq4f+xmEVxf/WJUXohVFol7JKlziud7xcsKC6v4UfMNxcPCN/LGTmFOQ2EAfnO3Cy1/PM0
-	l4oxEzyVW2ZGfIBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7CDC81364F;
-	Mon,  3 Nov 2025 12:24:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BjdoHQ2fCGmOWQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 03 Nov 2025 12:24:45 +0000
-From: Vlastimil Babka <vbabka@suse.cz>
-Date: Mon, 03 Nov 2025 13:24:15 +0100
-Subject: [PATCH] slab: prevent infinite loop in kmalloc_nolock() with
- debugging
+	s=arc-20240116; t=1762172682; c=relaxed/simple;
+	bh=vwzBSD6YjCzeEO2eiRf2nhfCnTbIY4rkNTdkJaTw0TE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p2dmO5lwKbAUzYFFwyTYt/lyIIynESF23z1tVVyOpqVpn9OoAKVq35PTdIShYbF3pfzPK0boO2+2BMp9FMSWycKiZ0Ss4ijPnYHBvuEe+q54uvD7iY1drBNp4pLTkDaWYWunyEotTudre27EYTAdS/YaBnz+yUMweR5VwtIPmac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LPf1DRAK; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=jz3hwTdL; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A3B5usf2906517
+	for <linux-kernel@vger.kernel.org>; Mon, 3 Nov 2025 12:24:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	FdIQ6Czmd1hHUaY52E30LH9FRShtyPrpnnnsHJC/oT0=; b=LPf1DRAKgWnvBy7x
+	A0oDBivhqudxXd0xLWe7aYcGsA/hBnyMVvCk7p+nMaPDHkq0cPSJXTloY2dFJm2P
+	/DLZotJH7oUGS9FqNB3kDfsBRbkX8BOZPdp/wg6JMAyqToSJcYRwSGGis417txla
+	LVaDwzjBCNDpkIdiQfN200AXEAa7NW7rM62z+pSkSI8IT8Tzpb2hEeA7yy2x8RPB
+	w/jAejjEn9P5J16JxzgQ1glVZdaZT05F7rOVsVEojzXIgoEhCjiP4mf9phQUj8XK
+	2/7gp6XkdibD7TwKK0j9567izCJHG48tZTmdc8Qxsr3HAgHtxUd5b6eFnrfNB9C3
+	UtykYg==
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a6u7kr5vp-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 12:24:39 +0000 (GMT)
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-880415ba763so6231786d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 04:24:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762172679; x=1762777479; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FdIQ6Czmd1hHUaY52E30LH9FRShtyPrpnnnsHJC/oT0=;
+        b=jz3hwTdLVTn7GYAziYs6HatgJxCc3iwqL587LIFNEwDjjbigfke8REep+qsw3YtthN
+         ULojs+Mp2VAmc5encgEVYIV49hxE8TqucDHXQIVR1obKTd8DEchorSm436XlWZgx1y7U
+         njmeBk+PkPvd4uvQdKsRLw3sLHtHSe6M0p8jGuCOdpOx+5U+1BfvNpS5Bu/wXRDGpE/5
+         0Uc0hpNUwTUXmogIJNJfTn9c+BekXBEJHXrE9l53pkEliHcTa7YP9uNdx56oD8ZRZdX/
+         wyiewqUMaSD594Ku+MIPE+No0IopOSm63lZOaytIj3aVG67otxW1Ep+nu9bf8onMBiC+
+         Q9ZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762172679; x=1762777479;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FdIQ6Czmd1hHUaY52E30LH9FRShtyPrpnnnsHJC/oT0=;
+        b=SB5iDn1JcVrem0MDUH9FciAWsijiKU0AKFRXIqIXbOWoLkdbNDWz5qW+JFy9k9+s9N
+         76KKv4jKthuIJyeueiS2afabKx+xqA6FfyurnNONNpKPeCSqB/sAoJkP6uoac8eHocHZ
+         olDBazp7XNp7l01JRmvhoyKN9yi5eh7o2HMzW7EfhvdBqAHbv22FxzPA1hM87/u17155
+         VkDFlmY1uO8/cAkGc5+W6K+c6DAmyDcUocffcFAhsMStwRPW3YsufD8KFM2apQ8jo+R1
+         Jzdz6HFt5xS0H5TpQEuKxvglC2c26rq2FvQu9FKtQodMlGdGKnbu74wTwALxWR/IAdmO
+         a+Ag==
+X-Forwarded-Encrypted: i=1; AJvYcCUo2nFgAsibnCezr51kxSYddPah3/6BzIbW7grZsVerBOHL6PWm/+nNG1wV/d6EUSXo3vshWReq3IfpXIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz13u39yQYcm0hi5utW4hAx0eiz2i6Lj8XaOwiDPUNkWo16Pd1q
+	nZoVrXjaR6WJtbS+c+OW7mAv3qyVwK/D337xcuyayZDDKse8p1u8jjcQdDlDpW2WrggMk3975x1
+	8hddN5+A+a6PF8cvH+UFzlnuTlNPnc1b1HVtJowyjJ+oaGvjRhfPQsEMAxtFtJl4BZkc=
+X-Gm-Gg: ASbGncsyp2PQ9gHodgc8agSkqioj9R3t1LTOkGqC8y51T+WGbwIZjGEnhcGLQ/j78b+
+	4/zgVnXidvpNKI3SnV/hSsz3M6NPpriKpL9QeJfdzTUjEJVYug8p2fJUYHCZNzSD7rERrbrnZp4
+	M0AwtL1dGLKk4iBaBdSp2FOwxXFqw++v0L+ogJr5/wIGeD/r1So1xSQ5b8XMN+pMam3+J09Htc/
+	TgIkKpEoSGT+9beqayBKD14ZxQEbn1sCOAH+Wjja1KEXhp+49NMmjn/q7IByq3oWRf+4Ej5kJ/u
+	nMguYiYf2571rAybl+jajOter6yC+uJo8doUkFb5eYxHj3PQQrktLnviSOE8WyCbVkkyXXvJS7V
+	Lj4qvYtIHVM+U3ByGR6NU79D2rtd1IXrzUIemoJJQ9Ixx0rlt8qMvp0cP
+X-Received: by 2002:a05:622a:835c:b0:4e8:9af1:366c with SMTP id d75a77b69052e-4ed30f7f5bbmr89420831cf.9.1762172678773;
+        Mon, 03 Nov 2025 04:24:38 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHKC7c+sG3ScBo6GxArZhv36vSpltAdRIVXXFR8SiQD5USW8CgQ/o9dQtWKno1nX8BCx1zJ/w==
+X-Received: by 2002:a05:622a:835c:b0:4e8:9af1:366c with SMTP id d75a77b69052e-4ed30f7f5bbmr89420631cf.9.1762172678275;
+        Mon, 03 Nov 2025 04:24:38 -0800 (PST)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-640af968e5dsm4919370a12.19.2025.11.03.04.24.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Nov 2025 04:24:37 -0800 (PST)
+Message-ID: <89d1eaba-557c-4df6-b65c-b2105ec20788@oss.qualcomm.com>
+Date: Mon, 3 Nov 2025 13:24:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/7] Various dt-bindings for Milos and The Fairphone
+ (Gen. 6) addition
+To: Luca Weiss <luca.weiss@fairphone.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>, Vinod Koul <vkoul@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Bjorn Andersson
+ <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-crypto@vger.kernel.org
+References: <20250905-sm7635-fp6-initial-v3-0-0117c2eff1b7@fairphone.com>
+ <c93afd94-9d94-42fb-a312-df6e26bb2bc8@oss.qualcomm.com>
+ <DDZ1X799V2KV.269J9YL1AGCIF@fairphone.com>
+ <0fd020e4-636a-4bb3-9c22-7a5b16e4d3c3@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <0fd020e4-636a-4bb3-9c22-7a5b16e4d3c3@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251103-fix-nolock-loop-v1-1-6e2b3e82b9da@suse.cz>
-X-B4-Tracking: v=1; b=H4sIAO6eCGkC/x2MSQqAMAwAv1JyNtDUFb8iHqRGDUojLYgg/t3ic
- WBmHkgchRP05oHIlyTRkIEKA36bwsooc2Zw1tVEtsRFbgx6qN/xUD2xqyu2ZKlp3QK5OiNn5T8
- O4/t+xNOKgmEAAAA=
-X-Change-ID: 20251103-fix-nolock-loop-854e0101672f
-To: Harry Yoo <harry.yoo@oracle.com>, Alexei Starovoitov <ast@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
- Christoph Lameter <cl@gentwo.org>, David Rientjes <rientjes@google.com>, 
- Roman Gushchin <roman.gushchin@linux.dev>, linux-mm@kvack.org, 
- linux-kernel@vger.kernel.org, Vlastimil Babka <vbabka@suse.cz>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1904; i=vbabka@suse.cz;
- h=from:subject:message-id; bh=wQdnkU9hNx/O4Iwg0uQ2HzLaNraSVxoh2c1MXQVwov4=;
- b=owGbwMvMwMG4+8GG0kuuHbMYT6slMWRyzPuadbBx5/ulLL5bhM5remqunmjx3N2uOuDJLw7R9
- N3nir+2djL6szAwcjBYiimyVO8+4Sg6U9ljmofvR5hBrEwgU6RFGhiAgIWBLzcxr9RIx0jPVNtQ
- z9BQB8hk4OIUgKnmF2T/K+dpcSq46m6IiEnI+wwVy06xpIWzpnWZRL6f5ba1TsF1a/HXtMR1F9c
- Wf/LqN0vPPdhmeyDEO7a38d6HaTvaFUpf/ZmWFeX5/qmaA58Y92O/aLXlM5OunbP+7XTu41cvvT
- NhooU5m+3nT7pdO+351nSv2OyLea/bfDjS0ovfr3TX+Lrkd02h8pwwjrkuEnHccxm3Ke5d8uzS2
- 7CPNUZ13y68uay9rpTHuG2muvrcS9a3LbPMpJNuzwg1WDPtwMnUJzVhzRck9qq6L7KfI5b/Xcr5
- 4rHW0jnrXPb1PWfvflHJ9ExKp+mGVZvMqVtBf+K1q98KXNwfKROwYoleYNmUp1ezvf4aZLBaz1j
- 7WTURAA==
-X-Developer-Key: i=vbabka@suse.cz; a=openpgp;
- fpr=A940D434992C2E8E99103D50224FA7E7CC82A664
-X-Rspamd-Queue-Id: 959DA21AEF
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -4.51
-X-Spam-Level: 
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAzMDExMiBTYWx0ZWRfXx6H1y+QzskFx
+ uB4JQxkpijA9GlJtFp4e2Y9Y0TfQb6szEHP+8E7UlcDL6tpwDMZ8LARc9VuJAoOOyFdpw2G5sNF
+ FddMCgWBlLLKiK6NyqtBrMurqpDJH761wZBeOZUtQVOcjCR+6bOIunMeQ6pxGNuOsEUBi7Wj0gn
+ ttsUuwwpUBGKsK/MjeIu3XY8t2yMOEqaJEQeqzQ3Fm9oAL1xAuQXB2olxh4hhKXKo4bRmVd+xGc
+ SH7KPIlHxo1/rlV/T+bdhEAmv4D1NJQKXT3npiUP7Nb4DPqz5BB1+d6v5fIkW/eommhv31Udil5
+ j4wT3Mjl/q/L+PGUk5hoPDUVl2qs5jUUOzBDJISgVWBcv0csMID1c4mNcHRQ4GHLWhUBV5XGK3S
+ M9nhqmwo+wIvzcenpjZTY0eJPSIUmQ==
+X-Proofpoint-ORIG-GUID: 7YGj_zSLmRNuKP3bsBkvzLUEpXyklJeN
+X-Proofpoint-GUID: 7YGj_zSLmRNuKP3bsBkvzLUEpXyklJeN
+X-Authority-Analysis: v=2.4 cv=Q9HfIo2a c=1 sm=1 tr=0 ts=69089f07 cx=c_pps
+ a=oc9J++0uMp73DTRD5QyR2A==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=6H0WHjuAAAAA:8 a=efwxOTLiV638Ii7ixkkA:9
+ a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22 a=Soq9LBFxuPC4vsCAQt-j:22
+ a=HhbK4dLum7pmb74im6QT:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-03_01,2025-11-03_01,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 impostorscore=0 phishscore=0 priorityscore=1501
+ suspectscore=0 bulkscore=0 adultscore=0 clxscore=1015 malwarescore=0
+ spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511030112
 
-In review of a followup work, Harry noticed a potential infinite loop.
-Upon closed inspection, it already exists for kmalloc_nolock() on a
-cache with debugging enabled, since commit af92793e52c3 ("slab:
-Introduce kmalloc_nolock() and kfree_nolock().")
+On 11/3/25 1:23 PM, Konrad Dybcio wrote:
+> On 11/3/25 1:17 PM, Luca Weiss wrote:
+>> On Mon Nov 3, 2025 at 1:14 PM CET, Konrad Dybcio wrote:
+>>> On 9/5/25 12:40 PM, Luca Weiss wrote:
+>>>> Document various bits of the Milos SoC in the dt-bindings, which don't
+>>>> really need any other changes.
+>>>>
+>>>> Then we can add the dtsi for the Milos SoC and finally add a dts for
+>>>> the newly announced The Fairphone (Gen. 6) smartphone.
+>>>>
+>>>> Dependencies:
+>>>> * The dt-bindings should not have any dependencies on any other patches.
+>>>> * The qcom dts bits depend on most other Milos patchsets I have sent in
+>>>>   conjuction with this one. The exact ones are specified in the b4 deps.
+>>>>
+>>>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+>>>> ---
+>>>
+>>> FWIW this looks good.. where are we with regards to the dependencies?
+>>>
+>>> Are we waiting for anything else than the PMIV0104 (as part of glymur/
+>>> kaanapali)?
+>>
+>> Hi,
+>>
+>> From my side, I'm not aware of any patches that have any unresolved
+>> comments, so I'm essentially just waiting for the correct maintainers to
+>> pick up the variety of dt-bindings patches in this series, and the
+>> PMIV0104 and PM7550 series.
+>>
+>> Any advice to make this actually proceed would be appreciated since most
+>> have been waiting for quite a while.
+> 
+> Apparently I misremembered, kaanapali actually uses PMH0101 and PMH0110
+> and PMH0104, whereas glymur uses pmh0101, pmcx0102, pmh0110 and pmh0104
+> 
+> (it is not easy indeed)
+> 
+> so it looks like PMIV0104 only showed up with your series.. and I'm not
+> opposed to it, let me leave some review tags there, and I suppose I'll
+> just ask you to rebase this series on next & make sure the bindings
+> checker is happy
 
-When alloc_single_from_new_slab() fails to trylock node list_lock, we
-keep retrying to get partial slab or allocate a new slab. If we indeed
-interrupted somebody holding the list_lock, the trylock fill fail
-deterministically and we end up allocating and defer-freeing slabs
-indefinitely with no progress.
+Well I apparently already left the review tags there.. please resend
+all of them (2 pmics + this one) as a single v4
 
-To fix it, fail the allocation if spinning is not allowed. This is
-acceptable in the restricted context of kmalloc_nolock(), especially
-with debugging enabled.
-
-Reported-by: Harry Yoo <harry.yoo@oracle.com>
-Closes: https://lore.kernel.org/all/aQLqZjjq1SPD3Fml@hyeyoo/
-Fixes: af92793e52c3 ("slab: Introduce kmalloc_nolock() and kfree_nolock().")
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
-as we discussed in the linked thread, 6.18 hotfix to be included in
-slab/for-next-fixes
----
- mm/slub.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/mm/slub.c b/mm/slub.c
-index d4367f25b20d..f1a5373eee7b 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -4666,8 +4666,12 @@ static void *___slab_alloc(struct kmem_cache *s, gfp_t gfpflags, int node,
- 	if (kmem_cache_debug(s)) {
- 		freelist = alloc_single_from_new_slab(s, slab, orig_size, gfpflags);
- 
--		if (unlikely(!freelist))
-+		if (unlikely(!freelist)) {
-+			/* This could cause an endless loop. Fail instead. */
-+			if (!allow_spin)
-+				return NULL;
- 			goto new_objects;
-+		}
- 
- 		if (s->flags & SLAB_STORE_USER)
- 			set_track(s, freelist, TRACK_ALLOC, addr,
-
----
-base-commit: 6146a0f1dfae5d37442a9ddcba012add260bceb0
-change-id: 20251103-fix-nolock-loop-854e0101672f
-
-Best regards,
--- 
-Vlastimil Babka <vbabka@suse.cz>
-
+Konrad
 
