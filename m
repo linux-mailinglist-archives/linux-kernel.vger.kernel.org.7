@@ -1,108 +1,121 @@
-Return-Path: <linux-kernel+bounces-882295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AB5FC2A169
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 06:46:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A637DC2A172
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 06:49:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43D9E188E6B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 05:46:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 655DE3ACECE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 05:49:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7659285CAE;
-	Mon,  3 Nov 2025 05:46:22 +0000 (UTC)
-Received: from unicom146.biz-email.net (unicom146.biz-email.net [210.51.26.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3162882DB;
+	Mon,  3 Nov 2025 05:49:26 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9555D5695;
-	Mon,  3 Nov 2025 05:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E14A1145355
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 05:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762148782; cv=none; b=mR+v0301CnN9l72jJWgSxbv0F0oXVFwNYmS0DmvrhxHsPHA6l/l7lQS83LZQ4NjQ9C3yVTkNJPI0F40gEjf76tD880MsQTxgP95HBpIlnoKsDrfInwkLviVGuH0C2w+89CBx+UGsS8SpMPr8iGFiWSHFLTUpt/DKZQH0RMEHT7Y=
+	t=1762148966; cv=none; b=fnKZecIhl91nsatohQRQ9hDkZieI7U4tzafxxZykDzeoxGUJDxUGr5LaWnvW8zExRdweWFQf+V+sf9NxowYK2VWigABPPvoIJKIXXgvJCfDu8KVVmsRQc5yFeQ0xsb7RapSQgCFdublgOMtFbEMREu3qPVy7y7r9zyoEBtG1x+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762148782; c=relaxed/simple;
-	bh=lmdvFZmuC47ZDhcf5I/FHsn3O13bSXuC/1ludIdyEiE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=g3Dpp9SwShQidYSRABr9zBaaCSrJRKgnVtbodFUNhEK+KOakF3HOeRrKxE950qIh57LIUE24N/GwnLWewoy13OX7Yv2k9GJ+fFvXASPnrI+uRQ+jAqj/UCgeC3ISqsi4N7/ZJ73WAa7nNN6OK33kx5n31J5L2SrLOr1jDAmvojQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from Jtjnmail201615.home.langchao.com
-        by unicom146.biz-email.net ((D)) with ASMTP (SSL) id 202511031346010428;
-        Mon, 03 Nov 2025 13:46:01 +0800
-Received: from jtjnmailAR01.home.langchao.com (10.100.2.42) by
- Jtjnmail201615.home.langchao.com (10.100.2.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Mon, 3 Nov 2025 13:45:59 +0800
-Received: from inspur.com (10.100.2.107) by jtjnmailAR01.home.langchao.com
- (10.100.2.42) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Mon, 3 Nov 2025 13:45:59 +0800
-Received: from localhost.localdomain.com (unknown [10.94.13.117])
-	by app3 (Coremail) with SMTP id awJkCsDwD_qWQQhpl7cJAA--.13467S4;
-	Mon, 03 Nov 2025 13:45:59 +0800 (CST)
-From: Chu Guangqing <chuguangqing@inspur.com>
-To: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Chu Guangqing
-	<chuguangqing@inspur.com>
-Subject: [PATCH] net: sungem_phy: Fix a typo error in sungem_phy
-Date: Mon, 3 Nov 2025 13:44:43 +0800
-Message-ID: <20251103054443.2878-1-chuguangqing@inspur.com>
-X-Mailer: git-send-email 2.43.7
+	s=arc-20240116; t=1762148966; c=relaxed/simple;
+	bh=+KFj5rGnHv27vIKb5+keI4itoupavrQMKtAXgOjiUmw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=RQc7hZwBdaVXSHFwedQZnQjB1BPeiCzRkfBwRQquSrSRggIbrYRohK/gIW/SG7ZeHQzmwPNWDVXwbEmcfI/l8pxEXAS1RVbZLc5PlGhjWkJ6whB30V9q66mYwqTN3ffjqT3Kv/oFwdZvnsO/ceg4xeUN+b2vSNB5JnOjVKA7QkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-4330ead8432so26459585ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 21:49:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762148964; x=1762753764;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FWCdtFeRiTYHHo48qr1uxFIsc2bW5Uiytm2WAQQjOmg=;
+        b=L1XAVZbPASDqbQeCsmSoWOEb0xcXX9DbOClWa1EjqsHaWUUCYa44GK7U3vd07aopLS
+         rKZS5EZ1ncSsxdp83kg48oS+zhM4CrDhcKxlv0fb8wNS8zJXDXO54OQQeoGWs13N0hOH
+         fIwB2CF7vLTCQTVeKcYlr716jSIB6HrEX3A8tXQ8oyll7gqxpalZFpCy9UUszv1BpOT6
+         lnbaf7NEBh4L3OYFGAoWtkvDUPoTtsdMxjcHiAXtQmNSTcHP2n37kkjG+IUZspVtBw2O
+         TFI4nxWDaa4MQB5R+hwtsnZSXfyah/pxP9qRK5b70q5rbtBtuBZ/PjXrS7bSksySwC6D
+         Em2w==
+X-Gm-Message-State: AOJu0YzV+uez1YY0pMBxf6KNyIrqgk2qrvB5HfDdQR0gN7aLRqPyGSIp
+	Iunt3+F/2e27lbQZzDoidRvVsrFxPATjHYl6Kpp6s1CZttJbrFLOKDccxuplOm9KJhBCnzUDjbD
+	9PMGlrKynexFZMu4wt04/DzgEuF29lFAMo071pQQtGxin6GD/OiRFY69vgFY=
+X-Google-Smtp-Source: AGHT+IHaKhOyfP00wH32DhPeXxAXQpubqqgptzhFctVL7oDnEfLQdgvsmU1tHW/9H+v+BGNNa2Eg3ONeAIu72b66cE0OCq9rD4A8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: awJkCsDwD_qWQQhpl7cJAA--.13467S4
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUY27AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
-	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
-	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8I
-	cVCY1x0267AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aV
-	CY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAq
-	x4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6x
-	CaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCF
-	04k20xvY0x0EwIxGrwCF54CYxVCY1x0262kKe7AKxVWUAVWUtwCFx2IqxVCFs4IE7xkEbV
-	WUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF
-	67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42
-	IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF
-	0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxh
-	VjvjDU0xZFpf9x0JUdHUDUUUUU=
-X-CM-SenderInfo: 5fkxw35dqj1xlqj6x0hvsx2hhfrp/
-X-CM-DELIVERINFO: =?B?+a+4KJRRTeOiUs3aOqHZ50hzsfHKF9Ds6CbXmDm38RucXu3DYXJR7Zlh9zE0nt/Iac
-	D+KV4QW92Y+U3fDwLdmbxaXwqGEL1URZtEu8am3brerhYPFdyOvr8SFzF9TnCopT05gNEM
-	QO5EYHN1SSQvpFdNPvs=
-Content-Type: text/plain
-tUid: 20251103134601a89007328d44a3fb94094b7e61516df4
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+X-Received: by 2002:a05:6e02:398e:b0:433:290f:c201 with SMTP id
+ e9e14a558f8ab-433290fc2c0mr58954985ab.11.1762148964051; Sun, 02 Nov 2025
+ 21:49:24 -0800 (PST)
+Date: Sun, 02 Nov 2025 21:49:24 -0800
+In-Reply-To: <6907edce.a70a0220.37351b.0014.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <69084264.050a0220.29fc44.0033.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] [nbd?] KASAN: slab-use-after-free Write in
+ recv_work (3)
+From: syzbot <syzbot+56fbf4c7ddf65e95c7cc@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Fix a spelling mistakes for regularly
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org.
 
-Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
----
- drivers/net/sungem_phy.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+***
 
-diff --git a/drivers/net/sungem_phy.c b/drivers/net/sungem_phy.c
-index 55aa8d0c8e1f..c10198d44576 100644
---- a/drivers/net/sungem_phy.c
-+++ b/drivers/net/sungem_phy.c
-@@ -1165,7 +1165,7 @@ int sungem_phy_probe(struct mii_phy *phy, int mii_id)
- 	int i;
+Subject: Re: [syzbot] [nbd?] KASAN: slab-use-after-free Write in recv_work (3)
+Author: lizhi.xu@windriver.com
+
+#syz test
+
+diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+index a853c65ac65d..d5de9bac68f1 100644
+--- a/drivers/block/nbd.c
++++ b/drivers/block/nbd.c
+@@ -1024,9 +1024,9 @@ static void recv_work(struct work_struct *work)
+ 	nbd_mark_nsock_dead(nbd, nsock, 1);
+ 	mutex_unlock(&nsock->tx_lock);
  
- 	/* We do not reset the mii_phy structure as the driver
--	 * may re-probe the PHY regulary
-+	 * may re-probe the PHY regularly
- 	 */
- 	phy->mii_id = mii_id;
+-	nbd_config_put(nbd);
+ 	atomic_dec(&config->recv_threads);
+ 	wake_up(&config->recv_wq);
++	nbd_config_put(nbd);
+ 	kfree(args);
+ }
  
--- 
-2.43.7
-
+@@ -1540,7 +1540,10 @@ static int nbd_start_device(struct nbd_device *nbd)
+ 		args->index = i;
+ 		queue_work(nbd->recv_workq, &args->work);
+ 	}
+-	return nbd_set_size(nbd, config->bytesize, nbd_blksize(config));
++	error = nbd_set_size(nbd, config->bytesize, nbd_blksize(config));
++	if (error)
++		flush_workqueue(nbd->recv_workq);
++	return error;
+ }
+ 
+ static int nbd_start_device_ioctl(struct nbd_device *nbd)
+@@ -2355,6 +2358,7 @@ static int nbd_genl_reconfigure(struct sk_buff *skb, struct genl_info *info)
+ 	}
+ 	mutex_unlock(&nbd_index_mutex);
+ 
++	mutex_lock(&nbd->config_lock);
+ 	config = nbd_get_config_unlocked(nbd);
+ 	if (!config) {
+ 		dev_err(nbd_to_dev(nbd),
+@@ -2363,7 +2367,6 @@ static int nbd_genl_reconfigure(struct sk_buff *skb, struct genl_info *info)
+ 		return -EINVAL;
+ 	}
+ 
+-	mutex_lock(&nbd->config_lock);
+ 	if (!test_bit(NBD_RT_BOUND, &config->runtime_flags) ||
+ 	    !nbd->pid) {
+ 		dev_err(nbd_to_dev(nbd),
 
