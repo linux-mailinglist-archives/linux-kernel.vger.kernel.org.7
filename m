@@ -1,202 +1,191 @@
-Return-Path: <linux-kernel+bounces-882785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28F43C2B7C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:46:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DB2DC2B7C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:46:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AB87D4F7711
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:40:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2B4434EE2AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D39302CC0;
-	Mon,  3 Nov 2025 11:39:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB1F3019A7;
+	Mon,  3 Nov 2025 11:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OhMvr4bA"
-Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="c0LXDZn/";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vQivLMfd";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RKQ7+278";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="StkIyM2c"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AFB630275E
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 11:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49122F2603
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 11:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762169990; cv=none; b=Amuuc5ZOcfmThF3MneTX924GBdF9xsVRconZDnxFQZQBeM1QWz+jbnrfaWk8N+sPCcqSk65THZ2X5v58RklDd5E8gkJi04oqRACAHjnpcWyGOrpB2kldXXQ/bxJNHMnvGag1TlX3xgpt4CNbZBxsFpFiEj4ehue2z06gnkwLfdA=
+	t=1762169985; cv=none; b=ueb9ZaS0tCYLbRt3clWXKZ+gvZslpsWHZlM5G55SImx48x/WQ69n4gLHBwvtfFVzvuBQ9ps619IIOu3K212zTokkuKquqw8vazJdbv/ja6qj75ItcUBc9K42dMiffHxLMlPOgJOowDzThZm/wJnA8gLAL6N3CSaYwJu4OJLAfWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762169990; c=relaxed/simple;
-	bh=p293SKf5o/p3baJzQjvB+/sLwGBM0lsd3WQD3vZfrVM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uQW+ZAssmOEFUGB9BExd3x1lyKG1qa17P0vvRO9G58HDNgqzX6g7qr31/9H6HAaLSz5TDY9QyWfJ5beInviDbiaIpmc3GRzJb6iedLQn+UNXp6wVDMLciPWtlTW38MhoT+QZ2Tmbd74ZJIPGfMiWDd5g4SKCrXN9frFlGvdFBMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OhMvr4bA; arc=none smtp.client-ip=209.85.215.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b6ceb3b68eeso3191017a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 03:39:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762169989; x=1762774789; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/r08ApJzmACuZwLJWForR04uW0kQJLXeWuOH252Kn+k=;
-        b=OhMvr4bAQy/h3UdeYzBNYlB7S9TLCnITU+XoyEHhUgvbVhOHxAc69mtCMNTt7KCG1k
-         ZlJcyPhp7A9QbnVoVeupFS3U4cUbcrC9PHm+9uMWu8oEogWUAWfDwa1Z6HwX5HD2uKTY
-         00Sc+Ptxn7D8/g10WUyh3Sfoj9wCLxZ7tqNZo4eA9RTFjwxw9mW/omY/FQx0DjfhVQ++
-         uZBxBtvO+MW7WxvezPiZ970VG7tSAtSe6JBNUP9cWNtBvCV8BJujw/VOwfLVIa0fBioo
-         pknFdkzvsSGbH224yWE1FeEN3Xxzi4dXzCXcKSt+9PtcLI0nL8LYZ/p5u/dLsp6OZbe7
-         nrNA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762169989; x=1762774789;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/r08ApJzmACuZwLJWForR04uW0kQJLXeWuOH252Kn+k=;
-        b=T4SN2ZMxCVujpiCc72yvaAgNXzopALDLMvHEKrUwmUmJVq7rWf8hmUeSWp9QisaPGI
-         eDuG8YgdYfzmpuEa+6KRMWuTdCUQerM0k5xNyBpRKwswswykvUnkfiV3w1CYt7jEuOwB
-         dvB2Eoe+y/hQ9uBSw/74X8zlV7Kzq4EP43G/Um7huhTg/ybhgT1S6G53rE8nWQAeOMjm
-         hU6yeZuETCG1JDyF+AkJIvZmMrm/PpT8l1Ded6Ql0wS8vBL1AJtdGREEsPvLV1e1T+Tr
-         UaYhA13qA4gRBj/xH7xejuTe0RrFIyzBh+2YxwLNL+ZDY8PAQnQlziDyjkWrOCVANQlx
-         jYeg==
-X-Gm-Message-State: AOJu0Yzz1Cf1rMnxhssbPlp0A1vjmI6SZSmdVyDbuGavqYGo2iI9eI3y
-	g1nU7iFR2mtNSSsVzcTDNOC7DcgVLICF/Ln/nqr56JB76dAxEaAn2OyE
-X-Gm-Gg: ASbGncvCfPdWEzL4jdwqDsgGIex5lazUFJg7FdSOse+QK9O0s/5yhCgBVsR13QBz5ff
-	z6zQMs5/UUWR5fV9UPtu3QrgA33aKPWxUf3RLLre8LVis2fzA02VBqe70dwR13xvxHOylnZIn0K
-	2YD2kQP+F5GhISRx76lxbPSKXbqwyFXIvLyV5iID8ERPpWbAuRgun1AwM0IlwjbGzfUOiLMTxNx
-	fE4wHn31MsCM35os/ifbOd777g4kVGoYd2Ye7Jj1Nid7OEbu13hsiSsa34QTfWajvw4hhdeXgQq
-	QJZUHUrwefg4YItTsK8q1PRcwWYBkZ6hQx1lTIu1aR4IiC6wZY8ggXu7HHVihhmbbyAUA80BaLJ
-	QvvCsa0Tufn+wKPbDZCGBKBN1yymcCMYQnoi9006MRD5OaE4LoPJJ72dINj//MgKeu8A+Z2gIsV
-	Wz
-X-Google-Smtp-Source: AGHT+IGVaoQkYMseij6RRLrsVDqj6D0bH7qiXKKA5WqNNjbqxLqG9f/9/U2SkMikJgtrNK8QszUkWQ==
-X-Received: by 2002:a17:902:d48b:b0:295:613f:3d6a with SMTP id d9443c01a7336-295613f4033mr92547815ad.29.1762169988522;
-        Mon, 03 Nov 2025 03:39:48 -0800 (PST)
-Received: from archie.me ([210.87.74.117])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2959e5deea5sm46177175ad.37.2025.11.03.03.39.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 03:39:47 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id 2D8A6420A685; Mon, 03 Nov 2025 18:39:44 +0700 (WIB)
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Documentation <linux-doc@vger.kernel.org>,
-	Linux Security Module <linux-security-module@vger.kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Kees Cook <kees@kernel.org>,
-	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Stuart Yoder <stuart.yoder@arm.com>
-Subject: [PATCH] security: sctp: Format type and permission checks tables
-Date: Mon,  3 Nov 2025 18:39:23 +0700
-Message-ID: <20251103113922.61232-2-bagasdotme@gmail.com>
-X-Mailer: git-send-email 2.51.2
+	s=arc-20240116; t=1762169985; c=relaxed/simple;
+	bh=xuqF16WhVzqA2FUfzxBa/BY/nWht4SzK/jI91oQ4ofI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tpitmh+8M+Wwg/lLuHAbzW0lOjJgoCMt7jWHcwwo5zp1wxaGUjMZF5Yym663b2Rj7XdIDg+a+b+CPEiCPbE08r5x4nT/1e64omFa/8W0rUb3gefMNJdGjb9qlB5MyOb0ZbBnPfP5TBC9Jw+nTPBcdMnKMTwEZmP+d+7d0r8uFxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=c0LXDZn/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vQivLMfd; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RKQ7+278; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=StkIyM2c; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 0C2601F7A8;
+	Mon,  3 Nov 2025 11:39:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762169982; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BYFPo24Ij3UmRulCj1bzPQQbaCPLRcKYWdpbhhJioFM=;
+	b=c0LXDZn/rEv9qCVCEdIAMgviTwFch9IB9JdeqCueY+Y+mqg1orsxMNeGVL7mcYDG09L3QM
+	86iPjfg3GGQSKqWDKXvi84paNZW3vnuVDbI2U/D3sUiJHYzxJf/J8sMHmkSaJpUlEx8Fm5
+	zYTTifMoudqrcX9Svd2PGIf/bkCEk+k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762169982;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BYFPo24Ij3UmRulCj1bzPQQbaCPLRcKYWdpbhhJioFM=;
+	b=vQivLMfd1A3C4ey8ake8iSeCjaRxxyEdkg05xM0nMEW0ma4LSzKPBDpz9B2sSRlsrKjSNP
+	iJkw0mC5hh7kQ4Cg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=RKQ7+278;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=StkIyM2c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762169981; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BYFPo24Ij3UmRulCj1bzPQQbaCPLRcKYWdpbhhJioFM=;
+	b=RKQ7+278ovdiZrReoIFld+tN1YkggIuKaBp/+02bCIN9aEBG61kzYq1QEwxH9inc6NIBpK
+	OAtM/bdgePHxODPs5U/89U+GBclpqWd6LV7q+5FnnW/TsSbI5hkWQppWfgkim4FNtzQvts
+	I8rLxExUkpuorpghioqeJygoVlbAEzg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762169981;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BYFPo24Ij3UmRulCj1bzPQQbaCPLRcKYWdpbhhJioFM=;
+	b=StkIyM2cKhGyKLYb6um/A53ZZo9s1ktcQBQUOl7o50jGcLjp0qVbNXjIW7MQhd51g14obB
+	4PnFAy9704+CluCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F21691364F;
+	Mon,  3 Nov 2025 11:39:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Z0EVO3yUCGlqLQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 03 Nov 2025 11:39:40 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 51008A2812; Mon,  3 Nov 2025 12:39:40 +0100 (CET)
+Date: Mon, 3 Nov 2025 12:39:40 +0100
+From: Jan Kara <jack@suse.cz>
+To: Fedor Pchelkin <pchelkin@ispras.ru>
+Cc: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, 
+	linux-ext4@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>, 
+	"Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
+Subject: Re: [PATCH v2 2/2] ext4: check if mount_opts is NUL-terminated in
+ ext4_ioctl_set_tune_sb()
+Message-ID: <3rscuc2wkxmfwgvyblxqlormqecmqtbysh6pploetnd2pendlh@xoiinaf7j6aj>
+References: <20251101160430.222297-1-pchelkin@ispras.ru>
+ <20251101160430.222297-2-pchelkin@ispras.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5303; i=bagasdotme@gmail.com; h=from:subject; bh=p293SKf5o/p3baJzQjvB+/sLwGBM0lsd3WQD3vZfrVM=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDJkckw+cjnnzTlUswkzq8mK2iLyPfdOqpixwvT5l0t21Z sIMeu6vO0pZGMS4GGTFFFkmJfI1nd5lJHKhfa0jzBxWJpAhDFycAjCRiGiG/+GCr42t+w63Mu1b JdnOVHY9bceC6P3T1+4r3qb1gH/Lt7eMDDPNlu044a1+RXZVf7RzsveVyYc0l83ZxcnU5LMq0PZ FEyMA
-X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251101160430.222297-2-pchelkin@ispras.ru>
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 0C2601F7A8
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[linuxtesting.org:url,suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_THREE(0.00)[3];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Score: -4.01
 
-Use reST grid tables for both type and permission checks tables.
+On Sat 01-11-25 19:04:29, Fedor Pchelkin wrote:
+> params.mount_opts may come as potentially non-NUL-term string.  Userspace
+> is expected to pass a NUL-term string.  Add an extra check to ensure this
+> holds true.  Note that further code utilizes strscpy_pad() so this is just
+> for proper informing the user of incorrect data being provided.
+> 
+> Found by Linux Verification Center (linuxtesting.org).
+> 
+> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
 
-Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
----
-This patch is based on lsm tree.
+Looks good. Feel free to add:
 
- Documentation/security/SCTP.rst | 48 +++++++++++++++++++++------------
- 1 file changed, 31 insertions(+), 17 deletions(-)
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-diff --git a/Documentation/security/SCTP.rst b/Documentation/security/SCTP.rst
-index 6d80d464ab6e7c..321bf6c8738970 100644
---- a/Documentation/security/SCTP.rst
-+++ b/Documentation/security/SCTP.rst
-@@ -46,24 +46,31 @@ Returns 0 on success, error on failure.
-                ipv4 or ipv6 address using sizeof(struct sockaddr_in) or
-                sizeof(struct sockaddr_in6).
- 
--  ------------------------------------------------------------------
--  |                     BIND Type Checks                           |
-+.. table:: BIND Type Checks
-+
-+  +----------------------------+-----------------------------------+
-   |       @optname             |         @address contains         |
--  |----------------------------|-----------------------------------|
-+  +============================+===================================+
-   | SCTP_SOCKOPT_BINDX_ADD     | One or more ipv4 / ipv6 addresses |
-+  +----------------------------+-----------------------------------+
-   | SCTP_PRIMARY_ADDR          | Single ipv4 or ipv6 address       |
-+  +----------------------------+-----------------------------------+
-   | SCTP_SET_PEER_PRIMARY_ADDR | Single ipv4 or ipv6 address       |
--  ------------------------------------------------------------------
-+  +----------------------------+-----------------------------------+
-+
-+.. table:: CONNECT Type Checks
- 
--  ------------------------------------------------------------------
--  |                   CONNECT Type Checks                          |
-+  +----------------------------+-----------------------------------+
-   |       @optname             |         @address contains         |
--  |----------------------------|-----------------------------------|
-+  +============================+===================================+
-   | SCTP_SOCKOPT_CONNECTX      | One or more ipv4 / ipv6 addresses |
-+  +----------------------------+-----------------------------------+
-   | SCTP_PARAM_ADD_IP          | One or more ipv4 / ipv6 addresses |
-+  +----------------------------+-----------------------------------+
-   | SCTP_SENDMSG_CONNECT       | Single ipv4 or ipv6 address       |
-+  +----------------------------+-----------------------------------+
-   | SCTP_PARAM_SET_PRIMARY     | Single ipv4 or ipv6 address       |
--  ------------------------------------------------------------------
-+  +----------------------------+-----------------------------------+
- 
- A summary of the ``@optname`` entries is as follows::
- 
-@@ -228,26 +235,33 @@ The security module performs the following operations:
- security_sctp_bind_connect()
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- Checks permissions required for ipv4/ipv6 addresses based on the ``@optname``
--as follows::
-+as follows:
- 
--  ------------------------------------------------------------------
--  |                   BIND Permission Checks                       |
-+.. table:: BIND Permission Checks
-+
-+  +----------------------------+-----------------------------------+
-   |       @optname             |         @address contains         |
--  |----------------------------|-----------------------------------|
-+  +============================+===================================+
-   | SCTP_SOCKOPT_BINDX_ADD     | One or more ipv4 / ipv6 addresses |
-+  +----------------------------+-----------------------------------+
-   | SCTP_PRIMARY_ADDR          | Single ipv4 or ipv6 address       |
-+  +----------------------------+-----------------------------------+
-   | SCTP_SET_PEER_PRIMARY_ADDR | Single ipv4 or ipv6 address       |
--  ------------------------------------------------------------------
-+  +----------------------------+-----------------------------------+
-+
-+.. table:: CONNECT Permission Checks
- 
--  ------------------------------------------------------------------
--  |                 CONNECT Permission Checks                      |
-+  +----------------------------+-----------------------------------+
-   |       @optname             |         @address contains         |
--  |----------------------------|-----------------------------------|
-+  +============================+===================================+
-   | SCTP_SOCKOPT_CONNECTX      | One or more ipv4 / ipv6 addresses |
-+  +----------------------------+-----------------------------------+
-   | SCTP_PARAM_ADD_IP          | One or more ipv4 / ipv6 addresses |
-+  +----------------------------+-----------------------------------+
-   | SCTP_SENDMSG_CONNECT       | Single ipv4 or ipv6 address       |
-+  +----------------------------+-----------------------------------+
-   | SCTP_PARAM_SET_PRIMARY     | Single ipv4 or ipv6 address       |
--  ------------------------------------------------------------------
-+  +----------------------------+-----------------------------------+
- 
- 
- `SCTP LSM Support`_ gives a summary of the ``@optname``
+								Honza
 
-base-commit: dfa024bc3f67a97e1a975dd66b83af8b3845eb19
+> ---
+> 
+> v2: check length of mount_opts in superblock tuning ioctl (Jan Kara)
+> 
+>     Can't plainly return error at strscpy_pad() call site in
+>     ext4_sb_setparams(), that's a void ext4_update_sb_callback.
+> 
+> v1: https://lore.kernel.org/lkml/20251028130949.599847-1-pchelkin@ispras.ru/T/#u
+> 
+>  fs/ext4/ioctl.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
+> index a93a7baae990..3dec26c939fd 100644
+> --- a/fs/ext4/ioctl.c
+> +++ b/fs/ext4/ioctl.c
+> @@ -1394,6 +1394,10 @@ static int ext4_ioctl_set_tune_sb(struct file *filp,
+>  	if (copy_from_user(&params, in, sizeof(params)))
+>  		return -EFAULT;
+>  
+> +	if (strnlen(params.mount_opts, sizeof(params.mount_opts)) ==
+> +	    sizeof(params.mount_opts))
+> +		return -E2BIG;
+> +
+>  	if ((params.set_flags & ~TUNE_OPS_SUPPORTED) != 0)
+>  		return -EOPNOTSUPP;
+>  
+> -- 
+> 2.51.0
+> 
 -- 
-An old man doll... just what I always wanted! - Clara
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
