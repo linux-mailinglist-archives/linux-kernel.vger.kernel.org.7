@@ -1,222 +1,645 @@
-Return-Path: <linux-kernel+bounces-883151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23CE2C2C7F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:56:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64327C2C9AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:13:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9BA2234A721
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:56:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1541F4279E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:02:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD11B334389;
-	Mon,  3 Nov 2025 14:56:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB1B316193;
+	Mon,  3 Nov 2025 14:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XiUcUBih";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0/QgBKkz"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Tx0k4kR5";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PLTTm28l"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8601025D1E9;
-	Mon,  3 Nov 2025 14:56:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611D130CDA8;
+	Mon,  3 Nov 2025 14:47:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762181784; cv=none; b=MN2W9LmyQ7fTdYbRp85jqkb7G/MZhY5n9iIrkd4D0lCabYF6Gke6Rm07V/+f8kTQXAAXMkbAYbbsqai2FOYq0as+qCFLmYc8YAimInkq5fJSE5X2EV6Un5iGithmhiRupY3BmGPlcJYGo8Lz3BTqSFqzRYP0Vnoz1x+dVitWCaY=
+	t=1762181254; cv=none; b=aHbdMj22lhTBiBytB5eG3SpSZJXbRg2ALEkzEg3tVrCBamHmbQUH8HxUEin3YsbSabl9HzpDizzd/Ri7BY+XMsujrGAOKqn+CboAxp8o6TOyG6Y3iyV7Bvf/+XNg7tUREzD7eEPsNO5jQ/+FFpnbXfzI3EfTWcA1GLe9ZhFFZAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762181784; c=relaxed/simple;
-	bh=GKiEHQYbZ9O5zRueidCrnI4Nof1vAVhqWFWETa9Q4zo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=J10JPbTIiN4uUZJwX70ipfFC9GX74XeatUIY/8lrD6UAE+5Pu7sIn/dTwgnxJcq9dtru1meYK9pZDGak6xK/BR2IS4jEMuyfCWGibT1LH8vuF90VE7716vyzo5TK52vE3CyPwragaW3cON39S6NYQG6PwkNvQ5oGCPyRPuwh+VM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XiUcUBih; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0/QgBKkz; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1762181254; c=relaxed/simple;
+	bh=wUZkgUT5Ykvx6Swa9C0LG8DcwzNtkIDNlaNfd6JxADg=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=HkjgFO3+vdg3yPFGM01z8E6OnN9YAojBZwMsB3Wm74PyDCOc9gxJ/GALQu2/Mgh/7exMmkOsDwjKgyWRl8jeb/pRfhfBMysfXfVF9SWhLNoSgXuBytOiT3RA4zUouH1odvKL0uowDV4DUIipFo+kFd3Ne6oz3/x4MVf0ROKcTAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Tx0k4kR5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PLTTm28l; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 3 Nov 2025 15:56:19 +0100
+Date: Mon, 03 Nov 2025 14:47:16 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762181780;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=8KmgFJFmTnTiwLLTqDjpcpiVmKo1ylq3G0CC12iUpoY=;
-	b=XiUcUBihyp2w0Hj1A+qX62EhBt9ql+MEQdBEAbMTGs8yZvCzdk3YCvphsh3B7FJcgr5VpP
-	h5zvSgAQkF6b5Bz2C2Piz2SoknBhI5MoG1BaRElC0OTrrVPC83AOTTx3Gk1QAUb/ECLrQH
-	b1myItGYDWYb5bx7aEBTVFyfHU4nzIPcCo1PyHNZkHg7avF3USHObJXCNBeRSTnvbh1nLm
-	ToQJhqJV4hFKQxP/k7zevDmTNNRZASCfhQwd/Mrzhk7tOPaAsfCreVMmAehQJFKk+eHyxr
-	J9JfFm5Y9ls6MJydBCqqn1H4TWWrSrGSBVweJD4iXmVNfYFUsAnXyiE4Jvawfg==
+	s=2020; t=1762181251;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pgh8BXoTJdo+9gTlpmB5MJPIBaa1JAB/JyLO81kfy8s=;
+	b=Tx0k4kR58NsQrMQL75lP7MaMN/nXI9VXtwkjEyji1NXxvDbF+/qbSwsJdAdbq8iR5zDFY0
+	EDBAA/23kgc+m/+NnXV8JlxJuc3IpcmvnYD9OO/9tdqBCyyqZDxDTVZ5B6qfymBCdfXb1a
+	DPFztcm/7HHW8BdLHJIwpOFCewOG9Wb1EfR8lmpHzXiRb4HxZTKzYACmfIYq96dAWFIXdF
+	01XWrBzlMLmDnKU/LeJZIHlYoZx+A43FJ97a+YWpvYm07R9m5VjUFJDv8Rp843UgIVAAGp
+	51s35dQIcPxDuP00d8rx1sGlCsJGO5PD4R91Gn5efcaa1p0xdty/TfiaPK1Qkw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762181780;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=8KmgFJFmTnTiwLLTqDjpcpiVmKo1ylq3G0CC12iUpoY=;
-	b=0/QgBKkzEfE2DTyCGGTLXUqJyB251lidPPfp2TNNngiKVckX6VheJgzR+Z1t/box3+nnjl
-	NYJ8t2zSf6WeNKBQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Thomas Gleixner <tglx@linutronix.de>, linux-rt-devel@lists.linux.dev
-Cc: LKML <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org,
-	Steven Rostedt <rostedt@goodmis.org>
-Subject: [ANNOUNCE] v6.18-rc4-rt3
-Message-ID: <20251103145619.amGKEIT5@linutronix.de>
+	s=2020e; t=1762181251;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pgh8BXoTJdo+9gTlpmB5MJPIBaa1JAB/JyLO81kfy8s=;
+	b=PLTTm28lolyXmTc/Z+WInngu0+B1hzLDJjDprE/3fE/Di1FNiKwP2LzZXJ9cpY+w/EAJ1n
+	MFJZa6srthrM4iAg==
+From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: core/rseq] rseq: Provide and use rseq_set_ids()
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20251027084307.393972266@linutronix.de>
+References: <20251027084307.393972266@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Message-ID: <176218123641.2601451.10059883055980409309.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Dear RT folks!
+The following commit has been merged into the core/rseq branch of tip:
 
-I'm pleased to announce the v6.18-rc4-rt3 patch set. 
+Commit-ID:     5371d55ceec76a7e172d8c5187c0ae7e70784cc7
+Gitweb:        https://git.kernel.org/tip/5371d55ceec76a7e172d8c5187c0ae7e707=
+84cc7
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Mon, 27 Oct 2025 09:45:08 +01:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Mon, 03 Nov 2025 15:26:19 +01:00
 
-Changes since v6.18-rc4-rt2:
+rseq: Provide and use rseq_set_ids()
 
-  - Replace the ARM patches based on latest version posted to upstream:
-    - HIGHPTE is now disabled instead of HAVE_GUP_FAST. 
-    - HAVE_ARCH_JUMP_LABEL is now allowed on UP and only disabled on
-      SMP builds.
-    - Redid the page fault to avoid a warning and harden the branch
-      predictor on the correct CPU if needed.
-    - Removed the KVM dependency as there is no more KVM.
+Provide a new and straight forward implementation to set the IDs (CPU ID,
+Node ID and MM CID), which can be later inlined into the fast path.
 
-Known issues
-    - Yoann Congal reported a bit spinlock in dm_exception_table_lock().
-        https://lore.kernel.org/all/Z8GTjqgDe_5EkE3t@P-ASN-ECS-830T8C3.local
+It does all operations in one scoped_user_rw_access() section and retrieves
+also the critical section member (rseq::cs_rseq) from user space to avoid
+another user..begin/end() pair. This is in preparation for optimizing the
+fast path to avoid extra work when not required.
 
-The delta patch against v6.18-rc4-rt2 is appended below and can be found here:
- 
-     https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.18/incr/patch-6.18-rc4-rt2-rt3.patch.xz
+On rseq registration set the CPU ID fields to RSEQ_CPU_ID_UNINITIALIZED and
+node and MM CID to zero. That's the same as the kernel internal reset
+values. That makes the debug validation in the exit code work correctly on
+the first exit to user space.
 
-You can get this release via the git tree at:
+Use it to replace the whole related zoo in rseq.c
 
-    https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v6.18-rc4-rt3
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Link: https://patch.msgid.link/20251027084307.393972266@linutronix.de
+---
+ fs/binfmt_elf.c            |   2 +-
+ include/linux/rseq.h       |  16 +-
+ include/linux/rseq_entry.h |  89 ++++++++++++++-
+ include/linux/sched.h      |  10 +--
+ kernel/rseq.c              | 236 +++++++-----------------------------
+ 5 files changed, 151 insertions(+), 202 deletions(-)
 
-The RT patch against v6.18-rc4 can be found here:
-
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.18/older/patch-6.18-rc4-rt3.patch.xz
-
-The split quilt queue is available at:
-
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.18/older/patches-6.18-rc4-rt3.tar.xz
-
-Sebastian
-
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 002db8da69ee5..84ad4fe11589b 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -41,7 +41,7 @@ config ARM
- 	select ARCH_SUPPORTS_CFI
- 	select ARCH_SUPPORTS_HUGETLBFS if ARM_LPAE
- 	select ARCH_SUPPORTS_PER_VMA_LOCK
--	select ARCH_SUPPORTS_RT if HAVE_POSIX_CPU_TIMERS_TASK_WORK
-+	select ARCH_SUPPORTS_RT
- 	select ARCH_USE_BUILTIN_BSWAP
- 	select ARCH_USE_CMPXCHG_LOCKREF
- 	select ARCH_USE_MEMTEST
-@@ -81,7 +81,7 @@ config ARM
- 	select HAS_IOPORT
- 	select HAVE_ARCH_AUDITSYSCALL if AEABI && !OABI_COMPAT
- 	select HAVE_ARCH_BITREVERSE if (CPU_32v7M || CPU_32v7) && !CPU_32v6
--	select HAVE_ARCH_JUMP_LABEL if !XIP_KERNEL && !CPU_ENDIAN_BE32 && MMU && !PREEMPT_RT
-+	select HAVE_ARCH_JUMP_LABEL if !XIP_KERNEL && !CPU_ENDIAN_BE32 && MMU && (!PREEMPT_RT || !SMP)
- 	select HAVE_ARCH_KFENCE if MMU && !XIP_KERNEL
- 	select HAVE_ARCH_KGDB if !CPU_ENDIAN_BE32 && MMU
- 	select HAVE_ARCH_KASAN if MMU && !XIP_KERNEL
-@@ -106,7 +106,7 @@ config ARM
- 	select HAVE_DYNAMIC_FTRACE_WITH_REGS if HAVE_DYNAMIC_FTRACE
- 	select HAVE_EFFICIENT_UNALIGNED_ACCESS if (CPU_V6 || CPU_V6K || CPU_V7) && MMU
- 	select HAVE_EXIT_THREAD
--	select HAVE_GUP_FAST if ARM_LPAE && !(PREEMPT_RT && HIGHPTE)
-+	select HAVE_GUP_FAST if ARM_LPAE
- 	select HAVE_FUNCTION_ERROR_INJECTION
- 	select HAVE_FUNCTION_GRAPH_TRACER
- 	select HAVE_FUNCTION_GRAPH_FREGS
-@@ -130,7 +130,6 @@ config ARM
- 	select HAVE_PERF_EVENTS
- 	select HAVE_PERF_REGS
- 	select HAVE_PERF_USER_STACK_DUMP
--	select HAVE_POSIX_CPU_TIMERS_TASK_WORK if !KVM
- 	select MMU_GATHER_RCU_TABLE_FREE if SMP && ARM_LPAE
- 	select HAVE_REGS_AND_STACK_ACCESS_API
- 	select HAVE_RSEQ
-@@ -1215,7 +1214,7 @@ config HIGHMEM
- 
- config HIGHPTE
- 	bool "Allocate 2nd-level pagetables from highmem" if EXPERT
--	depends on HIGHMEM
-+	depends on HIGHMEM && !PREEMPT_RT
- 	default y
- 	help
- 	  The VM uses one page of physical memory for each page table.
-diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
-index 00713f22ef066..ad58c1e22a5f9 100644
---- a/arch/arm/mm/fault.c
-+++ b/arch/arm/mm/fault.c
-@@ -183,9 +183,6 @@ __do_user_fault(unsigned long addr, unsigned int fsr, unsigned int sig,
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index e4653bb..3eb734c 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -46,7 +46,7 @@
+ #include <linux/cred.h>
+ #include <linux/dax.h>
+ #include <linux/uaccess.h>
+-#include <linux/rseq.h>
++#include <uapi/linux/rseq.h>
+ #include <asm/param.h>
+ #include <asm/page.h>
+=20
+diff --git a/include/linux/rseq.h b/include/linux/rseq.h
+index 7f347c3..92f9cd4 100644
+--- a/include/linux/rseq.h
++++ b/include/linux/rseq.h
+@@ -5,6 +5,8 @@
+ #ifdef CONFIG_RSEQ
+ #include <linux/sched.h>
+=20
++#include <uapi/linux/rseq.h>
++
+ void __rseq_handle_notify_resume(struct ksignal *sig, struct pt_regs *regs);
+=20
+ static inline void rseq_handle_notify_resume(struct pt_regs *regs)
+@@ -48,7 +50,7 @@ static inline void rseq_virt_userspace_exit(void)
+ static inline void rseq_reset(struct task_struct *t)
  {
- 	struct task_struct *tsk = current;
- 
--	if (addr > TASK_SIZE)
--		harden_branch_predictor();
--
- #ifdef CONFIG_DEBUG_USER
- 	if (((user_debug & UDBG_SEGV) && (sig == SIGSEGV)) ||
- 	    ((user_debug & UDBG_BUS)  && (sig == SIGBUS))) {
-@@ -218,10 +215,14 @@ void do_bad_area(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
- 	 * If we are in kernel mode at this point, we
- 	 * have no context to handle this fault with.
- 	 */
--	if (user_mode(regs))
-+	if (user_mode(regs)) {
-+		if (addr >= TASK_SIZE)
-+			harden_branch_predictor();
-+		local_irq_enable();
- 		__do_user_fault(addr, fsr, SIGSEGV, SEGV_MAPERR, regs);
--	else
-+	} else {
- 		__do_kernel_fault(mm, addr, fsr, regs);
-+	}
+ 	memset(&t->rseq, 0, sizeof(t->rseq));
+-	t->rseq.ids.cpu_cid =3D ~0ULL;
++	t->rseq.ids.cpu_id =3D RSEQ_CPU_ID_UNINITIALIZED;
  }
- 
- #ifdef CONFIG_MMU
-@@ -274,8 +275,11 @@ do_page_fault(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
- 
- 
- 	/* Enable interrupts if they were enabled in the parent context. */
--	if (interrupts_enabled(regs))
-+	if (interrupts_enabled(regs)) {
-+		if (user_mode(regs) && addr >= TASK_SIZE)
-+			harden_branch_predictor();
- 		local_irq_enable();
+=20
+ static inline void rseq_execve(struct task_struct *t)
+@@ -59,15 +61,19 @@ static inline void rseq_execve(struct task_struct *t)
+ /*
+  * If parent process has a registered restartable sequences area, the
+  * child inherits. Unregister rseq for a clone with CLONE_VM set.
++ *
++ * On fork, keep the IDs (CPU, MMCID) of the parent, which avoids a fault
++ * on the COW page on exit to user space, when the child stays on the same
++ * CPU as the parent. That's obviously not guaranteed, but in overcommit
++ * scenarios it is more likely and optimizes for the fork/exec case without
++ * taking the fault.
+  */
+ static inline void rseq_fork(struct task_struct *t, u64 clone_flags)
+ {
+-	if (clone_flags & CLONE_VM) {
++	if (clone_flags & CLONE_VM)
+ 		rseq_reset(t);
+-	} else {
++	else
+ 		t->rseq =3D current->rseq;
+-		t->rseq.ids.cpu_cid =3D ~0ULL;
+-	}
+ }
+=20
+ #else /* CONFIG_RSEQ */
+diff --git a/include/linux/rseq_entry.h b/include/linux/rseq_entry.h
+index fb53a6f..37444e8 100644
+--- a/include/linux/rseq_entry.h
++++ b/include/linux/rseq_entry.h
+@@ -75,6 +75,7 @@ DECLARE_STATIC_KEY_MAYBE(CONFIG_RSEQ_DEBUG_DEFAULT_ENABLE, =
+rseq_debug_enabled);
+ #endif
+=20
+ bool rseq_debug_update_user_cs(struct task_struct *t, struct pt_regs *regs, =
+unsigned long csaddr);
++bool rseq_debug_validate_ids(struct task_struct *t);
+=20
+ static __always_inline void rseq_note_user_irq_entry(void)
+ {
+@@ -194,6 +195,43 @@ efault:
+ 	return false;
+ }
+=20
++/*
++ * On debug kernels validate that user space did not mess with it if the
++ * debug branch is enabled.
++ */
++bool rseq_debug_validate_ids(struct task_struct *t)
++{
++	struct rseq __user *rseq =3D t->rseq.usrptr;
++	u32 cpu_id, uval, node_id;
++
++	/*
++	 * On the first exit after registering the rseq region CPU ID is
++	 * RSEQ_CPU_ID_UNINITIALIZED and node_id in user space is 0!
++	 */
++	node_id =3D t->rseq.ids.cpu_id !=3D RSEQ_CPU_ID_UNINITIALIZED ?
++		  cpu_to_node(t->rseq.ids.cpu_id) : 0;
++
++	scoped_user_read_access(rseq, efault) {
++		unsafe_get_user(cpu_id, &rseq->cpu_id_start, efault);
++		if (cpu_id !=3D t->rseq.ids.cpu_id)
++			goto die;
++		unsafe_get_user(uval, &rseq->cpu_id, efault);
++		if (uval !=3D cpu_id)
++			goto die;
++		unsafe_get_user(uval, &rseq->node_id, efault);
++		if (uval !=3D node_id)
++			goto die;
++		unsafe_get_user(uval, &rseq->mm_cid, efault);
++		if (uval !=3D t->rseq.ids.mm_cid)
++			goto die;
 +	}
- 
++	return true;
++die:
++	t->rseq.event.fatal =3D true;
++efault:
++	return false;
++}
++
+ #endif /* RSEQ_BUILD_SLOW_PATH */
+=20
+ /*
+@@ -279,6 +317,57 @@ efault:
+ 	return false;
+ }
+=20
++/*
++ * Updates CPU ID, Node ID and MM CID and reads the critical section
++ * address, when @csaddr !=3D NULL. This allows to put the ID update and the
++ * read under the same uaccess region to spare a separate begin/end.
++ *
++ * As this is either invoked from a C wrapper with @csaddr =3D NULL or from
++ * the fast path code with a valid pointer, a clever compiler should be
++ * able to optimize the read out. Spares a duplicate implementation.
++ *
++ * Returns true, if the operation was successful, false otherwise.
++ *
++ * In the failure case task::rseq_event::fatal is set when invalid data
++ * was found on debug kernels. It's clear when the failure was an unresolved=
+ page
++ * fault.
++ *
++ * If inlined into the exit to user path with interrupts disabled, the
++ * caller has to protect against page faults with pagefault_disable().
++ *
++ * In preemptible task context this would be counterproductive as the page
++ * faults could not be fully resolved. As a consequence unresolved page
++ * faults in task context are fatal too.
++ */
++static rseq_inline
++bool rseq_set_ids_get_csaddr(struct task_struct *t, struct rseq_ids *ids,
++			     u32 node_id, u64 *csaddr)
++{
++	struct rseq __user *rseq =3D t->rseq.usrptr;
++
++	if (static_branch_unlikely(&rseq_debug_enabled)) {
++		if (!rseq_debug_validate_ids(t))
++			return false;
++	}
++
++	scoped_user_rw_access(rseq, efault) {
++		unsafe_put_user(ids->cpu_id, &rseq->cpu_id_start, efault);
++		unsafe_put_user(ids->cpu_id, &rseq->cpu_id, efault);
++		unsafe_put_user(node_id, &rseq->node_id, efault);
++		unsafe_put_user(ids->mm_cid, &rseq->mm_cid, efault);
++		if (csaddr)
++			unsafe_get_user(*csaddr, &rseq->rseq_cs, efault);
++	}
++
++	/* Cache the new values */
++	t->rseq.ids.cpu_cid =3D ids->cpu_cid;
++	rseq_stat_inc(rseq_stats.ids);
++	rseq_trace_update(t, ids);
++	return true;
++efault:
++	return false;
++}
++
+ static __always_inline void rseq_exit_to_user_mode(void)
+ {
+ 	struct rseq_event *ev =3D &current->rseq.event;
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 24a9da7..e47abc8 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -42,7 +42,6 @@
+ #include <linux/posix-timers_types.h>
+ #include <linux/restart_block.h>
+ #include <linux/rseq_types.h>
+-#include <uapi/linux/rseq.h>
+ #include <linux/seqlock_types.h>
+ #include <linux/kcsan.h>
+ #include <linux/rv.h>
+@@ -1408,15 +1407,6 @@ struct task_struct {
+ #endif /* CONFIG_NUMA_BALANCING */
+=20
+ 	struct rseq_data		rseq;
+-#ifdef CONFIG_DEBUG_RSEQ
+-	/*
+-	 * This is a place holder to save a copy of the rseq fields for
+-	 * validation of read-only fields. The struct rseq has a
+-	 * variable-length array at the end, so it cannot be used
+-	 * directly. Reserve a size large enough for the known fields.
+-	 */
+-	char				rseq_fields[sizeof(struct rseq)];
+-#endif
+=20
+ #ifdef CONFIG_SCHED_MM_CID
+ 	int				mm_cid;		/* Current cid in mm */
+diff --git a/kernel/rseq.c b/kernel/rseq.c
+index 9763155..1e4f1d2 100644
+--- a/kernel/rseq.c
++++ b/kernel/rseq.c
+@@ -88,13 +88,6 @@
+ # define RSEQ_EVENT_GUARD	preempt
+ #endif
+=20
+-/* The original rseq structure size (including padding) is 32 bytes. */
+-#define ORIG_RSEQ_SIZE		32
+-
+-#define RSEQ_CS_NO_RESTART_FLAGS (RSEQ_CS_FLAG_NO_RESTART_ON_PREEMPT | \
+-				  RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL | \
+-				  RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE)
+-
+ DEFINE_STATIC_KEY_MAYBE(CONFIG_RSEQ_DEBUG_DEFAULT_ENABLE, rseq_debug_enabled=
+);
+=20
+ static inline void rseq_control_debug(bool on)
+@@ -227,159 +220,9 @@ static int __init rseq_debugfs_init(void)
+ __initcall(rseq_debugfs_init);
+ #endif /* CONFIG_DEBUG_FS */
+=20
+-#ifdef CONFIG_DEBUG_RSEQ
+-static struct rseq *rseq_kernel_fields(struct task_struct *t)
+-{
+-	return (struct rseq *) t->rseq_fields;
+-}
+-
+-static int rseq_validate_ro_fields(struct task_struct *t)
+-{
+-	static DEFINE_RATELIMIT_STATE(_rs,
+-				      DEFAULT_RATELIMIT_INTERVAL,
+-				      DEFAULT_RATELIMIT_BURST);
+-	u32 cpu_id_start, cpu_id, node_id, mm_cid;
+-	struct rseq __user *rseq =3D t->rseq.usrptr;
+-
+-	/*
+-	 * Validate fields which are required to be read-only by
+-	 * user-space.
+-	 */
+-	if (!user_read_access_begin(rseq, t->rseq.len))
+-		goto efault;
+-	unsafe_get_user(cpu_id_start, &rseq->cpu_id_start, efault_end);
+-	unsafe_get_user(cpu_id, &rseq->cpu_id, efault_end);
+-	unsafe_get_user(node_id, &rseq->node_id, efault_end);
+-	unsafe_get_user(mm_cid, &rseq->mm_cid, efault_end);
+-	user_read_access_end();
+-
+-	if ((cpu_id_start !=3D rseq_kernel_fields(t)->cpu_id_start ||
+-	    cpu_id !=3D rseq_kernel_fields(t)->cpu_id ||
+-	    node_id !=3D rseq_kernel_fields(t)->node_id ||
+-	    mm_cid !=3D rseq_kernel_fields(t)->mm_cid) && __ratelimit(&_rs)) {
+-
+-		pr_warn("Detected rseq corruption for pid: %d, name: %s\n"
+-			"\tcpu_id_start: %u ?=3D %u\n"
+-			"\tcpu_id:       %u ?=3D %u\n"
+-			"\tnode_id:      %u ?=3D %u\n"
+-			"\tmm_cid:       %u ?=3D %u\n",
+-			t->pid, t->comm,
+-			cpu_id_start, rseq_kernel_fields(t)->cpu_id_start,
+-			cpu_id, rseq_kernel_fields(t)->cpu_id,
+-			node_id, rseq_kernel_fields(t)->node_id,
+-			mm_cid, rseq_kernel_fields(t)->mm_cid);
+-	}
+-
+-	/* For now, only print a console warning on mismatch. */
+-	return 0;
+-
+-efault_end:
+-	user_read_access_end();
+-efault:
+-	return -EFAULT;
+-}
+-
+-/*
+- * Update an rseq field and its in-kernel copy in lock-step to keep a cohere=
+nt
+- * state.
+- */
+-#define rseq_unsafe_put_user(t, value, field, error_label)			\
+-	do {									\
+-		unsafe_put_user(value, &t->rseq.usrptr->field, error_label);	\
+-		rseq_kernel_fields(t)->field =3D value;				\
+-	} while (0)
+-
+-#else
+-static int rseq_validate_ro_fields(struct task_struct *t)
+-{
+-	return 0;
+-}
+-
+-#define rseq_unsafe_put_user(t, value, field, error_label)		\
+-	unsafe_put_user(value, &t->rseq.usrptr->field, error_label)
+-#endif
+-
+-static int rseq_update_cpu_node_id(struct task_struct *t)
+-{
+-	struct rseq __user *rseq =3D t->rseq.usrptr;
+-	u32 cpu_id =3D raw_smp_processor_id();
+-	u32 node_id =3D cpu_to_node(cpu_id);
+-	u32 mm_cid =3D task_mm_cid(t);
+-
+-	rseq_stat_inc(rseq_stats.ids);
+-
+-	/* Validate read-only rseq fields on debug kernels */
+-	if (rseq_validate_ro_fields(t))
+-		goto efault;
+-	WARN_ON_ONCE((int) mm_cid < 0);
+-
+-	if (!user_write_access_begin(rseq, t->rseq.len))
+-		goto efault;
+-
+-	rseq_unsafe_put_user(t, cpu_id, cpu_id_start, efault_end);
+-	rseq_unsafe_put_user(t, cpu_id, cpu_id, efault_end);
+-	rseq_unsafe_put_user(t, node_id, node_id, efault_end);
+-	rseq_unsafe_put_user(t, mm_cid, mm_cid, efault_end);
+-
+-	/* Cache the user space values */
+-	t->rseq.ids.cpu_id =3D cpu_id;
+-	t->rseq.ids.mm_cid =3D mm_cid;
+-
+-	/*
+-	 * Additional feature fields added after ORIG_RSEQ_SIZE
+-	 * need to be conditionally updated only if
+-	 * t->rseq_len !=3D ORIG_RSEQ_SIZE.
+-	 */
+-	user_write_access_end();
+-	trace_rseq_update(t);
+-	return 0;
+-
+-efault_end:
+-	user_write_access_end();
+-efault:
+-	return -EFAULT;
+-}
+-
+-static int rseq_reset_rseq_cpu_node_id(struct task_struct *t)
++static bool rseq_set_ids(struct task_struct *t, struct rseq_ids *ids, u32 no=
+de_id)
+ {
+-	struct rseq __user *rseq =3D t->rseq.usrptr;
+-	u32 cpu_id_start =3D 0, cpu_id =3D RSEQ_CPU_ID_UNINITIALIZED, node_id =3D 0,
+-	    mm_cid =3D 0;
+-
+-	/*
+-	 * Validate read-only rseq fields.
+-	 */
+-	if (rseq_validate_ro_fields(t))
+-		goto efault;
+-
+-	if (!user_write_access_begin(rseq, t->rseq.len))
+-		goto efault;
+-
+-	/*
+-	 * Reset all fields to their initial state.
+-	 *
+-	 * All fields have an initial state of 0 except cpu_id which is set to
+-	 * RSEQ_CPU_ID_UNINITIALIZED, so that any user coming in after
+-	 * unregistration can figure out that rseq needs to be registered
+-	 * again.
+-	 */
+-	rseq_unsafe_put_user(t, cpu_id_start, cpu_id_start, efault_end);
+-	rseq_unsafe_put_user(t, cpu_id, cpu_id, efault_end);
+-	rseq_unsafe_put_user(t, node_id, node_id, efault_end);
+-	rseq_unsafe_put_user(t, mm_cid, mm_cid, efault_end);
+-
+-	/*
+-	 * Additional feature fields added after ORIG_RSEQ_SIZE
+-	 * need to be conditionally reset only if
+-	 * t->rseq_len !=3D ORIG_RSEQ_SIZE.
+-	 */
+-	user_write_access_end();
+-	return 0;
+-
+-efault_end:
+-	user_write_access_end();
+-efault:
+-	return -EFAULT;
++	return rseq_set_ids_get_csaddr(t, ids, node_id, NULL);
+ }
+=20
+ static bool rseq_handle_cs(struct task_struct *t, struct pt_regs *regs)
+@@ -410,6 +253,8 @@ efault:
+ void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
+ {
+ 	struct task_struct *t =3D current;
++	struct rseq_ids ids;
++	u32 node_id;
+ 	bool event;
+ 	int sig;
+=20
+@@ -456,6 +301,8 @@ void __rseq_handle_notify_resume(struct ksignal *ksig, st=
+ruct pt_regs *regs)
+ 	scoped_guard(RSEQ_EVENT_GUARD) {
+ 		event =3D t->rseq.event.sched_switch;
+ 		t->rseq.event.sched_switch =3D false;
++		ids.cpu_id =3D task_cpu(t);
++		ids.mm_cid =3D task_mm_cid(t);
+ 	}
+=20
+ 	if (!IS_ENABLED(CONFIG_DEBUG_RSEQ) && !event)
+@@ -464,7 +311,8 @@ void __rseq_handle_notify_resume(struct ksignal *ksig, st=
+ruct pt_regs *regs)
+ 	if (!rseq_handle_cs(t, regs))
+ 		goto error;
+=20
+-	if (unlikely(rseq_update_cpu_node_id(t)))
++	node_id =3D cpu_to_node(ids.cpu_id);
++	if (!rseq_set_ids(t, &ids, node_id))
+ 		goto error;
+ 	return;
+=20
+@@ -504,13 +352,33 @@ void rseq_syscall(struct pt_regs *regs)
+ }
+ #endif
+=20
++static bool rseq_reset_ids(void)
++{
++	struct rseq_ids ids =3D {
++		.cpu_id		=3D RSEQ_CPU_ID_UNINITIALIZED,
++		.mm_cid		=3D 0,
++	};
++
++	/*
++	 * If this fails, terminate it because this leaves the kernel in
++	 * stupid state as exit to user space will try to fixup the ids
++	 * again.
++	 */
++	if (rseq_set_ids(current, &ids, 0))
++		return true;
++
++	force_sig(SIGSEGV);
++	return false;
++}
++
++/* The original rseq structure size (including padding) is 32 bytes. */
++#define ORIG_RSEQ_SIZE		32
++
+ /*
+  * sys_rseq - setup restartable sequences for caller thread.
+  */
+ SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32, rseq_len, int, flags,=
+ u32, sig)
+ {
+-	int ret;
+-
+ 	if (flags & RSEQ_FLAG_UNREGISTER) {
+ 		if (flags & ~RSEQ_FLAG_UNREGISTER)
+ 			return -EINVAL;
+@@ -521,9 +389,8 @@ SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32, rs=
+eq_len, int, flags, u32
+ 			return -EINVAL;
+ 		if (current->rseq.sig !=3D sig)
+ 			return -EPERM;
+-		ret =3D rseq_reset_rseq_cpu_node_id(current);
+-		if (ret)
+-			return ret;
++		if (!rseq_reset_ids())
++			return -EFAULT;
+ 		rseq_reset(current);
+ 		return 0;
+ 	}
+@@ -563,27 +430,22 @@ SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32, =
+rseq_len, int, flags, u32
+ 	if (!access_ok(rseq, rseq_len))
+ 		return -EFAULT;
+=20
+-	/*
+-	 * If the rseq_cs pointer is non-NULL on registration, clear it to
+-	 * avoid a potential segfault on return to user-space. The proper thing
+-	 * to do would have been to fail the registration but this would break
+-	 * older libcs that reuse the rseq area for new threads without
+-	 * clearing the fields. Don't bother reading it, just reset it.
+-	 */
+-	if (put_user(0UL, &rseq->rseq_cs))
+-		return -EFAULT;
++	scoped_user_write_access(rseq, efault) {
++		/*
++		 * If the rseq_cs pointer is non-NULL on registration, clear it to
++		 * avoid a potential segfault on return to user-space. The proper thing
++		 * to do would have been to fail the registration but this would break
++		 * older libcs that reuse the rseq area for new threads without
++		 * clearing the fields. Don't bother reading it, just reset it.
++		 */
++		unsafe_put_user(0UL, &rseq->rseq_cs, efault);
++		/* Initialize IDs in user space */
++		unsafe_put_user(RSEQ_CPU_ID_UNINITIALIZED, &rseq->cpu_id_start, efault);
++		unsafe_put_user(RSEQ_CPU_ID_UNINITIALIZED, &rseq->cpu_id, efault);
++		unsafe_put_user(0U, &rseq->node_id, efault);
++		unsafe_put_user(0U, &rseq->mm_cid, efault);
++	}
+=20
+-#ifdef CONFIG_DEBUG_RSEQ
+-	/*
+-	 * Initialize the in-kernel rseq fields copy for validation of
+-	 * read-only fields.
+-	 */
+-	if (get_user(rseq_kernel_fields(current)->cpu_id_start, &rseq->cpu_id_start=
+) ||
+-	    get_user(rseq_kernel_fields(current)->cpu_id, &rseq->cpu_id) ||
+-	    get_user(rseq_kernel_fields(current)->node_id, &rseq->node_id) ||
+-	    get_user(rseq_kernel_fields(current)->mm_cid, &rseq->mm_cid))
+-		return -EFAULT;
+-#endif
  	/*
- 	 * If we're in an interrupt or have no user
-@@ -473,9 +477,6 @@ do_translation_fault(unsigned long addr, unsigned int fsr,
- 	if (addr < TASK_SIZE)
- 		return do_page_fault(addr, fsr, regs);
- 
--	if (interrupts_enabled(regs))
--		local_irq_enable();
+ 	 * Activate the registration by setting the rseq area address, length
+ 	 * and signature in the task struct.
+@@ -599,6 +461,8 @@ SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32, rs=
+eq_len, int, flags, u32
+ 	 */
+ 	current->rseq.event.has_rseq =3D true;
+ 	rseq_sched_switch_event(current);
 -
- 	if (user_mode(regs))
- 		goto bad_area;
- 
-@@ -546,9 +547,6 @@ do_translation_fault(unsigned long addr, unsigned int fsr,
- static int
- do_sect_fault(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
- {
--	if (interrupts_enabled(regs))
--		local_irq_enable();
--
- 	do_bad_area(addr, fsr, regs);
  	return 0;
++
++efault:
++	return -EFAULT;
  }
-diff --git a/localversion-rt b/localversion-rt
-index c3054d08a1129..1445cd65885cd 100644
---- a/localversion-rt
-+++ b/localversion-rt
-@@ -1 +1 @@
---rt2
-+-rt3
 
