@@ -1,60 +1,64 @@
-Return-Path: <linux-kernel+bounces-883483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0D23C2D923
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:04:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1685BC2D90B
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:04:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A8FC94EFD18
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:03:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 467F23A6F72
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3931F31D727;
-	Mon,  3 Nov 2025 18:02:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B50137C52;
+	Mon,  3 Nov 2025 18:03:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b3E5RH/3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZrEtuORC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552503101C9;
-	Mon,  3 Nov 2025 18:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 468B3199230;
+	Mon,  3 Nov 2025 18:03:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762192973; cv=none; b=M+6RvDjJ8zFgrv30RM0lIBnFZhTfZ4XwMENuJPQ/Jisx+HTAu4A1DkBb1/bu4x2FmMXpAfhJRxcAWfuO5QeCV3fKfibOEc1sTZa/R6D766ONyr3iGVPGpqe+zhf95NgzgWUJ0K+Fpi6uRJM7lk7LBs2aOOiLYmhxlliRLbjk0UI=
+	t=1762192991; cv=none; b=F3Tm7qiKiDU1hFXEp7T+pYaqpjquUUAbBdd16qgefs6wfO4+NIUwu0bDVSpxVhFtOSGUJQ/tOgkU3nXRBYTMJe9kEbFx6ahW3elLtnj9iONUiMjQJoShz1ekK5+4HZPXB8HE9V2fS4s0vekxNnyaNQcoaPimUnNqn3L6bw/Lr4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762192973; c=relaxed/simple;
-	bh=vtCCB6cHVVYz6GSXG5SXRqNmkFGWgwXWfLKIRr7Fsdc=;
+	s=arc-20240116; t=1762192991; c=relaxed/simple;
+	bh=nykU3KuIG39Hkra9YtKgZFir7eDFsIkuzXIsan3RTp8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TKZy5z3lCAcPrsrlde0HqtMsmA0PQ2wF9Kr10VdTg6SqUqNgSWAqH3REfIFqI4rmkPZNF3mtbphdby8ch4wsEEr18brDWueODIOy/l0lsUIawN9EML5RP6vroAJpN7NRhmhM75+fp7Bjm/WEno6+7JLD/uWiU4sMlDG/Mdsz2Lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b3E5RH/3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEEFEC113D0;
-	Mon,  3 Nov 2025 18:02:51 +0000 (UTC)
+	 MIME-Version:Content-Type; b=JngC1kQf9Fow26ibCWf+hycUsawfmCA1xlYh9+LA8ZSdZK5QkH+TRuxp68r841mZirHmgiuLcIGay1Lwi+MolilcBmSxg28pIpfdqJ4l5+ExP9VW8KXsW0cg5TNJEKbqqd0B0+14p8mnGiWBzvjZgGSJMaKFyLUY1Y1frirk5l0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZrEtuORC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23B54C4CEE7;
+	Mon,  3 Nov 2025 18:03:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762192973;
-	bh=vtCCB6cHVVYz6GSXG5SXRqNmkFGWgwXWfLKIRr7Fsdc=;
+	s=k20201202; t=1762192990;
+	bh=nykU3KuIG39Hkra9YtKgZFir7eDFsIkuzXIsan3RTp8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=b3E5RH/3Jvmp5U3VIh0FUxlUMsZSrVrloHeBM2SjQ97w9SvP/fVl5YU1Zv6qzN/kK
-	 iZ6XG4Tkub0ywyK23bjX1Mujd5jLHiGop66WBMhOJwxsb2PYjv3urasg8UdG8joc0O
-	 V6fpMWXNAy0MR7zN0ZQ5cp8/BpBByZiJPsB+T9qbqnIaSpK0iwDTfXe7J2deadO8e7
-	 xGkMZFkpIm/VmU6KFL6jV42vluGj/h3i19t9AsRAC3tr8EIS0U75koe6WpV0AnNdQV
-	 rEDnGUPkcqRupvg6Fs0czfwYdJApuwgJZXWHceVgED93z0ciyBnYODf9aoHRcM3nOY
-	 zdzFkZKRPje4Q==
+	b=ZrEtuORCC3S4NsYgY7iRrKIJnWxcsZ9jjavEvCeseaVvZ6qtlgIJtb5fYsJUTNXA4
+	 zbexLqS15mwujAxsk2c3eUDsDZQUhV2J9ge6gh0pzzNrw+gPyrYISJ2nU1J51lSA5d
+	 U1S2V/ZwhdBVcyobaL4rmfyQ7N/BPI7rRgeGDrrqSYR1gDAf9JWeB37wn0mITUkIcw
+	 /o+P27LvhtIO1nf7uN6iZSHbmCS334iMbCjYvisZBXsi6oHQ1Xa5byIL3ZMfA2gwNV
+	 Y2OOKrohBMxNNfxrIptb3bA5CJ76lOUrR8gsKiCoQctrAU1XyyEAUAOECTzkVYJbE9
+	 2mJnpQdjZmvgA==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: dongsheng <dongsheng.x.zhang@intel.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+Cc: Emil Tsalapatis <etsal@meta.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"Emil Tsalapatis (Meta)" <emil@etsalapatis.com>,
+	Andrea Righi <arighi@nvidia.com>,
+	Tejun Heo <tj@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
 	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.17] perf/x86/intel/uncore: Add uncore PMU support for Wildcat Lake
-Date: Mon,  3 Nov 2025 13:02:16 -0500
-Message-ID: <20251103180246.4097432-3-sashal@kernel.org>
+	peterz@infradead.org,
+	juri.lelli@redhat.com,
+	vincent.guittot@linaro.org,
+	sched-ext@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.17] sched_ext: defer queue_balance_callback() until after ops.dispatch
+Date: Mon,  3 Nov 2025 13:02:25 -0500
+Message-ID: <20251103180246.4097432-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.51.0
 In-Reply-To: <20251103180246.4097432-1-sashal@kernel.org>
 References: <20251103180246.4097432-1-sashal@kernel.org>
@@ -70,181 +74,272 @@ X-stable-base: Linux 6.17.7
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: dongsheng <dongsheng.x.zhang@intel.com>
+From: Emil Tsalapatis <etsal@meta.com>
 
-[ Upstream commit f4c12e5cefc8ec2eda93bc17ea734407228449ab ]
+[ Upstream commit a8ad873113d3fe01f9b5d737d4b0570fa36826b0 ]
 
-WildcatLake (WCL) is a variant of PantherLake (PTL) and shares the same
-uncore PMU features with PTL. Therefore, directly reuse Pantherlake's
-uncore PMU enabling code for WildcatLake.
+The sched_ext code calls queue_balance_callback() during enqueue_task()
+to defer operations that drop multiple locks until we can unpin them.
+The call assumes that the rq lock is held until the callbacks are
+invoked, and the pending callbacks will not be visible to any other
+threads. This is enforced by a WARN_ON_ONCE() in rq_pin_lock().
 
-Signed-off-by: dongsheng <dongsheng.x.zhang@intel.com>
-Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://patch.msgid.link/20250908061639.938105-2-dapeng1.mi@linux.intel.com
+However, balance_one() may actually drop the lock during a BPF dispatch
+call. Another thread may win the race to get the rq lock and see the
+pending callback. To avoid this, sched_ext must only queue the callback
+after the dispatch calls have completed.
+
+CPU 0                   CPU 1           CPU 2
+
+scx_balance()
+  rq_unpin_lock()
+  scx_balance_one()
+    |= IN_BALANCE	scx_enqueue()
+    ops.dispatch()
+      rq_unlock()
+                        rq_lock()
+                        queue_balance_callback()
+                        rq_unlock()
+                                        [WARN] rq_pin_lock()
+      rq_lock()
+    &= ~IN_BALANCE
+rq_repin_lock()
+
+Changelog
+
+v2-> v1 (https://lore.kernel.org/sched-ext/aOgOxtHCeyRT_7jn@gpd4)
+
+- Fixed explanation in patch description (Andrea)
+- Fixed scx_rq mask state updates (Andrea)
+- Added Reviewed-by tag from Andrea
+
+Reported-by: Jakub Kicinski <kuba@kernel.org>
+Signed-off-by: Emil Tsalapatis (Meta) <emil@etsalapatis.com>
+Reviewed-by: Andrea Righi <arighi@nvidia.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-## **Backport Recommendation: YES**
+Based on my comprehensive analysis using semantic code analysis tools
+and repository examination, here is my recommendation:
 
-### Analysis Summary
+## **ANSWER: YES** (with critical caveat)
 
-I have thoroughly analyzed this commit using semantic code analysis
-tools and examined the Linux kernel repository. Here is my comprehensive
-assessment:
+This commit **should be backported to stable kernel trees**, BUT the
+follow-up fix commit a3c4a0a42e61a ("sched_ext: fix flag check for
+deferred callbacks") **MUST be included together**, as the original
+patch has a bug.
 
 ---
 
-## 1. **Code Changes Analysis**
+## **Extensive Analysis:**
 
-**What the commit does:**
-- Adds a single line to the `intel_uncore_match` device table in
-  `arch/x86/events/intel/uncore.c:1898`
-- Maps `INTEL_WILDCATLAKE_L` CPU model (0xD5) to the existing
-  `ptl_uncore_init` initialization function
-- Enables uncore Performance Monitoring Unit (PMU) support for Wildcat
-  Lake CPUs
+### **1. Feature Availability Analysis**
 
-**Specific change:**
-```c
-+       X86_MATCH_VFM(INTEL_WILDCATLAKE_L,      &ptl_uncore_init),
+Using git history analysis, I determined:
+- **sched_ext was introduced in v6.12-rc1** (commit f0e1a0643a59b)
+- **v6.11 and earlier kernels DO NOT have sched_ext** (verified with
+  `git ls-tree`)
+- **Only stable trees v6.12+ need this fix** (v6.12.x, v6.13.x, v6.16.x,
+  v6.17.x all have kernel/sched/ext.c)
+
+### **2. Semantic Code Analysis Using MCP Tools**
+
+**Functions analyzed:**
+- `mcp__semcode__find_function`: Located schedule_deferred(),
+  balance_one(), balance_scx()
+- `mcp__semcode__find_callers`: Traced call graph to understand impact
+  scope
+
+**Call chain discovered:**
+```
+Core scheduler → balance_scx (.balance callback)
+  ↓
+balance_one() [sets SCX_RQ_IN_BALANCE flag]
+  ↓
+ops.dispatch() [BPF scheduler callback - CAN DROP RQ LOCK]
+  ↓
+[RACE WINDOW - other CPUs can acquire lock]
+  ↓
+schedule_deferred() → queue_balance_callback()
+  ↓
+WARN_ON_ONCE() in rq_pin_lock() on CPU 2
 ```
 
-**Statistics:** 1 file changed, 1 insertion (+)
+**Impact scope:**
+- schedule_deferred() called by: direct_dispatch()
+- direct_dispatch() called by: do_enqueue_task()
+- do_enqueue_task() called by: enqueue_task_scx, put_prev_task_scx,
+  scx_bpf_reenqueue_local
+- These are **core scheduler operations** triggered by normal task
+  scheduling
+- **User-space exposure**: Yes, any process using sched_ext can trigger
+  this
 
----
+### **3. Bug Severity Analysis**
 
-## 2. **Semantic Analysis Tools Used**
+**Race condition mechanism** (from commit message and code):
+1. CPU 0: balance_one() sets IN_BALANCE flag, calls ops.dispatch()
+2. ops.dispatch() **drops rq lock** during BPF execution
+3. CPU 1: Acquires lock, calls schedule_deferred(), sees IN_BALANCE,
+   queues callback
+4. CPU 2: Calls rq_pin_lock(), sees pending callback → **WARN_ON_ONCE()
+   triggers**
 
-### **mcp__semcode__find_type**: Analyzed x86_cpu_id structure
-- Confirmed this is a standard device table structure in
-  `include/linux/mod_devicetable.h:687`
-- The structure contains vendor, family, model fields and driver_data
-  pointer
-- This is the standard Linux device ID matching mechanism
+**Code reference** (kernel/sched/sched.h:1790-1797):
+```c
+static inline void rq_pin_lock(struct rq *rq, struct rq_flags *rf)
+{
+    rf->cookie = lockdep_pin_lock(__rq_lockp(rq));
+    rq->clock_update_flags &= (RQCF_REQ_SKIP|RQCF_ACT_SKIP);
+    rf->clock_update_flags = 0;
+    WARN_ON_ONCE(rq->balance_callback &&
+                 rq->balance_callback != &balance_push_callback);  // ←
+VIOLATION
+}
+```
 
-### **mcp__semcode__find_function**: Located ptl_uncore_init
-- Found at `arch/x86/events/intel/uncore.c:1810`
-- It's a well-established initialization structure already used for
-  INTEL_PANTHERLAKE_L
-- Contains function pointers for cpu_init, mmio_init, and uses discovery
-  mode
+**Severity**: Medium-High
+- Not a crash, but scheduler correctness issue
+- Generates kernel warnings in logs
+- Indicates inconsistent scheduler state
+- Reported by Jakub Kicinski (well-known kernel developer)
 
-### **mcp__semcode__find_callers**: Checked impact scope
-- `intel_uncore_init` is a module_init function (line 1976)
-- Not called by other functions - it's an entry point
-- Uses `x86_match_cpu()` to find the appropriate init function for the
-  running CPU
+### **4. Code Changes Analysis**
 
-### **Repository examination**:
-- Verified INTEL_WILDCATLAKE_L is defined in
-  `arch/x86/include/asm/intel-family.h:153`
-- Confirmed ptl_uncore_init already exists and is tested code
-- Found the commit has already been backported (3b163fc2f971b) by Sasha
-  Levin
+**Changes are minimal and focused:**
+- kernel/sched/ext.c: +29 lines, -2 lines
+- kernel/sched/sched.h: +1 line (new flag SCX_RQ_BAL_CB_PENDING)
 
----
+**Behavioral change:**
+- BEFORE: queue_balance_callback() called immediately when
+  SCX_RQ_IN_BALANCE set
+- AFTER: Set SCX_RQ_BAL_CB_PENDING flag, defer actual queuing until
+  after ops.dispatch()
+- NEW: maybe_queue_balance_callback() called after balance_one()
+  completes
 
-## 3. **Stable Kernel Rules Compliance**
+**No architectural changes:** Just timing adjustment to avoid race
+window
 
-According to **Documentation/process/stable-kernel-rules.rst:15**:
+### **5. Critical Follow-up Fix Required**
 
-> "It must either fix a real bug that bothers people **or just add a
-device ID**."
+**Commit a3c4a0a42e61a analysis:**
+```diff
+- if (rq->scx.flags & SCX_RQ_BAL_PENDING)
++       if (rq->scx.flags & SCX_RQ_BAL_CB_PENDING)
+```
 
-**This commit explicitly falls under the device ID exception:**
+The original patch checks the **wrong flag** in schedule_deferred().
+This means:
+- Without the follow-up, multiple deferred operations could be queued
+  incorrectly
+- **Both commits must be backported together**
 
-✅ **Adds a device ID**: Adds CPU model ID to device match table
-✅ **Size requirement** (<100 lines): Only 1 line changed
-✅ **Obviously correct**: Reuses existing, tested `ptl_uncore_init` code
-✅ **Already in mainline**: Upstream commit
-f4c12e5cefc8ec2eda93bc17ea734407228449ab
-✅ **Tested**: Commit message states WCL shares identical PMU features
-with PTL
+### **6. Stable Tree Compliance**
 
----
+✅ **Fixes important bug**: Race condition causing kernel warnings
+✅ **No new features**: Pure bug fix
+✅ **No architectural changes**: Small, contained fix
+✅ **Minimal regression risk**: Changes only affect sched_ext code path
+✅ **Subsystem confined**: Only affects sched_ext subsystem
 
-## 4. **Risk Assessment**
+### **7. Backport Recommendation**
 
-**Regression Risk: NONE**
-- The change only affects Wildcat Lake CPUs (model 0xD5)
-- If this CPU is not present, the new line has zero effect
-- No modification to existing code paths or initialization functions
-- Reuses battle-tested ptl_uncore_init that's already in use for
-  PANTHERLAKE_L
+**YES**, backport to all stable trees with sched_ext (v6.12+), with
+these requirements:
 
-**Code Complexity: TRIVIAL**
-- Single line addition to a static const device table
-- No new functions, no behavioral changes
-- Pattern matches dozens of similar entries in the same table (lines
-  1870-1906)
+1. **MUST include both commits:**
+   - a8ad873113d3 ("sched_ext: defer queue_balance_callback()")
+   - a3c4a0a42e61a ("sched_ext: fix flag check for deferred callbacks")
 
-**Dependencies: NONE**
-- All required code already exists:
-  - `INTEL_WILDCATLAKE_L` macro defined in intel-family.h
-  - `ptl_uncore_init` structure already implemented
-  - `X86_MATCH_VFM` macro is standard infrastructure
+2. **Target stable trees:** 6.12.x, 6.13.x, 6.14.x, 6.15.x, 6.16.x,
+   6.17.x
 
----
+3. **Not needed for:** v6.11.x and earlier (no sched_ext code)
 
-## 5. **Impact Analysis**
+**Reasoning:** This is a correctness fix for a real race condition in
+core scheduler code that can be triggered by normal scheduling
+operations when using BPF extensible schedulers. The fix is small,
+contained, and follows all stable kernel rules.
 
-**If backported:**
-- Wildcat Lake CPU users gain uncore PMU support for performance
-  profiling
-- Enables `perf` tool to access hardware performance counters on WCL
-- Zero impact on systems without Wildcat Lake CPUs
+ kernel/sched/ext.c   | 29 +++++++++++++++++++++++++++--
+ kernel/sched/sched.h |  1 +
+ 2 files changed, 28 insertions(+), 2 deletions(-)
 
-**If NOT backported:**
-- Users with Wildcat Lake CPUs on stable kernels cannot use uncore PMU
-  features
-- Professional users doing performance analysis on WCL would need
-  mainline kernels
-- Creates unnecessary gap in hardware support for released CPUs
-
----
-
-## 6. **Precedent and Context**
-
-The stable kernel rules **explicitly allow** device ID additions
-because:
-1. They enable hardware that already exists in the field
-2. They have minimal/zero regression risk
-3. They are typically trivial and obviously correct
-4. They improve user experience without changing kernel behavior
-
-This commit perfectly matches this pattern - similar to how USB device
-IDs, PCI device IDs, and other hardware identifiers are routinely
-backported to stable kernels.
-
----
-
-## **Final Recommendation: YES - Backport this commit**
-
-**Rationale:**
-- Explicitly permitted by stable kernel rules (device ID addition)
-- Trivial change with zero regression risk
-- Enables hardware support for released CPUs
-- Follows established stable kernel practices
-- Already successfully backported to this tree (3b163fc2f971b)
-
- arch/x86/events/intel/uncore.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
-index a762f7f5b1616..d6c945cc5d07c 100644
---- a/arch/x86/events/intel/uncore.c
-+++ b/arch/x86/events/intel/uncore.c
-@@ -1895,6 +1895,7 @@ static const struct x86_cpu_id intel_uncore_match[] __initconst = {
- 	X86_MATCH_VFM(INTEL_ARROWLAKE_H,	&mtl_uncore_init),
- 	X86_MATCH_VFM(INTEL_LUNARLAKE_M,	&lnl_uncore_init),
- 	X86_MATCH_VFM(INTEL_PANTHERLAKE_L,	&ptl_uncore_init),
-+	X86_MATCH_VFM(INTEL_WILDCATLAKE_L,	&ptl_uncore_init),
- 	X86_MATCH_VFM(INTEL_SAPPHIRERAPIDS_X,	&spr_uncore_init),
- 	X86_MATCH_VFM(INTEL_EMERALDRAPIDS_X,	&spr_uncore_init),
- 	X86_MATCH_VFM(INTEL_GRANITERAPIDS_X,	&gnr_uncore_init),
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index 040ca7419b4f9..b796ce247fffd 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -820,13 +820,23 @@ static void schedule_deferred(struct rq *rq)
+ 	if (rq->scx.flags & SCX_RQ_IN_WAKEUP)
+ 		return;
+ 
++	/* Don't do anything if there already is a deferred operation. */
++	if (rq->scx.flags & SCX_RQ_BAL_PENDING)
++		return;
++
+ 	/*
+ 	 * If in balance, the balance callbacks will be called before rq lock is
+ 	 * released. Schedule one.
++	 *
++	 *
++	 * We can't directly insert the callback into the
++	 * rq's list: The call can drop its lock and make the pending balance
++	 * callback visible to unrelated code paths that call rq_pin_lock().
++	 *
++	 * Just let balance_one() know that it must do it itself.
+ 	 */
+ 	if (rq->scx.flags & SCX_RQ_IN_BALANCE) {
+-		queue_balance_callback(rq, &rq->scx.deferred_bal_cb,
+-				       deferred_bal_cb_workfn);
++		rq->scx.flags |= SCX_RQ_BAL_CB_PENDING;
+ 		return;
+ 	}
+ 
+@@ -2043,6 +2053,19 @@ static void flush_dispatch_buf(struct scx_sched *sch, struct rq *rq)
+ 	dspc->cursor = 0;
+ }
+ 
++static inline void maybe_queue_balance_callback(struct rq *rq)
++{
++	lockdep_assert_rq_held(rq);
++
++	if (!(rq->scx.flags & SCX_RQ_BAL_CB_PENDING))
++		return;
++
++	queue_balance_callback(rq, &rq->scx.deferred_bal_cb,
++				deferred_bal_cb_workfn);
++
++	rq->scx.flags &= ~SCX_RQ_BAL_CB_PENDING;
++}
++
+ static int balance_one(struct rq *rq, struct task_struct *prev)
+ {
+ 	struct scx_sched *sch = scx_root;
+@@ -2190,6 +2213,8 @@ static int balance_scx(struct rq *rq, struct task_struct *prev,
+ #endif
+ 	rq_repin_lock(rq, rf);
+ 
++	maybe_queue_balance_callback(rq);
++
+ 	return ret;
+ }
+ 
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 72fb9129afb6a..c7f67f54d4e3e 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -782,6 +782,7 @@ enum scx_rq_flags {
+ 	SCX_RQ_BAL_KEEP		= 1 << 3, /* balance decided to keep current */
+ 	SCX_RQ_BYPASSING	= 1 << 4,
+ 	SCX_RQ_CLK_VALID	= 1 << 5, /* RQ clock is fresh and valid */
++	SCX_RQ_BAL_CB_PENDING	= 1 << 6, /* must queue a cb after dispatching */
+ 
+ 	SCX_RQ_IN_WAKEUP	= 1 << 16,
+ 	SCX_RQ_IN_BALANCE	= 1 << 17,
 -- 
 2.51.0
 
