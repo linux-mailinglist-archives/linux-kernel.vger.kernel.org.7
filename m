@@ -1,297 +1,319 @@
-Return-Path: <linux-kernel+bounces-883716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCFDCC2E2D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 22:41:44 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3183AC2E3EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 23:20:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CBA83BC85D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 21:41:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C96084E1D94
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 22:20:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1D842BEC22;
-	Mon,  3 Nov 2025 21:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AyjzqCIT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 577A52D5938
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 21:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 658482BD580;
+	Mon,  3 Nov 2025 22:20:09 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 915301509A0
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 22:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762206098; cv=none; b=nQnjxeR8kbV06/bq+o5U9hqFARqCGtJShhB9ktCZhZqzUgZ3bqa87Y59/S4tSs6gjga+sj5raUN0+cVykAJeoCG/g5WI+FQ0NsR5MijOWMXwHqhaSPMq2d7OrVaoF37U2VdPd3CwMBIjrrpnjbCXi61KmMmsPmDPZrx37wKWugA=
+	t=1762208408; cv=none; b=GOVKnYDWA1z1y6F/uoe0dZK6k/BbwgVukyhohA2N4sEi1B55GNZCGKh0paQSYw8fp2Ww3bJYywcF6oeJ5lwMpuM9ff/2s46Xg/yD/F4S+OqoMyFHUlHDSlrjZhxUv08jEp7k1NLu2Q+8BgC9MGNGkp1XjfaGr989GleitYGqtzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762206098; c=relaxed/simple;
-	bh=sCLsTKlEpxY8AiaUHlzddcMmymkNDrjLHZK8JZlIo0s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Sh6Yv5r6HF+XTSsj1ASXmYooWwN8JD/BvrmemwpH0Pol0EAqpcUItui5w3OQUs2iKec0fKyidtQrFsDUeL/Kx+7YYAr87F8y8zpSkwxEwu94VqqKXP2YiGsTdNtEMGaQ2+7kv3asQ5Abk7/mR+CH153rJiH70MvJXl1VZs7HLbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AyjzqCIT; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762206096; x=1793742096;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=sCLsTKlEpxY8AiaUHlzddcMmymkNDrjLHZK8JZlIo0s=;
-  b=AyjzqCITTLgQ6cI9VtU7RsHxnsmiOH0PPnFsa65idisUsvG8suuOuDdR
-   Kkk63Dj9qtfJw3vPV9Wir/XiybZKpGnn9rQPTEjWr0lwoUaDwrIkufliG
-   4hXiLUOq1V2G+zoKZunX/kriCosB3c8mU6kAo6e94l3H0eT7PLV8o6IPc
-   iyoXnocHe2lfYslEXLROBN/Ifbf4urImYVHfrGymokMssj9XYhlZ98YD+
-   tDGp4xGe052Qn3Ents7T+r67AAHTknAJ7ThwT38zh97G8YAstdOFQyp42
-   bekqA9HuKtVD1IXU+yfppRXRVF9IPAL7w7XzxQiYRWmHcILVBfKtHATMp
-   g==;
-X-CSE-ConnectionGUID: uhw57eJHRxW1De7aasdQZA==
-X-CSE-MsgGUID: fI3CwjpqQ5GiCloCMMhOfA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="51862770"
-X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="51862770"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 13:41:36 -0800
-X-CSE-ConnectionGUID: 4nCC/ExiSuem0xBxtcxbCg==
-X-CSE-MsgGUID: Y4whzGG0SMej2zlCX07CgQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="187429551"
-Received: from unknown (HELO [10.241.243.18]) ([10.241.243.18])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 13:41:35 -0800
-Message-ID: <35424dcfef4caf32076b4bbece2dafddb495e730.camel@linux.intel.com>
-Subject: Re: [PATCH 15/19] sched/fair: Respect LLC preference in task
- migration and detach
-From: Tim Chen <tim.c.chen@linux.intel.com>
-To: "Chen, Yu C" <yu.c.chen@intel.com>, K Prateek Nayak
- <kprateek.nayak@amd.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>, Juri Lelli	
- <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
- Gorman <mgorman@suse.de>,  Valentin Schneider	 <vschneid@redhat.com>,
- Madadi Vineeth Reddy <vineethr@linux.ibm.com>, Hillf Danton
- <hdanton@sina.com>, Shrikanth Hegde <sshegde@linux.ibm.com>, Jianyong Wu	
- <jianyong.wu@outlook.com>, Yangyu Chen <cyy@cyyself.name>, Tingyin Duan	
- <tingyin.duan@gmail.com>, Vern Hao <vernhao@tencent.com>, Len Brown	
- <len.brown@intel.com>, Aubrey Li <aubrey.li@intel.com>, Zhao Liu	
- <zhao1.liu@intel.com>, Chen Yu <yu.chen.surf@gmail.com>, Adam Li	
- <adamli@os.amperecomputing.com>, Tim Chen <tim.c.chen@intel.com>, 
-	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
- "Gautham R . Shenoy" <gautham.shenoy@amd.com>, Ingo Molnar
- <mingo@redhat.com>
-Date: Mon, 03 Nov 2025 13:41:34 -0800
-In-Reply-To: <76d1fe33-da20-47b3-9403-f3d6e664ad96@intel.com>
-References: <cover.1760206683.git.tim.c.chen@linux.intel.com>
-	 <d3afcff5622222523c843f5c1b023bfe43f9c67c.1760206683.git.tim.c.chen@linux.intel.com>
-	 <5cdf379c-b663-424d-8505-d91046e63c20@amd.com>
-	 <0a81b5be-6edd-4231-859b-0c6d06c61595@intel.com>
-	 <2c57d76f-fb31-4e1b-a3ce-ca13713e1b86@amd.com>
-	 <ebe994addb5624089db71df8fee402a664f8800a.camel@linux.intel.com>
-	 <53f9a8dc-c215-405b-958b-9cdd326dbfe3@amd.com>
-	 <c85e242d55da1f12419e2c2dc2bfa3fc942a848e.camel@linux.intel.com>
-	 <c67f70c5-1082-47e7-8270-f4b8ae05eace@amd.com>
-	 <76d1fe33-da20-47b3-9403-f3d6e664ad96@intel.com>
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
- keydata=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
- uQ==
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-2.fc42) 
+	s=arc-20240116; t=1762208408; c=relaxed/simple;
+	bh=RZZGW9wkmTQ6/q1ynHjZ72Ap/stQVT7AelIhPqqcvZs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QhWlosWHrsdzGIbP7n0zdidPGZAr741LI8w+4ChWVFEyOnQ51CnXUiNFtEl0QFl4e7GE/uG4uqpPj2oaXPA88cA8knFwtX0dAUN4Wm/8esvNUN0xX8D/EvKtlzqoColNhGsY0ECrbhx2PQI5DCo3+eO14wUaXURNeO6o1+wwOng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub4.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4d0lXN1KLcz9sSR;
+	Mon,  3 Nov 2025 22:46:28 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id JqLU5buq-Vrb; Mon,  3 Nov 2025 22:46:28 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4d0lXM6sDDz9sSL;
+	Mon,  3 Nov 2025 22:46:27 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id D67848B76C;
+	Mon,  3 Nov 2025 22:46:27 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id msbw2gEQ50eF; Mon,  3 Nov 2025 22:46:27 +0100 (CET)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 39A2A8B763;
+	Mon,  3 Nov 2025 22:46:27 +0100 (CET)
+Message-ID: <662a5f56-8851-43a8-af27-237acd799943@csgroup.eu>
+Date: Mon, 3 Nov 2025 22:46:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] eeprom: at25: convert to spi-mem API
+To: "Sverdlin, Alexander" <alexander.sverdlin@siemens.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: "hui.wang@canonical.com" <hui.wang@canonical.com>,
+ "mwalle@kernel.org" <mwalle@kernel.org>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "florent.trinh-thai@cs-soprasteria.com"
+ <florent.trinh-thai@cs-soprasteria.com>, "arnd@arndb.de" <arnd@arndb.de>
+References: <20250702222823.864803-1-alexander.sverdlin@siemens.com>
+ <638496dd-ec60-4e53-bad7-eb657f67d580@csgroup.eu>
+ <44b4f443075818cc0799724c9adf635b786e97b4.camel@siemens.com>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <44b4f443075818cc0799724c9adf635b786e97b4.camel@siemens.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2025-10-31 at 23:17 +0800, Chen, Yu C wrote:
-> Hi Prateek,
->=20
-> On 10/31/2025 11:32 AM, K Prateek Nayak wrote:
-> > Hello Tim,
-> >=20
-> > On 10/31/2025 1:37 AM, Tim Chen wrote:
-> > > On Thu, 2025-10-30 at 09:49 +0530, K Prateek Nayak wrote:
-> > > > Hello Tim,
-> > > >=20
-> > > > On 10/30/2025 2:39 AM, Tim Chen wrote:
-> > > > > > > I suppose you are suggesting that the threshold for stopping =
-task detachment
-> > > > > > > should be higher. With the above can_migrate_llc() check, I s=
-uppose we have
-> > > > > > > raised the threshold for stopping "task detachment"?
-> > > > > >=20
-> > > > > > Say the LLC is under heavy load and we only have overloaded gro=
-ups.
-> > > > > > can_migrate_llc() would return "mig_unrestricted" since
-> > > > > > fits_llc_capacity() would return false.
-> > > > > >=20
-> > > > > > Since we are under "migrate_load", sched_balance_find_src_rq() =
-has
-> > > > > > returned the CPU with the highest load which could very well be=
- the
-> > > > > > CPU with with a large number of preferred LLC tasks.
-> > > > > >=20
-> > > > > > sched_cache_enabled() is still true and when detach_tasks() rea=
-ches
-> > > > > > one of these preferred llc tasks (which comes at the very end o=
-f the
-> > > > > > tasks list),
-> > > > > > we break out even if env->imbalance > 0 leaving
-> > > > >=20
-> > > > > Yes, but at least one task has been removed to even the load (mak=
-ing forward progress) and
-> > > > > the remaining tasks all wish to stay in the current LLC and will
-> > > > > preferred not to be moved. My thought was to not even all the loa=
-d out
-> > > > > in one shot and pull more tasks out of their preferred LLC.
-> > > > > If the imbalance still remain, we'll come to that in the next loa=
-d balance.
-> > > >=20
-> > > > In that case, can we spoof a LBF_ALL_PINNED for the case where we s=
-tart
-> > >=20
-> > > In the code chunk (with fix I mentioned in last reply):
-> > >=20
-> > > +#ifdef CONFIG_SCHED_CACHE
-> > > +		/*
-> > > +		 * Don't detach more tasks if the remaining tasks want
-> > > +		 * to stay. We know the remaining tasks all prefer the
-> > > +		 * current LLC, because after order_tasks_by_llc(), the
-> > > +		 * tasks that prefer the current LLC are at the tail of
-> > > +		 * the list. The inhibition of detachment is to avoid too
-> > > +		 * many tasks being migrated out of the preferred LLC.
-> > > +		 */
-> > > +		if (sched_cache_enabled() && detached && p->preferred_llc !=3D -1 =
-&&
-> > > +		    llc_id(env->src_cpu) =3D=3D p->preferred_llc &&
-> > > 		    llc_id(env->dst_cpu) !=3D p->preferred_llc)
-> > > +			break;
-> > >=20
-> > > We have already pulled at least one task when we stop detaching becau=
-se we
-> > > know that all the remaining tasks want to stay in it current LLC.
-> > > "detached" is non zero when we break. So LBF_ALL_PINNED would be clea=
-red.
-> > > We will only exit the detach_tasks loop when there are truly no tasks
-> > > that can be moved and it is truly a LBF_ALL_PINNED case.
-> >=20
-> > So what I was suggesting is something like:
-> >=20
-> > @@ -10251,6 +10252,7 @@ static int detach_tasks(struct lb_env *env)
-> >   	unsigned long util, load;
-> >   	struct task_struct *p;
-> >   	int detached =3D 0;
-> > +	bool preserve_preferred;
-> >  =20
-> >   	lockdep_assert_rq_held(env->src_rq);
-> >  =20
-> > @@ -10268,6 +10270,10 @@ static int detach_tasks(struct lb_env *env)
-> >  =20
-> >   	tasks =3D order_tasks_by_llc(env, &env->src_rq->cfs_tasks);
-> >  =20
-> > +	preserve_preferred =3D sched_cache_enabled() &&
-> > +			     !(env->sd->flags & SD_SHARE_LLC) &&
->=20
-> Maybe also check (env->sd->child->flag & SD_SHARE_LLC) because we only
-> care about the domain that is the parent of a LLC domain.
->=20
-> > +			     !sd->nr_balance_failed;
->  > +
-> >   	while (!list_empty(tasks)) {
-> >   		/*
-> >   		 * We don't want to steal all, otherwise we may be treated likewise=
-,
-> > @@ -10370,16 +10376,15 @@ static int detach_tasks(struct lb_env *env)
-> >  =20
-> >   #ifdef CONFIG_SCHED_CACHE
-> >   		/*
-> > -		 * Don't detach more tasks if the remaining tasks want
-> > -		 * to stay. We know the remaining tasks all prefer the
-> > -		 * current LLC, because after order_tasks_by_llc(), the
-> > -		 * tasks that prefer the current LLC are at the tail of
-> > -		 * the list. The inhibition of detachment is to avoid too
-> > -		 * many tasks being migrated out of the preferred LLC.
-> > +		 * We've hit tasks that prefer src LLC while balancing between LLCs.
-> > +		 * If previous balances have been successful, pretend the rest of th=
-e
-> > +		 * tasks on this CPU are pinned and let the main load balancing loop
-> > +		 * find another target CPU to pull from if imbalance exists.
-> >   		 */
-> > -		if (sched_cache_enabled() && detached && p->preferred_llc !=3D -1 &&
-> > -		    llc_id(env->src_cpu) =3D=3D p->preferred_llc)
-> > +		if (preserve_preferred && detached && llc_id(env->src_cpu) =3D=3D p-=
->preferred_llc) {
-> > +			env->flags |=3D LBF_ALL_PINNED;
->=20
-> Let me try to understand this strategy: if all previous migrations
-> on this sched_domain have succeeded, it means that even if we stop
-> migrating tasks out of this busiest CPU from now on, it won=E2=80=99t
-> matter because the imbalance has already been mitigated. If we stop
-> the migration, we should look for other busy CPUs to pull some tasks
-> from. One concern is that setting LBF_ALL_PINNED and only clearing
-> env->dst_cpu will trigger a full re-scan of the entire sched_domain,
-> which might be costly-especially on large LLCs. We can try this to
-> see if it has any impact on the benchmark.
 
-I think it does cause update_sd_lb_stats() to be called again with
-the previous rq taken out.  So we are spending more CPU cycles
-to find an alternative task to balance to try to preserve LLC preference.
 
-Tim
+Le 03/11/2025 à 20:12, Sverdlin, Alexander a écrit :
+> [Vous ne recevez pas souvent de courriers de alexander.sverdlin@siemens.com. Découvrez pourquoi ceci est important à https://aka.ms/LearnAboutSenderIdentification ]
+> 
+> Hi Christophe,
+> 
+> On Mon, 2025-11-03 at 17:33 +0100, Christophe Leroy wrote:
+>>> Replace the RAW SPI accesses with spi-mem API. The latter will fall back to
+>>> RAW SPI accesses if spi-mem callbacks are not implemented by a controller
+>>> driver.
+>>
+>> With this patch (kernel v6.17.1) our powerpc boards are totally
+>> unstable, we get multiple random Oops due to bad memory accesses.
+>>
+>> With this commit reverted the board is stable again.
+>>
+>> The SPI driver is:
+>>
+>> CONFIG_SPI=y
+>> CONFIG_SPI_MASTER=y
+>> CONFIG_SPI_MEM=y
+>> CONFIG_SPI_FSL_LIB=y
+>> CONFIG_SPI_FSL_CPM=y
+>> CONFIG_SPI_FSL_SPI=y
+>>
+>> How can we further investigate the issue ?
+> 
+> could you share these "random Oops"?
 
->=20
-> thanks,
-> Chenyu
->=20
-> >   			break;
-> > +		}
-> >   #endif
-> >  =20
-> >=20
+Sure. At the first place they look unrelated. Something is likely 
+writing in the weed.
+
+> 
+> Looks like spi-fsl-spi doesn't support spi-mem interface (similar to spi-fsl-lpspi
+> we use the patch with), so spi-mem falls back to the regular SPI. From this standpoint
+> it's not that much different from the situation before patch.
+> 
+> But let's look into the splats.
+
+First one:
+
+[   27.112241] Kernel attempted to read user page (7f) - exploit 
+attempt? (uid: 0)
+[   27.119739] BUG: Kernel NULL pointer dereference on read at 0x0000007f
+[   27.126181] Faulting instruction address: 0xc01af5fc
+[   27.131093] Oops: Kernel access of bad area, sig: 11 [#2]
+[   27.136422] BE PAGE_SIZE=16K  CMPC885
+[   27.143594] CPU: 0 UID: 0 PID: 64 Comm: rcS Tainted: G      D W 
+     6.17.1-knld-3.16.4rc3-git8ac3a4-g568c147ca0f7 #17 PREEMPT
+[   27.155385] Tainted: [D]=DIE, [W]=WARN
+[   27.159056] Hardware name: MCR3000_2G 8xx 0x500000 CMPC885
+[   27.164479] NIP:  c01af5fc LR: c08c3698 CTR: 00000000
+[   27.169481] REGS: ca173c00 TRAP: 0300   Tainted: G      D W 
+  (6.17.1-knld-3.16.4rc3-git8ac3a4-g568c147ca0f7)
+[   27.180054] MSR:  00009032 <EE,ME,IR,DR,RI>  CR: 95003599  XER: a000bf00
+[   27.187024] DAR: 0000007f DSISR: c0000000
+[   27.187024] GPR00: c08c3d1c ca173cc0 c32b4c80 c2004400 00000cc0 
+00000cc0 00000100 000039db
+[   27.187024] GPR08: 000039da 00000080 c31ea000 00000004 35003599 
+100d815e c329a1c0 c11b0000
+[   27.187024] GPR16: c312ac30 c11659ec c11d7f98 c11b01b4 c3284260 
+c107b85c c312abc0 c1165450
+[   27.187024] GPR24: c11d7f08 c11f0000 00000cc0 ffffffff c08c3698 
+00000cc0 ffffffff c2004400
+[   27.226870] NIP [c01af5fc] kmem_cache_alloc_noprof+0x54/0x21c
+[   27.232551] LR [c08c3698] mas_dup_build+0x154/0x75c
+[   27.237372] Call Trace:
+[   27.239781] [ca173cc0] [00000001] 0x1 (unreliable)
+[   27.244514] [ca173ce0] [00000000] 0x0
+[   27.248129] [ca173d20] [c08c3d1c] __mt_dup+0x7c/0xf8
+[   27.253034] [ca173d90] [c0188b14] dup_mmap+0xc8/0x690
+[   27.258026] [ca173df0] [c001f8a4] copy_process+0xcd4/0x148c
+[   27.263534] [ca173e70] [c0020188] kernel_clone+0xa4/0x3e8
+[   27.268869] [ca173eb0] [c0020820] sys_clone+0x78/0x9c
+[   27.273861] [ca173f20] [c000ddcc] system_call_exception+0x8c/0x160
+[   27.279971] [ca173f30] [c00110a8] ret_from_syscall+0x0/0x28
+[   27.285479] ---- interrupt: c00 at 0xfca2a6c
+[   27.289696] NIP:  0fca2a6c LR: 0fca7c40 CTR: 0fc6f51c
+[   27.294701] REGS: ca173f40 TRAP: 0c00   Tainted: G      D W 
+  (6.17.1-knld-3.16.4rc3-git8ac3a4-g568c147ca0f7)
+[   27.305272] MSR:  0000d032 <EE,PR,ME,IR,DR,RI>  CR: 25005590  XER: 
+a000bf00
+[   27.312587]
+[   27.312587] GPR00: 00000078 7fc30fb0 7795b520 01200011 00000000 
+00000000 00000000 77954088
+[   27.312587] GPR08: 0000d032 100d4010 100cdd2d 0fc6f51c 59005998 
+100d815e c0004a68 00000000
+[   27.312587] GPR16: 00000000 7fc467dc 1001041c 10010000 100103ec 
+10005984 00000000 00000000
+[   27.312587] GPR24: ffffffff 00000000 100d58a4 100d58a4 100d5340 
+00000000 0fde378c 00000000
+[   27.349679] NIP [0fca2a6c] 0xfca2a6c
+[   27.353207] LR [0fca7c40] 0xfca7c40
+[   27.356649] ---- interrupt: c00
+[   27.359753] Code: 7c9d2378 418201ec 813f0000 81090004 83c90000 
+81290008 2c1e0000 4182004c 2c090000 38e80001 41820040 813f001c 
+<7d3e482e> 7ca000a6 7c5113a6 815f0000
+[   27.375418] ---[ end trace 0000000000000000 ]---
+
+Second one:
+
+[   25.086900] Disabling lock debugging due to kernel taint
+[   25.086966] Machine check in kernel mode.
+[   25.086999] Caused by (from SRR1=d032): Data access error at address 
+7f9aeb94
+[   25.087136] Oops: Machine check, sig: 7 [#1]
+[   25.107454] BE PAGE_SIZE=16K  CMPC885
+[   25.114628] CPU: 0 UID: 0 PID: 260 Comm: syslogd Tainted: G   M    W 
+          6.17.1-knld-3.16.4rc3-git8ac3a4-g568c147ca0f7 #17 PREEMPT
+[   25.126850] Tainted: [M]=MACHINE_CHECK, [W]=WARN
+[   25.131380] Hardware name: MCR3000_2G 8xx 0x500000 CMPC885
+[   25.136804] NIP:  0fcdbb30 LR: 0fde378c CTR: 00000000
+[   25.141805] REGS: ca22bf40 TRAP: 0200   Tainted: G   M    W 
+  (6.17.1-knld-3.16.4rc3-git8ac3a4-g568c147ca0f7)
+[   25.152378] MSR:  0000d032 <EE,PR,ME,IR,DR,RI>  CR: 99003398  XER: 
+a000bf00
+[   25.159693] DAR: 7f9aeb94 DSISR: 00000001
+[   25.159693] GPR00: 00000000 7f9aeb70 77d07520 0000004e 0fde378c 
+29003398 77d004cc 0fcdbb14
+[   25.159693] GPR08: 0000d032 fffff000 00000000 00000000 59003398 
+100d815e 7fa52560 100d0000
+[   25.159693] GPR16: 100d0000 00000000 ffffffff 00000059 100d0000 
+11a681f7 11a683f8 11a681f8
+[   25.159693] GPR24: 100d0000 100b4559 100d0178 00000058 11a681f8 
+00000058 0fde378c 0000004e
+[   25.199453] NIP [0fcdbb30] 0xfcdbb30
+[   25.202982] LR [0fde378c] 0xfde378c
+[   25.206427] Call Trace:
+[   25.208845] ---[ end trace 0000000000000000 ]---
+
+Third one:
+
+[   25.295400] BUG: Bad page map in process syslogd  pte:ffffffff 
+pmd:031c0041
+[   25.302212] addr:7f98c000 vm_flags:00100173 anon_vma:c3278c30 
+mapping:00000000 index:1fff7
+[   25.310682] file:(null) fault:0x0 mmap:0x0 mmap_prepare: 0x0 
+read_folio:0x0
+[   25.317750] CPU: 0 UID: 0 PID: 260 Comm: syslogd Tainted: G   M  D W 
+          6.17.1-knld-3.16.4rc3-git8ac3a4-g568c147ca0f7 #17 PREEMPT
+[   25.329963] Tainted: [M]=MACHINE_CHECK, [D]=DIE, [W]=WARN
+[   25.335258] Hardware name: MCR3000_2G 8xx 0x500000 CMPC885
+[   25.340684] Call Trace:
+[   25.343090] [ca22bc50] [c08b4d48] dump_stack+0x78/0x94 (unreliable)
+[   25.349373] [ca22bc60] [c017b2c0] print_bad_pte.isra.0+0x134/0x240
+[   25.355483] [ca22bcb0] [c017d374] vm_normal_page+0xc0/0xd0
+[   25.360905] [ca22bcc0] [c017df94] zap_pte_range+0x1ec/0xaf4
+[   25.366413] [ca22bd70] [c017f194] unmap_page_range+0xfc/0x144
+[   25.372093] [ca22bda0] [c017f2d0] unmap_vmas+0x70/0x134
+[   25.377256] [ca22bde0] [c0188244] exit_mmap+0xbc/0x3d0
+[   25.382334] [ca22be80] [c001db84] mmput+0x4c/0x12c
+[   25.387067] [ca22be90] [c0024b54] do_exit+0x20c/0x954
+[   25.392059] [ca22bed0] [c0025324] make_task_dead+0x88/0x164
+[   25.397567] [ca22bee0] [c000a6bc] die+0x204/0x20c
+[   25.402214] [ca22bf10] [c000b4b0] machine_check_exception+0x110/0x264
+[   25.408583] [ca22bf30] [c00031f4] MachineCheck_virt+0x100/0x104
+[   25.414434] ---- interrupt: 200 at 0xfcdbb30
+[   25.418651] NIP:  0fcdbb30 LR: 0fde378c CTR: 00000000
+[   25.423657] REGS: ca22bf40 TRAP: 0200   Tainted: G   M  D W 
+  (6.17.1-knld-3.16.4rc3-git8ac3a4-g568c147ca0f7)
+[   25.434228] MSR:  0000d032 <EE,PR,ME,IR,DR,RI>  CR: 99003398  XER: 
+a000bf00
+[   25.441543] DAR: 7f9aeb94 DSISR: 00000001
+[   25.441543] GPR00: 00000000 7f9aeb70 77d07520 0000004e 0fde378c 
+29003398 77d004cc 0fcdbb14
+[   25.441543] GPR08: 0000d032 fffff000 00000000 00000000 59003398 
+100d815e 7fa52560 100d0000
+[   25.441543] GPR16: 100d0000 00000000 ffffffff 00000059 100d0000 
+11a681f7 11a683f8 11a681f8
+[   25.441543] GPR24: 100d0000 100b4559 100d0178 00000058 11a681f8 
+00000058 0fde378c 0000004e
+[   25.481302] NIP [0fcdbb30] 0xfcdbb30
+[   25.484831] LR [0fde378c] 0xfde378c
+[   25.488273] ---- interrupt: 200
+[   25.694562] BUG: Bad page map in process syslogd  pte:ffffffff 
+pmd:031c0041
+[   25.701361] addr:7f990000 vm_flags:00100173 anon_vma:c3278c30 
+mapping:00000000 index:1fff8
+
+Fourth one:
+
+[   29.366796] Kernel attempted to read user page (24) - exploit 
+attempt? (uid: 0)
+[   29.373925] BUG: Kernel NULL pointer dereference on read at 0x00000024
+[   29.380367] Faulting instruction address: 0xc08cbd0c
+[   29.385279] Oops: Kernel access of bad area, sig: 11 [#1]
+[   29.390607] BE PAGE_SIZE=16K  CMPC885
+[   29.397780] CPU: 0 UID: 0 PID: 415 Comm: rm Tainted: G        W 
+     6.17.1-knld-3.16.4rc3-git8ac3a4-g568c147ca0f7 #17 PREEMPT
+[   29.409562] Tainted: [W]=WARN
+[   29.412467] Hardware name: MCR3000_2G 8xx 0x500000 CMPC885
+[   29.417890] NIP:  c08cbd0c LR: c08cbcf8 CTR: c08cbc44
+[   29.422892] REGS: ca2f3c80 TRAP: 0300   Tainted: G        W 
+  (6.17.1-knld-3.16.4rc3-git8ac3a4-g568c147ca0f7)
+[   29.433465] MSR:  00009032 <EE,ME,IR,DR,RI>  CR: 99005999  XER: a000bf00
+[   29.440435] DAR: 00000024 DSISR: c0000000
+[   29.440435] GPR00: c08ce480 ca2f3d40 c31c8640 00000000 c31f0800 
+ffffffff c31f0880 ffffffff
+[   29.440435] GPR08: 00000000 00000000 00000000 ffffffff 0000001f 
+100d815e 7fab0cc0 100d0000
+[   29.440435] GPR16: 100d0000 00000000 100d442c 100d4430 c334a740 
+00100000 c31f0880 00000000
+[   29.440435] GPR24: 00000000 00000001 00000004 ff074600 00000009 
+00000024 ca2f3df8 0e0a2324
+[   29.480281] NIP [c08cbd0c] mas_wr_store_entry+0x508/0xa90
+[   29.485618] LR [c08cbcf8] mas_wr_store_entry+0x4f4/0xa90
+[   29.490869] Call Trace:
+[   29.493278] [ca2f3d40] [000000ca] 0xca (unreliable)
+[   29.498097] [ca2f3d80] [c08ce480] mas_erase+0x63c/0x6c4
+[   29.503261] [ca2f3df0] [c08ce568] mtree_erase+0x60/0x100
+[   29.508510] [ca2f3e40] [c02093f4] simple_offset_remove+0x24/0x40
+[   29.514449] [ca2f3e50] [c0158a10] shmem_unlink+0x4c/0x108
+[   29.519784] [ca2f3ea0] [c01daa98] vfs_unlink+0xc4/0x344
+[   29.524948] [ca2f3ec0] [c01df0d8] do_unlinkat+0x288/0x334
+[   29.530284] [ca2f3f20] [c000ddcc] system_call_exception+0x8c/0x160
+[   29.536394] [ca2f3f30] [c00110a8] ret_from_syscall+0x0/0x28
+[   29.541902] ---- interrupt: c00 at 0xfcdc8c4
+[   29.546118] NIP:  0fcdc8c4 LR: 10098e84 CTR: 0fcda734
+[   29.551124] REGS: ca2f3f40 TRAP: 0c00   Tainted: G        W 
+  (6.17.1-knld-3.16.4rc3-git8ac3a4-g568c147ca0f7)
+[   29.561695] MSR:  0000d032 <EE,PR,ME,IR,DR,RI>  CR: 29005590  XER: 
+a000bf00
+[   29.569010]
+[   29.569010] GPR00: 0000000a 7fab0b80 77d3f520 100d4414 10098eb8 
+29005590 ca2f3ebc 0fccf170
+[   29.569010] GPR08: 0000d032 00000074 005b5d4e 0fcda734 00000003 
+100d815e 7fab0cc0 100d0000
+[   29.569010] GPR16: 100d0000 00000000 100d442c 100d4430 ffffffff 
+00000001 00000000 00000000
+[   29.569010] GPR24: 00000000 00000000 00000002 ffffff4d 100b7abc 
+100d4434 0fde378c 100d4414
+[   29.606102] NIP [0fcdc8c4] 0xfcdc8c4
+[   29.609630] LR [10098e84] 0x10098e84
+[   29.613158] ---- interrupt: c00
+[   29.616261] Code: 57e9063a 418203c0 7d29e430 7d3c4b78 553d103a 
+7fc3f378 4bff40c5 2c030003 39200000 4082000c 57ff002e 393f00a8 
+<7d29e82e> 7c09d800 418202a4 7f65db78
+[   29.631927] ---[ end trace 0000000000000000 ]---
+[   29.636486]
+[   29.637947] note: rm[415] exited with irqs disabled
+
+Christophe
+
 
