@@ -1,78 +1,75 @@
-Return-Path: <linux-kernel+bounces-883076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31B06C2C6EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:37:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63944C2C6EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:37:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3C8694E8415
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:36:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1731A189276D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:37:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA2D280338;
-	Mon,  3 Nov 2025 14:36:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A8E280CE5;
+	Mon,  3 Nov 2025 14:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hu75PmCK"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TN6Zsljo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB6A27FB3E;
-	Mon,  3 Nov 2025 14:36:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76CBD20125F;
+	Mon,  3 Nov 2025 14:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762180573; cv=none; b=eUuEtInJOGaRsNWO9hI7AKo2ZX6RFajQlLnK/NQtmJQ4SLidtBp0FJpxgC0E1eVehG59gGTyeHk+YhbgiLJVRspmtZm9N8qDwoScZY/w/Ivv1JfOwZZYtYbTcNkMoNm+AmQktvtKdYIX4fWgSsro9pc3Uz/MbdlwaXlRGJ8oAkM=
+	t=1762180624; cv=none; b=SCn/ywiNfJ3G2ZwSO+VAZm5vbI3ZPKxbMyNcwl82XFa/plm5aILPMCjeFTwjdeRUZBf4Or+unX16C2SnD0dLZfVeYUzSUZsobhQgn4WzNvhUmWTbHsoMonkuGdRdnc4kclYy+21rLWYz26MHf/aymPnHekqP7qFbajLD7/eYECI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762180573; c=relaxed/simple;
-	bh=PJL40H1rrSr1RByqR89AZ2E1q5oDA4QRqub55GfiluA=;
+	s=arc-20240116; t=1762180624; c=relaxed/simple;
+	bh=ONESlJrt0B1hJRr7zz4S/UVLdm+/k3OpYpvNjlrv2Qc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LTY8VyeacoTHzBLEx2dK8JMAWnGpOKH2Js5d2mrz1A6k6oQJ/T3LqPmcY72u439qAtlkhd0YHek+U1PefB2ypVgBkQ6DlIc+rRhQzu9fnRCa3eoKn4FAtss6TJHDZckVnnDwWjbHUrr0ZM2RqDy1jrZhYTfzeE1KnUN6+0gyAys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hu75PmCK; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=bDJLzxzXeix51zzhX2vSU/9HiMumVsIUdwFwVA82G6A=; b=hu75PmCKzdeDR7snJfmgqiYskr
-	4Y+walnvU1NsJgfJ12yFjqNQQ6z64Kt7zgMxH2HfwjtCBNQwrXHwQWgvMap+GK4otMLw4mg5AfVet
-	qwHSUePwD1bMztaS6NBdgCU88ut4785Q4wVifQnfCXPkYVmGyySH/cIadqVIgWN0ePB4ws89Xg6Di
-	BpDuY77NKwLBZJWM5L5uda8UtdQ5gy3vlhqkTvyAj3OntGYhMcRLfnvoxFr553Uw8MEWfSumy8GL5
-	/7HDjsGlInDkOQeKkZ3JzXQddczmYxPncAru6jv/Jy8t2KDjxb5jc1EPJzu1Zge+u6IsLqIAmuKlp
-	V58oCqwQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vFvf3-00000008v4J-1HNK;
-	Mon, 03 Nov 2025 14:35:57 +0000
-Date: Mon, 3 Nov 2025 14:35:57 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Kiryl Shutsemau <kirill@shutemov.name>
-Cc: Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Dave Chinner <david@fromorbit.com>, linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv3 1/2] mm/memory: Do not populate page table entries
- beyond i_size
-Message-ID: <aQi9zaPxwLBTneF4@casper.infradead.org>
-References: <20251027115636.82382-1-kirill@shutemov.name>
- <20251027115636.82382-2-kirill@shutemov.name>
- <20251027153323.5eb2d97a791112f730e74a21@linux-foundation.org>
- <hw5hjbmt65aefgfz5cqsodpduvlkc6fmlbmwemvoknuehhgml2@orbho2mz52sv>
- <9e2750bf-7945-cc71-b9b3-632f03d89a55@google.com>
- <aQWT_6cXWAcjZYON@casper.infradead.org>
- <xadc6rbs7fkk2mb5b4reobqwue2kveo736r3wpa5zwted4daua@rgasjiwwot3g>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CbrDJXlyPVTIsb4ghS0+rv0CwA8eIp7D7p3IW02HDYNbbsUzSO1TjsMYN9UOK/ikpchnhbMCWAICSrsb4z+4HqGvSJ+3YoRiKmthftG5eOVOJwi2Fed69ghe1Q+8KrNdRyvECe9EtDGP0bhQDrINR1PnxMlmu0oiZVOrRznRiYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TN6Zsljo; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762180623; x=1793716623;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ONESlJrt0B1hJRr7zz4S/UVLdm+/k3OpYpvNjlrv2Qc=;
+  b=TN6ZsljoOkfeXfrZrsy2I3/fR8I495qWdq/pwcAjoaMIJ6JCw8VkRDnx
+   //YWTaC4D9xd/de/Q0CrQ1h5jaCseVZpKoU+E+fYuN8AgwnRxl5NQ3JoT
+   zPMu93Uo/XA3tsMfENp468q7s95/3ipDBJCszIRHa9tzQHxggO2AZG4PA
+   moEmzVZCeOKf+1wh7aASTWrWxzzHtyVU4yugjzz68/cJEvtP6UDDm/nMf
+   4Tgm/d/yLIK3oZDfMwmCt/05sI5L7RHp2sm4olWwAmPv3oXKG2VLd1ZYp
+   GJf1MUQoOCuQI00pxmlM/mRsXvUXlPeZ9PgF0Y4/eEVfpP4/31XeDjip3
+   A==;
+X-CSE-ConnectionGUID: zc0Jjt9qSpCdNEOB0asc5g==
+X-CSE-MsgGUID: jyX5/BWpS267DIR/982ZxA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="64288690"
+X-IronPort-AV: E=Sophos;i="6.19,276,1754982000"; 
+   d="scan'208";a="64288690"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 06:37:01 -0800
+X-CSE-ConnectionGUID: h2uKtdXFRZ6Ir7hHE6kedQ==
+X-CSE-MsgGUID: 4wEuwb8XSS6eMkJFSpaLuA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,276,1754982000"; 
+   d="scan'208";a="192040839"
+Received: from smoehrl-linux.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.216])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 06:37:00 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vFvfz-00000005Axr-2vI2;
+	Mon, 03 Nov 2025 16:36:55 +0200
+Date: Mon, 3 Nov 2025 16:36:54 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v2] gpiolib: fix invalid pointer access in debugfs
+Message-ID: <aQi-Bs3Aw6T6ejt_@smile.fi.intel.com>
+References: <20251103141132.53471-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,31 +78,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <xadc6rbs7fkk2mb5b4reobqwue2kveo736r3wpa5zwted4daua@rgasjiwwot3g>
+In-Reply-To: <20251103141132.53471-1-brgl@bgdev.pl>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Mon, Nov 03, 2025 at 10:59:00AM +0000, Kiryl Shutsemau wrote:
-> On Sat, Nov 01, 2025 at 05:00:47AM +0000, Matthew Wilcox wrote:
-> > On Wed, Oct 29, 2025 at 02:45:52AM -0700, Hugh Dickins wrote:
-> > > But you're giving yourself too hard a time of backporting with your
-> > > 5.10 Fixee 01c70267053d for 1/2: the only filesystem which set the
-> > > flag then was tmpfs, which you're now excepting.  The flag got
-> > > renamed later (in 5.16) and then in 5.17 at last there was another
-> > > filesystem to set it.  So, this 1/2 would be
-> > > 
-> > > Fixes: 6795801366da ("xfs: Support large folios")
-> > 
-> > I haven't been able to keep up with this patchset -- sorry.
-> > 
-> > But this problem didn't exist until bs>PS support was added because we
-> > would never add a folio to the page cache which extended beyond i_size
-> > before.  We'd shrink the folio order allocated in do_page_cache_ra()
-> > (actually, we still do, but page_cache_ra_unbounded() rounds it up
-> > again).  So it doesn't fix that commit at all, but something far more
-> > recent.
-> 
-> What about truncate path? We could allocate within i_size at first, then
-> truncate, if truncation failed to split the folio the mapping stays
-> beyond i_size.
+On Mon, Nov 03, 2025 at 03:11:32PM +0100, Bartosz Golaszewski wrote:
 
-Is it worth backporting all this way to solve this niche case?
+> If the memory allocation in gpiolib_seq_start() fails, the s->private
+> field remains uninitialized and is later dereferenced without checking
+> in gpiolib_seq_stop(). Initialize s->private to NULL before calling
+> kzalloc() and check it before dereferencing it.
+
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
