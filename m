@@ -1,176 +1,263 @@
-Return-Path: <linux-kernel+bounces-883325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDD3DC2D106
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:20:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C76AC2D114
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:20:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 102F44E40D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:20:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B598188B5DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:20:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED88B3176EF;
-	Mon,  3 Nov 2025 16:20:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4755C315D41;
+	Mon,  3 Nov 2025 16:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YP7ygsWI"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dxZK56Ol"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A64F43161A6
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A87316192
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:19:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762186804; cv=none; b=DcamDHcQqn08aH/hwtZlkFHhB9HupTDUW7eBrjHW4QChHj5v+oSM5Tf7m/KOhuHDHQAHeaKc7s6vlOTdOFXuYNkCnK40VSd0s9faP80LNvp9b/H3S2pBxVTxFAuFjMDkpxx4CXONR6a6TPeu93wDn3CECfQBkguoMBl7wJQBTOo=
+	t=1762186796; cv=none; b=CwqtgajX3ac6VNpjBQSLbQOTs9pgz/YX/8prTqxdsiKj1ijLh1wUSPr/WWm4SCWxMIpIEGTfLHpKhTv3jLYn2mLDFZkbveruZx+ZJNDd1bn2qbXYnSz+Dh2n/Cu7ws7pEK8xdp+2qlwaIPTIbxpRSrwlZovwHmXJtYiZcjBfq4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762186804; c=relaxed/simple;
-	bh=mNCO7bKF1YLZWJUvv6QucWgagnW9KRRy5Z/VQ4WsXkA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uV7/G373JAsfW60KXPD7gRQBBuAjisZQbANiFlZ5WRPoEuWH9Rh4QLrDS+5CHKH+PUU3DLsPydF6JuxwW/WhpKmMu5chGSb0pSa/aRzlzW5PetSaNt2EOa7UIS241Pcyq3zmVVQGw0ChT97mprtwbaZFDp6EFhl07X/d6DEAmS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YP7ygsWI; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4eb9fa69fb8so62845451cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 08:20:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762186802; x=1762791602; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=stkcD7bp9eEScodaC0wp9S9uIOMbzo7VYqM5npEhDuo=;
-        b=YP7ygsWI4uYnEBFXIWSJReTo1vPTr2AmE3ku8YVokpGmde+rzBe42cA8nU5qjclEwR
-         qH4Y1IKSb/KKmuw5YJGeO+rVdUpm8FZR3GWBRXcKwTWSxL00JIFFH6lY3c4aTvxw8fZk
-         TKa/MDue6XsPkJc5jLicI3U1QjvVjsfYfYagi2W7hzj8wvbojBbBNkK6C/6s0g8C93x+
-         nixx86mERz42qzzxDxV0sbHPEV4KFuS4rOAlT4bF+fgKkBm987UcpSWLolgBTHB0eVYj
-         K9R3Fz1C5P/7lXcF6JHXPjHi3VjlqNx3ZAPgIq5VFTWkQ48wXqqpxCNYQf0GoyxmjceF
-         1jQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762186802; x=1762791602;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=stkcD7bp9eEScodaC0wp9S9uIOMbzo7VYqM5npEhDuo=;
-        b=KkuXPz/p7MTWp1rzWuyL6xgIE4zxDqYMMfQwH2mJNCjVZJlUCujSAbPyiYcA9DQ6Lc
-         l4g015QNJUrMMSTtwLdBKj0ffat3LfG0GpP3Acdo5jEbQCqPgwhYlajqRKx6uBHWA6Lo
-         sDhBX7Oei5g01u4RAhcZDpwFAOMM9DoSDS+agtnR0w4fk+RCJtru3FVX6V0Q37LaIcch
-         EVkT7zGyoxYu1PDmEueF3w6jDtA69BADsFC1eqdc0lohgXoTEYzvgOY+RWEpiIpODcYI
-         cGX693p634xIIDkZXq+FUhFFQIiYX24/FJXwHyF26BulXZBxEx2ZccN7/CX5J8nD+m28
-         gH0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWnSMkNOaubkS05oQlSbhZNIo+bsjtXJ9bfAUBYBGK7h1brhkm8H7lD/IDuZwJh0btz+09SVTFD2aPYofA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNC288L0SBOuGbbkWmvcM8PrXqZYFP9pZ8U0/FJnosQsbBF8wq
-	p90fVQD5ELXTV9iCW4kBVZmaO82yfMnNJ/NjSqznwz6llpCW0g+1cWN2
-X-Gm-Gg: ASbGncvGWFZYGTFalYeqlTqtK8XIdyRG9SYtWcOQt7VpgBSm+a3j12Sk7k7/XHTBfSJ
-	05pORRYEJODBPavlazHt75vYkgrgf+mRl+i6+oq6KR2DM4s7jtKQM6OusgXkW57PDu40Zdk01Vb
-	+Oa3u/tjSZ+pWuZr3dulVqW9m+PMu/8CRoE7EyB3h4oaJRld6eH0SdXqWI78okp7kG0hwPRpBsi
-	8gb6fHkteXQjkrEYLUx3hkH5Dt6oaey+OGEe6NfD8UE08zgXagnE6i7Wjd2yHGwHMeYoU7VBkQX
-	0h80JkkeQCpvXIwp2cculsHr1h/UtqDRktiDu4SijESZHQHWdalZe2VY25JWxX3JFKc32+bhCFw
-	S1uOG2kgnxZW3BQePNU+Gf7ITbxMrkGPGFbObaOSSTG7Sh1Dt7Z2HmQ8h0xTcVn0HTLstVa/OVP
-	kp1qD2hHrg5NYr1WQ=
-X-Google-Smtp-Source: AGHT+IGe1q09n9Y3T70y+bZseDCq548mz/zlbtRlwZW06qsqGJ+EAcKCvfGCZuP/HMHl9AMMVlN6zw==
-X-Received: by 2002:a05:622a:989:b0:4eb:a33d:1f45 with SMTP id d75a77b69052e-4ed30dcd062mr185924351cf.33.1762186801557;
-        Mon, 03 Nov 2025 08:20:01 -0800 (PST)
-Received: from ideapad.tufts.edu ([130.64.64.35])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-88060eb3332sm4273556d6.60.2025.11.03.08.20.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 08:20:01 -0800 (PST)
-From: Ivan Pravdin <ipravdin.official@gmail.com>
-To: rostedt@goodmis.org,
-	tglozar@redhat.com,
-	linux-trace-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Ivan Pravdin <ipravdin.official@gmail.com>
-Subject: [PATCH v5 2/2] rtla: fix -a overriding -t argument
-Date: Mon,  3 Nov 2025 11:19:08 -0500
-Message-ID: <b6ae60424050b2c1c8709e18759adead6012b971.1762186418.git.ipravdin.official@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <cover.1762186418.git.ipravdin.official@gmail.com>
-References: <cover.1762186418.git.ipravdin.official@gmail.com>
+	s=arc-20240116; t=1762186796; c=relaxed/simple;
+	bh=Sk3YUo7dUQtfztKAt03QLqMqer/FMN4d3z80Z8X0gQY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RNoAfkU/NhxEFtcPBrBH7h3Rtqj/OZuM4bXWPfG6TUUXWxIMLeSuUc3VbGiqenZu3iB6CHC1u3+NMisL6EOXVGnR5m3Mk37sWZk0zvY3aYUMDNiDgfg3wP7D2nwkTXUI1hXgLxsaqdNzhOBHFmDQdK1qeJGJbWqkvq/6T6VciVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dxZK56Ol; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC232C2BCB0
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:19:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762186795;
+	bh=Sk3YUo7dUQtfztKAt03QLqMqer/FMN4d3z80Z8X0gQY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=dxZK56OlymerAXSLwcLJt5wUMBCeKIIy9k9GZrQIWtIybqxFAG8HG5eoRNsFV1W8G
+	 LQmGxQHV6ltIL3yHCFC1ZNy53wFCeSEoTPc0yw1eE3ENLLRJO45ic9q/r2nG/+wgFY
+	 ELkmJT1boKpiZjKxsCrgystfh2kWIvg+LAJHXn0A8525tXiVO6Fjy9b3m065jzMo05
+	 9OE+JYZs4ewGR8lOjokWdhW2QfC917+q9iNK447Mpr1ycV0G8ahkUHGdA6dKxtugSb
+	 xe2TIiC5CQhtwMvBVc7TBnLdt5sFpD6jBD2kw01inXCrgklxuYNintL75CBU+fNe/+
+	 WTETAAUJ7TKtw==
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-7c69476dd8cso2452677a34.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 08:19:55 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXcdYllDu5Xhqffl0fUSgUbwl8+mtSkH3JeaDdMcP3bdqY5J2e4t7poMB+t8rwhC6WURYi2nBAJW+mQf3Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyY0UM3Nm5nW1/nCZZHIuyZHnA1Cu8cfxXrejouiAS5WYxfxqJu
+	Ax91Ts8WIBGyLD+cIr/f/VNbad8SKb4Q6BjP2Z+qXha8E34KDrBemW2hY/VrUhHKV7HtrGm2YoU
+	oWFxEzLlWbzqkpe+VbVf4ZpZI72LO5Ug=
+X-Google-Smtp-Source: AGHT+IG3361toIoasB3uOKUzNV6dinGA22EHyvpJDIQt6UYgSrpZaDoMHd819oZo8awumREm/GvNri9dakziMUuH1og=
+X-Received: by 2002:a05:6808:d4d:b0:438:39a2:b61c with SMTP id
+ 5614622812f47-44f95dfb174mr5549335b6e.2.1762186795085; Mon, 03 Nov 2025
+ 08:19:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20251030071321.2763224-1-hejunhao3@h-partners.com>
+In-Reply-To: <20251030071321.2763224-1-hejunhao3@h-partners.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 3 Nov 2025 17:19:43 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0h=QtcT7zhZEgrTjUk7EAk2OfbGG6BoEEv-3toKODMXQA@mail.gmail.com>
+X-Gm-Features: AWmQ_bk1ceWWT4cSZSU5mE1myDtpg3UPaMnBHWg-zIlq7JFILI41pAtQ3N0MKOQ
+Message-ID: <CAJZ5v0h=QtcT7zhZEgrTjUk7EAk2OfbGG6BoEEv-3toKODMXQA@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: APEI: Handle repeated SEA error interrupts storm scenarios
+To: Junhao He <hejunhao3@h-partners.com>
+Cc: rafael@kernel.org, tony.luck@intel.com, bp@alien8.de, guohanjun@huawei.com, 
+	mchehab@kernel.org, xueshuai@linux.alibaba.com, jarkko@kernel.org, 
+	yazen.ghannam@amd.com, jane.chu@oracle.com, lenb@kernel.org, 
+	Jonathan.Cameron@huawei.com, linux-acpi@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-edac@vger.kernel.org, shiju.jose@huawei.com, tanxiaofei@huawei.com, 
+	linuxarm@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When running rtla as
+On Thu, Oct 30, 2025 at 8:13=E2=80=AFAM Junhao He <hejunhao3@h-partners.com=
+> wrote:
+>
+> The do_sea() function defaults to using firmware-first mode, if supported=
+.
+> It invoke acpi/apei/ghes ghes_notify_sea() to report and handling the SEA
+> error, The GHES uses a buffer to cache the most recent 4 kinds of SEA
+> errors. If the same kind SEA error continues to occur, GHES will skip to
+> reporting this SEA error and will not add it to the "ghes_estatus_llist"
+> list until the cache times out after 10 seconds, at which point the SEA
+> error will be reprocessed.
+>
+> The GHES invoke ghes_proc_in_irq() to handle the SEA error, which
+> ultimately executes memory_failure() to process the page with hardware
+> memory corruption. If the same SEA error appears multiple times
+> consecutively, it indicates that the previous handling was incomplete or
+> unable to resolve the fault. In such cases, it is more appropriate to
+> return a failure when encountering the same error again, and then proceed
+> to arm64_do_kernel_sea for further processing.
+>
+> When hardware memory corruption occurs, a memory error interrupt is
+> triggered. If the kernel accesses this erroneous data, it will trigger
+> the SEA error exception handler. All such handlers will call
+> memory_failure() to handle the faulty page.
+>
+> If a memory error interrupt occurs first, followed by an SEA error
+> interrupt, the faulty page is first marked as poisoned by the memory erro=
+r
+> interrupt process, and then the SEA error interrupt handling process will
+> send a SIGBUS signal to the process accessing the poisoned page.
+>
+> However, if the SEA interrupt is reported first, the following exceptiona=
+l
+> scenario occurs:
+>
+> When a user process directly requests and accesses a page with hardware
+> memory corruption via mmap (such as with devmem), the page containing thi=
+s
+> address may still be in a free buddy state in the kernel. At this point,
+> the page is marked as "poisoned" during the SEA claim memory_failure().
+> However, since the process does not request the page through the kernel's
+> MMU, the kernel cannot send SIGBUS signal to the processes. And the memor=
+y
+> error interrupt handling process not support send SIGBUS signal. As a
+> result, these processes continues to access the faulty page, causing
+> repeated entries into the SEA exception handler. At this time, it lead to
+> an SEA error interrupt storm.
+>
+> Fixes this by returning a failure when encountering the same error again.
+>
+> The following error logs is explained using the devmem process:
+>   NOTICE:  SEA Handle
+>   NOTICE:  SpsrEl3 =3D 0x60001000, ELR_EL3 =3D 0xffffc6ab42671400
+>   NOTICE:  skt[0x0]die[0x0]cluster[0x0]core[0x1]
+>   NOTICE:  EsrEl3 =3D 0x92000410
+>   NOTICE:  PA is valid: 0x1000093c00
+>   NOTICE:  Hest Set GenericError Data
+>   [ 1419.542401][    C1] {57}[Hardware Error]: Hardware error from APEI G=
+eneric Hardware Error Source: 9
+>   [ 1419.551435][    C1] {57}[Hardware Error]: event severity: recoverabl=
+e
+>   [ 1419.557865][    C1] {57}[Hardware Error]:  Error 0, type: recoverabl=
+e
+>   [ 1419.564295][    C1] {57}[Hardware Error]:   section_type: ARM proces=
+sor error
+>   [ 1419.571421][    C1] {57}[Hardware Error]:   MIDR: 0x0000000000000000
+>   [ 1419.571434][    C1] {57}[Hardware Error]:   Multiprocessor Affinity =
+Register (MPIDR): 0x0000000081000100
+>   [ 1419.586813][    C1] {57}[Hardware Error]:   error affinity level: 0
+>   [ 1419.586821][    C1] {57}[Hardware Error]:   running state: 0x1
+>   [ 1419.602714][    C1] {57}[Hardware Error]:   Power State Coordination=
+ Interface state: 0
+>   [ 1419.602724][    C1] {57}[Hardware Error]:   Error info structure 0:
+>   [ 1419.614797][    C1] {57}[Hardware Error]:   num errors: 1
+>   [ 1419.614804][    C1] {57}[Hardware Error]:    error_type: 0, cache er=
+ror
+>   [ 1419.629226][    C1] {57}[Hardware Error]:    error_info: 0x000000002=
+0400014
+>   [ 1419.629234][    C1] {57}[Hardware Error]:     cache level: 1
+>   [ 1419.642006][    C1] {57}[Hardware Error]:     the error has not been=
+ corrected
+>   [ 1419.642013][    C1] {57}[Hardware Error]:    physical fault address:=
+ 0x0000001000093c00
+>   [ 1419.654001][    C1] {57}[Hardware Error]:   Vendor specific error in=
+fo has 48 bytes:
+>   [ 1419.654014][    C1] {57}[Hardware Error]:    00000000: 00000000 0000=
+0000 00000000 00000000  ................
+>   [ 1419.670685][    C1] {57}[Hardware Error]:    00000010: 00000000 0000=
+0000 00000000 00000000  ................
+>   [ 1419.670692][    C1] {57}[Hardware Error]:    00000020: 00000000 0000=
+0000 00000000 00000000  ................
+>   [ 1419.783606][T54990] Memory failure: 0x1000093: recovery action for f=
+ree buddy page: Recovered
+>   [ 1419.919580][ T9955] EDAC MC0: 1 UE Multi-bit ECC on unknown memory (=
+node:0 card:1 module:71 bank:7 row:0 col:0 page:0x1000093 offset:0xc00 grai=
+n:1 - APEI location: node:0 card:257 module:71 bank:7 row:0 col:0)
+>   NOTICE:  SEA Handle
+>   NOTICE:  SpsrEl3 =3D 0x60001000, ELR_EL3 =3D 0xffffc6ab42671400
+>   NOTICE:  skt[0x0]die[0x0]cluster[0x0]core[0x1]
+>   NOTICE:  EsrEl3 =3D 0x92000410
+>   NOTICE:  PA is valid: 0x1000093c00
+>   NOTICE:  Hest Set GenericError Data
+>   NOTICE:  SEA Handle
+>   NOTICE:  SpsrEl3 =3D 0x60001000, ELR_EL3 =3D 0xffffc6ab42671400
+>   NOTICE:  skt[0x0]die[0x0]cluster[0x0]core[0x1]
+>   NOTICE:  EsrEl3 =3D 0x92000410
+>   NOTICE:  PA is valid: 0x1000093c00
+>   NOTICE:  Hest Set GenericError Data
+>   ...
+>   ...        ---> Hapend SEA error interrupt storm
+>   ...
+>   NOTICE:  SEA Handle
+>   NOTICE:  SpsrEl3 =3D 0x60001000, ELR_EL3 =3D 0xffffc6ab42671400
+>   NOTICE:  skt[0x0]die[0x0]cluster[0x0]core[0x1]
+>   NOTICE:  EsrEl3 =3D 0x92000410
+>   NOTICE:  PA is valid: 0x1000093c00
+>   NOTICE:  Hest Set GenericError Data
+>   [ 1429.818080][ T9955] Memory failure: 0x1000093: already hardware pois=
+oned
+>   [ 1429.825760][    C1] ghes_print_estatus: 1 callbacks suppressed
+>   [ 1429.825763][    C1] {59}[Hardware Error]: Hardware error from APEI G=
+eneric Hardware Error Source: 9
+>   [ 1429.843731][    C1] {59}[Hardware Error]: event severity: recoverabl=
+e
+>   [ 1429.861800][    C1] {59}[Hardware Error]:  Error 0, type: recoverabl=
+e
+>   [ 1429.874658][    C1] {59}[Hardware Error]:   section_type: ARM proces=
+sor error
+>   [ 1429.887516][    C1] {59}[Hardware Error]:   MIDR: 0x0000000000000000
+>   [ 1429.901159][    C1] {59}[Hardware Error]:   Multiprocessor Affinity =
+Register (MPIDR): 0x0000000081000100
+>   [ 1429.901166][    C1] {59}[Hardware Error]:   error affinity level: 0
+>   [ 1429.914896][    C1] {59}[Hardware Error]:   running state: 0x1
+>   [ 1429.914903][    C1] {59}[Hardware Error]:   Power State Coordination=
+ Interface state: 0
+>   [ 1429.933319][    C1] {59}[Hardware Error]:   Error info structure 0:
+>   [ 1429.946261][    C1] {59}[Hardware Error]:   num errors: 1
+>   [ 1429.946269][    C1] {59}[Hardware Error]:    error_type: 0, cache er=
+ror
+>   [ 1429.970847][    C1] {59}[Hardware Error]:    error_info: 0x000000002=
+0400014
+>   [ 1429.970854][    C1] {59}[Hardware Error]:     cache level: 1
+>   [ 1429.988406][    C1] {59}[Hardware Error]:     the error has not been=
+ corrected
+>   [ 1430.013419][    C1] {59}[Hardware Error]:    physical fault address:=
+ 0x0000001000093c00
+>   [ 1430.013425][    C1] {59}[Hardware Error]:   Vendor specific error in=
+fo has 48 bytes:
+>   [ 1430.025424][    C1] {59}[Hardware Error]:    00000000: 00000000 0000=
+0000 00000000 00000000  ................
+>   [ 1430.053736][    C1] {59}[Hardware Error]:    00000010: 00000000 0000=
+0000 00000000 00000000  ................
+>   [ 1430.066341][    C1] {59}[Hardware Error]:    00000020: 00000000 0000=
+0000 00000000 00000000  ................
+>   [ 1430.294255][T54990] Memory failure: 0x1000093: already hardware pois=
+oned
+>   [ 1430.305518][T54990] 0x1000093: Sending SIGBUS to devmem:54990 due to=
+ hardware memory corruption
+>
+> Signed-off-by: Junhao He <hejunhao3@h-partners.com>
+> ---
+>  drivers/acpi/apei/ghes.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+> index 005de10d80c3..eebda39bfc30 100644
+> --- a/drivers/acpi/apei/ghes.c
+> +++ b/drivers/acpi/apei/ghes.c
+> @@ -1343,8 +1343,10 @@ static int ghes_in_nmi_queue_one_entry(struct ghes=
+ *ghes,
+>         ghes_clear_estatus(ghes, &tmp_header, buf_paddr, fixmap_idx);
+>
+>         /* This error has been reported before, don't process it again. *=
+/
+> -       if (ghes_estatus_cached(estatus))
+> +       if (ghes_estatus_cached(estatus)) {
+> +               rc =3D -ECANCELED;
+>                 goto no_work;
+> +       }
+>
+>         llist_add(&estatus_node->llnode, &ghes_estatus_llist);
+>
+> --
 
-    `rtla <timerlat|osnoise> <top|hist> -t custom_file.txt -a 100`
-
--a options override trace output filename specified by -t option.
-Running the command above will create <timerlat|osnoise>_trace.txt file
-instead of custom_file.txt. Fix this by making sure that -a option does
-not override trace output filename even if it's passed after trace
-output filename is specified.
-
-Fixes: 173a3b014827 ("rtla/timerlat: Add the automatic trace option")
-Signed-off-by: Ivan Pravdin <ipravdin.official@gmail.com>
-Reviewed-by: Tomas Glozar <tglozar@redhat.com>
----
- tools/tracing/rtla/src/osnoise_hist.c  | 3 ++-
- tools/tracing/rtla/src/osnoise_top.c   | 3 ++-
- tools/tracing/rtla/src/timerlat_hist.c | 3 ++-
- tools/tracing/rtla/src/timerlat_top.c  | 3 ++-
- 4 files changed, 8 insertions(+), 4 deletions(-)
-
-diff --git a/tools/tracing/rtla/src/osnoise_hist.c b/tools/tracing/rtla/src/osnoise_hist.c
-index 8b12d8803998..ae8426f40f8f 100644
---- a/tools/tracing/rtla/src/osnoise_hist.c
-+++ b/tools/tracing/rtla/src/osnoise_hist.c
-@@ -557,7 +557,8 @@ static struct common_params
- 			params->threshold = 1;
- 
- 			/* set trace */
--			trace_output = "osnoise_trace.txt";
-+			if (!trace_output)
-+				trace_output = "osnoise_trace.txt";
- 
- 			break;
- 		case 'b':
-diff --git a/tools/tracing/rtla/src/osnoise_top.c b/tools/tracing/rtla/src/osnoise_top.c
-index 0be400666c05..6ae7cdb3bdc0 100644
---- a/tools/tracing/rtla/src/osnoise_top.c
-+++ b/tools/tracing/rtla/src/osnoise_top.c
-@@ -397,7 +397,8 @@ struct common_params *osnoise_top_parse_args(int argc, char **argv)
- 			params->threshold = 1;
- 
- 			/* set trace */
--			trace_output = "osnoise_trace.txt";
-+			if (!trace_output)
-+				trace_output = "osnoise_trace.txt";
- 
- 			break;
- 		case 'c':
-diff --git a/tools/tracing/rtla/src/timerlat_hist.c b/tools/tracing/rtla/src/timerlat_hist.c
-index 16416192e432..311c4f18ce4c 100644
---- a/tools/tracing/rtla/src/timerlat_hist.c
-+++ b/tools/tracing/rtla/src/timerlat_hist.c
-@@ -878,7 +878,8 @@ static struct common_params
- 			params->print_stack = auto_thresh;
- 
- 			/* set trace */
--			trace_output = "timerlat_trace.txt";
-+			if (!trace_output)
-+				trace_output = "timerlat_trace.txt";
- 
- 			break;
- 		case 'c':
-diff --git a/tools/tracing/rtla/src/timerlat_top.c b/tools/tracing/rtla/src/timerlat_top.c
-index fe4f4e69e00f..3a3b11b5beaa 100644
---- a/tools/tracing/rtla/src/timerlat_top.c
-+++ b/tools/tracing/rtla/src/timerlat_top.c
-@@ -628,7 +628,8 @@ static struct common_params
- 			params->print_stack = auto_thresh;
- 
- 			/* set trace */
--			trace_output = "timerlat_trace.txt";
-+			if (!trace_output)
-+				trace_output = "timerlat_trace.txt";
- 
- 			break;
- 		case '5':
--- 
-2.48.1
-
+This needs a response from the APEI reviewers as per MAINTAINERS, thanks!
 
