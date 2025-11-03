@@ -1,275 +1,141 @@
-Return-Path: <linux-kernel+bounces-882771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DEA0C2B764
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:43:25 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F999C2B54E
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:27:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C7BC4F80B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:34:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1D8864F10D7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2113A303A04;
-	Mon,  3 Nov 2025 11:29:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3364230215F;
+	Mon,  3 Nov 2025 11:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cWm599um"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j1vuxJdT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F4A303A06
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 11:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63DDC2FF172;
+	Mon,  3 Nov 2025 11:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762169397; cv=none; b=VQEDNyEU2jPesgTylpMYqqR6i6AAGaPQs5L9IPxmckIUuxGKignNIWxLEVjtF02+pSj08KhwNIO7hMK44+O89o0DXYy8WZt94UOc1T082jGAHe/f/n40RFHLUY7Mc1YMi8ju+f+kilcRYZLN4NFOECVhujsxnsTn1qXPunTar6o=
+	t=1762169130; cv=none; b=iiZ+SwBqzuBKbaxwnP5rLimew+s+5YR7F+xVs/oMHSd2Wu+l5EFmZ317DWBcqh/DyW8mwKaYrcYVco92Ty8yFrrO3bS4IANJnpCbVXC2p3D99Ja6AOI2HhUQMlcbnLxg+8hP5RX18es0/AsPqvXabjASmb8lhKWt6BsuopuoUUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762169397; c=relaxed/simple;
-	bh=02Xm9aWU5ML4s0PYpl8iCFqzRN8TlwzC37mlWleAjrY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GDIeK26oQ5KKwiOMOFTmBvMs4nIYJpSN3/91X1CRAax5ZIULhJ0LNEf6BFz9MJYBvgnpR94aH+WCgPdVx8SXApshgAeSVBoGGa46PZGPVs83RQ63ynZVusgA8pwoXSSM+XbZi+CPKQWRrMVX86IhXJZARavjbVszKjSNHXwYyvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cWm599um; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762169382;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=P2xZ0GILbr2Y9bhSsbkAZ2CEPTxZiSfugV1/vX9rVKA=;
-	b=cWm599um4HMWXTwV1n8vvwWPvQqMP+7/3CHcMzLdrMiM8M0FsJUS2NuJ8f7jmc68b6+eu2
-	/LuxjLHgpDMBxj7NnOOdBfvDcCcMg+3/NljupUr9RL6/3PHkp3iM+u2CcUQgj7xa/zxxL0
-	giOHD3IAQ48Q6+0rEE6mJsAE/9jg6LE=
-From: Menglong Dong <menglong.dong@linux.dev>
-To: Menglong Dong <menglong8.dong@gmail.com>,
- Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>,
- John Fastabend <john.fastabend@gmail.com>,
- Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
- Eduard <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Matt Bobrowski <mattbobrowski@google.com>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Leon Hwang <leon.hwang@linux.dev>, jiang.biao@linux.dev,
- bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
- linux-trace-kernel <linux-trace-kernel@vger.kernel.org>
-Subject:
- Re: [PATCH bpf-next v3 4/7] bpf,x86: add tracing session supporting for
- x86_64
-Date: Mon, 03 Nov 2025 19:24:24 +0800
-Message-ID: <3577705.QJadu78ljV@7950hx>
-In-Reply-To:
- <CAADnVQKDza_ueBFRkZS8rmUVJriynWi_0FqsZE8=VbTzQYuM4w@mail.gmail.com>
-References:
- <20251026030143.23807-1-dongml2@chinatelecom.cn>
- <CADxym3Y4nc2Qaq00Pp7XwmCXJHn0SsEoOejK8ZxhydepcbB8kQ@mail.gmail.com>
- <CAADnVQKDza_ueBFRkZS8rmUVJriynWi_0FqsZE8=VbTzQYuM4w@mail.gmail.com>
+	s=arc-20240116; t=1762169130; c=relaxed/simple;
+	bh=TpVvPlj0tta9z2BEWx6gMPkRyyi2xUERVIYJPCB/YcI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ABp71VVz77xGkR0+BU3eUY9v55rDuza7d1FwyoWBA/xfKMyU73fP4sTd/i5btUlNqLTm4GnmrdIQRgpfnzMdkqu9jKQtn0YnOi6zEN/Z4Z5+FwMZNMFWWGS04/BgZEtioC9gCiS3mK6Dfwv9QQy59R4TcaDy+oL9VBfOsnAvpbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j1vuxJdT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD1D7C4CEE7;
+	Mon,  3 Nov 2025 11:25:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762169130;
+	bh=TpVvPlj0tta9z2BEWx6gMPkRyyi2xUERVIYJPCB/YcI=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=j1vuxJdTYPQkhNvz50UXu9o0PQdnoNod1artu72+6A9CMrzstQ7SO7iYhsp9cYCMp
+	 EtIT2gX29gCDswYzfdkqqbdLrBLtP6EYMxHNB1oPWEFRnyUQaA0kwAhklhLWjkzWiq
+	 onAX0A1xG490ehwwDpIDVWAbTqdEwjUTBrME10qhl0feAAS+9dAYbjKLrohDqP6vq4
+	 tC1dW3i0UUoLd2B/sNpb/6C6TRt2DAIXXfD2lnlHWzRFn63/rTNjD6DpVPD3YGcP8c
+	 Ad+wgQIfTzhFE41zrOtFZFQK8imi/5tR7HInGwof+iMgKWYtBfm7UYF630iJuCGXg5
+	 IIDCRg9/s133w==
+Message-ID: <93c4a167-805b-47f0-8e4b-76b1aeabb87e@kernel.org>
+Date: Mon, 3 Nov 2025 12:25:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] arm64: dts: qcom: msm8953-lenovo-kuntao: Add
+ initial device tree
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Raihan Ahamed <raihan1999ahamed@gmail.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Kees Cook <kees@kernel.org>,
+ Tony Luck <tony.luck@intel.com>, "Guilherme G . Piccoli"
+ <gpiccoli@igalia.com>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+References: <20251031135506.214025-1-raihan1999ahamed@gmail.com>
+ <20251031135506.214025-2-raihan1999ahamed@gmail.com>
+ <e516564b-5e43-4628-836c-ff227a68d20e@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <e516564b-5e43-4628-836c-ff227a68d20e@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2025/11/1 01:57, Alexei Starovoitov wrote:
-> On Thu, Oct 30, 2025 at 8:36=E2=80=AFPM Menglong Dong <menglong8.dong@gma=
-il.com> wrote:
-> >
-> > On Fri, Oct 31, 2025 at 9:42=E2=80=AFAM Alexei Starovoitov
-> > <alexei.starovoitov@gmail.com> wrote:
-> > >
-> > > On Sat, Oct 25, 2025 at 8:02=E2=80=AFPM Menglong Dong <menglong8.dong=
-@gmail.com> wrote:
-> > > >
-> > > > Add BPF_TRACE_SESSION supporting to x86_64. invoke_bpf_session_entr=
-y and
-> > > > invoke_bpf_session_exit is introduced for this purpose.
-> > > >
-> > > > In invoke_bpf_session_entry(), we will check if the return value of=
- the
-> > > > fentry is 0, and set the corresponding session flag if not. And in
-> > > > invoke_bpf_session_exit(), we will check if the corresponding flag =
-is
-> > > > set. If set, the fexit will be skipped.
-> > > >
-> > > > As designed, the session flags and session cookie address is stored=
- after
-> > > > the return value, and the stack look like this:
-> > > >
-> > > >   cookie ptr    -> 8 bytes
-> > > >   session flags -> 8 bytes
-> > > >   return value  -> 8 bytes
-> > > >   argN          -> 8 bytes
-> > > >   ...
-> > > >   arg1          -> 8 bytes
-> > > >   nr_args       -> 8 bytes
-> > > >   ...
-> > > >   cookieN       -> 8 bytes
-> > > >   cookie1       -> 8 bytes
-> > > >
-> > > > In the entry of the session, we will clear the return value, so the=
- fentry
-> > > > will always get 0 with ctx[nr_args] or bpf_get_func_ret().
-> > > >
-> > > > Before the execution of the BPF prog, the "cookie ptr" will be fill=
-ed with
-> > > > the corresponding cookie address, which is done in
-> > > > invoke_bpf_session_entry() and invoke_bpf_session_exit().
-> > >
-> > > ...
-> > >
-> > > > +       if (session->nr_links) {
-> > > > +               for (i =3D 0; i < session->nr_links; i++) {
-> > > > +                       if (session->links[i]->link.prog->call_sess=
-ion_cookie)
-> > > > +                               stack_size +=3D 8;
-> > > > +               }
-> > > > +       }
-> > > > +       cookies_off =3D stack_size;
-> > >
-> > > This is not great. It's all root and such,
-> > > but if somebody attaches 64 progs that use session cookies
-> > > then the trampoline will consume 64*8 of stack space just for
-> > > these cookies. Plus more for args, cookie, ptr, session_flag, etc.
-> >
-> > The session cookie stuff does take a lot of stack memory.
-> > For fprobe, it will store the cookie into its shadow stack, which
-> > can free the stack.
-> >
-> > How about we remove the session cookie stuff? Therefore,
-> > only 8-bytes(session flags) are used on the stack. And if we reuse
-> > the nr_regs slot, no stack will be consumed. However, it will make
-> > thing complex, which I don't think we should do.
-> >
-> > > Sigh.
-> > > I understand that cookie from one session shouldn't interfere
-> > > with another, but it's all getting quite complex
-> > > especially when everything is in assembly.
-> > > And this is just x86 JIT. Other JITs would need to copy
-> > > this complex logic :(
-> >
-> > Without the session cookie, it will be much easier to implement
-> > in another arch. And with the hepler of AI(such as cursor), it can
-> > be done easily ;)
->=20
-> The reality is the opposite. We see plenty of AI generated garbage.
-> Please stay human.
-
-It's not wised to make the AI generate all the things for us, and
-I find the AI is not good at planing and designing, but good at
-implement a single thing, such as generating a instruction or
-machine code from the C code. Of course I can generate it by
-myself with clang, but it still save a lot efforts.
-
->=20
-> >
-> > > At this point I'm not sure that "symmetry with kprobe_multi_session"
-> > > is justified as a reason to add all that.
-> > > We don't have a kprobe_session for individual kprobes after all.
-> >
-> > As for my case, the tracing session can make my code much
-> > simpler, as I always use the fentry+fexit to hook a function. And
-> > the fexit skipping according to the return value of fentry can also
-> > achieve better performance.
->=20
-> I don't buy the argument that 'if (cond) goto skip_fexit_prog'
-> in the generated trampoline is measurably faster than
-> 'if (cond) return' inside the fexit program.
-
-=46or now, there maybe no performance improvement. And I
-were playing to implement such logic in the next step:
-
-If there are no fexit and modify_return progs in the trampoline,
-I'll check if "session_flags =3D=3D ALL_SKIP" after the entry of the
-fsession, and skip the origin call in such case and return directly
-in such case. Therefore, the performance of fsession is almost
-the same as fentry. According to our testing, the performance
-of fexit is half of fentry. So the performance in this case has a
-100% increasing.
-
-This is a just rough thought, not sure if it works.
-
-In fact, the performance improvement can be achieved more in the
-bpf prog. For example, I want to trace the return value of skb_clone()
-with the TCP port being 8080, I have to write following code:
-
-SEC("fentry/skb_clone")
-int clone_entry(struct sk_buff *skb)
-{
-    /* parse the skb and do some filter
-     *    |
-     * return 0 if not TCP + 80 port
-     *    |
-     * save the address of "skb" to the hash table "m_context"
-     *    |
-     * output the skb + timestamp
-     */
-    return 0;
-}
-
-SEC("fexit/skb_clone")
-int clone_exit(struct sk_buff *skb, u64 ret)
-{
-    /* lookup if skb in the "m_context", return 0 if not
-     *    |
-     * output the skb + return value + timestamp
-     *    |
-     * delete the "skb" from the m_context
-     */
-    return 0;
-}
-
-I have to maintain a hash table "m_context" to check if
-the exit of skb_clone() is what I want. It works, but it has
-extra overhead in the hash table lookup and deleting. What's
-more, it's not stable on some complex case.
-
-The problem is that we don't has a way to pair the
-fentry/fexit on the stack(do we?).
-
->=20
-> > AFAIT, the mast usage of session cookie in kprobe is passing the
-> > function arguments to the exit. For tracing, we can get the args
-> > in the fexit. So the session cookie in tracing is not as important as
-> > in kprobe.
->=20
-> Since kprobe_multi was introduced, retsnoop and tetragon adopted
-> it to do mass attach, and both use bpf_get_attach_cookie().
-> While both don't use bpf_session_cookie().
-> Searching things around I also didn't find a single real user
-> of bpf_session_cookie() other than selftests/bpf and Jiri's slides :)
->=20
-> So, doing all this work in trampoline for bpf_session_cookie()
-> doesn't seem warranted, but with that doing session in trampoline
-> also doesn't look useful, since the only benefit vs a pair
-> of fentry/fexit is skip of fexit, which can be done already.
-> Plus complexity in all JITs... so, I say, let's shelve the whole thing fo=
-r now.
-
-Yeah, the session cookie is not useful in my case too, I'm OK to
-skip it.
-
-The pair of fentry/fexit have some use cases(my nettrace and
-Leon's bpfsnoop, at least). Not sure if the reason above is sufficient,
-please ignore the message if it is not :)
-
-The way we implement the trampoline makes it arch related and
-complex. I tried to rewrite it with C code, but failed. It's too difficult
-and I suspect it's impossible :/
-
-Thanks!
-Menglong Dong
-
->=20
->=20
+On 03/11/2025 12:23, Konrad Dybcio wrote:
+>> +
+>> +		one-key-low-power {
+>> +			label = "onekeylowpower";
+>> +			gpios = <&tlmm 86 GPIO_ACTIVE_LOW>;
+>> +			linux,code = <ABS_HAT1Y>;
+>> +			debounce-interval = <15>;
+>> +		};
+>> +
+>> +		homepage {
+>> +			label = "homepage";
+>> +			gpios = <&tlmm 132 GPIO_ACTIVE_LOW>;
+>> +			linux,code = <KEY_HOMEPAGE>;
+>> +			debounce-interval = <15>;
+>> +			gpio-key,wakeup;
+>> +		};
+> 
+> Please sort these nodes without an address by their name> +	};
+>> +
 
 
+These will also fail tests :/
 
-
+Best regards,
+Krzysztof
 
