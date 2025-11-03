@@ -1,139 +1,325 @@
-Return-Path: <linux-kernel+bounces-883616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 642C7C2DE18
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 20:21:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 824B3C2DE42
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 20:23:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 0FB0834C16A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 19:21:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E6323B38D2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 19:21:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FD5A295DBD;
-	Mon,  3 Nov 2025 19:21:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4913F347C3;
+	Mon,  3 Nov 2025 19:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Da4+Jzq9"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="r+Nt/9rk"
+Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012047.outbound.protection.outlook.com [52.101.43.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB405224B1F;
-	Mon,  3 Nov 2025 19:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762197688; cv=none; b=C5yqc4aa5+Qi0aOl8HwvVd9imUbTmmv8pupvzg3znGjncLTcdMrktqt8e4ipHvbMAnDo18YtHJCxyMUbXFZSQZNlmOMPQEENt+xiKa8AR9J3Y9byHNOyGY5ZVdJhZWqpMtj2oNZStAqX8hIs5z/YynuPpWFPMO08Qalja+YAueE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762197688; c=relaxed/simple;
-	bh=XIKZfpbWhIczx+zfqu9he4VYj9BcO79XICH9IZJazMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W+r5qB9nebiyS0hdFXCLv2oq2a2q6z88756Q1px80B1lCynnZSojNWUwXlyEd8Z7ejOjlbfR5milLexM6tJjGKensAfbcqrm1KhIOMkbGzcYiJi9aYisMXcBeypxs7URJIXk4x7zQmt+dP9d1k+sytt/w9JzNLcIlmB0BTD/Vow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Da4+Jzq9; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=bApFsiCh5GhK1LrnE+wALM58Na/7RmLhN4XmrqINttw=; b=Da4+Jzq9hAP4ZVsMeffgtRao6u
-	xWPp3cQ4ny2634aCIWw8HMHQtw3eQnPiGuAao+sPnye+9Pjsh+fZJETDK40F/RgoWiCvS4fQOyBzy
-	rsnz9h7ZWkx/9mtH3nU6qeY6sRGuhiKfMqO1z1eOnXRyyTAWoS4vl1ANoQ2PnMu86u6gf6skx65XG
-	HqGSYBRmGR/ZWuvhe+TJ6Y8nXPSSVYpYYj8caAM8EpUtj0M9Anb6e3YJNDMEwMLRobjw9WLbyqv+t
-	/j7wrKfU1XO9D2HCN7AGKeBG6guRpSSNANim/uSnoG6iEkDbqeOCjmZs6cYPsU0hCmxnjI452AlrR
-	SMCUGfUg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vG07E-0000000FtOT-09nn;
-	Mon, 03 Nov 2025 19:21:21 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 1E29C300230; Mon, 03 Nov 2025 20:21:20 +0100 (CET)
-Date: Mon, 3 Nov 2025 20:21:20 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Guangbo Cui <jckeep.cuiguangbo@gmail.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Waiman Long <longman@redhat.com>, linux-rt-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] PCI/aer_inject: Convert inject_lock to
- raw_spinlock_t
-Message-ID: <20251103192120.GJ3419281@noisy.programming.kicks-ass.net>
-References: <20251102105706.7259-1-jckeep.cuiguangbo@gmail.com>
- <20251102105706.7259-3-jckeep.cuiguangbo@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8654223D7DA;
+	Mon,  3 Nov 2025 19:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762197700; cv=fail; b=hm5lQJXpDs4jspIsqaer+pqtfD14xj/VBgxWOTqX7ETK1prfx1JTtvCmjVkwZtlrPur5mVgWmPiVRw4fECyM1HxKWyjFbkymqHzFcLImkYWikk0hUs1AB82VAwV+tHpX18dgLV88+j3IeNczYq7bRb58C/64Gpj9R/Xgq+pj3CM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762197700; c=relaxed/simple;
+	bh=1b1gS1FCDffT9n4/R/Dd1CS+PiUMjHd5ewR+7iiGxts=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Lq5dbQZyAHyh+Uj7kRGytVr3yWBV+guzQsY7QWSwYt33cmitiN4+DGoOoU8lGENOfeh35oNpv5tT8fBEBwXobCaVpgs483h1feBJZSZU7u/+jWH7E/V3asYQ/AIznNQ1jqNmpSr5dwkAo7P+UPd3HKGNLJpEVUfh4n0nIU+mEfg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=r+Nt/9rk; arc=fail smtp.client-ip=52.101.43.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hptGP8HqEnNQ4ul7FouC9KwYJKtTcJltDHldzgobORtf89iEHI1wiAospbbIkS+INl5h3aDtI5yAMX2Ss6UqhQEQyRurZSe/xqhh8gN4lGYbToekZmo/KxG2DWzGBwaIqXcD8gybcSsvFIUlIMVaMpk1KmAEmi4izG/V2ytCmKrlMEBRZ8cIszdd36tyTR3gu2s0F7b572rWrgSFI40d1EpyM9F0MMyGdpQKaSUOY2N/OyzyxMhtuSo8tM8oP+jHZFc0m0bFi+G9X69SlSaSZg2MCfHKlxyPt7FZx0+QVuA5WQqPU+pGbNXkcyyx+lpE173VmRrOEnbyLtq04FDdfQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6XkRmv2Z8PfoSUE353r6UQ5BTshJFdBmBR/2amC0Opg=;
+ b=giSkm/P8Og6UmMacARzeErUKbj73qsK0KCIBcw5FL+TFJM6mHp1+0bAZfgOilAgACnm/uuEs/Cdx3b8FSitymvpB53XXddMo6VQS61dB53F5E5C44+NENQpoZeEQQ51IDL7IWiIODML5VB39q3M1GrPo6bSq3iANoYAB7RVUJaYBPbZc1UgfS7UjUiUmx0v3uN7FOgbfE5NrFv85gpYiKTovOtTILNf5WXTG/QUqSDG3JzSMXwk7fxZeDaxACztsR/Zw4rqHP3HVvUAhfrfdkV/SLoi/Yv9SwHXGhEi1udOKTZviHa0yZo5qw8gumV6aQRrYoZzoRWucbPrCPfHwag==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6XkRmv2Z8PfoSUE353r6UQ5BTshJFdBmBR/2amC0Opg=;
+ b=r+Nt/9rkurdzFQ753jl8SnWs0GC40A2hWMi43ijMi2yE0FL+ki8O3+2dpWC5O9Dtbsn6rcijd/+GhNX1IqeM/1rWsKjOhA3YW0xEoa3RTqJg2QmwhdzeeH2UpULHcmYsiOfG5TOZuR5LxQyKwgangoYS0MqNiBS6ZKFTylbv/drnEa40WbOOUcUQx9DMpXAakV2s1l0AEcFIGl6l3vmODkWf9TEigjM1qIQrNeFv5QT7SsNs7ZYmrKdZSNiZ44lpzFTykppP5dArMNVyQhYl/HQrMdyfHFNEWNVhdSyTTdl3I/NcO6lb1U9r0JzhqsjBxjHoSv4hNaYLSZCmTYIktA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
+ by LV8PR12MB9230.namprd12.prod.outlook.com (2603:10b6:408:186::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Mon, 3 Nov
+ 2025 19:21:33 +0000
+Received: from SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
+ ([fe80::4ee2:654e:1fe8:4b91%2]) with mapi id 15.20.9275.015; Mon, 3 Nov 2025
+ 19:21:33 +0000
+Message-ID: <226d7dcb-26c3-4477-b1e9-2b837dc17cd1@nvidia.com>
+Date: Mon, 3 Nov 2025 14:21:26 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/7] nova-core: mm: Add data structures for page table
+ management
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, dakr@kernel.org, acourbot@nvidia.com,
+ Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ John Hubbard <jhubbard@nvidia.com>, Timur Tabi <ttabi@nvidia.com>,
+ joel@joelfernandes.org, Elle Rhumsaa <elle@weathered-steel.dev>,
+ Daniel Almeida <daniel.almeida@collabora.com>, nouveau@lists.freedesktop.org
+References: <20251020185539.49986-1-joelagnelf@nvidia.com>
+ <20251020185539.49986-8-joelagnelf@nvidia.com>
+ <CANiq72=SSQ5nSjt9yzX_A3Tgo2ByGM5CV0VqFnF1cTOzrZ-pbg@mail.gmail.com>
+Content-Language: en-US
+From: Joel Fernandes <joelagnelf@nvidia.com>
+In-Reply-To: <CANiq72=SSQ5nSjt9yzX_A3Tgo2ByGM5CV0VqFnF1cTOzrZ-pbg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SJ0PR03CA0212.namprd03.prod.outlook.com
+ (2603:10b6:a03:39f::7) To SN7PR12MB8059.namprd12.prod.outlook.com
+ (2603:10b6:806:32b::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251102105706.7259-3-jckeep.cuiguangbo@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|LV8PR12MB9230:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1682a71d-95af-4a58-103e-08de1b0e32e6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?M0s2SFhnZGlGUjd0UzZZSWtRN25FVTEzbmFPQnVWSUhvZlU1Sld3V0xDbTNQ?=
+ =?utf-8?B?bXlEM3ZVWHRPV1BpcjN4UlQwbGFIZXNraXN2ZERmN1dORFg5d09IZkhRRVp6?=
+ =?utf-8?B?b2dZbFVZR2FVR0hYNkErc3F0QnpzeGNEU2NPRnI2aEZuaFYvdWR0ZnViRWs4?=
+ =?utf-8?B?a3RtNHNqbnA1aXhrVzZGNGpqZnJELzdRRm0vUGZQbzlKVkViUjhqS0pjTGF0?=
+ =?utf-8?B?M2cvU0djc2FaNE5SWStkcjlnekpXN3h0cnBnREwyR3lhSVRSWmd1aWpYSC8y?=
+ =?utf-8?B?Z3ZSZVNXU3orZDdkdHZqMkpBYysvK0kweUo2WDBGZlVYdUZrNFU1MTJNeHZJ?=
+ =?utf-8?B?Rzh0OGQ4N1IvdGNhcDlZYndUQ2tjRFVka0xGelJBUFlCZFNNeFVQRmp1Z1FM?=
+ =?utf-8?B?dWd3NEFDZnFzbVJ2Q1ByUDdodlc1VWQ0VXI1SjJMcTNjRnJocjhOSTlYYXk1?=
+ =?utf-8?B?QWxnNjAyU0l6UnpzSTZlTFQvd0lZT0I4dkNYUDBHQkpMc2VMSGc3cmhRZkJH?=
+ =?utf-8?B?RW5pVG9EZktiRnY1TDJwZnRVUXNkY0dOT0k5b2dzK1lWTWFDUnlNV3pJa1dY?=
+ =?utf-8?B?QlJHZmxmVXdhRis4UzJ5cUxEOVlsUUZsRUtjUUNBVXhvMWc1SWpnYzljMVhM?=
+ =?utf-8?B?dlRKdy9CRVExc0ZtZFQvOGJvRndLU1VBa3A2VmdLSUZIT2pUOWgrTzF1Zms0?=
+ =?utf-8?B?NS9zQ0R3T0ZKTk4rUGhWcWdIeGR6eDFSblpZR0JCTjlaRFhscE1XSHNrTDJ1?=
+ =?utf-8?B?dVNudUIzTnltTmxnRHlnb2ZUWG9vZFF3NlBOSHRuL0JKQjVCT20zNGhIbDlx?=
+ =?utf-8?B?c210dy96MnpVLzFud2IxSmpvbnZzbjlkZ0EvMHRMaVhDVnFnL0UwV2ExSndh?=
+ =?utf-8?B?eVhpdVFiOVdJRDFRK0dSNmQ3L0RwQmFwUCs1S3lmMFd6YUNqQVRBSlYvWW9Y?=
+ =?utf-8?B?Mk9oZEI4azNRbGRLMlpwM0JnZk51THRzZnhOeUFDbEhzRkNaRjF2SytqU2Z1?=
+ =?utf-8?B?elJvRytSQzlQS3V3b2UwclNMandTeE1hOXdFZEJJN2g5OWFxTWhnUEk4K1Bx?=
+ =?utf-8?B?MVhjWnBHUE1HRlNaYUMzMHlmczE5bTQzRnhteFNXdGVhalA2cXZEbVJuSmUy?=
+ =?utf-8?B?SEVDQTRaTU51Rm15VjFuRFZPem91cENDampLeVFOZ0dXYW5TUnBpV3lHY2NF?=
+ =?utf-8?B?enM3QzI5L2NZWUpsUTdqdGg3Q0JIMmpmWGNMM1A0d240TzVRT3NNOE5Fdmsv?=
+ =?utf-8?B?Q2FOQUFzaDdOVGR0d01zeXQ2Y0s5L2ZycnhVZCt1SjdDL0Y1dnUzYlJhZGY2?=
+ =?utf-8?B?cVRFd2lnbUN6ekJYVkpEN3IxNFp2QkdjWGVyVkRFMjVLaXUwd1RRYk41SU15?=
+ =?utf-8?B?NnJDVzUralFSMzk5MVE2cC8vamZBZEd3YlVJU3BUd3ZtZE9kUTl5Z3llY2pB?=
+ =?utf-8?B?N3VySXd4TmFmT0laL0NSR0lqNHd3RnovTGd2ckRiZTVKU0EyL1NtRGFKVVNX?=
+ =?utf-8?B?emwyVGJFQzRYZklFLzVRLzBGeVBzb0JEQzdQb1h2bkg1WXlVNU51QnN2SVht?=
+ =?utf-8?B?TUxOUjJZemxvL2dwbXNpemtYNDB1Q1Fva1RYa1VPcU1yT2k4bitJbkhuOXox?=
+ =?utf-8?B?TTFpd2hMUVIySFN3UlBDMW1wVE1YMG5QMUhLdlVMN0NFaEV1RkJDV3hPbDhI?=
+ =?utf-8?B?R3lOZjB3ajdPNDlDQmtZVk5ESktOQUVjSnJQeGZleENXeXNONjl3d0RVODZs?=
+ =?utf-8?B?SzlPVVBHT2lLYzRZdFdSRVgrTThGeUhSaWdpUTBoQ1dieEgzZlhqMUV1cFlr?=
+ =?utf-8?B?Tkd2QmZJSCtNWGhlRzZ1dklZNFJPMEI1MkhSY0c0UnJrZWFNTkNpQWtocTlX?=
+ =?utf-8?B?dGhENHRpbi80QTh4cHpxWkg3MkFzWkRxVVRoK0hlby9YYWhjbkw2Y1JneUhn?=
+ =?utf-8?Q?R0AlCm3luzs7GzPaEMt3+xsDh6QRnQJC?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?N0pWSkRmWkU4ai9lWU80Tko4SkdVWWJMYTJLaU1IU2lILzRoMk5KTktnVWZp?=
+ =?utf-8?B?UGlHRkduRWZ3NWg1a1dlWE5uU0tkSXRwQWlMYWlwZlNWR29rSWN0bFpqZzhy?=
+ =?utf-8?B?QjZwVHZOdkw3dDBFWmRsbnp5RXhUR3BUU1B6NTQ4MDhOQTZFU3VDTDZGU3k2?=
+ =?utf-8?B?bktyWHhIR0RaeVVsSEN4ZXlySU9zNTc0Z2V6NXFJUEQ2SnJiZDREZStnUlFT?=
+ =?utf-8?B?enp6M2lqZHU1NXRpSitKbG53WUtXNkUzTlMwY20wamc0MEFHaEtXamVlaWln?=
+ =?utf-8?B?WkNOb01LNUlLSWZKbnFpQjBNbEovbWxveTBqWUFNQVZJcHA3SStZUllWUVFW?=
+ =?utf-8?B?amhZU0I0aVdJdHBtVGdXbFNiZGgvdDZlZmhqeXN2RGpqVGU3WHQwd29Cb1o4?=
+ =?utf-8?B?NFBrdVVlQ2ZkRGhqS2Nkckw3SkVaVWs0N2VkbE1LYWQrTkdMNG10TVFmZTE2?=
+ =?utf-8?B?L3BGbTVRckk1ayttUVpoWHlZbUdYOFNRQnpVbUo1cUlLMlFXdTdtRCtVTllq?=
+ =?utf-8?B?LzZvS09lbXlIY05IbU5CMkhoVmRPY3J4U2dTOG9sd2Z0V0RTZDlreUNtZFhB?=
+ =?utf-8?B?cUhpM1VRb0FmVnlOSzYvbGpiaER3bURKdkhPbmV4dVp5dk4xTXpBS1dxL1hO?=
+ =?utf-8?B?ZVRRK0ZNcGtnMzc2a3MzOXBheTRlbEZsbzFOYmNiQ2c4b2drVFpNZm9jVENY?=
+ =?utf-8?B?ZTRlL2doQ2hma05FVkZqaEY4em1nMm1FTXdZdnJud2JSdnVJVWtKWWFkNHJa?=
+ =?utf-8?B?MjZJcWYwd2xCVUxWNjJrZ1ZoV3p1QjlYSExrS0xYYkhQKzl5QUF2cGc1Z3U1?=
+ =?utf-8?B?dysySTQwRkFxc2hSZzROM3hkSzVSNHVmNktlR08vajlxQWZJSkMvSU1yRVlR?=
+ =?utf-8?B?ZWRZdEMxRXp3Z0M1VVR4UkdIQUxwUXowQWV5YW5qWHNhZTFsem5QMEJMR2Mr?=
+ =?utf-8?B?RlRBVU8rSDA0VzBGMHpCYnl0VE5kakRNUmtvQ0x3QkRmdzlsYzRsTUMxaTFi?=
+ =?utf-8?B?SVlXN2xUUEwzQ1Y1bTNVUVllOGRLWFgvaUs3Tk5KdS9mWmpmcWkzd0lueG50?=
+ =?utf-8?B?OW1GdEw1cjdtNTVGakdOZnQ1Sy9DdEZ2anVSd0E5TjdmSUZQN1Z6QkVYQ2tV?=
+ =?utf-8?B?aTMyYmhRY21lUmJSdHFkYmhRS3lzUFN4dXA5d3lXKy80NEVNYk1SQTBvZ3lj?=
+ =?utf-8?B?RW5MbGErcy9pcG1HZmttcjRadlk5a0xBaFFRc0pzMjdiT2E0RnFDNWdxRFV6?=
+ =?utf-8?B?TmhiNzNkVmVjbEdwQnlUSHBKVDlXcXh0eVhadzJ6dXFrTXAwTUN5NmRJMlhm?=
+ =?utf-8?B?MWR6R2F0Z2x0TjlEMjJaNXBvMTRSRmNlN1N5K0dFcEpBQ2l3aFRsTDNkUVRS?=
+ =?utf-8?B?Z2ZmeFRDcjVPTldzdWY2L1VmSytvWENFMEg4MDMrT0VDUFVHTUlacTRIc1pT?=
+ =?utf-8?B?bGkwelJSbTh1bThjSlNGZDYvOHNyczF1L1QvS3dtN1RwcFdKd0JGS08rYTln?=
+ =?utf-8?B?eFU5bjdKUjA1dFVVNEFpdHdmSVRvMWRpSGx6R1d5WjdxS1loWjd5V0tMNS9r?=
+ =?utf-8?B?bkViQTVVRjdCMmxLcHZXNW9YdFRSbHZoUWZ3cldGRHBmanYwUXpreHBxUksr?=
+ =?utf-8?B?Ni9zYjhjTEt2eVhvWnkwTkdKdkYrQS9GdDR1YTJSODhONG9VekdyaW5aR1Yv?=
+ =?utf-8?B?Vk10NHZoUzRpMWF1RkdIVHZTb0JMakZKcjZGODFCQWlJcjFuTXBQajU1MURB?=
+ =?utf-8?B?UUdwQllWL09lRXQyQUg0Z0dEdlZXd2NmUW1zYnZJY3Z3U0xxRzFuUkhhSDlJ?=
+ =?utf-8?B?VGdKUDFBV2JMSGlmN1k2MHU3RVZzdU8wbmovYS9sSVlzVnpVazR3allNNS9G?=
+ =?utf-8?B?UUZKMGxQMzRsYzFTcCtmRHpyU0MrYzhGSDVINVVMdnVaNHRkUlBqUGEzWDc0?=
+ =?utf-8?B?cnhwYnJOQjM5N0hIVU9BZUtCclRVWk1RNC92UHF3WWJXOE9SSFRDWnpTWWVx?=
+ =?utf-8?B?VzdKeXgzQTNKRElkaXB3L1BwYUgvRUFzMjJ4UXpTTlRNRGtvajE2OSswRUF0?=
+ =?utf-8?B?UEs1WGp6bnQzY1AvSTA3QkZubHBkRXgxaEhsZVl4Vm5uYjMvVjkrdm9vNXJQ?=
+ =?utf-8?B?N2tqVU1FeWQ2V1RUNFhhcEp3MGx3WE5PL2h0cXZVUnpOZWZEdUNmUFJ1SEVq?=
+ =?utf-8?B?enc9PQ==?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1682a71d-95af-4a58-103e-08de1b0e32e6
+X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 19:21:33.2734
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +b4lwL5U9NQ2AQdo3p6Uci3nd4pjLk5xbGfAwMKXc8mnbri8db5m2KZ965mzX/OV9o+kTDWqk+X8MkagkFdYFw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9230
 
-On Sun, Nov 02, 2025 at 10:57:06AM +0000, Guangbo Cui wrote:
-> The AER injection path may run in interrupt-disabled context while
-> holding inject_lock. On PREEMPT_RT kernels, spinlock_t becomes a
-> sleeping lock, so it must not be taken while a raw_spinlock_t is held.
-> Doing so violates lock ordering rules and trigger lockdep reports
-> such as “Invalid wait context”.
+Hi Miguel,
+
+On 10/20/2025 5:30 PM, Miguel Ojeda wrote:
+> Hi Joel,
 > 
-> Convert inject_lock to raw_spinlock_t to ensure non-sleeping locking
-> semantics. The protected list is bounded and used only for debugging,
-> so raw locking will not cause latency issues.
+> A few nits below (I do sometimes this kind of docs review to try to
+> keep a consistent style across all Rust code).
 
-Bounded how?
+Thanks a lot for these, I studied all of the suggestions and agree with them.
+May I also suggest to add some of these suggestions to the kernel rust coding
+guidelines document, that way others new to sending rust kernel patches don't
+miss it (example not adding a period at the end of a markdown doc header.). But
+I will make it a point to check all my patches to make sure it confirms to the
+suggestions.
 
-Also,
+Also a lot of your suggestions are related to how it looks it rustdoc, so I will
+try to build rustdoc and see what it looks like as well, to get an idea of when
+things in my patches could be improved.
 
----
+thanks,
 
---- a/drivers/pci/pcie/aer_inject.c
-+++ b/drivers/pci/pcie/aer_inject.c
-@@ -85,12 +85,13 @@ static void aer_error_init(struct aer_er
- 	err->pos_cap_err = pos_cap_err;
- }
- 
--/* inject_lock must be held before calling */
- static struct aer_error *__find_aer_error(u32 domain, unsigned int bus,
- 					  unsigned int devfn)
- {
- 	struct aer_error *err;
- 
-+	lockdep_assert_held(&inject_lock);
-+
- 	list_for_each_entry(err, &einjected, list) {
- 		if (domain == err->domain &&
- 		    bus == err->bus &&
-@@ -100,20 +101,24 @@ static struct aer_error *__find_aer_erro
- 	return NULL;
- }
- 
--/* inject_lock must be held before calling */
- static struct aer_error *__find_aer_error_by_dev(struct pci_dev *dev)
- {
--	int domain = pci_domain_nr(dev->bus);
-+	int domain;
-+
-+	lockdep_assert_held(&inject_lock);
-+
-+	domain = pci_domain_nr(dev->bus);
- 	if (domain < 0)
- 		return NULL;
- 	return __find_aer_error(domain, dev->bus->number, dev->devfn);
- }
- 
--/* inject_lock must be held before calling */
- static struct pci_ops *__find_pci_bus_ops(struct pci_bus *bus)
- {
- 	struct pci_bus_ops *bus_ops;
- 
-+	lockdep_assert_held(&inject_lock);
-+
- 	list_for_each_entry(bus_ops, &pci_bus_ops_list, list) {
- 		if (bus_ops->bus == bus)
- 			return bus_ops->ops;
+ - Joel
+
+
+> 
+> On Mon, Oct 20, 2025 at 8:56 PM Joel Fernandes <joelagnelf@nvidia.com> wrote:
+>>
+>> +//!     .set_table_frame_number(new_table.frame_number());
+>> +//! // Call a function to write PDE to VRAM address
+> 
+> Newline between these. Period ad the end.
+> 
+>> +//! ## Given a PTE, Get or allocate a PFN (page frame number).
+> 
+> In headers, no period at the end. Also, is "Get" intended to be capitalized?
+> 
+>> +//!     // Call a function to read 64-bit PTE value from VRAM address
+> 
+> Period at the end too (more of these elsewhere).
+> 
+>> +//!     if pte.valid() {
+>> +//!         // Return physical frame number from existing mapping
+>> +//!         Ok(Pfn::new(pte.frame_number()))
+> 
+> Early returns where possible, like in C, i.e. to avoid indentation on
+> big `else` branches.
+> 
+>> +/// Memory size constants
+>> +pub(crate) const KB: usize = 1024;
+>> +pub(crate) const MB: usize = KB * 1024;
+> 
+> The docs will only apply to the first item, so this probably was meant
+> to be a `//` instead of a `///`.
+> 
+> Or you could use a module to contain these (and then possibly `use`
+> them outside), and then you can have docs in the module itself, but
+> that is heavier.
+> 
+>> +/// Page size: 4 KiB
+>> +pub(crate) const PAGE_SIZE: usize = 4 * KB;
+> 
+> `rustdoc` would eventually render the value and the non-evaluated
+> expression, and in the source code it already says `4 * KB`, so I
+> think repeating the value isn't needed, unless you mean to show it is
+> really a multiple of 2.
+> 
+>> +pub(crate) enum PageTableLevel {
+>> +    Pdb, // Level 0 - Page Directory Base
+>> +    L1,  // Level 1
+>> +    L2,  // Level 2
+>> +    L3,  // Level 3 - Dual PDE (128-bit entries)
+>> +    L4,  // Level 4 - PTEs
+> 
+> In this case, I think you meant the other way around, i.e. actual
+> docs: `///` instead of `//`.
+> 
+> (Also, unless there is a particular reason (e.g. it is a big table),
+> please generally put comments on top of things, not at the side, which
+> matches closer to what is needed for docs.)
+> 
+>> +    /// Convert an Address to a frame number.
+> 
+> These should eventually be intra-doc links, but at least please use
+> for the moment backticks when referring to Rust items like types etc.
+> 
+>> +    /// # Example
+> 
+> We always use the plural for these section headers, even if there is a
+> single item (e.g. single example).
+> 
+>> +    /// ```no_run
+>> +    /// let va = VirtualAddress::default();
+>> +    /// let pte_idx = va.level_index(PageTableLevel::L4);
+>> +    /// ```
+> 
+> This will need some `use` lines -- not needed now, but just as a
+> reminder that these will get actually built eventually.
+> 
+>> +    /// Get raw u64 value.
+> 
+> Intra-doc link or at least backticks.
+> 
+>> +    /// The valid bit is inverted so add an accessor to flip it.
+>> +    pub(crate) fn set_valid(&self, value: bool) -> Pde {
+> 
+> This docs string sounds like a commit message.
+> 
+>> +/// Dual PDE at Level 3 - 128-bit entry containing both LPT and SPT pointers.
+>> +/// Lower 64 bits = big/large page, upper 64 bits = small page.
+> 
+> It sounds like a few of these details should be on its own paragraph
+> to avoid having them in the short description (title).
+> 
+>> +/// // Call a function to read dual PDE from VRAM address
+>> +/// let mut dual_pde: DualPde = read_dual_pde(dpde_addr)?;
+>> +/// // Call a function to allocate a page table and return its VRAM address
+>> +/// let spt_addr = allocate_page_table()?;
+>> +/// dual_pde.set_spt(Pfn::from(spt_addr), AperturePde::VideoMemory);
+>> +/// // Call a function to write dual PDE to VRAM address
+>> +/// write_dual_pde(dpde_addr, dual_pde)?;
+> 
+> Newlines before the comments, i.e. between "conceptual blocks".
+> 
+>> +    pub lpt: Pde, // Large/Big Page Table pointer (2MB pages) - bits 63:0 (lower)
+>> +    pub spt: Pde, // Small Page Table pointer (4KB pages) - bits 127:64 (upper)
+> 
+> Docs instead of comments.
+> 
+>> +    /// Check if has valid Small Page Table.
+> 
+> Missing word?
+> 
+> Thanks!
+> 
+> Cheers,
+> Miguel
+
 
