@@ -1,75 +1,78 @@
-Return-Path: <linux-kernel+bounces-882563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DEFEC2AC2D
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 10:35:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D88EC2AC3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 10:35:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7898F3ADBE9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 09:33:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F5F23B1670
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 09:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F982EB845;
-	Mon,  3 Nov 2025 09:33:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F072EB5C4;
+	Mon,  3 Nov 2025 09:33:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PSa7sb5C"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="giLfoaBn"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35792900A8
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 09:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF542EA17D
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 09:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762162405; cv=none; b=XEdCPIcZg6xUsfGHpa4lLOimqvamwPHj1CisRyT3/Px0TqYVrOyguz1Ju9O8z2CKBaENIW/AYDTiLwiGpMYmJKqL2fgB4w5G+5n8m3Sl4X+IDfxfLQ/jcMUT6souaA9SjqCW5KLMkRsvdooFAy+/8V6JsQ+Dx8CYRfWR9SM3RQ0=
+	t=1762162438; cv=none; b=fDXNA9hsPbbf18RPAxeXfAcwoiuN2MmkaNg2CPwXNBdv/P40ieTkgl0AuCDNckcipOO23noxMxpXXGwwqmXaTsUv85075zoaiAsaZaDdiZO9e0dOvX29r1ufT9yNvMK3TVuymqUioL0h7x43r/9Qvt2JPZuRBWzyXQbmLdS4cLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762162405; c=relaxed/simple;
-	bh=c1A0QWUdxkJKpRTlrVIzDoZpeSzx2x/Os/6OQGH0TtQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NnCnq6UPnemK6a981sUsp+q5F3OAWsR5ZJZIxrdC9qmiYE/BL+Qeduqth0Xg/417rQa+mJNZLrcR1rOdVNYrYP9ru3C4UrVM5dHtWQoDrwP6/Ycnq/z3ZUCThkh/jlAdtGDRV0HwaW8aibt8IEXGPO9iKlz20n5Dti6BX4f1p/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PSa7sb5C; arc=none smtp.client-ip=209.85.214.177
+	s=arc-20240116; t=1762162438; c=relaxed/simple;
+	bh=D4T4s3SNgWEGdSKy6+YGhcgGrNqzcT9NA8JLZ8xPMUo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Iu6LIp54hs+hfX29lEFny6K5gLrQsofx4FdzoBbWMbz0S2VPGdCsS+ATbd8XFWmm3a87JwM9ci6/clskmQdCXqnRsMVx05vIZDGostghUM5/PL8GfASQvSsLV66QXObUaPGXh+YjtywPLQHnpviqNBlkO4pi4AxxVt8c1VYTork=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=giLfoaBn; arc=none smtp.client-ip=209.85.215.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2951a817541so41421665ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 01:33:24 -0800 (PST)
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b6329b6e3b0so4079955a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 01:33:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762162404; x=1762767204; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fi7edW2fKbyqZ3kHK/AlGvcaMEfMr3O/Cmh61+xdw30=;
-        b=PSa7sb5CBWAn8It+shTtlOR4Q8S1+W3sumQI1DqXLvo1uqtOJH9TY1iaBEtjOMreXc
-         LaJ4TIxhzrx18P5cMBRV9g9lw6kHUaxO3TuX3FF28js8E5Cemkvt9LppHDvH1gxRbPtg
-         2AZ81LuWZMvic7uSj673VPxFWjYUzFK+Zi2QIfziMrGvoitxBWIKz4OaqjgVht7VmsBy
-         5n68vRLa73g3lFqNDwE9egiRtAF9qK01T5o8gS0vdz2k+kY/gFFFgcxe6rn3ecLME0iK
-         Wn6C0y4pZeBvZkdxjU/cD8W6puvMfnTgubfXH9vtwOJuIq01ZD3wTE0AA200DXM693tK
-         ORyg==
+        d=gmail.com; s=20230601; t=1762162436; x=1762767236; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jF3tE7PvrhPTALHjWZmN+099uKS6CXrFf6F9PXA5mFA=;
+        b=giLfoaBn3QvlAuOoAI4/tVlTuE8+aF8J67YlB1jURAm6U+CW9owCkDJkhKK10XalhQ
+         PZPOkeN3QlUgr7+aOFHwglOhEb0lR/3GhtRLlt/pJDCRXnq61TbiLVXH5R4phtWkDs0/
+         bgDQXGOZHqCuyR5EcJBfkzGBFLcnnVPAKrJPV9rEgUrqMFBo/8R/aJK2FP8Brl49zUQw
+         msPwbxKTCdw8StJJvilMApUorXyJxySeqzxTD2xfBy0oqJHZa984jzqWc/KusJNWc9aA
+         3zROi53m9/jB9cBWQ1PYgba84X1jIb+sgLHkL+dpsbvXIl7TDP350s7maim0OtdbDuUo
+         gUOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762162404; x=1762767204;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fi7edW2fKbyqZ3kHK/AlGvcaMEfMr3O/Cmh61+xdw30=;
-        b=OTz0dqKXUvh0bynUl8Gr61VcV5V/v+Wh5wku8padxe4ru/SbH+zC7jZe37tG95zVw0
-         5vkPN0KkmR50TuTWvJvQHz/hc/YYHoN+00ojZd6HSaI6LMQmkGPphHSgx/zxW0sNq5SS
-         OMLbzWr6oci3eW4KuNDBfnU8hYaJWX8RHMWQ/w+OaCg5wGaOWsOfFGlaKYYxv9fDEC0C
-         ojjIXDRKZ/EF1bPcwx0zVT988Xuf3w0Y0pkChMKeO8okpCLskwNdtFwWuV0Z7QWjmkIq
-         snUvkd6mnY+5Tq6HmnQdhcRGuyksZXxw5Mb90ggBFiA2pCBoprabIE2RjkR0IqUdPMF3
-         KVsw==
-X-Forwarded-Encrypted: i=1; AJvYcCW3qHk24EtDz1FOHzitvX4vQ1Z82X1arZs/eT23kPemA21ly3mzrAoEK9MNHTwtBhIQAvYY0QQDx3potT0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8ELqMGXirYYXZCCQBdY0/2M4YSGZKVO41yrYg+nIhyqgTPrho
-	WUqkv950ga5a3RCULuKJj29rB18YrTT4+9wNLQVaLlvUYgjW+ZnDy0nv
-X-Gm-Gg: ASbGncvSzN+hL4zD1HhzQkeCb6gwDrTKkIfS4flm/W2zzcOLd/uuuM46uj5DCEEdefg
-	jwAaKRTQwCfftKkN8i1I3x1pSXqWXPghwXxAdlgH0UBTAzbFIfk/47zM4OBFjuAT7AL+kSH5MxT
-	RTa9nF+aHKKQaV5SiveJxaV6w8KweIxPpOXpf2oAGjaRLCFQSnGxhNT0HBcDH4oPkF/C6S1206I
-	43b7vc1Bguf99nh1YVRoP3xo70MnZEo2QhwNZcPs2S9HIyEzZRhWmsh0LpZEzIx+4LKCL/5E+S2
-	X8QvlIT0jPqRLCCZDc+Q443j+9elTnal8+cv0sKjX9pUlu7bcpVJKL2QjS3zHYjnb2HjSWl1o/s
-	JYZG1F0GDIW3B9gePvDPxXfUH0pZVez7IqS/CTIPa/H7yXPV+IE+H2q3qE3+YBiJbxAO0eA==
-X-Google-Smtp-Source: AGHT+IEhVI8HLKKsPHJmLdcgQIX3NyE6Qj62NyZlp0rKKc1HR0bkXg6Og36M1Mf5WeEiO70N6uA3uA==
-X-Received: by 2002:a17:903:11c3:b0:290:c5e5:4d90 with SMTP id d9443c01a7336-2951a524561mr137993865ad.42.1762162403672;
-        Mon, 03 Nov 2025 01:33:23 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762162436; x=1762767236;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jF3tE7PvrhPTALHjWZmN+099uKS6CXrFf6F9PXA5mFA=;
+        b=Y/BBpZQFewTkQ5cnHpNcp8UxC5mWioRMSEa2Jk+lCcbICsYI0vPxm66SpGx3xX+8kD
+         nCPUuPpqVgSYL22TkGV4pRR5VJ0W8TMlv42VAFtoS1gVY84SCUAFcttCsp8+rM82IHc/
+         ZlD8/iL6jl5Iqlb9Hc4osbUG6TzSXxUVlf4eeG2YHNfV9112rZUP9P5YF5HxRXAQ0Eb8
+         7He7/0kEydb0DF8MCfZaUNT2jgwkUGtrMLTjJE7cC2MBTS3w75sLqtpRvXvmMoe9RNO7
+         hMeKizDxppae7EgvYFl3jGpl5VhL32qkC+HCE3oviPPJ0Gs7A3jy5bFOjHEUZXlQ998U
+         +iQA==
+X-Forwarded-Encrypted: i=1; AJvYcCWdk25/ADYA/VAJfk2Gr+qp6lqK2JYuEm8N0thHCuy32sdWSX9FSrmW7GAgLG2nzI2u1nAe1DsJ02+7WbE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywb+A2g/6pbFvjzI6M+bbcZ5q88SxJszIym3ATrKmI7170sQoHO
+	Ufku/ygpHT56xz8OP7LBU4s17Esqgi1DFwTalnnvAL9J5LdrHeOEdjaP
+X-Gm-Gg: ASbGnctmp9XTyKTLKyTzxd+nBRJU8mxsWQ4np3rpYVxXNmysQ+xX72zjSYxjIh8po3O
+	jQkQ1IpRveUiRJq7M3g6+1601iMfPhoStReKJ1xQqqbZew6D3RADeB79UtnhxDiKu23gO2V83JM
+	uneBWg6M4nXthV8nAB2tTJ0bFz/j2fQg+2gvEEC+ABIJgE+bo0uPDqwL+O8vZXMwlkFkbGMZTF1
+	KNJnZneworhumrLdqQUpP+CgvdIUy8AjJXfvYWv+1XXXD9FZV+W9e5fhVRVgRmvADNaF/hHoYAg
+	yXwwEA+BE2Q4G1gN175uknRJ9hq3V6xPpwlWoos5KNHqjK3jX3bJ9eFhpptocaPhyOzSpdkpRo9
+	pGv8XGm6ClCbOiR5poTtIpbkWQmauIOHHnomgrurJF2t7teF2LYlUFZOVUu9cg6hkFkmNhljzW0
+	VKwJN1
+X-Google-Smtp-Source: AGHT+IENCvGrL25P0O0Fc+MRrko1aTk7mSWYGPtk8oKD7ItaFZLfQ0P2sXgV2rrZRmkjGd+q+PpjRQ==
+X-Received: by 2002:a17:902:f606:b0:295:7423:530a with SMTP id d9443c01a7336-295742355fdmr75326455ad.29.1762162436497;
+        Mon, 03 Nov 2025 01:33:56 -0800 (PST)
 Received: from gmail.com ([218.32.81.133])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2952696ea51sm112351435ad.57.2025.11.03.01.33.21
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2952696ea51sm112351435ad.57.2025.11.03.01.33.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 01:33:23 -0800 (PST)
+        Mon, 03 Nov 2025 01:33:55 -0800 (PST)
 From: Peter Shen <sjg168@gmail.com>
 X-Google-Original-From: Peter Shen <peter.shen@amd.com>
 To: Andrew Jeffery <andrew@codeconstruct.com.au>
@@ -82,10 +85,12 @@ Cc: Joel Stanley <joel@jms.id.au>,
 	linux-aspeed@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org,
 	peter.shen@amd.com
-Subject: [PATCH v3 0/2] ARM: dts: aspeed: Add Device Tree for Facebook Anacapa BMC
-Date: Mon,  3 Nov 2025 17:33:18 +0800
-Message-Id: <20251103093320.1392256-1-peter.shen@amd.com>
+Subject: [PATCH v3 1/2] dt-bindings: arm: aspeed: Add compatible for Facebook Anacapa BMC
+Date: Mon,  3 Nov 2025 17:33:19 +0800
+Message-Id: <20251103093320.1392256-2-peter.shen@amd.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251103093320.1392256-1-peter.shen@amd.com>
+References: <20251103093320.1392256-1-peter.shen@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,23 +99,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series adds Device Tree support for the Facebook Anacapa BMC 
-platform, which uses the Aspeed AST2600 SoC.
+This patch adds the compatible string for the Facebook Anacapa BMC
+which uses an Aspeed AST2600 SoC. This is required before adding
+the board's device tree source file.
 
-Patch 1/2: Adds the compatible string to the Device Tree bindings.
-Patch 2/2: Adds the initial Device Tree source file.
-
-The Anacapa BMC is based on the Aspeed AST2600 and includes the standard 
-peripherals required for BMC operation.
-
+Signed-off-by: Peter Shen <peter.shen@amd.com>
 ---
+ Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Changes in v3:
-- Rebased onto the latest upstream kernel tree (Linux 6.18-rc4).
-- **Fixed all indentations from spaces to tabs to comply with the kernel coding style.**
-- **Updated the Device Tree Source (DTS) content based on review feedback.**
-- Resent as pure plain text using git send-email with --thread option to fix broken threading and corporate HTML issues from the previous submission.
+diff --git a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+index aedefca7cf4a..bcb874ebd9d2 100644
+--- a/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
++++ b/Documentation/devicetree/bindings/arm/aspeed/aspeed.yaml
+@@ -80,6 +80,7 @@ properties:
+               - aspeed,ast2600-evb
+               - aspeed,ast2600-evb-a1
+               - asus,x4tf-bmc
++              - facebook,anacapa-bmc
+               - facebook,bletchley-bmc
+               - facebook,catalina-bmc
+               - facebook,clemente-bmc
+-- 
+2.34.1
 
-Thanks,
-Peter Shen
 
