@@ -1,207 +1,242 @@
-Return-Path: <linux-kernel+bounces-882492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DE82C2A971
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:37:47 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEFFCC2A97A
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:38:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D35BA188C03E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:38:11 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 452593483AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:38:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F232C2E091B;
-	Mon,  3 Nov 2025 08:37:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82702E0928;
+	Mon,  3 Nov 2025 08:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Mnf5ROZP"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="DWFAg4xx"
+Received: from outbound.mr.icloud.com (p-west2-cluster2-host11-snip4-8.eps.apple.com [57.103.68.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBAB52DEA7A
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 08:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B768C2D77F7
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 08:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.68.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762159061; cv=none; b=Z1fZQGWYW3vX82XET6clyPviGKnji2QpKhu17aOaxBOEDELCwzVK1Qv35pac0Qqri92ncNpG1mmGdZOxsSTjF/uezVe9/iMzh/L0HYpYe8TftKVW7rzEiFGLpLZ5hCBIhad6Yvk5EKo3AalHySJ2cFNebg0LwqL3tUZqlFIxuwY=
+	t=1762159081; cv=none; b=Wr8M4g0YyngzL2lvKP9VZpFvlPe4Ly049rnIpsLNRUI5qXpu94J7NtBt5yfJUaPDtbS19tPaiZ8MLmDU3/QcFjvQgORDhHzOmCgS9OIAtlgBvHEY+OV7pOHnh7DdySNZC2ysIjb0gHfQR0n3mBTTQPYlSrViUgIwNXjrMiB0RNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762159061; c=relaxed/simple;
-	bh=VPQocaf6gUl8BS3pejlUrKCB/3VeiYl/8q6ahm5+LvI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GTk+mAbcO98R7auPKyPcC23J8BcsGsWmmHjaqIoo2+yitPidSL4lemsAemCIA0jMPosuHIX6pf5Ygp4va1RqELuw6gXlZuI2x5KasxUTizu7/Zy/gG+ruX9ptAFuLS0eEAmcIfGSX2qzCEJfwXQu3GjNaMggc3LEp4l16ecCaKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Mnf5ROZP; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6409cb34fe0so344869a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 00:37:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762159057; x=1762763857; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/6+8IBdXCcTU6eZ4JMuY2we8/fQYN6+oBue210uWprk=;
-        b=Mnf5ROZPFeEGjQSTjLFS78Z4bYSK7xLjDs/P/VGFnqiJ8Qdu1iKEE4VBPyh5IansPP
-         atAMh0tHLmBey2Pja9dgn9J6wHuOJo88+eBrZuyzmcpDa5Ab1lhGl4FFmVf1mBvwIuEK
-         ngoK2Rooxz3Bx2hoOsmaOjExYVs18lLjzvwOPL7kJ+Frc+MKmJNZ5Gfcu4mk7zr3b0QB
-         SGt1n+1Pv0lejRv1kmnwo9icAZpKLf0wtKrn8Mbu1qE7JqnPLPsMYNjhJF74mk7BZ0nO
-         Zvy+68ys66H2zy0xJLl5iuw6/u3MTtW1G2lJu6G3vzjXDwvgYGbokGRlDrdvO8qygvF6
-         oTrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762159057; x=1762763857;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/6+8IBdXCcTU6eZ4JMuY2we8/fQYN6+oBue210uWprk=;
-        b=PZVApIej6f0bogZK4PYFnto8vR/f5neg/MUQwDLs78Nn4XaZC7HbTaPEX1bJzaO31j
-         KOh+3a5xREVIqRzVKcIRb2MY+7P+6KLNixKeFvDkrebaDTn3qTmLI0X0dr12ZFq3OcuE
-         qbmiFM1yBCQoAaFXhJwra6918Y6qAyVV7ZNE+XqYV/FX2H3mYUjk1m6ul1VhwRQ7Ir/6
-         BmxiTq2p+Bke3c+77zH88BW11yxlzYeHfTshy2KSAkT4VjLkWc1ZUm1hbmhwIyZsuD9O
-         jhHzJ7wVKcfXkA8CNIXm7IZmbabB05IEPCa2Iv6455dS2i+QRnG1VU+iemLfowp7rCzt
-         PkBQ==
-X-Gm-Message-State: AOJu0YyV+FDwahkd9iMxbACan86X4GrQ06Lpi+F91+8p9jR2I9oTonFy
-	OBOKD84XemFKHfvP/japh/p/BhB3xFX46cfphJbMZxwUdZIHxp9GyOfaIwLyylpiYus=
-X-Gm-Gg: ASbGncu+Dz4s0H33OJUdVSh7lAsLKI98CehQdNEePDKrCsaqRh1I+8aQrOBCRsHMtN+
-	D8DFX6R3v+J8w9JHtIZwQou5OLYSOuWNCEiOz2uVdQn3ZLHA7nDeLG79GnwL4iHCJ9fAHxZK9c6
-	ce6GIwaJOub1FAhcfpgobsff7Zul1IWFUmkLgsHEvWVehqEOTTNaJUv5LF22nFrtQ3HqQ4QdVSQ
-	ClIo5wshLnWkKtqZbylhliF4AkKeJzJfAaA7K7AJNQJ9fCD/WVOY1hGOQYonpRZusnZQ30Ae2gt
-	M9M5YomCve7ccHMYsIqEjX+TFlW32050iAuY9brm+6MrLsgVuxPe7f9jl6sI2Ix9fmvOgvYnkEk
-	NJyPTBLyqMTXUcKNbeLQRiNjWYuAiQGQ1NDxGT8nlXj8SFdEKByAG/uQ6TZ9sAqB0OaJYjc2oKD
-	AuzuDA/NXkEzXOJYt52o5xthOswEsjXHFfx/Ys+JobUbJX7LRdrmku2XRX52BJG8UJa5UWs+xj9
-	B4d
-X-Google-Smtp-Source: AGHT+IEXAMzB4Q3iZseWqc5EI+3z01yD/lkzyZQiHdGqXZRiWGSYaalZ7FPGcsDnEnqBbvKYbK1akQ==
-X-Received: by 2002:a05:6402:27d3:b0:640:9eb3:3683 with SMTP id 4fb4d7f45d1cf-6409eb34460mr3244974a12.1.1762159057100;
-        Mon, 03 Nov 2025 00:37:37 -0800 (PST)
-Received: from mordecai (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6407b428119sm9012005a12.24.2025.11.03.00.37.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 00:37:36 -0800 (PST)
-Date: Mon, 3 Nov 2025 09:37:28 +0100
-From: Petr Tesarik <ptesarik@suse.com>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, rcu@vger.kernel.org,
- x86@kernel.org, linux-arm-kernel@lists.infradead.org,
- loongarch@lists.linux.dev, linux-riscv@lists.infradead.org,
- linux-arch@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Josh
- Poimboeuf <jpoimboe@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo
- Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Andy
- Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Paolo Bonzini
- <pbonzini@redhat.com>, Arnd Bergmann <arnd@arndb.de>, Frederic Weisbecker
- <frederic@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, Jason Baron
- <jbaron@akamai.com>, Steven Rostedt <rostedt@goodmis.org>, Ard Biesheuvel
- <ardb@kernel.org>, Sami Tolvanen <samitolvanen@google.com>, "David S.
- Miller" <davem@davemloft.net>, Neeraj Upadhyay
- <neeraj.upadhyay@kernel.org>, Joel Fernandes <joelagnelf@nvidia.com>, Josh
- Triplett <josh@joshtriplett.org>, Boqun Feng <boqun.feng@gmail.com>,
- Uladzislau Rezki <urezki@gmail.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Mel Gorman <mgorman@suse.de>, Andrew
- Morton <akpm@linux-foundation.org>, Masahiro Yamada <masahiroy@kernel.org>,
- Han Shen <shenhan@google.com>, Rik van Riel <riel@surriel.com>, Jann Horn
- <jannh@google.com>, Dan Carpenter <dan.carpenter@linaro.org>, Oleg Nesterov
- <oleg@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, Clark Williams
- <williams@redhat.com>, Yair Podemsky <ypodemsk@redhat.com>, Marcelo Tosatti
- <mtosatti@redhat.com>, Daniel Wagner <dwagner@suse.de>
-Subject: Re: [PATCH v6 06/29] static_call: Add read-only-after-init static
- calls
-Message-ID: <20251103093728.031042d0@mordecai>
-In-Reply-To: <xhsmhqzujp9t3.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
-References: <20251010153839.151763-1-vschneid@redhat.com>
-	<20251010153839.151763-7-vschneid@redhat.com>
-	<20251030112251.5afcf9ed@mordecai>
-	<xhsmhqzujp9t3.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.50; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1762159081; c=relaxed/simple;
+	bh=Sp7nSaXbOCNj+brMy3i1C+VjmzXxTE/hC3oJTrEU3E4=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=ZPU1YxiGZkbHI5yn8S9QLEVSQnc7bW/DrlzkSp5nJ6wyVrEonKiidENbAkfGudPIOOterHVrX9GMcZeKLVFpIxAd/SruEUCZKqUYQs3OR5VEE9aY+aKPVI/ll9b67LWqeryS2zd7CeGzDuhvDrEjcEW12utFZf2pUo62QPCnLIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=pass smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=DWFAg4xx; arc=none smtp.client-ip=57.103.68.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ljones.dev
+Received: from outbound.mr.icloud.com (unknown [127.0.0.2])
+	by p00-icloudmta-asmtp-us-west-2a-60-percent-7 (Postfix) with ESMTPS id CDDDF1800176;
+	Mon,  3 Nov 2025 08:37:56 +0000 (UTC)
+Dkim-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; s=sig1; bh=A5gZGsxsUWbC8mj8gE4jWelFQ54ptgMLFPpk+7cReZg=; h=Content-Type:Mime-Version:Subject:From:Date:Message-Id:To:x-icloud-hme; b=DWFAg4xxE+m20x9u9wD9OY/lr1Y7D5slT97bh68PmrJ+rsRr8BdfN/aVM+20Kzaq3lrPtlw9e+dvOwksUZEnp+TYOY/QWt73veAx09Y9CPDDteq9pogmBxQP3XlJA4/7UqD7huBJ+mTsPFGUK5eTovHQ5dkkswevRU3FRKjlpTKHtz0vbGmPex8xeRE6Nbs8scMfBKBPZUE48KGObQ60xUOmBf0ih1OIuC84s81q7nAzIcL6Ux/CwPUIVQ+gG+U/xfvemiJeTvcvQQcz8v2pVxaQrSmJKuZbdb5uxnvNL9jawdXafzqCbXf90UOLlRV7VnCR8wE/I6D05NCeZL9Wvg==
+mail-alias-created-date: 1566896761000
+Received: from smtpclient.apple (unknown [17.57.152.38])
+	by p00-icloudmta-asmtp-us-west-2a-60-percent-7 (Postfix) with ESMTPSA id C7E0218000A2;
+	Mon,  3 Nov 2025 08:37:53 +0000 (UTC)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3864.200.81.1.6\))
+Subject: Re: [PATCH v7 5/9] platform/x86: asus-wmi: Add support for multiple
+ kbd led handlers
+From: luke@ljones.dev
+In-Reply-To: <CAGwozwHCnHwOVw08ZJ4LOFD8kDv+kevvF1-PkjBq2+VMBBx9TQ@mail.gmail.com>
+Date: Mon, 3 Nov 2025 21:37:40 +1300
+Cc: "Derek J. Clark" <derekjohn.clark@gmail.com>,
+ Jiri Kosina <jikos@kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>,
+ Corentin Chary <corentin.chary@gmail.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?utf-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Denis Benato <benato.denis96@gmail.com>,
+ kernel test robot <lkp@intel.com>,
+ platform-driver-x86@vger.kernel.org,
+ linux-input@vger.kernel.org,
+ oe-kbuild-all@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <52B61B78-4177-474B-9D40-471ED918C951@ljones.dev>
+References: <CAGwozwFgd91n2HnHn0VEL3BTGkj8QCRnp2jfCsMB38JqK8znNg@mail.gmail.com>
+ <20251103042848.9302-1-derekjohn.clark@gmail.com>
+ <CAGwozwHCnHwOVw08ZJ4LOFD8kDv+kevvF1-PkjBq2+VMBBx9TQ@mail.gmail.com>
+To: Antheas Kapenekakis <lkml@antheas.dev>
+X-Mailer: Apple Mail (2.3864.200.81.1.6)
+X-Proofpoint-GUID: 7TEDa_DEytf2rJ2G_QvLuacr2f32o_bB
+X-Proofpoint-ORIG-GUID: 7TEDa_DEytf2rJ2G_QvLuacr2f32o_bB
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAzMDA3OSBTYWx0ZWRfX+2R3w4de1bFi
+ Uoi+7W7T669pWxfnxoMqJYU0u4FOJBd3oGi7s97P1RCKvMCUNjxPWqbeu0y/4X6XPRrskpnU16n
+ l780+p1LLHNjvNxrXKRqESJ+Fbq4pXY8BiIK7lkujs+D4+4g7TelObBUCyylRUi924126StCQ0f
+ dbfZ9cB8EEcZClu5rYKzEbIYg7jbqcZEXoNj8VQeM/51KVy2LGaLGVdqmmPH1aAXKI+zvIg0Mnv
+ MqpSyRzLEWm57JyF9eQobuUX99ETrBImuCbJE2eV1JXN7Bg2ZJ3wkj9F3Z5fIc31vo5ZlRjDQ=
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-02_02,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0
+ adultscore=0 malwarescore=0 mlxscore=0 clxscore=1030 mlxlogscore=999
+ spamscore=0 phishscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.22.0-2506270000 definitions=main-2511030079
+X-JNJ: AAAAAAABbd6XqknHa+CF2M9WuZZR5OKHSDARVg9jtMkzSgwqIagSwG7+g5Ssmnkzk3xUZFHnxEwri1mPi5uS5bMEfZnetGW5CPWf9HpyK42SlQTrSZlb6W6sxOaeNRZIwJVuexGtpzmgCSkP15DREt3MeFSyOTc0sf4wT6lyF6HLRKZN7VvbYGlnEQhDkrtFfQJu9TyJeIeyNTe/wqeK8QaHw5UtiJPrj8VnIXCwBeulEIfzb2hqZpvw9w66UaBmeVA7O8to06cNqlSdiwsm4iHrYgtjZhfQkkFVFPvf0PBUEiBoZ7V27qw/bSQleHc54iwXGbw+0lz63cKiiiFBrzWmTdh/fR8o71fRr/7DOtne7Bi8U+6mCjc1CMX8PZ1cf8oHA/CsM1fJVognGYYdCjHWctrzbxL6+pN7HG/5SXAgRsZJvHSGlmrj3KfOZ0U5LGmV0obIFASig3EJU6WC592/wW6CUYioy4qtT00YrsjqB6b4dKtYJEVjIgBfaa3eIrOQxAc+lH+WJF2me4OSWR8QT2eKfz6joEH4mf1ATFMGykaXq/k6edSKW52Rx5Ubq+QQG4Bb0bSTLX2MYEsIea3jkLnmABOR0ynVVNXN69QkbI25kTBtA/Ar9D7rVB436Zrs8ECticPiUCKQBGENU8KIQ41qp3sLizZON68d0V0FUk6551zo7+55hFICbxv3FLyoJTiyhNqKF8tj249sXLwLXZNh9+0/XJpuXvPCIWOuF2vZHqEjTwnwNhWmI9arC2KuXMOWOKKK1c4u47Xo5Xsg3Z+/eGMl85bTNT9jPJzJr3Nn7g/9w6Nj/g==
 
-On Fri, 31 Oct 2025 12:52:56 +0100
-Valentin Schneider <vschneid@redhat.com> wrote:
 
-> On 30/10/25 11:25, Petr Tesarik wrote:
-> > On Fri, 10 Oct 2025 17:38:16 +0200
-> > Valentin Schneider <vschneid@redhat.com> wrote:
-> >  
-> >> From: Josh Poimboeuf <jpoimboe@kernel.org>
-> >>
-> >> Deferring a code patching IPI is unsafe if the patched code is in a
-> >> noinstr region.  In that case the text poke code must trigger an
-> >> immediate IPI to all CPUs, which can rudely interrupt an isolated NO_HZ
-> >> CPU running in userspace.
-> >>
-> >> If a noinstr static call only needs to be patched during boot, its key
-> >> can be made ro-after-init to ensure it will never be patched at runtime.
-> >>
-> >> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> >> ---
-> >>  include/linux/static_call.h | 16 ++++++++++++++++
-> >>  1 file changed, 16 insertions(+)
-> >>
-> >> diff --git a/include/linux/static_call.h b/include/linux/static_call.h
-> >> index 78a77a4ae0ea8..ea6ca57e2a829 100644
-> >> --- a/include/linux/static_call.h
-> >> +++ b/include/linux/static_call.h
-> >> @@ -192,6 +192,14 @@ extern long __static_call_return0(void);
-> >>      };								\
-> >>      ARCH_DEFINE_STATIC_CALL_TRAMP(name, _func)
-> >>
-> >> +#define DEFINE_STATIC_CALL_RO(name, _func)				\
-> >> +	DECLARE_STATIC_CALL(name, _func);				\
-> >> +	struct static_call_key __ro_after_init STATIC_CALL_KEY(name) = {\
-> >> +		.func = _func,						\
-> >> +		.type = 1,						\
-> >> +	};								\
-> >> +	ARCH_DEFINE_STATIC_CALL_TRAMP(name, _func)
-> >> +
-> >>  #define DEFINE_STATIC_CALL_NULL(name, _func)				\
-> >>      DECLARE_STATIC_CALL(name, _func);				\
-> >>      struct static_call_key STATIC_CALL_KEY(name) = {		\
-> >> @@ -200,6 +208,14 @@ extern long __static_call_return0(void);
-> >>      };								\
-> >>      ARCH_DEFINE_STATIC_CALL_NULL_TRAMP(name)
-> >>
-> >> +#define DEFINE_STATIC_CALL_NULL_RO(name, _func)				\
-> >> +	DECLARE_STATIC_CALL(name, _func);				\
-> >> +	struct static_call_key __ro_after_init STATIC_CALL_KEY(name) = {\
-> >> +		.func = NULL,						\
-> >> +		.type = 1,						\
-> >> +	};								\
-> >> +	ARCH_DEFINE_STATIC_CALL_NULL_TRAMP(name)
-> >> +  
-> >
-> > I think it would be a good idea to add a comment describing when these
-> > macros are supposed to be used, similar to the explanation you wrote for
-> > the _NOINSTR variants. Just to provide a clue for people adding a new
-> > static key in the future, because the commit message may become a bit
-> > hard to find if there are a few cleanup patches on top.
-> >  
-> 
-> I was about to write such a comment but I had another take; The _NOINSTR
-> static key helpers are special and only relevant to IPI deferral; whereas
-> the _RO helpers actually change the backing storage for the keys and as a
-> bonus are used by the IPI deferral instrumentation.
-> 
-> IMO it's the same here for the static calls, it makes sense to mark the
-> relevant ones as _RO regardless of IPI deferral.
-> 
-> I could however add a comment to ANNOTATE_NOINSTR_ALLOWED() itself,
-> something like:
-> 
-> ```
-> /*
->  * This is used to tell objtool that a given static key is safe to be used
->  * within .noinstr code, and it doesn't need to generate a warning about it.
->  *
->  * For more information, see tools/objtool/Documentation/objtool.txt,
->  * "non-RO static key usage in noinstr code"
->  */
-> #define ANNOTATE_NOINSTR_ALLOWED(key) __ANNOTATE_NOINSTR_ALLOWED(key)
-> ```
+> On 3 Nov 2025, at 20:36, Antheas Kapenekakis <lkml@antheas.dev> wrote:
+>=20
+> On Mon, 3 Nov 2025 at 05:29, Derek J. Clark =
+<derekjohn.clark@gmail.com> wrote:
+>>=20
+>>> On Fri, 31 Oct 2025 at 09:27, Jiri Kosina <jikos@kernel.org> wrote:
+>>>>=20
+>>>> On Thu, 23 Oct 2025, Antheas Kapenekakis wrote:
+>>>>=20
+>>>>>>  1589
+>>>>>>  1590  static void kbd_led_update_all(struct work_struct *work)
+>>>>>>  1591  {
+>>>>>>  1592          enum led_brightness value;
+>>>>>>  1593          struct asus_wmi *asus;
+>>>>>>  1594          bool registered, notify;
+>>>>>>  1595          int ret;
+>>>>>                              /\ value should have been an int and
+>>>>> placed here. It can take the value -1 hence the check
+>>>>=20
+>>>> Thanks, that needs to be fixed before the final merge.
+>>>>=20
+>>>>> Are there any other comments on the series?
+>>>>>=20
+>>>>> The only issue I am aware of is that Denis identified a bug in =
+asusd
+>>>>> (asusctl userspace program daemon) in certain Asus G14/G16 laptops
+>>>>> that cause laptop keys to become sticky, I have had users also =
+report
+>>>>> that bug in previous versions of the series. WIthout asusd =
+running,
+>>>>> keyboards work fine incl. with brightness control (did not work
+>>>>> before). Given it will take two months for this to reach mainline, =
+I
+>>>>> think it is a fair amount of time to address the bug.
+>>>>=20
+>>>> One thing that is not clear to me about this -- is this causing a =
+visible
+>>>> user-space behavior regression before vs. after the patchset with =
+asusctl?
+>>>>=20
+>>>> If so, I am afraid this needs to be root-caused and fixed before =
+the set
+>>>> can be considered for inclusion.
+>>=20
+>>> Commit 591ba2074337 ("HID: asus: prevent binding to all HID devices =
+on
+>>> ROG") adds HID_QUIRK_INPUT_PER_APP and the extra devices seem to
+>>> confuse asusd. Since the devices are the same as with hid-asus not
+>>> loaded, it is specific to that program.
+>>>=20
+>>>=20
+>> Hi Antheas.
+>>=20
+>> While you have previously expressed to me directly that you wish =
+InputPlumber
+>> didn't exist, it still very much does, in fact, exist. I also know =
+that you are
+>> explicitly aware that InputPlumber is a consumer of this interface, =
+so your
+>> comment that asusctl is the only affected program is something you =
+know to be
+>> false. This is not even the first time you have renamed an input =
+device that
+>> you knew InputPlumber was a consumer of without notifying me[1].
+>>=20
+>> I can't abide you outright lying to the maintainers here and I'm sick =
+and tired
+>> of having to watch your every move on the LKML. Either become a good =
+citizen of
+>> kernel maintenance, or get out of it.
+>=20
+> Hi Derek,
+> I am not aware if your software is affected or not by this series as I
+> have not received reports about it.
+>=20
+> If it is, please add:
+> "ASUSTeK Computer Inc. N-KEY Device"
+>=20
+> As a name match to your software (should only take 5 minutes).
+>=20
+> I worked with Luke and Dennis on it for the better part of a year so
+> hopefully they forwarded to you if it affects you or not.
+>=20
+> Your software relies on OOT drivers for most devices incl. the Ally so
+> I am unsure if it is affected in reality. E.g., it would not be
+> affected in SteamOS and CachyOS. In the future, it would be good to
+> avoid name matches for your software as it makes it very fragile,
+> which is a discussion we have had before. I do not think device evdev
+> names constitute an ABI technically.
 
-I agree, this makes more sense. Thank you!
+Taking no sides here.
 
-Petr T
+An unfortunate reality is that there is stuff out there that does use =
+name matches (and yes I agree they shouldn=E2=80=99t because it is *not* =
+an ABI and many many devices have had name changes over the decades).
+
+While name strings aren't a formal ABI, when a change affects known =
+downstream users, a heads-up helps the ecosystem adapt smoothly=E2=80=94ev=
+en if the technical stance is that they shouldn't rely on names.
+
+In general it also needs to be justified such as:
+- "Matches updated product branding"
+- "Current string is misleading (says 'mouse' but it's a keyboard)"
+- "Fixing spelling error"
+- "Aligning with USB-IF device class names"
+
+I always advocated use of evdev libraries to discover devices rather =
+than the shortcut of name matching as it is much more powerful and =
+reliable (which is how asusctl does dynamic add/remove of LED dev dbus =
+interfaces). It=E2=80=99s much better to use evdev with vid/pid, device =
+sub/classes, into descriptors and so on - you can be as open or =
+restrictive as required by use case. This particular issue illustrates =
+why this approach is preferable.
+
+If the name change is a result of something I said or missed then I =
+apologise to both Derek and yourself. Likely I missed it as I=E2=80=99ve =
+never relied on name strings for userspace.
+
+Regarding the OOT ally drivers I started, these will of course get =
+upstreamed in the future (by Denis in this case when he can). They are =
+getting very heavily battled tested in the mean time. Please do =
+contribute to them if there is anything required to be addressed or chat =
+to Denis, after all they are made only to benefit all users (there is no =
+*race to be first* here.
+
+As I no longer work on Asus laptops/handhelds and don't have hardware =
+left to test with, I can't contribute further to this discussion. Best =
+of luck resolving this.
+
+I'm out.
+Luke.
+
+>=20
+> Best,
+> Antheas
+>=20
+>> Commit 591ba2074337 ("HID: asus: prevent binding to all HID devices =
+on ROG")
+>> Nacked-By: Derek J. Clark <derekjohn.clark@gmail.com>
+>>=20
+>> - Derek
+>>=20
+>> [1] https://lore.kernel.org/linux-input/Z74vZD7ZtKBTDlwy@google.com/
+>>=20
+>>> We can delay that patch until Denis who took over maintenance of the
+>>> program can have a deeper look. I will still keep the last part of
+>>> that patch that skips the input check, because that causes errors in
+>>> devices that do not create an input device (e.g., lightbar).
+>>>=20
+>>> Antheas
+
+
 
