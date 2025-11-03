@@ -1,115 +1,137 @@
-Return-Path: <linux-kernel+bounces-882715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A953CC2B37D
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:02:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2504C2B36B
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:02:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FD783A625A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:02:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D6D11891DAB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681D23002A6;
-	Mon,  3 Nov 2025 11:02:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A7830149D;
+	Mon,  3 Nov 2025 11:02:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zq8xyZaP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m/KfQHIV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597263009E4
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 11:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD14E30103F;
+	Mon,  3 Nov 2025 11:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762167729; cv=none; b=nPKBIAxYYF+UcA9F1dK6rSVbje6wO6gnajxkgpNhUB1Ju+LbalPdXPULjrgxWCimhLrGN5r0kBVfgpt5aBeYpfmgNGEhQRGwlUTqTjmSJ4wIHhNSCryFuDI3N4SPvZzG1WPtBJYVkbM1oeX8S/gwRLWiASBGM3GQ1gh1uiQ/WLc=
+	t=1762167734; cv=none; b=MrceagdIL0grQoIBl/VdF1cGR7EPn0eJBMlctCXYyN94NadyJGQohw9m2fqJycZZmCqLSmOB07ljKsEM9TQwEmPMOYdL2yVsbVjlhy2zdlxTHQALOONqhQ7YNPaxm4EN8MUoPVCqEb1ngScxHeO/Thbncdr9a9gCdjbqoQNRtn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762167729; c=relaxed/simple;
-	bh=dBEGE7Q2FKfgjAlIXnLQQ3kv27gx1kpdPQtSwVZaBLg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fEH5wfRYxRob1DG02B8oRYYkMYOfh1WCAEvUMxgQIXAslA/9XClumz1hsRDanwQS1fGTw8GDOv8bnokMyAMRTQFZwo+fkADm4dvTIJ5OmVMf3uR9Ydagb+I7dYS5llZVURlrv9vdiDGRfrkjOv2onCZjFW8Cr0h+M4r9FOQVDMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zq8xyZaP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 742AAC4CEE7;
-	Mon,  3 Nov 2025 11:02:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762167727;
-	bh=dBEGE7Q2FKfgjAlIXnLQQ3kv27gx1kpdPQtSwVZaBLg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Zq8xyZaPRCiSAPW57VhpsgAiTBwBqP6XkDgxOvn5vZzA1sYnqgh0RK5mD5wnjGYGK
-	 Hu0MC0hbd6ILJ24QPsYjK8AvwJlo6q3ygStghGvD32c6OmXG8C5HjncIMB9PZpxato
-	 J4d2LnumJHSpZbzkzdQ0c+4R7sixgMQU/dRonIMHaL5Em2sFwnlppVzwgrIZhsXuG3
-	 Og0dec424Y3aGwlYl0f+1ns2Q6LnPqADoaWiu6OjG0zo0fVswYDtBIWirBCBfuYtW2
-	 Ex22L8WzhNXm3fHjLOWEViWi8YdGBaF1JvcxixiNfx8swlRvyHsquMloLFfUCHjitS
-	 seAV/qWGeefQg==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>,
-	Alexander Graf <graf@amazon.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Pratyush Yadav <pratyush@kernel.org>
-Cc: kexec@lists.infradead.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] kho: fix out-of-bounds access of vmalloc chunk
-Date: Mon,  3 Nov 2025 12:01:57 +0100
-Message-ID: <20251103110159.8399-1-pratyush@kernel.org>
-X-Mailer: git-send-email 2.51.2
+	s=arc-20240116; t=1762167734; c=relaxed/simple;
+	bh=+QUKYiq6QyurEYEfuCj/JyfcmWfTRvEucNWiwhh61Y8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MLcXePkSAagfFy73d6fPEyQbFrggZvNumC04/3FtSkpiwjbfvQIdv1c1ETEUfSCy1waxFm1cnmQLH+lMc//xPQS7d5DoY26N8HImW58DPW1Lt5L8KnRQL6rUYs3wVDct93qOFoXxo9VUZ1KpQcctPPfnpzHGrosvQHBCIfx4ZLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m/KfQHIV; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762167732; x=1793703732;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=+QUKYiq6QyurEYEfuCj/JyfcmWfTRvEucNWiwhh61Y8=;
+  b=m/KfQHIVpGzqHRVlc5f8DjaIQMRPKPuFDpXSrRS/fGVBowEuazeRJSiS
+   UMY40RJfHVllUw/g0IIXPTywKexoajnn4vA1Fch9GEdD3unaD1GiIzaQt
+   EClJHih879lUfNGPcEFR/pMq94ocgmwQzoZBelqQepekVnqeYuL/jRxxZ
+   9Dmb7BT3HNSsRWhVVg4bs1yYMmwIZvAeEos/moIB54Xp0LEw19TJhVJ+g
+   x5CoUXi/jkCnFe6L7gCrAp20zljoG4q6U9fyL4QkWklGcQ1+vGlnLt2rM
+   FTKAbAopZ9B/lzsBIJtRuVaxVMA6HJzEROUPxmKDdHMKA+aflkr5h5j4K
+   g==;
+X-CSE-ConnectionGUID: 3erTDP4VSD2vm65sL0zNxg==
+X-CSE-MsgGUID: E/kHXqH4Sm+Ylw9QPiTNZw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="74842739"
+X-IronPort-AV: E=Sophos;i="6.19,276,1754982000"; 
+   d="scan'208";a="74842739"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 03:02:11 -0800
+X-CSE-ConnectionGUID: jzZIC2rTShau3xRc3doKGw==
+X-CSE-MsgGUID: mIxJirusTs+LpRTi66etVA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,276,1754982000"; 
+   d="scan'208";a="191947690"
+Received: from egrumbac-mobl6.ger.corp.intel.com (HELO [10.245.245.12]) ([10.245.245.12])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 03:02:09 -0800
+Message-ID: <11d7b29d-a45f-48e9-bff5-cb94150d0bdf@intel.com>
+Date: Mon, 3 Nov 2025 13:02:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] usb: xhci: Check kcalloc_node() when allocating
+ interrupter array in xhci_mem_init()
+To: Michal Pecio <michal.pecio@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Guangshuo Li <lgs201920130244@gmail.com>,
+ Wesley Cheng <quic_wcheng@quicinc.com>, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20250918130838.3551270-1-lgs201920130244@gmail.com>
+ <20251103094036.2d1593bc.michal.pecio@gmail.com>
+Content-Language: en-US
+From: Mathias Nyman <mathias.nyman@intel.com>
+In-Reply-To: <20251103094036.2d1593bc.michal.pecio@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The list of pages in a vmalloc chunk is NULL-terminated. So when looping
-through the pages in a vmalloc chunk, both kho_restore_vmalloc() and
-kho_vmalloc_unpreserve_chunk() rightly make sure to stop when
-encountering a NULL page. But when the chunk is full, the loops do not
-stop and go past the bounds of chunk->phys, resulting in out-of-bounds
-memory access, and possibly the restoration or unpreservation of an
-invalid page.
+On 11/3/25 10:40, Michal Pecio wrote:
+> On Thu, 18 Sep 2025 21:08:38 +0800, Guangshuo Li wrote:
+>> kcalloc_node() may fail. When the interrupter array allocation returns
+>> NULL, subsequent code uses xhci->interrupters (e.g. in xhci_add_interrupter()
+>> and in cleanup paths), leading to a potential NULL pointer dereference.
+>>
+>> Check the allocation and bail out to the existing fail path to avoid
+>> the NULL dereference.
+>>
+>> Fixes: c99b38c412343 ("xhci: add support to allocate several interrupters")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
+>> ---
+>>   drivers/usb/host/xhci-mem.c | 3 ++-
+>>   1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
+>> index d698095fc88d..da257856e864 100644
+>> --- a/drivers/usb/host/xhci-mem.c
+>> +++ b/drivers/usb/host/xhci-mem.c
+>> @@ -2505,7 +2505,8 @@ int xhci_mem_init(struct xhci_hcd *xhci, gfp_t flags)
+>>   		       "Allocating primary event ring");
+>>   	xhci->interrupters = kcalloc_node(xhci->max_interrupters, sizeof(*xhci->interrupters),
+>>   					  flags, dev_to_node(dev));
+>> -
+>> +	if (!xhci->interrupters)
+>> +		goto fail;
+>>   	ir = xhci_alloc_interrupter(xhci, 0, flags);
+>>   	if (!ir)
+>>   		goto fail;
+>> -- 
+>> 2.43.0
+> 
+> Hi Greg and Mathias,
+> 
+> I noticed that this bug still exists in current 6.6 and 6.12 releases,
+> what would be the sensible course of action to fix it?
+> 
 
-Fix this by making sure the processing of chunk stops at the end of the
-array.
+Not sure this qualifies for stable.
+Is this something that has really happened in real life?
 
-Fixes: a667300bd53f2 ("kho: add support for preserving vmalloc allocations")
-Signed-off-by: Pratyush Yadav <pratyush@kernel.org>
----
+The stable-kernel-rules.rst states it should "fix a real bug that bothers people"
 
-Notes:
-    Commit 89a3ecca49ee8 ("kho: make sure page being restored is actually
-    from KHO") was quite helpful in catching this since kho_restore_page()
-    errored out due to missing magic number, instead of "restoring" a random
-    page and causing errors at other random places.
+If kcalloc_node() fails to allocate that array of pointers then something
+else is already badly messed up.
 
- kernel/kexec_handover.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+That being said, I don't object this being added to stable either
 
-diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
-index 76f0940fb4856..cc5aaa738bc50 100644
---- a/kernel/kexec_handover.c
-+++ b/kernel/kexec_handover.c
-@@ -869,7 +869,7 @@ static void kho_vmalloc_unpreserve_chunk(struct kho_vmalloc_chunk *chunk)
- 
- 	__kho_unpreserve(track, pfn, pfn + 1);
- 
--	for (int i = 0; chunk->phys[i]; i++) {
-+	for (int i = 0; i < ARRAY_SIZE(chunk->phys) && chunk->phys[i]; i++) {
- 		pfn = PHYS_PFN(chunk->phys[i]);
- 		__kho_unpreserve(track, pfn, pfn + 1);
- 	}
-@@ -992,7 +992,7 @@ void *kho_restore_vmalloc(const struct kho_vmalloc *preservation)
- 	while (chunk) {
- 		struct page *page;
- 
--		for (int i = 0; chunk->phys[i]; i++) {
-+		for (int i = 0; i < ARRAY_SIZE(chunk->phys) && chunk->phys[i]; i++) {
- 			phys_addr_t phys = chunk->phys[i];
- 
- 			if (idx + contig_pages > total_pages)
+Thanks
+Mathias
 
-base-commit: dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
--- 
-2.47.3
 
 
