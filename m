@@ -1,201 +1,186 @@
-Return-Path: <linux-kernel+bounces-882598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C79BC2AD89
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 10:49:40 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F063C2AD93
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 10:50:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8561D3A4065
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 09:49:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4F97D4E7E9B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 09:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999392F9DBB;
-	Mon,  3 Nov 2025 09:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70ED32F9D82;
+	Mon,  3 Nov 2025 09:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YIJHQk+2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QTc9cz+8"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C39B2F9987;
-	Mon,  3 Nov 2025 09:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF3F72F9980
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 09:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762163370; cv=none; b=K1Ao9nvWntEzafhQ7imXKmS2tlwoojWAu3HzybEHhqG9iptfdpd3g+aNLeSsbadqrraoZoqRGjs5k3V2d6+yPBf1i2vbtbOjJPrisu1aTvMy5dimiUDcLndqpKM/jFjvsLy/mN+57mt617q2TL+QX8X/no2b3/BNlQ8SepCpQRw=
+	t=1762163423; cv=none; b=CqQFmnEzowFC3eGDrbxBZINb65Pc09EuSLKJI03HonIFC5unfZSTyYm0K31Xfzr+zlWRlMFK+sWW/Gg/eAl9pml6ZRY6nquequEaiFsr0KW8T0BS9Zxl1rx0FjKnkuRVhfLWzvzxW0oQlVK3hmSK8mc1Zodz9isMiFnDrGWZcEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762163370; c=relaxed/simple;
-	bh=vG9zLhPDW7K8NUwgsTT8uAJdai2F1EJGuKPUTSsmIKw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gBTSqo3XXMaauMuNOVv9oSAzugGPCk6E9VEJBETFZqv3fhlgTrnwy8pz0OCbONo5M7LUGMMFFSWFxfamKmzoBCEUq0PF4+Wg30W8f49rLd6r7hQFlwSrIud3o82Vchkw3NW3m9ifC0RxWVpN3HK9LkillpWI28zb1LiioAvDKao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YIJHQk+2; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762163369; x=1793699369;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vG9zLhPDW7K8NUwgsTT8uAJdai2F1EJGuKPUTSsmIKw=;
-  b=YIJHQk+2reSsxGGjbnReVqEeBPfZoySArGrqFvLQ8c40KLRcCMnFXnMp
-   hgwhTAkKDgnAmkhyhWB4ghOHTn6pULbWV2FY5pdqSLcd8LsLy8tLBZWdD
-   uIwjMLMT3+VkULf1VDZG7mJyXVogArvEKG9rtDUMuKdBpXXqR0yt/xBuN
-   5EVr76RqYhgj7zbg/DKSuRcnvBpzjgX98+8Cj3hfpkeostyfSGilWGTbm
-   6tQXfHD/S12A45YjuAkuv6Fi/TT88uqzYKvddcrcRwwELdW86JT83bxCY
-   bCTtdaCegOCJ0KJzEhoevFG0AmKX6/YzcY8D9PbJAJYcB8k73qANcWcye
-   g==;
-X-CSE-ConnectionGUID: 0MDWZg4xRjOeuUYciw0yXw==
-X-CSE-MsgGUID: 35N/gOrPQ06oEaIDJTkNSw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="66847762"
-X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
-   d="scan'208";a="66847762"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 01:49:28 -0800
-X-CSE-ConnectionGUID: mjEiHSGESqy9XFXxvVzC2g==
-X-CSE-MsgGUID: TNSndF7CTfWQmydTJLdHrA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
-   d="scan'208";a="217649008"
-Received: from smoehrl-linux.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.216])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 01:49:26 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vFrBg-000000056xO-1dpX;
-	Mon, 03 Nov 2025 11:49:20 +0200
-Date: Mon, 3 Nov 2025 11:49:19 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Daniel Scally <djrscally@gmail.com>,
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v4 03/10] software node: allow referencing firmware nodes
-Message-ID: <aQh6n2XuI0oayg2g@smile.fi.intel.com>
-References: <20251103-reset-gpios-swnodes-v4-0-6461800b6775@linaro.org>
- <20251103-reset-gpios-swnodes-v4-3-6461800b6775@linaro.org>
+	s=arc-20240116; t=1762163423; c=relaxed/simple;
+	bh=lLdro4UCejX2T0cIjEIAFpHkeF9T6b7n0Tt52fX1K9M=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=R9Dz3QX2ROEazJlwe0JTTFUBBTu0TtnmigAIhFcQEf/IE9pc0GfPw5rxuKt8iRhmfVFKo3IwWJWFOxQJjyyP5wmm/y6FiZwGCRUB+RyQCJGWQbfEmVLLBytlvRvOZRZBQx2A2yP5QEMKARuD6TO10lm0QH+f5xQRXVR/pCW+Odo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QTc9cz+8; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-475dc6029b6so37340755e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 01:50:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762163420; x=1762768220; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xkxRjtj8Zko1T2xij3oDoi3JjwhxKLKuoC0vibst6Dw=;
+        b=QTc9cz+88GfFLIx1Z5AlfQmnkOnNLCc3W67DvqHHiXx/W3Z/ZRecLLkrIBoa1jhlu2
+         COc1xKp8U+tXjSpxYFtD7nEs/uNlyfR3LEZdVTH22J2+JBYrSl5aIYs7z2Z2Xo2IpB+s
+         M5AEKii5wjnoUkzIE9BGf2ugjsi+f3eVRysvAcgFqW01MkMEkajens6/VfjUCOWePocO
+         buQ8DnfPGt14dFj3dF0uVDAm+s7aQwsI3T+c3Xa0jYnwJ9M5EEemqFNhPjPtlp5C8SGm
+         bowvtE6phABrwULn2mYM3vOw1JHFjIkNhr9MyWe5xrJKIKXxQ8fzbqDSVpYA/HvjyqKG
+         wkSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762163420; x=1762768220;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xkxRjtj8Zko1T2xij3oDoi3JjwhxKLKuoC0vibst6Dw=;
+        b=CKdPZNKd4insMJBzWP/S18jNtWN298RsujVo13Arumx1PArmLL87L8l6Rical3PjQv
+         JHQl4BMT7G9OMc3X6/V7MBJZa26JH6QgTs4gAe7M+aopgBg1yEQCLFxNzpEGE8g6d+Nb
+         mXmUeztLjxN6PL18K24RQIQncAji+FmNlIrxdVxf4pVFGVj68HyC2Sdt0YWJ9L+I4tBv
+         oMIHH0uEHKbHXhadUPGTEcNtHRBB02c5jBw/I5EeTFmllvTajoUmjznQ4oexMD8wIIJu
+         aU0sR89mhSH3XL4pSdhHQ8pk4ZuIlcJ2P/tlgDBkyjj27IQrkr8Ra65o/tc13r5ruO/x
+         au/A==
+X-Forwarded-Encrypted: i=1; AJvYcCV71/6djKV6CtGpV3HAo5y41wOxu5pbaX+kZm2A2pqkoMcVj/bO/URILBlMlvxW7533hkQmxIcs4lGl27A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/jX4L11y6osBdQ7V8sjMHve4BUS3c1gbLVRsBIMH4VWQDLOv4
+	6OQxwLu8JVrK4B6nh+m+PlDEDEucPVnRsvjvXyWvWYE+Zw60xHe1NUQUCvPqQsctSRo=
+X-Gm-Gg: ASbGncvjrGNNTELjvmESxnDoYxvxNUb4+Xl1GWCJSaYUQncaQtA1v8tDqBh/nj84pOa
+	1Hqz7iHhK/RCb5kJyRhX4ITCahxPtEv0LmMVv8Hq+aLyU6gohmiPxswbispZLNmP4vzjbCgtk8n
+	iLCeHyzDS5HBd5f6w1rTpaL6lgpTK0gi8mQ9593FijWuk3D7ZrRy85VSSa/cpQnZqUpcqvmgQur
+	RD6i+vRiKDioPnn4Bh3EZjAumVjAWr3OxpvETpTThNz8yVYnuVcD0XHjNx2iQVyIHyDFF2nm2nJ
+	yfPspbiJheApTym0saYichVdUPAQIQmjNdfsH7npb/IhFNHb3sdAEBJ2ckdg3r5GJnEZh7xFz5k
+	uJvboLrxApoHs3BPcojXjEncGUCNR65CeHZkC2bGszeuPDOFATJ+5ViiqNjBtJTtFX3u+FIkgJI
+	CM7uDmz5U9rXynpqnmi4HnoG8ssltXrlb85Da5cMU08xW0
+X-Google-Smtp-Source: AGHT+IHrNu7b4MLVFNafM5XudQwLx9/rw/9sFxikTt/B5JVYOos8PxRbnxL+oXtoVWVlGPVam6SEPg==
+X-Received: by 2002:a05:600c:5249:b0:471:145b:dd0d with SMTP id 5b1f17b1804b1-4773087230cmr102374215e9.24.1762163420204;
+        Mon, 03 Nov 2025 01:50:20 -0800 (PST)
+Received: from [192.168.27.65] (home.rastines.starnux.net. [82.64.67.166])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4772fcd45a9sm84684815e9.3.2025.11.03.01.50.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Nov 2025 01:50:19 -0800 (PST)
+Message-ID: <83d07b54-d584-4297-9aae-2a170c0059d4@linaro.org>
+Date: Mon, 3 Nov 2025 10:50:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251103-reset-gpios-swnodes-v4-3-6461800b6775@linaro.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH RESEND 0/3] PCI: meson: Fix the parsing of DBI region
+To: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Hanjie Lin <hanjie.lin@amlogic.com>,
+ Yue Wang <yue.wang@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
+ Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ Andrew Murray <amurray@thegoodpenguin.co.uk>,
+ Jingoo Han <jingoohan1@gmail.com>,
+ Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, stable+noautosel@kernel.org,
+ stable@vger.kernel.org, Linnaea Lavia <linnaea-von-lavia@live.com>
+References: <20251101-pci-meson-fix-v1-0-c50dcc56ed6a@oss.qualcomm.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20251101-pci-meson-fix-v1-0-c50dcc56ed6a@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 03, 2025 at 10:35:23AM +0100, Bartosz Golaszewski wrote:
+On 11/1/25 05:29, Manivannan Sadhasivam wrote:
+> Hi,
 > 
-> At the moment software nodes can only reference other software nodes.
-> This is a limitation for devices created, for instance, on the auxiliary
-> bus with a dynamic software node attached which cannot reference devices
-> the firmware node of which is "real" (as an OF node or otherwise).
+> This compile tested only series aims to fix the DBI parsing issue repored in
+> [1]. The issue stems from the fact that the DT and binding described 'dbi'
+> region as 'elbi' from the start.
 > 
-> Make it possible for a software node to reference all firmware nodes in
-> addition to static software nodes. To that end: add a second pointer to
-> struct software_node_ref_args of type struct fwnode_handle. The core
-> swnode code will first check the swnode pointer and if it's NULL, it
-> will assume the fwnode pointer should be set. Rework the helper macros
-> and deprecate the existing ones whose names don't indicate the reference
-> type.
+> Now, both binding and DTs are fixed and the driver is reworked to work with both
+> old and new DTs.
 > 
-> Software node graphs remain the same, as in: the remote endpoints still
-> have to be software nodes.
+> Note: The driver patch is OK to be backported till 6.2 where the common resource
+> parsing code was introduced. But the DTS patch should not be backported. And I'm
+> not sure about the backporting of the binding.
+> 
+> Please test this series on the Meson board with old and new DTs.
 
-...
+Let me try this serie, I'm on a business trip this week so don't expect a full test
+report until next monday.
 
-> +	/*
-> +	 * A software node can reference other software nodes or firmware
-> +	 * nodes (which are the abstraction layer sitting on top of them).
-> +	 * This is done to ensure we can create references to static software
-> +	 * nodes before they're registered with the firmware node framework.
-> +	 * At the time the reference is being resolved, we expect the swnodes
-> +	 * in question to already have been registered and to be backed by
-> +	 * a firmware node. This is why we use the fwnode API below to read the
+Neil
 
-A nit-pick (since anyway it requires a new version): move 'the' to the next
-line to make them more equal in the length.
-
-> +	 * relevant properties and bump the reference count.
-> +	 */
-
-...
-
-> -#define SOFTWARE_NODE_REFERENCE(_ref_, ...)			\
-> +#define __SOFTWARE_NODE_REF(_ref, ...)				\
-
-No, NAK. The renaming of the parameters is not related to this change _at all_.
-Why do you change established style here? Did I miss your answer to my question
-in the previous rounds?
-
->  (const struct software_node_ref_args) {				\
-> -	.node = _ref_,						\
-> +	.swnode = _Generic(_ref,				\
-> +			   const struct software_node *: _ref,	\
-> +			   default: NULL),			\
-> +	.fwnode = _Generic(_ref,				\
-> +			   struct fwnode_handle *: _ref,	\
-> +			   default: NULL),			\
->  	.nargs = COUNT_ARGS(__VA_ARGS__),			\
->  	.args = { __VA_ARGS__ },				\
->  }
-
-...
-
-> +#define SOFTWARE_NODE_REF_SWNODE(_ref, ...)			\
-> +	__SOFTWARE_NODE_REF(_ref, __VA_ARGS__)
-> +
-> +#define SOFTWARE_NODE_REF_FWNODE(_ref, ...)			\
-> +	__SOFTWARE_NODE_REF(_ref, __VA_ARGS__)
-> +
-> +/* DEPRECATED, use SOFTWARE_NODE_REF_SWNODE() instead. */
-> +#define SOFTWARE_NODE_REFERENCE(_ref, ...)			\
-> +	SOFTWARE_NODE_REF_SWNODE(_ref, __VA_ARGS__)
-
-Now, useless.
-
-...
-
-
-> -#define PROPERTY_ENTRY_REF(_name_, _ref_, ...)				\
-> +#define __PROPERTY_ENTRY_REF(_type, _name, _ref, ...)			\
->  (struct property_entry) {						\
-> -	.name = _name_,							\
-> +	.name = _name,							\
->  	.length = sizeof(struct software_node_ref_args),		\
->  	.type = DEV_PROP_REF,						\
-> -	{ .pointer = &SOFTWARE_NODE_REFERENCE(_ref_, ##__VA_ARGS__), },	\
-> +	{ .pointer = &_type(_ref, ##__VA_ARGS__), },			\
->  }
-
-Do we need this now? I assume that _Generic() takes case of this.
-
-...
-
-> +#define PROPERTY_ENTRY_REF_SWNODE(_name, _ref, ...)			\
-> +	__PROPERTY_ENTRY_REF(SOFTWARE_NODE_REF_SWNODE,			\
-> +			     _name, _ref, __VA_ARGS__)
-> +
-> +#define PROPERTY_ENTRY_REF_FWNODE(_name, _ref, ...)			\
-> +	__PROPERTY_ENTRY_REF(SOFTWARE_NODE_REF_FWNODE,			\
-> +			    _name, _ref, __VA_ARGS__)
-> +
-> +/* DEPRECATED, use PROPERTY_ENTRY_REF_SWNODE() instead. */
-> +#define PROPERTY_ENTRY_REF(_name, _ref, ...)				\
-> +	PROPERTY_ENTRY_REF_SWNODE(_name, _ref, __VA_ARGS__)
-
-Seems like useless churn.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+> 
+> - Mani
+> 
+> [1] https://lore.kernel.org/linux-pci/DM4PR05MB102707B8CDF84D776C39F22F2C7F0A@DM4PR05MB10270.namprd05.prod.outlook.com/
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@oss.qualcomm.com>
+> ---
+> Resending as the git sendemail config got messed up
+> 
+> ---
+> Manivannan Sadhasivam (3):
+>        dt-bindings: PCI: amlogic: Fix the register name of the DBI region
+>        arm64: dts: amlogic: Fix the register name of the 'DBI' region
+>        PCI: meson: Fix parsing the DBI register region
+> 
+>   .../devicetree/bindings/pci/amlogic,axg-pcie.yaml      |  6 +++---
+>   arch/arm64/boot/dts/amlogic/meson-axg.dtsi             |  4 ++--
+>   arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi      |  2 +-
+>   drivers/pci/controller/dwc/pci-meson.c                 | 18 +++++++++++++++---
+>   drivers/pci/controller/dwc/pcie-designware.c           | 12 +++++++-----
+>   5 files changed, 28 insertions(+), 14 deletions(-)
+> ---
+> base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+> change-id: 20251031-pci-meson-fix-c8b651bc6662
+> 
+> Best regards,
 
 
