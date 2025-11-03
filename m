@@ -1,413 +1,134 @@
-Return-Path: <linux-kernel+bounces-882709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ED80C2B2BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:55:19 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B13BC2B2CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:56:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D69C18925D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:55:43 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 507F14E03E0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878863009CA;
-	Mon,  3 Nov 2025 10:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EEDC3009D4;
+	Mon,  3 Nov 2025 10:56:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=hendrik-noack@gmx.de header.b="Mo1CM+y4"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="GEjDmM21"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B46822FFDE2;
-	Mon,  3 Nov 2025 10:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9031F3002D4
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 10:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762167311; cv=none; b=siy8yOicb1GA9O5XIFBz3b7FSZvttogu5StjJiXNOO44fIw8nASjPQtgLqv3GhhS3loidnIY1ARhGHC5+zur5xYCB++YLBoclqXGhbtI5LVtQtWLUBz4pwlS/mYI2ucp/b8Drl561v4vLfgrW8KGVO5joGECEpeKttRbCwc/zb8=
+	t=1762167377; cv=none; b=I5fA1NVFzhKsLrxVmo5DiS8vgHDE00wIzIk4SDK5BIweafS0sn4S6Hr3TEeHkvF0EG46jJ0s6HU+4dN0jvCqC1tW1l8BmQknlyE1QyKvLwb/5mTnruKzLAY+0Ql2pplt8n1u4CaqqMN8BE/k+zAaONwJnMLWDrkzNDTIAXT6Ze4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762167311; c=relaxed/simple;
-	bh=z8gBnAAY25DyQDRkKROzWmlDuilvhefVAfS5wjLAVuU=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=qk2jX3FAQLk1m7co6o+6C4wz+9xnBw3Uml3Hb7tRduENCxI3nceiskUX/tYWdgXwcjFAET7nsSBEZMgWp+fW9E20D4Qa9C4EmIRgsH03bRnDIrjIhz3XtZGNa0QoejovrAQLADKuS69n/3Wi1zhDjanc8e5/TizA8iZ8UcUlVPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=hendrik-noack@gmx.de header.b=Mo1CM+y4; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1762167305; x=1762772105; i=hendrik-noack@gmx.de;
-	bh=z8gBnAAY25DyQDRkKROzWmlDuilvhefVAfS5wjLAVuU=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Message-ID:In-Reply-To:
-	 References:Subject:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Mo1CM+y4DwoONiyUar3HdmnNBtr2Yqg0OVIGImlF7JJ4fYggUZ+396JQjZOtaE9J
-	 1+r12+Tyn6vmYbwgOZT4LfuW2LdXhsfIrq7ch+5tOY97oi7PTLiDTfhW2iS3JvVLD
-	 9ru444j53nMgzBzLB3ioGgoWCdEtPL6DcvFzoFE9NeEu8VwA24IsEAn82m+Ev0s2J
-	 3BVZ4cWiJ9kxOz4vb5KaD3+Kj6nydvYNuzIDIamVcyTXT8hBtgIOav6sfZy8CBk8N
-	 6wue28dN2o08bFDbJT3M/WS6Q7ZJQTvr4I4KOPEcREcN3yGgtXzooZZAnrB+7Cg45
-	 vAp68A+wVvp1cfZ1/w==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [127.0.0.1] ([217.85.39.201]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MfYLQ-1vr8uP25ZQ-00b1PR; Mon, 03
- Nov 2025 11:55:05 +0100
-Date: Mon, 3 Nov 2025 11:55:05 +0100 (GMT+01:00)
-From: Kernel GMX <hendrik-noack@gmx.de>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Hendrik Noack <hendrik-noack@gmx.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <a596e67d-56f2-43c7-8b42-55403dfb3a93@gmx.de>
-In-Reply-To: <20251028-funky-rose-rook-3ccab5@kuoka>
-References: <20251027164050.113623-1-hendrik-noack@gmx.de> <20251027212535.4078-1-hendrik-noack@gmx.de> <20251027212535.4078-2-hendrik-noack@gmx.de> <20251028-funky-rose-rook-3ccab5@kuoka>
-Subject: Re: [PATCH 2/2] Input: Add support for Wacom W9000-series penabled
- touchscreens
+	s=arc-20240116; t=1762167377; c=relaxed/simple;
+	bh=qXd1oKO85msYoAVXXFRKg+REL5mVmucUjgWVubyCwzQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lgnp97+PJQLz7v10qlRw7YxQP2obOqBKrbCj8mmHUHLdGTUZfj6lpWpsek2mWukf49tF7Wv2zQV/h8QC7FgBXNlrYTaTwSlvVCtAZpDCofj5H4VowyUyNJwLtBbBeb9BTFn2e9x+W3bSp4QS/e9yfXOfpBNuAcVH9+rigtT9T5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=GEjDmM21; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-378e8d10494so43315861fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 02:56:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1762167372; x=1762772172; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ok14Sy5kuYnk485Ftwy7kJP5xIgoR392fDNYbBDnVsc=;
+        b=GEjDmM21brD60IDPvOLK4mVw/J58f58NnHnBLBc3eSK7EDPtCPIkrx1lzVOL7ny4NG
+         ueMQCmyBb5ySLVGqqeUWmQ6L+5KrSRYSEyaviljmmxcJZWx53bQ6HbtE32r0UuxpR1aE
+         HYyGQ+qHThCkNtxLsMjMaL2NgRwjCPS1did9aII8lIDDa1hf1h2Dqe1qyWBAjQvc/jZw
+         MuW94y+xfITOAk18nnHwb9my9xpckl53mBGhu6X192TRqlKiCNvkAMIWX5otU+3v76Gw
+         YW5wKCMv4shQxT4W9Zbnkyr+gWF9AdHjIT5sTJXd9Mt8unMvoJCl68CBV6VOnLGzFm0K
+         X+Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762167372; x=1762772172;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ok14Sy5kuYnk485Ftwy7kJP5xIgoR392fDNYbBDnVsc=;
+        b=rhYVkkNqaaKSqgxTDKE8DRvvY53FuQO2388aT3J837Qqcu1/KdaCrhM0Srb4fBIOG+
+         mBSh21G8PYwVQ4x1a+yxwlBH6yo7z4awtohq7YVKbwPILEyrZ7IOX8hmWqnz6RP4eq5+
+         MLEAglOg5KxJdoJtCOXWWmHMjpcpDyAVDv1S7adS4yHjHzzQrxWACCTwOE22tr52voio
+         9IXgq1OK+zb89EprR3D8W0upSprWy9hf2AlT3hPXuGERbSZu0k21ootEEv0VBGB3bDLo
+         AKMxCvCP2640/YdxnNfnIRjLWQ6Ly/H+/lWO9DP3dCkkej+UBkQdmZq3slIL5tmoCjME
+         IzsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVniyv8bqMVRGFdrxGCti9BtDKVmcMKCZ7RDdG/5zCjEFW7SDme4pz0EtG93Dw+A1WGjYRAh3fVsoKRi8k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyd7Elwir/N8bFfGV+W2SxEWaVhpv3L9EDAMzLMbF+/oWWufeI2
+	ebb/dBBqwiSyYQfbXIW86bV0cktFkg3sBXqT8X0OFHSapnNstdT+GwsXgN7hdH0zRAuCATfHHK3
+	rHUZTO7Vucjp7X7w3LGhS4vJWhjFUA5byI6hAeY5XWw==
+X-Gm-Gg: ASbGncvZCNeU5vuhUBZ2jeZ/Iocq71yZvM4X7fVcEWBhtzdMQzaQXwHGsxPjDEHH73M
+	2eZiPtkLu2rtTYtLE91D6tDEwNM/3XgprtH63C7s1V2pIE7YSDUbnQpZbi7E8xbl06+IUJrpSRR
+	6rc2PSinCbkenm/eR3AZKzZ39VaHFZvxz9wXue1hkAmdHTOp92wFiPyiH1Gu0+tdW2UuKz2H7l3
+	xQGCdxv/HfdyLzbQSnjfnLSOhKbjgnQEHBlb5DUxDfq2BNhmLXZm2zBaVqJgbUqyDcZrqshgqEK
+	rfredsrPiYh2oo6B
+X-Google-Smtp-Source: AGHT+IGCNFyrRkoy6fXh6ZFQgn7Nyap9sPAn3749NMDYc+KPJNXNFZcWuq9hVUt8f+/CoqxAouRL21Fy6SGUSNRsLi4=
+X-Received: by 2002:a2e:9284:0:b0:372:9c25:7a94 with SMTP id
+ 38308e7fff4ca-37a18e2d703mr27723701fa.41.1762167372364; Mon, 03 Nov 2025
+ 02:56:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20251103-reset-gpios-swnodes-v4-0-6461800b6775@linaro.org>
+ <20251103-reset-gpios-swnodes-v4-3-6461800b6775@linaro.org>
+ <aQh6n2XuI0oayg2g@smile.fi.intel.com> <CAMRc=Md=r7GaO3A_7de+EqzboyA2cqNSTZx7+64VSMvRBb9gpw@mail.gmail.com>
+ <aQiJgRDm0lZYqSmj@kekkonen.localdomain>
+In-Reply-To: <aQiJgRDm0lZYqSmj@kekkonen.localdomain>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 3 Nov 2025 11:56:00 +0100
+X-Gm-Features: AWmQ_bk3gj7buQnHcMQ8QrYYR-_txSOE_pOOdJ6cMSRz8o8pL2AgO4lkThKstzw
+Message-ID: <CAMRc=MfQ6n0S4RCPMhvE8kx5w4pc47=M3pwMH6c_CCo1-uZMKA@mail.gmail.com>
+Subject: Re: [PATCH v4 03/10] software node: allow referencing firmware nodes
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, Daniel Scally <djrscally@gmail.com>, 
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Danilo Krummrich <dakr@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-acpi@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Correlation-ID: <a596e67d-56f2-43c7-8b42-55403dfb3a93@gmx.de>
-X-Provags-ID: V03:K1:O44pUs/aBda5RcUDlPz31ROWOKXuoNOREMkjVDN+ZkxrRG+bvVi
- /0UV2D7PujOOdXm9NGLrp+JLO+FF/nEop2Xe6IdfC0RcXWAASBO16BoxxoKnuOCdr327imF
- fp+2dn73dIkabsXkCD0+kvnLUPMTg22EpmpuuiPfh/k1Q74eoLLTAr+qYf4YTsxWgGGC1bp
- nyQIZc3kPkKTrxj4jJucA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:J2tUm8Fjw3Y=;CLSvCzF7qeS67KsINwOYeEg6hvD
- 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
- Cdu9F3R79FhgPcwMOtloNbcpkGPAIX5HaX9RoR
 
-28.10.2025 08:44:34 Krzysztof Kozlowski <krzk@kernel.org>:
-
-> On Mon, Oct 27, 2025 at 10:25:35PM +0100, Hendrik Noack wrote:
->> +
->> +static const struct of_device_id wacom_w9000_of_match[] =3D {
->> +=C2=A0=C2=A0 { .compatible =3D "wacom,w9007a_lt03", .data =3D &wacom_w9=
-007a_lt03, },
->> +=C2=A0=C2=A0 { .compatible =3D "wacom,w9007a_v1", .data =3D &wacom_w900=
-7a_v1, },
->> +=C2=A0=C2=A0 {},
->> +};
->> +MODULE_DEVICE_TABLE(of, wacom_w9000_of_match);
+On Mon, Nov 3, 2025 at 11:52=E2=80=AFAM Sakari Ailus
+<sakari.ailus@linux.intel.com> wrote:
 >
-> This goes next to other ID table, around the probe.
+> Hi Bartosz, Andy,
 >
->> +
->> +static int wacom_w9000_read(struct i2c_client *client, u8 command, int =
-len, char *data)
->> +{
->> +=C2=A0=C2=A0 struct i2c_msg xfer[2];
->> +=C2=A0=C2=A0 bool retried =3D false;
->> +=C2=A0=C2=A0 int ret;
->> +
+> On Mon, Nov 03, 2025 at 11:36:36AM +0100, Bartosz Golaszewski wrote:
+> > On Mon, Nov 3, 2025 at 10:49=E2=80=AFAM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > > > +#define SOFTWARE_NODE_REF_SWNODE(_ref, ...)                  \
+> > > > +     __SOFTWARE_NODE_REF(_ref, __VA_ARGS__)
+> > > > +
+> > > > +#define SOFTWARE_NODE_REF_FWNODE(_ref, ...)                  \
+> > > > +     __SOFTWARE_NODE_REF(_ref, __VA_ARGS__)
+> > > > +
+> > > > +/* DEPRECATED, use SOFTWARE_NODE_REF_SWNODE() instead. */
+> > > > +#define SOFTWARE_NODE_REFERENCE(_ref, ...)                   \
+> > > > +     SOFTWARE_NODE_REF_SWNODE(_ref, __VA_ARGS__)
+> > >
+> > > Now, useless.
+> > >
+> >
+> > No, why? With these changes, SOFTWARE_NODE_REFERENCE()'s name is a bit
+> > misleading or incomplete, so I'm proposing to start replacing it with
+> > SOFTWARE_NODE_REF_SWNODE() which is compatible with the former but has
+> > a better name.
 >
-> ...
->
->> +
->> +static int wacom_w9000_probe(struct i2c_client *client)
->> +{
->> +=C2=A0=C2=A0 struct device *dev =3D &client->dev;
->> +=C2=A0=C2=A0 struct wacom_w9000_data *wacom_data;
->> +=C2=A0=C2=A0 struct input_dev *input_dev;
->> +=C2=A0=C2=A0 int ret;
->> +=C2=A0=C2=A0 u32 val;
->> +
->> +=C2=A0=C2=A0 if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C=
-)) {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(dev, "i2c_check_functional=
-ity error\n");
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -EIO;
->> +=C2=A0=C2=A0 }
->> +
->> +=C2=A0=C2=A0 wacom_data =3D devm_kzalloc(dev, sizeof(struct wacom_w9000=
-_data), GFP_KERNEL);
->
-> sizeof(*)
->
-> Please use existing kernel coding style, not some downstream version.
+> Given we're already using _Generic() to determine the argument type, coul=
+d
+> we simply use e.g. SOFTWARE_NODE_REF() in both cases?
 >
 
-Okay, I was orienting myself on the atmel_mxt_ts driver and it had it like =
-this.
+It may be possible, yes. I'll look into it.
 
->> +=C2=A0=C2=A0 if (!wacom_data)
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -ENOMEM;
->> +
->> +=C2=A0=C2=A0 wacom_data->variant =3D i2c_get_match_data(client);
->> +
->> +=C2=A0=C2=A0 wacom_data->client =3D client;
->> +
->> +=C2=A0=C2=A0 input_dev =3D devm_input_allocate_device(dev);
->> +=C2=A0=C2=A0 if (!input_dev)
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -ENOMEM;
->> +=C2=A0=C2=A0 wacom_data->input_dev =3D input_dev;
->> +
->> +=C2=A0=C2=A0 wacom_data->irq =3D client->irq;
->> +=C2=A0=C2=A0 i2c_set_clientdata(client, wacom_data);
->> +
->> +=C2=A0=C2=A0 wacom_data->regulator =3D devm_regulator_get(dev, "vdd");
->> +=C2=A0=C2=A0 if (IS_ERR(wacom_data->regulator)) {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D PTR_ERR(wacom_data->regula=
-tor);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(dev, "Failed to get regula=
-tors %d\n", ret);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
->
-> Nope. Look at all other drivers. Syntax is since some years return
-> dev_err_probe.
->
->> +=C2=A0=C2=A0 }
->> +
->> +=C2=A0=C2=A0 /* Request flash-mode line and don't go into flash mode */
->> +=C2=A0=C2=A0 wacom_data->flash_mode_gpio =3D devm_gpiod_get_optional(de=
-v, "flash-mode", GPIOD_OUT_LOW);
->> +=C2=A0=C2=A0 if (IS_ERR(wacom_data->flash_mode_gpio)) {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D PTR_ERR(wacom_data->flash_=
-mode_gpio);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(dev, "Failed to get flash-=
-mode gpio: %d\n", ret);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
->
-> You must handle deferred probe. Please look at all other drivers how
-> they do it.
->
->> +=C2=A0=C2=A0 }
->> +
->> +=C2=A0=C2=A0 /* Request pdct line=C2=A0 */
->> +=C2=A0=C2=A0 wacom_data->pen_detect_gpio =3D devm_gpiod_get_optional(de=
-v, "pdct", GPIOD_IN);
->> +=C2=A0=C2=A0 if (IS_ERR(wacom_data->pen_detect_gpio)) {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D PTR_ERR(wacom_data->pen_de=
-tect_gpio);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(dev, "Failed to get pdct g=
-pio: %d\n", ret);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
->> +=C2=A0=C2=A0 }
->> +
->> +=C2=A0=C2=A0 /* Request pen-insert line=C2=A0 */
->> +=C2=A0=C2=A0 wacom_data->pen_inserted_gpio =3D devm_gpiod_get_optional(=
-dev, "pen-inserted", GPIOD_IN);
->> +=C2=A0=C2=A0 if (IS_ERR(wacom_data->pen_inserted_gpio)) {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D PTR_ERR(wacom_data->pen_in=
-serted_gpio);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(dev, "Failed to get pen-in=
-sert gpio: %d\n", ret);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
->> +=C2=A0=C2=A0 }
->> +
->> +=C2=A0=C2=A0 ret =3D regulator_enable(wacom_data->regulator);
->> +=C2=A0=C2=A0 if (ret) {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(dev, "Failed to enable reg=
-ulators: %d\n", ret);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
->> +=C2=A0=C2=A0 }
->> +
->> +=C2=A0=C2=A0 msleep(200);
->> +
->> +=C2=A0=C2=A0 ret =3D wacom_w9000_query(wacom_data);
->> +=C2=A0=C2=A0 if (ret)
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto err_disable_regulators;
->> +
->> +=C2=A0=C2=A0 input_dev->name =3D wacom_data->variant->name;
->> +=C2=A0=C2=A0 input_dev->id.bustype =3D BUS_I2C;
->> +=C2=A0=C2=A0 input_dev->dev.parent =3D dev;
->> +=C2=A0=C2=A0 input_dev->id.vendor =3D 0x56a;
->> +=C2=A0=C2=A0 input_dev->id.version =3D wacom_data->fw_version;
->> +=C2=A0=C2=A0 input_dev->open =3D wacom_w9000_open;
->> +=C2=A0=C2=A0 input_dev->close =3D wacom_w9000_close;
->> +
->> +=C2=A0=C2=A0 __set_bit(EV_KEY, input_dev->evbit);
->> +=C2=A0=C2=A0 __set_bit(EV_ABS, input_dev->evbit);
->> +=C2=A0=C2=A0 __set_bit(BTN_TOUCH, input_dev->keybit);
->> +=C2=A0=C2=A0 __set_bit(BTN_TOOL_PEN, input_dev->keybit);
->> +=C2=A0=C2=A0 __set_bit(BTN_TOOL_RUBBER, input_dev->keybit);
->> +=C2=A0=C2=A0 __set_bit(BTN_STYLUS, input_dev->keybit);
->> +
->> +=C2=A0=C2=A0 // Calculate x and y resolution from size in devicetree
->> +=C2=A0=C2=A0 ret =3D device_property_read_u32(dev, "touchscreen-x-mm", =
-&val);
->> +=C2=A0=C2=A0 if (ret)
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 input_abs_set_res(input_dev, ABS_X=
-, 100);
->> +=C2=A0=C2=A0 else
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 input_abs_set_res(input_dev, ABS_X=
-, wacom_data->prop.max_x / val);
->> +=C2=A0=C2=A0 ret =3D device_property_read_u32(dev, "touchscreen-y-mm", =
-&val);
->> +=C2=A0=C2=A0 if (ret)
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 input_abs_set_res(input_dev, ABS_Y=
-, 100);
->> +=C2=A0=C2=A0 else
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 input_abs_set_res(input_dev, ABS_Y=
-, wacom_data->prop.max_y / val);
->> +
->> +=C2=A0=C2=A0 input_set_abs_params(input_dev, ABS_X, 0, wacom_data->prop=
-.max_x, 4, 0);
->> +=C2=A0=C2=A0 input_set_abs_params(input_dev, ABS_Y, 0, wacom_data->prop=
-.max_y, 4, 0);
->> +=C2=A0=C2=A0 input_set_abs_params(input_dev, ABS_PRESSURE, 0, wacom_dat=
-a->max_pressure, 0, 0);
->> +=C2=A0=C2=A0 input_set_abs_params(input_dev, ABS_DISTANCE, 0, 255, 0, 0=
-);
->> +
->> +=C2=A0=C2=A0 touchscreen_parse_properties(input_dev, false, &wacom_data=
-->prop);
->> +
->> +=C2=A0=C2=A0 ret =3D devm_request_threaded_irq(dev, wacom_data->irq, NU=
-LL, wacom_w9000_interrupt,
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IRQF_ONESHOT | IRQF_NO_AUTOEN, clie=
-nt->name, wacom_data);
->> +=C2=A0=C2=A0 if (ret) {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(dev, "Failed to register i=
-nterrupt\n");
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto err_disable_regulators;
->> +=C2=A0=C2=A0 }
->> +
->> +=C2=A0=C2=A0 if (wacom_data->pen_detect_gpio) {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 wacom_data->pen_detect_irq =3D gpi=
-od_to_irq(wacom_data->pen_detect_gpio);
->
-> Why is this a GPIO? Your binding said this is GPIO, your code says this
-> is an interrupt.
-
-You are right, it's not necessary here.
-
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D devm_request_threaded_irq(=
-dev, wacom_data->pen_detect_irq, NULL,
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 wacom_w9000=
-_interrupt_pen_detect, IRQF_ONESHOT |
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IRQF_NO_AUT=
-OEN | IRQF_TRIGGER_RISING |
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IRQF_TRIGGE=
-R_FALLING, "wacom_pdct", wacom_data);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret) {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(de=
-v, "Failed to register pdct interrupt\n");
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto err_d=
-isable_regulators;
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->> +=C2=A0=C2=A0 }
->> +
->> +=C2=A0=C2=A0 if (wacom_data->pen_inserted_gpio) {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 input_dev->evbit[0] |=3D BIT_MASK(=
-EV_SW);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 input_set_capability(input_dev, EV=
-_SW, SW_PEN_INSERTED);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 wacom_data->pen_insert_irq =3D gpi=
-od_to_irq(wacom_data->pen_inserted_gpio);
->
-> Same question here.
->
-
-The driver needs to know the GPIO state to determine if the pen is inserted
-so that it can enable or disable the regulator and main interrupt according=
-ly.
-An interrupt for this GPIO is necessary for this evaluation to occur
-on every signal change.
-
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D devm_request_threaded_irq(=
-dev, wacom_data->pen_insert_irq, NULL,
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 wacom_w9000=
-_interrupt_pen_insert, IRQF_ONESHOT |
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IRQF_NO_AUT=
-OEN | IRQF_TRIGGER_RISING |
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IRQF_TRIGGE=
-R_FALLING, "wacom_pen_insert",
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 wacom_data)=
-;
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret) {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(de=
-v, "Failed to register pen-insert interrupt\n");
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto err_d=
-isable_regulators;
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->> +=C2=A0=C2=A0 }
->> +
-
-...
-
-Thank you for you feedback, I will address the feedback in my next iteratio=
-n.
-
-Best regards,
-Hendrik
+Bart
 
