@@ -1,315 +1,137 @@
-Return-Path: <linux-kernel+bounces-883174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7635C2CA31
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:18:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 780FDC2CA51
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:19:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6286C1890618
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:13:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51DA91896513
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:14:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95C6727FB26;
-	Mon,  3 Nov 2025 15:00:23 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64325199230
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 15:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC63316185;
+	Mon,  3 Nov 2025 15:00:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZPqhH38S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70BB314D01
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 15:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762182023; cv=none; b=ETlRVxB3p8F3mahIFdHEg4+taVOz/Ie+y2ygHJM6sDS2MV7bbgIQYOQhfWIVeHVdf4ZuEaYYTVZhEdOTbKoT5qNoFbDU0E/L0OIcYRvgrW2gtCXLPMhRB61laoh4yf7V646F+FSfWnizt/xixnhFv8GbQlt5ffGRDTMXC+EyeJ0=
+	t=1762182058; cv=none; b=AMH68rqtAGieFdszxn9Al+xA/08Z9lxZz9FGalqG4J0o1Vf5HCUILNBzCYKpVwntuqy4yYkFecHtmBphsPNeIleEC0lPpaKxpnqHF9xAiK4U//mfhDWpqWkfupk2BCIj6yoRbcL+QorMjJTXNJkdQ3IXBKgNUbWPHhPai488Qvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762182023; c=relaxed/simple;
-	bh=bjFKRKNjV1ZsFIbrYmLPK+exJ+sWf+Fft4VeDsxk82o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MzWHKaO/qm5jSuV6uCI3sU3YvYv6hn1GaYDNyHCGQzL6XrDqGF3l//5It7K/yvuoovajlfm2C4J7LSrfpB5qXhr0DQB9GBhg4uvM5stHo+UWpWGO3BUQ4CbPtDAvm3UO5/3Iuvg7v7LPqSwUd32dJL61tPqfOSjVxChyvHT4s5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2010D1D14
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 07:00:13 -0800 (PST)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A7FB53F66E
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 07:00:20 -0800 (PST)
-Date: Mon, 3 Nov 2025 15:00:10 +0000
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: Suraj Kandpal <suraj.kandpal@intel.com>
-Cc: linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
-	intel-gfx@lists.freedesktop.org, kernel-list@raspberrypi.com,
-	amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	dmitry.baryshkov@oss.qualcomm.com, ankit.k.nautiyal@intel.com,
-	arun.r.murthy@intel.com, uma.shankar@intel.com,
-	jani.nikula@intel.com, harry.wentland@amd.com, siqueira@igalia.com,
-	alexander.deucher@amd.com, christian.koenig@amd.com,
-	airlied@gmail.com, simona@ffwll.ch,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	robin.clark@oss.qualcomm.com, abhinav.kumar@linux.dev,
-	tzimmermann@suse.de, jessica.zhang@oss.qualcomm.com,
-	sean@poorly.run, marijn.suijten@somainline.org,
-	laurent.pinchart+renesas@ideasonboard.com, mcanal@igalia.com,
-	dave.stevenson@raspberrypi.com,
-	tomi.valkeinen+renesas@ideasonboard.com,
-	kieran.bingham+renesas@ideasonboard.com, louis.chauvet@bootlin.com
-Subject: Re: [PATCH v2 1/7] drm: writeback: Refactor drm_writeback_connector
- structure
-Message-ID: <aQjDejhzGRYJT614@e110455-lin.cambridge.arm.com>
-References: <20251007054528.2900905-1-suraj.kandpal@intel.com>
- <20251007054528.2900905-2-suraj.kandpal@intel.com>
+	s=arc-20240116; t=1762182058; c=relaxed/simple;
+	bh=/uwToHnwNW84HCHbkJWQFde13XUJe2F71QknFu5Kl/0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cPFeQ9ujCwaOCFd2Ih0VUfQLCswRLIXAkM9jXbU3/JGG+d7jSTP33O8pk3v9j+ypdke0oCzIay/OGWcfwFS78XCBoqeyRHFj3pHvfGQQNNl5f7Abkd6ApX75okA2Csv8MBZRzeIHUCNPAmfjQqOda173UIKCG2XdsOtNpSlgW+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZPqhH38S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C4FAC4CEE7
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 15:00:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762182057;
+	bh=/uwToHnwNW84HCHbkJWQFde13XUJe2F71QknFu5Kl/0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ZPqhH38S2QoMVWjiO6GbUV7fs9JkjFS9LnfJSS2MTA6oSJj668XxfWrghiNB+HUxr
+	 A62Lt0aepLOHQW33FqgMClWPFi5Afrh2Ro65ouWqOvtOIwY2mLl6FCC31dX1YkSKdj
+	 q0OqAFTM8EIK2gz7XV0lsgJTRD4bcjWmUNX6E0gHi5v1tUYr6TqzFdP/EydZUlvSOC
+	 47DB1wI1TgLYUfiXN2x+yTjLEXhQjobULfP5V0lf0uq0YNrLAUvp+FqXiBK50OHB6l
+	 Rvrxw0pkONOY0XfWnnuwsR6lCB8SnzECpy3U9anrtOqgFZ4cFxBWiUcQ0pt8RySt5X
+	 pxCFcwRC11PSw==
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-378ccb8f84aso48064751fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 07:00:57 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUEOt9G1LgKc1f/ueFpumE85Ypp2lW2VRitdvOhv4sQwN6SA1639p6X8wtQkj0k5xWTHkyxvjWx2wqq8oU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQoEAdNgx6doIGgQzs5GV0RJP4R0RCD+ZEK1URL1ycymQyV+Kk
+	INfF6h1suqItVGphPF4jOubn/HxKzfqQvgRcxfzK3MqOAgNOpa8ZI9+dbIYR0tEVcHuKhi4UeBe
+	HfEWxa3mdbnE3ukulddp2xG7b6ZNOpB8=
+X-Google-Smtp-Source: AGHT+IEi+iSwjuEXmvD7iegxDUaoM6UQcmHjxFljBvwZBo2gIGwFbAv6omtrOKP2lEzQH/dsslIHmWcQ1h1CFoMZQY8=
+X-Received: by 2002:a2e:a109:0:b0:372:8ba7:21e7 with SMTP id
+ 38308e7fff4ca-37a18d8f192mr39642631fa.1.1762182055907; Mon, 03 Nov 2025
+ 07:00:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251007054528.2900905-2-suraj.kandpal@intel.com>
+References: <CAB95QARfqSUNJCCgyPcTPu0-hk10e-sOVVMrnpKd6OdV_PHrGA@mail.gmail.com>
+ <20251026211334.GA1659905@ax162> <CAB95QASG1pZJT7HyqxM90_FExhSVjoHmPqYHeQWXnrAzCNErmA@mail.gmail.com>
+ <CAB95QARmr9b-jVdgDLpA4Qq=3WN7CYS46YEH4Ok4gpSdZHpq5A@mail.gmail.com>
+ <20251028174541.GA1548965@ax162> <CAB95QARtzDWensRzui3d-7+jhymcFBOBi78ev9LMy=ZFJMDCTA@mail.gmail.com>
+ <20251031220732.GA2254630@ax162>
+In-Reply-To: <20251031220732.GA2254630@ax162>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 3 Nov 2025 16:00:44 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXF2kKyEOc6KSBfbdUMf5m4o=DLZXk4++C3q-utA_9g4DA@mail.gmail.com>
+X-Gm-Features: AWmQ_bliwR1u_FsAwYSAtWHdXAJut1MeLr288G3HbZXN8FGeOCxGQhM0ghX94as
+Message-ID: <CAMj1kXF2kKyEOc6KSBfbdUMf5m4o=DLZXk4++C3q-utA_9g4DA@mail.gmail.com>
+Subject: Re: Can't boot kernel 6.17.4+ via rEFInd
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Eugene Shalygin <eugene.shalygin@gmail.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+	linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 07, 2025 at 11:15:23AM +0530, Suraj Kandpal wrote:
-> Some drivers cannot work with the current design where the connector
-> is embedded within the drm_writeback_connector such as Intel and
-> some drivers that can get it working end up adding a lot of checks
-> all around the code to check if it's a writeback conenctor or not,
-> this is due to the limitation of inheritance in C.
-> To solve this move the drm_writeback_connector within the
-> drm_connector and remove the drm_connector base which was in
-> drm_writeback_connector. Make this drm_writeback_connector
-> a union with hdmi connector to save memory and since a connector can
-> never be both writeback and hdmi it should serve us well.
-> Do all other required modifications that come with these changes
-> along with addition of new function which returns the drm_connector
-> when drm_writeback_connector is present.
-> Modify drivers using the drm_writeback_connector to
-> allow them to use this connector without breaking them.
-> The drivers modified here are amd, komeda, mali, vc4, vkms,
-> rcar_du, msm
-> 
-> Signed-off-by: Suraj Kandpal <suraj.kandpal@intel.com>
-> ---
-> V1 -> V2: Use &connector->writeback, make commit message imperative (Dmitry)
-> ---
->  .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |  6 +-
->  .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h |  2 +-
->  .../drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c  |  8 +--
->  .../gpu/drm/arm/display/komeda/komeda_crtc.c  |  6 +-
->  .../gpu/drm/arm/display/komeda/komeda_kms.h   |  6 +-
->  .../arm/display/komeda/komeda_wb_connector.c  |  8 +--
->  drivers/gpu/drm/arm/malidp_crtc.c             |  2 +-
->  drivers/gpu/drm/arm/malidp_drv.h              |  2 +-
->  drivers/gpu/drm/arm/malidp_hw.c               |  6 +-
->  drivers/gpu/drm/arm/malidp_mw.c               |  8 +--
->  drivers/gpu/drm/drm_atomic_uapi.c             |  2 +-
->  drivers/gpu/drm/drm_writeback.c               | 35 ++++++----
+On Fri, 31 Oct 2025 at 23:07, Nathan Chancellor <nathan@kernel.org> wrote:
+>
+> Hi Eugene,
+>
+> On Wed, Oct 29, 2025 at 09:07:20PM +0100, Eugene Shalygin wrote:
+> > On Tue, 28 Oct 2025 at 18:45, Nathan Chancellor <nathan@kernel.org> wrote:
+> > > > Replacing CONFIG_KERNEL_ZSTD with  CONFIG_KERNEL_GZIP made the kernel
+> > > > bootable. What does that mean?
+> > >
+> > > Hmmmm, I am not sure... That seems rather odd within the context of the
+> > > flagged change.
+> >
+> > Huh! The fourth of my machines with the similar config (also fully
+> > updated ~amd64 Gentoo) with rEFind boots kernel 6.17.5 with
+> > CONFIG_KERNEL_ZSTD enabled.
+> >
+> > > Could you post the output of 'readelf -S vmlinux vmlinux.unstripped'
+> > > from the broken and good builds?
+> >
+> > Attached.
+>
+> Unfortunately, nothing appears to be out of the ordinary there... Only
+> .modinfo gets removed from the vmlinux.unstripped to vmlinux stage.
+>
+> > > Does rEFInd have any sort of additional
+> > > debugging to see why/what it is complaining about not being able to
+> > > find?
+> >
+> > No, unfortunately. However, I was unable to find the first part of the
+> > error message ("Not Found") in the rEFInd sources.
+>
+> I am guessing the "Not Found" is EFI_NOT_FOUND, so I think this is
+> coming from StartEFIImage() in refind/launch_efi.c:
+>
+>   https://sourceforge.net/p/refind/code/ci/253abe5c4af58d044912517daa567c4440612c46/tree/refind/launch_efi.c#l290
+>
+> I am not sure where the LoadImage call comes from (the firmware?) so I
+> don't really know why that call would fail... Has CONFIG_KERNEL_ZSTD
+> always worked in this configuration? Presumably since you are not seeing
+> "Invalid loader file", you are going into the
+>
+>   if ((LoaderType == LOADER_TYPE_EFI) || (LoaderType == LOADER_TYPE_GZIP)) {
+>
+> branch there. I am at a bit of a loss here. Ard, could you see any
+> obvious reason from an EFI perspective why
+>
+>   3e86e4d74c04 ("kbuild: keep .modinfo section in vmlinux.unstripped")
+>
+> would cause issues with booting via rEFInd?
 
-For the komeda and malidp drivers, as well as for the drm_writeback.c changes:
+For some reason, this change seems to result in a PE/COFF header
+change that results in the EFI firmware refusing to load it.
 
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+Eugene, can you try whether the image can be loaded by the EFI shell
+directly? You may have to rename the file and give it a .efi
+extension, but otherwise, you should be able to boot it using
 
+Shell> fs0:bzImage.efi root=/dev/....   etc etc
 
-[snip]
-
-
-> diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
-> index 8f34f4b8183d..1b090e6bddc1 100644
-> --- a/include/drm/drm_connector.h
-> +++ b/include/drm/drm_connector.h
-> @@ -1882,6 +1882,61 @@ struct drm_connector_cec {
->  	void *data;
->  };
->  
-> +/**
-> + * struct drm_writeback_connector - DRM writeback connector
-> + */
-> +struct drm_writeback_connector {
-> +	/**
-> +	 * @pixel_formats_blob_ptr:
-> +	 *
-> +	 * DRM blob property data for the pixel formats list on writeback
-> +	 * connectors
-> +	 * See also drm_writeback_connector_init()
-> +	 */
-> +	struct drm_property_blob *pixel_formats_blob_ptr;
-> +
-> +	/** @job_lock: Protects job_queue */
-> +	spinlock_t job_lock;
-> +
-> +	/**
-> +	 * @job_queue:
-> +	 *
-> +	 * Holds a list of a connector's writeback jobs; the last item is the
-> +	 * most recent. The first item may be either waiting for the hardware
-> +	 * to begin writing, or currently being written.
-> +	 *
-> +	 * See also: drm_writeback_queue_job() and
-> +	 * drm_writeback_signal_completion()
-> +	 */
-> +	struct list_head job_queue;
-> +
-> +	/**
-> +	 * @fence_context:
-> +	 *
-> +	 * timeline context used for fence operations.
-> +	 */
-> +	unsigned int fence_context;
-> +	/**
-> +	 * @fence_lock:
-> +	 *
-> +	 * spinlock to protect the fences in the fence_context.
-> +	 */
-> +	spinlock_t fence_lock;
-> +	/**
-> +	 * @fence_seqno:
-> +	 *
-> +	 * Seqno variable used as monotonic counter for the fences
-> +	 * created on the connector's timeline.
-> +	 */
-> +	unsigned long fence_seqno;
-> +	/**
-> +	 * @timeline_name:
-> +	 *
-> +	 * The name of the connector's fence timeline.
-> +	 */
-> +	char timeline_name[32];
-> +};
-> +
->  /**
->   * struct drm_connector - central DRM connector control structure
->   *
-> @@ -2291,10 +2346,16 @@ struct drm_connector {
->  	 */
->  	struct llist_node free_node;
->  
-> -	/**
-> -	 * @hdmi: HDMI-related variable and properties.
-> -	 */
-> -	struct drm_connector_hdmi hdmi;
-> +	union {
-
-This is a surprising choice. Before this patch one had to have a separate
-writeback connector besides the HDMI connector. Going forward it looks
-like you still need two connectors, one that uses the writeback member
-and one that uses the hdmi one. Is that intended?
-
-I was expecting that you're going to declare the writeback member next
-to the hdmi, without overlap. If you do that, then you also don't need
-to move the struct drm_writeback declaration from the header file and
-it should be enough to include the drm_writeback.h file.
-
-Best regards,
-Liviu
-
-> +		/**
-> +		 * @hdmi: HDMI-related variable and properties.
-> +		 */
-> +		struct drm_connector_hdmi hdmi;
-> +		/**
-> +		 * @writeback: Writeback related valriables.
-> +		 */
-> +		struct drm_writeback_connector writeback;
-> +	};
->  
->  	/**
->  	 * @hdmi_audio: HDMI codec properties and non-DRM state.
-> diff --git a/include/drm/drm_writeback.h b/include/drm/drm_writeback.h
-> index 958466a05e60..702141099520 100644
-> --- a/include/drm/drm_writeback.h
-> +++ b/include/drm/drm_writeback.h
-> @@ -15,66 +15,6 @@
->  #include <drm/drm_encoder.h>
->  #include <linux/workqueue.h>
->  
-> -/**
-> - * struct drm_writeback_connector - DRM writeback connector
-> - */
-> -struct drm_writeback_connector {
-> -	/**
-> -	 * @base: base drm_connector object
-> -	 */
-> -	struct drm_connector base;
-> -
-> -	/**
-> -	 * @pixel_formats_blob_ptr:
-> -	 *
-> -	 * DRM blob property data for the pixel formats list on writeback
-> -	 * connectors
-> -	 * See also drm_writeback_connector_init()
-> -	 */
-> -	struct drm_property_blob *pixel_formats_blob_ptr;
-> -
-> -	/** @job_lock: Protects job_queue */
-> -	spinlock_t job_lock;
-> -
-> -	/**
-> -	 * @job_queue:
-> -	 *
-> -	 * Holds a list of a connector's writeback jobs; the last item is the
-> -	 * most recent. The first item may be either waiting for the hardware
-> -	 * to begin writing, or currently being written.
-> -	 *
-> -	 * See also: drm_writeback_queue_job() and
-> -	 * drm_writeback_signal_completion()
-> -	 */
-> -	struct list_head job_queue;
-> -
-> -	/**
-> -	 * @fence_context:
-> -	 *
-> -	 * timeline context used for fence operations.
-> -	 */
-> -	unsigned int fence_context;
-> -	/**
-> -	 * @fence_lock:
-> -	 *
-> -	 * spinlock to protect the fences in the fence_context.
-> -	 */
-> -	spinlock_t fence_lock;
-> -	/**
-> -	 * @fence_seqno:
-> -	 *
-> -	 * Seqno variable used as monotonic counter for the fences
-> -	 * created on the connector's timeline.
-> -	 */
-> -	unsigned long fence_seqno;
-> -	/**
-> -	 * @timeline_name:
-> -	 *
-> -	 * The name of the connector's fence timeline.
-> -	 */
-> -	char timeline_name[32];
-> -};
-> -
->  /**
->   * struct drm_writeback_job - DRM writeback job
->   */
-> @@ -131,10 +71,10 @@ struct drm_writeback_job {
->  	void *priv;
->  };
->  
-> -static inline struct drm_writeback_connector *
-> -drm_connector_to_writeback(struct drm_connector *connector)
-> +static inline struct drm_connector *
-> +drm_writeback_to_connector(struct drm_writeback_connector *wb_connector)
->  {
-> -	return container_of(connector, struct drm_writeback_connector, base);
-> +	return container_of(wb_connector, struct drm_connector, writeback);
->  }
->  
->  int drm_writeback_connector_init(struct drm_device *dev,
-> -- 
-> 2.34.1
-> 
-
--- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+(or wherever the file resides)
 
