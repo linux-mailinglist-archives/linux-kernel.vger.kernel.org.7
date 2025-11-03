@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-882424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E82FC2A708
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:57:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B507C2A725
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:57:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72F9D3B7252
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:53:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 097F03B7E08
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:53:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98AE52C0F97;
-	Mon,  3 Nov 2025 07:53:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10ADF2C1587;
+	Mon,  3 Nov 2025 07:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="fgQbC0R1"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="RNpBwAS4"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64EAA2BE64C
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 07:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C2742C158E
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 07:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762156395; cv=none; b=iTXik34KHkqnaQui0G3CqpKM1/c+fp2zcr8ovDHN1xk6cq+AHaWv2dUJ9v/klTDBmCUXVWZEV5ymsVmyEFicQ/e6KrhmuzFd2nLSMl/YI9CM7/PgudB3NhLA/bO+D6PiUMA4zaPWa7jbndEusdZ0KVTlLUOZHpqf0Ynz/4lDfFc=
+	t=1762156403; cv=none; b=edjaA23KEiMg3QCgNvTovbW2QHibj1AgbMsYswoOSFAG3c3iUlQETa1qMqkd1PTSEe83EWjkaqOYdXD5x/RRKcU+SESxZin6kGpVbQQNRSRdLdWXZkcizWj507msZLPnTm+3G71Yfh8fM+ZiLNAZP8uThMEBAEsPH7oFs6115OI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762156395; c=relaxed/simple;
-	bh=YI6y0WtkAOSxi3fWHEa12lXBLbRmRWX/UrNbhODMw7c=;
+	s=arc-20240116; t=1762156403; c=relaxed/simple;
+	bh=Lodb6rLROk4Q3CAebuv8vkqskVQL3XSySEbny+ty2Qs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XWPCgZJk4N4cJO6uCf+sKTTR73YShkyrunI9eniw9SB1HzsDf/Ck0jkvWjozZTQ/WAZXsHVRphuCK7ZzXQl8uwWOhYFfJjAaw/VA+koFC4/Y2Z8DVW8/GR+HhYf7XSf9PMGnu5KzgFGg6GZTiTRqf5I6IhIL/LTugiTrOvQMLyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=fgQbC0R1; arc=none smtp.client-ip=209.85.216.41
+	 MIME-Version; b=l5b1zIg46u7D4nlZ6HpHi1696skDC80Ms3q8OEgda6ns/LT6+4z/soXKRc6ANESP9upbEKy1E7ISZWlxpjwztGyrUmhF+EOPoncGSZ21hI0AlmjHr7/PhtiZP5VW6UkISjJ5vzJqXrK4CzcG23ct+QgyehYbiX/dmjP7ixKhoZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=RNpBwAS4; arc=none smtp.client-ip=209.85.216.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-339d7c403b6so3732161a91.2
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 23:53:14 -0800 (PST)
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-340e525487eso822477a91.3
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 23:53:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shopee.com; s=shopee.com; t=1762156394; x=1762761194; darn=vger.kernel.org;
+        d=shopee.com; s=shopee.com; t=1762156401; x=1762761201; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6yMtctYgS2rV+P47tm9bNW95kd+lcuzHA0J2B8KxNkI=;
-        b=fgQbC0R16BbBxVgperj2mMJBzRM3/5FZwDegF6tlNBkkz0Kxf0M03DPBrG5fJN7pn9
-         ulelxzJlKlMU/yVcDbQjNm03n4dfnwn/hHKmz50/W+SlxkRtHG8ZaCmCCbNoKmafKQRX
-         GPKrPT8hwvRLwI8KDP/TxdQwsnvvHsI5gcAZWqZHzPO688g7/pF0d50PdBjGueNCV7Ii
-         RIPDfuX77WT+9EBrNSngHWeijBkppvejfd5RFW4UbVcWIdnZYatehs+24HehDOcdYzp6
-         sKjthJxLWMfFB25P4CSmQry8OK80bqEBs5pXvVaw1TC5CNPRcDMYhqX3YuVLi+LQtOZa
-         fC5g==
+        bh=nbphvwlZY5Z8mMpRxJCeoPt3Sbe7fHbYhkrPsa2IkNg=;
+        b=RNpBwAS4yESmrj9Weh9BEo1RboZ8PK06YEA0hxkj1PpR/zXz1nB8SdZa24ikNZFH8v
+         I/+0hPUmOjIT1kmeg4JM9BUUR4MmAziopCMnJYfZJ96Yd8xjk+gUA8cR2zaKsRK8VBY4
+         G/3BUoKW2hn4oKK2mb5LFyWsn5FBoRX0b7mlczVWgwIdY8aDae/GxBJwaZAKk9v+KZLF
+         rNNZVSEdPS6Mfb2TyY4r9lo3Y+c6GRWsYCoSm49TiTbz5y317bhRCtdtYYKqTFzL25JI
+         hOA/uEprySpMADE+pi2j8LC4pQgOPpWQB+t1EFzDR5HUyUUxZSBP5BGva3g/SdGR2o6B
+         MtZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762156394; x=1762761194;
+        d=1e100.net; s=20230601; t=1762156401; x=1762761201;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6yMtctYgS2rV+P47tm9bNW95kd+lcuzHA0J2B8KxNkI=;
-        b=DYL+wRSY4NooOTB8uZQzP7duDxi641phnO0Q+YY3QcOP8OARAFjAFGqoU0AiSkqVCj
-         BKaXHXDSsHJUzJ+Md4mMfSsvFY62Sp46+q3ist0qORHgYJKyqERfNkyN29XL7vz5ddVp
-         9StEvDYyhlDPOhjnhENNOmkb6+ZoAv3x6Fc3+33umSuvJoy8w46WAmzGSkVLv+dKE00Z
-         VkNXMQQeeUo3z2z/CMbggYn9Lyl/RRLuSwbAE8IO6sZqXtCoCModN8eH6heqYqA1dcQQ
-         9P8hdZn3x1XDT0Fu4/P5e+BGG07hjokmyyBy9HJNP61hYwBW5YWhc5BbQbCs/XpQbKP7
-         LEKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU40NN+clN+pEsJVc7/4r/bd0Yfb1zs2pLc0egA430YSv19NskLakqWZVYNf5LJ1yKmKjfaW5xaoiQbA+Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEW0pupZGP8AoSdC+8b8t4w1YtdE6eFL0oMufiE1iYfKr3806B
-	HeE/tPKHjeiF1+SxwabkEBUtOsyQzvoFV75MnVzA6XLCtYNDtwd6VK18FdZ0AXK2bwE=
-X-Gm-Gg: ASbGnctRceybtM1Um/VI6jaUmwiXeoNdRWbX6Lom5R9Pv6hWixbir3p7iGq7+CzjqtZ
-	j5Aow6Kqr2alIRqlYEv4G/fG9iW3uAhC4E20tEimChglYLGpNS9EntZLw6Suz4hRII7f0qNYpGs
-	6rLVfKQJNwlVAFoymR2PQrrFRb+Kj2vncdCLJYve0wNs0txiaozZZBYqYZV46QpHoxuPRH+FuTG
-	wqdjY4sKcjxJK3/NuVaGz3JagIEi2J/BXOZlqNR1aqvUJ6DkdtTTvh0OI6jqh/RoBIAkhZYQxtU
-	bjycqmwr3xouhR83pgIcQy2YMQbhBFf8dvoHfoUFv34URZ/aqt9hizlHIM0GSAx9B3ED8pMrINM
-	baKkbt+k6NlwmdV8KQiVargtiB4vk7fORs1FDAykgDVQaTYUsz8KoG/IB9CU8KUXY47NipYb3OZ
-	30YWROSuoFQb8eKpHUTvlpuE3D
-X-Google-Smtp-Source: AGHT+IELQOgDx8D/eQP4ToiYJS7h+qaVvXs4UNrgHqqZp+hj5K9vMTs1s/xhbdYPxDl7zK1DXp+1dQ==
-X-Received: by 2002:a17:90b:53c7:b0:339:eff5:ef26 with SMTP id 98e67ed59e1d1-3408307e71amr13784912a91.30.1762156393719;
-        Sun, 02 Nov 2025 23:53:13 -0800 (PST)
+        bh=nbphvwlZY5Z8mMpRxJCeoPt3Sbe7fHbYhkrPsa2IkNg=;
+        b=ZBAaTZcDJEDB1jBEBf4+vUSP9jEQ1kFXs8BacbYJk/hXYeM8Yk+nTCzSE715NssE1W
+         eRmVKFGF6NmV/nzYWhQTr4ijOlOLb7OI9ITcf1EMZXBmyhvePD2ME7XUrQF54UB1/rzv
+         9hEeYJF0FRf+R8GzvqFOKS2kAjx0D60hXcWyrthUibHo3F9Swc+OuDl4pI921jEVtZL3
+         fFKxe82SUJ6NqgT5Fcav5KrMV9f2eEY90thMtvZClGTnE0rnqd3v38wflo2ARzR9fz+E
+         Mn0j+4yuaSDpPFtayNYp8mQ+y+tseZ9acSntsNyO1kC+/Zl9+2MLU728+qIjmVjgTY9D
+         x07A==
+X-Forwarded-Encrypted: i=1; AJvYcCV0uemNetW14hwjyKgxTDHUIGaF7lCqcDaLgHXmcmXevO/OW5KpzWpeill/f2GwLP8FZKZFhWLoJ3rE6tY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqCsn8GCGFYTLO/yXhJdE7ENfVT7U+DMHXkSyBj2+Pwlv/DH9E
+	G+VClrapjj4hyg9QHa/CGm1UH1/Dpc9QjOZ7ujeJfuwwJ+1WIu7ApwfcUJfrd3AgxT8=
+X-Gm-Gg: ASbGnct50Se2PQhch/j1Y0LM4mhAqDRWbrNO1/KH/6WkiZzwRQ+qWg0dyGZcRsyU6FA
+	72/aYg2VSXYRVEQ4S8ZndhRbgSfd/jG0Uaq0VOJ23ChZF+ricu8nU511kfw1iAaFN1vPZNTPL4I
+	CuCfKMonyOe5lfHS4UlRIy5Nflz8rvPEYlF2xxgaW8XY2FYmU7BfTI/UTeWdaI2mNHSlLNCGtox
+	z/K2ocMB/bvuzp+fO23gsA6Meh5fh0D9/mydXxcHDJZf5nV6IT6fBb3ToMqmN8KrE1p3ZuDKkcQ
+	ljO3ZGS6F329OM6q+7Si2wNfrIcNGQt7UsZSAU9yAzcQVlVO/YzyeGXijTgQaseIdoEN+E283CK
+	g5ZfINJ6pLjhQhGTRaqLnrm6FDWZKAb7vKXyoz0jhxQDeXe91ZhSMWa1jWFTNprssRDBTVi+8nI
+	K3Csd/V5+HiXo0n55DLDD6QIwvkRTc4VjlGsc=
+X-Google-Smtp-Source: AGHT+IESJtnYCC+6tKU/IMMlAFX3OXThvg7/IT5AO+qIlJZ6EL/qIntowvs3vVciOZabgFGZ7594Wg==
+X-Received: by 2002:a17:90b:39cc:b0:329:e4d1:c20f with SMTP id 98e67ed59e1d1-34082fcc5f5mr15216714a91.9.1762156400905;
+        Sun, 02 Nov 2025 23:53:20 -0800 (PST)
 Received: from .shopee.com ([122.11.166.8])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34159a16652sm34552a91.20.2025.11.02.23.53.06
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34159a16652sm34552a91.20.2025.11.02.23.53.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Nov 2025 23:53:13 -0800 (PST)
+        Sun, 02 Nov 2025 23:53:20 -0800 (PST)
 From: Leon Huang Fu <leon.huangfu@shopee.com>
 To: stable@vger.kernel.org,
 	greg@kroah.com
@@ -101,15 +101,14 @@ Cc: tj@kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
 	Chris Li <chrisl@kernel.org>,
-	Bagas Sanjaya <bagasdotme@gmail.com>,
 	Greg Thelen <gthelen@google.com>,
 	Ivan Babrou <ivan@cloudflare.com>,
 	Michal Koutny <mkoutny@suse.com>,
 	Waiman Long <longman@redhat.com>,
 	Wei Xu <weixugc@google.com>
-Subject: [PATCH 6.6.y 3/7] mm: memcg: change flush_next_time to flush_last_time
-Date: Mon,  3 Nov 2025 15:51:31 +0800
-Message-ID: <20251103075135.20254-4-leon.huangfu@shopee.com>
+Subject: [PATCH 6.6.y 4/7] mm: memcg: move vmstats structs definition above flushing code
+Date: Mon,  3 Nov 2025 15:51:32 +0800
+Message-ID: <20251103075135.20254-5-leon.huangfu@shopee.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20251103075135.20254-1-leon.huangfu@shopee.com>
 References: <20251103075135.20254-1-leon.huangfu@shopee.com>
@@ -123,37 +122,19 @@ Content-Transfer-Encoding: 8bit
 
 From: Yosry Ahmed <yosryahmed@google.com>
 
-[ Upstream commit 508bed884767a8eb394640bae9edcdf082816c43 ]
+[ Upstream commit e0bf1dc859fdd08ef738824710770a30a8069433 ]
 
-Patch series "mm: memcg: subtree stats flushing and thresholds", v4.
-
-This series attempts to address shortages in today's approach for memcg
-stats flushing, namely occasionally stale or expensive stat reads.  The
-series does so by changing the threshold that we use to decide whether to
-trigger a flush to be per memcg instead of global (patch 3), and then
-changing flushing to be per memcg (i.e.  subtree flushes) instead of
-global (patch 5).
-
-This patch (of 5):
-
-flush_next_time is an inaccurate name.  It's not the next time that
-periodic flushing will happen, it's rather the next time that ratelimited
-flushing can happen if the periodic flusher is late.
-
-Simplify its semantics by just storing the timestamp of the last flush
-instead, flush_last_time.  Move the 2*FLUSH_TIME addition to
-mem_cgroup_flush_stats_ratelimited(), and add a comment explaining it.
-This way, all the ratelimiting semantics live in one place.
+The following patch will make use of those structs in the flushing code,
+so move their definitions (and a few other dependencies) a little bit up
+to reduce the diff noise in the following patch.
 
 No functional change intended.
 
-Link: https://lkml.kernel.org/r/20231129032154.3710765-1-yosryahmed@google.com
-Link: https://lkml.kernel.org/r/20231129032154.3710765-2-yosryahmed@google.com
+Link: https://lkml.kernel.org/r/20231129032154.3710765-3-yosryahmed@google.com
 Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
 Tested-by: Domenico Cerasuolo <cerasuolodomenico@gmail.com>
 Acked-by: Shakeel Butt <shakeelb@google.com>
-Acked-by: Chris Li <chrisl@kernel.org> (Google)
-Tested-by: Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: Chris Li <chrisl@kernel.org>
 Cc: Greg Thelen <gthelen@google.com>
 Cc: Ivan Babrou <ivan@cloudflare.com>
 Cc: Johannes Weiner <hannes@cmpxchg.org>
@@ -167,41 +148,175 @@ Cc: Wei Xu <weixugc@google.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Leon Huang Fu <leon.huangfu@shopee.com>
 ---
- mm/memcontrol.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ mm/memcontrol.c | 148 ++++++++++++++++++++++++------------------------
+ 1 file changed, 74 insertions(+), 74 deletions(-)
 
 diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 03a984287e5b..433cd273006d 100644
+index 433cd273006d..157be6820fd1 100644
 --- a/mm/memcontrol.c
 +++ b/mm/memcontrol.c
-@@ -590,7 +590,7 @@ static DECLARE_DEFERRABLE_WORK(stats_flush_dwork, flush_memcg_stats_dwork);
- static DEFINE_PER_CPU(unsigned int, stats_updates);
- static atomic_t stats_flush_ongoing = ATOMIC_INIT(0);
- static atomic_t stats_flush_threshold = ATOMIC_INIT(0);
--static u64 flush_next_time;
-+static u64 flush_last_time;
-
- #define FLUSH_TIME (2UL*HZ)
-
-@@ -650,7 +650,7 @@ static void do_flush_stats(void)
- 	    atomic_xchg(&stats_flush_ongoing, 1))
- 		return;
-
--	WRITE_ONCE(flush_next_time, jiffies_64 + 2*FLUSH_TIME);
-+	WRITE_ONCE(flush_last_time, jiffies_64);
-
- 	cgroup_rstat_flush(root_mem_cgroup->css.cgroup);
-
-@@ -666,7 +666,8 @@ void mem_cgroup_flush_stats(void)
-
- void mem_cgroup_flush_stats_ratelimited(void)
- {
--	if (time_after64(jiffies_64, READ_ONCE(flush_next_time)))
-+	/* Only flush if the periodic flusher is one full cycle late */
-+	if (time_after64(jiffies_64, READ_ONCE(flush_last_time) + 2*FLUSH_TIME))
- 		mem_cgroup_flush_stats();
+@@ -570,6 +570,80 @@ mem_cgroup_largest_soft_limit_node(struct mem_cgroup_tree_per_node *mctz)
+ 	return mz;
  }
 
++/* Subset of vm_event_item to report for memcg event stats */
++static const unsigned int memcg_vm_event_stat[] = {
++	PGPGIN,
++	PGPGOUT,
++	PGSCAN_KSWAPD,
++	PGSCAN_DIRECT,
++	PGSCAN_KHUGEPAGED,
++	PGSTEAL_KSWAPD,
++	PGSTEAL_DIRECT,
++	PGSTEAL_KHUGEPAGED,
++	PGFAULT,
++	PGMAJFAULT,
++	PGREFILL,
++	PGACTIVATE,
++	PGDEACTIVATE,
++	PGLAZYFREE,
++	PGLAZYFREED,
++#if defined(CONFIG_MEMCG_KMEM) && defined(CONFIG_ZSWAP)
++	ZSWPIN,
++	ZSWPOUT,
++	ZSWPWB,
++#endif
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++	THP_FAULT_ALLOC,
++	THP_COLLAPSE_ALLOC,
++	THP_SWPOUT,
++	THP_SWPOUT_FALLBACK,
++#endif
++};
++
++#define NR_MEMCG_EVENTS ARRAY_SIZE(memcg_vm_event_stat)
++static int mem_cgroup_events_index[NR_VM_EVENT_ITEMS] __read_mostly;
++
++static void init_memcg_events(void)
++{
++	int i;
++
++	for (i = 0; i < NR_MEMCG_EVENTS; ++i)
++		mem_cgroup_events_index[memcg_vm_event_stat[i]] = i + 1;
++}
++
++static inline int memcg_events_index(enum vm_event_item idx)
++{
++	return mem_cgroup_events_index[idx] - 1;
++}
++
++struct memcg_vmstats_percpu {
++	/* Local (CPU and cgroup) page state & events */
++	long			state[MEMCG_NR_STAT];
++	unsigned long		events[NR_MEMCG_EVENTS];
++
++	/* Delta calculation for lockless upward propagation */
++	long			state_prev[MEMCG_NR_STAT];
++	unsigned long		events_prev[NR_MEMCG_EVENTS];
++
++	/* Cgroup1: threshold notifications & softlimit tree updates */
++	unsigned long		nr_page_events;
++	unsigned long		targets[MEM_CGROUP_NTARGETS];
++};
++
++struct memcg_vmstats {
++	/* Aggregated (CPU and subtree) page state & events */
++	long			state[MEMCG_NR_STAT];
++	unsigned long		events[NR_MEMCG_EVENTS];
++
++	/* Non-hierarchical (CPU aggregated) page state & events */
++	long			state_local[MEMCG_NR_STAT];
++	unsigned long		events_local[NR_MEMCG_EVENTS];
++
++	/* Pending child counts during tree propagation */
++	long			state_pending[MEMCG_NR_STAT];
++	unsigned long		events_pending[NR_MEMCG_EVENTS];
++};
++
+ /*
+  * memcg and lruvec stats flushing
+  *
+@@ -681,80 +755,6 @@ static void flush_memcg_stats_dwork(struct work_struct *w)
+ 	queue_delayed_work(system_unbound_wq, &stats_flush_dwork, FLUSH_TIME);
+ }
+
+-/* Subset of vm_event_item to report for memcg event stats */
+-static const unsigned int memcg_vm_event_stat[] = {
+-	PGPGIN,
+-	PGPGOUT,
+-	PGSCAN_KSWAPD,
+-	PGSCAN_DIRECT,
+-	PGSCAN_KHUGEPAGED,
+-	PGSTEAL_KSWAPD,
+-	PGSTEAL_DIRECT,
+-	PGSTEAL_KHUGEPAGED,
+-	PGFAULT,
+-	PGMAJFAULT,
+-	PGREFILL,
+-	PGACTIVATE,
+-	PGDEACTIVATE,
+-	PGLAZYFREE,
+-	PGLAZYFREED,
+-#if defined(CONFIG_MEMCG_KMEM) && defined(CONFIG_ZSWAP)
+-	ZSWPIN,
+-	ZSWPOUT,
+-	ZSWPWB,
+-#endif
+-#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+-	THP_FAULT_ALLOC,
+-	THP_COLLAPSE_ALLOC,
+-	THP_SWPOUT,
+-	THP_SWPOUT_FALLBACK,
+-#endif
+-};
+-
+-#define NR_MEMCG_EVENTS ARRAY_SIZE(memcg_vm_event_stat)
+-static int mem_cgroup_events_index[NR_VM_EVENT_ITEMS] __read_mostly;
+-
+-static void init_memcg_events(void)
+-{
+-	int i;
+-
+-	for (i = 0; i < NR_MEMCG_EVENTS; ++i)
+-		mem_cgroup_events_index[memcg_vm_event_stat[i]] = i + 1;
+-}
+-
+-static inline int memcg_events_index(enum vm_event_item idx)
+-{
+-	return mem_cgroup_events_index[idx] - 1;
+-}
+-
+-struct memcg_vmstats_percpu {
+-	/* Local (CPU and cgroup) page state & events */
+-	long			state[MEMCG_NR_STAT];
+-	unsigned long		events[NR_MEMCG_EVENTS];
+-
+-	/* Delta calculation for lockless upward propagation */
+-	long			state_prev[MEMCG_NR_STAT];
+-	unsigned long		events_prev[NR_MEMCG_EVENTS];
+-
+-	/* Cgroup1: threshold notifications & softlimit tree updates */
+-	unsigned long		nr_page_events;
+-	unsigned long		targets[MEM_CGROUP_NTARGETS];
+-};
+-
+-struct memcg_vmstats {
+-	/* Aggregated (CPU and subtree) page state & events */
+-	long			state[MEMCG_NR_STAT];
+-	unsigned long		events[NR_MEMCG_EVENTS];
+-
+-	/* Non-hierarchical (CPU aggregated) page state & events */
+-	long			state_local[MEMCG_NR_STAT];
+-	unsigned long		events_local[NR_MEMCG_EVENTS];
+-
+-	/* Pending child counts during tree propagation */
+-	long			state_pending[MEMCG_NR_STAT];
+-	unsigned long		events_pending[NR_MEMCG_EVENTS];
+-};
+-
+ unsigned long memcg_page_state(struct mem_cgroup *memcg, int idx)
+ {
+ 	long x = READ_ONCE(memcg->vmstats->state[idx]);
 --
 2.50.1
 
