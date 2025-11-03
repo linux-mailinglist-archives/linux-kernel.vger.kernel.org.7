@@ -1,104 +1,108 @@
-Return-Path: <linux-kernel+bounces-883241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA32CC2CD53
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:43:43 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99E6CC2CC75
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:35:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DECB818921AE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:36:05 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1F16334B193
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77CB3164D9;
-	Mon,  3 Nov 2025 15:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40A43319862;
+	Mon,  3 Nov 2025 15:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BkutaiGv";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Bu2ewWuU"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hm7iVkNl";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="TDiZ+t/d"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2003314D39
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 15:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E32831961D
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 15:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762183792; cv=none; b=RzaEG80LHkA0VqYL3AOwxucCD3Ptc8cafNH2vrGbZHCQkq6F158/g3afo+dXYPiN2eBbv3Zvchgw8Jf3zjB0If3HKJIXpCBbnvES4z9tqrRWPXgAmDVyvr2fTzc5wIPmGSf7pPK1p24g+tFZV8QqZRiN2gFeJWPhduVKGSlw38I=
+	t=1762183795; cv=none; b=msMBsjG7bTXFyLKVzrEXlqKq4cBetkKGlRNo0hX3EEk8iRF4E8j8PvzGxDo2oyy3NlvgTIfSBuBbKgdAN/4Sodl0nav7c+mWZlCMFl5AWD4Abv2HecB7dCpFzdbrPQvxne1EuUUeILtkuumnjAo0DTlDehPYU94SB4Bzk2oP4vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762183792; c=relaxed/simple;
-	bh=Qu4o+5vdG4guuxWL13xICD+nDkAgjCx0T8HQXjzGPZk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D7HyRb5MB6OGJd9BQk5Z+9xxohDWkfqEiyOe1/f8A+remlpl3BX19EqeIFDnqILFrl2085mN8yMRKiJrY+47KDkaE6AY7MvQ/A2Q4zm/oCbQPuRvrK9sXdxwcz0gVWgVFBwLQODblcP/UPKO5vIONb+arneaSGfMocxeQXyqe6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BkutaiGv; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Bu2ewWuU; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1762183795; c=relaxed/simple;
+	bh=dBArJw8BtQbb+GbIeTd+sj4QHw9R7vxcd2HVbGXyZ8I=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=RRMKz945pUP9MehcOL/lxNtwnDFze9LCO31HCDI9sioih7sPjqVjOZ/4PjpUZcUr2X1+oVezbhjKpIAT8usc0kp1GyMm+CcDQQpG8rUiWdYwvHiTY4tjQ+L4bl3AMzxxG24bCjzHDtYLj3SXSOdoa6HPOBjyh1eHbhIAogOGByc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hm7iVkNl; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=TDiZ+t/d; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A3EsW7E3444783
-	for <linux-kernel@vger.kernel.org>; Mon, 3 Nov 2025 15:29:49 GMT
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A3AIVFl2755773
+	for <linux-kernel@vger.kernel.org>; Mon, 3 Nov 2025 15:29:52 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=iuUp7Twb1AkLQGRdG3T6gdiruxN1hkGWsFs
-	xCM/VYy0=; b=BkutaiGvu9FDIxWl/+NFZuQGHNvm6/SwZmaRUkVGMiwJ++zuspL
-	qzwLX1/D2mI31HoBm9ReqWQoUI/5pNef99vPZ22uxl9+tIqFfAr64XhLlBnYQ7yx
-	Zs4wBx7fm+AucLRcwm32p6wGGcqjfo52osdLyDgvxIaonvO2lRHbZCbDV/ek8BAC
-	8aDmgnlyVcQ+eKd2yn1xC/4Ets5M5HFLnOCVnYfKpmf151PaNsaivol6lkglQ/F3
-	HIZsdkF8QJEbzD5Yd9WHKDJ0MqH/0ml7RhDFOw+fXdnqkkQdXBaqLmdzDx7g0FJJ
-	pGwun54Hh9CezSEG5PR2MsJtYzTx0UNKGUQ==
+	cc:content-transfer-encoding:date:from:in-reply-to:message-id
+	:mime-version:references:subject:to; s=qcppdkim1; bh=M5RoU67xWc+
+	/hX5e4Ph3gnRFs2xHxrz6wCE2cVAYy5I=; b=hm7iVkNlXLmuTNV25NbfYm+bPFZ
+	Pp+4Hdg4U6Ejt303H1ZP3RtEljLlZcF2a2sSHgyXYIKEY0piA2Rvx6H5aGifeyUc
+	2/6G9ga3b3rr6ELRXFPaBD1GYmZsm4+SZtv1+xEagy0p6nd2otjKMHABvw/biuer
+	jtkp5u9JuxmT2wT3YiQqR2siZPXFPLXmhggPsBYI533oCFwJvCHBygZVUmC2K+7f
+	P+0Cu29rVLlBRhL8Tji4tWzwiBibQ8LzciYTKAOp88tCzUkWl/uVLL4/flHoNSsa
+	DZNhAGIzEyRon2s95OMJgUNEdEAMp9EVj3iwj7AMBexqah7h/QzYhFxvSzw==
 Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a6xjqr3fp-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a6th9rsjc-1
 	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 15:29:49 +0000 (GMT)
-Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-29598910dd2so33534435ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 07:29:49 -0800 (PST)
+	for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 15:29:52 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2956510d04cso20246065ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 07:29:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762183789; x=1762788589; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iuUp7Twb1AkLQGRdG3T6gdiruxN1hkGWsFsxCM/VYy0=;
-        b=Bu2ewWuUChgjxu9VwTa+tcghF4cmT/BLKT0ewI5gZLsx8w2TK3d0rE9eQuSnpAMje0
-         Tac86dPMUynFy3N71UTKS49fk+y6/6ByFhtAL36xgtq++tLT6oDfPPMNVjzrZ8lNCMRw
-         CGIisqliW6Je4tKP/ybxL3iwmKlmaV1ZCMQsrq7I/tWjwZbPC0oryj8owJL4WwbIruuU
-         fJVkaDDZ4JkeBJEyfoY+UcTJCg8DXEbjYc1UO1f6VDWENfUhohlx7ipsCCwUsuIZDvbc
-         scXzwMypX4AHEVZSRkbzULHcdAL2Y3K5uCPrmcrEh4NQPGSNBFYdKOokESC+LMD/TY2A
-         5tqg==
+        d=oss.qualcomm.com; s=google; t=1762183792; x=1762788592; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M5RoU67xWc+/hX5e4Ph3gnRFs2xHxrz6wCE2cVAYy5I=;
+        b=TDiZ+t/d58R09rgflDHlUPVh9y+tWDbvKnLaXyx+BRDuLSGc96/emOdY5jPexKFIUg
+         BdhcrMbSYsCrjsrcWYVFlG5dljzs0cbPXuHdBfg/NvCAKr1HjeqIwU6LYGFYVz71TDUN
+         KOljy6w5Ia1pz6l4f6tro1npdgVi6Ljz4UhfRE0VZYZsbBCYHgBEx3haIHBxHO2w2SIE
+         GIZYKYPedWEQ23qwQMVOqF4I0dTyMbmIZCySNXTnMiJ4MpZhX4dN57u9gk2umULB0+Li
+         mfo9UBBdaABHfvBPyyi5GQAv0iTveSj6WWg1U8WEjQ9HI4QUl8hwCEyIjoatr4/VvpmG
+         8JbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762183789; x=1762788589;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iuUp7Twb1AkLQGRdG3T6gdiruxN1hkGWsFsxCM/VYy0=;
-        b=BAijBGwFcBK4jaJ2fHW9U9TrtbEt4fp2BgNu3topJdeUotI5jxwqaDTbbkao6ohFfC
-         Jckj1dUuVj8f5WiY5j6ASP1NsrEV6zO4VNh2BSmrjTkWSjmDEZAz5dpcHoW6s2jMRsTm
-         LHIYTBYipl1Xn1E1iBECYSqykX4VzzhdTeyQa3Pgsni4Ta2FcSe+vZlaQKh2YKCvcvd6
-         0QaqAwz2gIUCRk9m3dhSh4PlpcjJNRSwUIq2qzsAiNIHQa9a29vQxlNpBVI9MhpswvWv
-         Ea4DLsetSJqWMvpj8o8R4V+b+o4Lo0SF+vlUQKXddAdJm38dyDHi2dLuWC/A1ICYLgr1
-         WzrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNSqDF5Wxm7QWMiLTp+alpcRTB9Pz5ZNsPqIuEAq9Z+O4NmDfZqBFat8xB3PWzi6YXuHlbLArsgqy/aeM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoIs1rum5qvTn/zHBSFVEXZf0bXsWy07O4f2aww9wPcAHspw9h
-	yQcH5nkuv7ZmALZuf7eZ8beQRSSjiVqDjmYwVd1549Jy5q/Ss53+rLlP5Xv2NoclOLiHf6SYXfw
-	eul4sn37yCyEmMZghjX+iaPoiS3aMUK3ya4tlZPVY9eysdxDO83wAS65LEOD65E2iYKE=
-X-Gm-Gg: ASbGnctoxk2SFEI3fw8EAdXjjhpdaKeMoXdQDUCH09yd0e+L207be+f9OrPjfMjoD+a
-	m+osj8HOOcjs6ZNYpo/AUQr74rt7M7UFo1MFuR4INTu1jbTYv/HLeE0Svb1lP47xeAr/ouyAZqf
-	gpduhXx+pOA2JLJqXBPEihFywumDmTdotOW1al98YX3OHZXwg37U19tbtSRulruq49jukvk8ayi
-	NLXwWR5HJUcyepNPb70AkDd7+KUun3KQ/Nc4gAzuf693uSN/MgshYuGC0Tihefykv4Yih3SUWzg
-	TxQrqSNTPYcZtkJNOTwzMhh/LADAbMsAW6IuBMm9zWsYxuWZjWRb/0IiOFhluDpMcqugsRPDuLM
-	CZ1YQOZA/MDXxYREesaSvb6mxrO0R
-X-Received: by 2002:a17:902:c40a:b0:295:54cd:d2dc with SMTP id d9443c01a7336-29554cdd5eamr137298355ad.16.1762183788602;
-        Mon, 03 Nov 2025 07:29:48 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFeFoMWtVRbtUqyET77Erx4bRvUg7ngB/KYLbL8h2qmcG5sVT+8D18sM053N+dGTqJqIll3iA==
-X-Received: by 2002:a17:902:c40a:b0:295:54cd:d2dc with SMTP id d9443c01a7336-29554cdd5eamr137297895ad.16.1762183788062;
-        Mon, 03 Nov 2025 07:29:48 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762183792; x=1762788592;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=M5RoU67xWc+/hX5e4Ph3gnRFs2xHxrz6wCE2cVAYy5I=;
+        b=e9vy2bGK9amPHsV2SaKRHSGFeulS3QGC9dG3Xoezi72NW2azqCI+O8U4t2Qzy1f6E+
+         VUiS+B3QefyQAdVgTr/U+jx93YdHNhYVoEQ7Y52LPd7Lhr5A/9uqVUIWgKSdXx5HkoQG
+         nkHDY/zgn/6FwyKSa4yQK79kxaWxj4vqwATLHs37f6Xl/7cCgeyj+5kkDZGPzPtMOFC7
+         ErtlzlXbZTYFOzAUXvEJjKHmIIr3QJKsyrhX5VggfhV2sVmuwbg2H4uT/vfqRJa0XWdX
+         0wWrJ0HJxB2CeicxbF1Cxhrw+Og9C0IqT7nd40h3IMWgAHrwX+UINPnltk3veppWdQuB
+         nBDw==
+X-Forwarded-Encrypted: i=1; AJvYcCWgPtsAkvUdviHkT83TyhbV3tt/rnpwQYkvRi3nB3abUigU7uAaJmODL5iDY4Ev+Kb+IF4O75xh4ueMxis=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwBcyOohe86QXa+pBuT4hYeNN9OdGs3GF7wcYgMtDRiC/dVXZ5
+	XXajBGMZpb/C+bSMj3vPBYJrvHMo+8vxajx8P5oVXAKJSAtGUlGtdTW9vuuQzWMaBFQmO9WIbAF
+	Bf26g4UuPzDCEuL77FP3BoS2cMge4NWmNoAbnUErGthmzmp6bUo92mE3YY/MXcbKIoZ0=
+X-Gm-Gg: ASbGnct0WEU7kK5GwVTLJIb7mW2Nbf52MtvcMV2XIRB/ZHrUhiJnXZfv8+p+9OJ36V3
+	M5cayWL0uJ038I9qYG50H93JMXzzAOZNThSvCIDPu/IHm1IA3CAt1sOgM1kuTx99fNL3U2lYizi
+	Jh2z3mb0NwT8P0un7ss+QZnALStIzmFnpjO26QeZQ1eMCHJFYg0SdCRww5WbSxAPIusUEwRj3WU
+	dK/PwY5qE3vNKJG37sqDmEEuaq7hw4LH7KiImKI1HI5Cg9E6uHbtmuie3cN1P9mhUoD7dSAF0EO
+	sFgGL1018AwrjkBk8CWL7ASddnYaJvrwg5USdWq5/WRhoPaCc5JFkqQ5l4A7ubUCsiEFuXNnMmH
+	27IEos4yp1Ix0bddDpaQhklMeU2h6
+X-Received: by 2002:a17:902:e5cd:b0:295:59ef:df96 with SMTP id d9443c01a7336-29559efe23amr109155625ad.13.1762183791806;
+        Mon, 03 Nov 2025 07:29:51 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEHTGFTcSyqO40WoFf96Tzk+1rxW6bfMikFwy8bey6bnkI+yt5C/QmsCzPuTxQ6g51HNPuH7w==
+X-Received: by 2002:a17:902:e5cd:b0:295:59ef:df96 with SMTP id d9443c01a7336-29559efe23amr109155245ad.13.1762183791133;
+        Mon, 03 Nov 2025 07:29:51 -0800 (PST)
 Received: from hu-deesin-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2952699c9dbsm126087675ad.84.2025.11.03.07.29.44
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2952699c9dbsm126087675ad.84.2025.11.03.07.29.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 07:29:47 -0800 (PST)
+        Mon, 03 Nov 2025 07:29:50 -0800 (PST)
 From: Deepak Kumar Singh <deepak.singh@oss.qualcomm.com>
 To: andersson@kernel.org, chris.lew@oss.qualcomm.com, konradybcio@kernel.org
 Cc: jingyi.wang@oss.qualcomm.com, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
         Deepak Kumar Singh <deepak.singh@oss.qualcomm.com>
-Subject: [PATCH V2 0/2] soc: qcom: smp2p: Add support for remoteproc early attach
-Date: Mon,  3 Nov 2025 20:59:27 +0530
-Message-Id: <20251103152929.2434911-1-deepak.singh@oss.qualcomm.com>
+Subject: [PATCH V2 1/2] soc: qcom: smp2p: Add irqchip state support
+Date: Mon,  3 Nov 2025 20:59:28 +0530
+Message-Id: <20251103152929.2434911-2-deepak.singh@oss.qualcomm.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20251103152929.2434911-1-deepak.singh@oss.qualcomm.com>
+References: <20251103152929.2434911-1-deepak.singh@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -106,44 +110,143 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-GUID: 3cXry4Vs6mt4QY3amzr6EYao_hYQQ8X1
-X-Proofpoint-ORIG-GUID: 3cXry4Vs6mt4QY3amzr6EYao_hYQQ8X1
-X-Authority-Analysis: v=2.4 cv=criWUl4i c=1 sm=1 tr=0 ts=6908ca6d cx=c_pps
+X-Proofpoint-GUID: tvlO9x3L5wVYCyGCrTGPTq1ZsHvHAp5u
+X-Authority-Analysis: v=2.4 cv=ea8wvrEH c=1 sm=1 tr=0 ts=6908ca70 cx=c_pps
  a=cmESyDAEBpBGqyK7t0alAg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
  a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=yQkoZ8-9xyiC3PRw88EA:9 a=1OuFwYUASf3TG4hYMiVC:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAzMDEzOSBTYWx0ZWRfX2v/o43yQwB8x
- tGwLJZvZwgixLkBexTapNkLkGB43jT3NnT/LHEhEBlsskv+Hm9J4OyyGhkjj0CqmYXr/tMFOz1K
- UO5grjNzEYx0NxFDNBM+Ls8IZFfNb8kwOu+RWadnsFV6Q2CQwagZ9UZ4nqMRNvk/QWziYS3WkmC
- Q1Owr3mIvVXkw0afJ0cxO0LjjF5vtUPwGBxuTiQ9/ocn7GZvOTFFI+rz3y72vF7UgzVTUIgf9Mb
- 69BvpMH1v915C+Fd0+V9qQBj/Khmjt8bF8XzTC4LB3KLb7Kh0XvTPxG7+E550qSGmJA60trzR6e
- pFsIP+jEda7ZACWNytApcgvb8BzK6bsGbSBGEbQcU78/51sRaM/xfb0V8w+U+FoFB0DAaen+zZs
- 4EEIO9QzDRuCeT97wzoNB7FtsGB2og==
+ a=EUspDBNiAAAA:8 a=Ht6YvOiLTg5Y4LB-hcAA:9 a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-ORIG-GUID: tvlO9x3L5wVYCyGCrTGPTq1ZsHvHAp5u
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAzMDEzOSBTYWx0ZWRfX/AiJUIwKzrVE
+ edIndeuYKvmtQf/wLHRAVWGc6PWoE8yQ79L9su3hRRuKrl36xreKViJISbIe9rYwha9ssuRWqVH
+ v/PQDi2WAEb+3nKqgqf5GYseqSJKW3P4DFTkDf14q15ONd9lEgikiB54xddy8et1MOwNbaUhXPY
+ /D0JX8MGbxDVq5RmW1yfX53y2yEGHkJeFWTGDgmiq3vZ9sfPZLWJQ/hQAfnVixRIfwjx9RrPykM
+ NcuJZmCnY077fgFuCc7IYnzfceOXGuAD9yC8OROQ80S0BCGob/2F63jpLQZ1+VaBBp0lfEP0OZ6
+ RVbcBSKIjCA/HGcqKShtPPpWns8C0jsfqWPuLZEZSPJyH/f6ddBsYul773uokTGlnbN0cet4M5U
+ WZIEZbU3zJmCBEAmZSitbvWwn4kE1w==
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2025-11-03_02,2025-11-03_02,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- adultscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
- impostorscore=0 clxscore=1011 spamscore=0 suspectscore=0 bulkscore=0
- malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511030139
+ malwarescore=0 impostorscore=0 suspectscore=0 lowpriorityscore=0 bulkscore=0
+ adultscore=0 spamscore=0 priorityscore=1501 phishscore=0 clxscore=1011
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511030139
 
-Changes from v1:
-[PATCH 1/2]
-Update condition to check version 2 in qcom_smp2p_start_in().
-Add more comment to describe above condition.
-[PATCH 2/2]
-Add description for version v1 and v2 of smp2p.
-Check validity of in_version.
+From: Chris Lew <chris.lew@oss.qualcomm.com>
 
-Chris Lew (2):
-  soc: qcom: smp2p: Add irqchip state support
-  soc: qcom: smp2p: Add support for smp2p v2
+A remoteproc booted during earlier boot stages such as UEFI or the
+bootloader, may need to be attached to without restarting the remoteproc
+hardware. To do this the remoteproc will need to check the ready and
+handover states in smp2p without an interrupt notification.
 
- drivers/soc/qcom/smp2p.c | 102 +++++++++++++++++++++++++++++++++++++--
- 1 file changed, 99 insertions(+), 3 deletions(-)
+Add support for the .irq_get_irqchip_state callback so remoteproc can
+read the current state of the fatal, ready and handover bits.
 
+Signed-off-by: Chris Lew <chris.lew@oss.qualcomm.com>
+Signed-off-by: Deepak Kumar Singh <deepak.singh@oss.qualcomm.com>
+---
+ drivers/soc/qcom/smp2p.c | 61 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 61 insertions(+)
+
+diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
+index cb515c2340c1..39628df36745 100644
+--- a/drivers/soc/qcom/smp2p.c
++++ b/drivers/soc/qcom/smp2p.c
+@@ -48,6 +48,9 @@
+ #define SMP2P_MAGIC 0x504d5324
+ #define SMP2P_ALL_FEATURES	SMP2P_FEATURE_SSR_ACK
+ 
++#define ONE 1
++#define TWO 2
++
+ /**
+  * struct smp2p_smem_item - in memory communication structure
+  * @magic:		magic number
+@@ -222,6 +225,42 @@ static void qcom_smp2p_negotiate(struct qcom_smp2p *smp2p)
+ 	}
+ }
+ 
++static void qcom_smp2p_start_in(struct qcom_smp2p *smp2p)
++{
++	unsigned int smem_id = smp2p->smem_items[SMP2P_INBOUND];
++	unsigned int pid = smp2p->remote_pid;
++	char buf[SMP2P_MAX_ENTRY_NAME];
++	struct smp2p_smem_item *in;
++	struct smp2p_entry *entry;
++	size_t size;
++	int i;
++
++	in = qcom_smem_get(pid, smem_id, &size);
++	if (IS_ERR(in))
++		return;
++
++	smp2p->in = in;
++
++	/* Check if version is initialized and set to v2.
++	 * Early enumeration of inbound entries is required only
++	 * for early boot processors which have smp2p version 2.
++	 */
++	if (in->version != TWO)
++		return;
++
++	for (i = smp2p->valid_entries; i < in->valid_entries; i++) {
++		list_for_each_entry(entry, &smp2p->inbound, node) {
++			memcpy(buf, in->entries[i].name, sizeof(buf));
++			if (!strcmp(buf, entry->name)) {
++				entry->value = &in->entries[i].value;
++				entry->last_value = readl(entry->value);
++				break;
++			}
++		}
++	}
++	smp2p->valid_entries = i;
++}
++
+ static void qcom_smp2p_notify_in(struct qcom_smp2p *smp2p)
+ {
+ 	struct smp2p_smem_item *in;
+@@ -368,12 +407,31 @@ static void smp2p_irq_print_chip(struct irq_data *irqd, struct seq_file *p)
+ 	seq_printf(p, "%8s", dev_name(entry->smp2p->dev));
+ }
+ 
++static int smp2p_irq_get_irqchip_state(struct irq_data *irqd, enum irqchip_irq_state which,
++				       bool *state)
++{
++	struct smp2p_entry *entry = irq_data_get_irq_chip_data(irqd);
++	u32 val;
++
++	if (which != IRQCHIP_STATE_LINE_LEVEL)
++		return -EINVAL;
++
++	if (!entry->value)
++		return -ENODEV;
++
++	val = readl(entry->value);
++	*state = !!(val & BIT(irqd_to_hwirq(irqd)));
++
++	return 0;
++}
++
+ static struct irq_chip smp2p_irq_chip = {
+ 	.name           = "smp2p",
+ 	.irq_mask       = smp2p_mask_irq,
+ 	.irq_unmask     = smp2p_unmask_irq,
+ 	.irq_set_type	= smp2p_set_irq_type,
+ 	.irq_print_chip = smp2p_irq_print_chip,
++	.irq_get_irqchip_state = smp2p_irq_get_irqchip_state,
+ };
+ 
+ static int smp2p_irq_map(struct irq_domain *d,
+@@ -618,6 +676,9 @@ static int qcom_smp2p_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
++	/* Check inbound entries in the case of early boot processor */
++	qcom_smp2p_start_in(smp2p);
++
+ 	/* Kick the outgoing edge after allocating entries */
+ 	qcom_smp2p_kick(smp2p);
+ 
 -- 
 2.34.1
 
