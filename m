@@ -1,128 +1,130 @@
-Return-Path: <linux-kernel+bounces-882152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F531C29C2A
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 02:12:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62162C29C58
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 02:18:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5BD0E4E4185
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 01:12:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FBF9188FE93
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 01:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C249269D17;
-	Mon,  3 Nov 2025 01:11:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B9EF273804;
+	Mon,  3 Nov 2025 01:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="WhfNGhW5"
-Received: from canpmsgout03.his.huawei.com (canpmsgout03.his.huawei.com [113.46.200.218])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Xf2GCOog"
+Received: from mail-m1973187.qiye.163.com (mail-m1973187.qiye.163.com [220.197.31.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A495B26CE0F;
-	Mon,  3 Nov 2025 01:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F79086334;
+	Mon,  3 Nov 2025 01:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762132318; cv=none; b=jmCmMEtU9/MEVuCxsnx0A6lTd09IV/H4EMcTZ4EkYYAChxmdbSwMv7UejAKKhPCMZOiSLJK+I3Ke31oVpcT53Wt8quVgyrRJ8E+FAydvrIyHkmzQpX3xtnpEuMCAK0uMpGjppQe/1X6RWdReKfq5aJGYSk22TsUPmiNCGZJs5Vg=
+	t=1762132643; cv=none; b=cC6kJRYFOuuwHTX2JhbMtapu8C10IdWusKRyKI8Lixl23OFbU5pls5viFP7q0y0NKnDRUX2zcpmL50thmFZYyB4wWAjY//buEWPCemcYMLnjZ+3XM4gLYC5s4PtUu487QyfQuv7P1D3iVSZO9BSagb+0Shb3ysWtwDZVkNuNo2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762132318; c=relaxed/simple;
-	bh=OObnbOurmUBnsR8DdU+LSqR9KziWySdWAuiFPthEiNQ=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=P1ruxb4zA96cO/DzhBEMLwpfRJpe9qDWFNG1AYa2v/IeL3PvGWZ6PtBgkr/j0dmt27B4jk1x00ehrGw0mSu6il8aYgG/JKvsaQqffiP3xc4jUqF+uE1CFhcWp/5udAdGEya5s5skDhZbG9Wfk5ab6zx2yi/PwA24UnBDHs1rus0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=WhfNGhW5; arc=none smtp.client-ip=113.46.200.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=hcU1uo2c5xmsCi47GF3xOFBCAX+ntvxmuboNdEVPJjc=;
-	b=WhfNGhW5pbA13j4FcbvRpvaV5jG+MxO6z83P6yzBRwCZQmplC5JJ/zfT/Tr/dLYJ2S0XHf9Vi
-	n+y2/9jZAovM1vsV5Kc5iKhD3OwyFQsJ2pOGRmzAPcpVcWtaI5wjLALkkAN44VpJJV751cLZUW6
-	D+v6BeuIXgOBTDRnYGh4uRA=
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4d0D6368NZzpStg;
-	Mon,  3 Nov 2025 09:10:19 +0800 (CST)
-Received: from dggpemf500015.china.huawei.com (unknown [7.185.36.143])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8355A140276;
-	Mon,  3 Nov 2025 09:11:46 +0800 (CST)
-Received: from [10.67.121.110] (10.67.121.110) by
- dggpemf500015.china.huawei.com (7.185.36.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 3 Nov 2025 09:11:45 +0800
-Subject: Re: [PATCH] vfio: Fix ksize arg while copying user struct in
- vfio_df_ioctl_bind_iommufd()
-To: Raghavendra Rao Ananta <rananta@google.com>
-CC: Jason Gunthorpe <jgg@ziepe.ca>, David Matlack <dmatlack@google.com>, Josh
- Hilke <jrhilke@google.com>, <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <alex@shazbot.org>
-References: <20251030171238.1674493-1-rananta@google.com>
- <5e24cb1e-4ee8-166b-48c7-88fa6857c8dc@huawei.com>
- <CAJHc60yak=kOQmap7Tmp=84cx7Z=h_15K_ZP9kdvxBc1h15rgg@mail.gmail.com>
-From: liulongfang <liulongfang@huawei.com>
-Message-ID: <9a153cfc-3c41-398b-4682-6d04e1880cc9@huawei.com>
-Date: Mon, 3 Nov 2025 09:11:45 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1762132643; c=relaxed/simple;
+	bh=5za/wdwfGmyMjsBpSMunPbfMRKuNjLwmg5jr/Bt+LWM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gMdTfy/jsz6EwjuEW/ee3f71MzPSbXz0S80vmkPDI9Qv2FT7ZL5zLrPDE932ocKPsy9jAYib2Y4PfsqUJnbrGgc9Aon17AYQE87BdDt4F0H3SvN52YuzxPvFFXZei3Von+tg2LQ0mcIfV1OyoDblOSEKR5Gt52i0LfVERC9kGY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Xf2GCOog; arc=none smtp.client-ip=220.197.31.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.149] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 2818c2243;
+	Mon, 3 Nov 2025 09:11:59 +0800 (GMT+08:00)
+Message-ID: <39c21e9f-4958-4007-bb09-3ef40ff30d2a@rock-chips.com>
+Date: Mon, 3 Nov 2025 09:11:57 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAJHc60yak=kOQmap7Tmp=84cx7Z=h_15K_ZP9kdvxBc1h15rgg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- dggpemf500015.china.huawei.com (7.185.36.143)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 01/10] usb: typec: Add notifier functions
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Chaoyi Chen <kernel@airkyi.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner
+ <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Yubing Zhang <yubing.zhang@rock-chips.com>,
+ Frank Wang <frank.wang@rock-chips.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Amit Sunil Dhamne <amitsd@google.com>, Dragan Simic <dsimic@manjaro.org>,
+ Johan Jonker <jbx6244@gmail.com>, Diederik de Haas <didi.debian@cknow.org>,
+ Peter Robinson <pbrobinson@gmail.com>, linux-usb@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+References: <20251029071435.88-1-kernel@airkyi.com>
+ <20251029071435.88-2-kernel@airkyi.com> <aQS8IatWiAUzBUxd@kuha.fi.intel.com>
+Content-Language: en-US
+From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+In-Reply-To: <aQS8IatWiAUzBUxd@kuha.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-HM-Tid: 0a9a47455e0103abkunm8b2c313f943871
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGR5MTVYYQk0YGR1KQ0kfTx1WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpPSE
+	xVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=Xf2GCOogE5JU9VFai8bfqqPO4EwB1WJ7U798BYDMShF5yADbVIRdoEeXupnhnUlWCWamERfBB8hOvuY9KC55ljPx2XdO0aSSZ4aN/YVRrfNdwUmKid0Rkhyi8liJDc6hPFcv+WVwWCoRwFPiFILAWI0NSARBI9pcgXmLDxUm+VA=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=kGpL6uycvY2W1UtRJCq/id+/GMXz5vHEcP9JtnFabFA=;
+	h=date:mime-version:subject:message-id:from;
 
-On 2025/11/1 1:09, Raghavendra Rao Ananta wrote:
-> On Thu, Oct 30, 2025 at 6:34 PM liulongfang <liulongfang@huawei.com> wrote:
->>
->> On 2025/10/31 1:12, Raghavendra Rao Ananta wrote:
->>> For the cases where user includes a non-zero value in 'token_uuid_ptr'
->>> field of 'struct vfio_device_bind_iommufd', the copy_struct_from_user()
->>> in vfio_df_ioctl_bind_iommufd() fails with -E2BIG. For the 'minsz' passed,
->>> copy_struct_from_user() expects the newly introduced field to be zero-ed,
->>> which would be incorrect in this case.
->>>
->>> Fix this by passing the actual size of the kernel struct. If working
->>> with a newer userspace, copy_struct_from_user() would copy the
->>> 'token_uuid_ptr' field, and if working with an old userspace, it would
->>> zero out this field, thus still retaining backward compatibility.
->>>
->>> Fixes: 86624ba3b522 ("vfio/pci: Do vf_token checks for VFIO_DEVICE_BIND_IOMMUFD")
->>
->> Hi Ananta,
->>
->> This patch also has another bug: in the hisi_acc_vfio_pci.c driver, It have two "struct vfio_device_ops"
->> Only one of them, "hisi_acc_vfio_pci_ops" has match_token_uuid added,
->> while the other one, "hisi_acc_vfio_pci_migrn_ops", is missing it.
->> This will cause a QEMU crash (call trace) when QEMU tries to start the device.
->>
->> Could you please help include this fix in your patchset as well?
->>
->> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
->> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
->> @@ -1637,6 +1637,7 @@ static const struct vfio_device_ops hisi_acc_vfio_pci_migrn_ops = {
->>         .mmap = hisi_acc_vfio_pci_mmap,
->>         .request = vfio_pci_core_request,
->>         .match = vfio_pci_core_match,
->> +       .match_token_uuid = vfio_pci_core_match_token_uuid,
->>         .bind_iommufd = vfio_iommufd_physical_bind,
->>         .unbind_iommufd = vfio_iommufd_physical_unbind,
->>         .attach_ioas = vfio_iommufd_physical_attach_ioas,
->>
-> Sent as a separate patch in v2:
-> https://lore.kernel.org/all/20251031170603.2260022-3-rananta@google.com/
-> (untested).
+On 10/31/2025 9:39 PM, Heikki Krogerus wrote:
+
+> Hi,
 >
+>> diff --git a/include/linux/usb/typec_notify.h b/include/linux/usb/typec_notify.h
+>> new file mode 100644
+>> index 000000000000..f3a7b5f5b05b
+>> --- /dev/null
+>> +++ b/include/linux/usb/typec_notify.h
+>> @@ -0,0 +1,16 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +
+>> +#ifndef __USB_TYPEC_NOTIFY
+>> +#define __USB_TYPEC_NOTIFY
+>> +
+>> +#include <linux/notifier.h>
+> Replace that include with a forward declaration:
+>
+> struct notifier_block;
+>
+>> +enum usb_typec_event {
+>> +	TYPEC_ALTMODE_REGISTERED,
+>> +	TYPEC_ALTMODE_UNREGISTERED,
+>> +};
+>> +
+>> +int typec_altmode_register_notify(struct notifier_block *nb);
+>> +int typec_altmode_unregister_notify(struct notifier_block *nb);
+>> +
+>> +#endif /* __USB_TYPEC_NOTIFY */
+> I don't see any need for a separate header file for this. Intoduce
+> those in typec_altmode.h.
 
-I've tested this patch locally, and after applying it, QEMU no longer fails to start
-and the functionality works as expected.
+Will fix these in v9. Thank you.
 
-Thanks.
-Longfang.
 
-> Thank you.
-> Raghavendra
-> .
-> 
+>
+> thanks,
+>
+-- 
+Best,
+Chaoyi
+
 
