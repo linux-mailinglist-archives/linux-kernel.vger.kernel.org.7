@@ -1,211 +1,102 @@
-Return-Path: <linux-kernel+bounces-882250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A3C2C29FDC
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 04:47:42 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45A92C29FE5
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 04:48:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 629C13A9E17
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 03:47:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B311E4EA9C0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 03:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33BE2868B5;
-	Mon,  3 Nov 2025 03:47:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="MFjKhlNh"
-Received: from canpmsgout09.his.huawei.com (canpmsgout09.his.huawei.com [113.46.200.224])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F34628852B;
+	Mon,  3 Nov 2025 03:48:08 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0DDEEA8;
-	Mon,  3 Nov 2025 03:47:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.224
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6144EEA8;
+	Mon,  3 Nov 2025 03:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762141633; cv=none; b=YfOuBOEOjaCIWV5tHxlP/p5KLhmRz/Y4rTQDBgmpW14bcszc85b1wfGJE/F1DjIRB6byHNJ/qjOXsleaULSLsGNnb6tYhBTBnAw5sV2scjV0Cg8/Q8dyIFeyC9L0siICWLIg413eXuHue6Ldyhb1THPXLNgjLkEiiSgPW3PHpzc=
+	t=1762141688; cv=none; b=SKQcXF4WZnDqSVqIccZiBwqUa2vEe6FZ3+/3NB4ah0klZd2as9PCAkQ1vZfMUDSjrbRqdYbsBRo9jpcThG8RLHlumFBWeIfQtC+51GCM7R5yu+dQ4ize8hoJQs0EjiEj6fzibubTGInwjomISBy66QtLdDg0e938soIZ71ZeAww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762141633; c=relaxed/simple;
-	bh=L6Su2ukM9UOYRRVdX5DrBoLGnbapqAFdQuetSaq8vb4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rNDpH/5tTqUhTmvENCATOxMfjJ2tXQ/lLuwQHlk55YvUDNoP5lzEFqHzYqrtZ1NwjR6F4oFSN/i/uvenq5mTuurU3YjyeVglA24xjmqABmF6DO9m3rAZCZ1ltxwXPOl3OQCZEvAuvWOAPv8lopI3CfaBq+FkEKf7m35TJiV16v4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=MFjKhlNh; arc=none smtp.client-ip=113.46.200.224
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=0rpIOldGaRZqux6IkfxvDrJ9iXhiz25va/SIekALyO4=;
-	b=MFjKhlNhh/5/RBFE9MVUU6tsM6zHmptB2deGf3AyAlf3opd53Q4QDzhqUwNkbIkvhyn1IVoln
-	WgIhnIslqfzwbiQQwhIWLicTnsxOwmIzXuWXAMgqWaAkxO9WR6kIM/pATG8PmUKG3qV7N2ggk3T
-	LHKLqzfGj2QplFROV1RpDIU=
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4d0HY74cWyz1cyNp;
-	Mon,  3 Nov 2025 11:45:31 +0800 (CST)
-Received: from kwepemf100008.china.huawei.com (unknown [7.202.181.222])
-	by mail.maildlp.com (Postfix) with ESMTPS id CE76D1A0188;
-	Mon,  3 Nov 2025 11:47:05 +0800 (CST)
-Received: from [10.174.178.24] (10.174.178.24) by
- kwepemf100008.china.huawei.com (7.202.181.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 3 Nov 2025 11:47:03 +0800
-Message-ID: <f4518f80-8e17-e622-fbe6-e20a7d1c85fc@huawei.com>
-Date: Mon, 3 Nov 2025 11:47:03 +0800
+	s=arc-20240116; t=1762141688; c=relaxed/simple;
+	bh=M75ey4SC1nq26YdA3zMPnasTfomPxSxVwmgJl3E+jAw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XZmzccWodxueLjpTRW6DZ05KArnAwhrHy7P3Mb0jI6RzpbW/vSZq/qlztZN8wMluivP+/4BWg2FMLK9w6UBVRuh6w3AHsUzHYyjIk+mhsbJprXUwWIZYk2WOxkhpX90G0yipuNTrpdlUGFDVrZA4sYhWVJaVnX2lPFeww0odjpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
+	by APP-05 (Coremail) with SMTP id zQCowAB34vDnJQhplpMqAQ--.21872S2;
+	Mon, 03 Nov 2025 11:47:53 +0800 (CST)
+From: Haotian Zhang <vulab@iscas.ac.cn>
+To: srini@kernel.org,
+	broonie@kernel.org
+Cc: lgirdwood@gmail.com,
+	jaroslav.kysela@perex.cz,
+	tiwai@suse.com,
+	linux-sound@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haotian Zhang <vulab@iscas.ac.cn>
+Subject: [PATCH] soundoc: qcom: va-macro: fix resource leak in va_macro_remove()
+Date: Mon,  3 Nov 2025 11:47:35 +0800
+Message-ID: <20251103034735.90-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.50.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH v2] arm64/mpam: Clean MBWU monitor overflow bit
-Content-Language: en-US
-To: Ben Horgan <ben.horgan@arm.com>, <james.morse@arm.com>
-CC: <amitsinght@marvell.com>, <baisheng.gao@unisoc.com>,
-	<baolin.wang@linux.alibaba.com>, <carl@os.amperecomputing.com>,
-	<catalin.marinas@arm.com>, <dakr@kernel.org>, <dave.martin@arm.com>,
-	<david@redhat.com>, <dfustini@baylibre.com>, <fenghuay@nvidia.com>,
-	<gregkh@linuxfoundation.org>, <gshan@redhat.com>, <guohanjun@huawei.com>,
-	<jeremy.linton@arm.com>, <jonathan.cameron@huawei.com>, <kobak@nvidia.com>,
-	<lcherian@marvell.com>, <lenb@kernel.org>, <linux-acpi@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<lpieralisi@kernel.org>, <peternewman@google.com>, <quic_jiles@quicinc.com>,
-	<rafael@kernel.org>, <robh@kernel.org>, <rohit.mathew@arm.com>,
-	<scott@os.amperecomputing.com>, <sdonthineni@nvidia.com>,
-	<sudeep.holla@arm.com>, <tan.shaopeng@fujitsu.com>, <will@kernel.org>,
-	<xhao@linux.alibaba.com>, <wangkefeng.wang@huawei.com>,
-	<sunnanyong@huawei.com>
-References: <20251017185645.26604-25-james.morse@arm.com>
- <20251029075655.3284280-1-zengheng4@huawei.com>
- <b0ea1879-9e77-4eb3-8312-ce27d73cc1f4@arm.com>
-From: Zeng Heng <zengheng4@huawei.com>
-In-Reply-To: <b0ea1879-9e77-4eb3-8312-ce27d73cc1f4@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemf100008.china.huawei.com (7.202.181.222)
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAB34vDnJQhplpMqAQ--.21872S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrKr47KF1rXrWrGF4fXFWDurg_yoWDuwb_C3
+	95Wr48ZFy8Wry2g3yUtr4UAanIvrnxArW5GFs7t3yxGryUtF13XrsrCrn8ur1UWwsak3W5
+	WF1DWrW8Jry3ZjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbsxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r1q
+	6r43MxkIecxEwVAFwVW8GwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
+	C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
+	wI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
+	v20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
+	jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0x
+	ZFpf9x0JU3CzNUUUUU=
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBg0PA2kIGm8wxwAAsk
 
-Hi Ben,
+The va_macro_probe() function calls clk_hw_get_clk() to obtain the
+fsgen clock, which increments the clock's reference count. However,
+the corresponding va_macro_remove() function does not call clk_put()
+to release this reference, resulting in a resource leak.
 
-On 2025/10/30 17:52, Ben Horgan wrote:
-> Hi Zeng,
-> 
-> On 10/29/25 07:56, Zeng Heng wrote:
->> The MSMON_MBWU register accumulates counts monotonically forward and
->> would not automatically cleared to zero on overflow. The overflow portion
->> is exactly what mpam_msmon_overflow_val() computes, there is no need to
->> additionally subtract mbwu_state->prev_val.
->>
->> Before invoking write_msmon_ctl_flt_vals(), the overflow bit of the
->> MSMON_MBWU register must first be read to prevent it from being
->> inadvertently cleared by the write operation.
->>
->> Finally, use the overflow bit instead of relying on counter wrap-around
->> to determine whether an overflow has occurred, that avoids the case where
->> a wrap-around (now > prev_val) is overlooked. So with this, prev_val no
->> longer has any use and remove it.
->>
->> CC: Ben Horgan <ben.horgan@arm.com>
->> Signed-off-by: Zeng Heng <zengheng4@huawei.com>
->> ---
->>   drivers/resctrl/mpam_devices.c  | 22 +++++++++++++++++-----
->>   drivers/resctrl/mpam_internal.h |  3 ---
->>   2 files changed, 17 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/resctrl/mpam_devices.c b/drivers/resctrl/mpam_devices.c
->> index 0dd048279e02..db4cec710091 100644
->> --- a/drivers/resctrl/mpam_devices.c
->> +++ b/drivers/resctrl/mpam_devices.c
->> @@ -1039,7 +1039,6 @@ static void write_msmon_ctl_flt_vals(struct mon_read *m, u32 ctl_val,
->>   		mpam_write_monsel_reg(msc, CFG_MBWU_CTL, ctl_val | MSMON_CFG_x_CTL_EN);
->>
->>   		mbwu_state = &m->ris->mbwu_state[m->ctx->mon];
->> -		mbwu_state->prev_val = 0;
->>
->>   		break;
->>   	default:
->> @@ -1062,6 +1061,16 @@ static u64 mpam_msmon_overflow_val(enum mpam_device_features type)
->>   	}
->>   }
->>
->> +static bool read_msmon_mbwu_is_overflow(struct mpam_msc *msc)
->> +{
->> +	u32 ctl;
->> +
->> +	ctl = mpam_read_monsel_reg(msc, CFG_MBWU_CTL);
->> +	return ctl & (MSMON_CFG_x_CTL_OFLOW_STATUS |
->> +		      MSMON_CFG_MBWU_CTL_OFLOW_STATUS_L) ?
->> +		      true : false;
->> +}
->> +
->>   /* Call with MSC lock held */
->>   static void __ris_msmon_read(void *arg)
->>   {
->> @@ -1069,6 +1078,7 @@ static void __ris_msmon_read(void *arg)
->>   	bool config_mismatch;
->>   	struct mon_read *m = arg;
->>   	u64 now, overflow_val = 0;
->> +	bool mbwu_overflow = false;
->>   	struct mon_cfg *ctx = m->ctx;
->>   	bool reset_on_next_read = false;
->>   	struct mpam_msc_ris *ris = m->ris;
->> @@ -1091,6 +1101,7 @@ static void __ris_msmon_read(void *arg)
->>   			reset_on_next_read = mbwu_state->reset_on_next_read;
->>   			mbwu_state->reset_on_next_read = false;
->>   		}
->> +		mbwu_overflow = read_msmon_mbwu_is_overflow(msc);
->>   	}
->>
->>   	/*
->> @@ -1103,8 +1114,10 @@ static void __ris_msmon_read(void *arg)
->>   	config_mismatch = cur_flt != flt_val ||
->>   			  cur_ctl != (ctl_val | MSMON_CFG_x_CTL_EN);
->>
->> -	if (config_mismatch || reset_on_next_read)
->> +	if (config_mismatch || reset_on_next_read) {
->>   		write_msmon_ctl_flt_vals(m, ctl_val, flt_val);
->> +		mbwu_overflow = false;
->> +	}
->>
->>   	switch (m->type) {
->>   	case mpam_feat_msmon_csu:
->> @@ -1138,10 +1151,9 @@ static void __ris_msmon_read(void *arg)
->>   		mbwu_state = &ris->mbwu_state[ctx->mon];
->>
->>   		/* Add any pre-overflow value to the mbwu_state->val */
->> -		if (mbwu_state->prev_val > now)
->> -			overflow_val = mpam_msmon_overflow_val(m->type) - mbwu_state->prev_val;
-> 
-> This all looks fine for overflow, but what we've been forgetting about
-> is the power management. As James mentioned in his commit message, the
-> prev_val is after now check is doing double duty. If an msc is powered
-> down and reset then we lose the count. Hence, to keep an accurate count,
-> we should be considering this case too.
-> 
+Add clk_put() call in va_macro_remove() to properly release the fsgen
+clock reference.
 
+Fixes: 908e6b1df26e ("ASoC: codecs: lpass-va-macro: Add support to VA Macro")
+Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+---
+ sound/soc/codecs/lpass-va-macro.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Regarding CPU power management and CPU on-/off-line scenarios, this
-should and already has been handled by mpam_save_mbwu_state():
-
-1. Freezes the current MSMON_MBWU counter into the
-mbwu_state->correction;
-2. Clears the MSMON_MBWU counter;
-
-After the CPU is powered back on, the total bandwidth traffic is
-MSMON_MBWU(the `now` variable) + correction.
-
-So the above solution also covers CPU power-down scenarios, and no
-additional code is needed to adapt to this case.
-
-If I've missed anything, thanks in advance to point it out.
-
-
-Best Regards,
-Zeng Heng
-
-
-
-
-
-
+diff --git a/sound/soc/codecs/lpass-va-macro.c b/sound/soc/codecs/lpass-va-macro.c
+index a49551f3fb29..440d0f54aa33 100644
+--- a/sound/soc/codecs/lpass-va-macro.c
++++ b/sound/soc/codecs/lpass-va-macro.c
+@@ -1663,6 +1663,7 @@ static void va_macro_remove(struct platform_device *pdev)
+ {
+ 	struct va_macro *va = dev_get_drvdata(&pdev->dev);
+ 
++	clk_put(va->fsgen);
+ 	if (va->has_npl_clk)
+ 		clk_disable_unprepare(va->npl);
+ 
+-- 
+2.50.1.windows.1
 
 
