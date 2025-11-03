@@ -1,261 +1,157 @@
-Return-Path: <linux-kernel+bounces-883680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2502C2E0FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 21:48:54 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18D54C2E0F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 21:48:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A7E11885598
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 20:47:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9B06A4E2169
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 20:47:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF7023EAB8;
-	Mon,  3 Nov 2025 20:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3732C0281;
+	Mon,  3 Nov 2025 20:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jD7umLum";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="AXuI+to+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="frnItTGW"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8EB42AA6
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 20:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29963238D42
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 20:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762202827; cv=none; b=KU/gWi7IEzM3W3betNR8OJ7Eg6foMbOrVE9sSE2q7mU7C3hAX31UVhwHIP49QFZmsl16d5rD09pD3rCz1NGh7ZCxGfHChYa598v8C9w0wC/h0NteaRC3Tge7+NnehUYb8FdIyU680BYRILmtVPrBsKZjeNPcdcsavI4RJAEEySE=
+	t=1762202872; cv=none; b=KeZ5/5JsfFuiL+xrKIwNaVVIazSk7DCYr81gAL2qFxuVIFXukIGKMOw53ghrNiqtAGezxMhNvCMerBxNsB+WJKAMN79Q60DY4Alik4a6PnxQvA6Hr+W75uDx85yD5yeukM5rI6Uae3mTD3lvjma8QLsj8lv9Obp6wD15RvdNUl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762202827; c=relaxed/simple;
-	bh=H+9kO5f8FrA5y1DhJYYKBh/OTpYkMGYW83uGngfbvCs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QkbvnSg9d12m0eNgBXXMAC4G3J857lukAj1Y+uhezQ+zMnez5yTan7bKhZAoUb0C88fpQbuZGYBEoKTTsvZYBCj2KR+w/5247fJ2czwuL8u5mO6bq4uX++RXim5qeb29o+Ja8ZQdgby2N1rDlI7MW1Ybs8SLqn+wKJezz/7gMNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jD7umLum; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=AXuI+to+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762202824;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vghBKiSvOSdxfV0lhypHIAUMncAsgcwHnYxmY/VnkRM=;
-	b=jD7umLum/BiXFO45KJnBt0zoOk4yN8SGpgzBanP+Ft7r9CsCCYaTa5RIPGQxTvv80Z7P7W
-	7bsOcmjzhsfl9z53/2RPV+AQtKC5rYih52oxLC1fCiKiJZJneHRUMvCfOVvCzqsSRDuxNX
-	MAgzz8msM+hDw7slMxS/b7B4PYYsuIU=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-551-7Fvy63PBNCu-93ehY0rdgQ-1; Mon, 03 Nov 2025 15:47:03 -0500
-X-MC-Unique: 7Fvy63PBNCu-93ehY0rdgQ-1
-X-Mimecast-MFC-AGG-ID: 7Fvy63PBNCu-93ehY0rdgQ_1762202822
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-8805c2acd64so22707426d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 12:47:02 -0800 (PST)
+	s=arc-20240116; t=1762202872; c=relaxed/simple;
+	bh=a+vN09clVIm5tcOtX8Gar8O7sWSsGJBH8NFznjlbuLw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EoVffGbTcGwIKugWdXZ0Zqh41xFchpA06SxKrzvk+7uKoFuXTD7SjqTaSRf8r9sX9rguaGBfYU1DQfXd6zzMzg3KpjLCg3dDMx4dfwq0q8gw8L29lCMLObsib6RCRAeNULL9RCLEOekg8AD7nwpY4Wc0EoYnUifJNIos9K7hi8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=frnItTGW; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7ab689d3fa0so101826b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 12:47:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762202822; x=1762807622; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vghBKiSvOSdxfV0lhypHIAUMncAsgcwHnYxmY/VnkRM=;
-        b=AXuI+to+akWYvXiC9AN5xvS6pIm3basqMbjpeQJ4aNGgiHjXGIcGk6JU2c18LpKrI2
-         QL0fCw86a0RTdcURbZIS+Ul0/jLSJWP1eGCyeBy8kEax81oF5cD7NY6tmJ77xB7UZLpe
-         SfYSRstpmw6nb1ufrM1A8Ir7IYdDdrkk9AWAQRX+athgE2zCxS+i9peKTCls1V2rPEtZ
-         csajzyIflMOe4yMilKanzJg2+J2WONlY4EnxJ2l6HSkjCsQMt8qjI9gQmS1tRo987HoQ
-         KHnSxDZEDuZyHmBMyZ/kBC6SvgzRwIqu0jeulUwKs7F6OX73/eeGylcpw28awkY60lkH
-         V1yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762202822; x=1762807622;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=purestorage.com; s=google2022; t=1762202870; x=1762807670; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vghBKiSvOSdxfV0lhypHIAUMncAsgcwHnYxmY/VnkRM=;
-        b=MstOzxdMc5UBhGEfCPgfaWCG4P+gUz2snh8sELvAeVTzBSukUt1e33te6fCEaO3/kl
-         GbP8F0Q9V+ZnWiBWiR40ld/qY2nHCS1eOp3nZsg7ZP+fb48kJz/eWFzcKZatY8R4fA2l
-         f30jtgkoXhMfHZwK56rPhLcLxGDL8XvDIK/giQwsQBQ4CoIVzFZP3llFy2rr8IDWq4z5
-         QM+86oS4r6Nt+ImvzNg3kgCosDmrgsaZm7JX27n6E7Yq3HB0xNRj1UKJGiUmf4EbgW7o
-         +LkHcbd5Yspt7KhfvIA5AoICRCvv7FT1GRNBWIIXnVjnfyYj+J3Fib4DoRLQO9DHkJxy
-         r+9w==
-X-Forwarded-Encrypted: i=1; AJvYcCVcsZruH5pKhtwpiaMiIlaMbrtKKpCiaOpAloW0AhsnP+YNJ8x6IfBFdulhRu0NzoRSfJHF8nisR3aIcQo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykRFNmYaBlZo9PmN4e3eMXVd6rW0VGnNmeHcwnezr11ztV6GCf
-	7K8DhkiV/2uVZQaZh9BW4QXC/CS3UVKz9AAqk273kws2WZcAlZk2UqCe1YfIOhoozPYyFdf6bnj
-	0GM9iak4D7N21WNQEYfjfN26RG1+CbLhwuFn9Okw732ZWta3OXjd8nLb8AWFVOxwCew==
-X-Gm-Gg: ASbGnctjcAdtuqN2cpLdQtwNeY2v3Hciaxrfr2U5/WmKrH/orDKJCS2ERoZlWFQJSag
-	IIisYYam+EobsI/7h2hR69OtvAh8UL6mJyPhji866jRbOVp+tlSxe/+KMNZN2B8oZ0yepHWpcNj
-	rv8fyfsEPkIrOpdElOaWXiQ1917HvysamMkGM2/44kUHEfanX9ywDg6hbZD7J3mcgXxq/NgKG4/
-	pfEUZwnFCL2DTkkXRlCSHEuEDzOS9ktVqxRu7lpCKrZr1uBiJD0iNj91HGSzJWOBHgwvK1VbqC2
-	343cVdktv701RoY5tIL45F1Jdf3giIj/r+Mr8zuv4eiPXJwX30ld5krL8zLkfoPYzlk=
-X-Received: by 2002:ad4:5d43:0:b0:880:4c73:9e44 with SMTP id 6a1803df08f44-8804c73a24emr33040616d6.15.1762202822191;
-        Mon, 03 Nov 2025 12:47:02 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFki4qB2bWfAdvpnwwEKDZVQ/jgwqxyK8R5E1a/l8fmyEI99KRQ9GoapziPmE3jrH2Z1ZbnIQ==
-X-Received: by 2002:ad4:5d43:0:b0:880:4c73:9e44 with SMTP id 6a1803df08f44-8804c73a24emr33040296d6.15.1762202821640;
-        Mon, 03 Nov 2025 12:47:01 -0800 (PST)
-Received: from x1.local ([142.188.210.50])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-88060e9566dsm9124636d6.47.2025.11.03.12.46.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 12:47:00 -0800 (PST)
-Date: Mon, 3 Nov 2025 15:46:57 -0500
-From: Peter Xu <peterx@redhat.com>
-To: "David Hildenbrand (Red Hat)" <david@kernel.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Mike Rapoport <rppt@kernel.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	Nikita Kalyazin <kalyazin@amazon.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	James Houghton <jthoughton@google.com>,
-	Hugh Dickins <hughd@google.com>, Michal Hocko <mhocko@suse.com>,
-	Ujwal Kundur <ujwal.kundur@gmail.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Andrea Arcangeli <aarcange@redhat.com>, conduct@kernel.org
-Subject: Re: [PATCH v4 0/4] mm/userfaultfd: modulize memory types
-Message-ID: <aQkUwbx7Z4q1qcSB@x1.local>
-References: <78424672-065c-47fc-ba76-c5a866dcdc98@redhat.com>
- <aPZDVuscFsYSlQjI@x1.local>
- <dtepn7obw5syd47uhyxavytodp7ws2pzr2yuchda32wcwn4bj4@wazn24gijumu>
- <aPe0oWR9-Oj58Asz@x1.local>
- <nnxhd7zxjza6m4w4lr5qyev2krbkp4yfcgcwq6nkaqrqt6bzpb@iklep2xxp5gv>
- <aQO3Zko6Qrk7O96u@x1.local>
- <aQPCwFZqNd_ZlZ0S@x1.local>
- <d0b037a6-11b9-483b-aa67-b2a8984e56e0@lucifer.local>
- <aQPU-tyo_w68cnKK@x1.local>
- <7768bbb5-f060-45f7-b584-95bd73c47146@kernel.org>
+        bh=Z+i+icE8IiyClGUVbQkBzxyTYknJ8/f/9xuIDF0CulI=;
+        b=frnItTGWBoCkkJM13i5I2O93bpMuEk2yfFL/hhn2wgUCDdit3uF+Ya+mwLvf1cptKA
+         NdLfPXPxU7+xOyQfNOHNBRO2O88vnkM8wg0D+bEOWObAietBKXQ/YpWgS6PRj9XakEXF
+         0uU5t9fktMIuIvPfoDfJ8tvHAr7MtqipnpmghWD5LSoyiPn3tjoOSmkBvUS7uxQF6j+p
+         MtwETHdsG2SGDS+uHqej3Yp1O6hYpJSj+Q/Itfx3mpXcbQ0M+WRNzAXmuf16fzVX1VeR
+         v3DApY9vOAfqcebzpmOKls2k+T2OD2YONoO55vMBU096S3BF04Fx3W79qiRC/kUTl06V
+         fQiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762202870; x=1762807670;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Z+i+icE8IiyClGUVbQkBzxyTYknJ8/f/9xuIDF0CulI=;
+        b=WtnO8Yb8WAOj+n5XYa3JHy8RaqSzqV1gd6103GFfD0dPK4dQaZFehiIa0pSmgwkFFv
+         w+CtrIt19kkO8ItRzjJ9af1nB5ASdCQJm2QK2Ju6K4+eS9YF+K42FUlZKErq227G8j7O
+         glvGfhq4GOpFb0i1oip20C3Sm65I5K1Xn3upVE0IYJH/V64A8K1bUbheEGsZdjQblTEB
+         5HdOZVqas+xUsckS6ux6StHy+1WH5Ix/eJGC+oPOTEIAYUK8LjcMtVq729/hJVfuWqzc
+         6ERaoUDli+WmHQsog4uY12KxKQ20bBqsFKfN55vPCLUBHYZRgoClIXduULNWm5L/RJQP
+         Um+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXWqW8tbrNLdnT7ovzXFc+745PAiK3F2wCmzfupRvUR4gQ7xD2544e9xtYBjt8mUkrPCjdA2lerJc5M6TM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2pGpe2HBIdE2zITRYAiKtU4l3f63pd2iJa++QCPfdg2qDbmEF
+	WJyC31eNR7PuMuOTPrVXQhKKBfVSfovPJte+Cg12ZHHiiHGqxrlPVWEuYk8t+D7Ck2FK0tORUcG
+	G6wik/c8QU4g/LRQCEoghVgTPsTNLBSLO4PcUKvp9/g==
+X-Gm-Gg: ASbGnctYZ3PWJHgDjV4EQWJ/q+TGSScs2laWQEbRIDsWQUU7ojLk+vB2x/6Wgh6HHHv
+	lMxC+9RSXVWtjhk7pAfu70FbJcbvWxmkULk56+QaMohC21XgZe/unvBOobxVhROanWJ+Z0Z4Wnk
+	wXBCfBwCZZgjuUR5/omzDAPpyZn7rTNiYu0opc8FAYxEAlQrq3n2SOy0ZsOzCjDiY4zKFojiGub
+	H5XFC3Pxf48Wh9rS223w0ePSZHA9lgy+1G6JQEDdQPue2hX5V3FkUx4YxjyUwM5YllURoCmGYQ9
+	d/4GfLm5As7yypK7778fLvD31KCQ
+X-Google-Smtp-Source: AGHT+IH9W5Yz0Du9VH7KHBKlBV6mxFdT8/2W8B6DMI8gR86YbjrXYjVZeItEyfgxJbcb8qFJyg3Aepo7OAlVmh7HvH8=
+X-Received: by 2002:a17:902:f684:b0:294:ec58:1d23 with SMTP id
+ d9443c01a7336-2951a3a3eecmr89081495ad.3.1762202870213; Mon, 03 Nov 2025
+ 12:47:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <7768bbb5-f060-45f7-b584-95bd73c47146@kernel.org>
+References: <20250904170902.2624135-1-csander@purestorage.com>
+ <175742490970.76494.10067269818248850302.b4-ty@kernel.dk> <fe312d71-c546-4250-a730-79c23a92e028@gmail.com>
+ <5d41be18-d8a4-4060-aa04-8b9d03731586@kernel.dk>
+In-Reply-To: <5d41be18-d8a4-4060-aa04-8b9d03731586@kernel.dk>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Mon, 3 Nov 2025 12:47:38 -0800
+X-Gm-Features: AWmQ_bmchfvPvbc6j7bPb8NZmMiCt-7TsMmgFjMHSv2mTVxvDRP5RDGTV2htgSY
+Message-ID: <CADUfDZqHbfAQXG8j2W_GZrxFbYSQQeo9sYdzMEYLQTsuCR+4=A@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 03, 2025 at 09:01:02PM +0100, David Hildenbrand (Red Hat) wrote:
-> > > I have an extremely heavy workload at the moment anyway, but honestly
-> > > interactions like this have seriously put me off being involved in this review
-> > > personally.
-> > > 
-> > > Do we really want this to be how review in mm or the kernel is?
-> > > 
-> > > Is that really the culture we want to have here?
-> > 
-> > Gosh.. Seriously?
-> > 
-> > I'm ok if this needs to be audited.  I have all the previous discussions in
-> > the cover letter as links.
-> 
-> I'm late to the party (or whatever this here is called. ah right, drama),
-> and I haven't yet dug through all the emails and certainly not through all
-> the of involved code changes.
-> 
-> Peter, I was a bit surprised by your messages here indeed, not what I
-> expected.
-> 
-> The "Your code allows to operate on pmd* in a module??? That's too risky and
-> mm can explode!  Isn't it?" definitely was absolutely unnecessary ... or
-> telling Liam that "he want almost mad".
+On Wed, Sep 10, 2025 at 8:36=E2=80=AFAM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 9/10/25 5:57 AM, Pavel Begunkov wrote:
+> > On 9/9/25 14:35, Jens Axboe wrote:
+> >>
+> >> On Thu, 04 Sep 2025 11:08:57 -0600, Caleb Sander Mateos wrote:
+> >>> As far as I can tell, setting IORING_SETUP_SINGLE_ISSUER when creatin=
+g
+> >>> an io_uring doesn't actually enable any additional optimizations (asi=
+de
+> >>> from being a requirement for IORING_SETUP_DEFER_TASKRUN). This series
+> >>> leverages IORING_SETUP_SINGLE_ISSUER's guarantee that only one task
+> >>> submits SQEs to skip taking the uring_lock mutex in the submission an=
+d
+> >>> task work paths.
+> >>>
+> >>> [...]
+> >>
+> >> Applied, thanks!
+> >>
+> >> [1/5] io_uring: don't include filetable.h in io_uring.h
+> >>        commit: 5d4c52bfa8cdc1dc1ff701246e662be3f43a3fe1
+> >> [2/5] io_uring/rsrc: respect submitter_task in io_register_clone_buffe=
+rs()
+> >>        commit: 2f076a453f75de691a081c89bce31b530153d53b
+> >> [3/5] io_uring: clear IORING_SETUP_SINGLE_ISSUER for IORING_SETUP_SQPO=
+LL
+> >>        commit: 6f5a203998fcf43df1d43f60657d264d1918cdcd
+> >> [4/5] io_uring: factor out uring_lock helpers
+> >>        commit: 7940a4f3394a6af801af3f2bcd1d491a71a7631d
+> >> [5/5] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
+> >>        commit: 4cc292a0faf1f0755935aebc9b288ce578d0ced2
+> >
+> > FWIW, from a glance that should be quite broken, there is a bunch of
+> > bits protected from parallel use by the lock. I described this
+> > optimisation few years back around when first introduced SINGLE_ISSUER
+> > and the DEFER_TASKRUN locking model, but to this day think it's not
+> > worth it as it'll be a major pain for any future changes. It would've
+> > been more feasible if links wasn't a thing. Though, none of it is
+> > my problem anymore, and I'm not insisting.
+>
+> Hmm yes, was actually pondering this last night as well and was going
+> to take a closer look today as I have a flight coming up. I'll leave
+> them in there for now just to see if syzbot finds anything, and take
+> that closer look and see if it's salvageable for now or if we just need
+> a new revised take on this.
 
-It was a joke!
-
-uffd_copy() API was NACKed because of this.  Now the new proposal
-introduced it.  I made a joke saying Liam allows that to happen in his
-branch, but forbid mine.
-
-I thought it was super clear to identify.
-
-> 
-> Again, not what I would have expected from you, and I would assume that you
-> had a bad day and would at least apologize now that some time passed.
-
-Sorry, no.  I won't apologize for that.  I was not fair treated, and now I
-think it's fair I at least make a joke.  
-
-David, you're leaving, and I'm totally dissappointed that at this point of
-time, you ask me to apologize instead.
-
-I thought it was obvious a joke, because I never thought having pmd* in a
-function in a module is not OK.
-
-I always thought it was fine, Linux is not a micro kernel.  It's just fine.
-It is what happening in Linux right now.  It is so obvious.  In case it was
-not clear, I hope I make it clear now.  If I'm going to formally NACK
-Liam's series, I won't use this as one of the real reasons.  I just hide it
-in some of others that are real reasons.  However if to be fair, when this
-reason is removed, this series should also remove the "highlight" that it
-removed shmem.h header, because my v1 also did that when with uffd_copy().
-
-> 
-> I understand that you were upset by the previous feedback on the earlier
-> series.
-> 
-> There were some heated arguments in the last discussions, but most of them
-> were based on misunderstandings. I would have thought that once they were
-> resolved that we could continue focusing on discussing the technical details
-> again.
-> 
-> From what I can see you asked for actual code and when Liam came back with
-> some code that looks like *a lot of work* to me.
-
-It's Liam who stood out strongly pushing back what he at least used to be
-not familiar with.  This was, IMHO, rude.  It's ok to keep silent on some
-patchset that one isn't familiar.  It's ok to ask questions.  It's not ok
-to strongly push back without being extremely familiar with the code.
-
-He might be more familiar now, I wish he is. But it's Liam's decision to
-work on the code.
-
-We're adults, we do what we should do, not what we asked to do.  If we do
-what we asked to do, we should have our reasons.
-
-My ask was trying to make Liam see that what he proposed is over
-engineering the whole thing.  I was pretty sure of that, he wasn't.  I
-explained to him multiple times on why it was an overkill, he doesn't
-agree. It's fine for him to disagree, it's Liam's right.  Then it's also
-fine for me to ask him code it up to notice himself, if I can't persuade
-him.  That's the only way for him to persuade me instead.
-
-I sincerely wished that works out.  As I said, then I'll properly review
-it, and then we build whatever we need on top.  I'm totally fine.  However
-it didn't go like that, the API is exactly what I pictured.  I prefer my
-proposal.  That's what I did: showing the difference when there're two
-proposals, and ask for a second opinion.
-
-It's not fair to put that on top of me to blame.  He's trying to justify
-he's correct.  It has nothing to do with me.  He can stop pushing back
-anytime.  He can keep proposing what he works on.  It's his decision, not
-mine.
-
-> 
-> He really seems to care (which I highly appreciate) and went the extra mile
-> to show us how the uffd code could evolve.
-> 
-> We've all (well okay, some of us) been crying for some proper userfaultfd
-> cleanups for years.
-> 
-> So is there a way we can move forward with this without thinking in binary?
-> Is there some middle-ground to be had? Can some reworks come on top of your
-> series? Can so reworks be integrated in this series?
-> 
-> I agree that what Liam proposes here is on the larger side, and probably
-> does a lot of things in a single rework. That doesn't mean that we couldn't
-> move into that direction in smaller steps.
-> 
-> (I really don't think we should be thinking in terms of a CoC war like: show
-> them what I did and I will show them what they did. We are all working on
-> the same bigger goal here after all ...)
-
-We've got some second opinion from Mike, please read it first.  David,
-you're co-maintaining mm with Andrew.  I think it's fair indeed you provide
-how things should go together with Andrew.  It's fair you and Andrew
-whoever would like to make a decision on how to move forward.  I'm fine on
-whatever decision you want to make.
-
-I think I tried my best trying to make gmem work as simple as possible.
-
-For the CoC report, I wish someone from CoC would also review it.
+Is the concern the various IO_URING_F_UNLOCKED contexts (e.g. io_uring
+worker threads) relying on uring_lock to synchronize access to the
+io_ring_ctx with submitter_task? I think it would be possible to
+provide mutual exclusion in those contexts using a task work item to
+suspend submitter_task. When submitter_task picks up the task work, it
+can unblock the thread running in IO_URING_F_UNLOCKED context, which
+can then take the uring_lock as usual. Once it releases the
+uring_lock, it can unblock submitter_task.
+This approach could certainly add latency to taking uring_lock in
+IO_URING_F_UNLOCKED contexts, though I don't expect that is very
+common in applications using io_uring. We could certainly add a new
+setup flag to avoid changing the behavior for existing
+IORING_SETUP_SINGLE_ISSUER users. What are your thoughts on this
+approach?
 
 Thanks,
-
--- 
-Peter Xu
-
+Caleb
 
