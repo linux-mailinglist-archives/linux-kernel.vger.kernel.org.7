@@ -1,156 +1,170 @@
-Return-Path: <linux-kernel+bounces-883619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEB13C2DE48
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 20:23:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E24CC2DE54
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 20:25:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4C06189A1FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 19:24:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68F9B189A64A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 19:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA33A347C3;
-	Mon,  3 Nov 2025 19:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6F53191D1;
+	Mon,  3 Nov 2025 19:24:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c9UT0S1a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FJZTTIfL"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA301B87C0;
-	Mon,  3 Nov 2025 19:23:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5408D347C3;
+	Mon,  3 Nov 2025 19:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762197821; cv=none; b=HrhShMqWM0ZhilHzzn6NoIFAo/Ku4VqiF67roXzVjUZv7t8a+PU/YtB+7fFSEHhWiFPOrdIVF3NXWwPR9f4ECkZ387syKFgKlw8q7nUKJMU/23/ZhD9cYWP/vUgZuOkOQWfx8vR5ETcEBfOqulTMqjEnZJCMpT0LhHd3g+EfFc8=
+	t=1762197899; cv=none; b=SYEMTVaJ6EhjG/MIfh8nbiz90qFs30KnHVItC+prw2PUEsLzaDxNGM3GJUkSyxRZBVYankXPPR/5jGG3RNOwpAuniT+Iq3PA9knvJvXpJVAOeY0oy+xm+DnWbqK/qgEjMEc9QTRiHqv53KpGX+tHfWJpYmTkQfcHoCDIdaqaeV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762197821; c=relaxed/simple;
-	bh=YF+Dh7k5RXyD8ZknLWrr6zckBVz5y8Jk5LVnJjqJxoY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NoelRET7XDSnU1FeTYwyUgIlFlYaqbHkrVkKalrVg4AXz8X4HYOwkYgoahQfC6sg9CC0qi0O5Yn7EccmD6Wh7hOwGujkYavYryjh4FVRxG+jtYM7gpUf4OmEFYttAVRIKn+aAHDJRKmRmvwNBveXi9xyZCqkFaWnJ+uf55YK/5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c9UT0S1a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BEBEC4CEE7;
-	Mon,  3 Nov 2025 19:23:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762197821;
-	bh=YF+Dh7k5RXyD8ZknLWrr6zckBVz5y8Jk5LVnJjqJxoY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=c9UT0S1aE+oyoVDfFS4tVvZUGvWl9HiC7/F+Cp66KCVA7C4GhH0PqNtoBTarCw3iW
-	 r2P630kamF4JSjUnf0EzY4gdgF4lREKNM2+yjmeoTw3nLHhjxYDny/gqAjP3iNUL7a
-	 JzIyQ1aRH3QyNtDz4IpxtL5MX/fDHZSJh77cPeKd7LS92GluG1GXIy1BpAiLFwvlox
-	 cRJrDCtLOcgMqEzgJxz44Oa9sLKyl40ixdJjaMo6LOW9qbHf4ryeTRFym1qVmpu9UH
-	 uIilWOADkYHyRHPzn2EvdQ0ZptspxmBomG3l6lNVoh9BMoIycP2QxAs9MQX9p7Fs9q
-	 9DzIobQXg5JOg==
-Message-ID: <a326d1eb-62f1-4add-8dc9-cea7d7e4ed3c@kernel.org>
-Date: Mon, 3 Nov 2025 20:23:30 +0100
+	s=arc-20240116; t=1762197899; c=relaxed/simple;
+	bh=YT4mXxQdx1Z/PE3Yf/aXEevukAJlGlp/Gs7YbI3nPgs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rs1nnFAfyLv9SnkJvK9DibYZF5fEkSB/lqsKTshLdwFh3kuPpwzW7TmznMijCpBIni8YALICqmtxOreJWt7TAIex+Hh/MaoS/dKlLCu4QutcZRJOJWuMWWGTGK3yafxojRCyrlkH0jsfPtMdLrNYGwudZYdQ1Izw3O3rsb9ORvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FJZTTIfL; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762197896; x=1793733896;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=YT4mXxQdx1Z/PE3Yf/aXEevukAJlGlp/Gs7YbI3nPgs=;
+  b=FJZTTIfLsIr6OvfNmGZ2PoSbQN4xCvgBwWZL8mLLAc/nkAbPM5qUnBai
+   u7aABQREiXXcSlbPARiTE8ttGY6qMB5TTkQXmXxOyMx0CYO5qkkVSWklx
+   5x1qT6spIu6MBzm6KVVgqQVMWadARwijGIpGuEUvA4pL5USrJma10eu2n
+   jqL9HVHAKzZSoOEbXy2i7+Izl623x8q8tdKSYzdz4vuN1Ev9p9xKhLI4c
+   QDtvoqQOgh62PIKZbuEUcMaaD4pIpEalCxkfmMPRwiIowrT9QaGFC77HL
+   Yzhuv1Z/cH+W00CX/fpPucfgxc8AdaScRsbVbwr12j4vsNC1eFj3A0Q32
+   g==;
+X-CSE-ConnectionGUID: faikKZF7SL6iO2JJOQT4ew==
+X-CSE-MsgGUID: YTccQ5UvRTyhGRYiA7Qc6A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="64321086"
+X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
+   d="scan'208";a="64321086"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 11:24:56 -0800
+X-CSE-ConnectionGUID: ts9V3WD0TjuY0nwK8/miog==
+X-CSE-MsgGUID: AcugWwu0TFOcPf0UgpNZ8w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
+   d="scan'208";a="217588322"
+Received: from klitkey1-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.81])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 11:24:53 -0800
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with ESMTP id 6CA30121466;
+	Mon, 03 Nov 2025 21:24:49 +0200 (EET)
+Date: Mon, 3 Nov 2025 21:24:49 +0200
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Tarang Raval <tarang.raval@siliconsignals.io>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>, Hans de Goede <hansg@kernel.org>,
+	=?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>,
+	Sylvain Petinot <sylvain.petinot@foss.st.com>,
+	Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+	Dongcheng Yan <dongcheng.yan@intel.com>,
+	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 2/2] media: i2c: add Sony IMX111 CMOS camera sensor
+ driver
+Message-ID: <aQkBgVwi2FS5ve42@kekkonen.localdomain>
+References: <20251030115757.33695-1-clamor95@gmail.com>
+ <20251030115757.33695-3-clamor95@gmail.com>
+ <PN3P287MB182950EC8691183FBFC4EC098BFBA@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
+ <CAPVz0n0Vqi0xg8c=PS3vyFr9YzRC0PtFXyxw9G5yHohS4FKVbQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 11/12] x86/xen: use lazy_mmu_state when
- context-switching
-To: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- David Hildenbrand <david@redhat.com>, "David S. Miller"
- <davem@davemloft.net>, David Woodhouse <dwmw2@infradead.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
- Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
-References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
- <20251029100909.3381140-12-kevin.brodsky@arm.com>
- <c7c8a233-2103-4b48-b65e-ec81666d20e4@kernel.org>
- <285faae4-dab6-4819-847a-889bdf87d5d7@arm.com>
-From: "David Hildenbrand (Red Hat)" <david@kernel.org>
-Content-Language: en-US
-In-Reply-To: <285faae4-dab6-4819-847a-889bdf87d5d7@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPVz0n0Vqi0xg8c=PS3vyFr9YzRC0PtFXyxw9G5yHohS4FKVbQ@mail.gmail.com>
 
-On 03.11.25 19:29, Kevin Brodsky wrote:
-> On 03/11/2025 16:15, David Hildenbrand (Red Hat) wrote:
->> On 29.10.25 11:09, Kevin Brodsky wrote:
->>> [...]
->>>
->>> @@ -437,7 +436,7 @@ static void xen_end_context_switch(struct
->>> task_struct *next)
->>>          xen_mc_flush();
->>>        leave_lazy(XEN_LAZY_CPU);
->>> -    if (test_and_clear_ti_thread_flag(task_thread_info(next),
->>> TIF_LAZY_MMU_UPDATES))
->>> +    if (next->lazy_mmu_state.active)
->>
->> This is nasty. If in_lazy_mmu_mode() is not sufficient, we will want
->> to have a separate helper that makes it clear what the difference
->> between both variants is.
+Hi Svyatoslav,
+
+On Thu, Oct 30, 2025 at 05:13:31PM +0200, Svyatoslav Ryhel wrote:
+> чт, 30 жовт. 2025 р. о 16:55 Tarang Raval <tarang.raval@siliconsignals.io> пише:
+> >
+> > Hi Svyatoslav,
+> >
+> > > Add a v4l2 sub-device driver for the Sony IMX111 image sensor. This is a
+> > > camera sensor using the i2c bus for control and the csi-2 bus for data.
+> > >
+> > > The following features are supported:
+> > > - manual exposure, digital and analog gain control support
+> > > - pixel rate/link freq control support
+> > > - supported resolution up to 3280x2464 for single shot capture
+> > > - supported resolution up to 1920x1080 @ 30fps for video
+> > > - supported bayer order output SGBRG10 and SGBRG8
+> > >
+> > > Camera module seems to be partially compatible with Nokia SMIA but it
+> > > lacks a few registers required for clock calculations and has different
+> > > vendor-specific per-mode configurations which makes it incompatible with
+> > > existing CCS driver.
+> > >
+> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> >
+> > ---
+> >
+> > > +static int imx111_set_ctrl(struct v4l2_ctrl *ctrl)
+> > > +{
+> > > +   struct imx111 *sensor = ctrl_to_imx111(ctrl);
+> > > +   struct device *dev = regmap_get_device(sensor->regmap);
+> > > +   s64 max;
+> > > +   int ret = 0;
+> > > +
+> > > +   /* Propagate change of current control to all related controls */
+> > > +   switch (ctrl->id) {
+> >
+> > Do we need the switch statement, since only one case is present?
+> > You can use an 'if' instead.
+> >
 > 
-> in_lazy_mmu_mode() operates on current, but here we're operating on a
-> different task. The difference is more fundamental than just passing a
-> task_struct * or not: in_lazy_mmu_mode() is about whether we're
-> currently in lazy MMU mode, i.e. not paused and not in interrupt
-> context. A task that isn't scheduled is never in lazy MMU mode -
-> lazy_mmu_state.active is just the saved state to be restored when
-> scheduled again.
+> imx219 and imx319 which are recommended references use switch, and it
+> seems that media maintainters are particularly picky to code style, I
+> have copied it from there.
+
+The documentation lists areas where the mentioned drivers serve as good
+examples, it does not say everything in those drivers is done the way it is
+best. Common sense indeed should prevail.
+
+The reason why we mention these these drivers as examples is that there are
+things that have been notoriously hard to get right (such as runtime PM
+usage in sensor drivers).
+
+...
+
+> > > +static int imx111_initialize(struct imx111 *sensor)
+> > > +{
+> > > +   struct device *dev = regmap_get_device(sensor->regmap);
+> > > +   int ret;
+> >
+> > ret = 0;
+> >
 > 
-> My point here is that we could have a helper for this use-case, but it
-> should not be used in other situations (at least not on current). Maybe
-> __task_lazy_mmu_active(task)? I do wonder if accessing lazy_mmu_state
-> directly isn't expressing the intention well enough though (checking the
-> saved state).
+> cci_write does not state that ret must be initiated.
 
-
-Likely there should be a
-
-/**
-  * task_lazy_mmu_active - test whether the lazy-mmu mode is active for a
-  *			  task
-  * @task: ...
-  *
-  * The lazy-mmu mode is active if a task has lazy-mmu mode enabled and
-  * currently not paused.
-  */
-static inline bool task_lazy_mmu_active(struct task_struct *task)
-{
-	return task->lazy_mmu_state.active;
-}
-
-/**
-  * in_lazy_mmu_mode() - test whether current is in lazy-mmu mode
-  *
-  * Test whether the current task is in lazy-mmu mode: whether the
-  * interrupts are enabled and the lazy-mmu mode is active for the
-  * current task.
-  */
-  static inline bool in_lazy_mmu_mode(void)
-  {
-+	if (in_interrupt())
-+		return false;
-+
-  	return task_lazy_mmu_active(current);
-  }
-
-
-Something like that. Maybe we can find better terminology.
+It does not explicitly use that wording but the documentation is clear
+enough IMO.
 
 -- 
-Cheers
+Kind regards,
 
-David
+Sakari Ailus
 
