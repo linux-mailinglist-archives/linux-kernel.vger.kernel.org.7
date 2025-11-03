@@ -1,470 +1,318 @@
-Return-Path: <linux-kernel+bounces-883758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13935C2E50F
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 23:50:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C93C0C2E524
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 23:52:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C28503B8C7A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 22:49:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBC583AA301
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 22:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7AEB2EE5F5;
-	Mon,  3 Nov 2025 22:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD212FABFF;
+	Mon,  3 Nov 2025 22:52:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SFNcKhK5";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="eADYVZ6Y"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="au3kjbS0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4241A9F82
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 22:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762210195; cv=none; b=WBcm48Dp71lkx9EgwrLhOPRVjq8rq0FDpi1UfbtoSiuBm0v6kl7DOgkCfVFNUzSGNG+cBoYe04dsXcRmHBuR2c1BUX1pSiBWlUft9SLznAbfjQ3RifCuzoqbvf9/TWELFfLN83QqA6GYX+YH7PGigADMuXbX1lVIk2PwpTv+sdY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762210195; c=relaxed/simple;
-	bh=5kYaIOs/gj36O9vsI2zajISfrtXwQDb/E6iF9t7uoXE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ohQ86otFQmvEYTQ4cHqnp6tx0wVJv0j8t6xWAxvT+EQ2ocODOhHF2Gwvts3CmM8XP67yD/CabXujXpgJHdsqcglWZexxL+d2hDkZKil7r66Gk7IaPsKUTKvg5HBCdinOOu4xg4gGmwTI72GSmMSKVB39p9E0iar6B1Y0KZF1qcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SFNcKhK5; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=eADYVZ6Y; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762210192;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NS9ophB+2gsn6r3puiXvB9tNNXIblEqHHdimliWUDuY=;
-	b=SFNcKhK5GSnLmVBOdKLeczhqh2X9uQBAERr2o8v+tTfEaj/NNAbYRxeZR2r7js2RpCK+w3
-	DmeeOhxxRL219rPuZP7r4fxxV1k0kUUHg0KQqLHgg+ZzxauPhLTtlf35q8gVC81IQcTwpu
-	IUCd7V5CEhi9fnD7J5dzaW+gB916St4=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-47-XP2M3SL1OviVTDbV8vh1Sw-1; Mon, 03 Nov 2025 17:49:51 -0500
-X-MC-Unique: XP2M3SL1OviVTDbV8vh1Sw-1
-X-Mimecast-MFC-AGG-ID: XP2M3SL1OviVTDbV8vh1Sw_1762210191
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4ecf8faf8bdso140356451cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 14:49:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762210191; x=1762814991; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NS9ophB+2gsn6r3puiXvB9tNNXIblEqHHdimliWUDuY=;
-        b=eADYVZ6Yti+zoT0T0BVB/Z16zK7ApMPQtMR8tz4eN6KBa2xGflDInN8P7u2YEL5PV6
-         uF/q+9CTChK1uhvcWcUOMu+TlTpFEdtII50BkF5kCRJq+G8vcOVwQY0gmAb1xGyxSOdi
-         D9eMZZuchzsXKnP+RlmEq8n4VgdOIjkMUDeY3707ulUF/y8wkucPk9434FYwq3E/MXPA
-         UNtGlk9aWDeNw3N8hV1mgpgYmSzKNo04EEfuTQ2TT2w7it1OTH+35DMurYvu4Uq4//w3
-         l7JWApcTDkx3nNQVtWZge/hHOLeDVpjshoDuK4pZfwUDf86hW0n09uBLLTlmVydHcfyx
-         fe6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762210191; x=1762814991;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NS9ophB+2gsn6r3puiXvB9tNNXIblEqHHdimliWUDuY=;
-        b=dY1smG73mNe+wUHrbxV4FL2Ui8uDnxJK3770pl7M9FZGtSl/W/Dd6ag8oaGm3yMPFj
-         twkk1Tjjf8W3fOJqvGHR5QbfzbCiis9qbOITSpYx3FuVO4ErXsuFG2BWsUe3Fduy/icB
-         k4x+u/SvvF3D7hzU8vEiAQdLh+hqVPO0e4xdSIY7TImuFAaRopEG0T6VGrqTHnagSOLl
-         TUZ4nK3OpB448spRBi0D49bUs4rQ9xy/SdHe71Q5NhDJEtR+ZX5Sw5ZHRHb/vduOm9UN
-         O3SAHZ3dyjYVsKZ1SIcRQ5/zrN/ztO++2gsMIDoS7OIgzTlLaRWR/JWmBeY+mkJ5JZrL
-         PF/g==
-X-Forwarded-Encrypted: i=1; AJvYcCWp8CwKZtjUTM0yNj26LyveayJL8vqr5Yxf+7eKy6pv2JFEiJign2zrySaHEGdKn8dp9m5upu4IwxyqVOQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkOp23NIYfhtrRMfopbGXuk9TPKoeR4igJp9G3PQeQf+yr/QqZ
-	gH34F6/MeSmV/l6zOgM/DO09d9+7vMABugBkihSWrqiX+TADe5LMDxJ2WDQb34wZ9CImLf0qmCf
-	1FPxYn4apwfUTalr9D7crPFvLsZfERGizoU1POmXjmMO3NqwYu9o3KBlJ9o/u7UCoUQ==
-X-Gm-Gg: ASbGnctvKjtz6TfovcGsJOO8gNI1KOspuSoigpAJ5D1uxHLrklGgt89x7jFz7d+BI4Q
-	bRbSYyLhRgo0A8tWv7TlQl3kxhZllgcR2fHJlNfUJn7h9hR5aEK4IRX6VNVbgsyKXI7lofYBi78
-	TTlmDNQlUbcjx8qC6U+1ed/2eob6XPG1WAjx8NeLf1hxwG0GdPmCYBEF1i/Ca0dBbcua7iFkRX5
-	FkCp34OAZkpWu/gaaW29J57KMoboR7D5eKSIwLZyRTuUsiRH6GFG8BlsZbyPdH50zozDphP6E2T
-	Qom4Zq2F/g69rxsrQcW2Cgu4YwqYfEhXOUQu2goUJdbHf5O/JE2jo++ZivCpdlxAie0=
-X-Received: by 2002:a05:622a:1650:b0:4ec:f402:8268 with SMTP id d75a77b69052e-4ed30dcaa0dmr191640501cf.26.1762210190424;
-        Mon, 03 Nov 2025 14:49:50 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGAsLPvmBUHB2Z3FfK6yOGs/GMWLA9GrZV7ryn8pAKwOM/qFXw5EREel6ThWDgZtJuk9VQrHA==
-X-Received: by 2002:a05:622a:1650:b0:4ec:f402:8268 with SMTP id d75a77b69052e-4ed30dcaa0dmr191640121cf.26.1762210189822;
-        Mon, 03 Nov 2025 14:49:49 -0800 (PST)
-Received: from x1.local ([142.188.210.50])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-8b0f847ef28sm71286485a.54.2025.11.03.14.49.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 14:49:49 -0800 (PST)
-Date: Mon, 3 Nov 2025 17:49:46 -0500
-From: Peter Xu <peterx@redhat.com>
-To: "David Hildenbrand (Red Hat)" <david@kernel.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Mike Rapoport <rppt@kernel.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	Nikita Kalyazin <kalyazin@amazon.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	James Houghton <jthoughton@google.com>,
-	Hugh Dickins <hughd@google.com>, Michal Hocko <mhocko@suse.com>,
-	Ujwal Kundur <ujwal.kundur@gmail.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Andrea Arcangeli <aarcange@redhat.com>, conduct@kernel.org
-Subject: Re: [PATCH v4 0/4] mm/userfaultfd: modulize memory types
-Message-ID: <aQkxioBXJtPbuJJ-@x1.local>
-References: <dtepn7obw5syd47uhyxavytodp7ws2pzr2yuchda32wcwn4bj4@wazn24gijumu>
- <aPe0oWR9-Oj58Asz@x1.local>
- <nnxhd7zxjza6m4w4lr5qyev2krbkp4yfcgcwq6nkaqrqt6bzpb@iklep2xxp5gv>
- <aQO3Zko6Qrk7O96u@x1.local>
- <aQPCwFZqNd_ZlZ0S@x1.local>
- <d0b037a6-11b9-483b-aa67-b2a8984e56e0@lucifer.local>
- <aQPU-tyo_w68cnKK@x1.local>
- <7768bbb5-f060-45f7-b584-95bd73c47146@kernel.org>
- <aQkUwbx7Z4q1qcSB@x1.local>
- <5f128cbf-7210-42d9-aca1-0a5ed20928c2@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0263B2E6CD7;
+	Mon,  3 Nov 2025 22:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762210321; cv=fail; b=tVWLcWlHepIywnzFxmoyFXt4+xrp4bhgYvVObg2R+qBnGmo2ZqOlvc1MQ4FuR2qvAmHdrhVaAP9SVR14SK0pAMOtmZiTWp9YTsSrrT3NotwqH+TkrqxMDYWxqvymqEeqBi2efmOIBpIJd2003izApRCGW6VPuFHqu7ClNVX7KZs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762210321; c=relaxed/simple;
+	bh=O/Ao67+ZVUTX9Cko8f84b1ZGdIeR3/NRUlzyHTfrBbY=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=hYKdctJjmAXAnuJLVNn7vqjDva/cvh1tdVP2TaGac4DvIv3ETU4SMaGO7/chYrSyaKjqHO1asw8L2iIpXqMrmN7vgmgorhYnV9+E2IPmNoHgD6WAp0N/ecbZP0t3Gm4aNGUv6UWL7ElW7GghvlvRv2QUfjLeZLEnUsSeHpElZU0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=au3kjbS0; arc=fail smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762210320; x=1793746320;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:mime-version;
+  bh=O/Ao67+ZVUTX9Cko8f84b1ZGdIeR3/NRUlzyHTfrBbY=;
+  b=au3kjbS0AriSZPrrydaJGvZXDDTEFzBsPtmJNsFUR61IBhqbUCxst5Di
+   OD7LsmNjtZHmdfPP+5WGil1X+cDHfJlViXBMyYe5eM+0aX+kqsaSYTohi
+   c1pdsK9o0OGEoZ1f0ZG8qbFZZ0t6jOrjT2MDS/STrgndMWAUTYMDQRwxC
+   TAwaPQjo1MzLBWWz/caEhi/Tu7lkO1rJdD3RnpEkeQ3H1FFoF+fS9wyT+
+   46ZARAsHYHFn3QOMnF3cNZT8L2bJzrA7Y3AmCdPgItvnN1C6zUyxtYNEO
+   TYIIoAEqauT12D3WnUM+RGG0/V0Ul2GiIxEkUSrBMtjVEG4asbzgPhbkn
+   w==;
+X-CSE-ConnectionGUID: UKm/v/BeSEe/3AA4x8HOmA==
+X-CSE-MsgGUID: /MpkNFIJRJWeZBhNJYp5UQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="89758799"
+X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
+   d="asc'?scan'208";a="89758799"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 14:51:59 -0800
+X-CSE-ConnectionGUID: Rn58Z/bnQLKbEMsFVURLEQ==
+X-CSE-MsgGUID: 2vUFVoJARrO7/+dMOhvclA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
+   d="asc'?scan'208";a="224238941"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 14:51:59 -0800
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 3 Nov 2025 14:51:58 -0800
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Mon, 3 Nov 2025 14:51:58 -0800
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (40.93.194.65)
+ by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 3 Nov 2025 14:51:58 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fnuJaro8bDw72S7uG+rMFrVIIxze887BPrtbzAe8M35rbHecqio4Lvcv2YHSY7PQzExg+0eypGZxyLR++/jRmhIzG/Kqkouuqtz5YpUbULxiWhSmhil/rnwVPovKN/DWk+yyaxjE/Qp60c2gIje5i1NGGe+CjIw1/IFSCJWsouazpBLvxn4LwHhwh96M/P7ceE6UUPNC8K+AmibZb1jbnqnOy5xvoTgXxtJMgX54j+wQ3hVIWuYM8TUihgySOkPLgHCtQXZL/v7VPMG/6W/kj7umQkjfYdSq9NzK1NcPSGU5PaOCWdnmFOADYk4Kcx4s6qHP2zCoMtzdhhhg4XgThQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4WoItB1WRdl28dvy0xKMdQCWGmn1clSBHOJx69ypm5M=;
+ b=IuRtb7/gh4ddC8lJxYKsFoG0AjcmVQ2A8WHRYeXQ8tGkAi+4iqRMy7/OOpkaP+jD2BpsRnTt0LG3qfB6ro04b1NjColzT+DyyVDj2kRGu5Hl1vyVJvB1WxZnpNIdn0HLrYeL+xg08ko+Ogy1ndDzVarL0nCEhmLII9nE1WK89f5ApEkr+faxx62kSTA1dTsQjquy8CVaZ6nLPdf78h6tjJAFYVcjnD/cHrzSQaus0W4Sai6IWx+OpKXxqD+0IqaVWhxRn6o/WRVIyNoAu8LKCjzBRq9uRX8yahV6N9Kd5BKJMY0dkd1s2CaXtHX5Jf1Djkp04hrLfPxzXGlkRJO3lA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
+ by DM4PR11MB6144.namprd11.prod.outlook.com (2603:10b6:8:af::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Mon, 3 Nov
+ 2025 22:51:56 +0000
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::81f7:c6c0:ca43:11c3]) by CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::81f7:c6c0:ca43:11c3%3]) with mapi id 15.20.9275.015; Mon, 3 Nov 2025
+ 22:51:56 +0000
+Message-ID: <39096776-9b98-4e09-a008-d8d9620433dd@intel.com>
+Date: Mon, 3 Nov 2025 14:51:53 -0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Documentation: pldmfw: Demote library overview section
+To: Randy Dunlap <rdunlap@infradead.org>, Bagas Sanjaya
+	<bagasdotme@gmail.com>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, Linux Documentation
+	<linux-doc@vger.kernel.org>
+CC: Jonathan Corbet <corbet@lwn.net>
+References: <20251103030228.23851-1-bagasdotme@gmail.com>
+ <33ce66c4-d128-41d5-9e26-aabb7e80aa67@infradead.org>
+Content-Language: en-US
+From: Jacob Keller <jacob.e.keller@intel.com>
+Autocrypt: addr=jacob.e.keller@intel.com; keydata=
+ xjMEaFx9ShYJKwYBBAHaRw8BAQdAE+TQsi9s60VNWijGeBIKU6hsXLwMt/JY9ni1wnsVd7nN
+ J0phY29iIEtlbGxlciA8amFjb2IuZS5rZWxsZXJAaW50ZWwuY29tPsKTBBMWCgA7FiEEIEBU
+ qdczkFYq7EMeapZdPm8PKOgFAmhcfUoCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AA
+ CgkQapZdPm8PKOiZAAEA4UV0uM2PhFAw+tlK81gP+fgRqBVYlhmMyroXadv0lH4BAIf4jLxI
+ UPEL4+zzp4ekaw8IyFz+mRMUBaS2l+cpoBUBzjgEaFx9ShIKKwYBBAGXVQEFAQEHQF386lYe
+ MPZBiQHGXwjbBWS5OMBems5rgajcBMKc4W4aAwEIB8J4BBgWCgAgFiEEIEBUqdczkFYq7EMe
+ apZdPm8PKOgFAmhcfUoCGwwACgkQapZdPm8PKOjbUQD+MsPBANqBUiNt+7w0dC73R6UcQzbg
+ cFx4Yvms6cJjeD4BAKf193xbq7W3T7r9BdfTw6HRFYDiHXgkyoc/2Q4/T+8H
+In-Reply-To: <33ce66c4-d128-41d5-9e26-aabb7e80aa67@infradead.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature";
+	boundary="------------2o6I4THBubJ0s1zEC6v130gd"
+X-ClientProxiedBy: MW4P223CA0005.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:303:80::10) To CO1PR11MB5089.namprd11.prod.outlook.com
+ (2603:10b6:303:9b::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <5f128cbf-7210-42d9-aca1-0a5ed20928c2@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PR11MB5089:EE_|DM4PR11MB6144:EE_
+X-MS-Office365-Filtering-Correlation-Id: 61ace4b4-2438-4de4-e162-08de1b2b967a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?N2hGRkNZZUNmT0o5eXdLVit1SkkxaS9XTFMzUGVEd1dmT1JiaGovRmR2Qlpz?=
+ =?utf-8?B?WHpNR0kyb0NYTDZhaFg3NllGeUIyZHlMNE9PbGFPLzhUcWFSdFdkM1JoUTFB?=
+ =?utf-8?B?R0xDbzJ6aGp3SDRaQWpEdzdrRVpPTEp4RmtkNllMaEdFa3owYmNhKzFia3ZF?=
+ =?utf-8?B?bUFOUSs5UUR0cmo4b0VIUlhQWlFBV29mL1hRYlg2eTkrMk9sVGZXY2hWNHZx?=
+ =?utf-8?B?TUROakdZZ3h1RGRBSUZKSFpNNWVpdVBiTUIxaW1PYnVjQzE5YTFpR2tUWHJm?=
+ =?utf-8?B?ZmlxV1dBSnVRN2M5V3hVUUxhUzBKUHg1cVBTdHZqSEo1ZHgvVEdXNDhmcUVn?=
+ =?utf-8?B?NWxzbWxQb2piVmNmeWJ4S21mTGM1LzNvUUFVb2lrbkVNT0lXakdHWjMxeDRx?=
+ =?utf-8?B?TFc1WElKS2wrQU1KS0QzMTk1bzZKaXM2MnRodDFEZ0c3UWg3WmpDa1hWbkJs?=
+ =?utf-8?B?OC91Y3hpM09acUhtTDd5U2dDd2hSU0QzMDN1Yk50SFlreElUQ2RUaWJPTENK?=
+ =?utf-8?B?R28yNVpma3VjblEzbndpN0M3S0piQ1ZINHQwR1h2QVNpUm9xOEN1TDB1cnhD?=
+ =?utf-8?B?WnF3M3lYcEw4bGJ0ZW1KZVBFTEFqSHVvNHlCbVJvZFI1WFpmVXVTWTE0MkdC?=
+ =?utf-8?B?c01ZU2p5ZkpybUlmelFHVDFuSVhMQnlUdUdScklhRGpzcGUyd21mL3RDK212?=
+ =?utf-8?B?eFJsdFRnL0lReHlMTkN5VjlvZDlDTWdXL3c4bXJ3OURiUFVHOFI2QzgzWFY2?=
+ =?utf-8?B?M2EwbDkrTjArU1RoOEppTEVPbFAyaFpuZG02UkN1ZVRRYkRBSmdmblkrbzBa?=
+ =?utf-8?B?aXV1KzF0MDUzbHNXMTlQMXkvZnFYNnJBUUdYNGE5Mit3N0dyV0xRNkpNMko5?=
+ =?utf-8?B?Y0dlK216L2wwZElWT01pYWpMU2Jzb1ZaaEpQbWN6ODFVekVvS0JqcHMybWhk?=
+ =?utf-8?B?UTJCRHI0VjVvaXlQVGVMN1BJbEpxN0ZPUzBKd0xKZDRMTGU2YUZjSWpyYU5t?=
+ =?utf-8?B?YWJlbDU4Q0k5M0ZWZDdLN1lNS3JRekUzaGZyT081bzdlOUVGcE1RUUVmYlVn?=
+ =?utf-8?B?OHA5czRLcGpqZjhqbUdsUS9wSm51ZGtPeGJmUXV1NkNZRVRjS3hIRi9rUnhI?=
+ =?utf-8?B?ZlF0VE40eStIQTJSMFY1RnpnTk01ZmdtbzhwSFhwSzB6T2x4bmFyWDdVcWh6?=
+ =?utf-8?B?MHhHclhtM204VDV5OTJ0TWkxRUJ6dWpyWXFZL0RwNEdWOHBDY0hXVHhoYWI3?=
+ =?utf-8?B?MnNLaXd5VXZKbTlRWDNzT29yY3NBL0FKRFdpNUxIVEg1aTRtOVNZTnFwVFZB?=
+ =?utf-8?B?dk90b0FqenpGc2dxWEpHeW82ZGk4OG1GMTVybTgxYW9waDZuc2pKeEdxYTNT?=
+ =?utf-8?B?VFpNOURuZ1drbUZKblZVSDZGQTFhYUJJaXN6eVdMWFRFdGVHeElUYkFvNXhk?=
+ =?utf-8?B?eGRtelZLVHZlR21DaWNxb2JMWjdyTUt2N0xPM3daK0RoNE5hR3lvYmd1K3pD?=
+ =?utf-8?B?RVFxQ2hsZXlab2VQZGxzWnFUeE51c3pwVW14SUtCUGdiZk5WMk95RzAvWlg3?=
+ =?utf-8?B?VXdjNTg5ZUpGU0tNREhaRVNCWjhXb0RocFRscUQ2b1Zyb3Q2RWxxbTRKM3F6?=
+ =?utf-8?B?RlR2eWgwQzdUOVNsVE56UEoxMkwyemhEUTduOFFsT2JueFhNaUVuVHJhUk1M?=
+ =?utf-8?B?bS9SSWNieHlTVll0bEtQdjB4VVoyZ2pobEZDQllSN0VLR0xFdDV0ZW1LaUZW?=
+ =?utf-8?B?cG5Oa0NLaTJiTXNhdTd0Nko0VjdYNDZrZTVQTWNRQjZ1QWdjbkF5NGpRVEZv?=
+ =?utf-8?B?dFVSTHBycmJ4VWRyc1ZQbGtaaDVvNkNGZEJhZ3ZvOXRlR3k2Z3FpTW43V3RH?=
+ =?utf-8?B?YnUzSE10SHJjbFdWeXJrb1NKNEM0b2hpYTNSb2pObDlWMVFBRnFFaldlMnlT?=
+ =?utf-8?Q?0ylyoCc7+r0zZ9LnBPf1myDEjaId703u?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?T2YxTWErWDBQOUtxbHQ3T3lxaG45T0htRTRldmp2OXM2MjRVQUtMcmx6b21B?=
+ =?utf-8?B?YXRKN2NqWWphbWpjWTlJeDdLa1hLK1J4dDduWTY5b2RZRHNlS1ZENjNxMmtJ?=
+ =?utf-8?B?RHIvbzNRWURNb3I1c0plNGZUSzVRd1JJcVVkbDdxd2s5L1Z3YkN6U1dlTURZ?=
+ =?utf-8?B?SlNOVFFmZU5jVGZndS8wSy9HZEhaRzVOMFpOVnJxSERQVEFaMmgybE9xSEU1?=
+ =?utf-8?B?TGVrZGRRNkhKaS91ZVYzSVBwcERaS3BRL2RUUU5FVi9SaXB0WEJlSE5hVHJF?=
+ =?utf-8?B?WTFnMldTZFJqMkE2dGgzVXJTdy9WNWMvK2xJd2laTGhmNWVUNWpSMk5XQUk0?=
+ =?utf-8?B?NVVPNGZTQzVhVHRESndHL0dOR21lWmJFZ08xaCtGMzRyRWJvR0l5SVNMOHlx?=
+ =?utf-8?B?YThBbXVxT09ERGRHOWNDTDJYQ0VTY0xwbkx5Wm1RT1dRd0pCNmFqU25YUk9L?=
+ =?utf-8?B?aGhCeEpxeHI0QmJ3NElXUUwwLytrYkpJV1ZSQ0FiLy9za2xPODZMcVBqY1Fs?=
+ =?utf-8?B?U3B5Uzh4YlpITS9nMlBLRmxvbitBZ1NjaDFReUVpdEg0YS9kY2F3M0JiU2la?=
+ =?utf-8?B?WVhlREJONzVyaWpjUjh3TExjWUw1YXFNNDBBT0JKdmp3ZURoUm9HU2RIc3FG?=
+ =?utf-8?B?MC9MSlRocG5iZWJQV0xZZDY1Y3B5Ry9tWTNhUVEva3A4MFRNL2xLVGRoa09P?=
+ =?utf-8?B?c0gzdzJDc2xaNmhXK1NHa0pCcUo2SExaMG9IcXVWVUplVjc2U0NMSmJEU25r?=
+ =?utf-8?B?SUV5d3U2cyt1SldpcDBCMTQ1MFRTRWVuZ0M1NFhQMW9VWjltSGNDVFgrc0JB?=
+ =?utf-8?B?K1kyNmt6RGU0UThVM1F3MjBobEw3U0Vhd1VUUzVQdkh3dVl6M2VmeXpXV04r?=
+ =?utf-8?B?Ulp2WmR1OFdYQno1LzlKdExiS1NSUktOSnJWcWVKbU1VZGFLOFZGdFNXNFE0?=
+ =?utf-8?B?c0V6ZXNsY0FrRVZOMVZvbTV1RHpCeDJmZkRzWEp4RGJmdUpEODdyWXdBdTZN?=
+ =?utf-8?B?MVZLQUFjNW9JRWJKdjA3ZENsazZNckNzQW9hekVtbWF4bXFiaDNWNXJWMWo1?=
+ =?utf-8?B?WUJWK1N6L2xoajJBWGNIMTFSYkIwWjdpTitMRHhwVzJUT1NXZW5JQ251WUtC?=
+ =?utf-8?B?SnR4OUVBaGFleDIxanFBSnNIakRlam1tbVdObjFmZjh6U242WE1GZm5CZ0Js?=
+ =?utf-8?B?c0owMnlmNHhFdmh6TUpSTmRIaVltYXJVOEZCcWc4Qno2QzN5SjZYdTUyWEJq?=
+ =?utf-8?B?eEFsMHltOUE4elRHS29hRkdGSVlpaHpyOVk1K01TekRuWW1USEJnKytDN0ov?=
+ =?utf-8?B?djh4QytDQUZZdXg5OVlIOTFOWE93SnFDM0tvaWF2VWNmRVlqekpDeXBhdGll?=
+ =?utf-8?B?Tlp3TXV4ekU0d1BLblAyaGtTVGVjTUhkRDVqL0VjcDd6SnhHZjB1ZURPV3Bx?=
+ =?utf-8?B?cHN3Mkp5cDNWdnlYRHpoM0dlSWFOQkp1eHVnSFcyRmxXR2grMm5xeTlja2xh?=
+ =?utf-8?B?L3cwUWhtaXNUTXVPeE9KdmN1VWxITEFDVldyWVNzUjB4MWNraTNsakZYSEIx?=
+ =?utf-8?B?eU5JbUdZMXNaYm9KN2QxblplQ2dDUXBUNW4ya2tHY09qUG44U1JKb1IySHVY?=
+ =?utf-8?B?Rzltc1dsaStaTjhmc2ZGQmpYOVAybmV3bVFwc3hxUy9VYy9pU1pCdW5OdmJJ?=
+ =?utf-8?B?MmZJZXlKTkhiYXM0cXZQOWFoMWs1WWhnYUUzRmY3d3oybzN5SnphakRWTDdH?=
+ =?utf-8?B?T201aTNidGlOR2VYSCtnZEUyZTVnam9UVEs0RlVMNFhQTFI5SjVXeHE4VDIz?=
+ =?utf-8?B?OVZ1cXA4T2RGZVRESmhrbEFWNDFqa2VTSXJmaFNvbERZUURIZG8ydGRFeEt6?=
+ =?utf-8?B?cHkvalRtYm5IM2cxN0xEaTNsb0lhY0VKR2tPN3lTcGZyaU44WFFTcTd5RHl3?=
+ =?utf-8?B?TWJWVDlpVnZwSGZYRkloRWo3S1graTBKYmNpWnJXS0hKemlGYUw1eEp0T0Jr?=
+ =?utf-8?B?T2M5RzMzZldybmZHT3M2VmZQb3lsV2kvVnUrYTZuTDNkY0xrSHpNYkpnWDNw?=
+ =?utf-8?B?OFJ1ZlpxWnZ3endzNVQ3dFZOdWNsaGM4eC9yTlkvVEN0eWRTNWZLTTZWY2wr?=
+ =?utf-8?B?cThWWTVQbVMyWTJWTjNVY1BncGxnamRCK0dGZ3VGZTBWVUs5OVBzeHc5UWti?=
+ =?utf-8?B?dmc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 61ace4b4-2438-4de4-e162-08de1b2b967a
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 22:51:56.1788
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: OjVlsK8CN037mQA6oT4qKDN1rFTuxh9M+plrSsZclPnDz+QY5c9diITF17YSubQe1WrHetlBzaEPndhdwdN77ycEFYYYaXBJOKPJHKAFTJs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6144
+X-OriginatorOrg: intel.com
 
-On Mon, Nov 03, 2025 at 10:27:05PM +0100, David Hildenbrand (Red Hat) wrote:
-> On 03.11.25 21:46, Peter Xu wrote:
-> > On Mon, Nov 03, 2025 at 09:01:02PM +0100, David Hildenbrand (Red Hat) wrote:
-> > > > > I have an extremely heavy workload at the moment anyway, but honestly
-> > > > > interactions like this have seriously put me off being involved in this review
-> > > > > personally.
-> > > > > 
-> > > > > Do we really want this to be how review in mm or the kernel is?
-> > > > > 
-> > > > > Is that really the culture we want to have here?
-> > > > 
-> > > > Gosh.. Seriously?
-> > > > 
-> > > > I'm ok if this needs to be audited.  I have all the previous discussions in
-> > > > the cover letter as links.
-> > > 
-> > > I'm late to the party (or whatever this here is called. ah right, drama),
-> > > and I haven't yet dug through all the emails and certainly not through all
-> > > the of involved code changes.
-> > > 
-> > > Peter, I was a bit surprised by your messages here indeed, not what I
-> > > expected.
-> > > 
-> > > The "Your code allows to operate on pmd* in a module??? That's too risky and
-> > > mm can explode!  Isn't it?" definitely was absolutely unnecessary ... or
-> > > telling Liam that "he want almost mad".
-> > 
-> > It was a joke!
-> > 
-> > uffd_copy() API was NACKed because of this.  Now the new proposal
-> > introduced it.  I made a joke saying Liam allows that to happen in his
-> > branch, but forbid mine.
-> > 
-> > I thought it was super clear to identify.
-> 
-> Text is a very bad medium for that, especially given the previous
-> discussions that were rather heated.
-> 
-> So it's good that you clarify that -- I am not sure how many people got that
-> it was a joke TBH.
-> 
-> I understood the reference to previous discussions but to me it sounded
-> rather dismissive in the context of this discussion.
-> 
-> > 
-> > > 
-> > > Again, not what I would have expected from you, and I would assume that you
-> > > had a bad day and would at least apologize now that some time passed.
-> > 
-> > Sorry, no.  I won't apologize for that.  I was not fair treated, and now I
-> > think it's fair I at least make a joke.
-> 
-> Peter, if you would tell me that I am going mad I would not be able to
-> understand that as a joke -- unless maybe if you add plenty of :) . :)
+--------------2o6I4THBubJ0s1zEC6v130gd
+Content-Type: multipart/mixed; boundary="------------OkxWxlj6yIcRzXUVRU0fEtj8";
+ protected-headers="v1"
+Message-ID: <39096776-9b98-4e09-a008-d8d9620433dd@intel.com>
+Date: Mon, 3 Nov 2025 14:51:53 -0800
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Documentation: pldmfw: Demote library overview section
+To: Randy Dunlap <rdunlap@infradead.org>, Bagas Sanjaya
+ <bagasdotme@gmail.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Documentation <linux-doc@vger.kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>
+References: <20251103030228.23851-1-bagasdotme@gmail.com>
+ <33ce66c4-d128-41d5-9e26-aabb7e80aa67@infradead.org>
+Content-Language: en-US
+From: Jacob Keller <jacob.e.keller@intel.com>
+Autocrypt: addr=jacob.e.keller@intel.com; keydata=
+ xjMEaFx9ShYJKwYBBAHaRw8BAQdAE+TQsi9s60VNWijGeBIKU6hsXLwMt/JY9ni1wnsVd7nN
+ J0phY29iIEtlbGxlciA8amFjb2IuZS5rZWxsZXJAaW50ZWwuY29tPsKTBBMWCgA7FiEEIEBU
+ qdczkFYq7EMeapZdPm8PKOgFAmhcfUoCGwMFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AA
+ CgkQapZdPm8PKOiZAAEA4UV0uM2PhFAw+tlK81gP+fgRqBVYlhmMyroXadv0lH4BAIf4jLxI
+ UPEL4+zzp4ekaw8IyFz+mRMUBaS2l+cpoBUBzjgEaFx9ShIKKwYBBAGXVQEFAQEHQF386lYe
+ MPZBiQHGXwjbBWS5OMBems5rgajcBMKc4W4aAwEIB8J4BBgWCgAgFiEEIEBUqdczkFYq7EMe
+ apZdPm8PKOgFAmhcfUoCGwwACgkQapZdPm8PKOjbUQD+MsPBANqBUiNt+7w0dC73R6UcQzbg
+ cFx4Yvms6cJjeD4BAKf193xbq7W3T7r9BdfTw6HRFYDiHXgkyoc/2Q4/T+8H
+In-Reply-To: <33ce66c4-d128-41d5-9e26-aabb7e80aa67@infradead.org>
 
-If it's a problematic use of the word "mad", it could be my English not my
-attitude.  I can easily say I'm mad at something when I'm not satisfied.
-I admit I'm not a native speaker.
+--------------OkxWxlj6yIcRzXUVRU0fEtj8
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-But then, if you think "mad" is a bad word, how about:
 
-https://lore.kernel.org/all/6odeeo7bgxgq4v6y3jercrriqyreynuelofrw6k6roh7ws5vy2@wyvx7uiztb5y/
 
-        I'm happy to address changes, but I'm not happy to accept more
-        middleware and "it's not part of the patch set" to address any
-        problem as you push more trash into an already horrible code base.
+On 11/2/2025 9:09 PM, Randy Dunlap wrote:
+>=20
+>=20
+> On 11/2/25 7:02 PM, Bagas Sanjaya wrote:
+>> pldmfw library overview section is formatted as title heading (the
+>> second title of index.rst), making it listed in driver-api toctree.
+>>
+>> Demote the section.
+>>
+>> Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
+>=20
+> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+> Tested-by: Randy Dunlap <rdunlap@infradead.org>
+>=20
+> Thanks.
 
-I didn't raise CoC report for that.  I was still trying to be technical on
-the whole discussion as much as I can do best.  Hence, my reply was:
+Acked-by: Jacob Keller <jacob.e.keller@intel.com>
 
-        > I'm happy to address changes, but I'm not happy to accept more
-        > middleware and "it's not part of the patch set" to address any problem
-        > as you push more trash into an already horrible code base.
-        > 
-        > We need to fix things too.
-        > 
-        > So I'm fixing it.
-
-        Let's wait for a 2nd opinion on the approaches.
-
-        As I said, I'm OK if everyone likes your solution and if I'm the only one
-        NACKing it.  If we can support guest-memfd finally whoever adds that, it's
-        not so bad.
-
-Is "trash" a better word than "mad"?
-
-> 
-> > 
-> > David, you're leaving, and I'm totally dissappointed that at this point of
-> > time, you ask me to apologize instead.
-> 
-> I'll be right here, working for the community as I always do. So please read
-> my message as if nothing in that regard happened.
-> 
-> I don't want you to feel bad here, I want us to find a solution without more
-> of this drama.
-> 
-> Because that's what we have here, unfortunately :(
-> 
-> > 
-> > I thought it was obvious a joke, because I never thought having pmd* in a
-> > function in a module is not OK.
-> 
-> Unfortunately it was not clear.
-> 
-> > 
-> > I always thought it was fine, Linux is not a micro kernel.  It's just fine.
-> > It is what happening in Linux right now.  It is so obvious.  In case it was
-> > not clear, I hope I make it clear now.  If I'm going to formally NACK
-> > Liam's series, I won't use this as one of the real reasons.  I just hide it
-> > in some of others that are real reasons.  However if to be fair, when this
-> > reason is removed, this series should also remove the "highlight" that it
-> > removed shmem.h header, because my v1 also did that when with uffd_copy().
-> > 
-> > > 
-> > > I understand that you were upset by the previous feedback on the earlier
-> > > series.
-> > > 
-> > > There were some heated arguments in the last discussions, but most of them
-> > > were based on misunderstandings. I would have thought that once they were
-> > > resolved that we could continue focusing on discussing the technical details
-> > > again.
-> > > 
-> > >  From what I can see you asked for actual code and when Liam came back with
-> > > some code that looks like *a lot of work* to me.
-> > 
-> > It's Liam who stood out strongly pushing back what he at least used to be
-> > not familiar with.  This was, IMHO, rude.  It's ok to keep silent on some
-> > patchset that one isn't familiar.  It's ok to ask questions.  It's not ok
-> > to strongly push back without being extremely familiar with the code.
-> 
-> /me am I a rude person? :( ;)
-
-Frankly, I would trust that if you strongly NACK a series, then you should
-have good knowledge of the code base and the series you disagree.
-
-If you didn't have enough knowledge and NACK some patchset without really
-knowing much better than the author, yes, IMHO I think it's rude too.
-
-If I did it, it's the same.  I will be the one to be rude.  It has nothing
-to do with who's doing it.
-
-Like if I strongly push back whatever change in maple tree, I'll be rude.
-I never did, and I'll never do that.
-
-> 
-> The previous discussions on this were not ideal, because there were
-> misunderstandings, yes. Liam has a lot of background on VMA handling, so I
-> think getting is input is actually pretty valuable.
-
-There is a line.  I can't tell how to draw a line, but there is.
-
-> 
-> > 
-> > He might be more familiar now, I wish he is. But it's Liam's decision to
-> > work on the code.
-> 
-> Right, Liam took the time to actually implement what he envisionsed. I
-> assume it was a great learning experience for him.
-> 
-> Shame that this drama here seems to make him want to stop using that
-> experience in the future.
-> 
-> > 
-> > We're adults, we do what we should do, not what we asked to do.  If we do
-> > what we asked to do, we should have our reasons.
-> > 
-> > My ask was trying to make Liam see that what he proposed is over
-> > engineering the whole thing.  I was pretty sure of that, he wasn't.  I
-> > explained to him multiple times on why it was an overkill, he doesn't
-> > agree. It's fine for him to disagree, it's Liam's right.  Then it's also
-> > fine for me to ask him code it up to notice himself, if I can't persuade
-> > him.  That's the only way for him to persuade me instead.
-> 
-> Well, he noticed that we can apparently cleanup userfaultfd quite heavily.
-> :)
-> 
-> And maybe that's the main problem here: Liam talks about general uffd
-> cleanups while you are focused on supporting guest_memfd minor mode "as
-> simple as possible" (as you write below).
-> 
-> I acked your series for a reason: I think it is good enough to implement
-> that (as simple as possible), but I also have the feeling that we can do
-> much better in general.
-
-"feeling" is not a good reason to block a series from landing.  If you, or
-Liam, or anyone, has good proposal already, we can always consider it.
-
-The thing is I don't easily see a good proposal so far, it's non-trivial.
-
-Meanwhile, the current v1-v4 I posted should be simply enough that even if
-one day someone wants to clean it up we can revert relevant changes and
-apply the cleanup idea on top, because the changeset needed to do the
-cleanup on top of v1-v4 of mine will be trivial.  It doesn't need to be
-blocked.
-
-I mentioned too that I think userfaultfd code isn't the cleanest, for
-example, here:
-
-https://lore.kernel.org/all/aQPX859LbBg5FmE8@x1.local/
-
-        On Thu, Oct 30, 2025 at 04:24:46PM -0400, Liam R. Howlett wrote:
-        > Right, so the existing code a huge mess today and you won't fix
-        > anything, ever.
-
-        IMHO fix is the wrong word.  Cleanup it is.  I agree the current
-        userfaultfd code isn't extremely easy to follow.
-
-So I agree cleanups might help.
-
-Liam explained his "vision" on how to cleanup.  I explained why it won't
-work, starting from:
-
-https://lore.kernel.org/all/20250926211650.525109-1-peterx@redhat.com
-
-At that time, the proposal was still:
-
-        struct vm_uffd_ops hugetlb_uffd_ops = {
-                .missing = hugetlb_handle_userfault,
-                .write_protect = mwriteprotect_range,
-                .minor = hugetlb_handle_userfault_minor,
-
-                .mfill_atomic = hugetlb_mfill_atomic_pte,
-                .mfill_atomic_continue = ...
-                .mfill_zeropage = ...
-                .mfill_poison = ...
-                .mfill_copy = NULL, /* For example */
-        };
-
-Obviously, whoever proposed above hasn't looked at handle_userfaultfd() at
-all. That's also why I stopped commenting at that time, because it means
-who proposed it actually doesn't know the code well yet, and I don't
-necessarily need to comment on each line.  I explained from high level on
-why it's an overkill at that time.
-
-It's fine to propose something being familiar or not with it, but again
-it's not fine to strongly pushback one series with such a proposal, and
-without the familiarity of the code base.
-
-> 
-> > 
-> > I sincerely wished that works out.  As I said, then I'll properly review
-> > it, and then we build whatever we need on top.  I'm totally fine.  However
-> > it didn't go like that, the API is exactly what I pictured.  I prefer my
-> > proposal.  That's what I did: showing the difference when there're two
-> > proposals, and ask for a second opinion.
-> > 
-> > It's not fair to put that on top of me to blame.  He's trying to justify
-> > he's correct.  It has nothing to do with me.  He can stop pushing back
-> > anytime.  He can keep proposing what he works on.  It's his decision, not
-> > mine.
-> 
-> I would prefer if we can come to a conclusion instead of having people stop
-> pushing back and walking away.
-
-Obviously people can walk away from either side.  It's not always that who
-push back things can walk away.
-
-I'm nobody.  I don't mean I'll be walking away and I'm comparing that to
-Liam's walking away.  Liam is doing very well on maple trees (I didn't
-follow at all, but I'd trust that), while I'm pretty sure Linux will run as
-smooth if I walked away.  However IMHO this is not a reason at all to allow
-anyone randomly NACK on anything without good reasons, and without good
-knowledge base of what the patchset is touching.
-
-Not to mention this is also not the 1st time it got strong NACK.  v2 was
-almost NACKed because I introduced a function that returns a folio*.
-
-> 
-> I assume positive intend here from both sides.
-> 
-> > 
-> > > 
-> > > He really seems to care (which I highly appreciate) and went the extra mile
-> > > to show us how the uffd code could evolve.
-> > > 
-> > > We've all (well okay, some of us) been crying for some proper userfaultfd
-> > > cleanups for years.
-> > > 
-> > > So is there a way we can move forward with this without thinking in binary?
-> > > Is there some middle-ground to be had? Can some reworks come on top of your
-> > > series? Can so reworks be integrated in this series?
-> > > 
-> > > I agree that what Liam proposes here is on the larger side, and probably
-> > > does a lot of things in a single rework. That doesn't mean that we couldn't
-> > > move into that direction in smaller steps.
-> > > 
-> > > (I really don't think we should be thinking in terms of a CoC war like: show
-> > > them what I did and I will show them what they did. We are all working on
-> > > the same bigger goal here after all ...)
-> > 
-> > We've got some second opinion from Mike, please read it first.
-> 
-> I read it, and I will have to look into some more details. But what I could
-> read from Mikes reply is that there could be a discussion continuing where
-> we would find a middle ground.
-> 
-> Well, if I can motivate Liam to keep working on userfaultfd at all.
-> 
->  David,
-> > you're co-maintaining mm with Andrew.  I think it's fair indeed you provide
-> > how things should go together with Andrew.  It's fair you and Andrew
-> > whoever would like to make a decision on how to move forward.  I'm fine on
-> > whatever decision you want to make.
-> 
-> Unfortuantely (or fortunately?) I am not officially maintaining userfaultfd.
-> And Andrew is not involved enough I am afraid to make a decision.
-> 
-> Of course, I *could* make a decision, but that would likely involve that we
-> continue the discussion without this drama. But do people want that?
-
-If you get my whole point, I was sincerely trying to collect 2nd opinions.
-
-I can paste my reply once more here, for my attitude:
-
-https://lore.kernel.org/all/aQPX859LbBg5FmE8@x1.local/
-
-If you are talking about drama, just to mention I didn't raise a CoC report
-even if my code was evaluated as "trash".  IMHO, whoever reads these
-discussions likely wasted some part of one's time.  I don't want to waste
-time for whoever is going to audit this whole thing.
-
-I left my opinion in maybe 1 hour after Liam shared his branch, that
-included having lunch.  I can glimpse ~1000 LOC as fast almost because what
-Liam proposed matched almost like what I can imagine.
-
-Mike shared his opinion today.
-
-You can definitely share yours after taking time to read about it.
-
-We stuck here for months. So many things happened.  It's definitely not a
-problem if we take this slow.
+libpldm doesn't have its own tree at present, and most updates typically
+have gone through netdev. However, I think this makes the most sense to
+be taken through docs tree, since it doesn't impact any code.
 
 Thanks,
+Jake
 
--- 
-Peter Xu
+>=20
+>> ---
+>>  Documentation/driver-api/pldmfw/index.rst | 1 -
+>>  1 file changed, 1 deletion(-)
+>>
+>> diff --git a/Documentation/driver-api/pldmfw/index.rst b/Documentation=
+/driver-api/pldmfw/index.rst
+>> index fd871b83f34f3a..e59beca374c1fa 100644
+>> --- a/Documentation/driver-api/pldmfw/index.rst
+>> +++ b/Documentation/driver-api/pldmfw/index.rst
+>> @@ -14,7 +14,6 @@ the PLDM for Firmware Update standard
+>>     file-format
+>>     driver-ops
+>> =20
+>> -=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>  Overview of the ``pldmfw`` library
+>>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>> =20
+>>
+>> base-commit: e5e7ca66a7fc6b8073c30a048e1157b88d427980
+>=20
 
+
+--------------OkxWxlj6yIcRzXUVRU0fEtj8--
+
+--------------2o6I4THBubJ0s1zEC6v130gd
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wnsEABYIACMWIQQgQFSp1zOQVirsQx5qll0+bw8o6AUCaQkyCQUDAAAAAAAKCRBqll0+bw8o6Ahl
+AQCpD4zVwRAB7OWpm5AOLEBsOqcv2XCEfnZVNbfS+7GGAAD+I/3aCUkulCkM7rQbR3s60kHDNCzA
+pz1yjWxaBGuX/g8=
+=96yT
+-----END PGP SIGNATURE-----
+
+--------------2o6I4THBubJ0s1zEC6v130gd--
 
