@@ -1,133 +1,65 @@
-Return-Path: <linux-kernel+bounces-883258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7369DC2CD02
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:40:26 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C68EC2CD0C
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:40:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 08C3C34B298
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:39:45 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D532934BC33
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430CB32142F;
-	Mon,  3 Nov 2025 15:33:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B99530CDA8;
+	Mon,  3 Nov 2025 15:35:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EoqaC9vu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N1SZWNMI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895F92F29;
-	Mon,  3 Nov 2025 15:33:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98970283FCF
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 15:35:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762184016; cv=none; b=IN3S0h2SEnBzEXnpLVK5wLejhZgSYYIkljjn3ZBwldassYkwri1oexXYIq4fRFqdRAek/+fDS0ABI0vvGnIHg+I0T79sjjL80cgmPtlaXE8r6gUdzSNaBi/wSd+BEAEzszNB8y7UumRkK7NoKdqeasxsy7KKTc3NMskNJHvSB5M=
+	t=1762184102; cv=none; b=cXKFipJuAHEf44jQAQgw/hbFCiKXB0GYc43vk6X+NHTTetGmh/7Wyc8ws0Nm87wgzGU8dxt8q124I1KZOjx2ryWCmoKKh6q5sY+RpxqgwA2jZlPVrLbwCTKIxWS3KS7Pt17cV6anrpkZikZQTU6afE5js73QVWd5XI4x3NaN/jA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762184016; c=relaxed/simple;
-	bh=uNgNaPYwouZv9T9lCZAvJr4F5YbOOwITKjbMBTcUrBw=;
+	s=arc-20240116; t=1762184102; c=relaxed/simple;
+	bh=SW3TIGJMIg2vrHloehmaqeDzoU5scfUDSDR1CcoNKng=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nrCRdHtpQctpYxxwa3bWmsIVMu7INlmA+Qc8mFR8840b5bia+xtC9EPv4de82MVdZ1NPjyPdFIbG2EAG7l8/N/ImLJniYR1f2lcwx7iCXKz8FfVMRFa6PpQEKyGiK8u7EVmUwwGa2EkxUF2dFggEduvfRpIIIZA9kT8P0CYeiGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EoqaC9vu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABC50C4CEE7;
-	Mon,  3 Nov 2025 15:33:35 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=MlTesun0o1l9ElURMkDtjQ4voQhzbDEIL1Sb9EUrmsY7sbGtdn5Ds4+Lu/o7shdAahlxiYDMVsDzWZKxoCrZLuZ32eNlUSMgc/D1NJdsjJ7kEz6sHBuZGZ2E1uqucwfME6tp71/9oYiLTx+ew7/9e5m7EVRHjDVjyvEqr3MFBk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N1SZWNMI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5CBFC4CEE7;
+	Mon,  3 Nov 2025 15:34:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762184016;
-	bh=uNgNaPYwouZv9T9lCZAvJr4F5YbOOwITKjbMBTcUrBw=;
+	s=k20201202; t=1762184100;
+	bh=SW3TIGJMIg2vrHloehmaqeDzoU5scfUDSDR1CcoNKng=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EoqaC9vuQda+zjylpdayNSFe10w5OE5vTjDXkIBunHgQzE3bO872axhDmzaERKKc4
-	 1WO4YOH7eYFyN57IViLtXDCrjg9KhRMgfUaQ5wvFdAILIJ+KJxIythXbxl2DudG1ny
-	 6tPkIKJBZtN1QqqRhBrdVrjEHLxHNDazsSSAGXNV6/vFAwylTY5nsLR8bFV6JyMjZO
-	 iCqOtgaf65zxNMDC0B7+AsdsCtdYCThD9y8rPIyO8SbNqJMdrALHupnB49CN6j9eDA
-	 0SQ3+IxKdr/f/jFAtkS8A2J+ex/qA+tAfeh8rwofIinxaf4uRECGvhVZtZmc5/lO/T
-	 2L1Sj+MI9pXBQ==
-Date: Mon, 3 Nov 2025 15:33:33 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>
-Cc: linux-spi@vger.kernel.org, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Axel Haslam <ahaslam@baylibre.com>,
-	jic23@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com,
-	andy@kernel.org, marcelo.schmitt1@gmail.com
-Subject: Re: [PATCH v4 1/1] spi: offload: Add offset parameter
-Message-ID: <aQjLTc_2gnmv6Im3@finisterre.sirena.org.uk>
-References: <cd315e95c0bd8523f00e91c400abcd6a418e5924.1759760519.git.marcelo.schmitt@analog.com>
+	b=N1SZWNMIZMQHmORDR1eXot94vuaJyuwhm1tY7qBUKwmiMmsXoOEd/WypbgK4UCjzW
+	 0wlg2yxf0diQGD2A4gFPynBnUThe/u0TKyKrN13f5yIyYEC0Yz/GNu5WPwcCItdnJC
+	 5eFrA1Gy/88eeKfOeyzswLjxrO4c7nlcExPp24S/VBOwTCu5+EWi5j6j4JCTC2bWOk
+	 vvz9OsLfLCFYl5vqIWjtVPqP7jt9KiisuGUAVyl/+3ahFF13udAj2ltVW/8uZKO/cy
+	 zfsop7INXlem2UbskYIMasQP+J249Y1fQfNuva/YxYMPF6wiTayv83iFsrlE34wjCS
+	 2n/sczJuxZLjQ==
+Date: Mon, 3 Nov 2025 08:34:58 -0700
+From: Keith Busch <kbusch@kernel.org>
+To: Chu Guangqing <chuguangqing@inspur.com>
+Cc: hch@lst.de, sagi@grimberg.me, kch@nvidia.com,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] nvme: Fix typo error in nvme target
+Message-ID: <aQjLogHkN2hPwsBs@kbusch-mbp>
+References: <20251103024131.1855-1-chuguangqing@inspur.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="o8Uu4xR4vYJkTo3h"
-Content-Disposition: inline
-In-Reply-To: <cd315e95c0bd8523f00e91c400abcd6a418e5924.1759760519.git.marcelo.schmitt@analog.com>
-X-Cookie: If in doubt, mumble.
-
-
---o8Uu4xR4vYJkTo3h
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251103024131.1855-1-chuguangqing@inspur.com>
 
-On Mon, Oct 06, 2025 at 11:25:41AM -0300, Marcelo Schmitt wrote:
-> From: Axel Haslam <ahaslam@baylibre.com>
->=20
-> Add an offset parameter that can be passed in the periodic trigger.
-> This is useful for example when ADC drivers implement a separate periodic
-> signal to trigger conversion and need offload to read the result with
-> some delay. While at it, add some documentation to offload periodic trigg=
-er
-> parameters.
+On Mon, Nov 03, 2025 at 10:41:31AM +0800, Chu Guangqing wrote:
+> Fix two spelling mistakes.
 
-The following changes since commit 3a8660878839faadb4f1a6dd72c3179c1df56787:
-
-  Linux 6.18-rc1 (2025-10-12 13:42:36 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-=
-offload-offset
-
-for you to fetch changes up to b83fb1b14c06bdd765903ac852ba20a14e24f227:
-
-  spi: offload: Add offset parameter (2025-10-13 11:27:52 +0100)
-
-----------------------------------------------------------------
-spi: offload: Add offset parameter
-
-Add an offset parameter that can be passed in the periodic trigger.
-This is useful for example when ADC drivers implement a separate periodic
-signal to trigger conversion and need offload to read the result with
-some delay. While at it, add some documentation to offload periodic trigger
-parameters.
-
-----------------------------------------------------------------
-Axel Haslam (1):
-      spi: offload: Add offset parameter
-
-Mark Brown (1):
-      Merge existing fixes from spi/for-6.18 into new branch
-
- Documentation/devicetree/bindings/spi/spi-cadence.yaml | 11 ++++++++---
- drivers/spi/spi-dw-mmio.c                              |  4 +++-
- drivers/spi/spi-offload-trigger-pwm.c                  |  3 +++
- drivers/spi/spi-rockchip-sfc.c                         | 12 +++++++++++-
- include/linux/spi/offload/types.h                      |  9 +++++++++
- 5 files changed, 34 insertions(+), 5 deletions(-)
-
---o8Uu4xR4vYJkTo3h
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkIy0wACgkQJNaLcl1U
-h9B+TQf8CLMMp0eFM4Yft6zWiJu3qRiTwKgwwP8ASigBd/9Zl4WfV2JcrdE0IMzP
-GZsATHGwDGWbgG4Gkak2Q31XLQIyfVPg1hCEBuC3MEvPafGScG4q8wACtOBJDV/0
-8vj1B9PAyEKETM/2PrsOpPZQx7nXuFTRM699p1ICONrGYx/vTScIfxMMYd5Opy93
-bagKs62vmVPSAaZ8YLHLC8a+kxIMVb051vSUacEEl2vZNCVS8atZIOfne4pjkvWd
-AAmiPnypnYSnV2NrHI0z+yfCAqTV92TToD5HNBAVyGgkeUBhEVNT+o8KceYqlmyG
-tTcDZTSksf70z5bfXsMVz7G+GimfYQ==
-=BJP0
------END PGP SIGNATURE-----
-
---o8Uu4xR4vYJkTo3h--
+Thanks, applied to nvme-6.19.
 
