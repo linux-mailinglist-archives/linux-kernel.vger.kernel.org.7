@@ -1,238 +1,218 @@
-Return-Path: <linux-kernel+bounces-883622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7854C2DE72
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 20:29:27 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99158C2DE7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 20:30:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F2C93B5076
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 19:29:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F5DF4E51BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 19:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140A931D372;
-	Mon,  3 Nov 2025 19:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D6631D392;
+	Mon,  3 Nov 2025 19:29:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l6yylscO"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="C+74zJxj"
+Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11010062.outbound.protection.outlook.com [52.101.61.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7351C28D82F
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 19:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762198154; cv=none; b=eFO3LKRuumSIwaDmHuQ5KGhTSjru7EbpVCXX1IVA5JixKWyb/1DHiGxGNrTZp/IYQN6XyzC5LzXfggnmhlDA9c+fKFQ+lCFmQPj6jyFK0Z6gulA3qDFH3uoveoP22XOMXzuuMArG3rha40x/biGLIt4EnGLVB93dGcqijw3t4Co=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762198154; c=relaxed/simple;
-	bh=3ixGimuk0/HaHuWo/1PcSWMZCdoIwspA0vWadlpGWeQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SoQD1bKrV+yAJQWIKFuhWF3g+/IT4mdO3BK6Z6jn/DuAlU1qW1hzGL7MozN66QqNWi3C89WsKzimFu9n5YeGiCch2MIIZibQbO6Qrlq3JTzB9r6yYN5iQd68fZf9do7H7LF583Bh9OHXjOGtzSNtooTEdCzEhwxZzjWll7f9Zkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l6yylscO; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-4283be7df63so2571837f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 11:29:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762198151; x=1762802951; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pw1mz3Wmkjtz3arI75Z8UisY7e4ejFDGm7ZA+8DIcLQ=;
-        b=l6yylscOgUvQq2XzBc73m3dsQ4lqZk3PKKfncA6Y0KpUo4bRCqPaboACeCKPcEl3QI
-         2G3boR/0mKvFx23w0OSrMG1ts/2QruZd0ksArOh3PiEgDdIy6Gq417THbRE08p0SQJW0
-         VVTgaJqec52votxFqdryHYmOUAyxhvkDpq3+H5nwtnMdr+ilYpnKc/gM7j37YCJGWY+u
-         sCCRXmwa1o18i7dTSVaARYXi8YS0q/fovveVLhANFXkyoB86TeF9N11PU95qY+YvMzXs
-         1BMtz3j0ckoVF64RwMz4l92+6jy8/StJULFLiTBnhdtzNuRuheLvU0wWxethjOmcVxoW
-         fnsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762198151; x=1762802951;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pw1mz3Wmkjtz3arI75Z8UisY7e4ejFDGm7ZA+8DIcLQ=;
-        b=UYI605jwS2b4R2G2kNr2UCFuzji6NoDSGreevI5wXkPTWHFMRTaFeWbJfsdDfqacGv
-         +RTLyKnOKg/CzYrYnym82aB2TGPwBhvRXeI8MkcNUr4gbRkLTgOknWd2vqgbO3fVckCV
-         bQPRyl36XVMhBI380KZGgEdQCRxz0MGHtAMliyQ65JpV0b/WUcC9+DgicXRBm2qFLN9V
-         83RkJv3+B0l4ak1GzwcqEag8a/vfiGzBZAYD8fh8KdVuSsY/bD8LdLuwK3NbVijHmu67
-         WvBx1RmxByU0ymcrQiNev5ZcItFVp9/L7s8PRqz3N9ve6oeWNVlmFrTgy69Ar5HlW06P
-         RsBg==
-X-Forwarded-Encrypted: i=1; AJvYcCW0wINFu5l9B6i/hR/feT/dXK6UqdQeOde7c0vAwpriL53c8rsiNpAfCpzSG7r+7D+e0BKlS+3hKNVnU+0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy62bKRHYtgh3Yo3/Vc+xCPELOWGkEWxM6ZknfXLQv2QyLlEXdF
-	Z8iMUS7BO2r8lgyxDQNHXCqpFC8QT0YsU9Uvp+EJTIjiK5wB2HBB6uDO
-X-Gm-Gg: ASbGncu0ulcDD5g8wPHAnjaKBV+IuPfz9UAiLt9hwL9uF/p8qrcCYHfA+3B86GxUSQ1
-	LM4dA1d9CecfVMNFRARNlQ9iLw0pPAoveI5SSH402wEb2tqnTfwVUK5i5/WcSLTn8czmg0yN1Zn
-	qnXoCFY27E4x1oZTT0kUD/55PFMHySyMSlo83hUGqTGj4rWYCwUN/v1oorSTdsaIMpyOc/v5ZSm
-	4eJnXHi9ceGBHAX3SJ/85mLZns95kI5w3QKSg8BNqEEtHnc1pgT8CZAI0FD2WAJUhWOmDxU1Lzm
-	yirGaDuliS6LmVOIsLD2swFSbLaLSHc/rrIZUT/tTtDXKqXpw4k7TZ9Q2Y1z0sZBPNAT/2i+P6G
-	xJJhPixeTBBLXXOWW7TviiHGGsuEACXNtA5Q2MjP+ICrvS/222EXL9CBFugjaky6qssWq2d1IFh
-	XvqA6tuWauEtR3NfX26sLrtUfhUYG5sdMZNwcTr3HH88n8pU5lc0x4
-X-Google-Smtp-Source: AGHT+IEIOBDfz+HBIHDphP6uzoI17aYjvF3ZSriDyVBLsupCrmaZDmFmWse/BayuXmJV7U9EbfA7ug==
-X-Received: by 2002:a05:6000:2411:b0:427:928:789e with SMTP id ffacd0b85a97d-429bd6d583dmr12073376f8f.61.1762198150371;
-        Mon, 03 Nov 2025 11:29:10 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c4af7c7sm175165915e9.7.2025.11.03.11.29.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 11:29:10 -0800 (PST)
-Date: Mon, 3 Nov 2025 19:29:08 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Kuan-Wei Chiu <visitorckw@gmail.com>, Guan-Chun Wu
- <409411716@gms.tku.edu.tw>, Andrew Morton <akpm@linux-foundation.org>,
- ebiggers@kernel.org, tytso@mit.edu, jaegeuk@kernel.org, xiubli@redhat.com,
- idryomov@gmail.com, kbusch@kernel.org, axboe@kernel.dk, hch@lst.de,
- sagi@grimberg.me, home7438072@gmail.com, linux-nvme@lists.infradead.org,
- linux-fscrypt@vger.kernel.org, ceph-devel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/6] lib/base64: add generic encoder/decoder, migrate
- users
-Message-ID: <20251103192908.1d716a7b@pumpkin>
-In-Reply-To: <aQjxjlJvLnx_zRx8@smile.fi.intel.com>
-References: <20251029101725.541758-1-409411716@gms.tku.edu.tw>
-	<20251031210947.1d2b028da88ef526aebd890d@linux-foundation.org>
-	<aQiC4zrtXobieAUm@black.igk.intel.com>
-	<aQiM7OWWM0dXTT0J@google.com>
-	<20251103132213.5feb4586@pumpkin>
-	<aQi_JHjSi46uUcjB@smile.fi.intel.com>
-	<aQjxjlJvLnx_zRx8@smile.fi.intel.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0C0A28D82F;
+	Mon,  3 Nov 2025 19:29:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762198190; cv=fail; b=F9vKXCH6zgBkD+sRYebZeTuRZV1IKybUAMXyJkmUZft555z9nCgusbqB5fNg1qXYCZVkVioKqigkuvw8IPWYYeDbtno/sm+qyfHDHzWYsDJ61BaQxakoIart/HOh/cXeGT9jt4sWvHd/nZc+OyfUXRhrFQb86rWWaUNnucbFjIA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762198190; c=relaxed/simple;
+	bh=xWNR1oGLOfLtEsacLf7u7LqzV2uSc+rcZOs/SpRosVY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=D8uhmGU+I/OSG/AEuP8gYuwKG41otDvI9omDFO5fdU+z1t1FnzKnbnjgy5RSQR70j/qPP48GVGTz3IEUrJCIzK1KlJF9D/7K0Xmg/9kboCUptRXxDMk0Ilwfpsq61OSqnNIkUKIQxKE2wQmEF/MxF6QXoyCOduLOo3qYKQ/2rlc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=C+74zJxj; arc=fail smtp.client-ip=52.101.61.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lPjY7GvewxAWu5WzZBGS3wm0HhorCx92AQ6eVy135Khir7onqLua4CBxAzkToS/GjoYfC9nQoU+R0cOw7FtqTC26aBBobqPClHeeijSPaBGxAZhhAWnVajhgnW1hGCNHarvyWAlWkh6Ilnh4/4+/LfKZE7ck+qd5JAVGLLUSIKf2cQxfczo4b1CmLSWIch2zjWQYoZhURhs8beOCYHIFaj8DLAskI0c2WVG8Vi3KTK/doXWNodgHCfY1/pw2ROKihfLxZWQcQnJUBFRwzsXYJxv2KZ+IbWkNs6GgTTKctaTQi1GSVAlpCjDyONLU/bw7hZ41ZMGg5iPyrXuxPAgFTw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QajWhrkTDE9/OUU/00qZKPdxsm2QS09vJeq57ChQLDo=;
+ b=JgKuZCBFubtyUDYMOK+WTEWCFh6pjEAomIuzRzdibTJpcslhj6lBnp/2Iz59p8waiWxlJ26igLmmR+SG+9HzTlxF5Smp1r0leeALLsC2koWRyOFLPJ0PtTDWVOggB3yIYSy2KwHw/TDEqDkkgCXCDUglqpbigDdT2CHhAfQbr+Qc4F8S7QmI5h8C/izeyGCApZzVFC7XXxdIqw0cG8Sa6Gv7JDlhqaD1xtiI4wlMIjTfbnUAQ/vi/JOtFSqNzKygjGwzy5xHKyzF0KsLsyhvFvthdt924M90n5tqEFJDGZ/Pg/ysR5C8QkFGbz4VcEN2+81SoOulfnXkFUfPd9Jq4Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QajWhrkTDE9/OUU/00qZKPdxsm2QS09vJeq57ChQLDo=;
+ b=C+74zJxj6xKYCjE4ecYTQSAPs3/Qsiq83Pb5qFleSKcu7EtAKpvg3OYVWkYqV3zk6KcUbZx+dIYjy7bYaYfpn2Khk4WOVcDPy9s4dBAHzbGqHAIxoPCR00wL5muAbkNj0fv+HjM6k3mEaBodAORZrXV/0UmxRLrCeSCfHHgBmbcq26mvfGERSEG0O5NctM8ZXblAtjJaM0zcsCBZK9Q92YD8PMpP/ci54NAI54El7h1chOgJR89W9vVi4fi6sNoNhFnDfECchGZ1NGqCgHtu6pqTEt2IYkosnZZ5Iwk0EQ9+XnQ4CKFraJajyf8NXZkDYqCvXn2moOva9p0kLVMFPw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com (2603:10b6:a03:210::13)
+ by SJ5PPFE4FC9FAB3.namprd12.prod.outlook.com (2603:10b6:a0f:fc02::9a7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Mon, 3 Nov
+ 2025 19:29:45 +0000
+Received: from BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4]) by BY5PR12MB4116.namprd12.prod.outlook.com
+ ([fe80::81b6:1af8:921b:3fb4%4]) with mapi id 15.20.9275.015; Mon, 3 Nov 2025
+ 19:29:45 +0000
+Message-ID: <02d37e88-8bfe-45ab-86da-0afa98fa1ebe@nvidia.com>
+Date: Mon, 3 Nov 2025 11:29:33 -0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/7] nova-core: mm: Add data structures for page table
+ management
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+ Joel Fernandes <joelagnelf@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, dakr@kernel.org, acourbot@nvidia.com,
+ Alistair Popple <apopple@nvidia.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, bjorn3_gh@protonmail.com,
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Timur Tabi <ttabi@nvidia.com>, joel@joelfernandes.org,
+ Elle Rhumsaa <elle@weathered-steel.dev>,
+ Daniel Almeida <daniel.almeida@collabora.com>, nouveau@lists.freedesktop.org
+References: <20251020185539.49986-1-joelagnelf@nvidia.com>
+ <20251020185539.49986-8-joelagnelf@nvidia.com>
+ <CANiq72=SSQ5nSjt9yzX_A3Tgo2ByGM5CV0VqFnF1cTOzrZ-pbg@mail.gmail.com>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <CANiq72=SSQ5nSjt9yzX_A3Tgo2ByGM5CV0VqFnF1cTOzrZ-pbg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SJ0PR03CA0185.namprd03.prod.outlook.com
+ (2603:10b6:a03:2ef::10) To BY5PR12MB4116.namprd12.prod.outlook.com
+ (2603:10b6:a03:210::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY5PR12MB4116:EE_|SJ5PPFE4FC9FAB3:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2a5168ed-4a94-4a95-29c5-08de1b0f581c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eFFiSzZxOGxMZXZVbWxlcmNsZS8zNGl5dk0vanltaTZtaGE2cUpMK3RNaVhU?=
+ =?utf-8?B?WjB2NkRXVjFxcVlpNUtlU0x4U2hYNW1yTVR3NjVVcFNPaGk0QjhCTU5vLzFE?=
+ =?utf-8?B?cnNGa29KdUVlMk9YTHY1NmthNytKb3p0WUkvMkhvV3YxeERzVDE5bDJWanFu?=
+ =?utf-8?B?bDBGaHAwRnFYS3ZmZEkrVTlpUVZHQklka1R5c0hOR3BzQ3RQZFdyblFxbUI3?=
+ =?utf-8?B?WHdCMjFsM3BHZ1JRaCtJOEVraHJ4V0tiaForOFJ0U2FBSjI3Z1EwV2xxZnBP?=
+ =?utf-8?B?NlhmaGtTS0NSamZFZmtITnJQQk9aVXRCK2UrWnV3Lzc5L0VhaXJWTVR1V0FD?=
+ =?utf-8?B?TFp4TW51WUlISEhvdlQySll1Zm9MZEhxTVJ4YjVtekdadTRXTEx6T1RCK1VY?=
+ =?utf-8?B?U2JxMWNtYXJlR2I1UHZMckw1OXZiRjVIZmI3VXZjY1doWis5Y1FOVzlxNnY0?=
+ =?utf-8?B?VjhZSUZuUGVvcGxrMExQUzdFUzA0MDRVcWJsakJIbjYrQ1RRTkRTanVlK0hF?=
+ =?utf-8?B?ZXNVQVdtbHZ2eEtaWU5pYnJjMmRFNVZHcW1SSjBEMzdSK2RaUTc4djVrbko4?=
+ =?utf-8?B?cktvb3luUDYxd0lTVHhOdHU5ZVM0WjgzN3UrZFlrQ1J0WVdpMXFmbFlUNmRQ?=
+ =?utf-8?B?cWhUdXB5Z3FHSHI1Y3Z1KzlGQytGazNQcmFTcFFGQTRPbzdueGhJaDJhcFZJ?=
+ =?utf-8?B?c2syY1RoZjdER0htTGtBL3cyMThCZHlseWFPNG9EYmlnQkVCeUM1dDB4d2Va?=
+ =?utf-8?B?ckx5c3VGRlZmME1tc2NNYkszVENEOWc1bHE2blNDTXlKemQ0MVM4WkV6eVRr?=
+ =?utf-8?B?NEh1TlphMWN2V29ISGJLSlZkRStEbFVMU3dHU0MvMjFhelJIaU5yWlF0aGRC?=
+ =?utf-8?B?dVNQLytQUzNVNEZjY20ybGJhSk5ZbWtuSjYyTDZ1Q09kdDUwRHhwTjBlbk9M?=
+ =?utf-8?B?SmN5bjY1RUdqNDAwVmowa3U2UGVseFcwNFU0QWt3SSt2OHF5R0M0Wmo3dE9T?=
+ =?utf-8?B?dlBBRXkwbzhoQm9vU0FFc2hIWUhTOStzRjdyNXR2K3RZT0U0Y3ZtT1FjcWlC?=
+ =?utf-8?B?SG5WaGhEUTlxZWhWZ1hNYmIreDJrQlBHMDJ0K2dKRjZ3Ymh1NnRyOXEwMlF3?=
+ =?utf-8?B?cEhuaUZBdWcvTWgwTnNqZjJzbks3SFQyR083NlZKL2Z0d2d6RHdBNy9ESkMy?=
+ =?utf-8?B?OVQ1Vk5DamI4a0pDWHlJTDZKclFXZVdZNU5yYUhIODc2WitSdFhJSHdpTm8v?=
+ =?utf-8?B?M0RycjRKKzVudUR6KzVZSlFkYndBME0zM0RBN3NOYXdtK0xEZVBhVjJSck01?=
+ =?utf-8?B?R1d4TFlTYytNT2xuOTUvWG5MSkhoQnkvM2xNVjNDUXJMejNtSUxtb1dqbzI1?=
+ =?utf-8?B?N05PSTE2YWwrK3d5NzBhTHdvQzcrbjZKM2daSXRqciszelNKcGlWV3RUNWVI?=
+ =?utf-8?B?RENTTDNrK2FJMGZ0TzQxZXNzSnZjQ05vTVhZa2VZUVNsUk9zZmNISmVFU25B?=
+ =?utf-8?B?SXVQNzF1eDR5RGovS2tnYUZuWDdjTjVDRWM0UTdUTW5uM0FwS3VLUWNNcy9t?=
+ =?utf-8?B?MUlmTGc3SG5WQysvQzB0ZDVabHFpZUV0dWJHUFRlb08zdWc5eDBYSTI5bFV0?=
+ =?utf-8?B?YVBCbkJWSkVrU3Ird2ZPMlMrd2FocjBHdGVBaTdMTTYzNDV4RENCRm1HOFZv?=
+ =?utf-8?B?Uk1JNmNsczBEKzNOa0RHOFpKamo4VkFBR0ZpQ21mdU9ra0E3eWh6MTBGeGpO?=
+ =?utf-8?B?YmtwSkNUQzZWZmQ1NmFKSVBRZit5ZC9iSnd3Y0RFdnMrcGhySVBOWVZ6ckRr?=
+ =?utf-8?B?d3IxVzFWa3p4YkhkN3NyUTBqWDJCSXZta1pvMVdjMnVnL2VZYktUV084Wjhi?=
+ =?utf-8?B?akxZNU8xdjRkOE9BUDU1ZVdYYzJqbXpMbkkyUGd0M2JTdDNjM0krQlN5T1k2?=
+ =?utf-8?Q?hhIslj5PKToB3pjJllJGQ1jpQWQQ25ml?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR12MB4116.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SkdoczFsMmJOQUpMb0lZZ0tJTXE0ZnZCZ1NSTkYyNXJKV3UzRjdaMGZNNXd4?=
+ =?utf-8?B?Q3p5UHg5QVBWWFFtZi9sL05iSnoxemNkZ2N5Y3hGcVhHaW43UTR6RW0zTUxz?=
+ =?utf-8?B?aWpzSzBkK2F5Zi9NbEZrSDU5czk1dlFURUljdDZlby9uV0VIOWNFQjRXc1No?=
+ =?utf-8?B?RlFUSG1Cd2tWR2tWc3lUaFVBQ3BmWndKQ0MzakxFRFNCYlVXbVcybEZmanlh?=
+ =?utf-8?B?YkVQY0MzK0xtdzJRN1doVEVrK1ZGczNyYkFKclc0Q1VWRG8zek1jZU1VOEY4?=
+ =?utf-8?B?Ukg4U1F4amwvMU5ZbkMyeXRWK1diRksyUzZGRmxVSmxVR1RJckVVQ2NwUml4?=
+ =?utf-8?B?M09TQ2JPOE5nSHpLaHQ5cmtPQkxoUFAxSjJBYnhYMDdOMkE0d0YzaGE0RkFy?=
+ =?utf-8?B?L0JlZGdQUjJzZ0h0NEZkUUd2YVp0V0htM21ZZ1VmNFpDb2Z6YUVwdjQvZVdi?=
+ =?utf-8?B?NWYwQ0NZRTUxSkJsLzJxd0Njdk50VUlVbEQ2ZUlJSysybjlzWFNGdkVXQXpu?=
+ =?utf-8?B?WWQ0bUhKWGFYN1VySEd0MlVmVk9DaUtrb2xCNFd6NHhGTmlDczFIMTZhQnlQ?=
+ =?utf-8?B?bUdsUEg4Ylo4NVBZZnVYQlY1TDVNSjhyd2pCaWhVSlRDUHRWdysvTHhsME5m?=
+ =?utf-8?B?ZWM1LzFCVnFBVHVCM1RGdDhRQ1pvd05EZXRvRXl1YkFGam81OUVWVjllS1VF?=
+ =?utf-8?B?alFBQzNOSWJqaXk4R3FialI5bUNxZmR2YklZNE0xQ0NUWGI0TnhxS2dLZ1cw?=
+ =?utf-8?B?MmJaTm1ORG83MlAwdTJzRWV0bUgybUt1K0Fsd2F3NmJYbzlrYzJLbXVEZFRq?=
+ =?utf-8?B?VFp3RVlQNy9sNWV1d3BPVUVxQ1Bnb0Z4V0VDVWJmVmxhWkE4a2dxcnRMQStp?=
+ =?utf-8?B?V2V3RU1PcW81dGRpcGRSQkpCczVQdjRhcGU1SE16c0E0YlVkTzBxK0ZOSnNr?=
+ =?utf-8?B?VTBiMVZjeVhQbzViY3hBMWVrOWRJUjZ4dTVoV2NNbEk1ZTZPYy80VUx5QlJo?=
+ =?utf-8?B?Q1h6MkE3akE1d3JEK1RKR244M3FyVFNTMzRkZE4zMEp0cktDckN6dTBSM2pj?=
+ =?utf-8?B?UnpOUEI4cTA1ZU95eUdQUTJCRTM1Z251MmQwTHJiSmFsSTVwSkdKa3lWcml3?=
+ =?utf-8?B?SzJDZzlKbWVlYVAyUHppOUUyUTU2dExFazVhU2diNkRhUzJpZDR0TlljeGpB?=
+ =?utf-8?B?ZmtSeFE2OXJxdzZndjM1NENnNzcwZDdCK3AyVXR4VlBYWmpyTjk3NytJblRx?=
+ =?utf-8?B?b1ZWTFVpSHBvck85dnlnL3ZlVkRPWGlVc3BrMkVBdjJkc1U5RENTM0VwMldj?=
+ =?utf-8?B?TjNWOSt6bHB4NURWcU90SW5hTE9hM0tDUHdsNHRZTkdGWTJTcmtvRnZabHlU?=
+ =?utf-8?B?TDlveFBSVkxkSzV6RGFiMHNlZnM1OUpoRys5bzVvRWFlSm5lQS9xWXBQdmk3?=
+ =?utf-8?B?RDVZeEQxVExJVDhlTG8xd2VmRnJMVGZVK3g4L29QQ2JrbmxVb3BhUDZHM25M?=
+ =?utf-8?B?cUFYZVBNejFnYlAvTklTRmJlcld5MHFJY0paY05MQU15UWNmSW1nNlFXU0tW?=
+ =?utf-8?B?d3dZVHkvcm91aVpwV1J6ZzREZWMvUkk5SUcvb1ljUzlFL0xBUXlvb3RVcDZz?=
+ =?utf-8?B?WjVhYVRqbGthNCt4SGxDK3BBdFJjNXNUS0hNN1pzaStpVXM3dGdZOWhTYzY1?=
+ =?utf-8?B?VlRUUm94Y3JuVmUwQ3hFTjBsTm9SNTBacC9IcDVuWkxEenp0SENYUUFqV3do?=
+ =?utf-8?B?cWs4OUNQU2xQNGdwZEFBMEpjekxYK3FXUXZBRFVld2VIaTNaU2NTUkdXTG1Z?=
+ =?utf-8?B?aWlCQUVSQnFtWXcveDJCZGgwL2s1YkpDZnI1bnptYXhGQ0JLbFJjS1ZyZlQ5?=
+ =?utf-8?B?NUw4eW5kOG5kSU1jUXFkMytBRTdRdlJUQVpycmlWMXN4QW9lOGFPOUxlM2Yv?=
+ =?utf-8?B?S3l5bStIZTBUUWNQTHBiU2hEZ2VhSC8xSmhDUjlFYndFOHhHQWZHUDZUY3Ev?=
+ =?utf-8?B?aVY4UDFjS3ljZDR3UCt1UVQ5NEcyZmtqSXhjQ0RPQ2pMUlk4eXVlZXpQSVpB?=
+ =?utf-8?B?bXpBYlpkWjZDWTdRZGY4WmFkRHgyUlF1cm1vU2FMSzZSaTN0VG1kV2xUaVpL?=
+ =?utf-8?Q?EOFHXofT8C0kEIZEHGqZzvEHt?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2a5168ed-4a94-4a95-29c5-08de1b0f581c
+X-MS-Exchange-CrossTenant-AuthSource: BY5PR12MB4116.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 19:29:45.2626
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: b9LdRTADQC1azAGnkuuai+CGoPdNk2sOiK3VbvGQCTv4H8KliE9eiozCjeWG/7URzLYV4Y0nZKQDEI1OCo5JSw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPFE4FC9FAB3
 
-On Mon, 3 Nov 2025 20:16:46 +0200
-Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
-
-> On Mon, Nov 03, 2025 at 04:41:41PM +0200, Andy Shevchenko wrote:
-> > On Mon, Nov 03, 2025 at 01:22:13PM +0000, David Laight wrote:  
-> > > On Mon, 3 Nov 2025 19:07:24 +0800
-> > > Kuan-Wei Chiu <visitorckw@gmail.com> wrote:  
-> > > > On Mon, Nov 03, 2025 at 11:24:35AM +0100, Andy Shevchenko wrote:  
-> > > > > On Fri, Oct 31, 2025 at 09:09:47PM -0700, Andrew Morton wrote:    
-> > > > > > On Wed, 29 Oct 2025 18:17:25 +0800 Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:  
+On 10/20/25 2:30 PM, Miguel Ojeda wrote:
+> Hi Joel,
 > 
-> ...
+> A few nits below (I do sometimes this kind of docs review to try to
+> keep a consistent style across all Rust code).
 > 
-> > > > > > Looks like wonderful work, thanks.  And it's good to gain a selftest
-> > > > > > for this code.
-> > > > > >     
-> > > > > > > This improves throughput by ~43-52x.    
-> > > > > > 
-> > > > > > Well that isn't a thing we see every day.    
-> > > > > 
-> > > > > I agree with the judgement, the problem is that this broke drastically a build:
-> > > > > 
-> > > > > lib/base64.c:35:17: error: initializer overrides prior initialization of this subobject [-Werror,-Winitializer-overrides]
-> > > > >    35 |         [BASE64_STD] = BASE64_REV_INIT('+', '/'),
-> > > > >       |                        ^~~~~~~~~~~~~~~~~~~~~~~~~
-> > > > > lib/base64.c:26:11: note: expanded from macro 'BASE64_REV_INIT'
-> > > > >    26 |         ['A'] =  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, \
-> > > > >       |                  ^
-> > > > > lib/base64.c:35:17: note: previous initialization is here
-> > > > >    35 |         [BASE64_STD] = BASE64_REV_INIT('+', '/'),
-> > > > >       |                        ^~~~~~~~~~~~~~~~~~~~~~~~~
-> > > > > lib/base64.c:25:16: note: expanded from macro 'BASE64_REV_INIT'
-> > > > >    25 |         [0 ... 255] = -1, \
-> > > > >       |                       ^~
-> > > > > ...
-> > > > > fatal error: too many errors emitted, stopping now [-ferror-limit=]
-> > > > > 20 errors generated.
-> > > > >     
-> > > > Since I didn't notice this build failure, I guess this happens during a
-> > > > W=1 build? Sorry for that. Maybe I should add W=1 compilation testing
-> > > > to my checklist before sending patches in the future. I also got an
-> > > > email from the kernel test robot with a duplicate initialization
-> > > > warning from the sparse tool [1], pointing to the same code.
-> > > > 
-> > > > This implementation was based on David's previous suggestion [2] to
-> > > > first default all entries to -1 and then set the values for the 64
-> > > > character entries. This was to avoid expanding the large 256 * 3 table
-> > > > and improve code readability.
-> > > > 
-> > > > Since I believe many people test and care about W=1 builds,  
-> > > 
-> > > Last time I tried a W=1 build it failed horribly because of 'type-limits'.
-> > > The kernel does that all the time - usually for its own error tests inside
-> > > #define and inline functions.
-> > > Certainly some of the changes I've seen to stop W=1 warnings are really
-> > > a bad idea - but that is a bit of a digression.
-> > > 
-> > > Warnings can be temporarily disabled using #pragma.
-> > > That might be the best thing to do here with this over-zealous warning.
-> > > 
-> > > This compiles on gcc and clang (even though the warnings have different names):
-> > > #pragma GCC diagnostic push
-> > > #pragma GCC diagnostic ignored "-Woverride-init"
-> > > int x[16] = { [0 ... 15] = -1, [5] = 5};
-> > > #pragma GCC diagnostic pop
-> > >   
-> > > > I think we need to find another way to avoid this warning?
-> > > > Perhaps we could consider what you suggested:
-> > > > 
-> > > > #define BASE64_REV_INIT(val_plus, val_comma, val_minus, val_slash, val_under) { \
-> > > > 	[ 0 ... '+'-1 ] = -1, \
-> > > > 	[ '+' ] = val_plus, val_comma, val_minus, -1, val_slash, \
-> > > > 	[ '0' ] = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, \
-> > > > 	[ '9'+1 ... 'A'-1 ] = -1, \
-> > > > 	[ 'A' ] = 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, \
-> > > > 		  23, 24, 25, 26, 27, 28, 28, 30, 31, 32, 33, 34, 35, \
-> > > > 	[ 'Z'+1 ... '_'-1 ] = -1, \
-> > > > 	[ '_' ] = val_under, \
-> > > > 	[ '_'+1 ... 'a'-1 ] = -1, \
-> > > > 	[ 'a' ] = 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, \
-> > > > 		  49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, \
-> > > > 	[ 'z'+1 ... 255 ] = -1 \
-> > > > }  
-> > > 
-> > > I just checked, neither gcc nor clang allow empty ranges (eg [ 6 ... 5 ] = -1).
-> > > Which means the coder has to know which characters are adjacent as well
-> > > as getting the order right.
-> > > Basically avoiding the warning sucks.
-> > >   
-> > > > Or should we just expand the 256 * 3 table as it was before?  
-> > > 
-> > > That has much the same issue - IIRC it relies on three big sequential lists.
-> > > 
-> > > The #pragma may be best - but doesn't solve sparse (unless it processes
-> > > them as well).  
-> > 
-> > Pragma will be hated.
-
-They have been used in a few other places.
-and to disable more 'useful' warnings.
-
-> > I believe there is a better way to do what you want. Let me cook a PoC.  
+> On Mon, Oct 20, 2025 at 8:56 PM Joel Fernandes <joelagnelf@nvidia.com> wrote:
+>>
+>> +//!     .set_table_frame_number(new_table.frame_number());
+>> +//! // Call a function to write PDE to VRAM address
 > 
-> I tried locally several approaches and the best I can come up with is the pre-generated
-> (via Python script) pieces of C code that we can copy'n'paste instead of that shortened
-> form. So basically having a full 256 tables in the code is my suggestion to fix the build
-> issue. Alternatively we can generate that at run-time (on the first run) in
-> the similar way how prime_numbers.c does. The downside of such an approach is loosing
-> the const specifier, which I consider kinda important.
+> Newline between these. Period ad the end.
 > 
-> Btw, in the future here might be also the side-channel attack concerns appear, which would
-> require to reconsider the whole algo to get it constant-time execution.
 
-The array lookup version is 'reasonably' time constant.
-One option is to offset all the array entries by 1 and subtract 1 after reading the entry.
-That means that the 'error' characters have zero in the array (not -1).
-At least the compiler won't error that!
-The extra 'subtract 1' is probably just measurable.
+Hi Miguel,
 
-But I'd consider raising a bug on gcc :-)
-One of the uses of ranged designated initialisers for arrays is to change the
-default value - as been done here.
-It shouldn't cause a warning.
+As Joel also was hinting at, is there any easy way to get this sort
+of thing automatically checked? This is what scripts/checkpatch.pl
+helps us out with on the C side, and maybe it is also the right
+tool for Rust...?
 
-	David
+It's sad to have a patchset pass both checkpatch.pl, and CLIPPY=1 
+builds, and yet still be full of typography and convention 
+violations.
 
-> 
-> > > > [1]: https://lore.kernel.org/oe-kbuild-all/202511021343.107utehN-lkp@intel.com/
-> > > > [2]: https://lore.kernel.org/lkml/20250928195736.71bec9ae@pumpkin/  
-> 
+
+thanks,
+-- 
+John Hubbard
 
 
