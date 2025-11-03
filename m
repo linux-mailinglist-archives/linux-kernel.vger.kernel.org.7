@@ -1,121 +1,258 @@
-Return-Path: <linux-kernel+bounces-883231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF108C2CBE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:31:58 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FAADC2CCC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:38:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8C55034ACEC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:31:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 380304F2619
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:32:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E9DE3191A4;
-	Mon,  3 Nov 2025 15:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ExtowJG6"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D333A2E2665
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 15:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7D131DD82;
+	Mon,  3 Nov 2025 15:25:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB66313541
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 15:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762183452; cv=none; b=o7XSJcyZDWBQ7bO0N78VBTCTXmtfeXl5Fgic4YH6nei8yLvREzJNqTRKdtYItpmHvcHV6hpo/BboSmqXE9Rnc1PgXPl4ZPhrDKu/k3jc42g2e3C6j6wNc7b5AzBmLZCT9N6fHx9jIt1iOAdAaoqIG9sx2H5vbcxzsP+4hG4nIwg=
+	t=1762183499; cv=none; b=G+TsYlvsYFnEPVLHS3oiD9w7tjEV81aNN4sBIPvimmV+aznRBhkmH9ka2KSWs+m8pTGJ7+RNrLyc46suDHTIo3axoVu4fT4goqbjJGSXdx7GNsYvZuSbFVYXFwNiKWtxD5e1H5F57HUsI5FLzA7nUU+qySlXQGbE+S7FXTht4pI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762183452; c=relaxed/simple;
-	bh=ccXE7l8rh76UqpN08+a+SSxEqMoYL8fV38Ef9NR6ecY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=g1KneQkVsuCFYDGt4AD21/JlHMxViKzOShOWsP219HQKWYXd4j2y15133YFZj7Hk2RtxW9/uMgzWPMA+UckrBmU97VJ9riLsiedfl+ekTBRTtAVzKU3gFfnI2V7TNFCAVAPkB4MksULJVPu4PHEmUYrdl27o3fO816BK/LFZttw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ExtowJG6; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762183445;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=bafh6Qz+/AR0dvxRSvNKPJVNHyEjLHl83jQu2pz2VaQ=;
-	b=ExtowJG6k8ibWUtu1chzuZs5NfMgy5tLtx5y0m0R4Ub6M15dCtEAVFjRv23Ly1Z7pZp84Z
-	xQXT5HVu4vmDD49ewnTlNwDTeQlPymJIQi6UuZ4fBZhNokaCrgOuPC201pPfMf7qrnx3yd
-	VCVHRQ6k3es432+8sGlrBOsfesx6qrY=
-From: Dawei Li <dawei.li@linux.dev>
-To: catalin.marinas@arm.com,
-	will@kernel.org
-Cc: mark.rutland@arm.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	dawei.li@linux.dev,
-	set_pte_at@outlook.com
-Subject: [PATCH] arm64: Remove assertion on CONFIG_VMAP_STACK
-Date: Mon,  3 Nov 2025 23:23:45 +0800
-Message-Id: <20251103152345.175463-1-dawei.li@linux.dev>
+	s=arc-20240116; t=1762183499; c=relaxed/simple;
+	bh=j9iWIyYbIjwGY5VJA0VqTrLshnsJrIZGxJpSOueV+Bk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O1M7bqwWZWSd5LDlB7Fzqafi3HRg/YC2wyG+mlEiRxGqz7ko6sYngl7irwSjNTGgG+BH83u98EOippNIHqPIpg8T0+J9wtWMrtXy4mD26LAF7UkVERRhbJCb4gzxbMhIHM00QORCcCfVEMclguJfS8ozmA/4o7RulNR4kg34d3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E92552A6B
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 07:24:49 -0800 (PST)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7B7453F66E
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 07:24:57 -0800 (PST)
+Date: Mon, 3 Nov 2025 15:24:31 +0000
+From: Liviu Dudau <liviu.dudau@arm.com>
+To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Cc: Rob Herring <robh@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Chia-I Wu <olvaffe@gmail.com>, Chen-Yu Tsai <wenst@chromium.org>,
+	Steven Price <steven.price@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>, kernel@collabora.com,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-hardening@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH v8 1/5] dt-bindings: gpu: mali-valhall-csf: add
+ mediatek,mt8196-mali variant
+Message-ID: <aQjJLwd33aVY-ss9@e110455-lin.cambridge.arm.com>
+References: <20251017-mt8196-gpufreq-v8-0-98fc1cc566a1@collabora.com>
+ <6599426.lOV4Wx5bFT@workhorse>
+ <aQFoKoWIlf7xPzZX@e110455-lin.cambridge.arm.com>
+ <3127655.ElGaqSPkdT@workhorse>
+ <aQIc39c8MvU37G_q@e110455-lin.cambridge.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <aQIc39c8MvU37G_q@e110455-lin.cambridge.arm.com>
 
-CONFIG_VMAP_STACK is selected by arm64 arch unconditionly since commit
-ef6861b8e6dd ("arm64: Mandate VMAP_STACK").
+On Wed, Oct 29, 2025 at 01:56:14PM +0000, Liviu Dudau wrote:
+> On Wed, Oct 29, 2025 at 02:42:35PM +0100, Nicolas Frattaroli wrote:
+> > On Wednesday, 29 October 2025 02:04:42 Central European Standard Time Liviu Dudau wrote:
+> > > On Tue, Oct 28, 2025 at 09:51:43PM +0100, Nicolas Frattaroli wrote:
+> > > > On Tuesday, 28 October 2025 18:12:35 Central European Standard Time Liviu Dudau wrote:
+> > > > > On Fri, Oct 17, 2025 at 05:31:08PM +0200, Nicolas Frattaroli wrote:
+> > > > > > The Mali-based GPU on the MediaTek MT8196 SoC uses a separate MCU to
+> > > > > > control the power and frequency of the GPU. This is modelled as a power
+> > > > > > domain and clock provider.
+> > > > > > 
+> > > > > > It lets us omit the OPP tables from the device tree, as those can now be
+> > > > > > enumerated at runtime from the MCU.
+> > > > > > 
+> > > > > > Add the necessary schema logic to handle what this SoC expects in terms
+> > > > > > of clocks and power-domains.
+> > > > > > 
+> > > > > > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> > > > > > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> > > > > > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+> > > > > > ---
+> > > > > >  .../bindings/gpu/arm,mali-valhall-csf.yaml         | 37 +++++++++++++++++++++-
+> > > > > >  1 file changed, 36 insertions(+), 1 deletion(-)
+> > > > > > 
+> > > > > > diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml b/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml
+> > > > > > index 613040fdb444..860691ce985e 100644
+> > > > > > --- a/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml
+> > > > > > +++ b/Documentation/devicetree/bindings/gpu/arm,mali-valhall-csf.yaml
+> > > > > > @@ -45,7 +45,9 @@ properties:
+> > > > > >      minItems: 1
+> > > > > >      items:
+> > > > > >        - const: core
+> > > > > > -      - const: coregroup
+> > > > > > +      - enum:
+> > > > > > +          - coregroup
+> > > > > > +          - stacks
+> > > > > >        - const: stacks
+> > > > > 
+> > > > > I'm not sure how to parse this part of the change. We're overwriting the property
+> > > > > for mt8196-mali anyway so why do we need this? And if we do, should 'stacks'
+> > > > > still remain as a const?
+> > > > 
+> > > > The properties section outside of the if branches outside here
+> > > > specifies a pattern of properties that matches for all devices.
+> > > > 
+> > > > In this case, I changed it so that the second clock-names item
+> > > > may either be "coregroup" or "stacks".
+> > > 
+> > > Why would we want to do that for non-MT8196 devices? It doesn't make sense to me.
+> > > The overwrite in the if branch should be enough to give you want you want (i.e.
+> > > core followed by stacks and only that).
+> > 
+> > I built my understanding of why on the same reason of why we specify
+> > a minItems of 1 but require it to be 3 in the if branch of the only
+> > other compatible (rk3588): it describes what may be found in those
+> > properties, not what is required by the specific compatible preceding
+> > the generic valhall compatible. arm,mali-valhall-csf is currently
+> > not described as a compatible that's allowed to appear stand-alone
+> > without some other compatible before it to specify further which SoC
+> > it's on, so it really just is whatever RK3588 needs vs. whatever
+> > MT8196 needs at the moment.
+> > 
+> > Arguably though, there's no functional difference here, and I'm not
+> > aware on any rules regarding this. My change may be problematic
+> > however, because of the whole double stacks thing.
+> 
+> I think I'm saying the same thing. The "arm,mali-valhall-csf" is the most general
+> compatible string and defines the common denominator if not overwritten. I'm
+> not expecting anyone to use just that string for a compatible, but downstream
+> we have additional compatible strings that don't have to update the schema at all.
+> rk3588 has a specific setup that requires 3 clocks so you cannot have any optional,
+> that's why it is overwriting the minItems. Your whole double stack thing is
+> actually not needed if all you do is overwrite in the MT8196 case the clock
+> names and maxItems to only need two clocks.
+> 
+> > 
+> > > > Yes, the third "stacks"
+> > > > remains, though if you wanted to be extra precise you could
+> > > > then specify in the non-MT8196 cases that we should not have
+> > > > stacks followed by stacks, but I'd wager some checker for
+> > > > duplicate names may already catch that.
+> > > > 
+> > > > However, I don't think it's a big enough deal to reroll this
+> > > > series again.
+> > > 
+> > > I'm not asking you to re-roll the series but if you agree to drop that
+> > > part I can make the edit when merging it.
+> > 
+> > If the other DT maintainers (especially Rob who gave it his R-b)
+> > are okay with dropping it, then yes please do.
+> 
+> Rob, do you agree with dropping the change in the generic bindings?
 
-Remove the redundant assertion and headers.
+I haven't got any answers, so I'll push the patch as is and send a separate
+fix that hopefully catches Rob's attention quicker.
 
-Signed-off-by: Dawei Li <dawei.li@linux.dev>
----
- arch/arm64/include/asm/vmap_stack.h | 4 ----
- arch/arm64/kernel/sdei.c            | 4 ----
- 2 files changed, 8 deletions(-)
+Best regards,
+Liviu
 
-diff --git a/arch/arm64/include/asm/vmap_stack.h b/arch/arm64/include/asm/vmap_stack.h
-index 20873099c035..75daee1a07e9 100644
---- a/arch/arm64/include/asm/vmap_stack.h
-+++ b/arch/arm64/include/asm/vmap_stack.h
-@@ -3,9 +3,7 @@
- #ifndef __ASM_VMAP_STACK_H
- #define __ASM_VMAP_STACK_H
- 
--#include <linux/bug.h>
- #include <linux/gfp.h>
--#include <linux/kconfig.h>
- #include <linux/vmalloc.h>
- #include <linux/pgtable.h>
- #include <asm/memory.h>
-@@ -19,8 +17,6 @@ static inline unsigned long *arch_alloc_vmap_stack(size_t stack_size, int node)
- {
- 	void *p;
- 
--	BUILD_BUG_ON(!IS_ENABLED(CONFIG_VMAP_STACK));
--
- 	p = __vmalloc_node(stack_size, THREAD_ALIGN, THREADINFO_GFP, node,
- 			__builtin_return_address(0));
- 	return kasan_reset_tag(p);
-diff --git a/arch/arm64/kernel/sdei.c b/arch/arm64/kernel/sdei.c
-index 95169f7b6531..213ac72ce4fd 100644
---- a/arch/arm64/kernel/sdei.c
-+++ b/arch/arm64/kernel/sdei.c
-@@ -63,8 +63,6 @@ static void free_sdei_stacks(void)
- {
- 	int cpu;
- 
--	BUILD_BUG_ON(!IS_ENABLED(CONFIG_VMAP_STACK));
--
- 	for_each_possible_cpu(cpu) {
- 		_free_sdei_stack(&sdei_stack_normal_ptr, cpu);
- 		_free_sdei_stack(&sdei_stack_critical_ptr, cpu);
-@@ -88,8 +86,6 @@ static int init_sdei_stacks(void)
- 	int cpu;
- 	int err = 0;
- 
--	BUILD_BUG_ON(!IS_ENABLED(CONFIG_VMAP_STACK));
--
- 	for_each_possible_cpu(cpu) {
- 		err = _init_sdei_stack(&sdei_stack_normal_ptr, cpu);
- 		if (err)
+
+> > > > > 
+> > > > > >  
+> > > > > >    mali-supply: true
+> > > > > > @@ -110,6 +112,27 @@ allOf:
+> > > > > >          power-domain-names: false
+> > > > > >        required:
+> > > > > >          - mali-supply
+> > > > > > +  - if:
+> > > > > > +      properties:
+> > > > > > +        compatible:
+> > > > > > +          contains:
+> > > > > > +            const: mediatek,mt8196-mali
+> > > > > > +    then:
+> > > > > > +      properties:
+> > > > > > +        mali-supply: false
+> > > > > > +        sram-supply: false
+> > > > > > +        operating-points-v2: false
+> > > > > > +        power-domains:
+> > > > > > +          maxItems: 1
+> > > > > > +        power-domain-names: false
+> > > > > > +        clocks:
+> > > > > > +          maxItems: 2
+> > > > > > +        clock-names:
+> > > > > > +          items:
+> > > > > > +            - const: core
+> > > > > > +            - const: stacks
+> > > > > > +      required:
+> > > > > > +        - power-domains
+> > > > > >  
+> > > > > >  examples:
+> > > > > >    - |
+> > > > > > @@ -145,5 +168,17 @@ examples:
+> > > > > >              };
+> > > > > >          };
+> > > > > >      };
+> > > > > > +  - |
+> > > > > > +    gpu@48000000 {
+> > > > > > +        compatible = "mediatek,mt8196-mali", "arm,mali-valhall-csf";
+> > > > > > +        reg = <0x48000000 0x480000>;
+> > > > > > +        clocks = <&gpufreq 0>, <&gpufreq 1>;
+> > > > > > +        clock-names = "core", "stacks";
+> > > > > > +        interrupts = <GIC_SPI 606 IRQ_TYPE_LEVEL_HIGH 0>,
+> > > > > > +                     <GIC_SPI 605 IRQ_TYPE_LEVEL_HIGH 0>,
+> > > > > > +                     <GIC_SPI 604 IRQ_TYPE_LEVEL_HIGH 0>;
+> > > > > > +        interrupt-names = "job", "mmu", "gpu";
+> > > > > > +        power-domains = <&gpufreq>;
+> > > > > > +    };
+> > > > > >  
+> > > > > >  ...
+> > > > > > 
+> > > > > 
+> > > > > 
+> > > > 
+> > > > 
+> > > > 
+> > > > 
+> > > 
+> > > 
+> > 
+> > 
+> > 
+> > 
+> 
+> -- 
+> ====================
+> | I would like to |
+> | fix the world,  |
+> | but they're not |
+> | giving me the   |
+>  \ source code!  /
+>   ---------------
+>     ¯\_(ツ)_/¯
+
 -- 
-2.25.1
-
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
 
