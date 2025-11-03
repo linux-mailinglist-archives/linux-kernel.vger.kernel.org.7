@@ -1,78 +1,161 @@
-Return-Path: <linux-kernel+bounces-883768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E47A5C2E609
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:07:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5758CC2E618
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:09:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DA473B68F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:07:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D1693B5F4B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:09:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8316F2FD66D;
-	Mon,  3 Nov 2025 23:07:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB772FDC3C;
+	Mon,  3 Nov 2025 23:09:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WqtkZ31A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ed/2eeUb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0642EFDA5;
-	Mon,  3 Nov 2025 23:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E64279DAE;
+	Mon,  3 Nov 2025 23:09:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762211249; cv=none; b=juBLIT9EYf81OtYlUB3bBAXOjChqH0zCi+mQXOVvV/ZkjjLR2HzrH87IPS4myl0Bv4qJlvxijv1PWR2sXO7Om5bXicoJdhcvq/ItJjCDNFnvotltQHpEIpEObmlvUVB8QyxlkQfqfh65HEfmKmXOosy7AM8fwHJ1Z4dgv6qSSW8=
+	t=1762211353; cv=none; b=Y6yYCBBI0r8eBUCJgQ+JnENANC+zkh+BsnGpXbW3ioGA6ssH1LJriXI+FRWUY/kP0SVVw4/BEPj2w5HMqq+rf3O0tlqesTtIXwYrl/mlNjV6OtiQ5ArlaX9QOAY6GnZ5pZfGOQO2halq8nsOqrA+4CXudpYeLzTlzE1ne9L0ux4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762211249; c=relaxed/simple;
-	bh=OMVS4a5vTHm5CQ4is8lSPAja+uMe69qUq5lJcXWmYB0=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=FJHgq1Txs11Q2FNefYcaUrUmBCpAY7pjFST5CTzd+2RTx0Ea0osNySA332BDKaQdAAy6EexKtszoCI9ynZEgh6MEVOymqctwOIjh8x8tsAz1BuNRoU7jhM1pMB2TRTZc6CcOUDNzGNtAceKOOS1gIAhT5baRJEiMfgEpwgpauWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WqtkZ31A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73780C4CEE7;
-	Mon,  3 Nov 2025 23:07:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762211248;
-	bh=OMVS4a5vTHm5CQ4is8lSPAja+uMe69qUq5lJcXWmYB0=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=WqtkZ31AxTGsOx54hTC6u5yISP2pPTQsi9fFFns6uKm6wOdMdGnlREhUSNgzhNWA+
-	 Vknodrnh4+eafOEg5rSZKw8OdRUXhUk3IwFiOxx9fYrhfJSPgZqrcn5cgOP3TziR/r
-	 WotwH4sEITqKpE2D9t9tOJJwOC0jKnp4l03lnzpB9KturTkyMQDYj4gnKCoZ3pF0G1
-	 dhDyKnicFuBqNwQ1g0DZ51OnVMRF6NeIRe8mRzRlH1v3QPmObB4qESLX0fTi4K7bV3
-	 6jV8wpyCQksGeX29ml0svrtEAs8JPN2Ef8NiVz1I5KM4bp/U9ReY09OadW84mxOK+G
-	 KTOd4pj7xEn7Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB45C3809A88;
-	Mon,  3 Nov 2025 23:07:03 +0000 (UTC)
-Subject: Re: [GIT PULL] EDAC urgent for v6.18-rc5
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20251103114438.GAaQiVpgXgECnocHvE@fat_crate.local>
-References: <20251103114438.GAaQiVpgXgECnocHvE@fat_crate.local>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20251103114438.GAaQiVpgXgECnocHvE@fat_crate.local>
-X-PR-Tracked-Remote: ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/ras/ras.git tags/edac_urgent_for_v6.18_rc5
-X-PR-Tracked-Commit-Id: 79c0a2b7abc906c7cf3c793256c6b638d7dc477f
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 8bb886cb8f3a2811430ddb7d9838e245c57e7f7c
-Message-Id: <176221122260.2247133.18130206432088503298.pr-tracker-bot@kernel.org>
-Date: Mon, 03 Nov 2025 23:07:02 +0000
-To: Borislav Petkov <bp@alien8.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-edac <linux-edac@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
+	s=arc-20240116; t=1762211353; c=relaxed/simple;
+	bh=QvMpsgaSDen4lyz7AxCBQwLm8CEwLKEYNKi2d76kCso=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HkWdOfjkWzJXeWl4EYRG7aR2Udi3O1WlYpMx7s29MxVxehjHyFuMscXS4XW7d8LVE3JDBpInx/FUzhvaGkAuY5iTD/FyCw7h1428J4HSkxCK89h3sJ7a4hXMwMGX/1KdpBAO/Ej1+FK+P4s87V3RLZw6EKSIkjopqHDVZzMC/6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ed/2eeUb; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762211352; x=1793747352;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=QvMpsgaSDen4lyz7AxCBQwLm8CEwLKEYNKi2d76kCso=;
+  b=Ed/2eeUbv5r/pCnGgbDqYdBqVi9d8ioiYpgl6moJRZdIV63/A6JM1y3j
+   PoranySTbE0JlrOIhSkbhPPOH6+rNPBBKgBJq4Vo7CyFXUOQCBEukXHFA
+   /kxMmvK8HAXfAHGTg5zgqjNaBhVpVYbYk3cyWkc2zmhnAdlWDMkzUOOmn
+   FTgJ6XLyqguuEFUttqQtD5Qbp69fF0BYV7+U8sgq69EExwksFvlQ+FRut
+   5ahxGK9q3+yFjZ5n/8aZV7G/JtpRLmZ7yo4+8FCjeaJqjxzTW4XuwxPDJ
+   vE8EzYho61mXLVrKhCqLIaZfANI0q6elkA9WbK8TPjdABKaRF0WUFtvsp
+   A==;
+X-CSE-ConnectionGUID: XVwbS4PlTQ6Nr8fMVsVeng==
+X-CSE-MsgGUID: kQLEDBbcT1uGnzZpTUP4nw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="81705670"
+X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
+   d="scan'208";a="81705670"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 15:09:11 -0800
+X-CSE-ConnectionGUID: EcOEjnIPRkmITq9jZ+s5Iw==
+X-CSE-MsgGUID: m4rW2RntRiWAVflq0sNu/g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
+   d="scan'208";a="186672685"
+Received: from dwesterg-mobl1.amr.corp.intel.com (HELO [10.125.110.133]) ([10.125.110.133])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 15:09:10 -0800
+Message-ID: <1e3dffee-ffa9-452f-ae9c-83093460103f@intel.com>
+Date: Mon, 3 Nov 2025 16:09:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 08/14] cxl: Introduce callback for HPA address ranges
+ translation
+To: Robert Richter <rrichter@amd.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Davidlohr Bueso <dave@stgolabs.net>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Gregory Price <gourry@gourry.net>,
+ "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+ Terry Bowman <terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
+References: <20251103184804.509762-1-rrichter@amd.com>
+ <20251103184804.509762-9-rrichter@amd.com>
+From: Dave Jiang <dave.jiang@intel.com>
+Content-Language: en-US
+In-Reply-To: <20251103184804.509762-9-rrichter@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Mon, 3 Nov 2025 12:44:38 +0100:
 
-> ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/ras/ras.git tags/edac_urgent_for_v6.18_rc5
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/8bb886cb8f3a2811430ddb7d9838e245c57e7f7c
+On 11/3/25 11:47 AM, Robert Richter wrote:
+> Introduce a callback to translate an endpoint's HPA range to the
+> address range of the root port which is the System Physical Address
+> (SPA) range used by a region. The callback can be set if a platform
+> needs to handle address translation.
+> 
+> The callback is attached to the root port. An endpoint's root port can
+> easily be determined in the PCI hierarchy without any CXL specific
+> knowledge. This allows the early use of address translation for CXL
+> enumeration. Address translation is esp. needed for the detection of
+> the root decoders. Thus, the callback is embedded in struct
+> cxl_root_ops instead of struct cxl_rd_ops.
+> 
+> Signed-off-by: Robert Richter <rrichter@amd.com>
 
-Thank you!
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>> ---
+>  drivers/cxl/core/region.c | 19 +++++++++++++++++++
+>  drivers/cxl/cxl.h         |  1 +
+>  2 files changed, 20 insertions(+)
+> 
+> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+> index 2dd9e9be4889..379a67cc8e31 100644
+> --- a/drivers/cxl/core/region.c
+> +++ b/drivers/cxl/core/region.c
+> @@ -3364,6 +3364,15 @@ static int match_root_decoder(struct device *dev, const void *data)
+>  	return range_contains(r1, r2);
+>  }
+>  
+> +static int translate_hpa_range(struct cxl_root *cxl_root,
+> +			       struct cxl_region_context *ctx)
+> +{
+> +	if (!cxl_root->ops.translate_hpa_range)
+> +		return 0;
+> +
+> +	return cxl_root->ops.translate_hpa_range(cxl_root, ctx);
+> +}
+> +
+>  static struct cxl_root_decoder *
+>  get_cxl_root_decoder(struct cxl_endpoint_decoder *cxled,
+>  		     struct cxl_region_context *ctx)
+> @@ -3371,6 +3380,16 @@ get_cxl_root_decoder(struct cxl_endpoint_decoder *cxled,
+>  	struct cxl_port *port = cxled_to_port(cxled);
+>  	struct cxl_root *cxl_root __free(put_cxl_root) = find_cxl_root(port);
+>  	struct device *cxlrd_dev;
+> +	int rc;
+> +
+> +	rc = translate_hpa_range(cxl_root, ctx);
+> +	if (rc) {
+> +		dev_err(port->uport_dev,
+> +			"%s:%s Failed to translate address range %#llx:%#llx\n",
+> +			dev_name(&ctx->cxlmd->dev), dev_name(&cxled->cxld.dev),
+> +			ctx->hpa_range.start, ctx->hpa_range.end);
+> +		return ERR_PTR(rc);
+> +	}
+>  
+>  	cxlrd_dev = device_find_child(&cxl_root->port.dev, &ctx->hpa_range,
+>  				      match_root_decoder);
+> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
+> index 9a381c827416..94b9fcc07469 100644
+> --- a/drivers/cxl/cxl.h
+> +++ b/drivers/cxl/cxl.h
+> @@ -644,6 +644,7 @@ struct cxl_root_ops {
+>  	int (*qos_class)(struct cxl_root *cxl_root,
+>  			 struct access_coordinate *coord, int entries,
+>  			 int *qos_class);
+> +	int (*translate_hpa_range)(struct cxl_root *cxl_root, void *data);
+>  };
+>  
+>  /**
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
 
