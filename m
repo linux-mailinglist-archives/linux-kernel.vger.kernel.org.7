@@ -1,226 +1,130 @@
-Return-Path: <linux-kernel+bounces-883423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2F38C2D69E
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:16:14 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0660EC2D65F
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:14:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EB5218819FA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:11:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AA73F4EA0C9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:12:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085CC3195EC;
-	Mon,  3 Nov 2025 17:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F21331A06F;
+	Mon,  3 Nov 2025 17:12:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SlqXc6fd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T7ig8eNN"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32CEA319605
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 17:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D601830C375
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 17:12:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762189883; cv=none; b=ICjgn8hyFuKXyfTAmG2yiomPbV5j/EtZ/ock7wUHBxB4iWioAYL2zcfbYaeqHwZg6xaz0cHS+GjQpSJG3OBo4NTwTAkbhnU38/vkSG6Ue4dFJ+29Cz5eCc0uDVWa9kX9gRQcTmM3UW9ezeLLszbWnRYQuGtW9JT7GAOku3F4CE4=
+	t=1762189973; cv=none; b=Spie0GdYIX2GcGS3BVDYQx7PU3CSLDxqwj+jGOl2eaSNEWZDQuliuc6FJq9co2YIgjcHgfosCZkdozrpwU/qh6owKpPkfmgE/H7ZeOUgUh/tlNIrOjNMmBZ9AzWQNUOiJ8CeHp/rLWdT6DJG3WobQjfISD/cIIgNFmQa+AYRdzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762189883; c=relaxed/simple;
-	bh=Sv9FQL3Mzv+xYf8NoCGm6lqnm9197fwnn5s+c0L/OC4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P7/JzIOGmNaDteK0VLf00y9Q8MSkQBa0AxJAGHkWOQZNSd+dnZYr5VtIcLT6OI56/3oyltY3yzP14VCw/UCzjOe3SPt/Xpr5bEkjRUW6apIHW94pni57+NKKYA+4+pfqtRzCy3vULbfDOpu65jcbOHOQl1mwG/63RdO3cekqK1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SlqXc6fd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7704C4AF0E
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 17:11:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762189882;
-	bh=Sv9FQL3Mzv+xYf8NoCGm6lqnm9197fwnn5s+c0L/OC4=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-	b=SlqXc6fdFdwZKkA3NGn+gW1fT8efWP2Pq9Eay/W3Z/vvEZfuiMhms2HFuhmciuSLQ
-	 1Kh7RRyWB29Umachh4f15d/U7AQqP3zYHMeYH5OC3ZppNDS1UKTAdPsHgevXW/WW55
-	 ve9P/zKD57n3O8qju8FiYDzLkoTNe2h4N+7x0a2rVJjuzTYWH53qtGyPu87G5HYLDv
-	 eCmzAwVZo6J+LklFDGA4aj3LdeXYHdHp3670uap8kl2GfnATtEfPe4pICSzf4/kbdD
-	 thKd8mjau7IIw+u35stL/MSUdmOQNyQ03rET2COozaTLSqLRDjZQlLrDM1E0HNe3q2
-	 pDtzVyQqo3pug==
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-378d50e1c77so39071271fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 09:11:22 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWbVYJ7FJgXcbmyEnPDO7+na47UPScmtg2Pn3U63ZI3e0X+ASJH041Rak/DILQJg29702dmocbVQFDqi/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySKrhebf/pZDw1mWKLF6HPHzLAcjQ9Kf1R9AlZwoy6tn3e2IFZ
-	pMc4aldzi45RcoIRC1XJJHLcNu+OApvw5zbYt2gJR9x2z6j/edm3Mfmmqqn9vzF8XFQL4pwSqx3
-	8pU7AMGf+aYlhNWTySJ+kI52XuIs0Igw=
-X-Google-Smtp-Source: AGHT+IGj3r9zUjzPzn9IEygYQzEgz7ukM/+Lp4b6fW21ZV+0fJdeLDp4noFAI8Yrq2hHKB7s/nRse2db5Ak/8EyGv8Q=
-X-Received: by 2002:a2e:9205:0:b0:337:e29c:b0d2 with SMTP id
- 38308e7fff4ca-37a18de1e52mr34298411fa.41.1762189881006; Mon, 03 Nov 2025
- 09:11:21 -0800 (PST)
+	s=arc-20240116; t=1762189973; c=relaxed/simple;
+	bh=kDarkteaSnf10lfwAsM0uNbYYX1j31SFkq5885N1grs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KSeEDYD43bzxMORyqolgJopZk3Fpw0KrxD51xdEMVwf3l/AO5tS6LAypE7QnGw9bX8s0r657Tse3jZbJScjdzkLTUmA3kiabUz2yXt1r30vcz3LJg4iwHUiBAMVhgB6yMTW09xAknX1L+fSK3MnIe1SDo13Oau3w8VLiu0ozJP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T7ig8eNN; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b3b3a6f4dd4so858334566b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 09:12:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762189970; x=1762794770; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0L+x6u92PFUYymdltbOhgzGP+ZfkmtaHqsZECM78beQ=;
+        b=T7ig8eNNh+V/55GcLc/ThuyhUMfykytyFM46JH+87HC5sN3CdGLKxQQDb+NmePvDCD
+         ntBNtXR/wY5jFsWUqoy/qoB9xTErB10EiE86G5X8T0l7CBPOyNJo70Q8ju/yLpsUs8SJ
+         bgEgjw3cuF1jgkXkv72fYjj60L7AOv7oD+Shq+kdnYvn1NFyIMfh/iFwASPwuGrm8Kit
+         JtOi4typ3vO8UgsELcFjkJrZPXQrcqjnpaKENync7bfHOZwYJUlhcVp6IXRrB4i50p2k
+         4uh0p22XwWJ0ysIRTTLHCjgqFDfZMLxdMbW5pya6zvtrw5V31NJKS30yOwG8c+cOFFA2
+         4ItA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762189970; x=1762794770;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0L+x6u92PFUYymdltbOhgzGP+ZfkmtaHqsZECM78beQ=;
+        b=X2xhgRVVdYv1D1W2uJnnezi5IlmBTJRJWuaHsBHACq+Zeh1tEvhFHvQ+chhwiANYLq
+         PT5DHLryTqQUcwD06EzWg4Jy6dRpqCH+hR9mfXVYXKVUc8I01ivhUTft1fz9OEdSz9NS
+         alOVH8S2rsSV0/9Hvzo5xD5IewuWhdzsLy0uzSH/omrT/uLzZdY+xkJR1YvhP4t6msaW
+         fI6lJ8z+90pvE7yWtGKB6NedJi5nmHbAIa71hP4U/sHH2mbx5x2haKvRCCSD+OeHIeOk
+         WuMC8S40CbxytpMCRmgarQd9+KRwVxKeu+DTRMq+r3787pau27n6EFALX5/tj7jfOmNH
+         Mc9g==
+X-Forwarded-Encrypted: i=1; AJvYcCWLlWGQPgs2b+aMXotxUv6vz2zmOKTZOLofPoe6pkYsySE9gUR1LtDkstjxivG2H2ChuyRpJvwxI3+jPdU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+PUsPLFz7tqBgTv6Hguzzn4RCG3p7FXvutinUm4mHzTEiXXp0
+	T3ONIDq/oV97c2qxjCYBFZ9IkhwfalhcmS5GxnBGZX5XzZgvwdZ06rZ3
+X-Gm-Gg: ASbGncsWexKsjH7Q0NM3os9l6vWArVwgJIGMpwqAgNkJqMQtYuatclvyzajI2JjMFWe
+	G5OwxYGWV3440ci4t3wSleDym84NuxRuA7+Rph8+dCwpC7EDPDZORN7VnryyCXzSvBSiYeqTdLg
+	tpkq+o5YimKtIbR3ZTMWcXs0Mj0jWllxCt6SL/qNzlk+k6lNTrjTiOM7SC5KYNw6WYVyDjCch7g
+	ongkvl03xhwkiAIPIVbG1piWZSO5c3SNsCB/wF1OEBWjTgGtyI5OjA+HS8TxPYIH5pY7N3QGKGU
+	siWf+SXTxoKvvrhUcGvb7gf9RhpZVHBkjF0HHQBKz/gYiwDYqyHI1NwIARNv5OrX6bwVZyJCDqQ
+	mOCJJfSIhqGqBKn0D5lQjGK8/yYP8HqTbtcw34uPd1Kuaw8V4exeOyJLFntQ+C39mQEZHrXvxYI
+	NASGbO87ZQiSF4
+X-Google-Smtp-Source: AGHT+IFYSrn3+JLLfbrsA9O3z+gFUcu1TIraVBmewJp9yIRvtZodmEr6n/k/vgTpSkGh5NZ4ce3uwg==
+X-Received: by 2002:a17:907:3cd6:b0:b6d:79fa:b166 with SMTP id a640c23a62f3a-b70708b1503mr1195109666b.63.1762189969903;
+        Mon, 03 Nov 2025 09:12:49 -0800 (PST)
+Received: from foxbook (bgu110.neoplus.adsl.tpnet.pl. [83.28.84.110])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7077c809dasm1075780866b.50.2025.11.03.09.12.48
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Mon, 03 Nov 2025 09:12:49 -0800 (PST)
+Date: Mon, 3 Nov 2025 18:12:45 +0100
+From: Michal Pecio <michal.pecio@gmail.com>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: x86@kernel.org, regressions@lists.linux.dev, Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
+ <bp@alien8.de>, Mario Limonciello <mario.limonciello@amd.com>, Eric
+ DeVolder <eric.devolder@oracle.com>, linux-kernel@vger.kernel.org
+Subject: Re: AMD topology broken on various 754/AM2+/AM3/AM3+ systems causes
+ NB/EDAC/GART regression since 6.14
+Message-ID: <20251103181245.7745621f.michal.pecio@gmail.com>
+In-Reply-To: <20251103143851.GA8673@yaz-khff2.amd.com>
+References: <20251024204658.3da9bf3f.michal.pecio@gmail.com>
+	<20251024213204.GA311478@yaz-khff2.amd.com>
+	<20251103084021.61971a89.michal.pecio@gmail.com>
+	<20251103143851.GA8673@yaz-khff2.amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251012192330.6903-1-jernej.skrabec@gmail.com> <20251012192330.6903-27-jernej.skrabec@gmail.com>
-In-Reply-To: <20251012192330.6903-27-jernej.skrabec@gmail.com>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Tue, 4 Nov 2025 01:11:07 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65RecyHZVUN--oSmtzPDpmUHALd3Pqf79a1fKP9yxD8cA@mail.gmail.com>
-X-Gm-Features: AWmQ_bkNL0jahcEQaqn8bSZ19J8F-ktWPPiEchcfhtJA1Ye9Nhc1HXJ4hMb0Q_M
-Message-ID: <CAGb2v65RecyHZVUN--oSmtzPDpmUHALd3Pqf79a1fKP9yxD8cA@mail.gmail.com>
-Subject: Re: [PATCH 26/30] drm/sun4i: mixer: Add quirk for number of VI scalers
-To: Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: mripard@kernel.org, maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, samuel@sholland.org, 
-	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 13, 2025 at 3:24=E2=80=AFAM Jernej Skrabec <jernej.skrabec@gmai=
-l.com> wrote:
->
-> On DE2 and DE3, UI scalers are located right after VI scalers. So in
-> order to calculate proper UI scaler base address, number of VI scalers
-> must be known. In practice, it is same as number of VI channels, but it
-> doesn't need to be.
->
-> Let's make a quirk for this number. Code for configuring channels and
-> associated functions won't have access to vi_num quirk anymore after
-> rework for independent planes.
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-> ---
->  drivers/gpu/drm/sun4i/sun8i_mixer.c     | 11 +++++++++++
->  drivers/gpu/drm/sun4i/sun8i_mixer.h     |  2 ++
->  drivers/gpu/drm/sun4i/sun8i_ui_scaler.c | 10 +++++-----
->  3 files changed, 18 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/=
-sun8i_mixer.c
-> index 78bbfbe62833..f9131396f22f 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> @@ -708,6 +708,7 @@ static const struct sun8i_mixer_cfg sun8i_a83t_mixer0=
-_cfg =3D {
->         .scaler_mask    =3D 0xf,
->         .scanline_yuv   =3D 2048,
->         .de2_fcc_alpha  =3D 1,
-> +       .vi_scaler_num  =3D 1,
->         .ui_num         =3D 3,
->         .vi_num         =3D 1,
->  };
-> @@ -718,6 +719,7 @@ static const struct sun8i_mixer_cfg sun8i_a83t_mixer1=
-_cfg =3D {
->         .scaler_mask    =3D 0x3,
->         .scanline_yuv   =3D 2048,
->         .de2_fcc_alpha  =3D 1,
-> +       .vi_scaler_num  =3D 1,
->         .ui_num         =3D 1,
->         .vi_num         =3D 1,
->  };
-> @@ -729,6 +731,7 @@ static const struct sun8i_mixer_cfg sun8i_h3_mixer0_c=
-fg =3D {
->         .scaler_mask    =3D 0xf,
->         .scanline_yuv   =3D 2048,
->         .de2_fcc_alpha  =3D 1,
-> +       .vi_scaler_num  =3D 1,
->         .ui_num         =3D 3,
->         .vi_num         =3D 1,
->  };
-> @@ -740,6 +743,7 @@ static const struct sun8i_mixer_cfg sun8i_r40_mixer0_=
-cfg =3D {
->         .scaler_mask    =3D 0xf,
->         .scanline_yuv   =3D 2048,
->         .de2_fcc_alpha  =3D 1,
-> +       .vi_scaler_num  =3D 1,
->         .ui_num         =3D 3,
->         .vi_num         =3D 1,
->  };
-> @@ -751,6 +755,7 @@ static const struct sun8i_mixer_cfg sun8i_r40_mixer1_=
-cfg =3D {
->         .scaler_mask    =3D 0x3,
->         .scanline_yuv   =3D 2048,
->         .de2_fcc_alpha  =3D 1,
-> +       .vi_scaler_num  =3D 1,
->         .ui_num         =3D 1,
->         .vi_num         =3D 1,
->  };
-> @@ -761,6 +766,7 @@ static const struct sun8i_mixer_cfg sun8i_v3s_mixer_c=
-fg =3D {
->         .ui_num =3D 1,
->         .scaler_mask =3D 0x3,
->         .scanline_yuv =3D 2048,
-> +       .vi_scaler_num  =3D 2,
->         .ccsc =3D CCSC_MIXER0_LAYOUT,
->         .mod_rate =3D 150000000,
->  };
-> @@ -772,6 +778,7 @@ static const struct sun8i_mixer_cfg sun20i_d1_mixer0_=
-cfg =3D {
->         .scaler_mask    =3D 0x3,
->         .scanline_yuv   =3D 2048,
->         .de2_fcc_alpha  =3D 1,
-> +       .vi_scaler_num  =3D 1,
->         .ui_num         =3D 1,
->         .vi_num         =3D 1,
->  };
-> @@ -783,6 +790,7 @@ static const struct sun8i_mixer_cfg sun20i_d1_mixer1_=
-cfg =3D {
->         .scaler_mask    =3D 0x1,
->         .scanline_yuv   =3D 1024,
->         .de2_fcc_alpha  =3D 1,
-> +       .vi_scaler_num  =3D 1,
->         .ui_num         =3D 0,
->         .vi_num         =3D 1,
->  };
-> @@ -794,6 +802,7 @@ static const struct sun8i_mixer_cfg sun50i_a64_mixer0=
-_cfg =3D {
->         .scaler_mask    =3D 0xf,
->         .scanline_yuv   =3D 4096,
->         .de2_fcc_alpha  =3D 1,
-> +       .vi_scaler_num  =3D 1,
->         .ui_num         =3D 3,
->         .vi_num         =3D 1,
->  };
-> @@ -805,6 +814,7 @@ static const struct sun8i_mixer_cfg sun50i_a64_mixer1=
-_cfg =3D {
->         .scaler_mask    =3D 0x3,
->         .scanline_yuv   =3D 2048,
->         .de2_fcc_alpha  =3D 1,
-> +       .vi_scaler_num  =3D 1,
->         .ui_num         =3D 1,
->         .vi_num         =3D 1,
->  };
-> @@ -814,6 +824,7 @@ static const struct sun8i_mixer_cfg sun50i_h6_mixer0_=
-cfg =3D {
->         .mod_rate       =3D 600000000,
->         .scaler_mask    =3D 0xf,
->         .scanline_yuv   =3D 4096,
-> +       .vi_scaler_num  =3D 1,
->         .ui_num         =3D 3,
->         .vi_num         =3D 1,
->  };
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.h b/drivers/gpu/drm/sun4i/=
-sun8i_mixer.h
-> index def07afd37e1..40b800022237 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> @@ -178,6 +178,7 @@ enum sun8i_mixer_type {
->   * @scaline_yuv: size of a scanline for VI scaler for YUV formats.
->   * @de2_fcc_alpha: use FCC for missing DE2 VI alpha capability
->   *     Most DE2 cores has FCC. If number of VI planes is one, enable thi=
-s.
-> + * @vi_scaler_num: Number of VI scalers. Used on DE2 and DE3.
->   * @map: channel map for DE variants processing YUV separately (DE33)
->   */
->  struct sun8i_mixer_cfg {
-> @@ -189,6 +190,7 @@ struct sun8i_mixer_cfg {
->         unsigned int    de_type;
->         unsigned int    scanline_yuv;
->         unsigned int    de2_fcc_alpha : 1;
-> +       unsigned int    vi_scaler_num;
+On Mon, 3 Nov 2025 09:38:51 -0500, Yazen Ghannam wrote:
+> > I have this AM4 system with some proprietary HP BIOS:
+> > 
+> > [02Fh 0047 001h]               Local Apic ID : 10
+> > [037h 0055 001h]               Local Apic ID : 11
+> > [03Fh 0063 001h]               Local Apic ID : 12
+> > [047h 0071 001h]               Local Apic ID : 13
+> > 
+> > domain: Thread     shift: 0 dom_size:     1 max_threads:     1
+> > domain: Core       shift: 4 dom_size:    16 max_threads:    16
+> > domain: Module     shift: 4 dom_size:     1 max_threads:    16
+> > domain: Tile       shift: 4 dom_size:     1 max_threads:    16
+> > domain: Die        shift: 4 dom_size:     1 max_threads:    16
+> > domain: DieGrp     shift: 4 dom_size:     1 max_threads:    16
+> > domain: Package    shift: 4 dom_size:     1 max_threads:    16
+> > 
+> > It seems that pkgid is 0x1 here, which is not a problem because
+> > it's single socket, but dunno if HP or somebody else couldn't do
+> > similar things in an 8-socket system and end up with pkgid > 8.
+> >   
+> 
+> So is this another bogus case?
 
-This could be a smaller type. Please do a sweep of the struct after the
-refactoring is done and see if any of the types could be shrunk.
+No, it isn't bogus. It's a quad-core Carrizo APU with its four LAPICs,
+but their numbers start from 0x10 rather than 0x00. And AFAIU, the
+calculated pkgid vaule will be 1.
 
-And just a nitpick, but I would probably insert it above scaler_mask.
-
-
-Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
+If HP or other vendor would do similar thing on an 8-socket system,
+the assumption that (pkgid < 8) could no longer hold, even if the CPUs
+are completely real.
 
