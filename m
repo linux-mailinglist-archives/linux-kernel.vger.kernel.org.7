@@ -1,111 +1,207 @@
-Return-Path: <linux-kernel+bounces-882410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2459C2A635
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:45:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8395C2A64D
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:47:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 877A31888602
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:45:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B6E73AB460
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:44:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72D72C027D;
-	Mon,  3 Nov 2025 07:44:31 +0000 (UTC)
-Received: from unicom146.biz-email.net (unicom146.biz-email.net [210.51.26.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4106B2C11F6;
+	Mon,  3 Nov 2025 07:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oHXNX1Pa";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pHLY+Hy/";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oHXNX1Pa";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="pHLY+Hy/"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4603D2BE7B5;
-	Mon,  3 Nov 2025 07:44:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAFA52BE7C3
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 07:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762155871; cv=none; b=Cl68MwlRmTn/d5cBW3fGQ+Nw1PKTLfzwChno4NlHnJr+aFlAolUZlfbb19zWfbN/IZkMDOHh7fuD1+DLWupDEIZ8aFzv8SubvnZTxCnn8mZjLZEz/ecc3A2dwbpk2pDpHS2UwOa6e5EzkwwMBapxKb21jU1/SQl6jFAcNIkSPTo=
+	t=1762155812; cv=none; b=atAmRlh86wq6I2TFmGdgnbFBcDPlXNOOys5QFNQ/HlWDCDPagj4L36DnHZaeX19P0gL9HwzDz4PqMseTj22sv2DIK1KCjHy8Qxy/zU0KgyRfyix39wq/pD6SiiMVhasdQN5pkDkB2TtDzkvLJ8b98EYEbmd0X4+Ogt49o1Qv9EY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762155871; c=relaxed/simple;
-	bh=mqtTEHnfdDj7ufOnIaA3taPobJloaDUr/In/jZdqmZQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=i1KqVCYzKoRl3nX5LzyTPZFOg3qsRJRwX6S10vjBX5eNyARkIuuZuSY6Jo51qqY/bje76OzuV16tlnDTvjbU5LhR366nNK0ZEHmQBAe+sOaY4MoR0xRid8pX4hFFyP6Yyp+mL8xwZNg4JX2skQYa54dyuxtpwsI6J7U7t85PDrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from Jtjnmail201614.home.langchao.com
-        by unicom146.biz-email.net ((D)) with ASMTP (SSL) id 202511031544212240;
-        Mon, 03 Nov 2025 15:44:21 +0800
-Received: from jtjnmailAR02.home.langchao.com (10.100.2.43) by
- Jtjnmail201614.home.langchao.com (10.100.2.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Mon, 3 Nov 2025 15:44:21 +0800
-Received: from inspur.com (10.100.2.107) by jtjnmailAR02.home.langchao.com
- (10.100.2.43) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Mon, 3 Nov 2025 15:44:21 +0800
-Received: from localhost.localdomain.com (unknown [10.94.13.117])
-	by app3 (Coremail) with SMTP id awJkCsDw_vlUXQhp9sMJAA--.15676S4;
-	Mon, 03 Nov 2025 15:44:21 +0800 (CST)
-From: Chu Guangqing <chuguangqing@inspur.com>
-To: <mst@redhat.com>, <jasowang@redhat.com>, <xuanzhuo@linux.alibaba.com>,
-	<eperezma@redhat.com>, <andrew+netdev@lunn.ch>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>
-CC: <virtualization@lists.linux.dev>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Chu Guangqing <chuguangqing@inspur.com>
-Subject: [PATCH] virtio_net: Fix a typo error in virtio_net
-Date: Mon, 3 Nov 2025 15:43:05 +0800
-Message-ID: <20251103074305.4727-1-chuguangqing@inspur.com>
-X-Mailer: git-send-email 2.43.7
+	s=arc-20240116; t=1762155812; c=relaxed/simple;
+	bh=/m7el7qiOG+uRtgB+hXS9l/zlSwOEIYXKrdWDa7gS7Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HT+2SZ8NmO8ghi3rXaM5f4NWjtTIoZ26SL0tr8fBKS0XqMyDSExoJi368WO52zjMMPBay6JBO5VUQiIgMR5cO/JjYrsJJFgQGWx7HWQLn3hht53Ua3q9dzO7wGnLVMzWAuuEan6ccZCNziSlFpNjHPAcI+0LCPKycdR8vM3efP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oHXNX1Pa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pHLY+Hy/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oHXNX1Pa; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=pHLY+Hy/; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4614521D9C;
+	Mon,  3 Nov 2025 07:43:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762155809; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=i1+B9zt2AEIIJkaGtGDVUCOE0R3A1Xscg4L+TVTph6g=;
+	b=oHXNX1PazznzOv0TdsXLeV+LALADhxuXwcl6Pm+0iogwUrpycWJY2psgvRUOkUYIw+4bQi
+	E1QgV5Ti42OEP1ubrzQSTkseczV7hrSyj+26FA64EZUtTl5DrK1UHVvOY+dZ0DsJDh8akK
+	qxzC9dr10socnAM0T/eRTQ+/HWKZg2Q=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762155809;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=i1+B9zt2AEIIJkaGtGDVUCOE0R3A1Xscg4L+TVTph6g=;
+	b=pHLY+Hy/4YS85jrJAA0r7KCCBCWUAEHh1Wyp9LD+wkgdqHNSTY/RTBmx4yG+nRWxbOgD+0
+	Buizniao6Vt33TBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762155809; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=i1+B9zt2AEIIJkaGtGDVUCOE0R3A1Xscg4L+TVTph6g=;
+	b=oHXNX1PazznzOv0TdsXLeV+LALADhxuXwcl6Pm+0iogwUrpycWJY2psgvRUOkUYIw+4bQi
+	E1QgV5Ti42OEP1ubrzQSTkseczV7hrSyj+26FA64EZUtTl5DrK1UHVvOY+dZ0DsJDh8akK
+	qxzC9dr10socnAM0T/eRTQ+/HWKZg2Q=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762155809;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=i1+B9zt2AEIIJkaGtGDVUCOE0R3A1Xscg4L+TVTph6g=;
+	b=pHLY+Hy/4YS85jrJAA0r7KCCBCWUAEHh1Wyp9LD+wkgdqHNSTY/RTBmx4yG+nRWxbOgD+0
+	Buizniao6Vt33TBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 346C91364F;
+	Mon,  3 Nov 2025 07:43:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id TT3MDCFdCGnNQwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 03 Nov 2025 07:43:29 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 9AE38A2A61; Mon,  3 Nov 2025 08:43:28 +0100 (CET)
+Date: Mon, 3 Nov 2025 08:43:28 +0100
+From: Jan Kara <jack@suse.cz>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
+	jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com, 
+	mcgrof@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com, 
+	libaokun1@huawei.com
+Subject: Re: [PATCH 03/25] ext4: remove PAGE_SIZE checks for rec_len
+ conversion
+Message-ID: <n7vgicrsj4soriob45vd2pwqtm77jt6wnsk3ie5g66am2oqvji@k2ayujwhxcrx>
+References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
+ <20251025032221.2905818-4-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: awJkCsDw_vlUXQhp9sMJAA--.15676S4
-X-Coremail-Antispam: 1UD129KBjvdXoWrKw4DZw45uw1fAr48GryDWrg_yoWfurc_uw
-	1UZr43tws5Kr4Y9ay5Cw4rAFW5Ka1kWF4kGF9xK3ySkF98uF13WF9FvFyDGFZrX39Fyr1r
-	GFsxGFn8A34fZjkaLaAFLSUrUUUU1b8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbTkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_GcCE
-	3s1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
-	1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02
-	F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4I
-	kC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4II
-	rI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMx
-	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
-	wI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
-	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v2
-	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxV
-	W8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRfcTQUUUUU=
-X-CM-SenderInfo: 5fkxw35dqj1xlqj6x0hvsx2hhfrp/
-X-CM-DELIVERINFO: =?B?aGgYCpRRTeOiUs3aOqHZ50hzsfHKF9Ds6CbXmDm38RucXu3DYXJR7Zlh9zE0nt/Iac
-	D+KRUjP8h4mBi1RxM9Ia5pGzwGWIFG12ndAMRSAp2L3HO3jalIbuAhB7ycZuhkKUFH9M9G
-	hF5mfmemBa/tI1nkgFQ=
-Content-Type: text/plain
-tUid: 202511031544215cf76b7d677404249b6809f204a42c80
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251025032221.2905818-4-libaokun@huaweicloud.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-0.30 / 50.00];
+	SEM_URIBL(3.50)[huaweicloud.com:email];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.986];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_NONE(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,huawei.com:email,imap1.dmz-prg2.suse.org:helo,suse.com:email,huaweicloud.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -0.30
 
-Fix the spelling error of "separate".
+On Sat 25-10-25 11:21:59, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+> 
+> Previously, ext4_rec_len_(to|from)_disk only performed complex rec_len
+> conversions when PAGE_SIZE >= 65536 to reduce complexity.
+> 
+> However, we are soon to support file system block sizes greater than
+> page size, which makes these conditional checks unnecessary. Thus, these
+> checks are now removed.
+> 
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
 
-Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
----
- drivers/net/virtio_net.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Looks good. Feel free to add:
 
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 8e8a179aaa49..1e6f5e650f11 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -3760,7 +3760,7 @@ static int virtnet_set_queues(struct virtnet_info *vi, u16 queue_pairs)
- 	 * (2) no user configuration.
- 	 *
- 	 * During rss command processing, device updates queue_pairs using rss.max_tx_vq. That is,
--	 * the device updates queue_pairs together with rss, so we can skip the sperate queue_pairs
-+	 * the device updates queue_pairs together with rss, so we can skip the separate queue_pairs
- 	 * update (VIRTIO_NET_CTRL_MQ_VQ_PAIRS_SET below) and return directly.
- 	 */
- 	if (vi->has_rss && !netif_is_rxfh_configured(dev)) {
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/ext4/ext4.h | 12 ------------
+>  1 file changed, 12 deletions(-)
+> 
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 24c414605b08..93c2bf4d125a 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -2464,28 +2464,19 @@ static inline unsigned int ext4_dir_rec_len(__u8 name_len,
+>  	return (rec_len & ~EXT4_DIR_ROUND);
+>  }
+>  
+> -/*
+> - * If we ever get support for fs block sizes > page_size, we'll need
+> - * to remove the #if statements in the next two functions...
+> - */
+>  static inline unsigned int
+>  ext4_rec_len_from_disk(__le16 dlen, unsigned blocksize)
+>  {
+>  	unsigned len = le16_to_cpu(dlen);
+>  
+> -#if (PAGE_SIZE >= 65536)
+>  	if (len == EXT4_MAX_REC_LEN || len == 0)
+>  		return blocksize;
+>  	return (len & 65532) | ((len & 3) << 16);
+> -#else
+> -	return len;
+> -#endif
+>  }
+>  
+>  static inline __le16 ext4_rec_len_to_disk(unsigned len, unsigned blocksize)
+>  {
+>  	BUG_ON((len > blocksize) || (blocksize > (1 << 18)) || (len & 3));
+> -#if (PAGE_SIZE >= 65536)
+>  	if (len < 65536)
+>  		return cpu_to_le16(len);
+>  	if (len == blocksize) {
+> @@ -2495,9 +2486,6 @@ static inline __le16 ext4_rec_len_to_disk(unsigned len, unsigned blocksize)
+>  			return cpu_to_le16(0);
+>  	}
+>  	return cpu_to_le16((len & 65532) | ((len >> 16) & 3));
+> -#else
+> -	return cpu_to_le16(len);
+> -#endif
+>  }
+>  
+>  /*
+> -- 
+> 2.46.1
+> 
 -- 
-2.43.7
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
