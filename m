@@ -1,248 +1,237 @@
-Return-Path: <linux-kernel+bounces-883728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6CF3C2E331
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 22:53:49 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6393DC2E346
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 22:55:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1E3734E10D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 21:53:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 45F004E34B1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 21:55:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBCA82D5A0C;
-	Mon,  3 Nov 2025 21:53:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFC6A2D640A;
+	Mon,  3 Nov 2025 21:55:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gsny5fU9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LA3CfMZz"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B0F28C871;
-	Mon,  3 Nov 2025 21:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CEAA28C871
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 21:55:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762206824; cv=none; b=Uw7D569yCRVkGtOK7HRQpy+CO0hImvNgOFzyVWqAV7Nij7ts0xs5eyMoh1VWFuIfE3lnLaFJT1y18pAozePt/O3LbtteyJDyut1/JCxEnkgqDvn8zAPDJIjXOFeeNxp5/bvsa2/lyyD94SbvWMMRQKf0WL7ydi4xx4eUV7yY970=
+	t=1762206910; cv=none; b=DRJjVZUcM0gV15FiQ7ui6HME8vDSRLPl78PuXtM3+LLt37Hb76eRumwp6cn5f0BiTrLQYPf10Vn9jWVAdfZ1J06QGqbrS6GntfMt1A/pWacXbQI2Yd6PSHe+js82nFXVIcLOow0EjcJiEjKyuDXmBT5Re6yD1fMyqSz3G0rJ7bE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762206824; c=relaxed/simple;
-	bh=MyymXxDlxmAVglrubFk2bhJA+1zPzOalG3vPbTgwEIo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GvOY4D9SmqQn0ni5sJxxfsWVSvXlpKvF58TtpkJsoI0zalgh/pkzWQWOoDh//CQwb2SnEDGnL/Sueb/IZ6KKk7KeohPMPs3wyrJNblfhVdK8z4JH+yyWWLhI/OMGUUnKHLMKUUtZgfpDx8784jNbIHlEpcV8IduGq6GJ8XYX+GA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gsny5fU9; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762206822; x=1793742822;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=MyymXxDlxmAVglrubFk2bhJA+1zPzOalG3vPbTgwEIo=;
-  b=gsny5fU9aBPUV7AXQt3J6wsQ9DvwYxB8LZKz6cVkOt5vTkqr/9FHiGzD
-   d6kjacgqWzm/2T3Cr/dSMNWN1cXcKbdMv8Ff/Ah3A2E5gPLSFvyKniyJk
-   a30aDiKAzBc3ajUGDymU5ejjsgA47/ft/7Jh6AyqIYzOBRY/tGhuM4Ae9
-   oS7HDP45LZn/T1Muov8SBS7pntEj9BKk2siH6qpiSeoKjGz/4neGRcmu/
-   BJrXEJzvFC0WEqIhi39pidELCrG5c4uj6+40R17Zqf53t/T96xiFzXCJZ
-   k6vNXcNXjX7NhEhg+rFqfAeByzOe6j/WPw4+In79s/OVz1/HKzykHv63x
-   g==;
-X-CSE-ConnectionGUID: grjB4QAHRxewZrYOW68hsw==
-X-CSE-MsgGUID: qg+ea1UwShmOsG1ZsUetEA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="51863379"
-X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="51863379"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 13:53:42 -0800
-X-CSE-ConnectionGUID: myKvn5TcRU+wmQqUP0BiLQ==
-X-CSE-MsgGUID: jW0lQ96EQaiU1rz3unSZEw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="186658732"
-Received: from dwesterg-mobl1.amr.corp.intel.com (HELO [10.125.110.133]) ([10.125.110.133])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 13:53:40 -0800
-Message-ID: <1ef139d0-2a27-40aa-8b08-09d9ec89791d@intel.com>
-Date: Mon, 3 Nov 2025 14:53:38 -0700
+	s=arc-20240116; t=1762206910; c=relaxed/simple;
+	bh=PqRD5AA9CQTIV/Fa/oHzoO1tcNy233SlClAbBJUGor4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VejungMqh2IbIcBl4z30hU5jr0uQAnEpWy8eOECsHXWjuM03ULqc/u16iz1FXMgUR8d/ojM6i0X6A1p/G7ZfnW3d+bL93Tv0InRWeaiU3JSHTJMjbbE4Dq+qjwWGobqeoNfwYHydAGuNtb8UFbOZh3attefkYK5FioCzF1eCowY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LA3CfMZz; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-295247a814bso48755165ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 13:55:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762206908; x=1762811708; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=vr0AhTl2tnZbnbuQ/Lyma/KtCDNr4xZVutDV7GzLnVs=;
+        b=LA3CfMZzLrQ6XLQZyRt0GaLcAsm5R8payqzB1LHKzw/LvAirTGwN4Uk0xXe+eT98ls
+         LdRsZaqQxizvYR5AtVDfnMJZVynfKcEQ4HOvllbtXE6udxv1M8IVw/Knvse9wgVaaPHk
+         9yWoKNYJJKiyv8aplUx6t7yqE2b/1Z67GM77uGWRSHW8pFRD29nCIibfoT+um3926l+U
+         ZKBYQdvUba5DPt0ks/7kRanu4kGVh7DnH//mF/1sPGOtMWx+lwCY0F3ZCFBMhGTwEr9z
+         XWPdgzenDumCXjlJi4IpeX4c3crZt5aMJeTljnUR6cAC4E0cwmy4cbfpN8IO009qJse4
+         q6Fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762206908; x=1762811708;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vr0AhTl2tnZbnbuQ/Lyma/KtCDNr4xZVutDV7GzLnVs=;
+        b=UoKHF6K2o/f1SH4D3mag69nYVKRaE/iKyv66C/bYjoRGtaelmZk0IQodUDef78cExp
+         a/2vjIfotdu3ZX2ONUrzxBbziBylevgkX+m7zmJESjB6U39LK85Hugzv+7dxy5+3E8Uu
+         dZbGxPvJ5MU7NUp+MTH2JffQ51ipM0yUkqjN6VzzB5hdB3YUbRKnpy/bxwmx78yEwpy8
+         ZLk99MxeLouZTsSszQasxt1rsGTTlHbZoX/U2nxPV/eyN26GtqD+8hby6ThSzFh8AwmF
+         OekIoB6DZq89tX4cunsVQ0dyrVj0goxBJk3IZgCdNpaC9RPC6tlGBrGJEjKWAQs1z2Md
+         czeg==
+X-Forwarded-Encrypted: i=1; AJvYcCVtwpyAzRh2Jzh1dMXGWt3W/xdOiyhbvlvG6CVo6X0l6uja81smNYXhQjdl7dYn7/8RCZDecxJuBPIVU6Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXcv++Ch4vL+uRHhjMeQQzmJ5jP08ku+WnWOrH/zkDgoDN7KOt
+	jWca86NaxYooLhDOh9bZxkHlgY5n0TiTlGGNU9bm8viWoP/ztREsrKfO
+X-Gm-Gg: ASbGncvYSrvn9H42KS7UxpBr77F5A5CWMA7DFYpJaVYVkn33v4KmjHlnG6j8r1cYjUI
+	dbPhIQ+n9EZXc3RyCQXvOzEx4DXSt3jBQwcOuOLJrZYHXsLSxVVYttlJle6L+0i4+4hk7s5tdkq
+	WQO+YqKfDOQwqGVLL5E5Gr8Jos7TKqRvfQphQvmwy7kLdUZFQhv7cEQWHGs/S/slbLNkQTnOtoH
+	0EsAj3VbH45IvwNBwwz0/cygqGrmS7TyCT+KYHhR3PVZraIa6JtkHSsD3GcwX05GPgqTfnGwUz4
+	AolWsf4cv5jYzdPgFa4nHgvkvVI7ovtqvfvz2WzKNe2asQq87m1IL1hLdPjI+Zp/2SwCWRgV1ke
+	Wn6w2A4TxgRmAfCbzxw/GZt5IoiYsFGzHfnUw7NTNZataDHz+/Y5vBOSXrtglifUQFumpnDlLO7
+	KNnE0DwNZngv6hlkgJzCG1
+X-Google-Smtp-Source: AGHT+IGf3rk/ZWnZ4nfGKqzMAbFFNABrHVTEBwI6MOLjfLVcyB9CbUYGpwNMYJDh1R03ToS7kGBkyA==
+X-Received: by 2002:a17:902:f68f:b0:26a:8171:dafa with SMTP id d9443c01a7336-2951a38be8emr209211645ad.21.1762206907635;
+        Mon, 03 Nov 2025 13:55:07 -0800 (PST)
+Received: from localhost ([2804:30c:1653:6900:3b53:af9d:48d6:f107])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-29601a7a882sm1715665ad.109.2025.11.03.13.55.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Nov 2025 13:55:06 -0800 (PST)
+Date: Mon, 3 Nov 2025 18:56:21 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	michael.hennerich@analog.com, nuno.sa@analog.com,
+	eblanc@baylibre.com, andy@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, corbet@lwn.net
+Subject: Re: [PATCH v6 8/8] iio: adc: ad4030: Support common-mode channels
+ with SPI offloading
+Message-ID: <aQklBYl2drPil69Y@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1760984107.git.marcelo.schmitt@analog.com>
+ <3fadbf22973098c4be9e5f0edd8c22b8b9b18ca6.1760984107.git.marcelo.schmitt@analog.com>
+ <20251027140423.61d96e88@jic23-huawei>
+ <aQJY7XizVWbE68ll@debian-BULLSEYE-live-builder-AMD64>
+ <ca6760182b4662c96df6204bae903d8affa6a8e3.camel@gmail.com>
+ <aQisqe5EWARTwpQq@debian-BULLSEYE-live-builder-AMD64>
+ <1c3712b9b5313ed6c9d07c1acbc9b918a4883056.camel@gmail.com>
+ <c365b17c-de18-4718-8d51-fa1d93236d90@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 05/14] cxl: Simplify cxl_root_ops allocation and
- handling
-To: Robert Richter <rrichter@amd.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Davidlohr Bueso <dave@stgolabs.net>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- Gregory Price <gourry@gourry.net>,
- "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
- Terry Bowman <terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
-References: <20251103184804.509762-1-rrichter@amd.com>
- <20251103184804.509762-6-rrichter@amd.com>
-From: Dave Jiang <dave.jiang@intel.com>
-Content-Language: en-US
-In-Reply-To: <20251103184804.509762-6-rrichter@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c365b17c-de18-4718-8d51-fa1d93236d90@baylibre.com>
 
+On 11/03, David Lechner wrote:
+> On 11/3/25 8:30 AM, Nuno Sá wrote:
+> > On Mon, 2025-11-03 at 10:22 -0300, Marcelo Schmitt wrote:
+> >> On 10/30, Nuno Sá wrote:
+> >>> On Wed, 2025-10-29 at 15:11 -0300, Marcelo Schmitt wrote:
+> >>>> On 10/27, Jonathan Cameron wrote:
+> >>>>> On Mon, 20 Oct 2025 16:15:39 -0300
+> >>>>> Marcelo Schmitt <marcelo.schmitt@analog.com> wrote:
+> >>>>>
+> >>>>>> AD4030 and similar devices can read common-mode voltage together with
+> >>>>>> ADC sample data. When enabled, common-mode voltage data is provided in a
+> >>>>>> separate IIO channel since it measures something other than the primary
+> >>>>>> ADC input signal and requires separate scaling to convert to voltage
+> >>>>>> units. The initial SPI offload support patch for AD4030 only provided
+> >>>>>> differential channels. Now, extend the AD4030 driver to also provide
+> >>>>>> common-mode IIO channels when setup with SPI offloading capability.
+> >>>>>>
+> >>>>>> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> >>>>>> ---
+> >>>>>> New patch.
+> >>>>>> I hope this works for ADCs with two channels. It's not clear if works as
+> >>>>>> expected with current HDL and single-channel ADCs (like ADAQ4216).
+> >>>>>>
+> >>>>>> The ad4630_fmc HDL project was designed for ADCs with two channels and
+> >>>>>> always streams two data channels to DMA (even when the ADC has only one
+> >>>>>> physical channel). Though, if the ADC has only one physical channel, the
+> >>>>>> data that would come from the second ADC channel comes in as noise and
+> >>>>>> would have to be discarded. Because of that, when using single-channel
+> >>>>>> ADCs, the ADC driver would need to use a special DMA buffer to filter out
+> >>>>>> half of the data that reaches DMA memory. With that, the ADC sample data
+> >>>>>> could be delivered to user space without any noise being added to the IIO
+> >>>>>> buffer. I have implemented a prototype of such specialized buffer
+> >>>>>> (industrialio-buffer-dmaengine-filtered), but it is awful and only worked
+> >>>>>> with CONFIG_IIO_DMA_BUF_MMAP_LEGACY (only present in ADI Linux tree). Usual
+> >>>>>> differential channel data is also affected by the extra 0xFFFFFFFF data
+> >>>>>> pushed to DMA. Though, for the differential channel, it's easier to see it
+> >>>>>> shall work for two-channel ADCs (the sine wave appears "filled" in
+> >>>>>> iio-oscilloscope).
+> >>>>>>
+> >>>>>> So, I sign this, but don't guarantee it to work.
+> >>>>>
+> >>>>> So what's the path to resolve this?  Waiting on HDL changes or not support
+> >>>>> those devices until we have a clean solution?
+> >>>>
+> >>>> Waiting for HDL to get updated I'd say.
+> >>>
+> >>> Agree. We kind of control the IP here so why should we do awful tricks in
+> >>> SW right :)? At the very least I would expect hdl to be capable to discard the
+> >>> data in HW.
+> >>>
+> >>>>
+> >>>>>
+> >>>>> Also, just to check, is this only an issue with the additional stuff this
+> >>>>> patch adds or do we have a problem with SPI offload in general (+ this
+> >>>>> IP) and those single channel devices?
+> >>>>
+> >>>> IMO, one solution would be to update the HDL project for AD4630 and similar ADCs
+> >>>> to not send data from channel 2 to DMA memory when single-channel ADCs are
+> >>>> connected. Another possibility would be to intercept and filter out the extra
+> >>>> data before pushing it to user space. My first attempt of doing that didn't
+> >>>> work out with upstream kernel but I may revisit that.
+> >>>
+> >>> I'm also confused. Is this also an issue with the current series without common mode?
+> >>>
+> >>> If I'm getting things right, one channel ADCs pretty much do not work right now with
+> >>> spi offload?
+> >>
+> >> Yes, that's correct. It kind of works for single-channel ADCs, but half of the
+> >> data we see in user space is valid and the other half is not. For two-channel
+> >> ADCs, everything should be fine.
+> > 
+> > To me that is something that does not work eheheh :).
+Well, yeah, I tend to agree with that 😅
 
-
-On 11/3/25 11:47 AM, Robert Richter wrote:
-> A root port's callback handlers are collected in struct cxl_root_ops.
-> The structure is dynamically allocated, though it contains only a
-> single pointer in it. This also requires to check two pointers to
-> check for the existance of a callback.
+> > I mean, going with all this trouble
+> > to sample as fast as we can just so we have to discard (or mask out) half of every sample
+> > in userspace (even though I can imagine we still get better performance vs non offload case).
 > 
-> Simplify the allocation, release and handler check by embedding the
-> ops statical in struct cxl_root.
-> 
-> Signed-off-by: Robert Richter <rrichter@amd.com>
+> If we are getting extra data to userspace, then either we aren't creating the
+> SPI message correctly and telling the controller to read too much data or
+> the HDL is broken.
 
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>> ---
->  drivers/cxl/acpi.c      |  7 ++-----
->  drivers/cxl/core/cdat.c |  8 ++++----
->  drivers/cxl/core/port.c |  9 ++-------
->  drivers/cxl/cxl.h       | 19 ++++++++++---------
->  4 files changed, 18 insertions(+), 25 deletions(-)
-> 
-> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
-> index bd2e282ca93a..1ab780edf141 100644
-> --- a/drivers/cxl/acpi.c
-> +++ b/drivers/cxl/acpi.c
-> @@ -299,10 +299,6 @@ static int cxl_acpi_qos_class(struct cxl_root *cxl_root,
->  	return cxl_acpi_evaluate_qtg_dsm(handle, coord, entries, qos_class);
->  }
->  
-> -static const struct cxl_root_ops acpi_root_ops = {
-> -	.qos_class = cxl_acpi_qos_class,
-> -};
-> -
->  static void del_cxl_resource(struct resource *res)
->  {
->  	if (!res)
-> @@ -914,9 +910,10 @@ static int cxl_acpi_probe(struct platform_device *pdev)
->  	cxl_res->end = -1;
->  	cxl_res->flags = IORESOURCE_MEM;
->  
-> -	cxl_root = devm_cxl_add_root(host, &acpi_root_ops);
-> +	cxl_root = devm_cxl_add_root(host);
->  	if (IS_ERR(cxl_root))
->  		return PTR_ERR(cxl_root);
-> +	cxl_root->ops.qos_class = cxl_acpi_qos_class;
->  	root_port = &cxl_root->port;
->  
->  	rc = bus_for_each_dev(adev->dev.bus, NULL, root_port,
-> diff --git a/drivers/cxl/core/cdat.c b/drivers/cxl/core/cdat.c
-> index c4bd6e8a0cf0..b84a9b52942c 100644
-> --- a/drivers/cxl/core/cdat.c
-> +++ b/drivers/cxl/core/cdat.c
-> @@ -213,7 +213,7 @@ static int cxl_port_perf_data_calculate(struct cxl_port *port,
->  	if (!cxl_root)
->  		return -ENODEV;
->  
-> -	if (!cxl_root->ops || !cxl_root->ops->qos_class)
-> +	if (!cxl_root->ops.qos_class)
->  		return -EOPNOTSUPP;
->  
->  	xa_for_each(dsmas_xa, index, dent) {
-> @@ -221,9 +221,9 @@ static int cxl_port_perf_data_calculate(struct cxl_port *port,
->  
->  		cxl_coordinates_combine(dent->coord, dent->cdat_coord, ep_c);
->  		dent->entries = 1;
-> -		rc = cxl_root->ops->qos_class(cxl_root,
-> -					      &dent->coord[ACCESS_COORDINATE_CPU],
-> -					      1, &qos_class);
-> +		rc = cxl_root->ops.qos_class(cxl_root,
-> +					     &dent->coord[ACCESS_COORDINATE_CPU],
-> +					     1, &qos_class);
->  		if (rc != 1)
->  			continue;
->  
-> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
-> index 8128fd2b5b31..2338d146577c 100644
-> --- a/drivers/cxl/core/port.c
-> +++ b/drivers/cxl/core/port.c
-> @@ -459,7 +459,6 @@ static void cxl_root_decoder_release(struct device *dev)
->  	if (atomic_read(&cxlrd->region_id) >= 0)
->  		memregion_free(atomic_read(&cxlrd->region_id));
->  	__cxl_decoder_release(&cxlrd->cxlsd.cxld);
-> -	kfree(cxlrd->ops);
->  	kfree(cxlrd);
->  }
->  
-> @@ -955,19 +954,15 @@ struct cxl_port *devm_cxl_add_port(struct device *host,
->  }
->  EXPORT_SYMBOL_NS_GPL(devm_cxl_add_port, "CXL");
->  
-> -struct cxl_root *devm_cxl_add_root(struct device *host,
-> -				   const struct cxl_root_ops *ops)
-> +struct cxl_root *devm_cxl_add_root(struct device *host)
->  {
-> -	struct cxl_root *cxl_root;
->  	struct cxl_port *port;
->  
->  	port = devm_cxl_add_port(host, host, CXL_RESOURCE_NONE, NULL);
->  	if (IS_ERR(port))
->  		return ERR_CAST(port);
->  
-> -	cxl_root = to_cxl_root(port);
-> -	cxl_root->ops = ops;
-> -	return cxl_root;
-> +	return to_cxl_root(port);
->  }
->  EXPORT_SYMBOL_NS_GPL(devm_cxl_add_root, "CXL");
->  
-> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-> index b57cfa4273b9..9a381c827416 100644
-> --- a/drivers/cxl/cxl.h
-> +++ b/drivers/cxl/cxl.h
-> @@ -638,6 +638,14 @@ struct cxl_port {
->  	resource_size_t component_reg_phys;
->  };
->  
-> +struct cxl_root;
-> +
-> +struct cxl_root_ops {
-> +	int (*qos_class)(struct cxl_root *cxl_root,
-> +			 struct access_coordinate *coord, int entries,
-> +			 int *qos_class);
-> +};
-> +
->  /**
->   * struct cxl_root - logical collection of root cxl_port items
->   *
-> @@ -646,7 +654,7 @@ struct cxl_port {
->   */
->  struct cxl_root {
->  	struct cxl_port port;
-> -	const struct cxl_root_ops *ops;
-> +	struct cxl_root_ops ops;
->  };
->  
->  static inline struct cxl_root *
-> @@ -655,12 +663,6 @@ to_cxl_root(const struct cxl_port *port)
->  	return container_of(port, struct cxl_root, port);
->  }
->  
-> -struct cxl_root_ops {
-> -	int (*qos_class)(struct cxl_root *cxl_root,
-> -			 struct access_coordinate *coord, int entries,
-> -			 int *qos_class);
-> -};
-> -
->  static inline struct cxl_dport *
->  cxl_find_dport_by_dev(struct cxl_port *port, const struct device *dport_dev)
->  {
-> @@ -755,8 +757,7 @@ struct cxl_port *devm_cxl_add_port(struct device *host,
->  				   struct device *uport_dev,
->  				   resource_size_t component_reg_phys,
->  				   struct cxl_dport *parent_dport);
-> -struct cxl_root *devm_cxl_add_root(struct device *host,
-> -				   const struct cxl_root_ops *ops);
-> +struct cxl_root *devm_cxl_add_root(struct device *host);
->  struct cxl_root *find_cxl_root(struct cxl_port *port);
->  
->  DEFINE_FREE(put_cxl_root, struct cxl_root *, if (_T) put_device(&_T->port.dev))
+The current patch set version (v6) only asks for the amount of ADC precision
+bits in each transfer when offloading messages. I can't see how that would work
+but okay, I'll test it with smaller xfer length.
 
+> 
+> > 
+> >>
+> >>>
+> >>> If the above is correct I would just not support it for 1 channel ADCs.
+> >>
+> >> Currently, it's just one part that is single-channel (AD4030). If patches 6 and
+> >> 7 were accepted, it would be 3 single-channel parts supported. I can add an `if`
+> >> somewhere to check the number of channel, but it will eventually have to be
+> >> removed when HDL gets fixed.
+> > 
+> > I would probably do the above or maybe we just need to push for an hdl fix or some
+> > final conclusion (like if they cannot fix it for some reason) and act accordingly.
+> > 
+> >>
+> >> Or, if HDL can't be fixed, then we'll need the `if` now and something else
+> >> latter to filter out extra data before pushing to IIO buffers as mentioned
+> >> above. Though, this scenario seems odd to me as I think the HDL wouldn't be 100%
+> >> compatible with single-channel AD4030-like parts. We would be writing code to
+> >> support AD4030 _and_ a peculiar data stream from this specific HDL project?
+> >>
+> >> My suggestion is to apply all patches except patch 8. IMHO, SPI offload
+> >> single-channel ADC support is broken due to HDL IP data stream not being
+> >> compatible with single-channel parts. That's not a Linux driver issue.
+> > 
+> > Well, it's not a SW issue but we are driving the HW and we know it's broken so I
+> > don't see a point in having something that does not work. Given that this is so
+> > connected to the HDL part of it I'm not sure it's fine to ignore that offload does
+> > not work for 1 channel parts. 
+> > 
+> > Anyways, it's odd to me but ultimately if Jonathan is fine with it, I won't object :)
+> > 
+> > 
+> > - Nuno Sá
+> 
+> If single-channel parts currently don't work and two-channel parts need [1] or
+> a hardware descrambler to work with a single data line, then it sounds like we
+> are blocked here until the HDL is improved or [1] is merged.
+> 
+> [1]: https://lore.kernel.org/linux-iio/20251014-spi-add-multi-bus-support-v1-0-2098c12d6f5f@baylibre.com/
+
+Ack, I think so.
 
