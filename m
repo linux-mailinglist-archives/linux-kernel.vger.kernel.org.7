@@ -1,92 +1,220 @@
-Return-Path: <linux-kernel+bounces-882469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88B27C2A86C
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:18:29 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DF58C2A887
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:19:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C3D364E8537
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:18:03 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5F03334810B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122182DC322;
-	Mon,  3 Nov 2025 08:17:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E51C2DC348;
+	Mon,  3 Nov 2025 08:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hPgHPj60"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="o7KBs+1h";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Elm6Yjki";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="o7KBs+1h";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Elm6Yjki"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DF42DAFC2;
-	Mon,  3 Nov 2025 08:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C612DA744
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 08:19:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762157875; cv=none; b=d5CRNsnHAGZDA5Pvj9VitCVRXD7Ll0GlOAJsw42CBFPD+l9jb67PMo6pgiMaJLzIzhMlyqCpo8PKWm88szC/8xIQOwkwos0YzWN/hfuH+QyxkY9mpF8kTQKuxHCecpEWx4tgUJ9I6oG2iDqv3Dx3DMyUeEK5TRlzmSsbffGFt7g=
+	t=1762157946; cv=none; b=VDnpMGlBlmuppWi6VDAGth2Y0OJ4KiSsT7OJPoSHqJ6yRJGGTkfPfJ2oZVJxCXXup5f2uK6t1pS4DDWHO7izizbP7z6NkeD3glevUNV1stBCcjU3OeaKwgtc1yKzNE4MEY2ARvmsDG4geCpLXQQWzZNTssjd5T4zoEQT1JMrnfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762157875; c=relaxed/simple;
-	bh=e4eP8kIUbnxFkpE508lw7JjVKEVh23zzNZi3k04+VEk=;
+	s=arc-20240116; t=1762157946; c=relaxed/simple;
+	bh=X8uk+hT0KMJqYpL/ncwIq3caS9NqOl0v8gh24DqwyZI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EbSLAIorYuUhLUCLIJE14h3+JNnaAdybye/dywhOYzIoTNRwQaYWpELzwr4XyzrEV/16OXc+fZnySKD6HCIEiRZJw6zNYhodMKH4tIvissXg1Uarg8oqmVSaaHkxkFkyyCYrt3WvvaaRs64oFYF5s9O23X8gu1LA0U9c3AoiETM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hPgHPj60; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BDA0C4CEE7;
-	Mon,  3 Nov 2025 08:17:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762157874;
-	bh=e4eP8kIUbnxFkpE508lw7JjVKEVh23zzNZi3k04+VEk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hPgHPj60n+mdv62mBOJGsVRWqHQ01Gjr7rTSTRIbj0hEjbXQsio7zNnampwXmqVfr
-	 Sa91lh+8Xq11c2+0Eob2Mol7XBSQJj7zWPNQ5V/g6F1JDR4dqvCiIP9HT2K+AkNAcL
-	 Getpo0YGj7SaTIBeEQrO9vLl8D1dpFVaLA9BHQJwYUBay5ujiO3DOp4ST9WOasWYrR
-	 iEe9bbG/vX18ImVYbICTXGNw3rJ2W9y7N7ru3GyHbfFCGaO8tCGT+29JaOtPbGXYKS
-	 2Tw6/LfHfQ+08W0UHnbz56r9V02UmWfUDrvk7LicyK7GpLoz5kyMept3/H2CWlbjR9
-	 BFmCJrOBptHrg==
-Date: Mon, 3 Nov 2025 09:17:52 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Ryan Chen <ryan_chen@aspeedtech.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
-	jk@codeconstruct.com.au, Kevin Chen <kevin_chen@aspeedtech.com>, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org
-Subject: Re: [PATCH v6 1/1] dt-bindings: interrupt-controller:
- aspeed,ast2700: correct #interrupt-cells and interrupts count
-Message-ID: <20251103-economic-lime-chupacabra-d7adec@kuoka>
-References: <20251030060155.2342604-1-ryan_chen@aspeedtech.com>
- <20251030060155.2342604-2-ryan_chen@aspeedtech.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=f+Ksyitb4EY6SFTIVOsXR6Q1Hyi5u+Dl4M7R5ukhZogXkfgxDPjNRvFSvkaj0TubXu4YxwMCgJkwkxmZxEprRDwbnZH5yI8fAFy4snltCGj/abQvQpkioZ8lTUphXjdS+CO1PKp00KUFq7zxfkuMXhF1KFOVa0STDYqJG6bENws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=o7KBs+1h; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Elm6Yjki; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=o7KBs+1h; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Elm6Yjki; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1524D21B0C;
+	Mon,  3 Nov 2025 08:19:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762157943; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hPAKFxV4WCdjb87dxxJgN6RLPpiYUsGfxeA/knVg7pI=;
+	b=o7KBs+1hiZj6a1B13uDGEQ6i8QewLRf0/uK6k7VVlQI0ZH4oKNhwBrsVvT+ZuYOcucZ98g
+	LNwl6q6wiCC34Xbsya1kuqFuXTDjp1Sis3qY6T8CG7FMGR5Wb704pCyjAuX7+vXBWKOBZ6
+	4AB9hKVCARa1MNpdpEUZVfq7skerSp8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762157943;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hPAKFxV4WCdjb87dxxJgN6RLPpiYUsGfxeA/knVg7pI=;
+	b=Elm6YjkiWTjTTixkffDtRGHuU7/BR3Asa2O8aoO7DZrBhWpnjXgMHINeEtvTjzvy6ESM6S
+	4fedW+Bu15xKdYBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762157943; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hPAKFxV4WCdjb87dxxJgN6RLPpiYUsGfxeA/knVg7pI=;
+	b=o7KBs+1hiZj6a1B13uDGEQ6i8QewLRf0/uK6k7VVlQI0ZH4oKNhwBrsVvT+ZuYOcucZ98g
+	LNwl6q6wiCC34Xbsya1kuqFuXTDjp1Sis3qY6T8CG7FMGR5Wb704pCyjAuX7+vXBWKOBZ6
+	4AB9hKVCARa1MNpdpEUZVfq7skerSp8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762157943;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hPAKFxV4WCdjb87dxxJgN6RLPpiYUsGfxeA/knVg7pI=;
+	b=Elm6YjkiWTjTTixkffDtRGHuU7/BR3Asa2O8aoO7DZrBhWpnjXgMHINeEtvTjzvy6ESM6S
+	4fedW+Bu15xKdYBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 02CA21364F;
+	Mon,  3 Nov 2025 08:19:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 3UepAHdlCGnUZgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 03 Nov 2025 08:19:03 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 4641DA2A64; Mon,  3 Nov 2025 09:19:02 +0100 (CET)
+Date: Mon, 3 Nov 2025 09:19:02 +0100
+From: Jan Kara <jack@suse.cz>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
+	jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com, 
+	mcgrof@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com, 
+	libaokun1@huawei.com
+Subject: Re: [PATCH 06/25] ext4: introduce s_min_folio_order for future BS >
+ PS support
+Message-ID: <eywbqqzeiiz63dqsxrvetpqyj3poniywbvm4wwpcacmr6skaqb@ircbveu4srgi>
+References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
+ <20251025032221.2905818-7-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251030060155.2342604-2-ryan_chen@aspeedtech.com>
+In-Reply-To: <20251025032221.2905818-7-libaokun@huaweicloud.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-0.30 / 50.00];
+	SEM_URIBL(3.50)[huaweicloud.com:email];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_NONE(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Score: -0.30
 
-On Thu, Oct 30, 2025 at 02:01:55PM +0800, Ryan Chen wrote:
-> Update the AST2700 interrupt controller binding to match the actual
-> hardware and the irq-aspeed-intc driver behavior.
+On Sat 25-10-25 11:22:02, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
 > 
-> - Interrupts:
->   First-level INTC banks request multiple interrupt lines to the root
->   GIC, with a maximum of 10 per bank. Second-level INTC banks request
->   only one interrupt line to their parent INTC-IC. Therefore, set the
->   interrupts property to allow a minimum of 1 and a maximum of 10
->   entries.
+> This commit introduces the s_min_folio_order field to the ext4_sb_info
+> structure. This field will store the minimum folio order required by the
+> current filesystem, laying groundwork for future support of block sizes
+> greater than PAGE_SIZE.
 > 
-> - #interrupt-cells:
->   Set '#interrupt-cells' to <1> since the irq-aspeed-intc.c driver does
->   not support specifying a trigger type; only the interrupt index is used.
-> 
-> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
 > ---
->  .../interrupt-controller/aspeed,ast2700-intc.yaml   | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
-
+>  fs/ext4/ext4.h  |  3 +++
+>  fs/ext4/inode.c |  3 ++-
+>  fs/ext4/super.c | 10 +++++-----
+>  3 files changed, 10 insertions(+), 6 deletions(-)
+> 
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index 93c2bf4d125a..bca6c3709673 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -1677,6 +1677,9 @@ struct ext4_sb_info {
+>  	/* record the last minlen when FITRIM is called. */
+>  	unsigned long s_last_trim_minblks;
+>  
+> +	/* minimum folio order of a page cache allocation */
+> +	unsigned int s_min_folio_order;
+> +
+>  	/* Precomputed FS UUID checksum for seeding other checksums */
+>  	__u32 s_csum_seed;
+>  
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index a63513a3db53..889761ed51dd 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -5174,7 +5174,8 @@ void ext4_set_inode_mapping_order(struct inode *inode)
+>  	if (!ext4_should_enable_large_folio(inode))
+>  		return;
+>  
+> -	mapping_set_folio_order_range(inode->i_mapping, 0,
+> +	mapping_set_folio_order_range(inode->i_mapping,
+> +				      EXT4_SB(inode->i_sb)->s_min_folio_order,
+>  				      EXT4_MAX_PAGECACHE_ORDER(inode));
+>  }
+>  
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index aa5aee4d1b63..d353e25a5b92 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -5100,11 +5100,8 @@ static int ext4_load_super(struct super_block *sb, ext4_fsblk_t *lsb,
+>  	 * If the default block size is not the same as the real block size,
+>  	 * we need to reload it.
+>  	 */
+> -	if (sb->s_blocksize == blocksize) {
+> -		*lsb = logical_sb_block;
+> -		sbi->s_sbh = bh;
+> -		return 0;
+> -	}
+> +	if (sb->s_blocksize == blocksize)
+> +		goto success;
+>  
+>  	/*
+>  	 * bh must be released before kill_bdev(), otherwise
+> @@ -5135,6 +5132,9 @@ static int ext4_load_super(struct super_block *sb, ext4_fsblk_t *lsb,
+>  		ext4_msg(sb, KERN_ERR, "Magic mismatch, very weird!");
+>  		goto out;
+>  	}
+> +
+> +success:
+> +	sbi->s_min_folio_order = get_order(blocksize);
+>  	*lsb = logical_sb_block;
+>  	sbi->s_sbh = bh;
+>  	return 0;
+> -- 
+> 2.46.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
