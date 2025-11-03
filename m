@@ -1,194 +1,110 @@
-Return-Path: <linux-kernel+bounces-882750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 602F5C2B51E
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:27:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F38C1C2B620
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:32:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id B73FA3412DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:27:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 074603A13DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED38302141;
-	Mon,  3 Nov 2025 11:27:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D611309F0B;
+	Mon,  3 Nov 2025 11:27:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e4g6jvJJ"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U6WkkxGT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212B43019B8
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 11:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F56A309EE1;
+	Mon,  3 Nov 2025 11:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762169223; cv=none; b=gYcUJNbxsreQ7OE5GlgkGUhVYcJRV5Y8OhgN63j+pTwi8utvPdqgwf883G2lxcA6d9kAEYTETRR3Qyzm082beILPinHDuJB4dm48x8NKBGj+qP0Nctwd/cusQHAplP+foocqE+swAWLrQxz5VZKrQn1J+IoKT892q7iXEpQioOg=
+	t=1762169254; cv=none; b=pgtnadJtNGd5a1GxIRocqpoUzWmw1UpoDYQFXotdOxnulGGv0WK3N2YvpObhTK7+YjIGKZd9x+JYpCBwqNa31UbgVLUOTEWaL9FO3/N0/YNu8m7qWuhuGqRZBb5WSufhdn8DXryg+R6PoVcoBa8Rh/m0ovJY1VezZONh58Pi4b8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762169223; c=relaxed/simple;
-	bh=lGE7Ybu/RDSIulxrNCxHK7fYM0+Qcge2/3uQRKIybAk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k6pePIqtxVjYkBM1/r4vq/DPX+GxktSaLeRVVYAApaK55aDSwGI3UqcGsIAru6sO11Eix971q2XwoqqqMCa1GuJY5btrSuIuF1JlEs2Wkb9sqahQmDTv3ywtW7krKCTdndDPmtky2oWSO1ukjUCZcZCqAtMPWWg64AZwZg1gET8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e4g6jvJJ; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-64080ccf749so4931261a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 03:27:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762169219; x=1762774019; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qjmy8XjX+bzyGd/5u6oANywBcBczevKHZ7vCYGJEnxc=;
-        b=e4g6jvJJclnb+Bh7nUITeQ9pEDiyXGS235zjqhzozRUfnn8CyyR5clYo7iuFiA6Cgk
-         vKmVxhDeuS07H7ObjDJQEaYUd1oF+Lv0F9Yl2vM81WMw1TEInOXkmnhLnvGafPgVJ5nb
-         bZrKAciwkJDRT0/rhD8eEmOxdDMszZe2dcu+KZw86aCWuuAfjxaKVSTV4mKxImYtsF+f
-         dMOcC+7uzVqRujYWgTBrsoJuaSnKU8wIA1874aVaaAT4W7apTVEtyIUn33Fnp5expoC/
-         /DoqUh2e9H/u/7g7dTrlKN8w9EJkLBVNv+9e4Q2Z0/fvi7xq7p0qPgzAi2zP63UGqE08
-         g4Lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762169219; x=1762774019;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qjmy8XjX+bzyGd/5u6oANywBcBczevKHZ7vCYGJEnxc=;
-        b=IimWl+r93+n2qPI8sYBHx05tdQ9X9yWXB5H9MK/Uhev4nrxN4kpF5e01aQ/DlRz52T
-         AlZ3az6x/r1VCdGVNMSkqTnDPmsF7JVVwbwfrEthI7LNS+EqIIHHq+UUFn1Rr655lM48
-         tCPYowF1YdN+CbzCkGBNWVq5jHsrzyLbRz06DssHnmWkRYFt8g9VfvfqCbRoSYgK0IGg
-         OQ9X9SPBfz6iYOrluaF5Q7NOXiXjUZQrctQH42Nc6wR0neJzx8s8U0TwydvAelOzvw+D
-         2gWP50Uh1DxY0tQUPJ8eTJt7c9qfy9hCbXHilz8rLE4pWO77qPaoZo6n+H0Ri+tBQRNY
-         Yobg==
-X-Forwarded-Encrypted: i=1; AJvYcCUV23mp5qy206nlvO3zWNiUmsI+DndNUQBw8JUw4I+T0yL6HaW+qtYAobG7IE3zQH8bBplkJQjlWys62KQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7YVb5vLPtQ7cFPxpLDfTqb0LwgVdHwRQm6jbudCzhxcEqQyHH
-	/RO45cYbbd/KStZTC2RKbVccuGhR06wtEGhHZbF/Vb1FnHVJm/Xw3RGLBWYpaR1UfHo=
-X-Gm-Gg: ASbGncsSZlx5Pa96+K+YXbFcGs6nr74Fb9GyGxyH7xSuBwo4mRZxWd7bWKXPrTvZf+l
-	Xq30tdX8aL0l9dEd54gWaQAajkYL8aO6lZtcC2fXdexOs35A0Rcj/IqrWHQjSmPxM4Dl3CLgxvO
-	V4g2UpugYVUjPVsa2XiG20tM6vCzVB61Naq62QkW1K8xilAUEZ+CuBVU/1zuXNNWlD4bCFpyv1P
-	XLhZhF99uwRF022trSS+MngsscblRVggQ38z6IIyD+hrJKrRfV1xNaT5LuuYe3RWCJPZji3IexZ
-	gsjsM0NRwkYdAIxZfjyDzbgjEtgSNAkldL1aDt/WAb10X1E6X9A/PUyXfNlsR9zYXmTSuz3rSAR
-	NAX3NCwwgSLK5YirtSjlfEk6GZBAyCUM7ES1SuTw2jOMpm+9za6H7iadyFogbCWa4D1QUG95QLG
-	eA9ew4ZeH4tHqdT9m9pVEj1KI=
-X-Google-Smtp-Source: AGHT+IHivtvy/jRPu0I8Ces/TDhvBY7TVA9tDT88jLA028aX3ASpmqQ3KfJYVYM1rOEorR2QyolQYQ==
-X-Received: by 2002:a05:6402:4402:b0:640:a26e:3d76 with SMTP id 4fb4d7f45d1cf-640a26e4208mr5484730a12.27.1762169219448;
-        Mon, 03 Nov 2025 03:26:59 -0800 (PST)
-Received: from [172.20.10.10] ([213.233.110.172])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-640af968e5dsm4801329a12.19.2025.11.03.03.26.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Nov 2025 03:26:58 -0800 (PST)
-Message-ID: <c5c81744-48a2-4f3f-9ac3-2420af7caaac@linaro.org>
-Date: Mon, 3 Nov 2025 13:26:56 +0200
+	s=arc-20240116; t=1762169254; c=relaxed/simple;
+	bh=rKQ/y4Od9YwZy6lC+CZIwz4HC5HTRvkb8TpxPddq1Vk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Mo7KmbCQar3y+VnvZrBt2pwSb7nQEY6CiG2X4m0pzpsrVEhXULAnYO5DxsoLOIyFoXF8S5vGMwu6/d+vYbVefbNVOkmPLTiRXh+eXwW4thLA+dTnmNf7afTmKF4HAi5Et8jmNtztwsRE5c2pz+2hvzEaSZAzgzMBlwhx+9WgWts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U6WkkxGT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AB8FC4CEF8;
+	Mon,  3 Nov 2025 11:27:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762169253;
+	bh=rKQ/y4Od9YwZy6lC+CZIwz4HC5HTRvkb8TpxPddq1Vk=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=U6WkkxGTZLtlnNdBQazDAtsgeorAhuV5hDik2pKTcqsbl3AaR8l1x/LcjhuAqzZmM
+	 FnUljnz4oNoibMK6CNcTsI4Cmk8GCZDxmUgQLJpGu6LNbAdK3eBHjjmQmzO+eiozl6
+	 LSrtXCRVfTPH0uCruRfXoi/ShDZVsvqVitWm7iob2y3dvUuZXBE+KFlybomgbT1jZl
+	 FiQr9dcZVjF6Q77JMbh+SdH48QAgj635490LAFLfFWZTbB3E61HjQO2q6btJFVZXXv
+	 JEtz2qOaA5A7hFtdB/OapYZMe47sQxmIQQAfCj0yV1hphNgVui5vZ4o+rXxARtLPvx
+	 xGUBJ68dEzFyA==
+From: Christian Brauner <brauner@kernel.org>
+Date: Mon, 03 Nov 2025 12:26:57 +0100
+Subject: [PATCH 09/16] erofs: use credential guards
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 10/11] arm64: dts: exynos: gs101: add the chipid node
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- semen.protsenko@linaro.org, willmcvicker@google.com,
- kernel-team@android.com, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251031-gs101-chipid-v1-0-d78d1076b210@linaro.org>
- <20251031-gs101-chipid-v1-10-d78d1076b210@linaro.org>
- <20251103-pompous-lean-jerboa-c7b8ee@kuoka>
- <b82af744-ebbd-4dc8-8ccb-c7e4f2a6b04d@linaro.org>
- <abd5b16b-1467-449c-b452-7699cbe5d9f5@kernel.org>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <abd5b16b-1467-449c-b452-7699cbe5d9f5@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20251103-work-creds-guards-simple-v1-9-a3e156839e7f@kernel.org>
+References: <20251103-work-creds-guards-simple-v1-0-a3e156839e7f@kernel.org>
+In-Reply-To: <20251103-work-creds-guards-simple-v1-0-a3e156839e7f@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-aio@kvack.org, linux-unionfs@vger.kernel.org, 
+ linux-erofs@lists.ozlabs.org, linux-nfs@vger.kernel.org, 
+ linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
+ cgroups@vger.kernel.org, netdev@vger.kernel.org, 
+ Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-96507
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1187; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=rKQ/y4Od9YwZy6lC+CZIwz4HC5HTRvkb8TpxPddq1Vk=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRyTGwvdjrU7i51dLfjOt7O6IIJCSndv3gerc31srrjL
+ W3fKHK3o5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCLK+YwMJzeedL6l15ZWc+Rc
+ huX+xWsVps0+7X4xPfcr3+sHt++GCTAyfPgWIblbax3XPz3/q2cNb1f6+T3fwW7ZOHnP15KSP9x
+ rGQA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
+Use credential guards for scoped credential override with automatic
+restoration on scope exit.
 
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ fs/erofs/fileio.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-On 11/3/25 1:01 PM, Krzysztof Kozlowski wrote:
-> On 03/11/2025 11:50, Tudor Ambarus wrote:
->>
->>
->> On 11/3/25 12:18 PM, Krzysztof Kozlowski wrote:
->>> On Fri, Oct 31, 2025 at 12:56:09PM +0000, Tudor Ambarus wrote:
->>>> Add the chipid node.
->>>>
->>>> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
->>>> ---
->>>>  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 6 ++++++
->>>>  1 file changed, 6 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
->>>> index d06d1d05f36408137a8acd98e43d48ea7d4f4292..11622da2d46ff257b447a3dfdc98abdf29a45b9a 100644
->>>> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
->>>> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
->>>> @@ -467,6 +467,12 @@ opp-2802000000 {
->>>>  		};
->>>>  	};
->>>>  
->>>> +	chipid {
->>>> +		compatible = "google,gs101-chipid";
->>>
->>> That's not a real device, sorry.
->>>
->>> I had some doubts when reading the bindings, then more when reading
->>> driver - like chipid probe() was basically empty, no single device
->>> access, except calling other kernel subsystem - and now here no single
->>> actual hardware resource, except reference to other node.
->>>
->>> Are you REALLY REALLY sure you have in your datasheet such device as
->>> chipid?
->>>
->>> It is damn basic question, which you should start with.
->>
->> Documentation says that  GS101 "includes a CHIPID block for the software
->> that sends and receives APB interface signals to and from the bus system.
->> The first address of the SFR region (0x1000_0000) contains the product ID."
->>
->> 0x1000_0000 is the base address of the OTP controller (OTP_CON_TOP).
->>
->> "CHIPID block" tells it's a device, no? But now I think it was just an
->> unfortunate datasheet description. Do you have an advice on how I shall
->> treat this next please? Maybe register to the soc interface directly from
->> the OTP controller driver?
->>
-> 
-> 
-> Huh, then I am confused, because:
-> 1. That's the same message as in other Exynos and it has SFR region
-> 2. Your binding said there is no SFR region.
-> 3. Anyway, please post complete DTS, so if this has SFR region it must
-> have proper reg entry. You cannot skip it.
-> 
-> Of course next question would be what is the OTP controller...
+diff --git a/fs/erofs/fileio.c b/fs/erofs/fileio.c
+index b7b3432a9882..d27938435b2f 100644
+--- a/fs/erofs/fileio.c
++++ b/fs/erofs/fileio.c
+@@ -47,7 +47,6 @@ static void erofs_fileio_ki_complete(struct kiocb *iocb, long ret)
+ 
+ static void erofs_fileio_rq_submit(struct erofs_fileio_rq *rq)
+ {
+-	const struct cred *old_cred;
+ 	struct iov_iter iter;
+ 	int ret;
+ 
+@@ -61,9 +60,8 @@ static void erofs_fileio_rq_submit(struct erofs_fileio_rq *rq)
+ 		rq->iocb.ki_flags = IOCB_DIRECT;
+ 	iov_iter_bvec(&iter, ITER_DEST, rq->bvecs, rq->bio.bi_vcnt,
+ 		      rq->bio.bi_iter.bi_size);
+-	old_cred = override_creds(rq->iocb.ki_filp->f_cred);
+-	ret = vfs_iocb_iter_read(rq->iocb.ki_filp, &rq->iocb, &iter);
+-	revert_creds(old_cred);
++	scoped_with_creds(rq->iocb.ki_filp->f_cred)
++		ret = vfs_iocb_iter_read(rq->iocb.ki_filp, &rq->iocb, &iter);
+ 	if (ret != -EIOCBQUEUED)
+ 		erofs_fileio_ki_complete(&rq->iocb, ret);
+ }
 
-The CHIPID block, which has a dedicated chapter and all :), consists of two
-registers:
-
-Product ID
-Address = Base Address (0x1000_0000) + 0x0000, Reset Value = 0xE383_0000
-
-Chipid 3
-Address = Base Address (0x1000_0000) + 0x0010, Reset Value = 0x0000_0000
-
-While the Product ID is fixed (fused I assume), the CHIPID registers:
-"depend on the OTP value. When the power-on sequence progresses, the OTP
-values are loaded to the registers. These registers can read the loaded
-current OTP values."
-
-OTP values are from the OTP memory (32Kbit) from address 5'b00000, 160 bits
-in total. Even if not explicitly stated, I think the OTP controller copies
-the CHIP ID from the OTP memory to its registers, so that the "CHIPID block"
-can access them. You notice that the reset value of the CHIPID OTP registers
-is zero. They're then filled at power-on.
-
-This is all. I lean towards thinking the CHIPID block is not really a device.
-It's just a way software gets the product and chip IDs, which is by querying
-the OTP registers. I think I lean towards registering to the soc interface
-directly via the OTP device. Or maybe you think differently?
-
-Thanks,
-ta
-
+-- 
+2.47.3
 
 
