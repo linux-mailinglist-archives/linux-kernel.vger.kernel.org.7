@@ -1,412 +1,183 @@
-Return-Path: <linux-kernel+bounces-883235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3C4DC2CFFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:10:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A808C2CD2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:41:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2CE4460598
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:32:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 969C3189C4FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B9C23148CE;
-	Mon,  3 Nov 2025 15:26:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E772320CAA;
+	Mon,  3 Nov 2025 15:26:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dR4lyfqy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B8cwaqOJ"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C5C7313E01;
-	Mon,  3 Nov 2025 15:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524D4320A3F
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 15:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762183566; cv=none; b=dK4nsklbqchLJvcxfsf/t8nIbbwaVvK3LPASeKj8zkFbNJAbhBF+ZS4pjUIufIZ/P9P960oDrjmiimM0m9zXWjKspMyAH3qzUFAgDc/RWyrcuGz6f8ZafO/rqEw/OMg/0kx9ZOETivp67t9x0nfwIBYhRI9BWZEr/fwmHfTXUHc=
+	t=1762183572; cv=none; b=aW8ULlOKE6A/6tuP0xKRimaToBQ0bLcXceyDFWyJsOU7AZIsB/zf4JqSttYTrXfb4dAL/crOpx2FE0arIp9RJDW0HtFqnpF48cPwchAa6UPqWXUaYwYTO15afGSUut+Jr2hqsrS5+LXg15q2IxEs5ahG7t6q0nATKJ4d4a+OFo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762183566; c=relaxed/simple;
-	bh=vTEEqBvf4uzbZw74WdV2qWj7leVepYcRsHzgRilYAj0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CLEx0+qHjJ2B4oN+ks+koZ1nYfbfC0Ob3mgGP2CHqqPLYS/ipZg1/siN/CAb4+SVadmOo8hPzjxxxgL7HgA3BdUbEM4fw2tDXHOiVMdbPFaDPh7gTGrxG8EvR6N4PrV262YjwpVzTj/ziUZF7np3BjuUF4uQIeR07xT2u4APMJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dR4lyfqy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6021C4CEFD;
-	Mon,  3 Nov 2025 15:25:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762183563;
-	bh=vTEEqBvf4uzbZw74WdV2qWj7leVepYcRsHzgRilYAj0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dR4lyfqyfIeJ3Ig5IPvfd8uQHC7OCGkNY5Ighzdr7vuELihzTMXwpe1J33wj3KKqF
-	 yXmy51zxJLjI4GwonRG1NW5zAvQittC2tg3yCjRcZMgdiNt30fumnf97uLkEaLYA+4
-	 r6swm9vdmo8l8qyKlx6b9m3eX9FfPDwKiTLK9JjVkvYookjhlcFEBfKoOVT0WsG9+p
-	 82keLUNdicu7twpN0Qvj8BU2ViUhie01STXSh+ioYOCdTJddR+uVE8NIufhxzLUmM/
-	 5GGmf0rKR9Akh31tWmPTVFX7fFXFURZ+UPi8gqlwg3/kVJsyQmz7JnBtqO5mhL3JQK
-	 383L40wVejGiQ==
-Date: Mon, 3 Nov 2025 15:25:56 +0000
-From: Lee Jones <lee@kernel.org>
-To: Johan Jonker <jbx6244@yandex.com>
-Cc: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	William Breathitt Gray <wbg@kernel.org>, kernel@collabora.com,
-	Jonas Karlman <jonas@kwiboo.se>, Alexey Charkov <alchark@gmail.com>,
-	linux-rockchip@lists.infradead.org, linux-pwm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH v3 2/5] mfd: Add Rockchip mfpwm driver
-Message-ID: <20251103152556.GB8064@google.com>
-References: <20251027-rk3576-pwm-v3-0-654a5cb1e3f8@collabora.com>
- <20251027-rk3576-pwm-v3-2-654a5cb1e3f8@collabora.com>
- <16341fe2-7d2b-45a6-a861-93950c1bbd1f@yandex.com>
+	s=arc-20240116; t=1762183572; c=relaxed/simple;
+	bh=D3ds/ErQYUeUim9iowe0yUVn+i3cOriaf5Ex8lux6pQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R63vb8evUNyObNOlmJI4uaxsq9T2Z9wB9/eoUXhb/uRRuTgWyYq2n+Qm67iJIzoCdiIkqW3WaIiySaMDN8cTC2Oq7CJN+Po8d8LdwBIbulP3UNF8f7VCQxxxhJE3+0B1d8ah8PO8xaC7W2ot1HX+n1iOthFyvgbJt9F7yvd3l9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B8cwaqOJ; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-64075080480so762385a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 07:26:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762183568; x=1762788368; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=VdUAOQ9UfYb10NpKHLkwpV3JaSley4T2F3ae70K4wwQ=;
+        b=B8cwaqOJ0ENcNb6RN0kA/DvDkwiyBcC/MsvhznfdWZZszrieoVyz5Rc9Fg/q2YO1zu
+         2jsT1Z48ryYe909d6l7k8+5ZnmCq8oExDNZs+zUUeVFadqV644UsV3d2Gnsk0YTU1u2I
+         4QgZdHWjIUOcRDjzhauhFmY1VEWgAE/x3vguozQQ+fMXqyIW5gYMm2RSjSD/cZ1E42v4
+         AWdvWS+iqsWTD30aLzlvyml2UzEIVAAHs1OA+1+MTze/LxDW5YAT5XQASS+b1BbWHhrb
+         VcGXCB8mPrVCM3nWFHy0Jnk08wUIOK8b0QQJ+FAzy/Tjiq2hcBy7S9qF+PTNQ3/I/e1r
+         2OgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762183568; x=1762788368;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VdUAOQ9UfYb10NpKHLkwpV3JaSley4T2F3ae70K4wwQ=;
+        b=hl97Zo7fZah5G9/pfQQ8+PTGzUzjZYGPl00PfNiXElKs/WIISuyKaAfXfQqtbHi/hZ
+         qpb7xYV8n5QqE60WkND9DswGUHB0IbyjhzRzR8KJMeqNhgb7jL++wkEHYhcfWdTeuMFB
+         G7dTyZUkBvcq3/yHin4d4mA90DplwxMmzyeXiCBw4ifJbe3yFkpKGLOnPaqgRpJF13f+
+         XwC5lJ9oNxN9ylKUUyZU9NMhMGzJNNLQUvTsQLudtr4X2siF9Usc+PzaJbAJw9qr6JuR
+         jNpR1ChlJPt//aLF42gC42OPtnAo/HHV4CbFL48y5piNsqnVfETj087sE6/aWK6p3E4s
+         aDPw==
+X-Forwarded-Encrypted: i=1; AJvYcCUgXjWrCrEeqtc4rIYOadKF1Bf9k8GcOrkNzUcNGsN4r8QlxwMbt2E+UlpieEwq9nAmdQvlgJU2rZMaH5s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPc7zllkgvFWDccw42YoGyYnbC+dp0okIcPBvOmdjk5lr+E+b1
+	aOR6iXhtZEbNvz22KH0oV3ye0UgPT+CWcD21z6dquVhSJWdvZxds/DWNlqX/lzCe/7E=
+X-Gm-Gg: ASbGncti71Oiy53TVhm/zx+XH+25fvg5Tv8uYj5my4b19GLQuQSdkisKFN1iDa1oU5i
+	n4s4wLzrqVdl6BlYkQzloxtDZXJ4nRBVGZsmCa9KfKDQtrWVv9fsClHpwdxSI9W8l2cT2liNHSa
+	ITivt6aB2OGEd4AFVSBYCbNDDrfF8dQjJxAGe3UcgmQPT9vWm6MwF3TGbPPcHsEQuG8NHHiIr7e
+	Na5lT6jh7e5yP3WKGO7WD7BqebffE7xT6LGh1v7qtM3k+fYFDV6z8yqVvyPpUc5oHj9StoD+Ada
+	rNO6EfuQQ8sVdHJBNyreM2kGwPaq0nBFZhKysP3xvss4xE9LB1CGXfaR2TGlh+u3142XJ8ZxePj
+	IbFUT726LCCF4lzHAPyJBF9E8noA39TzvpA4RU021f/OiKca9HGbkYUcsMl92tgu0ae9l4CUeQE
+	pxZQ3Bay7J5z9iTykNu022
+X-Google-Smtp-Source: AGHT+IEy5eZgEtJamv4eN74TVUTPfYhXuXEbyjSf3Zgujp3MHg9SizhKmfU6gaqx4CLBvmHZq4yLNA==
+X-Received: by 2002:a05:6402:26c2:b0:640:acc8:eff6 with SMTP id 4fb4d7f45d1cf-640acc8f300mr3184665a12.0.1762183568505;
+        Mon, 03 Nov 2025 07:26:08 -0800 (PST)
+Received: from [192.168.1.29] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b71a332a9f9sm115987266b.38.2025.11.03.07.26.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Nov 2025 07:26:07 -0800 (PST)
+Message-ID: <ee8db6df-76e2-497d-8718-b0ce5affff05@linaro.org>
+Date: Mon, 3 Nov 2025 16:26:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <16341fe2-7d2b-45a6-a861-93950c1bbd1f@yandex.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/2] reset: handle RESET_GPIO better to provide the
+ fallback
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ linux-kernel@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
+References: <20251015205919.12678-4-wsa+renesas@sang-engineering.com>
+ <e1fd975c-56ef-442b-8617-d63237bf795a@linaro.org> <aQjI1m0yYs2t1hYq@shikoro>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+AhsD
+ BQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEEm9B+DgxR+NWWd7dUG5NDfTtBYpsFAmgXUEoF
+ CRaWdJoACgkQG5NDfTtBYpudig/+Inb3Kjx1B7w2IpPKmpCT20QQQstx14Wi+rh2FcnV6+/9
+ tyHtYwdirraBGGerrNY1c14MX0Tsmzqu9NyZ43heQB2uJuQb35rmI4dn1G+ZH0BD7cwR+M9m
+ lSV9YlF7z3Ycz2zHjxL1QXBVvwJRyE0sCIoe+0O9AW9Xj8L/dmvmRfDdtRhYVGyU7fze+lsH
+ 1pXaq9fdef8QsAETCg5q0zxD+VS+OoZFx4ZtFqvzmhCs0eFvM7gNqiyczeVGUciVlO3+1ZUn
+ eqQnxTXnqfJHptZTtK05uXGBwxjTHJrlSKnDslhZNkzv4JfTQhmERyx8BPHDkzpuPjfZ5Jp3
+ INcYsxgttyeDS4prv+XWlT7DUjIzcKih0tFDoW5/k6OZeFPba5PATHO78rcWFcduN8xB23B4
+ WFQAt5jpsP7/ngKQR9drMXfQGcEmqBq+aoVHobwOfEJTErdku05zjFmm1VnD55CzFJvG7Ll9
+ OsRfZD/1MKbl0k39NiRuf8IYFOxVCKrMSgnqED1eacLgj3AWnmfPlyB3Xka0FimVu5Q7r1H/
+ 9CCfHiOjjPsTAjE+Woh+/8Q0IyHzr+2sCe4g9w2tlsMQJhixykXC1KvzqMdUYKuE00CT+wdK
+ nXj0hlNnThRfcA9VPYzKlx3W6GLlyB6umd6WBGGKyiOmOcPqUK3GIvnLzfTXR5DOwU0EVUNc
+ NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
+ hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
+ oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
+ H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
+ yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
+ 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
+ 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
+ +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
+ FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
+ 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
+ DFH41ZZ3t1Qbk0N9O0FimwUCaBdQXwUJFpZbKgAKCRAbk0N9O0Fim07TD/92Vcmzn/jaEBcq
+ yT48ODfDIQVvg2nIDW+qbHtJ8DOT0d/qVbBTU7oBuo0xuHo+MTBp0pSTWbThLsSN1AuyP8wF
+ KChC0JPcwOZZRS0dl3lFgg+c+rdZUHjsa247r+7fvm2zGG1/u+33lBJgnAIH5lSCjhP4VXiG
+ q5ngCxGRuBq+0jNCKyAOC/vq2cS/dgdXwmf2aL8G7QVREX7mSl0x+CjWyrpFc1D/9NV/zIWB
+ G1NR1fFb+oeOVhRGubYfiS62htUQjGLK7qbTmrd715kH9Noww1U5HH7WQzePt/SvC0RhQXNj
+ XKBB+lwwM+XulFigmMF1KybRm7MNoLBrGDa3yGpAkHMkJ7NM4iSMdSxYAr60RtThnhKc2kLI
+ zd8GqyBh0nGPIL+1ZVMBDXw1Eu0/Du0rWt1zAKXQYVAfBLCTmkOnPU0fjR7qVT41xdJ6KqQM
+ NGQeV+0o9X91X6VBeK6Na3zt5y4eWkve65DRlk1aoeBmhAteioLZlXkqu0pZv+PKIVf+zFKu
+ h0At/TN/618e/QVlZPbMeNSp3S3ieMP9Q6y4gw5CfgiDRJ2K9g99m6Rvlx1qwom6QbU06ltb
+ vJE2K9oKd9nPp1NrBfBdEhX8oOwdCLJXEq83vdtOEqE42RxfYta4P3by0BHpcwzYbmi/Et7T
+ 2+47PN9NZAOyb771QoVr8A==
+In-Reply-To: <aQjI1m0yYs2t1hYq@shikoro>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 28 Oct 2025, Johan Jonker wrote:
+On 03/11/2025 16:23, Wolfram Sang wrote:
+> 
+>> You removed RFC and entire rationale. Your earlier commit - 690de2902dca
+>> - is broken. You must not do that.
+> 
+> Wojciech was told to do exactly what he did. Dunno by whom, I trusted
+> that after seeing the handling code in reset core. Is the required
+> fallback documented somewhere?
+
+Yes, by stable ABI document and by standard rule - we never break the users.
+
+That commit for which I sent revert effectively breaks that rule -
+affects the users.
 
 > 
+>> Broken 690de2902dca leads to this broken patchset, but that is not a
+>> correct fix. You need to fix the source - revert 690de2902dca, because
+>> it is obviously wrong. You MUST ave fallback to reset-gpios, that was
+>> the entire concept how this driver was written.
 > 
-> On 10/27/25 18:11, Nicolas Frattaroli wrote:
-> > With the Rockchip RK3576, the PWM IP used by Rockchip has changed
-> > substantially. Looking at both the downstream pwm-rockchip driver as
-> > well as the mainline pwm-rockchip driver made it clear that with all its
-> > additional features and its differences from previous IP revisions, it
-> > is best supported in a new driver.
-> > 
-> > This brings us to the question as to what such a new driver should be.
-> > To me, it soon became clear that it should actually be several new
-> > drivers, most prominently when Uwe Kleine-König let me know that I
-> > should not implement the pwm subsystem's capture callback, but instead
-> > write a counter driver for this functionality.
-> > 
-> > Combined with the other as-of-yet unimplemented functionality of this
-> > new IP, it became apparent that it needs to be spread across several
-> > subsystems.
-> > 
-> > For this reason, we add a new MFD core driver, called mfpwm (short for
-> > "Multi-function PWM"). This "parent" driver makes sure that only one
-> > device function driver is using the device at a time, and is in charge
-> > of registering the MFD cell devices for the individual device functions
-> > offered by the device.
-> > 
-> > An acquire/release pattern is used to guarantee that device function
-> > drivers don't step on each other's toes.
-> > 
-> > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> > ---
-> >  MAINTAINERS                        |   2 +
-> >  drivers/mfd/Kconfig                |  15 ++
-> >  drivers/mfd/Makefile               |   1 +
-> >  drivers/mfd/rockchip-mfpwm.c       | 340 +++++++++++++++++++++++++++
-> >  include/linux/mfd/rockchip-mfpwm.h | 454 +++++++++++++++++++++++++++++++++++++
-> >  5 files changed, 812 insertions(+)
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index baecabab35a2..8f3235ba825e 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -22372,6 +22372,8 @@ L:	linux-rockchip@lists.infradead.org
-> >  L:	linux-pwm@vger.kernel.org
-> >  S:	Maintained
-> 
-> >  F:	Documentation/devicetree/bindings/pwm/rockchip,rk3576-pwm.yaml
-> 
-> A question not so much for Nicolas specific:
-> The yaml documents already have a 'maintainers' entry.
-> However MAINTAINERS is full yaml entries.
-> Could someone explain why we still need dual registration?
-> 
-> maintainers:
->   - Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> 
-> > +F:	drivers/soc/rockchip/mfpwm.c
-> > +F:	include/soc/rockchip/mfpwm.h
-> 
-> different file name and location?
-> 
->   drivers/mfd/rockchip-mfpwm.c       | 340 +++++++++++++++++++++++++++
->   include/linux/mfd/rockchip-mfpwm.h | 454 +++++++++++++++++++++++++++++++++++++
-> 
-> 
-> >  
-> >  ROCKCHIP RK3568 RANDOM NUMBER GENERATOR SUPPORT
-> >  M:	Daniel Golle <daniel@makrotopia.org>
-> > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> > index dbeac6825a10..8b3a3160fbdf 100644
-> > --- a/drivers/mfd/Kconfig
-> > +++ b/drivers/mfd/Kconfig
-> > @@ -1367,6 +1367,21 @@ config MFD_RC5T583
-> >  	  Additional drivers must be enabled in order to use the
-> >  	  different functionality of the device.
-> >  
-> > +config MFD_ROCKCHIP_MFPWM
-> > +	tristate "Rockchip multi-function PWM controller"
-> > +	depends on OF
-> > +	depends on HAS_IOMEM
-> > +	depends on COMMON_CLK
-> > +	select MFD_CORE
-> > +	help
-> > +	  Some Rockchip SoCs, such as the RK3576, use a PWM controller that has
-> > +	  several different functions, such as generating PWM waveforms but also
-> > +	  counting waveforms.
-> > +
-> > +	  This driver manages the overall device, and selects between different
-> > +	  functionalities at runtime as needed. Drivers for them are implemented
-> > +	  in their respective subsystems.
-> > +
-> >  config MFD_RK8XX
-> >  	tristate
-> >  	select MFD_CORE
-> > diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> > index e75e8045c28a..ebadbaea9e4a 100644
-> > --- a/drivers/mfd/Makefile
-> > +++ b/drivers/mfd/Makefile
-> > @@ -231,6 +231,7 @@ obj-$(CONFIG_MFD_PALMAS)	+= palmas.o
-> >  obj-$(CONFIG_MFD_VIPERBOARD)    += viperboard.o
-> >  obj-$(CONFIG_MFD_NTXEC)		+= ntxec.o
-> >  obj-$(CONFIG_MFD_RC5T583)	+= rc5t583.o rc5t583-irq.o
-> > +obj-$(CONFIG_MFD_ROCKCHIP_MFPWM)	+= rockchip-mfpwm.o
-> >  obj-$(CONFIG_MFD_RK8XX)		+= rk8xx-core.o
-> >  obj-$(CONFIG_MFD_RK8XX_I2C)	+= rk8xx-i2c.o
-> >  obj-$(CONFIG_MFD_RK8XX_SPI)	+= rk8xx-spi.o
-> > diff --git a/drivers/mfd/rockchip-mfpwm.c b/drivers/mfd/rockchip-mfpwm.c
-> > new file mode 100644
-> > index 000000000000..08c2d8da41b7
-> > --- /dev/null
-> > +++ b/drivers/mfd/rockchip-mfpwm.c
-> > @@ -0,0 +1,340 @@
-> > +// SPDX-License-Identifier: GPL-2.0-or-later
-> > +/*
-> > + * Copyright (c) 2025 Collabora Ltd.
-> > + *
-> > + * A driver to manage all the different functionalities exposed by Rockchip's
-> > + * PWMv4 hardware.
-> > + *
-> > + * This driver is chiefly focused on guaranteeing non-concurrent operation
-> > + * between the different device functions, as well as setting the clocks.
-> > + * It registers the device function platform devices, e.g. PWM output or
-> > + * PWM capture.
-> > + *
-> > + * Authors:
-> > + *     Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> > + */
-> > +
-> > +#include <linux/array_size.h>
-> > +#include <linux/clk.h>
-> > +#include <linux/clk-provider.h>
-> > +#include <linux/mfd/core.h>
-> > +#include <linux/mfd/rockchip-mfpwm.h>
-> > +#include <linux/module.h>
-> > +#include <linux/of.h>
-> > +#include <linux/overflow.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/spinlock.h>
-> > +
-> > +/**
-> > + * struct rockchip_mfpwm - private mfpwm driver instance state struct
-> > + * @pdev: pointer to this instance's &struct platform_device
-> > + * @base: pointer to the memory mapped registers of this device
-> > + * @pwm_clk: pointer to the PLL clock the PWM signal may be derived from
-> > + * @osc_clk: pointer to the fixed crystal the PWM signal may be derived from
-> > + * @rc_clk: pointer to the RC oscillator the PWM signal may be derived from
-> > + * @chosen_clk: a clk-mux of pwm_clk, osc_clk and rc_clk
-> > + * @pclk: pointer to the APB bus clock needed for mmio register access
-> > + * @active_func: pointer to the currently active device function, or %NULL if no
-> > + *               device function is currently actively using any of the shared
-> > + *               resources. May only be checked/modified with @state_lock held.
-> > + * @acquire_cnt: number of times @active_func has currently mfpwm_acquire()'d
-> > + *               it. Must only be checked or modified while holding @state_lock.
-> > + * @state_lock: this lock is held while either the active device function, the
-> > + *              enable register, or the chosen clock is being changed.
-> > + * @irq: the IRQ number of this device
-> > + */
-> > +struct rockchip_mfpwm {
-> > +	struct platform_device *pdev;
-> > +	void __iomem *base;
-> > +	struct clk *pwm_clk;
-> > +	struct clk *osc_clk;
-> > +	struct clk *rc_clk;
-> > +	struct clk *chosen_clk;
-> > +	struct clk *pclk;
-> > +	struct rockchip_mfpwm_func *active_func;
-> > +	unsigned int acquire_cnt;
-> > +	spinlock_t state_lock;
-> > +	int irq;
-> > +};
-> > +
-> > +static atomic_t subdev_id = ATOMIC_INIT(0);
-> > +
-> > +static inline struct rockchip_mfpwm *to_rockchip_mfpwm(struct platform_device *pdev)
-> > +{
-> > +	return platform_get_drvdata(pdev);
-> > +}
-> > +
-> > +static int mfpwm_check_pwmf(const struct rockchip_mfpwm_func *pwmf,
-> > +			    const char *fname)
-> > +{
-> > +	struct device *dev = &pwmf->parent->pdev->dev;
-> > +
-> > +	if (IS_ERR_OR_NULL(pwmf)) {
-> > +		dev_warn(dev, "called %s with an erroneous handle, no effect\n",
-> > +			 fname);
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	if (IS_ERR_OR_NULL(pwmf->parent)) {
-> > +		dev_warn(dev, "called %s with an erroneous mfpwm_func parent, no effect\n",
-> > +			 fname);
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +__attribute__((nonnull))
-> > +static int mfpwm_do_acquire(struct rockchip_mfpwm_func *pwmf)
-> > +{
-> > +	struct rockchip_mfpwm *mfpwm = pwmf->parent;
-> > +	unsigned int cnt;
-> > +
-> > +	if (mfpwm->active_func && pwmf->id != mfpwm->active_func->id)
-> > +		return -EBUSY;
-> > +
-> > +	if (!mfpwm->active_func)
-> > +		mfpwm->active_func = pwmf;
-> > +
-> > +	if (!check_add_overflow(mfpwm->acquire_cnt, 1, &cnt)) {
-> > +		mfpwm->acquire_cnt = cnt;
-> > +	} else {
-> > +		dev_warn(&mfpwm->pdev->dev, "prevented acquire counter overflow in %s\n",
-> > +			 __func__);
-> > +		return -EOVERFLOW;
-> > +	}
-> > +
-> > +	dev_dbg(&mfpwm->pdev->dev, "%d acquired mfpwm, acquires now at %u\n",
-> > +		pwmf->id, mfpwm->acquire_cnt);
-> > +
-> > +	return clk_enable(mfpwm->pclk);
-> > +}
-> > +
-> > +int mfpwm_acquire(struct rockchip_mfpwm_func *pwmf)
-> > +{
-> > +	struct rockchip_mfpwm *mfpwm;
-> > +	unsigned long flags;
-> > +	int ret = 0;
-> > +
-> > +	ret = mfpwm_check_pwmf(pwmf, "mfpwm_acquire");
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	mfpwm = pwmf->parent;
-> > +	dev_dbg(&mfpwm->pdev->dev, "%d is attempting to acquire\n", pwmf->id);
-> > +
-> > +	if (!spin_trylock_irqsave(&mfpwm->state_lock, flags))
-> > +		return -EBUSY;
-> > +
-> > +	ret = mfpwm_do_acquire(pwmf);
-> > +
-> > +	spin_unlock_irqrestore(&mfpwm->state_lock, flags);
-> > +
-> > +	return ret;
-> > +}
-> > +EXPORT_SYMBOL_NS_GPL(mfpwm_acquire, "ROCKCHIP_MFPWM");
-> > +
-> > +__attribute__((nonnull))
-> > +static void mfpwm_do_release(const struct rockchip_mfpwm_func *pwmf)
-> > +{
-> > +	struct rockchip_mfpwm *mfpwm = pwmf->parent;
-> > +
-> > +	if (!mfpwm->active_func)
-> > +		return;
-> > +
-> > +	if (mfpwm->active_func->id != pwmf->id)
-> > +		return;
-> > +
-> > +	/*
-> > +	 * No need to check_sub_overflow here, !mfpwm->active_func above catches
-> > +	 * this type of problem already.
-> > +	 */
-> > +	mfpwm->acquire_cnt--;
-> > +
-> > +	if (!mfpwm->acquire_cnt)
-> > +		mfpwm->active_func = NULL;
-> > +
-> > +	clk_disable(mfpwm->pclk);
-> > +}
-> > +
-> > +void mfpwm_release(const struct rockchip_mfpwm_func *pwmf)
-> > +{
-> > +	struct rockchip_mfpwm *mfpwm;
-> > +	unsigned long flags;
-> > +
-> > +	if (mfpwm_check_pwmf(pwmf, "mfpwm_release"))
-> > +		return;
-> > +
-> > +	mfpwm = pwmf->parent;
-> > +
-> > +	spin_lock_irqsave(&mfpwm->state_lock, flags);
-> > +	mfpwm_do_release(pwmf);
-> > +	dev_dbg(&mfpwm->pdev->dev, "%d released mfpwm, acquires now at %u\n",
-> > +		pwmf->id, mfpwm->acquire_cnt);
-> > +	spin_unlock_irqrestore(&mfpwm->state_lock, flags);
-> > +}
-> > +EXPORT_SYMBOL_NS_GPL(mfpwm_release, "ROCKCHIP_MFPWM");
-> > +
-> > +/**
-> > + * mfpwm_register_subdev - register a single mfpwm_func
-> > + * @mfpwm: pointer to the parent &struct rockchip_mfpwm
-> > + * @name: sub-device name string
-> > + *
-> > + * Allocate a single &struct mfpwm_func, fill its members with appropriate data,
-> > + * and register a new mfd cell.
-> > + *
-> > + * Returns: 0 on success, negative errno on error
-> > + */
-> > +static int mfpwm_register_subdev(struct rockchip_mfpwm *mfpwm,
-> > +				 const char *name)
-> > +{
-> > +	struct rockchip_mfpwm_func *func;
-> > +	struct mfd_cell cell = {};
-> > +
-> > +	func = devm_kzalloc(&mfpwm->pdev->dev, sizeof(*func), GFP_KERNEL);
-> > +	if (IS_ERR(func))
-> > +		return PTR_ERR(func);
-> > +	func->irq = mfpwm->irq;
-> > +	func->parent = mfpwm;
-> > +	func->id = atomic_inc_return(&subdev_id);
-> > +	func->base = mfpwm->base;
-> > +	func->core = mfpwm->chosen_clk;
-> > +	cell.name = name;
-> > +	cell.platform_data = func;
-> > +	cell.pdata_size = sizeof(*func);
-> > +	// cell.ignore_resource_conflicts = true;
-> > +	// cell.resources = mfpwm->pdev->resource;
-> > +	// cell.num_resources = mfpwm->pdev->num_resources;
-> > +
-> > +	return devm_mfd_add_devices(&mfpwm->pdev->dev, func->id, &cell, 1, NULL,
-> > +				    0, NULL);
-> > +}
-> > +
-> > +static int mfpwm_register_subdevs(struct rockchip_mfpwm *mfpwm)
-> > +{
-> > +	int ret;
-> > +
-> 
-> > +	ret = mfpwm_register_subdev(mfpwm, "pwm-rockchip-v4");
-> 
-> Not sure who came up with this name?
-> In case we need to filter wouldn't be easier to order it just like the bindings: manufacture '-' function
+> What is the benefit of having reset-gpios handling in the reset core
+> optionally and required as a fallback?
 
-Please snip your replies in the future.
+Stable ABI rules require that, it is not about "benefits". Please send
+email to Linus and ask him: "can I make a change which breaks users of ABI".
 
--- 
-Lee Jones [李琼斯]
+
+> 
+> What is the drawback of having this tiny driver in the core and provide
+
+If you have squashed the patchset, instead of making this non-bisectable
+mess, it would be fine. But because you made it non-bisectable and only
+one part got to the kernel - ALL USERS are affected and their boards broken.
+
+See four reports from Marek Szyprowski.
+
+
+Best regards,
+Krzysztof
 
