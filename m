@@ -1,118 +1,107 @@
-Return-Path: <linux-kernel+bounces-882803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D000C2B86D
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:53:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AE30C2B8C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:57:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E17D3A91E6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:49:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5FC93A49FE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D287306488;
-	Mon,  3 Nov 2025 11:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 001F1306B06;
+	Mon,  3 Nov 2025 11:52:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Xo33jnNE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FbvePhAA"
+Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7803054F8;
-	Mon,  3 Nov 2025 11:49:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FCF8306B02
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 11:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762170573; cv=none; b=BHp+xAUdjDVCpsN1+0WKM4KMkPNoJtUbyXOaxIbQWxCrjADpm6qJX6OMNd8cg6l0i8grhTUtL7oHiu6Mea7Xf3xsMOb5cTZVpqH/BZLy6ya1S//Imqk50oSrf9YhXtELEZboOGzx0X7/xVo6h139mLKMrVI9dZnIcGWcmYRx/hY=
+	t=1762170752; cv=none; b=I23DB91qNAzfNsVLgWPAdFJanrrzOLKRdnVo26qKd0iZtxYcQ7cJdisf88v9OY3za9iU9G68GG3LTyUc6yU3Crz58SZLwuS9EF88jdlWSPQYkdofnqR1ttWMseu0cBdiO07yoZLsTEGh1TQvyLXOOzmn+Ni+EuLDXhvWv2jEE+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762170573; c=relaxed/simple;
-	bh=ZwAgCATanaBWIqO1E6H8E5QJTHevA2isw2ecO03UmJE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K/SberuxZYLcq5VKqQfbbv7zpzIq1XePcnoONjj8eFK8KMqDvtyd4cj00MRqr+2CI2QcoSuUK+SLc8xtf9QCpAC28hlbhtAt2NcqVuogTSDi9bFSph8MxdrYUq3xww6Tyr1PW1ShTd1obuZwh9aGdh0vwPhe2GgljEK6h/fZKD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Xo33jnNE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE03AC4CEFD;
-	Mon,  3 Nov 2025 11:49:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1762170573;
-	bh=ZwAgCATanaBWIqO1E6H8E5QJTHevA2isw2ecO03UmJE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xo33jnNEgTi3HzVNIVS3g6ls4E7ZMUvwWA4OkLZRrXcV0ZlpIpG6bOeBgKG8OFuvX
-	 WM4Al9mdJL1AaZkbRmmDFVze7zkR98jNPJ2EtNJRloji+/iS2qt21VsWG6UYuwRp00
-	 TnkpgoRsdhCFVECs4BUqLtmTSbzVJy7NINeEIzug=
-Date: Mon, 3 Nov 2025 20:49:30 +0900
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Michal Pecio <michal.pecio@gmail.com>
-Cc: Mathias Nyman <mathias.nyman@intel.com>,
-	Guangshuo Li <lgs201920130244@gmail.com>,
-	Wesley Cheng <quic_wcheng@quicinc.com>, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] usb: xhci: Check kcalloc_node() when allocating
- interrupter array in xhci_mem_init()
-Message-ID: <2025110342-rimless-change-0a95@gregkh>
-References: <20250918130838.3551270-1-lgs201920130244@gmail.com>
- <20251103094036.2d1593bc.michal.pecio@gmail.com>
+	s=arc-20240116; t=1762170752; c=relaxed/simple;
+	bh=RPb/+8qLb7/0J9oKNYmFzQfLzRyJLF4cr7ZNuVBPCVI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=nnBwgbC5rd0bL2c16S16B6ATQfwsR0C0GjFmYSNzDjtq4EKUQonRPrLv2HxiubcUlUTjFCbOX3iCWNAkcwUUDlxDMtlqOtC4VDPgFu89G3vHFpcgSx+d93lYqvVWlAVVCu8b71Cl+zBaAetr8jaxBoSQiuvkjfxhZI5TL7e0C6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FbvePhAA; arc=none smtp.client-ip=185.246.85.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-03.galae.net (Postfix) with ESMTPS id 751B64E414BA;
+	Mon,  3 Nov 2025 11:52:27 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 49AB260628;
+	Mon,  3 Nov 2025 11:52:27 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F0E6410B5005F;
+	Mon,  3 Nov 2025 12:52:20 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762170746; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=nxLsgXaX3S7Wf96NrKXVV0SE7yKYs5dnel8d4jei4WI=;
+	b=FbvePhAAaYxdeRQVSnYhE7UWK6DoHCvGymwxDkiWTU0lpiuIg60oBggkuzXgey7qynUvxV
+	RVVN7od4+LESxZ02FMEkv24OswzAkrfIL4PAsYgUoQdeWsc0Fcxrz/ekicDsUpquTUzoCs
+	TlIbS1pTmMSvdZ7PyQdGtnwVNqGPxvMUf+VIUgjJcbLLay9pteEAiA1gliQU7IrRAz0tiO
+	AGp4tX/2t+7JfAz2TFqtQy1I+MQGGOh+Ofm3rTjiI/82hBTvajaxhet3JAHMoDWPdIeaX9
+	jSP8Lz2hG5JhyuWRuU64gFZU8L1ikExIWOfYbOff83S6r+4rMYh0ygX48w3Ybw==
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Naresh Kamboju <naresh.kamboju@linaro.org>, 
+ Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, 
+ Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Hui Pu <Hui.Pu@gehealthcare.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20251017-drm-bridge-alloc-getput-bridge-connector-fix-hdmi_cec-v2-0-667abf6d47c0@bootlin.com>
+References: <20251017-drm-bridge-alloc-getput-bridge-connector-fix-hdmi_cec-v2-0-667abf6d47c0@bootlin.com>
+Subject: Re: [PATCH v2 0/3] drm/display: bridge_connector: get/put the
+ stored bridges: fix NULL pointer regression
+Message-Id: <176217074003.78559.5719838860402143983.b4-ty@bootlin.com>
+Date: Mon, 03 Nov 2025 12:52:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251103094036.2d1593bc.michal.pecio@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, Nov 03, 2025 at 09:40:36AM +0100, Michal Pecio wrote:
-> On Thu, 18 Sep 2025 21:08:38 +0800, Guangshuo Li wrote:
-> > kcalloc_node() may fail. When the interrupter array allocation returns
-> > NULL, subsequent code uses xhci->interrupters (e.g. in xhci_add_interrupter()
-> > and in cleanup paths), leading to a potential NULL pointer dereference.
-> > 
-> > Check the allocation and bail out to the existing fail path to avoid
-> > the NULL dereference.
-> > 
-> > Fixes: c99b38c412343 ("xhci: add support to allocate several interrupters")
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Guangshuo Li <lgs201920130244@gmail.com>
-> > ---
-> >  drivers/usb/host/xhci-mem.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
-> > index d698095fc88d..da257856e864 100644
-> > --- a/drivers/usb/host/xhci-mem.c
-> > +++ b/drivers/usb/host/xhci-mem.c
-> > @@ -2505,7 +2505,8 @@ int xhci_mem_init(struct xhci_hcd *xhci, gfp_t flags)
-> >  		       "Allocating primary event ring");
-> >  	xhci->interrupters = kcalloc_node(xhci->max_interrupters, sizeof(*xhci->interrupters),
-> >  					  flags, dev_to_node(dev));
-> > -
-> > +	if (!xhci->interrupters)
-> > +		goto fail;
-> >  	ir = xhci_alloc_interrupter(xhci, 0, flags);
-> >  	if (!ir)
-> >  		goto fail;
-> > -- 
-> > 2.43.0
-> 
-> Hi Greg and Mathias,
-> 
-> I noticed that this bug still exists in current 6.6 and 6.12 releases,
-> what would be the sensible course of action to fix it?
-> 
-> The patch from Guangshuo Li is a specific fix and it applies cleanly on
-> those branches. By simulating allocation failure, I confirmed the bug
-> and the fix on 6.6.113, which is identical to the current 6.6.116.
-> 
-> Mainline added an identical check in 83d98dea48eb ("usb: xhci: add
-> individual allocation checks in xhci_mem_init()") which is a cleanup
-> that has a merge conflict at least with 6.6.
-> 
-> The conflict seems superficial and probably the cleanup would have no
-> side effects on 6.6/6.12, but I haven't really reviewed this and maybe
-> it would be simpler to just take the targeted fix?
 
-A backport is always appreciated if you want a patch in stable kernels.
-And as this really can never be triggerd by a user, it's a low priority :)
+On Fri, 17 Oct 2025 18:15:03 +0200, Luca Ceresoli wrote:
+> A patch of mine recently merged in drm-misc-next [1] has a NULL pointer
+> deref regression (reported here [2] and here [3]). Being in lack of a quick
+> fix, I sent a revert proposal [4].
+> 
+> The revert proposal has no answers currenty, and in the meanwhile I have a
+> patch that implements the original idea but without the same bug. So here's
+> a v2 series with:
+> 
+> [...]
 
-thanks,
+Applied, thanks!
 
-greg k-h
+[1/3] Revert "drm/display: bridge_connector: get/put the stored bridges"
+      commit: b4027536933f813e51cc53be0b7542012f09aa38
+[2/3] drm/display: bridge_connector: get/put the stored bridges
+      commit: 13adb8c97846603efc7bfc7663dfdc0ba2f34b8f
+[3/3] drm/display: bridge_connector: get/put the panel_bridge
+      commit: a3f433c57c46776f95fdf4cfaad1ab27dbca7311
+
+Best regards,
+-- 
+Luca Ceresoli <luca.ceresoli@bootlin.com>
+
 
