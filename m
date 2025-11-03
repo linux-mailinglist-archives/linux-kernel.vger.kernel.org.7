@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-882427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0A26C2A7DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:08:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B3DFC2A71C
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:57:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0A883AE667
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:01:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4C7B24F2DD3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1F92C15BE;
-	Mon,  3 Nov 2025 07:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E1A2C0F97;
+	Mon,  3 Nov 2025 07:53:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="avRt75Sr"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="aoxfi8Ra"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FDA2C158E
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 07:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D9FF2C21CD
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 07:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762156413; cv=none; b=uKV+rfPQlSVVREDKwN59hsg3jhWH9Q927eKuts6rk95zh8bRqoTzSvxOrFRRaGNy357f+hfDpgKFmNMe2H86Cu4iwlVEjKIScOPp1THE81blk4p4zaeLkzOpqQ3isbp+9woKDnInXIG0iQzevRRozafVfolMLYyMtHunE3A4STo=
+	t=1762156417; cv=none; b=TQNcoKis7TiJVgk8CUM38qzLskTgzNaDmfDjYqoAOmUZRfAf1jtAaWOyTh6siSqgdbvM85RcAyKoF/IuNbiJ7V/hP/fQKSmwXc0B7Q2lnmA1wy/4CVtwx9iS3k91jhtqbwul42RiL5gBo9yvAI5LL3+iRTX6527MxMbMf4ATAh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762156413; c=relaxed/simple;
-	bh=DAl6x1WW+sdgvs4yNNBh1LtvTW7dfzKVhNfdGn4NeFs=;
+	s=arc-20240116; t=1762156417; c=relaxed/simple;
+	bh=11CarfubxZ0qqJeB0Vehw4TOzZTVQzHPXsWuRlypEew=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MKqnDPAK8lk17nmn17lC4m6gGkd1P85Sl1NMvi1kT07kFEhhHT+S5dYcdAWi96QRDEsLIppo7m9Wug6G8ekheJhNP2EJH0OxpTw1o8S4TQXkY38t8BC/e0j7Y5wvMcmW6mFTixYq0kmjrrNUINKLKFoXYEbMQ7E2uYimKV/ggVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=avRt75Sr; arc=none smtp.client-ip=209.85.210.175
+	 MIME-Version; b=rkwh49GtkHdsdHVA7nuYg65DX7HSjnmzAxpOiql4vNYUcoWgwu5uLb3nbS6cFjD4NoX1CMzsDsEjBDuVdKLZ4bTDlRheMkFBtDNif84COK4hhSU24MTGxklWiouPCK4okheBmHBep4xHveVbf501rr72LBYR7/GV/u8S1KEfcNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=aoxfi8Ra; arc=none smtp.client-ip=209.85.216.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-7a4c202a30aso4101103b3a.2
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 23:53:28 -0800 (PST)
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-34101107cc8so914092a91.0
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 23:53:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shopee.com; s=shopee.com; t=1762156408; x=1762761208; darn=vger.kernel.org;
+        d=shopee.com; s=shopee.com; t=1762156415; x=1762761215; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ba4jPz4GzIpOX2boFuFrVZ/wgd/V0hgb12GzaY8s2GM=;
-        b=avRt75SrlEMRN6VHUrUG4/hxcSr/9e7hT8Lm4RVgI12j9XLFLeyv5LOpocBcQXqoHk
-         AazKna8UPo/iQ9pIXo1ShuuTadSBN52RkDlzC2kWfV2k7++otXY+dRpyTopzKvObGoU/
-         MhaiWdvXhB/sr4rEjHcy2IKPHBBYh9i52H4SE12JKUBui4IqiuPyKgVz0KkwI3qy0pcL
-         UuTch5Gy0SG2WHkhXwFCrMqxkOWuYWrt9erQALgIviHqetle8/DSjEoGsfaPDLWFGgem
-         5CRE4yo4kncazmWhFKnKLFNjQZmpda5lvwjGC2mptl+l6Ut8CwW0A1iovY7fEWFbKQWC
-         utRw==
+        bh=M049GtTJOIx1jAzuZfnGS5SMrlVlEyxlsar/o1b4yF0=;
+        b=aoxfi8Ra1FzgbVw0i+4G8onXMzKRoV0KsDT9xfY4lD3m8AjDKrQnM4V9jfkB0bXp3U
+         5v4rfNYf8W7aDq+WPzUdJTCL8oEDX5UbwTZHiiyLBug2ODPpgqrOWumgTzsQ08tYMhxh
+         Eagmcmb7nqAObF9R5BY5+UVhCWpRVwLNcKg7SpU8d7Rr5syovYj+ZWOoAQO1T+ov03ID
+         zvdFxCHurOPAzAVXxT5DegQbSUQlMPr2Z8shr5Ucqu2JeWNTzc2qcuZsHtFGGRdc6xcb
+         bV70Mlvt3NDdZKTel/+W+f2ipTMDuocX8yWgjqKObAfVgMBFgdPz06lQ2Ut68u6002nB
+         QBeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762156408; x=1762761208;
+        d=1e100.net; s=20230601; t=1762156415; x=1762761215;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Ba4jPz4GzIpOX2boFuFrVZ/wgd/V0hgb12GzaY8s2GM=;
-        b=SJPpjXg3Uz0HYeP/m3gZhi1SyFsVw/vRoC9y/sUm/csDKCKQn347gt8F6Zx5cGzZhF
-         q0KwZQnkYo/mRmAKFlxKrn8gRyq89wJM89fT4SGc1L+0OAdI8SfH4vktwyypz9PqjyUp
-         EdYa7YItVDLtqJK+3eM7yOLUT983wBsrAELOg885zD1rMEvcZyJbB465z/qhVKhig477
-         s0AnZl/P8OEX5Q3TeM83nWg2hMKE/B80rgRb/I6tzFcAcQWGcCC9gSYUEbIZeSHC0Wok
-         J2Nb5cw90dbcfcfsRlncTBnT4NqXLcFJtTciQpykkj3ES+sjTqnJ1PLizVToHVxB1EJP
-         r9Vg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzEb+uWsmz+Y8Rsm+8u79cJBZE20zMLo4zpndLhchyJGWN9+avy2y+tBHOcnxQFJg4KEoClgPA4jWMp1A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBi4LZytZKc/maXTph3s2CLJFDOrXd6pLSgglNnXCsKYeQabKU
-	ohmea7K4p2jEokcLAZB/5mWUGqkL3UviLhdu5FlrH6LrSiCJ0UwVzF2GDY5vHUjO9hA=
-X-Gm-Gg: ASbGncuX+Lg1FLc86VaQnHSdCe/gWmIB+8ic+UzmNvUbcTmCagiS2r+9KKoBJsXZhHZ
-	8y4u2ID5OssZNlJ9LQtIoeBeKyEWKpEDA7EhCYqlUoyWlOuPqZ6YeTXq+8AjaYI68Y9vkzgpG9T
-	ouX8S1Qj0oIbX0iHGnlYXHz1Ap82XhoQv3i1nGB1K99UHbIB8W4g7wd83f8wF8DnoqijYnNcI8v
-	vrFRi180vgWBNult3k+p/AH2RJMeOHH62D6mUU/okm0qACTmB5bfUtu+X1juQ795wS9NS9ueT93
-	z0VlQLYiGn4HCDENW9jb9Bs5Idqdvk01wfH7tOivoQEd7PuSKfD+JqzHlEvgv8QqOA0hP1nS2zx
-	rQHoyMIJYG66lRxmLFoLn7pEeqPoTdAcAucWW8pPc+NivzVwfvB94ahxcUzHQF4mkrUHxQ8Abhl
-	LwzhVozQTsCL4uzQ==
-X-Google-Smtp-Source: AGHT+IGWNo1R+qKvdYnQyYk2CzdvOoi6Va0W2v8DV/ljaASF7VURewKuzp1i6g4RA/RRpxV0UmwQ/w==
-X-Received: by 2002:a05:6a20:7344:b0:311:99:7524 with SMTP id adf61e73a8af0-348ca351af3mr15450451637.18.1762156407934;
-        Sun, 02 Nov 2025 23:53:27 -0800 (PST)
+        bh=M049GtTJOIx1jAzuZfnGS5SMrlVlEyxlsar/o1b4yF0=;
+        b=ZrwKzv1wNtpEvp0Vm31e0AkDriWZKh8qkoIbTIS+zqWn7lRbnczTQ+F7TqFOgm0Dbe
+         kgT3dT8PPE+Xm/mYddXw1vo0C27yqwTrNNSxdy2CTzGlrfZBWU2TfV1LUH81UKmGYXJP
+         9WW5NMGW32QgI4olLtoxtzqBasSs70zQRUNhe+EwDgUeDWFCysL8vC4jucUi/HidqEkb
+         hWwJyusb4KvsK6axJZdabF1HPk49p6a4fmuD8ujezsVAJOrKRpXESVCbum8V4Dgdqqf/
+         AiRrGpuT3SL1Qkg/h3S5YWGneniwJu5WtXKV1BGih0IcVYnfjs6i7XNi/jutF3xhVp3K
+         xCQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVXqvulDmwGp1l0e2B8ZQ5pKdjOqzk+ivjHH2kEm1mU+FCzmLmRIhZAXuYolw56UgYWapfM/mOGGrWGjR0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeEXWocZE/IqKgnyReWhNZdih0HjkhipDAz2aCMMW4OKbajAuO
+	1Jd4HZ+xw7QOWfIqX6LZMMw7LOoWFtP7SUfwljcxvBxfTqbswS2sL9Lj1afRmev3yAo=
+X-Gm-Gg: ASbGncsU9LK1/0O/imRo+WXpaVPKrIZ4TmCQKK2bsVLoW0qO4w5F3Vp2/QdIkRR7Yo+
+	RV0uiyrK1KofFD6wF3QLh/xhHFWfycbhMR1v5eJhusyDkUZ6S2Vmo7kJcQXcMZrw6eK1Gga72In
+	FobwmcU4flXi80XJaKOCC+6BJgYouPI1h4JYOARVFl3SCHGwOn8lnrqFnSwRCj3qYgzCZ5h+RwB
+	sOOjW9Zq4QSaf2kEHLDYY+oDdmB0NqsfgxLVq4ipvE28lksJIoWziRvpMg9Liof7g+Xh+IC9BUM
+	DHNf7rT5lV4+TiMmxNj3esM6DE1JL8p89mCQiAf+yrzldiGVTDeZojL/+IZ11dPNp/Gogn0yeEP
+	9msdk+tlgj4H9pnkq1vcxaJNU12sB/U/l8o9CaS9pGwUQzKagLrK1ZHbqzL1O+OwzsB681oODKN
+	ztOJQxem9k0vHQqYxKeLFcz7k+
+X-Google-Smtp-Source: AGHT+IFNIljmMinHPhv4QokcHvxrVgwW0bD5RaqFND+JFxMKndgBolIUy2lVbgcYBW1Dd94/zRpM1A==
+X-Received: by 2002:a17:90b:3fc3:b0:340:d1a1:af6d with SMTP id 98e67ed59e1d1-340d1a1b159mr8269845a91.36.1762156414854;
+        Sun, 02 Nov 2025 23:53:34 -0800 (PST)
 Received: from .shopee.com ([122.11.166.8])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34159a16652sm34552a91.20.2025.11.02.23.53.21
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34159a16652sm34552a91.20.2025.11.02.23.53.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Nov 2025 23:53:27 -0800 (PST)
+        Sun, 02 Nov 2025 23:53:34 -0800 (PST)
 From: Leon Huang Fu <leon.huangfu@shopee.com>
 To: stable@vger.kernel.org,
 	greg@kroah.com
@@ -106,9 +106,9 @@ Cc: tj@kernel.org,
 	Michal Koutny <mkoutny@suse.com>,
 	Waiman Long <longman@redhat.com>,
 	Wei Xu <weixugc@google.com>
-Subject: [PATCH 6.6.y 5/7] mm: memcg: make stats flushing threshold per-memcg
-Date: Mon,  3 Nov 2025 15:51:33 +0800
-Message-ID: <20251103075135.20254-6-leon.huangfu@shopee.com>
+Subject: [PATCH 6.6.y 6/7] mm: workingset: move the stats flush into workingset_test_recent()
+Date: Mon,  3 Nov 2025 15:51:34 +0800
+Message-ID: <20251103075135.20254-7-leon.huangfu@shopee.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20251103075135.20254-1-leon.huangfu@shopee.com>
 References: <20251103075135.20254-1-leon.huangfu@shopee.com>
@@ -122,123 +122,36 @@ Content-Transfer-Encoding: 8bit
 
 From: Yosry Ahmed <yosryahmed@google.com>
 
-[ Upstream commit 8d59d2214c2362e7a9d185d80b613e632581af7b ]
+[ Upstream commit b006847222623ac3cda8589d15379eac86a2bcb7 ]
 
-A global counter for the magnitude of memcg stats update is maintained on
-the memcg side to avoid invoking rstat flushes when the pending updates
-are not significant.  This avoids unnecessary flushes, which are not very
-cheap even if there isn't a lot of stats to flush.  It also avoids
-unnecessary lock contention on the underlying global rstat lock.
+The workingset code flushes the stats in workingset_refault() to get
+accurate stats of the eviction memcg.  In preparation for more scoped
+flushed and passing the eviction memcg to the flush call, move the call to
+workingset_test_recent() where we have a pointer to the eviction memcg.
 
-Make this threshold per-memcg.  The scheme is followed where percpu (now
-also per-memcg) counters are incremented in the update path, and only
-propagated to per-memcg atomics when they exceed a certain threshold.
+The flush call is sleepable, and cannot be made in an rcu read section.
+Hence, minimize the rcu read section by also moving it into
+workingset_test_recent().  Furthermore, instead of holding the rcu read
+lock throughout workingset_test_recent(), only hold it briefly to get a
+ref on the eviction memcg.  This allows us to make the flush call after we
+get the eviction memcg.
 
-This provides two benefits: (a) On large machines with a lot of memcgs,
-the global threshold can be reached relatively fast, so guarding the
-underlying lock becomes less effective.  Making the threshold per-memcg
-avoids this.
+As for workingset_refault(), nothing else there appears to be protected by
+rcu.  The memcg of the faulted folio (which is not necessarily the same as
+the eviction memcg) is protected by the folio lock, which is held from all
+callsites.  Add a VM_BUG_ON() to make sure this doesn't change from under
+us.
 
-(b) Having a global threshold makes it hard to do subtree flushes, as we
-cannot reset the global counter except for a full flush.  Per-memcg
-counters removes this as a blocker from doing subtree flushes, which helps
-avoid unnecessary work when the stats of a small subtree are needed.
+No functional change intended.
 
-Nothing is free, of course.  This comes at a cost: (a) A new per-cpu
-counter per memcg, consuming NR_CPUS * NR_MEMCGS * 4 bytes.  The extra
-memory usage is insigificant.
-
-(b) More work on the update side, although in the common case it will only
-be percpu counter updates.  The amount of work scales with the number of
-ancestors (i.e.  tree depth).  This is not a new concept, adding a cgroup
-to the rstat tree involves a parent loop, so is charging.  Testing results
-below show no significant regressions.
-
-(c) The error margin in the stats for the system as a whole increases from
-NR_CPUS * MEMCG_CHARGE_BATCH to NR_CPUS * MEMCG_CHARGE_BATCH * NR_MEMCGS.
-This is probably fine because we have a similar per-memcg error in charges
-coming from percpu stocks, and we have a periodic flusher that makes sure
-we always flush all the stats every 2s anyway.
-
-This patch was tested to make sure no significant regressions are
-introduced on the update path as follows.  The following benchmarks were
-ran in a cgroup that is 2 levels deep (/sys/fs/cgroup/a/b/):
-
-(1) Running 22 instances of netperf on a 44 cpu machine with
-hyperthreading disabled. All instances are run in a level 2 cgroup, as
-well as netserver:
-  # netserver -6
-  # netperf -6 -H ::1 -l 60 -t TCP_SENDFILE -- -m 10K
-
-Averaging 20 runs, the numbers are as follows:
-Base: 40198.0 mbps
-Patched: 38629.7 mbps (-3.9%)
-
-The regression is minimal, especially for 22 instances in the same
-cgroup sharing all ancestors (so updating the same atomics).
-
-(2) will-it-scale page_fault tests. These tests (specifically
-per_process_ops in page_fault3 test) detected a 25.9% regression before
-for a change in the stats update path [1]. These are the
-numbers from 10 runs (+ is good) on a machine with 256 cpus:
-
-             LABEL            |     MEAN    |   MEDIAN    |   STDDEV   |
-------------------------------+-------------+-------------+-------------
-  page_fault1_per_process_ops |             |             |            |
-  (A) base                    | 270249.164  | 265437.000  | 13451.836  |
-  (B) patched                 | 261368.709  | 255725.000  | 13394.767  |
-                              | -3.29%      | -3.66%      |            |
-  page_fault1_per_thread_ops  |             |             |            |
-  (A) base                    | 242111.345  | 239737.000  | 10026.031  |
-  (B) patched                 | 237057.109  | 235305.000  | 9769.687   |
-                              | -2.09%      | -1.85%      |            |
-  page_fault1_scalability     |             |             |
-  (A) base                    | 0.034387    | 0.035168    | 0.0018283  |
-  (B) patched                 | 0.033988    | 0.034573    | 0.0018056  |
-                              | -1.16%      | -1.69%      |            |
-  page_fault2_per_process_ops |             |             |
-  (A) base                    | 203561.836  | 203301.000  | 2550.764   |
-  (B) patched                 | 197195.945  | 197746.000  | 2264.263   |
-                              | -3.13%      | -2.73%      |            |
-  page_fault2_per_thread_ops  |             |             |
-  (A) base                    | 171046.473  | 170776.000  | 1509.679   |
-  (B) patched                 | 166626.327  | 166406.000  | 768.753    |
-                              | -2.58%      | -2.56%      |            |
-  page_fault2_scalability     |             |             |
-  (A) base                    | 0.054026    | 0.053821    | 0.00062121 |
-  (B) patched                 | 0.053329    | 0.05306     | 0.00048394 |
-                              | -1.29%      | -1.41%      |            |
-  page_fault3_per_process_ops |             |             |
-  (A) base                    | 1295807.782 | 1297550.000 | 5907.585   |
-  (B) patched                 | 1275579.873 | 1273359.000 | 8759.160   |
-                              | -1.56%      | -1.86%      |            |
-  page_fault3_per_thread_ops  |             |             |
-  (A) base                    | 391234.164  | 390860.000  | 1760.720   |
-  (B) patched                 | 377231.273  | 376369.000  | 1874.971   |
-                              | -3.58%      | -3.71%      |            |
-  page_fault3_scalability     |             |             |
-  (A) base                    | 0.60369     | 0.60072     | 0.0083029  |
-  (B) patched                 | 0.61733     | 0.61544     | 0.009855   |
-                              | +2.26%      | +2.45%      |            |
-
-All regressions seem to be minimal, and within the normal variance for the
-benchmark.  The fix for [1] assumes that 3% is noise -- and there were no
-further practical complaints), so hopefully this means that such
-variations in these microbenchmarks do not reflect on practical workloads.
-
-(3) I also ran stress-ng in a nested cgroup and did not observe any
-obvious regressions.
-
-[1]https://lore.kernel.org/all/20190520063534.GB19312@shao2-debian/
-
-Link: https://lkml.kernel.org/r/20231129032154.3710765-4-yosryahmed@google.com
+Link: https://lkml.kernel.org/r/20231129032154.3710765-5-yosryahmed@google.com
 Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
-Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
 Tested-by: Domenico Cerasuolo <cerasuolodomenico@gmail.com>
 Acked-by: Shakeel Butt <shakeelb@google.com>
 Cc: Chris Li <chrisl@kernel.org>
 Cc: Greg Thelen <gthelen@google.com>
 Cc: Ivan Babrou <ivan@cloudflare.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
 Cc: Michal Hocko <mhocko@kernel.org>
 Cc: Michal Koutny <mkoutny@suse.com>
 Cc: Muchun Song <muchun.song@linux.dev>
@@ -249,128 +162,99 @@ Cc: Wei Xu <weixugc@google.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Leon Huang Fu <leon.huangfu@shopee.com>
 ---
- mm/memcontrol.c | 50 +++++++++++++++++++++++++++++++++----------------
- 1 file changed, 34 insertions(+), 16 deletions(-)
+ mm/workingset.c | 36 ++++++++++++++++++++++++------------
+ 1 file changed, 24 insertions(+), 12 deletions(-)
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 157be6820fd1..c31a5364f325 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -628,6 +628,9 @@ struct memcg_vmstats_percpu {
- 	/* Cgroup1: threshold notifications & softlimit tree updates */
- 	unsigned long		nr_page_events;
- 	unsigned long		targets[MEM_CGROUP_NTARGETS];
+diff --git a/mm/workingset.c b/mm/workingset.c
+index 9110957bec5b..6e61ad08df75 100644
+--- a/mm/workingset.c
++++ b/mm/workingset.c
+@@ -425,8 +425,16 @@ bool workingset_test_recent(void *shadow, bool file, bool *workingset)
+ 	struct pglist_data *pgdat;
+ 	unsigned long eviction;
+
+-	if (lru_gen_enabled())
+-		return lru_gen_test_recent(shadow, file, &eviction_lruvec, &eviction, workingset);
++	rcu_read_lock();
 +
-+	/* Stats updates since the last flush */
-+	unsigned int		stats_updates;
- };
-
- struct memcg_vmstats {
-@@ -642,6 +645,9 @@ struct memcg_vmstats {
- 	/* Pending child counts during tree propagation */
- 	long			state_pending[MEMCG_NR_STAT];
- 	unsigned long		events_pending[NR_MEMCG_EVENTS];
++	if (lru_gen_enabled()) {
++		bool recent = lru_gen_test_recent(shadow, file,
++				&eviction_lruvec, &eviction, workingset);
 +
-+	/* Stats updates since the last flush */
-+	atomic64_t		stats_updates;
- };
-
- /*
-@@ -661,9 +667,7 @@ struct memcg_vmstats {
-  */
- static void flush_memcg_stats_dwork(struct work_struct *w);
- static DECLARE_DEFERRABLE_WORK(stats_flush_dwork, flush_memcg_stats_dwork);
--static DEFINE_PER_CPU(unsigned int, stats_updates);
- static atomic_t stats_flush_ongoing = ATOMIC_INIT(0);
--static atomic_t stats_flush_threshold = ATOMIC_INIT(0);
- static u64 flush_last_time;
-
- #define FLUSH_TIME (2UL*HZ)
-@@ -690,26 +694,37 @@ static void memcg_stats_unlock(void)
- 	preempt_enable_nested();
- }
-
++		rcu_read_unlock();
++		return recent;
++	}
 +
-+static bool memcg_should_flush_stats(struct mem_cgroup *memcg)
-+{
-+	return atomic64_read(&memcg->vmstats->stats_updates) >
-+		MEMCG_CHARGE_BATCH * num_online_cpus();
-+}
-+
- static inline void memcg_rstat_updated(struct mem_cgroup *memcg, int val)
- {
-+	int cpu = smp_processor_id();
- 	unsigned int x;
 
- 	if (!val)
- 		return;
-
--	cgroup_rstat_updated(memcg->css.cgroup, smp_processor_id());
-+	cgroup_rstat_updated(memcg->css.cgroup, cpu);
-+
-+	for (; memcg; memcg = parent_mem_cgroup(memcg)) {
-+		x = __this_cpu_add_return(memcg->vmstats_percpu->stats_updates,
-+					  abs(val));
-+
-+		if (x < MEMCG_CHARGE_BATCH)
-+			continue;
-
--	x = __this_cpu_add_return(stats_updates, abs(val));
--	if (x > MEMCG_CHARGE_BATCH) {
- 		/*
--		 * If stats_flush_threshold exceeds the threshold
--		 * (>num_online_cpus()), cgroup stats update will be triggered
--		 * in __mem_cgroup_flush_stats(). Increasing this var further
--		 * is redundant and simply adds overhead in atomic update.
-+		 * If @memcg is already flush-able, increasing stats_updates is
-+		 * redundant. Avoid the overhead of the atomic update.
- 		 */
--		if (atomic_read(&stats_flush_threshold) <= num_online_cpus())
--			atomic_add(x / MEMCG_CHARGE_BATCH, &stats_flush_threshold);
--		__this_cpu_write(stats_updates, 0);
-+		if (!memcg_should_flush_stats(memcg))
-+			atomic64_add(x, &memcg->vmstats->stats_updates);
-+		__this_cpu_write(memcg->vmstats_percpu->stats_updates, 0);
- 	}
- }
-
-@@ -728,13 +743,12 @@ static void do_flush_stats(void)
-
- 	cgroup_rstat_flush(root_mem_cgroup->css.cgroup);
-
--	atomic_set(&stats_flush_threshold, 0);
- 	atomic_set(&stats_flush_ongoing, 0);
- }
-
- void mem_cgroup_flush_stats(void)
- {
--	if (atomic_read(&stats_flush_threshold) > num_online_cpus())
-+	if (memcg_should_flush_stats(root_mem_cgroup))
- 		do_flush_stats();
- }
-
-@@ -748,8 +762,8 @@ void mem_cgroup_flush_stats_ratelimited(void)
- static void flush_memcg_stats_dwork(struct work_struct *w)
- {
- 	/*
--	 * Always flush here so that flushing in latency-sensitive paths is
--	 * as cheap as possible.
-+	 * Deliberately ignore memcg_should_flush_stats() here so that flushing
-+	 * in latency-sensitive paths is as cheap as possible.
+ 	unpack_shadow(shadow, &memcgid, &pgdat, &eviction, workingset);
+ 	eviction <<= bucket_order;
+@@ -448,8 +456,16 @@ bool workingset_test_recent(void *shadow, bool file, bool *workingset)
+ 	 * configurations instead.
  	 */
- 	do_flush_stats();
- 	queue_delayed_work(system_unbound_wq, &stats_flush_dwork, FLUSH_TIME);
-@@ -5658,6 +5672,10 @@ static void mem_cgroup_css_rstat_flush(struct cgroup_subsys_state *css, int cpu)
- 			}
+ 	eviction_memcg = mem_cgroup_from_id(memcgid);
+-	if (!mem_cgroup_disabled() && !eviction_memcg)
++	if (!mem_cgroup_disabled() &&
++	    (!eviction_memcg || !mem_cgroup_tryget(eviction_memcg))) {
++		rcu_read_unlock();
+ 		return false;
++	}
++
++	rcu_read_unlock();
++
++	/* Flush stats (and potentially sleep) outside the RCU read section */
++	mem_cgroup_flush_stats_ratelimited();
+
+ 	eviction_lruvec = mem_cgroup_lruvec(eviction_memcg, pgdat);
+ 	refault = atomic_long_read(&eviction_lruvec->nonresident_age);
+@@ -493,6 +509,7 @@ bool workingset_test_recent(void *shadow, bool file, bool *workingset)
  		}
  	}
-+	statc->stats_updates = 0;
-+	/* We are in a per-cpu loop here, only do the atomic write once */
-+	if (atomic64_read(&memcg->vmstats->stats_updates))
-+		atomic64_set(&memcg->vmstats->stats_updates, 0);
+
++	mem_cgroup_put(eviction_memcg);
+ 	return refault_distance <= workingset_size;
  }
 
- #ifdef CONFIG_MMU
+@@ -519,19 +536,16 @@ void workingset_refault(struct folio *folio, void *shadow)
+ 		return;
+ 	}
+
+-	/* Flush stats (and potentially sleep) before holding RCU read lock */
+-	mem_cgroup_flush_stats_ratelimited();
+-
+-	rcu_read_lock();
+-
+ 	/*
+ 	 * The activation decision for this folio is made at the level
+ 	 * where the eviction occurred, as that is where the LRU order
+ 	 * during folio reclaim is being determined.
+ 	 *
+ 	 * However, the cgroup that will own the folio is the one that
+-	 * is actually experiencing the refault event.
++	 * is actually experiencing the refault event. Make sure the folio is
++	 * locked to guarantee folio_memcg() stability throughout.
+ 	 */
++	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
+ 	nr = folio_nr_pages(folio);
+ 	memcg = folio_memcg(folio);
+ 	pgdat = folio_pgdat(folio);
+@@ -540,7 +554,7 @@ void workingset_refault(struct folio *folio, void *shadow)
+ 	mod_lruvec_state(lruvec, WORKINGSET_REFAULT_BASE + file, nr);
+
+ 	if (!workingset_test_recent(shadow, file, &workingset))
+-		goto out;
++		return;
+
+ 	folio_set_active(folio);
+ 	workingset_age_nonresident(lruvec, nr);
+@@ -556,8 +570,6 @@ void workingset_refault(struct folio *folio, void *shadow)
+ 		lru_note_cost_refault(folio);
+ 		mod_lruvec_state(lruvec, WORKINGSET_RESTORE_BASE + file, nr);
+ 	}
+-out:
+-	rcu_read_unlock();
+ }
+
+ /**
 --
 2.50.1
 
