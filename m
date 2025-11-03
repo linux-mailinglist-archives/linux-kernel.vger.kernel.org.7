@@ -1,135 +1,96 @@
-Return-Path: <linux-kernel+bounces-883150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C556BC2C84C
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:59:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D7E7C2C849
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:58:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E62FB3BC115
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:54:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B03F3BB83B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:54:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C99334385;
-	Mon,  3 Nov 2025 14:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA79F333745;
+	Mon,  3 Nov 2025 14:54:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aJY014VW"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O5vZMG5u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8658B284690
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 14:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D03330B20;
+	Mon,  3 Nov 2025 14:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762181664; cv=none; b=t7GA526veD7SpKua2G6WBRHvxqcIg5awOVESAgl05y+uzgFN1Ss33hxbbJglV7gi/jOJZxZAljIaf7S7FqeEo9922nTM2X3PDUlvVRnUP2v9xxuIRL32X4PMYE8VU0PyM1OuP9lXYvdJHIt6hfCMvtSLtXRY4iSgwR3exi0fXgI=
+	t=1762181653; cv=none; b=kjLT/BSQGHCbhxVyG+DCzJIphBWuVbD72JIHhkNikWzVSvSCzBKYJb06Rrkult4efCnY4RWOPPlOMBLPNFIWRI78nAfwxBKczG4PXqp9i6aX2Peo2HeYTSJe1KkngdqqfQDLhE+Dzk6Rb7/gXpDo0TTCnRkUqOjCMJamBVoUnOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762181664; c=relaxed/simple;
-	bh=CfuwIHPDQmryroqS5zJUoyuxZn1pCBzzOLe0OXbOiAc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fwVVesNhp6SRxNuwEdkq38K1DtQ9MEqgkp3P3JkIO21cmCLXbFQKqkkWZjrS6zudAIOVfE+HmnnRQBVWQ9ZfIDe8jCtCHznmxfQ09gyrvS2coqnFV5kfX2njDMmLjrST4bE7E7dPUL+iJ1yIhPO5xMbFhDmTdvPegD4GwLzsLfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aJY014VW; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-29498a10972so5226765ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 06:54:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762181662; x=1762786462; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fGcJLqwF2c7XiGCzl/4Dx0kZfB4HHUCiMyybkRLYqWA=;
-        b=aJY014VWhdesFHneuyewR8bEzcB23WZLZK3BsqQ4eGQUJYQRCgxYtkahTK01Mr5SNr
-         nCCLEcTkLt9yo45B9mQVzNGCSaR0Qyt9ffbYRn1oq24KKIDHTWvK6vRnd3jz6eZBoKpP
-         ssbQmmb1+aRsqjI/Iap8kDtZA8C/pETeBLl+VW4+0heb8y8bALKZo3j6FuvD2iKkEEFd
-         gZdiBR1XXRAt3oGUlbp9IJFR+xVHqtwcYoQXZAMUW46SW9XH3juMdxx3khIGd2COrWsE
-         qcfRSTJQFUtSqB6aLTKHWsetQqXbQiBrYMbNMNLXtEA4EBzW7SzzHDHGPcs0Ee7oYw4O
-         5HLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762181662; x=1762786462;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fGcJLqwF2c7XiGCzl/4Dx0kZfB4HHUCiMyybkRLYqWA=;
-        b=aC/vVoxNHyvtC/TQVGeK+ActxyeFWkO2XmuA1Y+w7enWHOkTFiaaI2DfBCIkeXb9zg
-         HRWWgrWw8ABsN2hVpc9gM7kMgO1WQQ5R8ITlnzYjO7ECtIyulZtCQYsmbHjsYpnz3U1j
-         cPpkjp6+inR3aVTSmubl3lGSGU/g5NeYZ8Yv6B4SqFD9SRq+PqI10mwRSubqh4jgAkBy
-         LyBpEbDz4GgeW+J/OIhZOsmdPE3Uqm1E2Ab1fXKDifysUVbc2DljilxeST1yLfHdUsdc
-         GWt+MV6YdZxsH8cuRnRPGb9ITGtCH1GpmEMuQ7zMwVEeKQ5NK8sKp3dddN0wqTH+tdY2
-         iEPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcchYZRJwWfI/kD/4iUIlw49KhXYVmndN+k6hNKa9oJk+behRimlp3/7ztNrG1rZl1Uk31iRFXJHPZMC8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyY7AV2lHZeUOFpcaGRvyZitMeFfy/CRDphIkztXLX+MOy9gQcN
-	IPzxqqKsh+rVY2CNcO89wnX20Xe8B6mUSMfTf7gu8gbaeT0c6yLeZHNiwA5wqEC+5LLPuYaFsaI
-	J7cI+YBIMkpABI5sOzOCveQCH5yunXIg=
-X-Gm-Gg: ASbGncujq6Gh2IipJaU3yXBr1ckl6zmCjIcWPXPpkIRgZ9E7D6AbkLC0yVCD7unU4/h
-	gs4fZMKO2Midw1t3yfgj4NYLbM39fHxrSAbtothX1G4y/DYFLrr17+JJ0gV/hmI6enBDrAU5tUs
-	yhgUgUV8HRvZgd3XczvkH5rl3mEj3Zzbyb7XW2KIlyAFsm1yrhD90w9ji4H4cYyMv75/RGnko5t
-	miMux6UJt4ZC8NWO9s5CgYyJuyN2CRFXF8NRi2nEstQku/mE49AIG3IDT2t22Qkk5+pD4FVFdhF
-	ADBCoKL9kKi+mrkYq8Mq4/wg+RcQkbPn8aFQVCPbeDoXXL1/G7kH0scUDj5GZhwFaay5qdozD/X
-	Ww0b763q5r/opHA==
-X-Google-Smtp-Source: AGHT+IF2duoky+NM8f4/33jjIQnYvFb0ADfwWmZJzGiMMxqRwi7/BedNBWl7f8IPHRBvKgr7QLnax9M257phzS375FY=
-X-Received: by 2002:a17:902:d48f:b0:26b:1871:1f70 with SMTP id
- d9443c01a7336-2951a40cc4dmr90644255ad.5.1762181661810; Mon, 03 Nov 2025
- 06:54:21 -0800 (PST)
+	s=arc-20240116; t=1762181653; c=relaxed/simple;
+	bh=4s6jsp1lmDxjMyiq+Fxr6WPmKUWWu6/VM3FszmVU1VI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=aCS4Fx2iaVm1ny1J7vAhyRh4aiAXNO916ttQ+uhkP2a0FPOoRLRFdy3nWkrWTnxzve9xn6UWVST8Jw8MbhUU7xY6iCaNaYG8rOjFoHyMakwSmoY1JQzS5snkbztLNByPX0h5C5wblzXkfUWvYXf24MSDKUhIWiSghcsX54JFSG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O5vZMG5u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89446C4CEE7;
+	Mon,  3 Nov 2025 14:54:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762181653;
+	bh=4s6jsp1lmDxjMyiq+Fxr6WPmKUWWu6/VM3FszmVU1VI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=O5vZMG5uImfesosvU8itwVpGUZB0IIm0NYO6GFMKVLryRBt9knXDxQOQuOIraT0Kf
+	 LWrx02Cu/dTYBuafUx6Q42O2ATSOmG1P2fG9l748+pVmpOTBy0Uu9JAdCB1HKACsUa
+	 diOzUbxGG/Sg3//BYwdCImKaZqqGzhTt4Mu9hzbFnZryVL6bnX/6JuvHV3Vw8X3b2v
+	 +swSSFp/6W0SzH6iCG6q1CPjMgr7oZEoeXgyosNh1ye5Cn/VLRMFnKXEZ68qHtrFO6
+	 VbyJGODYYShWYUcSXnZKHStsHiARhk31nQTbelYopzEX+stTKxMMwFTFeTvPWsTZS/
+	 H0ctBwM1LzMtQ==
+Date: Mon, 3 Nov 2025 11:54:09 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+	Ian Rogers <irogers@google.com>,
+	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	linux-perf-users@vger.kernel.org, Leo Yan <leo.yan@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: [PATCH 1/1] MAINTAINERS: Add James Clark as a perf tools reviewer
+Message-ID: <aQjCEfiFLJwApdlj@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251031-bounded_ints-v1-0-e2dbcd8fda71@nvidia.com>
- <20251031-bounded_ints-v1-1-e2dbcd8fda71@nvidia.com> <aQgQv6F0Ao4DH6U0@yury>
- <CANiq72mg-NntJLf_jbigz++0hK7G3WAxbvejRq1EzOc7GE+doA@mail.gmail.com> <aQi7e6VgFsqpq1Rn@yury>
-In-Reply-To: <aQi7e6VgFsqpq1Rn@yury>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 3 Nov 2025 15:54:08 +0100
-X-Gm-Features: AWmQ_blCg000_2OneJ2R30enMvqJWPDFlAOjeiP7bYGOSrzFcFJ8-nZgZdW_JUo
-Message-ID: <CANiq72=4UXemR3ea5nNbqGt0Zh9q4hwiGVAn+hxfcZ-Zqa8y4w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] rust: add BitInt integer wrapping type
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Alice Ryhl <aliceryhl@google.com>, 
-	Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Jesung Yang <y.j3ms.n@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, Nov 3, 2025 at 3:26=E2=80=AFPM Yury Norov <yury.norov@gmail.com> wr=
-ote:
->
-> This is exactly what the patch does:
+Just FYI, I'm carrying this on the perf tools tree.
 
-No, there are no arithmetic conversions going on here in the sense of
-C. It defines a particular operation for a set of types.
+James Clark has been actively reviewing patches and contributing
+to perf tools. Reflect this by adding him as a reviewer in the
+MAINTAINERS file.
 
-What you are seeing there is that literals, in Rust, do type
-inference, and so the compiler picks a type:
+Reviewed-by: James Clark <james.clark@linaro.org>
+Acked-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Namhyung Kim <namhyung@kernel.org>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ MAINTAINERS | 1 +
+ 1 file changed, 1 insertion(+)
 
-    https://doc.rust-lang.org/reference/expressions/literal-expr.html#r-exp=
-r.literal.int.infer
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f6cda468095de127..13a80d4a8b6b67dd 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -20157,6 +20157,7 @@ R:	Alexander Shishkin <alexander.shishkin@linux.intel.com>
+ R:	Jiri Olsa <jolsa@kernel.org>
+ R:	Ian Rogers <irogers@google.com>
+ R:	Adrian Hunter <adrian.hunter@intel.com>
++R:	James Clark <james.clark@linaro.org>
+ L:	linux-perf-users@vger.kernel.org
+ L:	linux-kernel@vger.kernel.org
+ S:	Supported
+-- 
+2.51.0
 
-Thus if you do:
-
-    let v1 =3D BitInt::<u8, 4>::from_expr(15);
-    let v2 =3D BitInt::<u16, 4>::from_expr(15);
-    let i =3D 5;
-    assert_eq!(v1 + i, 20);
-    assert_eq!(v2 + i, 20);
-
-That will not build, because `i` cannot have two types. But it will if
-you comment one of the two asserts.
-
-And if you do:
-
-    let v =3D BitInt::<u16, 4>::from_expr(15);
-    assert_eq!(v + 5u8, 20);
-
-It will not build either -- there is not even "widening" going on from
-`u8` to `u16` in this last example.
-
-Cheers,
-Miguel
 
