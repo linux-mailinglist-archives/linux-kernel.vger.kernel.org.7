@@ -1,181 +1,117 @@
-Return-Path: <linux-kernel+bounces-883143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3733C2CBE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:32:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CCB9C2CA80
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:20:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F0EA42677F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:01:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6BA418804C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19FE132D0E7;
-	Mon,  3 Nov 2025 14:50:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ug8gqS9s";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="RyaWd2qm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7470332EDC;
+	Mon,  3 Nov 2025 14:52:09 +0000 (UTC)
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8513632C936
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 14:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC6C332EC7
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 14:52:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762181417; cv=none; b=Cc0xH2Cqg2F0zqTyX0LgiJDK51eaVKWIue0gHXBjOW8D3/z+2BjcGtRBY4W/K832F7mCgdX4dEvXMxHH4i7CUi56XugFngFlQIJBnY8paPHk2NvATYyoOJVhC9J70OevaYL90K3dJ8D3c0P8ocmYMJB7X2/XVcVKZNWlYyB66B4=
+	t=1762181529; cv=none; b=ufhzarK4WlPRWPB04zw/CmRmZD3Ht0HRFl8B8Ns3MLnpseJe2pBA3DfEK11gPnNugEyYISIIGT1kLodVi6hfJen4Z7TQCD7TNCurq/GnPK8b+xrsdLvpmc6F4vB9iv+E6kGXoN6oFMmXXngbVRCky6M1K4ozpTmzfrSO1aGonRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762181417; c=relaxed/simple;
-	bh=awDPBHUqeWdiCTx68GRboOT/DtuaFpnsr65AopF29ug=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Pk0PaxfvHBwcKzmbBkK01KgHj94b5jBzkR6p2hkgseP3sEeTS/BQR9MucvkfzXUkkdeCXOqHtrxcHbW+QOG4BSv4e1pOPHagwWtRY4Y7Pvy8UTb2stZZ8dx0Qyd/HvHBohWoNl0WSSX3iYZBQ0RtDFBaeQjQknNraQvAVLP1Rb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ug8gqS9s; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=RyaWd2qm; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762181414;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+nMoLQg870a5vLIr0xXAcHBID4BH0thIsNlUoCS1bvw=;
-	b=Ug8gqS9su/aU0N8qi1i2oD2RafyXlxx5QeX2qAFzg/pQuJBwu6wyPV/23dbkyDXhRhfE5k
-	rNh+YCShaNkIQZr3njTQlaO+hEKHMgo/owMOf4hO3UdbXMjESZQFPLJxfZzH3dgSv/aDvI
-	WxDdmCMakwojWlqHPmRNFR6yrE3psJg=
-Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
- [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-443-wDQSWhtXNIa-Qdb4Emt6RQ-1; Mon, 03 Nov 2025 09:50:13 -0500
-X-MC-Unique: wDQSWhtXNIa-Qdb4Emt6RQ-1
-X-Mimecast-MFC-AGG-ID: wDQSWhtXNIa-Qdb4Emt6RQ_1762181412
-Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-640c4609713so2103968a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 06:50:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762181412; x=1762786212; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+nMoLQg870a5vLIr0xXAcHBID4BH0thIsNlUoCS1bvw=;
-        b=RyaWd2qmMgLNxTEMP+ty7Hf7+cPTiZbtYEZrbVlO5TCfB5ecEWMIgphfpThCwMzPk2
-         CKGLsyeGz4mjIXYVawPbk3kfmpTVVOhno2tLd/+QP9NgFDiOEghCaFaSKI3VREeM7sBf
-         0U91Mt2+hDO+jKrv4fXEcY+y0zVHcoGCa10Mo+KzHQ/QvfmUfY6neKC8sx/Be6gE99aV
-         JjhLNkdAFVzQBA950JK0ynx+/Ypg1zCaZLz9hwFEAyWFJ4Ki+5oSlrNv/U84tOWOCAAd
-         aTWnn/a9ozB6Z4Ktyze8X/yrGYEtRyBxki0m2v1suGKa6BZMw56FewcGoiqvVOfdOS6H
-         YTjw==
+	s=arc-20240116; t=1762181529; c=relaxed/simple;
+	bh=kyZFo/IEic/pNMA3pRq7OzAQup7CQuPdzl24uLGrwEo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PqS+IhahzJ7Qr49k47MPrl60H9EY/NX0XuQKHvflRvg5twiaeouQKBeZTNu7cuBdkGtTX8xlL3Q1kC1ACZtHHWkenI8V+5EM/Ax29lM7dnG01n8L8rAb786iwmSPT4aJermqQQS0RsEzAVodOtBlDE8uRb//HBk8ZsXs47yb6VU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-932dfe14b2eso4212914241.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 06:52:07 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762181412; x=1762786212;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+nMoLQg870a5vLIr0xXAcHBID4BH0thIsNlUoCS1bvw=;
-        b=pNk+diazcs8WlMuYaMvi821TczbQ3zfY9kY7WdjsCyfVB3nX8M606rRAwGOQAACSKX
-         VtbcPCalRh2oP3rzK7zL60zCA1Y2f1trDfWIIAE2EUKnVNMAIk7fz4wEH1BjK9mRUYwm
-         TadRQX8Wk1bG+n5UIUoBWDYjoFR9Oy77d9hm1T4p/efUM+O/h4BpMXpkFIGaoZUJH9nY
-         EPvx/F3ZzyA4QboP1yoLJzLc37L131jj+91e5Ws2GY+UAeBboEcWaSM79+WNxox1zJIl
-         BA52qk/krJlW7uyE0LcNyQhQFoXmdOPVr+hx3daVW1288smAa/w5Gl968IJFVKv/0ex6
-         bG6g==
-X-Forwarded-Encrypted: i=1; AJvYcCW0fRUOSvU6EcYUDEALOIX7zuq3KFVGRO/EvZNJqw6gtdfBZM4fWgvwQjLEkv7OPGbMTMKxhziqa5Y0uRw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykUo89SEH3i0iiz7WYocCnn3NvhMMPqLbAZqSbH+wlRDhqWfMt
-	hJtqWK4/q8wK1vjKToKagiwYbOCnfP7m5Araoj3i0rLayJXxg6rfGMjNBjFxW/kz7pybXYuJcNo
-	yNBT+YuoYYJ0GznmPTJXa7vyb3RXJluTqYjhaP4HA4nsIQckgrG6tT2DbORTrT5PTDQ==
-X-Gm-Gg: ASbGncs4gJkXUgfuQkhXGTGMVtn65ByoC7qCBvNMAeYTTMvgaxcbMqhZveLSCHPLvEG
-	eYokE6nuD0EptUHL7jOCLUAd474PiA33ZbOf935uVrRkkIZutwGSEvOS2MI8rs/efyOWI2gHPPb
-	DxkvWr8vBZXvbgcWzddFSZCVi5ILQ4kZfSihFmg8X/jGnrOwZbgvIRYA+oMxC0oA3lia468ZKFC
-	8ZIPhnNfwm/1IAf7+g4BP2oPSlH+nD5izDAAQkMokPgaO+xffIFbCHvdijgYqWyxx/9pl+NbLFl
-	PPL0UI2gHamTdeTcNi48X0ZTA9HJrSkOaRelzZORfwHfdaZ99w1G3xG7a10usDk1pqJ1yoWbdle
-	8oXJOvMPD8IG2Uxwzb3p/Fn4=
-X-Received: by 2002:a05:6402:34ca:b0:640:b497:bf71 with SMTP id 4fb4d7f45d1cf-640b497c2admr4755525a12.8.1762181411921;
-        Mon, 03 Nov 2025 06:50:11 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHNHHGCfan3xN8hz0VQLwH+oMIT11J2vhXom0DZu1MBhk6Duw5v6C2YzkNLZvnmt+vEeRS3LQ==
-X-Received: by 2002:a05:6402:34ca:b0:640:b497:bf71 with SMTP id 4fb4d7f45d1cf-640b497c2admr4755480a12.8.1762181411457;
-        Mon, 03 Nov 2025 06:50:11 -0800 (PST)
-Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-640b977e6acsm4056741a12.25.2025.11.03.06.50.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 06:50:10 -0800 (PST)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id B7D07328476; Mon, 03 Nov 2025 15:50:09 +0100 (CET)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To: Byungchul Park <byungchul@sk.com>
-Cc: linux-mm@kvack.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
- harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
- davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
- john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
- leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
- andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
- akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
- surenb@google.com, mhocko@suse.com, horms@kernel.org, jackmanb@google.com,
- hannes@cmpxchg.org, ziy@nvidia.com, ilias.apalodimas@linaro.org,
- willy@infradead.org, brauner@kernel.org, kas@kernel.org,
- yuzhao@google.com, usamaarif642@gmail.com, baolin.wang@linux.alibaba.com,
- almasrymina@google.com, asml.silence@gmail.com, bpf@vger.kernel.org,
- linux-rdma@vger.kernel.org, sfr@canb.auug.org.au, dw@davidwei.uk,
- ap420073@gmail.com, dtatulea@nvidia.com
-Subject: Re: [RFC mm v5 2/2] mm: introduce a new page type for page pool in
- page type
-In-Reply-To: <20251103123942.GA64460@system.software.com>
-References: <20251103075108.26437-1-byungchul@sk.com>
- <20251103075108.26437-3-byungchul@sk.com> <87jz07pajq.fsf@toke.dk>
- <20251103123942.GA64460@system.software.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Mon, 03 Nov 2025 15:50:09 +0100
-Message-ID: <87h5vbp3vi.fsf@toke.dk>
+        d=1e100.net; s=20230601; t=1762181526; x=1762786326;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/yZuUM0vSJzTDMkCs4SIwBgC08R7t/skmrEIOYPMpKA=;
+        b=IcNS2XXIayf0COOIgJ4+Sy5UJkoI4FIWkTINz7j8SFh3o03X7O4eo/JbXRMy7Fwhqw
+         lfY93/1vVkfZbtvF4eUdk2+KJLtDq9D5Ty5NtWelKb0bCtas+e3Q1al07t9phUwtVM4G
+         SBkm5ufPMGA/JPVUjiRM6cE9GLHZWUSE95BRUK80Afp0a4jLGYuEwPFtimzoRYDAb4wN
+         gFWiZLNuRAbialu4fJA1LcS0nRPdeC/I9W3hrL2SzrimK9PQfUa9ks3CWrVhMsgfWDWp
+         olUq/Hm1+XogQ9yb0VAZZ9yilO+LveuzktBaeAByZwnmczVeuL1Uy8WvIHlOE2mOCAs9
+         SjYA==
+X-Gm-Message-State: AOJu0Yw5cJaVJIx+5LuvUGR+1Da+IbXgUnNVPmAisVtNA2jaDs8KPYNB
+	8BsTVUuSccYpri4vs3Uheu1DjBmHuZxBaXO6lVPqrq7vdlDB62NFMVO0AvHXRY/g
+X-Gm-Gg: ASbGnctF51aGztS1VDkmJ5K9D603nHthIyFJfP78a8zx6bb38/WYMY8In8fJ0kVt7gN
+	ik0042SLRPVr67+w8mGbLBNfwhi3aNB1XCvtKVLs0e6iLPNvOQJfDB5q7UE4tx6s9VP7E21UI3w
+	6DriA2ohL7dZonQqCedfe6Oe+3kdWQPNCiFEhd5SQia73i/IlZ4l0nEC/D8kgR+rF8miH8ydzDu
+	vlT0LuEWLxypue1i5KaS5fzRhTDsgN0wHUGVjawdBtGLXmBFy99Ci9uw+FszLl4HqlogGbrJy8H
+	WLZoC8ZK9uEvyIJRVDbax5UtNOG+iJj/lB1QFUibvD0oe7MGkkxKbNN4QmHGFzSlc7Tg6riPNNA
+	g7x6ljk7IWem1ZcCgHjQn+YxzpxAj37NQ0ZdFnzIiL31QOBKGeXHaGvdVRnAOYzvihIrWz31y8k
+	VX56FBWTaZrme8PGyE5BHLMNrflm5306Cdk1Jcq+Pf/lUeaqIC
+X-Google-Smtp-Source: AGHT+IG9VvnzDXtX0JKFQiQUX+In4MVf6y6Akxn4NQO63RSBV4mp4D/++PPUhhN1Oq8eI4TqcX3yrA==
+X-Received: by 2002:a05:6102:50a2:b0:5db:e373:f0af with SMTP id ada2fe7eead31-5dbe373f995mr875526137.31.1762181525976;
+        Mon, 03 Nov 2025 06:52:05 -0800 (PST)
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-5dbf332cebbsm172757137.13.2025.11.03.06.52.05
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Nov 2025 06:52:05 -0800 (PST)
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-93515cb8c2bso2630563241.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 06:52:05 -0800 (PST)
+X-Received: by 2002:a05:6102:588d:b0:5db:c9cd:673d with SMTP id
+ ada2fe7eead31-5dbc9cd6b9amr1394207137.26.1762181525198; Mon, 03 Nov 2025
+ 06:52:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+References: <20251102141733.160640-1-yuntao.wang@linux.dev>
+In-Reply-To: <20251102141733.160640-1-yuntao.wang@linux.dev>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 3 Nov 2025 15:51:53 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdW0mLsZmJsWmQEaN=g-kRMMVHaBpRZmQW1VFRqyDvK6UQ@mail.gmail.com>
+X-Gm-Features: AWmQ_blF-HrJJFZ6UawjIZOL5JF9-1QW9wszE5S3sxv-Mq_PqjGG7F9PQMoMuHo
+Message-ID: <CAMuHMdW0mLsZmJsWmQEaN=g-kRMMVHaBpRZmQW1VFRqyDvK6UQ@mail.gmail.com>
+Subject: Re: [PATCH] of: fdt: Fix the len check in early_init_dt_check_for_elfcorehdr()
+To: Yuntao Wang <yuntao.wang@linux.dev>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
 
-Byungchul Park <byungchul@sk.com> writes:
+Hi Yuntaoi,
 
-> On Mon, Nov 03, 2025 at 01:26:01PM +0100, Toke H=C3=B8iland-J=C3=B8rgense=
-n wrote:
->> Byungchul Park <byungchul@sk.com> writes:
->>=20
->> > Currently, the condition 'page->pp_magic =3D=3D PP_SIGNATURE' is used =
-to
->> > determine if a page belongs to a page pool.  However, with the planned
->> > removal of ->pp_magic, we should instead leverage the page_type in
->> > struct page, such as PGTY_netpp, for this purpose.
->> >
->> > Introduce and use the page type APIs e.g. PageNetpp(), __SetPageNetpp(=
-),
->> > and __ClearPageNetpp() instead, and remove the existing APIs accessing
->> > ->pp_magic e.g. page_pool_page_is_pp(), netmem_or_pp_magic(), and
->> > netmem_clear_pp_magic().
->> >
->> > This work was inspired by the following link:
->> >
->> > [1] https://lore.kernel.org/all/582f41c0-2742-4400-9c81-0d46bf4e8314@g=
-mail.com/
->> >
->> > While at it, move the sanity check for page pool to on free.
->> >
->> > Suggested-by: David Hildenbrand <david@redhat.com>
->> > Co-developed-by: Pavel Begunkov <asml.silence@gmail.com>
->> > Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
->> > Signed-off-by: Byungchul Park <byungchul@sk.com>
->> > Acked-by: David Hildenbrand <david@redhat.com>
->> > Acked-by: Zi Yan <ziy@nvidia.com>
->> > Acked-by: Mina Almasry <almasrymina@google.com>
->>=20
->> Acked-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
->>=20
->> IIUC, this will allow us to move the PP-specific fields out of struct
->> page entirely at some point, right? What are the steps needed to get to
->> that point after this?
+On Sun, 2 Nov 2025 at 15:18, Yuntao Wang <yuntao.wang@linux.dev> wrote:
+> The len value is in bytes, while `dt_root_addr_cells + dt_root_size_cells`
+> is in cells (4 bytes per cell).
 >
-> Yes, it'd be almost done once this set gets merged :-)
->
-> Will check if I can safely remove pp fields from struct page, and do
-> it!
+> Comparing them directly is incorrect. Convert units before comparison.
 
-Sounds good, thanks!
+Thanks for your patch!
 
--Toke
+> Fixes: f7e7ce93aac1 ("of: fdt: Add generic support for handling elf core headers property")
 
+My commit consolidated existing code, so you may want to add
+Fixes: e62aaeac426ab1dd ("arm64: kdump: provide /proc/vmcore file")
+so code in v5.14 and older will be fixed by stable backports, too.
+
+> Signed-off-by: Yuntao Wang <yuntao.wang@linux.dev>
+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
