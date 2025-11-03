@@ -1,175 +1,149 @@
-Return-Path: <linux-kernel+bounces-883493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47E5CC2D992
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:09:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AF18C2D99B
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:09:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5FD254EAF71
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:09:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B1A11899D96
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52432D5923;
-	Mon,  3 Nov 2025 18:09:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF3621E0BB;
+	Mon,  3 Nov 2025 18:09:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fSibrf8L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UnKrqmyv"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0373148BE
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B902313273
 	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 18:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762193368; cv=none; b=MWiJl+v/Ae0WIOUwgr3Yi/abvklb/I91OlHaC2WfJZAsFyC6BTTpndzcg8svKW84unkfop4keQUHlFDkG8xg4zAx3i0tSrXwCs47HdGZaJMjxVO7xn9BTVMAP8mogcs5FEbwITHmnI97uj9rdfu1u817ULf3RRgNsxeiS7nkGv8=
+	t=1762193369; cv=none; b=RYQ2SWiWUDbcX421Th0kfeaWB/XF9ZBuFDxptlNl3VRuSiUxkl5rXuzX63FwaMpC7qtl4OfAeO9JQ3dCGmumFQh3b07KKOmZ6xmnh5iUaDCm7iiYwObSN2eClmb0/fH6Jd97cbzs5XZYER4S3xq9IXh6SyySBrYDNdUPk9cH4CQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762193368; c=relaxed/simple;
-	bh=GIVep2mwCobXrapQXMsC8otlq3Mdat5Ya3mMg5dI0ug=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MQPab6dkpnJkKEqOhDUzzKUuw810Ohhzm53uZ1Aa/22c9893CUN7dgKtPvncUN9j1JvcQ3WByiUfZ4swLMbqO5g6NokAlSATjd+iMqkiOmqg7WmcaOqLWM5QQmyL36j6quOITA9d6Z2JxGff1x9ukwKSQyohjjw8hdJcOF2+FB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fSibrf8L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2079C19424
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 18:09:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762193367;
-	bh=GIVep2mwCobXrapQXMsC8otlq3Mdat5Ya3mMg5dI0ug=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fSibrf8LiIh1UPYNJaZIy/YygOjQ2940i93GlOxIP9gMl8eVhtmGgNTxtQjuo2U9N
-	 pX17/Y0NjCqda7m2kiWFWWu/CyKzRpx6zn+qD0h1fsN51tkfwtOcGzm3MR+i5I7+8u
-	 wYWEOFpN0Mmvc/6I8MCqNX4ze9lklqBL2Om1nl7+a6M8l3VQ8gGCKd2A+rXNCDtXN+
-	 BwRrDOX8tlyOq3egRgkOPHXDH0/jeIF8/w5nVkiNM406wTDnk8ZhMR718++WQVPi98
-	 +36nmIcOLz7CnBOTMVH61swRmj2jlzNBmMKyPZv2m4E9Yt4CU/GQdgFJJrJtEZE0p+
-	 HP00cHU3TD6sQ==
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-654ef376363so2406030eaf.0
+	s=arc-20240116; t=1762193369; c=relaxed/simple;
+	bh=dSZOek6ygkyM8kMLRCDVZKMdCPYWkaopn/XnCYI/Vb8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WUavSwq0lvwC9faf/rpbgLaWMtLMteda7r96R4QKuf8wLUgYjI3TFc+jtJ5NZk8D4lCdLrfN9J1tbHUvWUwSqq22BvceS1PAYBjSaSs7Dv21a6xtVYhUiD+pTUP5LVFGVVRpNHh+3Qj8Fgm98FcYCKdSNC1yKTbFaqa7YVlMXTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UnKrqmyv; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2951a817541so48437215ad.2
         for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 10:09:27 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUuDagZpGT/W9wrxF4hADw4zC9SKrY1ZT0U+lj6FPbJS6i3ZVbF3ImlgCeQ2UKXeZAGl4lhuRcnerWKibc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKMrpqqBm6CSYuOQdh9qgD75AbVlo0at62Pg06Ilsfu1cIWLbh
-	EFuIflCpzev99O9fkAGJ+NG2GDo6KHy8kufa9tqBJyFGhLlEqSE84eQd4nJ9MlExoVmpF3IISyg
-	cPRR6lAf4dnx9G1auaUvMJRQ3I+R5ipM=
-X-Google-Smtp-Source: AGHT+IG7x2rRrcA6QrLQTa5xWb0daH70NTjyInTXmFaxht1gFxQwSaFvkKLb5ZMaa0lEvSdnh4SnPhH3Mz/5+lVl5m4=
-X-Received: by 2002:a4a:e912:0:b0:654:fc59:2240 with SMTP id
- 006d021491bc7-6568a3eedabmr6067377eaf.1.1762193366901; Mon, 03 Nov 2025
- 10:09:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762193367; x=1762798167; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6GMq24IVk2F3a28aOoFMSN6wPIMIYmOKkHFdluZNlp8=;
+        b=UnKrqmyvy6DUp++piPtr188PfaI7oNGWMAM7vbHHUoa8Z9eZ0AnIrrEfDDpRdehICM
+         SoAstZCyWWNpzruPp7eFAMTwRquJwBlqtZL56KudJ8l8Kb3l90Nkx4vxII++gEAjpC90
+         wkr+DtJr11CPMuL+LYZFP70v+H3ETgpNRqooepuWnrSZlFGu3OuFUkfcYWLnM9hNW+QU
+         S8XAKoQ9pJq4TB+PeDtcBwoAZGrKV9T6HI3AJx2PPG1HqBz4Yhd8M0NDjAeDYdhdFIqr
+         wJBRtfK87pOqOYL5EnjZWVoBQrCIMbKE/PacszEDIpNKzu2Yrs7zQOMPSNXizjJtOZQB
+         mwJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762193367; x=1762798167;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6GMq24IVk2F3a28aOoFMSN6wPIMIYmOKkHFdluZNlp8=;
+        b=F7mr16AyxS0YH47KE76j4GesZxhffJSRuCu3r41BxWjUUDVaB/tPb0RqDH8oF5kpGN
+         hIQp1i43wLEy7+EvAJ60iH1YKPiMnKuoKkYxS15NhJN82+olcNJrZ/D+Ht9RKke60pTD
+         0YNZyy32lwguRRkmnbt8Aty15Qkuqvmi5IPUHnknmxsfZb37LzVvKwSI+BaSajrEM3iD
+         9IMn03jtAgYn8anxjWePG57q9FZrTs/DDmNVTZI+U9MDnfegvTejgINtkY0n2vmlmdi1
+         F8PkIFUt/Abykc5HCKR01vdB6/XztTfTCR0/Ug51qUVFsTS0Fyn+IESvmlc3OrCzt7q9
+         GBow==
+X-Forwarded-Encrypted: i=1; AJvYcCX7gLCqHxql8NSLQ5Dg827SME6HUVKxol1iemykdSjwM24mNgVPPxlXD9WpbqswKFx85oc6+Iprcv1HkPc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWYycLEEre9OcJrEfVzq08wbstdAu/WjJfGxX4IZTNyZmj0g78
+	yahpO7dpLtvPZSJ9tOh+JP7rxJzQXY38cpI0P/4DlBmowMajQNDwDK0+
+X-Gm-Gg: ASbGnctUFkH+a3I2GFBIOhkHvzZRvPmwTuI04va4/qmeDM7oE5olJZ3U8opED2GocDJ
+	jLfxCA43LBb14YDlKq3MvwnK0CItVhR+tPxaEPqypIQIgn/chLjvXAf/jP6SWeNaZlEv8btpNHh
+	QL4i4iNa2FWjPlVw0pWoIPOc6jWiGBmmtLlI0aJSuqr9zqylHGQWJfn2s5sIX8X9xbuMIkbgkf6
+	YJj9oxees+/EMKC23iQ2p94SXhoaonqv3VNq8kh/qXoxwIlwiOqjz5Rzs8kea8VxMznkhwNAGk4
+	yK5RXGMFCUyed+mhSD1spP8mx0marLScbIMVWdORW5PyYYz0UHHy1iVvK93ZUwca0RdK363JGFN
+	HEO0WLZg/ACDZv6NonUM8yjFZ9w2jR9xciUBTDPBlDpwhpmpD391S50A8yzp9avzkR7NzpXTY1N
+	PtfEj22kG9aAeXnVYgjdUgAk0yag==
+X-Google-Smtp-Source: AGHT+IGZrfXVBo54SYedR/Q9MDC4tdP/p2CLo6tbKfTLBQnHa03b/gxt/4AS9fp/eW4cLQ/lJm333A==
+X-Received: by 2002:a17:902:da87:b0:290:c94b:8381 with SMTP id d9443c01a7336-2951a3905e9mr148631275ad.7.1762193367176;
+        Mon, 03 Nov 2025 10:09:27 -0800 (PST)
+Received: from ?IPv6:2a03:83e0:115c:1:3eb6:963c:67a2:5992? ([2620:10d:c090:500::5:d721])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-341760c9476sm14136a91.4.2025.11.03.10.09.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Nov 2025 10:09:26 -0800 (PST)
+Message-ID: <a584d6e00a7b78927debb828f252280777d2da6a.camel@gmail.com>
+Subject: Re: [PATCH bpf-next v4 1/2] bpf: Skip bounds adjustment for
+ conditional jumps on same scalar register
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: KaFai Wan <kafai.wan@linux.dev>, ast@kernel.org, daniel@iogearbox.net, 
+	john.fastabend@gmail.com, andrii@kernel.org, martin.lau@linux.dev,
+ song@kernel.org, 	yonghong.song@linux.dev, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, 	jolsa@kernel.org, shuah@kernel.org,
+ paul.chaignon@gmail.com, m.shachnai@gmail.com, 
+	harishankar.vishwanathan@gmail.com, colin.i.king@gmail.com,
+ luis.gerhorst@fau.de, 	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Cc: Kaiyan Mei <M202472210@hust.edu.cn>, Yinhao Hu <dddddd@hust.edu.cn>
+Date: Mon, 03 Nov 2025 10:09:23 -0800
+In-Reply-To: <20251103063108.1111764-2-kafai.wan@linux.dev>
+References: <20251103063108.1111764-1-kafai.wan@linux.dev>
+	 <20251103063108.1111764-2-kafai.wan@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251103084244.2654432-1-lihuisong@huawei.com> <20251103084244.2654432-5-lihuisong@huawei.com>
-In-Reply-To: <20251103084244.2654432-5-lihuisong@huawei.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 3 Nov 2025 19:09:14 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0idhxfOa8_Zp4Z_j5Rqh4GW4JsBpGT_hT=v=NgcEZRb+g@mail.gmail.com>
-X-Gm-Features: AWmQ_bmi96oszDfQBk54Oo-EquHWI8AVZM3ogwB9ykleX4g_GY4wX8ncFBRI9TM
-Message-ID: <CAJZ5v0idhxfOa8_Zp4Z_j5Rqh4GW4JsBpGT_hT=v=NgcEZRb+g@mail.gmail.com>
-Subject: Re: [PATCH v2 4/7] ACPI: processor: idle: Disable ACPI idle if get
- power information failed in power notify
-To: Huisong Li <lihuisong@huawei.com>
-Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Sudeep.Holla@arm.com, linuxarm@huawei.com, 
-	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
-	yubowen8@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 3, 2025 at 9:42=E2=80=AFAM Huisong Li <lihuisong@huawei.com> wr=
-ote:
->
-> The old states may not be usable any more if get power information
-> failed in power notify. The ACPI idle should be disabled entirely.
-
-How does it actually disable anything?  It only changes the
-acpi_processor_power_state_has_changed() return value AFAICS, but that
-return value isn't checked.
-
-> Fixes: f427e5f1cf75 ("ACPI / processor: Get power info before updating th=
-e C-states")
-
-So how does it fix anything?
-
-> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+On Mon, 2025-11-03 at 14:31 +0800, KaFai Wan wrote:
+> When conditional jumps are performed on the same scalar register
+> (e.g., r0 <=3D r0, r0 > r0, r0 < r0), the BPF verifier incorrectly
+> attempts to adjust the register's min/max bounds. This leads to
+> invalid range bounds and triggers a BUG warning.
+>=20
+> The problematic BPF program:
+>    0: call bpf_get_prandom_u32
+>    1: w8 =3D 0x80000000
+>    2: r0 &=3D r8
+>    3: if r0 > r0 goto <exit>
+>=20
+> The instruction 3 triggers kernel warning:
+>    3: if r0 > r0 goto <exit>
+>    true_reg1: range bounds violation u64=3D[0x1, 0x0] s64=3D[0x1, 0x0] u3=
+2=3D[0x1, 0x0] s32=3D[0x1, 0x0] var_off=3D(0x0, 0x0)
+>    true_reg2: const tnum out of sync with range bounds u64=3D[0x0, 0xffff=
+ffffffffffff] s64=3D[0x8000000000000000, 0x7fffffffffffffff] var_off=3D(0x0=
+, 0x0)
+>=20
+> Comparing a register with itself should not change its bounds and
+> for most comparison operations, comparing a register with itself has
+> a known result (e.g., r0 =3D=3D r0 is always true, r0 < r0 is always fals=
+e).
+>=20
+> Fix this by:
+> 1. Enhance is_scalar_branch_taken() to properly handle branch direction
+>    computation for same register comparisons across all BPF jump operatio=
+ns
+> 2. Adds early return in reg_set_min_max() to avoid bounds adjustment
+>    for unknown branch directions (e.g., BPF_JSET) on the same register
+>=20
+> The fix ensures that unnecessary bounds adjustments are skipped, preventi=
+ng
+> the verifier bug while maintaining correct branch direction analysis.
+>=20
+> Reported-by: Kaiyan Mei <M202472210@hust.edu.cn>
+> Reported-by: Yinhao Hu <dddddd@hust.edu.cn>
+> Closes: https://lore.kernel.org/all/1881f0f5.300df.199f2576a01.Coremail.k=
+aiyanm@hust.edu.cn/
+> Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
 > ---
->  drivers/acpi/processor_idle.c | 22 +++++++++++++++++-----
->  1 file changed, 17 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.=
-c
-> index c73df5933691..4627b00257e6 100644
-> --- a/drivers/acpi/processor_idle.c
-> +++ b/drivers/acpi/processor_idle.c
-> @@ -1317,6 +1317,7 @@ int acpi_processor_power_state_has_changed(struct a=
-cpi_processor *pr)
->         int cpu;
->         struct acpi_processor *_pr;
->         struct cpuidle_device *dev;
-> +       int ret =3D 0;
->
->         if (disabled_by_idle_boot_param())
->                 return 0;
-> @@ -1345,8 +1346,18 @@ int acpi_processor_power_state_has_changed(struct =
-acpi_processor *pr)
->                         cpuidle_disable_device(dev);
->                 }
->
-> -               /* Populate Updated C-state information */
-> -               acpi_processor_get_power_info(pr);
-> +               /*
-> +                * Populate Updated C-state information
-> +                * The same idle state is used for all CPUs, cpuidle of a=
-ll CPUs
-> +                * should be disabled.
-> +                */
-> +               ret =3D acpi_processor_get_power_info(pr);
-> +               if (ret) {
-> +                       pr_err("Get processor-%u power information failed=
-, disable cpuidle of all CPUs\n",
-> +                              pr->id);
 
-pr_info() at most, preferably pr_debug() or maybe pr_info_once().
+Acked-by: Eduard Zingerman <eddyz87@gmail.com>
 
-> +                       goto release_lock;
-
-"unlock" would be a better name.
-
-> +               }
-> +
->                 acpi_processor_setup_cpuidle_states(pr);
->
->                 /* Enable all cpuidle devices */
-> @@ -1354,18 +1365,19 @@ int acpi_processor_power_state_has_changed(struct=
- acpi_processor *pr)
->                         _pr =3D per_cpu(processors, cpu);
->                         if (!_pr || !_pr->flags.power_setup_done)
->                                 continue;
-> -                       acpi_processor_get_power_info(_pr);
-> -                       if (_pr->flags.power) {
-> +                       ret =3D acpi_processor_get_power_info(_pr);
-
-This does not need to be called if _pr->flags.power is unset.  Why are
-you changing this?
-
-> +                       if (!ret && _pr->flags.power) {
->                                 dev =3D per_cpu(acpi_cpuidle_device, cpu)=
-;
->                                 acpi_processor_setup_cpuidle_dev(_pr, dev=
-);
->                                 cpuidle_enable_device(dev);
->                         }
-
-If it succeeds for the next CPU, the return value will be still 0, won't it=
-?
-
->                 }
-> +release_lock:
->                 cpuidle_resume_and_unlock();
->                 cpus_read_unlock();
->         }
->
-> -       return 0;
-> +       return ret;
->  }
->
->  void acpi_processor_register_idle_driver(void)
-> --
+[...]
 
