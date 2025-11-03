@@ -1,140 +1,105 @@
-Return-Path: <linux-kernel+bounces-882160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3860C29C8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 02:33:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E39C0C29C91
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 02:34:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5A95B4E889A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 01:33:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3E28188A577
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 01:35:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9174D275AE8;
-	Mon,  3 Nov 2025 01:33:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC1B2773DD;
+	Mon,  3 Nov 2025 01:34:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="DHkSK+8N"
-Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e5jdEu7Y"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECCDE19F127
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 01:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B5819F127
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 01:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762133598; cv=none; b=SGCOlo+RefQCi/We+AVq5psfiXuZia+5ChSxK9PvOjriIXl6IVLBEeIY/aBD4sAiPL8VrMswAowIrwgqE+Skf3axpVXihVNYXI6d7n+T+puvyME4Ocr+jOwaAeUvilM1mScgkL7vFYiht8pmRh+fJcLEJocqnJr+IDZgiySxEwI=
+	t=1762133688; cv=none; b=f1nE09RcToBcCKl7CaXb4mWjbf4oLx8c1p3roJRGTz76V5CkpwRQVhv+1vPuMN83kFBt7U1RYVY6C7uO2HITG7LZM0Y+I3w5eq7LSes8C8qD/lVwu7yt/+DZ3ip2s202Ld0kKyYp0NlZPu2I+XkxBpiYLwDPc3jlV5d1nqLmZfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762133598; c=relaxed/simple;
-	bh=srFLzSQUhm+1KYU24MeXzYCCGeLQtQFTIteI8ITLGxs=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=trYtL3c/tY/MIg4Uayz0dBymSDMuXcj9yxMtqM7lx7jsYbZz7uHydrQWvcNb4R+zYYek7VWguJsVMpzOO3kUZ7REcwNKFUBCwCPsH8w39WUbbhWKJ1zMpTkTDrvOZFWsD+DMJre1g93S43aY43luEshtlwgRzEmbz4ULa8ChmV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=DHkSK+8N; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-06.internal (phl-compute-06.internal [10.202.2.46])
-	by mailfout.phl.internal (Postfix) with ESMTP id C029AEC0188;
-	Sun,  2 Nov 2025 20:33:13 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Sun, 02 Nov 2025 20:33:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1762133593; x=1762219993; bh=3VygVh8ojnHZK6FC71RvbSxh7Er0TIana3l
-	DR4kRD/E=; b=DHkSK+8N1Ccmb1vOpA9xnwBD2uvM67fxDbua4lqY7tr5MMqC8tn
-	D7VIjFLZ7M1N+3cMHqaFYaJznO3kaBoEZXbZj/ofFQ/B2NI0fSJr1tyUczBHtoQ9
-	/gkVN7O8Gf7QSCwdzczVNV7ng9McQdeV+mkn13avLKFmfSnLVErE+4C4EvL08x+L
-	SewHUYn+juid2nxlZJT9RfpO/t+E5IghW5WOU+g3W0N/SdO9Ov9tx3qroJZL9j36
-	qNR+J+xYmbbxKcWIGeKwcPDTGB0DcKatEFT6iB5kL7BMLuf6VyL2xH9pg+TSWg3N
-	hfu9PkujdLWLL1bk5VvYa6OvMRkp4OgYJdw==
-X-ME-Sender: <xms:VwYIaUD42uoBLLy3ZodfzjcH3tolU_GIRZSpv84Mx9VwgEH6njHKFg>
-    <xme:VwYIaSWedtKwTBcsmsAV8FQQFGsy83O6TQ83O1xa6iFjfrn3oOwYQceOO2lULoOp4
-    EVMJZvP4AknMElxzPYt_TxY3B3ebjx9kkB6E94mzU1s94ZjiTit3b8>
-X-ME-Received: <xmr:VwYIaS_NA9d5Qj8hMggJvosAsk_snx2ATkQb2EW0JIWyK4Jq45SMEPikkydlqSXO73PIzu1aQxa9oIQTO037o0MluHEnNYV6ndE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujeeikedvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevufgjkfhfgggtsehttdertddttddvnecuhfhrohhmpefhihhnnhcuvfhh
-    rghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgqeenucggtffrrghtth
-    gvrhhnpeelueehleehkefgueevtdevteejkefhffekfeffffdtgfejveekgeefvdeuheeu
-    leenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfth
-    hhrghinheslhhinhhugidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopeduuddpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhinhhugiesthhrvggslhhighdrohhrgh
-    dprhgtphhtthhopehushgvrhhmheejseihrghhohhordgtohhmpdhrtghpthhtohepmhhp
-    vgesvghllhgvrhhmrghnrdhiugdrrghupdhrtghpthhtohepnhhpihhgghhinhesghhmrg
-    hilhdrtghomhdprhgtphhtthhopegthhhrihhsthhophhhvgdrlhgvrhhohiestghsghhr
-    ohhuphdrvghupdhrtghpthhtohepshgrmhesrhgrvhhnsghorhhgrdhorhhgpdhrtghpth
-    htohepsggvnhhhsehkvghrnhgvlhdrtghrrghshhhinhhgrdhorhhgpdhrtghpthhtohep
-    lhhinhhugihpphgtqdguvghvsehlihhsthhsrdhoiihlrggsshdrohhrghdprhgtphhtth
-    hopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:VwYIaUTU-BK8uSSVx3SZODS2Ahtsx-YeSDowDEVUpsPCJTxS7d6AeQ>
-    <xmx:VwYIaXQP4o8ikIxT9SvV9pi2FH0Cg47DxBUC5DT3UdjIVezfBEG_WQ>
-    <xmx:VwYIaQ6eEV-h7m5Zk1y3SdhLVIQinwn7PXxOTZa1eDlXZQS761KIFQ>
-    <xmx:VwYIacXtAfEMH2ORcsi_GkuT3F-oxRK7I6v1DDh5HFclSWso5l12oQ>
-    <xmx:WQYIaZybGOq_gvBumGA8zbKaoCkhD1OMeVgVO7aflcI9T0hm_UZ5BfH2>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 2 Nov 2025 20:33:09 -0500 (EST)
-Date: Mon, 3 Nov 2025 12:33:22 +1100 (AEDT)
-From: Finn Thain <fthain@linux-m68k.org>
-To: "Dr. David Alan Gilbert" <linux@treblig.org>
-cc: Stan Johnson <userm57@yahoo.com>, mpe@ellerman.id.au, npiggin@gmail.com, 
-    christophe.leroy@csgroup.eu, sam@ravnborg.org, benh@kernel.crashing.org, 
-    linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
-    rdunlap@infradead.org, Cedar Maxwell <cedarmaxwell@mac.com>
-Subject: Re: [PATCH v4] powerpc: Use shared font data
-In-Reply-To: <aQeQYNANzlTqJZdR@gallifrey>
-Message-ID: <20108eef-b7cf-3f23-264a-5d97021f9ffa@linux-m68k.org>
-References: <20230825142754.1487900-1-linux@treblig.org> <d81ddca8-c5ee-d583-d579-02b19ed95301@yahoo.com> <aQeQYNANzlTqJZdR@gallifrey>
+	s=arc-20240116; t=1762133688; c=relaxed/simple;
+	bh=ftMbpL6j/uQsNO3O6mNfkO4ZVF4ndgDgaVSJY8PJAk8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VgWqZ71T3gVO8A27oxyCl55tbtEDdXn9HJDJmHVtY39AQ3ijYvvl4pf22BuEOV0JLp9PIKVYDaFQ3h3f8LYDA4l6+32rxCtaz0ZpNJubHdTKKQHdqAHbGqY70RHChMhUt4A5OYkorM0S4UReg44nr2YYc1o5WbnkLIXyqfEV/Hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e5jdEu7Y; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762133685;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=lfUe6keLvgZWmVlJAkKYXrc9NNITdmhd/cHUPUOe4OU=;
+	b=e5jdEu7Y4tL8tDhscr3STQ+yM3U4Z7iZXV6o+wpoua14qUg2XLHk8MaSI5fHWLM6lhM1AY
+	p8G7tXskYO8ZifMaAbWTi14jvrCpOvHyPxy6VmR7iuEkzNBeRwqfA9Y81z0vJ+3qcdkZQI
+	NLv633u8aOTvWtNAoJJW6SGIyC8FPUk=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-523-GrnURyw5OYSREck9qxKEXQ-1; Sun,
+ 02 Nov 2025 20:34:42 -0500
+X-MC-Unique: GrnURyw5OYSREck9qxKEXQ-1
+X-Mimecast-MFC-AGG-ID: GrnURyw5OYSREck9qxKEXQ_1762133681
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BDE851956094;
+	Mon,  3 Nov 2025 01:34:40 +0000 (UTC)
+Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.88.7])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 5A7A21956056;
+	Mon,  3 Nov 2025 01:34:38 +0000 (UTC)
+From: Waiman Long <longman@redhat.com>
+To: Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
+Cc: cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ridong <chenridong@huawei.com>,
+	Gabriele Monaco <gmonaco@redhat.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Waiman Long <longman@redhat.com>
+Subject: [cgroup/for-6.19 PATCH 0/3] cgroup/cpuset: Additional housekeeping check & cleanup
+Date: Sun,  2 Nov 2025 20:34:08 -0500
+Message-ID: <20251103013411.239610-1-longman@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
+The first two patches are based on the two cpuset patches from the
+"timers: Exclude isolated cpus from timer migration" patch series [1]
+with some minor modifications. They add additional nohz_full housekeeping
+mask check to ensure that there is at least one common housekeeping
+CPU that is not domain and nohz_full isolated.
 
-On Sun, 2 Nov 2025, Dr. David Alan Gilbert wrote:
+The last patch is another cleanup patch to simplify the current
+partition code.
 
-> 
-> So I'm not a PPC person specifically; so lets see if the PPC people have 
-> any suggestions, but:
-> 
->    a) Do you know if there's any way to recreate the same hang/works 
-> combination in qemu; I know it has a g3beige model but I don't know how 
-> to get something similar to your failing combo.
-> 
+[1] https://lore.kernel.org/lkml/20251020112802.102451-1-gmonaco@redhat.com/
 
-I guess we could probably reproduce this in QEMU if the BootX bootloader 
-could be made to work there. In theory, 'qemu-system-ppc -M g3beige' might 
-work.
+Gabriele Monaco (2):
+  cgroup/cpuset: Rename update_unbound_workqueue_cpumask() to
+    update_isolation_cpumasks()
+  cgroup/cpuset: Fail if isolated and nohz_full don't leave any
+    housekeeping
 
->    b) Can you get any diagnostics out of the prom on the mac?  Like a PC 
-> or anything to have some idea where it hung?
-> 
+Waiman Long (1):
+  cgroup/cpuset: Globally track isolated_cpus update
 
-Well, that's the problem: if you enable the CONFIG_BOOTX_TEXT diagnostics, 
-the system hangs instead of printing stuff. If you disable the 
-CONFIG_BOOTX_TEXT diagnostics (in favour of serial diagnostics) the hang 
-goes away.
+ kernel/cgroup/cpuset.c | 139 +++++++++++++++++++++++++++++------------
+ 1 file changed, 100 insertions(+), 39 deletions(-)
 
-Anyway, I imagine that the problem with your patch was that it relies on 
-font data from a different (read only) section, which is unavailable for 
-some reason (MMU not fully configured yet?)
+-- 
+2.51.1
 
-So I've asked Stan to test a patch that simply removes the relevant 
-'const' keywords. It's not a solution, but might narrow-down the search.
-
->    c) Is this only the Powerbooks that are unhappy - are other Macs OK 
-> with this - if so, wth is the difference with a powerbook?  Is it a 
-> different debian config or something?
-> 
-
-The BootX bootloader doesn't work on New World systems, which is probably 
-why we don't see this regression on anything newer than a Wallstreet. 
-
-It's likely that other Old World systems are also affected, if they are 
-using BootX. We don't yet know whether the regression also affects Old 
-World systems using the iQUIK bootloader instead of BootX.
 
