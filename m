@@ -1,144 +1,146 @@
-Return-Path: <linux-kernel+bounces-882823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96D3EC2B972
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:17:26 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C3DEC2B9D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:20:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 42E95348C20
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:17:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F35134EDDD4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A8530ACF9;
-	Mon,  3 Nov 2025 12:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D20830AD12;
+	Mon,  3 Nov 2025 12:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="zC9ft3RB"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h5VYnZri"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906C3309F19
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 12:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34D3C2FDC41
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 12:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762172236; cv=none; b=U1lXpdHhSR4fR5lA1ASQABalECxxJ675PjsV/ZLPL/BIHHrJPhxIsY6hapfmnWH0gj85Hji1LNXCN0ScCBo8VOWf51WSD4K4JQxaN6/6LlFI7dNPyvVdIMogB5L0omi8Gq4Oe6F8X2+At/+Z5CJI3nzEDQRMTDInRz4xG+gAsAc=
+	t=1762172302; cv=none; b=ndnCHcDnQKeoYNXKTrAy0ADz2/f+nIo9dQfr5FwXlV0OrPnG6Tk386PsV2jDza4v3Z9CDzmLTCop8NoKf2VnMZnTqR7pODmGSad7NV6PqooY1ZSoiMc5xTFynSmHAJNitUSKyJdTub3o3uUb/EsqUgmFNiX9SyVlqIon75igHtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762172236; c=relaxed/simple;
-	bh=N6dzLqWRKXo3vdjPNtp4WU0RNAGv8JDAOdUXXVowYMU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=WNK3JRpAkSuxmAIfIZmeFY6inmK86/NfBbcm0R8p22FuxWENwZ4cAJrvMafW4YcUP2NDBJZBEq1gKD22Sa8LiWTBq6kyoC4PvnjS/zISX8gNe4lpAt3ejgCH87Km+pWGhvxKtz1Uw/1IR/DEng8NLRqB9aoOGW0hwXU9QAaIYoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=zC9ft3RB; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-b71397df721so108409766b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 04:17:13 -0800 (PST)
+	s=arc-20240116; t=1762172302; c=relaxed/simple;
+	bh=lCBHxR560VrCvyH/VPyQ9rGtbUvg+uTp3AfswUNaCwU=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=BuUzeeO61ANYAEMvvIUo1Xs2ZIjL6nLaOZvZJNb1cT+mXeNgS50irpP/5PiTpMeBjKJb6JmwE66u7xvnjs5C5AQqV+OnWS117Gd7xQe7dXw4NCPb7TxX2yDiiIrQJQv3NCzoyLno3ZuO4CIm222xu/j+th9cNUXal6i26aI3h0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--khtsai.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h5VYnZri; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--khtsai.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b99dc8f439bso1108950a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 04:18:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1762172232; x=1762777032; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aNjT7Aiq5Dh6jiEB8sw52p14qgaFnxeV2nRWidKXfx4=;
-        b=zC9ft3RBWag/V+c4hsCUTEoIz0cffEe3V3R2CDajBFXXkVe2pm0bDhvl7lNKRLQIrq
-         spwO0fb0gLqktktSW3Mh1iTK/dS6rW582Ewl8JrbaSsAbE0syaRN+BM4SJp0d2g6ZlLq
-         2xl+67Dod/VLo51R1ncoCrhoCyaCRxsNbFAlqi0CnOKodq4xLsNlEfAxteq87mULbxPU
-         OzIf1wYjaaRE6AXA8Ery/wcNRvedXLjPlxS/Fue98UAVeo91zmq+yjk4bVAFzLufeF01
-         WdoES5CFbHlIhtxgm/lAyDMnTYR2zJHlSk4unA+ElbdgpUT9OlSj9GjCQu6AGxZbG15Q
-         jMKQ==
+        d=google.com; s=20230601; t=1762172300; x=1762777100; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=2LD8GK3pIPbr0iXGHwDU1sX6lg+zmtmtG9m7gSTkkV0=;
+        b=h5VYnZri6xNwSQol3pNsLuHJmX6AwlOu/WL09o/gVftXSrN3SQTrtJxTtAOYXU6piS
+         l2OnNx0a9S9xPlJqT+rmkA0EnKOPaOItrO4p3WjbzG6DZuJyrATHW1cZy+NsmvV8u1U7
+         kRUJwmYxoDbfMPnUO8jZnlc+nJcWid5vIV2vzja425s4LuCbS5XgSq7gmydLiaxkKaW0
+         OFy0Hw6UVnQ8U4ABim7MuIPMFchT0W+QMVsv3Z685Hkock+wcon/WhDv/Q8O3f99mAG5
+         c6uDxy5xlzabw7YIrLJxoC3604gp8KiEGg+jc038OujLWZCa6JO69E+JZQS6rYwELR/N
+         Adeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762172232; x=1762777032;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=aNjT7Aiq5Dh6jiEB8sw52p14qgaFnxeV2nRWidKXfx4=;
-        b=ZpFyHAmYVmuh/Hgrp8xlzN5MtlSBUUbTF7GB++jWPbw2QaUMs6mtZXrl01+Vc+m6hp
-         A5kh8SH5qALqZnYccj6jLEn4werUfqu7NLXs8f6Mv+J1r+R/1igGnqGYYrMIh7Dca3IP
-         4OOGCtsLKfaHJD2/RkDr+HOjupsqFmsvmGUKRs5MUn9zaSLvk74XiDZeVPyDLNGBfQ26
-         nRVe4h4Dj4NDAeJunKx7xXyVNhgWNQ+bgRVK5SfMes7TsRBEa+nGs4Zpwkd6ol+ce8f8
-         iXX6fioWgAVNrc0q7Ls1yzbzaTJ5mt+3zEI6GA7PQZ/54NdhcnsU0HtYu5x2J6Njl2fE
-         +ZDA==
-X-Forwarded-Encrypted: i=1; AJvYcCUk7tqBQSTh+Vu3GXf11Rm2Ls1puYTmoq2/PCgsDdaGpOKQcwV7yh++NmefYC/zDoRdTeSFM1hWmtID/KE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwT4rreqhwyNR7hP3QfslXrK410WhAOss5HYHPzwPL9ww6mpePm
-	2RLCKfhVcXF9/R3IM43OpNggwMluXnJeMxjHRR6/zqr9Or+wVmKsTprVSY1JSuwXIo4=
-X-Gm-Gg: ASbGncuIzyVEqeEllyfkUl5meghmqt2uELUGj/YBlB1Aks1Zhej+/jGLBhgooHEmfP7
-	IjKMGUk0DOaz6GjV5zbqGoA8befM79ollLBrES9sP5e8nGSi3kVdNKP17SNTYLWrqgnAkItIidB
-	4crnGRVvdgOchZ5TYQcpLzfNi6NOkDC10urIQfKY/mm1+FOePuEvC2b1+NoN8l4bdUK2cta24jF
-	KsQHFCsQzWpLYt3v91nmg/GD7wkbStS0rv1b9cwgdrroV93tXOYlgMr0ViY5Jm2VmtiacN65bZk
-	yGkIJ+DWRhp68rlk6VbjDlCMUBDxkHaetDhaU9+hXhPtuQtR48x5KoHzMyJUhZ4cFn7VRal5bS8
-	gwONua8XjR3eyOFm4SDH7RCYNuUuw2VpJOlY36z0sjtYJPhPYAvts0eTwkahRFVnPZsCNOYYZw5
-	cFx6eQJ59h3hcnzCsdwm636gLOQiSZyEMsrBOnr0l/0VZnbOBxuQ7cqWFI
-X-Google-Smtp-Source: AGHT+IEKZUv1KyQWAizLeoG+U9udqAbGU47hQIHv4aHNYJKhylIq0YUcjZYxg94xX07JT/Vlq4yG1g==
-X-Received: by 2002:a17:906:f5a9:b0:b6d:519f:2389 with SMTP id a640c23a62f3a-b707083253dmr1286167366b.52.1762172231791;
-        Mon, 03 Nov 2025 04:17:11 -0800 (PST)
-Received: from localhost (144-178-202-139.static.ef-service.nl. [144.178.202.139])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b70bedcec19sm332233966b.7.2025.11.03.04.17.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Nov 2025 04:17:11 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762172300; x=1762777100;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2LD8GK3pIPbr0iXGHwDU1sX6lg+zmtmtG9m7gSTkkV0=;
+        b=KrUnNAIX9EwWoykdhgTMIHZKTSbBm6pwO+gAzVAttLwvZCdln6JMWIx1bGmCEAVPYz
+         DqhWCtpSOf1J2lfrboEHCB+Ie7gy13nM4iCcDfg9+KNSfR239atOWVill4UOD+d4Qucc
+         L5pLYtpIO4rYQs6SB+hTa0q+iiKJYH0340T5bnBnfC0hFgGjKHjuMTpzRfi0bV3yRHC8
+         gfIXAoWbrZ5DtA6p4fUUM4qN/TUGG8a6PXLf9EEWUkmrNl666IJLaC4NOmGljszMVerV
+         bxeLU8uzA5Ty2ihMdQjnLmsNuYz3nb2uipi0qRUIKylXvziO5eYQvDHPdXWpPiUvez2H
+         sGXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZgVIguuXhlancnquuqxdR0HzvyC47akKDZOfx1meddXM+msdzUTb+lewvQ2b7TptN1fBBAjJzWQ9Nh4I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQnuSR2Tc2jsaGDW88V/dO+HmBWIHOYDf1N36gOoewXu2A/LDk
+	EAK2YzxY9vw/xpW3BS/2sIrbS9mgtqcag6EgXbc0S1O333Km5n7eFAq5PXMJPwGLcomUqOUSuhe
+	gnpLOxw==
+X-Google-Smtp-Source: AGHT+IFYj2bc2+wvjxhjaaBXfWAhANMdDhDx7DCRHrEyTF9mpAjtjHhPdTtptoJl8tKopX/K0DGDgh01h+U=
+X-Received: from plcr17.prod.google.com ([2002:a17:903:151:b0:295:5580:89bd])
+ (user=khtsai job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:db07:b0:295:5623:e59b
+ with SMTP id d9443c01a7336-2955623e7e9mr91846145ad.32.1762172300352; Mon, 03
+ Nov 2025 04:18:20 -0800 (PST)
+Date: Mon,  3 Nov 2025 20:17:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 03 Nov 2025 13:17:11 +0100
-Message-Id: <DDZ1X799V2KV.269J9YL1AGCIF@fairphone.com>
-Subject: Re: [PATCH v3 0/7] Various dt-bindings for Milos and The Fairphone
- (Gen. 6) addition
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Konrad Dybcio" <konrad.dybcio@oss.qualcomm.com>, "Luca Weiss"
- <luca.weiss@fairphone.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "Viresh Kumar" <viresh.kumar@linaro.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>, "Manivannan Sadhasivam" <mani@kernel.org>, "Herbert
- Xu" <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
- "Vinod Koul" <vkoul@kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>,
- "Bjorn Andersson" <andersson@kernel.org>, "Konrad Dybcio"
- <konradybcio@kernel.org>
-Cc: <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
- <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
- <linux-crypto@vger.kernel.org>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20250905-sm7635-fp6-initial-v3-0-0117c2eff1b7@fairphone.com>
- <c93afd94-9d94-42fb-a312-df6e26bb2bc8@oss.qualcomm.com>
-In-Reply-To: <c93afd94-9d94-42fb-a312-df6e26bb2bc8@oss.qualcomm.com>
+X-Mailer: git-send-email 2.51.1.930.gacf6e81ea2-goog
+Message-ID: <20251103121814.1559719-1-khtsai@google.com>
+Subject: [PATCH] usb: gadget: f_eem: Fix memory leak in eem_unwrap
+From: Kuen-Han Tsai <khtsai@google.com>
+To: gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Kuen-Han Tsai <khtsai@google.com>, stable@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon Nov 3, 2025 at 1:14 PM CET, Konrad Dybcio wrote:
-> On 9/5/25 12:40 PM, Luca Weiss wrote:
->> Document various bits of the Milos SoC in the dt-bindings, which don't
->> really need any other changes.
->>=20
->> Then we can add the dtsi for the Milos SoC and finally add a dts for
->> the newly announced The Fairphone (Gen. 6) smartphone.
->>=20
->> Dependencies:
->> * The dt-bindings should not have any dependencies on any other patches.
->> * The qcom dts bits depend on most other Milos patchsets I have sent in
->>   conjuction with this one. The exact ones are specified in the b4 deps.
->>=20
->> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
->> ---
->
-> FWIW this looks good.. where are we with regards to the dependencies?
->
-> Are we waiting for anything else than the PMIV0104 (as part of glymur/
-> kaanapali)?
+The existing code did not handle the failure case of usb_ep_queue in the
+command path, potentially leading to memory leaks.
 
-Hi,
+Improve error handling to free all allocated resources on usb_ep_queue
+failure. This patch continues to use goto logic for error handling, as the
+existing error handling is complex and not easily adaptable to auto-cleanup
+helpers.
 
-From my side, I'm not aware of any patches that have any unresolved
-comments, so I'm essentially just waiting for the correct maintainers to
-pick up the variety of dt-bindings patches in this series, and the
-PMIV0104 and PM7550 series.
+kmemleak results:
+  unreferenced object 0xffffff895a512300 (size 240):
+    backtrace:
+      slab_post_alloc_hook+0xbc/0x3a4
+      kmem_cache_alloc+0x1b4/0x358
+      skb_clone+0x90/0xd8
+      eem_unwrap+0x1cc/0x36c
+  unreferenced object 0xffffff8a157f4000 (size 256):
+    backtrace:
+      slab_post_alloc_hook+0xbc/0x3a4
+      __kmem_cache_alloc_node+0x1b4/0x2dc
+      kmalloc_trace+0x48/0x140
+      dwc3_gadget_ep_alloc_request+0x58/0x11c
+      usb_ep_alloc_request+0x40/0xe4
+      eem_unwrap+0x204/0x36c
+  unreferenced object 0xffffff8aadbaac00 (size 128):
+    backtrace:
+      slab_post_alloc_hook+0xbc/0x3a4
+      __kmem_cache_alloc_node+0x1b4/0x2dc
+      __kmalloc+0x64/0x1a8
+      eem_unwrap+0x218/0x36c
+  unreferenced object 0xffffff89ccef3500 (size 64):
+    backtrace:
+      slab_post_alloc_hook+0xbc/0x3a4
+      __kmem_cache_alloc_node+0x1b4/0x2dc
+      kmalloc_trace+0x48/0x140
+      eem_unwrap+0x238/0x36c
 
-Any advice to make this actually proceed would be appreciated since most
-have been waiting for quite a while.
+Fixes: 4249d6fbc10f ("usb: gadget: eem: fix echo command packet response issue")
+Cc: stable@kernel.org
+Signed-off-by: Kuen-Han Tsai <khtsai@google.com>
+---
+ drivers/usb/gadget/function/f_eem.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Regards
-Luca
-
->
-> Konrad
+diff --git a/drivers/usb/gadget/function/f_eem.c b/drivers/usb/gadget/function/f_eem.c
+index 6de81ea17274..edbbadad6138 100644
+--- a/drivers/usb/gadget/function/f_eem.c
++++ b/drivers/usb/gadget/function/f_eem.c
+@@ -477,8 +477,13 @@ static int eem_unwrap(struct gether *port,
+ 				req->complete = eem_cmd_complete;
+ 				req->zero = 1;
+ 				req->context = ctx;
+-				if (usb_ep_queue(port->in_ep, req, GFP_ATOMIC))
++				if (usb_ep_queue(port->in_ep, req, GFP_ATOMIC)) {
+ 					DBG(cdev, "echo response queue fail\n");
++					kfree(ctx);
++					kfree(req->buf);
++					usb_ep_free_request(ep, req);
++					dev_kfree_skb_any(skb2);
++				}
+ 				break;
+ 
+ 			case 1:  /* echo response */
+-- 
+2.51.1.930.gacf6e81ea2-goog
 
 
