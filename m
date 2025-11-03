@@ -1,191 +1,185 @@
-Return-Path: <linux-kernel+bounces-882522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56794C2AA6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:56:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60FC3C2AA71
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:56:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F29FC4E75A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:56:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E94AF3B16F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A672E370E;
-	Mon,  3 Nov 2025 08:56:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 560782E7622;
+	Mon,  3 Nov 2025 08:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SCte6W5r"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oTTeiws+"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30BD286417
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 08:56:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0F02E54BF;
+	Mon,  3 Nov 2025 08:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762160179; cv=none; b=VDWTXAwBQ5N6zfJ1zaDnhYWafOf+c52aOrbIjkSB7edZBLXO0SlclLIwzXTlyiupkD3EFdCMLPkbEJv/o2dS7/o/4gG/5DPYXmyo+rZ3lFbW6XmnOGGZEkBXU6Pp0XVwT61c98B0RXExU33hm8c3HViMLd73rPbiNfM9V+tRgUo=
+	t=1762160186; cv=none; b=b8wLE/OgsUAF5xlL4rEIoGK06W/2qf76tzB3sidASlRAlQ2Z2+q1lc4k2vyXudopa9SNbXTrF0iahObWgBs5v0muEgdFBLgXzjA5KJRXOrnGZkfWgslfJj9RCkeaWRyZNwEHCHP3mbIqJlT1Jp8ryoPRmdT0G/jtq/SHjuQ6s/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762160179; c=relaxed/simple;
-	bh=cdG/2GNESlbUp6+q1QrgnV9FBjJKweM3wcW1s9bN0Co=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G2dPpMpx7U1Tb3F6gdF5qbJa8Q7rRtukpP9Ul6uNJmM950BJQ34oBfQnSttkPn5tx7C1m/eD2UK4zqUChFuTo8GViOGBpMQ6noTVDq9O4W50+zp5rZG5m0+dHi4n5Dz5QP6MN5WvFoTbjyrzu3qv5ed11mXk6Hf4gTNy9MYwwo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SCte6W5r; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-29568d93e87so10176785ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 00:56:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762160177; x=1762764977; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QqNH2TcSY0Cf3Gw2Gm7ueN4cQjJXED+OmhcKafNVeF4=;
-        b=SCte6W5rDw3loqRwj105g6vOylV/LMTe18AZmC4Haqt8A8QQnfHtdqpT2u+DRU7TvI
-         CZ2O0RSCVwIklAUrxJmRdYq/lzC2XS/oGzabtFk2/oQv1iGQm31J+eKmA3guR5Ms68yy
-         GSpmbgEfkPgSVkQTWVY2PV4N5LL7Pm4P+RjX57Stsu7Dr88VBQMdLBiLiTrK08v8SgxP
-         ViMPW9LMsqwZVu9Vj0ZnyNxwSpUWBulyQSgacxAofTo2cl/xLMVVh2wfp9Vvo6938OKg
-         6+s1TYBi/JK88P/p/pNlavvIwmevp2Y5RKJILGbSzI1JrlNkEMVhws8f7eZdzXdGfy/k
-         ZJ+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762160177; x=1762764977;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QqNH2TcSY0Cf3Gw2Gm7ueN4cQjJXED+OmhcKafNVeF4=;
-        b=vB54FMo6fPLbvGE3cuu4V+Fv5+w9Ve7H+xlk91BbEHtl+oPu3Gf3OJTip4ilXwrQT3
-         tkiQFHBdiYqp5r3p2QA2t1Oj47vA+CqGtGmv5O0aUIKDTWeD/CferYn7X8FT4iqH/x8n
-         1vW/ejdX2S+SNIIoZWtFs7vTKa8SeRAbO69T5MSwgjByswTYh3uZFian4kqFYrARxAxB
-         QZ8J3Iii5IsOUMbivwmUzCQp/2jCymILgVQHrl3iZo9Igscm/TCoLKOOQeLETvGiMojs
-         4EPTZ2RBIBkvtSbPvovOefj5/vFR8agPGwjxp4SqMkr+8tumlZ2DvlGJepXT+KYuOrO2
-         L7QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVSXjHZJ51JdtB22WoV1GFbsGV2vEzL0Baq74rqdqndhH4lqQCIjZrH6hc1mlVqChf2TBZmSxTrq2RTl1U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4exS6mOufaVQ/3ZzZQ3Z57NeynVas1Ot9KdvSpBuWi2+LWAmn
-	VbBVYxRvdiJcSN8pOjx1fiZwA6gwhkuM/9kgW4hz6iqw0kQa1y8SLPt+
-X-Gm-Gg: ASbGnctW1+SDmFxnrSxv0uKz/bAeQXZ95OVOyLQ28SfNQ8Y6iXPZ4VL5BhM5AoQrPhD
-	u8J0w0LjV/deEDywfherOvfOpRi4OpD45bU43XOkz+AAu53kCECgt+y4Qw8PZH83BYM9uE3pjsG
-	wSH3J6kN21tByolWyD4BTQaNSHL+V5SLB1ZVJpyMRu2Kftl0cxjN62LqAruuKqLfwI2ur3UXHOB
-	e9oxhjCalNodsqXHwP+bpDSG6t3sGWpqRVFoSUjZPsWICOw4qhOnupSnIWRhx4rnwIOEK/faNI+
-	nVieMrlvnJSsNhAPu4A5HewmpXE0B2XRVYVIRYUt7R9oKImcUZBEYVMjb3l/jYoKlywCpj+sHNR
-	+jk8mVb7LaUBYbDgU+XYL5aM5HpqhIMVszekyqUYknUg3KMwdZyFg1hdu5eC841RpXjM82wz8MO
-	Ec8u5NcGgJUxWaLxY=
-X-Google-Smtp-Source: AGHT+IGkgEsePzXxOC8diAv/i5Np1XTP2RcGbYFduDEBYKr/iatAaBQiTbvcgvvKRavZB/+3psCtUw==
-X-Received: by 2002:a17:902:c405:b0:295:426a:77a6 with SMTP id d9443c01a7336-295426a786amr114478515ad.32.1762160176891;
-        Mon, 03 Nov 2025 00:56:16 -0800 (PST)
-Received: from fedora.flets-east.jp ([2400:4050:a0e1:7d00:af43:dc37:28a7:37db])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-295586482c6sm75414465ad.22.2025.11.03.00.56.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 00:56:16 -0800 (PST)
-From: Ryo Takakura <ryotkkr98@gmail.com>
-To: geert@linux-m68k.org,
-	den@valinux.co.jp
-Cc: iommu@lists.linux.dev,
-	joro@8bytes.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	robin.murphy@arm.com,
-	will@kernel.org
-Subject: Re: [PATCH] iommu: ipmmu-vmsa: Add DMA controllers to devices_allowlist
-Date: Mon,  3 Nov 2025 17:56:12 +0900
-Message-ID: <20251103085612.42134-1-ryotkkr98@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <CAMuHMdVtR_8OZG2XrD5PHY+ybaH4dudya4VXNXD3iHktdDyF8w@mail.gmail.com>
-References: <CAMuHMdVtR_8OZG2XrD5PHY+ybaH4dudya4VXNXD3iHktdDyF8w@mail.gmail.com>
+	s=arc-20240116; t=1762160186; c=relaxed/simple;
+	bh=lCXRosTn4Mj/QrN4xjJ+JLcI6xF053GP6NbQY85J2pM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QcmCVRfIvEsM13pghxoX7fvWoTD/8xfRRVp1bmY7Zg3KcRy2gdo5bVoJAPmD2hPDsTNZUrdfBOTWHfkv8gpb61A4v9h18w5DcetB8J84XqsDO1kFMwvy3rl0bwqzKHidEV/7hBxko1Re1a1mfJkHrTBvw20Rzlt6XLhri90XPbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oTTeiws+; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1762160182;
+	bh=lCXRosTn4Mj/QrN4xjJ+JLcI6xF053GP6NbQY85J2pM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oTTeiws+XDqPYCSAEBmgaVpzZ/YfXq9FkPZ0Ey/u6YtOJFo2pQ8gPQkabyV+BBR12
+	 fz6LC96S19XknHxdj2DUI0F8l1O1a0C+GYaQNbF3yBHbiuQGgFIjZzjOEQ0ptxuOBx
+	 B5GezsczBTGxMtcz57f7Wg3IQ/dcNXDvkDztQ+Npaqq2vNkVI/Dk3efXhRjprTm6hJ
+	 zyFSnD5NUR9X3y7HZ6beHMKygzQMpPftJV1ubpxa/1x1i7ePTI13uaLOVvSx9Rfu9F
+	 a543B8xvlujZowXMyWLBxiRQ34JLWQsacceKV0/NMhP71UlICEL3/tdHrujknqESGg
+	 YMOzXRu/boqpw==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8B4BE17E1091;
+	Mon,  3 Nov 2025 09:56:21 +0100 (CET)
+Message-ID: <781e754e-6603-4ae3-9340-24403a6d8137@collabora.com>
+Date: Mon, 3 Nov 2025 09:56:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/15] arm64: dts: mediatek: Add Openwrt One AP
+ functionality
+To: Sjoerd Simons <sjoerd@collabora.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Ryder Lee <ryder.lee@mediatek.com>, Jianjun Wang
+ <jianjun.wang@mediatek.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>,
+ Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Lee Jones <lee@kernel.org>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Lorenzo Bianconi <lorenzo@kernel.org>, Felix Fietkau <nbd@nbd.name>
+Cc: kernel@collabora.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+ linux-phy@lists.infradead.org, netdev@vger.kernel.org,
+ Daniel Golle <daniel@makrotopia.org>, Bryan Hinton <bryan@bryanhinton.com>,
+ Conor Dooley <conor.dooley@microchip.com>
+References: <20251101-openwrt-one-network-v2-0-2a162b9eea91@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20251101-openwrt-one-network-v2-0-2a162b9eea91@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi, Geert!
+Il 01/11/25 14:32, Sjoerd Simons ha scritto:
+> Significant changes in V2:
+>    * https://lore.kernel.org/lkml/20251016-openwrt-one-network-v1-0-de259719b6f2@collabora.com/
+>    * Only introduce labels in mt7981b.dtsi when required
+>    * Switch Airoha EN8811H phy irq to level rather then edge triggered
+>    * Move uart0 pinctrl from board dts to soc dtsi
+>    * Only overwrite constraints with non-default values in MT7981 bindings
+>    * Make SPI NOR nvmem cell labels more meaningfull
+>    * Seperate fixing and disable-by-default for the mt7981 in seperate
+>      patches
+> 
+> This series add various peripherals to the Openwrt One, to make it
+> actually useful an access point:
+> 
+> * Pcie express (tested with nvme storage)
+> * Wired network interfaces
+> * Wireless network interfaces (2.4g, 5ghz wifi)
+> * Status leds
+> * SPI NOR for factory data
+> 
+> Unsurprisingly the series is a mix of dt binding updates, extensions of
+> the mt7981b and the openwrt one dtb. All driver support required is
+> already available.
+> 
+> Sadly during testing i've found various quirks requiring kernel
+> arguments. Documenting those here both as note to self and making it
+> easier for others to test :)
+> 
+> * fw_devlink=permissive: the nvmem fixed-layout doesn't create a layout
+>    device, so doesn't trigger fw_devlink
 
-I'm helping out Den-san a bit on the issue.
+This should really be fixed in fw_devlink I believe. It's not the first device
+that uses nvmem fixed-layout and will not be the last one.
 
-On Wed, 29 Oct 2025 17:08:07 +0100, Geert Uytterhoeven wrote:
->On Mon, 27 Oct 2025 at 02:26, Koichiro Den <den@valinux.co.jp> wrote:
->> Add Renesas DMA controller devices to the devices_allowlist to enable
->> their use with the IPMMU. This allows DMA channels to operate through
->> the IOMMU when enabled.
->>
->> Signed-off-by: Koichiro Den <den@valinux.co.jp>
->
->Thanks for your patch!
->
->> --- a/drivers/iommu/ipmmu-vmsa.c
->> +++ b/drivers/iommu/ipmmu-vmsa.c
->> @@ -741,7 +741,9 @@ static const char * const devices_allowlist[] = {
->>         "ee100000.mmc",
->>         "ee120000.mmc",
->>         "ee140000.mmc",
->> -       "ee160000.mmc"
->> +       "ee160000.mmc",
->> +       "e7350000.dma-controller",
->> +       "e7351000.dma-controller"
->
->While your change looks correct to me, it causes DMA mapping failures on
->Gray Hawk Single and Sparrow Hawk when IPMMU support is enabled
->(on renesas-drivers-2025-10-28-v6.18-rc3 with renesas_defconfig
->+ CONFIG_IPMMU_VMSA=y):
->
->    rcar-dmac e7351000.dma-controller: chan1: failed to map 1@0x00000000e656000c
->    sh-sci e6560000.serial: Failed preparing Tx DMA descriptor
->
->0xe656000c = HSCIF2 Transmit FIFO data register.
+> * clk_ignore_unused: Needed when building CONFIG_NET_MEDIATEK_SOC as a
+>    module. If the ethernet related clocks (gp1/gp2) get disabled the
+>    mac ends up in a weird state causing it not to function correctly.
 
-Thank you for sharing.
-I was able to reproduce the issue on Gray Hawk Single(r8a779h2).
+I'm sure that this can be resolved by adding resets.
 
->With "#define DEBUG" added to drivers/dma/sh/rcar-dmac.c:
->
->    rcar-dmac e7351000.dma-controller: chan1: failed to map 1@0x00000000e656000c
->    sh-sci e6560000.serial: Failed preparing Tx DMA descriptor
->    rcar-dmac e7351000.dma-controller: chan2: map 1@0x00000000e6560014
->to 0x00000000fff82014 dir: DMA_TO_DEVICE
->    rcar-dmac e7351000.dma-controller: chan2: chunk
->00000000e5110c20/000000005e0ede90 sgl 0@000000000d8c5440, 256/256
->0x00000000fff82014 -> 0x00000000ffed6000
->    rcar-dmac e7351000.dma-controller: chan2: submit #2@000000005e0ede90
->    rcar-dmac e7351000.dma-controller: chan2: chunk
->0000000025f2f66c/00000000e5f0dd15 sgl 0@0000000064f1067f, 256/256
->0x00000000fff82014 -> 0x00000000ffed6100
->    rcar-dmac e7351000.dma-controller: chan2: submit #3@00000000e5f0dd15
->    rcar-dmac e7351000.dma-controller: chan2: queue chunk
->00000000e5110c20: 256@0x00000000fff82014 -> 0x00000000ffed6000
->
->0xe6560014 = HSCIF2 Receive FIFO data register
+> * pcie_aspm: ASPM is forced to enabled in 6.18-rc1, unfortunately
+>    enabling ASPM L1.1 ends up triggering unrecoverable AERs.
 
-Does IPMMU support handling FIFO registers?
-(Forgive me the question... I'm still trying to learn how it works.)
+That must be resolved in the PCIe driver - either it must disable L1.1 support
+or needs some fixes around.
 
-If not, with now dma-controller backed with IPMMU, maybe what
-we need is to map FIFO register directly like it used to do?
+Still, I think if you add resets to the PCIe node you should at least get the
+MAC recovered at PM resume time (but being this a router, I really don't think
+that this would matter - still, for the sake of completion...)
 
->Comparing to the CONFIG_IPMMU_VMSA=n case:
->
->    rcar-dmac e7351000.dma-controller: chan1: map 1@0x00000000e656000c
->to 0x00000000e656000c dir: DMA_FROM_DEVICE
->    rcar-dmac e7351000.dma-controller: chan1: chunk
->0000000096396eb4/00000000f35357b6 sgl 0@0000000013546bf6, 74/74
->0x0000000489ab5000 -> 0x00000000e656000c
->    rcar-dmac e7351000.dma-controller: chan1: submit #2@00000000f35357b6
->    rcar-dmac e7351000.dma-controller: chan1: queue chunk
->0000000096396eb4: 74@0x0000000489ab5000 -> 0x00000000e656000c
->
->This confuses me even more: why no DMA_TO_DEVICE mapping in the
->latter case?
+Overall, this series is good and I'm fine with picking all of the changes: even
+if there are some needed quirks, those aren't freezing the boot process and the
+worst thing that could ever happen is that in some conditions some devices will
+simply not probe.
+I guess that the resets, etc, can be added later as a fix - but at least we can
+get those devices at least partially up and running .
 
-I believe the DEVICE being reffered in DMA_FROM_DEVICE is
-DMAC rather than FIFO TX register.
-So from DMAC's point of view, the dma of DMAC->FIFO TX register
-should be think of it as DMA_FROM_DEVICE. 
+Can anyone pick the bindings please, so that I can pick everything else?
 
->>  };
->>
->>  static bool ipmmu_device_is_allowed(struct device *dev)
->
->Gr{oetje,eeting}s,
->
->                        Geert
+Cheers,
+Angelo
 
-Sincerely,
-Ryo Takakura
+> 
+> Patches are against the mediatek trees for-next branch
+> 
+> Signed-off-by: Sjoerd Simons <sjoerd@collabora.com>
+> ---
+> Sjoerd Simons (15):
+>        arm64: dts: mediatek: mt7981b: Configure UART0 pinmux
+>        arm64: dts: mediatek: mt7981b: Add reserved memory for TF-A
+>        dt-bindings: mfd: syscon: Add mt7981-topmisc
+>        dt-bindings: PCI: mediatek-gen3: Add MT7981 PCIe compatible
+>        dt-bindings: phy: mediatek,tphy: Add support for MT7981
+>        arm64: dts: mediatek: mt7981b: Add PCIe and USB support
+>        arm64: dts: mediatek: mt7981b-openwrt-one: Enable PCIe and USB
+>        dt-bindings: net: mediatek,net: Correct bindings for MT7981
+>        arm64: dts: mediatek: mt7981b: Add Ethernet and WiFi offload support
+>        arm64: dts: mediatek: mt7981b-openwrt-one: Enable SPI NOR
+>        arm64: dts: mediatek: mt7981b-openwrt-one: Enable Ethernet
+>        arm64: dts: mediatek: mt7981b: Disable wifi by default
+>        arm64: dts: mediatek: mt7981b: Add wifi memory region
+>        arm64: dts: mediatek: mt7981b-openwrt-one: Enable wifi
+>        arm64: dts: mediatek: mt7981b-openwrt-one: Enable software leds
+> 
+>   Documentation/devicetree/bindings/mfd/syscon.yaml  |   1 +
+>   .../devicetree/bindings/net/mediatek,net.yaml      |  13 +-
+>   .../bindings/pci/mediatek-pcie-gen3.yaml           |   1 +
+>   .../devicetree/bindings/phy/mediatek,tphy.yaml     |   1 +
+>   .../boot/dts/mediatek/mt7981b-openwrt-one.dts      | 263 +++++++++++++++++++++
+>   arch/arm64/boot/dts/mediatek/mt7981b.dtsi          | 247 ++++++++++++++++++-
+>   6 files changed, 519 insertions(+), 7 deletions(-)
+> ---
+> base-commit: 860a0efbb95de468b17c86ed5cf8d90ee4bc5d7b
+> change-id: 20251016-openwrt-one-network-40bc9ac1b25c
+> 
+> Best regards,
+
 
