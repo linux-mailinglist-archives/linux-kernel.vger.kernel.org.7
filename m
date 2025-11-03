@@ -1,44 +1,100 @@
-Return-Path: <linux-kernel+bounces-882342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70D36C2A39D
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 07:46:39 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB307C2A3A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 07:47:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 377D33B1C50
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 06:46:37 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 362C834673B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 06:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C27F1C8626;
-	Mon,  3 Nov 2025 06:46:31 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39C4111A8;
+	Mon,  3 Nov 2025 06:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FNvsKfex";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="jYmcuWWB"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D3778488;
-	Mon,  3 Nov 2025 06:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D981BA45
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 06:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762152390; cv=none; b=KX6/m3vsFz/wO/e9wjjLde2xtqYJopgLtslWJ1PxsLZuLdBaLNbc8CS1rRxNnuegS5Tpc0My0G4BDP3q0t72zMriPuQzTPLOsYI13P1YfZr2suiXNKPCd7H92oJTLHdOvSJpig21P7WfghJp7LjubhRxVwPl5vNyGTOyc7JGmt4=
+	t=1762152450; cv=none; b=OMxmDIFlfRGyO4eDC+9aiWTSVrCWZaZBMhv1wDScjQWsS3sZlhmhqlgWlWMXwyfOMu39ZtG/kaC4rAYWP5SWAowaOqXfZe5TEDAyRDCaHKv3KvmB/cgrnf7Q5Bix52Uh69V/JNPshTxqXjeg2VNp2ffbX296VfsGtopDWBVjXnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762152390; c=relaxed/simple;
-	bh=MvK/sVL/GMRf1EE+aA4FT7Yydp12nA+OqKYU9tDhPlQ=;
+	s=arc-20240116; t=1762152450; c=relaxed/simple;
+	bh=K8N8tbeNdymmtF/uUrSXOUq3zpP/auTGLxwYC0DKoJ0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a0RhgK6H9LZGqqCZOs9LVGt6Wwh7gHtD3QwSkcLJL8vmLdP7k7tKVCY+UEY8xLvkAvGz07psNxDfxUYRZCBL/0gLKXXFznO6XBwPvhfOn8WMWXA4nWDlfRgddPIHwjRWtpJgkWhXzHJMN5NQ5HbwXYo9bk4hDDqqGH7k3nBgZ04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d0MYc0sn0zYQtwq;
-	Mon,  3 Nov 2025 14:46:12 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 161E11A07BB;
-	Mon,  3 Nov 2025 14:46:25 +0800 (CST)
-Received: from [10.67.111.176] (unknown [10.67.111.176])
-	by APP2 (Coremail) with SMTP id Syh0CgBHnUW_TwhpLCouCg--.9161S2;
-	Mon, 03 Nov 2025 14:46:24 +0800 (CST)
-Message-ID: <ffe1d7ec-70fc-44cd-879c-23902929a24a@huaweicloud.com>
-Date: Mon, 3 Nov 2025 14:46:23 +0800
+	 In-Reply-To:Content-Type; b=aRFGR8eQ56ofP5YmP9Zh3nVah84w1gdhluVf9c5vkQcpYkBcXAS47SiNGFDu090pV4glEZDvTDdAdhMosVWjCi2Grb7p608AXFQT0POyLCUluktsgXkfYJO1A5UPOvgS6efEILVMZ1p0WSY+jNL13r3qS/Dd45SNgGXGvPFfZqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FNvsKfex; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=jYmcuWWB; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A36CFkR2270121
+	for <linux-kernel@vger.kernel.org>; Mon, 3 Nov 2025 06:47:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	VUprMWB9f+U/dF/iWyMObNplnlmDPtZSAvvvIjHdoLg=; b=FNvsKfexnK7umLrm
+	6rmxm0jsX41skorefYnK1rkEdxkVYynmSNMscUNYDIke/3EI99Bjo8AlSgKFT+af
+	URtmmKyIJk61s0dZjgt4/IK/kBkkYNgi153IFCsMQ92BmDDDS+x1NlQhXLmS5CD0
+	j7bpyLK87F+94xwTRhFDGeRD+Kz8rsXv8zNjVRi7D6Yt+KVkMTY2MnDy7rnE80wZ
+	LDNv/GcLKwychYiH4SeWsIHcE/X1Gp9OIRXM1HLUbL/5u/S5cTECjn4IFgBFolVy
+	xURvfluQX/ztRFP0WQmu5x4Ath+/RQK4U7+Jcwl3ZsnL+GVuLVQ0EsbtVIiqH+ca
+	rx8vzg==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a6pwag301-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 06:47:28 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-340bb1bf12aso2064433a91.1
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 22:47:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762152448; x=1762757248; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VUprMWB9f+U/dF/iWyMObNplnlmDPtZSAvvvIjHdoLg=;
+        b=jYmcuWWB6kzjDyMbzrtIZd/uhAmuTGaIDCDmEJ7SMX8ZHD5eeXPFI4XQl3U9M0LJVl
+         hTNoCfy67TjhRgJzwf6ltD1ECFz1+pJANVi4pcAs3s4eTFppeotQUwI7C53YQ2iXrRX0
+         D4oAythzO4lxZWw+dEUIWL7DAmJc5UW0jJ4yexVy4vMM+O2Cr0Fk6nZfJ5OJKutfTvUb
+         r6wvttkW5sopDqnX27OvUlGFkUYHZ6nvk+rf8tGcvPkrqMyc/L+DpCCjtTfHRfx5dvTO
+         XvM+DGyz2/n2AKz489ImrjzhQyUqe4aW3J3XcYHtR4sawCFvFN2XAvO7ZYlKZjI4g+uZ
+         1vFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762152448; x=1762757248;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VUprMWB9f+U/dF/iWyMObNplnlmDPtZSAvvvIjHdoLg=;
+        b=OP/dIjMmD2btG6LmDQ9skI/NWg295IZgm1SMC4lWCI6nzxFSHY2HYqUoi5M0C9T5OE
+         xDUZWVBMGjjKezAta7Syv2Pi41tS3qmp7+At2Sod45w+6jNSUrUjubBHatbrT44RCf5u
+         Ddq2Qnl5WrtwYYM3Yp/sMOZfp2eQyoT++MieIKevRCvTsTGfi/47bNSBJ8DNIO9+KcuX
+         h8GV4cLS/Lt0nsXf0id8H7tKVWAmNw5MxtVE+js9NBGz6BnqbGGW9ighOocpxKn6qRex
+         zwUyw/loFbBAoPNpn2x5hkLq9kdEknvLf27gy2dzSyV46wOnlhhgEKPqrL+2paUeEKi2
+         /HGw==
+X-Forwarded-Encrypted: i=1; AJvYcCXOki1bVboJg73w0d0v7f9DEViAu1jQIbHEJUhrUlMfh9mcnnkU3ICMnPxH1qvrDVzgcKDsx4EpG1mWp/8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAbEGgOCFnIZnV3ywrzuKs2w6CdF1oAjmLyaOPSoZYOzLlHGVz
+	3jWl574OA24G7bAg/xP1hRNuX+quM8+ngy+9CDhukPE7ljb9JHu4/DTy3CCbxUlQ/Z8rXyrHYDK
+	98QbAy015fGGconIhlU2JXMiZyQE7KGC/YgOp6LvXKrt58y35mdyLvRxdErl0NHbz6QE=
+X-Gm-Gg: ASbGncumJi5XzQ5icZrZL+PnpCWu28IQn7WW5eY5X9KgRqlIweJ5X5xR1As3jhPrzNA
+	+Nb35jd3WkkJa14s71qMMFlxJfvPmthmrdng2XB7uoEtuXx5bgdkdh4Pk8fxsVEoAhjeDvmo9gm
+	b8K22Yu5onLZ+acmrMWvuGSF3ssZYD713XI8E4e7c4MF3OtUwfvj7cfv9OD6qkrFTbUmQ8fUo/E
+	dOR7IqmSFRDLvKfoEfOX8tyPmmke1gXKOj/pxHipqDp0apxgPWPhPQo5ysArvGotEkMcgj8G8x+
+	vJO0EuzJhLWrlNsCc7AmvfA83XKRPcWV4/F5n173Xsa8vxnS7zzl+1lTT4KP5MVFG++eC5gaM43
+	9ueGBlKRgIXy9oq9qo1TGmK/cBEQiA/UkTb9XeqdDodMgxFxToSKtQXZfQI4GoR6+UI+nJA==
+X-Received: by 2002:a17:90b:4a43:b0:340:e4fb:130b with SMTP id 98e67ed59e1d1-340e4fb1b03mr6037090a91.14.1762152447858;
+        Sun, 02 Nov 2025 22:47:27 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEy+kT8FuWYj763z0FG99urE2PvoS18tOAq5/lq09IZ1XFpuhFhefuhhfSzK462jQV4mZXcuw==
+X-Received: by 2002:a17:90b:4a43:b0:340:e4fb:130b with SMTP id 98e67ed59e1d1-340e4fb1b03mr6037076a91.14.1762152447310;
+        Sun, 02 Nov 2025 22:47:27 -0800 (PST)
+Received: from [10.133.33.108] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34050992090sm13526918a91.5.2025.11.02.22.47.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 02 Nov 2025 22:47:26 -0800 (PST)
+Message-ID: <d3e4a3b1-4785-4b31-9db5-00ebb8704c01@oss.qualcomm.com>
+Date: Mon, 3 Nov 2025 14:47:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,317 +102,164 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [cgroup/for-6.19 PATCH 3/3] cgroup/cpuset: Globally track
- isolated_cpus update
-To: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- Chen Ridong <chenridong@huawei.com>, Gabriele Monaco <gmonaco@redhat.com>,
- Frederic Weisbecker <frederic@kernel.org>
-References: <20251103013411.239610-1-longman@redhat.com>
- <20251103013411.239610-4-longman@redhat.com>
+Subject: Re: [PATCH v3 2/3] arm64: dts: qcom: Add header file for IPCC
+ physical client IDs on Kaanapali platform
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Manivannan Sadhasivam <mani@kernel.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, aiqun.yu@oss.qualcomm.com,
+        tingwei.zhang@oss.qualcomm.com, trilok.soni@oss.qualcomm.com,
+        yijie.yang@oss.qualcomm.com, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20251031-knp-ipcc-v3-0-62ffb4168dff@oss.qualcomm.com>
+ <20251031-knp-ipcc-v3-2-62ffb4168dff@oss.qualcomm.com>
+ <hwrbtnxy2jy5wimgvr6s4de2iuu44njnefmxlgzn5onj47b7b3@l5nj3zhhgvc5>
 Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <20251103013411.239610-4-longman@redhat.com>
+From: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+In-Reply-To: <hwrbtnxy2jy5wimgvr6s4de2iuu44njnefmxlgzn5onj47b7b3@l5nj3zhhgvc5>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgBHnUW_TwhpLCouCg--.9161S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3CFWfJw1ftr15tFyDJFyxXwb_yoWDWFW5pF
-	yUCFWxKFWUtw15u343tFsFkw4Skw4DtF12kw15Wa4rZF9rXwn7ta4jka90yayrWrZ8JrW5
-	XFWqgws7WF1xCwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyCb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=OrdCCi/t c=1 sm=1 tr=0 ts=69085000 cx=c_pps
+ a=vVfyC5vLCtgYJKYeQD43oA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=B7Gn7m6QUtlGWARR1OgA:9
+ a=QEXdDO2ut3YA:10 a=rl5im9kqc5Lf4LNbBjHf:22
+X-Proofpoint-ORIG-GUID: gnd7ovDx14fezGKLArr7yuwuuim9EGn7
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAzMDA2MiBTYWx0ZWRfX4ZQd+rmoIF41
+ skSa3fe4VGD+01WmRryxjm4YV6TS5Xly/xa4R1dGRnoGE/77VDJQuP3A0g2x3o/KVd9bMTvwloG
+ 9r0b53mFC3QRFyXRPQ9rmaAYkRFwoQcoQRlxZEkoCRAugWdloTm6EZHtXnZtC3rUyvoBQga5HGP
+ nLninmcwU9UH9OUdbmz6mo6mnyL+kGqYG3Bcm0XjaQbEuCrSon1r4x0rCYDDFVZzu8lGDxfqIlu
+ a4bXpqkZ94EZ1hrg30Cmu3yTR4Q2tdrmgOkkNp9Rmj396RLg+EyTRhh4FfvTSWHOEFgrPCa3grb
+ 3urFSkkRDm0AFNYxVne8oZridOkAqPvb+4U9rfq+aoIG8q28PykT7KYCDVAWg8E7b70yRoY4ITM
+ f9LePvu9dvSUkzMKFqJ+eO0LRIZHYA==
+X-Proofpoint-GUID: gnd7ovDx14fezGKLArr7yuwuuim9EGn7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-02_02,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 adultscore=0 lowpriorityscore=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 bulkscore=0 impostorscore=0 phishscore=0
+ spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511030062
 
 
 
-On 2025/11/3 9:34, Waiman Long wrote:
-> The current cpuset code passes a local isolcpus_updated flag around in a
-> number of functions to determine if external isolation related cpumasks
-> like wq_unbound_cpumask should be updated. It is a bit cumbersome and
-> makes the code more complex. Simplify the code by using a global boolean
-
-Agree.
-
-> flag "isolated_cpus_updating" to track this. This flag will be set in
-> isolated_cpus_update() and cleared in update_isolation_cpumasks().
+On 11/2/2025 3:07 AM, Bjorn Andersson wrote:
+> On Fri, Oct 31, 2025 at 12:41:45AM -0700, Jingyi Wang wrote:
 > 
-> No functional change is expected.
+> Whenever you have a subject line that ends in "on <soc/platform>",
+> that's a good indicator that you're missing something in the subject
+> prefix.
 > 
-> Signed-off-by: Waiman Long <longman@redhat.com>
-> ---
->  kernel/cgroup/cpuset.c | 74 ++++++++++++++++++++----------------------
->  1 file changed, 35 insertions(+), 39 deletions(-)
+> Compare:
+> arm64: dts: qcom: Add header file for IPCC physical client IDs on Kaanapali platform
 > 
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index d6d459c95d82..406a1c3789f5 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -81,6 +81,13 @@ static cpumask_var_t	subpartitions_cpus;
->   */
->  static cpumask_var_t	isolated_cpus;
->  
+> with:
+> arm64: dts: qcom: kaanapali: Add IPCC client IDs
+> 
+> 
+> Also, now that this is "devicetree", it would make sense to merge them
+> together with the users. Or at least after we've introduced
+> kaanapali.dtsi...
+> 
+> 
+> I don't think you need to resubmit this though, I can fix up the subject
+> when I merge. But please get to the point where it makes sense to merge
+> them as fast as possible.
+> 
+> Regards,
+> Bjorn
+> 
 
-Is isolated_cpus protected by cpuset_mutex or callback_lock?
+Got it.
 
-If isolated_cpus is indeed protected by cpuset_mutex, perhaps we can move the update of
-isolated_cpus outside the critical section of callback_lock. This would allow us to call
-update_isolation_cpumasks in isolated_cpus_update, making the isolated_cpus_updating variable
-unnecessary. Reducing a global variable would be beneficial.
+Thanks,
+Jingyi
 
-> +/*
-> + * isolated_cpus updating flag (protected by cpuset_mutex)
-> + * Set if isolated_cpus is going to be updated in the current
-> + * cpuset_mutex crtical section.
-> + */
-> +static bool isolated_cpus_updating;
-> +
->  /*
->   * Housekeeping (HK_TYPE_DOMAIN) CPUs at boot
->   */
-> @@ -1327,13 +1334,14 @@ static void isolated_cpus_update(int old_prs, int new_prs, struct cpumask *xcpus
->  		cpumask_or(isolated_cpus, isolated_cpus, xcpus);
->  	else
->  		cpumask_andnot(isolated_cpus, isolated_cpus, xcpus);
-> +
-> +	isolated_cpus_updating = true;
->  }
->  
->  /*
->   * isolated_cpus_should_update - Returns if the isolated_cpus mask needs update
->   * @prs: new or old partition_root_state
->   * @parent: parent cpuset
-> - * Return: true if isolated_cpus needs modification, false otherwise
->   */
->  static bool isolated_cpus_should_update(int prs, struct cpuset *parent)
->  {
-> @@ -1347,15 +1355,12 @@ static bool isolated_cpus_should_update(int prs, struct cpuset *parent)
->   * @new_prs: new partition_root_state
->   * @parent: parent cpuset
->   * @xcpus: exclusive CPUs to be added
-> - * Return: true if isolated_cpus modified, false otherwise
->   *
->   * Remote partition if parent == NULL
->   */
-> -static bool partition_xcpus_add(int new_prs, struct cpuset *parent,
-> +static void partition_xcpus_add(int new_prs, struct cpuset *parent,
->  				struct cpumask *xcpus)
->  {
-> -	bool isolcpus_updated;
-> -
->  	WARN_ON_ONCE(new_prs < 0);
->  	lockdep_assert_held(&callback_lock);
->  	if (!parent)
-> @@ -1365,13 +1370,11 @@ static bool partition_xcpus_add(int new_prs, struct cpuset *parent,
->  	if (parent == &top_cpuset)
->  		cpumask_or(subpartitions_cpus, subpartitions_cpus, xcpus);
->  
-> -	isolcpus_updated = (new_prs != parent->partition_root_state);
-> -	if (isolcpus_updated)
-> +	if (new_prs != parent->partition_root_state)
-
-Can this if statement be replaced with new helper isolated_cpus_should_update？
-
->  		isolated_cpus_update(parent->partition_root_state, new_prs,
->  				     xcpus);
->  
->  	cpumask_andnot(parent->effective_cpus, parent->effective_cpus, xcpus);
-> -	return isolcpus_updated;
->  }
->  
->  /*
-> @@ -1379,15 +1382,12 @@ static bool partition_xcpus_add(int new_prs, struct cpuset *parent,
->   * @old_prs: old partition_root_state
->   * @parent: parent cpuset
->   * @xcpus: exclusive CPUs to be removed
-> - * Return: true if isolated_cpus modified, false otherwise
->   *
->   * Remote partition if parent == NULL
->   */
-> -static bool partition_xcpus_del(int old_prs, struct cpuset *parent,
-> +static void partition_xcpus_del(int old_prs, struct cpuset *parent,
->  				struct cpumask *xcpus)
->  {
-> -	bool isolcpus_updated;
-> -
->  	WARN_ON_ONCE(old_prs < 0);
->  	lockdep_assert_held(&callback_lock);
->  	if (!parent)
-> @@ -1396,14 +1396,12 @@ static bool partition_xcpus_del(int old_prs, struct cpuset *parent,
->  	if (parent == &top_cpuset)
->  		cpumask_andnot(subpartitions_cpus, subpartitions_cpus, xcpus);
->  
-> -	isolcpus_updated = (old_prs != parent->partition_root_state);
-> -	if (isolcpus_updated)
-> +	if (old_prs != parent->partition_root_state)
->  		isolated_cpus_update(old_prs, parent->partition_root_state,
->  				     xcpus);
->  
-
-Ditto
-
->  	cpumask_and(xcpus, xcpus, cpu_active_mask);
->  	cpumask_or(parent->effective_cpus, parent->effective_cpus, xcpus);
-> -	return isolcpus_updated;
->  }
->  
->  /*
-> @@ -1442,17 +1440,24 @@ static bool isolated_cpus_can_update(struct cpumask *add_cpus,
->  	return res;
->  }
->  
-> -static void update_isolation_cpumasks(bool isolcpus_updated)
-> +/*
-> + * update_isolation_cpumasks - Update external isolation related CPU masks
-> + *
-> + * The following external CPU masks will be updated if necessary:
-> + * - workqueue unbound cpumask
-> + */
-> +static void update_isolation_cpumasks(void)
->  {
->  	int ret;
->  
-> -	lockdep_assert_cpus_held();
-> -
-> -	if (!isolcpus_updated)
-> +	if (!isolated_cpus_updating)
->  		return;
->  
-> +	lockdep_assert_cpus_held();
-> +
->  	ret = workqueue_unbound_exclude_cpumask(isolated_cpus);
->  	WARN_ON_ONCE(ret < 0);
-> +	isolated_cpus_updating = false;
->  }
->  
->  /**
-> @@ -1577,8 +1582,6 @@ static inline bool is_local_partition(struct cpuset *cs)
->  static int remote_partition_enable(struct cpuset *cs, int new_prs,
->  				   struct tmpmasks *tmp)
->  {
-> -	bool isolcpus_updated;
-> -
->  	/*
->  	 * The user must have sysadmin privilege.
->  	 */
-> @@ -1605,11 +1608,11 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
->  		return PERR_HKEEPING;
->  
->  	spin_lock_irq(&callback_lock);
-> -	isolcpus_updated = partition_xcpus_add(new_prs, NULL, tmp->new_cpus);
-> +	partition_xcpus_add(new_prs, NULL, tmp->new_cpus);
->  	list_add(&cs->remote_sibling, &remote_children);
->  	cpumask_copy(cs->effective_xcpus, tmp->new_cpus);
->  	spin_unlock_irq(&callback_lock);
-> -	update_isolation_cpumasks(isolcpus_updated);
-> +	update_isolation_cpumasks();
->  	cpuset_force_rebuild();
->  	cs->prs_err = 0;
->  
-> @@ -1632,15 +1635,12 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
->   */
->  static void remote_partition_disable(struct cpuset *cs, struct tmpmasks *tmp)
->  {
-> -	bool isolcpus_updated;
-> -
->  	WARN_ON_ONCE(!is_remote_partition(cs));
->  	WARN_ON_ONCE(!cpumask_subset(cs->effective_xcpus, subpartitions_cpus));
->  
->  	spin_lock_irq(&callback_lock);
->  	list_del_init(&cs->remote_sibling);
-> -	isolcpus_updated = partition_xcpus_del(cs->partition_root_state,
-> -					       NULL, cs->effective_xcpus);
-> +	partition_xcpus_del(cs->partition_root_state, NULL, cs->effective_xcpus);
->  	if (cs->prs_err)
->  		cs->partition_root_state = -cs->partition_root_state;
->  	else
-> @@ -1650,7 +1650,7 @@ static void remote_partition_disable(struct cpuset *cs, struct tmpmasks *tmp)
->  	compute_excpus(cs, cs->effective_xcpus);
->  	reset_partition_data(cs);
->  	spin_unlock_irq(&callback_lock);
-> -	update_isolation_cpumasks(isolcpus_updated);
-> +	update_isolation_cpumasks();
->  	cpuset_force_rebuild();
->  
->  	/*
-> @@ -1675,7 +1675,6 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
->  {
->  	bool adding, deleting;
->  	int prs = cs->partition_root_state;
-> -	int isolcpus_updated = 0;
->  
->  	if (WARN_ON_ONCE(!is_remote_partition(cs)))
->  		return;
-> @@ -1711,9 +1710,9 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
->  
->  	spin_lock_irq(&callback_lock);
->  	if (adding)
-> -		isolcpus_updated += partition_xcpus_add(prs, NULL, tmp->addmask);
-> +		partition_xcpus_add(prs, NULL, tmp->addmask);
->  	if (deleting)
-> -		isolcpus_updated += partition_xcpus_del(prs, NULL, tmp->delmask);
-> +		partition_xcpus_del(prs, NULL, tmp->delmask);
->  	/*
->  	 * Need to update effective_xcpus and exclusive_cpus now as
->  	 * update_sibling_cpumasks() below may iterate back to the same cs.
-> @@ -1722,7 +1721,7 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
->  	if (xcpus)
->  		cpumask_copy(cs->exclusive_cpus, xcpus);
->  	spin_unlock_irq(&callback_lock);
-> -	update_isolation_cpumasks(isolcpus_updated);
-> +	update_isolation_cpumasks();
->  	if (adding || deleting)
->  		cpuset_force_rebuild();
->  
-> @@ -1803,7 +1802,6 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
->  	int deleting;	/* Deleting cpus from parent's effective_cpus	*/
->  	int old_prs, new_prs;
->  	int part_error = PERR_NONE;	/* Partition error? */
-> -	int isolcpus_updated = 0;
->  	struct cpumask *xcpus = user_xcpus(cs);
->  	bool nocpu;
->  
-> @@ -2065,14 +2063,12 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
->  	 * and vice versa.
->  	 */
->  	if (adding)
-> -		isolcpus_updated += partition_xcpus_del(old_prs, parent,
-> -							tmp->addmask);
-> +		partition_xcpus_del(old_prs, parent, tmp->addmask);
->  	if (deleting)
-> -		isolcpus_updated += partition_xcpus_add(new_prs, parent,
-> -							tmp->delmask);
-> +		partition_xcpus_add(new_prs, parent, tmp->delmask);
->  
->  	spin_unlock_irq(&callback_lock);
-> -	update_isolation_cpumasks(isolcpus_updated);
-> +	update_isolation_cpumasks();
->  
->  	if ((old_prs != new_prs) && (cmd == partcmd_update))
->  		update_partition_exclusive_flag(cs, new_prs);
-> @@ -3094,7 +3090,7 @@ static int update_prstate(struct cpuset *cs, int new_prs)
->  	else if (isolcpus_updated)
->  		isolated_cpus_update(old_prs, new_prs, cs->effective_xcpus);
->  	spin_unlock_irq(&callback_lock);
-> -	update_isolation_cpumasks(isolcpus_updated);
-> +	update_isolation_cpumasks();
->  
->  	/* Force update if switching back to member & update effective_xcpus */
->  	update_cpumasks_hier(cs, &tmpmask, !new_prs);
-
--- 
-Best regards,
-Ridong
+>> On earlier platforms, Inter Process Communication Controller (IPCC) used
+>> virtual client IDs and performed virtual-to-physical mapping in hardware,
+>> so the IDs defined in dt-bindings/mailbox/qcom-ipcc.h are common across
+>> platforms. Physical client IDs instead of virtual client IDs are used for
+>> qcom new platforms like Kaanapali, which will be parsed by the devicetree
+>> and passed to hardware to use Physical client IDs directly. Since physical
+>> client IDs could vary across platforms, add a corresponding header file
+>> for the Kaanapali platform.
+>>
+>> Signed-off-by: Jingyi Wang <jingyi.wang@oss.qualcomm.com>
+>> ---
+>>  arch/arm64/boot/dts/qcom/kaanapali-ipcc.h | 58 +++++++++++++++++++++++++++++++
+>>  1 file changed, 58 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/kaanapali-ipcc.h b/arch/arm64/boot/dts/qcom/kaanapali-ipcc.h
+>> new file mode 100644
+>> index 000000000000..125375a4aac0
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/qcom/kaanapali-ipcc.h
+>> @@ -0,0 +1,58 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause */
+>> +/*
+>> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+>> + */
+>> +
+>> +#ifndef __DTS_KAANAPALI_MAILBOX_IPCC_H
+>> +#define __DTS_KAANAPALI_MAILBOX_IPCC_H
+>> +
+>> +/* Physical client IDs */
+>> +#define IPCC_MPROC_AOP			0
+>> +#define IPCC_MPROC_TZ			1
+>> +#define IPCC_MPROC_MPSS			2
+>> +#define IPCC_MPROC_LPASS		3
+>> +#define IPCC_MPROC_SDC			4
+>> +#define IPCC_MPROC_CDSP			5
+>> +#define IPCC_MPROC_APSS			6
+>> +#define IPCC_MPROC_SOCCP		13
+>> +#define IPCC_MPROC_DCP			14
+>> +#define IPCC_MPROC_SPSS			15
+>> +#define IPCC_MPROC_TME			16
+>> +#define IPCC_MPROC_WPSS			17
+>> +
+>> +#define IPCC_COMPUTE_L0_CDSP		2
+>> +#define IPCC_COMPUTE_L0_APSS		3
+>> +#define IPCC_COMPUTE_L0_GPU		4
+>> +#define IPCC_COMPUTE_L0_CVP		8
+>> +#define IPCC_COMPUTE_L0_CAM		9
+>> +#define IPCC_COMPUTE_L0_CAM1		10
+>> +#define IPCC_COMPUTE_L0_DCP		11
+>> +#define IPCC_COMPUTE_L0_VPU		12
+>> +#define IPCC_COMPUTE_L0_SOCCP		16
+>> +
+>> +#define IPCC_COMPUTE_L1_CDSP		2
+>> +#define IPCC_COMPUTE_L1_APSS		3
+>> +#define IPCC_COMPUTE_L1_GPU		4
+>> +#define IPCC_COMPUTE_L1_CVP		8
+>> +#define IPCC_COMPUTE_L1_CAM		9
+>> +#define IPCC_COMPUTE_L1_CAM1		10
+>> +#define IPCC_COMPUTE_L1_DCP		11
+>> +#define IPCC_COMPUTE_L1_VPU		12
+>> +#define IPCC_COMPUTE_L1_SOCCP		16
+>> +
+>> +#define IPCC_PERIPH_CDSP		2
+>> +#define IPCC_PERIPH_APSS		3
+>> +#define IPCC_PERIPH_PCIE0		4
+>> +#define IPCC_PERIPH_PCIE1		5
+>> +
+>> +#define IPCC_FENCE_CDSP			2
+>> +#define IPCC_FENCE_APSS			3
+>> +#define IPCC_FENCE_GPU			4
+>> +#define IPCC_FENCE_CVP			8
+>> +#define IPCC_FENCE_CAM			8
+>> +#define IPCC_FENCE_CAM1			10
+>> +#define IPCC_FENCE_DCP			11
+>> +#define IPCC_FENCE_VPU			20
+>> +#define IPCC_FENCE_SOCCP		24
+>> +
+>> +#endif
+>>
+>> -- 
+>> 2.25.1
+>>
 
 
