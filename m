@@ -1,137 +1,206 @@
-Return-Path: <linux-kernel+bounces-882960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CD20C2C05D
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 14:16:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 910B1C2C0C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 14:23:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4A0A189A147
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 13:15:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98A9C3AA2AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 13:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8924B30DED1;
-	Mon,  3 Nov 2025 13:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D0221D3F2;
+	Mon,  3 Nov 2025 13:16:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jbCN4s9y"
-Received: from mail-wr1-f67.google.com (mail-wr1-f67.google.com [209.85.221.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="m7+7r+M6";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="QWBkm1gL"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4897C309DB4
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 13:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 672471DF24F
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 13:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762175689; cv=none; b=MQ99KvRdNR5qYeysGEJarUawr8YTdLkN0XYEbPvkFOIRKjqqArzYjSGflvNtR703rzXz4oF7rsXYdB9Sjk7AJGn1nKW1N8PjOGOy08yGGeTVz7c2gtMa3ODwnjpXjf0sKjudEgk9CbidoSt1M9jjNB7uUCl3y49xsPPsjrKvgaM=
+	t=1762175761; cv=none; b=UP9eIIVRaPW1VvOd1/pd6bH9KXfLaar+VwCwVrhDbkEQ1QITg8VvgAc3+pKs6+mGZXbd91ghLL5TmnEvrW7sWuEbDKEDp//KcdO2p/Ki3Cj1oe8V6ssAkcVSObiKLF5OLYVPM3NXm7pQLThCoxu2ZzQsI1RgO3SBU3OHePwaQt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762175689; c=relaxed/simple;
-	bh=Siug+06jX3i4GnzQ5QzhPzthl4ECdvKKGbHXxfZkFkU=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qu6cqlnFLtC2at2flrkugxgSyAHgwz+ZZTg7uWBAavhYMTITejMhCBhjJypLx1wgGMGz0Gj6QamWe6NOJ1BReDjgzyuJbtqD/i2KG3ZdRm/PH3MsH5WokNzjZFwZYKnhxg8MI60yFlTkR+QOWtrtY1VsySSHYIHfCBr68qcDX0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jbCN4s9y; arc=none smtp.client-ip=209.85.221.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f67.google.com with SMTP id ffacd0b85a97d-429c7e438a8so1636592f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 05:14:47 -0800 (PST)
+	s=arc-20240116; t=1762175761; c=relaxed/simple;
+	bh=oMgbXwa9FIWvjLs4oqx7nkUSvxUr38rp5LQT8Jf1s2k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q28La2qDX5uBpDWYEHDU5vQqB0A8WNgic0Zd9unryVVI+shHZ1Rfj+L2qPGLn2AZlgHkiJWL3WuFsTtGalrEo4Ko045RONvJfvGKoVSyxk3qZHexWXKDcz14hPQOOvYUrzShRZlppTHtlbovMW2sEQdmOwgIhTfSk62krnMQjco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=m7+7r+M6; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=QWBkm1gL; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A3CDA4q2247230
+	for <linux-kernel@vger.kernel.org>; Mon, 3 Nov 2025 13:15:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	mJi2SKffdqwBQAyEENUG+x2LtEGehybWi06tfIUxK4g=; b=m7+7r+M6tnDiKlvg
+	MUI9DM/edF2ZFc5oWyAWh/EVypHl9eimGxIts0vTxd42Q61tLXBdSVDQPmn+NGBQ
+	KXli8a5pX1dGUpjmIZZHHlpUPjaAN4nYbEJVlT8/oZmtkhdxoLAe4SQih7IRpQ8c
+	IakAE8jhklLxe6e8Xh0mQPWh1MY42H0yK3/DeQnBDM125SXafWTVTeVQgWbwd8jZ
+	JzyIg7yYYU8o1myeMB+JI5pwvSR/ZD2/uctQfRNzO3FQOZIZB/7q8PtyHLI4V0xB
+	J7E72TXLmTFYvnwkPcfkOod3RUghU5U5OofEEwjWumJjRuKeuhcvnqAHSLrpmWnp
+	hCk9cg==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a6q0yh7cj-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 13:15:58 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4e8934ae68aso19350131cf.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 05:15:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762175686; x=1762780486; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=rQAGurkDPR4RcdDesOFdVCugIU+WZRmXA3XBpTTF4co=;
-        b=jbCN4s9yoj69r1m9/x5/5VntVyWyUdwRY1WKdjCYn6IkqZvwJ7tu0M+m8iNHB3SBpd
-         L2siROR0UjQIQd9azoIui2htcn7vCbfkGBlrZsM3eKAj+gumhprqQPkD3IZlqA2EFW4c
-         +iqQYetAPxYsQyxWcerqj34b04pGHn9tkDn7S29TZJ/9gQ+J1j9hHk5u8JzPWl5j49O+
-         bKkBd7/408HzJC5jQChqI8ljAgQMDgtPiMG/hp7Fk4lSCZCL66uUx7m5V67dJ7bVZOyR
-         9WTEaXOcVbyOuK7PIr5CJVJMTH8K4bAyE5SGCB+Kktjfq4FZxIyL74fZJ30ukXc8cg1Y
-         77Gw==
+        d=oss.qualcomm.com; s=google; t=1762175758; x=1762780558; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mJi2SKffdqwBQAyEENUG+x2LtEGehybWi06tfIUxK4g=;
+        b=QWBkm1gLZPLF0AJ1VFDxtxWPoSkozlA4NBIEOefqNrunRtB6OIBhUYp+sGqT4M08QA
+         d/6RY/MMkZ6WjATeOJgLcm3gWVCUC6vMEj5ec+i5XtfT6d9+yP+ZDpyelJjFZ7AXc+ht
+         WpbRln3tTC03y1dsw04exVXrK28sdb7frdNz/aFO2jiqrmNB3rsPgJ3jAE8HLpSvSgwb
+         h13Oqit3nOP64WPUKv05vO43ebWy+8atc8OEl+y3S5C89T/mKRFwRECdXAhsUWYTL+mH
+         EGZ0GqvfFPeeE0QfwTMEsRUSEZOfPfcRLfxs8/mxK6u4mpp7JKkY5C/5hGSXT/vGcXxn
+         mv/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762175686; x=1762780486;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
+        d=1e100.net; s=20230601; t=1762175758; x=1762780558;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rQAGurkDPR4RcdDesOFdVCugIU+WZRmXA3XBpTTF4co=;
-        b=RytHFG69r8rylqSk2BWvReZcuPWycJa09fLwsW6eAyCtjjSw2bA0rmK3lYRm7anu/K
-         uCO1WdWjSAeOuyUZjpBArlYBSMBeRT4AHmV+J7aI0cfv8eDO2jSNMn24IlWp+0KxrY5w
-         Zf4o9fNGWTgF0SbtOTY7inHCQuCCe+1Um3LHtcqJSQUsXBW1OlZMf/Ge0E+h0bwPHaDn
-         OmHu0ZInOjjGXOzb1Vyeaj8m3CT0RjNzPmYV5XWnGzxFSujQFTOjHAWSpjVMn1ZXRE56
-         gIlaWyS6gpKlSeqgl02eqq6qBfMAM5QHiTdz3eZjgv5YBYBmqEeeVJVjbBKqqLkJbcnu
-         P0LQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXixxpS/+yaFljr2KW91cxFCDoaJYirBHBEZSf9F5RCOhwtSGecEst9DMgNaVKKMZnXrDbsOeDW6ariTRk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxf8raPeKyZWt44yeY6mr435PluKvBFBAb3JtT4L21Uhz/30G65
-	C8CD636aQOm1pFj/ZgiXwViPWWw4j/9TiZmYfZpS1HXmXbmwYdzsBR4PcxrP1rrQMqAk4w==
-X-Gm-Gg: ASbGncusLpDyccY6CAH0EwrB646tPO0fPu4a/06PQ0KPBF1dagFPsrf2PZ16K4+DRP/
-	6Bz90Xq2TJH2jlyWVQ45txyAb0GrQU/lqXHDftXNLEuC5DD5hZHbnJa36PWT9xOUD8zhBeiGWnZ
-	6rAXa3VRdGE+6PU8V/hY067xMKK5oKVt4verkjnLdZAWQ7SQwf1OGdZKvv5ChYsXdsX+H0WmcLd
-	Vn3nHSTw6aiMIIPAaR1Eh+rjuOWGbNi5ytmFEWkNxF2oAWHA6Nj7xkPgP/ZuJUcIVu6RHoLkhAK
-	pDXZbIIkz6ws508T76pr4V8PuVlzj956TSKmDM+IQU6Wh0BnftZyie8t5zh/QEN9zux18vY6PAn
-	ad4D5cPxnK39yB1ZZVSUgKoPj64e5CYTyvxXu4cvKrsIzfmtmNn310lpJJ3OKJksmfzkiTiq0PR
-	tm/u5Q+NC/Y16JgESAmv3u7wR1CBWquCuWWxK+
-X-Google-Smtp-Source: AGHT+IGd/En4l/nwtIiEacs97yG94DizzI61g7kS/dAbXkBEHMMIpZN5vZiuOsRccq8nGuUTHj4Irg==
-X-Received: by 2002:a05:6000:2889:b0:429:d66b:50ae with SMTP id ffacd0b85a97d-429d66b52fdmr1818837f8f.57.1762175686428;
-        Mon, 03 Nov 2025 05:14:46 -0800 (PST)
-Received: from workstation (ip7-114-231-195.pool-bba.aruba.it. [195.231.114.7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429ca375a1dsm13565997f8f.27.2025.11.03.05.14.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 05:14:46 -0800 (PST)
-From: francesco <francescopompo2@gmail.com>
-X-Google-Original-From: francesco <francesco@workstation>
-Date: Mon, 3 Nov 2025 14:14:43 +0100
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Francesco =?iso-8859-1?Q?Pomp=F2?= <francescopompo2@gmail.com>,
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] efistub/smbios: Add fallback for SMBIOS record lookup
-Message-ID: <aQiqw1kX8br_KBnT@workstation>
-References: <20251102001411.108385-1-francescopompo2@gmail.com>
- <CAMj1kXEUL-Uv4tCx5NLVHDRo-BdEK1xJdee-UYs-ymE-mLxv0Q@mail.gmail.com>
- <CADr=TJdTcss14P43_jAj4tsEYukt=Z18SnjUNqMD95O_5KkNVA@mail.gmail.com>
- <CAMj1kXEP=nByL5+R2Ch-PLSKnziEyyK_rLZL=wcvKRNcBPTJbg@mail.gmail.com>
+        bh=mJi2SKffdqwBQAyEENUG+x2LtEGehybWi06tfIUxK4g=;
+        b=L/KeqbE5VD7iFKo/dfFfYsHkAjcyslhAg4WS+lLR6rLKNvYmJe8NZWF9ieOySBmhf2
+         A4qPPAwTPlKViM5+u+qLl4QQ4JC/s0dJG/BLK4zwy9oHUMco2DXGjbguxyN568/TMzBj
+         9MsEJxBL8K/WEkNr9HMNacgCCtR6Qg9Tgtf2vz+oGNuIdcBvgLXhoHZd+/GBHp3KBZyD
+         ctb+l5kXAD5oT9iBKcMmGamXuGknB6ggBFTOqZx1jOJWbm7O8jt4ciFflWzyzYR43sj9
+         QWhq5Why+Mq59pHjgv293+z/2itKTxAW8F+my3QCILJQVax9ILnfZ5nWlCqB7wWEHslq
+         VscA==
+X-Forwarded-Encrypted: i=1; AJvYcCVm8b8MZVMMZ5dIPCGM800xY7NcLAm6G0M+DvPqAezDsTe2DD1th3pvBPWS7DAXMnU4WLt2pxq6ld+XqJ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yztctf0VIQ5q6qfmnectI/CWcTMEoi/+VuVTlwSnPK5GQOTOJGL
+	3BDaK5+wKATk0byqcGgPRPQaj6krYhYEyu1PXN3nu2fOc8AoEvZHpayqELpqdzJzb0eFd/BEjuW
+	wwJAhKl164AL7NJ/ppNx4FNCvIdLmzbpzJRZ4notlFIIziF6DrYuNduditsZBy0x0+ks=
+X-Gm-Gg: ASbGnctDjrHzKUdMdknSIEhWIrc28G31eMhxrHuVaGAFbkCDgvRTDA4eVOkapinRmJi
+	wInxWWmqS0+kSUqrXqzVqczz0EKhAMSCP7x0VgpFu0K+Xyhgy0ourqhV2BdrLkDRVu/9XxISlo1
+	/+tN8z7d3dK0T/72rB/nb76AMCmSjagyOmfNQUH2u8Ii9YdR6J4GD9cwvlWN7b5WQZTOC41w18c
+	9OJGBWI85azY3fRAx9UU+BOqXkDLtAnhh+RaOr5Osfizu6kZh9Np0glN/O6hSAluCPgp+bDahG3
+	X/Z+H/xH307Gzh997sHQrnl6bBkJJy+0RYlxWhAsu3jIgxvQBFLHTu/i3rPmAPhFLI4ZngmA8PU
+	fnl2NfJKVGzaUSIncYd/rT0aXzlHH3EHdWz9l/0tZ7O9x5IB24aSYe5Wa
+X-Received: by 2002:a05:622a:588:b0:4d0:3985:e425 with SMTP id d75a77b69052e-4ed30f3cc9dmr109744771cf.7.1762175757644;
+        Mon, 03 Nov 2025 05:15:57 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFGh7/QV0gEshhpbMietL7LQeiu9j1PQXIccgtNnpkzyuw4Wy1i4QV7GqTXvaLVMylBd9ovww==
+X-Received: by 2002:a05:622a:588:b0:4d0:3985:e425 with SMTP id d75a77b69052e-4ed30f3cc9dmr109744381cf.7.1762175757012;
+        Mon, 03 Nov 2025 05:15:57 -0800 (PST)
+Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b70abbb6106sm534193866b.67.2025.11.03.05.15.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Nov 2025 05:15:56 -0800 (PST)
+Message-ID: <114cb239-d0b8-4db3-8972-77ec3a24825b@oss.qualcomm.com>
+Date: Mon, 3 Nov 2025 14:15:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMj1kXEP=nByL5+R2Ch-PLSKnziEyyK_rLZL=wcvKRNcBPTJbg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: kodiak: add coresight nodes
+To: Jie Gan <jie.gan@oss.qualcomm.com>,
+        Bjorn Andersson
+ <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20251103-add-coresight-nodes-for-sc7280-v1-1-13d503123c07@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20251103-add-coresight-nodes-for-sc7280-v1-1-13d503123c07@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=NYbrFmD4 c=1 sm=1 tr=0 ts=6908ab0e cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=vf5OUP8M7W2h9ZXQaioA:9
+ a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-GUID: PA96ax_aGDxdc4_bZAkl8Zz5hRGBDd2j
+X-Proofpoint-ORIG-GUID: PA96ax_aGDxdc4_bZAkl8Zz5hRGBDd2j
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAzMDEyMCBTYWx0ZWRfX2i9YkibfcNsb
+ +QNqbk/6WHmtLgxaV9G3HgTYbqrxjp6QzdJ4vxgtdMPVx6r3k4V5dErKqJnmq0W2sZLIQZiyKOo
+ wpeT9IMtr3xcsqe6X9Iq7WNuXanIZTZDsSWCvaOR5OqvhkqCKRKegBc7HJt8k0Tq6YKwv9tCATB
+ buAxpqxXAa9zZY5jSe1bAHeFNIU9RD9ReA+nFQn74Q6L9aw2Px2PV2qH6DvgwNIf3ftpxoDdhe1
+ 6IFRrOTu/esdLIH2IGywJizU6Zzi0VvLrf4cwCaq9Biwhip6cbT9Ifl0DDRskHvSG3C4W2mBaHy
+ gNgfrwICsBPUhQY2WDPygDWbU6WaVykQCEBqZpsOCOxK1vxH9Yn49iReIYlzl0fQUwz+mUcbPr8
+ b15v4hbpFGkZpjw5oOAKMgYBRZtqUA==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-03_02,2025-11-03_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 phishscore=0 impostorscore=0 spamscore=0 lowpriorityscore=0
+ adultscore=0 priorityscore=1501 suspectscore=0 bulkscore=0 clxscore=1015
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511030120
 
-On Mon, Nov 03, 2025 at 02:11:31PM +0100, Ard Biesheuvel wrote:
-> On Mon, 3 Nov 2025 at 11:15, Francesco Pompò <francescopompo2@gmail.com> wrote:
-> >
-> > Il giorno lun 3 nov 2025 alle ore 09:19 Ard Biesheuvel
-> > <ardb@kernel.org> ha scritto:
-> > >
-> > > Hello Francesco,
-> > >
-> > > On Sun, 2 Nov 2025 at 01:14, Francesco Pompo <francescopompo2@gmail.com> wrote:
-> > > >
-> > > > Some UEFI firmware implementations do not provide the SMBIOS Protocol,
-> > > > causing efi_get_smbios_record() to fail. This prevents retrieval of
-> > > > system information such as product name, which is needed by
-> > > > apple_set_os() to enable the integrated GPU on dual-graphics Intel
-> > > > MacBooks.
-> > > >
-> > > > Add a fallback that directly parses the SMBIOS entry point table when
-> > > > the protocol is unavailable. Log when the fallback is used.
-> > > >
-> > > > Signed-off-by: Francesco Pompo <francescopompo2@gmail.com>
-> > > > ---
-> > > >  drivers/firmware/efi/libstub/efistub.h | 17 +++++
-> > > >  drivers/firmware/efi/libstub/smbios.c  | 99 +++++++++++++++++++++++++-
-> > > >  2 files changed, 113 insertions(+), 3 deletions(-)
-> > > >
-> > >
-> > > On which platform does this fix an actual existing issue?
-> >
-> > Hello Ard,
-> >
-> > My Macbook Pro Late 2013, product name Macbook11,3 is affected.
+On 11/3/25 9:35 AM, Jie Gan wrote:
+> Add TPDM, TPDA, CTI and funnel coresight devices for AOSS and QDSS
+> blocks.
 > 
-> You meant MacbookPro11,3, right?
+> Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/kodiak.dtsi | 290 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 290 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/kodiak.dtsi b/arch/arm64/boot/dts/qcom/kodiak.dtsi
+> index 3ef61af2ed8a..09aba1645408 100644
+> --- a/arch/arm64/boot/dts/qcom/kodiak.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/kodiak.dtsi
+> @@ -3338,6 +3338,85 @@ stm_out: endpoint {
+>  			};
+>  		};
+>  
+> +		tpda@6004000 {
+> +			compatible = "qcom,coresight-tpda", "arm,primecell";
+> +			reg = <0x0 0x06004000 0x0 0x1000>;
+> +
+> +			clocks = <&aoss_qmp>;
+> +			clock-names = "apb_pclk";
+> +
+> +			in-ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@1c {
+> +					reg = <28>;
 
-Yes sorry. Anyway I sent a PATCH v2 email.
+Please use hex in 'reg' (just like you did in the unit address above)
 
--- 
-Francesco Pompo'
+> +					qdss_tpda_in28: endpoint {
+
+and leave a \n between the last property and the following subnodes
+
+[...]
+
+
+> +		cti@6010000 {
+> +			compatible = "arm,coresight-cti", "arm,primecell";
+> +			reg = <0x0 0x06010000 0x0 0x1000>;
+> +
+> +			clocks = <&aoss_qmp>;
+> +			clock-names = "apb_pclk";
+
+I see 15 more CTI instances following this one at a 0x1000 stride,
+followed by a TPIU at 0x06040000.
+
+Actually a whole lot more debugging hardware. This patchset looks
+tailored for debugging AOSS< as you briefly mentioned in the commit
+message.
+
+Would it be beneficial or useful to (perhaps in a separate series)
+extend the support for those?
+
+FWIW the various register bases and field sizes correspond to what I
+can see in the docs, I can't speak for the port numbers. Please just
+fix up the style issues I mentioned above.
+
+Konrad
 
