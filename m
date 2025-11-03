@@ -1,237 +1,173 @@
-Return-Path: <linux-kernel+bounces-882649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 330B9C2B05D
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:23:05 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9319EC2B07B
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:24:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AA9F434864F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:23:04 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1BAE44EC750
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9C22FDC4F;
-	Mon,  3 Nov 2025 10:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F1B2FD7BC;
+	Mon,  3 Nov 2025 10:24:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IgG8yfUI"
-Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KBWjo7l5"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3958D2FD7BC
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 10:22:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9288528E5;
+	Mon,  3 Nov 2025 10:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762165374; cv=none; b=XdC6OQZR5JlXaxsB3Y6TbYZvKbk48YdbpoQRPLiQhAaCr/w0zX4NdruCY6mvjWW3XR+FA1WIesZu34FHcA8zHbJvRrl2my9FXKdbcQ10GqviuP9m+IOkLKxM5RV1oRgGhMHHXFNY/PYo60DzHuSwMNC8b3ZYodAPnEPasrFgqmo=
+	t=1762165482; cv=none; b=cf2Wf1aPkL/kOhFsGS+jpen3vBwVGx35XWqFwFeKJ+m4UzCt6jXgkr9hBVhePrCeLNPmbPbISInPFUCvitqbAiv/fG4Bwje2Ni9KAcsTzYmxgXG9S6t/N7hhBgR8PA3SRBVsVkymkmt3ZFaOEGZ5kGFyvbQ6WCbW/Ozb6faz+iY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762165374; c=relaxed/simple;
-	bh=ZRv2Bik0mh3ATM87xP1ZEX31SBMDxa+G2+N2PQfmDDY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=a7Oo9mxauS4tGciGTxV9FFRNnUL/dylj86EjlGFZdgGIYsqMWfMquxnNYHinYYFB/Hl1ms5fNqOPYr+bKkWQtTVR3fhj59ImcxfPDxN7TB6/PM0H8eOSMeq4sFF/vsN0uUj5E8McQVhQpWSEztvpJZK/6d1ieukaHymx2SNVDSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IgG8yfUI; arc=none smtp.client-ip=209.85.218.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-b70b3297664so73842666b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 02:22:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762165371; x=1762770171; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=74nlGMCrnYUSq61pxDhzCKYDlRI/c4Z3CWqyM8Nq0u4=;
-        b=IgG8yfUInXpn7+jSRUl915/XmW3eRHHS9FuY7Ytbg1vkMY6UqWAwJ7rQ9W/zVPuFtc
-         i5DL1X4URQbfeaX4CJKnLeQPbZjv027v+2VZLADQDMWFepB8Jb58qbVDil9v414ns93S
-         JUPfXu3b5avbhmT8KhTOYiaLR0glOVHsacKRz2N+K1pTRJbiC/MKIVh+Zoh+ruxFCz7O
-         7coPEy1FIUg0zVVa3NoDRpEm15qosYJ5nNdc3QTp9I5zZRaR42JS65053z5mSSetN0j/
-         TRnwsTlWuHaKgpodXEfg9JEXHrn5CiN2QrQhClnScAi+xfpfnaUV0joUqFFazlh+9OnE
-         3jeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762165371; x=1762770171;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=74nlGMCrnYUSq61pxDhzCKYDlRI/c4Z3CWqyM8Nq0u4=;
-        b=jOfyAHsOQl7YG1qqU/dP+DLs3Kf9UCLQHgIYiOSnG+il8mM0HJkfrv3RoE6072KIuz
-         /XTJ0eEsQ9kpHm97GbEIJakGSre+ecEqta46vZ3vlmUzBd4aElxdCcN2EI6XDQCvlMZc
-         aUY+pmUbYlHhq/5iQT4Yibc5KbF6wkR07BF/EvjrDh9zpuBkOpWn3sYD1tgq5ipMRy5k
-         GYH5Gn2WxQbzML3LVc0VEeJE3YhbL6W+JLPAb+6U4d1puKph2KWy0OgCT8sp7k8w0J8O
-         SiQl5Nd+T8xCTkIk9vfMtLznACCSi3B4ZcyAKN/Manh1fBcT1BTzUvoUtqnv9alsTpwc
-         jdwg==
-X-Forwarded-Encrypted: i=1; AJvYcCVweS9zELyTgElrx0+8IiU0QHRCIThglTnoXdGU/0TIOiQelFKxaE40DE/iNlf7IpxXgmJNoghXhZWjAoY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyiwe2yHfQ/kGfCN/bpEC9x152YeGPvjtvm4NlVLwqaYa/wfNTx
-	n+3YrtqEpIek9Kct/DWO9rlyKP1w8VuIvpHofJnXyuDiPOiJGb69xtsOff5gmeUSfrktGyvpe3H
-	qwlLALerGoOQrdaErug==
-X-Google-Smtp-Source: AGHT+IHn9x6PSa83XXQosPVx5KOgBWzu3uFfEDGplbMkxxWGLEi0O/THMcQiIWHNoig+hnN4QKP3KjebTPJUtss=
-X-Received: from ede26.prod.google.com ([2002:a05:6402:20da:b0:640:b66f:1e57])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6402:5111:b0:63e:2d4d:5a60 with SMTP id 4fb4d7f45d1cf-64076f67066mr10626790a12.8.1762165370729;
- Mon, 03 Nov 2025 02:22:50 -0800 (PST)
-Date: Mon, 3 Nov 2025 10:22:49 +0000
-In-Reply-To: <20251101-b4-as-flattened-v1-1-860f2ebeedfd@nvidia.com>
+	s=arc-20240116; t=1762165482; c=relaxed/simple;
+	bh=mMwseOtfch0WkUGPSpFwAXRTLyTjgl9zM2KFRVdOVDg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oJYlr/Dlo6mo/cdm5U8LzNVzz+zTrOAGPk9QwLloWZqXA4Qn0pXYhmtLZqmLxxhXhMu/5viZGo4RGuIQtk7ffDx7wFouix2I2FVkpCfwxD93qz6W8niD4QP5zVZtBXatclpzWLK/C94n9ejjh6pJyNLS1/yjL6M07f2fcHk0kQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KBWjo7l5; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762165480; x=1793701480;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mMwseOtfch0WkUGPSpFwAXRTLyTjgl9zM2KFRVdOVDg=;
+  b=KBWjo7l5tOq2bHskEowWq4wuwyX7pS2j1THFAbaxGI12OdRjCzcz/DcI
+   6rJqPRzrA4vK6lN67498wRbTmev19pYa/tf4GkDXGmHdJWhWUYivkybPM
+   YAovTjqNfKe2uvejqDnKrB0d5MjRktz+gRu0CH7zoWGQYWfRNg5XSufEJ
+   jz6MyYXIcxpc6Vtonbywy+1GKnLb+r0bGQrsxmMMLD6LiQvmwQc+hJW2G
+   zwc5GWEV90FT6rAqFPLUWTkkMNh/8aUNg+kVy9qH/1p/LHjyMMuvUpudT
+   Z3tvwY6lghLT84IVtHbZs532IOhAtdIYAQdI4btQAqjuAd3UbQDtpjgj5
+   w==;
+X-CSE-ConnectionGUID: 2RR3y4GZTKaZG0nhUuML1g==
+X-CSE-MsgGUID: OhQvM02NRrywjtgGMAxysQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="75684390"
+X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
+   d="scan'208";a="75684390"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 02:24:40 -0800
+X-CSE-ConnectionGUID: GSkOX9xmStqEMunUgyEZ7g==
+X-CSE-MsgGUID: 0qHH5bPeSHCjgFcT4iPTOQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
+   d="scan'208";a="186705439"
+Received: from black.igk.intel.com ([10.91.253.5])
+  by fmviesa006.fm.intel.com with ESMTP; 03 Nov 2025 02:24:36 -0800
+Received: by black.igk.intel.com (Postfix, from userid 1003)
+	id 8D05495; Mon, 03 Nov 2025 11:24:35 +0100 (CET)
+Date: Mon, 3 Nov 2025 11:24:35 +0100
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Guan-Chun Wu <409411716@gms.tku.edu.tw>, ebiggers@kernel.org,
+	tytso@mit.edu, jaegeuk@kernel.org, xiubli@redhat.com,
+	idryomov@gmail.com, kbusch@kernel.org, axboe@kernel.dk, hch@lst.de,
+	sagi@grimberg.me, visitorckw@gmail.com, home7438072@gmail.com,
+	linux-nvme@lists.infradead.org, linux-fscrypt@vger.kernel.org,
+	ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] lib/base64: add generic encoder/decoder, migrate
+ users
+Message-ID: <aQiC4zrtXobieAUm@black.igk.intel.com>
+References: <20251029101725.541758-1-409411716@gms.tku.edu.tw>
+ <20251031210947.1d2b028da88ef526aebd890d@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251101-b4-as-flattened-v1-1-860f2ebeedfd@nvidia.com>
-Message-ID: <aQiCeZE7eN_KVdZ5@google.com>
-Subject: Re: [PATCH RESEND] rust: enable slice_flatten feature and abstract it
- through an extension trait
-From: Alice Ryhl <aliceryhl@google.com>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas.schier@linux.dev>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251031210947.1d2b028da88ef526aebd890d@linux-foundation.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Sat, Nov 01, 2025 at 10:31:38PM +0900, Alexandre Courbot wrote:
-> In Rust 1.80, the previously unstable `slice::flatten` family of methods
-> have been stabilized and renamed to `as_flattened`.
+On Fri, Oct 31, 2025 at 09:09:47PM -0700, Andrew Morton wrote:
+> On Wed, 29 Oct 2025 18:17:25 +0800 Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:
 > 
-> This creates an issue as we want to use `as_flattened`, but need to
-> support the MSRV (which at the moment is Rust 1.78) where it is named
-> `flatten`.
+> > This series introduces a generic Base64 encoder/decoder to the kernel
+> > library, eliminating duplicated implementations and delivering significant
+> > performance improvements.
+> > 
+> > The Base64 API has been extended to support multiple variants (Standard,
+> > URL-safe, and IMAP) as defined in RFC 4648 and RFC 3501. The API now takes
+> > a variant parameter and an option to control padding. As part of this
+> > series, users are migrated to the new interface while preserving their
+> > specific formats: fscrypt now uses BASE64_URLSAFE, Ceph uses BASE64_IMAP,
+> > and NVMe is updated to BASE64_STD.
+> > 
+> > On the encoder side, the implementation processes input in 3-byte blocks,
+> > mapping 24 bits directly to 4 output symbols. This avoids bit-by-bit
+> > streaming and reduces loop overhead, achieving about a 2.7x speedup compared
+> > to previous implementations.
+> > 
+> > On the decoder side, replace strchr() lookups with per-variant reverse tables
+> > and process input in 4-character groups. Each group is mapped to numeric values
+> > and combined into 3 bytes. Padded and unpadded forms are validated explicitly,
+> > rejecting invalid '=' usage and enforcing tail rules.
 > 
-> Solve this by enabling the `slice_flatten` feature, and abstracting
-> `as_flatten` behind an extension trait that calls the right method
-> depending on the Rust version.
+> Looks like wonderful work, thanks.  And it's good to gain a selftest
+> for this code.
 > 
-> This extension trait can be removed once the MSRV passes 1.80.
+> > This improves throughput by ~43-52x.
 > 
-> Suggested-by: Miguel Ojeda <ojeda@kernel.org>
-> Link: https://lore.kernel.org/all/CANiq72kK4pG=O35NwxPNoTO17oRcg1yfGcvr3==Fi4edr+sfmw@mail.gmail.com/
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> ---
-> This patch was part of the Nova GSP boot series [1], but since it
-> requires attention from the core Rust team (and possibly the build
-> maintainers?) and is otherwise buried under Nova patches, I am taking
-> the freedom to send it separately for visibility.
-> 
-> Hopefully it captures Miguel's suggestion [2] accurately, but please let
-> me know if I missed something.
-> 
-> Since the Nova GSP boot series makes use of this, I hope to eventually
-> merge it alongside the series, through the DRM tree.
-> 
-> Thanks!
-> 
-> [1] https://lore.kernel.org/all/20251029-gsp_boot-v7-0-34227afad347@nvidia.com/
-> [2] https://lore.kernel.org/all/CANiq72kK4pG=O35NwxPNoTO17oRcg1yfGcvr3==Fi4edr+sfmw@mail.gmail.com/
-> ---
->  init/Kconfig           |  3 +++
->  rust/kernel/lib.rs     |  4 ++++
->  rust/kernel/slice.rs   | 63 ++++++++++++++++++++++++++++++++++++++++++++++++++
->  scripts/Makefile.build |  3 ++-
->  4 files changed, 72 insertions(+), 1 deletion(-)
-> 
-> diff --git a/init/Kconfig b/init/Kconfig
-> index cab3ad28ca49..7da93c9cccc3 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -147,6 +147,9 @@ config LD_CAN_USE_KEEP_IN_OVERLAY
->  	# https://github.com/llvm/llvm-project/pull/130661
->  	def_bool LD_IS_BFD || LLD_VERSION >= 210000
->  
-> +config RUSTC_HAS_SLICE_AS_FLATTENED
-> +	def_bool RUSTC_VERSION >= 108000
-> +
->  config RUSTC_HAS_COERCE_POINTEE
->  	def_bool RUSTC_VERSION >= 108400
->  
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index 3dd7bebe7888..2581a356d114 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -21,6 +21,9 @@
->  #![feature(inline_const)]
->  #![feature(pointer_is_aligned)]
->  //
-> +// Stable since Rust 1.80.0.
-> +#![feature(slice_flatten)]
-> +//
->  // Stable since Rust 1.81.0.
->  #![feature(lint_reasons)]
->  //
-> @@ -128,6 +131,7 @@
->  pub mod security;
->  pub mod seq_file;
->  pub mod sizes;
-> +pub mod slice;
->  mod static_assert;
->  #[doc(hidden)]
->  pub mod std_vendor;
-> diff --git a/rust/kernel/slice.rs b/rust/kernel/slice.rs
-> new file mode 100644
-> index 000000000000..7e837bec4bed
-> --- /dev/null
-> +++ b/rust/kernel/slice.rs
-> @@ -0,0 +1,63 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Additional (and temporary) slice helpers.
-> +
-> +/// Extension trait providing a portable version of [`as_flattened`] and
-> +/// [`as_flattened_mut`].
-> +///
-> +/// In Rust 1.80, the previously unstable `slice::flatten` family of methods
-> +/// have been stabilized and renamed from `flatten` to `as_flattened`.
-> +///
-> +/// This creates an issue for as long as the MSRV is < 1.80, as the same functionality is provided
-> +/// by different methods depending on the compiler version.
-> +///
-> +/// This extension trait solves this by abstracting `as_flatten` and calling the correct  method
-> +/// depending on the Rust version.
-> +///
-> +/// This trait can be removed once the MSRV passes 1.80.
-> +///
-> +/// [`as_flattened`]: slice::as_flattened
-> +/// [`as_flattened_mut`]: slice::as_flattened_mut
-> +pub trait AsFlattened<T> {
-> +    /// Takes an `&[[T; N]]` and flattens it to a `&[T]`.
-> +    ///
-> +    /// This is an portable layer on top of [`as_flattened`]; see its documentation for details.
-> +    ///
-> +    /// [`as_flattened`]: slice::as_flattened
-> +    fn as_flattened_slice(&self) -> &[T];
-> +
-> +    /// Takes an `&mut [[T; N]]` and flattens it to a `&mut [T]`.
-> +    ///
-> +    /// This is an portable layer on top of [`as_flattened_mut`]; see its documentation for details.
-> +    ///
-> +    /// [`as_flattened_mut`]: slice::as_flattened_mut
-> +    fn as_flattened_slice_mut(&mut self) -> &mut [T];
-> +}
-> +
-> +impl<T, const N: usize> AsFlattened<T> for [[T; N]] {
-> +    #[allow(clippy::incompatible_msrv)]
-> +    fn as_flattened_slice(&self) -> &[T] {
-> +        #[cfg(not(CONFIG_RUSTC_HAS_SLICE_AS_FLATTENED))]
-> +        {
-> +            self.flatten()
-> +        }
-> +
-> +        #[cfg(CONFIG_RUSTC_HAS_SLICE_AS_FLATTENED)]
-> +        {
-> +            self.as_flattened()
-> +        }
-> +    }
-> +
-> +    #[allow(clippy::incompatible_msrv)]
-> +    fn as_flattened_slice_mut(&mut self) -> &mut [T] {
-> +        #[cfg(not(CONFIG_RUSTC_HAS_SLICE_AS_FLATTENED))]
-> +        {
-> +            self.flatten_mut()
-> +        }
-> +
-> +        #[cfg(CONFIG_RUSTC_HAS_SLICE_AS_FLATTENED)]
-> +        {
-> +            self.as_flattened_mut()
-> +        }
+> Well that isn't a thing we see every day.
 
-Hmm. Why not have this match the name that this was stabilized under?
-That way, when bumping the MSRV, we can just remove this trait without
-changing the callers.
+I agree with the judgement, the problem is that this broke drastically a build:
 
-Alice
+lib/base64.c:35:17: error: initializer overrides prior initialization of this subobject [-Werror,-Winitializer-overrides]
+   35 |         [BASE64_STD] = BASE64_REV_INIT('+', '/'),
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~
+lib/base64.c:26:11: note: expanded from macro 'BASE64_REV_INIT'
+   26 |         ['A'] =  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, \
+      |                  ^
+lib/base64.c:35:17: note: previous initialization is here
+   35 |         [BASE64_STD] = BASE64_REV_INIT('+', '/'),
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~~
+lib/base64.c:25:16: note: expanded from macro 'BASE64_REV_INIT'
+   25 |         [0 ... 255] = -1, \
+      |                       ^~
+...
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+20 errors generated.
+
+
+> : Decode:
+> :   64B   ~1530ns  ->  ~80ns    (~19.1x)
+> :   1KB  ~27726ns  -> ~1239ns   (~22.4x)
+> 
+> 
+> : Encode:
+> :   64B   ~90ns   -> ~32ns   (~2.8x)
+> :   1KB  ~1332ns  -> ~510ns  (~2.6x)
+> : 
+> : Decode:
+> :   64B  ~1530ns  -> ~35ns   (~43.7x)
+> :   1KB ~27726ns  -> ~530ns  (~52.3x)
+> 
+> 
+> : This change also improves performance: encoding is about 2.7x faster and
+> : decoding achieves 43-52x speedups compared to the previous implementation.
+> 
+> : This change also improves performance: encoding is about 2.7x faster and
+> : decoding achieves 43-52x speedups compared to the previous local
+> : implementation.
+> 
+> 
+> Do any of these callers spend a sufficient amount of time in this
+> encoder/decoder for the above improvements to be observable/useful?
+> 
+> 
+> I'll add the series to mm.git's mm-nonmm-unstable branch to give it
+> linux-next exposure.  I ask the NVMe, ceph and fscrypt teams to check
+> the code and give it a test in the next few weeks, thanks.  
+> 
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
