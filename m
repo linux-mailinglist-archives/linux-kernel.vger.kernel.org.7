@@ -1,209 +1,186 @@
-Return-Path: <linux-kernel+bounces-882230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DE65C29EE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 04:15:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2542C29EEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 04:16:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8D8F34EAB9A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 03:15:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46EF9188EE6D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 03:16:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285C62882D7;
-	Mon,  3 Nov 2025 03:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3BFB285CAE;
+	Mon,  3 Nov 2025 03:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TM/2558W"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X8YhopaT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F828B663
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 03:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17FC8248C;
+	Mon,  3 Nov 2025 03:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762139710; cv=none; b=klGHEaPfHEJmREswS5+ACVcW82P5zIWJSO+0A3YtG0ofAHOpWZzng//FhU22zxtP0mboe7Ax0I3RUvN2Y7F4E+byS2wUZB5vOH80DeK1K9ZH69ih35F7wmcjg9VnP1F11amec81/iNpbVQsVAsgpb7jQCwvVE1675LVZfj3/5tQ=
+	t=1762139773; cv=none; b=naGBE01PrfaPtqupYiQ007sJDqnMax6Wz/s8v/5UoeepJveijV3nzbzjVEFSWDI0syuZXc6ap7jfyf3ktYzaXeMTkR69V5pWUoU8dsxwij4uF48Bztaake1sZckM+T9HyYsVwbfT+enxE6mua6FKL/nw2N1pwwbRYhywtf/NEIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762139710; c=relaxed/simple;
-	bh=6SQN0vecgbgR6BRspTq3+ZfoO061hFhPK3vugcQ2Ork=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=oB2r6joA4K0d0DqrkhBh7oXq8pB/X7voJl7zZbir8BQ2VVzNm7SEe4Fi2FaB2McvKOy4CLooImloh178xKjmEzo7/hag6AK20jPGSlG0TBG6JFgnrJYSVc6iLr3zFseWCsyBmJjJVfdOuVvLcAR9lG9ELXSDfJwpftamu1s3dGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TM/2558W; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2951a817541so38207395ad.2
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 19:15:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762139706; x=1762744506; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qXsyXRBsjl/UJdnzdmn5tcpNjcGfeLeLeRD6/RJCrMM=;
-        b=TM/2558WbPfibgmubtZZFCsvLhq2VxiYUx72McFQAyJVswXHE1gRs97zGzXX83d9pM
-         6nGtGAhiDRAO7pmfZxlCOmhewr4Sw9XVIBc1wY9NYECSDrvF7vPhEjFJ4n3vW15mfiUj
-         yNv1iKXHK1vKJFxex7RNoGc0Y2DKy9UBGTc50Fupe8IwZ28Bfmu6Hkrl9uIe0JiMXVUv
-         MwztBNsIlCqBTEW/n5qIVr/vuihAq2Sm0r2MSvnmMkLmVzSpF39MxGZ18bK+5hB+szd2
-         vlbFanByBetAAANlpAaTQA3hNvJwuCIJf4ZebfroAdZmaLq76MIFy+CHcnb/pK1NWER/
-         McTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762139706; x=1762744506;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qXsyXRBsjl/UJdnzdmn5tcpNjcGfeLeLeRD6/RJCrMM=;
-        b=XszWtjJd8nuTGhm03+KW8RGL0a1K84RsSbvO5BzYoQLeZoN6vh+qgmiBnNJG7oiCPF
-         gw1kjNlU0T9QZ/Dw2ALhS0wlU5A/WWsf2L+r1jlgHie243N/ey109hfQ+BJaPVbQVXkk
-         aMGL1+Ip5QRM//ZtPnE5zDo6DC6kV9lITMHzNYLCKJERt8Ezw51pe1A9gxVrWCq6yQ5n
-         5QpX/2fXn6hkL0DSUgdBtd3RGO7uRhrzbKLu8wIQkik3uNNrosUID8XroKJzwjPcEngl
-         fO4wJ9LpC1CnQEFvhtCKw7VYus9Ij+niVdq57i3FTZVKeZZl1Z3UXKeSNJFihMW67CL9
-         fFsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXiW9wRbdrzk23NT9M3CQYmTHGKu0Y8YRapyqKngNAwkgDG4br7M8F0lgVVRRcRy1lt2pQlEdYu6rNzcaA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlcLBXN+eTOcoI7/+tzFYUDUJ6hQ8Q6lnLSuia5pjabMdgphb1
-	HeR4dOCeEK0IUYvcPwaDhZ3ww1CfiZGL1DUqroe33CjUBOAEVZBJ8vqO
-X-Gm-Gg: ASbGncugSKM1vtIUPbOkDgv5Xv+UI4+mOsVIPp1PeBiQRDWNaV1G3EEU9D1F5YsLfuL
-	HG8mgX6NcZAAHEzudvAjRvFoACOjzyFIhuljXUZXNoFeQ51m+L3yf2U5uW0GYpYZIFD1wI7ZhK2
-	bioLKTdZOgsNNQxZrmtaGFwjhICAaw/572fuBoQEcAOws7+QaZS25hf0ZI0fgmXmWS7eXO09AAS
-	YHrBu/bJNmXoY24OoUCEIHtE6FK7pC6/mCQVf/Emczwb8XREMMEV20A95bEL5zkEs9DtapZuTSk
-	t7iaA90e3p+J2i+fo/yn8Eu4YPYk1R6nM7e/7VuqLBTYfVu8liZ1wji9KwC/7X3GaxkJJ526zJw
-	68IoOe3r6MJrasb4TwSdHAdHWm0C4FhZ+r3U8KiGu7/Lo+AAEW4n3
-X-Google-Smtp-Source: AGHT+IGG+q0ieQsp6YHQm4OSNdUh6TFKKIYVrooi6skX+w389/d71u+8qnyE0A7jThdV080hsrl80Q==
-X-Received: by 2002:a17:902:ecc7:b0:295:7806:1d73 with SMTP id d9443c01a7336-2957806269fmr60832765ad.24.1762139706174;
-        Sun, 02 Nov 2025 19:15:06 -0800 (PST)
-Received: from gmail.com ([2a09:bac1:19c0:20::4:37d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-29526871058sm102183285ad.3.2025.11.02.19.15.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Nov 2025 19:15:05 -0800 (PST)
-From: Qingfang Deng <dqfext@gmail.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-ppp@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v2] ppp: enable TX scatter-gather
-Date: Mon,  3 Nov 2025 11:15:01 +0800
-Message-ID: <20251103031501.404141-1-dqfext@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1762139773; c=relaxed/simple;
+	bh=q+uKLEAXf2uLQtF4OkAZ7zdOsNGLQtv7zATZ7AydPrc=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=mlpyz5Ynr5qyMNDLsyVU5ZMK+JsvzeBVIRCGOuyNs/WceQiojOmxd7IR/WKrXQ8TbMv7OqqOVLX1x0v9yykKqZeoUmg6f6mkS/QiHiGwG8BVXugHnDgI/8cw6EsJP+G+Bd8yHl1dIQ5QfufDWDdTBEGKMSLQzJ484orZjh1phkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X8YhopaT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BFD2C4CEE7;
+	Mon,  3 Nov 2025 03:16:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762139770;
+	bh=q+uKLEAXf2uLQtF4OkAZ7zdOsNGLQtv7zATZ7AydPrc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=X8YhopaTexz0VzaZilFrwr9sXcLAPQxfok5OBDssfz2JO9AGkFSfBvfFoiiD+Czes
+	 m1QXkTuoWNfIB3vzkwyrGQ/H9NvsKG6zU//FdqyiaGttl5hnjnqlYH4nIQ+mMst1cx
+	 DJ/Yposizph2yqpQRn+RwlIa2qiZn3hAbqosh5sEgmJbOA0EcqCfnjm3b7GrtYN52D
+	 TA/kxhAvLGYovhYT7SZ3r3CInx3NPJ9UgS46jOoFBJ6D0tx5SI+uBTaakKf3G8FefD
+	 jGIyI8LX+gxgPE00fRPSkEnR8Gpn30k1SzmpzpwubP7IH3xl1wnx8kUwmPcyEUjzGC
+	 ZUIEDoB2kZmKw==
+Date: Mon, 3 Nov 2025 12:16:06 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: rostedt@goodmis.org, jolsa@kernel.org, mathieu.desnoyers@efficios.com,
+ jiang.biao@linux.dev, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] tracing: fprobe: use ftrace if
+ CONFIG_DYNAMIC_FTRACE_WITH_ARGS
+Message-Id: <20251103121606.bb5b1405e1e64267f7f3ebe5@kernel.org>
+In-Reply-To: <20251031024038.19176-1-dongml2@chinatelecom.cn>
+References: <20251031024038.19176-1-dongml2@chinatelecom.cn>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-When chan->direct_xmit is true, and no compressors are in use, PPP
-prepends its header to a skb, and calls dev_queue_xmit directly. In this
-mode the skb does not need to be linearized.
-Enable NETIF_F_SG and NETIF_F_FRAGLIST, and add
-ppp_update_dev_features() to conditionally disable them if a linear skb
-is required. This is required to support PPPoE GSO.
+On Fri, 31 Oct 2025 10:40:38 +0800
+Menglong Dong <menglong8.dong@gmail.com> wrote:
 
-Signed-off-by: Qingfang Deng <dqfext@gmail.com>
----
-v1 -> v2:
- Changes dev->features under the TX spinlock to avoid races.
- - https://lore.kernel.org/netdev/20250912095928.1532113-1-dqfext@gmail.com/
+> For now, we will use ftrace for the fprobe if fp->exit_handler not exists
+> and CONFIG_DYNAMIC_FTRACE_WITH_REGS is enabled.
+> 
+> However, CONFIG_DYNAMIC_FTRACE_WITH_REGS is not supported by some arch,
+> such as arm. What we need in the fprobe is the function arguments, so we
+> can use ftrace for fprobe if CONFIG_DYNAMIC_FTRACE_WITH_ARGS is enabled.
+> 
+> Therefore, use ftrace if CONFIG_DYNAMIC_FTRACE_WITH_REGS or
+> CONFIG_DYNAMIC_FTRACE_WITH_ARGS enabled.
+> 
+> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> ---
+> v2:
+> - remove the definition of FPROBE_USE_FTRACE
+> ---
+>  kernel/trace/fprobe.c | 30 +++++++++++++++++++-----------
+>  1 file changed, 19 insertions(+), 11 deletions(-)
+> 
+> diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
+> index ecd623eef68b..742ad5a61d46 100644
+> --- a/kernel/trace/fprobe.c
+> +++ b/kernel/trace/fprobe.c
+> @@ -44,6 +44,7 @@
+>  static struct hlist_head fprobe_table[FPROBE_TABLE_SIZE];
+>  static struct rhltable fprobe_ip_table;
+>  static DEFINE_MUTEX(fprobe_mutex);
+> +static struct fgraph_ops fprobe_graph_ops;
+>  
+>  static u32 fprobe_node_hashfn(const void *data, u32 len, u32 seed)
+>  {
+> @@ -254,7 +255,7 @@ static inline int __fprobe_kprobe_handler(unsigned long ip, unsigned long parent
+>  	return ret;
+>  }
+>  
+> -#ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
+> +#if defined(CONFIG_DYNAMIC_FTRACE_WITH_ARGS) || defined(CONFIG_DYNAMIC_FTRACE_WITH_REGS)
+>  /* ftrace_ops callback, this processes fprobes which have only entry_handler. */
+>  static void fprobe_ftrace_entry(unsigned long ip, unsigned long parent_ip,
+>  	struct ftrace_ops *ops, struct ftrace_regs *fregs)
+> @@ -295,7 +296,7 @@ NOKPROBE_SYMBOL(fprobe_ftrace_entry);
+>  
+>  static struct ftrace_ops fprobe_ftrace_ops = {
+>  	.func	= fprobe_ftrace_entry,
+> -	.flags	= FTRACE_OPS_FL_SAVE_REGS,
+> +	.flags	= FTRACE_OPS_FL_SAVE_ARGS,
+>  };
+>  static int fprobe_ftrace_active;
+>  
+> @@ -335,6 +336,13 @@ static bool fprobe_is_ftrace(struct fprobe *fp)
+>  {
+>  	return !fp->exit_handler;
+>  }
+> +
 
- drivers/net/ppp/ppp_generic.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+Ah, the new function depends on MODULES. 
 
-diff --git a/drivers/net/ppp/ppp_generic.c b/drivers/net/ppp/ppp_generic.c
-index 854e1a95d29a..389542f0af5f 100644
---- a/drivers/net/ppp/ppp_generic.c
-+++ b/drivers/net/ppp/ppp_generic.c
-@@ -498,6 +498,17 @@ static ssize_t ppp_read(struct file *file, char __user *buf,
- 	return ret;
- }
- 
-+static void ppp_update_dev_features(struct ppp *ppp)
-+{
-+	struct net_device *dev = ppp->dev;
-+
-+	if (!(dev->priv_flags & IFF_NO_QUEUE) || ppp->xc_state ||
-+	    ppp->flags & (SC_COMP_TCP | SC_CCP_UP))
-+		dev->features &= ~(NETIF_F_SG | NETIF_F_FRAGLIST);
-+	else
-+		dev->features |= NETIF_F_SG | NETIF_F_FRAGLIST;
-+}
-+
- static bool ppp_check_packet(struct sk_buff *skb, size_t count)
- {
- 	/* LCP packets must include LCP header which 4 bytes long:
-@@ -824,6 +835,7 @@ static long ppp_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 	case PPPIOCSFLAGS:
- 		if (get_user(val, p))
- 			break;
-+		rtnl_lock();
- 		ppp_lock(ppp);
- 		cflags = ppp->flags & ~val;
- #ifdef CONFIG_PPP_MULTILINK
-@@ -834,6 +846,12 @@ static long ppp_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 		ppp_unlock(ppp);
- 		if (cflags & SC_CCP_OPEN)
- 			ppp_ccp_closed(ppp);
-+
-+		ppp_xmit_lock(ppp);
-+		ppp_update_dev_features(ppp);
-+		ppp_xmit_unlock(ppp);
-+		netdev_update_features(ppp->dev);
-+		rtnl_unlock();
- 		err = 0;
- 		break;
- 
-@@ -1650,6 +1668,8 @@ static void ppp_setup(struct net_device *dev)
- 	dev->flags = IFF_POINTOPOINT | IFF_NOARP | IFF_MULTICAST;
- 	dev->priv_destructor = ppp_dev_priv_destructor;
- 	dev->pcpu_stat_type = NETDEV_PCPU_STAT_TSTATS;
-+	dev->features = NETIF_F_SG | NETIF_F_FRAGLIST;
-+	dev->hw_features = dev->features;
- 	netif_keep_dst(dev);
- }
- 
-@@ -3112,13 +3132,17 @@ ppp_set_compress(struct ppp *ppp, struct ppp_option_data *data)
- 	if (data->transmit) {
- 		state = cp->comp_alloc(ccp_option, data->length);
- 		if (state) {
-+			rtnl_lock();
- 			ppp_xmit_lock(ppp);
- 			ppp->xstate &= ~SC_COMP_RUN;
- 			ocomp = ppp->xcomp;
- 			ostate = ppp->xc_state;
- 			ppp->xcomp = cp;
- 			ppp->xc_state = state;
-+			ppp_update_dev_features(ppp);
- 			ppp_xmit_unlock(ppp);
-+			netdev_update_features(ppp->dev);
-+			rtnl_unlock();
- 			if (ostate) {
- 				ocomp->comp_free(ostate);
- 				module_put(ocomp->owner);
-@@ -3539,6 +3563,7 @@ ppp_connect_channel(struct channel *pch, int unit)
- 
- 	pn = ppp_pernet(pch->chan_net);
- 
-+	rtnl_lock();
- 	mutex_lock(&pn->all_ppp_mutex);
- 	ppp = ppp_find_unit(pn, unit);
- 	if (!ppp)
-@@ -3562,6 +3587,7 @@ ppp_connect_channel(struct channel *pch, int unit)
- 		ppp->dev->priv_flags |= IFF_NO_QUEUE;
- 	else
- 		ppp->dev->priv_flags &= ~IFF_NO_QUEUE;
-+	ppp_update_dev_features(ppp);
- 	spin_unlock_bh(&pch->downl);
- 	if (pch->file.hdrlen > ppp->file.hdrlen)
- 		ppp->file.hdrlen = pch->file.hdrlen;
-@@ -3579,6 +3605,10 @@ ppp_connect_channel(struct channel *pch, int unit)
- 	spin_unlock(&pch->upl);
-  out:
- 	mutex_unlock(&pn->all_ppp_mutex);
-+	if (ret == 0)
-+		netdev_update_features(ppp->dev);
-+	rtnl_unlock();
-+
- 	return ret;
- }
- 
+#ifdef CONFIG_MODULES
+
+> +static void fprobe_set_ips(unsigned long *ips, unsigned int cnt, int remove,
+> +			   int reset)
+> +{
+> +	ftrace_set_filter_ips(&fprobe_graph_ops.ops, ips, cnt, remove, reset);
+> +	ftrace_set_filter_ips(&fprobe_ftrace_ops, ips, cnt, remove, reset);
+> +}
+
+#endif	/* CONFIG_MODULES */
+
+>  #else
+
+#ifdef CONFIG_MODULES
+
+>  static int fprobe_ftrace_add_ips(unsigned long *addrs, int num)
+>  {
+> @@ -349,7 +357,13 @@ static bool fprobe_is_ftrace(struct fprobe *fp)
+>  {
+>  	return false;
+>  }
+
+#endif	/* CONFIG_MODULES */
+
+are needed.
+
+Thank you,
+
+> -#endif
+> +
+> +static void fprobe_set_ips(unsigned long *ips, unsigned int cnt, int remove,
+> +			   int reset)
+> +{
+> +	ftrace_set_filter_ips(&fprobe_graph_ops.ops, ips, cnt, remove, reset);
+> +}
+> +#endif /* !CONFIG_DYNAMIC_FTRACE_WITH_ARGS && !CONFIG_DYNAMIC_FTRACE_WITH_REGS */
+>  
+>  /* fgraph_ops callback, this processes fprobes which have exit_handler. */
+>  static int fprobe_fgraph_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
+> @@ -596,14 +610,8 @@ static int fprobe_module_callback(struct notifier_block *nb,
+>  	} while (node == ERR_PTR(-EAGAIN));
+>  	rhashtable_walk_exit(&iter);
+>  
+> -	if (alist.index > 0) {
+> -		ftrace_set_filter_ips(&fprobe_graph_ops.ops,
+> -				      alist.addrs, alist.index, 1, 0);
+> -#ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
+> -		ftrace_set_filter_ips(&fprobe_ftrace_ops,
+> -				      alist.addrs, alist.index, 1, 0);
+> -#endif
+> -	}
+> +	if (alist.index > 0)
+> +		fprobe_set_ips(alist.addrs, alist.index, 1, 0);
+>  	mutex_unlock(&fprobe_mutex);
+>  
+>  	kfree(alist.addrs);
+> -- 
+> 2.51.2
+> 
+
+
 -- 
-2.43.0
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
