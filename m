@@ -1,171 +1,181 @@
-Return-Path: <linux-kernel+bounces-883142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7745C2CA32
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:18:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A3733C2CBE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:32:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 206013AAEF7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:01:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F0EA42677F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7CE32861E;
-	Mon,  3 Nov 2025 14:48:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19FE132D0E7;
+	Mon,  3 Nov 2025 14:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FYszmzmh";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="y+OH+W0k"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ug8gqS9s";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="RyaWd2qm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7EF314D15;
-	Mon,  3 Nov 2025 14:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8513632C936
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 14:50:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762181297; cv=none; b=W4IqY/KWFPhUMRboJGFPT8DDiCsBe785eRWWDBYiR+uMyCIX13iKhMtQcMYJZoRMF6n6r1PZvbHUmkMb9COfbQE+FqhGW1PCPKvxxYCyJYQTljEYzQowZnMzVelbKJqj/OsiiGc75VXLGECK7QMcxgqYG5PLngHf1bPOLyT9aBs=
+	t=1762181417; cv=none; b=Cc0xH2Cqg2F0zqTyX0LgiJDK51eaVKWIue0gHXBjOW8D3/z+2BjcGtRBY4W/K832F7mCgdX4dEvXMxHH4i7CUi56XugFngFlQIJBnY8paPHk2NvATYyoOJVhC9J70OevaYL90K3dJ8D3c0P8ocmYMJB7X2/XVcVKZNWlYyB66B4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762181297; c=relaxed/simple;
-	bh=UysfJMIe/bn/3ljyPqmpAgbo4+BOlB8x2Eh2MjCVTX4=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=ovs+RgZgCJ0tpzdfmA1urzbZ7mhoJL7xvpgsCHYzOk9gSF8c5PN7pC7Yem5X3QfDoJDzku+K/VzkpuDQQdbwvWEWjHRL5mhn2bMw8XBvSSpBsfOVV2TbttnodesjJ9nsYKGhi2AEjTeG51Q09NVLApqEpbEYvtkXwqb76ASFhq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FYszmzmh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=y+OH+W0k; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 03 Nov 2025 14:48:13 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762181294;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
+	s=arc-20240116; t=1762181417; c=relaxed/simple;
+	bh=awDPBHUqeWdiCTx68GRboOT/DtuaFpnsr65AopF29ug=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Pk0PaxfvHBwcKzmbBkK01KgHj94b5jBzkR6p2hkgseP3sEeTS/BQR9MucvkfzXUkkdeCXOqHtrxcHbW+QOG4BSv4e1pOPHagwWtRY4Y7Pvy8UTb2stZZ8dx0Qyd/HvHBohWoNl0WSSX3iYZBQ0RtDFBaeQjQknNraQvAVLP1Rb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ug8gqS9s; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=RyaWd2qm; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762181414;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=oUpr2u7CDyfQkJlmvdQoguV5PDCjMrOOovcN5lk0b2o=;
-	b=FYszmzmhhJxMfYwCUW0SbuSy0E2Gqb3Qw0IenkomHfJ/MQ6Mm46ss61h/bj1frnQDrhQyG
-	zR0VJ3Vqx7Pu04iv4la21C2XQmTf+JnGsQmIm157QMsjcxGN7ktTgENTWcYPTkaepFlyYX
-	6kryqDQlsehD2gr7hKPeO9rrf/H/0nzuxp4w/FdGXjFX7rhrcam7+O4m11eTU82qSY90e6
-	ruZvsPR+42Kbk/TYsfEBDNCm8wOarvDhzQdghO/BMon6wYhKBz8vig5pawBJvxCVU9iDfj
-	HI+vD9d1U8lC9N+5CLs60xFhdibYOp5pui5C2F4Dhuw4Hq9Y2EzgHG95a0OKEA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762181294;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oUpr2u7CDyfQkJlmvdQoguV5PDCjMrOOovcN5lk0b2o=;
-	b=y+OH+W0k5BJqT+YsJaT2SbGjk0SgPrVGUTiLbtplqgTUpZuRxhxx/Y4ETzJqvxm7QwkrUU
-	R1rAVVbWI842F2Cg==
-From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: core/rseq] ARM: uaccess: Implement missing __get_user_asm_dword()
-Cc: kernel test robot <lkp@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20251027083745.168468637@linutronix.de>
-References: <20251027083745.168468637@linutronix.de>
+	bh=+nMoLQg870a5vLIr0xXAcHBID4BH0thIsNlUoCS1bvw=;
+	b=Ug8gqS9su/aU0N8qi1i2oD2RafyXlxx5QeX2qAFzg/pQuJBwu6wyPV/23dbkyDXhRhfE5k
+	rNh+YCShaNkIQZr3njTQlaO+hEKHMgo/owMOf4hO3UdbXMjESZQFPLJxfZzH3dgSv/aDvI
+	WxDdmCMakwojWlqHPmRNFR6yrE3psJg=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-443-wDQSWhtXNIa-Qdb4Emt6RQ-1; Mon, 03 Nov 2025 09:50:13 -0500
+X-MC-Unique: wDQSWhtXNIa-Qdb4Emt6RQ-1
+X-Mimecast-MFC-AGG-ID: wDQSWhtXNIa-Qdb4Emt6RQ_1762181412
+Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-640c4609713so2103968a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 06:50:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=redhat.com; s=google; t=1762181412; x=1762786212; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+nMoLQg870a5vLIr0xXAcHBID4BH0thIsNlUoCS1bvw=;
+        b=RyaWd2qmMgLNxTEMP+ty7Hf7+cPTiZbtYEZrbVlO5TCfB5ecEWMIgphfpThCwMzPk2
+         CKGLsyeGz4mjIXYVawPbk3kfmpTVVOhno2tLd/+QP9NgFDiOEghCaFaSKI3VREeM7sBf
+         0U91Mt2+hDO+jKrv4fXEcY+y0zVHcoGCa10Mo+KzHQ/QvfmUfY6neKC8sx/Be6gE99aV
+         JjhLNkdAFVzQBA950JK0ynx+/Ypg1zCaZLz9hwFEAyWFJ4Ki+5oSlrNv/U84tOWOCAAd
+         aTWnn/a9ozB6Z4Ktyze8X/yrGYEtRyBxki0m2v1suGKa6BZMw56FewcGoiqvVOfdOS6H
+         YTjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762181412; x=1762786212;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+nMoLQg870a5vLIr0xXAcHBID4BH0thIsNlUoCS1bvw=;
+        b=pNk+diazcs8WlMuYaMvi821TczbQ3zfY9kY7WdjsCyfVB3nX8M606rRAwGOQAACSKX
+         VtbcPCalRh2oP3rzK7zL60zCA1Y2f1trDfWIIAE2EUKnVNMAIk7fz4wEH1BjK9mRUYwm
+         TadRQX8Wk1bG+n5UIUoBWDYjoFR9Oy77d9hm1T4p/efUM+O/h4BpMXpkFIGaoZUJH9nY
+         EPvx/F3ZzyA4QboP1yoLJzLc37L131jj+91e5Ws2GY+UAeBboEcWaSM79+WNxox1zJIl
+         BA52qk/krJlW7uyE0LcNyQhQFoXmdOPVr+hx3daVW1288smAa/w5Gl968IJFVKv/0ex6
+         bG6g==
+X-Forwarded-Encrypted: i=1; AJvYcCW0fRUOSvU6EcYUDEALOIX7zuq3KFVGRO/EvZNJqw6gtdfBZM4fWgvwQjLEkv7OPGbMTMKxhziqa5Y0uRw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykUo89SEH3i0iiz7WYocCnn3NvhMMPqLbAZqSbH+wlRDhqWfMt
+	hJtqWK4/q8wK1vjKToKagiwYbOCnfP7m5Araoj3i0rLayJXxg6rfGMjNBjFxW/kz7pybXYuJcNo
+	yNBT+YuoYYJ0GznmPTJXa7vyb3RXJluTqYjhaP4HA4nsIQckgrG6tT2DbORTrT5PTDQ==
+X-Gm-Gg: ASbGncs4gJkXUgfuQkhXGTGMVtn65ByoC7qCBvNMAeYTTMvgaxcbMqhZveLSCHPLvEG
+	eYokE6nuD0EptUHL7jOCLUAd474PiA33ZbOf935uVrRkkIZutwGSEvOS2MI8rs/efyOWI2gHPPb
+	DxkvWr8vBZXvbgcWzddFSZCVi5ILQ4kZfSihFmg8X/jGnrOwZbgvIRYA+oMxC0oA3lia468ZKFC
+	8ZIPhnNfwm/1IAf7+g4BP2oPSlH+nD5izDAAQkMokPgaO+xffIFbCHvdijgYqWyxx/9pl+NbLFl
+	PPL0UI2gHamTdeTcNi48X0ZTA9HJrSkOaRelzZORfwHfdaZ99w1G3xG7a10usDk1pqJ1yoWbdle
+	8oXJOvMPD8IG2Uxwzb3p/Fn4=
+X-Received: by 2002:a05:6402:34ca:b0:640:b497:bf71 with SMTP id 4fb4d7f45d1cf-640b497c2admr4755525a12.8.1762181411921;
+        Mon, 03 Nov 2025 06:50:11 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHNHHGCfan3xN8hz0VQLwH+oMIT11J2vhXom0DZu1MBhk6Duw5v6C2YzkNLZvnmt+vEeRS3LQ==
+X-Received: by 2002:a05:6402:34ca:b0:640:b497:bf71 with SMTP id 4fb4d7f45d1cf-640b497c2admr4755480a12.8.1762181411457;
+        Mon, 03 Nov 2025 06:50:11 -0800 (PST)
+Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-640b977e6acsm4056741a12.25.2025.11.03.06.50.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Nov 2025 06:50:10 -0800 (PST)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+	id B7D07328476; Mon, 03 Nov 2025 15:50:09 +0100 (CET)
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To: Byungchul Park <byungchul@sk.com>
+Cc: linux-mm@kvack.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+ harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
+ davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
+ john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
+ leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
+ andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
+ akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+ surenb@google.com, mhocko@suse.com, horms@kernel.org, jackmanb@google.com,
+ hannes@cmpxchg.org, ziy@nvidia.com, ilias.apalodimas@linaro.org,
+ willy@infradead.org, brauner@kernel.org, kas@kernel.org,
+ yuzhao@google.com, usamaarif642@gmail.com, baolin.wang@linux.alibaba.com,
+ almasrymina@google.com, asml.silence@gmail.com, bpf@vger.kernel.org,
+ linux-rdma@vger.kernel.org, sfr@canb.auug.org.au, dw@davidwei.uk,
+ ap420073@gmail.com, dtatulea@nvidia.com
+Subject: Re: [RFC mm v5 2/2] mm: introduce a new page type for page pool in
+ page type
+In-Reply-To: <20251103123942.GA64460@system.software.com>
+References: <20251103075108.26437-1-byungchul@sk.com>
+ <20251103075108.26437-3-byungchul@sk.com> <87jz07pajq.fsf@toke.dk>
+ <20251103123942.GA64460@system.software.com>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date: Mon, 03 Nov 2025 15:50:09 +0100
+Message-ID: <87h5vbp3vi.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176218129319.2601451.17735585075234538848.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the core/rseq branch of tip:
+Byungchul Park <byungchul@sk.com> writes:
 
-Commit-ID:     44c5b6768e3a1385fdf3b10893404bc5a2c1248a
-Gitweb:        https://git.kernel.org/tip/44c5b6768e3a1385fdf3b10893404bc5a2c=
-1248a
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Mon, 27 Oct 2025 09:43:42 +01:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Mon, 03 Nov 2025 15:26:09 +01:00
+> On Mon, Nov 03, 2025 at 01:26:01PM +0100, Toke H=C3=B8iland-J=C3=B8rgense=
+n wrote:
+>> Byungchul Park <byungchul@sk.com> writes:
+>>=20
+>> > Currently, the condition 'page->pp_magic =3D=3D PP_SIGNATURE' is used =
+to
+>> > determine if a page belongs to a page pool.  However, with the planned
+>> > removal of ->pp_magic, we should instead leverage the page_type in
+>> > struct page, such as PGTY_netpp, for this purpose.
+>> >
+>> > Introduce and use the page type APIs e.g. PageNetpp(), __SetPageNetpp(=
+),
+>> > and __ClearPageNetpp() instead, and remove the existing APIs accessing
+>> > ->pp_magic e.g. page_pool_page_is_pp(), netmem_or_pp_magic(), and
+>> > netmem_clear_pp_magic().
+>> >
+>> > This work was inspired by the following link:
+>> >
+>> > [1] https://lore.kernel.org/all/582f41c0-2742-4400-9c81-0d46bf4e8314@g=
+mail.com/
+>> >
+>> > While at it, move the sanity check for page pool to on free.
+>> >
+>> > Suggested-by: David Hildenbrand <david@redhat.com>
+>> > Co-developed-by: Pavel Begunkov <asml.silence@gmail.com>
+>> > Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+>> > Signed-off-by: Byungchul Park <byungchul@sk.com>
+>> > Acked-by: David Hildenbrand <david@redhat.com>
+>> > Acked-by: Zi Yan <ziy@nvidia.com>
+>> > Acked-by: Mina Almasry <almasrymina@google.com>
+>>=20
+>> Acked-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
+>>=20
+>> IIUC, this will allow us to move the PP-specific fields out of struct
+>> page entirely at some point, right? What are the steps needed to get to
+>> that point after this?
+>
+> Yes, it'd be almost done once this set gets merged :-)
+>
+> Will check if I can safely remove pp fields from struct page, and do
+> it!
 
-ARM: uaccess: Implement missing __get_user_asm_dword()
+Sounds good, thanks!
 
-When CONFIG_CPU_SPECTRE=3Dn then get_user() is missing the 8 byte ASM variant
-for no real good reason. This prevents using get_user(u64) in generic code.
+-Toke
 
-Implement it as a sequence of two 4-byte reads with LE/BE awareness and
-make the unsigned long (or long long) type for the intermediate variable to
-read into dependend on the the target type.
-
-The __long_type() macro and idea was lifted from PowerPC. Thanks to
-Christophe for pointing it out.
-
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202509120155.pFgwfeUD-lkp@intel=
-.com/
-Link: https://patch.msgid.link/20251027083745.168468637@linutronix.de
----
- arch/arm/include/asm/uaccess.h | 26 +++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/include/asm/uaccess.h b/arch/arm/include/asm/uaccess.h
-index f90be31..d6ae80b 100644
---- a/arch/arm/include/asm/uaccess.h
-+++ b/arch/arm/include/asm/uaccess.h
-@@ -283,10 +283,17 @@ extern int __put_user_8(void *, unsigned long long);
- 	__gu_err;							\
- })
-=20
-+/*
-+ * This is a type: either unsigned long, if the argument fits into
-+ * that type, or otherwise unsigned long long.
-+ */
-+#define __long_type(x) \
-+	__typeof__(__builtin_choose_expr(sizeof(x) > sizeof(0UL), 0ULL, 0UL))
-+
- #define __get_user_err(x, ptr, err, __t)				\
- do {									\
- 	unsigned long __gu_addr =3D (unsigned long)(ptr);			\
--	unsigned long __gu_val;						\
-+	__long_type(x) __gu_val;					\
- 	unsigned int __ua_flags;					\
- 	__chk_user_ptr(ptr);						\
- 	might_fault();							\
-@@ -295,6 +302,7 @@ do {									\
- 	case 1:	__get_user_asm_byte(__gu_val, __gu_addr, err, __t); break;	\
- 	case 2:	__get_user_asm_half(__gu_val, __gu_addr, err, __t); break;	\
- 	case 4:	__get_user_asm_word(__gu_val, __gu_addr, err, __t); break;	\
-+	case 8:	__get_user_asm_dword(__gu_val, __gu_addr, err, __t); break;	\
- 	default: (__gu_val) =3D __get_user_bad();				\
- 	}								\
- 	uaccess_restore(__ua_flags);					\
-@@ -353,6 +361,22 @@ do {									\
- #define __get_user_asm_word(x, addr, err, __t)			\
- 	__get_user_asm(x, addr, err, "ldr" __t)
-=20
-+#ifdef __ARMEB__
-+#define __WORD0_OFFS	4
-+#define __WORD1_OFFS	0
-+#else
-+#define __WORD0_OFFS	0
-+#define __WORD1_OFFS	4
-+#endif
-+
-+#define __get_user_asm_dword(x, addr, err, __t)				\
-+	({								\
-+	unsigned long __w0, __w1;					\
-+	__get_user_asm(__w0, addr + __WORD0_OFFS, err, "ldr" __t);	\
-+	__get_user_asm(__w1, addr + __WORD1_OFFS, err, "ldr" __t);	\
-+	(x) =3D ((u64)__w1 << 32) | (u64) __w0;				\
-+})
-+
- #define __put_user_switch(x, ptr, __err, __fn)				\
- 	do {								\
- 		const __typeof__(*(ptr)) __user *__pu_ptr =3D (ptr);	\
 
