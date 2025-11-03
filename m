@@ -1,207 +1,402 @@
-Return-Path: <linux-kernel+bounces-883314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5157C2D19D
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:25:20 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7544C2D0D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:17:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68F4C3BC566
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:16:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F2B6C4EA9C5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597AA315D5A;
-	Mon,  3 Nov 2025 16:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0B8315D41;
+	Mon,  3 Nov 2025 16:16:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UqfDVAnV";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="f+IowJFu"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="n1LDMBck"
+Received: from CY3PR05CU001.outbound.protection.outlook.com (mail-westcentralusazhn15013063.outbound.protection.outlook.com [52.102.133.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB092836A4
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:16:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762186586; cv=none; b=AlhCyviFXFI9Af6iZaCT0WzLsMKwL6Qo/fz61uqaBDWAprNWsPoPNUm/O37pomvgm8O2v6OqgH7ejqP/puLMC48HlVHF8Y/AspQF90yMeO5o/moR/3lxkTYHJPLRk87fzAI/r9s0Yo2qkNW2GyTP7jJV5KQXhHLzuI3uXfifxWo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762186586; c=relaxed/simple;
-	bh=0jpXIqxzH2ZZX5QeF7Q7S5vGPUY9pP98uq1sW5fKLNY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UeP19prPVSB5C60jcGUs0MAfaQttrUWBUQl5gL197jlx7olGyjYJVtFySF2dKKVT5PlD4c/6E8f1qQdKM7aVYhaBQAjtCDBR44VZSkUXl2n63URAKSd5IwtMBn1yFuvM4HF7TCvUaSuO7wjV9P5W1rp3hpbD4wcQC0fJoj2JO8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UqfDVAnV; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=f+IowJFu; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A3G4fTv564683
-	for <linux-kernel@vger.kernel.org>; Mon, 3 Nov 2025 16:16:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	LdcvW589MblNcpGME+8yqSm+KMPX7JkIf/mEmjfl5nE=; b=UqfDVAnVnTRhkPiM
-	suknEGR1qO7C1SYTpu/u0kars0WkplsSC5ZSQ2yXsVdosiqL5FQRyLr54OghBKDf
-	kjattXM3nlWZDFmK21oh59wzx2Rl5BCocLPK61SyLGtQ4MuKPJd7+vULGPlRbrlx
-	acIEWCZk6sifaNwIlfUjaXWovOhxF3qrikO/M9caftbEJH5TpN/6jC1Jnsmu3AyD
-	f20jXrL/2gmAxwMK3shkza4Ji64Ic4kZ8I+ChfG7OXdVUEJGHsFUE52K778pG8ZB
-	ULcLJnr6WvO6TmhjYBNcIqw0+tLyRlr3oPGhiyhmJH34tMSynB++NPdbPge3kb/c
-	IOJSfA==
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a5bcm5578-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 16:16:24 +0000 (GMT)
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-78105c10afdso5431960b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 08:16:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762186583; x=1762791383; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LdcvW589MblNcpGME+8yqSm+KMPX7JkIf/mEmjfl5nE=;
-        b=f+IowJFuP5BzbUX7oDJBd1no/0kQpEvU6IUDAKTDJXL9zoZU7WGqWdUNySzJucNK1O
-         1gwSHY2NKaSEhmAfzytzoQWBoPf19MIheSy8N2sg0ighkxc8jZtLR3uNmqMdRlQO3YMn
-         9giSEsihg3UySBW0TpfccThB1eFBNwGMa60Nsh5QD4QpjQEnvFAboUAhA7RB0IzYX2GE
-         hzmWBlt/+XvfAvS3cCmQD0tEUDXde5vuouVGDRmrwiNkuRiaoV6pUWHiT8uF2wsuOnaw
-         qn3Po+C7zXZpzRkvg5vjYy9w2LY4yVtegX/lgbjVTqRyjNEe5giCWpOHdmDoDoRr0Fpr
-         U2Kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762186583; x=1762791383;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LdcvW589MblNcpGME+8yqSm+KMPX7JkIf/mEmjfl5nE=;
-        b=C/IYqA1KHjXuaJMjUPaJVdLpxSsOBFUzMQMHK8LQBHcSM1ke/qmwicL6qZMahqquPe
-         IT/jKofv+ME7tJ9CgukPeG1qXsNZG+s9X7nxHV2otzwDd+7MHoUow4SzWbylD0SyQkqO
-         koZwXj+ync4IHJ6kHiTyHdSmUGBWNQVuccCSqrpQZgnS/YaJ9KcpQTUpPBDgHhVdrvou
-         FX4IeS2/2snLiNJqrY2BHLhkh8NPDLH/cY0GgK+z4MfqnfTDjPWZSfgyDXT5FWEe+Rnd
-         JIo+dNH6MykcAMbZXakobi9UYYH8j9viqy+MjeyWYyQ2NRa2HWNFYng5hn8BVdjInCiE
-         2nVw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6bAzWmK1aEQ7SJ989dkFB+/xrpVNswizvV291btnT8f4875tKyuiCizMKLzQ3ObUezjzYnPzodvjhnDc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3U4KJNcaj1mhk3KqtKha0lZXJYB4ITioca+N14Gialckoj0KZ
-	hBw1A404XAzmKHETFpT/pOoMi/ZlUpvKJninKnetyEZiNKddX0eQ06JdaqAB49JxWG16KyiWKfA
-	bHIkpip4NTMUH7KAGMFrh7LhVYa+rK3PYu8F6WF1EgQQM7GTFy/OX4T0Gx1y6KNFfupeP0Pv1HQ
-	Y=
-X-Gm-Gg: ASbGncvZo/atye753ku4V78v37oNI8D47ggEDjBumpzCJf1jVZikKGrzmuCi7ee7s3f
-	6QaFxflH4Xwz2RryStGltKe80X1qzwpxbS5HGxOYMnZ1rZUJzQkj6cxrBUWMrzv7wVQi/iS6MH/
-	+pq9L4ciaC6i9qWi9a4WbcE4ab6RPNOqvu53tQQmnn/xpmbwJVoIkZyryY/lT/LPBll+0OtvWaF
-	NQr+TuJhf6hVlahFeQY50ylAnogkXHcRJlNEbRi+3r2YyCU+7hUdwZyg1UxLH8WaMjio9Xb+LHT
-	Mz0+xjKqhkBcIBj5zq1KBRIpWAQVSA5T7p79aMbe9zd8fQCTm58k9N6DGkH56PG34YIthfYqogJ
-	ioXDYvwUpT4jyZFj3z37s10YXKl04hwMdGg==
-X-Received: by 2002:a05:6a20:72a6:b0:2db:f868:22c with SMTP id adf61e73a8af0-348cd20baa6mr18430545637.40.1762186582795;
-        Mon, 03 Nov 2025 08:16:22 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF9/B6M7mt8CtWVyJzrPwOK0l0sUdXjqJsKuje1nItIKT6qHk3qWszOLI4NbHKTsmM4uDw2Mg==
-X-Received: by 2002:a05:6a20:72a6:b0:2db:f868:22c with SMTP id adf61e73a8af0-348cd20baa6mr18430496637.40.1762186582187;
-        Mon, 03 Nov 2025 08:16:22 -0800 (PST)
-Received: from [10.216.41.187] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a7d8e6fa5bsm11885136b3a.27.2025.11.03.08.16.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Nov 2025 08:16:21 -0800 (PST)
-Message-ID: <da04aa57-f3dc-9bcd-5ba3-05088a6661ab@oss.qualcomm.com>
-Date: Mon, 3 Nov 2025 21:46:17 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417DB277013
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.102.133.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762186607; cv=fail; b=gIZVtZvsJpPiABGj6Ia0mjjSWEuAxvXkBD2IWscnOjVYD21EC52rdNB126De+Drg+7OspHob5wxfr9RlYa5d7tLLsBt0xsSSrBiU80YBX9BB12YzulUpUQmCcKcEKvUHZD8SRjc821aUNkHNJipImHC4kbGHJoDaL/DRss0yOPQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762186607; c=relaxed/simple;
+	bh=40whBvZxN0ZQB/DGKDKC40/65qFcE7X+FSBGanvHpcw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Hls2Kt0B8dZshml6Ab1AgR4DLxjud4nAXpsSa2RC517yH/hi2ekTLBs0c4O4iGZQ8CWfKlz7WpwXCEngjxXuIBnE0GcWXSKFjHYofPoprA1/YMgUGPAtFIqi16Z+3nkQ9zOEe+RVxysgXRf+sRxHuTWHP3bZi7eUQGgQUfAuxi8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=n1LDMBck; arc=fail smtp.client-ip=52.102.133.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tfTeXHApOCt7w1GtCZ+ULQXGQi8RGhmiFluO3YIa5CSttuGgEE4yym7i9QjhtAj8xMj8tpQUlxaYW6LPSJZm8VPh4g7OLt3xDckm00/WAA8/SHh91GP7DmgxBmeHWIhrOcqWaLTG9Sw6L0RlgbBtrS5P/KVr5d3nLIdwL+R5A2D1odLlGVROpg8O4IA2c/N4fQClFy6rChDRlRl2WwXbi6QenFSZGHygAwqlQugoWEClfVVMVcSboAYPwxaoCBswTPL3BmYScLtjf41mRTLpYSXfMqOVXYCkQI6gh0eYqftz4LC6PgeSeg/H6JxXwunptLp/yh8amfLEQdxNf1Ovog==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KEy4F2Op4GIxCicUBgqc9jfQ8diBdGFb9ONQGT8Cet0=;
+ b=SFuoJ7+OkKAP+oa0EaFfnrDWmlGUROzLhUMv0bUqZi1mNxrJ2Hw2K46MttdW43ljvKuCQQhtgxMFSTR2xGSBBFECPESeyJ/uDInqzFKzMv+ewBmVELBt6lJ4PnZJdWTF8w5L4XjSuoEo8K0wpoSi2kUpeBSL9uMzeDoObmelN+fFI1BStF8iRU2xM3ovutBO0Ft/1Gh+TslmeBEPjiq13GvK1SQGevuaEUpfJmMshHeOUBBtWPrdVATc3tH94uenHbncSPsZKF30pcJj52HtGTtVs390Vniy/W4g5pXUNPfU0+DsgBvVXxU0ZzTM3sGK9wOsteocqC/TMvg4aQi6rg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.21.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KEy4F2Op4GIxCicUBgqc9jfQ8diBdGFb9ONQGT8Cet0=;
+ b=n1LDMBck2uE5n5dFZiS5Pnm4MY/2NwLqpa2Kxkb1Nc1Pw0zAQJ/zlT6kWeuCsRvkNGsh2tqT3gbhlIouOz9Vo6MOKXDTLHJW56F7cnjlV6EyoB9zLtvJw6j3XGvZfPAi1e2oJhsqaRR3KoKwLQ0BFRZ7FbhQkojV4PmXMn1OvWg=
+Received: from MW4PR04CA0173.namprd04.prod.outlook.com (2603:10b6:303:85::28)
+ by MN0PR10MB5982.namprd10.prod.outlook.com (2603:10b6:208:3ca::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.14; Mon, 3 Nov
+ 2025 16:16:41 +0000
+Received: from MWH0EPF000A6734.namprd04.prod.outlook.com
+ (2603:10b6:303:85:cafe::ec) by MW4PR04CA0173.outlook.office365.com
+ (2603:10b6:303:85::28) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.16 via Frontend Transport; Mon,
+ 3 Nov 2025 16:16:19 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
+Received: from flwvzet200.ext.ti.com (198.47.21.194) by
+ MWH0EPF000A6734.mail.protection.outlook.com (10.167.249.26) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.6 via Frontend Transport; Mon, 3 Nov 2025 16:16:39 +0000
+Received: from DFLE204.ent.ti.com (10.64.6.62) by flwvzet200.ext.ti.com
+ (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 3 Nov
+ 2025 10:16:33 -0600
+Received: from DFLE209.ent.ti.com (10.64.6.67) by DFLE204.ent.ti.com
+ (10.64.6.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 3 Nov
+ 2025 10:16:32 -0600
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE209.ent.ti.com
+ (10.64.6.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Mon, 3 Nov 2025 10:16:32 -0600
+Received: from [10.249.128.225] ([10.249.128.225])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5A3GGRMf465222;
+	Mon, 3 Nov 2025 10:16:28 -0600
+Message-ID: <a921f0d9-b525-4cd0-9875-5d7cd2987419@ti.com>
+Date: Mon, 3 Nov 2025 21:46:26 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v8 2/3] firmware: qcom_scm: Support multiple waitq
- contexts
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RESEND PATCH v7 1/2] drm/tidss: Remove max_pclk_khz and
+ min_pclk_khz from tidss display features
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	<aradhya.bhatia@linux.dev>, <devarsht@ti.com>, <mripard@kernel.org>,
+	<jyri.sarha@iki.fi>, <maarten.lankhorst@linux.intel.com>, <simona@ffwll.ch>,
+	<airlied@gmail.com>, <tzimmermann@suse.de>, <h-shenoy@ti.com>
+CC: <praneeth@ti.com>, <u-kumar1@ti.com>, <vigneshr@ti.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20251028033958.369100-1-s-jain1@ti.com>
+ <20251028033958.369100-2-s-jain1@ti.com>
+ <bdfcd6b8-6799-4e7e-913e-528df322436a@ideasonboard.com>
 Content-Language: en-US
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Unnathi Chalicheemala <unnathi.chalicheemala@oss.qualcomm.com>
-References: <20251102-multi_waitq_scm-v8-0-d71ee7b93b62@oss.qualcomm.com>
- <20251102-multi_waitq_scm-v8-2-d71ee7b93b62@oss.qualcomm.com>
- <CAMRc=Mfh+WQx-vasZed6jWi5nUjg=K+ScVRBMCiFgK397=JbVg@mail.gmail.com>
-From: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
-In-Reply-To: <CAMRc=Mfh+WQx-vasZed6jWi5nUjg=K+ScVRBMCiFgK397=JbVg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAzMDE0NiBTYWx0ZWRfX2ggMtZFTcmKn
- d40jqdclNOFGexCCuYv/y62dSpFXuSBhj4yQuWixxa1vCg71TBjBW8teKYTM9KsVbzDpVvvAguE
- RcCGdLj+ckVynBcsKP9M2LLo96vz5xunEAYWtbGkxu0pEpleCkZISibzAk/dxsdfahNa1fZJHK4
- HfqU714wXLLOcRZck9dc/doN4BU1al/dkfhAJk8erE1VjcYuQnFLDGkyKmx1+zejSyrfGfTy4b5
- mecdcrQC98MKxk+S8sAWhzo57FBYCfGEo2P4F+6+zIPN+ahhA1tVKqcn5VAyNisi9X7FU2l1kPY
- 9jF6wP+X8xGIan9Ue5Ohb79SZOKFYct8t2/Rwsd8OImUTp0P+0k7aisTZTNVMFse8OkA8wK6RZa
- eQLeGTGdn5IsZFiflf5cJk3KLdya9A==
-X-Authority-Analysis: v=2.4 cv=EszfbCcA c=1 sm=1 tr=0 ts=6908d558 cx=c_pps
- a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=fzkneX8sAZvuw6kD2IUA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=OpyuDcXvxspvyRM73sMx:22
-X-Proofpoint-GUID: 19xi0w6MUPA5XM3frmftnw8sI65_l6YV
-X-Proofpoint-ORIG-GUID: 19xi0w6MUPA5XM3frmftnw8sI65_l6YV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-03_03,2025-11-03_02,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 adultscore=0 priorityscore=1501 spamscore=0 phishscore=0
- malwarescore=0 lowpriorityscore=0 suspectscore=0 clxscore=1015
- impostorscore=0 classifier=typeunknown authscore=0 authtc= authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511030146
+From: Swamil Jain <s-jain1@ti.com>
+In-Reply-To: <bdfcd6b8-6799-4e7e-913e-528df322436a@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000A6734:EE_|MN0PR10MB5982:EE_
+X-MS-Office365-Filtering-Correlation-Id: 01ff5254-ec4d-4d7d-c5f8-08de1af45eee
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|7416014|34020700016|36860700013|1800799024|921020|12100799066;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QVJQZ0ZIc3lNdDRTSnNESnQyOE5wbjFRZytoaXZUSURYbmVRWGhIaDhuTG9t?=
+ =?utf-8?B?L0Mvbi9qSmR5cGkrYW5VUlRhNWVGK0l4cFExamhuOEJnWXlHWmZwamhmUC9C?=
+ =?utf-8?B?eUk0WnRRMzFMUWdzb2FqeW5CZGZQcnh4c3VHNzFVVFJtR0YwbUVtSGhLN1ZO?=
+ =?utf-8?B?aWI0MGtDTUZUTEswaS92ZCtuZEEwcndnSENIWnU4ZU1MdGVnY21Ia3lJazhU?=
+ =?utf-8?B?SHFNaWZ1Ny9MLytzOWluRHliRVowa1I4enJZTzZKV2FmUlFLOFh3SEoxTDBX?=
+ =?utf-8?B?dVZWT1hhRGhDZlV1Sk5GUjVibUwzWXAwcFpLMVRPd2lNVE53N0ZVdXVTK2Yr?=
+ =?utf-8?B?VVVNdDhXaStxaGFXUXd0M056eWloUUNFN2hVckRuZU5ja3hnQmZDSmQ3eGU5?=
+ =?utf-8?B?Y0EveE9UVitlc1A0MWJZWlNnVVo4ZlgyNmRlN1Z6U2Jmc1dVSlVONXYzRXdw?=
+ =?utf-8?B?SzVjOFV3dUdXWVp6UkUvcEErQXFwTmhvKzlxazh6R2Vxc3RvajAzSFhwQUNz?=
+ =?utf-8?B?TVBqNHIyVW82bjFkSlRmcU9jNEVsS3hsNXp1V2RiUmFLUC9SSG9JVThiMkVB?=
+ =?utf-8?B?TytIWllzRmordUhWbW9oTm1xcjZ5NER0WnNDZlNuK1dtYjZxNW1TenRFY1FF?=
+ =?utf-8?B?TG90Y0ovV1pkSi9oNVNGQzhuTzBDZ2ttTm53UEN6cDlEU0NRd0JuNFplU3Av?=
+ =?utf-8?B?NmFMUE9jMWxrOGRkQ1pSNnNJRjdMRkRFMkY3dFVLT0RuZzV2VTN5ZG5vRXNT?=
+ =?utf-8?B?eW9ZZVo5SnBDSWNDREtWbmdZZVNRQlMwTktKK0p1Z2tncGw4MmNoRGRVZHdZ?=
+ =?utf-8?B?b3JnYzM0UWVvOExEWVE4T0VBYmJrK0tnWlkwR2pvT2E4ejNkT1ZhdUhCYVJJ?=
+ =?utf-8?B?MG9LYnZyMmwzN21kTlQ2WlZiRXNDSUsya0hLclg4cDZSbWhCY2cvUnRpWDVx?=
+ =?utf-8?B?dzc5VVZxTTlYMldMZGN6QngvRXk0UFoyWU5BRUpVOHpVOE1qQUtzTHVtNy9U?=
+ =?utf-8?B?ZGpLU3U2UlZXeVM3Sisvb084Q1lOR2czbXBIQUErS1FyT09IQ3RkTEcrWjNt?=
+ =?utf-8?B?UzMzcXZBQkU1alN1UzQ3bmNxeWN4NFViOWJnMi9xdG1NK1pBa2ZPU2pMMlNv?=
+ =?utf-8?B?cldwbnVsSFg3MzkzbXJ5RERWcGZaRVlvUE5yQ3krcWxMQmszWXF6dTNwN1JE?=
+ =?utf-8?B?dGhieENFUTRrQXU0MGtSeVM1cEJuME5mUnY4NEl1RnV2UE5uMFR1V1NNdmI5?=
+ =?utf-8?B?eGowWnJ3MHZCMDdtNk8vcnV5cnNaZEtyTG5JQ3dyamxUQUJrY05vd2hSOFlH?=
+ =?utf-8?B?ellrSFVjektra0crRWZtWTJQd05HbURwNnRKK1ZnbGszcHhKRXdSVHkwUnZ3?=
+ =?utf-8?B?RE5qTDdaWjdFNzdybmJ5RlVoQnpIdVIwVDU1S1ZvK2FhUmxERmRRUk5ra3dO?=
+ =?utf-8?B?SUNrZDdaYUdHRXNoTVlhZ29jVm1INWFYUDhjcHh6TUJjbW1jRmdGUUQzY0lI?=
+ =?utf-8?B?ejVtL2h4QlV6R0NQd20yajJ6RGJ6aUpzUjAzTmxEdWRhdlBJVkR0MG5TNFFU?=
+ =?utf-8?B?cy82ZER3VlNRUGF4bUQxTERxeUNjVE1Lem4zR1UyU1JDWjJYOE9pMkVCS3pv?=
+ =?utf-8?B?YitTb3JDUFptNitERHhDVjlWRERuR2FSYVJtaFJJQjJjWEFZMm5DS3hnd0dh?=
+ =?utf-8?B?aHFUdkhiSnRNSDdLbU9kdlhJU0ZDd3hZV2phazB5eVNDQktDd0Y2NThvUWlM?=
+ =?utf-8?B?d1N4aFcvckMvM0F5Y05CcC9xTFFMT3cwbDloUEg0V3VQZlF3b21YSVBsMHBD?=
+ =?utf-8?B?eXVtR1lKOGNvdDMzR1V1OHBLTVFocTZmd25mbFlrbzc3MXQrRzE5M091OUpG?=
+ =?utf-8?B?dkhWWWl6RFhRaW1SZE03T3hTZnBOWHlmSURVZzJTeVFKNm05Wkd0a0dBUndX?=
+ =?utf-8?B?Tk5LVm8zK0dTNjMzNVpEL01VbjVBcWtUc0w1UngrTjd3S1BmZy9EYUY5c1NE?=
+ =?utf-8?B?bzNldlJ4OWlDajIzaFVHWnQ2M2svL2VBL29MeGx1byt3cTlYUVpkNzZXSklz?=
+ =?utf-8?B?VUoydUpOSnNuWEF4UENFNytDc1FOdHV3R1A4ZTUzSmRxMTdtM0t5cGJqTGpB?=
+ =?utf-8?Q?BYlUPoFX/N/LvnsjmYtzrODS8?=
+X-Forefront-Antispam-Report:
+	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(376014)(82310400026)(7416014)(34020700016)(36860700013)(1800799024)(921020)(12100799066);DIR:OUT;SFP:1501;
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 16:16:39.9440
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 01ff5254-ec4d-4d7d-c5f8-08de1af45eee
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000A6734.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR10MB5982
 
+Hi Tomi,
 
-
-On 11/3/2025 9:16 PM, Bartosz Golaszewski wrote:
-> On Sun, Nov 2, 2025 at 9:19 AM Shivendra Pratap
-> <shivendra.pratap@oss.qualcomm.com> wrote:
->>
->> From: Unnathi Chalicheemala <unnathi.chalicheemala@oss.qualcomm.com>
->>
->> Currently, only a single waitqueue context exists in the driver.
->> Multi-waitqueue mechanism is added in firmware to support the case,
->> when multiple VMs make SMC calls or single VM making multiple calls on
->> same CPU. Enhance the driver to support multiple waitqueue when
->> support is present in the firmware.
->>
->> When VMs make a SMC call, firmware allocates a waitqueue context,
->> assuming the SMC call to be a blocking call. The SMC calls that cannot
->> acquire resources, while execution in firmware, are returned to sleep
->> in the calling VM. When the resource becomes available in the
->> firmware, the VM gets notified to wake the sleeping thread and resume
->> SMC call. The current qcom_scm driver supports single waitqueue as the
->> old firmwares support only single waitqueue with waitqueue id zero.
->> Multi-waitqueue mechanism is added in firmware starting SM8650 to
->> support the case when multiple VMs make SMC calls or single VM making
->> multiple calls on same CPU. To enable this support in qcom_scm driver,
->> add support for handling multiple waitqueues. For instance, SM8650
->> firmware can allocate two such waitq contexts, so the driver needs to
->> implement two waitqueue contexts. For a generalized approach, the
->> number of supported waitqueues can be queried from the firmware using
->> a SMC call.
->>
->> Introduce qcom_scm_query_waitq_count to get the number of waitqueue
->> contexts supported by the firmware and allocate “N” unique waitqueue
->> contexts with a dynamic sized array where each unique wq_ctx is
->> associated with a struct completion variable for easy lookup. Older
->> targets which support only a single waitqueue, may return an error for
->> qcom_scm_query_waitq_count, set the wq_cnt to one for such failures.
->>
->> Signed-off-by: Unnathi Chalicheemala <unnathi.chalicheemala@oss.qualcomm.com>
->> Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
->> ---
->>  drivers/firmware/qcom/qcom_scm.c | 75 ++++++++++++++++++++++++++++------------
->>  1 file changed, 53 insertions(+), 22 deletions(-)
->>
->> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
->> index 28979f95e51fbee94b84c1570a4d88a76f72db4e..0b6efa7c2bdc25a3ba152c25d5451d1154779ddd 100644
->> --- a/drivers/firmware/qcom/qcom_scm.c
->> +++ b/drivers/firmware/qcom/qcom_scm.c
->> @@ -47,7 +47,7 @@ struct qcom_scm {
->>         struct clk *iface_clk;
->>         struct clk *bus_clk;
->>         struct icc_path *path;
->> -       struct completion waitq_comp;
->> +       struct completion *waitq;
+On 03-11-2025 13:34, Tomi Valkeinen wrote:
+> Hi,
 > 
-> Why this change? This makes the name less descriptive if not misleading.
+> On 28/10/2025 05:39, Swamil Jain wrote:
+>> From: Jayesh Choudhary <j-choudhary@ti.com>
+>>
+>> The TIDSS hardware does not have independent maximum or minimum pixel
+>> clock limits for each video port. Instead, these limits are determined
+>> by the SoC's clock architecture. Previously, this constraint was
+>> modeled using the 'max_pclk_khz' and 'min_pclk_khz' fields in
+>> 'dispc_features', but this approach is static and does not account for
+>> the dynamic behavior of PLLs.
+>>
+>> This patch removes the 'max_pclk_khz' and 'min_pclk_khz' fields from
+>> 'dispc_features'. The correct way to check if a requested mode's pixel
+>> clock is supported is by using 'clk_round_rate()' in the 'mode_valid()'
+>> hook. If the best frequency match for the mode clock falls within the
+>> supported tolerance, it is approved. TIDSS supports a 5% pixel clock
+>> tolerance, which is now reflected in the validation logic.
+>>
+>> This change allows existing DSS-compatible drivers to be reused across
+>> SoCs that only differ in their pixel clock characteristics. The
+>> validation uses 'clk_round_rate()' for each mode, which may introduce
+>> additional delay (about 3.5 ms for 30 modes), but this is generally
+>> negligible. Users desiring faster validation may bypass these calls
+>> selectively, for example, checking only the highest resolution mode,
+>> as shown here[1].
+>>
+>> [1]: https://lore.kernel.org/all/20250704094851.182131-3-j-choudhary@ti.com/
+>>
+>> Tested-by: Michael Walle <mwalle@kernel.org>
+>> Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
+>> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+>> Signed-off-by: Swamil Jain <s-jain1@ti.com>
+>> ---
+>>   drivers/gpu/drm/tidss/tidss_dispc.c | 85 ++++++++++-------------------
+>>   drivers/gpu/drm/tidss/tidss_dispc.h |  3 -
+>>   2 files changed, 30 insertions(+), 58 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
+>> index d0b191c470ca..07731b02490f 100644
+>> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
+>> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
+>> @@ -57,12 +57,6 @@ static const u16 tidss_k2g_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
+>>   };
+>>   
+>>   const struct dispc_features dispc_k2g_feats = {
+>> -	.min_pclk_khz = 4375,
+>> -
+>> -	.max_pclk_khz = {
+>> -		[DISPC_VP_DPI] = 150000,
+>> -	},
+>> -
+>>   	/*
+>>   	 * XXX According TRM the RGB input buffer width up to 2560 should
+>>   	 *     work on 3 taps, but in practice it only works up to 1280.
+>> @@ -145,11 +139,6 @@ static const u16 tidss_am65x_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
+>>   };
+>>   
+>>   const struct dispc_features dispc_am65x_feats = {
+>> -	.max_pclk_khz = {
+>> -		[DISPC_VP_DPI] = 165000,
+>> -		[DISPC_VP_OLDI_AM65X] = 165000,
+>> -	},
+>> -
+>>   	.scaling = {
+>>   		.in_width_max_5tap_rgb = 1280,
+>>   		.in_width_max_3tap_rgb = 2560,
+>> @@ -245,11 +234,6 @@ static const u16 tidss_j721e_common_regs[DISPC_COMMON_REG_TABLE_LEN] = {
+>>   };
+>>   
+>>   const struct dispc_features dispc_j721e_feats = {
+>> -	.max_pclk_khz = {
+>> -		[DISPC_VP_DPI] = 170000,
+>> -		[DISPC_VP_INTERNAL] = 600000,
+>> -	},
+>> -
+>>   	.scaling = {
+>>   		.in_width_max_5tap_rgb = 2048,
+>>   		.in_width_max_3tap_rgb = 4096,
+>> @@ -316,11 +300,6 @@ const struct dispc_features dispc_j721e_feats = {
+>>   };
+>>   
+>>   const struct dispc_features dispc_am625_feats = {
+>> -	.max_pclk_khz = {
+>> -		[DISPC_VP_DPI] = 165000,
+>> -		[DISPC_VP_INTERNAL] = 170000,
+>> -	},
+>> -
+>>   	.scaling = {
+>>   		.in_width_max_5tap_rgb = 1280,
+>>   		.in_width_max_3tap_rgb = 2560,
+>> @@ -377,15 +356,6 @@ const struct dispc_features dispc_am625_feats = {
+>>   };
+>>   
+>>   const struct dispc_features dispc_am62a7_feats = {
+>> -	/*
+>> -	 * if the code reaches dispc_mode_valid with VP1,
+>> -	 * it should return MODE_BAD.
+>> -	 */
+>> -	.max_pclk_khz = {
+>> -		[DISPC_VP_TIED_OFF] = 0,
+>> -		[DISPC_VP_DPI] = 165000,
+>> -	},
+>> -
+>>   	.scaling = {
+>>   		.in_width_max_5tap_rgb = 1280,
+>>   		.in_width_max_3tap_rgb = 2560,
+>> @@ -442,10 +412,6 @@ const struct dispc_features dispc_am62a7_feats = {
+>>   };
+>>   
+>>   const struct dispc_features dispc_am62l_feats = {
+>> -	.max_pclk_khz = {
+>> -		[DISPC_VP_DPI] = 165000,
+>> -	},
+>> -
+>>   	.subrev = DISPC_AM62L,
+>>   
+>>   	.common = "common",
+>> @@ -1333,33 +1299,53 @@ static void dispc_vp_set_default_color(struct dispc_device *dispc,
+>>   			DISPC_OVR_DEFAULT_COLOR2, (v >> 32) & 0xffff);
+>>   }
+>>   
+>> +/*
+>> + * Calculate the percentage difference between the requested pixel clock rate
+>> + * and the effective rate resulting from calculating the clock divider value.
+>> + */
+>> +unsigned int dispc_pclk_diff(unsigned long rate, unsigned long real_rate)
+>> +{
+>> +	int r = rate / 100, rr = real_rate / 100;
+>> +
+>> +	return (unsigned int)(abs(((rr - r) * 100) / r));
+>> +}
+>> +
+>> +static int check_pixel_clock(struct dispc_device *dispc,
+>> +			     u32 hw_videoport, unsigned long clock)
+>> +{
+>> +	unsigned long round_clock;
+>> +
+>> +	round_clock = clk_round_rate(dispc->vp_clk[hw_videoport], clock);
+>> +	/*
+>> +	 * To keep the check consistent with dispc_vp_set_clk_rate(), we
+>> +	 * use the same 5% check here.
+>> +	 */
+>> +	if (dispc_pclk_diff(clock, round_clock) > 5)
+>> +		return -EINVAL;
+>> +	return 0;
+>> +}
+>> +
+>>   enum drm_mode_status dispc_vp_mode_valid(struct dispc_device *dispc,
+>>   					 u32 hw_videoport,
+>>   					 const struct drm_display_mode *mode)
+>>   {
+>>   	u32 hsw, hfp, hbp, vsw, vfp, vbp;
+>>   	enum dispc_vp_bus_type bus_type;
+>> -	int max_pclk;
+>>   
+>>   	bus_type = dispc->feat->vp_bus_type[hw_videoport];
+>>   
+>> -	max_pclk = dispc->feat->max_pclk_khz[bus_type];
+>> -
+>> -	if (WARN_ON(max_pclk == 0))
+>> +	if (WARN_ON(bus_type == DISPC_VP_TIED_OFF))
+>>   		return MODE_BAD;
+>>   
+>> -	if (mode->clock < dispc->feat->min_pclk_khz)
+>> -		return MODE_CLOCK_LOW;
+>> -
+>> -	if (mode->clock > max_pclk)
+>> -		return MODE_CLOCK_HIGH;
+>> -
+>>   	if (mode->hdisplay > 4096)
+>>   		return MODE_BAD;
+>>   
+>>   	if (mode->vdisplay > 4096)
+>>   		return MODE_BAD;
+>>   
+>> +	if (check_pixel_clock(dispc, hw_videoport, mode->clock * 1000))
+>> +		return MODE_CLOCK_HIGH;
+>> +
+> 
+> I think it's better to just inline check_pixel_clock here, it's just a
+> few lines. Also, returning MODE_CLOCK_HIGH is not correct. I see other
+> drivers using MODE_NOCLOCK or MODE_CLOCK_RANGE.
+> 
+Thanks for the suggestions Tomi. I will use MODE_CLOCK_RANGE instead of 
+MODE_CLOCK_HIGH and will update check_pixel_clock() as you mentioned.
 
-Want to make it dynamic array of waitq`s. Should the name be kept as 
-struct completion *waitq_comp; ?
+Regards,
+Swamil> Other than that:
+> 
+> Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+> 
+>   Tomi
+> 
+>>   	/* TODO: add interlace support */
+>>   	if (mode->flags & DRM_MODE_FLAG_INTERLACE)
+>>   		return MODE_NO_INTERLACE;
+>> @@ -1423,17 +1409,6 @@ void dispc_vp_disable_clk(struct dispc_device *dispc, u32 hw_videoport)
+>>   	clk_disable_unprepare(dispc->vp_clk[hw_videoport]);
+>>   }
+>>   
+>> -/*
+>> - * Calculate the percentage difference between the requested pixel clock rate
+>> - * and the effective rate resulting from calculating the clock divider value.
+>> - */
+>> -unsigned int dispc_pclk_diff(unsigned long rate, unsigned long real_rate)
+>> -{
+>> -	int r = rate / 100, rr = real_rate / 100;
+>> -
+>> -	return (unsigned int)(abs(((rr - r) * 100) / r));
+>> -}
+>> -
+>>   int dispc_vp_set_clk_rate(struct dispc_device *dispc, u32 hw_videoport,
+>>   			  unsigned long rate)
+>>   {
+>> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.h b/drivers/gpu/drm/tidss/tidss_dispc.h
+>> index 60c1b400eb89..42279312dcc1 100644
+>> --- a/drivers/gpu/drm/tidss/tidss_dispc.h
+>> +++ b/drivers/gpu/drm/tidss/tidss_dispc.h
+>> @@ -77,9 +77,6 @@ enum dispc_dss_subrevision {
+>>   };
+>>   
+>>   struct dispc_features {
+>> -	int min_pclk_khz;
+>> -	int max_pclk_khz[DISPC_VP_MAX_BUS_TYPE];
+>> -
+>>   	struct dispc_features_scaling scaling;
+>>   
+>>   	enum dispc_dss_subrevision subrev;
+> 
 
-thanks,
-Shivendra
 
