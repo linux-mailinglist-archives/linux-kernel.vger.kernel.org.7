@@ -1,185 +1,121 @@
-Return-Path: <linux-kernel+bounces-883308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89CD3C2D207
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:29:21 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43A6AC2D045
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:13:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8D913BCB02
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:11:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BC77934A28A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:13:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F148313E1E;
-	Mon,  3 Nov 2025 16:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8A2315D30;
+	Mon,  3 Nov 2025 16:12:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K8p8WP9r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="J67R47cw";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9Ki0RdvF"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617CE3101C2
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54040314D34;
+	Mon,  3 Nov 2025 16:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762186296; cv=none; b=Dsb5Rsv8SdtPoLDnzXNa/EHtUyHRKGYHew4Pb3YxGUInwsutOVau7XKa0B3mTpZ3rEOwTVgMDwpKEh8wES8LNqKhtzzIoh9T6b1Onvm50KxjA+dKRMt8gnL8Hrsrs1KuDaiofdWW7FjkqEaxAOziOncy6bGrXuCnzs56lQHF4bc=
+	t=1762186378; cv=none; b=ZkRjCINMzHCIMIJBraLq8hcjLiRY79hTOu9lhJoiEVQmfs4Li/Fj9+qvFtrD5dRpZbsHZ5FOEopIoNHiXisbucotqaduhEvBY+7nf6rM9+njk7rX1Eb1dJmqT6F5ZD62YZdX//CaUgFAYDqNoKfZHJADd3Mu5yYzraJxUxLxKDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762186296; c=relaxed/simple;
-	bh=t3uCVlNB2xJvfnPV0X/hGGm+4C1tih7qB1AMxkuOk3s=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d2Xw2QbCPPVqzWb8tHllRHe0cOFnrpcNEFa4/WDpoTQgCeROQaX1A5HveGU/vjHeLG7vyUhRyKuW1y9H9bEhRPS9j5YhGCRb4qsKt5ODFZPAXBFTWtONMtI9GiyT2G0vYWLGXWjMTmbEIL0fOF26zCJoHBMXtOsNtWZBxFammL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K8p8WP9r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0C59C4CEE7;
-	Mon,  3 Nov 2025 16:11:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762186295;
-	bh=t3uCVlNB2xJvfnPV0X/hGGm+4C1tih7qB1AMxkuOk3s=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=K8p8WP9rT5MxIAnfnxfqwVuhJ0DnYjbNVkEk8Ii1JA8elVgIjBSFsM4Iu+x/ZCI3c
-	 dPZE5rbVRMx7VmX4a0AsIYVnsWDfyct4kktvU7CFb427nTX8O0RRyhiRliyEFopkDu
-	 YrI7hkvPtsHGccYOL/e767fSIzzbElpa38AnXNjt7zajMnbjoJvpZ9Sba67iFWsvLQ
-	 0NPj0z66MzqlMSqDio+rPwd7e1TVY1woUkCQ9UEIG2ptPlZ4Lu1UF6dS9eN5MU030c
-	 bxiXfGKcu6Q+D+LR8VUj/RYno21OP8zVX8G4ddiIGaL0tL93VlVmynrHqneNaOvMd0
-	 cdkYD63GTiyNw==
-Date: Mon, 3 Nov 2025 18:11:26 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Peter Xu <peterx@redhat.com>, David Hildenbrand <david@redhat.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Muchun Song <muchun.song@linux.dev>,
-	Nikita Kalyazin <kalyazin@amazon.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Axel Rasmussen <axelrasmussen@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	James Houghton <jthoughton@google.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Hugh Dickins <hughd@google.com>, Michal Hocko <mhocko@suse.com>,
-	Ujwal Kundur <ujwal.kundur@gmail.com>,
-	Oscar Salvador <osalvador@suse.de>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Andrea Arcangeli <aarcange@redhat.com>
-Subject: Re: [PATCH v4 0/4] mm/userfaultfd: modulize memory types
-Message-ID: <aQjULib7JriWnVTq@kernel.org>
-References: <20251014231501.2301398-1-peterx@redhat.com>
- <78424672-065c-47fc-ba76-c5a866dcdc98@redhat.com>
- <aPZDVuscFsYSlQjI@x1.local>
- <dtepn7obw5syd47uhyxavytodp7ws2pzr2yuchda32wcwn4bj4@wazn24gijumu>
- <aPe0oWR9-Oj58Asz@x1.local>
- <nnxhd7zxjza6m4w4lr5qyev2krbkp4yfcgcwq6nkaqrqt6bzpb@iklep2xxp5gv>
+	s=arc-20240116; t=1762186378; c=relaxed/simple;
+	bh=oc90fEdM5Sak359pU8Gkz9mTWuX0+8Esz9enp4sqwq4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pbB93KkFgiM+wxk5NWOyEFQwn3fxMdXcS3grdf32JmdfYTIbGlMVLKfxamJS0gmTR8qRQsUmE7x8kndUXf2zQzJ5iJDs+hlj5jxo6YEovyzy2svoWdYVWaiTmIHMF7KM3R3zcXbNvSDAw5mRxY/nlubcjdISQOhXfF7pE2pQjQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=J67R47cw; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9Ki0RdvF; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762186375;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PBHLn6tvAwx686O8GxZfsUgcS5/YK8VNBPdnsSAmQ6o=;
+	b=J67R47cwNSrF1uJUuWP+Te/nOY/l2yooxtkOBpxpo3nlgyWUEO/LLdeb0nEdvCsxFBI15I
+	pnjBz0NLaklbAuug4oMhsTU4fgPhC6viXsVxQxYRYE/qEzDK3kncdSgFem395JnfEtehtI
+	taaGsmjHpHpQ70CuHurauQavLSNLdt028nG5PQQb39EZySt2Dql6nZkZkUoi8xgwi+jwOq
+	xxTokAuajEgQOfSQaaYmPh9qCjk8Q6chdazh/GK83gq7Dz6Q4HySHrMPZ3xlI9qOck8JnZ
+	6bZhlnJ0hsmb086V3XDkk9O75NygEb0xzuAFtMpFejBIqsWN7iEIqnvKBT74Ag==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762186375;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PBHLn6tvAwx686O8GxZfsUgcS5/YK8VNBPdnsSAmQ6o=;
+	b=9Ki0RdvFD9IT0eEZRX0PiYKm4Rb93LiQZD4UUwqi++Q9QvZnIrb+PF89SYWXfwGWaueIKi
+	yTx6XqNDbqJGzbCA==
+To: Peter Jung <ptr1337@cachyos.org>, linux-kernel@vger.kernel.org,
+ linux-tip-commits@vger.kernel.org
+Cc: stable@vger.kernel.org, Gregory Price <gourry@gourry.net>, "Borislav
+ Petkov (AMD)" <bp@alien8.de>, x86@kernel.org
+Subject: Re: [tip: x86/urgent] x86/CPU/AMD: Add RDSEED fix for Zen5
+In-Reply-To: <9a27f2e6-4f62-45a6-a527-c09983b8dce4@cachyos.org>
+References: <176165291198.2601451.3074910014537130674.tip-bot2@tip-bot2>
+ <9a27f2e6-4f62-45a6-a527-c09983b8dce4@cachyos.org>
+Date: Mon, 03 Nov 2025 17:12:54 +0100
+Message-ID: <878qgnw0vt.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <nnxhd7zxjza6m4w4lr5qyev2krbkp4yfcgcwq6nkaqrqt6bzpb@iklep2xxp5gv>
+Content-Type: text/plain
 
-Hi Liam,
+On Mon, Nov 03 2025 at 14:59, Peter Jung wrote:
+>>   static void init_amd_zen5(struct cpuinfo_x86 *c)
+>>   {
+>> +	if (!x86_match_min_microcode_rev(zen5_rdseed_microcode)) {
+>> +		clear_cpu_cap(c, X86_FEATURE_RDSEED);
+>> +		msr_clear_bit(MSR_AMD64_CPUID_FN_7, 18);
+>> +		pr_emerg_once("RDSEED32 is broken. Disabling the corresponding CPUID bit.\n");
+>> +	}
+>>   }
+>>   
+>>   static void init_amd(struct cpuinfo_x86 *c)
+>
+> This fix seems to break quite a bunch of users in CachyOS. There has 
+> been now several users reporting that there system can not get properly 
+> into the graphical interface.
+>
+> CachyOS is compiling the packages with -march=znver5 and the GCC 
+> compiler currently does pass RDSEED.
 
-On Thu, Oct 30, 2025 at 01:13:24PM -0400, Liam R. Howlett wrote:
-> * Peter Xu <peterx@redhat.com> [251021 12:28]:
-> 
-> ...
-> 
-> > Can you send some patches and show us the code, help everyone to support
-> > guest-memfd minor fault, please?
-> 
-> Patches are here:
-> 
-> https://git.infradead.org/?p=users/jedix/linux-maple.git;a=shortlog;h=refs/heads/modularized_mem
+You get what you ask for. You build a binary for a CPU which does
+not provide a functional correct RDSEED16/32 instruction.
 
-It's really cool you picked up the gauntlet and invested this effort into
-refactoring of uffd!
+> This patch results into that also Client CPUs (Strix Point, Granite 
+> Ridge), can not execute this. There has been a microcode fix deployed in 
+> linux-firmware for Turin, but no other microcode changes seen yet.
+>
+> I think it would be possible to exclude clients or providing a fix for this.
 
-I agree that userfault code begs for cleanups after the sh^W stuff has been
-piling over and over, but ...
- 
-> This is actually modularized memory types.  That means there is no
-> hugetlb.h or shmem.h included in mm/userfaultfd.c code.
-> 
-> uffd_flag_t has been removed.  This was turning into a middleware and
-> it is not necessary.  Neither is supported_ioctls.
-> 
-> hugetlb now uses the same functions as every other memory type,
-> including anon memory.
-> 
-> Any memory type can change functionality without adding instructions or
-> flags or anything to some other code.
-> 
-> This code passes uffd-unit-test and uffd-wp-mremap (skipped the swap
-> tests).
-> 
-> guest-memfd can implement whatever it needs to (or use others
-> implementations), like shmem_uffd_ops here:
-> 
-> static const struct vm_uffd_ops shmem_uffd_ops = {
->         .copy                   =       shmem_mfill_atomic_pte_copy,
->         .zeropage               =       shmem_mfill_atomic_pte_zeropage,
->         .cont                   =       shmem_mfill_atomic_pte_continue,
->         .poison                 =       mfill_atomic_pte_poison,
->         .writeprotect           =       uffd_writeprotect,
->         .is_dst_valid           =       shmem_is_dst_valid,
->         .increment              =       mfill_size,
->         .failed_do_unlock       =       uffd_failed_do_unlock,
->         .page_shift             =       uffd_page_shift,
->         .complete_register      =       uffd_complete_register,
-> };   
+There are only two fixes:
 
-... I don't think it's the right level of abstraction to add as uffd_ops to
-vmap_ops.
- 
-As I see it, we have two levels where things are different: hugetlb vs
-others at the very core of mfill_atomic() and then how different pte-based
-types implement a single page operations, i.e copy/zeropage/continue.
+      1) New microcode
 
-So to separate hugetlb code from userfault we need something like 
+      2) Fix all source code to either use the 64bit variant of RDSEED
+         or check the result for 0 and treat it like RDSEED with CF=0
+         (fail) or make it check the CPUID bit....
 
-	->get_parent_pagetable()
-	->pagesize()
-	->mfill_atomic_page()
+New microcode will come around soon and fixing all source code is not
+possible.
 
-and apparently something like your complete_register() and maybe
-is_dst_valid().
+Excluding clients is not an option because that leaves anything crypto
+related which relies on randomness with a big hole. Clients require
+functional crypto as much as any other system, no?
 
-But to provide hooks for shmem, anon and potentially guest_memfd() we
-should be looking at callbacks to get a folio to populate a PTE, either for
-copy or continue, and Peter's ->minor_get_folio() seems to me the right
-level of abstraction to expose at vm_uffd_ops.
+So the only workaround for now is to use a build which does not emit
+RDSEED or checks CPUID for availability before blindly using it.
 
-I believe we can extract ->get_folio() and ->put_folio() from
-shmem_mfill_atomic_pte() and call them from mfill_atomic_pte_copy().
+Thanks,
 
-> Where guest-memfd needs to write the one function:
-> guest_memfd_pte_continue(), from what I understand.
-> 
-> Obviously some of the shmem_ functions would need to be added to a
-> header, or such.
-> 
-> And most of that can come from shmem_mfill_atomic_pte_continue(), from
-> what I understand.  This is about 40 lines of code, but may require
-> exposing some shmem functions to keep the code that compact.
-
-This seems to me an overkill to implement MFILL_ATOMIC_CONTINUE for
-guest_memfd().
-I think it should be able to register a callback to provide a singe folio
-at a given file offset if that folio is in the guest_memfd's page cache.
-No reason for guest_memfd to start re-implementing locking, acquiring of
-PMD and updating the page table, even if it only needs to call functions
-from userfaultfd
-
-> So we don't need to expose getting a folio to a module, or decode any
-> special flags or whatever.  We just call the function that needs to be
-> called on the vma that is found.
-
-Agree about exposing flags to a module and about limiting API to functions
-only.
- 
-> Thanks,
-> Liam
-> 
-
--- 
-Sincerely yours,
-Mike.
+        tglx
 
