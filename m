@@ -1,234 +1,120 @@
-Return-Path: <linux-kernel+bounces-883398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 954F9C2D548
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:03:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EB7C6C2D551
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:03:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 990F2188F191
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:01:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0B09189D6BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:01:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1823731D758;
-	Mon,  3 Nov 2025 16:58:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E781531AF22;
+	Mon,  3 Nov 2025 17:00:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BgSNdV/7"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ogQRM1RI"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9169731D726
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CCFC3164B7
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 17:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762189115; cv=none; b=kTdFeZ42/tcRZU52J+/ZyMGpJjeKMsEB9sirKiwaXFdQWkEYmilau2ybEbDm3AiDHlrYHchMXv0iOCpme1xmbo2hh08P8p2+tT7MSIw4SGKbEycUjhKonhiX1tR4JnM+s1umiEvUcGKFQ5PK2Vi8lLupVQndWGgsi2oUuPIRuFw=
+	t=1762189212; cv=none; b=e8jRUqc1et+NRZv70fQuPnqxzOvO+c53ii945fOKPDBHdldyTpJoXPj20Dd2YUvl5BG1uJ/sSFSCJLAbZOMd42rtELhW7o2BjIg4i0NTo2vTvr5YlLJBx1Myeglat1BLi67bIdSqs6ixw0Yh/8bnns+GshEdAWrghoMJynEq0YI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762189115; c=relaxed/simple;
-	bh=b0O3GE4qbZNbg0oDGHxasBjYudlii3ZM6j4y5Cr/l5w=;
+	s=arc-20240116; t=1762189212; c=relaxed/simple;
+	bh=bxgI7xm+IgIVGvsbKQgVxrFpU5UPoucGihmhUKxnDx8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tUyFhVupz4nvR6nyHt4c+qTmEanESgPZaXCj7Ez44aCcD2G7o4WdCj5gUtL8M22sJKkefsV/NbvoufFTDo/1q5a/jbml7Y/LwgFQNcKZl9i4LbjF/iyJcXZYt7wKQtTBLMbZou8ym3QC2xNroBaIHWkZyoYAlPaQnPki1S8/+bY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BgSNdV/7; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4ed59386345so4321911cf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 08:58:32 -0800 (PST)
+	 To:Cc:Content-Type; b=t45kL7HgUAgSufnkGrN6tVTPyowd1WN7F0S3XAtgc/c6HcvGI9ArTL4/9mHNYDfNF1/lBvH3k2FN40Z4QpCLtUEyr9ipQp/06nPH/4BhCup+YIjicvDtmOjiex97uQacaRd+SBWMlVxS785El8BatRX9UDpey1/VfyEiUsHDCHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ogQRM1RI; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-378d50e1c82so44492051fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 09:00:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762189111; x=1762793911; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1762189209; x=1762794009; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1mTsTlYaKlSyBQb/TNu3wRr8ckz09pUbjw64hL0b7SA=;
-        b=BgSNdV/7fYcawu86Vprj4piD9mA6QYHDGBDcmYm2fLXK4hRHjjKuMhNmYs7sAN7qMy
-         6aY5E1uBpvxUa2VyFxyTIbHoDlJitWdKYjjXh1r0B90tBbeL+1cQ23UqigUOPgoiM7K+
-         MDM4VqY3IVlSVpLFUPyg7TujDLirAMRRmn9PlcBvjVSdfD+VdV38CmmVndVWIT5UJV96
-         V7d80IZCUE5W/Hs2+5+oMbjsUVtHptCaN0xLW+cDqVU2OYpDJdLsFMHMpNsSGiH9tckX
-         JBEbw9g2g3V57Qjm59LD5YxyMLCFCeFslqUaEyc1ObHrCuwY5hkOSqsZY4Uyhw/RNq2K
-         6u5w==
+        bh=WoNdC5BMiRyOC0JiGM2ExKgLEDkWaHJnqqKpzjHUJnc=;
+        b=ogQRM1RIDauUxKdDMF0xVOh0FavrKXs/i4GjeTjsRvuc+GbOQ7Eq1VmdRVUFiqkZuO
+         mTaM0ABhs1BSs6NypX7y4kkvj2aqiSdz5NcIKowKDlYnQ2kyjLE/HuCG6GzMbldGtJAh
+         Rmh6hBZ5XjRd3HnatSG4//IMx+NR1HXKpdnM46qs2dLYyh7E/Pi/jiAgMiUEYcoMidaS
+         LWUiKgDuL5JfOzt1/5+9Hx/Ftz7ZzKFyEGP8bnIFQZLyRujj9UGvmU+rQvzlHJUkTqmN
+         4lGwBM29w54J/aYumPsumBkL00sl1fARjKJwLFJisN+K14rCyXx9Or9m40MGWoUK9Tzr
+         KG/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762189111; x=1762793911;
+        d=1e100.net; s=20230601; t=1762189209; x=1762794009;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1mTsTlYaKlSyBQb/TNu3wRr8ckz09pUbjw64hL0b7SA=;
-        b=JPuEnRNFWLFVQQv1+yVNE0Oaavo8OAG4GamJ/pQ5AcpDWGdssm1jEcXOoLvkQFRkXS
-         x9+aoFE9DcLyfh3auuPwWGjU3b27LMZDvC9q8qlVEK/x3PaJLpKZ4mAdkPy++xUJnOxj
-         SsQDm773xCYvLohdtK8kxctb9RELYXdXH2DVoh0yBRMLE0Z1ulibuVHPYGGesV8cv7tn
-         4INPi3+5qa832JIwZJaLj/U1/A3pUVvLtoEazEIDthjj7Tki1H+jN9Ih+9DnuZLz5Q8v
-         uFJ35SZPiF5XCU6h11Si59p4PEELsBqgO6iRRV6j+7hLXEfOms+C3/Ay8BF1Wv/Zw74y
-         mClQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXDjtMe0aUESAQa+7PAoiOu03htS27Y7hWBCI/x9R6QWNyJP4o0dkDG/EgRqlFu0YFTdIVD7o43HnvXNpY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxCKWjSJCcEPKzgI/BVK9wgOHXhJWasEwWoct0aTOSkCVckL/h
-	8rzxt2xUlD8KAlp2DyodwJk1iVaMn0TWsS7mpyXOSOEwRk46R8fCRC2D+t+12IrHzan0vmmWNYr
-	iFdfmJVyGVLxMmLgSUeEyhd59yX2TvVg=
-X-Gm-Gg: ASbGncu4q0wLxE9UUSZtQaFKpJOoJNZ40yA55IwUfm+UgGhWRnoyVrF5NZS1Rm28WlB
-	dp0xTfHOafXbvnL16qrpZjcleNlkNMRjkXVsB3AJNWQxS0LjcNdHQ90LLQsgf3gSlRSeCxxiVqz
-	CnOBCeSErBNi2m0g+X0zPJdriDT6C3kynKRGTNaOyPUfUJLw2sE6XdwBuPHeEePqOzqBZ/KyU6T
-	adIlUCriexRi/WFnftQAt9NH211N+0xy9wvlCBosNTHjpsU2yHKtQJ1kwIP495FSyy1JlTHoyZ3
-	KG1sogTphwuRYunexFdr6wBqRg93Yvp7pYLOXbpq79Q=
-X-Google-Smtp-Source: AGHT+IHyI72HABW//cHBarLcnu9+Ba1MPRR6bZ6mJXb7LBAoEIMFtTzlhgqDHkzZb+vCZHWzUpZ0aVzufuIm9gLbSlg=
-X-Received: by 2002:ac8:7f81:0:b0:4e6:ef26:3152 with SMTP id
- d75a77b69052e-4ed310d1aa1mr166286551cf.80.1762189111384; Mon, 03 Nov 2025
- 08:58:31 -0800 (PST)
+        bh=WoNdC5BMiRyOC0JiGM2ExKgLEDkWaHJnqqKpzjHUJnc=;
+        b=EaYuREehaPCqej6L2LxMAzeRkbWLqJ9NagBwl1G5974t6G5MF6sKEnsFOX46C3bAJn
+         WRGLFh/jSFPhRXk/Q2xczeWw0UWugXWWkZyvhuql7QZtAVAvUzYXhBTRLIs2w1o/eSmt
+         4saau3P4NMilsaEo4NFB137Sx5u6Y3EppSwqf6iZcOo51ZftJnpuOQC7LlU2zxoOki9e
+         lxul7NvFDrWqFG8y3S28qbznNq2o04xL+SYn2UtFZCK/5hgH3BW9HdARjzQasJtuLFZW
+         /1/uQkdoUwDPXe8tWRu1csFkk1jEBtoKH/C+0KcXoDXDmMvUYFMSG5//m3YIhC9cGkl8
+         674Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXjTVUodkF66rq23upKxbBZcgbLnbcNduPYjpzGGc7TVCWp4svpz53pJYeRlCss9/sYLM/5QfgrenbpZmM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw50xrxJpgA3CO9i7MK8PbsmIpbe9zR+dx6h1pNk/9XJEuwBC2Q
+	VwTaQ+Aabg7jBXxYBMvmogMoR75w2dhqDUllrpzNpa13UFtTPlsuCXo4wLpJ4WCaPaTB0Sn/Iyf
+	jzcI0wbY2MsRbFR9q9IwFnY/JSA8F/WJzjxnCPQ9uZA==
+X-Gm-Gg: ASbGncv7jw4sIM2U/pv691eZX8hWzFOxSzSvTsbS2K4qQ3xd5dSysUroZSBxAGWYgfQ
+	I+WoRoZIfV2+6urMwkZPk5LW/qB0anzzpRfxGveyjma6VJ58CSEJtKhoyGL3cXf98iEaaxelZ5+
+	kcQEicggl+jje76kltrFeOf4EffkVwtnS6C2BMqP2I3ol2UdSJBEVtAEzCdv9jDsLdHPr4xZsRl
+	YsYhIhoAT6B3gKMva2qPN8lbjzTFykv7IFrHgLHw0IWsMc6KHq/mpFA9GqTVXlMaoVRk6TZFW8W
+	MGBUUsFyjQNsyfSwfAS73yJWv+s=
+X-Google-Smtp-Source: AGHT+IFAokWDp529X/xQj865heioyoJ+JqIPsFe9otddKohP4c/QuEQTPtIBaIp16NtEOgDGZnEZx9kzQeL+ZIUR0So=
+X-Received: by 2002:a05:651c:2210:b0:37a:39c1:721e with SMTP id
+ 38308e7fff4ca-37a39c178d0mr8876841fa.17.1762189208387; Mon, 03 Nov 2025
+ 09:00:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <68cc0578.050a0220.28a605.0006.GAE@google.com> <69056c50.a70a0220.1e08cc.006c.GAE@google.com>
-In-Reply-To: <69056c50.a70a0220.1e08cc.006c.GAE@google.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Mon, 3 Nov 2025 08:58:20 -0800
-X-Gm-Features: AWmQ_bkDsSgdQVUGrhQNkWuvMPjtQkwEYu3HRdCHE9EaMTy5z14J08E7zjkious
-Message-ID: <CAJnrk1bF8sLU6tG2MGkt_KR4BoTd_k01CMVZJ9js2-eyh80tbw@mail.gmail.com>
-Subject: Re: [syzbot] [iomap?] kernel BUG in folio_end_read (2)
-To: syzbot <syzbot+3686758660f980b402dc@syzkaller.appspotmail.com>
-Cc: brauner@kernel.org, chao@kernel.org, djwong@kernel.org, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20251102-multi_waitq_scm-v8-0-d71ee7b93b62@oss.qualcomm.com>
+ <20251102-multi_waitq_scm-v8-2-d71ee7b93b62@oss.qualcomm.com>
+ <CAMRc=Mfh+WQx-vasZed6jWi5nUjg=K+ScVRBMCiFgK397=JbVg@mail.gmail.com> <da04aa57-f3dc-9bcd-5ba3-05088a6661ab@oss.qualcomm.com>
+In-Reply-To: <da04aa57-f3dc-9bcd-5ba3-05088a6661ab@oss.qualcomm.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 3 Nov 2025 17:59:55 +0100
+X-Gm-Features: AWmQ_bmXS4BEImKKjWCHGw5hmxlPJzmWjlXp6Ll6_YqBi7myoVjDaXfXIpxoD70
+Message-ID: <CAMRc=Mcj_6g3ory9zqxEWCHmpxh3hf4C-iBK0XT82F8nGVcFKQ@mail.gmail.com>
+Subject: Re: [PATCH v8 2/3] firmware: qcom_scm: Support multiple waitq contexts
+To: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Unnathi Chalicheemala <unnathi.chalicheemala@oss.qualcomm.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 1, 2025 at 1:26=E2=80=AFPM syzbot
-<syzbot+3686758660f980b402dc@syzkaller.appspotmail.com> wrote:
+On Mon, Nov 3, 2025 at 5:16=E2=80=AFPM Shivendra Pratap
+<shivendra.pratap@oss.qualcomm.com> wrote:
 >
-> syzbot has found a reproducer for the following issue on:
+> >> diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/=
+qcom_scm.c
+> >> index 28979f95e51fbee94b84c1570a4d88a76f72db4e..0b6efa7c2bdc25a3ba152c=
+25d5451d1154779ddd 100644
+> >> --- a/drivers/firmware/qcom/qcom_scm.c
+> >> +++ b/drivers/firmware/qcom/qcom_scm.c
+> >> @@ -47,7 +47,7 @@ struct qcom_scm {
+> >>         struct clk *iface_clk;
+> >>         struct clk *bus_clk;
+> >>         struct icc_path *path;
+> >> -       struct completion waitq_comp;
+> >> +       struct completion *waitq;
+> >
+> > Why this change? This makes the name less descriptive if not misleading=
+.
 >
-> HEAD commit:    98bd8b16ae57 Add linux-next specific files for 20251031
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D163b2bcd98000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D63d09725c93bc=
-c1c
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D3686758660f980b=
-402dc
-> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b797=
-6-1~exp1~20250708183702.136), Debian LLD 20.1.8
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D176fc342580=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D10403f3458000=
-0
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/975261746f29/dis=
-k-98bd8b16.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/ad565c6cf272/vmlinu=
-x-98bd8b16.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/1816a55a8d5f/b=
-zImage-98bd8b16.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/d6d9eee31f=
-db/mount_0.gz
->   fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=3D=
-17803f34580000)
->
-> IMPORTANT: if you fix the issue, please add the following tag to the comm=
-it:
-> Reported-by: syzbot+3686758660f980b402dc@syzkaller.appspotmail.com
->
->  vms_complete_munmap_vmas+0x206/0x8a0 mm/vma.c:1279
->  do_vmi_align_munmap+0x364/0x440 mm/vma.c:1538
->  do_vmi_munmap+0x253/0x2e0 mm/vma.c:1586
->  __vm_munmap+0x207/0x380 mm/vma.c:3196
->  __do_sys_munmap mm/mmap.c:1077 [inline]
->  __se_sys_munmap mm/mmap.c:1074 [inline]
->  __x64_sys_munmap+0x60/0x70 mm/mmap.c:1074
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> ------------[ cut here ]------------
-> kernel BUG at mm/filemap.c:1530!
-
-I think this is the same bug that was fixed by [1].
-
-[1] https://lore.kernel.org/linux-fsdevel/20251031211309.1774819-2-joannelk=
-oong@gmail.com/
-
-> Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
-> CPU: 1 UID: 0 PID: 5989 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(f=
-ull)
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 10/02/2025
-> RIP: 0010:folio_end_read+0x1e9/0x230 mm/filemap.c:1530
-> Code: 79 c7 ff 48 89 df 48 c7 c6 20 6d 74 8b e8 9f df 2e ff 90 0f 0b e8 d=
-7 79 c7 ff 48 89 df 48 c7 c6 40 63 74 8b e8 88 df 2e ff 90 <0f> 0b e8 c0 79=
- c7 ff 48 89 df 48 c7 c6 20 6d 74 8b e8 71 df 2e ff
-> RSP: 0018:ffffc90003f8e268 EFLAGS: 00010246
-> RAX: c6904ff3387db700 RBX: ffffea0001b5ef00 RCX: 0000000000000000
-> RDX: 0000000000000007 RSI: ffffffff8d780a1b RDI: 00000000ffffffff
-> RBP: 0000000000000000 R08: ffffffff8f7d7477 R09: 1ffffffff1efae8e
-> R10: dffffc0000000000 R11: fffffbfff1efae8f R12: 1ffffd400036bde1
-> R13: 1ffffd400036bde0 R14: ffffea0001b5ef08 R15: 00fff20000004060
-> FS:  0000555572333500(0000) GS:ffff888125fe2000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f57d6844000 CR3: 0000000075586000 CR4: 00000000003526f0
-> Call Trace:
->  <TASK>
->  iomap_readahead+0x96a/0xbc0 fs/iomap/buffered-io.c:547
->  iomap_bio_readahead include/linux/iomap.h:608 [inline]
->  erofs_readahead+0x1c3/0x3c0 fs/erofs/data.c:383
->  read_pages+0x17a/0x580 mm/readahead.c:163
->  page_cache_ra_order+0x924/0xe70 mm/readahead.c:518
->  filemap_readahead mm/filemap.c:2658 [inline]
->  filemap_get_pages+0x7ff/0x1df0 mm/filemap.c:2704
->  filemap_read+0x3f6/0x11a0 mm/filemap.c:2800
->  __kernel_read+0x4cf/0x960 fs/read_write.c:530
->  integrity_kernel_read+0x89/0xd0 security/integrity/iint.c:28
->  ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:480 [inline]
->  ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
->  ima_calc_file_hash+0x85e/0x16f0 security/integrity/ima/ima_crypto.c:568
->  ima_collect_measurement+0x428/0x8f0 security/integrity/ima/ima_api.c:293
->  process_measurement+0x1121/0x1a40 security/integrity/ima/ima_main.c:405
->  ima_file_check+0xd7/0x120 security/integrity/ima/ima_main.c:656
->  security_file_post_open+0xbb/0x290 security/security.c:2652
->  do_open fs/namei.c:3977 [inline]
->  path_openat+0x2f26/0x3830 fs/namei.c:4134
->  do_filp_open+0x1fa/0x410 fs/namei.c:4161
->  do_sys_openat2+0x121/0x1c0 fs/open.c:1437
->  do_sys_open fs/open.c:1452 [inline]
->  __do_sys_openat fs/open.c:1468 [inline]
->  __se_sys_openat fs/open.c:1463 [inline]
->  __x64_sys_openat+0x138/0x170 fs/open.c:1463
->  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7f0b08d8efc9
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f=
-7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
- ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007ffec6a5d268 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-> RAX: ffffffffffffffda RBX: 00007f0b08fe5fa0 RCX: 00007f0b08d8efc9
-> RDX: 0000000000121140 RSI: 0000200000000000 RDI: ffffffffffffff9c
-> RBP: 00007f0b08e11f91 R08: 0000000000000000 R09: 0000000000000000
-> R10: 000000000000013d R11: 0000000000000246 R12: 0000000000000000
-> R13: 00007f0b08fe5fa0 R14: 00007f0b08fe5fa0 R15: 0000000000000004
->  </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:folio_end_read+0x1e9/0x230 mm/filemap.c:1530
-> Code: 79 c7 ff 48 89 df 48 c7 c6 20 6d 74 8b e8 9f df 2e ff 90 0f 0b e8 d=
-7 79 c7 ff 48 89 df 48 c7 c6 40 63 74 8b e8 88 df 2e ff 90 <0f> 0b e8 c0 79=
- c7 ff 48 89 df 48 c7 c6 20 6d 74 8b e8 71 df 2e ff
-> RSP: 0018:ffffc90003f8e268 EFLAGS: 00010246
-> RAX: c6904ff3387db700 RBX: ffffea0001b5ef00 RCX: 0000000000000000
-> RDX: 0000000000000007 RSI: ffffffff8d780a1b RDI: 00000000ffffffff
-> RBP: 0000000000000000 R08: ffffffff8f7d7477 R09: 1ffffffff1efae8e
-> R10: dffffc0000000000 R11: fffffbfff1efae8f R12: 1ffffd400036bde1
-> R13: 1ffffd400036bde0 R14: ffffea0001b5ef08 R15: 00fff20000004060
-> FS:  0000555572333500(0000) GS:ffff888125ee2000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000001b30063fff CR3: 0000000075586000 CR4: 00000000003526f0
->
->
-> ---
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
+> Want to make it dynamic array of waitq`s. Should the name be kept as
+> struct completion *waitq_comp; ?
 >
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.gi=
-t
-master
+Yeah, can me waitq_comps if it's plural.
+
+Bart
 
