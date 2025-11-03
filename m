@@ -1,92 +1,117 @@
-Return-Path: <linux-kernel+bounces-882615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD075C2AE9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:05:48 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56751C2AEA0
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:06:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A6C2B4E81C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:05:47 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 224414EB179
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:06:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8112FBE1F;
-	Mon,  3 Nov 2025 10:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9DEB2FBE1F;
+	Mon,  3 Nov 2025 10:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eL2lC8rm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jQVn/NW4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D094B14A60F;
-	Mon,  3 Nov 2025 10:05:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB9714A60F;
+	Mon,  3 Nov 2025 10:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762164340; cv=none; b=uKRR9WnIijnh8JDqrbL9fXjHNqL8wy2zMk6zFYxrs3h7O3FqkAVOsp7ijHvipKtjJlmtRw+6cO2gkSEyn/nPWdl0L8AstGdxLfrJVPRWkx8EVI7UZaDpc4qiOxVNGBCVjdDEJGrzkxuER4M6wvPQ2A736WqtU1PPCf0u8zctenA=
+	t=1762164385; cv=none; b=i0YCXppdml2Dvf8vRFR+IpoN5otc0NiLPFi2rwG19IyzjB/R3QZl41Zy+CnsGuWI/R3YX0RFIQ3chRYUQrVZaHyM/SZxkK1qE9I75n7MtzHRMHb1C5XLbQJQNdhuhMOmtkI+WaaDdxEc9l+YoHWqEuL5bKiPEW+rfGsBPbwwQRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762164340; c=relaxed/simple;
-	bh=r5ZAahRc6Rn7ZJ6STU/KlsskUpNdQLHqPWsUeMUM35M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K3YkS4/7W2AXlqIIy2uerU5/aezoB0lGrfS6nCW04jtbd20zBzKDPTv+GRiSdUBZeAvzybuE3/5QVQIrFUWlI9HQPkkhG6N+UDjRQUp6Ht7keUdkMzxSNCaS7z5pn4nCER+ljswgO8rdNSJpg+XRRlO1XibFINOCfCmuAgEafgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eL2lC8rm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E9E4C4CEE7;
-	Mon,  3 Nov 2025 10:05:39 +0000 (UTC)
+	s=arc-20240116; t=1762164385; c=relaxed/simple;
+	bh=U7dljpxaf1r0mwkGNZ8GR8FmR5XSNn25x6Hd0IO0hQE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=uQW2867MVK0G1/V/VDK1VIufi3ZdbMzEnjmmGVxHU+b6bJyY7KIAYE84AvLOxMrL9fI/j9ZdLb0jw3zNUIl5Zz3aGbB4cbB+XsfT05liw9B9miRY2JZm/Wz+j0vwU+XxgMV+RAjWUfo3QT5Ic+GFRt9SEHhEkDI5JsH5AKgBhRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jQVn/NW4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99B5EC4CEE7;
+	Mon,  3 Nov 2025 10:06:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762164340;
-	bh=r5ZAahRc6Rn7ZJ6STU/KlsskUpNdQLHqPWsUeMUM35M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eL2lC8rmaq3O60XkiGTmkNNrnvk5bW+DcBQt4+I+zrOPAFhoS9KuvvFe2U7Rxbmn4
-	 34oXI5MPb3x8rohfCg0fSGKA7G2RwdqwlK7vDJ3Fj5q7Dg5ycOSitET8XcMlPC0tCH
-	 ktUcd/T3lYGGWtvNqqsZDuu1G/fyFOs3pbPGd8TRKAltwkPECc5arOxFvLHJjWrNIv
-	 JeUXSLJ5IqVO7RQK2LOSg2Sas+Z/wvGF7Cbwc14NSDYVoi00vhBmzMEKOxHPyc7od/
-	 oXSWLvQV7hFFGw4R8IwigjbdH/Roobxvjvc/K/c4v6mMuXeKOqSHxrIgBfHzN985d1
-	 QKnj0fWt/Z9tw==
-Date: Mon, 3 Nov 2025 11:05:38 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, 
-	=?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, semen.protsenko@linaro.org, willmcvicker@google.com, 
-	kernel-team@android.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/11] soc: samsung: exynos-chipid: refer to match->data
- as data
-Message-ID: <20251103-spoonbill-of-incredible-resistance-d5befc@kuoka>
-References: <20251031-gs101-chipid-v1-0-d78d1076b210@linaro.org>
- <20251031-gs101-chipid-v1-4-d78d1076b210@linaro.org>
+	s=k20201202; t=1762164384;
+	bh=U7dljpxaf1r0mwkGNZ8GR8FmR5XSNn25x6Hd0IO0hQE=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=jQVn/NW4nxlzqdkHGtzkZw9cVy5oPgWwxkHaZ/SWZ921tyTRJbZygRMP59xDFGOhD
+	 kaZNmGafoRq9WVW1C7iqyCBsCf4FORfnDEKVI14AB6ZQ0ZCE6UruopRNLTSn5G9cqv
+	 T2nG5sH6qiVvBaRpB7hVg4/QwdlGv8M6EVunWHr+g3Dei5d+1c5bSJ6ebK11v7GhJs
+	 00vlmmusnGwBS2EpVEu/3QIH1f/Y9cvOmG5X0VQnPM22C1CXpXbm4kPstcNtTEe8iF
+	 QqblJijTFMnmXMoU7yaO+G+GfWo5T1vUp7+YjMowCa5ddRh4bAE9fcYcDlV7GOIP2O
+	 FwCi6cs/OJAsg==
+Message-ID: <d661ae00-d100-46ef-8a15-50919b34daae@kernel.org>
+Date: Mon, 3 Nov 2025 11:06:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251031-gs101-chipid-v1-4-d78d1076b210@linaro.org>
+User-Agent: Mozilla Thunderbird
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH] media: az6007: Add upper bound check to the data of
+ device state
+To: Edward Adam Davis <eadavis@qq.com>,
+ syzbot+0192952caa411a3be209@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ mchehab@kernel.org, syzkaller-bugs@googlegroups.com
+References: <6805a24c.050a0220.4e547.000b.GAE@google.com>
+ <tencent_93C4465D499DEEDF6EE60CB667DC46D0D206@qq.com>
+Content-Language: en-US, nl
+In-Reply-To: <tencent_93C4465D499DEEDF6EE60CB667DC46D0D206@qq.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 31, 2025 at 12:56:03PM +0000, Tudor Ambarus wrote:
-> Be consistent across the driver and refer to match->data as data.
+On 21/04/2025 16:31, Edward Adam Davis wrote:
+> syzbot report a corrupted list in az6007_i2c_xfer. [1]
 > 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> Before accessing the member data of the struct az6007_device_state, only
+> the lower boundary of data is checked, but the upper boundary is not checked.
+> When the value of msgs[i].len is damaged or too large, it will cause out
+> of bounds access to st->data.
+> 
+> [1]
+> UBSAN: array-index-out-of-bounds in drivers/media/usb/dvb-usb-v2/az6007.c:821:30
+> index 4096 is out of range for type 'unsigned char [4096]'
+> CPU: 1 UID: 0 PID: 5832 Comm: syz-executor328 Not tainted 6.15.0-rc2-syzkaller-00493-gac71fabf1567 #0 PREEMPT(full)
+> Call Trace:
+>  <TASK>
+>  az6007_i2c_xfer+0x549/0xc30 drivers/media/usb/dvb-usb-v2/az6007.c:821
+>  i2c_transfer_buffer_flags+0x10c/0x190 drivers/i2c/i2c-core-base.c:2343
+>  i2cdev_read+0x111/0x280 drivers/i2c/i2c-dev.c:155
+>  do_loop_readv_writev fs/read_write.c:833 [inline]
+>  do_preadv+0x1af/0x270 fs/read_write.c:1130
+>  do_syscall_64+0xcd/0x260 arch/x86/entry/syscall_64.c:94
+> 
+> Reported-by: syzbot+0192952caa411a3be209@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=0192952caa411a3be209
+> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
 > ---
->  drivers/soc/samsung/exynos-chipid.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
+>  drivers/media/usb/dvb-usb-v2/az6007.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
-> index f5107b8b339e8884d6a67a80650a95441510c66c..ab6bdf24a754a0faf974190c1fa1f99735cbef8e 100644
-> --- a/drivers/soc/samsung/exynos-chipid.c
-> +++ b/drivers/soc/samsung/exynos-chipid.c
-> @@ -106,7 +106,7 @@ static int exynos_chipid_get_chipid_info(struct regmap *regmap,
->  
->  static int exynos_chipid_probe(struct platform_device *pdev)
->  {
-> -	const struct exynos_chipid_variant *drv_data;
-> +	const struct exynos_chipid_variant *data;
+> diff --git a/drivers/media/usb/dvb-usb-v2/az6007.c b/drivers/media/usb/dvb-usb-v2/az6007.c
+> index 65ef045b74ca..6322894eda27 100644
+> --- a/drivers/media/usb/dvb-usb-v2/az6007.c
+> +++ b/drivers/media/usb/dvb-usb-v2/az6007.c
+> @@ -806,7 +806,8 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
+>  			if (az6007_xfer_debug)
+>  				printk(KERN_DEBUG "az6007: I2C R addr=0x%x len=%d\n",
+>  				       addr, msgs[i].len);
+> -			if (msgs[i].len < 1) {
+> +			if (msgs[i].len < 1 ||
+> +			    msgs[i].len > ARRAY_SIZE(st->data) - 5) {
 
-I would prefer name drv_data, to mark clearly this is driver data.
-Sometimes driver state container is called "data".
+Hmm, shouldn't this be '- 6'? Since a few lines below this the length passed
+to __az6007_read is msgs[i].len + 6.
 
-Best regards,
-Krzysztof
+Regards,
+
+	Hans
+
+>  				ret = -EIO;
+>  				goto err;
+>  			}
 
 
