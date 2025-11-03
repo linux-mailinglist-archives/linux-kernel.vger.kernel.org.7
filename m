@@ -1,112 +1,92 @@
-Return-Path: <linux-kernel+bounces-882468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E008C2A8B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:22:24 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88B27C2A86C
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:18:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 274CE3AA095
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:17:18 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C3D364E8537
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F192D9EFB;
-	Mon,  3 Nov 2025 08:17:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122182DC322;
+	Mon,  3 Nov 2025 08:17:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HRjk03VT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hPgHPj60"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466112DBF75
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 08:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DF42DAFC2;
+	Mon,  3 Nov 2025 08:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762157830; cv=none; b=cbL7wq6vaki9Hb8DzFv1Qj51/eEYSAShmTjtANs3c+sce1JaMS3E9IUFxqFgyL/5AUjepoY/L+X+KYsktF5OaThozrBAb0QmciqWfvkdHeZ4EwC/GqUcCfKSpDIwGv04TcSbw+xCXTLNSZKu9UwlQOnb5sQccs7QIUydpWKqDIs=
+	t=1762157875; cv=none; b=d5CRNsnHAGZDA5Pvj9VitCVRXD7Ll0GlOAJsw42CBFPD+l9jb67PMo6pgiMaJLzIzhMlyqCpo8PKWm88szC/8xIQOwkwos0YzWN/hfuH+QyxkY9mpF8kTQKuxHCecpEWx4tgUJ9I6oG2iDqv3Dx3DMyUeEK5TRlzmSsbffGFt7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762157830; c=relaxed/simple;
-	bh=j8mFAeinoGzjohTxPM/JooGOND/brFE6iWetnyY1zLA=;
+	s=arc-20240116; t=1762157875; c=relaxed/simple;
+	bh=e4eP8kIUbnxFkpE508lw7JjVKEVh23zzNZi3k04+VEk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S+7uG40R1CKVNAvhY0eIV+FtIAqT7vk1YWzQoflqduYyYfGEa0IODs5VN9rpMtOjrS1E8YvXXQyet8bPl+Rnhyfzxlu/skJxYZjh+d9MpQNwDaXnbbICqvl38cgK+DY7HnxH4ViwufL3cCxa1IrjrFKykBOvV7zUKqhw3EHgNgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HRjk03VT; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762157827; x=1793693827;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=j8mFAeinoGzjohTxPM/JooGOND/brFE6iWetnyY1zLA=;
-  b=HRjk03VT2gW0QPdCBzJs9UAKc92nXpecoP+n5MDeCAYXuo6ujO45Uuz3
-   Wu44VyqblIotsS8hOhCt6P8iqPrL7ZezJqcpmdBcuyrTEO9r4AjQDnLNS
-   kweed5HrWMPsFI4be/Gm3b0W3H0UAI5fG10FJSy/MSfAR1/cFiKobpCww
-   JizFyHAAuoicRQ8MouAzpqW93Do2W7ZGYl/GF3wA+yHxgyK57ScTgGT3+
-   zJTq4+fAjNKJd5YRk3LODgeBNAFSzj0TaHaBSE/Yq//1G8f6qF82S4WzE
-   WSbHMcE88o9JPc7JO0eQg/lHs/nde+WO3DPH+SyMg2uhahSmiHu8bbR1N
-   A==;
-X-CSE-ConnectionGUID: mN/ighyYSy+tV99AzzALgQ==
-X-CSE-MsgGUID: 31wjy1WCQ6emXCGLabQAZw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11531"; a="64153815"
-X-IronPort-AV: E=Sophos;i="6.17,312,1747724400"; 
-   d="scan'208";a="64153815"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 00:17:06 -0800
-X-CSE-ConnectionGUID: 5Zqo+qmeTNONqQD3jKh5hA==
-X-CSE-MsgGUID: 8IzxdN4iTv28R+IiUJY3gA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
-   d="scan'208";a="210339720"
-Received: from smoehrl-linux.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.216])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 00:17:04 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vFpkJ-000000055Qu-2lCY;
-	Mon, 03 Nov 2025 10:16:59 +0200
-Date: Mon, 3 Nov 2025 10:16:58 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Raag Jadav <raag.jadav@intel.com>, kees@kernel.org, broonie@kernel.org,
-	arnd@arndb.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] mod_devicetable: Bump auxiliary_device_id name size
-Message-ID: <aQhk-lQSDhzRmqHu@smile.fi.intel.com>
-References: <20251031190234.224813-1-raag.jadav@intel.com>
- <2025110105-upright-dinginess-3b2c@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EbSLAIorYuUhLUCLIJE14h3+JNnaAdybye/dywhOYzIoTNRwQaYWpELzwr4XyzrEV/16OXc+fZnySKD6HCIEiRZJw6zNYhodMKH4tIvissXg1Uarg8oqmVSaaHkxkFkyyCYrt3WvvaaRs64oFYF5s9O23X8gu1LA0U9c3AoiETM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hPgHPj60; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BDA0C4CEE7;
+	Mon,  3 Nov 2025 08:17:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762157874;
+	bh=e4eP8kIUbnxFkpE508lw7JjVKEVh23zzNZi3k04+VEk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hPgHPj60n+mdv62mBOJGsVRWqHQ01Gjr7rTSTRIbj0hEjbXQsio7zNnampwXmqVfr
+	 Sa91lh+8Xq11c2+0Eob2Mol7XBSQJj7zWPNQ5V/g6F1JDR4dqvCiIP9HT2K+AkNAcL
+	 Getpo0YGj7SaTIBeEQrO9vLl8D1dpFVaLA9BHQJwYUBay5ujiO3DOp4ST9WOasWYrR
+	 iEe9bbG/vX18ImVYbICTXGNw3rJ2W9y7N7ru3GyHbfFCGaO8tCGT+29JaOtPbGXYKS
+	 2Tw6/LfHfQ+08W0UHnbz56r9V02UmWfUDrvk7LicyK7GpLoz5kyMept3/H2CWlbjR9
+	 BFmCJrOBptHrg==
+Date: Mon, 3 Nov 2025 09:17:52 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Ryan Chen <ryan_chen@aspeedtech.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+	jk@codeconstruct.com.au, Kevin Chen <kevin_chen@aspeedtech.com>, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-aspeed@lists.ozlabs.org
+Subject: Re: [PATCH v6 1/1] dt-bindings: interrupt-controller:
+ aspeed,ast2700: correct #interrupt-cells and interrupts count
+Message-ID: <20251103-economic-lime-chupacabra-d7adec@kuoka>
+References: <20251030060155.2342604-1-ryan_chen@aspeedtech.com>
+ <20251030060155.2342604-2-ryan_chen@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2025110105-upright-dinginess-3b2c@gregkh>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20251030060155.2342604-2-ryan_chen@aspeedtech.com>
 
-On Sat, Nov 01, 2025 at 07:18:22AM +0100, Greg KH wrote:
-> On Sat, Nov 01, 2025 at 12:32:34AM +0530, Raag Jadav wrote:
-> > Since auxiliary device id string is formed using the combination of parent
-> > and child device names, it may require more than 32 bytes if both the names
-> > are long enough. Bump the size to 40 bytes to satisfy such cases.
+On Thu, Oct 30, 2025 at 02:01:55PM +0800, Ryan Chen wrote:
+> Update the AST2700 interrupt controller binding to match the actual
+> hardware and the irq-aspeed-intc driver behavior.
 > 
-> What in-kernel users need such a larger name?  If we allow larger names,
-> people will try to do crazy things and use memory addresses in them (has
-> happened already...)
+> - Interrupts:
+>   First-level INTC banks request multiple interrupt lines to the root
+>   GIC, with a maximum of 10 per bank. Second-level INTC banks request
+>   only one interrupt line to their parent INTC-IC. Therefore, set the
+>   interrupts property to allow a minimum of 1 and a maximum of 10
+>   entries.
 > 
-> > Suggested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > Signed-off-by: Raag Jadav <raag.jadav@intel.com>
-> > ---
-> > Triggered by [1].
-> > 
-> > [1] https://lore.kernel.org/r/aQSwWLVKH_3TthTW@smile.fi.intel.com
+> - #interrupt-cells:
+>   Set '#interrupt-cells' to <1> since the irq-aspeed-intc.c driver does
+>   not support specifying a trigger type; only the interrupt index is used.
 > 
-> How long would this driver submission's name be?  I couldn't figure it
-> out, and really, any device with a huge name is going to be a pain...
+> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+> ---
+>  .../interrupt-controller/aspeed,ast2700-intc.yaml   | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
 
-Right, Raag, please describe a use case.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
--- 
-With Best Regards,
-Andy Shevchenko
-
+Best regards,
+Krzysztof
 
 
