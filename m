@@ -1,141 +1,115 @@
-Return-Path: <linux-kernel+bounces-882714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4FA7C2B362
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:01:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A953CC2B37D
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:02:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC973188E930
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:02:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FD783A625A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CFEA2F8BF4;
-	Mon,  3 Nov 2025 11:01:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681D23002A6;
+	Mon,  3 Nov 2025 11:02:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OXLo1ILC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zq8xyZaP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7005E2FF66C;
-	Mon,  3 Nov 2025 11:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 597263009E4
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 11:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762167702; cv=none; b=LHGGgTu8kHHzF8C38GwdZ/5OPepEett5hKv/jWbrsvVdbf+v1Itf+maVfYidbFcncpSiuZbMmsf0mGfaEx6HZwQxqLYee8jNwTMcpwrGIXZuWWqAGalsQdc/o2PmCSXJvBddLHzkhKG2gdA8hd9wR3Pwal7DNngHPL8Odic6lqQ=
+	t=1762167729; cv=none; b=nPKBIAxYYF+UcA9F1dK6rSVbje6wO6gnajxkgpNhUB1Ju+LbalPdXPULjrgxWCimhLrGN5r0kBVfgpt5aBeYpfmgNGEhQRGwlUTqTjmSJ4wIHhNSCryFuDI3N4SPvZzG1WPtBJYVkbM1oeX8S/gwRLWiASBGM3GQ1gh1uiQ/WLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762167702; c=relaxed/simple;
-	bh=7Yl7p/QKEuKHnvf3YHO1rOx7CdUWvLwG5swnB3bc+OE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=naK87HXK7MxLEyf+X7DAdO71pHYk8dnFQmC5THHtm3PQA47x39L6vYak4nmaR934RUPNPapT/pJmAGOW/Du+C5ykYiN6TpSRUXPA/TQ7LSOKRYgSqOcD2hVEnW1CqWRENRSGBk58ZnPXX3rhVuKJaQp+lIujK36yzRxTgCGi01c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OXLo1ILC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2D8FC4CEE7;
-	Mon,  3 Nov 2025 11:01:40 +0000 (UTC)
+	s=arc-20240116; t=1762167729; c=relaxed/simple;
+	bh=dBEGE7Q2FKfgjAlIXnLQQ3kv27gx1kpdPQtSwVZaBLg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fEH5wfRYxRob1DG02B8oRYYkMYOfh1WCAEvUMxgQIXAslA/9XClumz1hsRDanwQS1fGTw8GDOv8bnokMyAMRTQFZwo+fkADm4dvTIJ5OmVMf3uR9Ydagb+I7dYS5llZVURlrv9vdiDGRfrkjOv2onCZjFW8Cr0h+M4r9FOQVDMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zq8xyZaP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 742AAC4CEE7;
+	Mon,  3 Nov 2025 11:02:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762167702;
-	bh=7Yl7p/QKEuKHnvf3YHO1rOx7CdUWvLwG5swnB3bc+OE=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=OXLo1ILCSbQrT3q/OqOr+NGTkNoVDVspDRDFRbSItt1cMc4Z+ingzlppzx/jVjCfg
-	 cZ4dX+q471OUZpo/tnnFZL31Pu9ZPLn2o5Odly5z98UABy5SYz14FscVpBfO6c1T/P
-	 uhpUT572SQ1irzA/GgbcXLHVjd27sfUrGfu+OSGFl1MoeChH5c3jjNWd2i+oH4+Mf0
-	 Ax1Fbh/bNNvc5o9gRBYEK0BZRDq/pi+1BSji9u/K7B0GR2zLVHhvPxYRM+mH3X9UY+
-	 zJvuUHeX21OYk828hNWoxJLdHiMLBK3CkDNKABXlHdoNNAQlZ3xxtVY1Ajch3uUYO1
-	 O4lV1mkHgioXQ==
-Message-ID: <9f9d2240-63be-4232-8ad6-44821d2b9177@kernel.org>
-Date: Mon, 3 Nov 2025 12:01:39 +0100
+	s=k20201202; t=1762167727;
+	bh=dBEGE7Q2FKfgjAlIXnLQQ3kv27gx1kpdPQtSwVZaBLg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Zq8xyZaPRCiSAPW57VhpsgAiTBwBqP6XkDgxOvn5vZzA1sYnqgh0RK5mD5wnjGYGK
+	 Hu0MC0hbd6ILJ24QPsYjK8AvwJlo6q3ygStghGvD32c6OmXG8C5HjncIMB9PZpxato
+	 J4d2LnumJHSpZbzkzdQ0c+4R7sixgMQU/dRonIMHaL5Em2sFwnlppVzwgrIZhsXuG3
+	 Og0dec424Y3aGwlYl0f+1ns2Q6LnPqADoaWiu6OjG0zo0fVswYDtBIWirBCBfuYtW2
+	 Ex22L8WzhNXm3fHjLOWEViWi8YdGBaF1JvcxixiNfx8swlRvyHsquMloLFfUCHjitS
+	 seAV/qWGeefQg==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Baoquan He <bhe@redhat.com>,
+	Alexander Graf <graf@amazon.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>,
+	Pratyush Yadav <pratyush@kernel.org>
+Cc: kexec@lists.infradead.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] kho: fix out-of-bounds access of vmalloc chunk
+Date: Mon,  3 Nov 2025 12:01:57 +0100
+Message-ID: <20251103110159.8399-1-pratyush@kernel.org>
+X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [PATCH V2] media: dvb-usb: Optimizing err() output
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- mchehab@kernel.org, syzbot+480edd2cadb85ddb4bbe@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com
-References: <tencent_303296E836864A7674D377A966003C7D3709@qq.com>
- <tencent_A5374A4B00744776B566CC3DD936EC960A09@qq.com>
- <24d04c2c-50b1-48ec-8ba9-c09ef29fd3fd@kernel.org>
-Content-Language: en-US, nl
-In-Reply-To: <24d04c2c-50b1-48ec-8ba9-c09ef29fd3fd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Also fix the Subject line to add "pctv452e:" as prefix.
+The list of pages in a vmalloc chunk is NULL-terminated. So when looping
+through the pages in a vmalloc chunk, both kho_restore_vmalloc() and
+kho_vmalloc_unpreserve_chunk() rightly make sure to stop when
+encountering a NULL page. But when the chunk is full, the loops do not
+stop and go past the bounds of chunk->phys, resulting in out-of-bounds
+memory access, and possibly the restoration or unpreservation of an
+invalid page.
 
-Regards,
+Fix this by making sure the processing of chunk stops at the end of the
+array.
 
-	Hans
+Fixes: a667300bd53f2 ("kho: add support for preserving vmalloc allocations")
+Signed-off-by: Pratyush Yadav <pratyush@kernel.org>
+---
 
-On 03/11/2025 12:00, Hans Verkuil wrote:
-> On 14/10/2025 02:30, Edward Adam Davis wrote:
->> syzbot reported a uninit-value in pctv452e_i2c_msg. [1]
->>
->> When the snd_len or rcv_len check fails and jumps to failed, buf is
->> uninitialized, triggering the uninit-value issue.
->>
->> Setting the err() output buf byte count to 0 before jumping to failed
->> before initializing buf and setting it to 7 after initializing buf avoids
->> this warning.
->>
->> [1]
->> BUG: KMSAN: uninit-value in hex_string+0x681/0x740 lib/vsprintf.c:1220
->>  pctv452e_i2c_msg+0x82a/0x8f0 drivers/media/usb/dvb-usb/pctv452e.c:467
->>  pctv452e_i2c_xfer+0x2e6/0x4c0 drivers/media/usb/dvb-usb/pctv452e.c:502
->>
->> Reported-by: syzbot+480edd2cadb85ddb4bbe@syzkaller.appspotmail.com
->> Closes: https://syzkaller.appspot.com/bug?extid=480edd2cadb85ddb4bbe
->> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
->> ---
->> V1 -> V2: subject typos
->>
->>  drivers/media/usb/dvb-usb/pctv452e.c | 5 +++--
->>  1 file changed, 3 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/media/usb/dvb-usb/pctv452e.c b/drivers/media/usb/dvb-usb/pctv452e.c
->> index 5094de9a312e..3b6e86a8e9ff 100644
->> --- a/drivers/media/usb/dvb-usb/pctv452e.c
->> +++ b/drivers/media/usb/dvb-usb/pctv452e.c
->> @@ -420,7 +420,7 @@ static int pctv452e_i2c_msg(struct dvb_usb_device *d, u8 addr,
->>  	struct pctv452e_state *state = d->priv;
->>  	u8 *buf;
->>  	u8 id;
->> -	int ret;
->> +	int ret, plen = 0;
-> 
-> Adding a plen variable isn't the right fix...
-> 
->>  
->>  	buf = kmalloc(64, GFP_KERNEL);
->>  	if (!buf)
->> @@ -432,6 +432,7 @@ static int pctv452e_i2c_msg(struct dvb_usb_device *d, u8 addr,
->>  	if (snd_len > 64 - 7 || rcv_len > 64 - 7)
->>  		goto failed;
-> 
-> ...this check should be moved up to before the kmalloc and just return -EINVAL.
-> That also avoids incrementing state->c in that case.
-> 
-> Regards,
-> 
-> 	Hans
-> 
->>  
->> +	plen = 7;
->>  	buf[0] = SYNC_BYTE_OUT;
->>  	buf[1] = id;
->>  	buf[2] = PCTV_CMD_I2C;
->> @@ -466,7 +467,7 @@ static int pctv452e_i2c_msg(struct dvb_usb_device *d, u8 addr,
->>  failed:
->>  	err("I2C error %d; %02X %02X  %02X %02X %02X -> %*ph",
->>  	     ret, SYNC_BYTE_OUT, id, addr << 1, snd_len, rcv_len,
->> -	     7, buf);
->> +	     plen, buf);
->>  
->>  	kfree(buf);
->>  	return ret;
-> 
-> 
+Notes:
+    Commit 89a3ecca49ee8 ("kho: make sure page being restored is actually
+    from KHO") was quite helpful in catching this since kho_restore_page()
+    errored out due to missing magic number, instead of "restoring" a random
+    page and causing errors at other random places.
+
+ kernel/kexec_handover.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
+index 76f0940fb4856..cc5aaa738bc50 100644
+--- a/kernel/kexec_handover.c
++++ b/kernel/kexec_handover.c
+@@ -869,7 +869,7 @@ static void kho_vmalloc_unpreserve_chunk(struct kho_vmalloc_chunk *chunk)
+ 
+ 	__kho_unpreserve(track, pfn, pfn + 1);
+ 
+-	for (int i = 0; chunk->phys[i]; i++) {
++	for (int i = 0; i < ARRAY_SIZE(chunk->phys) && chunk->phys[i]; i++) {
+ 		pfn = PHYS_PFN(chunk->phys[i]);
+ 		__kho_unpreserve(track, pfn, pfn + 1);
+ 	}
+@@ -992,7 +992,7 @@ void *kho_restore_vmalloc(const struct kho_vmalloc *preservation)
+ 	while (chunk) {
+ 		struct page *page;
+ 
+-		for (int i = 0; chunk->phys[i]; i++) {
++		for (int i = 0; i < ARRAY_SIZE(chunk->phys) && chunk->phys[i]; i++) {
+ 			phys_addr_t phys = chunk->phys[i];
+ 
+ 			if (idx + contig_pages > total_pages)
+
+base-commit: dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
+-- 
+2.47.3
 
 
