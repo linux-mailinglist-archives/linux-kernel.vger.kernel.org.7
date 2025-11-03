@@ -1,45 +1,46 @@
-Return-Path: <linux-kernel+bounces-882131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC29EC29B75
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 01:49:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A21A6C29BAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 01:50:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FCCA188E908
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 00:49:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEA84188F5D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 00:50:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178AE1DB54C;
-	Mon,  3 Nov 2025 00:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E3423D7F0;
+	Mon,  3 Nov 2025 00:48:41 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF9486329;
-	Mon,  3 Nov 2025 00:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9413221DB4;
+	Mon,  3 Nov 2025 00:48:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762130918; cv=none; b=SD3CxX5e+aSFl+7N/YdqXNebe/i2sKULLzI2ut0rZfQW0ogo/EXipiJxOgvaMUzqYsHoGnqxbKr55fuiVczESdCkjkedrpdVM+9LlRc87AUDj0Aq+2ErF9zwMLzaK8jvQw5WKllPI5pls1OCfoIgnDVbNWMgI6dxrEs+1cc8UAY=
+	t=1762130920; cv=none; b=YNA7lUj47Oj5kSnwvQpdHFb5bpsXK5fKVq8U30HYrotUcMukdZTH38o7FGUinIv4mSnENwvgfMyY3Ybmr2AKPcUQbuusqxIoI+kfisdkSqgj96j0nXXmUUYvFK3N5expesJW7IwuLvyaCkmglppSkIuAsIayFEP5zSWYQFtk550=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762130918; c=relaxed/simple;
-	bh=lRmNRXW79BJacRZiBSLo6rgqKBbUGx6eh1YWYDJmvUw=;
+	s=arc-20240116; t=1762130920; c=relaxed/simple;
+	bh=nOFN6vfcMqilST2zNVsxQcVLExMZvz9mpz5z12p8XFE=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=d26yK2y8w4j0pGRLC6RFn7EmBq4R8fUZYf1YqfB+BCnY6BnzLhoidCGMiMfBj1swFPZL8TR0epZrh7U5whBUx2EjCUDhRHog3NYmtzHgN/V2ZW/grujTM9vVkkGgrwlimiGDoMRO+j3ESEImNnmxqrRaHsyF0r4Pu5tlL7h3uBU=
+	 MIME-Version:Content-Type; b=ftWl5X6UtfmLYxBqfamArcgGifK3hR/iGGG60anm7dTJ0eNzQxShNrqKOcs0tXu/bkaQtVYTsZToE1AtaEgzl4L/jYnmr2S+N1M4DzOZzCzKqgPLVxiS8zZFmx5y8MEOkYFIelmKNIDmV4RpVB05Zn40uZwy0amFtlM5J4RwswU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D415BC4AF0B;
-	Mon,  3 Nov 2025 00:48:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83EE3C19421;
+	Mon,  3 Nov 2025 00:48:40 +0000 (UTC)
 Received: by venus (Postfix, from userid 1000)
-	id 3F434180CC5; Mon, 03 Nov 2025 01:48:33 +0100 (CET)
+	id 4E67318157B; Mon, 03 Nov 2025 01:48:33 +0100 (CET)
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org, 
- Haotian Zhang <vulab@iscas.ac.cn>
-Cc: linux-kernel@vger.kernel.org
-In-Reply-To: <20250929113234.1726-1-vulab@iscas.ac.cn>
-References: <20250929031536.2274-1-vulab@iscas.ac.cn>
- <20250929113234.1726-1-vulab@iscas.ac.cn>
-Subject: Re: [PATCH v2] power: supply: rt5033_charger: Fix device node
- reference leaks
-Message-Id: <176213091325.301408.8119254276502287887.b4-ty@collabora.com>
+To: Sebastian Reichel <sre@kernel.org>, 
+ Murad Masimov <m.masimov@mt-integration.ru>
+Cc: ChiYuan Huang <cy_huang@richtek.com>, ChiaEn Wu <chiaen_wu@richtek.com>, 
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ lvc-project@linuxtesting.org
+In-Reply-To: <20251009145308.1830893-1-m.masimov@mt-integration.ru>
+References: <20251009145308.1830893-1-m.masimov@mt-integration.ru>
+Subject: Re: [PATCH] power: supply: rt9467: Prevent using uninitialized
+ local variable in rt9467_set_value_from_ranges()
+Message-Id: <176213091331.301408.12846671531653101740.b4-ty@collabora.com>
 Date: Mon, 03 Nov 2025 01:48:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -52,20 +53,18 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.3
 
 
-On Mon, 29 Sep 2025 19:32:34 +0800, Haotian Zhang wrote:
-> The device node pointers `np_conn` and `np_edev`, obtained from
-> of_parse_phandle() and of_get_parent() respectively, are not released.
-> This results in a reference count leak.
+On Thu, 09 Oct 2025 17:53:08 +0300, Murad Masimov wrote:
+> There is a typo in rt9467_set_value_from_ranges() that can cause leaving local
+> variable sel with an undefined value which is then used in regmap_field_write().
 > 
-> Add of_node_put() calls after the last use of these device nodes to
-> properly release their references and fix the leaks.
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
 > 
-> [...]
+> 
 
 Applied, thanks!
 
-[1/1] power: supply: rt5033_charger: Fix device node reference leaks
-      commit: 6cdc4d488c2f3a61174bfba4e8cc4ac92c219258
+[1/1] power: supply: rt9467: Prevent using uninitialized local variable in rt9467_set_value_from_ranges()
+      commit: 15aca30cc6c69806054b896a2ccf7577239cb878
 
 Best regards,
 -- 
