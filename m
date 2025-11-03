@@ -1,93 +1,103 @@
-Return-Path: <linux-kernel+bounces-883778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50887C2E664
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:29:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EB2AC2E667
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:30:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1E213B87C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:28:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B4E63AA097
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF45E2FF64B;
-	Mon,  3 Nov 2025 23:28:05 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 765C92FF644;
+	Mon,  3 Nov 2025 23:29:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="BvO0hEUA"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92902C11CB
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 23:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44B023184F
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 23:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762212485; cv=none; b=WNGUo82DHYYXuRWPUJTLyH2fOSMZIisLZrLuUcFVyJIXuE/S1FYHjRicVSPb7EMfBOyjlJvTJHr1LeOvm5ME0CmYLZl7iv3Uj5pyHb6qVfpllfbH0zFMYvJNnWcUeMLGRqjwj/tY350CkkQ2rfBAL20UHqTUMBTZ843E4jqdZ/Y=
+	t=1762212598; cv=none; b=GT1eC87mmcvvkiSj4953MMe+llbJAKrbzIiwiA/pTIK/uLrNQfBXoxFcMpaJFmskFStuXVeEFMXKINbAWCU02O83kx7j3SSLtj0mQ/xtNWR9deP58GJySsGRzEZW06dm9p2FVabcElkpUCWwVAoeRDz445tHsUNuFKsfcbYXf2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762212485; c=relaxed/simple;
-	bh=e+hUtLgnUk9Xelyamxzo8aAh92PTX/nGJkqBbHiuw1I=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=e+xftdqUA+If0U1S50zi54WB7zoDW8o3ZLSO+1DXfF3UojNER7K18tg6h5whxBJQDDPf1J0ra058eugNN2va+KA05gHE/X3shOdoXBcWwre6kECpiJbROaD3K7RP3Guqih+cWJfoqOv3QY8fU32NdFDWDuGWUXY8cLu2w357gbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-9434f5350bcso467236639f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 15:28:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762212483; x=1762817283;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RAZCNdGP6oa4/13Oj7L2uGoPdWBFOF+p2dxE9OH7Xts=;
-        b=JujqB0IyTkNU883nN1rm/x01xLEOCH3yxWiv7QUgY1mUdxFjuuoQFECcE5lI1LJ4t1
-         2s3LRkvJbikacdvUMLvVn8pb6r4OzpvoOgTyFTa5Z5r8vZLhNn7ar4SykiWBWrX+8Tah
-         CYZGtXOpBox008oLw3bS/lGGHJe86aBFfJQoE6NLV7D/yAyFaX5xCDpH6R/SxV2iTcCE
-         S2cqZXaKNlXtry/z9AXsxyXbvvFZxzISnFsGYgDJ557IjH/VBEY7LAoznGniYNQICedW
-         FNMQdAmJuqpJmKRL3RJkSGRaf6829I8zEqsRCZCL60RbOPTdkOqliQKegvEcKLo/Fdtg
-         FlSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVLp0DaJJTjP5TEGIIKa6krQysbgGHL+A8/qUmzGgHSlKezQRqWXrqsX0TL7KXdaG3/7tvnnW6DJdPE4uk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/0YN9niwuDB8KTwv1GpTclxrMJeszPkw4fty1ZGFNcSPvwzek
-	ycgVio7zXr8krAm12l3Ku+HgUbTsDVmkuQjVEXZoZg8SF5Q9zVVPp4L4/SjUicUU3WVpmAxoocx
-	hTbNCTKFvu6/CV2HCtKv4MFsRyslYmmUdgBlp+RbivuQhuO9+SaW++ZE791E=
-X-Google-Smtp-Source: AGHT+IGdfjUbagDO/4+FziCnHEUyeuf6B9If+BZc4kuwQIqb9ahoHL7XKeHxACMKk70wvvZhdDmGpPBqt1bgpW8kLip3yqMw4Sgc
+	s=arc-20240116; t=1762212598; c=relaxed/simple;
+	bh=M6GknbJpE506sINKjQjH772EGL0xHUNJqJDMuG3v7JI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PmHVP4pSqpSttR5Z0mkWTXqcWuWrKScEZ8BXyIY4/eNcKL9h9QTcORpnWBI4vhPSo6uS52yiZUuiDsdDARhE5Jir+h2ZJolmvF9crZB+flvGqYHt6CJSK3buTz61UZLOSJEVux+FsUXcZ5+HrUfFGDF5Qgii/Kq5n0CZWdj1pqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=BvO0hEUA; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Reply-To:Content-Type:In-Reply-To:References;
+	bh=/GEMrOwZVsiXdMif1L0bfvd7qwfmMoi0a0kPiLrWVPA=; b=BvO0hEUAUKHNaCspW5SOVCu0/G
+	PwrTaHoHOMGWWOlg++lw6Am1wTewS49UfOolGriQxEukA6xtj+RFRqa02sfmnv3YIduazuP/t65uz
+	Z+ko0GbyKUGX0cWbLa5y5F2oFqpJPHkP85COWY40Ky494KGItFycxoy3ZzABkEGoDbDSzq1ePwHEe
+	jF6P2kLcUXgfhunylDroww4w89CQ3geDtjVlVDcNAy4CQ7QUugfLnTIdiS3wH3GaFiFjnzf0p8Smw
+	LI4F7tfwfV09b4E9Czw3UdNC2iOHlbojYbjg477imgC49CPTEiaJX39hUh8Z1SfHgGA5zM6wOFSrT
+	0mrgQENQ==;
+Received: from i53875a3a.versanet.de ([83.135.90.58] helo=phil.fritz.box)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1vG3zh-0007mj-5a; Tue, 04 Nov 2025 00:29:49 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: lee@kernel.org,
+	srini@kernel.org
+Cc: heiko@sntech.de,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/2] qnap-mcu: add nvmem subdevice to read the eeprom
+Date: Tue,  4 Nov 2025 00:29:40 +0100
+Message-ID: <20251103232942.410386-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:ed15:0:b0:945:9e9c:721 with SMTP id
- ca18e2360f4ac-9485929af5emr165838339f.3.1762212483202; Mon, 03 Nov 2025
- 15:28:03 -0800 (PST)
-Date: Mon, 03 Nov 2025 15:28:03 -0800
-In-Reply-To: <00000000000062a2960621a49519@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <69093a83.050a0220.98a6.0096.GAE@google.com>
-Subject: Re: [syzbot] [wireless?] WARNING in ieee80211_rx_list (3)
-From: syzbot <syzbot+b4aa2b672b18f1d4dc5f@syzkaller.appspotmail.com>
-To: acsjakub@amazon.de, davem@davemloft.net, edumazet@google.com, 
-	ffmancera@riseup.net, horms@kernel.org, johannes@sipsolutions.net, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	liuhangbin@gmail.com, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot suspects this issue was fixed by commit:
+The qnap-mcu is firmware running on a Weltrend WT61P803 MCU and there is
+an eeprom connected to it, that can be read via the serial interface.
 
-commit d67ca09ca39f9605459959004b28c56899e3bca3
-Author: Hangbin Liu <liuhangbin@gmail.com>
-Date:   Tue Sep 2 06:55:58 2025 +0000
+The eeprom is somewhat important, as it contains for example the
+assigned mac address for the rk3568's gmac interface on TSx33 devices.
 
-    hsr: use netdev_master_upper_dev_link() when linking lower ports
+So add a nvmem driver for it and hook it into the mfd.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=153bebcd980000
-start commit:   b66e19dcf684 Merge branch 'mctp-add-mctp-over-usb-hardware..
-git tree:       net-next
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cc73f5c6f9d29d57
-dashboard link: https://syzkaller.appspot.com/bug?extid=b4aa2b672b18f1d4dc5f
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=104ccdb0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=164d7498580000
 
-If the result looks correct, please mark the issue as fixed by replying with:
+This needs to be applied on top of
+commit a141f0ff2548 ("mfd: qnap-mcu: Include linux/types.h in qnap-mcu.h
+shared header") to not cause build failures.
 
-#syz fix: hsr: use netdev_master_upper_dev_link() when linking lower ports
+changes in v4:
+- add missing linux/slab.h include for kzalloc and kfree prototypes
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+changes in v3:
+- rebase on top of 6.18-rc3
+- the compile error the kernel-test-robot reported in v2 should've
+  fixed itself with the patch applied before 6.18-rc1 .
+
+changes in v2:
+- drop binding patch, already applied
+- split up nvmem driver and qnap-mcu-mfd subdevice addition (Lee)
+- add Srinivas' Ack for the nvmem driver
+
+Heiko Stuebner (2):
+  nvmem: Add driver for the eeprom in qnap-mcu controllers
+  mfd: qnap-mcu: Hook up the eeprom sub-device
+
+ drivers/mfd/qnap-mcu.c          |   1 +
+ drivers/nvmem/Kconfig           |   9 +++
+ drivers/nvmem/Makefile          |   2 +
+ drivers/nvmem/qnap-mcu-eeprom.c | 111 ++++++++++++++++++++++++++++++++
+ 4 files changed, 123 insertions(+)
+ create mode 100644 drivers/nvmem/qnap-mcu-eeprom.c
+
+-- 
+2.47.2
+
 
