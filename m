@@ -1,109 +1,173 @@
-Return-Path: <linux-kernel+bounces-882322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF514C2A2FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 07:29:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7FA1C2A2F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 07:29:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 543463AB723
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 06:29:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67F89188AEB5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 06:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03DFB295516;
-	Mon,  3 Nov 2025 06:29:11 +0000 (UTC)
-Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2CE296BA8;
+	Mon,  3 Nov 2025 06:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cxG98CUt"
+Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31525291C33;
-	Mon,  3 Nov 2025 06:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84AEB21578D
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 06:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762151350; cv=none; b=YjXXy6ZUmetSgoIkkTUzHLAd2iQMH/PiMwwIUtmTp8ah4shgdqu5bItFXq22pHDfqtQZwQTDiv5BATRDcknkaRPcxYGqEadG3lDiMoE4Hqrva0be7y8FV46Bk/7RCLh9UM3pjK7kns2bJ7JlBGxBQhnnJMOoQSuOJcqyaJUCOZ8=
+	t=1762151320; cv=none; b=W7GFyjM+sAZWf7dQXfWBsNv/OgI94NucdTON7FAnxD2pq8eW+6vBmA1emi8DoJimo703j0pljQsS8tEqbiFs77IAiCHBuZOv7DzVAOgz6U0fNekbSceY607qE/fVFOcVHnyzVkl7g0p8s64uTNjmG3MZBMEapXvEvv6rD+x4lNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762151350; c=relaxed/simple;
-	bh=8jVk7in61RXpS246U2Z4bBDD2OdJJ6KiqtiqI6EDdLI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oXyo+hL3Qv0rUFZV9J4dAA6PLU7bp3HmII6vlW6VoBvIb9G2/KLFp0tl200PjQvkKF1AGYA5NLj0n2eYWALRH1ywEBYVXWPefrExKrZ2Gv1II2rZIXgrUXIhCX6e0gpiWalw1sXwWSaJMFb96eiWUVDUB/nV8zL790YxupSZ2uE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from Jtjnmail201615.home.langchao.com
-        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id 202511031428596615;
-        Mon, 03 Nov 2025 14:28:59 +0800
-Received: from jtjnmailAR02.home.langchao.com (10.100.2.43) by
- Jtjnmail201615.home.langchao.com (10.100.2.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Mon, 3 Nov 2025 14:29:00 +0800
-Received: from inspur.com (10.100.2.107) by jtjnmailAR02.home.langchao.com
- (10.100.2.43) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Mon, 3 Nov 2025 14:29:00 +0800
-Received: from localhost.localdomain.com (unknown [10.94.13.117])
-	by app3 (Coremail) with SMTP id awJkCsDw3fisSwhpm7wJAA--.11974S4;
-	Mon, 03 Nov 2025 14:29:00 +0800 (CST)
-From: Chu Guangqing <chuguangqing@inspur.com>
-To: <"dario.binacchi@amarulasolutions.commkl@pengutronix.demailhol"@kernel.org>
-CC: <linux-can@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Chu Guangqing
-	<chuguangqing@inspur.com>
-Subject: [PATCH] can: bxcan: Fix a typo error for assign
-Date: Mon, 3 Nov 2025 14:27:46 +0800
-Message-ID: <20251103062746.4212-1-chuguangqing@inspur.com>
-X-Mailer: git-send-email 2.43.7
+	s=arc-20240116; t=1762151320; c=relaxed/simple;
+	bh=PfSsBRoB3TgmqwbvgrIlvWOlJprDh92dXfLoV/tLGlg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=kUrxcSN6oxspSbMuLiSUXsIKsJD/AGozr0cyxHOI9KZ8MBKUgnxfAT9+RWuJkXJSdHL0kzNS496DMzrqm6/+hU713xq015vDBPD38VVpZVEOKgVBxs2yyUFYc9mF2Owu9vxD2eO3Nne302mcP55W7IxCqPOlhPIIu+wDZYGAacg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cxG98CUt; arc=none smtp.client-ip=209.85.214.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-2956d816c10so13651695ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 22:28:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762151318; x=1762756118; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HzWLA6lM7306PSkRpZwBsCJQbgLVcWr7Jb7jPn8ULYQ=;
+        b=cxG98CUt30ivJIKJgt7/dzhqgSS6q6ovGTF3Sv3LpIC8CmtExCW3+I754+K4rornrB
+         /t5mI+I/DVzJr5OGhUPNH4nuaaBffa9atjTPEn7Sml47rqZcUPm7yFrce0V++RYGP+kH
+         F+BSveDBbzU1Ivd0R/zYc/y5OtBcqidSmrulMhWhGPkDi6xNBeEJgvjmgIAQXep6y3P5
+         JYCbplnuw5tWDVNMq+J4UCNzm3OVTsRXbBfyYTJR0vyZa23b2r+2V5Q6/eHVfJc+43GV
+         wK8Nx9UsAkagZrrAD0pb4jvB80wfLRPK0wg94HMl+b95JgJgO3IbCwe4YzkUocOOYR02
+         Tqhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762151318; x=1762756118;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HzWLA6lM7306PSkRpZwBsCJQbgLVcWr7Jb7jPn8ULYQ=;
+        b=pC3UIzcpFhcjKm3dZz5cxO9eAbVfOsNT9bm5mp50t20pEK8/Of1+AMxMN3VRJcZtLy
+         7cw/Qj3bh511zWayrGZMgHmYOjc6B0zuzXlmTMR5gixCfnHHPJKLGB5xjk3LHFSCNoZy
+         zx8cD/sYV2CjmTDp52By3Dv0R16Vm5KjaNgXRrtMDOuL80Fu+27cxF9xGJfmbgd8m7QA
+         wNSBtKSw3sB7rh1bFgDLf9/hhI/GFe0m1noL/0cEEcrXSCGybEHVO2uYORdwzRP+Uo+9
+         QOGCAJiKCWWkM2qXsIOPhaGueqG+0qKoy93Ge+384+Z4JsHpbDuss+S0OPdEnHuOn+d9
+         y3gQ==
+X-Gm-Message-State: AOJu0YzoR/fQSrkV0jjU5Tck0EB2fNcPkyVd6oCo7WP8uHqyBFlHUXkp
+	rygvF8iXe4RGOhEu83VG5ct5shYw0nQCPZtYO3GNzjTXiBNd2bH/jCDnLAScPYP9M31SNYLJ
+X-Gm-Gg: ASbGncvtacuH/gKQbsPNo6DG9Uai+CYuGJGvy+7YWEM9aD1NU50tlrW6NBoyrvokzs2
+	oljAHxO8FNZi2mBWrwsic1t0Zm2wMg8cMhBG58SMaBF3+MqN6BZxZwFr2cFSt6qpwm+mUXj/IO0
+	djTObErdP8t1DL12aeDdg5rkpIFOQ/snD7pNJ1Lt4vm6i/LA68f0R9Yt2uX3pOzm6oRrJi9raZS
+	H+1RDzuF+SBMhzphVwsmTgaQ3l9+xslaIOyVboDv0eKvg4ua//D2XJq8rhdN0Awn3BGwdn2DRI/
+	T+FrYFbdGUXfr3aUNQtJ0jDA8YV4+KleBMOUextkXelvT1IIB95zVFw+0iTjoGLzILefMOJ9G3Q
+	luoFvMaGcbKyZ1kRfSbAu/xRJ94tl9ZZJe3YdIq/jALXmySnIhCTu+XKUZGf5FNBfcLpbnTjw5e
+	mrV40ZvwfZ5kY/pU/SjF0U
+X-Google-Smtp-Source: AGHT+IGieiNu6B5gkgyoDggtQ7uHFE1tUXXst+2hCFavgg4oBRkDQVMrd9IkdCDUo5boIWBJw2G0nw==
+X-Received: by 2002:a17:902:c407:b0:295:57f6:76b with SMTP id d9443c01a7336-29557f60d3bmr68472355ad.7.1762151317697;
+        Sun, 02 Nov 2025 22:28:37 -0800 (PST)
+Received: from days-ASUSLaptop.lan ([110.191.181.52])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2952699c482sm108155595ad.80.2025.11.02.22.28.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Nov 2025 22:28:37 -0800 (PST)
+From: dayss1224@gmail.com
+To: anup@brainfault.org,
+	ajones@ventanamicro.com,
+	atishp@atishpatra.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org,
+	Dong Yang <dayss1224@gmail.com>,
+	Quan Zhou <zhouquan@iscas.ac.cn>
+Subject: [PATCH] KVM: riscv: Support enabling dirty log gradually in small chunks
+Date: Mon,  3 Nov 2025 14:28:25 +0800
+Message-Id: <20251103062825.9084-1-dayss1224@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: awJkCsDw3fisSwhpm7wJAA--.11974S4
-X-Coremail-Antispam: 1UD129KBjvdXoW7XFy7JrWrtFyfAF1kAryrWFg_yoWxtwb_Gr
-	sYkw42qa4qkr12kw47Ka17ZryYyF4UXFn3WrnaqrWaqF4UAr1Fkrs29r17t3Z8GrW8G3s3
-	WwsIyr1Fk34UKjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb48FF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_GcCE
-	3s1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
-	1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0
-	cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8Jw
-	ACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAKzI0EY4vE52x0
-	82I5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
-	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y
-	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
-	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
-	IxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUjnNVDUUUU
-	U==
-X-CM-SenderInfo: 5fkxw35dqj1xlqj6x0hvsx2hhfrp/
-X-CM-DELIVERINFO: =?B?YEPbipRRTeOiUs3aOqHZ50hzsfHKF9Ds6CbXmDm38RucXu3DYXJR7Zlh9zE0nt/Iac
-	D+Kfazu9iKXuQF24Xl6m1qs5nU+vTWs0UaMZjN3SDVnrRYG49jBlNTzDl+diXDBjRnugDY
-	cc5eMvHHNB//UOanGao=
-Content-Type: text/plain
-tUid: 20251103142859d5068511d85d887aecdaa579b34e7dba
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
 
-Fix the spelling error of "assign".
+From: Dong Yang <dayss1224@gmail.com>
 
-Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
+There is already support of enabling dirty log gradually in small chunks
+for x86 in commit 3c9bd4006bfc ("KVM: x86: enable dirty log gradually in
+small chunks") and c862626 ("KVM: arm64: Support enabling dirty log
+gradually in small chunks"). This adds support for riscv.
+
+x86 and arm64 writes protect both huge pages and normal pages now, so
+riscv protect also protects both huge pages and normal pages.
+
+On a nested virtualization setup (RISC-V KVM running inside a QEMU VM
+on an [Intel® Core™ i5-12500H] host), I did some tests with a 2G Linux
+VM using different backing page sizes. The time taken for
+memory_global_dirty_log_start in the L2 QEMU is listed below:
+
+Page Size      Before    After Optimization
+  4K            4490.23ms         31.94ms
+  2M             48.97ms          45.46ms
+  1G             28.40ms          30.93ms
+
+Signed-off-by: Quan Zhou <zhouquan@iscas.ac.cn>
+Signed-off-by: Dong Yang <dayss1224@gmail.com>
 ---
- drivers/net/can/bxcan.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/virt/kvm/api.rst    | 2 +-
+ arch/riscv/include/asm/kvm_host.h | 3 +++
+ arch/riscv/kvm/mmu.c              | 5 ++++-
+ 3 files changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/can/bxcan.c b/drivers/net/can/bxcan.c
-index 0b579e7bb3b6..baf494d20bef 100644
---- a/drivers/net/can/bxcan.c
-+++ b/drivers/net/can/bxcan.c
-@@ -227,7 +227,7 @@ static void bxcan_enable_filters(struct bxcan_priv *priv, enum bxcan_cfg cfg)
- 	 * mask mode with 32 bits width.
- 	 */
+diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+index 57061fa29e6a..3b621c3ae67c 100644
+--- a/Documentation/virt/kvm/api.rst
++++ b/Documentation/virt/kvm/api.rst
+@@ -8028,7 +8028,7 @@ will be initialized to 1 when created.  This also improves performance because
+ dirty logging can be enabled gradually in small chunks on the first call
+ to KVM_CLEAR_DIRTY_LOG.  KVM_DIRTY_LOG_INITIALLY_SET depends on
+ KVM_DIRTY_LOG_MANUAL_PROTECT_ENABLE (it is also only available on
+-x86 and arm64 for now).
++x86, arm64 and riscv for now).
  
--	/* Enter filter initialization mode and assing filters to CAN
-+	/* Enter filter initialization mode and assign filters to CAN
- 	 * controllers.
+ KVM_CAP_MANUAL_DIRTY_LOG_PROTECT2 was previously available under the name
+ KVM_CAP_MANUAL_DIRTY_LOG_PROTECT, but the implementation had bugs that make
+diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/asm/kvm_host.h
+index 4d794573e3db..848b63f87001 100644
+--- a/arch/riscv/include/asm/kvm_host.h
++++ b/arch/riscv/include/asm/kvm_host.h
+@@ -59,6 +59,9 @@
+ 					 BIT(IRQ_VS_TIMER) | \
+ 					 BIT(IRQ_VS_EXT))
+ 
++#define KVM_DIRTY_LOG_MANUAL_CAPS   (KVM_DIRTY_LOG_MANUAL_PROTECT_ENABLE | \
++	KVM_DIRTY_LOG_INITIALLY_SET)
++
+ struct kvm_vm_stat {
+ 	struct kvm_vm_stat_generic generic;
+ };
+diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
+index 525fb5a330c0..a194eee256d8 100644
+--- a/arch/riscv/kvm/mmu.c
++++ b/arch/riscv/kvm/mmu.c
+@@ -161,8 +161,11 @@ void kvm_arch_commit_memory_region(struct kvm *kvm,
+ 	 * allocated dirty_bitmap[], dirty pages will be tracked while
+ 	 * the memory slot is write protected.
  	 */
- 	regmap_update_bits(priv->gcan, BXCAN_FMR_REG,
+-	if (change != KVM_MR_DELETE && new->flags & KVM_MEM_LOG_DIRTY_PAGES)
++	if (change != KVM_MR_DELETE && new->flags & KVM_MEM_LOG_DIRTY_PAGES) {
++		if (kvm_dirty_log_manual_protect_and_init_set(kvm))
++			return;
+ 		mmu_wp_memory_region(kvm, new->id);
++	}
+ }
+ 
+ int kvm_arch_prepare_memory_region(struct kvm *kvm,
 -- 
-2.43.7
+2.34.1
 
 
