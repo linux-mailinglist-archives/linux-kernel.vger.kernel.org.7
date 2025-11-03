@@ -1,114 +1,104 @@
-Return-Path: <linux-kernel+bounces-882282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53489C2A0EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 06:24:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D28C7C2A0F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 06:25:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id B20D94EAA4A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 05:24:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F7023B1E9C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 05:25:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7AF326B973;
-	Mon,  3 Nov 2025 05:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1799026B973;
+	Mon,  3 Nov 2025 05:24:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RZvgHDti"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="G4VD1FwC"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09F7B23E25B;
-	Mon,  3 Nov 2025 05:24:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0890EAD5A
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 05:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762147472; cv=none; b=Q/S442Pq+1zJfapbcvpgNwU3YMSAQFaLhqy2wXEwXDhMm3JikkNWT4h2SxCYsS5M8gX8NwxmcpZhQzxrz04LOb2QjGn7YNss3YKq2999qlQbREstF0mOXmckvJZd/d96726yILjSCrvR46Hx5D96wu8dS5vv2Gq1llkJaqwaRZg=
+	t=1762147496; cv=none; b=UVqnAlxBVvTfvrrmMlUqpxVkyFk/4DN41eNYodb1db9L1oyIxQ1/xlH9RWfbfXCl1WkCFbAt5HLlTep8DYVCd4uf4Cvu7t1f+BV92Qgz9RNd9ai4CGGyWM5jNS4tygSnFNEWfB3vAMOSO1PSQYgOMzKzntIkh3nkJZqLMUtDIjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762147472; c=relaxed/simple;
-	bh=vtekGxNqhXtGTOf6dmBkq5nSZuUqmgZv0+huBUiriSc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i5b17ohZo/y8xZnjxNavlczzCYkK6NX+vue1Mk8dgXaZ78QRq6MNVug091xxeumbap0vMuauxJ9KFBwQ3CdKK4jm2K63xQR3PNFIg12er0rX6vrxfgrbLOLpMU5rIXLkS84W0ewLg+U6w5pWXfNALyZ9K+sVd+LQdUYZCHbdOt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RZvgHDti; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762147470; x=1793683470;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vtekGxNqhXtGTOf6dmBkq5nSZuUqmgZv0+huBUiriSc=;
-  b=RZvgHDtipx0esA0zz5q1hYYjL8vpWk9oas2ShvKs0irvbw96h6vjStOH
-   CuwI2dmtbehFitc1bHx/8uW0B+04Cxuba9PhuIkp0WFYjhwaoy3OulPZG
-   Q7kdaNr1H1qhSULKwvomWW4+/4LrTWlPSCSgBV9TszLvTGk2FqHChweIT
-   rZxNNDyN+P/cVJ/Ydd40a0fy2Uo/a/QcoR7bjQNnwwvy+gbo95H8nLCgz
-   QiFghGgxvKCa5lyFKx1n950iYcOxm49hTECijmIYnxwvZjycDWXVdBRng
-   63S5Y/Om5POfPMCrxWg6jZeCcfRNYz9dvsTAlJYb2WZUPU/wVVRFqiFG3
-   A==;
-X-CSE-ConnectionGUID: l3yqbM/pR3mzHoxkHl13Tg==
-X-CSE-MsgGUID: ZvtkdzUrSQuPWGQ/VncYKw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="74820375"
-X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
-   d="scan'208";a="74820375"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2025 21:24:30 -0800
-X-CSE-ConnectionGUID: Rqt5InDDTxmiay36a8yHJQ==
-X-CSE-MsgGUID: V7DyeiptQICbTuksykd4Bg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
-   d="scan'208";a="191104512"
-Received: from lkp-server02.sh.intel.com (HELO 66d7546c76b2) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 02 Nov 2025 21:24:28 -0800
-Received: from kbuild by 66d7546c76b2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1vFn3J-000PqK-1p;
-	Mon, 03 Nov 2025 05:24:25 +0000
-Date: Mon, 3 Nov 2025 13:24:18 +0800
-From: kernel test robot <lkp@intel.com>
-To: Pauli Virtanen <pav@iki.fi>, linux-bluetooth@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, Pauli Virtanen <pav@iki.fi>,
-	marcel@holtmann.org, johan.hedberg@gmail.com, luiz.dentz@gmail.com,
-	jukka.rissanen@linux.intel.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] Bluetooth: 6lowpan: Don't hold spin lock over
- sleeping functions
-Message-ID: <202511031234.Gw8GEsFK-lkp@intel.com>
-References: <8736a4ce03f143b7a63cb99ab425e5403eafa9e4.1761998763.git.pav@iki.fi>
+	s=arc-20240116; t=1762147496; c=relaxed/simple;
+	bh=uilIMW8H9xyz5+Zkt1AKDQxeML2GO3cuH76cUPnpI6k=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=NhJ5XWIb/Trzmleyr40e9xJJaIJT3/ciCnBWXTVW9ZhXMfjj0V8sRB25iOdjV3vzx3SxozvofM9nePcTYN6JAkJTHzE0mHxBn26H9ZmwVB4627oOPKLL0HROG2qk1UlaPFrlDn9K9U0Za0lJNMcNCv3P/+XZqCOvsN7Plv8hTi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--badhri.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=G4VD1FwC; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--badhri.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-340bc4ef67fso2131879a91.3
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 21:24:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762147494; x=1762752294; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=YCP+d3HGNTVLSyaVEuAKYg438nXFEAHL1ebhNeuJAzg=;
+        b=G4VD1FwCEZ4N72jGjY3t89dSUESe3PM0zX/3scLxw1ZTpTN3xwYIiSyvx+DXdbFV0X
+         7nZPlApk26xDPrPHr2LI5nxF2dkFW3sc3Zfo1mzbJdJYpaOP1GH4pMYuei9If9Hgshxz
+         SlOtPJ5zZHK2uIL2xJ+A4yy6AaLuAWaXLKDjO2232JtnWwIWqSHa11qQ+WsCnYdX8HDU
+         k0L+oYHLHI9lJtJt/UQG2LS56Qtn1/6nYrRhoRvrJxpfI+VE7T+iZmegAjUDki1SGrBI
+         GA5M9zXF8DWNLEtsRIEOfxvO5WKb8m9WJbmpdmfWQvih5wTfrNtq5Q3XA8dhDDxT3jgz
+         pO1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762147494; x=1762752294;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YCP+d3HGNTVLSyaVEuAKYg438nXFEAHL1ebhNeuJAzg=;
+        b=C8rFtfoT7ast1Emce5NH4fDIrj5+aoDcv6gYV6lKTr1TtM8m7tVcXAnbsqh2Uk5Td0
+         pUu/zln/I0O3b++0dAkkOU73TX1vVDXdaSXMHxc/1CIOFpJudepgiZYPcCEQmYnLeOtz
+         BXhPBNsSkOOc5UHgt8QZ3fnkUv+TByxEzM3wPX0bV3RwLOCMHs/fKwyt04p/x5vgL3Ye
+         4uRL0Mrgy+dEfajhSmI5yh1sH8/UXD/zAQFuWRaZVOaZXSaJ980RSrr5QlL1s3NOCRw7
+         abB0y8TtAXaJkNMGmHbS3J2UrPsnmTPIiWLtqKsjDTucc2LQi5SlU2JQ1RDWlLfEiFjg
+         OqSg==
+X-Forwarded-Encrypted: i=1; AJvYcCUsChFVY4qZkzsjYybp+e4lXy3HH/VzBoTNcLzDqL2iXQlbrCGohBClov2vPOUXYhU9zL8A3ZEnrc9P61g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxd9wBeGVlcw0bouQNOscF4hLwQHBY5RPZMzF4/n2F4C1xJKfKU
+	NCKCHLMFjF8XvkFNuq2U75+cnJFzBr/U2L0hLQhVnF9IC9fy8+Dn6QBqfIl7VsK9MlqQBwuvpZe
+	oPTxC6g==
+X-Google-Smtp-Source: AGHT+IF7/Pn1hgg2i1g93sjcOH5bk7bVbGcbG0UO5+dnz2j8grS5JSSlFQ2hgGTC6kNaDPYXt9QbE67Lqy8=
+X-Received: from plsl2.prod.google.com ([2002:a17:903:2442:b0:268:c82:4230])
+ (user=badhri job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2348:b0:272:c95c:866
+ with SMTP id d9443c01a7336-2951a3b6b8amr164269915ad.20.1762147494261; Sun, 02
+ Nov 2025 21:24:54 -0800 (PST)
+Date: Mon,  3 Nov 2025 05:24:49 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8736a4ce03f143b7a63cb99ab425e5403eafa9e4.1761998763.git.pav@iki.fi>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.1.930.gacf6e81ea2-goog
+Message-ID: <20251103052450.1028813-1-badhri@google.com>
+Subject: [PATCH v2 0/1] TCPM logbuffer wraparound
+From: Badhri Jagan Sridharan <badhri@google.com>
+To: heikki.krogerus@linux.intel.com, gregkh@linuxfoundation.org, 
+	badhri@google.com
+Cc: amitsd@google.com, kyletso@google.com, rdbabiera@google.com, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Pauli,
+This is a follow up on a previous discussion:
+https://lore.kernel.org/lkml/20230410073134.488762-1-badhri@google.com/.
 
-kernel test robot noticed the following build errors:
+With this change, TCPM log buffer will now wrap around when full and
+will not self-clear upon being read (dumped). A Kconfig option and a
+corresponding debugfs file node are introduced to allow opt-in back to
+the previous, non-wrapping, self-clearing behavior if required.
+This is an interim step while TCPM logging infrastructure is migrated
+to the standard event trace system. 
 
-[auto build test ERROR on bluetooth/master]
-[also build test ERROR on bluetooth-next/master linus/master v6.18-rc4 next-20251031]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Badhri Jagan Sridharan (1):
+  tcpm: Wraparound tcpm log and dont clear them when read
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Pauli-Virtanen/Bluetooth-6lowpan-fix-BDADDR_LE-vs-ADDR_LE_DEV-address-type-confusion/20251101-201123
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth.git master
-patch link:    https://lore.kernel.org/r/8736a4ce03f143b7a63cb99ab425e5403eafa9e4.1761998763.git.pav%40iki.fi
-patch subject: [PATCH 3/4] Bluetooth: 6lowpan: Don't hold spin lock over sleeping functions
-config: x86_64-randconfig-071-20251103 (https://download.01.org/0day-ci/archive/20251103/202511031234.Gw8GEsFK-lkp@intel.com/config)
-compiler: gcc-14 (Debian 14.2.0-19) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20251103/202511031234.Gw8GEsFK-lkp@intel.com/reproduce)
+ drivers/usb/typec/tcpm/Kconfig |  8 ++++++
+ drivers/usb/typec/tcpm/tcpm.c  | 51 ++++++++++++++++++++++++++++++++--
+ 2 files changed, 57 insertions(+), 2 deletions(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202511031234.Gw8GEsFK-lkp@intel.com/
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
->> ERROR: modpost: "l2cap_chan_hold_unless_zero" [net/bluetooth/bluetooth_6lowpan.ko] undefined!
-
+base-commit: 18514fd70ea4ca9de137bb3bceeac1bac4bcad75
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.51.1.930.gacf6e81ea2-goog
+
 
