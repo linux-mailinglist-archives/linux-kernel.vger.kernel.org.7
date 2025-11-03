@@ -1,96 +1,172 @@
-Return-Path: <linux-kernel+bounces-883131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0188C2C8DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:05:11 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E773C2C8C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:04:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 149A118895F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:04:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A220E4F6D71
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64F3314B93;
-	Mon,  3 Nov 2025 14:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7166314B95;
+	Mon,  3 Nov 2025 14:48:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ht1E+NlL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cMOrFdZu";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cp3tI6CS"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085B8321420;
-	Mon,  3 Nov 2025 14:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0D3A322A21;
+	Mon,  3 Nov 2025 14:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762181284; cv=none; b=SC2N3S8v/UJj3rN+rV5qmwZecZteBr2zcOyKqnvVowK3bSXPZbRJGpSFpX+oOzFcLcHRUhMBcdAfupoflFaU47GZtAAbZwbfH+vBdXfPGVtwzBJf9UnhlVCYxG0pUNPpLJ5YkXrX8GvkVDJ4C4U/KKNBu1KOSRxH5EiwPRU7gQ8=
+	t=1762181287; cv=none; b=uN87ZF0XHJzVKk0xJuXE1jTqnbRUKSBZYSkvFxhp+NaTCtGqNBUfBgeb7tYBlbO9uwW83XKE9CZIcZWGjsb9kf/FVjZzavr/hAP05aIw0yoGdJnzDMOcOFhAahx9ZrJjMe9fB1GM8g91pCJ3nsLzYcJSRu0Cel8XEhfhNG18ddc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762181284; c=relaxed/simple;
-	bh=s1TOHB/EaoLNcCokp3pYPltiaDX4VKk4mtf4uBUHgHw=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=UTMHQNlKduulaPdhst+PTOERvt9N5FNbGc37sVajzaZCwZpVks82b7iG+jigmZ0jEcjuaEHdBpgnGd+JFPmW9hYzTRBn2qOQb+1KKwnRgszkitP8dd4p4Ecv0QK7siPt8HrxcVjRP3iVPnTZDs/9JS1yyjZX5iPtDA7Cfv0IlHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ht1E+NlL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33487C4CEFD;
-	Mon,  3 Nov 2025 14:48:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762181283;
-	bh=s1TOHB/EaoLNcCokp3pYPltiaDX4VKk4mtf4uBUHgHw=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=ht1E+NlLXq6lFFdNgfX9KABIzlgV4BwqhHLcSQXNplduPeUwT9NPTj0wYuNToQ9ON
-	 +Qp59Sjt1Jvmvebv+tJMxFYEVLka/bU1mhMdVYAzi0HbnQ9SKMIukfAocLDJtdN1b0
-	 3PFC3M6LdKTUEdVe6sYHQdx/TNzBcNQgSwnYTiYI4lcXfDnZYQqkUheuosGmOkwIbR
-	 D4VHHi/7drlUC2FhHxVpqrohMyvFqhniTtxOWpDjP+ZOXB1tdc5Ot71RTZfabGa8o+
-	 yCAKkgf77JElAZHkMwyW3HPlijBQ3TgfdoGV90NO+324qsFhyCkLVloT5CV6s+SwyI
-	 95Wx34Tj247/w==
-Message-ID: <62b0caf3-b5ca-48a9-9730-cf31e10eaa10@kernel.org>
-Date: Mon, 3 Nov 2025 15:48:00 +0100
+	s=arc-20240116; t=1762181287; c=relaxed/simple;
+	bh=EbjCITNw9WrxjH151EwQuJc5vwchw+VbA6CRYl0c6CQ=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=iaCszMRQUPeFjt0UQNPTa0G4uthXYwrQyRYikh+AnAjBrFWLO79Qvu9eOdlPP9AzTbEMobL5pXM7B3Z9zXV3pyOgdAMUsSVomto1BxfXbWMN7DhRQIIow9caXc/xUlr8EwYxAe7syHTnu3+5i9eStdxgJ5qqolxUGqEWf4XP6Rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cMOrFdZu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cp3tI6CS; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 03 Nov 2025 14:48:02 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762181284;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6sRchOLwMOk8fg+YVXKjRi1K3IbJZDc5VacC2BFwCAM=;
+	b=cMOrFdZuHZfk//8xLkl6cKSvqpVKjLm3I3KbqJoSCZvd4u6nVU/uF2ZlEzz70N1To3PLNV
+	TiXxJ4Ihb+xp8+dTpXvmJfBGXOgOufAdYEofpitgnWgS6PyIEOTsBb3ays3ZH7ExRJ8Mgp
+	1Dk7E6k9zHQHIq6YxmotWAVWx9u6FWonwHI8vgI3yIVhePHEXZT5jiT7YbksVEv69YsWrr
+	zPOFdqp4qPg6WcE7dkyWd1SwhXRasHruEywa45hoGefDY39278HZ7hcNT9zrjaUQPC7Bpo
+	n7NSoxVlpGUaCAm2V2Z7wGNvtw+RAkLdJG/FBGB8fX5J1Z3eHvlKhBZ89SEdXQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762181284;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6sRchOLwMOk8fg+YVXKjRi1K3IbJZDc5VacC2BFwCAM=;
+	b=cp3tI6CSdlcsRExQpRXQOoLxyb+y2MdaVhaUKui4HoyfJOxrJffsQc0cYpM5b38dIN+SPc
+	AL1uw901Mb0zqmDw==
+From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: core/rseq] uaccess: Provide put/get_user_inline()
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20251027083745.609031602@linutronix.de>
+References: <20251027083745.609031602@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Hans Verkuil <hverkuil+cisco@kernel.org>
-Subject: Re: [RFC PATCH v1 2/2] MAINTAINERS: add entry for AVMatrix HWS driver
-To: Ben Hoff <hoff.benjamin.k@gmail.com>, linux-media@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, mchehab@kernel.org, hverkuil@kernel.org,
- lukas.bulwahn@redhat.com
-References: <20251027195638.481129-1-hoff.benjamin.k@gmail.com>
- <20251027195638.481129-4-hoff.benjamin.k@gmail.com>
-Content-Language: en-US, nl
-In-Reply-To: <20251027195638.481129-4-hoff.benjamin.k@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Message-ID: <176218128299.2601451.11164496284331019033.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 27/10/2025 20:56, Ben Hoff wrote:
+The following commit has been merged into the core/rseq branch of tip:
 
-Missing commit log. Sorry, even for a trivial commit it is needed.
+Commit-ID:     ffe194fdea838ff55bcf76462c359f4cd733891a
+Gitweb:        https://git.kernel.org/tip/ffe194fdea838ff55bcf76462c359f4cd73=
+3891a
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Mon, 27 Oct 2025 09:43:56 +01:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Mon, 03 Nov 2025 15:26:11 +01:00
 
-It's missing a Signed-off-by line as well.
+uaccess: Provide put/get_user_inline()
 
-Regards,
+Provide convenience wrappers around scoped user access similar to
+put/get_user(), which reduce the usage sites to:
 
-	Hans
+       if (!get_user_inline(val, ptr))
+       		return -EFAULT;
 
-> ---
->  MAINTAINERS | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 3da2c26a796b..313ac53f647d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -4128,6 +4128,12 @@ S:	Maintained
->  F:	Documentation/devicetree/bindings/iio/adc/avia-hx711.yaml
->  F:	drivers/iio/adc/hx711.c
->  
-> +AVMATRIX HWS CAPTURE DRIVER
-> +M:	Ben Hoff <hoff.benjamin.k@gmail.com>
-> +L:	linux-media@vger.kernel.org
-> +S:	Maintained
-> +F:	drivers/media/pci/hws/
-> +
->  AX.25 NETWORK LAYER
->  L:	linux-hams@vger.kernel.org
->  S:	Orphan
+Should only be used if there is a demonstrable performance benefit.
 
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Link: https://patch.msgid.link/20251027083745.609031602@linutronix.de
+---
+ include/linux/uaccess.h | 50 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 50 insertions(+)
+
+diff --git a/include/linux/uaccess.h b/include/linux/uaccess.h
+index 5f142c0..be395f5 100644
+--- a/include/linux/uaccess.h
++++ b/include/linux/uaccess.h
+@@ -825,6 +825,56 @@ for (bool done =3D false; !done; done =3D true)						\
+ #define scoped_user_rw_access(uptr, elbl)				\
+ 	scoped_user_rw_access_size(uptr, sizeof(*(uptr)), elbl)
+=20
++/**
++ * get_user_inline - Read user data inlined
++ * @val:	The variable to store the value read from user memory
++ * @usrc:	Pointer to the user space memory to read from
++ *
++ * Return: 0 if successful, -EFAULT when faulted
++ *
++ * Inlined variant of get_user(). Only use when there is a demonstrable
++ * performance reason.
++ */
++#define get_user_inline(val, usrc)				\
++({								\
++	__label__ efault;					\
++	typeof(usrc) _tmpsrc =3D usrc;				\
++	int _ret =3D 0;						\
++								\
++	scoped_user_read_access(_tmpsrc, efault)		\
++		unsafe_get_user(val, _tmpsrc, efault);		\
++	if (0) {						\
++	efault:							\
++		_ret =3D -EFAULT;					\
++	}							\
++	_ret;							\
++})
++
++/**
++ * put_user_inline - Write to user memory inlined
++ * @val:	The value to write
++ * @udst:	Pointer to the user space memory to write to
++ *
++ * Return: 0 if successful, -EFAULT when faulted
++ *
++ * Inlined variant of put_user(). Only use when there is a demonstrable
++ * performance reason.
++ */
++#define put_user_inline(val, udst)				\
++({								\
++	__label__ efault;					\
++	typeof(udst) _tmpdst =3D udst;				\
++	int _ret =3D 0;						\
++								\
++	scoped_user_write_access(_tmpdst, efault)		\
++		unsafe_put_user(val, _tmpdst, efault);		\
++	if (0) {						\
++	efault:							\
++		_ret =3D -EFAULT;					\
++	}							\
++	_ret;							\
++})
++
+ #ifdef CONFIG_HARDENED_USERCOPY
+ void __noreturn usercopy_abort(const char *name, const char *detail,
+ 			       bool to_user, unsigned long offset,
 
