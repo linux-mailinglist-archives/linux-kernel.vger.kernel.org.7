@@ -1,180 +1,86 @@
-Return-Path: <linux-kernel+bounces-882128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EB66C29B48
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 01:27:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCF45C29B51
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 01:43:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F64B188E85A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 00:28:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DBD5F188BF21
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 00:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824C819AD89;
-	Mon,  3 Nov 2025 00:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CbQbsIVD";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vzfv6dPc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19900157493;
+	Mon,  3 Nov 2025 00:43:07 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C544A158538
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 00:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D698BEC
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 00:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762129648; cv=none; b=QgKwRyS4soSJ/JUOcS+CgzxFO8irvOtW5TGrJpY0p96KXtZotgKEWxkLtDkGrFyWnHp3k+uZqQWiaZA2IEijDebVPbSiYAiRKtMLfGZq+3KSt40fsUTuGf8AAyaX+gKXhJbCV0yrQUXvIyyF2qJUDhrLB9dq6ecA0CpKnEgYzg4=
+	t=1762130586; cv=none; b=I0EEGDDNI0dLqYGTCzQZcPni0277QLsR4ZoP9DuZiHKYCeCh3sudnI/HzGf/fEcFEzo8Qlxy4e7UUrqnZK3cpLwTUNivMB1GC7EiZn43zxPjsmPNL4amlCqkWfRLryQQm5K6/dWf50LCFzu6yUwReBN93h85VCrOTRok9P8z94k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762129648; c=relaxed/simple;
-	bh=8g9x8QH1x4ffbmi5EFK3Nczs+pWe9XWd+V1E0ScetUg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pAh2srbQIzPcvphCiFE6kBRh10huXJUu7mBSZOdZ0Wfqd2/zfgkpWlWiBjl6RG8l/U/Go59us5vJanXb105gp0PtRlO+nfZ8ttSo7WKFTtL25BjiFw4pS2XSUVL2FlQd/NKFUB8TPmLOhgtUPe4qLy0GhM9GodhtxDhmIYHmSbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CbQbsIVD; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vzfv6dPc; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762129645;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GhN0fR0yEMJ11xlBRy3sHA6iY8FKJIup/YalqEMEfzg=;
-	b=CbQbsIVDBh6FexNmfEU+BJRI2J0fQyQ43QK1R1kcz9roHd8kG+qX4qNu7OsmVA5ViPfFn5
-	c6EKkXsV1XYlpFaHu8u4Afuk1jgLSwrrL2xN2pmJGYcftazAA6cWHsO8akH1Tl3zoGQJD4
-	s3yTBBbKdaJK+uQE8h3p55ynB7OhJsY=
-Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
- [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-274-CSAD97MuPPaBstFRwhG_kw-1; Sun, 02 Nov 2025 19:27:23 -0500
-X-MC-Unique: CSAD97MuPPaBstFRwhG_kw-1
-X-Mimecast-MFC-AGG-ID: CSAD97MuPPaBstFRwhG_kw_1762129640
-Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-37773b477c6so18374201fa.2
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 16:27:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762129640; x=1762734440; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GhN0fR0yEMJ11xlBRy3sHA6iY8FKJIup/YalqEMEfzg=;
-        b=Vzfv6dPckT7OJo4X5vy2Qc8n7DvJcJ3hnhgsXT4xGZ3p8u/s75Rq+q7tXQ6wQjPh7a
-         OJEpJ9GR8VM1te8TX9v34s4Q0wq7DayGcmVPNspTBEb+AjJDWB8qEF/5q470wTrPSXR6
-         Au2CqErLUZA3zr9Ud0Objeghht6ECMMsPIlgYJXU9Kwq1F5OkJZGEUIw9j3ULFbin4qs
-         rXWNRO+Y+NrSBIuKHxy5jzp3ElmTfXNouNddRbeQAnHO+MYjfi+0PGh/73ppMFh9XF/P
-         RLVNwQediXaSHMcuj8R0KW4m2JyGFuxG7JgcsJe6JrA8uJ0LTuRkuaEOYKtpEXIEjVMq
-         Nehw==
+	s=arc-20240116; t=1762130586; c=relaxed/simple;
+	bh=rzuQ2IwGQu2vGH0Cb2K/9/sOVr+Ce5jdccc22FuhOzI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=A0MERrLIvmqOjYrJo5yImFld+zFu2WoLC+wjtf9w6vqsd31pYgwwPQipEGcEbOS4xxHmjv+uPzgvhvsiDC4Gva1ITS1jL7thS4USVFEzkuFoiVbPafaEGBIBonnsID5R6JdNqow9o8X2bS0+ShRns8YSQ63ZQ78+YDvsq0bSaLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-93e8839f138so393112239f.2
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 16:43:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762129640; x=1762734440;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GhN0fR0yEMJ11xlBRy3sHA6iY8FKJIup/YalqEMEfzg=;
-        b=cFc9KcAUkYeKFz+KZYrX1BZD5/83hOG1MMLnFtXFGlrD8221tysYpnAUpUvYezAj3o
-         PjU5sIdOnDYnZSP+7uWtrY/MConxtgqh2CStv13TXZyycnXatnCaDOv4+nhH454o20vK
-         9pEdjBzeDVIPtTul8HICEB1/V6ZSoSL44muGkGCLL0EbN1EWUd33+fDGYonwzbULVrBR
-         +P3Ft4An5w/VAKbCUHuljvfeHaVFy8dAAUxSYGs5RmGOAVFs4k7K3/T7x/uJfQSqzoVe
-         CMO7QdQ2IeHIYgeB6sIDRJD49+wmmRbe92QcxuU1gVPAHFQEDaRygZLMznonFN8LiBoO
-         mTJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUzCMkVEaknyTF3sTywU6PGDD68y3wb5LUcns0qFuwy9UsrLppzV3bHj1/122zX1oN6xFH3V/jmJtk6Zpg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVh7ukxn+vDeNDLBAHWoHKe/7ZZbDfYIEjb/mZSlWKfgw1crYL
-	lsixFamQEtC/8e9FOeFQ6NH4PLvH5mcxmC9OurxZybwiBgcjnXx7dGPQPlqJHAsq7d6qw0aj3CQ
-	gYC+b6xtXvBOVAxkSZNJc1gK2L46vjheDU7T5OWSt2NPq0amG3vIkCmdO3+J4kzm2iYFqGcRB4g
-	eNtdShGtRquBG82HHGSc8absRRC9Rstn09imbVI77o
-X-Gm-Gg: ASbGnct3NpwoHIdSNcZABgB9AWkY67xLB5ZbVmb0O/EsnHulEZJhsQXRYCLbcYfRWzM
-	3HN6t37o1KHLOPnRzEqFdYoKXAKeDAeCrtmp8VH4OCGV58qBftqJXmCohxo5/zZkzIS8iaPT4+R
-	OE9eCnbm2gL+hAU5K7mFLBnyJmNe4zUAKZfwjctUvhNaZf0a7ekx7nXqkE
-X-Received: by 2002:ac2:4e0a:0:b0:594:2e9b:f28f with SMTP id 2adb3069b0e04-5942e9bf55dmr132754e87.7.1762129640415;
-        Sun, 02 Nov 2025 16:27:20 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEw5YCNtN60wEBZeO0yilPOmGlUKgm3n8yeSZujSQ3OwjSmQaTNhz43TSHckHIRzh9qcPYr44zOZEcpd+tMCvk=
-X-Received: by 2002:ac2:4e0a:0:b0:594:2e9b:f28f with SMTP id
- 2adb3069b0e04-5942e9bf55dmr132741e87.7.1762129639985; Sun, 02 Nov 2025
- 16:27:19 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762130582; x=1762735382;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dUbdcTw4VhhGQ51DNJio4yY6+yjI5cWbQg754sQwc/M=;
+        b=I/XmnzR3u/+FYwsBmz923zow1qcqjs5tZw7K0D0RUbIWleuc2vB7GCaVWUPrG8VTqL
+         HsI5zfuIF5Lh8UzlGC58Vjdec/1zNii2HboVd1GFvwrMcM7HF9adeFcNYw8LFYwJ4/c+
+         fY0OWE6SP7hS+cndQ3zBnZpqJH0iEYoTHs+jJmya4TbUBK5DPDbiqiMtzLuyPewwymrM
+         WHN4sTDhMJIQxxJr2H7Bt2iPAYk+bBs5S+ObXgY5dQcyBH3HZFtuPs78n9jQ6DyBvZd5
+         SAZFdleBlYR+FrcpOpLACVvqpArrmZaaUq4Z9cJNIb6NLHYgMedbVqhAM6J4OpAwtL9n
+         t8QA==
+X-Gm-Message-State: AOJu0YyOJxCMnnvWzMpTpTOkqpDz7tYt+bgpBPUrHbp747RRnPWUI6Q6
+	Hb42b+lMkiBedIvx7r1zAFr6x1oFUzZQUm7GNnF7tyIxAhpRAKa59irUE9KTaHoZBRzdk1oo+Ag
+	7hwx/R5Lq/2NX11Y5nwLtORQj72BCtZmkPz6tXBpUMnvnRw8QkTy01CGyWyk=
+X-Google-Smtp-Source: AGHT+IGZDNHVRoeekTneCv3hA7bm/UIS3AretQExtg9lsC5D077WCVd+YhpbvB3D60szPOjotwts4uxif0082rfxPqDRCt9RHSbJ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251030062807.1515356-1-linan666@huaweicloud.com> <20251030062807.1515356-2-linan666@huaweicloud.com>
-In-Reply-To: <20251030062807.1515356-2-linan666@huaweicloud.com>
-From: Xiao Ni <xni@redhat.com>
-Date: Mon, 3 Nov 2025 08:27:08 +0800
-X-Gm-Features: AWmQ_bkZW4sQnzxqwLMdGXcS_bsxTNcHL9wvjnN2nS8I6-ARO9HgfsZ0OaYPOVM
-Message-ID: <CALTww28FMQFKHOJ3jnbC-FyxusfF3bvRZEgBz_TCvJM4e-OoEQ@mail.gmail.com>
-Subject: Re: [PATCH v8 1/4] md: delete md_redundancy_group when array is
- becoming inactive
-To: linan666@huaweicloud.com
-Cc: corbet@lwn.net, song@kernel.org, yukuai@fnnas.com, linan122@huawei.com, 
-	hare@suse.de, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-raid@vger.kernel.org, yangerkun@huawei.com, yi.zhang@huawei.com
+X-Received: by 2002:a05:6e02:3110:b0:431:d093:758d with SMTP id
+ e9e14a558f8ab-4330d1f5a08mr154713395ab.22.1762130582263; Sun, 02 Nov 2025
+ 16:43:02 -0800 (PST)
+Date: Sun, 02 Nov 2025 16:43:02 -0800
+In-Reply-To: <CAHjv_au+-9FMB-XUZvRyHP=GVfAxEPN_N2Z6pyJV2=FpPAQEwA@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6907fa96.050a0220.29fc44.002d.GAE@google.com>
+Subject: Re: [syzbot] [bfs?] INFO: task hung in bfs_lookup (6)
+From: syzbot <syzbot+e7be6bf3e45b7b463bfa@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	zlatistiv@gmail.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 30, 2025 at 2:36=E2=80=AFPM <linan666@huaweicloud.com> wrote:
->
-> From: Li Nan <linan122@huawei.com>
->
-> 'md_redundancy_group' are created in md_run() and deleted in del_gendisk(=
-),
-> but these are not paired. Writing inactive/active to sysfs array_state ca=
-n
-> trigger md_run() multiple times without del_gendisk(), leading to
-> duplicate creation as below:
->
->  sysfs: cannot create duplicate filename '/devices/virtual/block/md0/md/s=
-ync_action'
->  Call Trace:
->   dump_stack_lvl+0x9f/0x120
->   dump_stack+0x14/0x20
->   sysfs_warn_dup+0x96/0xc0
->   sysfs_add_file_mode_ns+0x19c/0x1b0
->   internal_create_group+0x213/0x830
->   sysfs_create_group+0x17/0x20
->   md_run+0x856/0xe60
->   ? __x64_sys_openat+0x23/0x30
->   do_md_run+0x26/0x1d0
->   array_state_store+0x559/0x760
->   md_attr_store+0xc9/0x1e0
->   sysfs_kf_write+0x6f/0xa0
->   kernfs_fop_write_iter+0x141/0x2a0
->   vfs_write+0x1fc/0x5a0
->   ksys_write+0x79/0x180
->   __x64_sys_write+0x1d/0x30
->   x64_sys_call+0x2818/0x2880
->   do_syscall_64+0xa9/0x580
->   entry_SYSCALL_64_after_hwframe+0x4b/0x53
->  md: cannot register extra attributes for md0
->
-> Creation of it depends on 'pers', its lifecycle cannot be aligned with
-> gendisk. So fix this issue by triggering 'md_redundancy_group' deletion
-> when the array is becoming inactive.
->
-> Fixes: 790abe4d77af ("md: remove/add redundancy group only in level chang=
-e")
-> Signed-off-by: Li Nan <linan122@huawei.com>
-> ---
->  drivers/md/md.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> index fa13eb02874e..f6fd55a1637b 100644
-> --- a/drivers/md/md.c
-> +++ b/drivers/md/md.c
-> @@ -6878,6 +6878,10 @@ static int do_md_stop(struct mddev *mddev, int mod=
-e)
->                 if (!md_is_rdwr(mddev))
->                         set_disk_ro(disk, 0);
->
-> +               if (mode =3D=3D 2 && mddev->pers->sync_request &&
-> +                   mddev->to_remove =3D=3D NULL)
-> +                       mddev->to_remove =3D &md_redundancy_group;
-> +
->                 __md_stop_writes(mddev);
->                 __md_stop(mddev);
->
-> --
-> 2.39.2
->
+Hello,
 
-Looks good to me.
-Reviewed-by: Xiao Ni <xni@redhat.com>
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
+Reported-by: syzbot+e7be6bf3e45b7b463bfa@syzkaller.appspotmail.com
+Tested-by: syzbot+e7be6bf3e45b7b463bfa@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         6146a0f1 Linux 6.18-rc4
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1683ee14580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2c614fa9e6f5bdc1
+dashboard link: https://syzkaller.appspot.com/bug?extid=e7be6bf3e45b7b463bfa
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=111dee14580000
+
+Note: testing is done by a robot and is best-effort only.
 
