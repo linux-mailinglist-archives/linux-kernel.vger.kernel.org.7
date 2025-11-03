@@ -1,155 +1,298 @@
-Return-Path: <linux-kernel+bounces-882156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF936C29C67
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 02:21:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0223BC29C7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 02:24:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B82B43A576E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 01:20:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7A853AD8CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 01:23:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45336271470;
-	Mon,  3 Nov 2025 01:20:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B10642727E5;
+	Mon,  3 Nov 2025 01:23:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E4aGudqB"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UHWxN+zg";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="nba5I9U/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E839A185E4A
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 01:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB946185E4A
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 01:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762132838; cv=none; b=jJ9i5rmvjRqhP8bh8TPbljytjEoTVE46IDLaYzNEZqJjdGNZT2ahRBM0RBP8SwOtXay9C7mATqJaMgPDk0wmCtmMbx14Q7kKZPrVnyhsPCBzx/rO29HUbk1zSWL6/nlzRb60AdfANGT7POLeqrCWscMi1ZeWP0UeDr15N5o1kSA=
+	t=1762133031; cv=none; b=WY4RxgUwyhPek0wolF9tB/AKbJMFfPRAr2g/Q2CQf9iiMXYpI44cR7s/hBaB/fxi5KqfVdVYsLXjtvfa165SBQr8DgjRsvJ/EEZi8lSWQPa9HRNJdV5x8AFjN+/rsh8jG2DCW8Xbp2T9TPuYhcqE03zDE70EXhdUVDF/asqurUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762132838; c=relaxed/simple;
-	bh=1LAAn+Z5xoPYzyg30F9FeK8noBsYqvleFp9Jn25EztY=;
+	s=arc-20240116; t=1762133031; c=relaxed/simple;
+	bh=Th7XVJ2Qjh7tHojN1+7TKRuwCS9QFJmGLp++xxYFcn8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HrS+AGRNmcc4mkSGH8YRyT5jyFZPeAjFB+wfbLscvFPmZdrcrjoFbL1hXc0C/SingOCe7GGv2xXI29v/H9i7LklcFmBDKNZTWpdKSB5/A0WoK7Nehn9zX1r1AmTX31A7ARg+tjKrfQoZTK/ymPiUq68NKU4hJ8jeea0u8N2hfIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E4aGudqB; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-b3c2db014easo824937866b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 17:20:36 -0800 (PST)
+	 To:Cc:Content-Type; b=S3qraotoNBiW5oK4iUUovSwzHCWgiSY9qKFDKw+5aOsWfTg7797vCBroz1uNNa3xWjCTQSQlMz5uJVtxj3dMAEGt/mssRnadlzwJStIG7jpCs0hDpYAuiGt2Y8N2KZEwSxFI5bFtLrMvDroTRgcHOb6w9kcJA2L9WEmJlxh4bNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UHWxN+zg; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=nba5I9U/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762133027;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pYva0xFFyJLEsXT9lXPl/qxqgmGOEqN3BS7K6bAdCAg=;
+	b=UHWxN+zgcfO9rVrrDAAL10qcCMRfASC/UZah+IqN/5kOr87BGaXiaJn7HCjmuSjY4C32dK
+	1v6jBKxFRwAvIaiTig3RstAN4AD3LAJcn+khFlovslqzwfEgllweN/boAR8C7bmIuABdeL
+	uB+PjgWRwGmFN6y6ifvHWq5DW5DFyxU=
+Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
+ [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-611-VGs-NyrbMdKoj32c7eKWww-1; Sun, 02 Nov 2025 20:23:46 -0500
+X-MC-Unique: VGs-NyrbMdKoj32c7eKWww-1
+X-Mimecast-MFC-AGG-ID: VGs-NyrbMdKoj32c7eKWww_1762133025
+Received: by mail-lj1-f199.google.com with SMTP id 38308e7fff4ca-37a2df7ffb9so6106691fa.1
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 17:23:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762132835; x=1762737635; darn=vger.kernel.org;
+        d=redhat.com; s=google; t=1762133024; x=1762737824; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6o69PGXXR3RBbRcnqQbAWMDbgwdLMCFEE7c26uWS6X0=;
-        b=E4aGudqBP8EWlh7tl1u2bJtjL5NNQ7peD15wjM+KJESfVVFFlRu8/ksMOX7YjtW3r+
-         OtOhTt3HdoScypUyvXKb2zmcs3lu2KLPYL4Nd1W/15p57VehO+LjDXL27PDYKkTyszY1
-         UCvpyfPogPsmvwKjXKct7DBlpvuBJ71c+OULsGh3uRLIvX5BG0OdxGHra3FRtiWs6DoL
-         agxC4Roy8Og86635L7Pa0TBJwU9Uq2foSJtLaGyVVK2ZKw4Hjr3QEmc+Y7JPqz1qxh4v
-         mOZldgEb3gX51PNzQ50t0SeDQTkpMPshVVWICJNqVnafyOlLlNb92ybWmh+l/GdKEAwD
-         Saww==
+        bh=pYva0xFFyJLEsXT9lXPl/qxqgmGOEqN3BS7K6bAdCAg=;
+        b=nba5I9U/+0jdGNBCAjdrsyM7kVTkOToSZ0UD6cEYhchO3kULUswlLrtQylSwDGRRK4
+         Hcg+WYS7WH0ugb4v5hfspI0tCgXPREWHP+ETWlBdG6tpFiT+SIX6vwxW7KprgAyVHUmh
+         7Ry7NeA598bnR2nStgCzj+IGsC/OtlwH6JJCfPKQEErLYzy+yI4KR6PE6EX5uPeVFUjk
+         ZTDR4a5H1ktY4QwJITvYhik+g6kGmcW38t3kuHGyTZ+gOVKwamyjhDR5+s04x2RCJHaK
+         oWXNKQLpTmiqfWTt6GDcDN7rU9N1dq8m+BTgq9zmfUmkBE1oh31xi1TOVOUtgSbUkctT
+         E2FQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762132835; x=1762737635;
+        d=1e100.net; s=20230601; t=1762133024; x=1762737824;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6o69PGXXR3RBbRcnqQbAWMDbgwdLMCFEE7c26uWS6X0=;
-        b=jSpPfJV4hYjM9ow6HxumJgE0+MXpecmBTuFf3/Nh3Zyz7AZxac/XjrkgiXMOfubIGV
-         dCIrH/r6TdRmIHU40EjcgYvNcZpM5lRMu+Z2n3C6Nv65cPmPHN0dVml5E6Kb51yTI8yK
-         LzvfUrdNilpe6o15iaXiTSRL5BJXbBW+wbUVkXwcsLqC/S/ARXts58CcyidYBgyF+sp0
-         jGUDBh7VsGSzngKRQhchGa+aIzhlVELXqFv2fqQzyzI83Qats+MXO8StI8PpeQ53xGYo
-         DaC+l5/AfqODdWpYSrpQUWoxpCQrA7YybN+QGpggG4zYMKnyZwXr2NRN6ci24IFDjg23
-         gsuA==
-X-Forwarded-Encrypted: i=1; AJvYcCWCTt7Pc9Zr3mvMgjl0USUQBOKka9LMikaLCrrxD5Go450t3ijxFJoRRr0xpoUh2yY0Qcd/dTepGkrIa50=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmdGgQidXk2mKC2e4H8izMVeExWdrppegllETrYnlhV9StUEU+
-	2Jk/5O24TluRi+4CUZvCokZVyp6dWB0RFH+8rs9m4Y8RCtKjB9nsIW8p78bkN+24xdmAT1SmZ99
-	nzApDWouJQ7oH/XD3qUN2IHbEgMprZZM=
-X-Gm-Gg: ASbGncvVrv57VA0xfdMr+2utpENdstvQkqN1CYIBwgKmRMaZaA+Hg5xsgTC/+V2UQWP
-	zaMcL6c+z18HAIlkG5sOieTGxrRrog9RxBGrVQZC+hM4EYUQ5YNSP+LpSo5AFqIZBqnInCUGe2O
-	L1ie945NSgm//Oxb/7FQl4LbiYWuxe62mdwfqRx0uyJmEsPLjKnTvCTZgFWSa6+FQQg8cICeDaF
-	fuvEx5mFpQ/6R23ofusvQokE0FzR8JWhh+cWMQ1tMjJ2/Xj6TkLMbJHmLMlLg==
-X-Google-Smtp-Source: AGHT+IFQiFViuJQbXhEm8/2UCUwAZnU0wpU5q41bCr6Py0FglerqTsyWswO1/oU/bE3nF1HvunvUPgqDMQii18SeD8I=
-X-Received: by 2002:a17:907:70e:b0:b3e:8252:cd47 with SMTP id
- a640c23a62f3a-b70704bc386mr1151976166b.31.1762132835081; Sun, 02 Nov 2025
- 17:20:35 -0800 (PST)
+        bh=pYva0xFFyJLEsXT9lXPl/qxqgmGOEqN3BS7K6bAdCAg=;
+        b=fte3L1QCPp7YJfVM/Bwc12vFlIELkc5VXTd8MJyCYfFsiSVAU2sO20+2q7YoDpbhWv
+         jOi0S5MBpvR8OOAhAl+a9ZPJ5EQSdJrnnzn2sSAAOkD2OP68qdY4gdclRSkmlAtt3fdG
+         mcvxV0oahNXKSdy1H4L2IIM/K6kCqTnOBe+zPn64L5RIARyVVDRxZV6OlDEhPlaRIRj1
+         wWmd1+5dD7ZiM1GVRG47lZrCFKflnRRuaRacjENqaQIpLT+u6ZlwQiwOb+fkSubscEqS
+         f7r8DPrRRXhFjyeiSSqdFb+btgcAyMwSstQkEE42ZPZnjDP3uXvTrNBCBlmwMJrTirTD
+         kKXg==
+X-Forwarded-Encrypted: i=1; AJvYcCX0Gx0ZNRwof/hLXLJOdwWRS6yrx+yzkr5VyeZ7LT0z7jVZHug5QJ+sl+a7hNmaMON39u3WdFQmUiHg1dE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO5FjR4aEb5fehr+qqQWG8t+AYlhrydoCUsgh/c8aWK9xhJD0n
+	g+8hSVVREPiBvMqsUGylqImffnZ7/o0SVVb2gZ+V+V9wWEKF71ts7ubYQm7eQabxW0LLU0P6t9u
+	ufAAKeamaN5yvoZlzuLzLi/8E48XhQSopzqDqcOPFOL41KT9kPo/mTr4lgxpSwWzSM1PmXUntpg
+	S9SNVYvySEnmTZ0tc8Z82iSBe3TM2YlA+sFiJSqpqq7lcbe5nMi6+INw==
+X-Gm-Gg: ASbGncsl5aKG6UAlrgjnecihq9IJ7SOQV+TsS8+CKn5ZDL7EcHWo0bS5ABSSRJm2Xbv
+	SpBQG1UzVQv5NVMbWO5zaEeV1WbpTxEcGzdo2Bh56+VQe62bSMsJ1t67YAh2MPJeJLx1Tt4gzsE
+	meQEgkZgqwJCkMe6UsQ9u2QfGzqcwmIJxCqbtg2H6jJ16GYhtgcaj4pzc=
+X-Received: by 2002:a05:651c:1a0b:b0:37a:35b5:eeff with SMTP id 38308e7fff4ca-37a35b5f4e8mr9053271fa.23.1762133024206;
+        Sun, 02 Nov 2025 17:23:44 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEPZjEcv11bmRaJCDAnmYXuMgNRnwjz6cfmoHuFiJi+XsYtjqJAhf0XNetfuNdgKQJceKQZfs7+G/MVZRQ6lIk=
+X-Received: by 2002:a05:651c:1a0b:b0:37a:35b5:eeff with SMTP id
+ 38308e7fff4ca-37a35b5f4e8mr9053131fa.23.1762133023644; Sun, 02 Nov 2025
+ 17:23:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251027135423.3098490-1-dolinux.peng@gmail.com>
- <20251027135423.3098490-4-dolinux.peng@gmail.com> <CAEf4BzZ+tpT2ViD_zc8mwz260spriYDiPymw3MFsEibRcuqbqg@mail.gmail.com>
- <CAErzpmvahZJRFktDydp5tcpYnhCAw9P9UmPeC5XpRxPuo0mZ8w@mail.gmail.com> <CAEf4Bzbv+vgsh9_8hsy=JMojmdR_Zoq1EEzaGj0CetMN-7LmDQ@mail.gmail.com>
-In-Reply-To: <CAEf4Bzbv+vgsh9_8hsy=JMojmdR_Zoq1EEzaGj0CetMN-7LmDQ@mail.gmail.com>
-From: Donglin Peng <dolinux.peng@gmail.com>
-Date: Mon, 3 Nov 2025 09:20:22 +0800
-X-Gm-Features: AWmQ_bkLzXSgwO3OCR1pUlQf1s0rqdB7tTg-l9OMrUdUmcHpDX7YKB7cR9ncZ4c
-Message-ID: <CAErzpmsVHD7Z5h3jiv8xjVrZcGtZd2umuB-8sv8TsNuTLs8A7A@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 3/3] btf: Reuse libbpf code for BTF type sorting
- verification and binary search
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: ast@kernel.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
-	Eduard Zingerman <eddyz87@gmail.com>, Alan Maguire <alan.maguire@oracle.com>, Song Liu <song@kernel.org>, 
-	pengdonglin <pengdonglin@xiaomi.com>
+References: <20251030062807.1515356-1-linan666@huaweicloud.com> <20251030062807.1515356-3-linan666@huaweicloud.com>
+In-Reply-To: <20251030062807.1515356-3-linan666@huaweicloud.com>
+From: Xiao Ni <xni@redhat.com>
+Date: Mon, 3 Nov 2025 09:23:32 +0800
+X-Gm-Features: AWmQ_bnLnCJThdvlzNsn8q3UkhsqL9YQdiBUJHrrHMNwH6kq0-4nzcxackYnp1A
+Message-ID: <CALTww28LKk6bH4tuEA4DD3uAJScCVAQUBn0d0JYu3AvVjxetzQ@mail.gmail.com>
+Subject: Re: [PATCH v8 2/4] md: init bioset in mddev_init
+To: linan666@huaweicloud.com
+Cc: corbet@lwn.net, song@kernel.org, yukuai@fnnas.com, linan122@huawei.com, 
+	hare@suse.de, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-raid@vger.kernel.org, yangerkun@huawei.com, yi.zhang@huawei.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 1, 2025 at 12:51=E2=80=AFAM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
+On Thu, Oct 30, 2025 at 2:36=E2=80=AFPM <linan666@huaweicloud.com> wrote:
 >
-> On Tue, Oct 28, 2025 at 7:03=E2=80=AFPM Donglin Peng <dolinux.peng@gmail.=
-com> wrote:
-> >
-> > On Wed, Oct 29, 2025 at 2:40=E2=80=AFAM Andrii Nakryiko
-> > <andrii.nakryiko@gmail.com> wrote:
-> > >
-> > > On Mon, Oct 27, 2025 at 6:54=E2=80=AFAM Donglin Peng <dolinux.peng@gm=
-ail.com> wrote:
-> > > >
-> > > > The previous commit implemented BTF sorting verification and binary
-> > > > search algorithm in libbpf. This patch enables this functionality i=
-n
-> > > > the kernel.
-> > > >
-> > > > Cc: Eduard Zingerman <eddyz87@gmail.com>
-> > > > Cc: Alexei Starovoitov <ast@kernel.org>
-> > > > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> > > > Cc: Alan Maguire <alan.maguire@oracle.com>
-> > > > Cc: Song Liu <song@kernel.org>
-> > > > Signed-off-by: pengdonglin <pengdonglin@xiaomi.com>
-> > > > Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
-> > > > ---
-> > > > v2->v3:
-> > > > - Include btf_sort.c directly in btf.c to reduce function call over=
-head
-> > > > ---
-> > > >  kernel/bpf/btf.c | 34 ++++++++++++++++++----------------
-> > > >  1 file changed, 18 insertions(+), 16 deletions(-)
-> > > >
-> > > > diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-> > > > index 0de8fc8a0e0b..df258815a6ca 100644
-> > > > --- a/kernel/bpf/btf.c
-> > > > +++ b/kernel/bpf/btf.c
-> > > > @@ -33,6 +33,7 @@
-> > > >  #include <net/sock.h>
-> > > >  #include <net/xdp.h>
-> > > >  #include "../tools/lib/bpf/relo_core.h"
-> > > > +#include "../tools/lib/bpf/btf_sort.h"
-> > >
-> > > I don't believe in code reuse for the sake of code reuse. This code
-> > > sharing just makes everything more entangled and complicated.
-> > > Reimplementing binary search is totally fine, IMO.
-> >
-> > Thanks. Would you be open to the approach from v2, where we place
-> > the common code in btf_sort.c and compile it separately rather than
-> > including it directly?
-> >
+> From: Li Nan <linan122@huawei.com>
 >
-> No, the code is too trivial to try to reuse it. Kernel and user space
-> libbpf code are run with different constraints, sharing it is
-> necessary evil (like for BPF CO-RE relocations), not something that
-> should be encouraged.
+> IO operations may be needed before md_run(), such as updating metadata
+> after writing sysfs. Without bioset, this triggers a NULL pointer
+> dereference as below:
+>
+>  BUG: kernel NULL pointer dereference, address: 0000000000000020
+>  Call Trace:
+>   md_update_sb+0x658/0xe00
+>   new_level_store+0xc5/0x120
+>   md_attr_store+0xc9/0x1e0
+>   sysfs_kf_write+0x6f/0xa0
+>   kernfs_fop_write_iter+0x141/0x2a0
+>   vfs_write+0x1fc/0x5a0
+>   ksys_write+0x79/0x180
+>   __x64_sys_write+0x1d/0x30
+>   x64_sys_call+0x2818/0x2880
+>   do_syscall_64+0xa9/0x580
+>   entry_SYSCALL_64_after_hwframe+0x4b/0x53
+>
+> Reproducer
+> ```
+>   mdadm -CR /dev/md0 -l1 -n2 /dev/sd[cd]
+>   echo inactive > /sys/block/md0/md/array_state
+>   echo 10 > /sys/block/md0/md/new_level
+> ```
+>
 
-Thanks, I will implement it separately as recommended.
+Hi Li Nan
 
+> mddev_init() can only be called once per mddev, no need to test if bioset
+> has been initialized anymore.
+
+The patch looks good to me. But I don't understand the message here.
+This patch changes the alloc/free bioset positions. What's the meaning
+of "no need to test if bioset has been initialized anymore"?
+
+Regards
+Xiao
 >
-> > >
-> > > [...]
+> Fixes: d981ed841930 ("md: Add new_level sysfs interface")
+> Signed-off-by: Li Nan <linan122@huawei.com>
+> ---
+>  drivers/md/md.c | 69 +++++++++++++++++++++++--------------------------
+>  1 file changed, 33 insertions(+), 36 deletions(-)
+>
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index f6fd55a1637b..dffc6a482181 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -730,6 +730,8 @@ static void mddev_clear_bitmap_ops(struct mddev *mdde=
+v)
+>
+>  int mddev_init(struct mddev *mddev)
+>  {
+> +       int err =3D 0;
+> +
+>         if (!IS_ENABLED(CONFIG_MD_BITMAP))
+>                 mddev->bitmap_id =3D ID_BITMAP_NONE;
+>         else
+> @@ -741,10 +743,23 @@ int mddev_init(struct mddev *mddev)
+>
+>         if (percpu_ref_init(&mddev->writes_pending, no_op,
+>                             PERCPU_REF_ALLOW_REINIT, GFP_KERNEL)) {
+> -               percpu_ref_exit(&mddev->active_io);
+> -               return -ENOMEM;
+> +               err =3D -ENOMEM;
+> +               goto exit_acitve_io;
+>         }
+>
+> +       err =3D bioset_init(&mddev->bio_set, BIO_POOL_SIZE, 0, BIOSET_NEE=
+D_BVECS);
+> +       if (err)
+> +               goto exit_writes_pending;
+> +
+> +       err =3D bioset_init(&mddev->sync_set, BIO_POOL_SIZE, 0, BIOSET_NE=
+ED_BVECS);
+> +       if (err)
+> +               goto exit_bio_set;
+> +
+> +       err =3D bioset_init(&mddev->io_clone_set, BIO_POOL_SIZE,
+> +                         offsetof(struct md_io_clone, bio_clone), 0);
+> +       if (err)
+> +               goto exit_sync_set;
+> +
+>         /* We want to start with the refcount at zero */
+>         percpu_ref_put(&mddev->writes_pending);
+>
+> @@ -773,11 +788,24 @@ int mddev_init(struct mddev *mddev)
+>         INIT_WORK(&mddev->del_work, mddev_delayed_delete);
+>
+>         return 0;
+> +
+> +exit_sync_set:
+> +       bioset_exit(&mddev->sync_set);
+> +exit_bio_set:
+> +       bioset_exit(&mddev->bio_set);
+> +exit_writes_pending:
+> +       percpu_ref_exit(&mddev->writes_pending);
+> +exit_acitve_io:
+> +       percpu_ref_exit(&mddev->active_io);
+> +       return err;
+>  }
+>  EXPORT_SYMBOL_GPL(mddev_init);
+>
+>  void mddev_destroy(struct mddev *mddev)
+>  {
+> +       bioset_exit(&mddev->bio_set);
+> +       bioset_exit(&mddev->sync_set);
+> +       bioset_exit(&mddev->io_clone_set);
+>         percpu_ref_exit(&mddev->active_io);
+>         percpu_ref_exit(&mddev->writes_pending);
+>  }
+> @@ -6393,29 +6421,9 @@ int md_run(struct mddev *mddev)
+>                 nowait =3D nowait && bdev_nowait(rdev->bdev);
+>         }
+>
+> -       if (!bioset_initialized(&mddev->bio_set)) {
+> -               err =3D bioset_init(&mddev->bio_set, BIO_POOL_SIZE, 0, BI=
+OSET_NEED_BVECS);
+> -               if (err)
+> -                       return err;
+> -       }
+> -       if (!bioset_initialized(&mddev->sync_set)) {
+> -               err =3D bioset_init(&mddev->sync_set, BIO_POOL_SIZE, 0, B=
+IOSET_NEED_BVECS);
+> -               if (err)
+> -                       goto exit_bio_set;
+> -       }
+> -
+> -       if (!bioset_initialized(&mddev->io_clone_set)) {
+> -               err =3D bioset_init(&mddev->io_clone_set, BIO_POOL_SIZE,
+> -                                 offsetof(struct md_io_clone, bio_clone)=
+, 0);
+> -               if (err)
+> -                       goto exit_sync_set;
+> -       }
+> -
+>         pers =3D get_pers(mddev->level, mddev->clevel);
+> -       if (!pers) {
+> -               err =3D -EINVAL;
+> -               goto abort;
+> -       }
+> +       if (!pers)
+> +               return -EINVAL;
+>         if (mddev->level !=3D pers->head.id) {
+>                 mddev->level =3D pers->head.id;
+>                 mddev->new_level =3D pers->head.id;
+> @@ -6426,8 +6434,7 @@ int md_run(struct mddev *mddev)
+>             pers->start_reshape =3D=3D NULL) {
+>                 /* This personality cannot handle reshaping... */
+>                 put_pers(pers);
+> -               err =3D -EINVAL;
+> -               goto abort;
+> +               return -EINVAL;
+>         }
+>
+>         if (pers->sync_request) {
+> @@ -6554,12 +6561,6 @@ int md_run(struct mddev *mddev)
+>         mddev->private =3D NULL;
+>         put_pers(pers);
+>         md_bitmap_destroy(mddev);
+> -abort:
+> -       bioset_exit(&mddev->io_clone_set);
+> -exit_sync_set:
+> -       bioset_exit(&mddev->sync_set);
+> -exit_bio_set:
+> -       bioset_exit(&mddev->bio_set);
+>         return err;
+>  }
+>  EXPORT_SYMBOL_GPL(md_run);
+> @@ -6784,10 +6785,6 @@ static void __md_stop(struct mddev *mddev)
+>         mddev->private =3D NULL;
+>         put_pers(pers);
+>         clear_bit(MD_RECOVERY_FROZEN, &mddev->recovery);
+> -
+> -       bioset_exit(&mddev->bio_set);
+> -       bioset_exit(&mddev->sync_set);
+> -       bioset_exit(&mddev->io_clone_set);
+>  }
+>
+>  void md_stop(struct mddev *mddev)
+> --
+> 2.39.2
+>
+
 
