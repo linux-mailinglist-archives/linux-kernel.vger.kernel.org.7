@@ -1,64 +1,57 @@
-Return-Path: <linux-kernel+bounces-883051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40D8FC2C59A
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:14:41 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29D85C2C5A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:15:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DDE4D34A648
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:14:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1878E4E0430
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:15:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314B92F7AAE;
-	Mon,  3 Nov 2025 14:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2B330E827;
+	Mon,  3 Nov 2025 14:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="chqN+X+9"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X3o01LlD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85F019F127
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 14:14:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D7BE303CAF;
+	Mon,  3 Nov 2025 14:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762179268; cv=none; b=BV9Zo8wr6/GwxOW1UVpwMlUH/OlAoeAGz5qFbv/yiudsMvUh+dwk8MowP2E4sEGT9jFCLkYpVMc1FBfS1WkmyJ+XRHccdvHlZ450ILvefuMEqiZ572KABKR+P/bhDt38G6h9I/B+OeeemhC0MyzOGef69isJxrsgUuXYNwLn3DI=
+	t=1762179302; cv=none; b=R51QtpZuIZeUZO/0caGX351TCgOuCFldT4daxq2FXNiT1Ggw99A+jcAe/XUIroxS9TrRGzWXSox7awLrJ6HSN6vBtD6Fz5CKoD3XtUVse3GxC45BOZw5UrAlIdnq8Hi7Di8NH/uXKsBVz9sMJrV9NiPPjFKl1m1DCZ3vMqqu6FQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762179268; c=relaxed/simple;
-	bh=JGaArpyjlVW/76SFOKStdpgXS3RCeB+iXVixw2rgAJs=;
+	s=arc-20240116; t=1762179302; c=relaxed/simple;
+	bh=fs90Ul4vTnu9dV9I/VxXT9SC/TJ8z2rQUAx6krg4/Gk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k2JgWKN7PL91dpsJsQ2fIMLAyCkaUH8pBwQeHM3g6oOoJ8TobK6mcPUOx4XCDYa95et079F6COo1JaMUpP1/KIdLOhMrLEcKpagaGMN/FD1Yfeb51nudDE2d67R1AIR/rm3PO8GeipFY7gHaJwtoPAWUwlmAT3sO/7OVCwPs6D0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=chqN+X+9; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=cCbR8BW+licPz9CLpgORR1v7fuvmYJ7LlKX3uzYVqLU=; b=chqN+X+9wFGec/93Uq/evRSkyH
-	LuVaBZoV0gcookgG/5Ts/reQLB5EPUV61blyJSzfarcWIhImZQl8BzIUfOFtta+pFG1gDWgCGv084
-	0FbJZ59cOF5aLJFCqsu3A+suUgfuYaLcrVIz8iu4NNX+/f6dYM45lngFv18WE26xnH/lM9mdEhWuy
-	V6BMqQwF7urix6OiZACoxfCKmc5E/TIMY4hS1TKhpE9zXXXDfM7xuTCI0jH7OgZ6v/XBo7Bq7pqSW
-	Ua4tXlaHLHhixhrROxWGR3uM5kIiX06g7oOBcskHwVEmAn0wTWE3PuOQXcce0XzQuwYDDPLNWhmAI
-	1B/qFycQ==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vFvK8-00000008Ip8-1fNw;
-	Mon, 03 Nov 2025 14:14:21 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 2034E300220; Mon, 03 Nov 2025 15:14:21 +0100 (CET)
-Date: Mon, 3 Nov 2025 15:14:21 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Mel Gorman <mgorman@techsingularity.net>
-Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Chris Mason <clm@meta.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] sched/fair: Reimplement NEXT_BUDDY to align with
- EEVDF goals
-Message-ID: <20251103141421.GW4068168@noisy.programming.kicks-ass.net>
-References: <20251103110445.3503887-1-mgorman@techsingularity.net>
- <20251103110445.3503887-3-mgorman@techsingularity.net>
- <20251103140711.GB3245006@noisy.programming.kicks-ass.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=O74wzks0Mo8Dbtc+TpnTHx3i6/CEwckq2wBn4JT2BpTolcXXVtSnox2m+wnbwm0IsKE+5LIe/ag+3OXm2D/KXJLtk+dbaa1QrvoRNyKkbQ93eoL9PSfSLG7hMpvvMZjCU2p8zfdkW39yy6CUCeIwdCMuKlLuDKyUsnAFxSmDDmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X3o01LlD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EAD4C4CEE7;
+	Mon,  3 Nov 2025 14:14:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762179301;
+	bh=fs90Ul4vTnu9dV9I/VxXT9SC/TJ8z2rQUAx6krg4/Gk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X3o01LlDmBO8alUjN9fiIY8ZAoR7Yj4bPPQbuFzEScyf0Q+7jfwgwoRGax0TZ3ojY
+	 tzyICCPRCpa3zMyy/7yD27/7XPdsRJKROidbqzVoisReUN7xz3/qO5eQpYtP+0n6A+
+	 34LWRNe/+fecNcLTHGQPnYdnTsVIHQS17sRl0IOPv+7Q+bvTglLRtYh82ZIRHggnbS
+	 IlPpUHlT5+zj0383kredcBozFfs9sR65eKFqhRDVZfuacSnlVtfOMy90LDKuqYxA8v
+	 edKiJH984rvPsqH/NuUuzAS/qRIfHyzmhuTlxxicOom0g9wiUFZ31J4wexSJ9qpm8J
+	 tWMwbSQu69+lg==
+Date: Mon, 3 Nov 2025 14:14:56 +0000
+From: Will Deacon <will@kernel.org>
+To: Leo Yan <leo.yan@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	James Clark <james.clark@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf: arm_spe: Ensure trace is disabled when TRUNCATED
+ flag is set
+Message-ID: <aQi44CZOiwhI19dd@willie-the-truck>
+References: <20251015-arm_spe_fix_truncated_flag-v1-1-555e328cba05@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,22 +60,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251103140711.GB3245006@noisy.programming.kicks-ass.net>
+In-Reply-To: <20251015-arm_spe_fix_truncated_flag-v1-1-555e328cba05@arm.com>
 
-On Mon, Nov 03, 2025 at 03:07:11PM +0100, Peter Zijlstra wrote:
-
-> > @@ -8734,7 +8819,7 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
-> >  	struct sched_entity *se = &donor->se, *pse = &p->se;
-> >  	struct cfs_rq *cfs_rq = task_cfs_rq(donor);
-> >  	int cse_is_idle, pse_is_idle;
-> > -	bool do_preempt_short = false;
-> > +	enum preempt_wakeup_action preempt_action = PREEMPT_WAKEUP_NONE;
+On Wed, Oct 15, 2025 at 07:23:37PM +0100, Leo Yan wrote:
+> The TRUNCATED flag can be set in the following cases:
 > 
-> I'm thinking NONE is the wrong default
+>  1. When data loss is detected (PMBSR_EL1.DL == 0b1).
+>  2. When arm_spe_perf_aux_output_begin() fails to find a valid limit
+>     because it runs out of free space.
+> 
+> Currently, only the first case invokes irq_work_run() to execute the
+> event disable callback, while the second case does not.
+> 
+> Move the call to irq_work_run() later with checking the TRUNCATED flag,
+> so that both cases are handled and redundant calls are avoided.
+> 
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
+> ---
+>  drivers/perf/arm_spe_pmu.c | 15 +++++++++------
+>  1 file changed, 9 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
+> index fa50645feddadbea5dc1e404f80f62cf5aa96fd4..05ba977f75d607a1d524f68694db9ea18a6ef20c 100644
+> --- a/drivers/perf/arm_spe_pmu.c
+> +++ b/drivers/perf/arm_spe_pmu.c
+> @@ -731,12 +731,6 @@ static irqreturn_t arm_spe_pmu_irq_handler(int irq, void *dev)
+>  	if (act == SPE_PMU_BUF_FAULT_ACT_SPURIOUS)
+>  		return IRQ_NONE;
+>  
+> -	/*
+> -	 * Ensure perf callbacks have completed, which may disable the
+> -	 * profiling buffer in response to a TRUNCATION flag.
+> -	 */
+> -	irq_work_run();
+> -
+>  	switch (act) {
+>  	case SPE_PMU_BUF_FAULT_ACT_FATAL:
+>  		/*
+> @@ -765,6 +759,15 @@ static irqreturn_t arm_spe_pmu_irq_handler(int irq, void *dev)
+>  		break;
+>  	}
+>  
+> +	/*
+> +	 * The TRUNCATED flag is set when data loss is detected by PMBSR_EL1.DL,
+> +	 * or arm_spe_perf_aux_output_begin() sets the flag if runs out of free
+> +	 * space. Ensure that all perf callbacks have completed for disabling
+> +	 * the profiling buffer.
+> +	 */
+> +	if (handle->aux_flags & PERF_AUX_FLAG_TRUNCATED)
+> +		irq_work_run();
 
-That was unfinished, kid interrupted me at an inopportune moment and I
-lost my train ;-)
+I'm not sure about this. afaict, perf_aux_output_begin() can fail
+(return NULL) without setting the TRUNCATED flag but with a disable
+pending in irq work. It also feels a little fragile moving the existing
+irq_work_run() call as that could easily break in future if e.g. irq
+work is used for other manipulation of the buffer controls.
 
-Anyway, the current code defaults to what will be 'pick'. And I suppose
-we could make the default depend on WAKEUP_PREEMPT but meh.
+Given that this isn't a fast path, isn't it simpler and safer just to
+do something like the below?
+
+Will
+
+--->8
+
+diff --git a/drivers/perf/arm_spe_pmu.c b/drivers/perf/arm_spe_pmu.c
+index fa50645fedda..8a38d69e9600 100644
+--- a/drivers/perf/arm_spe_pmu.c
++++ b/drivers/perf/arm_spe_pmu.c
+@@ -758,6 +758,10 @@ static irqreturn_t arm_spe_pmu_irq_handler(int irq, void *dev)
+                if (!(handle->aux_flags & PERF_AUX_FLAG_TRUNCATED)) {
+                        arm_spe_perf_aux_output_begin(handle, event);
+                        isb();
++
++                       /* Insightful comment here */
++                       if (event->hw.state)
++                               irq_work_run();
+                }
+                break;
+        case SPE_PMU_BUF_FAULT_ACT_SPURIOUS:
+
 
