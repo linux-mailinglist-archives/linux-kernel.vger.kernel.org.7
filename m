@@ -1,70 +1,78 @@
-Return-Path: <linux-kernel+bounces-883075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4502C2C6C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:34:28 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31B06C2C6EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:37:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7BA3018980F7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:34:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3C8694E8415
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F8D280014;
-	Mon,  3 Nov 2025 14:33:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA2D280338;
+	Mon,  3 Nov 2025 14:36:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pu0EgPfz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hu75PmCK"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74167274B39;
-	Mon,  3 Nov 2025 14:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB6A27FB3E;
+	Mon,  3 Nov 2025 14:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762180410; cv=none; b=vD7b827Allh9jAot84mFtTXzktpRasnV4R+jZKPy1DQwCDq/xW1Y29cIQHh5DjVYOGPrRcR/ATloNeKNGCm6QDqQa+Th6D8tYfeUcIyccKiTJGn0nl19AKHkCutXIYboj5ydFhJcYVQdRigKpaG7LfbTKNUeeN9C993H1CgeyrU=
+	t=1762180573; cv=none; b=eUuEtInJOGaRsNWO9hI7AKo2ZX6RFajQlLnK/NQtmJQ4SLidtBp0FJpxgC0E1eVehG59gGTyeHk+YhbgiLJVRspmtZm9N8qDwoScZY/w/Ivv1JfOwZZYtYbTcNkMoNm+AmQktvtKdYIX4fWgSsro9pc3Uz/MbdlwaXlRGJ8oAkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762180410; c=relaxed/simple;
-	bh=ADIEP2R4Ye3a32o5urTgbZq2x2MIrVSu4eY4ppawa+E=;
+	s=arc-20240116; t=1762180573; c=relaxed/simple;
+	bh=PJL40H1rrSr1RByqR89AZ2E1q5oDA4QRqub55GfiluA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kT5m0tuGkWv62YFytd8yrK4j5IWm4FBCjJdFJS9LbpErjsh0pOM9Jck71iezkvsCg3Z4Z1TuB6ah/+vkf0vDCyB1BtS1FlRV4ek617xvJEpkSQSfsYej9B8Ic+GpZrcdxYoTQd8kqDOo4q/R1kRz9lIxsAytsiKE1UOAo6fXBno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pu0EgPfz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05AD8C4CEE7;
-	Mon,  3 Nov 2025 14:33:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762180410;
-	bh=ADIEP2R4Ye3a32o5urTgbZq2x2MIrVSu4eY4ppawa+E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pu0EgPfzvjxNzAIsMUXSORw/6lYc9GfU4GaBq2sILlsDpGtjsrmRc+YdwDv3m6ake
-	 JHxJ2Yay279m0qKorZ3WYC67v1gF4ln6k4IMb6+HwrSwsVQeFUbzJzigRn5MHI9OeY
-	 qjVx5buHc9KVTKW/R1cvEsti/x+qNEUhwlk0a9XjuQEbOoV9QnImX50GUpNci/qCxz
-	 vql1rTt+ETn/+hUSJH3lr6oIYzPVgxk82JOo7j5i+UALRm5az5Ofga8DTAx6ACk3f9
-	 rlAw2wYpEkHIcl89YFRv2J0vO2tS295cEnBqrcyv1DbPNunAfRoPNJeAmmKBbkbkzT
-	 q/NtfE39BpBVA==
-Date: Mon, 3 Nov 2025 14:33:22 +0000
-From: Will Deacon <will@kernel.org>
-To: James Clark <james.clark@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>, Leo Yan <leo.yan@arm.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH v9 1/5] perf: Add perf_event_attr::config4
-Message-ID: <aQi9MstZTsloKmeo@willie-the-truck>
-References: <20251029-james-perf-feat_spe_eft-v9-0-d22536b9cf94@linaro.org>
- <20251029-james-perf-feat_spe_eft-v9-1-d22536b9cf94@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LTY8VyeacoTHzBLEx2dK8JMAWnGpOKH2Js5d2mrz1A6k6oQJ/T3LqPmcY72u439qAtlkhd0YHek+U1PefB2ypVgBkQ6DlIc+rRhQzu9fnRCa3eoKn4FAtss6TJHDZckVnnDwWjbHUrr0ZM2RqDy1jrZhYTfzeE1KnUN6+0gyAys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hu75PmCK; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=bDJLzxzXeix51zzhX2vSU/9HiMumVsIUdwFwVA82G6A=; b=hu75PmCKzdeDR7snJfmgqiYskr
+	4Y+walnvU1NsJgfJ12yFjqNQQ6z64Kt7zgMxH2HfwjtCBNQwrXHwQWgvMap+GK4otMLw4mg5AfVet
+	qwHSUePwD1bMztaS6NBdgCU88ut4785Q4wVifQnfCXPkYVmGyySH/cIadqVIgWN0ePB4ws89Xg6Di
+	BpDuY77NKwLBZJWM5L5uda8UtdQ5gy3vlhqkTvyAj3OntGYhMcRLfnvoxFr553Uw8MEWfSumy8GL5
+	/7HDjsGlInDkOQeKkZ3JzXQddczmYxPncAru6jv/Jy8t2KDjxb5jc1EPJzu1Zge+u6IsLqIAmuKlp
+	V58oCqwQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vFvf3-00000008v4J-1HNK;
+	Mon, 03 Nov 2025 14:35:57 +0000
+Date: Mon, 3 Nov 2025 14:35:57 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Kiryl Shutsemau <kirill@shutemov.name>
+Cc: Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Rik van Riel <riel@surriel.com>,
+	Harry Yoo <harry.yoo@oracle.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Dave Chinner <david@fromorbit.com>, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv3 1/2] mm/memory: Do not populate page table entries
+ beyond i_size
+Message-ID: <aQi9zaPxwLBTneF4@casper.infradead.org>
+References: <20251027115636.82382-1-kirill@shutemov.name>
+ <20251027115636.82382-2-kirill@shutemov.name>
+ <20251027153323.5eb2d97a791112f730e74a21@linux-foundation.org>
+ <hw5hjbmt65aefgfz5cqsodpduvlkc6fmlbmwemvoknuehhgml2@orbho2mz52sv>
+ <9e2750bf-7945-cc71-b9b3-632f03d89a55@google.com>
+ <aQWT_6cXWAcjZYON@casper.infradead.org>
+ <xadc6rbs7fkk2mb5b4reobqwue2kveo736r3wpa5zwted4daua@rgasjiwwot3g>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,43 +81,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251029-james-perf-feat_spe_eft-v9-1-d22536b9cf94@linaro.org>
+In-Reply-To: <xadc6rbs7fkk2mb5b4reobqwue2kveo736r3wpa5zwted4daua@rgasjiwwot3g>
 
-On Wed, Oct 29, 2025 at 03:46:01PM +0000, James Clark wrote:
-> Arm FEAT_SPE_FDS adds the ability to filter on the data source of a
-> packet using another 64-bits of event filtering control. As the existing
-> perf_event_attr::configN fields are all used up for SPE PMU, an
-> additional field is needed. Add a new 'config4' field.
+On Mon, Nov 03, 2025 at 10:59:00AM +0000, Kiryl Shutsemau wrote:
+> On Sat, Nov 01, 2025 at 05:00:47AM +0000, Matthew Wilcox wrote:
+> > On Wed, Oct 29, 2025 at 02:45:52AM -0700, Hugh Dickins wrote:
+> > > But you're giving yourself too hard a time of backporting with your
+> > > 5.10 Fixee 01c70267053d for 1/2: the only filesystem which set the
+> > > flag then was tmpfs, which you're now excepting.  The flag got
+> > > renamed later (in 5.16) and then in 5.17 at last there was another
+> > > filesystem to set it.  So, this 1/2 would be
+> > > 
+> > > Fixes: 6795801366da ("xfs: Support large folios")
+> > 
+> > I haven't been able to keep up with this patchset -- sorry.
+> > 
+> > But this problem didn't exist until bs>PS support was added because we
+> > would never add a folio to the page cache which extended beyond i_size
+> > before.  We'd shrink the folio order allocated in do_page_cache_ra()
+> > (actually, we still do, but page_cache_ra_unbounded() rounds it up
+> > again).  So it doesn't fix that commit at all, but something far more
+> > recent.
 > 
-> Reviewed-by: Leo Yan <leo.yan@arm.com>
-> Tested-by: Leo Yan <leo.yan@arm.com>
-> Reviewed-by: Ian Rogers <irogers@google.com>
-> Signed-off-by: James Clark <james.clark@linaro.org>
-> ---
->  include/uapi/linux/perf_event.h | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-> index 78a362b80027..0d0ed85ad8cb 100644
-> --- a/include/uapi/linux/perf_event.h
-> +++ b/include/uapi/linux/perf_event.h
-> @@ -382,6 +382,7 @@ enum perf_event_read_format {
->  #define PERF_ATTR_SIZE_VER6			120	/* Add: aux_sample_size */
->  #define PERF_ATTR_SIZE_VER7			128	/* Add: sig_data */
->  #define PERF_ATTR_SIZE_VER8			136	/* Add: config3 */
-> +#define PERF_ATTR_SIZE_VER9			144	/* add: config4 */
->  
->  /*
->   * 'struct perf_event_attr' contains various attributes that define
-> @@ -543,6 +544,7 @@ struct perf_event_attr {
->  	__u64	sig_data;
->  
->  	__u64	config3; /* extension of config2 */
-> +	__u64	config4; /* extension of config3 */
+> What about truncate path? We could allocate within i_size at first, then
+> truncate, if truncation failed to split the folio the mapping stays
+> beyond i_size.
 
-Please can one of the core perf maintainers ack/nak this extension?
-
-Cheers,
-
-Will
+Is it worth backporting all this way to solve this niche case?
 
