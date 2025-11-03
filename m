@@ -1,96 +1,186 @@
-Return-Path: <linux-kernel+bounces-882481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 692FDC2A912
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:27:43 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62E7CC2A8DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:25:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AE003A840B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:24:04 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id DCF703485F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:25:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E35F2DC33F;
-	Mon,  3 Nov 2025 08:24:00 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 286A82DC77B;
+	Mon,  3 Nov 2025 08:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SOnVe8YS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52AEB2DC33B
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 08:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE9E28D8F1;
+	Mon,  3 Nov 2025 08:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762158239; cv=none; b=MLU5HG2A+rrLqS8NlIH/hnfEGZYyhlZZcKO4GPFj29rG8mfE8LPs0O4iFTN4V6cND4eRUxaSSPBfTMo9tAaUiW15wa+uI5jun06g1oIORs+WgaaaockRERUtbs9qUpy+MJCmx3ftsQ7fc6bGWNoiSHeQzMjuCHotlWircTp3QfI=
+	t=1762158336; cv=none; b=htGxj3rkj0UgkOx/9srI1+IOEyy93xV39r1rjeY0VDzJ8q4GoPLCEyNTVwUuY/ZENZPJ20L3YW69s6pbWo1+6C5DzVFbecTIGJ8aaCMH6SWwRtv4wKL8WAUwDOKfo9g34lNADUEn6B2L2sRQbUEYCSORALQlh7N1bi1eqj06yGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762158239; c=relaxed/simple;
-	bh=S/DTc/O6rMhMH6zAzV0ay+G2IMZ8KQmdwqkOUmY0+FQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=uMduHSH254KOYW6l1TjIU2TsoMnmWANx8Iqijk9oupouZyv8ngBm8SeZWIL4kibp2KGKaldC4lR7HWKIS+nKaetUiMbQYmXlbbFsekIMcADg1ZVpmM+Flb35rqnDYgPAofkaLX3dKcwhKY+zHGiD6dUmiGPoe9YRUHK/y1UDU8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-4333035774fso6472185ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 00:23:58 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762158237; x=1762763037;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=++IReHIa7IiNwxKIKgozoAKwB3QVw95sQFg+MidWDL4=;
-        b=pbrxazgm8/+yKVTRaGPxky9nwyzD8kft62ZbsDdUL1tlorEHZZpOzPgEhjY1JZC273
-         ubk8PvPqyjl2mERyQ3jiFgIb0GHFzExjwOgx/cheIQsDncoMQZ/wgw6wrhKbLJVXol4c
-         htqQlogO3UXJY5E7azDYE7nCACD24xi2akDGRvE1e38vaug6nHW917xiehryA7y0yY7V
-         BzHOQJOengauRES2GT+f8Qk6BEXUzUGOd7pAMKlcLOqvni5BrA4LzXonh2hH9PaNMt/5
-         w9VtSigM4Wj5fhkTHR0MXkGxPzpOmgBYlg1ozYZiEOUani6QFBCpszjIKHfph3p2rZmR
-         7pxQ==
-X-Gm-Message-State: AOJu0Yx29Cq6ZVUTRevbzdI2e20lR6NMl94B9SxuEk5zIfVHBJcOq85j
-	C4h+5WUneJ7bWoUFKCl+/yT7QykFDgL2hetlAxny/dC5FLBzqEfUp50fKsx2UadulQGu9MxKhnK
-	2Sx4j6eFBDO6nyrFRVVbfxRNtBFPO0Uig7tnNMGlNcujsv0wrU7lj9R9F20c=
-X-Google-Smtp-Source: AGHT+IGumfiUd1MUWl5RGKrdWz71+mjqfdxg2cIQa5TXWkwOXR7I1y8m81BvpOrno4u5u/u9H4Tr4ZqR9zuHeiJaz8FH/6Z8w6Gb
+	s=arc-20240116; t=1762158336; c=relaxed/simple;
+	bh=F5aVqdw4ylrut0vH7us2KkUmhnLaDIfWT7Jmh8UeHiM=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=V0UK00tUbBZJ6GRBq5dS4KmQT5yC6ntpq5TivThczsbkuQsZrhxrJninlVI865/A64E/u+cj/YMFvVcGbzvUqssOQMmBWYJ6BRaKT08NVcRphe2YITUK115sTEQfsmtpEyKXDNYN81IX+5LvTMD2DFOcDMvSJmWP9zLrIArbH74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SOnVe8YS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CF73C4CEE7;
+	Mon,  3 Nov 2025 08:25:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762158336;
+	bh=F5aVqdw4ylrut0vH7us2KkUmhnLaDIfWT7Jmh8UeHiM=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=SOnVe8YSEu+ue1pID+odYB2F9GCnoD8x9BrSk1fPnF9h8If8hxdQioDW0fU0bh2vR
+	 MCiTaZWUw9NgaFHcRKOA4PV/L5E+4Eh9hezH/BqrkjYgKa3DHt6O0pnY62oDp1aQ1P
+	 ivqPKDwDPS/ChYFh2KcvLB1hXK5zQTTN74JX7ZhGCXPLegxW+1a73Wtsr8cz4wjHOF
+	 5TLnQsL61LXi0WkUcz5/5LCHpglw0ON+nFhsf/CIXo6xgdhoU0PiADQW6ytjOEYwgS
+	 oAlNiR69Gfdyz6mylStaKRqxRwWqPniOQAUcy1YXpfxfLukAEa2KvNhOA2K70h2bvq
+	 5t/Gb+bxOw7og==
+Message-ID: <dd0aa0bd-17ec-42a5-9ddb-ed564993aa9b@kernel.org>
+Date: Mon, 3 Nov 2025 09:25:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a2e:b0:433:330a:a572 with SMTP id
- e9e14a558f8ab-433330aa64dmr14238865ab.13.1762158237513; Mon, 03 Nov 2025
- 00:23:57 -0800 (PST)
-Date: Mon, 03 Nov 2025 00:23:57 -0800
-In-Reply-To: <6903e7f7.050a0220.3344a1.044c.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6908669d.050a0220.29fc44.0037.GAE@google.com>
-Subject: Forwarded: Re: [syzbot] [ext4?] WARNING in ext4_xattr_inode_update_ref
- (2)
-From: syzbot <syzbot+76916a45d2294b551fd9@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH v2] media: dvbringbuffer : fix space issues
+To: Nikhil S <nikhilsunilkumar@gmail.com>, mchehab@kernel.org
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250925181032.7862-1-nikhilsunilkumar@gmail.com>
+Content-Language: en-US, nl
+In-Reply-To: <20250925181032.7862-1-nikhilsunilkumar@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On 25/09/2025 20:10, Nikhil S wrote:
+> Fix the space issues detected by the checkpatch tool
+> 
+> Changes in v2:
+>  - Split multiple assignments into separate lines
 
-***
+This patch is a duplicate of:
 
-Subject: Re: [syzbot] [ext4?] WARNING in ext4_xattr_inode_update_ref (2)
-Author: lizhi.xu@windriver.com
+https://lore.kernel.org/linux-media/20250718130807.87691-1-darshanrathod475@gmail.com/
 
-#syz test
+which has already been merged. So I'm dropping this one.
 
-diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-index ce7253b3f549..5f535d45111b 100644
---- a/fs/ext4/xattr.c
-+++ b/fs/ext4/xattr.c
-@@ -1040,6 +1040,13 @@ static int ext4_xattr_inode_update_ref(handle_t *handle, struct inode *ea_inode,
- 		ret = -EFSCORRUPTED;
- 		goto out;
- 	}
-+	if (overflows_type(ref_count + ref_change, u64)) {
-+		ext4_error_inode(ea_inode, __func__, __LINE__, 0,
-+			"EA inode %lu ref overflows: ref_count=%lld ref_change=%d",
-+			ea_inode->i_ino, ref_count, ref_change);
-+		ret = -EFSCORRUPTED;
-+		goto out;
-+	}
- 	ref_count += ref_change;
- 	ext4_xattr_inode_set_ref(ea_inode, ref_count);
- 
+Regards,
+
+	Hans
+
+> 
+> Signed-off-by: Nikhil S <nikhilsunilkumar@gmail.com>
+> ---
+>  drivers/media/dvb-core/dvb_ringbuffer.c | 34 +++++++++++++++----------
+>  1 file changed, 20 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/media/dvb-core/dvb_ringbuffer.c b/drivers/media/dvb-core/dvb_ringbuffer.c
+> index 7d4558de8..99c2d700c 100644
+> --- a/drivers/media/dvb-core/dvb_ringbuffer.c
+> +++ b/drivers/media/dvb-core/dvb_ringbuffer.c
+> @@ -37,10 +37,11 @@
+>  
+>  void dvb_ringbuffer_init(struct dvb_ringbuffer *rbuf, void *data, size_t len)
+>  {
+> -	rbuf->pread=rbuf->pwrite=0;
+> -	rbuf->data=data;
+> -	rbuf->size=len;
+> -	rbuf->error=0;
+> +	rbuf->pread = 0;
+> +	rbuf->pwrite = 0;
+> +	rbuf->data = data;
+> +	rbuf->size = len;
+> +	rbuf->error = 0;
+>  
+>  	init_waitqueue_head(&rbuf->queue);
+>  
+> @@ -235,7 +236,7 @@ ssize_t dvb_ringbuffer_write_user(struct dvb_ringbuffer *rbuf,
+>  	return len;
+>  }
+>  
+> -ssize_t dvb_ringbuffer_pkt_write(struct dvb_ringbuffer *rbuf, u8* buf, size_t len)
+> +ssize_t dvb_ringbuffer_pkt_write(struct dvb_ringbuffer *rbuf, u8 *buf, size_t len)
+>  {
+>  	int status;
+>  	ssize_t oldpwrite = rbuf->pwrite;
+> @@ -245,7 +246,8 @@ ssize_t dvb_ringbuffer_pkt_write(struct dvb_ringbuffer *rbuf, u8* buf, size_t le
+>  	DVB_RINGBUFFER_WRITE_BYTE(rbuf, PKT_READY);
+>  	status = dvb_ringbuffer_write(rbuf, buf, len);
+>  
+> -	if (status < 0) rbuf->pwrite = oldpwrite;
+> +	if (status < 0)
+> +		rbuf->pwrite = oldpwrite;
+>  	return status;
+>  }
+>  
+> @@ -258,8 +260,10 @@ ssize_t dvb_ringbuffer_pkt_read_user(struct dvb_ringbuffer *rbuf, size_t idx,
+>  
+>  	pktlen = rbuf->data[idx] << 8;
+>  	pktlen |= rbuf->data[(idx + 1) % rbuf->size];
+> -	if (offset > pktlen) return -EINVAL;
+> -	if ((offset + len) > pktlen) len = pktlen - offset;
+> +	if (offset > pktlen)
+> +		return -EINVAL;
+> +	if ((offset + len) > pktlen)
+> +		len = pktlen - offset;
+>  
+>  	idx = (idx + DVB_RINGBUFFER_PKTHDRSIZE + offset) % rbuf->size;
+>  	todo = len;
+> @@ -278,7 +282,7 @@ ssize_t dvb_ringbuffer_pkt_read_user(struct dvb_ringbuffer *rbuf, size_t idx,
+>  }
+>  
+>  ssize_t dvb_ringbuffer_pkt_read(struct dvb_ringbuffer *rbuf, size_t idx,
+> -				int offset, u8* buf, size_t len)
+> +				int offset, u8 *buf, size_t len)
+>  {
+>  	size_t todo;
+>  	size_t split;
+> @@ -286,8 +290,10 @@ ssize_t dvb_ringbuffer_pkt_read(struct dvb_ringbuffer *rbuf, size_t idx,
+>  
+>  	pktlen = rbuf->data[idx] << 8;
+>  	pktlen |= rbuf->data[(idx + 1) % rbuf->size];
+> -	if (offset > pktlen) return -EINVAL;
+> -	if ((offset + len) > pktlen) len = pktlen - offset;
+> +	if (offset > pktlen)
+> +		return -EINVAL;
+> +	if ((offset + len) > pktlen)
+> +		len = pktlen - offset;
+>  
+>  	idx = (idx + DVB_RINGBUFFER_PKTHDRSIZE + offset) % rbuf->size;
+>  	todo = len;
+> @@ -309,7 +315,7 @@ void dvb_ringbuffer_pkt_dispose(struct dvb_ringbuffer *rbuf, size_t idx)
+>  	rbuf->data[(idx + 2) % rbuf->size] = PKT_DISPOSED;
+>  
+>  	// clean up disposed packets
+> -	while(dvb_ringbuffer_avail(rbuf) > DVB_RINGBUFFER_PKTHDRSIZE) {
+> +	while (dvb_ringbuffer_avail(rbuf) > DVB_RINGBUFFER_PKTHDRSIZE) {
+>  		if (DVB_RINGBUFFER_PEEK(rbuf, 2) == PKT_DISPOSED) {
+>  			pktlen = DVB_RINGBUFFER_PEEK(rbuf, 0) << 8;
+>  			pktlen |= DVB_RINGBUFFER_PEEK(rbuf, 1);
+> @@ -321,7 +327,7 @@ void dvb_ringbuffer_pkt_dispose(struct dvb_ringbuffer *rbuf, size_t idx)
+>  	}
+>  }
+>  
+> -ssize_t dvb_ringbuffer_pkt_next(struct dvb_ringbuffer *rbuf, size_t idx, size_t* pktlen)
+> +ssize_t dvb_ringbuffer_pkt_next(struct dvb_ringbuffer *rbuf, size_t idx, size_t *pktlen)
+>  {
+>  	int consumed;
+>  	int curpktlen;
+> @@ -339,7 +345,7 @@ ssize_t dvb_ringbuffer_pkt_next(struct dvb_ringbuffer *rbuf, size_t idx, size_t*
+>  	if (consumed < 0)
+>  		consumed += rbuf->size;
+>  
+> -	while((dvb_ringbuffer_avail(rbuf) - consumed) > DVB_RINGBUFFER_PKTHDRSIZE) {
+> +	while ((dvb_ringbuffer_avail(rbuf) - consumed) > DVB_RINGBUFFER_PKTHDRSIZE) {
+>  
+>  		curpktlen = rbuf->data[idx] << 8;
+>  		curpktlen |= rbuf->data[(idx + 1) % rbuf->size];
+
 
