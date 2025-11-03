@@ -1,116 +1,217 @@
-Return-Path: <linux-kernel+bounces-882415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 834ACC2A668
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:51:25 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22ADBC2A728
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:58:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A0873AAB3B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:49:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DA6084F08FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:54:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E88B2BE7B5;
-	Mon,  3 Nov 2025 07:48:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D3F2BE649;
+	Mon,  3 Nov 2025 07:54:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PL9I6Jaa"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="N/PbNfs9"
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11013069.outbound.protection.outlook.com [40.107.201.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06C523D7CD;
-	Mon,  3 Nov 2025 07:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762156137; cv=none; b=GfI14wVrFkcaW2lSGrJ8nx3OphisEUm6y3tSwVjT7pDSuDkigLolZACKJOhq1J6gSehFkfnsLkbk9hCqSsGFIF/hMKvMf0rTBSojn8IAVA06fpaIrrMs+7q0vIlq46nACVj7q4Cr3QmHPseX1/C1WrjY88cq+7/neCcr1aCLOVk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762156137; c=relaxed/simple;
-	bh=MJgeVbNpUoGoHD1/sYkEHKgZWHINzoEgg34xJW4Po0k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bj7vBSBQTTwvgqU0BT6C4VJs5/EiSwI3Fds7yn+5gOo5+lOM6MY94/r1QKqUjnpuoP7xnxyKbGC5bllylPv4kMjtaUes3typRr9+OOK26FYZa69f3N0jo61R2QX/LwZ9nfENLvE+nPAFDHUh2LeKbaUUmKN5rR+QTXaR8Al58e8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PL9I6Jaa; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762156136; x=1793692136;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=MJgeVbNpUoGoHD1/sYkEHKgZWHINzoEgg34xJW4Po0k=;
-  b=PL9I6JaaGuA2UKs/2RpU8aqGyAnyz5zJFP6An7FC0tZ0LjPULkbOz+bU
-   MlnPlyLufgaNfyinof1TdX9e1vgrfYUKExSRIQWr4leFkoER1e8SSOuy7
-   LzbcUvN7kDbUBeW8dJ9ihYavEEJFYfgL5ebuWpcq3GUWJnmGjY/i47r1n
-   V7CWsTv457Hs4I3UTJBKROSCJYxMKkLJLlP9ybAOUXmNZ/AgMjyjjlTO4
-   Hi3nGuydmYtf387/fwzbt1XzZYI4UpVqmTkeD31jkEu/sloP74QHbDUls
-   zKPo0L0VvhwG5JVVNgzLRQ8AqSckUXlppYkdlRIezhoauHeK4NCoJg9gn
-   g==;
-X-CSE-ConnectionGUID: ZzFISQjVTki0XMCmKWvpaQ==
-X-CSE-MsgGUID: bKY6FqUSQFqcujgDSmz5dg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="81636124"
-X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
-   d="scan'208";a="81636124"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2025 23:48:55 -0800
-X-CSE-ConnectionGUID: 3675MS2DRWyz6L0nyQ0PPQ==
-X-CSE-MsgGUID: Bfa3tw9zQYyOQGbhail1Cw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
-   d="scan'208";a="187117193"
-Received: from smoehrl-linux.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.216])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2025 23:48:52 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vFpJ0-000000054xb-3Tzt;
-	Mon, 03 Nov 2025 09:48:46 +0200
-Date: Mon, 3 Nov 2025 09:48:45 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Nishanth Menon <nm@ti.com>, Raag Jadav <raag.jadav@intel.com>,
-	Santosh Shilimkar <ssantosh@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>, Tero Kristo <kristo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	kernel-janitors@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Jonathan Corbet <corbet@lwn.net>
-Subject: Re: clk: keystone: sci-clk: use devm_kmemdup_array() once more in
- ti_sci_scan_clocks_from_fw()
-Message-ID: <aQheXQLhrn_fOnyz@smile.fi.intel.com>
-References: <a8e94921-a426-4db8-aed6-b6e17e88b8e3@web.de>
- <aQTLHlv2_V9Pgjk3@smile.fi.intel.com>
- <06be737a-365d-4a2e-89dd-72fe415bc7d5@web.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3942BE7B5;
+	Mon,  3 Nov 2025 07:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762156444; cv=fail; b=d4xV/+0VEwjJwM2vSZy+TiqlJjqXVRRu47r6eTgwLfshZl84+K5IeNy6Tqxz9Wa+c47F3qrwxl1Nu39+g4XSZCI4L5taaU55q1ORiI8yl5cgfZ4AutlU+c/KJotCzYb+8HiNIK964Zb/oqFG51X6DSXKJhaaItPaXyAIk4D6c2I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762156444; c=relaxed/simple;
+	bh=CucJKitNXZoLkN4DEbz07ngypuyLw4ROnw9LV/3Pllo=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=qf0+iBgnyPbR8niWUPscbVGFmZ//DqdaFhxTWr/LECyuu40R35nwWHg8VuhkgzahKtuMdOaFKjVXnlBjSXWWWzQvUR8ZVb5iNFFDwXpUYazMgr8sQ3zVmeghTAM67f8n8QjnC/7d0uqs7lSIPFr79dxi7e7pncmrkfcWLdeal+Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=N/PbNfs9; arc=fail smtp.client-ip=40.107.201.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=o1iSYszPB7dyqeDK9gCJzWQwpv0l6vdATmYsxhKtFUggxz5nl5gPLUDzRzAlE+zsmePxRc+y1xZChUsxNPJdEYSGIWOAqW4qY8TiY6oWxSIkIBrbe6Ljn3ohtBVtmRWOWJmXHtyTas/05/oWLSJoO+IfcUtpKMunOh1f9Vhd/1lC955fSfiyHgXYwDgNdP1DLNYeRkUYyBRMJTxXOX+JDh2D+272P376AZyAu6M4+E4aHegOcPy+LdN6q/8cAmRsJErO6J0eMkJtBlnUVAb8AWfT6qGZmBADpnv6ayvLN7YysgwZXwB8m9XL+aOd44UAds7FN7JPeBGfgIXtGF8BYg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=USOYUNbThRk2evQtdJ1ALyZNEU8L73+YE+LgRhUMAJ4=;
+ b=ln49GJR+ge9hxZj5PjmNpovEs02Egl0yNKhGALNFkCoGoOAoLdbE8Pte2vbB38kqx1tJnyRTtSGReOFEkjZUQDddonNF2kMEYwC//HoHG8KPwgHxXm72PJmiVkyhCL2afdmXILHC6/rZlB3k7ZLqzEm04u4qb0TUl3+IH9GhrZnlmOQ/BVjjoGdDZg6DCF+FePDkQoGeNKqIqZuzUYbNB9kT5c+1z/XZ6adNVl8avyeW+XyynKMTN9qg2ouaizLqzJpuG3vfM2/o0Vjf/ESaT/hik3I1n2RllLqjs4TDlPBPBd7S2umtKF0iQMNp5SJJEsAVzZOG0/aDk4YLIQyBOQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=USOYUNbThRk2evQtdJ1ALyZNEU8L73+YE+LgRhUMAJ4=;
+ b=N/PbNfs9r4pbVfnE+33ABV5EdK/1F0TRRqRasrjIyIP/8CrZvgvGPQF11cqFQXZY184rcjTP4Eqh5zNLWeo2k48HL9mHAhBlYsfsW0CHD0fTgOdHzNxPHQOS0xWGe8+M0TZw/0z3IZF6beh7huEev/y43j3EEzza4WrefyMLNNw=
+Received: from DM6PR10CA0024.namprd10.prod.outlook.com (2603:10b6:5:60::37) by
+ DM4PR12MB6542.namprd12.prod.outlook.com (2603:10b6:8:89::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9275.16; Mon, 3 Nov 2025 07:53:58 +0000
+Received: from DS1PEPF0001708E.namprd03.prod.outlook.com
+ (2603:10b6:5:60:cafe::55) by DM6PR10CA0024.outlook.office365.com
+ (2603:10b6:5:60::37) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.16 via Frontend Transport; Mon,
+ 3 Nov 2025 07:53:58 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
+Received: from satlexmb07.amd.com (165.204.84.17) by
+ DS1PEPF0001708E.mail.protection.outlook.com (10.167.17.134) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.6 via Frontend Transport; Mon, 3 Nov 2025 07:53:57 +0000
+Received: from [127.0.1.1] (10.180.168.240) by satlexmb07.amd.com
+ (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Sun, 2 Nov
+ 2025 23:53:53 -0800
+From: "Yo-Jung Leo Lin (AMD)" <Leo.Lin@amd.com>
+Subject: [PATCH 0/5] drm/amdgpu: add UMA carveout tuning interfaces
+Date: Mon, 3 Nov 2025 15:51:03 +0800
+Message-ID: <20251103-vram-carveout-tuning-for-upstream-v1-0-17e2a72639c5@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <06be737a-365d-4a2e-89dd-72fe415bc7d5@web.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOdeCGkC/x2NywqDMBAAf0X27IKraKO/Ij0Es+oemsjmQUH89
+ 4Yeh4GZGyKrcISluUG5SJTgK1DbwHZafzCKqwx9149E3YBF7Qc3q4VDTpiyF3/gHhTzFZNyleR
+ GMvNkjHsNUDuX8i7f/2N9P88PWJlL2XMAAAA=
+To: Alex Deucher <alexander.deucher@amd.com>, =?utf-8?q?Christian_K=C3=B6nig?=
+	<christian.koenig@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter
+	<simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+	Jonathan Corbet <corbet@lwn.net>
+CC: <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>, "Yo-Jung Leo Lin
+ (AMD)" <Leo.Lin@amd.com>, <anson.tsao@amd.com>, <superm1@kernel.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2058; i=Leo.Lin@amd.com;
+ h=from:subject:message-id; bh=CucJKitNXZoLkN4DEbz07ngypuyLw4ROnw9LV/3Pllo=;
+ b=owEBbAKT/ZANAwAKAV8XsZZKKe6GAcsmYgBpCF8KOWehwmRkXY12gPyhha+kD/da4qcWBnxxj
+ lF3qrvdQtWJAjIEAAEKAB0WIQQzqV4kW+yguuqHrw5fF7GWSinuhgUCaQhfCgAKCRBfF7GWSinu
+ htTDD/ii8nm8tV9oLdmVPmUlKbH+Wr4F885CKPJmvEgoIes8nkGyZ1nlVn9MRpM25vCDlJF4nV3
+ 6XB37Zt/4Hug3sXWwGsmNPrO2l8aMBs265gJm8Fg7MyRS5Zynkn+UfKNR9D2GFmcIlPi+GZLlDC
+ uwTV+7niGn7+fwxeapWxKfcP8XvrdgFU7fuC66OJE5WX15saUqa42d6lmKJwzfiknK1I3BMwPTE
+ 4UPOoqhFQrl1JmMwLMI6EJOU/c3prNEPphOK4EYza73pzbOJBQWmRUP4eL94mmxoNfSb/mvoevE
+ cFI7D7ePCkYOkDBFc+J2WZT5nRthXSrTj9UNy0Ch4WrE0mMxKyDwPoCpqBamwRKpGdRMq53EuUF
+ h8xd4+/HE3c7ZyYsIOpqCw8UVqg5Q2/HS/FQbL0F0JgPWePSxWENTgMVNBmXXF/IJ8RDy+uUbpJ
+ KPIpq9NkzOL+M+cQ036tYaNraVXZ79cTqPIQUIpLPkjaKJQaAe6WNkQ7S6ayE3uS49CUGzgZMq8
+ c0kGbpMZgavNfyj+iP57meiRVLxYsNoecNvQt46jBeFWVVHEqJZxWvJNYY2M3bngwcDKrf9vp/1
+ hy51MIAWUFlxjqRwLJelBEpAPcdXLil9Y8nfcFrLcFS8uWnPXAKudiObktM+keTOLyACBSBZtDX
+ O2NBLbaQufy8d
+X-Developer-Key: i=Leo.Lin@amd.com; a=openpgp;
+ fpr=33A95E245BECA0BAEA87AF0E5F17B1964A29EE86
+X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
+ (10.181.42.216)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS1PEPF0001708E:EE_|DM4PR12MB6542:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1a1ee43f-e0df-4974-3dea-08de1aae249e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|82310400026|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UlJPd2lObDdKOXdlc05wZWxqSDVDYkczTUsyNllaTjRhdU9oR25QVWdtUHFt?=
+ =?utf-8?B?QXRJRXpRRVlxVUM5bTZaRG43OXVpVEJWOEN5dThCb0lCZndKTWN5YVZWQzJY?=
+ =?utf-8?B?RUk4TUErQ2x0RXhLc1htaStmU0tiUm1tak0wWTJYd0RLV2M3MVRpa2E0Ykhz?=
+ =?utf-8?B?N3RYODErWFZ6T2RZelpHVlh6cDMxOGk0YkdZakYxNndrWnRHY0VDZzBPb3Zm?=
+ =?utf-8?B?UkdoY0I2UHBHYVhCRlVMKzV3M3hDQ3h6RmRwcHpsUFUxVCtJZ1M3dEY0ZTJI?=
+ =?utf-8?B?c0gzc1Vjek9hWjNXU3BNVncrN1c0c0sxUWM5RjNyS0NIby9sZW5Xa09tUDNN?=
+ =?utf-8?B?L2FCdjZwMzFZU1NDdnJhclBUbkFuNURoKzZ5Y2FOM29tTGo3cUFIcXZBdjJN?=
+ =?utf-8?B?Z2FtT2J4YVZMQU50Y2hHUFFETk44WGUwMEIxQU8wbmtLMmt6MkNza095V01s?=
+ =?utf-8?B?UUZ3MnZRSzUvSjE5TU5rS0dDQXY1MkF3ZEluOEpRNnN3cjF0YU5xZjZ5NUFO?=
+ =?utf-8?B?VnFzeHdHRzg3M1pRZjZ1ak9waUFMSTJXRVpNMkZ4cEVVeDV1cTNuaC9ySmo4?=
+ =?utf-8?B?bVMwYlU0U2NjMTBpYWU3bFlpaEUyWHJyam9yclp1cmFoOGVjb25GWGh5b0kz?=
+ =?utf-8?B?dUZsRnhVbEpSSEdHNGlVM09mY3VXaXltVkhvaW5HYW9ZSVdPaTRhYzF4OGF4?=
+ =?utf-8?B?QzZBdDJ2RnJvWkVFaERVaHhHd1FuMFRoc0VJYnQzNGljTWhXVnNoeE85SkNp?=
+ =?utf-8?B?dkRnYVh3KzA0NVRpS01ERWN4WXhGZE5ibVFpRHozWE5yMVV5V2JlaC9DNThu?=
+ =?utf-8?B?cm5mWHBlbVc5MDE2Y01ybTcySFBubU5wUU42OE9nVDZ4Rml4Y1RsbXFYN2NN?=
+ =?utf-8?B?QjRTUE9NWitudzV6L3ZJOHp2NEJNMVhzSEpIbzNFV0F3Uy9RZG1WdXJYVlAy?=
+ =?utf-8?B?ajZyNTR6Y21MTGc3T3ZiREVtb0NKd0MrajEyeWw0MmVkeTlnczBOZGpScHNh?=
+ =?utf-8?B?ZVAyK2VSOHdTOTBxeG1ROFBpY2J1dVNGZDkwTFRnSUg0Y0k4NjJCYllXc3Fr?=
+ =?utf-8?B?Qzh1VVJVd2R2b0d0UnV2YWNDc1ppbFVIOWpPbk54ZnhjczdwYUEvM3hKa3dH?=
+ =?utf-8?B?cUlPY0F4NFI0elZGbVc2bTF6ektyOHQxQmt6ZlZESlE2aDNGb1RnbHArM3ZZ?=
+ =?utf-8?B?L3BuQ3dEbWczdS9PR2V6Ny9HOTdPRnRHYzlQbXJXYlVXTWZRWkpjaGVkeGZ4?=
+ =?utf-8?B?QWlncnU3US9IZ09iWE92TmFrQXlndUtrMlpSTmgzcjg1OU1aenVObm4wK3Vj?=
+ =?utf-8?B?UFd2SHRSK1VaYi9lNXVCT2JUa0dCdHBvcFZHc0EvblZjc3doVm9Ha3NlcTJm?=
+ =?utf-8?B?ZFF3aEt2aW5oaSs2QUdmdVpCSVBxNHBqWEhNbUJ4dnV6T1IvRkprQTBjaHk2?=
+ =?utf-8?B?eWVMb0h5NWM4NkZEQWdBUDVKbG5NR0JvNVBLaDJveWRYd2Z6amRjYzV3aDA2?=
+ =?utf-8?B?RE8zV1JIMSt5VlVoY2o2VnpGQVJMdXZ5NXZIeitzNll6ZjJ6RFRFS1UrSHpa?=
+ =?utf-8?B?TWQ5V1JtRlBkS29sUGxlVVk2b09ZNHdseFJ2SXRUZjIvM0JRL2FUdisrS2Y1?=
+ =?utf-8?B?aXhEeEJaZnR4Y29jQ0JZUU0yZ3phc1VDT0pEelc4WGY2ZWI3R2dnZXpDSnJj?=
+ =?utf-8?B?bE5YMzl0bEl4cTV6ZVNBV2I1ckJzdE1Yb3hOaExSY3llbExkcVNseElEU2JT?=
+ =?utf-8?B?bk5vU3RnTENGLzM4eVRBenZ1S3NCOU92UEs3dDhuRk5vUldueTIvNjc4SjNt?=
+ =?utf-8?B?aTlPZndDL0RwWFpzTzlDajk5dXU4amJPbURUempVMktxL2ZwZVNnZW5Fc2o1?=
+ =?utf-8?B?MzBXQmlEeElDZDIzS1hFNWtqSCtWdFZ6R3lQSDVCZENWVXhJT2pIZzh0d3Zs?=
+ =?utf-8?B?RmZZRWVnb2hzUUpjUzNFZjdkK2NXRHpCcTBQQk5QZmdMbGNQTU1zU1krQ3ZC?=
+ =?utf-8?B?TWNXQVd0TEIrRDNzMG1ZTUhBd2ZzWEQzR2dQWkIzN05MRzZQQ0J0bWZPQ3g1?=
+ =?utf-8?B?cEpOV283a0pSTTI3V1pkN1RUa2QzNFlJUzJ0WjJvdDkzYllzMWpYajFPOU5r?=
+ =?utf-8?Q?nKoI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 07:53:57.3380
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1a1ee43f-e0df-4974-3dea-08de1aae249e
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS1PEPF0001708E.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6542
 
-On Fri, Oct 31, 2025 at 04:06:59PM +0100, Markus Elfring wrote:
-> >> Fixes: 3c13933c60338ce6fb2369bd0e93f91e52ddc17d ("clk: keystone: sci-clk: add support for dynamically probing clocks")
-> > 
-> > Wrong format of Fixes tag, please keep the SHA at bare minumum.
-> 
-> I got an other impression.
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.18-rc3#n145
-> 
-> Would you find information from the commit 6356f18f09dc0781650c4f128ea48745fa48c415
-> ("Align git commit ID abbreviation guidelines and checks") interesting also
-> for this technical detail?
+The integrated info v2.3 table in the Atom ROM exposes available
+options for the VRAM carveout sizes. The carveout size can be changed
+using the ATCS function code 0xA for BIOS that supports this.
 
-Even the above mentioned commit doesn't do like you have done. 12+ doesn't mean
-the full length. The rule of thumb is to use the minimum that doesn't give a
-clash. And you may read the Linus' thoughts on the Geert's work. I.o.w. don't solve
-the issue that doesn't exist.
+Make these features available as sysfs files, so that users can set
+the carveout size in a way similar to what a Windows user can do in
+the "Tuning" tab in the AMD Adrenalin. The newly added sysfs files
+are:
 
+- uma_carveout_options: this a read-only file listing all available
+  carveout options. They are fetched from the Atom ROM on driver
+  initialization.
+
+- uma_carveout: this shows the index of the currently selected option,
+  as shown in the uma_carveout_options. Writing a valid option index
+  to this file will change the carveout option on next boot.
+
+Note that above files are created only if BIOS indicates support for
+it, i.e. where the table shows non-zero UMACarveoutIndexMax.
+
+Signed-off-by: Yo-Jung Leo Lin (AMD) <Leo.Lin@amd.com>
+---
+Yo-Jung Leo Lin (AMD) (5):
+      drm/amdgpu: parse UMA size-getting/setting bits in ATCS mask
+      drm/amdgpu: add helper to read UMA carveout info
+      drm/amdgpu: add UMA allocation setting helpers
+      drm/amdgpu: add UMA allocation interfaces to sysfs
+      Documentation/amdgpu: Add UMA carveout details
+
+ Documentation/gpu/amdgpu/driver-misc.rst         |  26 ++++
+ drivers/gpu/drm/amd/amdgpu/amdgpu.h              |   7 ++
+ drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c         |  47 ++++++++
+ drivers/gpu/drm/amd/amdgpu/amdgpu_atombios.c     | 144 +++++++++++++++++++++--
+ drivers/gpu/drm/amd/amdgpu/amdgpu_atomfirmware.c |  75 ++++++++++++
+ drivers/gpu/drm/amd/amdgpu/amdgpu_atomfirmware.h |   1 +
+ drivers/gpu/drm/amd/amdgpu/atom.h                |   4 +
+ drivers/gpu/drm/amd/include/amd_acpi.h           |  34 +++++-
+ 8 files changed, 330 insertions(+), 8 deletions(-)
+---
+base-commit: ac9914fa72a5a917bb61c5e87bee6b8f9b751f33
+change-id: 20251103-vram-carveout-tuning-for-upstream-1d5189688d73
+
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Yo-Jung Leo Lin (AMD) <Leo.Lin@amd.com>
 
 
