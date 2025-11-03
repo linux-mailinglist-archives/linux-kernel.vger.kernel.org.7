@@ -1,121 +1,107 @@
-Return-Path: <linux-kernel+bounces-882705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07D3DC2B2E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:57:27 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42C19C2B290
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:53:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B20CC3B3D8C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:53:34 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E2BE03440B6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D68C2301004;
-	Mon,  3 Nov 2025 10:53:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 212243002CA;
+	Mon,  3 Nov 2025 10:53:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="UCIvXGY4"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g4qRr20L"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA25A2FFFB5
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 10:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACED42FD1DD;
+	Mon,  3 Nov 2025 10:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762167204; cv=none; b=ZkI0l+iinzr9pEhwyaf9N+8UGD4dug81iRLTG/wlKqBQe6cZhK+bwReVCWr0MZdfYnF4cXyLQHAP7WDIS7KY4gB5Eu7/KuMom3Rv9V7Snknttg2POGFIhpbgzyGrWwZYQ1YriNIKSQEtDBCUnKtmAtAatMlkDH5073cgm6SsaSo=
+	t=1762167202; cv=none; b=Bvdmr/hKBEtsjapecNEprzG8F+032JxyhT+aa3FXKd2/3P0oTgjegB/ACbEqG+Pw34E4A7A/hIWu3Flj1BpcNyJJhSHo1q3kiNyx4Kx8xchA3T7sytPWF9zkgTKSaHk3SIh2AEN79V5NIdW3FwSsEqwyQ5whx/B/jXs1C10adSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762167204; c=relaxed/simple;
-	bh=EY4jDPbNPmr5PzA9GSYwh54Yw35fl5rlzQYnUs6Iusk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hBk3pEGylfouIeUIcdPdL6fPaJCWI9D8BQx2L+3/v71jvMlKjWYSHzY7YtUItQ44pJb+LknpqdHOHY92AgE4S2Tqms1bBRYOyWkEGnMu8WROOZoF1tAi+LyFXbqrnwiLVEGaMWWlJAvdwyHuqc8RaHiUVlkXaPQ5lfrwFsonum4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=UCIvXGY4; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-36d77de259bso28867771fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 02:53:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1762167200; x=1762772000; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EY4jDPbNPmr5PzA9GSYwh54Yw35fl5rlzQYnUs6Iusk=;
-        b=UCIvXGY42sups7C267nt135b6IGwZCedTHICPhayhHMPbplbJQj+iOC6BAtOb9Lj8E
-         fhyks2qEOtJoDm+KKTNHfuL4jPTr6I5WF1m6tIkzroGPEVlg4JJSNfFGe1iMdFfLEuKo
-         MybiOA76NyK7Y+ynd0E+ZbZJqO03HqinL/RyIhCzNYUd0CCL48SaVATHZDRPRfnWkBar
-         0oCOvGC28fCNYArTetHEUb6A61qG0ym2cKVcMvlIn9ouVfqBOhnv6E4wVE1zef0IqAJW
-         UERR+FbO8XOafCTeIRIQ906SuvwNCwL45ZBDbi14zEQyGp0MLFPjUcNqMUQLIEyUtlg+
-         kCzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762167200; x=1762772000;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EY4jDPbNPmr5PzA9GSYwh54Yw35fl5rlzQYnUs6Iusk=;
-        b=CYaff24c7l7OuBU9bwS6EoKTbFhs4weMdgoCN6zeqKpsm8VT/CIxvKX+g3kPTAHVEF
-         VxVhH4a9nCQHUXN4+2cGeMEIIpG7aLuAvm00QSp08hLB4PP+EHRuDR884ARbHblc3qdi
-         5QIPr7bpqt5QIz88Rh9By5iLs8pLjU1PxpurVokPIKvgF9v9DPRjojpLjnSmtgTvmIlB
-         0eYVUrZ97pN8o3YW8ICNRQ6tmDWHtoMpmQHBlSyfM+/HRmxmhCe+1aKhR3hfp8weyRsH
-         2G5+1ZWxXIoFnYdbVhApIrY5NzEaqMJX8QLGbSawYVcfGuSKX3WbqbyYXIZ62rHSxl8b
-         yf7w==
-X-Forwarded-Encrypted: i=1; AJvYcCVunZflw2K8NoA5KlK13so3b29r4H7pidAgTGp3IC2rQ9ewKk1oAfwqTSuSq4TEfCqvbE8V2EcWMYFNNRk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+dH3J7xdmuU0TXH2GruimMOLY3sNKBUqlhdml+yVPEdviCSDp
-	RBszZQ8F14/CFU5Pu/JAfeo/wcrtwiX/zCDt5UHUNZFVFV0PPFoUDse4jfogo0rTH3IIWk5QGOj
-	cfQpVbnQl8GM2+6CdEZmcVgH3vMrNpoczt8lYSpmaYg==
-X-Gm-Gg: ASbGncvV+j7cBKTieVQpMWD210wmFA93VC3wHpGXqq3l252P5i0iC8ssuVcUJ7YfbG8
-	Mz5lrhoyZE3PX6ytnTKmmw7yczW4hXU/HHmAFaznfEyI6IgvCLRMrvXmwFX+mPshCnt1K0auiHZ
-	QnEeMktvAd/UP25eR0/uqI+77eOTDDmou26uH2zA+Br4u4arMHyWniO8IaSFnd5jNnZxMtgkExu
-	+GG+dnxxCjumHzOEhos7co8gsB5aAOACx298Nwn2jAikbrU2sxtvTf0WztAyH5h8wkIs5p1C3jy
-	6TnBAdQS+v0jK1r2
-X-Google-Smtp-Source: AGHT+IEShcGLq+8nFRRZ1S7fCAIIXDtScTJ8z36zHz5pLUhN35vmGlC0mMXVLA08DstbNEHUwTHKGlgAvk7gFq8+FWI=
-X-Received: by 2002:a2e:9103:0:b0:36d:114b:52e2 with SMTP id
- 38308e7fff4ca-37a18dd5390mr27978041fa.34.1762167199608; Mon, 03 Nov 2025
- 02:53:19 -0800 (PST)
+	s=arc-20240116; t=1762167202; c=relaxed/simple;
+	bh=LvrLeebeThEjajSskzduJGv2IgAdw0JjxMI1Op5x2ZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AyAk7anDzbHwITu+blk3nCrl4ypOr4rocjkxxA/1c9rL/9lSViDgX8C0WqTjVIZUofaQUKMEhLnW+qIUgVhrbpB7KPP3IMgJERtsXIVcLNRJcSzEoZfO6fPH5JbFlDYUgb1tZzOFNmwkwhqUerKftmI33Q1mrnYdXQqlJWIjz5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g4qRr20L; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762167201; x=1793703201;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LvrLeebeThEjajSskzduJGv2IgAdw0JjxMI1Op5x2ZI=;
+  b=g4qRr20LQpBZCKeKEhLfF1xjTpDd7EsaWVoHu6e04o6Rx0r5VE5PGUla
+   7WesFoTLEs9vmuH9yQn0uSlnKGQaa12gYlmHsvplZsyNEATbi6behYqXI
+   ywHBVNK7liubl2AOvjQB/7tbE5BdzuBa7rtaBoOkW1zMKK4txnbY1tB4R
+   Pm9nnbry0txUKZlputHFACgXxSEu49cDEXfFPVqfO726avEHFJObXBdnc
+   QMrSsoFGYzg8cDoEb2+XJjIEhb1NrXiVY0EkT64TuCoeptt9GPbtErJh9
+   k9+eOCAw9ePZ20qduUNuVR5Ueki3UgmqFA7BZJ9jnaZpe+lze0cJcAoX7
+   g==;
+X-CSE-ConnectionGUID: R61n3f2EQEa3qgcyi8DxWQ==
+X-CSE-MsgGUID: Elwv9j0MT/O3bjapRnUnZQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="75686467"
+X-IronPort-AV: E=Sophos;i="6.19,276,1754982000"; 
+   d="scan'208";a="75686467"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 02:53:20 -0800
+X-CSE-ConnectionGUID: rb9znT5MSW6AOiYIfzKztA==
+X-CSE-MsgGUID: 16llHiBuT7mjYw13Ga3lsg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,276,1754982000"; 
+   d="scan'208";a="186710372"
+Received: from vpanait-mobl.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.27])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 02:53:17 -0800
+Received: from kekkonen.localdomain (localhost [IPv6:::1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 9E713120D07;
+	Mon, 03 Nov 2025 12:53:18 +0200 (EET)
+Date: Mon, 3 Nov 2025 12:53:18 +0200
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH v4 01/10] software node: read the reference args via the
+ fwnode API
+Message-ID: <aQiJnnVYYD8kvsdI@kekkonen.localdomain>
+References: <20251103-reset-gpios-swnodes-v4-0-6461800b6775@linaro.org>
+ <20251103-reset-gpios-swnodes-v4-1-6461800b6775@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251103-reset-gpios-swnodes-v4-0-6461800b6775@linaro.org>
- <20251103-reset-gpios-swnodes-v4-4-6461800b6775@linaro.org> <aQh7JUeQ84WwUzW9@smile.fi.intel.com>
-In-Reply-To: <aQh7JUeQ84WwUzW9@smile.fi.intel.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 3 Nov 2025 11:53:08 +0100
-X-Gm-Features: AWmQ_bkPWbySIvFJ536kZ_G3NlC3s3A6TPy9KXNNHgvuSGjsmX4rbxmg-1iSaYU
-Message-ID: <CAMRc=MdpX+jHQWqFAgOuHB0E3Sdge92=vcjm=xcS4Asqm8_3Xg@mail.gmail.com>
-Subject: Re: [PATCH v4 04/10] gpio: swnode: don't use the swnode's name as the
- key for GPIO lookup
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Daniel Scally <djrscally@gmail.com>, 
-	Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251103-reset-gpios-swnodes-v4-1-6461800b6775@linaro.org>
 
-On Mon, Nov 3, 2025 at 10:51=E2=80=AFAM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Mon, Nov 03, 2025 at 10:35:24AM +0100, Bartosz Golaszewski wrote:
-> >
-> > Looking up a GPIO controller by label that is the name of the software
-> > node is wonky at best - the GPIO controller driver is free to set
-> > a different label than the name of its firmware node. We're already bei=
-ng
-> > passed a firmware node handle attached to the GPIO device to
-> > swnode_get_gpio_device() so use it instead for a more precise lookup.
->
-> Sounds to me like a ready-to-go patch and even maybe with a Fixes tags, b=
-ut
-> it's up to you. So, why not apply it so we have less churn in the next ve=
-rsion
-> of the series?
->
+On Mon, Nov 03, 2025 at 10:35:21AM +0100, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> Once we allow software nodes to reference all kinds of firmware nodes,
+> the refnode here will no longer necessarily be a software node so read
+> its proprties going through its fwnode implementation.
+> 
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Yeah, makes sense.
+Reviewed-by: Sakari Ailus <sakari.ailus@linux.intel.com>
 
-Fixes: e7f9ff5dc90c ("gpiolib: add support for software nodes")
+-- 
+Sakari Ailus
 
