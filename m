@@ -1,72 +1,63 @@
-Return-Path: <linux-kernel+bounces-883003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5201DC2C40B
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 14:52:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0347EC2C369
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 14:45:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EEC13AE9CC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 13:44:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DC3F18892CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 13:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9B1307499;
-	Mon,  3 Nov 2025 13:44:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7473F30EF6B;
+	Mon,  3 Nov 2025 13:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QCOL73+8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KQw4MTmk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2831C2DA77E
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 13:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4A730DEA9;
+	Mon,  3 Nov 2025 13:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762177462; cv=none; b=TUH+Nyc06Z+17X1KRvaUtAOv7CSnpIOIadKcFjTiBHvIPjmwn7vGLCp+O/G7UM0ozf4+C3BqPBVEnlHBHscFuwn+/CPYpcFg0Km14MT2CbYtGd/W2JCyLs0UziYbwg31gjo/c6/4SdqmokORKdcb/byehPfk/WhbdBzDTWwsX6U=
+	t=1762177464; cv=none; b=ohJe2/1k00evan20xxwBO5yjM18NeTWIwAboXXD3dX4cNwXT9V8oI756nd6KKwTWUKVEc2MMTvnPrfyMiSTHGao5thsOmPwE5ge5ffw9qNxK0oXif3BgRR7diFYcV3p/dSTrjrGuwHy689gvP/IZz/MqvTPloseFRPcLv8Kd3ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762177462; c=relaxed/simple;
-	bh=Ho8xnwtVhCs170rsEmDxmxB/LnNMrvqKQDg/io/46bI=;
+	s=arc-20240116; t=1762177464; c=relaxed/simple;
+	bh=0MbAV9bNWbSdrKxjEc6SEhW2otB9NDHuKXLNye47LYo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LLgoNE7UsIqbAPM6KiLOiZJq49/llPXHsDxi4aJskqAo23+oQnL1ujX/eXREGBjGxdEwjoo1tg8rgj3dQZytWT+EjZvLP5WPBTyUjYX9ryr+qtIJse0hOjMyWD8ZJOtYSx37Y6QnzXtUf7z0aoY8Vcc+cFmn+640WhQrDZoGDQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QCOL73+8; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762177460;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7y5731YSFQoOJji3TgqoZH7giSydAFFycah6fSB5+eA=;
-	b=QCOL73+8FnWeiVgoGhvnRZpKcEVJiKoKRrlgNdJbzDWBAohxI0KMGzd1U6K1kUyRRsXZli
-	ev0SiXZmVD8wD+sBcIrLSTA5lmsTKu4IzXFQYw6WHClgZIS4JLa0FhFYIUvkQCRyV95rB1
-	yMmZWZL1M0MlKdrfB4mcvBYAMzDDaPo=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-516-sDtFBhtTPFKucNiVrIZhJg-1; Mon,
- 03 Nov 2025 08:44:15 -0500
-X-MC-Unique: sDtFBhtTPFKucNiVrIZhJg-1
-X-Mimecast-MFC-AGG-ID: sDtFBhtTPFKucNiVrIZhJg_1762177454
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 18941195609F;
-	Mon,  3 Nov 2025 13:44:14 +0000 (UTC)
-Received: from wcosta-thinkpadt14gen4.rmtbr.csb (unknown [10.22.88.143])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id D66BE1800451;
-	Mon,  3 Nov 2025 13:44:09 +0000 (UTC)
-Date: Mon, 3 Nov 2025 10:44:08 -0300
-From: Wander Lairson Costa <wander@redhat.com>
-To: Tomas Glozar <tglozar@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, 
-	John Kacur <jkacur@redhat.com>, Luis Goncalves <lgoncalv@redhat.com>, 
-	Costa Shulyupin <costa.shul@redhat.com>, Crystal Wood <crwood@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>
-Subject: Re: [PATCH v3 7/7] Documentation/rtla: Document --bpf-action option
-Message-ID: <67caphyfdl7bivf2kqkp72eqd7bi4pjpbmsbu5loco7j46fmqw@enanot5eztwc>
-References: <20251027153401.1039217-1-tglozar@redhat.com>
- <20251027153401.1039217-8-tglozar@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=t7FVmPeTr36YNs8/qkUMDkbCRWIj1jzeqLUpaEJzUBySZIvA5X3Mk23kKmwoGHr2JSPF3AARhisLH12hl/jqcaaRNXA7Wt/dn4LJ9KJ1bGlVEQj93RLumPHX7Ap8AV/3Nd38ND2SVI1e2m7UKU1hOoilQIBtxNQDZBjKkhskrkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KQw4MTmk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B8F1C4CEE7;
+	Mon,  3 Nov 2025 13:44:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762177464;
+	bh=0MbAV9bNWbSdrKxjEc6SEhW2otB9NDHuKXLNye47LYo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KQw4MTmkeuu7tJsm35ZTr+SPFj62DZG75dkVxgZ7qMlIoDYfG55sxMZzcOuBLZAqE
+	 WCbtKleagoN5AxpZWR519RitBnVTxNUjYMRkoo7H9n0l7SVHDaZlGeK+h/FaHVlF0O
+	 iUWl6eqUOPjvfw9MxqAi0KmTktxc7kKUlmOl+WtMQkejRumLVNkKAdyMlPk2XaWKvg
+	 WAt5CLxLnj7vwOA0XVyipOQiaarEpW2K3BfkXiUvZms3LuR5XyC3qk+a2qyPBiGPf/
+	 /9AnaWLcOX3bjlxjrwvY1unWAAcNTjLqaOtDbSGOMM17hsBgv+uiScOcEYnZ33uKIE
+	 HfHs2TLsiepGw==
+Date: Mon, 3 Nov 2025 13:44:16 +0000
+From: Will Deacon <will@kernel.org>
+To: Yunhui Cui <cuiyunhui@bytedance.com>
+Cc: akpm@linux-foundation.org, alex@ghiti.fr, anup@brainfault.org,
+	aou@eecs.berkeley.edu, atish.patra@linux.dev,
+	catalin.marinas@arm.com, dianders@chromium.org,
+	johannes@sipsolutions.net, lihuafei1@huawei.com,
+	mark.rutland@arm.com, masahiroy@kernel.org, maz@kernel.org,
+	mingo@kernel.org, nicolas.schier@linux.dev, palmer@dabbelt.com,
+	paul.walmsley@sifive.com, suzuki.poulose@arm.com,
+	thorsten.blum@linux.dev, wangjinchao600@gmail.com,
+	yangyicong@hisilicon.com, zhanjie9@hisilicon.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v4 1/2] watchdog: move arm64 watchdog_hld into common code
+Message-ID: <aQixsIQXTjYyhRVj@willie-the-truck>
+References: <20251014031425.93284-1-cuiyunhui@bytedance.com>
+ <20251014031425.93284-2-cuiyunhui@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,53 +66,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251027153401.1039217-8-tglozar@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+In-Reply-To: <20251014031425.93284-2-cuiyunhui@bytedance.com>
 
-On Mon, Oct 27, 2025 at 04:34:01PM +0100, Tomas Glozar wrote:
-> Add new option --bpf-action into common_timerlat_options.txt, including
-> the format in which it takes the BPF program, and a reference to an
-> example.
-> 
-> Signed-off-by: Tomas Glozar <tglozar@redhat.com>
-> ---
->  .../tools/rtla/common_timerlat_options.rst    | 20 +++++++++++++++++++
->  1 file changed, 20 insertions(+)
-> 
-> diff --git a/Documentation/tools/rtla/common_timerlat_options.rst b/Documentation/tools/rtla/common_timerlat_options.rst
-> index c6046fcf52dc..7e08a27e87fe 100644
-> --- a/Documentation/tools/rtla/common_timerlat_options.rst
-> +++ b/Documentation/tools/rtla/common_timerlat_options.rst
-> @@ -65,3 +65,23 @@
->          Set timerlat to run without workload, waiting for the user to dispatch a per-cpu
->          task that waits for a new period on the tracing/osnoise/per_cpu/cpu$ID/timerlat_fd.
->          See linux/tools/rtla/example/timerlat_load.py for an example of user-load code.
+On Tue, Oct 14, 2025 at 11:14:24AM +0800, Yunhui Cui wrote:
+> @@ -306,3 +307,85 @@ void __init hardlockup_config_perf_event(const char *str)
+>  	wd_hw_attr.type = PERF_TYPE_RAW;
+>  	wd_hw_attr.config = config;
+>  }
 > +
-> +**--bpf-action** *bpf-program*
+> +#ifdef CONFIG_WATCHDOG_PERF_ADJUST_PERIOD
+> +/*
+> + * Safe maximum CPU frequency in case a particular platform doesn't implement
+> + * cpufreq driver. Although, architecture doesn't put any restrictions on
+> + * maximum frequency but 5 GHz seems to be safe maximum given the available
+> + * CPUs in the market which are clocked much less than 5 GHz. On the other
+> + * hand, we can't make it much higher as it would lead to a large hard-lockup
+> + * detection timeout on parts which are running slower (eg. 1GHz on
+> + * Developerbox) and doesn't possess a cpufreq driver.
+> + */
+> +#define SAFE_MAX_CPU_FREQ	5000000000UL // 5 GHz
+> +__weak u64 hw_nmi_get_sample_period(int watchdog_thresh)
+> +{
+> +	unsigned int cpu = smp_processor_id();
+> +	unsigned long max_cpu_freq;
 > +
-> +        Loads a BPF program from an ELF file and executes it when a latency threshold is exceeded.
+> +	max_cpu_freq = cpufreq_get_hw_max_freq(cpu) * 1000UL;
+> +	if (!max_cpu_freq)
+> +		max_cpu_freq = SAFE_MAX_CPU_FREQ;
 > +
-> +        The BPF program must be a valid ELF file loadable with libbpf. The program must contain
-> +        a function named ``action_handler``, declared with ``SEC("tp/timerlat_action")`` or
-> +        a different section name beginning with "tp/". This tells libbpf that the program type is
+> +	return (u64)max_cpu_freq * watchdog_thresh;
+> +}
 
-nit: simply document that the section name must start with "tp/", the
-part saying about "tp/timerlat_action" seems redudant, IIUC.
+Why does this function become __weak? Neither arm64 nor riscv override
+it afaict.
 
-> +        BPF_PROG_TYPE_TRACEPOINT, without it, the program will not be loaded properly.
-> +
-> +        The program receives a ``struct trace_event_raw_timerlat_sample`` parameter
-> +        containing timerlat sample data.
-> +
-> +        An example is provided in ``tools/tracing/rtla/example/timerlat_bpf_action.c``.
-> +        This example demonstrates how to create a BPF program that prints latency information using
-> +        bpf_trace_printk() when a threshold is exceeded.
-> +
-> +        **Note**: BPF actions require BPF support to be available. If BPF is not available
-> +        or disabled, the tool will fall back to tracefs mode and BPF actions will not be
-> +        supported.
-> -- 
-> 2.51.0
-> 
-
+Will
 
