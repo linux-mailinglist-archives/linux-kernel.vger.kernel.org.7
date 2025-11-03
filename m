@@ -1,95 +1,109 @@
-Return-Path: <linux-kernel+bounces-882954-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CBAEC2C016
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 14:13:23 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id D52BEC2C074
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 14:17:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F6951884223
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 13:11:58 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0AC2F4F8254
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 13:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 361D030E0D0;
-	Mon,  3 Nov 2025 13:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B00C30E0CD;
+	Mon,  3 Nov 2025 13:11:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f+eUb7u6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="osnc5Bnf"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mmrfrpGk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27E8E30CDBA
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 13:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83CA730C62C
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 13:11:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762175456; cv=none; b=U7IoNzXJpGU+9GXNotX0I/yfVwWIItKm2fJjMf0mu9LJAG+6zNJMZKp9GCnkfE/Bhtrxaa9R2zCFI5RNHOWY/zQUDczxnm1qgGKlYqy1NOi0hN0Vx7Gh1qnrNxdyVrMNBH80wlU69FZ20aLXc/1kZ4n4KE9N2Ks6eaGfHO552Gk=
+	t=1762175504; cv=none; b=o77d9O8LOYFaXKb3xPJ19Sa/kmPzAsOuAZhlamSs7kkeRM8pNZr6osvMRyN8AR6GqtTzGQXYhiAguN77AZ44ybJ/Zd2mL0aYMzA4cUU/pPeBa34j4LE440jYG65zZ2A9rk+zkphXC9mw5dn3Tj2ZKdhbKSfvd4WFUGZ8rHzbsRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762175456; c=relaxed/simple;
-	bh=bv4gAPr0TXjwGKaPIWzMrPjwB2rvz2sYPRKE56eH6gw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cVlQOnFUgXucqZ2a3ZUzRSYzuGvh8DUbC1wkvAwsdc4DUi+2GSmB7+BvIIPjrOjpDDUs5+ZJPv2IOSTlEaXjw38JtxlslfncqCvIc+pLh+Jt24zRZFtxnwEelqPW8r+riL6ST9Tc5CRkhnsQt0cSIOtbkhOTa+esxnKwlgxAxHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f+eUb7u6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=osnc5Bnf; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 3 Nov 2025 14:10:51 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762175453;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=keJYij85FmpHS+dRr9WXgII7FSzLb0l6XUmYsofOW24=;
-	b=f+eUb7u6xCAbPncm6jAx5i5Ffdju84oPHLYk3f9T5yOWEev6XiNCBPAtoPxGcOsYiwep+u
-	v64W9dV1Nu+JKWFmKQltaJxz+W1oGhz9BArY+qcdf0Snk/mlk2iFz/X6L4Pa3YKPgKFM+H
-	nPgEPC+SDcOewqPwnbe5kI/S8qmo0s/HZm37lRc3BBdd8o4KnJZ4p7NV3YVdMglX2oGawj
-	hG1OZBn+C1vt++U9wUIzuzDU/rfp/LTF3TsG5gGla5J26449hUq8/kS1CxHacM00XWvi0s
-	GBiEWzwQxFZeDB1vZZcur7AkxglNXcwSo2RJU656So8tRAQhZxZC9AyIkvh/MA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762175453;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=keJYij85FmpHS+dRr9WXgII7FSzLb0l6XUmYsofOW24=;
-	b=osnc5BnfoxAA++sjI+RLLKtbK1z2eBhU7Ta4Ee83h2CV+JNU7tLyUeSrJmAVDL/FUurZ2t
-	RoI2zCpIIuC4nxAw==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH] cpu: Make atomic callbacks run on UP with disabled
- interrupts
-Message-ID: <20251103131051._qx__Noh@linutronix.de>
-References: <20251103120354.HU-oB1_z@linutronix.de>
- <20251103124254.GA3245006@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1762175504; c=relaxed/simple;
+	bh=hkcGjhSNuBJqCDYhFpR4HKv0LE//ewMc0aXjMlRYi98=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RXukrsZgDfEFlu4JOhNTbljhjkexyZ42QGWmKLLTlGAguvK15eyzHAvtsczEWrHyWy/y4C0MGcvXgt//v6LQUzqMAZ9N3YAA7okMc+wm4N0SG2MS9NbzpTxoot0XZkpDpHtd/TkhmdCDrZ/0SFMCJ0brg6eiXkoggiurwhXy1TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mmrfrpGk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E922C4CEFD
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 13:11:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762175504;
+	bh=hkcGjhSNuBJqCDYhFpR4HKv0LE//ewMc0aXjMlRYi98=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=mmrfrpGkhMITojffvKGNDcddl0UEu7QMnAG2g04RUytAzLUnHaaphT873ni6FLbCw
+	 zHc2lft27/r/sZgzZM2eTBZXy8wUGTz/rpfagFr167S8aq6j3fX9ExLHVLA5YA+NgG
+	 m76B6Ds3f0iBVd82Z8d5yJe7NApk443iPKsBIorKs8N6I+WEuBEmvFf3AzUHpEwMXm
+	 aGv/4d3RoEL6yZyQw5nvfjmCYNlxa2p0SB79T73DuxO36pmPgaUb+3DhFr4UUexMe+
+	 aODqmDS6xc82zzqlzfrGhW0wdbO0dKI4kWeJEVvqX//SlpNsCv04lBfkKrMzcbw5M1
+	 tyxxIy89nV1oA==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-591c9934e0cso7191915e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 05:11:44 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV17hFMzDnkr/Pn5NYoRG2/o2vn7bvvCtjib9w2p/c7nYeJzVow3AWdlmcdqwcHUDoDvYOX2P833bk6GeE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyJwjPhuldcnNmYjvbfmOGKcq0Lvsfut7/n2Thddw/nuT+zgWd
+	52F0Sk7qJxu0qc9RxSQLhhX2FjPQPn9KI+4/nF45j3tZTcW1W7axCX4J4Y61rTje4Lz3kIIiIQb
+	+lr0i7y1onftXdDD0s4uoaKF/CdRJ874=
+X-Google-Smtp-Source: AGHT+IE0jF9ZZS4oGUlH8lSkm+TnmRLYAlDNV0H1c5FaAI7HL/ZiatfAAVaCzegcKT5f+lxtSTUGbWeL+sfp356f2Hs=
+X-Received: by 2002:a05:6512:1191:b0:592:f2ac:779f with SMTP id
+ 2adb3069b0e04-5941d500f9cmr4188118e87.18.1762175502721; Mon, 03 Nov 2025
+ 05:11:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251103124254.GA3245006@noisy.programming.kicks-ass.net>
+References: <20251102001411.108385-1-francescopompo2@gmail.com>
+ <CAMj1kXEUL-Uv4tCx5NLVHDRo-BdEK1xJdee-UYs-ymE-mLxv0Q@mail.gmail.com> <CADr=TJdTcss14P43_jAj4tsEYukt=Z18SnjUNqMD95O_5KkNVA@mail.gmail.com>
+In-Reply-To: <CADr=TJdTcss14P43_jAj4tsEYukt=Z18SnjUNqMD95O_5KkNVA@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 3 Nov 2025 14:11:31 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXEP=nByL5+R2Ch-PLSKnziEyyK_rLZL=wcvKRNcBPTJbg@mail.gmail.com>
+X-Gm-Features: AWmQ_bkpgqE5vV6wNEMZwdayegSnXFcHcSy_rz1vjnzV6CjuL5B4TuzcLRvW758
+Message-ID: <CAMj1kXEP=nByL5+R2Ch-PLSKnziEyyK_rLZL=wcvKRNcBPTJbg@mail.gmail.com>
+Subject: Re: [PATCH] efistub/smbios: Add fallback for SMBIOS record lookup
+To: =?UTF-8?Q?Francesco_Pomp=C3=B2?= <francescopompo2@gmail.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2025-11-03 13:42:54 [+0100], Peter Zijlstra wrote:
-> How about:
-> 
-> 	if (cpuhp_is_atomic_state(state)) {
-> 		guard(irqsave)();
-> 		ret = cpuhp_invoke_callback(cpu, state, bringup, node, NULL);
-> 		/*
-> 		 * STARTING/DYING must not fail!
-> 		 */
-> 		WARN_ON_ONCE(ret);
-> 	} else {
-> 		ret = cpuhp_invoke_callback(cpu, state, bringup, node, NULL);
-> 	}
-> 
-> which is a little more like cpuhp_thread_fun()
+On Mon, 3 Nov 2025 at 11:15, Francesco Pomp=C3=B2 <francescopompo2@gmail.co=
+m> wrote:
+>
+> Il giorno lun 3 nov 2025 alle ore 09:19 Ard Biesheuvel
+> <ardb@kernel.org> ha scritto:
+> >
+> > Hello Francesco,
+> >
+> > On Sun, 2 Nov 2025 at 01:14, Francesco Pompo <francescopompo2@gmail.com=
+> wrote:
+> > >
+> > > Some UEFI firmware implementations do not provide the SMBIOS Protocol=
+,
+> > > causing efi_get_smbios_record() to fail. This prevents retrieval of
+> > > system information such as product name, which is needed by
+> > > apple_set_os() to enable the integrated GPU on dual-graphics Intel
+> > > MacBooks.
+> > >
+> > > Add a fallback that directly parses the SMBIOS entry point table when
+> > > the protocol is unavailable. Log when the fallback is used.
+> > >
+> > > Signed-off-by: Francesco Pompo <francescopompo2@gmail.com>
+> > > ---
+> > >  drivers/firmware/efi/libstub/efistub.h | 17 +++++
+> > >  drivers/firmware/efi/libstub/smbios.c  | 99 ++++++++++++++++++++++++=
++-
+> > >  2 files changed, 113 insertions(+), 3 deletions(-)
+> > >
+> >
+> > On which platform does this fix an actual existing issue?
+>
+> Hello Ard,
+>
+> My Macbook Pro Late 2013, product name Macbook11,3 is affected.
 
-very nice indeed. What about WARN_ON_ONCE(ret && bringup) given the
-BUG_ON(ret && !bringup) below?
-
-> 
-
-Sebastian
+You meant MacbookPro11,3, right?
 
