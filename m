@@ -1,47 +1,54 @@
-Return-Path: <linux-kernel+bounces-882525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59E54C2AA9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:59:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2355C2AAAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:59:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D50018907D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:58:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CB811892405
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:59:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A4A2E6CA1;
-	Mon,  3 Nov 2025 08:58:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7826A2E6CD3;
+	Mon,  3 Nov 2025 08:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ua3C8sne"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="sFhv3Gsf"
+Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com [113.46.200.222])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CB242C0261;
-	Mon,  3 Nov 2025 08:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044362DF6F8;
+	Mon,  3 Nov 2025 08:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.222
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762160303; cv=none; b=s28wTCaLxa/iPVoh8BdFEhcDW8Q+xViXRucwDfSNuOGZzrT9SbZ0h6jv1+Tdxqgq2oAZunQZqNMJqT9eJuFczxh8Bx00WWilBWdqQt8pBNLWLPlAnETcoUVefH5VbVtU4UuPrnEjnsj3KCQHVBuzNepbV/rmvklmRQtKSdp+yNM=
+	t=1762160329; cv=none; b=CI7YD+AikEmu2uD2Bdk1Hm0VxkTIXSqtQjMN32qPX+mslVOhAujT3d8ZAzHjPa6g5tOLXFw/U1MpwplB9BgYhk40hwsJVGNzKpqduamodRJGhJmgvINoEmlimnZnPb9LdT/QIgH34VUB/xRE0nbgybyoES71n6QxrOxrHWKuQiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762160303; c=relaxed/simple;
-	bh=CRi6704MPvvIAXAC4rSvi6zCRtfM0lNB9IjeqMN27tA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O0LcOut+9hBGJGOAHAgBSMl44xgaCAXzZBOjIBbUa7Kn4lEMrTlhBX7LYTR8VQVDnQcf3ercbMHwffIiXsF8ZaOCL6SZh1UfCKmKgylO5bq46q7gFs8IT1X2QXSDY60EcJm07/hs0sAxRl2Spj2DeAH3iOirKdNKz7GK8bTihDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ua3C8sne; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 198A1C4CEE7;
-	Mon,  3 Nov 2025 08:58:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762160302;
-	bh=CRi6704MPvvIAXAC4rSvi6zCRtfM0lNB9IjeqMN27tA=;
-	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ua3C8sne8P4O2Z41/qFLqnFxrLlq5J0VITwu3QaJdvXT+JYV3oC3AvS3DSwt8DUxE
-	 5EWbBUaRJTYuSs4Vjk1fWVRx8Xj/1AXHgTqKRVvSZJAaIJ9wpOSCI+nUV6UX6RduVG
-	 8VQ9TC2isNwbFc/VgCFAnng05lzfmBY1xV0psNhRmA0Bw9ASB05X0U7SUN3bp13K/B
-	 JvEsQ951/9ggy7dKfbmCBjf2wprCYtxXnGgBCGWsfyr2pO8Zkqo0GwhdR2Yp3vA9+V
-	 P4ut4zcQHdfvAvZXgEoRV6MsQzrBmPbt+S+xsg3nsGWCYBBRP75Su5T/wZs8/aF91Z
-	 J1uwq5visn9ig==
-Message-ID: <1c3e9bc8-0d25-46b2-98a3-643157f78b21@kernel.org>
-Date: Mon, 3 Nov 2025 09:58:15 +0100
+	s=arc-20240116; t=1762160329; c=relaxed/simple;
+	bh=JXPCsQTTxVnoh0TkP1LaQ3H1WCvGUkzl8sNo7rus+JQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pOdeot5EPzYYNJMcQVvhSoxckJc5xmfd4A/SNEcA5RwoGeAM0n4mcZr/Acv0vKqTFYMqx5tK3dRFi4ZQ7oG+KIYn8QvCQwFvz2U/jSM1KmrCp/X5E3u54gJZyy8OEDGCoPfQyMCzOsDUHpIvQXu7XoOcREUlg2WlzSPcMgx4lHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=sFhv3Gsf; arc=none smtp.client-ip=113.46.200.222
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=vhZdASlHH+QeEq0UbVzWVoPF8l6AizkcGzyv7NcZ9Mk=;
+	b=sFhv3GsfQN1H1yy+8lqdJs/YTjxE/ctYLlpRHqbIF1HL8eVbhAa3uTGbSJfEK7Ap7X5qK2Vn7
+	symE54OrB7tDUT/1FniVkv2WM2Pe1+FwsRqZ2PoPlmHtorOtuW3sfSCwtF9Dw9DzF9laYu4UtYB
+	rJ8NDNTnYlIDS1bk3vJFhtc=
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4d0QSk5RT4zLlVC;
+	Mon,  3 Nov 2025 16:57:10 +0800 (CST)
+Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
+	by mail.maildlp.com (Postfix) with ESMTPS id 65DAE1A016C;
+	Mon,  3 Nov 2025 16:58:44 +0800 (CST)
+Received: from [10.174.177.19] (10.174.177.19) by
+ dggpemf500016.china.huawei.com (7.185.36.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 3 Nov 2025 16:58:43 +0800
+Message-ID: <2ea387c7-cd15-44cc-8789-af3fbe0460a3@huawei.com>
+Date: Mon, 3 Nov 2025 16:58:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,80 +56,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Reply-To: Daniel Gomez <da.gomez@kernel.org>
-Subject: Re: [PATCH v2 3/3] module: Add compile-time check for embedded NUL
- characters
-To: Hans Verkuil <hverkuil+cisco@kernel.org>, Kees Cook <kees@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>
-Cc: Rusty Russell <rusty@rustcorp.com.au>, Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>, linux-modules@vger.kernel.org,
- Malcolm Priestley <tvboxspy@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Hans Verkuil <hverkuil@kernel.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-hardening@vger.kernel.org
-References: <20251010030348.it.784-kees@kernel.org>
- <20251010030610.3032147-3-kees@kernel.org>
- <91866583-037f-4607-b148-4ddf38ffaf51@kernel.org>
-Content-Language: en-US
-From: Daniel Gomez <da.gomez@kernel.org>
-Organization: kernel.org
-In-Reply-To: <91866583-037f-4607-b148-4ddf38ffaf51@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 03/11/2025 09.54, Hans Verkuil wrote:
-> On 10/10/2025 05:06, Kees Cook wrote:
->> Long ago, the kernel module license checks were bypassed by embedding a
->> NUL character in the MODULE_LICENSE() string[1]. By using a string like
->> "GPL\0proprietary text", the kernel would only read "GPL" due to C string
->> termination at the NUL byte, allowing proprietary modules to avoid kernel
->> tainting and access GPL-only symbols.
->>
->> The MODULE_INFO() macro stores these strings in the .modinfo ELF
->> section, and get_next_modinfo() uses strcmp()-family functions
->> which stop at the first NUL. This split the embedded string into two
->> separate .modinfo entries, with only the first part being processed by
->> license_is_gpl_compatible().
->>
->> Add a compile-time check using static_assert that compares the full
->> string length (sizeof - 1) against __builtin_strlen(), which stops at
->> the first NUL. If they differ, compilation fails with a clear error
->> message.
->>
->> While this check can still be circumvented by modifying the ELF binary
->> post-compilation, it prevents accidental embedded NULs and forces
->> intentional abuse to require deliberate binary manipulation rather than
->> simple source-level tricks.
->>
->> Build tested with test modules containing both valid and invalid license
->> strings. The check correctly rejects:
->>
->>     MODULE_LICENSE("GPL\0proprietary")
->>
->> while accepting normal declarations:
->>
->>     MODULE_LICENSE("GPL")
-> 
-> Who will take this series? I can take the first two media patches and
-> someone else can take this last patch, or I can take all, or someone
-> else can take all patches. The media patches already have my 'Reviewed-by'.
-> 
-> Any preferences?
-
-I will take patch 3 in modules' tree.
+Subject: Re: [PATCH net] selftests: netdevsim: Fix ethtool-features.sh fail
+To: Sabrina Dubroca <sd@queasysnail.net>
+CC: <kuba@kernel.org>, <andrew@lunn.ch>, <davem@davemloft.net>,
+	<edumazet@google.com>, <pabeni@redhat.com>, <shuah@kernel.org>,
+	<horms@kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>
+References: <20251030032203.442961-1-wangliang74@huawei.com>
+ <aQPxN5lQui5j8nK8@krikkit>
+From: Wang Liang <wangliang74@huawei.com>
+In-Reply-To: <aQPxN5lQui5j8nK8@krikkit>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ dggpemf500016.china.huawei.com (7.185.36.197)
 
 
-> 
-> Regards,
-> 
-> 	Hans
-> 
->>
->> Link: https://lwn.net/Articles/82305/ [1]
->> Suggested-by: Rusty Russell <rusty@rustcorp.com.au>
->> Signed-off-by: Kees Cook <kees@kernel.org>
+在 2025/10/31 7:13, Sabrina Dubroca 写道:
+> 2025-10-30, 11:22:03 +0800, Wang Liang wrote:
+>> This patch adds executable permission to script 'ethtool-features.sh', and
+>> check 'ethtool --json -k' support.
+> Those are two separate things, probably should be two separate patches.
 
-Reviewed-by: Daniel Gomez <da.gomez@samsung.com>
+
+Ok, I will extract the executable permission change to a new patch.
+
+>
+> [...]
+>> @@ -7,6 +7,11 @@ NSIM_NETDEV=$(make_netdev)
+>>   
+>>   set -o pipefail
+>>   
+>> +if ! ethtool --json -k $NSIM_NETDEV > /dev/null 2>&1; then
+> I guess it's improving the situation, but I've got a system with an
+> ethtool that accepts the --json argument, but silently ignores it for
+>   -k (ie `ethtool --json -k $DEV` succeeds but doesn't produce a json
+> output), which will still cause the test to fail later.
+
+
+That is indeed a bit strange.
+
+I'm not sure the best way to handle this situation now. Maybe update ethtool
+instead of checking the output is not a bad method.
+
 
