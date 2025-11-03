@@ -1,188 +1,179 @@
-Return-Path: <linux-kernel+bounces-882279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DDA2C2A0D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 06:20:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68E36C2A0DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 06:21:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 80BA14EA187
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 05:20:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF9FB3B15D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 05:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1FF9223710;
-	Mon,  3 Nov 2025 05:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF6A23F40D;
+	Mon,  3 Nov 2025 05:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="cWqpkcDy";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="f4Rb83Ug"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Ly1wlrTy"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FC6628DB3
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 05:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE1328DB3;
+	Mon,  3 Nov 2025 05:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762147227; cv=none; b=e0oF3Qqm86sIYfytPqg6i4xNxDNlUFSPTXxMeoXKvHAy0kE1CCIEoqNp48hDubhrzPAGNLGUZ8wWQITvigXdDzdFxnzG6fRwtaEXKHuvOuHFTv6+XGyIkewRe7L//6S2FCloFX8+zFrYmrNvDPR8aXkuyHHrxPRamhJx7Gj27iE=
+	t=1762147265; cv=none; b=sMNpv2p1tv8AMnrZNR81w1poalR6F1WRLUoMR9A4HWgCbXzoJ/r64LaAZ8qG+oyWxU+GvYv6sROvFwHmnct+uzKMuCqbGrgp3xVTA2KsUzWxChX3QfnjtblyeGGI3ownMfOOWq0FnR0nUd7YCb7xNFbXoPnndlSO8OpDsgKnmpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762147227; c=relaxed/simple;
-	bh=JSX9p/wIgvHai+qHF4nQy/+4OQNMz0VoQCPVnyjPdr0=;
+	s=arc-20240116; t=1762147265; c=relaxed/simple;
+	bh=KiTakMNYhpyqAGwMX4/KFpUS4ukxEBVyGXTR+SlrTZI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Iv5QzxtR3LQP8CfYIjEueMM2U54+qBD/AsfBxQ4L5gF0YOVMhj9gz5yBwcNQjozOOR9BMP6oBAZvrFCbLUUdKQ2zUi9P80Rk8buNHXUQHiw4j1t0LTvwX7Lm3mUWu/woEkWimRoyTnyjzPmz5MjVF00ShJ9jqlQpDl00TnIHeBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=cWqpkcDy; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=f4Rb83Ug; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A2LCJ8G1281298
-	for <linux-kernel@vger.kernel.org>; Mon, 3 Nov 2025 05:20:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=7GGfOekLc0CHGGD6nfIjuSVS
-	vP2PeOzTU8l9vvvf41g=; b=cWqpkcDy5W5BxSkQBNgW/S3VUlm16SZ7FShTh7qS
-	gcmzBRAggLjDO6GqPMVuljyLcXT1Kh4SbSP8YltOWB7FFRftBxSGn555j6KTRlNJ
-	/bsRe59GNBHzLF5uTVKOFI0v+8qbUA9BErYvkPDnlc/wqSOQ6Nimm8oFqCAYIj0J
-	EBlNFsxGWjl4ZuqT9y8hc/yPZFqEHxF7mRgouhSTIdcoWok7fwnbG2+JZn66g0pR
-	85CF+wQ3018k7UUM4kRUxz8fi5+y/nZG8X4e0pALJrkR1r0+qubMYlpQ1TIV6Ggo
-	/ybFcu1qsoX5YXzOpNQyKU+HZbIWgGsMw/bFlTEZ0mWMZw==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a57jn3jqm-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 05:20:24 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4eb7853480dso122929851cf.0
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 21:20:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762147223; x=1762752023; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7GGfOekLc0CHGGD6nfIjuSVSvP2PeOzTU8l9vvvf41g=;
-        b=f4Rb83Ug5bZzkOeFtT+HQySLW1eA0FsYXKcoQii8tmnfVKSf+OVtZSwrHT5wuI/IfR
-         bm3dqCu2CH4XaBp5qim8SrLIQTlTddA0gzPGg/nbefQVLCNiaHJbgS4mIYLQ7V6P/Uun
-         aeZzJkfuRd1BaCvY03gxXK0ktDq557GJzpSPpZBQ+cPVGNDcMU07fyCzSpF4w0+i4Fv5
-         FV3qPqs8Iq+xT7F8Cb9fuQfVv2iQDxvKbrWfXZ3B8mvHWNeELLJoMzW+RLlCj4V7VIl7
-         lDGGtNhKL9kio7aib6/pqXbwnZmHsfJf3ebl/OvUMVYZw0LnfWZB8GKEe9cb3fyZHxDU
-         mh6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762147223; x=1762752023;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7GGfOekLc0CHGGD6nfIjuSVSvP2PeOzTU8l9vvvf41g=;
-        b=f/6KeVh4nJPkYBH47RHtLLiy1+r/Nzp6L7gSf4AVqRoOhfRZezPEIrVsHReMiTOO28
-         wF2xvbs/OLOurQqxGzrFXTBXBc+tJepEpNW+sS8MDG8JwfgMRyRcOU+NkY1bZtTdX6dT
-         4v00SJDTiV4Jex6wcK0+zkugft3O1s6A9l8J8l/CWDAJzoR3/TJ7Y6/vJ2reayfX9Kt+
-         l0EjFluDo7TzXcqxhUAd5WZhMZjo2ZtVoJy4ubbZZjxj4rDuN9v/VHQJr2y9DiVAZRwS
-         fAE5e2i7H1OmOoI0C157YLiGRJoHTfNa5TZ1LAW9BAAG5hrls8p+5cPaQ5kf+mtF4nE1
-         BxNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXMLnHYZpkeMasH0XFap0cpFQ2tmIy3+mUPkBqUqwJJGSXHOmoLdxzy/wkU4hqeYMWiXSAN425iS3vIsu0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxThjiUTdi9s3pltIDwUldJyYB09tgnIBoX8m73iVGZ4d9Fx7w9
-	IHotd8ymB0+IziznlYbk+PeMM/C3ExBwOaq4gkouO6CTaiKydSN9A/Lf1KUztAfOE3F4bB+XJfC
-	p0+q/Im3qBizLR2eVAUb0FvG9rfhqKJRxL7zMpWYRJk6iQIQwdkxdzjTFOMudw1PgF48=
-X-Gm-Gg: ASbGncsZj7PcYhqQZNbSmFNoAwY0VJtw7T2613adixuzmShKPtZIGzG87mmKRZFBxh5
-	Q4n4UB52KpSSIjUNvE0yDLn/Vkgknujc97WwJPCTy3bA+AVFI54epmLeQxk0gfkiN+8KeRSlbq+
-	Au6LRF+d33oJDXdihIARb7SvbaGtRztMgo8YAdiRlrZUkKclCBN/HhIVFvqKSZZyM49CVvlP4ZR
-	/0OyCzLEf70Pi0SPyJjEKdfezSrBWF8xkyt3UaMbref4PPirR3j1HYor/5/IVcZUKh3rFbRoXEL
-	8MK1tCg1lilyiwLniHaupaKmbFjy43C1DKqhwesXDr8atSI5d4VzXnr4WPMyPOaxlAEBlJMWOTM
-	IpJ7HBs4at++F+ctVwNb8GEhNeidmDVgmWhiyihxs8QJlqQzQPofxyjew/kk3cgNLNjp202BIns
-	ky2WXXT7hHv0LK
-X-Received: by 2002:ac8:6f17:0:b0:4ec:eef1:52f9 with SMTP id d75a77b69052e-4ed31073eebmr185256571cf.67.1762147223420;
-        Sun, 02 Nov 2025 21:20:23 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFlxVVTClCdm2b14QJHu5NecoS0dWkyd0akYNoXO8ZN/iF/gNbPqXOw3mB1GIGfjm+us1bdjg==
-X-Received: by 2002:ac8:6f17:0:b0:4ec:eef1:52f9 with SMTP id d75a77b69052e-4ed31073eebmr185256241cf.67.1762147222851;
-        Sun, 02 Nov 2025 21:20:22 -0800 (PST)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5942e2bac22sm457536e87.62.2025.11.02.21.20.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Nov 2025 21:20:20 -0800 (PST)
-Date: Mon, 3 Nov 2025 07:20:17 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Hui Pu <Hui.Pu@gehealthcare.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] drm/display: bridge_connector: get/put the stored
- bridges: fix NULL pointer regression
-Message-ID: <whkqe5j4ydzjh6f7qiiz5q3dpqwry7anadpzl3dfvjftz36tua@zq4vkvriadci>
-References: <20251017-drm-bridge-alloc-getput-bridge-connector-fix-hdmi_cec-v2-0-667abf6d47c0@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=c8G3Yrspd2n/zt3D6sOF6rZHftC+f5k71C7jzm6ek/kR9BNRYmNSUpbKDbvvLEBJTMBafi++r8akLD2f/+K+IZjBGY6q5GIqsRtsEfNg6FXyP27pW0R3nqm7ypt4KBjyeIJK9s5V+zIo8v5ABox4htwLDWrXRxqaPZS81yCnCHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Ly1wlrTy; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A2KCFaa016813;
+	Mon, 3 Nov 2025 05:20:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=jMSYAu
+	sxYlf1VVxhQe8v5fMuC5LP0UC5SXkvrut2NoI=; b=Ly1wlrTy7yuurWKEqwCftm
+	BHEdTAFc4o0aYdJQ1lPXFflwDjA8ujjHnCF92O8IcPOHIxKB6Lh9lF+Ys09DdiUA
+	ophyPJMZYVYhxLWnExSwyhQe3ZC+dVgIMx5no3G5606zur30BueDI12jvk8f/FAE
+	cvBzG3ivNuzCSj9HGqwShDadILR4HjFaobNTWR79+2rd0YjQGYnlI88DTDsWsPbC
+	E4AKRKqfGVu2uo9l+DzsD6GdQJvFOsSFr9xJjzmZBoseJxIFQ/2VXjmhlDHoZ4zv
+	clUUtTbcL2OHkOS9ufRQmLfuw0vuYFiRZSjJKD/j0sgeXqk794wudEEnpqQNuNFQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59v1myd0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Nov 2025 05:20:39 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5A35KdRO006672;
+	Mon, 3 Nov 2025 05:20:39 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59v1mycx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Nov 2025 05:20:38 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A344fri021483;
+	Mon, 3 Nov 2025 05:20:38 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a5xrjbs1j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Nov 2025 05:20:38 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A35Ka9N31981836
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 3 Nov 2025 05:20:36 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 52E4D2004B;
+	Mon,  3 Nov 2025 05:20:36 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 157CC20040;
+	Mon,  3 Nov 2025 05:20:34 +0000 (GMT)
+Received: from Gautams-MacBook-Pro.local (unknown [9.43.116.143])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon,  3 Nov 2025 05:20:33 +0000 (GMT)
+Date: Mon, 3 Nov 2025 10:50:26 +0530
+From: Gautam Menghani <gautam@linux.ibm.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
+        Alexander Graf <agraf@suse.de>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+        Miaoqian Lin <linmq006@gmail.com>
+Subject: Re: [PATCH] KVM: PPC: Use pointer from memcpy() call for assignment
+ in kvmppc_kvm_pv()
+Message-ID: <aQg7msPQvAZbXs_u@Gautams-MacBook-Pro.local>
+References: <ad42871b-22a6-4819-b5db-835e7044b3f1@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20251017-drm-bridge-alloc-getput-bridge-connector-fix-hdmi_cec-v2-0-667abf6d47c0@bootlin.com>
-X-Authority-Analysis: v=2.4 cv=StidKfO0 c=1 sm=1 tr=0 ts=69083b98 cx=c_pps
- a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VwQbUJbxAAAA:8 a=P-IC7800AAAA:8 a=hD80L64hAAAA:8 a=pGLkceISAAAA:8
- a=EUspDBNiAAAA:8 a=AWrDNu5aXUrvGcUHwcEA:9 a=CjuIK1q_8ugA:10
- a=a_PwQJl-kcHnX1M80qC6:22 a=d3PnA9EDa4IxuAV0gXij:22
-X-Proofpoint-GUID: LpKQkb2zJp2lNAVvEBOE0buNeLAaWblm
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAzMDA0NyBTYWx0ZWRfXznnimbVFLDil
- tjrytLXNJDf4wBmo7BIGy5FeRfKbOJGrys8vnFPw+YIoXqiVJ9tWYLmYzAJJ0NqdcrPdepcgwvp
- P5SHKnO2jtxqbAgWWJ6c/naWI8L4t/bLKGfk4Y3m4+Q/4FH6NLA6PoV1g3R8sXPxRoBkTc1dsdX
- 5gQBwi5aiwZBXWU9FWYYFZkVa2iz0PuTBnwPs4QJERaLfk6ynqUVHWdUtm7o1j083yWyIs1Y0lS
- lNKM2ckkRQJoOFsUnnEdDVUWdZf92IwRMGCkQDV7gSBmzKk/A8IK2xxj95Jui+O3kKv98kN5/c1
- 4jI01oW0EiBSuhCai3/kBWWNDx4PKtD0tC47oV7THcFJyxQaviNsH+Xx/GxrfGTuqe4IhFzwZgP
- E4dPMyZT7zsfRJgS4T4qkYD4aXPHEQ==
-X-Proofpoint-ORIG-GUID: LpKQkb2zJp2lNAVvEBOE0buNeLAaWblm
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ad42871b-22a6-4819-b5db-835e7044b3f1@web.de>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: s1oEhR6BIpCrsug6jsfVGX8pgU_LzU-4
+X-Proofpoint-ORIG-GUID: _pMypZ0RUqX5RFeWRSx1Kt-pJHcoctpY
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAyMSBTYWx0ZWRfX2zSSroT9Kfsr
+ uMXS51u8zrNm1Lx+V5gbzWX8OcPkIdi4f2cTjfViqY0xPbk+/WTWPCNV4U+13OkpT7JFd4/Hg9L
+ vf7UKx+e+Wp0lx40J5XD3EXP0XIDsWLF8Zgbr+k0xhjGC5Uq0QEBBIo0kT9Issb4znXTe8bMrcn
+ b74iPOtldM9tNREFr39+x8SbcKMNRPO5iGFOhqPkwBpVXdBTGDF7hVwCFMry49bMzBDG6jssRXY
+ yXOPTDV6emxigeiBqKuuskHNOJsQ33rETCkEyTQjcVnEqWE+wrkQ0wBeXexZIzHsbKOu9wjOkiK
+ H/MUU8dnoD7+YCWJjalMQcAmptHrw2m2cs3Ii79SV7d1ZegbIhEQfPMfcQm29waujgYJVI1ulX7
+ m5ed6qt5cX0siX1Y2CrRVnY8WI97sw==
+X-Authority-Analysis: v=2.4 cv=H8HWAuYi c=1 sm=1 tr=0 ts=69083ba7 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=8nJEP1OIZ-IA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=FP58Ms26AAAA:8 a=8Wr6nJrWg-yotHxcTvEA:9 a=3ZKOabzyN94A:10 a=wPNLvfGTeEIA:10
+ a=cPQSjfK2_nFv0Q5t_7PE:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
  definitions=2025-11-02_02,2025-10-29_03,2025-10-01_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 phishscore=0 adultscore=0 malwarescore=0 impostorscore=0
- spamscore=0 priorityscore=1501 suspectscore=0 bulkscore=0 lowpriorityscore=0
+ spamscore=0 phishscore=0 lowpriorityscore=0 priorityscore=1501 adultscore=0
+ impostorscore=0 clxscore=1011 bulkscore=0 suspectscore=0 malwarescore=0
  classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511030047
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010021
 
-On Fri, Oct 17, 2025 at 06:15:03PM +0200, Luca Ceresoli wrote:
-> A patch of mine recently merged in drm-misc-next [1] has a NULL pointer
-> deref regression (reported here [2] and here [3]). Being in lack of a quick
-> fix, I sent a revert proposal [4].
+On Thu, Oct 30, 2025 at 09:51:00PM +0100, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 30 Oct 2025 21:43:20 +0100
+> Subject: [PATCH] KVM: PPC: Use pointer from memcpy() call for assignment in kvmppc_kvm_pv()
 > 
-> The revert proposal has no answers currenty, and in the meanwhile I have a
-> patch that implements the original idea but without the same bug. So here's
-> a v2 series with:
+> A pointer was assigned to a variable. The same pointer was used for
+> the destination parameter of a memcpy() call.
+> This function is documented in the way that the same value is returned.
+> Thus convert two separate statements into a direct variable assignment for
+> the return value from a memory copy action.
 > 
->  - the same revert patch
->  - the original patch but rewritten without the same bug (and even simpler)
+> The source code was transformed by using the Coccinelle software.
 > 
-> Also the re-written patch is now split in two for clarity because it was
-> doing two somewhat different things.
-> 
-> [1] https://lore.kernel.org/all/20250926-drm-bridge-alloc-getput-bridge-connector-v2-1-138b4bb70576@bootlin.com/
-> [2] https://lore.kernel.org/lkml/336fbfdd-c424-490e-b5d1-8ee84043dc80@samsung.com/
-> [3] https://lore.kernel.org/lkml/CA+G9fYuKHp3QgPKjgFY3TfkDdh5Vf=Ae5pCW+eU41Bu=D7th2g@mail.gmail.com/
-> [4] https://lore.kernel.org/lkml/20251016-drm-bridge-alloc-getput-bridge-connector-fix-hdmi_cec-v1-1-81d6984c5361@bootlin.com/
-> 
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
 > ---
-> Changes in v2:
-> - No changes to the revert patch
-> - Added the (corrected) patch introducing the same feature as the original
->   buggy patch, and also split it in two fir clarity
-> - Link to v1: https://lore.kernel.org/r/20251016-drm-bridge-alloc-getput-bridge-connector-fix-hdmi_cec-v1-1-81d6984c5361@bootlin.com
+>  arch/powerpc/kvm/powerpc.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 > 
+> diff --git a/arch/powerpc/kvm/powerpc.c b/arch/powerpc/kvm/powerpc.c
+> index 2ba057171ebe..ae28447b3e04 100644
+> --- a/arch/powerpc/kvm/powerpc.c
+> +++ b/arch/powerpc/kvm/powerpc.c
+> @@ -216,8 +216,7 @@ int kvmppc_kvm_pv(struct kvm_vcpu *vcpu)
+>  
+>  			shared &= PAGE_MASK;
+>  			shared |= vcpu->arch.magic_page_pa & 0xf000;
+> -			new_shared = (void*)shared;
+> -			memcpy(new_shared, old_shared, 0x1000);
+> +			new_shared = memcpy(shared, old_shared, 0x1000);
+>  			vcpu->arch.shared = new_shared;
+>  		}
+>  #endif
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+This patch does not compile
 
-Tested-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> # db410c
+In file included from ./include/linux/string.h:382,
+                 from ./arch/powerpc/include/asm/paca.h:16,
+                 from ./arch/powerpc/include/asm/current.h:13,
+                 from ./include/linux/sched.h:12,
+                 from ./include/linux/resume_user_mode.h:6,
+                 from ./include/linux/entry-virt.h:6,
+                 from ./include/linux/kvm_host.h:5,
+                 from arch/powerpc/kvm/powerpc.c:12:
+arch/powerpc/kvm/powerpc.c: In function `kvmppc_kvm_pv´:
+arch/powerpc/kvm/powerpc.c:219:45: error: passing argument 1 of `__builtin_dynamic_object_size´ makes pointer from integer without a cast [-Wint-conversion]
+  219 |                         new_shared = memcpy(shared, old_shared, 0x1000);
+      |                                             ^~~~~~
+      |                                             |
+      |                                             ulong {aka long unsigned int}
 
 
-
--- 
-With best wishes
-Dmitry
+Thanks,
+Gautam
 
