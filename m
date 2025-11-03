@@ -1,131 +1,178 @@
-Return-Path: <linux-kernel+bounces-883386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31FA1C2D4BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:57:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6801EC2D4AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:57:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4A7A4638AE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:51:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14AB7461F58
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:51:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A4FC31A550;
-	Mon,  3 Nov 2025 16:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB57031A561;
+	Mon,  3 Nov 2025 16:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LwXOJc1f"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="iqSloNE4"
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3EB5319877
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E77030DEDE
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762188672; cv=none; b=iB4ws75PdbuySVut+ujxk6PjNt0rKVWRzpFauuKkf/Ts5cSULAM0BfVIiqvOK1jRiM5CpYzr0fnMTXYb9ZVx0L1URxnc4itckqVFrq197T7ZaeQvj41l5HO/TXFnnbxSS+7MIfW6xqvC4WPCbCIQMC3cZMlyIDEgTcIVqzo1VGk=
+	t=1762188676; cv=none; b=syaDpaM87EK1yJq6OTdKSJZXVBLHvJTRzswgCTweEDzfPG/HJ4+GO0htvNerZvbSCTk8ImQty6bCigCn94gNpUeNvzqwXQlNs74p6Pe2V5MhESDltQkucMt1yegUjwGBGhkN1Om9k24S8qzLLk62Vy3HfkMLZ2OOcXqR2C6+Sws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762188672; c=relaxed/simple;
-	bh=U1CZQvGZlStQTkWZUdO8PikaUYvoR7RVMCWF9NnIGm0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UPgckkPOFCe9bTx/lFa23K+NWJoTV6i3IbmH2C89CYh759NfGa8tJEIpp8z93UPevzzmlKLbHhTR8xgoii1yBfZssagx6iDRCWuAi6BQ+7YVluHxCHgE+Pydl9ugf6QoRpWt6yZWi0mkX73gJ0nIoyek6A1w1Zmqvn4RhpbWg8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LwXOJc1f; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 3 Nov 2025 16:50:48 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762188664;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=K607a5Gs7qbahtSC1e+NSqHSnCO3TxUx9UKukeyvNPg=;
-	b=LwXOJc1f/K6nb9wVO4GrLcftfn/ho3nwgJUxumOCpurUvQXx/93i+UNBV5Yq2bbZt7nvAw
-	fMmzfMUc1I/3+ppcS733aXLz+px5KKfFl/WleoOFYiWgdyYLV+Z7APCP8bdRcshyLwBq9s
-	F69Azfl+0DfAJts9qaYrtJW/yoECpf0=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Kairui Song <ryncsn@gmail.com>
-Cc: Barry Song <baohua@kernel.org>, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>, 
-	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Youngjun Park <youngjun.park@lge.com>, 
-	Hugh Dickins <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	"Huang, Ying" <ying.huang@linux.alibaba.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/19] mm/swap: rename __read_swap_cache_async to
- swap_cache_alloc_folio
-Message-ID: <2gzofxcv3vbfd5l22drj6p67huf533nq6g2hnurr74ewbrp2gx@f7i6qabbuxng>
-References: <20251029-swap-table-p2-v1-0-3d43f3b6ec32@tencent.com>
- <20251029-swap-table-p2-v1-1-3d43f3b6ec32@tencent.com>
- <ufy26fqfvaxqjywneec3hcuky7ozpa2fm63pxcuuberrvicffv@bkblomeix35w>
- <CAGsJ_4x1P0ypm70De7qDcDxqvY93GEPW6X2sBS_xfSUem5_S2w@mail.gmail.com>
- <CAMgjq7A+OBoH71qo=Vt65BeV7M9uOvkJ+9pQX2eq4-tqcKwVwg@mail.gmail.com>
+	s=arc-20240116; t=1762188676; c=relaxed/simple;
+	bh=9X5qYxyuX7GnNfRV7eA4zSQai4y1CCQShsSie8Vm55M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=kmjHZM35XKBDyYOoFwAvKp8CK++QgII4VDYJHqOwVcjheS2kRRBaZmYksLnsIlE4T5C5brv+Fharm3yQ5jIDHJG+aH1gKc1ZeO7U0l8AYAYWDyMGQjUfiHHhyobbsRED01238CFOBa1SDjkTdgzPRFxI5dJn85SXTVgYzVq3V/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=iqSloNE4; arc=none smtp.client-ip=209.85.166.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-940f8a73275so498879539f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 08:51:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1762188673; x=1762793473; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=1ZYP6s7A0e6t6qMHErZJUr+ea4gjElbTNwHT5ZSG9V0=;
+        b=iqSloNE47jdELzksVc0fnuz9fogLeKwgmZivkrfyPb7yGkOcOG6P0FJ/Rn5QgSgC1v
+         49D7ExByxsmTH/H5jv/jfaeADVKncryNbXx+ntFypxjqLNMx8iCxkdn0D5KrdWVkiUjX
+         Phpqqi9HU5CzjsH85qeDJNSkuirer2Qu8tcA4Dsc+6dRfNbWIljvwgbDyTEbdgKgI4e1
+         pcbwx2nXRMoOch2a4fYUX/Z7qdedILVVBzTALJ+AMI3VfB4C7olxHjDa74u1bAvfyBPK
+         u8xJLKmKRMr0OGMHDRKqb3W5s4sYL1lodGRx9fohAMSRuxKXLVHY3pRSuNBMABmIFBYn
+         3vLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762188673; x=1762793473;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1ZYP6s7A0e6t6qMHErZJUr+ea4gjElbTNwHT5ZSG9V0=;
+        b=YGo9L0sU7u3kBLaliT7jGUC24OYGHJ0dYy8YRyZ7dlPJw6CcGmUCmJhknuZLSJEaSl
+         wVeHSH75Vuswch2Tfu8cg66oaZQ3ycu3k4COptOIZZTxUqDFh/syoTaMOOHWR0UQQnF3
+         buB4QIhVmTMECLIaOPctcMIgKbZuXRI6AluhnwZHSTHzkuihcOzDTjFfFvmsLwXqATyW
+         Np97It8/TIAJVseFqI8RDdOCIypqeLeqV2TBxW8BGs7UIy059BQMHFVMZBN76rdu0Ncz
+         GjK6ldkJMwHor0X90oGWwRt65EfLzRe8hjQad3ZazHn3aKvNHebGk+2qz96//rv9asFH
+         ji5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWHq74NA5D4tL1KUHVBax+xai2tenjcnRLmBMKv9Dw7t6V/EaFLEvS+MUZ+MGNuf3kl9p22UtJyvaW+kp4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyU3D1qXIk+Ar3UxJO23DW3Aw/dUHbc7CsdhYZNL5Sfp2MgWIDf
+	rs6s1Bo/rmYds1tC2SeMFCX0lkiZ9ZX8PF90EyuUSQB1p3+ZdVLwfQUBWH8heVlfPUY=
+X-Gm-Gg: ASbGnct7KmCFgkc+36HxK2GjdGy1umGU9HOGyr6OJUFsR9v2niWYlvjR5piJKwWfW7q
+	mIYF0t/RaKC0/Iq4QCOT2iGAHV7br4XYb9dcSaXIW4vDdge9pkmx61G7G3KuZ242L2/Jw+V16PA
+	rubuHI+8v4jIbGI0lsQ+Bhm8ZP9LutgcLA+ij5CSTtO6uiQY7W6YC8wCnRxzhBZiYdyfzM3M1Vb
+	mXeYKHYPn74J8UvkrtrUaoZHi/53hmjwQFpWtnq2YtVhx6X6xo3S+u9SnvaYmIz6sbRONgkmC7L
+	8mYsBQf1WgM2jlcAWIr/mzkIGlmWx5dd+iFtp0JKXmDCgKeecK4Jox710LHkS4PblqrlCf46l7R
+	J7CPbISRlrdRzGY8ABoT8iXqMLBQO26op3fAymOFWGsxRtlXil8GTnJqqPsDkSWtguU/En/9+Yf
+	2GsQz/j6NhmN6nHeaONvPh9cd1krveU/oDvx1VTPf4x3XZ7j5Fn24=
+X-Google-Smtp-Source: AGHT+IG3IvG/mEvLf0CP6EjG0xRAhCkqKP6lfBEvoWKsucXyQJGlFuxO7exsoiSwRmrN+GNPUYV9uA==
+X-Received: by 2002:a05:6e02:174b:b0:433:2d6a:ec2b with SMTP id e9e14a558f8ab-4332d6b190fmr50614775ab.24.1762188673045;
+        Mon, 03 Nov 2025 08:51:13 -0800 (PST)
+Received: from [172.22.22.234] (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5b7226ba48dsm324005173.49.2025.11.03.08.51.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Nov 2025 08:51:12 -0800 (PST)
+Message-ID: <6872beb1-f27f-48b9-a756-5b7faa380cec@riscstar.com>
+Date: Mon, 3 Nov 2025 10:51:11 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMgjq7A+OBoH71qo=Vt65BeV7M9uOvkJ+9pQX2eq4-tqcKwVwg@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/7] PCI: spacemit: introduce SpacemiT PCIe host driver
+To: lpieralisi@kernel.org, kwilczynski@kernel.org, mani@kernel.org,
+ robh@kernel.org, bhelgaas@google.com, dlan@gentoo.org, johannes@erdfelt.com,
+ p.zabel@pengutronix.de, christian.bruel@foss.st.com,
+ thippeswamy.havalige@amd.com, krishna.chundru@oss.qualcomm.com,
+ mayank.rana@oss.qualcomm.com, qiang.yu@oss.qualcomm.com,
+ shradha.t@samsung.com, inochiama@gmail.com, guodong@riscstar.com,
+ linux-pci@vger.kernel.org, spacemit@lists.linux.dev,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20251030220259.1063792-1-elder@riscstar.com>
+ <20251030220259.1063792-6-elder@riscstar.com> <aQU4rGzrB1-Vu7C6@aurel32.net>
+Content-Language: en-US
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <aQU4rGzrB1-Vu7C6@aurel32.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 03, 2025 at 05:02:28PM +0800, Kairui Song wrote:
-> On Mon, Nov 3, 2025 at 4:28 PM Barry Song <baohua@kernel.org> wrote:
-> > > > +/**
-> > > > + * swap_cache_alloc_folio - Allocate folio for swapped out slot in swap cache.
-> > > > + * @entry: the swapped out swap entry to be binded to the folio.
-> > > > + * @gfp_mask: memory allocation flags
-> > > > + * @mpol: NUMA memory allocation policy to be applied
-> > > > + * @ilx: NUMA interleave index, for use only when MPOL_INTERLEAVE
-> > > > + * @new_page_allocated: sets true if allocation happened, false otherwise
-> > > > + * @skip_if_exists: if the slot is a partially cached state, return NULL.
-> > > > + *                  This is a workaround that would be removed shortly.
-> > > > + *
-> > > > + * Allocate a folio in the swap cache for one swap slot, typically before
-> > > > + * doing IO (swap in or swap out). The swap slot indicated by @entry must
-> > > > + * have a non-zero swap count (swapped out). Currently only supports order 0.
+On 10/31/25 5:31 PM, Aurelien Jarno wrote:
+> Hi Alex,
 > 
-> Hi Yosry and Barry, thanks for the review.
+> On 2025-10-30 17:02, Alex Elder wrote:
+>> +/* Disable ASPM L1 for now, until reported errors can be reproduced */
 > 
-> > >
-> > > Is it used for swap in? That's confusing because the next sentence
-> > > mention that it needs to be already swapped out.
+> Thanks for adding this function.
 > 
-> Yes, swap in is the typical user, swap_vma_readahead calls this
-> function directly, allocate a folio then initiate the swap in IO.
+>> +static void k1_pcie_post_init(struct dw_pcie_rp *pp)
+>> +{
+>> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+>> +	u8 offset;
+>> +	u32 val;
+>> +
+>> +	offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+>> +
+>> +	dw_pcie_dbi_ro_wr_en(pci);
+>> +
+>> +	/* Turn off ASPM L1 for the link */
+>> +	val = readl(pci->dbi_base + offset + PCI_EXP_LNKCAP);
 > 
-> I'm not sure why it is confusing. A swapped out slot getting swapped
-> in seems a very common thing?
+> Why not using dw_pcie_readl_dbi() instead?
+> 
+>> +	val &= ~PCI_EXP_LNKCAP_ASPM_L1;
+>> +	writel(val, pci->dbi_base + offset + PCI_EXP_LNKCAP);
+> 
+> And here dw_pcie_writel_dbi()?
+> 
+>> +
+>> +	dw_pcie_dbi_ro_wr_dis(pci);
+>> +}
+>> +
+>> +static void k1_pcie_deinit(struct dw_pcie_rp *pp)
+>> +{
+>> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+>> +	struct k1_pcie *k1 = to_k1_pcie(pci);
+>> +
+>> +	/* Assert fundamental reset (drive PERST# low) */
+>> +	regmap_set_bits(k1->pmu, k1->pmu_off + PCIE_CLK_RESET_CONTROL,
+>> +			PCIE_RC_PERST);
+>> +
+>> +	phy_exit(k1->phy);
+>> +
+>> +	k1_pcie_disable_resources(k1);
+>> +}
+>> +
+>> +static const struct dw_pcie_host_ops k1_pcie_host_ops = {
+>> +	.init		= k1_pcie_init,
+>> +	.post_init	= k1_pcie_post_init,
+> 
+> Unfortunately, while I can see the effect of the change with for
+> instance lspci -vvv, this happens way too late in the device scan
+> process, i.e. after pcie_aspm_override_default_link_state() and causes
+> L1 to still be enabled.
 
-I mixed up swapping in and swapping out :) I was complaining about
-mentioning "swapping out", not vice versa. Sorry for the confusion.
+OK thanks for this information.  I am going to contact you
+privately to get more information on your errors (and those
+Johannes is reporting) so that I can try to resolve them
+before I post the next version of this patch series.
+
+					-Alex
 
 > 
-> > >
-> > > I suspect you're referring to the zswap writeback use case, but in this
-> > > case we're still "swapping-in" the folio from zswap to swap it out to
-> > > disk. I'd avoid mentioning swap in here because it's confusing.
+> I have tried to move it earlier, in k1_pcie_init() after writing the
+> vendor and device IDs. This works as long as "nvme scan" is run in
+> U-Boot. But if I don't run this command, it seems that the change is
+> ignored or lost (i.e. I can still see L1 enabled with lspci -vvv).
 > 
-> Oh, I thought the zswap writeback is considered a kind of swap out :),
-> since it's technically writing data from ram to swap device.
-
-We do swap the page out, but we use __read_swap_cache_async() to "swap
-in" the page from zswap first.
-
+> Moving it at the end of k1_pcie_init() works fine, like moving it at the
+> beginning of k1_pcie_start_link(). But my knowledge is too limited to
+> know where is the correct place.
 > 
-> >
-> > I assume you mean avoiding any mention of swap-out? As for swap-out, we’re
-> > swapping a folio out from the LRU — we’re not allocating a new folio.
-> >
-> > BTW, this sentence also feels a bit odd to me. I’d prefer removing
-> > “swap out” from
-> > “doing IO (swap in or swap out)”.
+> Regards
+> Aurelien
 > 
-> How about "doing IO (e.g. swap in or zswap writeback)"? Swap-in is a
-> very common user, and zswap writeback can be mentioned explicitly.
 
-Looks good to me. Thanks.
 
