@@ -1,241 +1,143 @@
-Return-Path: <linux-kernel+bounces-883507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C1B6C2DA0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:18:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5E48C2DA17
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:18:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E27A04E8129
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:18:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3948189B603
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3821271451;
-	Mon,  3 Nov 2025 18:17:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE372264C8;
+	Mon,  3 Nov 2025 18:18:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="lFgd8s97"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cOd52XJR"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59546191F92
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 18:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7B61A9F94
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 18:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762193875; cv=none; b=C0Y1wIURs64DqusMC3/JzSGkUBMmxXaeeup6f1e6YC4VSxV3F9WjEPTjesQ9K/SVn9Qy/BKf1CMDkLaox9s5vTKmTYGifC8/RPV/x541MqTjNOoo9eKZWiKZrlK33z2yLrYHgU8ORBTTwcx+4/mbMdJsCOHFpL/7iMOdJBcfSiU=
+	t=1762193916; cv=none; b=iICJhMt/wti5CMC/xWB1WErbLbZPH+AcJd09ObQJ2wGy3QxHS6zWI4+GwNzAU4BMNL2Viqk/cXm/cAi/cc55rRdp3V80l2CUDn/C4/O8EONkQJdAqfrjgfcRpgC63YjuhVhQuztQaP+nCBxl1UtffZAVRvldHr/VfOn28b3hwdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762193875; c=relaxed/simple;
-	bh=q3logXzsizlE7vxCDEHKIRUBbcalhSKwMKCC5YbOdeg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N2IV7n0mVdU8wIAIWvmUjso+qlSaGoeFgEpMV63Oe85S1ZCJbOmrwp/AfBNm3fx9xwdxHWlDSjLniuB2J9cVHH0Tx2y5a9okyZZXrXA8zLq61+OfmhcPx1x8evyIT4WaE8VNvegrn+qoGfZemdIqpQsONHY6/if04lRQIwBMyuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=lFgd8s97; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-7866dcf50b1so14377077b3.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 10:17:52 -0800 (PST)
+	s=arc-20240116; t=1762193916; c=relaxed/simple;
+	bh=URXNs5NVV9mjyIjpTFJ2nbkM6xeZY0uxMOBeg6vFH8o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BWAgLmNo049LJ9w4oFl4ri8VsUB9vb0Uwl/RzB2fMcNOz+KXc+Be5a43bID/479TSk7KrMvo7nD9BAxzQw1AajYY9LMct4gs+9wLZLnOG4g6KcgfsjVQQpB7BWYIAwCO6/6DG/CLhEJRZRwb1G+6THXOLF4/bTeo9EhNJGXn4f0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cOd52XJR; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b4aed12cea3so855186166b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 10:18:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1762193871; x=1762798671; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/xmAK/aryaCve4zg5te4EbYXs5XtAGc70a0N7jrOVis=;
-        b=lFgd8s976x7GSAgtbxgIha2fcT43XDvV8skZh1K4878SKJWRK+x26KBg8J6OwIlAc/
-         Qlo0KgIMGBdU/lMRXPL1ytvkimGW24FD8rNIMzRGXmWA0yMP9oj3s1v0kGUz/9czj2kW
-         J9DAXu8LvnLVsfEgLq3YHo+tNZqVaQO8EHsQUU2JNnkrdaPPmFND+KKqg5b45khIKcWX
-         eO8NIefBS7d++6RU7Xd+AVJavdbGjDbFu9Vx95lg73pfhuXrHxEtJ+9wNRYKxlk6YxD1
-         ZW+Xvv+1gcEdZiIbQJ7GVHTOT2p0anF+r/kPpuFnI/qTNRJqCYsLMXITGZoIRqN4bXLC
-         Pa4A==
+        d=suse.com; s=google; t=1762193913; x=1762798713; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jqRLjgd8K+hT2Lw3XZjWXjJmFIP7/NT9CeMKS9r3avc=;
+        b=cOd52XJRLZb8IO6129H4kd+jNXtLtqXDIfUbNyTnlPT621DrqSW7cJrsRhJOC1JjJ6
+         7jRgw+h0rbmu3qfB++z+uE12q0QJeAOScF4U6tibhKHoiNRAyGUH8iMEl1qNXwHH5u4A
+         U0eGwkOlgoXxkQDChytZV6mLW5IU5IwP18WLWLXidYJAN9NeF0b05PZkhe/zVVQAHFvP
+         eGQxjXhNbhaR5TcrpQA2D6lF3jRerxH2CumgUjl8YgPKY1KIBVnI3pJREGDF8tejk72z
+         HzaYuDkn0WLVvVBq8ndNJl5Cd7cGcQDTt1ZR71N4N3gMxTYT/msNy4ZEGIdsbrVcNyOj
+         Jr6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762193871; x=1762798671;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/xmAK/aryaCve4zg5te4EbYXs5XtAGc70a0N7jrOVis=;
-        b=un4vSMCavlTsC5UenS6WBXbN8mGhVcKCyAgtVTY9OrvdAAqWwX2DZnVGQdO1yJWyC1
-         PetByokN2sPGVELx0QaZmIiJqwIygGILjx8R7bjhER9DPIU3m5UbS8987CpIApzT1kmy
-         kIE1IXPcTLD46kbIgjsqI4z9fQg6utLJGr7uJnmcB/vy5lz5HlGpXUc6nfPqGaJIwE69
-         Jwp7WZ1drz85zqGBNYF1X53Hdjv724A+0GaRXBWAOF9De9pxChnl2p70Z3WIjxeOWyA8
-         x1kaXj+4ozLu3uNtaiAI3ctKLOk44Ze6+XH+zddylryoF0dIoyL5LrZT4xGtIUP2IO+p
-         MxuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVBH9Iymkjty2cpGgOjoNql7JnfEfxjgXod/R4BvMy+3sNrwc533xZtWR+RXxfz6lsOGJQihHZDHz7xKhc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTCKjaA0hsUJ7660ng+5yScQ56mmFFrlmepwZcEszUfK1N9dBk
-	jlv4GdXnqCs0BW7IKEVJ28/1NcDVkB/Fk0NvGpSfKyCjfm51FmjcfoiHkzcopn+3qNZB2GX42tK
-	sx2yTNGuiM7g6KGZfs6wtQsZcR2ytPtbC8Qc5sQLJIg==
-X-Gm-Gg: ASbGncuvNnl3+ZD5WuRzY/2Ut1buwKRTydeQNjDxDIiLUImM6m39COe9z/6oDneVLlg
-	vElDegC4Z/Prn+QDhZidys0HaevBqkuDiFFnRF7Cdt1Uk1KSFg7d+xL9iPQF9we4zPkQbtfyCw7
-	xRTvQVL26CanxrgACP6X/NbbVMeCQcegfr1JUHD4729IhBdsZqVdXEcknxDmSiUsOOEYMjGjfiE
-	E8KsRsfFC9QdHM/CaE3nfE1UqhnspPCu3G+ruk8tFVZIPwBjgjTFKwtMvqQqsgTpGMmhk+bUQUZ
-	uX4Pxk7SZ7GQEy+Jq4vX5ZO7Avo=
-X-Google-Smtp-Source: AGHT+IFqE8B94Mp2/FJ4pe8YGqharK3QI0mj5qNCj+r9MNVvDf2hJB3l7zQZO5XO9mTAk+uegLHpNOSHPzCdeHMMZAU=
-X-Received: by 2002:a05:690c:62c4:b0:786:5789:57df with SMTP id
- 00721157ae682-78657895902mr97319357b3.45.1762193871162; Mon, 03 Nov 2025
- 10:17:51 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762193913; x=1762798713;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jqRLjgd8K+hT2Lw3XZjWXjJmFIP7/NT9CeMKS9r3avc=;
+        b=OCG+UXioIH8pCyJHIZeWtQsAQ/Zo3oUGyNw8q51e6+S6NEGpcnVu+lGNqwsqmYAugT
+         4yMHDrN/GtwdB1NQo13TYtrw5sfgz0RKjsyO9F7HA13utUv0AAZSsOoeZvCnvjwVU7GF
+         BYG/M/nWB2RE/Ind5wHBgaDQF6aeAJJCsmSQCJjM0k/DP2X8JdjajtTFaIV4k6iTKmTc
+         wbmQC4MWtiPqmkfZdkNbz3JjY9VpKT8Cl799ig700012ZP6Y3ks685qjpy/Cb2lM/Nk/
+         qwMPmdSo6j6le+U8513S+mqLt0My2JRShXxA8DkGq+Tbh1NjVMMFznh5GcYK+wuKpQay
+         FxCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWX8WgAQ7s84iS9zrFRss4lCLahwGa4vn3H98JLfg/2UUmQbF9q0a7c77Evd+CElODs6G2n5EUiItNx1EI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvjO+aewvyBYZ1GhI/orQmbzHdBvP5TPZLNqmIXNf2u+dv++QZ
+	o1Pjgr2t1TGsLo+8C0k/URG8T78kCyRk7DbFnWgBhPdY5z2Lt5XOf5D7xVUgZBZ43i9W9IglNQ0
+	NjGv1OSQ=
+X-Gm-Gg: ASbGncvxpQI74UUvw/DUvblwXKVs8xze7hdRNTH8SOi2R1kKcMa53wPv1B84UsH57u5
+	7ZQBJgwgACg7oqof/Znp3o4N5S/zE59LV7QB4nZumheRaADu9ktJeZAFqY3bxw8LQ08jWrwdCYx
+	ruWyMG6RFFdjnskzkasA7oI1a2RzkYVqe5Z7AnNx0wes4v3AI9mmZlZXh4NdszITdzQtiTJnDpq
+	L+ik9rT5GWQqF4q1pz99+uSpLvPRi9NsrSa18X515N9t4fdPIj2l1evO/juM8UB0D/NCfN6Hynl
+	7p5oy+urqUHDyqRNvN6x+2o4Rx5dkYlv8phZW01oMtI9kcy99AIgw2G9UaodaFeToUziBXIiIQn
+	1OtbAODRXnG0vowriEE3kp0LL10KxEGt8RW+gwnqusAzCZao1WpdexSRpc0Xhbq9fzAb+vMz7p3
+	iUVS/LmsHB2b/odA==
+X-Google-Smtp-Source: AGHT+IE2daxTlMOHk/CGF2RugDrn4nke6v1czkbTOpjMgsbAikWRjv6WYKeA3oTiX78nZbbiTawnTw==
+X-Received: by 2002:a17:906:6a21:b0:b6d:7d27:258b with SMTP id a640c23a62f3a-b70700d34b3mr1435687266b.12.1762193912944;
+        Mon, 03 Nov 2025 10:18:32 -0800 (PST)
+Received: from localhost (109-81-31-109.rct.o2.cz. [109.81.31.109])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7077cfa966sm1093828666b.65.2025.11.03.10.18.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Nov 2025 10:18:32 -0800 (PST)
+Date: Mon, 3 Nov 2025 19:18:31 +0100
+From: Michal Hocko <mhocko@suse.com>
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+	Alexei Starovoitov <ast@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	JP Kobryn <inwardvessel@gmail.com>, linux-mm@kvack.org,
+	cgroups@vger.kernel.org, bpf@vger.kernel.org,
+	Martin KaFai Lau <martin.lau@kernel.org>,
+	Song Liu <song@kernel.org>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH v2 00/23] mm: BPF OOM
+Message-ID: <aQjx91L6IlG-qtjX@tiehlicka>
+References: <20251027231727.472628-1-roman.gushchin@linux.dev>
+ <aQSB-BgjKmSkrSO7@tiehlicka>
+ <87ldkonoke.fsf@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251031114835.113026-1-tarang.raval@siliconsignals.io> <20251031114835.113026-2-tarang.raval@siliconsignals.io>
-In-Reply-To: <20251031114835.113026-2-tarang.raval@siliconsignals.io>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Mon, 3 Nov 2025 18:17:31 +0000
-X-Gm-Features: AWmQ_bmurtv0JEn9tphiJaL2oYCvaL0iF7Drv_num1dn1VxlUEctW68r9rEtJqs
-Message-ID: <CAPY8ntDy0NmU5D6Q=v+X0nN9beGFLWHQp0jpfNYq+shGaam87g@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] media: i2c: imx219: Propagate errors from control
- range updates
-To: Tarang Raval <tarang.raval@siliconsignals.io>
-Cc: sakari.ailus@linux.intel.com, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ldkonoke.fsf@linux.dev>
 
-Hi Tarang
+On Sun 02-11-25 12:53:53, Roman Gushchin wrote:
+> Michal Hocko <mhocko@suse.com> writes:
+> 
+> > On Mon 27-10-25 16:17:03, Roman Gushchin wrote:
+> >> The second part is related to the fundamental question on when to
+> >> declare the OOM event. It's a trade-off between the risk of
+> >> unnecessary OOM kills and associated work losses and the risk of
+> >> infinite trashing and effective soft lockups.  In the last few years
+> >> several PSI-based userspace solutions were developed (e.g. OOMd [3] or
+> >> systemd-OOMd [4]). The common idea was to use userspace daemons to
+> >> implement custom OOM logic as well as rely on PSI monitoring to avoid
+> >> stalls. In this scenario the userspace daemon was supposed to handle
+> >> the majority of OOMs, while the in-kernel OOM killer worked as the
+> >> last resort measure to guarantee that the system would never deadlock
+> >> on the memory. But this approach creates additional infrastructure
+> >> churn: userspace OOM daemon is a separate entity which needs to be
+> >> deployed, updated, monitored. A completely different pipeline needs to
+> >> be built to monitor both types of OOM events and collect associated
+> >> logs. A userspace daemon is more restricted in terms on what data is
+> >> available to it. Implementing a daemon which can work reliably under a
+> >> heavy memory pressure in the system is also tricky.
+> >
+> > I do not see this part addressed in the series. Am I just missing
+> > something or this will follow up once the initial (plugging to the
+> > existing OOM handling) is merged?
+> 
+> Did you receive patches 11-23?
 
-On Fri, 31 Oct 2025 at 11:49, Tarang Raval
-<tarang.raval@siliconsignals.io> wrote:
->
-> Propagate return values from __v4l2_ctrl_modify_range() and
-> __v4l2_ctrl_s_ctrl() in imx219_set_ctrl() and imx219_set_pad_format().
-> This ensures proper error handling instead of ignoring possible
-> failures. Also return the result of imx219_set_pad_format() from
-> imx219_init_state().
+OK, I found it. Patches 11-23 are threaded separately (patch 11
+with Message-ID: <20251027232206.473085-1-roman.gushchin@linux.dev> doesn't
+seem to have In-reply-to in header) and I have missed them previously. I
+will have a look in upcoming days.
 
-It should be impossible for a number of these to fail unless someone
-has messed up in updating the driver, but it does little harm in
-returning the error code back out.
 
-The slight hesitation would be that in imx219_set_pad_format you could
-have updated the ranges/values of one or more controls, and then fail
-leaving a partially implemented mode change. It has returned an error,
-but an application would be reasonable in thinking that the previous
-working state has been retained when it hasn't.
-As long as it would only trigger due to a driver bug rather than user
-interaction, I would *not* propose that all values have to be saved
-and have to be restored on failure. It just gets too ugly.
-
-> Signed-off-by: Tarang Raval <tarang.raval@siliconsignals.io>
-
-Reviewed-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-
-> ---
->  drivers/media/i2c/imx219.c | 61 +++++++++++++++++++++++++-------------
->  1 file changed, 40 insertions(+), 21 deletions(-)
->
-> diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-> index 48efdcd2a8f9..40693635c0c3 100644
-> --- a/drivers/media/i2c/imx219.c
-> +++ b/drivers/media/i2c/imx219.c
-> @@ -453,10 +453,14 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
->                 exposure_max = format->height + ctrl->val - 4;
->                 exposure_def = (exposure_max < IMX219_EXPOSURE_DEFAULT) ?
->                         exposure_max : IMX219_EXPOSURE_DEFAULT;
-> -               __v4l2_ctrl_modify_range(imx219->exposure,
-> -                                        imx219->exposure->minimum,
-> -                                        exposure_max, imx219->exposure->step,
-> -                                        exposure_def);
-> +               ret = __v4l2_ctrl_modify_range(imx219->exposure,
-> +                                              imx219->exposure->minimum,
-> +                                              exposure_max,
-> +                                              imx219->exposure->step,
-> +                                              exposure_def);
-> +               if (ret)
-> +                       return ret;
-> +
->         }
->
->         /*
-> @@ -848,6 +852,7 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
->         struct v4l2_rect *crop;
->         u8 bin_h, bin_v, binning;
->         u32 prev_line_len;
-> +       int ret;
->
->         format = v4l2_subdev_state_get_format(state, 0);
->         prev_line_len = format->width + imx219->hblank->val;
-> @@ -883,19 +888,28 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
->                 int pixel_rate;
->
->                 /* Update limits and set FPS to default */
-> -               __v4l2_ctrl_modify_range(imx219->vblank, IMX219_VBLANK_MIN,
-> -                                        IMX219_FLL_MAX - mode->height, 1,
-> +               ret = __v4l2_ctrl_modify_range(imx219->vblank, IMX219_VBLANK_MIN,
-> +                                              IMX219_FLL_MAX - mode->height, 1,
-> +                                              mode->fll_def - mode->height);
-> +               if (ret)
-> +                       return ret;
-> +
-> +               ret = __v4l2_ctrl_s_ctrl(imx219->vblank,
->                                          mode->fll_def - mode->height);
-> -               __v4l2_ctrl_s_ctrl(imx219->vblank,
-> -                                  mode->fll_def - mode->height);
-> +               if (ret)
-> +                       return ret;
-> +
->                 /* Update max exposure while meeting expected vblanking */
->                 exposure_max = mode->fll_def - 4;
->                 exposure_def = (exposure_max < IMX219_EXPOSURE_DEFAULT) ?
->                         exposure_max : IMX219_EXPOSURE_DEFAULT;
-> -               __v4l2_ctrl_modify_range(imx219->exposure,
-> -                                        imx219->exposure->minimum,
-> -                                        exposure_max, imx219->exposure->step,
-> -                                        exposure_def);
-> +               ret = __v4l2_ctrl_modify_range(imx219->exposure,
-> +                                              imx219->exposure->minimum,
-> +                                              exposure_max,
-> +                                              imx219->exposure->step,
-> +                                              exposure_def);
-> +               if (ret)
-> +                       return ret;
->
->                 /*
->                  * With analog binning the default minimum line length of 3448
-> @@ -906,9 +920,12 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
->                 imx219_get_binning(state, &bin_h, &bin_v);
->                 llp_min = (bin_h & bin_v) == IMX219_BINNING_X2_ANALOG ?
->                                   IMX219_BINNED_LLP_MIN : IMX219_LLP_MIN;
-> -               __v4l2_ctrl_modify_range(imx219->hblank, llp_min - mode->width,
-> -                                        IMX219_LLP_MAX - mode->width, 1,
-> -                                        llp_min - mode->width);
-> +               ret = __v4l2_ctrl_modify_range(imx219->hblank,
-> +                                              llp_min - mode->width,
-> +                                              IMX219_LLP_MAX - mode->width, 1,
-> +                                              llp_min - mode->width);
-> +               if (ret)
-> +                       return ret;
->                 /*
->                  * Retain PPL setting from previous mode so that the
->                  * line time does not change on a mode change.
-> @@ -917,13 +934,17 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
->                  * mode width subtracted.
->                  */
->                 hblank = prev_line_len - mode->width;
-> -               __v4l2_ctrl_s_ctrl(imx219->hblank, hblank);
-> +               ret = __v4l2_ctrl_s_ctrl(imx219->hblank, hblank);
-> +               if (ret)
-> +                       return ret;
->
->                 /* Scale the pixel rate based on the mode specific factor */
->                 pixel_rate = imx219_get_pixel_rate(imx219) *
->                              imx219_get_rate_factor(state);
-> -               __v4l2_ctrl_modify_range(imx219->pixel_rate, pixel_rate,
-> -                                        pixel_rate, 1, pixel_rate);
-> +               ret = __v4l2_ctrl_modify_range(imx219->pixel_rate, pixel_rate,
-> +                                              pixel_rate, 1, pixel_rate);
-> +               if (ret)
-> +                       return ret;
->         }
->
->         return 0;
-> @@ -972,9 +993,7 @@ static int imx219_init_state(struct v4l2_subdev *sd,
->                 },
->         };
->
-> -       imx219_set_pad_format(sd, state, &fmt);
-> -
-> -       return 0;
-> +       return imx219_set_pad_format(sd, state, &fmt);
->  }
->
->  static const struct v4l2_subdev_video_ops imx219_video_ops = {
-> --
-> 2.34.1
->
+-- 
+Michal Hocko
+SUSE Labs
 
