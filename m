@@ -1,157 +1,234 @@
-Return-Path: <linux-kernel+bounces-883681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18D54C2E0F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 21:48:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DDEEC2E104
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 21:49:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9B06A4E2169
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 20:47:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D9BA189093A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 20:48:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3732C0281;
-	Mon,  3 Nov 2025 20:47:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE75C2BEC59;
+	Mon,  3 Nov 2025 20:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="frnItTGW"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=defranco.dev.br header.i=@defranco.dev.br header.b="UWcGzk1h"
+Received: from mail-05.mail-europe.com (mail-05.mail-europe.com [85.9.206.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29963238D42
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 20:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5A4218AB9
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 20:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.9.206.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762202872; cv=none; b=KeZ5/5JsfFuiL+xrKIwNaVVIazSk7DCYr81gAL2qFxuVIFXukIGKMOw53ghrNiqtAGezxMhNvCMerBxNsB+WJKAMN79Q60DY4Alik4a6PnxQvA6Hr+W75uDx85yD5yeukM5rI6Uae3mTD3lvjma8QLsj8lv9Obp6wD15RvdNUl0=
+	t=1762202892; cv=none; b=ox4tg/NDdagknNvZcnZNaUSdB9l3y3NUdAI0fvyriJShxMMI7uAByc1x2Fx1GLH2xyfnIElJNOmVBA9kfnbyzHZT8/vByvIy9dkmNct3qNqFL3mYpms13XHy672zOspIjSuQQI3EDlquowwBieno/JbcFOGFYjVQtQCStp0B5fY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762202872; c=relaxed/simple;
-	bh=a+vN09clVIm5tcOtX8Gar8O7sWSsGJBH8NFznjlbuLw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EoVffGbTcGwIKugWdXZ0Zqh41xFchpA06SxKrzvk+7uKoFuXTD7SjqTaSRf8r9sX9rguaGBfYU1DQfXd6zzMzg3KpjLCg3dDMx4dfwq0q8gw8L29lCMLObsib6RCRAeNULL9RCLEOekg8AD7nwpY4Wc0EoYnUifJNIos9K7hi8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=frnItTGW; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7ab689d3fa0so101826b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 12:47:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1762202870; x=1762807670; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Z+i+icE8IiyClGUVbQkBzxyTYknJ8/f/9xuIDF0CulI=;
-        b=frnItTGWBoCkkJM13i5I2O93bpMuEk2yfFL/hhn2wgUCDdit3uF+Ya+mwLvf1cptKA
-         NdLfPXPxU7+xOyQfNOHNBRO2O88vnkM8wg0D+bEOWObAietBKXQ/YpWgS6PRj9XakEXF
-         0uU5t9fktMIuIvPfoDfJ8tvHAr7MtqipnpmghWD5LSoyiPn3tjoOSmkBvUS7uxQF6j+p
-         MtwETHdsG2SGDS+uHqej3Yp1O6hYpJSj+Q/Itfx3mpXcbQ0M+WRNzAXmuf16fzVX1VeR
-         v3DApY9vOAfqcebzpmOKls2k+T2OD2YONoO55vMBU096S3BF04Fx3W79qiRC/kUTl06V
-         fQiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762202870; x=1762807670;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Z+i+icE8IiyClGUVbQkBzxyTYknJ8/f/9xuIDF0CulI=;
-        b=WtnO8Yb8WAOj+n5XYa3JHy8RaqSzqV1gd6103GFfD0dPK4dQaZFehiIa0pSmgwkFFv
-         w+CtrIt19kkO8ItRzjJ9af1nB5ASdCQJm2QK2Ju6K4+eS9YF+K42FUlZKErq227G8j7O
-         glvGfhq4GOpFb0i1oip20C3Sm65I5K1Xn3upVE0IYJH/V64A8K1bUbheEGsZdjQblTEB
-         5HdOZVqas+xUsckS6ux6StHy+1WH5Ix/eJGC+oPOTEIAYUK8LjcMtVq729/hJVfuWqzc
-         6ERaoUDli+WmHQsog4uY12KxKQ20bBqsFKfN55vPCLUBHYZRgoClIXduULNWm5L/RJQP
-         Um+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXWqW8tbrNLdnT7ovzXFc+745PAiK3F2wCmzfupRvUR4gQ7xD2544e9xtYBjt8mUkrPCjdA2lerJc5M6TM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2pGpe2HBIdE2zITRYAiKtU4l3f63pd2iJa++QCPfdg2qDbmEF
-	WJyC31eNR7PuMuOTPrVXQhKKBfVSfovPJte+Cg12ZHHiiHGqxrlPVWEuYk8t+D7Ck2FK0tORUcG
-	G6wik/c8QU4g/LRQCEoghVgTPsTNLBSLO4PcUKvp9/g==
-X-Gm-Gg: ASbGnctYZ3PWJHgDjV4EQWJ/q+TGSScs2laWQEbRIDsWQUU7ojLk+vB2x/6Wgh6HHHv
-	lMxC+9RSXVWtjhk7pAfu70FbJcbvWxmkULk56+QaMohC21XgZe/unvBOobxVhROanWJ+Z0Z4Wnk
-	wXBCfBwCZZgjuUR5/omzDAPpyZn7rTNiYu0opc8FAYxEAlQrq3n2SOy0ZsOzCjDiY4zKFojiGub
-	H5XFC3Pxf48Wh9rS223w0ePSZHA9lgy+1G6JQEDdQPue2hX5V3FkUx4YxjyUwM5YllURoCmGYQ9
-	d/4GfLm5As7yypK7778fLvD31KCQ
-X-Google-Smtp-Source: AGHT+IH9W5Yz0Du9VH7KHBKlBV6mxFdT8/2W8B6DMI8gR86YbjrXYjVZeItEyfgxJbcb8qFJyg3Aepo7OAlVmh7HvH8=
-X-Received: by 2002:a17:902:f684:b0:294:ec58:1d23 with SMTP id
- d9443c01a7336-2951a3a3eecmr89081495ad.3.1762202870213; Mon, 03 Nov 2025
- 12:47:50 -0800 (PST)
+	s=arc-20240116; t=1762202892; c=relaxed/simple;
+	bh=N+JiD1rO4TadcRXtyM+p8UvSgmDnE/ymMRMjE5ca/fQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=uwiirjj4ccKEL2kXkWyNkJEeEZJzVJHA3fdzuzDtdam4ZzfcPKGAaaui7VnizN9qIEYAeoA/U+sUt84iEIhGhQTA2Km6gmR71KdAnZWIYF8hxbeM21i44rH6ZeggFGT/Z/I93eraB+gPoGxjrn1QjM76aVlAB1RMeRLAA7NLrfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=defranco.dev.br; spf=pass smtp.mailfrom=defranco.dev.br; dkim=pass (2048-bit key) header.d=defranco.dev.br header.i=@defranco.dev.br header.b=UWcGzk1h; arc=none smtp.client-ip=85.9.206.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=defranco.dev.br
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=defranco.dev.br
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=defranco.dev.br;
+	s=protonmail; t=1762202868; x=1762462068;
+	bh=wU9IWXqC4dESjWm1H0SxwHsTARPMBcPAE1wY/KsJQwg=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=UWcGzk1hfTgSGlDELWUEDRfSLAsZPfPjO0juYwKwqFdFDMbS3zeFmkq2r4I5CZ2Id
+	 KRZ/F2xPkgL2lhQ8Sb2yJtbmfy5Z8/4SeQhLbuiFNOJkYXYh24XudvQVUxsY4sTIoy
+	 zfxwDOoxb0Nr+WqANcBnzzVDAZJ0yvse3HzxFQCtmxq9Q4Sk8m7A8TCHF07bqItJy1
+	 xiuk2+KRKeARtP0x8HzayeTfrcRebkBbbJrKydK/NMJGuhRJ+C0hlA8BgE3csCXs8K
+	 weYo9N7rDfjDdTn5IuZBQ103L90/MdM81qq6K3w/V2wOUiTRssx/cOPEDdi1mEcVuB
+	 T9WO5PrA6ogpA==
+Date: Mon, 03 Nov 2025 20:47:41 +0000
+To: Beleswar Padhi <b-padhi@ti.com>
+From: Hiago De Franco <hiago@defranco.dev.br>
+Cc: jassisinghbrar@gmail.com, linux-kernel@vger.kernel.org, hiago.franco@toradex.com, francesco.dolcini@toradex.com, afd@ti.com, hnagalla@ti.com, u-kumar1@ti.com, nm@ti.com, vigneshr@ti.com
+Subject: Re: [PATCH v2] mailbox: omap-mailbox: Check for pending msgs only when mbox is exclusive
+Message-ID: <tuyd2fp7rtt6ijufeb5ma6xxu4rgijuigrb345o5yuso22eqbw@ijies6ceyfcd>
+Feedback-ID: 160619648:user:proton
+X-Pm-Message-ID: 6e92723e81f194395ad2f5befa23d824d5348ebc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250904170902.2624135-1-csander@purestorage.com>
- <175742490970.76494.10067269818248850302.b4-ty@kernel.dk> <fe312d71-c546-4250-a730-79c23a92e028@gmail.com>
- <5d41be18-d8a4-4060-aa04-8b9d03731586@kernel.dk>
-In-Reply-To: <5d41be18-d8a4-4060-aa04-8b9d03731586@kernel.dk>
-From: Caleb Sander Mateos <csander@purestorage.com>
-Date: Mon, 3 Nov 2025 12:47:38 -0800
-X-Gm-Features: AWmQ_bmchfvPvbc6j7bPb8NZmMiCt-7TsMmgFjMHSv2mTVxvDRP5RDGTV2htgSY
-Message-ID: <CADUfDZqHbfAQXG8j2W_GZrxFbYSQQeo9sYdzMEYLQTsuCR+4=A@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Pavel Begunkov <asml.silence@gmail.com>, io-uring@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 10, 2025 at 8:36=E2=80=AFAM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 9/10/25 5:57 AM, Pavel Begunkov wrote:
-> > On 9/9/25 14:35, Jens Axboe wrote:
-> >>
-> >> On Thu, 04 Sep 2025 11:08:57 -0600, Caleb Sander Mateos wrote:
-> >>> As far as I can tell, setting IORING_SETUP_SINGLE_ISSUER when creatin=
-g
-> >>> an io_uring doesn't actually enable any additional optimizations (asi=
-de
-> >>> from being a requirement for IORING_SETUP_DEFER_TASKRUN). This series
-> >>> leverages IORING_SETUP_SINGLE_ISSUER's guarantee that only one task
-> >>> submits SQEs to skip taking the uring_lock mutex in the submission an=
-d
-> >>> task work paths.
-> >>>
-> >>> [...]
-> >>
-> >> Applied, thanks!
-> >>
-> >> [1/5] io_uring: don't include filetable.h in io_uring.h
-> >>        commit: 5d4c52bfa8cdc1dc1ff701246e662be3f43a3fe1
-> >> [2/5] io_uring/rsrc: respect submitter_task in io_register_clone_buffe=
-rs()
-> >>        commit: 2f076a453f75de691a081c89bce31b530153d53b
-> >> [3/5] io_uring: clear IORING_SETUP_SINGLE_ISSUER for IORING_SETUP_SQPO=
-LL
-> >>        commit: 6f5a203998fcf43df1d43f60657d264d1918cdcd
-> >> [4/5] io_uring: factor out uring_lock helpers
-> >>        commit: 7940a4f3394a6af801af3f2bcd1d491a71a7631d
-> >> [5/5] io_uring: avoid uring_lock for IORING_SETUP_SINGLE_ISSUER
-> >>        commit: 4cc292a0faf1f0755935aebc9b288ce578d0ced2
-> >
-> > FWIW, from a glance that should be quite broken, there is a bunch of
-> > bits protected from parallel use by the lock. I described this
-> > optimisation few years back around when first introduced SINGLE_ISSUER
-> > and the DEFER_TASKRUN locking model, but to this day think it's not
-> > worth it as it'll be a major pain for any future changes. It would've
-> > been more feasible if links wasn't a thing. Though, none of it is
-> > my problem anymore, and I'm not insisting.
->
-> Hmm yes, was actually pondering this last night as well and was going
-> to take a closer look today as I have a flight coming up. I'll leave
-> them in there for now just to see if syzbot finds anything, and take
-> that closer look and see if it's salvageable for now or if we just need
-> a new revised take on this.
+On 04.11.2025 01:41, Beleswar Padhi wrote:
+> On TI K3 devices, the mailbox resides in the Always-On power domain
+> (LPSC_main_alwayson) and is shared among multiple processors. The
+> mailbox is not solely exclusive to Linux.
+>=20
+> Currently, the suspend path checks all FIFO queues for pending messages
+> and blocks suspend if any are present. This behavior is unnecessary for
+> K3 devices, since some of the FIFOs are used for RTOS<->RTOS
+> communication and are independent of Linux.
+>=20
+> For FIFOs used in Linux<->RTOS communication, any pending message would
+> trigger an interrupt, which naturally prevents suspend from completing.
+> Hence, there is no need for the mailbox driver to explicitly check for
+> pending messages on K3 platforms.
+>=20
+> Introduce a device match flag to indicate whether the mailbox instance
+> is exclusive to Linux, and skip the pending message check for
+> non-exclusive instances (such as in K3).
+>=20
+> Fixes: a49f991e740f ("arm64: dts: ti: k3-am62-verdin: Add missing cfg for=
+ TI IPC Firmware")
+> Closes: https://lore.kernel.org/all/sid7gtg5vay5qgicsl6smnzwg5mnneoa35cem=
+pt5ddwjvedaio@hzsgcx6oo74l/
 
-Is the concern the various IO_URING_F_UNLOCKED contexts (e.g. io_uring
-worker threads) relying on uring_lock to synchronize access to the
-io_ring_ctx with submitter_task? I think it would be possible to
-provide mutual exclusion in those contexts using a task work item to
-suspend submitter_task. When submitter_task picks up the task work, it
-can unblock the thread running in IO_URING_F_UNLOCKED context, which
-can then take the uring_lock as usual. Once it releases the
-uring_lock, it can unblock submitter_task.
-This approach could certainly add latency to taking uring_lock in
-IO_URING_F_UNLOCKED contexts, though I don't expect that is very
-common in applications using io_uring. We could certainly add a new
-setup flag to avoid changing the behavior for existing
-IORING_SETUP_SINGLE_ISSUER users. What are your thoughts on this
-approach?
+Thanks for the patch, I tested on both Verdin AM62 and AM62P and looks
+like everything is good, I can enter suspend without the error
+previously reported.
 
-Thanks,
-Caleb
+Tested-by: Hiago De Franco <hiago.franco@toradex.com> # Verdin AM62/AM62P
+
+Regards,
+Hiago.
+
+> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+> ---
+> Cc: Francesco Dolcini <francesco.dolcini@toradex.com>
+> Cc: Hiago De Franco <hiago.franco@toradex.com>
+> Please help in testing the patch on Toradex platforms.
+>=20
+> Testing Done:
+> 1. Tested Boot across all TI K3 EVM/SK boards.
+> 2. Tested IPC on all TI K3 J7* EVM/SK boards (& AM62x SK).
+> 3. Tested mbox driver probe & device boot on AM57x-evm (OMAP5 based).
+> 4. Tested that the patch generates no new warnings/errors.
+>=20
+> Changes since v1:
+> 1. Use device_get_match_data() in probe and store result for re-use.
+>=20
+> Link to v1:
+> https://lore.kernel.org/all/20251103075920.2611642-1-b-padhi@ti.com/
+>=20
+> Changes since RFC:
+> 1. Skip checking pending messages instead of flushing
+> them explicitly for K3 devices.
+>=20
+> Link to RFC Version:
+> https://lore.kernel.org/all/20251022102015.1345696-1-b-padhi@ti.com/
+>=20
+>  drivers/mailbox/omap-mailbox.c | 35 +++++++++++++++++++---------------
+>  1 file changed, 20 insertions(+), 15 deletions(-)
+>=20
+> diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbo=
+x.c
+> index 680243751d62..17fe6545875d 100644
+> --- a/drivers/mailbox/omap-mailbox.c
+> +++ b/drivers/mailbox/omap-mailbox.c
+> @@ -68,6 +68,7 @@ struct omap_mbox_fifo {
+> =20
+>  struct omap_mbox_match_data {
+>  =09u32 intr_type;
+> +=09bool is_exclusive;
+>  };
+> =20
+>  struct omap_mbox_device {
+> @@ -78,6 +79,7 @@ struct omap_mbox_device {
+>  =09u32 num_users;
+>  =09u32 num_fifos;
+>  =09u32 intr_type;
+> +=09const struct omap_mbox_match_data *mbox_data;
+>  };
+> =20
+>  struct omap_mbox {
+> @@ -341,11 +343,13 @@ static int omap_mbox_suspend(struct device *dev)
+>  =09if (pm_runtime_status_suspended(dev))
+>  =09=09return 0;
+> =20
+> -=09for (fifo =3D 0; fifo < mdev->num_fifos; fifo++) {
+> -=09=09if (mbox_read_reg(mdev, MAILBOX_MSGSTATUS(fifo))) {
+> -=09=09=09dev_err(mdev->dev, "fifo %d has unexpected unread messages\n",
+> -=09=09=09=09fifo);
+> -=09=09=09return -EBUSY;
+> +=09if (mdev->mbox_data->is_exclusive) {
+> +=09=09for (fifo =3D 0; fifo < mdev->num_fifos; fifo++) {
+> +=09=09=09if (mbox_read_reg(mdev, MAILBOX_MSGSTATUS(fifo))) {
+> +=09=09=09=09dev_err(mdev->dev, "fifo %d has unexpected unread messages\n=
+",
+> +=09=09=09=09=09fifo);
+> +=09=09=09=09return -EBUSY;
+> +=09=09=09}
+>  =09=09}
+>  =09}
+> =20
+> @@ -378,8 +382,9 @@ static const struct dev_pm_ops omap_mbox_pm_ops =3D {
+>  =09SET_SYSTEM_SLEEP_PM_OPS(omap_mbox_suspend, omap_mbox_resume)
+>  };
+> =20
+> -static const struct omap_mbox_match_data omap2_data =3D { MBOX_INTR_CFG_=
+TYPE1 };
+> -static const struct omap_mbox_match_data omap4_data =3D { MBOX_INTR_CFG_=
+TYPE2 };
+> +static const struct omap_mbox_match_data omap2_data =3D { MBOX_INTR_CFG_=
+TYPE1, true };
+> +static const struct omap_mbox_match_data omap4_data =3D { MBOX_INTR_CFG_=
+TYPE2, true };
+> +static const struct omap_mbox_match_data am654_data =3D { MBOX_INTR_CFG_=
+TYPE2, false };
+> =20
+>  static const struct of_device_id omap_mailbox_of_match[] =3D {
+>  =09{
+> @@ -396,11 +401,11 @@ static const struct of_device_id omap_mailbox_of_ma=
+tch[] =3D {
+>  =09},
+>  =09{
+>  =09=09.compatible=09=3D "ti,am654-mailbox",
+> -=09=09.data=09=09=3D &omap4_data,
+> +=09=09.data=09=09=3D &am654_data,
+>  =09},
+>  =09{
+>  =09=09.compatible=09=3D "ti,am64-mailbox",
+> -=09=09.data=09=09=3D &omap4_data,
+> +=09=09.data=09=09=3D &am654_data,
+>  =09},
+>  =09{
+>  =09=09/* end */
+> @@ -449,7 +454,6 @@ static int omap_mbox_probe(struct platform_device *pd=
+ev)
+>  =09struct omap_mbox_fifo *fifo;
+>  =09struct device_node *node =3D pdev->dev.of_node;
+>  =09struct device_node *child;
+> -=09const struct omap_mbox_match_data *match_data;
+>  =09struct mbox_controller *controller;
+>  =09u32 intr_type, info_count;
+>  =09u32 num_users, num_fifos;
+> @@ -462,11 +466,6 @@ static int omap_mbox_probe(struct platform_device *p=
+dev)
+>  =09=09return -ENODEV;
+>  =09}
+> =20
+> -=09match_data =3D of_device_get_match_data(&pdev->dev);
+> -=09if (!match_data)
+> -=09=09return -ENODEV;
+> -=09intr_type =3D match_data->intr_type;
+> -
+>  =09if (of_property_read_u32(node, "ti,mbox-num-users", &num_users))
+>  =09=09return -ENODEV;
+> =20
+> @@ -483,6 +482,12 @@ static int omap_mbox_probe(struct platform_device *p=
+dev)
+>  =09if (!mdev)
+>  =09=09return -ENOMEM;
+> =20
+> +=09mdev->mbox_data =3D device_get_match_data(&pdev->dev);
+> +=09if (!mdev->mbox_data)
+> +=09=09return -ENODEV;
+> +
+> +=09intr_type =3D mdev->mbox_data->intr_type;
+> +
+>  =09mdev->mbox_base =3D devm_platform_ioremap_resource(pdev, 0);
+>  =09if (IS_ERR(mdev->mbox_base))
+>  =09=09return PTR_ERR(mdev->mbox_base);
+> --=20
+> 2.34.1
+>=20
+
 
