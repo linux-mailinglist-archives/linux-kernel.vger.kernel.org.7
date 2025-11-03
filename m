@@ -1,115 +1,175 @@
-Return-Path: <linux-kernel+bounces-883492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0281EC2D986
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:09:05 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47E5CC2D992
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:09:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A87F18994DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:09:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5FD254EAF71
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738843054D4;
-	Mon,  3 Nov 2025 18:08:58 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8953285CA4;
-	Mon,  3 Nov 2025 18:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52432D5923;
+	Mon,  3 Nov 2025 18:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fSibrf8L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0373148BE
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 18:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762193338; cv=none; b=MwcCzFCDhgXOIO6nlWArroFR0sHv65fnuIWn/TzkSIdcyKmTopiW6ApTgduo8TfRZ0KuXF67rRIvA3eOVBAXhBkTyaTxJmjYZhrlAUWLnSHjrZOyAHd9kJ/mH3ooEh6cuXycrYn5hXPRvLQjXE3wB1qZtPI5K5XuO7GikxeekJk=
+	t=1762193368; cv=none; b=MWiJl+v/Ae0WIOUwgr3Yi/abvklb/I91OlHaC2WfJZAsFyC6BTTpndzcg8svKW84unkfop4keQUHlFDkG8xg4zAx3i0tSrXwCs47HdGZaJMjxVO7xn9BTVMAP8mogcs5FEbwITHmnI97uj9rdfu1u817ULf3RRgNsxeiS7nkGv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762193338; c=relaxed/simple;
-	bh=oMupISCSYd/eNzrdMLFaLu2UlclpMU6/awU7/8GJBY0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hkvtxROnV9n1eKH4RjN7bMByxbka6c6Vnk0Ejs5pmgrF97/3PEWHxwamPJSr6DYgG2qx0zdV8CZMm7ZiwWfNdmBNACwXtc8mJOjgzn8CokZJrGeY+pPJyjBG4WuuCRYqyVae6d7rgiFDxDkRb9cdA6VwF99gSvLzCkPn/pCm+uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4DBAF2A6B;
-	Mon,  3 Nov 2025 10:08:48 -0800 (PST)
-Received: from [10.1.30.16] (unknown [10.1.30.16])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 463A43F694;
-	Mon,  3 Nov 2025 10:08:48 -0800 (PST)
-Message-ID: <1965fe85-3734-45e9-af89-651c65845e8a@arm.com>
-Date: Mon, 3 Nov 2025 18:08:45 +0000
+	s=arc-20240116; t=1762193368; c=relaxed/simple;
+	bh=GIVep2mwCobXrapQXMsC8otlq3Mdat5Ya3mMg5dI0ug=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MQPab6dkpnJkKEqOhDUzzKUuw810Ohhzm53uZ1Aa/22c9893CUN7dgKtPvncUN9j1JvcQ3WByiUfZ4swLMbqO5g6NokAlSATjd+iMqkiOmqg7WmcaOqLWM5QQmyL36j6quOITA9d6Z2JxGff1x9ukwKSQyohjjw8hdJcOF2+FB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fSibrf8L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2079C19424
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 18:09:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762193367;
+	bh=GIVep2mwCobXrapQXMsC8otlq3Mdat5Ya3mMg5dI0ug=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=fSibrf8LiIh1UPYNJaZIy/YygOjQ2940i93GlOxIP9gMl8eVhtmGgNTxtQjuo2U9N
+	 pX17/Y0NjCqda7m2kiWFWWu/CyKzRpx6zn+qD0h1fsN51tkfwtOcGzm3MR+i5I7+8u
+	 wYWEOFpN0Mmvc/6I8MCqNX4ze9lklqBL2Om1nl7+a6M8l3VQ8gGCKd2A+rXNCDtXN+
+	 BwRrDOX8tlyOq3egRgkOPHXDH0/jeIF8/w5nVkiNM406wTDnk8ZhMR718++WQVPi98
+	 +36nmIcOLz7CnBOTMVH61swRmj2jlzNBmMKyPZv2m4E9Yt4CU/GQdgFJJrJtEZE0p+
+	 HP00cHU3TD6sQ==
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-654ef376363so2406030eaf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 10:09:27 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUuDagZpGT/W9wrxF4hADw4zC9SKrY1ZT0U+lj6FPbJS6i3ZVbF3ImlgCeQ2UKXeZAGl4lhuRcnerWKibc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKMrpqqBm6CSYuOQdh9qgD75AbVlo0at62Pg06Ilsfu1cIWLbh
+	EFuIflCpzev99O9fkAGJ+NG2GDo6KHy8kufa9tqBJyFGhLlEqSE84eQd4nJ9MlExoVmpF3IISyg
+	cPRR6lAf4dnx9G1auaUvMJRQ3I+R5ipM=
+X-Google-Smtp-Source: AGHT+IG7x2rRrcA6QrLQTa5xWb0daH70NTjyInTXmFaxht1gFxQwSaFvkKLb5ZMaa0lEvSdnh4SnPhH3Mz/5+lVl5m4=
+X-Received: by 2002:a4a:e912:0:b0:654:fc59:2240 with SMTP id
+ 006d021491bc7-6568a3eedabmr6067377eaf.1.1762193366901; Mon, 03 Nov 2025
+ 10:09:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 07/12] mm: enable lazy_mmu sections to nest
-To: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>,
- David Woodhouse <dwmw2@infradead.org>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
- Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
-References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
- <20251029100909.3381140-8-kevin.brodsky@arm.com>
- <ae1236da-2647-4d53-bf4d-ff8fc32eb734@redhat.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <ae1236da-2647-4d53-bf4d-ff8fc32eb734@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20251103084244.2654432-1-lihuisong@huawei.com> <20251103084244.2654432-5-lihuisong@huawei.com>
+In-Reply-To: <20251103084244.2654432-5-lihuisong@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 3 Nov 2025 19:09:14 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0idhxfOa8_Zp4Z_j5Rqh4GW4JsBpGT_hT=v=NgcEZRb+g@mail.gmail.com>
+X-Gm-Features: AWmQ_bmi96oszDfQBk54Oo-EquHWI8AVZM3ogwB9ykleX4g_GY4wX8ncFBRI9TM
+Message-ID: <CAJZ5v0idhxfOa8_Zp4Z_j5Rqh4GW4JsBpGT_hT=v=NgcEZRb+g@mail.gmail.com>
+Subject: Re: [PATCH v2 4/7] ACPI: processor: idle: Disable ACPI idle if get
+ power information failed in power notify
+To: Huisong Li <lihuisong@huawei.com>
+Cc: rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Sudeep.Holla@arm.com, linuxarm@huawei.com, 
+	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com, zhenglifeng1@huawei.com, 
+	yubowen8@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 01/11/2025 12:22, David Hildenbrand wrote:
+On Mon, Nov 3, 2025 at 9:42=E2=80=AFAM Huisong Li <lihuisong@huawei.com> wr=
+ote:
 >
->>   static inline void lazy_mmu_mode_pause(void)
->>   {
->> +    struct lazy_mmu_state *state = &current->lazy_mmu_state;
->> +
->> +    VM_WARN_ON(state->nesting_level == 0 || !state->active);
->> +
->> +    state->active = false;
->>       arch_leave_lazy_mmu_mode();
->
-> Just one question:
->
-> Don't we want to allow for pause/resume when not enabled? Would seem
-> valid to me, because pause/resume code should actually not worry about
-> that, right?
+> The old states may not be usable any more if get power information
+> failed in power notify. The ACPI idle should be disabled entirely.
 
-This does sound sensible, thanks for the suggestion. The initial goal
-was to allow functions that know they're called with lazy MMU enabled to
-be able to pause it temporarily if they need batching disabled. But we
-could generalise this to: if you know batching would break things, then
-you can preemptively add a pause/resume pair, and it won't do anything
-unless you're called with lazy MMU enabled.
+How does it actually disable anything?  It only changes the
+acpi_processor_power_state_has_changed() return value AFAICS, but that
+return value isn't checked.
 
-I also like this as this removes an invalid usage situation - now as
-long as you have balanced enable/disable and pause/resume calls, you're
-good. Will make that change in v5.
+> Fixes: f427e5f1cf75 ("ACPI / processor: Get power info before updating th=
+e C-states")
 
-- Kevin
+So how does it fix anything?
 
+> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+> ---
+>  drivers/acpi/processor_idle.c | 22 +++++++++++++++++-----
+>  1 file changed, 17 insertions(+), 5 deletions(-)
 >
-> if (!state->nesting_level) {
->     VM_WARN_ON(state->active);
->     return;
-> }
-> VM_WARN_ON(!state->active);
-> state->active = false;
-> arch_leave_lazy_mmu_mode();
+> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.=
+c
+> index c73df5933691..4627b00257e6 100644
+> --- a/drivers/acpi/processor_idle.c
+> +++ b/drivers/acpi/processor_idle.c
+> @@ -1317,6 +1317,7 @@ int acpi_processor_power_state_has_changed(struct a=
+cpi_processor *pr)
+>         int cpu;
+>         struct acpi_processor *_pr;
+>         struct cpuidle_device *dev;
+> +       int ret =3D 0;
 >
+>         if (disabled_by_idle_boot_param())
+>                 return 0;
+> @@ -1345,8 +1346,18 @@ int acpi_processor_power_state_has_changed(struct =
+acpi_processor *pr)
+>                         cpuidle_disable_device(dev);
+>                 }
+>
+> -               /* Populate Updated C-state information */
+> -               acpi_processor_get_power_info(pr);
+> +               /*
+> +                * Populate Updated C-state information
+> +                * The same idle state is used for all CPUs, cpuidle of a=
+ll CPUs
+> +                * should be disabled.
+> +                */
+> +               ret =3D acpi_processor_get_power_info(pr);
+> +               if (ret) {
+> +                       pr_err("Get processor-%u power information failed=
+, disable cpuidle of all CPUs\n",
+> +                              pr->id);
+
+pr_info() at most, preferably pr_debug() or maybe pr_info_once().
+
+> +                       goto release_lock;
+
+"unlock" would be a better name.
+
+> +               }
+> +
+>                 acpi_processor_setup_cpuidle_states(pr);
+>
+>                 /* Enable all cpuidle devices */
+> @@ -1354,18 +1365,19 @@ int acpi_processor_power_state_has_changed(struct=
+ acpi_processor *pr)
+>                         _pr =3D per_cpu(processors, cpu);
+>                         if (!_pr || !_pr->flags.power_setup_done)
+>                                 continue;
+> -                       acpi_processor_get_power_info(_pr);
+> -                       if (_pr->flags.power) {
+> +                       ret =3D acpi_processor_get_power_info(_pr);
+
+This does not need to be called if _pr->flags.power is unset.  Why are
+you changing this?
+
+> +                       if (!ret && _pr->flags.power) {
+>                                 dev =3D per_cpu(acpi_cpuidle_device, cpu)=
+;
+>                                 acpi_processor_setup_cpuidle_dev(_pr, dev=
+);
+>                                 cpuidle_enable_device(dev);
+>                         }
+
+If it succeeds for the next CPU, the return value will be still 0, won't it=
+?
+
+>                 }
+> +release_lock:
+>                 cpuidle_resume_and_unlock();
+>                 cpus_read_unlock();
+>         }
+>
+> -       return 0;
+> +       return ret;
+>  }
+>
+>  void acpi_processor_register_idle_driver(void)
+> --
 
