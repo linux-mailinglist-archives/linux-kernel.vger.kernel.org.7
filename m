@@ -1,149 +1,124 @@
-Return-Path: <linux-kernel+bounces-883746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A3F7C2E3E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 23:19:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E776BC2E3F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 23:22:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 096B818938BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 22:20:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7B271894400
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 22:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F5B30CDA2;
-	Mon,  3 Nov 2025 22:19:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B51BA305E19;
+	Mon,  3 Nov 2025 22:22:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h9oF19FO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I/Lp31yo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D2E306482;
-	Mon,  3 Nov 2025 22:19:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DA2819A288;
+	Mon,  3 Nov 2025 22:22:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762208378; cv=none; b=GKErDRY8KJsKrLY2Io6roGp88pE+GBPnEvmEBUGOQCvrB2ld34nmfQkVwrofZmI7uq3amV3Xdj2AIMUFyRycOnQubYNEsVcYEtmqI4mDa8LzFs7rKf9pzlr/UFGttjHQgBvKS8zT0scNI3aGwD2jZJ/K2sVKYL9MiWzsStfDtuA=
+	t=1762208528; cv=none; b=pvf7cFpclCyUteNT5JBfqjCcZhWhnzFawmLetsdKZ4tAMMxGSQPMvrtH5fAiE0VFCO2Bc4rOSUU5p6m7jjkRVdEKaCfKAEi0afDYfhYD3lPT75hf+tLQz6fRMjrjoZxUmpXgksyP3bb5riG2BxAEzc2UlGy/ssXGt08+6evipaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762208378; c=relaxed/simple;
-	bh=wpiPMuuFGzd1HX1RUyEGmhibbSv0Aqq202GkXTrqzrI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LiYDuSUvEUiDgjQQw1VUcSpKwt4WGsXIYJlZyDM0KcNgMcKkyz+p1/AZcK25r3f0pDUkcNE0f3oJx44mbj1wzy4dp+e5u0Ha87NzxEOssLwslHf/oQO+Jj8sbDYYua3DQXIc2IVgRR1Nw1t/IogJ0WyCwHhmdkGyhmV8yS569HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h9oF19FO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C5E7C113D0;
-	Mon,  3 Nov 2025 22:19:37 +0000 (UTC)
+	s=arc-20240116; t=1762208528; c=relaxed/simple;
+	bh=4+HwZyxB60cLLkwbbtQeqRTkzlhrRDxKz+l5ARqBSFw=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=h/zNyUsOf1tDkfG6L78/xG9Lqsk6pAleR48U6xo2dm2stvgA7XtQXjRJ+Dn2acZGT0hJHECReTGaif8mR9WWx6YytkkW2QW2ee/NIAjMyN1r3DF4FnyAD6qEiaA6aJ5dsmJvxODJ4McEtHSMQuHx2WE9LXm2Aga+FDRhcDOU3gQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I/Lp31yo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D9AFC4CEE7;
+	Mon,  3 Nov 2025 22:22:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762208377;
-	bh=wpiPMuuFGzd1HX1RUyEGmhibbSv0Aqq202GkXTrqzrI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=h9oF19FO4D0QWNnPur/W3em/sBAkXLMI+juCha0XOT2C+A1v4GMxlRWcEWnDBILBH
-	 6Y3PfhVCuNvoW9T3dUia9/szzPKk1EcmN53F57slLladGVza87YmUtb9Q6ZOduLQ8J
-	 5rSTKMTqvup/lNRsorxZcukzShamibR8QAzBvmTz/KSgpbOVUcK409aDfWa3kRFnHn
-	 x/ilWilqTxmjNkj5UyVWDuPmoGvJPTMgzu/+Wv8OCVKHTodrmwsX6p5hb8YRo9eXBv
-	 m2IJQzL9eH0qkLvzJWFHx/+fdKuj4gHXCIToL+4R0YtrWSyBhXtGbjy7qMCNljNmSv
-	 GjmT+2tNENExw==
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Yue Wang <yue.wang@Amlogic.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Linnaea Lavia <linnaea-von-lavia@live.com>,
-	FUKAUMI Naoki <naoki@radxa.com>,
-	Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
-	linux-amlogic@lists.infradead.org,
+	s=k20201202; t=1762208527;
+	bh=4+HwZyxB60cLLkwbbtQeqRTkzlhrRDxKz+l5ARqBSFw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=I/Lp31yoA+tIy3PALY99JfXTZS6tYX9J8PxGDjCegfDjzss4rKJoVJotvrVl6IZEw
+	 O+NjEs21yS9zEJjDSzc860V/hp6+VR11aam88MLXsVw0u2lWvLVVhPey2L4qqKKvza
+	 iABcTKLO4pKOM2S/pyT49b6YhJXNcJIQjp6vTSJRXsSTqyxi5WqSFByIxyotsB8CLV
+	 Etkqg60Rlmw7SV/CDP6sLHmqaHNBwZDYFtPSCfALy2BjB+QoFoLmaIJbI1YnnwMHc4
+	 FbE/1qyhWBcNv/c8EsZTKoaphJW0KdeOV25G5lW47zOpNAHdXSDlXDQFYkxvzRrsSU
+	 tnrDl1SQNkFMQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <maz@kernel.org>)
+	id 1vG2w8-000000026Nh-3s7P;
+	Mon, 03 Nov 2025 22:22:05 +0000
+Date: Mon, 03 Nov 2025 22:22:04 +0000
+Message-ID: <86jz06vjsj.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Jose Marinho <jose.marinho@arm.com>
+Cc: Jiaqi Yan <jiaqiyan@google.com>,
+	oliver.upton@linux.dev,
+	duenwen@google.com,
+	rananta@google.com,
+	jthoughton@google.com,
+	vsethi@nvidia.com,
+	jgg@nvidia.com,
+	joey.gouly@arm.com,
+	suzuki.poulose@arm.com,
+	yuzenghui@huawei.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	pbonzini@redhat.com,
+	corbet@lwn.net,
+	shuah@kernel.org,
+	kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
-	linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] PCI: meson: Remove meson_pcie_link_up() timeout, message, speed check
-Date: Mon,  3 Nov 2025 16:19:26 -0600
-Message-ID: <20251103221930.1831376-1-helgaas@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	linux-doc@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v4 1/3] KVM: arm64: VM exit to userspace to handle SEA
+In-Reply-To: <7a61bcf9-a57d-a8e9-a9b8-4eacef80acd3@arm.com>
+References: <20251013185903.1372553-1-jiaqiyan@google.com>
+	<20251013185903.1372553-2-jiaqiyan@google.com>
+	<7a61bcf9-a57d-a8e9-a9b8-4eacef80acd3@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: jose.marinho@arm.com, jiaqiyan@google.com, oliver.upton@linux.dev, duenwen@google.com, rananta@google.com, jthoughton@google.com, vsethi@nvidia.com, jgg@nvidia.com, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, pbonzini@redhat.com, corbet@lwn.net, shuah@kernel.org, kvm@vger.kernel.org, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+On Mon, 03 Nov 2025 18:17:00 +0000,
+Jose Marinho <jose.marinho@arm.com> wrote:
+> 
+> > +	/*
+> > +	 * Exit to userspace, and provide faulting guest virtual and physical
+> > +	 * addresses in case userspace wants to emulate SEA to guest by
+> > +	 * writing to FAR_ELx and HPFAR_ELx registers.
+> > +	 */
+> > +	memset(&run->arm_sea, 0, sizeof(run->arm_sea));
+> > +	run->exit_reason = KVM_EXIT_ARM_SEA;
+> > +	run->arm_sea.esr = esr & esr_mask;
+> > +
+> > +	if (!(esr & ESR_ELx_FnV))
+> > +		run->arm_sea.gva = kvm_vcpu_get_hfar(vcpu) > +
+> > +	ipa = kvm_vcpu_get_fault_ipa(vcpu);
+> > +	if (ipa != INVALID_GPA) {
+> > +		run->arm_sea.flags |= KVM_EXIT_ARM_SEA_FLAG_GPA_VALID;
+> > +		run->arm_sea.gpa = ipa;
+> 
+> Are we interested in the value of PFAR_EL2 (if FEAT_PFAR implemented)?
 
-Previously meson_pcie_link_up() only returned true if the link was in the
-L0 state.  This was incorrect because hardware autonomously manages
-transitions between L0, L0s, and L1 while both components on the link stay
-in D0.  Those states should all be treated as "link is active".
+We don't have any support for PFAR, and I don't think we have any plan
+to support it in the near future. If anything, the rest of the kernel
+should start by growing support for it before we start dragging it
+into KVM.
 
-Returning false when the device was in L0s or L1 broke config accesses
-because dw_pcie_other_conf_map_bus() fails if the link is down, which
-caused errors like this:
+	M.
 
-  meson-pcie fc000000.pcie: error: wait linkup timeout
-  pci 0000:01:00.0: BAR 0: error updating (0xfc700004 != 0xffffffff)
-
-Remove the LTSSM state check, timeout, speed check, and error message from
-meson_pcie_link_up(), the dw_pcie_ops.link_up() method, so it is a simple
-boolean check of whether the link is active.  Timeouts and and error
-messages are handled at a higher level, e.g., dw_pcie_wait_for_link().
-
-Fixes: 9c0ef6d34fdb ("PCI: amlogic: Add the Amlogic Meson PCIe controller driver")
-Reported-by: Linnaea Lavia <linnaea-von-lavia@live.com>
-Closes: https://lore.kernel.org/r/DM4PR05MB102707B8CDF84D776C39F22F2C7F0A@DM4PR05MB10270.namprd05.prod.outlook.com
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Tested-by: Linnaea Lavia <linnaea-von-lavia@live.com>
-Cc: stable@vger.kernel.org
----
- drivers/pci/controller/dwc/pci-meson.c | 36 +++-----------------------
- 1 file changed, 3 insertions(+), 33 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
-index 787469d1b396..13685d89227a 100644
---- a/drivers/pci/controller/dwc/pci-meson.c
-+++ b/drivers/pci/controller/dwc/pci-meson.c
-@@ -338,40 +338,10 @@ static struct pci_ops meson_pci_ops = {
- static bool meson_pcie_link_up(struct dw_pcie *pci)
- {
- 	struct meson_pcie *mp = to_meson_pcie(pci);
--	struct device *dev = pci->dev;
--	u32 speed_okay = 0;
--	u32 cnt = 0;
--	u32 state12, state17, smlh_up, ltssm_up, rdlh_up;
-+	u32 state12;
- 
--	do {
--		state12 = meson_cfg_readl(mp, PCIE_CFG_STATUS12);
--		state17 = meson_cfg_readl(mp, PCIE_CFG_STATUS17);
--		smlh_up = IS_SMLH_LINK_UP(state12);
--		rdlh_up = IS_RDLH_LINK_UP(state12);
--		ltssm_up = IS_LTSSM_UP(state12);
--
--		if (PM_CURRENT_STATE(state17) < PCIE_GEN3)
--			speed_okay = 1;
--
--		if (smlh_up)
--			dev_dbg(dev, "smlh_link_up is on\n");
--		if (rdlh_up)
--			dev_dbg(dev, "rdlh_link_up is on\n");
--		if (ltssm_up)
--			dev_dbg(dev, "ltssm_up is on\n");
--		if (speed_okay)
--			dev_dbg(dev, "speed_okay\n");
--
--		if (smlh_up && rdlh_up && ltssm_up && speed_okay)
--			return true;
--
--		cnt++;
--
--		udelay(10);
--	} while (cnt < WAIT_LINKUP_TIMEOUT);
--
--	dev_err(dev, "error: wait linkup timeout\n");
--	return false;
-+	state12 = meson_cfg_readl(mp, PCIE_CFG_STATUS12);
-+	return IS_SMLH_LINK_UP(state12) && IS_RDLH_LINK_UP(state12);
- }
- 
- static int meson_pcie_host_init(struct dw_pcie_rp *pp)
 -- 
-2.43.0
-
+Without deviation from the norm, progress is not possible.
 
