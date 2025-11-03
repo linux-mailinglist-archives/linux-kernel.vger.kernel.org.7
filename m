@@ -1,263 +1,143 @@
-Return-Path: <linux-kernel+bounces-883324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C76AC2D114
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:20:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 251CCC2D2A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:36:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B598188B5DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:20:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8DED425447
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4755C315D41;
-	Mon,  3 Nov 2025 16:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D02D3191A6;
+	Mon,  3 Nov 2025 16:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dxZK56Ol"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rj09nGBa"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A87316192
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DCC43164D8
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762186796; cv=none; b=CwqtgajX3ac6VNpjBQSLbQOTs9pgz/YX/8prTqxdsiKj1ijLh1wUSPr/WWm4SCWxMIpIEGTfLHpKhTv3jLYn2mLDFZkbveruZx+ZJNDd1bn2qbXYnSz+Dh2n/Cu7ws7pEK8xdp+2qlwaIPTIbxpRSrwlZovwHmXJtYiZcjBfq4o=
+	t=1762186806; cv=none; b=P+QfmasS9+QOYRFIo0IjWfj5m030LFEzfHPknGsVoH5TSP6JxrtfZWlZblxa4H0bbmgrWwAt0kzfazyODn11mMTUHUkbiSn7hLy11f4AroAVX7/R4QAOWOrBWCylwrN3Kpiqvxb2uSGCliUDEGGnBbjh415IoYJMXSDA8NkHlVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762186796; c=relaxed/simple;
-	bh=Sk3YUo7dUQtfztKAt03QLqMqer/FMN4d3z80Z8X0gQY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RNoAfkU/NhxEFtcPBrBH7h3Rtqj/OZuM4bXWPfG6TUUXWxIMLeSuUc3VbGiqenZu3iB6CHC1u3+NMisL6EOXVGnR5m3Mk37sWZk0zvY3aYUMDNiDgfg3wP7D2nwkTXUI1hXgLxsaqdNzhOBHFmDQdK1qeJGJbWqkvq/6T6VciVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dxZK56Ol; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC232C2BCB0
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:19:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762186795;
-	bh=Sk3YUo7dUQtfztKAt03QLqMqer/FMN4d3z80Z8X0gQY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=dxZK56OlymerAXSLwcLJt5wUMBCeKIIy9k9GZrQIWtIybqxFAG8HG5eoRNsFV1W8G
-	 LQmGxQHV6ltIL3yHCFC1ZNy53wFCeSEoTPc0yw1eE3ENLLRJO45ic9q/r2nG/+wgFY
-	 ELkmJT1boKpiZjKxsCrgystfh2kWIvg+LAJHXn0A8525tXiVO6Fjy9b3m065jzMo05
-	 9OE+JYZs4ewGR8lOjokWdhW2QfC917+q9iNK447Mpr1ycV0G8ahkUHGdA6dKxtugSb
-	 xe2TIiC5CQhtwMvBVc7TBnLdt5sFpD6jBD2kw01inXCrgklxuYNintL75CBU+fNe/+
-	 WTETAAUJ7TKtw==
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-7c69476dd8cso2452677a34.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 08:19:55 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXcdYllDu5Xhqffl0fUSgUbwl8+mtSkH3JeaDdMcP3bdqY5J2e4t7poMB+t8rwhC6WURYi2nBAJW+mQf3Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyY0UM3Nm5nW1/nCZZHIuyZHnA1Cu8cfxXrejouiAS5WYxfxqJu
-	Ax91Ts8WIBGyLD+cIr/f/VNbad8SKb4Q6BjP2Z+qXha8E34KDrBemW2hY/VrUhHKV7HtrGm2YoU
-	oWFxEzLlWbzqkpe+VbVf4ZpZI72LO5Ug=
-X-Google-Smtp-Source: AGHT+IG3361toIoasB3uOKUzNV6dinGA22EHyvpJDIQt6UYgSrpZaDoMHd819oZo8awumREm/GvNri9dakziMUuH1og=
-X-Received: by 2002:a05:6808:d4d:b0:438:39a2:b61c with SMTP id
- 5614622812f47-44f95dfb174mr5549335b6e.2.1762186795085; Mon, 03 Nov 2025
- 08:19:55 -0800 (PST)
+	s=arc-20240116; t=1762186806; c=relaxed/simple;
+	bh=h7R/k1MMSVPQfBxt0pvy0030CquRgbNXX1VOTDMoaIQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=rsCyf1ev+0QpqqaHhrft3YrtVXJc5GdlhZNk4IseEUp3vdSYBZvDMl2G1QuzD+hJSLb8AibCVrF6ZY8emXIri04WYOEyyDj9KiuVGwsd3d/cPTXXogTFNffsJ2d0yFkkdN+oTqAEtAP2XruJejZv+R31LgKt/1QMwvGnFiZKzeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sidnayyar.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rj09nGBa; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sidnayyar.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-47740c1442dso14937455e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 08:20:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762186802; x=1762791602; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=W8tTM2uCb0zl0k898LdIZTakN1ZygKd+3CMbo77PL78=;
+        b=rj09nGBaFeX9xJxGNhVti1JlVGg35iSsZj581DpbIM5CayFWU0a8FRWSK4VebK7qHu
+         Ux+y7H3SBxbIMMw9l7HyhN7Ptva2mSJhoC1VSqLuECr8c9NxHO9OT24T4rssf+DC3l4s
+         wG/3HPFQP1bi+Nm1IMlehvS1erGMmZ1i8AlRbxXVxR0SuoaVwJ9avqqZTTYVgNf4z8+c
+         X0kE/cWi2A52pNCxV6BG9vfj49Ss8qMjosifq2Sa8P6+wD4YW0jhh7Os4pN8CLUXbfjq
+         4Z10drFG4KKLrxMdHOK+CXi44cRaLGDIecz3PkEHdqJnO616SPjAVuVmtTFqYEOqhzOm
+         1axQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762186802; x=1762791602;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=W8tTM2uCb0zl0k898LdIZTakN1ZygKd+3CMbo77PL78=;
+        b=bL8nG0oL7ehFJdn45N8RaLoSX9LeykIZHN6pC4Jcvi/i5ALfm2mfjLKWWuG7oHTaSs
+         COiob4DWLEkD7ABEcHZRBwd4FEYWlvdez8zpojEaIVFnSaYJVGkIEoDTW0vmjwXObzLi
+         L24VLxWsgJ/NOLN42sE0A3mJ60Yfjs1xRoqusUhAQDsWHLCiRytCX1oHJGiFUIct9kWA
+         TZ6TbEHe0ZmIs3rGt+lfTcf2nHCeYcWmYvmgXGkfJNvaCykVlAAPbyreAvPxsRZROucd
+         yr1JQTPoucpmHqZJdbdIPHHbOyW9srb4d7phwKlW44Qpsxw/qqWR0zAtCrGBux0qyOm5
+         BNYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKj+9ej4066G8aprB6L0whehUaOa87JcO8LS4qCaOb0Qvc1mqnKzSx7RtvGPp21thRaGBmGrL7hu10aTs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfenYWfIL/rd8i9fjoBiaSxB2+JtuztwiAquXM1Eizk9jCokxj
+	OX3D+dismldzZH6CuQ9I9ZmZFXB4cJcdplwPJ+sAD3uFDyja85cs04qzKaYQUWFzND18fZmJWXN
+	JCVwj/OCF0hN0lkGANg==
+X-Google-Smtp-Source: AGHT+IEbhSxEl23KciUSXJmUxlryd+9/wkj5PORgK0VgJEd3vZvStNFYMjkCuoAO6A/1vErUZgMsibakSlGcVNc=
+X-Received: from wmwn6.prod.google.com ([2002:a05:600d:4346:b0:477:3fdf:4c28])
+ (user=sidnayyar job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:8b30:b0:46d:a04:50c6 with SMTP id 5b1f17b1804b1-477429d8ee4mr73769555e9.30.1762186802499;
+ Mon, 03 Nov 2025 08:20:02 -0800 (PST)
+Date: Mon,  3 Nov 2025 16:19:46 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251030071321.2763224-1-hejunhao3@h-partners.com>
-In-Reply-To: <20251030071321.2763224-1-hejunhao3@h-partners.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 3 Nov 2025 17:19:43 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0h=QtcT7zhZEgrTjUk7EAk2OfbGG6BoEEv-3toKODMXQA@mail.gmail.com>
-X-Gm-Features: AWmQ_bk1ceWWT4cSZSU5mE1myDtpg3UPaMnBHWg-zIlq7JFILI41pAtQ3N0MKOQ
-Message-ID: <CAJZ5v0h=QtcT7zhZEgrTjUk7EAk2OfbGG6BoEEv-3toKODMXQA@mail.gmail.com>
-Subject: Re: [PATCH] ACPI: APEI: Handle repeated SEA error interrupts storm scenarios
-To: Junhao He <hejunhao3@h-partners.com>
-Cc: rafael@kernel.org, tony.luck@intel.com, bp@alien8.de, guohanjun@huawei.com, 
-	mchehab@kernel.org, xueshuai@linux.alibaba.com, jarkko@kernel.org, 
-	yazen.ghannam@amd.com, jane.chu@oracle.com, lenb@kernel.org, 
-	Jonathan.Cameron@huawei.com, linux-acpi@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-edac@vger.kernel.org, shiju.jose@huawei.com, tanxiaofei@huawei.com, 
-	linuxarm@huawei.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.1.930.gacf6e81ea2-goog
+Message-ID: <20251103161954.1351784-1-sidnayyar@google.com>
+Subject: [PATCH v3 0/8] scalable symbol flags with __kflagstab
+From: Siddharth Nayyar <sidnayyar@google.com>
+To: petr.pavlu@suse.com, corbet@lwn.net
+Cc: arnd@arndb.de, linux-arch@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+	mcgrof@kernel.org, nathan@kernel.org, nicolas.schier@linux.dev, 
+	samitolvanen@google.com, sidnayyar@google.com, maennich@google.com, 
+	gprocida@google.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 30, 2025 at 8:13=E2=80=AFAM Junhao He <hejunhao3@h-partners.com=
-> wrote:
->
-> The do_sea() function defaults to using firmware-first mode, if supported=
-.
-> It invoke acpi/apei/ghes ghes_notify_sea() to report and handling the SEA
-> error, The GHES uses a buffer to cache the most recent 4 kinds of SEA
-> errors. If the same kind SEA error continues to occur, GHES will skip to
-> reporting this SEA error and will not add it to the "ghes_estatus_llist"
-> list until the cache times out after 10 seconds, at which point the SEA
-> error will be reprocessed.
->
-> The GHES invoke ghes_proc_in_irq() to handle the SEA error, which
-> ultimately executes memory_failure() to process the page with hardware
-> memory corruption. If the same SEA error appears multiple times
-> consecutively, it indicates that the previous handling was incomplete or
-> unable to resolve the fault. In such cases, it is more appropriate to
-> return a failure when encountering the same error again, and then proceed
-> to arm64_do_kernel_sea for further processing.
->
-> When hardware memory corruption occurs, a memory error interrupt is
-> triggered. If the kernel accesses this erroneous data, it will trigger
-> the SEA error exception handler. All such handlers will call
-> memory_failure() to handle the faulty page.
->
-> If a memory error interrupt occurs first, followed by an SEA error
-> interrupt, the faulty page is first marked as poisoned by the memory erro=
-r
-> interrupt process, and then the SEA error interrupt handling process will
-> send a SIGBUS signal to the process accessing the poisoned page.
->
-> However, if the SEA interrupt is reported first, the following exceptiona=
-l
-> scenario occurs:
->
-> When a user process directly requests and accesses a page with hardware
-> memory corruption via mmap (such as with devmem), the page containing thi=
-s
-> address may still be in a free buddy state in the kernel. At this point,
-> the page is marked as "poisoned" during the SEA claim memory_failure().
-> However, since the process does not request the page through the kernel's
-> MMU, the kernel cannot send SIGBUS signal to the processes. And the memor=
-y
-> error interrupt handling process not support send SIGBUS signal. As a
-> result, these processes continues to access the faulty page, causing
-> repeated entries into the SEA exception handler. At this time, it lead to
-> an SEA error interrupt storm.
->
-> Fixes this by returning a failure when encountering the same error again.
->
-> The following error logs is explained using the devmem process:
->   NOTICE:  SEA Handle
->   NOTICE:  SpsrEl3 =3D 0x60001000, ELR_EL3 =3D 0xffffc6ab42671400
->   NOTICE:  skt[0x0]die[0x0]cluster[0x0]core[0x1]
->   NOTICE:  EsrEl3 =3D 0x92000410
->   NOTICE:  PA is valid: 0x1000093c00
->   NOTICE:  Hest Set GenericError Data
->   [ 1419.542401][    C1] {57}[Hardware Error]: Hardware error from APEI G=
-eneric Hardware Error Source: 9
->   [ 1419.551435][    C1] {57}[Hardware Error]: event severity: recoverabl=
-e
->   [ 1419.557865][    C1] {57}[Hardware Error]:  Error 0, type: recoverabl=
-e
->   [ 1419.564295][    C1] {57}[Hardware Error]:   section_type: ARM proces=
-sor error
->   [ 1419.571421][    C1] {57}[Hardware Error]:   MIDR: 0x0000000000000000
->   [ 1419.571434][    C1] {57}[Hardware Error]:   Multiprocessor Affinity =
-Register (MPIDR): 0x0000000081000100
->   [ 1419.586813][    C1] {57}[Hardware Error]:   error affinity level: 0
->   [ 1419.586821][    C1] {57}[Hardware Error]:   running state: 0x1
->   [ 1419.602714][    C1] {57}[Hardware Error]:   Power State Coordination=
- Interface state: 0
->   [ 1419.602724][    C1] {57}[Hardware Error]:   Error info structure 0:
->   [ 1419.614797][    C1] {57}[Hardware Error]:   num errors: 1
->   [ 1419.614804][    C1] {57}[Hardware Error]:    error_type: 0, cache er=
-ror
->   [ 1419.629226][    C1] {57}[Hardware Error]:    error_info: 0x000000002=
-0400014
->   [ 1419.629234][    C1] {57}[Hardware Error]:     cache level: 1
->   [ 1419.642006][    C1] {57}[Hardware Error]:     the error has not been=
- corrected
->   [ 1419.642013][    C1] {57}[Hardware Error]:    physical fault address:=
- 0x0000001000093c00
->   [ 1419.654001][    C1] {57}[Hardware Error]:   Vendor specific error in=
-fo has 48 bytes:
->   [ 1419.654014][    C1] {57}[Hardware Error]:    00000000: 00000000 0000=
-0000 00000000 00000000  ................
->   [ 1419.670685][    C1] {57}[Hardware Error]:    00000010: 00000000 0000=
-0000 00000000 00000000  ................
->   [ 1419.670692][    C1] {57}[Hardware Error]:    00000020: 00000000 0000=
-0000 00000000 00000000  ................
->   [ 1419.783606][T54990] Memory failure: 0x1000093: recovery action for f=
-ree buddy page: Recovered
->   [ 1419.919580][ T9955] EDAC MC0: 1 UE Multi-bit ECC on unknown memory (=
-node:0 card:1 module:71 bank:7 row:0 col:0 page:0x1000093 offset:0xc00 grai=
-n:1 - APEI location: node:0 card:257 module:71 bank:7 row:0 col:0)
->   NOTICE:  SEA Handle
->   NOTICE:  SpsrEl3 =3D 0x60001000, ELR_EL3 =3D 0xffffc6ab42671400
->   NOTICE:  skt[0x0]die[0x0]cluster[0x0]core[0x1]
->   NOTICE:  EsrEl3 =3D 0x92000410
->   NOTICE:  PA is valid: 0x1000093c00
->   NOTICE:  Hest Set GenericError Data
->   NOTICE:  SEA Handle
->   NOTICE:  SpsrEl3 =3D 0x60001000, ELR_EL3 =3D 0xffffc6ab42671400
->   NOTICE:  skt[0x0]die[0x0]cluster[0x0]core[0x1]
->   NOTICE:  EsrEl3 =3D 0x92000410
->   NOTICE:  PA is valid: 0x1000093c00
->   NOTICE:  Hest Set GenericError Data
->   ...
->   ...        ---> Hapend SEA error interrupt storm
->   ...
->   NOTICE:  SEA Handle
->   NOTICE:  SpsrEl3 =3D 0x60001000, ELR_EL3 =3D 0xffffc6ab42671400
->   NOTICE:  skt[0x0]die[0x0]cluster[0x0]core[0x1]
->   NOTICE:  EsrEl3 =3D 0x92000410
->   NOTICE:  PA is valid: 0x1000093c00
->   NOTICE:  Hest Set GenericError Data
->   [ 1429.818080][ T9955] Memory failure: 0x1000093: already hardware pois=
-oned
->   [ 1429.825760][    C1] ghes_print_estatus: 1 callbacks suppressed
->   [ 1429.825763][    C1] {59}[Hardware Error]: Hardware error from APEI G=
-eneric Hardware Error Source: 9
->   [ 1429.843731][    C1] {59}[Hardware Error]: event severity: recoverabl=
-e
->   [ 1429.861800][    C1] {59}[Hardware Error]:  Error 0, type: recoverabl=
-e
->   [ 1429.874658][    C1] {59}[Hardware Error]:   section_type: ARM proces=
-sor error
->   [ 1429.887516][    C1] {59}[Hardware Error]:   MIDR: 0x0000000000000000
->   [ 1429.901159][    C1] {59}[Hardware Error]:   Multiprocessor Affinity =
-Register (MPIDR): 0x0000000081000100
->   [ 1429.901166][    C1] {59}[Hardware Error]:   error affinity level: 0
->   [ 1429.914896][    C1] {59}[Hardware Error]:   running state: 0x1
->   [ 1429.914903][    C1] {59}[Hardware Error]:   Power State Coordination=
- Interface state: 0
->   [ 1429.933319][    C1] {59}[Hardware Error]:   Error info structure 0:
->   [ 1429.946261][    C1] {59}[Hardware Error]:   num errors: 1
->   [ 1429.946269][    C1] {59}[Hardware Error]:    error_type: 0, cache er=
-ror
->   [ 1429.970847][    C1] {59}[Hardware Error]:    error_info: 0x000000002=
-0400014
->   [ 1429.970854][    C1] {59}[Hardware Error]:     cache level: 1
->   [ 1429.988406][    C1] {59}[Hardware Error]:     the error has not been=
- corrected
->   [ 1430.013419][    C1] {59}[Hardware Error]:    physical fault address:=
- 0x0000001000093c00
->   [ 1430.013425][    C1] {59}[Hardware Error]:   Vendor specific error in=
-fo has 48 bytes:
->   [ 1430.025424][    C1] {59}[Hardware Error]:    00000000: 00000000 0000=
-0000 00000000 00000000  ................
->   [ 1430.053736][    C1] {59}[Hardware Error]:    00000010: 00000000 0000=
-0000 00000000 00000000  ................
->   [ 1430.066341][    C1] {59}[Hardware Error]:    00000020: 00000000 0000=
-0000 00000000 00000000  ................
->   [ 1430.294255][T54990] Memory failure: 0x1000093: already hardware pois=
-oned
->   [ 1430.305518][T54990] 0x1000093: Sending SIGBUS to devmem:54990 due to=
- hardware memory corruption
->
-> Signed-off-by: Junhao He <hejunhao3@h-partners.com>
-> ---
->  drivers/acpi/apei/ghes.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-> index 005de10d80c3..eebda39bfc30 100644
-> --- a/drivers/acpi/apei/ghes.c
-> +++ b/drivers/acpi/apei/ghes.c
-> @@ -1343,8 +1343,10 @@ static int ghes_in_nmi_queue_one_entry(struct ghes=
- *ghes,
->         ghes_clear_estatus(ghes, &tmp_header, buf_paddr, fixmap_idx);
->
->         /* This error has been reported before, don't process it again. *=
-/
-> -       if (ghes_estatus_cached(estatus))
-> +       if (ghes_estatus_cached(estatus)) {
-> +               rc =3D -ECANCELED;
->                 goto no_work;
-> +       }
->
->         llist_add(&estatus_node->llnode, &ghes_estatus_llist);
->
-> --
+This patch series implements a mechanism for scalable exported symbol
+flags using a separate section called __kflagstab. The series introduces
+__kflagstab support, removes *_gpl sections in favor of a GPL flag,
+simplifies symbol resolution during module loading.
 
-This needs a response from the APEI reviewers as per MAINTAINERS, thanks!
+This series previously added symbol import protection which aims to
+restrict the use of "protected symbol" exported by vmlinux, as a use
+case for which __kflagstab is being introduced. Such symbols are only
+allowed to be imported by signed modules when symbol protection is
+enabled. This functionality requires more thought and discussion [1],
+and therefore I will create a separate patch series for it. In the
+meantime, this series now only focuses on introduction of __kflagstab
+which right is an improvement to the module loader's code health [2].
+
+Thank you Petr Pavlu and Jonathan Corbet for their valuable feedback.
+
+---
+Changes from v2:
+- removed symbol import protection to spin off into its own series
+
+v2:
+https://lore.kernel.org/20251013153918.2206045-1-sidnayyar@google.com/
+
+Changes from v1:
+- added a check to ensure __kflagstab is present
+- added warnings for the obsolete *_gpl sections
+- moved protected symbol check before ref_module() call
+- moved protected symbol check failure warning to issue detection point
+
+v1:
+https://lore.kernel.org/20250829105418.3053274-1-sidnayyar@google.com/
+
+[1] https://lore.kernel.org/cac5ed5e-3320-4db0-99d8-ea5e97e56bfb@suse.com/
+[2] https://lore.kernel.org/2bf54830-ea9c-4962-a7ef-653fbed8f8c0@suse.com/
+
+Siddharth Nayyar (8):
+  define kernel symbol flags
+  linker: add kflagstab section to vmlinux and modules
+  modpost: create entries for kflagstab
+  module loader: use kflagstab instead of *_gpl sections
+  modpost: put all exported symbols in ksymtab section
+  module loader: remove references of *_gpl sections
+  linker: remove *_gpl sections from vmlinux and modules
+  remove references to *_gpl sections in documentation
+
+ Documentation/kbuild/modules.rst  |  11 ++--
+ include/asm-generic/vmlinux.lds.h |  21 ++----
+ include/linux/export-internal.h   |  28 +++++---
+ include/linux/module.h            |   4 +-
+ include/linux/module_symbol.h     |   5 ++
+ kernel/module/internal.h          |   4 +-
+ kernel/module/main.c              | 102 ++++++++++++++----------------
+ scripts/mod/modpost.c             |  16 +++--
+ scripts/module.lds.S              |   3 +-
+ 9 files changed, 99 insertions(+), 95 deletions(-)
+
+-- 
+2.51.1.930.gacf6e81ea2-goog
+
 
