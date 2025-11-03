@@ -1,134 +1,87 @@
-Return-Path: <linux-kernel+bounces-882930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A58FC2BEA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 14:02:09 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C77EC2BD88
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:54:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 538C81896218
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:59:53 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BCF423461BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 083EC3191D6;
-	Mon,  3 Nov 2025 12:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UHssLS+E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0749F3112AB;
+	Mon,  3 Nov 2025 12:53:06 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A114316900;
-	Mon,  3 Nov 2025 12:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CCA33101AE
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 12:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762174422; cv=none; b=Kowduqz8Ir4l0qTOF028XWSpoY+gOcJVjA3Ip8bkQiWCWA4EaQEjy++LHRwbSuDWqFKrEFyDbVzLqzaGuowMY9l9VVZCdevMoa2WCcDNzOApSirLGTuTJUAeG12lzj7ikFWBfOWgCHumOBcsuaJwpH58xUQbicIBGc6Hc9Dq20k=
+	t=1762174385; cv=none; b=EwexrT82yOBWvsBH1n0bQ0/Ja2Gp3eefKsfdBke96MwfCZRc8I+FFewf21paWMhoFBbIf6bfm8KHe24UeKsRIgYGrmoUa2ikR51vzUtemIhsVv2CFDlTUzB20qHqHLYcTz+knjdqHtCH1Pf2AZTtkdAXvJhIhERjgBdzfdeekgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762174422; c=relaxed/simple;
-	bh=yulLeJZn1mX+cSvDuaJcOgJyv8hH6SOCKBioc8zxN20=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QGt52B45iXfpHOEZNQ2YE9JWFH7heYe9CZweo+wjfR+iFjMoVtDJJ5MEg3LP+yIahjCgWvdpqrX2sR4MI03JVPTWv+VA5wGUdpw3vs8+v3xmsg1Kt1imETag5HhrE2QIc+BEoLH+MnNIUAmpvhjeu5D/nUE7ui3/k/VxOlgiX0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UHssLS+E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E56ADC4CEE7;
-	Mon,  3 Nov 2025 12:53:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762174422;
-	bh=yulLeJZn1mX+cSvDuaJcOgJyv8hH6SOCKBioc8zxN20=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=UHssLS+EqhPcmq4VX9kZY0n2kc8tsCfVCjt6DuBstuv8EC32KZlxDwa9aLUG4Y5RW
-	 bzDFE+AjQiL/+4Dmglxi9BQE7ek244+mr2ZVlLtff0GkpjA2GwpkhybdhtsFro4RH+
-	 zKrsUc9P+wtgp7fxV6PApqlPVF6FIGl8VBKRzQjtdzHqOF9xzCdoi0DVd/xRPG7BYW
-	 0zeeadflKBwib7ooXitByso+Gr9wLB5VwH4uC6UxMHmIZN+nGuVCPMG7pj9djf3gA+
-	 MuvY6e5z1u7rFwcu1qRKGA2wTrCiOmVMfrap5MLOYv3Rqwq0IXmtve0nNBeJ9kPy0j
-	 KKAZ/WDXXGLCA==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Mon, 03 Nov 2025 07:52:43 -0500
-Subject: [PATCH v4 15/17] nfsd: allow DELEGRETURN on directories
+	s=arc-20240116; t=1762174385; c=relaxed/simple;
+	bh=bj5f9xX1fnJ3dJMGZn4fuhinQ3RL1yDqPcLoBUSc1xo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=G1OMn7c40iFuO8DW+0GC5AdXzrjylOhZGn5tlfpR5EdLGAE/3R4st8ufcpypKxhx33nqB4s1Ihzl9plcjqO8PXZSEwW5CtFoFW+pcTv03Ov+soOTHyrZOqc6AAC0E6m6K+y5Rq69PIUWaCmO0Xs58Lbhf4BMwTHLdCDcL4v6w/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-4330ead8432so28601745ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 04:53:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762174383; x=1762779183;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PZocnu8EPn4lamljcaWUH4pHMKtolYi0r0uHU4tO8xk=;
+        b=EtmPSyDs+KoLBOsnMiN26XxvLmkmP76ANlRRT0VjxS9wdR9Mh3+lqFUXxn0pWxE/lV
+         A05N3pWbBwYkIT/tj3kqOBoUeCNZBWxnMMaUbV/k6SaCe8BFZVDpcRRbt0w2jTZmE5vC
+         FSQ/pujn1fGx3aOIfuCK4DyiYZcXdvgr5j0Tbf8lc9JUrWFl3feotEoPuXNZ1sZ+IFcE
+         GJG/Fi7CKpyeFFOcc1yAKK2MvdAM84P3JTMKJ90KCDjd8tcVSq7n/N9PSMBZX5uMd9eU
+         q3SMhtftr7UDOJcU1G5S7W2KweG1dopz4vVpGGHF+39Ge30f9NtLkvpNo+kqeNmGSlxo
+         wmEw==
+X-Forwarded-Encrypted: i=1; AJvYcCU8pceMJr5oh8hZn5/RUYOrKDQ/RUn/uqu3Pj/DtytS3bjHmvNZLwv3F2Cyw5jJPWuH6vrQ4JsFZqACC+E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwI0rjQ/Uj69HhJAGkrlWYlTG37+ErNdGge5jK+8LE2+dFHCjpQ
+	8vEyEzr2LiLPP60EkQJrE2whkwu/ayI/6aMcGbF4EWgLTT8uVwsuL9OF2a45pfZN3SU0hZPIldR
+	UvN0eGHK16UUu+n0eMUojMpvqN0aAsfePTxUZldjzKYq2Sfl+0aXOqNluEIY=
+X-Google-Smtp-Source: AGHT+IFwlFkgaV7o3+DvWgavE3xAGKwP39gDABlIiyrLBCj8TXrT/YzKkM0KXAU1ZlT3M1ezADrzGHPyekAx4Z9zV9/0LDwK2U9Y
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251103-dir-deleg-ro-v4-15-961b67adee89@kernel.org>
-References: <20251103-dir-deleg-ro-v4-0-961b67adee89@kernel.org>
-In-Reply-To: <20251103-dir-deleg-ro-v4-0-961b67adee89@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Chuck Lever <chuck.lever@oracle.com>, 
- Alexander Aring <alex.aring@gmail.com>, 
- Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
- Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
- Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
- Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
- Bharath SM <bharathsm@microsoft.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
- David Howells <dhowells@redhat.com>, Tyler Hicks <code@tyhicks.com>, 
- NeilBrown <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>, 
- Dai Ngo <Dai.Ngo@oracle.com>, Amir Goldstein <amir73il@gmail.com>, 
- Namjae Jeon <linkinjeon@kernel.org>, Steve French <smfrench@gmail.com>, 
- Sergey Senozhatsky <senozhatsky@chromium.org>, 
- Carlos Maiolino <cem@kernel.org>, Kuniyuki Iwashima <kuniyu@google.com>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
- samba-technical@lists.samba.org, netfs@lists.linux.dev, 
- ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
- linux-xfs@vger.kernel.org, netdev@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1228; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=yulLeJZn1mX+cSvDuaJcOgJyv8hH6SOCKBioc8zxN20=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpCKWeE480+wABQYqJklPZE2R0cp6NeFSJ3AyaC
- XhUBRMgxMSJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaQilngAKCRAADmhBGVaC
- FYB3D/9XuPIJashthYWvmksA9OtHQX/KiRSuH5SXxC6mf62tXE1cHMJBoaV0gLHl7Ak4fMX9aKI
- Ma2wZG111/8u42PZ0/Z5UNJ5Jx6Q6ptO0ltEgYl4vJpHmh4tI81ZE+QevqnRna8pJkBkINIzjjm
- 9KOurX4bg34tzdE0VIYx6FKy8nFUb5+JHTprjcAyy44pGpezXMzXgB9T/Ynpm7AeAQwi1XbqUzW
- P9aaeOiVeMJmUXJBI4Qm62zrzno8dgXr68e0HdmuGn1qH8DrMJOrN9t6gGNcRaulahmuw5z1yf5
- pDK8SPa9xx3cOit33yNTkn3T39600VZW/XGtmUmTE/VTjcWOt74sP+belIqSsh1M3KJhflOxFuD
- u4yjtb7B5dImLrxYjVFZL39P1H4WqA8YierlxIZa/wCaegLFaed4GCOys0BeLzkiJTcXraRpkPf
- FmPfuwjshGemRACFaiAmvlNZso3YDV5iSbMmeNghgCPl2XV7XKwzHOd1l9PWyXedupt/NdqQ7Ls
- v6aDsu7jBXjaAFxgfb27K4hSTXM0tlMkJpJTDXql5fjRvnWoheqDqOmdGLwvtLQcQT5eYOGkwaa
- 2TGBEUJBJ6S4H5z2muhfDa0rZ50UldQK+7a8N6dGNKcQ5Sv48tobCc+9eNdP5Gix3IqVyFtJnSJ
- qUTozEBnALhX8Ww==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+X-Received: by 2002:a92:cda1:0:b0:433:2d7c:66bd with SMTP id
+ e9e14a558f8ab-4332d7c6b1cmr45662915ab.10.1762174383358; Mon, 03 Nov 2025
+ 04:53:03 -0800 (PST)
+Date: Mon, 03 Nov 2025 04:53:03 -0800
+In-Reply-To: <510529165.3578880.1762172846355@kpc.webmail.kpnmail.nl>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6908a5af.050a0220.29fc44.0044.GAE@google.com>
+Subject: Re: [syzbot] [hfs?] kernel BUG in hfs_new_inode
+From: syzbot <syzbot+17cc9bb6d8d69b4139f0@syzkaller.appspotmail.com>
+To: jkoolstra@xs4all.nl, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-As Trond pointed out: "...provided that the presented stateid is
-actually valid, it is also sufficient to uniquely identify the file to
-which it is associated (see RFC8881 Section 8.2.4), so the filehandle
-should be considered mostly irrelevant for operations like DELEGRETURN."
+Hello,
 
-Don't ask fh_verify to filter on file type.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Reviewed-by: Chuck Lever <chuck.lever@oracle.com>
-Reviewed-by: NeilBrown <neil@brown.name>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/nfsd/nfs4state.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Reported-by: syzbot+17cc9bb6d8d69b4139f0@syzkaller.appspotmail.com
+Tested-by: syzbot+17cc9bb6d8d69b4139f0@syzkaller.appspotmail.com
 
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index 81fa7cc6c77b3cdc5ff22bc60ab0654f95dc258d..da66798023aba4c36c38208cec7333db237e46e0 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -7828,7 +7828,8 @@ nfsd4_delegreturn(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
- 	__be32 status;
- 	struct nfsd_net *nn = net_generic(SVC_NET(rqstp), nfsd_net_id);
- 
--	if ((status = fh_verify(rqstp, &cstate->current_fh, S_IFREG, 0)))
-+	status = fh_verify(rqstp, &cstate->current_fh, 0, 0);
-+	if (status)
- 		return status;
- 
- 	status = nfsd4_lookup_stateid(cstate, stateid, SC_TYPE_DELEG, SC_STATUS_REVOKED, &s, nn);
+Tested on:
 
--- 
-2.51.1
+commit:         6146a0f1 Linux 6.18-rc4
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=168f7932580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=72f4d1bb6e3e45a2
+dashboard link: https://syzkaller.appspot.com/bug?extid=17cc9bb6d8d69b4139f0
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17391e14580000
 
+Note: testing is done by a robot and is best-effort only.
 
