@@ -1,147 +1,150 @@
-Return-Path: <linux-kernel+bounces-882202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23E97C29DE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 03:35:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BA83C29DF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 03:38:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 049DE188D4F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 02:35:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 272451889A35
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 02:38:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B8128642D;
-	Mon,  3 Nov 2025 02:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DRIHBj45"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4410F28640B;
+	Mon,  3 Nov 2025 02:37:58 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B811C5D77
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 02:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42AF614B953;
+	Mon,  3 Nov 2025 02:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762137322; cv=none; b=Ii4fgWOF9wc86B2TRdnX0fKqHXcledrhfpwVG/qvBCXcbn7oy3g1XIWRGFwe4zcnmeNF1zVdFO++m9CG/mLGVR7UJdjluUW1+ynKKuqzCImBkcCtsEkwnDMkSGrh+3AShU9t5jrwItVId51b4wj6FzYKg7gf4zbVsfwxXAy1GZI=
+	t=1762137477; cv=none; b=d4n02TiufXR0oewzJZ8XsLvwq4uhPhU8tE+h8f23L4CMKVxOW0fsVwxMPrB23m/AI0M6JrQtEtgWuHb6ry6MQ4Yuc0jh3Exnm8nDQ5TpXW8jnTS906boZLU8AIeIoBuwFuclt9wHHoM+KykoCHHjllS3P27L6t4razpzE9dXoSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762137322; c=relaxed/simple;
-	bh=Po4FITX4drt+WLGHqKt44ddsd+cJ95meWgcRiywsgWI=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=MU0akZLk473YqVals2GYPMWmGCXw70unBbx5+5fAGHQW3QIlUE1PIS11i0bHG+aHF56Qfi9ks+UnztHe7yS7Xw6tm/VjVX6n/lJqpI8bzjjBX8vYU7RTUeIp9sznXS2ZpqJg2B19w/I1q6PfHmzQNxAAgSpqmMwkFfSpr0gkJk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DRIHBj45; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2C65C4CEF7;
-	Mon,  3 Nov 2025 02:35:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762137321;
-	bh=Po4FITX4drt+WLGHqKt44ddsd+cJ95meWgcRiywsgWI=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=DRIHBj45SABwSm7nwmUPGcarQCoImukTtihhrTOlN0GxOb5ugziEHQIBW08lK7/3e
-	 pPmKR5koEcyIlpD/luPAhyXTUhG4Gxx60kS4TnNHQrNynJ2vmc8Y6qRaWZ7GK/wGSR
-	 Tb7BkHsCqQtwne2k4McY/9c0vYiDMXvwsh6wYwulir4II4U9TlmofcKNM4x8Dzi6Uc
-	 MU38ocx8yNVBXw1YAHsvHV5eF6myK0ukRKv36E9EdF1ESD2lljE6WrWz8QK8J7Ko6b
-	 BePDcVrp/Lvo0JP/IcpcASn3LpIPFNL0VtBu5fcdaRJSDq3jiN7W/E/bcL0XfD8m8V
-	 T+g/LSC4L3AxQ==
-Message-ID: <ea38e464-a28a-4b06-8046-5b62f7172875@kernel.org>
-Date: Mon, 3 Nov 2025 10:35:17 +0800
+	s=arc-20240116; t=1762137477; c=relaxed/simple;
+	bh=ukUqwcz+sBycHhzxiy3W2SxXQ9SQb3q3ms/hTRSiMeY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZOdxAbP6yoC5QAILvxIDwXDrgZIR2XFNkUz7yIVyzDrDqNw9vmxrFfYDl/fMqGplNjTvPi9bZzpkwKp4GNdtjlh9RIxFLtyl5m9JGQgc+xVwyPj5amrm8FzT1MFT697OIOPIgPAaAJVR6jE2c3BwzbZqBiMhERdeTbLruPuNiLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 0f923836b85e11f0a38c85956e01ac42-20251103
+X-CTIC-Tags:
+	HR_CC_AS_FROM, HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CTE_8B
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
+	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
+	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
+	HR_TO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_EXISTED
+	SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.3.6,REQID:70b6d226-dd85-46cd-9c65-14e7c3b71550,IP:15,U
+	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:-30,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:-20
+X-CID-INFO: VERSION:1.3.6,REQID:70b6d226-dd85-46cd-9c65-14e7c3b71550,IP:15,URL
+	:0,TC:0,Content:-5,EDM:0,RT:0,SF:-30,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-20
+X-CID-META: VersionHash:a9d874c,CLOUDID:e02db1f34bb1bcb1bddb34349392fd38,BulkI
+	D:2511031037396H4RK8JP,BulkQuantity:0,Recheck:0,SF:10|38|66|78|102|850,TC:
+	nil,Content:0|15|50,EDM:-3,IP:-2,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,
+	BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 2,SSN|SDN
+X-CID-BAS: 2,SSN|SDN,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
+X-UUID: 0f923836b85e11f0a38c85956e01ac42-20251103
+X-User: hehuiwen@kylinos.cn
+Received: from localhost.localdomain [(116.128.244.171)] by mailgw.kylinos.cn
+	(envelope-from <hehuiwen@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1359740398; Mon, 03 Nov 2025 10:37:37 +0800
+From: Huiwen He <hehuiwen@kylinos.cn>
+To: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+	Xin Long <lucien.xin@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	linux-sctp@vger.kernel.org (open list:SCTP PROTOCOL),
+	netdev@vger.kernel.org (open list:NETWORKING [GENERAL]),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Huiwen He <hehuiwen@kylinos.cn>
+Subject: [PATCH v2] sctp: make sctp_transport_init() void
+Date: Mon,  3 Nov 2025 10:36:19 +0800
+Message-Id: <20251103023619.1025622-1-hehuiwen@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
- david.hunter.linux@gmail.com,
- linux-kernel-mentees@lists.linuxfoundation.org, khalid@kernel.org,
- syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
-Subject: Re: [PATCH v2 2/2] f2fs: Add sanity checks before unlinking and
- loading inodes
-To: "Nikola Z. Ivanov" <zlatistiv@gmail.com>, jaegeuk@kernel.org,
- linux-f2fs-devel@lists.sourceforge.net
-References: <cover.1761993022.git.zlatistiv@gmail.com>
- <55522ef8f3424e563ff18a720c709dcb065091af.1761993022.git.zlatistiv@gmail.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <55522ef8f3424e563ff18a720c709dcb065091af.1761993022.git.zlatistiv@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/1/25 20:56, Nikola Z. Ivanov wrote:
-> Add check for inode->i_nlink == 1 for directories during unlink,
-> as their value is decremented twice, which can trigger a warning in
-> drop_nlink. In such case mark the filesystem as corrupted and return
-> from the function call with the relevant failure return value.
-> 
-> Additionally add the 2 checks for i_nlink == 0 and i_nlink == 1 in
-> sanity_check_inode in order to detect on-disk corruption early.
-> 
-> Reported-by: syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=c07d47c7bc68f47b9083
-> Tested-by: syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
-> Signed-off-by: Nikola Z. Ivanov <zlatistiv@gmail.com>
-> ---
->  fs/f2fs/inode.c | 10 ++++++++++
->  fs/f2fs/namei.c | 15 +++++++++++----
->  2 files changed, 21 insertions(+), 4 deletions(-)
-> 
-> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
-> index 8c4eafe9ffac..089cbf3646f0 100644
-> --- a/fs/f2fs/inode.c
-> +++ b/fs/f2fs/inode.c
-> @@ -294,6 +294,16 @@ static bool sanity_check_inode(struct inode *inode, struct folio *node_folio)
->  		return false;
->  	}
->  
-> +	if (unlikely(inode->i_nlink == 0)) {
+sctp_transport_init() is static and never returns NULL. It is only
+called by sctp_transport_new(), so change it to void and remove the
+redundant return value check.
 
-This is a possible case, as an orphan inode may exist in filesystem after sudden
-power-cut.
+Signed-off-by: Huiwen He <hehuiwen@kylinos.cn>
+---
+Changes in v2:
+- Remove the 'fail' label and its path as suggested by Xin Long.
+- Link to v1: https://lore.kernel.org/all/20251101163656.585550-1-hehuiwen@kylinos.cn
 
-Thanks,
+ net/sctp/transport.c | 21 ++++++---------------
+ 1 file changed, 6 insertions(+), 15 deletions(-)
 
-> +		f2fs_warn(F2FS_I_SB(inode), "%s: inode (ino=%lx) has zero i_nlink",
-> +			  __func__, inode->i_ino);
-> +		return false;
-> +	} else if (S_ISDIR(inode->i_mode) && inode->i_nlink == 1) {
-> +		f2fs_warn(F2FS_I_SB(inode), "%s: directory inode (ino=%lx) has a single i_nlink",
-> +			  __func__, inode->i_ino);
-> +		return false;
-> +	}
-> +
->  	if (f2fs_has_extra_attr(inode)) {
->  		if (!f2fs_sb_has_extra_attr(sbi)) {
->  			f2fs_warn(sbi, "%s: inode (ino=%lx) is with extra_attr, but extra_attr feature is off",
-> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-> index 40cf80fd9d9a..d13077bad482 100644
-> --- a/fs/f2fs/namei.c
-> +++ b/fs/f2fs/namei.c
-> @@ -572,10 +572,11 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
->  	if (unlikely(inode->i_nlink == 0)) {
->  		f2fs_warn(F2FS_I_SB(inode), "%s: inode (ino=%lx) has zero i_nlink",
->  			  __func__, inode->i_ino);
-> -		err = -EFSCORRUPTED;
-> -		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
-> -		f2fs_folio_put(folio, false);
-> -		goto out;
-> +		goto corrupted;
-> +	} else if (S_ISDIR(inode->i_mode) && inode->i_nlink == 1) {
-> +		f2fs_warn(F2FS_I_SB(inode), "%s: directory inode (ino=%lx) has a single i_nlink",
-> +			  __func__, inode->i_ino);
-> +		goto corrupted;
->  	}
->  
->  	f2fs_balance_fs(sbi, true);
-> @@ -601,6 +602,12 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
->  
->  	if (IS_DIRSYNC(dir))
->  		f2fs_sync_fs(sbi->sb, 1);
-> +
-> +	goto out;
-> +corrupted:
-> +	err = -EFSCORRUPTED;
-> +	set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
-> +	f2fs_folio_put(folio, false);
->  out:
->  	trace_f2fs_unlink_exit(inode, err);
->  	return err;
+diff --git a/net/sctp/transport.c b/net/sctp/transport.c
+index 4d258a6e8033..0d48c61fe6ad 100644
+--- a/net/sctp/transport.c
++++ b/net/sctp/transport.c
+@@ -37,10 +37,10 @@
+ /* 1st Level Abstractions.  */
+ 
+ /* Initialize a new transport from provided memory.  */
+-static struct sctp_transport *sctp_transport_init(struct net *net,
+-						  struct sctp_transport *peer,
+-						  const union sctp_addr *addr,
+-						  gfp_t gfp)
++static void sctp_transport_init(struct net *net,
++				struct sctp_transport *peer,
++				const union sctp_addr *addr,
++				gfp_t gfp)
+ {
+ 	/* Copy in the address.  */
+ 	peer->af_specific = sctp_get_af_specific(addr->sa.sa_family);
+@@ -83,8 +83,6 @@ static struct sctp_transport *sctp_transport_init(struct net *net,
+ 	get_random_bytes(&peer->hb_nonce, sizeof(peer->hb_nonce));
+ 
+ 	refcount_set(&peer->refcnt, 1);
+-
+-	return peer;
+ }
+ 
+ /* Allocate and initialize a new transport.  */
+@@ -96,20 +94,13 @@ struct sctp_transport *sctp_transport_new(struct net *net,
+ 
+ 	transport = kzalloc(sizeof(*transport), gfp);
+ 	if (!transport)
+-		goto fail;
++		return NULL;
+ 
+-	if (!sctp_transport_init(net, transport, addr, gfp))
+-		goto fail_init;
++	sctp_transport_init(net, transport, addr, gfp);
+ 
+ 	SCTP_DBG_OBJCNT_INC(transport);
+ 
+ 	return transport;
+-
+-fail_init:
+-	kfree(transport);
+-
+-fail:
+-	return NULL;
+ }
+ 
+ /* This transport is no longer needed.  Free up if possible, or
+-- 
+2.25.1
 
 
