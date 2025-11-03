@@ -1,151 +1,119 @@
-Return-Path: <linux-kernel+bounces-882612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 063D9C2AE5B
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:01:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44753C2AE76
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:02:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01E4C3A9BE3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 09:59:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF9EF3A8B7D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4EB2FB0A3;
-	Mon,  3 Nov 2025 09:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43CCF2F28F6;
+	Mon,  3 Nov 2025 10:02:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="VaE0XOGs";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZBsvVHQU"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n3JPoNyt"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609468405C;
-	Mon,  3 Nov 2025 09:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D82C2FBE00
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 10:02:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762163978; cv=none; b=nUaMPrgsmV2+t2UYFtqVZOeBmJ+75hfS0ECo8Jm7aB9HQf3+eqfmua+NE5goUwmzIz2bi2WOXHo8QuGz4S/40ClWo8rXDEBjoUMQOp/IqSKqhsO4phXFBzOkDliscws1PAZYh+2bM1g1Sxk61wutcG26TSYBO6I+bKxgYe0VyYo=
+	t=1762164151; cv=none; b=HpJh4lVus9Q2l2so9bGrVd5WHBMvzdDqCCFFP/xB4qusMMf+IQt9hz5p6eQK/JKDOWq10cvuuMm8Nr3QvR3CuxGkis0WPX9e2ZTIU4lh0f157LXDTn02qK5niUEBFMJ3TvBmfL6G+S8nGIZPF1qtkpNgbJahaed+UHwH8gHayeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762163978; c=relaxed/simple;
-	bh=/185EXukW1YoAfSt0R/ts2WEh9FI/8+19d9aNbAhETw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HKgE0HRfQ1CMdnnflhONxsmI3GaTlWoS/Uao2dWVSrzBKnbC/Q8PcNg3n7RgOs0DHv8Kl04DBs3tZyK9Upj3EvpSUbVMbDtoXLg+AXXWNz0dafX7uBnizMemz7nZNESl0gMQ81b4bY12FPuLvceq+CuX/xoMtRc87ZPLh+esJAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=VaE0XOGs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZBsvVHQU; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 4682B140016D;
-	Mon,  3 Nov 2025 04:59:34 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-07.internal (MEProxy); Mon, 03 Nov 2025 04:59:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
-	 t=1762163974; x=1762250374; bh=EoRTOUiqNo2cvNRwLXJuVMPRCrEn4Z9F
-	qfz67AyZ8ys=; b=VaE0XOGsLoPWkUQZjnRbVu+9vhSJ8yT4THye/iIuq0x7Vg3H
-	XhYDeztRK3nqC/50GT4fABUZ+dSrb0WwPYUfeRaSqPnj3uz2AUvLyQXtisgrlksj
-	zF0K9deND+YrDLIOJLRsXZQB++vGiaOULFkxERKZoUK3ZAI3wKj7fN4S08rEl8es
-	USJdjGP3mvkw0gs+yNrbQbA1uhBSna0yikX6o5UrXyOdzc2j7Q3E7/yhGWDwDIYr
-	Txhhqt2XXXWA7kFns4LJYEbCf6Z81lilIVIqvo8gem2zntgQvbnAgknmZQirAB1x
-	sQrDjGfZ0mR9NVKbFYUsURwoZDfvTxFx4N08eQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762163974; x=
-	1762250374; bh=EoRTOUiqNo2cvNRwLXJuVMPRCrEn4Z9Fqfz67AyZ8ys=; b=Z
-	BsvVHQUMinQkRNXclXAjr75SpWgGB+RpPVy1E9pDEnqfbsQ13o5i0xmPao7+biMP
-	jLW9OaLTe0kIhWsTdnlKym7n5uQUQQz3hqDklEOY6LgShGdgv6NIzseZ/IpPZlLq
-	nSdDreW2OVW528uvx8FZzf9mgCqkOJi+NLiYsAFSyP8+3Tir2HlAMkznD9dc2hwP
-	dJQC/JSG27RmaZ7F3Ka3Iis+MAJV0q3g2XVCEKoBLneKxkqRXtaa4H+0pURz0uzG
-	yb9TvWVVBFj7hiu/BJxxSFBxEYLhzU05Ab2ZCbk351Aq8WesjWyYhXwGPXNtSvX2
-	RGPzsUpS0tg+PHDjZwf8Q==
-X-ME-Sender: <xms:BX0IaZLarJa_RiorcFZp3ZxY9zsxqdj1SVhj_KQJ03rIiaAqhgE64A>
-    <xme:BX0IaSoffggrfVvhlb5ry4ajsOWlX4ns1Mv1ptnq6zopYQ14xH_CTVX9aQFVfB_cN
-    kKx5T31DBmSNQ-OmIStXyS-TdOFThFZdqBZU5aIhZA29MqOFKZGug>
-X-ME-Received: <xmr:BX0IaUX0MLIL5_-EFcstSWxjb5c91s5FUxGa2DEX90D2jO8l792AHjNX3bFS>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujeejkeefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpefurggsrhhi
-    nhgrucffuhgsrhhotggruceoshgusehquhgvrghshihsnhgrihhlrdhnvghtqeenucggtf
-    frrghtthgvrhhnpeevuddvtdevheetkedvieeugeehieevjeekteefgfeffeefjefgvdef
-    tdelueefgeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepshgusehquhgvrghshihsnhgrihhl
-    rdhnvghtpdhnsggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
-    htohepfigrnhhglhhirghnghejgeeshhhurgifvghirdgtohhmpdhrtghpthhtohepkhhu
-    sggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthh
-    dprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohep
-    vgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrh
-    gvughhrghtrdgtohhmpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtohephhhorhhmsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvg
-    hvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:BX0Iaf1MYafNoAC3fvlsl6zPNNxdQLgWqPVV0le4FCyimamSlaxfEA>
-    <xmx:BX0IaTRdVT-zS-E7bKmstT2DhOnkhyTNuXKmPgJUMICYrbNOYDCKOA>
-    <xmx:BX0IaTTvb8zvKIqNajaTD7INixABmx9dYmvz0kWu0Wv7LgySfbcYdA>
-    <xmx:BX0IaUXQn9aZtP0TSyYNvrkLzwNBVM-c9mcXZGa1nSIxWwF_ErQgHA>
-    <xmx:Bn0IaYf64TuLWHc3xIjnfXwfeVZ32b-k6jdwU7zmtBv1_NkeGkN-dYE3>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 3 Nov 2025 04:59:33 -0500 (EST)
-Date: Mon, 3 Nov 2025 10:59:31 +0100
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Wang Liang <wangliang74@huawei.com>
-Cc: kuba@kernel.org, andrew@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, pabeni@redhat.com, shuah@kernel.org,
-	horms@kernel.org, netdev@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yuehaibing@huawei.com, zhangchangzhong@huawei.com
-Subject: Re: [PATCH net] selftests: netdevsim: Fix ethtool-features.sh fail
-Message-ID: <aQh9A647mJzBeBI_@krikkit>
-References: <20251030032203.442961-1-wangliang74@huawei.com>
- <aQPxN5lQui5j8nK8@krikkit>
- <2ea387c7-cd15-44cc-8789-af3fbe0460a3@huawei.com>
+	s=arc-20240116; t=1762164151; c=relaxed/simple;
+	bh=W0zrDmAkZxcdW8N0iwDoYZEJ2E6P0O3vg9i/EhjU7kY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=XYuhVHEQW45Ef3nF7s3I4Df6dKHeds/6JWVvL+3kyeggmM6OVBNDp6KO3TB0zShHjWpOCjeZubdQpxRZZo0X3Hrurmx3eFueX6zeecvGlKq8s57k97fVuX9D9VJWiaw4ecd2eaxp2xOux550LqNiebdHwkxeEfWaYukDXZyQmtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n3JPoNyt; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-b70ca7d1e78so10346466b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 02:02:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762164147; x=1762768947; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kk5WeVX3WZidjw/Ohoo4baVD2n02pPZGtcsCU88fulQ=;
+        b=n3JPoNytTryJjNZW/YZhzRHW5SNucl9bGohkFkA2Q1bHwBFBhVvFbf8zDrFS0Hn0ui
+         YkKcK7hYYsnlTwwy/u08LWCR59RwH87Fs/CpUwjHrJiUxs43qmG+o5btr9dXAP12fc+Y
+         Kxdcx8o1/ioHHsv2zKpf4JfiQMFbtjILKDPCIrbk0QwsUYEtHAn07mNckkjWcGp+jCC4
+         exO3s275TbRa9szT5YYF+vLR+PlHAHK8VOlNWyv4EZ4JsPx6awA9HxEq6UVyCyu0TQgr
+         6+576ufbHQfQQJ2GNfN+j0mJ7wyJ345Dh69zibBUMgDV0SsvCXswNZhagrHw22bG0TEW
+         Dxlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762164147; x=1762768947;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kk5WeVX3WZidjw/Ohoo4baVD2n02pPZGtcsCU88fulQ=;
+        b=TxtqAkqMzIrzovijcJz+na1WQTP3mzwVz/PeRRgdNASquoE4F54ATRP6QV8PyWyZKx
+         iTxYgqthGxMR9AY/rNkmICsuHsSudcpU3h3WXWbiVfkXU9wKo7xYjOsZYK/YhUKycIIW
+         clidg2L9c5GWZ2ZORga47Gz8vYxlej/FFlgj/MrR+mSV45u1hsWZ4o5p/Fa1u4HFAWEs
+         X3qtW4R2NssAKJOMR+F4xDehPZvFXIT/2p8f4M1+UL9dStUwtUq7LmFtkqAkxw8SvLRk
+         8qjSM4TepIx6Sze/cXofdKigCtU38XRPcvcp0mdzNOOAmS1UWuiFVr50Cj0uH+wr2iLK
+         uqyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWq5DBqufijjTVw2tMizsKGfDA6lFRaU3jBROM5tMYsqOrYMSYB/2pjl5xPFgQxGF//BbP/8w0eF+rDvro=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZXagGXUScATicVxZ0rClGqKPDwXi1ff+3RYJ3P1MSKjpMNkn1
+	9RCRrSs3A3/M5bOYnKRW5IkRpuR7EjoBVY5nyRssX6OMDL7jAO6Ny+ne8fxkv6D4ZrdHy9WDYog
+	PwQqn
+X-Gm-Gg: ASbGncuDFEncLRqfzx1369bg/PNDZMjY3q52K1Obql4SSNNUruy+iJDRMxHYHXwFqNy
+	MEp7hJaHMey7z/uBTWnQxrDNMEXN0C254Y5zwxr9o6cDgZMADVNQNJfCOsRi16I1IK7QyqkC+kn
+	u8SU6Tr0PBTuSgH4aSxPfJUvJCOGehY1O+gz0EoI7YPkOb0dc35PNnPrpqOplwZiFCLXSwHzhJm
+	a2jzT+gwPJOWtL01Sf24MpPMj2hqNq5tD8woJG0I/Nqkz9lmceQxRBp+YG+TvdntI+/6DqjOWYH
+	uAGHb6p/iMAFja/hsf938eDfCfHEa0RmvOgpFsXzwmFoD5lRTACFeh03Slwsnx9heI3FXMYCf+0
+	TcjDwqOMH0/NHWFCKj3XYLxx1Jf5ExIY2lGeawtO0yInrUsoXmYcVBIzi8r/EsE52L8P07cPKko
+	dcXgsrLhzT+jU/gtLXpzERKJRQNgY=
+X-Google-Smtp-Source: AGHT+IHhQd0Z7HhWjALB9oj1UOU7TBdJPgOnwuPH3RM+AzCngFPe/MvWD8B/RttW7aRFtZ4rAovK8w==
+X-Received: by 2002:a17:907:3e03:b0:b42:1324:797b with SMTP id a640c23a62f3a-b70708ea28bmr632326066b.9.1762164147447;
+        Mon, 03 Nov 2025 02:02:27 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b70b1576c5fsm433340966b.43.2025.11.03.02.02.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Nov 2025 02:02:26 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, semen.protsenko@linaro.org, 
+ willmcvicker@google.com, kernel-team@android.com, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20251031-gs101-chipid-v1-2-d78d1076b210@linaro.org>
+References: <20251031-gs101-chipid-v1-0-d78d1076b210@linaro.org>
+ <20251031-gs101-chipid-v1-2-d78d1076b210@linaro.org>
+Subject: Re: (subset) [PATCH 02/11] soc: samsung: exynos-chipid: use a
+ local dev variable
+Message-Id: <176216414543.27448.5786220259949366154.b4-ty@linaro.org>
+Date: Mon, 03 Nov 2025 11:02:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2ea387c7-cd15-44cc-8789-af3fbe0460a3@huawei.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
 
-2025-11-03, 16:58:42 +0800, Wang Liang wrote:
-> 
-> 在 2025/10/31 7:13, Sabrina Dubroca 写道:
-> > 2025-10-30, 11:22:03 +0800, Wang Liang wrote:
-> > > This patch adds executable permission to script 'ethtool-features.sh', and
-> > > check 'ethtool --json -k' support.
-> > Those are two separate things, probably should be two separate patches.
-> 
-> 
-> Ok, I will extract the executable permission change to a new patch.
-> 
-> > 
-> > [...]
-> > > @@ -7,6 +7,11 @@ NSIM_NETDEV=$(make_netdev)
-> > >   set -o pipefail
-> > > +if ! ethtool --json -k $NSIM_NETDEV > /dev/null 2>&1; then
-> > I guess it's improving the situation, but I've got a system with an
-> > ethtool that accepts the --json argument, but silently ignores it for
-> >   -k (ie `ethtool --json -k $DEV` succeeds but doesn't produce a json
-> > output), which will still cause the test to fail later.
-> 
-> 
-> That is indeed a bit strange.
-> 
-> I'm not sure the best way to handle this situation now. Maybe update ethtool
-> instead of checking the output is not a bad method.
 
-That's what Jakub was suggesting in his answer [1]. ethtool has
-supported json output for -k for almost 4 years, running upstream
-selftests with a version of ethtool older than that doesn't really
-make sense, so only the "permission change" patch is really needed.
+On Fri, 31 Oct 2025 12:56:01 +0000, Tudor Ambarus wrote:
+> Use a local variable for struct device to avoid dereferencing.
+> 
+> 
 
-[1] https://lore.kernel.org/netdev/20251030170217.43e544ad@kernel.org/
+Applied, thanks!
 
+[02/11] soc: samsung: exynos-chipid: use a local dev variable
+        https://git.kernel.org/krzk/linux/c/bea18c67a0ec75cc602aabc523d726a4626e1341
+
+Best regards,
 -- 
-Sabrina
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
