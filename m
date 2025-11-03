@@ -1,108 +1,109 @@
-Return-Path: <linux-kernel+bounces-882691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66BE7C2B24B
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:51:06 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BC0CC2B233
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:50:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2304D3B9069
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:49:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 47BB83494E7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51FAC2FFDF8;
-	Mon,  3 Nov 2025 10:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57273016E0;
+	Mon,  3 Nov 2025 10:49:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k76QV0pd"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="g0VtCmZg"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1009D2FF14E
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 10:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A27D301039
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 10:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762166969; cv=none; b=hb3gedOdIhM5LKUcVP16hSoXRm4LutlECtMRo5vkJCxwRR4spp2dDMkhPDhOcuLadDXk1J+xZgKdGLRkCG2VMEPtEog8ckBPboLjqj69IzHBnE8b5d5c5BNFO/wZ3RyR9Rj1HpzKZE46na7G0l6n0/vF67zVdZ+v3WQFQUZ0pzc=
+	t=1762166983; cv=none; b=dSGeVaS47if+lRBfX+Lo/0osbk7k4u3HzI9SbmajtuYPSChhBVyNCYihtsbaARmkZDqMmGGsRsmPyqdZmeFn0Aho7qynqO4SlCZLAdswJ2yUUTZhYkkzzM8+ObcJUw1RRZiZ1c8lb2eodD4yC4gmRutWMWolHJPuBgSrh8/rLU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762166969; c=relaxed/simple;
-	bh=Evfz1tcnqjd0f5x1YIdlbDb29zhP2FMybct8RGVgIjM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=VxFtpRwfhMczW6LKHZORvjTDPRG3dKSIRO3uL2uawNHt1A2skMfqFxAUEqrA86+vCLv9m1mvy9ue5MM3MnTzL+8zDlkQk/0ubkEDF9aaWvvujukp9OuWvezsDTS6/ayzPAbnMPrEVARhEfd4KuQNoRLkV5Bu9JbgpmiTETU2XrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=k76QV0pd; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-475de0566adso31896485e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 02:49:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762166966; x=1762771766; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MpWdihMx06jCjHLY5EmCWwN5NA1F7kZ8RlapB6cD5OU=;
-        b=k76QV0pdbNe/7LbOu//naw1MYKjcN6XMViWCaSSaCh1xXW31822vn83SUvkd/kMczC
-         qjF/vf06TjQ5NltNvQAk7EA+DQFmX+4aHgJq3C2IAGPhcnnpQOC7QbmpGrySg4Q5EwrR
-         UinoPIbBiJX0WcNg+aohLLt1Iz3RqM4pNd8cf9TptmeuBdqJqPM0RKMHL3U+wHKR5COS
-         mYub+WEsZJtHd0rNSWcfOqaoEubSmmQjK9qK2Qnx0LJRcpa/5VyXkTo4/3k29C+XPMfc
-         sX4shZ/mY71mAoKeTniRUdvZO4ZEaTX1KujbuZZTYZ3VMNljhCCNExrZRUqLO4vFDvQ1
-         R5Qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762166966; x=1762771766;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MpWdihMx06jCjHLY5EmCWwN5NA1F7kZ8RlapB6cD5OU=;
-        b=i1sYPa9MWgehiztSFoHnAc0uyVTjLGU+kgc5gbRVNldEM0kseEIE0GlDFp7hgQC/uV
-         XKAZ5R3Zuvjsl2h2f5BsoUjsNa+cTjdGkoSBpUG1bjwhfUSdJ5MvicHegNwNpTZEdsCI
-         jgQvhcGNKDPFRaAO4zfMf75tqJPRgJen1JdBQ8pG5Cw7ZJ0NkdQQO5JW0Tlq2sx6cIkF
-         lxlC7aVdyb/3KDqluPQ7DyLv+n56xM/efbVgxvQp4CzM7D0pGSoo8Hk7n6WhFUDAkAvI
-         l2gMFiIj4HP99L3hSeRMJhLV61h07MGrsiP1/6bWAJV6ZcC4FPNiM/UJWx4aE3uIGCX2
-         7QVA==
-X-Forwarded-Encrypted: i=1; AJvYcCVeIlo3atDzA65Pn29xZyAFXz1juzfmn0K2/xD6aCEpp5aDn4a8mFAmoHup/tqNAKiTIAJlh4JvLuJBGbs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzb0opEFMogHmPxLTLK9uJxEKSA30ZrAPr5G1m+9hNWsM94B90I
-	PnpboMrMk9r8nxvVDJYC3ogmhUIxKm7zDEoL8e36TWxjwRMUdYklzCyG/fBbideIS8nqUmnE+rt
-	0wdnyCdZS6UZAvyYlvg==
-X-Google-Smtp-Source: AGHT+IEQzl/e6rTwNPnjUtOH6pZmLtmwiNJNjCotzrRyo/a0nRPHwZhBiPYChczpTpEtjWOvjSdmGgtTEihcQ/k=
-X-Received: from wma5.prod.google.com ([2002:a05:600c:8905:b0:475:d8de:fe5b])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:848d:b0:471:14f5:126f with SMTP id 5b1f17b1804b1-477308b222dmr106823955e9.33.1762166966577;
- Mon, 03 Nov 2025 02:49:26 -0800 (PST)
-Date: Mon, 3 Nov 2025 10:49:25 +0000
-In-Reply-To: <aQiBTOj1jl4xM3pJ@google.com>
+	s=arc-20240116; t=1762166983; c=relaxed/simple;
+	bh=xOzYIPM8KTs0S15N0TQI3qQZXr+215520Jm+o6h1zcU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=glIALn5ueQyGrs4JBiNygxgGBcx+MTimXRNSZMkFc68S3/J/XTwM2eXJYN2tddIA73RXt5yXcQfK/SZ1UyB83ISKWg4/1/bsKbDUUePoDpASUSqoac2BvJYU5yvy7dzsaowTx8VPWm+3BaAQCMlMzT3/MFbnXQN1+w74a9gO8Gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=g0VtCmZg; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id D4EA41A183D;
+	Mon,  3 Nov 2025 10:49:39 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id A93DF60628;
+	Mon,  3 Nov 2025 10:49:39 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 55E0510B50014;
+	Mon,  3 Nov 2025 11:49:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762166978; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=om6wHCpy7rTQ5fiCmhmBYc/5JN7l85iZJ6/YxQjLX1c=;
+	b=g0VtCmZgHjb0pB3bwDcm4QpSfQDoVXlx0ge0ujYmBzpxsc12xZLGyWFZTAaYNfbId3dhGV
+	olfOQFok4HXzsdG3dY6uxHaIeX3RL2InA90S6PHg8MBTgwKvJt3wAuvBFO3E6v1B8DtBzg
+	269c+J6DqN7glyEr4XK55f+Wnkq+qO6I6uU6a5b81PfosIlPgoZKHFgrqH3baCFxq63WJ+
+	WnDVFKDnZh3OxNWxvkSMTGJMytT2Rz7fY/7sykFBAaTkXzZ6nIuUBeUunIqQzoE2iiC5eC
+	tP2QiWAzjjIvjCaSoOmpKay4VAahWk1XtqYi1fZpEzxzDR8fH4vPUOWxitaaDg==
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	davem@davemloft.net,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	Simon Horman <horms@kernel.org>,
+	Boon Khai Ng <boon.khai.ng@altera.com>,
+	=?UTF-8?q?Alexis=20Lothor=C3=A9?= <alexis.lothore@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: [PATCH net-next v2 3/4] net: altera-tse: Don't use netdev name for the PCS mdio bus
+Date: Mon,  3 Nov 2025 11:49:26 +0100
+Message-ID: <20251103104928.58461-4-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20251103104928.58461-1-maxime.chevallier@bootlin.com>
+References: <20251103104928.58461-1-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251102-bounded_ints-v2-0-7ef0c26b1d36@nvidia.com>
- <20251102-bounded_ints-v2-1-7ef0c26b1d36@nvidia.com> <aQiBTOj1jl4xM3pJ@google.com>
-Message-ID: <aQiItc35Y19l4HOc@google.com>
-Subject: Re: [PATCH v2 1/2] rust: add BitInt integer wrapping type
-From: Alice Ryhl <aliceryhl@google.com>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Yury Norov <yury.norov@gmail.com>, 
-	Jesung Yang <y.j3ms.n@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Mon, Nov 03, 2025 at 10:17:48AM +0000, Alice Ryhl wrote:
-> On Sun, Nov 02, 2025 at 11:24:42PM +0900, Alexandre Courbot wrote:
-> > Add the `BitInt` type, which is an integer on which the number of bits
-> > allowed to be used is restricted, capping its maximal value below that
-> > of primitive type is wraps.
-> > 
-> > This is useful to e.g. enforce guarantees when working with bit fields.
-> > 
-> > Alongside this type, provide many `From` and `TryFrom` implementations
-> > are to reduce friction when using with regular integer types. Proxy
-> > implementations of common integer traits are also provided.
-> > 
-> > Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> 
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+The PCS mdio bus must be created before registering the net_device. To
+do that, we musn't depend on the netdev name to create the mdio bus
+name. Let's use the device's name instead.
 
-Actually, I saw Yury's comments on v1 and I have some additional comments
-as well. See my reply there.
+Note that this changes the bus name in /sys/bus/mdiobus
 
-Alice
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+---
+ drivers/net/ethernet/altera/altera_tse_main.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/net/ethernet/altera/altera_tse_main.c b/drivers/net/ethernet/altera/altera_tse_main.c
+index 343c78a493a1..003df8970998 100644
+--- a/drivers/net/ethernet/altera/altera_tse_main.c
++++ b/drivers/net/ethernet/altera/altera_tse_main.c
+@@ -1404,7 +1404,7 @@ static int altera_tse_probe(struct platform_device *pdev)
+ 			 (unsigned long) control_port->start, priv->rx_irq,
+ 			 priv->tx_irq);
+ 
+-	snprintf(mrc.name, MII_BUS_ID_SIZE, "%s-pcs-mii", ndev->name);
++	snprintf(mrc.name, MII_BUS_ID_SIZE, "%s-pcs-mii", dev_name(&pdev->dev));
+ 	pcs_bus = devm_mdio_regmap_register(&pdev->dev, &mrc);
+ 	if (IS_ERR(pcs_bus)) {
+ 		ret = PTR_ERR(pcs_bus);
+-- 
+2.49.0
+
 
