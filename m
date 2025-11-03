@@ -1,78 +1,58 @@
-Return-Path: <linux-kernel+bounces-883462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5F53C2D812
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:41:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D53B3C2D82A
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:42:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63D7E1897DD5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:41:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 911921897344
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:42:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4150C31A579;
-	Mon,  3 Nov 2025 17:41:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0954B31B10E;
+	Mon,  3 Nov 2025 17:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HGe5wLU5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="nbH8mJEK"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5405C31A815;
-	Mon,  3 Nov 2025 17:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2AE131B810
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 17:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762191666; cv=none; b=ueYuCiD3aOcXxv3Bal5vpzkiGxalvNgVSw1IM4fLUJt/gDe8Gv15K5MRo9jjedG20PvlGq1WHcl4kRwK9rwT7jwOaTsJXgAUZK0YO1Pa4QEhJ2LWi0GeIfE/Fl5unIaPYil1hCNtm/06xAF93O8Kvp5pT5gLRrip3B8DUQw+7SU=
+	t=1762191746; cv=none; b=LW37IDExv8/9cY0w5Y46IqUSQ+vZREFpK950+arHhXTRgXQexOubgmCi6C1rAR9+YUsMvLoi5he41oqrC8F50l7TvN8clX93ptL9JlEy5JKY1/OmLJQqL6IKE/QQA7aR3EaDVGFtLdvBJsrITLmmuGu5z7Y8dgkh/qLhPV07rkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762191666; c=relaxed/simple;
-	bh=blIcHAMRAe5V33UqQcWdFv858LTncTJy6mR9QrwJqE8=;
+	s=arc-20240116; t=1762191746; c=relaxed/simple;
+	bh=QzWllWVn5yrHh7nNt4n4mceQ4Uf0pLV9CpCEEkgUK34=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QWYG+/B/fZQa/O1UMJhWnZfBkwldpWPcXq53JyWLNfzmsam7wTV/kL/qJMfEQ/8n2KajeuICE+lSrcIwP4ZBKenv2WwqsFzLKblkMpW9nU6Mqgc0R5+tsfpFzaWJ/qg095om4RWqkDnz+zQG3u6/0Oq/OUbAiF3yWywOUUgLoeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HGe5wLU5; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762191663; x=1793727663;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=blIcHAMRAe5V33UqQcWdFv858LTncTJy6mR9QrwJqE8=;
-  b=HGe5wLU5IrNQqvkpsJ2a5UTttXMOTE7t6wc3kPqeVFLi6EVOC8YSavJE
-   7XHqZzjjvkDqM40IRXzsI4tkRJ5yor6fSfEufLMdqpPaIiQK2awNcYuJA
-   dhQoMVpUG+Td3yI84mem4SphjALXVuY3bB1iYa80Bh+SUyYlfOyBfRNj5
-   ivkmPyoyMDGlHsgeeoKipU4+hXCDXN63gzOIyEFfXEaljC5QVVVkyzlXy
-   WR+fQlDyd9+jzHuTeJQTkI6NeSmv053PLYbcIaB9DG8LT0ZJa4s4YkB3/
-   Y3KPKn2sUSRBtmfRDXh7NCxEbs1/Vf5S8pEvAOWy7GzdNUiPzYWlLGjxi
-   w==;
-X-CSE-ConnectionGUID: 1mpYLa7QQRW7NaNFFiYwuA==
-X-CSE-MsgGUID: 5nFm06YcQSyY/NVi5LG/6Q==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="67929170"
-X-IronPort-AV: E=Sophos;i="6.19,276,1754982000"; 
-   d="scan'208";a="67929170"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 09:41:03 -0800
-X-CSE-ConnectionGUID: ehrOoC5cQXe9ONWPZA14oQ==
-X-CSE-MsgGUID: hGNQs13GQgqBj7kTRLrcUw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,276,1754982000"; 
-   d="scan'208";a="186876832"
-Received: from mgerlach-mobl1.amr.corp.intel.com (HELO desk) ([10.124.220.244])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 09:41:02 -0800
-Date: Mon, 3 Nov 2025 09:40:57 -0800
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
-Subject: Re: [PATCH v4 2/8] x86/bugs: Decouple ALTERNATIVE usage from VERW
- macro definition
-Message-ID: <20251103174057.lovxpwpznkpl6bcv@desk>
-References: <20251031003040.3491385-1-seanjc@google.com>
- <20251031003040.3491385-3-seanjc@google.com>
- <20251101041324.k2crtjvwqaxhkasr@desk>
- <aQjfwARMXlb1GGLJ@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FjjR5r8XHUp61fwamdjXbFzDVaiLmK0wbwYJvSJrlhsBlmINcN3qNAsI5te+kzpqeH0LyGkEB2FNfxLI1YvOUZy0brhAl6shJuJrpvKpfzpW2rqT3BWMROZ7gT19w0p9MF1z5alEPLrY7ZrNf7AGtjku0GTiPrFq7Y3vHczufCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=nbH8mJEK; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 3 Nov 2025 17:42:03 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762191731;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SKLIB64ZIhTtcFHmOvDpo0hsn2FVov07VUH7lbNowPk=;
+	b=nbH8mJEKymnkb7LL3mIw3UK8MkClv2JR9WMpvOsglHlfIdEimqc30tqT62BLhaOKfvxFVS
+	20/wcReHO/Yr+kB52IdrPJ5cX7pZojJL24zBPGaEfvzlEP1Cg5pQJ8xo0G7OuNIqDaF9LK
+	MrDhELPGDttPwNigu6xlmIGuwDdXRzQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Jim Mattson <jmattson@google.com>
+Cc: Sean Christopherson <seanjc@google.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Maxim Levitsky <mlevitsk@redhat.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Matteo Rizzo <matteorizzo@google.com>, evn@google.com
+Subject: Re: [PATCH] KVM: x86: SVM: Mark VMCB_LBR dirty when L1 sets
+ DebugCtl[LBR]
+Message-ID: <tavsqj24pscngpu5pxfuvpsylcn72anoc7q5i5goip5lb5fqpt@xh2srbojpvfs>
+References: <20251101000241.3764458-1-jmattson@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,18 +61,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aQjfwARMXlb1GGLJ@google.com>
+In-Reply-To: <20251101000241.3764458-1-jmattson@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Nov 03, 2025 at 09:00:48AM -0800, Sean Christopherson wrote:
-> On Fri, Oct 31, 2025, Pawan Gupta wrote:
-> > On Thu, Oct 30, 2025 at 05:30:34PM -0700, Sean Christopherson wrote:
-> > > Decouple the use of ALTERNATIVE from the encoding of VERW to clear CPU
-> > > buffers so that KVM can use ALTERNATIVE_2 to handle "always clear buffers"
-> > > and "clear if guest can access host MMIO" in a single statement.
-> > > 
-> > > No functional change intended.
-> > > 
-> > > Signed-off-by: Sean Christopherson <seanjc@google.com>
+On Fri, Oct 31, 2025 at 05:02:29PM -0700, Jim Mattson wrote:
+> With the VMCB's LBR_VIRTUALIZATION_ENABLE bit set, the CPU will load
+> the DebugCtl MSR from the VMCB's DBGCTL field at VMRUN. To ensure that
+> it does not load a stale cached value, clear the VMCB's LBR clean bit
+> when L1 is running and bit 0 (LBR) of the DBGCTL field is changed from
+> 0 to 1. (Note that this is already handled correctly when L2 is
+> running.)
+> 
+> There is no need to clear the clean bit in the other direction,
+> because when the VMCB's DBGCTL.LBR is 0, the VMCB's
+> LBR_VIRTUALIZATION_ENABLE bit will be clear, and the CPU will not
+> consult the VMCB's DBGCTL field at VMRUN.
 
-Reviewed-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Is it worth the mental load of figuring out why we do it in
+svm_enable_lbrv() but not svm_disable_lbrv()?
+
+Maybe we can at least document it in svm_disable_lbrv() with a comment?
+
+> 
+> Fixes: 1d5a1b5860ed ("KVM: x86: nSVM: correctly virtualize LBR msrs when L2 is running")
+> Reported-by: Matteo Rizzo <matteorizzo@google.com>
+> Reported-by: evn@google.com
+> Signed-off-by: Jim Mattson <jmattson@google.com>
+> ---
+>  arch/x86/kvm/svm/svm.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> index 153c12dbf3eb..b4e5a0684f57 100644
+> --- a/arch/x86/kvm/svm/svm.c
+> +++ b/arch/x86/kvm/svm/svm.c
+> @@ -816,6 +816,8 @@ void svm_enable_lbrv(struct kvm_vcpu *vcpu)
+>  	/* Move the LBR msrs to the vmcb02 so that the guest can see them. */
+>  	if (is_guest_mode(vcpu))
+>  		svm_copy_lbrs(svm->vmcb, svm->vmcb01.ptr);
+> +	else
+> +		vmcb_mark_dirty(svm->vmcb, VMCB_LBR);
+>  }
+>  
+>  static void svm_disable_lbrv(struct kvm_vcpu *vcpu)
+> -- 
+> 2.51.2.1006.ga50a493c49-goog
+> 
 
