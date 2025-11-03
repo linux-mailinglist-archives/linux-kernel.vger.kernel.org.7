@@ -1,354 +1,238 @@
-Return-Path: <linux-kernel+bounces-883621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 597AFC2DE63
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 20:27:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7854C2DE72
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 20:29:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E810D4E23C6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 19:27:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F2C93B5076
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 19:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF78F3161B5;
-	Mon,  3 Nov 2025 19:27:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140A931D372;
+	Mon,  3 Nov 2025 19:29:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="a4OCmgtf"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l6yylscO"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04ED6347C3;
-	Mon,  3 Nov 2025 19:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7351C28D82F
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 19:29:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762198037; cv=none; b=maqBmKclJka2saQOJVKWLs6E+7/P1+r8rEbILAnyzlUwCNndoTOQtUqGkn8sskNmA78kpa7TB02ur8oqFLNse7/EF3ubT6hS8YZEEzQTPkxbzdpgz6KRh3LY6vrZmy9+h9C9Wo4PiSz1heLKK63EzFW6mO3wdf6R8DCcFW/xH0E=
+	t=1762198154; cv=none; b=eFO3LKRuumSIwaDmHuQ5KGhTSjru7EbpVCXX1IVA5JixKWyb/1DHiGxGNrTZp/IYQN6XyzC5LzXfggnmhlDA9c+fKFQ+lCFmQPj6jyFK0Z6gulA3qDFH3uoveoP22XOMXzuuMArG3rha40x/biGLIt4EnGLVB93dGcqijw3t4Co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762198037; c=relaxed/simple;
-	bh=NAUhLLt3/jTcnrppg7GdWFRrsyL86tZSX439YJgfZ7Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KeTeYNydcxPzAHn1YEBe2IfLKjUAFGu2jZslpGU6PhgE6QPnb6EuBLlOrL30+YBndDv/SMDIRD50Iz/N0K8nfrXTyKM8Mv5OZTzgnLORd/GG5aC0CPXLpXoug8KNXB7cVXlCzS2KvoH6/WJyeKNrwer3NgjHr0Y2U3zu/ceDrmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=a4OCmgtf; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=4rjLSzb8k/TGHTsZ2ITxS6HP2I1FgybxEp8aEoJ0Ytg=; b=a4OCmgtfGVVDqfTa2zVXtrOq1h
-	gKY63TN6QPA3TruMwd7EHhfeLaGwZjRw7Gxo9nJN/Ew+MkjPyKbcoO+t8u1EY6YK0eeQdAm2exf6C
-	Vie2ibCMtk6dAN4bLvhIGvdWzFzkdViAo3Q8rxYFxdtnwlCDGjsgNOZGwlUgg6yL1Y39eyOzfbWfW
-	1j/iGrve1uBGReH/XOMV9hTkBdrmPkt1qjUK0KaFeAsQKSuJT35Gni5z7FAnukzcDkpGhSh9Btb2q
-	mCeteEhXKNP9YRt/sqvGZRZXecpgAh5WBh1ReaPz1lOu4tlTf+uPUjuK2S0t+7cnoMK2Z9IbI7W5a
-	H0m2j4Pg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1vFzLA-0000000GB97-3dVR;
-	Mon, 03 Nov 2025 18:31:41 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 72A38300230; Mon, 03 Nov 2025 20:27:09 +0100 (CET)
-Date: Mon, 3 Nov 2025 20:27:09 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Guangbo Cui <jckeep.cuiguangbo@gmail.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Waiman Long <longman@redhat.com>, linux-rt-devel@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] PCI/aer_inject: Convert inject_lock to
- raw_spinlock_t
-Message-ID: <20251103192709.GV1386988@noisy.programming.kicks-ass.net>
-References: <20251102105706.7259-1-jckeep.cuiguangbo@gmail.com>
- <20251102105706.7259-3-jckeep.cuiguangbo@gmail.com>
- <20251103192120.GJ3419281@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1762198154; c=relaxed/simple;
+	bh=3ixGimuk0/HaHuWo/1PcSWMZCdoIwspA0vWadlpGWeQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SoQD1bKrV+yAJQWIKFuhWF3g+/IT4mdO3BK6Z6jn/DuAlU1qW1hzGL7MozN66QqNWi3C89WsKzimFu9n5YeGiCch2MIIZibQbO6Qrlq3JTzB9r6yYN5iQd68fZf9do7H7LF583Bh9OHXjOGtzSNtooTEdCzEhwxZzjWll7f9Zkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l6yylscO; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-4283be7df63so2571837f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 11:29:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762198151; x=1762802951; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pw1mz3Wmkjtz3arI75Z8UisY7e4ejFDGm7ZA+8DIcLQ=;
+        b=l6yylscOgUvQq2XzBc73m3dsQ4lqZk3PKKfncA6Y0KpUo4bRCqPaboACeCKPcEl3QI
+         2G3boR/0mKvFx23w0OSrMG1ts/2QruZd0ksArOh3PiEgDdIy6Gq417THbRE08p0SQJW0
+         VVTgaJqec52votxFqdryHYmOUAyxhvkDpq3+H5nwtnMdr+ilYpnKc/gM7j37YCJGWY+u
+         sCCRXmwa1o18i7dTSVaARYXi8YS0q/fovveVLhANFXkyoB86TeF9N11PU95qY+YvMzXs
+         1BMtz3j0ckoVF64RwMz4l92+6jy8/StJULFLiTBnhdtzNuRuheLvU0wWxethjOmcVxoW
+         fnsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762198151; x=1762802951;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pw1mz3Wmkjtz3arI75Z8UisY7e4ejFDGm7ZA+8DIcLQ=;
+        b=UYI605jwS2b4R2G2kNr2UCFuzji6NoDSGreevI5wXkPTWHFMRTaFeWbJfsdDfqacGv
+         +RTLyKnOKg/CzYrYnym82aB2TGPwBhvRXeI8MkcNUr4gbRkLTgOknWd2vqgbO3fVckCV
+         bQPRyl36XVMhBI380KZGgEdQCRxz0MGHtAMliyQ65JpV0b/WUcC9+DgicXRBm2qFLN9V
+         83RkJv3+B0l4ak1GzwcqEag8a/vfiGzBZAYD8fh8KdVuSsY/bD8LdLuwK3NbVijHmu67
+         WvBx1RmxByU0ymcrQiNev5ZcItFVp9/L7s8PRqz3N9ve6oeWNVlmFrTgy69Ar5HlW06P
+         RsBg==
+X-Forwarded-Encrypted: i=1; AJvYcCW0wINFu5l9B6i/hR/feT/dXK6UqdQeOde7c0vAwpriL53c8rsiNpAfCpzSG7r+7D+e0BKlS+3hKNVnU+0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy62bKRHYtgh3Yo3/Vc+xCPELOWGkEWxM6ZknfXLQv2QyLlEXdF
+	Z8iMUS7BO2r8lgyxDQNHXCqpFC8QT0YsU9Uvp+EJTIjiK5wB2HBB6uDO
+X-Gm-Gg: ASbGncu0ulcDD5g8wPHAnjaKBV+IuPfz9UAiLt9hwL9uF/p8qrcCYHfA+3B86GxUSQ1
+	LM4dA1d9CecfVMNFRARNlQ9iLw0pPAoveI5SSH402wEb2tqnTfwVUK5i5/WcSLTn8czmg0yN1Zn
+	qnXoCFY27E4x1oZTT0kUD/55PFMHySyMSlo83hUGqTGj4rWYCwUN/v1oorSTdsaIMpyOc/v5ZSm
+	4eJnXHi9ceGBHAX3SJ/85mLZns95kI5w3QKSg8BNqEEtHnc1pgT8CZAI0FD2WAJUhWOmDxU1Lzm
+	yirGaDuliS6LmVOIsLD2swFSbLaLSHc/rrIZUT/tTtDXKqXpw4k7TZ9Q2Y1z0sZBPNAT/2i+P6G
+	xJJhPixeTBBLXXOWW7TviiHGGsuEACXNtA5Q2MjP+ICrvS/222EXL9CBFugjaky6qssWq2d1IFh
+	XvqA6tuWauEtR3NfX26sLrtUfhUYG5sdMZNwcTr3HH88n8pU5lc0x4
+X-Google-Smtp-Source: AGHT+IEIOBDfz+HBIHDphP6uzoI17aYjvF3ZSriDyVBLsupCrmaZDmFmWse/BayuXmJV7U9EbfA7ug==
+X-Received: by 2002:a05:6000:2411:b0:427:928:789e with SMTP id ffacd0b85a97d-429bd6d583dmr12073376f8f.61.1762198150371;
+        Mon, 03 Nov 2025 11:29:10 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c4af7c7sm175165915e9.7.2025.11.03.11.29.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Nov 2025 11:29:10 -0800 (PST)
+Date: Mon, 3 Nov 2025 19:29:08 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Kuan-Wei Chiu <visitorckw@gmail.com>, Guan-Chun Wu
+ <409411716@gms.tku.edu.tw>, Andrew Morton <akpm@linux-foundation.org>,
+ ebiggers@kernel.org, tytso@mit.edu, jaegeuk@kernel.org, xiubli@redhat.com,
+ idryomov@gmail.com, kbusch@kernel.org, axboe@kernel.dk, hch@lst.de,
+ sagi@grimberg.me, home7438072@gmail.com, linux-nvme@lists.infradead.org,
+ linux-fscrypt@vger.kernel.org, ceph-devel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] lib/base64: add generic encoder/decoder, migrate
+ users
+Message-ID: <20251103192908.1d716a7b@pumpkin>
+In-Reply-To: <aQjxjlJvLnx_zRx8@smile.fi.intel.com>
+References: <20251029101725.541758-1-409411716@gms.tku.edu.tw>
+	<20251031210947.1d2b028da88ef526aebd890d@linux-foundation.org>
+	<aQiC4zrtXobieAUm@black.igk.intel.com>
+	<aQiM7OWWM0dXTT0J@google.com>
+	<20251103132213.5feb4586@pumpkin>
+	<aQi_JHjSi46uUcjB@smile.fi.intel.com>
+	<aQjxjlJvLnx_zRx8@smile.fi.intel.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251103192120.GJ3419281@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 03, 2025 at 08:21:20PM +0100, Peter Zijlstra wrote:
-> On Sun, Nov 02, 2025 at 10:57:06AM +0000, Guangbo Cui wrote:
-> > The AER injection path may run in interrupt-disabled context while
-> > holding inject_lock. On PREEMPT_RT kernels, spinlock_t becomes a
-> > sleeping lock, so it must not be taken while a raw_spinlock_t is held.
-> > Doing so violates lock ordering rules and trigger lockdep reports
-> > such as “Invalid wait context”.
+On Mon, 3 Nov 2025 20:16:46 +0200
+Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
+
+> On Mon, Nov 03, 2025 at 04:41:41PM +0200, Andy Shevchenko wrote:
+> > On Mon, Nov 03, 2025 at 01:22:13PM +0000, David Laight wrote:  
+> > > On Mon, 3 Nov 2025 19:07:24 +0800
+> > > Kuan-Wei Chiu <visitorckw@gmail.com> wrote:  
+> > > > On Mon, Nov 03, 2025 at 11:24:35AM +0100, Andy Shevchenko wrote:  
+> > > > > On Fri, Oct 31, 2025 at 09:09:47PM -0700, Andrew Morton wrote:    
+> > > > > > On Wed, 29 Oct 2025 18:17:25 +0800 Guan-Chun Wu <409411716@gms.tku.edu.tw> wrote:  
+> 
+> ...
+> 
+> > > > > > Looks like wonderful work, thanks.  And it's good to gain a selftest
+> > > > > > for this code.
+> > > > > >     
+> > > > > > > This improves throughput by ~43-52x.    
+> > > > > > 
+> > > > > > Well that isn't a thing we see every day.    
+> > > > > 
+> > > > > I agree with the judgement, the problem is that this broke drastically a build:
+> > > > > 
+> > > > > lib/base64.c:35:17: error: initializer overrides prior initialization of this subobject [-Werror,-Winitializer-overrides]
+> > > > >    35 |         [BASE64_STD] = BASE64_REV_INIT('+', '/'),
+> > > > >       |                        ^~~~~~~~~~~~~~~~~~~~~~~~~
+> > > > > lib/base64.c:26:11: note: expanded from macro 'BASE64_REV_INIT'
+> > > > >    26 |         ['A'] =  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, \
+> > > > >       |                  ^
+> > > > > lib/base64.c:35:17: note: previous initialization is here
+> > > > >    35 |         [BASE64_STD] = BASE64_REV_INIT('+', '/'),
+> > > > >       |                        ^~~~~~~~~~~~~~~~~~~~~~~~~
+> > > > > lib/base64.c:25:16: note: expanded from macro 'BASE64_REV_INIT'
+> > > > >    25 |         [0 ... 255] = -1, \
+> > > > >       |                       ^~
+> > > > > ...
+> > > > > fatal error: too many errors emitted, stopping now [-ferror-limit=]
+> > > > > 20 errors generated.
+> > > > >     
+> > > > Since I didn't notice this build failure, I guess this happens during a
+> > > > W=1 build? Sorry for that. Maybe I should add W=1 compilation testing
+> > > > to my checklist before sending patches in the future. I also got an
+> > > > email from the kernel test robot with a duplicate initialization
+> > > > warning from the sparse tool [1], pointing to the same code.
+> > > > 
+> > > > This implementation was based on David's previous suggestion [2] to
+> > > > first default all entries to -1 and then set the values for the 64
+> > > > character entries. This was to avoid expanding the large 256 * 3 table
+> > > > and improve code readability.
+> > > > 
+> > > > Since I believe many people test and care about W=1 builds,  
+> > > 
+> > > Last time I tried a W=1 build it failed horribly because of 'type-limits'.
+> > > The kernel does that all the time - usually for its own error tests inside
+> > > #define and inline functions.
+> > > Certainly some of the changes I've seen to stop W=1 warnings are really
+> > > a bad idea - but that is a bit of a digression.
+> > > 
+> > > Warnings can be temporarily disabled using #pragma.
+> > > That might be the best thing to do here with this over-zealous warning.
+> > > 
+> > > This compiles on gcc and clang (even though the warnings have different names):
+> > > #pragma GCC diagnostic push
+> > > #pragma GCC diagnostic ignored "-Woverride-init"
+> > > int x[16] = { [0 ... 15] = -1, [5] = 5};
+> > > #pragma GCC diagnostic pop
+> > >   
+> > > > I think we need to find another way to avoid this warning?
+> > > > Perhaps we could consider what you suggested:
+> > > > 
+> > > > #define BASE64_REV_INIT(val_plus, val_comma, val_minus, val_slash, val_under) { \
+> > > > 	[ 0 ... '+'-1 ] = -1, \
+> > > > 	[ '+' ] = val_plus, val_comma, val_minus, -1, val_slash, \
+> > > > 	[ '0' ] = 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, \
+> > > > 	[ '9'+1 ... 'A'-1 ] = -1, \
+> > > > 	[ 'A' ] = 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, \
+> > > > 		  23, 24, 25, 26, 27, 28, 28, 30, 31, 32, 33, 34, 35, \
+> > > > 	[ 'Z'+1 ... '_'-1 ] = -1, \
+> > > > 	[ '_' ] = val_under, \
+> > > > 	[ '_'+1 ... 'a'-1 ] = -1, \
+> > > > 	[ 'a' ] = 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, \
+> > > > 		  49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, \
+> > > > 	[ 'z'+1 ... 255 ] = -1 \
+> > > > }  
+> > > 
+> > > I just checked, neither gcc nor clang allow empty ranges (eg [ 6 ... 5 ] = -1).
+> > > Which means the coder has to know which characters are adjacent as well
+> > > as getting the order right.
+> > > Basically avoiding the warning sucks.
+> > >   
+> > > > Or should we just expand the 256 * 3 table as it was before?  
+> > > 
+> > > That has much the same issue - IIRC it relies on three big sequential lists.
+> > > 
+> > > The #pragma may be best - but doesn't solve sparse (unless it processes
+> > > them as well).  
 > > 
-> > Convert inject_lock to raw_spinlock_t to ensure non-sleeping locking
-> > semantics. The protected list is bounded and used only for debugging,
-> > so raw locking will not cause latency issues.
+> > Pragma will be hated.
+
+They have been used in a few other places.
+and to disable more 'useful' warnings.
+
+> > I believe there is a better way to do what you want. Let me cook a PoC.  
 > 
-> Bounded how?
+> I tried locally several approaches and the best I can come up with is the pre-generated
+> (via Python script) pieces of C code that we can copy'n'paste instead of that shortened
+> form. So basically having a full 256 tables in the code is my suggestion to fix the build
+> issue. Alternatively we can generate that at run-time (on the first run) in
+> the similar way how prime_numbers.c does. The downside of such an approach is loosing
+> the const specifier, which I consider kinda important.
+> 
+> Btw, in the future here might be also the side-channel attack concerns appear, which would
+> require to reconsider the whole algo to get it constant-time execution.
+
+The array lookup version is 'reasonably' time constant.
+One option is to offset all the array entries by 1 and subtract 1 after reading the entry.
+That means that the 'error' characters have zero in the array (not -1).
+At least the compiler won't error that!
+The extra 'subtract 1' is probably just measurable.
+
+But I'd consider raising a bug on gcc :-)
+One of the uses of ranged designated initialisers for arrays is to change the
+default value - as been done here.
+It shouldn't cause a warning.
+
+	David
+
+> 
+> > > > [1]: https://lore.kernel.org/oe-kbuild-all/202511021343.107utehN-lkp@intel.com/
+> > > > [2]: https://lore.kernel.org/lkml/20250928195736.71bec9ae@pumpkin/  
 > 
 
-And
-
----
---- a/drivers/pci/pcie/aer_inject.c
-+++ b/drivers/pci/pcie/aer_inject.c
-@@ -128,15 +128,14 @@ static struct pci_ops *__find_pci_bus_op
- 
- static struct pci_bus_ops *pci_bus_ops_pop(void)
- {
--	unsigned long flags;
- 	struct pci_bus_ops *bus_ops;
- 
--	raw_spin_lock_irqsave(&inject_lock, flags);
-+	guard(raw_spinlock_irqsave)(&inject_lock);
- 	bus_ops = list_first_entry_or_null(&pci_bus_ops_list,
- 					   struct pci_bus_ops, list);
- 	if (bus_ops)
- 		list_del(&bus_ops->list);
--	raw_spin_unlock_irqrestore(&inject_lock, flags);
-+
- 	return bus_ops;
- }
- 
-@@ -222,18 +221,18 @@ static int aer_inj_write(struct pci_bus
- static int aer_inj_read_config(struct pci_bus *bus, unsigned int devfn,
- 			       int where, int size, u32 *val)
- {
--	u32 *sim;
- 	struct aer_error *err;
--	unsigned long flags;
- 	int domain;
--	int rv;
-+	u32 *sim;
- 
--	raw_spin_lock_irqsave(&inject_lock, flags);
-+	guard(raw_spinlock_irqsave)(&inject_lock);
- 	if (size != sizeof(u32))
- 		goto out;
-+
- 	domain = pci_domain_nr(bus);
- 	if (domain < 0)
- 		goto out;
-+
- 	err = __find_aer_error(domain, bus->number, devfn);
- 	if (!err)
- 		goto out;
-@@ -241,31 +240,29 @@ static int aer_inj_read_config(struct pc
- 	sim = find_pci_config_dword(err, where, NULL);
- 	if (sim) {
- 		*val = *sim;
--		raw_spin_unlock_irqrestore(&inject_lock, flags);
- 		return 0;
- 	}
-+
- out:
--	rv = aer_inj_read(bus, devfn, where, size, val);
--	raw_spin_unlock_irqrestore(&inject_lock, flags);
--	return rv;
-+	return aer_inj_read(bus, devfn, where, size, val);
- }
- 
- static int aer_inj_write_config(struct pci_bus *bus, unsigned int devfn,
- 				int where, int size, u32 val)
- {
--	u32 *sim;
- 	struct aer_error *err;
--	unsigned long flags;
--	int rw1cs;
- 	int domain;
--	int rv;
-+	int rw1cs;
-+	u32 *sim;
- 
--	raw_spin_lock_irqsave(&inject_lock, flags);
-+	guard(raw_spinlock_irqsave)(&inject_lock);
- 	if (size != sizeof(u32))
- 		goto out;
-+
- 	domain = pci_domain_nr(bus);
- 	if (domain < 0)
- 		goto out;
-+
- 	err = __find_aer_error(domain, bus->number, devfn);
- 	if (!err)
- 		goto out;
-@@ -276,13 +273,10 @@ static int aer_inj_write_config(struct p
- 			*sim ^= val;
- 		else
- 			*sim = val;
--		raw_spin_unlock_irqrestore(&inject_lock, flags);
- 		return 0;
- 	}
- out:
--	rv = aer_inj_write(bus, devfn, where, size, val);
--	raw_spin_unlock_irqrestore(&inject_lock, flags);
--	return rv;
-+	return aer_inj_write(bus, devfn, where, size, val);
- }
- 
- static struct pci_ops aer_inj_pci_ops = {
-@@ -301,22 +295,21 @@ static void pci_bus_ops_init(struct pci_
- 
- static int pci_bus_set_aer_ops(struct pci_bus *bus)
- {
--	struct pci_ops *ops;
- 	struct pci_bus_ops *bus_ops;
--	unsigned long flags;
-+	struct pci_ops *ops;
- 
- 	bus_ops = kmalloc(sizeof(*bus_ops), GFP_KERNEL);
- 	if (!bus_ops)
- 		return -ENOMEM;
- 	ops = pci_bus_set_ops(bus, &aer_inj_pci_ops);
--	raw_spin_lock_irqsave(&inject_lock, flags);
--	if (ops == &aer_inj_pci_ops)
--		goto out;
--	pci_bus_ops_init(bus_ops, bus, ops);
--	list_add(&bus_ops->list, &pci_bus_ops_list);
--	bus_ops = NULL;
--out:
--	raw_spin_unlock_irqrestore(&inject_lock, flags);
-+
-+	scoped_guard (raw_spinlock_irqsave, &inject_lock) {
-+		if (ops == &aer_inj_pci_ops)
-+			break;
-+		pci_bus_ops_init(bus_ops, bus, ops);
-+		list_add(&bus_ops->list, &pci_bus_ops_list);
-+		bus_ops = NULL;
-+	}
- 	kfree(bus_ops);
- 	return 0;
- }
-@@ -388,69 +381,66 @@ static int aer_inject(struct aer_error_i
- 				       uncor_mask);
- 	}
- 
--	raw_spin_lock_irqsave(&inject_lock, flags);
--
--	err = __find_aer_error_by_dev(dev);
--	if (!err) {
--		err = err_alloc;
--		err_alloc = NULL;
--		aer_error_init(err, einj->domain, einj->bus, devfn,
--			       pos_cap_err);
--		list_add(&err->list, &einjected);
--	}
--	err->uncor_status |= einj->uncor_status;
--	err->cor_status |= einj->cor_status;
--	err->header_log0 = einj->header_log0;
--	err->header_log1 = einj->header_log1;
--	err->header_log2 = einj->header_log2;
--	err->header_log3 = einj->header_log3;
--
--	if (!aer_mask_override && einj->cor_status &&
--	    !(einj->cor_status & ~cor_mask)) {
--		ret = -EINVAL;
--		pci_warn(dev, "The correctable error(s) is masked by device\n");
--		raw_spin_unlock_irqrestore(&inject_lock, flags);
--		goto out_put;
--	}
--	if (!aer_mask_override && einj->uncor_status &&
--	    !(einj->uncor_status & ~uncor_mask)) {
--		ret = -EINVAL;
--		pci_warn(dev, "The uncorrectable error(s) is masked by device\n");
--		raw_spin_unlock_irqrestore(&inject_lock, flags);
--		goto out_put;
--	}
--
--	rperr = __find_aer_error_by_dev(rpdev);
--	if (!rperr) {
--		rperr = rperr_alloc;
--		rperr_alloc = NULL;
--		aer_error_init(rperr, pci_domain_nr(rpdev->bus),
--			       rpdev->bus->number, rpdev->devfn,
--			       rp_pos_cap_err);
--		list_add(&rperr->list, &einjected);
--	}
--	if (einj->cor_status) {
--		if (rperr->root_status & PCI_ERR_ROOT_COR_RCV)
--			rperr->root_status |= PCI_ERR_ROOT_MULTI_COR_RCV;
--		else
--			rperr->root_status |= PCI_ERR_ROOT_COR_RCV;
--		rperr->source_id &= 0xffff0000;
--		rperr->source_id |= PCI_DEVID(einj->bus, devfn);
--	}
--	if (einj->uncor_status) {
--		if (rperr->root_status & PCI_ERR_ROOT_UNCOR_RCV)
--			rperr->root_status |= PCI_ERR_ROOT_MULTI_UNCOR_RCV;
--		if (sever & einj->uncor_status) {
--			rperr->root_status |= PCI_ERR_ROOT_FATAL_RCV;
--			if (!(rperr->root_status & PCI_ERR_ROOT_UNCOR_RCV))
--				rperr->root_status |= PCI_ERR_ROOT_FIRST_FATAL;
--		} else
--			rperr->root_status |= PCI_ERR_ROOT_NONFATAL_RCV;
--		rperr->root_status |= PCI_ERR_ROOT_UNCOR_RCV;
--		rperr->source_id &= 0x0000ffff;
--		rperr->source_id |= PCI_DEVID(einj->bus, devfn) << 16;
-+	scoped_guard (raw_spinlock_irqsave, &inject_lock) {
-+		err = __find_aer_error_by_dev(dev);
-+		if (!err) {
-+			err = err_alloc;
-+			err_alloc = NULL;
-+			aer_error_init(err, einj->domain, einj->bus, devfn,
-+				       pos_cap_err);
-+			list_add(&err->list, &einjected);
-+		}
-+		err->uncor_status |= einj->uncor_status;
-+		err->cor_status |= einj->cor_status;
-+		err->header_log0 = einj->header_log0;
-+		err->header_log1 = einj->header_log1;
-+		err->header_log2 = einj->header_log2;
-+		err->header_log3 = einj->header_log3;
-+
-+		if (!aer_mask_override && einj->cor_status &&
-+		    !(einj->cor_status & ~cor_mask)) {
-+			ret = -EINVAL;
-+			pci_warn(dev, "The correctable error(s) is masked by device\n");
-+			goto out_put;
-+		}
-+		if (!aer_mask_override && einj->uncor_status &&
-+		    !(einj->uncor_status & ~uncor_mask)) {
-+			ret = -EINVAL;
-+			pci_warn(dev, "The uncorrectable error(s) is masked by device\n");
-+			goto out_put;
-+		}
-+
-+		rperr = __find_aer_error_by_dev(rpdev);
-+		if (!rperr) {
-+			rperr = rperr_alloc;
-+			rperr_alloc = NULL;
-+			aer_error_init(rperr, pci_domain_nr(rpdev->bus),
-+				       rpdev->bus->number, rpdev->devfn,
-+				       rp_pos_cap_err);
-+			list_add(&rperr->list, &einjected);
-+		}
-+		if (einj->cor_status) {
-+			if (rperr->root_status & PCI_ERR_ROOT_COR_RCV)
-+				rperr->root_status |= PCI_ERR_ROOT_MULTI_COR_RCV;
-+			else
-+				rperr->root_status |= PCI_ERR_ROOT_COR_RCV;
-+			rperr->source_id &= 0xffff0000;
-+			rperr->source_id |= PCI_DEVID(einj->bus, devfn);
-+		}
-+		if (einj->uncor_status) {
-+			if (rperr->root_status & PCI_ERR_ROOT_UNCOR_RCV)
-+				rperr->root_status |= PCI_ERR_ROOT_MULTI_UNCOR_RCV;
-+			if (sever & einj->uncor_status) {
-+				rperr->root_status |= PCI_ERR_ROOT_FATAL_RCV;
-+				if (!(rperr->root_status & PCI_ERR_ROOT_UNCOR_RCV))
-+					rperr->root_status |= PCI_ERR_ROOT_FIRST_FATAL;
-+			} else
-+				rperr->root_status |= PCI_ERR_ROOT_NONFATAL_RCV;
-+			rperr->root_status |= PCI_ERR_ROOT_UNCOR_RCV;
-+			rperr->source_id &= 0x0000ffff;
-+			rperr->source_id |= PCI_DEVID(einj->bus, devfn) << 16;
-+		}
- 	}
--	raw_spin_unlock_irqrestore(&inject_lock, flags);
- 
- 	if (aer_mask_override) {
- 		pci_write_config_dword(dev, pos_cap_err + PCI_ERR_COR_MASK,
 
