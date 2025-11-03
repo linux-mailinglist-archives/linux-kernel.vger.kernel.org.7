@@ -1,82 +1,100 @@
-Return-Path: <linux-kernel+bounces-883214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46ECCC2CDED
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:47:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 24F76C2D01F
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:11:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B4303B84C5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:27:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D7B6566112
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7AF32E15E;
-	Mon,  3 Nov 2025 15:15:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7762E32863E;
+	Mon,  3 Nov 2025 15:15:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fqb+Ap+n"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fmTi+U07"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010059.outbound.protection.outlook.com [52.101.85.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7705528750B
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 15:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762182923; cv=none; b=LIbtczwcvwC/9zv1zY4OJg8b39jeV0dAWMtcBttg6HI6f6rSxGgghK0vNiBMcw2HZyMibd7+KXKnhGY13HNrDC7mg9VM/VAAiHle3JWPUrmwpGgNEm9ugDvxPPZ4NnrOA+mkF4V59bIeWmFFdiJpXxfdH/XNcASLJe12oLUIl6U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762182923; c=relaxed/simple;
-	bh=fiE1WYTuKmYzY56YIoVVy+YVvbVbFd8mhvn32xKDZZw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=OAL279pyfgqeapP2Andall543lo+GbmXO7ma4D47Q2NceUYSprRCZKzBQheHP32mj+m+u9XJF2uZRjuk56G/6fk0eGhH72vRX0YmcayO3hEFzJDbNZpstAvuubf609lT7dSBc5LFLShAmoPFcgZ3u3vPRiMyKB8JamacEDG9vxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Fqb+Ap+n; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b404a8be3f1so62558866b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 07:15:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762182919; x=1762787719; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WnkMx27uJCgIz5HUf8NlnnVVAnQB4Ee+Mh1yuMco5wE=;
-        b=Fqb+Ap+nU4faQhNA1/5UA5NdmGOPtAlTmgYX0EU4cY9y7vpvjiwOQKjP+h5MDIiWmK
-         1GuKktEKSkC15062MqWZEXjkSzkyUfR/oukPiJwoaW2M4u2d6r2xhtMDpDEfJZnp9uLG
-         NMZMbeNPlhPGkOeeJdAv+jlTV3ZdSdEsSvZfqr1hsrIWnYDP4zZY2auujKWT7P1XjHTf
-         FaCp19ikfMAD0qfSjGueLwLSIyODMUSkzTcWDQTKWd2KeUBGrGICiuaGSTI3zDVQO/xL
-         rEQwi2A15XTPQJJTiDI3HB9eYX456vrABu1YXxsVtRacUSQFPv/K3bSu9Bz9IyVQXBAZ
-         M1yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762182919; x=1762787719;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WnkMx27uJCgIz5HUf8NlnnVVAnQB4Ee+Mh1yuMco5wE=;
-        b=bDJvEUoNtYd2xRCSCruami/PXvYLMXf1ZtvwpnGfVaSrWBBRCG+luOKX6LM62kn04D
-         htC59E8Fly+UDTxYVQA5bUd/Lqg8Z8G3bbLF2D4IUa7d2a+4iGzPNEW5bwXXjEOmC12/
-         0ZlCTucvSStxv5uuRg1SLtGM4l+k3947rMryIvvIBBMrU0unebHsQtOOajXWFojDPV/i
-         ctwNNzHntJQeoi5BLbiADu1C9TIet6JJFcfwY3YDC9+l+ITMJ8JkJiwUCxKQfnVInqgy
-         qyLuHE+c6vELAxmnFAJorsDDrtlzFpw2Ztdn7boErtXz8sQBrQjwXYg1mizDiJHaTDCB
-         Ihow==
-X-Forwarded-Encrypted: i=1; AJvYcCVPPPi5jqYCfbv6ODWRZ1GzufhhNgttdRmpN5u3W+gWe8VBymDuvAWnYeoDhCYdvIEuLiRjsp4FC4ZXM38=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRmWyyHCr9KH3uzeNknIqf91xxMhBQ5gd6DQYrGACSF0nZ2HHG
-	JU+zTUKmtPt5oWbNgmiltU9XZbOOez7n1yCQMmZq5U/DNNRZZC26UV/dVHj7ZclHLDc=
-X-Gm-Gg: ASbGncsIuy7zWqARMiM7VdCakp4jNqgrJKy15Y69PePQLh990VFrBv3mTnIrFvBiCko
-	ErrvK2iMEuXjR175Ljg7PcuoBxjjfQcRtcTP4CRkKNq7FAgFjifhkkqNXKiY7/JlSNTG9rUGfoc
-	6iZMiQWmumTzH8K6/Bf50IBlFJI4lGqhM/AF/vbTufyvtVJRrWWCP+Iv9tQxf9TLclRq6v4WhVT
-	8WstawaNp094Hj5qulG2zEDccFLORFzbPWKbRioVM+H8vNewmXHsFvSw9T7I1fGVz4Mf7KjiQSE
-	VoJKFUpsIaLVwslKEFcSax25m3M0dukLPiLvTugv1tULQUR0c3YYKwayhHRA21MCtETTO7RtG9b
-	SDH8ocRvg6eqdBC255x3xfh4WBiBQIrstimgwxX+LzcLoydyQf+cIqddcBACIPt2FAf361xq3kb
-	HxTkT+6OZRYEFM4aNwVvT26r9oFXs=
-X-Google-Smtp-Source: AGHT+IG3T7tb2Yt2A02oCGM7Q7A8bJNqhBa1XTmmGtX9j9rsUVRi2kSt6P9ULRSy/RxYjvR3tygZrA==
-X-Received: by 2002:a17:906:f9da:b0:b70:b6f5:4239 with SMTP id a640c23a62f3a-b70b6f546e4mr200283966b.3.1762182918727;
-        Mon, 03 Nov 2025 07:15:18 -0800 (PST)
-Received: from [127.0.1.1] ([178.197.219.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7077975dfdsm1045203066b.13.2025.11.03.07.15.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 07:15:17 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Mon, 03 Nov 2025 16:14:52 +0100
-Subject: [PATCH 12/12] dt-bindings: PCI: qcom,pcie-apq8084: Move APQ8084 to
- dedicated schema
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FBD9326D5C
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 15:15:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762182908; cv=fail; b=f4AsS1zb+JRgWfjAbr3xzf5JFUGFAVGsTNFVKhOv0zdYeNc9NtYFQecC4sF7IXZvLbup34LkNRhJSWzeX3FyyJ7/VhvKifVYDQZoazMTeDLGPwE3fSExflnaG21eny9EGXZZ+oydJOxMYUgAEVu/QNQ3WF+gkGtd2dr4LtT3WTo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762182908; c=relaxed/simple;
+	bh=rLC4O/kLlbSXnAZwyBUcQNgZFy/bbcLfSy4vw1I1bvs=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Cz2hF54DyAa2g3Y14t7+nuoW0YCBkul4U0TdP0rtgvj2Gav2IAzmzn2PzNbi4OuTqBYcDEIkeO5+NgNs9iFavryAgOEPs4kWb5mBW8xnvVyN3oXUA1R6tYbKHhSBw9YR0lg0GSQvJKT+k9Om/8XIbJHZMi9lHJUZAIB8p8vpLLU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fmTi+U07; arc=fail smtp.client-ip=52.101.85.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CT+ooJGklcHQOlGVfPXc7WmCdUklBCkIPGihW4yFZXN3BLGj3ux5EjXIWohbk0DIXmwLpbGfr0Z8A2P3ICWeI7ZyBNbwE/PQ5GpvwnT8oRLrmLi9Iw5qNvpGF+VqWyTZPqNQ08b2Udb1re/fhnuQsCGRHbuUVDwGCefKZ3xbRC95fYutG2nRAUlSiiEoFOl7fCjcuccsyxcobolJM1WJ8CixqlY9pHkuKSaJzZgn7g5okaCx3JwraH3iIT4fc3CdBru79AjtE1U3yWhpPuAAarL3lCf2xQqXUqJfTDYtVLB0FFca5AFFnbEX8kKEUJIXWAad2AM6iuKIWbDcm8Iujg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=f1YXNIVu4F7PeIM/myo7/Iqc6fAs5G0bcqdkExPd5Ww=;
+ b=J9BX8DWQKsvMpnCO6f3X1JStOCvC1wT5LCfoorjkMuNftJJ7KdcQ5FtALT9Vu/Gi0UhQC4tZiPEqIXv0zX+AnxQ0EwJrI+ncukeabPK5PEzCCr73meb5mkXMtjBOl0yAQYC0mvlWMY9L8tlh4qlouyhiirHAW6gqTpxJG78nb3wX179ukyn+GGTdPPZBpVGzDBMj+a/jU3q/wyq5iOUqsn8KrBwTpw7LZXPJIRFllB/xUIdRpENGWod0sccrBXnpyoShM6RwOJW4Xx7bQUL9Tdmeck1FhfPjcLKsXlvxmcVGZY5zLx+/HsFulJLnDgyP4VoHq1eKtr7lf2nAueIiOw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.23.194) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=f1YXNIVu4F7PeIM/myo7/Iqc6fAs5G0bcqdkExPd5Ww=;
+ b=fmTi+U07KC0AbsrCongZaDoFFLqxbUJZEwyAp/2tu0lH27/xrT6YOf+LwhFuc9d02FFcUZhyJID9dhglJIZlzS+ZtgSKS2f313prp1oG1nGhlBf6Yhx/Q53NaMdEQzW2OvtXa+Q+dKGljJ5+Ebzi/i2/UXompj74bQwb1PftDGA=
+Received: from CYZPR20CA0009.namprd20.prod.outlook.com (2603:10b6:930:a2::20)
+ by DS0PR10MB7317.namprd10.prod.outlook.com (2603:10b6:8:f8::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Mon, 3 Nov
+ 2025 15:14:59 +0000
+Received: from CY4PEPF0000E9D7.namprd05.prod.outlook.com
+ (2603:10b6:930:a2:cafe::a8) by CYZPR20CA0009.outlook.office365.com
+ (2603:10b6:930:a2::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.16 via Frontend Transport; Mon,
+ 3 Nov 2025 15:14:53 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.194)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.23.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.23.194; helo=lewvzet200.ext.ti.com; pr=C
+Received: from lewvzet200.ext.ti.com (198.47.23.194) by
+ CY4PEPF0000E9D7.mail.protection.outlook.com (10.167.241.70) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.6 via Frontend Transport; Mon, 3 Nov 2025 15:14:58 +0000
+Received: from DLEE209.ent.ti.com (157.170.170.98) by lewvzet200.ext.ti.com
+ (10.4.14.103) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 3 Nov
+ 2025 09:14:55 -0600
+Received: from DLEE215.ent.ti.com (157.170.170.118) by DLEE209.ent.ti.com
+ (157.170.170.98) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 3 Nov
+ 2025 09:14:55 -0600
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE215.ent.ti.com
+ (157.170.170.118) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Mon, 3 Nov 2025 09:14:55 -0600
+Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5A3FEtrV325063;
+	Mon, 3 Nov 2025 09:14:55 -0600
+From: Nishanth Menon <nm@ti.com>
+To: Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>,
+	"Thomas Richard (TI.com)" <thomas.richard@bootlin.com>
+CC: Nishanth Menon <nm@ti.com>, Thomas Petazzoni
+	<thomas.petazzoni@bootlin.com>, Gregory CLEMENT
+	<gregory.clement@bootlin.com>, Richard Genoud <richard.genoud@bootlin.com>,
+	Udit Kumar <u-kumar1@ti.com>, Prasanth Mantena <p-mantena@ti.com>, "Abhash
+ Kumar" <a-kumar2@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] firmware: ti_sci: set IO Isolation only if the firmware is capable
+Date: Mon, 3 Nov 2025 09:14:53 -0600
+Message-ID: <176218288382.3559260.12524155435608432109.b4-ty@ti.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20251031-ti-sci-io-isolation-v2-1-60d826b65949@bootlin.com>
+References: <20251031-ti-sci-io-isolation-v2-1-60d826b65949@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,404 +102,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251103-dt-bindings-pci-qcom-v1-12-c0f6041abf9b@linaro.org>
-References: <20251103-dt-bindings-pci-qcom-v1-0-c0f6041abf9b@linaro.org>
-In-Reply-To: <20251103-dt-bindings-pci-qcom-v1-0-c0f6041abf9b@linaro.org>
-To: Bjorn Helgaas <bhelgaas@google.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Manivannan Sadhasivam <mani@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9651;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=fiE1WYTuKmYzY56YIoVVy+YVvbVbFd8mhvn32xKDZZw=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBpCMbudKVoMx5Hu6yqSfD5iC+WV2eqbZKfSkUpo
- Fpmq/BPatCJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaQjG7gAKCRDBN2bmhouD
- 106rD/4xXcVAS/pYQaW20Tc+H9ZmFl9U3p3o6XdS022bNxo/No7OUUjKtrhvU5IKr6I/68X+Kqk
- b+QFLo7osRt12g6O6jUCLK7Yfq9ctMVNrmxfU4gSO5OAK9w1AOjfNWvvn/vJizKy/77YOOK0W6V
- epk++c8/jG8bolWJOA5DR29XV18MmdJtzeNNL3m/r2JOGpNQwf5Qgtl23DZRG6sh4TG2kUQnK1s
- Ts5nrDgsYoXD8quriceewfTA+1DMqr86AZKy+f5KiyLByUSerbM6v2Z5gGHEC6J02pxWwiR1qPb
- fswriPDcvcnM85veV6LaglZk/Y6HbCS8bNKXoVO2kY9St6ZQ6PMrDfuuxKDAcFJw+/BcSKJhs3I
- tuqOK1qDzPEKHNzjPh1/c7vbSbpXSPNEprU4TSacsJ2Otdndn7b4xYOS/vW4gGr/8raRhEBKm5C
- Bcsek4C6YwbEb21B8djI7QSIwj5S+4Gf2EwVkP7mfrUzRJFcc/WRzyB3sbOnvBAcloxBC9gnc6T
- 7n7D+k4dEV5l4G9IrL3Syz/kBDuBiY8XSEb6KH0yDxEAMaba1MatTGSIJKbEe+fUStN/cHecJbi
- JmxOtzBWQqBEHSjQDC+l3z9KYF0SvUYgMNQog5dYPZTyTYdj7sE03VDFJ3XsRp68mnomlyhaKHW
- p8blykrM8/8VRzA==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D7:EE_|DS0PR10MB7317:EE_
+X-MS-Office365-Filtering-Correlation-Id: 89da82d9-03d3-473d-688a-08de1aebc082
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|34020700016|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Mi8vcXMzVFI5NVdjd0VmNlEyYTRDZnNOOHBKVlZicVlwY1QzUzU4bkppK3Ur?=
+ =?utf-8?B?UFBBQm9sUWlYUUpuZEhvbWpwTS96aFBERXIrT3ZaUGtrQ0JZMkV4RHlKY1VM?=
+ =?utf-8?B?ZXBYSXQvNmxuWXNwQTdNVk1xNGdHSThBZFJKNkRmaW1IMWcwd1RtdGQ2REdV?=
+ =?utf-8?B?UTZ6V0paVldvZEQ2UDhCQkFQQXozaDJ2YlQweEl4SWhMTCt4M1NucXlOQm85?=
+ =?utf-8?B?bEZRQXF5ckpHMFp2eGFxcGVLWkpHSFhVajA5SmxMRWo1MkVpd3VvZVh1TXpu?=
+ =?utf-8?B?UHlTTVRtNFlDRU1NR3NVbGY0TkF3SmNLYXQ4TTB5NFl3NnFJMmZZUVNnUTZ3?=
+ =?utf-8?B?K2NjdnRkbkxEaHk0dEJGcE1iT2pNNk5jckc2YTZUN0k4ODJGWW5rMVFuUkk3?=
+ =?utf-8?B?cWJwejZSZTNxdzNmVlhuQW1TS2FWZnlWUTV1eDBoTWV6b0xUamw3SEc0TEsx?=
+ =?utf-8?B?VFIzSDI2aWZtanVJVmFEOHk0enpWNjZMcWlqaEl2TlJCa1lNblMzK3RRdW1Y?=
+ =?utf-8?B?WHFZRmgxSG1Tclo3bCtCdDh2S21EVWFvaE1tRStzTHlxVkFEdTA3MFRNeWQr?=
+ =?utf-8?B?dUdxMEo2Nm9JZHZUUEpVOUdhWmFDZnJvNXBtVHpoNjlrTW54MENjN3I0a1kr?=
+ =?utf-8?B?dC9lTFF5VXhkM2ovTTAwbHU4THNaR2p1RXoxSEVPQjdGUDR4YXFBYW02RGJO?=
+ =?utf-8?B?YjVMbWFybVdkRVdnemI2WlRkOU9lSHFLbURpTk9BRlh5dmh6dzlKanVuT09s?=
+ =?utf-8?B?RGZFa1lLZnByekVjQmxXQ1V0dkFGYXBUMDMvSWZ2Z09WYklVeEh5c3pMMTRN?=
+ =?utf-8?B?eXg2bFFIN3NtdzR6SDBhRVlRaXF2TllwR1B0UzJNUWp2bXUwT3FheVQrR3B1?=
+ =?utf-8?B?RS81UmVnRE1OZndJNTBvMWhHU3NSeDNEZlgxaHZYT3RlaHhYNUJvSUwxSU5U?=
+ =?utf-8?B?RXVWQjBnK056TlBVbmpIcDFreHd2VlVHYXlUbkNtR1RXSDgzNmc1QnpVYmNZ?=
+ =?utf-8?B?OGZqY2tSZStxZHE1ZTlKMmlVdWd1Rld3OHFudlBXSk1PMkpIeW4wVFpxamFH?=
+ =?utf-8?B?M21IQ3FzMWpic3NDelY1MTJsRk9CU1ByT2grV3RkdXdJYUNIbGVudnM0d2tN?=
+ =?utf-8?B?TGQwaTlpZDN3NDdqbzBrSi93ZGVUWG9aQ1Q1Rkd4c3NEbmM4eHRuYWp2dHl3?=
+ =?utf-8?B?RDVpZklvd2I2YnpidFJ3NXJ3NGpqaXhuNll1MFhSRTFtUndxaGwwcEhTZW82?=
+ =?utf-8?B?N0RmTkI0bnAzR0NBZVpTYjBUNG5UbU0yaEE2cTNQSUw3UENOQTBaV2xNV2F6?=
+ =?utf-8?B?OGJDdnRiMVR2WGJuemU2M0ZYVUhDd0RXeTBScnVyeDZkTzREOTRBTUkwNHY4?=
+ =?utf-8?B?RjdyMklNM0VWQXM1ejUxZXc5TmtQMFNJN3NhYWk2U1VCcXVUb1dhNkpQMFRJ?=
+ =?utf-8?B?OGJnQkNxTkU5eDNTS1Z2KzUyY1dBMHBCRm5talhCeTI5NDVmeEp1cXkrMkh3?=
+ =?utf-8?B?QjRvU0E1d0VIaUplNVd0cVRUa0xBVXpQajRKejVLTUE2cStPbUZiVmJrVXhT?=
+ =?utf-8?B?NGhObWpsczlUY1lnNWtxMUlXZmVhby9WMmZlbFFrNHFsdS9xZGF3TVlKU2Np?=
+ =?utf-8?B?U1hnbm9FTzJsenJqSVpIUk9EVXdMQTJVZGF5U2lOMVZXVE5WbXhEU0tBWnZm?=
+ =?utf-8?B?WEpWdDk2NFUwTEk4OEhOVnhLMU9veHIwRWJBR2oyOFdtQkpOemNZWnNBQ3VD?=
+ =?utf-8?B?N296SU1sbnQ0ME1Sa0cvOEQzei9Oako4bmNwNTh4aXJwTmM1VzJsZi9kRjdp?=
+ =?utf-8?B?YUNoSnpNYmkrNmxxOU1tZGx3K2Z6ekRLcitodG92V3FvWllwdndmRmJNQVBl?=
+ =?utf-8?B?VmE3UUl6b3p5Tmc2aThkR2s2Z3JYaHVYbmphdkpEdzVsOW12azB4TEJZUXJC?=
+ =?utf-8?B?dVgyWXBkMXNvMXFyZW1JUy81a2RsVUQ2V1diOTNlNWQzYlBhVXpTNkV3d2hP?=
+ =?utf-8?B?WUV3aDJHLzJQY1YrRHNUQmltN1krTXplalR1c01Ia05xUjNrTWJFU1hFM21B?=
+ =?utf-8?B?Z0d6NEVkUUpwMzR2T1BRSXpabHRYNWFndlNrenRrb2hmN0wwZ1IrbVlBYU1s?=
+ =?utf-8?Q?ydFA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:198.47.23.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet200.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(34020700016)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 15:14:58.1704
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 89da82d9-03d3-473d-688a-08de1aebc082
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.194];Helo=[lewvzet200.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000E9D7.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB7317
 
-Move APQ8084 PCIe devices from qcom,pcie.yaml binding to a dedicated
-file to make reviewing and maintenance easier.
+Hi Thomas Richard (TI.com),
 
-New schema is equivalent to the old one with few changes:
- - Adding a required compatible, which is actually redundant.
- - Drop the really obvious comments next to clock/reg/reset-names items.
+On Fri, 31 Oct 2025 13:44:56 +0100, Thomas Richard (TI.com) wrote:
+> Prevent calling ti_sci_cmd_set_io_isolation() on firmware that does not
+> support the IO_ISOLATION capability. Add the MSG_FLAG_CAPS_IO_ISOLATION
+> capability flag and check it before attempting to set IO isolation during
+> suspend/resume operations.
+> 
+> Without this check, systems with older firmware may experience undefined
+> behavior or errors when entering/exiting suspend states.
+> 
+> [...]
 
-After moving the qcom,pcie.yaml becames empty thus can be entirely
-removed.
+I have applied the following to branch ti-drivers-soc-next on [1].
+Thank you!
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../devicetree/bindings/pci/qcom,pcie-apq8084.yaml | 109 ++++++++++
- .../devicetree/bindings/pci/qcom,pcie.yaml         | 227 ---------------------
- 2 files changed, 109 insertions(+), 227 deletions(-)
+[1/1] firmware: ti_sci: set IO Isolation only if the firmware is capable
+      commit: 999e9bc953e321651d69556fdd5dfd178f96f128
 
-diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie-apq8084.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie-apq8084.yaml
-new file mode 100644
-index 000000000000..a6403a3de076
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pci/qcom,pcie-apq8084.yaml
-@@ -0,0 +1,109 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pci/qcom,pcie-apq8084.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Qualcomm APQ8084 PCI Express Root Complex
-+
-+maintainers:
-+  - Bjorn Andersson <andersson@kernel.org>
-+  - Manivannan Sadhasivam <mani@kernel.org>
-+
-+properties:
-+  compatible:
-+    enum:
-+      - qcom,pcie-apq8084
-+
-+  reg:
-+    minItems: 4
-+    maxItems: 5
-+
-+  reg-names:
-+    minItems: 4
-+    items:
-+      - const: parf
-+      - const: dbi
-+      - const: elbi
-+      - const: config
-+      - const: mhi
-+
-+  clocks:
-+    maxItems: 4
-+
-+  clock-names:
-+    items:
-+      - const: iface # Configuration AHB clock
-+      - const: master_bus # Master AXI clock
-+      - const: slave_bus # Slave AXI clock
-+      - const: aux
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  interrupt-names:
-+    items:
-+      - const: msi
-+
-+  resets:
-+    maxItems: 1
-+
-+  reset-names:
-+    items:
-+      - const: core
-+
-+  vdda-supply:
-+    description: A phandle to the core analog power supply
-+
-+required:
-+  - power-domains
-+  - resets
-+  - reset-names
-+
-+allOf:
-+  - $ref: qcom,pcie-common.yaml#
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+    #include <dt-bindings/gpio/gpio.h>
-+    pcie@fc520000 {
-+      compatible = "qcom,pcie-apq8084";
-+      reg = <0xfc520000 0x2000>,
-+            <0xff000000 0x1000>,
-+            <0xff001000 0x1000>,
-+            <0xff002000 0x2000>;
-+      reg-names = "parf", "dbi", "elbi", "config";
-+      device_type = "pci";
-+      linux,pci-domain = <0>;
-+      bus-range = <0x00 0xff>;
-+      num-lanes = <1>;
-+      #address-cells = <3>;
-+      #size-cells = <2>;
-+      ranges = <0x81000000 0 0          0xff200000 0 0x00100000>,
-+               <0x82000000 0 0x00300000 0xff300000 0 0x00d00000>;
-+      interrupts = <GIC_SPI 243 IRQ_TYPE_LEVEL_HIGH>;
-+      interrupt-names = "msi";
-+      #interrupt-cells = <1>;
-+      interrupt-map-mask = <0 0 0 0x7>;
-+      interrupt-map = <0 0 0 1 &intc 0 244 IRQ_TYPE_LEVEL_HIGH>,
-+                      <0 0 0 2 &intc 0 245 IRQ_TYPE_LEVEL_HIGH>,
-+                      <0 0 0 3 &intc 0 247 IRQ_TYPE_LEVEL_HIGH>,
-+                      <0 0 0 4 &intc 0 248 IRQ_TYPE_LEVEL_HIGH>;
-+      clocks = <&gcc 324>,
-+               <&gcc 325>,
-+               <&gcc 327>,
-+               <&gcc 323>;
-+      clock-names = "iface", "master_bus", "slave_bus", "aux";
-+      resets = <&gcc 81>;
-+      reset-names = "core";
-+      power-domains = <&gcc 1>;
-+      vdda-supply = <&pma8084_l3>;
-+      phys = <&pciephy0>;
-+      phy-names = "pciephy";
-+      perst-gpios = <&tlmm 70 GPIO_ACTIVE_LOW>;
-+      pinctrl-0 = <&pcie0_pins_default>;
-+      pinctrl-names = "default";
-+    };
-diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-deleted file mode 100644
-index b071af484a1e..000000000000
---- a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-+++ /dev/null
-@@ -1,227 +0,0 @@
--# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
--%YAML 1.2
-----
--$id: http://devicetree.org/schemas/pci/qcom,pcie.yaml#
--$schema: http://devicetree.org/meta-schemas/core.yaml#
--
--title: Qualcomm PCI express root complex
--
--maintainers:
--  - Bjorn Andersson <bjorn.andersson@linaro.org>
--  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
--
--description: |
--  Qualcomm PCIe root complex controller is based on the Synopsys DesignWare
--  PCIe IP.
--
--properties:
--  compatible:
--    oneOf:
--      - enum:
--          - qcom,pcie-apq8084
--
--  reg:
--    minItems: 4
--    maxItems: 6
--
--  reg-names:
--    minItems: 4
--    maxItems: 6
--
--  interrupts:
--    minItems: 1
--    maxItems: 9
--
--  interrupt-names:
--    minItems: 1
--    maxItems: 9
--
--  iommu-map:
--    minItems: 1
--    maxItems: 16
--
--  # Common definitions for clocks, clock-names and reset.
--  # Platform constraints are described later.
--  clocks:
--    minItems: 3
--    maxItems: 13
--
--  clock-names:
--    minItems: 3
--    maxItems: 13
--
--  dma-coherent: true
--
--  interconnects:
--    maxItems: 2
--
--  interconnect-names:
--    items:
--      - const: pcie-mem
--      - const: cpu-pcie
--
--  resets:
--    minItems: 1
--    maxItems: 12
--
--  reset-names:
--    minItems: 1
--    maxItems: 12
--
--  vdda-supply:
--    description: A phandle to the core analog power supply
--
--  phys:
--    maxItems: 1
--
--  phy-names:
--    items:
--      - const: pciephy
--
--  power-domains:
--    maxItems: 1
--
--  perst-gpios:
--    description: GPIO controlled connection to PERST# signal
--    maxItems: 1
--
--  required-opps:
--    maxItems: 1
--
--  wake-gpios:
--    description: GPIO controlled connection to WAKE# signal
--    maxItems: 1
--
--required:
--  - compatible
--  - reg
--  - reg-names
--  - interrupt-map-mask
--  - interrupt-map
--  - clocks
--  - clock-names
--
--anyOf:
--  - required:
--      - interrupts
--      - interrupt-names
--      - "#interrupt-cells"
--  - required:
--      - msi-map
--
--allOf:
--  - $ref: /schemas/pci/pci-host-bridge.yaml#
--  - if:
--      properties:
--        compatible:
--          contains:
--            enum:
--              - qcom,pcie-apq8084
--    then:
--      properties:
--        reg:
--          minItems: 4
--          maxItems: 5
--        reg-names:
--          minItems: 4
--          items:
--            - const: parf # Qualcomm specific registers
--            - const: dbi # DesignWare PCIe registers
--            - const: elbi # External local bus interface registers
--            - const: config # PCIe configuration space
--            - const: mhi # MHI registers
--
--  - if:
--      properties:
--        compatible:
--          contains:
--            enum:
--              - qcom,pcie-apq8084
--    then:
--      properties:
--        clocks:
--          minItems: 4
--          maxItems: 4
--        clock-names:
--          items:
--            - const: iface # Configuration AHB clock
--            - const: master_bus # Master AXI clock
--            - const: slave_bus # Slave AXI clock
--            - const: aux # Auxiliary (AUX) clock
--        resets:
--          maxItems: 1
--        reset-names:
--          items:
--            - const: core # Core reset
--
--  - if:
--      not:
--        properties:
--          compatible:
--            contains:
--              enum:
--                - qcom,pcie-msm8996
--    then:
--      required:
--        - resets
--        - reset-names
--
--  - if:
--      properties:
--        compatible:
--          contains:
--            enum:
--              - qcom,pcie-apq8084
--    then:
--      properties:
--        interrupts:
--          maxItems: 1
--        interrupt-names:
--          items:
--            - const: msi
--
--unevaluatedProperties: false
--
--examples:
--  - |
--    #include <dt-bindings/interrupt-controller/arm-gic.h>
--    #include <dt-bindings/gpio/gpio.h>
--    pcie@fc520000 {
--      compatible = "qcom,pcie-apq8084";
--      reg = <0xfc520000 0x2000>,
--            <0xff000000 0x1000>,
--            <0xff001000 0x1000>,
--            <0xff002000 0x2000>;
--      reg-names = "parf", "dbi", "elbi", "config";
--      device_type = "pci";
--      linux,pci-domain = <0>;
--      bus-range = <0x00 0xff>;
--      num-lanes = <1>;
--      #address-cells = <3>;
--      #size-cells = <2>;
--      ranges = <0x81000000 0 0          0xff200000 0 0x00100000>,
--               <0x82000000 0 0x00300000 0xff300000 0 0x00d00000>;
--      interrupts = <GIC_SPI 243 IRQ_TYPE_LEVEL_HIGH>;
--      interrupt-names = "msi";
--      #interrupt-cells = <1>;
--      interrupt-map-mask = <0 0 0 0x7>;
--      interrupt-map = <0 0 0 1 &intc 0 244 IRQ_TYPE_LEVEL_HIGH>,
--                      <0 0 0 2 &intc 0 245 IRQ_TYPE_LEVEL_HIGH>,
--                      <0 0 0 3 &intc 0 247 IRQ_TYPE_LEVEL_HIGH>,
--                      <0 0 0 4 &intc 0 248 IRQ_TYPE_LEVEL_HIGH>;
--      clocks = <&gcc 324>,
--               <&gcc 325>,
--               <&gcc 327>,
--               <&gcc 323>;
--      clock-names = "iface", "master_bus", "slave_bus", "aux";
--      resets = <&gcc 81>;
--      reset-names = "core";
--      power-domains = <&gcc 1>;
--      vdda-supply = <&pma8084_l3>;
--      phys = <&pciephy0>;
--      phy-names = "pciephy";
--      perst-gpios = <&tlmm 70 GPIO_ACTIVE_LOW>;
--      pinctrl-0 = <&pcie0_pins_default>;
--      pinctrl-names = "default";
--    };
--...
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
 -- 
-2.48.1
+Regards,
+Nishanth Menon
+Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+https://ti.com/opensource
 
 
