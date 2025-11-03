@@ -1,109 +1,92 @@
-Return-Path: <linux-kernel+bounces-882956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D52BEC2C074
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 14:17:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3590BC2C034
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 14:14:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0AC2F4F8254
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 13:12:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97931189A7D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 13:12:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B00C30E0CD;
-	Mon,  3 Nov 2025 13:11:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED882989B4;
+	Mon,  3 Nov 2025 13:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mmrfrpGk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YN63yOAo"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83CA730C62C
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 13:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9641FDD
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 13:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762175504; cv=none; b=o77d9O8LOYFaXKb3xPJ19Sa/kmPzAsOuAZhlamSs7kkeRM8pNZr6osvMRyN8AR6GqtTzGQXYhiAguN77AZ44ybJ/Zd2mL0aYMzA4cUU/pPeBa34j4LE440jYG65zZ2A9rk+zkphXC9mw5dn3Tj2ZKdhbKSfvd4WFUGZ8rHzbsRs=
+	t=1762175542; cv=none; b=B7WjiAezxqUwYYub+AiOfQFSLqlJJl4LwfRvqnL7LEJ29ZN4fIA3+nGFwkpqZJCZtmTDFUUypGGDDyMO/GENprepL1kjP5eE5JN8GaLRkp6l77mn3y8xFty71j6Jp9CfWQzrRMdEJJ5S64Kl8BP0y6zKCAOV2yacvqOgUxi/boI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762175504; c=relaxed/simple;
-	bh=hkcGjhSNuBJqCDYhFpR4HKv0LE//ewMc0aXjMlRYi98=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RXukrsZgDfEFlu4JOhNTbljhjkexyZ42QGWmKLLTlGAguvK15eyzHAvtsczEWrHyWy/y4C0MGcvXgt//v6LQUzqMAZ9N3YAA7okMc+wm4N0SG2MS9NbzpTxoot0XZkpDpHtd/TkhmdCDrZ/0SFMCJ0brg6eiXkoggiurwhXy1TE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mmrfrpGk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E922C4CEFD
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 13:11:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762175504;
-	bh=hkcGjhSNuBJqCDYhFpR4HKv0LE//ewMc0aXjMlRYi98=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=mmrfrpGkhMITojffvKGNDcddl0UEu7QMnAG2g04RUytAzLUnHaaphT873ni6FLbCw
-	 zHc2lft27/r/sZgzZM2eTBZXy8wUGTz/rpfagFr167S8aq6j3fX9ExLHVLA5YA+NgG
-	 m76B6Ds3f0iBVd82Z8d5yJe7NApk443iPKsBIorKs8N6I+WEuBEmvFf3AzUHpEwMXm
-	 aGv/4d3RoEL6yZyQw5nvfjmCYNlxa2p0SB79T73DuxO36pmPgaUb+3DhFr4UUexMe+
-	 aODqmDS6xc82zzqlzfrGhW0wdbO0dKI4kWeJEVvqX//SlpNsCv04lBfkKrMzcbw5M1
-	 tyxxIy89nV1oA==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-591c9934e0cso7191915e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 05:11:44 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV17hFMzDnkr/Pn5NYoRG2/o2vn7bvvCtjib9w2p/c7nYeJzVow3AWdlmcdqwcHUDoDvYOX2P833bk6GeE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyJwjPhuldcnNmYjvbfmOGKcq0Lvsfut7/n2Thddw/nuT+zgWd
-	52F0Sk7qJxu0qc9RxSQLhhX2FjPQPn9KI+4/nF45j3tZTcW1W7axCX4J4Y61rTje4Lz3kIIiIQb
-	+lr0i7y1onftXdDD0s4uoaKF/CdRJ874=
-X-Google-Smtp-Source: AGHT+IE0jF9ZZS4oGUlH8lSkm+TnmRLYAlDNV0H1c5FaAI7HL/ZiatfAAVaCzegcKT5f+lxtSTUGbWeL+sfp356f2Hs=
-X-Received: by 2002:a05:6512:1191:b0:592:f2ac:779f with SMTP id
- 2adb3069b0e04-5941d500f9cmr4188118e87.18.1762175502721; Mon, 03 Nov 2025
- 05:11:42 -0800 (PST)
+	s=arc-20240116; t=1762175542; c=relaxed/simple;
+	bh=Mmvt7PNKG6SU914myWVJdx0KaLHcNTW1dQjRb3V+seM=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=LNY9tL7z6g9liUbsW1JlaphysE72pggm/wu4TYtcuV3mBYOJI2bpVlnKQvgfFKFqwuC+WRhO2IEzSGtGWbXTaYqM+NyR8yBZ+0ParuZL7T1tQ5lbkG3A6/70uFQleueqXmg7Y/xlTJ9RJl3rf3KHamBrAmopy+y/4OIQQ5gyww4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YN63yOAo; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762175536;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=B33bdjHhYu9+wHKhO/TygcTBTBUN2QAjRpW4nRjqLZI=;
+	b=YN63yOAowvXAlExeNV1G5mA5fRE7JO5WrXcnHM8QWl1hX+YG/266U3tITk+P1Xm/jyVcif
+	5Tbino2hjvGNXq/A3WOn/LHMcDuVYtOyjTl5BtjFLQ/cCd5bJgmuWnYDucHOWiE0NvedQi
+	cRcNmjVpET9g4t+MrpOBLb9uQvVz8EY=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20251102001411.108385-1-francescopompo2@gmail.com>
- <CAMj1kXEUL-Uv4tCx5NLVHDRo-BdEK1xJdee-UYs-ymE-mLxv0Q@mail.gmail.com> <CADr=TJdTcss14P43_jAj4tsEYukt=Z18SnjUNqMD95O_5KkNVA@mail.gmail.com>
-In-Reply-To: <CADr=TJdTcss14P43_jAj4tsEYukt=Z18SnjUNqMD95O_5KkNVA@mail.gmail.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Mon, 3 Nov 2025 14:11:31 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXEP=nByL5+R2Ch-PLSKnziEyyK_rLZL=wcvKRNcBPTJbg@mail.gmail.com>
-X-Gm-Features: AWmQ_bkpgqE5vV6wNEMZwdayegSnXFcHcSy_rz1vjnzV6CjuL5B4TuzcLRvW758
-Message-ID: <CAMj1kXEP=nByL5+R2Ch-PLSKnziEyyK_rLZL=wcvKRNcBPTJbg@mail.gmail.com>
-Subject: Re: [PATCH] efistub/smbios: Add fallback for SMBIOS record lookup
-To: =?UTF-8?Q?Francesco_Pomp=C3=B2?= <francescopompo2@gmail.com>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.700.81\))
+Subject: Re: [PATCH] misc: ad525x_dpot: Replace sprintf with sysfs_emit in
+ sysfs_show_reg
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <2025110333-marbled-viewable-0259@gregkh>
+Date: Mon, 3 Nov 2025 14:11:41 +0100
+Cc: Michael Hennerich <michael.hennerich@analog.com>,
+ Arnd Bergmann <arnd@arndb.de>,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <EDC58257-4D56-464C-B11D-1AEB0B90EE5C@linux.dev>
+References: <20251103123403.62076-2-thorsten.blum@linux.dev>
+ <2025110333-marbled-viewable-0259@gregkh>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, 3 Nov 2025 at 11:15, Francesco Pomp=C3=B2 <francescopompo2@gmail.co=
-m> wrote:
->
-> Il giorno lun 3 nov 2025 alle ore 09:19 Ard Biesheuvel
-> <ardb@kernel.org> ha scritto:
-> >
-> > Hello Francesco,
-> >
-> > On Sun, 2 Nov 2025 at 01:14, Francesco Pompo <francescopompo2@gmail.com=
-> wrote:
-> > >
-> > > Some UEFI firmware implementations do not provide the SMBIOS Protocol=
-,
-> > > causing efi_get_smbios_record() to fail. This prevents retrieval of
-> > > system information such as product name, which is needed by
-> > > apple_set_os() to enable the integrated GPU on dual-graphics Intel
-> > > MacBooks.
-> > >
-> > > Add a fallback that directly parses the SMBIOS entry point table when
-> > > the protocol is unavailable. Log when the fallback is used.
-> > >
-> > > Signed-off-by: Francesco Pompo <francescopompo2@gmail.com>
-> > > ---
-> > >  drivers/firmware/efi/libstub/efistub.h | 17 +++++
-> > >  drivers/firmware/efi/libstub/smbios.c  | 99 ++++++++++++++++++++++++=
-+-
-> > >  2 files changed, 113 insertions(+), 3 deletions(-)
-> > >
-> >
-> > On which platform does this fix an actual existing issue?
->
-> Hello Ard,
->
-> My Macbook Pro Late 2013, product name Macbook11,3 is affected.
+On 3. Nov 2025, at 13:46, Greg Kroah-Hartman wrote:
+> On Mon, Nov 03, 2025 at 01:34:03PM +0100, Thorsten Blum wrote:
+>> Replace sprintf() with sysfs_emit() in sysfs_show_reg(). sysfs_emit() is
+>> preferred for formatting sysfs output as it provides better bounds
+>> checking.  No functional changes.
+>> 
+>> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+>> Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> ---
+>> [...]
+> 
+> I did not suggest doing this for existing code at all, it's only needed
+> for new code, I've said so many times.
 
-You meant MacbookPro11,3, right?
+You suggested it in [1] for this function when I made another change to
+it a few weeks ago. I even replied that there's no coccicheck warning,
+and that the sysfs_emit change should probably be a separate patch.
+
+No big deal, but still confusing.
+
+Thanks,
+Thorsten
+
+[1] https://lore.kernel.org/lkml/2025082052-crawfish-revisable-7965@gregkh/
+
 
