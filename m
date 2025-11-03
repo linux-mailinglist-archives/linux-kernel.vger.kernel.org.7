@@ -1,266 +1,105 @@
-Return-Path: <linux-kernel+bounces-882401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A726CC2A5F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:41:18 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8341DC2A5ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:40:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 73BC83482AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:40:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 875C74EBE26
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:40:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B282C15B7;
-	Mon,  3 Nov 2025 07:39:52 +0000 (UTC)
-Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 513E32C0297;
+	Mon,  3 Nov 2025 07:40:17 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7028A2C21CB;
-	Mon,  3 Nov 2025 07:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E512C0282
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 07:40:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762155591; cv=none; b=PB5Z2YyaGR9zGeb4aKtuBTObc91PjxA4rxQZ+xLT6ZKooVQ4WEAmdLFgtk9FniA8nxb4cBVoooSNakkknEKNzmIia9jkJZDHkDOu1Nj5FSAcZGKW5i34xJoKYFdKq279hNpn/BCLDdjjh98SClNwHu+MlXGycSgdPUk5tldj3ps=
+	t=1762155616; cv=none; b=HhPJEesalx2RjQC7/5je2j7klW5T1wZ4wQqX0tsZ4UU+AOZe0nWccpdr2pZE7wRXUgPMz5mariB6WMau5h4vlLBQ3LVV1McGdFbBTNs4nSqvKonR5lR0wpOOLVw0EOGdS7L/11Ot0GE5tterRAQxvxVyjeDOvac71eZ0GJ3p7jI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762155591; c=relaxed/simple;
-	bh=1wloGNNVsoIOYfApIhEtsrZ4/JcgHz40F3WbPMyHM2I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=NNKUJq58xR5qS7OP/g5/MRF30vFS7S7qMX5ssM3Fvjyxsg4s5VJC2yC/KmhqJaN8C/jtAiPwMIeS3ZHkO4fBtGGZNW681Asgo+1DGVyNQbiaTvTDGC7AjKkjUDz2yPrFyFwgZz07EPuYY0RQQZpktZoooExM1HfPGWb+9CK/GR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 3 Nov
- 2025 15:39:31 +0800
-Received: from [127.0.1.1] (192.168.10.13) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server id 15.2.1748.10 via Frontend
- Transport; Mon, 3 Nov 2025 15:39:31 +0800
-From: Jacky Chou <jacky_chou@aspeedtech.com>
-Date: Mon, 3 Nov 2025 15:39:19 +0800
-Subject: [PATCH net-next v3 4/4] net: ftgmac100: Add RGMII delay support
- for AST2600
+	s=arc-20240116; t=1762155616; c=relaxed/simple;
+	bh=/3SFyZfNGJCJ/swAwUUx3ONTybkPZJcCEJy2UF/cFHw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fwX+sHFNSjEqy98n7J34Dif5b7ocS41ktmYYrQ6w8PoXTjCQhyKENHbesUgkAuj49vShs5SlRU7Cs2LeW5K/HBtElU0bhRgBamV3EwEYsei0lk7da5CXb8i8Ee/JQKnusWstlyce72mXahYgXxF1qsniHNAvywEXmdHdIuZwUCg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1vFpAU-0001rH-RE; Mon, 03 Nov 2025 08:39:58 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1vFpAT-006ozU-2l;
+	Mon, 03 Nov 2025 08:39:57 +0100
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1vFpAT-00GZtJ-2O;
+	Mon, 03 Nov 2025 08:39:57 +0100
+Date: Mon, 3 Nov 2025 08:39:57 +0100
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Bryan Brattlof <bb@ti.com>
+Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Andrew Davis <afd@ti.com>, Tero Kristo <kristo@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Tony Lindgren <tony@atomide.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v7 3/3] arm64: dts: ti: k3-am62l: add initial reference
+ board file
+Message-ID: <aQhcTbQbSZj-MniQ@pengutronix.de>
+References: <20251031-am62lx-v7-0-cb426be9d6ee@ti.com>
+ <20251031-am62lx-v7-3-cb426be9d6ee@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20251103-rgmii_delay_2600-v3-4-e2af2656f7d7@aspeedtech.com>
-References: <20251103-rgmii_delay_2600-v3-0-e2af2656f7d7@aspeedtech.com>
-In-Reply-To: <20251103-rgmii_delay_2600-v3-0-e2af2656f7d7@aspeedtech.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Po-Yu Chuang <ratbert@faraday-tech.com>, Joel Stanley
-	<joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>
-CC: <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-aspeed@lists.ozlabs.org>, <taoren@meta.com>, Jacky Chou
-	<jacky_chou@aspeedtech.com>
-X-Mailer: b4 0.14.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762155571; l=6843;
- i=jacky_chou@aspeedtech.com; s=20251031; h=from:subject:message-id;
- bh=1wloGNNVsoIOYfApIhEtsrZ4/JcgHz40F3WbPMyHM2I=;
- b=IbTCiNJSMVeN46KAGwM6smmb4SlvlDS0giiLkC2aPV+1ijm2hi8g3hPKPyNwS+BzPaMFHewgh
- B6/atZuzn+DCIYQZTmeRLLALXB3RZ3uAn+VBzZ6POfVsIOBlQi0X5Zn
-X-Developer-Key: i=jacky_chou@aspeedtech.com; a=ed25519;
- pk=8XBx7KFM1drEsfCXTH9QC2lbMlGU4XwJTA6Jt9Mabdo=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251031-am62lx-v7-3-cb426be9d6ee@ti.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On the AST2600 platform, the RGMII delay is controlled via the
-SCU registers. The delay chain configuration differs between MAC0/1
-and MAC2/3, even though all four MACs use a 32-stage delay chain.
-+------+----------+-----------+-------------+-------------+
-|      |Delay Unit|Delay Stage|TX Edge Stage|RX Edge Stage|
-+------+----------+-----------+-------------+-------------+
-|MAC0/1|     45 ps|        32 |           0 |           0 |
-+------+----------+-----------+-------------+-------------+
-|MAC2/3|    250 ps|        32 |           0 |          26 |
-+------+----------+-----------+-------------+-------------+
-For MAC2/3, the "no delay" condition starts from stage 26.
-Setting the RX delay stage to 26 means that no additional RX
-delay is applied.
-Here lists the RX delay setting of MAC2/3 below.
-26 -> 0   ns, 27 -> 0.25 ns, ... , 31 -> 1.25 ns,
-0  -> 1.5 ns, 1  -> 1.75 ns, ... , 25 -> 7.75 ns
+On Fri, Oct 31, 2025 at 09:08:06AM -0500, Bryan Brattlof wrote:
+> +&i2c0 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&i2c0_pins_default>;
+> +	clock-frequency = <400000>;
 
-Therefore, we calculate the delay stage from the
-rx-internal-delay-ps of MAC2/3 to add 26. If the stage is equel
-to or bigger than 32, the delay stage will be mask 0x1f to get
-the correct setting.
-The delay chain is like a ring for configuration.
-Example for the rx-internal-delay-ps of MAC2/3 is 2000 ps,
-we will get the delay stage is 2.
+status = "okay" missing here.
 
-Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
----
- drivers/net/ethernet/faraday/ftgmac100.c | 110 +++++++++++++++++++++++++++++++
- drivers/net/ethernet/faraday/ftgmac100.h |  15 +++++
- 2 files changed, 125 insertions(+)
+> +
+> +	eeprom@51 {
+> +		/* AT24C512C-MAHM-T or M24512-DFMC6TG */
+> +		compatible = "atmel,24c512";
+> +		reg = <0x51>;
+> +	};
+> +};
+> +
 
-diff --git a/drivers/net/ethernet/faraday/ftgmac100.c b/drivers/net/ethernet/faraday/ftgmac100.c
-index a863f7841210..bc83ef079095 100644
---- a/drivers/net/ethernet/faraday/ftgmac100.c
-+++ b/drivers/net/ethernet/faraday/ftgmac100.c
-@@ -26,6 +26,9 @@
- #include <linux/if_vlan.h>
- #include <linux/of_net.h>
- #include <linux/phy_fixed.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/regmap.h>
-+#include <linux/bitfield.h>
- #include <net/ip.h>
- #include <net/ncsi.h>
- 
-@@ -1833,6 +1836,108 @@ static bool ftgmac100_has_child_node(struct device_node *np, const char *name)
- 	return ret;
- }
- 
-+static int ftgmac100_set_ast2600_rgmii_delay(struct platform_device *pdev,
-+					     u32 rgmii_tx_delay,
-+					     u32 rgmii_rx_delay)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	u32 rgmii_delay_unit;
-+	struct regmap *scu;
-+	int dly_mask;
-+	int dly_reg;
-+	int id;
-+
-+	scu = syscon_regmap_lookup_by_phandle(np, "scu");
-+	if (IS_ERR(scu)) {
-+		dev_err(&pdev->dev, "failed to get scu");
-+		return PTR_ERR(scu);
-+	}
-+
-+	id = of_alias_get_id(np, "ethernet");
-+	if (id < 0 || id > 3) {
-+		dev_err(&pdev->dev, "get wrong alise id %d\n", id);
-+		return -EINVAL;
-+	}
-+
-+	if (of_device_is_compatible(np, "aspeed,ast2600-mac01")) {
-+		dly_reg = AST2600_MAC01_CLK_DLY;
-+		rgmii_delay_unit = AST2600_MAC01_CLK_DLY_UNIT;
-+	} else if (of_device_is_compatible(np, "aspeed,ast2600-mac23")) {
-+		dly_reg = AST2600_MAC23_CLK_DLY;
-+		rgmii_delay_unit = AST2600_MAC23_CLK_DLY_UNIT;
-+	}
-+
-+	rgmii_tx_delay = DIV_ROUND_CLOSEST(rgmii_tx_delay, rgmii_delay_unit);
-+	if (rgmii_tx_delay >= 32) {
-+		dev_err(&pdev->dev,
-+			"The index %u of TX delay setting is out of range\n",
-+			rgmii_tx_delay);
-+		return -EINVAL;
-+	}
-+
-+	rgmii_rx_delay = DIV_ROUND_CLOSEST(rgmii_rx_delay, rgmii_delay_unit);
-+	if (rgmii_rx_delay >= 32) {
-+		dev_err(&pdev->dev,
-+			"The index %u of RX delay setting is out of range\n",
-+			rgmii_rx_delay);
-+		return -EINVAL;
-+	}
-+
-+	/* Due to the hardware design reason, for MAC23 on AST2600, the zero
-+	 * delay ns on RX is configured by setting value 0x1a.
-+	 * List as below:
-+	 * 0x1a -> 0   ns, 0x1b -> 0.25 ns, ... , 0x1f -> 1.25 ns,
-+	 * 0x00 -> 1.5 ns, 0x01 -> 1.75 ns, ... , 0x19 -> 7.75 ns, 0x1a -> 0 ns
-+	 */
-+	if (of_device_is_compatible(np, "aspeed,ast2600-mac23"))
-+		rgmii_rx_delay = (AST2600_MAC23_RX_DLY_0_NS + rgmii_rx_delay) &
-+				 AST2600_MAC_TX_RX_DLY_MASK;
-+
-+	if (id == 0 || id == 2) {
-+		dly_mask = ASPEED_MAC0_2_TX_DLY | ASPEED_MAC0_2_RX_DLY;
-+		rgmii_tx_delay = FIELD_PREP(ASPEED_MAC0_2_TX_DLY, rgmii_tx_delay);
-+		rgmii_rx_delay = FIELD_PREP(ASPEED_MAC0_2_RX_DLY, rgmii_rx_delay);
-+	} else {
-+		dly_mask = ASPEED_MAC1_3_TX_DLY | ASPEED_MAC1_3_RX_DLY;
-+		rgmii_tx_delay = FIELD_PREP(ASPEED_MAC1_3_TX_DLY, rgmii_tx_delay);
-+		rgmii_rx_delay = FIELD_PREP(ASPEED_MAC1_3_RX_DLY, rgmii_rx_delay);
-+	}
-+
-+	regmap_update_bits(scu, dly_reg, dly_mask, rgmii_tx_delay | rgmii_rx_delay);
-+
-+	return 0;
-+}
-+
-+static int ftgmac100_set_internal_delay(struct platform_device *pdev)
-+{
-+	struct device_node *np = pdev->dev.of_node;
-+	u32 rgmii_tx_delay;
-+	u32 rgmii_rx_delay;
-+	int err;
-+
-+	if (!(of_device_is_compatible(np, "aspeed,ast2600-mac01") ||
-+	      of_device_is_compatible(np, "aspeed,ast2600-mac23")))
-+		return 0;
-+
-+	err = of_property_read_u32(np, "tx-internal-delay-ps", &rgmii_tx_delay);
-+	if (err) {
-+		dev_err(&pdev->dev, "failed to get tx-internal-delay-ps\n");
-+		return err;
-+	}
-+
-+	err = of_property_read_u32(np, "rx-internal-delay-ps", &rgmii_rx_delay);
-+	if (err) {
-+		dev_err(&pdev->dev, "failed to get tx-internal-delay-ps\n");
-+		return err;
-+	}
-+
-+	err = ftgmac100_set_ast2600_rgmii_delay(pdev,
-+						rgmii_tx_delay,
-+						rgmii_rx_delay);
-+
-+	return err;
-+}
-+
- static int ftgmac100_probe(struct platform_device *pdev)
- {
- 	struct resource *res;
-@@ -2004,6 +2109,11 @@ static int ftgmac100_probe(struct platform_device *pdev)
- 		if (of_device_is_compatible(np, "aspeed,ast2600-mac"))
- 			iowrite32(FTGMAC100_TM_DEFAULT,
- 				  priv->base + FTGMAC100_OFFSET_TM);
-+
-+		/* Configure RGMII delay if there are the corresponding compatibles */
-+		err = ftgmac100_set_internal_delay(pdev);
-+		if (err)
-+			goto err_phy_connect;
- 	}
- 
- 	/* Default ring sizes */
-diff --git a/drivers/net/ethernet/faraday/ftgmac100.h b/drivers/net/ethernet/faraday/ftgmac100.h
-index 4968f6f0bdbc..6a2a9159bee4 100644
---- a/drivers/net/ethernet/faraday/ftgmac100.h
-+++ b/drivers/net/ethernet/faraday/ftgmac100.h
-@@ -271,4 +271,19 @@ struct ftgmac100_rxdes {
- #define FTGMAC100_RXDES1_UDP_CHKSUM_ERR	(1 << 26)
- #define FTGMAC100_RXDES1_IP_CHKSUM_ERR	(1 << 27)
- 
-+/* Aspeed SCU */
-+#define AST2600_MAC01_CLK_DLY	0x340
-+#define AST2600_MAC23_CLK_DLY	0x350
-+#define AST2600_MAC01_CLK_DLY_UNIT	45	/* ps */
-+#define AST2600_MAC01_TX_DLY_0_NS	0
-+#define AST2600_MAC01_RX_DLY_0_NS	0
-+#define AST2600_MAC23_CLK_DLY_UNIT	250	/* ps */
-+#define AST2600_MAC23_TX_DLY_0_NS	0
-+#define AST2600_MAC23_RX_DLY_0_NS	0x1a
-+#define AST2600_MAC_TX_RX_DLY_MASK	0x1f
-+#define ASPEED_MAC0_2_TX_DLY		GENMASK(5, 0)
-+#define ASPEED_MAC0_2_RX_DLY		GENMASK(17, 12)
-+#define ASPEED_MAC1_3_TX_DLY		GENMASK(11, 6)
-+#define ASPEED_MAC1_3_RX_DLY		GENMASK(23, 18)
-+
- #endif /* __FTGMAC100_H */
+Sascha
 
 -- 
-2.34.1
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
