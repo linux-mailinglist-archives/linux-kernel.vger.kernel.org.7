@@ -1,54 +1,64 @@
-Return-Path: <linux-kernel+bounces-882334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0FDDC2A33D
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 07:39:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7CC5C2A337
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 07:37:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D463D4ED170
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 06:38:41 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 49B794EA8A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 06:37:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C934A298CCF;
-	Mon,  3 Nov 2025 06:38:34 +0000 (UTC)
-Received: from ssh247.corpemail.net (ssh247.corpemail.net [210.51.61.247])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68BAA296BBD;
-	Mon,  3 Nov 2025 06:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.247
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3119D296BC3;
+	Mon,  3 Nov 2025 06:37:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3029221DB5
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 06:37:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762151914; cv=none; b=s7HwiPItwcKZd+jPEmRLg3f9UU0/jx3kLSbDJrgTc1Qh6k85Yh5l4Iu5HUkrGpWULYyn5OKTT8SJicMy7z9eNzwjjNuBfEAokcW9Kzl4BpbzQgvDXfU2A81eYzcEuhJ+P5kuPhrkIG+pGUtAjP16Cnp2PJmlmOgPhhZM4KgMO5g=
+	t=1762151864; cv=none; b=RLwo1yxz3jjs4Dr5RZfzrO4vXTEYk4AQVR0WKxvFhSJp1bTuY4kjpaMcT66qMh+lNLOvz8E8H8qFucZ/FDe11OFuQlii9106VB+kNhlhERd2j7UMVJYYkbWqRqD94AMzMufYAijllRfDgd1wJo/Ug5ARurxr38zRRZjupa/ospk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762151914; c=relaxed/simple;
-	bh=mqtTEHnfdDj7ufOnIaA3taPobJloaDUr/In/jZdqmZQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B3kpoePP96JcF3TGSCLT6A0gdAcfZk9YX54oeIcFTyMStRVVao43JIfqMfsXHjSRLP2pYG4XEB0C4lbZ9Lm/WoQNxbBxSNglVT/mNjwv2/22XdLOnuSg7mlBO/YaO/q79QLLra7nhCt68Pb7hPpmGluWGnprmZwdnimQlRP6NJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.247
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from Jtjnmail201616.home.langchao.com
-        by ssh247.corpemail.net ((D)) with ASMTP (SSL) id 202511031438248582;
-        Mon, 03 Nov 2025 14:38:24 +0800
-Received: from jtjnmailAR01.home.langchao.com (10.100.2.42) by
- Jtjnmail201616.home.langchao.com (10.100.2.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Mon, 3 Nov 2025 14:38:23 +0800
-Received: from inspur.com (10.100.2.107) by jtjnmailAR01.home.langchao.com
- (10.100.2.42) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Mon, 3 Nov 2025 14:38:23 +0800
-Received: from localhost.com (unknown [10.94.13.117])
-	by app3 (Coremail) with SMTP id awJkCsDwEPneTQhpgL0JAA--.13964S4;
-	Mon, 03 Nov 2025 14:38:22 +0800 (CST)
-From: Chu Guangqing <chuguangqing@inspur.com>
-To: <"mst@redhat.comjasowang@redhat.comxuanzhuo@linux.alibaba.comeperezma@redhat.comandrew+netdev@lunn.chdavem@davemloft.netedumazet@google.comkuba@kernel.orgpabeni"@redhat.com>
-CC: <xuanzhuo@linux.alibaba.com>, <eperezma@redhat.com>,
-	<virtualization@lists.linux.dev>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Chu Guangqing <chuguangqing@inspur.com>
-Subject: [PATCH] virtio_net: Fix a typo error in virtio_net
-Date: Mon, 3 Nov 2025 14:36:33 +0800
-Message-ID: <20251103063633.4295-1-chuguangqing@inspur.com>
-X-Mailer: git-send-email 2.43.7
+	s=arc-20240116; t=1762151864; c=relaxed/simple;
+	bh=l6Gg/KXsf7Xx6bbK38Vv301YSNTzxuyblASz3B0eElI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bU/APkDL2cP8QyDTSATNBEuRP5G6AVmeS2yTCq7S0iFEDyxkVucdXB5bC1meIaIPWDC9xNMVS/gSEVEqJejeZR0MN0IsmFjxJiLYFYwxowGduQetSTChRUKJl5zaLqJVssj1lUUHEoS5iA0YEgZCHVT40l7fX/WghiG/I5Npdsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 005BA28FA;
+	Sun,  2 Nov 2025 22:37:33 -0800 (PST)
+Received: from Mac.blr.arm.com (unknown [10.164.136.41])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 258E73F694;
+	Sun,  2 Nov 2025 22:37:34 -0800 (PST)
+From: Dev Jain <dev.jain@arm.com>
+To: tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	akpm@linux-foundation.org,
+	david@redhat.com,
+	hannes@cmpxchg.org
+Cc: ryan.roberts@arm.com,
+	hpa@zytor.com,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	ppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	zhengqi.arch@bytedance.com,
+	shakeel.butt@linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Dev Jain <dev.jain@arm.com>
+Subject: [RFC PATCH] mm: Enable CONFIG_PT_RECLAIM on all architectures
+Date: Mon,  3 Nov 2025 12:07:18 +0530
+Message-Id: <20251103063718.90743-1-dev.jain@arm.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,55 +66,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: awJkCsDwEPneTQhpgL0JAA--.13964S4
-X-Coremail-Antispam: 1UD129KBjvdXoWrKw4DZw45uw1fAr48GryDWrg_yoWfurc_uw
-	1UZr43tws5Kr4Y9ay5Cw4rAFW5Ka1kWF4kGF9xK3ySkF98uF13WF9FvFyDGFZrX39Fyr1r
-	GFsxGFn8A34fZjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbVkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_GcCE
-	3s1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
-	1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0
-	cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8Jw
-	ACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_Jw0_
-	GFylc7CjxVAKzI0EY4vE52x082I5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
-	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
-	b7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
-	vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
-	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
-	nxnUUI43ZEXa7VUjHmh7UUUUU==
-X-CM-SenderInfo: 5fkxw35dqj1xlqj6x0hvsx2hhfrp/
-X-CM-DELIVERINFO: =?B?DKTVVJRRTeOiUs3aOqHZ50hzsfHKF9Ds6CbXmDm38RucXu3DYXJR7Zlh9zE0nt/Iac
-	D+KWEkofU1bJvebEtZkuG4YLrU+vTWs0UaMZjN3SDVnrRYNjwvvyPu2AsqKRdyaiTde6PO
-	b7yM2pVqj+AYQqHbEW8=
-Content-Type: text/plain
-tUid: 202511031438248c7be716b006c143bcb8f91c6232ec2c
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
 
-Fix the spelling error of "separate".
+The implementation of CONFIG_PT_RECLAIM is completely contained in generic
+mm code. It depends on the RCU callback which will reclaim the pagetables -
+there is nothing arch-specific about that. So, enable this config for
+all architectures.
 
-Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
+Signed-off-by: Dev Jain <dev.jain@arm.com>
 ---
- drivers/net/virtio_net.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/Kconfig | 1 -
+ mm/Kconfig       | 5 +----
+ mm/pt_reclaim.c  | 2 +-
+ 3 files changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 8e8a179aaa49..1e6f5e650f11 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -3760,7 +3760,7 @@ static int virtnet_set_queues(struct virtnet_info *vi, u16 queue_pairs)
- 	 * (2) no user configuration.
- 	 *
- 	 * During rss command processing, device updates queue_pairs using rss.max_tx_vq. That is,
--	 * the device updates queue_pairs together with rss, so we can skip the sperate queue_pairs
-+	 * the device updates queue_pairs together with rss, so we can skip the separate queue_pairs
- 	 * update (VIRTIO_NET_CTRL_MQ_VQ_PAIRS_SET below) and return directly.
- 	 */
- 	if (vi->has_rss && !netif_is_rxfh_configured(dev)) {
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index fa3b616af03a..5681308a5650 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -327,7 +327,6 @@ config X86
+ 	select FUNCTION_ALIGNMENT_4B
+ 	imply IMA_SECURE_AND_OR_TRUSTED_BOOT    if EFI
+ 	select HAVE_DYNAMIC_FTRACE_NO_PATCHABLE
+-	select ARCH_SUPPORTS_PT_RECLAIM		if X86_64
+ 	select ARCH_SUPPORTS_SCHED_SMT		if SMP
+ 	select SCHED_SMT			if SMP
+ 	select ARCH_SUPPORTS_SCHED_CLUSTER	if SMP
+diff --git a/mm/Kconfig b/mm/Kconfig
+index 0e26f4fc8717..903c37d02555 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -1355,13 +1355,10 @@ config ARCH_HAS_USER_SHADOW_STACK
+ 	  The architecture has hardware support for userspace shadow call
+           stacks (eg, x86 CET, arm64 GCS or RISC-V Zicfiss).
+ 
+-config ARCH_SUPPORTS_PT_RECLAIM
+-	def_bool n
+-
+ config PT_RECLAIM
+ 	bool "reclaim empty user page table pages"
+ 	default y
+-	depends on ARCH_SUPPORTS_PT_RECLAIM && MMU && SMP
++	depends on MMU && SMP
+ 	select MMU_GATHER_RCU_TABLE_FREE
+ 	help
+ 	  Try to reclaim empty user page table pages in paths other than munmap
+diff --git a/mm/pt_reclaim.c b/mm/pt_reclaim.c
+index 7e9455a18aae..049e17f08c6a 100644
+--- a/mm/pt_reclaim.c
++++ b/mm/pt_reclaim.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <linux/hugetlb.h>
+-#include <asm-generic/tlb.h>
++#include <asm/tlb.h>
+ #include <asm/pgalloc.h>
+ 
+ #include "internal.h"
 -- 
-2.43.7
+2.30.2
 
 
