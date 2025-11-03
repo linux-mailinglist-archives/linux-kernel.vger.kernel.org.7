@@ -1,90 +1,145 @@
-Return-Path: <linux-kernel+bounces-882905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E99EC2BD24
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:50:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FC2DC2BD60
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:53:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 849A5188ACB4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:47:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A4723A9258
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D0B2F2905;
-	Mon,  3 Nov 2025 12:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2767030ACEA;
+	Mon,  3 Nov 2025 12:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="p1Z3Vxb3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="2tFdT9lH"
+Received: from server.couthit.com (server.couthit.com [162.240.164.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C34228DF07
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 12:46:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D6A2D8360;
+	Mon,  3 Nov 2025 12:48:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762173996; cv=none; b=tx5dIBlbfTwXZQVh5y3JsrQWJIyXYgsEietyOVeZUmNOiKmd8bFN+dNleRWZQrWEeZsXLwHBsXWlWikU7uklgbkQRHipPZL8FnMIOfbD9bndSIsUByF/aQflpWUkFgLEFqKautx5ytG1oeVkZePz8YT9j7zB96CE2yWTHL1b8PQ=
+	t=1762174131; cv=none; b=Iytb0X4vytTuF9wegRsiIkRQaIeF1fQpM+YXwfP5C8OKxN7EnpUdiGoLR6Z2AyESeQQjWpPq8vC5flPE84gHsRPlAb7r22LTtSuUXxbcVfHf/1c3+zln7WKVgxHgdwIJfxEEVKLxC54+3xK3YiAoJFtfJ89avLR6wJSRdseA1EA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762173996; c=relaxed/simple;
-	bh=1MgeKLRiNDOLajyUxO/fGTeWqc+lJ/9yc5bfpiiVIss=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dy665NzKeyvAwzhA+LMyXZglgNb3G/scI9tTEssdKrS93jkQmt3mnO/QqFqWX+pMpNCG9FxOzvceoOYG4S4qPaCtj5FTiU7B22UL9NzaJDvaGyhfwElul2GI6gQ2TceelIgFgs9VN748s3pLLkKCat1mCwmsz80PUYtRvyEPNg8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=p1Z3Vxb3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 499D0C113D0;
-	Mon,  3 Nov 2025 12:46:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1762173995;
-	bh=1MgeKLRiNDOLajyUxO/fGTeWqc+lJ/9yc5bfpiiVIss=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p1Z3Vxb3pwo8qd3pP2g5F087aPlVZVAYFhRbMdDbUAhT8oIROmm3ZHc7zBzCpslJH
-	 u4VQijClxhsdZ2FtTP0kYxXqHb4AJjLoHxBiUSkceuFxhtVa5kO49SO9Hl20Nbxp5J
-	 VbQFZcj7sCi103nNiHW4TCWC18XvN8kndkF7+1YA=
-Date: Mon, 3 Nov 2025 21:46:32 +0900
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>
-Cc: Michael Hennerich <michael.hennerich@analog.com>,
-	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] misc: ad525x_dpot: Replace sprintf with sysfs_emit in
- sysfs_show_reg
-Message-ID: <2025110333-marbled-viewable-0259@gregkh>
-References: <20251103123403.62076-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1762174131; c=relaxed/simple;
+	bh=IdboKY1PXrAGO4syzkQNEAjYzB+o+QEgylf92LdeBrI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kQf4TmDUtUAATcqBUnzY0AUNDBt6gSKuugOQ0j62ze9RhRuuqQqAsaCO1CCwjMXJWUY0uXSTKA5RonB85XBgxs41uEapgwGusYXasRgmjiOxLhfJLBM4Q26VEqrMnWgNy/XID4vnQGAolRvVJ9MWL74FWy/c8OpjhBUv3CWrRmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=2tFdT9lH; arc=none smtp.client-ip=162.240.164.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
+	; s=default; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject
+	:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=Nxcpn3Hue00ov8/8RT06Ws2hq4Ob1LXYSYCqOo+CjUY=; b=2tFdT9lHy2ok+cgcrmkWs3jB8F
+	jE4Isj+ka+TpLW+yweBh8xOAqS5epzOkHAjveR/lVHYI0CzFbZanZefWzhgPgxGccIbTDx1aJPk5n
+	fmvTkmnRgD9aMVq8iVwx1+ARgZxor6BBVv3EO+cxvVrFqDILmToIcB78KbREbzjc8+Uf5CBFTLxyX
+	rCru5wc6S2BasR6gc62cHpdY/rgfjjKBElgAzF5OAVO5MeXtkVFWdDGZGlzWxPRtqrHTjAM58JAdI
+	aMUIWPGQr/+O5Z8mBtEKV90/bQFulmJ57FH51a0wDtGUQKKL4/7HJB4hXFaqzgds6fCeKqTmWmced
+	5O1Ds9cQ==;
+Received: from [122.175.9.182] (port=21157 helo=cypher.couthit.local)
+	by server.couthit.com with esmtpa (Exim 4.98.1)
+	(envelope-from <parvathi@couthit.com>)
+	id 1vFtzK-00000006SBs-1h7P;
+	Mon, 03 Nov 2025 07:48:46 -0500
+From: Parvathi Pudi <parvathi@couthit.com>
+To: nm@ti.com,
+	vigneshr@ti.com,
+	tony@atomide.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	richardcochran@gmail.com
+Cc: linux-omap@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	andrew@lunn.ch,
+	danishanwar@ti.com,
+	pratheesh@ti.com,
+	j-rameshbabu@ti.com,
+	praneeth@ti.com,
+	srk@ti.com,
+	rogerq@ti.com,
+	krishna@couthit.com,
+	mohan@couthit.com,
+	pmohan@couthit.com,
+	basharath@couthit.com,
+	parvathi@couthit.com
+Subject: [PATCH v2 0/2] Add support for ICSSM Ethernet on AM57x, AM437x, and AM335x
+Date: Mon,  3 Nov 2025 18:17:22 +0530
+Message-ID: <20251103124820.1679167-1-parvathi@couthit.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251103123403.62076-2-thorsten.blum@linux.dev>
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server.couthit.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - couthit.com
+X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: parvathi@couthit.com
+X-Authenticated-Sender: server.couthit.com: parvathi@couthit.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On Mon, Nov 03, 2025 at 01:34:03PM +0100, Thorsten Blum wrote:
-> Replace sprintf() with sysfs_emit() in sysfs_show_reg(). sysfs_emit() is
-> preferred for formatting sysfs output as it provides better bounds
-> checking.  No functional changes.
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  drivers/misc/ad525x_dpot.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/misc/ad525x_dpot.c b/drivers/misc/ad525x_dpot.c
-> index 04683b981e54..519f97089a00 100644
-> --- a/drivers/misc/ad525x_dpot.c
-> +++ b/drivers/misc/ad525x_dpot.c
-> @@ -419,7 +419,7 @@ static ssize_t sysfs_show_reg(struct device *dev,
->  	s32 value;
->  
->  	if (reg & DPOT_ADDR_OTP_EN)
-> -		return sprintf(buf, "%s\n", str_enabled_disabled(
-> +		return sysfs_emit(buf, "%s\n", str_enabled_disabled(
->  			test_bit(DPOT_RDAC_MASK & reg, data->otp_en_mask)));
+Hi,
 
-I did not suggest doing this for existing code at all, it's only needed
-for new code, I've said so many times.
+This series adds support for ICSSM Ethernet on Texas Instruments AM57x,
+AM437x and AM335x platforms.
 
-sprintf() works just fine here, there's no bug or issue with it.
+The AM57x and AM437x IDKs support two PRU-ICSS instances, each consisting
+of two PRU cores, with each PRU-ICSS instance capable of handling two
+Ethernet ports. For the AM57x platforms, the PRU-ICSS2 node has been added
+to the am57xx-idk-common.dtsi, while for the AM437x platform, the PRU-ICSS1
+node has been added to the am437x-idk-evm.dts.
 
-thanks,
+The AM335x ICE features a single PRU-ICSS instance. A new device tree source
+file, am335x-icev2-prueth.dts, has been introduced to define the PRU-ICSS node
+for the AM335x platform.
 
-greg k-h
+This is v2 of the patch series [v1]. It addresses comments made on [v1].
+This series is based on the latest next-20251103 linux-next.
+
+Changes from v1 to v2 :
+
+*) Addressed Andrew Lunn's comment on patch 1 of the series.
+*) Addressed MD Danish Anwar comment on patch 1 of the series.
+*) Rebased the series on latest linux-next.
+
+[v1] https://lore.kernel.org/all/20251013125401.1435486-1-parvathi@couthit.com/
+
+Thanks and Regards,
+Parvathi.
+
+Roger Quadros (2):
+  arm: dts: ti: Adds device tree nodes for PRU Cores, IEP and eCAP
+    modules of PRU-ICSS2 Instance.
+  arm: dts: ti: Adds support for AM335x and AM437x
+
+ arch/arm/boot/dts/ti/omap/Makefile            |   1 +
+ .../boot/dts/ti/omap/am335x-icev2-prueth.dts  | 533 ++++++++++++++++++
+ arch/arm/boot/dts/ti/omap/am33xx-l4.dtsi      |  11 +
+ arch/arm/boot/dts/ti/omap/am4372.dtsi         |  11 +
+ arch/arm/boot/dts/ti/omap/am437x-idk-evm.dts  | 137 ++++-
+ arch/arm/boot/dts/ti/omap/am57-pruss.dtsi     |  11 +
+ arch/arm/boot/dts/ti/omap/am571x-idk.dts      |   8 +-
+ arch/arm/boot/dts/ti/omap/am572x-idk.dts      |  10 +-
+ arch/arm/boot/dts/ti/omap/am574x-idk.dts      |  10 +-
+ .../boot/dts/ti/omap/am57xx-idk-common.dtsi   |  61 ++
+ 10 files changed, 783 insertions(+), 10 deletions(-)
+ create mode 100644 arch/arm/boot/dts/ti/omap/am335x-icev2-prueth.dts
+
+-- 
+2.43.0
+
 
