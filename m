@@ -1,75 +1,63 @@
-Return-Path: <linux-kernel+bounces-883612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71CFAC2DE15
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 20:21:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A273C2DE22
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 20:21:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADCD04201AE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 19:18:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 001B9422B43
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 19:19:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A99296BB7;
-	Mon,  3 Nov 2025 19:17:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5634320386;
+	Mon,  3 Nov 2025 19:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GI4IEceT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cEeNuDTr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2488126ED31
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 19:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F6231D74E;
+	Mon,  3 Nov 2025 19:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762197456; cv=none; b=mcbbTFT2FZBhZ7Mq1koa3l6MXeCC6HepVVvFQv7dgbftUPGOkiJoWD3rv05bQp5wMGsdghQ9plvALlIVjh5cKmvRxlW105L5pPugXbWyXDH/rDqonV8K+Xp+bP589ZZxz1A0sMW5lkCOXUYVyzbe6nB3uoWOYr9OFit1vvWI5Eg=
+	t=1762197473; cv=none; b=mcESlDDK8Z1uXxRZIhsA36G5GOAOuFQBZnXb+c2VPsguWw7ND8DGg3PtuQDkDzWXnBRR4ryCreRRyvsdtgmT3R1siq3dOEBLzy5+9pzuQ/i7r64zkhjHhLkE1mG9WMdgMYdFeoiJi6+adxn/p5WgTRsPWEmbr5NU4D5AsIkJass=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762197456; c=relaxed/simple;
-	bh=ZdQu9jWeg5RJ3g3Vn7fsPI9e2L5ti/jaJi2n3TjztDg=;
+	s=arc-20240116; t=1762197473; c=relaxed/simple;
+	bh=hXuE1VBaSY3RKRgphu5e9Wa0Cavk7sH93K8Brpnelhw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QhXTWFjGWCsT4Nq0HO8AC6+Dy51coZeBBs3yPTc5dGiCy6PkCF0AeazsiXRPTi/nxgSFFiE6XbW+b9KqDM5SDr5krm3+JNSQi0jxi1GaJvJxpRvqGQpYJcUwmyzMGPFSiFDwljLUTqVGhyqs0BvKiFuBsq3gghKiVgAXr5WryxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GI4IEceT; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762197455; x=1793733455;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ZdQu9jWeg5RJ3g3Vn7fsPI9e2L5ti/jaJi2n3TjztDg=;
-  b=GI4IEceT3JfWCraZG+Wa7u9+eNsB2hfOb2hojvBPaVokeq/oaPXHdNhr
-   vXk7h2AjjUlD4gJovRHJ6OBYsHRuxWoEY4mYzzMt3iHQYYmBwE/KGcxRc
-   wBs8nhP+zGx6QwVvPe81AapovnKfGqUtNAsuhL01YPyxsi810eJjuYy45
-   cwMNSk8Ag8yX0W48OJ46jmrOwV2UXI8S8dhE/k+iBilHyGV400X6FWIF5
-   tqqAyMcmZP1lXdKGGGTGZW7vgQ6lqVDN0s2Tijyui3PlbvXqo6szpNybx
-   W01o2oMlChLmamEHuLBEmZpMjodXWt0B7HAN1DTttbYwERQPV3i88cI/j
-   A==;
-X-CSE-ConnectionGUID: blajTX8CTByJ2t+Y0NbakA==
-X-CSE-MsgGUID: ku+AjgrOQs+KEJ1CjVf5GQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="64169642"
-X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="64169642"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 11:17:33 -0800
-X-CSE-ConnectionGUID: T1h0BkvHTouCBCid8I+S+A==
-X-CSE-MsgGUID: z+Eg9sO0R8mYDwDt2vM18A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="186635625"
-Received: from smoehrl-linux.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.216])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 11:17:31 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vG03T-00000005FP1-0ds0;
-	Mon, 03 Nov 2025 21:17:27 +0200
-Date: Mon, 3 Nov 2025 21:17:26 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Guan-Chun Wu <409411716@gms.tku.edu.tw>,
-	Kuan-Wei Chiu <visitorckw@gmail.com>, linux-kernel@vger.kernel.org
-Cc: David Laight <david.laight.linux@gmail.com>
-Subject: Re: [PATCH v1 1/1] base64: Unroll the tables initialisers
-Message-ID: <aQj_xgm5_dnyJ2cc@smile.fi.intel.com>
-References: <20251103190510.627314-1-andriy.shevchenko@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=L4PcaMG6u1YBi1F6veBHotmNwZGN+51N96SrUWxIHKdUivyzpv5tK37rp1gXc/y9SFr+JDGrK1GMJlZhrpgItO7PcR0J6z1SsTwRmRqSIihWlMq0uatoOCi7Yam9mZMvifPwK/SfNcL/+3QcSgMr4ovPY6r61s3tIZds5tb66KI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cEeNuDTr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E071C4CEE7;
+	Mon,  3 Nov 2025 19:17:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762197471;
+	bh=hXuE1VBaSY3RKRgphu5e9Wa0Cavk7sH93K8Brpnelhw=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=cEeNuDTr1SboNVPsjO50nf9fbgya3TROP191it+xMY0GC6SUqqkeZSHuss3m/OFW1
+	 rWuRFnTf6Mtuv12qSlGbiD03Rq6E6Wl+7KYuRVNdmNBhzsiusb0GHv5PitEUvqhEez
+	 ZyprsnZuAHp8MVZ154qU3gCMzqvr7gHvnqhNMRTqvyO2zW2MynDG2+nuS2pdRtOaFv
+	 +Yrem4yAAvxN9aMqqfUjCl2+Dd0xypZgu6aGCE619PdS9s8BGK5GrR/jSfEJjwIm4f
+	 ACmB5v7t7iTvrEwgQYkzl+rek4TUUJ5lYi7WE+1NEjtwZ+t1rPIb8rmdj9HhuKs6MI
+	 BKre6jda/c4bw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 4330ACE0BB3; Mon,  3 Nov 2025 11:17:50 -0800 (PST)
+Date: Mon, 3 Nov 2025 11:17:50 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org, Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
+Subject: Re: [PATCH 17/19] srcu: Optimize SRCU-fast-updown for arm64
+Message-ID: <8a33bf08-8ca4-4fc1-9481-fff2247e5518@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <082fb8ba-91b8-448e-a472-195eb7b282fd@paulmck-laptop>
+ <20251102214436.3905633-17-paulmck@kernel.org>
+ <b2fb5a99-8dc2-440b-bf52-1dbcf3d7d9a7@efficios.com>
+ <f89a3a56-e48a-4975-b67b-9387fe2e48c6@paulmck-laptop>
+ <7cdecba1-2b30-4296-9862-3dd7bcc013d8@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,35 +66,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251103190510.627314-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <7cdecba1-2b30-4296-9862-3dd7bcc013d8@efficios.com>
 
-On Mon, Nov 03, 2025 at 08:05:10PM +0100, Andy Shevchenko wrote:
-> Currently the initialisers of the tables have duplicate indices.
-> This prevents from building with `make W=1`.
+On Mon, Nov 03, 2025 at 01:16:23PM -0500, Mathieu Desnoyers wrote:
+> On 2025-11-03 12:08, Paul E. McKenney wrote:
+> > On Mon, Nov 03, 2025 at 08:34:10AM -0500, Mathieu Desnoyers wrote:
+> [...]
 > 
-> To address the issue, unroll the table initialisers with generated
-> arrays by the following Python excerpt:
+> > > One example is the libside (user level) rcu implementation which uses
+> > > two counters per cpu [1]. One counter is the rseq fast path, and the
+> > > second counter is for atomics (as fallback).
+> > > 
+> > > If the typical scenario we want to optimize for is thread context, we
+> > > can probably remove the atomic from the fast path with just preempt off
+> > > by partitioning the per-cpu counters further, one possibility being:
+> > > 
+> > > struct percpu_srcu_fast_pair {
+> > > 	unsigned long lock, unlock;
+> > > };
+> > > 
+> > > struct percpu_srcu_fast {
+> > > 	struct percpu_srcu_fast_pair thread;
+> > > 	struct percpu_srcu_fast_pair irq;
+> > > };
+> > > 
+> > > And the grace period sums both thread and irq counters.
+> > > 
+> > > Thoughts ?
+> > 
+> > One complication here is that we need srcu_down_read() at task level
+> > and the matching srcu_up_read() at softirq and/or hardirq level.
+> > 
+> > Or am I missing a trick in your proposed implementation?
 > 
-> CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+> I think you are indeed missing the crux of the solution here.
 > 
-> def gen_table(ch62, ch63):
->     table = [ 0xff ] * 256
->     for idx, char in enumerate(CHARS):
->         table[ord(char)] = idx
->     table[ord(ch62)] = 62
->     table[ord(ch63)] = 63
+> Each of task level and soft/hard irq level increments will be
+> dispatched into different counters (thread vs irq). But the
+> grace period will sum, for each the the two periods one after the
+> next, the unlock counts and then the lock counts. It will consider
+> the period as quiescent if the delta between the two sums is zero,
+> e.g.
 > 
->     for i in range(0, len(table), 8):
->         print (f"\t{', '.join(f"0x{c:02x}" for c in table[i:i+8])},\t/* {i:-3d} - {i+7:-3d} */")
+>   (count[period].irq.unlock + count[period].thread.unlock -
+>    count[period].irq.lock - count[period].thread.lock) == 0
+> 
+> so the sum does not care how the counters were incremented
+> (it just does a load-relaxed), but each counter category
+> have its own way of dealing with concurrency (thread: percpu
+> ops, irq: atomics).
+> 
+> This is effectively a use of split-counters, but the split
+> is across concurrency handling mechanisms rather than across
+> CPUs.
 
-I haven't added a Fixes tag as the idea to fold this to the initial
-contribution.
+Ah, got it, thank you!  But we would need an additional softirq counter,
+correct?
 
--- 
-With Best Regards,
-Andy Shevchenko
+I will keep this in my back pocket in case Catalin's and Yicong's prefetch
+trick turns out to be problematic, and again, thank you!
 
-
+							Thanx, Paul
 
