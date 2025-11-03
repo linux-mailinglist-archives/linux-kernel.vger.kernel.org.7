@@ -1,48 +1,46 @@
-Return-Path: <linux-kernel+bounces-882136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D982C29B90
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 01:49:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FAABC29BB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 01:50:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7A5994E79BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 00:49:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 466FA3B1B21
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 00:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4531E236A8B;
-	Mon,  3 Nov 2025 00:48:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53A9D261B92;
+	Mon,  3 Nov 2025 00:48:43 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C094A86329;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94A0221FA0;
 	Mon,  3 Nov 2025 00:48:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762130920; cv=none; b=VpqI1WSjJhaHGgnOyNbG8KEObA9zB3ou5QLwTjDJmE4KMgaCHhi/Cn907q73zUOQEYzvAvJISell/dZWRQv6EJe7PbAxbAfdRedjkCQFamtvobNMLKWAqXnuxaY5u22IHGZyXcv6+dIbCdZmMFXPF67C2R7GsJOoONfyDLggXFc=
+	t=1762130921; cv=none; b=l88t7ZEKOUx9fJ42vXnrjfdcaUCOHNt6IsgSKCBYUpffyiE2DU/Hrl0SGcoCwQJGNBvofWAnZ87jFLThxOzgJ/PG/5XR9ihnfqBrIkQz6V+qJTgO46W9HUVj9Trde/8/DypfLPqP84xQLzH24Wj/yqt4UAyebBeKwjj8kWjU4no=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762130920; c=relaxed/simple;
-	bh=BZsrRdPraUWXnOVX6LT0rZV7p4D0gXlmeCc65dsR0Ps=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=lSqSaEhhL1snfHiLTpRHm1JHEwYXy5sPv3iBjYvdpAe2eXgo4Y5ed29KVKZitPEIV+UB/M0GxuhkdTKHgys4DhCJ7TnK9zGEsvJn6h5XgLUA87vFvMgp7EwBOFL/G3YdSk1yV/tiKmzB8pqX9TT76z4ta6AKkLycQ39f+hAtX5s=
+	s=arc-20240116; t=1762130921; c=relaxed/simple;
+	bh=frGOQD20OIB0FLKp2HLEg73Jo/9xWaklNYdCEqESRDw=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=rX0pBYQpqT56ZKdgwjQev0MuEteeu+aBPMdTToPCiTYNF2KYyB02KvWEkBUS5HSBQ64O1llUWjeR0HvXUZIo32eI9dttaRhNFyIo+ZKkFjdwRhWZLRkJHIPaID4b0+MEEJqQJ3y3QFYbChsmqHqhbYb6H9b8Uf+sgFIxOLpNrB4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85D02C116D0;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DE54C116B1;
 	Mon,  3 Nov 2025 00:48:40 +0000 (UTC)
 Received: by venus (Postfix, from userid 1000)
-	id 53AE818157C; Mon, 03 Nov 2025 01:48:33 +0100 (CET)
+	id 59CEF1822D6; Mon, 03 Nov 2025 01:48:33 +0100 (CET)
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
 To: Sebastian Reichel <sre@kernel.org>, 
- Ivan Abramov <i.abramov@mt-integration.ru>
-Cc: Lee Jones <lee@kernel.org>, Felipe Balbi <felipe.balbi@linux.intel.com>, 
- Charles Keepax <ckeepax@opensource.wolfsonmicro.com>, 
- Baolin Wang <baolin.wang@linux.alibaba.com>, patches@opensource.cirrus.com, 
+ Fenglin Wu <fenglin.wu@oss.qualcomm.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, linux-arm-msm@vger.kernel.org, 
  linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- lvc-project@linuxtesting.org
-In-Reply-To: <20251009170553.566561-1-i.abramov@mt-integration.ru>
-References: <20251009170553.566561-1-i.abramov@mt-integration.ru>
-Subject: Re: [PATCH 1/1] power: supply: wm831x: Check wm831x_set_bits()
- return value
-Message-Id: <176213091333.301408.13978622275399193894.b4-ty@collabora.com>
+ Val Packett <val@packett.cool>
+In-Reply-To: <20251012233333.19144-2-val@packett.cool>
+References: <20251012233333.19144-2-val@packett.cool>
+Subject: Re: [PATCH 0/2] power: supply: qcom_battmgr: improve charge
+ control threshold handling
+Message-Id: <176213091335.301408.9120443011267055817.b4-ty@collabora.com>
 Date: Mon, 03 Nov 2025 01:48:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -55,18 +53,24 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.3
 
 
-On Thu, 09 Oct 2025 20:05:52 +0300, Ivan Abramov wrote:
-> Since wm831x_set_bits() may return error, log failure and exit from
-> wm831x_usb_limit_change() in such case.
+On Sun, 12 Oct 2025 20:32:17 -0300, Val Packett wrote:
+> Currently, upowerd is unable to turn off the battery preservation mode[1]
+> on Qualcomm laptops, because it does that by setting the start threshold to
+> zero and the driver returns an error:
 > 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> pmic_glink.power-supply.0: charge control start threshold exceed range: [50 - 95]
 > 
+> Kernel documentation says the end threshold must be clamped[2] but does
+> not say anything about the start threshold.
 > 
+> [...]
 
 Applied, thanks!
 
-[1/1] power: supply: wm831x: Check wm831x_set_bits() return value
-      commit: ea14bae6df18942bccb467fcf5ff33ca677b8253
+[1/2] power: supply: qcom_battmgr: clamp charge control thresholds
+      commit: 8809980fdc8a86070667032fa4005ee83f1c62f3
+[2/2] power: supply: qcom_battmgr: support disabling charge control
+      commit: 446fcf494691da4e685923e5fad02b163955fc0e
 
 Best regards,
 -- 
