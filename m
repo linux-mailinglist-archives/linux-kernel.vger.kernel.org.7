@@ -1,45 +1,44 @@
-Return-Path: <linux-kernel+bounces-882145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1010C29BC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 01:51:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6378C29BAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 01:50:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 746B8347CC0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 00:51:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AB0318900D2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 00:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0F526B75B;
-	Mon,  3 Nov 2025 00:48:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76CB023D7C4;
+	Mon,  3 Nov 2025 00:48:41 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D28269CE8;
-	Mon,  3 Nov 2025 00:48:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E630B22156A;
+	Mon,  3 Nov 2025 00:48:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762130924; cv=none; b=ADiKWoDsFi19inTXk/NBYipA6bD0BAt3Wivl4QLm19oCw8ZTITVyA38KiD9RwVizYKM2ltpERCxFNB7NAFsqh9rb7KY04GjEQU5lBHRJJQMVNG6n5T7mYYn9RBx49Qh3sE4EZWaZY0nu7FMyUFmLSl3bnRJ7MOmO3QGnxmxUCok=
+	t=1762130920; cv=none; b=Z40LiGht5TVgVnxNrn958O1nKlGAqE+YaNvKZH427gi6hd/g7R+0GNUgq7sOmMmL1MJR9ExmdZaEvRChMw6zo8C0/bEElm3qiwvrL6bzDNZnQCl/RRAQ6s8sP0c4ktycJSRU57WoWiNzir484gNr8x9KArbuhyaudeH0Wp0Fmmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762130924; c=relaxed/simple;
-	bh=oqMUtkg0C6dq+0OEgc827D+kqB7xcg8Gy9UecXwt6lI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=jrLCwncxqNe1NvtRkDl34BF790u1Q0Fv6LDLPwirPo1iBcYUGRwwBZSxFGhDVRLj6wR7rotWndMpZibNoWjck+u6C6JySCed/RMR6RgW7oOVC1jfVmD83bAGJNKi4kXGpdmo/eFgrZuD5HfXPL69NfzaUw+ljmzAAPvMBpEWZYI=
+	s=arc-20240116; t=1762130920; c=relaxed/simple;
+	bh=s/uZrYG0J1VoRSPDy5vlbSvXSTmXTUOXn0IoyZq29ZA=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=FPWpQ9CgLzYSCLVm3J3POjbZ7c5EiTFcGUN8kLi3lZ2sNxi3JZx174TwR6DKnofffhFDUxsUnKZIBHwyLYNGf3CmDifyrFh/vTspKxSmg1irG58lVAjUW+vWY1N4mcgCyF8Fh8oGTrm+KvTUp5+/rqhumlLpWFyLpFa8Qwt3Dz4=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2AF1C4CEFB;
-	Mon,  3 Nov 2025 00:48:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B498C2BC87;
+	Mon,  3 Nov 2025 00:48:40 +0000 (UTC)
 Received: by venus (Postfix, from userid 1000)
-	id 7EB631822DB; Mon, 03 Nov 2025 01:48:33 +0100 (CET)
+	id 6B97C1822D9; Mon, 03 Nov 2025 01:48:33 +0100 (CET)
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Sebastian Reichel <sre@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, cy_huang@richtek.com
-Cc: ob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- devicetree@vger.kernel.org, linux-pm@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <cover.1761894605.git.cy_huang@richtek.com>
-References: <cover.1761894605.git.cy_huang@richtek.com>
-Subject: Re: [PATCH v4 0/3] Add Richtek RT9756 Smart-Cap divider charger
-Message-Id: <176213091350.301408.12731744580465780465.b4-ty@collabora.com>
+To: Sebastian Reichel <sre@kernel.org>, Anton Vorontsov <cbou@mail.ru>, 
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Ahelenia_Ziemia=C5=84ska?= <nabijaczleweli@nabijaczleweli.xyz>
+In-Reply-To: <xczpgox57hxbunkcbdl5fxhc4gnsajsipldfidi7355afezk64@tarta.nabijaczleweli.xyz>
+References: <xczpgox57hxbunkcbdl5fxhc4gnsajsipldfidi7355afezk64@tarta.nabijaczleweli.xyz>
+Subject: Re: [PATCH] power: supply: apm_power: only unset own
+ apm_get_power_status
+Message-Id: <176213091342.301408.14482368410534019640.b4-ty@collabora.com>
 Date: Mon, 03 Nov 2025 01:48:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -48,28 +47,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.14.3
 
 
-On Fri, 31 Oct 2025 15:19:32 +0800, cy_huang@richtek.com wrote:
-> From: ChiYuan Huang <cy_huang@richtek.com>
+On Fri, 17 Oct 2025 00:05:18 +0200, Ahelenia Ziemiańska wrote:
+> Mirroring drivers/macintosh/apm_emu.c, this means that
+>   modprobe apm_power && modprobe $anotherdriver && modprobe -r apm_power
+> leaves $anotherdriver's apm_get_power_status instead of deleting it.
 > 
-> This patch series adds support for RT9756 charger.
 > 
-> V4
-> - Fix sparse error that kernel test robot reported
-> 
-> [...]
 
 Applied, thanks!
 
-[1/3] dt-bindings: power: supply: Add Richtek RT9756 smart cap divider charger
-      commit: 6964258c617759fb4d6be97a434f44a853a7be52
-[2/3] power: supply: rt9756: Add Richtek RT9756 smart cap divider charger
-      commit: b6f0796d4398beba49c548e07a3d13656acb8fb1
-[3/3] Documentation: power: rt9756: Document exported sysfs entries
-      commit: 1cda37798599692cb553fdb4e93faa294e1a151b
+[1/1] power: supply: apm_power: only unset own apm_get_power_status
+      commit: bd44ea12919ac4e83c9f3997240fe58266aa8799
 
 Best regards,
 -- 
