@@ -1,79 +1,76 @@
-Return-Path: <linux-kernel+bounces-882808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43676C2B8E7
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:00:33 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C67FC2B981
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:18:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8F133AFC6E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:58:24 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7718E4ECC0B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7453074A9;
-	Mon,  3 Nov 2025 11:58:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2A4830AD1E;
+	Mon,  3 Nov 2025 12:16:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="EY6UN7uP"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="AInRrPnk"
+Received: from out162-62-57-64.mail.qq.com (out162-62-57-64.mail.qq.com [162.62.57.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016722D7BF;
-	Mon,  3 Nov 2025 11:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF3A21D3F0;
+	Mon,  3 Nov 2025 12:16:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762171098; cv=none; b=NjGMlSy2BKxHch8/5aN0UtrhFd8fVfi/NyG+5zluVbGPoMhiPIkZjcpTJBAPsYeR/dr4UOmMg4A+VoRvUsyeUlze2Ph/Nf7BsZGTl3/ZFDy/RPnTZSI2iTaWyULYEp3iJemgMfCaIp/GMCXQQbrUIsFAcR7U5RqRgrvbVVmy7qU=
+	t=1762172184; cv=none; b=J7u2GHBkne++HPbiySwGKo/4dztQYaqy9/YrW8Mag2nT8qfPjnQSsYLVGxnJFowawVWNN2yK0ircN8p2gJAlViCocTPvJRkjhfxfRAqm4FpD9nnjXrX+HeBgBQNhxEsQZ4MTVo/QdE1P+6SHbpofpbLh6ldQH1u34Asjrf4CuIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762171098; c=relaxed/simple;
-	bh=9f3gCIriMaW9vu+07GtY5VjvGBNYiwVCGnBM2hedpOE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EfKLjmxhYwiyWAtZ0dezyD5sEWZVik6/hUaCN5FCg8vg1pDy0kqGmbbCPIbtu3/VcUZ97WERErnD4uzClYWHx4EeVFhj5PyWEiD+hdwWVXKDQpBDVhIS4ymW0YViTCYk2KoONHFzR20XGS76tqVxvNxmKITJBwB90OJ7Ar6bLvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=EY6UN7uP; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 5eead250b8ac11f0b33aeb1e7f16c2b6-20251103
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=RHKonKHpuu8h2tauK0dzekelgQBO2YV089GcLoFAdyw=;
-	b=EY6UN7uPF+IpU25XwBchGixP4+bKlnnbw3CuiPi6iIXX8FjovB0TOv0xNatm3AKr1F1eUXM5ia7k5cbgeqEW4a36SpNjbml/fy8gP+S8AtgiQU/1PUnr95KChjH3HvAta6JDU9kgW3H7SYOL1hETgSI9rKygRHjSZP/L90mQWyQ=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:4e402ce6-0129-402b-a267-f49be04019c8,IP:0,UR
-	L:25,TC:0,Content:0,EDM:-20,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:5
-X-CID-META: VersionHash:a9d874c,CLOUDID:fea78e26-cfd6-4a1d-a1a8-72ac3fdb69c4,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102|123|836|888|898,TC:-5,Content:0|
-	15|50,EDM:1,IP:nil,URL:11|97|99|83|106|1,File:130,RT:0,Bulk:nil,QS:nil,BEC
-	:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 5eead250b8ac11f0b33aeb1e7f16c2b6-20251103
-Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
-	(envelope-from <peter.wang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 2112950668; Mon, 03 Nov 2025 19:58:11 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Mon, 3 Nov 2025 19:58:12 +0800
-Received: from mtksitap99.mediatek.inc (10.233.130.16) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1748.26 via Frontend Transport; Mon, 3 Nov 2025 19:58:12 +0800
-From: <peter.wang@mediatek.com>
-To: <linux-scsi@vger.kernel.org>
-CC: <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
-	<robh@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
-	<conor+dt@kernel.org>, <jejb@linux.ibm.com>, <martin.petersen@oracle.com>,
-	<lgirdwood@gmail.com>, <broonie@kernel.org>, <matthias.bgg@gmail.com>,
-	<angelogioacchino.delregno@collabora.com>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-arm-kernel@lists.infradead.org>, <wenst@chromium.org>,
-	<conor.dooley@microchip.com>, <chu.stanley@gmail.com>,
-	<chun-hung.wu@mediatek.com>, <peter.wang@mediatek.com>,
-	<alice.chao@mediatek.com>, <naomi.chu@mediatek.com>, <ed.tsai@mediatek.com>,
-	<chunfeng.yun@mediatek.com>
-Subject: [PATCH v1] dt-bindings: phy: mediatek,ufs-phy: Update maintainer information in mediatek,ufs-phy.yaml
-Date: Mon, 3 Nov 2025 19:57:36 +0800
-Message-ID: <20251103115808.3771214-1-peter.wang@mediatek.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1762172184; c=relaxed/simple;
+	bh=6krgWtqrGcUs/3srWaBGKYaon5zOH66rvyRQwKTNAYg=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=oVTkgsFGkug8yxMBU36O/SLwPBAsB0dRxEFIdUBzm6DOEyo76WBDaoH2kHrLqKJ9G3LJgsveDTkfgkF9EFK4Li8nHIKbZdsrbfUJOHUN/wHADrhayUZdNmVOfmPjN/7fakmOzc/gXAJut0ZB2+r3/8wmlJc3O89+vfKV/Ute3fM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=AInRrPnk; arc=none smtp.client-ip=162.62.57.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1762171871; bh=WFePNAZGR4tQn9FIlJTTpZn4dniKjCQurdOMqdPydC4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=AInRrPnksJMYjSNNtZk0hNwQ47VHtzZgHQeMUdl9u8ZtaRoYcDaeRCtbupLdudEak
+	 Lx3inBB2JMcUPfeogiplxYErOG6gzr/LP46jrPgvQV7V9DTT2dafrV/IB5AZZP43xi
+	 ctAH5sAcuwxLk6A2VEpdEYLMYvxeli9DYJNbTB54=
+Received: from pek-lxu-l1.corp.ad.wrs.com ([111.201.7.117])
+	by newxmesmtplogicsvrsza56-0.qq.com (NewEsmtp) with SMTP
+	id E711D030; Mon, 03 Nov 2025 19:57:49 +0800
+X-QQ-mid: xmsmtpt1762171069tbsjfar7s
+Message-ID: <tencent_7D8067C646C712F50668898DEEC9AEE48C06@qq.com>
+X-QQ-XMAILINFO: NVJ0hJNx7N5SbHuNsjjI99gdChJWFrhEaEO2fz9GKo04uhP3B05ApCdOdGAaB0
+	 NTLvE+/XOzKcAUqeXoICv+lWPdGvIbNZR533IEGg7HtSKyPTTi5IcUrrlrCiPRfwhs8ctKIqv9xD
+	 RlhLod0vaOaJdVwKfVaI5WOX1/8pjbJ3xHQ+TdkuEGwIj743AmU9vLTnbQvPyC2CnXKWbe18cp3J
+	 7rNCtSv/rQHSsx98EfsQVQtX9RHvo3M5TzFuZcD0nqnhOY+x85wtMOAHwJ5zI44lC6GANKNIRxqj
+	 npot38WHE94sd7BH8B1gfySo2N2W88vD+qI2kCy45HGlwt88i9vLeRut9GEnr7cIJ/RC5nNxEH2d
+	 Uh8tcJSH5bI4ovjlbwiMrEY7E4LOULhhKkTVpHwS6ObwBuBGRH30C3h4YdnvXuo075q3KNj8v2cu
+	 1w9Bh7jzfPRTLH5PbxRjdrV6f2R7ulOtPARuthYkUBQxPji8t4EvR/U3UnDHK/RwSqriW8bCLl43
+	 pOHoA3cfNQbBUN2bGdVx3Z+mH82xzhM5boThy0T/MQOs+APGkPliWBxPsCyEen1e2/54jT7UuEAk
+	 RoEMlOD4s/O3NF5b9Y/uZ2FGnXuHgmhK8IDGu+lkMQ1dRC9+37xkPt1eBDGbAoQ5yR2plScAKEcl
+	 wSfiqmv4zUSUmZUH2A/sUKKXeSOM6sOU3DE9z6UeWDortVSv9ygLMLvbCh8jTshybU9HeoEBlrx6
+	 3Mae40iAMQLJ83N3VDZnmWDA8imsid1Ed84CNK2kdrcEZBP0RdNuIBy5PsqGq/+Q6LI0lJWWl62W
+	 gL9p8TemNAKG6EHHPTgfSUyOavxwU/NtH41koGDtJQBCxZ4sWU1Yr8HziqqHP7dH49PsYWN+b1pR
+	 /aTK5Dl8xwc1SVP2eU+Qm67r7x93AD7DYB6Jf1O8X2bvUiP3iUwAfqEDCLzHS6hCpo0rImvShFO+
+	 nyyLpmI4mzhxp6COf8hCVf3Jyl1cDt+ksPi1ZLxzleftqZgTdWQ4gOI911NUH40JEqZFDZ6a3ars
+	 9FDmiRMA==
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: hverkuil+cisco@kernel.org
+Cc: eadavis@qq.com,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	mchehab@kernel.org,
+	syzbot+480edd2cadb85ddb4bbe@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH V3] media: dvb-usb: pctv452e: move snd/rcv len check before kmalloc
+Date: Mon,  3 Nov 2025 19:57:49 +0800
+X-OQ-MSGID: <20251103115748.1724573-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <9f9d2240-63be-4232-8ad6-44821d2b9177@kernel.org>
+References: <9f9d2240-63be-4232-8ad6-44821d2b9177@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,35 +78,55 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
 
-From: Peter Wang <peter.wang@mediatek.com>
+syzbot reported a uninit-value in pctv452e_i2c_msg. [1]
 
-Replace Stanley Chu with me and Chaotian in the maintainers field,
-since his email address is no longer active.
+When the snd_len or rcv_len check fails and jumps to failed, buf is
+uninitialized, triggering the uninit-value issue.
 
-Signed-off-by: Peter Wang <peter.wang@mediatek.com>
+Move the snd/rcv length check before kmalloc, and return -EINVAL directly
+if the condition is met.
+
+[1]
+BUG: KMSAN: uninit-value in hex_string+0x681/0x740 lib/vsprintf.c:1220
+ pctv452e_i2c_msg+0x82a/0x8f0 drivers/media/usb/dvb-usb/pctv452e.c:467
+ pctv452e_i2c_xfer+0x2e6/0x4c0 drivers/media/usb/dvb-usb/pctv452e.c:502
+
+Reported-by: syzbot+480edd2cadb85ddb4bbe@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=480edd2cadb85ddb4bbe
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
 ---
- Documentation/devicetree/bindings/phy/mediatek,ufs-phy.yaml | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+V1 -> V2: subject typos
+V2 -> V3: move the check before kmalloc
 
-diff --git a/Documentation/devicetree/bindings/phy/mediatek,ufs-phy.yaml b/Documentation/devicetree/bindings/phy/mediatek,ufs-phy.yaml
-index 3e62b5d4da61..6e2edd43fc2a 100644
---- a/Documentation/devicetree/bindings/phy/mediatek,ufs-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/mediatek,ufs-phy.yaml
-@@ -8,8 +8,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: MediaTek Universal Flash Storage (UFS) M-PHY
+ drivers/media/usb/dvb-usb/pctv452e.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/usb/dvb-usb/pctv452e.c b/drivers/media/usb/dvb-usb/pctv452e.c
+index 5094de9a312e..bc7a224d829e 100644
+--- a/drivers/media/usb/dvb-usb/pctv452e.c
++++ b/drivers/media/usb/dvb-usb/pctv452e.c
+@@ -422,16 +422,15 @@ static int pctv452e_i2c_msg(struct dvb_usb_device *d, u8 addr,
+ 	u8 id;
+ 	int ret;
  
- maintainers:
--  - Stanley Chu <stanley.chu@mediatek.com>
-   - Chunfeng Yun <chunfeng.yun@mediatek.com>
-+  - Peter Wang <peter.wang@mediatek.com>
-+  - Chaotian Jing <chaotian.jing@mediatek.com>
++	if (snd_len > 64 - 7 || rcv_len > 64 - 7)
++		return -EINVAL;
++
+ 	buf = kmalloc(64, GFP_KERNEL);
+ 	if (!buf)
+ 		return -ENOMEM;
  
- description: |
-   UFS M-PHY nodes are defined to describe on-chip UFS M-PHY hardware macro.
+ 	id = state->c++;
+ 
+-	ret = -EINVAL;
+-	if (snd_len > 64 - 7 || rcv_len > 64 - 7)
+-		goto failed;
+-
+ 	buf[0] = SYNC_BYTE_OUT;
+ 	buf[1] = id;
+ 	buf[2] = PCTV_CMD_I2C;
 -- 
-2.45.2
+2.43.0
 
 
