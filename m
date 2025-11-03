@@ -1,104 +1,110 @@
-Return-Path: <linux-kernel+bounces-883421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87989C2D6A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:16:39 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6657BC2D63B
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:13:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 108773A949F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:10:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ABA144F061A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C9031A562;
-	Mon,  3 Nov 2025 17:10:10 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5AFB31A547;
+	Mon,  3 Nov 2025 17:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="DuRRNwLF"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E833195EC;
-	Mon,  3 Nov 2025 17:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E883191DA
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 17:11:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762189809; cv=none; b=iv97ku0dqWpCRJCSqWncjGf6jmp7QE0oEjH1c0PHB5eQwhyUrauKgM5W1s9oUcthG6nV23fm+1loT9Mvwinft8RoSFhlBHa8XePqS6Oxw7HB27YYeSbr4sTfa7Z86CHnsGbB7biQcXA2UJE8bmh73Y09w2+FMTmU9GUeP4T0FaU=
+	t=1762189864; cv=none; b=RCBGA4geWnSFULz9519MZwLPleqoJxK2NixxqFV2yhZHAXtlLjRrnExyVnAc3hQxp9gLrEqy/RzPjbeRhI18v6a/93WYE4aRhvPD/bOVg5OpJ80kXDsWldRUD7wxPoDPeD9d/ZTpaxvGSuvfXJd8OWN7mhhPYEoi0ylB177rXYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762189809; c=relaxed/simple;
-	bh=LJh0yJmZew+j33AAQcg4a1FkrctIZBGiG0dRH5ntOVE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u73wIIP57NzDdw162XoWfqtlNRMQCHDOHu1lWV4BfI5X6SZZu6w7SQ4YFoi0JKzWT/KdOq6qHHivxInWTNrnQof/0cyKAA0OIER2Qz+BV0f2i3MlKSqcWd5jUM+V/sH2nqIJCuszXVKeGsusU2qTnelfqDuR1l/PeUdhoxK2ehI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf02.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay09.hostedemail.com (Postfix) with ESMTP id 7C65487A07;
-	Mon,  3 Nov 2025 17:10:03 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf02.hostedemail.com (Postfix) with ESMTPA id 8952F80009;
-	Mon,  3 Nov 2025 17:10:01 +0000 (UTC)
-Date: Mon, 3 Nov 2025 12:10:05 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, linux-kselftest@vger.kernel.org,
- Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Linus Torvalds
- <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] selftests/tracing: Add basic test for trace_marker_raw
- file
-Message-ID: <20251103121005.6399baf3@gandalf.local.home>
-In-Reply-To: <20251014161403.1443c21f@gandalf.local.home>
-References: <20251014145149.3e3c1033@gandalf.local.home>
-	<20251014161403.1443c21f@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762189864; c=relaxed/simple;
+	bh=Lk0U6aOZYGKiX3lx5Z6agRssiK8ITNGCvi4Ct5xiygg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YSW/9BJNixR3uxbPMv4kzvzp4USvY+WehFk3OFZpgRO0y8T42vNwFKlRRg8YBHcXloa8kNDvV3i/OYbFQkTWsw1NO1dWAVA80Zvnt4HoiE901fHBErFFODl3YTv2y7VtgSkNkHR299ET2ElDpmyjjP7srCAkptPabJI11c47mmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=DuRRNwLF; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=Lk0U
+	6aOZYGKiX3lx5Z6agRssiK8ITNGCvi4Ct5xiygg=; b=DuRRNwLF8AqXgMM2n1iT
+	tRw95UkHX7+wU01ZDvS3P/hmazXatG8RL6xXtq2k3G1aHH0QOoFvBozk/bJGxPXD
+	5O7ZMlheCmOLs1H5MBqjJOde4xh0PSpJ08B8wqNInLP15CPUdBNRc0QcUEIN4iAX
+	/+QMC1U2s3xy92dgtV78b8wtonXTauYYip/0r242/Shg9YhChc5Njxq0BH4JjRN8
+	s3owMj6ciFvvXSzBGTprmG7LMpxCZrNpbjdrLXYkAlI7VHpKsQN89Bw3oogji9rD
+	nMSCITfDTKUf1fwLybh7euYFxZwGITcX+K/xA/fiujl/Yqb9A3JlhFiA34+kEc3T
+	lA==
+Received: (qmail 2308169 invoked from network); 3 Nov 2025 18:10:59 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Nov 2025 18:10:59 +0100
+X-UD-Smtp-Session: l3s3148p1@XGiazLNCrpgujnuf
+Date: Mon, 3 Nov 2025 18:10:59 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-kernel@vger.kernel.org,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH v2 1/2] reset: always bail out on missing RESET_GPIO
+ driver
+Message-ID: <aQjiIx8yD8ON4Epu@shikoro>
+References: <20251015205919.12678-4-wsa+renesas@sang-engineering.com>
+ <20251015205919.12678-5-wsa+renesas@sang-engineering.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: hk76wpkzbpmcdotf97s3yti645x16htk
-X-Rspamd-Server: rspamout07
-X-Rspamd-Queue-Id: 8952F80009
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+OJjDpCCQZTaWuuqg4AxJH6/gz5MVPfM4=
-X-HE-Tag: 1762189801-800533
-X-HE-Meta: U2FsdGVkX18tWlsEVyMSMYef+Sj6KGHulrIOpw579zFEDGoqMVKtdR+08qaWO5ytMy55qtFbZYYWgh9bRoRJpaAI6g2Xn5pgtqYaG4PATyWXm0+XwAwPyA6M3JggK26NIZrFzp5MVfCkuTUqTlQEgdbpDZyvikEL7bsKIxuc62OPTe7nZEfhalu8OW2dWex0MhmkxxlY5g47jIBnEYllPOEc+rNzdqrxU7FvyLUUp8bsvNpsWzh02PpFc8MU18btNtT41HfeLRgyEkEpSYRJAsMwxZnO4Fum/CDVkTEZeLRT/DRsIMvpY5dkFM4SgbsgC445lUd0O5p680Jv5XX/s9Fd6nE5xqhNLwqEAF9lTEefg+jh9SdRZdOA18i3z28+C3paIifWpqnUC9pL6bJi0PMV7hMyH70S
-
-Masami,
-
-  Ping!
-
--- Steve
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="L7RcH5EEZxf/gIvk"
+Content-Disposition: inline
+In-Reply-To: <20251015205919.12678-5-wsa+renesas@sang-engineering.com>
 
 
-On Tue, 14 Oct 2025 16:14:03 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+--L7RcH5EEZxf/gIvk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Shuah,
-> 
-> After Masami gives an ack, could you take this through your tree.
-> 
-> I don't think it's urgent, but I want to make sure it gets upstream.
-> 
-> -- Steve
-> 
-> 
-> On Tue, 14 Oct 2025 14:51:49 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
-> > From: Steven Rostedt <rostedt@goodmis.org>
-> > 
-> > Commit 64cf7d058a00 ("tracing: Have trace_marker use per-cpu data to read
-> > user space") made an update that fixed both trace_marker and
-> > trace_marker_raw. But the small difference made to trace_marker_raw had a
-> > blatant bug in it that any basic testing would have uncovered.
-> > Unfortunately, the self tests have tests for trace_marker but nothing for
-> > trace_marker_raw which allowed the bug to get upstream.
-> > 
-> > Add basic selftests to test trace_marker_raw so that this doesn't happen
-> > again.
-> > 
-> > Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> >  
+On Wed, Oct 15, 2025 at 10:59:21PM +0200, Wolfram Sang wrote:
+> Optional GPIOs mean they can be omitted. If they are described, a
+> failure in acquiring them still needs to be reported. When the
+> RESET_GPIO is not enabled (so the reset core cannot provide its assumed
+> fallback), the user should be informed about it. So, not only bail out
+> but also give a hint how to fix the situation. This means the check has
+> to be moved after ensuring the GPIO is really described.
+>=20
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
+Philipp, I reverted the offending commit in i2c-mux. You can revert this
+one as well.
+
+
+--L7RcH5EEZxf/gIvk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmkI4iMACgkQFA3kzBSg
+KbZXmQ//bG2i5PSvLcNFK2YO6xT4DJkcFY1jnUprzJaSnk120TaXPYve5mGBoKfh
+wUL47R6GPV4Wi3y+44BIZQICBj7CEVsVSqQv/qcrzCdmpJWUjbGEVDe5pqsSPsZ4
+6Lsi3O2Racrd78sSlSfL3dcHE3Dkv4RxvA3BgrY7YfKe8pq0M1mfj5NX5bOJFRSU
+KP8ijPjR5N7oTATovTiYyxCUPe0ZMRyDX/iyyNwyEzrS3wDqZojYmeUslpjF0gIl
+HSwRBNnTz8swY5fEtTLghyCtrXc40XxT+Dr6PzzpOyb3kkuVKxVnAbSnWo2Z/fTY
+hIVUnXj+BmL9Jm39iKlJziBE3zIDYAbhGz7zBOJF5lCSljxZqIsFA4r4xP4P3XRE
+nTPPtNERud16F2x5Bb/gf6Vaqu02bmcV9zlJE2nzwkq9Uv8NtYV2ADtF6WY9Ezc4
+duRr2DJ80gVrR02qmZS9oA/53H3wFs1XMretVU7pQhuuiNG7Ybg+4kBirLWDGxQd
+p3+iZoZQyeezgcc/SC6rhtAAYur6QIH8TBOm9yskgRj7CRe24DBrade8R3YbHEIL
+k1Z3LgZfZel6EY0JOQLPfWjp5/quS5pHZffmzk6uYJaapd5JosFZ9jVgZIriy0Pc
+vNsmsOshyExUppgT0NwxwsJn6iNRjTDZXrFCAQe/cteOqXDcrL0=
+=Ui3s
+-----END PGP SIGNATURE-----
+
+--L7RcH5EEZxf/gIvk--
 
