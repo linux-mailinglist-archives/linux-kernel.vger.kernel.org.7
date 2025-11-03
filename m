@@ -1,97 +1,109 @@
-Return-Path: <linux-kernel+bounces-883520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E392EC2DACE
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:29:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF2ADC2DADA
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:29:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49979188280C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:27:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D11918947F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 284E828C862;
-	Mon,  3 Nov 2025 18:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m3545L7D"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21450288C25;
-	Mon,  3 Nov 2025 18:26:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A7128C862;
+	Mon,  3 Nov 2025 18:29:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7329F248F4D;
+	Mon,  3 Nov 2025 18:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762194407; cv=none; b=ZFrIkvZ8UyvtP64bfglhhvmmDmoY6V0sMt/Ul6ZgKKaHeRiEaL2HJP1DeE6gWJPjBPWc8Y44WXQAoYP3Fepefli4cA8WC1RZOo8ZhJ9LGHg61JOp3BZwLSd4F3Mu8zsRUBw7LaCOIzV21I0JRs8+BxWUhFAX08oW5jAiZ0jMpOw=
+	t=1762194552; cv=none; b=AIb9DcDt70q0kIgb+941hM7cLYqA22GcWKwzFdmxqa+/inKxhdsouEYuyIvhpvMxe/BApEOMTHUBT6e67X+FE1rQ8ijmHpDeS97mCvWEY5kqhbxoAIt+0+2OyuSjaCnXHkqmJZDBVa+6sn8uTovHpnbIbFrkwwrGwR07EIew9Lc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762194407; c=relaxed/simple;
-	bh=Tc6CfAFmd8BcAhsq22LZ+5CZ9tMw6kSfG7lamss8Vs4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hXEDnUVpH1LYZ6PzjuARpEY4UMlR0H0imxO0+INKQjt7z6qmJY6z3KT0sqwBe8CYcx7rdMwMfr4TYK80sxjsOEE6IIwTIy4C9gtgHIc5PmDFTwrmCH09Q/D33+TTchCmxwONE5/3jyO4W98BDt4+LKwGZYX6Od67zSuyG6Vj7fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m3545L7D; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762194405; x=1793730405;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Tc6CfAFmd8BcAhsq22LZ+5CZ9tMw6kSfG7lamss8Vs4=;
-  b=m3545L7DMqVJftZ/Zk9KeQCiXqUotM6oHbJSSfl96VFUMWcC7hYzOkvR
-   7tOnV2finyiPPP3mVNz0rz82zw1w6X8qb8ZJBOotUU2xmujg58qzoJi0Y
-   bsEXdC8SddLkzJ5CNTXS331L97IQ2g2luXZEeqKKZvqxxZKxv7H/wSKyI
-   hPYCM617+2qTsHf8RWuHuekBAOUbrm7aV+QBTvbGQYdb7nevU6iAqTmik
-   Ee4D5nZMzT0qzR3B5XAL2Wg4r0ID0pxKwqz0rBJZT0mwzM0f4PTdW79qv
-   Emok4/MThRRBka7qweUKOD2J2ps8IvZImFnbspW1pleWnrnLXFzYU5XRp
-   A==;
-X-CSE-ConnectionGUID: QZq4/W7LQGevr8QYUEX0NQ==
-X-CSE-MsgGUID: KJkF/VtTR1mJkGRvLQn3Xg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="74569331"
-X-IronPort-AV: E=Sophos;i="6.19,276,1754982000"; 
-   d="scan'208";a="74569331"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 10:26:45 -0800
-X-CSE-ConnectionGUID: +YzdhGnqRwacooQpPvLOag==
-X-CSE-MsgGUID: scUMybvGRBy8h/qCawvLHg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,276,1754982000"; 
-   d="scan'208";a="224185573"
-Received: from mgerlach-mobl1.amr.corp.intel.com (HELO desk) ([10.124.220.244])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 10:26:44 -0800
-Date: Mon, 3 Nov 2025 10:26:38 -0800
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
-Subject: Re: [PATCH v4 6/8] KVM: VMX: Bundle all L1 data cache flush
- mitigation code together
-Message-ID: <20251103182638.y7np5zuccmca6n7f@desk>
-References: <20251031003040.3491385-1-seanjc@google.com>
- <20251031003040.3491385-7-seanjc@google.com>
+	s=arc-20240116; t=1762194552; c=relaxed/simple;
+	bh=PejloQnKGuK3bpH0pnM/kdDvHB2ShDka/sYljxbJywo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AdHucotwj6ylNmn4Pp4IJOI/Lk8iAKtKIw5Wq7z8zqMkeCZBh5tVm7cwHgTKWgCUX8bTmXOlAKovz3u6rs2oOAZ2cPN2n7j+0kJzDGlni6xSUELHOuXvKFiqDPvj+3J6cWSzS896qkq2iH7CIQxTuQVm4/6EeiFIZabBd7R9fcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DD0752A6B;
+	Mon,  3 Nov 2025 10:29:02 -0800 (PST)
+Received: from [10.1.30.16] (unknown [10.1.30.16])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 191F33F694;
+	Mon,  3 Nov 2025 10:29:02 -0800 (PST)
+Message-ID: <285faae4-dab6-4819-847a-889bdf87d5d7@arm.com>
+Date: Mon, 3 Nov 2025 18:29:00 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251031003040.3491385-7-seanjc@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 11/12] x86/xen: use lazy_mmu_state when
+ context-switching
+To: "David Hildenbrand (Red Hat)" <david@kernel.org>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ David Hildenbrand <david@redhat.com>, "David S. Miller"
+ <davem@davemloft.net>, David Woodhouse <dwmw2@infradead.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+ Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
+References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
+ <20251029100909.3381140-12-kevin.brodsky@arm.com>
+ <c7c8a233-2103-4b48-b65e-ec81666d20e4@kernel.org>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <c7c8a233-2103-4b48-b65e-ec81666d20e4@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 30, 2025 at 05:30:38PM -0700, Sean Christopherson wrote:
-> Move vmx_l1d_flush(), vmx_cleanup_l1d_flush(), and the vmentry_l1d_flush
-> param code up in vmx.c so that all of the L1 data cache flushing code is
-> bundled together.  This will allow conditioning the mitigation code on
-> CONFIG_CPU_MITIGATIONS=y with minimal #ifdefs.
-> 
-> No functional change intended.
-> 
-> Reviewed-by: Brendan Jackman <jackmanb@google.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
+On 03/11/2025 16:15, David Hildenbrand (Red Hat) wrote:
+> On 29.10.25 11:09, Kevin Brodsky wrote:
+>> [...]
+>>
+>> @@ -437,7 +436,7 @@ static void xen_end_context_switch(struct
+>> task_struct *next)
+>>         xen_mc_flush();
+>>       leave_lazy(XEN_LAZY_CPU);
+>> -    if (test_and_clear_ti_thread_flag(task_thread_info(next),
+>> TIF_LAZY_MMU_UPDATES))
+>> +    if (next->lazy_mmu_state.active)
+>
+> This is nasty. If in_lazy_mmu_mode() is not sufficient, we will want
+> to have a separate helper that makes it clear what the difference
+> between both variants is.
 
-Reviewed-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+in_lazy_mmu_mode() operates on current, but here we're operating on a
+different task. The difference is more fundamental than just passing a
+task_struct * or not: in_lazy_mmu_mode() is about whether we're
+currently in lazy MMU mode, i.e. not paused and not in interrupt
+context. A task that isn't scheduled is never in lazy MMU mode -
+lazy_mmu_state.active is just the saved state to be restored when
+scheduled again.
+
+My point here is that we could have a helper for this use-case, but it
+should not be used in other situations (at least not on current). Maybe
+__task_lazy_mmu_active(task)? I do wonder if accessing lazy_mmu_state
+directly isn't expressing the intention well enough though (checking the
+saved state).
+
+- Kevin
 
