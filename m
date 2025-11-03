@@ -1,234 +1,166 @@
-Return-Path: <linux-kernel+bounces-882861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57BFBC2BB91
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:39:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B48DCC2BB34
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:35:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 424894F38D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:34:01 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CA9554F184B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:26:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E16B30CD9E;
-	Mon,  3 Nov 2025 12:33:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A6D30BB97;
+	Mon,  3 Nov 2025 12:26:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QBini41k"
-Received: from mail-wr1-f68.google.com (mail-wr1-f68.google.com [209.85.221.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gV+oCEZQ";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="UAKuRWa2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D065A3081BA
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 12:33:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C55D2D73B2
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 12:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762173228; cv=none; b=ONW0iseNPqr90sTV+lyPwuMSGr03S5O8aOm6TdAhhL/f9K1dxLnWqm+CjP/yUXqO1Q7P0dX+OWHhKoi9wgMN7uVZH6Z79SZPezTNPBKNSlMVIZAitcVuFJiWi3Se7F/SNvbBHQXL7nD7LWweC4iW4XXL4HASDSabKZyi2Un0DJQ=
+	t=1762172768; cv=none; b=mXuujBenAJ0qjCxx5nVl5o2EicvRvIICCQz4uspWS1Dwa9DoXZAdNfYq7YZmxGDK36g2kLKjLcBvA6ROVs0/OL/no6Fe5624kARACtSkbOnwGfPU+hoXlAb7vrZHb5ud7eeRVL4YCeAhARiU16QGiFe/6RFL8JNDY/yMhoA2FKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762173228; c=relaxed/simple;
-	bh=ghhidARFtfJugeCzCLtclN3YKp1i6H9G6hYai1TD4Z8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dlb2xvn/kuUscxUtPDXptSU7I+BVCxW0JvQ1jg9fkRx7VHYeSSejw4ZGj5MI1EPIY57PMa3FiKvpbN5nJhMiBy30XUnLdrb8R5+ofTk4u5PIoFAoxl4zdIaQnysglC2MnArHox4KbCQAECYjUeErmKXOod8/cNaqnLxVLv9rVOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QBini41k; arc=none smtp.client-ip=209.85.221.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f68.google.com with SMTP id ffacd0b85a97d-429b7ba208eso2592222f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 04:33:46 -0800 (PST)
+	s=arc-20240116; t=1762172768; c=relaxed/simple;
+	bh=Si/42XMXJCEofqRHH+RrI534o6OjSI0ZZ/KP8a9kKog=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=eV72MzmTD2pIotPOEd0jNaiyFArRblnUpCv6I9l8cQWiisEAzUVUufNbrbGBiZx9AdzAqag/vlrEFK2I6cTOBnXND5w8Uy2jMzNrowcmzLSGhqj9ZexF82kn0sP5wHzGK89HPowbFIf8A785hYzAcZUbyT+56u5+FojbB5i9UN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gV+oCEZQ; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=UAKuRWa2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762172766;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g11uOENAhXF6Lz2FLzv66IHWNpx+JPxP5XeReK+9A1c=;
+	b=gV+oCEZQpzCxHcpx8JbLGIpjFUJFXkr7Ce3ilCkiN6rYdE8rVrKBuaDkkNwhFmD4ibCVvg
+	MbM7L7C91ulEYLMNqZ+pO68DWODoHLs4VDa/QCc5YRzoQWaPfSLlkyWLpwr/T2xjcgC20f
+	JNoXO4So/dAVu5i/xwTXldu88ZjWDRY=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-498-g7qTwD54OFKVwIkULjmM-g-1; Mon, 03 Nov 2025 07:26:04 -0500
+X-MC-Unique: g7qTwD54OFKVwIkULjmM-g-1
+X-Mimecast-MFC-AGG-ID: g7qTwD54OFKVwIkULjmM-g_1762172764
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-b70b1778687so72786566b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 04:26:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762173225; x=1762778025; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jwjU3G+SlHqEQOLDInlGvFRjuKuVcl3NjbYL1KLyrdk=;
-        b=QBini41k048D6HXSU+5w1dC87BT5zFry+1MIOSgcuJLirxaeJLSAtHl966Gro7FzRf
-         ALWmUB1kjm6QULdsHwn4HsWPyEiZQD1Z0TqGiqLnw5u4+9CDYRnyp349C2Ds7ripC7ZB
-         Jj8cokWXjZwnYo0IFZ+s/1Ty0dmktX7WZwj4pttlP3bXXogvvzYaewV+hlGytAnpJSMT
-         yp3DZ079o0hKef1SIiokvZt/u8tcyAdITPqR3EOXNd7itbAsmhB8bIVNV4YF2riUi2OE
-         LL6OLd8hIqHRl8zjRbM2z4MJO5UkJAPmM7nfSwXC/vSBDASQ8FHm+toa7L11YDVKLvH8
-         x6qg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762173225; x=1762778025;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=redhat.com; s=google; t=1762172764; x=1762777564; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jwjU3G+SlHqEQOLDInlGvFRjuKuVcl3NjbYL1KLyrdk=;
-        b=FuU+y+H1/VzLhdmIOFh0sZWQ3KTQvZXI+opMVdyQnq1SRflQJasJpifmg/pu2ziGTC
-         4F4pJoT2omULzg3K9cR75q907m5x8Qsn0NuOo7XofAdLJJ4zqtlN/vVejMHCStwZOfkd
-         hWuqBQa1ZRLGAnpDOy+LfrIvXC6ENIIA638Iu6j8dSFoBApg6Pi8GpGM0OZ3p1ObycMl
-         KKmZtzJL5Priv3C+TEkVSxzpdcmkLoP92CoUksqp8TbgK70GrpQYmnOFVx0/cvm7mwiZ
-         ppFywPqjJtoesd/1SVssRAEPMshzxLI+6yXzSF65o2gl1qs5ke/qjQzZp33TqrF4/3cE
-         8xww==
-X-Forwarded-Encrypted: i=1; AJvYcCWoFDwBrsPjejg2m4+y2GTbSopRWzjLgubuVZUCEFJclHrlODXQwUSbUufkiCX7PQdUXullsgUAZcEh6YY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywz6CCzw/8gZndfJU/tjC4iSwW1n0f8O4Ua8bJKhGqsC9nakTuA
-	0ClEMXrfpOhjkvRL9eH/xh5+cAqlmboIoseNAo8qaDl8FIpRT4QJdX3QtR5WqlBp8RZHkg==
-X-Gm-Gg: ASbGncvCT0NME8DH9Mvo72xaRmj5iyoUtF58AoeMKpELVqMo8W0zzEc1xDvf0pAPttu
-	XCz9Jc/otggh/FnW80EIv7BuJxWWvSAc5VAQNyW3vRTHaRT5HgLTL4OWVK7NS7NvhCXh9Gmq48b
-	+zYekCmzs7IZJn4uC6rJuWgBbegCXALxZpf/fGs4YFYAKDryNTKvFBh5bqyhLgz0/EslVTCHEN1
-	PnI8XNwDOBaa1oJeXABPIWcJx1BIAxvWDLp51PRAe65G6Wn8eljnysk75KNXVh/j7IBtKSFXNsm
-	lpMtIrJAOSYxDQ01zCLKkhPe71LSNrTOo8aBQin/HGfeTBg/UI5lrWAU/WZhxkw+lGI+4JnmQfo
-	UKrCjxWYieteTCoREkPQp1U2BM25YMdZcJ4ch46y4nVaUZEHf2lmGpaLMa4Al0MEV8LnqEb6Kj2
-	fa6nRFp6/JKifEWyQ2dp6b29FCXKKLapKCnufyTCqbPEBlM83gF7HmIKkZj1zOQClVF/5SSno//
-	Vg=
-X-Google-Smtp-Source: AGHT+IEwV7DamHH8yuNQtr/2Vcl0mNBkIWyq3ZNNbW0+a4hs/HLsXuOao7LPKAznJr3kDLofhaikAA==
-X-Received: by 2002:a05:6000:2f88:b0:429:bb53:c8f4 with SMTP id ffacd0b85a97d-429bd6a4bd3mr8480044f8f.34.1762173225005;
-        Mon, 03 Nov 2025 04:33:45 -0800 (PST)
-Received: from workstation.vpn.francesco.cc (ip7-114-231-195.pool-bba.aruba.it. [195.231.114.7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c13f32edsm19673346f8f.41.2025.11.03.04.33.43
+        bh=g11uOENAhXF6Lz2FLzv66IHWNpx+JPxP5XeReK+9A1c=;
+        b=UAKuRWa2ThRifoqGXh5Ca1Pvm9cEVooPc+adYv+NBJIR0tYzgRyS4005U5EMGsWCpN
+         Wk6mhPZ8FZ07XSOdHtirRWe1YU2BnyZfq4l8jhKQ5CLWZydkTozvD7Ai5FknlW6+/d8+
+         VMyZsS08ptMgIQY3D5w7RikxAEeKoN/fpkrE+InuhXtvxj+JZMhwuN4zf8/8kgiNj501
+         ow/fF4bR5WGU4NFPgIQaNzvC5OyJ7h3uIMv6fAdUnUVlVrbBixxGdSyGJiuaXhPbCPvI
+         Y6QgPhvn5oV7F7pikEwRX1p4D6BPRAwrhHL0FynP9yGVsJcIhH5hl4pdt7BK1Jpp5VYM
+         8s+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762172764; x=1762777564;
+        h=content-transfer-encoding:mime-version:message-id:date:references
+         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g11uOENAhXF6Lz2FLzv66IHWNpx+JPxP5XeReK+9A1c=;
+        b=fxWILdchAwCV5V4acTexhzXOXCZ9hpa/cKa+62cE1Q5soIFKuSs+1yQu2MAEQ9oNwK
+         6Rbn4uQ1qo7QxAd+QOZvhKeVFQLyKTsbSep1UPhYVLHXoXPyUnpNaSHAt0I2QbDF1Iz1
+         pQHvAODVTwryfhq2eIVWkihy2Ca5f1dYKTUSyu49B7oaEDNQ+wEmr+dGnzDSuyUpEPgp
+         8uPZAvipvOi1Ia2E3v8TelBYt5aUTNxuZ/nrZxV79FhoZh93vbVXSFsvGDYdyAJj4oAg
+         CKoJ8oS1u9JmlqbY28/n85pBE2qxWUitCvVlNYJyb8Cnv88+nSZqaxAuZxSYQQ3L7Vax
+         zrXg==
+X-Gm-Message-State: AOJu0YyeQ8LbESyrGITcd8iyeiA9+vjmKWYehzRkICqXoPHaf//ARkgY
+	qOkBB4CC1HiMTDHwg0+c1Q/3cDqXNyPq9LuPjgsH7+ZwBB+a+e/NFYM4ts7ifID7C1JHHabOtd5
+	JV62f69zb+3J81cgLiTQVbu4xTLueny8j9MUELzMwgWXtRYNhUXXlHFXdUi5Ra2xh/w==
+X-Gm-Gg: ASbGncujdIi2jZtqqCF3CF+6gAkelfatyzk/LBvmUTUeUpAj1zI/8f8b2BLsA3WM28t
+	hbAH6Ibf4kraWfYGWQ5Qid2gUvwDN3dkZil0nXJWXzlBlZLLaXERRenTsPSDlKfjDVDoaPJbTZM
+	Ufux8kKhoVFSVUykMx/0f2FI4f4CAcw2hPSRbADJxQ8bNxDuGTp8FlxNi6/HCYQLJEi61k3CKhc
+	uxr+Souu+z41PY8dAJEPZ0q1p2Pr8j7qYUq5kH90BcbBD3XS0ctAnGBhWakDTI2x2wijMSJEYgs
+	GCm66oZOtDAL+VBecD7k0tT9ZonuD5wgNNx9UKGG7qDGIhxNqM+KTG86BydbejrmrsmqZXUgCrC
+	0NeSuHE4iXhhQvKwajplqfj4=
+X-Received: by 2002:a17:907:2d90:b0:b54:25dc:a644 with SMTP id a640c23a62f3a-b707088d70cmr1143620766b.60.1762172763686;
+        Mon, 03 Nov 2025 04:26:03 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGGDSUZroE2R0agAHuAggyj7GFeJpoD3zlqyuRNs//UwQQu1Iz9F3y2cjiJMrJtGK3MF6tN8A==
+X-Received: by 2002:a17:907:2d90:b0:b54:25dc:a644 with SMTP id a640c23a62f3a-b707088d70cmr1143613966b.60.1762172763188;
+        Mon, 03 Nov 2025 04:26:03 -0800 (PST)
+Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7077975d24sm1032752266b.1.2025.11.03.04.26.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 04:33:44 -0800 (PST)
-From: Francesco Pompo <francescopompo2@gmail.com>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-efi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Francesco Pompo <francescopompo2@gmail.com>
-Subject: [PATCH v2] efistub/x86: Add fallback for SMBIOS record lookup
-Date: Mon,  3 Nov 2025 13:25:39 +0100
-Message-ID: <20251103123335.1089483-1-francescopompo2@gmail.com>
-X-Mailer: git-send-email 2.50.1
+        Mon, 03 Nov 2025 04:26:02 -0800 (PST)
+Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
+	id DCD6D328450; Mon, 03 Nov 2025 13:26:01 +0100 (CET)
+From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
+To: Byungchul Park <byungchul@sk.com>, linux-mm@kvack.org,
+ netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+ harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
+ davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
+ john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
+ leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
+ andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
+ akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+ surenb@google.com, mhocko@suse.com, horms@kernel.org, jackmanb@google.com,
+ hannes@cmpxchg.org, ziy@nvidia.com, ilias.apalodimas@linaro.org,
+ willy@infradead.org, brauner@kernel.org, kas@kernel.org,
+ yuzhao@google.com, usamaarif642@gmail.com, baolin.wang@linux.alibaba.com,
+ almasrymina@google.com, asml.silence@gmail.com, bpf@vger.kernel.org,
+ linux-rdma@vger.kernel.org, sfr@canb.auug.org.au, dw@davidwei.uk,
+ ap420073@gmail.com, dtatulea@nvidia.com
+Subject: Re: [RFC mm v5 2/2] mm: introduce a new page type for page pool in
+ page type
+In-Reply-To: <20251103075108.26437-3-byungchul@sk.com>
+References: <20251103075108.26437-1-byungchul@sk.com>
+ <20251103075108.26437-3-byungchul@sk.com>
+X-Clacks-Overhead: GNU Terry Pratchett
+Date: Mon, 03 Nov 2025 13:26:01 +0100
+Message-ID: <87jz07pajq.fsf@toke.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Some Apple EFI firmwares do not provide the SMBIOS Protocol,
-causing efi_get_smbios_record() to fail. This prevents retrieval of
-system information such as product name, which is needed by
-apple_set_os() to enable the integrated GPU on dual-graphics Intel
-MacBooks.
+Byungchul Park <byungchul@sk.com> writes:
 
-Add a fallback that directly parses the SMBIOS entry point table when
-the protocol is unavailable.
+> Currently, the condition 'page->pp_magic =3D=3D PP_SIGNATURE' is used to
+> determine if a page belongs to a page pool.  However, with the planned
+> removal of ->pp_magic, we should instead leverage the page_type in
+> struct page, such as PGTY_netpp, for this purpose.
+>
+> Introduce and use the page type APIs e.g. PageNetpp(), __SetPageNetpp(),
+> and __ClearPageNetpp() instead, and remove the existing APIs accessing
+> ->pp_magic e.g. page_pool_page_is_pp(), netmem_or_pp_magic(), and
+> netmem_clear_pp_magic().
+>
+> This work was inspired by the following link:
+>
+> [1] https://lore.kernel.org/all/582f41c0-2742-4400-9c81-0d46bf4e8314@gmai=
+l.com/
+>
+> While at it, move the sanity check for page pool to on free.
+>
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Co-developed-by: Pavel Begunkov <asml.silence@gmail.com>
+> Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
+> Signed-off-by: Byungchul Park <byungchul@sk.com>
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Acked-by: Zi Yan <ziy@nvidia.com>
+> Acked-by: Mina Almasry <almasrymina@google.com>
 
-Signed-off-by: Francesco Pompo <francescopompo2@gmail.com>
----
- drivers/firmware/efi/libstub/x86-stub.c | 107 +++++++++++++++++++++++-
- 1 file changed, 106 insertions(+), 1 deletion(-)
+Acked-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@redhat.com>
 
-diff --git a/drivers/firmware/efi/libstub/x86-stub.c b/drivers/firmware/efi/libstub/x86-stub.c
-index f8e465da344d..13059412fdb9 100644
---- a/drivers/firmware/efi/libstub/x86-stub.c
-+++ b/drivers/firmware/efi/libstub/x86-stub.c
-@@ -225,6 +225,110 @@ static void retrieve_apple_device_properties(struct boot_params *boot_params)
- 	}
- }
- 
-+struct smbios_entry_point {
-+	char anchor[4];
-+	u8 ep_checksum;
-+	u8 ep_length;
-+	u8 major_version;
-+	u8 minor_version;
-+	u16 max_size_entry;
-+	u8 ep_rev;
-+	u8 reserved[5];
-+	char int_anchor[5];
-+	u8 int_checksum;
-+	u16 st_length;
-+	u32 st_address;
-+	u16 number_of_entries;
-+	u8 bcd_rev;
-+};
-+
-+static bool verify_ep_checksum(const struct smbios_entry_point *ep)
-+{
-+	const u8 *ptr = (u8 *)ep;
-+	u8 sum = 0;
-+	int i;
-+
-+	for (i = 0; i < ep->ep_length; i++)
-+		sum += ptr[i];
-+
-+	return sum == 0;
-+}
-+
-+static bool verify_ep_int_checksum(const struct smbios_entry_point *ep)
-+{
-+	const u8 *ptr = (u8 *)&ep->int_anchor;
-+	u8 sum = 0;
-+	int i;
-+
-+	for (i = 0; i < 15; i++)
-+		sum += ptr[i];
-+
-+	return sum == 0;
-+}
-+
-+static bool verify_ep_integrity(const struct smbios_entry_point *ep)
-+{
-+	if (memcmp(ep->anchor, "_SM_", sizeof(ep->anchor)) != 0)
-+		return false;
-+
-+	if (memcmp(ep->int_anchor, "_DMI_", sizeof(ep->int_anchor)) != 0)
-+		return false;
-+
-+	if (!verify_ep_checksum(ep) || !verify_ep_int_checksum(ep))
-+		return false;
-+
-+	return true;
-+}
-+
-+static const struct efi_smbios_record *search_record(void *table, u32 length,
-+						     u8 type)
-+{
-+	const u8 *p, *end;
-+
-+	p = (u8 *)table;
-+	end = p + length;
-+
-+	while (p + sizeof(struct efi_smbios_record) < end) {
-+		const struct efi_smbios_record *hdr =
-+			(struct efi_smbios_record *)p;
-+		const u8 *next;
-+
-+		if (hdr->type == type)
-+			return hdr;
-+
-+		/* Type 127 = End-of-Table */
-+		if (hdr->type == 0x7F)
-+			return NULL;
-+
-+		/* Jumping to the unformed section */
-+		next = p + hdr->length;
-+
-+		/* Unformed section ends with 0000h */
-+		while ((next[0] != 0 || next[1] != 0) && next + 1 < end)
-+			next++;
-+
-+		next += 2;
-+		p = next;
-+	}
-+
-+	return NULL;
-+}
-+
-+static const struct efi_smbios_record *get_table_record(u8 type)
-+{
-+	const struct smbios_entry_point *ep;
-+
-+	ep = get_efi_config_table(SMBIOS_TABLE_GUID);
-+	if (!ep)
-+		return NULL;
-+
-+	if (!verify_ep_integrity(ep))
-+		return NULL;
-+
-+	return search_record((void *)(unsigned long)ep->st_address,
-+		ep->st_length, type);
-+}
-+
- static bool apple_match_product_name(void)
- {
- 	static const char type1_product_matches[][15] = {
-@@ -240,7 +344,8 @@ static bool apple_match_product_name(void)
- 	const struct efi_smbios_type1_record *record;
- 	const u8 *product;
- 
--	record = (struct efi_smbios_type1_record *)efi_get_smbios_record(1);
-+	record = (struct efi_smbios_type1_record *)(efi_get_smbios_record(1) ?:
-+		get_table_record(1));
- 	if (!record)
- 		return false;
- 
--- 
-2.50.1
+IIUC, this will allow us to move the PP-specific fields out of struct
+page entirely at some point, right? What are the steps needed to get to
+that point after this?
+
+-Toke
 
 
