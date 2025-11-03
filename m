@@ -1,110 +1,197 @@
-Return-Path: <linux-kernel+bounces-883376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5036EC2D43C
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:53:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EA6BC2D466
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:54:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A16B425827
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:46:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07DDF3BBD88
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:48:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB5431961D;
-	Mon,  3 Nov 2025 16:46:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97EA331960B;
+	Mon,  3 Nov 2025 16:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X7nsttJ5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QpH8DyH0"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9822327FB0E;
-	Mon,  3 Nov 2025 16:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850DE2DCF44
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762188390; cv=none; b=smZtsFi1ufAgonXzJtVtpygl5sg6VwLma2sBWEh7hmwggda4py6nTH4u1gkjuPJ1XKu7txmbRKnviq84XRp7IeDAurhtod1cPvEEqP/6ZhkOW0AWPsuxS4t3FCC/l4jpdp6X/Xsg0lZlGHQbDghmG1dIkjh2gwsLJdLaZ5rlf1Q=
+	t=1762188493; cv=none; b=UH60+/iNpsiIXpqQwgVCTSM2Uup0tmpa196+URJ9WTkJOEPV6tSkmJ6l58oYqiCsUpyMafom70ttphwpWii3uhV2BuWZ0/yNFwcAzMbWEf7nTP9I3S0wcQHPQQddCk8MMm2Bko4WZ/U8RASs8B781arbO6eyvTdE1poL11TqUq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762188390; c=relaxed/simple;
-	bh=bQoQlcYHevM+fEbYlxaZHeDzoToJ/H9DsSpcxx2O4mY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hCqzGsXseJVF3G2yv85qVtjE7HC0axcY7YIbBknh/ooTYzyGVC9m2ByuuiYF2kAAckxBYFZzSAvYuaD9IlwNh9gnNzRr/w8kbXTEWSF3I8K2h8cru8vQFMjaj58AROujfU2mkzATR7LgPiWTrdkQvWpM0daNAWWuSqmIBcjDc0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X7nsttJ5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4F82C4CEFD;
-	Mon,  3 Nov 2025 16:46:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762188390;
-	bh=bQoQlcYHevM+fEbYlxaZHeDzoToJ/H9DsSpcxx2O4mY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X7nsttJ5wpufBxgZ9zN/oBF3lPwKV2Js7ZlalsYPDvqnBqXao784dbn3VhiGOKMdL
-	 RI7i/xgC1l/Bz4BRmjwKmq7uz/QznxWKVaJ3ABHOMRRERMywkusS7kdYoE1JP6ZnBY
-	 JIQdngWur6Rp09hAlyfRUyRoElss3L1XblKaO68JWV0AFmDItmGtzdGwOXw1dpgLJR
-	 NbtUi3GZq96yicFFSNVOTsgDU+tX6LTbL5ObLy7Hm9/Ug7JbuX4vendjj0qS75ScHa
-	 9K82muTkdTaFXcrCY6cfUKdTmsJ4fsPxxBdb79XA+ryLLgKVm+qOsjt/lIayM9wfnj
-	 6tVxLclq9s5SA==
-Date: Mon, 3 Nov 2025 16:46:27 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, maz@kernel.org,
-	oliver.upton@linux.dev, miko.lenczewski@arm.com,
-	kevin.brodsky@arm.com, ardb@kernel.org, suzuki.poulose@arm.com,
-	lpieralisi@kernel.org, yangyicong@hisilicon.com,
-	scott@os.amperecomputing.com, joey.gouly@arm.com,
-	yuzenghui@huawei.com, pbonzini@redhat.com, shuah@kernel.org,
-	mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v10 3/9] KVM: arm64: kselftest: set_id_regs: add test for
- FEAT_LSUI
-Message-ID: <aQjcYwHstanefv5L@finisterre.sirena.org.uk>
-References: <20251103163224.818353-1-yeoreum.yun@arm.com>
- <20251103163224.818353-4-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1762188493; c=relaxed/simple;
+	bh=jBs8TInezGrqn7lBKsOpEL7ivihT00ZrAK/aortOSpQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IIQq+9sr8eyCISuB4YVVj5xHTa5uTgl/DdL2KUcTSe471TxEKcznk9/S+TEqJP19fODL0vJF0BBQzHgJa4GJ2Mf3jJP9VwYjh7A1x/8AgnINxBaYypU4RIAZW9Y8vNMelBbtfV7ZnBimICK17tBiWp9vryWzNCRoVr8KzemHnuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QpH8DyH0; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-47721743fd0so24916685e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 08:48:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1762188489; x=1762793289; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=m5sPGkrkFa+BIv4P90jHrJVfi2snemHJi/xGZTBOH3w=;
+        b=QpH8DyH0AwR59+5nI6LKwecrBQa596Goa6+nKvbKNcx6VsQjhDBW8fvgI+NZShv5E2
+         bKNNOaQGHCyzmhrVEzvMCOqomcvTuJDNVqcGQZGm4T10+Dyk/gs19rYRQANw8/bIpLL1
+         E5EGsRN/aPN7hJM1/rzh9OFGpBaRI0latUj6AtipsutrYUyVDqLpRsRGGHYJlHR5WmMk
+         mxitqiCd8YS84cGaQO9F7mXrnvCTQBAOohn3G+2nJEIr5n1q8VBq3VYyHDdYDz1AKNiv
+         wtuX/cH8Y8CX0VY3b9qliEsleTJSio2oAuDihw5bs10u9LFML8GYaxQbJ7q2IP8gnDg5
+         1O7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762188489; x=1762793289;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=m5sPGkrkFa+BIv4P90jHrJVfi2snemHJi/xGZTBOH3w=;
+        b=qbWFeE0WxF+xilLkInQoCsZlvY/fCCl4IxHcrHV3KjxiSDLpEuWqsd6WVbOFnhHTCc
+         6a63MHqLrPSGhPmya5crpDhpoJEFQx1BuIg0EL63/Cs/EBt+9lgftIv60l0llP88hqiE
+         wHlal/1eSZ3Uf0K3FRt94oBcLuGalCDKiigTtBaOIg4OL3/75t0iJVJD0OyBGf0EVPMQ
+         QLYlpfSPoNLEf0vZQOTQ5JWAypxeA/36GTWRPGRio61r2F3i5+DYLxtl7hDzHmKZq9j7
+         ps57qQOaPgIvIdT3K4CUQkNaUXAN9YpWdsmkxbHqK5WcbMGtHscqEtkuR1H6LckTeLSo
+         T57g==
+X-Gm-Message-State: AOJu0YyzAplS9M6kKYXS5bB/ahbXgDGfeVQOX2wXlrFnQWMN9+gi2Gkc
+	hZFT5iYE+dEXbVf14tourPF5Wzx2NDwicXhpEPq6F54qL/i8U2Lw+GPMZd9E/JI1ZUp9nEiWtl2
+	F5VsY
+X-Gm-Gg: ASbGnct5+a8QQIY0Of/PrL/53J+Bpm66f02oOKVOTRCR4PqUBE5M2BPkYYaHSj4C/LT
+	miAVVmVYy5Iih+kScYcEw2gLQk83Mb64L2Jnjw9CPiqZNJX5gBaYCI7MlpPAUsR1nyEt9zTKyI4
+	vvrs+s0m4tFHKeCTBw9L/17LBxMD2d4jXEElFYrMq+H3wBW8t2sLZeux36TiduTMRNjEtV8Gdd3
+	uKwkTLoarm+cADrfdDNR0m86bG6FP0keRQaiGDzX+4YmDC37m7nwCHqRnqibVnZkg2PSWF52BOq
+	oX6NL0vv/brZWxzdaz59qbyyl3wW8RBjYfpjFoI85X6+6iCgFrGhkbaneZxiMB+/BSvGaiMHS28
+	c4upoRpROy7l044z9CnVkpsHwKU548jM5PogswO62WB6peoLbzHWCrDr5dDR24tg9IXdcvdmtQM
+	oVxCRspDZ5Gzs/2U0iz2dZtfu/
+X-Google-Smtp-Source: AGHT+IHn+Z1e4sX03I15uydQaHtVImGCDSavhgeRz4F8FOoyRNKT0SkIDzFYOHn5zbcS1AudwJpIGg==
+X-Received: by 2002:a05:600c:4e87:b0:46e:74cc:42b8 with SMTP id 5b1f17b1804b1-4773080fbfbmr118466665e9.17.1762188489181;
+        Mon, 03 Nov 2025 08:48:09 -0800 (PST)
+Received: from localhost.localdomain ([2a00:6d43:105:c401:e307:1a37:2e76:ce91])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429d1061efasm9864899f8f.24.2025.11.03.08.48.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Nov 2025 08:48:08 -0800 (PST)
+From: Marco Crivellari <marco.crivellari@suse.com>
+To: linux-kernel@vger.kernel.org,
+	intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Cc: Tejun Heo <tj@kernel.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Marco Crivellari <marco.crivellari@suse.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Krzysztof Karas <krzysztof.karas@intel.com>
+Subject: [PATCH v2 0/3] replace old wq(s), add WQ_PERCPU to alloc_workqueue
+Date: Mon,  3 Nov 2025 17:47:57 +0100
+Message-ID: <20251103164800.294729-1-marco.crivellari@suse.com>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="n1neAWNWhZ8UixfX"
-Content-Disposition: inline
-In-Reply-To: <20251103163224.818353-4-yeoreum.yun@arm.com>
-X-Cookie: If in doubt, mumble.
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Hi,
+
+=== Current situation: problems ===
+
+Let's consider a nohz_full system with isolated CPUs: wq_unbound_cpumask is
+set to the housekeeping CPUs, for !WQ_UNBOUND the local CPU is selected.
+
+This leads to different scenarios if a work item is scheduled on an
+isolated CPU where "delay" value is 0 or greater then 0:
+        schedule_delayed_work(, 0);
+
+This will be handled by __queue_work() that will queue the work item on the
+current local (isolated) CPU, while:
+
+        schedule_delayed_work(, 1);
+
+Will move the timer on an housekeeping CPU, and schedule the work there.
+
+Currently if a user enqueue a work item using schedule_delayed_work() the
+used wq is "system_wq" (per-cpu wq) while queue_delayed_work() use
+WORK_CPU_UNBOUND (used when a cpu is not specified). The same applies to
+schedule_work() that is using system_wq and queue_work(), that makes use
+again of WORK_CPU_UNBOUND.
+
+This lack of consistency cannot be addressed without refactoring the API.
+
+=== Recent changes to the WQ API ===
+
+The following, address the recent changes in the Workqueue API:
+
+- commit 128ea9f6ccfb ("workqueue: Add system_percpu_wq and system_dfl_wq")
+- commit 930c2ea566af ("workqueue: Add new WQ_PERCPU flag")
+
+The old workqueues will be removed in a future release cycle.
+
+=== Introduced Changes by this series ===
+
+1) [P 1-2]  Replace uses of system_wq and system_unbound_wq
+
+    system_wq is a per-CPU workqueue, but his name is not clear.
+    system_unbound_wq is to be used when locality is not required.
+
+    Because of that, system_wq has been replaced with system_percpu_wq, and
+    system_unbound_wq has been replaced with system_dfl_wq.
+
+2) [P 3] WQ_PERCPU added to alloc_workqueue()
+
+    This change adds a new WQ_PERCPU flag to explicitly request
+    alloc_workqueue() to be per-cpu when WQ_UNBOUND has not been specified.
 
 
---n1neAWNWhZ8UixfX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks!
 
-On Mon, Nov 03, 2025 at 04:32:18PM +0000, Yeoreum Yun wrote:
-> Add test coverage for FEAT_LSUI.
+---
+Changes in v2:
+- fix typo in patch subject (add instead of added).
 
-Ah, sorry - I see the set_id_regs change I asked for in my previous
-reply is here actually!  Usually the selftests patches go at the end of
-the series after all the functional changes so it didn't look like there
-were any for the series.
+- in every patch is also present the specific commit hash about the
+  workqueue API change.
 
->  static const struct reg_ftr_bits ftr_id_aa64isar3_el1[] = {
->  	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64ISAR3_EL1, FPRCVT, 0),
-> +	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64ISAR3_EL1, LSUI, 0),
->  	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64ISAR3_EL1, LSFE, 0),
->  	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64ISAR3_EL1, FAMINMAX, 0),
->  	REG_FTR_END,
+- fixed commit log of P1 (removed "Adding system_dfl_wq...").
 
-Reviewed-by: Mark Brown <broonie@kernel.org>
+- P2: subject changed reflecting the effective change.
 
---n1neAWNWhZ8UixfX
-Content-Type: application/pgp-signature; name="signature.asc"
+- rebased to v6.18-rc4.
 
------BEGIN PGP SIGNATURE-----
+Marco Crivellari (3):
+  drm/i915: replace use of system_unbound_wq with system_dfl_wq
+  drm/i915: replace use of system_wq with system_percpu_wq in the
+    documentation
+  drm/i915: add WQ_PERCPU to alloc_workqueue users
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkI3GIACgkQJNaLcl1U
-h9BSBQf+LLF5rxdT9uo9B8kyXYNRb+JQM8zxCcNQeqrEg0FpYzyyCldSnKZHqq3a
-C2L100Zn5WXFzUsmwztAxkDPDhfpXdPp+B6A7IZJXpLHX33tXSC1cMoHmgGustOd
-vw4RjrvTdLKKxIj2lsOyxJAXHKK4h+9JIc0uN0msMm5Jy+2dlVv8EaF1jc0nUxjY
-rHh8DdgOCh0GwEBG/AnEOWeH2TUsgjxMlVT9MZ7KYoIhIErPUjTxZELb86quh9g2
-CwR0PD4SN0NMfRPcI0JQV1CX3wU59f3actJXifMs4yFlqvzlKm8B3DkDzHz6S54w
-XXSOpO06mXKEcprPaUq3qYEX/6NQkA==
-=pmiJ
------END PGP SIGNATURE-----
+ drivers/gpu/drm/i915/display/intel_display_driver.c | 4 ++--
+ drivers/gpu/drm/i915/display/intel_display_power.c  | 2 +-
+ drivers/gpu/drm/i915/display/intel_tc.c             | 4 ++--
+ drivers/gpu/drm/i915/gem/i915_gem_ttm_move.c        | 2 +-
+ drivers/gpu/drm/i915/gt/uc/intel_guc.c              | 4 ++--
+ drivers/gpu/drm/i915/gt/uc/intel_guc_ct.c           | 4 ++--
+ drivers/gpu/drm/i915/gt/uc/intel_guc_submission.c   | 6 +++---
+ drivers/gpu/drm/i915/i915_active.c                  | 2 +-
+ drivers/gpu/drm/i915/i915_driver.c                  | 5 +++--
+ drivers/gpu/drm/i915/i915_drv.h                     | 2 +-
+ drivers/gpu/drm/i915/i915_sw_fence_work.c           | 2 +-
+ drivers/gpu/drm/i915/i915_vma_resource.c            | 2 +-
+ drivers/gpu/drm/i915/pxp/intel_pxp.c                | 2 +-
+ drivers/gpu/drm/i915/pxp/intel_pxp_irq.c            | 2 +-
+ drivers/gpu/drm/i915/selftests/i915_sw_fence.c      | 2 +-
+ drivers/gpu/drm/i915/selftests/mock_gem_device.c    | 2 +-
+ 16 files changed, 24 insertions(+), 23 deletions(-)
 
---n1neAWNWhZ8UixfX--
+-- 
+2.51.1
+
 
