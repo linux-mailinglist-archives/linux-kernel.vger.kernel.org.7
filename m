@@ -1,373 +1,261 @@
-Return-Path: <linux-kernel+bounces-883679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51E07C2E0EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 21:46:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2502C2E0FE
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 21:48:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4ABD3BD4FB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 20:46:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A7E11885598
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 20:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D09147C9B;
-	Mon,  3 Nov 2025 20:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF7023EAB8;
+	Mon,  3 Nov 2025 20:47:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wIPDfEoV"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jD7umLum";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="AXuI+to+"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4ED02C0F62
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 20:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D8EB42AA6
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 20:47:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762202766; cv=none; b=EX6lIIs3/bNLyo5wK/kByj8gRumjf1wbq1XXi33aZJvnpVPRmAlr1pkWzl/Bc7sa/fIyaAQwM9Xd1n47tRk7hMja9fVqVrWrZP9ngnrj8xtMlCdX1PRUyTB3msCygXvpLuJ9Y97uw15vTM8IXhaFmLuEuFzkvVg+ia95GaVaQ1w=
+	t=1762202827; cv=none; b=KU/gWi7IEzM3W3betNR8OJ7Eg6foMbOrVE9sSE2q7mU7C3hAX31UVhwHIP49QFZmsl16d5rD09pD3rCz1NGh7ZCxGfHChYa598v8C9w0wC/h0NteaRC3Tge7+NnehUYb8FdIyU680BYRILmtVPrBsKZjeNPcdcsavI4RJAEEySE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762202766; c=relaxed/simple;
-	bh=78VVdJBIjH7DUWFrqgAJg5hmrAaLyzBHn4nSy26ktbA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cDFDASOVfrgS+3LibEhD0lRFjlXwsmLg8D2eG+AsushzFqjuZZtC27pxFHU+8OtrC9MoBU7go5J8cHzLVvqRVOSJjiPJDZsmmncplOY7AoXbJ0agQMUhEGbY6kRAD8PoESARPGWGx7oIvCJwUVPMk9OSUsnSPYn9YIAcMYMdig8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wIPDfEoV; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-47105bbb8d9so2065e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 12:46:03 -0800 (PST)
+	s=arc-20240116; t=1762202827; c=relaxed/simple;
+	bh=H+9kO5f8FrA5y1DhJYYKBh/OTpYkMGYW83uGngfbvCs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QkbvnSg9d12m0eNgBXXMAC4G3J857lukAj1Y+uhezQ+zMnez5yTan7bKhZAoUb0C88fpQbuZGYBEoKTTsvZYBCj2KR+w/5247fJ2czwuL8u5mO6bq4uX++RXim5qeb29o+Ja8ZQdgby2N1rDlI7MW1Ybs8SLqn+wKJezz/7gMNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jD7umLum; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=AXuI+to+; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762202824;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vghBKiSvOSdxfV0lhypHIAUMncAsgcwHnYxmY/VnkRM=;
+	b=jD7umLum/BiXFO45KJnBt0zoOk4yN8SGpgzBanP+Ft7r9CsCCYaTa5RIPGQxTvv80Z7P7W
+	7bsOcmjzhsfl9z53/2RPV+AQtKC5rYih52oxLC1fCiKiJZJneHRUMvCfOVvCzqsSRDuxNX
+	MAgzz8msM+hDw7slMxS/b7B4PYYsuIU=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-551-7Fvy63PBNCu-93ehY0rdgQ-1; Mon, 03 Nov 2025 15:47:03 -0500
+X-MC-Unique: 7Fvy63PBNCu-93ehY0rdgQ-1
+X-Mimecast-MFC-AGG-ID: 7Fvy63PBNCu-93ehY0rdgQ_1762202822
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-8805c2acd64so22707426d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 12:47:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762202762; x=1762807562; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XFLQG05yxnGeCUjCRezA06BGBQoij7YwrxYVw5ACcfo=;
-        b=wIPDfEoV5fT8DZeaMjcFiC6rE8jsFG6tyN4iSMR1FR+5C45Bc5dqRHpH5fFKo5ACf0
-         pfyGWIUhEYdI92md0KtpyGztW1Bs9cRP8Q9jzXm76ZF2qkWYE/9d4p0E/jA2sGpR7knE
-         tAtt3VmKjN8/rllfIzxiyLKmEe9yPa+27BlFR2DleMdmUP5gZZBv3g5THjqJVMphQ5G0
-         VriDMyMCpQto1XJtZCyRRgYf6uMlxVHcEdxTFu3CVeePg5db/OdgP3Vgp3w2i2tn+l36
-         03WtFAkiTPK0oIoH6zwEaQUQAZ725h/yza7GDhCIHRbK3nbOSa8GGTU9afSSrRJopxG/
-         mTmQ==
+        d=redhat.com; s=google; t=1762202822; x=1762807622; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vghBKiSvOSdxfV0lhypHIAUMncAsgcwHnYxmY/VnkRM=;
+        b=AXuI+to+akWYvXiC9AN5xvS6pIm3basqMbjpeQJ4aNGgiHjXGIcGk6JU2c18LpKrI2
+         QL0fCw86a0RTdcURbZIS+Ul0/jLSJWP1eGCyeBy8kEax81oF5cD7NY6tmJ77xB7UZLpe
+         SfYSRstpmw6nb1ufrM1A8Ir7IYdDdrkk9AWAQRX+athgE2zCxS+i9peKTCls1V2rPEtZ
+         csajzyIflMOe4yMilKanzJg2+J2WONlY4EnxJ2l6HSkjCsQMt8qjI9gQmS1tRo987HoQ
+         KHnSxDZEDuZyHmBMyZ/kBC6SvgzRwIqu0jeulUwKs7F6OX73/eeGylcpw28awkY60lkH
+         V1yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762202762; x=1762807562;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XFLQG05yxnGeCUjCRezA06BGBQoij7YwrxYVw5ACcfo=;
-        b=gB4omtojFQWtV0HvjkR9WiLoGHZdGaalqYLcvksYHNX7apUDUziLSD5gYSBUhmQm0j
-         f2ha1+21kftoGzgsKXciTWSfmRQDPOdAYCV1LGBqhFytplzy0a8gTQO/SwCJOqfvOmiM
-         Ns1z14YINtHSzN589A+6+hwYcrp/DgLSfOssFNNzzQ3I/PgHDpYrASHXg3dlw6Wakg8g
-         NJIQ60UTbWjyadhhbSfNVK/Wej/1WxnZH9Wxu7RlhXe6dyRQO/v6bGAXCY/3r8t0XyoW
-         YUhjySSlj0SakYX3PYafgE5T0jwPBX9DOgtt8YuAVnLvWOB7MGjUtPWoIoP93axRQMgK
-         5eew==
-X-Forwarded-Encrypted: i=1; AJvYcCXK2QBRGn2xYH49hphCF521SzIWV0SX7FUiIvl1gV9KUDUOb9kEZOhk0HBn4TL7v5ibgz+vqS67A+UyB4w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiKOTF16V5Z8jFQBwq7N4BH+LtG2iIL+rHtfS1t255zP7+VCey
-	8cwwbSqpgqnErh7Ba9vDlnGH3Jrec/qr3zLK2vakzlywZQgkMuilS84LyOa6u/lEQIoGwtcbUM6
-	8uPed49oGVjvNhOSRihz/Rsr/KCBBIUl+2xXvjVJx
-X-Gm-Gg: ASbGncto6u/vPfc+VbJd1Zb9tqCySP7NU+9OayBiD8QvdFN2Oo2VRpwqueDqQaaegT6
-	STAOmu3rp9PfthL06tX9LHKcFKebmxyBqZxD3WPjfOq4IbuSYnA2xmOtaUar3oJndP1zQAl78bm
-	Mv74zGkrXVNASu8iABodZ5IAB73uBmkplfEn8Pp7dDmbtN/GyER87TRdOoZGFSgA/3QWwszssig
-	bIvTnIIfZvibJ0mU5//uatKqXajvacP7H6MZ37lAPtOiIX9dOjdTMG5QUqi0CDbMs0SAR5Kh98u
-	zHTUUKNrixmCeA==
-X-Google-Smtp-Source: AGHT+IG9oVCZDDY5MyOKgKW4xlI1Oc/GPLlunrZYyxDoj2qoI35Mip7UpVZjaQGJTHznRiF6HsyMfkM02zJ0rlqdzwI=
-X-Received: by 2002:a05:600c:21ce:b0:475:da0c:38a8 with SMTP id
- 5b1f17b1804b1-47754f81696mr407755e9.4.1762202761807; Mon, 03 Nov 2025
- 12:46:01 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762202822; x=1762807622;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vghBKiSvOSdxfV0lhypHIAUMncAsgcwHnYxmY/VnkRM=;
+        b=MstOzxdMc5UBhGEfCPgfaWCG4P+gUz2snh8sELvAeVTzBSukUt1e33te6fCEaO3/kl
+         GbP8F0Q9V+ZnWiBWiR40ld/qY2nHCS1eOp3nZsg7ZP+fb48kJz/eWFzcKZatY8R4fA2l
+         f30jtgkoXhMfHZwK56rPhLcLxGDL8XvDIK/giQwsQBQ4CoIVzFZP3llFy2rr8IDWq4z5
+         QM+86oS4r6Nt+ImvzNg3kgCosDmrgsaZm7JX27n6E7Yq3HB0xNRj1UKJGiUmf4EbgW7o
+         +LkHcbd5Yspt7KhfvIA5AoICRCvv7FT1GRNBWIIXnVjnfyYj+J3Fib4DoRLQO9DHkJxy
+         r+9w==
+X-Forwarded-Encrypted: i=1; AJvYcCVcsZruH5pKhtwpiaMiIlaMbrtKKpCiaOpAloW0AhsnP+YNJ8x6IfBFdulhRu0NzoRSfJHF8nisR3aIcQo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykRFNmYaBlZo9PmN4e3eMXVd6rW0VGnNmeHcwnezr11ztV6GCf
+	7K8DhkiV/2uVZQaZh9BW4QXC/CS3UVKz9AAqk273kws2WZcAlZk2UqCe1YfIOhoozPYyFdf6bnj
+	0GM9iak4D7N21WNQEYfjfN26RG1+CbLhwuFn9Okw732ZWta3OXjd8nLb8AWFVOxwCew==
+X-Gm-Gg: ASbGnctjcAdtuqN2cpLdQtwNeY2v3Hciaxrfr2U5/WmKrH/orDKJCS2ERoZlWFQJSag
+	IIisYYam+EobsI/7h2hR69OtvAh8UL6mJyPhji866jRbOVp+tlSxe/+KMNZN2B8oZ0yepHWpcNj
+	rv8fyfsEPkIrOpdElOaWXiQ1917HvysamMkGM2/44kUHEfanX9ywDg6hbZD7J3mcgXxq/NgKG4/
+	pfEUZwnFCL2DTkkXRlCSHEuEDzOS9ktVqxRu7lpCKrZr1uBiJD0iNj91HGSzJWOBHgwvK1VbqC2
+	343cVdktv701RoY5tIL45F1Jdf3giIj/r+Mr8zuv4eiPXJwX30ld5krL8zLkfoPYzlk=
+X-Received: by 2002:ad4:5d43:0:b0:880:4c73:9e44 with SMTP id 6a1803df08f44-8804c73a24emr33040616d6.15.1762202822191;
+        Mon, 03 Nov 2025 12:47:02 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFki4qB2bWfAdvpnwwEKDZVQ/jgwqxyK8R5E1a/l8fmyEI99KRQ9GoapziPmE3jrH2Z1ZbnIQ==
+X-Received: by 2002:ad4:5d43:0:b0:880:4c73:9e44 with SMTP id 6a1803df08f44-8804c73a24emr33040296d6.15.1762202821640;
+        Mon, 03 Nov 2025 12:47:01 -0800 (PST)
+Received: from x1.local ([142.188.210.50])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-88060e9566dsm9124636d6.47.2025.11.03.12.46.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Nov 2025 12:47:00 -0800 (PST)
+Date: Mon, 3 Nov 2025 15:46:57 -0500
+From: Peter Xu <peterx@redhat.com>
+To: "David Hildenbrand (Red Hat)" <david@kernel.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, Mike Rapoport <rppt@kernel.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Nikita Kalyazin <kalyazin@amazon.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Axel Rasmussen <axelrasmussen@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	James Houghton <jthoughton@google.com>,
+	Hugh Dickins <hughd@google.com>, Michal Hocko <mhocko@suse.com>,
+	Ujwal Kundur <ujwal.kundur@gmail.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Andrea Arcangeli <aarcange@redhat.com>, conduct@kernel.org
+Subject: Re: [PATCH v4 0/4] mm/userfaultfd: modulize memory types
+Message-ID: <aQkUwbx7Z4q1qcSB@x1.local>
+References: <78424672-065c-47fc-ba76-c5a866dcdc98@redhat.com>
+ <aPZDVuscFsYSlQjI@x1.local>
+ <dtepn7obw5syd47uhyxavytodp7ws2pzr2yuchda32wcwn4bj4@wazn24gijumu>
+ <aPe0oWR9-Oj58Asz@x1.local>
+ <nnxhd7zxjza6m4w4lr5qyev2krbkp4yfcgcwq6nkaqrqt6bzpb@iklep2xxp5gv>
+ <aQO3Zko6Qrk7O96u@x1.local>
+ <aQPCwFZqNd_ZlZ0S@x1.local>
+ <d0b037a6-11b9-483b-aa67-b2a8984e56e0@lucifer.local>
+ <aQPU-tyo_w68cnKK@x1.local>
+ <7768bbb5-f060-45f7-b584-95bd73c47146@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251013185903.1372553-1-jiaqiyan@google.com> <20251013185903.1372553-2-jiaqiyan@google.com>
- <7a61bcf9-a57d-a8e9-a9b8-4eacef80acd3@arm.com>
-In-Reply-To: <7a61bcf9-a57d-a8e9-a9b8-4eacef80acd3@arm.com>
-From: Jiaqi Yan <jiaqiyan@google.com>
-Date: Mon, 3 Nov 2025 12:45:50 -0800
-X-Gm-Features: AWmQ_bn3UtOS-iQBnGW8DyhNypxqDQ3vgsdMl2IVI_yUyITm8YFcPAhNl3XpHT4
-Message-ID: <CACw3F51_0A8CuCgzcvoA3Db=Wxo8mm5XZw5in+nTKrst+NCcqw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] KVM: arm64: VM exit to userspace to handle SEA
-To: Jose Marinho <jose.marinho@arm.com>
-Cc: maz@kernel.org, oliver.upton@linux.dev, duenwen@google.com, 
-	rananta@google.com, jthoughton@google.com, vsethi@nvidia.com, jgg@nvidia.com, 
-	joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, 
-	catalin.marinas@arm.com, will@kernel.org, pbonzini@redhat.com, corbet@lwn.net, 
-	shuah@kernel.org, kvm@vger.kernel.org, kvmarm@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <7768bbb5-f060-45f7-b584-95bd73c47146@kernel.org>
 
-On Mon, Nov 3, 2025 at 10:17=E2=80=AFAM Jose Marinho <jose.marinho@arm.com>=
- wrote:
->
-> Thank you for these patches.
+On Mon, Nov 03, 2025 at 09:01:02PM +0100, David Hildenbrand (Red Hat) wrote:
+> > > I have an extremely heavy workload at the moment anyway, but honestly
+> > > interactions like this have seriously put me off being involved in this review
+> > > personally.
+> > > 
+> > > Do we really want this to be how review in mm or the kernel is?
+> > > 
+> > > Is that really the culture we want to have here?
+> > 
+> > Gosh.. Seriously?
+> > 
+> > I'm ok if this needs to be audited.  I have all the previous discussions in
+> > the cover letter as links.
+> 
+> I'm late to the party (or whatever this here is called. ah right, drama),
+> and I haven't yet dug through all the emails and certainly not through all
+> the of involved code changes.
+> 
+> Peter, I was a bit surprised by your messages here indeed, not what I
+> expected.
+> 
+> The "Your code allows to operate on pmd* in a module??? That's too risky and
+> mm can explode!  Isn't it?" definitely was absolutely unnecessary ... or
+> telling Liam that "he want almost mad".
 
-Thanks for your comments, Jose!
+It was a joke!
 
->
-> On 10/13/2025 7:59 PM, Jiaqi Yan wrote:
-> > When APEI fails to handle a stage-2 synchronous external abort (SEA),
-> > today KVM injects an asynchronous SError to the VCPU then resumes it,
-> > which usually results in unpleasant guest kernel panic.
-> >
-> > One major situation of guest SEA is when vCPU consumes recoverable
-> > uncorrected memory error (UER). Although SError and guest kernel panic
-> > effectively stops the propagation of corrupted memory, guest may
-> > re-use the corrupted memory if auto-rebooted; in worse case, guest
-> > boot may run into poisoned memory. So there is room to recover from
-> > an UER in a more graceful manner.
-> >
-> > Alternatively KVM can redirect the synchronous SEA event to VMM to
-> > - Reduce blast radius if possible. VMM can inject a SEA to VCPU via
-> >    KVM's existing KVM_SET_VCPU_EVENTS API. If the memory poison
-> >    consumption or fault is not from guest kernel, blast radius can be
-> >    limited to the triggering thread in guest userspace, so VM can
-> >    keep running.
-> > - Allow VMM to protect from future memory poison consumption by
-> >    unmapping the page from stage-2, or to interrupt guest of the
-> >    poisoned page so guest kernel can unmap it from stage-1 page table.
-> > - Allow VMM to track SEA events that VM customers care about, to restar=
-t
-> >    VM when certain number of distinct poison events have happened,
-> >    to provide observability to customers in log management UI.
-> >
-> > Introduce an userspace-visible feature to enable VMM handle SEA:
-> > - KVM_CAP_ARM_SEA_TO_USER. As the alternative fallback behavior
-> >    when host APEI fails to claim a SEA, userspace can opt in this new
-> >    capability to let KVM exit to userspace during SEA if it is not
-> >    owned by host.
-> > - KVM_EXIT_ARM_SEA. A new exit reason is introduced for this.
-> >    KVM fills kvm_run.arm_sea with as much as possible information about
-> >    the SEA, enabling VMM to emulate SEA to guest by itself.
-> >    - Sanitized ESR_EL2. The general rule is to keep only the bits
-> >      useful for userspace and relevant to guest memory.
-> >    - Flags indicating if faulting guest physical address is valid.
-> >    - Faulting guest physical and virtual addresses if valid.
-> >
-> > Signed-off-by: Jiaqi Yan <jiaqiyan@google.com>
-> > Co-developed-by: Oliver Upton <oliver.upton@linux.dev>
-> > Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
-> > ---
-> >   arch/arm64/include/asm/kvm_host.h |  2 +
-> >   arch/arm64/kvm/arm.c              |  5 +++
-> >   arch/arm64/kvm/mmu.c              | 68 ++++++++++++++++++++++++++++++=
--
-> >   include/uapi/linux/kvm.h          | 10 +++++
-> >   4 files changed, 84 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm=
-/kvm_host.h
-> > index b763293281c88..e2c65b14e60c4 100644
-> > --- a/arch/arm64/include/asm/kvm_host.h
-> > +++ b/arch/arm64/include/asm/kvm_host.h
-> > @@ -350,6 +350,8 @@ struct kvm_arch {
-> >   #define KVM_ARCH_FLAG_GUEST_HAS_SVE                 9
-> >       /* MIDR_EL1, REVIDR_EL1, and AIDR_EL1 are writable from userspace=
- */
-> >   #define KVM_ARCH_FLAG_WRITABLE_IMP_ID_REGS          10
-> > +     /* Unhandled SEAs are taken to userspace */
-> > +#define KVM_ARCH_FLAG_EXIT_SEA                               11
-> >       unsigned long flags;
-> >
-> >       /* VM-wide vCPU feature set */
-> > diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
-> > index f21d1b7f20f8e..888600df79c40 100644
-> > --- a/arch/arm64/kvm/arm.c
-> > +++ b/arch/arm64/kvm/arm.c
-> > @@ -132,6 +132,10 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
-> >               }
-> >               mutex_unlock(&kvm->lock);
-> >               break;
-> > +     case KVM_CAP_ARM_SEA_TO_USER:
-> > +             r =3D 0;
-> > +             set_bit(KVM_ARCH_FLAG_EXIT_SEA, &kvm->arch.flags);
-> > +             break;
-> >       default:
-> >               break;
-> >       }
-> > @@ -327,6 +331,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, l=
-ong ext)
-> >       case KVM_CAP_IRQFD_RESAMPLE:
-> >       case KVM_CAP_COUNTER_OFFSET:
-> >       case KVM_CAP_ARM_WRITABLE_IMP_ID_REGS:
-> > +     case KVM_CAP_ARM_SEA_TO_USER:
-> >               r =3D 1;
-> >               break;
-> >       case KVM_CAP_SET_GUEST_DEBUG2:
-> > diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-> > index 7cc964af8d305..09210b6ab3907 100644
-> > --- a/arch/arm64/kvm/mmu.c
-> > +++ b/arch/arm64/kvm/mmu.c
-> > @@ -1899,8 +1899,48 @@ static void handle_access_fault(struct kvm_vcpu =
-*vcpu, phys_addr_t fault_ipa)
-> >       read_unlock(&vcpu->kvm->mmu_lock);
-> >   }
-> >
-> > +/*
-> > + * Returns true if the SEA should be handled locally within KVM if the=
- abort
-> > + * is caused by a kernel memory allocation (e.g. stage-2 table memory)=
-.
-> > + */
-> > +static bool host_owns_sea(struct kvm_vcpu *vcpu, u64 esr)
-> > +{
-> > +     /*
-> > +      * Without FEAT_RAS HCR_EL2.TEA is RES0, meaning any external abo=
-rt
-> > +      * taken from a guest EL to EL2 is due to a host-imposed access (=
-e.g.
-> > +      * stage-2 PTW).
-> > +      */
-> > +     if (!cpus_have_final_cap(ARM64_HAS_RAS_EXTN))
-> > +             return true;
-> > +
-> > +     /* KVM owns the VNCR when the vCPU isn't in a nested context. */
-> > +     if (is_hyp_ctxt(vcpu) && (esr & ESR_ELx_VNCR))
-> Is this check valid only for a "Data Abort"?
+uffd_copy() API was NACKed because of this.  Now the new proposal
+introduced it.  I made a joke saying Liam allows that to happen in his
+branch, but forbid mine.
 
-Yes, the VNCR bit is specific to a Data Abort (provided we can only
-reach host_owns_sea if kvm_vcpu_abt_issea).
-I don't think we need to explicitly exclude the check here for
-Instruction Abort.
+I thought it was super clear to identify.
 
-> > +             return true;
-> > +
-> > +     /*
-> > +      * Determine if an external abort during a table walk happened at
-> > +      * stage-2 is only possible with S1PTW is set. Otherwise, since K=
-VM
-> nit: Is the first sentence correct?
+> 
+> Again, not what I would have expected from you, and I would assume that you
+> had a bad day and would at least apologize now that some time passed.
 
-Oh, it should be "Determining ...".
+Sorry, no.  I won't apologize for that.  I was not fair treated, and now I
+think it's fair I at least make a joke.  
 
->
-> > +      * sets HCR_EL2.TEA, SEAs due to a stage-1 walk (i.e. accessing t=
-he
-> > +      * PA of the stage-1 descriptor) can reach here and are reported
-> > +      * with a TTW ESR value.
-> > +      */
-> > +     return (esr_fsc_is_sea_ttw(esr) && (esr & ESR_ELx_S1PTW));
-> > +}
-> > +
-> >   int kvm_handle_guest_sea(struct kvm_vcpu *vcpu)
-> >   {
-> > +     struct kvm *kvm =3D vcpu->kvm;
-> > +     struct kvm_run *run =3D vcpu->run;
-> > +     u64 esr =3D kvm_vcpu_get_esr(vcpu);
-> > +     u64 esr_mask =3D ESR_ELx_EC_MASK  |
-> > +                    ESR_ELx_IL       |
-> > +                    ESR_ELx_FnV      |
-> > +                    ESR_ELx_EA       |
-> > +                    ESR_ELx_CM       |
-> > +                    ESR_ELx_WNR      |
-> > +                    ESR_ELx_FSC;
-> > +     u64 ipa;
-> > +
-> >       /*
-> >        * Give APEI the opportunity to claim the abort before handling i=
-t
-> >        * within KVM. apei_claim_sea() expects to be called with IRQs en=
-abled.
-> > @@ -1909,7 +1949,33 @@ int kvm_handle_guest_sea(struct kvm_vcpu *vcpu)
-> >       if (apei_claim_sea(NULL) =3D=3D 0)
-> >               return 1;
-> >
-> > -     return kvm_inject_serror(vcpu);
-> > +     if (host_owns_sea(vcpu, esr) ||
-> > +         !test_bit(KVM_ARCH_FLAG_EXIT_SEA, &vcpu->kvm->arch.flags))
-> > +             return kvm_inject_serror(vcpu);
-> > +
-> > +     /* ESR_ELx.SET is RES0 when FEAT_RAS isn't implemented. */
-> > +     if (kvm_has_ras(kvm))
-> > +             esr_mask |=3D ESR_ELx_SET_MASK;
-> > +
-> > +     /*
-> > +      * Exit to userspace, and provide faulting guest virtual and phys=
-ical
-> > +      * addresses in case userspace wants to emulate SEA to guest by
-> > +      * writing to FAR_ELx and HPFAR_ELx registers.
-> > +      */
-> > +     memset(&run->arm_sea, 0, sizeof(run->arm_sea));
-> > +     run->exit_reason =3D KVM_EXIT_ARM_SEA;
-> > +     run->arm_sea.esr =3D esr & esr_mask;
-> > +
-> > +     if (!(esr & ESR_ELx_FnV))
-> > +             run->arm_sea.gva =3D kvm_vcpu_get_hfar(vcpu) > +
-> > +     ipa =3D kvm_vcpu_get_fault_ipa(vcpu);
-> > +     if (ipa !=3D INVALID_GPA) {
-> > +             run->arm_sea.flags |=3D KVM_EXIT_ARM_SEA_FLAG_GPA_VALID;
-> > +             run->arm_sea.gpa =3D ipa;
->
-> Are we interested in the value of PFAR_EL2 (if FEAT_PFAR implemented)?
+David, you're leaving, and I'm totally dissappointed that at this point of
+time, you ask me to apologize instead.
 
-I don't think userspace (VMM) or the guest would need or make any use
-of the physical memory address. I believe host physical address in
-general should be hidden from userspace process.
+I thought it was obvious a joke, because I never thought having pmd* in a
+function in a module is not OK.
 
-Completely off-topic: if FEAT_PFAR is implemented, I would propose EL3
-RAS to implement something below so that host APEI can claim the SEA:
-1. Triage the SEA to determine if it has to be handled in place, or
-should it be redirected to lower EL2.
-2. If SEA should be redirected to EL2, craft a memory error CPER that
-contains a valid physical memory address.
-3. When redirect a SEA to EL2, also populate it to host APEI GHES.
+I always thought it was fine, Linux is not a micro kernel.  It's just fine.
+It is what happening in Linux right now.  It is so obvious.  In case it was
+not clear, I hope I make it clear now.  If I'm going to formally NACK
+Liam's series, I won't use this as one of the real reasons.  I just hide it
+in some of others that are real reasons.  However if to be fair, when this
+reason is removed, this series should also remove the "highlight" that it
+removed shmem.h header, because my v1 also did that when with uffd_copy().
 
-This way, memory error caused SEA can properly trigger the normal
-memory_failure routine provided by host kernel, instead of handled as
-an exception without memory error context by KVM.
+> 
+> I understand that you were upset by the previous feedback on the earlier
+> series.
+> 
+> There were some heated arguments in the last discussions, but most of them
+> were based on misunderstandings. I would have thought that once they were
+> resolved that we could continue focusing on discussing the technical details
+> again.
+> 
+> From what I can see you asked for actual code and when Liam came back with
+> some code that looks like *a lot of work* to me.
 
-> I believe kvm_vcpu_get_fault_ipa gets the HPFAR_EL2, which is valid for
-> S2 translation and GPC faults, but unknown for other cases.
+It's Liam who stood out strongly pushing back what he at least used to be
+not familiar with.  This was, IMHO, rude.  It's ok to keep silent on some
+patchset that one isn't familiar.  It's ok to ask questions.  It's not ok
+to strongly push back without being extremely familiar with the code.
 
-You are absolutely right that HPFAR_EL2 register is unknown for SEA.
-However, thanks to Oliver [1] KVM now performs a FAR to HPFAR address
-translation (__translate_far_to_hpfar) for certain SEA cases (see
-__fault_safe_to_translate), and stores the translation status +
-results in vcpu->arch.fault. These SEA cases are returned to userspace
-in this patchset.
+He might be more familiar now, I wish he is. But it's Liam's decision to
+work on the code.
 
-[1] https://lore.kernel.org/all/20250402201725.2963645-4-oliver.upton@linux=
-.dev.
+We're adults, we do what we should do, not what we asked to do.  If we do
+what we asked to do, we should have our reasons.
 
->
-> Jose
->
-> > +     }
-> > +
-> > +     return 0;
-> >   }
-> >
-> >   /**
-> > diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-> > index 6efa98a57ec11..acc7b3a346992 100644
-> > --- a/include/uapi/linux/kvm.h
-> > +++ b/include/uapi/linux/kvm.h
-> > @@ -179,6 +179,7 @@ struct kvm_xen_exit {
-> >   #define KVM_EXIT_LOONGARCH_IOCSR  38
-> >   #define KVM_EXIT_MEMORY_FAULT     39
-> >   #define KVM_EXIT_TDX              40
-> > +#define KVM_EXIT_ARM_SEA          41
-> >
-> >   /* For KVM_EXIT_INTERNAL_ERROR */
-> >   /* Emulate instruction failed. */
-> > @@ -473,6 +474,14 @@ struct kvm_run {
-> >                               } setup_event_notify;
-> >                       };
-> >               } tdx;
-> > +             /* KVM_EXIT_ARM_SEA */
-> > +             struct {
-> > +#define KVM_EXIT_ARM_SEA_FLAG_GPA_VALID      (1ULL << 0)
-> > +                     __u64 flags;
-> > +                     __u64 esr;
-> > +                     __u64 gva;
-> > +                     __u64 gpa;
-> > +             } arm_sea;
-> >               /* Fix the size of the union. */
-> >               char padding[256];
-> >       };
-> > @@ -963,6 +972,7 @@ struct kvm_enable_cap {
-> >   #define KVM_CAP_RISCV_MP_STATE_RESET 242
-> >   #define KVM_CAP_ARM_CACHEABLE_PFNMAP_SUPPORTED 243
-> >   #define KVM_CAP_GUEST_MEMFD_MMAP 244
-> > +#define KVM_CAP_ARM_SEA_TO_USER 245
-> >
-> >   struct kvm_irq_routing_irqchip {
-> >       __u32 irqchip;
+My ask was trying to make Liam see that what he proposed is over
+engineering the whole thing.  I was pretty sure of that, he wasn't.  I
+explained to him multiple times on why it was an overkill, he doesn't
+agree. It's fine for him to disagree, it's Liam's right.  Then it's also
+fine for me to ask him code it up to notice himself, if I can't persuade
+him.  That's the only way for him to persuade me instead.
+
+I sincerely wished that works out.  As I said, then I'll properly review
+it, and then we build whatever we need on top.  I'm totally fine.  However
+it didn't go like that, the API is exactly what I pictured.  I prefer my
+proposal.  That's what I did: showing the difference when there're two
+proposals, and ask for a second opinion.
+
+It's not fair to put that on top of me to blame.  He's trying to justify
+he's correct.  It has nothing to do with me.  He can stop pushing back
+anytime.  He can keep proposing what he works on.  It's his decision, not
+mine.
+
+> 
+> He really seems to care (which I highly appreciate) and went the extra mile
+> to show us how the uffd code could evolve.
+> 
+> We've all (well okay, some of us) been crying for some proper userfaultfd
+> cleanups for years.
+> 
+> So is there a way we can move forward with this without thinking in binary?
+> Is there some middle-ground to be had? Can some reworks come on top of your
+> series? Can so reworks be integrated in this series?
+> 
+> I agree that what Liam proposes here is on the larger side, and probably
+> does a lot of things in a single rework. That doesn't mean that we couldn't
+> move into that direction in smaller steps.
+> 
+> (I really don't think we should be thinking in terms of a CoC war like: show
+> them what I did and I will show them what they did. We are all working on
+> the same bigger goal here after all ...)
+
+We've got some second opinion from Mike, please read it first.  David,
+you're co-maintaining mm with Andrew.  I think it's fair indeed you provide
+how things should go together with Andrew.  It's fair you and Andrew
+whoever would like to make a decision on how to move forward.  I'm fine on
+whatever decision you want to make.
+
+I think I tried my best trying to make gmem work as simple as possible.
+
+For the CoC report, I wish someone from CoC would also review it.
+
+Thanks,
+
+-- 
+Peter Xu
+
 
