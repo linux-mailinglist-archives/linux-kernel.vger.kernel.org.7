@@ -1,126 +1,93 @@
-Return-Path: <linux-kernel+bounces-883635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8CDCC2DF08
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 20:49:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72228C2DF17
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 20:50:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 277984F4272
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 19:46:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5B9B188349A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 19:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62972299A85;
-	Mon,  3 Nov 2025 19:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7151B29BDBF;
+	Mon,  3 Nov 2025 19:50:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="F986l98h"
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.205])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ij1Ejwlf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4367B34D3A5;
-	Mon,  3 Nov 2025 19:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE3291D63F3;
+	Mon,  3 Nov 2025 19:50:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762199209; cv=none; b=nxz06epp4w+QQtATPowIdjoJIifuOQtHlE7A+N8Dj4wpiUcf54GtfY8AAl33abTdtiA7UvGCAHCgUn4jrLPndynqYEqCC88pLiSzT+MU7GUyO+9Wjr9WQ9VyDrKiggVd59iuw3wdCBb7tLb82IFCaKXcdcOkua/dbTlwg5NZnok=
+	t=1762199442; cv=none; b=r8wsXM+J3ZrMklqHYE746GcpdFysUMcvh8YgObx0fNJC3A6/nphlDvVqFd2ghTgVyqV1elRFObeYcL+xCpMBxsnAlyhR1b2zmoKLh76ID+C1R7FF2ltHS5e5ai6WyJdgIRvvQvq8c8VEu3Ov4QeEP3fNM4mALs5Rs7Vlh3Z7jrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762199209; c=relaxed/simple;
-	bh=Nq8wAi1+vvQBgZVT1V6WqkuBliIzYdqllfMklb/kj10=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IgMlG3PUuc3/l8Pp+2wCee/VYsaj8G4lL377wrNXDbkliIiqAeixTZTL6CjM1jAcWvI/yOBO9m/TLqkIldN+RvsN/jbwt/exMPEiXYug78yiBkH4rT7kVsLdRSXRo/ocO9ct4OJxp06vdWHCJlQg+cayLwTNfa4Fue4qlg7pfTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=F986l98h; arc=none smtp.client-ip=192.19.144.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: from mail-acc-it-01.broadcom.com (mail-acc-it-01.acc.broadcom.net [10.35.36.83])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 0C2BAC0000F3;
-	Mon,  3 Nov 2025 11:46:47 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 0C2BAC0000F3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1762199207;
-	bh=Nq8wAi1+vvQBgZVT1V6WqkuBliIzYdqllfMklb/kj10=;
+	s=arc-20240116; t=1762199442; c=relaxed/simple;
+	bh=enGHIs4CYZaSjrMsHT1Pdfu0yIzXOGToAS03vAY2p5s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DyRpcLNso0/v2dXFsDl7oujDJTfFpz71f2gbXx6EHKKUQgQNnGMM9/kLCBndafOrDPvijFTpS1wwm0L1MwWF3RGa9nhA8MZgDTm6VzFIL1H5u7Hw5IY/pk0CggetUwUFLNGNS05BJP+yaXqcPdLCzaSnApmZ4Q7nGd/MAT/n/os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ij1Ejwlf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2DD8C4CEE7;
+	Mon,  3 Nov 2025 19:50:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762199442;
+	bh=enGHIs4CYZaSjrMsHT1Pdfu0yIzXOGToAS03vAY2p5s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=F986l98hYVNEiT5SvyktxmIGNwZe35pFPPapz5iK8IwIkHUOSAaN+MOd1Aj3EYkhY
-	 SRV/yrtuTrJVFYnN3ulhj+d4u8UJCXjaBUJq1bEYx5T0hoD0JlaAGoCp8yskf0Th2G
-	 riF3zePJWYgoUs9i6xWv5yEE3o8u6SVZ88y/1jWg=
-Received: from stbirv-lnx-1.igp.broadcom.net (stbirv-lnx-1.igp.broadcom.net [10.67.48.32])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-acc-it-01.broadcom.com (Postfix) with ESMTPSA id D3AE54002F44;
-	Mon,  3 Nov 2025 14:46:45 -0500 (EST)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: netdev@vger.kernel.org
-Cc: bcm-kernel-feedback-list@broadcom.com,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Doug Berger <opendmb@gmail.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Antoine Tenart <atenart@kernel.org>,
-	Kuniyuki Iwashima <kuniyu@google.com>,
-	Yajun Deng <yajun.deng@linux.dev>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH net-next 2/2] net: bcmgenet: Support calling set_pauseparam from panic context
-Date: Mon,  3 Nov 2025 11:46:31 -0800
-Message-Id: <20251103194631.3393020-3-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251103194631.3393020-1-florian.fainelli@broadcom.com>
-References: <20251103194631.3393020-1-florian.fainelli@broadcom.com>
+	b=ij1Ejwlfokk1GTXC5reRyqLTxNWolYonW7JSzakzX5ATZcUM2cKNzYKlupm9ZVx4x
+	 VcsDWIZ8UIRK7mrWwJPaWG0a+LLl92WEjMMyMPt84Kb4p6JmrHvrhpcS5Wb3MMzfko
+	 BZj2PgMOeVOw/mt+vQkR8fIQyhfGDIWnjvxVEBHz2d/7zmXTUBoFn4p2J6bvj9SOCZ
+	 +ObOePxd0RymklUqDimMwldDegUlAWkiOqBiGhPfIkQcO4sTQHX4W6pjsWTNz51Vn9
+	 kWtlvVx52LYSdQeSoiEi/yhVcA5I9CdOzKZRk4z16382dCOzdnvQQYImbFCnPHhkpP
+	 XPgj7wnMP69JQ==
+From: Daniel Gomez <da.gomez@kernel.org>
+To: Luis Chamberlain <mcgrof@kernel.org>,
+	Kees Cook <kees@kernel.org>
+Cc: Daniel Gomez <da.gomez@kernel.org>,
+	Hans Verkuil <hverkuil+cisco@kernel.org>,
+	Malcolm Priestley <tvboxspy@gmail.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@kernel.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Rusty Russell <rusty@rustcorp.com.au>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-modules@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] module: Add compile-time check for embedded NUL characters
+Date: Mon,  3 Nov 2025 20:49:43 +0100
+Message-ID: <176219902728.2668573.8447418880394997824.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <20251010030348.it.784-kees@kernel.org>
+References: <20251010030348.it.784-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-Avoid making sleeping calls that would not be able to complete the MMIO
-writes ignoring pause frame reception and generation at the Ethernet MAC
-controller level.
 
-Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
----
- drivers/net/ethernet/broadcom/genet/bcmmii.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+On Thu, 09 Oct 2025 20:06:06 -0700, Kees Cook wrote:
+>  v2:
+>  - use static_assert instead of _Static_assert
+>  - add Hans's Reviewed-by's
+>  v1: https://lore.kernel.org/lkml/20251008033844.work.801-kees@kernel.org/
+> 
+> Hi!
+> 
+> [...]
 
-diff --git a/drivers/net/ethernet/broadcom/genet/bcmmii.c b/drivers/net/ethernet/broadcom/genet/bcmmii.c
-index 38f854b94a79..de7156b5ecf7 100644
---- a/drivers/net/ethernet/broadcom/genet/bcmmii.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmmii.c
-@@ -75,7 +75,8 @@ static void bcmgenet_mac_config(struct net_device *dev)
- 	reg |= RGMII_LINK;
- 	bcmgenet_ext_writel(priv, reg, EXT_RGMII_OOB_CTRL);
- 
--	spin_lock_bh(&priv->reg_lock);
-+	if (!panic_in_progress())
-+		spin_lock_bh(&priv->reg_lock);
- 	reg = bcmgenet_umac_readl(priv, UMAC_CMD);
- 	reg &= ~((CMD_SPEED_MASK << CMD_SPEED_SHIFT) |
- 		       CMD_HD_EN |
-@@ -88,7 +89,8 @@ static void bcmgenet_mac_config(struct net_device *dev)
- 		reg |= CMD_TX_EN | CMD_RX_EN;
- 	}
- 	bcmgenet_umac_writel(priv, reg, UMAC_CMD);
--	spin_unlock_bh(&priv->reg_lock);
-+	if (!panic_in_progress())
-+		spin_unlock_bh(&priv->reg_lock);
- 
- 	active = phy_init_eee(phydev, 0) >= 0;
- 	bcmgenet_eee_enable_set(dev,
-@@ -139,7 +141,8 @@ void bcmgenet_phy_pause_set(struct net_device *dev, bool rx, bool tx)
- 	linkmode_mod_bit(ETHTOOL_LINK_MODE_Pause_BIT, phydev->advertising, rx);
- 	linkmode_mod_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, phydev->advertising,
- 			 rx | tx);
--	phy_start_aneg(phydev);
-+	if (!panic_in_progress())
-+		phy_start_aneg(phydev);
- 
- 	mutex_lock(&phydev->lock);
- 	if (phydev->link)
+Applied patch 3, thanks!
+
+[3/3] module: Add compile-time check for embedded NUL characters
+      commit: 913359754ea821c4d6f6a77e0449b29984099663
+
+Best regards,
 -- 
-2.34.1
-
+Daniel Gomez <da.gomez@samsung.com>
 
