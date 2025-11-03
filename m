@@ -1,140 +1,120 @@
-Return-Path: <linux-kernel+bounces-882583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24C66C2AD05
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 10:42:09 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD785C2ACD2
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 10:40:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id AD2AE4F1EEF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 09:39:48 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 79CB434915A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 09:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65FDA2F066B;
-	Mon,  3 Nov 2025 09:39:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 933E82EFDBB;
+	Mon,  3 Nov 2025 09:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aWxrWply"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fJE5DKqL"
+Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B54B62EFDA5;
-	Mon,  3 Nov 2025 09:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914312EC558;
+	Mon,  3 Nov 2025 09:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762162772; cv=none; b=iMII1LkGnB3Tj/KAieVeApag01Vx9uppGRy6P6gjnXVuAHeMhiSeRN13gN5FWt7Np28x/i5GIM8MT99oKfEBPYdADkoYum3LadM5YKBvRzSv0abPDd+/fHYlw/6UZIqf9gYS9p34yekGKb6dHpn7UhyoaJXk8Q4KnRx6O2G+TyA=
+	t=1762162787; cv=none; b=jLDYw+RlqqEYDr5sPnCDCHqsDs/VbfD1/cuq+l/Y8fN2KOE3G4AksIRkT0NVz2Cz1FrjhZv51CwLoPOrpksTig/qAIswdbNQOpes4w8BvmrF9YbU6q+3xlqlqCeCiwS58PCYarvSvF8ASyFb/SoYSP9gNQmABVVRNZhm2xe9jko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762162772; c=relaxed/simple;
-	bh=74xTa1alepkXuLAJggdVWdu19FLOXxI8tg4rxRqpq10=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dh4Z6S0PqZ/zz7rsOEUFHsFmQ4yrpwnAtRN6iF1fP1qplJpOt4bADSZmXYklCyVxRP3oHva7Fy16prngUmCwvGBfiX+blcf+zN2kyp18hLIzC/3YsviWIG4iFAJrs3qCwgxMg/jYwVSkRon1GZoBZ3cNixwfwKvoNETC3AuU9uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aWxrWply; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3542C4CEFD;
-	Mon,  3 Nov 2025 09:39:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762162772;
-	bh=74xTa1alepkXuLAJggdVWdu19FLOXxI8tg4rxRqpq10=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aWxrWply1t/qhJLrulY0PUa6pjoYucGLbqzRzXOYHGA7T2aNuhDZgBWJyTPk+KgbF
-	 YL5RaPIgr3MwZHw+7/KFDKWYNaJlnECOhrwvH5xoVIqkcXafleWxGaDAPT/E5YFUNZ
-	 DYBI4IukWOwTI+ATD91xP1V3n5IS+Vi0/K/GAjN860CoLntKpLd71X4E5Fi4G/Nqa0
-	 46wtYNsfddKPkHt8f4LCSFrucRsmOQPYgPOs0i898jRRyUIUu38ziU5v30xaVcvLyL
-	 TW8bWqQOXx78nB1+A8crUEmN2ciaXtN7MbpLzFHh43oeOlkdjb3+vRWRwqqSPGzpIi
-	 VORLel3UFeyhQ==
-Date: Mon, 3 Nov 2025 10:39:29 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Cyril Chao <Cyril.Chao@mediatek.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	Project_Global_Chrome_Upstream_Group@mediatek.com
-Subject: Re: [PATCH v3 09/10] ASoC: dt-bindings: mediatek,mt8189-nau8825: add
- mt8189-nau8825 document
-Message-ID: <20251103-handsome-fractal-stoat-8b82ca@kuoka>
-References: <20251031073216.8662-1-Cyril.Chao@mediatek.com>
- <20251031073216.8662-10-Cyril.Chao@mediatek.com>
+	s=arc-20240116; t=1762162787; c=relaxed/simple;
+	bh=wN2aU/M8qhuJf9I7yq5BtC9TMEbeEqeInZHiWNRpMcQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=NkBmrRNVXXp+L58IoH31btDYuzt8+z1c1q32/pjjnCyapv/hQUnk5/0yRXCd+zPOxEB3cVEDvr9sxziotuQlB7PEQcSgSTCWT3p4aEAsjtCHwXM1aQkOotLxJ+GAgfCqrIDJaqq9Y8uInSbK/+tlIV0gc7PY86VkLuVhLi1L9pI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fJE5DKqL; arc=none smtp.client-ip=185.246.84.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
+	by smtpout-02.galae.net (Postfix) with ESMTPS id BD7BE1A1839;
+	Mon,  3 Nov 2025 09:39:42 +0000 (UTC)
+Received: from mail.galae.net (mail.galae.net [212.83.136.155])
+	by smtpout-01.galae.net (Postfix) with ESMTPS id 8A41460628;
+	Mon,  3 Nov 2025 09:39:42 +0000 (UTC)
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7C3581181802F;
+	Mon,  3 Nov 2025 10:39:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
+	t=1762162781; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=vkeC2Id2TZzKkRDJDdQieEk1hQjbOf+Z6dHLIhtw7EU=;
+	b=fJE5DKqLMxGrsvaZpi9XL9uZbYF+IT52opnNBntnb0+EsyDZs1EVJk2TXtSHRsUbhEm7Ov
+	QRVa9WzZRinCxJysO64SgUx7/iEMt/hvuoTl/tuuOsb4zgMEKdggLQ3gqJvEaG4qr5hNWS
+	HbtSyk1JYkjf1N2yt9m0raq84eG7dlbuUODIYpD1Bh1NuEHJWRSUej+CY/4T49JhQO1QBq
+	46L5KRrSbx1Q9WNdFaMXXneOnF5kqSOg2Bz7Urb94CLlg6J9Ua5CbEQulOI29O95BykPVD
+	vHwEWayJY+HUtqDDNKoASp7vSvPdd492wS+zT2Dt7bLZEz4qFLebqY3ICSYU8w==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20251031073216.8662-10-Cyril.Chao@mediatek.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 03 Nov 2025 10:39:36 +0100
+Message-Id: <DDYYKJWVL8KH.3UDBWDYHK2M8N@bootlin.com>
+Subject: Re: [PATCH bpf-next 2/4] selftests/bpf: integrate test_tc_edt into
+ test_progs
+Cc: <ebpf@linuxfoundation.org>, <bastien.curutchet@bootlin.com>,
+ <thomas.petazzoni@bootlin.com>, <bpf@vger.kernel.org>,
+ <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <martin.lau@kernel.org>, <clm@meta.com>, <ihor.solodrai@linux.dev>,
+ <bot+bpf-ci@kernel.org>, <ast@kernel.org>, <daniel@iogearbox.net>,
+ <andrii@kernel.org>, <eddyz87@gmail.com>, <song@kernel.org>,
+ <yonghong.song@linux.dev>, <john.fastabend@gmail.com>,
+ <kpsingh@kernel.org>, <sdf@fomichev.me>, <haoluo@google.com>,
+ <jolsa@kernel.org>, <shuah@kernel.org>
+From: =?utf-8?q?Alexis_Lothor=C3=A9?= <alexis.lothore@bootlin.com>
+To: "Martin KaFai Lau" <martin.lau@linux.dev>, <alexis.lothore@bootlin.com>
+X-Mailer: aerc 0.21.0-0-g5549850facc2
+References: <20251031-tc_edt-v1-2-5d34a5823144@bootlin.com>
+ <09feef91b51f675195b5b1b9a854d844c9999c0cebb429d785fe60f6c787dc8b@mail.kernel.org> <d886e631-851b-4e2f-aecb-ecdb541dfedc@linux.dev>
+In-Reply-To: <d886e631-851b-4e2f-aecb-ecdb541dfedc@linux.dev>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, Oct 31, 2025 at 03:32:03PM +0800, Cyril Chao wrote:
-> +  mediatek,platform:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: The phandle of MT8189 ASoC platform.
-> +
-> +patternProperties:
-> +  "^dai-link-[0-9]+$":
-> +    type: object
-> +    description:
-> +      Container for dai-link level properties and CODEC sub-nodes.
+On Fri Oct 31, 2025 at 8:28 PM CET, Martin KaFai Lau wrote:
+> On 10/31/25 9:20 AM, bot+bpf-ci@kernel.org wrote:
 
-<placeholder (see further)>
+[...]
 
-> +
-> +    properties:
-> +      link-name:
-> +        description:
-> +          This property corresponds to the name of the BE dai-link to which
-> +          we are going to update parameters in this node.
-> +        enum:
-> +          - TDM_DPTX_BE
-> +          - I2SOUT0_BE
-> +          - I2SIN0_BE
-> +          - I2SOUT1_BE
-> +
-> +      codec:
-> +        description: Holds subnode which indicates codec dai.
-> +        type: object
-> +        additionalProperties: false
-> +
-> +        properties:
-> +          sound-dai:
-> +            minItems: 1
-> +            maxItems: 2
-> +        required:
-> +          - sound-dai
-> +
-> +      dai-format:
-> +        description: audio format.
-> +        enum:
-> +          - i2s
-> +          - right_j
-> +          - left_j
-> +          - dsp_a
-> +          - dsp_b
-> +
-> +      mediatek,clk-provider:
-> +        $ref: /schemas/types.yaml#/definitions/string
-> +        description: Indicates dai-link clock master.
-> +        enum:
-> +          - cpu
-> +          - codec
-> +
-> +    additionalProperties: false
+>>> +	while (true) {
+>>> +		send(conn->client_conn_fd, (void *)tx_buffer, BUFFER_LEN, 0);
+>>> +		ts_end =3D get_time_ns();
+>>> +		if ((ts_end - ts_start)/100000 >=3D TIMEOUT_MS) {
+>>                                           ^^^^^^
+>>=20
+>> Does this time conversion use the correct divisor? The timeout check
+>> appears to divide nanoseconds by 100000, but TIMEOUT_MS is 2000
+>> milliseconds. Converting nanoseconds to milliseconds requires dividing
+>> by 1000000, not 100000. With the current calculation, the timeout would
+>> trigger after 200 milliseconds rather than 2000 milliseconds.
+>
+> The report is correct, there is a typo in the denominator.
 
-If there is going to be a new version please move this one above to
-earlier place - after "description:", to the placeholder place (but of
-course keep indentation level, just ordering).
+Gaaaah, that's one stupid mistake, and so I possibly got too enthusiastic
+about the initial results. I'll redo some more tests with this point fixed.
 
-Also
-A nit, subject: drop second/last, redundant "document". The
-"dt-bindings" prefix is already stating that this is documentation.
-See also:
-https://elixir.bootlin.com/linux/v6.17-rc3/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+> Use the send_recv_data() helper in network_helpers.c. It should simplify=
+=20
+> this test and no need to pthread_create, while loop, ....etc.=20
+> send_recv_data limits by the number of bytes instead of the length of=20
+> time. There is a target rate in this test, so it should be easy to=20
+> convert from time limit to byte limit and reuse the send_recv_data.
 
-No need to resend just for that.
+Nice, thanks for the hint, I'll then simplify the whole test by using this
+helper.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Alexis
 
-Best regards,
-Krzysztof
+
+
+--=20
+Alexis Lothor=C3=A9, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
 
