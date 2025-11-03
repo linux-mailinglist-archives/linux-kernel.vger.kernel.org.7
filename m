@@ -1,121 +1,119 @@
-Return-Path: <linux-kernel+bounces-883312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DFD7C2D091
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:15:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A6F3C2D0B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:16:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id AC4EB34A373
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:15:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDACA1884E96
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:16:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D55E9286889;
-	Mon,  3 Nov 2025 16:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7839B315D42;
+	Mon,  3 Nov 2025 16:15:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YAvg0woH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AjEEQcQB"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC299313E13
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60A15315761
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762186541; cv=none; b=apjM/S7yAZAL4gaOtL+moApenJQiRtDXuQocqkZ/Zc819Kyh2CfAm3+kE6ZQNdk6La5XUJaWInJUhQL67hCriMCW1BC3+xx1iOrWyr7rF+QDfzIEAPP6/HVgU+SSasV+tlzzBxNjqvzGu/XLmnOubfPCb6Dl33KEIrts5VcaxTs=
+	t=1762186558; cv=none; b=hy372xzZbR9sQWAqxBF3kOXshRLFMCZ9c5Mr1c/dwtd5cG8mF4clb6Nt4e+ujXheQPoaXM7+TJ1Y0M31xJTbin0ex6zeEPvXvc7IKx+K/KHDQw6DV4Dg+NFt21/MbM6mmumEAy07P5n0i+1J5ks/TV0qSJDoaAZZEkm1KzwCbJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762186541; c=relaxed/simple;
-	bh=ZR/sDYjpQKF1CKDhKCs09dp9eEQwFbA38q7Jicq8e4A=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=gb44R4oKuFxwbsDa7PZHai8JEjmeZmn5ToI+ko4Fi/8SE7Anw/iKoCmDInP4FaTJIqiu0uKE8CE81PsbnGvPT6HxsznfQYKFjyUw1tiZB3U2zkP1DhGa050n7fADVIaoEYzkwIFwGruhDq3vM1yRPqBPZn1I+Rxs45/YGGN98f4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YAvg0woH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762186538;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ajIoHf0YZl85cHlPMn5BAk8HERcqnQT0DKHhQNq20Ew=;
-	b=YAvg0woHbyXe/N4W6eJLb8iTenBrLjmGxKBddZNrTGnbSIrTxTGJbnMhmBn9QAIg5srTqy
-	j4FnLypF3yIRuj0xM4UrgYaD8jghvyW3TczGqw5LpWQj4u2np91c5XGBjXUDl5KJ5OdnrB
-	QXgM8GIzxQt9KWRYchBlgYyO9OvmidM=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-253-J4O6Lz9jNx6t4iBepiByAw-1; Mon,
- 03 Nov 2025 11:15:35 -0500
-X-MC-Unique: J4O6Lz9jNx6t4iBepiByAw-1
-X-Mimecast-MFC-AGG-ID: J4O6Lz9jNx6t4iBepiByAw_1762186534
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 55FBC18094C1;
-	Mon,  3 Nov 2025 16:15:34 +0000 (UTC)
-Received: from [10.45.225.163] (unknown [10.45.225.163])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6866619560A2;
-	Mon,  3 Nov 2025 16:15:32 +0000 (UTC)
-Date: Mon, 3 Nov 2025 17:15:29 +0100 (CET)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
-    Tushar Sugandhi <tusharsu@linux.microsoft.com>, dm-devel@lists.linux.dev, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dm: Don't warn if IMA_DISABLE_HTABLE is not enabled
-In-Reply-To: <20251031153455.1057431-1-jonathanh@nvidia.com>
-Message-ID: <60f0e17e-0d2a-e6b7-289d-84f7dac65a34@redhat.com>
-References: <20251031153455.1057431-1-jonathanh@nvidia.com>
+	s=arc-20240116; t=1762186558; c=relaxed/simple;
+	bh=eJqBobj4OytscvmhKPZl0zP0AFVmYk+5BUqlFCRdi3A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VYKxBx36ubXk9KbkRr/AgMlajQty+IiWOUIP13A16H7pp9YVBjhgFQ6KT3yCswGjO+c++9tdqBLSAy46WS3D2T7FQJgV9K0Txq9sSZ8v4ubR8Bv7xklBfsrSLWA7lVQXqkly3tj/bjJj6WtlhpcfxDpMyCuWyMFceSFgzfaPT2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AjEEQcQB; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-295c64cb951so204295ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 08:15:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762186557; x=1762791357; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eJqBobj4OytscvmhKPZl0zP0AFVmYk+5BUqlFCRdi3A=;
+        b=AjEEQcQBYsdYoJaRyq3irTJM1xX6gTWJtCzlkZqQ+b/iSVmut5ljmsE3/BeH9B9WrR
+         nj65BNtNfSqRC+qrAq0sGzE3rgTi5CO5AsUJDmlGSVHGRbSWhFYESDfvKp6LE0ELAJig
+         5t6JU4c0c/dJ5SmZHqIRH6FMe1i+qtoti8ExeGKilrrlISbwU5GtdTasThexRC0jOZbt
+         EKM6Tw9bxCJTTiV/6CyFctS5aGggSB6kAGdnDEfg6zwXY7OP6QhMiEWlIW4Q9DqrZYJr
+         t4Mt44nLrC6DsJ/Rg39xOkxLL48wM3HcfCBU1WnGWJJkVWVx5KijLZUOX5+XE8a2gtqV
+         2hGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762186557; x=1762791357;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eJqBobj4OytscvmhKPZl0zP0AFVmYk+5BUqlFCRdi3A=;
+        b=u/9dJ4rTIW0dlEJA8ntsxg2kT1gacv1RZX8HI4CAe5BtnnwrEqJutUFywRcbq+R8bs
+         nMr7m29BrsKXU876dxpzFjhw+lfi0W9JK4wVGXv1mYWvXmLhetWq4OluWiWI3J5pnNjB
+         l04JccTNBEJCzUbw8y1ehI+TSxgm8aOOi5VbtBTDl6VkoDhBIoOFFDHIsB1pxt+jSQxO
+         zxMbi08JGQ/yKZH8wIMIk035ni31VDmEpne23gcUpCvErXCkTG0QrASuu+ppUa7u4DJr
+         EHcfd3I7R3uK1bZLt864Zd9Sujl2muLLhXzRzh42ChpcSnT/J1fNydxVK7N8tO/UL89C
+         gJzg==
+X-Forwarded-Encrypted: i=1; AJvYcCVORldavVDnNEQ8m2OmT6IIHUD1y72tRtXxHYUPNTm5qiOlIIIs3PlakXqPwDnhLlyYvsJDSqGeMX6bF7Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXZq60aRBgmXSp6SwwlPnXwtLWHHrSjm6vH1081TceD7KXbEGR
+	W7zZn5VsSGdsIzbTCc2bu0OXaX1kNT+K3k/oql+9oGvfZnQnK8WStNfeY5MoAGXAz31QwKsq5fw
+	lMZk4B9L8R9y7oBGTlUZS0btZFePiWLQ1rTQs1az+
+X-Gm-Gg: ASbGnct8fcdbN6TQSSqIEJ06IUAgXB9WImKFA5W62p0UIfnIrNnNh9hG/oAPgQobO8K
+	UxiySP4EFOciukkX5LfbnkvXbkKeDBQ3rKw2SRnqQkDOBblzbrAzLmp1BXXkD2Wv0P84jyZk/Sf
+	FKXMC0jP0HvkPL2B8LF8QckGGFsyXquiajKRrVKq4AngBHtI9l0HRruHVblz4eAfRMVmpxwvrrZ
+	AD5d0EuoBA4rGpNOUlxNMIuRPCJm8R/qcmNPeCLhI2A+Gu8Ll7aLmEQ5iaJ9GDEdLE21ZfNKC7f
+	YZjPlTrOgPhXwUnC72kXD0kAyw==
+X-Google-Smtp-Source: AGHT+IESkpVff0fTrWG6+qbua5DBKANFmK98G6/eOT2NsvwR+nXJHjYIfFHT0CWbeA3guuxRSguPyBipiQOLvR+/ViQ=
+X-Received: by 2002:a17:902:d4cf:b0:295:5405:46be with SMTP id
+ d9443c01a7336-295f8c8fbe9mr274955ad.1.1762186556373; Mon, 03 Nov 2025
+ 08:15:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <aQjCEfiFLJwApdlj@x1> <20251103151912.GW281971@e132581.arm.com>
+In-Reply-To: <20251103151912.GW281971@e132581.arm.com>
+From: Ian Rogers <irogers@google.com>
+Date: Mon, 3 Nov 2025 08:15:45 -0800
+X-Gm-Features: AWmQ_blVKwqOT3MpSdCINIgTWdpTjuwwg78TioInmeu2jRMq4fTdiOyTs1xPGF8
+Message-ID: <CAP-5=fWcjoz_iNyMM6xSqkyDzmOmar-zaejSOn1L6Dta061kEQ@mail.gmail.com>
+Subject: Re: [PATCH 1/1] MAINTAINERS: Add James Clark as a perf tools reviewer
+To: Leo Yan <leo.yan@arm.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-kernel@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>, 
+	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, Ingo Molnar <mingo@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, linux-perf-users@vger.kernel.org, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Accepted, thanks.
+On Mon, Nov 3, 2025 at 7:19=E2=80=AFAM Leo Yan <leo.yan@arm.com> wrote:
+>
+> On Mon, Nov 03, 2025 at 11:54:09AM -0300, Arnaldo Carvalho de Melo wrote:
+> > Just FYI, I'm carrying this on the perf tools tree.
+> >
+> > James Clark has been actively reviewing patches and contributing
+> > to perf tools. Reflect this by adding him as a reviewer in the
+> > MAINTAINERS file.
+> >
+> > Reviewed-by: James Clark <james.clark@linaro.org>
+> > Acked-by: Ingo Molnar <mingo@kernel.org>
+> > Acked-by: Namhyung Kim <namhyung@kernel.org>
+> > Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+>
+> Well deserved, James. Congrats!
 
-Mikulas
+Great, we need more code reviews!
 
+Acked-by: Ian Rogers <irogers@google.com>
 
-On Fri, 31 Oct 2025, Jon Hunter wrote:
-
-> Commit f1cd6cb24b6b ("dm ima: add a warning in dm_init if duplicate ima
-> events are not measured") added a warning message if CONFIG_IMA is
-> enabled but CONFIG_IMA_DISABLE_HTABLE is not to inform users. When
-> enabling CONFIG_IMA, CONFIG_IMA_DISABLE_HTABLE is disabled by default
-> and so warning is seen. Therefore, it seems more appropriate to make
-> this an INFO level message than warning. If this truly is a warning,
-> then maybe CONFIG_IMA_DISABLE_HTABLE should default to y if CONFIG_IMA
-> is enabled.
-> 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
-> We have some tests that check for kernel warnings and whenever we
-> stumbled across a new warning we see if there is a way to fix it.
-> For this one it seems a bit odd to always warn for something that
-> defaults to disabled. If necessary we can ignore it, but I wanted
-> to see if this would be acceptable first.
-> 
->  drivers/md/dm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/md/dm.c b/drivers/md/dm.c
-> index bff3ab4a3bd8..557f3f52edf4 100644
-> --- a/drivers/md/dm.c
-> +++ b/drivers/md/dm.c
-> @@ -272,7 +272,7 @@ static int __init dm_init(void)
->  	int r, i;
->  
->  #if (IS_ENABLED(CONFIG_IMA) && !IS_ENABLED(CONFIG_IMA_DISABLE_HTABLE))
-> -	DMWARN("CONFIG_IMA_DISABLE_HTABLE is disabled."
-> +	DMINFO("CONFIG_IMA_DISABLE_HTABLE is disabled."
->  	       " Duplicate IMA measurements will not be recorded in the IMA log.");
->  #endif
->  
-> -- 
-> 2.43.0
-> 
-
+Thanks,
+Ian
 
