@@ -1,45 +1,46 @@
-Return-Path: <linux-kernel+bounces-882133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD66AC29B78
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 01:49:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3303CC29B7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 01:49:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE165188E940
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 00:49:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F86C188F5E6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 00:49:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19CB41DDA1E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E1D1DF254;
 	Mon,  3 Nov 2025 00:48:39 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D02A1465B4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A112C148FE6;
 	Mon,  3 Nov 2025 00:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762130918; cv=none; b=cCH0gr3z5QH0tCu7dv2C5SAxywpcdH5fhlEZaks8DiuotHQJ8b5F/8U5+NvLmBdMXGkmSAOe/cBSxORxvrpGpdQnn8UdubCIEs6PocFIxLe+5f31JQF+eHZjjaL3If4eH/ijjzQ52G6KlJxbf8kG7xdbhKupzPnKM4kL357ozsw=
+	t=1762130918; cv=none; b=Q3drmW6SjehUric6FTCZZZtxKxYgdgRHiyc2Oay4+D/ERwbsn/A+hsEsA7L7c1DP2tIFdjaHCdm2awPoxWVj2ynQ2BitaISgLLIBTDHV0p3OU+QY1UgcQDPBrohRQ78Soie0CX2XM26vwd56cnLDJ4VzU7JWw2bJs1ASkkS6wPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762130918; c=relaxed/simple;
-	bh=2RPmo9wPrQ44L75Ktc/u/44O4tw1ecrQD5bk3TeacgA=;
+	bh=4aJJSEQbKMYwCrCB76sU7Ppk1UbESUbsL3BTPXhxGzw=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=tpz+zdFl2LVwqQKe9tcWZQRgCzA4Jp4yuaIvby+3ikzvIiCpLtkLkNpgerZcHMpU6WTt/pJ9rn/GGxkTnws4GTFdGCCqwOBHRH6LKALErJKtuNLt7sfPMn+kFREl2iuLc08hJvQa07TOOupCU1M0FUCmCaFeBhBNXztkxsAFxew=
+	 MIME-Version:Content-Type; b=kXeMxTdezErdBlHJEl2Uv1UpLM4olfnX9Z94VcikdM7GA76U97tgpp2tIxwVSOg/KWZ9Xrbk7t2MKWSJK24Qq50Ibv1Te+pOvCC6zgX8e2cW98yeePcqCcMlDF6WCB+yPplj6g8FMmA2krAP4D30vES5n6y2kO7ozkFcZi65eGc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D217FC4CEFB;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7961C4AF0D;
 	Mon,  3 Nov 2025 00:48:37 +0000 (UTC)
 Received: by venus (Postfix, from userid 1000)
-	id 35FB6180CB6; Mon, 03 Nov 2025 01:48:33 +0100 (CET)
+	id 433EE180FAC; Mon, 03 Nov 2025 01:48:33 +0100 (CET)
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>, Lee Jones <lee@kernel.org>, 
- Sebastian Reichel <sre@kernel.org>, Andreas Kemnade <andreas@kemnade.info>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20250918-bd71828-charger-v5-0-851164839c28@kemnade.info>
-References: <20250918-bd71828-charger-v5-0-851164839c28@kemnade.info>
-Subject: Re: (subset) [PATCH v5 0/3] power: supply: add charger for BD71828
-Message-Id: <176213091320.301408.17517885463599490632.b4-ty@collabora.com>
+To: Tobias Schrammm <t.schramm@manjaro.org>, 
+ Ivan Abramov <i.abramov@mt-integration.ru>
+Cc: Sebastian Reichel <sre@kernel.org>, Zheyu Ma <zheyuma97@gmail.com>, 
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ lvc-project@linuxtesting.org
+In-Reply-To: <20251008120711.556021-1-i.abramov@mt-integration.ru>
+References: <20251008120711.556021-1-i.abramov@mt-integration.ru>
+Subject: Re: [PATCH 1/1] power: supply: cw2015: Check
+ devm_delayed_work_autocancel() return code
+Message-Id: <176213091326.301408.1968897537081136339.b4-ty@collabora.com>
 Date: Mon, 03 Nov 2025 01:48:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -52,26 +53,18 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.3
 
 
-On Thu, 18 Sep 2025 09:45:08 +0200, Andreas Kemnade wrote:
-> Add basic charger which does just read out simple registers without
-> doing any sophisticated things.
+On Wed, 08 Oct 2025 15:07:11 +0300, Ivan Abramov wrote:
+> Since devm_delayed_work_autocancel() may fail, add return code check and
+> exit cw_bat_probe() on error.
 > 
-> This is a stripped down version of
-> https://lore.kernel.org/lkml/dbd97c1b0d715aa35a8b4d79741e433d97c562aa.1637061794.git.matti.vaittinen@fi.rohmeurope.com/
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
 > 
-> That version includes all the bells-and-whistles you might imagine
-> around coloumb counter handling and capacity measurement which includes
-> changes no the power supply core.
-> Rather do a step by step approach to keep that reviewable.
 > 
-> [...]
 
 Applied, thanks!
 
-[2/3] power: supply: Add bd718(15/28/78) charger driver
-      commit: 5bff79dad20a51fed3ff6d78f6b60321cd145a99
-[3/3] MAINTAINERS: Add entry for BD71828 charger
-      commit: b838cecc229122559b3e2e381a9275f714bd4146
+[1/1] power: supply: cw2015: Check devm_delayed_work_autocancel() return code
+      commit: 92ec7e7b86ec0aff9cd7db64d9dce50a0ea7c542
 
 Best regards,
 -- 
