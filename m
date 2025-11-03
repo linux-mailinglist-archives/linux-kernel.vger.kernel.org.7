@@ -1,97 +1,163 @@
-Return-Path: <linux-kernel+bounces-882980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C96EAC2C131
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 14:28:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6761DC2C1A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 14:33:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3703188C03E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 13:28:36 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4D5314EB53C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 13:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D6526C3AE;
-	Mon,  3 Nov 2025 13:28:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C7DA26E6F4;
+	Mon,  3 Nov 2025 13:28:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LsXlgl30";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dJ6PLeb4"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="V0GNWNsz";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OqE0m0Wl"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2EF2265629
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 13:28:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF7922689C
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 13:28:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762176488; cv=none; b=n0LMI5Lc8vm46On/NqkhQANnJ3LY5IEr9hmd8RumNZs2U8iNe4Wae8fU1fFjji63qOdAeanCro9I09dwBxvoUmM36svNaJUz6+vbprb5SBXDdCzhwTtKjZFI+mtv4fRJTANb6K4OEdUy89rUQT6JB09lqTDATgvLORhYJ0SjxrQ=
+	t=1762176504; cv=none; b=S2xj8u7yo+QFcdIRgzHwQvlyU7G6Q6CD2Gsgw5PLk9rBSiN/FFCrzPMbxxPThdmRH6XiZE7eprC2b2vxYgSRY6EiU/NnM7THaOUAfYTf5mHO/ZlJMVX/RvDrsQpT3saTkpgz7CYFV12JGQb5Z7RdTskmwlPueP/FkmBHiLt2JX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762176488; c=relaxed/simple;
-	bh=b7G2qm0HnGJniKLxCGXZ2ooxpRdxzu7y1Euk2kB4ydQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=exb/q0P98VCSZgWs25jrcadP5VqrdieExla+oWqEJ8WhTXb6KsdVtoVRwaaKCd8ZXZipqo67CT6zJWY5r6oyf2vA/tWz/ZkYCc0bLheyRklrc+EqzrI3wdVl7rB7BQTDJXeqTfnvQUKxLYhK2AA06J5vjD+BPTLKvt2PeGQ+hvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LsXlgl30; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dJ6PLeb4; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1762176504; c=relaxed/simple;
+	bh=yAENzopaWNXHMYHOBDUdbRfvnK9r1g9tZlOgg4EqmlU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P3FpD2AcwMVWL4QZQQ8tW+fYvnPY4Yowz8vkXlRTydtu8R7Js11Im0kEkkPJpVU+OmjO4p3VnE928mSANF+A73pS2QLPdmTzLqg+JHG4k+nacw8AmuV7ytRZnSp2MVbdLiU6m2Oz3acVFWZIeWR/FWj5hpzPdWU040TNE8IAq2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=V0GNWNsz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OqE0m0Wl; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
+Date: Mon, 3 Nov 2025 14:28:20 +0100
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762176484;
+	s=2020; t=1762176501;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=T3h2bJ/FNA85uqXLMAmHxQlPHnKHNzu2LkySt72HDas=;
-	b=LsXlgl30LUqKQVQJcOoKzxQ4SVqB56+6y/FIhFPqbA59T3ros1ucPX1Yk6Da0F+Yk+OeME
-	JAQr6yQZtMXaF7s6+y5bdGhxLx6ZfYULYgibyI3zs1v6HnTS37+abwU6erhzkf+uRUQdN3
-	C/O7ewhJpAW2oUYJkdMg5DglqWL3gu4lP2Z9ovciaCmJuCMVpHVB3gqg4X5mWE9NEnQmYE
-	9ZCQ47celJmuU1UpremMxrGhS3otFbVSSZj7yaxEisy17CjVPBbtTzva4K/o/uGRTu5Tmo
-	jr6sLUsQIbLm4iljOchUQ5XldxpIKTmZ7QRTOwLhu9kNHYsIrt8kFe68gWgcmA==
+	bh=3nsewwGRfCF7rZUNal+n9HmccxNHWVyjH99sJShIJVA=;
+	b=V0GNWNszvy39GOCY3KJMzWp9RUQNL7ifrgO5tEuVfGzM+OM58FmpAOhasgER618y6a9QJl
+	FmLKcb4nB/GVUNK953QAbjmx6XRPf+PVsgbyZQcCqK8+UImpp2oCZfvYu2pjhOMfTnMMn8
+	pYLmDxbqrao1JAadUPxaQQYin6nWZwT8CX0+9NduQ6XUrpffm+nIJVXCBpuWZtAucjXZ6u
+	d7Z5VuWYvjvrRA+iPx7rEc0cTAgAwoqmJzEdORdoSyhRN8vT5FHt2T3F1FkKhqjckPp9ja
+	O8JcYLQD3sbvZw2LDBKuhNaH1yDHdAcI+tzdg43m2pouyorWecsmowikzepzxw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762176484;
+	s=2020e; t=1762176501;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=T3h2bJ/FNA85uqXLMAmHxQlPHnKHNzu2LkySt72HDas=;
-	b=dJ6PLeb4eIyJBuGq9QzEMCY5jqh/nsQKCjZAhhSDdxQbk6A5x8Y/dzizfkif54C2NcHlRg
-	DskYeDctigr4SxCA==
-To: Shrikanth Hegde <sshegde@linux.ibm.com>, LKML
- <linux-kernel@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Gabriele Monaco
- <gmonaco@redhat.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Michael Jeanson <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>,
- "Paul E. McKenney" <paulmck@kernel.org>, "Gautham R. Shenoy"
- <gautham.shenoy@amd.com>, Florian Weimer <fweimer@redhat.com>, Tim Chen
- <tim.c.chen@intel.com>, Yury Norov <yury.norov@gmail.com>
-Subject: Re: [patch V3 09/20] cpumask: Cache num_possible_cpus()
-In-Reply-To: <4cdfd743-3cfd-4317-8e24-0f94e6fa8d39@linux.ibm.com>
-References: <20251029123717.886619142@linutronix.de>
- <20251029124515.846126176@linutronix.de>
- <4cdfd743-3cfd-4317-8e24-0f94e6fa8d39@linux.ibm.com>
-Date: Mon, 03 Nov 2025 14:28:03 +0100
-Message-ID: <87tszbw8ik.ffs@tglx>
+	bh=3nsewwGRfCF7rZUNal+n9HmccxNHWVyjH99sJShIJVA=;
+	b=OqE0m0WlA3YIZKoLaJDaguAaJrN5Swz+omV5Gn/uGJT0dveZ+vjPbfN0ASCjhhUfoSOmFu
+	s1j+zDNweUbM0TAg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH v2] cpu: Make atomic callbacks run on UP with disabled
+ interrupts
+Message-ID: <20251103132820.0llS_QPg@linutronix.de>
+References: <20251103120354.HU-oB1_z@linutronix.de>
+ <20251103124254.GA3245006@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251103124254.GA3245006@noisy.programming.kicks-ass.net>
 
-On Mon, Nov 03 2025 at 15:36, Shrikanth Hegde wrote:
-> On 10/29/25 6:39 PM, Thomas Gleixner wrote:
->> Reevaluating num_possible_cpus() over and over does not make sense. That
->> becomes a constant after init as cpu_possible_mask is marked ro_after_init.
->> 
->> Cache the value during initialization and provide that for consumption.
->> 
->
-> Reviewed-by: Shrikanth Hegde <sshegde@linux.ibm.com>
->
->
-> Observation:
-> I see below usage which could be improved too?
-> kernel/irq/affinity.c:		set_vecs = cpumask_weight(cpu_possible_mask);
-> lib/tests/cpumask_kunit.c:	KUNIT_EXPECT_EQ_MSG(test, nr_cpu_ids, cpumask_weight(cpu_possible_mask),
->
-> Specially irq_calc_affinity_vectors, it seems to take cpus_read_lock, but I don't think
-> that lock is protecting possible cpus. possible cpus can't change after boot. No?
+On SMP callbacks in the "starting" range are invoked while the CPU is
+brought up and interrupts are still disabled. Callbacks which are added
+later ar invoked via the hotplug-thread on the target CPU and interrupts
+are explicitly disabled.
+In the UP case callbacks which are added later are invoked "directly"
+without the thread. This is okay since there is just one CPU but with
+enabled interrupts debug code, such as smp_processor_id(), will issue
+warnings.
 
-It can't. So yes the cpus_read_lock() is pointless.
+Disable interrupts before invoking the calback on UP if the state is
+atomic and interrupts are expected to be disabled.
+The "save" part is required because this is also invoked early in the
+boot process while interrupts are disabled and must not be enabled. The
+warnings aligns the function with cpuhp_thread_fun().
+
+Fixes: 06ddd17521bf1 ("sched/smp: Always define is_percpu_thread() and sche=
+duler_ipi()")
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+v1=E2=80=A6v2:
+ - guard() syntax as suggested by PeterZ plus the warning from
+   cpuhp_thread_fun(). This will lead to a warning + bug in the bringup
+   case which also happens with the thread on SMP.
+
+ kernel/cpu.c | 27 ++++++++++++++++++---------
+ 1 file changed, 18 insertions(+), 9 deletions(-)
+
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index db9f6c539b28c..8ab69a891d7ae 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -249,6 +249,14 @@ static int cpuhp_invoke_callback(unsigned int cpu, enu=
+m cpuhp_state state,
+ 	return ret;
+ }
+=20
++/*
++ * The former STARTING/DYING states, ran with IRQs disabled and must not f=
+ail.
++ */
++static bool cpuhp_is_atomic_state(enum cpuhp_state state)
++{
++	return CPUHP_AP_IDLE_DEAD <=3D state && state < CPUHP_AP_ONLINE;
++}
++
+ #ifdef CONFIG_SMP
+ static bool cpuhp_is_ap_state(enum cpuhp_state state)
+ {
+@@ -271,14 +279,6 @@ static inline void complete_ap_thread(struct cpuhp_cpu=
+_state *st, bool bringup)
+ 	complete(done);
+ }
+=20
+-/*
+- * The former STARTING/DYING states, ran with IRQs disabled and must not f=
+ail.
+- */
+-static bool cpuhp_is_atomic_state(enum cpuhp_state state)
+-{
+-	return CPUHP_AP_IDLE_DEAD <=3D state && state < CPUHP_AP_ONLINE;
+-}
+-
+ /* Synchronization state management */
+ enum cpuhp_sync_state {
+ 	SYNC_STATE_DEAD,
+@@ -2364,7 +2364,16 @@ static int cpuhp_issue_call(int cpu, enum cpuhp_stat=
+e state, bool bringup,
+ 	else
+ 		ret =3D cpuhp_invoke_callback(cpu, state, bringup, node, NULL);
+ #else
+-	ret =3D cpuhp_invoke_callback(cpu, state, bringup, node, NULL);
++	if (cpuhp_is_atomic_state(state)) {
++		guard(irqsave)();
++		ret =3D cpuhp_invoke_callback(cpu, state, bringup, node, NULL);
++		/*
++		 * STARTING/DYING must not fail!
++		 */
++		WARN_ON_ONCE(ret);
++	} else {
++		ret =3D cpuhp_invoke_callback(cpu, state, bringup, node, NULL);
++	}
+ #endif
+ 	BUG_ON(ret && !bringup);
+ 	return ret;
+--=20
+2.51.0
+
 
