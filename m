@@ -1,209 +1,141 @@
-Return-Path: <linux-kernel+bounces-883257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 995E1C2CE56
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:50:55 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FE61C2CC8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:36:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 251FD189FC8C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:39:43 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BC7F034AC05
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D110D322A15;
-	Mon,  3 Nov 2025 15:33:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2912B28488D;
+	Mon,  3 Nov 2025 15:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="dWdyC9QN"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013067.outbound.protection.outlook.com [40.107.159.67])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="4djKIx7F"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E30433203B6
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 15:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762183982; cv=fail; b=KWmQlSsNu4ROE80Ruy0X2dkJ7tk6/L/B8fzc5+Ky3ISeTrmCt/24uSRaHIxnSk1Jv6CeJQOwJI+wsyEcLXO07cTEj38ZXeAUn70YeqwvLcJWyEdhqzYv9tZ+t0qI8K4uFLP2AhUb93+x9l6Q2ofhUhr/heC1h+1fJ85kTZKTqY8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762183982; c=relaxed/simple;
-	bh=kfZKJz5ibHnghym8AIujBoOsAnXGBBdgiGJoH/QmU0I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=D5du2rUhO+Vgrai6f/JseaIeQgktyl2zBkOBYL14mJvg2RhGO5iOT5g9maujgiYGbF5NM+sdJLwSlEDaf916eCEZfD6NNuXSh2XPecwYxHISWtFCcL5FZ/huT+gpk2MPTYnmxPW2qgWZOcTZ+A4be6tqJxTfDeIvIjGzk1Kycx8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=dWdyC9QN; arc=fail smtp.client-ip=40.107.159.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TyXRXSHnE1GE19lLu1yxeCzfCempEQG0Ahi+KhGp7fN+7s/OemHefkSVC9mli8xKaRqyXgRl7+x2A9yDc2orzznNQ9Jh8he/qnE1AUgE2tqU5NcSNlHDqqIApLkocqdutNADPjYRZ/sD8elz2Oc5dkIe7m22RfTeaXlZl7qFRXOzTL2NH3X5RS69gc+nIJS4zAqqqjyx7MoAjU/axBE2N5xJf+d8FmZ6NoovwIcqpyW7xU/w+O59nGotXy+i6PLu+ndrXCUuume6ZO562mL84feMc12OMkdA5BUVsUGiHBU4vQ0NRRkpv3ocjjA74f75SIrMpSMfRnmw3NM7TejBzA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=vgP26udAd2fHCh3OkTxE7AQXDUuf5RWh2ltggmW6hR4=;
- b=nNtKl0/qoW7LNbF2cb/A8PuPBDHAMXDVQxi0APdg3YgHxDCqupQyo0QmQgr1+3/UOnx9YYn0fPxeH4xPJ+OH28arixQYwY7WHo/E+eOEmwAlymHFMCHNPnSJUhtcbSdHJAJUF9MWr8XG2jSCOYEJG6/x5JcOd6EEjC027a0Xr7URKrNIYAsviUpf3Nd+BTZDesEBrAP5X6enRiOo8PNzyag+R+6OAz3ZgYk6Iu5KKJfUTlQdrE/NsbCcAV1aICtT5ftPmZ3EPAHp/PKjGucAyq17uuVg9j/nfnJ4Jqx7THZ8ol1FI8ebHzTYsTW4g0853b9CZD6pa+gyrzbLK/oFmQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=vgP26udAd2fHCh3OkTxE7AQXDUuf5RWh2ltggmW6hR4=;
- b=dWdyC9QNINsXpDd9meUePmdZZRemJS8mGuuo6vNiI7lNAiJELZ04r0CaFN1I6UOmeuy2dH/drxiRzUZV/q77PyctYQ+nzUwJRe4tiVI/fTsWbAlhkBhUH9P+MmtM4CGy0CovCU5zy+M1yEkuLcybO7WyHWCAMf7InjioFnNWldO7ifLDx/hGvEkRRvXGzVHD9TIIi3D56wjBz4+qmX40EUsyBtswXWW3oTLx18KpFEI3W3HvFk3qeBE6EEKXyDDlCuUv8Afy3eBP7txnmySCODDpREcbsj42GCK6rBPnjWhE2qmWYeDSil2WkQT5RDgPByeov9eGd/jsy5nd29KuFw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from GV1PR04MB9135.eurprd04.prod.outlook.com (2603:10a6:150:26::19)
- by DU4PR04MB10500.eurprd04.prod.outlook.com (2603:10a6:10:55e::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Mon, 3 Nov
- 2025 15:32:55 +0000
-Received: from GV1PR04MB9135.eurprd04.prod.outlook.com
- ([fe80::b1f6:475e:de5d:8442]) by GV1PR04MB9135.eurprd04.prod.outlook.com
- ([fe80::b1f6:475e:de5d:8442%7]) with mapi id 15.20.9275.015; Mon, 3 Nov 2025
- 15:32:55 +0000
-From: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-To: imx@lists.linux.dev
-Cc: dri-devel@lists.freedesktop.org,
-	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>,
-	Frank Li <Frank.Li@nxp.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v6 9/9] MAINTAINERS: Add entry for i.MX94 DCIF driver
-Date: Mon,  3 Nov 2025 15:30:53 +0000
-Message-ID: <20251103-dcif-upstreaming-v6-9-76fcecfda919@oss.nxp.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20251103-dcif-upstreaming-v6-0-76fcecfda919@oss.nxp.com>
-References: <20251103-dcif-upstreaming-v6-0-76fcecfda919@oss.nxp.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: AM8P191CA0025.EURP191.PROD.OUTLOOK.COM
- (2603:10a6:20b:21a::30) To GV1PR04MB9135.eurprd04.prod.outlook.com
- (2603:10a6:150:26::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3ADF27990C;
+	Mon,  3 Nov 2025 15:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762183891; cv=none; b=KmFO058PHqkcks7cw3Uy74sUhh5R1fwryAxx7ANbMlVIgV0GUFecXhwXRD2DnXux6qis3wSH+wOrwkgLifNoZCYmykGUKCkgf0Yz9QJihryBeAyZzMdVqqUP13h514x3UszfOKk9yzF05q158oy7NfGqcht15FWH+yDiKQpSlw4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762183891; c=relaxed/simple;
+	bh=fSjfZHeRH3jjgZmY2OhRdseXte5F6TtMVyjoub4ROIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dR6gf9GYVxRUn310Gl1YLXy3Dhuk6Vf8GDcWgMDLCyurXh9HyP3SocE+DQcH69oIgdSf8k10mB6S8SHCDM6AqzqsZmZd35t7/QlTnprb9Qk5LcDifnf/M6px4YwGHgf1VFuhgsT3xP2YX+VbNGYlaA+BoN74DRpoPe8NXNhDDjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=4djKIx7F; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=YhNU6F3e7O+GIKBJPqJUCA4XLZNOk3X8LOJVjqbpazU=; b=4djKIx7FgIHxgQaShMONodK0DK
+	CALstbfnOlSnmh2+IshZ7q6H/nrRaV7S3V6weJsdquIy9ew4znG64QmQV3l5v/thpL9A5KJrDas4W
+	XMTC4t5LPzklGa8mzL63Rt/d7Gjhpa2TEK8GObgmovf48fFeY0QSP4YrTjjbGVh5c2mo=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vFwWW-00CnMr-L8; Mon, 03 Nov 2025 16:31:12 +0100
+Date: Mon, 3 Nov 2025 16:31:12 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Sabrina Dubroca <sd@queasysnail.net>
+Cc: Jakub Kicinski <kuba@kernel.org>, Wang Liang <wangliang74@huawei.com>,
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+	shuah@kernel.org, horms@kernel.org, netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yuehaibing@huawei.com, zhangchangzhong@huawei.com
+Subject: Re: [PATCH net] selftests: netdevsim: Fix ethtool-features.sh fail
+Message-ID: <4cd4c178-4dcc-4a31-98f7-48b870380d5f@lunn.ch>
+References: <20251030032203.442961-1-wangliang74@huawei.com>
+ <aQPxN5lQui5j8nK8@krikkit>
+ <20251030170217.43e544ad@kernel.org>
+ <aQiANPQU9ZEa0zCo@krikkit>
+ <e014c4c5-105a-43cb-9411-ec139af2b2a1@lunn.ch>
+ <aQjDrMH34QVz6e1E@krikkit>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV1PR04MB9135:EE_|DU4PR04MB10500:EE_
-X-MS-Office365-Filtering-Correlation-Id: a1b06b0a-e38f-4e97-231f-08de1aee4238
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|19092799006|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?R3JJSHpxT0V2SG1HTkZvc3pWYm9lNTFVMTJ4eGpOSFNkaXI2MWJZa1JnUkJx?=
- =?utf-8?B?UFU5R3dhbllSN2YzRkEybEdINFRqQVRPOG1GdzBtWTA2L2NYVG9TTjRpK0Zs?=
- =?utf-8?B?MGZvdS93RGpTZFJrc1RtVkE2ejROVFQ2QmFjTHRjSWFtazFWZjh0TnZwb0xs?=
- =?utf-8?B?TnFHSFRBbHIzTlZ5VTlFVkxCeW0zL1Y0N3FJSnhORFdFSnRGNXlaLzNmOFFr?=
- =?utf-8?B?TXpvQ2FhM3YzUlBPc2FNN3EvbE5PWml6N1FEaTIzVUpucHEweEl6WUdyc3li?=
- =?utf-8?B?QVJtTGJtRC9LSk95SCsxOUFhZzZTRFNrV3dHbFJ2OE52aGNVMUV1RUd5WFZL?=
- =?utf-8?B?RC8rWnNaTTFkYWRSYURIVVBxZ3g0bkdCdHAwRUh2OEFZN2lvZllpNFUvZ3pD?=
- =?utf-8?B?aG1LTnBPaERlTGFWVVJDazRxWWkyR25jcUhqN3UxZGMzK1JLcWJaWmhuQ2Jx?=
- =?utf-8?B?SUlMWnRGL3hEK1g0b3pGMXdYZnNNZEF0RFhHUEI2RkNJSTJxcVZ0RmRkbFcv?=
- =?utf-8?B?YU1IQTFQVkJsTUREajZMTk1aM3R4WjFLMkJqVC9Ld1I3ZTNOdm11dkNNeTY0?=
- =?utf-8?B?SUZRdDUrTTA0OWh3S201dTBzNzVSZWFHbTkxVjQ0ZWJUQjhuVTFXZ3BxVVM5?=
- =?utf-8?B?WjdIeVNnbkRCYk9neDEyNzVjcjBidEZWTDJnbVErYjEyNEU2bGFCMFc1dUdE?=
- =?utf-8?B?Z1JVY1BRaFltRHVtc1hRN3lFRTdzTFRmTXhQUjB4b0xSb0RHODNuSkpMZEVl?=
- =?utf-8?B?QUdTTkZsNEJZWTNYdXA2ZWc0RXlPcnkvSFlTSFdWWkZtTUkyUmlRVWtnekkx?=
- =?utf-8?B?ck02WXNVckdjYkNSTTh5YTU2d2pucUU5dGgwYXRTN283amxKREg0aGRxQ0sx?=
- =?utf-8?B?UUE0OWdlSE4zOUtjSW1VQytQN3BBek9hdVdFNURlcmYxMmppOEhHREJET3ov?=
- =?utf-8?B?Y1hIL1N2dnZlZ1Jyd2E4dmVGTmVxWVVPUWcyRVR3Ni9IR1VMQldMVm5kSEVt?=
- =?utf-8?B?M1NCZzRhaU9UZ3lGVUI1bXhhVlhQNmY3elI2Zml6Q1VnNEZSUEduN3cvdTZM?=
- =?utf-8?B?UFYzUUdpWFJuY2F3OUNuQmwwMzZ4RmVKRGt6UzFFQzN1T2dwL3FIY1AwZVc0?=
- =?utf-8?B?emxDbXJVaWJocVBKcjFGTnN4UDhrenpHSDNva2tYTVlBZUhFeEsyRmw0Ynps?=
- =?utf-8?B?S0hQZkVTTTVVVFdKTk0wWGNPRmFRaGZYeWdrMWZJc0dOZXg0OGdlT2xxMnNa?=
- =?utf-8?B?MlJNYzNiWmVBdWxBNGFCeGxiVkp2eFZ2bEU2QVhiV2pBZ0lHd1BtMzcvdE9O?=
- =?utf-8?B?c2pTZGFhMTR3UVg3VHFKSjlFaFM4R2c0eFNCamJmbGJ4VXU5c1pPMUc0RDBa?=
- =?utf-8?B?c2lwVlBNSzg0bXVLLy9mY3pJcE01empTL0lhQ2NBajJTN2RPMUkyelNjSjAw?=
- =?utf-8?B?TERnZ1ZQRkUycVUxVHRHRlptaElFR3hqR3NtRjlIRWJCSng3TzZGQTZ0Q0o2?=
- =?utf-8?B?bFJ4b1ExWjNkdEViRVF2RkJIUU5BeGhEaDhoQUxOQ0hkaWdsUG52TS9JV3Rk?=
- =?utf-8?B?d201UElIdnVDMEVQRVBTb01wZXc0WnNuNk9CdnhCUWpUbUlHYTFIV0trWjRC?=
- =?utf-8?B?NDVBQzVYQWtaejJnMkVGaTFEWk5nZjVLNXhYSWNoMGNmM1BhRXBBZnpQaHVp?=
- =?utf-8?B?Mm1iTXdibWJjR3UzU0tJK0ZSL1BJNUp6VDQydmdBWXlsWldZWDFUOGQrbmdN?=
- =?utf-8?B?UEJvV0UvNnB0eDhyd2JCb2hVZGV0M2pnc0QyVUdzcWY3Ti82WXRoT0tYNXR3?=
- =?utf-8?B?aFFBVVc0TEt2QVh1VHBZcEczaU5aUFBOR3ErN0RMd2d6UXV2SzAzTHozRFpk?=
- =?utf-8?B?cWM4ME16R3E0SGdPVDMrdEhnZ3ZaY1pFK1BDamxlQmYwR0E9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR04MB9135.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SkZaWi8wZ0Q2by9iQnBLekNlSXc3emVScTJiVHp0b0xGY09CQ0NEOElaWmVz?=
- =?utf-8?B?cFhZTi9rdnhXa0lsb2FZNGtrVHhiaVFFY200dTA0aHU4M2UwR0hMb3VQeTg5?=
- =?utf-8?B?cDlGV1BIQWNqMmtqNnFWUUIrNnZMYW56b29FYVNzaHJsd3NVcXZxb09vNWho?=
- =?utf-8?B?UHhJK09WbG4vMjVOMExFL1RGNlJzMWNiOEJ6K3ZxWS9CTnhWaGdua3hQV2xz?=
- =?utf-8?B?bHpIcjI4U2FaTU5jbWZscERURUMzUk10UHRXcFNpYXUzZXErd1hyZTJjdi9S?=
- =?utf-8?B?aVFKeitHblZabXNHUWh0ZnJMcmFsKzBBSTIvVW9rUXNaS0xteFh3WklGYVQz?=
- =?utf-8?B?ZFlqeXpoVDRUSVdMYU1vcktIQzlvZFRUOTlCQnAxbVRiNkJaVzc3Yis0cTBs?=
- =?utf-8?B?czNhNTlyY3J3ZVA4d1ZXd0I3TWV3dDJwY0xla1dvQjZUcCtsY2JvUTdZZUI1?=
- =?utf-8?B?MmtqOHZIanROUFIwNVhFK0d0RGdmMWFFamkrazh3UWQ1T1RxSDBpY21Qd0F5?=
- =?utf-8?B?bmJrNDFVcWRyTVlsNnM1MERHbmF5TUdLMkxWK1l6eC9ZQXJwL3Z2WC8yd3Jo?=
- =?utf-8?B?MGZuSlRzNDQ4N3hncWM5aThWblBjZkF6TXRrQlBCT1I2dEFLUXV1MTVVd3NN?=
- =?utf-8?B?MEpVdnpjK3FadUUrbStQTGdxaVpLT0FXQkhDTThFQWRmS2hCWXJSRFI2aml4?=
- =?utf-8?B?OWsza2dtY3lnVFFtU3NjaGNBTXVvd1NYb003WCs3RDlIaFRPWmZ1blh1RG1w?=
- =?utf-8?B?K21RLzlod1dmN01qRFZCNWtaamlFUXgyVys5N0pTZkpxZ0xUcGVPc0FLWVQz?=
- =?utf-8?B?bDMwZGQzMW9YdXcxSlJlZmhYc0RwT0IyVW1waWVyMGVGbS9IUktMcnhUT3RT?=
- =?utf-8?B?ZmViVlh5c2szTTF3dFZ0QVZhYkRpOGZWbXFPUHFtbzJnQ05TRXBtLzhhN1Nl?=
- =?utf-8?B?VkdMUFFueUp3NjdUWW9pNHhaaGRSRnY3aEJCYnJraHBqcGxObUkxR3VVQlUw?=
- =?utf-8?B?QWxROWI3OVZWUCs4VlZsTlNCMWhuYjEvSHgrMUNEZHJUZ0xVRkdjSEJJRVJB?=
- =?utf-8?B?cE9RVlU1aGkzLytzMm0xazVuMmJJcnQyNGFocUl3Q3cvcTdrSk9YMGV4dStT?=
- =?utf-8?B?Tmdpd3Yway9RS21GWGNaajNMSndwaE5hMlpKRnhpSWIvZXRQSmx5eThEeTZW?=
- =?utf-8?B?OFpCbXFFck1xbjF2L1Qvek9uSDErWHRFNWw5c0ZzSG9XNmhYalBaa1FYTnBK?=
- =?utf-8?B?OU9wSUtPSkoraXpHNGxRcFlVb2JrbFlYWGZtNzY1VXI4Z1Z0VHVkTU81SHdz?=
- =?utf-8?B?Yk5GU3pOZEZKNDNYK1MrSk1oNE1UOS93dmNJNGE3YmRGejltK1F2ZU41WVJE?=
- =?utf-8?B?RWRXd0dpWlhCL3F5MUliZVZveGFJNlB4L29xUjRsa2xFK1E3S014N1VySGVi?=
- =?utf-8?B?MkpHZFRxVnFVWmREY1J3S3pIQlJPMFNkTENacGJWME55b3RZanJJby9aS2tv?=
- =?utf-8?B?SXZIa2U4cDZ2ZEZLTlBOUm9SNi8waHltTERPYVFWdkNscmx1MWZ5SUZTZlh2?=
- =?utf-8?B?OGFGeTE2TWV3bkFUcENtQnM3dUMzVTY0eGIxZmlJV01hRkJEVmp6L2FxeVdZ?=
- =?utf-8?B?SmRlSnVZdDFiYlRIbFZ1Um1EdW9ibDhCQXRZdThHTTZWOUx1UUh2bE90ZWlX?=
- =?utf-8?B?S3g2K0hrcGxjR0dEN045c2NMQUk3UlNrR1FwT1pFYVNNUUQwcEpranlFU2pH?=
- =?utf-8?B?U2JTMTFCTTF5cHUyUmRQNC9pZy9QTjB4bzIrek8wNUtXczAvSVBQRHp3N0hn?=
- =?utf-8?B?NDVsd3Zjakx0L0twN0VJVC9FWDBZNG5OTWFJczU4THBJditOUlZ1OVllbElM?=
- =?utf-8?B?aXhYb2R0YzZCWmZJcVJlek02RHk3Rmh3ZGljdGE4MnFCVjVTT2xFcHIzMzNu?=
- =?utf-8?B?S2t0d0N5SWZUZTI0N2I2eVpzQWNReERoMVN5bWRLWk84bWNJSVJtQzQyQ3B2?=
- =?utf-8?B?WUYrZnNLWkJ0aFNSU1N1L2cwSm9uQW1wWDR5MzZseW5iR3o2OU0ySUVtZW9x?=
- =?utf-8?B?L0R0VnJEUEtsTVZJN250NG9JTEVRUnJRcTBvcjkzWVdVRTcxQS9SK1o5dlJE?=
- =?utf-8?B?Tnk5Qml5YTNFZzZMcHAycVBib1VFTHRWb2wrbkNpNVlEYllrbElrUWg5ZXU1?=
- =?utf-8?B?c1E9PQ==?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a1b06b0a-e38f-4e97-231f-08de1aee4238
-X-MS-Exchange-CrossTenant-AuthSource: GV1PR04MB9135.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 15:32:55.0390
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5Re1f+PZ2//Ybt0UHtmx4vUVkUX+dcO4fJVX5WOOp07GFZe/RX5viCF7CS7iflHROC8nFiT6mBj4vyX2suE0CA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10500
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aQjDrMH34QVz6e1E@krikkit>
 
-The driver is part of DRM subsystem and is located in
-drivers/gpu/drm/imx/dcif.
+On Mon, Nov 03, 2025 at 04:01:00PM +0100, Sabrina Dubroca wrote:
+> 2025-11-03, 14:36:00 +0100, Andrew Lunn wrote:
+> > On Mon, Nov 03, 2025 at 11:13:08AM +0100, Sabrina Dubroca wrote:
+> > > 2025-10-30, 17:02:17 -0700, Jakub Kicinski wrote:
+> > > > On Fri, 31 Oct 2025 00:13:59 +0100 Sabrina Dubroca wrote:
+> > > > > >  set -o pipefail
+> > > > > >  
+> > > > > > +if ! ethtool --json -k $NSIM_NETDEV > /dev/null 2>&1; then  
+> > > > > 
+> > > > > I guess it's improving the situation, but I've got a system with an
+> > > > > ethtool that accepts the --json argument, but silently ignores it for
+> > > > >  -k (ie `ethtool --json -k $DEV` succeeds but doesn't produce a json
+> > > > > output), which will still cause the test to fail later.
+> > > > 
+> > > > And --json was added to -k in Jan 2022, that's pretty long ago.
+> > > > I'm not sure we need this aspect of the patch at all..
+> > > 
+> > > Ok.  Then maybe a silly idea: for the tests that currently have some
+> > > form of "$TOOL is too old" check, do we want to remove those after a
+> > > while? If so, how long after the feature was introduced in $TOOL?
+> > 
+> > Another option is to turn them into a hard fail, after X years.
+> 
+> If the "skip if too old" check is removed, the test will fail when run
+> with old tools (because whatever feature is needed will not be
+> supported, so somewhere in the middle of test execution there will be
+> a failure - but the developer will have to figure out "tool too old"
+> from some random command failing).
 
-Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Which is not great. It would be much better is the failure message
+was: 'ethtool: your version is more than $X years old. Please upgrade'
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 38383f9d8a31e28c64447032d1052827dd5d3ea5..ba16eebd0da223509aaee6bb60070c62bc508a09 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18693,6 +18693,15 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/media/nxp,imx8-jpeg.yaml
- F:	drivers/media/platform/nxp/imx-jpeg
- 
-+NXP i.MX 94 DCIF DRIVER
-+M:	Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-+L:	dri-devel@lists.freedesktop.org
-+L:	imx@lists.linux.dev
-+S:	Maintained
-+T:	git https://gitlab.freedesktop.org/drm/misc/kernel.git
-+F:	Documentation/devicetree/bindings/display/imx/nxp,imx94-dcif.yaml
-+F:	drivers/gpu/drm/imx/dcif/
-+
- NXP i.MX CLOCK DRIVERS
- M:	Abel Vesa <abelvesa@kernel.org>
- R:	Peng Fan <peng.fan@nxp.com>
+We could also embed the date the requirement was added into the
+test. So when $X years have past, the test will automatically start
+failing, no additional work for the test maintainer.
 
--- 
-2.49.0
+> > My
+> > guess is, tests which get skipped because the test tools are too old
+> > frequently get ignored. Tests which fail are more likely to be looked
+> > at, and the tools updated.
+> > 
+> > Another idea is have a dedicated test which simply tests the versions
+> > of all the tools. And it should only pass if the installed tools are
+> > sufficiently new that all test can pass. If you have tools which are
+> > in the grey zone between too old to cause skips, but not old enough to
+> > cause fails, you then just have one failing test you need to turn a
+> > blind eye to.
+> 
+> That's assumming people run all the tests every time. Is that really
+> the case, or do people often run the 2-5 tests that cover the area
+> they care about? For example it doesn't make much sense to run nexthop
+> and TC tests for a macsec patch (and the other way around). If my
+> iproute is too old to run some nexthop or TC tests, I can still run
+> the tests I really need for my patch.
+> 
+> But maybe if the tests are run as "run everything" (rather than
+> manually running a few of them), ensuring all the needed tools are
+> recent enough makes sense.
+
+I've not do any of this sort of testing for kernel work, but i have
+for other projects. As a developer i tend to manually run the test of
+interest to get the feature working. I then throw the code at a
+Jenkins instance which runs all the tests, just to find if i've
+accidentally broke something elsewhere. It happens, there is a side
+effect i did not spot, etc. Regression testing tends to run
+everything, possibly every day, otherwise on each change set. It costs
+no developer time, other than looking at the status board the next
+day.
+
+       Andrew
+
 
