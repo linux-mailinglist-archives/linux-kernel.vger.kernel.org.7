@@ -1,71 +1,87 @@
-Return-Path: <linux-kernel+bounces-883320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80C55C2D0FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:19:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20AFDC2D104
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:20:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id F0A3E4E5C0A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:18:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A196188AB61
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95E143161A4;
-	Mon,  3 Nov 2025 16:18:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7A5B315D58;
+	Mon,  3 Nov 2025 16:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MsWVovaK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DW2D3EZL"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54EA9316185
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B8D314D01
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762186720; cv=none; b=Kx6G+oxPyBV1zAvd084f0qVz6Ksfp7luUoDwHv/+jX/FJ1ifllR6/eqafP6haRxmWkhd+rby2+qhwrwR78QFyl+5g4Be+22H5l2hzNsZBW7ObXsZdcPgzTNeBmCrY8KU3bwRq2fCViK6qlTm/InTAZqm1te/edn7uEAXhtCn9mw=
+	t=1762186780; cv=none; b=CSDY2QPl270TC7sNtcZ/0XXQPj1pGaxOeIXZZa0pNVitHjdKNpY3gmgO8UobOL/GkTezo/GYe3XdjcpuSHG0w4dRAsJm7Y2kFlAJW6H/lwHz9IHXqWRcxU1nK/2i2oKKJVt4+TYXHbcGYe6oMADjQ73TI+YzMIyzlgOKMRn08II=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762186720; c=relaxed/simple;
-	bh=9IL4uEHSH1TQDJe2aI3li5/cp3GxB4EPdYuPtkpRhpI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NCVVYRu121oEvifztyPkvRDtDTegljjviAjAA5841N5Mt/y+XktcmfsUWDSwlJCBI0knUz1+Qo4U/NVpIcciJm7KnxxWNEaXtk9k1fRdFpGZJtUKj37kubvxeiZ0w8Jrs/hsZfXm+XHVubOYvspAQXdsNH5udwPie6EEw2ynRr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MsWVovaK; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762186716;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ezCNaUCKcpwGk7sWAga5EHhyDCPk/Oxt4aXzp6O1YvQ=;
-	b=MsWVovaKdxvefRcf+wwIbtRXwwUvS6AW9xkxCbYukXnCYVF6VXJQG+PZzhyNGC7m8HKlvL
-	fgYD3aP+/OiMo/Q4LAIAja5jQ1duBd5pDD10sIzwdCsZFl7e0ItbfCH3HZT111kzL6dzlW
-	1wgkU5cYqPcWpgdKfCqldpzwBPy9XJM=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-328-5ogMiM_RPI6yIOzf3m55fA-1; Mon,
- 03 Nov 2025 11:18:33 -0500
-X-MC-Unique: 5ogMiM_RPI6yIOzf3m55fA-1
-X-Mimecast-MFC-AGG-ID: 5ogMiM_RPI6yIOzf3m55fA_1762186710
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 838B81800669;
-	Mon,  3 Nov 2025 16:18:29 +0000 (UTC)
-Received: from cmirabil.redhat.com (unknown [10.22.64.253])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3EDAD30001A1;
-	Mon,  3 Nov 2025 16:18:27 +0000 (UTC)
-From: Charles Mirabile <cmirabil@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: Charles Mirabile <cmirabil@redhat.com>,
-	linux-riscv@lists.infradead.org,
-	Lucas Zampieri <lzampier@redhat.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	Paul Walmsley <pjw@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] irqchip/sifive-plic: fix call to __plic_toggle in M-Mode code path
-Date: Mon,  3 Nov 2025 11:18:13 -0500
-Message-ID: <20251103161813.2437427-1-cmirabil@redhat.com>
+	s=arc-20240116; t=1762186780; c=relaxed/simple;
+	bh=SA8YBwX6UV/exj69CxLhHvYltiFC6wLWEhuIydTpxus=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XpjnAPm2mB1bnU5qgt1LgHnmGqCcf7FRRFcCRLldxPJvZJ113UYyVxF+xwHTVscZ1cyN0fJ5YntcfCiTo0rRWH8snhX0jTf40N4SLrCXxi0CXkfhhluVYC0XusYe29fX1AzQp/Hf2m8DIenQb5wEvcH3NcE9DuY849RS6UCjRzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DW2D3EZL; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-88058103dcfso7176276d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 08:19:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762186777; x=1762791577; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ncd8iftKarOftKagzkM1Xq0zcBakpgViOG8SqvFntD8=;
+        b=DW2D3EZLMhCYEg7/WUS5CDUC8gjTNM77YeaSHNPHUGPmxLJ98Q0DFehyVSoO3JivoN
+         k0FlfzsySn9uA6UBAmIz7qyz36z1xm94/1AswpDGs42TuGUegAQ9BEI1imKM94qQ4L6x
+         zvsuXPMS3ICQR5zuYTxwWcfgoA0RT8JjkedoGFY7RH3tjVgmmlWPisRWKr1ofVHbI77g
+         qYdTQSlcAd4ZGqJU/LnP1rVbSe2Bgv6TUxUAeLqIWmFhF5RBiLqgOUw4uazwICjAWERq
+         17n/rS2C628cz1fr1vBKUat4a/Z91YugnM1twYt/rCfeX3Shm8Ee0VwSw/E0CP0nq17M
+         +QrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762186777; x=1762791577;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ncd8iftKarOftKagzkM1Xq0zcBakpgViOG8SqvFntD8=;
+        b=WMnZB62dHha6FCq6LOLJd6KMi4DMpN2a746B6G2sjnA49gJDniEXhMNBGeGNjj3MvI
+         PFfUuOLtjOh3TiUGiDzMkda7tflOMNNusWs2+w9EB+WbTNs6AgJFOmy2c7gfdMBYi1uG
+         dRJ8/pCYFQwQesAsVBM6XEjNZSOLMb+WQmwhH+bdD+gX6f9DRaHBPFWEk/4ry3uJU4Hl
+         oygqe6X8wcdYlweF9gfoJPp7E1xTn8SsQYz/X5T8CrHl8CXYEzMsGRxLVPt2Mv55lmNG
+         MsigvUtQDC0OuDixWF4/x/mHv39P/Wb8YHSkF/UvUez0660ByM7iAhLRnf0l7zmc5sHV
+         Akew==
+X-Forwarded-Encrypted: i=1; AJvYcCV8plBkqbjJkeyEpQE1pho3AJ7A0teJXcRGx0o/gN4oAFbaEjY54kGJlQUN0bMPe9VqVLlgzoynWMBlUdE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YygCxibo0fWj4IG4/gBnyxp7yRyGKeb8VBWxtduQaf9zvRttDCs
+	rcXftTbWmqQsiF7hFsX+e0tH4RurUzsfiZWJPhyyg0g0hhoTLVojQstH
+X-Gm-Gg: ASbGncvlSD/Kz8ald0xOcvfu3QyYT/NfQVcAn/AmzRTpUKfoFUxkUIYeQnLmRrnkSUg
+	gMSWGObtm8QbEpnA+JxfFayO3tx2bl77wb8KHFHgXOrKVLYECfXu4mUaxFh5bRkZ4ESj9KRIyK4
+	///oUCUcOJCQD5NxtqJG53j2h76fyvlfSm1R0lqncge95Beu4HTy9qkP89VKBPhBTgpRPNe7muy
+	9y3op9H0iiFjTnKfyHpbUTVJMH19nzTYGBiPtHvcz1XVu5bmLXa+rpg7UmuLv5atrlqZuMZIjpk
+	fIdmFbyBbwMzPLl2jPkflBLULpwF0diSVUCIJkPfUR7UfUe0YFJE+bBaF16O7F4dJKjOC92nCvU
+	wXf/kE5E2Ntz4vNILmQfi9kFgmz3gBDS+r0krzvxxIxMTb20nhbr4h3BX1nuKBZMKeeH8B+kc6x
+	ac54OFxXq2Wz3/KL8=
+X-Google-Smtp-Source: AGHT+IEAQfamPC/d0ofEW4bGHVEQ9HHMtZbp4Q8HmqPZCWRtg8LnyQJ/AkABfg86VcVL9UWlrv5V2w==
+X-Received: by 2002:a05:6214:f01:b0:785:aa57:b5bb with SMTP id 6a1803df08f44-8802f44b4b4mr155355746d6.43.1762186777421;
+        Mon, 03 Nov 2025 08:19:37 -0800 (PST)
+Received: from ideapad.tufts.edu ([130.64.64.35])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-88060eb3332sm4273556d6.60.2025.11.03.08.19.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Nov 2025 08:19:37 -0800 (PST)
+From: Ivan Pravdin <ipravdin.official@gmail.com>
+To: rostedt@goodmis.org,
+	tglozar@redhat.com,
+	linux-trace-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ivan Pravdin <ipravdin.official@gmail.com>
+Subject: [PATCH v5 0/2] rtla: fix cgroup and trace options parsing
+Date: Mon,  3 Nov 2025 11:19:04 -0500
+Message-ID: <cover.1762186418.git.ipravdin.official@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,48 +89,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-The code path for M-Mode linux that disables interrupts for other contexts
-was missed when refactoring __plic_toggle.
+This series fixes 2 issue in rtla timerlat and osnoise parsing.
 
-Since the new version caches updates to the state for the primary context,
-its use in this codepath is no longer desireable even if it could be made
-correct.
+1. Make -C/--cgroup option more user-friendly. Currently rtla timerlat
+   and osnoise parses does not allow to specify tracer's threads cgroup
+   name as `-C [cgroup]` or `--cgroup [cgroup]`. Second patch fixes this
+   by allowing users to specify cgroup in the aforementioned manner.
 
-Replace the calls to __plic_toggle with a loop that simply disables all of
-the interrupts in groups of 32 with a direct mmio write.
+2. When specifying `-t/--trace` before `-a/--auto`, trace filename is
+   override to default <osnoise|timerlat>_trace.txt. For example, when
+   running rtla as
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202510271316.AQM7gCCy-lkp@intel.com/
-Fixes: 14ff9e54dd14 ("irqchip/sifive-plic: Cache the interrupt enable state")
+       `rtla timerlat top -t custom_file.txt -a 100`
 
-Signed-off-by: Charles Mirabile <cmirabil@redhat.com>
----
- drivers/irqchip/irq-sifive-plic.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+   when the threshold is reached, timerlat_trace.txt file is created
+   instead of specified custom_file.txt. Third patch addresses this
+   issue.
+   
+changes v4 -> v5:
+   - Removed setting trace_output before checking if it's NULL in
+     `fix -a overriding -t argument` patch
 
-diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index cbd7697bc148..0de3003981f1 100644
---- a/drivers/irqchip/irq-sifive-plic.c
-+++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -592,12 +592,12 @@ static int plic_probe(struct fwnode_handle *fwnode)
- 		if (parent_hwirq != RV_IRQ_EXT) {
- 			/* Disable S-mode enable bits if running in M-mode. */
- 			if (IS_ENABLED(CONFIG_RISCV_M_MODE)) {
--				void __iomem *enable_base = priv->regs +
-+				u32 __iomem *enable_base = priv->regs +
- 					CONTEXT_ENABLE_BASE +
- 					i * CONTEXT_ENABLE_SIZE;
- 
--				for (hwirq = 1; hwirq <= nr_irqs; hwirq++)
--					__plic_toggle(enable_base, hwirq, 0);
-+				for (int j = 0; j <= nr_irqs / 32; j++)
-+					writel(0, enable_base + j);
- 			}
- 			continue;
- 		}
+changes v3 -> v4:
+   - Removed patch [1] as it has been mainlined
+   - Resolved merge conflicts with [2]
+
+changes v2 -> v3:
+   - Combined common logic into a utility function to parse optional
+     argument value
+   - Removed change that removed `clear_terminal` 
+
+changes v1 -> v2:
+   - Moved removing clear_terminal from `fix -C/--cgroup interface`
+     patch to `fix -a overriding -t argument` patch
+   - Added clarification why to remove clear_terminal
+   - Added `Fixes:` tag to the `fix -C/--cgroup interface` patch
+
+v4: https://lore.kernel.org/all/cover.1760791697.git.ipravdin.official@gmail.com/
+v3: https://lore.kernel.org/all/cover.1757034919.git.ipravdin.official@gmail.com/
+v2: https://lore.kernel.org/all/cover.1755018581.git.ipravdin.official@gmail.com/
+v1: https://lore.kernel.org/all/cover.1755014784.git.ipravdin.official@gmail.com/
+
+[1] https://lore.kernel.org/all/164ffc2ec8edacaf1295789dad82a07817b6263d.1757034919.git.ipravdin.official@gmail.com/
+[2] https://patchwork.kernel.org/project/linux-trace-kernel/list/?series=999703
+
+Ivan Pravdin (2):
+  rtla: fix -C/--cgroup interface
+  rtla: fix -a overriding -t argument
+
+ Documentation/tools/rtla/common_options.rst |  2 +-
+ tools/tracing/rtla/src/osnoise_hist.c       | 29 +++++++--------------
+ tools/tracing/rtla/src/osnoise_top.c        | 29 +++++++--------------
+ tools/tracing/rtla/src/timerlat_hist.c      | 29 +++++++--------------
+ tools/tracing/rtla/src/timerlat_top.c       | 29 +++++++--------------
+ tools/tracing/rtla/src/utils.c              | 26 ++++++++++++++++++
+ tools/tracing/rtla/src/utils.h              |  1 +
+ 7 files changed, 64 insertions(+), 81 deletions(-)
+
 -- 
-2.43.0
+2.48.1
 
 
