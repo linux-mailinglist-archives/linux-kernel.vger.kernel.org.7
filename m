@@ -1,132 +1,96 @@
-Return-Path: <linux-kernel+bounces-882495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EA45C2A989
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:41:13 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A20EC2A995
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:41:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3747188CBC0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:41:37 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8AE8A3485CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64AE12E03EF;
-	Mon,  3 Nov 2025 08:41:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B15E2E0B6D;
+	Mon,  3 Nov 2025 08:41:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="iWIQ6qIs"
-Received: from smtpout-03.galae.net (smtpout-03.galae.net [185.246.85.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QEo4/259"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEEC62D7DC0
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 08:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.85.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961372E03EF;
+	Mon,  3 Nov 2025 08:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762159265; cv=none; b=YG9JCN/4RU2te0gPsNmaUAMGsZY+8WSsdIzWsKq/3xoB/WpZEzCSpEg7er03VbpiOLwnhSZo3Ck/ZgSyGmfy1lSSoaOMyUQIyHFdWLdOP6j9CItMXXcQrFLCtwb0jCTLFOEKh6ao1qShxrOaXrk4QgbhJnQksVCOX9O3cVUIpWg=
+	t=1762159301; cv=none; b=EFN6jlPc4Oo0EuFzGsgC6sRrUSFCd8w8YQShb6mt8hCVv+NTV6TVBirUrw/m2e+wypIQNwBimwBkj3gLQSvvVf0NB+fbazdm9fBX4isTkfnuerumfkVr/CqzKMd/dlCqWqWB9ujWsVqpPHeTChkj7cUcRUzkGP9owPyfFfMQpUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762159265; c=relaxed/simple;
-	bh=v+GhSFMVaW/Lfg8/fIiRNwYwGsUSOMGi1AXYxUkQrxU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Gfwqpo2DVlJpa7g2HsvCypuViUi1XJLls7OdP5Fc+8CJfeIfv0e6WJbDI18MEwcuiHkQtWTWGyP4GQELBAtrexlIkm4jjx4M5Q3M5hmIwUkdfXngh2EADTuOyqIErFQWqcwrFOSKASyF83fWL2h2vsvPqNXOklwCY5VJeucNeI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=iWIQ6qIs; arc=none smtp.client-ip=185.246.85.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-03.galae.net (Postfix) with ESMTPS id 03F284E414BA;
-	Mon,  3 Nov 2025 08:40:54 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id C7E4F60628;
-	Mon,  3 Nov 2025 08:40:53 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 23F7A11818002;
-	Mon,  3 Nov 2025 09:40:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762159252; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=OdBSKKFuFhKbNuvtZatqu6kaGrQLICACn7lyjwcUeMg=;
-	b=iWIQ6qIsThvjONMtKyRFIt3RRi6l8dYaN4kZtEpF0WxdZTR7zGXHa3A3SoAxpgiYwhng1C
-	zo2hxlhOeOIb85bpal78IjolPGrbtnhMf2GTaOtON4SFmj2JNEwTdhhikSLHT8y9Vdw5pv
-	PGiWyZayoE1KrFgQsZhXz5nqIV76pBGQ8b8xJ76M3McS23COAjPQu2EtNEeGG/Y9zwpRNq
-	g9l+LJDWDxoiA7qLF+F93yPnQWhTEwvv/B1gMSc6SWwqI7FSB0SrI3CR5JZdfOpIGSeo7I
-	GXAnVbrl6Vm6a//OWA6mPtDG2QKiil4G6Ce/v9nokrQP0Y5ZxZU1SzYSk1dnMA==
-Date: Mon, 3 Nov 2025 09:40:45 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Jonathan Cameron
- <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, Nuno
- =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Geert Uytterhoeven
- <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, Liam
- Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Pascal Eberhard
- <pascal.eberhard@se.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 2/4] iio: adc: Add support for the Renesas RZ/N1 ADC
-Message-ID: <20251103094045.73a061ea@bootlin.com>
-In-Reply-To: <aQMpHDwCqcrNrnT9@smile.fi.intel.com>
-References: <20251029144644.667561-1-herve.codina@bootlin.com>
-	<20251029144644.667561-3-herve.codina@bootlin.com>
-	<aQMpHDwCqcrNrnT9@smile.fi.intel.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1762159301; c=relaxed/simple;
+	bh=8aTzAU2/Gv1nRFnHGr2k29zzB9wCWCQrVWNMTykV0qM=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=hN09ytLpiUYFnAhv9+WEX+Mir33pxK6hQIERK6mJWdVTojl83VYttPkVUjLdFdFt0y+p3dfhOy6cYahCql9CDorttG8owjHAqgZcuUwKrJEeQvyU9J4LXPtzXEW/KAeyWYmNH67q1YJs3tWUHcvl/irRoaLXl98mrXfqWsqwIHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QEo4/259; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95755C4CEE7;
+	Mon,  3 Nov 2025 08:41:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762159301;
+	bh=8aTzAU2/Gv1nRFnHGr2k29zzB9wCWCQrVWNMTykV0qM=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=QEo4/259tVNl4JUjWFMEE6xAFGOcLTXOiP/hxV4OBOamMFLReci2Ygd3m2KPU5OSC
+	 L1mVPlcJBYG+wP+spfy3s7pEb7JQxYk7ALHjsDWHKAp4dZ8pSjyXyLzqetJaC+hapi
+	 8Ai9rDAMSA9EwYhszhf+FdVVhhcztvItyoggswC+GXKxQ6OpThHHRnjcwHZu5KKCY7
+	 rnza2Gd+TDXp6bfqZXsoUNrHY0c5v38lKnqAoaZRTWuzLILDmrrOgoZsE6ldL5Sw7Z
+	 IOFEYhUkJ1GFleftTk1WtSZp6hYDAiVGNKQuHhLZ3RlBp4ng8DA3EFkaHy4eQUVCFW
+	 kzVF4omxMlr4g==
+Message-ID: <6f1cd703-7efe-4bd4-b236-b01bf1589b73@kernel.org>
+Date: Mon, 3 Nov 2025 09:41:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [PATCH v2 0/3] media: Optimize the code using vmalloc_array
+To: tanze <tanze@kylinos.cn>, mchehab@kernel.org, mingo@kernel.org,
+ hverkuil@kernel.org, tskd08@gmail.com
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251022032038.422230-1-tanze@kylinos.cn>
+Content-Language: en-US, nl
+In-Reply-To: <20251022032038.422230-1-tanze@kylinos.cn>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 7bit
 
-Hi Andy,
-
-On Thu, 30 Oct 2025 11:00:12 +0200
-Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
-
-...
+On 22/10/2025 05:20, tanze wrote:
+> Change array_size() to vmalloc_array(), Due to vmalloc_array() is optimized better,
+> uses fewer instructions, and handles overflow more concisely
 > 
-> > +	ret = devm_regulator_get_enable_optional(dev, avdd_name);
-> > +	if (ret < 0) {
-> > +		if (ret != -ENODEV)
-> > +			return dev_err_probe(dev, ret,
-> > +					     "Failed to get '%s' regulator\n",
-> > +					     avdd_name);
-> > +		return 0;
-> > +	}  
+> v1->v2: Update patch #02 #03 due to typos CI robot detected some issues
 > 
-> 	if (ret == -ENODEV)
-> 		return dev_err_probe(); // takes less LoCs
-> 	if (ret < 0) // do we need ' < 0' part?
-> 		return 0;
+> v1:https://lore.kernel.org/all/20251021143122.268730-1-tanze@kylinos.cn/
 > 
+> tanze (3):
+>   media: dvb-core: Optimize the code using vmalloc_array
+>   media: vivid: Optimize the code using vmalloc_array
+>   media: pt1: Optimize the code using vmalloc_array
 
-Well, I need to abort on error returned by devm_regulator_get_enable_optional()
-but I need also to filter out the ENODEV error.
+FYI: all three patches are duplicates of:
 
-ENODEV, returned by devm_regulator_get_enable_optional(), means that the
-regulator is not present. This should not be seen as an error by the caller.
-Indeed, the regulator is not present and so, the related ADC core will not
-be used. This is not an error from the caller perspective.
+https://lore.kernel.org/linux-media/20250812035310.497233-1-rongqianfeng@vivo.com/
 
-The code you proposed is not correct regarding this point.
+which has already been merged.
 
-Instead of my original code, I can propose the following:
-	if (ret < 0) {
-		if (ret == -ENODEV)
-			return 0;
+So I'm skipping these patches.
 
-		return dev_err_probe(dev, ret,
-				     "Failed to get '%s' regulator\n",
-				     avdd_name);
-	}
+Regards,
 
-What do you think about it?
+	Hans
 
-For other comments you have sent, I agree with them and I will take them into
-account in the next iteration.
-
-Best regards,
-Hervé
+> 
+>  drivers/media/dvb-core/dmxdev.c               | 4 ++--
+>  drivers/media/dvb-core/dvb_demux.c            | 9 +++++----
+>  drivers/media/pci/pt1/pt1.c                   | 2 +-
+>  drivers/media/test-drivers/vivid/vivid-core.c | 2 +-
+>  4 files changed, 9 insertions(+), 8 deletions(-)
+> 
 
 
