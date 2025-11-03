@@ -1,123 +1,198 @@
-Return-Path: <linux-kernel+bounces-883064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBDD4C2C65F
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:25:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68EDAC2C647
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:24:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 593871897AC1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:25:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B070F1897544
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:24:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D73226D02;
-	Mon,  3 Nov 2025 14:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64CDF30F7FC;
+	Mon,  3 Nov 2025 14:24:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GpHfzqJq"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AbHH74sC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53BD23B62C
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 14:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306C427E1A1
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 14:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762179928; cv=none; b=Oy1PuAvufNxOWuBycGg2MyHhv5RqchG8XtgfCPfecAdgUsxwnckWLxnXM+lOuBtYgLhhL7Wf2Yitb/QQ3KMHhTq+Cjk8nwSh+01gBLorf31/0y4WpV0yBFuhL9pH4szeVwH/8ze4gJ6C0MaNdKTgIthz08R8ixsfzhfH4SAHBXk=
+	t=1762179848; cv=none; b=Je6Nbt8q4PGfnrV3WPEqLJh7f51zfB1seSUz/bHy3FoTL/lnsiZQqSXx2B0DH+C8FBq57i4ISPxlvlZe7t5i/rO+wZkDjNRhuTTfMdHIglVzoTQfWK4i6DBfvzgtH2bUsqlUG4gn6BsDUQ35GN/i9HLFK6oeR2mGHzWlE8zS5ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762179928; c=relaxed/simple;
-	bh=xWMYardQHnIaK12l1ryDr3bjsr+pXFGz+yDLvCdz8aM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X7mFrzJLHMyutxQqewIkq+iftiUDSGtkklB5ICuzza0KasR/uECTYc4hG9MsgvU7NP3LUcIuBmH5FRijRIJik3GaP8EhpQMmZh2zNsp5RSeoo9rssyfi6fMHUXgmhzadp7kGGWdswAfgyjZPtcnk2BEb7M+5CaPek4TI0GG7FK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GpHfzqJq; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47728f914a4so22565465e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 06:25:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762179925; x=1762784725; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=l0eHvLoiid9wDCxuP//NlqPdvxc5VD66YHxv5DH3KtE=;
-        b=GpHfzqJqfv+4NhnDs7wBZ3N21ZMxK313TY7qWEo+iIpRbnsiAo4d8gmzCAeM4Nn2Tm
-         NQOZoEJJRTpyHVJovzK8apqm/5SDXqtYLQ4o54YRBpQjdKd2NWzdoCMNUI9O9ejzohyf
-         xBrbA86jKMk7p9NP8PdgJOfpqF8ioxtw8Bx6nkk/YBKGCJLmZiY0kR/AezvUsjBb4mZM
-         q0aOcOOeldLJ5ibkrw6iYda69aoxjG5bVhQk84ToPmYC6SMas9g5Firr6NKw4ujGCyMr
-         lmj67toayoNq3ptMAKxLBeBAWGkkHWXIvSRF32gV7H8AAolEX6UpK+Q+Zx+U9X18vWsL
-         vTVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762179925; x=1762784725;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=l0eHvLoiid9wDCxuP//NlqPdvxc5VD66YHxv5DH3KtE=;
-        b=El2TRUmnK/7xiE29hxctc7qkuwGPeHO0s8dTA84/P+0gLrAiXwl1DNKAPKiIVqODlD
-         TGR34wbzv+kDpu77MaAfd2nSfuXFMUTnOgCMprKNShG/mCBIJWZxOwivyyEE7tfR/rJE
-         02fzbnMYb/G2a0ZgUFxRm1tKopLBUODkHc2JF8CVnA5zmt2Dg9imiA6Q+Z3H+jR9rmse
-         mddogbF9uIHTQXlsezQC7h7k2iIo2WKVY4nIRYKI3CikxYtN9tQZAATjzdyQYviNHTcG
-         hoLAvSnfbmFS8/hoT0EIXjHz60sZ6vn4C8rfFCUR4Tn1D9lBwDrIpQHYQudKEqGz+mNK
-         CCGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX7Im/1HjQQc+bf7sFlclWT4o7ZxxEQqOIHIk96AwkKDjqiZXKMkHHPpEV72naaL/lJLo3aJmOVNhh/KMs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcNmZLoWvEDFq1Qb/iZw8HaA7rM/+c2NNeqTAFsYdtsLju2pPV
-	GTmxyK6mfjuixpvZIXAtoE9VG3piTokIEsncS0uFVsmB/+m7vNVw25QaXcWoUlkB
-X-Gm-Gg: ASbGncsPq1fsxLZxpKiBcYev6JGp0+PFo4MbaNp/CAKD+kbkCiQr6k9uWmrthVJeg7k
-	BDrkwRkyNPQxu3JHXzUY5aQAQgZGifPrLMKIpsrANTrDzH3+YhdZd9T9te3UDWiZP0k5D8fHiim
-	HciG2YsDxDDVfRb1Ez7WLXcqp5J6sbtBGWN6U82et+AWr6rdfGs05PzzW1Y4bZPqfcv4VysUksl
-	iOONiHNUh7Ve6EJjWoASCyTj8N+HZmuYsevjnAdmIcxaiViKmVXDBLo5RBhGHYbuam/L/uIPFVa
-	8sg32uoSJm7i2brTWFapCp8LoHKBVAxys28Cd17ykYM5UdSsue8mMzzd8tEZAA+hTIUqMOqtCue
-	39HBi8aMTKsBZ9ALqv9hy5OzDhdkbJ6it32PHzIDo6qAJNQAz/6ZR/HrsCPOjylKCEkNwOf4dew
-	WfTRGraQPbCB1xZaL2HpM=
-X-Google-Smtp-Source: AGHT+IFVmp7tFVYPy3tim/ILb0m6yD7bQL1F/KHtlrW8xr0PngQ0veSe7mMWCHVQNprA0UG970M3NQ==
-X-Received: by 2002:a05:600c:c178:b0:46d:9d28:fb5e with SMTP id 5b1f17b1804b1-4773a7384c3mr92009525e9.5.1762179924825;
-        Mon, 03 Nov 2025 06:25:24 -0800 (PST)
-Received: from snakeroot ([109.175.243.91])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c3a77b1sm160531325e9.17.2025.11.03.06.25.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 06:25:24 -0800 (PST)
-From: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>
-To: jikos@kernel.org
-Cc: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel test robot <lkp@intel.com>,
-	Julia Lawall <julia.lawall@inria.fr>
-Subject: [PATCH] HID: corsair-void: Use %pe for printing PTR_ERR
-Date: Mon,  3 Nov 2025 14:21:13 +0000
-Message-ID: <20251103142120.29446-2-stuart.a.hayhurst@gmail.com>
-X-Mailer: git-send-email 2.51.0
+	s=arc-20240116; t=1762179848; c=relaxed/simple;
+	bh=3YCSoTTCO6yCWGmiep6fmJxEdfQK32XhDAT5MUPalJo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lkQ7yQr+fry1wvsQ+QC6U3Ulj5Sln3YsoytO1DxSKLNLqmcl90fqX+DGmMzwxlbDscxnMu+gFexmonVwfeQskv4WlSxMftFbfkG4Pu5qegFJdvE+fRZVTnQQY1zHD8M16Ebhe6S/hM+Abc3oUOHtAZAUCtG9bFZIRCUNHqDYKOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AbHH74sC; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762179846;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=65jXSeMKSZYnQFCjONKvkkryS9O5MQBveQ8USpiQYy8=;
+	b=AbHH74sCxFa5WqYwOBTAdj5PyWSsKq/TXsEdRkac1q8je73CrOKh3bkxFPBlZQSw7NCMpn
+	pHU5Il3nyB4ikwmBejkW9wZjvLT9oyKfVSic5FpKRyEyBWOHqIMLQV+sVWWFzHk/urjIUq
+	V3hlWA+E2lmw+7yeWCamJlBXajEPsU8=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-607-mPi14YyKOcmbQImyjdjzcQ-1; Mon,
+ 03 Nov 2025 09:24:05 -0500
+X-MC-Unique: mPi14YyKOcmbQImyjdjzcQ-1
+X-Mimecast-MFC-AGG-ID: mPi14YyKOcmbQImyjdjzcQ_1762179844
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C881B1800742;
+	Mon,  3 Nov 2025 14:24:03 +0000 (UTC)
+Received: from wcosta-thinkpadt14gen4.rmtbr.csb (unknown [10.22.88.143])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 630CF1800576;
+	Mon,  3 Nov 2025 14:23:59 +0000 (UTC)
+Date: Mon, 3 Nov 2025 11:23:57 -0300
+From: Wander Lairson Costa <wander@redhat.com>
+To: Tomas Glozar <tglozar@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, 
+	John Kacur <jkacur@redhat.com>, Luis Goncalves <lgoncalv@redhat.com>, 
+	Costa Shulyupin <costa.shul@redhat.com>, Crystal Wood <crwood@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: Re: [PATCH v3 1/7] rtla/timerlat: Support tail call from BPF program
+Message-ID: <ijizcoufpxwtrutqpurumsx7zls2dixyanlcn6oshvhpon5osd@aeuzrsmkidrz>
+References: <20251027153401.1039217-1-tglozar@redhat.com>
+ <20251027153401.1039217-2-tglozar@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251027153401.1039217-2-tglozar@redhat.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Use %pe to print a PTR_ERR to silence a cocci warning
+On Mon, Oct 27, 2025 at 04:33:55PM +0100, Tomas Glozar wrote:
+> Add a map to the rtla-timerlat BPF program that holds a file descriptor
+> of another BPF program, to be executed on threshold overflow.
+> 
+> timerlat_bpf_set_action() is added as an interface to set the program.
+> 
+> Signed-off-by: Tomas Glozar <tglozar@redhat.com>
+> ---
+>  tools/tracing/rtla/src/timerlat.bpf.c | 23 ++++++++++++++++++++---
+>  tools/tracing/rtla/src/timerlat_bpf.c | 13 +++++++++++++
+>  tools/tracing/rtla/src/timerlat_bpf.h |  1 +
+>  3 files changed, 34 insertions(+), 3 deletions(-)
+> 
+> diff --git a/tools/tracing/rtla/src/timerlat.bpf.c b/tools/tracing/rtla/src/timerlat.bpf.c
+> index 084cd10c21fc..19ccd9abf8d4 100644
+> --- a/tools/tracing/rtla/src/timerlat.bpf.c
+> +++ b/tools/tracing/rtla/src/timerlat.bpf.c
+> @@ -40,6 +40,17 @@ struct {
+>  	__uint(max_entries, 1);
+>  } signal_stop_tracing SEC(".maps");
+>  
+> +struct {
+> +	__uint(type, BPF_MAP_TYPE_PROG_ARRAY);
+> +	__uint(key_size, sizeof(unsigned int));
+> +	__uint(max_entries, 1);
+> +	__array(values, unsigned int (void *));
+> +} bpf_action SEC(".maps") = {
+> +	.values = {
+> +		[0] = 0
+> +	},
+> +};
+> +
+>  /* Params to be set by rtla */
+>  const volatile int bucket_size = 1;
+>  const volatile int output_divisor = 1000;
+> @@ -109,7 +120,7 @@ nosubprog void update_summary(void *map,
+>  	map_set(map, SUMMARY_SUM, map_get(map, SUMMARY_SUM) + latency);
+>  }
+>  
+> -nosubprog void set_stop_tracing(void)
+> +nosubprog void set_stop_tracing(struct trace_event_raw_timerlat_sample *tp_args)
+>  {
+>  	int value = 0;
+>  
+> @@ -118,6 +129,12 @@ nosubprog void set_stop_tracing(void)
+>  
+>  	/* Signal to userspace */
+>  	bpf_ringbuf_output(&signal_stop_tracing, &value, sizeof(value), 0);
+> +
+> +	/*
+> +	 * Call into BPF action program, if attached.
+> +	 * Otherwise, just silently fail.
+> +	 */
+> +	bpf_tail_call(tp_args, &bpf_action, 0);
+>  }
+>  
+>  SEC("tp/osnoise/timerlat_sample")
+> @@ -138,13 +155,13 @@ int handle_timerlat_sample(struct trace_event_raw_timerlat_sample *tp_args)
+>  		update_summary(&summary_irq, latency, bucket);
+>  
+>  		if (irq_threshold != 0 && latency_us >= irq_threshold)
+> -			set_stop_tracing();
+> +			set_stop_tracing(tp_args);
+>  	} else if (tp_args->context == 1) {
+>  		update_main_hist(&hist_thread, bucket);
+>  		update_summary(&summary_thread, latency, bucket);
+>  
+>  		if (thread_threshold != 0 && latency_us >= thread_threshold)
+> -			set_stop_tracing();
+> +			set_stop_tracing(tp_args);
+>  	} else {
+>  		update_main_hist(&hist_user, bucket);
+>  		update_summary(&summary_user, latency, bucket);
+> diff --git a/tools/tracing/rtla/src/timerlat_bpf.c b/tools/tracing/rtla/src/timerlat_bpf.c
+> index e97d16646bcd..1d619e502c65 100644
+> --- a/tools/tracing/rtla/src/timerlat_bpf.c
+> +++ b/tools/tracing/rtla/src/timerlat_bpf.c
+> @@ -59,6 +59,19 @@ int timerlat_bpf_init(struct timerlat_params *params)
+>  	return 0;
+>  }
+>  
+> +/*
+> + * timerlat_bpf_set_action - set action on threshold executed on BPF side
+> + */
+> +static int timerlat_bpf_set_action(struct bpf_program *prog)
+> +{
+> +	unsigned int key = 0, value = bpf_program__fd(prog);
+> +
+> +	return bpf_map__update_elem(bpf->maps.bpf_action,
+> +				    &key, sizeof(key),
+> +				    &value, sizeof(value),
+> +				    BPF_ANY);
+> +}
+> +
 
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Julia Lawall <julia.lawall@inria.fr>
-Closes: https://lore.kernel.org/r/202510300342.WtPn2jF3-lkp@intel.com/
-Signed-off-by: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>
----
- drivers/hid/hid-corsair-void.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+I believe it makes more sense to add the definition of this function to
+the patch where it is called.
 
-diff --git a/drivers/hid/hid-corsair-void.c b/drivers/hid/hid-corsair-void.c
-index fee134a7eba3..5e9a5b8f7f16 100644
---- a/drivers/hid/hid-corsair-void.c
-+++ b/drivers/hid/hid-corsair-void.c
-@@ -553,9 +553,8 @@ static void corsair_void_add_battery(struct corsair_void_drvdata *drvdata)
- 
- 	if (IS_ERR(new_supply)) {
- 		hid_err(drvdata->hid_dev,
--			"failed to register battery '%s' (reason: %ld)\n",
--			drvdata->battery_desc.name,
--			PTR_ERR(new_supply));
-+			"failed to register battery '%s' (reason: %pe)\n",
-+			drvdata->battery_desc.name, new_supply);
- 		return;
- 	}
- 
--- 
-2.51.0
+>  /*
+>   * timerlat_bpf_attach - attach BPF program to collect timerlat data
+>   */
+> diff --git a/tools/tracing/rtla/src/timerlat_bpf.h b/tools/tracing/rtla/src/timerlat_bpf.h
+> index 118487436d30..b5009092c7a3 100644
+> --- a/tools/tracing/rtla/src/timerlat_bpf.h
+> +++ b/tools/tracing/rtla/src/timerlat_bpf.h
+> @@ -12,6 +12,7 @@ enum summary_field {
+>  };
+>  
+>  #ifndef __bpf__
+> +#include <bpf/libbpf.h>
+>  #ifdef HAVE_BPF_SKEL
+>  int timerlat_bpf_init(struct timerlat_params *params);
+>  int timerlat_bpf_attach(void);
+> -- 
+> 2.51.0
+> 
 
 
