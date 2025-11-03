@@ -1,110 +1,101 @@
-Return-Path: <linux-kernel+bounces-882641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1107EC2AFE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:19:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0941C2B012
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:20:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 755174F14DC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:17:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A06E13A748A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99DCC2F39D0;
-	Mon,  3 Nov 2025 10:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0609C2FD666;
+	Mon,  3 Nov 2025 10:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u2iuyYRl"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UVYeexe/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6348B1DED42
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 10:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5762A2E7624;
+	Mon,  3 Nov 2025 10:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762165073; cv=none; b=bSigMCGsV3+ONzXLN8fKwQv/rxZZLYmiQBMPNIpsLY6DieSw9QJTUWsdntFvASgmu3y361TR6NEOTm6wxHrVyo2wmf84c6g/2LaYN2r5UEOEn3qZf+wV26eBgen5nbgSxY3Xiht70o1UNZOwwUCGYgJLbnqBJH9VLEIV/1YVpyI=
+	t=1762165098; cv=none; b=U5bk/2BRbAEZDlTh1FnDWGYjLs/1UdndAu+vSEKSx1vY+jPzS1z3ZEJTgqWaOO+iYgRimzBa4IA3vLVqZfTJrrH/WC4NXJUp0b82+9rvLk8DQt/QMVUyj0JAEKw5p5ybfu2GfPSStkKaZ9ioj/MBdyGz/JTNIjmoRC42MGHaa9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762165073; c=relaxed/simple;
-	bh=8MiCb/wkimzT9J7ynbKauVkA4ev6a3Tt3Yba+gQGitY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=gjVxVYVHX08nkvZ7n/x2cHDkBNVHGgNvjwRtFG9gWdVoPw3YumuysJ8gD+wFjOtllVXeSBzqUv17Jv+93XEzwt4jXTj8pymel24dcycFmhhGe/9bOe3lm9uXgk/q78Dj4ornhqJUd9xGxiwY0OHu30Loq1MRMrH90g7f/KB3C0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u2iuyYRl; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-476b8c02445so33789295e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 02:17:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762165069; x=1762769869; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oOgM8WNLkc6Tm8aSr853varn89fMEi98z7ILIYLUAHI=;
-        b=u2iuyYRlALb/4MtI3k+vG70n2zuOdQKOw/wm3ErRBGVp4XSJiZTSO4NfZtID3KJ5SN
-         9O1X4PXRkucTU1DBaMMyF2qNXqG4vnqnDSUqTxV+664p3WIR9n0ipVVaWX2HBGo23+a2
-         2kw0upQBFBm46vGDz6y+kQPVp+TXVXsHDKms1jB9a/DvODyBSNoOMEIAkVMjRmsCcP2b
-         mevbCGOtAGRTPiKeUfKCkzqFpfp6XgZE/9d4Kzv4uetAvyJYiIskWlzl2Vhq1CKVanXr
-         cmpZxfcocIgvsTg6EAt5wft2Nc8kTfJ2zzve7mJ3zpiZib/R3c8oV7sSSWeUSTk+whHu
-         yYjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762165069; x=1762769869;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oOgM8WNLkc6Tm8aSr853varn89fMEi98z7ILIYLUAHI=;
-        b=VRh5lh7dudJPAa6xvEiWoWsZa7BDgcJMloUHDrxjN5A4ij5oZ9XbxerCije5CtELQR
-         nV9p3+jh6mSIxOrK8yXTrJFZFz9u3H51gp4i7opwf+/7wIdoGB2JzXHf9rsBPUlNfWIg
-         AL4NzZjYmtVIIHCSR2yEDulVbIhkgaIEtTN1vityH4/DAwsrFS7YglJ0iz6HexBr/WGA
-         TmokzdOOvG1g+3lrI97nwuCl5fZGmM4bYbg707/IbJuiLn+nr+n4dRETZ52FfBEglS6o
-         4u4fY/oeSS+qzppQ1qFD02szDPNO5HjSFLPHV/rZfHWcGPjwA8Jw6UtSQRgoyMJyrk29
-         ga3g==
-X-Forwarded-Encrypted: i=1; AJvYcCWzoMhwDeov1Zz5XI/AKs9UsohayNtknkzAzLRFIzpash7F6CaIapwAbKp1dUjzcTmU6sOPt11UqxrApqc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpsJJjxwpoEXkbcB0aOo55ON+SsYh0ujZegjgS/HlnABya4Zvl
-	94ON3vDs/1G7rDp//qnDSDe0xHvSymlSBbgYE/6N5d/J5qYCY26r3XaK88N7wLmSp+muiDHMdEe
-	G367jBFrcwH4FCif0FQ==
-X-Google-Smtp-Source: AGHT+IEGgSk8YGC/S8q02Xem2EpZ8CGSxhkfBY/COwRI6jkeUuW6v2BW/B/8X3uqJpmloBszvSIHf8ynay12SJQ=
-X-Received: from wmbg22.prod.google.com ([2002:a05:600c:a416:b0:477:14b8:19f6])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:190e:b0:471:669:ec1f with SMTP id 5b1f17b1804b1-47730791083mr125439425e9.8.1762165069626;
- Mon, 03 Nov 2025 02:17:49 -0800 (PST)
-Date: Mon, 3 Nov 2025 10:17:48 +0000
-In-Reply-To: <20251102-bounded_ints-v2-1-7ef0c26b1d36@nvidia.com>
+	s=arc-20240116; t=1762165098; c=relaxed/simple;
+	bh=C4QQnsShf5Y8+8Ho+Em1/waNjgFMK29LcwCRpg08oZs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AdEbYKCc4VzYI0Rcb9Tw3ZkUaO4ZHwdmumexUOih8QR/TK/Vn64/4NmDhRYXJOrtwitx1i12ng+AehtrLDdSkFz2OvTtQyVNUOoz+mPdljoI0aLx3eoIWxUHfi0NQztPz167cQEzZMZIYTV49ac0qYboGuqa5omzfZQ6W71cX5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UVYeexe/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49578C4CEE7;
+	Mon,  3 Nov 2025 10:18:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762165097;
+	bh=C4QQnsShf5Y8+8Ho+Em1/waNjgFMK29LcwCRpg08oZs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UVYeexe/SU2kLqppXCrgZ12xr7hjWV4gFx+NZfTOAdfFor6bpyeLxkounCwgN/qH1
+	 LRYYLPRWSnpjPD3aKriQF3S/6i2V87mzFy9vNbW33P0D7uFDsulFNvjSIQCILIZZ5H
+	 3PASHPOla3AEYTYjO32t/kQRTMpVWu8qlUB4Ou5SfaDiSg0661FIdNngmD7/w6SlQ5
+	 EHP2ds+29sKEYg1vhCMq8zaArngc0IU1vDd0XbvywyT3t5taiEFJQXyB2nEqepMQd5
+	 stdql9iwef3g1gdXjfS1GhEgWCSvYxtAMJf2q0LOcOuXHHiC8OzyRdiIqrIC+cGWQK
+	 Ce4WuDFhe9LOA==
+Date: Mon, 3 Nov 2025 11:18:15 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, 
+	=?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, semen.protsenko@linaro.org, willmcvicker@google.com, 
+	kernel-team@android.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 10/11] arm64: dts: exynos: gs101: add the chipid node
+Message-ID: <20251103-pompous-lean-jerboa-c7b8ee@kuoka>
+References: <20251031-gs101-chipid-v1-0-d78d1076b210@linaro.org>
+ <20251031-gs101-chipid-v1-10-d78d1076b210@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20251102-bounded_ints-v2-0-7ef0c26b1d36@nvidia.com> <20251102-bounded_ints-v2-1-7ef0c26b1d36@nvidia.com>
-Message-ID: <aQiBTOj1jl4xM3pJ@google.com>
-Subject: Re: [PATCH v2 1/2] rust: add BitInt integer wrapping type
-From: Alice Ryhl <aliceryhl@google.com>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Joel Fernandes <joelagnelf@nvidia.com>, Yury Norov <yury.norov@gmail.com>, 
-	Jesung Yang <y.j3ms.n@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251031-gs101-chipid-v1-10-d78d1076b210@linaro.org>
 
-On Sun, Nov 02, 2025 at 11:24:42PM +0900, Alexandre Courbot wrote:
-> Add the `BitInt` type, which is an integer on which the number of bits
-> allowed to be used is restricted, capping its maximal value below that
-> of primitive type is wraps.
+On Fri, Oct 31, 2025 at 12:56:09PM +0000, Tudor Ambarus wrote:
+> Add the chipid node.
 > 
-> This is useful to e.g. enforce guarantees when working with bit fields.
+> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+> ---
+>  arch/arm64/boot/dts/exynos/google/gs101.dtsi | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> Alongside this type, provide many `From` and `TryFrom` implementations
-> are to reduce friction when using with regular integer types. Proxy
-> implementations of common integer traits are also provided.
-> 
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+> index d06d1d05f36408137a8acd98e43d48ea7d4f4292..11622da2d46ff257b447a3dfdc98abdf29a45b9a 100644
+> --- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
+> @@ -467,6 +467,12 @@ opp-2802000000 {
+>  		};
+>  	};
+>  
+> +	chipid {
+> +		compatible = "google,gs101-chipid";
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+That's not a real device, sorry.
 
-> +                // Statically assert that `VALUE` fits within the set number of bits.
-> +                const {
-> +                    build_assert!(fits_within!(VALUE, $type, NUM_BITS));
-> +                }
+I had some doubts when reading the bindings, then more when reading
+driver - like chipid probe() was basically empty, no single device
+access, except calling other kernel subsystem - and now here no single
+actual hardware resource, except reference to other node.
 
-Since it's in a const block, this can just be an assert!.
+Are you REALLY REALLY sure you have in your datasheet such device as
+chipid?
 
-Alice
+It is damn basic question, which you should start with.
+
+
+Best regards,
+Krzysztof
+
 
