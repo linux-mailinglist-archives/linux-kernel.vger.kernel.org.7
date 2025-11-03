@@ -1,169 +1,118 @@
-Return-Path: <linux-kernel+bounces-883725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5956C2E325
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 22:52:13 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79925C2E328
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 22:52:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4D7CB4E2135
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 21:52:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 15C7C4E22F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 21:52:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63F12D5955;
-	Mon,  3 Nov 2025 21:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 560362C15B7;
+	Mon,  3 Nov 2025 21:52:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="av1Sa24X"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HLC99ka/"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3739428C871;
-	Mon,  3 Nov 2025 21:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5933328C871
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 21:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762206726; cv=none; b=q/NngKScuMH07Uv3cHsXCsvTyOarRo7h6LDuPd8Qi+bRJmvmG9Ilag4LaSHUYsD5POEOCQH3Pu8feLdhLZKGVafOEIZehq5+ilA8cho8WZMdTdPo+VfaViRi9+GNR9ragjRm7yMhZOaUBRWgAfnqfjkURXSJdAVhgrylNj0/Qz4=
+	t=1762206769; cv=none; b=aoiIdp4VZcKLsrvgP8/L3QV7fTFObHVMN7WEQ9fTsH1UQ82PwoX+h72mYBtSLEU9DXMNPuJLa3Gutynkk+LVKOBrS0nHLrgk/fzsbhPfILE+xXdMRE6V+CnJLeDkhc5E9EKTe98NoHZHAiDzqFwA2wMwtOjlaxtU2u0fbHlG8/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762206726; c=relaxed/simple;
-	bh=G650CcctKviHrpBbtXZF9/tV8M+ZyEG/5CgFWIMxRSQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C8lHpZdzBDs1VzWmkgC8M1D27DRjC3rMe/cCg7SgT6aEuR1cKnNLgIYkUYUhMCUYuhfWhz4OGsa4BlaaxiHOZmM+ue4I3hLk6PLvrsGKkUVnN8raXG3TRKXa+mOwbux/odXkBl/Do9KtIBuNYHh1CgQoo1q4CFkU0mAnJs1DJSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=av1Sa24X; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762206724; x=1793742724;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=G650CcctKviHrpBbtXZF9/tV8M+ZyEG/5CgFWIMxRSQ=;
-  b=av1Sa24XN23jCu+B0+CDQ1VPWI3Ld7S6cPlRgOBE316fkvq8AMU1B090
-   43xRcmk4gjWIlmaGNJxAdto8snytS1F4MZ+QCea8RRaa7bG8XBzgCzg2J
-   HgFHTBlJrNr80a2GQp2U0DX3yAO97y1QTs18szlq2IK9HKAVAhlERNRhk
-   7ObxMNJvl/09iJsd9uj7UGKNvLCd8gQqPhUpN8d4qui5Z7kLajgzMdFs7
-   Kgs/durfbeqStuXg5zRWmgcq4cnoNAUpXKIhgmBXEo+8QRYGpUCU9dCkm
-   RfodsCAb/DkXPl6CT8K6Ii+UNcTyns+MLyUhn5PWEYVyBlhqf64oe38fy
-   w==;
-X-CSE-ConnectionGUID: X065Zu5uR/mXsgeT5dEEOg==
-X-CSE-MsgGUID: xLsFedVWSV6jLbAuwEgeQQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="75645470"
-X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="75645470"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 13:52:04 -0800
-X-CSE-ConnectionGUID: zE+DtD8CRjmgagUg7pmUAQ==
-X-CSE-MsgGUID: JyTJB3WKTkC+lN8UwpeX0Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="186658446"
-Received: from dwesterg-mobl1.amr.corp.intel.com (HELO [10.125.110.133]) ([10.125.110.133])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 13:52:02 -0800
-Message-ID: <df23145b-b088-4131-ba23-6f63a4c49de0@intel.com>
-Date: Mon, 3 Nov 2025 14:52:01 -0700
+	s=arc-20240116; t=1762206769; c=relaxed/simple;
+	bh=bTBuRia61m/jG3EkoaOE4nkFZOW8WgwnoXev9wiHOvg=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Arylsi4Yrz3C8gAYtSpwxzrbLE6FOoo6ML1/9wVicn4wsKHXVsMvFYxaq1kyaAMvEhE4+EvuEZOg8JYksX0gYcXnwzbdiL2e8sIH/Z5NSsQYHbKTjxtI+GCM92oO47ULSIqiADcr1e7AG9GDUanFNRntOBmvj3DMVSLF/l16bfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--xur.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HLC99ka/; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--xur.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2904e9e0ef9so114179845ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 13:52:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762206767; x=1762811567; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=uFkcIttTXz5VeiXUFc/Q59ETx+8xz3MvAyheQfgOvCc=;
+        b=HLC99ka/5un1BN7nHVwkjjYTOe2JJVW3s1M1rXaAgGSATnDkrVM+qnUYopayRDoJIx
+         fwB/9eIvtMFYoPcLSNh12UxO9xIBpfnWv2Kl8KGVAavoYtG+hzpVbCU18UnrXRduiUCX
+         TcyEvaoFsB7zZO6Xxw+WbiZjRQaJKH1tWZKXAvn6H/fHBo8I0D8WGkghKAlSAmkWJCDV
+         jSi7vdU+qEamcR9kgPz5N9/PgOKfQ0PzcUn/hwiBN6sqEK/XTxE+DBt3qSRUQ9AsrXUO
+         ZlXbFrH4KXoGXRDAEEf07Fx/clXBnkfoa47buGO0QEUab7HCvviwUg8mn8138rt9H2ej
+         M4ZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762206767; x=1762811567;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uFkcIttTXz5VeiXUFc/Q59ETx+8xz3MvAyheQfgOvCc=;
+        b=fN88U0hjbbcVM8sUG6RvCImZCwBRm/+xsvCMwHGMCB7PeYQVmyNcJg5NfN8BBeklLE
+         x8whKmtp2zahHLlZsMarNTeiyTYQRtpzMsQIivLLmAPMZnGW5fgx4XU0ywo4KJjIENsh
+         tB0UVzQa+uHeRmpbfqmUQYawfG0tgn5Nw59YLNlyFwRx3dxKA8bS1tdR20QOmgE0hY6+
+         j7jT79zGMkZhAR69cyvbPucdbX/UZXynv/HoMVultQMk/hJwuTVjsI35kDoQra+vY1Mc
+         x5L0DQmpQbJir47El4fXvqWTqBifJrzvLjahUHeHivKkKCa+Y/7x8xA3vUwcrvdi19zH
+         jE+A==
+X-Gm-Message-State: AOJu0YwbUpBAerPq3LRZZuJfrA2yd10lDIfizOKIqybsq5h5GtQ212Iv
+	sW78NZjoWWf35t8u2E7Duj+U6Lu1B7gDXNRTY7HsWvtAlV0rk1y3nbZ6GwaqUyZuqwkQsw==
+X-Google-Smtp-Source: AGHT+IGXrXuz4lDC3hVuJg0c2xaS47MRIDYRtQmPg5kmZHqfpLCvaRNykNojZzFyu3ZD9CMIA7p9nUM=
+X-Received: from pjboc4.prod.google.com ([2002:a17:90b:1c04:b0:340:bb32:f5cf])
+ (user=xur job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:2308:b0:294:9813:4512
+ with SMTP id d9443c01a7336-2951a38de1dmr177469615ad.3.1762206767581; Mon, 03
+ Nov 2025 13:52:47 -0800 (PST)
+Date: Mon,  3 Nov 2025 21:52:43 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 04/14] cxl/region: Add @hpa_range argument to function
- cxl_calc_interleave_pos()
-To: Robert Richter <rrichter@amd.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Davidlohr Bueso <dave@stgolabs.net>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- Gregory Price <gourry@gourry.net>,
- "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
- Terry Bowman <terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
-References: <20251103184804.509762-1-rrichter@amd.com>
- <20251103184804.509762-5-rrichter@amd.com>
-From: Dave Jiang <dave.jiang@intel.com>
-Content-Language: en-US
-In-Reply-To: <20251103184804.509762-5-rrichter@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.2.997.g839fc31de9-goog
+Message-ID: <20251103215244.2080638-1-xur@google.com>
+Subject: [PATCH v2 1/2] objtool: fix the check for dead_end function with
+ multiple sibliing calls
+From: xur@google.com
+To: Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Rong Xu <xur@google.com>
+Cc: linux-kernel@vger.kernel.org, Sriraman Tallam <tmsriram@google.com>, 
+	Han Shen <shenhan@google.com>, Krzysztof Pszeniczny <kpszeniczny@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
+From: Rong Xu <xur@google.com>
 
+If a function has multiple sibling calls, the dead_end check should
+only return true if all sibling call targets are also dead_end
+functions.
 
-On 11/3/25 11:47 AM, Robert Richter wrote:
-> cxl_calc_interleave_pos() uses the endpoint decoder's HPA range to
-> determine its interleaving position. This requires the endpoint
-> decoders to be an SPA, which is not the case for systems that need
-> address translation.
-> 
-> Add a separate @hpa_range argument to function
-> cxl_calc_interleave_pos() to specify the address range. Now it is
-> possible to pass the SPA translated address range of an endpoint
-> decoder to function cxl_calc_interleave_pos().
-> 
-> Refactor only, no functional changes.
-> 
-> Patch is a prerequisite to implement address translation.
-> 
-> Reviewed-by: Gregory Price <gourry@gourry.net>
-> Signed-off-by: Robert Richter <rrichter@amd.com>
+Signed-off-by: Rong Xu <xur@google.com>
+Reviewed-by: Sriraman Tallam <tmsriram@google.com>
+Reviewed-by: Han Shen <shenhan@google.com>
+Reviewed-by: Krzysztof Pszeniczny <kpszeniczny@google.com>
+---
+ tools/objtool/check.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>> ---
->  drivers/cxl/core/region.c | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index bb889c891cf7..d3557d9d5b0f 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -1845,11 +1845,11 @@ static int find_pos_and_ways(struct cxl_port *port, struct range *range,
->   * Return: position >= 0 on success
->   *	   -ENXIO on failure
->   */
-> -static int cxl_calc_interleave_pos(struct cxl_endpoint_decoder *cxled)
-> +static int cxl_calc_interleave_pos(struct cxl_endpoint_decoder *cxled,
-> +				   struct range *hpa_range)
->  {
->  	struct cxl_port *iter, *port = cxled_to_port(cxled);
->  	struct cxl_memdev *cxlmd = cxled_to_memdev(cxled);
-> -	struct range *range = &cxled->cxld.hpa_range;
->  	int parent_ways = 0, parent_pos = 0, pos = 0;
->  	int rc;
->  
-> @@ -1887,7 +1887,8 @@ static int cxl_calc_interleave_pos(struct cxl_endpoint_decoder *cxled)
->  		if (is_cxl_root(iter))
->  			break;
->  
-> -		rc = find_pos_and_ways(iter, range, &parent_pos, &parent_ways);
-> +		rc = find_pos_and_ways(iter, hpa_range, &parent_pos,
-> +				       &parent_ways);
->  		if (rc)
->  			return rc;
->  
-> @@ -1897,7 +1898,7 @@ static int cxl_calc_interleave_pos(struct cxl_endpoint_decoder *cxled)
->  	dev_dbg(&cxlmd->dev,
->  		"decoder:%s parent:%s port:%s range:%#llx-%#llx pos:%d\n",
->  		dev_name(&cxled->cxld.dev), dev_name(cxlmd->dev.parent),
-> -		dev_name(&port->dev), range->start, range->end, pos);
-> +		dev_name(&port->dev), hpa_range->start, hpa_range->end, pos);
->  
->  	return pos;
->  }
-> @@ -1910,7 +1911,7 @@ static int cxl_region_sort_targets(struct cxl_region *cxlr)
->  	for (i = 0; i < p->nr_targets; i++) {
->  		struct cxl_endpoint_decoder *cxled = p->targets[i];
->  
-> -		cxled->pos = cxl_calc_interleave_pos(cxled);
-> +		cxled->pos = cxl_calc_interleave_pos(cxled, &cxlr->hpa_range);
->  		/*
->  		 * Record that sorting failed, but still continue to calc
->  		 * cxled->pos so that follow-on code paths can reliably
-> @@ -2094,7 +2095,7 @@ static int cxl_region_attach(struct cxl_region *cxlr,
->  		struct cxl_endpoint_decoder *cxled = p->targets[i];
->  		int test_pos;
->  
-> -		test_pos = cxl_calc_interleave_pos(cxled);
-> +		test_pos = cxl_calc_interleave_pos(cxled, &cxlr->hpa_range);
->  		dev_dbg(&cxled->cxld.dev,
->  			"Test cxl_calc_interleave_pos(): %s test_pos:%d cxled->pos:%d\n",
->  			(test_pos == cxled->pos) ? "success" : "fail",
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 9004fbc067693..c2ee3c3a84a62 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -314,7 +314,13 @@ static bool __dead_end_function(struct objtool_file *file, struct symbol *func,
+ 				return false;
+ 			}
+ 
+-			return __dead_end_function(file, insn_func(dest), recursion+1);
++			/*
++			 * A function can have multiple sibling calls. All of
++			 * them need to be dead ends for the function to be a
++			 * dead end too.
++			 */
++			if (!__dead_end_function(file, insn_func(dest), recursion+1))
++				return false;
+ 		}
+ 	}
+ 
+
+base-commit: 6146a0f1dfae5d37442a9ddcba012add260bceb0
+-- 
+2.51.2.997.g839fc31de9-goog
 
 
