@@ -1,291 +1,201 @@
-Return-Path: <linux-kernel+bounces-882858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ADB6C2BAD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:33:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA949C2BB2E
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:35:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D178188F8C3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:33:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C07BE3B87C5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 478D930C611;
-	Mon,  3 Nov 2025 12:32:32 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D0A30DEB0;
+	Mon,  3 Nov 2025 12:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1yIt+xuO"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 027F12FE57F;
-	Mon,  3 Nov 2025 12:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2035530C638
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 12:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762173151; cv=none; b=FvYB2cGOPovwziyRnKSI3KGpzwIZYwO62S9K/f8IUCTMoRQ+Go/LHb4UqNryRiYdiBA9NFfcrZQei73wEDqeP3eQsigwhmiXpMAqAnydRfG8QeQPDpTfKRuC49DbZiEpGRfdVVFN63ryiylmSpRNvGifCCESJJyZ85UNjVveWqY=
+	t=1762173244; cv=none; b=q1tLajr9eyArPSKc9+dZ2jDJVNSTnTEAARhgIP/+rMcvRF0CyFsxPOFpH5KZdykBzZZviiVtqN847BE4SGGwqv23bqzs1UlC1oYsHyLLGUbaatR9jSGU8HTHEQjruDxvDeMjT+BKp38v4ofG79O6joDGI5ahwmJ3weP9ljr/ffQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762173151; c=relaxed/simple;
-	bh=BRK0cw9ek/vbKWWU/5WFuFTQq8paZP6l279Uni3ApLk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ir7yK7Q09BPC7kVNveNOCcwsY3O05iuSYYqvd07PbLQFC8Ek5exaj+d5X8zX7qSLck8ls1GFFJbIc1Q7Fu42OgsbxdZ4+0uQveRf+nzMGmrHW+u6ZUDDuQUf+CgkWP4oH0bFjTSN7Y3hUlVdKuFRAR0cMgTPJNTan/dETOs7FKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4d0WF15DN8zKHMWQ;
-	Mon,  3 Nov 2025 20:32:21 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 082FB1A0F40;
-	Mon,  3 Nov 2025 20:32:26 +0800 (CST)
-Received: from [10.174.178.129] (unknown [10.174.178.129])
-	by APP2 (Coremail) with SMTP id Syh0CgCn_UXXoAhpp45JCg--.38025S3;
-	Mon, 03 Nov 2025 20:32:25 +0800 (CST)
-Message-ID: <2d4c41f5-6886-98a3-8ccc-54d8a4f89fdc@huaweicloud.com>
-Date: Mon, 3 Nov 2025 20:32:23 +0800
+	s=arc-20240116; t=1762173244; c=relaxed/simple;
+	bh=w36KW/wPb3cVagvybLftrF4CjYrWqxSZqwj4SEHtr88=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=kwZZRUIVV5V1N6ZIhzp0nA5ENFRKL+4hj6E+fTV1H+cuGmErLVlsZ+md8cosl8GHj9vMEvpx6tr/KoGIk6UQKddDMAIIVRJi0qGxfjCeSaK6jrGvkBO0DqSEofG559yskYjlHFY7S0e6+A8KUCz1MQBsdeIEXgTXijkJ29v4crE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1yIt+xuO; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-477212937eeso31012745e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 04:34:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762173241; x=1762778041; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MSAYutkZ7+a569qs6E4HPdsGwXOmRZ2wAq/f2x6mExQ=;
+        b=1yIt+xuOYwX5i7ODDEsQ5NbdkV5bYpYInTeM+iGri5xNow1udp+RYn2hFjNS07sg8S
+         M9Mxl48IvlYQD8UbDzMFMef84CajUNmyxGW597yAomAmZjK8lo3w/+EKRufRXf88ITgG
+         MdVa6m/pvXjIe8DpQYSHSdv4Vjf9nGQDnZIgxVcomYjBvBCmHrdi9uyIlCBfr/UNmRoj
+         W/zDbgkMgHdI/6cVnLx2iXxePNuOOhIthKCVBAIq02ow0IcrCFs1jwcOguu6/NX3HtkB
+         C16tB9C30AnFKkUoM68d8gaTsrXQfj/uZBPAmpJlYSblCZuKJALqCQ8AND3xcWpqiUvN
+         sEBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762173241; x=1762778041;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MSAYutkZ7+a569qs6E4HPdsGwXOmRZ2wAq/f2x6mExQ=;
+        b=i3IxFjidOczd7dnH+RVnIAOxk9reGB8h9iNoKRs69mnJR8S+MWv6APmqKx/jdPbaQ4
+         XQIrnas5U1dwLnX9DoAOkK+NvFMIFXsife2x6P+jMW4Oo5rsyhXZ25r8/x9/P11UbmHo
+         ZE8mpDks1p6EJHYQSXLxQ+V6y4sY0h0z23ZrSXGTdQq8XRqspG4BdqNP9RYBLC3R01RC
+         ZCSgwE5OaTG80OLYSYmwqY/Yz7XtYCt/KQadMikVd6/OkcnDyWDbWZ19rWHggyWm9TxJ
+         HhZSwhhf5Rtnj/JduXzugmsg5qCchV+k7id976dKstqK8cTizs2qDSOOXWPhyc83MsfY
+         o98g==
+X-Forwarded-Encrypted: i=1; AJvYcCWSanfs4hOjkbzkm6yt05gQD9gz4Lp6g2vxJdT33xxTOhgZGAH+erScFlaoH3PnDA/pTIdkYIjFyOsYE/0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzf/KFUdK7UKyAasY6kudLqSoM1NfiH3VAqbE2DJVpW/7uHvN0w
+	YZigoeihbvGJ8F1l+TkptbiYYTtYgu4/PaaLTLxMBXCmMDm5B6WUuwzrfUIJ6ezlYwQBJUvj74q
+	S7ULDWc3JjtDAig==
+X-Google-Smtp-Source: AGHT+IE3BVSRA1xaeeR33gXX0nVF0a1SF+382+YyhshPRNKnmANoXw9zOSGPxjdhjzWLcN6ym2yRotwlAcsWrA==
+X-Received: from wmbgz3.prod.google.com ([2002:a05:600c:8883:b0:477:df7:b01a])
+ (user=smostafa job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:4e08:b0:471:3b6:f2d with SMTP id 5b1f17b1804b1-477308aeaeamr104092065e9.38.1762173241601;
+ Mon, 03 Nov 2025 04:34:01 -0800 (PST)
+Date: Mon,  3 Nov 2025 12:33:48 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v8 2/4] md: init bioset in mddev_init
-To: Xiao Ni <xni@redhat.com>, linan666@huaweicloud.com
-Cc: corbet@lwn.net, song@kernel.org, yukuai@fnnas.com, hare@suse.de,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, yangerkun@huawei.com, yi.zhang@huawei.com
-References: <20251030062807.1515356-1-linan666@huaweicloud.com>
- <20251030062807.1515356-3-linan666@huaweicloud.com>
- <CALTww28LKk6bH4tuEA4DD3uAJScCVAQUBn0d0JYu3AvVjxetzQ@mail.gmail.com>
-From: Li Nan <linan666@huaweicloud.com>
-In-Reply-To: <CALTww28LKk6bH4tuEA4DD3uAJScCVAQUBn0d0JYu3AvVjxetzQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgCn_UXXoAhpp45JCg--.38025S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3GryUCr1DAFW5CrW3Jr1UJrb_yoW7Kr1xpa
-	yxJas8Kr4kJFWagry2qF1vg3WFqr1xtF4DtrW7ur1rAan2yr4kKF1Ygr48ZrykC3yvka1r
-	Ww18XFZxuF15ur7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPI14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v
-	4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7
-	AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
-	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GF
-	ylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
-	1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUQ
-	vtAUUUUU=
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.51.1.930.gacf6e81ea2-goog
+Message-ID: <20251103123355.1769093-1-smostafa@google.com>
+Subject: [PATCH v6 0/4] Move io-pgtable-arm selftest to KUnit
+From: Mostafa Saleh <smostafa@google.com>
+To: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Cc: robin.murphy@arm.com, will@kernel.org, joro@8bytes.org, jgg@ziepe.ca, 
+	praan@google.com, Mostafa Saleh <smostafa@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+This is a small series to clean up the io-pgtable-arm library.
+
+The first patch is a small clean up to reduce the depedencies of the
+test before moving it.
+
+The second patch was originally part of the SMMUv3 KVM driver support[1],
+which needed to factor out the kernel code from the io-pgtable-arm
+library, and based on Jason=E2=80=99s suggestion this can be taken out as a
+cleanup, and a step further to convert it to kunit.
+
+The second patch just moves the code to a new file with no other changes,
+so it can be easier to review with =E2=80=9C--color-moved=E2=80=9D
+
+The third patch converts the sefltest to be modular, that is useful as
+kunit can be a module and it can run anytime after boot.
+
+The fourth patch registers the test using kunit, and converges some of
+the APIs, some notes about that:
+
+Granularity of tests:
+---------------------
+To make the series easier to review, the series changes the test to run in
+kunit without making intrusive changes to the test itself.
+It=E2=80=99s possible to refactor the tests to have smaller granularity (al=
+though
+I think that would make it less efficient as we might create the same io-pg=
+table
+config multiple times) and integrate them in kunit as multiple tests, that
+change would be more intrusive, if you think that is the right approach,
+I can add a couple of more patches re-writing the tests.
+
+Other changes:
+--------------
+- Also, to make the test changes minimal, and the fail messages similar,
+  =E2=80=9CKUNIT_FAIL()=E2=80=9D is used to fail all tests instead of using=
+ KUNIT specific
+  assertions.
+
+- Instead of using faux device, we rely on kunit_device_register()
+
+- The WARN is removed when a test fails, as that doesn=E2=80=99t seem to be=
+ a pattern
+  used with kunit.
 
 
+You can find the instructions on how to run kunit in the last patch commit =
+message.
 
-在 2025/11/3 9:23, Xiao Ni 写道:
-> On Thu, Oct 30, 2025 at 2:36 PM <linan666@huaweicloud.com> wrote:
->>
->> From: Li Nan <linan122@huawei.com>
->>
->> IO operations may be needed before md_run(), such as updating metadata
->> after writing sysfs. Without bioset, this triggers a NULL pointer
->> dereference as below:
->>
->>   BUG: kernel NULL pointer dereference, address: 0000000000000020
->>   Call Trace:
->>    md_update_sb+0x658/0xe00
->>    new_level_store+0xc5/0x120
->>    md_attr_store+0xc9/0x1e0
->>    sysfs_kf_write+0x6f/0xa0
->>    kernfs_fop_write_iter+0x141/0x2a0
->>    vfs_write+0x1fc/0x5a0
->>    ksys_write+0x79/0x180
->>    __x64_sys_write+0x1d/0x30
->>    x64_sys_call+0x2818/0x2880
->>    do_syscall_64+0xa9/0x580
->>    entry_SYSCALL_64_after_hwframe+0x4b/0x53
->>
->> Reproducer
->> ```
->>    mdadm -CR /dev/md0 -l1 -n2 /dev/sd[cd]
->>    echo inactive > /sys/block/md0/md/array_state
->>    echo 10 > /sys/block/md0/md/new_level
->> ```
->>
-> 
-> Hi Li Nan
-> 
->> mddev_init() can only be called once per mddev, no need to test if bioset
->> has been initialized anymore.
-> 
-> The patch looks good to me. But I don't understand the message here.
-> This patch changes the alloc/free bioset positions. What's the meaning
-> of "no need to test if bioset has been initialized anymore"?
-> 
-> Regards
-> Xiao
+A failure at the test with the new implementation look as
+[   55.631877]     # arm_lpae_do_selftests: pgsize_bitmap 0x20010000, IAS 4=
+4 OAS 48
+[   55.632135]     # arm_lpae_do_selftests: EXPECTATION FAILED at drivers/i=
+ommu/io-pgtable-arm-selftests.c:144
+[   55.632135] test failed for fmt idx 0
 
-Hi Xiao
+Changes in v6:
+--------------
+- Remove arm_lpae_dump_ops()
+- Simplify __FAIL()
 
-Thanks for your review.
+v5: https://lore.kernel.org/linux-iommu/20250929155001.3287719-1-smostafa@g=
+oogle.com/
 
-Sorry for causing any misunderstanding.
-Old code:
--	if (!bioset_initialized(&mddev->bio_set)) {
--		err = bioset_init(&mddev->bio_set, BIO_POOL_SIZE, 0, BIOSET_NEED_BVECS);
+Changes in v5:
+--------------
+- Rebase on iommu/next tree
+- Collected Jason and Praan Rbs
+- Move back #include <slab.h> to the main file.
 
-New code:
-+	err = bioset_init(&mddev->bio_set, BIO_POOL_SIZE, 0, BIOSET_NEED_BVECS);
+v4: https://lore.kernel.org/linux-iommu/20250922090003.686704-1-smostafa@go=
+ogle.com/
 
-bioset_initialized() is removed. Can I describe it as:
-   mddev_init() can only be called once per mddev, thus bioset_initialized()
-can be removed.
+Main changes in v4:
+-------------------
+- Remove one missed __init.
+- Change the kconfig dependencies back as it broke ARM
+https://lore.kernel.org/all/202509201819.f369wBHc-lkp@intel.com/
 
->>
->> Fixes: d981ed841930 ("md: Add new_level sysfs interface")
->> Signed-off-by: Li Nan <linan122@huawei.com>
->> ---
->>   drivers/md/md.c | 69 +++++++++++++++++++++++--------------------------
->>   1 file changed, 33 insertions(+), 36 deletions(-)
->>
->> diff --git a/drivers/md/md.c b/drivers/md/md.c
->> index f6fd55a1637b..dffc6a482181 100644
->> --- a/drivers/md/md.c
->> +++ b/drivers/md/md.c
->> @@ -730,6 +730,8 @@ static void mddev_clear_bitmap_ops(struct mddev *mddev)
->>
->>   int mddev_init(struct mddev *mddev)
->>   {
->> +       int err = 0;
->> +
->>          if (!IS_ENABLED(CONFIG_MD_BITMAP))
->>                  mddev->bitmap_id = ID_BITMAP_NONE;
->>          else
->> @@ -741,10 +743,23 @@ int mddev_init(struct mddev *mddev)
->>
->>          if (percpu_ref_init(&mddev->writes_pending, no_op,
->>                              PERCPU_REF_ALLOW_REINIT, GFP_KERNEL)) {
->> -               percpu_ref_exit(&mddev->active_io);
->> -               return -ENOMEM;
->> +               err = -ENOMEM;
->> +               goto exit_acitve_io;
->>          }
->>
->> +       err = bioset_init(&mddev->bio_set, BIO_POOL_SIZE, 0, BIOSET_NEED_BVECS);
->> +       if (err)
->> +               goto exit_writes_pending;
->> +
->> +       err = bioset_init(&mddev->sync_set, BIO_POOL_SIZE, 0, BIOSET_NEED_BVECS);
->> +       if (err)
->> +               goto exit_bio_set;
->> +
->> +       err = bioset_init(&mddev->io_clone_set, BIO_POOL_SIZE,
->> +                         offsetof(struct md_io_clone, bio_clone), 0);
->> +       if (err)
->> +               goto exit_sync_set;
->> +
->>          /* We want to start with the refcount at zero */
->>          percpu_ref_put(&mddev->writes_pending);
->>
->> @@ -773,11 +788,24 @@ int mddev_init(struct mddev *mddev)
->>          INIT_WORK(&mddev->del_work, mddev_delayed_delete);
->>
->>          return 0;
->> +
->> +exit_sync_set:
->> +       bioset_exit(&mddev->sync_set);
->> +exit_bio_set:
->> +       bioset_exit(&mddev->bio_set);
->> +exit_writes_pending:
->> +       percpu_ref_exit(&mddev->writes_pending);
->> +exit_acitve_io:
->> +       percpu_ref_exit(&mddev->active_io);
->> +       return err;
->>   }
->>   EXPORT_SYMBOL_GPL(mddev_init);
->>
->>   void mddev_destroy(struct mddev *mddev)
->>   {
->> +       bioset_exit(&mddev->bio_set);
->> +       bioset_exit(&mddev->sync_set);
->> +       bioset_exit(&mddev->io_clone_set);
->>          percpu_ref_exit(&mddev->active_io);
->>          percpu_ref_exit(&mddev->writes_pending);
->>   }
->> @@ -6393,29 +6421,9 @@ int md_run(struct mddev *mddev)
->>                  nowait = nowait && bdev_nowait(rdev->bdev);
->>          }
->>
->> -       if (!bioset_initialized(&mddev->bio_set)) {
->> -               err = bioset_init(&mddev->bio_set, BIO_POOL_SIZE, 0, BIOSET_NEED_BVECS);
->> -               if (err)
->> -                       return err;
->> -       }
->> -       if (!bioset_initialized(&mddev->sync_set)) {
->> -               err = bioset_init(&mddev->sync_set, BIO_POOL_SIZE, 0, BIOSET_NEED_BVECS);
->> -               if (err)
->> -                       goto exit_bio_set;
->> -       }
->> -
->> -       if (!bioset_initialized(&mddev->io_clone_set)) {
->> -               err = bioset_init(&mddev->io_clone_set, BIO_POOL_SIZE,
->> -                                 offsetof(struct md_io_clone, bio_clone), 0);
->> -               if (err)
->> -                       goto exit_sync_set;
->> -       }
->> -
->>          pers = get_pers(mddev->level, mddev->clevel);
->> -       if (!pers) {
->> -               err = -EINVAL;
->> -               goto abort;
->> -       }
->> +       if (!pers)
->> +               return -EINVAL;
->>          if (mddev->level != pers->head.id) {
->>                  mddev->level = pers->head.id;
->>                  mddev->new_level = pers->head.id;
->> @@ -6426,8 +6434,7 @@ int md_run(struct mddev *mddev)
->>              pers->start_reshape == NULL) {
->>                  /* This personality cannot handle reshaping... */
->>                  put_pers(pers);
->> -               err = -EINVAL;
->> -               goto abort;
->> +               return -EINVAL;
->>          }
->>
->>          if (pers->sync_request) {
->> @@ -6554,12 +6561,6 @@ int md_run(struct mddev *mddev)
->>          mddev->private = NULL;
->>          put_pers(pers);
->>          md_bitmap_destroy(mddev);
->> -abort:
->> -       bioset_exit(&mddev->io_clone_set);
->> -exit_sync_set:
->> -       bioset_exit(&mddev->sync_set);
->> -exit_bio_set:
->> -       bioset_exit(&mddev->bio_set);
->>          return err;
->>   }
->>   EXPORT_SYMBOL_GPL(md_run);
->> @@ -6784,10 +6785,6 @@ static void __md_stop(struct mddev *mddev)
->>          mddev->private = NULL;
->>          put_pers(pers);
->>          clear_bit(MD_RECOVERY_FROZEN, &mddev->recovery);
->> -
->> -       bioset_exit(&mddev->bio_set);
->> -       bioset_exit(&mddev->sync_set);
->> -       bioset_exit(&mddev->io_clone_set);
->>   }
->>
->>   void md_stop(struct mddev *mddev)
->> --
->> 2.39.2
->>
-> 
-> 
-> .
+v3: https://lore.kernel.org/all/20250919133316.2741279-1-smostafa@google.co=
+m/
 
--- 
-Thanks,
-Nan
+Main changes in v3:
+-------------------
+- Move back unused code
+- Simplify printing based on Jason comments + some renames
+- Collect Jasons Rb
+v2: https://lore.kernel.org/all/20250917191143.3847487-1-smostafa@google.co=
+m/
+
+Main changes in v2:
+-------------------
+- Make the test modular
+v1: https://lore.kernel.org/linux-iommu/20250917140216.2199055-1-smostafa@g=
+oogle.com/
+
+[1] https://lore.kernel.org/all/20250819215156.2494305-5-smostafa@google.co=
+m/
+
+
+Mostafa Saleh (4):
+  iommu/io-pgtable-arm: Remove arm_lpae_dump_ops()
+  iommu/io-pgtable-arm: Move selftests to a separate file
+  iommu/io-pgtable-arm-selftests: Modularize the test
+  iommu/io-pgtable-arm-selftests: Use KUnit
+
+ drivers/iommu/Kconfig                    |  11 +-
+ drivers/iommu/Makefile                   |   1 +
+ drivers/iommu/io-pgtable-arm-selftests.c | 214 +++++++++++++++++++++++
+ drivers/iommu/io-pgtable-arm.c           | 203 ---------------------
+ 4 files changed, 221 insertions(+), 208 deletions(-)
+ create mode 100644 drivers/iommu/io-pgtable-arm-selftests.c
+
+
+base-commit: 6146a0f1dfae5d37442a9ddcba012add260bceb0
+--=20
+2.51.1.930.gacf6e81ea2-goog
 
 
