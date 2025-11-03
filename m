@@ -1,338 +1,286 @@
-Return-Path: <linux-kernel+bounces-882232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E8DBC29EF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 04:18:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 494A9C29F02
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 04:19:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A5F6E4E3A41
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 03:18:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E44A188C11D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 03:19:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 998D627F4CE;
-	Mon,  3 Nov 2025 03:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C7F28725C;
+	Mon,  3 Nov 2025 03:18:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FUP1FSpX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XPXWEIib";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Pxnz0lN6"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9CEA226D18
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 03:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762139873; cv=none; b=rrXw+6lwDetNP/t4QwfDPwndqj8xL7uGbe2SETt6PL2OOhMJW93eRJP/OWcF8P4OStrqvYrxmAwX6jfWMRp7qzwhtkI6UdmcpHnVwVrC/m3V/v5R4mb3/CXEl7zsluKpiptFIF6sDam0EzZQbnUTNdw3GezcTHBgsNEYe2LC+Eo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762139873; c=relaxed/simple;
-	bh=Qlf0NE/gpeGR10ptH0mjbCnXJKEHBCLG36L5sy1Vg38=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BNTRzu5Xnae+n6RaSQZfrIba5vPL0arY2N1VeZKAz78zSDOE1V11UQlFqiyJujFWyCOpA399GauPrQzQLgm+onNERsVNfVrvyuFFcCCYA2A30/rVg4EN3fYRAXYp4KCZtwNVdjqSnsgYv66H3SyUOzQK4OyYhc7cTW81SAnl3Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FUP1FSpX; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762139870;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5DU21dFbkfQss6XV7ENAx7XKS9XLFCmBUIaq0YUh++A=;
-	b=FUP1FSpXEHiF1yvuoAK5zj/28eoKbfe7kjAePWBP+gLlgoPICAc22Bqy//FyyjRzIJTQmn
-	dXqk7lQegdbCtgSUNCCXEQNiioB8hh3/qDiie0gra41ZSi7G29ZVlqBzToCImWRVTflqfF
-	t5aM6S4axmj2Kv+h1Bv15HPcON2GwSc=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-205-P1fMKWg_Nv-YBURa__jcBw-1; Sun,
- 02 Nov 2025 22:17:47 -0500
-X-MC-Unique: P1fMKWg_Nv-YBURa__jcBw-1
-X-Mimecast-MFC-AGG-ID: P1fMKWg_Nv-YBURa__jcBw_1762139865
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 22CCB18001DD;
-	Mon,  3 Nov 2025 03:17:45 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.93])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8F5EE1956056;
-	Mon,  3 Nov 2025 03:17:41 +0000 (UTC)
-Date: Mon, 3 Nov 2025 11:17:39 +0800
-From: Pingfan Liu <piliu@redhat.com>
-To: Chen Ridong <chenridong@huaweicloud.com>
-Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	Waiman Long <longman@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Pierre Gondois <pierre.gondois@arm.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>
-Subject: Re: [PATCHv4 2/2] sched/deadline: Walk up cpuset hierarchy to decide
- root domain when hot-unplug
-Message-ID: <aQge00u94JKGF9Tb@fedora>
-References: <20251028034357.11055-1-piliu@redhat.com>
- <20251028034357.11055-2-piliu@redhat.com>
- <73663a65-8028-4294-8eaf-9c94dc4451ff@huaweicloud.com>
- <aQH3-_YmqAq9aE67@fedora>
- <44130515-725a-4f44-b064-3b396ed26159@huaweicloud.com>
- <aQNBydr4geMWXebC@fedora>
- <a35dbd76-9f85-4ac2-aa57-1f0f78ff9fc0@huaweicloud.com>
- <aQTF1kLXNHncCCDB@fedora>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7681EACD;
+	Mon,  3 Nov 2025 03:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762139937; cv=fail; b=XJaTjY7h455KUAvOzFU3PfMGOH0mzPiGVafej8AhBbc6QhEAwziHqAi5P73ZV5X2zuAYuzHpljnH5NgQTFBDNm4+5QcXhO8zSUtKYH3/J+3NReuDtQBzJYrHIUeqN9g6FCT52Kk/IERvfFXv66oA/bASF3h3iKQbDs1QnOvrE+0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762139937; c=relaxed/simple;
+	bh=Ox3NuxFVYHVqVLiFp7X7oq9ya6bWnHbkfUCVgYUs6zU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=pK4nXGTM+39wCisa+ZHfNtrmI3GHTABylxVxW2CKBGUM0Lw9XBff525iaWtpSzl3eJ5M8CcHvlIvZhxm+65hJiKNKYPUqRXjPqh57kiTQg7ELQZaJyUiCVsUmQeqXFYTaZcLwM2kFVgBTbygg6KDa0LlwNkxYiVA478u96OFxCk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=XPXWEIib; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Pxnz0lN6; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A33EGdd019903;
+	Mon, 3 Nov 2025 03:18:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=DRWdXbzAfA2tGfUUDC
+	2BaxyIXl+NK1Brz1xL/g3lIkc=; b=XPXWEIibekMohMCSxeU52JcB+zkGdu/kf1
+	z3BRfDnC5iZO52iw17QtS8ATuLRJyNBYTb5+JVjL3ZQZooU+hlnpQpLyohENWlwW
+	tCsLp9xscITl8QkmpJEwxqYSII+8W0yi48cgKwVML81c7JDezyFSIckUhmkfGu0w
+	8MLxDfNkzNwptk5ALsXX7zhY0yltQ8fEXQFMi2KmlFKMwPixN1CyR0dOY1yudxS8
+	DFOZTgMzGrnmOZnbPIzlJhwduhSb1m7KCEP+2npogSTqzF/tSyiY9jv5OCN/1EI/
+	7iZeWpqU35O0feao641x7NstoI2G865f9oZK2IAsMRQGR46Zuvrw==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 4a6mah806f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 03 Nov 2025 03:18:27 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5A30AJPU016019;
+	Mon, 3 Nov 2025 03:18:27 GMT
+Received: from bl0pr03cu003.outbound.protection.outlook.com (mail-eastusazon11012043.outbound.protection.outlook.com [52.101.53.43])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 4a58n7b03e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 03 Nov 2025 03:18:26 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vdQTfvq/aeWCJIz7xGHopuUbPNjpl2AWtikFkygoEudFHybNgnBod/RSQtnt3U61dGxpMs80QPPes88WDlcimO49LbZCEC0vCpiRH0oysZwgTqJUW/t1jTcioZLLU4v2FxA3S+A1VT/yIe+6oicFGv2lTeCTeqp/99JEOy0H80WhmzuqyNh52GWO18lMVDhMk4E2ieodUGUf/VMZ6/kOCc9c0d+TtgiG1l2Q70sQ3fSrMTGziFPtvOqzgyCX/hb7ln8+DtyWSwBvPnDQzybcjNBpT6zP706G/yc2p5+x6IL3kieb6ItDYUJSp+R3PPfro163/ewH00gyoZVVFvYNHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DRWdXbzAfA2tGfUUDC2BaxyIXl+NK1Brz1xL/g3lIkc=;
+ b=WAMbeX1biAZMbpXHqriN/xpYCjPfVhL59Lpkx0/ksF+FAKzUtgb3s9tgIR15/6ztCOvF/0mZWNvOTIycRZAKxEctbNJtKQMXnGoLCec1RynV2lG0wi+H2ANh1I07HoNHnyt//M55dl9oalwxnMl+uyoVB1eDTA8OI23heWF6mI+pPJKnZzSERE09362pAEEojwttcrzvAC6sqTrJuw4dixMTpJiqHpl33Nx0U2xpgDx8LdtZ1bW+OkxupAVx1u7ZyBapoKxRVvkASe0drsgwhbd5bId/5F5jctpNpd9NS6NqvTn6b/cPgC4/sbyZSZuGFrjeAxjKYzIJdDfZMBCypw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DRWdXbzAfA2tGfUUDC2BaxyIXl+NK1Brz1xL/g3lIkc=;
+ b=Pxnz0lN6k3ZCrX0w49niph9jdo9ntgIwvQH7tPcOuGMqXuSUtbif67Lm+yFS3garFwM2N4/90naF6GtK8pctGVyy4uPrVFBcwil1ucgr+NQZUMh5CecU1ML73rIoX34mx6PS89BpVuQAnvq5BzVwORzavefa3uEcp8+25jwaoDQ=
+Received: from CH3PR10MB7329.namprd10.prod.outlook.com (2603:10b6:610:12c::16)
+ by CY8PR10MB6907.namprd10.prod.outlook.com (2603:10b6:930:86::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Mon, 3 Nov
+ 2025 03:18:00 +0000
+Received: from CH3PR10MB7329.namprd10.prod.outlook.com
+ ([fe80::f238:6143:104c:da23]) by CH3PR10MB7329.namprd10.prod.outlook.com
+ ([fe80::f238:6143:104c:da23%5]) with mapi id 15.20.9275.015; Mon, 3 Nov 2025
+ 03:17:59 +0000
+Date: Mon, 3 Nov 2025 12:17:46 +0900
+From: Harry Yoo <harry.yoo@oracle.com>
+To: Daniel Gomez <da.gomez@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Christoph Lameter <cl@gentwo.org>,
+        David Rientjes <rientjes@google.com>,
+        Roman Gushchin <roman.gushchin@linux.dev>,
+        Uladzislau Rezki <urezki@gmail.com>,
+        Sidhartha Kumar <sidhartha.kumar@oracle.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+        maple-tree@lists.infradead.org, linux-modules@vger.kernel.org,
+        Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Aaron Tomlin <atomlin@atomlin.com>,
+        Lucas De Marchi <lucas.demarchi@intel.com>
+Subject: Re: [PATCH v8 04/23] slab: add sheaf support for batching
+ kfree_rcu() operations
+Message-ID: <aQge2rmgRvd1JKxc@harry>
+References: <20250910-slub-percpu-caches-v8-0-ca3099d8352c@suse.cz>
+ <20250910-slub-percpu-caches-v8-4-ca3099d8352c@suse.cz>
+ <0406562e-2066-4cf8-9902-b2b0616dd742@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0406562e-2066-4cf8-9902-b2b0616dd742@kernel.org>
+X-ClientProxiedBy: SL2P216CA0194.KORP216.PROD.OUTLOOK.COM
+ (2603:1096:101:1a::19) To CH3PR10MB7329.namprd10.prod.outlook.com
+ (2603:10b6:610:12c::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aQTF1kLXNHncCCDB@fedora>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR10MB7329:EE_|CY8PR10MB6907:EE_
+X-MS-Office365-Filtering-Correlation-Id: bcc61d76-afc1-457e-6322-08de1a8796f3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|1800799024|10070799003|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Oz+gixBRSujsMaggMk/YjdAL2+9aiRgqS7lNgD4ZwqI3FMmVGjsH3up2i82x?=
+ =?us-ascii?Q?LrXGbZuN4ye0Gyw7A0KIGjyz+4ZC+X1dHQsdTXiQLubtAncy9NPY0GxUMDxA?=
+ =?us-ascii?Q?Q/EwS/wYBQBUZcUDM5GekvG4snpXyEXtxkrSRy2x9TTpJSpOg9uHGoIat3l6?=
+ =?us-ascii?Q?jYsir+tiOyiWz5N2pFu46OjS8KS38WSNPN/Wqxxt3zu5bf5P5VfndfhPqXEw?=
+ =?us-ascii?Q?4rgF3UWPoCNYL3M4OvrotpMX9ik0b2TQWuPxtEaS6MCetr3PXaewG7scVL7J?=
+ =?us-ascii?Q?w0TJ4WasshYfazRK+HjG1e1qNvPghzKkEDUDr9fRCEtUP/q4sDdR4zP9wlLf?=
+ =?us-ascii?Q?C8h9D/ONQwrHW9vkvf+i+P9cDHCtlTZKRqwHnqmVsT3mKHxC01DmlPTat9hl?=
+ =?us-ascii?Q?92gQXh5I5ZSxbqU02J19JwdfBJ3cTx7APgQzyNEZ3Ocm9m25BYytPxrpZy2Q?=
+ =?us-ascii?Q?h2fehQzXPYk3Yhn7yvSDTieblPO7g/mCPbV/cshHNy0sM0MrEP+07hBLsZHv?=
+ =?us-ascii?Q?MQpqLYRp4Ei9klRGF9c+0bg/rhLqIqk8vtY71WL63WegYPEzT7ZX7kxyskry?=
+ =?us-ascii?Q?vjc/1DwEuz7IZCz6Wuw54wuio3N1UpflgXyT2DYeWs9/Sy9dFQFraUYZhNj3?=
+ =?us-ascii?Q?DvGFvoHJZR4Ue7Ec3VM+0ZufhNUydJeF5rSloZdDkDI972/DpciUET5J9ksu?=
+ =?us-ascii?Q?4np2/PKBVdYpQfSOyXnR/iCwBkVKaXrDTWlOaOhBBqnHY7guwHnfXiQs/8qu?=
+ =?us-ascii?Q?5qefxyOLgAUdW+U2dYvUN2eYQxUJ0zis9vTgxs3kAVMOV7vjNg9mpbUy90Fb?=
+ =?us-ascii?Q?zRo0UA9H/qavkxTVyIniakJbPl4D9ZSmM46nBOt/u4E3yz3zW88M1WO3tF53?=
+ =?us-ascii?Q?fsu/QElqNOfxft9uSR4udF/c84mZdBc6Nc9yJpzj8rELElcksLYeg3lU0h6D?=
+ =?us-ascii?Q?XmXO9t2gcpgI8LqcjkxRg5mgjqIDVjx4eh0v0VwFl+zCd9b4apLOSHc6saFN?=
+ =?us-ascii?Q?AKV37j87SInUdorj8TybWcrvcXTJyRRkqTS9NfPgoLYsJBFYXLw3FLCrv4Da?=
+ =?us-ascii?Q?oZjn394dSHv/7KGHeu9BkUVLi6VVZHr2VLAep+4PJVlLUzcWxgNO79vp/qyO?=
+ =?us-ascii?Q?oSUkFHJMo3uJMXafD6SeSjGhbTI7AgVYcRa7pbOjJD5VbHYarD3moEObXkZE?=
+ =?us-ascii?Q?zC5isqn/JKWq4quEyHKkoVzBUsBnxP1Fv1EDucebz1LHVMo/hFIiMWl/grBF?=
+ =?us-ascii?Q?jfEbxJCmX6XDkIP6vMAtx2A9zXM54gQ46S6ieJ8K1MZKNUykeuxYbid+BAto?=
+ =?us-ascii?Q?dVQ+TkFlWwT9bEu9+cFqr5GuHEN8AxzRc8tlidxIUzMZVCuKNcOqpNy/A7bE?=
+ =?us-ascii?Q?hy8TIUp9T8CwUTQusreZfSGwqamlYzIoPTgENEVRhfesUofTv10XcneYwD/F?=
+ =?us-ascii?Q?leuFkleegLS439j81RecCbpwQmvDmj2Y?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR10MB7329.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(10070799003)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?dgXvDwDjbUWFQd5+tysDTE4l/l9BNVmDdWS8ErKAPD0GEEWtEqZJ3je93dMs?=
+ =?us-ascii?Q?QQES+DLlqHEW3odlJyq6N4nLbiYRGmgfTrhuduYT1evQyjZKZHxtYwbx0gWn?=
+ =?us-ascii?Q?EdiYdISUeCICP/r1IHlRP4PZGXhrmdPwPIQujfXyUJtwFW1SKwVU1VYy3Zoz?=
+ =?us-ascii?Q?SYqDxGBqwSUNjF7PCZ9QZj4p/3yQqKYYRdfJE5xyHvfFb3+rHui6sO/Y7SvY?=
+ =?us-ascii?Q?Ycada7ICvpKt3M+SRUKOBj7dYLsDPgX5gu4pwkkjTMoOLmnegcDyvqrNPak7?=
+ =?us-ascii?Q?nr6aufZFdYPlN/Aajxtk5ZQVJquwBxceoIooXtmKFGaOPgGArKp/Ot9owu1r?=
+ =?us-ascii?Q?Njqp8HL/ieP5RHkeCZiGKUfNJ+zoMa8I/b0QMDqXFo+RGhcPXx2tg4FWpRFy?=
+ =?us-ascii?Q?Duo03E+dCAfpUCDb/Nap2s9umqtPaCKWZ7fJl4S4cW53I1mSe8kfeLaIawCf?=
+ =?us-ascii?Q?4L8irOU2Jj+mJA/G9Lg6yhzTA4wc+DqRxzU5ya79cBvQiFJqiYIFQctz6nI4?=
+ =?us-ascii?Q?DwWvKv3jYtUIBBv4ylbS1o4uBSNmaeE96VvqR07W4dlxMgdwHwxrw4hgfOmG?=
+ =?us-ascii?Q?UMkHeOk8A3kcsI+TFoEDR0rJttSnaobtX26J5AZMP+xpJ12jJcnVT+E81+B4?=
+ =?us-ascii?Q?oYG+d3aH2D8bpMFraV6NBxJXldrg2AZ7tjjCsI/kYDL8CcMPPMV1qswkeFzT?=
+ =?us-ascii?Q?Wz9ZGcSoxW0MzSogQSKcE5x73C4pccmyGCDCN83ms+0m1nja2qwZdHl9QgYY?=
+ =?us-ascii?Q?LliZZdXPCH+76k4ysLTD4wTuuCsVO+d22q+YtyKPymjsJNEOla0KMGeY6r+4?=
+ =?us-ascii?Q?866JOjdG/3gBlPFMVKubvPmhZ9V3OTL7chv3LGPvUKjMm0VK/L48QGCZLnbW?=
+ =?us-ascii?Q?3idlehi+M3YPV2f78LgR5Nr3PiU4CVLnF3KZ0wLbUofmAcBnOQNogOzOp6mC?=
+ =?us-ascii?Q?zgKhmk3xgTqiuXnHn3LxHyRLkGnf0XlsK8ICypzuRbD4jcm7hWN7vv8Ocsur?=
+ =?us-ascii?Q?zXIvSiYRCp/xh7QARStsgZoron0Bt5AwUN26UJHJGxZqhNqomXQ+vsJ28Pc8?=
+ =?us-ascii?Q?oge9GDTNqzhp7oKyhFnWKDcJ/1rXfUCAjyXp2ltUKGipnQugmcYmkBXiZQq6?=
+ =?us-ascii?Q?sTOtZ8O27SDkVdkr6F5x6pbz8j16XqQDWr1dMiogDrFNYmCweaCpvDisGEI+?=
+ =?us-ascii?Q?rl3SWCMVv0i3d3UyDLcHk4qSn4YxnBy2SKiBiFyknMf0iklDh6oAk/g94qw9?=
+ =?us-ascii?Q?nsKlnxwBFpePMfla/UihiUZajSjrrvxjFZUExSvhIZc/Bz3mRMV4OgbTgsM+?=
+ =?us-ascii?Q?gFCIM6f5tAUIuhHBis7qDOldmRCRqya08Qo5mS2v9o7cpRBRUSMRhd2ftJpr?=
+ =?us-ascii?Q?a/ttaOcdU3Q4d+x1TYkydUtcNWchEg4ATkgnLFFqLxmoHSb/X3QHWeuIgAXi?=
+ =?us-ascii?Q?3gNCoUNBCXwaEGcnozvppgz0WdjWpIck7A76dLquHiYeAFMGq2yyWl93eQfW?=
+ =?us-ascii?Q?RIr6353NDLulRkmKcclASUGIFBbbofMexkRSD36LjS8zNT6L0fDEj5RxFGh8?=
+ =?us-ascii?Q?/zlC5nO2nWQoNpsKL/F20Jw+REVU88dwpGZvMTX1cD4lCcwNT6/lggNCTzsI?=
+ =?us-ascii?Q?JzSLsZBmGq9RcU/5SPPJUQaskw/KveCYgt06x9x7O9/b?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	n3OWrt5aji/flKkt8XKeqZyXwjbyF+30AqzgUvVD1Gz+FiUMS6s5+E5lcup4Ckn3D2Aa4baOIm/JB6DGITy5EJXNp7ouSxKnDu2RbzsRlLwWFHBmn1bXi0BF3JS66PLfKfTx7SbdDKDiDhjAtVt1blasmUkFmIzjRIhQlWJESQfDxjbQWvXUUSNahq235X1aWbG1GpItfUPp7hN1dGsQpPHIMewYhJFlSdID450E2v96aVI28P+0k+aQOj5Px13t9VaSVJz2/ySgfts2pzhEYFOtuHSMW6FdryIyeUL7CYqTb0WfuuFQ+qWZb+nY1/vVcWGlWsaGeNHzA5ujgTt43WijzZU7212ipsTQb9Mmk6OyX8DUDYR6tUxYis9zznpGpHaH+mQNQV90zdjqvJL4oYhFBJELx27yq/ENxvthnDaB4Hf6jKE0f4DzzBiC8Cq6SY7Cwp8V66VezACNCt6/JXZAmF8FJOfLD8NCc+ZuKLWRi8gYx4fQU8WYbMQ0uIkL4PsFldU5Lu0bSPA2VLvZugIV8jo8A9/hXCVSJP9KY6brkUiNY250ulD6xRwdPofu9TEQI+NgpHUuCnpjLyTqR2EAx53z1CF5K12VxypYOWY=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bcc61d76-afc1-457e-6322-08de1a8796f3
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR10MB7329.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 03:17:59.3413
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: A0r4UOk2GOSumH7JVTRTOTQuibFAKxCsw394yjjXuxOHNql48FTv7Z0JBKp1gXuDzeb4UIgxrzXsHvRk/374qw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR10MB6907
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-02_02,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 mlxlogscore=999 spamscore=0
+ adultscore=0 phishscore=0 malwarescore=0 bulkscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2510240000
+ definitions=main-2511030028
+X-Authority-Analysis: v=2.4 cv=UJfQ3Sfy c=1 sm=1 tr=0 ts=69081f03 b=1 cx=c_pps
+ a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=6UeiqGixMTsA:10 a=GoEa3M9JfhUA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=auTrCeKoL-_gxoL8Z8sA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAzMDAyOCBTYWx0ZWRfX4aXkffui2sNA
+ tp6ZrxEjAk1+txcO3KcMPsngmi9gFjoi0Y359UYhOrtPs9DQoahqkvT/ZcePcoyKwgoEkMopTdd
+ oGwGlDGUWks6RP748Wi++rpK7KZs5aowwDhzpVGi1vpN9Y3D2tN0+2Pdr0UbEni3H/JKk5ssEq8
+ DLZZ14EA5GMxk7igKFf6N/5SHvIH4CQab0AHIQ6uQXzIpLNg91zwCUgd1Em5ukMfQWaijjNmpJL
+ 5eko23U3fKTnRalXt3vIULpbqKx/6CsE80XDIXvckmFREDfiBrDZf2cFJ7ygusPuYGpCc7Lx4Sc
+ KdMEzFdYS5Z87BxmwZCqI8iyycuEfOq0zArxMgwYcdw6jlBUFtQJYWU4TDtk2QjqA2AiwV6thuF
+ B8JIFyWIeY/5BvXryHyV5IRz8geBaA==
+X-Proofpoint-ORIG-GUID: DbeBeOXKNV8aPmQl_4wPw6CCBvccSXJU
+X-Proofpoint-GUID: DbeBeOXKNV8aPmQl_4wPw6CCBvccSXJU
 
-Hi Ridong,
-
-I have some further findings. Your thoughts would be really
-helpful!
-
-On Fri, Oct 31, 2025 at 10:21:10PM +0800, Pingfan Liu wrote:
-> On Fri, Oct 31, 2025 at 08:47:14AM +0800, Chen Ridong wrote:
-> > 
-> > 
-> > On 2025/10/30 18:45, Pingfan Liu wrote:
-> > > On Thu, Oct 30, 2025 at 02:44:43PM +0800, Chen Ridong wrote:
-> > >>
-> > >>
-> > >> On 2025/10/29 19:18, Pingfan Liu wrote:
-> > >>> Hi Ridong,
-> > >>>
-> > >>> Thank you for your review, please see the comment below.
-> > >>>
-> > >>> On Wed, Oct 29, 2025 at 10:37:47AM +0800, Chen Ridong wrote:
-> > >>>>
-> > >>>>
-> > >>>> On 2025/10/28 11:43, Pingfan Liu wrote:
-> > >>>>> *** Bug description ***
-> > >>>>> When testing kexec-reboot on a 144 cpus machine with
-> > >>>>> isolcpus=managed_irq,domain,1-71,73-143 in kernel command line, I
-> > >>>>> encounter the following bug:
-> > >>>>>
-> > >>>>> [   97.114759] psci: CPU142 killed (polled 0 ms)
-> > >>>>> [   97.333236] Failed to offline CPU143 - error=-16
-> > >>>>> [   97.333246] ------------[ cut here ]------------
-> > >>>>> [   97.342682] kernel BUG at kernel/cpu.c:1569!
-> > >>>>> [   97.347049] Internal error: Oops - BUG: 00000000f2000800 [#1] SMP
-> > >>>>> [...]
-> > >>>>>
-> > >>>>> In essence, the issue originates from the CPU hot-removal process, not
-> > >>>>> limited to kexec. It can be reproduced by writing a SCHED_DEADLINE
-> > >>>>> program that waits indefinitely on a semaphore, spawning multiple
-> > >>>>> instances to ensure some run on CPU 72, and then offlining CPUs 1–143
-> > >>>>> one by one. When attempting this, CPU 143 failed to go offline.
-> > >>>>>   bash -c 'taskset -cp 0 $$ && for i in {1..143}; do echo 0 > /sys/devices/system/cpu/cpu$i/online 2>/dev/null; done'
-> > >>>>>
-> > >>>>> `
-> > >>>>> *** Issue ***
-> > >>>>> Tracking down this issue, I found that dl_bw_deactivate() returned
-> > >>>>> -EBUSY, which caused sched_cpu_deactivate() to fail on the last CPU.
-> > >>>>> But that is not the fact, and contributed by the following factors:
-> > >>>>> When a CPU is inactive, cpu_rq()->rd is set to def_root_domain. For an
-> > >>>>> blocked-state deadline task (in this case, "cppc_fie"), it was not
-> > >>>>> migrated to CPU0, and its task_rq() information is stale. So its rq->rd
-> > >>>>> points to def_root_domain instead of the one shared with CPU0.  As a
-> > >>>>> result, its bandwidth is wrongly accounted into a wrong root domain
-> > >>>>> during domain rebuild.
-> > >>>>>
-> > >>>>> The key point is that root_domain is only tracked through active rq->rd.
-> > >>>>> To avoid using a global data structure to track all root_domains in the
-> > >>>>> system, there should be a method to locate an active CPU within the
-> > >>>>> corresponding root_domain.
-> > >>>>>
-> > >>>>> *** Solution ***
-> > >>>>> To locate the active cpu, the following rules for deadline
-> > >>>>> sub-system is useful
-> > >>>>>   -1.any cpu belongs to a unique root domain at a given time
-> > >>>>>   -2.DL bandwidth checker ensures that the root domain has active cpus.
-> > >>>>>
-> > >>>>> Now, let's examine the blocked-state task P.
-> > >>>>> If P is attached to a cpuset that is a partition root, it is
-> > >>>>> straightforward to find an active CPU.
-> > >>>>> If P is attached to a cpuset that has changed from 'root' to 'member',
-> > >>>>> the active CPUs are grouped into the parent root domain. Naturally, the
-> > >>>>> CPUs' capacity and reserved DL bandwidth are taken into account in the
-> > >>>>> ancestor root domain. (In practice, it may be unsafe to attach P to an
-> > >>>>> arbitrary root domain, since that domain may lack sufficient DL
-> > >>>>> bandwidth for P.) Again, it is straightforward to find an active CPU in
-> > >>>>> the ancestor root domain.
-> > >>>>>
-> > >>>>> This patch groups CPUs into isolated and housekeeping sets. For the
-> > >>>>> housekeeping group, it walks up the cpuset hierarchy to find active CPUs
-> > >>>>> in P's root domain and retrieves the valid rd from cpu_rq(cpu)->rd.
-> > >>>>>
-> > >>>>> Signed-off-by: Pingfan Liu <piliu@redhat.com>
-> > >>>>> Cc: Waiman Long <longman@redhat.com>
-> > >>>>> Cc: Tejun Heo <tj@kernel.org>
-> > >>>>> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> > >>>>> Cc: "Michal Koutný" <mkoutny@suse.com>
-> > >>>>> Cc: Ingo Molnar <mingo@redhat.com>
-> > >>>>> Cc: Peter Zijlstra <peterz@infradead.org>
-> > >>>>> Cc: Juri Lelli <juri.lelli@redhat.com>
-> > >>>>> Cc: Pierre Gondois <pierre.gondois@arm.com>
-> > >>>>> Cc: Vincent Guittot <vincent.guittot@linaro.org>
-> > >>>>> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> > >>>>> Cc: Steven Rostedt <rostedt@goodmis.org>
-> > >>>>> Cc: Ben Segall <bsegall@google.com>
-> > >>>>> Cc: Mel Gorman <mgorman@suse.de>
-> > >>>>> Cc: Valentin Schneider <vschneid@redhat.com>
-> > >>>>> To: cgroups@vger.kernel.org
-> > >>>>> To: linux-kernel@vger.kernel.org
-> > >>>>> ---
-> > >>>>> v3 -> v4:
-> > >>>>> rename function with cpuset_ prefix
-> > >>>>> improve commit log
-> > >>>>>
-> > >>>>>  include/linux/cpuset.h  | 18 ++++++++++++++++++
-> > >>>>>  kernel/cgroup/cpuset.c  | 26 ++++++++++++++++++++++++++
-> > >>>>>  kernel/sched/deadline.c | 30 ++++++++++++++++++++++++------
-> > >>>>>  3 files changed, 68 insertions(+), 6 deletions(-)
-> > >>>>>
-> > >>>>> diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
-> > >>>>> index 2ddb256187b51..d4da93e51b37b 100644
-> > >>>>> --- a/include/linux/cpuset.h
-> > >>>>> +++ b/include/linux/cpuset.h
-> > >>>>> @@ -12,6 +12,7 @@
-> > >>>>>  #include <linux/sched.h>
-> > >>>>>  #include <linux/sched/topology.h>
-> > >>>>>  #include <linux/sched/task.h>
-> > >>>>> +#include <linux/sched/housekeeping.h>
-> > >>>>>  #include <linux/cpumask.h>
-> > >>>>>  #include <linux/nodemask.h>
-> > >>>>>  #include <linux/mm.h>
-> > >>>>> @@ -130,6 +131,7 @@ extern void rebuild_sched_domains(void);
-> > >>>>>  
-> > >>>>>  extern void cpuset_print_current_mems_allowed(void);
-> > >>>>>  extern void cpuset_reset_sched_domains(void);
-> > >>>>> +extern void cpuset_get_task_effective_cpus(struct task_struct *p, struct cpumask *cpus);
-> > >>>>>  
-> > >>>>>  /*
-> > >>>>>   * read_mems_allowed_begin is required when making decisions involving
-> > >>>>> @@ -276,6 +278,22 @@ static inline void cpuset_reset_sched_domains(void)
-> > >>>>>  	partition_sched_domains(1, NULL, NULL);
-> > >>>>>  }
-> > >>>>>  
-> > >>>>> +static inline void cpuset_get_task_effective_cpus(struct task_struct *p,
-> > >>>>> +		struct cpumask *cpus)
-> > >>>>> +{
-> > >>>>> +	const struct cpumask *hk_msk;
-> > >>>>> +
-> > >>>>> +	hk_msk = housekeeping_cpumask(HK_TYPE_DOMAIN);
-> > >>>>> +	if (housekeeping_enabled(HK_TYPE_DOMAIN)) {
-> > >>>>> +		if (!cpumask_intersects(p->cpus_ptr, hk_msk)) {
-> > >>>>> +			/* isolated cpus belong to a root domain */
-> > >>>>> +			cpumask_andnot(cpus, cpu_active_mask, hk_msk);
-> > >>>>> +			return;
-> > >>>>> +		}
-> > >>>>> +	}
-> > >>>>> +	cpumask_and(cpus, cpu_active_mask, hk_msk);
-> > >>>>> +}
-> > >>>>> +
-> > >>>>>  static inline void cpuset_print_current_mems_allowed(void)
-> > >>>>>  {
-> > >>>>>  }
-> > >>>>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> > >>>>> index 27adb04df675d..6ad88018f1a4e 100644
-> > >>>>> --- a/kernel/cgroup/cpuset.c
-> > >>>>> +++ b/kernel/cgroup/cpuset.c
-> > >>>>> @@ -1102,6 +1102,32 @@ void cpuset_reset_sched_domains(void)
-> > >>>>>  	mutex_unlock(&cpuset_mutex);
-> > >>>>>  }
-> > >>>>>  
-> > >>>>> +/* caller hold RCU read lock */
-> > >>>>> +void cpuset_get_task_effective_cpus(struct task_struct *p, struct cpumask *cpus)
-> > >>>>> +{
-> > >>>>> +	const struct cpumask *hk_msk;
-> > >>>>> +	struct cpuset *cs;
-> > >>>>> +
-> > >>>>> +	hk_msk = housekeeping_cpumask(HK_TYPE_DOMAIN);
-> > >>>>> +	if (housekeeping_enabled(HK_TYPE_DOMAIN)) {
-> > >>>>> +		if (!cpumask_intersects(p->cpus_ptr, hk_msk)) {
-> > >>>>> +			/* isolated cpus belong to a root domain */
-> > >>>>> +			cpumask_andnot(cpus, cpu_active_mask, hk_msk);
-> > >>>>> +			return;
-> > >>>>> +		}
-> > >>>>> +	}
-> > >>>>> +	/* In HK_TYPE_DOMAIN, cpuset can be applied */
-> > >>>>> +	cs = task_cs(p);
-> > >>>>> +	while (cs != &top_cpuset) {
-> > >>>>> +		if (is_sched_load_balance(cs))
-> > >>>>> +			break;
-> > >>>>> +		cs = parent_cs(cs);
-> > >>>>> +	}
-> > >>>>> +
-> > >>>>> +	/* For top_cpuset, its effective_cpus does not exclude isolated cpu */
-> > >>>>> +	cpumask_and(cpus, cs->effective_cpus, hk_msk);
-> > >>>>> +}
-> > >>>>> +
-> > >>>>
-> > >>>> It seems you may have misunderstood what Longman intended to convey.
-> > >>>>
-> > >>>
-> > >>> Thanks for pointing that out. That is possible and please let me address
-> > >>> your concern.
-> > >>>
-> > >>>> First, you should add comments to this function because its purpose is not clear. When I first saw
-> > >>>
-> > >>> OK, I will.
-> > >>>
-> > >>>> this function, I thought it was supposed to retrieve p->cpus_ptr excluding the offline CPU mask.
-> > >>>> However, I'm genuinely confused about the function's actual purpose.
-> > >>>>
-> > >>>
-> > >>> This function retrieves the active CPUs within the root domain where a specified task resides.
-> > >>>
-> > >>
-> > >> Thank you for the further clarification.
-> > >>
-> > >> 	+	/*
-> > >> 	+	 * If @p is in blocked state, task_cpu() may be not active. In that
-> > >> 	+	 * case, rq->rd does not trace a correct root_domain. On the other hand,
-> > >> 	+	 * @p must belong to an root_domain at any given time, which must have
-> > >> 	+	 * active rq, whose rq->rd traces the valid root domain.
-> > >> 	+	 */
-> > >>
-> > >> Is it necessary to walk up to the root partition (is_sched_load_balance(cs))?
-> > >>
-> > >> The effective_cpus of the cpuset where @p resides should contain active CPUs.
-> > >> If all CPUs in cpuset.cpus are offline, it would inherit the parent's effective_cpus for v2, and it
-> > >> would move the task to the parent for v1.
-> > >>
+On Fri, Oct 31, 2025 at 10:32:54PM +0100, Daniel Gomez wrote:
 > 
-> I located the code which implemented your comment. And I think for v2,
-> you are right. But for v1, there is an async nuance about
-> remove_tasks_in_empty_cpuset(). It is scheduled with a work_struct, so
-> there is no gurantee that task has been moved to ancestor cpuset before
-> rebuild_sched_domains_cpuslocked() is called in cpuset_handle_hotplug(),
-> which means that in dl_update_tasks_root_domain(), maybe task's cpuset
-> has not been updated yet.
 > 
+> On 10/09/2025 10.01, Vlastimil Babka wrote:
+> > Extend the sheaf infrastructure for more efficient kfree_rcu() handling.
+> > For caches with sheaves, on each cpu maintain a rcu_free sheaf in
+> > addition to main and spare sheaves.
+> > 
+> > kfree_rcu() operations will try to put objects on this sheaf. Once full,
+> > the sheaf is detached and submitted to call_rcu() with a handler that
+> > will try to put it in the barn, or flush to slab pages using bulk free,
+> > when the barn is full. Then a new empty sheaf must be obtained to put
+> > more objects there.
+> > 
+> > It's possible that no free sheaves are available to use for a new
+> > rcu_free sheaf, and the allocation in kfree_rcu() context can only use
+> > GFP_NOWAIT and thus may fail. In that case, fall back to the existing
+> > kfree_rcu() implementation.
+> > 
+> > Expected advantages:
+> > - batching the kfree_rcu() operations, that could eventually replace the
+> >   existing batching
+> > - sheaves can be reused for allocations via barn instead of being
+> >   flushed to slabs, which is more efficient
+> >   - this includes cases where only some cpus are allowed to process rcu
+> >     callbacks (Android)
+> > 
+> > Possible disadvantage:
+> > - objects might be waiting for more than their grace period (it is
+> >   determined by the last object freed into the sheaf), increasing memory
+> >   usage - but the existing batching does that too.
+> > 
+> > Only implement this for CONFIG_KVFREE_RCU_BATCHED as the tiny
+> > implementation favors smaller memory footprint over performance.
+> > 
+> > Also for now skip the usage of rcu sheaf for CONFIG_PREEMPT_RT as the
+> > contexts where kfree_rcu() is called might not be compatible with taking
+> > a barn spinlock or a GFP_NOWAIT allocation of a new sheaf taking a
+> > spinlock - the current kfree_rcu() implementation avoids doing that.
+> > 
+> > Teach kvfree_rcu_barrier() to flush all rcu_free sheaves from all caches
+> > that have them. This is not a cheap operation, but the barrier usage is
+> > rare - currently kmem_cache_destroy() or on module unload.
+> > 
+> > Add CONFIG_SLUB_STATS counters free_rcu_sheaf and free_rcu_sheaf_fail to
+> > count how many kfree_rcu() used the rcu_free sheaf successfully and how
+> > many had to fall back to the existing implementation.
+> > 
+> > Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> 
+> Hi Vlastimil,
+> 
+> This patch increases kmod selftest (stress module loader) runtime by about
+> ~50-60%, from ~200s to ~300s total execution time. My tested kernel has
+> CONFIG_KVFREE_RCU_BATCHED enabled. Any idea or suggestions on what might be
+> causing this, or how to address it?
 
-This behavior requires two set of implements for the new introduced
-function, one for cpuset V1 due to async, one for v2 which can fetch the
-active cpus from p->cpus_ptr directly.
+This is likely due to increased kvfree_rcu_barrier() during module unload.
 
-Apart from this drawback, the call sequence of functions matters when
-the logic enters the scheduler code for the hot-removal path. The newly
-introduced function should be called after cpuset propagation.
+It currently iterates over all CPUs x slab caches (that enabled sheaves,
+there should be only a few now) pair to make sure rcu sheaf is flushed
+by the time kvfree_rcu_barrier() returns.
 
+Just being curious, do you have any serious workload that depends on
+the performance of module unload?
 
-Best Regards,
-
-Pingfan
-
+-- 
+Cheers,
+Harry / Hyeonggon
 
