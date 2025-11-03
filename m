@@ -1,116 +1,129 @@
-Return-Path: <linux-kernel+bounces-882681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50B2EC2B1B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:40:14 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEF1CC2B1EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:44:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id CF5753492AA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:40:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1F3024F064C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA6D22FF165;
-	Mon,  3 Nov 2025 10:39:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761EF2FE052;
+	Mon,  3 Nov 2025 10:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eckQOwm/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QhsDnXUT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5692FD1DD;
-	Mon,  3 Nov 2025 10:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00891DF74F
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 10:41:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762166381; cv=none; b=Vh5y1JDGGPRzI81gZU2DUZ2BTVKIjfnEGz8A3NrwKWsP+7sVGHk4zuT6ZyhFgHccK2ZnbCLW3WwjJs7dI+NfrLUSFhw4wltSTuA/lfZs5N4KJjExUV5xkQOvOys57bXiFk/NezdfdZQ5wZPFpX81YCHAqlnaQbqEs1mtMfYs4KE=
+	t=1762166476; cv=none; b=ZyIezeEeZRgTkbi1uwBDhFHppCeSTcHqmmDmZcmDO2OMhWCviNwVtZjHxATzONQj7L5MFFCoAVoaAtyMlA1VJVeNfWsHUoGcnA+T0pY/JZpFp0LPxH07Hx0DHIeVBCWmk1dJov0U6U2KxwFyxOZJrfW+yuXrB/oCEn6bnIWzo74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762166381; c=relaxed/simple;
-	bh=KO80Tanytiz9zx9QKJRE34TwuV8NATMH1iVrHnczWsM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=iuFjj8TaI1srpEsqMnZYH5XNqoY1ljRP7GRIwwgK+KKP+wQ+KkX1iw6KhZhotv/LOZ3LSO0IaZXMKqlvbur4Ks1VSbU7Bahh7JvDyk7p6ejIUUEuGhTAmeRgg3KLUl/6lBRAlA0pQqogDqDYJAc2q2Q+I4jDi7+kFY5GxMa80jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eckQOwm/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AE1AC4CEE7;
-	Mon,  3 Nov 2025 10:39:37 +0000 (UTC)
+	s=arc-20240116; t=1762166476; c=relaxed/simple;
+	bh=4+L+ObjyqfOUwix+6EX/7qwZHGaUzprYEoX/LweO6xc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Myx11k7bQWk0iMyjHJHkYLoBUL4GzMNY7/lX5tdUpuvlTbZY4HL3RtoICdM9vNuI7o4/E0tfmhG5zCF9KLElEXJ77w9q1FZHkmUI3mcJ5LjmTf22Zfl1R05ZPRqdUdIRzxvpz6YXRAqoKoEXmAydlnNCc2b6nOW0i2HV0Fs6RIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QhsDnXUT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67CD5C4CEE7
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 10:41:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762166380;
-	bh=KO80Tanytiz9zx9QKJRE34TwuV8NATMH1iVrHnczWsM=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=eckQOwm/pT9m0IT7GCpfsbdKWeJ4QYxU3keMaWPEz1hKFBX/o6Mh39P+XZryL8ETK
-	 LiUZeSbK0vTI812jgU9VLZwNrD1GLXsg7j9+hakTvZICk5oSGtHwkQ4BVfoZeIeDFF
-	 f830CilIPWwMm/xosOViqidm7laGXiSGLaZtWG2cz+luoA7VB9cOqi9qoYgwjQrgj4
-	 4VV/6TGs2vpRIBQ5gQhD1BdFPyCiDazoLZcWNeazwDsM0cqXIHwtb4vNYhw96koKgr
-	 b8GRpwmn5xhMBWk0EnTrYlgMsA8ywkwfKR8VqB23bbYTUNkBJB9n7oagn5Rh1oxFIn
-	 NirQnCi8g+0eg==
+	s=k20201202; t=1762166476;
+	bh=4+L+ObjyqfOUwix+6EX/7qwZHGaUzprYEoX/LweO6xc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=QhsDnXUTJ4QzYsBiKcMvy17ybcYo3CxzJUGxqhnzGVJdejFVm5phN2gH/gxX3opSd
+	 UCJR/HuW829YOu1eeDk0ZJgTflynRaswd3FrC6/3Bflvgfvf9TLlLYGbeqzkTQt+2v
+	 47c6PogC8hvjSFWvzygwdkj0vlESDL4ZtidUq3ws//6HKq+4ri72t12A7aPmmcv4zX
+	 2WJSQuz2m7VVYi7I/khFNLKJokoNDaoeUUZzRfMugOh4dAb7HnP9c+/kz6cEN+yKTF
+	 11UcijV5rYA15bUhOKASxjKpFFoIqB0UnaCdXGdSFQqE4qV9lSz7JBedUf4K4MmWMm
+	 OFWTWkU17gC4g==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-594270ec7f9so1384475e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 02:41:16 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCURLCgCEUjdsVbhD+NsGE/abQvRJDuIQCSG83ZoyPP7BxO6BF8Z/0VilMq3Y7zF+RkVzu8IpiPLm+cfAfQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFoMUCptcSo0LNYwOkaHJgPbBz4vJnxQl2zjXM8l4H+JldZhqq
+	yhTT4XqsrvtIQq37tfbRok+dDyKh8pQ5o/d1AThTsBWl/pL/jiO4wBQVJqQT8jvZ20YaDR07R58
+	H3uSFmgRH25/0Ey8NkioO1NvEY80/HgI=
+X-Google-Smtp-Source: AGHT+IH5UkZg0NfeXp1cdWmyKntl1VU6TzxKZda6g/+Pg3BizkQm1WZ5S5JPmlPTZ6S15mgZIs7+xOimsTo8wTeXfL8=
+X-Received: by 2002:a05:6512:3b08:b0:57b:8675:e361 with SMTP id
+ 2adb3069b0e04-5941d50e4c5mr4765289e87.14.1762166474790; Mon, 03 Nov 2025
+ 02:41:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20251102001411.108385-1-francescopompo2@gmail.com>
+ <CAMj1kXEUL-Uv4tCx5NLVHDRo-BdEK1xJdee-UYs-ymE-mLxv0Q@mail.gmail.com> <CADr=TJdTcss14P43_jAj4tsEYukt=Z18SnjUNqMD95O_5KkNVA@mail.gmail.com>
+In-Reply-To: <CADr=TJdTcss14P43_jAj4tsEYukt=Z18SnjUNqMD95O_5KkNVA@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 3 Nov 2025 11:41:03 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXEfvx+jDv_6OfHd1uM-TUe0RkdR7JO1NnKbzcvLRpOQbA@mail.gmail.com>
+X-Gm-Features: AWmQ_blKqjh2udJeMdvwEYSdYDKaLcDMFQWXRtJi-V_zesZFSmqW0PqclhymSGI
+Message-ID: <CAMj1kXEfvx+jDv_6OfHd1uM-TUe0RkdR7JO1NnKbzcvLRpOQbA@mail.gmail.com>
+Subject: Re: [PATCH] efistub/smbios: Add fallback for SMBIOS record lookup
+To: =?UTF-8?Q?Francesco_Pomp=C3=B2?= <francescopompo2@gmail.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 03 Nov 2025 11:39:36 +0100
-Message-Id: <DDYZUHMIJSF3.1XF2MPW7D0Q6@kernel.org>
-Cc: <skhan@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH v6] rust: kernel: introduce
- `unsafe_precondition_assert!` macro
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Ritvik Gupta" <ritvikfoss@gmail.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>
-X-Mailer: aerc 0.21.0
-References: <20251007215034.213779-1-ritvikfoss@gmail.com>
-In-Reply-To: <20251007215034.213779-1-ritvikfoss@gmail.com>
 
-On Tue Oct 7, 2025 at 11:50 PM CEST, Ritvik Gupta wrote:
-> Introduce a new `safety` module containing `unsafe_precondition_assert!`
-> macro. It is a wrapper around `debug_assert!`, intended for validating
-> pre-conditions of unsafe function.
+On Mon, 3 Nov 2025 at 11:15, Francesco Pomp=C3=B2 <francescopompo2@gmail.co=
+m> wrote:
 >
-> When `CONFIG_RUST_DEBUG_ASSERTIONS` flag is enabled, this macro performs
-> runtime checks to ensure that the preconditions for unsafe function hold.
-> Otherwise, the macro is a no-op.
+> Il giorno lun 3 nov 2025 alle ore 09:19 Ard Biesheuvel
+> <ardb@kernel.org> ha scritto:
+> >
+> > Hello Francesco,
+> >
+> > On Sun, 2 Nov 2025 at 01:14, Francesco Pompo <francescopompo2@gmail.com=
+> wrote:
+> > >
+> > > Some UEFI firmware implementations do not provide the SMBIOS Protocol=
+,
+> > > causing efi_get_smbios_record() to fail. This prevents retrieval of
+> > > system information such as product name, which is needed by
+> > > apple_set_os() to enable the integrated GPU on dual-graphics Intel
+> > > MacBooks.
+> > >
+> > > Add a fallback that directly parses the SMBIOS entry point table when
+> > > the protocol is unavailable. Log when the fallback is used.
+> > >
+> > > Signed-off-by: Francesco Pompo <francescopompo2@gmail.com>
+> > > ---
+> > >  drivers/firmware/efi/libstub/efistub.h | 17 +++++
+> > >  drivers/firmware/efi/libstub/smbios.c  | 99 ++++++++++++++++++++++++=
++-
+> > >  2 files changed, 113 insertions(+), 3 deletions(-)
+> > >
+> >
+> > On which platform does this fix an actual existing issue?
 >
-> Suggested-by: Miguel Ojeda <ojeda@kernel.org>
-> Link: https://github.com/Rust-for-Linux/linux/issues/1162
-> Link: https://rust-for-linux.zulipchat.com/#narrow/channel/291566-Library=
-/topic/.60unsafe_precondition_assert.60.20macro/with/528457452
-> Signed-off-by: Ritvik Gupta <ritvikfoss@gmail.com>
-
-I think it's a good idea to have something like this, not sure if we
-have the final version here, but we should merge something.
-
-Reviewed-by: Benno Lossin <lossin@kernel.org>
-
-One nit below (that Miguel can fix when picking the patch).
-
-> +#[macro_export]
-> +macro_rules! unsafe_precondition_assert {
-> +    ($cond:expr $(,)?) =3D> {
-> +        $crate::unsafe_precondition_assert!(@inner $cond, ::core::string=
-ify!($cond))
-> +    };
-> +
-> +    ($cond:expr, $($arg:tt)+) =3D> {
-> +        $crate::unsafe_precondition_assert!(@inner $cond, $crate::prelud=
-e::fmt!($($arg)+))
-> +    };
-> +
-> +    (@inner $cond:expr, $msg:expr) =3D> {
-> +        ::core::debug_assert!($cond, "unsafe precondition(s) violated: {=
-}", $msg)
-
-This should be singular, since the name of the macro also is singular.
-
-Cheers,
-Benno
-
-> +    };
-> +}
+> Hello Ard,
 >
-> base-commit: c746c3b5169831d7fb032a1051d8b45592ae8d78
+> My Macbook Pro Late 2013, product name Macbook11,3 is affected.
+> Specifically at least the firmware version 478.0.0.0.0, released on
+> 01/13/2023. I have no way to downgrade to check for other versions.
+>
+> From what I have read on internet this should not be the only model to
+> be affected.
+>
+> The issue is that apple_match_product_name() fails to obtain its info
+> via efi_get_smbios_record() and makes apple_set_os() fail too.
+>
 
+Fair enough.
+
+But please move get_table_record() into x86-stub.c and call it
+directly from apple_match_product_name() if the call to
+efi_get_smbios_record() returns NULL. That way, the fallback is only
+used where we know it is needed, and we don't go down this direct
+path, e.g., on random arm64 boxes.
+
+Also, struct smbios_entry_point can be moved into the .c file, as it
+is not used anywhere else. And you can drop the __packed, I think - if
+it is needed for alignment, you can use __aligned(1) instead (but all
+the fields seem to be naturally aligned afaict)
 
