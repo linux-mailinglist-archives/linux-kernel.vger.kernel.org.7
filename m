@@ -1,55 +1,51 @@
-Return-Path: <linux-kernel+bounces-882306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5404EC2A243
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 07:07:37 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF79CC2A252
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 07:08:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id BDB2E4E9D7F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 06:07:08 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CE6534E69AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 06:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45C023A984;
-	Mon,  3 Nov 2025 06:07:02 +0000 (UTC)
-Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208992A1C7;
-	Mon,  3 Nov 2025 06:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D822741C0;
+	Mon,  3 Nov 2025 06:08:53 +0000 (UTC)
+Received: from zg8tmtyylji0my4xnjeumjiw.icoremail.net (zg8tmtyylji0my4xnjeumjiw.icoremail.net [162.243.161.220])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA4D5284684;
+	Mon,  3 Nov 2025 06:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.161.220
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762150022; cv=none; b=nfSEWbTw6eYBvyXc2Y0W0Toti3HqLIpJJCG7t6TTmEmVcjcoxoo98xsO20YprYEk1bU33Gb2/hC5c9Pq+8q07a7MkWIhjmxzQnKbyq4Ek+rOZNAC/Y+Srv1XEPXGni5BsMF/Vvi3Agz4gA+DuThelmZXPo9ty9/XmvB3Q6TfqjM=
+	t=1762150133; cv=none; b=gJq+ly4kIMQwtZq5Wb8lnL8RdIzLMn2QoM4Dgyk/Gpeb5XVZOTDllm5YCcZ3PsDWJuWtQX9FRVuadM6Qg1T4M+CutFSohwAEts0p2nOrTJVuOw8jCrWL/008FF2e6x35RZbSqPalMHqZ5aKWTyntGdqthDK1UmJ+/w3BZER70eY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762150022; c=relaxed/simple;
-	bh=RL7I2sVDsXvSV2eh80N/nVCcj43D61OOA35MTWaVuR0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pQZ91v3ESgfy44NlxWswIVN7oQeStpfCrqHAnvkqTblVIiREqyGTAow9XMqautY+OhtO74mDxUIeZN2mq02LBEHEtPKGyS0sSJghPZ7VV8eVQfdaiBQ4h2Fhzk5x7RsVOAmkID8onDn+12JZoYIEMc/WRDhgo5Q6Hw72tLxpQdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from Jtjnmail201617.home.langchao.com
-        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id 202511031406474531;
-        Mon, 03 Nov 2025 14:06:47 +0800
-Received: from jtjnmailAR02.home.langchao.com (10.100.2.43) by
- Jtjnmail201617.home.langchao.com (10.100.2.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Mon, 3 Nov 2025 14:06:47 +0800
-Received: from inspur.com (10.100.2.107) by jtjnmailAR02.home.langchao.com
- (10.100.2.43) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Mon, 3 Nov 2025 14:06:47 +0800
-Received: from localhost.com (unknown [10.94.13.117])
-	by app3 (Coremail) with SMTP id awJkCsDw3fh2RghpRboJAA--.11961S4;
-	Mon, 03 Nov 2025 14:06:47 +0800 (CST)
-From: Chu Guangqing <chuguangqing@inspur.com>
-To: <pablo@netfilter.org>, <laforge@gnumonks.org>, <andrew+netdev@lunn.ch>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>
-CC: <osmocom-net-gprs@lists.osmocom.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Chu Guangqing <chuguangqing@inspur.com>
-Subject: [PATCH] gtp: Fix a typo error for size
-Date: Mon, 3 Nov 2025 14:05:04 +0800
-Message-ID: <20251103060504.3524-1-chuguangqing@inspur.com>
-X-Mailer: git-send-email 2.43.7
+	s=arc-20240116; t=1762150133; c=relaxed/simple;
+	bh=ij7SSqEkbo4mNi6ysGnvvLGMAM4tjimDlNEUDeNc4Kc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KF8wDEp2yD5TJU6X+IhAubpbmY9IxLBDGN9tiAXyyO9sF5ELLEXz/y1T1ndQJHiUiNkdhQ7l99859qPz+lxVk6i5dDszVRYdMnvt1QVFhZ5FIkpQjjHIQU3XGg2f7KEbvJ7jvWIFO9Xj+hQdoKWNGMkwhG7lWRqYMv5jn4jF0sA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn; spf=pass smtp.mailfrom=zju.edu.cn; arc=none smtp.client-ip=162.243.161.220
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zju.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zju.edu.cn
+Received: from zju.edu.cn (unknown [106.117.100.156])
+	by mtasvr (Coremail) with SMTP id _____wCXkENBRghp0QdPAw--.12221S3;
+	Mon, 03 Nov 2025 14:05:54 +0800 (CST)
+Received: from ubuntu.localdomain (unknown [106.117.100.156])
+	by mail-app2 (Coremail) with SMTP id zC_KCgA3UEQ7RghpGF99Aw--.25113S2;
+	Mon, 03 Nov 2025 14:05:51 +0800 (CST)
+From: Duoming Zhou <duoming@zju.edu.cn>
+To: linux-s390@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	hca@linux.ibm.com,
+	gor@linux.ibm.com,
+	agordeev@linux.ibm.com,
+	borntraeger@linux.ibm.com,
+	svens@linux.ibm.com,
+	mingo@kernel.org,
+	tglx@linutronix.de,
+	Duoming Zhou <duoming@zju.edu.cn>
+Subject: [PATCH] s390/tape: fix use-after-free bugs caused by tape_dnr delayed work
+Date: Mon,  3 Nov 2025 14:05:44 +0800
+Message-Id: <20251103060544.22720-1-duoming@zju.edu.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,55 +53,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: awJkCsDw3fh2RghpRboJAA--.11961S4
-X-Coremail-Antispam: 1UD129KBjvdXoWrZrykKFyUCFW8ZryxCrWDCFg_yoWxCFgEk3
-	4xZFWxX3WUGFyvyw17ur4Y9ryak3W8ZF4kuw1IgrZxA345Za1Dur97uF97Xan8Cr4UJFy3
-	CFnxXryUZ34YqjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb38FF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_GcCE
-	3s1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
-	1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0
-	cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8Jw
-	ACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
-	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
-	1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
-	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
-	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
-	evJa73UjIFyTuYvjfUFg4SDUUUU
-X-CM-SenderInfo: 5fkxw35dqj1xlqj6x0hvsx2hhfrp/
-X-CM-DELIVERINFO: =?B?XyNJupRRTeOiUs3aOqHZ50hzsfHKF9Ds6CbXmDm38RucXu3DYXJR7Zlh9zE0nt/Iac
-	D+Kd002PUJ0c/jQWv7cO1ektgJ30b0MeiTb5cNH1w8ExGK1nHqxZ4+VdrBkvIbSUEPrEtB
-	VrlxhN96MEJ7s9QwWAU=
-Content-Type: text/plain
-tUid: 20251103140648c88674082191d03c82b124efa3dea5eb
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+X-CM-TRANSID:zC_KCgA3UEQ7RghpGF99Aw--.25113S2
+X-CM-SenderInfo: qssqjiasttq6lmxovvfxof0/1tbiAwQSAWkHs-8AbwA+sn
+X-CM-DELIVERINFO: =?B?yloTDgXKKxbFmtjJiESix3B1w3uoVhYI+vyen2ZzBEkOnu5chDpkB+ZdGnv/zQ0PbP
+	CR15Vie2bMrbJnHqI6rTqE7nL4FhIxvV4PEkCBxd2xL2aDveEeLLuEIaoCXDa3CO8ounDo
+	CWc4HIlAA4hKbnpcp4/J/FqLF/BbAV+6VQ+YBDSF9uI9lEwaeBPdnyJNs6TwlQ==
+X-Coremail-Antispam: 1Uk129KBj93XoW7ArW5tF4xCw1DuFWfuFWUJrc_yoW8CFWkpr
+	Z5J34qy34DWw40ka13X348uF1UG39rC3yUKrn2gwnagrn8A34rGryqqFnaqFyUJrWkAFW5
+	Xr9Iq34UuayDtFcCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvvb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AK
+	xVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc
+	02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAF
+	wI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0Y48IcxkI7V
+	AKI48G6xCjnVAKz4kxMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I
+	3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxV
+	WUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8I
+	cVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aV
+	AFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuY
+	vjxU7xwIDUUUU
 
-Fix the spelling error of "size".
+The delayed work tape_dnr is initialized in tape_alloc_device(), which
+is called from tape_generic_probe(), and is scheduled in the following
+scenarios:
 
-Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
+1. Starting an I/O operation fails with -EBUSY in __tape_start_io().
+2. Canceling an I/O operation fails with -EBUSY in __tape_cancel_io().
+3. A deferred error condition is detected in __tape_do_irq().
+
+When the tape device is detached via tape_generic_remove(), the
+tape_device structure might be deallocated after the final call to
+tape_put_device(). However, if the delayed work tape_dnr is still
+pending or executing at the time of detachment, it could lead to
+use-after-free bugs when the work function tape_delayed_next_request()
+accesses the already freed tape_device memory.
+
+The race condition can occur as follows:
+
+CPU 0(detach thread)      | CPU 1 (delayed work)
+tape_generic_remove()     |
+  tape_put_device(device) | tape_delayed_next_request
+                          |   device = container_of(...) // USE
+                          |   device-> // USE
+
+Add disable_delayed_work_sync() in tape_generic_remove() to guarantee
+proper cancellation of the delayed work item before tape_device is
+deallocated.
+
+This bug is identified by static analysis.
+
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Signed-off-by: Duoming Zhou <duoming@zju.edu.cn>
 ---
- drivers/net/gtp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/s390/char/tape_core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/gtp.c b/drivers/net/gtp.c
-index 5cb59d72bc82..4213c3b2d532 100644
---- a/drivers/net/gtp.c
-+++ b/drivers/net/gtp.c
-@@ -633,7 +633,7 @@ static void gtp1u_build_echo_msg(struct gtp1_header_long *hdr, __u8 msg_type)
- 	hdr->tid = 0;
+diff --git a/drivers/s390/char/tape_core.c b/drivers/s390/char/tape_core.c
+index 6ec812280221..722dc4737a87 100644
+--- a/drivers/s390/char/tape_core.c
++++ b/drivers/s390/char/tape_core.c
+@@ -625,6 +625,7 @@ tape_generic_remove(struct ccw_device *cdev)
+ 	}
+ 	DBF_LH(3, "(%08x): tape_generic_remove(%p)\n", device->cdev_id, cdev);
  
- 	/* seq, npdu and next should be counted to the length of the GTP packet
--	 * that's why szie of gtp1_header should be subtracted,
-+	 * that's why size of gtp1_header should be subtracted,
- 	 * not size of gtp1_header_long.
- 	 */
- 
++	disable_delayed_work_sync(&device->tape_dnr);
+ 	spin_lock_irq(get_ccwdev_lock(device->cdev));
+ 	switch (device->tape_state) {
+ 		case TS_INIT:
 -- 
-2.43.7
+2.34.1
 
 
