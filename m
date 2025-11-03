@@ -1,85 +1,76 @@
-Return-Path: <linux-kernel+bounces-883451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B95CC2D7FD
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:38:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A608C2D7DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:36:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7E393B6DD2
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:34:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FA761889567
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22F831B810;
-	Mon,  3 Nov 2025 17:34:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C2031B81B;
+	Mon,  3 Nov 2025 17:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tUx4q78T"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KubwgKY0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A5A3191D2
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 17:34:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF6E31A579;
+	Mon,  3 Nov 2025 17:36:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762191265; cv=none; b=j7d5vHZN1+4YdJTw/oTYxORIXtKKBniJhcEXXtP1COxBM6XVO98uE1fF4N2VN3+wxqFKRnv58g3UA3gwsYWUlOU9rH5MLL2lZhYR5FkCVOS2i7U0y6E/v9qgQveG1pgTXGNCysleZ+zxvCpNeNB/BZMhUjCSDJYG3I/l4r7XaXI=
+	t=1762191391; cv=none; b=ZtGDnbFlmefWU+zlEAwy1a3c/TD5zdX8L+QfV8qW7xFQ5ywS3a9mPb1AdtufdfSOdBC0kuczid7qe7zm2RqxcMX1RxSBz2ulHfXEGUfYvwjJoeirbcmFgN9jSiwA5WK68Gj0nwnipFL9MrM1pyiCKn4SaQCSvYRl+uS41XDLEy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762191265; c=relaxed/simple;
-	bh=U+aH8lUB+El5hnIWJORr7k8qBwm8VSBJwZFvW25Fg/I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GX4qgVXUwJgq624JR13aGvLgnKTXbG5Z4riCHKy8p1m9r6jEioTIBh4CyRiOZLKGEnUFyFctK1cnksdFXRO0pS9LK879mcoOc5zFJrI1+lkysk79DlJpNpwfeYmzz57sQJB9TKZ4a4o0pjosqFZO2uIWvQoLYDGb3JQdzQ2LXfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tUx4q78T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB3A2C19421
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 17:34:24 +0000 (UTC)
+	s=arc-20240116; t=1762191391; c=relaxed/simple;
+	bh=9EcSpTnGG+3lF1LspBXYvB/oLK+tUJK+pPR4eGAWoF8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BgbbFAdH+4eUK6r/41Bg+xPUCZb58vW5ScO/213llH/bEEHsQ7rNuz1mT9YR+KX8x5y59bDKmbJynjreo+rfC0PY5QrUZp7aR032c9kQGtMLerNbg1kfj45Y8WdmhIk4kRtGme1R2KG0Otf+uplxMFpInxnDGDmJBCw54oVeShc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KubwgKY0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A529AC4CEE7;
+	Mon,  3 Nov 2025 17:36:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762191264;
-	bh=U+aH8lUB+El5hnIWJORr7k8qBwm8VSBJwZFvW25Fg/I=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-	b=tUx4q78TJlms91B8kVH3OS4mBEXWsvYo6gIgV6Y0heRMq8vOm1cDId7gsHmz7W3tE
-	 7GiOz3MF6wlKLkRekNZ6ukVR+qYIJP7pj1+1I+C0fnW31LlA6+pgdgbsu1yqVjE6lO
-	 bvjS/eBSerrLyAuAqTfYt/Jm0i0W3o6czTZv7Ca+Eea98ojf4VLlcwUKvJpLKTQR+W
-	 n81B/gcvOWkCN1B1qUtJ1ul7lv3noAm5/SH0L9mrkqMLY/tBb/mPjuKZcG2t902EXh
-	 l4Xsnxt08jqN5XmqKhFuD5XCXr1TRB1nQaD8aChq4XcRvAOuYvyd3fS0LpCKAQlOPK
-	 kksI4DjMOPIUA==
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-376466f1280so59275491fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 09:34:24 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVAz4CXKmUmuZ6WdfXQpo4uDLd1rjMQN4KhmtYEhScEyJYPR2SIK/IxAsvxqZsxWOeLcJHGJ6JQjjZkHEE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlgL1e1ROhmTB70+eLseDhMzHRSrijsucJZkjruUQJSOYQSYi2
-	W+bxoHVOwWPm5VYVeBlKEx6nxZ4anZSGSD86Ltp76uWYiRioveuiRg3+zhinn2VmTUjl5Tqrp2J
-	BOp8PJ1WQ5mUYGt8i5uHpfcyY6axNc4U=
-X-Google-Smtp-Source: AGHT+IEqIvI6roVKypuJ/8lmOG6ruLu/sT6I8PoGyCI0UGJODSsC0TE29OXF/Zmg59uD8vy8TPsUZtJtVFNrzZBQfWQ=
-X-Received: by 2002:a2e:960f:0:b0:378:ec14:f79d with SMTP id
- 38308e7fff4ca-37a18da804fmr30699451fa.22.1762191263229; Mon, 03 Nov 2025
- 09:34:23 -0800 (PST)
+	s=k20201202; t=1762191390;
+	bh=9EcSpTnGG+3lF1LspBXYvB/oLK+tUJK+pPR4eGAWoF8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KubwgKY0KUWVM7l32G93OfNgqEAOEsAC8ZB6ZzBpRG/tHOd+U4kcNVvPR0geDHYY5
+	 5tSwUj/WFukSVhgNqwfCXw+lJ7lFrl68S9RgvusAZYrFniazel03A9N4oBhjv0Ha7j
+	 thaFrVS/Zn4MNWqXY7y/cKCG/Cl/ts/PGDw0k2/0VJh0aWgfLh4xZPTKz3P2TIH46u
+	 RT3j5vIYjCQLKeG9FOtYLl6Hh0sTx4hwHvJc9Ai4VO9L+KYWrp/hqxUbKrfRx8vd9h
+	 VM26QhMcg9hpiAukTzEYORdExDHsp4yVRs/ZTmLfZV8jdEGsat/T7AvWecGKwTm8/3
+	 l+L02LCN6R0Uw==
+Date: Mon, 3 Nov 2025 09:34:49 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>
+Subject: Re: [PATCH v2] lib/crypto: arm/blake2s: Fix some comments
+Message-ID: <20251103173449.GF1735@sol>
+References: <20251102014541.170188-1-ebiggers@kernel.org>
+ <20251102021553.176587-1-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251012192330.6903-1-jernej.skrabec@gmail.com> <20251012192330.6903-31-jernej.skrabec@gmail.com>
-In-Reply-To: <20251012192330.6903-31-jernej.skrabec@gmail.com>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Tue, 4 Nov 2025 01:34:11 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65v3_uNohrH6PgDaRdVcKzEL0n824kqxGC+m_ZMOjLiNQ@mail.gmail.com>
-X-Gm-Features: AWmQ_bkqC2MlJ3l_GaAyIVAX7lpWibpo3rNv2SEIDf6NmFqmG-ysp_S5fUsi28A
-Message-ID: <CAGb2v65v3_uNohrH6PgDaRdVcKzEL0n824kqxGC+m_ZMOjLiNQ@mail.gmail.com>
-Subject: Re: [PATCH 30/30] drm/sun4i: Nuke mixer pointer from layer code
-To: Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: mripard@kernel.org, maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, samuel@sholland.org, 
-	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251102021553.176587-1-ebiggers@kernel.org>
 
-On Mon, Oct 13, 2025 at 3:24=E2=80=AFAM Jernej Skrabec <jernej.skrabec@gmai=
-l.com> wrote:
->
-> It's not used anymore, so remove it. This allows trully independent
-> layer state from mixer.
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+On Sat, Nov 01, 2025 at 07:15:53PM -0700, Eric Biggers wrote:
+> Fix the indices in some comments in blake2s-core.S.
+> 
+> Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+> ---
+> 
+> v2: Fixed the same mistake in another place.
+> 
+> This patch is targeting libcrypto-next
 
-Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
+Applied to https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=libcrypto-next
+
+- Eric
 
