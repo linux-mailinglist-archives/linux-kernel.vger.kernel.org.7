@@ -1,134 +1,164 @@
-Return-Path: <linux-kernel+bounces-882736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C363C2B477
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:19:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D85E1C2B479
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:19:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A0821893461
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:19:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 051F23B0E40
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:19:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C032A30275E;
-	Mon,  3 Nov 2025 11:19:03 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8B1301489;
+	Mon,  3 Nov 2025 11:19:00 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F152FF66D;
-	Mon,  3 Nov 2025 11:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344F22E1EE7;
+	Mon,  3 Nov 2025 11:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762168743; cv=none; b=Dzx6OihTa+zMvYS5QfCaRQrruCUsrCvU04p9TjgEgmHo7qeQFHg5qKZAV6MmfwtJrTVAnvmfA1bYV17m/7Z+IlP3QyeN7iS0q/Y/LAKzIOIcmcuOjWy4M8Co7cdTDSFDE79nZpSTHqKXkGuqkekGirDlypxcwJifwzQELEe5LGE=
+	t=1762168739; cv=none; b=YLfLUVMYNS0vVfHRDmHrd5exd9kJiHhxR0dFESDDZqfdhUDVePNL3BrcLaz8UnWVn3hKRkrbHgRymtGGjVxs1YimMAtf3QA8a71a5DxGOtDFUFbZVS3UDsLsX75o+EFKgFqiSaABRZL7SMUtiXUS4DLr0SCWnuo2Y2OFNDWj6WE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762168743; c=relaxed/simple;
-	bh=fNrIgV1o+9irXV/ZRLy8p0aur9okmV7+4DLYLSB7u8k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h5VdqUX+OlHCtolLYtyPxoIhekoWZRIgUb0aU8cxi326m3jR9duzte9n3mavPYxLbd8TKL1Ug0uqN1Zj3fzG6zYxNvHkc6jsQNkUjhzjM7mB75qRRd0GrnD4s9V9kT/ow7MVUBpnwCWezrlu5UEQmnaCE/JGwQYB6AwNjfBBmRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
-	by APP-05 (Coremail) with SMTP id zQCowAC3JfSWjwhpZ7I6AQ--.23373S2;
-	Mon, 03 Nov 2025 19:18:47 +0800 (CST)
-From: Haotian Zhang <vulab@iscas.ac.cn>
-To: Herve Codina <herve.codina@bootlin.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Haotian Zhang <vulab@iscas.ac.cn>
-Subject: [PATCH] net: wan: framer: pef2256: Fix missing mfd_remove_devices() call
-Date: Mon,  3 Nov 2025 19:18:44 +0800
-Message-ID: <20251103111844.271-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1.windows.1
+	s=arc-20240116; t=1762168739; c=relaxed/simple;
+	bh=taFBnJJqqaEpZM3jo5utaLQzQlREaiFFTxcTAHk/CIA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=qo/4XeyRTkYn7QxAWhyKvKXMF7O9Uts17zAce6cnfUZ9Gfm1aT3whJ6tUIBlFEkKNqSfaSY7IsGY3hCfE+ZKKkxYJEOlgBNc20W/SmMBIHAikOBgWWRgn1f3Hr4shPO36Dmkf4kbvbaudW9EnzDBvHPZ+nZGs5iSOYGUmH1l2+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4d0Tc11XnHzYQttL;
+	Mon,  3 Nov 2025 19:18:41 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.252])
+	by mail.maildlp.com (Postfix) with ESMTP id 7AB231A0C73;
+	Mon,  3 Nov 2025 19:18:54 +0800 (CST)
+Received: from [10.67.111.176] (unknown [10.67.111.176])
+	by APP3 (Coremail) with SMTP id _Ch0CgDHWt+djwhp8cQMCg--.64504S2;
+	Mon, 03 Nov 2025 19:18:54 +0800 (CST)
+Message-ID: <31b58b15-0b46-4eba-bd50-afc99203695a@huaweicloud.com>
+Date: Mon, 3 Nov 2025 19:18:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowAC3JfSWjwhpZ7I6AQ--.23373S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7uw1xJrW8urW7tw1UAF4UCFg_yoW8ZFyrpw
-	43Aa909ry5Jw48W34xZ3Z5uFy5Awn7K3W0grWxu3s3ur98AFWUW348ZFy2yw45GrWxta13
-	JFWxJF1rCF98JaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r1q
-	6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
-	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y
-	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
-	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
-	IxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUb8hL5UUUU
-	U==
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwkPA2kISHP2FwAAs5
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 00/22] cpuset: rework local partition logic
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: longman@redhat.com, tj@kernel.org, hannes@cmpxchg.org, mkoutny@suse.com
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lujialin4@huawei.com, chenridong@huawei.com
+References: <20251025064844.495525-1-chenridong@huaweicloud.com>
+Content-Language: en-US
+In-Reply-To: <20251025064844.495525-1-chenridong@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:_Ch0CgDHWt+djwhp8cQMCg--.64504S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxuF1kWFWruFWDKr15tFW3GFg_yoW5tw4kpF
+	98GaySyryUGry5C3srJFs7Aw4rWwsrJFyUtwnxu348Xr17Aw1vvayIy395Za47XryDZryU
+	Z3ZrWr4xX3W7C3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
+	14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU8YYLPUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-The driver calls mfd_add_devices() but fails to call mfd_remove_devices()
-in error paths after successful MFD device registration and in the remove
-function. This leads to resource leaks where MFD child devices are not
-properly unregistered.
 
-Add mfd_remove_devices() call in the error path after mfd_add_devices()
-succeeds, and add the missing mfd_remove_devices() call in pef2256_remove()
-to properly clean up MFD devices.
 
-Fixes: c96e976d9a05 ("net: wan: framer: Add support for the Lantiq PEF2256 framer")
-Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
----
- drivers/net/wan/framer/pef2256/pef2256.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+On 2025/10/25 14:48, Chen Ridong wrote:
+> From: Chen Ridong <chenridong@huawei.com>
+> 
+> The current local partition implementation consolidates all operations
+> (enable, disable, invalidate, and update) within the large
+> update_parent_effective_cpumask() function, which exceeds 300 lines.
+> This monolithic approach has become increasingly difficult to understand
+> and maintain. Additionally, partition-related fields are updated in
+> multiple locations, leading to redundant code and potential corner case
+> oversights.
+> 
+> This patch series refactors the local partition logic by separating
+> operations into dedicated functions: local_partition_enable(),
+> local_partition_disable(), and local_partition_update(), creating
+> symmetry with the existing remote partition infrastructure.
+> 
+> The series is organized as follows:
+> 
+> 1. Fix a bug that isolcpus stat in root partition.
+> 
+> 2. Infrastructure Preparation (Patches 2-3):
+>    - Code cleanup and preparation for the refactoring work
+> 
+> 3. Introduce partition operation helpers (Patches 4-6):
+>    - Intoduce out partition_enable(), partition_disable(), and
+>      partition_update() functions.
+> 
+> 4. Use new helpers for remote partition (Patches 7-9)
+> 
+> 5. Local Partition Implementation (Patches 10-13):
+>    - Separate update_parent_effective_cpumask() into dedicated functions:
+>      * local_partition_enable()
+>      * local_partition_disable()
+>      * local_partition_invalidate()
+>      * local_partition_update()
+> 
+> 6. Optimization and Cleanup (Patches 14-22):
+>    - Remove redundant partition-related operations
+>    - Additional optimizations based on the new architecture
+> 
+> ---
+> 
+> Changes in v2:
+> - Added bugfix for root partition isolcpus at series start.
+> - Completed helper function implementations when first introduced.
+> - Split larger patches into smaller, more reviewable units.
+> - Incorporated feedback from Longman.
+> 
+> Chen Ridong (22):
+>   cpuset: fix isolcpus stay in root when isolated partition changes to
+>     root
+>   cpuset: add early empty cpumask check in partition_xcpus_add/del
+>   cpuset: generalize validate_partition() interface
+>   cpuset: introduce partition_enable()
+>   cpuset: introduce partition_disable()
+>   cpuset: introduce partition_update()
+>   cpuset: use partition_enable() for remote partition enablement
+>   cpuset: use partition_disable() for remote partition disablement
+>   cpuset: use partition_update() for remote partition update
+>   cpuset: introduce local_partition_enable()
+>   cpuset: introduce local_partition_disable()
+>   cpuset: introduce local_partition_invalidate()
+>   cpuset: introduce local_partition_update()
+>   cpuset: remove update_parent_effective_cpumask
+>   cpuset: remove redundant partition field updates
+>   cpuset: simplify partition update logic for hotplug tasks
+>   cpuset: unify local partition disable and invalidate
+>   cpuset: use partition_disable for compute_partition_effective_cpumask
+>   cpuset: use validate_local_partition in local_partition_enable
+>   cpuset: introduce validate_remote_partition
+>   cpuset: simplify update_prstate() function
+>   cpuset: remove prs_err clear when notify_partition_change
+> 
+>  kernel/cgroup/cpuset.c | 1000 +++++++++++++++++++---------------------
+>  1 file changed, 463 insertions(+), 537 deletions(-)
+> 
 
-diff --git a/drivers/net/wan/framer/pef2256/pef2256.c b/drivers/net/wan/framer/pef2256/pef2256.c
-index 1e4c8e85d598..d43fbf9bb27d 100644
---- a/drivers/net/wan/framer/pef2256/pef2256.c
-+++ b/drivers/net/wan/framer/pef2256/pef2256.c
-@@ -821,27 +821,34 @@ static int pef2256_probe(struct platform_device *pdev)
- 
- 	ret = pef2256_setup_e1(pef2256);
- 	if (ret)
--		return ret;
-+		goto err_mfd_remove;
- 
- 	framer_provider = devm_framer_provider_of_register(pef2256->dev,
- 							   framer_provider_simple_of_xlate);
--	if (IS_ERR(framer_provider))
--		return PTR_ERR(framer_provider);
-+	if (IS_ERR(framer_provider)) {
-+		ret = PTR_ERR(framer_provider);
-+		goto err_mfd_remove;
-+	}
- 
- 	/* Add audio devices */
- 	ret = pef2256_add_audio_devices(pef2256);
- 	if (ret < 0) {
- 		dev_err(pef2256->dev, "add audio devices failed (%d)\n", ret);
--		return ret;
-+		goto err_mfd_remove;
- 	}
- 
- 	return 0;
-+
-+err_mfd_remove:
-+	mfd_remove_devices(pef2256->dev);
-+	return ret;
- }
- 
- static void pef2256_remove(struct platform_device *pdev)
- {
- 	struct pef2256 *pef2256 = platform_get_drvdata(pdev);
- 
-+	mfd_remove_devices(pef2256->dev);
- 	/* Disable interrupts */
- 	pef2256_write8(pef2256, PEF2256_IMR0, 0xff);
- 	pef2256_write8(pef2256, PEF2256_IMR1, 0xff);
+Hi Longman,
+
+I'd appreciate it if you could have a look at this series when you have a moment.
+
 -- 
-2.50.1.windows.1
+Best regards,
+Ridong
 
 
