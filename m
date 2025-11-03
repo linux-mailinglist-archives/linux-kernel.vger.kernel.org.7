@@ -1,339 +1,211 @@
-Return-Path: <linux-kernel+bounces-882432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FEDFC2A737
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:58:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D7C6C2A689
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:53:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 282EE4F3C73
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:54:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81C5E3A6B96
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681DC2D0619;
-	Mon,  3 Nov 2025 07:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="AmkCNSd7"
-Received: from SJ2PR03CU001.outbound.protection.outlook.com (mail-westusazon11012024.outbound.protection.outlook.com [52.101.43.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DADE2C17B3;
-	Mon,  3 Nov 2025 07:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.43.24
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762156455; cv=fail; b=uBYGK/VPhWsR2usYpEoUE8YgCTe0IVyR0n4ZxHUR+p2AkMS+4aLqs4pMR7JtXZg5JCUpTB7CrnpnOhyKwyFpkTgcrMUWKv3b1qF3uzZxLlnR0kmeT1d6By5mC9gf5Av6djhCB8QBsFubq6f37rKPDa46ErufnYO3wO8p3jyWPHo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762156455; c=relaxed/simple;
-	bh=OOPUQvgJFYRAVz/SHG164JwIG24VU1oGoMaElOhVuXk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=q8S+OVAdzQfBNx2kyYeuF/TOD0gVb1SXIadd5TCtoMzqvXoXRh0E0WhDUHGts2zjK1LucNUpSvjSEhcY4Q+NPBlXl1ifUOcyFBXqgr5zAj01WBurkElzv73BybzZH62oIjGos6WlbtEezkSrU8DD82/BNeAyNyDSXsMMAOXcUN0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=AmkCNSd7; arc=fail smtp.client-ip=52.101.43.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=teuI3Nrqr2x5v5Se2VCpNr7t+nXq5/xe69oZXfzuIRHVbdBxAtUuEbTL1rUUlkCehJtiE6D5z23VCzyUHxpH1dcCWUlZrbKGg2jf9MEhjDyImIX6oDNK14XERN20/hjo2IyL5724ODN1eOCNJK4JvNHNE3g1LM8z9F+owpxt5oxxHPgH2stuDAWGEF0i5ZzYiDXoPYq9KcIPYvQlRlpLTSdKVdV2Bmsex9yf9FLBkHd11KBL29vQGvQ9MJv1vUS3gdjuctUuU4PlwQjIJkXpe3yEp7+ISzHBUBBtMo6RxM9intXTrzFSRk0fPwbqhFU9p564j4Y8plAmMtgKO1miZw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=k17MXIsfn8Q8h4L+R7U3PCZW2ieaCOBN/yI9P03b8EI=;
- b=GrMH/LAVUHrByv2qUzf+WoLsxrJoFaWT4SrPabuD3mJO8bITMD/J2KG9fiVHs8LyN2xb8OjijQjYCRpReuifr/tDBOJVHpuqJCfUAY8gtbFhqo0NcVg3qz+9tmn44SL2L3D5IOodtwiDm9oTYmCQWlwYa9UrfCCsJM7V2SbnE08InP6BF82nMe5MUNm1rC0n5SYPKYtESocsuAQKfHBkLrLt4Rv8+xi+3JjZ5brWfOOb5IKIdjAlS8xrttspoe21b1son5b1+40XRNCbjiEN6J5+DupLd+DtM+1vNqwTzMiqN+CpR1WM9N1dioDgAqrFchapsiQ14kxddo7Cd30s1w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=k17MXIsfn8Q8h4L+R7U3PCZW2ieaCOBN/yI9P03b8EI=;
- b=AmkCNSd7yyDxjmoQZic6exban2Ot+MlsEw3znZkPLSexoSYb+0jw8vq/CVSqLOHzrpU4HjaJI5s2HLQ63uuinbDSf+CUaBZMQ61Wg0eClao2zo+281Y2QQmloWamyO23cj0Zxc3P4JQhqcjTBYRIHropYeUOivjP9E6NEaY6ldw=
-Received: from DS7PR05CA0002.namprd05.prod.outlook.com (2603:10b6:5:3b9::7) by
- DM4PR12MB6304.namprd12.prod.outlook.com (2603:10b6:8:a2::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.16; Mon, 3 Nov 2025 07:54:10 +0000
-Received: from DS1PEPF00017093.namprd03.prod.outlook.com
- (2603:10b6:5:3b9:cafe::65) by DS7PR05CA0002.outlook.office365.com
- (2603:10b6:5:3b9::7) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.7 via Frontend Transport; Mon, 3
- Nov 2025 07:54:09 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=satlexmb07.amd.com; pr=C
-Received: from satlexmb07.amd.com (165.204.84.17) by
- DS1PEPF00017093.mail.protection.outlook.com (10.167.17.136) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.6 via Frontend Transport; Mon, 3 Nov 2025 07:54:09 +0000
-Received: from [127.0.1.1] (10.180.168.240) by satlexmb07.amd.com
- (10.181.42.216) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.17; Sun, 2 Nov
- 2025 23:54:04 -0800
-From: "Yo-Jung Leo Lin (AMD)" <Leo.Lin@amd.com>
-Date: Mon, 3 Nov 2025 15:51:06 +0800
-Subject: [PATCH 3/5] drm/amdgpu: add UMA allocation setting helpers
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6272C21D0;
+	Mon,  3 Nov 2025 07:51:32 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2B61411DE;
+	Mon,  3 Nov 2025 07:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762156292; cv=none; b=LxZu1v9Dj72t2bmQdUkGBgFuMMKzVne1rp3dv5fQgg9rJia1ByfEy0Ovc1PvHS2SbTaFR+u0RBcIjuUWsez5tDU9mhiER3m/RtGZUVzXvUdnjFPhM94+cmbmIUAPI+YqPMbQ27N9oI+2NXlpoHSy4rv+tMKCh1rohQfjinDfxao=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762156292; c=relaxed/simple;
+	bh=hfqpfBfHxBxqAMWf51/e9m+GyU8Dfc8f0Ko1up50BfE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=Z+Hd882BjU6FpZa3tjEiYdkx5PBuWCFsh4VIIqYDD7BIguFUf8dAo95cnQfNM0WMpaWHd7LfZH4gAhQW3jivXa/f9q++IP8RjGtaFuycoZmp+rUDlvnlFpPaU4qPGIuQXZqyfybVG+e3Ca8fddCoTBK70FzHqW0JChzCnjWC7K8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-c45ff70000001609-ff-69085ef70e8f
+From: Byungchul Park <byungchul@sk.com>
+To: linux-mm@kvack.org,
+	netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel_team@skhynix.com,
+	harry.yoo@oracle.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	davem@davemloft.net,
+	kuba@kernel.org,
+	hawk@kernel.org,
+	john.fastabend@gmail.com,
+	sdf@fomichev.me,
+	saeedm@nvidia.com,
+	leon@kernel.org,
+	tariqt@nvidia.com,
+	mbloch@nvidia.com,
+	andrew+netdev@lunn.ch,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	akpm@linux-foundation.org,
+	david@redhat.com,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	horms@kernel.org,
+	jackmanb@google.com,
+	hannes@cmpxchg.org,
+	ziy@nvidia.com,
+	ilias.apalodimas@linaro.org,
+	willy@infradead.org,
+	brauner@kernel.org,
+	kas@kernel.org,
+	yuzhao@google.com,
+	usamaarif642@gmail.com,
+	baolin.wang@linux.alibaba.com,
+	almasrymina@google.com,
+	toke@redhat.com,
+	asml.silence@gmail.com,
+	bpf@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	sfr@canb.auug.org.au,
+	dw@davidwei.uk,
+	ap420073@gmail.com,
+	dtatulea@nvidia.com
+Subject: [RFC mm v5 1/2] page_pool: check nmdesc->pp to see its usage as page pool for net_iov not page-backed
+Date: Mon,  3 Nov 2025 16:51:07 +0900
+Message-Id: <20251103075108.26437-2-byungchul@sk.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20251103075108.26437-1-byungchul@sk.com>
+References: <20251103075108.26437-1-byungchul@sk.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAAzXSb0gTcRwG8H53t7tzOTqW5qWRMIrASE2tvkGJIMSvIgh6VUE53JFXumTL
+	pYG0apJlmlmW6QTtj82pWLN0LldrM80yCkudVP4vo8zMfzk1bBq9+8DzfJ9XX5aUZ0gCWVF9
+	QtColYkKWkpJf/iWbvh9iBXDPxX4g7G6koaK6VS412uVgKdyiACjuRbBhOcDA/P2JgTjjc00
+	fHeNIbhdOkWC8Y2BgsnqGRLqbUMIvhVU0fC5qZ+BCsse6Cn7QkHD+ToS+i+/oCHbMEuC3TPC
+	wFmryTtco2fgbW2OBK7N3CWhTt/LwDubkYbuynkJfHFmU9BSWE7BaH4jCT05MdBUsgKmXg0j
+	aKyuI2DqUjEN7TdtBDyytzNwta2EhgFDD4I2Vz8F+XOZNBSdyUEwO+2dHMmdkEDR824mJhSf
+	cbtp7Br+SeKH5V0E7ii4QmH3k5cEri/8xOASSwquMYXgi+42ElvMF2hsGctj8MeOBhq/KJil
+	cH3fVlxvHSdw9rkReq//Aek2lZAo6gRNWHScNGHSOk0lvw9Kbfp1h9KjwRUXkQ/Lc1H8ecco
+	89+u/kx6wTS3jne7PeSC/bhw3pQ/4bWUJbkslv/w5MFisJxT8+Nd9kVT3Fr+a187tWAZt4kv
+	zXLS/0aD+Yr7jsWOD7eZt7eWEQuWezvmh4bFUZ5zsHzDn9fEv4OV/DOTm8pFshK0xIzkolqX
+	pBQTo0IT0tRiamj88SQL8j5HWfrcQSsae7vPiTgWKXxlvfGMKJcoddq0JCfiWVLhJ+syUKJc
+	plKmnRI0xw9rUhIFrRMFsZQiQBYxdVIl544oTwjHBCFZ0PxPCdYnUI8yVq/KIxMC4pfoHN92
+	GiPiM6W7zcpy/10hP/qiTjuyRm/tCFb1SIa3momc2uT9nZE3tumwQttS7HkfeW9+YF2k+LT5
+	+tItsdHLgh5v0LoqhvIybMGDN7pjYp8ubz+5ptOuXa/YblN/3dWrzy+Kk6iC3h0++tmvqkbb
+	WpoVEd6RHqagtAnKjSGkRqv8C9711w0YAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAAzXRa0hTYRwG8N6ds/ccZ5PDMjtoEY3EEtKkrH9m0ZfoIBjdi6B01CFP6qxN
+	TaNCc5BmLrVWZkpqZd5Cm7WLOKnN7KKQeMmZ5a20m1le84Y1jb794Hl4vjw0Iesn3WlBGc2r
+	lIoIOZaQkp2bk9b8PkoLa40nIae8DEPpRBw86DaJYbLsswhySgwIRic7KPhjqUMwUvsCw3fb
+	MIK7+eME5LzRkDBWPkWAueozgm9ZDzH01fVSUKoPhq7CfhKqLxkJ6L36EkOaZpoAy+QgBRdN
+	RY7hygQKbLmvxNBo0Irh+tR9AowJ3RQ0V+Vg6Cz7I4Z+axoJr7KLSfilqyWgS7sN6vLcYLx+
+	AEFtuVEE41dyMbTeqhLBE0srBdea8jB81HQhaLL1kqCbScZwO1GLYHrCMTmYPiqG2887qW2+
+	XKLdjjnbwE+Ce1zcLuLeZmWQnL3mtYgzZ3+guDx9DFdZ5M1dtjcRnL4kBXP64UyKe/+2GnMv
+	s6ZJztyziTObRkRcWtIg3uV2WBJ4nI8QYnmV79ZQSdiYaYI81eIRVzd0j0xAn9wuIyeaZdaz
+	tt5kPGfMeLF2+yQxZ1dmLVukG3VYQhNMKs121DyaDxYxSnak3TJvkvFkv/S0knOWMv5sfqoV
+	/xtdzpZWPJ3vODEbWEtDoWjOMken5LGGSEeSPLSgBLkKythIhRDh76MOD4tXCnE+x6Ii9cjx
+	fuH5mQwTGm3eYUUMjeQLpd3HKEEmVsSq4yOtiKUJuau0XUMKMulxRfxZXhUVooqJ4NVW5EGT
+	8iXSoIN8qIw5oYjmw3n+FK/6n4poJ/cE5KI7NBV0kvBKCjQcaeGl7+SNPhVts8taVukMG73c
+	tWJ1wOr7yb/PZq+Oly/NFG4WnCvff+DJ3oGxNkr4keiyx7zYvq9ruu+0R+DKNhd2e2a+5Wt6
+	2ooLdz1t2pAr6y5h3wZnv6gthcGzBS6Rht1nhooDntWv2G/sTFHdCM24lX7HWU6qwxR+3oRK
+	rfgLYMXzOvkCAAA=
+X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20251103-vram-carveout-tuning-for-upstream-v1-3-17e2a72639c5@amd.com>
-References: <20251103-vram-carveout-tuning-for-upstream-v1-0-17e2a72639c5@amd.com>
-In-Reply-To: <20251103-vram-carveout-tuning-for-upstream-v1-0-17e2a72639c5@amd.com>
-To: Alex Deucher <alexander.deucher@amd.com>, =?utf-8?q?Christian_K=C3=B6nig?=
-	<christian.koenig@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter
-	<simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
-	Jonathan Corbet <corbet@lwn.net>
-CC: <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>, "Yo-Jung Leo Lin
- (AMD)" <Leo.Lin@amd.com>, <anson.tsao@amd.com>, <superm1@kernel.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6396; i=Leo.Lin@amd.com;
- h=from:subject:message-id; bh=OOPUQvgJFYRAVz/SHG164JwIG24VU1oGoMaElOhVuXk=;
- b=owEBbQKS/ZANAwAKAV8XsZZKKe6GAcsmYgBpCF8MZa9qWLJSCsG/xjsJzKhTmW0gWhL2B9W3e
- 4/LFgF4urSJAjMEAAEKAB0WIQQzqV4kW+yguuqHrw5fF7GWSinuhgUCaQhfDAAKCRBfF7GWSinu
- hrwAD/9vMZSpclVz+UED+S+zuzbt8ZS1l6WCtaiEQQSe2CYiCW0x6E+rWTGtdTLqebFvyVWFd0J
- 0JcWKIT1c3dId1HmluudQdnWYZo52XSGtYWn9xAa5K2C46fZQrjBrCtD+w0vQalCGVbtLSUBPuK
- TOsbZtsXi9BLjzIZ8F0CGg2LSIobm1WuY8pWqkGq2KiGWqLDUCh8YnHu8Rn14NrD1Gf74A/P8Qf
- PLJ8Xf9DoRqA+SUZ8AawIy9qdwKFSal/gFPQPe9aaGJ0/ddXct3Fel6rTg+pq2y+RHcMkc61hK4
- WCVmJPf+lw2TvjAf9F1gNsfPuClgoiHYe47tJXIyDxjRjhik7lx3q6ImzgMGPYq7UC/VtsftaEm
- POCCud1upSAuC5J9Fcm4yEfl9tOat8kWreEGuHU2bMV6PDOayEjlZJGjXwaAlN79pOaq2GQMdUO
- 0j1EIpyqr29AdmPaTgu9mS4y43fvg3kw3/ExgYALMq6CFcHEgO8KKKhWIs4NJuvZ/oi8x4OJNzB
- 94XGDVBCLW5+kd3GqVW6FucT3kPd3vvNb7x3XmKMbZD94H2DUsqq3OI+qdIREvdJFNKiE07JnYu
- P1COAvFQgsJq1bRQ2kwxxaD4Aj7egn47LXuN4QBnli6DikqmNZuOj0ahOm6R3oqybGOMnGNeQrM
- pNXqqdyfdQlD3NA==
-X-Developer-Key: i=Leo.Lin@amd.com; a=openpgp;
- fpr=33A95E245BECA0BAEA87AF0E5F17B1964A29EE86
-X-ClientProxiedBy: satlexmb07.amd.com (10.181.42.216) To satlexmb07.amd.com
- (10.181.42.216)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF00017093:EE_|DM4PR12MB6304:EE_
-X-MS-Office365-Filtering-Correlation-Id: ce7dfa88-49da-44c6-4e72-08de1aae2bb5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NU1Sa2plVURTcXhzMkpJKzhPTmk5bHRneVZ5LzNTR3ZTeU5INndndGNxZ2ZN?=
- =?utf-8?B?RkV3N0E2dnFoVDdRUkF3NHV3QWg3bG5nWHZiQXY2Z2RDb0pYSVMzTkhJT0oy?=
- =?utf-8?B?QVFHZkkrTnVjM0pxZXRONE5qL0srMGRGc0V3MkJtYld3dVlwK2krWHlFNGxV?=
- =?utf-8?B?d3NuQ3RiTzhmQ2Ixd2Y0Y0VxVmRLdXIxWjlFK2dGdktCRVZkbmM3MUkxYWNj?=
- =?utf-8?B?Wkh2cmZkV000dGsrTzd5Q0Y0b2NLakloQ0Nybm1UTGpLcFNEWU85aWR3SnVZ?=
- =?utf-8?B?TEQySlphWWZZUWFET1VJY0liMWxOYXIxUWNCZEVLb1JpUkQ2eFlYZWtMSklr?=
- =?utf-8?B?Y2NlRW5MOCtTVWZOZkRZQUtPZzRPQjRTZGNzZkNOVFhrY2MyQXNyT2lyY1Rh?=
- =?utf-8?B?MmYwN3ZUVGdkZVNra0h6WklmN0loSkdUckpESHBselR5QUpnT3duNTViTjdr?=
- =?utf-8?B?UkJzb05WYlJwUjJQTjZkU2Qrb2FwbTg1MFNPeUM4V3BjRWxheUNjR2hRRkpm?=
- =?utf-8?B?dUNaSndnY0N0TUk4ajAxVWRlVGJwY3Z3V2pVU3V2ZE5XQ0NKRi9sQWpOcmcw?=
- =?utf-8?B?RXlBcDZKaVpRUWhBeklzeFRFNktSMG84NU1xNkU5RDZWazRUWldJNStRaytM?=
- =?utf-8?B?azJ6Z0tGUEZLVGRsRkF3ZjFaUmtSUHlzVGY4SVlsM3VycHVOR0RsZSt3ZW1y?=
- =?utf-8?B?T3FjRVlGd2g1UitBT0JHaEJrMW8vUGRNVGlZQis5UDI1K3BwTUVwZmxsVU8w?=
- =?utf-8?B?NGtBVzBsa0tFeHV5WXdET2ZEc1psVHlRaUFvek1UTG9SZWI2WXVJZHNlNlFC?=
- =?utf-8?B?RnRIcGsrOHNxaWdsaXNZR05CRnNCYzFaeXArSm1ZQlVNOEp1amVPaVNNSXRq?=
- =?utf-8?B?QmxSdGdZNHIzblVQZE56c3RXWU8wazNUOWJNRW5EQXhvVjZXaDBuNjJwNTRN?=
- =?utf-8?B?K2UvdHRFQWFrNHU1NlU4ZUYzSXJZNEFvSTJqWnpXZTBUV3h3a3dvSVBiOUhU?=
- =?utf-8?B?c2c4UkNSd1g4TVRjTkc4L0FZWkxSdWtsakdJc1FmaUNzRkM4R25kbTkyM3lR?=
- =?utf-8?B?clU5ZTBWVEpsYnRVaWVYeEllVVVpd2I3UVh4NVZpTTM4L0dwRUhzQ09YMnR4?=
- =?utf-8?B?Ynd0MEV5QU9laHcrMG1ack9ibm83ZnlUaC9iZ0hwYVJ3NzRLcjhlZWFXZHY0?=
- =?utf-8?B?T1dDZXNJcStqZEtYMmh6T0FYY2xuNEs1dE9vWkduVFBCTjB4eVQzNHhPWDF0?=
- =?utf-8?B?TklPZVBLKzNrRE5BYUF6d3Q2d1BNWXVIbEdqYXRoUktJbUFqQUkxSlVXay9h?=
- =?utf-8?B?ZmtnV205TGswNkFCdDA3blFHU0Zod3p3eEYrSWVpMWs3VDRpS0FLVTRlTWdk?=
- =?utf-8?B?UTdUeHp5ditpeVIyRGZZTmZMNS9OZkJSU0hkMWhaSmRSajZhaUVaNDVRWFVS?=
- =?utf-8?B?OVhaVmdHT3psSlFYYWwzZjlKVUhkNDBNeDZSSlZJMkg2RlM4RWtreXVscnN2?=
- =?utf-8?B?MTdZME5aVm9DblZrNlBIb200dTlTL3VDd1dDbE1mc3lETGlaMDl2QkhtZFJI?=
- =?utf-8?B?TmJRODhtWEhZL1FLNkc3ZzRQTnQxdXpHRlh4c0FkV3JWZEwzbmluYXNRc1hX?=
- =?utf-8?B?ZGVrelArSGJzZDNESG1PM0JnSW5QTUg2by9JMkpiU1FqTDdXZksyUXNkL1M3?=
- =?utf-8?B?ZkJJQlZGK1FhMi9ZK1FNRFdROGVIRmdiSGFjUEowWUxSa29SdlBrbTZWaHQ1?=
- =?utf-8?B?MTlST2JLRUhVU3BIUWZ0UHhSWjBScEpIelhiQXV3RnM1a3B6elliWkF4MWgz?=
- =?utf-8?B?RTg4YkNMa0lDSGZFSUFpS3NFazNIbmZqSXV4UFQ4OHRWZ25uYUd3QXR0ckE2?=
- =?utf-8?B?K0xJOHZOOGhVSDg0elFhNGIvR2ZNdE4rb1ZOa0E3QTZ3bzZPamxyZDdJNmJ4?=
- =?utf-8?B?VFRRWUJTazBycWFHdmVFRStNVEJpLzlCbnpUaGlIOHcxMVprZ0lVWnV2QzNF?=
- =?utf-8?B?andSS0ViSHF6cXRRMXpBMXhuMHhabUg5NERQT2xNdnVuSTVBYmpLZE1OMUd2?=
- =?utf-8?B?aXIxRlNYVlNZSXVxK1ExU1kwazc5bXppZ2dHL29TT2Vvd255N1ZDbkd4UHJ3?=
- =?utf-8?Q?ZcPM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:satlexmb07.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 07:54:09.2325
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ce7dfa88-49da-44c6-4e72-08de1aae2bb5
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[satlexmb07.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS1PEPF00017093.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6304
 
-On some platforms, UMA allocation size can be set using the ATCS
-methods. Add helper functions to interact with this functionality.
+Currently, the condition 'page->pp_magic == PP_SIGNATURE' is used to
+determine if a page belongs to a page pool.  However, with the planned
+removal of ->pp_magic, we will instead leverage the page_type in struct
+page, such as PGTY_netpp, for this purpose.
 
-Co-developed-by: Mario Limonciello (AMD) <superm1@kernel.org>
-Signed-off-by: Mario Limonciello (AMD) <superm1@kernel.org>
-Signed-off-by: Yo-Jung Leo Lin (AMD) <Leo.Lin@amd.com>
+That works for page-backed network memory.  However, for net_iov not
+page-backed, the identification cannot be based on the page_type.
+Instead, nmdesc->pp can be used to see if it belongs to a page pool, by
+making sure nmdesc->pp is NULL otherwise.
+
+For net_iov not page-backed, initialize it using nmdesc->pp = NULL in
+net_devmem_bind_dmabuf() and using kvmalloc_array(__GFP_ZERO) in
+io_zcrx_create_area() so that netmem_is_pp() can check if nmdesc->pp is
+!NULL to confirm its usage as page pool.
+
+Signed-off-by: Byungchul Park <byungchul@sk.com>
+Reviewed-by: Mina Almasry <almasrymina@google.com>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu.h      |  7 ++++++
- drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c | 43 ++++++++++++++++++++++++++++++++
- drivers/gpu/drm/amd/include/amd_acpi.h   | 30 ++++++++++++++++++++++
- 3 files changed, 80 insertions(+)
+ net/core/devmem.c      |  1 +
+ net/core/netmem_priv.h |  8 ++++++++
+ net/core/page_pool.c   | 16 ++++++++++++++--
+ 3 files changed, 23 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu.h b/drivers/gpu/drm/amd/amdgpu/amdgpu.h
-index a5574e84694b..3de520f0b5b4 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu.h
-@@ -1686,12 +1686,14 @@ int amdgpu_acpi_init(struct amdgpu_device *adev);
- void amdgpu_acpi_fini(struct amdgpu_device *adev);
- bool amdgpu_acpi_is_pcie_performance_request_supported(struct amdgpu_device *adev);
- bool amdgpu_acpi_is_power_shift_control_supported(void);
-+bool amdgpu_acpi_is_set_uma_allocation_size_supported(void);
- int amdgpu_acpi_pcie_performance_request(struct amdgpu_device *adev,
- 						u8 perf_req, bool advertise);
- int amdgpu_acpi_power_shift_control(struct amdgpu_device *adev,
- 				    u8 dev_state, bool drv_state);
- int amdgpu_acpi_smart_shift_update(struct amdgpu_device *adev,
- 				   enum amdgpu_ss ss_state);
-+int amdgpu_acpi_set_uma_allocation_size(struct amdgpu_device *adev, u8 index, u8 type);
- int amdgpu_acpi_pcie_notify_device_ready(struct amdgpu_device *adev);
- int amdgpu_acpi_get_tmr_info(struct amdgpu_device *adev, u64 *tmr_offset,
- 			     u64 *tmr_size);
-@@ -1720,6 +1722,7 @@ static inline bool amdgpu_acpi_should_gpu_reset(struct amdgpu_device *adev) { re
- static inline void amdgpu_acpi_detect(void) { }
- static inline void amdgpu_acpi_release(void) { }
- static inline bool amdgpu_acpi_is_power_shift_control_supported(void) { return false; }
-+static inline bool amdgpu_acpi_is_set_uma_allocation_size_supported(void) { return false; }
- static inline int amdgpu_acpi_power_shift_control(struct amdgpu_device *adev,
- 						  u8 dev_state, bool drv_state) { return 0; }
- static inline int amdgpu_acpi_smart_shift_update(struct amdgpu_device *adev,
-@@ -1727,6 +1730,10 @@ static inline int amdgpu_acpi_smart_shift_update(struct amdgpu_device *adev,
+diff --git a/net/core/devmem.c b/net/core/devmem.c
+index d9de31a6cc7f..f81b700f1fd1 100644
+--- a/net/core/devmem.c
++++ b/net/core/devmem.c
+@@ -291,6 +291,7 @@ net_devmem_bind_dmabuf(struct net_device *dev,
+ 			niov = &owner->area.niovs[i];
+ 			niov->type = NET_IOV_DMABUF;
+ 			niov->owner = &owner->area;
++			niov->desc.pp = NULL;
+ 			page_pool_set_dma_addr_netmem(net_iov_to_netmem(niov),
+ 						      net_devmem_get_dma_addr(niov));
+ 			if (direction == DMA_TO_DEVICE)
+diff --git a/net/core/netmem_priv.h b/net/core/netmem_priv.h
+index 23175cb2bd86..5561fd556bc5 100644
+--- a/net/core/netmem_priv.h
++++ b/net/core/netmem_priv.h
+@@ -22,6 +22,14 @@ static inline void netmem_clear_pp_magic(netmem_ref netmem)
+ 
+ static inline bool netmem_is_pp(netmem_ref netmem)
  {
- 	return 0;
- }
-+int amdgpu_acpi_set_uma_allocation_size(struct amdgpu_device *adev, u8 index, u8 type)
-+{
-+	return -EINVAL;
-+}
- static inline void amdgpu_acpi_get_backlight_caps(struct amdgpu_dm_backlight_caps *caps) { }
- #endif
- 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-index 0743fd8620e4..d53f7b33d619 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-@@ -669,6 +669,11 @@ bool amdgpu_acpi_is_power_shift_control_supported(void)
- 	return amdgpu_acpi_priv.atcs.functions.power_shift_control;
++	/* net_iov may be part of a page pool.  For net_iov, ->pp in
++	 * net_iov.desc can be used to determine if the pages belong to
++	 * a page pool.  Ensure that the ->pp either points to its page
++	 * pool or is set to NULL if it does not.
++	 */
++	if (netmem_is_net_iov(netmem))
++		return !!netmem_to_nmdesc(netmem)->pp;
++
+ 	return (netmem_get_pp_magic(netmem) & PP_MAGIC_MASK) == PP_SIGNATURE;
  }
  
-+bool amdgpu_acpi_is_set_uma_allocation_size_supported(void)
-+{
-+	return amdgpu_acpi_priv.atcs.functions.set_uma_allocation_size;
-+}
+diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+index 1a5edec485f1..2756b78754b0 100644
+--- a/net/core/page_pool.c
++++ b/net/core/page_pool.c
+@@ -699,7 +699,13 @@ s32 page_pool_inflight(const struct page_pool *pool, bool strict)
+ void page_pool_set_pp_info(struct page_pool *pool, netmem_ref netmem)
+ {
+ 	netmem_set_pp(netmem, pool);
+-	netmem_or_pp_magic(netmem, PP_SIGNATURE);
 +
- /**
-  * amdgpu_acpi_pcie_notify_device_ready
-  *
-@@ -909,6 +914,44 @@ static struct amdgpu_numa_info *amdgpu_acpi_get_numa_info(uint32_t pxm)
++	/* For page-backed, pp_magic is used to identify if it's pp.
++	 * For net_iov, it's ensured nmdesc->pp is non-NULL if it's pp
++	 * and nmdesc->pp is NULL if it's not.
++	 */
++	if (!netmem_is_net_iov(netmem))
++		netmem_or_pp_magic(netmem, PP_SIGNATURE);
+ 
+ 	/* Ensuring all pages have been split into one fragment initially:
+ 	 * page_pool_set_pp_info() is only called once for every page when it
+@@ -714,7 +720,13 @@ void page_pool_set_pp_info(struct page_pool *pool, netmem_ref netmem)
+ 
+ void page_pool_clear_pp_info(netmem_ref netmem)
+ {
+-	netmem_clear_pp_magic(netmem);
++	/* For page-backed, pp_magic is used to identify if it's pp.
++	 * For net_iov, it's ensured nmdesc->pp is non-NULL if it's pp
++	 * and nmdesc->pp is NULL if it's not.
++	 */
++	if (!netmem_is_net_iov(netmem))
++		netmem_clear_pp_magic(netmem);
++
+ 	netmem_set_pp(netmem, NULL);
  }
- #endif
  
-+/**
-+ * amdgpu_acpi_set_uma_allocation_size - Set Unified Memory Architecture allocation size via ACPI
-+ * @adev: Pointer to the amdgpu_device structure
-+ * @index: Index specifying the UMA allocation
-+ * @type: Type of UMA allocation
-+ *
-+ * This function configures the UMA allocation size for the specified device
-+ * using ACPI methods. The allocation is determined by the provided index and type.
-+ * Returns 0 on success or a negative error code on failure.
-+ */
-+int amdgpu_acpi_set_uma_allocation_size(struct amdgpu_device *adev, u8 index, u8 type)
-+{
-+	struct atcs_set_uma_allocation_size_input atcs_input;
-+	struct amdgpu_atcs *atcs = &amdgpu_acpi_priv.atcs;
-+	struct acpi_buffer params;
-+	union acpi_object *info;
-+
-+	if (!amdgpu_acpi_is_set_uma_allocation_size_supported())
-+		return -EINVAL;
-+
-+	atcs_input.size = sizeof(struct atcs_set_uma_allocation_size_input);
-+	atcs_input.uma_size_index = index;
-+	atcs_input.uma_size_type = type;
-+
-+	params.length = sizeof(struct atcs_set_uma_allocation_size_input);
-+	params.pointer = &atcs_input;
-+
-+	info = amdgpu_atcs_call(atcs, ATCS_FUNCTION_SET_UMA_ALLOCATION_SIZE, &params);
-+	if (!info) {
-+		drm_err(adev_to_drm(adev), "ATCS UMA allocation size update failed\n");
-+		return -EIO;
-+	}
-+
-+	kfree(info);
-+
-+	return 0;
-+}
-+
- /**
-  * amdgpu_acpi_get_node_id - obtain the NUMA node id for corresponding amdgpu
-  * acpi device handle
-diff --git a/drivers/gpu/drm/amd/include/amd_acpi.h b/drivers/gpu/drm/amd/include/amd_acpi.h
-index e582339e8e8e..84933c07f720 100644
---- a/drivers/gpu/drm/amd/include/amd_acpi.h
-+++ b/drivers/gpu/drm/amd/include/amd_acpi.h
-@@ -24,6 +24,8 @@
- #ifndef AMD_ACPI_H
- #define AMD_ACPI_H
- 
-+#include <linux/types.h>
-+
- #define ACPI_AC_CLASS           "ac_adapter"
- 
- struct atif_verify_interface {
-@@ -112,6 +114,17 @@ struct atcs_pwr_shift_input {
- 	u8 drv_state;	/* 0 = operational, 1 = not operational */
- } __packed;
- 
-+struct atcs_get_uma_size_output {
-+	u16 size;		/* structure size in bytes (includes size field) */
-+	u32 uma_size_mb;	/* allocated UMA size in MB */
-+} __packed;
-+
-+struct atcs_set_uma_allocation_size_input {
-+	u16 size;		/* structure size in bytes (includes size field) */
-+	u8 uma_size_index;	/* UMA size index */
-+	u8 uma_size_type;	/* UMA size type */
-+} __packed;
-+
- /* AMD hw uses four ACPI control methods:
-  * 1. ATIF
-  * ARG0: (ACPI_INTEGER) function code
-@@ -494,4 +507,21 @@ struct atcs_pwr_shift_input {
-  * OUTPUT: none
-  */
- 
-+#define ATCS_FUNCTION_GET_UMA_SIZE                                 0x6
-+/* ARG0: ATCS_FUNCTION_GET_UMA_SIZE
-+ * ARG1: none
-+ * OUTPUT:
-+ * WORD  - structure size in bytes (includes size field)
-+ * DWORD - allocated UMA size in MB
-+ */
-+
-+#define ATCS_FUNCTION_SET_UMA_ALLOCATION_SIZE                     0xA
-+/* ARG0: ATCS_FUNCTION_SET_UMA_ALLOCATION_SIZE
-+ * ARG1:
-+ * WORD  - structure size in bytes (includes size field)
-+ * BYTE  - UMA size index
-+ * BYTE  - UMA size type
-+ * OUTPUT: none
-+ */
-+
- #endif
-
 -- 
-2.43.0
+2.17.1
 
 
