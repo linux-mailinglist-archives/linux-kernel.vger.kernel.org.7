@@ -1,235 +1,182 @@
-Return-Path: <linux-kernel+bounces-882451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3113C2A7DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:09:05 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 722BDC2A7F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:09:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E9F804F1ED4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:05:57 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 845A44F243C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE8E12D77FF;
-	Mon,  3 Nov 2025 08:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3612D8384;
+	Mon,  3 Nov 2025 08:05:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="gCSyfNBh"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IWvYky2k";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HHHt24oT";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IWvYky2k";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HHHt24oT"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907BF287503
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 08:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F112D7DCB
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 08:05:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762157148; cv=none; b=bEJj+V9EXdId9S5IwQU++5Wmtw9Xla8bHu2g4m79NCLVSCfZN4BW8feRmL7k0b81s5UEVt6LnQ9VWJQ8P5p/+Wro8AHXpVRz0TZB7Ff8B8gr3Y9zNU5B31Cff3QJvVzaSWJa2mWrGhag6wMXhQcx5aDS8l3OWsX+I2jGCUqvo5c=
+	t=1762157157; cv=none; b=PsP4M5rduDlEKFsgGVD/YnbsiAoPsRyvy7XWTmlJ0NHu8SNGqJ8KJu16RdQfFLlKcf5mtUaEp8G0nsHUiUZdxNS7mCJvNg4g5H9nmlh5KTPBBlyezG18++By4+T4hXvv/OT4A6ID1feDpyo3jAEF1cwCmx2rfCBarfPdU/nqvfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762157148; c=relaxed/simple;
-	bh=Nnk0iDk+2nEq8U8BO6N3ucUcw+hYH4nbhRtzYQUFiuI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W5WddXRJy68VXtJBRMEqxnwpyR2/OvQr6lBVhqW7gQELSqJN963C4cwAo86aD2+DRAgG8U8NEtHYpnn9zJO5n2H30gMS/EwrIwn6y+9ozmcRKHsX+9f7HfyLzRkGUVDN45ZtojkymFnVhitiBklELxm2AWgewlFhpZM5pHo9PK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=gCSyfNBh; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6BEF411D5;
-	Mon,  3 Nov 2025 09:03:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1762157031;
-	bh=Nnk0iDk+2nEq8U8BO6N3ucUcw+hYH4nbhRtzYQUFiuI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gCSyfNBhxQHUFTYP+ZP5P3ElIkMz3FOj4t/EmMeXVr7Xyx7VOMUCLvfRmGysazgyO
-	 XnxIE2v+2hSY9zLAVCjVIRneQfXwfIFfj17AOwZS7wzxUKMKRSGv5xtdk4FU6ZcCno
-	 iAb85nUGa3ClgGbRPvFl3+sf05MmWV+C/WiZB+8A=
-Message-ID: <5c080bb8-2745-4765-abc4-2a46ca40916b@ideasonboard.com>
-Date: Mon, 3 Nov 2025 10:05:40 +0200
+	s=arc-20240116; t=1762157157; c=relaxed/simple;
+	bh=CYrRxmOpeFjXfHFVdQUrcZhG1Jb558XICy8oLDImpCs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ik8g0qckU92M7pSeDCtN2B7yCxt1RXCkBdRYQ8/zOJjJL1Wqqx7z1xxqe7cxRoFSwmuF2uRR0UQvfZMoJK8XTBGLHB8HXmA9oBLxf33Na6Wo94fX8oeLSxeyQuuTzNUmg9y5QT4xdiAROKY2l0UXI1On5+0ZK0JL1AZFDF6P8GM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IWvYky2k; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HHHt24oT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IWvYky2k; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HHHt24oT; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 5560221DC9;
+	Mon,  3 Nov 2025 08:05:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762157154; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1kCzcdMMVzQByO/M/ivTSIZeuG0QmSvpmFe9MpD4DCo=;
+	b=IWvYky2kLUkMEsXXhqEKF5kEsYt1OyCo3AsbPk5xM3+rhuPs+1bb4mYbgWUYcG3N43mGZa
+	F0mFRI89ho3xGrqd24PIv1xvM3Jope4EaqLzxRW7KjOev81xUkkfjZeAaKbCey4xDf/G8j
+	0rh70YVcw1jC0x/qEgaF/Yk96lAvq7w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762157154;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1kCzcdMMVzQByO/M/ivTSIZeuG0QmSvpmFe9MpD4DCo=;
+	b=HHHt24oTqGd+KxfECCrzRHNwBpak63P6fATQzb6nA0+iGsJnZtHL87gBSXK/MPM4dhsZE+
+	xoq6WcIz1MKBkMDw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762157154; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1kCzcdMMVzQByO/M/ivTSIZeuG0QmSvpmFe9MpD4DCo=;
+	b=IWvYky2kLUkMEsXXhqEKF5kEsYt1OyCo3AsbPk5xM3+rhuPs+1bb4mYbgWUYcG3N43mGZa
+	F0mFRI89ho3xGrqd24PIv1xvM3Jope4EaqLzxRW7KjOev81xUkkfjZeAaKbCey4xDf/G8j
+	0rh70YVcw1jC0x/qEgaF/Yk96lAvq7w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762157154;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1kCzcdMMVzQByO/M/ivTSIZeuG0QmSvpmFe9MpD4DCo=;
+	b=HHHt24oTqGd+KxfECCrzRHNwBpak63P6fATQzb6nA0+iGsJnZtHL87gBSXK/MPM4dhsZE+
+	xoq6WcIz1MKBkMDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0A16F1364F;
+	Mon,  3 Nov 2025 08:05:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id H9VxAmJiCGlFWQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 03 Nov 2025 08:05:54 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 22C5AA2A61; Mon,  3 Nov 2025 09:05:49 +0100 (CET)
+Date: Mon, 3 Nov 2025 09:05:49 +0100
+From: Jan Kara <jack@suse.cz>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
+	jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com, 
+	mcgrof@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com, 
+	libaokun1@huawei.com
+Subject: Re: [PATCH 04/25] ext4: make ext4_punch_hole() support large block
+ size
+Message-ID: <v55t7ujgvjf2wfrlbyiva4zuu6xv5pjl7lac5ykgzvgrgluipc@moyoiqdnyinl>
+References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
+ <20251025032221.2905818-5-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH v7 2/2] drm/tidss: Move OLDI mode validation to
- OLDI bridge mode_valid hook
-To: Swamil Jain <s-jain1@ti.com>, aradhya.bhatia@linux.dev, devarsht@ti.com,
- mripard@kernel.org, jyri.sarha@iki.fi, maarten.lankhorst@linux.intel.com,
- simona@ffwll.ch, airlied@gmail.com, tzimmermann@suse.de, h-shenoy@ti.com
-Cc: praneeth@ti.com, u-kumar1@ti.com, vigneshr@ti.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20251028033958.369100-1-s-jain1@ti.com>
- <20251028033958.369100-3-s-jain1@ti.com>
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Content-Language: en-US
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20251028033958.369100-3-s-jain1@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251025032221.2905818-5-libaokun@huaweicloud.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-0.30 / 50.00];
+	SEM_URIBL(3.50)[huaweicloud.com:email];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_NONE(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,huawei.com:email,suse.com:email,huaweicloud.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -0.30
 
-Hi,
-
-On 28/10/2025 05:39, Swamil Jain wrote:
-> From: Jayesh Choudhary <j-choudhary@ti.com>
+On Sat 25-10-25 11:22:00, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
 > 
-> After integrating OLDI support[0], it is necessary to identify which VP
-> instances use OLDI, since the OLDI driver owns the video port clock
-> (as a serial clock). Clock operations on these VPs must be delegated to
-> the OLDI driver, not handled by the TIDSS driver. This issue also
-> emerged in upstream discussions when DSI-related clock management was
-> attempted in the TIDSS driver[1].
+> Since the block size may be greater than the page size, when a hole
+> extends beyond i_size, we need to align the hole's end upwards to the
+> larger of PAGE_SIZE and blocksize.
 > 
-> To address this, add an 'is_ext_vp_clk' array to the 'tidss_device'
-> structure, marking a VP as 'true' during 'tidss_oldi_init()' and as
-> 'false' during 'tidss_oldi_deinit()'. TIDSS then uses 'is_ext_vp_clk'
-> to skip clock validation checks in 'dispc_vp_mode_valid()' for VPs
-> under OLDI control.
+> This is to prevent the issues seen in commit 2be4751b21ae ("ext4: fix
+> 2nd xfstests 127 punch hole failure") from reappearing after BS > PS
+> is supported.
 > 
-> Since OLDI uses the DSS VP clock directly as a serial interface and
-> manages its own rate, mode validation should be implemented in the OLDI
-> bridge's 'mode_valid' hook. This patch adds that logic, ensuring proper
-> delegation and avoiding spurious clock handling in the TIDSS driver.
-> 
-> [0]: https://lore.kernel.org/all/20250528122544.817829-1-aradhya.bhatia@linux.dev/
-> [1]: https://lore.kernel.org/all/DA6TT575Z82D.3MPK8HG5GRL8U@kernel.org/
-> 
-> Fixes: 7246e0929945 ("drm/tidss: Add OLDI bridge support")
-> Tested-by: Michael Walle <mwalle@kernel.org>
-> Reviewed-by: Devarsh Thakkar <devarsht@ti.com>
-> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
-> Signed-off-by: Swamil Jain <s-jain1@ti.com>
-> ---
->  drivers/gpu/drm/tidss/tidss_dispc.c |  2 ++
->  drivers/gpu/drm/tidss/tidss_drv.h   |  2 ++
->  drivers/gpu/drm/tidss/tidss_oldi.c  | 21 +++++++++++++++++++++
->  3 files changed, 25 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
-> index 07731b02490f..0c3337a7b163 100644
-> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
-> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
-> @@ -1315,6 +1315,8 @@ static int check_pixel_clock(struct dispc_device *dispc,
->  {
->  	unsigned long round_clock;
->  
-> +	if (dispc->tidss->is_ext_vp_clk[hw_videoport])
-> +		return 0;
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
 
-Add empty line here. Also, add a short comment what this check is about.
+When going for bs > ps support, I'm very suspicious of any code that keeps
+using PAGE_SIZE because it doesn't make too much sense anymore. Usually that
+should be either appropriate folio size or something like that. For example
+in this case if we indeed rely on freeing some buffers then with 4k block
+size in an order-2 folio things would be already broken.
 
->  	round_clock = clk_round_rate(dispc->vp_clk[hw_videoport], clock);
->  	/*
->  	 * To keep the check consistent with dispc_vp_set_clk_rate(), we
-> diff --git a/drivers/gpu/drm/tidss/tidss_drv.h b/drivers/gpu/drm/tidss/tidss_drv.h
-> index 84454a4855d1..e1c1f41d8b4b 100644
-> --- a/drivers/gpu/drm/tidss/tidss_drv.h
-> +++ b/drivers/gpu/drm/tidss/tidss_drv.h
-> @@ -24,6 +24,8 @@ struct tidss_device {
->  
->  	const struct dispc_features *feat;
->  	struct dispc_device *dispc;
-> +	bool is_ext_vp_clk[TIDSS_MAX_PORTS];
-> +
->  
->  	unsigned int num_crtcs;
->  	struct drm_crtc *crtcs[TIDSS_MAX_PORTS];
-> diff --git a/drivers/gpu/drm/tidss/tidss_oldi.c b/drivers/gpu/drm/tidss/tidss_oldi.c
-> index 7688251beba2..d1a5fdac93ff 100644
-> --- a/drivers/gpu/drm/tidss/tidss_oldi.c
-> +++ b/drivers/gpu/drm/tidss/tidss_oldi.c
-> @@ -309,6 +309,24 @@ static u32 *tidss_oldi_atomic_get_input_bus_fmts(struct drm_bridge *bridge,
->  	return input_fmts;
->  }
->  
-> +static enum drm_mode_status
-> +tidss_oldi_mode_valid(struct drm_bridge *bridge,
-> +		      const struct drm_display_info *info,
-> +		      const struct drm_display_mode *mode)
-> +{
-> +	struct tidss_oldi *oldi = drm_bridge_to_tidss_oldi(bridge);
-> +	unsigned long round_clock;
-> +
-> +	round_clock = clk_round_rate(oldi->serial, mode->clock * 7 * 1000);
-> +	/*
-> +	 * To keep the check consistent with dispc_vp_set_clk_rate(),
-> +	 * we use the same 5% check here.
-> +	 */
-> +	if (dispc_pclk_diff(mode->clock * 7 * 1000, round_clock) > 5)
-> +		return -EINVAL;
+As far as I'm checking truncate_inode_pages_range() already handles partial
+folio invalidation fine so I think we should just use blocksize in the
+rounding (to save pointless tail block zeroing) and be done with it.
 
-Add an empty line here.
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 4c04af7e51c9..a63513a3db53 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -4401,7 +4401,8 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
+>  	 * the page that contains i_size.
+>  	 */
+>  	if (end > inode->i_size)
 
-Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+BTW I think here we should have >= (not your fault but we can fix it when
+changing the code).
 
-> +	return 0;
-> +}
-> +
->  static const struct drm_bridge_funcs tidss_oldi_bridge_funcs = {
->  	.attach	= tidss_oldi_bridge_attach,
->  	.atomic_pre_enable = tidss_oldi_atomic_pre_enable,
-> @@ -317,6 +335,7 @@ static const struct drm_bridge_funcs tidss_oldi_bridge_funcs = {
->  	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
->  	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
->  	.atomic_reset = drm_atomic_helper_bridge_reset,
-> +	.mode_valid = tidss_oldi_mode_valid,
->  };
->  
->  static int get_oldi_mode(struct device_node *oldi_tx, int *companion_instance)
-> @@ -430,6 +449,7 @@ void tidss_oldi_deinit(struct tidss_device *tidss)
->  	for (int i = 0; i < tidss->num_oldis; i++) {
->  		if (tidss->oldis[i]) {
->  			drm_bridge_remove(&tidss->oldis[i]->bridge);
-> +			tidss->is_ext_vp_clk[tidss->oldis[i]->parent_vp] = false;
->  			tidss->oldis[i] = NULL;
->  		}
->  	}
-> @@ -580,6 +600,7 @@ int tidss_oldi_init(struct tidss_device *tidss)
->  		oldi->bridge.timings = &default_tidss_oldi_timings;
->  
->  		tidss->oldis[tidss->num_oldis++] = oldi;
-> +		tidss->is_ext_vp_clk[oldi->parent_vp] = true;
->  		oldi->tidss = tidss;
->  
->  		drm_bridge_add(&oldi->bridge);
+> -		end = round_up(inode->i_size, PAGE_SIZE);
+> +		end = round_up(inode->i_size,
+> +			       umax(PAGE_SIZE, sb->s_blocksize));
+>  	if (end > max_end)
+>  		end = max_end;
+>  	length = end - offset;
 
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
