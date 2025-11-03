@@ -1,128 +1,110 @@
-Return-Path: <linux-kernel+bounces-883189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3CA4C2CB34
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:26:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2939EC2CB3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:26:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4314B4F2A9C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:19:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A36B04F1646
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:19:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF59320394;
-	Mon,  3 Nov 2025 15:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2DCF2DF151;
+	Mon,  3 Nov 2025 15:12:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JCB2kS2U"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="f41YBBC3"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C651D320CB1
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 15:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A0D320CAA
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 15:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762182730; cv=none; b=MGd7iS2nSW/FnSjTxZzpkS3VYZzZE9AMp3jzOtSq2rPI9vCiwy1oq0ktAd3jLKDPILnbAOyFAI4bhClWbMGoWlgI9Xlr/frSF7jr9M53c6V07PZPpcq/hG6JnYaPeEW46Ik4XEN+THb19C0OQD+IbLf3VyH+dVSTvdfloPY4Sd8=
+	t=1762182745; cv=none; b=WL9+sxsvnfrLSCVDfe6zsZym7V1OBiyScmHhgiUVMBG9W7XDOgu7DaBQj/xpAeoGaK2eyNADD4L/vp7Tmr1oQ57bqHrqCgwOjWT5jh4s/wz4kH1Vv5+3082VEeXTFKybyaJ4dna9qhp+K7YWmu0RmcHh7tctYYLTrpCa/kLiIQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762182730; c=relaxed/simple;
-	bh=WvJxrEvmom0/RF7FARGCTnTIixEzgawwliy15cUaIDU=;
+	s=arc-20240116; t=1762182745; c=relaxed/simple;
+	bh=cvcwRv0H8OU0hYLPpoawuIqkAKSUgu8rnGIRHj5Ps0Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ShE/byBaxcwHegFf5s/UVfJPhnXvUl8XFfPjs2uoXQpkniW+0qjP52THYB0hxXORYPVDlytjjVY9/JbrvxnefITLXQCnnvTOs1eSqsx5qQG9VtC1T58Ef/QOGOVeKHbweq0JeD1eeYR7opeI2esgLX9nZx0RQ6+0303uA6vb0y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JCB2kS2U; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762182724;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+Yt98eTgh7ujwhrMznpREfl7FHJAib+MMNEzhXKLoVQ=;
-	b=JCB2kS2Uxv/JjSUuKE2HnmIKPSf0natvHyHKS/8y5wUM2gc4iUNjyj1+Ao0nNDwi/0xU6g
-	GSIAkkroCdfweYMOnhbFRLrDNV9EVQLwzV07TKHbEAEGPwrBxDPzfOP/M5aF2LVzC17FD1
-	WYPBZ/X7hUWGb4ipDzhn0PSC1bLwuuE=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-302-cQAgqfdLP7e7W68Y-JjM4w-1; Mon,
- 03 Nov 2025 10:12:03 -0500
-X-MC-Unique: cQAgqfdLP7e7W68Y-JjM4w-1
-X-Mimecast-MFC-AGG-ID: cQAgqfdLP7e7W68Y-JjM4w_1762182722
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C41811955F44;
-	Mon,  3 Nov 2025 15:12:01 +0000 (UTC)
-Received: from wcosta-thinkpadt14gen4.rmtbr.csb (unknown [10.22.88.143])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 8730F180044F;
-	Mon,  3 Nov 2025 15:11:56 +0000 (UTC)
-Date: Mon, 3 Nov 2025 12:11:54 -0300
-From: Wander Lairson Costa <wander@redhat.com>
-To: Tomas Glozar <tglozar@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, 
-	John Kacur <jkacur@redhat.com>, Luis Goncalves <lgoncalv@redhat.com>, 
-	Costa Shulyupin <costa.shul@redhat.com>, Crystal Wood <crwood@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>
-Subject: Re: [PATCH v3 5/7] rtla/tests: Run Test::Harness in verbose mode
-Message-ID: <fp7k3ib3zsdleiv4fal6daiaz24xxr2ern7tdooeazsngbmpil@qx52c62l2fnm>
-References: <20251027153401.1039217-1-tglozar@redhat.com>
- <20251027153401.1039217-6-tglozar@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=U6eOppzBSLWkCkZfi6OFOlp9+ZzQhIhpsJDB0m56MaGv3N6/zV78JJhEBNRxGTbFxf4YyolNHC/8omDBVxEGxUDjhpB+r92tM8R/SEkXfGxYiW+79Qac8rV8r3xbd7COoggprFnTpXetbYaJdGMMzaPx0X2/zl1ViNEHNZvDokc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=f41YBBC3; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=JYBs
+	Ouzm0OuzV+gD5jJz01cLpN98pp50tj7VUddi2rQ=; b=f41YBBC3nZsbCi3QzCSi
+	WbfhhPsOc1/RgR3XFjZ0Tz0nTGIQFJ/m5Y0rqDVb/dwbqArWNp7Um4SJzbbOyDtS
+	UdgN6BKvzPiBg5SX7Lv0bmTmUIkTF3s7VFtbw8+1nPozKftm/Shmcy1oUqptQXZ7
+	iX+4VKizacDPHUhRr306TMhUMY2yj8OXuTRF2Fzrt7z4RWa87VDkOqdmXvuapvxv
+	FYsuBP8D1A1UcuCPvdPt4qTtd510l1/eVMxnhGJvB405nWoys6jRZziQPzRr/9rC
+	RCneA3xQwkmu9vGQLtjBUQO06zGql+TVhNTQuR3igEc4qy7Nn1uA05N8tcEvkDnb
+	xg==
+Received: (qmail 2265056 invoked from network); 3 Nov 2025 16:12:18 +0100
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Nov 2025 16:12:18 +0100
+X-UD-Smtp-Session: l3s3148p1@dskoJLJC3jFtKPNt
+Date: Mon, 3 Nov 2025 16:12:18 +0100
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-renesas-soc@vger.kernel.org,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] reset: always bail out on missing RESET_GPIO
+ driver
+Message-ID: <aQjGUnu40hdhSKR9@shikoro>
+References: <20251015205919.12678-4-wsa+renesas@sang-engineering.com>
+ <20251015205919.12678-5-wsa+renesas@sang-engineering.com>
+ <35f619a73a83207b83de095967014b03b7d3e8f0.camel@pengutronix.de>
+ <9ba9f4b1-5bdf-4242-aba9-8035571caa1c@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="JZ7gr+IhwBjh+HIH"
+Content-Disposition: inline
+In-Reply-To: <9ba9f4b1-5bdf-4242-aba9-8035571caa1c@linaro.org>
+
+
+--JZ7gr+IhwBjh+HIH
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251027153401.1039217-6-tglozar@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 27, 2025 at 04:33:59PM +0100, Tomas Glozar wrote:
-> Add -v flag to prove command to also print the names of tests that
-> succeeded, not only those that failed, to allow easier debugging of the
-> test suite.
-> 
-> Also, drop printing the option and value to stdout in
-> check_with_osnoise_options, which was a debugging print that was
-> accidentally left in the final commit, and which would be otherwise now
-> visible in make check output, as stdout is no longer suppressed.
-> 
-> Suggested-by: Crystal Wood <crwood@redhat.com>
-> Signed-off-by: Tomas Glozar <tglozar@redhat.com>
-> ---
->  tools/tracing/rtla/Makefile        | 2 +-
->  tools/tracing/rtla/tests/engine.sh | 1 -
->  2 files changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/tools/tracing/rtla/Makefile b/tools/tracing/rtla/Makefile
-> index aef814b639b7..2701256abaf3 100644
-> --- a/tools/tracing/rtla/Makefile
-> +++ b/tools/tracing/rtla/Makefile
-> @@ -110,6 +110,6 @@ clean: doc_clean fixdep-clean
->  	$(Q)rm -rf feature
->  	$(Q)rm -f src/timerlat.bpf.o src/timerlat.skel.h example/timerlat_bpf_action.o
->  check: $(RTLA) tests/bpf/bpf_action_map.o
-> -	RTLA=$(RTLA) BPFTOOL=$(SYSTEM_BPFTOOL) prove -o -f tests/
-> +	RTLA=$(RTLA) BPFTOOL=$(SYSTEM_BPFTOOL) prove -o -f -v tests/
->  examples: example/timerlat_bpf_action.o
->  .PHONY: FORCE clean check
-> diff --git a/tools/tracing/rtla/tests/engine.sh b/tools/tracing/rtla/tests/engine.sh
-> index c7de3d6ed6a8..ed261e07c6d9 100644
-> --- a/tools/tracing/rtla/tests/engine.sh
-> +++ b/tools/tracing/rtla/tests/engine.sh
-> @@ -105,7 +105,6 @@ check_with_osnoise_options() {
->  			[ "$1" == "" ] && continue
->  			option=$(echo $1 | cut -d '=' -f 1)
->  			value=$(echo $1 | cut -d '=' -f 2)
-> -			echo "option: $option, value: $value"
->  			echo "$value" > "/sys/kernel/tracing/osnoise/$option" || return 1
->  		done
->  	fi
-> -- 
-> 2.51.0
-> 
 
-Reviewed-by: Wander Lairson Costa <wander@redhat.com>
+> > [1/2] reset: always bail out on missing RESET_GPIO driver
+> >       https://git.pengutronix.de/cgit/pza/linux/commit/?id=3D25d4d4604d=
+01
+>=20
+>=20
+> Why? This wasn't tested and wasn't reviewed... there were objections to
+> this patchset and long discussion.
 
+Only to patch 2? AFAIR there was no discussion regarding patch 1.
+
+
+--JZ7gr+IhwBjh+HIH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmkIxk4ACgkQFA3kzBSg
+KbainBAAiK2sGoJVz8cigw4/2xwSg+pLlMy5IjHOhgGRny9IScIRQ0DXl3TcuhMc
+WyPFOFGkRHyQ9wfQIkE4iKkHEVUC2FUcwKQXPZ8haHk/wEhid1OJe7iEPPrbneiQ
+K72cSOyTflL7OT3JKhSWBdHtYL7D6b/iV+0RdbcxdVTVDe+T/C3RPamGaKU7lobI
+1LOvdGXRVTRFqNj3NLzEh9H2vaJnFUeFvfstqHOXJsYO4FswFi9fZpDFEr/0359c
+ER06AbXlWJriHJYYEwgn79bu7djErpLEu6EGpFO4SPGlh674+IYuWFU0lvTufd4j
+IcFR5umEjBW8OOZnwwlWy4wX648Xtu6H/gv/ux5kNl2BGT/4m0FKJ/SbwRlgGiZ2
+yzXSu+TxZVMZ7mBjOwkmwoxo4TNv7fWm1BJLiTtOZX1hiI4EVK/TXHqUqF0sCJ6T
+wBGjg8youbM/qybqfu9W1WTTTUftLdRkhgImKayaBmPSuuT9eRmJgYKCJFkk+MgU
+Yc4GT10q6l8x6m1vedm4svN6gupZrx8ueIg9Rx9ZOhA6jkgDexQ3Yx8UIGYAKvJe
+F7OIwqyKTQs93nXQhjptrU1tYMhNZAd4RCDckMygmS6AOqdflhIFx+aS+KV278cm
+RPNUihO3EmOZb1nKGs8OT+r0kPF6yJ0b/03KO19g6xHDIHpcRuc=
+=l7W8
+-----END PGP SIGNATURE-----
+
+--JZ7gr+IhwBjh+HIH--
 
