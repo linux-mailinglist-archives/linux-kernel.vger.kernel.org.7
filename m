@@ -1,106 +1,92 @@
-Return-Path: <linux-kernel+bounces-883298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EB16C2D054
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:13:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19DD1C2CFEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:09:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 275874655BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:02:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54B77465B48
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00380314B94;
-	Mon,  3 Nov 2025 16:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08F7D314B95;
+	Mon,  3 Nov 2025 16:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fnW2zgIM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T3X9EsfS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 570063148C8;
-	Mon,  3 Nov 2025 16:02:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB263148C8
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762185742; cv=none; b=RIzFmhtGdfwhFxkNuozXi6Q1MFqChQW1rZd8exXBxJ3A0ZLBlIUjT7K3giRxmkdF93cBfNklkAo8qyjEXsn5y0u8XWDq8D+LP1uB0i/xA+YXPyr2UZN+7qWzIeQILqfF87HK0jgZdbjuxboOJJj38XAyL7NaIkvGKuR32VBg4OI=
+	t=1762185762; cv=none; b=XvrXvNmvGATXa8j9lVp+y8bHMUQ/zvEfHnXsbft6Wp890MATJMUg+BHNMeLrfL1vVw9isjeXkVsYCwv6ge1JXQknAil8eaQTRNodb+tbRpFzYeJ9DWcVN8W9KFf2LSnBMkQ28u2sdiISgfPNeDgVnO8tGX7nvZ+w5vYvcMGB+wA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762185742; c=relaxed/simple;
-	bh=dWiE+QloP4U5xWzLAg4cQn58TLdwOultML9Hm3/8Lr8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=sbK4JNhrPGdxtnbt2YqWgAyqq0IfkFi8ZRZk59jLERVv+EpqJiYiKPcLSI6mFG+4jpmbWnSiQqwn4huO8O7hFO9kUR953ii9aZRBKBB+HDP5pDejBgOFTyUk2M7d7os0hhN3vGNoPjPZRySbPFOP4q1r5NpoQoIkVaVlS0h99fU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fnW2zgIM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF422C4CEE7;
-	Mon,  3 Nov 2025 16:02:20 +0000 (UTC)
+	s=arc-20240116; t=1762185762; c=relaxed/simple;
+	bh=sV53YyVWcrRT+m6X34+YxDxrAbFL6QFjy7bBsEShcEo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I8z12x329Gyepm2gfeHnMuTSAn/ZeHUKrQlw4INSJFrAiESgklxoLq7k5ENgkJxeKLuEmfOhsX3s+6FqHQ/KQNDIZyq+9Rb8s0ZnOfJeiQZhZqr9fuZrp088NAyltnNzYVLJV/u8aQx8+eQZLt97Gs0nx2pKP2kM5Q/ClcrW+/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T3X9EsfS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E666FC113D0
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:02:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762185740;
-	bh=dWiE+QloP4U5xWzLAg4cQn58TLdwOultML9Hm3/8Lr8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=fnW2zgIMRMnd9MvIaz9WPvawhQDPIkHep+35+KiXx0dB1O4E4q3ZcTd/R2MS3v838
-	 ag1ndWg8XMDBbqE3zLdsQEqxGxqszT0iLKbewcT5dTx7Z6p/AebeHsLVvJdj/mDx3K
-	 gAH28TdqHQnQNwFwSoa0DSgqxPoxjRPYOZaeLbf0QqeMJ33GXhAPRWw/Hj77j3reC7
-	 I2RqNsxC+hcYlaaM4jXpLOMYklgZ96QdxNTnEQ3vYmOpzrM1IRdInyr7/B7zu1E9yp
-	 0DHgwW2AuQOpru+WPYnZM3csNDswOfZbZ3HC+qLsAPwzY8U2As6BLOtUX3RtTTwH/V
-	 njgN5SoePuHKw==
-Date: Mon, 3 Nov 2025 10:02:19 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: =?utf-8?B?UMOpdGVy?= Ujfalusi <peter.ujfalusi@linux.intel.com>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, linux-sound@vger.kernel.org,
-	kai.vehmanen@linux.intel.com, ranjani.sridharan@linux.intel.com,
-	yung-chuan.liao@linux.intel.com, pierre-louis.bossart@linux.dev,
-	bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kw@linux.com
-Subject: Re: [PATCH 1/7] PCI: Add Intel Nova Lake S audio Device ID
-Message-ID: <20251103160219.GA1806872@bhelgaas>
+	s=k20201202; t=1762185761;
+	bh=sV53YyVWcrRT+m6X34+YxDxrAbFL6QFjy7bBsEShcEo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=T3X9EsfSx0HYATlz8gEUMmbJU7FR4RQDk0avZO0EwHWDdd4eqM+Nq3v0LpcS1KYqS
+	 cuSUth6+qN2ixUikjgt1EjH4VA+U2BHZKV6lAtw8m16YQUii127o8qVyqOsRjbiXpc
+	 JiMStHBpsMyxNKsKP3ghW1ZbYBKz/qeXOIu+ghr2yBDKL22CXIXna85AsFbiq6oCW6
+	 xIfoEjHZtLI11+gK6DoeqGP3favuC8ZtziR2NC7tlYd/Bc6FJh6GpNL1mVTe5o0Hxd
+	 jA/Incz0E1IK165vXBRoY4oSSZQ2IMoRCVwYuulk2ZL9wmj9mSBTFYmSAb+MgB5yE2
+	 bEy9U0TEpdugA==
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7c53215c3c8so5214448a34.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 08:02:41 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXnnW6QhnxJrmU+R7NbHDiksXmJbpgAnd9ENukLa/559AABV49Y5NrVlQ6+Rs43H2DmEPoNB4rYlApK7Jg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyg4fNPtNwvvf1SRU303ce0HruW5Cy19TcYgGJpuLsXQUR1GGh+
+	ElL1gXNlMzwMzKG66dINajUYBnn0U5V/q/ExzSJVm7PmEM6O+1ujsIIHAwYLHLCFJNOHp5HTTpR
+	BIJw5hd5lKGPkXk9woS7f8HHGZLVFKHk=
+X-Google-Smtp-Source: AGHT+IG930y9apAOPt/XrUBvlxGLmexeDZbsEg8mrGDcQqgS9OsYketEofol/FuF0vXE3Pttu1s8pCWIEz9L/xGOaag=
+X-Received: by 2002:a05:6830:6a99:b0:7ba:8107:d559 with SMTP id
+ 46e09a7af769-7c696799d22mr6133427a34.26.1762185761225; Mon, 03 Nov 2025
+ 08:02:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9e34fe42-a031-4ab6-b986-c09a36040b66@linux.intel.com>
+References: <20251027192628.130998-1-jonas.gorski@gmail.com> <aQCK56FcZSCZdmgE@smile.fi.intel.com>
+In-Reply-To: <aQCK56FcZSCZdmgE@smile.fi.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 3 Nov 2025 17:02:29 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0i7CZDhMbx4JKmQprwWCnVG4bAEYpH-mddxJ6tJdb8wTw@mail.gmail.com>
+X-Gm-Features: AWmQ_bmbNUXYIWq2xTKrp4Rx-wtHwD0Gf37ZD3xa5PGDwzmma4kAB2NmsI8fp0o
+Message-ID: <CAJZ5v0i7CZDhMbx4JKmQprwWCnVG4bAEYpH-mddxJ6tJdb8wTw@mail.gmail.com>
+Subject: Re: [PATCH] Documentation: ACPI: i2c-muxes: fix I2C device references
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Jonas Gorski <jonas.gorski@gmail.com>
+Cc: Len Brown <lenb@kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 03, 2025 at 02:43:57PM +0200, Péter Ujfalusi wrote:
-> On 02/10/2025 11:42, Peter Ujfalusi wrote:
-> > Add Nova Lake S (NVL-S) audio Device ID
-> 
-> Can you check this patch so Takashi-san can pick the series up?
+On Tue, Oct 28, 2025 at 10:20=E2=80=AFAM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Mon, Oct 27, 2025 at 08:26:28PM +0100, Jonas Gorski wrote:
+> > When the device references were changed from relative to absolute in
+> > commit e65cb011349e ("Documentation: ACPI: Fix parent device
+> > references"), the MUX0 device was omitted from the paths.
+> >
+> > So add it to fix the references.
+>
+> > Fixes: e65cb011349e ("Documentation: ACPI: Fix parent device references=
+")
+>
+> Closes: https://lore.kernel.org/all/48d0fb45-096c-4caa-b51c-753c2f17f018@=
+gmail.com/
+> Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-We have a long history of adding these Intel audio device IDs that are
-only used once, which is not our usual practice per the comment at the
-top of the file:
-
- *      Do not add new entries to this file unless the definitions
- *      are shared between multiple drivers.
-
-Generally speaking, if an ID is used by only a single driver, we
-either use the plain hex ID or add the #define to the driver that uses
-it.
-
-Have we been operating under some special exception for the Intel
-audio IDs?  I see that I acked some of these additions in the past,
-but I don't remember why.
-
-> > Signed-off-by: Peter Ujfalusi <peter.ujfalusi@linux.intel.com>
-> > Reviewed-by: Kai Vehmanen <kai.vehmanen@linux.intel.com>
-> > Reviewed-by: Ranjani Sridharan <ranjani.sridharan@linux.intel.com>
-> > ---
-> >  include/linux/pci_ids.h | 1 +
-> >  1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
-> > index 92ffc4373f6d..a9a089566b7c 100644
-> > --- a/include/linux/pci_ids.h
-> > +++ b/include/linux/pci_ids.h
-> > @@ -3075,6 +3075,7 @@
-> >  #define PCI_DEVICE_ID_INTEL_5100_22	0x65f6
-> >  #define PCI_DEVICE_ID_INTEL_IOAT_SCNB	0x65ff
-> >  #define PCI_DEVICE_ID_INTEL_HDA_FCL	0x67a8
-> > +#define PCI_DEVICE_ID_INTEL_HDA_NVL_S	0x6e50
-> >  #define PCI_DEVICE_ID_INTEL_82371SB_0	0x7000
-> >  #define PCI_DEVICE_ID_INTEL_82371SB_1	0x7010
-> >  #define PCI_DEVICE_ID_INTEL_82371SB_2	0x7020
-> 
-> 
+Applied as 6.18-rc material, thanks!
 
