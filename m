@@ -1,99 +1,115 @@
-Return-Path: <linux-kernel+bounces-883077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63944C2C6EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:37:12 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24DABC2C704
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:38:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1731A189276D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:37:35 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4F53E4E97F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A8E280CE5;
-	Mon,  3 Nov 2025 14:37:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A861305E0D;
+	Mon,  3 Nov 2025 14:37:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TN6Zsljo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="WrwQlH8l"
+Received: from canpmsgout02.his.huawei.com (canpmsgout02.his.huawei.com [113.46.200.217])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76CBD20125F;
-	Mon,  3 Nov 2025 14:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095D627FB21;
+	Mon,  3 Nov 2025 14:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.217
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762180624; cv=none; b=SCn/ywiNfJ3G2ZwSO+VAZm5vbI3ZPKxbMyNcwl82XFa/plm5aILPMCjeFTwjdeRUZBf4Or+unX16C2SnD0dLZfVeYUzSUZsobhQgn4WzNvhUmWTbHsoMonkuGdRdnc4kclYy+21rLWYz26MHf/aymPnHekqP7qFbajLD7/eYECI=
+	t=1762180675; cv=none; b=RgJqiWkJS04JTUJLv0iiiMU6mT059KFTL21f03syjNnWBkHAR5hazh5T+6VDOrgtcR2kt3b2P6FesD4jwlIvS3FLgnQ8LDS5I+5KK9frZkvcro0XHlUYIM7AknnErx0MwlIyqlPpKjJ8z7PnwIWZ1eWbnWTcCoFecMDcJK99274=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762180624; c=relaxed/simple;
-	bh=ONESlJrt0B1hJRr7zz4S/UVLdm+/k3OpYpvNjlrv2Qc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CbrDJXlyPVTIsb4ghS0+rv0CwA8eIp7D7p3IW02HDYNbbsUzSO1TjsMYN9UOK/ikpchnhbMCWAICSrsb4z+4HqGvSJ+3YoRiKmthftG5eOVOJwi2Fed69ghe1Q+8KrNdRyvECe9EtDGP0bhQDrINR1PnxMlmu0oiZVOrRznRiYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TN6Zsljo; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762180623; x=1793716623;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ONESlJrt0B1hJRr7zz4S/UVLdm+/k3OpYpvNjlrv2Qc=;
-  b=TN6ZsljoOkfeXfrZrsy2I3/fR8I495qWdq/pwcAjoaMIJ6JCw8VkRDnx
-   //YWTaC4D9xd/de/Q0CrQ1h5jaCseVZpKoU+E+fYuN8AgwnRxl5NQ3JoT
-   zPMu93Uo/XA3tsMfENp468q7s95/3ipDBJCszIRHa9tzQHxggO2AZG4PA
-   moEmzVZCeOKf+1wh7aASTWrWxzzHtyVU4yugjzz68/cJEvtP6UDDm/nMf
-   4Tgm/d/yLIK3oZDfMwmCt/05sI5L7RHp2sm4olWwAmPv3oXKG2VLd1ZYp
-   GJf1MUQoOCuQI00pxmlM/mRsXvUXlPeZ9PgF0Y4/eEVfpP4/31XeDjip3
-   A==;
-X-CSE-ConnectionGUID: zc0Jjt9qSpCdNEOB0asc5g==
-X-CSE-MsgGUID: jyX5/BWpS267DIR/982ZxA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="64288690"
-X-IronPort-AV: E=Sophos;i="6.19,276,1754982000"; 
-   d="scan'208";a="64288690"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 06:37:01 -0800
-X-CSE-ConnectionGUID: h2uKtdXFRZ6Ir7hHE6kedQ==
-X-CSE-MsgGUID: 4wEuwb8XSS6eMkJFSpaLuA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,276,1754982000"; 
-   d="scan'208";a="192040839"
-Received: from smoehrl-linux.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.216])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 06:37:00 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vFvfz-00000005Axr-2vI2;
-	Mon, 03 Nov 2025 16:36:55 +0200
-Date: Mon, 3 Nov 2025 16:36:54 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v2] gpiolib: fix invalid pointer access in debugfs
-Message-ID: <aQi-Bs3Aw6T6ejt_@smile.fi.intel.com>
-References: <20251103141132.53471-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1762180675; c=relaxed/simple;
+	bh=lQQ+am8tER63NawYmu9xQEDLkM/8ujSRAUA52iOKakk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=nb108Lijoax05QFRuLTj2YOiTLcFaO8c4w0gftRBfhUgQc3JRbPLu4Np5jmBg4Kkb5zBExLBbHSuyJfNOvs2wiR2Iq+LBoIH4FPv+lzpXLYzNrUB6wpHyk8lCZh1Zi8V/efWBPVkrqnfMJx+oDg32473K35b92CiIdrMABDDsCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=WrwQlH8l; arc=none smtp.client-ip=113.46.200.217
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=eGGeoWjftywpXqd25cgi9W6Zo6I329qDMqJRqqnzkTY=;
+	b=WrwQlH8lSAQpoTyjNCrbB3iphcJzncWZfRlf74sQrgsPbwsTrLH2SgEbAsATlmSzSw6vT0jLM
+	l2158lRS4FQrFSsxnYpnGG7I719b2wRMI8nvfXfV2sLuvkmks3qJsnNK2TTwyfCOrzgQu1nRYFD
+	CR/FzoirvzJ1aIvIPQTLlAc=
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by canpmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4d0Yzy64WSzcb1J;
+	Mon,  3 Nov 2025 22:36:14 +0800 (CST)
+Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3FB2E180064;
+	Mon,  3 Nov 2025 22:37:48 +0800 (CST)
+Received: from [127.0.0.1] (10.174.178.254) by dggpemf500013.china.huawei.com
+ (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 3 Nov
+ 2025 22:37:46 +0800
+Message-ID: <70fd2f0e-8fac-4be7-9597-7072a36a58bc@huawei.com>
+Date: Mon, 3 Nov 2025 22:37:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251103141132.53471-1-brgl@bgdev.pl>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/25] ext4: support large block size in
+ ext4_calculate_overhead()
+To: Jan Kara <jack@suse.cz>
+CC: <linux-ext4@vger.kernel.org>, <tytso@mit.edu>, <adilger.kernel@dilger.ca>,
+	<linux-kernel@vger.kernel.org>, <kernel@pankajraghav.com>,
+	<mcgrof@kernel.org>, <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<yi.zhang@huawei.com>, <yangerkun@huawei.com>, <chengzhihao1@huawei.com>,
+	<libaokun1@huawei.com>, Baokun Li <libaokun@huaweicloud.com>
+References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
+ <20251025032221.2905818-8-libaokun@huaweicloud.com>
+ <qmsx753xemvacoaghwhv6emusazmlynv54qqxwsdfsoaoeqre4@bp2lgrdufaim>
+Content-Language: en-GB
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <qmsx753xemvacoaghwhv6emusazmlynv54qqxwsdfsoaoeqre4@bp2lgrdufaim>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ dggpemf500013.china.huawei.com (7.185.36.188)
 
-On Mon, Nov 03, 2025 at 03:11:32PM +0100, Bartosz Golaszewski wrote:
+On 2025-11-03 16:14, Jan Kara wrote:
+> On Sat 25-10-25 11:22:03, libaokun@huaweicloud.com wrote:
+>> From: Baokun Li <libaokun1@huawei.com>
+>>
+>> ext4_calculate_overhead() used a single page for its bitmap buffer, which
+>> worked fine when PAGE_SIZE >= block size. However, with block size greater
+>> than page size (BS > PS) support, the bitmap can exceed a single page.
+>>
+>> To address this, we now use __get_free_pages() to allocate multiple pages,
+>> sized to the block size, to properly support BS > PS.
+>>
+>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+>> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+> One comment below:
+>
+>> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+>> index d353e25a5b92..7338c708ea1d 100644
+>> --- a/fs/ext4/super.c
+>> +++ b/fs/ext4/super.c
+>> @@ -4182,7 +4182,8 @@ int ext4_calculate_overhead(struct super_block *sb)
+>>  	unsigned int j_blocks, j_inum = le32_to_cpu(es->s_journal_inum);
+>>  	ext4_group_t i, ngroups = ext4_get_groups_count(sb);
+>>  	ext4_fsblk_t overhead = 0;
+>> -	char *buf = (char *) get_zeroed_page(GFP_NOFS);
+>> +	gfp_t gfp = GFP_NOFS | __GFP_ZERO;
+>> +	char *buf = (char *)__get_free_pages(gfp, sbi->s_min_folio_order);
+> I think this should be using kvmalloc(). There's no reason to require
+> physically contiguous pages for this...
+>
+> 								Honza
 
-> If the memory allocation in gpiolib_seq_start() fails, the s->private
-> field remains uninitialized and is later dereferenced without checking
-> in gpiolib_seq_stop(). Initialize s->private to NULL before calling
-> kzalloc() and check it before dereferencing it.
+Makes sense, I will use kvmalloc() in the next version.
 
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
--- 
-With Best Regards,
-Andy Shevchenko
-
+Thanks,
+Baokun
 
 
