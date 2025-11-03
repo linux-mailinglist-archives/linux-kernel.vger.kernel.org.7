@@ -1,157 +1,125 @@
-Return-Path: <linux-kernel+bounces-882442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24309C2A7C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:07:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88BF6C2A7D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:08:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 696303B77CC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:00:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B7213B872F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1F72D46C0;
-	Mon,  3 Nov 2025 07:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D2A2D3EF2;
+	Mon,  3 Nov 2025 08:00:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AAOGKR/h";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="rElu7QUp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ttxQDPg6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F9622D3ECF
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 07:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46FF32D372A;
+	Mon,  3 Nov 2025 08:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762156798; cv=none; b=YPtQ870/o+7d8fdUGVEs2fk9XvZOqbRqedTyDREyL44HA73ASNrV3b0XHDXKeVQVmWprf18FwQfC9nnRRyWyDBYQahANfV7dDQr8e09exn9TpuE6rihe/MJrPCjVWP1nEIHcG/DN0ZYr2YCfWe0njieue3Cb5hzHL3y5kW/ghU8=
+	t=1762156812; cv=none; b=uEjOcV3VJGnBfoIysbGclcHq8Yt19peG0Jif2C169WtPUez3F3iWc5mwURIMi8j1R2rY4ZWh2/vcQRhXSVDsgX+O6tO216ZP59FrMqdAs7G3TklWyDZpmrMv/sbzFwUW6HOOX5yZ7e57TyWHjv8zcjVyxfMytTAeRKTCCtBo+Nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762156798; c=relaxed/simple;
-	bh=IszVnDCPm0bboeFG4KrxgTH5HC9Vm0rG9lgMcCpXRTE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=syuU/gCkkG7R0jf1cRdBI8k3QzxNSLekvTrA7UTnd8brwn4KwLTemb+6DkqxBIENMz59v0FUwgkKZBhfEOovaGDDDAkLiG9jyZ78/VNik2zpiSXn3eF/HaKK9RQdikpHJUPhZbPX3AwoDELhn+rS+MfRFZqY1TmFqz8RErbPTaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AAOGKR/h; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=rElu7QUp; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762156794;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=8Ng1Pwu6FSvlmYcO+fW7tQgV+r8RIUxL6Vl3k5g+WGE=;
-	b=AAOGKR/hnC3si2yqySHUvQZOIrjT9n/yteU0gJip4NXjyK7BG8fQkADnobzSImBifzgUQ5
-	xR2c3gl3dzYS2thnRIJglZcTA7RwTl4YUJMzu1HoBU2d3vl4KOvmrRsUWgTqT/yaZi3G/N
-	8QitM2WyT/gUj505v2QL3KQhSlIcSYI=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-318-riOW-YZbO1iFlIuCZRfItQ-1; Mon, 03 Nov 2025 02:59:53 -0500
-X-MC-Unique: riOW-YZbO1iFlIuCZRfItQ-1
-X-Mimecast-MFC-AGG-ID: riOW-YZbO1iFlIuCZRfItQ_1762156792
-Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-64097bef0e2so1889824a12.3
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 23:59:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762156792; x=1762761592; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8Ng1Pwu6FSvlmYcO+fW7tQgV+r8RIUxL6Vl3k5g+WGE=;
-        b=rElu7QUp8TqVy93pBeC1ARbNAPsj7jt7Fb+sRKoqZCd/Js80GcFbRezYmpfC7PmnG1
-         oVyBpJCxZ66BXFa22KxQpYiWil0WrIivhSkm2hC0Wbec1zwmCFBOFo1bF78Gof2gsf6C
-         gaZcQ6dZ+f0xV27GUSXihR5M0QpOmr5IhDirEuqaFwhZl/RdGwrNNe1m832c+dY4ODuD
-         0BUWPDc3ykvRdX9nSx0Rr7JH8+kKogLGNhSuxnHnMYcpWkLoBBSu2XOSTBPtNj48a6nt
-         eeA8Ciy93yBwB3Lgay4tcqUzArpiSpdcbnIDOxrZR7v0jM0VpLtSdUaJOqQGyKxbC9Wv
-         2moA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762156792; x=1762761592;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8Ng1Pwu6FSvlmYcO+fW7tQgV+r8RIUxL6Vl3k5g+WGE=;
-        b=gpYZp2QPlQ97XENVFbBT1min09tlhew1pwGLLS9qEEcJywZZlmjOml8UwZbofe/vxS
-         Azo9Ahrtlf1OrwwYHE9DVezTjmv6FkDEqSAPztKcxwtk+fyJX573EJe6rqnOCSJis0FB
-         U0B9u8pZKh9LEwmcbngQx3cohyxb1TxTJ567dMvc5vUupQU6X4XfW9INAVpJgEsiGMMY
-         fH6BN/k94GNwtpM58yAb9MIH3tznr6Vdq7AGVoPqyvrQzStAwszBtik49nd4BaSvnR9L
-         dfJqzlhsB7DX8Ey9f8jgU2W8tcR7Wg8VhUIvU/5zP5OLEAvyqgLkaIOXf73t1HKwWnki
-         wIgw==
-X-Forwarded-Encrypted: i=1; AJvYcCUT9/05ki2g13987MrepXlW+USaepzM+QoiYX+HnLtI5DHTed1AWH3SCbZQHgQ5/wptQUApPaWGrd8XpwI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6FETxjb7GOqSamU8ICPUJASAdnAc+qYBsszLCGi40me/crYPR
-	No0WgLFqd/qrrAoFjt0Efqdf1J14oos8R0PEvT+Kk6keaygzg8Wy2PbyoGbEG7iG2v69fwd8tCv
-	MWZ46W7+TUXbPPRd2Ki9LQME04HObSWjAlVBiE4iG5A0Dmei67j8E2rWTBRUcyapvXw==
-X-Gm-Gg: ASbGncvBKUGjdHO7p7dolv+3HsDMdmyMJjaYzUuUphglTseNKyPDKVVEZZHJefuHNU2
-	ht9wnX7n+AtwxooCo062HzSjtKOJglFjRsity6NWnSrTm9OM19M+E2pwYZbGlnackduYL5mkczg
-	p7RC8/oJl/yvTrWK5HBUQXTmjOlu29M+ZDj/TdLXkyEYAVdYBGBIn84tweaaGtzipmbAES5x8mM
-	3Y92pPLA8xK3Pyn9nCilgRENouzMuVO+esxCtFg7CutG8qvZxEmI3DwOmNbAlXwvZSZ2hw4gq53
-	DXURMcfS/gNjObrody1YI6GRYY+hmlf6mt9kiXDRN8IQRrDh5243UF6PkOBscFfgDq6lXLCgvFA
-	jhGF2Ct6CubHfIOlwUgkoxmFgY2+dFAqyvbdYIoXrOYxHngzT
-X-Received: by 2002:a17:907:6d1b:b0:b43:3dcf:b6c3 with SMTP id a640c23a62f3a-b707062eca7mr1059165666b.49.1762156792464;
-        Sun, 02 Nov 2025 23:59:52 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEei0TEbbcqaHv2/H5u75E6cBldBAuSc4DG6tLxuw9RodARfK8Z6AgTqtkQDZxiwrECzBHCag==
-X-Received: by 2002:a17:907:6d1b:b0:b43:3dcf:b6c3 with SMTP id a640c23a62f3a-b707062eca7mr1059163966b.49.1762156792088;
-        Sun, 02 Nov 2025 23:59:52 -0800 (PST)
-Received: from lbulwahn-thinkpadx1carbongen12.rmtde.csb ([2a02:810d:7e01:ef00:1622:5a48:afdc:799f])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b70b9f29c8asm312691066b.8.2025.11.02.23.59.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Nov 2025 23:59:51 -0800 (PST)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-doc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] MAINTAINERS: extend DOCUMENTATION SCRIPTS to the full directories
-Date: Mon,  3 Nov 2025 08:59:48 +0100
-Message-ID: <20251103075948.26026-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.51.1
+	s=arc-20240116; t=1762156812; c=relaxed/simple;
+	bh=k8xUp6bYueJmV2nq4Bw2KrEj8rt9MWjTaYtL8qt8QLs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tPx3o8JNLvTxfe0jDaX+EwhXho325ml8n0bVGaawCCTKmHxu04R2LbQFGyGclyDOU4c91COZZKmV8eHxKiwDvnjZJERM12FWzkX4ecX/YKqZtFLOPE4TmRPGDr9gboqlUaYZW82u6L+fcWwSyOMs8ac5vnNiYE8S3HSfNXEsBU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ttxQDPg6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3636BC4CEE7;
+	Mon,  3 Nov 2025 08:00:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762156812;
+	bh=k8xUp6bYueJmV2nq4Bw2KrEj8rt9MWjTaYtL8qt8QLs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ttxQDPg6jtNykrkfjTDtGG5MTvUGdUu7NvFFD1vy7dIreYcKOrguUE8KN1cdThOpy
+	 7B4B5oDjAhrk8+Qa98wTkKN7S4bbwHMA7CXSA1cjlOyJvMxkFu7fzpDBZlznY7cJj3
+	 aZMkVqeaoP9CYaD7PcdxjOOXxhbpG3uMFjR3H2rImtc3wW8VMKNNLHyX18wun9olf2
+	 JaLdOAeb8t+l9JWqEKTfhq0ijd+ZWoUV+T9W3qxCHjGNXGPqVuYCd/cieT6u4blgWf
+	 BFAhawOE3v2Vgqs7mEvh/YXNDsxKdX+EVL4Ar+aVThWojS54SY8DOEhaRXrSRhwLiM
+	 1rSQtFJndyX9w==
+Message-ID: <4c3d72a4-0b55-4fc1-a8a0-43485a87d529@kernel.org>
+Date: Mon, 3 Nov 2025 09:00:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] dt-bindings: iio: proximity: Remove Lidar-lite-v2
+ from trivial
+To: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>, robh@kernel.org,
+ krzk+dt@kernel.org, jic23@kernel.org, dlechner@baylibre.com,
+ nuno.sa@analog.com, andy@kernel.org, conor+dt@kernel.org,
+ mranostay@gmail.com, wbg@kernel.org
+Cc: ~lkcamp/patches@lists.sr.ht, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20251102221643.9966-1-rodrigo.gobbi.7@gmail.com>
+ <20251102221643.9966-2-rodrigo.gobbi.7@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20251102221643.9966-2-rodrigo.gobbi.7@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On 02/11/2025 23:10, Rodrigo Gobbi wrote:
+> The lidar-lite-v2 IC is not a trivial device because it has a few more
+> pins like power-en, mode ctrl and supplies.
+> 
+> Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/trivial-devices.yaml | 2 --
+>  1 file changed, 2 deletions(-)
 
-Due to commit abd61d1ff8f0 ("scripts: sphinx-pre-install: move it to
-tools/docs"), checkpatch.pl --self-test=patterns reported a non-matching
-file entry in DOCUMENTATION SCRIPTS. Clearly, there are now multiple
-documentation scripts, all located in Documentation/sphinx/ and tools/docs/
-and Mauro is the maintainer of those.
 
-Update the DOCUMENTATION SCRIPTS section to cover these directories. While
-at it, also make the DOCUMENTATION section cover the subdirectories of
-tools/docs/.
+That's not a separate commit.
 
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
----
- MAINTAINERS | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7031ee1e7cff..c9bdaaecc946 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7442,7 +7442,7 @@ F:	scripts/get_abi.py
- F:	scripts/kernel-doc*
- F:	scripts/lib/abi/*
- F:	scripts/lib/kdoc/*
--F:	tools/docs/*
-+F:	tools/docs/
- F:	tools/net/ynl/pyynl/lib/doc_generator.py
- X:	Documentation/ABI/
- X:	Documentation/admin-guide/media/
-@@ -7476,9 +7476,9 @@ DOCUMENTATION SCRIPTS
- M:	Mauro Carvalho Chehab <mchehab@kernel.org>
- L:	linux-doc@vger.kernel.org
- S:	Maintained
--F:	Documentation/sphinx/parse-headers.pl
-+F:	Documentation/sphinx/
- F:	scripts/documentation-file-ref-check
--F:	tools/docs/sphinx-pre-install
-+F:	tools/docs/
- 
- DOCUMENTATION/ITALIAN
- M:	Federico Vaga <federico.vaga@vaga.pv.it>
--- 
-2.51.1
-
+Best regards,
+Krzysztof
 
