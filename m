@@ -1,76 +1,152 @@
-Return-Path: <linux-kernel+bounces-883269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90DB3C2CE59
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:51:04 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63291C2CE29
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:49:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46DAC189E3E2
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0DA8F4F986E
 	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F193831691F;
-	Mon,  3 Nov 2025 15:39:39 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C24284883;
+	Mon,  3 Nov 2025 15:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Rt9hSliq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 114001F3B85
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 15:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 181B227B4EB
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 15:40:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762184379; cv=none; b=ry4Yj0nOdqt02gTYq+ekqhFlVHNTcQ6spc8/OoBdto4ck/nb6xm6bqdpyeEh7Uukxjw4M5A3+O1zQTrwyHGaDugKnb7esS1OQ41UuEDkv3VNEQJQ3NuYnJpolhvVh3dX9rJ3KMaMpR+WyyXYxy6D7klPZ3o7VGhilaySagUk9qs=
+	t=1762184437; cv=none; b=RRYbS8NvZMm55TkK+TWHMmT1SDeCvwOwu8LrFsYhrb+mt0G8eeICTAlTkG5vFlcrSLu0w/ZfOE6DLGSE17tbd475Gdi3rRlA8sFd2wDzQExzGVfgipej/RPfYzYcMxPuckVm6aKOj3KhTDjfSpSqivKrvbdavE7d81+3CZhiNk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762184379; c=relaxed/simple;
-	bh=MZIUTDUlLfJirMX9evaXHDyNYsjcHZ9WEC/P7k9Odow=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=s8J9NjGWFFN94u8WhP7zEp9st7m/vxLumCrvFVyDKQnCzHnfwQR36Z5wIOeM4PMKRGMnf7PrV6tfat3CuSemVsWEdN4a1RXJ/cg1Zx/uaAGr/CXjqZGSAL5CklRM+rsqKXD0tbtCzIBFr1uZ/8e6UOrIHpiaN7JjD7u8WoBUTQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-4333052501cso8533905ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 07:39:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762184377; x=1762789177;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MZIUTDUlLfJirMX9evaXHDyNYsjcHZ9WEC/P7k9Odow=;
-        b=DHKKogqO8LWosACMIaNAVdRjL+Ukbt9VykRCws7VGuofA47lYJTJZKVaKNbqbv6naC
-         bl7GWkqieffFyj79Q9NA9HYPr8Y57udUxp9wjFStUsj3OzEavZdXku0Vupg3o9nRi5Sa
-         A5g9IbVBhsRQO9eatGCQCNgYOJE7jnl5nT4qHdb8WoZz+qMHlUSaJlK91rwr5FFZNs2B
-         RqBSUL3QCmW0Y6pIwJy/uxKHkoZRL53cGKIgO5neO2gwCGLqmbFy6TOh5RNZG+MHu9es
-         hLVqiDXbrcv0aGpI2OLRD+v+TrsvbyW4Eaxfh78mkd4hoo7NiM04gAcT5znnfkQ3/bk+
-         imGw==
-X-Gm-Message-State: AOJu0YyxdFH+3GWk+UA5mZ9MIL7uGOpfWZiCHGwSZAp4yNvh0YF2It/S
-	72uHHl/O9JMEzpSimx49AIeymwIm3fRyvxlYuiVPZra6UEr9qK2sB8aBsDF+MUwn/75EYLPRrvI
-	cUTxUPvLRhG9y13ylzXAOxjUyZ92M6VN9/0tPz7BLJTD9tTZmzt9tWI5GC/k=
-X-Google-Smtp-Source: AGHT+IFdXfPoWZ9GITDdj5VrY2k7uds2/JFE72UcPCE4pvYHHVFSwd6rkE10oRoIJMIj7K+QFE7v4o4gk9fHKzi+6+59957AuqXT
+	s=arc-20240116; t=1762184437; c=relaxed/simple;
+	bh=X0wiVDoDQ/lFIVflb6+x+uwRmf/djAYzNvf0460O2tc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uUsibMN/qZ/9UkWi38K6CSs+CBIUAB6rTc3Oi0izz2TGg1B+wstmFtfU4XCQ7SurYjChXj1p+VA9xREHy/FNya7GEiDB9wQySvFvG1db3hJS/ehEHfTuMz9ObV6Cth9fgF76Gu5Ici2TtWeSn8Cwj37iAX7uUqAt738ESdzT50I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Rt9hSliq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762184433;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=o9wfXsJS9xOV8WFM6Ew+60eZBPyQWXtK745crlrG0W8=;
+	b=Rt9hSliqW22SKQwto2NOMtkPBSJs39KpwWRJ4wii+2b7wz+xFZc29EnQJgIKizobLETNud
+	W7+Yfsl8/GFPRY8fTvVgat4fqzRjoBj8dhQ/ddex2sF6jBs2mye7W14KB+vTE6h6o29ojr
+	yxf0dqNTf020RJexHr67MBPBIpvRqGY=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-102--LThxPVfNm6oI7BQImudPw-1; Mon,
+ 03 Nov 2025 10:40:30 -0500
+X-MC-Unique: -LThxPVfNm6oI7BQImudPw-1
+X-Mimecast-MFC-AGG-ID: -LThxPVfNm6oI7BQImudPw_1762184428
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 003DB180AE37;
+	Mon,  3 Nov 2025 15:40:16 +0000 (UTC)
+Received: from antares.redhat.com (unknown [10.44.33.211])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 67A7119540DD;
+	Mon,  3 Nov 2025 15:40:09 +0000 (UTC)
+From: Adrian Moreno <amorenoz@redhat.com>
+To: netdev@vger.kernel.org
+Cc: kuba@kernel.org,
+	nicolas.dichtel@6wind.com,
+	toke@redhat.com,
+	Adrian Moreno <amorenoz@redhat.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Xiao Liang <shaw.leon@gmail.com>,
+	Cong Wang <cong.wang@bytedance.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v3] rtnetlink: honor RTEXT_FILTER_SKIP_STATS in IFLA_STATS
+Date: Mon,  3 Nov 2025 16:40:04 +0100
+Message-ID: <20251103154006.1189707-1-amorenoz@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3707:b0:432:f3b:a809 with SMTP id
- e9e14a558f8ab-4330d222070mr180738655ab.26.1762184376925; Mon, 03 Nov 2025
- 07:39:36 -0800 (PST)
-Date: Mon, 03 Nov 2025 07:39:36 -0800
-In-Reply-To: <68dadf0e.050a0220.1696c6.001d.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6908ccb8.a70a0220.88fb8.0000.GAE@google.com>
-Subject: Forwarded: WARNING in f2fs_delete_entry (2)
-From: syzbot <syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+Gathering interface statistics can be a relatively expensive operation
+on certain systems as it requires iterating over all the cpus.
 
-***
+RTEXT_FILTER_SKIP_STATS was first introduced [1] to skip AF_INET6
+statistics from interface dumps and it was then extended [2] to
+also exclude IFLA_VF_INFO.
 
-Subject: WARNING in f2fs_delete_entry (2)
-Author: zlatistiv@gmail.com
+The semantics of the flag does not seem to be limited to AF_INET
+or VF statistics and having a way to query the interface status
+(e.g: carrier, address) without retrieving its statistics seems
+reasonable. So this patch extends the use RTEXT_FILTER_SKIP_STATS
+to also affect IFLA_STATS.
 
-#syz test
+[1] https://lore.kernel.org/all/20150911204848.GC9687@oracle.com/
+[2] https://lore.kernel.org/all/20230611105108.122586-1-gal@nvidia.com/
+
+Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+---
+ net/core/rtnetlink.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
+index 8040ff7c356e..b2a8920df1cc 100644
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -1270,13 +1270,13 @@ static size_t rtnl_dpll_pin_size(const struct net_device *dev)
+ static noinline size_t if_nlmsg_size(const struct net_device *dev,
+ 				     u32 ext_filter_mask)
+ {
+-	return NLMSG_ALIGN(sizeof(struct ifinfomsg))
++	size_t size;
++
++	size = NLMSG_ALIGN(sizeof(struct ifinfomsg))
+ 	       + nla_total_size(IFNAMSIZ) /* IFLA_IFNAME */
+ 	       + nla_total_size(IFALIASZ) /* IFLA_IFALIAS */
+ 	       + nla_total_size(IFNAMSIZ) /* IFLA_QDISC */
+ 	       + nla_total_size_64bit(sizeof(struct rtnl_link_ifmap))
+-	       + nla_total_size(sizeof(struct rtnl_link_stats))
+-	       + nla_total_size_64bit(sizeof(struct rtnl_link_stats64))
+ 	       + nla_total_size(MAX_ADDR_LEN) /* IFLA_ADDRESS */
+ 	       + nla_total_size(MAX_ADDR_LEN) /* IFLA_BROADCAST */
+ 	       + nla_total_size(4) /* IFLA_TXQLEN */
+@@ -1329,6 +1329,12 @@ static noinline size_t if_nlmsg_size(const struct net_device *dev,
+ 	       + nla_total_size(2)  /* IFLA_HEADROOM */
+ 	       + nla_total_size(2)  /* IFLA_TAILROOM */
+ 	       + 0;
++
++	if (!(ext_filter_mask & RTEXT_FILTER_SKIP_STATS))
++		size += nla_total_size(sizeof(struct rtnl_link_stats)) +
++			nla_total_size_64bit(sizeof(struct rtnl_link_stats64));
++
++	return size;
+ }
+ 
+ static int rtnl_vf_ports_fill(struct sk_buff *skb, struct net_device *dev)
+@@ -2123,7 +2129,8 @@ static int rtnl_fill_ifinfo(struct sk_buff *skb,
+ 	if (rtnl_phys_switch_id_fill(skb, dev))
+ 		goto nla_put_failure;
+ 
+-	if (rtnl_fill_stats(skb, dev))
++	if (!(ext_filter_mask & RTEXT_FILTER_SKIP_STATS) &&
++	    rtnl_fill_stats(skb, dev))
+ 		goto nla_put_failure;
+ 
+ 	if (rtnl_fill_vf(skb, dev, ext_filter_mask))
+-- 
+2.51.1
+
 
