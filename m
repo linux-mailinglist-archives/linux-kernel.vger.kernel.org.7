@@ -1,279 +1,254 @@
-Return-Path: <linux-kernel+bounces-882600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F757C2AD9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 10:50:46 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 561F1C2ADA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 10:51:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D3F818943D0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 09:51:10 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6E60B4EE5CF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 09:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E30002FB087;
-	Mon,  3 Nov 2025 09:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF7D2FAC0D;
+	Mon,  3 Nov 2025 09:50:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o0d/tbvL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="n274YcmW";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="OfttIeR1"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3BEC2FAC1D
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 09:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 956B82FABE0
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 09:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762163428; cv=none; b=XxsPA7v9OtbAHQVrDB1FE648aFJciFruA/0jo2p+8MaHZOIi1qOGL/iJzqa/GT9434QebOeywTcOi9KcMZcN0J9l30d1IRvgGJZMy/VwTJZZvXA9DppSidjkfnLkfc4xUviQ6pSqN/Qw5eiKyaKDdALcA+myTx6k4VtHkaGF5wQ=
+	t=1762163442; cv=none; b=AREtQDwY1Zl5djOQTWjyWDWmkGceWSbJzGMT9AcO5UzzURLRB++CqjyFpcmIJs6rIgQzWCJxy1mvEm1hmHZ2OBNjdaEebbFAtiIeEit/9m2gqHF9TmHW7FI7XXcjWVMLWXj9+pOiXSRqRQKmlD+xGLrS6mFxhfvqY+mVAiDnlUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762163428; c=relaxed/simple;
-	bh=tYIRJCNDS83FSlihnAvsUz65Uw1RaaI3aab9pQPHdcI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lBuO6q4cxQ6ojIxehQXvrwtXLUUEjRH/em5sP6LJRGEv0R84xIOEZl+lq8d1+fE4IahxRuYCt+lI7FDOa+sHAAqRbHzY46FuUQzX/AvV1jKVBszAbHB6XoXEy0rzSwytvcPSarp5g5aWhvRR0Zpr6Z2hVlZwtd5W/6TVrLU7Eag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o0d/tbvL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ADCCC19424
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 09:50:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762163427;
-	bh=tYIRJCNDS83FSlihnAvsUz65Uw1RaaI3aab9pQPHdcI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=o0d/tbvLY21MJS8egZkd0Ri1kw6SIk6ujVTmZp3+FHJgDC446N+4YaN0P8z5/Ak+m
-	 eVDkw3ons91vLRaElSJNtusAMLzGrqqj3SklVGWcEoapPntfieh25BEBz7wNCA/g/u
-	 7Ar4rwgSEFzKYKhdgxFZcjXabRLt5FukstCzexiPBZersOjx5WgGCpV9WFVNrpwSZ4
-	 55fG+jYpwXNWUwRIxJCeJPh7n2QSWjrOQ7RK5wn3ZBO97Cgqne5mQJ9jo8lG3kQKgE
-	 Zq9v0lJ97Qkh3/jeDPJODxyXTWeDes8J+gXtTtm3VXFNJAQHTqmoaoDSW7s/oJCUC2
-	 cbFmULb7qNwvA==
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b715064bed6so76993566b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 01:50:27 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWBPpntLtn+zM8PzXw5Ul8unXg1Vn3A2pB1J6Q03vR+agqN5NUJqJmuDd6AnXZASnar3kfVHgMhDZJYrU4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2EI9+njmZuqqseuxgEKu1rjxE6r6DJx2EkmKMXh4tQULphrJS
-	MFtPLAEca1IONV+7vdQc02APy0YIInTE0Y6EgWcAbQVTdaQJ1usWMyNbzd/u/ZHGD2qWXMsEc3a
-	uxinwv+6+5avC+T3Z4TyaYg9Gjr2UGPw=
-X-Google-Smtp-Source: AGHT+IH8qJzoI36AiJwr/7p2nTBJuZh3M5fSlb8Ojf11RW0d2BQ5ZRzirGxdOyLDc1rkkCxm0+GO4GSCTkJK54VerPk=
-X-Received: by 2002:a17:907:60c9:b0:b70:b077:b949 with SMTP id
- a640c23a62f3a-b70b077bc32mr381684366b.37.1762163425945; Mon, 03 Nov 2025
- 01:50:25 -0800 (PST)
+	s=arc-20240116; t=1762163442; c=relaxed/simple;
+	bh=8+/xzV2on4rrn+lAPCsi+lObQn8aZjFJ9O9i3JBGvmQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KXgHveQiRzYeX7B60JTEmP3FYIDZXM0V20BgCyBlrRaFeM2F9H9cFm2BRz1xgKcI8GIb2wfemsl9QPI5afNRcATofvIocWXj6wsktu87ak4NVsX817IPW1SEdm0kOAXgLSChKk5XKkSmkjU7Smr4ww7KWlryVePxXVjqgXKXf9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=n274YcmW; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=OfttIeR1; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A38Efhs1115111
+	for <linux-kernel@vger.kernel.org>; Mon, 3 Nov 2025 09:50:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	UJ1aDhkB06vvZs1dKrWIYRYXNH0OKlW47PivXqNYdno=; b=n274YcmWN0qtJwrX
+	Em2QGFKIoE2LhxWEZBkNMhi9Eg6/cAjsomJRdLnSPpVyINZ2wREI4HJmV2ciZLiq
+	Z3StYT8RiXPOt38/eU4xQkUxm1k3Xpv7XvbkHuABO5yVTeIk7JsogrNW5Q/so0M1
+	tzRfi/Hvn6bhTTVYyqTUkblLklItFNROSc7552ysIayR2Vcy/duO/aYna7AeErSn
+	4bFHtE9z9dNUtHIaz/tW6HuYWWhtqUH6UF3qe2gvfD9uanrnAXTbhq+tR/gIAld6
+	yPA78GBcVBGuPnmdX9Fbfg7pDXlWiz3J8a6gHokPCNHQgG+N+IedhLcBpJGEfnWS
+	CozVFw==
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a6f0w9g3p-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 09:50:39 +0000 (GMT)
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-34029cbe2f5so9764859a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 01:50:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762163439; x=1762768239; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UJ1aDhkB06vvZs1dKrWIYRYXNH0OKlW47PivXqNYdno=;
+        b=OfttIeR1Gn0UEC5U9VQUqnzJoz65C6zwUqtwP6hcMB1pZr/k6iXZNTThw6yaD/50XK
+         rahpPCqtEOnFVyjkixPohQdtfOY3QIjkigKpSURt0GaUZFUnTUyETm57AyIhJBaWjBAm
+         xbbnxf3+BRoKCKIeFvcs0JSIqiQdiLqhCykT30rLBQWzPpdv7WwZpOMAVwbTuv55vg3A
+         4uSvwFBEeu08wYflExi+hiYobjW1pPdE5fT0K2tHDvO4nrPKoyyNSE0q2xs2Cr3/JJGA
+         +7MKpmZZUOWKIj1/+i7giMxuN2H04nGRtIQm1lAxZCjuN4+YpmNnfjrsGKt1HLyyz0Jv
+         0PqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762163439; x=1762768239;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UJ1aDhkB06vvZs1dKrWIYRYXNH0OKlW47PivXqNYdno=;
+        b=tDU+087fLahQgSWTgP79vBLMPIhGOjnhOlCSiUepDTDWr5SXAaR/DE/wjWtcPgTEok
+         zOWLdV1/XPHPbIcFl/os6mew8C4wZ+N+xItgAL0zD8TWv/lmdVtWARYCwqtZb6JS1M7+
+         FeJB7UrLthdIfvO3eUYp1Ea25aLQsyfs/0fpVCepvlC2VyATo8lmtnEbpbhiJA1KCMos
+         YI2y/kQ3KI2Osw5kAUqrp1zhPYqIRG7sITjhehUPqdmQcJwFNch+s3CGXQJTbsDcVHP1
+         g3p8JyVGMGFQin48O4ktfJWTUxOJ7X6QYao6S+QI/HBXSfcpq1n8BhQhb8sdyw+iI70y
+         oUGw==
+X-Forwarded-Encrypted: i=1; AJvYcCViW6n9YorLiqWx5Ud2xXKybMgBtksjH6AP5OkdwiInoe2OkpejMXMy9Co/KOvT1n6aifw5cwxZMok1le8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy027J385GoL8OLyIzy9O//VpURtpuQ4J+2zo8oM3Nc77yX2Fwz
+	L/adWfDX6oESYwTM5KysWpEgRQ1P1e9Q+UkamxRaN1zEwTQjjhiS40NRYpWDABhdM7Kp4BmBPxm
+	G5x9yAg0+tWnAQVyExSoOhIQVOhUA0T7VzrA3K2JcwWZ5Bqusbm48ANDWVT3nr5RW5PI=
+X-Gm-Gg: ASbGncvHb70eb1S5ni14CpbtWZcQSZua9MjMGBC3s/ve1DXw5yh+IbigobzS8AYwBM5
+	+TT/6T47LZ7O5pzTpeHBjqxR59xcMcVu3Ugm41D5FizJvgNBYKod/lTaLCKusiCLC2iayGlvm5T
+	hs6iOjITGFVTuxRBZOVQZYYR3QNuRVfdn2Ke0kKKQPzv88xKDVDZjTVD20awwxajoXHlaJ3qtuL
+	XJQrhi8WJ7txpKv8WafpyF3PEB4QJrICRy9E83cUgcQDcPqlQM3Y/H1oo3WoboTQCOO+Kqbs1RU
+	rwNu7U4ZhXBVvuJ0elhKVawrp/VI5QqxcpUiFNrbQAvRw9RDWrxWYpjl1hu8LxvYqztJpHayn54
+	uSZR2BJGbfTOHCUh6kZx4K4IS2GiEKjx5L4fe6IZ1iRh6+YxFE6HfOa6dKy91VGfVSBV0REwsWN
+	NHC/eg4IYL0DfxUK9UxCoRvA==
+X-Received: by 2002:a17:90b:51d1:b0:336:9dcf:ed14 with SMTP id 98e67ed59e1d1-3408306b9f3mr14441355a91.23.1762163438898;
+        Mon, 03 Nov 2025 01:50:38 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG4T8dX9DwnT9dVx72hgvS77fZ0A4adsitM1oKseFqCGFEOjAHZrBIUEAOPs8AMu+Vod5aBWw==
+X-Received: by 2002:a17:90b:51d1:b0:336:9dcf:ed14 with SMTP id 98e67ed59e1d1-3408306b9f3mr14441335a91.23.1762163438338;
+        Mon, 03 Nov 2025 01:50:38 -0800 (PST)
+Received: from [10.190.211.199] (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3415a1c2f30sm377765a91.7.2025.11.03.01.50.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Nov 2025 01:50:37 -0800 (PST)
+Message-ID: <f248a779-1f35-482b-ac71-2671c38985ca@oss.qualcomm.com>
+Date: Mon, 3 Nov 2025 15:20:32 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029-ari_no_bus_dev-v5-0-d9a5eab67ed0@linux.ibm.com> <20251029-ari_no_bus_dev-v5-1-d9a5eab67ed0@linux.ibm.com>
-In-Reply-To: <20251029-ari_no_bus_dev-v5-1-d9a5eab67ed0@linux.ibm.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Mon, 3 Nov 2025 17:50:22 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H6qqppoX_G5KrWmPor16bXfvNTE2x8Xx6yajAYPqxpigw@mail.gmail.com>
-X-Gm-Features: AWmQ_bkF9DD4U4chJ9TajuEmQvXaXS5rbGCcvKkn6W1c1fvxW9F5_O2LhkhUoKE
-Message-ID: <CAAhV-H6qqppoX_G5KrWmPor16bXfvNTE2x8Xx6yajAYPqxpigw@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] PCI: Fix isolated PCI function probing with ARI
- and SR-IOV
-To: Niklas Schnelle <schnelle@linux.ibm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Jan Kiszka <jan.kiszka@siemens.com>, 
-	Bibo Mao <maobibo@loongson.cn>, linux-s390 <linux-s390@vger.kernel.org>, 
-	loongarch@lists.linux.dev, Farhan Ali <alifm@linux.ibm.com>, 
-	Matthew Rosato <mjrosato@linux.ibm.com>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, 
-	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Gerd Bayer <gbayer@linux.ibm.com>, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] soc: qcom: smem: Register gunyah watchdog device
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Pavan Kondeti <pavan.kondeti@oss.qualcomm.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski
+ <krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>
+References: <20251031-gunyah_watchdog-v4-0-7abb1ee11315@oss.qualcomm.com>
+ <20251031-gunyah_watchdog-v4-1-7abb1ee11315@oss.qualcomm.com>
+ <9421ff80-bd86-4b29-baca-c86da90c91aa@roeck-us.net>
+Content-Language: en-US
+From: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
+In-Reply-To: <9421ff80-bd86-4b29-baca-c86da90c91aa@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAzMDA4OCBTYWx0ZWRfX/OX9zzMao899
+ zmSS+mm+ZDGNyRiU+T8n/ApXFVV9OUlO0sTkp+/PpwaknAEgDjWW2Qtf8MCQahUBbI80YaPdI/3
+ jTn+eMNBJf+WLpb9Nnr8RcODZcEvUUsNusdxHAlt0mfWpo2yvQ8OCaCYmxTOrpKs6eQEzwBLTGS
+ 2EHVLN0wupzXjv4PCPNOMUiPPqcPKd/NInXWtbK039bbvccNiv1YR/y3flFTSo0uzl/EtKQgGEi
+ rl/7OcmRBHgQsw8GP7YKp1197ZaOkbKablJ3Ox6tbJTPsMhFkRAYU3DlU4Xo3aE2cuKLS7gUyiR
+ yvyay9iPacxB6XKIPlW1dBI56WZiAfb/lEAKo9xSBbDF2fmyVvSdxp8cgkCVov6hxWkxp2QNOwH
+ dT7ngivnYLAU8S46ArTFLPe1xjHa0w==
+X-Authority-Analysis: v=2.4 cv=LcAxKzfi c=1 sm=1 tr=0 ts=69087aef cx=c_pps
+ a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=GPS-_471uPuZnZ3Duw8A:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22
+X-Proofpoint-ORIG-GUID: c87WZQ0q7U3D1xMzddk7tP9TKL5nsiJB
+X-Proofpoint-GUID: c87WZQ0q7U3D1xMzddk7tP9TKL5nsiJB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-03_01,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 impostorscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015
+ priorityscore=1501 bulkscore=0 phishscore=0 suspectscore=0 malwarescore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511030088
 
-Hi, Niklas,
 
-On Wed, Oct 29, 2025 at 5:42=E2=80=AFPM Niklas Schnelle <schnelle@linux.ibm=
-.com> wrote:
+On 10/31/2025 8:54 PM, Guenter Roeck wrote:
+> On 10/31/25 03:18, Hrishabh Rajput via B4 Relay wrote:
+>> From: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
+>>
+>> To restrict gunyah watchdog initialization to Qualcomm platforms,
+>> register the watchdog device in the SMEM driver.
+>>
+>> When Gunyah is not present or Gunyah emulates MMIO-based
+>> watchdog, we expect Qualcomm watchdog or ARM SBSA watchdog device to be
+>> present in the devicetree. If none of these device nodes are detected,
+>> we register the SMC-based Gunyah watchdog device.
+>>
 >
-> When the isolated PCI function probing mechanism is used in conjunction
-> with ARI or SR-IOV it may not find all available PCI functions. In the
-> case of ARI the problem is that next_ari_fn() always returns -ENODEV if
-> dev is NULL and thus if fn 0 is missing the scan stops.
+> There should also be an explanation why there is no "qcom,gunyah-wdt"
+> devicetree node, both here and in the file.
 >
-> For SR-IOV things are more complex. Here the problem is that the check
-> for multifunction may fail. One example where this can occur is if the
-> first passed-through function is a VF with devfn 8. Now in
-> pci_scan_slot() this means it is fn 0 and thus multifunction doesn't get
-> set. Since VFs don't get multifunction set via PCI_HEADER_TYPE_MFD it
-> remains unset and probing stops even if there is a devfn 9.
->
-> Now at the moment both of these issues are hidden on s390. The first one
-> because ARI is detected as disabled as struct pci_bus's self is NULL
-> even though firmware does enable and use ARI. The second issue is hidden
-> as a side effect of commit 25f39d3dcb48 ("s390/pci: Ignore RID for
-> isolated VFs"). This is because VFs are either put on their own virtual
-> bus if the parent PF is not passed-through to the same instance or VFs
-> are hotplugged once SR-IOV is enabled on the parent PF and then
-> pci_scan_single_device() is used.
->
-> Still especially the first issue prevents correct detection of ARI and
-> the second might be a problem for other users of isolated function
-> probing. Fix both issues by keeping things as simple as possible. If
-> isolated function probing is enabled simply scan every possible devfn.
-I'm very sorry, but applying this patch on top of commit a02fd05661d7
-("PCI: Extend isolated function probing to LoongArch") we fail to
-boot.
 
-Boot log:
-[   10.365340] megaraid cmm: 2.20.2.7 (Release Date: Sun Jul 16
-00:01:03 EST 2006)
-[   10.372628] megaraid: 2.20.5.1 (Release Date: Thu Nov 16 15:32:35 EST 20=
-06)
-[   10.379564] megasas: 07.734.00.00-rc1
-[   10.383222] mpt3sas version 54.100.00.00 loaded
-[   10.388304] nvme nvme0: pci function 0000:08:00.0
-[   10.395088] Freeing initrd memory: 45632K
-[   10.469822] ------------[ cut here ]------------
-[   10.474409] WARNING: CPU: 0 PID: 247 at drivers/ata/libahci.c:233
-ahci_enable_ahci+0x64/0xb8
-[   10.482804] Modules linked in:
-[   10.485838] CPU: 0 UID: 0 PID: 247 Comm: kworker/0:11 Not tainted
-6.18.0-rc3 #1 PREEMPT(full)
-[   10.494397] Hardware name: To be filled by O.E.M.To be fill To be
-filled by O.E.M.To be fill/To be filled by O.E.M.To be fill, BIOS
-Loongson-UDK2018-V4.0.
-[   10.508139] Workqueue: events work_for_cpu_fn
-[   10.512468] pc 900000000103be2c ra 900000000103be28 tp
-900000010ae44000 sp 900000010ae47be0
-[   10.520769] a0 0000000000000000 a1 00000000000000b0 a2
-0000000000000001 a3 9000000001810e0c
-[   10.529069] a4 9000000002343e20 a5 0000000000000001 a6
-0000000000000010 a7 0000000000000000
-[   10.537373] t0 d10951fa66920f31 t1 d10951fa66920f31 t2
-0000000000001280 t3 000000000674c000
-[   10.545673] t4 0000000000000000 t5 0000000000000000 t6
-9000000008002480 t7 00000000000000b4
-[   10.553972] t8 90000001055eab90 u0 900000010ae47b68 s9
-9000000002221a50 s0 0000000000000000
-[   10.562272] s1 ffff800032435800 s2 0000000000000000 s3
-ffffffff80000000 s4 9000000002221570
-[   10.570571] s5 0000000000000005 s6 9000000101ccf0b8 s7
-90000000023dd000 s8 900000010ae47d08
-[   10.578869]    ra: 900000000103be28 ahci_enable_ahci+0x60/0xb8
-[   10.584665]   ERA: 900000000103be2c ahci_enable_ahci+0x64/0xb8
-[   10.590461]  CRMD: 000000b0 (PLV0 -IE -DA +PG DACF=3DCC DACM=3DCC -WE)
-[   10.596609]  PRMD: 00000004 (PPLV0 +PIE -PWE)
-[   10.600937]  EUEN: 00000000 (-FPE -SXE -ASXE -BTE)
-[   10.605698]  ECFG: 00071c1d (LIE=3D0,2-4,10-12 VS=3D7)
-[   10.610458] ESTAT: 000c0000 [BRK] (IS=3D ECode=3D12 EsubCode=3D0)
-[   10.615994]  PRID: 0014d010 (Loongson-64bit, Loongson-3C6000/S)
-[   10.621875] CPU: 0 UID: 0 PID: 247 Comm: kworker/0:11 Not tainted
-6.18.0-rc3 #1 PREEMPT(full)
-[   10.621877] Hardware name: To be filled by O.E.M.To be fill To be
-filled by O.E.M.To be fill/To be filled by O.E.M.To be fill, BIOS
-Loongson-UDK2018-V4.0.
-[   10.621878] Workqueue: events work_for_cpu_fn
-[   10.621881] Stack : 900000010ae47848 0000000000000000
-90000000002436bc 900000010ae44000
-[   10.621884]         900000010ae47820 900000010ae47828
-0000000000000000 900000010ae47968
-[   10.621887]         900000010ae47960 900000010ae47960
-900000010ae47630 0000000000000001
-[   10.621890]         0000000000000001 900000010ae47828
-d10951fa66920f31 9000000100414300
-[   10.621893]         80000000ffffe34d fffffffffffffffe
-000000000000034f 000000000000002f
-[   10.621896]         0000000000000063 0000000000000001
-000000000674c000 9000000002221a50
-[   10.621899]         0000000000000000 0000000000000000
-90000000020b6500 90000000023dd000
-[   10.621902]         00000000000000e9 0000000000000009
-0000000000000002 90000000023dd000
-[   10.621905]         900000010ae47d08 0000000000000000
-90000000002436d4 0000000000000000
-[   10.621908]         00000000000000b0 0000000000000004
-0000000000000000 0000000000071c1d
-[   10.621910]         ...
-[   10.621912] Call Trace:
-[   10.621913] [<90000000002436d4>] show_stack+0x5c/0x180
-[   10.621918] [<900000000023f328>] dump_stack_lvl+0x6c/0x9c
-[   10.621923] [<9000000000266eb8>] __warn+0x80/0x108
-[   10.621927] [<90000000017d1910>] report_bug+0x158/0x2a8
-[   10.621932] [<900000000180b610>] do_bp+0x2d0/0x340
-[   10.621938] [<9000000000241da0>] handle_bp+0x120/0x1c0
-[   10.621940] [<900000000103be2c>] ahci_enable_ahci+0x64/0xb8
-[   10.621943] [<900000000103beb8>] ahci_save_initial_config+0x38/0x4d8
-[   10.621946] [<90000000010391b4>] ahci_init_one+0x354/0x1088
-[   10.621950] [<9000000000d16cdc>] local_pci_probe+0x44/0xb8
-[   10.621953] [<9000000000286f78>] work_for_cpu_fn+0x18/0x30
-[   10.621956] [<900000000028a840>] process_one_work+0x160/0x330
-[   10.621961] [<900000000028b208>] worker_thread+0x330/0x460
-[   10.621964] [<9000000000295fdc>] kthread+0x11c/0x138
-[   10.621968] [<900000000180b740>] ret_from_kernel_thread+0x28/0xa8
-[   10.621971] [<9000000000241484>] ret_from_kernel_thread_asm+0xc/0x88
-[   10.621973]
+Ok sure, we'll include an explanation about this in the commit 
+description and in the file.
 
-Huacai
+>> Signed-off-by: Hrishabh Rajput <hrishabh.rajput@oss.qualcomm.com>
+>> ---
+>>   drivers/soc/qcom/smem.c | 37 +++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 37 insertions(+)
+>>
+>> diff --git a/drivers/soc/qcom/smem.c b/drivers/soc/qcom/smem.c
+>> index cf425930539e..40e4749fab02 100644
+>> --- a/drivers/soc/qcom/smem.c
+>> +++ b/drivers/soc/qcom/smem.c
+>> @@ -1118,6 +1118,34 @@ static int qcom_smem_resolve_mem(struct 
+>> qcom_smem *smem, const char *name,
+>>       return 0;
+>>   }
+>>   +static int register_gunyah_wdt_device(void)
+>> +{
+>> +    struct platform_device *gunyah_wdt_dev;
+>> +    struct device_node *np;
+>> +
+>> +    /*
+>> +     * When Gunyah is not present or Gunyah is emulating a 
+>> memory-mapped
+>> +     * watchdog, either of Qualcomm watchdog or ARM SBSA watchdog 
+>> will be
+>> +     * present. Skip initialization of SMC-based Gunyah watchdog if 
+>> that is
+>> +     * the case.
+>> +     */
+>> +    np = of_find_compatible_node(NULL, NULL, "qcom,kpss-wdt");
+>> +    if (np) {
+>> +        of_node_put(np);
+>> +        return 0;
+>> +    }
+>> +
+>> +    np = of_find_compatible_node(NULL, NULL, "arm,sbsa-gwdt");
+>> +    if (np) {
+>> +        of_node_put(np);
+>> +        return 0;
+>> +    }
+>> +
+>> +    gunyah_wdt_dev = platform_device_register_simple("gunyah-wdt", -1,
+>> +                             NULL, 0);
+>> +    return PTR_ERR_OR_ZERO(gunyah_wdt_dev);
+>> +}
+>> +
+>>   static int qcom_smem_probe(struct platform_device *pdev)
+>>   {
+>>       struct smem_header *header;
+>> @@ -1236,11 +1264,20 @@ static int qcom_smem_probe(struct 
+>> platform_device *pdev)
+>>       if (IS_ERR(smem->socinfo))
+>>           dev_dbg(&pdev->dev, "failed to register socinfo device\n");
+>>   +    ret = register_gunyah_wdt_device();
+>> +    if (ret)
+>> +        dev_dbg(&pdev->dev, "failed to register watchdog device\n");
+>> +
+>>       return 0;
+>>   }
+>>     static void qcom_smem_remove(struct platform_device *pdev)
+>>   {
+>> +    /*
+>> +     * Gunyah watchdog is intended to be a persistent module. Hence, 
+>> the
+>> +     * watchdog device is not unregistered.
+>> +     */
+>> +
+>
+> Odd explanation. I would assume that the smem device is supposed to be
+> persistent as well. Since  that is not the case, what happens if _this_
+> device is unregistered and registered again ?
+>
 
->
-> Cc: stable@vger.kernel.org
-> Fixes: 189c6c33ff42 ("PCI: Extend isolated function probing to s390")
-> Link: https://lore.kernel.org/linux-pci/d3f11e8562f589ddb2c1c83e74161bd89=
-48084c3.camel@linux.ibm.com/
-> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> ---
->  drivers/pci/probe.c | 21 +++++++++++++--------
->  1 file changed, 13 insertions(+), 8 deletions(-)
->
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index 0ce98e18b5a876afe72af35a9f4a44d598e8d500..41dd1a339a994956a6bc7e1fe=
-a0fe0d55452a963 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -2808,16 +2808,19 @@ static int next_ari_fn(struct pci_bus *bus, struc=
-t pci_dev *dev, int fn)
->         return next_fn;
->  }
->
-> -static int next_fn(struct pci_bus *bus, struct pci_dev *dev, int fn)
-> +static int next_fn(struct pci_bus *bus, struct pci_dev *dev, int fn,
-> +                  bool isolated_fns)
->  {
-> -       if (pci_ari_enabled(bus))
-> -               return next_ari_fn(bus, dev, fn);
-> +       if (!isolated_fns) {
-> +               if (pci_ari_enabled(bus))
-> +                       return next_ari_fn(bus, dev, fn);
->
-> +               /* only multifunction devices may have more functions */
-> +               if (dev && !dev->multifunction)
-> +                       return -ENODEV;
-> +       }
->         if (fn >=3D 7)
->                 return -ENODEV;
-> -       /* only multifunction devices may have more functions */
-> -       if (dev && !dev->multifunction)
-> -               return -ENODEV;
->
->         return fn + 1;
->  }
-> @@ -2859,10 +2862,12 @@ int pci_scan_slot(struct pci_bus *bus, int devfn)
->  {
->         struct pci_dev *dev;
->         int fn =3D 0, nr =3D 0;
-> +       bool isolated_fns;
->
->         if (only_one_child(bus) && (devfn > 0))
->                 return 0; /* Already scanned the entire slot */
->
-> +       isolated_fns =3D hypervisor_isolated_pci_functions();
->         do {
->                 dev =3D pci_scan_single_device(bus, devfn + fn);
->                 if (dev) {
-> @@ -2876,10 +2881,10 @@ int pci_scan_slot(struct pci_bus *bus, int devfn)
->                          * a hypervisor that passes through individual PC=
-I
->                          * functions.
->                          */
-> -                       if (!hypervisor_isolated_pci_functions())
-> +                       if (!isolated_fns)
->                                 break;
->                 }
-> -               fn =3D next_fn(bus, dev, fn);
-> +               fn =3D next_fn(bus, dev, fn, isolated_fns);
->         } while (fn >=3D 0);
->
->         /* Only one slot has PCIe device */
->
-> --
-> 2.48.1
->
+Thanks for pointing this out. qcom_smem_probe() will try to register the 
+watchdog device again while it is already registered. As per the 
+discussion in the other thread, we'll be implementing the module_exit() 
+for Gunyah watchdog driver so it will not be a persistent module 
+anymore. This problem will not exist then.
+
+
+Thanks,
+
+Hrishabh
+
 
