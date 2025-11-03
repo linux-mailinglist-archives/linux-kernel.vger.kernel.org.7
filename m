@@ -1,314 +1,134 @@
-Return-Path: <linux-kernel+bounces-883090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A2E9C2C74B
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:46:36 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2779C2C754
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:47:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 47F344E801E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:45:15 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9D6BF4EDF40
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27488305E0D;
-	Mon,  3 Nov 2025 14:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B2A310647;
+	Mon,  3 Nov 2025 14:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WkqYM605"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="ZrVfyp0j"
+Received: from canpmsgout09.his.huawei.com (canpmsgout09.his.huawei.com [113.46.200.224])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EEBE284690
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 14:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7351FE44B;
+	Mon,  3 Nov 2025 14:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.224
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762181111; cv=none; b=DDsH5YDj+xH68OFDwdM/BQq0uXn2s3bEzbNx6wPPE0ukTMpvZQA/lUhGbVs57fMMDe8RYYjvexMEouQ3tpz0RjJ04XldolfAxybDmikW8VVxrLRgHzlOGD84KFQJtjTTZwX/yq1x4mX9TiwB/niWKc2BaHsb77M5sff2n53McFE=
+	t=1762181155; cv=none; b=PZKFuaxTY00YGXcwqyxryHN11gX7CWUBhoNJkeKvFoYPqGWqKloYF2i6tJrxc3GTIdMcQPufTV2CDk34AmpdLB9sX9aLG/ioTUHa+AmMTLKy41KIxnCQjoCawrc0Tz6vp0Pd4ZAVwdLsuXS1XKTjgWP4LpeNpkrh5t8iST18l74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762181111; c=relaxed/simple;
-	bh=tcHQ8+NP5XolVw/PMnhxsjzK3oDK2++3aoPUNdPMWl0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DizClw3JrRt2zdhpZ7VEV1oyxC2NEKhFhxp7WX7OQiFMqdAdJ/DHO1buusFNlPZuH0fB0P+Kfe55FPP+O1xd3yr20XenlREuXE4yirgV9DTX9y2/K6GwvqVfI3tKinZfJFKfKG33DTvulH5KrHvnJ247Lan59oMXIZmawpvQEmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WkqYM605; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762181108;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RKe5T4XkgUNmc72tStyCh8sP7MNTXayWol7Zf/AYXFQ=;
-	b=WkqYM605LZ8ZG6B6dfuerVLCx5wkb3Q6pq6yyeOyg/znyG5zUH7mht7ejFZ9vo8nignlrx
-	P5CbMrOcUKB9iawGUR9KEJ8pYKrh89QMBNhxvvszL6v9h9cS1ncdIQ4uZDhmTkOrr5cg8v
-	VYibd9B2w8BnXZsptBzW6HJSq6Dcxmg=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-155-4aS0kB8bPqm4Ue7MfgfQFg-1; Mon,
- 03 Nov 2025 09:45:04 -0500
-X-MC-Unique: 4aS0kB8bPqm4Ue7MfgfQFg-1
-X-Mimecast-MFC-AGG-ID: 4aS0kB8bPqm4Ue7MfgfQFg_1762181103
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CB9831956050;
-	Mon,  3 Nov 2025 14:45:02 +0000 (UTC)
-Received: from wcosta-thinkpadt14gen4.rmtbr.csb (unknown [10.22.88.143])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id DDA801800452;
-	Mon,  3 Nov 2025 14:44:58 +0000 (UTC)
-Date: Mon, 3 Nov 2025 11:44:56 -0300
-From: Wander Lairson Costa <wander@redhat.com>
-To: Tomas Glozar <tglozar@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, 
-	John Kacur <jkacur@redhat.com>, Luis Goncalves <lgoncalv@redhat.com>, 
-	Costa Shulyupin <costa.shul@redhat.com>, Crystal Wood <crwood@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>
-Subject: Re: [PATCH v3 2/7] rtla/timerlat: Add --bpf-action option
-Message-ID: <liouklnl72kulibowk33roalgtjor24u3h6hfbuzudlodasdvz@fhy2zeif43nk>
-References: <20251027153401.1039217-1-tglozar@redhat.com>
- <20251027153401.1039217-3-tglozar@redhat.com>
+	s=arc-20240116; t=1762181155; c=relaxed/simple;
+	bh=Qh1ab34187lNGuxmAq7NRvD55hi/HhHvUJ6Nhwc3fH0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uf2bq1Se7whQhkxDbalHzkkkQRjsfEAB5EzORxa8EtitPb/5kvPNuMIxZ5m1t8M1j6pdXwCdeoYB9HglLezbvZTcd2+/SB2lq91HxRClxpg9Dz7cL2BukfrDcqlAKS+VFf1C+QJb+3/tJtLgfAyHQByAcm0YyqVNvRxHr/VcyDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=ZrVfyp0j; arc=none smtp.client-ip=113.46.200.224
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=0LC8BaVmEmaGtKa9JcwOiElMRg81zujwUDW5FoPzdQI=;
+	b=ZrVfyp0j0n+oW0sutIipbJeS8S4W3Wge73tR8pElvBWhuZvtKYACoB7FRnnL6B7bBymggBA+a
+	4jILv5r2D4DzvBg45yzGoxCGYRxCZGOTsSUglQVwDCbEnV+qli1fYSIMcIBUnpdo8UPdM+M7Ntx
+	en0YEvk8IfHNl+RcM+5dO7c=
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by canpmsgout09.his.huawei.com (SkyGuard) with ESMTPS id 4d0Z993nq4z1cyPL;
+	Mon,  3 Nov 2025 22:44:13 +0800 (CST)
+Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
+	by mail.maildlp.com (Postfix) with ESMTPS id 07D32140297;
+	Mon,  3 Nov 2025 22:45:48 +0800 (CST)
+Received: from [127.0.0.1] (10.174.178.254) by dggpemf500013.china.huawei.com
+ (7.185.36.188) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 3 Nov
+ 2025 22:45:46 +0800
+Message-ID: <761b447d-6e34-4a6d-b1d8-9f744ab548db@huawei.com>
+Date: Mon, 3 Nov 2025 22:45:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251027153401.1039217-3-tglozar@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/25] ext4: add EXT4_LBLK_TO_P and EXT4_P_TO_LBLK for
+ block/page conversion
+Content-Language: en-GB
+To: Jan Kara <jack@suse.cz>
+CC: <linux-ext4@vger.kernel.org>, <tytso@mit.edu>, <adilger.kernel@dilger.ca>,
+	<linux-kernel@vger.kernel.org>, <kernel@pankajraghav.com>,
+	<mcgrof@kernel.org>, <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<yi.zhang@huawei.com>, <yangerkun@huawei.com>, <chengzhihao1@huawei.com>,
+	<libaokun1@huawei.com>, Baokun Li <libaokun@huaweicloud.com>
+References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
+ <20251025032221.2905818-11-libaokun@huaweicloud.com>
+ <pgrk2x54egzxcvmfi4rra3exooxe3yxuvug6yvbtrgxm2oppym@fy52xh4weeww>
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <pgrk2x54egzxcvmfi4rra3exooxe3yxuvug6yvbtrgxm2oppym@fy52xh4weeww>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ dggpemf500013.china.huawei.com (7.185.36.188)
 
-On Mon, Oct 27, 2025 at 04:33:56PM +0100, Tomas Glozar wrote:
-> Add option --bpf-action that allows the user to attach an external BPF
-> program that will be executed via BPF tail call on latency threshold
-> overflow.
-> 
-> Executing additional BPF code on latency threshold overflow allows doing
-> doing low-latency and in-kernel troubleshooting of the cause of the
+On 2025-11-03 16:26, Jan Kara wrote:
+> On Sat 25-10-25 11:22:06, libaokun@huaweicloud.com wrote:
+>> From: Baokun Li <libaokun1@huawei.com>
+>>
+>> As BS > PS support is coming, all block number to page index (and
+>> vice-versa) conversions must now go via bytes. Added EXT4_LBLK_TO_P()
+>> and EXT4_P_TO_LBLK() macros to simplify these conversions and handle
+>> both BS <= PS and BS > PS scenarios cleanly.
+>>
+>> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+>> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+> 'P' in the macro names seems too terse :). I'd probably use PG to give a
+> better hint this is about pages? So EXT4_LBLK_TO_PG() and
+> EXT4_PG_TO_LBLK(). 
 
-typo: double "doing"
+Indeed, EXT4_LBLK_TO_PG reads much clearer. I will use it in v2.
 
-> overflow.
-> 
-> The option takes an argument, which is a path to a BPF ELF file
-> expected to contain a function named "action_handler" in a section named
-> "tp/timerlat_action" (the section is necessary for libbpf to assign the
-> correct BPF program type to it).
-> 
-> Signed-off-by: Tomas Glozar <tglozar@redhat.com>
-> ---
->  tools/tracing/rtla/src/timerlat.c      | 11 ++++++
->  tools/tracing/rtla/src/timerlat.h      |  2 +-
->  tools/tracing/rtla/src/timerlat_bpf.c  | 53 ++++++++++++++++++++++++++
->  tools/tracing/rtla/src/timerlat_bpf.h  |  6 ++-
->  tools/tracing/rtla/src/timerlat_hist.c |  5 +++
->  tools/tracing/rtla/src/timerlat_top.c  |  5 +++
->  6 files changed, 80 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/tracing/rtla/src/timerlat.c b/tools/tracing/rtla/src/timerlat.c
-> index b69212874127..6907a323f9ec 100644
-> --- a/tools/tracing/rtla/src/timerlat.c
-> +++ b/tools/tracing/rtla/src/timerlat.c
-> @@ -48,6 +48,17 @@ timerlat_apply_config(struct osnoise_tool *tool, struct timerlat_params *params)
->  		}
->  	}
->  
-> +	/* Check if BPF action program is requested but BPF is not available */
-> +	if (params->bpf_action_program) {
-> +		if (params->mode == TRACING_MODE_TRACEFS) {
-> +			err_msg("BPF actions are not supported in tracefs-only mode\n");
+> BTW, patch 8 could already use these macros...
+>
+> 								Honza
 
-I would just emit a warning to the user and proceed ignoring the bpf action argument.
+In Patch 8, the conversion is for a physical block number, which has a
+different variable type than lblk. Since this is the only location where
+this conversion is used in the code, I made a dedicated modification there.
 
-> +			goto out_err;
-> +		}
-> +
-> +		if (timerlat_load_bpf_action_program(params->bpf_action_program))
-> +			goto out_err;
-> +	}
-> +
->  	if (params->mode != TRACING_MODE_BPF) {
->  		/*
->  		 * In tracefs and mixed mode, timerlat tracer handles stopping
-> diff --git a/tools/tracing/rtla/src/timerlat.h b/tools/tracing/rtla/src/timerlat.h
-> index fd6065f48bb7..8dd5d134ce08 100644
-> --- a/tools/tracing/rtla/src/timerlat.h
-> +++ b/tools/tracing/rtla/src/timerlat.h
-> @@ -27,6 +27,7 @@ struct timerlat_params {
->  	int			dump_tasks;
->  	int			deepest_idle_state;
->  	enum timerlat_tracing_mode mode;
-> +	const char		*bpf_action_program;
->  };
->  
->  #define to_timerlat_params(ptr) container_of(ptr, struct timerlat_params, common)
-> @@ -36,4 +37,3 @@ int timerlat_main(int argc, char *argv[]);
->  int timerlat_enable(struct osnoise_tool *tool);
->  void timerlat_analyze(struct osnoise_tool *tool, bool stopped);
->  void timerlat_free(struct osnoise_tool *tool);
-> -
-> diff --git a/tools/tracing/rtla/src/timerlat_bpf.c b/tools/tracing/rtla/src/timerlat_bpf.c
-> index 1d619e502c65..05adf18303df 100644
-> --- a/tools/tracing/rtla/src/timerlat_bpf.c
-> +++ b/tools/tracing/rtla/src/timerlat_bpf.c
-> @@ -7,6 +7,10 @@
->  
->  static struct timerlat_bpf *bpf;
->  
-> +/* BPF object and program for action program */
-> +static struct bpf_object *obj;
-> +static struct bpf_program *prog;
-> +
->  /*
->   * timerlat_bpf_init - load and initialize BPF program to collect timerlat data
->   */
-> @@ -96,6 +100,11 @@ void timerlat_bpf_detach(void)
->  void timerlat_bpf_destroy(void)
->  {
->  	timerlat_bpf__destroy(bpf);
-> +	bpf = NULL;
-> +	if (obj)
-> +		bpf_object__close(obj);
-> +	obj = NULL;
-> +	prog = NULL;
->  }
->  
->  static int handle_rb_event(void *ctx, void *data, size_t data_sz)
-> @@ -190,4 +199,48 @@ int timerlat_bpf_get_summary_value(enum summary_field key,
->  			 bpf->maps.summary_user,
->  			 key, value_irq, value_thread, value_user, cpus);
->  }
-> +
-> +/*
-> + * timerlat_load_bpf_action_program - load and register a BPF action program
-> + */
-> +int timerlat_load_bpf_action_program(const char *program_path)
-> +{
-> +	int err;
-> +
-> +	obj = bpf_object__open_file(program_path, NULL);
-> +	if (!obj) {
-> +		err_msg("Failed to open BPF action program: %s\n", program_path);
-> +		goto out_err;
-> +	}
-> +
-> +	err = bpf_object__load(obj);
-> +	if (err) {
-> +		err_msg("Failed to load BPF action program: %s\n", program_path);
-> +		goto out_obj_err;
-> +	}
-> +
-> +	prog = bpf_object__find_program_by_name(obj, "action_handler");
-> +	if (!prog) {
-> +		err_msg("BPF action program must have 'action_handler' function: %s\n",
-> +			program_path);
-> +		goto out_obj_err;
-> +	}
-> +
-> +	err = timerlat_bpf_set_action(prog);
-> +	if (err) {
-> +		err_msg("Failed to register BPF action program: %s\n", program_path);
-> +		goto out_prog_err;
-> +	}
-> +
-> +	return 0;
-> +
-> +out_prog_err:
-> +	prog = NULL;
-> +out_obj_err:
-> +	bpf_object__close(obj);
-> +	obj = NULL;
-> +out_err:
-> +	return 1;
-> +}
-> +
->  #endif /* HAVE_BPF_SKEL */
-> diff --git a/tools/tracing/rtla/src/timerlat_bpf.h b/tools/tracing/rtla/src/timerlat_bpf.h
-> index b5009092c7a3..169abeaf4363 100644
-> --- a/tools/tracing/rtla/src/timerlat_bpf.h
-> +++ b/tools/tracing/rtla/src/timerlat_bpf.h
-> @@ -30,7 +30,7 @@ int timerlat_bpf_get_summary_value(enum summary_field key,
->  				   long long *value_thread,
->  				   long long *value_user,
->  				   int cpus);
-> -
-> +int timerlat_load_bpf_action_program(const char *program_path);
->  static inline int have_libbpf_support(void) { return 1; }
->  #else
->  static inline int timerlat_bpf_init(struct timerlat_params *params)
-> @@ -58,6 +58,10 @@ static inline int timerlat_bpf_get_summary_value(enum summary_field key,
->  {
->  	return -1;
->  }
-> +static inline int timerlat_load_bpf_action_program(const char *program_path)
-> +{
-> +	return -1;
-> +}
->  static inline int have_libbpf_support(void) { return 0; }
->  #endif /* HAVE_BPF_SKEL */
->  #endif /* __bpf__ */
-> diff --git a/tools/tracing/rtla/src/timerlat_hist.c b/tools/tracing/rtla/src/timerlat_hist.c
-> index 606c1688057b..5e639cc34f64 100644
-> --- a/tools/tracing/rtla/src/timerlat_hist.c
-> +++ b/tools/tracing/rtla/src/timerlat_hist.c
-> @@ -763,6 +763,7 @@ static void timerlat_hist_usage(char *usage)
->  		"	     --deepest-idle-state n: only go down to idle state n on cpus used by timerlat to reduce exit from idle latency",
->  		"	     --on-threshold <action>: define action to be executed at latency threshold, multiple are allowed",
->  		"	     --on-end <action>: define action to be executed at measurement end, multiple are allowed",
-> +		"	     --bpf-action <program>: load and execute BPF program when latency threshold is exceeded",
->  		NULL,
->  	};
->  
-> @@ -853,6 +854,7 @@ static struct common_params
->  			{"deepest-idle-state",	required_argument,	0, '\4'},
->  			{"on-threshold",	required_argument,	0, '\5'},
->  			{"on-end",		required_argument,	0, '\6'},
-> +			{"bpf-action",		required_argument,	0, '\7'},
->  			{0, 0, 0, 0}
->  		};
->  
-> @@ -1062,6 +1064,9 @@ static struct common_params
->  				exit(EXIT_FAILURE);
->  			}
->  			break;
-> +		case '\7':
-> +			params->bpf_action_program = optarg;
-> +			break;
->  		default:
->  			timerlat_hist_usage("Invalid option");
->  		}
-> diff --git a/tools/tracing/rtla/src/timerlat_top.c b/tools/tracing/rtla/src/timerlat_top.c
-> index fc479a0dcb59..da5d5db1bc17 100644
-> --- a/tools/tracing/rtla/src/timerlat_top.c
-> +++ b/tools/tracing/rtla/src/timerlat_top.c
-> @@ -521,6 +521,7 @@ static void timerlat_top_usage(char *usage)
->  		"	     --deepest-idle-state n: only go down to idle state n on cpus used by timerlat to reduce exit from idle latency",
->  		"	     --on-threshold <action>: define action to be executed at latency threshold, multiple are allowed",
->  		"	     --on-end: define action to be executed at measurement end, multiple are allowed",
-> +		"	     --bpf-action <program>: load and execute BPF program when latency threshold is exceeded",
->  		NULL,
->  	};
->  
-> @@ -603,6 +604,7 @@ static struct common_params
->  			{"deepest-idle-state",	required_argument,	0, '8'},
->  			{"on-threshold",	required_argument,	0, '9'},
->  			{"on-end",		required_argument,	0, '\1'},
-> +			{"bpf-action",		required_argument,	0, '\2'},
->  			{0, 0, 0, 0}
->  		};
->  
-> @@ -798,6 +800,9 @@ static struct common_params
->  				exit(EXIT_FAILURE);
->  			}
->  			break;
-> +		case '\2':
-> +			params->bpf_action_program = optarg;
-> +			break;
->  		default:
->  			timerlat_top_usage("Invalid option");
->  		}
-> -- 
-> 2.51.0
-> 
+Thank you for your review!
+
+
+Cheers,
+Baokun
+
+>> ---
+>>  fs/ext4/ext4.h | 6 ++++++
+>>  1 file changed, 6 insertions(+)
+>>
+>> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+>> index 9b236f620b3a..8223ed29b343 100644
+>> --- a/fs/ext4/ext4.h
+>> +++ b/fs/ext4/ext4.h
+>> @@ -369,6 +369,12 @@ struct ext4_io_submit {
+>>  	(round_up((offset), i_blocksize(inode)) >> (inode)->i_blkbits)
+>>  #define EXT4_LBLK_TO_B(inode, lblk) ((loff_t)(lblk) << (inode)->i_blkbits)
+>>  
+>> +/* Translate a block number to a page index */
+>> +#define EXT4_LBLK_TO_P(inode, lblk)	(EXT4_LBLK_TO_B((inode), (lblk)) >> \
+>> +					 PAGE_SHIFT)
+>> +/* Translate a page index to a block number */
+>> +#define EXT4_P_TO_LBLK(inode, pnum)	(((loff_t)(pnum) << PAGE_SHIFT) >> \
+>> +					 (inode)->i_blkbits)
+>>  /* Translate a block number to a cluster number */
+>>  #define EXT4_B2C(sbi, blk)	((blk) >> (sbi)->s_cluster_bits)
+>>  /* Translate a cluster number to a block number */
+>> -- 
+>> 2.46.1
+>>
 
 
