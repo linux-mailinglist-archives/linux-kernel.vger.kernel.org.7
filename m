@@ -1,98 +1,136 @@
-Return-Path: <linux-kernel+bounces-882186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4CEEC29D66
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 03:02:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FDE5C29D6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 03:03:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7BFA188F2E6
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 02:02:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B68E3AB02D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 02:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBFA927E05A;
-	Mon,  3 Nov 2025 02:02:22 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A867D27EFF7;
+	Mon,  3 Nov 2025 02:03:27 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
 	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71BAA1DC198;
-	Mon,  3 Nov 2025 02:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CCC829A2;
+	Mon,  3 Nov 2025 02:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762135342; cv=none; b=O2aENJwBN51dl0+BJCGiJwUBUKVTk63R2tqF8op7HouADau4Oh3FZLsi4wcSIHVEjTkA2xxZl5/ukCAH7WWjm6TRyb9kOQixv8inWijqU+AyoqRVMV+kBoRVMwH6YkvbMXNsttGMwMTKzWU5v4lOxolRxdLz4LqrConD+OV7bRc=
+	t=1762135407; cv=none; b=oHBuW9Di7aBK/J90T4w0E70zThQbw1WiOk3J1kLJFhHKQXPiAHIJoF4dU3nRLMyFTpUBfZBRm3Oiyr+5wg2C7skZNFXFSKc+Zwxy00meAVuFXUWYG6jUoRhbTVbzzyQBOrwBdSEtEn/ZW0pt4r4AaPhfRO3hL4bP160jElaZLxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762135342; c=relaxed/simple;
-	bh=Cm01nGDoGaXtlhaHwXjvtORV306MaykgatDv2UumqSA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nAUFOmbAZVCa0YZ3GqUHbJgAlYju0HQTzfpvjtLv9PNcGcUgF49nIgVX0a13qYUxgtjwzco3Tb2UCfXyJvAI4QwHYpgs2UvA6wJjvD5RNMCbGtGWEviohz3jc1qpwy5FJbqMej/Epc3XN5ntR/2du+U2Nk3vtQC7uMnWBzrgj0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
+	s=arc-20240116; t=1762135407; c=relaxed/simple;
+	bh=WcHlvIwTwKQ+93ogLCGc3oVtV09Vvg+lFU9c0YzSRAk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=CsAHGANGPOVI6D/cyD/lyck3UL8OYPSoO4QXNRAGQZCFQC8a7m3XKI3NWU+yHq2fWurvPA4fFyMnmu6sccSgpxudFYtHopYn1zEAEzRTakj70/cDNdBXpbs+4X+4oR8CpkcYzuKYLypuFzjJAlstR29OwkBDDJhYaHm9aESjH+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
-	by APP-03 (Coremail) with SMTP id rQCowAD3dOwfDQhpdzckAQ--.20597S2;
-	Mon, 03 Nov 2025 10:02:08 +0800 (CST)
-From: Haotian Zhang <vulab@iscas.ac.cn>
-To: Bin Liu <b-liu@ti.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Haotian Zhang <vulab@iscas.ac.cn>
-Subject: [PATCH] usb: musb: ux500: Fix PHY resource leak in error path
-Date: Mon,  3 Nov 2025 10:02:04 +0800
-Message-ID: <20251103020204.796-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.50.1.windows.1
+Received: from [127.0.0.2] (unknown [114.241.85.109])
+	by APP-05 (Coremail) with SMTP id zQCowAD3oO9JDQhpJTImAQ--.23894S2;
+	Mon, 03 Nov 2025 10:02:50 +0800 (CST)
+From: Vivian Wang <wangruikang@iscas.ac.cn>
+Date: Mon, 03 Nov 2025 10:02:49 +0800
+Subject: [PATCH net v3] net: spacemit: Check netif_running() in
+ emac_set_pauseparam()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowAD3dOwfDQhpdzckAQ--.20597S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrtFyxCw4rGFyDXw4xAF1fJFb_yoWDuwbE9F
-	y8Wr4xW3Z093WDCr1DGrW3ZrWS9anrX3ykWF4IqF9xG3WjvF1Dur1qvrZ8Zr48Kw47ur1D
-	tr98ur17uF1a9jkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb4kFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
-	1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v2
-	6r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
-	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCI
-	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
-	AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
-	Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUehL0UU
-	UUU
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAcPA2kIAqYyZAAAsU
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251103-k1-ethernet-remove-fc-v3-1-2083770cd282@iscas.ac.cn>
+X-B4-Tracking: v=1; b=H4sIAEgNCGkC/4WOwWrDMBBEf8Xo3DVaOVbVnPIfIQV5ta5FsZ1Ii
+ mgw/vcKtVB6KGVPszvzdjYROXiO4thsInD20a9LEd1TI2iyyxuDd0ULJVWPskN4R+A0cVg4QeB
+ 5zQwjgVGj08/OmBerRcleA4/+o3LPoljF5WsZ+HYvP9L3ZbCRgdZ59unYZN2igUD4uu3VP/mY1
+ vCo3TLWwD81MkIZy92ITvfS0MlHsrG11NJSmVn9cFD+yVGFI/FgqRtIGcm/Ofu+fwIVhXGVOQE
+ AAA==
+X-Change-ID: 20251031-k1-ethernet-remove-fc-82fd67d889a6
+To: Andrew Lunn <andrew+netdev@lunn.ch>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Yixun Lan <dlan@gentoo.org>, 
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+ Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
+ Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+ Vivian Wang <wangruikang@iscas.ac.cn>
+Cc: netdev@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.3
+X-CM-TRANSID:zQCowAD3oO9JDQhpJTImAQ--.23894S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ur13Zr1rKw1DJFy5Ar15CFg_yoW8uw1fpF
+	WUZa93Ww17Jr4rKFs7tw4xZFy5Jayftr1Uua1akw4rZa4aya4UCFyFkFW3Cr18ZFW5CrWa
+	gw4jv3WfCF1DArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9214x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26F
+	4UJVW0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv
+	7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r
+	1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02
+	628vn2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
+	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
+	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
+	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
+	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
+	BIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: pzdqw2pxlnt03j6l2u1dvotugofq/
 
-The ux500_musb_init() function calls usb_get_phy() to obtain a PHY
-resource, but fails to release it with usb_put_phy() when
-usb_register_notifier() fails. This leads to a resource leak as the
-PHY reference count is not properly decremented.
+Currently, emac_set_pauseparam() will oops if userspace calls it while
+the interface is not up, because phydev is NULL, but it is still
+accessed in emac_set_fc() and emac_set_fc_autoneg().
 
-Add usb_put_phy() call in the error path before returning to ensure
-the PHY resource is properly released when notifier registration fails.
+Check for netif_running(dev) in emac_set_pauseparam() before proceeding.
 
-Fixes: 0135522c4898 ("usb: musb: ux500: add otg notifier support")
-Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+Fixes: bfec6d7f2001 ("net: spacemit: Add K1 Ethernet MAC")
+Signed-off-by: Vivian Wang <wangruikang@iscas.ac.cn>
 ---
- drivers/usb/musb/ux500.c | 1 +
- 1 file changed, 1 insertion(+)
+This more urgent problem was discovered while trying to fix
+emac_set_pauseparam() (v1 of that has already been sent to the mailing
+lists [1], but it was still bad), so I decided to send this patch for
+the net tree now so that this oops will not happen on 6.18. A future
+version of the proper flow control implementation will be sent to
+net-next.
 
-diff --git a/drivers/usb/musb/ux500.c b/drivers/usb/musb/ux500.c
-index 8c2a43d992f5..14c5e986937e 100644
---- a/drivers/usb/musb/ux500.c
-+++ b/drivers/usb/musb/ux500.c
-@@ -155,6 +155,7 @@ static int ux500_musb_init(struct musb *musb)
- 	status = usb_register_notifier(musb->xceiv, &musb->nb);
- 	if (status < 0) {
- 		dev_dbg(musb->controller, "notification register failed\n");
-+		usb_put_phy(musb->xceiv);
- 		return status;
- 	}
+[1]: https://lore.kernel.org/spacemit/20251030-k1-ethernet-fix-autoneg-v1-1-baa572607ccc@iscas.ac.cn
+---
+Changes in v3:
+- Check netif_running() instead (Andrew)
+- Add back blurb about the attempt to fix flow control for context
+- Link to v2: https://lore.kernel.org/r/20251101-k1-ethernet-remove-fc-v2-1-014ac3bc280e@iscas.ac.cn
+
+Changes in v2:
+- Reduced patch to only contain checking IFF_UP to avoid the oops. More
+  invasive changes will be sent to net-next in the future. (Andrew)
+- Link to v1: https://lore.kernel.org/r/20251031-k1-ethernet-remove-fc-v1-1-1ae3f1d6508c@iscas.ac.cn
+---
+ drivers/net/ethernet/spacemit/k1_emac.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/net/ethernet/spacemit/k1_emac.c b/drivers/net/ethernet/spacemit/k1_emac.c
+index e1c5faff3b71..220eb5ce7583 100644
+--- a/drivers/net/ethernet/spacemit/k1_emac.c
++++ b/drivers/net/ethernet/spacemit/k1_emac.c
+@@ -1441,6 +1441,9 @@ static int emac_set_pauseparam(struct net_device *dev,
+ 	struct emac_priv *priv = netdev_priv(dev);
+ 	u8 fc = 0;
  
++	if (!netif_running(dev))
++		return -ENETDOWN;
++
+ 	priv->flow_control_autoneg = pause->autoneg;
+ 
+ 	if (pause->autoneg) {
+
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251031-k1-ethernet-remove-fc-82fd67d889a6
+
+Best regards,
 -- 
-2.50.1.windows.1
+Vivian "dramforever" Wang
 
 
