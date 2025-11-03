@@ -1,132 +1,91 @@
-Return-Path: <linux-kernel+bounces-883001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D289C2C3EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 14:48:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1ACDC2C3FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 14:51:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8B55E4F3111
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 13:43:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14BFB3B9A43
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 13:42:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D78C311588;
-	Mon,  3 Nov 2025 13:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE3CA30DED4;
+	Mon,  3 Nov 2025 13:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="u/3tIrrr"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="5dJvQh3n"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFCB220F5D
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 13:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3369287505;
+	Mon,  3 Nov 2025 13:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762177374; cv=none; b=h/2uKUFjxdVGKeq+L/UXk4YlGkJ5iIakffAu3pnZqs5eTWVjbJHTOCXLB23VX5Tu+RQxaR4oDi5Pm4W34U9QIX99PbGf6ELVWs0Ole8rus+OZIzdLMpeSERKMwk2GAxt/vlp6JEcgGdAkSUQhOR/hj5RfGuMXkjbv6xoIK0tv84=
+	t=1762177365; cv=none; b=M1/GHarI4jO8mS8Yz/xWg58o9z+7IuOgZJ+R+kakeWnK2GIt07JS7OixtVMpT4WZf/HBKgoVLqYmbZUr5Wynpt1dW99eVs/MTRJ2NpzgKynAsmc/9Mz4s6oRgeDAIYbjPWp6hSqXvZrLG+GKpqEtg+NKdBJbLveqs7iFDd1alZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762177374; c=relaxed/simple;
-	bh=RAABvezGFA2Wtq4ky+CiX2v4rwhXIzFbW+iYgbxO+Bg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jsSpcBjzkoQ7MsV2DIMDr6mFEm8XEqUJQKwLPHQCrl8nQDQd4oPJdV3ybo7mHVa8QRIUqOcX91cATF8wGL/ba/vj/FnxJGX7s8XY9InDuGk3jDRjh2S6B+FPstYlrl1lZ8l4wlViiHily/ZNFfjZCRQTmzyrtnl9vD+ANkmhwPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=u/3tIrrr; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: fc2ea286b8ba11f0b33aeb1e7f16c2b6-20251103
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=yRIS9Quy51a3mNw2C7dYSGFB2RcLs93hOIiFJCI5w1w=;
-	b=u/3tIrrrfRovPzAGVtxQ20mxQ+KVWiAShCbEt6DZCLiumDCW406iTSOVJ8Dm3S8h8BgjCM97elpOgeYNJ2AKzFEeGupKQg3gsGwniVrab+MKBVb/mTLHjAdUCyCTgcDnclBGUNIVLKCCJPqc20Xt2FShP+LMEHB+zGdJm4OXb+U=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:16b2033a-65b7-498b-b6eb-908260d7a3a8,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:a9d874c,CLOUDID:4957fc6a-d4bd-4ab9-8221-0049857cc502,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102|836|888|898,TC:-5,Content:
-	0|15|50,EDM:-3,IP:nil,URL:0,File:130,RT:0,Bulk:nil,QS:nil,BEC:nil,COL:0,OS
-	I:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: fc2ea286b8ba11f0b33aeb1e7f16c2b6-20251103
-Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
-	(envelope-from <niklaus.liu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 129136683; Mon, 03 Nov 2025 21:42:48 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Mon, 3 Nov 2025 21:42:49 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1748.26 via Frontend Transport; Mon, 3 Nov 2025 21:42:48 +0800
-From: niklaus.liu <Niklaus.Liu@mediatek.com>
-To: Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, <sirius.wang@mediatek.com>,
-	<vince-wl.liu@mediatek.com>, <jh.hsu@mediatek.com>,
-	<zhigang.qin@mediatek.com>, <sen.chu@mediatek.com>, Niklaus Liu
-	<niklaus.liu@mediatek.com>
-Subject: [PATCH 1/1] soc: mediatek regulator: Add Support for mt8189
-Date: Mon, 3 Nov 2025 21:42:26 +0800
-Message-ID: <20251103134241.3773-2-Niklaus.Liu@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20251103134241.3773-1-Niklaus.Liu@mediatek.com>
-References: <20251103134241.3773-1-Niklaus.Liu@mediatek.com>
+	s=arc-20240116; t=1762177365; c=relaxed/simple;
+	bh=SN78tTprEyPJh30MAa+FGKZYyVae+7d3WI68t9RQsRs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UZ9Tnommchau4CD9HdkKhjXOs4yg6BsJPuuJQYiapntWFVK6xyDabZBH9qjqHvMUkpqnxQtRWi/gDwCONtlJZOC1H2uxcKmYLVO41Z35jfHWr95xh6ZXZwWieiBVLGDiOSTpmifu8NEyC16rWdcZTuoNObQ5kSwQEPJw8iq4auI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=5dJvQh3n; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=vTeelEGQAyHJj0V/pXZ4TfRy6Rmpt2ra9UbEea3FvGM=; b=5dJvQh3nkBSumMNUbicC64Sw0N
+	6OC48RINmck6vt7BNz/aKLyobhC2TcNH8WG3frAiJ69uMTIheZcu6fjfLvQjNpjcV6lHLJURXY2Ur
+	itstKLi1BInug605I2wLRu/m5BaLHEcL0YTo9VUF3qQuBwV+3Ld6ORNiEKJ86dzdvu4g=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1vFupI-00CmeX-PU; Mon, 03 Nov 2025 14:42:28 +0100
+Date: Mon, 3 Nov 2025 14:42:28 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, davem@davemloft.net,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Simon Horman <horms@kernel.org>,
+	Boon Khai Ng <boon.khai.ng@altera.com>,
+	Alexis =?iso-8859-1?Q?Lothor=E9?= <alexis.lothore@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v2 2/4] net: altera-tse: Warn on bad revision at
+ probe time
+Message-ID: <db7e920d-a03e-40fd-9b37-71e836f0faf8@lunn.ch>
+References: <20251103104928.58461-1-maxime.chevallier@bootlin.com>
+ <20251103104928.58461-3-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251103104928.58461-3-maxime.chevallier@bootlin.com>
 
-From: Niklaus Liu <niklaus.liu@mediatek.com>
+On Mon, Nov 03, 2025 at 11:49:25AM +0100, Maxime Chevallier wrote:
+> Instead of reading the core revision at probe time, and print a warning
+> for an unexecpected version at .ndo_open() time, let's print that
+> warning directly in .probe().
+> 
+> This allows getting rid of the "revision" private field, and also
+> prevent a potential race between reading the revision in .probe() after
+> netdev registration, and accessing that revision in .ndo_open().
+> 
+> By printing the warning after register_netdev(), we are sure that we
+> have a netdev name, and that we try to print the revision after having
+> read it from the internal registers.
+> 
+> Suggested-by: Andrew Lunn <andrew@lunn.ch>
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-Enhance the regulator coupler driver to support GPU power control on the
-MediaTek MT8189 platform. This update ensures proper coordination of
-multiple regulators required for GPU operation,improving power management
-and system stability.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Signed-off-by: Niklaus Liu <niklaus.liu@mediatek.com>
----
- drivers/soc/mediatek/mtk-regulator-coupler.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/soc/mediatek/mtk-regulator-coupler.c b/drivers/soc/mediatek/mtk-regulator-coupler.c
-index 0b6a2884145e..f6e3b2a3a5a8 100644
---- a/drivers/soc/mediatek/mtk-regulator-coupler.c
-+++ b/drivers/soc/mediatek/mtk-regulator-coupler.c
-@@ -42,6 +42,18 @@ static int mediatek_regulator_balance_voltage(struct regulator_coupler *coupler,
- 	int max_uV = INT_MAX;
- 	int ret;
- 
-+	/*
-+	 * When vsram_gpu is enabled or disabled and the use_count of the
-+	 * vsram_gpu regulator is zero, the regulator coupler driver will
-+	 * execute regulator_do_balance_voltage, which adjusts the vsram_gpu
-+	 * voltage to the minimum value. This may result in vsram_gpu being
-+	 * lower than vgpu. Therefore, when enabling or disabling vsram_gpu,
-+	 * the 8189 temporarily skips the regulator coupler driver's modification
-+	 * of the vsram_gpu voltage.
-+	 */
-+	if (of_machine_is_compatible("mediatek,mt8189") && rdev == mrc->vsram_rdev)
-+		return 0;
-+
- 	/*
- 	 * If the target device is on, setting the SRAM voltage directly
- 	 * is not supported as it scales through its coupled supply voltage.
-@@ -148,7 +160,8 @@ static int mediatek_regulator_coupler_init(void)
- 	if (!of_machine_is_compatible("mediatek,mt8183") &&
- 	    !of_machine_is_compatible("mediatek,mt8186") &&
- 	    !of_machine_is_compatible("mediatek,mt8188") &&
--	    !of_machine_is_compatible("mediatek,mt8192"))
-+	    !of_machine_is_compatible("mediatek,mt8192") &&
-+	    !of_machine_is_compatible("mediatek,mt8189"))
- 		return 0;
- 
- 	return regulator_coupler_register(&mediatek_coupler.coupler);
--- 
-2.46.0
-
+    Andrew
 
