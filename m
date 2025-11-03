@@ -1,193 +1,246 @@
-Return-Path: <linux-kernel+bounces-882260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3091EC2A01B
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 04:59:50 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 893A3C2A00C
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 04:59:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D445C3AE543
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 03:59:48 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BEF3A346817
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 03:59:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB0928A1CC;
-	Mon,  3 Nov 2025 03:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YE6LC3hX"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06862288C13;
+	Mon,  3 Nov 2025 03:59:16 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A3728C862
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 03:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149FB1A238F;
+	Mon,  3 Nov 2025 03:59:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762142376; cv=none; b=HZsGvdVc+KsCkbM7x64fDmvqx90e0AukS0kv+Mr70yOrFL5y5H1RESJH3HTl8LRpfyGiETmUEGlYyAbZIW0pnQAshpBfDj+6qeoLKlnbr4nmCy0WRuZBWQaDJKIfe242H2sYHpYgcP/BSt9vDybqwjw9XuszW1AvnjpUiRrdDqQ=
+	t=1762142355; cv=none; b=CKBPuWvUu4BYl4jh3ZYroYmVmgewP3CrtVM+k2v3GCuil5sJKnedDOxXke4UZBJKVCRQBewKOrwgL41ItBKsxMX1NFplLdUc/W9I8L8DT6js1UXCEa/LHuNNMtGe2vBR+szJCDFzhP2J2RurEfQiVuoKB4soqmFkM+QfRgFCNY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762142376; c=relaxed/simple;
-	bh=h/BsebbZ4wBvM6Vyh3z7JbmpZtauPBFqptNV+1Iyrkg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=od9hglwNB/taP8y0gRaXMH/Z5QD9DCr8HGfhqlN8Be1UBhv8NCF7SNbYbOBXyIDOK8n4aTTb+eQWVj01ZyWCLlTY1ouY7K2YikiPHuTrk6Kw9OA1TIUbgZYn4KTApFzjbQo4RlbC8SpZjLKUAaqmoX9jqu9/qa3iCfyw2nOolIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YE6LC3hX; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A2LjECd010334;
-	Mon, 3 Nov 2025 03:59:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=ZPZsTXk92qwOQf9lG
-	LrlH/F3vYa3J75iomls7UbiwMU=; b=YE6LC3hXW1gooxS0Xfn0xaKhSdh0cgqrw
-	jNawS3mu1YR+lGhKWP11tbopZpjC6rjWf0NU8uBrjQB4Pgjsd+x/5qWu82CKCVPI
-	VZnq8fV0EI2DdFXl/CkhQocm86f/138bJlLR2aPHTXKpswOyamihiETYnN80Bmb1
-	wudneDGSiHYaef5a4WNIYKpCDA/XXJl9EtAG6qs0evKmAWMRntXqUTzzD1T6Fa7t
-	zhUCgTqEcCuqdU3EVIwcvq9NGEhkewHjq968xQfHe0ogigY3bmxU4b0JbTutQmhN
-	MBSN19VMvlxmCC9TnYo3M/2R35n6q7fjmBOcrSIzbB1OjbvNHv8/A==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59v1ms6t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Nov 2025 03:59:24 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A33UExT009874;
-	Mon, 3 Nov 2025 03:59:24 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a5x1k3mpt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Nov 2025 03:59:23 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A33xKhp42467762
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 3 Nov 2025 03:59:20 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 040282004E;
-	Mon,  3 Nov 2025 03:59:20 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 01E592004B;
-	Mon,  3 Nov 2025 03:59:18 +0000 (GMT)
-Received: from li-4f5ba44c-27d4-11b2-a85c-a08f5b49eada.in.ibm.com (unknown [9.109.204.116])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  3 Nov 2025 03:59:17 +0000 (GMT)
-From: Sourabh Jain <sourabhjain@linux.ibm.com>
-To: linux-kernel@vger.kernel.org
-Cc: Sourabh Jain <sourabhjain@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>, Baoquan he <bhe@redhat.com>,
-        Jiri Bohac <jbohac@suse.cz>, Shivang Upadhyay <shivangu@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, kexec@lists.infradead.org
-Subject: [PATCH 2/2] crash: export crashkernel CMA reservation to userspace
-Date: Mon,  3 Nov 2025 09:28:59 +0530
-Message-ID: <20251103035859.1267318-3-sourabhjain@linux.ibm.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251103035859.1267318-1-sourabhjain@linux.ibm.com>
-References: <20251103035859.1267318-1-sourabhjain@linux.ibm.com>
+	s=arc-20240116; t=1762142355; c=relaxed/simple;
+	bh=NmOtSZllADgVq47E8i86uit98ckf+dLKzNBtsMHFGR0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=HeerjcVlTzaYj4uBD+F4pb8wXK6BYeBaYfsS1QO/CdVlB2y1YW05tm8Tdnre154McO9JPYXbfJ4cMPfuMF1IA7/5Lrj4UuK01E4vrNz1nSKArpuJ9HcyZN1oYi5mjvh0zvhBZR5gKFKRUoaV/A5vNR/1Ndd8uinaFbbkLbdZSDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4d0Hrm75GbzKHLxd;
+	Mon,  3 Nov 2025 11:59:04 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id C295B1A0FAF;
+	Mon,  3 Nov 2025 11:59:08 +0800 (CST)
+Received: from [10.67.111.176] (unknown [10.67.111.176])
+	by APP2 (Coremail) with SMTP id Syh0CgDXekOLKAhpuOggCg--.38559S2;
+	Mon, 03 Nov 2025 11:59:08 +0800 (CST)
+Message-ID: <e4bde91c-fc82-4c40-8f6c-7fc044ddf79b@huaweicloud.com>
+Date: Mon, 3 Nov 2025 11:59:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 8YErAyaTIp0NQGWWgShZOZMcihC7I2Bd
-X-Proofpoint-ORIG-GUID: 8YErAyaTIp0NQGWWgShZOZMcihC7I2Bd
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAyMSBTYWx0ZWRfX9/YTQbBRYTQg
- bFIRQ5u91E8//hRZZL4Nt8RrkCh2AChSu5SQy+MjmJ6JzF5WP3ZjgyFEy4h9L8haYIkLekJAgnF
- 87VbtUFuoCAVdfcoyZ5cGT3H+MHkf/092vdic01/7KbBhO+ecWgLpNg0sZJSK4L+xIYMaWaNO/V
- +TlU7l//PLnlVcux6re3845ZV2eTQXMu1IWsNg8RKyREEvgQaEBrqTqt18NMkKtHU51T/AGzIEM
- Y1pQyjNrs8WcO+3ujeKOicR5QS/5gsVCK2rq6sxDvxa2/N+LCLRoIrgMOl46jlSh2EdK8rqjHSV
- Q/Qn0u096a3MoGtlWFzSVv1WNdL9URvzWsjhYbfdAKtQiCVvtwkIrimK/Vk7a5mdxddDEtab9aF
- 1Od5hUOAGp1j6zlslQrfrKu1rwNBCw==
-X-Authority-Analysis: v=2.4 cv=H8HWAuYi c=1 sm=1 tr=0 ts=6908289c cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22 a=Z4Rwk6OoAAAA:8 a=20KFwNOVAAAA:8
- a=VnNF1IyMAAAA:8 a=voM4FWlXAAAA:8 a=JfrnYn6hAAAA:8 a=8KeDlnjoBlZ3mOFQgX4A:9
- a=HkZW87K1Qel5hWWM3VKY:22 a=IC2XNlieTeVoXbcui8wp:22 a=1CNFftbPRP8L7MoqJWF3:22
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-02_02,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 phishscore=0 lowpriorityscore=0 priorityscore=1501 adultscore=0
- impostorscore=0 clxscore=1015 bulkscore=0 suspectscore=0 malwarescore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010021
+User-Agent: Mozilla Thunderbird
+Subject: Re: [cgroup/for-6.19 PATCH 2/3] cgroup/cpuset: Fail if isolated and
+ nohz_full don't leave any housekeeping
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>
+Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Chen Ridong <chenridong@huawei.com>, Gabriele Monaco <gmonaco@redhat.com>,
+ Frederic Weisbecker <frederic@kernel.org>
+References: <20251103013411.239610-1-longman@redhat.com>
+ <20251103013411.239610-3-longman@redhat.com>
+ <474e7133-0d43-4eb8-ae75-5e9a352c0eec@huaweicloud.com>
+Content-Language: en-US
+In-Reply-To: <474e7133-0d43-4eb8-ae75-5e9a352c0eec@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgDXekOLKAhpuOggCg--.38559S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxKFyDXFykKrykZry7AFWDurg_yoW7tryxpF
+	yUGFW3CayUtr13C34aqF1q9r1Skw4ktr12kasxGa4rZFnFv3WktryUu3Z8Cayru39xGryU
+	ZrWqgrs2g3W8ArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r1Y6r17MI8I3I0E5I8CrV
+	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCI
+	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
+	AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
+	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07UG-e
+	OUUUUU=
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-Add a sysfs entry /sys/kernel/kexec_crash_cma_ranges to expose all
-CMA crashkernel ranges.
 
-This allows userspace tools configuring kdump to determine how much
-memory is reserved for crashkernel. If CMA is used, tools can warn
-users when attempting to capture user pages with CMA reservation.
 
-The new sysfs hold the CMA ranges in below format:
+On 2025/11/3 11:47, Chen Ridong wrote:
+> 
+> 
+> On 2025/11/3 9:34, Waiman Long wrote:
+>> From: Gabriele Monaco <gmonaco@redhat.com>
+>>
+>> Currently the user can set up isolated cpus via cpuset and nohz_full in
+>> such a way that leaves no housekeeping CPU (i.e. no CPU that is neither
+>> domain isolated nor nohz full). This can be a problem for other
+>> subsystems (e.g. the timer wheel imgration).
+>>
+>> Prevent this configuration by blocking any assignation that would cause
+>> the union of domain isolated cpus and nohz_full to covers all CPUs.
+>>
+>> Acked-by: Frederic Weisbecker <frederic@kernel.org>
+>> Reviewed-by: Waiman Long <longman@redhat.com>
+>> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+>> Signed-off-by: Waiman Long <longman@redhat.com>
+>> ---
+>>  kernel/cgroup/cpuset.c | 67 +++++++++++++++++++++++++++++++++++++++++-
+>>  1 file changed, 66 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+>> index da770dac955e..d6d459c95d82 100644
+>> --- a/kernel/cgroup/cpuset.c
+>> +++ b/kernel/cgroup/cpuset.c
+>> @@ -1329,6 +1329,19 @@ static void isolated_cpus_update(int old_prs, int new_prs, struct cpumask *xcpus
+>>  		cpumask_andnot(isolated_cpus, isolated_cpus, xcpus);
+>>  }
+>>  
+>> +/*
+>> + * isolated_cpus_should_update - Returns if the isolated_cpus mask needs update
+>> + * @prs: new or old partition_root_state
+>> + * @parent: parent cpuset
+>> + * Return: true if isolated_cpus needs modification, false otherwise
+>> + */
+>> +static bool isolated_cpus_should_update(int prs, struct cpuset *parent)
+>> +{
+>> +	if (!parent)
+>> +		parent = &top_cpuset;
+>> +	return prs != parent->partition_root_state;
+>> +}
+>> +
+>>  /*
+>>   * partition_xcpus_add - Add new exclusive CPUs to partition
+>>   * @new_prs: new partition_root_state
+>> @@ -1393,6 +1406,42 @@ static bool partition_xcpus_del(int old_prs, struct cpuset *parent,
+>>  	return isolcpus_updated;
+>>  }
+>>  
+>> +/*
+>> + * isolated_cpus_can_update - check for isolated & nohz_full conflicts
+>> + * @add_cpus: cpu mask for cpus that are going to be isolated
+>> + * @del_cpus: cpu mask for cpus that are no longer isolated, can be NULL
+>> + * Return: false if there is conflict, true otherwise
+>> + *
+>> + * If nohz_full is enabled and we have isolated CPUs, their combination must
+>> + * still leave housekeeping CPUs.
+>> + */
+>> +static bool isolated_cpus_can_update(struct cpumask *add_cpus,
+>> +				     struct cpumask *del_cpus)
+>> +{
+>> +	cpumask_var_t full_hk_cpus;
+>> +	int res = true;
+>> +
+>> +	if (!housekeeping_enabled(HK_TYPE_KERNEL_NOISE))
+>> +		return true;
+>> +
+>> +	if (del_cpus && cpumask_weight_and(del_cpus,
+>> +			housekeeping_cpumask(HK_TYPE_KERNEL_NOISE)))
+>> +		return true;
+>> +
+>> +	if (!alloc_cpumask_var(&full_hk_cpus, GFP_KERNEL))
+>> +		return false;
+>> +
+>> +	cpumask_and(full_hk_cpus, housekeeping_cpumask(HK_TYPE_KERNEL_NOISE),
+>> +		    housekeeping_cpumask(HK_TYPE_DOMAIN));
+>> +	cpumask_andnot(full_hk_cpus, full_hk_cpus, isolated_cpus);
+>> +	cpumask_and(full_hk_cpus, full_hk_cpus, cpu_active_mask);
+>> +	if (!cpumask_weight_andnot(full_hk_cpus, add_cpus))
+>> +		res = false;
+>> +
+>> +	free_cpumask_var(full_hk_cpus);
+>> +	return res;
+>> +}
+>> +
+>>  static void update_isolation_cpumasks(bool isolcpus_updated)
+>>  {
+>>  	int ret;
+>> @@ -1551,6 +1600,9 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
+>>  	if (!cpumask_intersects(tmp->new_cpus, cpu_active_mask) ||
+>>  	    cpumask_subset(top_cpuset.effective_cpus, tmp->new_cpus))
+>>  		return PERR_INVCPUS;
+>> +	if (isolated_cpus_should_update(new_prs, NULL) &&
+>> +	    !isolated_cpus_can_update(tmp->new_cpus, NULL))
+>> +		return PERR_HKEEPING;
+>>  
+>>  	spin_lock_irq(&callback_lock);
+>>  	isolcpus_updated = partition_xcpus_add(new_prs, NULL, tmp->new_cpus);
+>> @@ -1650,6 +1702,9 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
+>>  		else if (cpumask_intersects(tmp->addmask, subpartitions_cpus) ||
+>>  			 cpumask_subset(top_cpuset.effective_cpus, tmp->addmask))
+>>  			cs->prs_err = PERR_NOCPUS;
+>> +		else if (isolated_cpus_should_update(prs, NULL) &&
+>> +			 !isolated_cpus_can_update(tmp->addmask, tmp->delmask))
+>> +			cs->prs_err = PERR_HKEEPING;
+>>  		if (cs->prs_err)
+>>  			goto invalidate;
+>>  	}
+>> @@ -1988,6 +2043,12 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
+>>  			return err;
+>>  	}
+>>  
+>> +	if (deleting && isolated_cpus_should_update(new_prs, parent) &&
+>> +	    !isolated_cpus_can_update(tmp->delmask, tmp->addmask)) {
+>> +		cs->prs_err = PERR_HKEEPING;
+>> +		return PERR_HKEEPING;
+>> +	}
+>> +
+>>  	/*
+>>  	 * Change the parent's effective_cpus & effective_xcpus (top cpuset
+>>  	 * only).
+>> @@ -2994,7 +3055,11 @@ static int update_prstate(struct cpuset *cs, int new_prs)
+>>  		 * A change in load balance state only, no change in cpumasks.
+>>  		 * Need to update isolated_cpus.
+>>  		 */
+>> -		isolcpus_updated = true;
+>> +		if ((new_prs == PRS_ISOLATED) &&
+>> +		    !isolated_cpus_can_update(cs->effective_xcpus, NULL))
+>> +			err = PERR_HKEEPING;
+>> +		else
+>> +			isolcpus_updated = true;
+>>  	} else {
+>>  		/*
+>>  		 * Switching back to member is always allowed even if it
+> 
+> I'm considering whether I should introduce a new function that consolidates
+> isolated_cpus_should_update, isolated_cpus_can_update, and prstate_housekeeping_conflict.
+> 
 
-cat /sys/kernel/kexec_crash_cma_ranges
-100000000-10c7fffff
+Sorry, we should introduce a new ...
 
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Baoquan he <bhe@redhat.com>
-Cc: Jiri Bohac <jbohac@suse.cz>
-Cc: Shivang Upadhyay <shivangu@linux.ibm.com>
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: kexec@lists.infradead.org
-Signed-off-by: Sourabh Jain <sourabhjain@linux.ibm.com>
----
- .../ABI/testing/sysfs-kernel-kexec-kdump        | 10 ++++++++++
- kernel/ksysfs.c                                 | 17 +++++++++++++++++
- 2 files changed, 27 insertions(+)
+> Just like:
+> 
+> bool housekeeping_conflict(...)
+> {
+> 	if (isolated_cpus_should_update && !isolated_cpus_can_update) {
+> 		return ture;
+> 	}
+> 	return prstate_housekeeping_conflict();
+> }
+> 
+> Since all of these are related to isolated CPUs, putting them into a centralized function would make
+> the code much easier to maintain.
+> 
 
-diff --git a/Documentation/ABI/testing/sysfs-kernel-kexec-kdump b/Documentation/ABI/testing/sysfs-kernel-kexec-kdump
-index 96b24565b68e..f6089e38de5f 100644
---- a/Documentation/ABI/testing/sysfs-kernel-kexec-kdump
-+++ b/Documentation/ABI/testing/sysfs-kernel-kexec-kdump
-@@ -41,3 +41,13 @@ Description:	read only
- 		is used by the user space utility kexec to support updating the
- 		in-kernel kdump image during hotplug operations.
- User:		Kexec tools
-+
-+What:		/sys/kernel/kexec_crash_cma_ranges
-+Date:		Nov 2025
-+Contact:	kexec@lists.infradead.org
-+Description:	read only
-+		Provides information about the memory ranges reserved from
-+		the Contiguous Memory Allocator (CMA) area that are allocated
-+		to the crash (kdump) kernel. It lists the start and end physical
-+		addresses of CMA regions assigned for crashkernel use.
-+User:		kdump service
-diff --git a/kernel/ksysfs.c b/kernel/ksysfs.c
-index eefb67d9883c..3855937aa923 100644
---- a/kernel/ksysfs.c
-+++ b/kernel/ksysfs.c
-@@ -135,6 +135,22 @@ static ssize_t kexec_crash_loaded_show(struct kobject *kobj,
- }
- KERNEL_ATTR_RO(kexec_crash_loaded);
- 
-+static ssize_t kexec_crash_cma_ranges_show(struct kobject *kobj,
-+				    struct kobj_attribute *attr, char *buf)
-+{
-+
-+	ssize_t len = 0;
-+	int i;
-+
-+	for (i = 0; i < crashk_cma_cnt; ++i) {
-+		len += sysfs_emit_at(buf, len, "%08llx-%08llx\n",
-+				     crashk_cma_ranges[i].start,
-+				     crashk_cma_ranges[i].end);
-+	}
-+	return len;
-+}
-+KERNEL_ATTR_RO(kexec_crash_cma_ranges);
-+
- static ssize_t kexec_crash_size_show(struct kobject *kobj,
- 				       struct kobj_attribute *attr, char *buf)
- {
-@@ -260,6 +276,7 @@ static struct attribute * kernel_attrs[] = {
- #ifdef CONFIG_CRASH_DUMP
- 	&kexec_crash_loaded_attr.attr,
- 	&kexec_crash_size_attr.attr,
-+	&kexec_crash_cma_ranges_attr.attr,
- #endif
- #endif
- #ifdef CONFIG_VMCORE_INFO
 -- 
-2.51.0
+Best regards,
+Ridong
 
 
