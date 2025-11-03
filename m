@@ -1,172 +1,140 @@
-Return-Path: <linux-kernel+bounces-882746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F4F3C2B4F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:25:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 06C6AC2B4D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:24:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D4871895142
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:24:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E8361894733
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:24:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6822303A2C;
-	Mon,  3 Nov 2025 11:23:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3320D2F3C12;
+	Mon,  3 Nov 2025 11:23:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aDxucTr2";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="ZnmSPK33"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I69Nt+ZZ"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD53E303CA4
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 11:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA252ED84A
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 11:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762169029; cv=none; b=LOo5PhhIRlQrYDxxsrZvEZbVQkoSyo3mGV/xXg9hWRDOuqwYxfgdaGsNipWgQ+Pbjycke5wiZI2qGiaMc92yBBQTxAA261HzPJ07oDc3od9tqLGflIlQbQe6Ju4rpDmsrqUJKt9Qv8QqNxhGWERnO1S+XTkRupUWwhYkRF+oV2w=
+	t=1762169010; cv=none; b=KcC1/PgXsCKpsNnU6gml+I8TyIBS0D8RNKhtu7/XItShRiRSJu9zVlh5edZ+3yYB4RpKwh7FZK+yNAoEsdxlmqK6gGsTe7FSpP0RXGVaQx/zrd7/qUlsCHhpEPo41W3KWwU5pRIV+yc9UV8H76AJxekRBcZNM73S1HW/cJwDFRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762169029; c=relaxed/simple;
-	bh=DRvka4WME8E68wyim4V4jVXhqhIqoleD68BrLy0DOic=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=scqp4kgfG6j0tmGA9Zi4QaH49pwWaK4JcGdOnI5m7Zkl190k57spLuN1o+39oTflCliRw/VAlxRJajuTTcgOTYtzq+lHV4HxP2FGS0MOwyRH2M4bLOkEW+Abt5FArvjw2u8XiUBQi6v5+Jb7EvN6nPn6lLCuBzoRFGd12Q1t468=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aDxucTr2; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=ZnmSPK33; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A36BDPW2267756
-	for <linux-kernel@vger.kernel.org>; Mon, 3 Nov 2025 11:23:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	WQBAmd3x4xg7RSgJRtPCwjlsBjPgBVVzNTmm7gL/Ybg=; b=aDxucTr2M7vILcaf
-	5/FaEYr7UY5g9RtAlVkrl4scF/oq3D5aD2vvUbCDSNymojlnvaedo7TxSbxKVnqs
-	zVTI5iaPu4sBOUvML0QvCIGnJhSnBFgwZv9nH/4Ij9/Uj4dH92tn77rg8Pz/pQvx
-	ZxNX+Bdiny9vBq2VKc/M/QPQVFMsnkPdn7Hi3ISDjQERNjuo5u5GyVy+kakthmyx
-	Z9f9xxifceaxIwobGUUpnOx2MnMwiqI+24qwHQYYmeFWAb4YS+GVTD+YbJw+NaHT
-	XaBIHI1bI+wmsb9wm0OGNOIAuqDrrc5JgilFAcqHVsXh2A0lHvnodg3uw8F5kd8w
-	7ywrZw==
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a6pwagx3m-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 11:23:46 +0000 (GMT)
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-33baef12edaso5151986a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 03:23:46 -0800 (PST)
+	s=arc-20240116; t=1762169010; c=relaxed/simple;
+	bh=zrhN/426GIFilnVCj4jC8s7WHQTdZuCf3dYpf2RYbrU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jl65mmogx/2TdsB22M3NYhRKUSkZDkDxYmm6HoOrikuhRHgmtZU1A9pzubzIQkrVq8hzsSZu40oPE+K67rEdi8h4Ysuu4t+iPbDEHcRuIZtRPaBMMRItwcVNMOwG54o2cDm8UvETVuMvTcfvnZD2g5fgEVoKRY9DeHgJyCVn2+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I69Nt+ZZ; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-b6d2f5c0e8eso869761066b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 03:23:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762169026; x=1762773826; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WQBAmd3x4xg7RSgJRtPCwjlsBjPgBVVzNTmm7gL/Ybg=;
-        b=ZnmSPK33X3PaIbzxN6HXzNy9UgrXUAMWYSM6S2hZg7hUzYhC54iGyZAnc4Op01oC4o
-         o6ubqBYysX+5zW+FBU/nGxpKz/mVqJa+q2kR/uDk2l8ogjwVWAHaDoAsUBvgjEutSNPJ
-         kHNs+afuEYyIDW7CviwsoZV3jloRxbRyytmXf3O3ECrBhJ33Z412sGp5Ir4g/7pnqje9
-         UjWHjAmYom60wmzE8u8UCwtQsbiu4DxHRs1HKuXDAb80HMgXsDkyqMY1YAJD92DKCXR9
-         A+36d+74cl0dqeXo+lYhmEp0VDpR2RM9GQAEUqanlFSsiKWEXdmK5G0ZCpphA4n4ggGn
-         1+GA==
+        d=gmail.com; s=20230601; t=1762169007; x=1762773807; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bTiOq3s4Du2klSTxft/DNgygXTqBjyM4NTyZGqGWusY=;
+        b=I69Nt+ZZiN1mB8kdAgiRvjcMenTdUvXmY/pnc/P02Jqgw5pxoidebb9JyI1WKhy0Wy
+         0rfT2QPC75uexucKKTbO9H6e1DHsK4Z5c6Bp/ADNs2qYexwNsMRhDK6kymfkWOPI7nSE
+         JhThI/u9wOrCh2Z02Mi7hLCiLLAbhVFDhrjsGB/QX3rKi1+FyxEDVJ38EBvjGoPkUwLj
+         UVNXZLyZThKCqKf5EFZ0Y0iMn7pr6GPi8f8JYF+eDSiCVEeyEmefPLQ6DpnJSp8/TKW9
+         fzFrnM3mJJIVsvgRBM8R+3HaKoRR90TNBDGCkSbC4YU7lUx0zZCX6Ez9rRG0qbA/skzf
+         qhsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762169026; x=1762773826;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1762169007; x=1762773807;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WQBAmd3x4xg7RSgJRtPCwjlsBjPgBVVzNTmm7gL/Ybg=;
-        b=Y+gNu4gwiw+Lohc21vFfmsBX4YX4YK2QfFW+V1okqqBBxDcs9pK42+MwPGn9UzG6/S
-         qUXpHGwR9zC0kFy9Gtr8pUvHtg1sPGicLCskbMiIO45pG1EVrThD4vqoSLiRCdnVaVg1
-         LkQNqunTkHiCVmKu3AaIUCFJBl5GkWPLTOlfhy4C0QR9zFnvqKpp/gQHumthKe8T+PXt
-         JwCZypxG3G3AzYSBauCeJXm5uaCRp+UMLPtHbDI2RizhNL/gRG/RpAI4hD0R6U7Wrm2P
-         H6o2xhoWiYPOq5uQOl6oA8X99BHlDy1AH7SxnZzGt+MwXk/RMa4X0EUHYjM/za4plEtf
-         iJJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUitF9Y0hTqz8ddHSiczJtQrHjEUESg0DfemX0aFIhyCQv3cM+HGLOXfaUQhQlA5K+iIHFScBS1nkIlA1w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxldLgcjO6lBGci/7HdWTBRJcweIEz8+kc8rfv1sLUAZ5Z7zf2s
-	GdAYEbMT8rV1T+nK9CjHk4CARMloppBGBJ1sfRdUjHP87x7cqreh/28H12ZTntusMegIUaInd4r
-	tRBqxo5+P00MRboPUIQNy5uOn9zGJPsd0WE6uc7kl+y11RmC2O6M1n51frR/+fqXtjwk=
-X-Gm-Gg: ASbGnctaQOhoBgIgL3Xw62EyRAqkmGXRTtLpQlo6pUs/4RN3JBAy1tvvG47MhCJoA6/
-	TwJSj94uqo95/0llWY1tPNh0JZppyDqpRrsjfaBmLdEh7A/rnzk6YWUoomHVp5K6vSzG1o2kSr/
-	CymyVMz4m/HSuJvT1NOzWG1JNtreYxB3mO6ibqa9m6WUEusetQCzl5wFyPyTL7G1GrUKtMGsKPy
-	OkgDIxIKiCxg0mmJdcQdEhTSPulQ+Cq1NR1WpOKoG/HcMzW+nReOVsCi4ixTaHi+6DdjuulG5H5
-	YPKxz6BQ5WqVvV6UtqaAWOpx4mSsPcuhZynOEvseWcE/0zU4mAonhwQMKp726WTt9GfXdm67yNt
-	kAzLBIko7eTxZKAfNBgkmUArwcU4=
-X-Received: by 2002:a17:90a:d44c:b0:32e:5646:d448 with SMTP id 98e67ed59e1d1-3408305889emr15090838a91.21.1762169026170;
-        Mon, 03 Nov 2025 03:23:46 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFjpJrb/hQEmZyHFAxf7uWiZ56d0Hgy5+Pi1tjMc8HAOXo7OWC89XrnFGr7HukikPexvpMlKQ==
-X-Received: by 2002:a17:90a:d44c:b0:32e:5646:d448 with SMTP id 98e67ed59e1d1-3408305889emr15090812a91.21.1762169025667;
-        Mon, 03 Nov 2025 03:23:45 -0800 (PST)
-Received: from hu-kbajaj-hyd.qualcomm.com ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b93bf078924sm9838762a12.32.2025.11.03.03.23.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 03:23:44 -0800 (PST)
-From: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
-Date: Mon, 03 Nov 2025 16:53:11 +0530
-Subject: [PATCH 2/2] soc: qcom: socinfo: Add SoC ID for QCS6490
+        bh=bTiOq3s4Du2klSTxft/DNgygXTqBjyM4NTyZGqGWusY=;
+        b=vwXf0sUw3Eqc2RT0fF2G7yHomwH5IpXgTIpwCadLS3R3kj8T3R0k5NHMJHF+DUr/zV
+         F57E0cix6TNPgyg5Sf/TX5Ho1S/WPj5KkXT6GAINVTwBvcCiJqvdjePQKFoiMqzQDheB
+         o3g3hSPCPJY/ZWOBnUeVK53f4g+9T0/MzWA1AwnNv0Cz3rPx92O78nQl3KbM2lAMoJly
+         pUnDk7TgFLqNbsU/S8S7rvdVfZ2qQqrE6lOUtP4SxfdMFWANyodsdKEMRnM6kwcPBsJr
+         aDMG5PgShmAgVLXYalK0IPuSjeZQSIUGsvnuBtFCITd1J3kKe5VzKamWCxD136QkreIx
+         AvAg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKWSDCm/nfiyD5N/HOCz1KPi5d7mxwPzg4GJLYhcOsBvjgzGhKFUDNpW/RdBJrZOVibhlRu1ArTnAJUFY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxl6A96vJorcZyKoSeQfVg7CFQEdhnOquDKnSUAeggpSa4s6QBJ
+	POYaxiEj3qjzJWQELJEevsstdZf/WT6fmdWZL+0njhf4BYH8Uiu9V7e3lPRpHA/J
+X-Gm-Gg: ASbGncvn9gZc1lgJwEqu8OaACdRzsC9DeV9FqGPh1Y0DZm39kzjMgTibvQxjWoj5Cdo
+	mKP0no0ccFpg3sRQy2m9Kq5N4lFDANfB1eeCvmzGlkqQbvzCJG6HiSupxDDyhcptKCqgwEqk4dG
+	OEwtyOiTMBzZ+Cdpv8QP3GnZ1MLBVgtAxre9Ib0/i19zfN3fCXD8nEjcg8KU0sMWlUYoHIKy1Cy
+	nBBvHuWw6sd4mc1BhTMdDeN0z2hEninx4mCtGuUWWe2/g+4kjw4qNnpweqyQ68Oh9aKCsk5umOI
+	B+lL0AP4WsgZVAPCoI+706YVbxetnIhlRJ35PMNvIe7oyB0a3oI6bxdz70aejymTZoP8Py8vtTy
+	aLJGxNQUKseSKXzglOMkkuaa9rLDNQPqC2jzB4auzEe2F6h1Y6HSdubR6qT8pzAE+uu3JQ9xY8c
+	DAi5EN2yuRYC8f99xxuOl+OCk=
+X-Google-Smtp-Source: AGHT+IHSVTw67BWDPb21rBazTbhQ1l5vnr08OXapMWF6VsDckr7xusWomPoiAMolfRR8VzInf7Rdxg==
+X-Received: by 2002:a17:906:3950:b0:b70:ac48:db8d with SMTP id a640c23a62f3a-b70ac48fb80mr408438566b.28.1762169006942;
+        Mon, 03 Nov 2025 03:23:26 -0800 (PST)
+Received: from foxbook (bgu110.neoplus.adsl.tpnet.pl. [83.28.84.110])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b70b9f29c8asm358534466b.8.2025.11.03.03.23.25
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Mon, 03 Nov 2025 03:23:26 -0800 (PST)
+Date: Mon, 3 Nov 2025 12:23:22 +0100
+From: Michal Pecio <michal.pecio@gmail.com>
+To: Mathias Nyman <mathias.nyman@intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Guangshuo Li
+ <lgs201920130244@gmail.com>, Wesley Cheng <quic_wcheng@quicinc.com>,
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+Subject: Re: [PATCH] usb: xhci: Check kcalloc_node() when allocating
+ interrupter array in xhci_mem_init()
+Message-ID: <20251103122322.5433a7a1.michal.pecio@gmail.com>
+In-Reply-To: <11d7b29d-a45f-48e9-bff5-cb94150d0bdf@intel.com>
+References: <20250918130838.3551270-1-lgs201920130244@gmail.com>
+	<20251103094036.2d1593bc.michal.pecio@gmail.com>
+	<11d7b29d-a45f-48e9-bff5-cb94150d0bdf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251103-qcs6490_soc_id-v1-2-c139dd1e32c8@oss.qualcomm.com>
-References: <20251103-qcs6490_soc_id-v1-0-c139dd1e32c8@oss.qualcomm.com>
-In-Reply-To: <20251103-qcs6490_soc_id-v1-0-c139dd1e32c8@oss.qualcomm.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Komal Bajaj <komal.bajaj@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762169014; l=709;
- i=komal.bajaj@oss.qualcomm.com; s=20250710; h=from:subject:message-id;
- bh=DRvka4WME8E68wyim4V4jVXhqhIqoleD68BrLy0DOic=;
- b=Y3mzoataOxwf5Wt7eB/FrRaSFcjOei0kcMj7vsZJeqqlVGQZD6Zt/JFjYLxvpsy6l5iyMM7P2
- LB9FGbfnrzYCdN62KfCmALedTizi7SiB24lPPxjB5nA5EXiFQgTvDiy
-X-Developer-Key: i=komal.bajaj@oss.qualcomm.com; a=ed25519;
- pk=wKh8mgDh+ePUZ4IIvpBhQOqf16/KvuQHvSvHK20LXNU=
-X-Authority-Analysis: v=2.4 cv=OrdCCi/t c=1 sm=1 tr=0 ts=690890c2 cx=c_pps
- a=UNFcQwm+pnOIJct1K4W+Mw==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=mXiXWBdQQqRcHvtpiWwA:9
- a=QEXdDO2ut3YA:10 a=uKXjsCUrEbL0IQVhDsJ9:22
-X-Proofpoint-ORIG-GUID: gtEiSCTVGj5Q3-3qlWOwpkojJV1YRKFL
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAzMDEwNCBTYWx0ZWRfX4mefq0btgNC/
- 2cXPGyKPPzLobyW5q0uskxfnZtYiV+3vAws048R/iaSNZxR8uuoFQ7LyU2EEl+AX+TYpwHBnl4p
- Y8/hQRminjtaGAyVdUmWhFRgqcb2tPr+Z7cZPtY/kEy8G0EbS/d6AFaRZ1xOYjuVOVSJCLSfN5L
- OTexqyeskN+KaQDHBZtKITsb1S3+XgAK3H05hJlaXwISYw9VW8eIMduF0mhEONUEJMrZK1xq2tQ
- WpDGcz7Kzu/CfYTrHTnfvnwP9yvUFgFjFPkYyOYoli/6WIWFl02Y6yPugo3epGJJXHrqN1uR39V
- snH5yE3Wu713eo8RFq9TwkGCTns3o/r26fIZDQAOkKhqhUsvnMCHxVCktCGCSHLKMjVCG/JH4J0
- sCNjayRtTO5OXLcfPLYM1P2r0ZzTKw==
-X-Proofpoint-GUID: gtEiSCTVGj5Q3-3qlWOwpkojJV1YRKFL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-03_01,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 adultscore=0 lowpriorityscore=0 priorityscore=1501
- malwarescore=0 suspectscore=0 bulkscore=0 impostorscore=0 phishscore=0
- spamscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511030104
 
-Add SoC ID table entry for Qualcomm QCS6490.
+On Mon, 3 Nov 2025 13:02:06 +0200, Mathias Nyman wrote:
+> > Hi Greg and Mathias,
+> > 
+> > I noticed that this bug still exists in current 6.6 and 6.12 releases,
+> > what would be the sensible course of action to fix it?
+> >   
+> 
+> Not sure this qualifies for stable.
+> Is this something that has really happened in real life?
+> 
+> The stable-kernel-rules.rst states it should "fix a real bug that bothers people"
+> 
+> If kcalloc_node() fails to allocate that array of pointers then something
+> else is already badly messed up.
 
-Signed-off-by: Komal Bajaj <komal.bajaj@oss.qualcomm.com>
----
- drivers/soc/qcom/socinfo.c | 1 +
- 1 file changed, 1 insertion(+)
+I don't know how the reported found it, but it can obviously happen when
+the driver is bound to a new xHCI controller under OOM conditions.
 
-diff --git a/drivers/soc/qcom/socinfo.c b/drivers/soc/qcom/socinfo.c
-index 4fd09e2bfd021424b9489cd29eec29dc7c7a16d3..69642891ad579bde5c492ea8f9e0110202b97866 100644
---- a/drivers/soc/qcom/socinfo.c
-+++ b/drivers/soc/qcom/socinfo.c
-@@ -449,6 +449,7 @@ static const struct soc_id soc_id[] = {
- 	{ qcom_board_id(SC7280) },
- 	{ qcom_board_id(SC7180P) },
- 	{ qcom_board_id(QCM6490) },
-+	{ qcom_board_id(QCS6490) },
- 	{ qcom_board_id(SM7325P) },
- 	{ qcom_board_id(IPQ5000) },
- 	{ qcom_board_id(IPQ0509) },
+So maybe not very often, but xHCI hotplug is a thing in Thunderbolt and
+OOM happens sometimes too, so it's not exactly impossible either.
 
--- 
-2.48.1
+I thought it's usual to fix such bugs when they are known.
+Simulated allocation failure before/after:
 
+[ +30,414603] xhci_hcd 0000:00:10.0: xHCI Host Controller
+[  +0,000012] xhci_hcd 0000:00:10.0: new USB bus registered, assigned bus number 2
+[  +0,000159] BUG: kernel NULL pointer dereference, address: 0000000000000000
+[  +0,000004] #PF: supervisor read access in kernel mode
+[  +0,000002] #PF: error_code(0x0000) - not-present page
+[  +0,000002] PGD 0 P4D 0 
+[  +0,000003] Oops: 0000 [#1] PREEMPT SMP
+[  +0,000004] CPU: 1 PID: 4270 Comm: insmod Not tainted 6.6.113 #11
+[  +0,000003] Hardware name: HP HP EliteDesk 705 G3 MT/8265, BIOS P06 Ver. 02.45 07/16/2024
+[  +0,000003] RIP: 0010:xhci_add_interrupter+0x25/0x130 [xhci_hcd]
+
+[  +0,042495] xhci_hcd 0000:00:10.0: xHCI Host Controller
+[  +0,000012] xhci_hcd 0000:00:10.0: new USB bus registered, assigned bus number 2
+[  +0,007193] xhci_hcd 0000:00:10.0: can't setup: -12
+[  +0,000010] xhci_hcd 0000:00:10.0: USB bus 2 deregistered
+[  +0,000080] xhci_hcd 0000:00:10.0: init 0000:00:10.0 fail, -12
+[  +0,000004] xhci_hcd: probe of 0000:00:10.0 failed with error -12
 
