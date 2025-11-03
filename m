@@ -1,94 +1,119 @@
-Return-Path: <linux-kernel+bounces-882274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A18F5C2A0A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 06:05:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13DE3C2A28C
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 07:21:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0055F188FC27
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 05:06:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C75073AB537
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 06:21:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316641B7F4;
-	Mon,  3 Nov 2025 05:05:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9888028EA56;
+	Mon,  3 Nov 2025 06:21:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=siddh.me header.i=sanganaka@siddh.me header.b="LLK6DNXU"
-Received: from sender-of-o51.zoho.in (sender-of-o51.zoho.in [103.117.158.51])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bt5enmgY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D9738D
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 05:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=103.117.158.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762146342; cv=pass; b=MbSPwmJG8jepqVwUY+lhspvaO2Yn5VF9PSCSxdby2RmmSgkIoEIz4bBroEo0Q/ivugzIzFft9zWcsH+O+iiCv7nMk4hwFFro4AgaW62TKa+XmTN3IDZrbgJYeX+gFMG8csMU/UfHUeA3//U4j+TLhVPjtOrsGs1L0UWOUviLh0A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762146342; c=relaxed/simple;
-	bh=UuIkn7EWXGxLiAQbNA/3G4v1WKpNPE7gcCd65q3uyp0=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=SeCe2v8fLGFvZqDbmUSjhTYqcmuK98LvcZ/t5Q7AJ01+vvQcpnJQDEIwQOLrP5QYf29+MyciNkXEuZ0I5g3jct2Hllp5YP4f7N8jxWs2RLG7nlUdKWK3FZoI2zSGC8e/Hw/0cPXJwSP8CZlCatCOxNbler9pGx8vrFyMmapYyAk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=siddh.me; spf=pass smtp.mailfrom=siddh.me; dkim=pass (1024-bit key) header.d=siddh.me header.i=sanganaka@siddh.me header.b=LLK6DNXU; arc=pass smtp.client-ip=103.117.158.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=siddh.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siddh.me
-ARC-Seal: i=1; a=rsa-sha256; t=1762146318; cv=none; 
-	d=zohomail.in; s=zohoarc; 
-	b=cLtRgdmyVWgaYNxVr///y7GQgt5qvGrM+Ha++ghOq5D9FjdVsL7GQZZUh0JRVljuG0QYlQ5IAsZbOc0uU4FIcD7t7+hO6wfaqlBCAkzGgwRweqF+ESWrwd0WJoxVsECrR3TVElZx9Guqk/VUFuPxDoOByje698StFhUaUXBXQh8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.in; s=zohoarc; 
-	t=1762146318; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=UuIkn7EWXGxLiAQbNA/3G4v1WKpNPE7gcCd65q3uyp0=; 
-	b=UwODotAHY5uaA6TjHDW3tOgfQ8EkbtM5C1e8ShUpyq+oXucV5iu7MoO6EdFLyL0RH5s8QknuNgUwZcW/Nl44RBgP7GSROCWx2wj7pgPqf6NNsNZiWNuND6B+UwC2t0HUqenPJoHhtFx03jRfds6XM7PgB/b3u2bpqRco/NZd7yk=
-ARC-Authentication-Results: i=1; mx.zohomail.in;
-	dkim=pass  header.i=siddh.me;
-	spf=pass  smtp.mailfrom=sanganaka@siddh.me;
-	dmarc=pass header.from=<sanganaka@siddh.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762146318;
-	s=zmail; d=siddh.me; i=sanganaka@siddh.me;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=UuIkn7EWXGxLiAQbNA/3G4v1WKpNPE7gcCd65q3uyp0=;
-	b=LLK6DNXUZPGeo3Gz/gLG0+mbRxVOu4visvjNgLUyJNGMzngaqU5snn93GcBW5e4Y
-	T7gamwe0+ThWI+f1VsnlIqa3KQjYZ/XQUQm9TTPH1DdVQKVn8iH7eXufTXp0/NAtENt
-	iBsjyL5MARcrj9FiXrOK/qgigzxbeZMQ3nSxxkos=
-Received: from mail.zoho.in by mx.zoho.in
-	with SMTP id 1762146285742831.872406016107; Mon, 3 Nov 2025 10:34:45 +0530 (IST)
-Date: Mon, 03 Nov 2025 10:34:45 +0530
-From: Siddh Raman Pant <sanganaka@siddh.me>
-To: "pintu.ping" <pintu.ping@gmail.com>
-Cc: "linux-kernel" <linux-kernel@vger.kernel.org>,
-	"kernelnewbies" <kernelnewbies@nl.linux.org>,
-	"kernelnewbies" <kernelnewbies@kernelnewbies.org>
-Message-ID: <19a481a7843.53422ba121754.4867625372707455852@siddh.me>
-In-Reply-To: <CAOuPNLh4R=H0BfQ4f13woGzc82jX9LGB+kxAGeGVkhwYqKcg4w@mail.gmail.com>
-References: <CAOuPNLh4R=H0BfQ4f13woGzc82jX9LGB+kxAGeGVkhwYqKcg4w@mail.gmail.com>
-Subject: =?UTF-8?Q?Re:=C2=A0Query:_Y2038_patch_series_for_3.18_Kernel?=
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD4534D3A5;
+	Mon,  3 Nov 2025 06:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762150861; cv=none; b=Bxux966oxN0/su1kni3VUzm1gmC6BXFSPPIXODaVMhaDH2k3xldwh+1bwE4Kgi1kkppWn8LCwGA1/pwm0LCoK0m4nU6kmRUPQvMblzajOGRe4rI/Bim/Ni1XgT8ZncveXTrDIYBh/DSGrtzPJp12Z/Pu6u7if9UPcD5WQyKG7yU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762150861; c=relaxed/simple;
+	bh=3oluBvHH0h8kKPf4YzZkXH4AKBNMaJ+LHhxbNQE8Fr0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DBPq7sR11JmpjuM2xYdv7pXqAe1RKDZ3TFXw+aJqeesuOCTwwDj1CblmTNlNw65+6FhogCMgN9Vi3/+8GuJ7XdAyHkbCGE4IIYz57ADBwmIsausDeUp/Vvm2P2lhOlsqe2suDdgYaraUsvHtp6Vc+ONxHYcSqovXfOWsJrU4Ql0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=bt5enmgY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D41FC4CEE7;
+	Mon,  3 Nov 2025 06:20:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1762150859;
+	bh=3oluBvHH0h8kKPf4YzZkXH4AKBNMaJ+LHhxbNQE8Fr0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bt5enmgYXPe/vFyIfEVvdj4yvMjyHwxBuPKg9JJtb986W55o/A9C28nt2bkG/OpBm
+	 oCUTcXPz2bsRC7+FO5SQgrTfTJe+rO5V6UwovtD6+f4JWA9uWe/SnFPMi6Tkw9xuI/
+	 ZmskcrfiVz+qlH9MJpkGauYF36KyH6oOS16knaVM=
+Date: Mon, 3 Nov 2025 11:07:43 +0900
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Haotian Zhang <vulab@iscas.ac.cn>
+Cc: Bin Liu <b-liu@ti.com>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] usb: musb: ux500: Fix PHY resource leak in error path
+Message-ID: <2025110336-barrack-agent-b418@gregkh>
+References: <20251103020204.796-1-vulab@iscas.ac.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251103020204.796-1-vulab@iscas.ac.cn>
 
-Mon, 03 Nov 2025 09:57:18 +0530 =E0=A4=95=E0=A5=8B Pintu Kumar Agarwal =E0=
-=A4=A8=E0=A5=87 =E0=A4=B2=E0=A4=BF=E0=A4=96=E0=A4=BE :
-> We have an arm32 based embedded product which is based on the 3.18
-> kernel and a simple busybox.
-> We wanted to support the Y2038 issue on this older kernel.
-> Is this feasible
-> Do we have the Y2038 separate patches available for both kernel and users=
-pace
-> ?
-> Or upgrading the kernel is the only option ?
+On Mon, Nov 03, 2025 at 10:02:04AM +0800, Haotian Zhang wrote:
+> The ux500_musb_init() function calls usb_get_phy() to obtain a PHY
+> resource, but fails to release it with usb_put_phy() when
+> usb_register_notifier() fails. This leads to a resource leak as the
+> PHY reference count is not properly decremented.
+> 
+> Add usb_put_phy() call in the error path before returning to ensure
+> the PHY resource is properly released when notifier registration fails.
+> 
+> Fixes: 0135522c4898 ("usb: musb: ux500: add otg notifier support")
+> Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+> ---
+>  drivers/usb/musb/ux500.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/usb/musb/ux500.c b/drivers/usb/musb/ux500.c
+> index 8c2a43d992f5..14c5e986937e 100644
+> --- a/drivers/usb/musb/ux500.c
+> +++ b/drivers/usb/musb/ux500.c
+> @@ -155,6 +155,7 @@ static int ux500_musb_init(struct musb *musb)
+>  	status = usb_register_notifier(musb->xceiv, &musb->nb);
+>  	if (status < 0) {
+>  		dev_dbg(musb->controller, "notification register failed\n");
+> +		usb_put_phy(musb->xceiv);
+>  		return status;
+>  	}
+>  
+> -- 
+> 2.50.1.windows.1
+> 
+> 
 
-Upgrading is a much much better option.
+Hi,
 
-3.18 is extremely ancient and extremely insecure.
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-(Sending again as I didn't press "reply all")
+You are receiving this message because of the following common error(s)
+as indicated below:
 
-Thanks,
-Siddh
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
