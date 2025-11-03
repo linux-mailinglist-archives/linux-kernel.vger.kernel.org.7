@@ -1,256 +1,243 @@
-Return-Path: <linux-kernel+bounces-883705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5B62C2E286
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 22:31:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC605C2E289
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 22:31:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A5D064E4254
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 21:31:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 420803BCCFE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 21:31:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDBD72D063C;
-	Mon,  3 Nov 2025 21:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 831082D3218;
+	Mon,  3 Nov 2025 21:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GphVs64e"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=vdwaa.nl header.i=@vdwaa.nl header.b="LQSw/doq";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="2N9sLIFF"
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6DA2AF00;
-	Mon,  3 Nov 2025 21:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762205460; cv=fail; b=Ikwl07wP8EcQseXgUKshZc76NCIS8c3laCxNzfkvhVfSjmxBEazhTRxRw+x5K+PXlW4jxOTtSiI/p0iIZgj5oc6wcweN4jIU9kv2FuIPTFgfSA1p5zjacLr3gAMf+SYzE8WzJn4F9ekLppmJzLcL9FMLc4Kena4mMrWk/4XdG4E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762205460; c=relaxed/simple;
-	bh=a1fT+xQ9K2Y+7sQv48xCjtrNvCElXl6E5VSPNvNDpzM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=d+Uk/REjXCJWIJ0yOOycaOjUPQnZN/zI+kdxNTLr88uaSH9qFRQeRMFP5Tbdqux+ycvWGowXRLdxP4z82/F3Xn/h/2Okvrc3kn8aFPv8TxavR4q6jijhJ7xv8/0iZIR0WDu+NPQ4uS+umZgRb4lzN778lp+ha5T2wDddWvngrSg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GphVs64e; arc=fail smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762205458; x=1793741458;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=a1fT+xQ9K2Y+7sQv48xCjtrNvCElXl6E5VSPNvNDpzM=;
-  b=GphVs64e2Hn/RmaYOjIffshoDZD8dWx0t7e2CABogqlnBoK39smWuwKl
-   iSmcd7B6BjvT1cOn/Q0KA8bnW8h7fRgCmpcOStU+PwOuni0gCedLlCasp
-   vIeIEtpvrHoC68vmY2kGD5F3pbJwMyye95aKy8g7f9LMuWWSFNtajNSZb
-   115hFthvHJSSir67PF+u+kfR2TfawVV9cSrctHX09afSLHoCWeensPPtI
-   l64+q6l1ssSN20Yhm8hI1k632GyklrlrLSQTrfesPF8boDc1Mvewe5JUB
-   JVKzVGw7usbmQJTo5jQiFnEM82CG/7Itrmch5KcLNrH/DSQH/siQQfJau
-   A==;
-X-CSE-ConnectionGUID: ln5Hjk0wSJug+1oMB0N57Q==
-X-CSE-MsgGUID: VgEv51X7QvuuWFJf5qphiA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="74584199"
-X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="74584199"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 13:30:57 -0800
-X-CSE-ConnectionGUID: xJv6/23ZRja9zC0UAb4jDw==
-X-CSE-MsgGUID: 3x72M+d1Q9WB3d4sALkc8g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="191297945"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 13:30:56 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Mon, 3 Nov 2025 13:30:55 -0800
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27 via Frontend Transport; Mon, 3 Nov 2025 13:30:55 -0800
-Received: from DM5PR21CU001.outbound.protection.outlook.com (52.101.62.33) by
- edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.2562.27; Mon, 3 Nov 2025 13:30:55 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oMPeiB0NvztJVpHgP41KcAxxJssqb6bIWPSfnqKxsMaCZvWGmGoIqqL3q/ZDwzRpHpmOKPcn6cjRLTViUWHpMwR6uLiQ5gCWp8ebERTdf9N4IqYWtsAOexVgFjes4c8D8nNGbzJfVdjoJt3hQndPUsf5kumYdnvGmHI5soGmRIS5DEi0XLXG0fbrduUb2kpTIRFrYtQxJXr/6Jz7mR1kkKLLDA260oWV3wh7YOW2MUfSqNrtehePBw5Id81qG4CFRA4Lbcz9YigN5Hb4aMJ1/OR9ynlGs9UAnN9kDjajkFIOmv58AY3g0b577xbS4Bbyee0I4/cnyb7HruiXetzYhA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e71pnvIX2/4JAn5sN0tQoJdoUZr5YuuSsSDHyxYSDkU=;
- b=aCf1Oe24yiLqYpNKQIXM/LO5p+d17TcexEKtXxIotXSuRqEGXJ+xlSnz2toPN31NzpYTi+BpYi5VTuioEkH2F83vZW9JWo9RssZkkxeQQZ2ZUPQXRAad4U3M4kLxY/h2TaTh0/LGuoyB+u6HPoKwR3FMF3tvvgjS4cPRSNb2OkoLTPUAeviBe/LepN+XGBGvDnfw8W1sG5+mRxW+X+4RTlUkAXBan8Sk2A8i8EQ+hgdJ/Hmew75GFpuAPgvnTCSpfP16GyXusFiI0BoRsNwJleTXWzldENDR4IpEJHNV4NVsEFOSqGKMxOPur0WXy2XYvKkfA+/6wwBn9rQHSVQaPw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CY5PR11MB6139.namprd11.prod.outlook.com (2603:10b6:930:29::17)
- by SA1PR11MB8280.namprd11.prod.outlook.com (2603:10b6:806:25d::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Mon, 3 Nov
- 2025 21:30:53 +0000
-Received: from CY5PR11MB6139.namprd11.prod.outlook.com
- ([fe80::7141:316f:77a0:9c44]) by CY5PR11MB6139.namprd11.prod.outlook.com
- ([fe80::7141:316f:77a0:9c44%6]) with mapi id 15.20.9275.013; Mon, 3 Nov 2025
- 21:30:53 +0000
-Date: Mon, 3 Nov 2025 15:30:49 -0600
-From: Lucas De Marchi <lucas.demarchi@intel.com>
-To: =?utf-8?Q?Micha=C5=82?= Winiarski <michal.winiarski@intel.com>
-CC: Alex Williamson <alex@shazbot.org>, Thomas =?utf-8?Q?Hellstr=C3=B6m?=
-	<thomas.hellstrom@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Yishai Hadas <yishaih@nvidia.com>, Kevin Tian
-	<kevin.tian@intel.com>, Shameer Kolothum <skolothumtho@nvidia.com>,
-	<intel-xe@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<kvm@vger.kernel.org>, Matthew Brost <matthew.brost@intel.com>, "Michal
- Wajdeczko" <michal.wajdeczko@intel.com>, <dri-devel@lists.freedesktop.org>,
-	Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, "Lukasz
- Laguna" <lukasz.laguna@intel.com>, Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v3 27/28] drm/intel/pciids: Add match with VFIO override
-Message-ID: <cj3ohepcobrqmam5upr5nc6jbvb6wuhkv4akw2lm5g3rms7foo@4snkr5sui32w>
-References: <20251030203135.337696-1-michal.winiarski@intel.com>
- <20251030203135.337696-28-michal.winiarski@intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20251030203135.337696-28-michal.winiarski@intel.com>
-X-ClientProxiedBy: BY5PR03CA0010.namprd03.prod.outlook.com
- (2603:10b6:a03:1e0::20) To CY5PR11MB6139.namprd11.prod.outlook.com
- (2603:10b6:930:29::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96DDA2AF00;
+	Mon,  3 Nov 2025 21:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762205469; cv=none; b=H2cHEDjShvRlR/Fi+dBlj6KfRJw5c/urfHtcwpsjyQ8DfMkGM3qG9BGHv8MDDvK/vVy5ZlP3xMYCD8zYt1VhgD2EJqab4CQF5zToKOsvbCLAeLQKCirJueja7CtatGBIslatKg+awumQi3Cms4/WK0EiPdnMdP8LMkjd6z2Wn40=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762205469; c=relaxed/simple;
+	bh=C1nfCvE/moILgJLutC4rDfqsAuPg81GHNXC7RwANoSE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=av8ctIIw4tT0VMe28U5bFZzH05hzj7eaAd6TPuWFaSRRfkj04OSXSJQ0/vQSN1SFNanIooxkhwd/Co1QPB0YpjS5ff48ac8MpmrgcLc/lTSnQTGu2wlDwXqaoavR2SQXCbA/l+oLJZpkRLmbbKUuAidp3QqD3BDe5+y7EYj3xjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vdwaa.nl; spf=pass smtp.mailfrom=vdwaa.nl; dkim=pass (2048-bit key) header.d=vdwaa.nl header.i=@vdwaa.nl header.b=LQSw/doq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=2N9sLIFF; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vdwaa.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vdwaa.nl
+Received: from phl-compute-03.internal (phl-compute-03.internal [10.202.2.43])
+	by mailfout.phl.internal (Postfix) with ESMTP id 71D9FEC0331;
+	Mon,  3 Nov 2025 16:31:04 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Mon, 03 Nov 2025 16:31:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vdwaa.nl; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1762205464;
+	 x=1762291864; bh=EBJQdfSFVqVStxS33cWTBDRhAkWgHd9W/rplNVuelOc=; b=
+	LQSw/doq3YwWf4pDj6q953CgIzStFjTKfHVOJxAjxiK9MXz+KhTL3ahxvx7F8gfu
+	uXDtUzfggu9s5VSea+N3SVKdm9xzZYeB4Dm1kk+Kc0n4GWOXQ4sVe4xK0gVxK2WP
+	60k0puiExZRMZvGEJUBqXVoU4PbW16Vs0gZHvRUG3pCl4kLJjxhpDdxwafmCuoAY
+	ID3Ccr6W5LYLajGzRZYS1+iGZW5Wbv9h6tT7Ce2rv8+KNNP6m6dF/bbKNtWNpOJ6
+	N77/5D+et+9ymoDr+fDOfnsUdivJ88gn+ehU445meF+jVVlBHUH4heWX76OKgpKn
+	h9s28sV2YOiYAzkI3H4U+g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762205464; x=
+	1762291864; bh=EBJQdfSFVqVStxS33cWTBDRhAkWgHd9W/rplNVuelOc=; b=2
+	N9sLIFFGLOQfpFskC/Rdtt3aaivVf108WU10qa5/DtYsuYZC0RA1kKg1Wgj+gj0p
+	JyErOZF+HzB4c2WYCPVwTt7mv0KB9oypY+2BTWvp5Tq9xY5s4Z+QubgZI9uiIsR1
+	jIr4ASEiNakanu7ODllH2/pTwwOw1h+vACS/3zmnRX0sGLVXJeeWqhsIit0S+tMv
+	TmFKxvkVjoPkTgP553xqDAWmJePqU+xO21mOZKe2mIbCDF7uumfVe2b8CUyM8m6K
+	V/tH6Gd8lw327dSuY7elVzY31o1ZyjaqhGPEw+oqNgpl9j8Kuw2+7SViV45SGLlx
+	bIBn1hNT9TpICXg0MlMJA==
+X-ME-Sender: <xms:Fx8JaQwn8wdyf6J5mC8RPCp0phjKLzA2WmTWYhhNOkbkreXQD0bsMA>
+    <xme:Fx8JaQRmZB_3KSmyaizcGEXFq-rAAHtLVEf0QcZkTz2TJNvsaVtI9TDNQfBTY6ar2
+    IlPnJPPWM_LmSVa5pMd_rPtL4VfncAMAaRnphTfFdjV3YZr1hVSfXTI>
+X-ME-Received: <xmr:Fx8JaUhY2pe74wPa9KmZDEEhDfcdOUG7wTv45p-xJk1-Vb7Oj2c_ygZo_IYVKmowMpLrywEUWW0Mx5OlY59WUHUsEDQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujeelvddvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdejnecuhfhrohhmpeflvghllhgv
+    uchvrghnucguvghrucghrggruceojhgvlhhlvgesvhgufigrrgdrnhhlqeenucggtffrrg
+    htthgvrhhnpeejvefgvddtffduvdeuleefveejteegfeetfeefleejleevvddvfffgleel
+    teeljeenucffohhmrghinhepsggrughlrghnugdrihhonecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomhepjhgvlhhlvgesvhgufigrrgdrnhhlpdhn
+    sggprhgtphhtthhopeekpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehisehroh
+    hnghdrmhhovgdprhgtphhtthhopehilhhpohdrjhgrrhhvihhnvghnsehlihhnuhigrdhi
+    nhhtvghlrdgtohhmpdhrtghpthhtohepihhkvghprghnhhgtsehgmhgrihhlrdgtohhmpd
+    hrtghpthhtohepmhhpvggrrhhsohhnqdhlvghnohhvohesshhquhgvsggsrdgtrgdprhgt
+    phhtthhopeguvghrvghkjhhohhhnrdgtlhgrrhhksehgmhgrihhlrdgtohhmpdhrtghpth
+    htohephhgrnhhsgheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphhlrghtfhhorhhm
+    qdgurhhivhgvrhdqgiekieesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    hlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:Fx8JafkmXNj2BFFGAajBYL04l5h3NC03me2QPI0ip_Pv4PBlAT_PwA>
+    <xmx:Fx8Jafsi6kycwHVyeuEpZB0DPVE_SlMUWgbzczgUWp-Wf-tLyWVprg>
+    <xmx:Fx8JaVYcDxJUoAmDy2c_edkfEEAVJI45UWipiqKvgWoTllSzFKk6XA>
+    <xmx:Fx8JaXCErHhwTBM2YnOwarkA5oqHJtfVhY-LkicdQR8FUbl6-D2hHQ>
+    <xmx:GB8JaaZDlied9QYcRT6KqlU8IZc_ALcaLSpOo08ODOgH4_R4Byqrjice>
+Feedback-ID: i2d0446dd:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 3 Nov 2025 16:31:02 -0500 (EST)
+Message-ID: <6bdbfe74-1765-408e-9192-e54accaa22f4@vdwaa.nl>
+Date: Mon, 3 Nov 2025 22:31:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY5PR11MB6139:EE_|SA1PR11MB8280:EE_
-X-MS-Office365-Filtering-Correlation-Id: 80a0651b-cb1f-4434-3140-08de1b20442c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?U0NURDV5NFdTcDJaSWJFZFJVSFBGenVtOGJJb1l6dlF5WWdLTkZ3Q1BZVDlr?=
- =?utf-8?B?VnJaTnJIeW95a0x1aG96Q1Rxb3lveGR0bktjNG0vT1orT3V1RU4wV2pLSFBa?=
- =?utf-8?B?c3huemJrbG5zWVZMMlVRQ1dVbFVvRjdhQnMxLzJPcU1lNEJTTTJuTm9ZcXdQ?=
- =?utf-8?B?QXlUb29HM0lLWGlZTUZYejhUazF4VW1zdGFjNWg3YU40NTAyZWhrc1gxYjdm?=
- =?utf-8?B?UXM1eWpYd1VyOHhlT2w5QVY1MDVYQ2VNVlJ3QitlbVFxQ3VBQkY5TW9ibDFC?=
- =?utf-8?B?WEk2ZFVKRzlNUkppcGNFN2hhVXBZc1NwZkRMOEhYZCtrZ2I3cHFhUmEzR1pa?=
- =?utf-8?B?Y2dGRExVTTF3Q0laSi9QMVpFWXBDSnplclpiUUttZkxGbjlZVTc2L2FranpR?=
- =?utf-8?B?V0RYZFpWUkl2d3hYVUFxcXBFTWZiNFZ6QUV2YUxlYjROYmxyY0tNMFBJQ09M?=
- =?utf-8?B?Z2wzaXhtdXJUVS96akVxcWdYR3VRNzFUeGVjNUNXSDFJcnJwa2VlYjlwV04w?=
- =?utf-8?B?bVd0VnZFWTBhaTVMc3psWW1pdkdMTXRjeTNhQVg5cTh4RmI4RStTZFlXZ1ps?=
- =?utf-8?B?MnAwcUdOQmJwOGRianE2S2NhaWVHQ1piTzd6Si9HNUF6SVJXOG1nQURTa0lQ?=
- =?utf-8?B?bHVEYXBueWRIOW5VdGJFbCtBMkFqN1FvOHhFMnRrVVpETzN2K1pYa2JLWFpm?=
- =?utf-8?B?WnVYaFlIZTJZcjhsQUhZT1FMcWxybExGQ0ZLRGNFbUhGZzVwMWloWUpwUWM1?=
- =?utf-8?B?M2R2eHRCaEFpalZaMVFuS1JwaFBsT3lTTnZ2SlFkeU9iSG14aW1lUVJzRUJ3?=
- =?utf-8?B?N2dERnQ2ZGZZSVJFTzI4djJHMWY1ZlJjc2lCVTRWRnkvYlFRSVNsc3hmQzVB?=
- =?utf-8?B?TXRzUDRSNFl3YXhhdExWZXptc3BrVXJtVkVJNzVWaUt1QkFIZUlwMUc1bkJR?=
- =?utf-8?B?V0IxZ3UxWE1GcDB4WHdnOGRQWVF1WnY5YStLa3lkNVQ2blo0YWRrNktKZ09w?=
- =?utf-8?B?Yzc2Zjkveks4cWN6QlBESEJHRDZoWGlNdXNJU2pOaGFLZnhydW10TUpON0Rq?=
- =?utf-8?B?a1pGeHFGOHI1MzYzOEhzSUpwQjhMU1g4ejNkZmtkNlR4MEJNclVGcEU0aGJK?=
- =?utf-8?B?R29HeE84eEZITE5hcFRtT0tVUjVSRFRIUWJLUGVnaDNpS1liNHJmWEZBaU5K?=
- =?utf-8?B?VXcxVlV0S2ExR0hNL0ZaeFJmWUlsZmtmVkoydkxYQW1uaFIydklHbGRCaGxv?=
- =?utf-8?B?RksvNEZSeHNIVFZWaGNUc05iZW9lKzFpa3duaTZrRXFUWk03N0lhc0tXT1ZC?=
- =?utf-8?B?ZzhCQktBdlI3TXRvM2VsSTgyUHM2U25EUUtCOWJFcnNNRlFsbjBzOFlEYXF6?=
- =?utf-8?B?ODdvOEpHaGhwZjJYNHh1RFJUR2RDKzYyUlRuMHFTWVVROTdIdStrOC9OWHo3?=
- =?utf-8?B?OHRuV09aV3pmUG5rZ2dDdS9jb3RYMUkwWVhZOFBaOERxd094aDYvR2xQc2Y2?=
- =?utf-8?B?Yk1send3S3JFSlRyb2gyWi9oalJPQWo4WkpRVDA5MzRMTGFDRTRFSEROMXdn?=
- =?utf-8?B?RWFkcDU0ajlHNUZ0V1hPN3FpWm5wRHExS0xVOE9oYjNKdmxXQ2JaaUVkM0cz?=
- =?utf-8?B?VU52OGlldkdRNndYL0MzdVJqQ25hZUpOQzdpMERncXVyWjA3NTI0eUZYaXZV?=
- =?utf-8?B?MWtaTDllMXUwdyttRDJuTFNNUmhxbVNWbVdRWGFjbk5aRWhtcnFiV0NIaThQ?=
- =?utf-8?B?dkFsNisycHcvZVVQTEd5bmU5aVJ6cjV0aUluMElQNHdoc2xOOEFZSTdPRjBW?=
- =?utf-8?B?TjlEWTJPVkYrajM5b0RzSmJZc3drU1c0ZEN1SjZaVEZYbXM3ZjliVnBWdHRk?=
- =?utf-8?B?aDB0NDBheGNLN3BlMWZ2ZXJaYTJLZzgvN2FwaHlNZFd3bkxjdXpWbit0QzRF?=
- =?utf-8?Q?x3u/Z0/JF9tWJ42KWt7u5VT2qTGHDs/A?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR11MB6139.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TVY5TjZ1RHZFblFOUGN5VkxJQVVURXpmT042TjhkRDhLcUNRSjl2eUttcjB1?=
- =?utf-8?B?RHRXZXdyYkd4ZXExYm9CUnlCRlRIeExEa0luWmhmL0N1YjNsZDl0d3RTTzFP?=
- =?utf-8?B?SUxublRNbmd1NnozaWg2ZlBJK2h3Z3ZvaGdZc3M4eFIzMVdPczlzZ3BMMkNj?=
- =?utf-8?B?KzJ6dWpjSGNyaG8renc5QVJXazJyT2xRVTg1RmRNTHVpNnlMb04wZlZCdHdp?=
- =?utf-8?B?cUFVS2QweThoVDZRQjJCYm5lNkR4WGs2bHBETVU3Qm1BeFdqbVEwYlZBTFJw?=
- =?utf-8?B?R2dycUlTUWMwMW81ZDNtOUhWQkNRUjBHYTRtdlhvMVp1TzhsZ01qcGl5b1hr?=
- =?utf-8?B?ZVJuWnVhRWZmSzVvc29GTWF6dEJzc1J5VzVZUHIvRnVFOFN3dm1xSUFMOGRR?=
- =?utf-8?B?aE1lWXB1R3FqcUMyQXR0SXFoSTI0b056MUlDL3V5bmRyKzV6Z2lkNlU5Mmoy?=
- =?utf-8?B?aU9GU1dTYlhOdllkclRJZVBiNFlhMGZqWnUyRTMwVGJISUhHczNnMVl2UXNE?=
- =?utf-8?B?eXBPVlBlbzZGbFR6NkNDeEp1MG1TVnpQbDVhYWZZdnhLRnJwbGtLbjQ2dUNW?=
- =?utf-8?B?SFJPQ1lPZjI2ODQ3R1p3Sk85YjVwRUNSSWpzMzFQa2NCeE95anBsSHcweHYy?=
- =?utf-8?B?bCt5S1ozUDBZbENRMGtVSnVhOFAvRVZNYVRrY251T1l3VnN3ZlB2LzNBTllF?=
- =?utf-8?B?eFYzR2hiWWd4V3RjeTBMZWVxcEtlaWhMdTVUY3JvV3VaenVJc3pMY3RHWlBl?=
- =?utf-8?B?bHFIYWp5eUNETWcvRlQ3aWRCUEx6U3N6cFhNYmhrc29weE1LR1RHemhpcysv?=
- =?utf-8?B?MmVKcVQ3Q2lPZjZDaDArWUZKVU9PbThqVU8waFVaR2ZyL0lNRWFKdDBjOHlL?=
- =?utf-8?B?cjJ4NWNFSldXdnNZZUVkdUloTm1GNTZvM0drRi9FL3kveW9nTVRJVmY3RWNK?=
- =?utf-8?B?b2U2dGEwaXhRdHhlamF6NStLbHZHdjlzdWIwbjdtb2tYTTFvcEVNZWdiZlgy?=
- =?utf-8?B?Qi80alg3dnhOTmdRdzdJTXBVQ3FvMDZtOWc1QVpPYkN6Y2NIRERBalQ1dEY5?=
- =?utf-8?B?d1pONitoeW5lVmxxb1NDaHlpb21XUGt5VHNxWjlCRW9LWDZnK0pLWnloWUN3?=
- =?utf-8?B?akVjd3A2QkFicVgwODNOUzErckVMU0dSMTlnMVZpaElXbWNtQ1F6N3puaUtH?=
- =?utf-8?B?V3RJNTNHaVJQMWhpeTF2YkhKNkVEMWNxcVUzQnZtTlJCOUhNb0hvOXNPbTFQ?=
- =?utf-8?B?cndPWVZpVStZckg0N0xnbGdZREx1WURJViswYUVKT2NkK0M1VWZYcFF0QVRK?=
- =?utf-8?B?aVB0MW81eUIzdm02V1hQNGFrRTZ6bjJJdmVOdXdpMlI3ckdlanBiNHdpbEZK?=
- =?utf-8?B?ekx4elJqd0c4MzNiWUd5RTBXTm9tZUQvZlRmMm5ORVRCUXFUSGRCbWs4Vk9p?=
- =?utf-8?B?K1FueWYyY2o0Z2NyeFl2dyt2bHh6SXdOMGJUQ1BoZVVlUjN3c3A0WDQrRmxE?=
- =?utf-8?B?ZXU4NXFaRStMK3FySXgvY0duSFNzYmY3dEl5elpOQnV0RkNra1V5cG9hOWpU?=
- =?utf-8?B?Z2ZBeWtKU0tBdnNYbFE2Z1JXUHZRclp5bGM5QVFQMmJoN2xDTjE1Z0tXTUVQ?=
- =?utf-8?B?QkpXZERxQy9BU2pkTTBOQXo2SHRleGgzMzZ3RmJzbFJSamlMazU0a2VEMUQ4?=
- =?utf-8?B?b3E2ZHQzZkdtb0FoNWFhQnNidkRwL2RtSnJzWGN5d1JHQjk0K0pYcnNJZDRQ?=
- =?utf-8?B?eGhsZGhTb1UycDNXeVJGZWJobjQwZTRQUllHb1FIajZZVjB2bjlpb3VGdERB?=
- =?utf-8?B?THlGTXpmV0pvQWVubmNMbzNYc3dRc0V1bWcrdVNraktjS3VlZjN4bHpPK0JI?=
- =?utf-8?B?aWVxUGExY3ZRT2xwaFhLNnVUY2xuR3AwM0VEUUZPOU9SbHVqQSs4RXdwaXFa?=
- =?utf-8?B?VDVsT003ZGplbWZGb1V2eHhBWnVRK2hoRmF4cjU3M1NzRDYwRXlSQXVsTEZw?=
- =?utf-8?B?VTJpbFdFSmxwdER4MU9JZkxMUUszNkFVY1oveVRBMTVlZlI2L05BVHg4Y0ln?=
- =?utf-8?B?bEtkUnBESlB3QTJrYlRNZHNuVS9wMjA2bGdiVXpZRFl3eUlXaE8zQ0JoeFN3?=
- =?utf-8?B?Q3oxcW1hcDdBbXVsK1ZWalFuc2YrTVRrTlJuSTVneEFGK2d4U2UrYXk0OWNC?=
- =?utf-8?B?bkE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 80a0651b-cb1f-4434-3140-08de1b20442c
-X-MS-Exchange-CrossTenant-AuthSource: CY5PR11MB6139.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 21:30:53.1708
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KfgCanVmsGSS26rbRfWU7Z4nEJNXDRwI72qdlj/52Lm/qs0fR/6894BThBnA7C7SD7iQYoyb6cvi8xkhjiig+BeOv8kqGDesRjmoqYL2rCY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8280
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] platform/x86: ideapad-laptop: Add charge_types:Fast
+ (Rapid Charge)
+To: Rong Zhang <i@rong.moe>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>
+Cc: Ike Panhc <ikepanhc@gmail.com>, Mark Pearson <mpearson-lenovo@squebb.ca>,
+ "Derek J. Clark" <derekjohn.clark@gmail.com>,
+ Hans de Goede <hansg@kernel.org>, platform-driver-x86@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251020192443.33088-1-i@rong.moe>
+ <dfa70284-04ce-482d-8d79-cc0ee8b4bf6d@vdwaa.nl>
+ <5d1ae6eb34378570ed1f9b62d945c95bda8a5b86.camel@rong.moe>
+ <1fd710f18bdfcf5d5c157697cdbe874465ee0130.camel@rong.moe>
+Content-Language: en-US
+From: Jelle van der Waa <jelle@vdwaa.nl>
+Autocrypt: addr=jelle@vdwaa.nl;
+ keydata= xsBNBE6QLAIBCAC3O6LmF+GKvOh7IV00TG+EKAQHAwjESnHGJOW58lKK7eAYn62ZM1uy0+6h
+ yCMu5PD7+ND6U1gcgTTHYwNK8AaJt7yY4FRssgdcJk59uJBwROZtllotClJ893CuB6Wgr68b
+ 07gIRbENYrB8rEoGfpUG//8/ep7sY8PS03jnFb4ll6mPlUE2oQVdYOlXgF4f9qkkIi4SQeE2
+ MTuERaOrDuUNDlroJ7Yfx3J/rL5Qjn578/TKCAxg0pns6VIA/P9spRGmLhT4zP+OxZXeSZme
+ IxcwFdJJXHr4oGaZvqe1yHlMmKR98rrIfPWhkw2Ls/XIZIxf6prT0XyczbzBnC2y1JyNABEB
+ AAHNIkplbGxlIHZhbiBkZXIgV2FhIDxqZWxsZUB2ZHdhYS5ubD7CwHsEEwECACUCGwMGCwkI
+ BwMCBhUIAgkKCwQWAgMBAh4BAheABQJUX8WhAhkBAAoJEMBghjN8UHc+mFwH/jjN+Qob4O36
+ YiieajRwVLGuYdUDt9Z655oQYU8V4qbWf2tjUtqTYXrxLnaY6xQoYouRz9yFbh9dIKZb67ir
+ 7AeVgCOtWVesGxAlGH6EY5JBZcsN0v0ScsivqQAv/Mv+4HK+XM57YlyRagD8tkprYskioWHg
+ OwQfXAO6nlm4BJHWO9bHJUMgiGs7I190IKQG7iLBnJuGjsOFuy5KTLpnv+w7twmz0H+pkUPe
+ jVHfJlJWdN4v1PigpgpjOR6ZepSIggMk7dHsa6GNLUOzi61yYVFe60+EGXhwyJIqSt56a4oR
+ jMUcXaOugGr+JwC8Eq7Pg2+aFk+8fbe0oUzZJucHGnDOwE0ETpAsAgEIAK4Usb7B00WRxCZG
+ HtM973F7V4OhOKv4kZKduxtu71bVUZsTuzn4h+m8guJ51uY/I2icUrN9gJG5aEzRqPuQi2L7
+ KmZUjs3pscZWgUgiT8UZFDR6RuQ4k3CcWobsRCjYZdSblSZ8ccrLJE7xSbwKMXjAh2PEiaQT
+ lS6wQbn6mHv4y3H9QVHs7+jXbmfHCxnVcwLqRmpuegSmezDaL5TlSc102voiXinhrWEZUvAB
+ KDh6VuJ/60Y6zelCXVsEjRaApz90iXY1nifLhkHM8B2wG7Pum3V3X0Y0QTVD+z3EL1iq5mFu
+ epKp//IOeeJN5iwHcRSJGy2s1oOzjRDyPv6v1AUAEQEAAcLAXwQYAQIACQUCTpAsAgIbDAAK
+ CRDAYIYzfFB3PvDuB/0dI13hSYHW27c2Rq8BaGbIhXYYETtPD5B25/P1JJ5OQZkPmVq+vSHw
+ uzUaDZHy3ZcwE+xFXzlkwXGdWos07JUGo74zV3HfeZxVEPv0HB9ACqQVU/JKjLZNj2SfhgzL
+ 4F+O4Zgdsf0YaZG09F5PbMvbhoCZLfAaKWz/4fLEfhrDJLhrphUyPDXosn0UxPkDv0iiixn4
+ V+bEZ5/wd8dRWi58R/iND+gRGsBREm5SpzdhnsarwoX6YdsQ449379enDNUN7jV4C3Gkon2s
+ VwI2ZZbS10cY8rFSAV/CJA2E9daRoz40DI0tgXgLBAVhy7y5HWZJsDZexU0HFKJfkDi7RUPj
+In-Reply-To: <1fd710f18bdfcf5d5c157697cdbe874465ee0130.camel@rong.moe>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 30, 2025 at 09:31:34PM +0100, Michał Winiarski wrote:
->In order to allow VFIO users to choose the right driver override, VFIO
->driver variant used for VF migration needs to use Intel Graphics PCI
->IDs.
->Add INTEL_VGA_VFIO_DEVICE match that sets VFIO override_only.
->
->Signed-off-by: Michał Winiarski <michal.winiarski@intel.com>
->---
-> include/drm/intel/pciids.h | 7 +++++++
-> 1 file changed, 7 insertions(+)
->
->diff --git a/include/drm/intel/pciids.h b/include/drm/intel/pciids.h
->index b258e79b437ac..d14ce43139a28 100644
->--- a/include/drm/intel/pciids.h
->+++ b/include/drm/intel/pciids.h
->@@ -43,6 +43,13 @@
-> 	.class = PCI_BASE_CLASS_DISPLAY << 16, .class_mask = 0xff << 16, \
-> 	.driver_data = (kernel_ulong_t)(_info), \
-> }
->+
->+#define INTEL_VGA_VFIO_DEVICE(_id, _info) { \
->+	PCI_DEVICE(PCI_VENDOR_ID_INTEL, (_id)), \
->+	.class = PCI_BASE_CLASS_DISPLAY << 16, .class_mask = 0xff << 16, \
->+	.driver_data = (kernel_ulong_t)(_info), \
->+	.override_only = PCI_ID_F_VFIO_DRIVER_OVERRIDE, \
+On 11/2/25 20:24, Rong Zhang wrote:
+> On Mon, 2025-11-03 at 02:57 +0800, Rong Zhang wrote:
+>> Hi Jelle,
+>>
+>> On Sun, 2025-11-02 at 17:09 +0100, Jelle van der Waa wrote:
+>>> On 10/20/25 21:24, Rong Zhang wrote:
+>>>> The GBMD/SBMC interface on IdeaPad/ThinkBook supports Rapid Charge mode
+>>>> (charge_types: Fast) in addition to Conservation Mode (charge_types:
+>>>> Long_Life).
+>>>>
+>>>> This patchset exposes these two modes while carefully maintaining their
+>>>> mutually exclusive state, which aligns with the behavior of manufacturer
+>>>> utilities on Windows.
+>>>>
+>>>> Tested on ThinkBook 14 G7+ ASP.
+>>>
+>>> Tested this patch on my Lenovo Ideapad U330p, it now advertises that
+>>> `Fast` is a supported charge_type although my laptop does not seem to
+>>> support it:
+>>>
+>>> [root@archlinux jelle]# cat /sys/class/power_supply/BAT1/charge_types
+>>> Fast [Standard] Long_Life
+>>> [root@archlinux jelle]# echo 'Fast' >
+>>> /sys/class/power_supply/BAT1/charge_types
+>>> [root@archlinux jelle]# cat /sys/class/power_supply/BAT1/charge_types
+>>> Fast [Standard] Long_Life
+>>
+>> Ahh, then we need an approach to determine if it is supported on a
+>> specific device.
+>>
+>> Glancing at the disassembled DSDT.dsl of my device, I found:
+>>
+>>     Method (GBMD, 0, NotSerialized)
+>>     {
+>>     	[...]
+>>     	If ((One == QCGS))
+>>     	{
+>>     		Local0 |= 0x00020000
+>>     	}
+>>     	[...]
+>>     }
+>>
+>> BIT(17) of GBMD is 1 on my device. Maybe QCGS means "Quick CharGe
+>> Supported?"
+>>
+>> With this assumption, I did some random Internet digging. The same bit
+>> on other devices is called QKSP ("QuicK charge SuPported?"), SQCG
+>> ("Support Quick CharGe?"), or QCBX (see below).
+>>
+>>     Method (GBMD, 0, NotSerialized)
+>>     {
+>>     	[...]
+>>     	If ((One == QCBX))
+>>     	{
+>>     		If ((One == QCHO))
+>>     		{
+>>     			Local0 |= 0x04
+>>     		}
+>>     	}
+>>     	[...]
+>>     	If ((One == QCBX))
+>>     	{
+>>     		Local0 |= 0x00020000
+>>     	}
+>>     	[...]
+>>     }
+>>
+>> https://badland.io/static/acpidump.txt
+>>
+>> 0x04 is BIT(2)/GBMD_RAPID_CHARGE_STATE_BIT. With all these pieces of
+>> information, I presume BIT(17) of GBMD is what we are searching for.
+>>
+>>> I'm wondering if the battery extension API allows to not advertise a
+>>> property if it isn't supported or if it should at least return -EINVAL.
+>>
+>> We can achieve this by defining multiple struct power_supply_ext. See
+>> drivers/power/supply/cros_charge-control.c.
+>>
+>> Could you test the patch below (based on "review-ilpo-next")?
+> 
+> Note: this patch is just a quick PoC (I am going to sleep now, zzz...).
+> ideapad_psy_ext_{get,set}_prop need to be reorganized to properly
+> support your device. If `cat charge_types' doesn't show `Fast', we're
+> in the right direction.
 
-why do we need this and can't use PCI_DRIVER_OVERRIDE_DEVICE_VFIO()
-directly? Note that there are GPUs that wouldn't match the display class
-above.
+Thanks for the quick patch!
 
-	edb660ad79ff ("drm/intel/pciids: Add match on vendor/id only")
-	5e0de2dfbc1b ("drm/xe/cri: Add CRI platform definition")
+Tested it on my Ideapad U330p:
 
-Lucas De Marchi
+[root@archlinux ~]# cat /sys/class/power_supply/BAT1/charge_types
+[Standard] Long_Life
+[root@archlinux ~]# echo Long_Life > 
+/sys/class/power_supply/BAT1/charge_types
+[root@archlinux ~]# cat /sys/class/power_supply/BAT1/charge_types
+Standard [Long_Life]
 
->+}
-> #endif
->
-> #define INTEL_I810_IDS(MACRO__, ...) \
->-- 
->2.50.1
->
+I'm however still waiting on the laptop to slowly charge to 80% to 
+confirm that charge limits are applied.
+
+Greetings,
+
+Jelle van der Waa
 
