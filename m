@@ -1,226 +1,230 @@
-Return-Path: <linux-kernel+bounces-883275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7012CC2D1A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:25:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D6A5C2D143
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:22:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC4AB424C99
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:44:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 073F7188AB06
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:21:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B6183A14;
-	Mon,  3 Nov 2025 15:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD433191DC;
+	Mon,  3 Nov 2025 16:20:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="WTL+dulM"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011001.outbound.protection.outlook.com [52.101.70.1])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="fSK6Uii9"
+Received: from mail.cybernetics.com (mail.cybernetics.com [173.71.130.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C221C3C18
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 15:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.1
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762184665; cv=fail; b=c5dksEHTwvEc4Ng8eD/+4iHnzytrjOvNEpMEbhfyhC0fG5XPS42Gi58pH9/0P3qqVYgu8ebIfx6m4HBMXvWtm46SMehNhdRpYPojaFAeZPZ7eGSjIT3/ZI4D5gf+HmnsOBZ1mSl9cnAOAWnJmD3XiQyfazKLRlidqaDANoRxits=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762184665; c=relaxed/simple;
-	bh=w+GVIXtEwJCBOFSCMdj+5aGgr5KN8jlDsUWP2rH4c6I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=DtRZ07W+ZK/x0Vt74YEh+u/fDZVPo+nncDOk/d6fwyxoPkBWt2EtvoWvQwPpbE1eykZKQ++Bb2C9o+XMrrKhIT3M7rnJS3eAXvR0seQm+EawIV00grz7GOztAosL9Lx3TYaL26xg9KrKCaj+MI7gdov8PfXLc8pNVoJb1pS4NUs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=WTL+dulM; arc=fail smtp.client-ip=52.101.70.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=HWilEdg1J1o52q3JvhBZ9XX4/QHGdNzFxCat7m7B2yMbOLRdpacS3izVx0sYp7AyahHRK1ycx41ePUcRQkkvdSVUVjQJtnjG475yhPYMWAkpnCfWFMKJyaPgnbzcSqjfhlMKQzSqfaCum3HaC6FkG7rqpBQaL/gxg3tnh+j1cytHGruZQGJTXrt0UJmhHHFBex9ySgLLSlCBBEW37a9Q5SCHJyH16uUqVXaTOIL28eZH8Zy/hjJNQzTjqT6sR70oz31+oS5YvbqfOcrldV87jlf0rKFolv30D1iiudwGJj3TayxMPgMH34E89/A7pVfWr9jPAXtsKbRBZt3pDWJzlQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=T0NXi6QNaXTwT0KfyhA1rSFqi9g02hy60g1tIjWTBdE=;
- b=NpHqYIs1JjDYQcqhMur3l9GSg21aFKb6LXFUZS0Vzqfo9txEcJIar/Hatk/A1bN3ItSSe0crBZQzP4tVCu7O8jxVfavvWYIUX/Q54CgvPhN+2j51bVp36mSEncPZ61q/F0kf0Ig9I8Ou/8dQOdysVLh2Pr2DbOUf361L1Rsce5GUi9wGx04hKf/ffvXOn2OK4LV2vELuXoD2OEasWwpqU0/v5prwAI/JT8IThwCKVp2xSQ6hD2TFV/bEDtl4C474Srv1Kr4ROp8RqcjWc70MPBS5J78aiaEMEqeDTkjfreriUWP3znvVUBtp5QzfRWSNkFRDv6wg4u0LsrLCj2sC+g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=T0NXi6QNaXTwT0KfyhA1rSFqi9g02hy60g1tIjWTBdE=;
- b=WTL+dulMsozUPo7qdqgF9gTziCL7lD5ohvUG/ctxt+VNP8tzTQlcKbaUMo/QRipb9MIu2HjPl8tqUq9WzXkMSQ3GwADil8p6iK+6RU9u2eZlct0e8CABU3nsXgQDdjYhrJE/z0vjHLsKbB27QhRj4apCaYkqG9zkIQj62OsWFfl6TAqMqSc1ZRpQEaRKQbs+rYWnVEEFGxbTIcVRpuW94hUgefb0BlgCTh5ZXucorvrqjGFPnevxCvLUKRUmRPCDvc4LIF5xYFXsd1kSXCOlMWKMVZ1LkPFxsf7wSa6IyPpTb6KHNt4SFDJGlEakfmnHfGs7E4I9CjD1AJduwuM84g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com (2603:10a6:102:23f::21)
- by AM9PR04MB8399.eurprd04.prod.outlook.com (2603:10a6:20b:3e6::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Mon, 3 Nov
- 2025 15:44:21 +0000
-Received: from PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15]) by PAXSPRMB0053.eurprd04.prod.outlook.com
- ([fe80::504f:2a06:4579:5f15%6]) with mapi id 15.20.9275.015; Mon, 3 Nov 2025
- 15:44:21 +0000
-Date: Mon, 3 Nov 2025 10:44:04 -0500
-From: Frank Li <Frank.li@nxp.com>
-To: Jisheng Zhang <jszhang@kernel.org>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i3c: dw: Add apb reset support
-Message-ID: <aQjNxCencdfq4bXq@lizhi-Precision-Tower-5810>
-References: <20251102100237.9451-1-jszhang@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251102100237.9451-1-jszhang@kernel.org>
-X-ClientProxiedBy: BYAPR06CA0003.namprd06.prod.outlook.com
- (2603:10b6:a03:d4::16) To AS4PR04MB9621.eurprd04.prod.outlook.com
- (2603:10a6:20b:4ff::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99EA83176F8
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.71.130.66
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762186808; cv=none; b=JZUY+PMwy7CQJttiIo8F1Cc30auEeApy1otq1q/Sw4VJbNaKFiaNlrm6Xl373MHxJBY/iRqAEO15E/hc3pzsHsuhP7QPNY7NxxbtIzPns9Wu3s+63N0YSTJAV3+NgiYDGLu9QNTjWMYp/QxgnkQedmTJgr8KFElYTXJJdtKEmTs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762186808; c=relaxed/simple;
+	bh=O90G56kfFPOri4qrEzK7YFsjB71EfKrK9p+F43qIGxo=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=kDqvP1L4cR6/pf+uryfc2uNXRJrHZWU++MBnKbNDoQ8U80yTPOoFadcvmBlzzmHo7VBsgbp3dKPFCSWTDMXEDPf9nBsKzdpf58/RYukz7q89jVO4GbvOJjpwvO3FfioLviLuSgkXi4RuZ+njPSe1jsKdNHLRy61i6f+bVhM9nvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=fail (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=fSK6Uii9 reason="signature verification failed"; arc=none smtp.client-ip=173.71.130.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id lo2q1DQROCs0AcPw; Mon, 03 Nov 2025 10:44:32 -0500 (EST)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=LMOi7QMdqqg2dcOiYEuZyKjhgoKOfOH88JRSzJLVSto=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:Cc:To:From:
+	Content-Language:Subject:MIME-Version:Date:Message-ID; b=fSK6Uii94NJBFtwTZXnv
+	WsLzglkByqRc42/NavSOP+sWtiK3JLTYl2AFAGIpfpqANBT8FcRumrdnzzZPdGRGs/uBdp44s203k
+	GsT/NOw7Ncv0cQWrOwd8YOcUcCoUyrws7ndUa6WQvr7JFrmrx1r+TMzdiAKojvM6Ev+rzvSKLk=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14263426; Mon, 03 Nov 2025 10:44:32 -0500
+Message-ID: <a6b8713e-c499-4fce-9964-9f277b24ebe9@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Mon, 3 Nov 2025 10:44:32 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXSPRMB0053:EE_|AM9PR04MB8399:EE_
-X-MS-Office365-Filtering-Correlation-Id: acc920a0-379b-413f-6d02-08de1aefd6ae
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|19092799006|376014|52116014|1800799024|38350700014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ZhOH5qzdJ1JVtYV4fp+jHnegVFVQUAattKspWPO6Prs+7ANA6NGSOXnTr2HA?=
- =?us-ascii?Q?r++1VOPMI1Ategh588hObKr7FMCKpSrg1fO+ea0jPb1uedm7tup74/fRXQTv?=
- =?us-ascii?Q?Lzu3tN+J+/N1CxSIyZtdjtrwa0rHpXjHW1gRq0SCH/tMpi3pxWtCaIRyJKu1?=
- =?us-ascii?Q?4mIL8Kka2Qhq4LZe+qZav9bBuCtV1bkl+G+njmu4wSh1wyEFIYp1dMP+7OZ4?=
- =?us-ascii?Q?G9fRSccjrpGMgyvu5HEjBMrb1JCAYn25JL1m2DZV3CEaQEKnq2gyuo2QnJR3?=
- =?us-ascii?Q?rBqFoB5I8epMw5TiDE9f5l9VUnUDcBKkHFr4dtBQygFUoixsBfjyEKNhPcm8?=
- =?us-ascii?Q?8t5yVTFv+a7iLjKFZiQnkUI/0l9svluj49j58zHJhFH96y/hv9BXqV3tIimb?=
- =?us-ascii?Q?XNj65QpB3Nno0EnvtIRaU4Pj7MIaL+is6bOfuUkNcxSbuo83tcE3E/eukqEz?=
- =?us-ascii?Q?W1OXqnGrFTEnoq4z1P9FBJxdW1+LaVJeUS/OWetUPhUAkXcwnXZFxACJtOQH?=
- =?us-ascii?Q?P0A4fb7MtGtsSMyWWL5XafbYededRrquPg8qFXPTutov8/XAKjeSJeiryiJv?=
- =?us-ascii?Q?47T3E4fdiZFFVM50EqlKK8cNVhcx5Dx+MOrcHyXx4PSpbYiYPmrhGQYv9pHb?=
- =?us-ascii?Q?zNRkxLTeMzyacfiHnE6OV6FCBmtVonTmsWg/oLs9SIayms+i5mic/BCP3/dQ?=
- =?us-ascii?Q?m1yos8SgICpsz+zfhWISgBOKbFO5+wBeSt6ZdzVGa4ncbF12MtltSmZgztnG?=
- =?us-ascii?Q?GOVbTntyEfCAp0Y2aMIILZA/bYOl3HvN+Y8E9DwWPn2amYCouUA7LeQBsqxu?=
- =?us-ascii?Q?xhB47qcX+s875lMdTLU0SjEdfkcnJ7KDvHAqme9Gi2POM3ZiuP6OXHxjmjZ9?=
- =?us-ascii?Q?3HL0um7XTGFTXSSjXVXvujI2/Xs6AAAZl916lUEViJqCRjJ9xaC1r9IlfDqL?=
- =?us-ascii?Q?sQ9o+WhOyI7ULnEJwLbq9EKLGmi79ghhPws3xUYHLTgDBJUrLaHrXZsftxv0?=
- =?us-ascii?Q?I628n8jX77JV+q2zHrK0mf4ZzaoPRhI2GbyEaOReDXjYGD3zMDHUnesTO9ZI?=
- =?us-ascii?Q?qL+TyNR+h7OlbLJFmo3z1KO1iKf5LhDdBR7akPC++LT8ChZPX9FO95HD33Bw?=
- =?us-ascii?Q?bbqNjcXHxNYmV3UMJvSZkx3UMhl5IgTN9Hoy4IjujtoZP9ptkl+htAB6kds8?=
- =?us-ascii?Q?kDID2MK804780fVooHjNeqw5X8iIHFHaG9WdptJvmqLQ2TQEyDyy2i0/6TsU?=
- =?us-ascii?Q?tjdRooP2mOoLpf58SbYwKJt6AbbJg5YCnT+P8yT+gj+HpPS62bdl+yG4Q0Ms?=
- =?us-ascii?Q?zPJbGNCXCL4vQO1ylxuKriIOkkPLBokGZXiOPQfp05hJD4ogTdX1Aor3XoY/?=
- =?us-ascii?Q?PdKLmh+N+CNjGNU6ApEYMctAg16lXtu+KiX+4vtj86nU9s8sHeQjpJDDifvy?=
- =?us-ascii?Q?MBU8Nhv39RRcyhDb+UBKKi/OHlhm9Cfmp0xD+bSHyIMPAdsmgxLky++XJX7H?=
- =?us-ascii?Q?V3zurGU20gZgQGcCaiNXms7Ur50378Jr5BU0?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXSPRMB0053.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(19092799006)(376014)(52116014)(1800799024)(38350700014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?68U/LNz8BOR8axDYstDzNt9QKZAZ3SJ+mOW1xvu2UZinpSgZEREKKg9Vf9m6?=
- =?us-ascii?Q?fOh8BVXMHAxf+yung9zXQ//IdKBezeiGxnuS7urpWg0eLyAhh2ekgbJWjaLa?=
- =?us-ascii?Q?Yjn/hcL8DOOd2lpoq186W9qgqZEfCgPsSXH5hBvPU5UrYr/BinL4xNIjdBRF?=
- =?us-ascii?Q?9sjUrSquHOuo59hSDN1r/XJIu8SpabHxPmiX4c/L8zgDQ+O/JrR4SALTRqiY?=
- =?us-ascii?Q?lI67BYX5yoO6ZqVEL8zT4QVJSVKBmCl5/9squRqcrVQpEBn2aY5J7T+CTu8I?=
- =?us-ascii?Q?Qsx0dLLbNYWOMTPEae2m/Pb+jxMMJFsP82NyldO5cToeVfbI34flkei59xQX?=
- =?us-ascii?Q?WlxOuCocoGed5df7z3u18tZ16LEhJVO2rBI7kdI+EPBQ2N8/rxTS8zV8W05i?=
- =?us-ascii?Q?freTTiETm390sQoBZcNEJV3HlqV/yiCTumq4kgYe+mTiTU5fOLQPCNLOPqVS?=
- =?us-ascii?Q?EE66iky549mDqq6T/EyzPX1jrRZDLexpGrc3VkOFVd/5bMuatuUu4FkgpS4g?=
- =?us-ascii?Q?RW6KJNtB7EtKXJQcmjWrbuR//lejCSNy0XM7QZwVeVO6Snv/0U7EprT9qV5g?=
- =?us-ascii?Q?vZIvbAOU6CGK6nbo+PDewHY7WSjshrHk+th32O73Tx+CJZJCKmNbJl1VQygA?=
- =?us-ascii?Q?Q2/EzwWjU6wQxdpbpcrWl4WrlYNtYOXiGHIgfAvMi6yYEodh7B0bBIQDA71q?=
- =?us-ascii?Q?4jfsEMyvdtA5z1CInJoUzYEqXD0M973N1nejH5RPnQkU8B6gBYI2lhtEo4wq?=
- =?us-ascii?Q?7uSz0O3z1s6EfJNqyNEmkLBKI3vLQLSPnXddhiwYkB/mHJy55/p15yfv9CLR?=
- =?us-ascii?Q?qjiEAGPHougl/NNeMk/1y9qyZesNs/7yA2oFUIjnbyV3IR9CgRfG85UhKbX/?=
- =?us-ascii?Q?+t3fCNhsQxM9JC0MJA0tIYpFgtdwWA4ZmIKIp6e7SE/DXIwKYXEGv+kZfbwe?=
- =?us-ascii?Q?zzD+0e+aQqqqA0qxPHVSpS0ASc257c6OIr3u5hNzMpSWUzpW+BrymjCBrq8M?=
- =?us-ascii?Q?4zNvBthfQRjhtCCtUndQ/2yBnQjWb0TOe3srcy/vZbmfS77hnz4iEFTn+xW1?=
- =?us-ascii?Q?uWnXX6XIasZEEvAwHK2iVyhHEiUzvR+M9XhkfpszxMm5uoDvDJ6dvTa2PSJI?=
- =?us-ascii?Q?Fxve1AojDifyueskhrJtmJlMf/AuZDkxXUipqd0WAXVjIik3G9jRnYqNRtHg?=
- =?us-ascii?Q?F8RTLBdAiDpMklnRoGX3VxVf9DoNFqBT5+Go316526RohJQb8K16YPgLMjJK?=
- =?us-ascii?Q?neWtlM2j01S69j9ymMPmOTwLYBJz5ZN17dJ7C5YMll7KjwvC+DjbcYj13uiG?=
- =?us-ascii?Q?lU6T+sNTfX5N9C+Nj6gUTYzRchypWlqMLSdthr/mvTvP9bxWDDVGfLsJSV4q?=
- =?us-ascii?Q?Mz0NgUMv+k/VaDtCliaPe1W0CwMSDBM2YwEesKwllS8wAf/yzS6mvI4NUGY/?=
- =?us-ascii?Q?7QyG7bJqOyBNtqD3P81Zv10joeUj24MeTk8d1hxNAGOiQpefBVxDcYnCzI66?=
- =?us-ascii?Q?QETzWzmO3QH4drE4z2vYwqLvPvS4LDq4Q615+ZIvxLwfkjQhBL4LIr+nYo1T?=
- =?us-ascii?Q?j9RAFvNbVj9NjBpGEiOygYDu1xIcYWDk6ek1SSH6?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: acc920a0-379b-413f-6d02-08de1aefd6ae
-X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9621.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 15:44:20.8826
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2yFuLwFTIRQjzBOX/BUmn0o8zX9069ycdLY3H+FTNwiFJ/UKM8u2BgcZ3VOLcZL6QeI28Lv/WZjBhxgr2NF1qA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8399
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/16] qla2xxx target mode improvements
+Content-Language: en-US
+X-ASG-Orig-Subj: Re: [PATCH v2 00/16] qla2xxx target mode improvements
+From: Tony Battersby <tonyb@cybernetics.com>
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, target-devel@vger.kernel.org,
+ scst-devel@lists.sourceforge.net,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Dmitry Bogdanov <d.bogdanov@yadro.com>,
+ Xose Vazquez Perez <xose.vazquez@gmail.com>,
+ GR-QLogic-Storage-Upstream@marvell.com, Nilesh Javali <njavali@marvell.com>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
+References: <e95ee7d0-3580-4124-b854-7f73ca3a3a84@cybernetics.com>
+In-Reply-To: <e95ee7d0-3580-4124-b854-7f73ca3a3a84@cybernetics.com>
+Content-Type: text/plain; charset=UTF-8
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1762184672
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 1
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 6032
+Content-Transfer-Encoding: quoted-printable
+X-ASG-Debug-ID: 1762184672-1cf4391391a8580001-xx1T2L
 
-On Sun, Nov 02, 2025 at 06:02:37PM +0800, Jisheng Zhang wrote:
-> Add support of apb reset which is to reset the APB interface.
+On 9/29/25 10:28, Tony Battersby wrote:
+> v1 -> v2
+> - Add new patch "scsi: qla2xxx: clear cmds after chip reset" suggested
+> by Dmitry Bogdanov.
+> - Rename "scsi: qla2xxx: fix oops during cmd abort" to "scsi: qla2xxx:
+> fix races with aborting commands" and make SCST reset the ISP on a HW
+> timeout instead of unmapping DMA that might still be in use.
+> - Fix "scsi: qla2xxx: fix TMR failure handling" to free mcmds properly
+> for LIO.
+> - In "scsi: qla2xxx: add back SRR support", detect more buggy HBA fw
+> versions based on the fw release notes.
+> - Shorten code comment in "scsi: qla2xxx: improve safety of cmd lookup
+> by handle" and improve patch description.
+> - Rebase other patches as needed.
 >
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> ---
->  drivers/i3c/master/dw-i3c-master.c | 9 +++++++++
->  drivers/i3c/master/dw-i3c-master.h | 1 +
->  2 files changed, 10 insertions(+)
+> v1:
+> https://lore.kernel.org/r/f8977250-638c-4d7d-ac0c-65f742b8d535@cybernet=
+ics.com/
 >
-> diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
-> index 9ceedf09c3b6..ca2863d2b2b7 100644
-> --- a/drivers/i3c/master/dw-i3c-master.c
-> +++ b/drivers/i3c/master/dw-i3c-master.c
-> @@ -1558,7 +1558,13 @@ int dw_i3c_common_probe(struct dw_i3c_master *master,
->  	if (IS_ERR(master->core_rst))
->  		return PTR_ERR(master->core_rst);
+> This patch series improves the qla2xxx FC driver in target mode.=C2=A0 =
+I
+> developed these patches using the out-of-tree SCST target-mode subsyste=
+m
+> (https://scst.sourceforge.net/), although most of the improvements will
+> also apply to the other target-mode subsystems such as the in-tree LIO.=
+=C2=A0
+> Unfortunately qla2xxx+LIO does not pass all of my tests, but my patches
+> do not make it any worse (results below).=C2=A0 These patches have been
+> well-tested at my employer with qla2xxx+SCST in both initiator mode and
+> target mode and with a variety of FC HBAs and initiators.=C2=A0 Since S=
+CST is
+> out-of-tree, some of the patches have parts that apply in-tree and othe=
+r
+> parts that apply out-of-tree to SCST.=C2=A0 I am going to include the
+> out-of-tree SCST patches to provide additional context; feel free to
+> ignore them if you are not interested.
 >
-> +	master->apb_rst = devm_reset_control_get_optional_exclusive(&pdev->dev,
-> +								    "apb_rst");
+> All patches apply to linux 6.17 and SCST 3.10 master branch.
+>
+> Summary of patches:
+> - bugfixes
+> - cleanups
+> - improve handling of aborts and task management requests
+> - improve log message
+> - add back SLER / SRR support (removed in 2017)
+>
+> Some of these patches improve handling of aborts and task management
+> requests.=C2=A0 This is some of the testing that I did:
+>
+> Test 1: Use /dev/sg to queue random disk I/O with short timeouts; make
+> sure cmds are aborted successfully.
+> Test 2: Queue lots of disk I/O, then use "sg_reset -N -d /dev/sg" on
+> initiator to reset logical unit.
+> Test 3: Queue lots of disk I/O, then use "sg_reset -N -t /dev/sg" on
+> initiator to reset target.
+> Test 4: Queue lots of disk I/O, then use "sg_reset -N -b /dev/sg" on
+> initiator to reset bus.
+> Test 5: Queue lots of disk I/O, then use "sg_reset -N -H /dev/sg" on
+> initiator to reset host.
+> Test 6: Use fiber channel attenuator to trigger SRR during
+> write/read/compare test; check data integrity.
+>
+> With my patches, SCST passes all of these tests.
+>
+> Results with in-tree LIO target-mode subsystem:
+>
+> Test 1: Seems to abort the same cmd multiple times (both
+> qlt_24xx_retry_term_exchange() and __qlt_send_term_exchange()).=C2=A0 B=
+ut
+> cmds get aborted, so give it a pass?
+>
+> Test 2: Seems to work; cmds are aborted.
+>
+> Test 3: Target reset doesn't seem to abort cmds, instead, a few seconds
+> later:
+> qla2xxx [0000:04:00.0]-f058:9: qla_target(0): tag 1314312, op 2a: CTIO
+> with TIMEOUT status 0xb received (state 1, port 51:40:2e:c0:18:1d:9f:cc=
+,
+> LUN 0)
+>
+> Tests 4 and 5: The initiator is unable to log back in to the target; th=
+e
+> following messages are repeated over and over on the target:
+> qla2xxx [0000:04:00.0]-e01c:9: Sending TERM ELS CTIO (ha=3D00000000f881=
+1390)
+> qla2xxx [0000:04:00.0]-f097:9: Linking sess 000000008df5aba8 [0] wwn
+> 51:40:2e:c0:18:1d:9f:cc with PLOGI ACK to wwn 51:40:2e:c0:18:1d:9f:cc
+> s_id 00:00:01, ref=3D2 pla 00000000835a9271 link 0
+>
+> Test 6: passes with my patches; SRR not supported previously.
+>
+> So qla2xxx+LIO seems a bit flaky when handling exceptions, but my
+> patches do not make it any worse.=C2=A0 Perhaps someone who is more fam=
+iliar
+> with LIO can look at the difference between LIO and SCST and figure out
+> how to improve it.
+>
+> Tony Battersby
+> https://www.cybernetics.com/
+>
+> Tony Battersby (16):
+>   Revert "scsi: qla2xxx: Perform lockless command completion in abort
+>     path"
+>   scsi: qla2xxx: fix initiator mode with qlini_mode=3Dexclusive
+>   scsi: qla2xxx: fix lost interrupts with qlini_mode=3Ddisabled
+>   scsi: qla2xxx: use reinit_completion on mbx_intr_comp
+>   scsi: qla2xxx: remove code for unsupported hardware
+>   scsi: qla2xxx: improve debug output for term exchange
+>   scsi: qla2xxx: fix term exchange when cmd_sent_to_fw =3D=3D 1
+>   scsi: qla2xxx: clear cmds after chip reset
+>   scsi: qla2xxx: fix races with aborting commands
+>   scsi: qla2xxx: improve checks in qlt_xmit_response / qlt_rdy_to_xfer
+>   scsi: qla2xxx: fix TMR failure handling
+>   scsi: qla2xxx: fix invalid memory access with big CDBs
+>   scsi: qla2xxx: add cmd->rsp_sent
+>   scsi: qla2xxx: improve cmd logging
+>   scsi: qla2xxx: add back SRR support
+>   scsi: qla2xxx: improve safety of cmd lookup by handle
+>
+>  drivers/scsi/qla2xxx/qla_dbg.c     |    3 +-
+>  drivers/scsi/qla2xxx/qla_def.h     |    1 -
+>  drivers/scsi/qla2xxx/qla_gbl.h     |    2 +-
+>  drivers/scsi/qla2xxx/qla_init.c    |    1 +
+>  drivers/scsi/qla2xxx/qla_isr.c     |   32 +-
+>  drivers/scsi/qla2xxx/qla_mbx.c     |    2 +
+>  drivers/scsi/qla2xxx/qla_mid.c     |    4 +-
+>  drivers/scsi/qla2xxx/qla_os.c      |   35 +-
+>  drivers/scsi/qla2xxx/qla_target.c  | 1775 +++++++++++++++++++++++-----
+>  drivers/scsi/qla2xxx/qla_target.h  |  112 +-
+>  drivers/scsi/qla2xxx/tcm_qla2xxx.c |   17 +
+>  11 files changed, 1646 insertions(+), 338 deletions(-)
+>
+>
+> base-commit: e5f0a698b34ed76002dc5cff3804a61c80233a7a
 
-Does binding already add "app_rst"?  The name "app" should be enough.
+Martin,
 
-Frank
+Could you apply this patch series for 6.19?=C2=A0 I have addressed all re=
+view
+comments and no one has given me any objections.=C2=A0 All patches are on=
+ v2
+except patch #11 which is on v3.
 
-> +	if (IS_ERR(master->apb_rst))
-> +		return PTR_ERR(master->apb_rst);
-> +
->  	reset_control_deassert(master->core_rst);
-> +	reset_control_deassert(master->apb_rst);
->
->  	spin_lock_init(&master->xferqueue.lock);
->  	INIT_LIST_HEAD(&master->xferqueue.list);
-> @@ -1607,6 +1613,7 @@ int dw_i3c_common_probe(struct dw_i3c_master *master,
->
->  err_assert_rst:
->  	reset_control_assert(master->core_rst);
-> +	reset_control_assert(master->apb_rst);
->
->  	return ret;
->  }
-> @@ -1711,6 +1718,7 @@ static int __maybe_unused dw_i3c_master_runtime_suspend(struct device *dev)
->  	dw_i3c_master_disable(master);
->
->  	reset_control_assert(master->core_rst);
-> +	reset_control_assert(master->apb_rst);
->  	dw_i3c_master_disable_clks(master);
->  	pinctrl_pm_select_sleep_state(dev);
->  	return 0;
-> @@ -1723,6 +1731,7 @@ static int __maybe_unused dw_i3c_master_runtime_resume(struct device *dev)
->  	pinctrl_pm_select_default_state(dev);
->  	dw_i3c_master_enable_clks(master);
->  	reset_control_deassert(master->core_rst);
-> +	reset_control_deassert(master->apb_rst);
->
->  	dw_i3c_master_set_intr_regs(master);
->  	dw_i3c_master_restore_timing_regs(master);
-> diff --git a/drivers/i3c/master/dw-i3c-master.h b/drivers/i3c/master/dw-i3c-master.h
-> index c5cb695c16ab..a4ba60043288 100644
-> --- a/drivers/i3c/master/dw-i3c-master.h
-> +++ b/drivers/i3c/master/dw-i3c-master.h
-> @@ -37,6 +37,7 @@ struct dw_i3c_master {
->  	struct dw_i3c_master_caps caps;
->  	void __iomem *regs;
->  	struct reset_control *core_rst;
-> +	struct reset_control *apb_rst;
->  	struct clk *core_clk;
->  	struct clk *pclk;
->  	char version[5];
-> --
-> 2.51.0
->
+https://lore.kernel.org/linux-scsi/e95ee7d0-3580-4124-b854-7f73ca3a3a84@c=
+ybernetics.com/
+
+Thanks,
+Tony Battersby
+https://www.cybernetics.com/
+
 
