@@ -1,191 +1,135 @@
-Return-Path: <linux-kernel+bounces-882784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DB2DC2B7C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:46:31 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F178C2B7E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:48:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2B4434EE2AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:39:52 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1C0AB4F6BDA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB1F3019A7;
-	Mon,  3 Nov 2025 11:39:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 453F33019D8;
+	Mon,  3 Nov 2025 11:41:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="c0LXDZn/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vQivLMfd";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RKQ7+278";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="StkIyM2c"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="haXVNmXG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49122F2603
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 11:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94FC321CC55;
+	Mon,  3 Nov 2025 11:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762169985; cv=none; b=ueb9ZaS0tCYLbRt3clWXKZ+gvZslpsWHZlM5G55SImx48x/WQ69n4gLHBwvtfFVzvuBQ9ps619IIOu3K212zTokkuKquqw8vazJdbv/ja6qj75ItcUBc9K42dMiffHxLMlPOgJOowDzThZm/wJnA8gLAL6N3CSaYwJu4OJLAfWM=
+	t=1762170085; cv=none; b=gcIjuyjVsyHUKKL5Qs+vupxa/unw8cymxGjfgOmrQeirpf7/uQhckt5vh65i1q5XL63E7JjGnF3hZ1hTluwvaZtiBmii1/N8ClgUe67d+gkze0yYmE+o/A2gIl6RQmtIGewigUOfWeoHL/s0iOd9oTo5QjWcu3Cyh5bMlRRKFfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762169985; c=relaxed/simple;
-	bh=xuqF16WhVzqA2FUfzxBa/BY/nWht4SzK/jI91oQ4ofI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tpitmh+8M+Wwg/lLuHAbzW0lOjJgoCMt7jWHcwwo5zp1wxaGUjMZF5Yym663b2Rj7XdIDg+a+b+CPEiCPbE08r5x4nT/1e64omFa/8W0rUb3gefMNJdGjb9qlB5MyOb0ZbBnPfP5TBC9Jw+nTPBcdMnKMTwEZmP+d+7d0r8uFxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=c0LXDZn/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vQivLMfd; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RKQ7+278; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=StkIyM2c; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0C2601F7A8;
-	Mon,  3 Nov 2025 11:39:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762169982; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BYFPo24Ij3UmRulCj1bzPQQbaCPLRcKYWdpbhhJioFM=;
-	b=c0LXDZn/rEv9qCVCEdIAMgviTwFch9IB9JdeqCueY+Y+mqg1orsxMNeGVL7mcYDG09L3QM
-	86iPjfg3GGQSKqWDKXvi84paNZW3vnuVDbI2U/D3sUiJHYzxJf/J8sMHmkSaJpUlEx8Fm5
-	zYTTifMoudqrcX9Svd2PGIf/bkCEk+k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762169982;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BYFPo24Ij3UmRulCj1bzPQQbaCPLRcKYWdpbhhJioFM=;
-	b=vQivLMfd1A3C4ey8ake8iSeCjaRxxyEdkg05xM0nMEW0ma4LSzKPBDpz9B2sSRlsrKjSNP
-	iJkw0mC5hh7kQ4Cg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=RKQ7+278;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=StkIyM2c
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762169981; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BYFPo24Ij3UmRulCj1bzPQQbaCPLRcKYWdpbhhJioFM=;
-	b=RKQ7+278ovdiZrReoIFld+tN1YkggIuKaBp/+02bCIN9aEBG61kzYq1QEwxH9inc6NIBpK
-	OAtM/bdgePHxODPs5U/89U+GBclpqWd6LV7q+5FnnW/TsSbI5hkWQppWfgkim4FNtzQvts
-	I8rLxExUkpuorpghioqeJygoVlbAEzg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762169981;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=BYFPo24Ij3UmRulCj1bzPQQbaCPLRcKYWdpbhhJioFM=;
-	b=StkIyM2cKhGyKLYb6um/A53ZZo9s1ktcQBQUOl7o50jGcLjp0qVbNXjIW7MQhd51g14obB
-	4PnFAy9704+CluCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F21691364F;
-	Mon,  3 Nov 2025 11:39:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Z0EVO3yUCGlqLQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 03 Nov 2025 11:39:40 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 51008A2812; Mon,  3 Nov 2025 12:39:40 +0100 (CET)
-Date: Mon, 3 Nov 2025 12:39:40 +0100
-From: Jan Kara <jack@suse.cz>
-To: Fedor Pchelkin <pchelkin@ispras.ru>
-Cc: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, 
-	linux-ext4@vger.kernel.org, Andreas Dilger <adilger.kernel@dilger.ca>, 
-	"Darrick J. Wong" <djwong@kernel.org>, linux-kernel@vger.kernel.org, lvc-project@linuxtesting.org
-Subject: Re: [PATCH v2 2/2] ext4: check if mount_opts is NUL-terminated in
- ext4_ioctl_set_tune_sb()
-Message-ID: <3rscuc2wkxmfwgvyblxqlormqecmqtbysh6pploetnd2pendlh@xoiinaf7j6aj>
-References: <20251101160430.222297-1-pchelkin@ispras.ru>
- <20251101160430.222297-2-pchelkin@ispras.ru>
+	s=arc-20240116; t=1762170085; c=relaxed/simple;
+	bh=83zk57cNtetxfYb8EbrdA3sau3Z5AXIe3hta2oRve9k=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Jz9b/P0TksAU8/EkSF3TLU3CeGkrkzgxtulN3HpvDeL3t3Ma/CHq8aZGefCzkBwlKAbsJ0SH+u1T5D0eHCtaF0Aj+QUucgiW2shEm0JoeerGbA9sOL84u3DoP4UUv+WNl2fp5AXMqEnDN7gKq5TnDclyr0fYR1iQkYk98gysiEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=haXVNmXG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2831AC4CEE7;
+	Mon,  3 Nov 2025 11:41:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762170085;
+	bh=83zk57cNtetxfYb8EbrdA3sau3Z5AXIe3hta2oRve9k=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=haXVNmXGZGW+D/M8k3qq8seaVPQHUvd/znza8FIdpOoK3zE20O6uiU6tjM/5lamEx
+	 v7yHWeWUqpGaCJKzSLh5ruy0PdAr5ZVuUqJBZYxjz6lJGAN8BjkDiYF4jD6rv0OzXd
+	 3o5BrsbvWWF3zpYP8o3LwLwFtJ+DcHqM5jsEqY5aQiTE8BTDIqsJGpeCOtvrRNOHqm
+	 GyJVz5HxddleqczfZpL+rrJIfmsgTYQ7a94z76hCzdBQ5/tF5D+sfHTLaR9I85UfVX
+	 IgF02OF8U8FH0gTC2DavMiEGmX8yRNcqFGZAhILPjPCPCmgzlIOx+o7CEHW41w38Sx
+	 hcYA09K63Ix7Q==
+Message-ID: <27b5eef1-f59f-4556-897c-f0cec7689d14@kernel.org>
+Date: Mon, 3 Nov 2025 12:41:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251101160430.222297-2-pchelkin@ispras.ru>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 0C2601F7A8
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linuxtesting.org:url,suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_COUNT_THREE(0.00)[3];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Spam-Score: -4.01
+User-Agent: Mozilla Thunderbird
+From: hverkuil+cisco@kernel.org
+Subject: Re: [PATCH V5 0/4] Add support for TI VIP
+To: Yemike Abhilash Chandra <y-abhilashchandra@ti.com>, mchehab@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: sakari.ailus@linux.intel.com, bparrot@ti.com,
+ jai.luthra@ideasonboard.com, dale@farnsworth.org,
+ linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, u-kumar1@ti.com
+References: <20251024094452.549186-1-y-abhilashchandra@ti.com>
+Content-Language: en-US, nl
+In-Reply-To: <20251024094452.549186-1-y-abhilashchandra@ti.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat 01-11-25 19:04:29, Fedor Pchelkin wrote:
-> params.mount_opts may come as potentially non-NUL-term string.  Userspace
-> is expected to pass a NUL-term string.  Add an extra check to ensure this
-> holds true.  Note that further code utilizes strscpy_pad() so this is just
-> for proper informing the user of incorrect data being provided.
+On 24/10/2025 11:44, Yemike Abhilash Chandra wrote:
+> This patch series adds support for the TI VIP. VIP stands for Video
+> Input Port, it can be found on devices such as DRA7xx and provides
+> a parallel interface to a video source such as a sensor or TV decoder.
 > 
-> Found by Linux Verification Center (linuxtesting.org).
+> Each VIP can support two inputs (slices) and a SoC can be configured
+> with a variable number of VIP's. Each slice can support two ports
+> each connected to its own sub-device.
 > 
-> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+> Changelog:
+> Changes in v5:
+> Krzysztof:
+> - Drop VIP node's label from the example in DT bindings
+> - Fix indentation of the example in DT bindings
+> - Get the phandle args directly through syscon call using syscon_regmap_lookup_by_phandle_args()
+> - Use devm_platform_ioremap_resource() instead of platform_get_resource() and devm_ioremap_resource()
+> - Drop struct resource *res from vip shared structure since it is now unused
+> 
+> v4l2-compliance output: https://gist.github.com/Yemike-Abhilash-Chandra/8d68342247da38d6ac59625f8eaf41c2
 
-Looks good. Feel free to add:
+v4l2-compliance is too old:
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+v4l2-compliance 1.28.1-5233, 32 bits, 32-bit time_t
+v4l2-compliance SHA: fc15e229d9d3 2024-07-23 19:22:15
 
-								Honza
+It's always best to compile v4l-utils from scratch using the git repo: https://git.linuxtv.org/v4l-utils.git/
 
-> ---
+v4l2-compliance is continually improved, and also kept in sync with the latest media
+git repo (https://gitlab.freedesktop.org/linux-media/media-committers.git), 'next' branch.
+
+Since there are kernel messages interleaved with the v4l2-compliance output I
+recommend to write the output to a file and show that.
+
+There is one failure for 'test Cropping'. If that still occurs with the latest version
+from git, then that needs to be addressed.
+
+Regards,
+
+	Hans
+
+> v4l2-compliance output with -s: https://gist.github.com/Yemike-Abhilash-Chandra/1dfa740a34e0e3d77a315b245e61b9ec
+> Test logs: https://gist.github.com/Yemike-Abhilash-Chandra/e44c4504d596f24e7c93a4c0b59f5316
+> DT binding check results: https://gist.github.com/Yemike-Abhilash-Chandra/a7eb1308df2d4a167baeec62bc744335
+> (No errors related to ti,vip.yaml)
 > 
-> v2: check length of mount_opts in superblock tuning ioctl (Jan Kara)
+> Link for v4: https://lore.kernel.org/linux-media/20251015054010.3594423-1-y-abhilashchandra@ti.com/#t
 > 
->     Can't plainly return error at strscpy_pad() call site in
->     ext4_sb_setparams(), that's a void ext4_update_sb_callback.
+> Dale Farnsworth (2):
+>   dt-bindings: media: ti: vpe: Add support for Video Input Port
+>   media: ti: vpe: Add the VIP driver
 > 
-> v1: https://lore.kernel.org/lkml/20251028130949.599847-1-pchelkin@ispras.ru/T/#u
+> Yemike Abhilash Chandra (2):
+>   media: ti: vpe: Re-introduce multi-instance and multi-client support
+>   media: ti: vpe: Export vpdma_load_firmware() function
 > 
->  fs/ext4/ioctl.c | 4 ++++
->  1 file changed, 4 insertions(+)
+>  .../devicetree/bindings/media/ti,vip.yaml     |  152 +
+>  MAINTAINERS                                   |    1 +
+>  drivers/media/platform/ti/Kconfig             |   13 +
+>  drivers/media/platform/ti/vpe/Makefile        |    2 +
+>  drivers/media/platform/ti/vpe/vip.c           | 3731 +++++++++++++++++
+>  drivers/media/platform/ti/vpe/vip.h           |  717 ++++
+>  drivers/media/platform/ti/vpe/vpdma.c         |   51 +-
+>  drivers/media/platform/ti/vpe/vpdma.h         |    6 +
+>  8 files changed, 4672 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/media/ti,vip.yaml
+>  create mode 100644 drivers/media/platform/ti/vpe/vip.c
+>  create mode 100644 drivers/media/platform/ti/vpe/vip.h
 > 
-> diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-> index a93a7baae990..3dec26c939fd 100644
-> --- a/fs/ext4/ioctl.c
-> +++ b/fs/ext4/ioctl.c
-> @@ -1394,6 +1394,10 @@ static int ext4_ioctl_set_tune_sb(struct file *filp,
->  	if (copy_from_user(&params, in, sizeof(params)))
->  		return -EFAULT;
->  
-> +	if (strnlen(params.mount_opts, sizeof(params.mount_opts)) ==
-> +	    sizeof(params.mount_opts))
-> +		return -E2BIG;
-> +
->  	if ((params.set_flags & ~TUNE_OPS_SUPPORTED) != 0)
->  		return -EOPNOTSUPP;
->  
-> -- 
-> 2.51.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+
 
