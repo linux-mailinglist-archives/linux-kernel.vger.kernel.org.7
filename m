@@ -1,251 +1,275 @@
-Return-Path: <linux-kernel+bounces-882743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1C53C2B4F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:25:15 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DEA0C2B764
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:43:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C20443B6AFA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:24:00 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5C7BC4F80B0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:34:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0A43019D8;
-	Mon,  3 Nov 2025 11:23:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2113A303A04;
+	Mon,  3 Nov 2025 11:29:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pnLOgxBl";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="akzN7B/O"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cWm599um"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD86301461
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 11:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F4A303A06
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 11:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762169018; cv=none; b=MwKCY7jNnrgjrpAtgihYl/IjS9UcnF2jbfVeVoFyvwMK44BS2UMAYD2hO1JCJdKb1ldmpbys7q9FhdRC72e8oQlaIfxg4+IiiiMMCmclbYBsOCwWDGjjZuvO+BFR8bt6wL1lfNfzt1eCusxu8fQHOKQimcZ9+k2V2fJJEQ6noIY=
+	t=1762169397; cv=none; b=VQEDNyEU2jPesgTylpMYqqR6i6AAGaPQs5L9IPxmckIUuxGKignNIWxLEVjtF02+pSj08KhwNIO7hMK44+O89o0DXYy8WZt94UOc1T082jGAHe/f/n40RFHLUY7Mc1YMi8ju+f+kilcRYZLN4NFOECVhujsxnsTn1qXPunTar6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762169018; c=relaxed/simple;
-	bh=4/8WP3/8KyyzzaZycL4PjwRartXnOK5+lfg70dZVDxM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=OCguQZh+Y//gBSDoAw3ZSkuOo3M4urjKOm7B3hkOHK6Qf6GOq9S3PnmWDsdonyTJy3fiSC4qDMnlJNgQPRpS58eGsxwlJTn1MIHNIX/u179bhSdIq+jWUcNJ/wxZXxU7V/eCk5tnPBrMi4Pcj1wQbJv07B81KpYKUR0Nv5deHNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pnLOgxBl; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=akzN7B/O; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A3AV6Im1941375
-	for <linux-kernel@vger.kernel.org>; Mon, 3 Nov 2025 11:23:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5b10FLwdc0HwfhtHnLEhX+TKUMxjRqrZdtiXlxAFFhw=; b=pnLOgxBl6+dCHxKW
-	lAlsG/z2cU0VId0oT3LbCKmtvWPxR3REb+eQM7EyiVfXDaPLUyuE/2nm5TG/DKDY
-	diRj+4sRVi53bHFaIa9sMN+h+BlCjWOGKwigyiK6cRZwa6GaqCMJyZhO29+RekOv
-	sQykdJ5ZemSYs4LIcO8g2nPi8kFC/0c78+agaj5OJvkEiVdy+0OO4AxoCl2ADcaP
-	iQOzlHbe3zoQbZ7N5bDcyGuu5VnB/Z+xb1Y41Mtf6pVCj9e66W399KbQvtFXqgB4
-	8R1E9KlfOPA0+uRByYIeg2vZqE82hA+rxNmiM7EWd3DlCs5G95IVqJL6fZY/ZzBd
-	9Jowtg==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a6m9w9a4v-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 11:23:34 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4e8934ae68aso19041561cf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 03:23:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762169014; x=1762773814; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=5b10FLwdc0HwfhtHnLEhX+TKUMxjRqrZdtiXlxAFFhw=;
-        b=akzN7B/OJ2YJa3MSJThD3J642zoOtFyRr44q+yEXxFAtHuljhSKinNr1PNS6uMYqsj
-         h1NSluTJ0yTX+DOSQECPx0ZRJySA6D54BByAo0lheii1UMAzwnQrayUnPAurlLCBaCfK
-         kiSpqroordh4+55WJYgAqvdFhdtm9Qm+lGINri6dJqzH9i+81ZDt5Zk1lk0ZplT9dtyO
-         QTjjYNbvg0IXfUZWoRtXg2wENdxqFs6OBgP/bPybQA7RPgMGLBxgs9alLJpWQRF6BHKB
-         6sTIBLe/XqThcRzVTv2qFWB0MEFMaQL8Vu7SHFZiZKWHX1XXGA3TX4Cxwdm2fi7PQN48
-         b4Sw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762169014; x=1762773814;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5b10FLwdc0HwfhtHnLEhX+TKUMxjRqrZdtiXlxAFFhw=;
-        b=d1q2oj4tn8NOU9biLG0lv3DfjbcvcAFNnZ4emMbXIfobrsZNWc3tRet43+Oam/n2Hp
-         7wcdSUQGfbuMZllIg2o53rrgV9S3QxIwXRjCivcSmqdvlM9OPLrSsD7CeJEQqhQqzxyJ
-         jkTr7UUy7VIIOwg8FgeEoWGNho/QmWuYyi9fznRYtesgzBnaqNm42GD0jX7LdubkydJd
-         SnRUjI+qDcfcwn5QnvD4LwjSF368MlsTW25xQi64OTPQP5p7rsRmfO5WroP892nCfgdd
-         QESqbOdsHxiATKvN3TIOoV8rresoiycRR+dSgRXsrv+wgBysVWBsG1kP2ZFHJTjm24IW
-         7+9A==
-X-Forwarded-Encrypted: i=1; AJvYcCVYEkwFtXpXRWgRqJZZu+vIYIXBUXuHxHn+GEfUXEZEX2YaLM4I6yTIv6u2yua5N/29K59FMZeSrXUweOs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yybalp4w6C8t+DwlwPZM2bZ0zy73QsYp9yowp5nDNGBfYdrrpit
-	BEQmuPPi+ljz1Xos8DGDK5jWMsn38rh8HY1v/yJ+rP8tVqY+k5J7Htxva21qWxcOBPqyhu/Qtmg
-	dOCDsf0f7v7a4fCmyTNH2m10n9X1ZRv1Y37aVqzOrLJUC6y+rmQSBny0OaXM0U3i5wqA=
-X-Gm-Gg: ASbGncvuAR2om/v4HC2yghjp7s0jJSY1sM8ZPhYKBuLnisfrhfevMa42ySxIhtM6gWg
-	B/u6/Wkbe71x8P92Fh8fn3iiO0izgNf5/7LnUl7eW0f+gMVHxM/nVjP8iOjyRrsA2aV1hHTtMTR
-	oaVM83MymgSXy3cVebci05xZ/WolEaT4U9zXQ42+Ma2ipa//TRcJQHxXa6NQAx7bpaLh1DdqQ5l
-	a3BQAIDvvuHVMy7airyooo3kd1/H6AOS8NKTda1UWnhoqTJ95niCskfpHxUtrAeWVSfo0CDs8Xr
-	oSlbAMXDMnA0Kh246lbm+FRP9xA1sMb26wqrGbeKeBfofw86gdB58VOnhGJ+Cl07TysZ164ii48
-	TTjMy5j1HtDaz5NYJpZ/PbvqHRa7iJzduH+nLAsjJrYWjRu+3oio1U/50
-X-Received: by 2002:a05:622a:38e:b0:4ec:fff:2815 with SMTP id d75a77b69052e-4ed30df2e79mr102046741cf.6.1762169013910;
-        Mon, 03 Nov 2025 03:23:33 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFZBwX1D3jJCH15p0kqXDXLz16GUl/rSLJBQ9cfFvv8QZ1FAc1bO2rtImHjVEhSEJLcC8qRzA==
-X-Received: by 2002:a05:622a:38e:b0:4ec:fff:2815 with SMTP id d75a77b69052e-4ed30df2e79mr102046551cf.6.1762169013507;
-        Mon, 03 Nov 2025 03:23:33 -0800 (PST)
-Received: from [192.168.119.202] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6408ef1c486sm7892631a12.36.2025.11.03.03.23.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Nov 2025 03:23:33 -0800 (PST)
-Message-ID: <e516564b-5e43-4628-836c-ff227a68d20e@oss.qualcomm.com>
-Date: Mon, 3 Nov 2025 12:23:29 +0100
+	s=arc-20240116; t=1762169397; c=relaxed/simple;
+	bh=02Xm9aWU5ML4s0PYpl8iCFqzRN8TlwzC37mlWleAjrY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GDIeK26oQ5KKwiOMOFTmBvMs4nIYJpSN3/91X1CRAax5ZIULhJ0LNEf6BFz9MJYBvgnpR94aH+WCgPdVx8SXApshgAeSVBoGGa46PZGPVs83RQ63ynZVusgA8pwoXSSM+XbZi+CPKQWRrMVX86IhXJZARavjbVszKjSNHXwYyvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cWm599um; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762169382;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=P2xZ0GILbr2Y9bhSsbkAZ2CEPTxZiSfugV1/vX9rVKA=;
+	b=cWm599um4HMWXTwV1n8vvwWPvQqMP+7/3CHcMzLdrMiM8M0FsJUS2NuJ8f7jmc68b6+eu2
+	/LuxjLHgpDMBxj7NnOOdBfvDcCcMg+3/NljupUr9RL6/3PHkp3iM+u2CcUQgj7xa/zxxL0
+	giOHD3IAQ48Q6+0rEE6mJsAE/9jg6LE=
+From: Menglong Dong <menglong.dong@linux.dev>
+To: Menglong Dong <menglong8.dong@gmail.com>,
+ Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
+ Eduard <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Matt Bobrowski <mattbobrowski@google.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Leon Hwang <leon.hwang@linux.dev>, jiang.biao@linux.dev,
+ bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+ linux-trace-kernel <linux-trace-kernel@vger.kernel.org>
+Subject:
+ Re: [PATCH bpf-next v3 4/7] bpf,x86: add tracing session supporting for
+ x86_64
+Date: Mon, 03 Nov 2025 19:24:24 +0800
+Message-ID: <3577705.QJadu78ljV@7950hx>
+In-Reply-To:
+ <CAADnVQKDza_ueBFRkZS8rmUVJriynWi_0FqsZE8=VbTzQYuM4w@mail.gmail.com>
+References:
+ <20251026030143.23807-1-dongml2@chinatelecom.cn>
+ <CADxym3Y4nc2Qaq00Pp7XwmCXJHn0SsEoOejK8ZxhydepcbB8kQ@mail.gmail.com>
+ <CAADnVQKDza_ueBFRkZS8rmUVJriynWi_0FqsZE8=VbTzQYuM4w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] arm64: dts: qcom: msm8953-lenovo-kuntao: Add
- initial device tree
-To: Raihan Ahamed <raihan1999ahamed@gmail.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, Kees Cook <kees@kernel.org>,
-        Tony Luck <tony.luck@intel.com>,
-        "Guilherme G . Piccoli"
- <gpiccoli@igalia.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20251031135506.214025-1-raihan1999ahamed@gmail.com>
- <20251031135506.214025-2-raihan1999ahamed@gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20251031135506.214025-2-raihan1999ahamed@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=P7Q3RyAu c=1 sm=1 tr=0 ts=690890b6 cx=c_pps
- a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=pGLkceISAAAA:8 a=iN3SH9SwNKT8slD2fOUA:9
- a=QEXdDO2ut3YA:10 a=dawVfQjAaf238kedN5IG:22
-X-Proofpoint-GUID: 80B2qps6KkSPACUZPv7P8lkfEg9CI8lt
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAzMDEwNCBTYWx0ZWRfX7v6imZ5nBba8
- t+MlZi3gk1dwCfKgF/KDVTbBDiIKVapmbN9fJVCcG/kuMV09IATW6f/RFmJdDimtGzDZXyehEac
- 2H7v7CKmKevtzEvpIVNa3FCqQKBxIIrXep5xbcec3NyaPSsUhn8Ax7PaPlNQ1QntoeIHVoHknzZ
- hiRsFz3x09uvWycZH0mqRKb4B3UHFV0JXaVOcV1RCqNog5wBxBafulMP9MvX4ssOjsy9aSbQiuj
- uFlOPpVHlrBwAPzGBU0CumG4iz6tlYHlyJQ2d71nLCLA029gMcIgxgYnMd+TKTZa5rdNsQnK4Df
- HTcl90SHI3WZqyKg94q0xab+m9qqrYcjdm1/k1r4uP1xD7xPVP4knMmLuBG84C0LIqIKnHc6pvH
- SMXgEbC8ebZCQ51qp0YA2V9amv+6/w==
-X-Proofpoint-ORIG-GUID: 80B2qps6KkSPACUZPv7P8lkfEg9CI8lt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-03_01,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 lowpriorityscore=0 bulkscore=0 spamscore=0 phishscore=0
- clxscore=1015 suspectscore=0 adultscore=0 malwarescore=0 priorityscore=1501
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.22.0-2510240001 definitions=main-2511030104
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Migadu-Flow: FLOW_OUT
 
-On 10/31/25 2:51 PM, Raihan Ahamed wrote:
-> Lenovo P2 is a handset using the MSM8953 SoC released in 2016
-> 
-> Add a device tree with initial support for:
-> 
-> - Enable accelerometer sensor
-> - Enable pinctrl for GPIO keys
-> - Enable gpu and add gpu_zap_shader
-> - GPIO keys
-> - SDHCI (internal and external storage)
-> - USB Device Mode
-> - WCNSS (WiFi/BT)
-> - Regulators
-> 
-> Signed-off-by: Raihan Ahamed <raihan1999ahamed@gmail.com>
-> ---
+On 2025/11/1 01:57, Alexei Starovoitov wrote:
+> On Thu, Oct 30, 2025 at 8:36=E2=80=AFPM Menglong Dong <menglong8.dong@gma=
+il.com> wrote:
+> >
+> > On Fri, Oct 31, 2025 at 9:42=E2=80=AFAM Alexei Starovoitov
+> > <alexei.starovoitov@gmail.com> wrote:
+> > >
+> > > On Sat, Oct 25, 2025 at 8:02=E2=80=AFPM Menglong Dong <menglong8.dong=
+@gmail.com> wrote:
+> > > >
+> > > > Add BPF_TRACE_SESSION supporting to x86_64. invoke_bpf_session_entr=
+y and
+> > > > invoke_bpf_session_exit is introduced for this purpose.
+> > > >
+> > > > In invoke_bpf_session_entry(), we will check if the return value of=
+ the
+> > > > fentry is 0, and set the corresponding session flag if not. And in
+> > > > invoke_bpf_session_exit(), we will check if the corresponding flag =
+is
+> > > > set. If set, the fexit will be skipped.
+> > > >
+> > > > As designed, the session flags and session cookie address is stored=
+ after
+> > > > the return value, and the stack look like this:
+> > > >
+> > > >   cookie ptr    -> 8 bytes
+> > > >   session flags -> 8 bytes
+> > > >   return value  -> 8 bytes
+> > > >   argN          -> 8 bytes
+> > > >   ...
+> > > >   arg1          -> 8 bytes
+> > > >   nr_args       -> 8 bytes
+> > > >   ...
+> > > >   cookieN       -> 8 bytes
+> > > >   cookie1       -> 8 bytes
+> > > >
+> > > > In the entry of the session, we will clear the return value, so the=
+ fentry
+> > > > will always get 0 with ctx[nr_args] or bpf_get_func_ret().
+> > > >
+> > > > Before the execution of the BPF prog, the "cookie ptr" will be fill=
+ed with
+> > > > the corresponding cookie address, which is done in
+> > > > invoke_bpf_session_entry() and invoke_bpf_session_exit().
+> > >
+> > > ...
+> > >
+> > > > +       if (session->nr_links) {
+> > > > +               for (i =3D 0; i < session->nr_links; i++) {
+> > > > +                       if (session->links[i]->link.prog->call_sess=
+ion_cookie)
+> > > > +                               stack_size +=3D 8;
+> > > > +               }
+> > > > +       }
+> > > > +       cookies_off =3D stack_size;
+> > >
+> > > This is not great. It's all root and such,
+> > > but if somebody attaches 64 progs that use session cookies
+> > > then the trampoline will consume 64*8 of stack space just for
+> > > these cookies. Plus more for args, cookie, ptr, session_flag, etc.
+> >
+> > The session cookie stuff does take a lot of stack memory.
+> > For fprobe, it will store the cookie into its shadow stack, which
+> > can free the stack.
+> >
+> > How about we remove the session cookie stuff? Therefore,
+> > only 8-bytes(session flags) are used on the stack. And if we reuse
+> > the nr_regs slot, no stack will be consumed. However, it will make
+> > thing complex, which I don't think we should do.
+> >
+> > > Sigh.
+> > > I understand that cookie from one session shouldn't interfere
+> > > with another, but it's all getting quite complex
+> > > especially when everything is in assembly.
+> > > And this is just x86 JIT. Other JITs would need to copy
+> > > this complex logic :(
+> >
+> > Without the session cookie, it will be much easier to implement
+> > in another arch. And with the hepler of AI(such as cursor), it can
+> > be done easily ;)
+>=20
+> The reality is the opposite. We see plenty of AI generated garbage.
+> Please stay human.
 
-[...]
+It's not wised to make the AI generate all the things for us, and
+I find the AI is not good at planing and designing, but good at
+implement a single thing, such as generating a instruction or
+machine code from the C code. Of course I can generate it by
+myself with clang, but it still save a lot efforts.
 
-> +++ b/arch/arm64/boot/dts/qcom/msm8953-lenovo-kuntao.dts
-> @@ -0,0 +1,294 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2024, Raihan Ahamed <raihan1999ahamed@gmail.com>
-> + */
-> +/dts-v1/;
-> +
-> +#include "msm8953.dtsi"
-> +#include "pm8953.dtsi"
-> +#include "pmi8950.dtsi"
-> +
-> +/delete-node/ &qseecom_mem;
-> +
-> +/ {
-> +	model = "Lenovo P2";
-> +	compatible = "lenovo,kuntao", "qcom,msm8953";
-> +	chassis-type = "handset";
-> +	qcom,msm-id = <0x125 0x00>;
+>=20
+> >
+> > > At this point I'm not sure that "symmetry with kprobe_multi_session"
+> > > is justified as a reason to add all that.
+> > > We don't have a kprobe_session for individual kprobes after all.
+> >
+> > As for my case, the tracing session can make my code much
+> > simpler, as I always use the fentry+fexit to hook a function. And
+> > the fexit skipping according to the return value of fentry can also
+> > achieve better performance.
+>=20
+> I don't buy the argument that 'if (cond) goto skip_fexit_prog'
+> in the generated trampoline is measurably faster than
+> 'if (cond) return' inside the fexit program.
 
-QCOM_ID_MSM8953 (dt-bindings/arm/qcom,ids.h)
+=46or now, there maybe no performance improvement. And I
+were playing to implement such logic in the next step:
 
-> +	qcom,board-id = <0x41 0x82b1 0x41 0x83b0>;
-> +
-> +	gpio-keys {
-> +		compatible = "gpio-keys";
-> +
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&gpio_key_default>;
+If there are no fexit and modify_return progs in the trampoline,
+I'll check if "session_flags =3D=3D ALL_SKIP" after the entry of the
+fsession, and skip the origin call in such case and return directly
+in such case. Therefore, the performance of fsession is almost
+the same as fentry. According to our testing, the performance
+of fexit is half of fentry. So the performance in this case has a
+100% increasing.
 
-property-n
-property-names
+This is a just rough thought, not sure if it works.
 
-in this order, please
-> +
-> +		key-volume-up {
-> +			label = "Volume Up";
-> +			gpios = <&tlmm 85 GPIO_ACTIVE_LOW>;
-> +			linux,code = <KEY_VOLUMEUP>;
-> +			debounce-interval = <15>;
-> +		};
-> +
-> +		one-key-low-power {
-> +			label = "onekeylowpower";
-> +			gpios = <&tlmm 86 GPIO_ACTIVE_LOW>;
-> +			linux,code = <ABS_HAT1Y>;
-> +			debounce-interval = <15>;
-> +		};
-> +
-> +		homepage {
-> +			label = "homepage";
-> +			gpios = <&tlmm 132 GPIO_ACTIVE_LOW>;
-> +			linux,code = <KEY_HOMEPAGE>;
-> +			debounce-interval = <15>;
-> +			gpio-key,wakeup;
-> +		};
+In fact, the performance improvement can be achieved more in the
+bpf prog. For example, I want to trace the return value of skb_clone()
+with the TCP port being 8080, I have to write following code:
 
-Please sort these nodes without an address by their name> +	};
-> +
-> +	reserved-memory {
-> +		qseecom_mem: qseecom@84a00000 {
-> +			reg = <0x0 0x84a00000 0x0 0x1900000>;
-> +			no-map;
-> +		};
-> +
-> +		ramoops@8ee00000 {
-> +			compatible = "ramoops";
-> +			reg = <0x0 0x8ee00000 0x0 0x80000>;
-> +			console-size = <0x40000>;
-> +			ftrace-size = <0x15000>;
-> +			record-size = <0x5000>;
-> +			pmsg-size = <0x2000>;
+SEC("fentry/skb_clone")
+int clone_entry(struct sk_buff *skb)
+{
+    /* parse the skb and do some filter
+     *    |
+     * return 0 if not TCP + 80 port
+     *    |
+     * save the address of "skb" to the hash table "m_context"
+     *    |
+     * output the skb + timestamp
+     */
+    return 0;
+}
 
-Usually ecc-size = <8> is desired, as the traces are often corrupted
+SEC("fexit/skb_clone")
+int clone_exit(struct sk_buff *skb, u64 ret)
+{
+    /* lookup if skb in the "m_context", return 0 if not
+     *    |
+     * output the skb + return value + timestamp
+     *    |
+     * delete the "skb" from the m_context
+     */
+    return 0;
+}
 
-[...]
+I have to maintain a hash table "m_context" to check if
+the exit of skb_clone() is what I want. It works, but it has
+extra overhead in the hash table lookup and deleting. What's
+more, it's not stable on some complex case.
 
-> +&tlmm {
-> +	gpio-reserved-ranges = <0 4>, <135 4>;
+The problem is that we don't has a way to pair the
+fentry/fexit on the stack(do we?).
 
-Any chance you know what is on these GPIOs, and could document it (e.g.
-like in x1-crd.dtsi)
+>=20
+> > AFAIT, the mast usage of session cookie in kprobe is passing the
+> > function arguments to the exit. For tracing, we can get the args
+> > in the fexit. So the session cookie in tracing is not as important as
+> > in kprobe.
+>=20
+> Since kprobe_multi was introduced, retsnoop and tetragon adopted
+> it to do mass attach, and both use bpf_get_attach_cookie().
+> While both don't use bpf_session_cookie().
+> Searching things around I also didn't find a single real user
+> of bpf_session_cookie() other than selftests/bpf and Jiri's slides :)
+>=20
+> So, doing all this work in trampoline for bpf_session_cookie()
+> doesn't seem warranted, but with that doing session in trampoline
+> also doesn't look useful, since the only benefit vs a pair
+> of fentry/fexit is skip of fexit, which can be done already.
+> Plus complexity in all JITs... so, I say, let's shelve the whole thing fo=
+r now.
 
-Konrad
+Yeah, the session cookie is not useful in my case too, I'm OK to
+skip it.
+
+The pair of fentry/fexit have some use cases(my nettrace and
+Leon's bpfsnoop, at least). Not sure if the reason above is sufficient,
+please ignore the message if it is not :)
+
+The way we implement the trampoline makes it arch related and
+complex. I tried to rewrite it with C code, but failed. It's too difficult
+and I suspect it's impossible :/
+
+Thanks!
+Menglong Dong
+
+>=20
+>=20
+
+
+
+
 
