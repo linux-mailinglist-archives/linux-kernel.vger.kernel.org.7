@@ -1,100 +1,110 @@
-Return-Path: <linux-kernel+bounces-883792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40B42C2E6E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:41:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89BB1C2E6F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:41:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAB3D3BA476
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:41:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A445B18954DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D517301473;
-	Mon,  3 Nov 2025 23:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743A730103B;
+	Mon,  3 Nov 2025 23:41:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="PVbmxVvG"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ROl9OrnP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B3429BDB5;
-	Mon,  3 Nov 2025 23:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AEA42FF667;
+	Mon,  3 Nov 2025 23:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762213255; cv=none; b=RdSwXJ6TOmXlXpXd97havacOofp2j5q9TNBhX7oXiPSuopoAFuVCJ/xf0T5z4AKJ1KzNX6aRLuXNRnueRr57pwyiKeuTvZ/aRAxGeCoD8xBCHXC4oFXAVnMvJRJqd0ogte+koz11jSWNXCu008EGCFIE7+xmYN29ThZ1jzKGpd8=
+	t=1762213279; cv=none; b=a1JTMjnhHpFN8Tom0RYLRgP344rfujM8gq0FnULsHWQWBqVCM02f/7/AQ92xGGxL44mmhhJ9O6CZsk/U04UyRoJmaUurpqUR07i370w5WC6TaG+gX5CUpfmqH3pF4bt1rESQCZwyM03socMHfgKV4WJ5rQwA0O2lTZq6gD6mmVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762213255; c=relaxed/simple;
-	bh=13BNk5M4TgX6y2PqTeJzVc0SVIvFLZ5JOrBQto9JgIM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MMnd7RpaYweSMpGaKv44RHQzZY9F3G7SJsaNj6Z/+bkbYanW0yWqSiG6bwmAkR6VGQ5K1WELxjJzitXJjrY7tKijJ9M+sbYUdnBlESBT19AlwKYam5OH2Nj8psLLEXj2E/StwwIzLGDzejMC9iht6cnX+1a9BQf6Azg9iv+DP3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=PVbmxVvG; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type;
-	bh=CFTN/83Dw7cTrDD0Xt25qXAGDTGZ+icbmJJMOc+9iGU=; b=PVbmxVvG+OYwY/Gz2fFLvDAk6I
-	aAuQaPh++ttBSY15koqMj8d3uvnBDoAj16CO25TWZIcOxbmbnL2ueJ0z40pwdaEMoXOqIDr5uXlPg
-	2CN1K8OMBAPpJgG86QATc2MtoGgDgTWkgyZruj/h4stAN4jksj8JEK102zJe/dh1nUCYjldpkuA5g
-	VZKVjazRFkuLIwtz+n/0Xhula5ONHdLVDtKqmIktsbbBooMbMS2hovfE5QHpoq3NrckAR6lRfNZGg
-	eaDWwbSQG0bvwWKv698zB9HYm5eFG/EHMQnjkgySa0WXVxHdMGip2jv5dt5m+ht+5BF7EQ1UDkeFf
-	nD3CYsSQ==;
-Received: from i53875a3a.versanet.de ([83.135.90.58] helo=phil.fritz.box)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1vG4AK-0007rE-E8; Tue, 04 Nov 2025 00:40:48 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: heiko@sntech.de
-Cc: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	michael.riesch@collabora.com
-Subject: [PATCH 2/2] dt-bindings: clock: rk3568: Drop CLK_NR_CLKS define
-Date: Tue,  4 Nov 2025 00:40:32 +0100
-Message-ID: <20251103234032.413563-3-heiko@sntech.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20251103234032.413563-1-heiko@sntech.de>
-References: <20251103234032.413563-1-heiko@sntech.de>
+	s=arc-20240116; t=1762213279; c=relaxed/simple;
+	bh=VKiITf9+qS6tyVB2MiLwEqlp/hx+AJoBSKEVJ8HXt4o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ijQHl1MYw5RAVgxHIdCZTVE9V8UssVae9Gvw/S2ZCWLTrZgQHoC4W/uWa5l75GqRwChdQRrsmpXzJvGtRC/6rAtBd7SzCy3sk5bunJCbRPsvT97eCdEBKe1AhwgoX2W65BZ0krT6EKhnuON3mByKYy5ELrDw4P10nRsyWhSgMLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ROl9OrnP; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762213278; x=1793749278;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=VKiITf9+qS6tyVB2MiLwEqlp/hx+AJoBSKEVJ8HXt4o=;
+  b=ROl9OrnPkEJrjAYHcn6V55IvGVDQW58bzEfbS9bkQhDSYoZ215YYC6cu
+   R0IDt9W9/dbYrq017pYj1sLMzwo1nk0Fwrqnc8ezFFO98IaJ5cSPD+qws
+   DoYXNS/h8GCxB+NMHKZmFuIYhwIywfXgG73tvFAUGqcYBZcQzpQU0hctr
+   j41aWt9ps/UXUg3j/YAx4lYfP0GJT7RD31X7dr+iZJC2vd0mOPXibMZwt
+   ljRZRV55VxC8l7GZBC05cHh8np+DfXQ+N/Nh2Hv5uVlzAm1CQSNo03Rny
+   jYUfmZXMzMqXbE1TSNHxE+y43503Dyl6zAaSkR5fLuDf+pwh9NiZVapdQ
+   g==;
+X-CSE-ConnectionGUID: hDumcN8+SnmHbdr1RBzM5g==
+X-CSE-MsgGUID: 36CUx6qMQsmzykkgjQx59g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="74591597"
+X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
+   d="scan'208";a="74591597"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 15:41:18 -0800
+X-CSE-ConnectionGUID: MMZ6YupdQHOjc5ly7jlPcw==
+X-CSE-MsgGUID: ZQg/glfQQb2JwYZQbaF4NA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
+   d="scan'208";a="186678175"
+Received: from dwesterg-mobl1.amr.corp.intel.com (HELO [10.125.110.133]) ([10.125.110.133])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 15:41:16 -0800
+Message-ID: <39ddd86e-f635-40f9-b3b7-0d1583b6bb6e@intel.com>
+Date: Mon, 3 Nov 2025 16:41:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] Documentation/driver-api/cxl: remove page-allocator quirk
+ section
+To: Jonathan Corbet <corbet@lwn.net>, Gregory Price <gourry@gourry.net>,
+ linux-cxl@vger.kernel.org
+Cc: dave@stgolabs.net, jonathan.cameron@huawei.com,
+ alison.schofield@intel.com, vishal.l.verma@intel.com, ira.weiny@intel.com,
+ dan.j.williams@intel.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20251003143233.1985150-1-gourry@gourry.net>
+ <87bjlibsdi.fsf@trenco.lwn.net>
+From: Dave Jiang <dave.jiang@intel.com>
+Content-Language: en-US
+In-Reply-To: <87bjlibsdi.fsf@trenco.lwn.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-CLK_NR_CLKS has always only be used on the driver side to calculate array
-sizes should never have been part of the clock-binding.
 
-Let's drop it, since the kernel code no longer uses it either and nothing
-else has ever used it.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- include/dt-bindings/clock/rk3568-cru.h | 2 --
- 1 file changed, 2 deletions(-)
+On 11/3/25 4:36 PM, Jonathan Corbet wrote:
+> Gregory Price <gourry@gourry.net> writes:
+> 
+>> The node/zone quirk section of the cxl documentation is incorrect.
+>> The actual reason for fallback allocation misbehavior in the
+>> described configuration is due to a kswapd/reclaim thrashing scenario
+>> fixed by the linked patch.  Remove this section.
+>>
+>> Link: https://lore.kernel.org/linux-mm/20250919162134.1098208-1-hannes@cmpxchg.org/
+>> Signed-off-by: Gregory Price <gourry@gourry.net>
+>> ---
+>>  .../cxl/allocation/page-allocator.rst         | 31 -------------------
+>>  1 file changed, 31 deletions(-)
+> 
+> This patch is still outstanding...should I take it through docs?
 
-diff --git a/include/dt-bindings/clock/rk3568-cru.h b/include/dt-bindings/clock/rk3568-cru.h
-index 5263085c5b23..f01f0e9ce8f1 100644
---- a/include/dt-bindings/clock/rk3568-cru.h
-+++ b/include/dt-bindings/clock/rk3568-cru.h
-@@ -483,8 +483,6 @@
- 
- #define PCLK_CORE_PVTM		450
- 
--#define CLK_NR_CLKS		(PCLK_CORE_PVTM + 1)
--
- /* pmu soft-reset indices */
- /* pmucru_softrst_con0 */
- #define SRST_P_PDPMU_NIU	0
--- 
-2.47.2
+I just pushed it to cxl/next this morning. Thanks. 
+
+> 
+> Thanks,
+> 
+> jon
 
 
