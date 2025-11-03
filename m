@@ -1,208 +1,180 @@
-Return-Path: <linux-kernel+bounces-883568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83281C2DC5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 20:00:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C4A8C2DC70
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 20:01:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3BBDB4E4994
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 19:00:31 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C141A4ECEBE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 19:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8D701B87C0;
-	Mon,  3 Nov 2025 19:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DFBA1AF0AF;
+	Mon,  3 Nov 2025 19:01:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GiQwvqaH"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="ZznU2pnB"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B403299947
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 19:00:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762196427; cv=none; b=q9q+DlpQX4YphZjJAxO691Jrl7pEYn8dbK1S57T9hF4u1IWYnwTXBOuB8cyNbFmH7oy05XmdyVsEm86Wr517UiWOuudUfXEyJU16pbFsaqHcpMgKltbwTM5MFNy+1KDFdW9xDtkQpYwGIsVCuWuyOicM7fQh5hhfylGukCQ57ZM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762196427; c=relaxed/simple;
-	bh=5Kc76iaR2aicGpXWI2CwVtoEWluQcseYpAvOTgc83Jw=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2062CCC5;
+	Mon,  3 Nov 2025 19:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762196487; cv=pass; b=WwtbeozBtBUXtqZvftJpjlSh6OqSHkkXnySGTEt3Dxxy8ba9Tu7L+R5Ym51CSej6ADrrFD7x0+krOdC77IIavzHJtkBSdtzBFssNK543FjgbAvi5OePNQWBpJT1c7YEqLZQXFUlS5oCHxVS1IxfifAtl+0CQnrNolkJ8fepMOy4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762196487; c=relaxed/simple;
+	bh=yJC87dA8BpOjpzyrYOBsDmH+6xNqhPdamuFM53Bv7q4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MLhg11O8nQfJ38KB9GR/Bfbs3Ca1kA6d1LtYynF8cIuDdy5+bo1TJrvqhlWulko5jw4kJ7AyUOXYD70+213JLONbOQRQEwwXJftSzT2N/hs0p9p4OdksPbaUfooP6nIyfFZjmo7z2IaI49bpgs/00+EIEOuM1BfvGN9ZcNOnxpE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GiQwvqaH; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-b626a4cd9d6so698346166b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 11:00:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762196411; x=1762801211; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QJ3N2WUq/UZ5e0T22UvDFgeGGC9bQkna+j2RgD0j4rQ=;
-        b=GiQwvqaHr9wEq6132VYfm8iKRI4FGC+8x496Pvg6dWe9zodE9zoozX/wrcUk/ZKHgq
-         5ckO9Z4C5FLWzUDAZ8UjroZRrOXlsvMiOtLxGNo4qZeeW4NH50rdjHPh6bIxQy8odj9M
-         wbYZ0cWgsjHgTpxwRdWBCK8KaMUzIJ4ImKPOjHDYUQz1EhFOU09gRENbb87s8jpfXGUF
-         2C3wHSy00Fqm3dbESN3krnSW6XEQ05WgtRYNgMOQ0KIx5MzAXk6AqUqSKN3wubDHrhNd
-         Bhiu5HfFItPP8ebDYvCmtsJOCCPKLQmKGeSyHAtWnU9ey465/YJNfL7I/XIJwFxu1Xch
-         9Drg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762196411; x=1762801211;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QJ3N2WUq/UZ5e0T22UvDFgeGGC9bQkna+j2RgD0j4rQ=;
-        b=FyPlIFetX7QS+V3c9+BrDdP0Zhlh5h6S7pJ5RMQFisLgvGCawEWVC44O6R8GLZ0kl3
-         tUzZ2+X08J9umRt7p74jfhXSI2hK1W50a0o9dCLL5tgKwozgca0sPrTkVpytjZVY/7mi
-         Ga6M9b5UBGuOB9luyr/J5738o/msxGv0RQOqqI1Ay5K0OZ+miD3awI/DutIALJJs/bsB
-         3qeNPtwPLpfgVXn3jhBdzwFGfQrjHW7F5wYizHDPw+/cXKZg0q4VB3sh6D/l74epqrPY
-         NFTF/ikziDyD5Cr+RN2Ve4HmEJp71kKzJdKHgD4x8iTysGy4axOEMkKMcm0aZ0r/TbpQ
-         CLcg==
-X-Forwarded-Encrypted: i=1; AJvYcCXbjZKI8pV7RFG/2mNKgg8QV55OMrJDYktr102Na20ov1a+g9XlTYb2S0k+mYpBQSDDf1TmS0J0QcY1/SA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxV2dH5f1aNaPSuhvsCHgOSTvl8japBKpDg9/pgw9/jnNHG3GAI
-	r6F4Bd0qkBgezO1F8A9awyziLhByPXuD/k1E5JAddUQjW27aI2TIN5oHB5RQLq52kx8=
-X-Gm-Gg: ASbGncte0EtH3Cnm/aFCx0gqH5RNfYabh3yHEizbzxallaSy2unhx3aoFbmXuiaEZeP
-	sXusS/A48yKMPOz3+2IKkDnqqYCftCdGpPnWfNvmtsrLHp5Sm9OaxuMyHJPlgcPC+Td+QUrNrTR
-	sKSoDPpBklLOMV67Pu8XspvYglATMb1XQPs1JI2kAZ+tqeMApkJlDjTHOtV0w6G2ROKvEMroqpy
-	QxsZjeaIoLymPComQd4el5mvM3TrOZdL3tV4/hgOJbNRGW/j5NJ4M0V8zlbpnSn8KSHmxc8Ueif
-	SxR/i+27N97Wao0Upf08sa/ysiJEsBYzkbLnlDj5ouu7lrdJ5xofy7Cg4YG8F0P4sY/jUUeXX6k
-	OlPPbtEN2SFwrYqJ/s++WMlz9fyeeAt1jvQHBepCSsuBYobqVrICgQ1DURa6PaaB9bhw7dx8TH7
-	jUUTJqoRtt91i3hFPVklPNU3YB
-X-Google-Smtp-Source: AGHT+IFhQXFPVDqHyarWQQ7R2subtRafoxgNsFUzIvYeodwBNh8qSwx6VEdKXz8J8S7jSfx/fTTE1Q==
-X-Received: by 2002:a17:906:ad0:b0:b70:a982:ad71 with SMTP id a640c23a62f3a-b70a982f501mr457990366b.33.1762196410649;
-        Mon, 03 Nov 2025 11:00:10 -0800 (PST)
-Received: from localhost (109-81-31-109.rct.o2.cz. [109.81.31.109])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7077ce927csm1117305366b.63.2025.11.03.11.00.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 11:00:10 -0800 (PST)
-Date: Mon, 3 Nov 2025 20:00:09 +0100
-From: Michal Hocko <mhocko@suse.com>
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	Alexei Starovoitov <ast@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	JP Kobryn <inwardvessel@gmail.com>, linux-mm@kvack.org,
-	cgroups@vger.kernel.org, bpf@vger.kernel.org,
-	Martin KaFai Lau <martin.lau@kernel.org>,
-	Song Liu <song@kernel.org>,
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v2 06/23] mm: introduce BPF struct ops for OOM handling
-Message-ID: <aQj7uRjz668NNrm_@tiehlicka>
-References: <20251027231727.472628-1-roman.gushchin@linux.dev>
- <20251027231727.472628-7-roman.gushchin@linux.dev>
- <aQR7HIiQ82Ye2UfA@tiehlicka>
- <875xbsglra.fsf@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TVozm/a9S52gN7XMKuZ7vQuHsHVgQCaYVeriXYRY+APCVhBzKfMQSZDcKdX5pSxR57ZsOfDrfQ64OLlPstx7Lw7TfQRZs7u6uupVXP7M7b965EpcoYrTivkec4TOTyakUJ6GK5OCaN4XgJOV3oWKQB80jTF2+9cLcmgOXCvE2vo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=ZznU2pnB; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1762196454; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=MzqOKhqJa9gC88iyxwI7s7fOQZnWvoV2aM/+RTvqDD4mxXfEG9LJjtR77alZUHm51ui76ALrT4oZnwufmrcsxbzVI0epHtG0v5MqEI4+14qZGLF8yOjXVyyF9iuPy+3DB2g/wQiAA9J9qiuiRb/xXUO7O+f8n5KJDiA2k0gujaY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1762196454; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=kNKSQa2kVwPMCXQR0sV5pA6zP64EIfrRIVHoLe4gYdQ=; 
+	b=m6OfssqaUlgY2ekPgKcnW3P4V+DvM9hzZewH/Gqv+pX1zvhRsxV0eo6xjg6BiGlxl1wOlvDHCvsJacxXoJBcH1PijR1x6dSbsG8/VtrSUmMlKK/byLu7wqtP1w0ZhX9dz1aKpTmmZbc1nMgxu4xIioKh7EAm5zrJt6i1nu064Pk=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1762196454;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=kNKSQa2kVwPMCXQR0sV5pA6zP64EIfrRIVHoLe4gYdQ=;
+	b=ZznU2pnBIg9Gek3PXRc/sHRorf7yD0gfJO5ILLjdlMkhoGZjhT1jwHCDmr39QeFF
+	up9KK+Xao29K3w11ICC/knQW/kSjMsWUzKNFd7rQu8fRssEDiHx9dfkgjqD+//d+aZF
+	YseptpAb4jRSdCE95LGYit0MeyK3huyXFpwhHrZ0=
+Received: by mx.zohomail.com with SMTPS id 1762196452142381.11883699950636;
+	Mon, 3 Nov 2025 11:00:52 -0800 (PST)
+Received: by venus (Postfix, from userid 1000)
+	id D186A182F6B; Mon, 03 Nov 2025 20:00:45 +0100 (CET)
+Date: Mon, 3 Nov 2025 20:00:45 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Heiko Stuebner <heiko@sntech.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Jingoo Han <jingoohan1@gmail.com>, Shawn Lin <shawn.lin@rock-chips.com>, linux-pci@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	kernel@collabora.com
+Subject: Re: [PATCH v4 9/9] PCI: dwc: support missing PCIe device on resume
+Message-ID: <s67opnadijrebativ27oiofub5cgr3lbclhxnmwnqrkltweqqj@j4douhswobsv>
+References: <20251029-rockchip-pcie-system-suspend-v4-0-ce2e1b0692d2@collabora.com>
+ <20251029-rockchip-pcie-system-suspend-v4-9-ce2e1b0692d2@collabora.com>
+ <dc230a62-bd31-450a-9acd-fa654f694b3a@oss.qualcomm.com>
+ <qlil44i7ywwxurdfovkbqvvjff7dey53uy5hzq4zbmvg7jg54o@zdg27w4q26gr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="obly2eyx2h24unc2"
 Content-Disposition: inline
-In-Reply-To: <875xbsglra.fsf@linux.dev>
+In-Reply-To: <qlil44i7ywwxurdfovkbqvvjff7dey53uy5hzq4zbmvg7jg54o@zdg27w4q26gr>
+X-Zoho-Virus-Status: 1
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.5.1/262.144.53
+X-ZohoMailClient: External
 
-On Sun 02-11-25 13:36:25, Roman Gushchin wrote:
-> Michal Hocko <mhocko@suse.com> writes:
-> 
-> > On Mon 27-10-25 16:17:09, Roman Gushchin wrote:
-> >> Introduce a bpf struct ops for implementing custom OOM handling
-> >> policies.
-> >> 
-> >> It's possible to load one bpf_oom_ops for the system and one
-> >> bpf_oom_ops for every memory cgroup. In case of a memcg OOM, the
-> >> cgroup tree is traversed from the OOM'ing memcg up to the root and
-> >> corresponding BPF OOM handlers are executed until some memory is
-> >> freed. If no memory is freed, the kernel OOM killer is invoked.
-> >
-> > Do you have any usecase in mind where parent memcg oom handler decides
-> > to not kill or cannot kill anything and hand over upwards in the
-> > hierarchy?
-> 
-> I believe that in most cases bpf handlers will handle ooms themselves,
-> but because strictly speaking I don't have control over what bpf
-> programs do or do not, the kernel should provide the fallback mechanism.
-> This is a common practice with bpf, e.g. sched_ext falls back to
-> CFS/EEVDF in case something is wrong.
 
-We do have fallback mechanism - the kernel oom handling. For that we do
-not need to pass to parent handler. Please not that I am not opposing
-this but I would like to understand thinking behind and hopefully start
-with a simpler model and then extend it later than go with a more
-complex one initially and then corner ourselves with weird side
-effects.
- 
-> Specifically to OOM case, I believe someone might want to use bpf
-> programs just for monitoring/collecting some information, without
-> trying to actually free some memory.
-> 
-> >> The struct ops provides the bpf_handle_out_of_memory() callback,
-> >> which expected to return 1 if it was able to free some memory and 0
-> >> otherwise. If 1 is returned, the kernel also checks the bpf_memory_freed
-> >> field of the oom_control structure, which is expected to be set by
-> >> kfuncs suitable for releasing memory. If both are set, OOM is
-> >> considered handled, otherwise the next OOM handler in the chain
-> >> (e.g. BPF OOM attached to the parent cgroup or the in-kernel OOM
-> >> killer) is executed.
-> >
-> > Could you explain why do we need both? Why is not bpf_memory_freed
-> > return value sufficient?
-> 
-> Strictly speaking, bpf_memory_freed should be enough, but because
-> bpf programs have to return an int and there is no additional cost
-> to add this option (pass to next or in-kernel oom handler), I thought
-> it's not a bad idea. If you feel strongly otherwise, I can ignore
-> the return value on rely on bpf_memory_freed only.
+--obly2eyx2h24unc2
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 9/9] PCI: dwc: support missing PCIe device on resume
+MIME-Version: 1.0
 
-No, I do not feel strongly one way or the other but I would like to
-understand thinking behind that. My slight preference would be to have a
-single return status that clearly describe the intention. If you want to
-have more flexible chaining semantic then an enum { IGNORED, HANDLED,
-PASS_TO_PARENT, ...} would be both more flexible, extensible and easier
-to understand.
+Hi,
 
-> >> The bpf_handle_out_of_memory() callback program is sleepable to enable
-> >> using iterators, e.g. cgroup iterators. The callback receives struct
-> >> oom_control as an argument, so it can determine the scope of the OOM
-> >> event: if this is a memcg-wide or system-wide OOM.
-> >
-> > This could be tricky because it might introduce a subtle and hard to
-> > debug lock dependency chain. lock(a); allocation() -> oom -> lock(a).
-> > Sleepable locks should be only allowed in trylock mode.
-> 
-> Agree, but it's achieved by controlling the context where oom can be
-> declared (e.g. in bpf_psi case it's done from a work context).
+On Sat, Nov 01, 2025 at 07:50:58PM +0530, Manivannan Sadhasivam wrote:
+> On Thu, Oct 30, 2025 at 11:07:19AM +0530, Krishna Chaitanya Chundru wrote:
+> >=20
+> > On 10/29/2025 11:26 PM, Sebastian Reichel wrote:
+> > > When dw_pcie_resume_noirq() is called for a PCIe root complex for a P=
+CIe
+> > > slot with no device plugged on Rockchip RK3576, dw_pcie_wait_for_link=
+()
+> > > will return -ETIMEDOUT. During probe time this does not happen, since
+> > > the platform sets 'use_linkup_irq'.
+> > >=20
+> > > This adds the same logic from dw_pcie_host_init() to the PM resume
+> > > function to avoid the problem.
+> > >=20
+> > > Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> > > ---
+> > >   drivers/pci/controller/dwc/pcie-designware-host.c | 13 ++++++++++---
+> > >   1 file changed, 10 insertions(+), 3 deletions(-)
+> > >=20
+> > > diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/driv=
+ers/pci/controller/dwc/pcie-designware-host.c
+> > > index e92513c5bda5..f25f1c136900 100644
+> > > --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+> > > +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+> > > @@ -1215,9 +1215,16 @@ int dw_pcie_resume_noirq(struct dw_pcie *pci)
+> > >   	if (ret)
+> > >   		return ret;
+> > > -	ret =3D dw_pcie_wait_for_link(pci);
+> > > -	if (ret)
+> > > -		return ret;
+> > > +	/*
+> > > +	 * Note: Skip the link up delay only when a Link Up IRQ is present.
+> > > +	 * If there is no Link Up IRQ, we should not bypass the delay
+> > > +	 * because that would require users to manually rescan for devices.
+> > > +	 */
+> >=20
+> > In the resume scenario, we should explicitly wait for the link to be up,
+> > there is no IRQ support at this resume phase
+>=20
+> This could be fixed if the PM handlers are moved to non-no_irq ones.
+>=20
+> > and secondly after controller resume pm framework will start resuming t=
+he
+> > bridges & endpoints. what happens
+> > if the link is not up by the time endpoint is resume is called. And ent=
+ire
+> > save & restore states might also gets messed up.
+> > There will be no way to recover from this.
+> >=20
+>=20
+> This is true if there were any devices connected to the bus during suspen=
+d. If
+> there were no devices, then it is fine to skip waiting for the link to be=
+ up.
 
-but out_of_memory is any sleepable context. So this is a real problem.
- 
-> >> The callback is executed just before the kernel victim task selection
-> >> algorithm, so all heuristics and sysctls like panic on oom,
-> >> sysctl_oom_kill_allocating_task and sysctl_oom_kill_allocating_task
-> >> are respected.
-> >
-> > I guess you meant to say and sysctl_panic_on_oom.
-> 
-> Yep, fixed.
-> >
-> >> BPF OOM struct ops provides the handle_cgroup_offline() callback
-> >> which is good for releasing struct ops if the corresponding cgroup
-> >> is gone.
-> >
-> > What kind of synchronization is expected between handle_cgroup_offline
-> > and bpf_handle_out_of_memory?
-> 
-> You mean from a user's perspective?
+I thought about setting a flag in the suspend routine, that a device
+is expected to be there at resume time. But I suppose it might also
+have been removed during the system suspend?
 
-I mean from bpf handler writer POV
+Greetings,
 
-> E.g. can these two callbacks run in
-> parallel? Currently yes, but it's a good question, I haven't thought
-> about it, maybe it's better to synchronize them.
-> Internally both rely on srcu to pin bpf_oom_ops in memory.
+-- Sebastian
 
-This should be really documented.
--- 
-Michal Hocko
-SUSE Labs
+--obly2eyx2h24unc2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmkI+90ACgkQ2O7X88g7
++pqgZg/9EF9L7gEKTe0tDzzOUncD96XuMsIlIRBt+9Mjsdfd7Xr5Rbr4K0h1lEy6
+Ul6KCQTMonZt0skafLBp3yAiv3rGJsZonOjHtFMsOUNeW+fCH8Ifvp2TqW/1blih
+SJ85klUOM9ShsN42FYcQBfRMHjCFmh1/A5jAgLsT3hlTAWAsBa1PXUd3HAkH4n0P
+cFdNs3+Wlk5FqDY7/xVCUcSEg8Hvfa/VTFbzZrRe6f9E0+tZF/K+rOt5ItRE8WM0
+fRTDnExoYbrwOtkyDjHv5eKLNnZ+Ak4SZX4Td5A+Fk+GhAC8tfOXw5i1qbY4PskL
+vFpUcKUtaKgeAj4aZjuVd2yYOnY8VnuGv7YSa4FAkvNPWufhg/yuVngdqTB1tgR1
+wc5Omt3x/YJzSLl3CYGXTrSnvS1PHYQrOE6kS0mikj/k9h71VYoY7UgpnbryaGjK
+Yl7zrqY5qHsEOLXvrrxrGuRqsG6cPJDLnU+3abanBEKd+lcqMKwyFpoaVmWaWkNO
+3Fdo7XDpitfwzxu96ZxOZgNFsazcovjlziFQnOSNmFdBsiJXsfDapLX4rQqjdrDn
+zFpgCaCCVohNfAAuVq1K1FnH/8z8o6NicAy7rJMCBs8jXw3IpJdfHbT8f3JDNl3r
+AsAHt4gzUND2Jtbwu6zpOaZdLgnQqvbfM+yN1NtiCqhxdEKKtOM=
+=SFK4
+-----END PGP SIGNATURE-----
+
+--obly2eyx2h24unc2--
 
