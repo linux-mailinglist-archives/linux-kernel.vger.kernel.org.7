@@ -1,133 +1,89 @@
-Return-Path: <linux-kernel+bounces-883784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBF8FC2E68B
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:34:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84FBAC2E694
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:35:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8F5DD4E458F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:34:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DD6C3BA6AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E1D2FE058;
-	Mon,  3 Nov 2025 23:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 697562FD1DD;
+	Mon,  3 Nov 2025 23:35:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HsbjfGAo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="miw76KJz"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFB92417D9;
-	Mon,  3 Nov 2025 23:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E68142E83;
+	Mon,  3 Nov 2025 23:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762212884; cv=none; b=EZii9nAi+97AkQr4eFDDxzYM+GKZndjgetW5J4U34bQC3gm8st/WaerGwL+rwnIMZzjCU5BjXVWodBZaxfzQLPHAtXjUooMEem3ApH7dVQTe02xrClfEhjP0JvcS+jLSKZUP+2NsuifsHcfZ9YUlyFEEjVMvS/WRtQuiwemEJOI=
+	t=1762212935; cv=none; b=S32SGGmF232yrexyX9IDD19D93rVrtMFWcXJtL5Hv4LEJgkdBLKxvfNVL7dgtzBvQ9S92v6H0XVU2lwlzF1cOiPXN3Y/4H71J13lDSZ9pA7TaTGK5mFgG+O861vPjQIlW/KLXHHAMpJHTGWnTJa4jLaeBf8P7nFu7iw8ILK2Zog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762212884; c=relaxed/simple;
-	bh=IhpxRbrczZDx4iR7wevjPZO+hVuDM7MnIM31bqzk/Mo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eqJdeXApkSn0mjo5Ll73nS7vIKyemPDfu6dq6sz0+ObIioSWClxegjcRtB143fWhtJfGDNfpcIRHaa0SsEybHAnSO3ZNaCBzq5petvzxjb1nhnq6PIVVTE55F720nmnhLNFWR5Lvigz4Vp2CalLybNSG7eCOe3PIIIVddr5jAqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HsbjfGAo; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762212883; x=1793748883;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=IhpxRbrczZDx4iR7wevjPZO+hVuDM7MnIM31bqzk/Mo=;
-  b=HsbjfGAox1MzGVQp85bwFsBYfcZ7SbBQJwX7qr+1qDJWWVMkp02XOtdH
-   StihCcjgRO/MezgPMFNXQ2b7RjJ8sCNB5+4Q1KwclT1tJGeqyj5q7R2a9
-   jq7mZ7tPi/LmSHMreUENn5bbInUjRWae5FlNAHfv0rgTHIj3NVyNubGn7
-   T069+ypTnEbNRLmbiGS2YRf/SZNjDaLV8snwtuID9vtOOhDbaT6/YPrHI
-   5YPu/eT3FF0RUTEM1rg2JMQhsnskSWG5Lr1se1GW79a/CLedtu5iSbT38
-   Qw3BpQBrgEmtMlWHSX2lLTKMbIwE/XSt5FJip0Rb924uNY5Fxi21I/fRG
-   Q==;
-X-CSE-ConnectionGUID: Vp8jCxagQ1CG0VWsD3QDdQ==
-X-CSE-MsgGUID: E/hEI1GwRS+q79o8Ar8VTA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="68159161"
-X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="68159161"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 15:34:42 -0800
-X-CSE-ConnectionGUID: C0Y+4Dz+TxGVzu+8ZdDUQg==
-X-CSE-MsgGUID: 8d6c9c99Rsyx8YdbfFw6zw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="186677042"
-Received: from dwesterg-mobl1.amr.corp.intel.com (HELO [10.125.110.133]) ([10.125.110.133])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 15:34:41 -0800
-Message-ID: <20123ac5-62a2-4073-bcd5-64634ca564e9@intel.com>
-Date: Mon, 3 Nov 2025 16:34:40 -0700
+	s=arc-20240116; t=1762212935; c=relaxed/simple;
+	bh=8q5djkQgi9ATG594fdKrpiHqqoFLfmBs6o2tSOJKmrA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=TT2TJc5+hhlKxhxUwvaV4x3Yg725nObae5F2EKbjZv92k3uWrtmIC7A1sFegBB4ZSlx9IBqWfEfKvDVddR4hr3RIeRrQP2PTZaQAoNBPlNXDPv4ByfFLGkBVptuUtHslDu5OAY4acyxVqG5AtiJ2YQzTl/u2n4k+CGT287Pegl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=miw76KJz; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net BCC2840AED
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1762212933; bh=8q5djkQgi9ATG594fdKrpiHqqoFLfmBs6o2tSOJKmrA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=miw76KJzANTlPp/FaYCIpqdzrI47P7DUX12kPe1mVu021fJ/HVl6sF2HWuLdjma/T
+	 HoqLRME5MfKP6jGWHeqcsX4EA2v+TBSfCveylOmdaCEREvsp1Ihu8162McjfQpZcd+
+	 u8k74vTn8FGpX+TuYLAs+us1an7KP2PVysmcbJO1qzGjrgCmvELslJzK6JWDkhAYll
+	 GOCyxHa3U4y8QZiowrwh3Kkg2MGIjEaeZ56GyGxZvHo93G7cbft4M8Tla1lsYzPRvY
+	 5xDHzWjXvxipLfO+9UD9Ba1gWKdgxAR7mJz9/BZAif8ycLHPpht/GmnF8b78JyR9RL
+	 MV+FJXNq6niCQ==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id BCC2840AED;
+	Mon,  3 Nov 2025 23:35:33 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Tomas Glozar <tglozar@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>
+Cc: linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, John Kacur <jkacur@redhat.com>, Luis
+ Goncalves <lgoncalv@redhat.com>, Costa Shulyupin <costa.shul@redhat.com>,
+ Crystal Wood <crwood@redhat.com>, Attila Fazekas <afazekas@redhat.com>,
+ Tomas Glozar <tglozar@redhat.com>
+Subject: Re: [PATCH 0/9] Documentation/rtla: Cover default options
+In-Reply-To: <20251010083338.478961-1-tglozar@redhat.com>
+References: <20251010083338.478961-1-tglozar@redhat.com>
+Date: Mon, 03 Nov 2025 16:35:32 -0700
+Message-ID: <87fraubsfv.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 09/14] cxl/acpi: Prepare use of EFI runtime services
-To: Robert Richter <rrichter@amd.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Davidlohr Bueso <dave@stgolabs.net>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- Gregory Price <gourry@gourry.net>,
- "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
- Terry Bowman <terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
-References: <20251103184804.509762-1-rrichter@amd.com>
- <20251103184804.509762-10-rrichter@amd.com>
-From: Dave Jiang <dave.jiang@intel.com>
-Content-Language: en-US
-In-Reply-To: <20251103184804.509762-10-rrichter@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
+Tomas Glozar <tglozar@redhat.com> writes:
 
+> RTLA has many options that have a default value that is used when
+> the option is not set associated with them. Those are not covered in
+> the documentation for the options, which creates confusion among users.
+>
+> Document the default behavior for all relevant options: -H, -P, -C,
+> --trace-buffer-size. Some of these are covered in general
+> descriptions, only missing from the option documentation.
+>
+> Also, fix a few typos and incorrect naming of tracers.
 
-On 11/3/25 11:47 AM, Robert Richter wrote:
-> In order to use EFI runtime services, esp. ACPI PRM which uses the
-> efi_rts_wq workqueue, initialize EFI before CXL ACPI.
-> 
-> There is a subsys_initcall order dependency if driver is builtin:
-> 
->  subsys_initcall(cxl_acpi_init);
->  subsys_initcall(efisubsys_init);
-> 
-> Prevent the efi_rts_wq workqueue being used by cxl_acpi_init() before
-> its allocation. Use subsys_initcall_sync(cxl_acpi_init) to always run
-> efisubsys_init() first.
-> 
-> Reported-by: Gregory Price <gourry@gourry.net>
-> Tested-by: Joshua Hahn <joshua.hahnjy@gmail.com>
-> Reviewed-by: Joshua Hahn <joshua.hahnjy@gmail.com>
-> Reviewed-by: Gregory Price <gourry@gourry.net>
-> Signed-off-by: Robert Richter <rrichter@amd.com>
+So I see that this series is still unapplied...should I take it through
+docs?
 
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>> ---
->  drivers/cxl/acpi.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
-> index 1ab780edf141..a54d56376787 100644
-> --- a/drivers/cxl/acpi.c
-> +++ b/drivers/cxl/acpi.c
-> @@ -996,8 +996,12 @@ static void __exit cxl_acpi_exit(void)
->  	cxl_bus_drain();
->  }
->  
-> -/* load before dax_hmem sees 'Soft Reserved' CXL ranges */
-> -subsys_initcall(cxl_acpi_init);
-> +/*
-> + * Load before dax_hmem sees 'Soft Reserved' CXL ranges. Use
-> + * subsys_initcall_sync() since there is an order dependency with
-> + * subsys_initcall(efisubsys_init), which must run first.
-> + */
-> +subsys_initcall_sync(cxl_acpi_init);
->  
->  /*
->   * Arrange for host-bridge ports to be active synchronous with
+Thanks,
 
+jon
 
