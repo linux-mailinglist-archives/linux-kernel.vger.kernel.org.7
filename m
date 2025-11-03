@@ -1,176 +1,122 @@
-Return-Path: <linux-kernel+bounces-882457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D57DC2A817
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:12:27 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C20CC2A832
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:14:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id A83443463D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:12:26 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 89B314E22FB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1AC2D249A;
-	Mon,  3 Nov 2025 08:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2E92D7DDC;
+	Mon,  3 Nov 2025 08:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S0YNXVS0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="oNyzKVTn"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9CA12C0282
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 08:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3D828DF07;
+	Mon,  3 Nov 2025 08:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762157540; cv=none; b=AVwOw1Sc+BJhN+96Wf1vOQqcctpDv3ScvKbwOmexeP1Zwdr43cjM1dq+UvX9htGPSA2hA8nwACUpMmXG7tntk2EQu3OnBaC8Ts9riWYcnB5auF0If/hlmA1RdLFDKtjk0tuIEUcX9Dz0wOZzYR1pfIrayJ6Xm9hNKiKUf5m5iQo=
+	t=1762157643; cv=none; b=DfFUf6j4PvxzFDzCWWgF4zQau/cnmnTsaDWFJ/1Rk/+TJgCLLq1CY/+9Q2R33J2zFD94jGL60bzgQFJrK+s9xhnmeGIwGCIblmOfd8fvGDhxK5asl6xgswlDfj+Wt7KJLgizfLOBAIRDIVYlkNDLZys3SuMAhSHesK1vmUtvAUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762157540; c=relaxed/simple;
-	bh=IvpnIGpW5pDCkLQfXgWwGHkEHfCk7MiqPLCNiRLC+WQ=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=bidm4QE4qcH+WHXSdVyfAJVmVY2r/MNB7bD1UWuvs269HWW1RvXCHsgFYJG9/1/uyPrcOpMn5Q7JG8rt12IgsYrBgzUvMWnxD1PbawPd0Ly5Se6v34yT40BkT8k4fM3U8XCshtpquYDPDZDgsFVdhhbQoTX5SnNeXmMMpZnwXII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S0YNXVS0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68D6AC4CEE7;
-	Mon,  3 Nov 2025 08:12:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762157539;
-	bh=IvpnIGpW5pDCkLQfXgWwGHkEHfCk7MiqPLCNiRLC+WQ=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=S0YNXVS0yAj8eMy8n4ZhbtQ9hC9T7Mf54lpwHTVpoKAAqh3V3nd+ZzZVWHv1SV+W5
-	 UAd3gtBHUvErsl25wSglSV94+e8eDBDB8+xMxyHLV58f0Sqe6lPn/TWLtxh6scepw4
-	 q1spY+AuYY/hk7wOUS7giLwwNUxKshkly3d98vZcRt5zCD8YKe0Uuttbl/D5MsOzbi
-	 m7k5AUlzhk2nB/mr+GfQBTZnFtjo5imn3No8h0N+RqcIbXSniKdUZO5aitu2TIC4Pn
-	 8uCvFmJpzDoQRIseKnwWF1P6pLD5ClaNqTQC1KpNUhsTxWbg3yaBpYQf1kguBZhJa1
-	 7oUS76waCD/vQ==
-Message-ID: <1f519357-a489-41fe-8159-a8e319aedd17@kernel.org>
-Date: Mon, 3 Nov 2025 16:12:15 +0800
+	s=arc-20240116; t=1762157643; c=relaxed/simple;
+	bh=54n85ZwyayArP7yhougQewaTm0CQee0hnxz3GHcV5Cg=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PqfEUKf4mxuLuyYMB/uN0MXmuGJSpI+WCtB6dayKio5HD0jxqIR+9+xD4fl8MVatdH6f4LpzllnnNazt4ETeEwJfay2z5+F6EjwAPL6hHQrx24BasDd3010kEcVc6lpYblFN8nuu4UKZY3lU2cXkmCDKu4cAAYHYkS5ejcqvSgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=oNyzKVTn; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id E81CAA0A96;
+	Mon,  3 Nov 2025 09:13:50 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=gw0/qyfr1zOYI5nSB/iu
+	m7AsYKgJjol2bq0uNTSmVDo=; b=oNyzKVTndUf6k4MmwLMb9UdLqY3qOueDGlmA
+	iAX37ynu3OZJab5CFUdMPhwsfkpXkXbOjUWCqOFZRVsDfvAACCTdhC4c5FXS09Gj
+	h+gVgxj0c5y8iMPFrdD9GJyil/+V+BQYRcsBdq9x8C0QVztbhRbbbvycZV0ygGpF
+	y16UXT+suwjmftg3ItVDXLGsFWltnMf9+8N5QcL5/ABlTZj0FMUFaXGMPIRh/MDS
+	QV8fDzZNdljuujhy9SC6e4HbMe80m/d0LFj4pciU8/eqRKKogSROnL4DA8eHLYw7
+	renehLdWFzvyccBD2W1aPSJpaNKibGC0R4WEuvXw91STG9yc3U1sMfPhZt51vf5u
+	y1Zt0m26ZehAt9KvrJxhwHNi0l04kvrxMw+xuIzUUad5rhOUrCo0Hux+pWC8rKjr
+	ZBI2VONAzieF66uKbgf/TXqeKLJbpw9uyW8fa4OiqPIpayZoUrpeoeQSU7s9k4aV
+	/cY6dGL4O/eS2sb4ZwbQt9N42wJ7iwJ5QCClzGwgzAMNK9SEAenCj3/wZOVI0ZKN
+	3KQ2mg57r4htDM1Kevb0yTmcf8XjsQy1MAYunu+ekjvdTPiOSAh6yGanBl1+GKFM
+	RokppcrenaqVqyGcg2xpgbr6gg9P0oQ3VaztgLLWZFjhe8Z34TkcGaLkwwNc/hdV
+	iL5MD00=
+From: Buday Csaba <buday.csaba@prolan.hu>
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Florian Fainelli <f.fainelli@gmail.com>,
+	<netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Buday Csaba <buday.csaba@prolan.hu>
+Subject: [PATCH v2 1/1] dt-bindings: net: ethernet-phy: clarify when compatible must specify PHY ID
+Date: Mon, 3 Nov 2025 09:13:42 +0100
+Message-ID: <64c52d1a726944a68a308355433e8ef0f82c4240.1762157515.git.buday.csaba@prolan.hu>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <b8613028fb2f7f69e2fa5e658bd2840c790935d4.1761898321.git.buday.csaba@prolan.hu>
+References: <b8613028fb2f7f69e2fa5e658bd2840c790935d4.1761898321.git.buday.csaba@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, jaegeuk@kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- skhan@linuxfoundation.org, david.hunter.linux@gmail.com,
- linux-kernel-mentees@lists.linuxfoundation.org, khalid@kernel.org,
- syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
-Subject: Re: [PATCH v2 2/2] f2fs: Add sanity checks before unlinking and
- loading inodes
-To: "Nikola Z. Ivanov" <zlatistiv@gmail.com>
-References: <cover.1761993022.git.zlatistiv@gmail.com>
- <55522ef8f3424e563ff18a720c709dcb065091af.1761993022.git.zlatistiv@gmail.com>
- <ea38e464-a28a-4b06-8046-5b62f7172875@kernel.org>
- <pcxf66ac2yjkqyvhb6xgbk6jiihcejuncgbblkewz6rs7i5uzt@m6yjin7t67is>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <pcxf66ac2yjkqyvhb6xgbk6jiihcejuncgbblkewz6rs7i5uzt@m6yjin7t67is>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1762157629;VERSION=8001;MC=2379286761;ID=111644;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2998FD515F66756A
 
-On 11/3/25 15:55, Nikola Z. Ivanov wrote:
-> On Mon, Nov 03, 2025 at 10:35:17AM +0800, Chao Yu wrote:
->> On 11/1/25 20:56, Nikola Z. Ivanov wrote:
->>> Add check for inode->i_nlink == 1 for directories during unlink,
->>> as their value is decremented twice, which can trigger a warning in
->>> drop_nlink. In such case mark the filesystem as corrupted and return
->>> from the function call with the relevant failure return value.
->>>
->>> Additionally add the 2 checks for i_nlink == 0 and i_nlink == 1 in
->>> sanity_check_inode in order to detect on-disk corruption early.
->>>
->>> Reported-by: syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
->>> Closes: https://syzkaller.appspot.com/bug?extid=c07d47c7bc68f47b9083
->>> Tested-by: syzbot+c07d47c7bc68f47b9083@syzkaller.appspotmail.com
->>> Signed-off-by: Nikola Z. Ivanov <zlatistiv@gmail.com>
->>> ---
->>>  fs/f2fs/inode.c | 10 ++++++++++
->>>  fs/f2fs/namei.c | 15 +++++++++++----
->>>  2 files changed, 21 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
->>> index 8c4eafe9ffac..089cbf3646f0 100644
->>> --- a/fs/f2fs/inode.c
->>> +++ b/fs/f2fs/inode.c
->>> @@ -294,6 +294,16 @@ static bool sanity_check_inode(struct inode *inode, struct folio *node_folio)
->>>  		return false;
->>>  	}
->>>  
->>> +	if (unlikely(inode->i_nlink == 0)) {
->>
->> This is a possible case, as an orphan inode may exist in filesystem after sudden
->> power-cut.
->>
->> Thanks,
->>
-> 
-> Hi Chao,
-> 
-> Do you suggest that it should not be wrapped in unlikely()?
+Change PHY ID description in ethernet-phy.yaml to clarify that a
+PHY ID is required (may -> must) when the PHY requires special
+initialization sequence.
 
-Nikola,
+Link: https://lore.kernel.org/netdev/20251026212026.GA2959311-robh@kernel.org/
+Link: https://lore.kernel.org/netdev/aQIZvDt5gooZSTcp@debianbuilder/
 
-No, I think we should not add this sanity check "inode->i_nlink == 0"
-into sanity_check_inode(), as for an orphan inode, its i_nlink is zero.
-We expect to get the inode w/o failure in recover_orphan_inode().
+Signed-off-by: Buday Csaba <buday.csaba@prolan.hu>
+---
+V1 -> V2: Changed wording on maintainer request.
+---
+ .../devicetree/bindings/net/ethernet-phy.yaml          | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-> 
-> I also now realise that I intended to wrap the "else if" case
-> as well but I've missed it in the final patch.
+diff --git a/Documentation/devicetree/bindings/net/ethernet-phy.yaml b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+index 2ec2d9fda..bb4c49fc5 100644
+--- a/Documentation/devicetree/bindings/net/ethernet-phy.yaml
++++ b/Documentation/devicetree/bindings/net/ethernet-phy.yaml
+@@ -35,9 +35,13 @@ properties:
+         description: PHYs that implement IEEE802.3 clause 45
+       - pattern: "^ethernet-phy-id[a-f0-9]{4}\\.[a-f0-9]{4}$"
+         description:
+-          If the PHY reports an incorrect ID (or none at all) then the
+-          compatible list may contain an entry with the correct PHY ID
+-          in the above form.
++          PHYs contain identification registers. These will be read to
++          identify the PHY. If the PHY reports an incorrect ID, or the
++          PHY requires a specific initialization sequence (like a
++          particular order of clocks, resets, power supplies), in
++          order to be able to read the ID registers, then the
++          compatible list must contain an entry with the correct PHY
++          ID in the above form.
+           The first group of digits is the 16 bit Phy Identifier 1
+           register, this is the chip vendor OUI bits 3:18. The
+           second group of digits is the Phy Identifier 2 register,
 
-Looks fine to add unlike for the "dir->i_nlink == 1" case.
+base-commit: 0d0eb186421d0886ac466008235f6d9eedaf918e
+-- 
+2.39.5
 
-Thanks,
-
-> 
-> Should I resend the patch with both cases wrapped in "unlikely()"
-> or would you suggest otherwise?
-> 
-> 
->>> +		f2fs_warn(F2FS_I_SB(inode), "%s: inode (ino=%lx) has zero i_nlink",
->>> +			  __func__, inode->i_ino);
->>> +		return false;
->>> +	} else if (S_ISDIR(inode->i_mode) && inode->i_nlink == 1) {
->>> +		f2fs_warn(F2FS_I_SB(inode), "%s: directory inode (ino=%lx) has a single i_nlink",
->>> +			  __func__, inode->i_ino);
->>> +		return false;
->>> +	}
->>> +
->>>  	if (f2fs_has_extra_attr(inode)) {
->>>  		if (!f2fs_sb_has_extra_attr(sbi)) {
->>>  			f2fs_warn(sbi, "%s: inode (ino=%lx) is with extra_attr, but extra_attr feature is off",
->>> diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
->>> index 40cf80fd9d9a..d13077bad482 100644
->>> --- a/fs/f2fs/namei.c
->>> +++ b/fs/f2fs/namei.c
->>> @@ -572,10 +572,11 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
->>>  	if (unlikely(inode->i_nlink == 0)) {
->>>  		f2fs_warn(F2FS_I_SB(inode), "%s: inode (ino=%lx) has zero i_nlink",
->>>  			  __func__, inode->i_ino);
->>> -		err = -EFSCORRUPTED;
->>> -		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
->>> -		f2fs_folio_put(folio, false);
->>> -		goto out;
->>> +		goto corrupted;
->>> +	} else if (S_ISDIR(inode->i_mode) && inode->i_nlink == 1) {
->>> +		f2fs_warn(F2FS_I_SB(inode), "%s: directory inode (ino=%lx) has a single i_nlink",
->>> +			  __func__, inode->i_ino);
->>> +		goto corrupted;
->>>  	}
->>>  
->>>  	f2fs_balance_fs(sbi, true);
->>> @@ -601,6 +602,12 @@ static int f2fs_unlink(struct inode *dir, struct dentry *dentry)
->>>  
->>>  	if (IS_DIRSYNC(dir))
->>>  		f2fs_sync_fs(sbi->sb, 1);
->>> +
->>> +	goto out;
->>> +corrupted:
->>> +	err = -EFSCORRUPTED;
->>> +	set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_FSCK);
->>> +	f2fs_folio_put(folio, false);
->>>  out:
->>>  	trace_f2fs_unlink_exit(inode, err);
->>>  	return err;
->>
 
 
