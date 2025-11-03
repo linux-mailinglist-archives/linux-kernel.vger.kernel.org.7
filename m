@@ -1,227 +1,108 @@
-Return-Path: <linux-kernel+bounces-883105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85FEDC2C7D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:54:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5EE0C2C8D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:04:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C17C44F7B56
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:48:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0201B3BAC1F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02F74314D33;
-	Mon,  3 Nov 2025 14:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E7B315D40;
+	Mon,  3 Nov 2025 14:47:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FVXfY9wY";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jyFYcdxd"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gLOofRBg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9F7313E11;
-	Mon,  3 Nov 2025 14:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC6630CDA8;
+	Mon,  3 Nov 2025 14:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762181240; cv=none; b=RK/sxRJB9XVeUUX0DT8euIvpXlt+9/xJ1pWfW/Ym2QSxgHdiC6imayx1E1y5/REJpHcZnZRtxj9iy15950KHsNeoYXbH/tON/JQ/92W91afdEHmFWxtHCerSkYxE734aix4CRko0JR6+cMMLww6r9qeIDLYVrO64MIJszS4EltQ=
+	t=1762181247; cv=none; b=cKzy98fXJZd29Q+sOlwVgwwy2QS1P3S3piKod2bZd21GmRdpVGdRO/rkMHuueIRHZObbjKWyaEX7VC4a++TmSvZaUuhTYigUDhm82QkDIXb3Yo6/vvyBvBywodYf2O1YDcsfyPhBGxWSvWDynlu2CqqyTYcCH7EnJVzDuwlR9OE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762181240; c=relaxed/simple;
-	bh=53oyxZxLXzhA03rEvvSyzQ4ZPdHAlWAvy9CNBFS3z4A=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=l3KGcRQSUOl4CJ6Kz5lcjvOeAgVhk0iSzqySj26XiZJqy/jfQQK+T5Clc4oIkm3wr7yDOywhE1hvkfXbv3WcUFc4KXCaI098oXdIcBQUsmQfQQN4lWrGTWeMw9OzKiByEw+xZN+dsR6MYpiNMw77NSZNDTS055W68pPNTOD9Bww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FVXfY9wY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jyFYcdxd; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 03 Nov 2025 14:47:15 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762181236;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ildRBiVuz9Etpe5rg3AcacMfry13OV8zkDygvXU5/7U=;
-	b=FVXfY9wYq+qAQRMpzqdVs/Kng7t42u5DV2O/ks/cQxKyOlP+WRtJEmWvm3+TdoHAAqEC96
-	XIADZ5EnWCtJzo8+dRIC/2O4rf1iX4duHxU3YwFbZoFolAH8ieTkMuwz4/z168WrrgR4Jc
-	7sYW74XYYeezpx9SYZBz8QOBzyWxEj+7tyeOX2bcpskwpM9iC/KjHt0sY/xZ/SzFZErISe
-	Crm0clkwgVmCr1ltmEskSywUWimLQ20rsUj4Nw8T3OtFL1YaA3UoAzahCOXQCw1299J2Ro
-	3oc8Wrd4iDWoyvp+UOj9QNbSCRsBAuS5eB/E9pkk03kw7r5zmN6EgjJA00ejZg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762181236;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ildRBiVuz9Etpe5rg3AcacMfry13OV8zkDygvXU5/7U=;
-	b=jyFYcdxd1h+DmlibqJiTpoJylzk6y18HsJqlhOwDFQjLpRt30ANHpIm1d3esfEThP6ztuO
-	qwLS8B3ps5MeYABw==
-From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rseq] rseq: Separate the signal delivery path
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20251027084307.455429038@linutronix.de>
-References: <20251027084307.455429038@linutronix.de>
+	s=arc-20240116; t=1762181247; c=relaxed/simple;
+	bh=wEqUiWqzTn3qz8K/m/T7ZHGVJLtzuiTUO3H/8VHuy4M=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=nH8ayaivYncpoEsHfjL3PVmo4mL3YWVI2o2M0B25zuqT03WEGLtbEZGzYos/9itB83G/Cchuob43/CygXVozc5nBspY6JbU0RR4UiR4t7s0rqAjKSDlEeCLcWmAV77OGSm4vyJoeLghGPdfuOYXmDu1Gc6dkXlrTfMmBaBOGNzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gLOofRBg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74552C4CEE7;
+	Mon,  3 Nov 2025 14:47:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762181247;
+	bh=wEqUiWqzTn3qz8K/m/T7ZHGVJLtzuiTUO3H/8VHuy4M=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=gLOofRBgysxna9uxvfoCaDQSiaA4GPKntTz9Vyhb8eoWE9LSRiuSNsMcdOySc+HPm
+	 X5M7AyMh2VsUfuI+2K1EKsR3ouH04TMqLaZpsmdC7+MOzVDXycuKj2BevSsfwkBzZP
+	 C/qRSO+iBvxoMRgWcZZY6QtZlf81GlB/L9p9EKGZqeXmolio9oY/+ji70KQmZpdLCu
+	 0mk96GkjUGd5IVVrXp7bzMVxS2SUgQS24lrkVDBWrgbyg3KAPgJGpKy29rJGve5PQf
+	 ro9giLqf6UwJMEPrXETo5yZdLn6lmaCR4SU4CEekeawWeh1/ZmGmryvmZft/7Ab1oy
+	 Wpg5ZgLB5zhMA==
+From: Daniel Gomez <da.gomez@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Alice Ryhl <aliceryhl@google.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+ Danilo Krummrich <dakr@kernel.org>, Benno Lossin <lossin@kernel.org>, 
+ Benno Lossin <lossin@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
+ Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Trevor Gross <tmgross@umich.edu>, 
+ Adam Bratschi-Kaye <ark.email@gmail.com>, rust-for-linux@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+ Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
+ Daniel Gomez <da.gomez@samsung.com>, Simona Vetter <simona.vetter@ffwll.ch>, 
+ Greg KH <gregkh@linuxfoundation.org>, Fiona Behrens <me@kloenk.dev>, 
+ Daniel Almeida <daniel.almeida@collabora.com>, 
+ linux-modules@vger.kernel.org
+In-Reply-To: <20250924-module-params-v3-v18-0-bf512c35d910@kernel.org>
+References: <20250924-module-params-v3-v18-0-bf512c35d910@kernel.org>
+Subject: Re: [PATCH v18 0/7] rust: extend `module!` macro with integer
+ parameter support
+Message-Id: <176218124220.2602452.14511624048623385037.b4-ty@kernel.org>
+Date: Mon, 03 Nov 2025 15:47:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176218123504.2601451.5262161857809150140.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
 
-The following commit has been merged into the core/rseq branch of tip:
 
-Commit-ID:     f1cad05fc4a1d00251c06d80c71b2b0d758c3346
-Gitweb:        https://git.kernel.org/tip/f1cad05fc4a1d00251c06d80c71b2b0d758=
-c3346
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Mon, 27 Oct 2025 09:45:10 +01:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Mon, 03 Nov 2025 15:26:20 +01:00
+On Wed, 24 Sep 2025 14:39:23 +0200, Andreas Hindborg wrote:
+> Extend the `module!` macro with support module parameters. Also add some
+> string to integer parsing functions.
+> 
+> Based on the original module parameter support by Miguel [1],
+> later extended and generalized by Adam for more types [2][3].
+> Originally tracked at [4].
+> 
+> [...]
 
-rseq: Separate the signal delivery path
+Applied, thanks!
 
-Completely separate the signal delivery path from the notify handler as
-they have different semantics versus the event handling.
+[1/7] rust: sync: add `SetOnce`
+      commit: 821fe7bf16c57d690f4f92997f4e51abb93e0347
+[2/7] rust: str: add radix prefixed integer parsing functions
+      commit: 51d9ee90ea9060be240830eb28f5f117ad00318c
+[3/7] rust: introduce module_param module
+      commit: 0b08fc292842a13aa496413b48c1efb83573b8c6
+[4/7] rust: module: use a reference in macros::module::module
+      commit: 3809d7a89fe550bf4065c04adff6dac610daddad
+[5/7] rust: module: update the module macro with module parameter support
+      commit: 0b24f9740f26ac7ad91ac0f4de27717c14de91bd
+[6/7] rust: samples: add a module parameter to the rust_minimal sample
+      commit: e119c2fe8c78632188f6cdeae620951a7032855a
+[7/7] modules: add rust modules files to MAINTAINERS
+      commit: ee3b8134b2bae848e03e56c090ceca4ae76cee06
 
-The signal delivery only needs to ensure that the interrupted user context
-was not in a critical section or the section is aborted before it switches
-to the signal frame context. The signal frame context does not have the
-original instruction pointer anymore, so that can't be handled on exit to
-user space.
+Best regards,
+-- 
+Daniel Gomez <da.gomez@kernel.org>
 
-No point in updating the CPU/CID ids as they might change again before the
-task returns to user space for real.
-
-The fast path optimization, which checks for the 'entry from user via
-interrupt' condition is only available for architectures which use the
-generic entry code.
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Link: https://patch.msgid.link/20251027084307.455429038@linutronix.de
----
- include/linux/rseq.h | 21 ++++++++++++++++-----
- kernel/rseq.c        | 30 ++++++++++++++++++++++--------
- 2 files changed, 38 insertions(+), 13 deletions(-)
-
-diff --git a/include/linux/rseq.h b/include/linux/rseq.h
-index 92f9cd4..f5a4318 100644
---- a/include/linux/rseq.h
-+++ b/include/linux/rseq.h
-@@ -7,22 +7,33 @@
-=20
- #include <uapi/linux/rseq.h>
-=20
--void __rseq_handle_notify_resume(struct ksignal *sig, struct pt_regs *regs);
-+void __rseq_handle_notify_resume(struct pt_regs *regs);
-=20
- static inline void rseq_handle_notify_resume(struct pt_regs *regs)
- {
- 	if (current->rseq.event.has_rseq)
--		__rseq_handle_notify_resume(NULL, regs);
-+		__rseq_handle_notify_resume(regs);
- }
-=20
-+void __rseq_signal_deliver(int sig, struct pt_regs *regs);
-+
-+/*
-+ * Invoked from signal delivery to fixup based on the register context before
-+ * switching to the signal delivery context.
-+ */
- static inline void rseq_signal_deliver(struct ksignal *ksig, struct pt_regs =
-*regs)
- {
--	if (current->rseq.event.has_rseq) {
--		current->rseq.event.sched_switch =3D true;
--		__rseq_handle_notify_resume(ksig, regs);
-+	if (IS_ENABLED(CONFIG_GENERIC_IRQ_ENTRY)) {
-+		/* '&' is intentional to spare one conditional branch */
-+		if (current->rseq.event.has_rseq & current->rseq.event.user_irq)
-+			__rseq_signal_deliver(ksig->sig, regs);
-+	} else {
-+		if (current->rseq.event.has_rseq)
-+			__rseq_signal_deliver(ksig->sig, regs);
- 	}
- }
-=20
-+/* Raised from context switch and exevce to force evaluation on exit to user=
- */
- static inline void rseq_sched_switch_event(struct task_struct *t)
- {
- 	if (t->rseq.event.has_rseq) {
-diff --git a/kernel/rseq.c b/kernel/rseq.c
-index 1e4f1d2..13faadc 100644
---- a/kernel/rseq.c
-+++ b/kernel/rseq.c
-@@ -250,13 +250,12 @@ efault:
-  * respect to other threads scheduled on the same CPU, and with respect
-  * to signal handlers.
-  */
--void __rseq_handle_notify_resume(struct ksignal *ksig, struct pt_regs *regs)
-+void __rseq_handle_notify_resume(struct pt_regs *regs)
- {
- 	struct task_struct *t =3D current;
- 	struct rseq_ids ids;
- 	u32 node_id;
- 	bool event;
--	int sig;
-=20
- 	/*
- 	 * If invoked from hypervisors before entering the guest via
-@@ -275,10 +274,7 @@ void __rseq_handle_notify_resume(struct ksignal *ksig, s=
-truct pt_regs *regs)
- 	if (unlikely(t->flags & PF_EXITING))
- 		return;
-=20
--	if (ksig)
--		rseq_stat_inc(rseq_stats.signal);
--	else
--		rseq_stat_inc(rseq_stats.slowpath);
-+	rseq_stat_inc(rseq_stats.slowpath);
-=20
- 	/*
- 	 * Read and clear the event pending bit first. If the task
-@@ -317,8 +313,26 @@ void __rseq_handle_notify_resume(struct ksignal *ksig, s=
-truct pt_regs *regs)
- 	return;
-=20
- error:
--	sig =3D ksig ? ksig->sig : 0;
--	force_sigsegv(sig);
-+	force_sig(SIGSEGV);
-+}
-+
-+void __rseq_signal_deliver(int sig, struct pt_regs *regs)
-+{
-+	rseq_stat_inc(rseq_stats.signal);
-+	/*
-+	 * Don't update IDs, they are handled on exit to user if
-+	 * necessary. The important thing is to abort a critical section of
-+	 * the interrupted context as after this point the instruction
-+	 * pointer in @regs points to the signal handler.
-+	 */
-+	if (unlikely(!rseq_handle_cs(current, regs))) {
-+		/*
-+		 * Clear the errors just in case this might survive
-+		 * magically, but leave the rest intact.
-+		 */
-+		current->rseq.event.error =3D 0;
-+		force_sigsegv(sig);
-+	}
- }
-=20
- /*
 
