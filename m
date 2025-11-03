@@ -1,87 +1,124 @@
-Return-Path: <linux-kernel+bounces-882919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C77EC2BD88
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:54:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77B5FC2BEBE
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 14:02:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BCF423461BE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:54:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E50811898849
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 13:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0749F3112AB;
-	Mon,  3 Nov 2025 12:53:06 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D21122D7B0;
+	Mon,  3 Nov 2025 12:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="vpmKuysz"
+Received: from server.couthit.com (server.couthit.com [162.240.164.96])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CCA33101AE
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 12:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF913019AA;
+	Mon,  3 Nov 2025 12:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762174385; cv=none; b=EwexrT82yOBWvsBH1n0bQ0/Ja2Gp3eefKsfdBke96MwfCZRc8I+FFewf21paWMhoFBbIf6bfm8KHe24UeKsRIgYGrmoUa2ikR51vzUtemIhsVv2CFDlTUzB20qHqHLYcTz+knjdqHtCH1Pf2AZTtkdAXvJhIhERjgBdzfdeekgI=
+	t=1762174521; cv=none; b=BakNIwOVBROhQ9Sn+k0vqPzOHCjNS2hS4zYE9zQQ22Y6yKmx5Jkx9lnf6bP8P3K5aesPbRuByI3ywAH9MAj3H1rmiyH4I3Wu04Qg2eXm+gKYVZiDxwhlmG60Pz8vgzcSeG6FDvcmk8YvVjYc+/gM2/OvO5Gmg+COMYhWA1zf/Zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762174385; c=relaxed/simple;
-	bh=bj5f9xX1fnJ3dJMGZn4fuhinQ3RL1yDqPcLoBUSc1xo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=G1OMn7c40iFuO8DW+0GC5AdXzrjylOhZGn5tlfpR5EdLGAE/3R4st8ufcpypKxhx33nqB4s1Ihzl9plcjqO8PXZSEwW5CtFoFW+pcTv03Ov+soOTHyrZOqc6AAC0E6m6K+y5Rq69PIUWaCmO0Xs58Lbhf4BMwTHLdCDcL4v6w/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-4330ead8432so28601745ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 04:53:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762174383; x=1762779183;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PZocnu8EPn4lamljcaWUH4pHMKtolYi0r0uHU4tO8xk=;
-        b=EtmPSyDs+KoLBOsnMiN26XxvLmkmP76ANlRRT0VjxS9wdR9Mh3+lqFUXxn0pWxE/lV
-         A05N3pWbBwYkIT/tj3kqOBoUeCNZBWxnMMaUbV/k6SaCe8BFZVDpcRRbt0w2jTZmE5vC
-         FSQ/pujn1fGx3aOIfuCK4DyiYZcXdvgr5j0Tbf8lc9JUrWFl3feotEoPuXNZ1sZ+IFcE
-         GJG/Fi7CKpyeFFOcc1yAKK2MvdAM84P3JTMKJ90KCDjd8tcVSq7n/N9PSMBZX5uMd9eU
-         q3SMhtftr7UDOJcU1G5S7W2KweG1dopz4vVpGGHF+39Ge30f9NtLkvpNo+kqeNmGSlxo
-         wmEw==
-X-Forwarded-Encrypted: i=1; AJvYcCU8pceMJr5oh8hZn5/RUYOrKDQ/RUn/uqu3Pj/DtytS3bjHmvNZLwv3F2Cyw5jJPWuH6vrQ4JsFZqACC+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI0rjQ/Uj69HhJAGkrlWYlTG37+ErNdGge5jK+8LE2+dFHCjpQ
-	8vEyEzr2LiLPP60EkQJrE2whkwu/ayI/6aMcGbF4EWgLTT8uVwsuL9OF2a45pfZN3SU0hZPIldR
-	UvN0eGHK16UUu+n0eMUojMpvqN0aAsfePTxUZldjzKYq2Sfl+0aXOqNluEIY=
-X-Google-Smtp-Source: AGHT+IFwlFkgaV7o3+DvWgavE3xAGKwP39gDABlIiyrLBCj8TXrT/YzKkM0KXAU1ZlT3M1ezADrzGHPyekAx4Z9zV9/0LDwK2U9Y
+	s=arc-20240116; t=1762174521; c=relaxed/simple;
+	bh=yCmFucSa1G5Pp8A+zeDRmnSqkeT+4p7344eckqskHHE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kU2JbHS5fHBfiHFnzEUryNCJgIR8UTPzXma40NsA83MeOj3Kt/BvLUKeg0zIilwzf92LZ8ktH3lM0pJcXZh+VLClLiq26trOVF45AKaMElRAh7vfWMxg7OFOo+CnQn4kGtcdbRO6wZ7MVEKqyhQ4VQakoH5KMD1gwfNHIRhazCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=vpmKuysz; arc=none smtp.client-ip=162.240.164.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
+	; s=default; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject
+	:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=N3mC2IrimTjppkhXo9GUUy1X4ukV/Q/7Ytq5A8GyzSw=; b=vpmKuyszMO0JHXCxcB4jw6giy/
+	RP+CNNXBYo3crdrkF0RI8Xs1z1Yfc9QpALKfLQPZoIyn5Y1CldkDLEP4CKsE10imD9ulsinGjBq3y
+	k81XRKIy7KbZupH324bZjB6bS9oJO5blv8i0sz7ZNyQZkz5tM76mB3AU2tbyUFEsAeQWOrdxdvOT5
+	XANrGLLvvFOAJdrOT8hXJRvyfuG138RqFCKrYt2PjTShQOzmQZQuJTGzu1Bbw+SAULz78kWAQuWGt
+	jvQLUVnJsA321xYrQ+N30A4nrWxb2q3VlNI/T6v45r0AxUV/f1Y/kfWhAGy4bmesxk26DbToJoAVq
+	turj3K7w==;
+Received: from [122.175.9.182] (port=36484 helo=cypher.couthit.local)
+	by server.couthit.com with esmtpa (Exim 4.98.1)
+	(envelope-from <parvathi@couthit.com>)
+	id 1vFu5d-00000006SKR-2YOn;
+	Mon, 03 Nov 2025 07:55:18 -0500
+From: Parvathi Pudi <parvathi@couthit.com>
+To: nm@ti.com,
+	vigneshr@ti.com,
+	aaro.koskinen@iki.fi,
+	andreas@kemnade.info,
+	khilman@baylibre.com,
+	rogerq@kernel.org,
+	tony@atomide.com
+Cc: linux-omap@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	danishanwar@ti.com,
+	pratheesh@ti.com,
+	j-rameshbabu@ti.com,
+	praneeth@ti.com,
+	srk@ti.com,
+	rogerq@ti.com,
+	krishna@couthit.com,
+	mohan@couthit.com,
+	pmohan@couthit.com,
+	basharath@couthit.com,
+	Parvathi Pudi <parvathi@couthit.com>
+Subject: [RESEND PATCH] ARM: multi_v7_defconfig: Enable TI PRU Ethernet driver
+Date: Mon,  3 Nov 2025 18:24:51 +0530
+Message-ID: <20251103125451.1679404-1-parvathi@couthit.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:cda1:0:b0:433:2d7c:66bd with SMTP id
- e9e14a558f8ab-4332d7c6b1cmr45662915ab.10.1762174383358; Mon, 03 Nov 2025
- 04:53:03 -0800 (PST)
-Date: Mon, 03 Nov 2025 04:53:03 -0800
-In-Reply-To: <510529165.3578880.1762172846355@kpc.webmail.kpnmail.nl>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6908a5af.050a0220.29fc44.0044.GAE@google.com>
-Subject: Re: [syzbot] [hfs?] kernel BUG in hfs_new_inode
-From: syzbot <syzbot+17cc9bb6d8d69b4139f0@syzkaller.appspotmail.com>
-To: jkoolstra@xs4all.nl, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server.couthit.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - couthit.com
+X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: parvathi@couthit.com
+X-Authenticated-Sender: server.couthit.com: parvathi@couthit.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-Hello,
+The Programmable Real-time Unit and Industrial Communication Subsystem
+Megabit (ICSSM) is a microcontroller subsystem in TI SoCs such as
+AM57x, AM437x, and AM335x. It provides real-time processing
+capabilities for industrial communication and custom peripheral interfaces.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Currently, EVMs based on AM57x, AM437x, and AM335x use the ICSSM driver
+for PRU-based Ethernet functionality.
 
-Reported-by: syzbot+17cc9bb6d8d69b4139f0@syzkaller.appspotmail.com
-Tested-by: syzbot+17cc9bb6d8d69b4139f0@syzkaller.appspotmail.com
+This patch enables TI_PRUSS and TI_PRUETH as a module for TI SoCs.
 
-Tested on:
+Signed-off-by: Parvathi Pudi <parvathi@couthit.com>
+---
+ arch/arm/configs/multi_v7_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-commit:         6146a0f1 Linux 6.18-rc4
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=168f7932580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=72f4d1bb6e3e45a2
-dashboard link: https://syzkaller.appspot.com/bug?extid=17cc9bb6d8d69b4139f0
-compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=17391e14580000
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 12f706e2ded5..7f1fa9dd88c9 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -281,6 +281,8 @@ CONFIG_TI_CPSW_SWITCHDEV=y
+ CONFIG_TI_CPTS=y
+ CONFIG_TI_KEYSTONE_NETCP=y
+ CONFIG_TI_KEYSTONE_NETCP_ETHSS=y
++CONFIG_TI_PRUSS=m
++CONFIG_TI_PRUETH=m
+ CONFIG_XILINX_EMACLITE=y
+ CONFIG_SFP=m
+ CONFIG_BROADCOM_PHY=y
+-- 
+2.43.0
 
-Note: testing is done by a robot and is best-effort only.
 
