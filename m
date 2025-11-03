@@ -1,188 +1,137 @@
-Return-Path: <linux-kernel+bounces-882170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B49DEC29CD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 02:47:55 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 298F7C29CDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 02:48:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BD373AF492
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 01:47:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 168274E9F27
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 01:48:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E3A22A1C5;
-	Mon,  3 Nov 2025 01:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE8E27A46A;
+	Mon,  3 Nov 2025 01:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SBuBF0Nf";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="h3eUvJrw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="XmbgW3S6"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BED01898E9
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 01:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE7927A135
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 01:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762134466; cv=none; b=pVmSx6uC6I91pyE5FO/Zf5igtY1YyO5i431dqh2WNuOP2B0Oq+acjYnL/IcrMagkn4DZtAdCJZIX7iysd2+vcSHxebp9mJOUbe4huhMwRHpVWMg0NjelmAo9ZRd70iJrplj8FjAmCnpWv3fTrICfxF5llazr0poPleC1udXbrp8=
+	t=1762134527; cv=none; b=A0VC2uXWDYs4L/TonZU0q/Iha+kFOIZOWumEOUKwKxNz0gRmxwzl3HUdXabdrpT9p3yUupfW99QkZHIaDzC4+JgyAXql4OIoDM7lKfQ0XMMMZA8nYQy3RFbkr1tsPpSAKmMeOxKVrEYLs7j+8WDINFyJ/2aNUxIF71N3ZQt0yLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762134466; c=relaxed/simple;
-	bh=DZ/KiMq7wWJ8uPyNXpIdNz0w5pQFBc9zI5smcnaaiB0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i0qHSD0RtzOt0e9fmJSblAsg00z0mLmhJ7QrbSwQpzAysoNjWJpxdCminsl1yHhT4Pkk+JKjTqrn+75ngJfitcfoUzmQrVaKcOTPlizLNu+DrvMZ8X5ATjBQEKLhJ5CektlX2cjHkCvyPHiOq2vZMzsj+7b4IJS6ePVtKnJZx0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SBuBF0Nf; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=h3eUvJrw; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762134464;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DS23ySq+vPb5Ayo6+abelT4SHGq2SoMsLQTkVaSuuRo=;
-	b=SBuBF0NfmiEAmskiJ6BG8F9JDWbtoOxdrNWriscf7/qEKzt7DPvjwjmLiJg0e6SK+hcPZi
-	DsWQv9RKinnlZp9eraxIfdlm60faE5wExtJnCmU7inYs8jWTsIcURM1TIOpw3VpEU5IcTq
-	6+oTAZkCkGOsa13Z432l4/1lfsp44Ms=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-204-8dSC1xdPOju43TTZ0oSLog-1; Sun, 02 Nov 2025 20:47:42 -0500
-X-MC-Unique: 8dSC1xdPOju43TTZ0oSLog-1
-X-Mimecast-MFC-AGG-ID: 8dSC1xdPOju43TTZ0oSLog_1762134461
-Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-59427500731so260571e87.0
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 17:47:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762134461; x=1762739261; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DS23ySq+vPb5Ayo6+abelT4SHGq2SoMsLQTkVaSuuRo=;
-        b=h3eUvJrw/IrXM943TWCMfLZSG2xXhrrG5N/qweL10nJoVfb0zjbFI20+DHAy6EFOrb
-         Ffl1ym7Ef03Lp5+S0N2CV8Fzma2gr3mIeyvnu7tDkL8Z76z4Sluk22vLRAzUfZb95Zjg
-         /K2cCyo4wGen2yf5cbg1m+PN/P/RNyp5qV02pywmYVFAzF/abLeHstalao/9Yq8sMgyw
-         cn8nNug7tAumBFnP0aoq7x2wstwrbd0e7EqUG94jSOaLPasaeHCTJ3ezZ8UQFlsSGhNc
-         m/NLFRVynESjetZZuiiY6rexzLwK0AUOhsd/a0ZrY5qqeUzHBsFigOzb5sb3aLqNdslE
-         4ZTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762134461; x=1762739261;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DS23ySq+vPb5Ayo6+abelT4SHGq2SoMsLQTkVaSuuRo=;
-        b=RIWb54cW8SBEf+pjPPBmzTtzy95WXaHGEFgkznPZek5UdGMLkh+1UvP580RtwDaqq0
-         jWs9xm4I0Lz7+4GGrb2gBktIgpsvIIQylj3F7zR6PmMAnHyg7u91sD/nqa9ZWraYUQjm
-         Sp16c7ZX1TahbOibUrFP0IPfnSIWNb6KpzK2295yU3OubHbtP1Knr8PKu2XgtIKCrY2p
-         oFnFNAER3C0z1WbQGwLdJdUPjiSGAaY4V3R8BicgrOEvmZxZHu5GavcnbsWjFcSExufh
-         Dz/6RYh7VtF8QW6pHpdlUOFiBdyfXDxzSxFyXER8iykqf2e6HLMdRShcYgryodHBZOLl
-         GBjg==
-X-Forwarded-Encrypted: i=1; AJvYcCVYeRd3YLir2A8ZhmyP8TayE9ZovvNANhGVhrJ0K46w7g7TXaKfqRSy78j0/G/mlUiZTjycSP1eXrZzehE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqyKAMRQE+hSrEPTnYMiSfnbEAW/yUl5RxjjAg4W7LWyeEFZLk
-	2/Wqub8h0XX6S7rMk6TIYItOGCvUGOinyLsR9vYDz07LyA6m5BewwdijyrW9rj+YAnW8cXLlMhD
-	8TYJQDYe3639SeAdvsgfWy2kvurvFOIr0rBfFtS5C4uMMSp2SAp+msQ7g8AIL4fSRTank5wD9ql
-	BQJd97Z7/WMoYk9kIxeFFOJT2V2XVstEmB9jaPCQmo
-X-Gm-Gg: ASbGncvFz+mjnDqK5Z8dk6MORhlpCbUgj6kMVUxxUpNQxpppX1kLhY15ESvzbGPLY8R
-	FnN9VpGsa1vs9LmZFCLqdr0PuhIgGPYRTigKk2hWTQewVz3PykHSu5KBF3Hvgvjj+Q6jCpeFnhO
-	+muukpuhqpqVZ5zQ33orDEeVxniSXstuZPY/kix4V8Ikp4GDtl+0B8KmQ=
-X-Received: by 2002:a05:6512:3e10:b0:594:2c58:978b with SMTP id 2adb3069b0e04-5942c589ad9mr620626e87.51.1762134461225;
-        Sun, 02 Nov 2025 17:47:41 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEHDOR/3/dEMSprdbAr+vGPJpG0WiUEecPksq7/JieZgEHWe+BMjD1gOgOvmjXIa+VsxvCQ+Uz9nvUL4YhsU+c=
-X-Received: by 2002:a05:6512:3e10:b0:594:2c58:978b with SMTP id
- 2adb3069b0e04-5942c589ad9mr620618e87.51.1762134460782; Sun, 02 Nov 2025
- 17:47:40 -0800 (PST)
+	s=arc-20240116; t=1762134527; c=relaxed/simple;
+	bh=VNjifc4beAKhf95qBl71+1nj8WFLRt5F42DJlTYYoKI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KQ50FTBTH1VbuGfyCDfCURgFRCVDzQZGO3iqE7XpDyfAZTv/jGRnBhiznlQujPHHFc+izHwYYOp4kNTxZfqIvZ/cYMaZAbK6RZk+6WXuTaJOHJwXvgti43kjbag0h8x5ITrbA7a6bY1gtdo3v19lkdLNcdKFRkxiIGuDmVJ0UeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=XmbgW3S6; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=l4/ObVuIt7UOD/QW6630dekGZj3RSJD8DWfo2+YTWOk=; b=XmbgW3S6VCsRsm46
+	1LTsab+aVcjrj1ts/Y3mnJOlWtNz6hHwWGQLpRBXWYAKAfQ1EqEhN139HehE19dhw8tFXRrsa8JKB
+	l8SapWvl2IQcscJFHyOwbW6L9LrrGIOEzPmh8+S6VRgRi4UAiK448c+3ihAd9DeecaPV6F0sudqp9
+	NEgrWmmeg5u9PIJSXmfZpzCQVWCCHl+XYqUTtn8Qjzuad710o8matxi2MFlw0vNOWRi1rdOBEKAJp
+	0WW9p0LSHfvIoc0I66uZ8GJC2E9v+a83rSYbFSTAhikuk6TCHmComVdd0rSB4bYVjf7Rmg9dFkkwo
+	mPj/FrCR90qp1lvTqg==;
+Received: from dg by mx.treblig.org with local (Exim 4.98.2)
+	(envelope-from <dg@treblig.org>)
+	id 1vFjgV-00000001ajA-1fNO;
+	Mon, 03 Nov 2025 01:48:39 +0000
+Date: Mon, 3 Nov 2025 01:48:39 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Finn Thain <fthain@linux-m68k.org>
+Cc: Stan Johnson <userm57@yahoo.com>, mpe@ellerman.id.au, npiggin@gmail.com,
+	christophe.leroy@csgroup.eu, sam@ravnborg.org,
+	benh@kernel.crashing.org, linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, rdunlap@infradead.org,
+	Cedar Maxwell <cedarmaxwell@mac.com>
+Subject: Re: [PATCH v4] powerpc: Use shared font data
+Message-ID: <aQgJ95Y3pA-8GdbP@gallifrey>
+References: <20230825142754.1487900-1-linux@treblig.org>
+ <d81ddca8-c5ee-d583-d579-02b19ed95301@yahoo.com>
+ <aQeQYNANzlTqJZdR@gallifrey>
+ <20108eef-b7cf-3f23-264a-5d97021f9ffa@linux-m68k.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251030062807.1515356-1-linan666@huaweicloud.com> <20251030062807.1515356-4-linan666@huaweicloud.com>
-In-Reply-To: <20251030062807.1515356-4-linan666@huaweicloud.com>
-From: Xiao Ni <xni@redhat.com>
-Date: Mon, 3 Nov 2025 09:47:28 +0800
-X-Gm-Features: AWmQ_bl8wDMCqnoMJ36yUqoXBMkz_wvMmqiObsyO1YtquNOV0cAL5Eti1U9XmlA
-Message-ID: <CALTww286rYcR1hFk5GtxuwFqtUo3fwNyixd5N-_MwBX3P6UUBA@mail.gmail.com>
-Subject: Re: [PATCH v8 3/4] md/raid0: Move queue limit setup before r0conf initialization
-To: linan666@huaweicloud.com
-Cc: corbet@lwn.net, song@kernel.org, yukuai@fnnas.com, linan122@huawei.com, 
-	hare@suse.de, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-raid@vger.kernel.org, yangerkun@huawei.com, yi.zhang@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20108eef-b7cf-3f23-264a-5d97021f9ffa@linux-m68k.org>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.12.48+deb13-amd64 (x86_64)
+X-Uptime: 01:43:41 up 7 days,  1:19,  2 users,  load average: 0.02, 0.04, 0.00
+User-Agent: Mutt/2.2.13 (2024-03-09)
 
-On Thu, Oct 30, 2025 at 2:36=E2=80=AFPM <linan666@huaweicloud.com> wrote:
->
-> From: Li Nan <linan122@huawei.com>
->
-> Prepare for making logical blocksize configurable. This change has no
-> impact until logical block size becomes configurable.
->
-> Move raid0_set_limits() before create_strip_zones(). It is safe as fields
-> modified in create_strip_zones() do not involve mddev configuration, and
-> rdev modifications there are not used in raid0_set_limits().
->
-> 'blksize' in create_strip_zones() fetches mddev's logical block size,
-> which is already the maximum aross all rdevs, so the later max() can be
-> removed.
->
-> Signed-off-by: Li Nan <linan122@huawei.com>
-> ---
->  drivers/md/raid0.c | 16 +++++++---------
->  1 file changed, 7 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
-> index e443e478645a..fbf763401521 100644
-> --- a/drivers/md/raid0.c
-> +++ b/drivers/md/raid0.c
-> @@ -68,7 +68,7 @@ static int create_strip_zones(struct mddev *mddev, stru=
-ct r0conf **private_conf)
->         struct strip_zone *zone;
->         int cnt;
->         struct r0conf *conf =3D kzalloc(sizeof(*conf), GFP_KERNEL);
-> -       unsigned blksize =3D 512;
-> +       unsigned int blksize =3D queue_logical_block_size(mddev->gendisk-=
->queue);
->
->         *private_conf =3D ERR_PTR(-ENOMEM);
->         if (!conf)
-> @@ -84,9 +84,6 @@ static int create_strip_zones(struct mddev *mddev, stru=
-ct r0conf **private_conf)
->                 sector_div(sectors, mddev->chunk_sectors);
->                 rdev1->sectors =3D sectors * mddev->chunk_sectors;
->
-> -               blksize =3D max(blksize, queue_logical_block_size(
-> -                                     rdev1->bdev->bd_disk->queue));
-> -
->                 rdev_for_each(rdev2, mddev) {
->                         pr_debug("md/raid0:%s:   comparing %pg(%llu)"
->                                  " with %pg(%llu)\n",
-> @@ -405,6 +402,12 @@ static int raid0_run(struct mddev *mddev)
->         if (md_check_no_bitmap(mddev))
->                 return -EINVAL;
->
-> +       if (!mddev_is_dm(mddev)) {
-> +               ret =3D raid0_set_limits(mddev);
-> +               if (ret)
-> +                       return ret;
-> +       }
-> +
->         /* if private is not null, we are here after takeover */
->         if (mddev->private =3D=3D NULL) {
->                 ret =3D create_strip_zones(mddev, &conf);
-> @@ -413,11 +416,6 @@ static int raid0_run(struct mddev *mddev)
->                 mddev->private =3D conf;
->         }
->         conf =3D mddev->private;
-> -       if (!mddev_is_dm(mddev)) {
-> -               ret =3D raid0_set_limits(mddev);
-> -               if (ret)
-> -                       return ret;
-> -       }
->
->         /* calculate array device size */
->         md_set_array_sectors(mddev, raid0_size(mddev, 0, 0));
-> --
-> 2.39.2
->
+* Finn Thain (fthain@linux-m68k.org) wrote:
+> 
+> On Sun, 2 Nov 2025, Dr. David Alan Gilbert wrote:
+> 
+> > 
+> > So I'm not a PPC person specifically; so lets see if the PPC people have 
+> > any suggestions, but:
+> > 
+> >    a) Do you know if there's any way to recreate the same hang/works 
+> > combination in qemu; I know it has a g3beige model but I don't know how 
+> > to get something similar to your failing combo.
+> > 
+> 
+> I guess we could probably reproduce this in QEMU if the BootX bootloader 
+> could be made to work there. In theory, 'qemu-system-ppc -M g3beige' might 
+> work.
+> 
+> >    b) Can you get any diagnostics out of the prom on the mac?  Like a PC 
+> > or anything to have some idea where it hung?
+> > 
+> 
+> Well, that's the problem: if you enable the CONFIG_BOOTX_TEXT diagnostics, 
+> the system hangs instead of printing stuff. If you disable the 
+> CONFIG_BOOTX_TEXT diagnostics (in favour of serial diagnostics) the hang 
+> goes away.
 
-Looks good to me.
-Reviewed-by: Xiao Ni <xni@redhat.com>
+Ah, a bug that doesn't like to be seen :-)
 
+> Anyway, I imagine that the problem with your patch was that it relies on 
+> font data from a different (read only) section, which is unavailable for 
+> some reason (MMU not fully configured yet?)
+> 
+> So I've asked Stan to test a patch that simply removes the relevant 
+> 'const' keywords. It's not a solution, but might narrow-down the search.
+
+I wonder if this is a compiler-flag-ism; I see arch/powerpc/kernel/Makefile
+has a pile of special flags, and for btext.o it has a -fPIC
+(as well as turning off some other flags).
+I wonder if bodging those in lib/fonts/Makefile for lib/fonts/font_sun8x16.c
+fixes it?
+But... this is data - there's no code is there - are any of those flags
+relevant for data only?
+
+> >    c) Is this only the Powerbooks that are unhappy - are other Macs OK 
+> > with this - if so, wth is the difference with a powerbook?  Is it a 
+> > different debian config or something?
+> > 
+> 
+> The BootX bootloader doesn't work on New World systems, which is probably 
+> why we don't see this regression on anything newer than a Wallstreet. 
+> 
+> It's likely that other Old World systems are also affected, if they are 
+> using BootX. We don't yet know whether the regression also affects Old 
+> World systems using the iQUIK bootloader instead of BootX.
+
+OK, remember I don't think I've ever tried PPC via MacOS booting, so not
+familiar with it.
+
+Dave
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
