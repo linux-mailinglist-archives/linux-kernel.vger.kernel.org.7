@@ -1,91 +1,65 @@
-Return-Path: <linux-kernel+bounces-882393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72D4AC2A58A
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:33:57 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D05DC2A596
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:34:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43705188FC6E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:33:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D9C96343B7D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA742BE63F;
-	Mon,  3 Nov 2025 07:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="INodRjqq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 390C82BE63F;
+	Mon,  3 Nov 2025 07:34:40 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7742F1F1537;
-	Mon,  3 Nov 2025 07:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E6E29D282
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 07:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762155184; cv=none; b=eGcM06iY18EZoZbpgQdzQZEmYS1oh/H45OSUg72WSinCQ6zwT9ruQdgOonNvr/dJd5A/c0wLSBJ6ByctnXYgKvnyy1gE6Un7aaG7u/h0y/tuz0FZXWdz3GLwpm/5dQkqLR9sRPkG0kxBN9QG8nVdYN5B0NWDuujIGoaBfM5Kpz8=
+	t=1762155279; cv=none; b=Bmjj2UbIhp8iDg7luSlN+PXAttydawU4N1a/+VGkgYpYIS0ksSDU0i9k0H4C2Jlgdi9xmCd77xRBZVtET0vISyy2s3gW6DXBsFkER1yF75ef7/mjx+7zrv1Pz0S5z6HVLa2Dcvm1q6+TCv+3zwiuFEJJxXqwthJY2/PaC+DC1L8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762155184; c=relaxed/simple;
-	bh=l5HUEGJQ2l2mq+aTaDpihogl26Os1llfVLM76lsWO6s=;
+	s=arc-20240116; t=1762155279; c=relaxed/simple;
+	bh=IboLZbupkxix2FXICklsyuXcnn9K5vNP0z0XeJ33kCU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oDs3U1hak9QktKbxGddfHm7WUGeisAR1CbVWIJrVSvrGI2urNeJ+yEfzJckwcSjb4T9Y7w+rNp8hDX+4M3W2q5nf03W6Yai61Kd0jLrRt1ajDkdWdmwpwIeOJqewgTIEJ+FR130EEZmy6IVkFbRkIv7YrgqMfaUY+iYUvZ8IsOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=INodRjqq; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762155182; x=1793691182;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=l5HUEGJQ2l2mq+aTaDpihogl26Os1llfVLM76lsWO6s=;
-  b=INodRjqq5g3YH1pVowBMEmyFoN9djrtk5imAnSs1gIqA4OXa7BBbkZF1
-   ktinLYAR4Kq8m80pYRKQxElXUsdx0m4RrF8vMkDYjs5hAU2XXsQ0+WLSH
-   s53U8k4jI+oixFOUJ4QuTX7ODX1KFm5EUePzY8Q5HqDCADY1btVGgb4hu
-   oP6az3HMZ8dA0a80mRuXSFFG4u+RwH98Pr/fQA+9xU44Vz4tjNiAiDG1t
-   LAXszUyG5fTcpi3DTVsTX8Zb1l3GjAwRcWJhN8MFLL27GlkYwlpRCTYhA
-   3bVH7tHhYNS4xxM3zefh0lh85209qudigompNNpoW8v31ZzE7BangRTtl
-   w==;
-X-CSE-ConnectionGUID: k3b+NNwrThqQv0R3yCJkXQ==
-X-CSE-MsgGUID: 6NTQKs5QSkmdUleSHu29EQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="64112034"
-X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
-   d="scan'208";a="64112034"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2025 23:33:02 -0800
-X-CSE-ConnectionGUID: wbZmldb1TQKn1RfPq/DltQ==
-X-CSE-MsgGUID: bxAVY6aMRQWiQcpRMmV5Aw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
-   d="scan'208";a="187250918"
-Received: from smoehrl-linux.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.216])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2025 23:32:57 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vFp3a-000000054ie-2nUE;
-	Mon, 03 Nov 2025 09:32:50 +0200
-Date: Mon, 3 Nov 2025 09:32:49 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Raag Jadav <raag.jadav@intel.com>,
-	Pablo Neira Ayuso <pablo@netfilter.org>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-	netdev@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	Florian Westphal <fw@strlen.de>, Phil Sutter <phil@nwl.cc>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH net-next v1 1/1] treewide: Rename ERR_PTR_PCPU() -->
- PCPU_ERR_PTR()
-Message-ID: <aQhaobur-9j6ye0m@smile.fi.intel.com>
-References: <20251030083632.3315128-1-andriy.shevchenko@linux.intel.com>
- <20251031164958.29f75595@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HKPXxX4ETYaPppDRgSh/DbN6QUevIb7Np98HSkglykmXBxS1rpyQ/Z2/k9kdu6f4tnOITYJVR39VRFUJK6uaPj12ipElsWuxizYCWlISaQ8ltI1wW3kLGDo8tVYCFZRPbzr4vQbdh0mNT2GmZmprZ7GCtI1cEBX1jNDRnSB7p1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1vFp4z-0001MA-7R; Mon, 03 Nov 2025 08:34:17 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1vFp4x-006ouR-2B;
+	Mon, 03 Nov 2025 08:34:15 +0100
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1vFp4x-00GZkn-1n;
+	Mon, 03 Nov 2025 08:34:15 +0100
+Date: Mon, 3 Nov 2025 08:34:15 +0100
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: Bryan Brattlof <bb@ti.com>
+Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Andrew Davis <afd@ti.com>, Tero Kristo <kristo@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Tony Lindgren <tony@atomide.com>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v7 2/3] arm64: dts: ti: k3-am62l: add initial
+ infrastructure
+Message-ID: <aQha9-oNEQd2Ds7Z@pengutronix.de>
+References: <20251031-am62lx-v7-0-cb426be9d6ee@ti.com>
+ <20251031-am62lx-v7-2-cb426be9d6ee@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,30 +68,88 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20251031164958.29f75595@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+In-Reply-To: <20251031-am62lx-v7-2-cb426be9d6ee@ti.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Fri, Oct 31, 2025 at 04:49:58PM -0700, Jakub Kicinski wrote:
-> On Thu, 30 Oct 2025 09:35:53 +0100 Andy Shevchenko wrote:
-> > Make the namespace of specific ERR_PTR() macro leading the thing.
-> > This is already done for IOMEM_ERR_PTR(). Follow the same pattern
-> > in PCPU_ERR_PTR().
-> 
-> TBH I find the current naming to be typical. _PCPU() is the "flavor" of
-> the API. Same as we usually append _rcu() to functions which expect
-> to operate under RCU. All error pointer helpers end with _PCPU().
+On Fri, Oct 31, 2025 at 09:08:05AM -0500, Bryan Brattlof wrote:
+> +	gpio0: gpio@600000 {
+> +		compatible = "ti,am64-gpio", "ti,keystone-gpio";
+> +		reg = <0x00 0x00600000 0x00 0x100>;
+> +		gpio-controller;
+> +		#gpio-cells = <2>;
+> +		interrupt-parent = <&gic500>;
+> +		interrupts = <GIC_SPI 260 IRQ_TYPE_EDGE_RISING>,
+> +			     <GIC_SPI 261 IRQ_TYPE_EDGE_RISING>,
+> +			     <GIC_SPI 262 IRQ_TYPE_EDGE_RISING>,
+> +			     <GIC_SPI 263 IRQ_TYPE_EDGE_RISING>,
+> +			     <GIC_SPI 264 IRQ_TYPE_EDGE_RISING>,
+> +			     <GIC_SPI 265 IRQ_TYPE_EDGE_RISING>,
+> +			     <GIC_SPI 266 IRQ_TYPE_EDGE_RISING>,
+> +			     <GIC_SPI 267 IRQ_TYPE_EDGE_RISING>;
+> +		interrupt-controller;
+> +		#interrupt-cells = <2>;
+> +		power-domains = <&scmi_pds 34>;
+> +		clocks = <&scmi_clk 140>;
+> +		clock-names = "gpio";
+> +		ti,ngpio = <126>;
+> +		ti,davinci-gpio-unbanked = <0>;
+> +		status = "disabled";
 
-Ah, there is also IS_ERR_PCPU()...
+Virtually all boards use GPIOs and a GPIO controller doesn't have any
+external dependencies, so could you enable them by default like done on
+many other SoCs?
 
-> I don't feel strongly so fine if anyone else wants to apply this.
-> But I will not :)
+> +
+> +	target-module@2b300050 {
+> +		compatible = "ti,sysc-omap2", "ti,sysc";
+> +		reg = <0x00 0x2b300050 0x00 0x4>,
+> +		      <0x00 0x2b300054 0x00 0x4>,
+> +		      <0x00 0x2b300058 0x00 0x4>;
+> +		reg-names = "rev", "sysc", "syss";
+> +		ranges = <0x00 0x00 0x2b300000 0x100000>;
+> +		#address-cells = <1>;
+> +		#size-cells = <1>;
+> +		power-domains = <&scmi_pds 83>;
+> +		clocks = <&scmi_clk 324>;
+> +		clock-names = "fck";
+> +		ti,sysc-mask = <(SYSC_OMAP2_ENAWAKEUP |
+> +				 SYSC_OMAP2_SOFTRESET |
+> +				 SYSC_OMAP2_AUTOIDLE)>;
+> +		ti,sysc-sidle = <SYSC_IDLE_FORCE>,
+> +				<SYSC_IDLE_NO>,
+> +				<SYSC_IDLE_SMART>,
+> +				<SYSC_IDLE_SMART_WKUP>;
+> +		ti,syss-mask = <1>;
+> +		ti,no-reset-on-init;
+> +		status = "disabled";
 
-OK.
+This node is present on many other TI SoCs, all I have looked at have
+this node enabled by default. I think it makes sense to have this node
+enabled given that it has child nodes like this UART:
+
+> +
+> +		wkup_uart0: serial@0 {
+> +			compatible = "ti,am64-uart", "ti,am654-uart";
+> +			reg = <0x00 0x100>;
+> +			interrupts = <GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&scmi_clk 324>;
+> +			assigned-clocks = <&scmi_clk 324>;
+> +			clock-names = "fclk";
+> +			status = "disabled";
+> +		};
+
+Sascha
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
