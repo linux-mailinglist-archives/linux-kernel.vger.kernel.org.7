@@ -1,50 +1,45 @@
-Return-Path: <linux-kernel+bounces-882144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CB51C29BBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 01:51:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD66AC29B78
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 01:49:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B77F6188602F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 00:51:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE165188E940
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 00:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5377B261B8C;
-	Mon,  3 Nov 2025 00:48:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19CB41DDA1E;
+	Mon,  3 Nov 2025 00:48:39 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9282253EF;
-	Mon,  3 Nov 2025 00:48:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D02A1465B4;
+	Mon,  3 Nov 2025 00:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762130921; cv=none; b=Ke7Yllblyl5vm3iBq9fOddryfPMScjljqx1+HHWHS+o/r1FDBGCtphnvLqNCvEhwUxgZ5dPZsSriRjRc77TaXn/Ij3etIe/o/61bOrujoz8R1n/efhP4S+BTtQKNzcl5k16yE/Wzo1NDNgdIGYP0wkeqLZ5N0ZIwhB0NctF2WB8=
+	t=1762130918; cv=none; b=cCH0gr3z5QH0tCu7dv2C5SAxywpcdH5fhlEZaks8DiuotHQJ8b5F/8U5+NvLmBdMXGkmSAOe/cBSxORxvrpGpdQnn8UdubCIEs6PocFIxLe+5f31JQF+eHZjjaL3If4eH/ijjzQ52G6KlJxbf8kG7xdbhKupzPnKM4kL357ozsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762130921; c=relaxed/simple;
-	bh=LKDibR5PiwX9DKk8uCq2qfo8M+DSlz4ZgYHoGEMG7+w=;
+	s=arc-20240116; t=1762130918; c=relaxed/simple;
+	bh=2RPmo9wPrQ44L75Ktc/u/44O4tw1ecrQD5bk3TeacgA=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=lQPKE+ijHiGpJ9BI83PBl3YWlrgQIBQZ+TrlvNZ7u1X3zcGTTvl8sX46hfFFykaXh7Q9BW4HWckvRh7UGobw7O+UJvrxxj/yvFZDc78vweE+5hyOdpIiU33POsTZHtOc8aycyf2Zax3N9XAnz/G/O7CTg/C7olEPkye1fRZQww0=
+	 MIME-Version:Content-Type; b=tpz+zdFl2LVwqQKe9tcWZQRgCzA4Jp4yuaIvby+3ikzvIiCpLtkLkNpgerZcHMpU6WTt/pJ9rn/GGxkTnws4GTFdGCCqwOBHRH6LKALErJKtuNLt7sfPMn+kFREl2iuLc08hJvQa07TOOupCU1M0FUCmCaFeBhBNXztkxsAFxew=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2F55C2BCB0;
-	Mon,  3 Nov 2025 00:48:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D217FC4CEFB;
+	Mon,  3 Nov 2025 00:48:37 +0000 (UTC)
 Received: by venus (Postfix, from userid 1000)
-	id 76FAD1822DA; Mon, 03 Nov 2025 01:48:33 +0100 (CET)
+	id 35FB6180CB6; Mon, 03 Nov 2025 01:48:33 +0100 (CET)
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: linux-kernel@vger.kernel.org, Lee Jones <lee@kernel.org>, 
- Sebastian Reichel <sre@kernel.org>, 
- Troy Mitchell <troy.mitchell@linux.spacemit.com>, 
- Yixun Lan <dlan@gentoo.org>, Paul Walmsley <pjw@kernel.org>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Alexandre Ghiti <alex@ghiti.fr>, linux-riscv@lists.infradead.org, 
- spacemit@lists.linux.dev, Aurelien Jarno <aurelien@aurel32.net>
-Cc: linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org, 
- spacemit@lists.linux.dev
-In-Reply-To: <20251102230352.914421-1-aurelien@aurel32.net>
-References: <20251102230352.914421-1-aurelien@aurel32.net>
-Subject: Re: (subset) [PATCH v5 0/2] driver: reset: spacemit-p1: add driver
- for poweroff/reboot
-Message-Id: <176213091347.301408.11587695003687450479.b4-ty@collabora.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>, Lee Jones <lee@kernel.org>, 
+ Sebastian Reichel <sre@kernel.org>, Andreas Kemnade <andreas@kemnade.info>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20250918-bd71828-charger-v5-0-851164839c28@kemnade.info>
+References: <20250918-bd71828-charger-v5-0-851164839c28@kemnade.info>
+Subject: Re: (subset) [PATCH v5 0/3] power: supply: add charger for BD71828
+Message-Id: <176213091320.301408.17517885463599490632.b4-ty@collabora.com>
 Date: Mon, 03 Nov 2025 01:48:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -57,20 +52,26 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.3
 
 
-On Mon, 03 Nov 2025 00:01:58 +0100, Aurelien Jarno wrote:
-> This adds poweroff/reboot support for the SpacemiT P1 PMIC chip, which is
-> commonly paired with the SpacemiT K1 SoC.
+On Thu, 18 Sep 2025 09:45:08 +0200, Andreas Kemnade wrote:
+> Add basic charger which does just read out simple registers without
+> doing any sophisticated things.
 > 
-> Note: For reliable operation, this driver depends on a this patch that adds
-> atomic transfer support to the SpacemiT I2C controller driver:
->   https://lore.kernel.org/spacemit/20251009-k1-i2c-atomic-v4-1-a89367870286@linux.spacemit.com/
+> This is a stripped down version of
+> https://lore.kernel.org/lkml/dbd97c1b0d715aa35a8b4d79741e433d97c562aa.1637061794.git.matti.vaittinen@fi.rohmeurope.com/
+> 
+> That version includes all the bells-and-whistles you might imagine
+> around coloumb counter handling and capacity measurement which includes
+> changes no the power supply core.
+> Rather do a step by step approach to keep that reviewable.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/2] driver: reset: spacemit-p1: add driver for poweroff/reboot
-      commit: 28124cc0fb8c7dc01a6834d227351e25d9a92c58
+[2/3] power: supply: Add bd718(15/28/78) charger driver
+      commit: 5bff79dad20a51fed3ff6d78f6b60321cd145a99
+[3/3] MAINTAINERS: Add entry for BD71828 charger
+      commit: b838cecc229122559b3e2e381a9275f714bd4146
 
 Best regards,
 -- 
