@@ -1,61 +1,58 @@
-Return-Path: <linux-kernel+bounces-882171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB06AC29CD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 02:48:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3C8BC29CCD
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 02:46:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B8383AFDCD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 01:48:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBB6D3AEB8C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 01:46:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73FE279DDB;
-	Mon,  3 Nov 2025 01:47:53 +0000 (UTC)
-Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E652749D7;
+	Mon,  3 Nov 2025 01:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="y3FUNARC"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8398927A469;
-	Mon,  3 Nov 2025 01:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 971DB3A1B5;
+	Mon,  3 Nov 2025 01:46:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762134473; cv=none; b=AiV5wkLZTrTFNUMUv+F9hKMTHWgmj3lUNiSrFDjZpIwjbbcxncvSn5thdSiLVvehBvWQ0Y20QCqPmdExRzrmBIQ0QU3qK9xDkTYrLP8Hh6OC6vXMqprauyeV2vFKVXGdu/iGVIdyueS+ihSomdFVwD1e/R4l91njlZT0U9cZRL8=
+	t=1762134412; cv=none; b=HkS9Jl+8kIZvA1xA6zEAGmUI1pUTIf1mYKP2+p6twOF2hp/YUE2eM/1Cd8pwZygBRWAgyPuieozlQg31kROfzC3GNhQDrswhbpn9dFZ52JUxQwAJ5kXhA0ts6kVpm56hnFo5xzgZM+ALEvOcvJPg/qr+ETrOutU4iTqNrCpnyfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762134473; c=relaxed/simple;
-	bh=NX+LUOI/DG6pE0xhbeDboThMj5zOWdUpVqcRRjTUk8I=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZtZNnWFcQLVons6QEuMOa7OFnSj7fAPGRHv8j+ek0FyvdA0bxOAB+le0STtc/bbkXp6aSdTgbL+F6VKjFNqauwenBwNxRigirvgXZp6TFklohH1xIKcbkN8K0OkQtB2tWVPzgsQo0R2/mkAfaQZUrCOUTiPfzBs8Zhv+rLMV780=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from Jtjnmail201617.home.langchao.com
-        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id 202511030947365699;
-        Mon, 03 Nov 2025 09:47:36 +0800
-Received: from jtjnmailAR02.home.langchao.com (10.100.2.43) by
- Jtjnmail201617.home.langchao.com (10.100.2.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Mon, 3 Nov 2025 09:47:34 +0800
-Received: from inspur.com (10.100.2.107) by jtjnmailAR02.home.langchao.com
- (10.100.2.43) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Mon, 3 Nov 2025 09:47:34 +0800
-Received: from localhost.localdomain.com (unknown [10.94.13.117])
-	by app3 (Coremail) with SMTP id awJkCsDwmPmyCQhp9KQJAA--.13804S5;
-	Mon, 03 Nov 2025 09:47:34 +0800 (CST)
-From: Chu Guangqing <chuguangqing@inspur.com>
-To: <john.g.garry@oracle.com>, <will@kernel.org>, <james.clark@linaro.org>,
-	<mike.leach@linaro.org>, <leo.yan@linux.dev>, <peterz@infradead.org>,
-	<mingo@redhat.com>, <acme@kernel.org>, <namhyung@kernel.org>,
-	<mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
-	<jolsa@kernel.org>, <irogers@google.com>, <adrian.hunter@intel.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-perf-users@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Chu Guangqing <chuguangqing@inspur.com>
-Subject: [PATCH v2 1/1] perf vendor events arm64 AmpereOneX: Fix spelling typo in the metrics file
-Date: Mon, 3 Nov 2025 09:46:33 +0800
-Message-ID: <20251103014633.1213-2-chuguangqing@inspur.com>
-X-Mailer: git-send-email 2.43.7
-In-Reply-To: <20251103014633.1213-1-chuguangqing@inspur.com>
-References: <20251103014633.1213-1-chuguangqing@inspur.com>
+	s=arc-20240116; t=1762134412; c=relaxed/simple;
+	bh=tz/3X5TX5Scv+lrlmT6dDipvwCHULnwEEad+kU5oR4o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E8niRLnjzjfHRsQhwKYc2+gSBTIecDslEqrrzE3eK/JPG/f3uC/TzsyVpVwmSTHGuUDqCMp6QGDSFRYNipyhIRBtigyboYTMZddUl+MF1ic27s5o+CF5PORmF2vPDAMaBpXvGb741pGQLkewIaVRMsLsapCpfPtF/UsIglix/Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=y3FUNARC; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=0WzumnM/hhduantBwY/kZRPJeZB7TIntXpGq+DNWcfs=; b=y3FUNARCE8EbRsUDEQDx8ZwINf
+	FrCYQeEdVKLsuu3Eea3no9qdg/k3loiiM5eAruaeI8339VLkBqd/tWUyeF5a7+R9ShRQ1W6S5g6sx
+	M21lmDj0km8MNhGb0I7CfzJoKJs0D1b9yLSejAhNqhXvEDc39MshTVV+xoIEYoxrmj9Bl+u2qbHQE
+	PJlYcetVeWA6BF8f+epjyJ65dFpTMJehIOdYvEZ+V1+6O8GpDjOK9u/oz29kr5j6IhhQcY36xUr3W
+	EuuSkENwZER0l+auT2QnSVHPSjbIJKsOttY6rb8sHt+eexS2NkZzYde/GVPbI4gNE8dDQOcBTx9gU
+	1bEZ3O6w==;
+Received: from [50.53.43.113] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vFjec-000000091d4-1SQs;
+	Mon, 03 Nov 2025 01:46:42 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	Thorsten Leemhuis <linux@leemhuis.info>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org
+Subject: [PATCH v3] kernel-chktaint: add reporting for tainted modules
+Date: Sun,  2 Nov 2025 17:46:41 -0800
+Message-ID: <20251103014641.669126-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,112 +60,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: awJkCsDwmPmyCQhp9KQJAA--.13804S5
-X-Coremail-Antispam: 1UD129KBjvJXoWxZFy3ArW5XryUtw48uw1Dtrb_yoW5Cr1UpF
-	W8uF4DWr4Sgr9xKas5trWIqF4S9ayruF4ftw1UKw1UuwnrZr1Yga9Fq3s7AF48ZrykGa13
-	uF1qyryUGr1UCw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUHqb7Iv0xC_Cr1lb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I2
-	0VC2zVCF04k26cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI
-	8067AKxVWUGwA2048vs2IY020Ec7CjxVAFwI0_Gr0_Xr1l8cAvFVAK0II2c7xJM28CjxkF
-	64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcV
-	CY1x0267AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY
-	1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4
-	xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCa
-	FVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI4
-	02YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCF
-	54CYxVCY1x0262kKe7AKxVW8ZVWrXwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_Wryl
-	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
-	AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
-	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0pEq2N
-	tUUUUU=
-X-CM-SenderInfo: 5fkxw35dqj1xlqj6x0hvsx2hhfrp/
-X-CM-DELIVERINFO: =?B?ChgN9pRRTeOiUs3aOqHZ50hzsfHKF9Ds6CbXmDm38RucXu3DYXJR7Zlh9zE0nt/Iac
-	D+KRzbM3WG6wK3TdXpl4ALTskQ/51zyjXsDLAUWvI3FwgIEgo4lAMTnf3ETstjRH9TRkEG
-	jKmC1H9zckCaoXwPIj8=
-Content-Type: text/plain
-tUid: 202511030947368a84a2fbb5776b2b60707d1027002bd8
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
 
-The json file incorrectly used "acceses" instead of "accesses".
+Check all loaded modules and report any that have their 'taint'
+flags set.  The tainted module output format is:
+ * <module_name> (<taint_flags>)
 
-Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
+Example output:
+
+Kernel is "tainted" for the following reasons:
+ * externally-built ('out-of-tree') module was loaded  (#12)
+ * unsigned module was loaded (#13)
+Raw taint value as int/string: 12288/'G           OE      '
+
+Tainted modules:
+ * dump_test (OE)
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Acked-by: Thorsten Leemhuis <linux@leemhuis.info>
 ---
- .../arch/arm64/ampere/ampereonex/metrics.json    | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+v2: change tainted modules output a bit (Thorsten);
+v3: add Acked-by from Thorsten (forgot it on v2);
+    more changes as suggested by Thorsten;
 
-diff --git a/tools/perf/pmu-events/arch/arm64/ampere/ampereonex/metrics.json b/tools/perf/pmu-events/arch/arm64/ampere/ampereonex/metrics.json
-index 6817cac149e0..a29aadc9b2e3 100644
---- a/tools/perf/pmu-events/arch/arm64/ampere/ampereonex/metrics.json
-+++ b/tools/perf/pmu-events/arch/arm64/ampere/ampereonex/metrics.json
-@@ -388,55 +388,55 @@
-         "MetricExpr": "L1D_CACHE_RW / L1D_CACHE",
-         "BriefDescription": "L1D cache access - demand",
-         "MetricGroup": "Cache",
--        "ScaleUnit": "100percent of cache acceses"
-+        "ScaleUnit": "100percent of cache accesses"
-     },
-     {
-         "MetricName": "l1d_cache_access_prefetches",
-         "MetricExpr": "L1D_CACHE_PRFM / L1D_CACHE",
-         "BriefDescription": "L1D cache access - prefetch",
-         "MetricGroup": "Cache",
--        "ScaleUnit": "100percent of cache acceses"
-+        "ScaleUnit": "100percent of cache accesses"
-     },
-     {
-         "MetricName": "l1d_cache_demand_misses",
-         "MetricExpr": "L1D_CACHE_REFILL_RW / L1D_CACHE",
-         "BriefDescription": "L1D cache demand misses",
-         "MetricGroup": "Cache",
--        "ScaleUnit": "100percent of cache acceses"
-+        "ScaleUnit": "100percent of cache accesses"
-     },
-     {
-         "MetricName": "l1d_cache_demand_misses_read",
-         "MetricExpr": "L1D_CACHE_REFILL_RD / L1D_CACHE",
-         "BriefDescription": "L1D cache demand misses - read",
-         "MetricGroup": "Cache",
--        "ScaleUnit": "100percent of cache acceses"
-+        "ScaleUnit": "100percent of cache accesses"
-     },
-     {
-         "MetricName": "l1d_cache_demand_misses_write",
-         "MetricExpr": "L1D_CACHE_REFILL_WR / L1D_CACHE",
-         "BriefDescription": "L1D cache demand misses - write",
-         "MetricGroup": "Cache",
--        "ScaleUnit": "100percent of cache acceses"
-+        "ScaleUnit": "100percent of cache accesses"
-     },
-     {
-         "MetricName": "l1d_cache_prefetch_misses",
-         "MetricExpr": "L1D_CACHE_REFILL_PRFM / L1D_CACHE",
-         "BriefDescription": "L1D cache prefetch misses",
-         "MetricGroup": "Cache",
--        "ScaleUnit": "100percent of cache acceses"
-+        "ScaleUnit": "100percent of cache accesses"
-     },
-     {
-         "MetricName": "ase_scalar_mix",
-         "MetricExpr": "ASE_SCALAR_SPEC / OP_SPEC",
-         "BriefDescription": "Proportion of advanced SIMD data processing operations (excluding DP_SPEC/LD_SPEC) scalar operations",
-         "MetricGroup": "Instructions",
--        "ScaleUnit": "100percent of cache acceses"
-+        "ScaleUnit": "100percent of cache accesses"
-     },
-     {
-         "MetricName": "ase_vector_mix",
-         "MetricExpr": "ASE_VECTOR_SPEC / OP_SPEC",
-         "BriefDescription": "Proportion of advanced SIMD data processing operations (excluding DP_SPEC/LD_SPEC) vector operations",
-         "MetricGroup": "Instructions",
--        "ScaleUnit": "100percent of cache acceses"
-+        "ScaleUnit": "100percent of cache accesses"
-     }
- ]
--- 
-2.43.7
+Cc: Thorsten Leemhuis <linux@leemhuis.info>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org
+---
+ tools/debugging/kernel-chktaint |   18 +++++++++++++++++-
+ 1 file changed, 17 insertions(+), 1 deletion(-)
 
+--- linux-next-20251031.orig/tools/debugging/kernel-chktaint
++++ linux-next-20251031/tools/debugging/kernel-chktaint
+@@ -211,9 +211,25 @@ else
+ 	addout "J"
+ 	echo " * fwctl's mutating debug interface was used (#19)"
+ fi
++echo "Raw taint value as int/string: $taint/'$out'"
++
++# report on any tainted loadable modules
++[ "$1" = "" ] && [ -r /sys/module/ ] && \
++	cnt=`grep [A-Z] /sys/module/*/taint | wc -l` || cnt=0
+ 
++if [ $cnt -ne 0 ]; then
++	echo
++	echo "Tainted modules:"
++	for dir in `ls /sys/module` ; do
++		if [ -r /sys/module/$dir/taint ]; then
++			modtnt=`cat /sys/module/$dir/taint`
++			[ "$modtnt" = "" ] || echo " * $dir ($modtnt)"
++		fi
++	done
++fi
++
++echo
+ echo "For a more detailed explanation of the various taint flags see"
+ echo " Documentation/admin-guide/tainted-kernels.rst in the Linux kernel sources"
+ echo " or https://kernel.org/doc/html/latest/admin-guide/tainted-kernels.html"
+-echo "Raw taint value as int/string: $taint/'$out'"
+ #EOF#
 
