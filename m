@@ -1,295 +1,144 @@
-Return-Path: <linux-kernel+bounces-882932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9672C2BFF2
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 14:12:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2330CC2BF5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 14:07:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1DE674FCBE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 13:00:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0AD1422ECD
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 13:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE8631A81C;
-	Mon,  3 Nov 2025 12:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4BF30DED3;
+	Mon,  3 Nov 2025 12:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YwfojEvQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HtyaFhq3"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C85431A564;
-	Mon,  3 Nov 2025 12:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D651E233D9E
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 12:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762174429; cv=none; b=eqDXfUe4BiZA/YUOUoXB+H2vGhTp71lghSuo2mEsAI7b1BH6uOo4Vj1XVzLmwCRhU6YA6Cn5vzZFaS/B9Jpl61Rg+twmp1iR5EaQQHzk4tpLEJ+16OAjwRhZoMrJ47sGLElUIELg+FWsKsIj/5+0RhB0LH5yOPuzxqS+OTiohGo=
+	t=1762174627; cv=none; b=kUiQer21aSEXYTwZTRvkzW+2x4O6bBLpcZ9DwK430ck2LOLO1qIByPJohwb81yMsSyfZgMGiE3OW9fCiPBEIyn1cz4QnYFuW8c/NLfaXrKagVo5VlbJUBITpnX7vLZmE1RIHRxLedE+MAg84xYl0FxfAprpiICbHU8aQkL1CzE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762174429; c=relaxed/simple;
-	bh=5vnEsFLmQTNGsjzc9nlp6oQVoid1mJ5o3l9cHdo2eoU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZSo9f8HP68sQLgUpRROUKPuubLujBpJeoYtnjwmEeR03D0nP+1QAAegkFsyhrEp5Wziu6qmBcZOS6PW9NN2x72gO9O1ppGdpC4EwfDT6UNAsj9IKhzEKPNMmwLwyCcywsFKZ3VwWRedwsB1qlhu5eV71oCzVQU8PyWX0orpMphg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YwfojEvQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B98ECC4CEE7;
-	Mon,  3 Nov 2025 12:53:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762174428;
-	bh=5vnEsFLmQTNGsjzc9nlp6oQVoid1mJ5o3l9cHdo2eoU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=YwfojEvQFoTNEWx92dDbQY9YwM2gMVZbl+HVm2qYIb4bEdRAKAFfXcjEUTdDW9tfA
-	 7qXTMn/4SphtVmKx7owviI2gqf+g28D6onZp70Dxl2KaYswfcWV98lpmJV4MOBcgCj
-	 Wag9u0li54jMktkldlTwPf3QPOYjN0yCg0ufsprjCOKUMsB4NJR9vtyx1urhXyMK/y
-	 VbMFkgGAAtJPuB3kj+igWAVCsbRmSvWIaUIHNtrmv9DaM6ZAgfcKN0eMi4AwG+ZWLI
-	 ooxWF6PEQPSNB5dQlfTSkYL/QkAO3JLSOnbPwqh+V5VUYE80VrSbGTba3GyIiELZIz
-	 I2Ur7jxHtbysQ==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Mon, 03 Nov 2025 07:52:45 -0500
-Subject: [PATCH v4 17/17] vfs: expose delegation support to userland
+	s=arc-20240116; t=1762174627; c=relaxed/simple;
+	bh=GtwiBFRUEFBVez/Z+mGFBS1AdJ87qQO1QK15vTC7rDU=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jAzn0OD83PIaTmucS1w/Ahf9r+ByzMJVoCGSmPT9lVxUsVtxig08hsa0s83DNRrG6mwUhDjKx316pDk9IsevWk1BA0/pIxoSJ77noFx8/n6VkqOcB5uHUCMEG2BrLLp1cC4BPVEoXtebM/CU3Rrn5V2SX6q7xRhMWm+8oOcPuqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HtyaFhq3; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-36d77de259bso29522441fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 04:57:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762174624; x=1762779424; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ABjcrw89jAA3Q20fdppeCXKOEoaWX9Ww3g8nGLhqb0U=;
+        b=HtyaFhq34el7kx1zNLJTOU8VAx9pxy/llrOxDdjkUz5tNUenQBfG2ftnzFjgjH6714
+         MtdjGHwudn3An/GyL/3cL/MiYQEThJAWjx0xXkREp/M5BlbsLB0nCYC+e1CUNc7Lu/c3
+         okIkcFstqxJSBYC2b4g434ePmQI1Y1+/tbksgDiPAL+Y0sW/OpWUpYFJukkBze3dT87s
+         WcJPgPmDdEmdtljE/+Lqi4GcFaAhBIPtEW//0LHCgqM05qy21fSsUPfJgs+oKlYg3C1s
+         THHj/jDGEPjZL0FN73ThLZoiJL5vVHT9rIKW1Dr+xemthLSzxj0q8B+WTQ7UjytxFlvA
+         zwuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762174624; x=1762779424;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ABjcrw89jAA3Q20fdppeCXKOEoaWX9Ww3g8nGLhqb0U=;
+        b=M4BOGYXhRK5imk/KMgU6hvV10TkHIWreNSBr3x98cWwJWaausgIuMvNUGCj3fkh90z
+         gcNN5BBu9sZs2F2nbJy9U7SLh85bDGzC/DCSAsVyPMosF8ppLDVCvGcRmr98PqkBpCb9
+         /1Hs/oS/IqD7or2p9suRvoPyPirwwii2qqJg7TifMgF/pUUajnUod5vR9whWSVrU9Emn
+         PelFL+598fj/ZZGMFDeiKaZvfgfq+Ma924+B8xqD2KSgISkDRm28nptlqJhmgBDFrJSG
+         JisEwaiHpuXTSs+Tcd8Vgu13JzO6/BF6D1gM8OJKEFMAWv6L2blAdYYOFfVOia9w/laS
+         W5ow==
+X-Gm-Message-State: AOJu0YxK7zA9KKR5vWRdy0XuH+rNaHSzYle4uyXTOrKRkwFP+kJOuHhK
+	mcXSISaJQZ0xF90cSY8jY54hhyp3VIuozmQ1tul9FmoAwAFm6ZPw6FbUpYBTPA==
+X-Gm-Gg: ASbGncs+9BLXjqNmXNf8RARXU+KXQ3ERzxeS/MclxEfao55Zp98NSApNGgicnCuFMfh
+	BJ8q53hdxbO8tw1/mPCRmjKL5PHZZf1ZTrmE8abMTA3cwJmxJ7tZO2Xi60phgEKXA5GIJUtcSEs
+	4H+3ZaUZ52ISUW/oqw7FJ5eQ8vNC8zoHjVzpZhx6yzp6vBtnSHKYn/rEIrmnRd+du3xcsMUylzn
+	6De1PylTcOyEX0bhtTVS5PuYbzPfgiBaE7lRBfU2Ik+pq/rIhO9KKlWEWjc4dLWwsL/4EbrzhZs
+	WMOZEioVtOgZh8TFA0sYbix1OsJP7SZBApWikAb9cXrBVdz54jXTQhrJUKd9/z6bpHhzk6zJZru
+	vzcNFQ+KBiARtr2vc439nLZIzYvHUwg8H+r3NkMZ2zg==
+X-Google-Smtp-Source: AGHT+IG4xzdqhYAc4R6V0PORR3naINtbpFIeJn5oDtyrwDfJWC2/RhaLJmIXtOn0jpFV5tRicG8KCw==
+X-Received: by 2002:a2e:a542:0:b0:37a:2fa7:53af with SMTP id 38308e7fff4ca-37a2fa75c90mr17228221fa.40.1762174623533;
+        Mon, 03 Nov 2025 04:57:03 -0800 (PST)
+Received: from pc636 ([2001:9b1:d5a0:a500::800])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-37a4167f286sm276301fa.52.2025.11.03.04.57.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Nov 2025 04:57:02 -0800 (PST)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Mon, 3 Nov 2025 13:57:01 +0100
+To: "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Hellwig <hch@infradead.org>
+Subject: Re: [RFC PATCH 0/4] make vmalloc gfp flags usage more apparent
+Message-ID: <aQimnV815XIjV2JT@pc636>
+References: <20251030164330.44995-1-vishal.moola@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251103-dir-deleg-ro-v4-17-961b67adee89@kernel.org>
-References: <20251103-dir-deleg-ro-v4-0-961b67adee89@kernel.org>
-In-Reply-To: <20251103-dir-deleg-ro-v4-0-961b67adee89@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
- Chuck Lever <chuck.lever@oracle.com>, 
- Alexander Aring <alex.aring@gmail.com>, 
- Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
- Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.org>, 
- Ronnie Sahlberg <ronniesahlberg@gmail.com>, 
- Shyam Prasad N <sprasad@microsoft.com>, Tom Talpey <tom@talpey.com>, 
- Bharath SM <bharathsm@microsoft.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
- David Howells <dhowells@redhat.com>, Tyler Hicks <code@tyhicks.com>, 
- NeilBrown <neil@brown.name>, Olga Kornievskaia <okorniev@redhat.com>, 
- Dai Ngo <Dai.Ngo@oracle.com>, Amir Goldstein <amir73il@gmail.com>, 
- Namjae Jeon <linkinjeon@kernel.org>, Steve French <smfrench@gmail.com>, 
- Sergey Senozhatsky <senozhatsky@chromium.org>, 
- Carlos Maiolino <cem@kernel.org>, Kuniyuki Iwashima <kuniyu@google.com>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org, 
- samba-technical@lists.samba.org, netfs@lists.linux.dev, 
- ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
- linux-xfs@vger.kernel.org, netdev@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6381; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=5vnEsFLmQTNGsjzc9nlp6oQVoid1mJ5o3l9cHdo2eoU=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBpCKWfL5rEDvoecb6h2EtHSx6vtxVMPU49VDa09
- uywOyfKWUeJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaQilnwAKCRAADmhBGVaC
- FT1vEADNkNWiGMlbqP7jUf8X5h6MV4sgqioLwoiaAFjuRU5X4KuPCYmeDsJwj9wB/gZ4ja/oL3g
- lr2Frya3Vi29F7gQOaEIk57edySLRufmHXUcdYbA4OEPTczEiLh/gX+YaFxnddpBLYXjSUPUBCz
- GAcnAXnCfnM6S67Pld55yVeOH+A3hSTo3tUHOpZ2WxgalhLWaNaVgrzWKkF05O1fj91Ca69FeLx
- 8Nk1SXdCZsF4SjEhBkUVqniNL97JKW+uL9fAUUt2n61XHohfJpZL4SSb96u+PghRlcOithDDZNW
- Yz3H+qOm2+UyrSKq/23CsCJpmPmBQJMWC3hQHgDfPKk/DmUstkYEphjo6MHP5JN/xh0xy+Fjc46
- vkcKFu0oJjyk4Cgg6N2VaSvnFlKF1CGhjTVwiyCf9S+r/NbfjkXEfTEfcuoMHVqA54X3HaL8Vei
- hVNqXr1t1/TWUJHoMFmSZdxgfdTmZ8/b1C5rnNNniSFnQcRktterb61H46ibbSoskjzhVpa5Rg6
- Npj3xwO1qGDqxlAoBqrzc4tkJcF2Z51uP8MuxufprmSzvr+n21c5g2bjvHEqoJ4BuKcsTfQMu8t
- 285nYgJNzuxJzNtQbtllD1d/nd6IjJOA/4kNVIDBwbHOiqmWfk22Ekl+QIh9dbCU51bkH5cS1kk
- CX67UzGREA7+Yug==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251030164330.44995-1-vishal.moola@gmail.com>
 
-Now that support for recallable directory delegations is available,
-expose this functionality to userland with new F_SETDELEG and F_GETDELEG
-commands for fcntl().
+On Thu, Oct 30, 2025 at 09:43:26AM -0700, Vishal Moola (Oracle) wrote:
+> We should do a better job at enforcing gfp flags for vmalloc. Right now, we
+> have a kernel-doc for __vmalloc_node_range(), and hope callers pass in
+> supported flags. If a caller were to pass in an unsupported flag, we may
+> BUG, silently clear it, or completely ignore it.
+> 
+> If we are more proactive about enforcing gfp flags, we can making sure
+> callers know when they may be asking for unsupported behavior.
+> 
+> This patchset lets vmalloc control the incoming gfp flags, and cleans up
+> some confusing gfp code.
+> 
+> ----------------
+> Based on mm-new
+> 
+> I did some digging and am not entirely sure what flags vmalloc does NOT
+> support. Is a better idea is to have explicitly supported flags and drop
+> all others?
+> 
+> __GFP_COMP is an obvious one due to a BUG call in split_page().
+> ~GFP_BITS_MASK is also obvious.
+> 
+> Then I started following the kernel doc and added NORETRY and
+> RETRY_MAYFAIL, and after forking a couple hundred times, it turns out some
+> per-cpu allocations pass in the NORETRY flag right now.
+> 
+> Does anyone have a handy-dandy list of supported/unsupported vmalloc flags
+> that we should reject/clear? Ulad?
+> 
+We recently have added GFP_ATOMIC, GFP_NOWAIT support. Both are handled
+based on gfpflags_allow_blocking() checking:
 
-Note that this also allows userland to request a FL_DELEG type lease on
-files too. Userland applications that do will get signalled when there
-are metadata changes in addition to just data changes (which is a
-limitation of FL_LEASE leases).
+<snip>
+* Supported GFP classes: %GFP_KERNEL, %GFP_ATOMIC, %GFP_NOWAIT,
+ * %GFP_NOFS and %GFP_NOIO. Zone modifiers are not supported.
+ * Please note %GFP_ATOMIC and %GFP_NOWAIT are supported only
+ * by __vmalloc().
+<snip>
 
-These commands accept a new "struct delegation" argument that contains a
-flags field for future expansion.
+>
+> I did some digging and am not entirely sure what flags vmalloc does NOT
+> support. Is a better idea is to have explicitly supported flags and drop
+> all others?
+>
+Maybe we should look at it vice versa. Focus on supported flags. In the
+slab there is an adjust function which modifies the gfp and emits the warning
+if passed GFP is part of buggy mask.
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/fcntl.c                 | 14 ++++++++++++++
- fs/locks.c                 | 42 +++++++++++++++++++++++++++++++++++++-----
- include/linux/filelock.h   | 12 ++++++++++++
- include/uapi/linux/fcntl.h | 10 ++++++++++
- 4 files changed, 73 insertions(+), 5 deletions(-)
-
-diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 72f8433d9109889eecef56b32d20a85b4e12ea44..8d57a6e34076d68228b6d8d9bb381f78a751b151 100644
---- a/fs/fcntl.c
-+++ b/fs/fcntl.c
-@@ -445,6 +445,7 @@ static long do_fcntl(int fd, unsigned int cmd, unsigned long arg,
- 		struct file *filp)
- {
- 	void __user *argp = (void __user *)arg;
-+	struct delegation deleg;
- 	int argi = (int)arg;
- 	struct flock flock;
- 	long err = -EINVAL;
-@@ -550,6 +551,19 @@ static long do_fcntl(int fd, unsigned int cmd, unsigned long arg,
- 	case F_SET_RW_HINT:
- 		err = fcntl_set_rw_hint(filp, arg);
- 		break;
-+	case F_GETDELEG:
-+		if (copy_from_user(&deleg, argp, sizeof(deleg)))
-+			return -EFAULT;
-+		fcntl_getdeleg(filp, &deleg);
-+		if (copy_to_user(argp, &deleg, sizeof(deleg)))
-+			return -EFAULT;
-+		err = 0;
-+		break;
-+	case F_SETDELEG:
-+		if (copy_from_user(&deleg, argp, sizeof(deleg)))
-+			return -EFAULT;
-+		err = fcntl_setdeleg(fd, filp, &deleg);
-+		break;
- 	default:
- 		break;
- 	}
-diff --git a/fs/locks.c b/fs/locks.c
-index dd290a87f58eb5d522f03fa99d612fbad84dacf3..1e29aecf79b8df66a6c67ca5f59cec40a376b9bc 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -1703,7 +1703,7 @@ EXPORT_SYMBOL(lease_get_mtime);
-  *	XXX: sfr & willy disagree over whether F_INPROGRESS
-  *	should be returned to userspace.
-  */
--int fcntl_getlease(struct file *filp)
-+static int __fcntl_getlease(struct file *filp, unsigned int flavor)
- {
- 	struct file_lease *fl;
- 	struct inode *inode = file_inode(filp);
-@@ -1719,7 +1719,8 @@ int fcntl_getlease(struct file *filp)
- 		list_for_each_entry(fl, &ctx->flc_lease, c.flc_list) {
- 			if (fl->c.flc_file != filp)
- 				continue;
--			type = target_leasetype(fl);
-+			if (fl->c.flc_flags & flavor)
-+				type = target_leasetype(fl);
- 			break;
- 		}
- 		spin_unlock(&ctx->flc_lock);
-@@ -1730,6 +1731,16 @@ int fcntl_getlease(struct file *filp)
- 	return type;
- }
- 
-+int fcntl_getlease(struct file *filp)
-+{
-+	return __fcntl_getlease(filp, FL_LEASE);
-+}
-+
-+void fcntl_getdeleg(struct file *filp, struct delegation *deleg)
-+{
-+	deleg->d_type = __fcntl_getlease(filp, FL_DELEG);
-+}
-+
- /**
-  * check_conflicting_open - see if the given file points to an inode that has
-  *			    an existing open that would conflict with the
-@@ -2039,13 +2050,13 @@ vfs_setlease(struct file *filp, int arg, struct file_lease **lease, void **priv)
- }
- EXPORT_SYMBOL_GPL(vfs_setlease);
- 
--static int do_fcntl_add_lease(unsigned int fd, struct file *filp, int arg)
-+static int do_fcntl_add_lease(unsigned int fd, struct file *filp, unsigned int flavor, int arg)
- {
- 	struct file_lease *fl;
- 	struct fasync_struct *new;
- 	int error;
- 
--	fl = lease_alloc(filp, FL_LEASE, arg);
-+	fl = lease_alloc(filp, flavor, arg);
- 	if (IS_ERR(fl))
- 		return PTR_ERR(fl);
- 
-@@ -2081,7 +2092,28 @@ int fcntl_setlease(unsigned int fd, struct file *filp, int arg)
- 
- 	if (arg == F_UNLCK)
- 		return vfs_setlease(filp, F_UNLCK, NULL, (void **)&filp);
--	return do_fcntl_add_lease(fd, filp, arg);
-+	return do_fcntl_add_lease(fd, filp, FL_LEASE, arg);
-+}
-+
-+/**
-+ *	fcntl_setdeleg	-	sets a delegation on an open file
-+ *	@fd: open file descriptor
-+ *	@filp: file pointer
-+ *	@deleg: delegation request from userland
-+ *
-+ *	Call this fcntl to establish a delegation on the file.
-+ *	Note that you also need to call %F_SETSIG to
-+ *	receive a signal when the lease is broken.
-+ */
-+int fcntl_setdeleg(unsigned int fd, struct file *filp, struct delegation *deleg)
-+{
-+	/* For now, no flags are supported */
-+	if (deleg->d_flags != 0)
-+		return -EINVAL;
-+
-+	if (deleg->d_type == F_UNLCK)
-+		return vfs_setlease(filp, F_UNLCK, NULL, (void **)&filp);
-+	return do_fcntl_add_lease(fd, filp, FL_DELEG, deleg->d_type);
- }
- 
- /**
-diff --git a/include/linux/filelock.h b/include/linux/filelock.h
-index 208d108df2d73a9df65e5dc9968d074af385f881..4384c6f61fad8f21d15974fac1d0f77747155f0f 100644
---- a/include/linux/filelock.h
-+++ b/include/linux/filelock.h
-@@ -159,6 +159,8 @@ int fcntl_setlk64(unsigned int, struct file *, unsigned int,
- 
- int fcntl_setlease(unsigned int fd, struct file *filp, int arg);
- int fcntl_getlease(struct file *filp);
-+int fcntl_setdeleg(unsigned int fd, struct file *filp, struct delegation *deleg);
-+void fcntl_getdeleg(struct file *filp, struct delegation *deleg);
- 
- static inline bool lock_is_unlock(struct file_lock *fl)
- {
-@@ -278,6 +280,16 @@ static inline int fcntl_getlease(struct file *filp)
- 	return F_UNLCK;
- }
- 
-+static inline int fcntl_setdeleg(unsigned int fd, struct file *filp, struct delegation *deleg)
-+{
-+	return -EINVAL;
-+}
-+
-+static inline int fcntl_getdeleg(struct file *filp, struct delegation *deleg)
-+{
-+	return F_UNLCK;
-+}
-+
- static inline bool lock_is_unlock(struct file_lock *fl)
- {
- 	return false;
-diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-index 3741ea1b73d8500061567b6590ccf5fb4c6770f0..aae88f4b5c05205b2b28ae46b21bca9817197e04 100644
---- a/include/uapi/linux/fcntl.h
-+++ b/include/uapi/linux/fcntl.h
-@@ -79,6 +79,16 @@
-  */
- #define RWF_WRITE_LIFE_NOT_SET	RWH_WRITE_LIFE_NOT_SET
- 
-+/* Set/Get delegations */
-+#define F_GETDELEG		(F_LINUX_SPECIFIC_BASE + 15)
-+#define F_SETDELEG		(F_LINUX_SPECIFIC_BASE + 16)
-+
-+/* Argument structure for F_GETDELEG and F_SETDELEG */
-+struct delegation {
-+	short		d_type;		/* F_RDLCK, F_WRLCK, F_UNLCK */
-+	unsigned int	d_flags;
-+};
-+
- /*
-  * Types of directory notifications that may be requested.
-  */
-
--- 
-2.51.1
-
+--
+Uladzislau Rezki
 
