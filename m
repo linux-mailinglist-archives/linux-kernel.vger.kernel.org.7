@@ -1,318 +1,686 @@
-Return-Path: <linux-kernel+bounces-882723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8361C2B3D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:06:23 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C8FAC2B3E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:07:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48B9018937DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:06:39 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id D6B4B3494F5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:07:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F328430103F;
-	Mon,  3 Nov 2025 11:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B00301700;
+	Mon,  3 Nov 2025 11:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FMv4kxOF";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Dom5Qxpm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aH/etqFn"
+Received: from mail-pj1-f68.google.com (mail-pj1-f68.google.com [209.85.216.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2865C3016F4
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 11:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E253019BF
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 11:07:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762167940; cv=none; b=RdAgh8G+/gFe7TK8hhsKE5C/095UdjuQpOaV3JedrmMtFUEKjdBZqRxCNm7VTKMMJcHle/QMhr/xGEkBKOkfuojy/SpIDN7knVPipK4yHhIV8gSzy8OnhaDSFYcWyDTA5qpOEAN4l/6ZIk2esyU/YO0VnFpzOsz7/jj4BRsScCQ=
+	t=1762168029; cv=none; b=OahU9ZGSI3xltOnUPuxmFnoRwnrsO1wo5fj7Ve4stmcQM0erOuxZjsy3LNph6bsK4rD0MhLVouxPy4PvqlkVcIXKllsc0L2F/S2gHE4PgQodU54dDVNR8UgEh05BGEn2s+v1tUUAsVMWvuUaqZefQC9Wei8rkkgPj7oV04oeCtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762167940; c=relaxed/simple;
-	bh=gfTwUykB/RnmTajqRSHRxKNiOaTJwE/JIgeSdjNjNDU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pivZW8d9/yDZiPiOsoWed2P9bZw9MFMmZjbkVM38d+zTrZazZRyr+4970MRfD1yvibXF4SjceKSrg+S3OshsYv3ZoGhS4z2jg+lrjQYtEN4yLhytvJvUpigCz4a7+7Op4nAZC6KnoFNLKwRZ015d0o3tn+hYVtd+BKpAFCcd4NI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FMv4kxOF; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Dom5Qxpm; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762167937;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9xCrDGRchnnGTkwO6YdV7uPKVA0+6GBpSaManbFOJHM=;
-	b=FMv4kxOF9OrN58AMVvanVWHzLkeknnlm7z8Sf9M0Ao5UvLcCnOhCG/euzW0x5d/NA3bc6c
-	otFy7EFHi0mx8+dBzN1PnCTdBHLiWqmcB3Grbt8qY6JcqHbCQaM7sUJSx3aJWoWQyTCivU
-	LCu6jt0vaQ5F8tLZLIyHrvQkXa7obOM=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-589-Z11qCqcFMuCxsoxIx3qkpA-1; Mon, 03 Nov 2025 06:05:36 -0500
-X-MC-Unique: Z11qCqcFMuCxsoxIx3qkpA-1
-X-Mimecast-MFC-AGG-ID: Z11qCqcFMuCxsoxIx3qkpA_1762167935
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-277f0ea6ee6so44996025ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 03:05:35 -0800 (PST)
+	s=arc-20240116; t=1762168029; c=relaxed/simple;
+	bh=Vx4Fb1mF4IWyoz8TY/XI8Ttw5g5x9qTpSSf8sJNUnkI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SE/GAqEU/fh7XTzHjGGmVZk7BOud+ukK+ZYW7gY8u7cKB3Ezwuh+tu0WIAbPCpSmjfmH1C6m4LnsGKSbRb3HZIuefpRMNI/dokRlcmzYaxINyI4gsWZ+f3DPIN9J9v4whMF1JBsUw2jgStBEwD6FgTGLEFEOhA/yMUAFdkvxUCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aH/etqFn; arc=none smtp.client-ip=209.85.216.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f68.google.com with SMTP id 98e67ed59e1d1-3408dd56b15so2203647a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 03:07:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762167935; x=1762772735; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1762168026; x=1762772826; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9xCrDGRchnnGTkwO6YdV7uPKVA0+6GBpSaManbFOJHM=;
-        b=Dom5Qxpmybg5uWgVL6MHt+QvS3sxwwjVF3JIBiqyw9ISex1xSidbn9WxTEmenRZMjS
-         NVs/UOr6JoNxubV6Eq5SwM87faS5c+9VkoiKEGUqLdJsiCrn8SB582eScn+i8YCGXZhE
-         hCzhKE/VNA9n2PpLVyS9LJSqTR5HO691O34z7P6f2h0lfuHD+lN6I3/vSyC/ywUbhkAS
-         tlKf6FpsQkHfUjsCpBqyxBvEGefNjgXSTMolVHXFC7x1PwBAvqWxdvx19m7xkFh0/y8/
-         ZBDzUOfbsIfb6xSc9H26gpzUNaAQM/aPsqQqOYq5Cax9wwhsTIB/CYuUFP2VIvi9dmEw
-         fmrw==
+        bh=lpL8yHxc29q7CkRcSb844TU4dCThtbOUfNG6nCrEn28=;
+        b=aH/etqFnspv71PKh0QpnqLJSaRj76gb6VxMb77j/BA0GlhkHOfxPZ4F0FnLUODiQgU
+         DKWAULMf+g8NNWL6lV4fWa2EQYCJZNe+38WzTyCVIpOKjuHqOK13LHhAKYYwkA/iqDQt
+         B6sysVGjmJ5vQIwt2WcyK1K0KlOffO8QGBtP1e6jQrjSVkyqxgr4UJbNPoY0K8GueHli
+         LS/vtTOb5hr1yk0TL99pM+62Wsp8OCv+Eu1sytqRtZTEDdnd4XppO/h8c8VPKRMfmLZV
+         zPVL2xSnOYEk3KYHpqd9Gf1eROgakHLJAitGKxx3nofKEF7cKPAUyyM2eXiVe7jSoszH
+         djtg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762167935; x=1762772735;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1762168026; x=1762772826;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9xCrDGRchnnGTkwO6YdV7uPKVA0+6GBpSaManbFOJHM=;
-        b=VkWPGH7bze8Qtkk3JIaDY9Dt5X5OMYUrywI/5uOUfUX7+zNG1Yh2yDh9pShTUufmkn
-         Yx7VLj/NHzflfYd8mD9LHSvL8+Mew2HPf5A+AwTD/p1ebv7G8ObQ6aSghXLlJde0tpM1
-         RIGTp6ywU7oLhFXcaGC3lqQ456TNQT1QvitYjDai/B2nyOjj1cPwtaPuwIvjNomroccf
-         n2fcuFrBD5r1FNbXNa7WPz7gadHekJjKYRTCdXev6AqvNquhmm7snyDwd1BMgORv8Gmb
-         k5ru0VKRDrLgpDlyi1q1CrC+lSXDB04ziTdy+5agjPX2c9LNOy5JTjgq+GkwMJe19JAz
-         BnrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU14dM3EWGPS/EAL8pgGvUWNbt77XJWUurCAUe2UDm/BJVwm8ktYV9LmFbiebeJPO+7NfYX6p8FlrI2wfE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlumFJ3mClfVDy1wqO2Pv060SjxQXx+86/i0izzGIDJBNgr2+8
-	f7ON4wqsxMnw+BFqcEd9Amu5UtNBGhfuELpayiE5IO87CWbjZoeM7qddBbES6WE28py4LJ6xA7E
-	sdVAEVEVgjpk3VtWhfYzzhRW4Nwh0RhWppPUVIEjwxshvFW53mVdME5rRLKZSDKlNgSXuMqREBS
-	u9K7rIpLie11JfadS2muZTPSENosGo/aMvFbsNQ0kY
-X-Gm-Gg: ASbGncu6Dwj5Sxg5sboBoQcYYE/fn0tcKCwY8n6yfkEKIs+HyUA5wh08Nel6ccprD9o
-	8shv9oEgehwf2ZpUT0d/b9LNq1Y1u503EfcX0HZvhAoOLn+X5F96YY/pqVSBbjWv8cb4QojibJG
-	bN+3VxYfF6Gt0aRKzXnWRyZjK4DKuBuLr1yE8F8U5TEw/5gprPyZw2YWM=
-X-Received: by 2002:a17:903:11cd:b0:27d:c542:fe25 with SMTP id d9443c01a7336-2951a587e32mr155174775ad.41.1762167934868;
-        Mon, 03 Nov 2025 03:05:34 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGA5xxOqESC5njIUuwo8X7aUkUUbc4ngsKRBvL0f6Uy3SwdFfrZxjJ/xB3v9LkidFvC0hMkhLozQ/mE6e5SuA8=
-X-Received: by 2002:a17:903:11cd:b0:27d:c542:fe25 with SMTP id
- d9443c01a7336-2951a587e32mr155174295ad.41.1762167934419; Mon, 03 Nov 2025
- 03:05:34 -0800 (PST)
+        bh=lpL8yHxc29q7CkRcSb844TU4dCThtbOUfNG6nCrEn28=;
+        b=VPKu7ZlpWkRtUUWNnV6GsZ2koX/BeGJPBeAmHCayp/S1eHodjLRLe6K8lzPCkTTHlb
+         a+9BzwyBncv5vpfwXA0UyQAO7nMF1++b5JIuV6OGDGgyM3zkYSdHaYJsFD9z3RTaNBbm
+         nYHxzAvHA6PY+RGk/b2iHLriYNT10bBPw9sh3Z2rb1aCma2a7XnXcSbfjDAEUYwrQ1GJ
+         KyWsMtp0JFitn1LIC1y5aspx8qsD+v59e+RuhPax+97E/j4ogkKzQ/CeoW5kJS7o1ahz
+         6tAH4WJzRDOa8U/2nMtJVUA7vTEBoYFi1+uGtMPe+CM5gjyDdC+RcN1TOQDJT72tjD82
+         N4jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWeWaILRu213P/knN/1JwAjkvq9orM9oA6CaO/0hF3gUeauQQ8Z5tm7GuGu2qkJkQMywZa83bpLbzipdN8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDPHmKp40OHXwbymsHopL5pKAsPMTvM22JpJQgSxHY5KRicmY5
+	fvyb+CHlAf7sDHN1MXKRY4ixNYPctPeqUY2hzXGN7tgoEUEvhSpV2zIrwS0lQF/xpLA3zA==
+X-Gm-Gg: ASbGncvx/+AnVUjXa5uHvQ+vsJz7tbSVRT2UbNce4uxBiQHYBimDmQ6tUv4c82BG4ya
+	rBeD0z9SoYQhvfY9/6duQnf/oNakeoDpXaJK/nnSWXkkGum4oGtCMU2RCcAcgUH2ERtXuwWPLXz
+	6M+gJouiL48OkoY4CBOEdO/wAgBAr+dS+RGq4M33xn553j4eNlo2qti/NeS2W5U5KN0pkVt+xOY
+	MbqyNrchrScSYSzW+Lc+aRoHSj4QAyCTK9XYGMhaMjWIHP1EOnTqvnTWSXNTWlkg8TmapEUiZYn
+	etIg55kCi4Bi2WDz6A7nyFSvvxyTKYRW5Ib3gDT1i8Scu8NGzHcGk6GR7pZMTaaR3A7JWIdHTfb
+	dnPrt4UUn5a0QK07TGh9vEKk/hm2w4iGpDsfhEMIflHm+m20gCkDbtuRq2DWQExG6+C6lCdkDuH
+	e78h0knMCBd/XYDUSRWg==
+X-Google-Smtp-Source: AGHT+IGP71CEMUjpsc/3IDciYKZfK0GZHpbNylf+FCaGnaJkEUyx11YbRLHjjB19GeJPwPaS5SSF8w==
+X-Received: by 2002:a17:903:41cc:b0:295:7806:1d64 with SMTP id d9443c01a7336-29578062796mr79445285ad.25.1762168025670;
+        Mon, 03 Nov 2025 03:07:05 -0800 (PST)
+Received: from VM-0-14-ubuntu.. ([43.134.26.72])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2955615d720sm84025575ad.65.2025.11.03.03.07.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Nov 2025 03:07:05 -0800 (PST)
+From: Junjie Cao <caojunjie650@gmail.com>
+To: Lee Jones <lee@kernel.org>,
+	Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Pavel Machek <pavel@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Helge Deller <deller@gmx.de>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fbdev@vger.kernel.org,
+	Pengyu Luo <mitltlatltl@gmail.com>,
+	Junjie Cao <caojunjie650@gmail.com>
+Subject: [PATCH v2 2/2] backlight: aw99706: Add support for Awinic AW99706 backlight
+Date: Mon,  3 Nov 2025 19:06:48 +0800
+Message-ID: <20251103110648.878325-3-caojunjie650@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20251103110648.878325-1-caojunjie650@gmail.com>
+References: <20251103110648.878325-1-caojunjie650@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6ac2baf0d5ae176cbd3279a4dff9e2c7750c6d45.1761918165.git.rrobaina@redhat.com>
- <202511011146.aPtw8SOn-lkp@intel.com>
-In-Reply-To: <202511011146.aPtw8SOn-lkp@intel.com>
-From: Ricardo Robaina <rrobaina@redhat.com>
-Date: Mon, 3 Nov 2025 08:05:22 -0300
-X-Gm-Features: AWmQ_blix0O5YM7w_tT0WXs6Pqjmi5gLv0k1Qz_HlHfym8b0laV-ctbmO_s95gk
-Message-ID: <CAABTaaCqzGoWKiRp40wh8JzJCq5OukdH+3HpGYN9OvnORpdjaA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] audit: include source and destination ports to NETFILTER_PKT
-To: kernel test robot <lkp@intel.com>
-Cc: audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
-	oe-kbuild-all@lists.linux.dev, paul@paul-moore.com, eparis@redhat.com, 
-	fw@strlen.de, pablo@netfilter.org, kadlec@netfilter.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Same thing here. I didn't get these warning messages in my local
-build. I'll fix it and submit a new version.
+From: Pengyu Luo <mitltlatltl@gmail.com>
 
-On Sat, Nov 1, 2025 at 1:05=E2=80=AFAM kernel test robot <lkp@intel.com> wr=
-ote:
->
-> Hi Ricardo,
->
-> kernel test robot noticed the following build errors:
->
-> [auto build test ERROR on pcmoore-audit/next]
-> [also build test ERROR on netfilter-nf/main nf-next/master linus/master v=
-6.18-rc3 next-20251031]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Ricardo-Robaina/au=
-dit-add-audit_log_packet_ip4-and-audit_log_packet_ip6-helper-functions/2025=
-1031-220605
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git=
- next
-> patch link:    https://lore.kernel.org/r/6ac2baf0d5ae176cbd3279a4dff9e2c7=
-750c6d45.1761918165.git.rrobaina%40redhat.com
-> patch subject: [PATCH v4 2/2] audit: include source and destination ports=
- to NETFILTER_PKT
-> config: arc-randconfig-002-20251101 (https://download.01.org/0day-ci/arch=
-ive/20251101/202511011146.aPtw8SOn-lkp@intel.com/config)
-> compiler: arc-linux-gcc (GCC) 8.5.0
-> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
-ve/20251101/202511011146.aPtw8SOn-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202511011146.aPtw8SOn-lkp=
-@intel.com/
->
-> All errors (new ones prefixed by >>):
->
->    kernel/audit.c: In function 'audit_log_packet_ip4':
-> >> kernel/audit.c:2555:3: error: a label can only be part of a statement =
-and a declaration is not a statement
->       struct tcphdr _tcph;
->       ^~~~~~
-> >> kernel/audit.c:2556:3: error: expected expression before 'const'
->       const struct tcphdr *th;
->       ^~~~~
-> >> kernel/audit.c:2558:3: error: 'th' undeclared (first use in this funct=
-ion); did you mean 'ih'?
->       th =3D skb_header_pointer(skb, skb_transport_offset(skb), sizeof(_t=
-cph), &_tcph);
->       ^~
->       ih
->    kernel/audit.c:2558:3: note: each undeclared identifier is reported on=
-ly once for each function it appears in
->    kernel/audit.c:2568:3: error: a label can only be part of a statement =
-and a declaration is not a statement
->       struct udphdr _udph;
->       ^~~~~~
->    kernel/audit.c:2569:3: error: expected expression before 'const'
->       const struct udphdr *uh;
->       ^~~~~
-> >> kernel/audit.c:2571:3: error: 'uh' undeclared (first use in this funct=
-ion); did you mean 'ih'?
->       uh =3D skb_header_pointer(skb, skb_transport_offset(skb), sizeof(_u=
-dph), &_udph);
->       ^~
->       ih
->    kernel/audit.c:2580:3: error: a label can only be part of a statement =
-and a declaration is not a statement
->       struct sctphdr _sctph;
->       ^~~~~~
->    kernel/audit.c:2581:3: error: expected expression before 'const'
->       const struct sctphdr *sh;
->       ^~~~~
-> >> kernel/audit.c:2583:3: error: 'sh' undeclared (first use in this funct=
-ion); did you mean 'ih'?
->       sh =3D skb_header_pointer(skb, skb_transport_offset(skb), sizeof(_s=
-ctph), &_sctph);
->       ^~
->       ih
->    kernel/audit.c: In function 'audit_log_packet_ip6':
->    kernel/audit.c:2616:3: error: a label can only be part of a statement =
-and a declaration is not a statement
->       struct tcphdr _tcph;
->       ^~~~~~
->    kernel/audit.c:2617:3: error: expected expression before 'const'
->       const struct tcphdr *th;
->       ^~~~~
->    kernel/audit.c:2619:3: error: 'th' undeclared (first use in this funct=
-ion); did you mean 'ih'?
->       th =3D skb_header_pointer(skb, skb_transport_offset(skb), sizeof(_t=
-cph), &_tcph);
->       ^~
->       ih
->    kernel/audit.c:2629:3: error: a label can only be part of a statement =
-and a declaration is not a statement
->       struct udphdr _udph;
->       ^~~~~~
->    kernel/audit.c:2630:3: error: expected expression before 'const'
->       const struct udphdr *uh;
->       ^~~~~
->    kernel/audit.c:2632:3: error: 'uh' undeclared (first use in this funct=
-ion); did you mean 'ih'?
->       uh =3D skb_header_pointer(skb, skb_transport_offset(skb), sizeof(_u=
-dph), &_udph);
->       ^~
->       ih
->    kernel/audit.c:2641:3: error: a label can only be part of a statement =
-and a declaration is not a statement
->       struct sctphdr _sctph;
->       ^~~~~~
->    kernel/audit.c:2642:3: error: expected expression before 'const'
->       const struct sctphdr *sh;
->       ^~~~~
->    kernel/audit.c:2644:3: error: 'sh' undeclared (first use in this funct=
-ion); did you mean 'ih'?
->       sh =3D skb_header_pointer(skb, skb_transport_offset(skb), sizeof(_s=
-ctph), &_sctph);
->       ^~
->       ih
->
->
-> vim +2555 kernel/audit.c
->
->   2543
->   2544  bool audit_log_packet_ip4(struct audit_buffer *ab, struct sk_buff=
- *skb)
->   2545  {
->   2546          struct iphdr _iph;
->   2547          const struct iphdr *ih;
->   2548
->   2549          ih =3D skb_header_pointer(skb, skb_network_offset(skb), s=
-izeof(_iph), &_iph);
->   2550          if (!ih)
->   2551                  return false;
->   2552
->   2553          switch (ih->protocol) {
->   2554          case IPPROTO_TCP:
-> > 2555                  struct tcphdr _tcph;
-> > 2556                  const struct tcphdr *th;
->   2557
-> > 2558                  th =3D skb_header_pointer(skb, skb_transport_offs=
-et(skb), sizeof(_tcph), &_tcph);
->   2559                  if (!th)
->   2560                          return false;
->   2561
->   2562                  audit_log_format(ab, " saddr=3D%pI4 daddr=3D%pI4 =
-proto=3D%hhu sport=3D%hu dport=3D%hu",
->   2563                                   &ih->saddr, &ih->daddr, ih->prot=
-ocol,
->   2564                                   ntohs(th->source), ntohs(th->des=
-t));
->   2565                  break;
->   2566          case IPPROTO_UDP:
->   2567          case IPPROTO_UDPLITE:
->   2568                  struct udphdr _udph;
->   2569                  const struct udphdr *uh;
->   2570
-> > 2571                  uh =3D skb_header_pointer(skb, skb_transport_offs=
-et(skb), sizeof(_udph), &_udph);
->   2572                  if (!uh)
->   2573                          return false;
->   2574
->   2575                  audit_log_format(ab, " saddr=3D%pI4 daddr=3D%pI4 =
-proto=3D%hhu sport=3D%hu dport=3D%hu",
->   2576                                   &ih->saddr, &ih->daddr, ih->prot=
-ocol,
->   2577                                   ntohs(uh->source), ntohs(uh->des=
-t));
->   2578                  break;
->   2579          case IPPROTO_SCTP:
->   2580                  struct sctphdr _sctph;
->   2581                  const struct sctphdr *sh;
->   2582
-> > 2583                  sh =3D skb_header_pointer(skb, skb_transport_offs=
-et(skb), sizeof(_sctph), &_sctph);
->   2584                  if (!sh)
->   2585                          return false;
->   2586
->   2587                  audit_log_format(ab, " saddr=3D%pI4 daddr=3D%pI4 =
-proto=3D%hhu sport=3D%hu dport=3D%hu",
->   2588                                   &ih->saddr, &ih->daddr, ih->prot=
-ocol,
->   2589                                   ntohs(sh->source), ntohs(sh->des=
-t));
->   2590                  break;
->   2591          default:
->   2592                  audit_log_format(ab, " saddr=3D%pI4 daddr=3D%pI4 =
-proto=3D%hhu",
->   2593                                   &ih->saddr, &ih->daddr, ih->prot=
-ocol);
->   2594          }
->   2595
->   2596          return true;
->   2597  }
->   2598  EXPORT_SYMBOL(audit_log_packet_ip4);
->   2599
->
-> --
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
->
+Add support for Awinic AW99706 backlight, which can be found in
+tablet and notebook backlight, one case is the Lenovo Legion Y700
+Gen4. This driver refers to the official datasheets and android
+driver, they can be found in [1].
+
+[1] https://www.awinic.com/en/productDetail/AW99706QNR
+
+Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
+Signed-off-by: Junjie Cao <caojunjie650@gmail.com>
+---
+Changes in v2:
+- add handler for max-brightness and default-brightness
+- use proper units for properties (Krzysztof)
+- drop non-fixed properties (Krzysztof)
+- include default values in the aw99706_dt_props table (Daniel)
+- warn when a property value from DT is invalid (Daniel)
+- drop warning when optional properties are missing (Daniel)
+- add a function pointer into the aw99706_dt_props table to handle lookup (Daniel)
+- use a lookup function instead of hardcoding the formula for the iLED max (Daniel)
+- move BL enalbe handler into aw99706_update_brightness (Daniel)
+- Link to v1: https://lore.kernel.org/linux-leds/20251026123923.1531727-3-caojunjie650@gmail.com
+
+ MAINTAINERS                       |   6 +
+ drivers/video/backlight/Kconfig   |   8 +
+ drivers/video/backlight/Makefile  |   1 +
+ drivers/video/backlight/aw99706.c | 492 ++++++++++++++++++++++++++++++
+ 4 files changed, 507 insertions(+)
+ create mode 100644 drivers/video/backlight/aw99706.c
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index be21f1fa8..551d8328e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4140,6 +4140,12 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/iio/adc/avia-hx711.yaml
+ F:	drivers/iio/adc/hx711.c
+ 
++AWINIC AW99706 WLED BACKLIGHT DRIVER
++M:	Junjie Cao <caojunjie650@gmail.com>
++S:	Maintained
++F:	Documentation/devicetree/bindings/leds/backlight/awinic,aw99706.yaml
++F:	drivers/video/backlight/aw99706.c
++
+ AX.25 NETWORK LAYER
+ L:	linux-hams@vger.kernel.org
+ S:	Orphan
+diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
+index d9374d208..35c7bfad0 100644
+--- a/drivers/video/backlight/Kconfig
++++ b/drivers/video/backlight/Kconfig
+@@ -156,6 +156,14 @@ config BACKLIGHT_ATMEL_LCDC
+ 	  If in doubt, it's safe to enable this option; it doesn't kick
+ 	  in unless the board's description says it's wired that way.
+ 
++config BACKLIGHT_AW99706
++	tristate "Backlight Driver for Awinic AW99706"
++	depends on I2C
++	select REGMAP_I2C
++	help
++	  If you have a LCD backlight connected to the WLED output of AW99706
++	  WLED output, say Y here to enable this driver.
++
+ config BACKLIGHT_EP93XX
+ 	tristate "Cirrus EP93xx Backlight Driver"
+ 	depends on FB_EP93XX
+diff --git a/drivers/video/backlight/Makefile b/drivers/video/backlight/Makefile
+index dfbb169bf..a5d62b018 100644
+--- a/drivers/video/backlight/Makefile
++++ b/drivers/video/backlight/Makefile
+@@ -25,6 +25,7 @@ obj-$(CONFIG_BACKLIGHT_ADP8870)		+= adp8870_bl.o
+ obj-$(CONFIG_BACKLIGHT_APPLE)		+= apple_bl.o
+ obj-$(CONFIG_BACKLIGHT_APPLE_DWI)	+= apple_dwi_bl.o
+ obj-$(CONFIG_BACKLIGHT_AS3711)		+= as3711_bl.o
++obj-$(CONFIG_BACKLIGHT_AW99706)		+= aw99706.o
+ obj-$(CONFIG_BACKLIGHT_BD6107)		+= bd6107.o
+ obj-$(CONFIG_BACKLIGHT_CLASS_DEVICE)	+= backlight.o
+ obj-$(CONFIG_BACKLIGHT_DA903X)		+= da903x_bl.o
+diff --git a/drivers/video/backlight/aw99706.c b/drivers/video/backlight/aw99706.c
+new file mode 100644
+index 000000000..f65e35905
+--- /dev/null
++++ b/drivers/video/backlight/aw99706.c
+@@ -0,0 +1,492 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * aw99706 - Backlight driver for the AWINIC AW99706
++ *
++ * Copyright (C) 2025 Junjie Cao <caojunjie650@gmail.com>
++ * Copyright (C) 2025 Pengyu Luo <mitltlatltl@gmail.com>
++ *
++ * Based on vendor driver:
++ * Copyright (c) 2023 AWINIC Technology CO., LTD
++ */
++
++#include <linux/backlight.h>
++#include <linux/bitfield.h>
++#include <linux/delay.h>
++#include <linux/gpio.h>
++#include <linux/i2c.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/regmap.h>
++
++#define AW99706_MAX_BRT_LVL		4095
++#define AW99706_REG_MAX			0x1F
++#define AW99706_ID			0x07
++
++/* registers list */
++#define AW99706_CFG0_REG			0x00
++#define AW99706_DIM_MODE_MASK			GENMASK(1, 0)
++
++#define AW99706_CFG1_REG			0x01
++#define AW99706_SW_FREQ_MASK			GENMASK(3, 0)
++#define AW99706_SW_ILMT_MASK			GENMASK(5, 4)
++
++#define AW99706_CFG2_REG			0x02
++#define AW99706_ILED_MAX_MASK			GENMASK(6, 0)
++#define AW99706_UVLOSEL_MASK			BIT(7)
++
++#define AW99706_CFG3_REG			0x03
++#define AW99706_CFG4_REG			0x04
++#define AW99706_BRT_MSB_MASK			GENMASK(3, 0)
++
++#define AW99706_CFG5_REG			0x05
++#define AW99706_BRT_LSB_MASK			GENMASK(7, 0)
++
++#define AW99706_CFG6_REG			0x06
++#define AW99706_RAMP_CTL_MASK			GENMASK(7, 6)
++
++#define AW99706_CFG7_REG			0x07
++#define AW99706_CFG8_REG			0x08
++#define AW99706_CFG9_REG			0x09
++#define AW99706_CFGA_REG			0x0A
++#define AW99706_CFGB_REG			0x0B
++#define AW99706_CFGC_REG			0x0C
++#define AW99706_CFGD_REG			0x0D
++#define AW99706_FLAG_REG			0x10
++#define AW99706_BACKLIGHT_EN_MASK		BIT(7)
++
++#define AW99706_CHIPID_REG			0x11
++#define AW99706_LED_OPEN_FLAG_REG		0x12
++#define AW99706_LED_SHORT_FLAG_REG		0x13
++#define AW99706_MTPLDOSEL_REG			0x1E
++#define AW99706_MTPRUN_REG			0x1F
++
++#define RESV	0
++
++/* Boost switching frequency table, in Hz */
++static const u32 aw99706_sw_freq_tbl[] = {
++	RESV, RESV, RESV, RESV, 300000, 400000, 500000, 600000,
++	660000, 750000, 850000, 1000000, 1200000, 1330000, 1500000, 1700000
++};
++
++/* Switching current limitation table, in uA */
++static const u32 aw99706_sw_ilmt_tbl[] = {
++	1500000, 2000000, 2500000, 3000000
++};
++
++/* ULVO threshold table, in uV */
++static const u32 aw99706_ulvo_thres_tbl[] = {
++	2200000, 5000000
++};
++
++struct reg_init_data;
++
++struct aw99706_device {
++	struct i2c_client *client;
++	struct device *dev;
++	struct regmap *regmap;
++	struct backlight_device *bl_dev;
++	struct gpio_desc *hwen_gpio;
++	struct reg_init_data *init_tbl;
++	int init_tbl_size;
++	bool bl_enable;
++};
++
++enum reg_access {
++	REG_NONE_ACCESS	= 0,
++	REG_RD_ACCESS	= 1,
++	REG_WR_ACCESS	= 2,
++};
++
++const u8 aw99706_regs[AW99706_REG_MAX + 1] = {
++	[AW99706_CFG0_REG]		= REG_RD_ACCESS | REG_WR_ACCESS,
++	[AW99706_CFG1_REG]		= REG_RD_ACCESS | REG_WR_ACCESS,
++	[AW99706_CFG2_REG]		= REG_RD_ACCESS | REG_WR_ACCESS,
++	[AW99706_CFG3_REG]		= REG_RD_ACCESS | REG_WR_ACCESS,
++	[AW99706_CFG4_REG]		= REG_RD_ACCESS | REG_WR_ACCESS,
++	[AW99706_CFG5_REG]		= REG_RD_ACCESS | REG_WR_ACCESS,
++	[AW99706_CFG6_REG]		= REG_RD_ACCESS | REG_WR_ACCESS,
++	[AW99706_CFG7_REG]		= REG_RD_ACCESS | REG_WR_ACCESS,
++	[AW99706_CFG8_REG]		= REG_RD_ACCESS | REG_WR_ACCESS,
++	[AW99706_CFG9_REG]		= REG_RD_ACCESS | REG_WR_ACCESS,
++	[AW99706_CFGA_REG]		= REG_RD_ACCESS | REG_WR_ACCESS,
++	[AW99706_CFGB_REG]		= REG_RD_ACCESS | REG_WR_ACCESS,
++	[AW99706_CFGC_REG]		= REG_RD_ACCESS | REG_WR_ACCESS,
++	[AW99706_CFGD_REG]		= REG_RD_ACCESS | REG_WR_ACCESS,
++	[AW99706_FLAG_REG]		= REG_RD_ACCESS,
++	[AW99706_CHIPID_REG]		= REG_RD_ACCESS,
++	[AW99706_LED_OPEN_FLAG_REG]	= REG_RD_ACCESS,
++	[AW99706_LED_SHORT_FLAG_REG]	= REG_RD_ACCESS,
++
++	/*
++	 * Write bit is dropped here, writing BIT(0) to MTPLDOSEL will unlock
++	 * Multi-time Programmable (MTP).
++	 */
++	[AW99706_MTPLDOSEL_REG]		= REG_RD_ACCESS,
++	[AW99706_MTPRUN_REG]		= REG_NONE_ACCESS,
++};
++
++static bool aw99706_readable_reg(struct device *dev, unsigned int reg)
++{
++	return aw99706_regs[reg] & REG_RD_ACCESS;
++}
++
++static bool aw99706_writeable_reg(struct device *dev, unsigned int reg)
++{
++	return aw99706_regs[reg] & REG_WR_ACCESS;
++}
++
++static inline int aw99706_i2c_read(struct aw99706_device *aw, u8 reg,
++				   unsigned int *val)
++{
++	return regmap_read(aw->regmap, reg, val);
++}
++
++static inline int aw99706_i2c_write(struct aw99706_device *aw, u8 reg, u8 val)
++{
++	return regmap_write(aw->regmap, reg, val);
++}
++
++static inline int aw99706_i2c_update_bits(struct aw99706_device *aw, u8 reg,
++					  u8 mask, u8 val)
++{
++	return regmap_update_bits(aw->regmap, reg, mask, val);
++}
++
++struct aw99706_dt_prop {
++	const char * const name;
++	int (*lookup)(const struct aw99706_dt_prop *prop, u32 dt_val, u8 *val);
++	const u32 * const lookup_tbl;
++	u8 tbl_size;
++	u8 reg;
++	u8 mask;
++	u8 shift;
++	u32 def_val;
++};
++
++static int aw99706_dt_property_lookup(const struct aw99706_dt_prop *prop,
++				      u32 dt_val, u8 *val)
++{
++	int i;
++
++	if (!prop->lookup_tbl) {
++		*val = dt_val;
++		return 0;
++	}
++
++	for (i = 0; i < prop->tbl_size; i++)
++		if (prop->lookup_tbl[i] == dt_val)
++			break;
++
++	*val = i;
++
++	return i == prop->tbl_size ? -1 : 0;
++}
++
++#define MIN_ILED_MAX	5000
++#define MAX_ILED_MAX	50000
++#define STEP_ILED_MAX	500
++
++static int
++aw99706_dt_property_iled_max_convert(const struct aw99706_dt_prop *prop,
++				     u32 dt_val, u8 *val)
++{
++	if (dt_val > MAX_ILED_MAX || dt_val < MIN_ILED_MAX)
++		return -1;
++
++	*val = (dt_val - MIN_ILED_MAX) / STEP_ILED_MAX;
++
++	return (dt_val - MIN_ILED_MAX) % STEP_ILED_MAX;
++}
++
++static const struct aw99706_dt_prop aw99706_dt_props[] = {
++	{
++		"awinic,dim-mode", aw99706_dt_property_lookup,
++		NULL, 0,
++		AW99706_CFG0_REG,
++		AW99706_DIM_MODE_MASK, __builtin_ctz(AW99706_DIM_MODE_MASK),
++		1,
++	},
++	{
++		"awinic,sw-freq", aw99706_dt_property_lookup,
++		aw99706_sw_freq_tbl, ARRAY_SIZE(aw99706_sw_freq_tbl),
++		AW99706_CFG1_REG,
++		AW99706_SW_FREQ_MASK, __builtin_ctz(AW99706_SW_FREQ_MASK),
++		750000,
++	},
++	{
++		"awinic,sw-ilmt", aw99706_dt_property_lookup,
++		aw99706_sw_ilmt_tbl, ARRAY_SIZE(aw99706_sw_ilmt_tbl),
++		AW99706_CFG1_REG,
++		AW99706_SW_ILMT_MASK, __builtin_ctz(AW99706_SW_ILMT_MASK),
++		3000000,
++	},
++	{
++		"awinic,iled-max", aw99706_dt_property_iled_max_convert,
++		NULL, 0,
++		AW99706_CFG2_REG,
++		AW99706_ILED_MAX_MASK, __builtin_ctz(AW99706_ILED_MAX_MASK),
++		20000,
++
++	},
++	{
++		"awinic,uvlo-thres", aw99706_dt_property_lookup,
++		aw99706_ulvo_thres_tbl, ARRAY_SIZE(aw99706_ulvo_thres_tbl),
++		AW99706_CFG2_REG,
++		AW99706_UVLOSEL_MASK, __builtin_ctz(AW99706_UVLOSEL_MASK),
++		2200000,
++	},
++	{
++		"awinic,ramp-ctl", aw99706_dt_property_lookup,
++		NULL, 0,
++		AW99706_CFG6_REG,
++		AW99706_RAMP_CTL_MASK, __builtin_ctz(AW99706_RAMP_CTL_MASK),
++		2,
++	},
++};
++
++struct reg_init_data {
++	u8 reg;
++	u8 mask;
++	u8 val;
++};
++
++static struct reg_init_data reg_init_tbl[ARRAY_SIZE(aw99706_dt_props)];
++
++static void aw99706_dt_parse(struct aw99706_device *aw,
++			     struct backlight_properties *bl_props)
++{
++	const struct aw99706_dt_prop *prop;
++	u32 dt_val;
++	int ret, i;
++	u8 val;
++
++	for (i = 0; i < ARRAY_SIZE(aw99706_dt_props); i++) {
++		prop = &aw99706_dt_props[i];
++		ret = device_property_read_u32(aw->dev, prop->name, &dt_val);
++		if (ret < 0)
++			dt_val = prop->def_val;
++
++		if (prop->lookup(prop, dt_val, &val)) {
++			dev_warn(aw->dev, "invalid value %d for property %s, using default value %d\n",
++				 dt_val, prop->name, prop->def_val);
++
++			prop->lookup(prop, prop->def_val, &val);
++		}
++
++		reg_init_tbl[i].reg = prop->reg;
++		reg_init_tbl[i].mask = prop->mask;
++		reg_init_tbl[i].val = val << prop->shift;
++	}
++
++	aw->init_tbl = reg_init_tbl;
++	aw->init_tbl_size = ARRAY_SIZE(reg_init_tbl);
++
++	bl_props->brightness = AW99706_MAX_BRT_LVL >> 1;
++	bl_props->max_brightness = AW99706_MAX_BRT_LVL;
++	device_property_read_u32(aw->dev, "default-brightness",
++				 &bl_props->brightness);
++	device_property_read_u32(aw->dev, "max-brightness",
++				 &bl_props->max_brightness);
++
++	if (bl_props->max_brightness > AW99706_MAX_BRT_LVL)
++		bl_props->max_brightness = AW99706_MAX_BRT_LVL;
++
++	if (bl_props->brightness > bl_props->max_brightness)
++		bl_props->brightness = bl_props->max_brightness;
++}
++
++static int aw99706_hw_init(struct aw99706_device *aw)
++{
++	int ret, i;
++
++	gpiod_set_value_cansleep(aw->hwen_gpio, 1);
++
++	for (i = 0; i < aw->init_tbl_size; i++) {
++		ret = aw99706_i2c_update_bits(aw, aw->init_tbl[i].reg,
++					      aw->init_tbl[i].mask,
++					      aw->init_tbl[i].val);
++		if (ret < 0) {
++			dev_err(aw->dev, "Failed to write init data %d\n", ret);
++			return ret;
++		}
++	}
++
++	return 0;
++}
++
++static int aw99706_bl_enable(struct aw99706_device *aw, bool en)
++{
++	int ret;
++	u8 val;
++
++	FIELD_MODIFY(AW99706_BACKLIGHT_EN_MASK, &val, en);
++	ret = aw99706_i2c_update_bits(aw, AW99706_CFGD_REG,
++				      AW99706_BACKLIGHT_EN_MASK, val);
++	if (ret)
++		dev_err(aw->dev, "Failed to enable backlight!\n");
++
++	return ret;
++}
++
++static int aw99706_update_brightness(struct aw99706_device *aw, u32 brt_lvl)
++{
++	bool bl_enable_now = !!brt_lvl;
++	int ret;
++
++	ret = aw99706_i2c_write(aw, AW99706_CFG4_REG,
++				(brt_lvl >> 8) & AW99706_BRT_MSB_MASK);
++	if (ret < 0)
++		return ret;
++
++	ret = aw99706_i2c_write(aw, AW99706_CFG5_REG,
++				brt_lvl & AW99706_BRT_LSB_MASK);
++	if (ret < 0)
++		return ret;
++
++	if (aw->bl_enable != bl_enable_now) {
++		ret = aw99706_bl_enable(aw, bl_enable_now);
++		if (!ret)
++			aw->bl_enable = bl_enable_now;
++	}
++
++	return ret;
++}
++
++static int aw99706_bl_update_status(struct backlight_device *bl)
++{
++	struct aw99706_device *aw = bl_get_data(bl);
++
++	return aw99706_update_brightness(aw, bl->props.brightness);
++}
++
++static const struct backlight_ops aw99706_bl_ops = {
++	.options = BL_CORE_SUSPENDRESUME,
++	.update_status = aw99706_bl_update_status,
++};
++
++static const struct regmap_config aw99706_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.max_register = AW99706_REG_MAX,
++	.writeable_reg = aw99706_writeable_reg,
++	.readable_reg = aw99706_readable_reg,
++};
++
++static int aw99706_chip_id_read(struct aw99706_device *aw)
++{
++	int ret;
++	unsigned int val;
++
++	ret = aw99706_i2c_read(aw, AW99706_CHIPID_REG, &val);
++	if (ret < 0)
++		return ret;
++
++	return val;
++}
++
++static int aw99706_probe(struct i2c_client *client)
++{
++	struct device *dev = &client->dev;
++	struct aw99706_device *aw;
++	struct backlight_device *bl_dev;
++	struct backlight_properties props = {};
++	int ret = 0;
++
++	aw = devm_kzalloc(dev, sizeof(*aw), GFP_KERNEL);
++	if (!aw)
++		return -ENOMEM;
++
++	aw->client = client;
++	aw->dev = dev;
++	i2c_set_clientdata(client, aw);
++
++	aw->regmap = devm_regmap_init_i2c(client, &aw99706_regmap_config);
++	if (IS_ERR(aw->regmap))
++		return dev_err_probe(dev, PTR_ERR(aw->regmap),
++				     "Failed to init regmap\n");
++
++	ret = aw99706_chip_id_read(aw);
++	if (ret != AW99706_ID)
++		return dev_err_probe(dev, ret,
++				     "Failed to validate chip id\n");
++
++	aw99706_dt_parse(aw, &props);
++
++	aw->hwen_gpio = devm_gpiod_get(aw->dev, "enable", GPIOD_OUT_LOW);
++	if (IS_ERR(aw->hwen_gpio))
++		return dev_err_probe(dev, PTR_ERR(aw->hwen_gpio),
++				     "Failed to get enable gpio\n");
++
++	ret = aw99706_hw_init(aw);
++	if (ret < 0)
++		return dev_err_probe(dev, ret,
++				     "Failed to initialize the chip\n");
++
++	props.type = BACKLIGHT_RAW;
++	props.scale = BACKLIGHT_SCALE_LINEAR;
++
++	bl_dev = devm_backlight_device_register(dev, "aw99706-backlight", dev,
++						aw, &aw99706_bl_ops, &props);
++	if (IS_ERR(bl_dev))
++		return dev_err_probe(dev, PTR_ERR(bl_dev),
++				     "Failed to register backlight!\n");
++
++	aw->bl_dev = bl_dev;
++
++	return 0;
++}
++
++static void aw99706_remove(struct i2c_client *client)
++{
++	struct aw99706_device *aw = i2c_get_clientdata(client);
++
++	aw99706_update_brightness(aw, 0);
++
++	msleep(50);
++
++	gpiod_set_value_cansleep(aw->hwen_gpio, 0);
++}
++
++static int aw99706_suspend(struct device *dev)
++{
++	struct aw99706_device *aw = dev_get_drvdata(dev);
++
++	return aw99706_update_brightness(aw, 0);
++}
++
++static int aw99706_resume(struct device *dev)
++{
++	struct aw99706_device *aw = dev_get_drvdata(dev);
++
++	return aw99706_hw_init(aw);
++}
++
++static SIMPLE_DEV_PM_OPS(aw99706_pm_ops, aw99706_suspend, aw99706_resume);
++
++static const struct i2c_device_id aw99706_ids[] = {
++	{ "aw99706" },
++	{ }
++};
++MODULE_DEVICE_TABLE(i2c, aw99706_ids);
++
++static const struct of_device_id aw99706_match_table[] = {
++	{ .compatible = "awinic,aw99706", },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, aw99706_match_table);
++
++static struct i2c_driver aw99706_i2c_driver = {
++	.probe = aw99706_probe,
++	.remove = aw99706_remove,
++	.id_table = aw99706_ids,
++	.driver = {
++		.name = "aw99706",
++		.of_match_table = aw99706_match_table,
++		.pm = &aw99706_pm_ops,
++	},
++};
++
++module_i2c_driver(aw99706_i2c_driver);
++
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("BackLight driver for aw99706");
+-- 
+2.51.1.dirty
 
 
