@@ -1,147 +1,151 @@
-Return-Path: <linux-kernel+bounces-883310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF32AC2D0A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:16:22 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85EB9C2D08A
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:15:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9DAB189646A
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:14:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 218A34E152F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20B3731579B;
-	Mon,  3 Nov 2025 16:13:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 388F4315D3D;
+	Mon,  3 Nov 2025 16:15:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OqbUjvKg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pMmG9L/w"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E205314D34
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6CC11CBA;
+	Mon,  3 Nov 2025 16:15:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762186413; cv=none; b=fJp050uuWka6ys5nwBy2V6tCoeZw5tZgBGtsO6smlVeVvuYVoxhofYmYinS6k9xXkYwsFTg9nKI7Q3UFDgxDYChBD787D74EJ9ko5tLsChtcUiPCBDG8k69TfNzi1V0CvoCCpiW+wG1KWLDGmiCWoYdXBxKJ1U2+fH5yCwF1f3U=
+	t=1762186529; cv=none; b=PvRTcHGk9dO0S2x1KSPktnhBJ/ry9Q0jlZxkA4g1GKEdggWnvx1XCR86QP1wNYtXW+k7BhNbGBV5HxiLYscGfESWOOM6/Jj1E32bHxvRArbNiZa9Uuo4kgjRQtfpTlMhuL0JFOp02yvIagBYcQ01A/L6dAgkuSCgz0i/+8lN4tQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762186413; c=relaxed/simple;
-	bh=HZAR4YcmpTnmikIRDHvdPrG91DIqK5aLBrbuwckCKE8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EqofiPgMk6kTMDTSGqdiP4VVcvjVzQUZsWyFayZHtTV0oeczu9hvA4zu4mXhSE7Xsj2AahN2RtyF306SCC/8I3RYvlwLSiZ48NGRJJ/v77hV5HCbZkoJDTBT//tmwmGotIgn1KgDq4tMseepIVELv6YAKznAcxIuelRHML22/7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OqbUjvKg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84331C4CEFD;
-	Mon,  3 Nov 2025 16:13:32 +0000 (UTC)
+	s=arc-20240116; t=1762186529; c=relaxed/simple;
+	bh=S0YKJr0SoBmysmz8IMr3QugNjlhYpJzfR41WjPWBUB4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kIRs71AkCt5FUPjdQSr82rU9toT6PYHuxrwDA8rI/Tl+hXp0Io1SPJMYgo3wx0XJh6VhFRNABIPX1T3ADUWHH8ph7FiZCCIJp3s3iRrTj9ONH5WHDnSUE7wtZCXpIBV52m2z9p1gGhOSEaPC1hNUZKo3GJRJGUlwmcpJG/gCcNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pMmG9L/w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22BE5C4CEE7;
+	Mon,  3 Nov 2025 16:15:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762186413;
-	bh=HZAR4YcmpTnmikIRDHvdPrG91DIqK5aLBrbuwckCKE8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OqbUjvKgmv05HeI3sQ2BotDazzqLsFaAS47d9QVnq7IjOtGZ5UkmQ6lPg5Qkux/I4
-	 USdstFtM3FkQjydcKoabb6HmSLARpUwXhDw+cAyMeIf48pAEhxDHfoWFsRboFgWIxb
-	 JTRmp+nq+Z5651uR5wGT0oJ4OZvwe+m+obsRyV3U7oZ+yjZh1HabyOun7O3bnxXy6s
-	 tERX5Z3GWm23BTWxhqLLUYb9PVH4LPl7RSBrMjOECBh3w7yBCnN/QtUICm2fyZOvpH
-	 gqfQtbNU/QySxWIfSlC9acfnID8G++xt1FgbQPbdfAIvr44Eh6Y497+dZfQEOMU2nE
-	 Z1XyV42vE7AkA==
-Date: Mon, 3 Nov 2025 13:13:29 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Fuad Tabba <tabba@google.com>
-Cc: linux-kernel@vger.kernel.org, Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>,
-	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCH 1/1] tools headers UAPI: Sync linux/kvm.h with the kernel
- sources
-Message-ID: <aQjUqXb-iIVIg7Fc@x1>
-References: <aQi-8IuAQ8CIPZuL@x1>
- <CA+EHjTwXWHUoH=-0z00gfWtSGKDymcBGgLdUyM0r0v65VR+86g@mail.gmail.com>
+	s=k20201202; t=1762186529;
+	bh=S0YKJr0SoBmysmz8IMr3QugNjlhYpJzfR41WjPWBUB4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pMmG9L/wSj8xOcK/DzcO7x+pUKpbN+kaGWRhPKGT/hFa2p/Ay8Nl1Mzz1ZWUyScDa
+	 vucJ0XbF6T0spIoI3AD/0qxqWiVKMh+Mmks24qxQFDpKZf3Zexx64cDs61lCh6Efy6
+	 od0TqupiK1VEnDg7glIHKRlBc357kZIMtV/jM6SD3qxje1H7u2r4taFzH3oyOWmxWM
+	 hHnL2j3jQ8KEJexQD4wpbJBjPfYdQst+gwFFqah20VMhXD96dyPMbnm/scOYZnijeO
+	 WcP/Ww9iS8dXs6EdOUxwooqxO/I0VbjvAaMNzv31ZZN/WtGdcK9zJR5blHKdrg4t/9
+	 0WafEdG9rsGng==
+Message-ID: <c7c8a233-2103-4b48-b65e-ec81666d20e4@kernel.org>
+Date: Mon, 3 Nov 2025 17:15:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+EHjTwXWHUoH=-0z00gfWtSGKDymcBGgLdUyM0r0v65VR+86g@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 11/12] x86/xen: use lazy_mmu_state when
+ context-switching
+To: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ David Hildenbrand <david@redhat.com>, "David S. Miller"
+ <davem@davemloft.net>, David Woodhouse <dwmw2@infradead.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+ Jann Horn <jannh@google.com>, Juergen Gross <jgross@suse.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
+References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
+ <20251029100909.3381140-12-kevin.brodsky@arm.com>
+From: "David Hildenbrand (Red Hat)" <david@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20251029100909.3381140-12-kevin.brodsky@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Nov 03, 2025 at 03:57:55PM +0000, Fuad Tabba wrote:
-> On Mon, 3 Nov 2025 at 14:40, Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> >
-> > tldr; Just FYI, I'm carrying this on the perf tools tree.
-> >
-> > Full explanation:
-> >
-> > There used to be no copies, with tools/ code using kernel headers
-> > directly. From time to time tools/perf/ broke due to legitimate kernel
-> > hacking. At some point Linus complained about such direct usage. Then we
-> > adopted the current model.
-> >
-> > See further details at:
-> >
-> >  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/include/uapi/README
-> >
-> > To pick the changes in:
-> >
-> >   fe2bf6234e947bf5 ("KVM: guest_memfd: Add INIT_SHARED flag, reject user page faults if not set")
-> >   d2042d8f96ddefde ("KVM: Rework KVM_CAP_GUEST_MEMFD_MMAP into KVM_CAP_GUEST_MEMFD_FLAGS")
-> >   3d3a04fad25a6621 ("KVM: Allow and advertise support for host mmap() on guest_memfd files")
-> >
-> > That just rebuilds perf, as these patches don't add any new KVM ioctl to
-> > be harvested for the the 'perf trace' ioctl syscall argument
-> > beautifiers.
+On 29.10.25 11:09, Kevin Brodsky wrote:
+> We currently set a TIF flag when scheduling out a task that is in
+> lazy MMU mode, in order to restore it when the task is scheduled
+> again.
 > 
-> nit: "the" is repeated. I've noticed this in earlier commits of yours
-> to this file as well :)
+> The generic lazy_mmu layer now tracks whether a task is in lazy MMU
+> mode in task_struct::lazy_mmu_state. We can therefore check that
+> state when switching to the new task, instead of using a separate
+> TIF flag.
+> 
+> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+> ---
+>   arch/x86/include/asm/thread_info.h | 4 +---
+>   arch/x86/xen/enlighten_pv.c        | 3 +--
+>   2 files changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
+> index e71e0e8362ed..0067684afb5b 100644
+> --- a/arch/x86/include/asm/thread_info.h
+> +++ b/arch/x86/include/asm/thread_info.h
+> @@ -100,8 +100,7 @@ struct thread_info {
+>   #define TIF_FORCED_TF		24	/* true if TF in eflags artificially */
+>   #define TIF_SINGLESTEP		25	/* reenable singlestep on user return*/
+>   #define TIF_BLOCKSTEP		26	/* set when we want DEBUGCTLMSR_BTF */
+> -#define TIF_LAZY_MMU_UPDATES	27	/* task is updating the mmu lazily */
+> -#define TIF_ADDR32		28	/* 32-bit address space on 64 bits */
+> +#define TIF_ADDR32		27	/* 32-bit address space on 64 bits */
+>   
+>   #define _TIF_SSBD		BIT(TIF_SSBD)
+>   #define _TIF_SPEC_IB		BIT(TIF_SPEC_IB)
+> @@ -114,7 +113,6 @@ struct thread_info {
+>   #define _TIF_FORCED_TF		BIT(TIF_FORCED_TF)
+>   #define _TIF_BLOCKSTEP		BIT(TIF_BLOCKSTEP)
+>   #define _TIF_SINGLESTEP		BIT(TIF_SINGLESTEP)
+> -#define _TIF_LAZY_MMU_UPDATES	BIT(TIF_LAZY_MMU_UPDATES)
+>   #define _TIF_ADDR32		BIT(TIF_ADDR32)
+>   
+>   /* flags to check in __switch_to() */
+> diff --git a/arch/x86/xen/enlighten_pv.c b/arch/x86/xen/enlighten_pv.c
+> index 4806cc28d7ca..f40f5999352e 100644
+> --- a/arch/x86/xen/enlighten_pv.c
+> +++ b/arch/x86/xen/enlighten_pv.c
+> @@ -426,7 +426,6 @@ static void xen_start_context_switch(struct task_struct *prev)
+>   
+>   	if (this_cpu_read(xen_lazy_mode) == XEN_LAZY_MMU) {
+>   		arch_leave_lazy_mmu_mode();
+> -		set_ti_thread_flag(task_thread_info(prev), TIF_LAZY_MMU_UPDATES);
+>   	}
+>   	enter_lazy(XEN_LAZY_CPU);
+>   }
+> @@ -437,7 +436,7 @@ static void xen_end_context_switch(struct task_struct *next)
+>   
+>   	xen_mc_flush();
+>   	leave_lazy(XEN_LAZY_CPU);
+> -	if (test_and_clear_ti_thread_flag(task_thread_info(next), TIF_LAZY_MMU_UPDATES))
+> +	if (next->lazy_mmu_state.active)
 
-eagle eagle eyes! Fixed.
+This is nasty. If in_lazy_mmu_mode() is not sufficient, we will want to 
+have a separate helper that makes it clear what the difference between 
+both variants is.
 
-Thanks,
 
-- Arnaldo
- 
-> > This addresses this perf build warning:
-> >
-> >   Warning: Kernel ABI header differences:
-> >     diff -u tools/include/uapi/linux/kvm.h include/uapi/linux/kvm.h
-> >
-> >   Please see tools/include/uapi/README for further details.
-> >
-> > Cc: Sean Christopherson <seanjc@google.com>
-> > Cc: Fuad Tabba <tabba@google.com>
-> > Cc: Paolo Bonzini <pbonzini@redhat.com>
-> > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > ---
-> 
-> Reviewed-by: Fuad Tabba <tabba@google.com>
-> 
-> Cheers,
-> /fuad
-> 
-> >  tools/include/uapi/linux/kvm.h | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/tools/include/uapi/linux/kvm.h b/tools/include/uapi/linux/kvm.h
-> > index f0f0d49d25443552..52f6000ab020840e 100644
-> > --- a/tools/include/uapi/linux/kvm.h
-> > +++ b/tools/include/uapi/linux/kvm.h
-> > @@ -962,6 +962,7 @@ struct kvm_enable_cap {
-> >  #define KVM_CAP_ARM_EL2_E2H0 241
-> >  #define KVM_CAP_RISCV_MP_STATE_RESET 242
-> >  #define KVM_CAP_ARM_CACHEABLE_PFNMAP_SUPPORTED 243
-> > +#define KVM_CAP_GUEST_MEMFD_FLAGS 244
-> >
-> >  struct kvm_irq_routing_irqchip {
-> >         __u32 irqchip;
-> > @@ -1598,6 +1599,8 @@ struct kvm_memory_attributes {
-> >  #define KVM_MEMORY_ATTRIBUTE_PRIVATE           (1ULL << 3)
-> >
-> >  #define KVM_CREATE_GUEST_MEMFD _IOWR(KVMIO,  0xd4, struct kvm_create_guest_memfd)
-> > +#define GUEST_MEMFD_FLAG_MMAP          (1ULL << 0)
-> > +#define GUEST_MEMFD_FLAG_INIT_SHARED   (1ULL << 1)
-> >
-> >  struct kvm_create_guest_memfd {
-> >         __u64 size;
-> > --
-> > 2.51.1
-> >
+-- 
+Cheers
+
+David
 
