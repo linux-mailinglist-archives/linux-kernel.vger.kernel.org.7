@@ -1,98 +1,127 @@
-Return-Path: <linux-kernel+bounces-882986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FDE4C2C170
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 14:30:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBCB8C2C1F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 14:37:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80B251893C1F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 13:30:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D25463AB07D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 13:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB30303A15;
-	Mon,  3 Nov 2025 13:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6331126E6FE;
+	Mon,  3 Nov 2025 13:31:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nbxTcQOV";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OSi/CTPE"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="LrpAneyB"
+Received: from mx08-00376f01.pphosted.com (mx08-00376f01.pphosted.com [91.207.212.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0CF72F0670
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 13:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F298613B5AE;
+	Mon,  3 Nov 2025 13:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762176603; cv=none; b=S6kT7hKlRmI8wBqO7h5smm+/62iPedilJQyxGZ1Ic/2VnjnjZSdbN5VRpDvVjci2EKABixzhEhkqSuVLrcBb9hlNiZTniPRK05qG/6h5JoyeFtLxuT/mGJFK2cnEkeUpbPoSYgcEu16aWKzW98ImLThh8dOeg5vdv8D/J1xYpIM=
+	t=1762176666; cv=none; b=hKFoGKX2EJnAAu/pc14qOejNjw+djeoUNDqNvucEEFrvPRUPPN16yvctzuh50U/AGUSotK4JeMUAnuIa3k3tXOQM8lmh9qY23sWCn24+0KPf7x+5Mob7xBe72CN5uydk/V9HEYQKcyTehIgF24lYFtc+IkAA/pfY23EhKn8c21w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762176603; c=relaxed/simple;
-	bh=1wx3sGMlAjIJ25V9kLnVxb1FCvPDfxLx2gzXU+LMUbY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Z1zaHyRXdescuGafVBAv+1O355VI/sJn+aJFy184bU+2NUMHyMX+cdiZAWqMJqT9KX4bXrwbqObjPTFb/SDCXts/g/LsBaY6IAgfCfFe+GaktEX7nlEZ0YBdi1899CMXQXwniJSZaybHuSRKosiiiGjz8gbrUYeeWl2NLNdwzVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nbxTcQOV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OSi/CTPE; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762176600;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kZi/1jjNoUO6QAtGhKAuwW6mw9HS1sPAGktTt2mBtl4=;
-	b=nbxTcQOVkDN6wdxdEaoDmADkEF1VbgxGG6RnUABu6L+pgkJwCukaMBhYXCtKTeUKARLi23
-	TBgDnA8Z+Sc4ITURw3dDC38tdteqglRgR67HDj1ZM2ytsuPzCvRT5uHpvwIv4UZeD6K3ks
-	jV4Qkrdmz/e9yNyf4c61DXzA/lVh/CEa9jHekE/OC0rDf0m67hwc4/6Nar1tMH+hF5JidG
-	GHGmCCglHQv4lUtzFjt12h9VrgBQ41MCDgUl92zzr16e76TmwHaYFV7cw9FcAaiplXEGD5
-	Q7UiqAQZ7oA9UgTc7bhtGfdCHxEaeTn9FaCIjWxLGEeu7peG9ihtYawsOFuIMw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762176600;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kZi/1jjNoUO6QAtGhKAuwW6mw9HS1sPAGktTt2mBtl4=;
-	b=OSi/CTPE/z91mAPENZCZybza7vOE+Jp1utffeAC+jFTKpYjiMpuVn4Z0iGHrzO0BaovaOp
-	iEgs9CiAJ6DYIlCQ==
-To: Shrikanth Hegde <sshegde@linux.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Gabriele Monaco
- <gmonaco@redhat.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Michael Jeanson <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>,
- "Paul E. McKenney" <paulmck@kernel.org>, "Gautham R. Shenoy"
- <gautham.shenoy@amd.com>, Florian Weimer <fweimer@redhat.com>, Tim Chen
- <tim.c.chen@intel.com>, Yury Norov <yury.norov@gmail.com>, LKML
- <linux-kernel@vger.kernel.org>
-Subject: Re: [patch V3 07/20] cpumask: Introduce cpumask_weighted_or()
-In-Reply-To: <88d397b7-5eeb-41eb-ba44-980e72008fd2@linux.ibm.com>
-References: <20251029123717.886619142@linutronix.de>
- <20251029124515.717519165@linutronix.de>
- <88d397b7-5eeb-41eb-ba44-980e72008fd2@linux.ibm.com>
-Date: Mon, 03 Nov 2025 14:29:59 +0100
-Message-ID: <87qzufw8fc.ffs@tglx>
+	s=arc-20240116; t=1762176666; c=relaxed/simple;
+	bh=cuf+/7Thz4o4dkUx69f6+UrYRgnQJ4miRs1xW5MUwkg=;
+	h=From:To:CC:In-Reply-To:References:Subject:Message-ID:Date:
+	 MIME-Version:Content-Type; b=o2G93/cNKJX18R1g9Pm9BYKE9iKHm7MOtSg3NxxESAlUEwPcoUrTLB2gVEiaU8H4N+Upcwa1PKWy8zEkMeHzKyJsM0BpttxBthWAg/DygDmHSnmiYn5btb93LS5JT0zcJqSOYVzMf7d5AGUocDWSsHJ5CNz1SKEVizALqKH9GUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=LrpAneyB; arc=none smtp.client-ip=91.207.212.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
+Received: from pps.filterd (m0168888.ppops.net [127.0.0.1])
+	by mx08-00376f01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A36s30f1265134;
+	Mon, 3 Nov 2025 13:30:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=dk201812; bh=p
+	ha4iqzjLRhIK14Ep3HX/+oxy73O9OJMBOJe+Wnyn98=; b=LrpAneyBQgmlSXaAC
+	6PgP4rS0pAlg52uKttIUkxS6DYWtgB87AMyGhZTBeEvc2ShPOleCvDTYl965wjAh
+	Fr6mKJhBp5vYDd9w9XQtPCSet0Nfx4GtrNQMHRyq9hxTbbUxBKGtoDFksb+gkHNb
+	p0mJ/po+vSGwGUVaA4sbnv3aZR9iJaYmNcMcnuTRXypr99aZc83TT0f4OWtzzfmn
+	5pAgB/zTX7PD+WfY5EVUf7uqD+fy0mCdonRwD1Uniwd1x9w98olAjGwVCyYwyHoj
+	l2u1kcwEH/IbHBl+YhAEf0Q6z7AuBD9I3l9GCoMR3Uk9P6iZSDzdjiy9U0/MSZTC
+	Uov1g==
+Received: from hhmail01.hh.imgtec.org (83-244-153-141.cust-83.exponential-e.net [83.244.153.141])
+	by mx08-00376f01.pphosted.com (PPS) with ESMTPS id 4a59bss9px-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Nov 2025 13:30:28 +0000 (GMT)
+Received: from HHMAIL03.hh.imgtec.org (10.44.0.121) by HHMAIL01.hh.imgtec.org
+ (10.100.10.19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.36; Mon, 3 Nov
+ 2025 13:30:27 +0000
+Received: from
+ 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa
+ (172.25.4.134) by HHMAIL03.hh.imgtec.org (10.44.0.121) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.17; Mon, 3 Nov 2025 13:30:26 +0000
+From: Matt Coster <matt.coster@imgtec.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard
+	<mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Michal Wilczynski
+	<m.wilczynski@samsung.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Matt Coster
+	<matt.coster@imgtec.com>
+CC: Frank Binns <frank.binns@imgtec.com>,
+        Alessio Belle
+	<alessio.belle@imgtec.com>,
+        Alexandru Dadu <alexandru.dadu@imgtec.com>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>, kernel test robot <lkp@intel.com>
+In-Reply-To: <20251014-pwrseq-dep-v1-1-49aabd9d8fa1@imgtec.com>
+References: <20251014-pwrseq-dep-v1-1-49aabd9d8fa1@imgtec.com>
+Subject: Re: [PATCH] drm/imagination: Optionally depend on POWER_SEQUENCING
+Message-ID: <176217662645.4491.9524914948435472872.b4-ty@imgtec.com>
+Date: Mon, 3 Nov 2025 13:30:26 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3
+X-Proofpoint-GUID: 2Mi1LMmksvkuRAg5rwahs4ajV7TIH27v
+X-Proofpoint-ORIG-GUID: 2Mi1LMmksvkuRAg5rwahs4ajV7TIH27v
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAzMDEyMiBTYWx0ZWRfX5+T0LQ50f6gI
+ Xov8i3k16qnn4LrK2wyPsYui34gX2dRw7luzWgTfl+bBkSQAMNm6ulew6bNP7oGAsaP8ybcrsfN
+ 96dg24+PgMR/UqBR8BwW8DzUH7UhX5ao19hPnLlArcgbMi6yDTSWWjaMnoyb2FNwyeyHbk80i1H
+ gsIv18mOcKZ6Nq1CUGtm9FWPUljY8pvQDICLHzJUQPCCFtJiMf4P6RyJKAFZi25bvAroFPW4GvI
+ ZttMUJ4NiI/MbAZPEHfvCPxg/F3DsrPWFiZxiFVgJjbFPxB8UondVCHiyvEJBe7/B/AYhyMDkMg
+ LjSkZ8ERXidMdJi49pdODn+biogHkr4yG0Uj3kfB2Kg25g9W57QQv2qwYHmAZYwY3IV4uHNJWdP
+ NnYygmRjiZGK85DOP8UGMuZqdq/o4A==
+X-Authority-Analysis: v=2.4 cv=Yb2wJgRf c=1 sm=1 tr=0 ts=6908ae74 cx=c_pps
+ a=AKOq//PuzOIrVTIF9yBwbA==:117 a=AKOq//PuzOIrVTIF9yBwbA==:17
+ a=0einROue838A:10 a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10
+ a=VkNPw1HP01LnGYTKEx00:22 a=VwQbUJbxAAAA:8 a=r_1tXGB3AAAA:8
+ a=IMCeZBfq-HFVmF8d6oMA:9 a=QEXdDO2ut3YA:10 a=t8nPyN_e6usw4ciXM-Pk:22
+ a=cPQSjfK2_nFv0Q5t_7PE:22
 
-On Mon, Nov 03 2025 at 14:45, Shrikanth Hegde wrote:
-> On 10/29/25 6:39 PM, Thomas Gleixner wrote:
->> +static __always_inline
->> +unsigned int cpumask_weighted_or(struct cpumask *dstp, const struct cpumask *src1p,
->> +				 const struct cpumask *src2p)
->> +{
->> +	return bitmap_weighted_or(cpumask_bits(dstp), cpumask_bits(src1p),
->> +				  cpumask_bits(src2p), small_cpumask_bits);
->> +}
->
-> nit:
->
-> We have currently cpumask_weight_and & variants.
-> Wouldn't it be better to name it cpumask_weight_or ?
 
-No. cpumask_weight_and() does weight(mask1 & mask2) but this does
+On Tue, 14 Oct 2025 12:57:31 +0100, Matt Coster wrote:
+> When the change using pwrseq was added, I nixed the dependency on
+> POWER_SEQUENCING since we didn't want it pulled in on platforms where
+> it's not needed [1]. I hadn't, however, considered the link-time
+> implications of this for configs with POWER_SEQUENCING=m.
+> 
+> [1]: https://lore.kernel.org/r/a265a20e-8908-40d8-b4e0-2c8b8f773742@imgtec.com/
+> 
+> [...]
 
-    mask3 = mask1 | mask2;
-    weight(mask3);
+Applied, thanks!
 
-That's two very different things.
+[1/1] drm/imagination: Optionally depend on POWER_SEQUENCING
+      (no commit info)
+
+Best regards,
+-- 
+Matt Coster <matt.coster@imgtec.com>
+
 
