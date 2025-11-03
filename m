@@ -1,202 +1,99 @@
-Return-Path: <linux-kernel+bounces-883372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9134C2D343
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:42:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD2FEC2D430
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:53:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 3A75B346411
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:42:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCA963BDF5F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07F53191A9;
-	Mon,  3 Nov 2025 16:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127083195FF;
+	Mon,  3 Nov 2025 16:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="LUMGZJcv"
-Received: from mail-il1-f195.google.com (mail-il1-f195.google.com [209.85.166.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jBVbreQj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FBB0264614
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B701264614;
+	Mon,  3 Nov 2025 16:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762188150; cv=none; b=WFtFxNtnxnOWCkqJj0cMXymb8yNjvYmpXrNdMX4ftkSi8B2vRRFN3ySDuSrsJW3TF0oXzkbdyEXWvJ+/330z87C+vK1xxqhjpAErD5iW+yjGbE1S8i+b19lZ7FAyMm1YytKhRNnllQglH9c50bnn8omFbkDUCFLxDS6avoo3Lrw=
+	t=1762188174; cv=none; b=SXFD5DZbwmy/Fs49OD5GpOKVbB8vWrqQ6vTTf3NvuSJLQqHPpQgOg24m5SKgzwqk0pM+ujiJ3LcTSqFHOvXdFtUF0sj2xzZi89UWjXjqFKytW2xhQiBSt5dB9Z2/uIFCQqtLhw7UIXBZwrDRPWHKTEtnjtU0XWq3xNBcI9NGhxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762188150; c=relaxed/simple;
-	bh=OcaI3qwgeTCF0BR+/oUJ3XCKZ1BAXfflSEB1AM9BxUo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jk12eztRmBuVVWN9kkMn45W7y5gLIiC38HVeroui+lo/3t0ZuLPYBR1zfdCUnTdgyh0BqpbshVbiQlYmwqnhSHSGhTYbUwSTHfN4AS7BeMll+IOlG5S5Xhvn7ZpaVS6EApaN+tq1cU24T9uAOx1PbRim9PToFJgL6leLA5BgND8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=LUMGZJcv; arc=none smtp.client-ip=209.85.166.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-il1-f195.google.com with SMTP id e9e14a558f8ab-4331e9cb748so6805965ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 08:42:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1762188147; x=1762792947; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GHeoDcWtrtw4Kqs9i7E9yy2tKQ26ZOwu5ohkUo50ijM=;
-        b=LUMGZJcvYHB/ArPfDS6VkpidsCPOQkpUlqp5pfcS1zS31//7Gi1OVZt+udAvPCi36P
-         be1c8XkF1FWzaRXVWdXDV0XgI7jf7On9pRLrd49SyqHENeMe5lugWD6VGE4Cjgh8moTV
-         PAq2+RNms5vqY6bj881XTXl7ado/tgfjZn7QyP1FaTyKw8tO3CCsNC9oIr+axWIr4zmo
-         W71je95IVLzv8OeyTQ568tdHll/jDHiFuuWxuDvTf4cvU7RCTxilm69UDC8MQ1eVJsxI
-         Iy+XfYzuZXT9Q/aVLAJUhAG8g8FPkfc80lMdoXHtqeVtwhdwbbm2EjhFu7M+q3wIKGNn
-         Jvfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762188147; x=1762792947;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GHeoDcWtrtw4Kqs9i7E9yy2tKQ26ZOwu5ohkUo50ijM=;
-        b=fXNInxXePOFjokWqAzMJHf1WoIqV+NBlPBqFJ6q7QzXCRHWNW9yviXjDXr5VkAnsEd
-         eUu0/Bf7NgeL2S4BkYxhQn8zyi/vNKN55TQfnNdnNu7a8HAW8YHrJE9JF7+7B6ZI2TBu
-         +s39rqXb2SdDxLFh21Gs5mqYNM9sS89RG5cSISq8c27q9ayx4paDuq92ciXtQazxbvm5
-         w2GQNTUp5FSrmgQWKFlQD4toM3/c5WBFzB+DFBrFB3uqvBTQSp9uRwdxVU3BB3V2cRYm
-         rw7SIbSwdd+9NePQIAQzVvzsqwf/X1ygVhDux0SuFhbA0m4l+NEv5a/7d92luGLxmFr0
-         yCXw==
-X-Forwarded-Encrypted: i=1; AJvYcCUv/7J2Mtj72JjmeAgI9Jf2EU7CRNi/kT0o4zuaD8kU3F/0cq5vQOrGr2L9PR2h6wkUtZE5Z4aJpL2UxOA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEcYN0LDU+X/zmEqjCZP54GC2RKrnBG0LEpLcy/e+IBaSaRwvn
-	Wi6MD/B0PtNB10Lcs6y0kuVw8HEG6ge5RxAOPB8R9q8NnDRfmCTYvvPPFV2S5qe4Htw=
-X-Gm-Gg: ASbGncsRh7lwHkN/ainMd98xhDoWBYhvlAf2FRaT+B6cMTvBDTD9Lz9zNjeh/bbmP1U
-	ZTQ6oFDrNPRFv8hpHwJDuMgFyRYaKfsDVQu5VI3Xjz8Sx9IG41RJn59gF49bwiaEvIuHuUsCcak
-	RCxJ3X7/Iwm+13Cur8FzU9irjHM3qI7a0W7BrTO9A3L917V74XYcb9gl8gRjIqI+d98tCFTwfB4
-	yEPi/g5mNlRxhiL7zPtMzT6YlaTEab9oCjK7lVNEH4GXh/ivOWKtexCgw2Wvj74YH1vXVEmnFL9
-	zpEX817+dXFNuN45B96FppeSP3lR1glonVDPzYWFIh+VFytLoM+Zvc0ni1P5pskuGpJJ88t8Tft
-	BU8A0FMkYtdp4+PUAr3wMFBr1d09aJH11KqOzwGSbO+AxaZl5koK9BTqgMZQPI9tXsjKNw3JGfm
-	bYYi/bE7B2mOaX18OmD9AJKAN4wg7mHq9IGv9fv4pL
-X-Google-Smtp-Source: AGHT+IHkHY4VTZ7p5OKjtOgXuNnn4x75Ilvl4YEJ6q5B/6x6J8/6eBwuDTFeeDgt2AKvux4z5rFo4g==
-X-Received: by 2002:a05:6e02:4603:b0:433:229c:351c with SMTP id e9e14a558f8ab-433377fbe1emr622165ab.1.1762188147419;
-        Mon, 03 Nov 2025 08:42:27 -0800 (PST)
-Received: from [172.22.22.234] (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-5b7226f55edsm334467173.59.2025.11.03.08.42.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Nov 2025 08:42:26 -0800 (PST)
-Message-ID: <35da84ab-5104-4fee-a7ea-4f3d42f7344a@riscstar.com>
-Date: Mon, 3 Nov 2025 10:42:23 -0600
+	s=arc-20240116; t=1762188174; c=relaxed/simple;
+	bh=pYpE/o8QeVnvKWPaYcPJE1tYaZ7Vi13aXpPbvbysa7w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=goIXRhxV0m/AYuKh0MprpJesBfdBlQrW6QZ61qToOtxKickY/pdCKAmhqTWadA/bTALhZRvxJloTUPQkb/GZ6TB3e8dSaMcMSg2kJotp3x8Bp5B62uhEsroEWj2DJT+h4vJLpVHbB0FvIiTyci4IrTX+eO7rWAqOUymJcfNUoUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jBVbreQj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63513C4CEE7;
+	Mon,  3 Nov 2025 16:42:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762188174;
+	bh=pYpE/o8QeVnvKWPaYcPJE1tYaZ7Vi13aXpPbvbysa7w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jBVbreQjg37cDVv0mGvX9dbU9+n08cbq6ZzOFDSiW6enAmiVfVYCyGNcGGp4+vvTC
+	 DCDPxeJW9+EoKUqPzu6kcExrXZyKFYtkt7V0NoTfp0Md8uXB60buGicnmPTIt57IwI
+	 syA0XqyVDb/lvrd4sTJQImXC4kHd/SCzdmzL7AmI2JTUtGs9Z3kZAUxykwq6J/PsS/
+	 jQ2qFU0312rEPhkXayASbbsvhHt+qCIWlQ1hI3jmKbiuFNahkM40CQECEtUbgZFgJY
+	 qsg6Y00CMlYCAu8c8SjFbUVO79jh61/mMate8J7VrZ54LSf+vs97sGymcDgRelmtZc
+	 eH4dbDzM0sgEw==
+Date: Mon, 3 Nov 2025 16:42:51 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: catalin.marinas@arm.com, will@kernel.org, maz@kernel.org,
+	oliver.upton@linux.dev, miko.lenczewski@arm.com,
+	kevin.brodsky@arm.com, ardb@kernel.org, suzuki.poulose@arm.com,
+	lpieralisi@kernel.org, yangyicong@hisilicon.com,
+	scott@os.amperecomputing.com, joey.gouly@arm.com,
+	yuzenghui@huawei.com, pbonzini@redhat.com, shuah@kernel.org,
+	mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v10 2/9] KVM: arm64: expose FEAT_LSUI to guest
+Message-ID: <aQjbiyNWZxrjRLQd@finisterre.sirena.org.uk>
+References: <20251103163224.818353-1-yeoreum.yun@arm.com>
+ <20251103163224.818353-3-yeoreum.yun@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/7] Introduce SpacemiT K1 PCIe phy and host controller
-To: Manivannan Sadhasivam <mani@kernel.org>,
- Aurelien Jarno <aurelien@aurel32.net>
-Cc: Johannes Erdfelt <johannes@erdfelt.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, bhelgaas@google.com,
- lpieralisi@kernel.org, kwilczynski@kernel.org, vkoul@kernel.org,
- kishon@kernel.org, dlan@gentoo.org, guodong@riscstar.com, pjw@kernel.org,
- palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
- p.zabel@pengutronix.de, christian.bruel@foss.st.com, shradha.t@samsung.com,
- krishna.chundru@oss.qualcomm.com, qiang.yu@oss.qualcomm.com,
- namcao@linutronix.de, thippeswamy.havalige@amd.com, inochiama@gmail.com,
- devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-phy@lists.infradead.org, spacemit@lists.linux.dev,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20251013153526.2276556-1-elder@riscstar.com>
- <aPEhvFD8TzVtqE2n@aurel32.net>
- <92ee253f-bf6a-481a-acc2-daf26d268395@riscstar.com>
- <aQEElhSCRNqaPf8m@aurel32.net> <20251028184250.GM15521@sventech.com>
- <82848c80-15e0-4c0e-a3f6-821a7f4778a5@riscstar.com>
- <20251028204832.GN15521@sventech.com>
- <5kwbaj2eqr4imcaoh6otqo7huuraqhodxh4dbwc33vqpi5j5yq@ueufnqetrg2m>
- <aQOlMcI9jTdd7QNb@aurel32.net>
- <ywr66wfkfay3xse77mb7ddbga5nced4yg7dapiybj3p2yp2an2@7zsaj5one5in>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <ywr66wfkfay3xse77mb7ddbga5nced4yg7dapiybj3p2yp2an2@7zsaj5one5in>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="SsaoZEtYAOX1mTlI"
+Content-Disposition: inline
+In-Reply-To: <20251103163224.818353-3-yeoreum.yun@arm.com>
+X-Cookie: If in doubt, mumble.
 
-On 10/31/25 1:10 AM, Manivannan Sadhasivam wrote:
-> On Thu, Oct 30, 2025 at 06:49:37PM +0100, Aurelien Jarno wrote:
->> Hi Mani,
->>
->> On 2025-10-30 22:11, Manivannan Sadhasivam wrote:
->>> + Aurelien
->>>
->>> On Tue, Oct 28, 2025 at 01:48:32PM -0700, Johannes Erdfelt wrote:
->>>> On Tue, Oct 28, 2025, Alex Elder <elder@riscstar.com> wrote:
->>>>> On 10/28/25 1:42 PM, Johannes Erdfelt wrote:
->>>>>> I have been testing this patchset recently as well, but on an Orange Pi
->>>>>> RV2 board instead (and an extra RV2 specific patch to enable power to
->>>>>> the M.2 slot).
->>>>>>
->>>>>> I ran into the same symptoms you had ("QID 0 timeout" after about 60
->>>>>> seconds). However, I'm using an Intel 600p. I can confirm my NVME drive
->>>>>> seems to work fine with the "pcie_aspm=off" workaround as well.
->>>>>
->>>>> I don't see this problem, and haven't tried to reproduce it yet.
->>>>>
->>>>> Mani told me I needed to add these lines to ensure the "runtime
->>>>> PM hierarchy of PCIe chain" won't be "broken":
->>>>>
->>>>> 	pm_runtime_set_active()
->>>>> 	pm_runtime_no_callbacks()
->>>>> 	devm_pm_runtime_enable()
->>>>>
->>>>> Just out of curiosity, could you try with those lines added
->>>>> just before these assignments in k1_pcie_probe()?
->>>>>
->>>>> 	k1->pci.dev = dev;
->>>>> 	k1->pci.ops = &k1_pcie_ops;
->>>>> 	dw_pcie_cap_set(&k1->pci, REQ_RES);
->>>>>
->>>>> I doubt it will fix what you're seeing, but at the moment I'm
->>>>> working on something else.
->>>>
->>>> Unfortunately there is no difference with the runtime PM hierarchy
->>>> additions.
->>>>
->>>
->>> These are not supposed to fix the issues you were facing. I discussed with Alex
->>> offline and figured out that L1 works fine on his BPI-F3 board with a NVMe SSD.
->>>
->>> And I believe, Aurelien is also using that same board, but with different
->>> SSDs. But what is puzzling me is, L1 is breaking Aurelien's setup with 3 SSDs
->>> from different vendors. It apparently works fine on Alex's setup. So it somehow
->>> confirms that Root Port supports and behaves correctly with L1. But at the same
->>> time, I cannot just say without evidence that L1 is broken on all these SSDs
->>> that you and Aurelien tested with.
 
-Aurelien, can you please confirm that your reports are with the BPI-F3
-board?  I believe you identified the three SSDs that were failing.  I
-am considering buying one of those models to see if I can reproduce
-the problem and troubleshoot it.
+--SsaoZEtYAOX1mTlI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->> It could be that we have different revision of the BPI-F3 board, it's
->> not impossible that I got an early-ish version. That said I just
->> visually checked the PCB against the schematics, and the devices on the
->> CLKREQN line appear to be installed.
->>
-> 
-> CLKREQ# is only needed for L1 PM Substates (L1.1 and L1.2). In other ASPM states
-> (L0s and L1), REFCLK is supposed to be ON. So those don't need CLKREQ# assertion
-> by the endpoint.
-> 
-> The L1 issue you are facing could be due to the board routing issue also. I'm
-> just speculating here.
-> 
->> If someone has contacts to check what changes have been done between the
->> different board revision, that could help. Or same if there are
->> different revisions of the SpacemiT K1 chip.
->>
-> 
-> I hope Alex can get this information.
+On Mon, Nov 03, 2025 at 04:32:17PM +0000, Yeoreum Yun wrote:
 
-I have sent a message to SpacemiT to explain that these issues are
-being reported, and asking for any useful information about the
-BPI-F3 (including whether there are different versions, or different
-versions of firmware, and how someone can identify what they have).
+> expose FEAT_LSUI to guest.
 
-Thanks.
+You should also update the set_id_regs test to cover this (the addition
+of ID_AA64ISAR4_EL1 was applied now).
 
-					-Alex
+--SsaoZEtYAOX1mTlI
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> - Mani
-> 
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkI24cACgkQJNaLcl1U
+h9ADVwf/SkI01bIU3sqijvh+m3ciwOMaw8AQTOZ21rAp8NHnf0xynHjwbIP0GLzh
+z8Y19mBYMVtFkTkSAsPsHauHZbzaCRgN/Uje2OhNJTvJK9sRmEJr/Zvr5TgedGq4
+5ypibycxN20qO9Zkhf6bVvclZ2Q35qHuM5ZQz8Vkbad8TmoZLS4x5rIcf26AFRS4
+Cf4Zl5DoA5jFOesZmz6jKxYGVMPz73zOF4owaL/Hake4ZvG+JO6ijjqOGcPFjWP5
+Bhs9DTIzOQzG4Ff2WfQw6VwWL3pZP+dMAKyL1cQnUkl7MaBHbDhVQjRsZhpxUNLh
+2eTrRDfBp0Wez31IZmTh1EH2AMIobA==
+=Vduu
+-----END PGP SIGNATURE-----
+
+--SsaoZEtYAOX1mTlI--
 
