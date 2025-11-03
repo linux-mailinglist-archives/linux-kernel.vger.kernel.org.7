@@ -1,113 +1,120 @@
-Return-Path: <linux-kernel+bounces-883540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E2DEC2DB9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:49:13 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7AE0C2DBC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:51:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2412F4E9715
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:49:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id C5D714F1924
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:50:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E264320393;
-	Mon,  3 Nov 2025 18:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDCF4320CCC;
+	Mon,  3 Nov 2025 18:49:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WCQnVLjR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aTY/xaqa"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 605E531E10D;
-	Mon,  3 Nov 2025 18:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC1D320A39
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 18:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762195731; cv=none; b=HsTYo4QT8XYJV+k3q+KxGg9xUZ3ezxRO07CMEwvZktP89MUd02PWDTeTKzmoelgkr9wvkeFx3cvaFQWEzuVbyzscopS7nas9FmmK9A1Z3IyhQD2V8LjAwR7QMlkKlN7aLReoJ2uXkrUtTrHc/kVCkf0UdGTrVw1cMjeno1614EA=
+	t=1762195777; cv=none; b=U8wLuqzHW5Hn7kEB8MOv7ztLqbBTIlE5jmzly1gG6wP8mMxKfbkxzVyZnWwOGXZfF7i526V5DRko8U46CDfiUQCYsuviyLgDQqdnaa8rlVFFwkrOTIGhRRjSnkEnNK3UgJ8y004qx/YmrJ7oWEyWd5IQEgIW/afgV2XmVs+KyxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762195731; c=relaxed/simple;
-	bh=ALydrsTcpGFsZ9Jo2jnOiurkBAgPfvv5NGiNTjaQw9g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iTsjTjL1HC/gWQa+IrL9I6vMhentg1VhxmTH2x3jIXWZwq6O/id3SWhsNOMUreM2S40HAPPI2XecYj2c358yXXd+ltlARbR2TFKQfzqZmLHjinJSDuJQSUHbuK6h2a2JVP2gdNVm3Sm/qqKS9M2LqGMiIArg3Hi4h60Vk3Yp96E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WCQnVLjR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7814EC4CEE7;
-	Mon,  3 Nov 2025 18:48:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762195730;
-	bh=ALydrsTcpGFsZ9Jo2jnOiurkBAgPfvv5NGiNTjaQw9g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WCQnVLjRHv18vrY0+OwuT509MUe11TNV4zCd61eR4WKDPtUevlmFc5gf3HsulkQIg
-	 LVS57XZHEQUqERD4VVkKtZ5QR/PSkzPBNA6j5fTug8riZbwGTFbWTBFLuQkKT4T9gE
-	 mt9fHI0CP+T5LTs0Ioyj2zaAQXM5UbXUvUrCfnQU7SP3DMRU8BIXIkHHqwv5P69rpJ
-	 3EL2+1iuwgC6jr0TqisM8ZdJqHdHA0DDEXe/25Q8YnGXGv4pMPn3LtgPUcdlv6WyYq
-	 7bk4vROeD9WhelggDv+dLh7e8vf4ACxSeu1Hk3mZKUlWkpJvOjk9dSUwz0u2MCpOzq
-	 g+AQzjsoR2Xpg==
-Date: Mon, 3 Nov 2025 11:48:46 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] lib/crypto: curve25519-hacl64: Fix older clang KASAN
- workaround for GCC
-Message-ID: <20251103184846.GA672460@ax162>
-References: <20251102-curve25519-hacl64-fix-kasan-workaround-v1-1-6ec6738f9741@kernel.org>
- <20251103170036.GD1735@sol>
+	s=arc-20240116; t=1762195777; c=relaxed/simple;
+	bh=cUXHg1xiNrQAJnQmh3zAMwsMypmYmGeR8zDCYyhj5sQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dXXuxWSxUFC8Pcr3rw8cW1hgoVLSob0abpovc/+DStqyddFumOwIzXcq7gshC6GzcazD8d2B8jCGpzAP+eKqrQSI6zKwH0/dXB3WBBqbNtjpMX0whkiZ7pEzrnK56mnHwG7i3VwkwfIBDHCX8cfGiCd9dwsrFrFb2KaYcCMfpCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aTY/xaqa; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3f0ae439b56so2471568f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 10:49:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762195773; x=1762800573; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cUXHg1xiNrQAJnQmh3zAMwsMypmYmGeR8zDCYyhj5sQ=;
+        b=aTY/xaqazcbzk8ytmmYFIWPxNJZ3mCWnimlq/tSoALFFaScdclz9ng1ny/7+NdsdXl
+         fC/lSBM+Ll8tD1ODwOfPH6FcqM+uxhmPtNLE14bGr/wLn/zexzt+zabMF/4R+emCBKNq
+         YBnqMXUjllF1l7Oq1T3UMZGKwfDjx7gq8tlW0lB4XN5yGYcSYM64xN5p1/7DNdY0rALD
+         xV1gu9NpoldrXkAvO1VDRmQGVtxoPGedRf4INUhtEnTyOykmZg4EtuIeADYoyCU003/n
+         LxuyRieOIDx9FxGX7N4cNGEl/FaiLD/ruzI3Oae1Qd10mScp3NY2l1RDv/ap+AGlcqvp
+         vGpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762195773; x=1762800573;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cUXHg1xiNrQAJnQmh3zAMwsMypmYmGeR8zDCYyhj5sQ=;
+        b=GFR9+hZ6NEMrgSm75RtKwQA4LZBzS853xLFKUY3tNB2qUjTwUIJdTMw0oFyS/0FSvP
+         KRb0YCVIuvzZDFTsMcmtWXZK531tPu9GYDQT3NUV6iYgwbHDTj7kcO/pJ/Ll76nfcdZJ
+         m8nmskGxmWEoKoQtDwiZXtrdqVFqRwX7a7RajaUffWVg9CPpZs9cTZ7miU1+fB1I157P
+         01fG0Qmp9WL33haPLejWaB4HeiLIfilE8Wn2B6zg2SAI5o8yqRXG9cW0x27o3QZBGNHl
+         txtdy0zEDVJG2qm51hIx6rS0lcAH3oT5AM+Hv1iaQp0Zac7GAXZwE4Zp1A/Np8vSu9gV
+         Vhag==
+X-Forwarded-Encrypted: i=1; AJvYcCV6CLNu5HFYrRPn3ugwpEvT7UtDsCe65IeEyrrxLAd7eOPW9VipqOCHtpCLjBNvHzIJA6jU0NbnvmDdoWo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjNVkGQBAhBAO/Vr5IvVs17C8zYBDC3q35e+LGJzrdQAUX7ssW
+	0je+6PSMf5hOTsCHJbooMWMun48WiV3uyNzb/hgi9p4I4nGJ8EWy4Wd+sNY1B45vcen0mGcWO6j
+	Y/7/jkbWfLwuBBsJjT+CdIMam8UfMUOw=
+X-Gm-Gg: ASbGnct4Xn4ppUSd7LzvZe+iHTVmgxKr/sL0t9FTcA4tNZs+wsTTVTqioknfgHto03i
+	KOW/XUPEFV+K6yWoVOsYrT2o/B2TSK5bOL0staccjEDOq8NtR1GkpDr75jRchhrmE2S+8zj545C
+	5hDD7lJzvN6C1ArV+BVVHaSl5r2gPiX8rHLDfWkfjDgmjgWBNTIS7si6PFQqAdqgOpJmMpiwA50
+	9NKunifSzbQ0KEsJuFTcw5zTWavPHpvku88BAyT4QmkV/RSl9xNlrwU0o04qk3Ys7BPZZUXa1ZN
+X-Google-Smtp-Source: AGHT+IFt4gOGrDj2t6tA8XILvHGEiv4nujQD4kFEHH+eHW0pODe/pp5N8EnfpMaVw2g1H2iXy/kIoISejExSMdbzjy4=
+X-Received: by 2002:a05:6000:2903:b0:425:7329:e1d2 with SMTP id
+ ffacd0b85a97d-429bd67c41emr11138869f8f.16.1762195773367; Mon, 03 Nov 2025
+ 10:49:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251103170036.GD1735@sol>
+References: <20251103-fix-nolock-loop-v1-1-6e2b3e82b9da@suse.cz>
+In-Reply-To: <20251103-fix-nolock-loop-v1-1-6e2b3e82b9da@suse.cz>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Mon, 3 Nov 2025 10:49:20 -0800
+X-Gm-Features: AWmQ_blWzRfr9N_Nvg7Vzkxyh1lg6x7F8lqvMADmV-lK2vXgOf6Km-urto1BDyI
+Message-ID: <CAADnVQ+pMfza=PF6eo05gSrtGkE1LbT6Fsg6DnmqZcta-3KUiQ@mail.gmail.com>
+Subject: Re: [PATCH] slab: prevent infinite loop in kmalloc_nolock() with debugging
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Harry Yoo <harry.yoo@oracle.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Christoph Lameter <cl@gentwo.org>, 
+	David Rientjes <rientjes@google.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 03, 2025 at 09:00:36AM -0800, Eric Biggers wrote:
-> On Sun, Nov 02, 2025 at 09:35:03PM -0500, Nathan Chancellor wrote:
-> > Commit 2f13daee2a72 ("lib/crypto/curve25519-hacl64: Disable KASAN with
-> > clang-17 and older") inadvertently disabled KASAN in curve25519-hacl64.o
-> > for GCC unconditionally because clang-min-version will always evaluate
-> > to nothing for GCC. Add a check for CONFIG_CC_IS_GCC to avoid the
-> > workaround, which is only needed for clang-17 and older.
-> > 
-> > Additionally, invert the 'ifeq (...,)' into 'ifneq (...,y)', as it is a
-> > little easier to read and understand the intention ("if not GCC or at
-> > least clang-18, disable KASAN").
-> > 
-> > Cc: stable@vger.kernel.org
-> > Fixes: 2f13daee2a72 ("lib/crypto/curve25519-hacl64: Disable KASAN with clang-17 and older")
-> > Signed-off-by: Nathan Chancellor <nathan@kernel.org>
-> > ---
-> >  lib/crypto/Makefile | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/lib/crypto/Makefile b/lib/crypto/Makefile
-> > index bded351aeace..372b7a12b371 100644
-> > --- a/lib/crypto/Makefile
-> > +++ b/lib/crypto/Makefile
-> > @@ -90,7 +90,7 @@ else
-> >  libcurve25519-$(CONFIG_CRYPTO_LIB_CURVE25519_GENERIC) += curve25519-fiat32.o
-> >  endif
-> >  # clang versions prior to 18 may blow out the stack with KASAN
-> > -ifeq ($(call clang-min-version, 180000),)
-> > +ifneq ($(CONFIG_CC_IS_GCC)$(call clang-min-version, 180000),y)
-> >  KASAN_SANITIZE_curve25519-hacl64.o := n
-> >  endif
-> 
-> Thanks for catching this!
-> 
-> Using CONFIG_CC_IS_GCC == "" to check for clang seems a bit odd when
-> there's already a CONFIG_CC_IS_CLANG available.
-> 
-> How about we do it like this?
-> 
->     ifeq ($(CONFIG_CC_IS_CLANG)_$(call clang-min-version, 180000),y_)
+On Mon, Nov 3, 2025 at 4:24=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wro=
+te:
+>
+> In review of a followup work, Harry noticed a potential infinite loop.
+> Upon closed inspection, it already exists for kmalloc_nolock() on a
+> cache with debugging enabled, since commit af92793e52c3 ("slab:
+> Introduce kmalloc_nolock() and kfree_nolock().")
+>
+> When alloc_single_from_new_slab() fails to trylock node list_lock, we
+> keep retrying to get partial slab or allocate a new slab. If we indeed
+> interrupted somebody holding the list_lock, the trylock fill fail
+> deterministically and we end up allocating and defer-freeing slabs
+> indefinitely with no progress.
+>
+> To fix it, fail the allocation if spinning is not allowed. This is
+> acceptable in the restricted context of kmalloc_nolock(), especially
+> with debugging enabled.
+>
+> Reported-by: Harry Yoo <harry.yoo@oracle.com>
+> Closes: https://lore.kernel.org/all/aQLqZjjq1SPD3Fml@hyeyoo/
+> Fixes: af92793e52c3 ("slab: Introduce kmalloc_nolock() and kfree_nolock()=
+.")
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+> ---
+> as we discussed in the linked thread, 6.18 hotfix to be included in
+> slab/for-next-fixes
 
-Yeah, I am not really sure why I was being so cryptic with the original
-way it was written :) I think it made a little more sense when it was
-'ifeq'. Technically we could do without the _ but would you prefer that
-I keep it? I can send a v2 with whatever you prefer and an updated
-commit message.
-
-Cheers,
-Nathan
+Acked-by: Alexei Starovoitov <ast@kernel.org>
 
