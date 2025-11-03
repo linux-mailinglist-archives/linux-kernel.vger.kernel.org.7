@@ -1,195 +1,111 @@
-Return-Path: <linux-kernel+bounces-882847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39BC0C2BA6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:25:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48377C2BA5F
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:24:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 930BC18959F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:25:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2147A3B7A50
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C7B30CDB2;
-	Mon,  3 Nov 2025 12:23:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF7BA30DD13;
+	Mon,  3 Nov 2025 12:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="APEaBeGR"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h5TUZXfL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931B52D0C92;
-	Mon,  3 Nov 2025 12:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F8030DD07;
+	Mon,  3 Nov 2025 12:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762172617; cv=none; b=RexqJGkzFRigtmDdXRNunGMIg1BLlwy3a+NJ7BsFbH9+/6IB1J5x++VH5w3wdLn1Vbp04sPSsjuL9zwHkESf7zNIv01r0HvvrK45+ttp2FdqCIOxf5ko6Q0/lGOpP7stc1BnIRQ617GsQouQfku77IbCVlOed/8mjVPK7L1umbo=
+	t=1762172623; cv=none; b=gppEkMox7ipjBI0dJ9GZiHVsLqLAZTZn1h46CKw16wxZYWvXk8wRmjICConRq34aZQdMDTzwGkDvXXR3dcoBuEq3zJ28VBopVaSCLvxJiSzybjkcSqDrIN8NsfmZaBuyMB8UJslVAzWCexaLkFiXZpmus9hurthjxRp67oqsEkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762172617; c=relaxed/simple;
-	bh=HEShMzZKAsuD2pJQ1j+0chm5T3Nli1m/xpt2pjx+ejY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N6+nXcJ5gTe+r2CLoiRbZwtXGNvAQQlPs5JVoZxLwlC/vFebG52W903G8SAkWbO6u/En+mKHNPdy8roEKogOYL916U5wUW4n+qarbUCRqmmlzH0jzL0KHwfe8+GD5UFKnh7zQVuPtQSH0oA3p9t7CpMUsDxP9FWyjArEscZAozQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=APEaBeGR; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (82-203-160-149.bb.dnainternet.fi [82.203.160.149])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id E5E7F99F;
-	Mon,  3 Nov 2025 13:21:40 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1762172501;
-	bh=HEShMzZKAsuD2pJQ1j+0chm5T3Nli1m/xpt2pjx+ejY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=APEaBeGRxHqPYPNuEVrAcHNep/jjdgFLhbG9UWla37ARJU0RUb2V20wikG9Y5WtAc
-	 Jb4OimaCU+KfrW35gTqmK6nrnaMqy7Fc2sdC9dX8JXa9q5w610E5Tw1iy8FiYPCvLl
-	 5s+Pl1rwsehi3cDP7nFSXLUHRSe9QB8r3+d+yUkc=
-Date: Mon, 3 Nov 2025 14:23:20 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Guoniu Zhou <guoniu.zhou@oss.nxp.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Guoniu Zhou <guoniu.zhou@nxp.com>
-Subject: Re: [PATCH 1/3] media: dt-bindings: nxp,imx8-isi: Add i.MX95 ISI
- compatible string
-Message-ID: <20251103122320.GT27255@pendragon.ideasonboard.com>
-References: <20251024-isi_imx95-v1-0-3ad1af7c3d61@nxp.com>
- <20251024-isi_imx95-v1-1-3ad1af7c3d61@nxp.com>
- <aPuAVqVUHjrPCbIH@lizhi-Precision-Tower-5810>
- <20251026220438.GG13023@pendragon.ideasonboard.com>
- <aP/F3joJ0RnL0G1z@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1762172623; c=relaxed/simple;
+	bh=EpC/d8RctC6D2NqwJF4B8XkTUMtzK+hUR+NvmNGudxM=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=HZV6F2p1JfIquQDc7vm85hEukfkBqxPxJrLbjIbq6gpjyM/hzZ09+afV/5k/mLr25XBd6e9BqwVlvSKV7b2fZYlFMq4Xo0WjC6pjVA+0u8pktnwx4WD9sZFGI5uHxLj/S+hpw4Eq3GLdfnwJEOg1QYGMSj0Utl9jVjuVaZSAEtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h5TUZXfL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 714EFC4CEE7;
+	Mon,  3 Nov 2025 12:23:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762172622;
+	bh=EpC/d8RctC6D2NqwJF4B8XkTUMtzK+hUR+NvmNGudxM=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=h5TUZXfLSIYFJ+C2cLV9ax0DJ161K5smtwnP3xVGkkdPTXt40U284gb0Z/uV23oSF
+	 elCBcizGdQdFT13oahVuNhzFbdCjQfPxXIENiKiq5Nen29yLa6+qoy6dbvCY8nGdw0
+	 B/Wmuf8HxrgRReePKt492QshgpvpYibWOY1JFHSahs84eRJOKAmLAOrdp66d7DUvQd
+	 ++bIkcue+qPCUlSWNpZ2V+TstCOtylg+TX1nOBTK0kAIjkHC27j14q8dfMf/d4+PIy
+	 QG9gFqW5onW2zICCz9yP/hCLXCx7mXDGN+vT2NkYb3LU1xawhoRVf9QnfcDqD73ige
+	 o7JeGFN/HglMg==
+Date: Mon, 03 Nov 2025 06:23:40 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aP/F3joJ0RnL0G1z@lizhi-Precision-Tower-5810>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Pengyu Luo <mitltlatltl@gmail.com>, 
+ Daniel Thompson <danielt@kernel.org>, linux-leds@vger.kernel.org, 
+ Jingoo Han <jingoohan1@gmail.com>, dri-devel@lists.freedesktop.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Helge Deller <deller@gmx.de>, 
+ Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ linux-fbdev@vger.kernel.org
+To: Junjie Cao <caojunjie650@gmail.com>
+In-Reply-To: <20251103110648.878325-2-caojunjie650@gmail.com>
+References: <20251103110648.878325-1-caojunjie650@gmail.com>
+ <20251103110648.878325-2-caojunjie650@gmail.com>
+Message-Id: <176217262093.2953282.2008834134717044680.robh@kernel.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: leds: backlight: Add Awinic
+ AW99706 backlight
 
-On Mon, Oct 27, 2025 at 03:19:58PM -0400, Frank Li wrote:
-> On Mon, Oct 27, 2025 at 12:04:38AM +0200, Laurent Pinchart wrote:
-> > On Fri, Oct 24, 2025 at 09:34:14AM -0400, Frank Li wrote:
-> > > On Fri, Oct 24, 2025 at 05:46:52PM +0800, Guoniu Zhou wrote:
-> > > > From: Guoniu Zhou <guoniu.zhou@nxp.com>
-> > > >
-> > > > The ISI module on i.MX95 supports up to eight channels and four link
-> > > > sources to obtain the image data for processing in its pipelines. It
-> > > > can process up to eight image sources at the same time.
-> > > >
-> > > > Signed-off-by: Guoniu Zhou <guoniu.zhou@nxp.com>
-> > > > ---
-> > > >  .../devicetree/bindings/media/nxp,imx8-isi.yaml    | 26 +++++++++++++++++++++-
-> > > >  1 file changed, 25 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml b/Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml
-> > > > index f43b91984f0152fbbcf80db3b3bbad7e8ad6c11e..eaab98ecf343a2cd3620f7469c016c3955d37406 100644
-> > > > --- a/Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml
-> > > > +++ b/Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml
-> > > > @@ -23,6 +23,7 @@ properties:
-> > > >        - fsl,imx8mp-isi
-> > > >        - fsl,imx8ulp-isi
-> > > >        - fsl,imx93-isi
-> > > > +      - fsl,imx95-isi
-> > > >
-> > > >    reg:
-> > > >      maxItems: 1
-> > > > @@ -49,7 +50,7 @@ properties:
-> > > >    interrupts:
-> > > >      description: Processing pipeline interrupts, one per pipeline
-> > > >      minItems: 1
-> > > > -    maxItems: 2
-> > > > +    maxItems: 8
-> > > >
-> > > >    power-domains:
-> > > >      maxItems: 1
-> > > > @@ -109,6 +110,29 @@ allOf:
-> > > >              - port@0
-> > > >              - port@1
-> > > >
-> > > > +  - if:
-> > > > +      properties:
-> > > > +        compatible:
-> > > > +          contains:
-> > > > +            const: fsl,imx95-isi
-> > > > +    then:
-> > > > +      properties:
-> > > > +        interrupts:
-> > > > +          maxItems: 8
-> > >
-> > > should minItems: 8 because you already limit maxItems at top;
-> >
-> > As far as I understand, when no "items" are specified, minItems defaults
-> > to 1, and maxItems defaults to minItems (if specified) or 0 (if minItems
-> > is not specified). This is implemented in dtschema/lib.py of
-> > https://github.com/devicetree-org/dt-schema.git.
-> >
-> > Then, in dtschema/fixups.py, if only one of minItems or maxItems is
-> > specified, the other one is set to the same value. I believe relying on
-> > this is frowned upon by the DT maintainers.
-> >
-> > We could specify minItems only here, as the top-level constraint will
-> > ensure we don't go over 8. That's not very future-proof though, so I
-> > think specifying both minItems and maxItems would be best. Confirmation
-> > from a DT maintainer would be appreciated.
+
+On Mon, 03 Nov 2025 19:06:47 +0800, Junjie Cao wrote:
+> From: Pengyu Luo <mitltlatltl@gmail.com>
 > 
-> I pretty sure I am correct. please below thread, I met many similar cases
-> before.
-> https://lore.kernel.org/imx/72c29785-eb7a-4cc8-a74c-3aad50129a23@kernel.org/
+> Add Awinic AW99706 backlight binding documentation.
+> 
+> Signed-off-by: Junjie Cao <caojunjie650@gmail.com>
+> ---
+> Changes in v2:
+> - use proper units for properties (Krzysztof)
+> - drop non-fixed properties (Krzysztof)
+> - add properties(max-brightness, default-brightness) (Krzysztof)
+> - Link to v1: https://lore.kernel.org/linux-leds/20251026123923.1531727-2-caojunjie650@gmail.com
+> 
+>  .../leds/backlight/awinic,aw99706.yaml        | 100 ++++++++++++++++++
+>  1 file changed, 100 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/leds/backlight/awinic,aw99706.yaml
+> 
 
-I discussed this with Krzysztof on IRC last week. He said that in
-conditional statements, both minItems and maxItems should be set, except
-when one of them is a border constraint (being the same as the top-level
-constraint). In that case it can be omitted.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-So in this particular case you're right, we should specify minItems
-here, not maxItems.
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/leds/backlight/awinic,aw99706.yaml:39:111: [warning] line too long (113 > 110 characters) (line-length)
 
-> > The fsl,imx8mp-isi block above should then be fixed. It currently only
-> > has maxItems set, minItems should be set to 2 as well.
+dtschema/dtc warnings/errors:
 
-The fsl,imx8mp-isi conditional block should specify both minItems and
-maxItems, and set both to 2.
+doc reference errors (make refcheckdocs):
 
-> >
-> > > > +        ports:
-> > > > +          properties:
-> > > > +            port@0:
-> > > > +              description: Pixel Link Slave 0
-> > > > +            port@1:
-> > > > +              description: Pixel Link Slave 1
-> > > > +            port@2:
-> > > > +              description: MIPI CSI-2 RX 0
-> > > > +            port@3:
-> > > > +              description: MIPI CSI-2 RX 1
-> > > > +          required:
-> > > > +            - port@2
-> > > > +            - port@3
-> > > > +
-> > >
-> > >      else
-> > >        properties:
-> > >          interrupts:
-> > >            maxItem: 2
-> > >
-> > > to keep the same restriction for existed compatible string.
-> >
-> > We already specify the number of interrupts in two separate conditional
-> > blocks above, with any else statement (for all but fsl,imx8mp-isi first,
-> > and then for fsl,imx8mp-isi). Both specify maxItems, so I think we're
-> > fine.
-> >
-> > > >  additionalProperties: false
-> > > >
-> > > >  examples:
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20251103110648.878325-2-caojunjie650@gmail.com
 
--- 
-Regards,
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
-Laurent Pinchart
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
