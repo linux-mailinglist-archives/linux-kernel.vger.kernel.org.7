@@ -1,123 +1,234 @@
-Return-Path: <linux-kernel+bounces-883396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13F30C2D536
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:02:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 954F9C2D548
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:03:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3DF51898715
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:00:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 990F2188F191
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B10331B80C;
-	Mon,  3 Nov 2025 16:57:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1823731D758;
+	Mon,  3 Nov 2025 16:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b5oNCpeX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BgSNdV/7"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF5531B11F
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:57:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9169731D726
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762189051; cv=none; b=AjIB67qfayRC95Sc1LC7grykXMFy4rwDS2shk+2yhhmY0PRo6D1qht/zDNRvSNf7I6iN7LogK5UzfIfyERYjduuIAN8tMokrCC2NPgxtmD29RO/R9VvW4T2rFX1+SVQJWnrkAfM3dd0rVJlzUvd64CiAD0jsHvtSMHZX01CxNqA=
+	t=1762189115; cv=none; b=kTdFeZ42/tcRZU52J+/ZyMGpJjeKMsEB9sirKiwaXFdQWkEYmilau2ybEbDm3AiDHlrYHchMXv0iOCpme1xmbo2hh08P8p2+tT7MSIw4SGKbEycUjhKonhiX1tR4JnM+s1umiEvUcGKFQ5PK2Vi8lLupVQndWGgsi2oUuPIRuFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762189051; c=relaxed/simple;
-	bh=UXbyL0c4gAKXyaDUG6J01Z7qz3xy2A7gPJAePIXHk4s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e/uOhCZi0LuUdci/vPStyoLsAt4O1raO4ELUBP9dETkaY8aY76rcDM7qoOS6pu3NYJYA77Ft8UN7bo2aIxA6Nw89k7lffIdMNPGE/47D00WBlnfETqpft5IHPpkXTkOyPUvvXT1i4q2/IH694+JTL/BkGOAlvapJkonQFDBoefE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b5oNCpeX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 564D7C4CEE7;
-	Mon,  3 Nov 2025 16:57:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762189051;
-	bh=UXbyL0c4gAKXyaDUG6J01Z7qz3xy2A7gPJAePIXHk4s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b5oNCpeXpk2uZyGZqBHEsvT/hu0avc8wvFDKDf/GNIctuNY4LZzu7oKF3BcrtP152
-	 krdL00sj+nAvuQJ7luVVgQZBHtZLG+ESOvSYRXYtd9okIy9M1kuE4DJ8+BtrrOcay0
-	 hxJtbn+ZQSFnv5Dk4evrInz5BKWwCvw9qLMCNPM5TgR9adqRa0ua75zNlC15uhXUyq
-	 arfewDLc70AnhMi5JT+O/G3ShaUUNkej4oHy9sxxYAunMtwrAlnlKxfiC9kME8LDXe
-	 wpfQqZFeNAEnF+mJNTKDYKMtOdbaWXl14nGiYny7DOAMOLe9+1892E8GGaFEn7AtvV
-	 C8V3fDWrEBf9g==
-Date: Mon, 3 Nov 2025 18:57:24 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Pratyush Yadav <pratyush@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>,
-	Alexander Graf <graf@amazon.com>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	kexec@lists.infradead.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kho: fix out-of-bounds access of vmalloc chunk
-Message-ID: <aQje9CFnTymbkUlM@kernel.org>
-References: <20251103110159.8399-1-pratyush@kernel.org>
+	s=arc-20240116; t=1762189115; c=relaxed/simple;
+	bh=b0O3GE4qbZNbg0oDGHxasBjYudlii3ZM6j4y5Cr/l5w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tUyFhVupz4nvR6nyHt4c+qTmEanESgPZaXCj7Ez44aCcD2G7o4WdCj5gUtL8M22sJKkefsV/NbvoufFTDo/1q5a/jbml7Y/LwgFQNcKZl9i4LbjF/iyJcXZYt7wKQtTBLMbZou8ym3QC2xNroBaIHWkZyoYAlPaQnPki1S8/+bY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BgSNdV/7; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4ed59386345so4321911cf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 08:58:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762189111; x=1762793911; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1mTsTlYaKlSyBQb/TNu3wRr8ckz09pUbjw64hL0b7SA=;
+        b=BgSNdV/7fYcawu86Vprj4piD9mA6QYHDGBDcmYm2fLXK4hRHjjKuMhNmYs7sAN7qMy
+         6aY5E1uBpvxUa2VyFxyTIbHoDlJitWdKYjjXh1r0B90tBbeL+1cQ23UqigUOPgoiM7K+
+         MDM4VqY3IVlSVpLFUPyg7TujDLirAMRRmn9PlcBvjVSdfD+VdV38CmmVndVWIT5UJV96
+         V7d80IZCUE5W/Hs2+5+oMbjsUVtHptCaN0xLW+cDqVU2OYpDJdLsFMHMpNsSGiH9tckX
+         JBEbw9g2g3V57Qjm59LD5YxyMLCFCeFslqUaEyc1ObHrCuwY5hkOSqsZY4Uyhw/RNq2K
+         6u5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762189111; x=1762793911;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1mTsTlYaKlSyBQb/TNu3wRr8ckz09pUbjw64hL0b7SA=;
+        b=JPuEnRNFWLFVQQv1+yVNE0Oaavo8OAG4GamJ/pQ5AcpDWGdssm1jEcXOoLvkQFRkXS
+         x9+aoFE9DcLyfh3auuPwWGjU3b27LMZDvC9q8qlVEK/x3PaJLpKZ4mAdkPy++xUJnOxj
+         SsQDm773xCYvLohdtK8kxctb9RELYXdXH2DVoh0yBRMLE0Z1ulibuVHPYGGesV8cv7tn
+         4INPi3+5qa832JIwZJaLj/U1/A3pUVvLtoEazEIDthjj7Tki1H+jN9Ih+9DnuZLz5Q8v
+         uFJ35SZPiF5XCU6h11Si59p4PEELsBqgO6iRRV6j+7hLXEfOms+C3/Ay8BF1Wv/Zw74y
+         mClQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXDjtMe0aUESAQa+7PAoiOu03htS27Y7hWBCI/x9R6QWNyJP4o0dkDG/EgRqlFu0YFTdIVD7o43HnvXNpY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxCKWjSJCcEPKzgI/BVK9wgOHXhJWasEwWoct0aTOSkCVckL/h
+	8rzxt2xUlD8KAlp2DyodwJk1iVaMn0TWsS7mpyXOSOEwRk46R8fCRC2D+t+12IrHzan0vmmWNYr
+	iFdfmJVyGVLxMmLgSUeEyhd59yX2TvVg=
+X-Gm-Gg: ASbGncu4q0wLxE9UUSZtQaFKpJOoJNZ40yA55IwUfm+UgGhWRnoyVrF5NZS1Rm28WlB
+	dp0xTfHOafXbvnL16qrpZjcleNlkNMRjkXVsB3AJNWQxS0LjcNdHQ90LLQsgf3gSlRSeCxxiVqz
+	CnOBCeSErBNi2m0g+X0zPJdriDT6C3kynKRGTNaOyPUfUJLw2sE6XdwBuPHeEePqOzqBZ/KyU6T
+	adIlUCriexRi/WFnftQAt9NH211N+0xy9wvlCBosNTHjpsU2yHKtQJ1kwIP495FSyy1JlTHoyZ3
+	KG1sogTphwuRYunexFdr6wBqRg93Yvp7pYLOXbpq79Q=
+X-Google-Smtp-Source: AGHT+IHyI72HABW//cHBarLcnu9+Ba1MPRR6bZ6mJXb7LBAoEIMFtTzlhgqDHkzZb+vCZHWzUpZ0aVzufuIm9gLbSlg=
+X-Received: by 2002:ac8:7f81:0:b0:4e6:ef26:3152 with SMTP id
+ d75a77b69052e-4ed310d1aa1mr166286551cf.80.1762189111384; Mon, 03 Nov 2025
+ 08:58:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251103110159.8399-1-pratyush@kernel.org>
+References: <68cc0578.050a0220.28a605.0006.GAE@google.com> <69056c50.a70a0220.1e08cc.006c.GAE@google.com>
+In-Reply-To: <69056c50.a70a0220.1e08cc.006c.GAE@google.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Mon, 3 Nov 2025 08:58:20 -0800
+X-Gm-Features: AWmQ_bkDsSgdQVUGrhQNkWuvMPjtQkwEYu3HRdCHE9EaMTy5z14J08E7zjkious
+Message-ID: <CAJnrk1bF8sLU6tG2MGkt_KR4BoTd_k01CMVZJ9js2-eyh80tbw@mail.gmail.com>
+Subject: Re: [syzbot] [iomap?] kernel BUG in folio_end_read (2)
+To: syzbot <syzbot+3686758660f980b402dc@syzkaller.appspotmail.com>
+Cc: brauner@kernel.org, chao@kernel.org, djwong@kernel.org, jaegeuk@kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 03, 2025 at 12:01:57PM +0100, Pratyush Yadav wrote:
-> The list of pages in a vmalloc chunk is NULL-terminated. So when looping
-> through the pages in a vmalloc chunk, both kho_restore_vmalloc() and
-> kho_vmalloc_unpreserve_chunk() rightly make sure to stop when
-> encountering a NULL page. But when the chunk is full, the loops do not
-> stop and go past the bounds of chunk->phys, resulting in out-of-bounds
-> memory access, and possibly the restoration or unpreservation of an
-> invalid page.
-> 
-> Fix this by making sure the processing of chunk stops at the end of the
-> array.
-> 
-> Fixes: a667300bd53f2 ("kho: add support for preserving vmalloc allocations")
-> Signed-off-by: Pratyush Yadav <pratyush@kernel.org>
+On Sat, Nov 1, 2025 at 1:26=E2=80=AFPM syzbot
+<syzbot+3686758660f980b402dc@syzkaller.appspotmail.com> wrote:
+>
+> syzbot has found a reproducer for the following issue on:
+>
+> HEAD commit:    98bd8b16ae57 Add linux-next specific files for 20251031
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D163b2bcd98000=
+0
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D63d09725c93bc=
+c1c
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D3686758660f980b=
+402dc
+> compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b797=
+6-1~exp1~20250708183702.136), Debian LLD 20.1.8
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D176fc342580=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D10403f3458000=
+0
+>
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/975261746f29/dis=
+k-98bd8b16.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/ad565c6cf272/vmlinu=
+x-98bd8b16.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/1816a55a8d5f/b=
+zImage-98bd8b16.xz
+> mounted in repro: https://storage.googleapis.com/syzbot-assets/d6d9eee31f=
+db/mount_0.gz
+>   fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=3D=
+17803f34580000)
+>
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+3686758660f980b402dc@syzkaller.appspotmail.com
+>
+>  vms_complete_munmap_vmas+0x206/0x8a0 mm/vma.c:1279
+>  do_vmi_align_munmap+0x364/0x440 mm/vma.c:1538
+>  do_vmi_munmap+0x253/0x2e0 mm/vma.c:1586
+>  __vm_munmap+0x207/0x380 mm/vma.c:3196
+>  __do_sys_munmap mm/mmap.c:1077 [inline]
+>  __se_sys_munmap mm/mmap.c:1074 [inline]
+>  __x64_sys_munmap+0x60/0x70 mm/mmap.c:1074
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> ------------[ cut here ]------------
+> kernel BUG at mm/filemap.c:1530!
 
-Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+I think this is the same bug that was fixed by [1].
 
+[1] https://lore.kernel.org/linux-fsdevel/20251031211309.1774819-2-joannelk=
+oong@gmail.com/
+
+> Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
+> CPU: 1 UID: 0 PID: 5989 Comm: syz.0.17 Not tainted syzkaller #0 PREEMPT(f=
+ull)
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 10/02/2025
+> RIP: 0010:folio_end_read+0x1e9/0x230 mm/filemap.c:1530
+> Code: 79 c7 ff 48 89 df 48 c7 c6 20 6d 74 8b e8 9f df 2e ff 90 0f 0b e8 d=
+7 79 c7 ff 48 89 df 48 c7 c6 40 63 74 8b e8 88 df 2e ff 90 <0f> 0b e8 c0 79=
+ c7 ff 48 89 df 48 c7 c6 20 6d 74 8b e8 71 df 2e ff
+> RSP: 0018:ffffc90003f8e268 EFLAGS: 00010246
+> RAX: c6904ff3387db700 RBX: ffffea0001b5ef00 RCX: 0000000000000000
+> RDX: 0000000000000007 RSI: ffffffff8d780a1b RDI: 00000000ffffffff
+> RBP: 0000000000000000 R08: ffffffff8f7d7477 R09: 1ffffffff1efae8e
+> R10: dffffc0000000000 R11: fffffbfff1efae8f R12: 1ffffd400036bde1
+> R13: 1ffffd400036bde0 R14: ffffea0001b5ef08 R15: 00fff20000004060
+> FS:  0000555572333500(0000) GS:ffff888125fe2000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f57d6844000 CR3: 0000000075586000 CR4: 00000000003526f0
+> Call Trace:
+>  <TASK>
+>  iomap_readahead+0x96a/0xbc0 fs/iomap/buffered-io.c:547
+>  iomap_bio_readahead include/linux/iomap.h:608 [inline]
+>  erofs_readahead+0x1c3/0x3c0 fs/erofs/data.c:383
+>  read_pages+0x17a/0x580 mm/readahead.c:163
+>  page_cache_ra_order+0x924/0xe70 mm/readahead.c:518
+>  filemap_readahead mm/filemap.c:2658 [inline]
+>  filemap_get_pages+0x7ff/0x1df0 mm/filemap.c:2704
+>  filemap_read+0x3f6/0x11a0 mm/filemap.c:2800
+>  __kernel_read+0x4cf/0x960 fs/read_write.c:530
+>  integrity_kernel_read+0x89/0xd0 security/integrity/iint.c:28
+>  ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:480 [inline]
+>  ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
+>  ima_calc_file_hash+0x85e/0x16f0 security/integrity/ima/ima_crypto.c:568
+>  ima_collect_measurement+0x428/0x8f0 security/integrity/ima/ima_api.c:293
+>  process_measurement+0x1121/0x1a40 security/integrity/ima/ima_main.c:405
+>  ima_file_check+0xd7/0x120 security/integrity/ima/ima_main.c:656
+>  security_file_post_open+0xbb/0x290 security/security.c:2652
+>  do_open fs/namei.c:3977 [inline]
+>  path_openat+0x2f26/0x3830 fs/namei.c:4134
+>  do_filp_open+0x1fa/0x410 fs/namei.c:4161
+>  do_sys_openat2+0x121/0x1c0 fs/open.c:1437
+>  do_sys_open fs/open.c:1452 [inline]
+>  __do_sys_openat fs/open.c:1468 [inline]
+>  __se_sys_openat fs/open.c:1463 [inline]
+>  __x64_sys_openat+0x138/0x170 fs/open.c:1463
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xfa/0xfa0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f0b08d8efc9
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f=
+7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff=
+ ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007ffec6a5d268 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+> RAX: ffffffffffffffda RBX: 00007f0b08fe5fa0 RCX: 00007f0b08d8efc9
+> RDX: 0000000000121140 RSI: 0000200000000000 RDI: ffffffffffffff9c
+> RBP: 00007f0b08e11f91 R08: 0000000000000000 R09: 0000000000000000
+> R10: 000000000000013d R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007f0b08fe5fa0 R14: 00007f0b08fe5fa0 R15: 0000000000000004
+>  </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:folio_end_read+0x1e9/0x230 mm/filemap.c:1530
+> Code: 79 c7 ff 48 89 df 48 c7 c6 20 6d 74 8b e8 9f df 2e ff 90 0f 0b e8 d=
+7 79 c7 ff 48 89 df 48 c7 c6 40 63 74 8b e8 88 df 2e ff 90 <0f> 0b e8 c0 79=
+ c7 ff 48 89 df 48 c7 c6 20 6d 74 8b e8 71 df 2e ff
+> RSP: 0018:ffffc90003f8e268 EFLAGS: 00010246
+> RAX: c6904ff3387db700 RBX: ffffea0001b5ef00 RCX: 0000000000000000
+> RDX: 0000000000000007 RSI: ffffffff8d780a1b RDI: 00000000ffffffff
+> RBP: 0000000000000000 R08: ffffffff8f7d7477 R09: 1ffffffff1efae8e
+> R10: dffffc0000000000 R11: fffffbfff1efae8f R12: 1ffffd400036bde1
+> R13: 1ffffd400036bde0 R14: ffffea0001b5ef08 R15: 00fff20000004060
+> FS:  0000555572333500(0000) GS:ffff888125ee2000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000001b30063fff CR3: 0000000075586000 CR4: 00000000003526f0
+>
+>
 > ---
-> 
-> Notes:
->     Commit 89a3ecca49ee8 ("kho: make sure page being restored is actually
->     from KHO") was quite helpful in catching this since kho_restore_page()
->     errored out due to missing magic number, instead of "restoring" a random
->     page and causing errors at other random places.
-> 
->  kernel/kexec_handover.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/kexec_handover.c b/kernel/kexec_handover.c
-> index 76f0940fb4856..cc5aaa738bc50 100644
-> --- a/kernel/kexec_handover.c
-> +++ b/kernel/kexec_handover.c
-> @@ -869,7 +869,7 @@ static void kho_vmalloc_unpreserve_chunk(struct kho_vmalloc_chunk *chunk)
->  
->  	__kho_unpreserve(track, pfn, pfn + 1);
->  
-> -	for (int i = 0; chunk->phys[i]; i++) {
-> +	for (int i = 0; i < ARRAY_SIZE(chunk->phys) && chunk->phys[i]; i++) {
->  		pfn = PHYS_PFN(chunk->phys[i]);
->  		__kho_unpreserve(track, pfn, pfn + 1);
->  	}
-> @@ -992,7 +992,7 @@ void *kho_restore_vmalloc(const struct kho_vmalloc *preservation)
->  	while (chunk) {
->  		struct page *page;
->  
-> -		for (int i = 0; chunk->phys[i]; i++) {
-> +		for (int i = 0; i < ARRAY_SIZE(chunk->phys) && chunk->phys[i]; i++) {
->  			phys_addr_t phys = chunk->phys[i];
->  
->  			if (idx + contig_pages > total_pages)
-> 
-> base-commit: dcb6fa37fd7bc9c3d2b066329b0d27dedf8becaa
-> -- 
-> 2.47.3
-> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+>
 
--- 
-Sincerely yours,
-Mike.
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.gi=
+t
+master
 
