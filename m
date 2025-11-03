@@ -1,121 +1,188 @@
-Return-Path: <linux-kernel+bounces-882540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6D42C2AB0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 10:10:45 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28795C2AB0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 10:13:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A42113B39EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 09:10:44 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 17C5F4E90FB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 09:13:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B4842E6CC0;
-	Mon,  3 Nov 2025 09:10:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF4832E1EFF;
+	Mon,  3 Nov 2025 09:13:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DTq+Ujc8"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iPCfat0M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB3A2E6CD3
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 09:10:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415A214F9D6
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 09:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762161040; cv=none; b=RdB2BI+FM5hrT9Gg0NjgFMRlD3btK+Cp9cMLUT9J/wprdy+PAa5ZSOyNStTFJo1bnU2cFK4EuIw9JHYTqPuHJu69CPNZ6wuLcBYCqdY5NO/ZuxxQtihVsuz+juzSN9X9SWmYOWrF+xBlclLSEUQ8peQ0R+C6Rtnabecp4WmMEgg=
+	t=1762161183; cv=none; b=DwaLGqNlXCWB6H+WsJj/R94l0NiTr5XazFfogjOoxJP2vTxe5FPuv6Oyt2CcN3t1ndChqbikSEl9DiF/Cs1i1QN+V7icCVSGwZHUERsQbJUQ16WbRA/hf+Y+Hop6T/CaGJdSEqdsCLgPmYTJcAlPyoQYZUGcMn46kMauRJAWYIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762161040; c=relaxed/simple;
-	bh=QUiZDJyRgD/8ISelZGs9/tsma9n2NV13edtbnKVKZEE=;
+	s=arc-20240116; t=1762161183; c=relaxed/simple;
+	bh=BLeGKlH4tFOe01XvDJYeXPH2ybj5CxCOnxzNCYyzS9Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fopk9HwRBA2Vg7Ab3tgiv2u66WfMhD/RhT6bBZZ2o9Rfbsw7u4LRsWONusTdP9Ie6kU6zdbqsF4VizhSpfcyjcODC7/MEBYrVohldXeJB+eOeBtXvxLkLjqndOZGg0S/+BJzVXm2LB67dWXoxmsGoVBLbAWf+MdeZRO+lBpix98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DTq+Ujc8; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-89ead335959so417829785a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 01:10:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762161038; x=1762765838; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QUiZDJyRgD/8ISelZGs9/tsma9n2NV13edtbnKVKZEE=;
-        b=DTq+Ujc8P1aCvGWVFiDBbxyPBRnyYCt48nncyRZWSLp+yvHHMOnG0vStOTaYo4klAU
-         Lh969l1lN9DLkiMK5HvHCxqkqJ9kqrdkCULBaFOViEEvuyiB1o68iRNE9qpdTI7PmzZ0
-         m9xmjXzkVGjzMKaXU0JgBPCvL+PSajMxhX4gfiWuTl/mBn87GVkQFl7+a+BMzuzgAd0H
-         NAXGcuqicXLyRQyrmQU2c3q2zLknG/chiiFD2bWp4fjmKriJ0zwAj5Nl36z03dQi08jm
-         R7WslNF+oKUXSglTzPpsSQNMU8A2gXoAS0Zofotn8p9p18wRKywyKIYWoskCaPokmBSK
-         Hfww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762161038; x=1762765838;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QUiZDJyRgD/8ISelZGs9/tsma9n2NV13edtbnKVKZEE=;
-        b=LZ8rA6eL/OjnJSJAgSpNV0AQfqgJWyXWVD04BaqFtlyYPejiBInWQ/RF9YSEWM0B9b
-         uOdojOyRb3pyFVeqEsZcKDjoPed3kg3Ksz/1VYVD8CxO6+AzHEBl2ebqUBZxHdEUWfBR
-         qGzeWxI9N/mKTlunaikDJMs0oxsReLTMCi8ANPFJIJ0pkKO3u0mox/Tp9xhHE6BedhHX
-         3KiQdRAf32gtYaDXjJrwaPnwaBdhHIICEr/ZI6Htrjl+VEv2KUUuqsL3TAQnhNApqD3F
-         /o+EXIVi8fQJS21AXa7ME6yRAr0r08emQcI58dyp3gOxKyI+ADBi5eLcSkMouuMloHV1
-         eMdw==
-X-Forwarded-Encrypted: i=1; AJvYcCV+J9bP96vRn/Ymv7l8d8rAFIEUypbQpSiecWVY2S5HnmYudNVtYLDm6mH7wnsSGyD4dRDIAQAiKy0zSkY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyy+84nKQKzk3f82U6DlVHpYJC+Fni+GGvMuDVk5WRxhCDzQVBW
-	iDp3s5io7uFuZh7+ePDmGa0keDgCKJcqCpN5nQ3GqPT+ZbWy5PDpig3fq6z0vvFgEFBuC8w3hrP
-	/bVgdJ92XYriUp26jeReCCjeZoYdb3R0=
-X-Gm-Gg: ASbGnctZiYN287DqGPvvEw4+Y8snvmwDj7T9KeNVkNX3JMF5i0VJ9dO89EOUQP1w4cH
-	u7I6jVeu9hOq58qTfSHjtqGisEg53u0v7Z5DChIhxv2gywoVgw9x6ng/SM5pFPpQHgi4Cv5u+C5
-	JKjZpcCNYatrI6hlyHr65qO7Vhg25NHRgj2bSZMc/2AZnoj6TUh4J50u2o0PrHqTRVn5/sGcfuK
-	//5QCuCL1kxeBUEwcttbZI2EWEYwK0Rxh8FA0a5SpvJIwagitanHhT7kmjkqYRK+UDxVnW93Rw9
-	Ba4HfWN5FQrlU40Xa7wPFU9++jU=
-X-Google-Smtp-Source: AGHT+IExkPs8nlbN6h2EtytDA/E26wg/SoLzvVARgJNEMejaCO7Oe83L2OTAOQHjef9AwC5pLrkqUQzXxOhklPtd2tQ=
-X-Received: by 2002:a05:620a:4087:b0:8a9:eb9d:512b with SMTP id
- af79cd13be357-8ab988eda3fmr1352526985a.6.1762161037654; Mon, 03 Nov 2025
- 01:10:37 -0800 (PST)
+	 To:Cc:Content-Type; b=tNtE/Kb2wPBhQKGxtriy75lyNAHrBuHuW6lUpubeVaItiLimZzqyhLE2hMZIbzdbR4z+HyXwvDvoXleCNNKmoJOh4aeb7VKXaUYa2ULHGeEnia/e0IL+LIi72j4eRU3khIUzz94oFEOfTTje0gJWGxF/oY7hsDBaKeNYWyST160=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iPCfat0M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E00DDC116B1
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 09:13:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762161182;
+	bh=BLeGKlH4tFOe01XvDJYeXPH2ybj5CxCOnxzNCYyzS9Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=iPCfat0ME0F/ezuDxC18wmk524gaGHcXIrStcp/20v6QVA0pKkQTKj3IrpIQirzLz
+	 48tcfmefhU+Oh9TQZKifDzcHqaocRCw1itRArQz/0JO/eKwS4FAFKYLFRoXLRa2dA0
+	 bMVpknFMIot0s0ZmeJBQcDjXbr5oTNXtptBrictpBvu2jYpByV9FPwPgstQPWB5gvv
+	 8PfLJymn3pb1ehDKJ1vKr5gkLYREfoFyzN84zNplWlefUtURfBfHR1vrrpdoV/bFnW
+	 C5V2QyHVmFT82vTCLj8rivb2T6Ojx0+z0ebXix09gb0FhZcMPAbYguNCmX7V3X7zTd
+	 hM8ZfxD/mBOTg==
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-640741cdda7so5161218a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 01:13:02 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVheCpJxMrOuHolu9e986iUTRyIxEL1ALT2gXu9u8hueYq8wLa/CtKePn8GmfOaOPywlRhp4DA5q3SlbIQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIxdMTMSDQt4TPz4WVAbYFahqtvMeiYQn59clTEZr6VOuTK4jc
+	1FMn/rTvMx2JP0s9gLNpwZk8kJ06WXHEpxICqu8vqiAAceHEKsVblpDENH57dhPLUgYrYtnml8U
+	/UuetNdbVvtfSfU0LlIzDI0da/JywLe4=
+X-Google-Smtp-Source: AGHT+IH/hMANbcDUCQ1Ja+g59TP7QZglZupzPFtaLLGpzDVLHNdE2GZ9jMCMW4PouhF4L90eNs/1uFe1GslDFbf1mMk=
+X-Received: by 2002:a17:907:2d29:b0:b71:8448:a8dd with SMTP id
+ a640c23a62f3a-b718448abcdmr68886166b.31.1762161181401; Mon, 03 Nov 2025
+ 01:13:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029-swap-table-p2-v1-0-3d43f3b6ec32@tencent.com>
- <20251029-swap-table-p2-v1-1-3d43f3b6ec32@tencent.com> <ufy26fqfvaxqjywneec3hcuky7ozpa2fm63pxcuuberrvicffv@bkblomeix35w>
- <CAGsJ_4x1P0ypm70De7qDcDxqvY93GEPW6X2sBS_xfSUem5_S2w@mail.gmail.com> <CAMgjq7A+OBoH71qo=Vt65BeV7M9uOvkJ+9pQX2eq4-tqcKwVwg@mail.gmail.com>
-In-Reply-To: <CAMgjq7A+OBoH71qo=Vt65BeV7M9uOvkJ+9pQX2eq4-tqcKwVwg@mail.gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Mon, 3 Nov 2025 17:10:26 +0800
-X-Gm-Features: AWmQ_bkqWGIOm_V1HEduqJo4E0AkHgk0dtjri9662bFQ_YbNVTPpmfTPLZFhKNE
-Message-ID: <CAGsJ_4zryZ-FqxZDo8k6VLx4-ijPdjk4i+txVzP41ZS_koNBgQ@mail.gmail.com>
-Subject: Re: [PATCH 01/19] mm/swap: rename __read_swap_cache_async to swap_cache_alloc_folio
-To: Kairui Song <ryncsn@gmail.com>
-Cc: Yosry Ahmed <yosry.ahmed@linux.dev>, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Baoquan He <bhe@redhat.com>, Chris Li <chrisl@kernel.org>, 
-	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	David Hildenbrand <david@redhat.com>, Youngjun Park <youngjun.park@lge.com>, 
-	Hugh Dickins <hughd@google.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	"Huang, Ying" <ying.huang@linux.alibaba.com>, Kemeng Shi <shikemeng@huaweicloud.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, linux-kernel@vger.kernel.org
+References: <20251029-loongarch-uapi-ptrace-types-v1-1-5c84855a348d@weissschuh.net>
+In-Reply-To: <20251029-loongarch-uapi-ptrace-types-v1-1-5c84855a348d@weissschuh.net>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Mon, 3 Nov 2025 17:12:58 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4oDtOUB_CecFE2sPE-JSQNNWvFRmY8=ZdDOCdD8kdo7g@mail.gmail.com>
+X-Gm-Features: AWmQ_bnIJsb9uCZ9U0bHJfiDhKTUuVzIxImeO2vZ69sxQ1m-TL0S9eXxKzMeQ6E
+Message-ID: <CAAhV-H4oDtOUB_CecFE2sPE-JSQNNWvFRmY8=ZdDOCdD8kdo7g@mail.gmail.com>
+Subject: Re: [PATCH] LoongArch: ptrace: Use UAPI types in UAPI header
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: WANG Xuerui <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-> > I assume you mean avoiding any mention of swap-out? As for swap-out, we=
-=E2=80=99re
-> > swapping a folio out from the LRU =E2=80=94 we=E2=80=99re not allocatin=
-g a new folio.
-> >
-> > BTW, this sentence also feels a bit odd to me. I=E2=80=99d prefer remov=
-ing
-> > =E2=80=9Cswap out=E2=80=9D from
-> > =E2=80=9Cdoing IO (swap in or swap out)=E2=80=9D.
+Hi, Thomas,
+
+On Wed, Oct 29, 2025 at 11:20=E2=80=AFPM Thomas Wei=C3=9Fschuh <linux@weiss=
+schuh.net> wrote:
 >
-> How about "doing IO (e.g. swap in or zswap writeback)"? Swap-in is a
-> very common user, and zswap writeback can be mentioned explicitly.
+> The kernel UAPI headers already contain fixed-width integer types,
+> there is no need to rely on libc types. There may not be a libc
+> available or it may not provide <stdint.h>, like for example on nolibc.
+>
+> This also aligns the header with the rest of the LoongArch UAPI headers.
+Thank you for your patch, but could you please tell me some history
+and user guide about the three styles: u64, __u64 and unint64_t?
 
-Yes, that seems much better. Though Yosry seems to view zswap_writeback as =
-a
-swap-in from zswap followed by a swap-out to the device, I kind of
-agree with him :-)
+Huacai
 
-Mentioning the special case separately seems to be the clearest approach.
-
-Thanks
-Barry
+>
+> Fixes: 803b0fc5c3f2 ("LoongArch: Add process management")
+> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> ---
+> I'd like to take this through the nolibc tree, as this currently breaks
+> the upcoming nolibc ptrace support.
+> ---
+>  arch/loongarch/include/uapi/asm/ptrace.h | 40 ++++++++++++++------------=
+------
+>  1 file changed, 18 insertions(+), 22 deletions(-)
+>
+> diff --git a/arch/loongarch/include/uapi/asm/ptrace.h b/arch/loongarch/in=
+clude/uapi/asm/ptrace.h
+> index aafb3cd9e943..215e0f9e8aa3 100644
+> --- a/arch/loongarch/include/uapi/asm/ptrace.h
+> +++ b/arch/loongarch/include/uapi/asm/ptrace.h
+> @@ -10,10 +10,6 @@
+>
+>  #include <linux/types.h>
+>
+> -#ifndef __KERNEL__
+> -#include <stdint.h>
+> -#endif
+> -
+>  /*
+>   * For PTRACE_{POKE,PEEK}USR. 0 - 31 are GPRs,
+>   * 32 is syscall's original ARG0, 33 is PC, 34 is BADVADDR.
+> @@ -41,44 +37,44 @@ struct user_pt_regs {
+>  } __attribute__((aligned(8)));
+>
+>  struct user_fp_state {
+> -       uint64_t fpr[32];
+> -       uint64_t fcc;
+> -       uint32_t fcsr;
+> +       __u64 fpr[32];
+> +       __u64 fcc;
+> +       __u32 fcsr;
+>  };
+>
+>  struct user_lsx_state {
+>         /* 32 registers, 128 bits width per register. */
+> -       uint64_t vregs[32*2];
+> +       __u64 vregs[32*2];
+>  };
+>
+>  struct user_lasx_state {
+>         /* 32 registers, 256 bits width per register. */
+> -       uint64_t vregs[32*4];
+> +       __u64 vregs[32*4];
+>  };
+>
+>  struct user_lbt_state {
+> -       uint64_t scr[4];
+> -       uint32_t eflags;
+> -       uint32_t ftop;
+> +       __u64 scr[4];
+> +       __u32 eflags;
+> +       __u32 ftop;
+>  };
+>
+>  struct user_watch_state {
+> -       uint64_t dbg_info;
+> +       __u64 dbg_info;
+>         struct {
+> -               uint64_t    addr;
+> -               uint64_t    mask;
+> -               uint32_t    ctrl;
+> -               uint32_t    pad;
+> +               __u64    addr;
+> +               __u64    mask;
+> +               __u32    ctrl;
+> +               __u32    pad;
+>         } dbg_regs[8];
+>  };
+>
+>  struct user_watch_state_v2 {
+> -       uint64_t dbg_info;
+> +       __u64 dbg_info;
+>         struct {
+> -               uint64_t    addr;
+> -               uint64_t    mask;
+> -               uint32_t    ctrl;
+> -               uint32_t    pad;
+> +               __u64    addr;
+> +               __u64    mask;
+> +               __u32    ctrl;
+> +               __u32    pad;
+>         } dbg_regs[14];
+>  };
+>
+>
+> ---
+> base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+> change-id: 20251029-loongarch-uapi-ptrace-types-0c5c6756f7e0
+>
+> Best regards,
+> --
+> Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+>
+>
 
