@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-882143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58B4FC29BB1
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 01:50:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E9CC29B7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 01:49:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED6B23B1B20
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 00:50:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48C251886CEC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 00:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC69261B70;
-	Mon,  3 Nov 2025 00:48:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D441DE2B4;
+	Mon,  3 Nov 2025 00:48:39 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8A92248BE;
-	Mon,  3 Nov 2025 00:48:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CFD813C3F2;
+	Mon,  3 Nov 2025 00:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762130921; cv=none; b=aTwP3WkdCqhgG5fp0vT55kF89W3f+tyk3QOwgo4YMoLmiPQFAzUkkfFNEx+UAVjAJSQPire6Ilnr0nipDdDVmNTbxebNmDRAfLAzNfxuunP59rSG87j93nX5qs4PXu3Z3TitzLqLVQSTkI1wasJxSxmU1EKDu2TYjtkhl7udsoE=
+	t=1762130918; cv=none; b=Xxl6Jff036E7WqaNGdcXbSJ9nsdTTIPymX+8/2pKYmKzGKV+7i7VtCcWEvVKAtSGG2qL5KyxZv3PrXVHg7cAArxj9uFewXM0IvFIkcEKPS8kuHQOtJHZupsQSSyJK8bubeEOpOk+kDXn3xRecyTYmxCm/Fikv5XXfO/EW543MHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762130921; c=relaxed/simple;
-	bh=EFJ2AFXJrCDVQFWhIyCOr+o/n0I5wJxHqPSflH+/EC8=;
+	s=arc-20240116; t=1762130918; c=relaxed/simple;
+	bh=LWTd1yc63iz5dTRYv0VkKU6FmoBTGXAInd6quG3CZj4=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=FvrvMBa/UprURDW7Ji+k94mG48EhNMZvzSqO4sEoYPmRmBOY1+MciuUbWQcviVyUxMz4FqZhb8C1TRWHz3AnSLdUAPvjgBMvKLl+TTnd0wOjPJybu+roVX7D3JFF+uOov0EMR7MUFifm79Q6yKk+xqL6L3d+dE+bNKs1IoxIywY=
+	 MIME-Version:Content-Type; b=CrtyjG9iuo8jMwyPLxtjeEawSCySKC6oGlkaDf3j2Q+ksYhC+FJZctCeHyS95dcVxjCQlgMUky+BX8wkaDuloKex/Y90klZaLRYTI0+JFytLg3LelbsHZNwVPIag2zc+p7gm7xTXCJ41vn2LvKTGGGhPUAmw6KVZU/WCXirMdWs=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CBB0C19425;
-	Mon,  3 Nov 2025 00:48:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5D2CC4AF0C;
+	Mon,  3 Nov 2025 00:48:37 +0000 (UTC)
 Received: by venus (Postfix, from userid 1000)
-	id 4B6171811F8; Mon, 03 Nov 2025 01:48:33 +0100 (CET)
+	id 3CED2180CB9; Mon, 03 Nov 2025 01:48:33 +0100 (CET)
 From: Sebastian Reichel <sebastian.reichel@collabora.com>
 To: Sebastian Reichel <sre@kernel.org>, 
- Ivan Abramov <i.abramov@mt-integration.ru>
-Cc: ChiaEn Wu <chiaen_wu@richtek.com>, ChiYuan Huang <cy_huang@richtek.com>, 
+ Dzmitry Sankouski <dsankouski@gmail.com>, Lee Jones <lee@kernel.org>, 
  linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- lvc-project@linuxtesting.org
-In-Reply-To: <20251009144725.562278-1-i.abramov@mt-integration.ru>
-References: <20251009144725.562278-1-i.abramov@mt-integration.ru>
-Subject: Re: [PATCH v2 1/1] power: supply: rt9467: Return error on failure
- in rt9467_set_value_from_ranges()
-Message-Id: <176213091329.301408.1063635478051970242.b4-ty@collabora.com>
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: stable@vger.kernel.org
+In-Reply-To: <20251023102905.71535-2-krzysztof.kozlowski@linaro.org>
+References: <20251023102905.71535-2-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] power: supply: max77705: Fix potential IRQ chip
+ conflict when probing two devices
+Message-Id: <176213091324.301408.11975062916698702054.b4-ty@collabora.com>
 Date: Mon, 03 Nov 2025 01:48:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -53,20 +53,24 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.3
 
 
-On Thu, 09 Oct 2025 17:47:24 +0300, Ivan Abramov wrote:
-> The return value of rt9467_set_value_from_ranges() when setting AICL VTH is
-> not checked, even though it may fail.
+On Thu, 23 Oct 2025 12:29:06 +0200, Krzysztof Kozlowski wrote:
+> MAX77705 charger is most likely always a single device on the board,
+> however nothing stops board designers to have two of them, thus same
+> device driver could probe twice. Or user could manually try to probing
+> second time.
 > 
-> Log error and return from rt9467_run_aicl() on fail.
-> 
-> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> Device driver is not ready for that case, because it allocates
+> statically 'struct regmap_irq_chip' as non-const and stores during
+> probe in 'irq_drv_data' member a pointer to per-probe state
+> container ('struct max77705_charger_data').  devm_regmap_add_irq_chip()
+> does not make a copy of 'struct regmap_irq_chip' but stores the pointer.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] power: supply: rt9467: Return error on failure in rt9467_set_value_from_ranges()
-      commit: 8b27fe2d8d2380118c343629175385ff587e2fe4
+[1/1] power: supply: max77705: Fix potential IRQ chip conflict when probing two devices
+      commit: 1cb053ea2e1dedd8f2d9653b7c3ca5b93c8c9275
 
 Best regards,
 -- 
