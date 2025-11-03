@@ -1,98 +1,74 @@
-Return-Path: <linux-kernel+bounces-883065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34988C2C674
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:26:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 033ECC2C6D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:35:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8ADC04E67E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:26:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 791AF3AC6DB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:28:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D5FD3126C8;
-	Mon,  3 Nov 2025 14:26:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF631313269;
+	Mon,  3 Nov 2025 14:28:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CPXnjccZ"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="DW3Hb58O"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BBA130DD32
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 14:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84AED3115A5;
+	Mon,  3 Nov 2025 14:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762179968; cv=none; b=oeW1FUpZcN4VAMBGAzYgGfp6/fyKb3Neni6PiWegKiopkz211toqWgpBEXezpGh5wD0wJWpF83Vc2g3rx+qczFyz56hRA92RzCpswe19trYKBJd9xNDCKZ43bfOzAdeaBIwTcfrsvo0Petf8ZPuyZDQOVLzLVMdSLVqNaOs88+M=
+	t=1762180101; cv=none; b=j2Qds3fSDqj2tU6UOMkM/uMWxuROeslehi9Uvsnc4/qciE0O3TcN9Ar6O8IBP2YDhczjLcberntuoSJhXbcUpVPCA5jYWRfzgpw2mykDuLsN5j+VhSQIan89+zVl37Lm9czy0XDNs8LIklphzVN+8NfMGOEfmOLFKuEtGt4wep8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762179968; c=relaxed/simple;
-	bh=K78RWkk+rgbWnehNDeAYSAUzgd9AWm27AyEpeGRwU2k=;
+	s=arc-20240116; t=1762180101; c=relaxed/simple;
+	bh=NEmLnCxweseSAXUrFNHIvk7MkUMBwh9+saonIoa8t3U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tKAFWYao3m10o0BO09klfzt1o8/OQESxUIolYXW30d2AOcZv5pALa7a6RSWWZZWrNzegFlqS/OtYyIgYeKLRtVoywomF2uZ75ZuRZWoJZ/7yMbSCYRvqQQtenEMOFUeJtdoG39aqfcOTnwgvY9HPPP4cU6rEaza/ZGR+pnK0VS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CPXnjccZ; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-73b4e3d0756so61142627b3.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 06:26:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762179966; x=1762784766; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5vG+TpX2vimjAShLENqDDN7PpdggEkGS6lF5Y2WIW1Y=;
-        b=CPXnjccZOaBIKhfIVMSv68iYEaUZULispLeGTJ06a7jJtMD4dRM078/ZueAC4JLP8j
-         SbEf/aASwqwz735LpihdL72POBPG5AirLdyfgBP/2wzuZudCsuef7OmDE+XWvoF51PhY
-         6dgNum+hyOX1f4Q/i9Q6533t+KfN/qw+wWWpzJVVaepkEL0+zYgGJayeKa60W8EhC8sx
-         BJdSVXspMK6ioPiFwQVrzvwuLHvIpLybEFeWfaSbVLwt3oJ/NpSNLC7pbcoctFXjUqCV
-         7EWhcw+RTAI+4z93K29PNSRr12ImKNQi0RKIJD2zusHgf5BMRNQc0q7Gt+aYCBHKV6fl
-         v2gQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762179966; x=1762784766;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5vG+TpX2vimjAShLENqDDN7PpdggEkGS6lF5Y2WIW1Y=;
-        b=GL1oL/nu+VDLuF6DALc7zPd1fH8r6NlaJILYR7/Z+Y4PoXsuAUi+5p0wS3jubLt++O
-         XmWcJPgTtNQtrzstdBR/TApBDgYDPVS2tJUkrTS3nqmipfCInrPFcepFmn2+pJ6UNsQ5
-         yPIIdOXKGnHl1UyehM1yxKeQKvaAiN7i9kZmDghxH9EQ0GBFzsxgHPc+J4vAcCGFan/X
-         kWjX3A9cOou4adsHAKwPbUw583PN4Uu1wbABhq6MUCnyzmdRb4JBbNh3YrXyfSOT/Gn2
-         u1LSN2cw5quGNd4SMxXduJqb8CTVUsVb5d4CrLkCOID2i9o5EqXbAAEErvIdnlv8yjqM
-         60EA==
-X-Forwarded-Encrypted: i=1; AJvYcCUlJ9xhmcGu/7ngBFibrJ+j5ORpckVEZ/7jmUs0sX+h+bLZUX330umG1MiDOc5Sp7SgDFx1m5QV31qqEyo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7dW3Dk2B9t6T4tDBOLGyZeeQxFR3HbyNUPZxFbWIp6WR+u+m2
-	qA8ll/kwIIC+HHVuh3ZeIINL8c8gSh7EERCKWc1ZZDxLBeqTqPOvEYh4
-X-Gm-Gg: ASbGnctwwkdn+DEzKNvlU1OaT1vwYL/6XM6MVfgrwB0Fmg20c1obG9HHT3rTo8PjdY1
-	3k37plJYJSEtiwGEQBdnSQFcqyp2AdKCVoApH+M6x3AsxS+7ToSYK/MMj26FhD5kR5FCx7WtMZt
-	KURVecvFFOI9lFmkonlpwFr4WsJd/c0yfUBk/wAu8x+03rKtahtRObyNEvkuGTlbGjL1LRmRmlM
-	0p0+HY5yRleTfGagEvRvie84mvHMqPVZ1W9MWOtXrBAXMlvpKKNWXbIHqbZpSlMpPFUUfp/G9Wa
-	pNkG5u+x7z+KAinCAeXs1YgHNHi1gV0tPczvR6CIXD9Z8iw6oqp/+RgGq7pFiaJL4z9CQcaXXIc
-	ZQW754VPZ/3PlP6wvdY3ZrqrVWomEcc+QgcAAXWA8FcUPBcjydnqXpvzFZ4p6RMU1HbRzPHwwDq
-	krMwAAPN0LIy/DcX7yioqAfUu7tJdC9fYmgus2gW5zKTI=
-X-Google-Smtp-Source: AGHT+IEH5jdLQbZho/a8RA7nF6g94W7FdJWsuNNVwBRPPoQkHp3BskZSgwf/LVFOw8f9zQEGt8nKaQ==
-X-Received: by 2002:a05:690c:4b88:b0:786:59d3:49da with SMTP id 00721157ae682-78659d36da7mr83652737b3.22.1762179966040;
-        Mon, 03 Nov 2025 06:26:06 -0800 (PST)
-Received: from localhost (c-73-105-0-253.hsd1.fl.comcast.net. [73.105.0.253])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-78691d8f62dsm1071397b3.10.2025.11.03.06.26.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 06:26:05 -0800 (PST)
-Date: Mon, 3 Nov 2025 09:26:03 -0500
-From: Yury Norov <yury.norov@gmail.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Alexandre Courbot <acourbot@nvidia.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Jesung Yang <y.j3ms.n@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 1/2] rust: add BitInt integer wrapping type
-Message-ID: <aQi7e6VgFsqpq1Rn@yury>
-References: <20251031-bounded_ints-v1-0-e2dbcd8fda71@nvidia.com>
- <20251031-bounded_ints-v1-1-e2dbcd8fda71@nvidia.com>
- <aQgQv6F0Ao4DH6U0@yury>
- <CANiq72mg-NntJLf_jbigz++0hK7G3WAxbvejRq1EzOc7GE+doA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=D1bK6e5x3mR1LWQi8C8huYOP1oisoEgNwZmUExKTGo5MzNK0y3uA15YhBJkX+0ksAbOgLjUQSYNNZP0lyUQuR4BHOWJxdv/iJpq/rRIdbgDL9W4CU6BqAPecCuOGmP37wqGqq5FpiNvEbacF8grTNYY6OuYYYhFYADQzg1Q2Mkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=DW3Hb58O; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5ADA440E01A5;
+	Mon,  3 Nov 2025 14:28:16 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Aar49mkZkxOI; Mon,  3 Nov 2025 14:28:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1762180092; bh=z/fhKiHX76PNvIIe2VEepLKf3GmqcJpE4QLQk/h/lUI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DW3Hb58OYGdV7uxPS34QauHPWufFKAMK4w8g6s2FJ/IvgRerUJEI0snlZRvLxivgf
+	 IQ/KIIDaFwfYTQwl1ybKgeJgwsmATRRdkXFzX849eHaUFvjam3ZzBjdAOIxXnbIAy/
+	 DE+IHdSDCV9CWeR2L5L5IGGn5JlUII6lU/L3jyGm/iTahyI/HBAJZjihNjsVxmhRGO
+	 xavHT71gH8JGh48s4pNWICuPqjPro0hxGpYf01ghIvyzeTCSkdRtsutbVyx43lybXZ
+	 cFkefpD8uExZtVDFKm2LIAMMvoVhWaJ1yBVCKUXia7RmGM1zojTG1GqoeguYRMRWS+
+	 XexcoF7cwrpfxRDAMJDNeCJ1Zem3iJuSMWKgEhafetLwbrg7WzlQUuXEdjlzU8q3YZ
+	 JdXTOLRCfMQ0CPR4PeJ/NgCtQniFwiK/gYsU/0n6NUo2X5nPVBKbCC4SGjt79HFobe
+	 xAYFsZ7udgyXrthA4LKwXpS8B0/rRQ6aMexo6cXzqQZ2RfbswswAfxkWAi8TMIt8yn
+	 mjE7t4WiNEQAw4r/yq2jqTPjoFbudeYFRec08BsQGmEfObeoHepddkOjeTyuki2bEo
+	 k1QFCLQZ6+d/8T+4TrPzNo+Jpu6DTJPVb7SiyC+5LmheK66v/zgbz+a1XxrjJtXPHn
+	 XrLyRmxSLGajlFOJiHokhoHg=
+Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id AE9A340E019D;
+	Mon,  3 Nov 2025 14:28:06 +0000 (UTC)
+Date: Mon, 3 Nov 2025 15:28:00 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Peter Jung <ptr1337@cachyos.org>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+	stable@vger.kernel.org, Gregory Price <gourry@gourry.net>,
+	x86@kernel.org
+Subject: Re: [tip: x86/urgent] x86/CPU/AMD: Add RDSEED fix for Zen5
+Message-ID: <20251103142800.GFaQi78AgT-qjY30r3@fat_crate.local>
+References: <176165291198.2601451.3074910014537130674.tip-bot2@tip-bot2>
+ <9a27f2e6-4f62-45a6-a527-c09983b8dce4@cachyos.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,27 +77,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72mg-NntJLf_jbigz++0hK7G3WAxbvejRq1EzOc7GE+doA@mail.gmail.com>
+In-Reply-To: <9a27f2e6-4f62-45a6-a527-c09983b8dce4@cachyos.org>
 
-On Mon, Nov 03, 2025 at 03:10:01PM +0100, Miguel Ojeda wrote:
-> On Mon, Nov 3, 2025 at 3:17 AM Yury Norov <yury.norov@gmail.com> wrote:
-> >
-> > Rust _must_ do the same thing to at least be arithmetically
-> > compatible to the big brother.
-> 
-> No, Rust doesn't need to do anything of the sort, sorry.
-> 
-> The point here is not to copy what C does, but to improve on it.
-> 
-> In particular, we definitely do not want to have anything like integer
-> promotions and arithmetic conversions from C.
+On Mon, Nov 03, 2025 at 02:59:11PM +0100, Peter Jung wrote:
+> CachyOS is compiling the packages with -march=znver5 and the GCC compiler
+> currently does pass RDSEED.
 
-This is exactly what the patch does:
+Yah, the compiler should not *pass* RDSEED, but issue code which checks
+whether RDSEED is there. Otherwise what's the point of CPUID flags?!
 
-  +/// let v = BitInt::<u8, 4>::from_expr(15);
-  +///
-  +/// // Common operations are supported against the backing type.
-  +/// assert_eq!(v + 5, 20);
-  +/// assert_eq!(v / 3, 5);
+I guess this should make those boxes boot but damn, that ain't right:
+
+---
+diff --git a/arch/x86/kernel/cpu/amd.c b/arch/x86/kernel/cpu/amd.c
+index 8e36964a7721..810be49dad31 100644
+--- a/arch/x86/kernel/cpu/amd.c
++++ b/arch/x86/kernel/cpu/amd.c
+@@ -1044,8 +1044,7 @@ static void init_amd_zen5(struct cpuinfo_x86 *c)
+ {
+ 	if (!x86_match_min_microcode_rev(zen5_rdseed_microcode)) {
+ 		clear_cpu_cap(c, X86_FEATURE_RDSEED);
+-		msr_clear_bit(MSR_AMD64_CPUID_FN_7, 18);
+-		pr_emerg_once("RDSEED32 is broken. Disabling the corresponding CPUID bit.\n");
++		WARN_ONCE(1, "RDSEED32 is broken. Disabling the corresponding CPUID bit.\n");
+ 	}
+ }
+ 
+> This patch results into that also Client CPUs (Strix Point, Granite Ridge),
+> can not execute this. There has been a microcode fix deployed in
+> linux-firmware for Turin, but no other microcode changes seen yet.
+> 
+> I think it would be possible to exclude clients or providing a fix for this.
+
+Client fixes are getting ready but I can't tell you when they'll be there.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
