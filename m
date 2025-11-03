@@ -1,136 +1,315 @@
-Return-Path: <linux-kernel+bounces-883173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1C2DC2C9A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:12:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7635C2CA31
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:18:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9E064341F2B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:12:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6286C1890618
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE0033891D;
-	Mon,  3 Nov 2025 14:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d3Aq3XRH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E6C3112BD;
-	Mon,  3 Nov 2025 14:58:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95C6727FB26;
+	Mon,  3 Nov 2025 15:00:23 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64325199230
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 15:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762181925; cv=none; b=eOMcfp5l+2Igm37NvGejtbv+1NpO7Fdy/cI/kkZzgCZQlFIeWzQ5igVGBa4G0t1oe1336hEi8IbilierYAQBGZXjTxl4Ab3/V27DLS4Z18Ea48IAVdxQIZbi4jegvuHv5Ug4Sc4M0Jod1uZY1jPEstolJsaeYWmTEfHLzJRHHXo=
+	t=1762182023; cv=none; b=ETlRVxB3p8F3mahIFdHEg4+taVOz/Ie+y2ygHJM6sDS2MV7bbgIQYOQhfWIVeHVdf4ZuEaYYTVZhEdOTbKoT5qNoFbDU0E/L0OIcYRvgrW2gtCXLPMhRB61laoh4yf7V646F+FSfWnizt/xixnhFv8GbQlt5ffGRDTMXC+EyeJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762181925; c=relaxed/simple;
-	bh=assirJLyUowDfFa7kE1YCP3FONPTzejJ9QbVSRO7hmk=;
+	s=arc-20240116; t=1762182023; c=relaxed/simple;
+	bh=bjFKRKNjV1ZsFIbrYmLPK+exJ+sWf+Fft4VeDsxk82o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tgPyT96ICT620jPUddb+Z8WUVq6bx8pyZw/GX0+8da1cUhiwLp1qiexCgaLiQEy6x9Q/0MGAFgCpNtnYfyxMrG/iJF/BR2v3Mlx9cjSqfhmLzq43Wkja1BHPppoSml1SJ9OWDWBdp/Q4jBIHKQL0sBVBfhbALCoNNyi/71Z0QTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d3Aq3XRH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F75EC4CEE7;
-	Mon,  3 Nov 2025 14:58:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762181925;
-	bh=assirJLyUowDfFa7kE1YCP3FONPTzejJ9QbVSRO7hmk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d3Aq3XRH4FIiOr1ca7vksnvcqMT2DxCali/3rU18MibxJ85utRKsxdBOYb9EzU40r
-	 xqJtMN8cpcFuO0b4Dn3cRam2oug440FP4XgmXKtrlbxdhKlkrPJwTSrS9RJlekJS1y
-	 vE0aEX8wVSNH/anfrG7cZYrDjbekNqr9A2hq4JI/fFIof+O1C1OPlB08HlkYuwgyD9
-	 b1AhgTX+lC9OWxjwogLjeIqdAkPxnR/ejBDzpFZXDoQu9OIsoCMq3UGCo4otyPO0Wf
-	 DGGnGzWS9urm+sBqvyqfWTJ9stDEiyyA7n4VEE6P/puMYPnrlwgzRQs8p0t32bzEtE
-	 TYQkW0iQbuROQ==
-Date: Mon, 3 Nov 2025 14:58:39 +0000
-From: Simon Horman <horms@kernel.org>
-To: Aditya Garg <gargaditya@linux.microsoft.com>
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, andrew+netdev@lunn.ch, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	longli@microsoft.com, kotaranov@microsoft.com,
-	shradhagupta@linux.microsoft.com, ssengar@linux.microsoft.com,
-	ernis@linux.microsoft.com, dipayanroy@linux.microsoft.com,
-	shirazsaleem@microsoft.com, linux-hyperv@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rdma@vger.kernel.org, gargaditya@microsoft.com
-Subject: Re: [PATCH net-next v2] net: mana: Handle SKB if TX SGEs exceed
- hardware limit
-Message-ID: <aQjDHy5qSGYADPS7@horms.kernel.org>
-References: <20251029131235.GA3903@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <aQMqLN0FRmNU3_ke@horms.kernel.org>
- <347c723b-d47c-49c2-9a3b-b49d967f875b@linux.microsoft.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MzWHKaO/qm5jSuV6uCI3sU3YvYv6hn1GaYDNyHCGQzL6XrDqGF3l//5It7K/yvuoovajlfm2C4J7LSrfpB5qXhr0DQB9GBhg4uvM5stHo+UWpWGO3BUQ4CbPtDAvm3UO5/3Iuvg7v7LPqSwUd32dJL61tPqfOSjVxChyvHT4s5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2010D1D14
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 07:00:13 -0800 (PST)
+Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A7FB53F66E
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 07:00:20 -0800 (PST)
+Date: Mon, 3 Nov 2025 15:00:10 +0000
+From: Liviu Dudau <liviu.dudau@arm.com>
+To: Suraj Kandpal <suraj.kandpal@intel.com>
+Cc: linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org,
+	intel-gfx@lists.freedesktop.org, kernel-list@raspberrypi.com,
+	amd-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	dmitry.baryshkov@oss.qualcomm.com, ankit.k.nautiyal@intel.com,
+	arun.r.murthy@intel.com, uma.shankar@intel.com,
+	jani.nikula@intel.com, harry.wentland@amd.com, siqueira@igalia.com,
+	alexander.deucher@amd.com, christian.koenig@amd.com,
+	airlied@gmail.com, simona@ffwll.ch,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	robin.clark@oss.qualcomm.com, abhinav.kumar@linux.dev,
+	tzimmermann@suse.de, jessica.zhang@oss.qualcomm.com,
+	sean@poorly.run, marijn.suijten@somainline.org,
+	laurent.pinchart+renesas@ideasonboard.com, mcanal@igalia.com,
+	dave.stevenson@raspberrypi.com,
+	tomi.valkeinen+renesas@ideasonboard.com,
+	kieran.bingham+renesas@ideasonboard.com, louis.chauvet@bootlin.com
+Subject: Re: [PATCH v2 1/7] drm: writeback: Refactor drm_writeback_connector
+ structure
+Message-ID: <aQjDejhzGRYJT614@e110455-lin.cambridge.arm.com>
+References: <20251007054528.2900905-1-suraj.kandpal@intel.com>
+ <20251007054528.2900905-2-suraj.kandpal@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <347c723b-d47c-49c2-9a3b-b49d967f875b@linux.microsoft.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251007054528.2900905-2-suraj.kandpal@intel.com>
 
-On Fri, Oct 31, 2025 at 06:50:10PM +0530, Aditya Garg wrote:
-> On 30-10-2025 14:34, Simon Horman wrote:
-> > On Wed, Oct 29, 2025 at 06:12:35AM -0700, Aditya Garg wrote:
-> > > The MANA hardware supports a maximum of 30 scatter-gather entries (SGEs)
-> > > per TX WQE. Exceeding this limit can cause TX failures.
-> > > Add ndo_features_check() callback to validate SKB layout before
-> > > transmission. For GSO SKBs that would exceed the hardware SGE limit, clear
-> > > NETIF_F_GSO_MASK to enforce software segmentation in the stack.
-> > > Add a fallback in mana_start_xmit() to linearize non-GSO SKBs that still
-> > > exceed the SGE limit.
-> > > 
-> > > Return NETDEV_TX_BUSY only for -ENOSPC from mana_gd_post_work_request(),
-> > > send other errors to free_sgl_ptr to free resources and record the tx
-> > > drop.
-> > > 
-> > > Co-developed-by: Dipayaan Roy <dipayanroy@linux.microsoft.com>
-> > > Signed-off-by: Dipayaan Roy <dipayanroy@linux.microsoft.com>
-> > > Signed-off-by: Aditya Garg <gargaditya@linux.microsoft.com>
-> > 
-> > ...
-> > 
-> > > @@ -289,6 +290,21 @@ netdev_tx_t mana_start_xmit(struct sk_buff *skb, struct net_device *ndev)
-> > >   	cq = &apc->tx_qp[txq_idx].tx_cq;
-> > >   	tx_stats = &txq->stats;
-> > > +	if (MAX_SKB_FRAGS + 2 > MAX_TX_WQE_SGL_ENTRIES &&
-> > > +	    skb_shinfo(skb)->nr_frags + 2 > MAX_TX_WQE_SGL_ENTRIES) {
-> > > +		/* GSO skb with Hardware SGE limit exceeded is not expected here
-> > > +		 * as they are handled in mana_features_check() callback
-> > > +		 */
-> > 
-> > Hi,
-> > 
-> > I'm curious to know if we actually need this code.
-> > Are there cases where the mana_features_check() doesn't
-> > handle things and the kernel will reach this line?
-> > 
-> > > +		if (skb_is_gso(skb))
-> > > +			netdev_warn_once(ndev, "GSO enabled skb exceeds max SGE limit\n");
-> > > +		if (skb_linearize(skb)) {
-> > > +			netdev_warn_once(ndev, "Failed to linearize skb with nr_frags=%d and is_gso=%d\n",
-> > > +					 skb_shinfo(skb)->nr_frags,
-> > > +					 skb_is_gso(skb));
-> > > +			goto tx_drop_count;
-> > > +		}
-> > > +	}
-> > > +
-> > >   	pkg.tx_oob.s_oob.vcq_num = cq->gdma_id;
-> > >   	pkg.tx_oob.s_oob.vsq_frame = txq->vsq_frame;
-> > 
-> > ...
+On Tue, Oct 07, 2025 at 11:15:23AM +0530, Suraj Kandpal wrote:
+> Some drivers cannot work with the current design where the connector
+> is embedded within the drm_writeback_connector such as Intel and
+> some drivers that can get it working end up adding a lot of checks
+> all around the code to check if it's a writeback conenctor or not,
+> this is due to the limitation of inheritance in C.
+> To solve this move the drm_writeback_connector within the
+> drm_connector and remove the drm_connector base which was in
+> drm_writeback_connector. Make this drm_writeback_connector
+> a union with hdmi connector to save memory and since a connector can
+> never be both writeback and hdmi it should serve us well.
+> Do all other required modifications that come with these changes
+> along with addition of new function which returns the drm_connector
+> when drm_writeback_connector is present.
+> Modify drivers using the drm_writeback_connector to
+> allow them to use this connector without breaking them.
+> The drivers modified here are amd, komeda, mali, vc4, vkms,
+> rcar_du, msm
 > 
-> Hi Simon,
-> As it was previously discussed and agreed on with Eric, this is for Non-GSO
-> skbs which could have possibly nr_frags greater than hardware limit.
-> 
-> Quoting Eric's comment from v1 thread: https://lore.kernel.org/netdev/CANn89iKwHWdUaeAsdSuZUXG-W8XwyM2oppQL9spKkex0p9-Azw@mail.gmail.com/
-> "I think that for non GSO, the linearization attempt is fine.
-> 
-> Note that this is extremely unlikely for non malicious users,
-> and MTU being usually small (9K or less),
-> the allocation will be much smaller than a GSO packet."
+> Signed-off-by: Suraj Kandpal <suraj.kandpal@intel.com>
+> ---
+> V1 -> V2: Use &connector->writeback, make commit message imperative (Dmitry)
+> ---
+>  .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c |  6 +-
+>  .../gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.h |  2 +-
+>  .../drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c  |  8 +--
+>  .../gpu/drm/arm/display/komeda/komeda_crtc.c  |  6 +-
+>  .../gpu/drm/arm/display/komeda/komeda_kms.h   |  6 +-
+>  .../arm/display/komeda/komeda_wb_connector.c  |  8 +--
+>  drivers/gpu/drm/arm/malidp_crtc.c             |  2 +-
+>  drivers/gpu/drm/arm/malidp_drv.h              |  2 +-
+>  drivers/gpu/drm/arm/malidp_hw.c               |  6 +-
+>  drivers/gpu/drm/arm/malidp_mw.c               |  8 +--
+>  drivers/gpu/drm/drm_atomic_uapi.c             |  2 +-
+>  drivers/gpu/drm/drm_writeback.c               | 35 ++++++----
 
-Thanks for the clarification, that makes sense to me.
+For the komeda and malidp drivers, as well as for the drm_writeback.c changes:
 
-FTR, Jakub's question (elsewhere) is different to mine.
+Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+
+
+[snip]
+
+
+> diff --git a/include/drm/drm_connector.h b/include/drm/drm_connector.h
+> index 8f34f4b8183d..1b090e6bddc1 100644
+> --- a/include/drm/drm_connector.h
+> +++ b/include/drm/drm_connector.h
+> @@ -1882,6 +1882,61 @@ struct drm_connector_cec {
+>  	void *data;
+>  };
+>  
+> +/**
+> + * struct drm_writeback_connector - DRM writeback connector
+> + */
+> +struct drm_writeback_connector {
+> +	/**
+> +	 * @pixel_formats_blob_ptr:
+> +	 *
+> +	 * DRM blob property data for the pixel formats list on writeback
+> +	 * connectors
+> +	 * See also drm_writeback_connector_init()
+> +	 */
+> +	struct drm_property_blob *pixel_formats_blob_ptr;
+> +
+> +	/** @job_lock: Protects job_queue */
+> +	spinlock_t job_lock;
+> +
+> +	/**
+> +	 * @job_queue:
+> +	 *
+> +	 * Holds a list of a connector's writeback jobs; the last item is the
+> +	 * most recent. The first item may be either waiting for the hardware
+> +	 * to begin writing, or currently being written.
+> +	 *
+> +	 * See also: drm_writeback_queue_job() and
+> +	 * drm_writeback_signal_completion()
+> +	 */
+> +	struct list_head job_queue;
+> +
+> +	/**
+> +	 * @fence_context:
+> +	 *
+> +	 * timeline context used for fence operations.
+> +	 */
+> +	unsigned int fence_context;
+> +	/**
+> +	 * @fence_lock:
+> +	 *
+> +	 * spinlock to protect the fences in the fence_context.
+> +	 */
+> +	spinlock_t fence_lock;
+> +	/**
+> +	 * @fence_seqno:
+> +	 *
+> +	 * Seqno variable used as monotonic counter for the fences
+> +	 * created on the connector's timeline.
+> +	 */
+> +	unsigned long fence_seqno;
+> +	/**
+> +	 * @timeline_name:
+> +	 *
+> +	 * The name of the connector's fence timeline.
+> +	 */
+> +	char timeline_name[32];
+> +};
+> +
+>  /**
+>   * struct drm_connector - central DRM connector control structure
+>   *
+> @@ -2291,10 +2346,16 @@ struct drm_connector {
+>  	 */
+>  	struct llist_node free_node;
+>  
+> -	/**
+> -	 * @hdmi: HDMI-related variable and properties.
+> -	 */
+> -	struct drm_connector_hdmi hdmi;
+> +	union {
+
+This is a surprising choice. Before this patch one had to have a separate
+writeback connector besides the HDMI connector. Going forward it looks
+like you still need two connectors, one that uses the writeback member
+and one that uses the hdmi one. Is that intended?
+
+I was expecting that you're going to declare the writeback member next
+to the hdmi, without overlap. If you do that, then you also don't need
+to move the struct drm_writeback declaration from the header file and
+it should be enough to include the drm_writeback.h file.
+
+Best regards,
+Liviu
+
+> +		/**
+> +		 * @hdmi: HDMI-related variable and properties.
+> +		 */
+> +		struct drm_connector_hdmi hdmi;
+> +		/**
+> +		 * @writeback: Writeback related valriables.
+> +		 */
+> +		struct drm_writeback_connector writeback;
+> +	};
+>  
+>  	/**
+>  	 * @hdmi_audio: HDMI codec properties and non-DRM state.
+> diff --git a/include/drm/drm_writeback.h b/include/drm/drm_writeback.h
+> index 958466a05e60..702141099520 100644
+> --- a/include/drm/drm_writeback.h
+> +++ b/include/drm/drm_writeback.h
+> @@ -15,66 +15,6 @@
+>  #include <drm/drm_encoder.h>
+>  #include <linux/workqueue.h>
+>  
+> -/**
+> - * struct drm_writeback_connector - DRM writeback connector
+> - */
+> -struct drm_writeback_connector {
+> -	/**
+> -	 * @base: base drm_connector object
+> -	 */
+> -	struct drm_connector base;
+> -
+> -	/**
+> -	 * @pixel_formats_blob_ptr:
+> -	 *
+> -	 * DRM blob property data for the pixel formats list on writeback
+> -	 * connectors
+> -	 * See also drm_writeback_connector_init()
+> -	 */
+> -	struct drm_property_blob *pixel_formats_blob_ptr;
+> -
+> -	/** @job_lock: Protects job_queue */
+> -	spinlock_t job_lock;
+> -
+> -	/**
+> -	 * @job_queue:
+> -	 *
+> -	 * Holds a list of a connector's writeback jobs; the last item is the
+> -	 * most recent. The first item may be either waiting for the hardware
+> -	 * to begin writing, or currently being written.
+> -	 *
+> -	 * See also: drm_writeback_queue_job() and
+> -	 * drm_writeback_signal_completion()
+> -	 */
+> -	struct list_head job_queue;
+> -
+> -	/**
+> -	 * @fence_context:
+> -	 *
+> -	 * timeline context used for fence operations.
+> -	 */
+> -	unsigned int fence_context;
+> -	/**
+> -	 * @fence_lock:
+> -	 *
+> -	 * spinlock to protect the fences in the fence_context.
+> -	 */
+> -	spinlock_t fence_lock;
+> -	/**
+> -	 * @fence_seqno:
+> -	 *
+> -	 * Seqno variable used as monotonic counter for the fences
+> -	 * created on the connector's timeline.
+> -	 */
+> -	unsigned long fence_seqno;
+> -	/**
+> -	 * @timeline_name:
+> -	 *
+> -	 * The name of the connector's fence timeline.
+> -	 */
+> -	char timeline_name[32];
+> -};
+> -
+>  /**
+>   * struct drm_writeback_job - DRM writeback job
+>   */
+> @@ -131,10 +71,10 @@ struct drm_writeback_job {
+>  	void *priv;
+>  };
+>  
+> -static inline struct drm_writeback_connector *
+> -drm_connector_to_writeback(struct drm_connector *connector)
+> +static inline struct drm_connector *
+> +drm_writeback_to_connector(struct drm_writeback_connector *wb_connector)
+>  {
+> -	return container_of(connector, struct drm_writeback_connector, base);
+> +	return container_of(wb_connector, struct drm_connector, writeback);
+>  }
+>  
+>  int drm_writeback_connector_init(struct drm_device *dev,
+> -- 
+> 2.34.1
+> 
+
+-- 
+====================
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    ¯\_(ツ)_/¯
 
