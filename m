@@ -1,173 +1,287 @@
-Return-Path: <linux-kernel+bounces-882511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E98BC2AA0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:48:52 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96632C2AA19
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:49:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E3DAA4ECC89
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:47:37 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 35A1A4ED986
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3740C2E2665;
-	Mon,  3 Nov 2025 08:47:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E25E2E3AE6;
+	Mon,  3 Nov 2025 08:48:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u9Q2rxdB"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I+gV+Dyo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1A82DFA32
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 08:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6125122FDFF;
+	Mon,  3 Nov 2025 08:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762159653; cv=none; b=Qr79wwp2k7T0D1Cd/m3aNPppg5ruc6Y50Xk3TwZjrGqMvCYvdgJ7jYWW5T40rh8Y9aj5vk3CAflqhBt0XbQJBFU2t5BEV2qdzPn/4qqWarMSWNRNra2ryEwQ97O1GLEqHK0jXDyOmQn7kpamx1SahtUYUbHFoteqI81dhWxCNAg=
+	t=1762159687; cv=none; b=EuMjv+wFB+g6m/VAr41aVtfDu3G1rTneDVP5aNXBvf280bTv6Bg6zAzTS8LPTtlk3JglOEpQrVBSSNXQGCTlF3NTIHRc+CN99Mw5+mCnlus3z70HRTJ6KwrkOjoIH313EMkkUSDD5NawNqJrqJ3KNiLpqJrYAk/1Kgc8YMZqxUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762159653; c=relaxed/simple;
-	bh=1X2By9QoThsdGSa5CA88Md4gR1pD3mMBEB9rDlXDtgg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lB/jzmpxjM2d7rHigObu0a8r5JYbS+We9wcSxNfE8er2DnvRbZzUvBdCLFSz6iXuVUegYk3FJ+Gu80CVFgHD555nqpLSfxWtS6DIGq+9CO3FrDZGjFxvSgvoHYFj3++Drk4BHQPsM/hYqNvOIzlykKNF73aSPRUeWhmDOSh4dMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u9Q2rxdB; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-29470bc80ceso45290955ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 00:47:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762159651; x=1762764451; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=1X2By9QoThsdGSa5CA88Md4gR1pD3mMBEB9rDlXDtgg=;
-        b=u9Q2rxdB7TKka87ADzE6bQN/eld2Ir7a9vkvcukwJ3iNnUYWijm1xtUJ1lGAfBpL5T
-         1o7NwzxdD6BMk1BP/8CWf23Z7I1MoVkQsnQt6dGZYXflHhP+x2wemodYoJMBmxXMPvs4
-         EXJffHvQxmdQhLapMzqwFJRg/ZzpyZDmaT9hpkCFWxeAY9ho2OCfgy78HL6m+y7X2es0
-         ZEoubj4Jd8+6XJ1JfIv0spJgc0dicxrGhjAAHkPNCssS9tkHQxDxoo+Fwip/lka+KgFT
-         bNY9iIyhoo+nTa2RO3etYTDTeEg1WleI2djp2fmzQYEqwK4MG3Wu3QuTPQ8ZdHtQ1eZY
-         gJ+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762159651; x=1762764451;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1X2By9QoThsdGSa5CA88Md4gR1pD3mMBEB9rDlXDtgg=;
-        b=NK3wh7dun+Z0R+6pXNeXTThfwfPma13WF4EpLpAB1JqdoWh3jCTDChu7wQw3zqFRd9
-         RU5bbol2Dfl9FDOJgenLXI9n/Ao2GtMq6Coh+jCuVcrUfR0XVucJDk8MfCjvGNeTBkcV
-         o+4iNalFzdM5DGj6pC5FQ8/IoknKmjHMVO8oI/ktF8hYOJr8zJ9NcPhKt+IXV5NX83p7
-         3dS/5RX6hc5963Wfs2CvYBuDWMC7/G6RSiiI+I4kSgHJ9wGG3pF4CV5kUgMypNu6IpX2
-         Z1mePxlOek937GL+tET4lYe27DX/8euGla3UwqHCk0KdJTke5J/Mwg7guVMP1Muinkz+
-         DoXQ==
-X-Gm-Message-State: AOJu0YzjtRp+lK5M5YCU1vz1yzFHdXGxjynx6Nx9e+xOmxaDJ1+wQWS7
-	GKdgAS/vDJi4aJvjcNL1t8Oqs5gOmSba+SRXfIdjCn1kp51Tr4jKvtVqrtdb1gDEcLKZaxqg8RI
-	puhJ+2r6VmvxtFoNuTfrNkIgMsVGZQgiwxCQ5EAxOLg==
-X-Gm-Gg: ASbGncsKf5MtWi4fGSW8P6COdwD61eSbKMLBhd7dDdf4mvWgaaLCz9hmklEiWDqrRIv
-	wGw0dCpoHmraox9OCNT8+EPt1OPyedM2sAA9TomEaFmxtF/OdNU5Zf/dCMa1IvL6qyhSwrUQIQ1
-	2tNHO29FEzcFI6iayRya0hiBcFOap8ARsEmNPuhAdOo9uDfu5YTq9XC+P9EUsdVMVC2dIli4Mk7
-	dCqClCA9PnAG1CZsPSCXREqfGXRE9gKcsvyjErTXcRIjUZXUdVrNwInf7LLPA==
-X-Google-Smtp-Source: AGHT+IEiPTsQwQmjnN2J2GJDQ9Za9zoUC977FiwEF1W5fvbJaKj2P0HWSCM/QFTK/S/yIJvxhgV0PffM5gtHzmdjQQw=
-X-Received: by 2002:a17:903:228b:b0:295:4d97:84f9 with SMTP id
- d9443c01a7336-2954d978dfbmr90787815ad.26.1762159651160; Mon, 03 Nov 2025
- 00:47:31 -0800 (PST)
+	s=arc-20240116; t=1762159687; c=relaxed/simple;
+	bh=kSK87Lz187SvEv/ezIlPUnK48XBpFCoU39V9dwZOIyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SEyW3E/iPyGWVlz3aVOKdhiLtPIFAW2852BbVHB1MeGAoX5gQgRx19kqsA7SVyASzeZKYHcofoT6LKToDXNyiKgd7wVmqgu6Hz1eI62dBV4aSHRAdchWXJHmZ+WsoCGCK0SmovcGqANbRyEsweGdg1LZZVL4184lmUCEsVvEvBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I+gV+Dyo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A97FC4CEE7;
+	Mon,  3 Nov 2025 08:48:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762159684;
+	bh=kSK87Lz187SvEv/ezIlPUnK48XBpFCoU39V9dwZOIyk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=I+gV+DyoFI5X6a/znFETi5APlRLYHVCEylajtMPu7Bv2+/yLCx842AhbEGS8QxMmw
+	 pROVlJ4PoF3+zuGhZzvLR6z3igjVndq3DaGDy0Aef8tmEEULTpVkMlLL38q7nmfXXa
+	 6n9d3wJnnLEKl9j6xVZJ/ttW9mbHoIma9T8GCYCIBqk86/qGS9r0BY/aBLJM9SwK3F
+	 0VVO2aVdRbmUpo9w4Wg0Tgh1S4YUoh5FAJyGml+5jpSZWg9I5guTAAzidNoNcpBial
+	 VdJNtrZ7sYQ3ZCfhQLngyGQ0ok2I2uzU4/5ipwo7Aj5kAHuHO0tGw9ombCqao+476g
+	 F43LRc2NbGdPA==
+Date: Mon, 3 Nov 2025 09:48:02 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: zhangsenchuan@eswincomputing.com
+Cc: bhelgaas@google.com, mani@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org, robh@kernel.org, 
+	p.zabel@pengutronix.de, jingoohan1@gmail.com, gustavo.pimentel@synopsys.com, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	christian.bruel@foss.st.com, mayank.rana@oss.qualcomm.com, shradha.t@samsung.com, 
+	krishna.chundru@oss.qualcomm.com, thippeswamy.havalige@amd.com, inochiama@gmail.com, 
+	ningyu@eswincomputing.com, linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com, 
+	ouyanghui@eswincomputing.com
+Subject: Re: [PATCH v4 1/2] dt-bindings: PCI: EIC7700: Add Eswin PCIe host
+ controller
+Message-ID: <20251103-gentle-precise-bloodhound-ef7136@kuoka>
+References: <20251030082900.1304-1-zhangsenchuan@eswincomputing.com>
+ <20251030083057.1324-1-zhangsenchuan@eswincomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029060757.2007601-1-srikar@linux.ibm.com>
- <20251029060757.2007601-2-srikar@linux.ibm.com> <CAKfTPtDW9rApEm+4qSrEpRDMA+68BnVOgegKUZUa5S-gKnR--A@mail.gmail.com>
- <aQHQ7UyaK849BKV8@linux.ibm.com>
-In-Reply-To: <aQHQ7UyaK849BKV8@linux.ibm.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Mon, 3 Nov 2025 09:46:26 +0100
-X-Gm-Features: AWmQ_bmrR_yvsXkBlqoY42TLV69O97bhzwYzWqV56CRBaYZDsYsoTTM21b2VC28
-Message-ID: <CAKfTPtDtfy7=rb6rPVMAk1+Bq4w=+opiWuo_Y+3dy3me--6KsA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] powerpc/smp: Disable steal from updating CPU capacity
-To: Srikar Dronamraju <srikar@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	Ben Segall <bsegall@google.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Ingo Molnar <mingo@kernel.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Mel Gorman <mgorman@suse.de>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Valentin Schneider <vschneid@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20251030083057.1324-1-zhangsenchuan@eswincomputing.com>
 
-Hi Sikar,
+On Thu, Oct 30, 2025 at 04:30:57PM +0800, zhangsenchuan@eswincomputing.com wrote:
+> From: Senchuan Zhang <zhangsenchuan@eswincomputing.com>
+> 
+> Add Device Tree binding documentation for the Eswin EIC7700 PCIe
+> controller module, the PCIe controller enables the core to correctly
+> initialize and manage the PCIe bus and connected devices.
+> 
+> Signed-off-by: Yu Ning <ningyu@eswincomputing.com>
+> Signed-off-by: Yanghui Ou <ouyanghui@eswincomputing.com>
+> Signed-off-by: Senchuan Zhang <zhangsenchuan@eswincomputing.com>
+> ---
+>  .../bindings/pci/eswin,eic7700-pcie.yaml      | 166 ++++++++++++++++++
+>  .../bindings/pci/snps,dw-pcie-common.yaml     |   2 +-
+>  2 files changed, 167 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/pci/eswin,eic7700-pcie.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/eswin,eic7700-pcie.yaml b/Documentation/devicetree/bindings/pci/eswin,eic7700-pcie.yaml
+> new file mode 100644
+> index 000000000000..e6c05e3a093a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/eswin,eic7700-pcie.yaml
+> @@ -0,0 +1,166 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pci/eswin,eic7700-pcie.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Eswin EIC7700 PCIe host controller
+> +
+> +maintainers:
+> +  - Yu Ning <ningyu@eswincomputing.com>
+> +  - Senchuan Zhang <zhangsenchuan@eswincomputing.com>
+> +  - Yanghui Ou <ouyanghui@eswincomputing.com>
+> +
+> +description:
+> +  The PCIe controller on EIC7700 SoC.
+> +
+> +properties:
+> +  compatible:
+> +    const: eswin,eic7700-pcie
+> +
+> +  reg:
+> +    maxItems: 3
+> +
+> +  reg-names:
+> +    items:
+> +      - const: dbi
+> +      - const: config
+> +      - const: mgmt
 
-On Wed, 29 Oct 2025 at 09:32, Srikar Dronamraju <srikar@linux.ibm.com> wrote:
->
-> * Vincent Guittot <vincent.guittot@linaro.org> [2025-10-29 08:43:34]:
->
-> > Hi Srikar,
-> >
-> > On Wed, 29 Oct 2025 at 07:09, Srikar Dronamraju <srikar@linux.ibm.com> wrote:
-> > >
-> > > In a shared LPAR with SMT enabled, it has been observed that when a CPU
-> > > experiences steal time, it can trigger task migrations between sibling
-> > > CPUs. The idle CPU pulls a runnable task from its sibling that is
-> > > impacted by steal, making the previously busy CPU go idle. This reversal
-> >
-> > IIUC, the migration is triggered by the reduced capacity case when
-> > there is 1 task on the CPU
->
-> Thanks Vincent for taking a look at the change.
->
-> Yes, Lets assume we have 3 threads running on 6 vCPUs backed by 2 Physical
-> cores. So only 3 vCPUs (0,1,2) would be busy and other 3 (3,4,5) will be
-> idle. The vCPUs that are busy will start seeing steal time of around 33%
-> because they cant run completely on the Physical CPU. Without the change,
-> they will start seeing their capacity decrease. While the idle vCPUs(3,4,5)
-> ones will have their capacity intact. So when the scheduler switches the 3
-> tasks to the idle vCPUs, the newer busy vCPUs (3,4,5) will start seeing steal
-> and hence see their CPU capacity drops while the newer idle vCPUs (0,1,2)
-> will see their capacity increase since their steal time reduces. Hence the
-> tasks will be migrated again.
+That's deprecated. Read its description. That's just elbi.
 
-Thanks for the details
-This is probably even more visible when vcpu are not pinned to separate cpu
+> +
+> +  ranges:
+> +    maxItems: 3
+> +
+> +  '#interrupt-cells':
+> +    const: 1
+> +
+> +  interrupt-names:
+> +    items:
+> +      - const: msi
+> +      - const: inta
+> +      - const: intb
+> +      - const: intc
+> +      - const: intd
+
+Thse are legacy signals. Why are you using legacy?
+
+> +
+> +  interrupt-map:
+> +    maxItems: 4
+> +
+> +  interrupt-map-mask:
+> +    items:
+> +      - const: 0
+> +      - const: 0
+> +      - const: 0
+> +      - const: 7
+> +
+> +  clocks:
+> +    maxItems: 4
+> +
+> +  clock-names:
+> +    items:
+> +      - const: mstr
+> +      - const: dbi
+> +      - const: pclk
+
+Deprecated name.
+
+> +      - const: aux
+> +
+> +  resets:
+> +    maxItems: 2
+> +
+> +  reset-names:
+> +    items:
+> +      - const: dbi
+> +      - const: powerup
+
+No such name.
+
+> +
+> +patternProperties:
+> +  "^pcie@":
+> +    type: object
+> +    $ref: /schemas/pci/pci-pci-bridge.yaml#
+> +
+> +    properties:
+> +      reg:
+> +        maxItems: 1
+> +
+> +      num-lanes:
+> +        maximum: 4
+> +
+> +      resets:
+> +        maxItems: 1
+> +
+> +      reset-names:
+> +        items:
+> +          - const: perst
+> +
+> +    required:
+> +      - reg
+> +      - ranges
+> +      - num-lanes
+> +      - resets
+> +      - reset-names
+> +
+> +    unevaluatedProperties: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - ranges
+> +  - interrupts
+> +  - interrupt-names
+> +  - interrupt-map-mask
+> +  - interrupt-map
+> +  - '#interrupt-cells'
+> +  - clocks
+> +  - clock-names
+> +  - resets
+> +  - reset-names
+> +
+> +allOf:
+> +  - $ref: /schemas/pci/snps,dw-pcie.yaml#
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        pcie@54000000 {
+> +            compatible = "eswin,eic7700-pcie";
+> +            reg = <0x0 0x54000000 0x0 0x4000000>,
+> +                  <0x0 0x40000000 0x0 0x800000>,
+> +                  <0x0 0x50000000 0x0 0x100000>;
+> +            reg-names = "dbi", "config", "mgmt";
+> +            #address-cells = <3>;
+> +            #size-cells = <2>;
+> +            #interrupt-cells = <1>;
+> +            ranges = <0x01000000 0x0 0x40800000 0x0 0x40800000 0x0 0x800000>,
+> +                     <0x02000000 0x0 0x41000000 0x0 0x41000000 0x0 0xf000000>,
+> +                     <0x43000000 0x80 0x00000000 0x80 0x00000000 0x2 0x00000000>;
+> +            bus-range = <0x00 0xff>;
+> +            clocks = <&clock 144>,
+> +                     <&clock 145>,
+> +                     <&clock 146>,
+> +                     <&clock 147>;
+> +            clock-names = "mstr", "dbi", "pclk", "aux";
+> +            resets = <&reset 97>,
+> +                     <&reset 98>;
+> +            reset-names = "dbi", "powerup";
+> +            interrupts = <220>, <179>, <180>, <181>, <182>, <183>, <184>, <185>, <186>;
+> +            interrupt-names = "msi", "inta", "intb", "intc", "intd";
+> +            interrupt-parent = <&plic>;
+> +            interrupt-map-mask = <0x0 0x0 0x0 0x7>;
+> +            interrupt-map = <0x0 0x0 0x0 0x1 &plic 179>,
+> +                            <0x0 0x0 0x0 0x2 &plic 180>,
+> +                            <0x0 0x0 0x0 0x3 &plic 181>,
+> +                            <0x0 0x0 0x0 0x4 &plic 182>;
+> +            device_type = "pci";
+> +            pcie@0 {
+> +                reg = <0x0 0x0 0x0 0x0 0x0>;
+> +                #address-cells = <3>;
+> +                #size-cells = <2>;
+> +                ranges;
+> +                device_type = "pci";
+> +                num-lanes = <4>;
+> +                resets = <&reset 99>;
+> +                reset-names = "perst";
+> +            };
+> +        };
+> +    };
+> diff --git a/Documentation/devicetree/bindings/pci/snps,dw-pcie-common.yaml b/Documentation/devicetree/bindings/pci/snps,dw-pcie-common.yaml
+> index 34594972d8db..cff52d0026b0 100644
+> --- a/Documentation/devicetree/bindings/pci/snps,dw-pcie-common.yaml
+> +++ b/Documentation/devicetree/bindings/pci/snps,dw-pcie-common.yaml
+> @@ -176,7 +176,7 @@ properties:
+>              - description: See native 'phy' reset for details
+>                enum: [ pciephy, link ]
+>              - description: See native 'pwr' reset for details
+> -              enum: [ turnoff ]
+> +              enum: [ turnoff, powerup ]
+
+NAK, you cannot add more deprecated names. Do you understand what
+deprecated/legacy mean?
 
 
->
-> >
-> > > can repeat continuously, resulting in ping-pong behavior between SMT
-> > > siblings.
-> >
-> > Does it mean that the vCPU generates its own steal time or is it
-> > because other vcpus are already running on the other CPU and they
-> > starts to steal time on the sibling vCPU
->
-> There are other vCPUs running and sharing the same Physical CPU, and hence
-> these vCPUs are seeing steal time.
->
-> >
-> > >
-> > > To avoid migrations solely triggered by steal time, disable steal from
-> > > updating CPU capacity when running in shared processor mode.
-> >
-> > You are disabling the steal time accounting only for your arch. Does
-> > it mean that only powerpc are impacted by this effect ?
->
-> On PowerVM, the hypervisor schedules at a core granularity. So in the above
-> scenario, if we assume SMT to be 2, then we have 3 vCores and 1 Physical
-> core. So even if 2 threads are running, they would be scheduled on 2 vCores
-> and hence we would start seeing 50% steal. So this steal accounting is more
-> predominant on Shared LPARs running on PowerVM.
->
-> However we can use this same mechanism on other architectures too since the
-> framework is arch independent.
->
-> Does this clarify?
+Best regards,
+Krzysztof
 
-yes, thanks
-I see 2 problems in your use case, the idle cpu doesn't have steal
-time even if the host cpu on which it will run, is already busy with
-other things
-and with not pinned vcpu, we can't estimate what will be the steal
-time on the target host
-And I don't see a simple way other than disabling steal time
-
->
-> --
-> Thanks and Regards
-> Srikar Dronamraju
 
