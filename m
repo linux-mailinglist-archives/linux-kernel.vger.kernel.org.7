@@ -1,131 +1,108 @@
-Return-Path: <linux-kernel+bounces-882498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BC0FC2A9A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:42:53 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42B90C2A9B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:43:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 6D1F24E7557
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:42:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DDFCD4EC2DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0230F2DAFD8;
-	Mon,  3 Nov 2025 08:42:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E71EC2E228D;
+	Mon,  3 Nov 2025 08:42:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="e2llAf04"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="OJ2UWY1D"
+Received: from canpmsgout08.his.huawei.com (canpmsgout08.his.huawei.com [113.46.200.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5C0A287245
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 08:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D321C2E1C64;
+	Mon,  3 Nov 2025 08:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762159365; cv=none; b=QXpYatttUjZc0hWOhiU99YuTPxR7NXWSlHdR8aA+f59U0RT9oShEKigRCNzMVROR8eTCxZIb82jzyK1SQixA/tAv9q52iLxd/KvKlkbHPsra1j0L0/r8t6Aon8JyUpN0yga2eYbgojCpL9zH+7RLEytyCpz/UnUlNAIytMkUVw4=
+	t=1762159372; cv=none; b=g5oZrllIIvKiBBWkblflB8pIey+QRJ9M5+Ym4JHGdOki0a2st53W/VbOESRJLybi0nC3ZSZ71rpDBeoPqKBzyJxHbo+E2PjJXLWI/DfoxVvrJ5zcQ3vM1M0vNtftvMIwPj2ZrdblvCJ2lsogriKui1GFJ8qQ6iBEgk3VcOMVxqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762159365; c=relaxed/simple;
-	bh=pL6QkzO6ebFeaF3cWNBoKsDA3L6V2A3jJUIGwOM82Hs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JCnJpnw7Qi9giqf2Idr+HL6kBZZ8Op6QLY/NBWKc+CZYrTsS2Ap9sCOPcXPA4qU8xeVbYYIWpvZVKEd+vsKaYh3Y9bY6gWYqnmqW1ygY+D0jd11qe11HOOASvkwUuh/JydOuhW55rBiuDqh1afQKgYdvvKjex0Rn3ROFjvAR7I8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=e2llAf04; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762159350;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=FQsNfh1GGsfH4N7UPatGUlnLBDtyUYCePR7Ny0Amo+M=;
-	b=e2llAf0407iTPU5zM/bNRIZWphIG7W5OPZgcRieYGV4z6ljt3aBx26CVYQRxpbiNxncQDv
-	Hp659gj5seIIffH4Y+OLmoH+Z5x+Gj3Yj31t3Qpth8gjcA+ZpZbaTpZN2wmpHW31fbJeJk
-	P+YtWKZmspXZwBBUF5ZYt5Wo5b+tgRE=
-From: george <dongtai.guo@linux.dev>
-Date: Mon, 03 Nov 2025 16:42:19 +0800
-Subject: [PATCH] LoongArch: BPF: Fix sign extension for 12-bit immediates
+	s=arc-20240116; t=1762159372; c=relaxed/simple;
+	bh=ncg3K6j0LrOldr2S29bxiaWY8UEZV6BFKeCYvAlxb/A=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=R/ECZNqpd2QddW237tK6F33sndLHJ42NexjReolzSMveFW8DgILFGEf82iQeHTWaHOLz5Tvaha9FKCeSWQJf9kWv01oEJvN2lTsLgXVOoqsqnuiGsaFHtEIXcGl48kKp2K5+HuxWf0UEuqoejuic/ZHf1Yca8GxCash7JAHsjs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=OJ2UWY1D; arc=none smtp.client-ip=113.46.200.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
+dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=x3n/1h3nBRhlOnHt+O1zE6ig3y9h9rJ09WqLGAv9Uas=;
+	b=OJ2UWY1Dgok0vv1T0zrlWv8b8GOnQTHgg9VKxAG4pVQi+AcdxYaQU3HZYIKgLJRIjSPZ5q2nc
+	oN+trpoMm7CwjWCnMpCneeiwv1aTxQZ4dam888T2PxD0ezJy8wcrRFhXa/oTS47Aea603xCRAjz
+	MVe51xe0LLg3w0uWNMDQKHk=
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by canpmsgout08.his.huawei.com (SkyGuard) with ESMTPS id 4d0Q6H4mB4zmV7V;
+	Mon,  3 Nov 2025 16:41:11 +0800 (CST)
+Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
+	by mail.maildlp.com (Postfix) with ESMTPS id C7520140277;
+	Mon,  3 Nov 2025 16:42:45 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 3 Nov 2025 16:42:45 +0800
+Received: from localhost.localdomain (10.50.163.32) by
+ kwepemn100009.china.huawei.com (7.202.194.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 3 Nov 2025 16:42:44 +0800
+From: Huisong Li <lihuisong@huawei.com>
+To: <rafael@kernel.org>, <lenb@kernel.org>
+CC: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<Sudeep.Holla@arm.com>, <linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
+	<zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>, <yubowen8@huawei.com>,
+	<lihuisong@huawei.com>
+Subject: [PATCH v2 0/7] ACPI: processor: idle: enhance and cleancode for cpuidle state
+Date: Mon, 3 Nov 2025 16:42:37 +0800
+Message-ID: <20251103084244.2654432-1-lihuisong@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251103-1-v1-1-20e6641a57da@linux.dev>
-X-B4-Tracking: v=1; b=H4sIAOpqCGkC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1NDQwNjXUNdS7O0xEQjE4NUizQTJaC6gqLUtMwKsBnRsbW1ADnkze9TAAA
- A
-X-Change-ID: 20251103-1-96faa240e8f4
-To: Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Tiezhu Yang <yangtiezhu@loongson.cn>, 
- Hengqi Chen <hengqi.chen@gmail.com>, Huacai Chen <chenhuacai@kernel.org>, 
- WANG Xuerui <kernel@xen0n.name>, Youling Tang <tangyouling@loongson.cn>
-Cc: bpf@vger.kernel.org, loongarch@lists.linux.dev, 
- linux-kernel@vger.kernel.org, George Guo <guodongtai@kylinos.cn>, 
- Bing Huang <huangbing@kylinos.cn>, george <dongtai.guo@linux.dev>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762159345; l=1770;
- i=dongtai.guo@linux.dev; s=20251103; h=from:subject:message-id;
- bh=r6iB+4QUzkiglp5aKNaGVGvpWZUg0I6p/aqNCFK0rKM=;
- b=b6fz9sckY6WVUreZ8Lba7h8hRBGk7JGTdKxLeSiwHsv/vtTZiTkhpyg0ZcPubLyabtVrI15zB
- q4+opYAPvg3BJqIiyqbVvRuTGYZx3+srGEKEZtP5sCqew+rPuNmcxb2
-X-Developer-Key: i=dongtai.guo@linux.dev; a=ed25519;
- pk=yHUJPGx/kAXutP/NSHpj7hWW0KQNlv3w9H6ju4qUoTM=
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 
-From: George Guo <guodongtai@kylinos.cn>
-
-When loading immediate values that fit within 12-bit signed range,
-the move_imm function incorrectly used zero extension instead of
-sign extension.
-
-The bug was exposed when scx_simple scheduler failed with -EINVAL
-in ops.init() after passing node = -1 to scx_bpf_create_dsq().
-Due to incorrect sign extension, `node >= (int)nr_node_ids`
-evaluated to true instead of false, causing BPF program failure.
-
-Verified by testing with the scx_simple scheduler (located in
-tools/sched_ext/). After building with `make` and running
-./tools/sched_ext/build/bin/scx_simple, the scheduler now
-initializes successfully with this fix.
-
-Fix this by using sign extension (sext) instead of zero extension
-for signed immediate values in move_imm.
-
-Fixes: 5dc615520c4d ("LoongArch: Add BPF JIT support")
-Reported-by: Bing Huang <huangbing@kylinos.cn>
-Signed-off-by: George Guo <guodongtai@kylinos.cn>
----
-Signed-off-by: george <dongtai.guo@linux.dev>
----
- arch/loongarch/net/bpf_jit.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/loongarch/net/bpf_jit.h b/arch/loongarch/net/bpf_jit.h
-index 5697158fd1645fdc3d83f598b00a9e20dfaa8f6d..f1398eb135b69ae61a27ed81f80b4bb0788cf0a0 100644
---- a/arch/loongarch/net/bpf_jit.h
-+++ b/arch/loongarch/net/bpf_jit.h
-@@ -122,7 +122,8 @@ static inline void move_imm(struct jit_ctx *ctx, enum loongarch_gpr rd, long imm
- 	/* addiw rd, $zero, imm_11_0 */
- 	if (is_signed_imm12(imm)) {
- 		emit_insn(ctx, addiw, rd, LOONGARCH_GPR_ZERO, imm);
--		goto zext;
-+		emit_sext_32(ctx, rd, is32);
-+		return;
- 	}
- 
- 	/* ori rd, $zero, imm_11_0 */
+This series is aimed to enhance the verification to the validity of
+_LPI object and LPI state. And do some cleancodes.
 
 ---
-base-commit: 6146a0f1dfae5d37442a9ddcba012add260bceb0
-change-id: 20251103-1-96faa240e8f4
+ Changelog:
+  v2:
+   - mark the illegal states as invalid as patch 1/9 and 2/9
+   - disable cpuidle of all CPUs if get power info failed in power
+     notify
+   - drop the patch raise up log level
+   - remove the patch applied.
+   https://lore.kernel.org/all/20250929093754.3998136-1-lihuisong@huawei.com/
 
-Best regards,
+Huisong Li (7):
+  ACPI: processor: idle: Mark the state as invalid if its entry method
+    is illegal
+  ACPI: processor: idle: Mark the state as invalid when get
+    lpi_state->arch_flags failed
+  ACPI: processor: idle: Relocate and verify
+    acpi_processor_ffh_lpi_probe
+  ACPI: processor: idle: Disable ACPI idle if get power information
+    failed in power notify
+  ACPI: processor: idle: Remove useless codes about the verification of
+    cstate count
+  ACPI: processor: idle: Redefine setup idle functions to void
+  ACPI: processor: idle: Redefine acpi_processor_setup_cpuidle_dev to
+    void
+
+ drivers/acpi/processor_idle.c | 85 ++++++++++++++++++++---------------
+ 1 file changed, 50 insertions(+), 35 deletions(-)
+
 -- 
-george <dongtai.guo@linux.dev>
+2.33.0
 
 
