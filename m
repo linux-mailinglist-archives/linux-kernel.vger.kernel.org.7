@@ -1,74 +1,69 @@
-Return-Path: <linux-kernel+bounces-882327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CFF1C2A328
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 07:33:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 209E2C2A322
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 07:33:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 909E94ED4FA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 06:32:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53CA4188B3E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 06:33:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84141298991;
-	Mon,  3 Nov 2025 06:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198472980A8;
+	Mon,  3 Nov 2025 06:33:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BFOkXztw"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="lLTFZU36"
+Received: from smtp.smtpout.orange.fr (smtp-21.smtpout.orange.fr [80.12.242.21])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057DE286D56
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 06:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C4E286D56;
+	Mon,  3 Nov 2025 06:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762151557; cv=none; b=vFmBKX7usbYXrMXNZwsJqyanBU0KCSkltt7wSE5VN/oIDFpNxvWb/irxwFOoBb8T++zUz2BaLoOfAOANHoDWmhfY4qErexG36vPS1d7fGfARHr89SLaBk4nDZdicQ8+72aF/XeUASiDr+2aW49T0oxySVGugWkcwwSVaLJOarFo=
+	t=1762151603; cv=none; b=FW3sn+LUn0Hder9Xg6m4dYKXWiKKefnHeNXLTAYLHLJrq6MTGIiJNQnqDenQrNoc4lHIJz8P8zAcZl/zbB39XtWDnMA3H6ZQP/NqrlL5oS8uWxhaHv6Dgzbfv9BXQy3HesRsELZhWA0opwvXc8Hxv58kJFn+pVeF1MiaRlDS7+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762151557; c=relaxed/simple;
-	bh=kbe8hMT2OvfiqAmCP4GWUa8XfLFY+MoXA/QxrTvkDww=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ljxSVUXFa2R3G41HO0r5WUI9OVFuLlrTrDD/QGUpGe3FUJKShBxdQmUVEm6XfPZ4lvjW9u1VH7KISOgJ7xvtLDNRy2kDV7iR37RWxR6uf0OwufdhSio2BWRSxkNTOXmRkIEwDx8QKHyJPMvzIs7oNJWB+dNZEYsLhsD4UtN68Uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BFOkXztw; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762151553;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9Co4HTS5uOZjTPA1XBfD/RtU0DY8DXK6Y5uls97p0Vw=;
-	b=BFOkXztwNIL5K8mOH+vAFRaD0ZZkLd1UA9FuPUUuW5dS0hRu5IsyrUUg3PqdK/0YoXhElP
-	cLXB95uuCrazQ9v7FRnqwBUjKZn9g75ncFFabEM/tm/9czjc/T0aXhGdEuf5FFS8OLw7we
-	QpsPF7CfUSYZPdMFHwEmLkUDuKJF8Ec=
-From: KaFai Wan <kafai.wan@linux.dev>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	shuah@kernel.org,
-	paul.chaignon@gmail.com,
-	m.shachnai@gmail.com,
-	kafai.wan@linux.dev,
-	harishankar.vishwanathan@gmail.com,
-	colin.i.king@gmail.com,
-	luis.gerhorst@fau.de,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH bpf-next v4 2/2] selftests/bpf: Add test for conditional jumps on same scalar register
-Date: Mon,  3 Nov 2025 14:31:08 +0800
-Message-ID: <20251103063108.1111764-3-kafai.wan@linux.dev>
-In-Reply-To: <20251103063108.1111764-1-kafai.wan@linux.dev>
-References: <20251103063108.1111764-1-kafai.wan@linux.dev>
+	s=arc-20240116; t=1762151603; c=relaxed/simple;
+	bh=0Nbk7N6TuGG8DqeUUT+1/buN8Uf1W+rXtEdV71vyM0k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uWT6FXn9ezrtNW/YNFZeR1IQoLqHDrNQBQNls6rb62YuePpq+C46T4i7SsshEL41Io9KgpN5vJ+sU7bGTaU9/PUT9RUdNIM1LuVCCUX775HveIwCgVbwNkovXfAq6qGxPc0W7CAG0Obd4h4FxvfFEylJ/Lopz2tHMjE44NRl4PQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=lLTFZU36; arc=none smtp.client-ip=80.12.242.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id Fo6ovtBvMsL0VFo6pvhfqx; Mon, 03 Nov 2025 07:32:08 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1762151528;
+	bh=AXuQEY3AagyS51O+lVG4zaIuniqmVZG13dgoQRqEHxA=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=lLTFZU36FYB0sKQyFImDYg0x8kfglP8EUdMvpX22mTojxO3tFK3caMU/oiUty2jgO
+	 kIU+K9GQdAjC1Y42Lreqn7cTd3hDfmtZR8lvFMGrrfFtorC6cyjZwUbEswloGoinjf
+	 gOtnnQQkH8KXBiPlrQAvLPybrYotWwgRVBSP3vNvDGnoBO4/em1NEwvEqk0jx7KJ1G
+	 EPugLS+Qlley1Ylz/XLOnCCAnl+VpBo1ho38+kLM9R2hRX9xxd0135mYwqbJIk2TU9
+	 cex59Yo2hDoQw+2TvTzDrqCfYHHaqIotJ/7PcqX7umepfUHMFyznUupg9QpcbTHNON
+	 fsnF4qh0nMHyQ==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Mon, 03 Nov 2025 07:32:08 +0100
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Shengjiu Wang <shengjiu.wang@gmail.com>,
+	Xiubo Li <Xiubo.Lee@gmail.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Nicolin Chen <nicoleotsuka@gmail.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-sound@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH] ASoC: fsl_spdif: Constify some structures
+Date: Mon,  3 Nov 2025 07:32:03 +0100
+Message-ID: <5fe08f028395a6c6f50d11eee8fdb4a90b1f68ab.1762151503.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.51.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,181 +71,107 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Add test cases to verify the correctness of the BPF verifier's branch analysis
-when conditional jumps are performed on the same scalar register. And make sure
-that JGT does not trigger verifier BUG.
+'struct fsl_spdif_soc_data' and 'struct snd_kcontrol_new' are not modified
+in this driver.
 
-Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
+Constifying these structures moves some data to a read-only section, so
+increases overall security, especially when the structure holds some
+function pointers.
+
+On a x86_64, with allmodconfig:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  53548	  25576	    128	  79252	  13594	sound/soc/fsl/fsl_spdif.o
+
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  54828	  24296	    128	  79252	  13594	sound/soc/fsl/fsl_spdif.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- .../selftests/bpf/progs/verifier_bounds.c     | 154 ++++++++++++++++++
- 1 file changed, 154 insertions(+)
+ sound/soc/fsl/fsl_spdif.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/progs/verifier_bounds.c b/tools/testing/selftests/bpf/progs/verifier_bounds.c
-index 0a72e0228ea9..e975dc285db6 100644
---- a/tools/testing/selftests/bpf/progs/verifier_bounds.c
-+++ b/tools/testing/selftests/bpf/progs/verifier_bounds.c
-@@ -1709,4 +1709,158 @@ __naked void jeq_disagreeing_tnums(void *ctx)
- 	: __clobber_all);
+diff --git a/sound/soc/fsl/fsl_spdif.c b/sound/soc/fsl/fsl_spdif.c
+index ee946e0d3f49..1b9be85b34c2 100644
+--- a/sound/soc/fsl/fsl_spdif.c
++++ b/sound/soc/fsl/fsl_spdif.c
+@@ -148,7 +148,7 @@ struct fsl_spdif_priv {
+ 	struct clk *pll11k_clk;
+ };
+ 
+-static struct fsl_spdif_soc_data fsl_spdif_vf610 = {
++static const struct fsl_spdif_soc_data fsl_spdif_vf610 = {
+ 	.imx = false,
+ 	.shared_root_clock = false,
+ 	.raw_capture_mode = false,
+@@ -158,7 +158,7 @@ static struct fsl_spdif_soc_data fsl_spdif_vf610 = {
+ 	.tx_formats = FSL_SPDIF_FORMATS_PLAYBACK,
+ };
+ 
+-static struct fsl_spdif_soc_data fsl_spdif_imx35 = {
++static const struct fsl_spdif_soc_data fsl_spdif_imx35 = {
+ 	.imx = true,
+ 	.shared_root_clock = false,
+ 	.raw_capture_mode = false,
+@@ -168,7 +168,7 @@ static struct fsl_spdif_soc_data fsl_spdif_imx35 = {
+ 	.tx_formats = FSL_SPDIF_FORMATS_PLAYBACK,
+ };
+ 
+-static struct fsl_spdif_soc_data fsl_spdif_imx6sx = {
++static const struct fsl_spdif_soc_data fsl_spdif_imx6sx = {
+ 	.imx = true,
+ 	.shared_root_clock = true,
+ 	.raw_capture_mode = false,
+@@ -179,7 +179,7 @@ static struct fsl_spdif_soc_data fsl_spdif_imx6sx = {
+ 
+ };
+ 
+-static struct fsl_spdif_soc_data fsl_spdif_imx8qm = {
++static const struct fsl_spdif_soc_data fsl_spdif_imx8qm = {
+ 	.imx = true,
+ 	.shared_root_clock = true,
+ 	.raw_capture_mode = false,
+@@ -189,7 +189,7 @@ static struct fsl_spdif_soc_data fsl_spdif_imx8qm = {
+ 	.tx_formats = SNDRV_PCM_FMTBIT_S24_LE,  /* Applied for EDMA */
+ };
+ 
+-static struct fsl_spdif_soc_data fsl_spdif_imx8mm = {
++static const struct fsl_spdif_soc_data fsl_spdif_imx8mm = {
+ 	.imx = true,
+ 	.shared_root_clock = false,
+ 	.raw_capture_mode = true,
+@@ -199,7 +199,7 @@ static struct fsl_spdif_soc_data fsl_spdif_imx8mm = {
+ 	.tx_formats = FSL_SPDIF_FORMATS_PLAYBACK,
+ };
+ 
+-static struct fsl_spdif_soc_data fsl_spdif_imx8ulp = {
++static const struct fsl_spdif_soc_data fsl_spdif_imx8ulp = {
+ 	.imx = true,
+ 	.shared_root_clock = true,
+ 	.raw_capture_mode = false,
+@@ -1146,7 +1146,7 @@ static int fsl_spdif_usync_put(struct snd_kcontrol *kcontrol,
  }
  
-+SEC("socket")
-+__description("conditional jump on same register, branch taken")
-+__not_msg("20: (b7) r0 = 1 {{.*}} R0=1")
-+__success __log_level(2)
-+__retval(0) __flag(BPF_F_TEST_REG_INVARIANTS)
-+__naked void condition_jump_on_same_register(void *ctx)
-+{
-+	asm volatile("			\
-+	call %[bpf_get_prandom_u32];	\
-+	w8 = 0x80000000;		\
-+	r0 &= r8;			\
-+	if r0 == r0 goto +1;		\
-+	goto l1_%=;			\
-+	if r0 >= r0 goto +1;		\
-+	goto l1_%=;			\
-+	if r0 s>= r0 goto +1;		\
-+	goto l1_%=;			\
-+	if r0 <= r0 goto +1;		\
-+	goto l1_%=;			\
-+	if r0 s<= r0 goto +1;		\
-+	goto l1_%=;			\
-+	if r0 != r0 goto l1_%=;		\
-+	if r0 >  r0 goto l1_%=;		\
-+	if r0 s> r0 goto l1_%=;		\
-+	if r0 <  r0 goto l1_%=;		\
-+	if r0 s< r0 goto l1_%=;		\
-+l0_%=:	r0 = 0;				\
-+	exit;				\
-+l1_%=:	r0 = 1;				\
-+	exit;				\
-+"	:
-+	: __imm(bpf_get_prandom_u32)
-+	: __clobber_all);
-+}
-+
-+SEC("socket")
-+__description("jset on same register, constant value branch taken")
-+__not_msg("7: (b7) r0 = 1 {{.*}} R0=1")
-+__success __log_level(2)
-+__retval(0) __flag(BPF_F_TEST_REG_INVARIANTS)
-+__naked void jset_on_same_register_1(void *ctx)
-+{
-+	asm volatile("			\
-+	r0 = 0;				\
-+	if r0 & r0 goto l1_%=;		\
-+	r0 = 1;				\
-+	if r0 & r0 goto +1;		\
-+	goto l1_%=;			\
-+l0_%=:	r0 = 0;				\
-+	exit;				\
-+l1_%=:	r0 = 1;				\
-+	exit;				\
-+"	:
-+	: __imm(bpf_get_prandom_u32)
-+	: __clobber_all);
-+}
-+
-+SEC("socket")
-+__description("jset on same register, scalar value branch taken")
-+__not_msg("12: (b7) r0 = 1 {{.*}} R0=1")
-+__success __log_level(2)
-+__retval(0) __flag(BPF_F_TEST_REG_INVARIANTS)
-+__naked void jset_on_same_register_2(void *ctx)
-+{
-+	asm volatile("			\
-+	/* range [1;2] */		\
-+	call %[bpf_get_prandom_u32];	\
-+	r0 &= 0x1;			\
-+	r0 += 1;			\
-+	if r0 & r0 goto +1;		\
-+	goto l1_%=;			\
-+	/* range [-2;-1] */		\
-+	call %[bpf_get_prandom_u32];	\
-+	r0 &= 0x1;			\
-+	r0 -= 2;			\
-+	if r0 & r0 goto +1;		\
-+	goto l1_%=;			\
-+l0_%=:	r0 = 0;				\
-+	exit;				\
-+l1_%=:	r0 = 1;				\
-+	exit;				\
-+"	:
-+	: __imm(bpf_get_prandom_u32)
-+	: __clobber_all);
-+}
-+
-+SEC("socket")
-+__description("jset on same register, scalar value unknown branch 1")
-+__msg("3: (b7) r0 = 0 {{.*}} R0=0")
-+__msg("5: (b7) r0 = 1 {{.*}} R0=1")
-+__success __log_level(2)
-+__flag(BPF_F_TEST_REG_INVARIANTS)
-+__naked void jset_on_same_register_3(void *ctx)
-+{
-+	asm volatile("			\
-+	/* range [0;1] */		\
-+	call %[bpf_get_prandom_u32];	\
-+	r0 &= 0x1;			\
-+	if r0 & r0 goto l1_%=;		\
-+l0_%=:	r0 = 0;				\
-+	exit;				\
-+l1_%=:	r0 = 1;				\
-+	exit;				\
-+"	:
-+	: __imm(bpf_get_prandom_u32)
-+	: __clobber_all);
-+}
-+
-+SEC("socket")
-+__description("jset on same register, scalar value unknown branch 2")
-+__msg("4: (b7) r0 = 0 {{.*}} R0=0")
-+__msg("6: (b7) r0 = 1 {{.*}} R0=1")
-+__success __log_level(2)
-+__flag(BPF_F_TEST_REG_INVARIANTS)
-+__naked void jset_on_same_register_4(void *ctx)
-+{
-+	asm volatile("			\
-+	/* range [-1;0] */		\
-+	call %[bpf_get_prandom_u32];	\
-+	r0 &= 0x1;			\
-+	r0 -= 1;			\
-+	if r0 & r0 goto l1_%=;		\
-+l0_%=:	r0 = 0;				\
-+	exit;				\
-+l1_%=:	r0 = 1;				\
-+	exit;				\
-+"	:
-+	: __imm(bpf_get_prandom_u32)
-+	: __clobber_all);
-+}
-+
-+SEC("socket")
-+__description("jset on same register, scalar value unknown branch 3")
-+__msg("4: (b7) r0 = 0 {{.*}} R0=0")
-+__msg("6: (b7) r0 = 1 {{.*}} R0=1")
-+__success __log_level(2)
-+__flag(BPF_F_TEST_REG_INVARIANTS)
-+__naked void jset_on_same_register_5(void *ctx)
-+{
-+	asm volatile("			\
-+	/* range [-1;-1] */		\
-+	call %[bpf_get_prandom_u32];	\
-+	r0 &= 0x2;			\
-+	r0 -= 1;			\
-+	if r0 & r0 goto l1_%=;		\
-+l0_%=:	r0 = 0;				\
-+	exit;				\
-+l1_%=:	r0 = 1;				\
-+	exit;				\
-+"	:
-+	: __imm(bpf_get_prandom_u32)
-+	: __clobber_all);
-+}
-+
- char _license[] SEC("license") = "GPL";
+ /* FSL SPDIF IEC958 controller defines */
+-static struct snd_kcontrol_new fsl_spdif_ctrls[] = {
++static const struct snd_kcontrol_new fsl_spdif_ctrls[] = {
+ 	/* Status cchanel controller */
+ 	{
+ 		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
+@@ -1233,7 +1233,7 @@ static struct snd_kcontrol_new fsl_spdif_ctrls[] = {
+ 	},
+ };
+ 
+-static struct snd_kcontrol_new fsl_spdif_ctrls_rcm[] = {
++static const struct snd_kcontrol_new fsl_spdif_ctrls_rcm[] = {
+ 	{
+ 		.iface = SNDRV_CTL_ELEM_IFACE_PCM,
+ 		.name = "IEC958 Raw Capture Mode",
 -- 
-2.43.0
+2.51.1
 
 
