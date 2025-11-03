@@ -1,138 +1,217 @@
-Return-Path: <linux-kernel+bounces-883394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D491CC2D527
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:01:22 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64407C2D506
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:00:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FDC81897D1E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:00:02 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id DA4064E8FC7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:59:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534C931A545;
-	Mon,  3 Nov 2025 16:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF36431AF3E;
+	Mon,  3 Nov 2025 16:57:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZPmPZfN0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IAVWywP7"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A143E329369;
-	Mon,  3 Nov 2025 16:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5008231960A
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762188955; cv=none; b=NLO7XvtQpsi/u2KVTTfTpEqvPAtk/TE02glxYbOwBMeNpLzA3irRl8iaS/TzGmodH52kpdbE7a2x/RifRM+r5qJnatANKEodX88QixOBuqIVZsjzVnGtmeUkL/NqO5jK3pRI+jTGUi6uM1QKcERytFcSUUEE0W/U6Qm3w8f53i4=
+	t=1762189044; cv=none; b=ERGFzKCn5n/SXQPeVU7eS0IzzjL8ZLHQhWm3EUK8yStt/ZmaupcwOtum2K6hqgJt2ujBGYupiC3crpzQK5iWgTcLEtYZMIf5o1CixrPz6CCj5IlwWBc6d5My2rJ8RiLOlhfz8A4Q2pUgKpqMr0dQYFbldXPNTwR48RlZYZLZJ1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762188955; c=relaxed/simple;
-	bh=norwYxHA6VI/ySU0ex5Ew7OW1FQwMlwu39WjPcjgOKw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZBGLTfYMPUcQhGuyFfT3niG/NVkpQEX1q64F6AqrdJHqSxg6LLWaHUBqgD/jEOd/IxBmo67B2aH2bKaSYX5bvYYzgb6vH10NQ682e/6koi9GO/3MiQEoO0g1u0x0GW4CIZEDacPR+PWnRVZS048HD9WXmijllYrUjEkLCkhXSKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZPmPZfN0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E28A1C116C6;
-	Mon,  3 Nov 2025 16:55:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762188955;
-	bh=norwYxHA6VI/ySU0ex5Ew7OW1FQwMlwu39WjPcjgOKw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZPmPZfN0yXQ5Ndyhd1mm6d5YyvVQn+2NS84I1P7cyPdxS80PfY2ZucI9nnhbgf4WY
-	 s7T0hQkmYh3BvC31fK7wOMt5xVzp7z74BHWa8QiGuneY+AjDKqKSdLT2+rUSqfiIRO
-	 dq+CUk9yAJPAVVOoWmGfXhaovQn/CvtO/zMXNg05HM/YIbPUs0MlUvc8htSP7z6LHt
-	 MfQNRhhp20WhSWzc6Igwle5mi2X3jI4fgZVoTroQvMzbrqdD1j07JdGxQgKVOnVbrm
-	 vd3TNzlzeFyZKWqiC0BIaRsKVR8HfiPDkfKQworpdeGvoSegLcGOaqT5hTJ1SqTz0O
-	 PrtNV6DhYV2Ww==
-Date: Mon, 3 Nov 2025 16:55:52 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
-	Andy Lutomirski <luto@kernel.org>,
-	Vincenzo Frascino <vincenzo.frascino@arm.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Nick Alcock <nick.alcock@oracle.com>,
-	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Shuah Khan <shuah@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Theodore Ts'o <tytso@mit.edu>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Nagarathnam Muthusamy <nagarathnam.muthusamy@oracle.com>,
-	Shannon Nelson <sln@onemain.com>, linux-kernel@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-	loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
-	linux-s390@vger.kernel.org, Aishwarya.TCV@arm.com
-Subject: Re: [PATCH v4 23/35] vdso/datastore: Map pages through struct page
-Message-ID: <aQjemPIbHMplGD4N@finisterre.sirena.org.uk>
-References: <20251014-vdso-sparc64-generic-2-v4-0-e0607bf49dea@linutronix.de>
- <20251014-vdso-sparc64-generic-2-v4-23-e0607bf49dea@linutronix.de>
- <aQjJNmwniQwwjeBR@finisterre.sirena.org.uk>
- <87bjljw1ra.ffs@tglx>
+	s=arc-20240116; t=1762189044; c=relaxed/simple;
+	bh=gXSUHmcaUphZGHWjr/dbElnyU/fHkGguUYmUjOgo1eQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NitF7Ti5j6G76ZdasGKRm5qJm7Mgt30Y9rzcOMPJ3nEdakrJI205/qlwrB6OT0i04m/j7k1Git08m697hpz2S29A8Dsf+Gwr83ne8qFQmiyAh8AoXGeKQ8Bb8NjfJ0A2RaJiKqPRQsxrBpDexHm7Mnve01D76yNL6ew2ZYOZGq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IAVWywP7; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4770d4df4deso99205e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 08:57:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762189040; x=1762793840; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gXSUHmcaUphZGHWjr/dbElnyU/fHkGguUYmUjOgo1eQ=;
+        b=IAVWywP7Idg4kbCL+ROhMARrDFCBIxbjkdsLw1UQdN/alB4sj7DknqS9kndjk1Sad6
+         sRZAJp2zPfsV3gDKEUrtX/foayTCWwVHIMxvH3GhOAQt8Hw9lLT54UjkPjjWXeW6wA5c
+         ihwMqed1uL2WxM7riuZ/lIUHtF3gmN3wbCFUw7IOCm/IbUU8neQM+299rdgXY8g4064X
+         vHeMsy5PuLRlikfVgC4IUt1tHKVL2KeKVHvglqKCxM/gOUDyEiQOcRp2gnLq/z0uUdhn
+         g61wGzFiKwMJI0FRzKcatyyvv19UEwbhpZXzBdncDfsS/QZUDcNS1VVdzcqwudvo+djT
+         HWng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762189040; x=1762793840;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gXSUHmcaUphZGHWjr/dbElnyU/fHkGguUYmUjOgo1eQ=;
+        b=cxWC4Uezef608a7ggjCnZH7FXHi0hhsAcWknBMEe2ckUZDoCzvXhM7LiC5oMY9oOfh
+         a6TG3UUQQo+ZFboOLbdl1u61OOQfkO6Ss/QS5Aavm+13WYgK2uXIrhiE43+n4q5q1LAR
+         /fZt6+il0CDvdZwj1cTnPPMWDfix9Gta90VASv5rH8EWPzELDKG1/+KUvcXkyDQJJDNn
+         G4kW7QkuqhP7TGOksH+nj8M0uLIBdA9q1LsWq8BvDhZRR1oVMSOeLE1O0xZspxOcL5Tq
+         9BxCHd0blMUHGaPUidHuiM8uM5J3va+E9UIXQhDWn2TEE9l2Dxi7upcBPBBj5hxSVEa+
+         OoNg==
+X-Forwarded-Encrypted: i=1; AJvYcCVSiKPq2hnMmQxihK4IbZ/sIz8m9g2ykO5vgyMImac9kSDrJK3kKGK91DVKBrwi0+Jlj9xbKlyhxI3i5r0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSeOBZx3fu3DbAABl6v2F58BDQRbMmjzlirqFymGr3Vgkjp0Ns
+	yl79VOTHM+MuGVhTC13H10Pi1FnVHDL6p1U7iV3Wid5cOcqROLA6SElI2C676NUuN2gxPneGcsp
+	DflBup07oysxhCIndwZ0mO2xfQy01KZfUYC8X7UXj
+X-Gm-Gg: ASbGncv7UMf1ElLQdEx8Yomp4h5jmzd2jBiKqF7Gqcy5D9xoFdRWWV70ebfmrJ4q9yi
+	+MU+LZLXZj+WrsT3VIvq0t12G9HhLWKloPabAma0T00Ze2+dAx0oCdQbIT3OlZ8THF1I0lW2RIH
+	joTpSSaooSjK+W/15tI+42FLz76rV2nkAEgCIoW/Ph90QUWEbiEjJNyyAPUcPMpx8jBHKvbEzJE
+	nVuKgO5jcg8XinbTXpZD7wq9GgAtz/mZosCE8rPZqsOzZM+7WuiyrJyEO/X9Y/VhG9La5tLjtBV
+	lKuf05DtYWrFXuJbaQ==
+X-Google-Smtp-Source: AGHT+IHltJD7aAfzyanPskcCGEW/r71vqTVXp8jRpi/mhU0n51LF+Ree9stW3JVC96zs2RiHGJB+80eotHc/1zCN5ok=
+X-Received: by 2002:a05:600c:a103:b0:477:1afe:b962 with SMTP id
+ 5b1f17b1804b1-4775494bf56mr266115e9.1.1762189040413; Mon, 03 Nov 2025
+ 08:57:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xyY1KyZQ9jhQldRu"
-Content-Disposition: inline
-In-Reply-To: <87bjljw1ra.ffs@tglx>
-X-Cookie: If in doubt, mumble.
+References: <20250118231549.1652825-1-jiaqiyan@google.com> <20250919155832.1084091-1-william.roche@oracle.com>
+ <CACw3F521fi5HWhCKi_KrkNLXkw668HO4h8+DjkP2+vBuK-=org@mail.gmail.com>
+ <aPjXdP63T1yYtvkq@hyeyoo> <CACw3F50As2jPzy1rRjzpm3uKOALjX_9WmKxMPGnQcok96OfQkA@mail.gmail.com>
+ <aQBqGupCN_v8ysMX@hyeyoo> <d3d35586-c63f-c1be-c95e-fbd7aafd43f3@huawei.com>
+ <CACw3F51qaug5aWFNcjB54dVEc8yH+_A7zrkGcQyKXKJs6uVvgA@mail.gmail.com>
+ <aQhk4WtDSaQmFFFo@harry> <aQhti7Dt_34Yx2jO@harry>
+In-Reply-To: <aQhti7Dt_34Yx2jO@harry>
+From: Jiaqi Yan <jiaqiyan@google.com>
+Date: Mon, 3 Nov 2025 08:57:08 -0800
+X-Gm-Features: AWmQ_bkTLA46lp2jCX_gE30BD7c00kSfXnsdnOyhAycwpjTYtFfHvFxWpgPbyHk
+Message-ID: <CACw3F503FG01yQyA53hHAo7q0yE3qQtMuT9kOjNHpp8Q9qHKPQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 0/3] Userspace MFR Policy via memfd
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: Miaohe Lin <linmiaohe@huawei.com>, =?UTF-8?Q?=E2=80=9CWilliam_Roche?= <william.roche@oracle.com>, 
+	Ackerley Tng <ackerleytng@google.com>, jgg@nvidia.com, akpm@linux-foundation.org, 
+	ankita@nvidia.com, dave.hansen@linux.intel.com, david@redhat.com, 
+	duenwen@google.com, jane.chu@oracle.com, jthoughton@google.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, muchun.song@linux.dev, nao.horiguchi@gmail.com, 
+	osalvador@suse.de, peterx@redhat.com, rientjes@google.com, 
+	sidhartha.kumar@oracle.com, tony.luck@intel.com, wangkefeng.wang@huawei.com, 
+	willy@infradead.org, vbabka@suse.cz, surenb@google.com, mhocko@suse.com, 
+	jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Nov 3, 2025 at 12:53=E2=80=AFAM Harry Yoo <harry.yoo@oracle.com> wr=
+ote:
+>
+> On Mon, Nov 03, 2025 at 05:16:33PM +0900, Harry Yoo wrote:
+> > On Thu, Oct 30, 2025 at 10:28:48AM -0700, Jiaqi Yan wrote:
+> > > On Thu, Oct 30, 2025 at 4:51=E2=80=AFAM Miaohe Lin <linmiaohe@huawei.=
+com> wrote:
+> > > > On 2025/10/28 15:00, Harry Yoo wrote:
+> > > > > On Mon, Oct 27, 2025 at 09:17:31PM -0700, Jiaqi Yan wrote:
+> > > > >> On Wed, Oct 22, 2025 at 6:09=E2=80=AFAM Harry Yoo <harry.yoo@ora=
+cle.com> wrote:
+> > > > >>> On Mon, Oct 13, 2025 at 03:14:32PM -0700, Jiaqi Yan wrote:
+> > > > >>>> On Fri, Sep 19, 2025 at 8:58=E2=80=AFAM =E2=80=9CWilliam Roche=
+ <william.roche@oracle.com> wrote:
+> > > > >>> But even after fixing that we need to fix the race condition.
+> > > > >>
+> > > > >> What exactly is the race condition you are referring to?
+> > > > >
+> > > > > When you free a high-order page, the buddy allocator doesn't not =
+check
+> > > > > PageHWPoison() on the page and its subpages. It checks PageHWPois=
+on()
+> > > > > only when you free a base (order-0) page, see free_pages_prepare(=
+).
+> > > >
+> > > > I think we might could check PageHWPoison() for subpages as what fr=
+ee_page_is_bad()
+> > > > does. If any subpage has HWPoisoned flag set, simply drop the folio=
+. Even we could
+> > >
+> > > Agree, I think as a starter I could try to, for example, let
+> > > free_pages_prepare scan HWPoison-ed subpages if the base page is high
+> > > order. In the optimal case, HugeTLB does move PageHWPoison flag from
+> > > head page to the raw error pages.
+> >
+> > [+Cc page allocator folks]
+> >
+> > AFAICT enabling page sanity check in page alloc/free path would be agai=
+nst
+> > past efforts to reduce sanity check overhead.
+> >
+> > [1] https://lore.kernel.org/linux-mm/1460711275-1130-15-git-send-email-=
+mgorman@techsingularity.net/
+> > [2] https://lore.kernel.org/linux-mm/1460711275-1130-16-git-send-email-=
+mgorman@techsingularity.net/
+> > [3] https://lore.kernel.org/all/20230216095131.17336-1-vbabka@suse.cz
+> >
+> > I'd recommend to check hwpoison flag before freeing it to the buddy
+> > when we know a memory error has occurred (I guess that's also what Miao=
+he
+> > suggested).
+> >
+> > > > do it better -- Split the folio and let healthy subpages join the b=
+uddy while reject
+> > > > the hwpoisoned one.
+> > > >
+> > > > >
+> > > > > AFAICT there is nothing that prevents the poisoned page to be
+> > > > > allocated back to users because the buddy doesn't check PageHWPoi=
+son()
+> > > > > on allocation as well (by default).
+> > > > >
+> > > > > So rather than freeing the high-order page as-is in
+> > > > > dissolve_free_hugetlb_folio(), I think we have to split it to bas=
+e pages
+> > > > > and then free them one by one.
+> > > >
+> > > > It might not be worth to do that as this would significantly increa=
+se the overhead
+> > > > of the function while memory failure event is really rare.
+> > >
+> > > IIUC, Harry's idea is to do the split in dissolve_free_hugetlb_folio
+> > > only if folio is HWPoison-ed, similar to what Miaohe suggested
+> > > earlier.
+> >
+> > Yes, and if we do the check before moving HWPoison flag to raw pages,
+> > it'll be just a single folio_test_hwpoison() call.
+> >
+> > > BTW, I believe this race condition already exists today when
+> > > memory_failure handles HWPoison-ed free hugetlb page; it is not
+> > > something introduced via this patchset. I will fix or improve this in
+> > > a separate patchset.
+> >
+> > That makes sense.
+>
+> Wait, without this patchset, do we even free the hugetlb folio when
+> its subpage is hwpoisoned? I don't think we do, but I'm not expert at MFR=
+...
 
---xyY1KyZQ9jhQldRu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Based on my reading of try_memory_failure_hugetlb, me_huge_page, and
+__page_handle_poison, I think mainline kernel frees dissolved hugetlb
+folio to buddy allocator in two cases:
+1. it was a free hugetlb page at the moment of try_memory_failure_hugetlb
+2. it was an anonomous hugetlb page
 
-On Mon, Nov 03, 2025 at 04:54:01PM +0100, Thomas Gleixner wrote:
-> On Mon, Nov 03 2025 at 15:24, Mark Brown wrote:
+Let me know if my understanding is wrong.
 
-> > which isn't super instructive.  Not all platforms seem to be affected,
-> > I've seen this on at least the Arm FVP, Orion O6 and Libretech Renegade
-> > Elite.  The diagnostics aren't very clear here but given that I'm seeing
-> > the same issue and bisect result on multiple platforms it seemed worth
-> > mentioning.  Some platforms do seem fine.
-
-> Can you try
-
->     git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/vdso
-
-> which is rc1 based and only contains the VDSO changes. That might give
-> us a better hint.
-
-Yeah, hopefully - my infrastructure is pretty swamped ATM and I'm in an
-internal conference.  I did kick something off earlier on this specific
-commit which should be equivalent information but it'll be tomorrow
-before I can get a full picture.
-
---xyY1KyZQ9jhQldRu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmkI3pcACgkQJNaLcl1U
-h9BpwAf9G2OE1wGg3D/F2WCmsKiRzqX8EJTZWpdThdfvEP9vbPytmPqRt4LoPk9E
-cKlt3SaJFVZbyfx2YTDOqcC/FaQr5gdVRVsLuiKavYpVHanTEb/HCx2BvROuDvE2
-Ssx3Em7R+eHCyonl/unY/EOt7PP4hUtDizXKblf1rb5I/tM9ADlHYpQSTKF2Poxr
-/gIn6gPy89C+hD2rrkQJZWraOVcbciUGJVMWtMKRm96l0pPwdHchsimXnrYq6AId
-exk8ECk4hjsPpcarTzTqvJr+UCDMFpF99qq7GWDrkeifMqQqrvR5RY2kcsdyNGMw
-3ssV8/Eg6XLVg7GU0FL9k76qaqD7kA==
-=et8+
------END PGP SIGNATURE-----
-
---xyY1KyZQ9jhQldRu--
+>
+> If we don't, the mainline kernel should not be affected by this yet?
+>
+> > Thanks for working on this!
+> >
+> > > > > That way, free_pages_prepare() will catch that it's poisoned and =
+won't
+> > > > > add it back to the freelist. Otherwise there will always be a win=
+dow
+> > > > > where the poisoned page can be allocated to users - before it's t=
+aken
+> > > > > off from the buddy.
+>
+> --
+> Cheers,
+> Harry / Hyeonggon
 
