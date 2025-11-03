@@ -1,197 +1,197 @@
-Return-Path: <linux-kernel+bounces-882406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8278C2A632
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:45:04 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C60BC2A617
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:43:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BDDE3B48A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:42:33 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 8F5403440F5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:43:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A45E2C0F7E;
-	Mon,  3 Nov 2025 07:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28712C158B;
+	Mon,  3 Nov 2025 07:42:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="E2fj1xwv";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6/uq2ziu";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XuPUqwaR";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="eT2I3gKQ"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G7GZX35f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61752C08A8
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 07:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92142C029B;
+	Mon,  3 Nov 2025 07:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762155739; cv=none; b=eedelMiH9RQmvHCOTtPkNmKDB1q7IUTzWIYZc7NgJqRXEHn8x4q+hOLGwX/uxbttmfo+lA/hb3o2m4QQ1xT7TeYppFPwdCl9RjWB/lzFJFauFuMGqQ9hvc9WdPOO6P2e9HIAXGgAzItF/ruCJ89GAUOtPDunVmgdXiJvtstPp4I=
+	t=1762155775; cv=none; b=QCNz1cRF0ol1VkZFh6F+I+LvNrEbjbhd7uGjGdCur2v2/dsSAbbhjMLR3Ecm1xWZQZcsJGU+PCRtRJe6lfkn8FlimyTIHE11rxtTpyw6mO+fiBd2FSjg5CKt0m/S9SdSwJZSHQfwDyNBafwI3zp9EMOmqkHTfi9VkqKAVmH5Hfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762155739; c=relaxed/simple;
-	bh=crKHLDrv/tguAh340pk3PYsJ1AIDc7B11a5UgOyZew4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uERa2D3EGFvNF7RgNlJd+ZEJPVkpkrYafctU3fdwAALJ9sx5tFh5SpATdp5g3q4X6ohwEqp5SCq0723WhKn1PPnb+jsd5sCt2+d8ryID5lJqjkTwZCJLzmEMwjmweW2U4pWFQpcif3TGF4CZtaWgqLAo+RHq3h5DrNO9KnQ/eHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=E2fj1xwv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6/uq2ziu; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XuPUqwaR; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=eT2I3gKQ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id BE18321D91;
-	Mon,  3 Nov 2025 07:42:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762155736; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UimfoG96X1jvnyXzTz1B//n6UQMpn5oIqKnAct0hN4c=;
-	b=E2fj1xwv0B+gyuP6qYpBTM7md69BXYUOjZPxuF8JoWVgi0aazNVCDfJUHVCkh33CtLKcDm
-	O+VA91snFtoUyK8xI2DGKenuFbYRqY+BcJlwAymb1AFkjpzGKEKYqObOy2CaOR3rqVp47I
-	/r2oE0Hu/qj1um83dnXReFOZ788D3ok=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762155736;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UimfoG96X1jvnyXzTz1B//n6UQMpn5oIqKnAct0hN4c=;
-	b=6/uq2ziuGvsIQqpmyavnq9XJY80lnnyvGE/hhi5j5lKSzoqMg3PQL+RONXWLu5fgR5mJmM
-	Jruvqcj5z3FxnRBQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=XuPUqwaR;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=eT2I3gKQ
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762155735; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UimfoG96X1jvnyXzTz1B//n6UQMpn5oIqKnAct0hN4c=;
-	b=XuPUqwaRNb67Fp//e+jApIHky15QPii6rtbOqLcACZLNreQUWESyexkWth3+7en734lgmO
-	NPMXuAUyOzxKWGgpBtAeulhPQCJBLy2FV1ZBF1bF+5t0hgGSj2yMLQjE2ugcILEWy2vV7y
-	8HVaw2zH2XZTYYRLZ/arwFBrb5qbRNQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762155735;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UimfoG96X1jvnyXzTz1B//n6UQMpn5oIqKnAct0hN4c=;
-	b=eT2I3gKQkdHL7CAykIvAckQpPuJL/WThAe57YUPfXR6NW25GxkKuk50ag44Zh1SIAUdtMH
-	2Crn0lgXnBsE1fAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AC08E1364F;
-	Mon,  3 Nov 2025 07:42:15 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id I679KddcCGlyQgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 03 Nov 2025 07:42:15 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 2DDE3A2A61; Mon,  3 Nov 2025 08:42:15 +0100 (CET)
-Date: Mon, 3 Nov 2025 08:42:15 +0100
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
-	jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com, 
-	mcgrof@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com, 
-	libaokun1@huawei.com
-Subject: Re: [PATCH 02/25] ext4: remove page offset calculation in
- ext4_block_truncate_page()
-Message-ID: <bk6mmw6msixyg6boqodonkmyxrok2bkrhklosuwyxcipgmfdcw@3knvjhm4ggyb>
-References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
- <20251025032221.2905818-3-libaokun@huaweicloud.com>
+	s=arc-20240116; t=1762155775; c=relaxed/simple;
+	bh=OUU0goUyjKS7VJe0KB9XzF2ZbtU3WVULdIiCjdEoyU0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HErtRIaBIbU3BgjHJjM+hMHnhNIxnqWW4hdZ9F35C07KkzWWqgVuEsGGTRrMlgA0qbHmH5Lt8erKbQbieI2hwF5lBvvNilTpj6kkuUjo2ctnNC/TFA78zgV8BmbvJfI6LMr5jPNwbhI9+BhpWiOE8BYsAtM51Ac4ulJ+YKNvJhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G7GZX35f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 61C15C4CEFD;
+	Mon,  3 Nov 2025 07:42:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762155774;
+	bh=OUU0goUyjKS7VJe0KB9XzF2ZbtU3WVULdIiCjdEoyU0=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=G7GZX35fT3IGRYT0M/GBsJfltdc3JWMOyFMnMycXR2eoQSpiY9R4VKIpQ7uAQsQ69
+	 C/9+AxLoDLnbMEe6u3tuMV6HrL41ud/ORal/0HuzjQlXmUVNAPKDkN8vjX8CNFItci
+	 kriVqVoe19UTvQK77syFxHY2UPSVVuGzaCoXOugqtMMUJVXwfCzz+nkO7aSrjfSg28
+	 SF2Gp3huYMaRLHugi3etBpIQqpMZIhJOm08E0MtkGCHS1jXGv4hddR+nN71+ETyoKF
+	 99dkutPQVivsVSvF7YRFNcQdIxRjq+81YoqHMKRwwkP21+MPJrwFSXfJDpT1+dxauw
+	 MxSjxdArNLyVQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F72ACCFA03;
+	Mon,  3 Nov 2025 07:42:54 +0000 (UTC)
+From: Dominique Martinet via B4 Relay <devnull+asmadeus.codewreck.org@kernel.org>
+Date: Mon, 03 Nov 2025 16:42:36 +0900
+Subject: [PATCH] net/9p: cleanup: change p9_trans_module->def to bool
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251025032221.2905818-3-libaokun@huaweicloud.com>
-X-Rspamd-Queue-Id: BE18321D91
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -0.15
-X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-0.15 / 50.00];
-	SEM_URIBL(3.50)[huaweicloud.com:email];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.14)[-0.724];
-	MIME_GOOD(-0.10)[text/plain];
-	BAD_REP_POLICIES(0.10)[];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	R_DKIM_ALLOW(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_NONE(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:dkim,huaweicloud.com:email,suse.com:email]
-X-Spamd-Bar: /
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20251103-v9fs_trans_def_bool-v1-1-f33dc7ed9e81@codewreck.org>
+X-B4-Tracking: v=1; b=H4sIAOtcCGkC/x2MQQqAIBAAvxJ7TsiiwL4SIZa7tRAabkgQ/T3pN
+ nOYeUAwMQqM1QMJMwvHUETXFay7Cxsq9sWhbdpe66ZT2ZDYK7kg1iPZJcZDOb8aGgz1BaCUZ0L
+ i+79O8/t+kBGn8GUAAAA=
+X-Change-ID: 20251103-v9fs_trans_def_bool-adc9f69f5adc
+To: Eric Van Hensbergen <ericvh@kernel.org>, 
+ Latchesar Ionkov <lucho@ionkov.net>, 
+ Christian Schoenebeck <linux_oss@crudebyte.com>
+Cc: v9fs@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ Dominique Martinet <asmadeus@codewreck.org>, 
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+X-Mailer: b4 0.15-dev-7be4f
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3628;
+ i=asmadeus@codewreck.org; h=from:subject:message-id;
+ bh=e6a1iYQuHQC7x5fsHwGCTvDypr2b1ZkzPJioRFGi6XY=;
+ b=owEBbQKS/ZANAwAKAatOm+xqmOZwAcsmYgBpCFz3yuyEQXZJcrjOEuC62x15QrGZfQvJftDe4
+ cHKuq1TJ56JAjMEAAEKAB0WIQT8g9txgG5a3TOhiE6rTpvsapjmcAUCaQhc9wAKCRCrTpvsapjm
+ cBdkD/wLg99Ehw6pxqNvcpYX9IDW48H/OKBbTGrGtJ1kIB9KVLMeG/oSyXAUVeVifpBEZgtnxoC
+ d2TO1zxlITNeHZMFWqxHIjItEMQf8UlIt1QdTcvRrYSw0wWRWJhM4AFN9vVRSpJNFvZogESXSHs
+ 4tbyUd8eNmlgVEavm6QczfUC1AJbUZ8/gOd6bGnGm9StZyCErp7+qPvEY2VKT0UGRiXUjlyp0+/
+ 1d9gWY/herCreyiSF0FrWbQWO8uiYiiCXsByJrvqmSdlvuQIIdC2gKclVaAGm6hcwZdyAntsJMP
+ XHIHaUgMzEkabsn7jwf/sv2mRPp9EKXpSLVE8ObpMtnDZYaV9y4DKzJtruqbPKJqClEtCYGdw0J
+ sN5H4DcuJR9uRgaRbwtmLZGTB87hDPgenOcYgRGQofCw2noNHvKP1CGEgLSnW30e3jF6QPdZzPj
+ nbBzHPBamA55eUZTuURKMqKTuhUdCIjq48PYHNOxST2kBKnUy+3EcxKDloztvq4/jY0sKg5/wm6
+ 1/hY4kPowgv/kKevvY0O6P+YUdRxS2nOE9JMkX51NUQqZE5uo8zAPEgdkD2IVsLCl3jQVyG7jbq
+ DwXaGKOo6NXPMHSi6hxqgFrM1fY+rF+GGke5/un80w93i1nVWKkfNKkvxbC3emQOlHWnNTiBnYQ
+ NLN1U+qI0xvONTg==
+X-Developer-Key: i=asmadeus@codewreck.org; a=openpgp;
+ fpr=B894379F662089525B3FB1B9333F1F391BBBB00A
+X-Endpoint-Received: by B4 Relay for asmadeus@codewreck.org/default with
+ auth_id=435
+X-Original-From: Dominique Martinet <asmadeus@codewreck.org>
+Reply-To: asmadeus@codewreck.org
 
-On Sat 25-10-25 11:21:58, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> For bs <= ps scenarios, calculating the offset within the block is
-> sufficient. For bs > ps, an initial page offset calculation can lead to
-> incorrect behavior. Thus this redundant calculation has been removed.
-> 
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+From: Dominique Martinet <asmadeus@codewreck.org>
 
-Looks good. Feel free to add:
+'->def' is only ever used as a true/false flag
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+Reported-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ include/net/9p/transport.h | 2 +-
+ net/9p/trans_fd.c          | 6 +++---
+ net/9p/trans_rdma.c        | 2 +-
+ net/9p/trans_virtio.c      | 2 +-
+ net/9p/trans_xen.c         | 2 +-
+ 5 files changed, 7 insertions(+), 7 deletions(-)
 
-								Honza
+diff --git a/include/net/9p/transport.h b/include/net/9p/transport.h
+index f0981515148d69abdaf06a2874eaab39f7ee2e94..0aedabc9b7ebe19e2c7273679fc934eff203de03 100644
+--- a/include/net/9p/transport.h
++++ b/include/net/9p/transport.h
+@@ -46,7 +46,7 @@ struct p9_trans_module {
+ 	char *name;		/* name of transport */
+ 	int maxsize;		/* max message size of transport */
+ 	bool pooled_rbuffers;
+-	int def;		/* this transport should be default */
++	bool def;		/* this transport should be default */
+ 	bool supports_vmalloc;	/* can work with vmalloc'd buffers */
+ 	struct module *owner;
+ 	int (*create)(struct p9_client *client,
+diff --git a/net/9p/trans_fd.c b/net/9p/trans_fd.c
+index e7334033eba5ae41f03fe8fe0fef7f8f35924886..bd4903d6482710cc3ae9e192fab2fd0d5318ad7a 100644
+--- a/net/9p/trans_fd.c
++++ b/net/9p/trans_fd.c
+@@ -1100,7 +1100,7 @@ static struct p9_trans_module p9_tcp_trans = {
+ 	.name = "tcp",
+ 	.maxsize = MAX_SOCK_BUF,
+ 	.pooled_rbuffers = false,
+-	.def = 0,
++	.def = false,
+ 	.supports_vmalloc = true,
+ 	.create = p9_fd_create_tcp,
+ 	.close = p9_fd_close,
+@@ -1115,7 +1115,7 @@ MODULE_ALIAS_9P("tcp");
+ static struct p9_trans_module p9_unix_trans = {
+ 	.name = "unix",
+ 	.maxsize = MAX_SOCK_BUF,
+-	.def = 0,
++	.def = false,
+ 	.supports_vmalloc = true,
+ 	.create = p9_fd_create_unix,
+ 	.close = p9_fd_close,
+@@ -1130,7 +1130,7 @@ MODULE_ALIAS_9P("unix");
+ static struct p9_trans_module p9_fd_trans = {
+ 	.name = "fd",
+ 	.maxsize = MAX_SOCK_BUF,
+-	.def = 0,
++	.def = false,
+ 	.supports_vmalloc = true,
+ 	.create = p9_fd_create,
+ 	.close = p9_fd_close,
+diff --git a/net/9p/trans_rdma.c b/net/9p/trans_rdma.c
+index 6c5ad232c19463ff42c611f5e409555381911c39..a0bc766199dadf448b8e048e68b97c646e125435 100644
+--- a/net/9p/trans_rdma.c
++++ b/net/9p/trans_rdma.c
+@@ -748,7 +748,7 @@ static struct p9_trans_module p9_rdma_trans = {
+ 	.name = "rdma",
+ 	.maxsize = P9_RDMA_MAXSIZE,
+ 	.pooled_rbuffers = true,
+-	.def = 0,
++	.def = false,
+ 	.supports_vmalloc = false,
+ 	.owner = THIS_MODULE,
+ 	.create = rdma_create_trans,
+diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
+index 12806207f4f03c5b291db938842d78f5146dc0b7..b58f50b00c7237d529556484ca497fe438b78d31 100644
+--- a/net/9p/trans_virtio.c
++++ b/net/9p/trans_virtio.c
+@@ -802,7 +802,7 @@ static struct p9_trans_module p9_virtio_trans = {
+ 	 */
+ 	.maxsize = PAGE_SIZE * (VIRTQUEUE_NUM - 3),
+ 	.pooled_rbuffers = false,
+-	.def = 1,
++	.def = true,
+ 	.supports_vmalloc = false,
+ 	.owner = THIS_MODULE,
+ };
+diff --git a/net/9p/trans_xen.c b/net/9p/trans_xen.c
+index 4b1cec0ab82977e366dfa6673a71b5a90cb2cd45..9389c1247001e2d8ed7e2151390295b09cdcf98c 100644
+--- a/net/9p/trans_xen.c
++++ b/net/9p/trans_xen.c
+@@ -257,7 +257,7 @@ static struct p9_trans_module p9_xen_trans = {
+ 	.name = "xen",
+ 	.maxsize = 1 << (XEN_9PFS_RING_ORDER + XEN_PAGE_SHIFT - 2),
+ 	.pooled_rbuffers = false,
+-	.def = 1,
++	.def = true,
+ 	.supports_vmalloc = false,
+ 	.create = p9_xen_create,
+ 	.close = p9_xen_close,
 
-> ---
->  fs/ext4/inode.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 0742039c53a7..4c04af7e51c9 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -4183,7 +4183,6 @@ static int ext4_block_zero_page_range(handle_t *handle,
->  static int ext4_block_truncate_page(handle_t *handle,
->  		struct address_space *mapping, loff_t from)
->  {
-> -	unsigned offset = from & (PAGE_SIZE-1);
->  	unsigned length;
->  	unsigned blocksize;
->  	struct inode *inode = mapping->host;
-> @@ -4192,8 +4191,8 @@ static int ext4_block_truncate_page(handle_t *handle,
->  	if (IS_ENCRYPTED(inode) && !fscrypt_has_encryption_key(inode))
->  		return 0;
->  
-> -	blocksize = inode->i_sb->s_blocksize;
-> -	length = blocksize - (offset & (blocksize - 1));
-> +	blocksize = i_blocksize(inode);
-> +	length = blocksize - (from & (blocksize - 1));
->  
->  	return ext4_block_zero_page_range(handle, mapping, from, length);
->  }
-> -- 
-> 2.46.1
-> 
+---
+base-commit: e21d451a82f39e91b7635c4fc3ff5ac082873ec3
+change-id: 20251103-v9fs_trans_def_bool-adc9f69f5adc
+
+Best regards,
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Dominique Martinet <asmadeus@codewreck.org>
+
+
 
