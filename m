@@ -1,186 +1,188 @@
-Return-Path: <linux-kernel+bounces-882453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC2A0C2A847
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:15:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 38641C2A826
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:13:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CCBE3A9FF5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:06:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3B613BCCA4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69ED523A984;
-	Mon,  3 Nov 2025 08:06:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B1C32D838C;
+	Mon,  3 Nov 2025 08:06:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="asBNxSJP"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zi8CXFTc";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TKVA5B8h";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="018BWjI4";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OUQNZkcn"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D0D287503
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 08:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1436C2D7D41
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 08:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762157193; cv=none; b=Gm8jlO0m7U4kEAC1m55U9JUZYrx4OEIp4jj+13t4Rj3q3q3P4adWNpfAD/fSli2ZsGLF8oMFt24ffhkTyOcT3jTgfP07idmw/VY7NsV7g5b8QiPVSR7p95pu2tb6qbr+MtAFv8pUOvvktpsOBPWfs0t0p6xt4m9wLdhwqkUov+w=
+	t=1762157204; cv=none; b=YDARL4Yj+1N88v8giJCrNVXiDNdN2GS59Sn406zfvkhIfVpJzSqu2PWycGlzkzPt5GMjUp5p1eOBAvM1i3yit2DPbFKbNeZIYiT0hfwnE/vtx5WF9C+F/2BIXNRDW+ddrTwcFoNeBCncetJ6zLy2AovrV4rlICk1H66y69v2zeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762157193; c=relaxed/simple;
-	bh=TJPUJVukbfWR3gfsffRUjF/8PW9lialw9HyxVO/Phco=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GbfRUczj1kbu2q5Gx8W9DGhFWC+hgxXxonr1AXX2hBAoG2bdXmweXQvh3sd4bnxLNFdLCCL1UuoL9rvpYSW4U76ZGa7KH82qZby3rrz0zsqBxvqKrHwky5WvvsWUmo6o0fFhjQQNpTSdiGYseyRWz4NBme+mq84sZ8b/iEsWW7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=asBNxSJP; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-78665368a5cso12123547b3.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 00:06:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762157190; x=1762761990; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7NJXJy4cAI4/mrSwSPYVdQe2DZkHcINj3IyYJCGJBc4=;
-        b=asBNxSJPMX0bW/hp8od5u6hOX+WUcGdc+pnZQKNZ6gLVlYO1j1eY2sFNWyPWv68Ib2
-         CJdmFD5cZcxVQpa5yOgjpdzl0e+zrr85rQRctyi96t3FRKyfJn5xcD4LR/bAxuZhyyki
-         TlRQ0qm4y+3s7CeVlcRJ0Tniif/EHIBdITvTXZHXP5RFCfHk+oNOSz64G/oGVlFeL6Bl
-         0KqECJrS5zTzjAbE9Uhu9Zy55rOr7pgTZtb+NNtO3mLBg5bfElwUy0yRxPC66+2CWtRj
-         1FA3PxbtwcETtBAs1O6A5sUB+AtOsEmIxnlC3AjO2mWXxvhck8n/MUIY8j18LcbupRqu
-         q6mA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762157190; x=1762761990;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7NJXJy4cAI4/mrSwSPYVdQe2DZkHcINj3IyYJCGJBc4=;
-        b=o4xSjWK/v5OpguHQUGRH6oPuVDTes0CoXHZ15sCTAWWDbs6HtcY60EYo93Qf/j8cay
-         ax7iEc3ZB0kDw+UBPKKvkehWZwU2FZq2z3DI6ZWF/oVBZuRgdZvymOPOq2NU5IpTZZrc
-         /WD9Pc7OFk0R7niocGqbTxnJosu+4DeKdrn9FJgVTf7IiJmyx7zZ1lDv++34B+ZqPAAz
-         Yn3HSZQzyAa5JtGoUlG9BcLPC620LeoJmn8ixGRBr1nDEgn4lXzqve7KyvJwNGXpGthj
-         QPPCjRiyTM9VEXv0inQJFF73fEiE6GPVMwqfFWEDF7NxuS+qcNeZUugDaTLxQ8V0OqC1
-         pPXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX08fIeQQEJSSdfpVu8B2IoNdeiKswg0gn/7r7M4VTzs576Li9i5j9+SRN3zHmUJ7Dmyc50lweoZTN9dwc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3NSlbtrpRWzHeJnKzMxo56cvfcD9TDha2VmyMSSXTE/n+E4WM
-	RjvMPoYB9EIgtQI/zO2YP0ZkBOn+7806Oe+h5fAP5/wAOCNA6V0CKHhwH2KGXeo1fplRgF8y28c
-	cSVB9WQg9JtTPctXA7NRroCKZlHplSoVS1pz5iSIR
-X-Gm-Gg: ASbGnctY0Sv+Px705fuotB8ygjY2oSy8Cjl+v0N43VDKMrgaHGSKyCDA3jn60ksOkE7
-	0/dac0BYEs/hFCvYQmqjw6n08VKzytPrZEg11B9ghDkL85pO7gHShPfJ8PqJJpdMTb6lhpqhINh
-	wJeZ9j+ucP3QL89QAnt+xLKjcnZMAwmQz5POCPWBEoh1VxwNsK2zo9xJlx8hGQ0WYy+WkzvZ8x9
-	PUC3r6dAwhdoGjT68sWdAw/+Dtxbbb8usZ8/WFwsKnP+DiPILGNBjvKweo=
-X-Google-Smtp-Source: AGHT+IEsP1MAEGN+2YqHUmUaqQaVV+TIUE+RtPGUJjC296VRFo5DRFM5ayW9vTRA+F1L+iNilpI+yRUdSzgulPYBC14=
-X-Received: by 2002:a05:690c:6d8c:b0:786:4231:5e90 with SMTP id
- 00721157ae682-7864856fc26mr99070117b3.56.1762157190044; Mon, 03 Nov 2025
- 00:06:30 -0800 (PST)
+	s=arc-20240116; t=1762157204; c=relaxed/simple;
+	bh=orVO1CjzazfzcM1r2PIirkigYX7G72QMN2kLOC6NvoU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GDDrkW65lryajVgAAn28RlKOLo+NZn3+6DN4U1mc0fc2Y4jSNCkKlfoJCNTd7Awd8oMLyngMdAM0wmTR5M85uDPcB8JSpuwqSpp/PB8wLPoghWNwXdQm/mhzLy10BGR4M6Dyusi/P7iOzYyYmBuaIoqAC+raM++blpnsezUPidE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zi8CXFTc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TKVA5B8h; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=018BWjI4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OUQNZkcn; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E9E9E218E8;
+	Mon,  3 Nov 2025 08:06:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762157198; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zCkJf14wqV0F4XHGtpv6IsvGx/JTM7DNUNTENvxVbxU=;
+	b=zi8CXFTcQaBKBEpxv7jW3Umveo7VgqtbjbyACZo1GbTjQwPDcorm1dOoX2Fkzlq0Le8W7Z
+	btudHizqz5EvwlqXOQ/UDkPeQrzjIWq1c/nwBIaBQ3RAWu7RZYky7dzQmT0mOXdF3LVAKS
+	fboMrOzYBm+sRlW2IjQOuDoi3rtNtNI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762157198;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zCkJf14wqV0F4XHGtpv6IsvGx/JTM7DNUNTENvxVbxU=;
+	b=TKVA5B8hPFYXxiy/uI/8Rk5SdCozQnbaYE7+LwVfmJ06p/Xb+Lcc3AAxwO6+v525r62EHA
+	3xHAl02CyVW1tXAA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=018BWjI4;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=OUQNZkcn
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1762157197; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zCkJf14wqV0F4XHGtpv6IsvGx/JTM7DNUNTENvxVbxU=;
+	b=018BWjI4UciYupwdOCuccVBXRZ2XDz4ea6ZHTB/DxoByTkfFiQn9aVNlepUhZZZVL3TB3C
+	hWx8qqKRjPqp/S72VAwSZxlLZF0Xp2V7sgAz3DYOkuw8nW7JorvnSi5rwKVh4mFeMylsPN
+	X1E37pTBeIXIrj963W1YYXZBYaLdK5A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1762157197;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zCkJf14wqV0F4XHGtpv6IsvGx/JTM7DNUNTENvxVbxU=;
+	b=OUQNZkcnZxVs3XQevIvUo8kEsC/6j+XzxjZ9NihmdZtp/sOAR2FXLvP18hvLA5VBsBmA4j
+	gutiWwhxOU80b7DQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DA6F91364F;
+	Mon,  3 Nov 2025 08:06:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 3gNSNY1iCGnNWQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 03 Nov 2025 08:06:37 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 58F69A2A61; Mon,  3 Nov 2025 09:06:33 +0100 (CET)
+Date: Mon, 3 Nov 2025 09:06:33 +0100
+From: Jan Kara <jack@suse.cz>
+To: libaokun@huaweicloud.com
+Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
+	jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com, 
+	mcgrof@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com, 
+	libaokun1@huawei.com
+Subject: Re: [PATCH 05/25] ext4: enable DIOREAD_NOLOCK by default for BS > PS
+ as well
+Message-ID: <q7podhkdz5bnjif6tm2ldwkdvzafwqc37u67eepajoreu4x2zx@3zypdbhvmouk>
+References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
+ <20251025032221.2905818-6-libaokun@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202509291645.fcBIaXMb-lkp@intel.com> <CANn89i+Bt5Coi3YOj2JjX4KWQN4tJJpyYD3EabS274T8bQwjSw@mail.gmail.com>
-In-Reply-To: <CANn89i+Bt5Coi3YOj2JjX4KWQN4tJJpyYD3EabS274T8bQwjSw@mail.gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 3 Nov 2025 00:06:18 -0800
-X-Gm-Features: AWmQ_bll77Tupv_60G7NMZkMDfIgtallI03szpNVDD4Eb724Mc_GXOztpPtFWkc
-Message-ID: <CANn89iLrM8ZJyJHYJH8Sbuj9F9OAKZn6srtgBXwU2XmMfJ-+BQ@mail.gmail.com>
-Subject: Re: include/net/sock.h:2098:16: sparse: sparse: cast to non-scalar
-To: kernel test robot <lkp@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	Jakub Kicinski <kuba@kernel.org>, =?UTF-8?Q?Maciej_=C5=BBenczykowski?= <maze@google.com>, 
-	Will Deacon <will@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, linux-alpha@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251025032221.2905818-6-libaokun@huaweicloud.com>
+X-Rspamd-Queue-Id: E9E9E218E8
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
+X-Spam-Score: -0.21
+X-Spam-Level: 
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-0.21 / 50.00];
+	SEM_URIBL(3.50)[huaweicloud.com:email];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	BAD_REP_POLICIES(0.10)[];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	R_DKIM_ALLOW(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_NONE(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,huaweicloud.com:email,huawei.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Spamd-Bar: /
 
-On Mon, Sep 29, 2025 at 2:49=E2=80=AFAM Eric Dumazet <edumazet@google.com> =
-wrote:
->
-> On Mon, Sep 29, 2025 at 1:58=E2=80=AFAM kernel test robot <lkp@intel.com>=
- wrote:
-> >
-> > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.=
-git master
-> > head:   e5f0a698b34ed76002dc5cff3804a61c80233a7a
-> > commit: c51da3f7a161c6822232be832abdffe47eb55b4c net: remove sock_i_uid=
-()
-> > date:   3 months ago
-> > config: alpha-randconfig-r122-20250929 (https://download.01.org/0day-ci=
-/archive/20250929/202509291645.fcBIaXMb-lkp@intel.com/config)
-> > compiler: alpha-linux-gcc (GCC) 15.1.0
-> > reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/arc=
-hive/20250929/202509291645.fcBIaXMb-lkp@intel.com/reproduce)
-> >
-> > If you fix the issue in a separate patch/commit (i.e. not just a new ve=
-rsion of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes: https://lore.kernel.org/oe-kbuild-all/202509291645.fcBIaXMb-l=
-kp@intel.com/
-> >
-> > sparse warnings: (new ones prefixed by >>)
-> >    net/packet/diag.c: note: in included file (through include/linux/soc=
-k_diag.h):
-> > >> include/net/sock.h:2098:16: sparse: sparse: cast to non-scalar
-> >    include/net/sock.h:2098:16: sparse: sparse: cast from non-scalar
-> > --
-> >    net/packet/af_packet.c:1099:13: sparse: sparse: context imbalance in=
- '__packet_lookup_frame_in_block' - different lock contexts for basic block
-> >    net/packet/af_packet.c:2541:17: sparse: sparse: context imbalance in=
- 'tpacket_rcv' - unexpected unlock
-> >    net/packet/af_packet.c: note: in included file (through include/net/=
-inet_sock.h, include/net/ip.h):
-> > >> include/net/sock.h:2098:16: sparse: sparse: cast to non-scalar
-> >    include/net/sock.h:2098:16: sparse: sparse: cast from non-scalar
-> >
-> > vim +2098 include/net/sock.h
-> >
-> > ^1da177e4c3f415 Linus Torvalds 2005-04-16  2094
-> > e84a4927a404f36 Eric Dumazet   2025-06-20  2095  static inline kuid_t s=
-k_uid(const struct sock *sk)
-> > e84a4927a404f36 Eric Dumazet   2025-06-20  2096  {
-> > e84a4927a404f36 Eric Dumazet   2025-06-20  2097         /* Paired with =
-WRITE_ONCE() in sockfs_setattr() */
-> > e84a4927a404f36 Eric Dumazet   2025-06-20 @2098         return READ_ONC=
-E(sk->sk_uid);
-> > e84a4927a404f36 Eric Dumazet   2025-06-20  2099  }
-> > e84a4927a404f36 Eric Dumazet   2025-06-20  2100
-> >
-> > :::::: The code at line 2098 was first introduced by commit
-> > :::::: e84a4927a404f369c842c19de93b216627fcc690 net: annotate races aro=
-und sk->sk_uid
-> >
-> > :::::: TO: Eric Dumazet <edumazet@google.com>
-> > :::::: CC: Jakub Kicinski <kuba@kernel.org>
-> >
-> > --
-> > 0-DAY CI Kernel Test Service
-> > https://github.com/intel/lkp-tests/wiki
->
-> This seems an Alpha issue to me ?
->
-> I can submit the following fix if there is an agreement.
->
-> diff --git a/arch/alpha/include/asm/rwonce.h b/arch/alpha/include/asm/rwo=
-nce.h
-> index 35542bcf92b3a883df353784bcb2d243475ccd91..b6801cd2ace962e11624737ed=
-334a5aeb30478b7
-> 100644
-> --- a/arch/alpha/include/asm/rwonce.h
-> +++ b/arch/alpha/include/asm/rwonce.h
-> @@ -22,10 +22,10 @@
->   */
->  #define __READ_ONCE(x)                                                 \
->  ({                                                                     \
-> -       __unqual_scalar_typeof(x) __x =3D                                =
- \
-> -               (*(volatile typeof(__x) *)(&(x)));                      \
-> +       __auto_type __x =3D                                              =
- \
-> +               (*(const volatile __unqual_scalar_typeof(x) *)&(x));    \
->         mb();                                                           \
-> -       (typeof(x))__x;                                                 \
-> +       __x;                                                            \
->  })
->
->  #endif /* CONFIG_SMP */
+On Sat 25-10-25 11:22:01, libaokun@huaweicloud.com wrote:
+> From: Baokun Li <libaokun1@huawei.com>
+> 
+> The dioread_nolock related processes already support large folio, so
+> dioread_nolock is enabled by default regardless of whether the blocksize
+> is less than, equal to, or greater than PAGE_SIZE.
+> 
+> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
 
-Gentle ping.
+Looks good. Feel free to add:
 
-Is alpha arch still alive ?
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/ext4/super.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index 894529f9b0cc..aa5aee4d1b63 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -4383,8 +4383,7 @@ static void ext4_set_def_opts(struct super_block *sb,
+>  	    ((def_mount_opts & EXT4_DEFM_NODELALLOC) == 0))
+>  		set_opt(sb, DELALLOC);
+>  
+> -	if (sb->s_blocksize <= PAGE_SIZE)
+> -		set_opt(sb, DIOREAD_NOLOCK);
+> +	set_opt(sb, DIOREAD_NOLOCK);
+>  }
+>  
+>  static int ext4_handle_clustersize(struct super_block *sb)
+> -- 
+> 2.46.1
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
