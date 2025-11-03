@@ -1,104 +1,135 @@
-Return-Path: <linux-kernel+bounces-883517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFB22C2DA9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:25:29 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 479D6C2DAA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:26:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DBE53AE240
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:25:28 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id E14873486B6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9C72877F2;
-	Mon,  3 Nov 2025 18:25:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="C/nXSjfP"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2470B17AE11
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 18:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06920288C25;
+	Mon,  3 Nov 2025 18:25:55 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1297517AE11;
+	Mon,  3 Nov 2025 18:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762194324; cv=none; b=s07SUCAAZBEsucZlAf4b9cEqMPZIWrL7OixPjvjx01zRLEIyWGgHckK7KtgxCh7xbdWtPSj33Q3r80LGUXqHO5HE62gwOEoE4KeE2Qy7zaR/sDE5U7j1Yhp91peZG2pZJg681GnLODLon5fHtcQBfR9kCYE3DpNydK/5EnAueEA=
+	t=1762194354; cv=none; b=d6eTRDbrjTBOxwymH2uOuby930g/lQr8SnHrCmZjnqHdRTFG1lVeIXNLogIkeatnm8Y4Vj/lV4sRWHMp4+guk1K7qXuNADaoSqokr3I9FTAa8LkiIUXgFlkf3Pf6JrB4aRN4uEAf7DKaDLYG85zrj+Ig0QWf91+4QPb7udRdac4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762194324; c=relaxed/simple;
-	bh=+ZiAF22RG8SE4/22xvinAMCOZqVTMfiP+2XRMc9Ytro=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q+Qr3nB+CnzwtjlKoipkdDIk1gscxDhSXIao6ed2Smk9MUJFZIng50W3H2hKH9TiwdLY0E65k1Gp39uStoqo4lQQbctJwzz23D6lOvODsqFLfl/Tt+27ckO3oe5Q8OrnMaVV7SyuWq9EkNJWg7uIqFwT3s8ZYm6xQ+p/fv+aFSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=C/nXSjfP; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9351540E01A5;
-	Mon,  3 Nov 2025 18:25:17 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id UbSHcfT87xcm; Mon,  3 Nov 2025 18:25:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1762194314; bh=eJWqppVKbxIicm6T21Iau17wwrjoNq1DoEbwbkFXN5c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=C/nXSjfP3r64/tur+d4ojv7T56X+mU8kIjC0G7QnPLQpZZjzVomh4Syca8/el1dsy
-	 QdrYam1zJIKxsj0OnSZ82J7a8cQS3QX/ac3LvUpzrti1Kz1z0sCmPhjw56gOtEo28i
-	 HikArqY24+THO91+NbgzSWS7OWxgtmcorsUzU3h4MZuniqavNfgot5RQgizAMprp9D
-	 WA4Mx//neAnyJNl52dN4CaMjDBOmZR4hPwXkvkZBWsDZ/2ZjZ2Nhx3K31q5ydYwB7X
-	 RgUjN5LitTRQTY8Y8/k1vLEQe5YGAO8nAK2PNmBxA5wDNv2KNrRvxPV33thoiDKEbZ
-	 iDo8Z/I642AQuOH3wIwbTdSSdp8K1rDeLabbA5ui3l0sw96H3cZpDxqMCbs9Qpe39X
-	 TtylIh0Hj1i6Fg5tJBBaFjdswr2wnc9HzTUlG9f3k3DByaxyDRS1Yf/8fw7EENIaNd
-	 YDA2VbKrLtGKEwr1ur34oq+THJem0EWEoasVsImLygujZjiJGn/MWWPSp/JlrlJzv8
-	 IJ54cgdA+Smg6XdYlvwz8Ji0D5ACSAz3aNlZkLRWMwGxVeGDH1GTzkH6O6nUoQ4vXm
-	 m8aDzWi3FTTAkLzR/xjYA0jcXRq8PilpyiamvM1usjtMffjqgw97pAtopkWl/yxWPu
-	 Bf4Z8bO78ZBdSRFgr7RD797U=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 36FEA40E00DA;
-	Mon,  3 Nov 2025 18:25:02 +0000 (UTC)
-Date: Mon, 3 Nov 2025 19:24:53 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Kaplan, David" <David.Kaplan@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>, Alexander Graf <graf@amazon.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 04/56] x86/bugs: Reset spectre_v1 mitigations
-Message-ID: <20251103182453.GPaQjzdVCYTKRb7H5Y@fat_crate.local>
-References: <20251013143444.3999-1-david.kaplan@amd.com>
- <20251013143444.3999-5-david.kaplan@amd.com>
- <20251029115719.GEaQIBH1j4vVEQLas9@fat_crate.local>
- <LV3PR12MB92654784A9E2D5E5639B875394FAA@LV3PR12MB9265.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1762194354; c=relaxed/simple;
+	bh=6Xh/82epPYCxQQw2FW1rqZLFSQMgbCtmljXqcyGvdlI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=agVIHWd9HHdxQDQ1yi3Nd3Z/5WHf4uHY1CHyq1BQ2zRJICk2Va/rx6qIvxPWNLj13XJbX6yhQcm9XpSFJdKZekQIyruwWLPx1rj5hqZWWFkDszHHNZ462dYI5F2+lk4jdOvTRI3ZT0i+Hjgo4t37S+DDzgpBgWA94T7Pv/INryY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7EF862A6B;
+	Mon,  3 Nov 2025 10:25:43 -0800 (PST)
+Received: from [10.1.30.16] (unknown [10.1.30.16])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E06143F694;
+	Mon,  3 Nov 2025 10:25:43 -0800 (PST)
+Message-ID: <334d6272-a1c2-4075-a956-3f41908371a6@arm.com>
+Date: Mon, 3 Nov 2025 18:25:41 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <LV3PR12MB92654784A9E2D5E5639B875394FAA@LV3PR12MB9265.namprd12.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 08/12] arm64: mm: replace TIF_LAZY_MMU with
+ in_lazy_mmu_mode()
+To: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ David Woodhouse <dwmw2@infradead.org>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+ Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
+References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
+ <20251029100909.3381140-9-kevin.brodsky@arm.com>
+ <b6f5b3cc-93a0-408a-b7e0-72462f3fd549@redhat.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <b6f5b3cc-93a0-408a-b7e0-72462f3fd549@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 29, 2025 at 01:48:03PM +0000, Kaplan, David wrote:
-> We have cross-dependencies around the *selection* of mitigations, but not
-> around the application of them.  There is no ordering requirement around the
-> *_apply_mitigation() functions.  As such I would not expect (and have not
-> observed) any ordering requirements around the reset functions.
+On 03/11/2025 16:03, David Hildenbrand wrote:
+> On 29.10.25 11:09, Kevin Brodsky wrote:
+>> The generic lazy_mmu layer now tracks whether a task is in lazy MMU
+>> mode. As a result we no longer need a TIF flag for that purpose -
+>> let's use the new in_lazy_mmu_mode() helper instead.
+>>
+>> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+>> ---
+>>   arch/arm64/include/asm/pgtable.h     | 16 +++-------------
+>>   arch/arm64/include/asm/thread_info.h |  3 +--
+>>   2 files changed, 4 insertions(+), 15 deletions(-)
+>>
+>> diff --git a/arch/arm64/include/asm/pgtable.h
+>> b/arch/arm64/include/asm/pgtable.h
+>> index 535435248923..61ca88f94551 100644
+>> --- a/arch/arm64/include/asm/pgtable.h
+>> +++ b/arch/arm64/include/asm/pgtable.h
+>> @@ -62,30 +62,21 @@ static inline void emit_pte_barriers(void)
+>>     static inline void queue_pte_barriers(void)
+>>   {
+>> -    unsigned long flags;
+>> -
+>>       if (in_interrupt()) {
+>>           emit_pte_barriers();
+>>           return;
+>>       }
+>>   -    flags = read_thread_flags();
+>> -
+>> -    if (flags & BIT(TIF_LAZY_MMU)) {
+>> -        /* Avoid the atomic op if already set. */
+>> -        if (!(flags & BIT(TIF_LAZY_MMU_PENDING)))
+>> -            set_thread_flag(TIF_LAZY_MMU_PENDING);
+>> -    } else {
+>> +    if (in_lazy_mmu_mode())
+>> +        test_and_set_thread_flag(TIF_LAZY_MMU_PENDING);
+>
+> You likely don't want a test_and_set here, which would do a
+> test_and_set_bit() -- an atomic rmw.
 
-This sounds like a single undo-function should be fine...
+Ah yes good point, the new version would do an atomic RMW in all cases.
+Simpler code but also slower :/
 
--- 
-Regards/Gruss,
-    Boris.
+>
+> You only want to avoid the atomic write if already set.
+>
+> So keep the current
+>
+>     /* Avoid the atomic op if already set. */
+>     if (!(flags & BIT(TIF_LAZY_MMU_PENDING)))
+>         set_thread_flag(TIF_LAZY_MMU_PENDING); 
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Pretty much, since we're now only considering one flag we can simplify
+it to:
+
+if (!test_thread_flag(TIF_LAZY_MMU_PENDING))
+    set_thread_flag(TIF_LAZY_MMU_PENDING);
+
+- Kevin
 
