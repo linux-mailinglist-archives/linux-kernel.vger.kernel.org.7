@@ -1,139 +1,84 @@
-Return-Path: <linux-kernel+bounces-882344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B7ABC2A3AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 07:50:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 842F3C2A3B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 07:53:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ED41E4E25C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 06:50:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4534B3AE165
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 06:53:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C870B8488;
-	Mon,  3 Nov 2025 06:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=emh-metering.com header.i=@emh-metering.com header.b="ei12Vmxg"
-Received: from pmg.emh-metering.com (pmg.emh-metering.com [62.153.85.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14AB328DF07;
+	Mon,  3 Nov 2025 06:53:06 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D081D416E;
-	Mon,  3 Nov 2025 06:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.153.85.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49688236453
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 06:53:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762152632; cv=none; b=cbVyN2kXKeIOMcX3UerNwYDQV5en3QfF0StJ2HkVPCLKy83c/wzzMxfkL2sPJzwZrcyvHe6uujONpKsT5f2YLBLZm9+yQNtF80njOZ/cMDKC1ecoKVLmyjbRnHq5MgLf7dNe2QhdiNw301Np3WcFvvqK4ko70vYkApxxY2kZLf4=
+	t=1762152785; cv=none; b=ou+TRYWH65oe6YPgvL0coH4JEHmYE3W+RKiilKbFsqf4UoLosiUSW112M2I7KK9oB9mh0ZruzuNNwIDBoFNTTYsBsx/uqGpEjSQTn1d/fb+jkt9dLS8MsD1x94vjQKHYLr2e1BlrpeUXU8Cc6two6pBDe57YMaTnSm+ulDOpuc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762152632; c=relaxed/simple;
-	bh=YlYPpkNMv1k/7qhVYm/6KIJE4qBuiONsX4rIdUOhzng=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=i5R3t6a5Ife8Mvo6M2Is/8gNz26Hp0GJ8Y1b2mSdSgFqNAsRynNf9CFElEZD227EXbhGRAJba7OxJ5TjDAv93yO60eKqnqxF1u8ldIAPPZKT/XmOkJRwVR6+5acjVROJfsa77Kx2Vv4N6ICz9NwV6J2nCQ2PgI3VsJmmGW3FFxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=emh-metering.com; spf=pass smtp.mailfrom=emh-metering.com; dkim=pass (2048-bit key) header.d=emh-metering.com header.i=@emh-metering.com header.b=ei12Vmxg; arc=none smtp.client-ip=62.153.85.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=emh-metering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emh-metering.com
-Received: from pmg.emh-metering.com (localhost.localdomain [127.0.0.1])
-	by pmg.emh-metering.com (Proxmox) with ESMTP id 79533201269;
-	Mon, 03 Nov 2025 07:50:21 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	emh-metering.com; h=cc:content-transfer-encoding:content-type
-	:content-type:date:from:from:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=EMH; bh=EB2O6kTVDp
-	xjxa6R1ervwAhb64BXCh6IFZiwSALTWaw=; b=ei12VmxgEys3hOhNzAqfWfZpUW
-	e8SIzsI7bzqQyiatL4os7UmgkilXHKCXIh0JLH3bQzfuxkMTU1zMfBPTcJwDOCRd
-	ReqAWzJuwjoWpCIwpYxc7M8wmtawa71/EORM6NFxDYV2lvN/bNuuFZYHcpHP3KG6
-	6lrUHsAPhzYD6YsWhRBEVgSBEdtTelGtaEqbq8nBJ8X8pfdmOswTIzwqH41ab1De
-	zKV95vvd+svWUeJhbVNsJKCQVC+LPinj5x6LfvN6F3KLHhPElDpRk0I5kjyakx12
-	pnqvuFEGXZGflaKwXb9esY/JU3FqffrOvbmyrW87UJOk3aPxhDmdq0wDrBlg==
-From: "Krebs, Olaf" <Olaf.Krebs@emh-metering.com>
-To: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
-	<festevam@gmail.com>, "open list:PWM SUBSYSTEM" <linux-pwm@vger.kernel.org>,
-	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
-	<linux-arm-kernel@lists.infradead.org>, open list
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v3] Fix IMX PWM period setting
-Thread-Topic: [PATCH v3] Fix IMX PWM period setting
-Thread-Index: AQHcTI3pZaT6LbFQuk2XOLVoRSV617TggtSg
-Date: Mon, 3 Nov 2025 06:50:20 +0000
-Message-ID: <1b071599b84c4519a81990fbfe09782b@emh-metering.com>
-References: <20251103064813.522840-1-user@jenkins>
-In-Reply-To: <20251103064813.522840-1-user@jenkins>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1762152785; c=relaxed/simple;
+	bh=rtwiLg39jRHrW/2IMi+S4pdRGNfonuk7Sgylcilz5pY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=V46TmzhMldB5xnVGnddJ5uFqgbiLfh3zhl1a9iJID6uBapgZ1OwZZ12+tzq4fAMnTo2xWnaAA2SEPC4ZdrUakhIi+FXPC84qLkK5Ya92koHG5JSygH6ouKYae/Q4rHKCpiW9mGjWKlNs7YSKt47y3bujtILtetXEBcl6pl41IRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-4330ead8432so26674785ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 22:53:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762152783; x=1762757583;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IKpPeoyHlt9rqty8Rc9OqAhBoPwC6oagWF1/FLdQWDc=;
+        b=X+By4ApSCvcOk5YKvwZBWJFOWUzknThJflAxMohKhYnOVlWdt7RwRDSMohlJhPzuwW
+         S4sgNCKbfBH44hp93jZ9MEj2TbtLL/A6az6WVoZ4qU6e3E8dqbnZaaeGLQM9vJKptV2s
+         CWyabnBLao+osgcZApikvvyZLiaV2FAHHa7wUHc00uv3cJ2dOsFBaL7WmHxFPPURM5Dm
+         xWZplEEufnmYKG3bWh1TCpf8Sbkg9Yb3ArqjhS4acGEOgtprWQ20m6EltBfPKYLUhUi5
+         BeE6IGs7KN6SQf53/0xVTNYkxrsuipkVEmC+8fHqfrF1zLflmoCQ88aD+XmlbYtiuiS2
+         iF+A==
+X-Gm-Message-State: AOJu0YzL1Bv5YVvtBLz0ou9exPQ9lKaKAfqAsxVukoOQF4RcnJuGfLWl
+	8NDvvakN/I14VeJ3TXC0uj8qLvOaULUPPpZFaEngWLMAypET35nhTwFRWGg3JvlbJImjhSf60e/
+	4KJneoaewupFwKW9n5GTKd3e3F7mbLpGdRn5a9WzXGQizkO8oee97k7D0SDo=
+X-Google-Smtp-Source: AGHT+IHzhQNePd8zABFwSC4Wcg336jJCapFw2t/QZLOJPT3MP8WBBu6o9ZACB3oYazCE5Q9QPtjbZPRCGskc7FfwHbbBrcjKL5/g
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:214a:b0:431:d726:9efd with SMTP id
+ e9e14a558f8ab-4330d138fccmr171223685ab.12.1762152783533; Sun, 02 Nov 2025
+ 22:53:03 -0800 (PST)
+Date: Sun, 02 Nov 2025 22:53:03 -0800
+In-Reply-To: <20251103064432.3767881-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6908514f.050a0220.29fc44.0035.GAE@google.com>
+Subject: Re: [syzbot] [nbd?] KASAN: slab-use-after-free Write in recv_work (3)
+From: syzbot <syzbot+56fbf4c7ddf65e95c7cc@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Olaf Krebs <okr@smgw.emh-meter.de>
+Hello,
 
-If a second PWM is requested by a driver before the first is configured, tr=
-ying to configure any of these results in .user_count > 1 and thus the conf=
-iguration fails.
-Fix that by only erroring out by additionally checking if the period is act=
-ually configured.
+syzbot tried to test the proposed patch but the build/boot failed:
 
-Exapmle: Using of 3 PWM channels to control a RGB LED.
+failed to run ["make" "KERNELVERSION=syzkaller" "KERNELRELEASE=syzkaller" "LOCALVERSION=-syzkaller" "-j" "64" "ARCH=x86_64" "LLVM=1" "bzImage"]: exit status 2
 
-DTS-Config for an imx93-Board:
-	...
-	led-controller {
-		compatible =3D "pwm-leds-multicolor";
-		multi-led {
-			label =3D "RGBled";
-			color =3D <LED_COLOR_ID_RGB>;
-			function =3D LED_FUNCTION_INDICATOR;
-			max-brightness =3D <255>;
-			led-red {
-				pwms =3D <&tpm5 0 1000000 PWM_POLARITY_INVERTED>;
-				color =3D <LED_COLOR_ID_RED>;
-			};
-			led-green {
-				pwms =3D <&tpm6 2 1000000 PWM_POLARITY_INVERTED>;
-				color =3D <LED_COLOR_ID_GREEN>;
-			};
-			led-blue {
-				pwms =3D <&tpm5 1 1000000 PWM_POLARITY_INVERTED>;
-				color =3D <LED_COLOR_ID_BLUE>;
-			};
-		};
-	};
-	...
 
-Without this patch, an BUSY-error message is generated during initializatio=
-n.
+Tested on:
 
-[    7.395326] leds_pwm_multicolor led-controller: error -EBUSY: failed to =
-set led PWM value for (null)
-[    7.405167] leds_pwm_multicolor led-controller: probe with driver leds_p=
-wm_multicolor failed with error -16
-
-Signed-off-by: Olaf krebs <olaf.krebs@emh-metering.com>
----
- drivers/pwm/pwm-imx-tpm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pwm/pwm-imx-tpm.c b/drivers/pwm/pwm-imx-tpm.c index 5b=
-399de16d60..411daa7711f1 100644
---- a/drivers/pwm/pwm-imx-tpm.c
-+++ b/drivers/pwm/pwm-imx-tpm.c
-@@ -190,7 +190,7 @@ static int pwm_imx_tpm_apply_hw(struct pwm_chip *chip,
- 		 * there are multiple channels in use with different
- 		 * period settings.
- 		 */
--		if (tpm->user_count > 1)
-+		if ((tpm->user_count > 1) && (tpm->real_period !=3D 0))
- 			return -EBUSY;
-=20
- 		val =3D readl(tpm->base + PWM_IMX_TPM_SC);
---
-2.47.3
-
+commit:         98231209 Add linux-next specific files for 20251103
+git tree:       linux-next
+kernel config:  https://syzkaller.appspot.com/x/.config?x=55e89517f3847929
+dashboard link: https://syzkaller.appspot.com/bug?extid=56fbf4c7ddf65e95c7cc
+compiler:       Debian clang version 20.1.8 (++20250708063551+0c9f909b7976-1~exp1~20250708183702.136), Debian LLD 20.1.8
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17d41e14580000
 
 
