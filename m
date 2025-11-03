@@ -1,261 +1,92 @@
-Return-Path: <linux-kernel+bounces-882739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC581C2B4E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:24:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D87B5C2B4C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:23:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7978A4F3E5F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:22:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80F1918922A1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B39303A1C;
-	Mon,  3 Nov 2025 11:22:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95100279324;
+	Mon,  3 Nov 2025 11:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tKubhfGZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="uwm/QCgn"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05DC30171A;
-	Mon,  3 Nov 2025 11:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079062FC013
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 11:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762168927; cv=none; b=NaRA4DFgxX4g/lDOe6NV898xJ9TcSyyR34i1dR86Wj1QeTiSbodfOzcWMqpFPRGcmsv3v3lPPtVTT979h8nwe8YOJj2HwkVajlnER4icm4O1QNs3SJk5UavCNejEmXUuT4YiUgRlJVd++VMPhj7KHivLOI1/3o6wGWF+Dj5EjxA=
+	t=1762168984; cv=none; b=pWm0LJLwSN1I8Nnp8QY5CRTGcLmqUGzmVq/pMbz9Hb5ieuHvJLQeEMSsLdBrHcJjM3fznchXY2Po4YxGHTo44aro34VJi9DmNkgRb2g6sxaTsp3MPvMZDhkHoQi4dTOkhwW9yDNBHhKUGbZYpqKWIPih77D4gWNvin6z7c63KgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762168927; c=relaxed/simple;
-	bh=zZlF5mFS0f/Oq95hrQaLrWEgcxubppt7A+bJPXZk8eE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jmPsyzbDY/7IJXhm1k+75I7CwI6JRH52HF2v53ZVeCvMYMYDZxQKYR1AHZBVSWtVuN1PXU0VHAGOB4auMhDRbUmN3K7hczWVmKzvXNx6+oF7AvusCfmN34pydvsTJEtdvTm0wZzdumwR0SiK82G3jH6o+wUdXUT7H9US2HWNtls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tKubhfGZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDD38C4CEE7;
-	Mon,  3 Nov 2025 11:22:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762168926;
-	bh=zZlF5mFS0f/Oq95hrQaLrWEgcxubppt7A+bJPXZk8eE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tKubhfGZ1E3MStl1BRbOzd2Q8vO1r0ckcnlGtZNrHz/RNHeEjLwXnDvVXIV0c6TYz
-	 KNKPv8aObnAuFGp3Z55H2JmW2+92bW4vRZjS6IyEegkcbwMNRWtRu2UToQNkZtro3m
-	 g5ozgD6/Jbdhk/RN4XxvUAr9UjaLb5OhQbBUBf8tfJcg4LetahlzKygwN78VAKG3bY
-	 uLgDEg203RIUt31Ie/o7VV8TTHy94ZLqBWKZZl73KTARp2BEgaa5nygNPr90jeKk+F
-	 KHH2mNubBAoPfyxFwy7RZ6a4g/BnE+ssGrAYUXuaYea164SPMWY5wjkLX/RGhBvut8
-	 5GzQycJcNdYWg==
-Date: Mon, 3 Nov 2025 12:21:59 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-fsdevel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>, 
-	Jeff Layton <jlayton@kernel.org>, Jann Horn <jannh@google.com>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, Lennart Poettering <mzxreary@0pointer.de>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Amir Goldstein <amir73il@gmail.com>, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-kernel@vger.kernel.org, 
-	cgroups@vger.kernel.org, bpf@vger.kernel.org, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v4 18/72] nstree: add unified namespace list
-Message-ID: <20251103-morsch-kunst-e8d040981325@brauner>
-References: <20251029-work-namespace-nstree-listns-v4-0-2e6f823ebdc0@kernel.org>
- <20251029-work-namespace-nstree-listns-v4-18-2e6f823ebdc0@kernel.org>
- <87ecqhy2y5.ffs@tglx>
+	s=arc-20240116; t=1762168984; c=relaxed/simple;
+	bh=g1eQXAuOq7D0vC5sOgAHDAXaw32TdgOgB2f1s0mir7g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SMy4j/kJzb5YqaMBtMHKj/VIbmyQr5i5GvQs0lr65sewTlVE/aRuNRtfZ6dP7AJbmLbKZ7CJE2+Ug8N1OoN9WudFZQmsTKgzcZojsPumZwFcJQFJ4Vzcj/B28cKqNilRlIPQWnBmhecKwVjjYsPsvfuoFlWy5ww/1mpauzqraWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=uwm/QCgn; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4d0Thy6Pz1z9tg0;
+	Mon,  3 Nov 2025 12:22:58 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1762168978;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D/B5cSi2gvG8WS+XWr9mKVvN8RRTThm5Yd3lpHPpvD0=;
+	b=uwm/QCgnP04rIAxBD8Seqrz57i6K8YDaj8DN+RJUocasdzWorlz6UnN9ihGSnyD2RqKfrn
+	66U61IRN71+ga3IYZcP13G1k1PyQV92JpIUS3u6RuoF7CN5KlnUI1DdqC5DLsw8ndvHYWy
+	bfgaBpt8uUVCvBGGZhohsYLs8WcHt9nsjG1QbP6qHNWSdyhXhobXFBjqdJMbEfFdeZYYZK
+	fZ1/DleXb7BaPygi4BeZEF2gSrDtdEgPjQbiQZoT+HFHR3wXQ6M6hQfd0DfdlDDu0ZORyD
+	F4e2IKQ/oQV7ZeBIZXGOXUn8awEcuEJrMprA3/sJDfvxsh5Ay3LsMQgYvade1Q==
+Message-ID: <f1abafa2-97e8-49ad-abc8-c71914ac2212@mailbox.org>
+Date: Mon, 3 Nov 2025 12:22:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87ecqhy2y5.ffs@tglx>
+Subject: Re: [PATCH] drm: Add "min bpc" connector property
+To: Sasha McIntosh <sashamcintosh@google.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+Cc: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ trivial@kernel.org
+References: <20251031204534.659180-1-sashamcintosh@google.com>
+From: =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel.daenzer@mailbox.org>
+Content-Language: en-CA
+In-Reply-To: <20251031204534.659180-1-sashamcintosh@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-ID: de984f8e742b7750fb9
+X-MBO-RS-META: h31ojnu9ox344y78z53c4jqnpaxg5yw1
 
-On Sat, Nov 01, 2025 at 08:20:50PM +0100, Thomas Gleixner wrote:
-> Christian!
+On 10/31/25 21:45, Sasha McIntosh wrote:
+> [Why]
+> When playing HDR or WCG content, bandwidth constraints may force the
+> driver to downgrade to 6bpc, resulting in visual artifacts like banding.
 > 
-> On Wed, Oct 29 2025 at 13:20, Christian Brauner wrote:
-> > --- a/kernel/time/namespace.c
-> > +++ b/kernel/time/namespace.c
-> > @@ -488,6 +488,7 @@ struct time_namespace init_time_ns = {
-> >  	.ns.ns_owner = LIST_HEAD_INIT(init_time_ns.ns.ns_owner),
-> >  	.frozen_offsets	= true,
-> >  	.ns.ns_list_node = LIST_HEAD_INIT(init_time_ns.ns.ns_list_node),
-> > +	.ns.ns_unified_list_node = LIST_HEAD_INIT(init_time_ns.ns.ns_unified_list_node),
+> Userspace should be able to configure a minimum allowed bpc.
 > 
-> Sorry that I did not catch that earlier, but
-> 
->   1) this screws up the proper tabular struct initializer
-> 
->   2) the churn of touching every compile time struct each time you add a
->      new field and add the same stupid initialization to each of them
->      can be avoided, when you do something like the uncompiled below.
->      You get the idea.
-> 
-> Thanks,
+> [How]
+> Introduce the "min bpc" connector property so the user can limit the
+> minimum bpc. Mirror the "mac bpc" implementation.
 
-Nice! I'm stealing that and I'll slap a Suggested-by for you on it.
-Thanks!
+One issue with this is that the effective bpc of the link (as observed by the user) can be higher than the physical bpc, due to things like DSC or various dithering techniques. So requiring a minimum physical bpc could artificially exclude configurations which would otherwise work fine.
 
-> 
->         tglx
-> ---
->  fs/namespace.c            |    9 +--------
->  include/linux/ns_common.h |   12 ++++++++++++
->  init/version-timestamp.c  |    9 +--------
->  ipc/msgutil.c             |    9 +--------
->  kernel/pid.c              |    8 +-------
->  kernel/time/namespace.c   |    9 +--------
->  kernel/user.c             |    9 +--------
->  7 files changed, 18 insertions(+), 47 deletions(-)
-> 
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -5985,19 +5985,12 @@ SYSCALL_DEFINE4(listmount, const struct
->  }
->  
->  struct mnt_namespace init_mnt_ns = {
-> -	.ns.inum	= ns_init_inum(&init_mnt_ns),
-> +	.ns		= NS_COMMON_INIT(init_mnt_ns, 1, 1),
->  	.ns.ops		= &mntns_operations,
->  	.user_ns	= &init_user_ns,
-> -	.ns.__ns_ref	= REFCOUNT_INIT(1),
-> -	.ns.__ns_ref_active = ATOMIC_INIT(1),
-> -	.ns.ns_type	= ns_common_type(&init_mnt_ns),
->  	.passive	= REFCOUNT_INIT(1),
->  	.mounts		= RB_ROOT,
->  	.poll		= __WAIT_QUEUE_HEAD_INITIALIZER(init_mnt_ns.poll),
-> -	.ns.ns_list_node = LIST_HEAD_INIT(init_mnt_ns.ns.ns_list_node),
-> -	.ns.ns_unified_list_node = LIST_HEAD_INIT(init_mnt_ns.ns.ns_unified_list_node),
-> -	.ns.ns_owner_entry = LIST_HEAD_INIT(init_mnt_ns.ns.ns_owner_entry),
-> -	.ns.ns_owner = LIST_HEAD_INIT(init_mnt_ns.ns.ns_owner),
->  };
->  
->  static void __init init_mount_tree(void)
-> --- a/include/linux/ns_common.h
-> +++ b/include/linux/ns_common.h
-> @@ -129,6 +129,18 @@ struct ns_common {
->  	};
->  };
->  
-> +#define NS_COMMON_INIT(nsname, refs, active)						\
-> +{											\
-> +	.ns_type		= ns_common_type(&nsname),				\
-> +	.inum			= ns_init_inum(&nsname),				\
-> +	.__ns_ref		= REFCOUNT_INIT(refs),					\
-> +	.__ns_ref_active	= ATOMIC_INIT(active),					\
-> +	.ns_list_node		= LIST_HEAD_INIT(nsname.ns.ns_list_node),		\
-> +	.ns_unified_list_node	= LIST_HEAD_INIT(nsname.ns.ns_unified_list_node),	\
-> +	.ns_owner_entry		= LIST_HEAD_INIT(nsname.ns.ns_owner_entry),		\
-> +	.ns_owner		= LIST_HEAD_INIT(nsname.ns.ns_owner),			\
-> +}
-> +
->  int __ns_common_init(struct ns_common *ns, u32 ns_type, const struct proc_ns_operations *ops, int inum);
->  void __ns_common_free(struct ns_common *ns);
->  
-> --- a/init/version-timestamp.c
-> +++ b/init/version-timestamp.c
-> @@ -8,9 +8,7 @@
->  #include <linux/utsname.h>
->  
->  struct uts_namespace init_uts_ns = {
-> -	.ns.ns_type = ns_common_type(&init_uts_ns),
-> -	.ns.__ns_ref = REFCOUNT_INIT(2),
-> -	.ns.__ns_ref_active = ATOMIC_INIT(1),
-> +	.ns = NS_COMMON_INIT(init_uts_ns, 2, 1),
->  	.name = {
->  		.sysname	= UTS_SYSNAME,
->  		.nodename	= UTS_NODENAME,
-> @@ -20,11 +18,6 @@ struct uts_namespace init_uts_ns = {
->  		.domainname	= UTS_DOMAINNAME,
->  	},
->  	.user_ns = &init_user_ns,
-> -	.ns.inum = ns_init_inum(&init_uts_ns),
-> -	.ns.ns_list_node = LIST_HEAD_INIT(init_uts_ns.ns.ns_list_node),
-> -	.ns.ns_unified_list_node = LIST_HEAD_INIT(init_uts_ns.ns.ns_unified_list_node),
-> -	.ns.ns_owner_entry = LIST_HEAD_INIT(init_uts_ns.ns.ns_owner_entry),
-> -	.ns.ns_owner = LIST_HEAD_INIT(init_uts_ns.ns.ns_owner),
->  #ifdef CONFIG_UTS_NS
->  	.ns.ops = &utsns_operations,
->  #endif
-> --- a/ipc/msgutil.c
-> +++ b/ipc/msgutil.c
-> @@ -27,18 +27,11 @@ DEFINE_SPINLOCK(mq_lock);
->   * and not CONFIG_IPC_NS.
->   */
->  struct ipc_namespace init_ipc_ns = {
-> -	.ns.__ns_ref = REFCOUNT_INIT(1),
-> -	.ns.__ns_ref_active = ATOMIC_INIT(1),
-> +	.ns = NS_COMMON_INIT(init_ipc_ns, 1, 1),
->  	.user_ns = &init_user_ns,
-> -	.ns.inum = ns_init_inum(&init_ipc_ns),
-> -	.ns.ns_list_node = LIST_HEAD_INIT(init_ipc_ns.ns.ns_list_node),
-> -	.ns.ns_unified_list_node = LIST_HEAD_INIT(init_ipc_ns.ns.ns_unified_list_node),
-> -	.ns.ns_owner_entry = LIST_HEAD_INIT(init_ipc_ns.ns.ns_owner_entry),
-> -	.ns.ns_owner = LIST_HEAD_INIT(init_ipc_ns.ns.ns_owner),
->  #ifdef CONFIG_IPC_NS
->  	.ns.ops = &ipcns_operations,
->  #endif
-> -	.ns.ns_type = ns_common_type(&init_ipc_ns),
->  };
->  
->  struct msg_msgseg {
-> --- a/kernel/pid.c
-> +++ b/kernel/pid.c
-> @@ -71,18 +71,12 @@ static int pid_max_max = PID_MAX_LIMIT;
->   * the scheme scales to up to 4 million PIDs, runtime.
->   */
->  struct pid_namespace init_pid_ns = {
-> -	.ns.__ns_ref = REFCOUNT_INIT(2),
-> -	.ns.__ns_ref_active = ATOMIC_INIT(1),
-> +	.ns = NS_COMMON_INIT(init_pid_ns, 2, 1),
->  	.idr = IDR_INIT(init_pid_ns.idr),
->  	.pid_allocated = PIDNS_ADDING,
->  	.level = 0,
->  	.child_reaper = &init_task,
->  	.user_ns = &init_user_ns,
-> -	.ns.inum = ns_init_inum(&init_pid_ns),
-> -	.ns.ns_list_node = LIST_HEAD_INIT(init_pid_ns.ns.ns_list_node),
-> -	.ns.ns_unified_list_node = LIST_HEAD_INIT(init_pid_ns.ns.ns_unified_list_node),
-> -	.ns.ns_owner_entry = LIST_HEAD_INIT(init_pid_ns.ns.ns_owner_entry),
-> -	.ns.ns_owner = LIST_HEAD_INIT(init_pid_ns.ns.ns_owner),
->  #ifdef CONFIG_PID_NS
->  	.ns.ops = &pidns_operations,
->  #endif
-> --- a/kernel/time/namespace.c
-> +++ b/kernel/time/namespace.c
-> @@ -478,17 +478,10 @@ const struct proc_ns_operations timens_f
->  };
->  
->  struct time_namespace init_time_ns = {
-> -	.ns.ns_type	= ns_common_type(&init_time_ns),
-> -	.ns.__ns_ref	= REFCOUNT_INIT(3),
-> -	.ns.__ns_ref_active = ATOMIC_INIT(1),
-> +	.ns		= NS_COMMON_INIT(init_time_ns, 3, 1),
->  	.user_ns	= &init_user_ns,
-> -	.ns.inum	= ns_init_inum(&init_time_ns),
->  	.ns.ops		= &timens_operations,
-> -	.ns.ns_owner_entry = LIST_HEAD_INIT(init_time_ns.ns.ns_owner_entry),
-> -	.ns.ns_owner = LIST_HEAD_INIT(init_time_ns.ns.ns_owner),
->  	.frozen_offsets	= true,
-> -	.ns.ns_list_node = LIST_HEAD_INIT(init_time_ns.ns.ns_list_node),
-> -	.ns.ns_unified_list_node = LIST_HEAD_INIT(init_time_ns.ns.ns_unified_list_node),
->  };
->  
->  void __init time_ns_init(void)
-> --- a/kernel/user.c
-> +++ b/kernel/user.c
-> @@ -65,16 +65,9 @@ struct user_namespace init_user_ns = {
->  			.nr_extents = 1,
->  		},
->  	},
-> -	.ns.ns_type = ns_common_type(&init_user_ns),
-> -	.ns.__ns_ref = REFCOUNT_INIT(3),
-> -	.ns.__ns_ref_active = ATOMIC_INIT(1),
-> +	.ns = NS_COMMON_INIT(init_user_ns, 3, 1),
->  	.owner = GLOBAL_ROOT_UID,
->  	.group = GLOBAL_ROOT_GID,
-> -	.ns.inum = ns_init_inum(&init_user_ns),
-> -	.ns.ns_list_node = LIST_HEAD_INIT(init_user_ns.ns.ns_list_node),
-> -	.ns.ns_unified_list_node = LIST_HEAD_INIT(init_user_ns.ns.ns_unified_list_node),
-> -	.ns.ns_owner_entry = LIST_HEAD_INIT(init_user_ns.ns.ns_owner_entry),
-> -	.ns.ns_owner = LIST_HEAD_INIT(init_user_ns.ns.ns_owner),
->  #ifdef CONFIG_USER_NS
->  	.ns.ops = &userns_operations,
->  #endif
+
+-- 
+Earthling Michel Dänzer       \        GNOME / Xwayland / Mesa developer
+https://redhat.com             \               Libre software enthusiast
 
