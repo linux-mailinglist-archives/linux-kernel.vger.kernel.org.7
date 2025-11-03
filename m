@@ -1,117 +1,250 @@
-Return-Path: <linux-kernel+bounces-882487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CD45C2A945
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:32:31 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA1B3C2A94D
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:34:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7FB43AD868
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:30:38 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 9C91A4E537A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:34:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AEB32DF140;
-	Mon,  3 Nov 2025 08:30:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 979612E06E6;
+	Mon,  3 Nov 2025 08:34:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="La9rBQQK"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SIJzn+1B"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B99072605;
-	Mon,  3 Nov 2025 08:30:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51773277C81;
+	Mon,  3 Nov 2025 08:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762158634; cv=none; b=uRxvhRjeW4WWy74ovl/bDgGsfxS0Zz46+nPw6Mx3u/VZRWpkVLHJJHeZQ6baSv1QOUxBCmA8kfFCcycxl6DIZ0hIMRrzugsyPDiIF7cQYnaeOLO1rmkM5+7LlRwZh2oos3V3bvSn+AtHXq445xVrf4GXqmNt7EtXzCcc+kXO78k=
+	t=1762158840; cv=none; b=ir/tMIcCo5eUcWLUN7lCJTODuJq4+3qnppCCF2SXIz1HWs7GPs8eGxLfSfsypupupY/TgPUIblOFw0+jEeyz+i4qyjvrBBQWnRz/PLr96nqvq+QtJ0+gOEgvruCRCuMCYxwcgwNwpr4P7qHnooO6QK4mSkRsE4r9MnzVsf8suGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762158634; c=relaxed/simple;
-	bh=S6yyFzMmtyqyR4pOSLkTbp/pNg+DaRIc5SyGLiJx7Tk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZALLcSpyTEvTUSPMjY2cjTbTzwrs5qVVefTr6M0+l5BoVNpK7h3EoMcqp2MAaifDQ3+X/g639I1LsH+0t4rUltBTxIPITzCz1Qq6NrFTSgm4rvo1FTFkGgmGxi2w7qQcio4j5sCHWPENUlJE8+p9+BkwmC3BSJcnKjOrF18xbBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=La9rBQQK; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762158633; x=1793694633;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=S6yyFzMmtyqyR4pOSLkTbp/pNg+DaRIc5SyGLiJx7Tk=;
-  b=La9rBQQKhlRLpm2Vop00F5NTgdlxJfBVWDmhTuS/0x5ebbKKA3ko1JWk
-   1Ik30eAUDzfdM8iWQSQ8+o23kykA8SCJST/Xloyrqk96WOJUQLXdaz8Eo
-   /S5jbpRYmbmo3KXTPM58kgo59lihGHm2yc5ojn1I2Id9TrdDVNLWh/nWT
-   2QQVNthJzF2A6GpuHmB0YJRA8U8VYIa8mde0s6lfuTPsNi3i/918B4Frj
-   il4ftnxM2gKA3r2ueVKEhtqFSaZbVfeDTZ4n78zlA5PD3jYUcld3iO1+1
-   n3QKMibYb2/At/ZaE4NhK3m876AHG3A1DSXVs6b8y5NSlbplrvrT0mZRT
-   g==;
-X-CSE-ConnectionGUID: wlsW7mKFT/WzTXdsmGis0g==
-X-CSE-MsgGUID: 6OY6XwcITjeghiG0MZklJA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="51799318"
-X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
-   d="scan'208";a="51799318"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 00:30:32 -0800
-X-CSE-ConnectionGUID: 4J3sswDESXyOmYqwBLmOJQ==
-X-CSE-MsgGUID: r3Xr3olwRH2nwfQhwDgr8g==
-X-ExtLoop1: 1
-Received: from smoehrl-linux.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.216])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 00:30:28 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1vFpxH-000000055de-1ZOH;
-	Mon, 03 Nov 2025 10:30:23 +0200
-Date: Mon, 3 Nov 2025 10:30:22 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jyoti Bhayana <jbhayana@google.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>
-Subject: Re: [PATCH v1 1/1] iio: common: scmi_sensors: Replace const_ilog2()
- with ilog2()
-Message-ID: <aQhoHj0s_bjI1gNs@smile.fi.intel.com>
-References: <20251031074500.3958667-1-andriy.shevchenko@linux.intel.com>
- <20251031094336.6f352b4f@pumpkin>
- <aQSHVsWGXzigTEMe@smile.fi.intel.com>
- <20251031124530.3db7805b@pumpkin>
- <aQSw7V7tYjBOtJ7k@smile.fi.intel.com>
- <20251031161331.0f0ef347@pumpkin>
+	s=arc-20240116; t=1762158840; c=relaxed/simple;
+	bh=YWu2XM7OXAN7C4pR9dsSPVi0rznxl/ZiAMYDWxHsIlc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZguvQDWaQL4vNquhxVy+43MGM8WxHAaLUbKzNWmpqcJTftUkh/eZ3ncg3Oa2+SXOQ/TjAFcll7gU16XmBPONudKFKVPb3R16ep0X0zwU4x1OOMQR245t4gO0+Wsx9NgADIvqXuiJ26UEw4sc7R4QSAG+qCfAu55qklIKSysJQMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SIJzn+1B; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A2KFI8K004420;
+	Mon, 3 Nov 2025 08:32:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=6kvXeg
+	tnHGH2dvhngivPl8vSn9VVnbxianx2ml6At6Q=; b=SIJzn+1B6W9oM2eaoy/YHg
+	eBBigTFYyvOI9FqFVbAxNQBJk7OsJkIcL71Bfna6VZUkqh40c7GapUFYZ5iF8sRv
+	Gr8dTXMymRtZJ8s++yexWv1ij7wo6VYhShrZhVDq41yj75ph0JeGVCKADK/YHtTq
+	GX3MIMDZ/N5qqAEIbGF00Q5htF6MOC+XL4hF518BX18l+iJjxcQbmu4bDG1zmjC4
+	JaRrWPwAdwUgpIOYFdxBzdZMRCWUzsW/HgM451x3+JWx1KfcwQmlDNOkYt4NhTIW
+	gRD9YIaV0/uJm8zB4i1DBFMoHs18pKBmB/HXGu5E8lZ+lxXr3R2rXIwqr6iKj5Pg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59xbnkvs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Nov 2025 08:32:27 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5A38WQmQ029518;
+	Mon, 3 Nov 2025 08:32:27 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a59xbnkvq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Nov 2025 08:32:26 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A34SfIE012891;
+	Mon, 3 Nov 2025 08:32:25 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 4a5y81mbvw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 03 Nov 2025 08:32:25 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A38WNYw44106174
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 3 Nov 2025 08:32:23 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C27F220040;
+	Mon,  3 Nov 2025 08:32:23 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 16F2220043;
+	Mon,  3 Nov 2025 08:32:13 +0000 (GMT)
+Received: from [9.109.215.252] (unknown [9.109.215.252])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  3 Nov 2025 08:32:12 +0000 (GMT)
+Message-ID: <dee4dc13-b187-42df-93ce-f738cfab32ea@linux.ibm.com>
+Date: Mon, 3 Nov 2025 14:02:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251031161331.0f0ef347@pumpkin>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 23/29] context-tracking: Introduce work deferral
+ infrastructure
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: Nicolas Saenz Julienne <nsaenzju@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Steven Rostedt <rostedt@goodmis.org>,
+        Ard Biesheuvel <ardb@kernel.org>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+        Joel Fernandes <joelagnelf@nvidia.com>,
+        Josh Triplett
+ <josh@joshtriplett.org>,
+        Boqun Feng <boqun.feng@gmail.com>, Uladzislau Rezki <urezki@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masahiro Yamada <masahiroy@kernel.org>, Han Shen <shenhan@google.com>,
+        Rik van Riel <riel@surriel.com>, Jann Horn <jannh@google.com>,
+        Dan Carpenter <dan.carpenter@linaro.org>,
+        Oleg Nesterov <oleg@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+        Clark Williams <williams@redhat.com>,
+        Yair Podemsky <ypodemsk@redhat.com>,
+        Marcelo Tosatti <mtosatti@redhat.com>, Daniel Wagner <dwagner@suse.de>,
+        Petr Tesarik <ptesarik@suse.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, rcu@vger.kernel.org, x86@kernel.org,
+        linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
+        linux-riscv@lists.infradead.org, linux-arch@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org
+References: <20251010153839.151763-1-vschneid@redhat.com>
+ <20251010153839.151763-24-vschneid@redhat.com>
+Content-Language: en-US
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+In-Reply-To: <20251010153839.151763-24-vschneid@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAyMSBTYWx0ZWRfXyZF7uxWMbR9h
+ eLK/nkDGQm3o/vMS6b4dMArF21TNJ6CaqoI+fi7VPIcu7OWjh13TfAaGOyTxh1gnwQIWiBKHjJa
+ 4uMwIrzLslo+qUygbHd9488ZCjL6vK5iXuiWUNX6ThTOzJBP1PKCUz5zZmvloNgyToR45jE2irN
+ a4EYP7E5d99vyLe0EnPUaY+AWXCKsxBO2ENMsQJ0K7+9kC0+hwsMybY4fCkeMcwmUxF0SvKxntf
+ G1Y18toiIF/maL5RFi7povbdJ4FJNPvHT8auC2LdGyFW5VpJAL0soYtskChjteGM2wfpc+kcC7y
+ KDSiIb0W+R7wCTgyXcXkjXUndM3ScPyUHlasPD5janXDgGwLZxidSrdWYD0Sch6Yd3oNTOJv1+T
+ flE5Wy2KQc8LqVOKJgn3Dc1iG4Hf4Q==
+X-Proofpoint-GUID: U84lOeDC5Q0AhrPIqcAHknHeCkhsE8rA
+X-Authority-Analysis: v=2.4 cv=OdCVzxTY c=1 sm=1 tr=0 ts=6908689b cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=VwQbUJbxAAAA:8 a=JfrnYn6hAAAA:8 a=20KFwNOVAAAA:8 a=e3ynTO8eh5RAdg4_BR0A:9
+ a=QEXdDO2ut3YA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=UhEZJTgQB8St2RibIkdl:22
+ a=Z5ABNNGmrOfJ6cZ5bIyy:22 a=QOGEsqRv6VhmHaoFNykA:22
+X-Proofpoint-ORIG-GUID: Yw4-ly9gm_lGmLrDsIj0uqTuFktFQQKI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-02_02,2025-10-29_03,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 adultscore=0 spamscore=0 suspectscore=0 impostorscore=0
+ lowpriorityscore=0 priorityscore=1501 clxscore=1011 phishscore=0 bulkscore=0
+ classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010021
 
-On Fri, Oct 31, 2025 at 04:13:31PM +0000, David Laight wrote:
-> On Fri, 31 Oct 2025 14:51:57 +0200
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > On Fri, Oct 31, 2025 at 12:45:30PM +0000, David Laight wrote:
+Hi Valentin.
 
-...
-
-> > Do you have an idea how to improve that?
+On 10/10/25 9:08 PM, Valentin Schneider wrote:
+> smp_call_function() & friends have the unfortunate habit of sending IPIs to
+> isolated, NOHZ_FULL, in-userspace CPUs, as they blindly target all online
+> CPUs.
 > 
-> Not sure I'd want to get cpp to generate a high-precision log.
-> It if definitely doable, but will be a mind-blowing mess.
-> (and I'm not sure how many MB the expanded line would be).
-> An ilog10() would be easier (probably looking like const_ilog2()).
+> Some callsites can be bent into doing the right, such as done by commit:
 > 
-> But for this code just use '+ 9' and add a suitable comment :-)
+>    cc9e303c91f5 ("x86/cpu: Disable frequency requests via aperfmperf IPI for nohz_full CPUs")
+> 
+> Unfortunately, not all SMP callbacks can be omitted in this
+> fashion. However, some of them only affect execution in kernelspace, which
+> means they don't have to be executed *immediately* if the target CPU is in
+> userspace: stashing the callback and executing it upon the next kernel entry
+> would suffice. x86 kernel instruction patching or kernel TLB invalidation
+> are prime examples of it.
+> 
+> Reduce the RCU dynticks counter width to free up some bits to be used as a
+> deferred callback bitmask. Add some build-time checks to validate that
+> setup.
+> 
+> Presence of CT_RCU_WATCHING in the ct_state prevents queuing deferred work.
+> 
+> Later commits introduce the bit:callback mappings.
+> 
+> Link: https://lore.kernel.org/all/20210929151723.162004989@infradead.org/
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzju@redhat.com>
+> Signed-off-by: Valentin Schneider <vschneid@redhat.com>
+> ---
+>   arch/Kconfig                                 |  9 +++
+>   arch/x86/Kconfig                             |  1 +
+>   arch/x86/include/asm/context_tracking_work.h | 16 +++++
+>   include/linux/context_tracking.h             | 21 ++++++
+>   include/linux/context_tracking_state.h       | 30 ++++++---
+>   include/linux/context_tracking_work.h        | 26 ++++++++
+>   kernel/context_tracking.c                    | 69 +++++++++++++++++++-
+>   kernel/time/Kconfig                          |  5 ++
+>   8 files changed, 165 insertions(+), 12 deletions(-)
+>   create mode 100644 arch/x86/include/asm/context_tracking_work.h
+>   create mode 100644 include/linux/context_tracking_work.h
+> 
+> diff --git a/include/linux/context_tracking_work.h b/include/linux/context_tracking_work.h
+> new file mode 100644
+> index 0000000000000..c68245f8d77c5
+> --- /dev/null
+> +++ b/include/linux/context_tracking_work.h
+> @@ -0,0 +1,26 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef _LINUX_CONTEXT_TRACKING_WORK_H
+> +#define _LINUX_CONTEXT_TRACKING_WORK_H
+> +
+> +#include <linux/bitops.h>
+> +
+> +enum {
+> +	CT_WORK_n_OFFSET,
+> +	CT_WORK_MAX_OFFSET
+> +};
+> +
+> +enum ct_work {
+> +	CT_WORK_n        = BIT(CT_WORK_n_OFFSET),
+> +	CT_WORK_MAX      = BIT(CT_WORK_MAX_OFFSET)
+> +};
+> +
+> +#include <asm/context_tracking_work.h>
+> +
 
-v2 is sent: 20251103082937.4081863-1-andriy.shevchenko@linux.intel.com
+It fails to compile on powerpc (likey any arch other than x86)
+
+In file included from ./include/linux/context_tracking_state.h:8,
+                  from ./include/linux/hardirq.h:5,
+                  from ./include/linux/interrupt.h:11,
+                  from ./include/linux/kernel_stat.h:8,
+                  from ./include/linux/cgroup.h:27,
+                  from ./include/linux/memcontrol.h:13,
+                  from ./include/linux/swap.h:9,
+                  from ./include/linux/suspend.h:5,
+                  from arch/powerpc/kernel/asm-offsets.c:21:
+./include/linux/context_tracking_work.h:17:10: fatal error: 
+asm/context_tracking_work.h: No such file or directory
+    17 | #include <asm/context_tracking_work.h>
+       |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
--- 
-With Best Regards,
-Andy Shevchenko
+Gating works for compile, but no benefit of the series.
+
++#ifdef HAVE_CONTEXT_TRACKING_WORK
+  #include <asm/context_tracking_work.h>
++#endif
 
 
+I have been trying to debug/understand the issue seen with isolcpus= and
+nohz_full=. system is idle, even then it occasionally woken up to do 
+some work. So I was interesting if this series can help.
 
