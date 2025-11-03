@@ -1,118 +1,102 @@
-Return-Path: <linux-kernel+bounces-882578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E51DEC2ACDB
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 10:40:42 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EAE3C2ACE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 10:41:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D0C204F37A1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 09:38:07 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id A525E4F3FC2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 09:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926DC2ED870;
-	Mon,  3 Nov 2025 09:37:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33B872ED866;
+	Mon,  3 Nov 2025 09:38:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lCnKP+uq"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="fS2bv1Kp"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A56D2ED87C
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 09:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE482EBB98;
+	Mon,  3 Nov 2025 09:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762162674; cv=none; b=RkfaQPIgPq4jyVHSQk9OsdRtU1APZ8hp04vuh5ptQF4uJmt7AxhLYBQbOnPa7pdvFdW6y51Yz6GcTsjj8WYXYl1kxOx5CK4d25yFWneVD7YmxTVUfckSDj+zj1Squnv2iJcS3IQ7l35Q8318Onu7mZ4pI1+VbVrrSBa9GTMdMj8=
+	t=1762162688; cv=none; b=jm+f6fWiWrHU+ulC43VIfXZIG07bEGboS26w1FoO1L4WYNdbZNwRjOQVFNGy6PFJtdc1fwS0eTltHj6rGa6Up47DA2Zc9rGiorbJl0Ynk9Pk1vs0LZrhd1IjtEqf8efvfMnNoK+b92wfFLITt2HNCRKu51uQKnSfqS1m/MGQrCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762162674; c=relaxed/simple;
-	bh=d7AJpNDK+zGWk/tW2/q+dSp4+6DKWIoXMzHbUc7Msk4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z7POyiWipUBhulL+2pWJtjVx/ggJFR89ihoYaee36YNMJnZKm3wD9pjADbl5OEup/KcuoHXkfNVztk89j+Pp/xETZAfAxgB93CcwbjQEWyh0tbedCqQURieYiXTdAosrhb0yGMF8YVpsjtl3ZaJU+8ku+BOhNS2EpC5QEiuTDiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lCnKP+uq; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1762162670;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=iwufg+Q99M7av1aeDiq92CAIAQYLr11Y8lBCgnCUUP8=;
-	b=lCnKP+uq1lHTbsoF3FNyxHmMv8gg7NJMPZ4qZVwUlZr5cLl10EAyXLigNCPn3qTr5ibiRT
-	HrJRNU1heA6JBtT8XcQLZlTlZOHVjzu2iudkbKfZ/5OUs/6dGHqMKtY8kfGDSDVhGhKgWa
-	rRgT7eF+quw4P+FAK2+yDDPq0byeHCM=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	Ingo Molnar <mingo@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] x86/fpu: Replace vmalloc + copy_from_user with vmemdup_user in xstateregs_set
-Date: Mon,  3 Nov 2025 10:37:19 +0100
-Message-ID: <20251103093721.3142-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1762162688; c=relaxed/simple;
+	bh=buv33Uz2Fo5fwFIVaIdaFUPAiAI11WQiPVvmTTQ8Zw4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TjQ/jOVFaI6M79nyj55HIZjIAQByPDeZUYsI66n7cEcJSh8qyGk4WmS0vYeIwhq5KwToTZmOcWRvweO9kCa/67z5wDiTMOQlWYV+Ej6Rb6Pe63YUScG5/EtXTEdaLZbU4X2JRlscDyxMYeXMwEktSs9BSIQU3aInlxzsnSxLEl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=fS2bv1Kp; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=gsDapFRugM+4XwGq22nVfGICtpH+R8BdlGsLTJySzLk=; b=fS2bv1KpeHE/vj0SlxiKC7ffk3
+	CKn04SPP2TPAJSHdqAAzRiod6AHFz1c/UCJ3cI9/KnHufmCdiX8owqRDox/9wE/1NUeHduAPp2HR8
+	TV02nXRa0EopydUkHTe+dMaukt11gXDUysJCB/lWdVU5t2Bw5vI2BUxTRo7OaSf58j+shL2Gk+qBO
+	D6LVPlQqeYD12WvCcyqbLZXQPI9zH0BdVB1S/7jCeEC0sxnh/VrRYr+XgvcBlusuvKrZDYyke2rfT
+	okfbzv6U23kCTtfOSfU/vMWr17w/a6SN4gD0xOLtdn4Z97Beg1V0Qv/k3NE4IEkcdnPjd9px7MqiL
+	YbA3aGeQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1vFq95-0000000F0Es-1EO8;
+	Mon, 03 Nov 2025 08:42:35 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 9947E30023C; Mon, 03 Nov 2025 10:38:04 +0100 (CET)
+Date: Mon, 3 Nov 2025 10:38:04 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: new objtool warnings
+Message-ID: <20251103093804.GY3245006@noisy.programming.kicks-ass.net>
+References: <20251031111515.09c9a4ed@canb.auug.org.au>
+ <20251103091006.GV3245006@noisy.programming.kicks-ass.net>
+ <20251103203256.5ac39302@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20251103203256.5ac39302@canb.auug.org.au>
 
-Replace vmalloc() followed by copy_from_user() with vmemdup_user() to
-improve and simplify xstateregs_set(). Use kvfree() to free.
+On Mon, Nov 03, 2025 at 08:32:56PM +1100, Stephen Rothwell wrote:
+> Hi Peter,
+>=20
+> On Mon, 3 Nov 2025 10:10:06 +0100 Peter Zijlstra <peterz@infradead.org> w=
+rote:
+> >
+> > On Fri, Oct 31, 2025 at 11:15:15AM +1100, Stephen Rothwell wrote:
+> > >=20
+> > > My x86_64 allmodconfig builds started producing these warnings today:
+> > >=20
+> > > vmlinux.o: warning: objtool: user_exc_vmm_communication+0x15a: call t=
+o __kasan_check_read() leaves .noinstr.text section
+> > > vmlinux.o: warning: objtool: exc_debug_user+0x182: call to __kasan_ch=
+eck_read() leaves .noinstr.text section
+> > > vmlinux.o: warning: objtool: exc_int3+0x123: call to __kasan_check_re=
+ad() leaves .noinstr.text section
+> > > vmlinux.o: warning: objtool: noist_exc_machine_check+0x17a: call to _=
+_kasan_check_read() leaves .noinstr.text section
+> > > vmlinux.o: warning: objtool: fred_exc_machine_check+0x17e: call to __=
+kasan_check_read() leaves .noinstr.text section
+> > >=20
+> > > I can't easily tell what caused this change, sorry. =20
+> >=20
+> > What compiler? This smells like a broken compiler, these are all
+> > noinstr and that very much has __no_sanitize_address.
+>=20
+> And today I didn't get them.  So who knows?  I did *not* change compiler
+> since Friday.
 
-Return early if an error occurs and remove the obsolete 'out' label.
-
-No functional changes intended.
-
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- arch/x86/kernel/fpu/regset.c | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
-
-diff --git a/arch/x86/kernel/fpu/regset.c b/arch/x86/kernel/fpu/regset.c
-index 0986c2200adc..00cc009918e6 100644
---- a/arch/x86/kernel/fpu/regset.c
-+++ b/arch/x86/kernel/fpu/regset.c
-@@ -3,6 +3,7 @@
-  * FPU register's regset abstraction, for ptrace, core dumps, etc.
-  */
- #include <linux/sched/task_stack.h>
-+#include <linux/string.h>
- #include <linux/vmalloc.h>
- 
- #include <asm/fpu/api.h>
-@@ -157,21 +158,15 @@ int xstateregs_set(struct task_struct *target, const struct user_regset *regset,
- 		return -EFAULT;
- 
- 	if (!kbuf) {
--		tmpbuf = vmalloc(count);
--		if (!tmpbuf)
--			return -ENOMEM;
--
--		if (copy_from_user(tmpbuf, ubuf, count)) {
--			ret = -EFAULT;
--			goto out;
--		}
-+		tmpbuf = vmemdup_user(ubuf, count);
-+		if (IS_ERR(tmpbuf))
-+			return PTR_ERR(tmpbuf);
- 	}
- 
- 	fpu_force_restore(fpu);
- 	ret = copy_uabi_from_kernel_to_xstate(fpu->fpstate, kbuf ?: tmpbuf, &target->thread.pkru);
- 
--out:
--	vfree(tmpbuf);
-+	kvfree(tmpbuf);
- 	return ret;
- }
- 
--- 
-2.51.1
-
+Oh well, lets chalk it up to gremlins for now. I'll have a look if it
+happens again/reliably.
 
