@@ -1,117 +1,80 @@
-Return-Path: <linux-kernel+bounces-882887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47023C2BC18
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:43:35 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A6D2C2BC5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:45:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id C7A77345446
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:42:20 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 12B0F34A604
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:44:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B05330DD03;
-	Mon,  3 Nov 2025 12:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DE22D8360;
+	Mon,  3 Nov 2025 12:41:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="judhg8dw"
-Received: from smtpout-04.galae.net (smtpout-04.galae.net [185.171.202.116])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KB3fMYYI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B3D130E852;
-	Mon,  3 Nov 2025 12:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.171.202.116
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FC32C325F
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 12:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762173608; cv=none; b=bsZkR4hiGLwxuUMh8uWDqQm8dzxg17k+GaKPAxe28O9qIcvyGBkAULg164fqMQ49B/I45mk5hvvH7pB5Hcw78Rq4ZqGtA1et3KkV8ruKH5ip6SgKizePUxZFOxf/CznTQ0iyxGcvS59Hmo+57zfLDFNHtK5qPKTNA2WDzs4cd7g=
+	t=1762173668; cv=none; b=bzfWX1f6A8gc/sMtnjj6zjs30gX7nYwGxeN6txo/Iim6yWrfuhrSzJsM7XGLfD78z9RW6ogPSRH/NNwoXTgGv0ej2RT2UqmLhKVYUEQB+ZVhPavLmupTVZGBbC8tYNgSH5mWO6bioWkhB4n2cDTEIeOr/DInFjHsBvLAPVumUcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762173608; c=relaxed/simple;
-	bh=cXS6YqDu1aAIoihYJMx0C5S/EGTY2veO/eUmFpn3vYo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RhYhLB8K0CM92npeaYgs+VO0nfCAFaCgHtz6q59WD+m0ZGL9oUdw+6scNl2dYg7sdz99JhiyMHg1KhhMuhvytgVS9ratYFeXTSPE/084YsDU12jNZKHNIGR8+UXcgisX+tcZABRNgBdEfOi+2Vy9pdSm/kk9LKgykSH1GeRVKEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=judhg8dw; arc=none smtp.client-ip=185.171.202.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-04.galae.net (Postfix) with ESMTPS id 89A20C0D7AA;
-	Mon,  3 Nov 2025 12:39:42 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 4B44A60709;
-	Mon,  3 Nov 2025 12:40:03 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 65ED610B5005A;
-	Mon,  3 Nov 2025 13:39:59 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762173602; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=6bd3qOFo0naZsfmsk+yctKY223PmdCGeaBNloBYRnoI=;
-	b=judhg8dwpBVzZwyMOx3oTg5uonu02y6mYMN3DlwAHPwOByOhxNgydk3PAScGHcIhYzROW7
-	alVO1Gkl2+bGCE+VqxZuCmotW6or1UJlDlqHhNUNWf3JTS4F4uLrUuxtFqiPp/q4LC/LEG
-	VKbx4WdQRskg5u2g2ejrzdesNvINKQkl6lIDlUSJ2VRE1O0mrKUtpj8fYfis6FaiIdBV6f
-	PXF/NViwhj1SZB6n2EAy/+daxfnQhKwu4IZIn9OXr9a2FduUrjuC1zwASj282zMFMAe741
-	DT0StxNgi2qABNGo6w9Xkm39VeaScVERhvx1UZuKcfP+DOs0sSbtQaB+wDTUnQ==
-Date: Mon, 3 Nov 2025 13:39:58 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Haotian Zhang <vulab@iscas.ac.cn>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, thomas.petazzoni@bootlin.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] net: wan: framer: pef2256: Switch to
- devm_mfd_add_devices()
-Message-ID: <20251103133958.7c9d5003@bootlin.com>
-In-Reply-To: <20251103123741.721-1-vulab@iscas.ac.cn>
-References: <20251103111844.271-1-vulab@iscas.ac.cn>
-	<20251103123741.721-1-vulab@iscas.ac.cn>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1762173668; c=relaxed/simple;
+	bh=LFNa1RWvyQXfYvHtptsTxiA9gGIdAMdc8de2nTvx2vY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tn6yFcHyxxFqC02f2Ts+XUhWTr3L8hIIyCHViDezQlElBayQlBFBnMRwc89p53DygYqDYa8BIWpAzAxYWsjPy871ilv1Ece3CswuqeUYqii2eGmL1A3SbuOqn3Psw2SV3iXy5rCLGVjSiEYHM6/gVaoSoCF2L00rhQWMd/KZ63I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KB3fMYYI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65003C4CEE7;
+	Mon,  3 Nov 2025 12:41:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762173667;
+	bh=LFNa1RWvyQXfYvHtptsTxiA9gGIdAMdc8de2nTvx2vY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=KB3fMYYIaQ3dXXDnbzt+KQR+SqnCLqPU7abJ6yIQHirqBmhgiGIOlNMdcNBWnOlNv
+	 nrj4JgiClyDKDzyzf4cowxewLoGzA/Pn2euAYII2Oi+dJDhf/WawRoXtk3xuUlWZ6y
+	 mXLUfl/yoH1gyqNnrOpfqg7Au1y9bWaov0j/gkRTtR9+1xAhgFJNKYfZIZav3yW2cS
+	 zWGCTV6vOkkBqwbdgCJCyFFpJDDpeyIppRvVOtJeVoexIigqkhcFiNMUR+4tzULgM1
+	 bTDOT63uNj44YcVEsF0TMbKwGtIJcllkrsTzm8WPa4/SUwWNVNv+NjNM34YHiv1tI1
+	 yZpOTmXNZMB2Q==
+From: Dinh Nguyen <dinguyen@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: dinguyen@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] firmware: stratix10-svc: fix for v6.18
+Date: Mon,  3 Nov 2025 06:41:05 -0600
+Message-ID: <20251103124105.34655-1-dinguyen@kernel.org>
+X-Mailer: git-send-email 2.42.0.411.g813d9a9188
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Haotian,
+The following changes since commit 6146a0f1dfae5d37442a9ddcba012add260bceb0:
 
-On Mon,  3 Nov 2025 20:37:41 +0800
-Haotian Zhang <vulab@iscas.ac.cn> wrote:
+  Linux 6.18-rc4 (2025-11-02 11:28:02 -0800)
 
-> The driver calls mfd_add_devices() but fails to call mfd_remove_devices()
-> in error paths after successful MFD device registration and in the remove
-> function. This leads to resource leaks where MFD child devices are not
-> properly unregistered.
-> 
-> Replace mfd_add_devices with devm_mfd_add_devices to automatically
-> manage the device resources.
-> 
-> Fixes: c96e976d9a05 ("net: wan: framer: Add support for the Lantiq PEF2256 framer")
-> Suggested-by: Herve Codina<herve.codina@bootlin.com>
-> Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
-> ---
-> Changes in v2:
->   - Use devm_mfd_add_devices() instead of manual cleanup
-> ---
->  drivers/net/wan/framer/pef2256/pef2256.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/wan/framer/pef2256/pef2256.c b/drivers/net/wan/framer/pef2256/pef2256.c
-> index 1e4c8e85d598..4f4433560964 100644
-> --- a/drivers/net/wan/framer/pef2256/pef2256.c
-> +++ b/drivers/net/wan/framer/pef2256/pef2256.c
-> @@ -812,7 +812,7 @@ static int pef2256_probe(struct platform_device *pdev)
->  
->  	platform_set_drvdata(pdev, pef2256);
->  
-> -	ret = mfd_add_devices(pef2256->dev, 0, pef2256_devs,
-> +	ret = devm_mfd_add_devices(pef2256->dev, 0, pef2256_devs,
->  			      ARRAY_SIZE(pef2256_devs), NULL, 0, NULL);
->  	if (ret) {
->  		dev_err(pef2256->dev, "add devices failed (%d)\n", ret);
+are available in the Git repository at:
 
-Thanks for your update.
+  git://git.kernel.org/pub/scm/linux/kernel/git/dinguyen/linux.git tags/stratix10_svc_fix_v6.18
 
-Acked-by: Herve Codina <herve.codina@bootlin.com>
+for you to fetch changes up to d0fcf70c680e4d1669fcb3a8632f41400b9a73c2:
 
-Best regards,
-Hervé
+  firmware: stratix10-svc: fix bug in saving controller data (2025-11-03 06:24:19 -0600)
+
+----------------------------------------------------------------
+firmware: stratix10-svc: fix saving contoller data for v6.18
+- Fix the incorrect use of platform_set_drvdata and dev_set_drvdata
+
+----------------------------------------------------------------
+Khairul Anuar Romli (1):
+      firmware: stratix10-svc: fix bug in saving controller data
+
+ drivers/firmware/stratix10-svc.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
