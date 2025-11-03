@@ -1,306 +1,220 @@
-Return-Path: <linux-kernel+bounces-882663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5EB5C2B15E
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:35:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 54EF4C2B17C
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:36:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 93B624F36A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:31:54 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CCD6A4F09E8
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:32:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C202FE570;
-	Mon,  3 Nov 2025 10:31:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4402FE59F;
+	Mon,  3 Nov 2025 10:32:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="1YTbn6Dz"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TT/C1I5j"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3712FE04A
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 10:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762165907; cv=none; b=JTH0uozLRu+hzOA0adEyupfgXOy9KlsLk7dPA6OIiB7QShV7PJ4+BBDzjMSBH7AQDyExwrh2DTsPkrh+mDqYZn+ijnoRYF1kRffGhTrYtELHGo+UaK/hPhK7yjY1B2FH+az+LN6yTTSZ9pX1podgvhuTFT3l0NisWh0GKsyGTrw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762165907; c=relaxed/simple;
-	bh=m5ybLjWP+Dpu8vcYkjzGVenOwZvocctdHG+nNdQ/i6s=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=EJ/oQlieihWJvVOb2ioMdUZQgURCwiLBmxcFl3mqXDfzZAJNVEeG7CPwsrZ1sf2g0jateGJGnF0iNNd4j3Zcquyrj9Ge4fBEW7rC1LZEGzPZF2cyu9cGYSgreSEXSnLUdy+JF05yM4GKrJxmqexsAGmnEoEL8xgpAlqZDzeIX8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=1YTbn6Dz; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b3c2db014easo886275866b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 02:31:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1762165902; x=1762770702; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ev+FutBx57/FNBFPUNtXOR1Qu8cLklW5P/s1yrMZQhc=;
-        b=1YTbn6DzPdy2PVNHfkf8q3xXKYATURHcoeESD6EFgwBcSlpJJYf7qX+SNimY1YBFkA
-         CEAUhcDB6sJN+SPe3D0Yq4lg4forc/+WUWJj/+Qd2fH/XjbQiS/wJpuQIEi1S3vU1QAf
-         9hei2MYyCPGWsTxpapc9KfzTydzc/S0Xon7i6/Yxk0uI9sBr02ydpQPo3CEI3pEJYTVx
-         Op4KxTFR6mybfJyRpl8lXVH1E4txKu5GZyDg/G+dn+Fspf/ECpnn2t8ygq8p0bBQi4Mw
-         y5KCzoNEpuWRrfnZx9vnVdmy1nmWDq3668FR3p8jnYRbk0wKFrgLbUnHOj2hVWLc+Ch1
-         Giag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762165902; x=1762770702;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ev+FutBx57/FNBFPUNtXOR1Qu8cLklW5P/s1yrMZQhc=;
-        b=BkpTQs6NEdL7B18mT48t/EEPVMKAkfqKDAgWQu+9PPQ+1nRkHJ4OHBqrPTr+1rSSak
-         ZG5TkqWQjBvSRwHaM7D9dCaxcV+Ti38MP2etNq8jWaVKriqDYEdxhWYI8N8fyfB9sNNX
-         mFK0I/tL/RvpuY5hPvMT204jkkyRGOjamh5+6SdrRJa+AsdvWQqDNAgweleWr2JtE9OU
-         BmemiEnoaL+AZHrxiMsZt/rapijihKTWnarLSyNO7lOgD/Xy+cxrhp4UfPPmjreU9i49
-         adrKV8+vlP5dJXHoS9YrFqDNnrMva46eqHoBt8NhbvSaLxdLb0IHZLCwiByg/VAHIpxr
-         Wi0g==
-X-Forwarded-Encrypted: i=1; AJvYcCVMKyGfWClr5bbnbtklAorkJtEezVJlQeitCs1GUQ/dmxrB/0UG12k7SzOzluCojbvhaa567dRdfpMkJ/U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfBhyKg3oHUF3SKRFFsB/wXGc+JW4pzvqdzwWl3gIRGKk3JpM0
-	s2SJhpwO7faytf3KbLEQbfacsjlvkm+/U3HkK0DBSFYZ7BBJM9dUc3nJwSfPmNWTUis=
-X-Gm-Gg: ASbGncsiBtl2wFVKNvfaJXjRR1Z/OBQoBMmaNwb3ljwVTM9vv0soVuhoz1i6R5Ghr4z
-	ngfSgnwG2O1q1uK5id4LpoXHkAB0Gv2pYGqfwf71MkszZC7sRco7ZmHtSQfkZmt5SADDjyf5mZm
-	0aA6OLU4v48goerecRvSA8eC/yDCTGo84KAV/mzo3CgPW32xYjKTKsicCDUBoBqE5rRnxX2hEt0
-	r7/jxFfLhWxSw8Jo4SkB1d+o1WTc6KZcRvx/FltMB+p/wioOMUDiJVgqhLytslp3wH9Qm/yVX5S
-	Y/zFw3vm4W4L26VrPobf27CJmb/pkioFCXUszVrFt9WvUvqnti0v+adWv/xKxCeXqVo+6nj0HXg
-	VJCowQv0jtH2jVdtAChcACOIexr2z9QMJt7Z578D/5uAP6ISXW5eA5QuSl4D8pcfpJi6d
-X-Google-Smtp-Source: AGHT+IE11zTQ7CCDiBUde1gGw8+g3Hsu0UVIKx9O4gSlkL+kMqtUKG4Migng/Rjq4y9baGdVTMcXrg==
-X-Received: by 2002:a17:907:3c8d:b0:b30:ead5:56d0 with SMTP id a640c23a62f3a-b707087a3f3mr1190934066b.61.1762165902387;
-        Mon, 03 Nov 2025 02:31:42 -0800 (PST)
-Received: from localhost ([62.246.251.40])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6407b438afasm9367567a12.30.2025.11.03.02.31.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 02:31:41 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9268405C
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 10:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762165930; cv=fail; b=rWwpHqRv9vHa4W/CyhllSxoGaFhS32LWrfvnUmoDpF7I1duMlpla/st0X+Z4Fw/sg9JEBxxjbXiIYObE7D4O0r9PV+RPXzwv7/MgdYgfxvo4EbHnTO1RGzN7Md4jmPH8M8v3GNNfW7ztEc0riPbe4fcU0g7cSei0ZTabNX19W3Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762165930; c=relaxed/simple;
+	bh=C48TOsN/mssQZ5kCnguHROmL4GbPZsD3BqVQc28YrYU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=e6msBTWNHxKmzmvXx5u0jPmwXEzHEBEWHVqQe+2rhCF35MG9KILHDm42LJep8bwawsOX2h0rg4Kmq61//4DCMdA8Y65w6TSe4eRCHknKrw1Ni77ZvMmOX0/DW8cSD4Xp8Ef2AIGdIWoXQFRgi+u43MTpNWFl0QiHasJ6fC8uhso=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TT/C1I5j; arc=fail smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762165928; x=1793701928;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=C48TOsN/mssQZ5kCnguHROmL4GbPZsD3BqVQc28YrYU=;
+  b=TT/C1I5j7dYBZzXMj6Vk6HfGOHNdy3bP3eGFZ1h8cewEEO56xZHqpFeh
+   5pQ148xijofichr34bVxigEBJPzstxyxSAFCK5lVy0kXsXGBYCgu8ixP+
+   UGCVG8b8BU7d9v+PkbINUM2kLEyWu6/+Bio0YZHiXWcaEFShSHq1STfIH
+   M3xw/gVeIqF1aZL+2rlpG7MTzyrMJO01YeevcGRXvQT3GLNLnVBsuPI3A
+   6LrgxIQgso6zEqysR4yt0zPixGESHMY6SsWRgIonuFuXP/BbFpTwQBszR
+   JxE/HMmw9qalGIF7F2zU5Qi3Dvb0qVy1LI6+5ULb9m6Ag8Q9O1kFtIU+1
+   Q==;
+X-CSE-ConnectionGUID: XAOM0CZ3Rjm12LRJ0NYIAQ==
+X-CSE-MsgGUID: qB6IZGKjRF6Bvdqgyhx39g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="64155105"
+X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
+   d="scan'208";a="64155105"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 02:32:07 -0800
+X-CSE-ConnectionGUID: CGeEmXdpTEqdntKGJ8pSfQ==
+X-CSE-MsgGUID: Un3YjzdaQoWHOFeqc3Bi0Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
+   d="scan'208";a="186509682"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 02:32:07 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 3 Nov 2025 02:32:06 -0800
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27 via Frontend Transport; Mon, 3 Nov 2025 02:32:06 -0800
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (40.93.194.67)
+ by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.2562.27; Mon, 3 Nov 2025 02:32:06 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JwZpG+JBWltNu2mYnQO6RsE6uw30M6Yp7KsHTwf+Uni5tnmBxYHsnsnuMIw7lUYNnlRTUMjYq+xGsNGpMHZNuaflkAzs+C7qq9lvxSXs1tvzAlS4qMlK0aOsOSla8Dj1EAnHHoKmPEULP+knu9OE4/dmbzEr57g7Al48RxRM1+xFj14qyF1gI8jqUjRx0V8LFtvGIG6KrJzWTEhW0g+QoPEFOZmj538dVghqhcl2ldrBfnA8olHzwNGqegZ/a79JHoh+J41bic3gyEDii3uEnbGGwadwp1hrjKUAui4lDk4kQdWvFGqQB0Yrb5mkitAf3/7Q4+zCTe+EtDEFMJ+XZw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=d10EdOqkJAn7kxbNtyoNL5OEjHM9CYDsaAsC4guELzg=;
+ b=vewLzyut50GeKC08tejhkmfL7ndFbN4WMz5PbRmuXRPJ2P+iLCpLdV8uGhlck0JaBKQI611lmvofmQBlEDieGwe5ypFtTFojfbBMyfpHx/+TTovdk40sDpke61eJ6cexzoW0RcUndSmBU+e4RMBJmHjmT7SbdfuqSjOk8e7HKbkWCRLtIaxPlUn/WS5k4VlQ2DtUb7l6AhhkWitCeG6pMvemSTY2mUT1NoybNl+KOPGQtOK4+hn4x7G18aqZjpIeJqSqxa9ci6G1FiSL72Hoqm8BNl36TObvERFVEqK6GTMNieD8jZ6ZBE8/bJSl4YGlf0+ZiipmEe+Gg5jVjnHz3w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CO1PR11MB5057.namprd11.prod.outlook.com (2603:10b6:303:6c::15)
+ by CH3PR11MB7818.namprd11.prod.outlook.com (2603:10b6:610:129::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Mon, 3 Nov
+ 2025 10:32:04 +0000
+Received: from CO1PR11MB5057.namprd11.prod.outlook.com
+ ([fe80::3b75:a8d2:464e:30cc]) by CO1PR11MB5057.namprd11.prod.outlook.com
+ ([fe80::3b75:a8d2:464e:30cc%3]) with mapi id 15.20.9275.015; Mon, 3 Nov 2025
+ 10:32:04 +0000
+Date: Mon, 3 Nov 2025 10:31:52 +0000
+From: Krzysztof Karas <krzysztof.karas@intel.com>
+To: Marco Crivellari <marco.crivellari@suse.com>
+CC: <linux-kernel@vger.kernel.org>, <intel-gfx@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>, Tejun Heo <tj@kernel.org>, Lai Jiangshan
+	<jiangshanlai@gmail.com>, Frederic Weisbecker <frederic@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Michal Hocko
+	<mhocko@suse.com>, Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Subject: Re: [PATCH 3/3] drm/i915: WQ_PERCPU added to alloc_workqueue users
+Message-ID: <5ujqee7npggfcqmul6lcm44ilqrhmpcpiaxvdpcjjfawjhf63j@764n7hxk3mfm>
+"Organization: Intel Technology Poland sp. z o.o. - ul. Slowackiego 173,
+ 80-298 Gdansk - KRS 101882 - NIP 957-07-52-316"
+References: <20251031100923.85721-1-marco.crivellari@suse.com>
+ <20251031100923.85721-4-marco.crivellari@suse.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <20251031100923.85721-4-marco.crivellari@suse.com>
+X-ClientProxiedBy: DU7P190CA0019.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:10:550::15) To CO1PR11MB5057.namprd11.prod.outlook.com
+ (2603:10b6:303:6c::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=d3b267eaf3d3b01695c425cab7bcb0fa2d52bdf1620d5ecf21626e95c9b6;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Mon, 03 Nov 2025 11:31:35 +0100
-Message-Id: <DDYZOCXFX1J2.30UFCSI059R9V@baylibre.com>
-Subject: Re: [PATCH v9 3/3] firmware: ti_sci: Partial-IO support
-From: "Markus Schneider-Pargmann" <msp@baylibre.com>
-To: "Andrew Davis" <afd@ti.com>, "Markus Schneider-Pargmann (TI.com)"
- <msp@baylibre.com>, "Nishanth Menon" <nm@ti.com>, "Tero Kristo"
- <kristo@kernel.org>, "Santosh Shilimkar" <ssantosh@kernel.org>
-Cc: "Vishal Mahaveer" <vishalm@ti.com>, "Kevin Hilman"
- <khilman@baylibre.com>, "Dhruva Gole" <d-gole@ti.com>, "Sebin Francis"
- <sebin.francis@ti.com>, "Kendall Willis" <k-willis@ti.com>, "Akashdeep
- Kaur" <a-kaur@ti.com>, <linux-arm-kernel@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.21.0
-References: <20251030-topic-am62-partialio-v6-12-b4-v9-0-074f55d9c16b@baylibre.com> <20251030-topic-am62-partialio-v6-12-b4-v9-3-074f55d9c16b@baylibre.com> <d3209c85-dc30-4f9a-8ea5-3c3e19330afd@ti.com>
-In-Reply-To: <d3209c85-dc30-4f9a-8ea5-3c3e19330afd@ti.com>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PR11MB5057:EE_|CH3PR11MB7818:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4b2dbeb9-dcab-4545-0488-08de1ac43b30
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?ZC90Z2s5YnBSSlp2QjdjTXRWZm5kdEpZSi9ybE5abm5qQlR2S3AyQ0VveHRP?=
+ =?utf-8?B?TkNuRmt3RzJYeGlUN0JNVWs4bFMreWIwL0U1YU5seGhwWk5YN3RTMVBvbVAr?=
+ =?utf-8?B?VlEyUkc2c0xyb1NDU2Z2ckZFQkhEQW1LWkFEdXVycWhsWkRRK2FZdytMa0hp?=
+ =?utf-8?B?S1FLcno0L1hTNWxEbzJoRllRTDV3TkZiVStoZFhCeEpJaDhwUVh1dzk2Wkdv?=
+ =?utf-8?B?ZU9DbHp3R1JMczNnOUc5M0dKSmFRYjRDQTVmcTJ5dGhBeEM4a3pTQmI3bkRS?=
+ =?utf-8?B?OVFoNGhHNGUyczliRHBJT0s0em9scTN4V3hmcU5vTDk4QkVFQUkzRHZ2V1hr?=
+ =?utf-8?B?YjYzZlg3cm1CVlJqM0N6RzY4cGdvalJ1N21iS0hWcEZ5WlJIck8rSjFqMmVm?=
+ =?utf-8?B?OE5HNXZvVmxIelVqa3JyRlNiMDF0WGtuRDdWYUJXMGhTejI2eVVvQ2NJL0pZ?=
+ =?utf-8?B?bDlxaVFTSHdxWXZuZExFZ2g3VWVxampCaVp3MUlXMW5Xd0ZaZjR4RXZZczlm?=
+ =?utf-8?B?TjdhMWVMUGRJZWkvRER0OXR5ZzQvdGlMNHBWM3d1ZTVEa1daQTJac2lsZC9T?=
+ =?utf-8?B?NURWaDJHekZlZFZNajNnWHlCYWVlc0E3K2ZUODFXYjV0d0F0dUZaREVMRGJr?=
+ =?utf-8?B?UW9ZZ1pTZnhUL2FzV3JOUWlYT1ZKWmdoSWdBZW03eG1IaU5hNHJBODNzZHQ3?=
+ =?utf-8?B?dTM2QzFYWGVaNDczUGhiTlJPeW9EMi9peitiQjZKcThscWdVSnlBVnVHZnc1?=
+ =?utf-8?B?dUp0NS8zR2pQRElqQmpjYkJJME9EaVJXSTRVeGJTb3NCNVE3dG5jQkhkRFFW?=
+ =?utf-8?B?c1J0ZGJzSjVQaTBBN00yRVlIQ1RZQ0NZT241bC9qUktpaTZmSEEvRFlMSXNT?=
+ =?utf-8?B?dmF4K3Q4cEZvWTFJRWc4Z1I0c2t0MVpORlk1d3Z0VmZ1aTQ4eXc5K3Jia0dT?=
+ =?utf-8?B?TWk2NjdjVisrRzZpMU5Cc3JQMkQ0WVhqbEU4aFZ6REh5dVNlc2xYMzVDNUhX?=
+ =?utf-8?B?QkF5bXhBNzdRWU1Dbld4emNWTU9ka3FocVZhOUdlVmh3c1d2azR4L05ZOENR?=
+ =?utf-8?B?dkY2OGlGZm1Kbi9FeDlSY0JMdThMbnNLZi9CTzVEUmhTNHpDeFBlaVVKM2Y2?=
+ =?utf-8?B?ZjFqL0UzK3pSMXo0a0hKZXVsWFVLQU5FKzJZdkcwYUplRzJQbWlZa2dMTnNE?=
+ =?utf-8?B?d3Y5WDR5T3BUKzF3Nnh1Q1plSHVpNXpZbFoxZldzUTN5NkFZSkZaMGpGb1lP?=
+ =?utf-8?B?V2NQdnppMW9yS0tIRE1xa3UrOEVJc012ajNLVnVzZnFtUE12bXhqdXQ1VkM5?=
+ =?utf-8?B?dHF1bWpQek1VeEtqV3BuMnhhS2JhNU4zRlhmZ0p6MWJRRS82b1R0cGw4UVNm?=
+ =?utf-8?B?R1pJeUR1VjBLZ3lmZEttVlh1K2h0UWdNem9vNXc0UVB1TE5MV09VZ0lhbjJG?=
+ =?utf-8?B?c1huNGkrUkhFZ3RJelhvUzRSUzBTQ2xqODRDSGRCK1NVNFgrZ0ZRNXUyRThO?=
+ =?utf-8?B?K0l4T3VvQUl2dVFhbks4dEdpRFRESGRDN2l3Ykhpa1QwZThHcnpMcE5rRGJq?=
+ =?utf-8?B?Zk5McGd5M3NKVFU3OWRCQlJ1VlYxb2hnVGt3MFBuaEFQUkRVUnJNRFVlbTZG?=
+ =?utf-8?B?YWNnTXFadlhqUmlCdVFEZjF2RmZJOEZFRDdEQXVQcS9qeWZNNlVKNWtlMEVN?=
+ =?utf-8?B?STB3SVVMWURUMnp6YXVXQlh5T08rakR6MVlNd1BNU3VPTktOemo2UkVWMmpH?=
+ =?utf-8?B?L01PWTBWZkhUUU96NmZIN1ZPMmx6U3ErZU45ODJNZFc5U0xGWnVDVy9JUm95?=
+ =?utf-8?B?VEZrNExCeW0rdW5sYmozYWtRZ1piTHMvOExHdktZVTRheTNyZW1hQTIvNmh1?=
+ =?utf-8?B?ekIzWVZBMkdKTUVZRFptRzNVVDdsYm5NVHJTSU15Y045YnkvMGg0REIyKzc2?=
+ =?utf-8?Q?yutqz00cef3esOZQqtXxlxm63hxTIJdt?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5057.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?OWptc0J1eXVyMy9XS3ZvQnArRlJsSDB2Ym41OEp3TlhWWWRENmJSblhBWUVx?=
+ =?utf-8?B?T0lNOGZiM1ZqTlVQUWtCajVOaTc3K0x6Z3dYVDlKTG44OEFIWUNvZTl2QWNM?=
+ =?utf-8?B?SGY5a1k1VlRLcy90TTQ5TTRvRjZIaFkwdy92WGZ2SVhTcEEvZnJhR0FuMG5W?=
+ =?utf-8?B?bjljQUtnNFM0QnVJY3hiUTY5V1YzRnVhaW1YTWlDN1N0QStMY2VaajRuYzZC?=
+ =?utf-8?B?OXNwL252VUZCY2pjN3gyOE5nWWZQYUg4dU9mTkZVQVl0YWx3Nm96TG8wWnBy?=
+ =?utf-8?B?QnF4ZWVJRlAyMEx0MWxySmpkYVJZaVRVTE5ja21KdDAvWVZkcndzT250QnJP?=
+ =?utf-8?B?U0VCYU9iUGhFZDR5ZEFQbEk0OUg5NGdzT29NdG5Gb2NlN2E5bEp1ZVphdVVI?=
+ =?utf-8?B?WkRWb3dRVnVpTVNkRCtxcnFGTVozT002d3puR1RuOURTS0l0NVVNK2dnTytx?=
+ =?utf-8?B?cUxUWlFEaHhVU1VmcEpNZ2RBMVpwZTQ1NlpSRHRkbGFoVVQvSzVPeDVtTi82?=
+ =?utf-8?B?Ym5YL2xlMnV6RXVGQVJ4REIxQ0pKdG5uY2NDUDlIdXA4dGZndHFMaFlmV0NE?=
+ =?utf-8?B?bjFsTTgxc3hqNVYxK1NZVG9hUk1KZ2FLdjZNcFlBMGV6WEVnME1mQ2REKzZL?=
+ =?utf-8?B?d2dsWWhrV2hlZVJYbEh4dVlWaVJ0ZEZnYjFaQ0ZiM2thcURFbStrNHhIenpx?=
+ =?utf-8?B?dTRzNXk4V3ZscUVqMkNjOC8zTWVrL1lZNXJYREExMG51K2tlRlNDcHZtVEpS?=
+ =?utf-8?B?UFVpaS9DRmdPL2JYdEsyaHE0NmFGbVRWVDJyVzNjY3N1WVRzOUVndUhHMUw3?=
+ =?utf-8?B?cDV6QWFXaW5KYzd6dFlPSlYvWVQxZjNFWVBEc211Tjc5ZGd0MUFoblFTeCt2?=
+ =?utf-8?B?RWxTMi9DSnhiaHA2RW1SQlZJZEhDYS9kTmZBOXFxUGRKSkY2dGN1TUxRTUtU?=
+ =?utf-8?B?WnAyWlJrT3V5c2FyanBGLzFUQlVTTUx1Z09HamxpUWxJWmJ5WXFPQnZwdmc0?=
+ =?utf-8?B?Z0FwSlBZVHVta1NFNTdPZW5BRVJoZGpTRWNLVjJsZ2lNS0loZGgvNnZsTHlz?=
+ =?utf-8?B?RHVraXMvUkkrcytCK1JFOTFhbVVpYzB2S0xCaUtvVVR2YXFtWC91RzkwR0oy?=
+ =?utf-8?B?R21pUTZybGZaK2F2RHpWbW1aOWw1RFNnTXpBRVdyTVBoWUUrOUxrUjhieHRj?=
+ =?utf-8?B?Q2pUOVNwb0p5RWNITGNCQU54YWQyRXJKa3pxazNTU2dkVzNIbE8wNTRhOTZX?=
+ =?utf-8?B?Ti9BM0c5Wnl6V05yZkFiakIrdXpoeUZLQU9NS0pmeW1VZG9FK1hEeGliZS9z?=
+ =?utf-8?B?clJPZ1FPQmxGZWRjZjJ2SXJvVFBYblJsUjFTeUp6WkIxeWhiakQ5dXQ2NThJ?=
+ =?utf-8?B?L0R4RkpONUc2SHJnbUJXcXJUeHNtL3gvUHhRQlpRUldJcm0weXVaVVNYeW1W?=
+ =?utf-8?B?RmNBNmRxSkZFSSszUmczM0VnS1NoTVBrYlZhTUJjd1ltQ1VSMWVHdTNaa3o0?=
+ =?utf-8?B?cVRNeXdWZkJWRlczeTFpdk8yYkRQT2dzdEowKzIyU3BVZkRHTEc3ZnIwTzAw?=
+ =?utf-8?B?SHFpQk0ybmVtM2QwbE5PdGZEOGxkWklhQUxjMzRoK0lrMHRRWGY5MGE5eG1W?=
+ =?utf-8?B?YnRtSFY0T243L0lma05rU1RNNFdYTTI2VG4xalo5RHlxK0ExT0NWcDJCL2t6?=
+ =?utf-8?B?eUd6VnFySDR1YVNISElMdmJxaDJISUlnV0VjbXlCN2hkUStzNGUwZEpjekRH?=
+ =?utf-8?B?cndKN3N2Y0lrVHVxWncva1FnTGszS2U1WlRxYlF1azFub004R3RrUGFHT3Y1?=
+ =?utf-8?B?L1FVeUlZTHhEcTNsMjZ5a1lpQ1Z0VjFOTmFycmc5dmJKVDV4Q045Qkg3VE0x?=
+ =?utf-8?B?VEpXUDM3ak5qRE5TQ0hlMTN3MjNjQ1RJQi9QN3g0MS9HaWJKaW1USlF4NU9T?=
+ =?utf-8?B?bWRaYllPWVA0MnZvbzJXcEcwRFd1RFpBejN2KzNPM3hTS083dS9JQVN5MmRh?=
+ =?utf-8?B?T3BkOTlmU2s2YzhlWFp1dGVkTnpyM2JuVnc2SER3MGF1TjFEbVQxQ01tc0RY?=
+ =?utf-8?B?Z29HQVVnOW9wWVlLaWpTQnJlOUo3T25CcmFad2xLWkRzSmp2SXZkeDhKS0Va?=
+ =?utf-8?B?T2tYejlpZm5lZS9mUzIzOC9WQ28yTHF3aEZRdExhb2k1Si9VcXpXZ3lBMEtr?=
+ =?utf-8?B?MXc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4b2dbeb9-dcab-4545-0488-08de1ac43b30
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5057.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 10:32:04.3659
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: RaWheRbAqcHKUN/s5jbCKjh6MEQDGI162TtVGxV1W88MeTALiIVYfIdQcW4Qq2YwPK1i9beX5L0y4RZbNvfpVrmTlNC3qYO1d62MmBqMhE8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB7818
+X-OriginatorOrg: intel.com
 
---d3b267eaf3d3b01695c425cab7bcb0fa2d52bdf1620d5ecf21626e95c9b6
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+Hi Marco,
 
-On Thu Oct 30, 2025 at 3:24 PM CET, Andrew Davis wrote:
-> On 10/30/25 4:26 AM, Markus Schneider-Pargmann (TI.com) wrote:
->> Add support for Partial-IO poweroff. In Partial-IO pins of a few
->> hardware units can generate system wakeups while DDR memory is not
->> powered resulting in a fresh boot of the system. These hardware units in
->> the SoC are always powered so that some logic can detect pin activity.
->>=20
->> If the system supports Partial-IO as described in the fw capabilities, a
->> sys_off handler is added. This sys_off handler decides if the poweroff
->> is executed by entering normal poweroff or Partial-IO instead. The
->> decision is made by checking if wakeup is enabled on all devices that
->> may wake up the SoC from Partial-IO.
->>=20
->> The possible wakeup devices are found by checking which devices
->> reference a "Partial-IO" system state in the list of wakeup-source
->> system states. Only devices that are actually enabled by the user will
->> be considered as an active wakeup source. If none of the wakeup sources
->> is enabled the system will do a normal poweroff. If at least one wakeup
->> source is enabled it will instead send a TI_SCI_MSG_PREPARE_SLEEP
->> message from the sys_off handler. Sending this message will result in an
->> immediate shutdown of the system. No execution is expected after this
->> point. The code will wait for 5s and do an emergency_restart afterwards
->> if Partial-IO wasn't entered at that point.
->>=20
->> A short documentation about Partial-IO can be found in section 6.2.4.5
->> of the TRM at
->>    https://www.ti.com/lit/pdf/spruiv7
->>=20
->> Signed-off-by: Markus Schneider-Pargmann (TI.com) <msp@baylibre.com>
->> ---
->>   drivers/firmware/ti_sci.c | 132 ++++++++++++++++++++++++++++++++++++++=
-+++++++-
->>   drivers/firmware/ti_sci.h |   5 ++
->>   2 files changed, 136 insertions(+), 1 deletion(-)
->>=20
->> diff --git a/drivers/firmware/ti_sci.c b/drivers/firmware/ti_sci.c
->> index 4db84a92a517b0aa7bb8d47e809d9848a16e2cc4..f2922fccfbe748a436cb9aa0=
-a8c8e5f48db02ef9 100644
->> --- a/drivers/firmware/ti_sci.c
->> +++ b/drivers/firmware/ti_sci.c
->> @@ -6,6 +6,7 @@
->>    *	Nishanth Menon
->>    */
->>  =20
->> +#include "linux/dev_printk.h"
->>   #define pr_fmt(fmt) "%s: " fmt, __func__
->>  =20
->>   #include <linux/bitmap.h>
->> @@ -3663,6 +3664,116 @@ devm_ti_sci_get_resource(const struct ti_sci_han=
-dle *handle, struct device *dev,
->>   }
->>   EXPORT_SYMBOL_GPL(devm_ti_sci_get_resource);
->>  =20
->> +/*
->> + * Enter Partial-IO, which disables everything including DDR with only =
-a small
->> + * logic being active for wakeup.
->> + */
->> +static int ti_sci_enter_partial_io(struct ti_sci_info *info)
->> +{
->> +	struct ti_sci_msg_req_prepare_sleep *req;
->> +	struct ti_sci_xfer *xfer;
->> +	struct device *dev =3D info->dev;
->> +	int ret =3D 0;
->> +
->> +	xfer =3D ti_sci_get_one_xfer(info, TI_SCI_MSG_PREPARE_SLEEP,
->> +				   TI_SCI_FLAG_REQ_GENERIC_NORESPONSE,
->> +				   sizeof(*req), sizeof(struct ti_sci_msg_hdr));
->> +	if (IS_ERR(xfer)) {
->> +		ret =3D PTR_ERR(xfer);
->> +		dev_err(dev, "Message alloc failed(%d)\n", ret);
->> +		return ret;
->> +	}
->> +
->> +	req =3D (struct ti_sci_msg_req_prepare_sleep *)xfer->xfer_buf;
->> +	req->mode =3D TISCI_MSG_VALUE_SLEEP_MODE_PARTIAL_IO;
->
-> This whole function is almost identical to ti_sci_cmd_prepare_sleep() oth=
-er
-> than you use a different mode here, which this different mode can be pass=
-ed
-> into ti_sci_cmd_prepare_sleep() just the same. Only other difference woul=
-d
-> be the NORESPONSE flag which you could just check "mode" passed in and
-> use the right flag for the mode.
+Usually, imperative form is used for patch titles:
+"add WQ_PERCPU to alloc_workqueue users".
 
-I thought this to be nicer as it avoided ifs, but as Kendall and you
-both requested this, I changed it for the next version.
-
->
->> +	req->ctx_lo =3D 0;
->> +	req->ctx_hi =3D 0;
->> +	req->debug_flags =3D 0;
->> +
->> +	ret =3D ti_sci_do_xfer(info, xfer);
->> +	if (ret) {
->> +		dev_err(dev, "Mbox send fail %d\n", ret);
->> +		goto fail;
->> +	}
->> +
->> +fail:
->> +	ti_sci_put_one_xfer(&info->minfo, xfer);
->> +
->> +	return ret;
->> +}
->> +
->> +/*
->> + * Iterate all device nodes that have a wakeup-source property and chec=
-k if one
->> + * of the possible phandles points to a Partial-IO system state. If it
->> + * does resolve the device node to an actual device and check if wakeup=
- is
->> + * enabled.
->> + */
->> +static bool ti_sci_partial_io_wakeup_enabled(struct ti_sci_info *info)
->> +{
->> +	struct device_node *wakeup_node =3D NULL;
->> +
->> +	for_each_node_with_property(wakeup_node, "wakeup-source") {
->> +		struct of_phandle_iterator it;
->> +		int err;
->> +
->> +		of_for_each_phandle(&it, err, wakeup_node, "wakeup-source", NULL, 0) =
-{
->> +			struct platform_device *pdev;
->> +			bool may_wakeup;
->> +
->> +			/*
->> +			 * Continue if idle-state-name is not off-wake. Return
->> +			 * value is the index of the string which should be 0 if
->> +			 * off-wake is present.
->> +			 */
->> +			if (of_property_match_string(it.node, "idle-state-name", "off-wake")=
-)
->> +				continue;
->> +
->> +			pdev =3D of_find_device_by_node(wakeup_node);
->> +			if (!pdev)
->> +				continue;
->> +
->> +			may_wakeup =3D device_may_wakeup(&pdev->dev);
->> +			put_device(&pdev->dev);
->> +
->> +			if (may_wakeup) {
->> +				dev_dbg(info->dev, "%pOF identified as wakeup source for Partial-IO=
-\n",
->> +					wakeup_node);
->> +				of_node_put(it.node);
->> +				of_node_put(wakeup_node);
->> +				return true;
->> +			}
->> +		}
->> +	}
->> +
->> +	return false;
->> +}
->> +
->> +static int ti_sci_sys_off_handler(struct sys_off_data *data)
->> +{
->> +	struct ti_sci_info *info =3D data->cb_data;
->> +	bool enter_partial_io =3D ti_sci_partial_io_wakeup_enabled(info);
->> +	int ret;
->> +
->> +	if (!enter_partial_io)
->> +		return NOTIFY_DONE;
->> +
->> +	dev_info(info->dev, "Entering Partial-IO because a powered wakeup-enab=
-led device was found.\n");
->> +
->> +	ret =3D ti_sci_enter_partial_io(info);
->> +
->
-> No need for newline here.
->
->> +	if (ret) {
->> +		dev_err(info->dev,
->> +			"Failed to enter Partial-IO %pe, trying to do an emergency restart\n=
-",
->> +			ERR_PTR(ret));
->
-> Why cast this int to a pointer before printing it out?
-
-I am casting this to an error pointer to get the resolution of the error
-value to a symbolic name with %pe. This will print 'EBUSY' etc.
-
-Thanks!
-
-Best
-Markus
-
---d3b267eaf3d3b01695c425cab7bcb0fa2d52bdf1620d5ecf21626e95c9b6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKMEABYKAEsWIQSJYVVm/x+5xmOiprOFwVZpkBVKUwUCaQiEhxsUgAAAAAAEAA5t
-YW51MiwyLjUrMS4xMSwyLDIRHG1zcEBiYXlsaWJyZS5jb20ACgkQhcFWaZAVSlNB
-ewEAzqNa+34X6+y+Ev+PL2U/s/P4kMziVU1jKpfSLWY12XQBANXHThqEN3gUgXRw
-ba7ULqDxdztsMTeTll24hghNKqIA
-=zC3u
------END PGP SIGNATURE-----
-
---d3b267eaf3d3b01695c425cab7bcb0fa2d52bdf1620d5ecf21626e95c9b6--
+-- 
+Best Regards,
+Krzysztof
 
