@@ -1,352 +1,118 @@
-Return-Path: <linux-kernel+bounces-882577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A06AAC2ACA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 10:38:03 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id E51DEC2ACDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 10:40:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85B4A189401B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 09:38:13 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D0C204F37A1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 09:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033282EC0AA;
-	Mon,  3 Nov 2025 09:35:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926DC2ED870;
+	Mon,  3 Nov 2025 09:37:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="WbyEUyYH"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lCnKP+uq"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331E82F3607
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 09:35:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A56D2ED87C
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 09:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762162558; cv=none; b=Ic5dIxs3FCaQuvPnJySYd8oYCIq4T2+/51ZPiAlDAooiI6vyhyQ71SpPK1tNCUpB35jXuoZLQZ0Xhw31ehPkWs952EM+AXVmQxCLYFtSQn0uKNMdHHOSwPsWnDqpnh08/LFdxHfLJIiFc1/tTnZbfUV7xdPiwpsWoCB+XmNqvpE=
+	t=1762162674; cv=none; b=RkfaQPIgPq4jyVHSQk9OsdRtU1APZ8hp04vuh5ptQF4uJmt7AxhLYBQbOnPa7pdvFdW6y51Yz6GcTsjj8WYXYl1kxOx5CK4d25yFWneVD7YmxTVUfckSDj+zj1Squnv2iJcS3IQ7l35Q8318Onu7mZ4pI1+VbVrrSBa9GTMdMj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762162558; c=relaxed/simple;
-	bh=LVirDKugKBwbbhccPkhESHv27V21xLYG8l1u0h8U634=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BNbzYqQzOLJt4AuLvAIRwKdEmm6IvQ3OHiGq1JzIiJ7KG+G2t3LtF/w0PbLWwldhXTZvX+2Ye2on5sNMwgkIb4g+lhfKsw7arA0wPaedWDU0TZ7RKACdiCRSCD2bZYZiNz/Ly8kXCZmkADn7+CcAkVe2opd1xKCpnEe/7HvLFSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=WbyEUyYH; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-475dc6029b6so37197395e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 01:35:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1762162554; x=1762767354; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ccx+aLo9kBZlyDoxwdiUlxqcXIUYEmsoX9N+IulSngU=;
-        b=WbyEUyYHMKr84mMD70rTZjLf3j6Lh6q35Gh/9YxOdly6LhgPDOAuJ+X0K8t1VkgvNX
-         taduIJ3t8ujN/ZPD90NWCMqKI2WPnVUFF8am9GyJQpozlGFkwAUrxGzl3ubdmvRDWKRF
-         U4SLxZeyws8LUZ48aAghIVvjAAVG89GNjT+K49RP/d538SYoOhlcChG0oEio7sxuHono
-         8DY1rfF6PWWj5yMZhUpviXlOJSIctORwrf0TgPRxAnZqsEc2Am64Kfw7ddhKqNfsnpAd
-         PZnXv/BHXp2SfGlFdN9pyShL/1FExajUFve/2GfQV5+sr+3SNnepQ8bdnUuT5AAWbQYg
-         uGuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762162554; x=1762767354;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ccx+aLo9kBZlyDoxwdiUlxqcXIUYEmsoX9N+IulSngU=;
-        b=uUSsx+jffNL4p73ht8WsW3XNHApC7r4d6TSG2ECCvxdGJg80Htwv9EfF107CPziT1V
-         4a8LP0KEAaxvadqTlX5eSkwJQkDV1S+C4uCD2nyyl867G/BTCPWUovpbHhZbw4rfPkE1
-         h/vYFU1uaU4vHwZT2CA1U4AZleXIWAAN1QErQlyRfiCllyqlkdJXvpo9NnlWa0MgXoxx
-         QWdqh/Gsr/fXYYx1Jkp+nWEIoaHmYJXB13Qi4KvMo4s5OZfY0eupE9YQ2txyXjU5dcfA
-         wU3BLV1vwUGF9kaWCEg5o7rPQHUm/S7Cz3vmd5c71Vcm/ezylahzTlbw9SoCZh85p1/S
-         1l5w==
-X-Forwarded-Encrypted: i=1; AJvYcCXIaccOhZA1pmJ/U/sTk1lCseRtvXwUFIclyIuQu7DAM1hj0gLY4qYr0tiocRiWGlYiaQ94xffFMJZZ0So=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMyoWJMwWYBB3uctsGHc+ctHJxNmE4hdqw1YHSCB2pkQriNEn7
-	H9DYcxZQ9weQ8Q7XzNrx73oU5vxrkKDn5ywVaVxhA46Vq71CrEzCqZdWV3mg/GP09WI=
-X-Gm-Gg: ASbGnctJi4kIGLz7Qqm1nVkQfvMT5HdWNUGp8UWBLNi/odv2V7OQ8iz++ms2GtmNEQA
-	uRYiqdIKTa4O4uLKOYLleGMtOIxiqJ4OF7ncRUCFww1Kr4YkTyhXsxZoGxFtsH8n/3nK9xR8KDO
-	2SIMlHQZlyef6CetH4n7qFzToCxUFd2Fq1zJA0zF7drCd9A8vVW8uy4vifWLLTCAf4UA22pi9L4
-	Brn47uXPMUf9YdhHB6xuWP2PZuuxTlnJUpBZ4Kz9Vm1aNtnQZP1p6Mn0HNiHQ6vkUUzUluiVNmI
-	IFY5Tez8CJQnupP0EKHx6Jhmmh/JJ1AKTU1d00ZRant67JV7VFTNzR2cjYttq+LqtLqURE8RG1X
-	OHcU+BgYgyMdYV1VK6tNiKIffAmISgiA9Q8YBR7LkGLQxAhqStE6LH3PVc6pkRBJSL+K9bVMIe2
-	2OuSpW
-X-Google-Smtp-Source: AGHT+IG+c9TBxrNO8Rhcga0cjbgIHbzYpexTcWraDC03lZYlbHD8b28uw8YTYq3tgyvQ6c0CGDmtaQ==
-X-Received: by 2002:a05:600c:3e07:b0:471:a96:d1b6 with SMTP id 5b1f17b1804b1-4773b1f9db7mr85016295e9.7.1762162554470;
-        Mon, 03 Nov 2025 01:35:54 -0800 (PST)
-Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:e6eb:2a19:143f:b127])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c4ac5d6sm147285675e9.8.2025.11.03.01.35.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 01:35:53 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 03 Nov 2025 10:35:30 +0100
-Subject: [PATCH v4 10/10] reset: gpio: use software nodes to setup the GPIO
- lookup
+	s=arc-20240116; t=1762162674; c=relaxed/simple;
+	bh=d7AJpNDK+zGWk/tW2/q+dSp4+6DKWIoXMzHbUc7Msk4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z7POyiWipUBhulL+2pWJtjVx/ggJFR89ihoYaee36YNMJnZKm3wD9pjADbl5OEup/KcuoHXkfNVztk89j+Pp/xETZAfAxgB93CcwbjQEWyh0tbedCqQURieYiXTdAosrhb0yGMF8YVpsjtl3ZaJU+8ku+BOhNS2EpC5QEiuTDiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lCnKP+uq; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762162670;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=iwufg+Q99M7av1aeDiq92CAIAQYLr11Y8lBCgnCUUP8=;
+	b=lCnKP+uq1lHTbsoF3FNyxHmMv8gg7NJMPZ4qZVwUlZr5cLl10EAyXLigNCPn3qTr5ibiRT
+	HrJRNU1heA6JBtT8XcQLZlTlZOHVjzu2iudkbKfZ/5OUs/6dGHqMKtY8kfGDSDVhGhKgWa
+	rRgT7eF+quw4P+FAK2+yDDPq0byeHCM=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	Ingo Molnar <mingo@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND] x86/fpu: Replace vmalloc + copy_from_user with vmemdup_user in xstateregs_set
+Date: Mon,  3 Nov 2025 10:37:19 +0100
+Message-ID: <20251103093721.3142-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251103-reset-gpios-swnodes-v4-10-6461800b6775@linaro.org>
-References: <20251103-reset-gpios-swnodes-v4-0-6461800b6775@linaro.org>
-In-Reply-To: <20251103-reset-gpios-swnodes-v4-0-6461800b6775@linaro.org>
-To: Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Daniel Scally <djrscally@gmail.com>, 
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-acpi@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7164;
- i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=zGQChOLYdShQxCyhFrgghwt6h1bOoSffKyYTaLJagTw=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBpCHdmkfkiw+TPahVB/J5Ozb3L+OfwnbkEAaAM8
- jTvH0EnPOmJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCaQh3ZgAKCRARpy6gFHHX
- ct08EACxza1Nitcc8hYrFjP4g8/IEkDBsLvHarp0JA2folddmog9HvZ+5ikQyAfCGA0QNJPGcwh
- wO3i/Qoe7yClroNovCJpbq4u5qhaXhhy7L9uvYekvU7ythdhwPP7mquZhP2oxBLXKgi6WdFmDTy
- O0Ag+0NMjhGHRCGnGASBJJ+LIhS2Ub9KwLxWQ1NznREdIMvSCRPNRkc3BUTLS4WvCipGf6OozKZ
- h9lK5HPErNsanQ55jm9twkdV7VPIU5mUBUFiSmLcbZTsYDTGQPZxDeq9ryizMtY1mlHnBBgWqsy
- DudImTzWMoEjPg/Cr+ovz07GFjG5hqIF0HSoHU0pXW+BJ1WTfZV9uAHWmlWsdQM4Xw6v3+cfrMu
- n7OisPGEys+O380l+82SLvRU3rbBXm2yeSvlmOrpA6vDXrL44wSLXwWAn62zR6qgquNmkA9Il+B
- yaEpBjODGUFTWd2Sb8fYz60lzzKT0IpWfyw0VfCW7WyNJpHzjdLuYcQdOrCKQBevz87KfRCPBYP
- fBZZbKva6K1RO6MN8xgeA+AkQYpfIc4n7yPdjaw+XQXVisYS1DE4TIZMvIfB+qwmsZJe2dAgH4Z
- aah7PYXttCW5fv7QERqORVou/+Y8g9Vm+H1kczeVtjhFV509pxETDA+Sua3tYkV+o/tJ7b7+RNg
- uRGLDCgqYkxB/Sw==
-X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
- fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Replace vmalloc() followed by copy_from_user() with vmemdup_user() to
+improve and simplify xstateregs_set(). Use kvfree() to free.
 
-GPIO machine lookup is a nice mechanism for associating GPIOs with
-consumers if we don't know what kind of device the GPIO provider is or
-when it will become available. However in the case of the reset-gpio, we
-are already holding a reference to the device and so can reference its
-firmware node. Let's setup a software node that references the relevant
-GPIO and attach it to the auxiliary device we're creating.
+Return early if an error occurs and remove the obsolete 'out' label.
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+No functional changes intended.
+
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
- drivers/reset/core.c | 132 ++++++++++++++++++++++++++++++---------------------
- 1 file changed, 78 insertions(+), 54 deletions(-)
+ arch/x86/kernel/fpu/regset.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-index fcf1c24086e565015b0956fdd40334274a1edb00..770d82ed7978f1006882908d92526fc6d8be3299 100644
---- a/drivers/reset/core.c
-+++ b/drivers/reset/core.c
-@@ -14,6 +14,7 @@
- #include <linux/export.h>
- #include <linux/gpio/driver.h>
- #include <linux/gpio/machine.h>
-+#include <linux/gpio/property.h>
- #include <linux/idr.h>
- #include <linux/kernel.h>
- #include <linux/kref.h>
-@@ -77,10 +78,12 @@ struct reset_control_array {
- /**
-  * struct reset_gpio_lookup - lookup key for ad-hoc created reset-gpio devices
-  * @of_args: phandle to the reset controller with all the args like GPIO number
-+ * @swnode: Software node containing the reference to the GPIO provider
-  * @list: list entry for the reset_gpio_lookup_list
+diff --git a/arch/x86/kernel/fpu/regset.c b/arch/x86/kernel/fpu/regset.c
+index 0986c2200adc..00cc009918e6 100644
+--- a/arch/x86/kernel/fpu/regset.c
++++ b/arch/x86/kernel/fpu/regset.c
+@@ -3,6 +3,7 @@
+  * FPU register's regset abstraction, for ptrace, core dumps, etc.
   */
- struct reset_gpio_lookup {
- 	struct of_phandle_args of_args;
-+	struct fwnode_handle *swnode;
- 	struct list_head list;
- };
+ #include <linux/sched/task_stack.h>
++#include <linux/string.h>
+ #include <linux/vmalloc.h>
  
-@@ -822,52 +825,45 @@ static void __reset_control_put_internal(struct reset_control *rstc)
- 	kref_put(&rstc->refcnt, __reset_control_release);
+ #include <asm/fpu/api.h>
+@@ -157,21 +158,15 @@ int xstateregs_set(struct task_struct *target, const struct user_regset *regset,
+ 		return -EFAULT;
+ 
+ 	if (!kbuf) {
+-		tmpbuf = vmalloc(count);
+-		if (!tmpbuf)
+-			return -ENOMEM;
+-
+-		if (copy_from_user(tmpbuf, ubuf, count)) {
+-			ret = -EFAULT;
+-			goto out;
+-		}
++		tmpbuf = vmemdup_user(ubuf, count);
++		if (IS_ERR(tmpbuf))
++			return PTR_ERR(tmpbuf);
+ 	}
+ 
+ 	fpu_force_restore(fpu);
+ 	ret = copy_uabi_from_kernel_to_xstate(fpu->fpstate, kbuf ?: tmpbuf, &target->thread.pkru);
+ 
+-out:
+-	vfree(tmpbuf);
++	kvfree(tmpbuf);
+ 	return ret;
  }
  
--static int __reset_add_reset_gpio_lookup(struct gpio_device *gdev, int id,
--					 struct device_node *np,
--					 unsigned int gpio,
--					 unsigned int of_flags)
-+static void reset_gpio_aux_device_release(struct device *dev)
- {
--	unsigned int lookup_flags;
--	const char *label_tmp;
-+	struct auxiliary_device *adev = to_auxiliary_dev(dev);
- 
--	/*
--	 * Later we map GPIO flags between OF and Linux, however not all
--	 * constants from include/dt-bindings/gpio/gpio.h and
--	 * include/linux/gpio/machine.h match each other.
--	 */
--	if (of_flags > GPIO_ACTIVE_LOW) {
--		pr_err("reset-gpio code does not support GPIO flags %u for GPIO %u\n",
--		       of_flags, gpio);
--		return -EINVAL;
-+	kfree(adev);
-+}
-+
-+static int reset_add_gpio_aux_device(struct device *parent,
-+				     struct fwnode_handle *swnode,
-+				     int id, void *pdata)
-+{
-+	struct auxiliary_device *adev;
-+	int ret;
-+
-+	adev = kzalloc(sizeof(*adev), GFP_KERNEL);
-+	if (!adev)
-+		return -ENOMEM;
-+
-+	adev->id = id;
-+	adev->name = "gpio";
-+	adev->dev.parent = parent;
-+	adev->dev.platform_data = pdata;
-+	adev->dev.release = reset_gpio_aux_device_release;
-+	device_set_node(&adev->dev, swnode);
-+
-+	ret = auxiliary_device_init(adev);
-+	if (ret) {
-+		kfree(adev);
-+		return ret;
- 	}
- 
--	label_tmp = gpio_device_get_label(gdev);
--	if (!label_tmp)
--		return -EINVAL;
-+	ret = __auxiliary_device_add(adev, "reset");
-+	if (ret) {
-+		auxiliary_device_uninit(adev);
-+		kfree(adev);
-+		return ret;
-+	}
- 
--	char *label __free(kfree) = kstrdup(label_tmp, GFP_KERNEL);
--	if (!label)
--		return -ENOMEM;
--
--	/* Size: one lookup entry plus sentinel */
--	struct gpiod_lookup_table *lookup __free(kfree) = kzalloc(struct_size(lookup, table, 2),
--								  GFP_KERNEL);
--	if (!lookup)
--		return -ENOMEM;
--
--	lookup->dev_id = kasprintf(GFP_KERNEL, "reset.gpio.%d", id);
--	if (!lookup->dev_id)
--		return -ENOMEM;
--
--	lookup_flags = GPIO_PERSISTENT;
--	lookup_flags |= of_flags & GPIO_ACTIVE_LOW;
--	lookup->table[0] = GPIO_LOOKUP(no_free_ptr(label), gpio, "reset",
--				       lookup_flags);
--
--	/* Not freed on success, because it is persisent subsystem data. */
--	gpiod_add_lookup_table(no_free_ptr(lookup));
--
--	return 0;
-+	return ret;
- }
- 
- /*
-@@ -875,9 +871,11 @@ static int __reset_add_reset_gpio_lookup(struct gpio_device *gdev, int id,
-  */
- static int __reset_add_reset_gpio_device(const struct of_phandle_args *args)
- {
-+	struct property_entry properties[] = { {}, {} };
- 	struct reset_gpio_lookup *rgpio_dev;
--	struct auxiliary_device *adev;
--	int id, ret;
-+	unsigned int offset, of_flags;
-+	struct device *parent;
-+	int id, ret, lflags;
- 
- 	/*
- 	 * Currently only #gpio-cells=2 is supported with the meaning of:
-@@ -895,6 +893,23 @@ static int __reset_add_reset_gpio_device(const struct of_phandle_args *args)
- 	 */
- 	lockdep_assert_not_held(&reset_list_mutex);
- 
-+	offset = args->args[0];
-+	of_flags = args->args[1];
-+
-+	/*
-+	 * Later we map GPIO flags between OF and Linux, however not all
-+	 * constants from include/dt-bindings/gpio/gpio.h and
-+	 * include/linux/gpio/machine.h match each other.
-+	 *
-+	 * FIXME: Find a better way of translating OF flags to GPIO lookup
-+	 * flags.
-+	 */
-+	if (of_flags > GPIO_ACTIVE_LOW) {
-+		pr_err("reset-gpio code does not support GPIO flags %u for GPIO %u\n",
-+		       of_flags, offset);
-+		return -EINVAL;
-+	}
-+
- 	struct gpio_device *gdev __free(gpio_device_put) =
- 		gpio_device_find_by_fwnode(of_fwnode_handle(args->np));
- 	if (!gdev)
-@@ -909,6 +924,13 @@ static int __reset_add_reset_gpio_device(const struct of_phandle_args *args)
- 		}
- 	}
- 
-+	lflags = GPIO_PERSISTENT | (of_flags & GPIO_ACTIVE_LOW);
-+	parent = gpio_device_to_device(gdev);
-+
-+	properties[0] = PROPERTY_ENTRY_GPIO_FWNODE("reset-gpios",
-+						   parent->fwnode,
-+						   offset, lflags);
-+
- 	id = ida_alloc(&reset_gpio_ida, GFP_KERNEL);
- 	if (id < 0)
- 		return id;
-@@ -920,11 +942,6 @@ static int __reset_add_reset_gpio_device(const struct of_phandle_args *args)
- 		goto err_ida_free;
- 	}
- 
--	ret = __reset_add_reset_gpio_lookup(gdev, id, args->np, args->args[0],
--					    args->args[1]);
--	if (ret < 0)
--		goto err_kfree;
--
- 	rgpio_dev->of_args = *args;
- 	/*
- 	 * We keep the device_node reference, but of_args.np is put at the end
-@@ -932,19 +949,26 @@ static int __reset_add_reset_gpio_device(const struct of_phandle_args *args)
- 	 * Hold reference as long as rgpio_dev memory is valid.
- 	 */
- 	of_node_get(rgpio_dev->of_args.np);
--	adev = auxiliary_device_create(gpio_device_to_device(gdev), "reset",
--				       "gpio", &rgpio_dev->of_args, id);
--	ret = PTR_ERR_OR_ZERO(adev);
-+
-+	rgpio_dev->swnode = fwnode_create_software_node(properties, NULL);
-+	if (IS_ERR(rgpio_dev->swnode)) {
-+		ret = PTR_ERR(rgpio_dev->swnode);
-+		goto err_put_of_node;
-+	}
-+
-+	ret = reset_add_gpio_aux_device(parent, rgpio_dev->swnode, id,
-+					&rgpio_dev->of_args);
- 	if (ret)
--		goto err_put;
-+		goto err_del_swnode;
- 
- 	list_add(&rgpio_dev->list, &reset_gpio_lookup_list);
- 
- 	return 0;
- 
--err_put:
-+err_del_swnode:
-+	fwnode_remove_software_node(rgpio_dev->swnode);
-+err_put_of_node:
- 	of_node_put(rgpio_dev->of_args.np);
--err_kfree:
- 	kfree(rgpio_dev);
- err_ida_free:
- 	ida_free(&reset_gpio_ida, id);
-
 -- 
-2.51.0
+2.51.1
 
 
