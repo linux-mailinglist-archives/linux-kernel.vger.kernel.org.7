@@ -1,77 +1,53 @@
-Return-Path: <linux-kernel+bounces-882204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BA83C29DF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 03:38:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4665EC29E04
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 03:42:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 272451889A35
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 02:38:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42AA13AC91A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 02:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4410F28640B;
-	Mon,  3 Nov 2025 02:37:58 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6B8285CB6;
+	Mon,  3 Nov 2025 02:42:40 +0000 (UTC)
+Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42AF614B953;
-	Mon,  3 Nov 2025 02:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC25FDDA9
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 02:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762137477; cv=none; b=d4n02TiufXR0oewzJZ8XsLvwq4uhPhU8tE+h8f23L4CMKVxOW0fsVwxMPrB23m/AI0M6JrQtEtgWuHb6ry6MQ4Yuc0jh3Exnm8nDQ5TpXW8jnTS906boZLU8AIeIoBuwFuclt9wHHoM+KykoCHHjllS3P27L6t4razpzE9dXoSQ=
+	t=1762137760; cv=none; b=ZpeXOPhnQYH2n6j/aguHv0RDWQUikUf29c6/trFfz6tMbZVRfLuL6RqT3KOSA1XN975RYFxgY5SxVCaVUO7bZYxZ6YH3AQl2rxjvIU6M3nIKsR+joCP6WED5v1DRhDP+wiejtnWEWBLIN32N25w6jbewZqE9uBPMrOysfgodm5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762137477; c=relaxed/simple;
-	bh=ukUqwcz+sBycHhzxiy3W2SxXQ9SQb3q3ms/hTRSiMeY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZOdxAbP6yoC5QAILvxIDwXDrgZIR2XFNkUz7yIVyzDrDqNw9vmxrFfYDl/fMqGplNjTvPi9bZzpkwKp4GNdtjlh9RIxFLtyl5m9JGQgc+xVwyPj5amrm8FzT1MFT697OIOPIgPAaAJVR6jE2c3BwzbZqBiMhERdeTbLruPuNiLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 0f923836b85e11f0a38c85956e01ac42-20251103
-X-CTIC-Tags:
-	HR_CC_AS_FROM, HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
-	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
-	HR_TO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_EXISTED
-	SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:70b6d226-dd85-46cd-9c65-14e7c3b71550,IP:15,U
-	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:-30,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:-20
-X-CID-INFO: VERSION:1.3.6,REQID:70b6d226-dd85-46cd-9c65-14e7c3b71550,IP:15,URL
-	:0,TC:0,Content:-5,EDM:0,RT:0,SF:-30,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-20
-X-CID-META: VersionHash:a9d874c,CLOUDID:e02db1f34bb1bcb1bddb34349392fd38,BulkI
-	D:2511031037396H4RK8JP,BulkQuantity:0,Recheck:0,SF:10|38|66|78|102|850,TC:
-	nil,Content:0|15|50,EDM:-3,IP:-2,URL:99|1,File:nil,RT:nil,Bulk:nil,QS:nil,
-	BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 0f923836b85e11f0a38c85956e01ac42-20251103
-X-User: hehuiwen@kylinos.cn
-Received: from localhost.localdomain [(116.128.244.171)] by mailgw.kylinos.cn
-	(envelope-from <hehuiwen@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1359740398; Mon, 03 Nov 2025 10:37:37 +0800
-From: Huiwen He <hehuiwen@kylinos.cn>
-To: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-	Xin Long <lucien.xin@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	linux-sctp@vger.kernel.org (open list:SCTP PROTOCOL),
-	netdev@vger.kernel.org (open list:NETWORKING [GENERAL]),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Huiwen He <hehuiwen@kylinos.cn>
-Subject: [PATCH v2] sctp: make sctp_transport_init() void
-Date: Mon,  3 Nov 2025 10:36:19 +0800
-Message-Id: <20251103023619.1025622-1-hehuiwen@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1762137760; c=relaxed/simple;
+	bh=2sUpdXvnLoJJzWpyw2XCAsTyAT7NWAp5488n4Jlwe10=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SpriiKxu8xb1jpdtu9Jv8QufqjIUFE+JRH7ICG8vLo0cFG9diXNptAvFVGMlCwIF+G5+fzRseb0yCTqUuMuw2eo7WXmUdUC5SetPcDM7jFiAjPbs+urlV2uGDkal4O1hsC88HRfTW6PmQLooBb6rkPtDtcaX+hlGa2sxVliDEwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from Jtjnmail201617.home.langchao.com
+        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id 202511031042226078;
+        Mon, 03 Nov 2025 10:42:22 +0800
+Received: from jtjnmailAR01.home.langchao.com (10.100.2.42) by
+ Jtjnmail201617.home.langchao.com (10.100.2.17) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Mon, 3 Nov 2025 10:42:22 +0800
+Received: from inspur.com (10.100.2.107) by jtjnmailAR01.home.langchao.com
+ (10.100.2.42) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Mon, 3 Nov 2025 10:42:22 +0800
+Received: from localhost.localdomain.com (unknown [10.94.13.117])
+	by app3 (Coremail) with SMTP id awJkCsDw3fiNFghpCKsJAA--.11932S4;
+	Mon, 03 Nov 2025 10:42:22 +0800 (CST)
+From: Chu Guangqing <chuguangqing@inspur.com>
+To: <hch@lst.de>, <sagi@grimberg.me>, <kch@nvidia.com>
+CC: <linux-nvme@lists.infradead.org>, <linux-kernel@vger.kernel.org>, Chu
+ Guangqing <chuguangqing@inspur.com>
+Subject: [PATCH] nvme: Fix typo error in nvme target
+Date: Mon, 3 Nov 2025 10:41:31 +0800
+Message-ID: <20251103024131.1855-1-chuguangqing@inspur.com>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,72 +55,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: awJkCsDw3fiNFghpCKsJAA--.11932S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr1DJw4xCF18tF17ZF13Arb_yoW8Gw47pF
+	4DGF12yrWUGFZ5Aa1fAF47ZFy5Ja1DWFyjkws2k34rZr45JFWFqFWDK3Wavrn8WF48KFyY
+	vanFvr1UZFs5XFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26rxl
+	6s0DM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r12
+	6r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
+	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y
+	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
+	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
+	IxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbSfO7UUUU
+	U==
+X-CM-SenderInfo: 5fkxw35dqj1xlqj6x0hvsx2hhfrp/
+X-CM-DELIVERINFO: =?B?qVcpO5RRTeOiUs3aOqHZ50hzsfHKF9Ds6CbXmDm38RucXu3DYXJR7Zlh9zE0nt/Iac
+	D+KYDuIAxMgs1TN2muRnDhaYYJ30b0MeiTb5cNH1w8ExGKMtp5zAOcuXG3uCwUwo/eFZjV
+	cfLCFrhKBmpiFco4imI=
+Content-Type: text/plain
+tUid: 20251103104222bc4ba2f2dffef220a6d94143087124bc
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-sctp_transport_init() is static and never returns NULL. It is only
-called by sctp_transport_new(), so change it to void and remove the
-redundant return value check.
+Fix two spelling mistakes.
 
-Signed-off-by: Huiwen He <hehuiwen@kylinos.cn>
+Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
 ---
-Changes in v2:
-- Remove the 'fail' label and its path as suggested by Xin Long.
-- Link to v1: https://lore.kernel.org/all/20251101163656.585550-1-hehuiwen@kylinos.cn
+ drivers/nvme/target/admin-cmd.c | 2 +-
+ drivers/nvme/target/core.c      | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
- net/sctp/transport.c | 21 ++++++---------------
- 1 file changed, 6 insertions(+), 15 deletions(-)
-
-diff --git a/net/sctp/transport.c b/net/sctp/transport.c
-index 4d258a6e8033..0d48c61fe6ad 100644
---- a/net/sctp/transport.c
-+++ b/net/sctp/transport.c
-@@ -37,10 +37,10 @@
- /* 1st Level Abstractions.  */
+diff --git a/drivers/nvme/target/admin-cmd.c b/drivers/nvme/target/admin-cmd.c
+index 3e378153a781..3da31bb1183e 100644
+--- a/drivers/nvme/target/admin-cmd.c
++++ b/drivers/nvme/target/admin-cmd.c
+@@ -708,7 +708,7 @@ static void nvmet_execute_identify_ctrl(struct nvmet_req *req)
  
- /* Initialize a new transport from provided memory.  */
--static struct sctp_transport *sctp_transport_init(struct net *net,
--						  struct sctp_transport *peer,
--						  const union sctp_addr *addr,
--						  gfp_t gfp)
-+static void sctp_transport_init(struct net *net,
-+				struct sctp_transport *peer,
-+				const union sctp_addr *addr,
-+				gfp_t gfp)
- {
- 	/* Copy in the address.  */
- 	peer->af_specific = sctp_get_af_specific(addr->sa.sa_family);
-@@ -83,8 +83,6 @@ static struct sctp_transport *sctp_transport_init(struct net *net,
- 	get_random_bytes(&peer->hb_nonce, sizeof(peer->hb_nonce));
- 
- 	refcount_set(&peer->refcnt, 1);
--
--	return peer;
- }
- 
- /* Allocate and initialize a new transport.  */
-@@ -96,20 +94,13 @@ struct sctp_transport *sctp_transport_new(struct net *net,
- 
- 	transport = kzalloc(sizeof(*transport), gfp);
- 	if (!transport)
--		goto fail;
-+		return NULL;
- 
--	if (!sctp_transport_init(net, transport, addr, gfp))
--		goto fail_init;
-+	sctp_transport_init(net, transport, addr, gfp);
- 
- 	SCTP_DBG_OBJCNT_INC(transport);
- 
- 	return transport;
--
--fail_init:
--	kfree(transport);
--
--fail:
--	return NULL;
- }
- 
- /* This transport is no longer needed.  Free up if possible, or
+ 	/*
+ 	 * We don't really have a practical limit on the number of abort
+-	 * comands.  But we don't do anything useful for abort either, so
++	 * commands.  But we don't do anything useful for abort either, so
+ 	 * no point in allowing more abort commands than the spec requires.
+ 	 */
+ 	id->acl = 3;
+diff --git a/drivers/nvme/target/core.c b/drivers/nvme/target/core.c
+index 5d7d483bfbe3..029a9f2420d3 100644
+--- a/drivers/nvme/target/core.c
++++ b/drivers/nvme/target/core.c
+@@ -40,7 +40,7 @@ EXPORT_SYMBOL_GPL(nvmet_wq);
+  *  - the nvmet_transports array
+  *
+  * When updating any of those lists/structures write lock should be obtained,
+- * while when reading (popolating discovery log page or checking host-subsystem
++ * while when reading (populating discovery log page or checking host-subsystem
+  * link) read lock is obtained to allow concurrent reads.
+  */
+ DECLARE_RWSEM(nvmet_config_sem);
 -- 
-2.25.1
+2.43.7
 
 
