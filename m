@@ -1,218 +1,74 @@
-Return-Path: <linux-kernel+bounces-882802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6152FC2B8BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:57:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DF33C2B707
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:39:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ADAF34F3550
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:49:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15AD13A194A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D879305074;
-	Mon,  3 Nov 2025 11:49:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0A1C30277A;
+	Mon,  3 Nov 2025 11:34:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TDwT0My1"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k6tG7Isp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A211D2DF133
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 11:49:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167391494CC;
+	Mon,  3 Nov 2025 11:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762170563; cv=none; b=AHy2lAylTnkmzSBPHTXYPIBHM4VGnvHytNR8z3WzE2lQJMeFgc6zKQb8ofWisDXoxINSPTV1YY6gPc44sDLGTyU9fQ3IgpfYyqiSQmGlsIGxAAhzt2LXJ+DbM7ftoYzX5syPXfeJXBA7Kr+FnGMzTMXigY1yoDc5Uxw0HYrH0n8=
+	t=1762169677; cv=none; b=NwqKRe0m4z1MOTZw0aD3vZvdO3I3Xz6EPpSn6rhaP0gNmhUnt02/2HPA/cXpM1TUxEYYWRJ43pMljqOJ7SnG//kULg2RSxjVAW7N4vBMCdv6W57OBOP/C75/kliFqaaDrpkAzqcmOJg55RDLLhVnlOGxsjuaZgU3Jl2wkteh5rU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762170563; c=relaxed/simple;
-	bh=kUT6MVBnXS9rJ8Jz27OSbNfw2Vw6di1nZ8qI0M1s12g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RwUSBGYPh/BLcbEcvfB3Y7XrF4z55j8cmXAcxkPX3NPLa4NLs8b4Mhl316zHeZudby5VJfDzFeG4z27belqEMcok7CgEX3FdKyjONn0X1nh6THPtFmvENZTiOnKxrj4+jJ2E3EWrXaGIBoRZySB7H23CqWuubqPoCCdm5MPM2io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TDwT0My1; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762170560;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CWHaUE+5jl+dykrCUaRiHLHmvTKeS281VYpCKKpXV8o=;
-	b=TDwT0My1FVzwWj1G1++zUOZtWPw4c0MYVTlEmTrN6BlKOE062mnmEzfoDBiyrDbnEcgaBy
-	l9APZsoA+WI++JQo8PQsy0TXMYznjW9DB/MnBasJ6fh9yS5OFQ7aL3ZYJ/MICWuHE9ZPcH
-	c0YT9ejhQznsg67JXDA3AfgyLRUAEQM=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-382-yKSSM1XKN_evZ2TMNfz8Sw-1; Mon,
- 03 Nov 2025 06:49:16 -0500
-X-MC-Unique: yKSSM1XKN_evZ2TMNfz8Sw-1
-X-Mimecast-MFC-AGG-ID: yKSSM1XKN_evZ2TMNfz8Sw_1762170555
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 29C8E195422D;
-	Mon,  3 Nov 2025 11:49:14 +0000 (UTC)
-Received: from tpad.localdomain (unknown [10.96.133.2])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 662431956056;
-	Mon,  3 Nov 2025 11:49:12 +0000 (UTC)
-Received: by tpad.localdomain (Postfix, from userid 1000)
-	id 9CB83400DCFD7; Mon,  3 Nov 2025 08:30:06 -0300 (-03)
-Date: Mon, 3 Nov 2025 08:30:06 -0300
-From: Marcelo Tosatti <mtosatti@redhat.com>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2] sched/idle: disable tick in idle=poll idle entry
-Message-ID: <aQiSPucmKCy4Rn6u@tpad>
-References: <aQJWWIDMMUxqDxnR@tpad>
- <aQONGWu1lM27erA3@localhost.localdomain>
+	s=arc-20240116; t=1762169677; c=relaxed/simple;
+	bh=OMeoSoV7FEFdPkuCN/amC8E9U4TeetZo9Y1tnRpJ0j0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WHf5ErDGWctrtGfseOs0+YGly64GHGqh18k1a1J9h0zF6LTsk38HMtlLLtPJhnigqo6bVl7aweu/b/L0os+BOCzIfZ8Ibe3rI/GDx/1p1SJtJD35rmT8BOoGuK+YJyo8LVAU/ygxnVYD0xHA1zExtk4v0jxyxbEgJ6B/O26ikZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k6tG7Isp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA435C4CEE7;
+	Mon,  3 Nov 2025 11:34:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762169676;
+	bh=OMeoSoV7FEFdPkuCN/amC8E9U4TeetZo9Y1tnRpJ0j0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=k6tG7Ispr1jGdUvlCt0BHxsNs3dK5T7a2Q1Mj3FgzMsrDx/WeLKI0beYX9AnA+Mba
+	 uIbud6+cPo0b1CwD3CXsaWUqHvQacUstEyTuLXnePogNNhod2iYzu7MgzmKgARodIk
+	 RlYUe6WjVFjHUXm1OJ+yhKQQEkPM34gfHO+S/J4X3jde5uPX7NfkPtqE9/3cOqbw8X
+	 Qu4VTi8cei6rUnevdO0WDi1YyLHPPGXOgisnUGP5mvrNv2WVdSnuUQ380WchgJ+dL5
+	 QPLEZt/ifgpxFmAo10Gn6Pt/PUoqduyRFfQAEgMREOELc9fVves6h6OIbTHnMRmjcR
+	 8DQQ2zVs1cOOg==
+Message-ID: <41afff31-0483-423f-9f10-9dede1fccc1b@kernel.org>
+Date: Mon, 3 Nov 2025 12:34:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aQONGWu1lM27erA3@localhost.localdomain>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/2] Add read_poll_timeout_atomic support
+To: a.hindborg@kernel.org
+Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, alex.gaynor@gmail.com,
+ aliceryhl@google.com, daniel.almeida@collabora.com, ojeda@kernel.org,
+ anna-maria@linutronix.de, bjorn3_gh@protonmail.com, boqun.feng@gmail.com,
+ frederic@kernel.org, gary@garyguo.net, jstultz@google.com,
+ linux-kernel@vger.kernel.org, lossin@kernel.org, lyude@redhat.com,
+ rust-for-linux@vger.kernel.org, sboyd@kernel.org, tglx@linutronix.de,
+ tmgross@umich.edu
+References: <20251103112958.2961517-1-fujita.tomonori@gmail.com>
+From: Danilo Krummrich <dakr@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20251103112958.2961517-1-fujita.tomonori@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 30, 2025 at 05:06:49PM +0100, Frederic Weisbecker wrote:
-> (Adding more people in Cc)
-> 
-> Le Wed, Oct 29, 2025 at 03:00:56PM -0300, Marcelo Tosatti a écrit :
-> > 
-> > Commit a5183862e76fdc25f36b39c2489b816a5c66e2e5 
-> > ("tick/nohz: Conditionally restart tick on idle exit") allows
-> > a nohz_full CPU to enter idle and return from it with the 
-> > scheduler tick disabled (since the tick might be undesired noise).
-> > 
-> > The idle=poll case still unconditionally restarts the tick when entering
-> > idle.
-> > 
-> > To reduce the noise for that case as well, stop the tick when entering
-> > idle, for the idle=poll case.
-> > 
-> > Change tick_nohz_full_kick_cpu to set NEED_RESCHED bit, to handle the
-> > case where a new timer is added from an interrupt. This breaks out of
-> > cpu_idle_poll and rearms the timer if necessary.
-> > 
-> > ---
-> > 
-> > v2: Handle the case where a new timer is added from an interrupt (Frederic Weisbecker)
-> > 
-> >  include/linux/sched.h    |    2 ++
-> >  kernel/sched/core.c      |   10 ++++++++++
-> >  kernel/sched/idle.c      |    2 +-
-> >  kernel/time/tick-sched.c |    1 +
-> >  4 files changed, 14 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/include/linux/sched.h b/include/linux/sched.h
-> > index cbb7340c5866..1f6938dc20cd 100644
-> > --- a/include/linux/sched.h
-> > +++ b/include/linux/sched.h
-> > @@ -2428,4 +2428,6 @@ extern void migrate_enable(void);
-> >  
-> >  DEFINE_LOCK_GUARD_0(migrate, migrate_disable(), migrate_enable())
-> >  
-> > +void set_tif_resched_if_polling(int cpu);
-> > +
-> >  #endif
-> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> > index f1ebf67b48e2..f0b84600084b 100644
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -988,6 +988,11 @@ static bool set_nr_if_polling(struct task_struct *p)
-> >  	return true;
-> >  }
-> >  
-> > +void set_tif_resched_if_polling(int cpu)
-> > +{
-> > +	set_nr_if_polling(cpu_rq(cpu)->idle);
-> > +}
-> > +
-> >  #else
-> >  static inline bool set_nr_and_not_polling(struct thread_info *ti, int tif)
-> >  {
-> > @@ -999,6 +1004,11 @@ static inline bool set_nr_if_polling(struct task_struct *p)
-> >  {
-> >  	return false;
-> >  }
-> > +
-> > +void set_tif_resched_if_polling(int cpu)
-> > +{
-> > +	set_tsk_need_resched(cpu_rq(cpu)->idle);
-> > +}
-> >  #endif
-> >  
-> >  static bool __wake_q_add(struct wake_q_head *head, struct task_struct *task)
-> > diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
-> > index c39b089d4f09..428c2d1cbd1b 100644
-> > --- a/kernel/sched/idle.c
-> > +++ b/kernel/sched/idle.c
-> > @@ -324,7 +324,7 @@ static void do_idle(void)
-> >  		 * idle as we know that the IPI is going to arrive right away.
-> >  		 */
-> >  		if (cpu_idle_force_poll || tick_check_broadcast_expired()) {
-> > -			tick_nohz_idle_restart_tick();
-> > +			tick_nohz_idle_stop_tick();
-> 
-> Shouldn't we simply remove the tick_nohz_idle_restart_tick() line? The nohz_full
-> CPU should have entered here with the tick disabled already.
-> 
-> Also non-nohz_full systems shouldn't care.
+On 11/3/25 12:29 PM, FUJITA Tomonori wrote:
+>   rust: add udelay() function
+>   rust: Add read_poll_timeout_atomic function
 
-With tick_nohz_idle_restart_tick removed:
-
-<idle>-0 [001] d.h2. 51.356672: hrtimer_start: hrtimer=ffff927ae205c418 function=tick_nohz_handler expires=51360062500 softexpires=51360062500 mode=ABS
-<idle>-0 [001] d.h2. 51.357671: hrtimer_cancel: hrtimer=ffff927ae205c418
-<idle>-0 [001] d.h1. 51.357671: hrtimer_expire_entry: hrtimer=ffff927ae205c418 function=tick_nohz_handler now=51360063398
-<idle>-0 [001] d.h1. 51.357671: hrtimer_expire_exit: hrtimer=ffff927ae205c418
-<idle>-0 [001] d.h2. 51.357671: hrtimer_start: hrtimer=ffff927ae205c418 function=tick_nohz_handler expires=51361062500 softexpires=51361062500 mode=ABS
-<idle>-0 [001] d.h2. 51.358671: hrtimer_cancel: hrtimer=ffff927ae205c418
-<idle>-0 [001] d.h1. 51.358671: hrtimer_expire_entry: hrtimer=ffff927ae205c418 function=tick_nohz_handler now=51361063420
-<idle>-0 [001] d.h1. 51.358672: hrtimer_expire_exit: hrtimer=ffff927ae205c418
-<idle>-0 [001] d.h2. 51.358672: hrtimer_start: hrtimer=ffff927ae205c418 function=tick_nohz_handler expires=51362062500 softexpires=51362062500 mode=ABS
-<idle>-0 [001] d.h2. 51.359671: hrtimer_cancel: hrtimer=ffff927ae205c418
-<idle>-0 [001] d.h1. 51.359671: hrtimer_expire_entry: hrtimer=ffff927ae205c418 function=tick_nohz_handler now=51362063447
-<idle>-0 [001] d.h1. 51.359672: hrtimer_expire_exit: hrtimer=ffff927ae205c418
-<idle>-0 [001] d.h2. 51.359672: hrtimer_start: hrtimer=ffff927ae205c418 function=tick_nohz_handler expires=51363062500 softexpires=51363062500 mode=ABS
-
-CPU 1 is idle and isolated.
-
-> >  			cpu_idle_poll();
-> >  		} else {
-> >  			cpuidle_idle_call();
-> > diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-> > index c527b421c865..efc3653999dc 100644
-> > --- a/kernel/time/tick-sched.c
-> > +++ b/kernel/time/tick-sched.c
-> > @@ -408,6 +408,7 @@ void tick_nohz_full_kick_cpu(int cpu)
-> >  	if (!tick_nohz_full_cpu(cpu))
-> >  		return;
-> >  
-> > +	set_tif_resched_if_polling(cpu);
-> 
-> Perhaps stuff that within wake_up_full_nohz_cpu() and call
-> set_nr_if_polling() directly.
-
-Can't call set_nr_if_polling() directly since if TIF_POLLING_NRFLAG is
-undefined:
-
-static inline bool set_nr_if_polling(struct task_struct *p)
-{
-        return false;
-}
-
-So the wakeup won't occur. Or am i missing something?
-
-
-> Also this needs a big comment.
-
-Sure!
-
-Thanks.
-
+@Andreas: Mind providing an ACK so I can pick this one up including the udelay()
+patch?
 
