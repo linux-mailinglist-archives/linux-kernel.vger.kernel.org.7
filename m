@@ -1,356 +1,183 @@
-Return-Path: <linux-kernel+bounces-882147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CB27C29C09
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 02:00:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B99FC29C12
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 02:02:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AB653B1AD0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 00:59:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6CFF188FE53
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 01:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8E6221FB6;
-	Mon,  3 Nov 2025 00:59:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9412652A2;
+	Mon,  3 Nov 2025 01:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=invisiblethingslab.com header.i=@invisiblethingslab.com header.b="NQ32fk4k";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eIoyL/hv"
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
+	dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b="Vc4RjCX+"
+Received: from GVXPR05CU001.outbound.protection.outlook.com (mail-swedencentralazon11023080.outbound.protection.outlook.com [52.101.83.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D8C22068B
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 00:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762131550; cv=none; b=sSFOSA63/wKE0ViUc33rs0aifs1ECKRqMkCNVJQcUplpYJFj8MRWHzfcle8bha25PbiZEp7W/SVvWeQTX6XJsBMCNudtwJgoK7zc6LwozxjxBAfw777srp8AuUcub97q14699WInB7CczBKOaioAS0AzWh7O/orQZLQCt/eVIbo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762131550; c=relaxed/simple;
-	bh=BhYBe7h9a6xmIxtQkkw+LctkkKfrhuWqqn/QUiVmV3I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mUy6n9pTPT9rpKb+QfFr7gKbllBFF0eFCWo+GF0yCUAupLBfjZLu7KDJpoORdpZUfKSoROVSDVj7JAPH2xk6Sx4PQA/r/TFbFoA3W/Dplgp0evEnpr1JKRPbVYgZYIEPT40QCxgqjsDIczfq/qbKMauDM4a2fIyNk6S9n8QW+po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=invisiblethingslab.com; spf=pass smtp.mailfrom=invisiblethingslab.com; dkim=pass (2048-bit key) header.d=invisiblethingslab.com header.i=@invisiblethingslab.com header.b=NQ32fk4k; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eIoyL/hv; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=invisiblethingslab.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=invisiblethingslab.com
-Received: from phl-compute-04.internal (phl-compute-04.internal [10.202.2.44])
-	by mailfout.stl.internal (Postfix) with ESMTP id DD0A31D00149;
-	Sun,  2 Nov 2025 19:59:05 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Sun, 02 Nov 2025 19:59:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	invisiblethingslab.com; h=cc:cc:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1762131545;
-	 x=1762217945; bh=VfpHwSy4K3iEN4IlxensOPYh7DJR+ei3YphvNflZmJg=; b=
-	NQ32fk4kJ8fOsL6ojnWw7da6lVwPOA0gmCkIe5/zej/Ndkb8KV+Xq8kxww5TP+gN
-	CCwEhxQWElkNp+k1Ek4ZLwxyXBL5PIaQuIOx8zkFQ/4RsYveoS25/XUrLs23punt
-	nA0XOf0/emoI/jRIjczasuQMFX1dBRjU9a3GKzOa+hvJY/rgMlKdAi7BsG6nswIa
-	sYIMG8iiUq7jG3BDfPegAW5e8i4BE9m99MbPOv3rOS4XpRMrfy0HGEgdZ4KSdENl
-	0FB0XmSJOC3bIfPNEx85acfXcrG29CU1fvXDJwiZFaJ+3tSol5pWOTnflmXqFjNP
-	C+tZ6PwE93JIUzyf6zWujg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1762131545; x=1762217945; bh=VfpHwSy4K3iEN4IlxensOPYh7DJR+ei3Yph
-	vNflZmJg=; b=eIoyL/hvQ/sxu0WYRPwDYPzId7mv3rPr5u7g301HcAc6gA3+crn
-	srigOjpL09ULbhzEQaX4mGAfosW72EXa9BkPPNYpalZun2I6qkKfnehFTIP1//vt
-	SqvVfW0e3SEVquLzN+OvkbxVnN3UhSFWY7by/vXTCFjmXSDGzTV9lHLhu+lhb31y
-	VnOhOU4YycIWkmEuwGFc/WeZW9AtURZXXp/X47+aVWcfpio1mYrEIXa3cmphqRO0
-	JwjPJkKxH8ot8+wDxND/i0U8uBu18dD++X9zHAh0nThno+3AUvWgvOd618Ohjxb8
-	475Diw1HdU7inegX8+bdWtHwOp/Lk7tROgA==
-X-ME-Sender: <xms:Wf4HafZdz8hfCIbDZwWmk7cCQoW6xJH-mRJ75ALUv4vCyR2hP1iJvA>
-    <xme:Wf4HaSFH77gKJX1SV1LDNrYU4503u7S57KZUcQfH_w5koQ8JDBKKksavgAb-PixdT
-    8jxKrhhsiC2K1J5nxx_NNelmDuzuYlKwygodfC1LvbQj84p7Q>
-X-ME-Received: <xmr:Wf4HabxJ-DB66PnLf3tHlXNKvnnZzBJVFOASNpXmh_MuuuynvvkFLmFNRdtpJVHiWMiiJeo2rlIJPSITKe0bnmlL-7iGJ_eBwgg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujeeijeehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggujgesghdtreertddtjeenucfhrhhomhepofgrrhgvkhcu
-    ofgrrhgtiiihkhhofihskhhiqdfikphrvggtkhhiuceomhgrrhhmrghrvghksehinhhvih
-    hsihgslhgvthhhihhnghhslhgrsgdrtghomheqnecuggftrfgrthhtvghrnhepieeluddv
-    keejueekhfffteegfeeiffefjeejvdeijedvgfejheetuddvkeffudeinecuffhomhgrih
-    hnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhep
-    mhgrihhlfhhrohhmpehmrghrmhgrrhgvkhesihhnvhhishhisghlvghthhhinhhgshhlrg
-    gsrdgtohhmpdhnsggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtphht
-    thhopegrlhgvgigrnhguvghrrdhushihshhkihhnsehinhhtvghlrdgtohhmpdhrtghpth
-    htohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthht
-    oheprhgvuhhvvghnrdgrsghlihihvghvsehinhhtvghlrdgtohhmpdhrtghpthhtoheplh
-    hinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    ghhrohgvtghksehgohhoghhlvgdrtghomhdprhgtphhtthhopehlihhnuhigsehrohgvtg
-    hkqdhushdrnhgvth
-X-ME-Proxy: <xmx:Wf4Hacm8M9G_yPA7YL--0jAfHz4maPvo-HPakD2ODKSOZQWOaClO3g>
-    <xmx:Wf4HacnGZUxysiIlOrWbRvnZWK0CnfXPl1CWOA0T9WDRBQQLAGoAcg>
-    <xmx:Wf4HaWxYahb3Z0pOGWR59q_YRgzLcKffuVi4eL4aasw5SFgS6_FEdA>
-    <xmx:Wf4HaZokUVB4wSzBWcW9S-7qnpddymG5yNQr89LPebnr2foeGmVieQ>
-    <xmx:Wf4HaS-_wmQS36iO2kKu15uj6Xt2kzbcwUanRATVjwsw0eqTkUzj_U_9>
-Feedback-ID: i1568416f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 2 Nov 2025 19:59:04 -0500 (EST)
-Date: Mon, 3 Nov 2025 01:59:02 +0100
-From: Marek =?utf-8?Q?Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>
-To: Alexander Usyskin <alexander.usyskin@intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Reuven Abliyev <reuven.abliyev@intel.com>,
-	linux-kernel@vger.kernel.org, Guenter Roeck <groeck@google.com>,
-	Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [char-misc] mei: fix error flow in probe
-Message-ID: <aQf-VkevcCf7F_04@mail-itl>
-References: <20251102180836.1203314-1-alexander.usyskin@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7B9157493
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 01:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.83.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762131722; cv=fail; b=Xu7qIhYjMAmpg7qIRqMfytiAAneslN6g2Djai/3h2j6Rnkdr+Ck2HhQ3sEYJkDnpUCwarL9bxYS64ylEOn4bUsrPeKYt6kKlq1hAsEGtMBw+JDmsxalwzQ6UFpQVB5kfDhDWAkCc2m1zIUZA2xBNUiy+fUPTmxH+DgW7yFtc7MY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762131722; c=relaxed/simple;
+	bh=gowYpn+6zPPOIvmrJqNTGY9IsSyCxFzQME2kzXoRvdE=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=GnWxC588ihRCpcX/s2AJxAOCibuJCrkx0jONMhwZ7yaRn5Skj15y1BY2KUCA/75qUjfaACMpP0VEHCnHvafeAu/2cfJT9hVKgA2iAVw/FNISaaPRozUiCajtD4d3HWB/yiiepVP5/ZrPYAx1jBdBVj+aCJdc4c7AO17kFRy8zOw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu; spf=pass smtp.mailfrom=genexis.eu; dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b=Vc4RjCX+; arc=fail smtp.client-ip=52.101.83.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=genexis.eu
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=K8p9U56XyEm3NRaivPuciHIhxxl3ENXLVq0UzQt9U1foiDPCzbv7yerDkNIHyBAOCRfJEB6mhWKoeuXd6ha0RQOHdgrmodcvfgyyd2n4a6m0Qfc1N43/ei6zvudAItsPFMiNdJLDpeD5NicarCTiBvoDaeaj/tNzTcoz93vmoc2NE2aDCFY8nZXe7w3jUuRQJJS11mWVIlLI/jR9Rnb209qObRm+BMCwGp+lnRNo1SPr/q6bx04ctXx9KFJLpPkfponoc5o78m+bVsCWZ2frtA7NAoZiMAnVCfTLoVCGbZagttSXumdTVkX3CyAKcNH6nc0xkuHImFu6QlFpBXUkFw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GaFjw+NJXzjeDMbfmbpglnj8O4f6WzHKqyWAibLSPeA=;
+ b=fQZrZDLqOAnjASfn1ZTGJ2gjHlKSBoLFlD7aqHfUYNgoFG0nGmJxYxGyCiW060liYx9jh/SUUCLnArG0orY+04FRinQELj1qhDepyyOPb2PhSpk9ddAuOXHKVgX++TzELrrPxPLUjiQx8zjMIse26Ym7jv8+ZEndTB2p5J1Kz7IqfqNJiVZ0NTS0/uUJq/OX1K6li4tpa0wWovfW2pkkuBp3xAJnn3jneFrtniZpmmRRs0ilNHEAPykyFpF07BW+pS2xxvKgTa6r9ekditKOyXfHYgVrb2UpHFuWqgDreK/ieAvmCCLbBof2sl5O9OWy2A8o6exOO+2NwOCgM+IOhA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=genexis.eu; dmarc=pass action=none header.from=iopsys.eu;
+ dkim=pass header.d=iopsys.eu; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iopsys.eu;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GaFjw+NJXzjeDMbfmbpglnj8O4f6WzHKqyWAibLSPeA=;
+ b=Vc4RjCX+23QpVQDFRWsSDjCKt5ICGcCdFqbEXv9nHEVGQES/NttiD9cKJfViaTcTU3c711P/3HMVg9kLhmSNFU1mNBJHXalqhC4XHNNt91u6Tv0KUmFviW08ZNyeqb+lyMA7WhkUjv8JEuAZM7pK4xyvFoXYkm7CZAchj3vnbI5TJQcy5lBhDp4TvxmR9oWgGFJJ5NUhRuqpffX7wWCFKGmNgHof6PababgVSSZJ7dHiMAsVdMVb9kYbF5l3v2z779dq0QQuOJFF4w38UsCBoOnT7tNFlL3OIPLa4/7keOu3OzVBNieFoUmXFia0jDAhTPs8FwGzY7u6YZfwKXj2fw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=iopsys.eu;
+Received: from DB4PR08MB8125.eurprd08.prod.outlook.com (2603:10a6:10:384::19)
+ by AS8PR08MB6183.eurprd08.prod.outlook.com (2603:10a6:20b:29e::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Mon, 3 Nov
+ 2025 01:01:56 +0000
+Received: from DB4PR08MB8125.eurprd08.prod.outlook.com
+ ([fe80::e9de:ca06:dae1:ef2f]) by DB4PR08MB8125.eurprd08.prod.outlook.com
+ ([fe80::e9de:ca06:dae1:ef2f%5]) with mapi id 15.20.9275.015; Mon, 3 Nov 2025
+ 01:01:56 +0000
+From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tianling Shen <cnsztl@gmail.com>,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+Subject: [PATCH] mtd: spinand: fmsh: remove QE bit for FM25S01A flash
+Date: Mon,  3 Nov 2025 04:01:48 +0300
+Message-ID: <20251103010148.3855648-1-mikhail.kshevetskiy@iopsys.eu>
+X-Mailer: git-send-email 2.51.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: GV2PEPF00004537.SWEP280.PROD.OUTLOOK.COM
+ (2603:10a6:158:401::349) To DB4PR08MB8125.eurprd08.prod.outlook.com
+ (2603:10a6:10:384::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Cb0eK72uMioendig"
-Content-Disposition: inline
-In-Reply-To: <20251102180836.1203314-1-alexander.usyskin@intel.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB4PR08MB8125:EE_|AS8PR08MB6183:EE_
+X-MS-Office365-Filtering-Correlation-Id: 11491559-167c-4067-3820-08de1a7495d1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?NoPWH6TVo0jAQbs4L40N7MMcFf1NsrX+nif5NX8Qm8WxUIrW+5GWVhaY8Cn6?=
+ =?us-ascii?Q?6oxelV5UBVB0HzDQlmi8QaoCF1PEm3hxOTIl/ZVjFtoU8YFNwuyP5wrjBl+2?=
+ =?us-ascii?Q?MiXbSrqHySfa9r1hJ+xMvmNKVlKO8A3NftXM8KZd79fmpU/nQ1aYUfCsL4Ib?=
+ =?us-ascii?Q?FVf6kEmpW0Zmd2BeI9bnSvM0Fv2Dm4iAvQtEes4mcfiBazai9d4O0ccW6mxX?=
+ =?us-ascii?Q?7bQtrwJ5BLQTBfNCuV4gJxDSo0YcuE0zXripW1wqw1VTgRqiKwvSgYzDPoCO?=
+ =?us-ascii?Q?rCPAHDWKMhnQlCibSbDmsN52pIOigAUnBEgJQ4tPc5XhVh6RMmnxkTnKmGll?=
+ =?us-ascii?Q?gc/8cCqiRQRfWvjUSk+/NE/8D2CJ3LT18tLfZeTSzG8SDpUryTUWGCeZQEdP?=
+ =?us-ascii?Q?0+y1zAsydjavJqzkZC16gadcfNgr3rjmNnhaKOjaRPMbkOLtZEcaTB2NK8VY?=
+ =?us-ascii?Q?VHaRBF55qKYzgX1G0U8XG8+KzeqPpY4Z3mUwxvfboPgbpWe9UyHeu+ff7hsv?=
+ =?us-ascii?Q?4F+EkE7fpJWIV2EEeii0W8ciRKtIVBjAFigqS/ZHNhawyXiS2HNZWqNpE6OF?=
+ =?us-ascii?Q?0AeEVw04bjcpY8JWlXCtuCy/VFaB1c6rSPe8S9e2nf3rUDTuaBPX1rh9gB/Z?=
+ =?us-ascii?Q?vkfJzzTlRgmzez0y+JpFVRA+wmEJ40jCiP17bF8y8KtIShWnC+VfZfmvYJuw?=
+ =?us-ascii?Q?9ye213EA5WJ5TvlGi8kV4Dd4P+kVgbY3lMAAQCRjYCZGEQ+NhNHEsW76UgHq?=
+ =?us-ascii?Q?I0P7XU/g5VEOqfuKUHXGL90kS9a7HDxYdbddh3IKoDQxv3ecOr7R0OCVdSC0?=
+ =?us-ascii?Q?VzWtjiE7G4Sq/sX61yF2i7ssB6nZ6aafjsq+tlZpUhDHPTUwQFkQ48uY0NXa?=
+ =?us-ascii?Q?bCTcogcW6nHCsO6KnReM1SfWuukdRtqyuMGU4vKOxt93B5a+oDIPCl6dKkGK?=
+ =?us-ascii?Q?vzQ4JZrGQPeTB+DuCnlEyrSrpOuHfY44r74oyA+eSfPBNWbkpDVtVCgF6w4p?=
+ =?us-ascii?Q?VVqTonbBdiwbmUHawKRUEksdyXHeeTaEKuliWMpBpupwWXVJGzArRx+Ckomt?=
+ =?us-ascii?Q?L9t9Kwi/y8J9bsUTWZhSbXJjxIvRykCGKArPFJzYtYR3dGP/IteLjR6Ufrim?=
+ =?us-ascii?Q?YNQBi/imsjvSdWGLVslfVqM2cK1fiJwICrxImb/qIgTtM+Qv08NAaBdUFvyl?=
+ =?us-ascii?Q?pL4ufHNYH5ysLLu+1kVPNXSeRzgDzl5/lIjwullcaft1n4nPnkPzaxHTw8Da?=
+ =?us-ascii?Q?eiuNDsp1jf9GDOoloVHxyDPW98aj8PXuLttY2dLQZKfKqMYyrvSGkhEtBhGP?=
+ =?us-ascii?Q?i28NAJiBO+teVctkxsHe9ygVUtOOjZuIj1yRSlho0JIUnntEZUmnL1/s2moc?=
+ =?us-ascii?Q?GPb39R/DSAkAJhM++LCLVfED+KXhTXZWSKj2iKeZOag1La5BHrqIUMuF47Um?=
+ =?us-ascii?Q?SW7/M0d7DDRUJBRivPdAqZr1vRqyPjiT141ExWAB/5U22ybXD71PMw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB4PR08MB8125.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?i2zcqy4BouWqKwziAeYk0fGKyEWOBsdf/vZ1ho67FBKX5D6aQq1eigTKkmIJ?=
+ =?us-ascii?Q?3MoSaR1kM9SvnBlmj9cGU16VDI8FlRPsVIHbDNluMv9NmTZFI9rL38Zt2qey?=
+ =?us-ascii?Q?sm2LGAKhj/PIVVKNbYhymrdmjmXBYPh/YENvUVzeBDkEmUl/a1sOdet3fJgK?=
+ =?us-ascii?Q?xhnBb2JwsnbZ9+gg/fFQYu00UrE0yTSAOGRcXQ7bw6m1ceJzkLP4jVGBpz1S?=
+ =?us-ascii?Q?DOgFWUWhIjBUJnTixg4F8ajhT0lkcFno18Hxo2/QE+/8NNIgdauqKvkzwLJY?=
+ =?us-ascii?Q?lf7cSdY4XrkN0pv9h9ONCjV7OSuIFtY+Ae4rpr+hiQe383k2uXb79nfpBuJf?=
+ =?us-ascii?Q?1gm7UbE48cwJPPK1P22CdzUjalmN1wy03JWhCePs4W8kv3vFMRPCEdy3xPGP?=
+ =?us-ascii?Q?OrETnU5U1/3YOmXFj8PRKZuyrDtaiEkrXqUWhAqUOkDbE5JYfnhRApelXo7U?=
+ =?us-ascii?Q?+V06mbowPgztfpoaT8d+LIyrMn+89MZu7XRevI/DacLhkZ1eVK4jwbbZO81F?=
+ =?us-ascii?Q?BENNdRjILYZPKSz5PdmyIJZY3NW+sQvbn0qVjpGnTtshgSW2w6m5kjOijYGz?=
+ =?us-ascii?Q?mKw0WlLpylLNjZ6EKD+rR8oXnYtkgZL1hOLrUlLRLY81wNHo9hIqY3rOvT5T?=
+ =?us-ascii?Q?DF4/PtYsziHFSlNLGlvOQ9skp3WA2CrMSQSVPR4ucluswFk8sjWirNETO5DD?=
+ =?us-ascii?Q?W0LwLVKAHfvm+CeJuyxegvdeW3zJGREP7tq0WLqxKlS/p8tnsTrMAgXALTE7?=
+ =?us-ascii?Q?80qdV4jx2QzDm1fp5f60FNGdipGP76H2VkR52hrFgceXFIOrqxzhKWpjRfum?=
+ =?us-ascii?Q?3huFdrm9ErjjbRanct/8eMl5FXBJZslpnrFs09gmaf1CR9I2plFeHjR057ny?=
+ =?us-ascii?Q?y86zb2FFW7eKKwzPP2pjBNYlo2us6oXU2rTpstKuj/SdJ6p54SA8839rZIFa?=
+ =?us-ascii?Q?qTU60cPyBzQI4oXsG4GKx/w6xh7w5gMwtkmH5bZNRDfF5r8dB4kolwE3VeJV?=
+ =?us-ascii?Q?OVtsya3cHBfT5B974uYZCL5zDxrDiuR9bTQI4h3NXlbxLVmuL3cdZzy6CA7k?=
+ =?us-ascii?Q?lbpEuFAid68daA7C9jitLhvQmBgC+k9Pk1nSYPsWDd5Kz+0X/wYGw0jR8BH0?=
+ =?us-ascii?Q?L6H7jmfzFtBMZKh1tn0778GTwVNBHB2ESL5Ot3sFSBSguoe0vLyNEDAsUCAu?=
+ =?us-ascii?Q?/crt+SEA3jTwWzYYcas7tN1Q3aJnPP1W5vMjaz7nZm65DUNg9Ei51gRzog4w?=
+ =?us-ascii?Q?+7mcBs0OL34utR2YhMSyplpt4XklCJFGWZ0VWfqnKvww5fw5ZkZUF10UL/8i?=
+ =?us-ascii?Q?6lDf4QOhZbAJEb5NPD8hxKngFD115hGnzrlAiDQ1tSP6AkGbV69tvDc2hrNN?=
+ =?us-ascii?Q?FkwzGBGWhzvpBQrchziWVo5gJ5EEM7zg3C/s90u8kktl/+o3kcIieOYyd2NG?=
+ =?us-ascii?Q?dTzahK/Dne3IcCY+u9tePYFxnLUaz1HvYhZLB6JOhrTBU9PGCtRKSMYa6oOi?=
+ =?us-ascii?Q?5iuv1CGg044bWNIG5HtxtGBiLYEsLZA+7W4GIsDfOhEJZiMwNgxSElSBkJpf?=
+ =?us-ascii?Q?kTAWjc/zU2l35BJEjuFlAsydx0O58gaK/l/a92/vpDM4H5+5VmDSD2Y8NOg4?=
+ =?us-ascii?Q?9uH5cBBo244WA1yaFATZP9o=3D?=
+X-OriginatorOrg: iopsys.eu
+X-MS-Exchange-CrossTenant-Network-Message-Id: 11491559-167c-4067-3820-08de1a7495d1
+X-MS-Exchange-CrossTenant-AuthSource: DB4PR08MB8125.eurprd08.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 01:01:56.7182
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8d891be1-7bce-4216-9a99-bee9de02ba58
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kKtgxRAXz/jV77z/inYzs+dL7hjafOeCUA7rU17jjXziVOlDIp8c61mD6yNZxrCSj7hYHLrt4aVnPSxwSEQYozvLAcE0StAj2VzAb5wfONg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB6183
 
+According to datasheet (http://eng.fmsh.com/nvm/FM25S01A_ds_eng.pdf)
+there is no QE (Quad Enable) bit for FM25S01A flash, so remove it.
 
---Cb0eK72uMioendig
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 3 Nov 2025 01:59:02 +0100
-From: Marek =?utf-8?Q?Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>
-To: Alexander Usyskin <alexander.usyskin@intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Reuven Abliyev <reuven.abliyev@intel.com>,
-	linux-kernel@vger.kernel.org, Guenter Roeck <groeck@google.com>,
-	Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [char-misc] mei: fix error flow in probe
+Fixes: 5f284dc15ca86 ("mtd: spinand: add support for FudanMicro FM25S01A")
+Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
+---
+ drivers/mtd/nand/spi/fmsh.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Sun, Nov 02, 2025 at 08:08:36PM +0200, Alexander Usyskin wrote:
-> Dismantle class device last in probe error flow to avoid accessing
-> freed memory like:
->=20
-> [   87.926774] WARNING: CPU: 9 PID: 518 at kernel/workqueue.c:4234
-> __flush_work+0x340/0x390
-> ...
-> [   87.926912] Workqueue: async async_run_entry_fn
-> [   87.926918] RIP: e030:__flush_work+0x340/0x390
-> [   87.926923] Code: 26 9d 05 00 65 48 8b 15 26 3c ca 02 48 85 db 48 8b
-> 04 24 48 89 54 24 58 0f 85 de fe ff ff e9 f6 fd ff ff 0f 0b e9 77 ff ff
-> ff <0f> 0b e9 70 ff ff ff 0f 0b e9 19 ff ff ff e8 7d 8b 0e 01 48 89 de
-> [   87.926931] RSP: e02b:ffffc900412ebc00 EFLAGS: 00010246
-> [   87.926936] RAX: 0000000000000000 RBX: ffff888103e55090 RCX: 000000000=
-0000000
-> [   87.926941] RDX: 000fffffffe00000 RSI: 0000000000000001 RDI: ffffc9004=
-12ebc60
-> [   87.926945] RBP: ffff888103e55090 R08: ffffffffc1266ec8 R09: ffff88811=
-09076e8
-> [   87.926949] R10: 0000000080040003 R11: 0000000000000000 R12: ffff88810=
-3e54000
-> [   87.926953] R13: ffffc900412ebc18 R14: 0000000000000001 R15: 000000000=
-0000000
-> [   87.926962] FS:  0000000000000000(0000) GS:ffff888233238000(0000) knlG=
-S:0000000000000000
-> [   87.926967] CS:  e030 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [   87.926971] CR2: 00007e7923b32708 CR3: 00000001088df000 CR4: 000000000=
-0050660
-> [   87.926977] Call Trace:
-> [   87.926981]  <TASK>
-> [   87.926987]  ? __call_rcu_common.constprop.0+0x11e/0x310
-> [   87.926993]  cancel_work_sync+0x5e/0x80
-> [   87.926999]  mei_cancel_work+0x19/0x40 [mei]
-> [   87.927051]  mei_me_probe+0x273/0x2b0 [mei_me]
-> [   87.927060]  local_pci_probe+0x45/0x90
-> [   87.927066]  pci_call_probe+0x5b/0x180
-> [   87.927070]  pci_device_probe+0x95/0x140
-> [   87.927074]  ? driver_sysfs_add+0x57/0xc0
-> [   87.927079]  really_probe+0xde/0x340
-> [   87.927083]  ? pm_runtime_barrier+0x54/0x90
-> [   87.927087]  __driver_probe_device+0x78/0x110
-> [   87.927092]  driver_probe_device+0x1f/0xa0
-> [   87.927095]  __driver_attach_async_helper+0x5e/0xe0
-> [   87.927100]  async_run_entry_fn+0x34/0x130
-> [   87.927104]  process_one_work+0x18d/0x340
-> [   87.927108]  worker_thread+0x256/0x3a0
-> [   87.927111]  ? __pfx_worker_thread+0x10/0x10
-> [   87.927115]  kthread+0xfc/0x240
-> [   87.927120]  ? __pfx_kthread+0x10/0x10
-> [   87.927124]  ? __pfx_kthread+0x10/0x10
-> [   87.927127]  ret_from_fork+0xf5/0x110
-> [   87.927132]  ? __pfx_kthread+0x10/0x10
-> [   87.927136]  ret_from_fork_asm+0x1a/0x30
-> [   87.927141]  </TASK>
->=20
-> Tested-by: Guenter Roeck <groeck@google.com>
-> Reported-by: Marek Marczykowski-G=C3=B3recki <marmarek@invisiblethingslab=
-=2Ecom>
-> Closes: https://lore.kernel.org/lkml/aQbYAXPADqfiXUYO@mail-itl/
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-> Closes: https://lore.kernel.org/lkml/8deef7c4-ac75-4db8-91b7-02cf0e39e371=
-@roeck-us.net/
-> Fixes: 7704e6be4ed2 ("mei: hook mei_device on class device")
-> Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+diff --git a/drivers/mtd/nand/spi/fmsh.c b/drivers/mtd/nand/spi/fmsh.c
+index 8b2097bfc771..c2b9a8c113cb 100644
+--- a/drivers/mtd/nand/spi/fmsh.c
++++ b/drivers/mtd/nand/spi/fmsh.c
+@@ -58,7 +58,7 @@ static const struct spinand_info fmsh_spinand_table[] = {
+ 		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
+ 					      &write_cache_variants,
+ 					      &update_cache_variants),
+-		     SPINAND_HAS_QE_BIT,
++		     0,
+ 		     SPINAND_ECCINFO(&fm25s01a_ooblayout, NULL)),
+ };
+ 
+-- 
+2.51.0
 
-I also confirm this patch fixes the issue:
-Tested-by: Marek Marczykowski-G=C3=B3recki <marmarek@invisiblethingslab.com>
-
-> ---
->  drivers/misc/mei/pci-me.c       | 13 ++++++-------
->  drivers/misc/mei/pci-txe.c      | 13 ++++++-------
->  drivers/misc/mei/platform-vsc.c | 11 +++++------
->  3 files changed, 17 insertions(+), 20 deletions(-)
->=20
-> diff --git a/drivers/misc/mei/pci-me.c b/drivers/misc/mei/pci-me.c
-> index b017ff29dbd1..73cad914be9f 100644
-> --- a/drivers/misc/mei/pci-me.c
-> +++ b/drivers/misc/mei/pci-me.c
-> @@ -223,6 +223,10 @@ static int mei_me_probe(struct pci_dev *pdev, const =
-struct pci_device_id *ent)
->  	hw->mem_addr =3D pcim_iomap_table(pdev)[0];
->  	hw->read_fws =3D mei_me_read_fws;
-> =20
-> +	err =3D mei_register(dev, &pdev->dev);
-> +	if (err)
-> +		goto end;
-> +
->  	pci_enable_msi(pdev);
-> =20
->  	hw->irq =3D pdev->irq;
-> @@ -237,13 +241,9 @@ static int mei_me_probe(struct pci_dev *pdev, const =
-struct pci_device_id *ent)
->  	if (err) {
->  		dev_err(&pdev->dev, "request_threaded_irq failure. irq =3D %d\n",
->  		       pdev->irq);
-> -		goto end;
-> +		goto deregister;
->  	}
-> =20
-> -	err =3D mei_register(dev, &pdev->dev);
-> -	if (err)
-> -		goto release_irq;
-> -
->  	if (mei_start(dev)) {
->  		dev_err(&pdev->dev, "init hw failure.\n");
->  		err =3D -ENODEV;
-> @@ -283,11 +283,10 @@ static int mei_me_probe(struct pci_dev *pdev, const=
- struct pci_device_id *ent)
->  	return 0;
-> =20
->  deregister:
-> -	mei_deregister(dev);
-> -release_irq:
->  	mei_cancel_work(dev);
->  	mei_disable_interrupts(dev);
->  	free_irq(pdev->irq, dev);
-> +	mei_deregister(dev);
->  end:
->  	dev_err(&pdev->dev, "initialization failed.\n");
->  	return err;
-> diff --git a/drivers/misc/mei/pci-txe.c b/drivers/misc/mei/pci-txe.c
-> index 06b55a891c6b..98d1bc2c7f4b 100644
-> --- a/drivers/misc/mei/pci-txe.c
-> +++ b/drivers/misc/mei/pci-txe.c
-> @@ -87,6 +87,10 @@ static int mei_txe_probe(struct pci_dev *pdev, const s=
-truct pci_device_id *ent)
->  	hw =3D to_txe_hw(dev);
->  	hw->mem_addr =3D pcim_iomap_table(pdev);
-> =20
-> +	err =3D mei_register(dev, &pdev->dev);
-> +	if (err)
-> +		goto end;
-> +
->  	pci_enable_msi(pdev);
-> =20
->  	/* clear spurious interrupts */
-> @@ -106,13 +110,9 @@ static int mei_txe_probe(struct pci_dev *pdev, const=
- struct pci_device_id *ent)
->  	if (err) {
->  		dev_err(&pdev->dev, "mei: request_threaded_irq failure. irq =3D %d\n",
->  			pdev->irq);
-> -		goto end;
-> +		goto deregister;
->  	}
-> =20
-> -	err =3D mei_register(dev, &pdev->dev);
-> -	if (err)
-> -		goto release_irq;
-> -
->  	if (mei_start(dev)) {
->  		dev_err(&pdev->dev, "init hw failure.\n");
->  		err =3D -ENODEV;
-> @@ -145,11 +145,10 @@ static int mei_txe_probe(struct pci_dev *pdev, cons=
-t struct pci_device_id *ent)
->  	return 0;
-> =20
->  deregister:
-> -	mei_deregister(dev);
-> -release_irq:
->  	mei_cancel_work(dev);
->  	mei_disable_interrupts(dev);
->  	free_irq(pdev->irq, dev);
-> +	mei_deregister(dev);
->  end:
->  	dev_err(&pdev->dev, "initialization failed.\n");
->  	return err;
-> diff --git a/drivers/misc/mei/platform-vsc.c b/drivers/misc/mei/platform-=
-vsc.c
-> index 288e7b72e942..9787b9cee71c 100644
-> --- a/drivers/misc/mei/platform-vsc.c
-> +++ b/drivers/misc/mei/platform-vsc.c
-> @@ -362,28 +362,27 @@ static int mei_vsc_probe(struct platform_device *pd=
-ev)
-> =20
->  	ret =3D mei_register(mei_dev, dev);
->  	if (ret)
-> -		goto err_dereg;
-> +		goto err;
-> =20
->  	ret =3D mei_start(mei_dev);
->  	if (ret) {
->  		dev_err_probe(dev, ret, "init hw failed\n");
-> -		goto err_cancel;
-> +		goto err;
->  	}
-> =20
->  	pm_runtime_enable(mei_dev->parent);
-> =20
->  	return 0;
-> =20
-> -err_dereg:
-> -	mei_deregister(mei_dev);
-> -
-> -err_cancel:
-> +err:
->  	mei_cancel_work(mei_dev);
-> =20
->  	vsc_tp_register_event_cb(tp, NULL, NULL);
-> =20
->  	mei_disable_interrupts(mei_dev);
-> =20
-> +	mei_deregister(mei_dev);
-> +
->  	return ret;
->  }
-> =20
-> --=20
-> 2.43.0
->=20
-
---=20
-Best Regards,
-Marek Marczykowski-G=C3=B3recki
-Invisible Things Lab
-
---Cb0eK72uMioendig
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEhrpukzGPukRmQqkK24/THMrX1ywFAmkH/lYACgkQ24/THMrX
-1yzZXgf5Afb3d9jpS0E4uGrOCTXX4tDVjg/2jCz1nZusCNLo0wQByPGPILeNmJM4
-9UyvruAtQ4Ph2v6T7hB5fAl66ZosjXX5daenxPP9B+2ooJORWLSaNCf/IwdAksIC
-D+pS8o3fpBmIKbMrSF65ieNak46EsB4n2bjMPIwK7O3MTRKIk1mR/YYyt75Qk6oy
-FpZ7/3ZjtXzJWsFptgKbbnMfYnb0Sf1SI+Obn9isbpJgkxMDnwKN2X59YzdzOu/R
-VXVSbsR1qcbu0SkwoZ/D1LmynnSb7kgKJ9Seb+Fx8BIO3wSlp7oCgO0o0vsVGGRX
-wcjUsOKOb0yhYxJHsOOU4WpRA1cnng==
-=McZF
------END PGP SIGNATURE-----
-
---Cb0eK72uMioendig--
 
