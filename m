@@ -1,220 +1,241 @@
-Return-Path: <linux-kernel+bounces-882471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DF58C2A887
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:19:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62F89C2A88F
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:19:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 5F03334810B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:19:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A92AF1889AEB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E51C2DC348;
-	Mon,  3 Nov 2025 08:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F9E271447;
+	Mon,  3 Nov 2025 08:19:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="o7KBs+1h";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Elm6Yjki";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="o7KBs+1h";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Elm6Yjki"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HAPLtJJt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C612DA744
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 08:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125522C0283
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 08:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762157946; cv=none; b=VDnpMGlBlmuppWi6VDAGth2Y0OJ4KiSsT7OJPoSHqJ6yRJGGTkfPfJ2oZVJxCXXup5f2uK6t1pS4DDWHO7izizbP7z6NkeD3glevUNV1stBCcjU3OeaKwgtc1yKzNE4MEY2ARvmsDG4geCpLXQQWzZNTssjd5T4zoEQT1JMrnfQ=
+	t=1762157978; cv=none; b=UxtCmIJwv4SzYrBldFtWMd4OOL6A6ntch5GJJCT2jxZuYaCDtgPL88pnfk1nkzULAKd2fsLoCwnYbatCpFAWp3PnbWXiBnrcfdxGebduQDuadR/arSC0JJoECaZK90YDotMleUAojtsJz83NwVLhxXuS1JPGM07lj+CH5REa1PQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762157946; c=relaxed/simple;
-	bh=X8uk+hT0KMJqYpL/ncwIq3caS9NqOl0v8gh24DqwyZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f+Ksyitb4EY6SFTIVOsXR6Q1Hyi5u+Dl4M7R5ukhZogXkfgxDPjNRvFSvkaj0TubXu4YxwMCgJkwkxmZxEprRDwbnZH5yI8fAFy4snltCGj/abQvQpkioZ8lTUphXjdS+CO1PKp00KUFq7zxfkuMXhF1KFOVa0STDYqJG6bENws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=o7KBs+1h; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Elm6Yjki; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=o7KBs+1h; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Elm6Yjki; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 1524D21B0C;
-	Mon,  3 Nov 2025 08:19:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762157943; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hPAKFxV4WCdjb87dxxJgN6RLPpiYUsGfxeA/knVg7pI=;
-	b=o7KBs+1hiZj6a1B13uDGEQ6i8QewLRf0/uK6k7VVlQI0ZH4oKNhwBrsVvT+ZuYOcucZ98g
-	LNwl6q6wiCC34Xbsya1kuqFuXTDjp1Sis3qY6T8CG7FMGR5Wb704pCyjAuX7+vXBWKOBZ6
-	4AB9hKVCARa1MNpdpEUZVfq7skerSp8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762157943;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hPAKFxV4WCdjb87dxxJgN6RLPpiYUsGfxeA/knVg7pI=;
-	b=Elm6YjkiWTjTTixkffDtRGHuU7/BR3Asa2O8aoO7DZrBhWpnjXgMHINeEtvTjzvy6ESM6S
-	4fedW+Bu15xKdYBg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762157943; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hPAKFxV4WCdjb87dxxJgN6RLPpiYUsGfxeA/knVg7pI=;
-	b=o7KBs+1hiZj6a1B13uDGEQ6i8QewLRf0/uK6k7VVlQI0ZH4oKNhwBrsVvT+ZuYOcucZ98g
-	LNwl6q6wiCC34Xbsya1kuqFuXTDjp1Sis3qY6T8CG7FMGR5Wb704pCyjAuX7+vXBWKOBZ6
-	4AB9hKVCARa1MNpdpEUZVfq7skerSp8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762157943;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hPAKFxV4WCdjb87dxxJgN6RLPpiYUsGfxeA/knVg7pI=;
-	b=Elm6YjkiWTjTTixkffDtRGHuU7/BR3Asa2O8aoO7DZrBhWpnjXgMHINeEtvTjzvy6ESM6S
-	4fedW+Bu15xKdYBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 02CA21364F;
-	Mon,  3 Nov 2025 08:19:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 3UepAHdlCGnUZgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 03 Nov 2025 08:19:03 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 4641DA2A64; Mon,  3 Nov 2025 09:19:02 +0100 (CET)
-Date: Mon, 3 Nov 2025 09:19:02 +0100
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
-	jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com, 
-	mcgrof@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com, 
-	libaokun1@huawei.com
-Subject: Re: [PATCH 06/25] ext4: introduce s_min_folio_order for future BS >
- PS support
-Message-ID: <eywbqqzeiiz63dqsxrvetpqyj3poniywbvm4wwpcacmr6skaqb@ircbveu4srgi>
-References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
- <20251025032221.2905818-7-libaokun@huaweicloud.com>
+	s=arc-20240116; t=1762157978; c=relaxed/simple;
+	bh=hm6y4Bhy6ai/EAscmvamJwwl2CvRbAWBdrHlLHTEYBU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qIJ7p2V+4H4bZXKtYUZNWmSkn00K/kknT/HW/J+1mU4APM8yALwpqj1/t5m7rbaajjI6r6igG3r1mIU37WBVOMOFZ9h9wN/Nrl5SUQuK0rqBurvkqNPbDmKPDdSYLlUrX5FdhZ9B5sw8Xcr/oOXdusvagpSVS1smOdnigUahqXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HAPLtJJt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8914C4CEFD
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 08:19:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762157977;
+	bh=hm6y4Bhy6ai/EAscmvamJwwl2CvRbAWBdrHlLHTEYBU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=HAPLtJJtfGDr+lyJTTWoCn13oYm/P5Nl/WB2TWHy6wYT9YQE+9n13Vr5Y+wiOP4OC
+	 0UQgAZ4VqvsogU4z6oHeL9PVM0NfACJnKUqJ/ThBTspJ1mHjLYpDg+IiOy7Rdk+xNO
+	 2Z2FR4WQIMA/4UnYbIUFmRrOTCy4x9ixKzPrekPI0AGaZ/QmH2VLNNr3CH5ggXbvR3
+	 xfNd8ozCTJNUTIdlK81JDlF+fM7TVVSs84tNjIVRWEzP5XaXQsjtcChUlMjPOuwhrN
+	 YR34OwsHRETlrmP+CG+gPjs9J3eSE/LX7iyp2p53dWhmXrLvpZH0XqwpP3OioU+Zkc
+	 7RKlcEQ0CSPFA==
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-37a2d9cf22aso14217621fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 00:19:37 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCW3dIxtuUbfTBCUiqGNiRq6V/OHtbXfvc43RonVq6tFTMIji9prWX8g2J3UTzkXiD6mA6pEUlkVWZuA0YA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz18jbmsAZ8kxVjVO5tQCmoX7rSXGnHIvRQyEu3dwWzQcmdthJe
+	XVx0h4glAHskpmwXllZ/xBRE35io6FP2OZfCSsecuEqnHIp5wGqSCdHRVeu+bcPF5NJlKFnRvn2
+	CN6qHoREefJyLZ1l/d/j+NYYpSbaxohU=
+X-Google-Smtp-Source: AGHT+IGkeypsY/UdqEGhP7XlbiVMQiOiYAlR0y7VfiumjdVwneCl8iaXNCxzpbiQetoVGMKeIM5XC7xOM0spZmptbpo=
+X-Received: by 2002:a2e:be13:0:b0:378:e0f3:53c1 with SMTP id
+ 38308e7fff4ca-37a107223d9mr50510791fa.18.1762157976317; Mon, 03 Nov 2025
+ 00:19:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251025032221.2905818-7-libaokun@huaweicloud.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-0.30 / 50.00];
-	SEM_URIBL(3.50)[huaweicloud.com:email];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_NONE(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,suse.cz:email]
-X-Spam-Flag: NO
-X-Spam-Score: -0.30
+References: <20251102001411.108385-1-francescopompo2@gmail.com>
+In-Reply-To: <20251102001411.108385-1-francescopompo2@gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 3 Nov 2025 09:19:25 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXEUL-Uv4tCx5NLVHDRo-BdEK1xJdee-UYs-ymE-mLxv0Q@mail.gmail.com>
+X-Gm-Features: AWmQ_bkjZffiPSxqGU8AZFkycwpZNCBdCbGRQWaAyVDQQ_JPvl1H9XTwBXeyILs
+Message-ID: <CAMj1kXEUL-Uv4tCx5NLVHDRo-BdEK1xJdee-UYs-ymE-mLxv0Q@mail.gmail.com>
+Subject: Re: [PATCH] efistub/smbios: Add fallback for SMBIOS record lookup
+To: Francesco Pompo <francescopompo2@gmail.com>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat 25-10-25 11:22:02, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> This commit introduces the s_min_folio_order field to the ext4_sb_info
-> structure. This field will store the minimum folio order required by the
-> current filesystem, laying groundwork for future support of block sizes
-> greater than PAGE_SIZE.
-> 
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+Hello Francesco,
 
-Looks good. Feel free to add:
-
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+On Sun, 2 Nov 2025 at 01:14, Francesco Pompo <francescopompo2@gmail.com> wrote:
+>
+> Some UEFI firmware implementations do not provide the SMBIOS Protocol,
+> causing efi_get_smbios_record() to fail. This prevents retrieval of
+> system information such as product name, which is needed by
+> apple_set_os() to enable the integrated GPU on dual-graphics Intel
+> MacBooks.
+>
+> Add a fallback that directly parses the SMBIOS entry point table when
+> the protocol is unavailable. Log when the fallback is used.
+>
+> Signed-off-by: Francesco Pompo <francescopompo2@gmail.com>
 > ---
->  fs/ext4/ext4.h  |  3 +++
->  fs/ext4/inode.c |  3 ++-
->  fs/ext4/super.c | 10 +++++-----
->  3 files changed, 10 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index 93c2bf4d125a..bca6c3709673 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -1677,6 +1677,9 @@ struct ext4_sb_info {
->  	/* record the last minlen when FITRIM is called. */
->  	unsigned long s_last_trim_minblks;
->  
-> +	/* minimum folio order of a page cache allocation */
-> +	unsigned int s_min_folio_order;
+>  drivers/firmware/efi/libstub/efistub.h | 17 +++++
+>  drivers/firmware/efi/libstub/smbios.c  | 99 +++++++++++++++++++++++++-
+>  2 files changed, 113 insertions(+), 3 deletions(-)
+>
+
+On which platform does this fix an actual existing issue?
+
+> diff --git a/drivers/firmware/efi/libstub/efistub.h b/drivers/firmware/efi/libstub/efistub.h
+> index 685098f9626f..68582ce81370 100644
+> --- a/drivers/firmware/efi/libstub/efistub.h
+> +++ b/drivers/firmware/efi/libstub/efistub.h
+> @@ -1151,6 +1151,23 @@ void free_screen_info(struct screen_info *si);
+>  void efi_cache_sync_image(unsigned long image_base,
+>                           unsigned long alloc_size);
+>
+> +struct __packed smbios_entry_point {
+> +       char anchor[4];
+> +       u8 ep_checksum;
+> +       u8 ep_length;
+> +       u8 major_version;
+> +       u8 minor_version;
+> +       u16 max_size_entry;
+> +       u8 ep_rev;
+> +       u8 reserved[5];
+> +       char int_anchor[5];
+> +       u8 int_checksum;
+> +       u16 st_length;
+> +       u32 st_address;
+> +       u16 number_of_entries;
+> +       u8 bcd_rev;
+> +};
 > +
->  	/* Precomputed FS UUID checksum for seeding other checksums */
->  	__u32 s_csum_seed;
->  
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index a63513a3db53..889761ed51dd 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -5174,7 +5174,8 @@ void ext4_set_inode_mapping_order(struct inode *inode)
->  	if (!ext4_should_enable_large_folio(inode))
->  		return;
->  
-> -	mapping_set_folio_order_range(inode->i_mapping, 0,
-> +	mapping_set_folio_order_range(inode->i_mapping,
-> +				      EXT4_SB(inode->i_sb)->s_min_folio_order,
->  				      EXT4_MAX_PAGECACHE_ORDER(inode));
+>  struct efi_smbios_record {
+>         u8      type;
+>         u8      length;
+> diff --git a/drivers/firmware/efi/libstub/smbios.c b/drivers/firmware/efi/libstub/smbios.c
+> index f31410d7e7e1..21f499035b37 100644
+> --- a/drivers/firmware/efi/libstub/smbios.c
+> +++ b/drivers/firmware/efi/libstub/smbios.c
+> @@ -33,6 +33,93 @@ union efi_smbios_protocol {
+>         } mixed_mode;
+>  };
+>
+> +static bool verify_ep_checksum(const struct smbios_entry_point *ep)
+> +{
+> +       const u8 *ptr = (u8 *)ep;
+> +       u8 sum = 0;
+> +       int i;
+> +
+> +       for (i = 0; i < ep->ep_length; i++)
+> +               sum += ptr[i];
+> +
+> +       return sum == 0;
+> +}
+> +
+> +static bool verify_ep_int_checksum(const struct smbios_entry_point *ep)
+> +{
+> +       const u8 *ptr = (u8 *)&ep->int_anchor;
+> +       u8 sum = 0;
+> +       int i;
+> +
+> +       for (i = 0; i < 15; i++)
+> +               sum += ptr[i];
+> +
+> +       return sum == 0;
+> +}
+> +
+> +static bool verify_ep_integrity(const struct smbios_entry_point *ep)
+> +{
+> +       if (memcmp(ep->anchor, "_SM_", sizeof(ep->anchor)) != 0)
+> +               return false;
+> +
+> +       if (memcmp(ep->int_anchor, "_DMI_", sizeof(ep->int_anchor)) != 0)
+> +               return false;
+> +
+> +       if (!verify_ep_checksum(ep) || !verify_ep_int_checksum(ep))
+> +               return false;
+> +
+> +       return true;
+> +}
+> +
+> +static const struct efi_smbios_record *search_record(void *table, u32 length,
+> +                                                    u8 type)
+> +{
+> +       const u8 *p, *end;
+> +
+> +       p = (u8 *)table;
+> +       end = p + length;
+> +
+> +       while (p + sizeof(struct efi_smbios_record) < end) {
+> +               const struct efi_smbios_record *hdr =
+> +                       (struct efi_smbios_record *)p;
+> +               const u8 *next;
+> +
+> +               if (hdr->type == type)
+> +                       return hdr;
+> +
+> +               /* Type 127 = End-of-Table */
+> +               if (hdr->type == 0x7F)
+> +                       return NULL;
+> +
+> +               /* Jumping to the unformed section */
+> +               next = p + hdr->length;
+> +
+> +               /* Unformed section ends with 0000h */
+> +               while ((next[0] != 0 || next[1] != 0) && next + 1 < end)
+> +                       next++;
+> +
+> +               next += 2;
+> +               p = next;
+> +       }
+> +
+> +       return NULL;
+> +}
+> +
+> +static const struct efi_smbios_record *get_table_record(u8 type)
+> +{
+> +       const struct smbios_entry_point *ep;
+> +
+> +       ep = get_efi_config_table(SMBIOS_TABLE_GUID);
+> +       if (!ep)
+> +               return NULL;
+> +
+> +       if (!verify_ep_integrity(ep))
+> +               return NULL;
+> +
+> +       return search_record((void *)(unsigned long)ep->st_address,
+> +               ep->st_length, type);
+> +}
+> +
+>  const struct efi_smbios_record *efi_get_smbios_record(u8 type)
+>  {
+>         struct efi_smbios_record *record;
+> @@ -43,9 +130,15 @@ const struct efi_smbios_record *efi_get_smbios_record(u8 type)
+>         status = efi_bs_call(locate_protocol, &EFI_SMBIOS_PROTOCOL_GUID, NULL,
+>                              (void **)&smbios) ?:
+>                  efi_call_proto(smbios, get_next, &handle, &type, &record, NULL);
+> -       if (status != EFI_SUCCESS)
+> -               return NULL;
+> -       return record;
+> +       if (status == EFI_SUCCESS)
+> +               return record;
+> +
+> +       efi_info(
+> +               "Cannot access SMBIOS protocol (status 0x%lx), parsing table directly\n",
+> +               status
+> +       );
+> +
+> +       return get_table_record(type);
 >  }
->  
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index aa5aee4d1b63..d353e25a5b92 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -5100,11 +5100,8 @@ static int ext4_load_super(struct super_block *sb, ext4_fsblk_t *lsb,
->  	 * If the default block size is not the same as the real block size,
->  	 * we need to reload it.
->  	 */
-> -	if (sb->s_blocksize == blocksize) {
-> -		*lsb = logical_sb_block;
-> -		sbi->s_sbh = bh;
-> -		return 0;
-> -	}
-> +	if (sb->s_blocksize == blocksize)
-> +		goto success;
->  
->  	/*
->  	 * bh must be released before kill_bdev(), otherwise
-> @@ -5135,6 +5132,9 @@ static int ext4_load_super(struct super_block *sb, ext4_fsblk_t *lsb,
->  		ext4_msg(sb, KERN_ERR, "Magic mismatch, very weird!");
->  		goto out;
->  	}
-> +
-> +success:
-> +	sbi->s_min_folio_order = get_order(blocksize);
->  	*lsb = logical_sb_block;
->  	sbi->s_sbh = bh;
->  	return 0;
-> -- 
-> 2.46.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+>
+>  const u8 *__efi_get_smbios_string(const struct efi_smbios_record *record,
+> --
+> 2.51.0
+>
 
