@@ -1,161 +1,109 @@
-Return-Path: <linux-kernel+bounces-883365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 958BBC2D2AA
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:36:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DD1FC2D29E
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:35:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D39C1896217
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:35:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0487718847F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:35:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62AFD32255C;
-	Mon,  3 Nov 2025 16:33:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 967F232145A;
-	Mon,  3 Nov 2025 16:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ACEA3203A5;
+	Mon,  3 Nov 2025 16:32:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RuWbkaSQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD1E131DDB7
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762187583; cv=none; b=HhePu20hAiLTcmGxSSD9NS8N5Q+W0XK5MZq+f632xLK5dkFOyuHtmkHeVVcGBP63AqbX4QygxOnz3eVe1mbOHSK/CX36/pAnDY84ZoHrlhpqsYKyFH0HQcK0IU5sltOWQhlPR3pJdhTqQkdQlX7Kailitq1jl3LHKbcGNBZpiJU=
+	t=1762187576; cv=none; b=Qc41qnnpzD0kh25bhEIiqcMOAS5hNtxhf44IVSCrZ7E5VZCzibuQxHrBDy+/MLTEhRpPn9Yr1mOO37+DPpxH2ba7oeFYNzYF2ah3MNQE/Y6bcT6AjZVv5togaWSvHjACo7AloyR2dsPf331pL7SvcaEKvWJBQWuGlbPyrPhR/+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762187583; c=relaxed/simple;
-	bh=zJ5r0/FG6kKD8kk4wmybeuLbTqD9YANOS+HOgk1St4U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=p/i0FxzdvJ522Dz7pvCeWVcFKQb2t+XjvvgJXFynZ18qxxg2jF6Jt4gVSj12uOrQkdwvSV7OTNO9p8mpLq+X5VQIpIkDy1M6d5zGIvsPP5B1dEQT8A7GcLOkVtHZkikaG52J/X/KtFKG5064i2We34Q5VyJDVRm/gRoc9oMcvQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 120663161;
-	Mon,  3 Nov 2025 08:32:53 -0800 (PST)
-Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id ABC853F694;
-	Mon,  3 Nov 2025 08:32:57 -0800 (PST)
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: catalin.marinas@arm.com,
-	will@kernel.org,
-	maz@kernel.org,
-	broonie@kernel.org,
-	oliver.upton@linux.dev,
-	miko.lenczewski@arm.com,
-	kevin.brodsky@arm.com,
-	ardb@kernel.org,
-	suzuki.poulose@arm.com,
-	lpieralisi@kernel.org,
-	yangyicong@hisilicon.com,
-	scott@os.amperecomputing.com,
-	joey.gouly@arm.com,
-	yuzenghui@huawei.com,
-	pbonzini@redhat.com,
-	shuah@kernel.org,
-	mark.rutland@arm.com
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: [PATCH v10 9/9] arm64: armv8_deprecated: apply FEAT_LSUI for swpX emulation.
-Date: Mon,  3 Nov 2025 16:32:24 +0000
-Message-Id: <20251103163224.818353-10-yeoreum.yun@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20251103163224.818353-1-yeoreum.yun@arm.com>
-References: <20251103163224.818353-1-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1762187576; c=relaxed/simple;
+	bh=hfsFJ0JmsaHcn92cUkxmK7bOCu0BvRvBVwUEixHaRuo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BVWXR61TuOmmbNxiNGpQjSg2CXP07lRBD1E6MsSPGK4rOTc5xMSh5pIHTC1+llHy+F+6KrNpn6XVoMj79C05Qc+9UlKECF94h/JU9scmcpleJ2oaSkk00IEvHEIIbUk/zopQfKOTO2VJPlU+ZvWgXGgbBYRi8yF7TwT3rePXR/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RuWbkaSQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F485C4AF09
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:32:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762187576;
+	bh=hfsFJ0JmsaHcn92cUkxmK7bOCu0BvRvBVwUEixHaRuo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=RuWbkaSQnN9gm2oyfmOdumljiA2KF97l/oX2aKh4tbtTMH1WnUdrSCjEeUdvysg5u
+	 nC3Qw6SxQT8sKwK6ffWnNP5keEOrqW52HbE3NDaRd9dbMSkcDIHjF6h276wJf6+sTz
+	 P5tc4+Pmuyy/V2d5bMnDIjK1eFI1ZaNSuMzHPQ98SXcF8PnTuhCv8G2I0NmhnVeaPz
+	 3vwAou38zbxobafSsG5olqCmjF+sHUfadvytjE2lrR/HApJXg4C0cvH+643J3BWAPB
+	 bZKRQP0eQghuLTtKY5tG4yVMEBUh9+3ZdZ4+xB5oMKmskoZsyyCguv6adgkVJFneBZ
+	 mnG9MINxZ/L1w==
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-3d220c5a16aso2913974fac.2
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 08:32:56 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV9RJj+4y1xLaxKu3qD9pNnQCpcQfs7ceslnNzqaNClO27Z1dj9oIPQJDD8SFswfSznTYVEDvHjO1EXKk4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmhSf32PCEDgHv+gJoCuEHr7JQNTSCsSAobEvqLg2gLQXjerMV
+	fHVWUATb0H85mTA69GdMqUhaBorW2eSF+AsviTJvJ1lQiHMJGyvSvfy3j3vah3xTMlvIHeWURt6
+	Nhn1tqr5KC6nXoVFyWZ/U7g5xySYsKrY=
+X-Google-Smtp-Source: AGHT+IGScnDEu+8/ixwFRFtuzjgUYukaYh32bsn+tYEEAv/30JtDZAtMc7syra+yFCuWLNC2D3p9QiuPabnNObc9z3w=
+X-Received: by 2002:a05:6870:558a:b0:322:5678:8245 with SMTP id
+ 586e51a60fabf-3dacbfabc55mr5867463fac.31.1762187575743; Mon, 03 Nov 2025
+ 08:32:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <aQSzr4NynN2mpEvG@stanley.mountain>
+In-Reply-To: <aQSzr4NynN2mpEvG@stanley.mountain>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 3 Nov 2025 17:32:44 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0hi_Sa6KW=kOto0Hm5-D85=8z30Oobhtt3yKNwL9VZ6nw@mail.gmail.com>
+X-Gm-Features: AWmQ_bkzBR_vT9YRBHw5a7-Ze_HqzL-yDSNjkE0Ua44s4bQH3pnPsI174Xdm5hE
+Message-ID: <CAJZ5v0hi_Sa6KW=kOto0Hm5-D85=8z30Oobhtt3yKNwL9VZ6nw@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: SBS: Fix present test in acpi_battery_read()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Alexey Starikovskiy <astarikovskiy@suse.de>, 
+	Harshit Mogalapalli <harshit.m.mogalapalli@gmail.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-apply FEAT_LSUI instruction to emulate deprecated swpX instruction.
+On Fri, Oct 31, 2025 at 2:03=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro=
+.org> wrote:
+>
+> The battery->present variable is a 1 bit bitfield in a u8.  This means
+> that the "state & (1 << battery->id)" test will only work when
+> "battery->id" is zero, otherwise ->present is zero.  Fix this by adding
+> a !!.
+>
+> Fixes: db1c291af7ad ("ACPI: SBS: Make SBS reads table-driven.")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> This is a new static checker warning that Harshit and I wrote.  It's
+> untested.
+>
+>  drivers/acpi/sbs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/acpi/sbs.c b/drivers/acpi/sbs.c
+> index a3f95a3fffde..d3edc3bcbf01 100644
+> --- a/drivers/acpi/sbs.c
+> +++ b/drivers/acpi/sbs.c
+> @@ -487,7 +487,7 @@ static int acpi_battery_read(struct acpi_battery *bat=
+tery)
+>                 if (result)
+>                         return result;
+>
+> -               battery->present =3D state & (1 << battery->id);
+> +               battery->present =3D !!(state & (1 << battery->id));
+>                 if (!battery->present)
+>                         return 0;
+>
+> --
 
-Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
----
- arch/arm64/kernel/armv8_deprecated.c | 52 ++++++++++++++++++++++++++--
- 1 file changed, 50 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/kernel/armv8_deprecated.c b/arch/arm64/kernel/armv8_deprecated.c
-index d15e35f1075c..424cf51d554f 100644
---- a/arch/arm64/kernel/armv8_deprecated.c
-+++ b/arch/arm64/kernel/armv8_deprecated.c
-@@ -13,6 +13,7 @@
- #include <linux/uaccess.h>
- 
- #include <asm/cpufeature.h>
-+#include <asm/lsui.h>
- #include <asm/insn.h>
- #include <asm/sysreg.h>
- #include <asm/system_misc.h>
-@@ -86,6 +87,53 @@ static unsigned int __maybe_unused aarch32_check_condition(u32 opcode, u32 psr)
-  *	   Rn  = address
-  */
- 
-+#ifdef CONFIG_AS_HAS_LSUI
-+static __always_inline int
-+__lsui_user_swp_asm(unsigned int *data, unsigned int addr)
-+{
-+	int err = 0;
-+	unsigned int temp;
-+
-+	asm volatile("// __lsui_user_swp_asm\n"
-+	__LSUI_PREAMBLE
-+	"1:	swpt		%w1, %w2, [%3]\n"
-+	"	mov		%w1, %w2\n"
-+	"2:\n"
-+	_ASM_EXTABLE_UACCESS_ERR(1b, 2b, %w0)
-+	: "+r" (err), "+r" (*data), "=&r" (temp)
-+	: "r" ((unsigned long)addr)
-+	: "memory");
-+
-+	return err;
-+}
-+
-+static __always_inline int
-+__lsui_user_swpb_asm(unsigned int *data, unsigned int addr)
-+{
-+	unsigned char idx;
-+	int err;
-+	unsigned int addr_al;
-+	union {
-+		unsigned int var;
-+		unsigned char raw[4];
-+	} data_al;
-+
-+	idx = addr & (sizeof(unsigned int) - 1);
-+	addr_al = ALIGN_DOWN(addr, sizeof(unsigned int));
-+
-+	if (get_user(data_al.var, (unsigned int *)(unsigned long)addr_al))
-+		return -EFAULT;
-+
-+	data_al.raw[idx] = *data;
-+
-+	err = __lsui_user_swp_asm(&data_al.var, addr_al);
-+	if (!err)
-+		*data = data_al.raw[idx];
-+
-+	return err;
-+}
-+#endif /* CONFIG_AS_HAS_LSUI */
-+
- /*
-  * Error-checking SWP macros implemented using ldxr{b}/stxr{b}
-  */
-@@ -128,9 +176,9 @@ LLSC_USER_SWPX()
- LLSC_USER_SWPX(b)
- 
- #define __user_swp_asm(data, addr) \
--	__llsc_user_swp_asm(data, addr)
-+	__lsui_llsc_body(user_swp_asm, data, addr)
- #define __user_swpb_asm(data, addr) \
--	__llsc_user_swpb_asm(data, addr)
-+	__lsui_llsc_body(user_swpb_asm, data, addr)
- 
- /*
-  * Bit 22 of the instruction encoding distinguishes between
--- 
-LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
-
+Applied as 6.18-rc material, thanks!
 
