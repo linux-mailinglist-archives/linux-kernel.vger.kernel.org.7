@@ -1,98 +1,75 @@
-Return-Path: <linux-kernel+bounces-883509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5E48C2DA17
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:18:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6193DC2DA1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:19:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3948189B603
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:19:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C54B73B6CC0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE372264C8;
-	Mon,  3 Nov 2025 18:18:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5FB27A900;
+	Mon,  3 Nov 2025 18:18:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cOd52XJR"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mb7vhoWz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7B61A9F94
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 18:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C026D239E97;
+	Mon,  3 Nov 2025 18:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762193916; cv=none; b=iICJhMt/wti5CMC/xWB1WErbLbZPH+AcJd09ObQJ2wGy3QxHS6zWI4+GwNzAU4BMNL2Viqk/cXm/cAi/cc55rRdp3V80l2CUDn/C4/O8EONkQJdAqfrjgfcRpgC63YjuhVhQuztQaP+nCBxl1UtffZAVRvldHr/VfOn28b3hwdo=
+	t=1762193928; cv=none; b=MabLYvAz51u3T05sVp7XzKySn3S0U9tHZhQ3HdJeVnRrwLZexblQrbh+ScM/QYIpyYaPXh3vFpbFDXX/Du3m9BvFAv2q44RNeD1Y6+hMe2gBLGxjP0EbA4mUD+e+AqOP2z97dHkgK82/w9vgkaQ0vUvj1ZNcww8u62Bb5o6BRr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762193916; c=relaxed/simple;
-	bh=URXNs5NVV9mjyIjpTFJ2nbkM6xeZY0uxMOBeg6vFH8o=;
+	s=arc-20240116; t=1762193928; c=relaxed/simple;
+	bh=SrEyK8SJfOQkG4xF4hAGtuxRN3B7OPPK2EUDDpkgAdc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BWAgLmNo049LJ9w4oFl4ri8VsUB9vb0Uwl/RzB2fMcNOz+KXc+Be5a43bID/479TSk7KrMvo7nD9BAxzQw1AajYY9LMct4gs+9wLZLnOG4g6KcgfsjVQQpB7BWYIAwCO6/6DG/CLhEJRZRwb1G+6THXOLF4/bTeo9EhNJGXn4f0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cOd52XJR; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-b4aed12cea3so855186166b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 10:18:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762193913; x=1762798713; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jqRLjgd8K+hT2Lw3XZjWXjJmFIP7/NT9CeMKS9r3avc=;
-        b=cOd52XJRLZb8IO6129H4kd+jNXtLtqXDIfUbNyTnlPT621DrqSW7cJrsRhJOC1JjJ6
-         7jRgw+h0rbmu3qfB++z+uE12q0QJeAOScF4U6tibhKHoiNRAyGUH8iMEl1qNXwHH5u4A
-         U0eGwkOlgoXxkQDChytZV6mLW5IU5IwP18WLWLXidYJAN9NeF0b05PZkhe/zVVQAHFvP
-         eGQxjXhNbhaR5TcrpQA2D6lF3jRerxH2CumgUjl8YgPKY1KIBVnI3pJREGDF8tejk72z
-         HzaYuDkn0WLVvVBq8ndNJl5Cd7cGcQDTt1ZR71N4N3gMxTYT/msNy4ZEGIdsbrVcNyOj
-         Jr6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762193913; x=1762798713;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jqRLjgd8K+hT2Lw3XZjWXjJmFIP7/NT9CeMKS9r3avc=;
-        b=OCG+UXioIH8pCyJHIZeWtQsAQ/Zo3oUGyNw8q51e6+S6NEGpcnVu+lGNqwsqmYAugT
-         4yMHDrN/GtwdB1NQo13TYtrw5sfgz0RKjsyO9F7HA13utUv0AAZSsOoeZvCnvjwVU7GF
-         BYG/M/nWB2RE/Ind5wHBgaDQF6aeAJJCsmSQCJjM0k/DP2X8JdjajtTFaIV4k6iTKmTc
-         wbmQC4MWtiPqmkfZdkNbz3JjY9VpKT8Cl799ig700012ZP6Y3ks685qjpy/Cb2lM/Nk/
-         qwMPmdSo6j6le+U8513S+mqLt0My2JRShXxA8DkGq+Tbh1NjVMMFznh5GcYK+wuKpQay
-         FxCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWX8WgAQ7s84iS9zrFRss4lCLahwGa4vn3H98JLfg/2UUmQbF9q0a7c77Evd+CElODs6G2n5EUiItNx1EI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvjO+aewvyBYZ1GhI/orQmbzHdBvP5TPZLNqmIXNf2u+dv++QZ
-	o1Pjgr2t1TGsLo+8C0k/URG8T78kCyRk7DbFnWgBhPdY5z2Lt5XOf5D7xVUgZBZ43i9W9IglNQ0
-	NjGv1OSQ=
-X-Gm-Gg: ASbGncvxpQI74UUvw/DUvblwXKVs8xze7hdRNTH8SOi2R1kKcMa53wPv1B84UsH57u5
-	7ZQBJgwgACg7oqof/Znp3o4N5S/zE59LV7QB4nZumheRaADu9ktJeZAFqY3bxw8LQ08jWrwdCYx
-	ruWyMG6RFFdjnskzkasA7oI1a2RzkYVqe5Z7AnNx0wes4v3AI9mmZlZXh4NdszITdzQtiTJnDpq
-	L+ik9rT5GWQqF4q1pz99+uSpLvPRi9NsrSa18X515N9t4fdPIj2l1evO/juM8UB0D/NCfN6Hynl
-	7p5oy+urqUHDyqRNvN6x+2o4Rx5dkYlv8phZW01oMtI9kcy99AIgw2G9UaodaFeToUziBXIiIQn
-	1OtbAODRXnG0vowriEE3kp0LL10KxEGt8RW+gwnqusAzCZao1WpdexSRpc0Xhbq9fzAb+vMz7p3
-	iUVS/LmsHB2b/odA==
-X-Google-Smtp-Source: AGHT+IE2daxTlMOHk/CGF2RugDrn4nke6v1czkbTOpjMgsbAikWRjv6WYKeA3oTiX78nZbbiTawnTw==
-X-Received: by 2002:a17:906:6a21:b0:b6d:7d27:258b with SMTP id a640c23a62f3a-b70700d34b3mr1435687266b.12.1762193912944;
-        Mon, 03 Nov 2025 10:18:32 -0800 (PST)
-Received: from localhost (109-81-31-109.rct.o2.cz. [109.81.31.109])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b7077cfa966sm1093828666b.65.2025.11.03.10.18.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 10:18:32 -0800 (PST)
-Date: Mon, 3 Nov 2025 19:18:31 +0100
-From: Michal Hocko <mhocko@suse.com>
-To: Roman Gushchin <roman.gushchin@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
-	Alexei Starovoitov <ast@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	JP Kobryn <inwardvessel@gmail.com>, linux-mm@kvack.org,
-	cgroups@vger.kernel.org, bpf@vger.kernel.org,
-	Martin KaFai Lau <martin.lau@kernel.org>,
-	Song Liu <song@kernel.org>,
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v2 00/23] mm: BPF OOM
-Message-ID: <aQjx91L6IlG-qtjX@tiehlicka>
-References: <20251027231727.472628-1-roman.gushchin@linux.dev>
- <aQSB-BgjKmSkrSO7@tiehlicka>
- <87ldkonoke.fsf@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=szUQDhhqzD6UCRKLKNiTMnOToGIh9cSnddPVce+vMOBDtBAuccfS+RiD/0Me6Aa5KPLWkZUFZcKXnwXEAS0WiBNiShu1FfaY7XsHCBoVH4gChkrK26C7V4pbPnR5eMpFCBm6m7FOvgOGM5KnLd0OkCJs7377BCu/hX3HvtE/0Sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mb7vhoWz; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762193927; x=1793729927;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=SrEyK8SJfOQkG4xF4hAGtuxRN3B7OPPK2EUDDpkgAdc=;
+  b=Mb7vhoWzoUkdtwCWWL5pOGWF00KjD3bFPhkCkhTsqqNySOaSpJVB90b6
+   vmK7rtlzLwPHKpro+8c+p9svRLAtHtaVAsd9CEXK3MwtD3l3h84nJIJov
+   bCYPBXcRZb+FRzH0JnnMljl+Z6dVXihgz64T9Pp1gP87FqZzfJ8ivJYtQ
+   IOtyTzs8DXHbwLL2rZgzEk9i+m/y2WkaPaxC/CtKOwOzsyOVwE3QlB0hy
+   4aGRzGQ8VF76k8dy5R6I7EcyT/NYZsBS4D4vOIgtZl5uzmftLUrYeedQO
+   nse/FoeJ7pLj6dX5jRsm7QrD8ymBMmiTbU+2F/DZOmaPMRXM+XACZueFb
+   w==;
+X-CSE-ConnectionGUID: nMxdZ+pQR1y7Q1rSJFmhVg==
+X-CSE-MsgGUID: EBc5BHx4TQWLi1wetyqLZA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="63974160"
+X-IronPort-AV: E=Sophos;i="6.19,276,1754982000"; 
+   d="scan'208";a="63974160"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 10:18:46 -0800
+X-CSE-ConnectionGUID: ZqmnTnrCTfmHQk7wSr8Hvg==
+X-CSE-MsgGUID: 7CAfQBm4TyuB4CJjO3WD3g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,276,1754982000"; 
+   d="scan'208";a="186623736"
+Received: from mgerlach-mobl1.amr.corp.intel.com (HELO desk) ([10.124.220.244])
+  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 10:18:45 -0800
+Date: Mon, 3 Nov 2025 10:18:40 -0800
+From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Brendan Jackman <jackmanb@google.com>
+Subject: Re: [PATCH v4 1/8] x86/bugs: Use VM_CLEAR_CPU_BUFFERS in VMX as well
+Message-ID: <20251103181840.kx3egw5fwgzpksu4@desk>
+References: <20251031003040.3491385-1-seanjc@google.com>
+ <20251031003040.3491385-2-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,43 +78,125 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87ldkonoke.fsf@linux.dev>
+In-Reply-To: <20251031003040.3491385-2-seanjc@google.com>
 
-On Sun 02-11-25 12:53:53, Roman Gushchin wrote:
-> Michal Hocko <mhocko@suse.com> writes:
+On Thu, Oct 30, 2025 at 05:30:33PM -0700, Sean Christopherson wrote:
+> From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
 > 
-> > On Mon 27-10-25 16:17:03, Roman Gushchin wrote:
-> >> The second part is related to the fundamental question on when to
-> >> declare the OOM event. It's a trade-off between the risk of
-> >> unnecessary OOM kills and associated work losses and the risk of
-> >> infinite trashing and effective soft lockups.  In the last few years
-> >> several PSI-based userspace solutions were developed (e.g. OOMd [3] or
-> >> systemd-OOMd [4]). The common idea was to use userspace daemons to
-> >> implement custom OOM logic as well as rely on PSI monitoring to avoid
-> >> stalls. In this scenario the userspace daemon was supposed to handle
-> >> the majority of OOMs, while the in-kernel OOM killer worked as the
-> >> last resort measure to guarantee that the system would never deadlock
-> >> on the memory. But this approach creates additional infrastructure
-> >> churn: userspace OOM daemon is a separate entity which needs to be
-> >> deployed, updated, monitored. A completely different pipeline needs to
-> >> be built to monitor both types of OOM events and collect associated
-> >> logs. A userspace daemon is more restricted in terms on what data is
-> >> available to it. Implementing a daemon which can work reliably under a
-> >> heavy memory pressure in the system is also tricky.
-> >
-> > I do not see this part addressed in the series. Am I just missing
-> > something or this will follow up once the initial (plugging to the
-> > existing OOM handling) is merged?
+> TSA mitigation:
 > 
-> Did you receive patches 11-23?
+>   d8010d4ba43e ("x86/bugs: Add a Transient Scheduler Attacks mitigation")
+> 
+> introduced VM_CLEAR_CPU_BUFFERS for guests on AMD CPUs. Currently on Intel
+> CLEAR_CPU_BUFFERS is being used for guests which has a much broader scope
+> (kernel->user also).
+> 
+> Make mitigations on Intel consistent with TSA. This would help handling the
+> guest-only mitigations better in future.
+> 
+> Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+> [sean: make CLEAR_CPU_BUF_VM mutually exclusive with the MMIO mitigation]
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>  arch/x86/kernel/cpu/bugs.c | 9 +++++++--
+>  arch/x86/kvm/vmx/vmenter.S | 2 +-
+>  2 files changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+> index 6a526ae1fe99..723666a1357e 100644
+> --- a/arch/x86/kernel/cpu/bugs.c
+> +++ b/arch/x86/kernel/cpu/bugs.c
+> @@ -194,7 +194,7 @@ DEFINE_STATIC_KEY_FALSE(switch_mm_cond_l1d_flush);
+>  
+>  /*
+>   * Controls CPU Fill buffer clear before VMenter. This is a subset of
+> - * X86_FEATURE_CLEAR_CPU_BUF, and should only be enabled when KVM-only
+> + * X86_FEATURE_CLEAR_CPU_BUF_VM, and should only be enabled when KVM-only
+>   * mitigation is required.
+>   */
+>  DEFINE_STATIC_KEY_FALSE(cpu_buf_vm_clear);
+> @@ -536,6 +536,7 @@ static void __init mds_apply_mitigation(void)
+>  	if (mds_mitigation == MDS_MITIGATION_FULL ||
+>  	    mds_mitigation == MDS_MITIGATION_VMWERV) {
+>  		setup_force_cpu_cap(X86_FEATURE_CLEAR_CPU_BUF);
+> +		setup_force_cpu_cap(X86_FEATURE_CLEAR_CPU_BUF_VM);
+>  		if (!boot_cpu_has(X86_BUG_MSBDS_ONLY) &&
+>  		    (mds_nosmt || smt_mitigations == SMT_MITIGATIONS_ON))
+>  			cpu_smt_disable(false);
+> @@ -647,6 +648,7 @@ static void __init taa_apply_mitigation(void)
+>  		 * present on host, enable the mitigation for UCODE_NEEDED as well.
+>  		 */
+>  		setup_force_cpu_cap(X86_FEATURE_CLEAR_CPU_BUF);
+> +		setup_force_cpu_cap(X86_FEATURE_CLEAR_CPU_BUF_VM);
+>  
+>  		if (taa_nosmt || smt_mitigations == SMT_MITIGATIONS_ON)
+>  			cpu_smt_disable(false);
+> @@ -748,6 +750,7 @@ static void __init mmio_apply_mitigation(void)
+>  	 */
+>  	if (verw_clear_cpu_buf_mitigation_selected) {
+>  		setup_force_cpu_cap(X86_FEATURE_CLEAR_CPU_BUF);
+> +		setup_force_cpu_cap(X86_FEATURE_CLEAR_CPU_BUF_VM);
+>  		static_branch_disable(&cpu_buf_vm_clear);
+>  	} else {
+>  		static_branch_enable(&cpu_buf_vm_clear);
+> @@ -839,8 +842,10 @@ static void __init rfds_update_mitigation(void)
+>  
+>  static void __init rfds_apply_mitigation(void)
+>  {
+> -	if (rfds_mitigation == RFDS_MITIGATION_VERW)
+> +	if (rfds_mitigation == RFDS_MITIGATION_VERW) {
+>  		setup_force_cpu_cap(X86_FEATURE_CLEAR_CPU_BUF);
+> +		setup_force_cpu_cap(X86_FEATURE_CLEAR_CPU_BUF_VM);
+> +	}
+>  }
+>  
+>  static __init int rfds_parse_cmdline(char *str)
+> diff --git a/arch/x86/kvm/vmx/vmenter.S b/arch/x86/kvm/vmx/vmenter.S
+> index bc255d709d8a..1f99a98a16a2 100644
+> --- a/arch/x86/kvm/vmx/vmenter.S
+> +++ b/arch/x86/kvm/vmx/vmenter.S
+> @@ -161,7 +161,7 @@ SYM_FUNC_START(__vmx_vcpu_run)
+>  	mov VCPU_RAX(%_ASM_AX), %_ASM_AX
+>  
+>  	/* Clobbers EFLAGS.ZF */
+> -	CLEAR_CPU_BUFFERS
+> +	VM_CLEAR_CPU_BUFFERS
+>  
+>  	/* Check EFLAGS.CF from the VMX_RUN_VMRESUME bit test above. */
+>  	jnc .Lvmlaunch
+> -- 
 
-OK, I found it. Patches 11-23 are threaded separately (patch 11
-with Message-ID: <20251027232206.473085-1-roman.gushchin@linux.dev> doesn't
-seem to have In-reply-to in header) and I have missed them previously. I
-will have a look in upcoming days.
+Sean, based on Brendan's feedback, below are the fixes to the comments on
+top of this patch:
 
-
--- 
-Michal Hocko
-SUSE Labs
+---
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index 08ed5a2e46a5..2be9be782013 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -321,9 +321,11 @@
+ #endif
+ .endm
+ 
++/* Primarily used in exit-to-userspace path */
+ #define CLEAR_CPU_BUFFERS \
+ 	__CLEAR_CPU_BUFFERS X86_FEATURE_CLEAR_CPU_BUF
+ 
++/* For use in KVM */
+ #define VM_CLEAR_CPU_BUFFERS \
+ 	__CLEAR_CPU_BUFFERS X86_FEATURE_CLEAR_CPU_BUF_VM
+ 
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 723666a1357e..49d5797a2a42 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -490,7 +490,7 @@ static enum rfds_mitigations rfds_mitigation __ro_after_init =
+ 
+ /*
+  * Set if any of MDS/TAA/MMIO/RFDS are going to enable VERW clearing
+- * through X86_FEATURE_CLEAR_CPU_BUF on kernel and guest entry.
++ * at userspace *and* guest entry.
+  */
+ static bool verw_clear_cpu_buf_mitigation_selected __ro_after_init;
+ 
 
