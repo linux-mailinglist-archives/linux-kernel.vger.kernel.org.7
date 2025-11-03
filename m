@@ -1,150 +1,497 @@
-Return-Path: <linux-kernel+bounces-882617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBCB3C2AEA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:07:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14CB1C2AEBB
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:09:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 79CCC4E34BA
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:07:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42F633B1833
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:08:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D2052FBE1F;
-	Mon,  3 Nov 2025 10:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540392EACE2;
+	Mon,  3 Nov 2025 10:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SKcrobyu"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="ijkJu0vC";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="ijkJu0vC"
+Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011046.outbound.protection.outlook.com [40.107.130.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EFDB2EACE2
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 10:06:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762164420; cv=none; b=ngnsmIgHC/Slr/OtcuRofrOUbsthO17u2xoTQc/6HtyXEGNQJ6my9pCDYNnb5gXYGaTnUG9i621GJ4YInTL/hqoWzyMgLLoF1uDVVSVMWIoVBIxwh2kK1iMjL4GU7sP2LrMWq+dsw6PhlEYtbJsK0NaE6nlh5Sw0kryvsaeSFbM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762164420; c=relaxed/simple;
-	bh=KxSmj2EVSAtKWRzCuZMY9w7YcJHWBV20IN/fuyz86/A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gzfB7oushmRXSWKX0wZT+R1TVdN2yvuxX4Van4r7ZAO+7fNIC75YR1g3p9Mm2sJtn6YV+tw0BBaSHPx4CkXiMGie0zLZsJn8o+EwdgCEuwmpq4GHHIYbf9NevIwcwJzTDcOZQqs9fU0sX7FCfKLzKM1fmZ8QlyuRPWo2U0mj0Bs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SKcrobyu; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A367XJ5028475;
-	Mon, 3 Nov 2025 10:06:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=cHq97x
-	9nqrg2FOY00JbF4hLf0LMQp5q16cfMuYJ/avQ=; b=SKcrobyuR50xxqVS/NPYXA
-	XZwY2/9/lfGH1qTlCpUmcsLyQd9kGLYIaoz4tL4k8hOThJmFhoKtQH5iQPfmqQgp
-	SMYTyaRfdHC1DqZjuyZfJ6Y7fnVMXMJkTsZkg2sTMQmzUb5D7cmtCQ2NWUKPx9kh
-	zgKLWFW9Xp1RcSnPvEe0hNu/v9ZBuqbbA03MH/JkGc6w9z1NiK/LO1b6VFXbCRG5
-	6jpdIQvWtpchZ5c0yE1bNRFvWoZrg7U/go4d0HaHAcjbSzjE0D4qd536jTSf/jH+
-	Ug8HSqG0/cWr+QaWXXrafLoUxfELHU/fuYbDh8r70cQOP4nsPGymDQEAyA6+QixQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a58mkp05s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Nov 2025 10:06:42 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5A3A6fDN027263;
-	Mon, 3 Nov 2025 10:06:41 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a58mkp05p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Nov 2025 10:06:41 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A370Pvu027394;
-	Mon, 3 Nov 2025 10:06:41 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a5vwy5661-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Nov 2025 10:06:41 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A3A6dXi44106008
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 3 Nov 2025 10:06:39 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1BFEF2006B;
-	Mon,  3 Nov 2025 10:06:39 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5432220067;
-	Mon,  3 Nov 2025 10:06:36 +0000 (GMT)
-Received: from [9.109.215.252] (unknown [9.109.215.252])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  3 Nov 2025 10:06:36 +0000 (GMT)
-Message-ID: <4cdfd743-3cfd-4317-8e24-0f94e6fa8d39@linux.ibm.com>
-Date: Mon, 3 Nov 2025 15:36:35 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8631C14A60F
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 10:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.46
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762164482; cv=fail; b=NJJw2MjcTTtxf+/q449wj5yJkUyB2UpsoK9Pei1bm4b5J9Yy27WcZFZecg3bEIA7zT0otcw0msscDzP/oeCDrhJ1cMWRz51jpVBSshoD/r4PZiX5iStgBNV1xgTl9pKTIcZWm+8e8SKG7Xy6c0M5nnWwn9P9m8q6Kvu3c+kqWeg=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762164482; c=relaxed/simple;
+	bh=ZIzl3BRIr6NltmNR+URqVh/MCqiPsKAEZGPsUNy+8lc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=MdeXHETUgQn9kQnWxc/8FutF8CF0DEseiSi1P/jcFiypYFAUbGEUMCtTVedfrikQ/YCaPzClQbAMo9QLDhUWdW+0cyW9kU1zT/aTLISTo9GfcMSKFXeBj1xgq9NTQlz5jomqjM4KbrlolHC/5Utgxa+dL/Fcz8gg2aEiSESGi7U=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=ijkJu0vC; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=ijkJu0vC; arc=fail smtp.client-ip=40.107.130.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=bhHOfCXrbZ6hNbFD+4WbnKsHKJQUjmEl8cpmURRCOFMEBGwtdpSbKRyexS6KSdCXrWgKCwXztIUv1+0KY4OjsNsbty04imy9/h4Ptc2vXVdELCTM1lB2IVLHHttoblfIctgvVX0TELNBUq1cuLwJyHTeLmIGYE62JrSOlAPr3LG/RrqOkMDUXTUuxF6fDPr/X+QKRLYgqamSI/XPQn1fzc9vo5ml9P9fAH0O+gN8EIs27eE9vAYwAKEY/yQIAQp/8rcHkMWiVkMthW8XvGkwbcvh9I0XibtWxQeK6xsC95/0egwtedN4iUnIjuprMd9TsPHG079nplaEBEGEJNqlIg==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IBLVrFb2rad9CrbPD4dhOKvd6Z1jPlHjPNIYyJxww3c=;
+ b=xZQt4vL+rEtYOfWzJHbKP7Wc4woyKanlOC1ec97ctoKmx4eshmBl+yc3qml2hUGerCbsltC9OWTEzAijdrRBlUnAEo2EoHFZYGiR6MPimevbtjImap6OorQUpazJMuQNeF5HZhXoe/l+8SF6K3lXf1ULesvwIIivzx7EaVmDTrHvpkMxuNceeC+XT7hjS8iTQ044lTIXGFB7zQsvW01XN9SIIVB7Qm4E1zhVw8W2s2U+vQfXo98+B9Q8VMT5+Qn8T+Vv3W+7Vnl+YNHHGn4C2C+ehs0ECbgjXP9AoxQaW4Bj/PxTcjdwcj9Wm3BMqyGCVy5Z9TAo9MkYLVSBp04QnA==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=os.amperecomputing.com smtp.mailfrom=arm.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
+ dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IBLVrFb2rad9CrbPD4dhOKvd6Z1jPlHjPNIYyJxww3c=;
+ b=ijkJu0vCjRqkmMXM8lHbQg6Xq+bxIUOKkIfwNVe8PSvr79Kd0JrhEuy0Nj04ybQozxEaha6vLvwZdFpWKWEbbi3iC1yQ4K2JL3Bh7fdIXnb5Ed+clH5budFxWN28wBINXtTXSVrE7iTVKHJ7a+8em2SUS6CFsjtDVzRnYof8WNs=
+Received: from AS4P192CA0001.EURP192.PROD.OUTLOOK.COM (2603:10a6:20b:5da::15)
+ by VE1PR08MB5872.eurprd08.prod.outlook.com (2603:10a6:800:1aa::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.16; Mon, 3 Nov
+ 2025 10:07:54 +0000
+Received: from AM3PEPF00009B9D.eurprd04.prod.outlook.com
+ (2603:10a6:20b:5da:cafe::60) by AS4P192CA0001.outlook.office365.com
+ (2603:10a6:20b:5da::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9275.16 via Frontend Transport; Mon,
+ 3 Nov 2025 10:07:56 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ AM3PEPF00009B9D.mail.protection.outlook.com (10.167.16.22) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.6
+ via Frontend Transport; Mon, 3 Nov 2025 10:07:52 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=T7/SJmvKHblW/u8ibUz42UxNUPujfR6Vagwy5r+b9ULOFGXqT75Bx0aIs5iPo1B4I7YjQVgQi0NB5G53NAJF0RyaH9W4n/GLJ5S4iVLHVOqoi/zuS+wRUaTgAq0/1QxnZT+pzgoj5YY72flnl7xItU6MLVyqrldCwkupQeIEbSTBXXoATn5/9rJXps3jySq9BFdAGNDD9cyd5+NBz5chZtEkQwXZws/XYXmAedawTUXzWfu/aQVhEImfdyaY85+TVPymCrMtLS1BpLTZE9Z56QVPhnSQg8m2L40PooJNhTFPVUNLdAxb5zZ1tlEDqnkeSVKbP1JRjOYNebWJM8d4mA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IBLVrFb2rad9CrbPD4dhOKvd6Z1jPlHjPNIYyJxww3c=;
+ b=m/2TnusH8dLgwXiRx9R4oukuzlGQACCxFVN3n20TA+BntF1ovKZ9YDyv88vLXf1PtC+rpj3l1KlAAqJCMjQgeaJTRFt3FzGQKQ7YMCxDxZ+sDVODhIfjMZ5B0Huk/2xJCaR/LNy76LULS9d4vD3Ow+XCXpFCG0TX8ilF4IElm925juVuf8BMekYdAlhiReFg7HvKMb1Mk4GeJube+Ah87e7O4nh26PnyypzyWNq0+6RiSPyolS3HHIA0YwKOb5OyOwJqeXiFT/QPRYKa3thK0a/AV0mOscFxPUycOXiJyb1XStEt+hMqBrxQjKrOUfQWCEq2fVa5vwlsmd/VLwkqHQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=IBLVrFb2rad9CrbPD4dhOKvd6Z1jPlHjPNIYyJxww3c=;
+ b=ijkJu0vCjRqkmMXM8lHbQg6Xq+bxIUOKkIfwNVe8PSvr79Kd0JrhEuy0Nj04ybQozxEaha6vLvwZdFpWKWEbbi3iC1yQ4K2JL3Bh7fdIXnb5Ed+clH5budFxWN28wBINXtTXSVrE7iTVKHJ7a+8em2SUS6CFsjtDVzRnYof8WNs=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from GVXPR08MB11445.eurprd08.prod.outlook.com
+ (2603:10a6:150:2c0::19) by GV1PR08MB8011.eurprd08.prod.outlook.com
+ (2603:10a6:150:99::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Mon, 3 Nov
+ 2025 10:07:15 +0000
+Received: from GVXPR08MB11445.eurprd08.prod.outlook.com
+ ([fe80::fa0f:733c:3b98:b13b]) by GVXPR08MB11445.eurprd08.prod.outlook.com
+ ([fe80::fa0f:733c:3b98:b13b%7]) with mapi id 15.20.9275.013; Mon, 3 Nov 2025
+ 10:07:14 +0000
+Message-ID: <cbabb814-3ca5-4213-9346-a7de28aac474@arm.com>
+Date: Mon, 3 Nov 2025 10:07:12 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 3/5] arm64: mm: support large block mapping when
+ rodata=full
+Content-Language: en-GB
+To: Yang Shi <yang@os.amperecomputing.com>, Guenter Roeck <linux@roeck-us.net>
+Cc: catalin.marinas@arm.com, will@kernel.org, akpm@linux-foundation.org,
+ david@redhat.com, lorenzo.stoakes@oracle.com, ardb@kernel.org,
+ dev.jain@arm.com, scott@os.amperecomputing.com, cl@gentwo.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, nd@arm.com
+References: <20250917190323.3828347-1-yang@os.amperecomputing.com>
+ <20250917190323.3828347-4-yang@os.amperecomputing.com>
+ <f24b9032-0ec9-47b1-8b95-c0eeac7a31c5@roeck-us.net>
+ <933a2eff-1e06-451e-9994-757d66f4b985@arm.com>
+ <bee6b93d-aa2e-4335-9801-89f02eb3eccc@arm.com>
+ <85e50475-7d2c-49df-924e-90e0b915a4d3@os.amperecomputing.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <85e50475-7d2c-49df-924e-90e0b915a4d3@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO4P123CA0311.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:197::10) To GVXPR08MB11445.eurprd08.prod.outlook.com
+ (2603:10a6:150:2c0::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [patch V3 09/20] cpumask: Cache num_possible_cpus()
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Gabriele Monaco <gmonaco@redhat.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Michael Jeanson <mjeanson@efficios.com>, Jens Axboe <axboe@kernel.dk>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-        Florian Weimer <fweimer@redhat.com>, Tim Chen <tim.c.chen@intel.com>,
-        Yury Norov <yury.norov@gmail.com>
-References: <20251029123717.886619142@linutronix.de>
- <20251029124515.846126176@linutronix.de>
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-Content-Language: en-US
-In-Reply-To: <20251029124515.846126176@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: RAj9FLlEYj6zGVxyJnYTp4QnQkVLchNh
-X-Proofpoint-GUID: SM1E8uFQHBH1lg8gRcNgmTX-X9lKS9wy
-X-Authority-Analysis: v=2.4 cv=SqidKfO0 c=1 sm=1 tr=0 ts=69087eb2 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VnNF1IyMAAAA:8 a=pGLkceISAAAA:8 a=N3jB7X-fAV_4ZEbNhA4A:9 a=QEXdDO2ut3YA:10
- a=cPQSjfK2_nFv0Q5t_7PE:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAwOSBTYWx0ZWRfX4+xAcH8HV1Id
- eDPnEZ09WKw1vClmzWiIpWRat9m1icfgQf6y0SGk5tuUcodF8roArwnygrhoJ7/Jf3WUe9etGfR
- cu0Zvr76BCJlSgCg+OzPqtz4hLMOau7yI/4o8CinPnYL1kwP0YvGHNc/eTOf3RlQeMOEH3ewB4c
- uFhRfi+LvibImL3B1B9IqbXavIXGFr1eg4cWCU6qsivM9UY0YCpddYrWMDLzkdpZeJMrVMmiVb4
- vND70F0s1PHRsk6WI4v8j4OuK/UIcQgCIzviITALHCNSagwOAVOETA4wXH6+ok91OtZqY1HlpcA
- ut/NUFElvdb1qIaZjHYNSSra+bfQyQohNVnjrhqJgLw5uA+c04TNAf+jZdRN6/bmlRgt1Mmm1pu
- j0t5o0WiaiIcspB7wrVsTbJi/kPpdQ==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-03_01,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1015 impostorscore=0 adultscore=0 lowpriorityscore=0
- malwarescore=0 spamscore=0 priorityscore=1501 bulkscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010009
+X-MS-TrafficTypeDiagnostic:
+	GVXPR08MB11445:EE_|GV1PR08MB8011:EE_|AM3PEPF00009B9D:EE_|VE1PR08MB5872:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3cc5eb81-50a4-45f9-b694-08de1ac0d9f4
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?utf-8?B?YWV6YXl3WTVKVUVNTWxpQnFsaW93bmIvOTh2bzRDV1ZEOTRoR3R1aGdPc2dK?=
+ =?utf-8?B?MkJqOFpwemRYbXp5Z212djE5OE90OWdIRVhIVEM2WVQ0TTQvSzlCNDRYc3Bi?=
+ =?utf-8?B?ZXMrRjhCMHBVa0N1bVh1WWhEcVRZWk0zRkxVZ2dhQU9ib1FBVEJKRXM4cUV6?=
+ =?utf-8?B?ZFV6R0xjajR0dnR5cUhnUW9pdkJuYXl0K1JSczJ3RTE2R0ZrTGVwOWJDQlF1?=
+ =?utf-8?B?OGhFTmZoMXpHK1I1UGJESnBEdEQ5UW9pS1I4aGowelhVT2Y2Mlo5Q2pzY0lz?=
+ =?utf-8?B?ZWhhQ0J2RGdiSDRiaUlMUllVRUdjTFQ3bnJCNGdvcmZOTGJ4NER1dkRNUzlj?=
+ =?utf-8?B?c2tqT21LeXlWTkUyd3VHZEJEWE15TVo2M29tclVPZDB4TWhIem5Fd0lXTE1w?=
+ =?utf-8?B?TDFFSjZLTVRpU1hyQk9iVW5peE5sUENEbTd3MGpNbmhuTWYxTFBlTXk2bFRU?=
+ =?utf-8?B?L3BmeFJUTTBxSUFVS0hWZlZXMnJiL2pWSFdUMGZUVXJJSWpUVWVWOHN5UWsr?=
+ =?utf-8?B?NFFUR0lHWjVFeTFaY2NSK0JpR0MyWG5YM0V0SjluSmFoMUN3OGR2VERGNWp1?=
+ =?utf-8?B?T0pDaDVwNEZuM3RJZ0Q1NlBmaDlaR2JkSERKWVVTSHF5eUVveVJoNDBkcUhq?=
+ =?utf-8?B?N2VMNUViMzdZVXloMWdxcGZ0MnhZUnk3NnFyM1RRWFJJSVpaTHVraHI0YWUy?=
+ =?utf-8?B?UTllclJ4TlVaeC9RSEgxYjRLTFFhQ0psNDB2cWJWTlJuVWRtVlFSczR4MXVZ?=
+ =?utf-8?B?Nmg0RGNzbEc3Y0Y0aGJXNVQxZENydmRZci9Fa2RFR3QzSE03WGRteDd0Y3dw?=
+ =?utf-8?B?NkxBYnN1Y1p4QXZxYnl4RVBFVE1IYzE3VS9jM3RIVGM4K3I2WUZrNWhiN05S?=
+ =?utf-8?B?UHE1cWFLVFBGdDVVem5vcVJ3T2lESk41aGtJaCtMUTd4b29WZklqaXZLaGNK?=
+ =?utf-8?B?VysraGp4aElHeG9lNUdYcnEwbkFhQlpITUhDTmJOS3ZaUDM0VFYxaHhlSEg2?=
+ =?utf-8?B?aVN3ZWtwWU9HbHdKRG5jazJMUU1oN0t1WXQxRk13YzhBOXdXOEhjQ1Y4Q0tS?=
+ =?utf-8?B?RU9MS0tkcktpSmNwMVhzZGFDVnl2UnJrRm9VUS9DN2ZLK0pLdTJiTVZGd0o2?=
+ =?utf-8?B?TXpaZzExenNBd0FsMFpBTWFMUGVDSkxFbHpLTDE4d1JYaS9EZUhyam5MWkV5?=
+ =?utf-8?B?UWtKT0hudjhwcVRsa0JYaXg1eEw2dGFSc2s4VUJrSyt0T0lNekJlQ24ybUdY?=
+ =?utf-8?B?Nzl4WkFLSlpGaEZOcG01eU16dlhycTBXOTRTMHN0NjJ5L0RPSWVMUVdRa3lM?=
+ =?utf-8?B?amwzTDlaK1gva1BUMWF1R254UWtDM0kzVEJ2cG1EVmc0L2xrRHRPWUtVMytP?=
+ =?utf-8?B?ZjI1MkJPQURvWE9HMHBUd1c2cjVDRkxKVW12eVBjMG1aL243clg0Z25XMTYy?=
+ =?utf-8?B?SGdwQVdsNW5LbkVhaC9lV0o5aVZ1NDFKV3h6L0pWdG1rY256VFgvZGhha2xS?=
+ =?utf-8?B?cncwdjY2alpkN29penRnTE5JWmtZTWp0T2tpdElaK3kwVEFIaXVxTjlwR0Yr?=
+ =?utf-8?B?UkQrUUxYaFdKUGZwUG05QXBNSFR2eTRab29RK01hRVJuakt0NDlSancrbTVS?=
+ =?utf-8?B?NHZ3VGpvQlhZR2s3R2xaN2xNcjlqK0dOYS9uMlJKZFpoMWFlT2gzRnJjaXpH?=
+ =?utf-8?B?K0JCVERNTWx5ZkhVSEtsOVQ4NWgrOUhlUHdPajhpVzJyQzZyendEZGZmZFpX?=
+ =?utf-8?B?Y0pZcEJFT2krRm5GdnVhcEc4cGh1NjBocjd2OFkraUZUS2dPb2wzT1ZPQWx1?=
+ =?utf-8?B?S3oveE5vK1A5V2d4bHlReWxQWEtxYWZia2JKQlFSVHp4QlI3N081MFRpL1ZP?=
+ =?utf-8?B?WklIVTVyOXVnNkZLZnhNK2dUbmN2N3JoSFVGekl2L0tjbVE9PQ==?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GVXPR08MB11445.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR08MB8011
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ AM3PEPF00009B9D.eurprd04.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	1039f839-8125-4d27-33fc-08de1ac0c2f1
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|35042699022|14060799003|7416014|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SWtNNzlKMDhmWGVKZDdaMGc0bjNmOTRnWU95TUUwK2RaN1dwc2prSDVkTFU5?=
+ =?utf-8?B?ZFh1MXFseW9RNk1DcFA3c2czQ1RLWnorQXRXeTV6bTU0Ulp6RHJhR2F2WTNi?=
+ =?utf-8?B?QTYzQXpna3JCaGpoZElVdDFrWXZxUC9neWx0dTFBdjlGK0JUMHFXWk11L3Vi?=
+ =?utf-8?B?LzRUMnNQV2ora00rREkydVJGZDZZYWpIaldUN2ErM1lYYXE2c1d5WUhNNjBN?=
+ =?utf-8?B?dUhjSnZ1QUlzM0dQS0gxM3BlYUhldlU5c0lSM3IyU1JnbzB0eDJzNWV4NjBM?=
+ =?utf-8?B?Mnc2ZmQySVlOUXVQQ2N1Q3NGL08zbjJ5TWkwRXVJVlltOVJMK2cyZFpvN25C?=
+ =?utf-8?B?VmRhckxjekd2aTY0b25qOVJ1MHppNkhVM3ovZGhMaTBhTUpzOERTak1Bb3M5?=
+ =?utf-8?B?ZnF6aVgwZ3lNd0J2U2FFNXZ1Qk9RVVRhTkZtN0RpZloxc1pqckx5enBDQ1p5?=
+ =?utf-8?B?QmVtYmlFWnhSaytwN0NjTUx3OW16dHAyVjZrR1Mwano5S3hvc1B2YndZenJz?=
+ =?utf-8?B?NHZnd05taDgyNGpoMHVIbWF5TDgzSkt1aHJ5bG1nREVBNEd5a21jSVJ5ZjJW?=
+ =?utf-8?B?UVhQenBSSnZPVnJMVjc3VGRxMXZMOWpzekNKcEVXSUxKb01OcGVCT3NYV3VU?=
+ =?utf-8?B?dTdmMVNtUW9XUkI5Q3hqMC9RMDVvL1JnNTc2YU4zSmJ5ZEFvZ2ZveGozMTNU?=
+ =?utf-8?B?ei92MGNsVkRUbDhuWWRyYTY1alFSWUpoMU9KbFZ3U0xUVFFvcXFPTHAzK3hs?=
+ =?utf-8?B?YjBVRjdCZXZDUmozUmtLNmNJNjNOK3RQUWRZV1hJVXl2aTVVVndGTWw4ZEJn?=
+ =?utf-8?B?OEtNRDJGNGZ3ZThvbWNNOC9JWUVCT2xoaHQvaElvNTFJemdaVWg5ZlNlYlda?=
+ =?utf-8?B?N2p2ZklpalRKMzBLMDF2cGt3RFNIa0x2Ni93cGQrMjFBV0JaYTVsalpQVlRv?=
+ =?utf-8?B?NVpYWGJpTDIyOXVxTDRJTWdFRWJhWXpHNjNDVUIxUkJmU1JZeXp4aDA5Y2V1?=
+ =?utf-8?B?YWhLcURGTEg3ZWxqUUdlWWpEOHNwOUYzRXpsb3BQNFVRYzhnbFdBRTBWSFVR?=
+ =?utf-8?B?MmhnbzFuRHZiRmNZbUtYbnRocHhlekV3WkxSZDRGMWFOWUlLRFVBUUJPKzh3?=
+ =?utf-8?B?TGtlWGRuN01SZWJlNHNCZk0rWDN2QmNUUHdGb25YS0tGeG04U2xDNWM0V0gr?=
+ =?utf-8?B?VmpleXVMU1RzUkI2cWxOdjlvSVc3d2JOQyszdWp4RzJRODZ3VEVEMWF4U2Nv?=
+ =?utf-8?B?WXptdEcwN0hadldHZ3AvejlPd3g4azVuYy9vSVhEcUdlYjNkbHRNdjFsblZp?=
+ =?utf-8?B?ODN0Q205aUZrc0VQWkVwWEllaDIzQ0NyRGJMeXVBYndxc1BzdlNZdG10YVdq?=
+ =?utf-8?B?VGlkS3p4NnUvVkRXUXN1RlRyTWduVEY2d29KbVhPQ3hocGwwRlMvWGQ4eldq?=
+ =?utf-8?B?bVd6U3lyUVhWUFhzRm1vdmExV2pPdDN2azc2NXlVMDlvZU1PcTdmdzhET2Nw?=
+ =?utf-8?B?aUJZcUdrVlZSS3BrZUlHRk9tZU5MU1hVZGxlQ3U5QkVRczVVRmdhVWVTL1Ni?=
+ =?utf-8?B?ZHo5YlZjWTBOZnV5MVJsWGJqYU1UOVBTZm1Pb3R0WUpRWnhURkpUVnVQY3hJ?=
+ =?utf-8?B?UjNmT2x4NlhhRW5ZRDlpNzlXS3kzTmxRRzRNVTgxVklLdm5Nb29ia1B5d3N0?=
+ =?utf-8?B?alliWG94SVpxUE03V0J1T2g0TFNiZ01NcU4rTTZUZ0pHUUh5YWw4RVl6RVh6?=
+ =?utf-8?B?a2wzVm9JTHUrbHg1N0JnbjMzMkFXV0lWKzhNdGNicm0wWUkvSkVwS0cvOHo1?=
+ =?utf-8?B?N0tEandCcDk5UURPQ3drRGVaR2F6VDdaanZzK2hpOFdRNVlsRUFoc2VGUVZC?=
+ =?utf-8?B?eVVjaUxpaXY2UDRWMXgxU1l6dVpibFZUZnkraE9LRkdWeUF1T3M3Q1BtSkh5?=
+ =?utf-8?B?d1l6amc0aS8wWUwwQkVaeVlSbE9xOTV1cUtLc21YSmluWWhOSUwvenltQkFO?=
+ =?utf-8?B?aWRvT2w2T1lkOWlnb2FpQW1maEtoRmpvc1B3VnM4VFBzWTZldVZDc1RieW5T?=
+ =?utf-8?Q?prDf7n?=
+X-Forefront-Antispam-Report:
+	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(35042699022)(14060799003)(7416014)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 10:07:52.4854
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3cc5eb81-50a4-45f9-b694-08de1ac0d9f4
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM3PEPF00009B9D.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR08MB5872
 
-
-
-On 10/29/25 6:39 PM, Thomas Gleixner wrote:
-> Reevaluating num_possible_cpus() over and over does not make sense. That
-> becomes a constant after init as cpu_possible_mask is marked ro_after_init.
+On 03/11/2025 00:47, Yang Shi wrote:
 > 
-> Cache the value during initialization and provide that for consumption.
 > 
 
-Reviewed-by: Shrikanth Hegde <sshegde@linux.ibm.com>
+[...]
 
+>> @@ -723,6 +733,16 @@ int split_kernel_leaf_mapping(unsigned long start,
+>> unsigned long end)
+>>       if (!system_supports_bbml2_noabort())
+>>           return 0;
+>>   +    /*
+>> +     * If the region is within a pte-mapped area, there is no need to try to
+>> +     * split. Additionally, CONFIG_DEBUG_ALLOC and CONFIG_KFENCE may change
+>> +     * permissions from softirq context so for those cases (which are always
+>> +     * pte-mapped), we must not go any further because taking the mutex
+>> +     * below may sleep.
+>> +     */
+>> +    if (force_pte_mapping() || is_kfence_address((void *)start))
+> 
+> IIUC this may break kfence late init? The kfence_late_init() allocates pages
+> from buddy allocator, then protects them (setting them to invalid). But the
+> protection requires split page table, this check will prevent kernel from
+> splitting page table because __kfence_pool is initialized before doing
+> protection. So there is kind of circular dependency.
 
-Observation:
-I see below usage which could be improved too?
-kernel/irq/affinity.c:		set_vecs = cpumask_weight(cpu_possible_mask);
-lib/tests/cpumask_kunit.c:	KUNIT_EXPECT_EQ_MSG(test, nr_cpu_ids, cpumask_weight(cpu_possible_mask),
+I hadn't considered late init. But I guess the requirement is that the kfence
+pool needs to be pte mapped whenever kfence is enabled.
 
-Specially irq_calc_affinity_vectors, it seems to take cpus_read_lock, but I don't think
-that lock is protecting possible cpus. possible cpus can't change after boot. No?
+For early init; that requirement is clearly met since we pte map it in the arch
+code. For late init, as far as I can tell, the memory is initially block mapped,
+is allocarted from the buddy then every other page is protected via
+kfence_init_pool() from kfence_init_pool(). This will have the effect of
+splitting every page in the pool to pte mappings (as long as your suggested fix
+below is applied).
 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Reviewed-by: Yury Norov <yury.norov@gmail.com>
-> ---
+It all feels a bit accidental though.
+
+> 
+> The below fix may work?
+> 
+> if (force_pte_mapping() || (READ_ONCE(kfence_enabled) && is_kfence_address((void
+> *)start)))
+> 
+> The kfence_enabled won't be set until protection is done. So if it is set, we
+> know kfence address must be mapped by PTE.
+
+I think it will work, but it feels a bit hacky, and kfence_enabled is currently
+static in core.c.
+
+I wonder if it would be preferable to explicitly do the pte mapping in
+arch_kfence_init_pool()? It looks like that's how x86 does it...
+
+> 
+> Thanks,
+> Yang
+> 
+> 
+> 
+> 
+> 
+>> +        return 0;
+>> +
+>>       /*
+>>        * Ensure start and end are at least page-aligned since this is the
+>>        * finest granularity we can split to.
+>> @@ -1009,16 +1029,6 @@ static inline void arm64_kfence_map_pool(phys_addr_t
+>> kfence_pool, pgd_t *pgdp) {
+>>     #endif /* CONFIG_KFENCE */
+>>   -static inline bool force_pte_mapping(void)
+>> -{
+>> -    bool bbml2 = system_capabilities_finalized() ?
+>> -        system_supports_bbml2_noabort() : cpu_supports_bbml2_noabort();
+>> -
+>> -    return (!bbml2 && (rodata_full || arm64_kfence_can_set_direct_map() ||
+>> -               is_realm_world())) ||
+>> -        debug_pagealloc_enabled();
+>> -}
+>> -
+>>   static void __init map_mem(pgd_t *pgdp)
+>>   {
+>>       static const u64 direct_map_end = _PAGE_END(VA_BITS_MIN);
+>> ---8<---
+>>
+>> Thanks,
+>> Ryan
+>>
+>>> Yang Shi, Do you have any additional thoughts?
+>>>
+>>> Thanks,
+>>> Ryan
+>>>
+>>>> Thanks,
+>>>> Guenter
+>>>>
+>>>> ---
+>>>> Example log:
+>>>>
+>>>> [    0.537499] BUG: sleeping function called from invalid context at kernel/
+>>>> locking/mutex.c:580
+>>>> [    0.537501] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 1,
+>>>> name: swapper/0
+>>>> [    0.537502] preempt_count: 1, expected: 0
+>>>> [    0.537504] 2 locks held by swapper/0/1:
+>>>> [    0.537505]  #0: ffffb60b01211960 (sched_domains_mutex){+.+.}-{4:4}, at:
+>>>> sched_domains_mutex_lock+0x24/0x38
+>>>> [    0.537510]  #1: ffffb60b01595838 (rcu_read_lock){....}-{1:3}, at:
+>>>> rcu_lock_acquire+0x0/0x40
+>>>> [    0.537516] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.18.0-dbg-
+>>>> DEV #1 NONE
+>>>> [    0.537517] Call trace:
+>>>> [    0.537518]  show_stack+0x20/0x38 (C)
+>>>> [    0.537520]  __dump_stack+0x28/0x38
+>>>> [    0.537522]  dump_stack_lvl+0xac/0xf0
+>>>> [    0.537525]  dump_stack+0x18/0x3c
+>>>> [    0.537527]  __might_resched+0x248/0x2a0
+>>>> [    0.537529]  __might_sleep+0x40/0x90
+>>>> [    0.537531]  __mutex_lock_common+0x70/0x1818
+>>>> [    0.537533]  mutex_lock_nested+0x34/0x48
+>>>> [    0.537534]  split_kernel_leaf_mapping+0x74/0x1a0
+>>>> [    0.537536]  update_range_prot+0x40/0x150
+>>>> [    0.537537]  __change_memory_common+0x30/0x148
+>>>> [    0.537538]  __kernel_map_pages+0x70/0x88
+>>>> [    0.537540]  __free_frozen_pages+0x6e4/0x7b8
+>>>> [    0.537542]  free_frozen_pages+0x1c/0x30
+>>>> [    0.537544]  __free_slab+0xf0/0x168
+>>>> [    0.537547]  free_slab+0x2c/0xf8
+>>>> [    0.537549]  free_to_partial_list+0x4e0/0x620
+>>>> [    0.537551]  __slab_free+0x228/0x250
+>>>> [    0.537553]  kfree+0x3c4/0x4c0
+>>>> [    0.537555]  destroy_sched_domain+0xf8/0x140
+>>>> [    0.537557]  cpu_attach_domain+0x17c/0x610
+>>>> [    0.537558]  build_sched_domains+0x15a4/0x1718
+>>>> [    0.537560]  sched_init_domains+0xbc/0xf8
+>>>> [    0.537561]  sched_init_smp+0x30/0x98
+>>>> [    0.537562]  kernel_init_freeable+0x148/0x230
+>>>> [    0.537564]  kernel_init+0x28/0x148
+>>>> [    0.537566]  ret_from_fork+0x10/0x20
+>>>> [    0.537569] =============================
+>>>> [    0.537569] [ BUG: Invalid wait context ]
+>>>> [    0.537571] 6.18.0-dbg-DEV #1 Tainted: G        W
+>>>> [    0.537572] -----------------------------
+>>>> [    0.537572] swapper/0/1 is trying to lock:
+>>>> [    0.537573] ffffb60b011f3830 (pgtable_split_lock){+.+.}-{4:4}, at:
+>>>> split_kernel_leaf_mapping+0x74/0x1a0
+>>>> [    0.537576] other info that might help us debug this:
+>>>> [    0.537577] context-{5:5}
+>>>> [    0.537578] 2 locks held by swapper/0/1:
+>>>> [    0.537579]  #0: ffffb60b01211960 (sched_domains_mutex){+.+.}-{4:4}, at:
+>>>> sched_domains_mutex_lock+0x24/0x38
+>>>> [    0.537582]  #1: ffffb60b01595838 (rcu_read_lock){....}-{1:3}, at:
+>>>> rcu_lock_acquire+0x0/0x40
+>>>> [    0.537585] stack backtrace:
+>>>> [    0.537585] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Tainted: G       
+>>>> W           6.18.0-dbg-DEV #1 NONE
+>>>> [    0.537587] Tainted: [W]=WARN
+>>>> [    0.537588] Call trace:
+>>>> [    0.537589]  show_stack+0x20/0x38 (C)
+>>>> [    0.537591]  __dump_stack+0x28/0x38
+>>>> [    0.537593]  dump_stack_lvl+0xac/0xf0
+>>>> [    0.537596]  dump_stack+0x18/0x3c
+>>>> [    0.537598]  __lock_acquire+0x980/0x2a20
+>>>> [    0.537600]  lock_acquire+0x124/0x2b8
+>>>> [    0.537602]  __mutex_lock_common+0xd8/0x1818
+>>>> [    0.537604]  mutex_lock_nested+0x34/0x48
+>>>> [    0.537605]  split_kernel_leaf_mapping+0x74/0x1a0
+>>>> [    0.537607]  update_range_prot+0x40/0x150
+>>>> [    0.537608]  __change_memory_common+0x30/0x148
+>>>> [    0.537609]  __kernel_map_pages+0x70/0x88
+>>>> [    0.537610]  __free_frozen_pages+0x6e4/0x7b8
+>>>> [    0.537613]  free_frozen_pages+0x1c/0x30
+>>>> [    0.537615]  __free_slab+0xf0/0x168
+>>>> [    0.537617]  free_slab+0x2c/0xf8
+>>>> [    0.537619]  free_to_partial_list+0x4e0/0x620
+>>>> [    0.537621]  __slab_free+0x228/0x250
+>>>> [    0.537623]  kfree+0x3c4/0x4c0
+>>>> [    0.537625]  destroy_sched_domain+0xf8/0x140
+>>>> [    0.537627]  cpu_attach_domain+0x17c/0x610
+>>>> [    0.537628]  build_sched_domains+0x15a4/0x1718
+>>>> [    0.537630]  sched_init_domains+0xbc/0xf8
+>>>> [    0.537631]  sched_init_smp+0x30/0x98
+>>>> [    0.537632]  kernel_init_freeable+0x148/0x230
+>>>> [    0.537633]  kernel_init+0x28/0x148
+>>>> [    0.537635]  ret_from_fork+0x10/0x20
+>>>>
+>>>> ---
+>>>> bisect:
+>>>>
+>>>> # bad: [3a8660878839faadb4f1a6dd72c3179c1df56787] Linux 6.18-rc1
+>>>> # good: [e5f0a698b34ed76002dc5cff3804a61c80233a7a] Linux 6.17
+>>>> git bisect start 'v6.18-rc1' 'v6.17'
+>>>> # bad: [58809f614e0e3f4e12b489bddf680bfeb31c0a20] Merge tag 'drm-
+>>>> next-2025-10-01' of https://gitlab.freedesktop.org/drm/kernel
+>>>> git bisect bad 58809f614e0e3f4e12b489bddf680bfeb31c0a20
+>>>> # bad: [a8253f807760e9c80eada9e5354e1240ccf325f9] Merge tag 'soc-
+>>>> newsoc-6.18' of git://git.kernel.org/pub/scm/linux/kernel/git/soc/soc
+>>>> git bisect bad a8253f807760e9c80eada9e5354e1240ccf325f9
+>>>> # bad: [4b81e2eb9e4db8f6094c077d0c8b27c264901c1b] Merge tag 'timers-
+>>>> vdso-2025-09-29' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
+>>>> git bisect bad 4b81e2eb9e4db8f6094c077d0c8b27c264901c1b
+>>>> # bad: [f1004b2f19d7e9add9d707f64d9fcbc50f67921b] Merge tag 'm68k-for-v6.18-
+>>>> tag1' of git://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k
+>>>> git bisect bad f1004b2f19d7e9add9d707f64d9fcbc50f67921b
+>>>> # good: [a9401710a5f5681abd2a6f21f9e76bc9f2e81891] Merge tag 'v6.18-rc-
+>>>> part1-smb3-common' of git://git.samba.org/ksmbd
+>>>> git bisect good a9401710a5f5681abd2a6f21f9e76bc9f2e81891
+>>>> # good: [fe68bb2861808ed5c48d399bd7e670ab76829d55] Merge tag 'microblaze-
+>>>> v6.18' of git://git.monstr.eu/linux-2.6-microblaze
+>>>> git bisect good fe68bb2861808ed5c48d399bd7e670ab76829d55
+>>>> # bad: [f2d64a22faeeecff385b4c91fab5fe036ab00162] Merge branch 'for-next/
+>>>> perf' into for-next/core
+>>>> git bisect bad f2d64a22faeeecff385b4c91fab5fe036ab00162
+>>>> # good: [30f9386820cddbba59b48ae0670c3a1646dd440e] Merge branch 'for-next/
+>>>> misc' into for-next/core
+>>>> git bisect good 30f9386820cddbba59b48ae0670c3a1646dd440e
+>>>> # good: [43de0ac332b815cf56dbdce63687de9acfd35d49] drivers/perf: hisi: Relax
+>>>> the event ID check in the framework
+>>>> git bisect good 43de0ac332b815cf56dbdce63687de9acfd35d49
+>>>> # good: [5973a62efa34c80c9a4e5eac1fca6f6209b902af] arm64: map [_text,
+>>>> _stext) virtual address range non-executable+read-only
+>>>> git bisect good 5973a62efa34c80c9a4e5eac1fca6f6209b902af
+>>>> # good: [b3abb08d6f628a76c36bf7da9508e1a67bf186a0] drivers/perf: hisi:
+>>>> Refactor the event configuration of L3C PMU
+>>>> git bisect good b3abb08d6f628a76c36bf7da9508e1a67bf186a0
+>>>> # good: [6d2f913fda5683fbd4c3580262e10386c1263dfb] Documentation: hisi-pmu:
+>>>> Add introduction to HiSilicon V3 PMU
+>>>> git bisect good 6d2f913fda5683fbd4c3580262e10386c1263dfb
+>>>> # good: [2084660ad288c998b6f0c885e266deb364f65fba] perf/dwc_pcie: Fix use of
+>>>> uninitialized variable
+>>>> git bisect good 2084660ad288c998b6f0c885e266deb364f65fba
+>>>> # bad: [77dfca70baefcb988318a72fe69eb99f6dabbbb1] Merge branch 'for-next/mm'
+>>>> into for-next/core
+>>>> git bisect bad 77dfca70baefcb988318a72fe69eb99f6dabbbb1
+>>>> # first bad commit: [77dfca70baefcb988318a72fe69eb99f6dabbbb1] Merge branch
+>>>> 'for-next/mm' into for-next/core
+>>>>
+>>>> ---
+>>>> bisect into branch:
+>>>>
+>>>> - git checkout -b testing 77dfca70baefcb988318a72fe69eb99f6dabbbb1
+>>>> - git rebase 77dfca70baefcb988318a72fe69eb99f6dabbbb1~1
+>>>>    [ fix minor conflict similar to the conflict resolution in 77dfca70baefc]
+>>>> - git diff 77dfca70baefcb988318a72fe69eb99f6dabbbb1
+>>>>    [ confirmed that there are no differences ]
+>>>> - confirm that the problem is still seen at the tip of the rebase
+>>>> - git bisect start HEAD 77dfca70baefcb988318a72fe69eb99f6dabbbb1~1
+>>>> - run bisect
+>>>>
+>>>> Results:
+>>>>
+>>>> # bad: [47fc25df1ae3ae8412f1b812fb586c714d04a5e6] arm64: map [_text, _stext)
+>>>> virtual address range non-executable+read-only
+>>>> # good: [30f9386820cddbba59b48ae0670c3a1646dd440e] Merge branch 'for-next/
+>>>> misc' into for-next/core
+>>>> git bisect start 'HEAD' '77dfca70baefcb988318a72fe69eb99f6dabbbb1~1'
+>>>> # good: [805491d19fc21271b5c27f4602f8f66b625c110f] arm64/Kconfig: Remove
+>>>> CONFIG_RODATA_FULL_DEFAULT_ENABLED
+>>>> git bisect good 805491d19fc21271b5c27f4602f8f66b625c110f
+>>>> # bad: [13c7d7426232cc4489df7cd2e1f646a22d3f6172] arm64: mm: support large
+>>>> block mapping when rodata=full
+>>>> git bisect bad 13c7d7426232cc4489df7cd2e1f646a22d3f6172
+>>>> # good: [a4d9c67e503f2b73c2d89d8e8209dfd241bdc8d8] arm64: Enable permission
+>>>> change on arm64 kernel block mappings
+>>>> git bisect good a4d9c67e503f2b73c2d89d8e8209dfd241bdc8d8
+>>>> # first bad commit: [13c7d7426232cc4489df7cd2e1f646a22d3f6172] arm64: mm:
+>>>> support large block mapping when rodata=full
+> 
+
 
