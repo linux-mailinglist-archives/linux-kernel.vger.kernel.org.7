@@ -1,213 +1,318 @@
-Return-Path: <linux-kernel+bounces-882721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB20BC2B3C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:05:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8361C2B3D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:06:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AE4A18922EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:06:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48B9018937DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56BCF30149E;
-	Mon,  3 Nov 2025 11:05:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F328430103F;
+	Mon,  3 Nov 2025 11:05:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ORAXuhGW";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="f92z/70v"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FMv4kxOF";
+	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="Dom5Qxpm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8EDF2FF64C
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 11:05:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2865C3016F4
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 11:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762167936; cv=none; b=a86tziLxMtkVTJK5lf1ZpUZh1d85dJaUrg2UgW6ehRvwTA0vGQp7sEmL0TZSSX7ursBOkC44Tb7XOKUAJnIhfuNOUjp5ZfNDtP/8ZIynkyDBJPWRbECCHH0Co4LMVvTAJN5dQa7wpEM8Xk43//KkfsfuB+P+cxtXMzwNawvN9Lw=
+	t=1762167940; cv=none; b=RdAgh8G+/gFe7TK8hhsKE5C/095UdjuQpOaV3JedrmMtFUEKjdBZqRxCNm7VTKMMJcHle/QMhr/xGEkBKOkfuojy/SpIDN7knVPipK4yHhIV8gSzy8OnhaDSFYcWyDTA5qpOEAN4l/6ZIk2esyU/YO0VnFpzOsz7/jj4BRsScCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762167936; c=relaxed/simple;
-	bh=PbBYKOHljQv0hEquyz1u4VUhJlHsSAixsX5XEF3aXtg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=t1WUqLUb1on5L5Hh3II53oFQXGZ43eRi/fr4H6vOw/r/kYqceUljO3XQmZCOm9u4BSLwtPhQZISu9f44aQlG0Bqg5iX2rM0pF6dbRAXo1r9CNKNfKfzpW+dVi9MC4zSvxxYPixUKQQBWaHcOAqVt1njFGDKi1HeYZThWfxAVxEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ORAXuhGW; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=f92z/70v; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A3889g2925731
-	for <linux-kernel@vger.kernel.org>; Mon, 3 Nov 2025 11:05:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=b9yQV3m8YeqlCN8IYeHs0/
-	SbZ8IPaj5crI0jwyLgZOY=; b=ORAXuhGWmDvQWwQ9LRI8fG/f7dZOILjbOHc+8P
-	IajcyrjuIfWWvmrHiSRCR/9GRJv4h3OGaV5wJQyUjb0CAQdo1VRK2qVoXQKz+Zzo
-	nUWpdvjiNDsXODFoZRN6O64KTnURbZnEAyDFPEyC/Mj4aLAK08dBeg1K90bhmjUb
-	2ohqcTf5R6Y9gqW3/E8EjYdRQW5pDuMOlO+mhA4drfGdc6sXBVrE9bzpAd7z/X20
-	F81pU7W0F8ZPPqQgl13iLjfaDMe8BMRun3nF5+dz4VDJrucuMqqEH0X0gKlwOugz
-	nBc3J04HlWNTuclb7zA6gSMZGVtzvvgT994+SAha9w9uSuuQ==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a5977cfgp-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 11:05:33 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b6cff817142so3028357a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 03:05:33 -0800 (PST)
+	s=arc-20240116; t=1762167940; c=relaxed/simple;
+	bh=gfTwUykB/RnmTajqRSHRxKNiOaTJwE/JIgeSdjNjNDU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pivZW8d9/yDZiPiOsoWed2P9bZw9MFMmZjbkVM38d+zTrZazZRyr+4970MRfD1yvibXF4SjceKSrg+S3OshsYv3ZoGhS4z2jg+lrjQYtEN4yLhytvJvUpigCz4a7+7Op4nAZC6KnoFNLKwRZ015d0o3tn+hYVtd+BKpAFCcd4NI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FMv4kxOF; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=Dom5Qxpm; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762167937;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9xCrDGRchnnGTkwO6YdV7uPKVA0+6GBpSaManbFOJHM=;
+	b=FMv4kxOF9OrN58AMVvanVWHzLkeknnlm7z8Sf9M0Ao5UvLcCnOhCG/euzW0x5d/NA3bc6c
+	otFy7EFHi0mx8+dBzN1PnCTdBHLiWqmcB3Grbt8qY6JcqHbCQaM7sUJSx3aJWoWQyTCivU
+	LCu6jt0vaQ5F8tLZLIyHrvQkXa7obOM=
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
+ [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-589-Z11qCqcFMuCxsoxIx3qkpA-1; Mon, 03 Nov 2025 06:05:36 -0500
+X-MC-Unique: Z11qCqcFMuCxsoxIx3qkpA-1
+X-Mimecast-MFC-AGG-ID: Z11qCqcFMuCxsoxIx3qkpA_1762167935
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-277f0ea6ee6so44996025ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 03:05:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762167933; x=1762772733; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=b9yQV3m8YeqlCN8IYeHs0/SbZ8IPaj5crI0jwyLgZOY=;
-        b=f92z/70viNv2GXYWEz0GUyAa8oFQanhbE58NIogOx5pCIJ4RWHerp5hYRW5/QI36pD
-         Yw5N1aIulnE6lJFm+lF1v48zvlsqkh3HK4MPLcF5EO8KT6/SnjX/usHhszHiJ9qD2FhU
-         sN3NxLociz2/YuaOBDiIJS5+ladGHJ9bUno7l/oIbv6fbXAy4cJ4CetwZs8PcZ6BLYpQ
-         KBQTVz8LARZbN0Y/Xlbi2OFHCbq69RDFYwdnAY3TNOU55DZlohlfOtZ0ntHUliWDTctm
-         HPyu/kHqifkp5H2EDcHcGxRCcT/IXvqoUKSLs9dZEB3P+l+82VHhO9gf5WuIzTnqmwwF
-         Hvsg==
+        d=redhat.com; s=google; t=1762167935; x=1762772735; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9xCrDGRchnnGTkwO6YdV7uPKVA0+6GBpSaManbFOJHM=;
+        b=Dom5Qxpmybg5uWgVL6MHt+QvS3sxwwjVF3JIBiqyw9ISex1xSidbn9WxTEmenRZMjS
+         NVs/UOr6JoNxubV6Eq5SwM87faS5c+9VkoiKEGUqLdJsiCrn8SB582eScn+i8YCGXZhE
+         hCzhKE/VNA9n2PpLVyS9LJSqTR5HO691O34z7P6f2h0lfuHD+lN6I3/vSyC/ywUbhkAS
+         tlKf6FpsQkHfUjsCpBqyxBvEGefNjgXSTMolVHXFC7x1PwBAvqWxdvx19m7xkFh0/y8/
+         ZBDzUOfbsIfb6xSc9H26gpzUNaAQM/aPsqQqOYq5Cax9wwhsTIB/CYuUFP2VIvi9dmEw
+         fmrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762167933; x=1762772733;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b9yQV3m8YeqlCN8IYeHs0/SbZ8IPaj5crI0jwyLgZOY=;
-        b=aL+gMv+c5kI2rNc3g7A6itX7rtSRWQEkzJI4cB8XQouIMdjvdwaF+cAcbnTo6uSkv9
-         A5zoC7G+YPFKDkHmZfD7Qmz9fcmi2R9VuhjPZntEPWbi4JZ315haKCYxs3T1Jaa0lufc
-         iII7j31d2W2O/sxBKr0NO+1+6uvAbUf8puy1i1XnN+KDrO9XDlx6VIo0VInRtoZ2XqE2
-         jDJyc2ZdAWnOXV6l+uRMOXCQpHK1M2EZ170DYL4U0etR9DRnQpFDRtT9BC0TT6IC5AIj
-         s73sDzityDN5043gEdwbf43nqjFaSNP44WAWaojDdL+wrvzo/Bd8ocH5TLeLSGMMIyKr
-         qccg==
-X-Forwarded-Encrypted: i=1; AJvYcCUWH+rKhT+DabwO/26HPTMuG5wk9tneeoGZqQ8Gykh3pQpjMVccOsK//g7D8suFaxzfl4TpL5sFfSei3yk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9TFGOnybNS6p58mJCQrHkN96kYUTHm9hsVW8kN4aXLTVuA9PF
-	PXTnEQNBhgh5afGG5eQQfc4OdP8f9kvVgDR0SljqDyF+Ie1B6PRQC53MsFT4fKImVRwpSEFXVoV
-	uVh5+1zlJ4FM5xLE5cWS3/ZF4SoJw9FDAzpJXXicNk5F0I4p7uJLd9JRNK5x+NrFSsfw=
-X-Gm-Gg: ASbGnctFVZndjO98kDc3M0mVi1g0Cm64FFL/V4XCiftYvu+lRyS6i+/Ik7EjnwLeeMG
-	RMot+4Blcs6YPcE5UYNB6BF9iRPTwecMkGMkhM1GTZDejqwNxyjU7m4Csa+0auAlqGXUSoTEM6F
-	UJOCsd522SxUT7hgLD+6b9Wv6vWGjDlLvWxrNMgTZaZxyiZTKmD7wCkIo44lOMWhRmyE2YlFHD0
-	z8xnh7nx+ZHwcbSzC4tpeflS/V3JGBgrnW6RSG7raabgj6FAZZTqPw20Jz9uMMVMNgAXvImHyJi
-	QkxYQiTXYHQaCAmOgYl3nI5qhc4bYIuPUkICt9ThcAeA9la1IbFKh/3C01WP9luzeEsjGIkjuKU
-	SwvBbmMUXpZlf5AM6JtS9jUGjlVOkEGoy3/lq
-X-Received: by 2002:a05:6a00:9295:b0:7ab:8d8a:1006 with SMTP id d2e1a72fcca58-7ab8d8a12ecmr2438515b3a.2.1762167932608;
-        Mon, 03 Nov 2025 03:05:32 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGOO2X3OCTIqFGdg+ksykjsr8Jsfhybzyh2B1RQ3QM+gdzBjae298OrS82qMQLYKfqudkH2UQ==
-X-Received: by 2002:a05:6a00:9295:b0:7ab:8d8a:1006 with SMTP id d2e1a72fcca58-7ab8d8a12ecmr2438472b3a.2.1762167932082;
-        Mon, 03 Nov 2025 03:05:32 -0800 (PST)
-Received: from hu-dikshita-hyd.qualcomm.com ([202.46.23.25])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7a7db09f362sm10753700b3a.38.2025.11.03.03.05.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 03:05:31 -0800 (PST)
-From: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
-Date: Mon, 03 Nov 2025 16:35:17 +0530
-Subject: [PATCH] media: iris: Refine internal buffer reconfiguration logic
- for resolution change
+        d=1e100.net; s=20230601; t=1762167935; x=1762772735;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9xCrDGRchnnGTkwO6YdV7uPKVA0+6GBpSaManbFOJHM=;
+        b=VkWPGH7bze8Qtkk3JIaDY9Dt5X5OMYUrywI/5uOUfUX7+zNG1Yh2yDh9pShTUufmkn
+         Yx7VLj/NHzflfYd8mD9LHSvL8+Mew2HPf5A+AwTD/p1ebv7G8ObQ6aSghXLlJde0tpM1
+         RIGTp6ywU7oLhFXcaGC3lqQ456TNQT1QvitYjDai/B2nyOjj1cPwtaPuwIvjNomroccf
+         n2fcuFrBD5r1FNbXNa7WPz7gadHekJjKYRTCdXev6AqvNquhmm7snyDwd1BMgORv8Gmb
+         k5ru0VKRDrLgpDlyi1q1CrC+lSXDB04ziTdy+5agjPX2c9LNOy5JTjgq+GkwMJe19JAz
+         BnrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU14dM3EWGPS/EAL8pgGvUWNbt77XJWUurCAUe2UDm/BJVwm8ktYV9LmFbiebeJPO+7NfYX6p8FlrI2wfE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlumFJ3mClfVDy1wqO2Pv060SjxQXx+86/i0izzGIDJBNgr2+8
+	f7ON4wqsxMnw+BFqcEd9Amu5UtNBGhfuELpayiE5IO87CWbjZoeM7qddBbES6WE28py4LJ6xA7E
+	sdVAEVEVgjpk3VtWhfYzzhRW4Nwh0RhWppPUVIEjwxshvFW53mVdME5rRLKZSDKlNgSXuMqREBS
+	u9K7rIpLie11JfadS2muZTPSENosGo/aMvFbsNQ0kY
+X-Gm-Gg: ASbGncu6Dwj5Sxg5sboBoQcYYE/fn0tcKCwY8n6yfkEKIs+HyUA5wh08Nel6ccprD9o
+	8shv9oEgehwf2ZpUT0d/b9LNq1Y1u503EfcX0HZvhAoOLn+X5F96YY/pqVSBbjWv8cb4QojibJG
+	bN+3VxYfF6Gt0aRKzXnWRyZjK4DKuBuLr1yE8F8U5TEw/5gprPyZw2YWM=
+X-Received: by 2002:a17:903:11cd:b0:27d:c542:fe25 with SMTP id d9443c01a7336-2951a587e32mr155174775ad.41.1762167934868;
+        Mon, 03 Nov 2025 03:05:34 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGA5xxOqESC5njIUuwo8X7aUkUUbc4ngsKRBvL0f6Uy3SwdFfrZxjJ/xB3v9LkidFvC0hMkhLozQ/mE6e5SuA8=
+X-Received: by 2002:a17:903:11cd:b0:27d:c542:fe25 with SMTP id
+ d9443c01a7336-2951a587e32mr155174295ad.41.1762167934419; Mon, 03 Nov 2025
+ 03:05:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251103-iris-seek-fix-v1-1-6db5f5e17722@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIAGyMCGkC/x2MQQqAMAzAvjJ6trBVhuBXxEPRToswZQURhn93e
- EwgqWBSVAxGV6HIraZnbhA6B8vOeRPUtTGQpxiC71GLGprIgUkfHJgiJ6LEkaA1V5Gm/980v+8
- HSJfEx18AAAA=
-X-Change-ID: 20251103-iris-seek-fix-7a25af22fa52
-To: Vikash Garodia <vikash.garodia@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Bryan O'Donoghue <bod@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@kernel.org>,
-        Stefan Schmidt <stefan.schmidt@linaro.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Val Packett <val@packett.cool>,
-        Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762167928; l=2639;
- i=dikshita.agarwal@oss.qualcomm.com; s=20240917; h=from:subject:message-id;
- bh=PbBYKOHljQv0hEquyz1u4VUhJlHsSAixsX5XEF3aXtg=;
- b=WYIuLfzXNU08ovUHkWxdR29tQKAMXsBBvw47SlVLVxzDgjaiVw8PeJOwtXaV/G18pYuWmc9iW
- nMgXX0Jka0oDkEtyXq55bZXVQbNw4FIzZ9pUOCWBawkCehrzDcFDEYw
-X-Developer-Key: i=dikshita.agarwal@oss.qualcomm.com; a=ed25519;
- pk=EEvKY6Ar1OI5SWf44FJ1Ebo1KuQEVbbf5UNPO+UHVhM=
-X-Proofpoint-GUID: PWmGkNtrbN8RKApkcZuJimyyNEJ8dT4x
-X-Proofpoint-ORIG-GUID: PWmGkNtrbN8RKApkcZuJimyyNEJ8dT4x
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAzMDEwMSBTYWx0ZWRfXwDlWj5glKYsS
- u//ewvR5mJc2qP4bzGtyQrJSRH8YuN03LI9DGrO5/39j8DKelE3xqq/5inWQOnAjFeXuD4Ja02l
- cbTN4H22HHRfKxaUFrokRgvJ5WBNydV7gfACHOCt+J6EL9MV3/NnjvafaXvTqy4dKe5ZX2xvBs3
- 56Ch/xOm1V/vcfESK0RChhe0VutY4m9ZULL7dwSPhjaPGb9ujwZmNdpug0w71lkR/0oYzFTQiO2
- gK8gPhkCALta484wUo4RMMq0No2ZxpfnaRrMu3PvGhHhHS6hfZjhycLiIJ3WzpGRmcgpNZt/WrE
- wwaRCajbwRpdcmGk8AcFoHN/9lk8CC7IWpdQGtdni4q+RtLekmYIs4/C1tx2DOXN/7ZWwMr0rrv
- jX+BWH8yUVJCAWjnMTxzB5yheU4WeA==
-X-Authority-Analysis: v=2.4 cv=WcABqkhX c=1 sm=1 tr=0 ts=69088c7d cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=e5mUnYsNAAAA:8 a=EUspDBNiAAAA:8
- a=mRoNVkTk4HY_DrcNXJoA:9 a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
- a=Vxmtnl_E_bksehYqCbjh:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-03_01,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 adultscore=0 priorityscore=1501
- impostorscore=0 spamscore=0 malwarescore=0 clxscore=1015 suspectscore=0
- bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511030101
+References: <6ac2baf0d5ae176cbd3279a4dff9e2c7750c6d45.1761918165.git.rrobaina@redhat.com>
+ <202511011146.aPtw8SOn-lkp@intel.com>
+In-Reply-To: <202511011146.aPtw8SOn-lkp@intel.com>
+From: Ricardo Robaina <rrobaina@redhat.com>
+Date: Mon, 3 Nov 2025 08:05:22 -0300
+X-Gm-Features: AWmQ_blix0O5YM7w_tT0WXs6Pqjmi5gLv0k1Qz_HlHfym8b0laV-ctbmO_s95gk
+Message-ID: <CAABTaaCqzGoWKiRp40wh8JzJCq5OukdH+3HpGYN9OvnORpdjaA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] audit: include source and destination ports to NETFILTER_PKT
+To: kernel test robot <lkp@intel.com>
+Cc: audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, 
+	oe-kbuild-all@lists.linux.dev, paul@paul-moore.com, eparis@redhat.com, 
+	fw@strlen.de, pablo@netfilter.org, kadlec@netfilter.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Improve the condition used to determine when input internal buffers need
-to be reconfigured during streamon on the capture port. Previously, the
-check relied on the INPUT_PAUSE sub-state, which was also being set
-during seek operations. This led to input buffers being queued multiple
-times to the firmware, causing session errors due to duplicate buffer
-submissions.
+Same thing here. I didn't get these warning messages in my local
+build. I'll fix it and submit a new version.
 
-This change introduces a more accurate check using the FIRST_IPSC and
-DRC sub-states to ensure that input buffer reconfiguration is triggered
-only during resolution change scenarios, such as streamoff/on on the
-capture port. This avoids duplicate buffer queuing during seek
-operations.
-
-Fixes: c1f8b2cc72ec ("media: iris: handle streamoff/on from client in dynamic resolution change")
-Reported-by: Val Packett <val@packett.cool>
-Closes: https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/4700
-Signed-off-by: Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
----
- drivers/media/platform/qcom/iris/iris_common.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/media/platform/qcom/iris/iris_common.c b/drivers/media/platform/qcom/iris/iris_common.c
-index 9fc663bdaf3fc989fe1273b4d4280a87f68de85d..21e176ce49ac2d2d26cf4fc25c1e5bca0abe501f 100644
---- a/drivers/media/platform/qcom/iris/iris_common.c
-+++ b/drivers/media/platform/qcom/iris/iris_common.c
-@@ -90,13 +90,15 @@ int iris_process_streamon_input(struct iris_inst *inst)
- 
- int iris_process_streamon_output(struct iris_inst *inst)
- {
-+	bool drain_active = false, drc_active = false, first_ipsc = false;
- 	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
--	bool drain_active = false, drc_active = false;
- 	enum iris_inst_sub_state clear_sub_state = 0;
- 	int ret = 0;
- 
- 	iris_scale_power(inst);
- 
-+	first_ipsc = inst->sub_state & IRIS_INST_SUB_FIRST_IPSC;
-+
- 	drain_active = inst->sub_state & IRIS_INST_SUB_DRAIN &&
- 		inst->sub_state & IRIS_INST_SUB_DRAIN_LAST;
- 
-@@ -108,7 +110,8 @@ int iris_process_streamon_output(struct iris_inst *inst)
- 	else if (drain_active)
- 		clear_sub_state = IRIS_INST_SUB_DRAIN | IRIS_INST_SUB_DRAIN_LAST;
- 
--	if (inst->domain == DECODER && inst->sub_state & IRIS_INST_SUB_INPUT_PAUSE) {
-+	 /* Input internal buffer reconfiguration required incase of resolution change */
-+	if (first_ipsc || drc_active) {
- 		ret = iris_alloc_and_queue_input_int_bufs(inst);
- 		if (ret)
- 			return ret;
-
----
-base-commit: 163917839c0eea3bdfe3620f27f617a55fd76302
-change-id: 20251103-iris-seek-fix-7a25af22fa52
-
-Best regards,
--- 
-Dikshita Agarwal <dikshita.agarwal@oss.qualcomm.com>
+On Sat, Nov 1, 2025 at 1:05=E2=80=AFAM kernel test robot <lkp@intel.com> wr=
+ote:
+>
+> Hi Ricardo,
+>
+> kernel test robot noticed the following build errors:
+>
+> [auto build test ERROR on pcmoore-audit/next]
+> [also build test ERROR on netfilter-nf/main nf-next/master linus/master v=
+6.18-rc3 next-20251031]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Ricardo-Robaina/au=
+dit-add-audit_log_packet_ip4-and-audit_log_packet_ip6-helper-functions/2025=
+1031-220605
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/audit.git=
+ next
+> patch link:    https://lore.kernel.org/r/6ac2baf0d5ae176cbd3279a4dff9e2c7=
+750c6d45.1761918165.git.rrobaina%40redhat.com
+> patch subject: [PATCH v4 2/2] audit: include source and destination ports=
+ to NETFILTER_PKT
+> config: arc-randconfig-002-20251101 (https://download.01.org/0day-ci/arch=
+ive/20251101/202511011146.aPtw8SOn-lkp@intel.com/config)
+> compiler: arc-linux-gcc (GCC) 8.5.0
+> reproduce (this is a W=3D1 build): (https://download.01.org/0day-ci/archi=
+ve/20251101/202511011146.aPtw8SOn-lkp@intel.com/reproduce)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202511011146.aPtw8SOn-lkp=
+@intel.com/
+>
+> All errors (new ones prefixed by >>):
+>
+>    kernel/audit.c: In function 'audit_log_packet_ip4':
+> >> kernel/audit.c:2555:3: error: a label can only be part of a statement =
+and a declaration is not a statement
+>       struct tcphdr _tcph;
+>       ^~~~~~
+> >> kernel/audit.c:2556:3: error: expected expression before 'const'
+>       const struct tcphdr *th;
+>       ^~~~~
+> >> kernel/audit.c:2558:3: error: 'th' undeclared (first use in this funct=
+ion); did you mean 'ih'?
+>       th =3D skb_header_pointer(skb, skb_transport_offset(skb), sizeof(_t=
+cph), &_tcph);
+>       ^~
+>       ih
+>    kernel/audit.c:2558:3: note: each undeclared identifier is reported on=
+ly once for each function it appears in
+>    kernel/audit.c:2568:3: error: a label can only be part of a statement =
+and a declaration is not a statement
+>       struct udphdr _udph;
+>       ^~~~~~
+>    kernel/audit.c:2569:3: error: expected expression before 'const'
+>       const struct udphdr *uh;
+>       ^~~~~
+> >> kernel/audit.c:2571:3: error: 'uh' undeclared (first use in this funct=
+ion); did you mean 'ih'?
+>       uh =3D skb_header_pointer(skb, skb_transport_offset(skb), sizeof(_u=
+dph), &_udph);
+>       ^~
+>       ih
+>    kernel/audit.c:2580:3: error: a label can only be part of a statement =
+and a declaration is not a statement
+>       struct sctphdr _sctph;
+>       ^~~~~~
+>    kernel/audit.c:2581:3: error: expected expression before 'const'
+>       const struct sctphdr *sh;
+>       ^~~~~
+> >> kernel/audit.c:2583:3: error: 'sh' undeclared (first use in this funct=
+ion); did you mean 'ih'?
+>       sh =3D skb_header_pointer(skb, skb_transport_offset(skb), sizeof(_s=
+ctph), &_sctph);
+>       ^~
+>       ih
+>    kernel/audit.c: In function 'audit_log_packet_ip6':
+>    kernel/audit.c:2616:3: error: a label can only be part of a statement =
+and a declaration is not a statement
+>       struct tcphdr _tcph;
+>       ^~~~~~
+>    kernel/audit.c:2617:3: error: expected expression before 'const'
+>       const struct tcphdr *th;
+>       ^~~~~
+>    kernel/audit.c:2619:3: error: 'th' undeclared (first use in this funct=
+ion); did you mean 'ih'?
+>       th =3D skb_header_pointer(skb, skb_transport_offset(skb), sizeof(_t=
+cph), &_tcph);
+>       ^~
+>       ih
+>    kernel/audit.c:2629:3: error: a label can only be part of a statement =
+and a declaration is not a statement
+>       struct udphdr _udph;
+>       ^~~~~~
+>    kernel/audit.c:2630:3: error: expected expression before 'const'
+>       const struct udphdr *uh;
+>       ^~~~~
+>    kernel/audit.c:2632:3: error: 'uh' undeclared (first use in this funct=
+ion); did you mean 'ih'?
+>       uh =3D skb_header_pointer(skb, skb_transport_offset(skb), sizeof(_u=
+dph), &_udph);
+>       ^~
+>       ih
+>    kernel/audit.c:2641:3: error: a label can only be part of a statement =
+and a declaration is not a statement
+>       struct sctphdr _sctph;
+>       ^~~~~~
+>    kernel/audit.c:2642:3: error: expected expression before 'const'
+>       const struct sctphdr *sh;
+>       ^~~~~
+>    kernel/audit.c:2644:3: error: 'sh' undeclared (first use in this funct=
+ion); did you mean 'ih'?
+>       sh =3D skb_header_pointer(skb, skb_transport_offset(skb), sizeof(_s=
+ctph), &_sctph);
+>       ^~
+>       ih
+>
+>
+> vim +2555 kernel/audit.c
+>
+>   2543
+>   2544  bool audit_log_packet_ip4(struct audit_buffer *ab, struct sk_buff=
+ *skb)
+>   2545  {
+>   2546          struct iphdr _iph;
+>   2547          const struct iphdr *ih;
+>   2548
+>   2549          ih =3D skb_header_pointer(skb, skb_network_offset(skb), s=
+izeof(_iph), &_iph);
+>   2550          if (!ih)
+>   2551                  return false;
+>   2552
+>   2553          switch (ih->protocol) {
+>   2554          case IPPROTO_TCP:
+> > 2555                  struct tcphdr _tcph;
+> > 2556                  const struct tcphdr *th;
+>   2557
+> > 2558                  th =3D skb_header_pointer(skb, skb_transport_offs=
+et(skb), sizeof(_tcph), &_tcph);
+>   2559                  if (!th)
+>   2560                          return false;
+>   2561
+>   2562                  audit_log_format(ab, " saddr=3D%pI4 daddr=3D%pI4 =
+proto=3D%hhu sport=3D%hu dport=3D%hu",
+>   2563                                   &ih->saddr, &ih->daddr, ih->prot=
+ocol,
+>   2564                                   ntohs(th->source), ntohs(th->des=
+t));
+>   2565                  break;
+>   2566          case IPPROTO_UDP:
+>   2567          case IPPROTO_UDPLITE:
+>   2568                  struct udphdr _udph;
+>   2569                  const struct udphdr *uh;
+>   2570
+> > 2571                  uh =3D skb_header_pointer(skb, skb_transport_offs=
+et(skb), sizeof(_udph), &_udph);
+>   2572                  if (!uh)
+>   2573                          return false;
+>   2574
+>   2575                  audit_log_format(ab, " saddr=3D%pI4 daddr=3D%pI4 =
+proto=3D%hhu sport=3D%hu dport=3D%hu",
+>   2576                                   &ih->saddr, &ih->daddr, ih->prot=
+ocol,
+>   2577                                   ntohs(uh->source), ntohs(uh->des=
+t));
+>   2578                  break;
+>   2579          case IPPROTO_SCTP:
+>   2580                  struct sctphdr _sctph;
+>   2581                  const struct sctphdr *sh;
+>   2582
+> > 2583                  sh =3D skb_header_pointer(skb, skb_transport_offs=
+et(skb), sizeof(_sctph), &_sctph);
+>   2584                  if (!sh)
+>   2585                          return false;
+>   2586
+>   2587                  audit_log_format(ab, " saddr=3D%pI4 daddr=3D%pI4 =
+proto=3D%hhu sport=3D%hu dport=3D%hu",
+>   2588                                   &ih->saddr, &ih->daddr, ih->prot=
+ocol,
+>   2589                                   ntohs(sh->source), ntohs(sh->des=
+t));
+>   2590                  break;
+>   2591          default:
+>   2592                  audit_log_format(ab, " saddr=3D%pI4 daddr=3D%pI4 =
+proto=3D%hhu",
+>   2593                                   &ih->saddr, &ih->daddr, ih->prot=
+ocol);
+>   2594          }
+>   2595
+>   2596          return true;
+>   2597  }
+>   2598  EXPORT_SYMBOL(audit_log_packet_ip4);
+>   2599
+>
+> --
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
+>
 
 
