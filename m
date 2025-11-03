@@ -1,124 +1,139 @@
-Return-Path: <linux-kernel+bounces-882345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E2DEC2A3B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 07:51:16 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B7ABC2A3AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 07:50:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B4EC188DBD0
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 06:51:40 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ED41E4E25C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 06:50:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C7E236453;
-	Mon,  3 Nov 2025 06:51:09 +0000 (UTC)
-Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C870B8488;
+	Mon,  3 Nov 2025 06:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=emh-metering.com header.i=@emh-metering.com header.b="ei12Vmxg"
+Received: from pmg.emh-metering.com (pmg.emh-metering.com [62.153.85.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC6820E702;
-	Mon,  3 Nov 2025 06:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36D081D416E;
+	Mon,  3 Nov 2025 06:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.153.85.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762152669; cv=none; b=amfW4HfvddAGBf5MjiO3vPWTNWywD9aYT3VmudK46CBtA4d7CZh30jPHsScMUrewmrTcZjBivRi1cABnkgwpGzHQH+ZOV6bpS+5g/3ggwfARwnD/tF+WZIzp3hwl2BnfAzlm8YjzMKGLGihFFibJdqLVjSHO/UFj7WuWtyOWEyg=
+	t=1762152632; cv=none; b=cbVyN2kXKeIOMcX3UerNwYDQV5en3QfF0StJ2HkVPCLKy83c/wzzMxfkL2sPJzwZrcyvHe6uujONpKsT5f2YLBLZm9+yQNtF80njOZ/cMDKC1ecoKVLmyjbRnHq5MgLf7dNe2QhdiNw301Np3WcFvvqK4ko70vYkApxxY2kZLf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762152669; c=relaxed/simple;
-	bh=7VM+qiAufbHBKdj/jfxUp+gQD1abUDYAwZcHZtfAHWM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SyNV91Jrf/asNfcNapJGnXSxDaCRPgMXjY6QdximoYOTeuI7aH+ghf2rlMtWFWLS3AviQLKtof2o+IDn2+HJLbTwAWcmaJtCCQfMGUtA5aQ0QjQGJH1IbFlKy9z82uCylrtEf+rLfN+BLYWuSLmP7uqaOvtgFf4opKgT0x2jx0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from Jtjnmail201617.home.langchao.com
-        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id 202511031450586091;
-        Mon, 03 Nov 2025 14:50:58 +0800
-Received: from jtjnmailAR02.home.langchao.com (10.100.2.43) by
- Jtjnmail201617.home.langchao.com (10.100.2.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.58; Mon, 3 Nov 2025 14:50:59 +0800
-Received: from inspur.com (10.100.2.107) by jtjnmailAR02.home.langchao.com
- (10.100.2.43) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
- Transport; Mon, 3 Nov 2025 14:50:59 +0800
-Received: from localhost.localdomain.com (unknown [10.94.13.117])
-	by app3 (Coremail) with SMTP id awJkCsDw3fjRUAhpz74JAA--.11977S4;
-	Mon, 03 Nov 2025 14:50:59 +0800 (CST)
-From: Chu Guangqing <chuguangqing@inspur.com>
-To: <mkl@pengutronix.de>, <mailhol@kernel.org>
-CC: <linux-can@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Chu Guangqing
-	<chuguangqing@inspur.com>
-Subject: [PATCH] can: janz-ican3: Fix a typo error for DESC_INVALID
-Date: Mon, 3 Nov 2025 14:49:34 +0800
-Message-ID: <20251103064934.4611-1-chuguangqing@inspur.com>
-X-Mailer: git-send-email 2.43.7
+	s=arc-20240116; t=1762152632; c=relaxed/simple;
+	bh=YlYPpkNMv1k/7qhVYm/6KIJE4qBuiONsX4rIdUOhzng=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=i5R3t6a5Ife8Mvo6M2Is/8gNz26Hp0GJ8Y1b2mSdSgFqNAsRynNf9CFElEZD227EXbhGRAJba7OxJ5TjDAv93yO60eKqnqxF1u8ldIAPPZKT/XmOkJRwVR6+5acjVROJfsa77Kx2Vv4N6ICz9NwV6J2nCQ2PgI3VsJmmGW3FFxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=emh-metering.com; spf=pass smtp.mailfrom=emh-metering.com; dkim=pass (2048-bit key) header.d=emh-metering.com header.i=@emh-metering.com header.b=ei12Vmxg; arc=none smtp.client-ip=62.153.85.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=emh-metering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emh-metering.com
+Received: from pmg.emh-metering.com (localhost.localdomain [127.0.0.1])
+	by pmg.emh-metering.com (Proxmox) with ESMTP id 79533201269;
+	Mon, 03 Nov 2025 07:50:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	emh-metering.com; h=cc:content-transfer-encoding:content-type
+	:content-type:date:from:from:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=EMH; bh=EB2O6kTVDp
+	xjxa6R1ervwAhb64BXCh6IFZiwSALTWaw=; b=ei12VmxgEys3hOhNzAqfWfZpUW
+	e8SIzsI7bzqQyiatL4os7UmgkilXHKCXIh0JLH3bQzfuxkMTU1zMfBPTcJwDOCRd
+	ReqAWzJuwjoWpCIwpYxc7M8wmtawa71/EORM6NFxDYV2lvN/bNuuFZYHcpHP3KG6
+	6lrUHsAPhzYD6YsWhRBEVgSBEdtTelGtaEqbq8nBJ8X8pfdmOswTIzwqH41ab1De
+	zKV95vvd+svWUeJhbVNsJKCQVC+LPinj5x6LfvN6F3KLHhPElDpRk0I5kjyakx12
+	pnqvuFEGXZGflaKwXb9esY/JU3FqffrOvbmyrW87UJOk3aPxhDmdq0wDrBlg==
+From: "Krebs, Olaf" <Olaf.Krebs@emh-metering.com>
+To: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam
+	<festevam@gmail.com>, "open list:PWM SUBSYSTEM" <linux-pwm@vger.kernel.org>,
+	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+	<linux-arm-kernel@lists.infradead.org>, open list
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v3] Fix IMX PWM period setting
+Thread-Topic: [PATCH v3] Fix IMX PWM period setting
+Thread-Index: AQHcTI3pZaT6LbFQuk2XOLVoRSV617TggtSg
+Date: Mon, 3 Nov 2025 06:50:20 +0000
+Message-ID: <1b071599b84c4519a81990fbfe09782b@emh-metering.com>
+References: <20251103064813.522840-1-user@jenkins>
+In-Reply-To: <20251103064813.522840-1-user@jenkins>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: awJkCsDw3fjRUAhpz74JAA--.11977S4
-X-Coremail-Antispam: 1UD129KBjvJXoWrtr18tw48KFyftr4DGrykKrg_yoW8JrykpF
-	45WrWq9F1DAF4rJ3W0qr1rZay5J3WkJFyv93yq9w4kZr1ay3WxGrWUWa4DtF1UZFs5Wr15
-	XrWqv3W7WF95Aa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26rxl
-	6s0DM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r12
-	6r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
-	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y
-	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1l
-	IxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbVOJ7UUUU
-	U==
-X-CM-SenderInfo: 5fkxw35dqj1xlqj6x0hvsx2hhfrp/
-X-CM-DELIVERINFO: =?B?j3CWspRRTeOiUs3aOqHZ50hzsfHKF9Ds6CbXmDm38RucXu3DYXJR7Zlh9zE0nt/Iac
-	D+KdFQyiXLhRFzXuW51lpyNb3U+vTWs0UaMZjN3SDVnrRYIC0NwmiUxgZcFrmVIO1Z6v4I
-	ftteRGRAzb4AZN7FB5g=
-Content-Type: text/plain
-tUid: 20251103145058746b320818ec9fba6853085455d35348
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
 
-The macro definition DESC_IVALID should be DESC_INVALID, as there is a
-spelling error here.
+From: Olaf Krebs <okr@smgw.emh-meter.de>
 
-Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
+If a second PWM is requested by a driver before the first is configured, tr=
+ying to configure any of these results in .user_count > 1 and thus the conf=
+iguration fails.
+Fix that by only erroring out by additionally checking if the period is act=
+ually configured.
+
+Exapmle: Using of 3 PWM channels to control a RGB LED.
+
+DTS-Config for an imx93-Board:
+	...
+	led-controller {
+		compatible =3D "pwm-leds-multicolor";
+		multi-led {
+			label =3D "RGBled";
+			color =3D <LED_COLOR_ID_RGB>;
+			function =3D LED_FUNCTION_INDICATOR;
+			max-brightness =3D <255>;
+			led-red {
+				pwms =3D <&tpm5 0 1000000 PWM_POLARITY_INVERTED>;
+				color =3D <LED_COLOR_ID_RED>;
+			};
+			led-green {
+				pwms =3D <&tpm6 2 1000000 PWM_POLARITY_INVERTED>;
+				color =3D <LED_COLOR_ID_GREEN>;
+			};
+			led-blue {
+				pwms =3D <&tpm5 1 1000000 PWM_POLARITY_INVERTED>;
+				color =3D <LED_COLOR_ID_BLUE>;
+			};
+		};
+	};
+	...
+
+Without this patch, an BUSY-error message is generated during initializatio=
+n.
+
+[    7.395326] leds_pwm_multicolor led-controller: error -EBUSY: failed to =
+set led PWM value for (null)
+[    7.405167] leds_pwm_multicolor led-controller: probe with driver leds_p=
+wm_multicolor failed with error -16
+
+Signed-off-by: Olaf krebs <olaf.krebs@emh-metering.com>
 ---
- drivers/net/can/janz-ican3.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/pwm/pwm-imx-tpm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/can/janz-ican3.c b/drivers/net/can/janz-ican3.c
-index 1efdd1fd8caa..7ae1f4ba4627 100644
---- a/drivers/net/can/janz-ican3.c
-+++ b/drivers/net/can/janz-ican3.c
-@@ -62,7 +62,7 @@
- #define DESC_VALID		0x80
- #define DESC_WRAP		0x40
- #define DESC_INTERRUPT		0x20
--#define DESC_IVALID		0x10
-+#define DESC_INVALID		0x10
- #define DESC_LEN(len)		(len)
- 
- /* Janz ICAN3 Firmware Messages */
-@@ -1723,11 +1723,11 @@ static netdev_tx_t ican3_xmit(struct sk_buff *skb, struct net_device *ndev)
- 	ican3_put_echo_skb(mod, skb);
- 
- 	/*
--	 * the programming manual says that you must set the IVALID bit, then
-+	 * the programming manual says that you must set the INVALID bit, then
- 	 * interrupt, then set the valid bit. Quite weird, but it seems to be
- 	 * required for this to work
- 	 */
--	desc.control |= DESC_IVALID;
-+	desc.control |= DESC_INVALID;
- 	memcpy_toio(desc_addr, &desc, sizeof(desc));
- 
- 	/* generate a MODULbus interrupt to the microcontroller */
--- 
-2.43.7
+diff --git a/drivers/pwm/pwm-imx-tpm.c b/drivers/pwm/pwm-imx-tpm.c index 5b=
+399de16d60..411daa7711f1 100644
+--- a/drivers/pwm/pwm-imx-tpm.c
++++ b/drivers/pwm/pwm-imx-tpm.c
+@@ -190,7 +190,7 @@ static int pwm_imx_tpm_apply_hw(struct pwm_chip *chip,
+ 		 * there are multiple channels in use with different
+ 		 * period settings.
+ 		 */
+-		if (tpm->user_count > 1)
++		if ((tpm->user_count > 1) && (tpm->real_period !=3D 0))
+ 			return -EBUSY;
+=20
+ 		val =3D readl(tpm->base + PWM_IMX_TPM_SC);
+--
+2.47.3
+
 
 
