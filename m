@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-882864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95E0FC2BBBE
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:40:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8D5CC2BB31
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:35:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 316304F5CC7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:34:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E255E1895A26
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:35:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0E530CDBB;
-	Mon,  3 Nov 2025 12:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10BE430E83D;
+	Mon,  3 Nov 2025 12:34:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fMqS4Eq3"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jzB7UDtj"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ABDF30CDB1
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 12:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FF630CDA3
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 12:34:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762173247; cv=none; b=Y0MlLeI1AIk9RsjS61JsAeY0z3nUfs2U471/2Iy56BhHs26oG4BDLJQuNSOfAGnUb6h1td72BXGRyxvZBcjHkFJpBwB6iobpCvmdewrPi87Oz0tIReeC2K6dzX2ewiZEO8q7CP4vqXgVI91OdXiNB8t5XhHBHm9zC69kCyn4PRs=
+	t=1762173247; cv=none; b=Z2BC04dGcUiw5nI5k/2ZuSZZZhIvt6aRCrKSPK4zTo2Y2OzeDjEu8z4lF+kz08XrnGy6E9+Rg5UM2sYyrRrExxMhST/nr228IlfkrMXspfOB9j8wz23LCDj/0+IaTK+RXDC/GT7APNj0bdFaPEzKBou79iQ8736nx5Waji2NljM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762173247; c=relaxed/simple;
-	bh=vjkrYPoAZlHM7oLJ+7JDcEL1NOqCh0147DxJfPx6SrY=;
+	bh=EQYMARjS+JyPMayoc+pRJxDO2woosAvTv2TdtcifVOc=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=n8cyyVuY5ASG7elzR4zhp58FnSpyQgeDbb/k6s6ukX4wERP1plCLC+50M3yHKbqOCyUcoQbxY51tyH10MeJ6hlD2pw0beR9LhNlYErC43IUZnoM4JxicwpVKTOKfcITMhCahEulbW/9p4ttV9x8gBneW23PaamBJ1NbjbSWngbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fMqS4Eq3; arc=none smtp.client-ip=209.85.221.74
+	 To:Cc:Content-Type; b=WQacLSffLW5WHtAm4JvA5T8IQAwOufy+Ie63TmZSA6CnqOvCqZ4qN5Nkttzhs0MlOYiCnthtMtHwLosh9lw1Vx233Xw4fZSwyhFk1UxGQr91Hvps5cvPBsZ4IIh3HXIu9FeV1pSbafegyn7CXgiMXNNbRcAXIt3oOB0efaDegVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jzB7UDtj; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--smostafa.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-429c17b29f3so1896601f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 04:34:03 -0800 (PST)
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-477124f7c00so23440825e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 04:34:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1762173242; x=1762778042; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1762173243; x=1762778043; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ux05tU7+D0B7IZxmyew0p2paYr4GUNmlb17Kgdor7nc=;
-        b=fMqS4Eq3HJp9zVaTcXRIialbtNgUgM18eQ1tx9Z39NHcEM/DQXAZapq2DberUzizcj
-         vWTFpioo0hTknvYf+xco4qKNrJgN5FimXnhLsvnL0oTnKZ8JiXA1EsDRkNuzhfnkstC2
-         5kydMoZ/TDMovzyhfAbFllnx+BgXjBC7nfLlinEl5gaGRJ5VRitKr/QhzF/1BnIF3JTZ
-         AM4kkm15fZZ+WPZgpOKUlvD81B0ZbqxrwzGqcdWg6ZjiWnBkvWQW3dzH4T30RAtydMSa
-         WJu0UqwZGJlKIKEMNliItkf6tpM2b0leluZZY067+thUrgwxx2pCjbjzjS1Ab5c2h8oi
-         esQg==
+        bh=XnNVG2vhHfC1gt/qitZLpmBchowi40mXLPD49k6Q4P8=;
+        b=jzB7UDtjzYy3alk8zcwOk9pEgucEQbR0hkG79cud04jAnBV7QXHumgUA02Z/RNoQwl
+         jVJwajFn9YV4Tj9eukuueQw6XibnKqvTxYa/CxeQH1HwZ3pqRObacPjz1pVKxToQedjp
+         fX6SG5bsxKH31xMIqIxVdY3Mpgp71rlwvw0WMooq+F/UKacxNyCtJajMrGbaWKh9/w/E
+         225W5QGQTqsbu9ie56B5aTq7DnPuzidlLPDHYXcd/dZH0KvHqXXt57pjDaRk62OzosEi
+         ZTzmn0XB0yxDWKojUJaTgzx8NgsQN3iLs/N1lPUq/nQDQh2rfNpIYqdhZoIZAPTYW0I5
+         IIMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762173242; x=1762778042;
+        d=1e100.net; s=20230601; t=1762173243; x=1762778043;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ux05tU7+D0B7IZxmyew0p2paYr4GUNmlb17Kgdor7nc=;
-        b=pmSQ7FUACJMjlffXPiV72IFHSr+8eSo2znK2LDA0CxtRAtBjr/K0em/SXu4tyEgOj8
-         0vSnLmSPjKpd3CYpnqDr0zI59mpAQ7I1k8tSoi/+9JIVACkRxKYh1BLAmK69JtDqa4x2
-         HeJZXoV9G5I0ficeHgAcw3fk0DbsP/ONhoa0bRVaxDSWU0hCZgQonIYesQdn3acx0k3Q
-         jxaHKAirzOPcCkTj0UV+RQGKaIXPXUbRq2TIMKNYKnFB8/5ofkwBVFEL4/bDFtfQd95u
-         ihqS2cWjFSqCqumNfM7WoDkc80typY/kS/YenPLCxO+ay8a5LK51jX31FoME1ZWw0pOv
-         A+Ew==
-X-Forwarded-Encrypted: i=1; AJvYcCV8zPMUhzb//gh9NntfoW7i/u5NA4xq8pnQRq9l1L0bqRRNl6yx3vtla+YmdS6Mo0Uu37z8Z/eUA+t7xpc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1sODuZ4mNVTPMZ+4a/E1PUJQfQmbRyvB49W+v3hp5ceZX4Plx
-	L1jsQ3JkoxVXIs+MDlecaVNvirLwFKpcnGc/AAyssfX4Aol0kVl3VraPOmyd6fk3CW5PmEbOS/h
-	mkznIyWp1TKMVvQ==
-X-Google-Smtp-Source: AGHT+IGrApuZXSqW3lxjcwRKlTmVFlztNd2Jc9n1hjMR+iMt6HX4Z1G6N1X7IymUPj+PYiV5MnuQog6Tf7KgIg==
-X-Received: from wmfv2.prod.google.com ([2002:a05:600c:15c2:b0:475:d804:bfd2])
+        bh=XnNVG2vhHfC1gt/qitZLpmBchowi40mXLPD49k6Q4P8=;
+        b=U3eKKBFV39vFQaHJDQvQWzLnEfT4G8kmGnpiZRv8I1/vHgciGxLZ7aCPfTPiJZ7v/i
+         hlVV718lrTAtEeSrNxPBr/xYVizmqY0k7PXnFn6UkKsyYYG3OOH5tjDntKV8OE4DAUhS
+         PrpmpdhkCaDWpPR+P1ja8gswPV6kv/r9IjH4B6ZGnqQxf3hhqMSG2QRgy/EQlcv7zBNk
+         STWx7n2TqMDYGR6kF7fTqLTsIVzZj6HB9GMtGZyQaL8AywGM397RgrCvNLh6BlKailcz
+         NS7w7Y3ppAVJ4fvFzL/TZW+GX5CZaBvAEEk0ZJXJQ9FiCzTMKEHjUQEZLW8yla7JfxtD
+         IIsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVSAmZxegOPfaUtE+0tseqfENtqXK5Wj/0QkG42RWVTOJp6msoHSVAdJ1nt97V1ZDFxuWNcjP/ZI1EflMA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGGnc3YIMmBKkE5ZyZ2sThQ2svbSAPdkCaJpM8SEOgrk1HQGcp
+	QowhWkVDzZWYhFArEm+CqHXaUuSRrEXV+gwY70JQHKE0y6suwbT/yM7TDahjlmBHb0fpuV60fek
+	ADmXBs2eOyWEZjQ==
+X-Google-Smtp-Source: AGHT+IHA8/ok6+XXuQ9VXgpdq0czkrD75t7WqBNgPYie2CXvz0gEKxvUiOAYrX3UQcN/obgIYlDq5IcvFyCXfQ==
+X-Received: from wmd16.prod.google.com ([2002:a05:600c:6050:b0:46e:37d6:c1a6])
  (user=smostafa job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:2301:b0:429:bcd7:ac9f with SMTP id ffacd0b85a97d-429bd6ac60fmr10501171f8f.53.1762173242489;
- Mon, 03 Nov 2025 04:34:02 -0800 (PST)
-Date: Mon,  3 Nov 2025 12:33:49 +0000
+ 2002:a05:600c:3149:b0:477:942:7521 with SMTP id 5b1f17b1804b1-477307e285dmr107319205e9.14.1762173243360;
+ Mon, 03 Nov 2025 04:34:03 -0800 (PST)
+Date: Mon,  3 Nov 2025 12:33:50 +0000
 In-Reply-To: <20251103123355.1769093-1-smostafa@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,132 +73,455 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20251103123355.1769093-1-smostafa@google.com>
 X-Mailer: git-send-email 2.51.1.930.gacf6e81ea2-goog
-Message-ID: <20251103123355.1769093-2-smostafa@google.com>
-Subject: [PATCH v6 1/4] iommu/io-pgtable-arm: Remove arm_lpae_dump_ops()
+Message-ID: <20251103123355.1769093-3-smostafa@google.com>
+Subject: [PATCH v6 2/4] iommu/io-pgtable-arm: Move selftests to a separate file
 From: Mostafa Saleh <smostafa@google.com>
 To: iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
 	linux-kernel@vger.kernel.org
 Cc: robin.murphy@arm.com, will@kernel.org, joro@8bytes.org, jgg@ziepe.ca, 
-	praan@google.com, Mostafa Saleh <smostafa@google.com>
+	praan@google.com, Mostafa Saleh <smostafa@google.com>, Jason Gunthorpe <jgg@nvidia.com>
 Content-Type: text/plain; charset="UTF-8"
 
-At the moment, if the selftest fails it prints a lot of information
-about the page table (size, levels...) this requires access to many
-internals, which has to be exposed in the next patch moving the
-tests out.
+Clean up the io-pgtable-arm library by moving the selftests out.
+Next the tests will be registered with kunit.
 
-Instead, we can simplify the print to only print the fmt and
-for each test ias, oas and pgsize_bitmap are already printed.
-That is enough to identify the failed case, and the rest can
-be deduced from the code.
+This is useful also to factor out kernel specific code out, so
+it can compiled as part of the hypervisor object.
 
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+Reviewed-by: Pranjal Shrivastava <praan@google.com>
 Signed-off-by: Mostafa Saleh <smostafa@google.com>
 ---
- drivers/iommu/io-pgtable-arm.c | 41 ++++++++++++----------------------
- 1 file changed, 14 insertions(+), 27 deletions(-)
+ drivers/iommu/Makefile                   |   1 +
+ drivers/iommu/io-pgtable-arm-selftests.c | 201 +++++++++++++++++++++++
+ drivers/iommu/io-pgtable-arm.c           | 190 ---------------------
+ 3 files changed, 202 insertions(+), 190 deletions(-)
+ create mode 100644 drivers/iommu/io-pgtable-arm-selftests.c
 
+diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
+index 355294fa9033..5250a2eea13f 100644
+--- a/drivers/iommu/Makefile
++++ b/drivers/iommu/Makefile
+@@ -12,6 +12,7 @@ obj-$(CONFIG_IOMMU_DMA) += dma-iommu.o
+ obj-$(CONFIG_IOMMU_IO_PGTABLE) += io-pgtable.o
+ obj-$(CONFIG_IOMMU_IO_PGTABLE_ARMV7S) += io-pgtable-arm-v7s.o
+ obj-$(CONFIG_IOMMU_IO_PGTABLE_LPAE) += io-pgtable-arm.o
++obj-$(CONFIG_IOMMU_IO_PGTABLE_LPAE_SELFTEST) += io-pgtable-arm-selftests.o
+ obj-$(CONFIG_IOMMU_IO_PGTABLE_DART) += io-pgtable-dart.o
+ obj-$(CONFIG_IOMMU_IOVA) += iova.o
+ obj-$(CONFIG_OF_IOMMU)	+= of_iommu.o
+diff --git a/drivers/iommu/io-pgtable-arm-selftests.c b/drivers/iommu/io-pgtable-arm-selftests.c
+new file mode 100644
+index 000000000000..5da6d4b69920
+--- /dev/null
++++ b/drivers/iommu/io-pgtable-arm-selftests.c
+@@ -0,0 +1,201 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * CPU-agnostic ARM page table allocator.
++ *
++ * Copyright (C) 2014 ARM Limited
++ *
++ * Author: Will Deacon <will.deacon@arm.com>
++ */
++
++#define pr_fmt(fmt)	"arm-lpae io-pgtable: " fmt
++
++#include <linux/device/faux.h>
++#include <linux/io-pgtable.h>
++#include <linux/kernel.h>
++
++#include "io-pgtable-arm.h"
++
++static struct io_pgtable_cfg *cfg_cookie __initdata;
++
++static void __init dummy_tlb_flush_all(void *cookie)
++{
++	WARN_ON(cookie != cfg_cookie);
++}
++
++static void __init dummy_tlb_flush(unsigned long iova, size_t size,
++				   size_t granule, void *cookie)
++{
++	WARN_ON(cookie != cfg_cookie);
++	WARN_ON(!(size & cfg_cookie->pgsize_bitmap));
++}
++
++static void __init dummy_tlb_add_page(struct iommu_iotlb_gather *gather,
++				      unsigned long iova, size_t granule,
++				      void *cookie)
++{
++	dummy_tlb_flush(iova, granule, granule, cookie);
++}
++
++static const struct iommu_flush_ops dummy_tlb_ops __initconst = {
++	.tlb_flush_all	= dummy_tlb_flush_all,
++	.tlb_flush_walk	= dummy_tlb_flush,
++	.tlb_add_page	= dummy_tlb_add_page,
++};
++
++#define __FAIL(i) ({							\
++		WARN(1, "selftest: test failed for fmt idx %d\n", (i));	\
++		-EFAULT;						\
++})
++
++static int __init arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
++{
++	static const enum io_pgtable_fmt fmts[] __initconst = {
++		ARM_64_LPAE_S1,
++		ARM_64_LPAE_S2,
++	};
++
++	int i, j;
++	unsigned long iova;
++	size_t size, mapped;
++	struct io_pgtable_ops *ops;
++
++	for (i = 0; i < ARRAY_SIZE(fmts); ++i) {
++		cfg_cookie = cfg;
++		ops = alloc_io_pgtable_ops(fmts[i], cfg, cfg);
++		if (!ops) {
++			pr_err("selftest: failed to allocate io pgtable ops\n");
++			return -ENOMEM;
++		}
++
++		/*
++		 * Initial sanity checks.
++		 * Empty page tables shouldn't provide any translations.
++		 */
++		if (ops->iova_to_phys(ops, 42))
++			return __FAIL(i);
++
++		if (ops->iova_to_phys(ops, SZ_1G + 42))
++			return __FAIL(i);
++
++		if (ops->iova_to_phys(ops, SZ_2G + 42))
++			return __FAIL(i);
++
++		/*
++		 * Distinct mappings of different granule sizes.
++		 */
++		iova = 0;
++		for_each_set_bit(j, &cfg->pgsize_bitmap, BITS_PER_LONG) {
++			size = 1UL << j;
++
++			if (ops->map_pages(ops, iova, iova, size, 1,
++					   IOMMU_READ | IOMMU_WRITE |
++					   IOMMU_NOEXEC | IOMMU_CACHE,
++					   GFP_KERNEL, &mapped))
++				return __FAIL(i);
++
++			/* Overlapping mappings */
++			if (!ops->map_pages(ops, iova, iova + size, size, 1,
++					    IOMMU_READ | IOMMU_NOEXEC,
++					    GFP_KERNEL, &mapped))
++				return __FAIL(i);
++
++			if (ops->iova_to_phys(ops, iova + 42) != (iova + 42))
++				return __FAIL(i);
++
++			iova += SZ_1G;
++		}
++
++		/* Full unmap */
++		iova = 0;
++		for_each_set_bit(j, &cfg->pgsize_bitmap, BITS_PER_LONG) {
++			size = 1UL << j;
++
++			if (ops->unmap_pages(ops, iova, size, 1, NULL) != size)
++				return __FAIL(i);
++
++			if (ops->iova_to_phys(ops, iova + 42))
++				return __FAIL(i);
++
++			/* Remap full block */
++			if (ops->map_pages(ops, iova, iova, size, 1,
++					   IOMMU_WRITE, GFP_KERNEL, &mapped))
++				return __FAIL(i);
++
++			if (ops->iova_to_phys(ops, iova + 42) != (iova + 42))
++				return __FAIL(i);
++
++			iova += SZ_1G;
++		}
++
++		/*
++		 * Map/unmap the last largest supported page of the IAS, this can
++		 * trigger corner cases in the concatednated page tables.
++		 */
++		mapped = 0;
++		size = 1UL << __fls(cfg->pgsize_bitmap);
++		iova = (1UL << cfg->ias) - size;
++		if (ops->map_pages(ops, iova, iova, size, 1,
++				   IOMMU_READ | IOMMU_WRITE |
++				   IOMMU_NOEXEC | IOMMU_CACHE,
++				   GFP_KERNEL, &mapped))
++			return __FAIL(i);
++		if (mapped != size)
++			return __FAIL(i);
++		if (ops->unmap_pages(ops, iova, size, 1, NULL) != size)
++			return __FAIL(i);
++
++		free_io_pgtable_ops(ops);
++	}
++
++	return 0;
++}
++
++static int __init arm_lpae_do_selftests(void)
++{
++	static const unsigned long pgsize[] __initconst = {
++		SZ_4K | SZ_2M | SZ_1G,
++		SZ_16K | SZ_32M,
++		SZ_64K | SZ_512M,
++	};
++
++	static const unsigned int address_size[] __initconst = {
++		32, 36, 40, 42, 44, 48,
++	};
++
++	int i, j, k, pass = 0, fail = 0;
++	struct faux_device *dev;
++	struct io_pgtable_cfg cfg = {
++		.tlb = &dummy_tlb_ops,
++		.coherent_walk = true,
++		.quirks = IO_PGTABLE_QUIRK_NO_WARN,
++	};
++
++	dev = faux_device_create("io-pgtable-test", NULL, 0);
++	if (!dev)
++		return -ENOMEM;
++
++	cfg.iommu_dev = &dev->dev;
++
++	for (i = 0; i < ARRAY_SIZE(pgsize); ++i) {
++		for (j = 0; j < ARRAY_SIZE(address_size); ++j) {
++			/* Don't use ias > oas as it is not valid for stage-2. */
++			for (k = 0; k <= j; ++k) {
++				cfg.pgsize_bitmap = pgsize[i];
++				cfg.ias = address_size[k];
++				cfg.oas = address_size[j];
++				pr_info("selftest: pgsize_bitmap 0x%08lx, IAS %u OAS %u\n",
++					pgsize[i], cfg.ias, cfg.oas);
++				if (arm_lpae_run_tests(&cfg))
++					fail++;
++				else
++					pass++;
++			}
++		}
++	}
++
++	pr_info("selftest: completed with %d PASS %d FAIL\n", pass, fail);
++	faux_device_destroy(dev);
++
++	return fail ? -EFAULT : 0;
++}
++subsys_initcall(arm_lpae_do_selftests);
 diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-index 7e8e2216c294..7d6d7221f540 100644
+index 7d6d7221f540..e6626004b323 100644
 --- a/drivers/iommu/io-pgtable-arm.c
 +++ b/drivers/iommu/io-pgtable-arm.c
-@@ -1297,21 +1297,8 @@ static const struct iommu_flush_ops dummy_tlb_ops __initconst = {
- 	.tlb_add_page	= dummy_tlb_add_page,
+@@ -12,8 +12,6 @@
+ #include <linux/atomic.h>
+ #include <linux/bitops.h>
+ #include <linux/io-pgtable.h>
+-#include <linux/kernel.h>
+-#include <linux/device/faux.h>
+ #include <linux/sizes.h>
+ #include <linux/slab.h>
+ #include <linux/types.h>
+@@ -1267,191 +1265,3 @@ struct io_pgtable_init_fns io_pgtable_arm_mali_lpae_init_fns = {
+ 	.alloc	= arm_mali_lpae_alloc_pgtable,
+ 	.free	= arm_lpae_free_pgtable,
  };
- 
--static void __init arm_lpae_dump_ops(struct io_pgtable_ops *ops)
--{
--	struct arm_lpae_io_pgtable *data = io_pgtable_ops_to_data(ops);
--	struct io_pgtable_cfg *cfg = &data->iop.cfg;
 -
--	pr_err("cfg: pgsize_bitmap 0x%lx, ias %u-bit\n",
--		cfg->pgsize_bitmap, cfg->ias);
--	pr_err("data: %d levels, 0x%zx pgd_size, %u pg_shift, %u bits_per_level, pgd @ %p\n",
--		ARM_LPAE_MAX_LEVELS - data->start_level, ARM_LPAE_PGD_SIZE(data),
--		ilog2(ARM_LPAE_GRANULE(data)), data->bits_per_level, data->pgd);
+-#ifdef CONFIG_IOMMU_IO_PGTABLE_LPAE_SELFTEST
+-
+-static struct io_pgtable_cfg *cfg_cookie __initdata;
+-
+-static void __init dummy_tlb_flush_all(void *cookie)
+-{
+-	WARN_ON(cookie != cfg_cookie);
 -}
 -
--#define __FAIL(ops, i)	({						\
-+#define __FAIL(i) ({							\
- 		WARN(1, "selftest: test failed for fmt idx %d\n", (i));	\
--		arm_lpae_dump_ops(ops);					\
- 		-EFAULT;						\
- })
- 
-@@ -1340,13 +1327,13 @@ static int __init arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
- 		 * Empty page tables shouldn't provide any translations.
- 		 */
- 		if (ops->iova_to_phys(ops, 42))
--			return __FAIL(ops, i);
-+			return __FAIL(i);
- 
- 		if (ops->iova_to_phys(ops, SZ_1G + 42))
--			return __FAIL(ops, i);
-+			return __FAIL(i);
- 
- 		if (ops->iova_to_phys(ops, SZ_2G + 42))
--			return __FAIL(ops, i);
-+			return __FAIL(i);
- 
- 		/*
- 		 * Distinct mappings of different granule sizes.
-@@ -1359,16 +1346,16 @@ static int __init arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
- 					   IOMMU_READ | IOMMU_WRITE |
- 					   IOMMU_NOEXEC | IOMMU_CACHE,
- 					   GFP_KERNEL, &mapped))
--				return __FAIL(ops, i);
-+				return __FAIL(i);
- 
- 			/* Overlapping mappings */
- 			if (!ops->map_pages(ops, iova, iova + size, size, 1,
- 					    IOMMU_READ | IOMMU_NOEXEC,
- 					    GFP_KERNEL, &mapped))
--				return __FAIL(ops, i);
-+				return __FAIL(i);
- 
- 			if (ops->iova_to_phys(ops, iova + 42) != (iova + 42))
--				return __FAIL(ops, i);
-+				return __FAIL(i);
- 
- 			iova += SZ_1G;
- 		}
-@@ -1379,18 +1366,18 @@ static int __init arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
- 			size = 1UL << j;
- 
- 			if (ops->unmap_pages(ops, iova, size, 1, NULL) != size)
--				return __FAIL(ops, i);
-+				return __FAIL(i);
- 
- 			if (ops->iova_to_phys(ops, iova + 42))
--				return __FAIL(ops, i);
-+				return __FAIL(i);
- 
- 			/* Remap full block */
- 			if (ops->map_pages(ops, iova, iova, size, 1,
- 					   IOMMU_WRITE, GFP_KERNEL, &mapped))
--				return __FAIL(ops, i);
-+				return __FAIL(i);
- 
- 			if (ops->iova_to_phys(ops, iova + 42) != (iova + 42))
--				return __FAIL(ops, i);
-+				return __FAIL(i);
- 
- 			iova += SZ_1G;
- 		}
-@@ -1406,11 +1393,11 @@ static int __init arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
- 				   IOMMU_READ | IOMMU_WRITE |
- 				   IOMMU_NOEXEC | IOMMU_CACHE,
- 				   GFP_KERNEL, &mapped))
--			return __FAIL(ops, i);
-+			return __FAIL(i);
- 		if (mapped != size)
--			return __FAIL(ops, i);
-+			return __FAIL(i);
- 		if (ops->unmap_pages(ops, iova, size, 1, NULL) != size)
--			return __FAIL(ops, i);
-+			return __FAIL(i);
- 
- 		free_io_pgtable_ops(ops);
- 	}
+-static void __init dummy_tlb_flush(unsigned long iova, size_t size,
+-				   size_t granule, void *cookie)
+-{
+-	WARN_ON(cookie != cfg_cookie);
+-	WARN_ON(!(size & cfg_cookie->pgsize_bitmap));
+-}
+-
+-static void __init dummy_tlb_add_page(struct iommu_iotlb_gather *gather,
+-				      unsigned long iova, size_t granule,
+-				      void *cookie)
+-{
+-	dummy_tlb_flush(iova, granule, granule, cookie);
+-}
+-
+-static const struct iommu_flush_ops dummy_tlb_ops __initconst = {
+-	.tlb_flush_all	= dummy_tlb_flush_all,
+-	.tlb_flush_walk	= dummy_tlb_flush,
+-	.tlb_add_page	= dummy_tlb_add_page,
+-};
+-
+-#define __FAIL(i) ({							\
+-		WARN(1, "selftest: test failed for fmt idx %d\n", (i));	\
+-		-EFAULT;						\
+-})
+-
+-static int __init arm_lpae_run_tests(struct io_pgtable_cfg *cfg)
+-{
+-	static const enum io_pgtable_fmt fmts[] __initconst = {
+-		ARM_64_LPAE_S1,
+-		ARM_64_LPAE_S2,
+-	};
+-
+-	int i, j;
+-	unsigned long iova;
+-	size_t size, mapped;
+-	struct io_pgtable_ops *ops;
+-
+-	for (i = 0; i < ARRAY_SIZE(fmts); ++i) {
+-		cfg_cookie = cfg;
+-		ops = alloc_io_pgtable_ops(fmts[i], cfg, cfg);
+-		if (!ops) {
+-			pr_err("selftest: failed to allocate io pgtable ops\n");
+-			return -ENOMEM;
+-		}
+-
+-		/*
+-		 * Initial sanity checks.
+-		 * Empty page tables shouldn't provide any translations.
+-		 */
+-		if (ops->iova_to_phys(ops, 42))
+-			return __FAIL(i);
+-
+-		if (ops->iova_to_phys(ops, SZ_1G + 42))
+-			return __FAIL(i);
+-
+-		if (ops->iova_to_phys(ops, SZ_2G + 42))
+-			return __FAIL(i);
+-
+-		/*
+-		 * Distinct mappings of different granule sizes.
+-		 */
+-		iova = 0;
+-		for_each_set_bit(j, &cfg->pgsize_bitmap, BITS_PER_LONG) {
+-			size = 1UL << j;
+-
+-			if (ops->map_pages(ops, iova, iova, size, 1,
+-					   IOMMU_READ | IOMMU_WRITE |
+-					   IOMMU_NOEXEC | IOMMU_CACHE,
+-					   GFP_KERNEL, &mapped))
+-				return __FAIL(i);
+-
+-			/* Overlapping mappings */
+-			if (!ops->map_pages(ops, iova, iova + size, size, 1,
+-					    IOMMU_READ | IOMMU_NOEXEC,
+-					    GFP_KERNEL, &mapped))
+-				return __FAIL(i);
+-
+-			if (ops->iova_to_phys(ops, iova + 42) != (iova + 42))
+-				return __FAIL(i);
+-
+-			iova += SZ_1G;
+-		}
+-
+-		/* Full unmap */
+-		iova = 0;
+-		for_each_set_bit(j, &cfg->pgsize_bitmap, BITS_PER_LONG) {
+-			size = 1UL << j;
+-
+-			if (ops->unmap_pages(ops, iova, size, 1, NULL) != size)
+-				return __FAIL(i);
+-
+-			if (ops->iova_to_phys(ops, iova + 42))
+-				return __FAIL(i);
+-
+-			/* Remap full block */
+-			if (ops->map_pages(ops, iova, iova, size, 1,
+-					   IOMMU_WRITE, GFP_KERNEL, &mapped))
+-				return __FAIL(i);
+-
+-			if (ops->iova_to_phys(ops, iova + 42) != (iova + 42))
+-				return __FAIL(i);
+-
+-			iova += SZ_1G;
+-		}
+-
+-		/*
+-		 * Map/unmap the last largest supported page of the IAS, this can
+-		 * trigger corner cases in the concatednated page tables.
+-		 */
+-		mapped = 0;
+-		size = 1UL << __fls(cfg->pgsize_bitmap);
+-		iova = (1UL << cfg->ias) - size;
+-		if (ops->map_pages(ops, iova, iova, size, 1,
+-				   IOMMU_READ | IOMMU_WRITE |
+-				   IOMMU_NOEXEC | IOMMU_CACHE,
+-				   GFP_KERNEL, &mapped))
+-			return __FAIL(i);
+-		if (mapped != size)
+-			return __FAIL(i);
+-		if (ops->unmap_pages(ops, iova, size, 1, NULL) != size)
+-			return __FAIL(i);
+-
+-		free_io_pgtable_ops(ops);
+-	}
+-
+-	return 0;
+-}
+-
+-static int __init arm_lpae_do_selftests(void)
+-{
+-	static const unsigned long pgsize[] __initconst = {
+-		SZ_4K | SZ_2M | SZ_1G,
+-		SZ_16K | SZ_32M,
+-		SZ_64K | SZ_512M,
+-	};
+-
+-	static const unsigned int address_size[] __initconst = {
+-		32, 36, 40, 42, 44, 48,
+-	};
+-
+-	int i, j, k, pass = 0, fail = 0;
+-	struct faux_device *dev;
+-	struct io_pgtable_cfg cfg = {
+-		.tlb = &dummy_tlb_ops,
+-		.coherent_walk = true,
+-		.quirks = IO_PGTABLE_QUIRK_NO_WARN,
+-	};
+-
+-	dev = faux_device_create("io-pgtable-test", NULL, 0);
+-	if (!dev)
+-		return -ENOMEM;
+-
+-	cfg.iommu_dev = &dev->dev;
+-
+-	for (i = 0; i < ARRAY_SIZE(pgsize); ++i) {
+-		for (j = 0; j < ARRAY_SIZE(address_size); ++j) {
+-			/* Don't use ias > oas as it is not valid for stage-2. */
+-			for (k = 0; k <= j; ++k) {
+-				cfg.pgsize_bitmap = pgsize[i];
+-				cfg.ias = address_size[k];
+-				cfg.oas = address_size[j];
+-				pr_info("selftest: pgsize_bitmap 0x%08lx, IAS %u OAS %u\n",
+-					pgsize[i], cfg.ias, cfg.oas);
+-				if (arm_lpae_run_tests(&cfg))
+-					fail++;
+-				else
+-					pass++;
+-			}
+-		}
+-	}
+-
+-	pr_info("selftest: completed with %d PASS %d FAIL\n", pass, fail);
+-	faux_device_destroy(dev);
+-
+-	return fail ? -EFAULT : 0;
+-}
+-subsys_initcall(arm_lpae_do_selftests);
+-#endif
 -- 
 2.51.1.930.gacf6e81ea2-goog
 
