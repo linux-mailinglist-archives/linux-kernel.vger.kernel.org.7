@@ -1,100 +1,222 @@
-Return-Path: <linux-kernel+bounces-883152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19D4FC2C814
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:57:55 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23CE2C2C7F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:56:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60F121888F4D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:57:03 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 9BA2234A721
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:56:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA29231063B;
-	Mon,  3 Nov 2025 14:56:32 +0000 (UTC)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD11B334389;
+	Mon,  3 Nov 2025 14:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XiUcUBih";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0/QgBKkz"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D94F21D3F2
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 14:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8601025D1E9;
+	Mon,  3 Nov 2025 14:56:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762181792; cv=none; b=RGt3s5nJTWz6co56mn4+ayu2Tob6wGKQ6rmFChdDpNzX5FrEu5nD65MSPlmQWf6ZdF51WedB0a0v49nQTcRiHCzOSdY3TQWVpGlP4hX/9Qz+Epu2ljAtMTr0WeAUike1ji2P0wYHCXnyfWJlDdNQmUv76P9/bp271YhJhiTnLqc=
+	t=1762181784; cv=none; b=MN2W9LmyQ7fTdYbRp85jqkb7G/MZhY5n9iIrkd4D0lCabYF6Gke6Rm07V/+f8kTQXAAXMkbAYbbsqai2FOYq0as+qCFLmYc8YAimInkq5fJSE5X2EV6Un5iGithmhiRupY3BmGPlcJYGo8Lz3BTqSFqzRYP0Vnoz1x+dVitWCaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762181792; c=relaxed/simple;
-	bh=s5HhCqdsQfAH71nlBy5jT8rmemhezTVFDs0Da9TumsU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jo+Yia87V+rSIRFpmti0BM+teHI4AJsX0qzUI4lF7/6PO2so8IPmDvQJSnMrPqAAqt1JmxdJFP16VFxaMMlGDq1gSE83pi+IlowsFCG4f8cInth1tvtmhQgp6Ws+MtyHSQWBtwYEtuUs7hhJ0vBy/gt8sy9dmYs17hgfI9TP2C8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-57992ba129eso5523469e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 06:56:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762181788; x=1762786588;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=s5HhCqdsQfAH71nlBy5jT8rmemhezTVFDs0Da9TumsU=;
-        b=BDL5SL1YzZv/EpnMXsXZDYhY1QtSh2wg78N3Ss5YJhwi2V6o6CrPwIw1WSxjUej3RV
-         0n6USz9WyyPavmupZ7HhnNgrrnUo/pyM9elCDz+t7HUK7XHPry37ISH6Jr69w9MzJohl
-         JdhGOcA2Mwglx/8EVjtleRtwse24ruaU82nQeCKZ0DcOqZp2enZPdwm7Ml9uJ47OgPGn
-         qIjjasr3Bgf4r8jrHIcV8wrA4th4Q1aENIa4UqUuOLPwQ8cLN+R9az5leSPn/XxuxN7D
-         LqKR9h4wONE//Kn4yRnzTxIPFPOQxKeJIv2AfP4ZcHAdbK6/Z+fLn+odTQoAPK181e99
-         PATg==
-X-Forwarded-Encrypted: i=1; AJvYcCXB71MNTMfIwYVjIeSm7V0UK+mDm+7qGxIucEgMp1uHIDmz66tYkXOd8YL8K9G+zMtU5mOgJg9vlbh899s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbSpsqwR9KcuU65Z0gH5Wz5bgxEvi8U+EgFCzF2lTUcHjkLfbA
-	oGqsNLHLMQXRKxiyn/MH52vLgeQmp6x9dUvEOvIQ3XNhO2mYXucBm1KZ5uijcaWp
-X-Gm-Gg: ASbGncvZn70aDpmHKXKBY10AuKQrWxZNS6HrE9qOvnFtakv+N11iSyQKyUXYrpg2C8l
-	HqSmzrDcIImmwqwb3bRpFZnO/N47wuAXEVSu3rTipu5jF9EWSgZbikfPKTHYdoDxQgWBRVkSq5E
-	8sJueUmHMhgbX+iXbhKpZrWefOfVqDz6Y9eEdJwh/4SHy6qSmdVxCkBbp4+Ue8DxpPJTdg+b8UA
-	tFYdMDkDN65NTZNobO0IRIbEHdVnxYxXm9bRS+t61RHTvp7aI5gh9Ymr/9EgryPgE81XlN7/wAf
-	wbdnRzHoazcCTEPKPb3Cd/aTstoT4QFHdEnrDwBosxsCwUbydWpq0N4e+aRcC4em3w3t6L5JY9p
-	bkIjFTQe+dZ9h9Fmp/bBJW4N0cWMeqNfMlXTAS9opPIezFHCiDpNQFywBykTCKKOtqyMi3sqlSB
-	LNBWZurIsOElVYdtOUPqAKALjX4jodRH9RfFQLLyDfKoU=
-X-Google-Smtp-Source: AGHT+IH4uP1xr0CSNTmjS2+87Y4V04d+qISk9h2ej70hDt7sN18P5IpggbC9gf0U6LsT285I85QvVg==
-X-Received: by 2002:a05:6512:4014:b0:594:2c64:54c9 with SMTP id 2adb3069b0e04-5942c64587dmr1218277e87.37.1762181787506;
-        Mon, 03 Nov 2025 06:56:27 -0800 (PST)
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5941f5bc07fsm2982481e87.89.2025.11.03.06.56.27
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Nov 2025 06:56:27 -0800 (PST)
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-376466f1280so57013341fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 06:56:27 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVx0VVFVMYqhvUYCcRNw8ryTUL9hx2Rjs8nerNUtlE+kOeu1B/WDYTqkQfmGYYhv/EYeVG2u4ZdGs4yW70=@vger.kernel.org
-X-Received: by 2002:a2e:8317:0:b0:375:fa47:14a8 with SMTP id
- 38308e7fff4ca-37a18dc644fmr33438281fa.31.1762181787126; Mon, 03 Nov 2025
- 06:56:27 -0800 (PST)
+	s=arc-20240116; t=1762181784; c=relaxed/simple;
+	bh=GKiEHQYbZ9O5zRueidCrnI4Nof1vAVhqWFWETa9Q4zo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=J10JPbTIiN4uUZJwX70ipfFC9GX74XeatUIY/8lrD6UAE+5Pu7sIn/dTwgnxJcq9dtru1meYK9pZDGak6xK/BR2IS4jEMuyfCWGibT1LH8vuF90VE7716vyzo5TK52vE3CyPwragaW3cON39S6NYQG6PwkNvQ5oGCPyRPuwh+VM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XiUcUBih; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0/QgBKkz; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 3 Nov 2025 15:56:19 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762181780;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=8KmgFJFmTnTiwLLTqDjpcpiVmKo1ylq3G0CC12iUpoY=;
+	b=XiUcUBihyp2w0Hj1A+qX62EhBt9ql+MEQdBEAbMTGs8yZvCzdk3YCvphsh3B7FJcgr5VpP
+	h5zvSgAQkF6b5Bz2C2Piz2SoknBhI5MoG1BaRElC0OTrrVPC83AOTTx3Gk1QAUb/ECLrQH
+	b1myItGYDWYb5bx7aEBTVFyfHU4nzIPcCo1PyHNZkHg7avF3USHObJXCNBeRSTnvbh1nLm
+	ToQJhqJV4hFKQxP/k7zevDmTNNRZASCfhQwd/Mrzhk7tOPaAsfCreVMmAehQJFKk+eHyxr
+	J9JfFm5Y9ls6MJydBCqqn1H4TWWrSrGSBVweJD4iXmVNfYFUsAnXyiE4Jvawfg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762181780;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=8KmgFJFmTnTiwLLTqDjpcpiVmKo1ylq3G0CC12iUpoY=;
+	b=0/QgBKkzEfE2DTyCGGTLXUqJyB251lidPPfp2TNNngiKVckX6VheJgzR+Z1t/box3+nnjl
+	NYJ8t2zSf6WeNKBQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Thomas Gleixner <tglx@linutronix.de>, linux-rt-devel@lists.linux.dev
+Cc: LKML <linux-kernel@vger.kernel.org>, linux-rt-users@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>
+Subject: [ANNOUNCE] v6.18-rc4-rt3
+Message-ID: <20251103145619.amGKEIT5@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251012192330.6903-1-jernej.skrabec@gmail.com> <20251012192330.6903-22-jernej.skrabec@gmail.com>
-In-Reply-To: <20251012192330.6903-22-jernej.skrabec@gmail.com>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Mon, 3 Nov 2025 22:56:14 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64Sfk7WvEXNnRfKRehtyn-4KhPBER9tV0E2_pX4JxGC8g@mail.gmail.com>
-X-Gm-Features: AWmQ_bmDRSdirXrFZY61Rit-O4eYxqlNFv0KMpQajaon1izsKkp3c6YIV8hGfRk
-Message-ID: <CAGb2v64Sfk7WvEXNnRfKRehtyn-4KhPBER9tV0E2_pX4JxGC8g@mail.gmail.com>
-Subject: Re: [PATCH 21/30] drm/sun4i: csc: use layer arg instead of mixer
-To: Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: mripard@kernel.org, maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, samuel@sholland.org, 
-	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-On Mon, Oct 13, 2025 at 3:24=E2=80=AFAM Jernej Skrabec <jernej.skrabec@gmai=
-l.com> wrote:
->
-> Layer will be more universal, due to DE33 support.
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+Dear RT folks!
 
-Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
+I'm pleased to announce the v6.18-rc4-rt3 patch set. 
+
+Changes since v6.18-rc4-rt2:
+
+  - Replace the ARM patches based on latest version posted to upstream:
+    - HIGHPTE is now disabled instead of HAVE_GUP_FAST. 
+    - HAVE_ARCH_JUMP_LABEL is now allowed on UP and only disabled on
+      SMP builds.
+    - Redid the page fault to avoid a warning and harden the branch
+      predictor on the correct CPU if needed.
+    - Removed the KVM dependency as there is no more KVM.
+
+Known issues
+    - Yoann Congal reported a bit spinlock in dm_exception_table_lock().
+        https://lore.kernel.org/all/Z8GTjqgDe_5EkE3t@P-ASN-ECS-830T8C3.local
+
+The delta patch against v6.18-rc4-rt2 is appended below and can be found here:
+ 
+     https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.18/incr/patch-6.18-rc4-rt2-rt3.patch.xz
+
+You can get this release via the git tree at:
+
+    https://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v6.18-rc4-rt3
+
+The RT patch against v6.18-rc4 can be found here:
+
+    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.18/older/patch-6.18-rc4-rt3.patch.xz
+
+The split quilt queue is available at:
+
+    https://cdn.kernel.org/pub/linux/kernel/projects/rt/6.18/older/patches-6.18-rc4-rt3.tar.xz
+
+Sebastian
+
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 002db8da69ee5..84ad4fe11589b 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -41,7 +41,7 @@ config ARM
+ 	select ARCH_SUPPORTS_CFI
+ 	select ARCH_SUPPORTS_HUGETLBFS if ARM_LPAE
+ 	select ARCH_SUPPORTS_PER_VMA_LOCK
+-	select ARCH_SUPPORTS_RT if HAVE_POSIX_CPU_TIMERS_TASK_WORK
++	select ARCH_SUPPORTS_RT
+ 	select ARCH_USE_BUILTIN_BSWAP
+ 	select ARCH_USE_CMPXCHG_LOCKREF
+ 	select ARCH_USE_MEMTEST
+@@ -81,7 +81,7 @@ config ARM
+ 	select HAS_IOPORT
+ 	select HAVE_ARCH_AUDITSYSCALL if AEABI && !OABI_COMPAT
+ 	select HAVE_ARCH_BITREVERSE if (CPU_32v7M || CPU_32v7) && !CPU_32v6
+-	select HAVE_ARCH_JUMP_LABEL if !XIP_KERNEL && !CPU_ENDIAN_BE32 && MMU && !PREEMPT_RT
++	select HAVE_ARCH_JUMP_LABEL if !XIP_KERNEL && !CPU_ENDIAN_BE32 && MMU && (!PREEMPT_RT || !SMP)
+ 	select HAVE_ARCH_KFENCE if MMU && !XIP_KERNEL
+ 	select HAVE_ARCH_KGDB if !CPU_ENDIAN_BE32 && MMU
+ 	select HAVE_ARCH_KASAN if MMU && !XIP_KERNEL
+@@ -106,7 +106,7 @@ config ARM
+ 	select HAVE_DYNAMIC_FTRACE_WITH_REGS if HAVE_DYNAMIC_FTRACE
+ 	select HAVE_EFFICIENT_UNALIGNED_ACCESS if (CPU_V6 || CPU_V6K || CPU_V7) && MMU
+ 	select HAVE_EXIT_THREAD
+-	select HAVE_GUP_FAST if ARM_LPAE && !(PREEMPT_RT && HIGHPTE)
++	select HAVE_GUP_FAST if ARM_LPAE
+ 	select HAVE_FUNCTION_ERROR_INJECTION
+ 	select HAVE_FUNCTION_GRAPH_TRACER
+ 	select HAVE_FUNCTION_GRAPH_FREGS
+@@ -130,7 +130,6 @@ config ARM
+ 	select HAVE_PERF_EVENTS
+ 	select HAVE_PERF_REGS
+ 	select HAVE_PERF_USER_STACK_DUMP
+-	select HAVE_POSIX_CPU_TIMERS_TASK_WORK if !KVM
+ 	select MMU_GATHER_RCU_TABLE_FREE if SMP && ARM_LPAE
+ 	select HAVE_REGS_AND_STACK_ACCESS_API
+ 	select HAVE_RSEQ
+@@ -1215,7 +1214,7 @@ config HIGHMEM
+ 
+ config HIGHPTE
+ 	bool "Allocate 2nd-level pagetables from highmem" if EXPERT
+-	depends on HIGHMEM
++	depends on HIGHMEM && !PREEMPT_RT
+ 	default y
+ 	help
+ 	  The VM uses one page of physical memory for each page table.
+diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
+index 00713f22ef066..ad58c1e22a5f9 100644
+--- a/arch/arm/mm/fault.c
++++ b/arch/arm/mm/fault.c
+@@ -183,9 +183,6 @@ __do_user_fault(unsigned long addr, unsigned int fsr, unsigned int sig,
+ {
+ 	struct task_struct *tsk = current;
+ 
+-	if (addr > TASK_SIZE)
+-		harden_branch_predictor();
+-
+ #ifdef CONFIG_DEBUG_USER
+ 	if (((user_debug & UDBG_SEGV) && (sig == SIGSEGV)) ||
+ 	    ((user_debug & UDBG_BUS)  && (sig == SIGBUS))) {
+@@ -218,10 +215,14 @@ void do_bad_area(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ 	 * If we are in kernel mode at this point, we
+ 	 * have no context to handle this fault with.
+ 	 */
+-	if (user_mode(regs))
++	if (user_mode(regs)) {
++		if (addr >= TASK_SIZE)
++			harden_branch_predictor();
++		local_irq_enable();
+ 		__do_user_fault(addr, fsr, SIGSEGV, SEGV_MAPERR, regs);
+-	else
++	} else {
+ 		__do_kernel_fault(mm, addr, fsr, regs);
++	}
+ }
+ 
+ #ifdef CONFIG_MMU
+@@ -274,8 +275,11 @@ do_page_fault(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ 
+ 
+ 	/* Enable interrupts if they were enabled in the parent context. */
+-	if (interrupts_enabled(regs))
++	if (interrupts_enabled(regs)) {
++		if (user_mode(regs) && addr >= TASK_SIZE)
++			harden_branch_predictor();
+ 		local_irq_enable();
++	}
+ 
+ 	/*
+ 	 * If we're in an interrupt or have no user
+@@ -473,9 +477,6 @@ do_translation_fault(unsigned long addr, unsigned int fsr,
+ 	if (addr < TASK_SIZE)
+ 		return do_page_fault(addr, fsr, regs);
+ 
+-	if (interrupts_enabled(regs))
+-		local_irq_enable();
+-
+ 	if (user_mode(regs))
+ 		goto bad_area;
+ 
+@@ -546,9 +547,6 @@ do_translation_fault(unsigned long addr, unsigned int fsr,
+ static int
+ do_sect_fault(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ {
+-	if (interrupts_enabled(regs))
+-		local_irq_enable();
+-
+ 	do_bad_area(addr, fsr, regs);
+ 	return 0;
+ }
+diff --git a/localversion-rt b/localversion-rt
+index c3054d08a1129..1445cd65885cd 100644
+--- a/localversion-rt
++++ b/localversion-rt
+@@ -1 +1 @@
+--rt2
++-rt3
 
