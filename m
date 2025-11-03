@@ -1,103 +1,106 @@
-Return-Path: <linux-kernel+bounces-882526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2355C2AAAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:59:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C39AC2AAB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 10:02:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CB811892405
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:59:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C913189036C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 09:02:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7826A2E6CD3;
-	Mon,  3 Nov 2025 08:58:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3682D7DC0;
+	Mon,  3 Nov 2025 09:01:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="sFhv3Gsf"
-Received: from canpmsgout07.his.huawei.com (canpmsgout07.his.huawei.com [113.46.200.222])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="a/ReXCY9"
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044362DF6F8;
-	Mon,  3 Nov 2025 08:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.222
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F62F230D14
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 09:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762160329; cv=none; b=CI7YD+AikEmu2uD2Bdk1Hm0VxkTIXSqtQjMN32qPX+mslVOhAujT3d8ZAzHjPa6g5tOLXFw/U1MpwplB9BgYhk40hwsJVGNzKpqduamodRJGhJmgvINoEmlimnZnPb9LdT/QIgH34VUB/xRE0nbgybyoES71n6QxrOxrHWKuQiw=
+	t=1762160507; cv=none; b=k+leDudespfef67Bv7UJsxvlz1usEGWo7hKNkvgGtf2qt9ai1POlBZl3l0/JeHiE/rhcV4Dq6fUQbEpmkiGQlOGyu9fDwTHvWuA44czK/Ps27fn3lde+hupzpqseSWy3WqxaKj9/n+QM9t9NEpSZX206wD9xk9YsX3jMO8iVlEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762160329; c=relaxed/simple;
-	bh=JXPCsQTTxVnoh0TkP1LaQ3H1WCvGUkzl8sNo7rus+JQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pOdeot5EPzYYNJMcQVvhSoxckJc5xmfd4A/SNEcA5RwoGeAM0n4mcZr/Acv0vKqTFYMqx5tK3dRFi4ZQ7oG+KIYn8QvCQwFvz2U/jSM1KmrCp/X5E3u54gJZyy8OEDGCoPfQyMCzOsDUHpIvQXu7XoOcREUlg2WlzSPcMgx4lHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=sFhv3Gsf; arc=none smtp.client-ip=113.46.200.222
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=vhZdASlHH+QeEq0UbVzWVoPF8l6AizkcGzyv7NcZ9Mk=;
-	b=sFhv3GsfQN1H1yy+8lqdJs/YTjxE/ctYLlpRHqbIF1HL8eVbhAa3uTGbSJfEK7Ap7X5qK2Vn7
-	symE54OrB7tDUT/1FniVkv2WM2Pe1+FwsRqZ2PoPlmHtorOtuW3sfSCwtF9Dw9DzF9laYu4UtYB
-	rJ8NDNTnYlIDS1bk3vJFhtc=
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by canpmsgout07.his.huawei.com (SkyGuard) with ESMTPS id 4d0QSk5RT4zLlVC;
-	Mon,  3 Nov 2025 16:57:10 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id 65DAE1A016C;
-	Mon,  3 Nov 2025 16:58:44 +0800 (CST)
-Received: from [10.174.177.19] (10.174.177.19) by
- dggpemf500016.china.huawei.com (7.185.36.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 3 Nov 2025 16:58:43 +0800
-Message-ID: <2ea387c7-cd15-44cc-8789-af3fbe0460a3@huawei.com>
-Date: Mon, 3 Nov 2025 16:58:42 +0800
+	s=arc-20240116; t=1762160507; c=relaxed/simple;
+	bh=/NdcaUMfQ0BGyNwZomCiV0RZvgN0AGZub7FE9predw0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EupgEusTM1NxHWA6pv3jkVwuulk8/62dv1m4KHkcXsmxLZoW/UiUkULJOBk+LfFiWbdR0VdxtMC9IilHJm6ePRXaYQ9Y6B2uIZlVOiXUcl4hYHTQQqiOo7k0280MkbYX7k0wsADXiikdsngB224Ww2bjjjhgdtXd0wpY+NvJWbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=a/ReXCY9; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762160497;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=bkrUj1G/r3FtXK0JfLFqVkLf5znqH+CmB/WJED783ZA=;
+	b=a/ReXCY9nhDEOgyQAv9hEmx9HuiK11hT2ERFx5B7viT/jta1Hyvka6ysaAwZHddthX5ibB
+	6JYUBxdLmBuDxarJ1+GKMA6QBNz4BgsR++g6uorB0ofsAbsAi4jlq0hRWDeNtw4xKWMPux
+	W4+fdOq1CRKp30oMMHwCbcALFSCbiNk=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Jarkko Sakkinen <jarkko@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-sgx@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] x86/sgx: Fix typos and formatting in function comments
+Date: Mon,  3 Nov 2025 10:01:04 +0100
+Message-ID: <20251103090103.1415-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] selftests: netdevsim: Fix ethtool-features.sh fail
-To: Sabrina Dubroca <sd@queasysnail.net>
-CC: <kuba@kernel.org>, <andrew@lunn.ch>, <davem@davemloft.net>,
-	<edumazet@google.com>, <pabeni@redhat.com>, <shuah@kernel.org>,
-	<horms@kernel.org>, <netdev@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>
-References: <20251030032203.442961-1-wangliang74@huawei.com>
- <aQPxN5lQui5j8nK8@krikkit>
-From: Wang Liang <wangliang74@huawei.com>
-In-Reply-To: <aQPxN5lQui5j8nK8@krikkit>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- dggpemf500016.china.huawei.com (7.185.36.197)
+X-Migadu-Flow: FLOW_OUT
 
+Fix typos and formatting in function comments to clarify that
+sgx_set_attribute() returns 0, not -0, to avoid confusion and to be
+consistent.
 
-在 2025/10/31 7:13, Sabrina Dubroca 写道:
-> 2025-10-30, 11:22:03 +0800, Wang Liang wrote:
->> This patch adds executable permission to script 'ethtool-features.sh', and
->> check 'ethtool --json -k' support.
-> Those are two separate things, probably should be two separate patches.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ arch/x86/kernel/cpu/sgx/main.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-
-Ok, I will extract the executable permission change to a new patch.
-
->
-> [...]
->> @@ -7,6 +7,11 @@ NSIM_NETDEV=$(make_netdev)
->>   
->>   set -o pipefail
->>   
->> +if ! ethtool --json -k $NSIM_NETDEV > /dev/null 2>&1; then
-> I guess it's improving the situation, but I've got a system with an
-> ethtool that accepts the --json argument, but silently ignores it for
->   -k (ie `ethtool --json -k $DEV` succeeds but doesn't produce a json
-> output), which will still cause the test to fail later.
-
-
-That is indeed a bit strange.
-
-I'm not sure the best way to handle this situation now. Maybe update ethtool
-instead of checking the output is not a bad method.
+diff --git a/arch/x86/kernel/cpu/sgx/main.c b/arch/x86/kernel/cpu/sgx/main.c
+index 2de01b379aa3..c33e2b56a3fc 100644
+--- a/arch/x86/kernel/cpu/sgx/main.c
++++ b/arch/x86/kernel/cpu/sgx/main.c
+@@ -465,11 +465,11 @@ static struct sgx_epc_page *__sgx_alloc_epc_page_from_node(int nid)
+ /**
+  * __sgx_alloc_epc_page() - Allocate an EPC page
+  *
+- * Iterate through NUMA nodes and reserve ia free EPC page to the caller. Start
++ * Iterate through NUMA nodes and reserve a free EPC page to the caller. Start
+  * from the NUMA node, where the caller is executing.
+  *
+  * Return:
+- * - an EPC page:	A borrowed EPC pages were available.
++ * - an EPC page:	A borrowed EPC page if available.
+  * - NULL:		Out of EPC pages.
+  */
+ struct sgx_epc_page *__sgx_alloc_epc_page(void)
+@@ -898,8 +898,8 @@ static struct miscdevice sgx_dev_provision = {
+  * /dev/sgx_provision is supported.
+  *
+  * Return:
+- * -0:		SGX_ATTR_PROVISIONKEY is appended to allowed_attributes
+- * -EINVAL:	Invalid, or not supported file descriptor
++ * - 0:		SGX_ATTR_PROVISIONKEY is appended to allowed_attributes
++ * - -EINVAL:	Invalid, or not supported file descriptor
+  */
+ int sgx_set_attribute(unsigned long *allowed_attributes,
+ 		      unsigned int attribute_fd)
+-- 
+2.51.1
 
 
