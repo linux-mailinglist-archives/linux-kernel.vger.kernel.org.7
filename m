@@ -1,101 +1,53 @@
-Return-Path: <linux-kernel+bounces-882356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1077C2A403
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:09:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C083CC2A406
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:09:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 2F0254EEB8E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:07:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F9FD1890D3E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 425F929BD90;
-	Mon,  3 Nov 2025 07:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB45298CBE;
+	Mon,  3 Nov 2025 07:08:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="FynWYY6f";
-	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="T9dpvIR5"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b="d3LsbCOR"
+Received: from smtpbgsg2.qq.com (smtpbgsg2.qq.com [54.254.200.128])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F5129B8E6
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 07:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9827C8BEC;
+	Mon,  3 Nov 2025 07:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.254.200.128
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762153616; cv=none; b=qHdLW//DR8LQ2UzXlL+bKs5IS+kmYQp2zmWrUrZqMe0r5pEOt0b1tzbn5uuzcxnr7UcZX+8UAAskTNEpnIwFAvN4K4xLoVGW5EKLymvpqcNcSgfHQKu7I06nqTGpnagNfQOp1xGxE8TUWXf75ElD3d60JMHgxgM1NzaWXkmYLXU=
+	t=1762153685; cv=none; b=CDC0ZeAOT+SqdXtqKUpypOP+XjvwhmOm1JH0dUZF1NuFsnXKwn9P8PU5iKuK0+1mqpTi6BCLMdPVrBZ5hCqQw5ahaXy1FG40rZhDFoxhujaIn383WskzWFzVZZmDcFioklUtVSOG8KDt/KeUs1bnLTwvvy5wPJvsiGooghlNaUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762153616; c=relaxed/simple;
-	bh=jPRvo8AxN6ZXO7cz0KQaS/sv2ld0a4D/+sFPdm3cEx0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=V3ow55rpHB5opCo44gYP7GG4YJyqrPaqZdFRHHS5BYM7S1Mmjnm9V14D9Zt4NAGLkvI2Yf24OLPSwT24dvNQYJxWb5LNh0puJzcy3KpK3wAisvJhK+j7eoDGiY7ZLIb4TILmrxggZ4BescwkGIDwb+08PeY277zboJJXw1CvPuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=FynWYY6f; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=T9dpvIR5; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A2He23r925731
-	for <linux-kernel@vger.kernel.org>; Mon, 3 Nov 2025 07:06:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	11c3KbrjHPgiU5BclHH5SfdYsQYYwt21sbw+FWikq08=; b=FynWYY6fgsE7lM1b
-	1yx33gZKolSlLLfQF5/ByEl61T8AoYvPWEKL68uJuu4X4yN+Os/0m0qWfEXNFQLx
-	IGzJfIfCy2w6QLBFIHkRbSTf69bbzlXbblRIApme3HchxPUZoESre0SjTNPGJZcd
-	78C+7YXwpc3A2K4Ie1CeBNTeOiqJ6v6asekgn2D0WrEu37P2i6nAUn2PaYGMGuhS
-	CgzyfoL/Pgbir5yEBiURL2/RBFbxLZDEljUUxeizU96GV6z1/eKQtBJ4pyv8R0aj
-	DdbS4KJ6nkcl8vhMINq2j5JCvqGnTAy34KAQrG0jopy99w8GUUI68+IiH6rNdp/Y
-	0DzwCg==
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a5977bqp3-1
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 07:06:53 +0000 (GMT)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-3408d2c733cso3319311a91.2
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 23:06:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=oss.qualcomm.com; s=google; t=1762153612; x=1762758412; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=11c3KbrjHPgiU5BclHH5SfdYsQYYwt21sbw+FWikq08=;
-        b=T9dpvIR5aTS9rDeqpBVpcgyAh+sz1o2MqolX5jIMvBNP/715iehDLQWy3FWWAVetoM
-         wSd9Z6dWy3/8/q7f7xWRWz27aWIBgTQd311ST/aYHkTrr8tJZLvVJri1B68bVuunxzYv
-         GpMMrY9ugMGLuQGRxZQ4+0PomrA6hl2zUvsuNTHL1qyOt5BrpqiDLytAiolBGdHEdpUa
-         VbbtUWO+j1ScYnbgPN1jx9k0+F/tN8WwuncSLCw8/pywx5lJGJDQ8nLBNbR/XpeVPmXt
-         0Yl91ZmyAu6GO4q2uVNrllC3QhGAJNOLxOAAYZ3CCkn3tgpjY3Ba+4qryYzciMLfFa4X
-         b6TQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762153612; x=1762758412;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=11c3KbrjHPgiU5BclHH5SfdYsQYYwt21sbw+FWikq08=;
-        b=Sfz5NGZLzl54p+x4Pw1EHJXbxT+WiJx4kyAfxk735UF3/2ye9+IjRnk2qYo0rDwbS9
-         vRJolUspQAsjzzl/WqQrahKa30oVHbE/PL00w19m452+izQTh/ohoS0LCq/QKywdOJt5
-         OMrZuAaIqN7YtdrMS9wHVx/ppXjr6GZ5JRqJ/ABq2W5NoUA/qm8G1PJofQ4Wbvc9ah7w
-         FkpKw53aVkgnrcHp9s1r959cmZCqo6qW7hwZhLFlpbjTCsn9eSiV36SnQ7NvSjNCgNGO
-         O3HApWmbR7KVQGnk6cgepkuWt8pTGz0X5lmpUJceilQHo77t6eZpWr5/LyZ00Jk25PYN
-         YJ6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVo+2WZqRv+zTo4UJ0IRYXEkZSNuSe4vGfzh8AGtRUIq5xHj5ktf3dNEjZ6e7Pgq5PvVDqye6G9JziPoCs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2QkRtYms2kcA2z4vqUjbk3EJx6e0OiSyc4zDH9RtThGbDqHrE
-	+EjohPO1tvBT0t0hYR2LwSav1GJFATUy4N43QplAmMxKThBCX79ya/of9krsXlrIKJ1AG9uwh3E
-	h7ckrkyRWC1eooFhzKzuMJ71FiYy/KU5BAnOGs11L7YVyRf282qdFW1Jpgdb4V8WbJgc=
-X-Gm-Gg: ASbGncuiiXT9p7goU5l2aDlEyujZRauvfV28ZV8tNYsTd82005K5Dv3gIAqGy3DcR4z
-	X/XWBuq7Jcz9BD7IQ1xg03EB3IWc6PO/0tmDJIl1zgU63FpDg384h2yFkokb4MeSXG8Y8y94bUS
-	aqKeOyU8X2prc4WKurIikvTXaqjzYdunwLal7pTP0NnQd/wOMfl/yS9u6B8x7RpJV51Vyd5UamQ
-	FXjURMUr4x18z1eZXjcuyp6Fq5I5K6QkCSYBuRLgxN8Xd4qlol6zM06YegCV60Ix82LpVFkAbzQ
-	U97/dtBIXuV/lMN6RMeBGgRjsiZhXqvOIKU782MM9eCMl3RMP+6o3UNuNsErmySWUJiqnLFSLkh
-	rS85LuAIO++jeZqO+LL2Gm2S3V6Rmahoi8dZvfEVZIkKEPU+x+tszhN8/cV+OeA==
-X-Received: by 2002:a17:90b:3512:b0:340:ec6f:5ac5 with SMTP id 98e67ed59e1d1-340ec6f5cfcmr4480126a91.2.1762153612388;
-        Sun, 02 Nov 2025 23:06:52 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF0l22Dq0T/IasETveP/YFptHxCxmhpbzcfOxByTl+bEQYHpqub71iYiBm4TLNep6pPcUNFKw==
-X-Received: by 2002:a17:90b:3512:b0:340:ec6f:5ac5 with SMTP id 98e67ed59e1d1-340ec6f5cfcmr4480094a91.2.1762153611843;
-        Sun, 02 Nov 2025 23:06:51 -0800 (PST)
-Received: from jiegan-gv.ap.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3407ef49da8sm5808704a91.1.2025.11.02.23.06.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Nov 2025 23:06:51 -0800 (PST)
-From: Jie Gan <jie.gan@oss.qualcomm.com>
-Date: Mon, 03 Nov 2025 15:06:22 +0800
-Subject: [PATCH v4 2/2] arm64: dts: qcom: monaco: Add CTCU and ETR nodes
+	s=arc-20240116; t=1762153685; c=relaxed/simple;
+	bh=2vc8dJMZd6FC7filclH3xokq3Yh9OgHdz+OEBsr598U=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HynKJCiPgaSpwPjK6naHD/0NrcOHxUqZvJ18SX/ia3BJj93RdOE95x8WKY/r3ouPNZt0XAEIsQHp6CKTb+c57NRuDiVwmxpJkVU7xUzh8IXc/YysWRmwUnH0pU+6iGDG7HU4dZ7hXslQVYLdjf9wMEEgRwwRyV6JG1TYGRtjL9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com; spf=none smtp.mailfrom=linux.spacemit.com; dkim=pass (1024-bit key) header.d=linux.spacemit.com header.i=@linux.spacemit.com header.b=d3LsbCOR; arc=none smtp.client-ip=54.254.200.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux.spacemit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.spacemit.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.spacemit.com;
+	s=mxsw2412; t=1762153590;
+	bh=twT6UKR7uxSLBMBv7PcVYWWyZztV/iDvMv6ENH9b6WA=;
+	h=From:Date:Subject:MIME-Version:Message-Id:To;
+	b=d3LsbCOR76oDxMaFWjYox4PGdOc/XpVKtHm0y/bIUif435dA0ASEwTBZVR8ndedbc
+	 hojETTZbvbEMTHhdJn6ANbmhFkAwYLQRaHt5+g7kOZhVkk9q7quPQm9ECADO/266El
+	 c9gA6/w+8eycNLm8LIAAEItJx0Y3cXdINR3e08wQ=
+X-QQ-mid: zesmtpgz3t1762153588t9f1f8e62
+X-QQ-Originating-IP: R3B6rAZlOdUvAMM4kUW1Wx0B4GixrEUlUvZkXan5Hdo=
+Received: from = ( [61.145.255.150])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 03 Nov 2025 15:06:26 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 16909040105550240895
+EX-QQ-RecipientCnt: 10
+From: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Date: Mon, 03 Nov 2025 15:06:24 +0800
+Subject: [PATCH] i2c: spacemit: fix detect issue
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,244 +55,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251103-enable-ctcu-for-monaco-v4-2-92ff83201584@oss.qualcomm.com>
-References: <20251103-enable-ctcu-for-monaco-v4-0-92ff83201584@oss.qualcomm.com>
-In-Reply-To: <20251103-enable-ctcu-for-monaco-v4-0-92ff83201584@oss.qualcomm.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach <mike.leach@linaro.org>,
-        James Clark <james.clark@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Tingwei Zhang <tingwei.zhang@oss.qualcomm.com>,
-        Yuanfang Zhang <yuanfang.zhang@oss.qualcomm.com>,
-        Mao Jinlong <jinlong.mao@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, coresight@lists.linaro.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jie Gan <jie.gan@oss.qualcomm.com>,
-        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1762153595; l=3931;
- i=jie.gan@oss.qualcomm.com; s=20250909; h=from:subject:message-id;
- bh=jPRvo8AxN6ZXO7cz0KQaS/sv2ld0a4D/+sFPdm3cEx0=;
- b=UiqqFcnAt021/IodBx0c94um0OoWrMu9IazVSkrxBTI7ECq2bmxESxKNtPy2HBGxA2THKlqzD
- jgtTLzuRmbqB+xdzThilAsdrQR8916cbhK6E8e9YDFn3spYBbQw7eMA
-X-Developer-Key: i=jie.gan@oss.qualcomm.com; a=ed25519;
- pk=3LxxUZRPCNkvPDlWOvXfJNqNO4SfGdy3eghMb8puHuk=
-X-Proofpoint-GUID: lA6taMKmr6nWgoNtqTQDbLm4eRMb47FV
-X-Proofpoint-ORIG-GUID: lA6taMKmr6nWgoNtqTQDbLm4eRMb47FV
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAzMDA2NSBTYWx0ZWRfX7OEeF1u/nyy0
- ByEFSc3UBsCQlveOJ9P3Rr+ibOz+XaYnl6mQNdFE7sIT6o+Pj5W/DYB+to87R1a/a6OXEDXgBOW
- 8vr6B+OYKiA2YEtrfr8d26lQBSb/QsUaoNqMS3z+uHweWkZOqCoFNV0AUXvcuE/PvP3RZHJ3lmo
- wymj2r/9uO3HcCdLe5u8a845dcunmUl/+uDS08f8OMtKPr1NZirVK4dqJofGFHM8yfPOQSa0pPJ
- S861qK41fnP/VFR341fMNAX6Kyf6/hhlb+3BER5Wa3CGcmfOQa9ZtxygIUbL64o8Jis6mxi5oAA
- isImFJL39SLOe+QRtiukA3SgfeT32gDN0pHaZzKkzCpuIgWZ0gQy5BRTq6ZnaswDYuCktbi043T
- zqiRUlQZ2VPdrJ/l4D8bRcRNgBARzw==
-X-Authority-Analysis: v=2.4 cv=WcABqkhX c=1 sm=1 tr=0 ts=6908548d cx=c_pps
- a=0uOsjrqzRL749jD1oC5vDA==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10
- a=VkNPw1HP01LnGYTKEx00:22 a=EUspDBNiAAAA:8 a=xJyy5nzPNu-aANFJA0oA:9
- a=QEXdDO2ut3YA:10 a=mQ_c8vxmzFEMiUWkPHU9:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-02_02,2025-10-29_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 lowpriorityscore=0 adultscore=0 priorityscore=1501
- impostorscore=0 spamscore=0 malwarescore=0 clxscore=1015 suspectscore=0
- bulkscore=0 classifier=typeunknown authscore=0 authtc= authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
- definitions=main-2511030065
+Content-Transfer-Encoding: 8bit
+Message-Id: <20251103-fix-k1-detect-failure-v1-1-bb07a8d7de7c@linux.spacemit.com>
+X-B4-Tracking: v=1; b=H4sIAG9UCGkC/x2MWwqAIBAAryL73YKPQukq0UfZVkthoRVBdPekz
+ 4GZeSBRZEpQiwciXZx4CxlUIcDPXZgIecgMWupKKWlw5BsXhQMd5A8cO17PSCh7I5321lhXQm7
+ 3SFn8v037vh+V0IcRZwAAAA==
+X-Change-ID: 20251103-fix-k1-detect-failure-0b3082c73784
+To: Andi Shyti <andi.shyti@kernel.org>, Yixun Lan <dlan@gentoo.org>, 
+ Alex Elder <elder@riscstar.com>, 
+ Michael Opdenacker <michael.opdenacker@rootcommit.com>
+Cc: Troy Mitchell <troymitchell988@gmail.com>, linux-i2c@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ spacemit@lists.linux.dev, Troy Mitchell <troy.mitchell@linux.spacemit.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1762153586; l=2372;
+ i=troy.mitchell@linux.spacemit.com; s=20250710; h=from:subject:message-id;
+ bh=2vc8dJMZd6FC7filclH3xokq3Yh9OgHdz+OEBsr598U=;
+ b=Hyn5Qog/ra3RKl96Owc8FFHtdNGYfk5j6NbnLXSzUgwqi6vdLL4hfMVZmP220fc8KIno7v+BK
+ paqheZ1hV68DflWL+R6bhBmNQDzJZ+X/9Tzwg+ShRAuBnNRTNa5ibQK
+X-Developer-Key: i=troy.mitchell@linux.spacemit.com; a=ed25519;
+ pk=lQa7BzLrq8DfZnChqmwJ5qQk8fP2USmY/4xZ2/MSsXc=
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpgz:linux.spacemit.com:qybglogicsvrgz:qybglogicsvrgz3a-0
+X-QQ-XMAILINFO: OW4JKxETGMY2QhaCakBTCB2YbsF7K2RIQJT/9qSLLx2hbcFan49fneMI
+	1/bIsB+wtDzQz71c086X6JKQiUNHIyvP7mxVs8D7hpCFS2KEuA5vEPWF9xqmILxOGVDIWse
+	j+cQ7jYD5Qz/t6pAuyTxxPzeGOgnI4iYn0bRrlVlsrk46WrVThMtHoDaJuDU1RV45nd68ZD
+	HBhpPJ/q7WJtGnbWf21x6XXtujDMJNnulHly8EMe8m63Ff9RbGr2Inve/gQVDxkGqgO+/W/
+	0o+4zwodSpLHyDCpx44b3fXLYt3CzzP6Ni61a7iigs5BUmVjtIrkZMke2TwTIxNkYV698Cb
+	KZCtrCd271Edb60GERNc6IOXPS9gcJDqje4LLGFpFWnPSbDdZDyU0X2CQjG7710gpNe/Tlj
+	BeQnLjxLGm7RqNNNtdvedt9gwnHg4ivP95GuETGx2qUerwFt5KQIO7ivVAvDyFPI9vKBNQg
+	UokJR7sx8dhtvidabrJDE+ML3XfGvr3eRQfW4KrSQO9+otJlmLVZ4osHUvEGsdbET1/2Vyo
+	K4j8M5z5n6sVMjbH/dBPneEnNGwB7XnNBJm6U7hh0gr4HrqWe1R1UNxFkt4O+2q1eSImeFV
+	abINM7BU6wuqEJVbB0OLaFt9hzq+VlZRbehwaUsv2Tdr4zPbdiZGywtnfyHPa28bGJRMoGD
+	fGJPiXkd7lER/VFowALipfvTvR6SauJXpCOevAY/OKIQ4BBNgaBoqMnS6yhmptYHyCpx0cs
+	gizfrhLSTw5m6oFtjt+2PE0AgbdNun6mXuyYdoQ9Ey4s6IIfaYjeJTOnhe3WMJNgskg1D+q
+	8fmbjaTzql06PdiViRkATVS09JaKiKZl4BdVhBl2D8B2w5hrtF1pB+pOgPE39yOwblAPTG8
+	ihiJKmeyzmzwMUO16ftngwoZ0pfLvHOgH3g7TfTybnei3t/NIE1m4Kh7aLPsbYznG6ztmZs
+	U7nxT+QpxdVV1SworCtJNUoSAsFDwgxAzy6SJz9QQLHgXz0vPuAAfIwvnW+Zq5zezs8Hptj
+	JL7YyaQ0JgPH8Laqb5KG/7vnC/vWsezrXBB0lkC+qVuRvkKwg1RwzE/BFPQDGU4IGKCFGU6
+	Km6kw4WUaM6XPSXAa898b4=
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-QQ-RECHKSPAM: 0
 
-Add CTCU and ETR nodes in DT to enable expected functionalities.
+This commit addresses two issues causing i2c detect to fail.
 
-Acked-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Jie Gan <jie.gan@oss.qualcomm.com>
+The identified issues are:
+
+1. Incorrect error handling for BED (Bus Error No ACK/NAK):
+   Before this commit, Both ALD (Arbitration Loss Detected) and
+   BED returned -EAGAIN.
+2. Missing interrupt status clear after initialization in xfer():
+   On the K1 SoC, simply fixing the first issue changed the error
+   from -EAGAIN to -ETIMEOUT. Through tracing, it was determined that
+   this is likely due to MSD (Master Stop Detected) latency issues.
+
+   That means the MSD bit in the ISR may still be set on the next transfer.
+   As a result, the controller won't work — we can see from the scope that
+   it doesn't issue any signal.
+   (This only occurs during rapid consecutive I2C transfers.
+   That explains why the issue only shows up with i2cdetect.)
+
+With these two fixes, i2c device detection now functions correctly on the K1 SoC.
+
+Fixes: 5ea558473fa31 ("i2c: spacemit: add support for SpacemiT K1 SoC")
+Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
 ---
- arch/arm64/boot/dts/qcom/monaco.dtsi | 153 +++++++++++++++++++++++++++++++++++
- 1 file changed, 153 insertions(+)
+I checked the vendor version driver and tried commenting out
+spacemit_i2c_clear_int_status() that runs before xfer starts.
+Surprisingly, i2cdetect stopped working as well.
+---
+ drivers/i2c/busses/i2c-k1.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/monaco.dtsi b/arch/arm64/boot/dts/qcom/monaco.dtsi
-index 816fa2af8a9a..1966dfad2dcc 100644
---- a/arch/arm64/boot/dts/qcom/monaco.dtsi
-+++ b/arch/arm64/boot/dts/qcom/monaco.dtsi
-@@ -2483,6 +2483,35 @@ lpass_ag_noc: interconnect@3c40000 {
- 			qcom,bcm-voters = <&apps_bcm_voter>;
- 		};
+diff --git a/drivers/i2c/busses/i2c-k1.c b/drivers/i2c/busses/i2c-k1.c
+index 6b918770e612e098b8ad17418f420d87c94df166..37828323317770ae2f0522d213dca67342ae166f 100644
+--- a/drivers/i2c/busses/i2c-k1.c
++++ b/drivers/i2c/busses/i2c-k1.c
+@@ -160,7 +160,8 @@ static int spacemit_i2c_handle_err(struct spacemit_i2c_dev *i2c)
  
-+		ctcu@4001000 {
-+			compatible = "qcom,qcs8300-ctcu", "qcom,sa8775p-ctcu";
-+			reg = <0x0 0x04001000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb";
-+
-+			in-ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					ctcu_in0: endpoint {
-+						remote-endpoint = <&etr0_out>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					ctcu_in1: endpoint {
-+						remote-endpoint = <&etr1_out>;
-+					};
-+				};
-+			};
-+		};
-+
- 		stm@4002000 {
- 			compatible = "arm,coresight-stm", "arm,primecell";
- 			reg = <0x0 0x04002000 0x0 0x1000>,
-@@ -2677,6 +2706,122 @@ qdss_funnel_out: endpoint {
- 			};
- 		};
+ 	if (i2c->status & (SPACEMIT_SR_BED | SPACEMIT_SR_ALD)) {
+ 		spacemit_i2c_reset(i2c);
+-		return -EAGAIN;
++		if (i2c->status & SPACEMIT_SR_ALD)
++			return -EAGAIN;
+ 	}
  
-+		replicator@4046000 {
-+			compatible = "arm,coresight-dynamic-replicator", "arm,primecell";
-+			reg = <0x0 0x04046000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb_pclk";
-+
-+			in-ports {
-+				port {
-+					qdss_rep_in: endpoint {
-+						remote-endpoint = <&swao_rep_out0>;
-+					};
-+				};
-+			};
-+
-+			out-ports {
-+				port {
-+					qdss_rep_out0: endpoint {
-+						remote-endpoint = <&etr_rep_in>;
-+					};
-+				};
-+			};
-+		};
-+
-+		tmc@4048000 {
-+			compatible = "arm,coresight-tmc", "arm,primecell";
-+			reg = <0x0 0x04048000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb_pclk";
-+			iommus = <&apps_smmu 0x04c0 0x00>;
-+
-+			arm,scatter-gather;
-+
-+			in-ports {
-+				port {
-+					etr0_in: endpoint {
-+						remote-endpoint = <&etr_rep_out0>;
-+					};
-+				};
-+			};
-+
-+			out-ports {
-+				port {
-+					etr0_out: endpoint {
-+						remote-endpoint = <&ctcu_in0>;
-+					};
-+				};
-+			};
-+		};
-+
-+		replicator@404e000 {
-+			compatible = "arm,coresight-dynamic-replicator", "arm,primecell";
-+			reg = <0x0 0x0404e000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb_pclk";
-+
-+			in-ports {
-+				port {
-+					etr_rep_in: endpoint {
-+						remote-endpoint = <&qdss_rep_out0>;
-+					};
-+				};
-+			};
-+
-+			out-ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+
-+					etr_rep_out0: endpoint {
-+						remote-endpoint = <&etr0_in>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+
-+					etr_rep_out1: endpoint {
-+						remote-endpoint = <&etr1_in>;
-+					};
-+				};
-+			};
-+		};
-+
-+		tmc@404f000 {
-+			compatible = "arm,coresight-tmc", "arm,primecell";
-+			reg = <0x0 0x0404f000 0x0 0x1000>;
-+
-+			clocks = <&aoss_qmp>;
-+			clock-names = "apb_pclk";
-+			iommus = <&apps_smmu 0x04a0 0x40>;
-+
-+			arm,scatter-gather;
-+			arm,buffer-size = <0x400000>;
-+
-+			in-ports {
-+				port {
-+					etr1_in: endpoint {
-+						remote-endpoint = <&etr_rep_out1>;
-+					};
-+				};
-+			};
-+
-+			out-ports {
-+				port {
-+					etr1_out: endpoint {
-+						remote-endpoint = <&ctcu_in1>;
-+					};
-+				};
-+			};
-+		};
-+
- 		tpdm@4841000 {
- 			compatible = "qcom,coresight-tpdm", "arm,primecell";
- 			reg = <0x0 0x04841000 0x0 0x1000>;
-@@ -3106,6 +3251,14 @@ out-ports {
- 				#address-cells = <1>;
- 				#size-cells = <0>;
+ 	return i2c->status & SPACEMIT_SR_ACKNAK ? -ENXIO : -EIO;
+@@ -491,6 +492,8 @@ static int spacemit_i2c_xfer(struct i2c_adapter *adapt, struct i2c_msg *msgs, in
  
-+				port@0 {
-+					reg = <0>;
-+
-+					swao_rep_out0: endpoint {
-+						remote-endpoint = <&qdss_rep_in>;
-+					};
-+				};
-+
- 				port@1 {
- 					reg = <1>;
+ 	spacemit_i2c_init(i2c);
  
++	spacemit_i2c_clear_int_status(i2c, SPACEMIT_I2C_INT_STATUS_MASK);
++
+ 	spacemit_i2c_enable(i2c);
+ 
+ 	ret = spacemit_i2c_wait_bus_idle(i2c);
 
+---
+base-commit: 3a8660878839faadb4f1a6dd72c3179c1df56787
+change-id: 20251103-fix-k1-detect-failure-0b3082c73784
+
+Best regards,
 -- 
-2.34.1
+Troy Mitchell <troy.mitchell@linux.spacemit.com>
 
 
