@@ -1,157 +1,136 @@
-Return-Path: <linux-kernel+bounces-882507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 010A5C2A9E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:44:54 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB262C2AAA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:59:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49B431892121
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:44:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 05FC04ECF85
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B982E228D;
-	Mon,  3 Nov 2025 08:44:08 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523E953363
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 08:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9362E7652;
+	Mon,  3 Nov 2025 08:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cewlsmQm"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8EEF2E1C6F;
+	Mon,  3 Nov 2025 08:58:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762159447; cv=none; b=KkdlTnLhHqT5Cm1Q9mNs2zirFNqUWjrT+4EVg9EpyOMCJk8E+oXCZWPpJr4CivDDoLtV/p9AeByvj4iqF+6c0l/HHATNH4ZESCCl4BgKhsoUAyBF8A8CL5pXb1RXbAG+R6lERatOPMau6YGxxQUs8i9J8Tw0iPa3zqMEqDyc/Gw=
+	t=1762160335; cv=none; b=lAJEKPsH/Ye1nuy0vzQKijljq7ggy7nby33RObRI9ieG0EyFFQOR9wL6LouyDr2tlnL4mPahUP5o5ISI9UPnB/0aQp0XUGz2IjsCgCS9OTh46z0f+1pLs2tLCamp8A8y56XiSgCRtcNm1N+doEapmUE8KtloL+t89N9jFgmwKqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762159447; c=relaxed/simple;
-	bh=ErdmyhYmbu+Q9MnDZ2ZB5VBnhzRHqOJACZeTJaH+/b4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RUfqDOQ5cOmNSKUy7U5lu0oBFevxzB/BBFhpHPGj1cj0FBlCrv/5xl4/yHC+DzsMauql8fRdioOP2wlgGT2MPsXWktbUf9z6YP+anLTaJsGF78RXWPrntIA99aP+L+42o5qyskLDTJv2aJbkStuXOZ6KmToYEiUzKBt2SZrRW1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BF88A1D13;
-	Mon,  3 Nov 2025 00:43:56 -0800 (PST)
-Received: from [10.164.136.41] (unknown [10.164.136.41])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3999F3F694;
-	Mon,  3 Nov 2025 00:43:57 -0800 (PST)
-Message-ID: <666e012e-0b13-4def-82de-55ccd5868d36@arm.com>
-Date: Mon, 3 Nov 2025 14:13:55 +0530
+	s=arc-20240116; t=1762160335; c=relaxed/simple;
+	bh=kyXRFhNZF3YdGGUinVbbVFRuVlkKQVdWx2ofydZcw6w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m2EIMj69T46dI7m2SwZnjcX2nljitit3KcNJ3ExHQFJQBlBCbVrV84MIl3rqOVjsct+d3/N48M5FM/XFH0Ld6eaQbMM8UdEPHDm6hVtcZ+bHykEBhkKJAv5zf1V1YZMM9Dw70BVYHTy6reYMNh4gfIOkkh1BGzkDLWrbxqgFlX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cewlsmQm; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762160334; x=1793696334;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kyXRFhNZF3YdGGUinVbbVFRuVlkKQVdWx2ofydZcw6w=;
+  b=cewlsmQmU/XiJaL7zkQrQCFgEiAwyrw7qEuWwBazc7RnOcjkGcLPsBXz
+   7G2wTCzgHVcjRxkA8ro5V/2KaIRQiFwCGra5qf37k7tQDdUy948a7Sc5z
+   7AQVXL5jqhEh7AS91h6LTIqrpSKq5dnP1IuHn8IqjK2EnnbQmGNPH69yS
+   aUU4+z283FdOdCNM4fIZX23nYWg2ByhfIBofNV+NpqmYFYH1jFY8WrZrh
+   PjNhkgYsW1xDaCwDY5e2ZCVmA44fEzyZPGLxksuDl/PFRqkfKQOspCQgq
+   ZNbzxTri3dzCGcTGd8l31vjiGcvX+54i987FvA6E7rDr6r6zTbS1UCRlj
+   w==;
+X-CSE-ConnectionGUID: HwQi7OKZQ0qd1ijGoiVF2g==
+X-CSE-MsgGUID: ESWMJK/jSEumc0mSLVBaLQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="75582384"
+X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
+   d="scan'208";a="75582384"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 00:58:22 -0800
+X-CSE-ConnectionGUID: Zz5XKvBGQQCxotpwplrFhA==
+X-CSE-MsgGUID: 2Hdrn2n3QxOtDLyPS5vWCw==
+X-ExtLoop1: 1
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmviesa003.fm.intel.com with ESMTP; 03 Nov 2025 00:58:20 -0800
+Date: Mon, 3 Nov 2025 16:44:18 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Kuhanh Murugasen Krishnan <kuhanh.murugasen.krishnan@altera.com>
+Cc: Moritz Fischer <mdf@kernel.org>, Xu Yilun <yilun.xu@intel.com>,
+	Tom Rix <trix@redhat.com>, linux-fpga@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RESEND][PATCH 1/1] fpga: altera-cvp: Limit driver registration
+ to specific device ID
+Message-ID: <aQhrYucpkGBWI2zL@yilunxu-OptiPlex-7050>
+References: <cover.1761764670.git.kuhanh.murugasen.krishnan@altera.com>
+ <0b6877dd7422e8c797bb42bf071fd85cf8a0af09.1761764670.git.kuhanh.murugasen.krishnan@altera.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] mm: Enable CONFIG_PT_RECLAIM on all architectures
-To: Qi Zheng <zhengqi.arch@bytedance.com>, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
- catalin.marinas@arm.com, will@kernel.org, akpm@linux-foundation.org,
- david@redhat.com, hannes@cmpxchg.org
-Cc: ryan.roberts@arm.com, hpa@zytor.com, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, vbabka@suse.cz, ppt@kernel.org, surenb@google.com,
- mhocko@suse.com, shakeel.butt@linux.dev, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20251103063718.90743-1-dev.jain@arm.com>
- <044e3f9a-3de2-4939-afff-3bb527eb024b@bytedance.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <044e3f9a-3de2-4939-afff-3bb527eb024b@bytedance.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0b6877dd7422e8c797bb42bf071fd85cf8a0af09.1761764670.git.kuhanh.murugasen.krishnan@altera.com>
 
+On Thu, Oct 30, 2025 at 03:05:44AM +0800, Kuhanh Murugasen Krishnan wrote:
+> From: "Murugasen Krishnan, Kuhanh" <kuhanh.murugasen.krishnan@altera.com>
 
-On 03/11/25 12:33 pm, Qi Zheng wrote:
-> Hi Dev,
->
-> On 11/3/25 2:37 PM, Dev Jain wrote:
->> The implementation of CONFIG_PT_RECLAIM is completely contained in 
->> generic
->> mm code. It depends on the RCU callback which will reclaim the 
->> pagetables -
->> there is nothing arch-specific about that. So, enable this config for
->> all architectures.
->
-> Thanks for doing this!
->
-> But unfortunately, not all architectures call tlb_remove_ptdesc() in
-> __pte_free_tlb(). Some architectures directly call pte_free() to
-> free PTE pages (without RCU).
+Is this your first post?
 
-Thanks! This was not obvious to figure out.
+https://lore.kernel.org/all/20250212223553.2717304-1-kuhanh.murugasen.krishnan@intel.com/
 
-Is there an arch bottleneck because of which they do this? I mean to say,
+Please mark the patch v2 if this patch is for the same issue. And please
+firstly response the talk and make clear all previous concerns, rather than
+just sent the patch and left.
 
-is something stopping us from simply redirecting __pte_free_tlb to 
-tlb_remove_ptdesc
+> 
+> The Altera CvP driver previously used PCI_ANY_ID, which caused it to
+> bind to all PCIe devices with the Altera vendor ID. This led to
+> incorrect driver association when multiple PCIe devices with different
+> device IDs were present on the same platform.
+> 
+> Update the device ID table to use 0x00 instead of PCI_ANY_ID so that
+> the driver only attaches to the intended device.
 
-or pte_free_defer?
+So could you please answer the previous concern here?
 
+Does dev_id 0x00 covers all supported devices? Do you have any DOC for
+this?
 
-I am looking to enable this config at least on arm64 by default, I 
-believe it will be legal
+> 
+> Reviewed-by: Dinh Nguyen <dinguyen@kernel.org>
 
-to do this at least here.
+I didn't see where the tag is from. Generally we don't prefer a
+Reviewed-by tag firstly appear from other than the person named.
 
+Thanks,
+Yilun
 
->
-> We need to modify these architectures first, otherwise it will
-> lead to UAF. This approach is feasible because Hugh provides similar
-> support in pte_free_defer().
->
-> Enabling PT_RECLAIM on all architecture has always been on my
-> TODO list, but it's been blocked by other things. :(
->
-> Thanks,
-> Qi
->
->>
->> Signed-off-by: Dev Jain <dev.jain@arm.com>
->> ---
->>   arch/x86/Kconfig | 1 -
->>   mm/Kconfig       | 5 +----
->>   mm/pt_reclaim.c  | 2 +-
->>   3 files changed, 2 insertions(+), 6 deletions(-)
->>
->> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
->> index fa3b616af03a..5681308a5650 100644
->> --- a/arch/x86/Kconfig
->> +++ b/arch/x86/Kconfig
->> @@ -327,7 +327,6 @@ config X86
->>       select FUNCTION_ALIGNMENT_4B
->>       imply IMA_SECURE_AND_OR_TRUSTED_BOOT    if EFI
->>       select HAVE_DYNAMIC_FTRACE_NO_PATCHABLE
->> -    select ARCH_SUPPORTS_PT_RECLAIM        if X86_64
->>       select ARCH_SUPPORTS_SCHED_SMT        if SMP
->>       select SCHED_SMT            if SMP
->>       select ARCH_SUPPORTS_SCHED_CLUSTER    if SMP
->> diff --git a/mm/Kconfig b/mm/Kconfig
->> index 0e26f4fc8717..903c37d02555 100644
->> --- a/mm/Kconfig
->> +++ b/mm/Kconfig
->> @@ -1355,13 +1355,10 @@ config ARCH_HAS_USER_SHADOW_STACK
->>         The architecture has hardware support for userspace shadow call
->>             stacks (eg, x86 CET, arm64 GCS or RISC-V Zicfiss).
->>   -config ARCH_SUPPORTS_PT_RECLAIM
->> -    def_bool n
->> -
->>   config PT_RECLAIM
->>       bool "reclaim empty user page table pages"
->>       default y
->> -    depends on ARCH_SUPPORTS_PT_RECLAIM && MMU && SMP
->> +    depends on MMU && SMP
->>       select MMU_GATHER_RCU_TABLE_FREE
->>       help
->>         Try to reclaim empty user page table pages in paths other 
->> than munmap
->> diff --git a/mm/pt_reclaim.c b/mm/pt_reclaim.c
->> index 7e9455a18aae..049e17f08c6a 100644
->> --- a/mm/pt_reclaim.c
->> +++ b/mm/pt_reclaim.c
->> @@ -1,6 +1,6 @@
->>   // SPDX-License-Identifier: GPL-2.0
->>   #include <linux/hugetlb.h>
->> -#include <asm-generic/tlb.h>
->> +#include <asm/tlb.h>
->>   #include <asm/pgalloc.h>
->>     #include "internal.h"
->
+> Signed-off-by: Ang Tien Sung <tien.sung.ang@altera.com>
+> Signed-off-by: Murugasen Krishnan, Kuhanh <kuhanh.murugasen.krishnan@altera.com>
+> ---
+>  drivers/fpga/altera-cvp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
+> index 5af0bd33890c..97e9d4d981ad 100644
+> --- a/drivers/fpga/altera-cvp.c
+> +++ b/drivers/fpga/altera-cvp.c
+> @@ -560,7 +560,7 @@ static int altera_cvp_probe(struct pci_dev *pdev,
+>  static void altera_cvp_remove(struct pci_dev *pdev);
+>  
+>  static struct pci_device_id altera_cvp_id_tbl[] = {
+> -	{ PCI_VDEVICE(ALTERA, PCI_ANY_ID) },
+> +	{ PCI_VDEVICE(ALTERA, 0x00) },
+>  	{ }
+>  };
+>  MODULE_DEVICE_TABLE(pci, altera_cvp_id_tbl);
+> -- 
+> 2.25.1
+> 
+> 
 
