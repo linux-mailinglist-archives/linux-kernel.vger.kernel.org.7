@@ -1,102 +1,157 @@
-Return-Path: <linux-kernel+bounces-883165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDD70C2C955
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:10:22 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83B75C2C9EC
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:15:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E5B11888D18
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:09:05 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EF53A4F9B65
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C2A32ED22;
-	Mon,  3 Nov 2025 14:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8592B314D0F;
+	Mon,  3 Nov 2025 14:57:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k3jenSgj"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OSuRumxA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333BA32D0EA;
-	Mon,  3 Nov 2025 14:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8F4280318;
+	Mon,  3 Nov 2025 14:57:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762181886; cv=none; b=JUDvznTeuuB+urJtMv6Ewnf494/JvAwx6DsQ1fMY+UWUMycpgjpWbjLNScTcjDxLQhJ6e+0JzCg5mQscZStEXflCXzvQ5gf9c/yb310+pcFiL8wfb9Px+CfzZ+7qaPxOwcNL8LgJkFqGWY5eg56c3jt1bh0KYjb1tgfQcNrWVos=
+	t=1762181855; cv=none; b=MxyUecHz0HM7Xg3mbUXHmA1hQusQAO5BhYG9LPnAuOVzXsgR4fZMFnQ4hIcEVljZIYJYmifLeZtzIDVIBpeuxTppt90+cqRn75xCVxU00QSiyxLE8Hei+OAv0JoaLbmdgy96vknaVDge14TJ0RJArAh4KKdllNLECIMnTsgQUAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762181886; c=relaxed/simple;
-	bh=pg2v4Qq4p691A716jLKgU9cR9rJWdfU2QnrT9iAtdLo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=aKL7VmjfqrYnITsbsaysrEcQIG3Z9Lp1JR0scetRMHuXMnwu2AtaVOzxCaJNwZe/ua7LRH+KugevcbnLbM1UHNNizx7nDiutL2ngw/ZKLAQTkcOKd4erOpZVcG6IUpAxD4qHP952sto56kOVYqAx/+NudHd2Yv0fxSdQl83Ks+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k3jenSgj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2085C19421;
-	Mon,  3 Nov 2025 14:58:02 +0000 (UTC)
+	s=arc-20240116; t=1762181855; c=relaxed/simple;
+	bh=oMWyReLEXY6etc/RXv5rvgB/h4bJgJr7T8StnrzmVhE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=p321Zxkb/tpqMfYCQUUVOeM050OpDNVbDhdZvDWgtzmQ7eQRmAnnK6wgKhtOa/mnlSxcUYEnJiqsfqf0ax71ZD+qekSBv6jlXFIuznlhfZVNfjdCWcZYbW7n/B2E925qHJZAxBgZ6Sl6kop92eZ5VoL/rNoN1ZUgIY/Pq+ZbfgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OSuRumxA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BD5BC4CEFD;
+	Mon,  3 Nov 2025 14:57:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762181885;
-	bh=pg2v4Qq4p691A716jLKgU9cR9rJWdfU2QnrT9iAtdLo=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=k3jenSgjz87qIYdLxKG5JJW4vxX0/TPxC6CFwTvlx7Tl7n9xE4mlIADEP/AxPoF0k
-	 3tHWsJQRfZReyP4rQ+YQZMb3IGYp9s5/GvKHpgXYopc4D7vWRzqJErSHWqp0ROj2Xq
-	 ++uF8hSneX2nYhaqRzlD1Ez+xBkz53yTGWIFTOdebt+I7k7+6dn5upLZYqDAldx3pP
-	 42Rcni/Xnt5jNXU6QaOy43bHgEsAZAKt2MVBNKePKZi45IFqA9Dwd+KyCcYbW3uXw1
-	 hcERYhyvMRY4w7zbRD1Mtuv+R1mzlr01Py/eUnVUwoTd2mK6Pwh9MKVd1ATi12wQyZ
-	 VgLHGxzPN5PMw==
-From: Christian Brauner <brauner@kernel.org>
-Date: Mon, 03 Nov 2025 15:57:31 +0100
-Subject: [PATCH 05/12] coredump: move revert_cred() before
- coredump_cleanup()
+	s=k20201202; t=1762181854;
+	bh=oMWyReLEXY6etc/RXv5rvgB/h4bJgJr7T8StnrzmVhE=;
+	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
+	b=OSuRumxAqQJ53J0UHJ+mMHBdnIyuA6iJ4heXXnpCL5XqWGD4TcqYjIm8Ma5YVAbA8
+	 LoA0N+PAe2P3+kRNyMtxfsVdd2yatL3TS/f+WO0FRaQ8tZHqRO4mD5WoeV/oRJYgqx
+	 e2knEOLtZVYld2tVaXBqJ0WwCDJAF9pgQuAHplQH1N8eqAWuz/sUf0nEAhzLddUS0c
+	 fMkIogALaROtDdmzZbW3yvCoC0VWudhobFGH7Y45Je6c3e9t//IIlNpa0T4jwK1+tJ
+	 1s9kfexWceQluMyNWEBaQPtsTX+40KzPCjrOyAQe+EhWtVL6EA1vXiPFRG8HLnCBoB
+	 EIg0jibq00ssA==
+Message-ID: <b38c4013-fabb-4469-bfa9-9296a88d244a@kernel.org>
+Date: Mon, 3 Nov 2025 15:57:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+From: Hans Verkuil <hverkuil+cisco@kernel.org>
+Subject: Re: [RFC PATCH v1 0/2] media: pci: AVMatrix HWS capture driver
+ refresh
+To: Ben Hoff <hoff.benjamin.k@gmail.com>, linux-media@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, mchehab@kernel.org, hverkuil@kernel.org,
+ lukas.bulwahn@redhat.com
+References: <20251027195638.481129-1-hoff.benjamin.k@gmail.com>
+Content-Language: en-US, nl
+In-Reply-To: <20251027195638.481129-1-hoff.benjamin.k@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20251103-work-creds-guards-prepare_creds-v1-5-b447b82f2c9b@kernel.org>
-References: <20251103-work-creds-guards-prepare_creds-v1-0-b447b82f2c9b@kernel.org>
-In-Reply-To: <20251103-work-creds-guards-prepare_creds-v1-0-b447b82f2c9b@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-aio@kvack.org, linux-unionfs@vger.kernel.org, 
- linux-erofs@lists.ozlabs.org, linux-nfs@vger.kernel.org, 
- linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
- cgroups@vger.kernel.org, netdev@vger.kernel.org, 
- linux-crypto@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
- Christian Brauner <brauner@kernel.org>
-X-Mailer: b4 0.15-dev-96507
-X-Developer-Signature: v=1; a=openpgp-sha256; l=611; i=brauner@kernel.org;
- h=from:subject:message-id; bh=pg2v4Qq4p691A716jLKgU9cR9rJWdfU2QnrT9iAtdLo=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRyHHqZ6D57643ky/+/Hb66KPGd3u+ty2sqxY7dP8x1W
- VGzSaXyeUcpC4MYF4OsmCKLQ7tJuNxynorNRpkaMHNYmUCGMHBxCsBE3AIZGd7od/1OWLjnxvcJ
- QtuE5zwRbfra+q7KjcFz9rPzNt/mP8xm+O+68mRGc8RuhsSMUs9/pps+397laOW5KMdl6vUvk+b
- 9SGYEAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-There's no need to pin the credentials across the coredump_cleanup()
-call. Nothing in there depends on elevated credentials.
+Hi Ben,
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- fs/coredump.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thank you for working on this!
 
-diff --git a/fs/coredump.c b/fs/coredump.c
-index 5c1c381ee380..4fce2a2f279c 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -1197,8 +1197,8 @@ void vfs_coredump(const kernel_siginfo_t *siginfo)
- 	}
- 
- close_fail:
--	coredump_cleanup(&cn, &cprm);
- 	revert_creds(old_cred);
-+	coredump_cleanup(&cn, &cprm);
- 	return;
- }
- 
+On 27/10/2025 20:56, Ben Hoff wrote:
+> Hi all,
+> 
+> This RFC series significantly refactors the downstream AVMatrix HWS PCIe
+> capture driver so it is maintainable in-tree and aligns with upstream
+> media driver expectations. The new implementation follows V4L2 and ALSA
+> subsystem patterns, splits the hardware plumbing across focused source
+> files, and introduces proper runtime PM and interrupt handling. The goal
+> is to keep future maintenance manageable while providing a direct path for
+> existing users of the vendor tree.
+> 
+> Current status / open items:
+>   - Audio capture paths have been refactored from the vendor driver but have
+>     not yet been validated on real hardware. I would appreciate guidance
+>     on whether you would prefer that I drop the ALSA pieces from the
+>     initial submission and stage them as a follow-up once I finish
+>     validation.
+>   - `v4l2-compliance` passes for each video node, and I have exercised
+>     basic capture in OBS. I still plan to do heavier soak testing across
+>     all inputs and audio channels, as well as cover the suspend/resume
+>     paths.
+> 
+> Any feedback on the overall structure, subsystem integration, and in
+> particular the best way to stage the audio support would be very welcome.
 
--- 
-2.47.3
+I think you have two options:
+
+1) wait until you finish the audio validation, or
+2) make this a staging driver (drivers/staging/media), add the audio part
+   later and then move it to drivers/media/pci.
+
+Regarding this driver: I gather that this is a rework of a GPL out-of-tree
+driver? Can you should at least add a URL that driver? That should definitely
+be part of the commit log of the driver.
+
+Is the vendor involved in this upstream driver work? Or you just took their
+code and made it suitable for mainlining? Just curious.
+
+Finally, for the next v1 please include the v4l2-compliance output in the
+cover letter. And make sure you compile v4l2-compliance from the v4l-utils
+git repo so you are using the latest and greatest version.
+
+Regards,
+
+	Hans
+
+> Once I hear back on the preferred direction I will respin this as a
+> formal v1 submission.
+> 
+> Thanks for taking a look!
+> 
+> Ben
+> 
+> Ben Hoff (2):
+>   media: pci: add AVMatrix HWS capture driver
+>   MAINTAINERS: add entry for AVMatrix HWS driver
+> 
+>  MAINTAINERS                            |    6 +
+>  drivers/media/pci/Kconfig              |    1 +
+>  drivers/media/pci/Makefile             |    1 +
+>  drivers/media/pci/hws/Kconfig          |   13 +
+>  drivers/media/pci/hws/Makefile         |    4 +
+>  drivers/media/pci/hws/hws.h            |  194 +++
+>  drivers/media/pci/hws/hws_audio.c      |  571 +++++++++
+>  drivers/media/pci/hws/hws_audio.h      |   22 +
+>  drivers/media/pci/hws/hws_irq.c        |  281 +++++
+>  drivers/media/pci/hws/hws_irq.h        |   12 +
+>  drivers/media/pci/hws/hws_pci.c        |  708 +++++++++++
+>  drivers/media/pci/hws/hws_reg.h        |  142 +++
+>  drivers/media/pci/hws/hws_v4l2_ioctl.c |  576 +++++++++
+>  drivers/media/pci/hws/hws_v4l2_ioctl.h |   32 +
+>  drivers/media/pci/hws/hws_video.c      | 1542 ++++++++++++++++++++++++
+>  drivers/media/pci/hws/hws_video.h      |   24 +
+>  16 files changed, 4129 insertions(+)
+>  create mode 100644 drivers/media/pci/hws/Kconfig
+>  create mode 100644 drivers/media/pci/hws/Makefile
+>  create mode 100644 drivers/media/pci/hws/hws.h
+>  create mode 100644 drivers/media/pci/hws/hws_audio.c
+>  create mode 100644 drivers/media/pci/hws/hws_audio.h
+>  create mode 100644 drivers/media/pci/hws/hws_irq.c
+>  create mode 100644 drivers/media/pci/hws/hws_irq.h
+>  create mode 100644 drivers/media/pci/hws/hws_pci.c
+>  create mode 100644 drivers/media/pci/hws/hws_reg.h
+>  create mode 100644 drivers/media/pci/hws/hws_v4l2_ioctl.c
+>  create mode 100644 drivers/media/pci/hws/hws_v4l2_ioctl.h
+>  create mode 100644 drivers/media/pci/hws/hws_video.c
+>  create mode 100644 drivers/media/pci/hws/hws_video.h
+> 
 
 
