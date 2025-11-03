@@ -1,59 +1,106 @@
-Return-Path: <linux-kernel+bounces-882611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9B67C2AE31
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 10:58:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 063D9C2AE5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:01:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id EFD004ED884
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 09:58:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01E4C3A9BE3
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 09:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D922FAC0A;
-	Mon,  3 Nov 2025 09:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4EB2FB0A3;
+	Mon,  3 Nov 2025 09:59:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TdTyXk64"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="VaE0XOGs";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZBsvVHQU"
+Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25ED92E8B6C;
-	Mon,  3 Nov 2025 09:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609468405C;
+	Mon,  3 Nov 2025 09:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762163913; cv=none; b=kMI9jWlACNFjLxYImW4keoR0Y98hV4HggzAUupYzwKGt08XovjiRnBLW1Yru7XCTQX31JU8FQCi23FG64sFMnJass+P90hN0B1zHJjTi2Fm1qEazdXLGoo4gJdP5kt/lGjJSFl42Jl0EZvY55/O/KCAy0ZC+YsADKKe43ji26+o=
+	t=1762163978; cv=none; b=nUaMPrgsmV2+t2UYFtqVZOeBmJ+75hfS0ECo8Jm7aB9HQf3+eqfmua+NE5goUwmzIz2bi2WOXHo8QuGz4S/40ClWo8rXDEBjoUMQOp/IqSKqhsO4phXFBzOkDliscws1PAZYh+2bM1g1Sxk61wutcG26TSYBO6I+bKxgYe0VyYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762163913; c=relaxed/simple;
-	bh=AQVt53EcUhGtycvRvdbhIy9l4ZVj1BQDK1Eh3TQzU3U=;
+	s=arc-20240116; t=1762163978; c=relaxed/simple;
+	bh=/185EXukW1YoAfSt0R/ts2WEh9FI/8+19d9aNbAhETw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LqxiGOh9qZ6D2zv18jiyZ4r9i3soJbc5Mkca5kCt2Zjy86MkvsjpyhykR5m43LToAiXPTRMI5pkkJgt9OZD1LU9igWLAxok389TUVYnLUpxZY0VsQbQtxq3uIM25q5fJ5zTZx+VUQHZXzIEkS4xAd7jcZR1pfrBbf+GNcbj4gJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TdTyXk64; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2284CC4CEE7;
-	Mon,  3 Nov 2025 09:58:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762163912;
-	bh=AQVt53EcUhGtycvRvdbhIy9l4ZVj1BQDK1Eh3TQzU3U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TdTyXk64a6SoBF2/pJUMVlz5jU5aR1tzVMqXCULhfRj4pIkOvFOf6FIp+Ztipbk37
-	 KceYPFct5Ya2Kr/NdS+C/NlBh8/5uvfFmh/skUwiiLLZHxvtaE8XEBITkduTZjiqxy
-	 FwVsyV5BGaAFbsuJc08/jCym+PZLc5KVtgQrsSseXLgxRmvKcEn9Vx1YEdA/jZdY1A
-	 RP64pPjO6lJfT3PZJANA13sTylaYqnIgJa4D+YlLvKrkrHF6q3FcRmG0VWT013FYEf
-	 tigiuqxVdb4JSkLftXkezpKX6Snt1DXr9Cud3xLuGWk4Nqo0jZtCarQkDMX9fCiwxX
-	 y27WIfxuUYpqg==
-Date: Mon, 3 Nov 2025 10:58:30 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, 
-	=?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>, semen.protsenko@linaro.org, willmcvicker@google.com, 
-	kernel-team@android.com, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/11] dt-bindings: hwinfo: samsung,exynos-chipid: add
- google,gs101 compatible
-Message-ID: <20251103-economic-tuscan-mink-0ebfa1@kuoka>
-References: <20251031-gs101-chipid-v1-0-d78d1076b210@linaro.org>
- <20251031-gs101-chipid-v1-1-d78d1076b210@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HKgE0HRfQ1CMdnnflhONxsmI3GaTlWoS/Uao2dWVSrzBKnbC/Q8PcNg3n7RgOs0DHv8Kl04DBs3tZyK9Upj3EvpSUbVMbDtoXLg+AXXWNz0dafX7uBnizMemz7nZNESl0gMQ81b4bY12FPuLvceq+CuX/xoMtRc87ZPLh+esJAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=VaE0XOGs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZBsvVHQU; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-07.internal (phl-compute-07.internal [10.202.2.47])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 4682B140016D;
+	Mon,  3 Nov 2025 04:59:34 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-07.internal (MEProxy); Mon, 03 Nov 2025 04:59:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
+	 t=1762163974; x=1762250374; bh=EoRTOUiqNo2cvNRwLXJuVMPRCrEn4Z9F
+	qfz67AyZ8ys=; b=VaE0XOGsLoPWkUQZjnRbVu+9vhSJ8yT4THye/iIuq0x7Vg3H
+	XhYDeztRK3nqC/50GT4fABUZ+dSrb0WwPYUfeRaSqPnj3uz2AUvLyQXtisgrlksj
+	zF0K9deND+YrDLIOJLRsXZQB++vGiaOULFkxERKZoUK3ZAI3wKj7fN4S08rEl8es
+	USJdjGP3mvkw0gs+yNrbQbA1uhBSna0yikX6o5UrXyOdzc2j7Q3E7/yhGWDwDIYr
+	Txhhqt2XXXWA7kFns4LJYEbCf6Z81lilIVIqvo8gem2zntgQvbnAgknmZQirAB1x
+	sQrDjGfZ0mR9NVKbFYUsURwoZDfvTxFx4N08eQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1762163974; x=
+	1762250374; bh=EoRTOUiqNo2cvNRwLXJuVMPRCrEn4Z9Fqfz67AyZ8ys=; b=Z
+	BsvVHQUMinQkRNXclXAjr75SpWgGB+RpPVy1E9pDEnqfbsQ13o5i0xmPao7+biMP
+	jLW9OaLTe0kIhWsTdnlKym7n5uQUQQz3hqDklEOY6LgShGdgv6NIzseZ/IpPZlLq
+	nSdDreW2OVW528uvx8FZzf9mgCqkOJi+NLiYsAFSyP8+3Tir2HlAMkznD9dc2hwP
+	dJQC/JSG27RmaZ7F3Ka3Iis+MAJV0q3g2XVCEKoBLneKxkqRXtaa4H+0pURz0uzG
+	yb9TvWVVBFj7hiu/BJxxSFBxEYLhzU05Ab2ZCbk351Aq8WesjWyYhXwGPXNtSvX2
+	RGPzsUpS0tg+PHDjZwf8Q==
+X-ME-Sender: <xms:BX0IaZLarJa_RiorcFZp3ZxY9zsxqdj1SVhj_KQJ03rIiaAqhgE64A>
+    <xme:BX0IaSoffggrfVvhlb5ry4ajsOWlX4ns1Mv1ptnq6zopYQ14xH_CTVX9aQFVfB_cN
+    kKx5T31DBmSNQ-OmIStXyS-TdOFThFZdqBZU5aIhZA29MqOFKZGug>
+X-ME-Received: <xmr:BX0IaUX0MLIL5_-EFcstSWxjb5c91s5FUxGa2DEX90D2jO8l792AHjNX3bFS>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdeggddujeejkeefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpefurggsrhhi
+    nhgrucffuhgsrhhotggruceoshgusehquhgvrghshihsnhgrihhlrdhnvghtqeenucggtf
+    frrghtthgvrhhnpeevuddvtdevheetkedvieeugeehieevjeekteefgfeffeefjefgvdef
+    tdelueefgeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuih
+    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepshgusehquhgvrghshihsnhgrihhl
+    rdhnvghtpdhnsggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhhtpdhrtghpth
+    htohepfigrnhhglhhirghnghejgeeshhhurgifvghirdgtohhmpdhrtghpthhtohepkhhu
+    sggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthh
+    dprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohep
+    vgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrh
+    gvughhrghtrdgtohhmpdhrtghpthhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhgpdhr
+    tghpthhtohephhhorhhmsheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhgvthguvg
+    hvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:BX0Iaf1MYafNoAC3fvlsl6zPNNxdQLgWqPVV0le4FCyimamSlaxfEA>
+    <xmx:BX0IaTRdVT-zS-E7bKmstT2DhOnkhyTNuXKmPgJUMICYrbNOYDCKOA>
+    <xmx:BX0IaTTvb8zvKIqNajaTD7INixABmx9dYmvz0kWu0Wv7LgySfbcYdA>
+    <xmx:BX0IaUXQn9aZtP0TSyYNvrkLzwNBVM-c9mcXZGa1nSIxWwF_ErQgHA>
+    <xmx:Bn0IaYf64TuLWHc3xIjnfXwfeVZ32b-k6jdwU7zmtBv1_NkeGkN-dYE3>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 3 Nov 2025 04:59:33 -0500 (EST)
+Date: Mon, 3 Nov 2025 10:59:31 +0100
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Wang Liang <wangliang74@huawei.com>
+Cc: kuba@kernel.org, andrew@lunn.ch, davem@davemloft.net,
+	edumazet@google.com, pabeni@redhat.com, shuah@kernel.org,
+	horms@kernel.org, netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yuehaibing@huawei.com, zhangchangzhong@huawei.com
+Subject: Re: [PATCH net] selftests: netdevsim: Fix ethtool-features.sh fail
+Message-ID: <aQh9A647mJzBeBI_@krikkit>
+References: <20251030032203.442961-1-wangliang74@huawei.com>
+ <aQPxN5lQui5j8nK8@krikkit>
+ <2ea387c7-cd15-44cc-8789-af3fbe0460a3@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,103 +109,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20251031-gs101-chipid-v1-1-d78d1076b210@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2ea387c7-cd15-44cc-8789-af3fbe0460a3@huawei.com>
 
-On Fri, Oct 31, 2025 at 12:56:00PM +0000, Tudor Ambarus wrote:
-> Google GS101 Chip ID references the nvmem cells from the OTP controller,
-> it doesn't need a reg space. Add the google,gs101-chipid compatible.
+2025-11-03, 16:58:42 +0800, Wang Liang wrote:
 > 
-> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-> ---
->  .../bindings/hwinfo/samsung,exynos-chipid.yaml     | 51 +++++++++++++++++++++-
->  1 file changed, 50 insertions(+), 1 deletion(-)
+> 在 2025/10/31 7:13, Sabrina Dubroca 写道:
+> > 2025-10-30, 11:22:03 +0800, Wang Liang wrote:
+> > > This patch adds executable permission to script 'ethtool-features.sh', and
+> > > check 'ethtool --json -k' support.
+> > Those are two separate things, probably should be two separate patches.
 > 
-> diff --git a/Documentation/devicetree/bindings/hwinfo/samsung,exynos-chipid.yaml b/Documentation/devicetree/bindings/hwinfo/samsung,exynos-chipid.yaml
-> index b9cdfe52b62ff3a365d61368c39db21facff6565..6d6260be02d47712ebf1e4d31973802e8340cdfe 100644
-> --- a/Documentation/devicetree/bindings/hwinfo/samsung,exynos-chipid.yaml
-> +++ b/Documentation/devicetree/bindings/hwinfo/samsung,exynos-chipid.yaml
-> @@ -33,6 +33,16 @@ properties:
->                - samsung,exynosautov9-chipid
->                - samsung,exynosautov920-chipid
->            - const: samsung,exynos850-chipid
-> +      - items:
-> +          - const: google,gs101-chipid
-
-That's a part of first enum at the beginning.
-
-> +
-> +  nvmem-cells:
-> +    maxItems: 2
-> +
-> +  nvmem-cell-names:
-> +    items:
-> +      - const: product-id
-> +      - const: chip-id
->  
->    reg:
->      maxItems: 1
-> @@ -47,7 +57,46 @@ properties:
->  
->  required:
->    - compatible
-> -  - reg
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            oneOf:
-
-No, don't copy. It's just redundant. Just like the fallbacks under one
-enum.
-
-> +              - enum:
-> +                  - samsung,exynos4210-chipid
-> +                  - samsung,exynos850-chipid
-> +              - items:
-> +                  - enum:
-> +                      - samsung,exynos5433-chipid
-> +                      - samsung,exynos7-chipid
-> +                      - samsung,exynos7870-chipid
-> +                      - samsung,exynos8890-chipid
-> +                  - const: samsung,exynos4210-chipid
-> +              - items:
-> +                  - enum:
-> +                      - samsung,exynos2200-chipid
-> +                      - samsung,exynos7885-chipid
-> +                      - samsung,exynos8895-chipid
-> +                      - samsung,exynos9610-chipid
-> +                      - samsung,exynos9810-chipid
-> +                      - samsung,exynos990-chipid
-> +                      - samsung,exynosautov9-chipid
-> +                      - samsung,exynosautov920-chipid
-> +                  - const: samsung,exynos850-chipid
-> +    then:
-
-properties:
-  nvmem-cells: false
-  same for names
-
-> +      required:
-> +        - reg
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: google,gs101-chipid
-> +    then:
-
-reg: false, similarly.
-
-> +      required:
-> +        - nvmem-cells
-> +        - nvmem-cell-names
->  
->  additionalProperties: false
->  
 > 
-> -- 
-> 2.51.1.930.gacf6e81ea2-goog
+> Ok, I will extract the executable permission change to a new patch.
 > 
+> > 
+> > [...]
+> > > @@ -7,6 +7,11 @@ NSIM_NETDEV=$(make_netdev)
+> > >   set -o pipefail
+> > > +if ! ethtool --json -k $NSIM_NETDEV > /dev/null 2>&1; then
+> > I guess it's improving the situation, but I've got a system with an
+> > ethtool that accepts the --json argument, but silently ignores it for
+> >   -k (ie `ethtool --json -k $DEV` succeeds but doesn't produce a json
+> > output), which will still cause the test to fail later.
+> 
+> 
+> That is indeed a bit strange.
+> 
+> I'm not sure the best way to handle this situation now. Maybe update ethtool
+> instead of checking the output is not a bad method.
+
+That's what Jakub was suggesting in his answer [1]. ethtool has
+supported json output for -k for almost 4 years, running upstream
+selftests with a version of ethtool older than that doesn't really
+make sense, so only the "permission change" patch is really needed.
+
+[1] https://lore.kernel.org/netdev/20251030170217.43e544ad@kernel.org/
+
+-- 
+Sabrina
 
