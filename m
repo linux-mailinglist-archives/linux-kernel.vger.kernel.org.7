@@ -1,76 +1,78 @@
-Return-Path: <linux-kernel+bounces-882421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2993C2A6D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:55:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57843C2A6EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:56:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27F673B4B9E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:53:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D959C3B56EA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:53:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5480D2C0F73;
-	Mon,  3 Nov 2025 07:52:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1B12C11D5;
+	Mon,  3 Nov 2025 07:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="P02YbIPl"
+	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="Z2OMwlnr"
 Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A610D2BE7B5
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 07:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DACD22C0277
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 07:53:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762156378; cv=none; b=fNawRhltFF77dUZlWRShS2A6BbTTZjANj0UFpio6oJSm6iKgRaWlNxe8Pi1UAS2PJtgX23tNxmZC4j9SYbf1TP8mG3O+pWSrSAMRf/X1bV7qNubcci4l3ASIADvb+RHvmnVs2g4x1CtAF3fSMck3ANvX+GDu519Fq1ym5aXDnm4=
+	t=1762156384; cv=none; b=FQaBraYEfRsTwfReRtlioGAfo+xRluq7o4Voz8gxeMR1p57XsSbUTKW/pYRAs5I9krgVL5vPHg1S2GszITkhKzu9UKN5yIO49rcm4fE0x0MGRMwScAgYMryqbFhQ3h/4dN4SELXg4FNvItGx4gNyCieUjEEzf5LWLxhk8UWpP2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762156378; c=relaxed/simple;
-	bh=CpM3LvhKwcp4J4lDv8ipejSSGm/KKdsoaJfd2VI7DlA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZfZP3vgo6+z70Qx/GBySC0eoHBgfCCiCz5Vuoj/eOtusVzNQzeh5i6TJWtjYqyf+qc9MJOI9IerzWmIByx739vZ5yf8iDNvtz9px4AJMUIBl7lgoMLYWQUOien505DpQfeb2QBOPxn3eOuHskTns9cHVx3WaKY7ZsCjRV/CIMRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=P02YbIPl; arc=none smtp.client-ip=209.85.216.54
+	s=arc-20240116; t=1762156384; c=relaxed/simple;
+	bh=e7ed8ZmJa/kqjlXsP+aE5zpUgSJSjGTZ/K4MPhvN53A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ioMoqEpLKwn7bnac56werBs/3adL/DvomBflwAPT670zdScTi1KN3WpXYl/lhlJZ0xERsTgGm3E8QUabfd4rP2l7+wubkkfl9sNxZrmVyjPVNEPQsnzm6DSrvlNZ0m/gYPEm8w6fHlPRiIYq02RNBpwb0ImNAE3ygXx3Ph9vnSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=Z2OMwlnr; arc=none smtp.client-ip=209.85.216.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-33b9dc8d517so3749514a91.0
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 23:52:54 -0800 (PST)
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-340e525487eso822279a91.3
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 23:53:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shopee.com; s=shopee.com; t=1762156374; x=1762761174; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pLkzhtoF4Ahv1FKwU/tjbCnsdl0esqhckJcQdc+yB8A=;
-        b=P02YbIPl/Elwc5XdXXFspjWAfPg6E4vbH9mgSZge3KREFOcZr/MNJA82NKKJyS338Z
-         LEnkiaHbasz2Fplbs+EoUKBUJrqt1Bi2+dcsHy/Dyz7TaULvbCiBj4rsUhsLH7XA++Hh
-         YBP7YOFusXY/eEKcUjF3IVm0eFRtUA1cOiFN9pXBhDLIZYj57IyTsonh86wS2FtdBQJK
-         HbBfMT1shzBp08qQc+LJZiNr9A1TeSy2uaOnkKH3x8YkfdLHiry7MGlcErQ1FZXAQ4RK
-         Q63kHw12o0VeSBnmWop/HSU5j06e2oXuBqUQUo1hfBDBxaMLAWdtDX+LvIU1O+Bu9FHC
-         yjJA==
+        d=shopee.com; s=shopee.com; t=1762156380; x=1762761180; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MBJR74pL2UFLaHc8oAOxpJBTbxd/tOOTfgjPB+YfL2o=;
+        b=Z2OMwlnrFpZPu1TtMLiVLFV8hnFN2kG30WbYGRbsESze970Nj7BxW0bhRs6j+6j3dX
+         s7SAHDc/dy4Rv727nu5GHILrJbG1vxqPBu9eDJgt0k9iRvA6g0Fi5Qyved3MrPZ2GiFM
+         FDUQ/q6QGjvOnMnH9RPTLD/j1s31ksoe5JgoQj0gCw82Ar2o6WnGSyuHchQkJuuyoYZX
+         FPZPW1onvsN0zgphUJJLTGk1bAtxoyGI72yZgX7Ym1yWB4f3Kg3OMLpdNWKpmufdTnOn
+         xOlzz0zm7VvQu1BBuqM0dquF2gk9nNXLOBhg7S3jfSquQXey0S4vrWSgMo+9ZRnpCOF7
+         rd1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762156374; x=1762761174;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pLkzhtoF4Ahv1FKwU/tjbCnsdl0esqhckJcQdc+yB8A=;
-        b=ssULF+6J3l7ueFv19ZyFbAxbLoFSBWkNWBxjolnjQ7yGzVABBt/NziqKLEddy7Lz2K
-         QevvgsYfLLBoAeW3YGSdsSCBmLv5551keNwBqN/ogG8MHq0LwP8UjdurJ5bQHDqhmcfy
-         V1o7AZszv7aR3tfT6eSNIIDcfABUBEIOEL7RnFpvFq7cIBqZ1AxXEYqCYHt2KhXFMLxp
-         jNvZ5lnIA386dvAMM43FaF3LXiDlrszvBQgHPdx/x22ZZKLAA/vM2FcYeB24MMbGOtiP
-         nyHt7C5eCJjAp+NT7GCiO+CBO/Rnd8xpLAEyeRK5taVGEgyQcAfLTIrobEGdEq2eXVYT
-         aRtw==
-X-Forwarded-Encrypted: i=1; AJvYcCXWKFHmpaXat3Qj8OjSgck3NX24M+gj7YotpOUDG+aZIoxAIyNuLuHOr9ZStKO0K9HTJSVt51Z9m65sCqM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjDA+CPKTlIwUkkSsPUUxfA5UCgdA9uuGP/rf6175TlgE49S09
-	ORkFSix2KI3qkEkklJLy8fFjMGeIu3ECFZ10iCOjDSCf7qHZ0f7/aTKaALK7HN2ww6Y=
-X-Gm-Gg: ASbGncstiZE4hzsNSph+wKDR7wK0xonDIiBWVcSnxAuVwpH/MU2+WOaOEOKrEFCHrh6
-	kaVjRE5Ad7SxBHqrxQ+tFfKR5yV6rQyZUMOCuUh86gRJ+ewj2sxasB6k9bBl6qkCd99yjkUsusX
-	itNPHc2PZprCd7KyjURhhDacpCl6U1FXfS/DqSSgh/SV0rqT5ZUGqAWwOWDM82j616UuHkBO7pn
-	ShwNFXp0VnUrhsxgRJC5f4PelJIxX1+DvaC8sT6/4CieRGghl56c5NEOfT6BqA+JpVdt6ES2E5S
-	CMO/OGMv26UZmuwrkzvnOBm9VJpjAZtitl4+O5IyP0xD7bTM3tDgk04LaW6rCFQdL8UfozxKWkA
-	/l2MLcy+LC1GE7AqrJ+/owOIXdJSEARUJTp5mYu3naEpSa1y8Mj5CaebTMK9R763a3QXvNbe18g
-	pwhnbcExG1pTva/3Mo6pHQBiDY
-X-Google-Smtp-Source: AGHT+IFmmflmrHgmAEotptMvyKECeXV6WQu6qDa1mCLOci2pV13NrALFzKLJadVhnxzhUmSBh4pxng==
-X-Received: by 2002:a17:90b:1c06:b0:341:2150:4856 with SMTP id 98e67ed59e1d1-341215049b9mr3820496a91.17.1762156373781;
-        Sun, 02 Nov 2025 23:52:53 -0800 (PST)
+        d=1e100.net; s=20230601; t=1762156380; x=1762761180;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MBJR74pL2UFLaHc8oAOxpJBTbxd/tOOTfgjPB+YfL2o=;
+        b=Xr05efuo1loQAh7L5NjGjYRLp/Mzx87lNDGZttFxJdbelgdbpPnLFPcOZvN/TI4IMb
+         3yfuJX0sFPinJxerZM6B0e5ZfhEyC28BomBPtPMFze04oEL3LfkcOC+8nVqp9sYtGd0b
+         yqIbzGbNpx1WjNd30W8FYfqxfrm/gpLKKHgrxqXm9YcAdiqKuN1h+KQ1CcsLJ4MvfNrr
+         exmtoVcmHKl65pYLQImoW48vnX0bu5+r5vI0fh7BTJ1Bz2lEZHXUgA9yWNrCrkOi5MXQ
+         MaWcvcIqBA6mxtrX2Jv3OUXUoadKFAKGgkNPSKdJHHp7cTYQ1dtgdmq26FdEXpLbNDQo
+         cEKA==
+X-Forwarded-Encrypted: i=1; AJvYcCVPx6uY+bbXJkIrgRdtVE0R3BwWQHi6pgw+b7L1Y/xVkwRmIggvJ2fB5DmlG9s4FipPycyK2tyL3ZZGTCU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyd5pqYOqNzNviauurWCLZnKISQPiIrZ3C9wg8VNm8vprivvUi2
+	8r6LegFeXLxZPybjzlO2o+C5kErD3EKjGxc6QmNNhFsHVOTaavBj2rvYAFMA6fqkTNc=
+X-Gm-Gg: ASbGncuYn7dr9FHNtWBpjE0MklD00MlisNKCfVVYfr/XznHM5OA1/4aXT8DZLTAPaJW
+	WFpAXH1xU7Eo38aEDDlg1QG6vp1DHAFdsiot0baA7EWk8TFidli/412s8a7L8aZEIYB/gjC2OyE
+	CcgxoS2B8J/vRKlsXDd9ySQ0Kjh8ZDYVUKAYSH2moK6Qv5OZCO3HvFafrl4gcmrErCw+s3lc/i0
+	fNGJYM3X/KHmJor6EqeC+EA1+b/Zyl3wFH4LNNNDBxbkJUAZ51hzNkyRT6n+XlzOaXWsdMVHM+V
+	N8hyZoJn3Smy7ygZ9ZdskQsWS9aQ6x3B49PadmTycb37NvwrFQByauoPIezRcPZpClGDdJ/L0Sr
+	XeLLXI/rpnQXawIR0u1YQTQ1m2OfU9GgcdjYztDARTqwfCwDQTvoEIJI4Bv7WI+FBCawONwExkM
+	O2esQ0u8Jp5pNlhGbP+W3hma7t
+X-Google-Smtp-Source: AGHT+IHCeuWblU4UX1TsHgam4EVLA+G+yYi1frynG5wZVaDx/qokn9yyEJcHgqKW4FWQHlMPmkrGgA==
+X-Received: by 2002:a17:90a:d450:b0:340:a961:80c5 with SMTP id 98e67ed59e1d1-340a961873emr10029797a91.32.1762156380212;
+        Sun, 02 Nov 2025 23:53:00 -0800 (PST)
 Received: from .shopee.com ([122.11.166.8])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34159a16652sm34552a91.20.2025.11.02.23.52.48
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34159a16652sm34552a91.20.2025.11.02.23.52.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Nov 2025 23:52:53 -0800 (PST)
+        Sun, 02 Nov 2025 23:52:59 -0800 (PST)
 From: Leon Huang Fu <leon.huangfu@shopee.com>
 To: stable@vger.kernel.org,
 	greg@kroah.com
@@ -97,11 +99,16 @@ Cc: tj@kernel.org,
 	cgroups@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH 6.6.y 0/7] mm: memcg: subtree stats flushing and thresholds
-Date: Mon,  3 Nov 2025 15:51:28 +0800
-Message-ID: <20251103075135.20254-1-leon.huangfu@shopee.com>
+	linux-mm@kvack.org,
+	Xin Hao <vernhao@tencent.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Muchun Song <songmuchun@bytedance.com>
+Subject: [PATCH 6.6.y 1/7] mm: memcg: add THP swap out info for anonymous reclaim
+Date: Mon,  3 Nov 2025 15:51:29 +0800
+Message-ID: <20251103075135.20254-2-leon.huangfu@shopee.com>
 X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20251103075135.20254-1-leon.huangfu@shopee.com>
+References: <20251103075135.20254-1-leon.huangfu@shopee.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -110,132 +117,118 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We observed failures in the 'memcontrol02' test case from the Linux Test
-Project (LTP) [1] when running on a 256-core server with the 6.6.y kernel.
-The test fails due to stale memory.stat values being returned, which is
-caused by the current stats flushing implementation's limitations with large
-core counts.
+From: Xin Hao <vernhao@tencent.com>
 
-This series backports the memcg subtree stats flushing improvements from
-Linux 6.8 to 6.6.y to address the issue. The main goal is to restore
-per-memcg stats flushing with dynamic thresholds, which improves both
-accuracy and performance of memory cgroup statistics, especially on
-high-core-count systems.
+[ Upstream commit 811244a501b967b00fecb1ae906d5dc6329c91e0 ]
 
-Background
-==========
+At present, we support per-memcg reclaim strategy, however we do not know
+the number of transparent huge pages being reclaimed, as we know the
+transparent huge pages need to be splited before reclaim them, and they
+will bring some performance bottleneck effect.  for example, when two
+memcg (A & B) are doing reclaim for anonymous pages at same time, and 'A'
+memcg is reclaiming a large number of transparent huge pages, we can
+better analyze that the performance bottleneck will be caused by 'A'
+memcg.  therefore, in order to better analyze such problems, there add THP
+swap out info for per-memcg.
 
-The current stats flushing in 6.6.y flushes the entire memcg hierarchy with
-a global threshold. This is not efficient and can cause stale stats when read
-'memory.stat'.
+[akpm@linux-foundation.orgL fix swap_writepage_fs(), per Johannes]
+  Link: https://lkml.kernel.org/r/20230913213343.GB48476@cmpxchg.org
+Link: https://lkml.kernel.org/r/20230913164938.16918-1-vernhao@tencent.com
+Signed-off-by: Xin Hao <vernhao@tencent.com>
+Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Shakeel Butt <shakeelb@google.com>
+Cc: Muchun Song <songmuchun@bytedance.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Leon Huang Fu <leon.huangfu@shopee.com>
+---
+ Documentation/admin-guide/cgroup-v2.rst | 9 +++++++++
+ mm/memcontrol.c                         | 2 ++
+ mm/page_io.c                            | 8 ++++----
+ mm/vmscan.c                             | 1 +
+ 4 files changed, 16 insertions(+), 4 deletions(-)
 
-Dependency Patches
-==================
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+index b26b5274eaaf..622a7f28db1f 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -1532,6 +1532,15 @@ PAGE_SIZE multiple when read back.
+ 		collapsing an existing range of pages. This counter is not
+ 		present when CONFIG_TRANSPARENT_HUGEPAGE is not set.
 
-Patches 1-2 are dependencies required for clean application of the main
-series:
++	  thp_swpout (npn)
++		Number of transparent hugepages which are swapout in one piece
++		without splitting.
++
++	  thp_swpout_fallback (npn)
++		Number of transparent hugepages which were split before swapout.
++		Usually because failed to allocate some continuous swap space
++		for the huge page.
++
+   memory.numa_stat
+ 	A read-only nested-keyed file which exists on non-root cgroups.
 
-Patch 1: 811244a501b9 "mm: memcg: add THP swap out info for anonymous reclaim"
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 2d2cada8a8a4..c61c90ea72a4 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -704,6 +704,8 @@ static const unsigned int memcg_vm_event_stat[] = {
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ 	THP_FAULT_ALLOC,
+ 	THP_COLLAPSE_ALLOC,
++	THP_SWPOUT,
++	THP_SWPOUT_FALLBACK,
+ #endif
+ };
 
-  This patch adds THP_SWPOUT and THP_SWPOUT_FALLBACK entries to the
-  memcg_vm_event_stat[] array. It is needed because patch 4 (e0bf1dc859fd)
-  moves the vmstats struct definitions, including this array. Without this
-  patch, the array structure would not match between 6.6.y and 6.8, causing
-  context conflicts during cherry-pick.
+diff --git a/mm/page_io.c b/mm/page_io.c
+index fe4c21af23f2..cb559ae324c6 100644
+--- a/mm/page_io.c
++++ b/mm/page_io.c
+@@ -208,8 +208,10 @@ int swap_writepage(struct page *page, struct writeback_control *wbc)
+ static inline void count_swpout_vm_event(struct folio *folio)
+ {
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+-	if (unlikely(folio_test_pmd_mappable(folio)))
++	if (unlikely(folio_test_pmd_mappable(folio))) {
++		count_memcg_folio_events(folio, THP_SWPOUT, 1);
+ 		count_vm_event(THP_SWPOUT);
++	}
+ #endif
+ 	count_vm_events(PSWPOUT, folio_nr_pages(folio));
+ }
+@@ -278,9 +280,6 @@ static void sio_write_complete(struct kiocb *iocb, long ret)
+ 			set_page_dirty(page);
+ 			ClearPageReclaim(page);
+ 		}
+-	} else {
+-		for (p = 0; p < sio->pages; p++)
+-			count_swpout_vm_event(page_folio(sio->bvec[p].bv_page));
+ 	}
 
-  The patch is already in mainline (merged in v6.7) but was not included in
-  the stable 6.6.y branch.
+ 	for (p = 0; p < sio->pages; p++)
+@@ -296,6 +295,7 @@ static void swap_writepage_fs(struct page *page, struct writeback_control *wbc)
+ 	struct file *swap_file = sis->swap_file;
+ 	loff_t pos = page_file_offset(page);
 
-Patch 2: 7108cc3f765c "mm: memcg: add per-memcg zswap writeback stat"
-
-  This patch adds the ZSWPWB entry to the memcg_vm_event_stat[] array. Like
-  patch 1, it is required for patch 4 to apply cleanly. The array structure
-  must match the 6.8 state for the code movement to succeed without
-  conflicts.
-
-  This patch is also in mainline (merged in v6.8) but was not backported to
-  6.6.y.
-
-Main Series
-===========
-
-Patches 3-7 are the core memcg stats flushing improvements:
-
-- Patch 3: Renames flush_next_time to flush_last_time for clarity
-- Patch 4: Moves vmstats struct definitions for better code organization
-- Patch 5: Implements per-memcg stats flushing thresholds (key change)
-- Patch 6: Moves stats flush into workingset_test_recent()
-- Patch 7: Restores subtree stats flushing (main feature)
-
-Cherry-Pick Notes for Patch 7
-==============================
-
-Patch 7 (7d7ef0a4686a) requires manual conflict resolution in mm/zswap.c:
-
-The conflict occurs because this patch includes changes to zswap shrinker
-code that was introduced in Linux 6.8. Since this new shrinker
-infrastructure does not exist in 6.6.y, the conflicting code should be
-removed during cherry-pick.
-
-Resolution: Keep the 6.6.y (HEAD) version of mm/zswap.c and discard the
-new shrinker code from the patch. The conflict markers will show:
-
-  <<<<<<< HEAD
-  // existing 6.6.y code
-  =======
-  // new 6.8 shrinker code (shrink_memcg_cb, zswap_shrinker_scan, etc.)
-  >>>>>>> 7d7ef0a4686a
-
-Simply keep the HEAD version and remove everything between the "======="
-and ">>>>>>>" markers. This is safe because the zswap shrinker is a
-separate new feature, not a dependency for the memcg stats changes.
-
-Additionally, if you encounter a conflict in mm/workingset.c, it may be
-due to commit 417dbd7be383 ("mm: ratelimit stat flush from workingset
-shrinker") which was backported to 6.6.y. The resolution is to use:
-  mem_cgroup_flush_stats_ratelimited(sc->memcg)
-which preserves the performance optimization while using the new API.
-
-Testing
-=======
-
-This series has been extensively tested upstream with:
-- 5000 concurrent workers in 500 cgroups doing allocations and reclaim
-- 250k threads reading stats every 100ms in 50k cgroups
-- No performance regressions observed with per-memcg thresholds
-
-The changes improve both stats accuracy and reduce unnecessary flushing
-overhead.
-
-References
-==========
-
-[1] Linux Test Project (LTP): https://github.com/linux-test-project/ltp
-
-Domenico Cerasuolo (1):
-  mm: memcg: add per-memcg zswap writeback stat
-
-Xin Hao (1):
-  mm: memcg: add THP swap out info for anonymous reclaim
-
-Yosry Ahmed (5):
-  mm: memcg: change flush_next_time to flush_last_time
-  mm: memcg: move vmstats structs definition above flushing code
-  mm: memcg: make stats flushing threshold per-memcg
-  mm: workingset: move the stats flush into workingset_test_recent()
-  mm: memcg: restore subtree stats flushing
-
- Documentation/admin-guide/cgroup-v2.rst |   9 +
- include/linux/memcontrol.h              |   8 +-
- include/linux/vm_event_item.h           |   1 +
- mm/memcontrol.c                         | 266 +++++++++++++-----------
- mm/page_io.c                            |   8 +-
- mm/vmscan.c                             |   3 +-
- mm/vmstat.c                             |   1 +
- mm/workingset.c                         |  42 ++--
- mm/zswap.c                              |   4 +
- 9 files changed, 203 insertions(+), 139 deletions(-)
-
++	count_swpout_vm_event(page_folio(page));
+ 	set_page_writeback(page);
+ 	unlock_page(page);
+ 	if (wbc->swap_plug)
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 258f5472f1e9..774bae2f54d7 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1922,6 +1922,7 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
+ 								folio_list))
+ 						goto activate_locked;
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
++					count_memcg_folio_events(folio, THP_SWPOUT_FALLBACK, 1);
+ 					count_vm_event(THP_SWPOUT_FALLBACK);
+ #endif
+ 					if (!add_to_swap(folio))
 --
 2.50.1
 
