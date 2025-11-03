@@ -1,138 +1,281 @@
-Return-Path: <linux-kernel+bounces-883392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAAEDC2D481
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:55:16 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEB1FC2D493
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:55:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 77D4534B7E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:55:16 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 73D7A34B162
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:55:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76613290F;
-	Mon,  3 Nov 2025 16:55:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EB4E31A561;
+	Mon,  3 Nov 2025 16:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V8T8z27A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="chCqRGOi"
+Received: from fra-out-010.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-010.esa.eu-central-1.outbound.mail-perimeter.amazon.com [63.178.143.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24C23101C2
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED37305068;
+	Mon,  3 Nov 2025 16:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.178.143.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762188906; cv=none; b=q/O+hgnmt4LYUllO60uSN1PZVeuDwPGE/mLEWV4QItgjbaZUdVyvvG6j+qW4+PD/bMaByzWwt95SgE/lboV8/XnmhowLBxI3/meTAXgYUgJzz/kWMI/ra6aSyNiFjWU7Udt68KgWTQHuXJWaPU1rtAmD/eY6PmPh9DOP0EB2k+g=
+	t=1762188926; cv=none; b=Zh9fZPX0Snw9kqzVmITopriznlHe2jQ2SpynFThFbsROBeHzyvRQl2Ku2mJ0NFreuDrQSYDc+nVICa4ruPINYWIaHd/2os9Td6AjFSbfk/4HbedT8NaBBaydn97wpUXWRGwVvf92QonBOtgwZtwvpe1+nXJeCZISWYMN8EE1MZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762188906; c=relaxed/simple;
-	bh=FB2fXq8qI+orZjzBe0HcJfqm2snf0R2VlXVim7tZELw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BfA1eMzgOKPvfngRWrJ/dmQ5yH42krOKi9uDsvKYT5LJnT2PGYgwlIv6bG/79NF5r88a8CFrtwE72QLoPXkAvQ+WJWj6RNxyDlNZO+77xUhdkTbFP6hphpafgVDKeOpdMmZgh8ELoX6ulG1/WxfphTy/Z993uWawtsjY+/tjO2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V8T8z27A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC29DC113D0
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:55:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762188906;
-	bh=FB2fXq8qI+orZjzBe0HcJfqm2snf0R2VlXVim7tZELw=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-	b=V8T8z27AnnpKBHtEhbnLDbFPHsZv8GVbqVqel+E7gHixQpbcLsAGvizl0NGG/6Zca
-	 6QYROpgCQ/+zudxsE+xz0EbzXO////Q1l6Q8VoeYg0Zwz/0p2LsF0r+0qFF0zLy0tT
-	 hURdxC4U/GUEcPZSm7OGpe7j0bO2lIwAT8nD/Fx7zWos68UsxMacU2lpeh1wTmo2wh
-	 UH5UUAKvnCnIuXSgsDAS8PUKouAvkxPaMfFCJo0x1jqKqFE0RF5TqT4KkVAcgfxmMH
-	 lIFEFOV6U2czbw6qc6pP1XNhS5Ng+uRsacHhwnmaLAxHDPfK4sSAF+H8OKuq2eGUv9
-	 DCo31S/MaCWsw==
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-378cfd75fb0so53630211fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 08:55:06 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWFLDS2/OAJGmhNPZTZNYT0UFe5cYCHUw+OF277NX35Rugx5ID1sKT4M4Q3LzeEp0nruO03fPbGl7SNW+Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXZTHIQBFO6M3qeg7lSMeE1Z+C19ISHr40+gHKsyQxDTaByg6d
-	ADANyQx7yNB2xBzIQv8LgyO8lptScwejvPDA3eW+mCCQxBYAAA49DA9+IGelS8s0axM8Lu4g6jC
-	bgEIqMkI3zLagmV8ReSJ4aIkYXnv+r6o=
-X-Google-Smtp-Source: AGHT+IESVT3wAxoqTzkJuv5v/0MWqydt3AjfMt93Ut8gKxHv8FnfFvByHx9A2eJ3N9us2Sxn3tsMRc12U585mB1Rp1E=
-X-Received: by 2002:a2e:a542:0:b0:37a:2fa7:53af with SMTP id
- 38308e7fff4ca-37a2fa75c90mr19439061fa.40.1762188905042; Mon, 03 Nov 2025
- 08:55:05 -0800 (PST)
+	s=arc-20240116; t=1762188926; c=relaxed/simple;
+	bh=bERujlan6xYBCXPOFlM4FGae/3KW3OBLj5Y11k2yHJQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Q8e/8xVBODnU7xHgh6kuPPKqltzYldVJG69smml4a+NZ/7A8fYdn9viiVn8LGQFavGOq0AX5RdQgS3UYgou+c2Hmy2/ijy4g1njhVEcNIYe9ZXC7ZZgtq3IAcPvYfqH26kbTXfXDGB/IeksFBrnpr8q4AzDxe3mz6AKQhp1so4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=chCqRGOi; arc=none smtp.client-ip=63.178.143.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1762188924; x=1793724924;
+  h=message-id:date:mime-version:reply-to:subject:to:cc:
+   references:from:in-reply-to:content-transfer-encoding;
+  bh=UEH2vz5x8bkUyz4ezTN39e/gCvIEAbggvIgsadkudPo=;
+  b=chCqRGOiza9e64wPfZ0xn/xoLDFY7WOUDUi1aP+e+3HOGVMr+tu4OtQ2
+   uiOdWTeWCdyfOoDZ1S070zbr9T5yRT4mHMMomEtsXczFD6pW2iGF2sicx
+   3/ujdrpTPFR/voLEzBlm5TP1Q6gM4sQ56akOZw9fcnOYR8mKupVmbgQtv
+   uSz8vVXT+HxpG4ByhE3Eaxtm6atBgHS4PoXyav0PlhOuUEvHuVB9XCv6o
+   o3DuKRiFRciUGsLMd4VBu+lSzi7xP2j6hAjuswNhk+APSavJmKR75guYH
+   MYN5GO5xZYZ9UmgoPliL0a4FxSK9etL4YwSkMrsg2QLK0ZwJsqVHbhLMW
+   Q==;
+X-CSE-ConnectionGUID: meLlLgWBTP27Rl/TBc+JIw==
+X-CSE-MsgGUID: K7u5/hGKSz6id+1S8o9fbg==
+X-IronPort-AV: E=Sophos;i="6.19,276,1754956800"; 
+   d="scan'208";a="4501536"
+Received: from ip-10-6-3-216.eu-central-1.compute.internal (HELO smtpout.naws.eu-central-1.prod.farcaster.email.amazon.dev) ([10.6.3.216])
+  by internal-fra-out-010.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 16:55:05 +0000
+Received: from EX19MTAEUB001.ant.amazon.com [54.240.197.234:12012]
+ by smtpin.naws.eu-central-1.prod.farcaster.email.amazon.dev [10.0.15.8:2525] with esmtp (Farcaster)
+ id bb542154-10c3-4be7-aa9d-727e3397c42e; Mon, 3 Nov 2025 16:55:05 +0000 (UTC)
+X-Farcaster-Flow-ID: bb542154-10c3-4be7-aa9d-727e3397c42e
+Received: from EX19D022EUC002.ant.amazon.com (10.252.51.137) by
+ EX19MTAEUB001.ant.amazon.com (10.252.51.28) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29;
+ Mon, 3 Nov 2025 16:55:05 +0000
+Received: from [192.168.10.21] (10.106.83.21) by EX19D022EUC002.ant.amazon.com
+ (10.252.51.137) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.2562.29; Mon, 3 Nov 2025
+ 16:55:04 +0000
+Message-ID: <2c61545f-befb-4681-95fd-ff281e1a947b@amazon.com>
+Date: Mon, 3 Nov 2025 16:55:02 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251021112013.2710903-1-andre.przywara@arm.com> <20251021112013.2710903-4-andre.przywara@arm.com>
-In-Reply-To: <20251021112013.2710903-4-andre.przywara@arm.com>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Tue, 4 Nov 2025 00:54:51 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67UFUAKz7tWV1b2YtANBU7a9b4KRb1SOOs=bxM4DBPwPw@mail.gmail.com>
-X-Gm-Features: AWmQ_blnI_C9_pjIZuBaEa3hzNHzRXpxHHoK0mpW9iYhv4eDs7c4vEasNevGFmo
-Message-ID: <CAGb2v67UFUAKz7tWV1b2YtANBU7a9b4KRb1SOOs=bxM4DBPwPw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] regulator: axp20x: add support for the AXP318W
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Lee Jones <lee@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Samuel Holland <samuel@sholland.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Yixun Lan <dlan@gentoo.org>, devicetree@vger.kernel.org, linux-sunxi@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Oct 21, 2025 at 7:20=E2=80=AFPM Andre Przywara <andre.przywara@arm.=
-com> wrote:
->
-> The X-Powers AXP318W is a typical PMIC from X-Powers, featuring nine
-> DC/DC converters and 28 LDOs, on the regulator side.
->
-> Describe the chip's voltage settings and switch registers, how the
-> voltages are encoded, and connect this to the MFD device via its
-> regulator ID.
-> We use just "318" for the internal identifiers, for easier typing and
-> less churn. If something else other than the "AXP318W" shows up, that's
-> an easy change, externally visible strings carry the additional letter
-> already.
->
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> ---
->  drivers/regulator/axp20x-regulator.c | 170 ++++++++++++++++++++++++++-
->  include/linux/mfd/axp20x.h           |  43 +++++++
->  2 files changed, 211 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp=
-20x-regulator.c
-> index da891415efc0b..1576bf4178f8f 100644
-> --- a/drivers/regulator/axp20x-regulator.c
-> +++ b/drivers/regulator/axp20x-regulator.c
-> @@ -138,6 +138,15 @@
->  #define AXP313A_DCDC_V_OUT_MASK                GENMASK(6, 0)
->  #define AXP313A_LDO_V_OUT_MASK         GENMASK(4, 0)
->
-> +#define AXP318_DCDC1_V_OUT_MASK                GENMASK(4, 0)
-> +#define AXP318_DCDC2_V_OUT_MASK                GENMASK(6, 0)
-> +#define AXP318_LDO_V_OUT_MASK          GENMASK(4, 0)
-> +#define AXP318_ELDO_V_OUT_MASK         GENMASK(5, 0)
-
-> +#define AXP318_DCDC2_NUM_VOLTAGES      88
-> +#define AXP318_DCDC6_NUM_VOLTAGES      128
-> +#define AXP318_DCDC7_NUM_VOLTAGES      103
-> +#define AXP318_DCDC8_NUM_VOLTAGES      119
-
-Upon closer inspection of the helper code, these aren't actually needed.
-My bad for introducing this unused field in the first place.
-
-[...]
-
-> +       AXP_DESC(AXP318, ELDO4, "eldo4", "eldoin", 500, 1500, 25,
-> +                AXP318_ELDO4_CONTROL, AXP318_ELDO_V_OUT_MASK,
-> +                AXP318_LDO_OUTPUT_CONTROL4, BIT(1)),
-> +       AXP_DESC(AXP318, ELDO5, "eldo5", "eldoin", 500, 1500, 25,
-> +                AXP318_ELDO5_CONTROL, AXP318_ELDO_V_OUT_MASK,
-> +                AXP318_LDO_OUTPUT_CONTROL4, BIT(2)),
-
-eldo4 and eldo5 support operating in switch mode. We can model that as
-a bypass mode control. See the *bypass* fields in regulator_desc and
-regulator_set_bypass_regmap() / regulator_get_bypass_regmap().
-
-The rest check out. But also see my other reply regarding the 1.54v
-threshold.
+User-Agent: Mozilla Thunderbird
+Reply-To: <kalyazin@amazon.com>
+Subject: Re: [PATCH v6 1/2] KVM: guest_memfd: add generic population via write
+To: Sean Christopherson <seanjc@google.com>
+CC: Nikita Kalyazin <kalyazin@amazon.co.uk>, "pbonzini@redhat.com"
+	<pbonzini@redhat.com>, "shuah@kernel.org" <shuah@kernel.org>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"david@redhat.com" <david@redhat.com>, "jthoughton@google.com"
+	<jthoughton@google.com>, "patrick.roy@linux.dev" <patrick.roy@linux.dev>,
+	Jack Thomson <jackabt@amazon.co.uk>, Derek Manwaring <derekmn@amazon.com>,
+	Marco Cali <xmarcalx@amazon.co.uk>, <ackerleytng@google.com>, "Vishal
+ Annapurve" <vannapurve@google.com>
+References: <20251020161352.69257-1-kalyazin@amazon.com>
+ <20251020161352.69257-2-kalyazin@amazon.com> <aPpS2aqdobVTk_ed@google.com>
+ <8a28ddea-35c0-490e-a7d2-7fb612fdd008@amazon.com>
+ <aQPakDuteQkg0hTu@google.com>
+Content-Language: en-US
+From: Nikita Kalyazin <kalyazin@amazon.com>
+Autocrypt: addr=kalyazin@amazon.com; keydata=
+ xjMEY+ZIvRYJKwYBBAHaRw8BAQdA9FwYskD/5BFmiiTgktstviS9svHeszG2JfIkUqjxf+/N
+ JU5pa2l0YSBLYWx5YXppbiA8a2FseWF6aW5AYW1hem9uLmNvbT7CjwQTFggANxYhBGhhGDEy
+ BjLQwD9FsK+SyiCpmmTzBQJnrNfABQkFps9DAhsDBAsJCAcFFQgJCgsFFgIDAQAACgkQr5LK
+ IKmaZPOpfgD/exazh4C2Z8fNEz54YLJ6tuFEgQrVQPX6nQ/PfQi2+dwBAMGTpZcj9Z9NvSe1
+ CmmKYnYjhzGxzjBs8itSUvWIcMsFzjgEY+ZIvRIKKwYBBAGXVQEFAQEHQCqd7/nb2tb36vZt
+ ubg1iBLCSDctMlKHsQTp7wCnEc4RAwEIB8J+BBgWCAAmFiEEaGEYMTIGMtDAP0Wwr5LKIKma
+ ZPMFAmes18AFCQWmz0MCGwwACgkQr5LKIKmaZPNTlQEA+q+rGFn7273rOAg+rxPty0M8lJbT
+ i2kGo8RmPPLu650A/1kWgz1AnenQUYzTAFnZrKSsXAw5WoHaDLBz9kiO5pAK
+In-Reply-To: <aQPakDuteQkg0hTu@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EX19D010EUA002.ant.amazon.com (10.252.50.108) To
+ EX19D022EUC002.ant.amazon.com (10.252.51.137)
 
 
-Thanks
-ChenYu
+
+On 30/10/2025 21:37, Sean Christopherson wrote:
+> On Fri, Oct 24, 2025, Nikita Kalyazin wrote:
+>>
+>>
+>> On 23/10/2025 17:07, Sean Christopherson wrote:
+>>> On Mon, Oct 20, 2025, Nikita Kalyazin wrote:
+>>>> From: Nikita Kalyazin <kalyazin@amazon.com>
+>>
+>> + Vishal and Ackerley
+>>
+>>>>
+>>>> write syscall populates guest_memfd with user-supplied data in a generic
+>>>> way, ie no vendor-specific preparation is performed.  If the request is
+>>>> not page-aligned, the remaining bytes are initialised to 0.
+>>>>
+>>>> write is only supported for non-CoCo setups where guest memory is not
+>>>> hardware-encrypted.
+>>>
+>>> Please include all of the "why".  The code mostly communicates the "what", but
+>>> it doesn't capture why write() support is at all interesting, nor does it explain
+>>> why read() isn't supported.
+>>
+>> Hi Sean,
+>>
+>> Thanks for the review.
+>>
+>> Do you think including the explanation from the cover letter would be
+>> sufficient?
+> 
+> It's pretty close.  A few more details would be helpful, e.g. to explain that VMMs
+> may use write() to populate the initial image
+
+Ack.
+
+> 
+>> Shall I additionally say that read() isn't supported because there is no use
+>> case for it as of now or would it be obvious?
+> 
+> Hmm, I think if you want to exclude read() support, the changelog should explicitly
+> state why.  E.g. "there's no use case" is quite different from "deliberately
+> don't support read() for security reasons".
+
+Ack.
+
+> 
+>>>> Signed-off-by: Nikitia Kalyazin <kalyazin@amazon.com>
+>>>> ---
+>>>>    virt/kvm/guest_memfd.c | 48 ++++++++++++++++++++++++++++++++++++++++++
+>>>
+>>> There's a notable lack of uAPI and Documentation chanegs.  I.e. this needs a
+>>> GUEST_MEMFD_FLAG_xxx along with proper documentation.
+>>
+>> Would the following be ok in the doc?
+>>
+>> When the capability KVM_CAP_GUEST_MEMFD_WRITE is supported, the 'flags'
+> 
+> No capability is necessary, see d2042d8f96dd ("KVM: Rework KVM_CAP_GUEST_MEMFD_MMAP
+> into KVM_CAP_GUEST_MEMFD_FLAGS").
+
+Thanks, I didn't realise that kvm/next was behind kvm/master.
+
+> 
+>> field
+>> supports GUEST_MEMFD_FLAG_WRITE. Setting this flag on guest_memfd creation
+>> enables write() syscall operations to populate guest_memfd memory from host
+>> userspace.
+>>
+>> When a write() operation is performed on a guest_memfd file descriptor with
+>> the
+>> GUEST_MEMFD_FLAG_WRITE set, the syscall will populate the guest memory with
+>> user-supplied data in a generic way, without any vendor-specific
+>> preparation.
+>> The write operation is only supported for non-CoCo (Confidential Computing)
+>> setups where guest memory is not hardware-encrypted.
+> 
+> The restriction should be that guest memory must be SHARED, i.e. not PRIVATE.
+> Strictly speaking, guest memory can be encrypted, e.g. with SME and TME (I think
+> TME is still a thing?), but with a shared key and thus accessible from the host.
+> 
+> Even if that weren't the case, we want to support this for CoCo VMs.
+
+To clarify, should it depend on GUEST_MEMFD_FLAG_INIT_SHARED for now?
+
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index 5bd76cf394fa..5fbf65f49586 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -736,7 +736,7 @@ static inline u64 
+kvm_gmem_get_supported_flags(struct kvm *kvm)
+         u64 flags = GUEST_MEMFD_FLAG_MMAP;
+
+         if (!kvm || kvm_arch_supports_gmem_init_shared(kvm))
+-               flags |= GUEST_MEMFD_FLAG_INIT_SHARED;
++               flags |= GUEST_MEMFD_FLAG_INIT_SHARED | 
+GUEST_MEMFD_FLAG_WRITE;
+
+         return flags;
+  }
+
+> 
+>> If the write request is not page-aligned, any remaining bytes within the page
+>> are initialized to zero.
+> 
+> Why?  (Honest question, e.g. is that standard file semantics?)
+
+The clause was originally suggested by James in v5 [1].  The behaviour 
+shouldn't be deviating from the standard semantics though, so I will 
+omit it.  Moreover, when looking at the shmem implementation, I realised 
+that I hadn't handled the case of clearing bytes _before_ written bytes 
+properly.  I will fix it in the next version.
+
+[1] 
+https://lore.kernel.org/kvm/CADrL8HUObfEd80sr783dB3dPWGSX7H5=0HCp9OjiL6D_Sp+2Ww@mail.gmail.com/
+
+> 
+>>> And while it's definitely it's a-ok to land .write() in advance of the direct map
+>>> changes, we do need to at least map out how we want the two to interact, e.g. so
+>>> that we don't end up with constraints that are impossible to satisfy.
+>>>
+>>
+>> write() shall not attempt to access a page that is not in the direct map,
+>> which I believe can be achieved via kvm_kmem_gmem_write_begin() consulting
+>> the KVM_GMEM_FOLIO_NO_DIRECT_MAP in folio->private (introduced in [1]).
+>>
+>> Do you think we should mention it in the commit message in some way? What
+>> particular constraint are you cautious about?
+> 
+> I want to be cautious with respect to the ABI/uAPI.  Patrick's series also adds
+> a flag, and guest_memfd doesn't currently provide a way to toggle flags after the
+> file is created.  That begs the question of how GUEST_MEMFD_FLAG_NO_DIRECT_MAP
+> will co-exist with GUEST_MEMFD_FLAG_WRITE.  Presumably the goal is to use write()
+> to initialize memory, and _then_ nuke the direct map.
+> 
+> I want line of sight to understanding the exact semantics/flows.  E.g. will KVM
+> require userspace to clear GUEST_MEMFD_FLAG_WRITE before allowing
+> NO_DIRECT_MAP?  Or will the write() simply fail?  How will the sequencing be
+> achieved?
+
+No, I don't think we can clear the GUEST_MEMFD_FLAG_WRITE as we expect 
+faults and writes to different pages to be arriving interspersed: some 
+pages will be populated by write() proactively, some will be allocated 
+by faults in the user mapping on demand.  Both write() and the fault 
+handler, if they need to allocate a page, will be writing content to it 
+and "sealing" by removing it from the direct map.  If write() faces an 
+already "sealed" page, it will fail (with EEXIST [1]).
+
+> 
+>>>> +     struct inode *inode = file_inode(file);
+>>>> +     pgoff_t index = pos >> PAGE_SHIFT;
+>>>> +     struct folio *folio;
+>>>> +
+>>>> +     if (!kvm_gmem_supports_mmap(inode))
+>>>
+>>> Checking for MMAP is neither sufficient nor strictly necessary.  MMAP doesn't
+>>> imply SHARED, and it's not clear to me that mmap() support should be in any way
+>>> tied to WRITE support.
+>>
+>> As in my reply to the comment about doc, I plan to introduce
+>> KVM_CAP_GUEST_MEMFD_WRITE and GUEST_MEMFD_FLAG_WRITE.  The
+>> kvm_arch_supports_gmem_write() will be a weak symbol and relying on
+>> !kvm_arch_has_private_mem() on x86, similar to
+>> kvm_arch_supports_gmem_mmap().  Does it look right?
+> 
+> No.  As above, write() should be allowed iff memory is SHARED.  Relevant commits
+> that are now in Linus' tree:
+> 
+>    44c6cb9fe9888b371e31165b2854bd0f4e2787d4 KVM: guest_memfd: Allow mmap() on guest_memfd for x86 VMs with private memory
+>    9aef71c892a55e004419923ba7129abe3e58d9f1 KVM: Explicitly mark KVM_GUEST_MEMFD as depending on KVM_GENERIC_MMU_NOTIFIER
+>    5d3341d684be80892d8f6f9812f90f9274b81177 KVM: guest_memfd: Invalidate SHARED GPAs if gmem supports INIT_SHARED
+
+Ack.
+
 
