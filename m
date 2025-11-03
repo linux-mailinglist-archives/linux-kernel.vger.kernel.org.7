@@ -1,165 +1,178 @@
-Return-Path: <linux-kernel+bounces-882552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B98CC2AB7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 10:25:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDB44C2AB89
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 10:26:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 319DC3B508C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 09:25:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BCA63B5073
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 09:26:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91DC2EA490;
-	Mon,  3 Nov 2025 09:25:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 203362EA17D;
+	Mon,  3 Nov 2025 09:26:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="KgOoiL/3"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MF0BUpRD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 886252EA14E
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 09:25:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E222E9730;
+	Mon,  3 Nov 2025 09:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762161908; cv=none; b=Igxjlvy3YgVEgjbL3p0JxUd4BLWRdJlQDQXLkrnjKcSn0Nb3xvSTttTi80vwwaG1P4LHf+BnNr92WpqEMBHheaJSqdVtzqAZWYyoOrN3jguxEwZrPG29NBp351ybHivKf9k2rqq0TujxD5cVNTIsIKMFadXG3JOh/Irj8w9rOWs=
+	t=1762161971; cv=none; b=hOPA9SvKDeNRSQVZ3QQn5DH73cBITopqtke3Y0qzVeZq0GdsnmR1sc+5sS9cue4FLsT6xn4cZ8iPeoJUDXB0Bar7GmmBqje79TDWrUXL2IGhh/U8wCDBeXYX4vap4XS2BbtvMZMv0UGUI0y+E97ZQJoHMS830J4O7RUmJFFCwQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762161908; c=relaxed/simple;
-	bh=J8wpUcNN6eKIe2BNft5mcvC6Lwm7D6CpSo7ypNdqnRg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YmsbtnI7/F9V82hXxqtb8R+7BXLXl7vDXvDvp+Xrt54S4yn+y5Ha5/Kl80L3s03XtAF8Mq8EcrwrlBHJE+1i9TjMQYc24N2ZD2cJnyGZ14Bxupm3PT1de+NwbFgoQzyfzn5BtlvmD60KCxi3563Qt4DSM2nvtfEG0cFfsFCCJo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=KgOoiL/3; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-640d0ec9651so485841a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 01:25:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1762161902; x=1762766702; darn=vger.kernel.org;
-        h=mime-version:user-agent:organization:references:in-reply-to:date:cc
-         :to:from:subject:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=J8wpUcNN6eKIe2BNft5mcvC6Lwm7D6CpSo7ypNdqnRg=;
-        b=KgOoiL/38Rtc+gBugYUplM6MQImn/eksHW+v/7hDUGOdNaqbui3Zibgq6fuSrhxWsX
-         5f27zsZJaevPOgMQFFOuH39EXGDOQed7O5WIJfkgs7vCsB8oqIzUeM2RDlRbw4HZkjCh
-         GQ1NE1AxHA8gtomYJsZTV5id+0K8kKZQzUySeEh7AjXwcMfhnKf972K/wzryOxp118kK
-         7hBndlOoG7u7BSZsY/fy1I7XK22rw5ab1tRPZyiRB6THvJipbkoiJRgPNhA+ST5zWaEW
-         89PsnG8ZfDdJFVHhhtZnZoEvbhKM7GN8/k+XT9MxvbjlEeS/1g7B+GDHJ3272RiDJh9r
-         4+jA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762161902; x=1762766702;
-        h=mime-version:user-agent:organization:references:in-reply-to:date:cc
-         :to:from:subject:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=J8wpUcNN6eKIe2BNft5mcvC6Lwm7D6CpSo7ypNdqnRg=;
-        b=K9HjAdWFVVmXfTciPr8UgLKgclcVbUw0oaWQFnZTDryxpx8m3AxcJMVBMlIzJE36pq
-         GjjCLn83O1Owd5DDlP/CDNtuO1Wg0yQQo3XRIKEE+s40sUinId3NZrW5TAyiAHD4cpTg
-         jjbdDbjAxEoast7YcPisDCniGi8g51FaLXIINCYjOBvA1mFUz9GaoMBD3RSC7C9LTkMM
-         DoYhqmdZpMKz67reml0ZDUQ3zLoSn5xj0rdUqKhpt11O/U9C3OsszNgm3A9/Bq2kLeG8
-         z+hTQzOU/aqmFYXsTiKaZmeSnCE16hPvYk3rtDcX6R8kIMAo3gCg1pKQ0LOGFkQs5SUg
-         IkSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVbrUZG+T/JwoI17RU64tTcAc3fAtzil61fWhIWjIkd7ulrAs+DkOhiUQ73Spm+mi4dQT0Jpro+R0LWI58=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlxzlE/7boZkxN8dwGdM8xCO8ccDHVYYfyefZUmhG8AbSCmhc6
-	dHNvrV8wfZtpXKA5ChciK/4sA/f99Nhqc6AgvHoxosA9tfz4569unTCkum6LiVjUV38=
-X-Gm-Gg: ASbGncvvGmd7JMiRO2qqxfJViT9bigf3gZmDPlU+AOwCLlbv/Xf4RV/lg0MNsE/7d02
-	AEJhn9Map2NYP2+LW5G7BYpGQDjSuxZ5hACTV6F4oMqocG5eU+MkiUCdZmpVdfMGEP1Y1iQDefH
-	jkVXPGmXQSdkUjKU/wEIoSiUycewgEhP/6V1Vk9ZlSnRUYfFml9bLB5V3qouvPJaawVi4+vnj05
-	u8LlZYOVeWADjts4W2jQFqX1S6hGdN9yOl5BJffmy3IWBCFrzojtjqr4R4Hzk6P7FadTTh9TY9Z
-	Czuj7rVYK7Kos7xbpmZ4dA9793D8eQpQo+PUj57QqsjF8jOa1nxXIt5XwfKmj8/Jp2mSSMVWF1v
-	369tr0KvJBE7h0RGqBfBDa3JAAwztaSMQirNQhuN/H1vy9APEx10sNpsFdsMxHn+7gBAAE/feGS
-	8lPpmZGNY0W1OnbOCuObuagC+SJIHd9ubJAS3l0naO/8R3KuTFEg==
-X-Google-Smtp-Source: AGHT+IH5hULo+8FDQ2WYcjV+y6dq0RuxLkwQQ2iO35o/+oBwlQsLx4u0zvThA0iUaycg5B4WYA5Ppw==
-X-Received: by 2002:a05:6402:2750:b0:63c:683c:f9d2 with SMTP id 4fb4d7f45d1cf-64076f78d17mr10299643a12.12.1762161901830;
-        Mon, 03 Nov 2025 01:25:01 -0800 (PST)
-Received: from [10.203.83.103] (mob-176-247-82-42.net.vodafone.it. [176.247.82.42])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-64094ec0921sm6848587a12.11.2025.11.03.01.25.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 01:25:01 -0800 (PST)
-Message-ID: <87f68357d52fe6406bab42d5bfb41e4addd9d301.camel@baylibre.com>
-Subject: Re: [PATCH 1/9] iio: imu: st_lsm6dsx: dynamically initialize
- iio_chan_spec data
-From: Francesco Lavra <flavra@baylibre.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lorenzo Bianconi <lorenzo@kernel.org>, David Lechner
- <dlechner@baylibre.com>,  Nuno =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>,  linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Mon, 03 Nov 2025 10:24:54 +0100
-In-Reply-To: <20251102111648.73422267@jic23-huawei>
-References: <20251030072752.349633-1-flavra@baylibre.com>
-	 <20251030072752.349633-2-flavra@baylibre.com>
-	 <20251102111648.73422267@jic23-huawei>
-Organization: BayLibre
-Content-Type: multipart/signed; micalg="pgp-sha512";
-	protocol="application/pgp-signature"; boundary="=-MnvrRlCym1HWP7zf9aXq"
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1762161971; c=relaxed/simple;
+	bh=0+8O8IQ8U0kV20x53Wn5EU5fTLeflJ75PULxjkLclzI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cM5oALXiQLIjEqR8eN93/V30uaB/MC+nVStd7Kg9ODP4X7B7lLnLjYwJGETH5MZQ4SgficXVJ+uYxhhzNaG4oJ6qBYpLvXaTcfJSZqqpcjMjm0MR5uDqfWLlxeE14PKNsSW+WoIgAZGjqsOwggu+yYCTT2yvZXEaYRylhcZ6wSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MF0BUpRD; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762161969; x=1793697969;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=0+8O8IQ8U0kV20x53Wn5EU5fTLeflJ75PULxjkLclzI=;
+  b=MF0BUpRDO4BFvJTHihTDeVU7KKTix9WcYAKeZyZmgBEznTx4umPkxbPw
+   IKaSLI7/SPG0NNbS52NqAAfd5ZDyKhrud27zoDl1xZ03i0JcI+ZlXNBKL
+   NofwKEn/+ehK/QVCXPcv+8IxZ7Wb6KqFgXLcBOBDEqabZcmZ9DdUNNgEl
+   wlNfNZQnWdJKjiZCb7Jvj8cnaHOL6RfhQ1DTMaiQvc+z+SOyO7b1/grHp
+   U8MJLPLOPr1cvI+eZ0mQ1+PqHaQ3KLnU1bXc2kTu0TnR/PnukmcMcZRDw
+   E71G2bCPvamEIYwJ9uTeSkvypjEi7nkUksJurwWp+67UOBMxd9DR5t/IM
+   Q==;
+X-CSE-ConnectionGUID: cRO+KDQcSiKA14kIVypIgw==
+X-CSE-MsgGUID: KwuOrzpxQV+GdZVaqg4ymQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="67886792"
+X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
+   d="scan'208";a="67886792"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 01:26:06 -0800
+X-CSE-ConnectionGUID: Zithr4brRoGAkRPrr4mi5g==
+X-CSE-MsgGUID: DFXSxedURhS+pgCRxTJGvA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
+   d="scan'208";a="187272974"
+Received: from krybak-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.127])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 01:26:04 -0800
+From: Jani Nikula <jani.nikula@intel.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Simona Vetter
+ <simona.vetter@ffwll.ch>, Intel Graphics
+ <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Thomas Zimmermann
+ <tzimmermann@suse.de>
+Subject: Re: linux-next: build failure after merge of the drm-misc tree
+In-Reply-To: <20251103112418.031b3f8c@canb.auug.org.au>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20251103112418.031b3f8c@canb.auug.org.au>
+Date: Mon, 03 Nov 2025 11:26:01 +0200
+Message-ID: <b4faab8bee2b4430447ff7aeac0f2b3e9aac8ec8@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain
+
+On Mon, 03 Nov 2025, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> After merging the drm-misc tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c: In function 'rzg2l_du_probe':
+> drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c:173:9: error: implicit declaration of function 'drm_info'; did you mean 'pr_info'? [-Wimplicit-function-declaration]
+>   173 |         drm_info(&rcdu->ddev, "Device %s probed\n", dev_name(&pdev->dev));
+>       |         ^~~~~~~~
+>       |         pr_info
+>
+> Presumably caused by commit
+>
+>   9695c143b72a ("drm/buddy: replace drm_print.h include with a forward declaration")
+> or
+>   ea722522d505 ("drm/mm: replace drm_print.h include with a forward declaration")
+> or
+>   d7a849d126d0 ("drm/ttm: replace drm_print.h include with a forward declaration")
+>
+> I have applied the following fix patch for today:
+
+Thanks for the report, the fix (same as yours) is at [1].
+
+BR,
+Jani.
 
 
---=-MnvrRlCym1HWP7zf9aXq
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+[1] https://lore.kernel.org/r/04f617d5fe37f92d750efbb73065df3997f5c6b5.1762161597.git.jani.nikula@intel.com
 
-On Sun, 2025-11-02 at 11:16 +0000, Jonathan Cameron wrote:
-> On Thu, 30 Oct 2025 08:27:44 +0100
-> Francesco Lavra <flavra@baylibre.com> wrote:
->=20
-> > Using the ST_LSM6DSX_CHANNEL_ACC() macro as a static initializer
-> > for the iio_chan_spec struct arrays makes all sensors advertise
-> > channel event capabilities regardless of whether they actually
-> > support event generation. And if userspace tries to configure
-> > accelerometer wakeup events on a sensor device that does not
-> > support them (e.g. LSM6DS0), st_lsm6dsx_write_event() dereferences
-> > a NULL pointer when trying to write to the wakeup register.
-> > Replace usage of the ST_LSM6DSX_CHANNEL_ACC() and
-> > ST_LSM6DSX_CHANNEL() macros with dynamic allocation and
-> > initialization of struct iio_chan_spec arrays, where the
-> > st_lsm6dsx_event structure is only used for sensors that support
-> > wakeup events; besides fixing the above bug, this serves as a
-> > preliminary step for adding support for more event types.
-> >=20
-> > Signed-off-by: Francesco Lavra <flavra@baylibre.com>
->=20
-> In cases where there are only a small number of options for what the
-> channel
-> arrays should contain, my normal preference would be more data over
-> moving
-> the complexity into code.=C2=A0 That is have two struct iio_chan_spec arr=
-ays
-> and
-> pick between them based on availability of the interrupt.
->=20
-> I haven't checked the whole series yet, but how many channel arrays
-> would we need to support the features you are introducing here? That is
-> how many different combinations exist in the supported chips?
 
-In the current code there are 3 struct iio_chan_spec arrays; we would need
-one more to fix the above bug, and one more to add tap event support; so a
-total of 5 arrays (each of length 4).
-As for struct iio_event_spec, the current code has one array (of length 1),
-and to add tap event support we would need another array (of length 2).
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Mon, 3 Nov 2025 11:12:27 +1100
+> Subject: [PATCH] fix up for dropping drm_print.h includes
+>
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c
+> index e1aa6a719529..c34b1a13e685 100644
+> --- a/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c
+> +++ b/drivers/gpu/drm/renesas/rz-du/rzg2l_du_drv.c
+> @@ -18,6 +18,7 @@
+>  #include <drm/drm_fbdev_dma.h>
+>  #include <drm/drm_gem_dma_helper.h>
+>  #include <drm/drm_probe_helper.h>
+> +#include <drm/drm_print.h>
+>  
+>  #include "rzg2l_du_drv.h"
+>  #include "rzg2l_du_kms.h"
+> -- 
+> 2.51.1
+>
+> Which lead to this:
+>
+> drivers/gpu/drm/rockchip/rockchip_drm_vop2.c: In function 'vop2_convert_format':
+> drivers/gpu/drm/rockchip/rockchip_drm_vop2.c:215:17: error: implicit declaration of function 'DRM_ERROR'; did you mean 'SO_ERROR'? [-Wimplicit-function-declaration]
+>   215 |                 DRM_ERROR("unsupported format[%08x]\n", format);
+>       |                 ^~~~~~~~~
+>       |                 SO_ERROR
+> drivers/gpu/drm/rockchip/rockchip_drm_vop2.c: In function 'rockchip_vop2_mod_supported':
+> drivers/gpu/drm/rockchip/rockchip_drm_vop2.c:395:33: error: implicit declaration of function 'drm_dbg_kms' [-Wimplicit-function-declaration]
+>   395 |                                 drm_dbg_kms(vop2->drm,
+>       |                                 ^~~~~~~~~~~
+> drivers/gpu/drm/rockchip/rockchip_drm_vop2.c: In function 'vop2_setup_scale':
+> drivers/gpu/drm/rockchip/rockchip_drm_vop2.c:602:25: error: implicit declaration of function 'drm_dbg'; did you mean 'dev_dbg'? [-Wimplicit-function-declaration]
+>   602 |                         drm_dbg(vop2->drm, "%s dst_w[%d] should align as 2 pixel\n",
+>       |                         ^~~~~~~
+>       |                         dev_dbg
+> drivers/gpu/drm/rockchip/rockchip_drm_vop2.c: In function 'vop2_core_clks_prepare_enable':
+> drivers/gpu/drm/rockchip/rockchip_drm_vop2.c:763:17: error: implicit declaration of function 'drm_err'; did you mean 'pr_err'? [-Wimplicit-function-declaration]
+>   763 |                 drm_err(vop2->drm, "failed to enable hclk - %d\n", ret);
+>       |                 ^~~~~~~
+>       |                 pr_err
+> drivers/gpu/drm/rockchip/rockchip_drm_vop2.c: In function 'vop2_crtc_atomic_disable':
+> drivers/gpu/drm/rockchip/rockchip_drm_vop2.c:967:17: error: implicit declaration of function 'drm_info'; did you mean 'pr_info'? [-Wimplicit-function-declaration]
+>   967 |                 drm_info(vop2->drm, "wait for vp%d dsp_hold timeout\n", vp->id);
+>       |                 ^~~~~~~~
+>       |                 pr_info
+> drivers/gpu/drm/rockchip/rockchip_drm_vop2.c: In function 'vop2_crtc_atomic_enable':
+> drivers/gpu/drm/rockchip/rockchip_drm_vop2.c:1758:41: error: implicit declaration of function 'drm_warn'; did you mean 'dev_warn'? [-Wimplicit-function-declaration]
+>  1758 |                                         drm_warn(vop2->drm,
+>       |                                         ^~~~~~~~
+>       |                                         dev_warn
+> drivers/gpu/drm/rockchip/rockchip_drm_vop2.c: In function 'rk3576_vp_isr':
+> drivers/gpu/drm/rockchip/rockchip_drm_vop2.c:2198:17: error: implicit declaration of function 'drm_err_ratelimited'; did you mean 'pr_err_ratelimited'? [-Wimplicit-function-declaration]
+>  2198 |                 drm_err_ratelimited(vop2->drm, "POST_BUF_EMPTY irq err at vp%d\n", vp->id);
+>       |                 ^~~~~~~~~~~~~~~~~~~
+>       |                 pr_err_ratelimited
+>
+> So, I have instead used the drm-misc tree from next-20251031 for today.
 
---=-MnvrRlCym1HWP7zf9aXq
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iQGzBAABCgAdFiEEhleFT5U73KMewxTm7fE7c86UNl8FAmkIdOYACgkQ7fE7c86U
-Nl+o0Qv+L1+kfzgrRneLLXOc6I57yrBmlGbdoXM7PhnsMsoM78a2fFO+EYxJFd03
-HFVM63v6jyl14NDLXiY5YX3XoaMDCdafqimlBYX5EbqBBXzALeyLjAd5ZYwDBfc/
-YBdFYRwKAOxwbSN/nLB1nqbNf3vpzU+mZRArVLz/AeyQQXAgpPmKXee4HzXb0nko
-af7ywKzE31Y6XznU7887dRt9HyuGqzE1qzb5CBEZqjaULhCHzpqIpdMnlVpMwFjD
-87Ff1q69NuNiJW153aakIYHQaZFd+olGvAWZChmaUlNCEsUpzf/sySDdiz2GVnrR
-zZ5GP+a6/njT7AJtKCsYbrqmECMR5NsErlHDCAkanTUvuAtoR8p7EXrunHDpleKk
-5lhli1jyQNRTsdskptXSJ8PdSogB0noRrIe/E4EAOjHS/bQ4UuIxt18nLSE5KKJI
-pHj04/HaNglVynOq/uYuzfkDAkfOei/20P3RpFJHhuBDIdIx+doSmyGlOOpMIy+0
-u0RTrkCu
-=ZdQR
------END PGP SIGNATURE-----
-
---=-MnvrRlCym1HWP7zf9aXq--
+-- 
+Jani Nikula, Intel
 
