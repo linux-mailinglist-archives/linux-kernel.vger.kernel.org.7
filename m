@@ -1,255 +1,255 @@
-Return-Path: <linux-kernel+bounces-883811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E545C2E7CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:53:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E650C2E7D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:54:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 495513B48CF
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:53:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 575D03B4CBF
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:54:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5100E30147A;
-	Mon,  3 Nov 2025 23:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BAD330595C;
+	Mon,  3 Nov 2025 23:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UPU8cHco"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Y8Gkl+X5"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AAE126F0A
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 23:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116FD126F0A;
+	Mon,  3 Nov 2025 23:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762214027; cv=none; b=G1LbR9dRFIz/tjewlW4Xf7e98KhwX0TI/qQbp1Df7ZZu4z513vcO/SB6d7uKzmHX3Hyd/T2l/1gjI9t8GIbmTMvSbjcIKf0wC/RBY4ZNojeI8T2laSe5OJy/APbomg4RKZ39aP7JYjiYxAYu0+a73lQm9GohVrRf8BYbuY/4OKA=
+	t=1762214061; cv=none; b=MlZi1yS3OTHFUV4mA9xBA5R5dLMObOicyVjftmtblq3kmeNOAAmFTikJeMmu0VoAHmekCiFLwZB6Z+wdQeAwZbU6+FIIIzCnE+pnWXbrqrLELKpX9zOlXB5S896ayUQA5TCEhj83N0pMcGIdTcvBS692XKqlyGoRZe9FD0rNrdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762214027; c=relaxed/simple;
-	bh=lATDq3/M9pfPxFBynTedjEEBJifdEQUpyUvP8lpjLgc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ci162TChOUfn1eTtMPkNzNCnAZWUECaLBsFrDrtapDMwTBcqTQIpqULMQ06V3Eg6QiZ80D2qcKV9XjOEBTDdxRHSE/RCqwKKcfDGo4PA7Yrzc+DPXpm5Nt7O6/Cb4Sxm3aGRVrY7QRRAQsQcT5fL1jPo5TAINO6VD2ohAiQdnJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UPU8cHco; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b99bfb451e5so1271087a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 15:53:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762214025; x=1762818825; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yLjxRtSfyBJOMagychkpTepNRla4EVPcURJSVrcQeQY=;
-        b=UPU8cHcoWqCAz9gjw1NchpbsuFCJKX5S33o67qk8hDAn8sBj9c9I9bfl7MART6FjCU
-         7Men0lchVDtS/favjV7nTZMyMfbBKkBa3EPFUjLFZ0nFQFzCcBHgdHhVUQnz0C4NvaUj
-         jWXIOCfU8fFB/epFjy/aw/fPrzICwhuJFlJJldx4PDbw6eSuUIIz7duSJGvX49nQ6hys
-         t+aGMlgBEhlXVzlT7uPlz5+uTjA7NPU+3WSAwex8wX+8WPR2cehiXBLYpKLt4QnyeyNf
-         4WxqbqJ9BxPLvKERCSJcHvTESTWztj8ciG8F3dwSAWKID3tDB4AVpFkSkg4vNqI4Vz6m
-         tIwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762214025; x=1762818825;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yLjxRtSfyBJOMagychkpTepNRla4EVPcURJSVrcQeQY=;
-        b=ncnoTLhJWiIbLOMWJsSyBLYR/Ry+m4t3NjG1UYz2vy5EWJIpUetZY3MRWYyOU3Tqn3
-         u3AHuwiufECVhoKRr3rFcT6gtuhAjKPhRgEcZnEA9alhNSuRVohjz+gSOPeX+S94SK0L
-         ILqW8B0kvrdg7/axHHFe5j+aGKGczygKOinTnWUalTkI1Jx0gizBiSVDu76tU5K6yIwb
-         wzoWnZTFnZSj/BeM981jFzB7ZESpvdAhNC6LwjYjvXJ5m3yMrZKA4xjMgX2uWN1BsR3n
-         a88N16kyS4IYAZJ6nBMz44SoJMyRLsPlr9JC5x5dyGmWZe2FBBEB2fmbncgVSvIOoe4s
-         +eZw==
-X-Gm-Message-State: AOJu0YzDWRQwaLetBIJll01vJofveBJsEmpG6/+ciNw2XeqsX2TAkDTa
-	EAsI7GlO+N/qA34YisuzoDp3DtcRM89+8mPaauGPdOhx5WVmVGKWjy7cS5TJRFT5xxnNTTQjMeR
-	IcETUpVR4LVRAd8HSxOIJOKiqLOTqKtU=
-X-Gm-Gg: ASbGnctuqasVpeXahN11RRL3KyjwEFT6K1r+Ce+Kap7A8nTihsAH3Yo7b4lNoRFJEGI
-	C4cFirzxYud9gWAC1A9pyUVpPbpjeGu83DpHDOGgk9s1fjAf/92LTUV2xJvxnXM0GlPHGXJCXJY
-	fH/YZIx9aFa9vfI94ALan2tUuF0Pg90YQI4RTPB3p18+HoqGZok8u/s4RG6ft2nvaIenXunw31D
-	hsp8ICzBeR45pgDaZKz9hxtytfjZS7lJVHXRxb5QHN/TcR0W9gX2vSIKUwUk6Pl0dc0dFCGcg==
-X-Google-Smtp-Source: AGHT+IFjJMuWOmDjj0eb6+pcmZCA68pLvX3OxhDBYHicRd6uUs/i7l+bHxwzshvHtyXhYzBsiR+VQipKQQKkZ83KoZQ=
-X-Received: by 2002:a17:902:e842:b0:295:5a06:308d with SMTP id
- d9443c01a7336-2955a063493mr111188005ad.14.1762214024930; Mon, 03 Nov 2025
- 15:53:44 -0800 (PST)
+	s=arc-20240116; t=1762214061; c=relaxed/simple;
+	bh=y9U2LJnpFVpTBNI71B/vpN9oy5Mm8nCiKZQgW4c0EXw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nGiuwSO5nKU3x0tPdWrhv/6oYt9zcHk7URxwFXD7IOM0Bh28+yz3hdrINV2K/c2cuQAtpvc4npoahNWE5t3chVSWQBTiWqbIPMA69dY1+mTFpKo8/uN14dw1LYI7EDuYgzBbVYJvE4XgMo+rcwMyK9kN7aqpjFB1hdD9GRswEEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Y8Gkl+X5; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1762214057;
+	bh=mRUoJCTJqlp/8fm/nnObjxg86xx43MVK+jdZbc13/t4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Y8Gkl+X5qmb3JnVQ5JS7wWflJFZq+DXLUlHqCF5QI3Pb5veDqno0FtNDBzUya/dZa
+	 6BsMGU20nFMqJMcBzj3qtlEvb43QOgf+O+7v8A7WYCc12tXq7OfeiKz+t6MniZRYXy
+	 Md3Z8x7xdiyZVSCD5H3PT0w/nCblRmDhp9w6H9PTYhEFKwumN9JYd3vrMsffCSWTtf
+	 MG0mClCgjTlKKeEopo3+9BqWhrubAoqCXYO/rpF7M7MSLBKpPlGQAysSl613qamTv4
+	 u/4rzZ4NK2DXXGyk429Wwh/Cy9PMEwEMAdW0Nw6ImZg99VFvppWdWC8T+ie42RHDdN
+	 Q31L2Xg1hPkKQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d0pMr2W6Hz4w2R;
+	Tue, 04 Nov 2025 10:54:16 +1100 (AEDT)
+Date: Tue, 4 Nov 2025 10:54:15 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <ukleinek@kernel.org>, Luis
+ Chamberlain <mcgrof@kernel.org>, Daniel Gomez <da.gomez@samsung.com>, Sami
+ Tolvanen <samitolvanen@google.com>, Petr Pavlu <petr.pavlu@suse.com>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>, Daniel Gomez
+ <da.gomez@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Michal Wilczynski <m.wilczynski@samsung.com>
+Subject: Re: linux-next: manual merge of the pwm tree with the modules tree
+Message-ID: <20251104105415.68bfb090@canb.auug.org.au>
+In-Reply-To: <20251104104827.1de36ea0@canb.auug.org.au>
+References: <20251104104827.1de36ea0@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251031104924.10631-1-mohamedahmedegypt2001@gmail.com>
- <20251031104924.10631-3-mohamedahmedegypt2001@gmail.com> <0bffd718-3659-4add-90fc-fb0e098f2897@nvidia.com>
-In-Reply-To: <0bffd718-3659-4add-90fc-fb0e098f2897@nvidia.com>
-From: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
-Date: Tue, 4 Nov 2025 01:53:33 +0200
-X-Gm-Features: AWmQ_blaOgJXhX7FTUGULCEM7fLqKNjCy5MDT2wZ0GCoGUGz9IYwhuxzFGdEeJk
-Message-ID: <CAA+WOBtmbPHigscFQCFgDo=9WSM6V-JMXGCO7orP=01XOqTPHQ@mail.gmail.com>
-Subject: Re: [PATCH v4 2/5] drm/nouveau/uvmm: Allow larger pages
-To: James Jones <jajones@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	Mary Guillemard <mary@mary.zone>, Faith Ekstrand <faith.ekstrand@collabora.com>, 
-	Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	nouveau@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/XobHOE.Oq7_rk_MAPom0Nm6";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/XobHOE.Oq7_rk_MAPom0Nm6
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Thanks a lot for the shout out! Looking more at things, the logic here
-is actually redundant. It was originally copied over directly from the
-bo allocation code to stay on the safer side (basically the idea back
-then was to make both the bo and vmm sides match exactly). We aren't
-at risk of having an aligned address that is in the wrong memory type
-because the bo allocation code (nouveau_bo.c:321) forces anything that
-has the GART flag to have a page size of 4K. Anything getting a page
-size higher than that is exclusively VRAM only. Additionally,
-currently things marked VRAM only don't get evicted to host memory
-except under high memory pressure and in that case, the context is
-paused until the objects in question are paged back in, so we also
-don't have to worry about memory placement there.
+Hi all,
 
-The memory placement check in the vmm code could be removed but I am
-leaning more towards leaving it as is just to stay on the safer side.
-At the same time, it would be more useful to keep it for the future as
-one of the future investigation targets that we want to look into is
-all the memory placement rules because the "only 4K is allowed for
-host memory" limit that nouveau imposes is a source of many pains in
-userspace (originally thought to be a HW thing but seems it's actually
-not), and having the checks on both bo and vmm paths would help
-starting out with that.
+[adding the modules tree contacts]
 
-Thanks a lot again,
-Mohamed
+On Tue, 4 Nov 2025 10:48:27 +1100 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Today's linux-next merge of the pwm tree got a conflict in:
+>=20
+>   rust/macros/module.rs
+>=20
+> between commits:
+>=20
+>   3809d7a89fe5 ("rust: module: use a reference in macros::module::module")
+>   0b24f9740f26 ("rust: module: update the module macro with module parame=
+ter support")
+>=20
+> from the modules tree and commit:
+>=20
+>   927687809649 ("rust: macros: Add support for 'imports_ns' to module!")
+>=20
+> from the pwm tree.
+>=20
+> I followed a supplied resolution from Uwe and Danieli, thanks.  Though I
+> am just wondering (fromfollowing the pattern) if the "&ns" on line 545
+> should be "ns" - though I guess it would fail to build if so?
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> --=20
+> Cheers,
+> Stephen Rothwell
+>=20
+> diff --cc rust/macros/module.rs
+> index d62e9c1e2a89,408cd1154875..000000000000
+> --- a/rust/macros/module.rs
+> +++ b/rust/macros/module.rs
+> @@@ -205,50 -98,7 +205,51 @@@ struct ModuleInfo=20
+>       description: Option<String>,
+>       alias: Option<Vec<String>>,
+>       firmware: Option<Vec<String>>,
+> +     imports_ns: Option<Vec<String>>,
+>  +    params: Option<Vec<Parameter>>,
+>  +}
+>  +
+>  +#[derive(Debug)]
+>  +struct Parameter {
+>  +    name: String,
+>  +    ptype: String,
+>  +    default: String,
+>  +    description: String,
+>  +}
+>  +
+>  +fn expect_params(it: &mut token_stream::IntoIter) -> Vec<Parameter> {
+>  +    let params =3D expect_group(it);
+>  +    assert_eq!(params.delimiter(), Delimiter::Brace);
+>  +    let mut it =3D params.stream().into_iter();
+>  +    let mut parsed =3D Vec::new();
+>  +
+>  +    loop {
+>  +        let param_name =3D match it.next() {
+>  +            Some(TokenTree::Ident(ident)) =3D> ident.to_string(),
+>  +            Some(_) =3D> panic!("Expected Ident or end"),
+>  +            None =3D> break,
+>  +        };
+>  +
+>  +        assert_eq!(expect_punct(&mut it), ':');
+>  +        let param_type =3D expect_ident(&mut it);
+>  +        let group =3D expect_group(&mut it);
+>  +        assert_eq!(group.delimiter(), Delimiter::Brace);
+>  +        assert_eq!(expect_punct(&mut it), ',');
+>  +
+>  +        let mut param_it =3D group.stream().into_iter();
+>  +        let param_default =3D expect_param_default(&mut param_it);
+>  +        let param_description =3D expect_string_field(&mut param_it, "d=
+escription");
+>  +        expect_end(&mut param_it);
+>  +
+>  +        parsed.push(Parameter {
+>  +            name: param_name,
+>  +            ptype: param_type,
+>  +            default: param_default,
+>  +            description: param_description,
+>  +        })
+>  +    }
+>  +
+>  +    parsed
+>   }
+>  =20
+>   impl ModuleInfo {
+> @@@ -263,7 -113,7 +264,8 @@@
+>               "license",
+>               "alias",
+>               "firmware",
+> +             "imports_ns",
+>  +            "params",
+>           ];
+>           const REQUIRED_KEYS: &[&str] =3D &["type", "name", "license"];
+>           let mut seen_keys =3D Vec::new();
+> @@@ -289,7 -139,7 +291,8 @@@
+>                   "license" =3D> info.license =3D expect_string_ascii(it),
+>                   "alias" =3D> info.alias =3D Some(expect_string_array(it=
+)),
+>                   "firmware" =3D> info.firmware =3D Some(expect_string_ar=
+ray(it)),
+> +                 "imports_ns" =3D> info.imports_ns =3D Some(expect_strin=
+g_array(it)),
+>  +                "params" =3D> info.params =3D Some(expect_params(it)),
+>                   _ =3D> panic!("Unknown key \"{key}\". Valid keys are: {=
+EXPECTED_KEYS:?}."),
+>               }
+>  =20
+> @@@ -329,25 -179,30 +332,30 @@@ pub(crate) fn module(ts: TokenStream) -
+>       // Rust does not allow hyphens in identifiers, use underscore inste=
+ad.
+>       let ident =3D info.name.replace('-', "_");
+>       let mut modinfo =3D ModInfoBuilder::new(ident.as_ref());
+>  -    if let Some(authors) =3D info.authors {
+>  +    if let Some(authors) =3D &info.authors {
+>           for author in authors {
+>  -            modinfo.emit("author", &author);
+>  +            modinfo.emit("author", author);
+>           }
+>       }
+>  -    if let Some(description) =3D info.description {
+>  -        modinfo.emit("description", &description);
+>  +    if let Some(description) =3D &info.description {
+>  +        modinfo.emit("description", description);
+>       }
+>       modinfo.emit("license", &info.license);
+>  -    if let Some(aliases) =3D info.alias {
+>  +    if let Some(aliases) =3D &info.alias {
+>           for alias in aliases {
+>  -            modinfo.emit("alias", &alias);
+>  +            modinfo.emit("alias", alias);
+>           }
+>       }
+>  -    if let Some(firmware) =3D info.firmware {
+>  +    if let Some(firmware) =3D &info.firmware {
+>           for fw in firmware {
+>  -            modinfo.emit("firmware", &fw);
+>  +            modinfo.emit("firmware", fw);
+>           }
+>       }
+>  -    if let Some(imports) =3D info.imports_ns {
+> ++    if let Some(imports) =3D &info.imports_ns {
+> +         for ns in imports {
+> +             modinfo.emit("import_ns", &ns);
+> +         }
+> +     }
+>  =20
+>       // Built-in modules also export the `file` modinfo string.
+>       let file =3D
 
-On Fri, Oct 31, 2025 at 7:01=E2=80=AFPM James Jones <jajones@nvidia.com> wr=
-ote:
->
-> On 10/31/25 03:49, Mohamed Ahmed wrote:
-> > From: Mary Guillemard <mary@mary.zone>
-> >
-> > Now that everything in UVMM knows about the variable page shift, we can
-> > select larger values.
-> >
-> > The proposed approach relies on nouveau_bo::page unless if it would cau=
-se
-> > alignment issues (in which case we fall back to searching for an
-> > appropriate shift)
-> >
-> > Signed-off-by: Mary Guillemard <mary@mary.zone>
-> > Co-developed-by: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
-> > Signed-off-by: Mohamed Ahmed <mohamedahmedegypt2001@gmail.com>
-> > ---
-> >   drivers/gpu/drm/nouveau/nouveau_uvmm.c | 60 +++++++++++++++++++++++++=
--
-> >   1 file changed, 58 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/nouveau/nouveau_uvmm.c b/drivers/gpu/drm/n=
-ouveau/nouveau_uvmm.c
-> > index 2cd0835b05e8..ab8933b88337 100644
-> > --- a/drivers/gpu/drm/nouveau/nouveau_uvmm.c
-> > +++ b/drivers/gpu/drm/nouveau/nouveau_uvmm.c
-> > @@ -454,6 +454,62 @@ op_unmap_prepare_unwind(struct drm_gpuva *va)
-> >       drm_gpuva_insert(va->vm, va);
-> >   }
-> >
-> > +static bool
-> > +op_map_aligned_to_page_shift(const struct drm_gpuva_op_map *op, u8 pag=
-e_shift)
-> > +{
-> > +     u64 non_page_bits =3D (1ULL << page_shift) - 1;
-> > +
-> > +     return (op->va.addr & non_page_bits) =3D=3D 0 &&
-> > +            (op->va.range & non_page_bits) =3D=3D 0 &&
-> > +            (op->gem.offset & non_page_bits) =3D=3D 0;
-> > +}
-> > +
-> > +static u8
-> > +select_page_shift(struct nouveau_uvmm *uvmm, struct drm_gpuva_op_map *=
-op)
-> > +{
-> > +     struct nouveau_bo *nvbo =3D nouveau_gem_object(op->gem.obj);
-> > +
-> > +     /* nouveau_bo_fixup_align() guarantees that the page size will be=
- aligned
-> > +      * for most cases, but it can't handle cases where userspace allo=
-cates with
-> > +      * a size and then binds with a smaller granularity. So in order =
-to avoid
-> > +      * breaking old userspace, we need to ensure that the VA is actua=
-lly
-> > +      * aligned before using it, and if it isn't, then we downgrade to=
- the first
-> > +      * granularity that will fit, which is optimal from a correctness=
- and
-> > +      * performance perspective.
-> > +      */
-> > +     if (op_map_aligned_to_page_shift(op, nvbo->page))
-> > +             return nvbo->page;
-> > +
-> > +     struct nouveau_mem *mem =3D nouveau_mem(nvbo->bo.resource);
-> > +     struct nvif_vmm *vmm =3D &uvmm->vmm.vmm;
-> > +     int i;
-> > +
-> > +     /* If the given granularity doesn't fit, let's find one that will=
- fit. */
-> > +     for (i =3D 0; i < vmm->page_nr; i++) {
-> > +             /* Ignore anything that is bigger or identical to the BO =
-preference. */
-> > +             if (vmm->page[i].shift >=3D nvbo->page)
-> > +                     continue;
-> > +
-> > +             /* Skip incompatible domains. */
-> > +             if ((mem->mem.type & NVIF_MEM_VRAM) && !vmm->page[i].vram=
-)
-> > +                     continue;
-> > +             if ((mem->mem.type & NVIF_MEM_HOST) &&
-> > +                 (!vmm->page[i].host || vmm->page[i].shift > PAGE_SHIF=
-T))
-> > +                     continue;
->
-> This logic doesn't seem correct. I'm not sure why there's a need to
-> limit the page size on the host memory type, but assuming there is due
-> to nouveau architecture or HW limitations I'm not aware of, it should be
-> applied universally, not just when falling back due to misaligned
-> addresses. You can get lucky and have aligned addresses regardless of
-> the target page size. Hence, this check would need to precede the above
-> early-out for the case where op_map_aligned_to_page_shift() succeeds.
->
-> Thanks,
-> -James
->
-> > +             /* If it fits, return the proposed shift. */
-> > +             if (op_map_aligned_to_page_shift(op, vmm->page[i].shift))
-> > +                     return vmm->page[i].shift;
-> > +     }
-> > +
-> > +     /* If we get here then nothing can reconcile the requirements. Th=
-is should never
-> > +      * happen.
-> > +      */
-> > +     WARN_ON(1);
-> > +
-> > +     return PAGE_SHIFT;
-> > +}
-> > +
-> >   static void
-> >   nouveau_uvmm_sm_prepare_unwind(struct nouveau_uvmm *uvmm,
-> >                              struct nouveau_uvma_prealloc *new,
-> > @@ -506,7 +562,7 @@ nouveau_uvmm_sm_prepare_unwind(struct nouveau_uvmm =
-*uvmm,
-> >                       if (vmm_get_range)
-> >                               nouveau_uvmm_vmm_put(uvmm, vmm_get_start,
-> >                                                    vmm_get_range,
-> > -                                                  PAGE_SHIFT);
-> > +                                                  select_page_shift(uv=
-mm, &op->map));
-> >                       break;
-> >               }
-> >               case DRM_GPUVA_OP_REMAP: {
-> > @@ -599,7 +655,7 @@ op_map_prepare(struct nouveau_uvmm *uvmm,
-> >
-> >       uvma->region =3D args->region;
-> >       uvma->kind =3D args->kind;
-> > -     uvma->page_shift =3D PAGE_SHIFT;
-> > +     uvma->page_shift =3D select_page_shift(uvmm, op);
-> >
-> >       drm_gpuva_map(&uvmm->base, &uvma->va, op);
-> >
->
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/XobHOE.Oq7_rk_MAPom0Nm6
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkJQKcACgkQAVBC80lX
+0GzhQQf/XfXqeODCWHoQ2SjdPRthxET3eMzv+bg4iHHW3GSSoAjWT8iEaNbD4dWd
+xX8xb2LgO225vrhrs0rogBZwYEhu/A8TFl+eJC/DTrTAeAl5VjipWOdRGQ+WolTf
+CsJre/VcMoiEieRYjlOlQ5145AQRb6Wv+dYD5m+5cXXZPmEVV5WcJnUsUH3D+nh7
+pEMTn+2OpVrMd/UWvbPOEj6Nyn6KxdQdud+X0ViBpKf91CyikhdBc/ZFvemL9Ipj
+OqJu0u/cz/3ubqfKs66dyyvsNoW54cBhFgIHCZtCn4gB+WcaN/dSroJWfs9H2QRS
+VHMWu6Hi0lgc0LKzL+8GORNwig8jSg==
+=1CAz
+-----END PGP SIGNATURE-----
+
+--Sig_/XobHOE.Oq7_rk_MAPom0Nm6--
 
