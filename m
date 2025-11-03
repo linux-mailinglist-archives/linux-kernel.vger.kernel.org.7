@@ -1,317 +1,134 @@
-Return-Path: <linux-kernel+bounces-882733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF61CC2B46E
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:19:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C363C2B477
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:19:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 923043AFA97
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:18:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A0821893461
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:19:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36F12FF66D;
-	Mon,  3 Nov 2025 11:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X6209kcr"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C032A30275E;
+	Mon,  3 Nov 2025 11:19:03 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D413232395
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 11:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F152FF66D;
+	Mon,  3 Nov 2025 11:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762168690; cv=none; b=O7PQUVd2SW/aQtCn3X07rhecJpveRzFsytDRUxz6Ds3KmTm5belihlwteeh4WH0ydhI5tx6dXXtBKslrS5+Cemh3r2Y27+c1jMEy7dY+ga2+xn2WBJfWMEWKqhirz/+I023X+9ppqM389/liq6x6vFnzE1URR5L2T9r/dcqiS0Q=
+	t=1762168743; cv=none; b=Dzx6OihTa+zMvYS5QfCaRQrruCUsrCvU04p9TjgEgmHo7qeQFHg5qKZAV6MmfwtJrTVAnvmfA1bYV17m/7Z+IlP3QyeN7iS0q/Y/LAKzIOIcmcuOjWy4M8Co7cdTDSFDE79nZpSTHqKXkGuqkekGirDlypxcwJifwzQELEe5LGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762168690; c=relaxed/simple;
-	bh=60lDMBL2oNpdxDCfZ/zaAoqSFSwNxdJ9b1c9SZ6HPGc=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DCdZUztweUNuuvsGb8Ub3ZzQqZ6VhtbDFun5CzwKPTTbURGbPEXavATCbq2mb/ZGMWe2wQi4G5Y3ueg+PBDuXRhr00SbPAcRkqNfMEqdv/y2M6XE3G7M8MD9PcTcqTBUavgij8qfC0d42Z+eYRxJJOG3+vHqki6VoM+E+hTsx4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X6209kcr; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4710a1f9e4cso35555985e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 03:18:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762168687; x=1762773487; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H6G1U+3shNA1F9Kl+gGDGcY4sTpab/foYa+z2DPImsw=;
-        b=X6209kcr5D55B9vEUyNCd+qG2YGOfxR7ZUdl+d9J6fsrtDNNpJw5vG+OophBv0kAvG
-         aKPBx4e2Oo0VkVbgGyS5SBIs/BdJ+143XkMpBdxyae2hKpmtcF2On0AFOv/L3QF09rMT
-         ROars0OFJIteG7kju2RZV3j0vXT8aAEDq6eX7NoPCLChBMcwFgCkvozgWGoKUxt8NYNc
-         xZ2Psiceu+kYfWUpKSXvI1aVNe27TwPXfBRscaxWzUGz6SUXQ8TJgSrUaNPWLOHTNXFM
-         UCKwzeIwvCescPx0s1bnJaJUinTEEO7XCZFfQpJ/oZarJqmiUjKCJgUdc0apRJIIOKtg
-         HBOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762168687; x=1762773487;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=H6G1U+3shNA1F9Kl+gGDGcY4sTpab/foYa+z2DPImsw=;
-        b=pZyxp9PI/mLCdRy5j67i8OE+PVMvrUlfXqYmk0t6E1BHQgdaWNRp4MP8xac/0/zISV
-         MPz2SpfPWBJQuIQkhCZx6d6l0umFqV7vwuOSsLTzvsi/PPOhdGPnU0xyLOvAxYwuf3xr
-         KZP/rSohb3+DKhKCLGJ0a+8daVEDq7gS0iMzwFnMf6FHi2i1rErfis2i4pcuN4CDJH7M
-         obnXeGP8LH+vRycxgLeUsTbhygLAOyRGq4tN6g42XMyjTBgfrA+uO866uP/AuOQlnVSo
-         eeWgbfmWu11oOnmTA8O+j1whmfIFKkovj5gFDFJ2JHWdiwojQnqAMejgRi7zOdnG3vIT
-         rivg==
-X-Forwarded-Encrypted: i=1; AJvYcCUeOtTmMX4UxVB/LW3LK1JT63vCh11niir8dYx5cxfyeDwI7MuBM3BvCoibB2pgvUXKwW/velV3l1qkkVs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywq/PQyswv6D6xohUC77xcIUEkKZTW4bmY3raJqT015+bUV51W6
-	VcSnEyuOo0CdzCWmJqAv9xn7vta0WxYID578KcotsHHdoSjEAMSJzoec
-X-Gm-Gg: ASbGncucUA6jVVH8B6at4EJ51Qh1Ge9dEfb6ROAeYi8BqQP49zD2tOJ4FKpjFFbGuLw
-	ztvM53m6Jkq0vDePRT1uTFNp8g0IPM3iukHcYLXNtYSKyAuIkXNt0+XCUo0utA11KeQ6KQeJJ3T
-	9F4k3VZEwbSDtYBzIjeelmRj3EhIOMzjCIRLv4YJSDEII6df0ArRMxQ8r5sDGdx7SxXKRcVvUxq
-	C02OwvRQAoZ6VXi37AKOA1TXeaqPIP5Z4RQPN7G/+I+R5oeDclvCWJqFoxlEzkL1Mq0Flv1eqaA
-	ZKetxqTG2PkEAr5+sSOHfke3AOjD7cqNAOlZ/vvuXg2kHSdG3o4eYQ8q5D4xYRLU2ARMxi0VQO+
-	pn4x7jhC+9f9mM5AO+r/0tH7kgcTj50rPRO3dTw0ZXkilDfwU0onzN3SR+XTJ+5/xPbZwX2NGeW
-	X3P6iNEJzwl/oZXbAX5Po=
-X-Google-Smtp-Source: AGHT+IH6i0PkBRAZb8K1KRO55KHAWOtXj4yQJQGAO0NKO2FQdbsbSicqPiEU9u6kw13j3FaaQD7dzg==
-X-Received: by 2002:a05:600d:4393:b0:46e:32a5:bd8d with SMTP id 5b1f17b1804b1-477331db3ccmr69867085e9.3.1762168687127;
-        Mon, 03 Nov 2025 03:18:07 -0800 (PST)
-Received: from [192.168.1.187] ([161.230.67.253])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c583d91sm150548485e9.17.2025.11.03.03.18.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 03:18:06 -0800 (PST)
-Message-ID: <a1577c7ce81d039f47e189e130295b76447b05c2.camel@gmail.com>
-Subject: Re: [PATCH 2/2] gpio: adg1712: add driver support
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>, Linus Walleij	
- <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Rob
- Herring	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley	 <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, 	linux-kernel@vger.kernel.org
-Date: Mon, 03 Nov 2025 11:18:42 +0000
-In-Reply-To: <20251031160710.13343-3-antoniu.miclaus@analog.com>
-References: <20251031160710.13343-1-antoniu.miclaus@analog.com>
-	 <20251031160710.13343-3-antoniu.miclaus@analog.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.58.1 
+	s=arc-20240116; t=1762168743; c=relaxed/simple;
+	bh=fNrIgV1o+9irXV/ZRLy8p0aur9okmV7+4DLYLSB7u8k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h5VdqUX+OlHCtolLYtyPxoIhekoWZRIgUb0aU8cxi326m3jR9duzte9n3mavPYxLbd8TKL1Ug0uqN1Zj3fzG6zYxNvHkc6jsQNkUjhzjM7mB75qRRd0GrnD4s9V9kT/ow7MVUBpnwCWezrlu5UEQmnaCE/JGwQYB6AwNjfBBmRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from DESKTOP-L0HPE2S (unknown [124.16.141.245])
+	by APP-05 (Coremail) with SMTP id zQCowAC3JfSWjwhpZ7I6AQ--.23373S2;
+	Mon, 03 Nov 2025 19:18:47 +0800 (CST)
+From: Haotian Zhang <vulab@iscas.ac.cn>
+To: Herve Codina <herve.codina@bootlin.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haotian Zhang <vulab@iscas.ac.cn>
+Subject: [PATCH] net: wan: framer: pef2256: Fix missing mfd_remove_devices() call
+Date: Mon,  3 Nov 2025 19:18:44 +0800
+Message-ID: <20251103111844.271-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.50.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAC3JfSWjwhpZ7I6AQ--.23373S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7uw1xJrW8urW7tw1UAF4UCFg_yoW8ZFyrpw
+	43Aa909ry5Jw48W34xZ3Z5uFy5Awn7K3W0grWxu3s3ur98AFWUW348ZFy2yw45GrWxta13
+	JFWxJF1rCF98JaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
+	6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r1q
+	6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
+	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y
+	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
+	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
+	IxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUb8hL5UUUU
+	U==
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwkPA2kISHP2FwAAs5
 
-On Fri, 2025-10-31 at 16:07 +0000, Antoniu Miclaus wrote:
-> Add driver support for the ADG1712, which contains four independent
-> single-pole/single-throw (SPST) switches and operates with a
-> low-voltage single supply range from +1.08V to +5.5V or a low-voltage
-> dual supply range from =C2=B11.08V to =C2=B12.75V.
->=20
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> ---
-> =C2=A0drivers/gpio/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=
-=A0=C2=A0 9 +++
-> =C2=A0drivers/gpio/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=
-=C2=A0 1 +
-> =C2=A0drivers/gpio/gpio-adg1712.c | 146 +++++++++++++++++++++++++++++++++=
-+++
-> =C2=A03 files changed, 156 insertions(+)
-> =C2=A0create mode 100644 drivers/gpio/gpio-adg1712.c
->=20
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index 7ee3afbc2b05..3fac05823eae 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -157,6 +157,15 @@ config GPIO_74XX_MMIO
-> =C2=A0	=C2=A0=C2=A0=C2=A0 8 bits:	74244 (Input), 74273 (Output)
-> =C2=A0	=C2=A0=C2=A0=C2=A0 16 bits:	741624 (Input), 7416374 (Output)
-> =C2=A0
-> +config GPIO_ADG1712
-> +	tristate "Analog Devices ADG1712 quad SPST switch GPIO driver"
-> +	depends on GPIOLIB
-> +	help
-> +	=C2=A0 GPIO driver for Analog Devices ADG1712 quad single-pole,
-> +	=C2=A0 single-throw (SPST) switch. The driver provides a GPIO controlle=
-r
-> +	=C2=A0 interface where each GPIO line controls one of the four independ=
-ent
-> +	=C2=A0 analog switches on the ADG1712.
-> +
-> =C2=A0config GPIO_ALTERA
-> =C2=A0	tristate "Altera GPIO"
-> =C2=A0	select GPIOLIB_IRQCHIP
-> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-> index ec296fa14bfd..9043d2d07a15 100644
-> --- a/drivers/gpio/Makefile
-> +++ b/drivers/gpio/Makefile
-> @@ -28,6 +28,7 @@ obj-$(CONFIG_GPIO_104_IDI_48)		+=3D gpio-104-idi-48.o
-> =C2=A0obj-$(CONFIG_GPIO_104_IDIO_16)		+=3D gpio-104-idio-16.o
-> =C2=A0obj-$(CONFIG_GPIO_74X164)		+=3D gpio-74x164.o
-> =C2=A0obj-$(CONFIG_GPIO_74XX_MMIO)		+=3D gpio-74xx-mmio.o
-> +obj-$(CONFIG_GPIO_ADG1712)		+=3D gpio-adg1712.o
-> =C2=A0obj-$(CONFIG_GPIO_ADNP)			+=3D gpio-adnp.o
-> =C2=A0obj-$(CONFIG_GPIO_ADP5520)		+=3D gpio-adp5520.o
-> =C2=A0obj-$(CONFIG_GPIO_ADP5585)		+=3D gpio-adp5585.o
-> diff --git a/drivers/gpio/gpio-adg1712.c b/drivers/gpio/gpio-adg1712.c
-> new file mode 100644
-> index 000000000000..f8d3481ac9d0
-> --- /dev/null
-> +++ b/drivers/gpio/gpio-adg1712.c
-> @@ -0,0 +1,146 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Analog Devices ADG1712 quad SPST switch GPIO driver
-> + *
-> + * Copyright 2025 Analog Devices Inc.
-> + *
-> + * Author: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> + */
-> +
-> +#include <linux/err.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/gpio/driver.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/property.h>
-> +
-> +#define ADG1712_NUM_GPIOS	4
-> +
-> +struct adg1712 {
-> +	struct gpio_chip chip;
-> +	struct gpio_desc *switch_gpios[ADG1712_NUM_GPIOS];
-> +};
-> +
-> +static int adg1712_get_direction(struct gpio_chip *chip, unsigned int of=
-fset)
-> +{
-> +	return GPIO_LINE_DIRECTION_OUT;
-> +}
-> +
-> +static int adg1712_direction_input(struct gpio_chip *chip, unsigned int =
-offset)
-> +{
-> +	return -EINVAL;
-> +}
+The driver calls mfd_add_devices() but fails to call mfd_remove_devices()
+in error paths after successful MFD device registration and in the remove
+function. This leads to resource leaks where MFD child devices are not
+properly unregistered.
 
-Did not checked gpiolib for this but do we need the above given that we alw=
-ays
-return GPIO_LINE_DIRECTION_OUT?
+Add mfd_remove_devices() call in the error path after mfd_add_devices()
+succeeds, and add the missing mfd_remove_devices() call in pef2256_remove()
+to properly clean up MFD devices.
 
-> +
-> +static int adg1712_direction_output(struct gpio_chip *chip, unsigned int=
- offset,
-> +				=C2=A0=C2=A0=C2=A0 int value)
-> +{
-> +	struct adg1712 *adg1712 =3D gpiochip_get_data(chip);
-> +
-> +	if (offset >=3D ADG1712_NUM_GPIOS)
-> +		return -EINVAL;
+Fixes: c96e976d9a05 ("net: wan: framer: Add support for the Lantiq PEF2256 framer")
+Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+---
+ drivers/net/wan/framer/pef2256/pef2256.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-I don't think above can happen.
+diff --git a/drivers/net/wan/framer/pef2256/pef2256.c b/drivers/net/wan/framer/pef2256/pef2256.c
+index 1e4c8e85d598..d43fbf9bb27d 100644
+--- a/drivers/net/wan/framer/pef2256/pef2256.c
++++ b/drivers/net/wan/framer/pef2256/pef2256.c
+@@ -821,27 +821,34 @@ static int pef2256_probe(struct platform_device *pdev)
+ 
+ 	ret = pef2256_setup_e1(pef2256);
+ 	if (ret)
+-		return ret;
++		goto err_mfd_remove;
+ 
+ 	framer_provider = devm_framer_provider_of_register(pef2256->dev,
+ 							   framer_provider_simple_of_xlate);
+-	if (IS_ERR(framer_provider))
+-		return PTR_ERR(framer_provider);
++	if (IS_ERR(framer_provider)) {
++		ret = PTR_ERR(framer_provider);
++		goto err_mfd_remove;
++	}
+ 
+ 	/* Add audio devices */
+ 	ret = pef2256_add_audio_devices(pef2256);
+ 	if (ret < 0) {
+ 		dev_err(pef2256->dev, "add audio devices failed (%d)\n", ret);
+-		return ret;
++		goto err_mfd_remove;
+ 	}
+ 
+ 	return 0;
++
++err_mfd_remove:
++	mfd_remove_devices(pef2256->dev);
++	return ret;
+ }
+ 
+ static void pef2256_remove(struct platform_device *pdev)
+ {
+ 	struct pef2256 *pef2256 = platform_get_drvdata(pdev);
+ 
++	mfd_remove_devices(pef2256->dev);
+ 	/* Disable interrupts */
+ 	pef2256_write8(pef2256, PEF2256_IMR0, 0xff);
+ 	pef2256_write8(pef2256, PEF2256_IMR1, 0xff);
+-- 
+2.50.1.windows.1
 
-> +
-> +	gpiod_set_value_cansleep(adg1712->switch_gpios[offset], value);
-
-return gpiod_set_value_cansleep().
-
-> +	return 0;
-> +}
-> +
-> +static int adg1712_set(struct gpio_chip *chip, unsigned int offset, int =
-value)
-> +{
-> +	struct adg1712 *adg1712 =3D gpiochip_get_data(chip);
-> +
-> +	if (offset >=3D ADG1712_NUM_GPIOS)
-> +		return -EINVAL;
-
-Ditto
-
-> +
-> +	gpiod_set_value_cansleep(adg1712->switch_gpios[offset], value);
-> +	return 0;
-> +}
-> +
-> +static int adg1712_get(struct gpio_chip *chip, unsigned int offset)
-> +{
-> +	struct adg1712 *adg1712 =3D gpiochip_get_data(chip);
-> +
-> +	if (offset >=3D ADG1712_NUM_GPIOS)
-> +		return -EINVAL;
-> +
-> +	return gpiod_get_value_cansleep(adg1712->switch_gpios[offset]);
-> +}
-> +
-> +static int adg1712_set_multiple(struct gpio_chip *chip, unsigned long *m=
-ask,
-> +				 unsigned long *bits)
-> +{
-> +	struct adg1712 *adg1712 =3D gpiochip_get_data(chip);
-> +	int i;
-> +
-> +	for_each_set_bit(i, mask, ADG1712_NUM_GPIOS) {
-> +		gpiod_set_value_cansleep(adg1712->switch_gpios[i],
-> +					 test_bit(i, bits));
-
-Error handling.
-
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct gpio_chip adg1712_gpio_chip =3D {
-> +	.label			=3D "adg1712",
-> +	.owner			=3D THIS_MODULE,
-> +	.get_direction		=3D adg1712_get_direction,
-> +	.direction_input	=3D adg1712_direction_input,
-> +	.direction_output	=3D adg1712_direction_output,
-> +	.get			=3D adg1712_get,
-> +	.set			=3D adg1712_set,
-> +	.set_multiple		=3D adg1712_set_multiple,
-> +	.base			=3D -1,
-> +	.ngpio			=3D ADG1712_NUM_GPIOS,
-> +	.can_sleep		=3D true,
-> +};
-> +
-> +static int adg1712_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev =3D &pdev->dev;
-> +	struct adg1712 *adg1712;
-> +	int ret, i;
-> +	char gpio_name[16];
-> +
-> +	adg1712 =3D devm_kzalloc(dev, sizeof(*adg1712), GFP_KERNEL);
-> +	if (!adg1712)
-> +		return -ENOMEM;
-> +
-> +	adg1712->chip =3D adg1712_gpio_chip;
-> +	adg1712->chip.parent =3D dev;
-> +
-> +	for (i =3D 0; i < ADG1712_NUM_GPIOS; i++) {
-> +		snprintf(gpio_name, sizeof(gpio_name), "switch%d", i + 1);
-
-Just a suggestion. Instead of the snprintf(), you could have a const array =
-of
-strings and just go over it. Not a big deal to me though. You could also
-consider devm_gpiod_get_array()
-
-> +		adg1712->switch_gpios[i] =3D devm_gpiod_get(dev, gpio_name,
-> +							=C2=A0 GPIOD_OUT_LOW);
-
-Should we make assumptions on the initial value? Not sure if GPIO_ASIS woul=
-d
-make sense here.
-
-> +		if (IS_ERR(adg1712->switch_gpios[i]))
-> +			return dev_err_probe(dev, PTR_ERR(adg1712->switch_gpios[i]),
-> +					=C2=A0=C2=A0=C2=A0=C2=A0 "failed to get %s gpio\n", gpio_name);
-> +	}
-> +
-> +	ret =3D devm_gpiochip_add_data(dev, &adg1712->chip, adg1712);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to add gpio chip\n");
-> +
-> +	dev_info(dev, "ADG1712 %u-GPIO expander registered\n",
-> +		 adg1712->chip.ngpio);
-
-Drop the above or turn it into dev_dbg()
-
-- Nuno S=C3=A1
->=20
 
