@@ -1,44 +1,87 @@
-Return-Path: <linux-kernel+bounces-882257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 893A3C2A00C
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 04:59:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEA3BC2A02B
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 05:01:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BEF3A346817
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 03:59:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C09318899CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 04:02:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06862288C13;
-	Mon,  3 Nov 2025 03:59:16 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1A2280035;
+	Mon,  3 Nov 2025 04:01:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="rRfTcdTR"
+Received: from BYAPR05CU005.outbound.protection.outlook.com (mail-westusazon11010035.outbound.protection.outlook.com [52.101.85.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149FB1A238F;
-	Mon,  3 Nov 2025 03:59:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762142355; cv=none; b=CKBPuWvUu4BYl4jh3ZYroYmVmgewP3CrtVM+k2v3GCuil5sJKnedDOxXke4UZBJKVCRQBewKOrwgL41ItBKsxMX1NFplLdUc/W9I8L8DT6js1UXCEa/LHuNNMtGe2vBR+szJCDFzhP2J2RurEfQiVuoKB4soqmFkM+QfRgFCNY4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762142355; c=relaxed/simple;
-	bh=NmOtSZllADgVq47E8i86uit98ckf+dLKzNBtsMHFGR0=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=HeerjcVlTzaYj4uBD+F4pb8wXK6BYeBaYfsS1QO/CdVlB2y1YW05tm8Tdnre154McO9JPYXbfJ4cMPfuMF1IA7/5Lrj4UuK01E4vrNz1nSKArpuJ9HcyZN1oYi5mjvh0zvhBZR5gKFKRUoaV/A5vNR/1Ndd8uinaFbbkLbdZSDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4d0Hrm75GbzKHLxd;
-	Mon,  3 Nov 2025 11:59:04 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id C295B1A0FAF;
-	Mon,  3 Nov 2025 11:59:08 +0800 (CST)
-Received: from [10.67.111.176] (unknown [10.67.111.176])
-	by APP2 (Coremail) with SMTP id Syh0CgDXekOLKAhpuOggCg--.38559S2;
-	Mon, 03 Nov 2025 11:59:08 +0800 (CST)
-Message-ID: <e4bde91c-fc82-4c40-8f6c-7fc044ddf79b@huaweicloud.com>
-Date: Mon, 3 Nov 2025 11:59:07 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A02286334;
+	Mon,  3 Nov 2025 04:01:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.85.35
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762142501; cv=fail; b=DN6iApCR7DY2CmYJHByJzEeBmc8K+omhkQqeO1JJzPwbtTqNkNxjZCwgJt1HUDMpeOvkhkJvlQU1KHEDX4yywlZptd4hcHDiRBpgVIFuD2UpR+RP+iASPn+kJvDgVDlWrznuuay5IVxl/8QEQ7skQAxYsvG/BPest3QpHDbOOvU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762142501; c=relaxed/simple;
+	bh=q3wG50m68bThI2EJgtOIDHynswfXzzGjt/P4MyN83MA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WGPAPQVVvr0HQUUvzNO8zZvSPS6/V1wEV0RQBCrxcmMtrT9fs6Urx3vwqx+8VdNaOn2HeR55Tu8bepIqAGqeRiGN3EPJfI7Ee1fGjVwT9buB9SOYHbojWRGFcdBEMp4ShMzakhj6dQEgwar8c62wgkn/UJLYOjhjLXLAlSGw9ts=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=rRfTcdTR; arc=fail smtp.client-ip=52.101.85.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kf9AnvaGvlVWdlPLuRtnTkCRZ81+V3omyAWFZJoRPimCri6ZuEbVLzZ5qWfSCbG5UZh5vRTXzZyEPu7g37Kw5SVElvGTIw9zB1t1j+WYZnwGc282nFxVi40Y6FPjogfjvIhQjUDFgh6dSzygepRiLd/tnT35SzH3f8oIF2/6/SvGjy5ZHxnvT2eyoUsMBwpb07WOzUE6nXs6HN4yQahXQLlKu58J5Y4oIHgYz3mVGVqZWRUJmtp7Is/+RPds1kwEmynilx23ghqIxn+rCCQY3qoqBpxR3BIMyzlvUmzASkiPZu71PS3uECN7xSsnpW+cKhN3a2oYVY6l3Oal43xJyA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=wn4j80hA7XgX5eoS4TefDL2BpHUckUSEMt/txSYf9UA=;
+ b=TfDmYcqHB881ONeOmI+47UEDMG+KUe/h6aBHxaEtZpDlSViMiF2fySDbMEU/7+kuAgnWtiwnf46IK+Zleg2CPjjM0hAI7/9Upy9eE7cfzqX/uhznml1OCKa3yzL4Q9zs5wn8u/Ew3kMrr5y2peaSZBTyHHLUxOSyfLlJSp/KasOEaYfBx8Mrebs1VkNo/+na1f4lMdHCkmUuiXdbrYxZWVO8dDiG3ZAY8K5RfdwjcCZkVobB2XIYFDr1EXZaGNbtQA7//pxKr70Aq6evl9ORRpbgNUKgRsFhoqXKPbfl2ueGL8wURJdzu1O7+b8sMOBh71v5Xoeq8di0/y9CfiroWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 198.47.23.194) smtp.rcpttodomain=lists.infradead.org smtp.mailfrom=ti.com;
+ dmarc=pass (p=quarantine sp=none pct=100) action=none header.from=ti.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wn4j80hA7XgX5eoS4TefDL2BpHUckUSEMt/txSYf9UA=;
+ b=rRfTcdTRlT4XZzvPT8FSkA8T8r7E02fb561uKLpRNmoASd6v4VgMKrKVbCgUs8/9pqtOdhJwL/UObG7dpQVLr2pRzrlO2UCgSUdKqXzVSKB/Ut1T6PEWttB9IlZIXtwztkHl/19uDsj5BKwE1RNNSc/pcicTgsT6eda7pDOsl24=
+Received: from BY3PR05CA0004.namprd05.prod.outlook.com (2603:10b6:a03:254::9)
+ by SJ5PPF8337777B9.namprd10.prod.outlook.com (2603:10b6:a0f:fc02::7b0) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.15; Mon, 3 Nov
+ 2025 04:01:37 +0000
+Received: from BY1PEPF0001AE16.namprd04.prod.outlook.com
+ (2603:10b6:a03:254:cafe::ad) by BY3PR05CA0004.outlook.office365.com
+ (2603:10b6:a03:254::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.7 via Frontend Transport; Mon, 3
+ Nov 2025 04:01:23 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.23.194)
+ smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
+ action=none header.from=ti.com;
+Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
+ 198.47.23.194 as permitted sender) receiver=protection.outlook.com;
+ client-ip=198.47.23.194; helo=lewvzet200.ext.ti.com; pr=C
+Received: from lewvzet200.ext.ti.com (198.47.23.194) by
+ BY1PEPF0001AE16.mail.protection.outlook.com (10.167.242.104) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.9298.6 via Frontend Transport; Mon, 3 Nov 2025 04:01:35 +0000
+Received: from DLEE211.ent.ti.com (157.170.170.113) by lewvzet200.ext.ti.com
+ (10.4.14.103) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 2 Nov
+ 2025 22:01:34 -0600
+Received: from DLEE214.ent.ti.com (157.170.170.117) by DLEE211.ent.ti.com
+ (157.170.170.113) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Sun, 2 Nov
+ 2025 22:01:34 -0600
+Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DLEE214.ent.ti.com
+ (157.170.170.117) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
+ Transport; Sun, 2 Nov 2025 22:01:34 -0600
+Received: from [172.24.233.103] (uda0132425.dhcp.ti.com [172.24.233.103])
+	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5A341U323454910;
+	Sun, 2 Nov 2025 22:01:30 -0600
+Message-ID: <ed1317ad-72a2-478d-b931-8f08d8c7e159@ti.com>
+Date: Mon, 3 Nov 2025 09:30:00 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,201 +89,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [cgroup/for-6.19 PATCH 2/3] cgroup/cpuset: Fail if isolated and
- nohz_full don't leave any housekeeping
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
- Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- Chen Ridong <chenridong@huawei.com>, Gabriele Monaco <gmonaco@redhat.com>,
- Frederic Weisbecker <frederic@kernel.org>
-References: <20251103013411.239610-1-longman@redhat.com>
- <20251103013411.239610-3-longman@redhat.com>
- <474e7133-0d43-4eb8-ae75-5e9a352c0eec@huaweicloud.com>
+Subject: Re: [PATCH] arm64: dts: ti: k3-*: Replace rgmii-rxid with rgmii-id
+ for CPSW ports
+To: Siddharth Vadapalli <s-vadapalli@ti.com>, <nm@ti.com>,
+	<kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, Francesco Dolcini <francesco@dolcini.it>, Wadim Egorov
+	<w.egorov@phytec.de>, Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+	Daniel Schultz <d.schultz@phytec.de>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
+References: <20251025073802.1790437-1-s-vadapalli@ti.com>
+From: Vignesh Raghavendra <vigneshr@ti.com>
 Content-Language: en-US
-In-Reply-To: <474e7133-0d43-4eb8-ae75-5e9a352c0eec@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20251025073802.1790437-1-s-vadapalli@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:Syh0CgDXekOLKAhpuOggCg--.38559S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxKFyDXFykKrykZry7AFWDurg_yoW7tryxpF
-	yUGFW3CayUtr13C34aqF1q9r1Skw4ktr12kasxGa4rZFnFv3WktryUu3Z8Cayru39xGryU
-	ZrWqgrs2g3W8ArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r1Y6r17MI8I3I0E5I8CrV
-	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCI
-	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
-	AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
-	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07UG-e
-	OUUUUU=
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY1PEPF0001AE16:EE_|SJ5PPF8337777B9:EE_
+X-MS-Office365-Filtering-Correlation-Id: cf1d0340-b680-436f-f6f6-08de1a8daeaf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|7416014|1800799024|34020700016|36860700013|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?a05wSXo2YThqRkp2d1RiWkVwNTFpT2xhbDYxblB5a1hYckZlMGJIYWM4RVQ4?=
+ =?utf-8?B?b20vWDhwbTYyemNFUHZncVlKTjNrWXMwbkRRVEI2ZTVGbHdvcVovMWh0TWhQ?=
+ =?utf-8?B?WVBRdVVXNUJXZDJQMERMeDc0MnZNWlY3LzQ4aXZJRjJEaHdZK1JMdGpDTGlE?=
+ =?utf-8?B?VjQrVzNwMGZOUmo2YW9MejdLOFpTdEV5Z0VpRFgxYzdiQ3pRV0todmFEY3Ji?=
+ =?utf-8?B?M0htTmQxQkFWVVdMVHZuVmd5Uld4OC94dzVjMGRTeVFMWFJsK1dpUjY3UlFx?=
+ =?utf-8?B?NlpOMjBld2V1cUNWTG54ZDBHNkxlN3ZBdVVuK29oSVpZdTRNejRqZ1ZqRTc5?=
+ =?utf-8?B?NnhtZnBDUVQ2OHdmbjJQTjAvVUxzbUtKQXIzQlJqK2FjM0xmR205dlR1RjR2?=
+ =?utf-8?B?aGVXakd4V2pvQ3JrZTA4L0tCaGJENHBZaFRDSVd2d1Zsams5ekxva08xbHhM?=
+ =?utf-8?B?dThac2puT29OL0NnZHcxVm85S1pmcjh6TEhYMC9DWUFQWU0vWUR3N09KQUtN?=
+ =?utf-8?B?TmcxZXBHZVB2QmNRYTlsMTlCbDNvczIzRkQ2MEpHd0lEZ2s5TklaYjdwV3RS?=
+ =?utf-8?B?aW4zUTNRRGY4cXVJV09tYTk5cENrTzJnelhPSlpnZkh1QjRWVzgxMnlmVDJt?=
+ =?utf-8?B?bFI2TUxFZkZUUktqYnVLc2JyZk5zZUU0QlJZWk9oOVZTYzJ5UG1iUEVjK3dL?=
+ =?utf-8?B?c09paUtvQ25LaG02QjZXUlFtNEtKTlhGbVFHVUI0NVdBT1g1d3dSWVEvK1dH?=
+ =?utf-8?B?dUgyQW1CQldTZlRNMi8zVld2ekNzb2FORC8xNE9DbXJLM3VXRWFsK1FjblFW?=
+ =?utf-8?B?RytDTHVKWWlHYUlRa3hVb283NmJDb1JRYkZkejJHV0Z5YmNXZVN4MTZ3RTZl?=
+ =?utf-8?B?dlh0elplY1RnajkyWVZyZnFoVWJhcWNWc2p4Z2V5RkVRWHVTZmR4MVVudWY4?=
+ =?utf-8?B?Zm9LWGdGZ1VqVnZxaTR4amlnZnZXY255KzFpa2NqUHprNDRIejdiN3FiTmtW?=
+ =?utf-8?B?R28xb1dpTklPQkhDN2twWDI4UmFuWFBSdlZrbXZLNnlmSUhJbjZIYThVd2tW?=
+ =?utf-8?B?UHphSnUyZFdkbW9OSDdoS3V0L3VBdDhYaVFQZitJcWpsckUxaGs3UVNzelpm?=
+ =?utf-8?B?Zyt0QWpiYWgrdTVsQi9SaFh4Rk5PNDJUeVdWMGxuWEJIK1UzbDI0ZzRnNzIz?=
+ =?utf-8?B?WUJlTDRvUzdYK2ViT0lQR21IeXFTZExBTVRBTmttSzVnVm9LdjltUk80Ukp0?=
+ =?utf-8?B?K2dpd3NnanUwRzB4VTUzK01EZWJMVEs5R1Q2azdPRERNejB3dFQ1M284NnZl?=
+ =?utf-8?B?OS9CR0l3U3RjNjZtQ24xM0x6REl0WGlTUnE0ZXFYdTJkREpxWW9CdmttdW5G?=
+ =?utf-8?B?L1JFUHowcTBXaVVJN2dLUUxJUUw5V0JTbFlHMHljMktRcEc1VzU1Vk0rWFAr?=
+ =?utf-8?B?N0kzWWZUbDJnL1k5cmYvbDVVcjdxdkdORjZEYmxZdzYydWZRTGQxV3MxZ0hx?=
+ =?utf-8?B?bGREalBnTTNFR0Zua2g2ejRBR3ZPYkNJSWVnUmIxbU0zNjdGVGJjMEhFSFdB?=
+ =?utf-8?B?ZGFobjFDQmJFZDlQZFI3bmRpazQyNEtPUGNYQ2xBT2JvT1c0dm5wNEpUa1Y3?=
+ =?utf-8?B?UHNoWWF1T1BLQ2MzMHlaVVFXVWx2RUFmMTFZU3I3eGd2c25ZeVk3MVFaT2o4?=
+ =?utf-8?B?SElSZVBzUDBLTkwydlNaUmNiS2hqVWFDeFFUTVFIRUtqN1ErQ3l1bll0RGZS?=
+ =?utf-8?B?RjhPWjBtZkUzNGF0Q3RvcFhqUjdtRXZXYVAycVpiaTRUYkp3MkpxeDIwMUEy?=
+ =?utf-8?B?ckhBdmhSb1dkUXhHbWFSRVZtNmFxRmNxNUZObU1sV255K1Z0S1I4YXBmODdr?=
+ =?utf-8?B?Ynh4Q0pqaE9yN1YySzh4SWF2ZXl4OG5GdkF2YTd1NWM1N2lqZ2N2a2greTRG?=
+ =?utf-8?B?MzBOSVhCdHdmWFNaMk4vTHlPR1FJVTJNNHk2SmU3cEk1OXRZTHpVZXBRTk1n?=
+ =?utf-8?B?c1M3RGptbU1kS3J5UHBFSEhYL2x4WmpJUGJMMmZNanpSWVQvK3RKYWVIa3c4?=
+ =?utf-8?B?c2xLSjA0ZWFXZlB6djJCVWIvK3hObUJRQmtaZ3c0K1ZBaHZXcHhUVDBJeFlL?=
+ =?utf-8?Q?316THWfCEvbD9iKM8FrYWRkyL?=
+X-Forefront-Antispam-Report:
+	CIP:198.47.23.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:lewvzet200.ext.ti.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(7416014)(1800799024)(34020700016)(36860700013)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: ti.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 04:01:35.5796
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: cf1d0340-b680-436f-f6f6-08de1a8daeaf
+X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.23.194];Helo=[lewvzet200.ext.ti.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BY1PEPF0001AE16.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ5PPF8337777B9
+
++ Francesco, Wadim, Daniel, Matthias
+
+Please test/review
+
+Hi Siddharth,
+
+On 25/10/25 13:07, Siddharth Vadapalli wrote:
+> The MAC Ports across all of the CPSW instances (CPSW2G, CPSW3G, CPSW5G and
+> CPSW9G) present in various K3 SoCs only support the 'RGMII-ID' mode. This
+> correction has been implemented/enforced by the updates to:
+> a) Device-Tree binding for CPSW [0]
+> b) Driver for CPSW [1]
+> c) Driver for CPSW MAC Port's GMII [2]
+> 
+> To complete the transition from 'RGMII-RXID' to 'RGMII-ID', update the
+> 'phy-mode' property for all CPSW ports by replacing 'rgmii-rxid' with
+> 'rgmii-id'.
+> 
+> [0]: commit 9b357ea52523 ("dt-bindings: net: ti: k3-am654-cpsw-nuss: update phy-mode in example")
+> [1]: commit ca13b249f291 ("net: ethernet: ti: am65-cpsw: fixup PHY mode for fixed RGMII TX delay")
+> [2]: commit a22d3b0d49d4 ("phy: ti: gmii-sel: Always write the RGMII ID setting")
+> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> ---
+> 
+> Hello,
+> 
+> This patch is based on linux-next tagged next-20251024.
 
 
+What boards have been tested?
 
-On 2025/11/3 11:47, Chen Ridong wrote:
-> 
-> 
-> On 2025/11/3 9:34, Waiman Long wrote:
->> From: Gabriele Monaco <gmonaco@redhat.com>
->>
->> Currently the user can set up isolated cpus via cpuset and nohz_full in
->> such a way that leaves no housekeeping CPU (i.e. no CPU that is neither
->> domain isolated nor nohz full). This can be a problem for other
->> subsystems (e.g. the timer wheel imgration).
->>
->> Prevent this configuration by blocking any assignation that would cause
->> the union of domain isolated cpus and nohz_full to covers all CPUs.
->>
->> Acked-by: Frederic Weisbecker <frederic@kernel.org>
->> Reviewed-by: Waiman Long <longman@redhat.com>
->> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
->> Signed-off-by: Waiman Long <longman@redhat.com>
->> ---
->>  kernel/cgroup/cpuset.c | 67 +++++++++++++++++++++++++++++++++++++++++-
->>  1 file changed, 66 insertions(+), 1 deletion(-)
->>
->> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->> index da770dac955e..d6d459c95d82 100644
->> --- a/kernel/cgroup/cpuset.c
->> +++ b/kernel/cgroup/cpuset.c
->> @@ -1329,6 +1329,19 @@ static void isolated_cpus_update(int old_prs, int new_prs, struct cpumask *xcpus
->>  		cpumask_andnot(isolated_cpus, isolated_cpus, xcpus);
->>  }
->>  
->> +/*
->> + * isolated_cpus_should_update - Returns if the isolated_cpus mask needs update
->> + * @prs: new or old partition_root_state
->> + * @parent: parent cpuset
->> + * Return: true if isolated_cpus needs modification, false otherwise
->> + */
->> +static bool isolated_cpus_should_update(int prs, struct cpuset *parent)
->> +{
->> +	if (!parent)
->> +		parent = &top_cpuset;
->> +	return prs != parent->partition_root_state;
->> +}
->> +
->>  /*
->>   * partition_xcpus_add - Add new exclusive CPUs to partition
->>   * @new_prs: new partition_root_state
->> @@ -1393,6 +1406,42 @@ static bool partition_xcpus_del(int old_prs, struct cpuset *parent,
->>  	return isolcpus_updated;
->>  }
->>  
->> +/*
->> + * isolated_cpus_can_update - check for isolated & nohz_full conflicts
->> + * @add_cpus: cpu mask for cpus that are going to be isolated
->> + * @del_cpus: cpu mask for cpus that are no longer isolated, can be NULL
->> + * Return: false if there is conflict, true otherwise
->> + *
->> + * If nohz_full is enabled and we have isolated CPUs, their combination must
->> + * still leave housekeeping CPUs.
->> + */
->> +static bool isolated_cpus_can_update(struct cpumask *add_cpus,
->> +				     struct cpumask *del_cpus)
->> +{
->> +	cpumask_var_t full_hk_cpus;
->> +	int res = true;
->> +
->> +	if (!housekeeping_enabled(HK_TYPE_KERNEL_NOISE))
->> +		return true;
->> +
->> +	if (del_cpus && cpumask_weight_and(del_cpus,
->> +			housekeeping_cpumask(HK_TYPE_KERNEL_NOISE)))
->> +		return true;
->> +
->> +	if (!alloc_cpumask_var(&full_hk_cpus, GFP_KERNEL))
->> +		return false;
->> +
->> +	cpumask_and(full_hk_cpus, housekeeping_cpumask(HK_TYPE_KERNEL_NOISE),
->> +		    housekeeping_cpumask(HK_TYPE_DOMAIN));
->> +	cpumask_andnot(full_hk_cpus, full_hk_cpus, isolated_cpus);
->> +	cpumask_and(full_hk_cpus, full_hk_cpus, cpu_active_mask);
->> +	if (!cpumask_weight_andnot(full_hk_cpus, add_cpus))
->> +		res = false;
->> +
->> +	free_cpumask_var(full_hk_cpus);
->> +	return res;
->> +}
->> +
->>  static void update_isolation_cpumasks(bool isolcpus_updated)
->>  {
->>  	int ret;
->> @@ -1551,6 +1600,9 @@ static int remote_partition_enable(struct cpuset *cs, int new_prs,
->>  	if (!cpumask_intersects(tmp->new_cpus, cpu_active_mask) ||
->>  	    cpumask_subset(top_cpuset.effective_cpus, tmp->new_cpus))
->>  		return PERR_INVCPUS;
->> +	if (isolated_cpus_should_update(new_prs, NULL) &&
->> +	    !isolated_cpus_can_update(tmp->new_cpus, NULL))
->> +		return PERR_HKEEPING;
->>  
->>  	spin_lock_irq(&callback_lock);
->>  	isolcpus_updated = partition_xcpus_add(new_prs, NULL, tmp->new_cpus);
->> @@ -1650,6 +1702,9 @@ static void remote_cpus_update(struct cpuset *cs, struct cpumask *xcpus,
->>  		else if (cpumask_intersects(tmp->addmask, subpartitions_cpus) ||
->>  			 cpumask_subset(top_cpuset.effective_cpus, tmp->addmask))
->>  			cs->prs_err = PERR_NOCPUS;
->> +		else if (isolated_cpus_should_update(prs, NULL) &&
->> +			 !isolated_cpus_can_update(tmp->addmask, tmp->delmask))
->> +			cs->prs_err = PERR_HKEEPING;
->>  		if (cs->prs_err)
->>  			goto invalidate;
->>  	}
->> @@ -1988,6 +2043,12 @@ static int update_parent_effective_cpumask(struct cpuset *cs, int cmd,
->>  			return err;
->>  	}
->>  
->> +	if (deleting && isolated_cpus_should_update(new_prs, parent) &&
->> +	    !isolated_cpus_can_update(tmp->delmask, tmp->addmask)) {
->> +		cs->prs_err = PERR_HKEEPING;
->> +		return PERR_HKEEPING;
->> +	}
->> +
->>  	/*
->>  	 * Change the parent's effective_cpus & effective_xcpus (top cpuset
->>  	 * only).
->> @@ -2994,7 +3055,11 @@ static int update_prstate(struct cpuset *cs, int new_prs)
->>  		 * A change in load balance state only, no change in cpumasks.
->>  		 * Need to update isolated_cpus.
->>  		 */
->> -		isolcpus_updated = true;
->> +		if ((new_prs == PRS_ISOLATED) &&
->> +		    !isolated_cpus_can_update(cs->effective_xcpus, NULL))
->> +			err = PERR_HKEEPING;
->> +		else
->> +			isolcpus_updated = true;
->>  	} else {
->>  		/*
->>  		 * Switching back to member is always allowed even if it
-> 
-> I'm considering whether I should introduce a new function that consolidates
-> isolated_cpus_should_update, isolated_cpus_can_update, and prstate_housekeeping_conflict.
-> 
+[...]
 
-Sorry, we should introduce a new ...
-
-> Just like:
-> 
-> bool housekeeping_conflict(...)
-> {
-> 	if (isolated_cpus_should_update && !isolated_cpus_can_update) {
-> 		return ture;
-> 	}
-> 	return prstate_housekeeping_conflict();
-> }
-> 
-> Since all of these are related to isolated CPUs, putting them into a centralized function would make
-> the code much easier to maintain.
-> 
 
 -- 
-Best regards,
-Ridong
+Regards
+Vignesh
+https://ti.com/opensource
 
 
