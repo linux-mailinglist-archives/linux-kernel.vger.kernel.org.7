@@ -1,179 +1,130 @@
-Return-Path: <linux-kernel+bounces-883339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40BF4C2D1C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:27:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7716C2D13D
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:22:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FF8D188AC4F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:25:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A724F188C0FA
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:21:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78AAE305068;
-	Mon,  3 Nov 2025 16:25:06 +0000 (UTC)
-Received: from rmisp-mx-out1.tele.net (rmisp-mx-out1.tele.net [194.208.23.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC54319845;
+	Mon,  3 Nov 2025 16:20:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VgxSYz1+"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE8E83164D9;
-	Mon,  3 Nov 2025 16:25:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.208.23.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D44B31812C
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762187106; cv=none; b=N+HJipXy/78UzHDQf0xElA2CO5SvpOtWKe3Ed4rEkpuX2YEzE0iU+bqicfpHc7O4VSyfV1C234n/kO8/8qBc9eZlypvhAuswYk0Nsvnt2vatL//8Hff5UmCsud/wUSRtevUO5KI+OqMvNI1aVfOA8VM2NAkRg1YfIS0NlswUY5w=
+	t=1762186808; cv=none; b=NZ17d5lvJYkTIr7fPv8LwRLhJIIqJNmLm+a+CKz1EbcUIzssM3M2MuN2/aqn8KHVFZx7eeVrY9mabOg5+rZLPE8w8oiSOxWbvvztDOVBmb1Sm4Fe2wCgGsKSHkXdA/0RMnelSH0aS+GFe9jm4lDmHUlw6do9jnPpMjEidMN/vEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762187106; c=relaxed/simple;
-	bh=ttAPdy4/JmO4ihisprisHBEG2ZNFvg/ddXNogR5EIO4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=awL8JLuc8xyfzeW99S2dg0hC3TecYGsCMfoyqsfwDwO+xYHJTFJvQ7wwr/7Zjq2NI3phM0uGxjdP/Ef9JWqehHDmmkrZWWyYYGzkyd8qZalyaqUWEKf/mDLeJW7O4B4XgHXIWcPnbXCB3bZv1YEs8d10X8117WOc+LQrixcN1GE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at; spf=fail smtp.mailfrom=emfend.at; arc=none smtp.client-ip=194.208.23.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emfend.at
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=emfend.at
-Received: from [192.168.0.207] (194-208-208-245.tele.net [194.208.208.245])
-	by rmisp-mx-out1.tele.net (Postfix) with ESMTPA id 5430310DE9C4;
-	Mon,  3 Nov 2025 17:19:47 +0100 (CET)
-Message-ID: <a7c2b507-90e8-4b0b-92d6-5b232e7ba22f@emfend.at>
-Date: Mon, 3 Nov 2025 17:19:47 +0100
+	s=arc-20240116; t=1762186808; c=relaxed/simple;
+	bh=pkHX++p8KzINn4g+tNG5oYVFuXXq/LyOGK2x2a5Q39w=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=dGAbQLQIF64utnS7cOwzhXmngXSRO6SnbbeXoxWrjU/fjT1QoHldYnhxGqSCqBnCQSEmT+ApK3NIytduHDFJZo++T4Cn3FtEVhyBP4ohyogW6z08BNrsSv4sCR9lmllIuDpHXyrzb8zCW0qQN+081sSKRUduttM9LMj2E7kMeXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sidnayyar.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VgxSYz1+; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sidnayyar.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-429cd447398so786138f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 08:20:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1762186804; x=1762791604; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jKpzC7OwKr3KFY5COtWMHui39YTNk2I7jCnxEbVs+Mg=;
+        b=VgxSYz1+TQ68Qc9k+4Zdm6LZd3LumOrbJybHGNYBI6SkLuy+sI6c0lh2snSdMN1dgf
+         rN1iPIKCkPXrjyHwuBQPnNnYaUg5hsa1wf0Gai+OH4ZxKwXE9LS+TIaFqGmmxIyehvBt
+         1o9wA5PPPt2HmH+U82DYmrv4CSOHAZl+ir5JhUZglRmRmWjTDGLWsJmZ2LWlQFxXrxC9
+         6pkl5DYQKXwDkgxeB0dI7/RN58lyq1Iy9N8p5Cz+xvnXeJSiDQvfzRleiMosD6bLQOCU
+         3jiHOMIiMxKqirQCdnIksZdQFNxD0zpxRk3CGugflFVZYZtZ5bkptE2fIuuByxLlFkNy
+         urng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762186804; x=1762791604;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jKpzC7OwKr3KFY5COtWMHui39YTNk2I7jCnxEbVs+Mg=;
+        b=SLcm924uQK4KE5gPPrqYLch9VEeCjy4D8gaqp/VcS5iZI2KZ8MAQ+Vw7QPUuZ+QXyK
+         CxHO3+TL1nDfWY5zpUM1mUrQd3K37sKw+Axvt4i/QsJjqw1+/dpevP8bfpueSSUMUNod
+         6G936KtcuH/1N3IhW0tUGPnfHih7EmlGd+nVmpYBrjZKtsJnW4Bzpp3NwvuI2Kwdsq7/
+         bkwt5QClK96VlxXnTpsajuTE+UFJuoyFRQuh6IbrDDqVquLebbaISZLCOisGD08waa5L
+         1OMqzlnRXtlbzLePGt+i/qXRvrKOuAS7WZSztB7j4R/AJfHJOwL0CKjV97YFaFpKwMeV
+         ZylA==
+X-Forwarded-Encrypted: i=1; AJvYcCVxuH4Ff6S17sW38Ht16bR9pNZCRaj2l4ovPUXmXn2cslkjuWXtzJqG9KTocA8yrBXR0FJ/iBD7iD2rqvs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxmktqv1AnSD22YlJGEqY/dkCSrfgeZG6BfMgLGX+slmRTOOjXC
+	RedTaRGKpNu0DgptnLgWOlMTva5u+RdvSA4dE1VLECDRqyHOnO8aOME8sONumEEjeFrZspJsxaO
+	fdEH2v775yGWHVHjeLg==
+X-Google-Smtp-Source: AGHT+IGYgTuLSihsPJ88Spd9dISIsCQuf62e7EG7IJZ70IGjE1Hy68HXjMiE6YNWqCxl9BmEEpOCUF8ubsRZqv0=
+X-Received: from wrmr5.prod.google.com ([2002:adf:e685:0:b0:3f9:9fbe:f838])
+ (user=sidnayyar job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:2281:b0:429:d2d2:5032 with SMTP id ffacd0b85a97d-429d2d2519emr3619316f8f.3.1762186804331;
+ Mon, 03 Nov 2025 08:20:04 -0800 (PST)
+Date: Mon,  3 Nov 2025 16:19:48 +0000
+In-Reply-To: <20251103161954.1351784-1-sidnayyar@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] media: i2c: add Himax HM1246 image sensor driver
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Hans Verkuil <hverkuil@kernel.org>,
- Hans de Goede <hansg@kernel.org>, Ricardo Ribalda <ribalda@chromium.org>,
- =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>,
- Tarang Raval <tarang.raval@siliconsignals.io>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
- Sylvain Petinot <sylvain.petinot@foss.st.com>,
- Dongcheng Yan <dongcheng.yan@intel.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Alan Stern <stern@rowland.harvard.edu>,
- Jingjing Xiong <jingjing.xiong@intel.com>,
- Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
- Mehdi Djait <mehdi.djait@linux.intel.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
- linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Hao Yao <hao.yao@intel.com>,
- bsp-development.geo@leica-geosystems.com
-References: <20251017-hm1246-v4-0-e3388ea2f08c@emfend.at>
- <20251017-hm1246-v4-2-e3388ea2f08c@emfend.at>
- <aPec0SRvDlqtVKIJ@kekkonen.localdomain>
- <6e7a63b1-6aee-4b4f-9fb9-2f2df92782b4@emfend.at>
- <85df7f30-e9ac-422e-8ab5-7c6b82774aaf@emfend.at>
- <aQiL111bKgKE6M22@kekkonen.localdomain>
-Content-Language: de-DE
-From: Matthias Fend <matthias.fend@emfend.at>
-In-Reply-To: <aQiL111bKgKE6M22@kekkonen.localdomain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20251103161954.1351784-1-sidnayyar@google.com>
+X-Mailer: git-send-email 2.51.1.930.gacf6e81ea2-goog
+Message-ID: <20251103161954.1351784-3-sidnayyar@google.com>
+Subject: [PATCH v3 2/8] linker: add kflagstab section to vmlinux and modules
+From: Siddharth Nayyar <sidnayyar@google.com>
+To: petr.pavlu@suse.com, corbet@lwn.net
+Cc: arnd@arndb.de, linux-arch@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+	mcgrof@kernel.org, nathan@kernel.org, nicolas.schier@linux.dev, 
+	samitolvanen@google.com, sidnayyar@google.com, maennich@google.com, 
+	gprocida@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Sakari,
+This section will contain read-only kernel symbol flag values in the
+form of a 8-bit bitset.
 
-Am 03.11.2025 um 12:02 schrieb Sakari Ailus:
-> Hi Matthias,
-> 
-> Thanks for the ping.
-> 
-> On Mon, Nov 03, 2025 at 07:54:52AM +0100, Matthias Fend wrote:
->> Hi Sakari,
->>
->> Am 23.10.2025 um 11:00 schrieb Matthias Fend:
->>> Hi Sakari,
->>>
->>> thanks a lot for your feedback.
->>
->> I had two follow-up questions regarding your feedback, but I suspect they
->> got lost in all the code. I've cleaned up this mail a bit to make the
->> questions more visible.
->>
->>>>> +
->>>>> +static int hm1246_update_controls(struct hm1246 *hm1246,
->>>>> +                  const struct hm1246_mode *mode)
->>>>> +{
->>>>> +    s64 pixel_rate, exposure_max, vblank, hblank;
->>>>> +    int ret;
->>>>> +
->>>>> +    ret = __v4l2_ctrl_s_ctrl(hm1246->link_freq_ctrl, mode-
->>>>>> link_freq_index);
->>>>
->>>> Does this do something? There's only a single link frequency value (and
->>>> index) supported.
->>>
->>> You're right. Even though hm1246_update_controls() isn't exactly wrong,
->>> I could currently remove this function completely. The sensor supports
->>> various modes (which result in different clock rates), and I've already
->>> started implementing more of them. With multiple modes the controls need
->>> to be updated. However, since there were still some internal sensor
->>> issues to be addressed and I haven't been able to fully test them, I've
->>> decided to use only the presumably most common RAW mode for now.
->>>
->>> Should I remove the function now and add it back once more modes are
->>> implemented?
-> 
-> I think it'd be better to postpone adding this. I think you'll need further
-> logic to support this and it'd be better to review this in conjunction with
-> the additional features.
+Signed-off-by: Siddharth Nayyar <sidnayyar@google.com>
+Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
+---
+ include/asm-generic/vmlinux.lds.h | 7 +++++++
+ scripts/module.lds.S              | 1 +
+ 2 files changed, 8 insertions(+)
 
-Okay, then I will remove hm1246_update_controls() for now.
-
-> 
->>>
->> ...
->>>>> +static int hm1246_parse_fwnode(struct hm1246 *hm1246)
->>>>> +{
->>>>> +    struct fwnode_handle *endpoint;
->>>>> +    struct v4l2_fwnode_endpoint bus_cfg = {
->>>>> +        .bus_type = V4L2_MBUS_PARALLEL,
->>>>> +    };
->>>>> +    int ret;
->>>>> +
->>>>> +    endpoint =
->>>>> fwnode_graph_get_endpoint_by_id(dev_fwnode(hm1246- >dev), 0,
->>>>> +                           0,
->>>>> +                           FWNODE_GRAPH_ENDPOINT_NEXT);
->>>>> +    if (!endpoint)
->>>>> +        return dev_err_probe(hm1246->dev, -EINVAL,
->>>>> +                     "missing endpoint node\n");
->>>>> +
->>>>> +    ret = v4l2_fwnode_endpoint_parse(endpoint, &bus_cfg);
->>>>
->>>> What about validating the link frequencies? You can use
->>>> v4l2_link_freq_to_bitmap(), too.
->>>
->>> I was under the impression that for sensors with a parallel interface,
->>> no frequency information is provided in the device tree (because there's
->>> no need for it). Since there are no frequency entries, they can't be
->>> verified.
->>>
->>> Am I wrong, or did you perhaps mean something else?
-> 
-> The current documentation
-> <URL:https://hverkuil.home.xs4all.nl/spec/driver-api/camera-sensor.html>
-> doesn't distinguish CSI-2 and parallel interfaces in this respect. It's a
-> good idea to ensure a safe frequency is used as the driver works the same
-> way in all cases, whether or not using one is mandatory.
-
-If I understand correctly, this means that in the bindings, the port 
-property 'link-frequencies' should be marked as 'required', and the port 
-in the example node should be extended with the line 'link-frequencies = 
-/bits/ 64 <42174000>;'.
-Then, during probe, it can be checked with v4l2_link_freq_to_bitmap() 
-whether the link frequency entered in the device tree is supported (this 
-also requires switching to v4l2_fwnode_endpoint_alloc_parse).
-
-Does this describe the desired change?
-
-Thanks for your help!
-  ~Matthias
-
-> 
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index ae2d2359b79e..310e2de56211 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -518,6 +518,13 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
+ 		__stop___kcrctab_gpl = .;				\
+ 	}								\
+ 									\
++	/* Kernel symbol flags table */					\
++	__kflagstab       : AT(ADDR(__kflagstab) - LOAD_OFFSET) {	\
++		__start___kflagstab = .;				\
++		KEEP(*(SORT(___kflagstab+*)))				\
++		__stop___kflagstab = .;					\
++	}								\
++									\
+ 	/* Kernel symbol table: strings */				\
+         __ksymtab_strings : AT(ADDR(__ksymtab_strings) - LOAD_OFFSET) {	\
+ 		*(__ksymtab_strings)					\
+diff --git a/scripts/module.lds.S b/scripts/module.lds.S
+index ee79c41059f3..9a8a3b6d1569 100644
+--- a/scripts/module.lds.S
++++ b/scripts/module.lds.S
+@@ -23,6 +23,7 @@ SECTIONS {
+ 	__ksymtab_gpl		0 : ALIGN(8) { *(SORT(___ksymtab_gpl+*)) }
+ 	__kcrctab		0 : ALIGN(4) { *(SORT(___kcrctab+*)) }
+ 	__kcrctab_gpl		0 : ALIGN(4) { *(SORT(___kcrctab_gpl+*)) }
++	__kflagstab		0 : ALIGN(1) { *(SORT(___kflagstab+*)) }
+ 
+ 	.ctors			0 : ALIGN(8) { *(SORT(.ctors.*)) *(.ctors) }
+ 	.init_array		0 : ALIGN(8) { *(SORT(.init_array.*)) *(.init_array) }
+-- 
+2.51.1.930.gacf6e81ea2-goog
 
 
