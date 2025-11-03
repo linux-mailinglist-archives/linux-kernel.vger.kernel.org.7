@@ -1,193 +1,109 @@
-Return-Path: <linux-kernel+bounces-882298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E429C2A1A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 06:53:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D4C9C2A1AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 06:55:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 20F0D4E1BD4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 05:53:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D369D188E9AC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 05:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8921028C871;
-	Mon,  3 Nov 2025 05:53:48 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4771285CAE
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 05:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D64028D83F;
+	Mon,  3 Nov 2025 05:55:16 +0000 (UTC)
+Received: from ssh247.corpemail.net (ssh247.corpemail.net [210.51.61.247])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63BD8285CAE;
+	Mon,  3 Nov 2025 05:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.247
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762149228; cv=none; b=sjY8CSY9Qx5ExfkjX5OawLzMEXvN9mzXVKr0zUODtGB2SljxJc9ESWQV9nWoPZPZ16H9oOtNcOwDpVmWauoSbHyFoAjbxF+abRCYc9YC/5sIAPoajepv4qW+mc+LFo7wSYdNWd7k1sY7v1ocxZF2hnYyli5BCGfOEwcVLP9GWbI=
+	t=1762149316; cv=none; b=S/Rtj+0mm8sFW/L9uCeEzGwcGwWARAdMMlxMGyk+y7nHtKMgHa1oEUiLYg7ny8IF6rlMKpL1tCPUB5LZKiuM+F00Wilmzf7i/NgAjxT7CuRo99nKpNqVSFXko8x1D7tBX1YBbELw6u8x9DpK+ZhJ4MxzS1s2ERuUf+yLCG1jfhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762149228; c=relaxed/simple;
-	bh=2A6MEl0+oN8/SiQNDoN7HkDimNG6pp7ZcpCwW+XB1MM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IET657MHMYIrEQcCMIS0NyuY3IxIkjrsJfvhp3nO4hcZpJLg+FfItUtqLFJ8UdXIDCiqPoUTc8Sl1SwkGdOhY/qM2nEr1O/oN8CG9atAYaK30BOtvZkWYLzW9sMwYCkk/i8BhieJN5WrirTf7j3EEuWRYdc4ZHDLZR42ZiGcJ3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1D80F28FA;
-	Sun,  2 Nov 2025 21:53:38 -0800 (PST)
-Received: from [10.164.136.41] (unknown [10.164.136.41])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3BEB33F694;
-	Sun,  2 Nov 2025 21:53:40 -0800 (PST)
-Message-ID: <4bc562ea-2fba-4484-9548-c606e254bc00@arm.com>
-Date: Mon, 3 Nov 2025 11:23:38 +0530
+	s=arc-20240116; t=1762149316; c=relaxed/simple;
+	bh=liBptfnPgamIoOT6mYW47OYRRBbzhoA8cwUTZwhASIA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I76T2bprANukuEqdYvq4tYGzgyXVYm5vSkZqbJkd/8QzLQqszbkl1U/dyxD4y/uWKO5QyHXVGNKgFqQCE0dz8BN/XnMaRW5af13BGoXAmAJ8qDNCZcjYlp39eoNI575akvvuLH+Qm2/QhGKS1/HJ7ZZCWbFiO1MH5dpQnSVQxIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.247
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from Jtjnmail201614.home.langchao.com
+        by ssh247.corpemail.net ((D)) with ASMTP (SSL) id 202511031355070850;
+        Mon, 03 Nov 2025 13:55:07 +0800
+Received: from jtjnmailAR01.home.langchao.com (10.100.2.42) by
+ Jtjnmail201614.home.langchao.com (10.100.2.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Mon, 3 Nov 2025 13:55:06 +0800
+Received: from inspur.com (10.100.2.107) by jtjnmailAR01.home.langchao.com
+ (10.100.2.42) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Mon, 3 Nov 2025 13:55:06 +0800
+Received: from localhost.localdomain.com (unknown [10.94.13.117])
+	by app3 (Coremail) with SMTP id awJkCsDww_q6Qwhpt7gJAA--.15221S4;
+	Mon, 03 Nov 2025 13:55:06 +0800 (CST)
+From: Chu Guangqing <chuguangqing@inspur.com>
+To: <andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Chu Guangqing
+	<chuguangqing@inspur.com>
+Subject: [PATCH] veth: Fix a typo error in veth
+Date: Mon, 3 Nov 2025 13:53:51 +0800
+Message-ID: <20251103055351.3150-1-chuguangqing@inspur.com>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 3/5] arm64: mm: support large block mapping when
- rodata=full
-To: Ryan Roberts <ryan.roberts@arm.com>, Guenter Roeck <linux@roeck-us.net>,
- Yang Shi <yang@os.amperecomputing.com>
-Cc: catalin.marinas@arm.com, will@kernel.org, akpm@linux-foundation.org,
- david@redhat.com, lorenzo.stoakes@oracle.com, ardb@kernel.org,
- scott@os.amperecomputing.com, cl@gentwo.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, nd@arm.com
-References: <20250917190323.3828347-1-yang@os.amperecomputing.com>
- <20250917190323.3828347-4-yang@os.amperecomputing.com>
- <f24b9032-0ec9-47b1-8b95-c0eeac7a31c5@roeck-us.net>
- <933a2eff-1e06-451e-9994-757d66f4b985@arm.com>
- <bee6b93d-aa2e-4335-9801-89f02eb3eccc@arm.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <bee6b93d-aa2e-4335-9801-89f02eb3eccc@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: awJkCsDww_q6Qwhpt7gJAA--.15221S4
+X-Coremail-Antispam: 1UD129KBjvdXoWrGrWfWw1xJF4furW5tryrJFb_yoWxWrX_CF
+	W7WayxXr4YgFy7Kw4Y9r47AryYqw15WF4kCFZag3ya9ayUZF15Kry8ur1DJr1DurW7Ar1D
+	Zr1ftr1DZ347KjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbcAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_GcCE
+	3s1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
+	1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0
+	cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8Jw
+	ACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_JF0_
+	Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxV
+	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI
+	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
+	4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
+	42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUr2-eDUUUU
+X-CM-SenderInfo: 5fkxw35dqj1xlqj6x0hvsx2hhfrp/
+X-CM-DELIVERINFO: =?B?QJfRO5RRTeOiUs3aOqHZ50hzsfHKF9Ds6CbXmDm38RucXu3DYXJR7Zlh9zE0nt/Iac
+	D+KbPV6ldG4k/ymFRhMsIeRH0J30b0MeiTb5cNH1w8ExGKCubaJNOkF2TflhkJRMm3MhDV
+	m8yehC3jkbPFRTb8kU8=
+Content-Type: text/plain
+tUid: 202511031355076141a1b02f6d96e57b66e2194516eb9d
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
->>>>
->>> With lock debugging enabled, we see a large number of "BUG: sleeping
->>> function called from invalid context at kernel/locking/mutex.c:580"
->>> and "BUG: Invalid wait context:" backtraces when running v6.18-rc3.
->>> Please see example below.
->>>
->>> Bisect points to this patch.
->>>
->>> Please let me know if there is anything I can do to help tracking
->>> down the problem.
->> Thanks for the report - ouch!
->>
->> I expect you're running on a system that supports BBML2_NOABORT, based on the
->> stack trace, I expect you have CONFIG_DEBUG_PAGEALLOC enabled? That will cause
->> permission tricks to be played on the linear map at page allocation and free
->> time, which can happen in non-sleepable contexts. And with this patch we are
->> taking pgtable_split_lock (a mutex) in split_kernel_leaf_mapping(), which is
->> called as a result of the permission change request.
->>
->> However, when CONFIG_DEBUG_PAGEALLOC enabled we always force-map the linear map
->> by PTE so split_kernel_leaf_mapping() is actually unneccessary and will return
->> without actually having to split anything. So we could add an early "if
->> (force_pte_mapping()) return 0;" to bypass the function entirely in this case,
->> and I *think* that should solve it.
->>
->> But I'm also concerned about KFENCE. I can't remember it's exact semantics off
->> the top of my head, so I'm concerned we could see similar problems there (where
->> we only force pte mapping for the KFENCE pool).
->>
->> I'll investigate fully tomorrow and hopefully provide a fix.
-> Here's a proposed fix, although I can't get access to a system with BBML2 until
-> tomorrow at the earliest. Guenter, I wonder if you could check that this
-> resolves your issue?
->
-> ---8<---
-> commit 602ec2db74e5abfb058bd03934475ead8558eb72
-> Author: Ryan Roberts <ryan.roberts@arm.com>
-> Date:   Sun Nov 2 11:45:18 2025 +0000
->
->      arm64: mm: Don't attempt to split known pte-mapped regions
->      
->      It has been reported that split_kernel_leaf_mapping() is trying to sleep
->      in non-sleepable context. It does this when acquiring the
->      pgtable_split_lock mutex, when either CONFIG_DEBUG_ALLOC or
->      CONFIG_KFENCE are enabled, which change linear map permissions within
->      softirq context during memory allocation and/or freeing.
->      
->      But it turns out that the memory for which these features may attempt to
->      modify the permissions is always mapped by pte, so there is no need to
->      attempt to split the mapping. So let's exit early in these cases and
->      avoid attempting to take the mutex.
->      
->      Closes: https://lore.kernel.org/all/f24b9032-0ec9-47b1-8b95-c0eeac7a31c5@roeck-us.net/
->      Fixes: a166563e7ec3 ("arm64: mm: support large block mapping when rodata=full")
->      Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
->
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index b8d37eb037fc..6e26f070bb49 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -708,6 +708,16 @@ static int split_kernel_leaf_mapping_locked(unsigned long addr)
->   	return ret;
->   }
->   
-> +static inline bool force_pte_mapping(void)
-> +{
-> +	bool bbml2 = system_capabilities_finalized() ?
-> +		system_supports_bbml2_noabort() : cpu_supports_bbml2_noabort();
-> +
-> +	return (!bbml2 && (rodata_full || arm64_kfence_can_set_direct_map() ||
-> +			   is_realm_world())) ||
-> +		debug_pagealloc_enabled();
-> +}
-> +
->   static DEFINE_MUTEX(pgtable_split_lock);
->   
->   int split_kernel_leaf_mapping(unsigned long start, unsigned long end)
-> @@ -723,6 +733,16 @@ int split_kernel_leaf_mapping(unsigned long start, unsigned long end)
->   	if (!system_supports_bbml2_noabort())
->   		return 0;
->   
-> +	/*
-> +	 * If the region is within a pte-mapped area, there is no need to try to
-> +	 * split. Additionally, CONFIG_DEBUG_ALLOC and CONFIG_KFENCE may change
+Fix a spellling error for resources
 
-Nit: CONFIG_DEBUG_PAGEALLOC.
+Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
+---
+ drivers/net/veth.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +	 * permissions from softirq context so for those cases (which are always
-> +	 * pte-mapped), we must not go any further because taking the mutex
-> +	 * below may sleep.
-> +	 */
-> +	if (force_pte_mapping() || is_kfence_address((void *)start))
-> +		return 0;
-> +
->   	/*
->   	 * Ensure start and end are at least page-aligned since this is the
->   	 * finest granularity we can split to.
-> @@ -1009,16 +1029,6 @@ static inline void arm64_kfence_map_pool(phys_addr_t kfence_pool, pgd_t *pgdp) {
->   
->   #endif /* CONFIG_KFENCE */
->   
-> -static inline bool force_pte_mapping(void)
-> -{
-> -	bool bbml2 = system_capabilities_finalized() ?
-> -		system_supports_bbml2_noabort() : cpu_supports_bbml2_noabort();
-> -
-> -	return (!bbml2 && (rodata_full || arm64_kfence_can_set_direct_map() ||
-> -			   is_realm_world())) ||
-> -		debug_pagealloc_enabled();
-> -}
-> -
+diff --git a/drivers/net/veth.c b/drivers/net/veth.c
+index a3046142cb8e..87a63c4bee77 100644
+--- a/drivers/net/veth.c
++++ b/drivers/net/veth.c
+@@ -1323,7 +1323,7 @@ static int veth_set_channels(struct net_device *dev,
+ 		if (peer)
+ 			netif_carrier_off(peer);
+ 
+-		/* try to allocate new resurces, as needed*/
++		/* try to allocate new resources, as needed*/
+ 		err = veth_enable_range_safe(dev, old_rx_count, new_rx_count);
+ 		if (err)
+ 			goto out;
+-- 
+2.43.7
 
-Otherwise LGTM.
-
-Reviewed-by: Dev Jain <dev.jain@arm.com>
-
->   static void __init map_mem(pgd_t *pgdp)
->   {
->   	static const u64 direct_map_end = _PAGE_END(VA_BITS_MIN);
-> ---8<---
->
-> Thanks,
-> Ryan
->
->> Yang Shi, Do you have any additional thoughts?
->>
->> Thanks,
->> Ryan
->>
 
