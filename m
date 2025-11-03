@@ -1,87 +1,95 @@
-Return-Path: <linux-kernel+bounces-883740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDD61C2E385
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 23:10:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76B52C2E3AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 23:14:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 529AF34A7D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 22:10:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 315E43A928A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 22:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0942E282C;
-	Mon,  3 Nov 2025 22:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E31D52EE5F4;
+	Mon,  3 Nov 2025 22:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="chcsMZ/4"
-Received: from PH8PR06CU001.outbound.protection.outlook.com (mail-westus3azhn15012020.outbound.protection.outlook.com [52.102.149.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="E4icyLMr"
+Received: from mail-yx1-f98.google.com (mail-yx1-f98.google.com [74.125.224.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E82DE2E62B9
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 22:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.102.149.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762207849; cv=fail; b=KA6qBVBSaqajAVlKrx496nqxuWdRKFedAj3m+wC8fsm/RcKmghkRjLsVF4fID5VKG5OaEnOBE6kofKIsSrZaUtR0j3fl09zIGi4xkg+LM8YZiOvv5oIz76gIf9EGZVdFEdG6n2U0f6KPugneihoh4/IErQPhTliGwvcnuXbjXkQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762207849; c=relaxed/simple;
-	bh=cR9f9J7kM1m3tTTxK1yU4MYSCp3Qjnbrq/2OYJfkJAs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=iJifSB34GbV0ygoxpZEi6heArdtxiLcEPvTThplo7KxIrUhRWhn/+w4Ly31q9F3X8qhDMBGFdZlQdXdTRKeIjT6Vsm6OsNbla/7l6lAgu/MR/QYJrgBi9w04hDS5f/4yJfuzUtuw6FPAe4k66rspmsYsPEP68ULL8FJAQfb+NIo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=chcsMZ/4; arc=fail smtp.client-ip=52.102.149.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=UBKXkb5yd5lR5AdvsFfKGLvgAOGgZXBSBxELs3RY2JTgE/6UPJzxEc6NBKUOr2f2xLBRKWGicF8qGwMe2Aso08c/WhPfsPteK4eySYIw9GiA0TgLjVml8AMXHS6PAhaup9LXWt60e6mojuGi2I01oJrwIcoDznWKKgjYRY8on0CniEq1SHTNkMpsQaQXqpaS/8HHuoEo/Wc1ovSkcAUssuhhRM5AeJAHs1+NRSPfQrTktZ/52KH/E5ywVIUIyK9iCRwIsYdRSg8xiOBXI03MaR7r/9oRiujb/jP1WmYxNRxBwW1VCVfFSXYs0UVIDLtW0Dt5FNfEmEpsvELQTniofQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KNn4VNKkE2T5zer5cmNfJxfyayvWG/GTh9hlSUEeEwE=;
- b=u5jlirzPUO07esGQ3tVatedn5WDuaOFgFNECBuanW4VoP90mFWJkUS1kfUlXc/OsGLBd99qX4X7/SFsQKPCC7mRD6c86u0vzhz5YVqw4qpqbCacUA3Up4aHyRFirbzxCEQYvfzccOGBpKO98ecnJ2r7Fc8aJ8lloq/7Y2kgGjI8QnYGoIdiWwtTq4vnY1TjXeNzGjxiCGSgjBdab51icYk3hfMQvHfe/Qkd/2JW8rf+FkbqN82cxe5wvvk4BcYsxOM2FemT+yJM2b6iXfWKY+clDetGuKb57j/HSDItx5hEc/PlLgdIWp1vzRP6eI2DLCrRfj8OrN7B9B8L0/GiPcQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 198.47.21.194) smtp.rcpttodomain=toradex.com smtp.mailfrom=ti.com; dmarc=pass
- (p=quarantine sp=none pct=100) action=none header.from=ti.com; dkim=none
- (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KNn4VNKkE2T5zer5cmNfJxfyayvWG/GTh9hlSUEeEwE=;
- b=chcsMZ/4u8EEVQ164jMoeG4DOEGnwYIcAYSb9awgE5HDsFUMIDQtFhGovD2ntlsnS/gXtFvfZJj7cW15U2u3HG5ttL4SrCVcaSM69l0vQxR39OhZ8H6WmqLml7YbAnUZ/V6QaUgHHnem0JQHnJSuvS2a9mhGSHow3NI+F8yS+4g=
-Received: from DS7PR05CA0007.namprd05.prod.outlook.com (2603:10b6:5:3b9::12)
- by SJ2PR10MB7060.namprd10.prod.outlook.com (2603:10b6:a03:4d3::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.9275.13; Mon, 3 Nov
- 2025 22:10:38 +0000
-Received: from DS1PEPF00017095.namprd03.prod.outlook.com
- (2603:10b6:5:3b9:cafe::8d) by DS7PR05CA0007.outlook.office365.com
- (2603:10b6:5:3b9::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.9298.7 via Frontend Transport; Mon, 3
- Nov 2025 22:10:38 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 198.47.21.194)
- smtp.mailfrom=ti.com; dkim=none (message not signed) header.d=none;dmarc=pass
- action=none header.from=ti.com;
-Received-SPF: Pass (protection.outlook.com: domain of ti.com designates
- 198.47.21.194 as permitted sender) receiver=protection.outlook.com;
- client-ip=198.47.21.194; helo=flwvzet200.ext.ti.com; pr=C
-Received: from flwvzet200.ext.ti.com (198.47.21.194) by
- DS1PEPF00017095.mail.protection.outlook.com (10.167.17.138) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9298.6 via Frontend Transport; Mon, 3 Nov 2025 22:10:36 +0000
-Received: from DFLE202.ent.ti.com (10.64.6.60) by flwvzet200.ext.ti.com
- (10.248.192.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 3 Nov
- 2025 16:10:34 -0600
-Received: from DFLE213.ent.ti.com (10.64.6.71) by DFLE202.ent.ti.com
- (10.64.6.60) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20; Mon, 3 Nov
- 2025 16:10:33 -0600
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE213.ent.ti.com
- (10.64.6.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.2562.20 via Frontend
- Transport; Mon, 3 Nov 2025 16:10:33 -0600
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5A3MAXmL915584;
-	Mon, 3 Nov 2025 16:10:33 -0600
-Message-ID: <20c226de-c53a-41f3-b432-6f75a6f83e75@ti.com>
-Date: Mon, 3 Nov 2025 16:10:33 -0600
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998E22EE268
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 22:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.125.224.98
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762207927; cv=none; b=nK7za40VvKFRBM8U3goKqt0QnaTqnVCJBEey0uizsFQsDRtc2F7h2fpdKV8B3q0N7i2MCb3Jh7lwuK78wHdRWYX0/VBPNv3HLhwRKelXV4zXQRuWQBfnhEz78sf4CgguP0U0f7z/9soyd2tcpWiBxtmoZRMNxzZtq/amLXzUXT4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762207927; c=relaxed/simple;
+	bh=KNld0hPOC0rvgPmM+x1YqBqsiUtIYLq7mTzBOKAmv0A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KJ0fYpJZD0GMjFpDhPDbaayM5ITT6+dkDAMHyp+2yx7E3CIsy9ikfMaZ29sFAzrqDZydhDxs6+E4Dz2lKAoTTXOoqo7VZhUMAHq2FB3Z+9p3S7XEH+sAbkBn1LoKkFSGo8OWWPuKGCEXQ1GlKOtHFvdV0IqPA5QCUc+MicF9sHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=E4icyLMr; arc=none smtp.client-ip=74.125.224.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-yx1-f98.google.com with SMTP id 956f58d0204a3-63e336b1ac4so7573944d50.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 14:12:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762207924; x=1762812724;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:dkim-signature:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mIukxs2eDwE3mLXELpSXoxd+kJ/H0EaWzJP2uktACOw=;
+        b=GtE6UiBD7HWDptE7W1cHdZ6ltXXdV3xMFevrcdcuSfljnhmEDSGtmmYg5fg4aQaAtP
+         0ucq/+LrXH8i7BXKgoLBiN1TRtebQkQywmQboHHT+0Ye467eNn4byYxiYtuekrtuDF+G
+         43DwE7VEo+juwuVleOa3DFlinOQO5V4bbe7E7G7zSYL3kr2qIyT9GVSMtpZZV2r5qYEy
+         NeDFP3FfB/DMwp4GHtSmhtVJdt7B59uReMQhrNnjPogN9BRTEE4LH9L6YksMEuS/Wk57
+         dGkhGJsl0r5+W5vwqx1oUOQbxWwqYoe+2UZ+Djj01LUS+gqR3VtCwxCaHLjU7NdocYQn
+         BCeA==
+X-Forwarded-Encrypted: i=1; AJvYcCXlwtD01c/NuHRBj7sCj51UCQLcpBxvyr+ZL+VOo4QfIrfkvARNSmj0RzvV70FADRoD+8hhmiiFTZ0cQKM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI3pmNFIHdsoA4XdC8FdpVsEApTuig9IrCgP4FvIGoAJPz4KPB
+	jvFusFKjgSbZhQMxM3HsenKoXzX+nPoVQH5WlB2fRcgKAjmjVCGPd+3l7Iz+6UaCS4HJpIABB4b
+	nx7607xNBh+VZfjYnEPdjEKnjRqXOJ9v7+aSDiB9tR7zQtvzbgQnxrBhYpL+h9AjiwD28u2sCIC
+	ixOXecmLdPUFP5UmpgC5k5bGEaVqzfJyV+jcAx8eimdO1L1fZZXubNW/cfciiZHTwpd2PL3+eG0
+	cmKWAgYpbFrCITEE2KrF5/s
+X-Gm-Gg: ASbGncuOyRPg5gn9dPzIRN7mIxGRl+Ic7wjUdA/KU9YJXyFNm0LyJy7ff9IRL+WKsn3
+	nQfse2ZQ+nbc7b/HCIQWVLZLD1zMbRzKfYktYAQJw1toi/+igDmQ60fgy495h3GV/h41uT2i+Br
+	aA+F+pWyD8Z66wbq3CA/iNiPDcpk+0ikKdRKRG8Y62jbd69W/AKIpfuNM+fsED+q8XatBIID3jO
+	fVnMHqksEAxRnOUtxGhIPGXQa+pTls46nXYYsI8YHo3IFN+eiIB6/6B8VloM48QuOI3DlmT8xKV
+	15qPPDci4AOOxSfyIyBdIAo4KgpHT5x99G3q2h7RLopWEdVVlRxUa/oQzK4I6ZGMnN7bAeHPDxB
+	FjImbr9fQdlKajLhYf0ndCY5SX8GAqifAZWgmPQ1HPpvD5yJZRbK/XLkBQ99wETJNjU07iBl5yY
+	6EVingUEBHPn7az2rXb3DMh9+uZLz9ouqp270IpBI=
+X-Google-Smtp-Source: AGHT+IFpHBLNgcMdvhmS/VyEGktkm5gq0VgAYPKbz216p/FFheUSeTNi7jvlXNiku0NNsuiyukBRxPOYvQ44
+X-Received: by 2002:a53:ac4f:0:b0:63f:b1fd:3850 with SMTP id 956f58d0204a3-63fc75ac04bmr752748d50.33.1762207924345;
+        Mon, 03 Nov 2025 14:12:04 -0800 (PST)
+Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-14.dlp.protect.broadcom.com. [144.49.247.14])
+        by smtp-relay.gmail.com with ESMTPS id 956f58d0204a3-63fc9425407sm16515d50.1.2025.11.03.14.12.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 03 Nov 2025 14:12:04 -0800 (PST)
+X-Relaying-Domain: broadcom.com
+X-CFilter-Loop: Reflected
+Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-78108268ea3so5056722b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 14:12:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1762207903; x=1762812703; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=mIukxs2eDwE3mLXELpSXoxd+kJ/H0EaWzJP2uktACOw=;
+        b=E4icyLMrchO9kh82wzkDJRwJIIGED66UN7dERQjNCX+V2iZDAEc4otrtt3n5Qdb+lE
+         RkTKTbzDlYvIeEyDYgvxbunk1+Q3cJsJhsu01nhLqcS9HGHGoUO5trLpBFs+apwsCDAi
+         f4HMZPAblXIyuA0rA5+zSt8VCz4F4VLAuCABk=
+X-Forwarded-Encrypted: i=1; AJvYcCUv3ywdmN3KGaddUXNsWFWeeLdLIShAvWpNfHmYBn6vrpptgRK97woKz+J/R+Ni/UjyePD9FufAScRQ8qw=@vger.kernel.org
+X-Received: by 2002:a05:6a21:3984:b0:344:8a19:524d with SMTP id adf61e73a8af0-34e28829751mr1186793637.2.1762207903495;
+        Mon, 03 Nov 2025 14:11:43 -0800 (PST)
+X-Received: by 2002:a05:6a21:3984:b0:344:8a19:524d with SMTP id adf61e73a8af0-34e28829751mr1186775637.2.1762207903106;
+        Mon, 03 Nov 2025 14:11:43 -0800 (PST)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ba1f2893b60sm181227a12.9.2025.11.03.14.11.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Nov 2025 14:11:42 -0800 (PST)
+Message-ID: <19e08c53-7e6e-40c5-9fd2-981675e85f26@broadcom.com>
+Date: Mon, 3 Nov 2025 14:11:40 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,239 +97,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mailbox: omap-mailbox: Check for pending msgs only
- when mbox is exclusive
-To: Beleswar Padhi <b-padhi@ti.com>, <jassisinghbrar@gmail.com>,
-	<linux-kernel@vger.kernel.org>, <hiago.franco@toradex.com>,
-	<francesco.dolcini@toradex.com>
-CC: <hnagalla@ti.com>, <u-kumar1@ti.com>, <nm@ti.com>, <vigneshr@ti.com>
-References: <20251103201111.1417785-1-b-padhi@ti.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20251103201111.1417785-1-b-padhi@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Subject: Re: [PATCH net v2] net: dsa: tag_brcm: legacy: fix untagged rx on
+ unbridged ports for bcm63xx
+To: Jakub Kicinski <kuba@kernel.org>, Jonas Gorski <jonas.gorski@gmail.com>
+Cc: Vladimir Oltean <olteanv@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ =?UTF-8?Q?=C3=81lvaro_Fern=C3=A1ndez_Rojas?= <noltari@gmail.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251027194621.133301-1-jonas.gorski@gmail.com>
+ <20251027211540.dnjanhdbolt5asxi@skbuf>
+ <CAOiHx=nw-phPcRPRmHd6wJ5XksxXn9kRRoTuqH4JZeKHfxzD5A@mail.gmail.com>
+ <20251029181216.3f35f8ba@kernel.org>
+Content-Language: en-US, fr-FR
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20251029181216.3f35f8ba@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS1PEPF00017095:EE_|SJ2PR10MB7060:EE_
-X-MS-Office365-Filtering-Correlation-Id: 35a4a20a-9cae-4e2b-e1e4-08de1b25d0f1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|34020700016|36860700013|82310400026|376014|7053199007|12100799066;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RFBQcHR1YjBYUXJjeUVWVG1iSFJCM0ovY2g2bnFSbWFiSXdBaWRSenpINXlt?=
- =?utf-8?B?UEtWUjg4VFVHNmlYbG1MNnZaNmJZTW05YzY5dG5ML0xjd1Q1V2RmYUhnaGY0?=
- =?utf-8?B?NjlmbVNLdGZkUjVrUXN0L2F2U0x1d0ZNdWxOOEduRS9pY1ZHMklUWDgrUFIy?=
- =?utf-8?B?WmV4SE5OWWZEalZ3VE1vOG1SOXlnVjRMV0REWWVuVWdEOVYrd0ZpWGxmRmFy?=
- =?utf-8?B?eFpFMXBLT3RLUjNkSEhrd2huRU1hNmZLNVNmdHNOajVZc2NUSFBsSEFsWkFo?=
- =?utf-8?B?RkFLU2l0a0daVWdKZG1zYzFNU1JBSmZjUlVaejl1bXZnbkJVeEVvQUZndlo2?=
- =?utf-8?B?QWlmK3E3b2pBVVhlc0FvTU1sTk9mVnNGaTJ0QVZWb09yeEUvR254SExDTmhh?=
- =?utf-8?B?R0tQT05PZXFFUURKMXFLQy9hWnFkU1IyRlhKQklIZlYzblkxakwyZjg2Qmph?=
- =?utf-8?B?bmd0M0w2eSt6ODlzNDlzamRFTE40bjlJVVhWZ0VUbTN4YlppTSswNm9VOUZF?=
- =?utf-8?B?WGV3Q2J2NFBPTENxNWJnK28rbWVsQ1NRSnpMczdNQ0JzTkNNcXVBdERtNHZp?=
- =?utf-8?B?ZGhBQm8zby9QL3ExcnBPRnYxbHoyUS9KQklDTlFaRXViV1lxaExjV0lGUEM2?=
- =?utf-8?B?bkxtd1JQUC9hRHhCMWlnOUtYdjhrUGdzTUJvRlRYOWQwVUNrVllzei84dk11?=
- =?utf-8?B?R1VuaUtmQXJFTjFacjVTNy94bEExeUwxVGFKeHFMc3BDWEtDdkhXcjVyNGpz?=
- =?utf-8?B?eFI2YW1rUGdNdW9ZZW0wd3ZlL1JWWXRGV2pqOTNySXY5ZEFsakZvNG1yalYx?=
- =?utf-8?B?VjErOFh4aEFldVZGZGVIMFZFczhhOEJ2NFBaZHdXcWZUU1d0YllSL3RwcXcv?=
- =?utf-8?B?NkVkZWg2QU1YTmN2NEI1c0p5WG1qc0JaNHlRVTVMR08yUVNiZVdTcVI0OFhr?=
- =?utf-8?B?Z0lqYnRhZ29PRHdkMWdRa1R0N3JNMlJ2SlRxM1BSemFJNk1rTFZZbWpDL2FM?=
- =?utf-8?B?NWpod3hGSFpHVXlJSy9FcDZFMkZsazVrSG9Tbjd4VDJDVHBrZDRZc3RRbmtv?=
- =?utf-8?B?T2hVV3pTRHpDcTNzM25KV2FmZll2U3N3bGhWZlpJYWxtLy9ZYjVOQzU1Ym9B?=
- =?utf-8?B?UEtuckNlRGg0a2c2UkttUGtFYlZVdnRuemRrSWU0SEVyYWU3S0VCK014aHlj?=
- =?utf-8?B?Rmx2U0hWaVZBTUdSOUpTV3FrU2VjUVRCSTBGMWQ0RUtWQUpyN3BvdFYrQUth?=
- =?utf-8?B?Y0s3OU1BM3BORGY4YjlvOXRFK0kxL0tYWHd4TnNYUnJVRHV6NEFobXRJU2RI?=
- =?utf-8?B?azRnaWRzWU1ORnlCdmpHY2RacmR1c0lXT3NhN21hUWhKWkpGRGsyRHcvZWRv?=
- =?utf-8?B?ZjJQM1p6b05qM0dHM0JuZCtINGMydUxVWVIrdWUxUVV3Z2Vlb0laZXpTUTlF?=
- =?utf-8?B?dXJpYVFZZzRXSXhKSml0NjJ5SkdXaWFGTlJCcDJCcW53aHBobkg5QXkzVXQx?=
- =?utf-8?B?OG12R1N4bXEvYkE5WUIxSmg0TVc5Z0ZJV2lIR1JqRGwwbjdTeG9pMzB0OW9P?=
- =?utf-8?B?QStPOXVtOURXNjhBWUMyMFZHbVRmL0JSejdqbXgvczB1bXQyY2pHSSs4REtB?=
- =?utf-8?B?RmtQSlMzakNUdTUvYkdYSkRrSkNmM0swV3JGSWFHRjM2VXladzhmZGpYcVdr?=
- =?utf-8?B?aEFIM2pJVDBiVVdVOFRTeWJUcEV6SjFNTFhKb1g0T0J2TkhZQTVuVVZzQTBN?=
- =?utf-8?B?QTYyeFpOa1NCTERGK3BsVkt2N1RPcWFyTHFlY1NuVCtqNkpKTWFjd3kwM2ZV?=
- =?utf-8?B?MkdVOWZqZWNyYkZ1cUtTM1JVanozNEZVSGsxMFNpalNMZzVJb0phTVBRQjVv?=
- =?utf-8?B?N1FjbldYV21RVWh1TnExMUNIQTdWLzZsZE95VXJqRnhpTExtL01PMjlBVEZV?=
- =?utf-8?B?bER4N0d1bHVxTWUvUENnWHdPODlFV3NzV2RDZFAwTjVGcGwzSjFja0pVWnBi?=
- =?utf-8?B?YlI4Mks5UmVtWGdxWUZ5NVBwaWZzOEY3d0tINVppQzVhSjI5Tmc0cm94YVI2?=
- =?utf-8?B?RXF0bVl6dXZUeFBXUmwvMHQ0NzY5ck1DNlpEdFJ5bmE0ckk4dmthQkJTVnA3?=
- =?utf-8?Q?k24E=3D?=
-X-Forefront-Antispam-Report:
-	CIP:198.47.21.194;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:flwvzet200.ext.ti.com;PTR:ErrorRetry;CAT:NONE;SFS:(13230040)(1800799024)(34020700016)(36860700013)(82310400026)(376014)(7053199007)(12100799066);DIR:OUT;SFP:1501;
-X-OriginatorOrg: ti.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 22:10:36.5499
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 35a4a20a-9cae-4e2b-e1e4-08de1b25d0f1
-X-MS-Exchange-CrossTenant-Id: e5b49634-450b-4709-8abb-1e2b19b982b7
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e5b49634-450b-4709-8abb-1e2b19b982b7;Ip=[198.47.21.194];Helo=[flwvzet200.ext.ti.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS1PEPF00017095.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR10MB7060
+X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-On 11/3/25 2:11 PM, Beleswar Padhi wrote:
-> On TI K3 devices, the mailbox resides in the Always-On power domain
-> (LPSC_main_alwayson) and is shared among multiple processors. The
-> mailbox is not solely exclusive to Linux.
-> 
-> Currently, the suspend path checks all FIFO queues for pending messages
-> and blocks suspend if any are present. This behavior is unnecessary for
-> K3 devices, since some of the FIFOs are used for RTOS<->RTOS
-> communication and are independent of Linux.
-> 
-> For FIFOs used in Linux<->RTOS communication, any pending message would
-> trigger an interrupt, which naturally prevents suspend from completing.
-> Hence, there is no need for the mailbox driver to explicitly check for
-> pending messages on K3 platforms.
-> 
-> Introduce a device match flag to indicate whether the mailbox instance
-> is exclusive to Linux, and skip the pending message check for
-> non-exclusive instances (such as in K3).
-> 
-> Fixes: a49f991e740f ("arm64: dts: ti: k3-am62-verdin: Add missing cfg for TI IPC Firmware")
-> Closes: https://lore.kernel.org/all/sid7gtg5vay5qgicsl6smnzwg5mnneoa35cempt5ddwjvedaio@hzsgcx6oo74l/
-> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-> ---
-> Cc: Francesco Dolcini <francesco.dolcini@toradex.com>
-> Cc: Hiago De Franco <hiago.franco@toradex.com>
-> Please help in testing the patch on Toradex platforms.
-> 
-> Testing Done:
-> 1. Tested Boot across all TI K3 EVM/SK boards.
-> 2. Tested IPC on all TI K3 J7* EVM/SK boards (& AM62x SK).
-> 3. Tested mbox driver probe & device boot on AM57x-evm (OMAP5 based).
-> 4. Tested that the patch generates no new warnings/errors.
-> 
-> Changes since v1:
-> 1. Use device_get_match_data() in probe and store result for re-use.
-> 
-> Link to v1:
-> https://lore.kernel.org/all/20251103075920.2611642-1-b-padhi@ti.com/
-> 
-> Changes since RFC:
-> 1. Skip checking pending messages instead of flushing
-> them explicitly for K3 devices.
-> 
-> Link to RFC Version:
-> https://lore.kernel.org/all/20251022102015.1345696-1-b-padhi@ti.com/
-> 
->   drivers/mailbox/omap-mailbox.c | 35 +++++++++++++++++++---------------
->   1 file changed, 20 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbox.c
-> index 680243751d62..17fe6545875d 100644
-> --- a/drivers/mailbox/omap-mailbox.c
-> +++ b/drivers/mailbox/omap-mailbox.c
-> @@ -68,6 +68,7 @@ struct omap_mbox_fifo {
->   
->   struct omap_mbox_match_data {
->   	u32 intr_type;
-> +	bool is_exclusive;
->   };
->   
->   struct omap_mbox_device {
-> @@ -78,6 +79,7 @@ struct omap_mbox_device {
->   	u32 num_users;
->   	u32 num_fifos;
->   	u32 intr_type;
-> +	const struct omap_mbox_match_data *mbox_data;
+On 10/29/25 18:12, Jakub Kicinski wrote:
+> On Tue, 28 Oct 2025 11:15:23 +0100 Jonas Gorski wrote:
+>>> Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
+>>>
+>>> Sorry for dropping the ball on v1. To reply to your reply there,
+>>> https://lore.kernel.org/netdev/CAOiHx=mNnMJTnAN35D6=LPYVTQB+oEmedwqrkA6VRLRVi13Kjw@mail.gmail.com/
+>>> I hadn't realized that b53 sets ds->untag_bridge_pvid conditionally,
+>>> which makes any consolidation work in stable trees very complicated
+>>> (although still desirable in net-next).
+>>
+>> It's for some more obscure cases where we cannot use the Broadcom tag,
+>> like a switch where the CPU port isn't a management port but a normal
+>> port. I am not sure this really exists, but maybe Florian knows if
+>> there are any (still used) boards where this applies.
 
-Not a fan of this, you could have stored just the relevant
-flag from the match data here in the instance data, not a
-pointer to the whole const struct. The issue being now you
-have the same info stored in two places, `intr_type` in the
-match data above, and intr_type on the line above that.
+There are two devices that I encountered where we could not use Broadcom 
+tags. One was indeed a case where the CPU port was for reasons unknown 
+not the IMP port, and therefore it was not possible to use Broadcom 
+tags. This system is not supported anymore and won't be. The second 
+device was an external BCM53125 connected to an internal SF2 switch, in 
+that case, we cannot enable Broadcom tags on the BCM53125 because there 
+is no way to way to cascade both tags one after the other on ingress 
+unfortunately...
 
-Looking more into it, the use of `intr_type` doesn't need to be
-stored in each mbox's instance data either, but that is an existing
-issue. For now I don't want to hold up an otherwise good bugfix
-over that, but we will want to come back here and clean some of
-this up next cycle, for now,
+>>
+>> If not, I am more than happy to reject this path as -EINVAL instead of
+>> the current TAG_NONE with untag_bridge_pvid = true.
+> 
+> IIUC Vladimir is okay with the patch but I realized now that Florian
+> is not even CCed here, and ack would be good. Adding him now. And we
+> should probably add a MAINTAINERS entry for tag_brcm to avoid this in
+> the future?
 
-Reviewed-by: Andrew Davis <afd@ti.com>
-
->   };
->   
->   struct omap_mbox {
-> @@ -341,11 +343,13 @@ static int omap_mbox_suspend(struct device *dev)
->   	if (pm_runtime_status_suspended(dev))
->   		return 0;
->   
-> -	for (fifo = 0; fifo < mdev->num_fifos; fifo++) {
-> -		if (mbox_read_reg(mdev, MAILBOX_MSGSTATUS(fifo))) {
-> -			dev_err(mdev->dev, "fifo %d has unexpected unread messages\n",
-> -				fifo);
-> -			return -EBUSY;
-> +	if (mdev->mbox_data->is_exclusive) {
-> +		for (fifo = 0; fifo < mdev->num_fifos; fifo++) {
-> +			if (mbox_read_reg(mdev, MAILBOX_MSGSTATUS(fifo))) {
-> +				dev_err(mdev->dev, "fifo %d has unexpected unread messages\n",
-> +					fifo);
-> +				return -EBUSY;
-> +			}
->   		}
->   	}
->   
-> @@ -378,8 +382,9 @@ static const struct dev_pm_ops omap_mbox_pm_ops = {
->   	SET_SYSTEM_SLEEP_PM_OPS(omap_mbox_suspend, omap_mbox_resume)
->   };
->   
-> -static const struct omap_mbox_match_data omap2_data = { MBOX_INTR_CFG_TYPE1 };
-> -static const struct omap_mbox_match_data omap4_data = { MBOX_INTR_CFG_TYPE2 };
-> +static const struct omap_mbox_match_data omap2_data = { MBOX_INTR_CFG_TYPE1, true };
-> +static const struct omap_mbox_match_data omap4_data = { MBOX_INTR_CFG_TYPE2, true };
-> +static const struct omap_mbox_match_data am654_data = { MBOX_INTR_CFG_TYPE2, false };
->   
->   static const struct of_device_id omap_mailbox_of_match[] = {
->   	{
-> @@ -396,11 +401,11 @@ static const struct of_device_id omap_mailbox_of_match[] = {
->   	},
->   	{
->   		.compatible	= "ti,am654-mailbox",
-> -		.data		= &omap4_data,
-> +		.data		= &am654_data,
->   	},
->   	{
->   		.compatible	= "ti,am64-mailbox",
-> -		.data		= &omap4_data,
-> +		.data		= &am654_data,
->   	},
->   	{
->   		/* end */
-> @@ -449,7 +454,6 @@ static int omap_mbox_probe(struct platform_device *pdev)
->   	struct omap_mbox_fifo *fifo;
->   	struct device_node *node = pdev->dev.of_node;
->   	struct device_node *child;
-> -	const struct omap_mbox_match_data *match_data;
->   	struct mbox_controller *controller;
->   	u32 intr_type, info_count;
->   	u32 num_users, num_fifos;
-> @@ -462,11 +466,6 @@ static int omap_mbox_probe(struct platform_device *pdev)
->   		return -ENODEV;
->   	}
->   
-> -	match_data = of_device_get_match_data(&pdev->dev);
-> -	if (!match_data)
-> -		return -ENODEV;
-> -	intr_type = match_data->intr_type;
-> -
->   	if (of_property_read_u32(node, "ti,mbox-num-users", &num_users))
->   		return -ENODEV;
->   
-> @@ -483,6 +482,12 @@ static int omap_mbox_probe(struct platform_device *pdev)
->   	if (!mdev)
->   		return -ENOMEM;
->   
-> +	mdev->mbox_data = device_get_match_data(&pdev->dev);
-> +	if (!mdev->mbox_data)
-> +		return -ENODEV;
-> +
-> +	intr_type = mdev->mbox_data->intr_type;
-> +
->   	mdev->mbox_base = devm_platform_ioremap_resource(pdev, 0);
->   	if (IS_ERR(mdev->mbox_base))
->   		return PTR_ERR(mdev->mbox_base);
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
 
