@@ -1,88 +1,176 @@
-Return-Path: <linux-kernel+bounces-882834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D4BFC2B9EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:20:52 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22F05C2B9ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:21:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFFE73A2D9F
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:20:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 5F7BE4EFB13
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:19:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A863530DEB9;
-	Mon,  3 Nov 2025 12:19:14 +0000 (UTC)
-Received: from relmlie5.idc.renesas.com (relmlor1.renesas.com [210.160.252.171])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32AC730DEA7;
-	Mon,  3 Nov 2025 12:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02DDD30B528;
+	Mon,  3 Nov 2025 12:18:59 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE24430B505;
+	Mon,  3 Nov 2025 12:18:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762172354; cv=none; b=f8XxX566E8A1SWHe5nqIWPV5c4gTBR2KpmB1oS9y5p8Kue7QX50FovVwTcEdw5j/RJLBnCdma9Eh18g7VORvG2Me29tdnZvCrj4GSCWbQOEOB1oMcFR2vXYZS77JM9ED3k/OQLV09bN2+1VszyVPaqkK0CazYwJh0N883VBu654=
+	t=1762172338; cv=none; b=rSCGvB+PsrU21TOzQiIp3ZOUf4EL3/3/SX2lQqBhlYEBdJU7dHi7Vx8A6FYUNs47xzupJkHPATE/DpVHKR7Ce7a/T2hYnkjkedDa0UCn7y3xU0zuDUEtVBjqqwu8pbfb0cwzQPbIU90TqMUqVMBgbA/6jAlyRA8ZpMydWrPmV9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762172354; c=relaxed/simple;
-	bh=RZil7nYEzSrNAf1EU1bKa08vAC8yB1ycRnCBTre+0sE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QWueGyPQx+TJQOaj+tzsd18FnwaK84PMIh3wpyNimHeLagN45qKo6ebkMipKyBKs9mgfgjhKyvixo+H+qPToQrtWVFmFABl1X/3PMIVAaGw5MMDsXDZNvatUjN7ZtUmWWyN9smzOBuIdraSjJ4TDX9xEVhWyCn5q+yd0C+tEnmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-CSE-ConnectionGUID: 7RNec1IXQS+TIY2K8QFXew==
-X-CSE-MsgGUID: HVZInHKJSNiU6mZ86jUAcQ==
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie5.idc.renesas.com with ESMTP; 03 Nov 2025 21:19:11 +0900
-Received: from vm01.adwin.renesas.com (unknown [10.226.92.152])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 2A2CA40065BE;
-	Mon,  3 Nov 2025 21:19:07 +0900 (JST)
-From: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
-To: claudiu.beznea.uj@bp.renesas.com,
-	alexandre.belloni@bootlin.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	p.zabel@pengutronix.de
-Cc: linux-rtc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 4/4] arm64: dts: renesas: r9a09g057h44-rzv2h-evk: Enable RTC
-Date: Mon,  3 Nov 2025 12:18:48 +0000
-Message-ID: <20251103121848.6539-5-ovidiu.panait.rb@renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20251103121848.6539-1-ovidiu.panait.rb@renesas.com>
-References: <20251103121848.6539-1-ovidiu.panait.rb@renesas.com>
+	s=arc-20240116; t=1762172338; c=relaxed/simple;
+	bh=nrJi0Eh9k7TVEo1mRfMkcAWyeSb8N7d5RRe0lJGNqA0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e76ijUJz8WWyPRKTlwK3UTsnjxivhvz4EiIrSGwacYbUl1v566wQfcyBeor2nUnJNYhUQfVM5bVi6aBWV5+/UdKfmSaHuDuMSETEEczvIAqB+opGRfOR9K2esblKA/c6xP8CFefRRAJD+84ZuIu+KvTv3NCGJJuqxCHNBnaOiZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.98.2)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1vFtWO-000000000oE-2ee0;
+	Mon, 03 Nov 2025 12:18:52 +0000
+Date: Mon, 3 Nov 2025 12:18:49 +0000
+From: Daniel Golle <daniel@makrotopia.org>
+To: Hauke Mehrtens <hauke@hauke-m.de>, Andrew Lunn <andrew@lunn.ch>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Andreas Schirm <andreas.schirm@siemens.com>,
+	Lukas Stockmann <lukas.stockmann@siemens.com>,
+	Alexander Sverdlin <alexander.sverdlin@siemens.com>,
+	Peter Christen <peter.christen@siemens.com>,
+	Avinash Jayaraman <ajayaraman@maxlinear.com>,
+	Bing tao Xu <bxu@maxlinear.com>, Liang Xu <lxu@maxlinear.com>,
+	Juraj Povazanec <jpovazanec@maxlinear.com>,
+	"Fanni (Fang-Yi) Chan" <fchan@maxlinear.com>,
+	"Benny (Ying-Tsan) Weng" <yweng@maxlinear.com>,
+	"Livia M. Rosu" <lrosu@maxlinear.com>,
+	John Crispin <john@phrozen.org>
+Subject: [PATCH net-next v7 02/12] net: dsa: lantiq_gswip: support
+ enable/disable learning
+Message-ID: <0aa4621e01c998378ad5812464bc17d23aa3bf62.1762170107.git.daniel@makrotopia.org>
+References: <cover.1762170107.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1762170107.git.daniel@makrotopia.org>
 
-Enable RTC.
+Switch API 2.2 or later supports enabling or disabling learning on each
+port. Implement support for BR_LEARNING bridge flag and announce support
+for BR_LEARNING on GSWIP 2.2 or later.
 
-Signed-off-by: Ovidiu Panait <ovidiu.panait.rb@renesas.com>
+Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
 ---
- arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts | 4 ++++
- 1 file changed, 4 insertions(+)
+v7: no changes
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-index 7fff8bea9494..99dfb40b6ea8 100644
---- a/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-+++ b/arch/arm64/boot/dts/renesas/r9a09g057h44-rzv2h-evk.dts
-@@ -407,6 +407,10 @@ &qextal_clk {
- 	clock-frequency = <24000000>;
- };
+v6: no changes
+
+v5: no changes
+
+v4: no changes
+
+v3: no changes
+
+v2: initialize supported flags with 0
+
+since RFC: no changes
+
+ drivers/net/dsa/lantiq/lantiq_gswip.h        |  3 ++
+ drivers/net/dsa/lantiq/lantiq_gswip_common.c | 43 ++++++++++++++++++++
+ 2 files changed, 46 insertions(+)
+
+diff --git a/drivers/net/dsa/lantiq/lantiq_gswip.h b/drivers/net/dsa/lantiq/lantiq_gswip.h
+index d86290db19b4..fb7d2c02bde9 100644
+--- a/drivers/net/dsa/lantiq/lantiq_gswip.h
++++ b/drivers/net/dsa/lantiq/lantiq_gswip.h
+@@ -157,6 +157,9 @@
+ #define  GSWIP_PCE_PCTRL_0_PSTATE_LEARNING	0x3
+ #define  GSWIP_PCE_PCTRL_0_PSTATE_FORWARDING	0x7
+ #define  GSWIP_PCE_PCTRL_0_PSTATE_MASK	GENMASK(2, 0)
++/* Ethernet Switch PCE Port Control Register 3 */
++#define GSWIP_PCE_PCTRL_3p(p)		(0x483 + ((p) * 0xA))
++#define  GSWIP_PCE_PCTRL_3_LNDIS	BIT(15)  /* Learning Disable */
+ #define GSWIP_PCE_VCTRL(p)		(0x485 + ((p) * 0xA))
+ #define  GSWIP_PCE_VCTRL_UVR		BIT(0)	/* Unknown VLAN Rule */
+ #define  GSWIP_PCE_VCTRL_VINR		GENMASK(2, 1) /* VLAN Ingress Tag Rule */
+diff --git a/drivers/net/dsa/lantiq/lantiq_gswip_common.c b/drivers/net/dsa/lantiq/lantiq_gswip_common.c
+index a0e361622acb..f130bf6642a7 100644
+--- a/drivers/net/dsa/lantiq/lantiq_gswip_common.c
++++ b/drivers/net/dsa/lantiq/lantiq_gswip_common.c
+@@ -403,6 +403,47 @@ static int gswip_add_single_port_br(struct gswip_priv *priv, int port, bool add)
+ 	return 0;
+ }
  
-+&rtc {
-+	status = "okay";
-+};
++static int gswip_port_set_learning(struct gswip_priv *priv, int port,
++				   bool enable)
++{
++	if (!GSWIP_VERSION_GE(priv, GSWIP_VERSION_2_2))
++		return -EOPNOTSUPP;
 +
- &rtxin_clk {
- 	clock-frequency = <32768>;
- };
++	/* learning disable bit */
++	return regmap_update_bits(priv->gswip, GSWIP_PCE_PCTRL_3p(port),
++				  GSWIP_PCE_PCTRL_3_LNDIS,
++				  enable ? 0 : GSWIP_PCE_PCTRL_3_LNDIS);
++}
++
++static int gswip_port_pre_bridge_flags(struct dsa_switch *ds, int port,
++				       struct switchdev_brport_flags flags,
++				       struct netlink_ext_ack *extack)
++{
++	struct gswip_priv *priv = ds->priv;
++	unsigned long supported = 0;
++
++	if (GSWIP_VERSION_GE(priv, GSWIP_VERSION_2_2))
++		supported |= BR_LEARNING;
++
++	if (flags.mask & ~supported)
++		return -EINVAL;
++
++	return 0;
++}
++
++static int gswip_port_bridge_flags(struct dsa_switch *ds, int port,
++				   struct switchdev_brport_flags flags,
++				   struct netlink_ext_ack *extack)
++{
++	struct gswip_priv *priv = ds->priv;
++
++	if (flags.mask & BR_LEARNING)
++		return gswip_port_set_learning(priv, port,
++					       !!(flags.val & BR_LEARNING));
++
++	return 0;
++}
++
+ static int gswip_port_setup(struct dsa_switch *ds, int port)
+ {
+ 	struct gswip_priv *priv = ds->priv;
+@@ -1521,6 +1562,8 @@ static const struct dsa_switch_ops gswip_switch_ops = {
+ 	.port_setup		= gswip_port_setup,
+ 	.port_enable		= gswip_port_enable,
+ 	.port_disable		= gswip_port_disable,
++	.port_pre_bridge_flags	= gswip_port_pre_bridge_flags,
++	.port_bridge_flags	= gswip_port_bridge_flags,
+ 	.port_bridge_join	= gswip_port_bridge_join,
+ 	.port_bridge_leave	= gswip_port_bridge_leave,
+ 	.port_fast_age		= gswip_port_fast_age,
 -- 
-2.51.0
-
+2.51.2
 
