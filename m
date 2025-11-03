@@ -1,57 +1,85 @@
-Return-Path: <linux-kernel+bounces-883083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B98DCC2C739
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:45:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88B4CC2C710
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:41:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C84763B7480
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:40:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD5141892FEC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E614281503;
-	Mon,  3 Nov 2025 14:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9C052836B1;
+	Mon,  3 Nov 2025 14:41:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pcgRrtfe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sj8qVCEU"
+Received: from mail-wr1-f66.google.com (mail-wr1-f66.google.com [209.85.221.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2FA27FB26
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 14:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84780280332
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 14:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762180852; cv=none; b=g/UTOTOFutjs0Bydsxy3zM/DBz8D3MvZNK6piPZccG5lemKB9QQPbD846zrYOMqa8gl05nkpjuomeB0N7dZiOoBeTx4WEUonAgs6udXKuZ2jJgfdxHN8SeISjboYT0xYk2SAd6JgqDAFcwuOook/qkZwZH1ZxqvwY5CFwkNh560=
+	t=1762180863; cv=none; b=n2MeR0WRsj84aT0WcwXsRDeud2pvsG1gvNzKtcjPs0q6/S1pCM1n51hmUOgJpOlregA9SBL77STYgwkErm0OyyVQa7DgIJjy5rbzHJTONcs6WTklMPcWZFImMqHZxxwHKXzHxk+eh8G+Hs3VvNPEv6hTAobrhBO3YUqg43cjkNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762180852; c=relaxed/simple;
-	bh=6+pA0xLGF1dPFTrzGqXqXrg449YCinBLwlhFlOUKDhs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=NCr/Y7x0ceBpr6h50b9jYbzgQdQl53s9STHN6vrtLlM9JHuvEHOPupoAcH3FMsppNpHqqU/zSUmW1sp65XHpRp4EiQi3j3lW+2Z2aHN58h2H3U8d8wfDewveIir4yvs8SLtamKp73KqYBKAIbNogUZZWvuZjf1kwenHosIAn2z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pcgRrtfe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DACDFC116B1;
-	Mon,  3 Nov 2025 14:40:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762180851;
-	bh=6+pA0xLGF1dPFTrzGqXqXrg449YCinBLwlhFlOUKDhs=;
-	h=Date:From:To:Cc:Subject:From;
-	b=pcgRrtfe7VvROrYxHHSbobP4gAXgq1jy6vBV+BYP9IkvskVUWpmBGXX37LoIvY3q3
-	 o3f+r/YmAlVvVlxWHLcoL7gmrpdRZi8jfxt3So1V2XiAociSGreSYlan04UmewZ6j6
-	 PollcdhMEZa5kzZeoEOQ3pyXrsEQ5NeNtbAaRyKILo8ZrOKD2Elfz5VAqWIAq/65TM
-	 YJo9TVa5vSUD4CX3nQilcCG8C4wAxHZ+KD0/Yyn2DzMPoLNYL46rknwJVYd9GbECm3
-	 8LOgZGN7QPtI9ejuF/Nlve0/cC6js/UCK2zEmNHb57ZbWnXEAdjkarBoU4jCup/WIg
-	 uAEQPP8zyhKpA==
-Date: Mon, 3 Nov 2025 11:40:48 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Sean Christopherson <seanjc@google.com>, Fuad Tabba <tabba@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>,
-	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>
-Subject: [PATCH 1/1] tools headers UAPI: Sync linux/kvm.h with the kernel
- sources
-Message-ID: <aQi-8IuAQ8CIPZuL@x1>
+	s=arc-20240116; t=1762180863; c=relaxed/simple;
+	bh=eWQeiP2zrgkz9osY0cSaodeycX0GFcYa/gGTxashC7s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mI7reyp9nSaaLOHfUme2x5UUqojw53ZR347q1GnwD0GdYhA6TKWMjoRZBrSMBkE3S9/AXGjIWqt6dvh9BI6TSJWBvffm1H9/cJ4ODZvcCxNuCYFpiGsrlnoi0mP1qYmMl+ffexMG+ijHGHINvXPdBjniUUlGjFgOU5Qh4Z+OvK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sj8qVCEU; arc=none smtp.client-ip=209.85.221.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f66.google.com with SMTP id ffacd0b85a97d-429cf861327so1091018f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 06:41:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762180860; x=1762785660; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nhnWCeGj7VSUUXora3GrZpUnZAZG0ncmkOPbfdU7JnI=;
+        b=Sj8qVCEUHq+xVD89nZZlQYDWpgbAnq60qhc9SiXS/hgQZD9jFCHMFEOltneCfqR/rD
+         qfCQqSiIRSV2Iv3+tgLg5vE98Ek8rIYZL+wx/9SqwNuYKFyUG3KOCjotOOg77hF2Kx0x
+         IW//bb0wOyxEGLQIlOT8Xp3IRjtKAMvjx6okpi0+cR2BX2rtl07aVEg7r+1OCTU13aVc
+         jiIJrcRfY3/ZMKSd4YJZkew5U/lQNW2yFNP2FcTbZeyJV3bL01xSXoQtRjx25LkCukjQ
+         ByOkz0Z4H+RyCpC9pxTyj0G/9lMz1d9tsj6elwuzKL6uzkL2yIIZHXzpsZkMhdpihBfn
+         LrVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762180860; x=1762785660;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nhnWCeGj7VSUUXora3GrZpUnZAZG0ncmkOPbfdU7JnI=;
+        b=Mah5iH+9qLOVCGevLIXTaNztfkkLij1dRHGpQE/jE9AySURxjHXotHQvadjanZSWR+
+         1H/+jbWq1He2G7wAXNyfhkBG6jfgXUkhc0d5UlBp3P+wm1zXuLCZ0puj0iJjYMU3mKHd
+         v6HRlz5FXFbcxYiG8tshAxboSnsPpGDrpxm01kqnFK8NRofwAGNXgsERE3iz5kKyFmyT
+         yCd9c18yS/k/1bf30jqByogI904yJMDuBNWYFEi6+wJl2oZ8Vv0TWTVlCjx2SWS4y/Lk
+         W/NRM5P5r3FAk9Az+LV5gxmv0pu9jM+T13RFjWcWq6hzER9EH3dRqQd5xZLmIUyIenv0
+         1BEw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmmg8vYA+HJzmreJeN8lAyEbq6+O8h1imAeUh2GvIlNSO51uw22KM4EGIKFPdLHy3BWGvPPJTlwn3Eb6E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/OgL3ocOyM+kM4/zgkoyAdO9VR4Ffw8n5N7Be93xsHj5gxGeI
+	B0GUiZH3Chw2wARebYdFsOyXlHfnupxf4vDthxGpekgWZbIy9GEnNM3W
+X-Gm-Gg: ASbGnctOPi05wimhI83/6mTR1HZqhzjIBS90smYjVwGBH5Dqh9TnmigaorbxG+Xj+Ll
+	rwF3iv5RMZeav+LNqEx1l750ELMgy/dpDRDkKd/CepvTS06NsBrT0otGiFDmp+9N0XD1VNJvozz
+	KRAJ8CXwIVZnBYuTNs6t3cwuyvShYQmZnf9g6WIQvr7P4wBLg4Qhz7/tsOeJmoUpfYOYA5xU0zl
+	MIB3ikbvgjuj1z53jxEe+SyVYwMYMxE6aaVq0iC0WFbfAL2JZhmitzl0jo+y4df1RqqNmlu1fmF
+	UIzpy+1cWSQgZ6pACkNAR964fflRSIP6kD5QH0IT50lyAq3r910NiUsKJXBeRxU9frBAd3cvZKJ
+	rz0BStH2kHISCY0XlnewI+wnBxVY6A5KGjsHvuscKQRTKvy1JTujzg9SNYkSSEdSUxcBN8FRBMK
+	e7ry4nXvmGhkVGF0rkxKZkjZcoKaAC7pwf+XinwfL0disrfwoiigXt
+X-Google-Smtp-Source: AGHT+IH/4xizOy+DuRDg4T/+1/r/B0yFQ05VGmFHc5NJhCGA96e19qMqEBWxN2MdSABc4RNojADaRw==
+X-Received: by 2002:a05:6000:178d:b0:429:b6e2:1ecf with SMTP id ffacd0b85a97d-429bd682973mr11766202f8f.22.1762180859783;
+        Mon, 03 Nov 2025 06:40:59 -0800 (PST)
+Received: from workstation (ip7-114-231-195.pool-bba.aruba.it. [195.231.114.7])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c48ee52sm162113385e9.2.2025.11.03.06.40.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Nov 2025 06:40:59 -0800 (PST)
+Date: Mon, 3 Nov 2025 15:40:58 +0100
+From: Francesco Pompo' <francescopompo2@gmail.com>
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] efistub/x86: Add fallback for SMBIOS record lookup
+Message-ID: <pt44dx2hnzvqrqsboa53p67qw4dhkslo3xme4uu5r333ygei2m@czvvf5btllhq>
+References: <20251103123335.1089483-1-francescopompo2@gmail.com>
+ <CAMj1kXHO8Mxk+zPEwx2+VP1FF_LoDu58tbDOm+-Y8m07d3nitw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,67 +88,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <CAMj1kXHO8Mxk+zPEwx2+VP1FF_LoDu58tbDOm+-Y8m07d3nitw@mail.gmail.com>
 
-tldr; Just FYI, I'm carrying this on the perf tools tree.
+On Mon, Nov 03, 2025 at 02:47:22PM +0100, Ard Biesheuvel wrote:
+> On Mon, 3 Nov 2025 at 13:33, Francesco Pompo <francescopompo2@gmail.com> wrote:
+> >
+> > Some Apple EFI firmwares do not provide the SMBIOS Protocol,
+> > causing efi_get_smbios_record() to fail. This prevents retrieval of
+> > system information such as product name, which is needed by
+> > apple_set_os() to enable the integrated GPU on dual-graphics Intel
+> > MacBooks.
+> >
+> > Add a fallback that directly parses the SMBIOS entry point table when
+> > the protocol is unavailable.
+> >
+> > Signed-off-by: Francesco Pompo <francescopompo2@gmail.com>
+> > ---
+> >  drivers/firmware/efi/libstub/x86-stub.c | 107 +++++++++++++++++++++++-
+> >  1 file changed, 106 insertions(+), 1 deletion(-)
+> >
+> 
+> OK, I've pushed this to the efi/next branch now. I did apply some
+> cosmetic tweaks, though, so please double check that I did not break
+> anything.
 
-Full explanation:
+Seems fine to me. I compiled it and it's working correctly on my
+hardware.
 
-There used to be no copies, with tools/ code using kernel headers
-directly. From time to time tools/perf/ broke due to legitimate kernel
-hacking. At some point Linus complained about such direct usage. Then we
-adopted the current model.
-
-See further details at:
-
- https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/include/uapi/README
-
-To pick the changes in:
-
-  fe2bf6234e947bf5 ("KVM: guest_memfd: Add INIT_SHARED flag, reject user page faults if not set")
-  d2042d8f96ddefde ("KVM: Rework KVM_CAP_GUEST_MEMFD_MMAP into KVM_CAP_GUEST_MEMFD_FLAGS")
-  3d3a04fad25a6621 ("KVM: Allow and advertise support for host mmap() on guest_memfd files")
-
-That just rebuilds perf, as these patches don't add any new KVM ioctl to
-be harvested for the the 'perf trace' ioctl syscall argument
-beautifiers.
-
-This addresses this perf build warning:
-
-  Warning: Kernel ABI header differences:
-    diff -u tools/include/uapi/linux/kvm.h include/uapi/linux/kvm.h
-
-  Please see tools/include/uapi/README for further details.
-
-Cc: Sean Christopherson <seanjc@google.com>
-Cc: Fuad Tabba <tabba@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/include/uapi/linux/kvm.h | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/tools/include/uapi/linux/kvm.h b/tools/include/uapi/linux/kvm.h
-index f0f0d49d25443552..52f6000ab020840e 100644
---- a/tools/include/uapi/linux/kvm.h
-+++ b/tools/include/uapi/linux/kvm.h
-@@ -962,6 +962,7 @@ struct kvm_enable_cap {
- #define KVM_CAP_ARM_EL2_E2H0 241
- #define KVM_CAP_RISCV_MP_STATE_RESET 242
- #define KVM_CAP_ARM_CACHEABLE_PFNMAP_SUPPORTED 243
-+#define KVM_CAP_GUEST_MEMFD_FLAGS 244
- 
- struct kvm_irq_routing_irqchip {
- 	__u32 irqchip;
-@@ -1598,6 +1599,8 @@ struct kvm_memory_attributes {
- #define KVM_MEMORY_ATTRIBUTE_PRIVATE           (1ULL << 3)
- 
- #define KVM_CREATE_GUEST_MEMFD	_IOWR(KVMIO,  0xd4, struct kvm_create_guest_memfd)
-+#define GUEST_MEMFD_FLAG_MMAP		(1ULL << 0)
-+#define GUEST_MEMFD_FLAG_INIT_SHARED	(1ULL << 1)
- 
- struct kvm_create_guest_memfd {
- 	__u64 size;
--- 
-2.51.1
-
+Thank you! :)
 
