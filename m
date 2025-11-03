@@ -1,139 +1,116 @@
-Return-Path: <linux-kernel+bounces-882749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDEE8C2B55A
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:27:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1330C2B581
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:28:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B7163A1815
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:27:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA1E23B1525
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:27:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F24C30217C;
-	Mon,  3 Nov 2025 11:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A0C303A26;
+	Mon,  3 Nov 2025 11:27:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CxxG+V47"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tOCc3t6S"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A56BF3019B7;
-	Mon,  3 Nov 2025 11:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846ED30275E;
+	Mon,  3 Nov 2025 11:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762169213; cv=none; b=L8R824LvbQptFtPQ4/yE+vX2xco6ay+wplLl/EOlERBKcvZQWSxSW0ILTzG5t75o9gRYCCZBwhBSDJiLmoFAUk4LoRsnRo8XwSmzoaTZ+m0pSBhF9Yo2KhaHOqCEf8u00ZUlK/tDLu5TRi7JCQpwOVx0PYwI19zzXAr5z9rygvY=
+	t=1762169227; cv=none; b=rsenBL9rqPAo6chPGQhlXke3s+tP0ksAn1nbgdh8sntQtEWCNknNDoP3EuD7Oj2R7WFUCikPRAsK4Qr8/MnlRYfRK7lSTcPOPE8cx+4xE5iBCcknXj9/6dSs/VhCl0Yvs+2rBAEr0jcID5Lkmoy3783DQrHDZgNITBCXUT+g1+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762169213; c=relaxed/simple;
-	bh=tmtNhkHZM0t+GeoHNS7NJao3XNvjH6XQdhTpxDAjHJ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WBR8qoOmHS876gegC/8nZRPnkAiWF3Ra/B00ZP8HaVSdnBfsBXvZfNwZyLQYpv1h8EwxVGj6cPgeEFcYaF2zxLLv6DceVyAmM2yp4N98jM0TEzTcN5CHvdkLpuHvWTLQgamvReUbg4TsVsZQJVbvfRadciIZqGVDPYt01zv+JLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CxxG+V47; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 909BFC4CEE7;
-	Mon,  3 Nov 2025 11:26:48 +0000 (UTC)
+	s=arc-20240116; t=1762169227; c=relaxed/simple;
+	bh=lhzfkd31EG7n+Ixv/igI3+Gf703FGmQM7qRQJFJp0Qw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RCm3y6NodkyJrB300V+vJ5pKKL2wdNrYC/5Y8EmTleZTswkgZtr4KaWg1Xp6/X+BLZI4bFpURck0WzJECHQlyYW1zJ8BHZqIA8jTlHwg1TZ1/ecsqyjNBHIpKLWuCuy/q5IopCdZA6GGbGLK0f1HdIZeSohzx2JLoU2p4zVRXbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tOCc3t6S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EC19C4CEE7;
+	Mon,  3 Nov 2025 11:27:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762169213;
-	bh=tmtNhkHZM0t+GeoHNS7NJao3XNvjH6XQdhTpxDAjHJ8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CxxG+V47Uy8utjTDAArh4KpZG4u6BkCkUwynf5YPEn9rtEeWxS0LgmMojZ9YtG1ss
-	 dstZ8aLe3v3AN9w4/gkTEueUX9KHGop+Q6qrbQhsW+T2xlLR8INN7qIHq1afJRKSCm
-	 TFdqkhHAr8Cfa3SR7butLD2Q1Nen2IfpBK0R+TDXLmr3giej3rtCGTPRc18AnHYCgH
-	 Jq2tUwRZEXU6T8G6n6+vQH48OHe75581lfHmVgfg0RqTGH4B9KTaeCrz8FQvtTapnz
-	 jEB8Vs8m8X3lIAyLRsXG6uKXO3yJ4j9G0nP1To+GkktW+aKD7FmAmByH5JKTLne6lo
-	 aPmfY4XZG4bdQ==
-Message-ID: <2b5eb6f3-8e48-4248-bf26-4ebd358217ff@kernel.org>
-Date: Mon, 3 Nov 2025 12:26:46 +0100
+	s=k20201202; t=1762169227;
+	bh=lhzfkd31EG7n+Ixv/igI3+Gf703FGmQM7qRQJFJp0Qw=;
+	h=From:Subject:Date:To:Cc:From;
+	b=tOCc3t6STGGHOu4PLoLSVcx2ZERkZuOWSvzibGMT41ZGBRpIxlVE2zM1wLM+azWtH
+	 CXXQGIJgbXlc4pcoRZtrzPJBiRn2hNf2/PbT/iNXFU2YIyvK0O7lN6n7fqiQQYTO2r
+	 S56nbKvJ4HDD/uhFYpS26gFpe/IhaVKOKNlTiWp0aqWh4hwlqba2gsW6PZDF6KkHdI
+	 E+oJviYEkXUIXAHGonrWTVUJv1hwTKl6B8YFLz0kRGg15k9tggVBLQa7N3uhapM5Nc
+	 viKpN5F642JfzfFux44DBO5hMf/JMg3KDrCcXbNBHWJEt2O66oU42LbKV3hFGWzv9A
+	 wqaRHQ0v5Nj0Q==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH 00/16] credentials guards: the easy cases
+Date: Mon, 03 Nov 2025 12:26:48 +0100
+Message-Id: <20251103-work-creds-guards-simple-v1-0-a3e156839e7f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: PCI: EIC7700: Add Eswin PCIe host
- controller
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: zhangsenchuan@eswincomputing.com, bhelgaas@google.com,
- krzk+dt@kernel.org, conor+dt@kernel.org, lpieralisi@kernel.org,
- kwilczynski@kernel.org, robh@kernel.org, p.zabel@pengutronix.de,
- jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
- linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, christian.bruel@foss.st.com,
- mayank.rana@oss.qualcomm.com, shradha.t@samsung.com,
- krishna.chundru@oss.qualcomm.com, thippeswamy.havalige@amd.com,
- inochiama@gmail.com, ningyu@eswincomputing.com, linmin@eswincomputing.com,
- pinkesh.vaghela@einfochips.com, ouyanghui@eswincomputing.com
-References: <20251030082900.1304-1-zhangsenchuan@eswincomputing.com>
- <20251030083057.1324-1-zhangsenchuan@eswincomputing.com>
- <20251103-gentle-precise-bloodhound-ef7136@kuoka>
- <urkbwcgmi4n7owlf4pu7hy5aeg4h7pgsecmie7tpfjhl3v64oh@zuuhr3b4wytz>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <urkbwcgmi4n7owlf4pu7hy5aeg4h7pgsecmie7tpfjhl3v64oh@zuuhr3b4wytz>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHiRCGkC/x3MywqDMBCF4VeRWXdsklLBvkrpIiZjHEyjzNALi
+ O/e2NXhW5x/AyVhUrg1Gwi9WXkpFfbUQJh8SYQcq8EZd7XWXPCzyIxBKCqml5c6ys81E3a2p9E
+ 5Y6JzUO+r0Mjff/r+qB68Eg7iS5iO4CKcuKDP+TyTFMrYtbZvjzLs+w9xb521mAAAAA==
+X-Change-ID: 20251103-work-creds-guards-simple-619ef2200d22
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-aio@kvack.org, linux-unionfs@vger.kernel.org, 
+ linux-erofs@lists.ozlabs.org, linux-nfs@vger.kernel.org, 
+ linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, 
+ cgroups@vger.kernel.org, netdev@vger.kernel.org, 
+ Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-96507
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1846; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=lhzfkd31EG7n+Ixv/igI3+Gf703FGmQM7qRQJFJp0Qw=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRyTGznOJ82MaJ8XWnoh3/NO3lLb6h8yImtPLv/+h1jC
+ e5mxnVzO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACby8TrDP6sCI8VCs9D/G65P
+ bPwsuGZ70B29nREygeYBau+6rjhq8jL8r3xlPHfHIidL93WWJ/7kuJ6X7QrbtfGkzHO7T3IHEh6
+ 85QAA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On 03/11/2025 10:02, Manivannan Sadhasivam wrote:
->>> +  interrupt-names:
->>> +    items:
->>> +      - const: msi
->>> +      - const: inta
->>> +      - const: intb
->>> +      - const: intc
->>> +      - const: intd
->>
->> Thse are legacy signals. Why are you using legacy?
->>
-> 
-> Why not? These INTx signals are still supported by many host platforms/devices.
-> These are not individual out-of-band signals, but just in-band messages. It is
-> perfectly fine for a host controller to support them.
+This converts all users of override_creds() to rely on credentials
+guards. Leave all those that do the prepare_creds() + modify creds +
+override_creds() dance alone for now. Some of them qualify for their own
+variant.
 
-Considering how many other legacy things were used in this binding, I
-just have doubts that choice of entries was correct.
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Christian Brauner (16):
+      cred: add {scoped_}with_creds() guards
+      aio: use credential guards
+      backing-file: use credential guards for reads
+      backing-file: use credential guards for writes
+      backing-file: use credential guards for splice read
+      backing-file: use credential guards for splice write
+      backing-file: use credential guards for mmap
+      binfmt_misc: use credential guards
+      erofs: use credential guards
+      nfs: use credential guards in nfs_local_call_read()
+      nfs: use credential guards in nfs_local_call_write()
+      nfs: use credential guards in nfs_idmap_get_key()
+      smb: use credential guards in cifs_get_spnego_key()
+      act: use credential guards in acct_write_process()
+      cgroup: use credential guards in cgroup_attach_permissions()
+      net/dns_resolver: use credential guards in dns_query()
 
-Best regards,
-Krzysztof
+ fs/aio.c                     |   6 +-
+ fs/backing-file.c            | 147 ++++++++++++++++++++++---------------------
+ fs/binfmt_misc.c             |   7 +--
+ fs/erofs/fileio.c            |   6 +-
+ fs/nfs/localio.c             |  59 +++++++++--------
+ fs/nfs/nfs4idmap.c           |   7 +--
+ fs/smb/client/cifs_spnego.c  |   6 +-
+ include/linux/cred.h         |  12 ++--
+ kernel/acct.c                |   6 +-
+ kernel/cgroup/cgroup.c       |  10 ++-
+ net/dns_resolver/dns_query.c |   6 +-
+ 11 files changed, 133 insertions(+), 139 deletions(-)
+---
+base-commit: fea79c89ff947a69a55fed5ce86a70840e6d719c
+change-id: 20251103-work-creds-guards-simple-619ef2200d22
+
 
