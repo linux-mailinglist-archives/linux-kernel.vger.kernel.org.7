@@ -1,79 +1,61 @@
-Return-Path: <linux-kernel+bounces-882812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9BE1C2B90E
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:04:04 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAF14C2B911
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 13:04:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D82963A897C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:03:56 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 67213349192
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 12:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C63DC308F16;
-	Mon,  3 Nov 2025 12:03:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D8993081DF;
+	Mon,  3 Nov 2025 12:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="dABSMopx"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ee4GPR1e";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5dRqNeCo"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBF2E56A;
-	Mon,  3 Nov 2025 12:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B74306B3F
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 12:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762171432; cv=none; b=ab+WlI76dg4LKo//+48PKjYq7AtULDw6pJazlLKHHSPSVkfUxylmdcy3ihtTvgQBP/I58ut6UqP+KzMN2Rld4X1rFHcxavwa8q3mkDhm70ivV66rAOuzlA3pJA+pIPzndQxAL4DM2MJiZlNbY9+eEwEyYP+7oIpPWGANpcO4hOQ=
+	t=1762171438; cv=none; b=D22D7ECHoDOR+Bcf+QtlC8AFNOGreod5lI3Uudvej+wgL9pjCE5pypLBiz2dzgDi44KrgL9OzOjdwzjkpTLEoyji9rlJst765nfgTnUEuTetA+81hZuE1UVXHK3Ey+u4iPIGYcbnfFLK/aTxDpf+GlD9Xp2hQSdV57m2DbT+/Nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762171432; c=relaxed/simple;
-	bh=acw7Ir0FmQ1xJRMVEmdHS7HJOrRUkpHDEiC5cQuSsBE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QwZ2q0AFRIFwaBW1g41QlW2fZiA/cekKZHHxox69MG4L1Q8vHsW6nDX+lrIaYR9UL0Z+UW/uLJlhlITiLIRy/txhIFt+8H545Qe+JQw2iA1Cn812wCz9PErJJRRmVSag8eohdGLizaRO39qvMy229E4XeToCJ9oOYX7zNL/guF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=dABSMopx; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 17F7040E01A5;
-	Mon,  3 Nov 2025 12:03:47 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id exd2t9Cotc1L; Mon,  3 Nov 2025 12:03:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1762171423; bh=9GiFv1yTzalzrkPadTjytgcZ6rFofTRbemaOz0R9fYc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dABSMopx3PzPo11JZu0fbwmTYbYRcJOrzRxdeLgal8ovpvUJaV4KXNmOjqPqlXlp0
-	 +5NOOkJz+gjzQAhzOOvUBxA3nwxl0sHlyf2uIEgZhhHu3EWU9IVWmvf33tMfU2PSPd
-	 agIEXdNoUmdWcrAQK8RS01w1dVljpZ2GswbUQZ22jVzB4w1JIr7+wMXYFjMCteH0w6
-	 Vq9lIF3w4wrpriJm5sO51p5N5Tz7zXPWFmGh0RHGXF8LSoiVNQxTXjsRA8RURxVe2R
-	 CU/pK8jrRFGq5GwcrRLroEOd8uPapSjgZ52IVGxNtlX3oWH9EWM4qrFpvETTYesOld
-	 a8l/Ct3NOKJFhaJ6GfMZTAtV3qlQp0WQ8FpbSQp3EPtJ81NQK1hGFAV7/CUzAiYtrt
-	 wx9BDWHJps7DCLrvTRUOmkMedZjLltKNp2xiVceVG6/JbB9mSq+GPSeY4c/ORyARHG
-	 kdTl7lv+5pmH8XzhNvlCKy89NhuyqMt+L1gSkniO+qAt/Fj5L5dbDwXtCDaP9u8CKx
-	 fEFP7+nO4MUszXYm1rH9stxQxr9mhl6DDJpstO+2mWNNCQ0/P809flVyQ5xi7VJM/N
-	 5h8yRfoGAeMfHc4gifBbk24NHUx+5eg6nP7T0zkHaLR+/kT59YTDCrECfXw2A/PLv+
-	 nm9ZSrVjfRLtojNd/Ruv16Ng=
-Received: from zn.tnic (pd9530da1.dip0.t-ipconnect.de [217.83.13.161])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with UTF8SMTPSA id 612C640E01CD;
-	Mon,  3 Nov 2025 12:03:25 +0000 (UTC)
-Date: Mon, 3 Nov 2025 13:03:19 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Christopher Snowhill <chris@kode54.net>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Gregory Price <gourry@gourry.net>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, hpa@zytor.com, peterz@infradead.org,
-	mario.limonciello@amd.com, riel@surriel.com, yazen.ghannam@amd.com,
-	me@mixaill.net, kai.huang@intel.com, sandipan.das@amd.com,
-	darwi@linutronix.de, stable@vger.kernel.org
-Subject: Re: [PATCH v2] x86/amd: Disable RDSEED on AMD Zen5 because of an
- error.
-Message-ID: <20251103120319.GAaQiaB3PnMKXfCj3Z@fat_crate.local>
-References: <aPT9vUT7Hcrkh6_l@zx2c4.com>
- <176216536464.37138.975167391934381427@copycat>
+	s=arc-20240116; t=1762171438; c=relaxed/simple;
+	bh=Fvns7so7WaV9EG4uo/yySBCYi2X5gGPaL9Yv9Xp0HYM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ZpEUnX5rYxuKu9c2k2kV0XAkD7TyW6e00csqkyJIhDMGMaaWiUzFhdmmAmSXYXoP+L0xfrnjACzgbsuYF2TdckfBzQQNdzw7zrNkk3XOMCFjev+7SrrzIoNLREUyRix/d4JrsHo8Hb7XJXepChEKSj1GodscBhkGyas90deoUho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ee4GPR1e; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5dRqNeCo; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 3 Nov 2025 13:03:54 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762171435;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=oie4k6X9NIABUpdnzNHEa7Wun2ohz1f1YgQzeCxEKzQ=;
+	b=Ee4GPR1eg8P9QuY0GK0Uwn8GG46ZkagGrFh+YcYT4vEOK2wvA2aBhCs/XCqCw3KB3vN66V
+	XVs7uccOl7rwnT7flKV3WUJJ8jgWPrMuH7XNDOZ2KSF4c90bxvvUU7+NXLhc+LuOZTTbtG
+	aE5R5LkuxiV2kqEWJ3kR71BjvnaF05oIwCRHjhF1yDL0x2qlsEKsWp2qLlPSjQ7A1NtnWQ
+	RtG7Ro0Z5cmD4nYJmEVdO0xsyyRj/RFEQRaApVWazm6YpCgyLKRfaLamtsPiS0FI31R9/m
+	3DrpiGAD12t8xRfslDymh9JEw4cFKL3olg4e4HFZoM24C5HdGt+lRA2YmnEhLQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762171435;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=oie4k6X9NIABUpdnzNHEa7Wun2ohz1f1YgQzeCxEKzQ=;
+	b=5dRqNeCof/kV/8vRpo7B5wK8P4ri8VlIg7vlHI2mEly9a9qGb3VgR8mSsyckJFHUwXp3Te
+	JJs/I4Zu/P1XDFBA==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: linux-kernel@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH] cpu: Make atomic callbacks run on UP with disabled interrupts
+Message-ID: <20251103120354.HU-oB1_z@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,17 +64,79 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <176216536464.37138.975167391934381427@copycat>
 
-On Mon, Nov 03, 2025 at 02:22:44AM -0800, Christopher Snowhill wrote:
-> Although apparently, the patch does break userspace for any distribution
-> building packages with -march=znver4
+On SMP callbacks in the "starting" range are invoked while the CPU is
+brought up and interrupts are still disabled. Callbacks which are added
+later ar invoked via the hotplug-thread on the target CPU and interrupts
+are explicitly disabled.
+In the UP case callbacks which are added later are invoked "directly"
+without the thread. This is okay since there is just one CPU but with
+enabled interrupts debug code, such as smp_processor_id(), will issue
+warnings.
 
-Care to elaborate?
+Disable interrupts before invoking the calback on UP if the state is
+atomic and interrupts are expected to be disabled.
+The "save" part is required because this is also invoked early in the
+boot process while interrupts are disabled and must not be enabled.
 
+Fixes: 06ddd17521bf1 ("sched/smp: Always define is_percpu_thread() and scheduler_ipi()")
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ kernel/cpu.c | 26 +++++++++++++++++---------
+ 1 file changed, 17 insertions(+), 9 deletions(-)
+
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index db9f6c539b28c..a6902646b4933 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -249,6 +249,14 @@ static int cpuhp_invoke_callback(unsigned int cpu, enum cpuhp_state state,
+ 	return ret;
+ }
+ 
++/*
++ * The former STARTING/DYING states, ran with IRQs disabled and must not fail.
++ */
++static bool cpuhp_is_atomic_state(enum cpuhp_state state)
++{
++	return CPUHP_AP_IDLE_DEAD <= state && state < CPUHP_AP_ONLINE;
++}
++
+ #ifdef CONFIG_SMP
+ static bool cpuhp_is_ap_state(enum cpuhp_state state)
+ {
+@@ -271,14 +279,6 @@ static inline void complete_ap_thread(struct cpuhp_cpu_state *st, bool bringup)
+ 	complete(done);
+ }
+ 
+-/*
+- * The former STARTING/DYING states, ran with IRQs disabled and must not fail.
+- */
+-static bool cpuhp_is_atomic_state(enum cpuhp_state state)
+-{
+-	return CPUHP_AP_IDLE_DEAD <= state && state < CPUHP_AP_ONLINE;
+-}
+-
+ /* Synchronization state management */
+ enum cpuhp_sync_state {
+ 	SYNC_STATE_DEAD,
+@@ -2364,7 +2364,15 @@ static int cpuhp_issue_call(int cpu, enum cpuhp_state state, bool bringup,
+ 	else
+ 		ret = cpuhp_invoke_callback(cpu, state, bringup, node, NULL);
+ #else
+-	ret = cpuhp_invoke_callback(cpu, state, bringup, node, NULL);
++	if (1) {
++		unsigned long flags = 0;
++
++		if (cpuhp_is_atomic_state(state))
++			local_irq_save(flags);
++		ret = cpuhp_invoke_callback(cpu, state, bringup, node, NULL);
++		if (cpuhp_is_atomic_state(state))
++			local_irq_restore(flags);
++	}
+ #endif
+ 	BUG_ON(ret && !bringup);
+ 	return ret;
 -- 
-Regards/Gruss,
-    Boris.
+2.51.0
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
