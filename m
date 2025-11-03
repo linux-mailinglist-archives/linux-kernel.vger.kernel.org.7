@@ -1,161 +1,166 @@
-Return-Path: <linux-kernel+bounces-883769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5758CC2E618
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:09:21 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 662D5C2E61E
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:09:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D1693B5F4B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:09:19 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 1247634B635
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB772FDC3C;
-	Mon,  3 Nov 2025 23:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0620E2FE06D;
+	Mon,  3 Nov 2025 23:09:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ed/2eeUb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OHsAeg1P"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4E64279DAE;
-	Mon,  3 Nov 2025 23:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940802FD1C2
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 23:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762211353; cv=none; b=Y6yYCBBI0r8eBUCJgQ+JnENANC+zkh+BsnGpXbW3ioGA6ssH1LJriXI+FRWUY/kP0SVVw4/BEPj2w5HMqq+rf3O0tlqesTtIXwYrl/mlNjV6OtiQ5ArlaX9QOAY6GnZ5pZfGOQO2halq8nsOqrA+4CXudpYeLzTlzE1ne9L0ux4=
+	t=1762211364; cv=none; b=Q5wzMv4j/NPDloteY0sZ0PbXwnyXb471uHUXhrBNj4eOZcJMhBvBBnNv+IeRpkT0cKJk51yC3kx/7Bv8G/khlivdfSpk7+bVBxTFj6dl+H6+aBIVrA4qg06Zyghl/XWeYx0kO6T8wERO2EbFd5sSrnQWVai5wF2hEleVIWt/wQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762211353; c=relaxed/simple;
-	bh=QvMpsgaSDen4lyz7AxCBQwLm8CEwLKEYNKi2d76kCso=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HkWdOfjkWzJXeWl4EYRG7aR2Udi3O1WlYpMx7s29MxVxehjHyFuMscXS4XW7d8LVE3JDBpInx/FUzhvaGkAuY5iTD/FyCw7h1428J4HSkxCK89h3sJ7a4hXMwMGX/1KdpBAO/Ej1+FK+P4s87V3RLZw6EKSIkjopqHDVZzMC/6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ed/2eeUb; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762211352; x=1793747352;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=QvMpsgaSDen4lyz7AxCBQwLm8CEwLKEYNKi2d76kCso=;
-  b=Ed/2eeUbv5r/pCnGgbDqYdBqVi9d8ioiYpgl6moJRZdIV63/A6JM1y3j
-   PoranySTbE0JlrOIhSkbhPPOH6+rNPBBKgBJq4Vo7CyFXUOQCBEukXHFA
-   /kxMmvK8HAXfAHGTg5zgqjNaBhVpVYbYk3cyWkc2zmhnAdlWDMkzUOOmn
-   FTgJ6XLyqguuEFUttqQtD5Qbp69fF0BYV7+U8sgq69EExwksFvlQ+FRut
-   5ahxGK9q3+yFjZ5n/8aZV7G/JtpRLmZ7yo4+8FCjeaJqjxzTW4XuwxPDJ
-   vE8EzYho61mXLVrKhCqLIaZfANI0q6elkA9WbK8TPjdABKaRF0WUFtvsp
-   A==;
-X-CSE-ConnectionGUID: XVwbS4PlTQ6Nr8fMVsVeng==
-X-CSE-MsgGUID: kQLEDBbcT1uGnzZpTUP4nw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="81705670"
-X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="81705670"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 15:09:11 -0800
-X-CSE-ConnectionGUID: EcOEjnIPRkmITq9jZ+s5Iw==
-X-CSE-MsgGUID: m4rW2RntRiWAVflq0sNu/g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="186672685"
-Received: from dwesterg-mobl1.amr.corp.intel.com (HELO [10.125.110.133]) ([10.125.110.133])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 15:09:10 -0800
-Message-ID: <1e3dffee-ffa9-452f-ae9c-83093460103f@intel.com>
-Date: Mon, 3 Nov 2025 16:09:08 -0700
+	s=arc-20240116; t=1762211364; c=relaxed/simple;
+	bh=71Z+nFQ8WD3X7cBHSB5xsYEXzWiJJvRTnkDU3GDIF/4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MdsPmME/Me8wSZWp0ypTqXw8+qfWH+lKGUbV7r6+1UbDlxdtkdYxv3D7srlXBSxrFNAhPGBN3J1XSP1AkGAsyzAkYJcfTVDakWHpSwm7UoYURWMCpWMv1LwHXvUGdqtiNg9FJBa5EiCT5B1JC2prUEnDXXpuGQIOCdXiEerBCa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OHsAeg1P; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-42557c5cedcso2936589f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 15:09:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762211361; x=1762816161; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=v1Q1tLieQpcpuMwIkeXnAFgYmCnVQs4T7Pfl0eQn33c=;
+        b=OHsAeg1Pqr4hO/2smhIWlflRR9lQ7fz6PCna37tUz7ufG0CXtmrbCnCx/gw1yvrKh4
+         rLsylZJ1t9QHwvPRPFj7I2f7tDSgs136ONR7l9kKRdJQIxuSX7WzX2IjYFDcXLlSk3rz
+         /fNXBaiORg0ph47+iAR/hrYqjvoeThTrPWypxoC1sKavjJwfPqpXcknzgYFsr/x5IN65
+         m3t4vUK8LBjTDRPEKidZCM9DA+bisScqJe63/D4F6oW8ZOZ3LB+Vrvg7x143r4w51tUR
+         4g26APygxCsQuAVCz5F9GC0sWsg04Qm2H+UINMHg/o9d38p8YaylIW7F1veZr9JSzNZ/
+         S4pQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762211361; x=1762816161;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v1Q1tLieQpcpuMwIkeXnAFgYmCnVQs4T7Pfl0eQn33c=;
+        b=PR0LBULb/7dOcaC/yBDwmcgzWHOf3StH4kqDMcnzbzAfHfwixBGbuAXGhJ4VoJy0Es
+         EAZmh1AM5fUzHXTPvnzqMZ60KtGARZznbGIUOMjBpx07ryAqQSp+fkJbqKFuR5JPLRUT
+         5fJ4IkonHMaLvs/MTYiOBnXSN+VJmRa5MwzaXwMlrAtJHWdaH1HyMjSyykQVYQ9L0yIH
+         4qmfDzm3L7VtyzAfCiRTrRxmwhPHHZ+DhDTw2QnH3tlZEOGhavU5CiA6kGkp+QY3rxmu
+         3Slzyh+uQMCV8eDEE4BkAl0VGvs0yZt71w880q57LNLa/gTEF5xdHSMpclst+Q9WQC4W
+         3iSA==
+X-Forwarded-Encrypted: i=1; AJvYcCUchsFmngkFE/MYuYQkMoo3Y//Iwo8j5wWj2zjkyVvyQO1uzQ0K15jOvR1wPuygcMq7pgJ6tlNvMBmgJ+s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrrK8VuNiy4zKbqnbgyOcr+0uWBp9zJihP76OtOoELotlYenxv
+	f5fFz7g3ZxgauRWMeLaG9+11y5Mw3PwOzGVckRlSygpk/skFZXuCT5Wv8CUhUw==
+X-Gm-Gg: ASbGnculfXiOMQWYGpQRBZjneyCdVWpmUaXbYl8OCmHugcocReO2wRlGWEd7D4hGsbr
+	BzEtPhmnu0qV9nFThoLjCW3JZ172bs2vy3mm8myPb+DFsK9RSBgkXOz7x0K6sY+E4BlvzYC3FvJ
+	DfFZay959wl/Hr8aOaB+GLMnBO9a6IJoGEoFVHfCDFTJUEA/C2migF/ueverCW9W06tAn12vsfs
+	Ir9GGkxjSR58mwL/M4KHadY6J8ze0H0TpwZe/KPXFdIpcY467JpNEB+QWBxRoRzJdKtFAW5p7cs
+	ACN7ouJFH81XoHn4OqbX7GTFy07/IhoPTc4CcLurdfqGG6Rk6FTCIWDlGpCsPy3XE4ktrgu2SWH
+	h2cGGaaCel9L60gUcJNrxuvl2612SuXVfaZGkjmiXUJfRS05p6dQLIm2eiDnVnYQ7m+f92DKYDH
+	iwrrxWtCyp/dPPbyOEfrtBwnDoEj7XKmNz+AKHrKdlfuyf455XnIPhQy2zpBQ=
+X-Google-Smtp-Source: AGHT+IEaEv1N6ajpfURp5K++JWjwDFC+FBT/tHpzug1ZX5HikVcj1HkwnZqbRmlJ6GwomLFTRQLpxA==
+X-Received: by 2002:a5d:64e9:0:b0:429:cf86:1247 with SMTP id ffacd0b85a97d-429cf861389mr5676038f8f.57.1762211360842;
+        Mon, 03 Nov 2025 15:09:20 -0800 (PST)
+Received: from f.. (cst-prg-14-82.cust.vodafone.cz. [46.135.14.82])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429dbf53e86sm1338586f8f.0.2025.11.03.15.09.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Nov 2025 15:09:19 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH v3] fs: push list presence check into inode_io_list_del()
+Date: Tue,  4 Nov 2025 00:09:11 +0100
+Message-ID: <20251103230911.516866-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 08/14] cxl: Introduce callback for HPA address ranges
- translation
-To: Robert Richter <rrichter@amd.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Davidlohr Bueso <dave@stgolabs.net>
-Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
- Gregory Price <gourry@gourry.net>,
- "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
- Terry Bowman <terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
-References: <20251103184804.509762-1-rrichter@amd.com>
- <20251103184804.509762-9-rrichter@amd.com>
-From: Dave Jiang <dave.jiang@intel.com>
-Content-Language: en-US
-In-Reply-To: <20251103184804.509762-9-rrichter@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+For consistency with sb routines.
 
+ext4 is the only consumer outside of evict(). Damage-controlling it is
+outside of the scope of this cleanup.
 
-On 11/3/25 11:47 AM, Robert Richter wrote:
-> Introduce a callback to translate an endpoint's HPA range to the
-> address range of the root port which is the System Physical Address
-> (SPA) range used by a region. The callback can be set if a platform
-> needs to handle address translation.
-> 
-> The callback is attached to the root port. An endpoint's root port can
-> easily be determined in the PCI hierarchy without any CXL specific
-> knowledge. This allows the early use of address translation for CXL
-> enumeration. Address translation is esp. needed for the detection of
-> the root decoders. Thus, the callback is embedded in struct
-> cxl_root_ops instead of struct cxl_rd_ops.
-> 
-> Signed-off-by: Robert Richter <rrichter@amd.com>
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>> ---
->  drivers/cxl/core/region.c | 19 +++++++++++++++++++
->  drivers/cxl/cxl.h         |  1 +
->  2 files changed, 20 insertions(+)
-> 
-> diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
-> index 2dd9e9be4889..379a67cc8e31 100644
-> --- a/drivers/cxl/core/region.c
-> +++ b/drivers/cxl/core/region.c
-> @@ -3364,6 +3364,15 @@ static int match_root_decoder(struct device *dev, const void *data)
->  	return range_contains(r1, r2);
->  }
->  
-> +static int translate_hpa_range(struct cxl_root *cxl_root,
-> +			       struct cxl_region_context *ctx)
-> +{
-> +	if (!cxl_root->ops.translate_hpa_range)
-> +		return 0;
-> +
-> +	return cxl_root->ops.translate_hpa_range(cxl_root, ctx);
-> +}
-> +
->  static struct cxl_root_decoder *
->  get_cxl_root_decoder(struct cxl_endpoint_decoder *cxled,
->  		     struct cxl_region_context *ctx)
-> @@ -3371,6 +3380,16 @@ get_cxl_root_decoder(struct cxl_endpoint_decoder *cxled,
->  	struct cxl_port *port = cxled_to_port(cxled);
->  	struct cxl_root *cxl_root __free(put_cxl_root) = find_cxl_root(port);
->  	struct device *cxlrd_dev;
-> +	int rc;
-> +
-> +	rc = translate_hpa_range(cxl_root, ctx);
-> +	if (rc) {
-> +		dev_err(port->uport_dev,
-> +			"%s:%s Failed to translate address range %#llx:%#llx\n",
-> +			dev_name(&ctx->cxlmd->dev), dev_name(&cxled->cxld.dev),
-> +			ctx->hpa_range.start, ctx->hpa_range.end);
-> +		return ERR_PTR(rc);
-> +	}
->  
->  	cxlrd_dev = device_find_child(&cxl_root->port.dev, &ctx->hpa_range,
->  				      match_root_decoder);
-> diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-> index 9a381c827416..94b9fcc07469 100644
-> --- a/drivers/cxl/cxl.h
-> +++ b/drivers/cxl/cxl.h
-> @@ -644,6 +644,7 @@ struct cxl_root_ops {
->  	int (*qos_class)(struct cxl_root *cxl_root,
->  			 struct access_coordinate *coord, int entries,
->  			 int *qos_class);
-> +	int (*translate_hpa_range)(struct cxl_root *cxl_root, void *data);
->  };
->  
->  /**
+v3:
+- address feedback by Jan: take care of ext4
+
+if you don't like the specific comment added below I would appreciate if
+you adjusted it yourself.
+
+this patch replaces this guy: https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git/commit/?h=vfs-6.19.inode&id=7ba2ca3d17bb69276de7c97587b1e1f3d989f389
+
+the other patch in the previous series remains unchanged
+
+ fs/ext4/inode.c   | 3 +--
+ fs/fs-writeback.c | 7 +++++++
+ fs/inode.c        | 4 +---
+ 3 files changed, 9 insertions(+), 5 deletions(-)
+
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index b864e9645f85..bf978ece70b3 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -202,8 +202,7 @@ void ext4_evict_inode(struct inode *inode)
+ 	 * the inode. Flush worker is ignoring it because of I_FREEING flag but
+ 	 * we still need to remove the inode from the writeback lists.
+ 	 */
+-	if (!list_empty_careful(&inode->i_io_list))
+-		inode_io_list_del(inode);
++	inode_io_list_del(inode);
+ 
+ 	/*
+ 	 * Protect us against freezing - iput() caller didn't have to have any
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index f784d8b09b04..e2eed66aabf8 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -1349,6 +1349,13 @@ void inode_io_list_del(struct inode *inode)
+ {
+ 	struct bdi_writeback *wb;
+ 
++	/*
++	 * FIXME: ext4 can call here from ext4_evict_inode() after evict() already
++	 * unlinked the inode.
++	 */
++	if (list_empty_careful(&inode->i_io_list))
++		return;
++
+ 	wb = inode_to_wb_and_lock_list(inode);
+ 	spin_lock(&inode->i_lock);
+ 
+diff --git a/fs/inode.c b/fs/inode.c
+index 0f3a56ea8f48..263da76ed4fc 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -815,9 +815,7 @@ static void evict(struct inode *inode)
+ 	BUG_ON(!(inode_state_read_once(inode) & I_FREEING));
+ 	BUG_ON(!list_empty(&inode->i_lru));
+ 
+-	if (!list_empty(&inode->i_io_list))
+-		inode_io_list_del(inode);
+-
++	inode_io_list_del(inode);
+ 	inode_sb_list_del(inode);
+ 
+ 	spin_lock(&inode->i_lock);
+-- 
+2.34.1
 
 
