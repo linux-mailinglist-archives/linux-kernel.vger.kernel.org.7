@@ -1,77 +1,78 @@
-Return-Path: <linux-kernel+bounces-882318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB908C2A2DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 07:26:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AC93C2A2DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 07:27:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 84FC04E802D
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 06:26:55 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 791A04E8C26
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 06:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8254E292B4B;
-	Mon,  3 Nov 2025 06:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED790295516;
+	Mon,  3 Nov 2025 06:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JEQ1VRQg"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KpRKMnas"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CBAA288C08
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 06:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B46821578D
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 06:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762151210; cv=none; b=EMj8tojFgMp3C5rGgPLdfcLoMrYJ1CZ7M3D+FUwriz3YmVey2fFAPe5p2vQeIPEPG16DsTzcaJNHcDGjLiUJmzgVKe+ydaGp4m313JvHhXHeR48fB1qOqs40cSSutUroXgPBtUWj06EuG8rrbeLtzwBb8etZqzuzIdigctvzIGo=
+	t=1762151234; cv=none; b=CVOAX+qJ98re/D0/YwlTOzG880snmHJjH23uc1Pn7/XeqCHl3NuFbIJ9uFj0M9BzK0UMmFLqVCgL76HuZITSAMbdn6F2ebBeuaKpufNH3Rf4FnHbrJmPrrgYGPmyr23szMJMafcACNh8S4vqc2B3GNO6PMY+y3upQQfXKEQ3T1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762151210; c=relaxed/simple;
-	bh=B7Dys0O6nBI1SpNWYBQ9IszCBqiZCkRXAY8GXR39t74=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qk2DdJexlsRjMoOKeG/XPR8wK5cn71jl8L1ssVEk0qqNCcRp49u6Bo7oKcS8UAEgy13EQyRqDrFahFBcg2AS9urYabD9F30fgo9vT0MUB6ZqVDEE4JG9488M6EsXDnhB5lMS3qlw6vdsaizeTKdgN+vKuHkx7sC9f0gE3hE1LhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JEQ1VRQg; arc=none smtp.client-ip=209.85.214.182
+	s=arc-20240116; t=1762151234; c=relaxed/simple;
+	bh=0rL5TGBY7q8nvzECU6bSXlUF+B8hh6WFBDcQ55vZL94=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nciyv8rnnSau/L1OnqkunA+rsU3/zY4mDJpCa7L5ad9OCFMEZCitlSlU6ReX2PzmVBWrL4OUc0oRywm8Iqoz4Nu6ac7nyU5ku4vhTizRXLTxzrtV54Zqrg7bMmAw+G58Jhrq3HBbOg12sP7a58JzsHtsh4bgFG8kdgvQuS/HBcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KpRKMnas; arc=none smtp.client-ip=209.85.216.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-29599f08202so10617235ad.3
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 22:26:49 -0800 (PST)
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-339d7c403b6so3665970a91.2
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 22:27:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762151209; x=1762756009; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9n+VOC446iMLGSUtF1aVw7jOFyi8anlj6U7DHCW/jPs=;
-        b=JEQ1VRQgupn1NMpuLRdeBoTi+6q8d6VjoGKYTxh551g1dX+HOS+Nwq8iJC2yaRE2EY
-         DGKX7qZF+RfvJyA4EG2ib9iwQfoCJLVqZBlpHsJ6XT0ZzZwUN/gaCdtTtFoEonsF5Xtr
-         j//ayLA5yiZ9cJegS75rrtOc6NWsfkxSj/2jzHYXgEzXUoGsvXS5O/ION6q6+bppAt7W
-         VXrmNpV8dlXnsUMj8DMX1b9R8kmo3CndXEXnmebX2zXTvVtP+0Ro1U2hZXyFmMGylIx9
-         VT2C/RLI5VSyQBhrheNC0eXA4D1jphQUx59EjohNe+gVTznPRxl5O5i61ZnnMzuWFx3A
-         HQBA==
+        d=gmail.com; s=20230601; t=1762151232; x=1762756032; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZGKLj9IuGGzKXJR4eozTFqH7zWJUpUm6z/EiTyDGmsU=;
+        b=KpRKMnas6jIAuyHC6odBnJM9Z+950EXimE4fz0tHvQ3Q/ic3XXf4gSgs6xwTjtmjgB
+         Yrp/RCZjLJGkqZb+/E9uTJIa/H98YWEVmYVvT9J2i44hvEKnHras6BSwhLo2dzcw2JL2
+         MH4bG54zWpEIoLZZVj3ZuHtqcv05Znr/P0yRfK2LhaGrXMeeNWOJ4GbGh4mouIKW8Jz1
+         Htig0HLHLeXM8xtxmee0eG4ESrh4J9WdD7bS5fTMTbEseJTKLPF2OUSYtYi/PXZSsief
+         3QvjffRSg92ZodtGCEkvilbxQKyA+XL9D7OK8XcKJWGJm7cvToqgBQtLrA570cY3HGxI
+         dZSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762151209; x=1762756009;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9n+VOC446iMLGSUtF1aVw7jOFyi8anlj6U7DHCW/jPs=;
-        b=kkoe8+/Yf908oPQMEKoA09lhyD9o4rpEYq7J9oNfDxUgL+7vEa0n8twNMDG4u1yxbM
-         wDYlIwGuRx2YyPd/rBC7favLWbv5KTpzwVxKyAcM+4t6A4Wk6yz2FLxSmv9P9s0XGTBt
-         bnMAx41LCmB7vsikf1zo9kND9TqjT/sEE5OamO4Nh4k6Fb5NkLWpTruyfBMmcjK/bInP
-         Fbr09i2D2yi0fNLYoel4IIcoM68jtsddY/RuLpAr8874avLhFwcHv1tQkutS3r6wkizE
-         kE8S8zdhfdOhEh2Egtlyz+93nqJNXADPurYHBsmZk46gtsXlVnfwmLHZRlS2I5dIBS2Z
-         +Y4A==
-X-Forwarded-Encrypted: i=1; AJvYcCXlIBrz7y8qfdblaXLcQEhOpVdWwo4mSzH4jH+7nMoYj0CB36Zer+eu1kysm+G3zEgxuW1Y0G3o809mDbc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZ1jQs4xEIvqbIWyENyZc59glRfR6g/aJW+pWgJumajKYg/3i9
-	o5cw6c/DUQfQy8/sdR0jIdeIlzQUjbbX0xPjVC/B/OLNcMZ1oa6hPAYW
-X-Gm-Gg: ASbGncvIs1J93rm/FBFKirY9IxT/AvNvw+2PLoMu5s+HVnPVG3MCvxNEjXYRCoCkR8J
-	TTzg2a0HJ/EpYYHrUIA1ri+yaXqpIo9CSwwUzqHCsuA92AdVDo5GUeaWNjyw1JbYqY6fwA7+1Ph
-	G/OfN2RU0aH8KPxK5ogCqDxVpFv0Gbw+3wbGSQvITBP5DwXmk9lQBEXpHIteUC5YovbjO3/ugAL
-	uRrAUK2kqLmd1VNa8nf9TPOwUKBTOICQjJqBP6dB/db6f+4ibV6AK5JMlYoDA06VjzT7FpIUUEs
-	ISwKefBjimUtEtaixmcC52T2n+WPJ4yRE9Y+WtUT975Xu2wW5V1y0sivcP4BCIaBxstSV7wguN+
-	a7CCGO+0sSWJZV85OOAXEA4GQPsRUs9uaAqfm0aVDNMsGK/QceIp3ILhUoIIPLfdd5wh/C2cfeQ
+        d=1e100.net; s=20230601; t=1762151232; x=1762756032;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZGKLj9IuGGzKXJR4eozTFqH7zWJUpUm6z/EiTyDGmsU=;
+        b=hVfZkGbLVFxuGiuegcyBXrcL6DwPT/84leMmkq2BLAHL5eP4rslXgD3xcgLK9NGihw
+         miwfFOWIb6B1Ggi24p+N28SzB+CDc8YpNuaPk/JxgL2mpyQpfIwIgQgHhNp7Fjk9ndYy
+         8mbqG8YwLvSbHwlsE17QNqhYyCGkNxmRNGtOHm5XA3MmtAR6v0lEep0Kvr29Tw6opxWh
+         d25+1E7kZ4hFwXWaa4sX2W/sq0EfQwfnC3JrYkgv0rf8u5CyAzQf1gKrZMp83ywQpZRi
+         NCCBX8gCw1JWccgA/CX5V0jqWq1kbpfQBUiiAgQHnktflodqObuLD+LMi0LyEt6jdXOo
+         EZ6w==
+X-Forwarded-Encrypted: i=1; AJvYcCXOLr2e6CGX4WgngFQdlC5UVMsY5UQedn1BbSDjPYhvIDuo+QEQ8sxAbS2c9BS4kxwlXG+F7TToC5SCNno=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXbL9rL/jFHrFpmrNoLTNqz+nJClHlA7yTQTLENJxNyflCGn6C
+	wQjbg9ZjNgE6BwWPguDEX97PbINf1j0defKSpmeARYPMCqSYBfm5D4mz
+X-Gm-Gg: ASbGnctiFpC1JnMZwPiV09R1u9t7SIMrejEZN7rOB49gdHFKpNLzo5pinS6ykZoPNO4
+	XnZMmqmSEOhgn6rikjGkoqCVN3Ks3Ei2ja11rU19e2x9KfH/gWuy5jY84dZMKsiqlFN1/XHibIh
+	NSQcR0pZiRKmxZJWicnX/2nbWbL6LWnUt/ysPhD9UgJWCAwgULlRNlHCtQ3haF5iLBNfSaKak4O
+	T+RG+mUuhgZlArbZBaAmrGageruOPzHoM0pddzHlPWjrr+mEjXcOxQLC43RT9XFthWUy8lvSZJF
+	9gqN3IVKOf+CRDuSF7XtToUtjJNcf1Ni72LFZW/fhpDyxaKHFwF88M0c+wdOmwMceNKHZTX3eLG
+	BWSMCE/at+pcfQJr6w9NiVlADRVCpOCMDVjebK8H4ZK0rPEO8VR5WhotEgbj/Gice91bxF2xgJw
 	==
-X-Google-Smtp-Source: AGHT+IHE85ZAE05MQ29tDiEe73xuX9q1kSirWYaSnQbdQ95U62fo8gMJxYb1mTHJbA73o23JvHBMaw==
-X-Received: by 2002:a17:902:f705:b0:26c:2e56:ec27 with SMTP id d9443c01a7336-2951a3d5107mr152483975ad.19.1762151208773;
-        Sun, 02 Nov 2025 22:26:48 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEEHJ5cKAo4s66Rvzv1t4feR0vnrItpNEwvY8alRc3/7dD6RTg/7i7hmvK6LD5XGWQ6H0YDoA==
+X-Received: by 2002:a17:902:ce8c:b0:295:9d7f:9294 with SMTP id d9443c01a7336-2959d7f9455mr43290485ad.21.1762151232219;
+        Sun, 02 Nov 2025 22:27:12 -0800 (PST)
 Received: from geday ([2804:7f2:800b:fff9::dead:c001])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2952699b603sm107777285ad.79.2025.11.02.22.26.44
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3407ef4c592sm4512294a91.1.2025.11.02.22.27.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 02 Nov 2025 22:26:48 -0800 (PST)
-Date: Mon, 3 Nov 2025 03:26:35 -0300
+        Sun, 02 Nov 2025 22:27:11 -0800 (PST)
+Date: Mon, 3 Nov 2025 03:27:05 -0300
 From: Geraldo Nascimento <geraldogabriel@gmail.com>
 To: linux-rockchip@lists.infradead.org
 Cc: Shawn Lin <shawn.lin@rock-chips.com>,
@@ -86,8 +87,9 @@ Cc: Shawn Lin <shawn.lin@rock-chips.com>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Johan Jonker <jbx6244@gmail.com>,
 	Geraldo Nascimento <geraldogabriel@gmail.com>
-Subject: [RFC PATCH 0/2] PCI: rockchip-host: support quirky devices
-Message-ID: <cover.1762150971.git.geraldogabriel@gmail.com>
+Subject: [RFC PATCH 1/2] arm64: dts: rockchip: drop PCIe 3v3 always-on/boot-on
+Message-ID: <1c1cb7f94cf41142c55561ce8f2a2579021d4818.1762150971.git.geraldogabriel@gmail.com>
+References: <cover.1762150971.git.geraldogabriel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,30 +98,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <cover.1762150971.git.geraldogabriel@gmail.com>
 
-With these two changes I'm able to work with a Samsung PM981a OEM SSD
-that is known to be not-working with Rockchip-IP PCIe.
+Example commit of needed dropping of regulator always-on/boot-on
+declarations to make sure quirky devices known to not be working on
+RK3399 are able to enumerate on the PCI bus.
 
-Previously I attempted a contrived solution that mostly worked for my
-simple purposes but was rather inelegant and impractical.
+One example only, tested on my ROCK PI N10 board, to avoid patch-bomb
 
-Now I have isolated the behavior to the three lines in the two commits.
-Omit those three lines and you get a working set with the kernel.
-
-I have no idea how to actually implement this in a way that makes sense
-and doesn't break the PCIe spec but it is my sincere wish that
-interested RK3399 parties test the change and report any regressions
-with already-working devices and specifically, successes or failures of
-initial link-training with these changes.
-
-Geraldo Nascimento (2):
-  arm64: dts: rockchip: drop PCIe 3v3 always-on/boot-on
-  PCI: rockchip-host: drop wait on PERST# toggle
-
+Signed-off-by: Geraldo Nascimento <geraldogabriel@gmail.com>
+---
  arch/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi | 2 --
- drivers/pci/controller/pcie-rockchip-host.c           | 1 -
- 2 files changed, 3 deletions(-)
+ 1 file changed, 2 deletions(-)
 
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi b/arch/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi
+index aa70776e898a..ad99a8558bf0 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399pro-vmarc-som.dtsi
+@@ -25,8 +25,6 @@ vcc3v3_pcie: regulator-vcc-pcie {
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&pcie_pwr>;
+ 		regulator-name = "vcc3v3_pcie";
+-		regulator-always-on;
+-		regulator-boot-on;
+ 		vin-supply = <&vcc5v0_sys>;
+ 	};
+ 
 -- 
 2.49.0
 
