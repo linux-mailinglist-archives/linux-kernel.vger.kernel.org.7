@@ -1,95 +1,64 @@
-Return-Path: <linux-kernel+bounces-883783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8316C2E685
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:34:33 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBF8FC2E68B
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:34:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9CE03B9E80
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:34:27 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8F5DD4E458F
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:34:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053DC23BD02;
-	Mon,  3 Nov 2025 23:34:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E1D2FE058;
+	Mon,  3 Nov 2025 23:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="IfFmt32l"
-Received: from mail-vk1-f227.google.com (mail-vk1-f227.google.com [209.85.221.227])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HsbjfGAo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE9F34D380
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 23:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.227
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFB92417D9;
+	Mon,  3 Nov 2025 23:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762212863; cv=none; b=g/ihqWyRhQuCioKAl83mEqf/eG4XXreL/1/ZfnJWeZNCabMNyl4NlK3w+bQi0NwjZ/rvK+36GrqlxABS+rTRmu7ZRCVrd0TAgACHSekZxvp42kzSY/m3VMFltVDlIzSo0yOSzctEP9ykQy5Zfz1keS/NxjGqhcXOXX/SOH3/R/0=
+	t=1762212884; cv=none; b=EZii9nAi+97AkQr4eFDDxzYM+GKZndjgetW5J4U34bQC3gm8st/WaerGwL+rwnIMZzjCU5BjXVWodBZaxfzQLPHAtXjUooMEem3ApH7dVQTe02xrClfEhjP0JvcS+jLSKZUP+2NsuifsHcfZ9YUlyFEEjVMvS/WRtQuiwemEJOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762212863; c=relaxed/simple;
-	bh=Hot0o9tYfiyQ3AUGU/S1GcdeBP5xB4rS/PNdZqyYWH4=;
+	s=arc-20240116; t=1762212884; c=relaxed/simple;
+	bh=IhpxRbrczZDx4iR7wevjPZO+hVuDM7MnIM31bqzk/Mo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CkMee/e3c0reJS5ML5IJTuvJu34waseaNpaeRG0qXQGRV4x5AjbMZ81U1A/EEV1tULMn/lVpmMnJ95m+lRCwgludyRUlukPCophA1W3wEzDYIniTFX12SeIzODsVFtW+Ygc0UiqfU6rDEXIwiF2eEMXe2tC8Lj63/OjtGJQ7v7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=IfFmt32l; arc=none smtp.client-ip=209.85.221.227
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-vk1-f227.google.com with SMTP id 71dfb90a1353d-5597330a34fso526062e0c.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 15:34:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762212860; x=1762817660;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:dkim-signature:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+P0KIIygy/NSL1zmH+oUDan0k+tOj8G3m0CQiMdVHAU=;
-        b=fvTiC282DwJjYYsTYUKQoN9NVgKM3zKDDBgp35Pvzp/ygxOg92henzf0WneAyKvwNy
-         DYruvR3Ge0RbGhU+2nR+518gAcynLldZoK+pCeca/q3hjbp46izIpEUYigoik3MZg+VI
-         5IYYjECSHvjxK8TlG7hEFQ2NeHBfH+EGoSiIhPPCtrP9WOadmBBaDb0a7EXmzKJltK6G
-         ZV2qMieicE4nk2GRyhOYsHnIHr1yunO1Ok+gQJW0QgxPJ/Qlp+LeXZb6zGljCJToPeaH
-         rLU8iyNjNeH0Rz2pZT+sUSwvILDANxo/dh5mcGKnUte6rbIN0UgRlqCus7c5UifWBlOX
-         xjag==
-X-Forwarded-Encrypted: i=1; AJvYcCWTjAzayQnGX8g/0+l7QAC7vrY8m/ipKQcya84w7HXj4ggkgCy4hEd2CxAmMVHeT5J7G1Ej+84bcdqcMg0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPx7vj6oSg/JMiVhOM4VxyL1av1SfJkNCzYtbsO6i6IvzWYOvx
-	cTiFITQxqbn6vWhWdIZxwWmxSTCBzm6L9Pc1B4bhZ0+vtWBtUfZFoVgXUnQZAVk2Xg+dPFQtgSF
-	PD73Tdw+b/XsuZ9pL2m8MPPS5qIjGZYR5qfk2jc3FF3qnYvjKykVHmOlgqKt2LiwBAkFbqXavp0
-	fKJEGXcvinnw3w87EiJT/AYeN0nPONfCg3ErfYBXf3dPg5qTg3+LMXc6lGsOUiBJNIivr3/qmDs
-	GQV9NGFGKqsu9zmzwliWJd+
-X-Gm-Gg: ASbGncuVexfDLhf2ytM6VN8bhiIBfU+Y8qwFLZ8XmpSes04SDdpzIp9bTCy/y/Ss0Pi
-	72SqvB7CzwbrSRIjzf9nfnIKljUuaG7U4V7w3/kaiBrGRKaqR585+IJKFNaevBKahvFxKkJvR4u
-	eAGVcyICwEyk/nh78MBVUt9S2K7K0DQwpdSDrAI40Wy1/rxi8xPCRBBY1jL6nGHygUQH2zkUNcJ
-	jM8g2S6JnrECkj3zQdu8PKYYIrRTotvDJkPRgVwKN2qp1fcc2GFA8DJw/spWIF6La+pbzVkaVVO
-	Pl2r8ew6+bxAlez05iK7oQHULa/TQPetCEtIHomiEgBlFY01/BxNlkURnHEUKBM+oFNtszMz4x+
-	k021SSxb0adbBJJ5Z9uNwReYy8wFiamqLuMnQPk+3hlm8wU/e1ibc0SsNsBiOMRGW2Fe1+y9VxD
-	VmGwfQDaGqn6H24tpW0n/g4IEr3wG4zBM0p1xrRFM=
-X-Google-Smtp-Source: AGHT+IFDvrvb0qgjhV1OOOxZHQ6nod1shxA1BS9F/iDD3Imp8PCKE0Imy4tKguz+sp6cn6Cs5xctyDaX2knA
-X-Received: by 2002:a05:6122:3d0f:b0:559:3d59:1fdc with SMTP id 71dfb90a1353d-5593e42365bmr5309746e0c.14.1762212860310;
-        Mon, 03 Nov 2025 15:34:20 -0800 (PST)
-Received: from smtp-us-east1-p01-i01-si01.dlp.protect.broadcom.com (address-144-49-247-12.dlp.protect.broadcom.com. [144.49.247.12])
-        by smtp-relay.gmail.com with ESMTPS id 71dfb90a1353d-55973bd3e90sm147155e0c.2.2025.11.03.15.34.20
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 03 Nov 2025 15:34:20 -0800 (PST)
-X-Relaying-Domain: broadcom.com
-X-CFilter-Loop: Reflected
-Received: by mail-pj1-f72.google.com with SMTP id 98e67ed59e1d1-3405c46a22eso5053460a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 15:34:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1762212859; x=1762817659; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=+P0KIIygy/NSL1zmH+oUDan0k+tOj8G3m0CQiMdVHAU=;
-        b=IfFmt32l2CDY7s4uBvE91sEArkjV5etRDgddRaUlYQC60E8ukHmfZ5rkW/GtY+WsHA
-         2ajFkBuMQkQyXxSSkzpqR3t4FvT7EgHqwRVspjHeCm4Ua8/BvDb7IyVOaGpsGz+RtvQX
-         VkPGt61uQ6BkV/9M+EMTeMuxuZIbpZBkDvKvQ=
-X-Forwarded-Encrypted: i=1; AJvYcCXaju1b9lwAqpkLIj3D7SENFwm9WNrALpifU+leQwhnIhpbDnJkIR2qofH/NNBRygNuqldbFOJqIdfenQ8=@vger.kernel.org
-X-Received: by 2002:a17:90b:584b:b0:340:b152:efe7 with SMTP id 98e67ed59e1d1-340b152f234mr15279095a91.11.1762212859281;
-        Mon, 03 Nov 2025 15:34:19 -0800 (PST)
-X-Received: by 2002:a17:90b:584b:b0:340:b152:efe7 with SMTP id 98e67ed59e1d1-340b152f234mr15279070a91.11.1762212858917;
-        Mon, 03 Nov 2025 15:34:18 -0800 (PST)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3415c69fd56sm2257488a91.14.2025.11.03.15.34.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Nov 2025 15:34:18 -0800 (PST)
-Message-ID: <ad5d4ba5-bd30-429d-9c5c-86b3d6abe232@broadcom.com>
-Date: Mon, 3 Nov 2025 15:34:15 -0800
+	 In-Reply-To:Content-Type; b=eqJdeXApkSn0mjo5Ll73nS7vIKyemPDfu6dq6sz0+ObIioSWClxegjcRtB143fWhtJfGDNfpcIRHaa0SsEybHAnSO3ZNaCBzq5petvzxjb1nhnq6PIVVTE55F720nmnhLNFWR5Lvigz4Vp2CalLybNSG7eCOe3PIIIVddr5jAqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HsbjfGAo; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762212883; x=1793748883;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=IhpxRbrczZDx4iR7wevjPZO+hVuDM7MnIM31bqzk/Mo=;
+  b=HsbjfGAox1MzGVQp85bwFsBYfcZ7SbBQJwX7qr+1qDJWWVMkp02XOtdH
+   StihCcjgRO/MezgPMFNXQ2b7RjJ8sCNB5+4Q1KwclT1tJGeqyj5q7R2a9
+   jq7mZ7tPi/LmSHMreUENn5bbInUjRWae5FlNAHfv0rgTHIj3NVyNubGn7
+   T069+ypTnEbNRLmbiGS2YRf/SZNjDaLV8snwtuID9vtOOhDbaT6/YPrHI
+   5YPu/eT3FF0RUTEM1rg2JMQhsnskSWG5Lr1se1GW79a/CLedtu5iSbT38
+   Qw3BpQBrgEmtMlWHSX2lLTKMbIwE/XSt5FJip0Rb924uNY5Fxi21I/fRG
+   Q==;
+X-CSE-ConnectionGUID: Vp8jCxagQ1CG0VWsD3QDdQ==
+X-CSE-MsgGUID: E/hEI1GwRS+q79o8Ar8VTA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="68159161"
+X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
+   d="scan'208";a="68159161"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 15:34:42 -0800
+X-CSE-ConnectionGUID: C0Y+4Dz+TxGVzu+8ZdDUQg==
+X-CSE-MsgGUID: 8d6c9c99Rsyx8YdbfFw6zw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
+   d="scan'208";a="186677042"
+Received: from dwesterg-mobl1.amr.corp.intel.com (HELO [10.125.110.133]) ([10.125.110.133])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 15:34:41 -0800
+Message-ID: <20123ac5-62a2-4073-bcd5-64634ca564e9@intel.com>
+Date: Mon, 3 Nov 2025 16:34:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,77 +66,68 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 0/2] Allow disabling pause frames on panic
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
- Doug Berger <opendmb@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Antoine Tenart <atenart@kernel.org>,
- Kuniyuki Iwashima <kuniyu@google.com>, Yajun Deng <yajun.deng@linux.dev>,
- open list <linux-kernel@vger.kernel.org>
-References: <20251103194631.3393020-1-florian.fainelli@broadcom.com>
- <20251103152257.2f858240@kernel.org>
-Content-Language: en-US, fr-FR
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20251103152257.2f858240@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v4 09/14] cxl/acpi: Prepare use of EFI runtime services
+To: Robert Richter <rrichter@amd.com>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Davidlohr Bueso <dave@stgolabs.net>
+Cc: linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Gregory Price <gourry@gourry.net>,
+ "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
+ Terry Bowman <terry.bowman@amd.com>, Joshua Hahn <joshua.hahnjy@gmail.com>
+References: <20251103184804.509762-1-rrichter@amd.com>
+ <20251103184804.509762-10-rrichter@amd.com>
+From: Dave Jiang <dave.jiang@intel.com>
+Content-Language: en-US
+In-Reply-To: <20251103184804.509762-10-rrichter@amd.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-DetectorID-Processed: b00c1d49-9d2e-4205-b15f-d015386d3d5e
 
-On 11/3/25 15:22, Jakub Kicinski wrote:
-> On Mon,  3 Nov 2025 11:46:29 -0800 Florian Fainelli wrote:
->> This patch set allows disabling pause frame generation upon encountering
->> a kernel panic. This has proven to be helpful in lab environments where
->> devices are still being worked on, will panic for various reasons, and
->> will occasionally take down the entire Ethernet switch they are attached
->> to.
+
+
+On 11/3/25 11:47 AM, Robert Richter wrote:
+> In order to use EFI runtime services, esp. ACPI PRM which uses the
+> efi_rts_wq workqueue, initialize EFI before CXL ACPI.
 > 
-> Could you explain in more detail? What does it mean that a pause frame
-> takes down an Ethernet switch?
+> There is a subsys_initcall order dependency if driver is builtin:
+> 
+>  subsys_initcall(cxl_acpi_init);
+>  subsys_initcall(efisubsys_init);
+> 
+> Prevent the efi_rts_wq workqueue being used by cxl_acpi_init() before
+> its allocation. Use subsys_initcall_sync(cxl_acpi_init) to always run
+> efisubsys_init() first.
+> 
+> Reported-by: Gregory Price <gourry@gourry.net>
+> Tested-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+> Reviewed-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+> Reviewed-by: Gregory Price <gourry@gourry.net>
+> Signed-off-by: Robert Richter <rrichter@amd.com>
 
-One of our devices crashed and kept on sending pause frames to its link 
-partner which is an Ethernet router. Rather than continue to forward 
-traffic between other LAN ports and Wi-Fi, that router just stopped 
-doing that and the other devices were frozen. I don't have the exact 
-model yet because this was on a different site/team but I will try to 
-get that. This should obviously be treated as a router bug and its 
-firmware should be updated, if there is an update available.
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>> ---
+>  drivers/cxl/acpi.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
+> index 1ab780edf141..a54d56376787 100644
+> --- a/drivers/cxl/acpi.c
+> +++ b/drivers/cxl/acpi.c
+> @@ -996,8 +996,12 @@ static void __exit cxl_acpi_exit(void)
+>  	cxl_bus_drain();
+>  }
+>  
+> -/* load before dax_hmem sees 'Soft Reserved' CXL ranges */
+> -subsys_initcall(cxl_acpi_init);
+> +/*
+> + * Load before dax_hmem sees 'Soft Reserved' CXL ranges. Use
+> + * subsys_initcall_sync() since there is an order dependency with
+> + * subsys_initcall(efisubsys_init), which must run first.
+> + */
+> +subsys_initcall_sync(cxl_acpi_init);
+>  
+>  /*
+>   * Arrange for host-bridge ports to be active synchronous with
 
-I have seen it happen a bunch of times at home as well with an unmanaged 
-5-port TP-Link switch and a crashed laptop.
--- 
-Florian
 
