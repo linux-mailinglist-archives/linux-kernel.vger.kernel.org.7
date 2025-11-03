@@ -1,196 +1,126 @@
-Return-Path: <linux-kernel+bounces-882560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22E16C2ABB2
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 10:29:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 436F0C2AC00
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 10:33:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABFC43ACA22
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 09:28:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5BA2B1890B70
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 09:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 348802E8B69;
-	Mon,  3 Nov 2025 09:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC222EB841;
+	Mon,  3 Nov 2025 09:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wt+QSSYT";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="yLVCne96"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ol+LJFCW"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9CC1DDA9;
-	Mon,  3 Nov 2025 09:28:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FF014A9B;
+	Mon,  3 Nov 2025 09:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762162107; cv=none; b=XO5GAHEpGK+5FX/DgasvVNmlHs7pMh1oi5w8wnne46esZspnG3B6dQHE++vwC1+iUqvmzW1x1M+F9EMbdtq3mXUsBnTdZ+K9qWRgfEK4eXL5j19KLjJlrttLwK7ZkjAZvADxltaRjinM07RuvKz3jhYnBVS+3BJCOpXzcpETV/M=
+	t=1762162384; cv=none; b=tH0S5RqDzNuKBYkyoLjVGwlF4lUyRKvdYRamukapJaPFQDdVcJ4CKUIF6y5kE7Iw29+gqTYOTF3vxyN0gtfPH/qXSq6t2gySROUAK/0psxxFyGjh1NHKITK2amR+MSMBAniuJKLMB+y8wP3qVtxlAdVfhTa8WBTHutJ3UcPzffg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762162107; c=relaxed/simple;
-	bh=cqU/xUK+o7hqrup51uwUOyK2P1SPFtx0FyiQGoBxy5s=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=qj5TaMbbY6QV1ujZK25Cpv3nJautx34ONE7e44wahgdCDqbY1XocJG7ihMwBqhtYt7pC3nl2FsibjJeeiS/lndE2bT7a7m86TjIQ01Lw6JToIrFeCpgpp3qZHBVWjE/lJg2DuzORNiqUoC9fXi1Z5qbnRQa/pmgpAlGa3BrENFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wt+QSSYT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=yLVCne96; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 03 Nov 2025 09:28:10 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762162097;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nH3CIAk6ZUOjMS94VjhEySqvrPmFA/4JuSKUr0NdArs=;
-	b=wt+QSSYTxIAeE2WoHjGE0dv3N4OESAD5YbkC/dnU5Zdm164SN2YcAeSTEv9i+BCXYJmFo/
-	ZIRp2fgnxB8NklXBHnSX0ZWQV/ZzsvOZWZNh4f+vxofLjIpjxpm9ZzYdX/urWANaTsVZ2/
-	hrqSUiy6QAQwDbRjAB6LNLqf87KbDi4o8yZiRn15DOOSspRlH93OblyS1cxLjK0NMxs+7/
-	5l0vq7MPrebPNqmp1T0dU/bTfntLsYLJEki9chAYFJmiLNiTxV5TmdXDQQdRkGEc1YHoVw
-	HVcN9eMsal4Nr5S7xCQNJBmFWtR8KiEZd3tSQE7T2aNcaB6Jfcb2uNZEHwezLQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762162097;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nH3CIAk6ZUOjMS94VjhEySqvrPmFA/4JuSKUr0NdArs=;
-	b=yLVCne96yfUDA9PKHCppajKRWloxmKL52tu557hTty2pKejWgsstxw/jUXydMxpT5SsA4w
-	HtkS8LxFLKLPV1Ag==
-From: "tip-bot2 for Dapeng Mi" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/urgent] perf: Fix system hang caused by cpu-clock
-Cc: Octavia Togami <octavia.togami@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Dapeng Mi <dapeng1.mi@linux.intel.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20251015051828.12809-1-dapeng1.mi@linux.intel.com>
-References: <20251015051828.12809-1-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1762162384; c=relaxed/simple;
+	bh=Nuh2R3/pT00YgMXLqLLY4IRx5KZb6a45kQmr4JyqfPk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RV2QttVdPg9e1YbL/KfByKW1gOMihXrAOsUzcg7lMaLRRP7umDwWpK3cLv/TFtv4QdBRn2JMzzwx1ATPK+SzdLQGn1bggBpVQcLKwlOBN4Vl2mKeUaNI1Ju5XO26SeZT3d0gvkymP2g0EYDaWqiXir/XPKS9+l7OiP62h2mjEWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ol+LJFCW; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1762162378;
+	bh=edG5a4sjRu7BUc8o6jbDQ1Y6nahbGsR172wjsG8PFGs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ol+LJFCWFDGQyyAQ+FvxtxfAQSdEeXI3DIDOK2rbf+8R/0fsCUNnV4XaagcChu+9+
+	 HStp2+ZVzMp23oxVEKbmFtT1q7WFzpLiRqktdoH2e5LS+UXsWNq2qEsfCVjfvFJfEJ
+	 RDXYewrTL7Uv5bCj2KgvmlzDx0Pn06Fb4I/PosG0aBUIHcN3Gz/jN1jJ1kOke5dm0W
+	 xk3Yq/K6fgNU08VoDoDydtOTA3ceJsSBSDqnMPpO0qqbI7GXC+r0qzb/dG+SVbr8rc
+	 f3o0T/Zu5VEzOzYQZ5HZn383jEb5kcHc5tvw8a3gpnGt02TAuF+1T1HQKyOtpKaSTy
+	 vBwTMs79G8H9Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d0RG23kXLz4wCk;
+	Mon, 03 Nov 2025 20:32:58 +1100 (AEDT)
+Date: Mon, 3 Nov 2025 20:32:56 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: new objtool warnings
+Message-ID: <20251103203256.5ac39302@canb.auug.org.au>
+In-Reply-To: <20251103091006.GV3245006@noisy.programming.kicks-ass.net>
+References: <20251031111515.09c9a4ed@canb.auug.org.au>
+	<20251103091006.GV3245006@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176216209074.2601451.3260756182440410503.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+Content-Type: multipart/signed; boundary="Sig_/BeinQdhGaPWrCFGHPu=VtXg";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/BeinQdhGaPWrCFGHPu=VtXg
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the perf/urgent branch of tip:
+Hi Peter,
 
-Commit-ID:     e33076f34f7a449c0e1808f15d88b2dd9a85979a
-Gitweb:        https://git.kernel.org/tip/e33076f34f7a449c0e1808f15d88b2dd9a8=
-5979a
-Author:        Dapeng Mi <dapeng1.mi@linux.intel.com>
-AuthorDate:    Wed, 15 Oct 2025 13:18:28 +08:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Mon, 03 Nov 2025 10:26:09 +01:00
+On Mon, 3 Nov 2025 10:10:06 +0100 Peter Zijlstra <peterz@infradead.org> wro=
+te:
+>
+> On Fri, Oct 31, 2025 at 11:15:15AM +1100, Stephen Rothwell wrote:
+> >=20
+> > My x86_64 allmodconfig builds started producing these warnings today:
+> >=20
+> > vmlinux.o: warning: objtool: user_exc_vmm_communication+0x15a: call to =
+__kasan_check_read() leaves .noinstr.text section
+> > vmlinux.o: warning: objtool: exc_debug_user+0x182: call to __kasan_chec=
+k_read() leaves .noinstr.text section
+> > vmlinux.o: warning: objtool: exc_int3+0x123: call to __kasan_check_read=
+() leaves .noinstr.text section
+> > vmlinux.o: warning: objtool: noist_exc_machine_check+0x17a: call to __k=
+asan_check_read() leaves .noinstr.text section
+> > vmlinux.o: warning: objtool: fred_exc_machine_check+0x17e: call to __ka=
+san_check_read() leaves .noinstr.text section
+> >=20
+> > I can't easily tell what caused this change, sorry. =20
+>=20
+> What compiler? This smells like a broken compiler, these are all
+> noinstr and that very much has __no_sanitize_address.
 
-perf: Fix system hang caused by cpu-clock
+And today I didn't get them.  So who knows?  I did *not* change compiler
+since Friday.
 
-A system hang issue caused by cpu-clock is reported and bisection
-indicates the commit 18dbcbfabfff ("perf: Fix the POLL_HUP delivery
- breakage") causes this issue.
+$ /usr/bin/x86_64-linux-gnu-gcc --version
+x86_64-linux-gnu-gcc (Debian 14.2.0-19) 14.2.0
 
-The root cause of the hang issue is that cpu-clock is a specific SW
-event which relies on the hrtimer. The __perf_event_overflow()
-is invoked from the hrtimer handler for cpu-clock event, and
-__perf_event_overflow() tries to call event stop callback
-(cpu_clock_event_stop()) to stop the event, and cpu_clock_event_stop()
-calls htimer_cancel() to cancel the hrtimer. But unfortunately the
-hrtimer callback is currently executing and then traps into deadlock.
+Cross compiler hosted on ppc64 le.
+--=20
+Cheers,
+Stephen Rothwell
 
-To avoid this deadlock, use hrtimer_try_to_cancel() instead of
-hrtimer_cancel() to cancel the hrtimer, and set PERF_HES_STOPPED flag
-for the stopping events. perf_swevent_hrtimer() would stop the event
-hrtimer once it detects the PERF_HES_STOPPED flag.
+--Sig_/BeinQdhGaPWrCFGHPu=VtXg
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Closes: https://lore.kernel.org/all/CAHPNGSQpXEopYreir+uDDEbtXTBvBvi8c6fYXJvc=
-eqtgTPao3Q@mail.gmail.com/
-Fixes: 18dbcbfabfff ("perf: Fix the POLL_HUP delivery breakage")
-Reported-by: Octavia Togami <octavia.togami@gmail.com>
-Suggested-by: Peter Zijlstra <peterz@infradead.org>
-Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Tested-by: Octavia Togami <octavia.togami@gmail.com>
-Link: https://patch.msgid.link/20251015051828.12809-1-dapeng1.mi@linux.intel.=
-com
----
- kernel/events/core.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 177e57c..6e4af97 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -11773,7 +11773,8 @@ static enum hrtimer_restart perf_swevent_hrtimer(stru=
-ct hrtimer *hrtimer)
-=20
- 	event =3D container_of(hrtimer, struct perf_event, hw.hrtimer);
-=20
--	if (event->state !=3D PERF_EVENT_STATE_ACTIVE)
-+	if (event->state !=3D PERF_EVENT_STATE_ACTIVE ||
-+	    event->hw.state & PERF_HES_STOPPED)
- 		return HRTIMER_NORESTART;
-=20
- 	event->pmu->read(event);
-@@ -11819,15 +11820,18 @@ static void perf_swevent_cancel_hrtimer(struct perf=
-_event *event)
- 	struct hw_perf_event *hwc =3D &event->hw;
-=20
- 	/*
--	 * The throttle can be triggered in the hrtimer handler.
--	 * The HRTIMER_NORESTART should be used to stop the timer,
--	 * rather than hrtimer_cancel(). See perf_swevent_hrtimer()
-+	 * The event stop can be triggered in the hrtimer handler.
-+	 * So use hrtimer_try_to_cancel() instead of hrtimer_cancel()
-+	 * to stop the hrtimer() to avoid trapping into a dead loop.
-+	 * Simultaneously the event would be set PERF_HES_STOPPED flag,
-+	 * perf_swevent_hrtimer() would stop the event hrtimer once it
-+	 * detects the PERF_HES_STOPPED flag.
- 	 */
- 	if (is_sampling_event(event) && (hwc->interrupts !=3D MAX_INTERRUPTS)) {
- 		ktime_t remaining =3D hrtimer_get_remaining(&hwc->hrtimer);
- 		local64_set(&hwc->period_left, ktime_to_ns(remaining));
-=20
--		hrtimer_cancel(&hwc->hrtimer);
-+		hrtimer_try_to_cancel(&hwc->hrtimer);
- 	}
- }
-=20
-@@ -11871,12 +11875,14 @@ static void cpu_clock_event_update(struct perf_even=
-t *event)
-=20
- static void cpu_clock_event_start(struct perf_event *event, int flags)
- {
-+	event->hw.state =3D 0;
- 	local64_set(&event->hw.prev_count, local_clock());
- 	perf_swevent_start_hrtimer(event);
- }
-=20
- static void cpu_clock_event_stop(struct perf_event *event, int flags)
- {
-+	event->hw.state =3D PERF_HES_STOPPED;
- 	perf_swevent_cancel_hrtimer(event);
- 	if (flags & PERF_EF_UPDATE)
- 		cpu_clock_event_update(event);
-@@ -11950,12 +11956,14 @@ static void task_clock_event_update(struct perf_eve=
-nt *event, u64 now)
-=20
- static void task_clock_event_start(struct perf_event *event, int flags)
- {
-+	event->hw.state =3D 0;
- 	local64_set(&event->hw.prev_count, event->ctx->time);
- 	perf_swevent_start_hrtimer(event);
- }
-=20
- static void task_clock_event_stop(struct perf_event *event, int flags)
- {
-+	event->hw.state =3D PERF_HES_STOPPED;
- 	perf_swevent_cancel_hrtimer(event);
- 	if (flags & PERF_EF_UPDATE)
- 		task_clock_event_update(event, event->ctx->time);
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkIdsgACgkQAVBC80lX
+0GyNMQf/VOgU5DSEHgBAMtjiWgqNvboeBFuIVB9i7V6vhcbNmvewBTHAa3nleRTe
+h66kA9iSqrkeKj+KHRGvBvrIUvIac01f9C02XSHC7gs/0CD27+lmqoEIqHpK/jqf
+vd9JK503aPcabwICJZKKkalfmz4n0hdyNnkBdaWGXgHjk5k6ngGNsy9nvUE4Eg3l
+kp4iwH3AdF+dKgAn9LgkLKwlXNcLZg+OU6DB8tWbfoDD1O0lYTOlQ8v18XIlKkdH
+71FPvrgnM5hoxLil4OGEeUcn3MTH3SW36p5ycV2C9H0b4DWDuE4Ri3EhYbc4la/K
+6GIBtDfzmj1f0ZhQg8OzZqmdTa5nvA==
+=EyJx
+-----END PGP SIGNATURE-----
+
+--Sig_/BeinQdhGaPWrCFGHPu=VtXg--
 
