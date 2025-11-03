@@ -1,194 +1,119 @@
-Return-Path: <linux-kernel+bounces-882966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CFEAC2C0FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 14:25:56 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D956C2C12E
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 14:28:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1E98D4F4743
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 13:21:49 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B7FF4E58C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 13:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70C4022689C;
-	Mon,  3 Nov 2025 13:21:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5926260569;
+	Mon,  3 Nov 2025 13:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IaoltB7x"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="XN2VxKRZ"
+Received: from canpmsgout06.his.huawei.com (canpmsgout06.his.huawei.com [113.46.200.221])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359A71DF24F
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 13:21:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8EB25393E;
+	Mon,  3 Nov 2025 13:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762176097; cv=none; b=I+p33YkxOwJAQXMynDdOBCmO94C+o5Y6ILN8ZQAEhCUpopxEus5LYyDNK2StrnDK5ruXOB+7mLZdLuAtbiDrVbWuiWZhc9H0hrBHeGogoa3NhrjrnmlriN2t3brVq7Kk3MQNbQvfdzFP2rXfVSmnz2A9naPdz1MEc84wpzCqfUU=
+	t=1762176252; cv=none; b=e2bg1Uvt7FbE+xNXwciGtVYIC17S4RlJdPUrCOJzKDF5tT1VHhcrj6ak4zL3GIGDfKG2yoY7f20xtpmu/Osl0/lmirt/CDAH3jVDSMpLf3J8UYzFXg0Jm4FLjSs+1GtXKsZ4t5nRucf8cirqGH9trC2Z6PyIVzoi5hldTTp5jQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762176097; c=relaxed/simple;
-	bh=mKY1DHsdAgjlaB/x4mbWgVNH2LRMMJSrnESEyMRaP0U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GT7nJvi3cbqYhamioo/0+QwkStehz4NpT12vxe3yHb90pa3enzlwAHGyDlOIbGL7ytq+0QRh2PSlibhS2VF4BstHuWlSEC3VVgA3EicCuoirL43spyGu+CCPc41SX0rIr/XJKxjymvTuo5ecFJ2uDSTGv20X9dlj+tVn01HlozI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IaoltB7x; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7aa2170adf9so999067b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 05:21:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762176095; x=1762780895; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=FSag3litSbjBkSWJUIOjnh1lwhzQTpa6XW5JSh0K4dY=;
-        b=IaoltB7x8uypSvtIHIoIFKaXiWG13IEiIw90H9tS06Zk9/k4Vmj7Nk8wfraIZM86Y7
-         iGhazBzVpeBdPZ+c45iO6Q6M24wLkqC0z4tNi7tjpHEKT55mKWfq9TvHhrfZCbx4se+8
-         xGvFKxbTS+yWfum5ll564hRAJY+8DEfl+4svPor6yAPx+ioA6IiJ1ybSKAIwXEEivFkS
-         5Ft199RPuwJCZRA4cCb2o4akZE9gICXnBG3eCe3+nLTaqDlWO6bQjFYcjuene4YVl/pH
-         BCTl6CFQn2TxELpTVqFLGKUuBoFjjw7dFMOhcWkF0J213nkaBr0ViyG42M0CSNYBexUi
-         8SVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762176095; x=1762780895;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FSag3litSbjBkSWJUIOjnh1lwhzQTpa6XW5JSh0K4dY=;
-        b=cCxxk1Gh5mOtWiUp4TvEF9ovbxkVXz90ycRc6tiOW1YaQ2ByDWMieDYljxfIeagA/Y
-         M0TZb1V8kKbkjOZ536eVoxQL+3pEYSc3WeD2HuiX57Q+j8ZZaAmz+WvO8Agj5L6zrkf3
-         JUx551imx9M81umW9MiMJuGw8zup54OMuODA7VfGmuBujQkgMVHS3fE6Hj8jxuGnSu7c
-         2le5VGIMfDd91RebFk/JoD9g8VXC31e79UhUeybSKYrqKxtds8smJEQX9Jb+gYc5eM23
-         UCvdNqgcPMe3a3Jbpr2TlkxMDx3Mu16GtdQEGNezAXfC16w4Qo9R7o+jp2yzxAdFRiLz
-         7+4g==
-X-Forwarded-Encrypted: i=1; AJvYcCV8H2Zl3qJZv6hDIj3XQcg01x9HAw58Z5PNV/WorSFwe/p2/6EL0+6SEJ5/k9rsVDZQG+UDyYsqF2IU4yM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkwNvy8WCqxMnt/iV5Qprdmtxzn8OzMQkyHWB8iu2DVg3E3c6E
-	qT9J6eGyn1jQddfudxHNin+rskz9XBIudHLiwb+aVmU8ERBgEcYPCgQB
-X-Gm-Gg: ASbGncs78UNCcrQziskH6R2lsIqOiwh7X6ZFsvvY/CDjbncFOcBHgLSVv1tZg1pePZ2
-	LMxvIWCZ7/dO8j0SeTjxVM5YUF1GH3fZ1dZlipaKnqIE+WP3jytHMzhRdVt0uPkKoNuK78IP8wX
-	LJT3b5tvWeI7QmeptMTK94Omkx9RABXDgOQwDDWxKIwrLQaDJWU97LTjfX5LWIi/2eNibAwk8Ds
-	ODATH5E+loomPRy42ybmLyCsDgBsJG5aC9WjO6yShSrAOVDpnC4aK4XcDsuEzejE6mGU84I5TL9
-	Z7IFuXNqEDf7gMe1a38zX7lCj2PEF5By0wUs+fwzOIavTt0TKccTBk1AGcy0ayRf7So23vym2p6
-	h+2RotZueeM64i7k9vC8WaiMpiUSWCMXps3BxNhrjMXgNBqSFj7Yh6uDOR8HrHR6Xp28esdSQcg
-	Hv2NV09KPYDg==
-X-Google-Smtp-Source: AGHT+IFRncy0SSf8FZC7TBGl7F23Zl2/7vOrV2SDaFdUpzfHPQjkN9PubvOPWwLZzJO6qqiOOmXSSw==
-X-Received: by 2002:a05:6a00:816:b0:7ab:2fd6:5d42 with SMTP id d2e1a72fcca58-7ab2fd65efbmr3773456b3a.16.1762176095236;
-        Mon, 03 Nov 2025 05:21:35 -0800 (PST)
-Received: from localhost ([2804:30c:1653:6900:3b53:af9d:48d6:f107])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7a7db197340sm11355094b3a.44.2025.11.03.05.21.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 05:21:34 -0800 (PST)
-Date: Mon, 3 Nov 2025 10:22:49 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	michael.hennerich@analog.com, nuno.sa@analog.com,
-	eblanc@baylibre.com, dlechner@baylibre.com, andy@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	corbet@lwn.net
-Subject: Re: [PATCH v6 8/8] iio: adc: ad4030: Support common-mode channels
- with SPI offloading
-Message-ID: <aQisqe5EWARTwpQq@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1760984107.git.marcelo.schmitt@analog.com>
- <3fadbf22973098c4be9e5f0edd8c22b8b9b18ca6.1760984107.git.marcelo.schmitt@analog.com>
- <20251027140423.61d96e88@jic23-huawei>
- <aQJY7XizVWbE68ll@debian-BULLSEYE-live-builder-AMD64>
- <ca6760182b4662c96df6204bae903d8affa6a8e3.camel@gmail.com>
+	s=arc-20240116; t=1762176252; c=relaxed/simple;
+	bh=MW0QQtvUuz61MW0vqnGbwGynelcszYrrI9irHuPD5SM=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BmhoTi9MDBKTsMIRnc+vLn/aOXlv9mehvA6s1yLZA1Y4eVS1K+0ErYBVW7Ryi+xsj/VyOhQyyFdmnIobe+pba0sDF5DkPKLwK6bTfubU9B3OYxZLnEd6Kj26aBYBFTIdELz5YbtGLlS/z7T1izyyAnpIDt2++/Y6PjK9ETwTyYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=XN2VxKRZ; arc=none smtp.client-ip=113.46.200.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=mAK4GGZ6Wc0AlGtkULkNF5rra7UyoEYfK4R4QDVlWWY=;
+	b=XN2VxKRZ3crT5GYeeWcFkjt4OALy8Rp9wM7ylmTQFH7kUhZ88qzDVCE5n8pywkFL/nevUvLYE
+	BwLJxMPgMSFxeY3ZRf2IwNogn4eKh8IPohQlk3UBi7gNesWUVZl/0GcQ6vIZC2tpJj5Zoi4FPnt
+	npWYlwA07OCHYgkB/eN8ZX4=
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by canpmsgout06.his.huawei.com (SkyGuard) with ESMTPS id 4d0XLt3rgWzRhQp;
+	Mon,  3 Nov 2025 21:22:30 +0800 (CST)
+Received: from kwepemj100009.china.huawei.com (unknown [7.202.194.3])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1D4CA180491;
+	Mon,  3 Nov 2025 21:24:04 +0800 (CST)
+Received: from DESKTOP-A37P9LK.huawei.com (10.67.109.17) by
+ kwepemj100009.china.huawei.com (7.202.194.3) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 3 Nov 2025 21:24:03 +0800
+From: Xie Yuanbin <xieyuanbin1@huawei.com>
+To: <tglx@linutronix.de>, <david@redhat.com>, <mingo@redhat.com>,
+	<bp@alien8.de>, <dave.hansen@linux.intel.com>, <hpa@zytor.com>,
+	<akpm@linux-foundation.org>, <lorenzo.stoakes@oracle.com>,
+	<Liam.Howlett@oracle.com>, <vbabka@suse.cz>, <rppt@kernel.org>,
+	<surenb@google.com>, <mhocko@suse.com>, <linmiaohe@huawei.com>,
+	<nao.horiguchi@gmail.com>, <luto@kernel.org>, <peterz@infradead.org>,
+	<tony.luck@intel.com>
+CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-edac@vger.kernel.org>, <will@kernel.org>, <liaohua4@huawei.com>,
+	<lilinjie8@huawei.com>, Xie Yuanbin <xieyuanbin1@huawei.com>
+Subject: Re: [PATCH 1/2] x86/mm: support memory-failure on 32-bits with SPARSEMEM
+Date: Mon, 3 Nov 2025 21:23:58 +0800
+Message-ID: <20251103132358.79766-1-xieyuanbin1@huawei.com>
+X-Mailer: git-send-email 2.51.0
+In-Reply-To: <5ace86cc-0b2d-4306-8bc1-dfc34cccef1a@redhat.com>
+References: <5ace86cc-0b2d-4306-8bc1-dfc34cccef1a@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ca6760182b4662c96df6204bae903d8affa6a8e3.camel@gmail.com>
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
+ kwepemj100009.china.huawei.com (7.202.194.3)
 
-On 10/30, Nuno Sá wrote:
-> On Wed, 2025-10-29 at 15:11 -0300, Marcelo Schmitt wrote:
-> > On 10/27, Jonathan Cameron wrote:
-> > > On Mon, 20 Oct 2025 16:15:39 -0300
-> > > Marcelo Schmitt <marcelo.schmitt@analog.com> wrote:
-> > > 
-> > > > AD4030 and similar devices can read common-mode voltage together with
-> > > > ADC sample data. When enabled, common-mode voltage data is provided in a
-> > > > separate IIO channel since it measures something other than the primary
-> > > > ADC input signal and requires separate scaling to convert to voltage
-> > > > units. The initial SPI offload support patch for AD4030 only provided
-> > > > differential channels. Now, extend the AD4030 driver to also provide
-> > > > common-mode IIO channels when setup with SPI offloading capability.
-> > > > 
-> > > > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> > > > ---
-> > > > New patch.
-> > > > I hope this works for ADCs with two channels. It's not clear if works as
-> > > > expected with current HDL and single-channel ADCs (like ADAQ4216).
-> > > > 
-> > > > The ad4630_fmc HDL project was designed for ADCs with two channels and
-> > > > always streams two data channels to DMA (even when the ADC has only one
-> > > > physical channel). Though, if the ADC has only one physical channel, the
-> > > > data that would come from the second ADC channel comes in as noise and
-> > > > would have to be discarded. Because of that, when using single-channel
-> > > > ADCs, the ADC driver would need to use a special DMA buffer to filter out
-> > > > half of the data that reaches DMA memory. With that, the ADC sample data
-> > > > could be delivered to user space without any noise being added to the IIO
-> > > > buffer. I have implemented a prototype of such specialized buffer
-> > > > (industrialio-buffer-dmaengine-filtered), but it is awful and only worked
-> > > > with CONFIG_IIO_DMA_BUF_MMAP_LEGACY (only present in ADI Linux tree). Usual
-> > > > differential channel data is also affected by the extra 0xFFFFFFFF data
-> > > > pushed to DMA. Though, for the differential channel, it's easier to see it
-> > > > shall work for two-channel ADCs (the sine wave appears "filled" in
-> > > > iio-oscilloscope).
-> > > > 
-> > > > So, I sign this, but don't guarantee it to work.
-> > > 
-> > > So what's the path to resolve this?  Waiting on HDL changes or not support
-> > > those devices until we have a clean solution?
-> > 
-> > Waiting for HDL to get updated I'd say.
-> 
-> Agree. We kind of control the IP here so why should we do awful tricks in
-> SW right :)? At the very least I would expect hdl to be capable to discard the
-> data in HW.
-> 
-> > 
-> > > 
-> > > Also, just to check, is this only an issue with the additional stuff this
-> > > patch adds or do we have a problem with SPI offload in general (+ this
-> > > IP) and those single channel devices?
-> > 
-> > IMO, one solution would be to update the HDL project for AD4630 and similar ADCs
-> > to not send data from channel 2 to DMA memory when single-channel ADCs are
-> > connected. Another possibility would be to intercept and filter out the extra
-> > data before pushing it to user space. My first attempt of doing that didn't
-> > work out with upstream kernel but I may revisit that.
-> 
-> I'm also confused. Is this also an issue with the current series without common mode?
-> 
-> If I'm getting things right, one channel ADCs pretty much do not work right now with
-> spi offload?
+On Mon, 3 Nov 2025 13:08:38 +0100, David Hildenbrand wrote:
+>> The historical commit d949f36f1865c60239d4 ("x86: Fix hwpoison code
+>> related build failure on 32-bit NUMAQ"), disabled x86_32's
+>> memory-failure when SPARSEMEM is enabled, because the number of
+>> page-flags are insufficient.
+>> 
+>> The commit 09022bc196d23484a7a5 ("mm: remove PG_error") removes a
+>> page flag, so memory-failure can now be enable now.
+>
+> In the meantime, we added PG_dropbehind
 
-Yes, that's correct. It kind of works for single-channel ADCs, but half of the
-data we see in user space is valid and the other half is not. For two-channel
-ADCs, everything should be fine.
+Okay, I completely understand now.
 
-> 
-> If the above is correct I would just not support it for 1 channel ADCs.
+For historical versions, MEMORY_FAILURE cannot be enabled with x86_32 &&
+SPARSEMEM because the number of page-flags are insufficient. At least it
+has been so from 5.10.x to 6.9.x.
 
-Currently, it's just one part that is single-channel (AD4030). If patches 6 and
-7 were accepted, it would be 3 single-channel parts supported. I can add an `if`
-somewhere to check the number of channel, but it will eventually have to be
-removed when HDL gets fixed.
+The commit 46df8e73a4a3f1445f2a ("mm: free up PG_slab") from 6.10-rc1
+remove a flag that allows MEMORY_FAILURE to be enabled from here on.
 
-Or, if HDL can't be fixed, then we'll need the `if` now and something else
-latter to filter out extra data before pushing to IIO buffers as mentioned
-above. Though, this scenario seems odd to me as I think the HDL wouldn't be 100%
-compatible with single-channel AD4030-like parts. We would be writing code to
-support AD4030 _and_ a peculiar data stream from this specific HDL project?
+The commit 09022bc196d23484a7a5 ("mm: remove PG_error") from 6.12-rc1
+remove another flag.
 
-My suggestion is to apply all patches except patch 8. IMHO, SPI offload
-single-channel ADC support is broken due to HDL IP data stream not being
-compatible with single-channel parts. That's not a Linux driver issue.
-Patch 8 (common-mode for single-channel) may be fine, but I haven't been able
-to validate that since I only have remote access to a single-channel ADC that
-has already required a buffer work around to test.
+The commit cceba6f7e46c48deca43 ("mm: add PG_dropbehind folio flag") from
+6.14-rc1 add a flag, but MEMORY_FAILURE can still be enabled.
+
+At least for the current version, memory-failure can be safely enabled.
+The number of pageflags reaches its maximum value under the following
+conditions: HIGHMEM && SPARSEMEM && X86_PAE && X86_PAT. In this case, if
+MEMORY_FAILURE is enabled, the number of pageflags just reached the limit
+of 32.
+
+I will update the V2 patch to describe it.
+
+> Cheers
+>
+> David / dhildenb
+
+Thanks!
+
+Xie Yuanbin
 
