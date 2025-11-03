@@ -1,161 +1,206 @@
-Return-Path: <linux-kernel+bounces-882640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id B81C1C2AFA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:17:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74D7CC2AEE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 11:11:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2BA4734444C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:17:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C64163ACFBB
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 10:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 853FE2FDC21;
-	Mon,  3 Nov 2025 10:17:16 +0000 (UTC)
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5FBD2FC013;
+	Mon,  3 Nov 2025 10:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WDTS+oto";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="c1jYj1FO"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C5B2FD1B1
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 10:17:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE5F14A60F;
+	Mon,  3 Nov 2025 10:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762165032; cv=none; b=rFBU8NuHfuGLmpEEZlmao50C59ta89tYTF9exewCdSm9B901q0is64BNy8chAUi7VMqEkt/EXHlQoxAta4G9N3WFmCQyxa1gHEB7pTuq2mBzfRIxMcvozf+x3/27HJu4FegOsXSCC7C5f+Zg2YMz4J9zW9jfmCKnxUXkCf1bMFk=
+	t=1762164614; cv=none; b=ahAAt0pb5gjWlpeYhY22vyLXPjUO7Ex8NerA6RSDOx28lpZVNrUTWHVV3iQBDl6Np/Bo0kiBWVtJ2mAsvOjO/vH5W7dkg429vC2OJSF12AZGxINGkr5fDC9ItWb4f/K+SmnfJ16oeHt6B1x0bkHQILQg0W55C/C3+oq/xxiB34M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762165032; c=relaxed/simple;
-	bh=mTHQRbPtXcLW9RC24UimP00dT4bpQ240D8TduWco7Ms=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ku6243TtoAnkR+EoxojCO3ZN7zAY+ksEM7/Vgh5G98tWMa260vrifqfr8/eASOyNJz7JGYHfeWeG2bNxCeXteYlMfaW58co10TwjaBEiBI+fZJmge3O451jkBsz1B5a9VKhlWWx9RBEvJNWjc+u9fh99nNcgfc2nhzllSg68HjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-28e7cd6dbc0so52392125ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 02:17:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762165028; x=1762769828;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WN9rH9/69UaI2zM1r1sL3pcOf4U1LH9TZ13cniByZO0=;
-        b=JpIHnP0+GqGPCNyMvtWZtvn/R+xo2TMrmYHBUKpdtmMoFgzHitHBzHLqjf7Mjd7jp6
-         QGA1jnSmlL97ixy2DFF0z0DEZKuamHPSFyPGq0KcTSLq6UCAkejYN6CB3jbwEOGlgew1
-         Aacqttxs7Dr9LI0BHaOrcX6HgPNzVisZEYAhG7HFvFBPchgBORnghikfFlHlZh38BglE
-         doMg8NIGM+1xybjrP/qwCqXkO8qHb7SYkFYgoI7PU/9q/l9aEcAyrBz2DgvKTGDpNqdi
-         3znLVoaU62cgxEperUwWLiJAr7imp2/qptqcQm5fG4ZA1xq2wnHVlpM33K8r195mi0sy
-         CKSw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdGeRUiyCS4Yf2zY3h86G/sJIbS0No/LfaPRFH4bkeCfKizyMQXdrEfzcGyMQRAQOfbXitUtVBjJc0gGU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEKMoCRNeTSKH0tx7BgJCfrUhLNx8F/mViJTCHDuCWf4bNcc0G
-	5JXt6T51E8I0E2VUSuOgb2fTD01U9bf4inLX6AAHM+20+93QehG6vZ+im/605qtb
-X-Gm-Gg: ASbGncuC8Qyvm0lPvJ80KXYzw8Dm5326l+qFJCi+3iDCKOtAbZqwpjchTddRt/UrhqR
-	4rR1qKTrmMPr1+ilDjPdJ1QWr3VuwCD+YG02ms8u4X/Kwd1T0PocutxUnpr1DKdR+7LA5k9p7yT
-	peRbYzdDTlhDXHo8naxWtrOVt5d8Im9I6G56bRVdgzWJYDq2gRGVvyR91Gfd5c2JeK2YIbwF4pR
-	SS6/8uAJULcFps4T49np1W6oy+OJlI6CcgVVENoPV7NjH7WG/ewuUP28GME+T/tgcASDptuEtJM
-	JtmGokVjHA/gKqkFfKYQyp8ARZKmjTqqNRr7Rm6h6ZFhZXGyKkXNwxMvLS2wpO6BbcD+Bh88kb9
-	QYrcTYJ4QuvXAH8nuTB6t0Sd6ZRYEzsjspHtqp8AiGK0gCvkkOAupXD1IPLzycg6APPdq0dCo9k
-	+WymE0fvCdl5EivemNzlVPbaGTupxPI7Jt6Pem1UOIJSiizJPkXJkZ77K3
-X-Google-Smtp-Source: AGHT+IGd9KVxjKoWxRuUv5wy/LzCACp+gnjPCdJ8h64kb4LLbvxCNvo/jSpr+UdGgwC3x0GMEBIWiQ==
-X-Received: by 2002:a17:903:94e:b0:28b:4ca5:d522 with SMTP id d9443c01a7336-2951a496d09mr174202875ad.39.1762165027668;
-        Mon, 03 Nov 2025 02:17:07 -0800 (PST)
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com. [209.85.210.171])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-295268ca9fdsm114820335ad.42.2025.11.03.02.17.07
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Nov 2025 02:17:07 -0800 (PST)
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7aab7623f42so1058541b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 02:17:07 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUu+LWK4Z1T7lhB3om4+k4SE+TGKcxd7EmAi99YAV8Jo7zTtxf4LGuNxQ4lGAiFyZGnNC1JmWLE/F3pyGE=@vger.kernel.org
-X-Received: by 2002:a05:6102:418d:b0:5db:f031:84ce with SMTP id
- ada2fe7eead31-5dbf031902dmr85155137.29.1762164587067; Mon, 03 Nov 2025
- 02:09:47 -0800 (PST)
+	s=arc-20240116; t=1762164614; c=relaxed/simple;
+	bh=V9YvBpMPCeKQCzNbxg+VMyRL1o9qkLYfE8o0iwL3+zc=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=dlSUYMoiv7kbrbjxoj4i3TqX4aa1nhcAjjw9owKkm75lK19yek4NUr0bSym1mTGFjBH1stjzk0B1roUqeKnnn9Mth5mmJus06rY4z8eKPwQASyQ8V0EhX6smKdJXsQ4FDIGViplOqAnIbDgSOyhFq9TWZ07jXk1dB1byTo7J6vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WDTS+oto; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=c1jYj1FO; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 03 Nov 2025 10:10:07 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1762164609;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EVarb4so6O4MwXTO1StH9mqdDIEJ8bBowHieREy6Bmc=;
+	b=WDTS+otoJGs9JUVMwGDiZb4X9t2w66jh27JH1erGHwxnx1wyPzuaO8WSU8l1kZEC5iguiX
+	xi4xU2y9Zfde1f+VBvbW/4N+sSouNb5EDUmoHXUF9hlTClTpObqA9+6rbVVe3QfbyhURql
+	PXUJAavbS0miXeTsNhM+mbTeA7AORXFGLlbLCkFg4kTfwHcZKXQ67YGf5hFJdjEZWJ9Bau
+	/8FMxaTxp7urCpePoW+KMZ46zipujK/rdkCnRIqEUOuy7fKVdvh3kNrhDlU3+CJRamIVhv
+	MY87b+wSDItuQPyvifjY/hmgDlS0UefsXRFMRxf+vs6gOfR01LfWxlKVLVujyA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1762164609;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EVarb4so6O4MwXTO1StH9mqdDIEJ8bBowHieREy6Bmc=;
+	b=c1jYj1FOzfS2Oh+G+d4joM69VSOA1AcsXexEXnMzdyjI8aWvJR8QjHhD1LQK3N0AmfBOIf
+	Q/gU3DR1TFTX++BA==
+From: "tip-bot2 for Dapeng Mi" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: perf/urgent] perf/core: Fix system hang caused by cpu-clock usage
+Cc: Octavia Togami <octavia.togami@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Dapeng Mi <dapeng1.mi@linux.intel.com>,
+ Ingo Molnar <mingo@kernel.org>, stable@vger.kernel.org, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20251015051828.12809-1-dapeng1.mi@linux.intel.com>
+References: <20251015051828.12809-1-dapeng1.mi@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1761588465.git.geert+renesas@glider.be> <97549838f28a1bb7861cfb42ee687f832942b13a.1761588465.git.geert+renesas@glider.be>
- <20251102104326.0f1db96a@jic23-huawei>
-In-Reply-To: <20251102104326.0f1db96a@jic23-huawei>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 3 Nov 2025 11:09:36 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUkm2hxSW1yeKn8kZkSrosr8V-QTrHKSMkY2CPJ8UH_BQ@mail.gmail.com>
-X-Gm-Features: AWmQ_bmxzzzgoIljXMDy5wJmHF15bg4ZKICGjY8c2_gWom3ME9XAPzMw0ghLXn4
-Message-ID: <CAMuHMdUkm2hxSW1yeKn8kZkSrosr8V-QTrHKSMkY2CPJ8UH_BQ@mail.gmail.com>
-Subject: Re: [PATCH -next v5 10/23] iio: imu: smi330: #undef
- field_{get,prep}() before definition
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	David Miller <davem@davemloft.net>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Joel Stanley <joel@jms.id.au>, 
-	Andrew Jeffery <andrew@codeconstruct.com.au>, Crt Mori <cmo@melexis.com>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Jacky Huang <ychuang3@nuvoton.com>, 
-	Shan-Chun Hung <schung@nuvoton.com>, Yury Norov <yury.norov@gmail.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Johannes Berg <johannes@sipsolutions.net>, Jakub Kicinski <kuba@kernel.org>, Alex Elder <elder@ieee.org>, 
-	David Laight <david.laight.linux@gmail.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	Jason Baron <jbaron@akamai.com>, Borislav Petkov <bp@alien8.de>, Tony Luck <tony.luck@intel.com>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Kim Seer Paller <kimseer.paller@analog.com>, 
-	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Richard Genoud <richard.genoud@bootlin.com>, 
-	Cosmin Tanislav <demonsingur@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Jianping Shen <Jianping.Shen@de.bosch.com>, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-renesas-soc@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, linux-edac@vger.kernel.org, qat-linux@intel.com, 
-	linux-gpio@vger.kernel.org, linux-aspeed@lists.ozlabs.org, 
-	linux-iio@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <176216460800.2601451.733142302683512228.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jonathan,
+The following commit has been merged into the perf/urgent branch of tip:
 
-On Sun, 2 Nov 2025 at 11:43, Jonathan Cameron <jic23@kernel.org> wrote:
-> On Mon, 27 Oct 2025 19:41:44 +0100
-> Geert Uytterhoeven <geert+renesas@glider.be> wrote:
->
-> > Prepare for the advent of globally available common field_get() and
-> > field_prep() macros by undefining the symbols before defining local
-> > variants.  This prevents redefinition warnings from the C preprocessor
-> > when introducing the common macros later.
-> >
-> > Suggested-by: Yury Norov <yury.norov@gmail.com>
-> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> So this is going to make a mess of merging your series given this is
-> queued up for next merge window.
->
-> I can pick this one up perhaps and we loop back to the replacement of
-> these in a future patch?  Or perhaps go instead with a rename
-> of these two which is probably nicer in the intermediate state than
-> undefs.
+Commit-ID:     eb3182ef0405ff2f6668fd3e5ff9883f60ce8801
+Gitweb:        https://git.kernel.org/tip/eb3182ef0405ff2f6668fd3e5ff9883f60c=
+e8801
+Author:        Dapeng Mi <dapeng1.mi@linux.intel.com>
+AuthorDate:    Wed, 15 Oct 2025 13:18:28 +08:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Mon, 03 Nov 2025 11:04:19 +01:00
 
-Renaming would mean a lot of churn.
-Just picking up the #undef patch should be simple and safe? The
-removal of the underf and redef can be done in the next cycle.
-Thanks!
+perf/core: Fix system hang caused by cpu-clock usage
 
-> > --- a/drivers/iio/imu/smi330/smi330_core.c
-> > +++ b/drivers/iio/imu/smi330/smi330_core.c
-> > @@ -68,7 +68,9 @@
-> >  #define SMI330_SOFT_RESET_DELAY 2000
-> >
-> >  /* Non-constant mask variant of FIELD_GET() and FIELD_PREP() */
-> > +#undef field_get
-> >  #define field_get(_mask, _reg) (((_reg) & (_mask)) >> (ffs(_mask) - 1))
-> > +#undef field_prep
-> >  #define field_prep(_mask, _val) (((_val) << (ffs(_mask) - 1)) & (_mask))
-> >
-> >  #define SMI330_ACCEL_CHANNEL(_axis) {                                        \
+cpu-clock usage by the async-profiler tool can trigger a system hang,
+which got bisected back to the following commit by Octavia Togami:
 
-Gr{oetje,eeting}s,
+  18dbcbfabfff ("perf: Fix the POLL_HUP delivery breakage") causes this issue
 
-                        Geert
+The root cause of the hang is that cpu-clock is a special type of SW
+event which relies on hrtimers. The __perf_event_overflow() callback
+is invoked from the hrtimer handler for cpu-clock events, and
+__perf_event_overflow() tries to call cpu_clock_event_stop()
+to stop the event, which calls htimer_cancel() to cancel the hrtimer.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+But that's a recursion into the hrtimer code from a hrtimer handler,
+which (unsurprisingly) deadlocks.
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+To fix this bug, use hrtimer_try_to_cancel() instead, and set
+the PERF_HES_STOPPED flag, which causes perf_swevent_hrtimer()
+to stop the event once it sees the PERF_HES_STOPPED flag.
+
+[ mingo: Fixed the comments and improved the changelog. ]
+
+Closes: https://lore.kernel.org/all/CAHPNGSQpXEopYreir+uDDEbtXTBvBvi8c6fYXJvc=
+eqtgTPao3Q@mail.gmail.com/
+Fixes: 18dbcbfabfff ("perf: Fix the POLL_HUP delivery breakage")
+Reported-by: Octavia Togami <octavia.togami@gmail.com>
+Suggested-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Tested-by: Octavia Togami <octavia.togami@gmail.com>
+Cc: stable@vger.kernel.org
+Link: https://github.com/lucko/spark/issues/530
+Link: https://patch.msgid.link/20251015051828.12809-1-dapeng1.mi@linux.intel.=
+com
+---
+ kernel/events/core.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
+
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 177e57c..1fd347d 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -11773,7 +11773,8 @@ static enum hrtimer_restart perf_swevent_hrtimer(stru=
+ct hrtimer *hrtimer)
+=20
+ 	event =3D container_of(hrtimer, struct perf_event, hw.hrtimer);
+=20
+-	if (event->state !=3D PERF_EVENT_STATE_ACTIVE)
++	if (event->state !=3D PERF_EVENT_STATE_ACTIVE ||
++	    event->hw.state & PERF_HES_STOPPED)
+ 		return HRTIMER_NORESTART;
+=20
+ 	event->pmu->read(event);
+@@ -11819,15 +11820,20 @@ static void perf_swevent_cancel_hrtimer(struct perf=
+_event *event)
+ 	struct hw_perf_event *hwc =3D &event->hw;
+=20
+ 	/*
+-	 * The throttle can be triggered in the hrtimer handler.
+-	 * The HRTIMER_NORESTART should be used to stop the timer,
+-	 * rather than hrtimer_cancel(). See perf_swevent_hrtimer()
++	 * Careful: this function can be triggered in the hrtimer handler,
++	 * for cpu-clock events, so hrtimer_cancel() would cause a
++	 * deadlock.
++	 *
++	 * So use hrtimer_try_to_cancel() to try to stop the hrtimer,
++	 * and the cpu-clock handler also sets the PERF_HES_STOPPED flag,
++	 * which guarantees that perf_swevent_hrtimer() will stop the
++	 * hrtimer once it sees the PERF_HES_STOPPED flag.
+ 	 */
+ 	if (is_sampling_event(event) && (hwc->interrupts !=3D MAX_INTERRUPTS)) {
+ 		ktime_t remaining =3D hrtimer_get_remaining(&hwc->hrtimer);
+ 		local64_set(&hwc->period_left, ktime_to_ns(remaining));
+=20
+-		hrtimer_cancel(&hwc->hrtimer);
++		hrtimer_try_to_cancel(&hwc->hrtimer);
+ 	}
+ }
+=20
+@@ -11871,12 +11877,14 @@ static void cpu_clock_event_update(struct perf_even=
+t *event)
+=20
+ static void cpu_clock_event_start(struct perf_event *event, int flags)
+ {
++	event->hw.state =3D 0;
+ 	local64_set(&event->hw.prev_count, local_clock());
+ 	perf_swevent_start_hrtimer(event);
+ }
+=20
+ static void cpu_clock_event_stop(struct perf_event *event, int flags)
+ {
++	event->hw.state =3D PERF_HES_STOPPED;
+ 	perf_swevent_cancel_hrtimer(event);
+ 	if (flags & PERF_EF_UPDATE)
+ 		cpu_clock_event_update(event);
+@@ -11950,12 +11958,14 @@ static void task_clock_event_update(struct perf_eve=
+nt *event, u64 now)
+=20
+ static void task_clock_event_start(struct perf_event *event, int flags)
+ {
++	event->hw.state =3D 0;
+ 	local64_set(&event->hw.prev_count, event->ctx->time);
+ 	perf_swevent_start_hrtimer(event);
+ }
+=20
+ static void task_clock_event_stop(struct perf_event *event, int flags)
+ {
++	event->hw.state =3D PERF_HES_STOPPED;
+ 	perf_swevent_cancel_hrtimer(event);
+ 	if (flags & PERF_EF_UPDATE)
+ 		task_clock_event_update(event, event->ctx->time);
 
