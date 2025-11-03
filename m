@@ -1,233 +1,199 @@
-Return-Path: <linux-kernel+bounces-883581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E531BC2DCB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 20:05:27 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F977C2DCFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 20:13:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C44F18993CC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 19:05:52 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 6964834BBC5
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 19:13:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E799C347DD;
-	Mon,  3 Nov 2025 19:05:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6455D296BBF;
+	Mon,  3 Nov 2025 19:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J4FOea8Q"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="or+t/Mk6"
+Received: from the.earth.li (the.earth.li [93.93.131.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89BA920C001
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 19:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E56347C3;
+	Mon,  3 Nov 2025 19:13:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762196720; cv=none; b=qypL+k3bf5G/DrPxWqdrIRGUpZy1FAGw0Iw7OdEFkS6wUgNv/20nqKtHhT3ftfSIx9Y6TeMLD6h8DuRYjLxHCYCTaOkIgzQUJK48Dqr2XShc4pkIBMuD/Y82wTHZY+ouYnQMQpb8Y5trcvaLZ5tJExIzbdN/zO9+An48I8iVdv8=
+	t=1762197186; cv=none; b=WIZXuUAOnMPEth4/OJopQAmeXFuPRIif2AJtoCz9+VB7afARE/ZgVqHJFgMniU2ZQF9dsbetvbAcTqx8mSTxUSew21L0K/mfy2redHmOXJ6b7kzTg+GgNrFT+O2m8JsaATiqxaNtXTgTZ2zzeQBqY2k9is14CCYOfFBIuVLJ+lQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762196720; c=relaxed/simple;
-	bh=WY3w0grYTxBO5g8NDg8sPsdIAaVJbDtr6eMmZUFWETU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AGkL3SdlWKZmNI2aZPUepO+Q+ONh+S/RG5wyyJd0DpS6iGv+nPAKP8ZasfR0KjPJ6DfHiD7EgIQemjND25mZt/qD1Sv7eAMudFHT99sS01Nsg0TE4lEQMwOyyq8nTHzjqasOLq5Z2KKNAP6EIWVodEK8DqvjWttTU/bE9c65qpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J4FOea8Q; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762196717; x=1793732717;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=WY3w0grYTxBO5g8NDg8sPsdIAaVJbDtr6eMmZUFWETU=;
-  b=J4FOea8QCcsvLzX7JRVFAexo6zi5Dg3JerQXN/3loEsaN77g8PjWguKJ
-   EyufHzav4WIgUOhgnrTzLq6MfIMUUL1kweY8ET8Z26UJ2G9RECNMTtgN8
-   On3fwOKdqTDChBMkpiuFIzptd6vd0GhVQqOdNqOZNni9xuLqZqawL5oYJ
-   T1sfjG/e+qCW/kzJugIy/BDrdSiYbrFq2UQYIiXhxpYYRcwJfCXqbvjg3
-   GL//5+1/92X/dWbrbXb4hiygGa2tyRVScpiCeyZz/oYIbd8k1MrjGNP0j
-   AgFkaorahr+mFC0yErQh3Qvm9cqdkxa9Et34EEbuShQm/BfXv8Ba2LvWF
-   A==;
-X-CSE-ConnectionGUID: rdOpHcqvQGaUHXpzDyFrrQ==
-X-CSE-MsgGUID: xL673HDgQXGng6T80LnH9A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11602"; a="64200570"
-X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="64200570"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 11:05:17 -0800
-X-CSE-ConnectionGUID: Jgy7JoTySKSNO3vNCkzlqA==
-X-CSE-MsgGUID: X9u55owPSTqboU9Zj1vrAA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,277,1754982000"; 
-   d="scan'208";a="217583593"
-Received: from black.igk.intel.com ([10.91.253.5])
-  by orviesa002.jf.intel.com with ESMTP; 03 Nov 2025 11:05:15 -0800
-Received: by black.igk.intel.com (Postfix, from userid 1003)
-	id 5D6C595; Mon, 03 Nov 2025 20:05:14 +0100 (CET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Guan-Chun Wu <409411716@gms.tku.edu.tw>,
-	Kuan-Wei Chiu <visitorckw@gmail.com>,
-	linux-kernel@vger.kernel.org
-Cc: David Laight <david.laight.linux@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] base64: Unroll the tables initialisers
-Date: Mon,  3 Nov 2025 20:05:10 +0100
-Message-ID: <20251103190510.627314-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1762197186; c=relaxed/simple;
+	bh=X28PVM1pHjUBiCIDklQDJk1W4z0EHRhbaDNCwuFLW8k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CSkzWAWKDK2NtmJfOzr/qLqXyZGh0tT5urWcJZSPNaBEYivGCmHXXuw1L/7OzbXhtBX5CrbSiBlyllOn08FbQ734rjQnkuweQr10vv9N6ivK7lyuh7vSEP9RAzPDOa18vaH5wBVPh+gePSYhStBPtiJO8GtlldJMn+ce8d0Jz4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=or+t/Mk6; arc=none smtp.client-ip=93.93.131.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
+	s=the; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
+	Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=AD67qlxIc6SDg/FLv0M1cX7SsFiaMOMP5oXhvhvdN90=; b=or+t/Mk6szqFsgIMcgzUQARmRr
+	mc9VLYQZQzapLpKaNTi7BrqsRln/KYFAaCoqqBexxI3h9ShxJqnciS+WkZiKM//ZygdEPJsAPnSD1
+	gZIHcpxED0kD87vfRc5GP+tl3oWdf+X+to9FFeK/r8F2MywJ9NSHvbDMCuThl6wwp5du+GsC3s8Xn
+	TteEQD4qjomNgk20372MdHTkc8sbIkK6vcjproJC/0n4z9fv8X/9zWFtzfZHETGXM738BCHfEuhKD
+	L7JRnqAooyFcP5QJcOP++oQxIM8YbK86b4rsLFiBUcyURjxNuW1VaF9K8TeEia6iJCnqIC+MaxsZQ
+	001xgSkw==;
+Received: from noodles by the.earth.li with local (Exim 4.96)
+	(envelope-from <noodles@earth.li>)
+	id 1vFzSD-00Daab-0n;
+	Mon, 03 Nov 2025 18:38:57 +0000
+Date: Mon, 3 Nov 2025 18:38:57 +0000
+From: Jonathan McDowell <noodles@earth.li>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>,
+	Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+	zohar@linux.ibm.com
+Subject: Re: [PATCH v3 4/4] tpm: Allow for exclusive TPM access when using
+ /dev/tpm<n>
+Message-ID: <aQj2wZrnV7vgoAcq@earth.li>
+References: <cover.1760958898.git.noodles@meta.com>
+ <61049f236fe1eaf72402895cea6892b52ce7e279.1760958898.git.noodles@meta.com>
+ <cec499d5130f37a7887d39b44efd8538dd361fe3.camel@huaweicloud.com>
+ <aP_KT0GiQSzt1ClO@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <aP_KT0GiQSzt1ClO@kernel.org>
 
-Currently the initialisers of the tables have duplicate indices.
-This prevents from building with `make W=1`.
+On Mon, Oct 27, 2025 at 09:38:55PM +0200, Jarkko Sakkinen wrote:
+>On Mon, Oct 20, 2025 at 01:53:30PM +0200, Roberto Sassu wrote:
+>> On Mon, 2025-10-20 at 12:31 +0100, Jonathan McDowell wrote:
+>> > From: Jonathan McDowell <noodles@meta.com>
+>> >
+>> > There are situations where userspace might reasonably desire exclusive
+>> > access to the TPM, or the kernel's internal context saving + flushing
+>> > may cause issues, for example when performing firmware upgrades. Extend
+>> > the locking already used for avoiding concurrent userspace access to
+>> > prevent internal users of the TPM when /dev/tpm<n> is in use.
+>> >
+>> > The few internal users who already hold the open_lock are changed to use
+>> > tpm_internal_(try_get|put)_ops, with the old tpm_(try_get|put)_ops
+>> > functions changing to obtain read access to the open_lock.  We return
+>> > -EBUSY when another user has exclusive access, rather than adding waits.
+>> >
+>> > Signed-off-by: Jonathan McDowell <noodles@meta.com>
+>> > ---
+>> > v2: Switch to _locked instead of _internal_ for function names.
+>> > v3: Move to end of patch series.
+>> >
+>> >  drivers/char/tpm/tpm-chip.c       | 53 +++++++++++++++++++++++++------
+>> >  drivers/char/tpm/tpm-dev-common.c |  8 ++---
+>> >  drivers/char/tpm/tpm.h            |  2 ++
+>> >  drivers/char/tpm/tpm2-space.c     |  5 ++-
+>> >  4 files changed, 52 insertions(+), 16 deletions(-)
+>> >
+>> > diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+>> > index ba906966721a..687f6d8cd601 100644
+>> > --- a/drivers/char/tpm/tpm-chip.c
+>> > +++ b/drivers/char/tpm/tpm-chip.c
+>> > @@ -144,7 +144,7 @@ void tpm_chip_stop(struct tpm_chip *chip)
+>> >  EXPORT_SYMBOL_GPL(tpm_chip_stop);
+>> >
+>> >  /**
+>> > - * tpm_try_get_ops() - Get a ref to the tpm_chip
+>> > + * tpm_try_get_ops_locked() - Get a ref to the tpm_chip
+>> >   * @chip: Chip to ref
+>> >   *
+>> >   * The caller must already have some kind of locking to ensure that chip is
+>> > @@ -154,7 +154,7 @@ EXPORT_SYMBOL_GPL(tpm_chip_stop);
+>> >   *
+>> >   * Returns -ERRNO if the chip could not be got.
+>> >   */
+>> > -int tpm_try_get_ops(struct tpm_chip *chip)
+>> > +int tpm_try_get_ops_locked(struct tpm_chip *chip)
+>> >  {
+>> >  	int rc = -EIO;
+>> >
+>> > @@ -185,22 +185,57 @@ int tpm_try_get_ops(struct tpm_chip *chip)
+>> >  	put_device(&chip->dev);
+>> >  	return rc;
+>> >  }
+>> > -EXPORT_SYMBOL_GPL(tpm_try_get_ops);
+>> >
+>> >  /**
+>> > - * tpm_put_ops() - Release a ref to the tpm_chip
+>> > + * tpm_put_ops_locked() - Release a ref to the tpm_chip
+>> >   * @chip: Chip to put
+>> >   *
+>> > - * This is the opposite pair to tpm_try_get_ops(). After this returns chip may
+>> > - * be kfree'd.
+>> > + * This is the opposite pair to tpm_try_get_ops_locked(). After this returns
+>> > + * chip may be kfree'd.
+>> >   */
+>> > -void tpm_put_ops(struct tpm_chip *chip)
+>> > +void tpm_put_ops_locked(struct tpm_chip *chip)
+>> >  {
+>> >  	tpm_chip_stop(chip);
+>> >  	mutex_unlock(&chip->tpm_mutex);
+>> >  	up_read(&chip->ops_sem);
+>> >  	put_device(&chip->dev);
+>> >  }
+>> > +
+>> > +/**
+>> > + * tpm_try_get_ops() - Get a ref to the tpm_chip
+>> > + * @chip: Chip to ref
+>> > + *
+>> > + * The caller must already have some kind of locking to ensure that chip is
+>> > + * valid. This function will attempt to get the open_lock for the chip,
+>> > + * ensuring no other user is expecting exclusive access, before locking the
+>> > + * chip so that the ops member can be accessed safely. The locking prevents
+>> > + * tpm_chip_unregister from completing, so it should not be held for long
+>> > + * periods.
+>> > + *
+>> > + * Returns -ERRNO if the chip could not be got.
+>> > + */
+>> > +int tpm_try_get_ops(struct tpm_chip *chip)
+>> > +{
+>> > +	if (!down_read_trylock(&chip->open_lock))
+>> > +		return -EBUSY;
+>>
+>> Hi Jonathan
+>>
+>> do I understand it correctly, that a process might open the TPM with
+>> O_EXCL, and this will prevent IMA from extending a PCR until that
+>> process closes the file descriptor?
+>>
+>> If yes, this might be a concern, and I think an additional API to
+>> prevent such behavior would be needed (for example when IMA is active,
+>> i.e. there is a measurement policy loaded).
+>
+>Also this would be a problem with hwrng.
+>
+>This probably needs to be refined somehow. I don't have a solution at
+>hand but "invariant" is that in-kernel caller should override user space
+>exclusion, even when O_EXCL is used.
 
-To address the issue, unroll the table initialisers with generated
-arrays by the following Python excerpt:
+Kernel access is exactly what caused the issue for me, in particular the 
+HW RNG access during a firmware upgrade. My patch to be able to disable 
+the HW RNG at runtime has landed in -next, which helps a lot, but it 
+really would be nice to be able to say "Hands off, I'm busy with this", 
+which is what led to this patch set.
 
-CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+To James' query about the fact the upgrade process should be properly 
+handled, I think the issue is probably that the HMAC context saving 
+around HW RNG access hit errors that were not gracefully handled, and we 
+marked the TPM as disabled in tpm2_load_null, causing failure 
+mid-upgrade.
 
-def gen_table(ch62, ch63):
-    table = [ 0xff ] * 256
-    for idx, char in enumerate(CHARS):
-        table[ord(char)] = idx
-    table[ord(ch62)] = 62
-    table[ord(ch63)] = 63
+J.
 
-    for i in range(0, len(table), 8):
-        print (f"\t{', '.join(f"0x{c:02x}" for c in table[i:i+8])},\t/* {i:-3d} - {i+7:-3d} */")
-
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- lib/base64.c | 115 +++++++++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 102 insertions(+), 13 deletions(-)
-
-diff --git a/lib/base64.c b/lib/base64.c
-index bcdbd411d63b..0a7c15c5c1b6 100644
---- a/lib/base64.c
-+++ b/lib/base64.c
-@@ -21,20 +21,109 @@ static const char base64_tables[][65] = {
- 	[BASE64_IMAP] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+,",
- };
- 
--#define BASE64_REV_INIT(ch_62, ch_63) { \
--	[0 ... 255] = -1, \
--	['A'] =  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, \
--		13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, \
--	['a'] = 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, \
--		39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, \
--	['0'] = 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, \
--	[ch_62] = 62, [ch_63] = 63, \
--}
--
- static const s8 base64_rev_maps[][256] = {
--	[BASE64_STD] = BASE64_REV_INIT('+', '/'),
--	[BASE64_URLSAFE] = BASE64_REV_INIT('-', '_'),
--	[BASE64_IMAP] = BASE64_REV_INIT('+', ',')
-+	[BASE64_STD] = {
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/*   0 -   7 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/*   8 -  15 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/*  16 -  23 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/*  24 -  31 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/*  32 -  39 */
-+		0xff, 0xff, 0xff, 0x3e, 0xff, 0xff, 0xff, 0x3f,	/*  40 -  47 */
-+		0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b,	/*  48 -  55 */
-+		0x3c, 0x3d, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/*  56 -  63 */
-+		0xff, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06,	/*  64 -  71 */
-+		0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,	/*  72 -  79 */
-+		0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16,	/*  80 -  87 */
-+		0x17, 0x18, 0x19, 0xff, 0xff, 0xff, 0xff, 0xff,	/*  88 -  95 */
-+		0xff, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f, 0x20,	/*  96 - 103 */
-+		0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,	/* 104 - 111 */
-+		0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f, 0x30,	/* 112 - 119 */
-+		0x31, 0x32, 0x33, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 120 - 127 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 128 - 135 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 136 - 143 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 144 - 151 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 152 - 159 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 160 - 167 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 168 - 175 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 176 - 183 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 184 - 191 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 192 - 199 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 200 - 207 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 208 - 215 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 216 - 223 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 224 - 231 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 232 - 239 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 240 - 247 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 248 - 255 */
-+	},
-+	[BASE64_URLSAFE] = {
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/*   0 -   7 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/*   8 -  15 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/*  16 -  23 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/*  24 -  31 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/*  32 -  39 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0x3e, 0xff, 0xff,	/*  40 -  47 */
-+		0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b,	/*  48 -  55 */
-+		0x3c, 0x3d, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/*  56 -  63 */
-+		0xff, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06,	/*  64 -  71 */
-+		0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,	/*  72 -  79 */
-+		0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16,	/*  80 -  87 */
-+		0x17, 0x18, 0x19, 0xff, 0xff, 0xff, 0xff, 0x3f,	/*  88 -  95 */
-+		0xff, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f, 0x20,	/*  96 - 103 */
-+		0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,	/* 104 - 111 */
-+		0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f, 0x30,	/* 112 - 119 */
-+		0x31, 0x32, 0x33, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 120 - 127 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 128 - 135 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 136 - 143 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 144 - 151 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 152 - 159 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 160 - 167 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 168 - 175 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 176 - 183 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 184 - 191 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 192 - 199 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 200 - 207 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 208 - 215 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 216 - 223 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 224 - 231 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 232 - 239 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 240 - 247 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 248 - 255 */
-+	},
-+	[BASE64_IMAP] = {
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/*   0 -   7 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/*   8 -  15 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/*  16 -  23 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/*  24 -  31 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/*  32 -  39 */
-+		0xff, 0xff, 0xff, 0x3e, 0x3f, 0xff, 0xff, 0xff,	/*  40 -  47 */
-+		0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x3b,	/*  48 -  55 */
-+		0x3c, 0x3d, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/*  56 -  63 */
-+		0xff, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06,	/*  64 -  71 */
-+		0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,	/*  72 -  79 */
-+		0x0f, 0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16,	/*  80 -  87 */
-+		0x17, 0x18, 0x19, 0xff, 0xff, 0xff, 0xff, 0xff,	/*  88 -  95 */
-+		0xff, 0x1a, 0x1b, 0x1c, 0x1d, 0x1e, 0x1f, 0x20,	/*  96 - 103 */
-+		0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,	/* 104 - 111 */
-+		0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f, 0x30,	/* 112 - 119 */
-+		0x31, 0x32, 0x33, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 120 - 127 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 128 - 135 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 136 - 143 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 144 - 151 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 152 - 159 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 160 - 167 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 168 - 175 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 176 - 183 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 184 - 191 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 192 - 199 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 200 - 207 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 208 - 215 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 216 - 223 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 224 - 231 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 232 - 239 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 240 - 247 */
-+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,	/* 248 - 255 */
-+	},
- };
- /**
-  * base64_encode() - Base64-encode some binary data
 -- 
-2.50.1
-
+What have you got in your pocket?
 
