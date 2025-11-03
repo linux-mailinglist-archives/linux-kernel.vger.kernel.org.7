@@ -1,249 +1,158 @@
-Return-Path: <linux-kernel+bounces-882220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62CDDC29E83
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 04:05:31 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00CD6C29E92
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 04:05:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7EE13B2940
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 03:05:29 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0F71C4EA166
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 03:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7E828727C;
-	Mon,  3 Nov 2025 03:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B54372877F2;
+	Mon,  3 Nov 2025 03:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="RDkToIF1"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KN48o2W0"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F44734D3BE;
-	Mon,  3 Nov 2025 03:05:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7E022F74D
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 03:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762139123; cv=none; b=q2So6HjESpGWa+pqWtWJIL6H/n2u7jmiIJrlwoBCgTbiqU+6qCJlqH++sV/T7ktvfAwGrqe+BHYyKRdYF5xzr98HwJAbVeDFJ9/97X//Xe9Ijt7F3mJte8asRIFd8OcPu9tL/QkOZL2iKR57oKOVnNF08IEFP1Yn9bXUNe+VviY=
+	t=1762139145; cv=none; b=BGdvurLp/v0D3awMMe+bUfsUWDQV5crw/385AL/GyBmWAblVdKbd4POAwh9quwQFqkNzb8sWyicbXaeNc6vwpGCpZB3pRP2XV7PlcVjcT7wasjSU8bx7yhA8ydCSn7vlh0Q7SKn0EhhxGV8HtsMtPZei1BCX2y2ZwMU35WeL4w0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762139123; c=relaxed/simple;
-	bh=h2on8smZNhSjND6dDV/2OQmdbs3lEHFCbUmsU4mkBno=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ilNeIlUIPjRwbTEIp5PVLi5XAqQ4pQb7pYa1JJYKg0imnFakJp+bRlqUrJWPGlNZORsIXdv8HmYN4wSLAytO+k1MCaPdEKcPTCWHUwfzGrRbSccMRcFivlmRuT/N3BAv5eM3fycwIRmm3jOt4IhyXDeoHqx7IY7kO+jVc0BIZBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=RDkToIF1; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 5A3353Ar8687552, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1762139103; bh=CDIb0DFGsEfP0VvgpwQqbMHWoefHoMlYMo8jDAfDT8c=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=RDkToIF1xJ9sGZEZZY2zhG5QZ/kZMPMq8cIaVYEEWBRwz0e846CP3sclBjP/Es9Wh
-	 zX1ePHkLNvtW7/4FcgFLuDNuSejEtRjm7hAfiTJ+vEVXript5sfv1ss/C7/w3wug1P
-	 hU2qqchtwzlQ+s1hz0sx7hyDUtGoNM4KjgqomauPdVGznygiLC3THuag1P8YqBix3q
-	 LNIrXf3Fomb+PuLt/8v8GdCI2bh4N3k5hKt4g1zuSduSmdqsf6D1d0bKCET+YuE4Aj
-	 Fn4NZ68yXKuek9zNh9tdWzhaEXLnSr2ZN/B7xHIhmZlJINjZFxfsVaFMIW4hIrM9u6
-	 OrQSEEWSpN/tQ==
-Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 5A3353Ar8687552
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 3 Nov 2025 11:05:03 +0800
-Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
- RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.27; Mon, 3 Nov 2025 11:05:03 +0800
-Received: from RTKEXHMBS06.realtek.com.tw ([::1]) by
- RTKEXHMBS06.realtek.com.tw ([fe80::744:4bc9:832c:9b7e%10]) with mapi id
- 15.02.1544.027; Mon, 3 Nov 2025 11:05:03 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Fedor Pchelkin <pchelkin@ispras.ru>,
-        Bitterblue Smith
-	<rtl8821cerfe2@gmail.com>
-CC: Zong-Zhe Yang <kevin_yang@realtek.com>,
-        Bernie Huang
-	<phhuang@realtek.com>,
-        "linux-wireless@vger.kernel.org"
-	<linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "lvc-project@linuxtesting.org"
-	<lvc-project@linuxtesting.org>
-Subject: RE: [PATCH rtw-next v4 08/10] wifi: rtw89: handle IEEE80211_TX_CTL_REQ_TX_STATUS frames for USB
-Thread-Topic: [PATCH rtw-next v4 08/10] wifi: rtw89: handle
- IEEE80211_TX_CTL_REQ_TX_STATUS frames for USB
-Thread-Index: AQHcSQcQXOM7uN/tL0SzUQvbc//iV7TgQVHA
-Date: Mon, 3 Nov 2025 03:05:03 +0000
-Message-ID: <1f5893398aac4966a2ae2939a6cb7f9c@realtek.com>
-References: <20251029190241.1023856-1-pchelkin@ispras.ru>
- <20251029190241.1023856-9-pchelkin@ispras.ru>
-In-Reply-To: <20251029190241.1023856-9-pchelkin@ispras.ru>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1762139145; c=relaxed/simple;
+	bh=0som6ehbnOrZUCiYGu7DmOQpitEQpLK/28RN7gfEbIs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GTIWofSx8FDPsEylMlFjV1lDXngeUQ0KU4DZeSD1FalXMF+BIGmCWZP+ro/oxoR+VYNU2diDg8T46WeHH3VX6R5kQIY81sp3L2UH9ZSTgeSi/kXidKHv/zEbjK4/IXf0oO3b9BrIq63i9kzeKo4167RQZqEt1BAQzW7ehzygE1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KN48o2W0; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-78af3fe5b17so3660704b3a.2
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 19:05:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762139143; x=1762743943; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Sf2MtafIziFxv0+iZSQBAt6orU3b9FFBk8saiJeqI+U=;
+        b=KN48o2W0KeIoGD0EwyVQvCypK9CxITQkktS6a4J2RLeF8LUaUB7LHQXvV6szbqauDq
+         D+Ebhr7Vj0nZG5uvrCvP12rmJt6RvbLmOYtZUDEU1+iwWNC7u0N2e4ZeKE8b+MPTS0S1
+         jTIO8Kt6lYux40PYurWOPOqaTs2QhvxM+wIDLD3GCHmrbusL0yWNC+waKhZayiD+k3Z0
+         eH0x+NxTF0tGYdHzJRQX6fheO7u+3RMqriJSs6jtNqjLlw+bBHB8sGqUmbcrbaohyB7L
+         ycmudcz738K2+pvL0mwFkHRDHRFhlwRlQPtj1LCYXo6S4MACFftP8stTcw5JxCTgFnrv
+         P0Xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762139143; x=1762743943;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Sf2MtafIziFxv0+iZSQBAt6orU3b9FFBk8saiJeqI+U=;
+        b=PE/uscVUBR6wT5WvtI6qajJAGPL53SLN+90LGXWVT53asuO1g93Vm1bEs/6vz5lcEh
+         HtBaDEGoguRH5x407tKndBIJn4cJ278buGpPvCgRVy8vfWrO+Knjkh6c1aS8tCTXi6iM
+         w4afCadAOw2Ab7Gb045ItmbXeCSQ95ue++I5OMozh9xH5eNJBlssJT7rgxuPuDRxmTLd
+         VYEu4+Dor7Qq/0s/O75BsSpgEvZQVFfHWT36xfrPk4FBK45mzPIiD39/1K3is4fc18Fb
+         ZO1lY9mS8HEV5E0+358o0pzdl/teiHHWh2Jf7lxeuAYftGOgrzTKuMyQ2rgOFF+SXCAo
+         w/YQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWyRkXPhFfJ/yN9877SibJxAhQ4r81skQUFr8pNozBo7NvSnw08gscwP9p3/V9BsZ3edRFIMg6zdTOMPw4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPxpP5rsdJyyYxhOBOg4O017luIevdRw2Bu2B9LqruxhVG/MZC
+	uqicr9srhu93t5rxGDcYwvaUHRRKMnkOVhvw8fBfPT3ncTZols33DzfR
+X-Gm-Gg: ASbGnctAT1DMgOwiojuMvpTntgY9TkXrc5z5m/HA+bOZ702+Fig4GTVATi7LRlKYm+f
+	b4/minY5T59tRgymSP6ZCjvyjypa2JXUO/tHjM6YY4hDX31cHd0ks6tiDyVpVuSeMevwC1j4IgW
+	qp6a3M4y6Weoq5tHgR8+z07LKEBFQiAVGO5SObBxxvUAZ4Ci445Iwt+yYi2rQpdWUy4Hnm0ZSUz
+	oiYMZgPsQeFuRM+xHA4jDUFrznMGjbmfQAnPo1uEFq85kHyGnplZksAL+F6JNOnmyjFnofYd8gZ
+	V7ZlxZr6PZGP7uEWn6HuYkjuB9QHOsaD/DISPKWK7LI9+7D6nUebtHktGJwWMywdqkHfSBZPINF
+	aRuDYRZ7Pf4MaKs7cyFGr4KoQP4h1WeVEp8l5rBFza9Hxe9DaEi9AHJsdYUXP+I5K1g06+z9efR
+	Zunl8MN5mhBw==
+X-Google-Smtp-Source: AGHT+IGYS/nnpitzE/eUQ+F68Ex58b2ct1BccZhqdFnCOq0bLpSK6sj1xCHRpQ3LEE1D/LOlqIwsLQ==
+X-Received: by 2002:a17:903:2286:b0:295:4d24:31bd with SMTP id d9443c01a7336-2954d243448mr108631195ad.17.1762139142642;
+        Sun, 02 Nov 2025 19:05:42 -0800 (PST)
+Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-295c2eb15f5sm11691785ad.2.2025.11.02.19.05.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Nov 2025 19:05:42 -0800 (PST)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Han Gao <rabenda.cn@gmail.com>,
+	Icenowy Zheng <uwu@icenowy.me>,
+	Vivian Wang <wangruikang@iscas.ac.cn>,
+	Yao Zi <ziyao@disroot.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+Cc: netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	sophgo@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: [PATCH v6 0/3] net: stmmac: dwmac-sophgo: Add phy interface filter
+Date: Mon,  3 Nov 2025 11:05:23 +0800
+Message-ID: <20251103030526.1092365-1-inochiama@gmail.com>
+X-Mailer: git-send-email 2.51.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Fedor Pchelkin <pchelkin@ispras.ru> wrote:
-> Frames flagged with IEEE80211_TX_CTL_REQ_TX_STATUS mean the driver has to
-> report to mac80211 stack whether AP sent ACK for the null frame/probe
-> request or not.  It's not implemented in USB part of the driver yet.
->=20
-> PCIe HCI has its own way of getting TX status incorporated into RPP
-> feature, and it's always enabled there.  Other HCIs need a different
-> scheme based on processing C2H messages.
->=20
-> Thus define a .tx_rpt_enabled flag indicating which HCIs need to enable a
-> TX report feature.  Currently it is USB only.
->=20
-> Toggle a bit in the TX descriptor and place flagged skbs in a fix-sized
-> queue to wait for a message from the firmware.  Firmware maintains a 4-bi=
-t
-> sequence number for required frames hence the queue can contain just 16
-> elements simultaneously.  That's enough for normal driver / firmware
-> communication.  If the firmware crashes for any reason and doesn't provid=
-e
-> TX reports in time, driver will handle this and report the obsolete frame=
-s
-> as dropped.
->=20
-> rtw89 also has a new feature providing a TX report for each transmission
-> attempt.  Ignore a failed TX status reported by the firmware until retry
-> limit is reached or successful status appears.  When there is no success
-> and the retry limit is reached, report the frame up to the wireless stack
-> as failed eventually.
->=20
-> HCI reset should stop all pending TX activity so forcefully flush the
-> queue there.
->=20
-> Found by Linux Verification Center (linuxtesting.org).
->=20
-> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+As the SG2042 has an internal rx delay, the delay should be remove
+when init the mac, otherwise the phy will be misconfigurated.
 
-Thanks for your work. I have only some minor suggestions for v4.
+Since this delay fix is common for other MACs, add a common helper
+for it. And use it to fix SG2042.
 
-[...]
+Change from v5:
+- https://lore.kernel.org/all/20251031012428.488184-1-inochiama@gmail.com
+1. patch 1: remove duplicate empty line
 
-> diff --git a/drivers/net/wireless/realtek/rtw89/core.h b/drivers/net/wire=
-less/realtek/rtw89/core.h
-> index 9372e30a0039..015d7833841f 100644
-> --- a/drivers/net/wireless/realtek/rtw89/core.h
-> +++ b/drivers/net/wireless/realtek/rtw89/core.h
-> @@ -3517,6 +3517,14 @@ struct rtw89_phy_rate_pattern {
->  #define RTW89_TX_LIFE_TIME             0x2
->  #define RTW89_TX_MACID_DROP            0x3
->=20
-> +#define RTW89_MAX_TX_RPTS              16
-> +#define RTW89_MAX_TX_RPTS_MASK         (RTW89_MAX_TX_RPTS - 1)
-> +struct rtw89_tx_rpt {
-> +       struct sk_buff *skbs[RTW89_MAX_TX_RPTS];
-> +       spinlock_t skb_lock;
+Change from v4:
+- https://lore.kernel.org/all/20251028003858.267040-1-inochiama@gmail.com
+1. patch 3: add const qualifier to struct sg2042_dwmac_data
 
-I think we should add a comment to describe how/where this lock can be used=
-.
-At least checkpatch will complain this.=20
+Change from v3:
+- https://lore.kernel.org/all/20251024015524.291013-1-inochiama@gmail.com
+1. patch 1: fix binding check error
 
-> +       atomic_t sn;
-> +};
-> +
->  #define RTW89_TX_WAIT_WORK_TIMEOUT msecs_to_jiffies(500)
->  struct rtw89_tx_wait_info {
->         struct rcu_head rcu_head;
+Change from v2:
+- https://lore.kernel.org/all/20251020095500.1330057-1-inochiama@gmail.com
+1. patch 3: fix comment typo
+2. patch 3: add check for PHY_INTERFACE_MODE_NA.
 
-[...]
+Change from v1:
+- https://lore.kernel.org/all/20251017011802.523140-1-inochiama@gmail.com
+1. Add phy-mode property to dt-bindings of sophgo,sg2044-dwmac
+2. Add common helper for fixing RGMII phy mode
+3. Use struct to hold the compatiable data.
 
-> diff --git a/drivers/net/wireless/realtek/rtw89/mac.c b/drivers/net/wirel=
-ess/realtek/rtw89/mac.c
-> index e4e126a4428b..a6642c5761cb 100644
-> --- a/drivers/net/wireless/realtek/rtw89/mac.c
-> +++ b/drivers/net/wireless/realtek/rtw89/mac.c
-> @@ -5463,7 +5463,10 @@ rtw89_mac_c2h_mcc_status_rpt(struct rtw89_dev *rtw=
-dev, struct sk_buff *c2h, u32
->  static void
->  rtw89_mac_c2h_tx_rpt(struct rtw89_dev *rtwdev, struct sk_buff *c2h, u32 =
-len)
->  {
-> +       struct rtw89_tx_rpt *tx_rpt =3D &rtwdev->tx_rpt;
-> +       struct rtw89_tx_skb_data *skb_data;
->         u8 sw_define, tx_status, txcnt;
-> +       struct sk_buff *skb;
->=20
->         if (rtwdev->chip->chip_id =3D=3D RTL8922A) {
->                 const struct rtw89_c2h_mac_tx_rpt_v2 *rpt_v2;
-> @@ -5492,6 +5495,29 @@ rtw89_mac_c2h_tx_rpt(struct rtw89_dev *rtwdev, str=
-uct sk_buff *c2h, u32 len)
->         rtw89_debug(rtwdev, RTW89_DBG_TXRX,
->                     "C2H TX RPT: sn %d, tx_status %d, txcnt %d\n",
->                     sw_define, tx_status, txcnt);
+Inochi Amaoto (3):
+  dt-bindings: net: sophgo,sg2044-dwmac: add phy mode restriction
+  net: phy: Add helper for fixing RGMII PHY mode based on internal mac
+    delay
+  net: stmmac: dwmac-sophgo: Add phy interface filter
 
-To claim sw_define is not over size of tx_rpt->skbs[], we can add below:
+ .../bindings/net/sophgo,sg2044-dwmac.yaml     | 19 ++++++++
+ .../ethernet/stmicro/stmmac/dwmac-sophgo.c    | 20 ++++++++-
+ drivers/net/phy/phy-core.c                    | 43 +++++++++++++++++++
+ include/linux/phy.h                           |  3 ++
+ 4 files changed, 84 insertions(+), 1 deletion(-)
 
-	static_assert(hweight32(RTW89_MAX_TX_RPTS_MASK) =3D=3D
-		      hweight32(RTW89_C2H_MAC_TX_RPT_W12_SW_DEFINE_V2) &&
-		      hweight32(RTW89_MAX_TX_RPTS_MASK) =3D=3D
-		      hweight32(RTW89_C2H_MAC_TX_RPT_W2_SW_DEFINE));
-
-
-> +
-> +       scoped_guard(spinlock_irqsave, &tx_rpt->skb_lock) {
-> +               skb =3D tx_rpt->skbs[sw_define];
-> +
-> +               /* skip if no skb (normally shouldn't happen) */
-> +               if (!skb) {
-> +                       rtw89_debug(rtwdev, RTW89_DBG_TXRX,
-> +                                   "C2H TX RPT: no skb found in queue\n"=
-);
-> +                       return;
-> +               }
-> +
-> +               skb_data =3D RTW89_TX_SKB_CB(skb);
-> +
-> +               /* skip if TX attempt has failed and retry limit has not =
-been
-> +                * reached yet
-> +                */
-> +               if (tx_status !=3D RTW89_TX_DONE &&
-> +                   txcnt !=3D skb_data->tx_pkt_cnt_lmt)
-> +                       return;
-> +
-> +               tx_rpt->skbs[sw_define] =3D NULL;
-> +               rtw89_tx_rpt_tx_status(rtwdev, skb, tx_status);
-> +       }
->  }
->=20
->  static void
-
-[...]
-
-> diff --git a/drivers/net/wireless/realtek/rtw89/usb.c b/drivers/net/wirel=
-ess/realtek/rtw89/usb.c
-> index c359b469aabe..5e587c93268e 100644
-> --- a/drivers/net/wireless/realtek/rtw89/usb.c
-> +++ b/drivers/net/wireless/realtek/rtw89/usb.c
-> @@ -216,6 +216,15 @@ static void rtw89_usb_write_port_complete(struct urb=
- *urb)
->                 skb_pull(skb, txdesc_size);
->=20
->                 info =3D IEEE80211_SKB_CB(skb);
-
-Since newly added chunk doesn't use 'info', just do it before
-ieee80211_tx_info_clear_status().
-
-> +               if (rtw89_is_tx_rpt_skb(skb)) {
-> +                       if (urb->status =3D=3D 0)
-> +                               rtw89_tx_rpt_skb_add(rtwdev, skb);
-> +                       else
-> +                               rtw89_tx_rpt_tx_status(rtwdev, skb,
-> +                                                      RTW89_TX_MACID_DRO=
-P);
-> +                       continue;
-> +               }
-> +
->                 ieee80211_tx_info_clear_status(info);
->=20
->                 if (urb->status =3D=3D 0) {
-
-[...]
+--
+2.51.2
 
 
