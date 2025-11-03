@@ -1,157 +1,158 @@
-Return-Path: <linux-kernel+bounces-882446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9279C2A80C
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:11:59 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 382EBC2A788
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:04:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4543C3AD16B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:03:40 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id BA833346035
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723682D8398;
-	Mon,  3 Nov 2025 08:03:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B762C08AD;
+	Mon,  3 Nov 2025 08:03:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fpQ+G/iF"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DLzwhkf6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D7F2D7397
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 08:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA462C0F93;
+	Mon,  3 Nov 2025 08:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762157000; cv=none; b=HPh0T48mK6W8fL8iKWdno/e16L/f4B+uoghglq5bh0n4lE/D3PSsfJkiAcFpY2EVH/BQdTudvI3wiVIag/nWv98lvHNNQt1IObyaY6/XSf7nw8GnLtG8rU9tCwKu+wI1xYU6WR2pJUMKRTzJ8Sdembh/ISLlfqjc7WNP3x04rwI=
+	t=1762157033; cv=none; b=BIcZhcMMu41I3jiBRXRSsTgmZEpy/b6PQoeNw4DKXRUzPubCeQCryt4AEt5OhDCWfDSsibpvr+W+jmzao6jRB3r9bEXiq+pL2P3D0hlg+IyMCzuvuetEFt9vkVbtToOsp/AW5YwPIyaXT+ur6QbU8FC+367WgNDctRQCmtU9iWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762157000; c=relaxed/simple;
-	bh=UGPgjULdS+we3HJqc3I3soms/UG6+af7wQFeI8hNCdo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=I6FEHpXVDGNSUFCDoXfRS01FKlunHgijE0QNzZk49kogi+ZknN7ih3kkTHxyjEz8SMyfr4n7WlJihuyyj8mbCTKU6k9PkQDH8+lwrrxwc2QXRUZt2ZHIF4+Wlhh4ypW/dwxJriK66APV2Jq6Azh02vUxxFd87gCA+8pmU4SImXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fpQ+G/iF; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-429cf861327so736349f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 00:03:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1762156997; x=1762761797; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=H26VIwt+agnnRoIUvWCQXs/2JOF56AwXUHjfpfr4mpA=;
-        b=fpQ+G/iF5/F99ya+dF03RyzCqd0Qg0fgiQTzCPfVh2VcHkhNeBz1qYeKccutr70RSH
-         ZSEMEFAIzDrWIY7D/PWP+1YrETaRq5cNc+I5ufki1mD22uLA/OHuOYp640aLb4u5DtFX
-         AHjqqJ8hpnlKFNMmOO/5I82/GUJx5zXBWAbwBPxgDAKhi3o1frPr1OVYLTmBBu44f82h
-         9g3DSc6VhF1/08rumJXTrrJgbdIuClh9LrJkyULv27DCoEu6+Af5DptitsUOrc1WwmHw
-         h1FRHmpMuGorhSduD6t8u0wh5fA38wFz2+KZlHIYciqrwrCPbR+SMHTczs+QT/DJTs2U
-         wCvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762156997; x=1762761797;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H26VIwt+agnnRoIUvWCQXs/2JOF56AwXUHjfpfr4mpA=;
-        b=DkAUcIKGPhTLqD8Nk3DLRrZwE4Py1ueho4aUxs+FlBpp0mZjQ3BbAV+vJdDw+IZi/J
-         XcZjMkK6W7X0YUP5fGcOjn0zbp54qbTT0nahBMctz8++MhOGLlzZyelWXF53KSxdj2p9
-         U7UjmO865yrJv4ltukKV3QDP/sQlitHQqJCF6vHu2EWipBqqZyhT6Kc+seE43IO3saUX
-         C1BvyzVjVb3anQlQWhaklYHg0HKc/lmSfLaHtx2ko0xTxhANrVeUSHmZ05U5QN/KIWmR
-         eVZTa9L+XVPi1qghlskc3JUL4Nh9z5QxkX9Nre60yg1QwLzDwXNu0bAPdsBKynTBT57/
-         sUMA==
-X-Forwarded-Encrypted: i=1; AJvYcCW4yM0QPFgmRKgVabukj6IZ2QWQcWLh68NCkHTMOTC+TxCvjZF7Q0mlbhaXxlvX/bw1nRAa44YL0+ebtv4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywcn2hF1olmpTRVZxNZ+HksDrBc6gNco4wr7JVwSfX/3FaIaBXb
-	UPAhci9yNmguLdlnf4x/Kxcixd2pFooQG9cBqklyFZAlqDceAFJC93kRsmgFsOU3iM8=
-X-Gm-Gg: ASbGncvqO3xGu6mQBbOR4dVmzoNblbl3gPMagzpEvl+SMyA/Z0whbqx5WD+LDcEFLIf
-	j9w7e897+Ib7okUBN7vqIgO8jHbUcOFeUHilx1JHExeZe3S7LZnQmw1qXh6Py0SUQvfUUsKrdLK
-	M8qoVHogEPmuIWIWfrMie2Tt1bGuvpN62pLlcrOUAaEDCVofI3K5Zt1Hwr786Vypj9mh2TTeDB5
-	YeF20NgDI/A54uOie9DVl4w37eD9ziPyxNOXYgTjxRMMgpHdRB+HVUUNU3wQnbQqchN2sXoN++X
-	XUk6wTN+s61To9hUJexVoKC781eKvi4Pu1Cy6cMbPwip902oMxnOteQaXO5llNflArVH6gBLYT2
-	VJnrKofjcBx6eVCev3kU14RtumCVYbzanib8f8v78Y/B+50sOFb50zBBa0nKNc7gR6ERlV9mCb7
-	9AfFvhQZUW2TI7iQF7vJJZ3sK2w9MA5hI=
-X-Google-Smtp-Source: AGHT+IGNz9UjeIUIyTmrdpy1PxW7eeOvbLMlDXLQPjJMq+zpapydUSIPBZjaS+Vh5y+ecN3Jkbp6Fw==
-X-Received: by 2002:a05:6000:2501:b0:429:ca7f:8d72 with SMTP id ffacd0b85a97d-429ca7f903emr4511698f8f.23.1762156997401;
-        Mon, 03 Nov 2025 00:03:17 -0800 (PST)
-Received: from gpeter-l.roam.corp.google.com ([145.224.65.248])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c4ac5d6sm142336215e9.8.2025.11.03.00.03.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Nov 2025 00:03:17 -0800 (PST)
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 03 Nov 2025 08:03:11 +0000
-Subject: [PATCH 2/2] arm64: dts: exynos: gs101: remove syscon compatible
- from pmu node
+	s=arc-20240116; t=1762157033; c=relaxed/simple;
+	bh=5pXyRXIxVt0Iau8mWou9oXadjFJmaZdgpbKlkoLVbSU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hPJQLlRv2LRrMvstj1ujmLNCKpjNotUtkSH3u2kIYfIP1GZTE+965kEt5oI5jPMpUkTE6t3itqMiB3oOhMPvNyMUoK8SfRWlO4u5zd7ZOvaYC/5sqgX9lKsj/KbRE6jpeXg0e4RRgdelPEbkHq6IipaJbOdfmOadLW8cAnXZ2uY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DLzwhkf6; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762157032; x=1793693032;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5pXyRXIxVt0Iau8mWou9oXadjFJmaZdgpbKlkoLVbSU=;
+  b=DLzwhkf6JVtn5aygnbhHB9zYbfO9dnSoPkNSp1SpCq4UGOTRGGCPwhGH
+   U2ux0/j0ZbeBeaOv3AdzrxHACPQP65Vwsxq+CZhR6l0QkHoHTzicNrhXR
+   shg3KEjxQ6cuSwt8em6lMjP9nt1sbLhx3SchVWNi0m3no/95/y5zsAqey
+   bn6O2BFEt0KWmd5ugh7mpZWFy9zWlyh0nifVBezZfupI0/VURnXo5z1S8
+   Ok+YdKx8t9xue71f8yLwPfjTVBHP5+EydkDgOodmgCd0oDrx6LrASTTvK
+   riiEeWGsS6MDPj/Qrm4/CTpeAJfQQEyIkRP/KktXa1+yldfeoi9CjZGl9
+   A==;
+X-CSE-ConnectionGUID: SPCZY5OwSkOq7K/DCRYatw==
+X-CSE-MsgGUID: YeJtQbERSquAGV3oIPwKAA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="74518682"
+X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
+   d="scan'208";a="74518682"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 00:03:51 -0800
+X-CSE-ConnectionGUID: W2KynLE4QPibqsxiZlCTFg==
+X-CSE-MsgGUID: x44oWC41SpWrm2y4Xsghpg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
+   d="scan'208";a="186042022"
+Received: from smoehrl-linux.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.216])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 00:03:47 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@intel.com>)
+	id 1vFpXQ-000000055GF-3PTd;
+	Mon, 03 Nov 2025 10:03:40 +0200
+Date: Mon, 3 Nov 2025 10:03:39 +0200
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-i3c@lists.infradead.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	linux-iio@vger.kernel.org, joshua.yeong@starfivetech.com,
+	devicetree@vger.kernel.org, linux@roeck-us.net,
+	Carlos Song <carlos.song@nxp.com>
+Subject: Re: [PATCH v9 4/6] i3c: master: svc: Add basic HDR mode support
+Message-ID: <aQhh2zZVxh1oVuJz@smile.fi.intel.com>
+References: <20251031-i3c_ddr-v9-0-f1e523ebaf78@nxp.com>
+ <20251031-i3c_ddr-v9-4-f1e523ebaf78@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20251103-remove-pmu-syscon-compat-v1-2-f2cb7f9ade6f@linaro.org>
-References: <20251103-remove-pmu-syscon-compat-v1-0-f2cb7f9ade6f@linaro.org>
-In-Reply-To: <20251103-remove-pmu-syscon-compat-v1-0-f2cb7f9ade6f@linaro.org>
-To: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- dan.carpenter@linaro.org, kernel-team@android.com, willmcvicker@google.com, 
- dan.carpenter@linaro.org, arnd@arndb.de, robh@kernel.org, 
- Peter Griffin <peter.griffin@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1645;
- i=peter.griffin@linaro.org; h=from:subject:message-id;
- bh=UGPgjULdS+we3HJqc3I3soms/UG6+af7wQFeI8hNCdo=;
- b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBpCGHBKP/enJRrOYHc08VISfExyYfUCOIHP/hNH
- NbGGlSpBV6JAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCaQhhwQAKCRDO6LjWAjRy
- uiiWD/97FQHrIvR7Ad+ObGfq9pO2VhDQDunpWCIekHI474m6k3nUj2ags+XEydrybbUAlBAJS5S
- si656ToMn2SK+oYw+BO2niz2Pnh58THEqnm5FlS9Q1Fw0RJgiyFaPhfWKR0dR6MTPrso9RSjEEc
- wx+vGME5loVJgJHMvBwdrtyy/L6m7g7TV4OWB8DBuExigkqdQLacipDGXbONDP/j5mMrEDQ2Vdo
- Ga30F3f/pW5rr5mVrtVHEjzV4+Z1UVsfJw5L4qUeyZY7/Mh0HAMQ1sh0jixf8UUkUTrQhlOyv4u
- Z4Lq8D5GirrHGhFoNmC/X1GlxGSlhc1ltUzAyyMhQ7rolomG4gsBqPY5XwwOLcN6sokE184lhJT
- i/lw0r6FicCx76Sh2r0Kno9sFUpPl7pibEXgKfeSCT76z3wnN685iKmTZvdbUI/LRFzxITlhtXe
- 2vMgFIbxfimbqKqCI1F53ty/eBHVvbqsJ9YZbDplSLYkFOXXzmztRZ5HG9rg6y6HYDCMMUWi9mo
- UPmWmJT9SbbjnVgz1L0S+rd2mExb8FEZZ4opckU9JwoX36t+3qjTkxLcrXpln64RGdoGpBnRJpk
- 6UAIy+QaOQt91LDA3BGDxPC1+yu3UKgv5FjICgKUkKCPNo/bun1F5f2T7XLSD0s4Fkg57+Qz4eY
- GbB0Tw4cdgP5DSg==
-X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
- fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251031-i3c_ddr-v9-4-f1e523ebaf78@nxp.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-Since commit ba5095ebbc7a ("mfd: syscon: Allow syscon nodes without a
-"syscon" compatible") it is possible to register a regmap without the
-syscon compatible in the node.
+On Fri, Oct 31, 2025 at 12:39:16PM -0400, Frank Li wrote:
+> Add basic HDR mode support for the svs I3C master driver.
+> 
+> Only support for private transfers and does not support sending CCC
+> commands in HDR mode.
+> 
+> Key differences:
+> - HDR uses commands (0x00-0x7F for write, 0x80-0xFF for read) to
+> distinguish transfer direction.
+> - HDR read/write commands must be written to FIFO before issuing the I3C
+> address command. The hardware automatically sends the standard CCC command
+> to enter HDR mode.
+> - HDR exit pattern must be sent instead of send a stop after transfer
+> completion.
+> - Read/write data size must be an even number.
 
-As mentioned in that commit, it's not correct to claim we are compatible
-with syscon, as a MMIO regmap created by syscon won't work. Removing the
-syscon compatible means syscon driver won't ever create a mmio regmap.
+...
 
-Note this isn't usually an issue today as exynos-pmu runs at an early
-initcall so the custom regmap will have been registered first. However
-changes proposed in [1] will bring -EPROBE_DEFER support to syscon allowing
-this mechanism to be more robust, especially in highly modularized systems.
+>  static bool svc_cmd_is_read(u32 rnw_cmd, u32 type)
+>  {
+> -	return rnw_cmd;
+> +	return (type == SVC_I3C_MCTRL_TYPE_DDR) ? !!(rnw_cmd & 0x80) : rnw_cmd;
 
-Technically this is a ABI break but no other platforms are affected.
+This seems confusing. Either !! is redundant (which is actually the case) or
+I don't know what the idea behind this.
 
-Link: https://lore.kernel.org/lkml/aQdHmrchkmOr34r3@stanley.mountain/ [1]
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
- arch/arm64/boot/dts/exynos/google/gs101.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +}
 
-diff --git a/arch/arm64/boot/dts/exynos/google/gs101.dtsi b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-index d06d1d05f36408137a8acd98e43d48ea7d4f4292..e1a7d33fd4a369f7b352b81d2070beb62a0ced16 100644
---- a/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-+++ b/arch/arm64/boot/dts/exynos/google/gs101.dtsi
-@@ -1705,7 +1705,7 @@ sysreg_apm: syscon@17420000 {
- 		};
- 
- 		pmu_system_controller: system-controller@17460000 {
--			compatible = "google,gs101-pmu", "syscon";
-+			compatible = "google,gs101-pmu";
- 			reg = <0x17460000 0x10000>;
- 			google,pmu-intr-gen-syscon = <&pmu_intr_gen>;
- 
+...
+
+> +static void svc_i3c_master_emit_force_exit(struct svc_i3c_master *master)
+> +{
+> +	u32 reg;
+> +
+> +	writel(SVC_I3C_MCTRL_REQUEST_FORCE_EXIT, master->regs + SVC_I3C_MCTRL);
+> +
+> +	/*
+> +	 * Not need check error here because it is never happen at hardware. IP
+
+If you move 'IP' to the next line it will be better to read.
+
+> +	 * just wait for few fclk cycle to complete DDR exit pattern. Even
+> +	 * though fclk stop, timeout happen here, the whole data actually
+> +	 * already finish transfer. The next command will be timeout because
+> +	 * wrong hardware state.
+> +	 */
+> +	readl_poll_timeout_atomic(master->regs + SVC_I3C_MSTATUS, reg,
+> +				  SVC_I3C_MSTATUS_MCTRLDONE(reg), 0, 1000);
+> +
+> +	/*
+> +	 * This delay is necessary after the emission of a stop, otherwise eg.
+> +	 * repeating IBIs do not get detected. There is a note in the manual
+> +	 * about it, stating that the stop condition might not be settled
+> +	 * correctly if a start condition follows too rapidly.
+> +	 */
+> +	udelay(1);
+>  }
 
 -- 
-2.51.1.930.gacf6e81ea2-goog
+With Best Regards,
+Andy Shevchenko
+
 
 
