@@ -1,138 +1,241 @@
-Return-Path: <linux-kernel+bounces-882416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7888DC2A66B
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:51:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2993C2A6D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:55:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2335D344B23
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:51:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27F673B4B9E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:53:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B1222BE7B5;
-	Mon,  3 Nov 2025 07:51:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5480D2C0F73;
+	Mon,  3 Nov 2025 07:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LjHwSot9"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b="P02YbIPl"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0D923EA82;
-	Mon,  3 Nov 2025 07:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A610D2BE7B5
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 07:52:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762156286; cv=none; b=dHZ27+OgihnksN/F2BfL7U4WFRQBPXJXz8tAIvwxu51f+H7tW+S80MNzRMvfAZsYFwzcyCfDxX9Ckbgbc4SwBxuBvtR0Z9JMmJ5G1euipcIyxFPBX//r66uk8s+/WzlOzEU65NTCjFcf8dclT8HWdkbkbd9iQxPk+JQcKQPl6eI=
+	t=1762156378; cv=none; b=fNawRhltFF77dUZlWRShS2A6BbTTZjANj0UFpio6oJSm6iKgRaWlNxe8Pi1UAS2PJtgX23tNxmZC4j9SYbf1TP8mG3O+pWSrSAMRf/X1bV7qNubcci4l3ASIADvb+RHvmnVs2g4x1CtAF3fSMck3ANvX+GDu519Fq1ym5aXDnm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762156286; c=relaxed/simple;
-	bh=CzFv5QtTw+xxN2lhxtaOKfWAs6w/cC9PXnYPBftch+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KwzDka0l+c40YsTYg470TZC/ZjqxB7I0HpE1XFgMquPn0++T1hEREN26fgPVXICX1Nu/UBRx2e9jmPcsfijTi3c3rONVtduceDft0C0GXR0QF1jaz/ydVDWGkvB/tOedOgRD6OWLXO0ODjhdMr35I5LyZZNP6kBthTIxLusQDNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LjHwSot9; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762156285; x=1793692285;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=CzFv5QtTw+xxN2lhxtaOKfWAs6w/cC9PXnYPBftch+8=;
-  b=LjHwSot9qdbTRRh2UArI75WUKix+V2RxS5YRLNH8yltJeS9wAKXDQOnE
-   IApTtVHI20A75XhJgxWl0A0p0JLDIMKaj5PMwvMn2pxv7OFQeovqbiofK
-   Z/r0lRsmOkImuNz9Qtuj09dMMrLgcJfQ+hIquVmczy6OIkXksldNh0hj9
-   k2JlNSVXlINxHxAVxeAMwCavP/afFmtEzeS6Hpn9NeJu1V+X3sNTtfQp2
-   C3191BbxOgzkygvSbHP0l8/87jDK9qzVNX1B3/7B2M2/Dlr+h52fb7MFo
-   pPtWiNrWztY3abVQyBgxalEyOcxI2thlKLN13/COHz3FpW0D5xfqIS8m2
-   g==;
-X-CSE-ConnectionGUID: pVXHbwEcQpmpPfZCdaRnMQ==
-X-CSE-MsgGUID: +s+AUinlQMSX+WdprkkuKg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="66839124"
-X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
-   d="scan'208";a="66839124"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2025 23:51:24 -0800
-X-CSE-ConnectionGUID: QA9eUSzpSVu3aRL5VPuxqw==
-X-CSE-MsgGUID: v+EbVtIyR0+YA4ipkPUPHQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
-   d="scan'208";a="224043544"
-Received: from smoehrl-linux.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.216])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2025 23:51:21 -0800
-Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
-	(envelope-from <andriy.shevchenko@intel.com>)
-	id 1vFpLR-0000000552S-0Yeh;
-	Mon, 03 Nov 2025 09:51:17 +0200
-Date: Mon, 3 Nov 2025 09:51:16 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Ajith Anandhan <ajithanandhan0406@gmail.com>
-Cc: linux-iio@vger.kernel.org, jic23@kernel.org, dlechner@baylibre.com,
-	nuno.sa@analog.com, andy@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/3] iio: adc: Add support for TI ADS1120 ADC
-Message-ID: <aQhe9IjEW07PP6Or@smile.fi.intel.com>
-References: <20251030163411.236672-1-ajithanandhan0406@gmail.com>
- <aQR1N__AwvPm21tm@smile.fi.intel.com>
- <406fbb02-5a2b-4097-a645-b97d3d74287c@gmail.com>
+	s=arc-20240116; t=1762156378; c=relaxed/simple;
+	bh=CpM3LvhKwcp4J4lDv8ipejSSGm/KKdsoaJfd2VI7DlA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZfZP3vgo6+z70Qx/GBySC0eoHBgfCCiCz5Vuoj/eOtusVzNQzeh5i6TJWtjYqyf+qc9MJOI9IerzWmIByx739vZ5yf8iDNvtz9px4AJMUIBl7lgoMLYWQUOien505DpQfeb2QBOPxn3eOuHskTns9cHVx3WaKY7ZsCjRV/CIMRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com; spf=pass smtp.mailfrom=shopee.com; dkim=pass (2048-bit key) header.d=shopee.com header.i=@shopee.com header.b=P02YbIPl; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=shopee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shopee.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-33b9dc8d517so3749514a91.0
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 23:52:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shopee.com; s=shopee.com; t=1762156374; x=1762761174; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pLkzhtoF4Ahv1FKwU/tjbCnsdl0esqhckJcQdc+yB8A=;
+        b=P02YbIPl/Elwc5XdXXFspjWAfPg6E4vbH9mgSZge3KREFOcZr/MNJA82NKKJyS338Z
+         LEnkiaHbasz2Fplbs+EoUKBUJrqt1Bi2+dcsHy/Dyz7TaULvbCiBj4rsUhsLH7XA++Hh
+         YBP7YOFusXY/eEKcUjF3IVm0eFRtUA1cOiFN9pXBhDLIZYj57IyTsonh86wS2FtdBQJK
+         HbBfMT1shzBp08qQc+LJZiNr9A1TeSy2uaOnkKH3x8YkfdLHiry7MGlcErQ1FZXAQ4RK
+         Q63kHw12o0VeSBnmWop/HSU5j06e2oXuBqUQUo1hfBDBxaMLAWdtDX+LvIU1O+Bu9FHC
+         yjJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762156374; x=1762761174;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pLkzhtoF4Ahv1FKwU/tjbCnsdl0esqhckJcQdc+yB8A=;
+        b=ssULF+6J3l7ueFv19ZyFbAxbLoFSBWkNWBxjolnjQ7yGzVABBt/NziqKLEddy7Lz2K
+         QevvgsYfLLBoAeW3YGSdsSCBmLv5551keNwBqN/ogG8MHq0LwP8UjdurJ5bQHDqhmcfy
+         V1o7AZszv7aR3tfT6eSNIIDcfABUBEIOEL7RnFpvFq7cIBqZ1AxXEYqCYHt2KhXFMLxp
+         jNvZ5lnIA386dvAMM43FaF3LXiDlrszvBQgHPdx/x22ZZKLAA/vM2FcYeB24MMbGOtiP
+         nyHt7C5eCJjAp+NT7GCiO+CBO/Rnd8xpLAEyeRK5taVGEgyQcAfLTIrobEGdEq2eXVYT
+         aRtw==
+X-Forwarded-Encrypted: i=1; AJvYcCXWKFHmpaXat3Qj8OjSgck3NX24M+gj7YotpOUDG+aZIoxAIyNuLuHOr9ZStKO0K9HTJSVt51Z9m65sCqM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjDA+CPKTlIwUkkSsPUUxfA5UCgdA9uuGP/rf6175TlgE49S09
+	ORkFSix2KI3qkEkklJLy8fFjMGeIu3ECFZ10iCOjDSCf7qHZ0f7/aTKaALK7HN2ww6Y=
+X-Gm-Gg: ASbGncstiZE4hzsNSph+wKDR7wK0xonDIiBWVcSnxAuVwpH/MU2+WOaOEOKrEFCHrh6
+	kaVjRE5Ad7SxBHqrxQ+tFfKR5yV6rQyZUMOCuUh86gRJ+ewj2sxasB6k9bBl6qkCd99yjkUsusX
+	itNPHc2PZprCd7KyjURhhDacpCl6U1FXfS/DqSSgh/SV0rqT5ZUGqAWwOWDM82j616UuHkBO7pn
+	ShwNFXp0VnUrhsxgRJC5f4PelJIxX1+DvaC8sT6/4CieRGghl56c5NEOfT6BqA+JpVdt6ES2E5S
+	CMO/OGMv26UZmuwrkzvnOBm9VJpjAZtitl4+O5IyP0xD7bTM3tDgk04LaW6rCFQdL8UfozxKWkA
+	/l2MLcy+LC1GE7AqrJ+/owOIXdJSEARUJTp5mYu3naEpSa1y8Mj5CaebTMK9R763a3QXvNbe18g
+	pwhnbcExG1pTva/3Mo6pHQBiDY
+X-Google-Smtp-Source: AGHT+IFmmflmrHgmAEotptMvyKECeXV6WQu6qDa1mCLOci2pV13NrALFzKLJadVhnxzhUmSBh4pxng==
+X-Received: by 2002:a17:90b:1c06:b0:341:2150:4856 with SMTP id 98e67ed59e1d1-341215049b9mr3820496a91.17.1762156373781;
+        Sun, 02 Nov 2025 23:52:53 -0800 (PST)
+Received: from .shopee.com ([122.11.166.8])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-34159a16652sm34552a91.20.2025.11.02.23.52.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 02 Nov 2025 23:52:53 -0800 (PST)
+From: Leon Huang Fu <leon.huangfu@shopee.com>
+To: stable@vger.kernel.org,
+	greg@kroah.com
+Cc: tj@kernel.org,
+	lizefan.x@bytedance.com,
+	hannes@cmpxchg.org,
+	corbet@lwn.net,
+	mhocko@kernel.org,
+	roman.gushchin@linux.dev,
+	shakeelb@google.com,
+	muchun.song@linux.dev,
+	akpm@linux-foundation.org,
+	sjenning@redhat.com,
+	ddstreet@ieee.org,
+	vitaly.wool@konsulko.com,
+	lance.yang@linux.dev,
+	leon.huangfu@shopee.com,
+	shy828301@gmail.com,
+	yosryahmed@google.com,
+	sashal@kernel.org,
+	vishal.moola@gmail.com,
+	cerasuolodomenico@gmail.com,
+	nphamcs@gmail.com,
+	cgroups@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH 6.6.y 0/7] mm: memcg: subtree stats flushing and thresholds
+Date: Mon,  3 Nov 2025 15:51:28 +0800
+Message-ID: <20251103075135.20254-1-leon.huangfu@shopee.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <406fbb02-5a2b-4097-a645-b97d3d74287c@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
- krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-On Sat, Nov 01, 2025 at 05:07:38PM +0530, Ajith Anandhan wrote:
-> On 10/31/25 2:07 PM, Andy Shevchenko wrote:
-> > On Thu, Oct 30, 2025 at 10:04:08PM +0530, Ajith Anandhan wrote:
-> > > This RFC patch series adds support for the Texas Instruments ADS1120,
-> > > a precision 16-bit delta-sigma ADC with SPI interface.
-> > > 
-> > > The driver provides:
-> > > - 4 single-ended voltage input channels
-> > > - Programmable gain amplifier (1 to 128)
-> > > - Configurable data rates (20 to 1000 SPS)
-> > > - Single-shot conversion mode
-> > > 
-> > > I'm looking for feedback on:
-> > > 1. The implementation approach for single-shot conversions
-> > > 2. Any other suggestions for improvement
-> > > 
-> > > Datasheet: https://www.ti.com/lit/gpn/ads1120
-> > The cover letter missed to answer the Q: Why a new driver? Have you checked the
-> > existing drivers? Do we have a similar enough one that may be extended to
-> > support this chip?
-> > 
-> Thank you for the feedback.
-> 
-> I evaluated the following existing driver before creating a new one:
-> 
-> ads124s08.c - TI ADS124S08
-> 
-> - This is the closest match (both are delta-sigma, SPI-based)
-> 
-> - However, significant differences exist:
-> 
->     * Different register layout (ADS124S08 has more registers)
-> 
->     * Different command set ADS124S08 has built-in MUX for differential
-> inputs
-> 
->     * Different register addressing and bit fields and conversion timing and
-> data retrieval.
-> 
-> would require extensive conditional code paths that might reduce
-> maintainability for both devices. A separate, focused driver seemed cleaner.
+We observed failures in the 'memcontrol02' test case from the Linux Test
+Project (LTP) [1] when running on a 256-core server with the 6.6.y kernel.
+The test fails due to stale memory.stat values being returned, which is
+caused by the current stats flushing implementation's limitations with large
+core counts.
 
-Good, please add this summary to the cover letter of next version.
+This series backports the memcg subtree stats flushing improvements from
+Linux 6.8 to 6.6.y to address the issue. The main goal is to restore
+per-memcg stats flushing with dynamic thresholds, which improves both
+accuracy and performance of memory cgroup statistics, especially on
+high-core-count systems.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Background
+==========
 
+The current stats flushing in 6.6.y flushes the entire memcg hierarchy with
+a global threshold. This is not efficient and can cause stale stats when read
+'memory.stat'.
 
+Dependency Patches
+==================
+
+Patches 1-2 are dependencies required for clean application of the main
+series:
+
+Patch 1: 811244a501b9 "mm: memcg: add THP swap out info for anonymous reclaim"
+
+  This patch adds THP_SWPOUT and THP_SWPOUT_FALLBACK entries to the
+  memcg_vm_event_stat[] array. It is needed because patch 4 (e0bf1dc859fd)
+  moves the vmstats struct definitions, including this array. Without this
+  patch, the array structure would not match between 6.6.y and 6.8, causing
+  context conflicts during cherry-pick.
+
+  The patch is already in mainline (merged in v6.7) but was not included in
+  the stable 6.6.y branch.
+
+Patch 2: 7108cc3f765c "mm: memcg: add per-memcg zswap writeback stat"
+
+  This patch adds the ZSWPWB entry to the memcg_vm_event_stat[] array. Like
+  patch 1, it is required for patch 4 to apply cleanly. The array structure
+  must match the 6.8 state for the code movement to succeed without
+  conflicts.
+
+  This patch is also in mainline (merged in v6.8) but was not backported to
+  6.6.y.
+
+Main Series
+===========
+
+Patches 3-7 are the core memcg stats flushing improvements:
+
+- Patch 3: Renames flush_next_time to flush_last_time for clarity
+- Patch 4: Moves vmstats struct definitions for better code organization
+- Patch 5: Implements per-memcg stats flushing thresholds (key change)
+- Patch 6: Moves stats flush into workingset_test_recent()
+- Patch 7: Restores subtree stats flushing (main feature)
+
+Cherry-Pick Notes for Patch 7
+==============================
+
+Patch 7 (7d7ef0a4686a) requires manual conflict resolution in mm/zswap.c:
+
+The conflict occurs because this patch includes changes to zswap shrinker
+code that was introduced in Linux 6.8. Since this new shrinker
+infrastructure does not exist in 6.6.y, the conflicting code should be
+removed during cherry-pick.
+
+Resolution: Keep the 6.6.y (HEAD) version of mm/zswap.c and discard the
+new shrinker code from the patch. The conflict markers will show:
+
+  <<<<<<< HEAD
+  // existing 6.6.y code
+  =======
+  // new 6.8 shrinker code (shrink_memcg_cb, zswap_shrinker_scan, etc.)
+  >>>>>>> 7d7ef0a4686a
+
+Simply keep the HEAD version and remove everything between the "======="
+and ">>>>>>>" markers. This is safe because the zswap shrinker is a
+separate new feature, not a dependency for the memcg stats changes.
+
+Additionally, if you encounter a conflict in mm/workingset.c, it may be
+due to commit 417dbd7be383 ("mm: ratelimit stat flush from workingset
+shrinker") which was backported to 6.6.y. The resolution is to use:
+  mem_cgroup_flush_stats_ratelimited(sc->memcg)
+which preserves the performance optimization while using the new API.
+
+Testing
+=======
+
+This series has been extensively tested upstream with:
+- 5000 concurrent workers in 500 cgroups doing allocations and reclaim
+- 250k threads reading stats every 100ms in 50k cgroups
+- No performance regressions observed with per-memcg thresholds
+
+The changes improve both stats accuracy and reduce unnecessary flushing
+overhead.
+
+References
+==========
+
+[1] Linux Test Project (LTP): https://github.com/linux-test-project/ltp
+
+Domenico Cerasuolo (1):
+  mm: memcg: add per-memcg zswap writeback stat
+
+Xin Hao (1):
+  mm: memcg: add THP swap out info for anonymous reclaim
+
+Yosry Ahmed (5):
+  mm: memcg: change flush_next_time to flush_last_time
+  mm: memcg: move vmstats structs definition above flushing code
+  mm: memcg: make stats flushing threshold per-memcg
+  mm: workingset: move the stats flush into workingset_test_recent()
+  mm: memcg: restore subtree stats flushing
+
+ Documentation/admin-guide/cgroup-v2.rst |   9 +
+ include/linux/memcontrol.h              |   8 +-
+ include/linux/vm_event_item.h           |   1 +
+ mm/memcontrol.c                         | 266 +++++++++++++-----------
+ mm/page_io.c                            |   8 +-
+ mm/vmscan.c                             |   3 +-
+ mm/vmstat.c                             |   1 +
+ mm/workingset.c                         |  42 ++--
+ mm/zswap.c                              |   4 +
+ 9 files changed, 203 insertions(+), 139 deletions(-)
+
+--
+2.50.1
 
