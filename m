@@ -1,118 +1,103 @@
-Return-Path: <linux-kernel+bounces-882506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AB0CC2A9E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:44:32 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C528C2AA28
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:50:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 332223A6352
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:44:06 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 481CE4EE43D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EA212E5B13;
-	Mon,  3 Nov 2025 08:43:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5082E5B21;
+	Mon,  3 Nov 2025 08:49:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b="eQk8loMt"
-Received: from canpmsgout05.his.huawei.com (canpmsgout05.his.huawei.com [113.46.200.220])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="kB+jhMCM"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 316FF2E62B9;
-	Mon,  3 Nov 2025 08:42:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF202DC348;
+	Mon,  3 Nov 2025 08:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762159379; cv=none; b=CkWXlT3zP0heZQsBXaJo1otu5l7aYZ9eFUcU8moWb/ZQlCDDVk2oIblBpMWixgIuIwBpz+RvNq/BeVP2RbfMdcMe1tNPZOeae+4JjbK20MeHjojU3VWY82Kyo+sgwbkiMTfuoq3AsywWjmENgH3ofFTpAHGUZ0tAJA36Yfmdqkc=
+	t=1762159786; cv=none; b=jeg6FReZOqw+f0s0X6QmTWTjyqJR+jmHfm/Low5PYOrS+GiPs3SNrYBkOTt8xu4GoXJYDuoN4LjyybIbFiDg8Xe6rbKdB4Q/Vji7TCQFyPrm9FfKBik6LlbzMEvvYMPSoWHZnVhiWxC2W1Nz12gPOjd4Hbmo5/1CeGjXneCo5KQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762159379; c=relaxed/simple;
-	bh=FpI1U6+LSrImKj5yJbC3JbtvCb9JrCxDUrMJy8x2q70=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kfB2F2pJjiu7briKjQKAyiiih/7QxqCVGuUlGAsudOVLFVXsPN2vA6eAvs8YZnan19RbiKPUWHQX0k+u6JfrJtKaf7vgSNcljTIYD/0xaWo7tG8726tfzhXuY7FdTuvaCu2Svy2eF0IGTkGDFQ+IWPlupcGgSNWfK+21pRmb0Rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=h-partners.com; dkim=pass (1024-bit key) header.d=h-partners.com header.i=@h-partners.com header.b=eQk8loMt; arc=none smtp.client-ip=113.46.200.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-dkim-signature: v=1; a=rsa-sha256; d=h-partners.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=lYn04A0PNhNxpV/CFYWHsfLmTyXgv8vwZHaF7oFVV/Y=;
-	b=eQk8loMtGE3Frl7BTUJivn9kSDLvaJ4OMz48g8g54CTcIKHTA/ATZ+MCEoRWqgxYS+lRbwjBU
-	xkndrqX+FuPRN8aGleo7BOg2Yj/8C8dHXrUw4Q9fqx+8zmfN/ZLe65cJ67VNAnFUwNsH6CoxTpO
-	BMCJtQwrB3Y04sd4txviFHI=
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by canpmsgout05.his.huawei.com (SkyGuard) with ESMTPS id 4d0Q6H75M1z12LGF;
-	Mon,  3 Nov 2025 16:41:11 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id A961D147B64;
-	Mon,  3 Nov 2025 16:42:48 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 3 Nov 2025 16:42:48 +0800
-Received: from localhost.localdomain (10.50.163.32) by
- kwepemn100009.china.huawei.com (7.202.194.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 3 Nov 2025 16:42:47 +0800
-From: Huisong Li <lihuisong@huawei.com>
-To: <rafael@kernel.org>, <lenb@kernel.org>
-CC: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<Sudeep.Holla@arm.com>, <linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
-	<zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>, <yubowen8@huawei.com>,
-	<lihuisong@huawei.com>
-Subject: [PATCH v2 7/7] ACPI: processor: idle: Redefine acpi_processor_setup_cpuidle_dev to void
-Date: Mon, 3 Nov 2025 16:42:44 +0800
-Message-ID: <20251103084244.2654432-8-lihuisong@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20251103084244.2654432-1-lihuisong@huawei.com>
-References: <20251103084244.2654432-1-lihuisong@huawei.com>
+	s=arc-20240116; t=1762159786; c=relaxed/simple;
+	bh=8tuJsROwI2VzZ5xr0xXLp3Zh781ZfsXiSloTIPD4CrM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M4v9DBaJpz65OGLPHNxJZIRqDUddv+aNw8YGIi5/hKpt9TTsP0g29jD27E7xKJWul2kV+uTxoRwcZmAFtBZGEkrqReJFPKBSPeBSUxqVsQZwhKp8R6JMPfbKdnN/TiS9stahbh/z5CwcoCHYgXdMoM11Lp70IbjqqLmZUCBNY+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=kB+jhMCM; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1762159427;
+	bh=8tuJsROwI2VzZ5xr0xXLp3Zh781ZfsXiSloTIPD4CrM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kB+jhMCM1GHi+MeyUo5A2D2Nl2Zaj4w0rJ0MtcoWUiZRrLwlQXY18GUWmUIdC6Qtz
+	 Hm/2tah1AkhRImWrzcwBH9eWu8zkbl6eoxm70yGutoNNZlNjJCGFifITnFUw3mT2Nc
+	 wvb59Iqh937c9S4bPXnwsRXxFoFpIxLcxdkjc7b7uCuWLmtQQ69tzgsoc9IPU5ye2s
+	 XppA6l5hCm/mMApe2zwkPeLlLikVgqeG3BBy5A5U6I3IUXSSaq8es3RhhKEeGctTIM
+	 XTtMgYmMybm2OXIsUt3yIYx9aU3EgPTJ0RcA5cEgcIIKJ96gyL1PExd9QVNV+8UQzQ
+	 1z2HMVD+If0Ng==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id ECECB17E090D;
+	Mon,  3 Nov 2025 09:43:45 +0100 (CET)
+Message-ID: <75a89547-6f21-4f89-8091-375e7013c26d@collabora.com>
+Date: Mon, 3 Nov 2025 09:43:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemn100009.china.huawei.com (7.202.194.112)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 08/15] dt-bindings: net: mediatek,net: Correct bindings
+ for MT7981
+To: Sjoerd Simons <sjoerd@collabora.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Ryder Lee <ryder.lee@mediatek.com>, Jianjun Wang
+ <jianjun.wang@mediatek.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ Manivannan Sadhasivam <mani@kernel.org>,
+ Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Lee Jones <lee@kernel.org>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Lorenzo Bianconi <lorenzo@kernel.org>, Felix Fietkau <nbd@nbd.name>
+Cc: kernel@collabora.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-pci@vger.kernel.org,
+ linux-phy@lists.infradead.org, netdev@vger.kernel.org,
+ Daniel Golle <daniel@makrotopia.org>, Bryan Hinton <bryan@bryanhinton.com>
+References: <20251101-openwrt-one-network-v2-0-2a162b9eea91@collabora.com>
+ <20251101-openwrt-one-network-v2-8-2a162b9eea91@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20251101-openwrt-one-network-v2-8-2a162b9eea91@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Notice that the acpi_processor_setup_cpuidle_dev() don't need to
-return any value because their callers don't check them anyway.
-So redefine the function to void.
+Il 01/11/25 14:32, Sjoerd Simons ha scritto:
+> Different SoCs have different numbers of Wireless Ethernet
+> Dispatch (WED) units:
+> - MT7981: Has 1 WED unit
+> - MT7986: Has 2 WED units
+> - MT7988: Has 2 WED units
+> 
+> Update the binding to reflect these hardware differences. The MT7981
+> also uses infracfg for PHY switching, so allow that property.
+> 
+> Signed-off-by: Sjoerd Simons <sjoerd@collabora.com>
 
-No intentional functional impact.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Signed-off-by: Huisong Li <lihuisong@huawei.com>
----
- drivers/acpi/processor_idle.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
-index 46614cf1ae8b..2ae51c42f544 100644
---- a/drivers/acpi/processor_idle.c
-+++ b/drivers/acpi/processor_idle.c
-@@ -1248,18 +1248,17 @@ static void acpi_processor_setup_cpuidle_states(struct acpi_processor *pr)
-  * @pr: the ACPI processor
-  * @dev : the cpuidle device
-  */
--static int acpi_processor_setup_cpuidle_dev(struct acpi_processor *pr,
--					    struct cpuidle_device *dev)
-+static void acpi_processor_setup_cpuidle_dev(struct acpi_processor *pr,
-+					     struct cpuidle_device *dev)
- {
- 	if (!pr->flags.power_setup_done || !pr->flags.power || !dev)
--		return -EINVAL;
-+		return;
- 
- 	dev->cpu = pr->id;
- 	if (pr->flags.has_lpi)
--		return 0;
-+		return;
- 
- 	acpi_processor_setup_cpuidle_cx(pr, dev);
--	return 0;
- }
- 
- static int acpi_processor_get_power_info(struct acpi_processor *pr)
--- 
-2.33.0
 
 
