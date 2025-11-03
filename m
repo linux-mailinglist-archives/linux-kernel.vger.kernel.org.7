@@ -1,233 +1,106 @@
-Return-Path: <linux-kernel+bounces-883300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19964C2D0EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:18:47 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6927FC2CF8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:05:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C88D3BC98C
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:03:56 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 354FE4F27A9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:02:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A528314B90;
-	Mon,  3 Nov 2025 16:03:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14EDE314D0B;
+	Mon,  3 Nov 2025 16:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="i4Xnsm0v";
-	dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b="taCqwNzw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="o0I2uQpN"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C1F7314B78
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049AD314D08;
+	Mon,  3 Nov 2025 16:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762185831; cv=none; b=s5DRwK1F6R2iT3lnbqsUzNDpPnBs+JL1/wU4ViZZyo8OONkyWKUfZwBQJ2NS+9hf+sHSOCsZipNmDePQp2EwU2nK5dvdAmJkFFXipWSt2qvcrTPu41DaMmcxqiIeo9m6iAqa//9m6VNLdr1Yw9r70pABci2HsHPsXw1fZc6vfqE=
+	t=1762185683; cv=none; b=rPeyphaXzXT25zJ5uHjlxLHse0/8AnCHv4Lzw1vh9LZ9IM0pWXfCKOzl0EmoyXgeezBq1qatGLme1N9Eg/Cl6Ueqha221NlW33dsFyAiIKtZa215x+B9GSXTfWRL0uK5/TRVxirqhYROq1acjGNEQ/gC14Cmi2kYVnnu6MuP2tM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762185831; c=relaxed/simple;
-	bh=W3vMDeaXnHo1OZjfJ7ogXCVgomGfM6sVhl807GF4qFQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dre9h6B5yVDwLsIo6qS3D5QkqV2Kx16IUkYOnAe4djxgr/KH71PyP0cxRVHuBYvgOWrL/foczkpA9cW+YjebBfAuTPlChm8bsMcjR7hRwuOVoBT7/GMunZLG9W05q/1Rne6/7BjGpow06OEkPxT0ALFSkaIuN1XLZzO7/4cflK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=i4Xnsm0v; dkim=pass (2048-bit key) header.d=redhat.com header.i=@redhat.com header.b=taCqwNzw; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1762185828;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=lAB1nRPhZgw2D2F/txfufevKSsNDcd09VLHZkiGFvSY=;
-	b=i4Xnsm0vx46j28gDyhryibvkXiqHewn8CK+/phFK5De/BLooQKa/ovWEn7EVMSqMFDs/bb
-	B5qGAJCRSze3s5TrxQ9vnCQvFj5Lb6KYkl3qpj45ZdGrBAV0+CsahIFJbbMAfzFFpk1f6h
-	OHkfyHTQjN7M/MMjMSPWLKv/8shijnI=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-408-_50qIX7kNVy1gKvWjeMWHQ-1; Mon, 03 Nov 2025 11:03:46 -0500
-X-MC-Unique: _50qIX7kNVy1gKvWjeMWHQ-1
-X-Mimecast-MFC-AGG-ID: _50qIX7kNVy1gKvWjeMWHQ_1762185826
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-477171bbf51so24501555e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 08:03:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=redhat.com; s=google; t=1762185826; x=1762790626; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=lAB1nRPhZgw2D2F/txfufevKSsNDcd09VLHZkiGFvSY=;
-        b=taCqwNzwBgQQGcFKeViFmoWuWppOz1wR2vdQ3NSNgpwOtff3+cbkf2Ar9bsv7Cv0FS
-         tCIs16cLEFIVUAnq9A2vGRYkwh96FDY7+7EJ0hDE0oSXZwJIHjN1uXyEMsWJwd3Al/Y5
-         1xS6eVKF3qtn3UjGUSBHt6BBvWPgs7OxYvLRISpV4QlCQ0xQUZAGjAju5SP3032RThmY
-         OiohCibU9VDgWNKArnBxozq/Ua/PxjLgxLp/QvY6gaLbiDU6obj5rDZvUIvEnM0sK+kC
-         h3fJJ4CrMOJ201ndQVVpAKgRNmK+Vi9m87eya25kWQM05LIJ0kNq5D3zJ3tIlDzc7IX6
-         u+rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762185826; x=1762790626;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lAB1nRPhZgw2D2F/txfufevKSsNDcd09VLHZkiGFvSY=;
-        b=uZBl2rOG3DaKa0K0/KrhCzXWAxFrVqzcj+9QLUd8InyrBpdkcCDIICiGu0JL9/93Jm
-         Xvbd3TX6Xm7qEXuU8TcWHm7yFgmVSqLR0w9SxekFNUa+LOmDBEK1GHC4VxfQSEJrWEnk
-         OJi1e3QDda5EzCsJkmY4FTf8gJviWHoRRlDuQqaMdxJhMb6pwGwOfxEXmsnwRiTcXhE6
-         tdYIstL2/G1QjqFUz+RPqStg89/Odbg56/ZsMekyTUnd2MyXwjFGeFCFm+4u1/y87dDT
-         AMEHQ2YtO0WnISMCvSttItCKMkc2556w+ZoHMS1AGjfL+nRyrZ4o+VU/5Usg/YewmmR9
-         vWlQ==
-X-Gm-Message-State: AOJu0YwqUfwv+uhns/Gv6IZeacFUHEh6+zt1w/9vJKhve9QnIYoPulDL
-	fE0rnnDxWfiLb5P3m/QJZ4hN5fvmoit31HVAA5+588CGfzqC+Vm9CmFUJ6nBw3KZgc7s7Ul+LLs
-	tQ+g3mDDbE8ef7NkCRZKQDoiUK2cAH6L2Spw9cPi923IPBGsW/9sX3cW+S72GLF7XWA==
-X-Gm-Gg: ASbGncvP6XOunlW5zyw+/XaFa+rCFOXYODO4BnaJhKClFMwJSxiNktJqirhhM5WQzlI
-	WSV7NJ2xqE4YTqNTwdkie7LDGs/Kzf68/8oepXTDJfHqW3nZlqi9kQGrOQ+A2YR05Am3bqo0HUa
-	BQoBWw8IlMkOp4/Nhi32TUvFFDISQbyZkUN5mXM35Gs6iQYe6L7ZvEHNn7gAoowwhU/BNx9IeNB
-	Qsh0r5U8rn7DXY0Z/+M52jYuGLr3v6VaGmvAa56Ednb1Gfgq/FchD+GcDFVS3qVnwQxRJiQJcE+
-	JX09g805nW+gXu1lkMj3ZIJ7/plgzIFqiKiW6v6PZyb1XqHb9zudXxz4Te8/i6rwOfq08v51QuC
-	31NKvWs2cnEZ9Dp1tau+/jJC/zGsTM62aqcusK0/tMcAexK+eEiDIhsIk+yMe11pyHjHmCJF2Rc
-	+gID5s/+tT+RF/Zhe/87rZw1LoqCA=
-X-Received: by 2002:a05:600d:831c:b0:477:542a:7ed1 with SMTP id 5b1f17b1804b1-477542a7ee4mr3985045e9.19.1762185825553;
-        Mon, 03 Nov 2025 08:03:45 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE5tyJHb+sues0m+7ZNZilqyo2L9Cho1JQDhJMCuFOgAOZW6Lsc8SY3FhL38SgCM772181+5A==
-X-Received: by 2002:a05:600d:831c:b0:477:542a:7ed1 with SMTP id 5b1f17b1804b1-477542a7ee4mr3984625e9.19.1762185825048;
-        Mon, 03 Nov 2025 08:03:45 -0800 (PST)
-Received: from ?IPV6:2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169? (p200300d82f3f4b00ee138c225cc5d169.dip0.t-ipconnect.de. [2003:d8:2f3f:4b00:ee13:8c22:5cc5:d169])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c48daa0sm167032215e9.3.2025.11.03.08.03.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Nov 2025 08:03:44 -0800 (PST)
-Message-ID: <b6f5b3cc-93a0-408a-b7e0-72462f3fd549@redhat.com>
-Date: Mon, 3 Nov 2025 17:03:42 +0100
+	s=arc-20240116; t=1762185683; c=relaxed/simple;
+	bh=Ot3iWYcj47ZwqvJJfRRJMWRtoVr4u3WTIVXuUcMeLds=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ua5UqkXj0KZORr/e9rB28nmM8xyC3r1c062QsqooAMlNO4RR7qGUBA4vttnK+bFMtKFNAVkPrMfs/Hv/A2hBgT66g0XSGV/nBX2dzgxksyhkCa3AnkNog4XA9LppBzWKs13DNnU/9o01XcWjgVaOtLbCHKM0w7FG6KXNAwLqeTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=o0I2uQpN; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1762185681; x=1793721681;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Ot3iWYcj47ZwqvJJfRRJMWRtoVr4u3WTIVXuUcMeLds=;
+  b=o0I2uQpN3wTxm3fJTSBFsVrPymIUB5auwirPeHEA+rRMlc+y0r7bvOsS
+   VBtyna4Uj+0lI+Wn0ecNhLIoz/aBPaBqJkRFC6wwH9LxKvDM2TGcIE0sV
+   v36y9y+0+aCErGgO5iP7pbpBlFmk5PchWVYQyHjeaaolcY6/AEIpKxDCz
+   mn6I1kTSbyjyEaQkMjvcsL+YzRiFIG5bkWh7cXnYQ4pk2ReBb0XfyTSg+
+   zDxhymBmqkzAMkoGapwxkVcqRWCOvXVMlKRRj5jCsbT8/gLS2va6hFkcI
+   9vSrCC1sAuM3+45PXXbVh45xnptY5wULaY+sRpIfjz5UQ/aA0shRFcm0g
+   w==;
+X-CSE-ConnectionGUID: HCNQY0jzQAeYr9vBiTkXcQ==
+X-CSE-MsgGUID: kqr79KI6SMSkHm381Jn2Zw==
+X-IronPort-AV: E=Sophos;i="6.19,276,1754982000"; 
+   d="scan'208";a="49119074"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 09:01:17 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.87.151) by
+ chn-vm-ex4.mchp-main.com (10.10.87.33) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.29; Mon, 3 Nov 2025 09:00:37 -0700
+Received: from Lily.microchip.com (10.10.85.11) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Mon, 3 Nov 2025 09:00:35 -0700
+From: Prajna Rajendra Kumar <prajna.rajendrakumar@microchip.com>
+To: Mark Brown <broonie@kernel.org>
+CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	<linux-riscv@lists.infradead.org>, <linux-spi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Conor Dooley
+	<conor.dooley@microchip.com>, Daire McNamara <daire.mcnamara@microchip.com>,
+	Valentina Fernandez Alanis <valentina.fernandezalanis@microchip.com>, "Cyril
+ Jean" <cyril.jean@microchip.com>, Prajna Rajendra Kumar
+	<prajna.rajendrakumar@microchip.com>
+Subject: [PATCH v1 0/3] Add support for Microchip CoreSPI Controller
+Date: Mon, 3 Nov 2025 16:05:12 +0000
+Message-ID: <20251103160515.412706-1-prajna.rajendrakumar@microchip.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 08/12] arm64: mm: replace TIF_LAZY_MMU with
- in_lazy_mmu_mode()
-To: Kevin Brodsky <kevin.brodsky@arm.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
- Andreas Larsson <andreas@gaisler.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
- <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Dave Hansen <dave.hansen@linux.intel.com>,
- "David S. Miller" <davem@davemloft.net>,
- David Woodhouse <dwmw2@infradead.org>, "H. Peter Anvin" <hpa@zytor.com>,
- Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
- Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
- Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
- Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
- Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
- <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
- Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
-References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
- <20251029100909.3381140-9-kevin.brodsky@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- qIws/H2t
-In-Reply-To: <20251029100909.3381140-9-kevin.brodsky@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 29.10.25 11:09, Kevin Brodsky wrote:
-> The generic lazy_mmu layer now tracks whether a task is in lazy MMU
-> mode. As a result we no longer need a TIF flag for that purpose -
-> let's use the new in_lazy_mmu_mode() helper instead.
-> 
-> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
-> ---
->   arch/arm64/include/asm/pgtable.h     | 16 +++-------------
->   arch/arm64/include/asm/thread_info.h |  3 +--
->   2 files changed, 4 insertions(+), 15 deletions(-)
-> 
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index 535435248923..61ca88f94551 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -62,30 +62,21 @@ static inline void emit_pte_barriers(void)
->   
->   static inline void queue_pte_barriers(void)
->   {
-> -	unsigned long flags;
-> -
->   	if (in_interrupt()) {
->   		emit_pte_barriers();
->   		return;
->   	}
->   
-> -	flags = read_thread_flags();
-> -
-> -	if (flags & BIT(TIF_LAZY_MMU)) {
-> -		/* Avoid the atomic op if already set. */
-> -		if (!(flags & BIT(TIF_LAZY_MMU_PENDING)))
-> -			set_thread_flag(TIF_LAZY_MMU_PENDING);
-> -	} else {
-> +	if (in_lazy_mmu_mode())
-> +		test_and_set_thread_flag(TIF_LAZY_MMU_PENDING);
+This patch series adds support for the Microchip FPGA CoreSPI "soft" IP 
+and documents its device tree bindings.
 
-You likely don't want a test_and_set here, which would do a 
-test_and_set_bit() -- an atomic rmw.
+As preparation, the existing Microchip SPI driver is renamed to clearly
+indicate that it supports only the Microchip PolarFire SoC "hard" controller.
+Although it was originally named with the expectation that it might also
+cover the FPGA CoreSPI "soft" IP, the register layouts differ significantly, 
+so separate drivers are required.
 
-You only want to avoid the atomic write if already set.
+Prajna Rajendra Kumar (3):
+  spi: microchip: rename driver file and internal identifiers
+  spi: dt-binding: document Microchip CoreSPI
+  spi: add support for microchip "soft" spi controller
 
-So keep the current
-
-	/* Avoid the atomic op if already set. */
-	if (!(flags & BIT(TIF_LAZY_MMU_PENDING)))
-		set_thread_flag(TIF_LAZY_MMU_PENDING);
+ .../bindings/spi/microchip,mpfs-spi.yaml      |  65 ++
+ drivers/spi/Kconfig                           |  12 +-
+ drivers/spi/Makefile                          |   1 +
+ drivers/spi/spi-microchip-core.c              | 582 ++++++----------
+ drivers/spi/spi-mpfs.c                        | 626 ++++++++++++++++++
+ 5 files changed, 903 insertions(+), 383 deletions(-)
+ create mode 100644 drivers/spi/spi-mpfs.c
 
 -- 
-Cheers
-
-David
+2.25.1
 
 
