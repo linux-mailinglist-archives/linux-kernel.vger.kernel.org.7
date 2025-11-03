@@ -1,60 +1,104 @@
-Return-Path: <linux-kernel+bounces-883239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 232D7C2CDE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:47:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA32CC2CD53
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:43:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C52F21891858
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:35:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DECB818921AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9135F314D03;
-	Mon,  3 Nov 2025 15:28:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E77CB3164D9;
+	Mon,  3 Nov 2025 15:29:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DbeNCjIG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="BkutaiGv";
+	dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b="Bu2ewWuU"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C92314A9B;
-	Mon,  3 Nov 2025 15:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2003314D39
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 15:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762183715; cv=none; b=t7St2Ips9s/jJ99CtfEDPICukvHssx/RoieZGO9TogCLWZ1rkKN8wX7FyCTTtqx0TwDqI0CSPA10jqhTUxM8KjukkPgA+Kqxi3lIxWYKHhaYz04fICz7ipSx1i78iDqGKSOanUFCi3N2x93nGSm8wC3bI1ilNLW0b1MFBVOsNsc=
+	t=1762183792; cv=none; b=RzaEG80LHkA0VqYL3AOwxucCD3Ptc8cafNH2vrGbZHCQkq6F158/g3afo+dXYPiN2eBbv3Zvchgw8Jf3zjB0If3HKJIXpCBbnvES4z9tqrRWPXgAmDVyvr2fTzc5wIPmGSf7pPK1p24g+tFZV8QqZRiN2gFeJWPhduVKGSlw38I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762183715; c=relaxed/simple;
-	bh=Xq/dCk1WgAkB9VEwNe7lHwdtfzlS+p4TEfMc2Az0jnc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dIsSp/K3cjUeS8s91zEQF36MXm4BafP7gZknu1WLC2oGh9yUtCZX9BGCwd3CCQYMS4grp68HmTLeqbznKtJrkXyHfHJc6cou+W4nS5rTc0w3emgobb0cP9cc6o94MHzr+UoAqJbIZBsb6tTvR3SJOfmM+FgIlDjV8ROrKZyno+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DbeNCjIG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85465C116B1;
-	Mon,  3 Nov 2025 15:28:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762183714;
-	bh=Xq/dCk1WgAkB9VEwNe7lHwdtfzlS+p4TEfMc2Az0jnc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=DbeNCjIGBy4SXe4Kiv0oTk6BcxUqZLQwmja/+Wo3p7orZDWbAJENQYp3CDwv06Ywa
-	 zSM2/hPPOP2xIlYFx+OAd7Jq2ao8cn9yGJFfncB1RDkyS/C7qxBI8KQsY79Shc/bCp
-	 ifWJQB7XnpMsL7NV0B+IWX5rTgO51YwShvg5cCVbzd0yhCmXhCXSZauvodv7hY0AvI
-	 dhdlG8QgP2QNkM9uviwMSQGtQR68AOYhLqWAt2SOT5qQkhzRVvkUJI7iY7NBHLVeF0
-	 cHM/AyHkuUF1eTGZoMDusHwDpecu0EP8VgPG1t7CaFMifDlzogkmyLqbovkPqWOSrf
-	 F8a2jMuf4dmXg==
-From: Michael Walle <mwalle@kernel.org>
-To: Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Michael Walle <mwalle@kernel.org>,
-	Udit Kumar <u-kumar1@ti.com>
-Subject: [PATCH] arm64: dts: ti: k3-am62p-j722s-common-main: move audio_refclk here
-Date: Mon,  3 Nov 2025 16:28:18 +0100
-Message-ID: <20251103152826.1608309-1-mwalle@kernel.org>
-X-Mailer: git-send-email 2.47.3
+	s=arc-20240116; t=1762183792; c=relaxed/simple;
+	bh=Qu4o+5vdG4guuxWL13xICD+nDkAgjCx0T8HQXjzGPZk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D7HyRb5MB6OGJd9BQk5Z+9xxohDWkfqEiyOe1/f8A+remlpl3BX19EqeIFDnqILFrl2085mN8yMRKiJrY+47KDkaE6AY7MvQ/A2Q4zm/oCbQPuRvrK9sXdxwcz0gVWgVFBwLQODblcP/UPKO5vIONb+arneaSGfMocxeQXyqe6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=BkutaiGv; dkim=pass (2048-bit key) header.d=oss.qualcomm.com header.i=@oss.qualcomm.com header.b=Bu2ewWuU; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.11/8.18.1.11) with ESMTP id 5A3EsW7E3444783
+	for <linux-kernel@vger.kernel.org>; Mon, 3 Nov 2025 15:29:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=iuUp7Twb1AkLQGRdG3T6gdiruxN1hkGWsFs
+	xCM/VYy0=; b=BkutaiGvu9FDIxWl/+NFZuQGHNvm6/SwZmaRUkVGMiwJ++zuspL
+	qzwLX1/D2mI31HoBm9ReqWQoUI/5pNef99vPZ22uxl9+tIqFfAr64XhLlBnYQ7yx
+	Zs4wBx7fm+AucLRcwm32p6wGGcqjfo52osdLyDgvxIaonvO2lRHbZCbDV/ek8BAC
+	8aDmgnlyVcQ+eKd2yn1xC/4Ets5M5HFLnOCVnYfKpmf151PaNsaivol6lkglQ/F3
+	HIZsdkF8QJEbzD5Yd9WHKDJ0MqH/0ml7RhDFOw+fXdnqkkQdXBaqLmdzDx7g0FJJ
+	pGwun54Hh9CezSEG5PR2MsJtYzTx0UNKGUQ==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4a6xjqr3fp-1
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 15:29:49 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-29598910dd2so33534435ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 07:29:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=oss.qualcomm.com; s=google; t=1762183789; x=1762788589; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iuUp7Twb1AkLQGRdG3T6gdiruxN1hkGWsFsxCM/VYy0=;
+        b=Bu2ewWuUChgjxu9VwTa+tcghF4cmT/BLKT0ewI5gZLsx8w2TK3d0rE9eQuSnpAMje0
+         Tac86dPMUynFy3N71UTKS49fk+y6/6ByFhtAL36xgtq++tLT6oDfPPMNVjzrZ8lNCMRw
+         CGIisqliW6Je4tKP/ybxL3iwmKlmaV1ZCMQsrq7I/tWjwZbPC0oryj8owJL4WwbIruuU
+         fJVkaDDZ4JkeBJEyfoY+UcTJCg8DXEbjYc1UO1f6VDWENfUhohlx7ipsCCwUsuIZDvbc
+         scXzwMypX4AHEVZSRkbzULHcdAL2Y3K5uCPrmcrEh4NQPGSNBFYdKOokESC+LMD/TY2A
+         5tqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762183789; x=1762788589;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iuUp7Twb1AkLQGRdG3T6gdiruxN1hkGWsFsxCM/VYy0=;
+        b=BAijBGwFcBK4jaJ2fHW9U9TrtbEt4fp2BgNu3topJdeUotI5jxwqaDTbbkao6ohFfC
+         Jckj1dUuVj8f5WiY5j6ASP1NsrEV6zO4VNh2BSmrjTkWSjmDEZAz5dpcHoW6s2jMRsTm
+         LHIYTBYipl1Xn1E1iBECYSqykX4VzzhdTeyQa3Pgsni4Ta2FcSe+vZlaQKh2YKCvcvd6
+         0QaqAwz2gIUCRk9m3dhSh4PlpcjJNRSwUIq2qzsAiNIHQa9a29vQxlNpBVI9MhpswvWv
+         Ea4DLsetSJqWMvpj8o8R4V+b+o4Lo0SF+vlUQKXddAdJm38dyDHi2dLuWC/A1ICYLgr1
+         WzrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWNSqDF5Wxm7QWMiLTp+alpcRTB9Pz5ZNsPqIuEAq9Z+O4NmDfZqBFat8xB3PWzi6YXuHlbLArsgqy/aeM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoIs1rum5qvTn/zHBSFVEXZf0bXsWy07O4f2aww9wPcAHspw9h
+	yQcH5nkuv7ZmALZuf7eZ8beQRSSjiVqDjmYwVd1549Jy5q/Ss53+rLlP5Xv2NoclOLiHf6SYXfw
+	eul4sn37yCyEmMZghjX+iaPoiS3aMUK3ya4tlZPVY9eysdxDO83wAS65LEOD65E2iYKE=
+X-Gm-Gg: ASbGnctoxk2SFEI3fw8EAdXjjhpdaKeMoXdQDUCH09yd0e+L207be+f9OrPjfMjoD+a
+	m+osj8HOOcjs6ZNYpo/AUQr74rt7M7UFo1MFuR4INTu1jbTYv/HLeE0Svb1lP47xeAr/ouyAZqf
+	gpduhXx+pOA2JLJqXBPEihFywumDmTdotOW1al98YX3OHZXwg37U19tbtSRulruq49jukvk8ayi
+	NLXwWR5HJUcyepNPb70AkDd7+KUun3KQ/Nc4gAzuf693uSN/MgshYuGC0Tihefykv4Yih3SUWzg
+	TxQrqSNTPYcZtkJNOTwzMhh/LADAbMsAW6IuBMm9zWsYxuWZjWRb/0IiOFhluDpMcqugsRPDuLM
+	CZ1YQOZA/MDXxYREesaSvb6mxrO0R
+X-Received: by 2002:a17:902:c40a:b0:295:54cd:d2dc with SMTP id d9443c01a7336-29554cdd5eamr137298355ad.16.1762183788602;
+        Mon, 03 Nov 2025 07:29:48 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFeFoMWtVRbtUqyET77Erx4bRvUg7ngB/KYLbL8h2qmcG5sVT+8D18sM053N+dGTqJqIll3iA==
+X-Received: by 2002:a17:902:c40a:b0:295:54cd:d2dc with SMTP id d9443c01a7336-29554cdd5eamr137297895ad.16.1762183788062;
+        Mon, 03 Nov 2025 07:29:48 -0800 (PST)
+Received: from hu-deesin-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2952699c9dbsm126087675ad.84.2025.11.03.07.29.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Nov 2025 07:29:47 -0800 (PST)
+From: Deepak Kumar Singh <deepak.singh@oss.qualcomm.com>
+To: andersson@kernel.org, chris.lew@oss.qualcomm.com, konradybcio@kernel.org
+Cc: jingyi.wang@oss.qualcomm.com, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Deepak Kumar Singh <deepak.singh@oss.qualcomm.com>
+Subject: [PATCH V2 0/2] soc: qcom: smp2p: Add support for remoteproc early attach
+Date: Mon,  3 Nov 2025 20:59:27 +0530
+Message-Id: <20251103152929.2434911-1-deepak.singh@oss.qualcomm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,112 +106,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: 3cXry4Vs6mt4QY3amzr6EYao_hYQQ8X1
+X-Proofpoint-ORIG-GUID: 3cXry4Vs6mt4QY3amzr6EYao_hYQQ8X1
+X-Authority-Analysis: v=2.4 cv=criWUl4i c=1 sm=1 tr=0 ts=6908ca6d cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=6UeiqGixMTsA:10 a=s4-Qcg_JpJYA:10 a=VkNPw1HP01LnGYTKEx00:22
+ a=yQkoZ8-9xyiC3PRw88EA:9 a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAzMDEzOSBTYWx0ZWRfX2v/o43yQwB8x
+ tGwLJZvZwgixLkBexTapNkLkGB43jT3NnT/LHEhEBlsskv+Hm9J4OyyGhkjj0CqmYXr/tMFOz1K
+ UO5grjNzEYx0NxFDNBM+Ls8IZFfNb8kwOu+RWadnsFV6Q2CQwagZ9UZ4nqMRNvk/QWziYS3WkmC
+ Q1Owr3mIvVXkw0afJ0cxO0LjjF5vtUPwGBxuTiQ9/ocn7GZvOTFFI+rz3y72vF7UgzVTUIgf9Mb
+ 69BvpMH1v915C+Fd0+V9qQBj/Khmjt8bF8XzTC4LB3KLb7Kh0XvTPxG7+E550qSGmJA60trzR6e
+ pFsIP+jEda7ZACWNytApcgvb8BzK6bsGbSBGEbQcU78/51sRaM/xfb0V8w+U+FoFB0DAaen+zZs
+ 4EEIO9QzDRuCeT97wzoNB7FtsGB2og==
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
+ definitions=2025-11-03_02,2025-11-03_02,2025-10-01_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ adultscore=0 priorityscore=1501 lowpriorityscore=0 phishscore=0
+ impostorscore=0 clxscore=1011 spamscore=0 suspectscore=0 bulkscore=0
+ malwarescore=0 classifier=typeunknown authscore=0 authtc= authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.22.0-2510240001
+ definitions=main-2511030139
 
-Since commit 9dee9cb2df08 ("arm64: dts: ti: k3-j722s-main: fix the audio
-refclk source") the clock nodes of the am62p and j722 are the same. Move
-them into the commit dtsi.
+Changes from v1:
+[PATCH 1/2]
+Update condition to check version 2 in qcom_smp2p_start_in().
+Add more comment to describe above condition.
+[PATCH 2/2]
+Add description for version v1 and v2 of smp2p.
+Check validity of in_version.
 
-Please note, that for the j722s the nodes are renamed from clock@ to
-clock-controller@.
+Chris Lew (2):
+  soc: qcom: smp2p: Add irqchip state support
+  soc: qcom: smp2p: Add support for smp2p v2
 
-Suggested-by: Udit Kumar <u-kumar1@ti.com>
-Signed-off-by: Michael Walle <mwalle@kernel.org>
----
- .../dts/ti/k3-am62p-j722s-common-main.dtsi    | 18 +++++++++++++++++
- arch/arm64/boot/dts/ti/k3-am62p-main.dtsi     | 20 -------------------
- arch/arm64/boot/dts/ti/k3-j722s-main.dtsi     | 18 -----------------
- 3 files changed, 18 insertions(+), 38 deletions(-)
+ drivers/soc/qcom/smp2p.c | 102 +++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 99 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
-index 3289244eca13..0a42fefb6915 100644
---- a/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62p-j722s-common-main.dtsi
-@@ -46,6 +46,24 @@ main_conf: bus@100000 {
- 		#size-cells = <1>;
- 		ranges = <0x00 0x00 0x00100000 0x20000>;
- 
-+		audio_refclk0: clock-controller@82e0 {
-+			compatible = "ti,am62-audio-refclk";
-+			reg = <0x82e0 0x4>;
-+			clocks = <&k3_clks 157 0>;
-+			assigned-clocks = <&k3_clks 157 0>;
-+			assigned-clock-parents = <&k3_clks 157 16>;
-+			#clock-cells = <0>;
-+		};
-+
-+		audio_refclk1: clock-controller@82e4 {
-+			compatible = "ti,am62-audio-refclk";
-+			reg = <0x82e4 0x4>;
-+			clocks = <&k3_clks 157 18>;
-+			assigned-clocks = <&k3_clks 157 18>;
-+			assigned-clock-parents = <&k3_clks 157 34>;
-+			#clock-cells = <0>;
-+		};
-+
- 		phy_gmii_sel: phy@4044 {
- 			compatible = "ti,am654-phy-gmii-sel";
- 			reg = <0x4044 0x8>;
-diff --git a/arch/arm64/boot/dts/ti/k3-am62p-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62p-main.dtsi
-index 908cc0760e7d..13d32cbff186 100644
---- a/arch/arm64/boot/dts/ti/k3-am62p-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62p-main.dtsi
-@@ -42,26 +42,6 @@ &inta_main_dmss {
- 	ti,interrupt-ranges = <5 69 35>;
- };
- 
--&main_conf {
--	audio_refclk0: clock-controller@82e0 {
--		compatible = "ti,am62-audio-refclk";
--		reg = <0x82e0 0x4>;
--		clocks = <&k3_clks 157 0>;
--		assigned-clocks = <&k3_clks 157 0>;
--		assigned-clock-parents = <&k3_clks 157 16>;
--		#clock-cells = <0>;
--	};
--
--	audio_refclk1: clock-controller@82e4 {
--		compatible = "ti,am62-audio-refclk";
--		reg = <0x82e4 0x4>;
--		clocks = <&k3_clks 157 18>;
--		assigned-clocks = <&k3_clks 157 18>;
--		assigned-clock-parents = <&k3_clks 157 34>;
--		#clock-cells = <0>;
--	};
--};
--
- &main_gpio0 {
- 	gpio-ranges = <&main_pmx0 0 0 32>, <&main_pmx0 32 33 38>,
- 			<&main_pmx0 70 72 22>;
-diff --git a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
-index 04de29da40f1..fc85a08428c3 100644
---- a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
-@@ -462,24 +462,6 @@ serdes_ln_ctrl: mux-controller@4080 {
- 		mux-reg-masks = <0x00 0x3>, /* SERDES0 lane0 select */
- 				<0x10 0x3>; /* SERDES1 lane0 select */
- 	};
--
--	audio_refclk0: clock@82e0 {
--		compatible = "ti,am62-audio-refclk";
--		reg = <0x82e0 0x4>;
--		clocks = <&k3_clks 157 0>;
--		assigned-clocks = <&k3_clks 157 0>;
--		assigned-clock-parents = <&k3_clks 157 16>;
--		#clock-cells = <0>;
--	};
--
--	audio_refclk1: clock@82e4 {
--		compatible = "ti,am62-audio-refclk";
--		reg = <0x82e4 0x4>;
--		clocks = <&k3_clks 157 18>;
--		assigned-clocks = <&k3_clks 157 18>;
--		assigned-clock-parents = <&k3_clks 157 34>;
--		#clock-cells = <0>;
--	};
- };
- 
- &wkup_conf {
 -- 
-2.47.3
+2.34.1
 
 
