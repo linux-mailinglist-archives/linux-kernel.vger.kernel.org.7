@@ -1,79 +1,88 @@
-Return-Path: <linux-kernel+bounces-883061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85785C2C5FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:20:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBDD4C2C65F
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:25:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 622FD18886A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:20:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 593871897AC1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579A5311C35;
-	Mon,  3 Nov 2025 14:19:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D73226D02;
+	Mon,  3 Nov 2025 14:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="X07LHIwP"
-Received: from smtpout-02.galae.net (smtpout-02.galae.net [185.246.84.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GpHfzqJq"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258E93148BD
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 14:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.246.84.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B53BD23B62C
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 14:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762179588; cv=none; b=HgNzM4Dr+0vRL83nu18tDD7I5j95PYf7oP6a+VEYqN1MFuFW8xCUQ1JZbsfPUfJyfxqV3NQXlklQiK8DqbLhc/SLC+p2RfsWVqnPnioMQ+e9usHR6ID7PiE90IlZW4WvLv8EqNO+IIuSn7cM57R1Mc0n+Q+nVK/D+ml22OkhQqc=
+	t=1762179928; cv=none; b=Oy1PuAvufNxOWuBycGg2MyHhv5RqchG8XtgfCPfecAdgUsxwnckWLxnXM+lOuBtYgLhhL7Wf2Yitb/QQ3KMHhTq+Cjk8nwSh+01gBLorf31/0y4WpV0yBFuhL9pH4szeVwH/8ze4gJ6C0MaNdKTgIthz08R8ixsfzhfH4SAHBXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762179588; c=relaxed/simple;
-	bh=3Aa+fgQhdXLmlBHwfKVF+zrnnydGtI+5KOVHCkraqPE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y5XU48MMxpPmyqYx4s2c0A0QEtFIhR/iG2OfAmYue9phLkXwO73s0BMpHSir/+GF8H/cSbPafBAFae3vysPm2T8ClDwm0OuGg78WaNdfsH5QhyFEBT1KmHQURi/I+7jyQ/XB+gQwynEafNp0dLKkJ/nPPxfAh9DrHhx5Ga6oX0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=X07LHIwP; arc=none smtp.client-ip=185.246.84.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: from smtpout-01.galae.net (smtpout-01.galae.net [212.83.139.233])
-	by smtpout-02.galae.net (Postfix) with ESMTPS id 85B381A1843;
-	Mon,  3 Nov 2025 14:19:44 +0000 (UTC)
-Received: from mail.galae.net (mail.galae.net [212.83.136.155])
-	by smtpout-01.galae.net (Postfix) with ESMTPS id 5BE6860628;
-	Mon,  3 Nov 2025 14:19:44 +0000 (UTC)
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 7E59F10B50128;
-	Mon,  3 Nov 2025 15:19:41 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=dkim;
-	t=1762179583; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=qkvhfd+aBeHI1uCgJoi4uMlo/YG8LyAVwUYzHTQgZ9w=;
-	b=X07LHIwP0uslNFLN3Tp28BRn5l84CTREQYhZUdS5P7jEdSwVgAe5TM3GDlXAGnc6jbo0Os
-	iWU/Xpo35BknPPRnmytlNrqBhhIahEg3LYlxATw3NfgAxV4sqgNp1EumBoDsrW8UzzmXkY
-	I1/W838VpUysSUI6xev90CEt9TQu/JZQTJDBAl1B29WtS4Iv5yA9PsiM06tHNbBPOFPivK
-	bAXWk7G2uFMY9rrSLDj+otGSEy9zJK33Cu0o22FHzthr8x1ePl5Zx/z7Rcog6y3e3+yUB6
-	H+SnjDlfLKbDI0yaxazl8x6xpQsk6f0DhWlOty70xMkU1SE2G5axHGUoyOmC5Q==
-From: "Herve Codina (Schneider Electric)" <herve.codina@bootlin.com>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	=?UTF-8?q?Nuno=20S=C3=A1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>
-Cc: linux-iio@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1762179928; c=relaxed/simple;
+	bh=xWMYardQHnIaK12l1ryDr3bjsr+pXFGz+yDLvCdz8aM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X7mFrzJLHMyutxQqewIkq+iftiUDSGtkklB5ICuzza0KasR/uECTYc4hG9MsgvU7NP3LUcIuBmH5FRijRIJik3GaP8EhpQMmZh2zNsp5RSeoo9rssyfi6fMHUXgmhzadp7kGGWdswAfgyjZPtcnk2BEb7M+5CaPek4TI0GG7FK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GpHfzqJq; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-47728f914a4so22565465e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 06:25:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762179925; x=1762784725; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=l0eHvLoiid9wDCxuP//NlqPdvxc5VD66YHxv5DH3KtE=;
+        b=GpHfzqJqfv+4NhnDs7wBZ3N21ZMxK313TY7qWEo+iIpRbnsiAo4d8gmzCAeM4Nn2Tm
+         NQOZoEJJRTpyHVJovzK8apqm/5SDXqtYLQ4o54YRBpQjdKd2NWzdoCMNUI9O9ejzohyf
+         xBrbA86jKMk7p9NP8PdgJOfpqF8ioxtw8Bx6nkk/YBKGCJLmZiY0kR/AezvUsjBb4mZM
+         q0aOcOOeldLJ5ibkrw6iYda69aoxjG5bVhQk84ToPmYC6SMas9g5Firr6NKw4ujGCyMr
+         lmj67toayoNq3ptMAKxLBeBAWGkkHWXIvSRF32gV7H8AAolEX6UpK+Q+Zx+U9X18vWsL
+         vTVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762179925; x=1762784725;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=l0eHvLoiid9wDCxuP//NlqPdvxc5VD66YHxv5DH3KtE=;
+        b=El2TRUmnK/7xiE29hxctc7qkuwGPeHO0s8dTA84/P+0gLrAiXwl1DNKAPKiIVqODlD
+         TGR34wbzv+kDpu77MaAfd2nSfuXFMUTnOgCMprKNShG/mCBIJWZxOwivyyEE7tfR/rJE
+         02fzbnMYb/G2a0ZgUFxRm1tKopLBUODkHc2JF8CVnA5zmt2Dg9imiA6Q+Z3H+jR9rmse
+         mddogbF9uIHTQXlsezQC7h7k2iIo2WKVY4nIRYKI3CikxYtN9tQZAATjzdyQYviNHTcG
+         hoLAvSnfbmFS8/hoT0EIXjHz60sZ6vn4C8rfFCUR4Tn1D9lBwDrIpQHYQudKEqGz+mNK
+         CCGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX7Im/1HjQQc+bf7sFlclWT4o7ZxxEQqOIHIk96AwkKDjqiZXKMkHHPpEV72naaL/lJLo3aJmOVNhh/KMs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcNmZLoWvEDFq1Qb/iZw8HaA7rM/+c2NNeqTAFsYdtsLju2pPV
+	GTmxyK6mfjuixpvZIXAtoE9VG3piTokIEsncS0uFVsmB/+m7vNVw25QaXcWoUlkB
+X-Gm-Gg: ASbGncsPq1fsxLZxpKiBcYev6JGp0+PFo4MbaNp/CAKD+kbkCiQr6k9uWmrthVJeg7k
+	BDrkwRkyNPQxu3JHXzUY5aQAQgZGifPrLMKIpsrANTrDzH3+YhdZd9T9te3UDWiZP0k5D8fHiim
+	HciG2YsDxDDVfRb1Ez7WLXcqp5J6sbtBGWN6U82et+AWr6rdfGs05PzzW1Y4bZPqfcv4VysUksl
+	iOONiHNUh7Ve6EJjWoASCyTj8N+HZmuYsevjnAdmIcxaiViKmVXDBLo5RBhGHYbuam/L/uIPFVa
+	8sg32uoSJm7i2brTWFapCp8LoHKBVAxys28Cd17ykYM5UdSsue8mMzzd8tEZAA+hTIUqMOqtCue
+	39HBi8aMTKsBZ9ALqv9hy5OzDhdkbJ6it32PHzIDo6qAJNQAz/6ZR/HrsCPOjylKCEkNwOf4dew
+	WfTRGraQPbCB1xZaL2HpM=
+X-Google-Smtp-Source: AGHT+IFVmp7tFVYPy3tim/ILb0m6yD7bQL1F/KHtlrW8xr0PngQ0veSe7mMWCHVQNprA0UG970M3NQ==
+X-Received: by 2002:a05:600c:c178:b0:46d:9d28:fb5e with SMTP id 5b1f17b1804b1-4773a7384c3mr92009525e9.5.1762179924825;
+        Mon, 03 Nov 2025 06:25:24 -0800 (PST)
+Received: from snakeroot ([109.175.243.91])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c3a77b1sm160531325e9.17.2025.11.03.06.25.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Nov 2025 06:25:24 -0800 (PST)
+From: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>
+To: jikos@kernel.org
+Cc: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	linux-input@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Pascal Eberhard <pascal.eberhard@se.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH v3 4/4] MAINTAINERS: Add the Renesas RZ/N1 ADC driver entry
-Date: Mon,  3 Nov 2025 15:18:34 +0100
-Message-ID: <20251103141834.71677-5-herve.codina@bootlin.com>
+	kernel test robot <lkp@intel.com>,
+	Julia Lawall <julia.lawall@inria.fr>
+Subject: [PATCH] HID: corsair-void: Use %pe for printing PTR_ERR
+Date: Mon,  3 Nov 2025 14:21:13 +0000
+Message-ID: <20251103142120.29446-2-stuart.a.hayhurst@gmail.com>
 X-Mailer: git-send-email 2.51.0
-In-Reply-To: <20251103141834.71677-1-herve.codina@bootlin.com>
-References: <20251103141834.71677-1-herve.codina@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,34 +90,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
 
-After contributing the driver, add myself as the maintainer for the
-Renesas RZ/N1 ADC driver.
+Use %pe to print a PTR_ERR to silence a cocci warning
 
-Signed-off-by: Herve Codina (Schneider Electric) <herve.codina@bootlin.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Reported-by: Julia Lawall <julia.lawall@inria.fr>
+Closes: https://lore.kernel.org/r/202510300342.WtPn2jF3-lkp@intel.com/
+Signed-off-by: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>
 ---
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/hid/hid-corsair-void.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 3da2c26a796b..a67babe1a5b4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -21900,6 +21900,13 @@ F:	include/dt-bindings/net/pcs-rzn1-miic.h
- F:	include/linux/pcs-rzn1-miic.h
- F:	net/dsa/tag_rzn1_a5psw.c
+diff --git a/drivers/hid/hid-corsair-void.c b/drivers/hid/hid-corsair-void.c
+index fee134a7eba3..5e9a5b8f7f16 100644
+--- a/drivers/hid/hid-corsair-void.c
++++ b/drivers/hid/hid-corsair-void.c
+@@ -553,9 +553,8 @@ static void corsair_void_add_battery(struct corsair_void_drvdata *drvdata)
  
-+RENESAS RZ/N1 ADC DRIVER
-+M:	Herve Codina <herve.codina@bootlin.com>
-+L:	linux-renesas-soc@vger.kernel.org
-+S:	Supported
-+F:	Documentation/devicetree/bindings/iio/adc/renesas,rzn1-adc.yaml
-+F:	drivers/iio/adc/rzn1-adc.c
-+
- RENESAS RZ/N1 DWMAC GLUE LAYER
- M:	Romain Gantois <romain.gantois@bootlin.com>
- S:	Maintained
+ 	if (IS_ERR(new_supply)) {
+ 		hid_err(drvdata->hid_dev,
+-			"failed to register battery '%s' (reason: %ld)\n",
+-			drvdata->battery_desc.name,
+-			PTR_ERR(new_supply));
++			"failed to register battery '%s' (reason: %pe)\n",
++			drvdata->battery_desc.name, new_supply);
+ 		return;
+ 	}
+ 
 -- 
 2.51.0
 
