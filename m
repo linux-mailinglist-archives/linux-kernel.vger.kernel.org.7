@@ -1,154 +1,147 @@
-Return-Path: <linux-kernel+bounces-883501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2401C2D9D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:13:10 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCBFDC2D9E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:15:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 619353B8AE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:12:42 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 116E14E459E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:15:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65CEA314D25;
-	Mon,  3 Nov 2025 18:12:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBED328750A;
+	Mon,  3 Nov 2025 18:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="S9fiLhb6"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HAMAqmBt"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263F817A309
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 18:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F091B3054F8
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 18:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762193556; cv=none; b=ebPEvtcjr2tN7kp7XAEk9EBNvgGAIDlx3murD/h+q6z2PEc2LEEo3SlXq7kf5ETP0E3rZI+DLszOImTkb42GLWbz4HNAUowFbn7ze9xEWdlbiXWL4eaOsjxOPekFL4jbHJnG7HAjUh6OyS2inCQlai0NbyqLWJVL0wKjdIh+HUA=
+	t=1762193692; cv=none; b=cHntqSh48klt9nkzGMUg4gut/keeqWulEda0MDY8rw+72f1tUddGy2reHqq6ZCrYlxgewLjzgQ1aIFA2cryJUciKx9Nj3EyCveCovWPCcP+pbqXJtFd+/doI2q2yc66+cUWEziC6eZho5qnQH00BTTrpd3mDysUFFAnrVc8AT+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762193556; c=relaxed/simple;
-	bh=RrEPeI9IoX4cpr4X8PabDKZ8aceTWPLs5YVZ9FX/Uc4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dev/C6rjikGf7VrypiT3JTNxQ4KHan3DCa3xMjTTxAotudro3ODamRTnC8OI6oEDARje2ETNlnA4zZeFXCCf0yMyIlFAw6rdpZOAEvZV1Nt75R9Spskr4PI/VK4TLENqClZoqxAfbtR3CV4z/uQA6T6Y8N/lDmLliCR7SJ7m2y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=S9fiLhb6; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5A3EfXnD013046;
-	Mon, 3 Nov 2025 18:12:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=aV0W83
-	3xXLtn8mocQ6UKoaSRW5kTrXZu+V6GeQZCP4o=; b=S9fiLhb6dCBR6chdWYNLKF
-	FdtWO+PTOZ1jPvNrn1oWm49fy+6p5JdrzDGRCP2bhhxNcSMrkBZCoow7uqGLyPhK
-	vcsjh5ap4eu9/IJ8cDlpWC6TBr1bULEnPKMmYPQROmMycsgsMdO+Dz+dmG0XCi0m
-	ozyB/o6/Uk1HWEsLThl3HjrUtXzDZ+OedkDPulTo3f80dT2MUXI/v0nquq+xHyrv
-	6o+aDItz8BMdVRodHh5uvIiaTP78SrqeIvYqTaK//tlTd+oruiOeaMj4tJ261Sdy
-	yuBuavap42jHnWAHbIiBSDQcWbeQzELWgY9CWoLJhWrWdqYc+SSP0W8EgJagQ45Q
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4a58mkr2a3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Nov 2025 18:12:25 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5A3H6tPt027375;
-	Mon, 3 Nov 2025 18:12:24 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4a5vwy78uy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 03 Nov 2025 18:12:24 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5A3ICOUg10617448
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 3 Nov 2025 18:12:24 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F1D8C5805A;
-	Mon,  3 Nov 2025 18:12:23 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A786958054;
-	Mon,  3 Nov 2025 18:12:23 +0000 (GMT)
-Received: from [9.61.98.95] (unknown [9.61.98.95])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  3 Nov 2025 18:12:23 +0000 (GMT)
-Message-ID: <2c522376-2a3b-44bf-b936-f0aeb70a376d@linux.ibm.com>
-Date: Mon, 3 Nov 2025 12:12:23 -0600
+	s=arc-20240116; t=1762193692; c=relaxed/simple;
+	bh=kRTldSDOu/FvTKTFbdBYsuhbuom+HjOyiUNQvk5adZg=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=jufkaZLXavKaoq28yo4QYSGbNzO1J3EAr2cttjXerjvwJu79Zcziz9e98uE70BmHdPTSYtH3vbBZ4pNDBdnfSWz3BMKfSpQ5ggaUqMfYFYuv+GTXZsPgtmBlZBZCeVXY2+k37qPoOoVQ3jJerU8BKQ8ikqScgB6Z9B4lJFu5uoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HAMAqmBt; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-29524abfba3so32854525ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 10:14:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762193690; x=1762798490; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WfDeb7baff6ASohW/ana1Q5tLYqMzwgelS8O0alrjlo=;
+        b=HAMAqmBt4/tW/z0+MrFMaBBudEbDpy7sjg7GZMUujq9GQPuxYEQljr+zVPEA9YmZoN
+         SpOtPk50ah4//z5+7olymLmbIprbn9HKhHxREmQOwkJ8D6A9y0yhdaj7Cs4jCjdWiuMG
+         ZcyU+G+aYUq9dA83+4iYFA6jlBRka5cb8kiVefNAAV1CWIzD0IOAi3n76DrcayFFWqnQ
+         6/QxrHZSvnMptPIHTqqGAB1dG9pCBPfdgOUFGMrtfn5o8D55TvozQCNg3z116y1EbKPO
+         glSeWp53qfc+2or0HsiXxAwnR+uhvoHznKspyH/MGqVxbbadYJL7GYlFbO+G85eKdXqP
+         mecw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762193690; x=1762798490;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=WfDeb7baff6ASohW/ana1Q5tLYqMzwgelS8O0alrjlo=;
+        b=ndmxcY5Cp6773k2PBwxsvfL/ZGBmnEk6didVGKcJlRS3u2SHHaYcdZfQDdIIsl6CFq
+         ovGoLgVI5n/hciN8ZgsGVZt/RUN2E/gkImF4m2DkvhKUZSZQ3TgNGCtkG0d8D4dOzXrq
+         uDEqlTiMSfDcGDR/75RtlpsjHAXB51UJwrmTS9yffSEZNoU+0nYAA8WaRaWLZqMhFVBx
+         unBTvERdBKGXHNjYTk2sYqSnfPPB55krpCMG8XeTW/evc7BFmHbFXMtPkqjM8fVgvAiP
+         SO+BIAReGScDHtd4z9XJhep2JMSvfejZNnOxcPpRkBpmHHIiI+Nala0zt6WFCctNCf5r
+         KfGw==
+X-Forwarded-Encrypted: i=1; AJvYcCUtBCtcJvtPtr/5bsSWq8WSqT1jPimI2bb+FVi2cIrlwA+pX6vDDRS4Np+4ubsW54Rbm/RUO1C5T0ADKJc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAZBiTxmeK28OZgtmBxMTiPxZET4pvOQV1KCdOZOUNq4lvCP82
+	2S21vVKj3uOZqveNLy9LOmcTdoj0BwBUHt7/uvBjr6oBBL17ejQ9+0Bn
+X-Gm-Gg: ASbGnctLkKHHtFtYG8QKwTzAfHFKxPXfH0SH0SGOzRS07vwVFgBChZx6ZUPcDb3pe93
+	dB/bEHF5CY8VczVtqJU4alNo6THIHwWNRtb74exb/3YCt4WyMMEpYx/KE88m0UMuPu26CNWUp2L
+	Z0vtxeqaBQKTDfs5pwUFf4l+Z4Mx4hKu3EliD4H+83X3hLTBBpOpyMPVwveMT6NEv3NB4PRksbe
+	ALvhyZm/MG1rtcBA4/KPWxqjrt4Muhvjdshq2wECzGbZF2NQE6198IbHjmpqZ/dbuEvkQSjS/ID
+	eAmzGvon5xP0kETeJFS4C+7W8I7tgprQZ/GkW8pV9caRx8EAEmlZejI+IDtC3ydxrUEnhJqz+CU
+	v6FXwAAHVo/Yr6vS4AUZxxepMtvlhS4l1MLDoctmSKWI84rEJDc6IpYnBCjMJGI6hQtCNrns3yE
+	9tkoRv9ksgYE6DTjpnybXjRZPEy+AIuoEwszQ9
+X-Google-Smtp-Source: AGHT+IFj6on1DpKDZ6l6GB/KDZKBx7WGs07I/oEK6+7I8XTKoEXeIEIYlTAWE0TZSKyMOsESiOQzAw==
+X-Received: by 2002:a17:902:c406:b0:24b:25f:5f81 with SMTP id d9443c01a7336-2951a3eacaamr206673065ad.17.1762193690274;
+        Mon, 03 Nov 2025 10:14:50 -0800 (PST)
+Received: from ?IPv6:2a03:83e0:115c:1:3eb6:963c:67a2:5992? ([2620:10d:c090:500::5:d721])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3415c8b5cfcsm1740053a91.19.2025.11.03.10.14.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Nov 2025 10:14:49 -0800 (PST)
+Message-ID: <ae64d43491a36fa5efc861be912a615348877d51.camel@gmail.com>
+Subject: Re: [PATCH bpf-next v4 2/2] selftests/bpf: Add test for conditional
+ jumps on same scalar register
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: KaFai Wan <kafai.wan@linux.dev>, ast@kernel.org, daniel@iogearbox.net, 
+	john.fastabend@gmail.com, andrii@kernel.org, martin.lau@linux.dev,
+ song@kernel.org, 	yonghong.song@linux.dev, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, 	jolsa@kernel.org, shuah@kernel.org,
+ paul.chaignon@gmail.com, m.shachnai@gmail.com, 
+	harishankar.vishwanathan@gmail.com, colin.i.king@gmail.com,
+ luis.gerhorst@fau.de, 	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Date: Mon, 03 Nov 2025 10:14:47 -0800
+In-Reply-To: <20251103063108.1111764-3-kafai.wan@linux.dev>
+References: <20251103063108.1111764-1-kafai.wan@linux.dev>
+	 <20251103063108.1111764-3-kafai.wan@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fsi: master-hub: Fix of_node leak in probe error path
-To: Haotian Zhang <vulab@iscas.ac.cn>, Ninad Palsule <ninad@linux.ibm.com>,
-        gregkh@linuxfoundation.org
-Cc: linux-fsi@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20251030095534.770-1-vulab@iscas.ac.cn>
-Content-Language: en-US
-From: Eddie James <eajames@linux.ibm.com>
-In-Reply-To: <20251030095534.770-1-vulab@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: p4wi3x0ObDmgSxy9M8r7Amy7nGTvv09Y
-X-Proofpoint-GUID: p4wi3x0ObDmgSxy9M8r7Amy7nGTvv09Y
-X-Authority-Analysis: v=2.4 cv=SqidKfO0 c=1 sm=1 tr=0 ts=6908f089 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=6UeiqGixMTsA:10 a=VkNPw1HP01LnGYTKEx00:22
- a=VnNF1IyMAAAA:8 a=H3Yl5Fb59XilEcTE980A:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUxMTAxMDAwOSBTYWx0ZWRfXwBJIRkgv4eAR
- 3wBZzAwXBTqe1fL8c+IPJeWoez5qBCW9t13JmDuOW9B3CfyZEq7BsHlxjFzdi2javqvtu33dOOs
- iz4R962Ptdw/n6ChAVHWlfiX0pA5Fke1q5zeCQqr/rQwqdv1ahjUp538vsvYrheL4tMVBnnnsJK
- RCT3/Tn3w0+JrS8JXYeqLNpF/EzR63DenRWV6laNcM1aOBWwo36P58sHgkjTt4yX+Qom1RS4zsY
- k9ffjghss7pzYkKuwsvkKpUGj0OsZwghXSPHAn28xuHXDk96Wz98t86cInX15hDpQ2SI5wQ4DA1
- y38jhhctybFxEyOm9oCSxKKx9FanpCxJ7fWhHM/BVUTNoi5Ro8iyX9Nz0FEDLkpAxoDKK2B+FIc
- BplwwUTmPI61eZY/QEHXL5viCPJiVg==
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1121,Hydra:6.1.9,FMLib:17.12.100.49
- definitions=2025-11-03_03,2025-11-03_03,2025-10-01_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 clxscore=1011 impostorscore=0 adultscore=0 lowpriorityscore=0
- malwarescore=0 spamscore=0 priorityscore=1501 bulkscore=0 phishscore=0
- classifier=typeunknown authscore=0 authtc= authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2510240000 definitions=main-2511010009
 
-
-On 10/30/25 4:55 AM, Haotian Zhang wrote:
-> If the call to fsi_master_register() fails, the function exits
-> without releasing the of_node reference previously acquired via
-> of_node_get(). This results in an of_node reference count leak.
->
-> Add a call to of_node_put() under a new label to ensure the
-> reference is correctly released before the function returns.
-
-
-Reviewed-by: Eddie James <eajames@linux.ibm.com>
-
-
->
-> Fixes: f6a2f8eb73f0 ("fsi: Match fsi slaves and engines to available dt nodes")
-> Signed-off-by: Haotian Zhang <vulab@iscas.ac.cn>
+On Mon, 2025-11-03 at 14:31 +0800, KaFai Wan wrote:
+> Add test cases to verify the correctness of the BPF verifier's branch ana=
+lysis
+> when conditional jumps are performed on the same scalar register. And mak=
+e sure
+> that JGT does not trigger verifier BUG.
+>=20
+> Signed-off-by: KaFai Wan <kafai.wan@linux.dev>
 > ---
->   drivers/fsi/fsi-master-hub.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/fsi/fsi-master-hub.c b/drivers/fsi/fsi-master-hub.c
-> index 6568fed7db3c..e259ed1c17e0 100644
-> --- a/drivers/fsi/fsi-master-hub.c
-> +++ b/drivers/fsi/fsi-master-hub.c
-> @@ -241,7 +241,7 @@ static int hub_master_probe(struct device *dev)
->   
->   	rc = fsi_master_register(&hub->master);
->   	if (rc)
-> -		goto err_release;
-> +		goto err_free_node;
->   
->   	/* At this point, fsi_master_register performs the device_initialize(),
->   	 * and holds the sole reference on master.dev. This means the device
-> @@ -253,6 +253,8 @@ static int hub_master_probe(struct device *dev)
->   	get_device(&hub->master.dev);
->   	return 0;
->   
-> +err_free_node:
-> +	of_node_put(hub->master.dev.of_node);
->   err_release:
->   	fsi_slave_release_range(fsi_dev->slave, FSI_HUB_LINK_OFFSET,
->   			FSI_HUB_LINK_SIZE * links);
+
+Thank you for adding these.
+
+Acked-by: Eduard Zingerman <eddyz87@gmail.com>
+
+(but a comment needs a fix)
+
+[...]
+
+> +SEC("socket")
+> +__description("jset on same register, scalar value unknown branch 3")
+> +__msg("4: (b7) r0 =3D 0 {{.*}} R0=3D0")
+> +__msg("6: (b7) r0 =3D 1 {{.*}} R0=3D1")
+> +__success __log_level(2)
+> +__flag(BPF_F_TEST_REG_INVARIANTS)
+> +__naked void jset_on_same_register_5(void *ctx)
+> +{
+> +	asm volatile("			\
+> +	/* range [-1;-1] */		\
+                     ^^
+   Typo, should be [-1;1].
+
+> +	call %[bpf_get_prandom_u32];	\
+> +	r0 &=3D 0x2;			\
+> +	r0 -=3D 1;			\
+> +	if r0 & r0 goto l1_%=3D;		\
+> +l0_%=3D:	r0 =3D 0;				\
+> +	exit;				\
+> +l1_%=3D:	r0 =3D 1;				\
+> +	exit;				\
+> +"	:
+> +	: __imm(bpf_get_prandom_u32)
+> +	: __clobber_all);
+> +}
+> +
+>  char _license[] SEC("license") =3D "GPL";
 
