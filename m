@@ -1,280 +1,175 @@
-Return-Path: <linux-kernel+bounces-883374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C334C2D433
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:53:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94E6DC2D364
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 17:44:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA0494607F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:44:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF8911898059
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 16:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C723B3191DF;
-	Mon,  3 Nov 2025 16:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B547231A545;
+	Mon,  3 Nov 2025 16:44:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iju6XUHs"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kwTwneeu"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E8331691F
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947DA264614
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 16:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762188264; cv=none; b=lWsMKtf68UNR8R/kLunlOQKoWTyiUvayLIweWM1IM/R0z2kOlM88OLj3pyvGgncRgT5IbFc+h5mil0u26j3b2YAPzHB5brVB6Wp0iUx54frUh/TASXHFUsRdDUomMOuJf/StPSxl1s64jBJy+6WVYfpLEqeovDJXvfI1Z/oQLuY=
+	t=1762188271; cv=none; b=eXnQFBL95QeJosqMsH+rHTYKXrPahLc/MGzPNzxKCbWCAkD6jML8VoxuYZ2Yd55Th8jYFxR11s32SkeyYrmsYP5Qk/McpmChihT6XiVBYTYTijqOJun2BN/UrUAPcEeMsiFpYb1tzDuoNIKRu8EZJPqXO8bAlKNk8wZM295AhSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762188264; c=relaxed/simple;
-	bh=I59wiwFqkVLbZoOM2bUnRlIlFIr+V9VcFSQ69zg46C8=;
+	s=arc-20240116; t=1762188271; c=relaxed/simple;
+	bh=w2feD2ttgeXkYR55jPw9Y7SXgsX+KQU5PqxDgw8kmJU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RokAC3eX9hxkCPq7Iy9fLW/zOL+RyNzWI3UlOwX3d1CJMeLOk56uYrvXj7zyKJi2xvJSp9tgRTK93nL5r4wIXVGxSGV1df5d3NlmKps6bT57Ls8CUEShXDiORm0er5yibYOvfdyuFk2PkpXp1EiPTUB7B5vy2X2rowd7WcMYcMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iju6XUHs; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-64091c2e520so3625661a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 08:44:22 -0800 (PST)
+	 To:Cc:Content-Type; b=K4/2SxanJdVSi9nvhXE/0PQeeYg4/Hr3HmqlkhZMPrgqq1Pgj+sv+fu4gUlcY2meVkuAqP4p+aeFw0rYcVncgEIrzc1c+ZTzcmfaKgb8V0JWOHqmmJGifCi6ZgYaOpgdwyPXS7FuRdGi1pIAMUtmsPuahAu52mvLIBUvKmE3OI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kwTwneeu; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-295c64cb951so212785ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 08:44:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762188261; x=1762793061; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1762188269; x=1762793069; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LM1Mf5XboMaTxjsxho7myGSxuJgsjYFuc/EcT5bM81M=;
-        b=iju6XUHsGsTJlvALW5sKs2mOOmBDDPRrZTMNp9jeq1RW6/i8Odc5/ivyLtmKB95bMK
-         KwveY7FTVgIdAKGxD4ja1HMF926eAWODxX05YmSwq81AKbZ3StSidHtPULfp+KC38X3I
-         yI3VEVySWglQsLtf1f5dWP4SecUpE3yi0I4lRe34lFeJVEbjr4EmXOrfQYqsUaZ8ccSg
-         lqXzRth5iRzW/E7bLKLpcbwh+3exiejNEPNzvS/qpGxIcq1jObovJtS6r1iTwoM7am9m
-         8S+iJ6ByAf4rU3ZuqTg7BIGhVrnDhSCk8p+0ob0guBVsgmyadRzkR5FgEAOd5hjPMbPJ
-         wAzQ==
+        bh=usZ/GjzUptuHMzqFuSlgFzDClkHAfq8dzjjPtBKSebs=;
+        b=kwTwneeuOvqrvHonTtml9vbU+0ufkOsTpY+BGRIDM7SF52N42RLcjIsm3PUpZjxV+Q
+         dddQ4wFULIVxkY5HN3pJMYN62EB1epgRbosPVlmNx7s4IsthwoTF/pMoNqELy0Pih+VY
+         QmGwZPynqRjaiSM4HEJu+J4icnw3CI13tpxfDmii3Lg4JRkgN2Rrez2JuB7lart8D3Rq
+         LuHg7xSx7+6TjqKHrd1uXmRN3NIGmflJF/c56d6VrU9viBxxVbLMPokHzrfTbKKH1GoV
+         ub5jvqbkpR5S5LN2/xwivq9zZ/VHsmdKmwG6tzrj9yaZMJWUhrRYGGnP/CyqJVk4V/Gs
+         3U3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762188261; x=1762793061;
+        d=1e100.net; s=20230601; t=1762188269; x=1762793069;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LM1Mf5XboMaTxjsxho7myGSxuJgsjYFuc/EcT5bM81M=;
-        b=TwWU/XOy3aW1Ao8Naf1Y11zyD1WlnChlL7wea2/dTimXsOlGVtajpwbgJISO1CJe4m
-         Em7KPEPSoTBHDh47MHq+jIgaOLD2e7Ip2gz470T+SO2T/ZE94XtTMm41iSAb5I3mWM0z
-         lyP9QYRSj8PzWeF1Xge37OQ6fcJU3aTnxQ54QPQdIGHMjnEjYrmLL6MsTyiz6WSwFMtF
-         RvwCs9kZdCUe8x2VoxojuF86IZcL3EcNZP6MGZXMzJsZdZ+RCc4RfX/0zTviDssPIhuF
-         lx4dSm1NnkvfWKrEvcIMg4VckVrW17jFncUGyvv2/gcmmT/q443z/qwuLhoU6v5X+dPy
-         +WjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZFLd2ciaRx2jW0v08D6WiYNWP3BFnU6DPMjKg70snEMlf0DjMemJX9anFeWA8r+ioAXWCqQ/zGYsBDMI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDnkceE3E9Sm3vnhrFkfnK035yelImS0l/Vq0IH6JNN2D/+osC
-	RbR3MwIDnixesrzOJtdPpskM7Y/wnx/OR44ARNlpqmU8O8XC026ry/YjKOvdxI54sSqch+xTRFP
-	fhTEICj/abptRYBShH2/tH9gjRXf3l4o=
-X-Gm-Gg: ASbGncuw/JVU6u8/GxBoSXTj0WGPui5qklerQX03pMoIySk8D6wJGdlYrPemC1/2Nyz
-	N4n+v8+nzQ01tLxN1AAMMuhSmwPip0fqaK8gVi3/17xF29QIPCLDIFXsMXDGVUKqHCf28OJ6NL6
-	kJkV2JwStGk2SfeCc76+w0wjQtuq1lgh+FcEeU8EPjcCTXoykpQHiHMFXuwYV7oLydj92dDDyzQ
-	xri9005pjdysN4XS5/XWanTJLmWtvbrI+6MGbwkf+UD0lcmYh+/v/a7LmoffmgweHX1hb7uWPEX
-	9zu38aC5DRLhdEc=
-X-Google-Smtp-Source: AGHT+IEnNURiDoaBjLpsTWUH9VrYNjPaIOjw8lu0D4XVVYkRaZQT9oThVFEbAAXuncvvQOueIKruSMdsB9DoUHyZ0bs=
-X-Received: by 2002:a17:907:7b8d:b0:b5c:753a:e022 with SMTP id
- a640c23a62f3a-b70701dc398mr1186998066b.29.1762188260475; Mon, 03 Nov 2025
- 08:44:20 -0800 (PST)
+        bh=usZ/GjzUptuHMzqFuSlgFzDClkHAfq8dzjjPtBKSebs=;
+        b=QpQkfYO34yDhYctgya/ZZdl3uyegk23jST3s859MKq5qqJKU8FOX6Oy43rteF3m2RI
+         2ZG5ExRrouOIUb9hc4XXuisSfbfF7z54BGcVKS8ytm2/g5T1FueerlwP2esD7Unmt7vZ
+         XIIplEqD7Ah9/7DEG1nOYM8ya+KXxIMRoLXKC8at8N3HclmPKqnN12bsXn/s6xX6x27+
+         VYPaM5YAAs+LX7jzqkkqb9w4Y66kMnaeBQwrvN+FQERKnuxd/gkyXqp0RzTp4IhUXUHo
+         uvRcyn7hpl3MXRjRAc+12lw6aiR4TAC+t8GAvfveKDbzddQ8kZJXbHcWU0N7j/XN5ceZ
+         eO0w==
+X-Forwarded-Encrypted: i=1; AJvYcCW9GsHKNAjBdC9M7VUjUWBAyslGHOz+s7/nL+Z0H3Ur3l7hOIrWvwjXkjShOCormiowJ2xrGBQpHryivWU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwICLyaO8p4NclKGu+Rum13sEiEv93y+I23pjMrxVB+2hdpZrzd
+	RFb+JlpbIXCqUnqI6bCBts7RZ20n6B9pq/Oz/YDwn4ObnC+ZSqGcSPGY8GYiHj72/6SG+J+WPYx
+	9F5U9dSIt3yaNw+Qm31fqkmX1ngfPSq773p8Xo5Nq
+X-Gm-Gg: ASbGnctncA9zIfoye3sIeYn86i61o7I34kA1LJnUwZm+h1wxJ/hOkfctlmEqadPfsaS
+	igA7kKXYRK2/d1JXDwP0wasVS3x2W7iWWo5Ie+UYfXe57KcUQx8uvgOESp6GDAKu+2pSZABze/N
+	+mt0mlPRwsSohYmBNXCx3xCt46cOfYSMJO5K43CGSDOIE/WxUVmTN1BcJIfl50NTmbjMW1uQOOI
+	k8kA8AxZ/xAPdwosC7QwoK8h4tZA9qGMcdJyM2EtBA1uF6s1ApACqmgvSzWgTzhP8tNq1JwGUtd
+	ufunEo9Cb4vb/h6DKLBewMEqunpz
+X-Google-Smtp-Source: AGHT+IFs+i74UEsPKiI4HBGk0AHRpY3oPKbKNmcPl4IvOaPQn9Rz7GlwRRaoVvhFaH16oJIE3DvbsmkRkuVoBFJNKRQ=
+X-Received: by 2002:a17:902:e84d:b0:271:9873:80d9 with SMTP id
+ d9443c01a7336-295f8cc34f0mr347465ad.7.1762188268555; Mon, 03 Nov 2025
+ 08:44:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251029134952.658450-1-mjguzik@gmail.com> <20251031201753.GD2441659@ZenIV>
- <20251101060556.GA1235503@ZenIV> <CAGudoHHno74hGjwu7rryrS4x2q2W8=SwMwT9Lohjr4mBbAg+LA@mail.gmail.com>
- <20251102061443.GE2441659@ZenIV> <CAGudoHFDAPEYoC8RAPuPVkcsHsgpdJtQh91=8wRgMAozJyYf2w@mail.gmail.com>
- <20251103044553.GF2441659@ZenIV>
-In-Reply-To: <20251103044553.GF2441659@ZenIV>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 3 Nov 2025 17:44:07 +0100
-X-Gm-Features: AWmQ_bnRp3G7Ykl903QbbL9ApDC5ofho-uqgihSVxa8bPNXNkVDexslsMax_YbU
-Message-ID: <CAGudoHGP+x0VPpJnn=zWG6NLTkN8t+TvKDwErfWVvzZ7CEa+=Q@mail.gmail.com>
-Subject: Re: [PATCH] fs: touch up predicts in putname()
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
+References: <20250901160930.1785244-1-pbonzini@redhat.com> <20250901160930.1785244-5-pbonzini@redhat.com>
+ <CAGtprH-63eMtsU6TMeYrR8bi=-83sve=ObgdVzSv0htGf-kX+A@mail.gmail.com>
+ <811dc6c51bb4dfdc19d434f535f8b75d43fde213.camel@intel.com>
+ <ec07b62e266aa95d998c725336e773b8bc78225d.camel@intel.com>
+ <114b9d1593f1168072c145a0041c3bfe62f67a37.camel@intel.com>
+ <CAGtprH9uhdwppnQxNUBKmA4DwXn3qwTShBMoDALxox4qmvF6_g@mail.gmail.com> <3cc285fc5f376763b7a0b02700ac4520e95cf4d6.camel@intel.com>
+In-Reply-To: <3cc285fc5f376763b7a0b02700ac4520e95cf4d6.camel@intel.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Mon, 3 Nov 2025 08:44:16 -0800
+X-Gm-Features: AWmQ_bnpejAZPjxey9qNJ4qVNIQOpviEighDn8xmxts_7VWMUGm00GjcWVLHS1I
+Message-ID: <CAGtprH9jc9Xu83_K1g0dbTtPKYx=oODz8aeqbKOtpHYsAgg5yg@mail.gmail.com>
+Subject: Re: [PATCH 4/7] x86/kexec: Disable kexec/kdump on platforms with TDX
+ partial write erratum
+To: "Huang, Kai" <kai.huang@intel.com>
+Cc: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>, 
+	"ashish.kalra@amd.com" <ashish.kalra@amd.com>, "Hansen, Dave" <dave.hansen@intel.com>, 
+	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "Williams, Dan J" <dan.j.williams@intel.com>, 
+	"kas@kernel.org" <kas@kernel.org>, "seanjc@google.com" <seanjc@google.com>, 
+	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	"mingo@redhat.com" <mingo@redhat.com>, "Yamahata, Isaku" <isaku.yamahata@intel.com>, 
+	"nik.borisov@suse.com" <nik.borisov@suse.com>, "Chatre, Reinette" <reinette.chatre@intel.com>, 
+	"hpa@zytor.com" <hpa@zytor.com>, "peterz@infradead.org" <peterz@infradead.org>, 
+	"sagis@google.com" <sagis@google.com>, "Chen, Farrah" <farrah.chen@intel.com>, 
+	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "bp@alien8.de" <bp@alien8.de>, 
+	"tglx@linutronix.de" <tglx@linutronix.de>, "Gao, Chao" <chao.gao@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 3, 2025 at 5:45=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> wr=
+On Tue, Oct 28, 2025 at 2:31=E2=80=AFAM Huang, Kai <kai.huang@intel.com> wr=
 ote:
 >
-> On Sun, Nov 02, 2025 at 11:42:03PM +0100, Mateusz Guzik wrote:
->
-> > Even ignoring the fact that there is a refcount and people may be
-> > inclined to refname(name) + take_filename(name), the following already
-> > breaks:
->
-> Er...  refname() doesn't need to be seen for anyone other than auditsc.c
-> and core part of filename handling in fs/namei.c (I'd like to move it
-> to fs/filename.c someday)...
->
-> > foo() {
-> >     name =3D getname(...);
-> >     if (!IS_ERR_OR_NULL(name))
-> >         bar(name);
-> >     putname(name);
-> > }
+> On Mon, 2025-10-27 at 17:07 -0700, Vishal Annapurve wrote:
+> > On Mon, Oct 27, 2025 at 2:28=E2=80=AFPM Huang, Kai <kai.huang@intel.com=
+> wrote:
+> > >
+> > > On Mon, 2025-10-27 at 16:23 +0000, Edgecombe, Rick P wrote:
+> > > > On Mon, 2025-10-27 at 00:50 +0000, Huang, Kai wrote:
+> > > > > >
+> > > > > > IIUC, kernel doesn't donate any of it's available memory to TDX=
+ module
+> > > > > > if TDX is not actually enabled (i.e. if "kvm.intel.tdx=3Dy" ker=
+nel
+> > > > > > command line parameter is missing).
+> > > > >
+> > > > > Right (for now KVM is the only in-kernel TDX user).
+> > > > >
+> > > > > >
+> > > > > > Why is it unsafe to allow kexec/kdump if "kvm.intel.tdx=3Dy" is=
+ not
+> > > > > > supplied to the kernel?
+> > > > >
+> > > > > It can be relaxed.  Please see the above quoted text from the cha=
+ngelog:
+> > > > >
+> > > > >  > It's feasible to further relax this limitation, i.e., only fai=
+l kexec
+> > > > >  > when TDX is actually enabled by the kernel.  But this is still=
+ a half
+> > > > >  > measure compared to resetting TDX private memory so just do th=
+e simplest
+> > > > >  > thing for now.
+> > > >
+> > > > I think KVM could be re-inserted with different module params? As i=
+n, the two
+> > > > in-tree users could be two separate insertions of the KVM module. T=
+hat seems
+> > > > like something that could easily come up in the real world, if a us=
+er re-inserts
+> > > > for the purpose of enabling TDX. I think the above quote was talkin=
+g about
+> > > > another way of checking if it's enabled.
+> > >
+> > > Yes exactly.  We need to look at module status for that.
 > >
-> > bar(struct filename *name)
-> > {
-> >     baz(take_filename(&name));
-> > }
-> >
-> > While the code as proposed in the branch does not do it, it is a
-> > matter of time before something which can be distilled to the above
-> > shows up.
+> > So, the right thing to do is to declare the host platform as affected
+> > by PW_MCE_BUG only if TDX module is initialized, does that sound
+> > correct?
 >
-> Breaks in which case, exactly?  If baz() consumes its argument, we are
-> fine, if it does we have a leak...
+> I was thinking something like this:
 >
+> https://lore.kernel.org/lkml/20250416230259.97989-1-kai.huang@intel.com/
 
-My point is currently the idiomatic handling of struct filename is to
-getname(), pass it around and then unconditionally call putname() on
-it, which already branches on IS_ERR_OR_NULL. With the previous
-proposed design it would be a matter of time before someone does that
-and take_filename somewhere down the callstack, resulting in a bug.
+This seems to be an important thing to make progress on. IMO,
+disabling kexec/kdump even if the host doesn't plan to use TDX
+functionality but wants to keep the build config enabled is a
+regression.
 
-The new alien_filename struct mostly sorts it out, but I have some notes on=
- it.
+I think explicitly doing TDX module initialization[1] ideally needs
+something like the above series from Kai and possibly resetting the
+PAMT memory during kexec/kdump at least on SPR/EMR CPUs. Otherwise
+it's effectively impossible to enable CONFIG_INTEL_TDX_HOST and have
+kexec/kdump working on the host even if no confidential workloads are
+scheduled on such SPR/EMR hosts.
 
-> I agree that 'take_filename' is inviting wrong connotations, though.
->
-> Hell knows - it might be worth thinking of that as claiming ownership.
-> Or, perhaps, transformation of the original object, if we separate
-> the notion of 'active filename' (absolutely tied to one thread, not
-> allowed to be reachable from any data structures shared with other
-> threads, etc.) from 'embryonic filename' (no refcounting whatsoever,
-> no copying of references, etc., consumed on transformation into
-> 'active filename').  Then getname_alien() would create an embryo,
-> to be consumed before doing actual work.  That could be expressed
-> in C type system...  Need to think about that.
->
-> One possibility would be something like
->
-> struct alien_filename {
->         struct filename *__dont_touch_that;
-> };
->
-> int getname_alien(struct alien_filename *v, const char __user *string)
-> {
->         struct filename *res;
->         if (WARN_ON(v->__dont_touch_that))
->                 return -EINVAL;
->         res =3D getname_flags(string, GETNAME_NOAUDIT);
->         if (IS_ERR(res))
->                 return PTR_ERR(res);
->         v->__done_touch_that =3D res;
->         return 0;
-> }
->
-> void destroy_alien_filename(struct alient_filename *v)
-> {
->         putname(no_free_ptr(v->__dont_touch_that));
-> }
->
-> struct filename *claim_filename(struct alien_filename *v)
-> {
->         struct filename *res =3D no_free_ptr(v->__dont_touch_that);
->         if (!IS_ERR(res))
->                 audit_getname(res);
->         return res;
-> }
->
-> and e.g.
->
-> struct io_rename {
->         struct file                     *file;
->         int                             old_dfd;
->         int                             new_dfd;
->         struct alien_filename           oldpath;
->         struct alien_filename           newpath;
->         int                             flags;
-> };
->
-> ...
->         err =3D getname_alien(&ren->oldpath);
->         if (unlikely(err))
->                 return err;
->         err =3D getname_alien(&ren->newpath);
->         if (unlikely(err)) {
->                 destroy_alien_filename(&ren->oldpath);
->                 return err;
->         }
->
-> ...
->         /* note that do_renameat2() consumes filename references */
->         ret =3D do_renameat2(ren->old_dfd, claim_filename(&ren->oldpath),
->                            ren->new_dfd, claim_filename(&ren->newpath),
->                            ren->flags);
-> ...
->
-> void io_renameat_cleanup(struct io_kiocb *req)
-> {
->         struct io_rename *ren =3D io_kiocb_to_cmd(req, struct io_rename);
->
->         destroy_alien_filename(&ren->oldpath);
->         destroy_alien_filename(&ren->newpath);
-> }
->
-> Might work...  Anyone found adding any instances of __dont_touch_that any=
-where in
-> the kernel would be obviously doing something fishy (and if they are play=
-ing silly
-> buggers with obfuscating that, s/doing something fishy/malicious/), so C =
-typechecking
-> + git grep once in a while should suffice for safety.
-
-I think this still wants some error-proofing to catch bad usage. Per
-the above, the new thing deviates from the idiom claiming you can
-always putname().
-
-Perhaps like this:
-struct alien_filename {
-        struct filename *__dont_touch_that;
-        struct task_struct *__who_can_free;
-        bool is_delegated;
-};
-
-It would start with __who_can_free =3D=3D NULL and would need to be
-populated by a helper before destroy_alien_name is legally callable.
-
-The consumer would denote it does not intend to free the obj by
-calling delegate_alien_name(), after which some other thread needs to
-take ownership.
-
-a sketch:
-/* called by the thread which allocated the name if it decides to go
-through with it */
-delegate_alien_name(name) {
-    VFS_BUG_ON(name->delegated);
-    name->delegated =3D true;
-}
-
-/* called by the thread using the name */
-claim_alien_name(name) {
-    VFS_BUG_ON(!name->delegated);
-    VFS_BUG_ON(name->__who_can_free !=3D NULL);
-    name->__who_can_free =3D current;
-}
-
-destroy_alien_name(name) {
-    if (name->delegated) {
-        VFS_BUG_ON(name->__who_can_free =3D=3D NULL);
-        VFS_BUG_ON(name->__who_can_free !=3D current);
-    }
-    putname(..);
-}
-
-So a sample correct consumer looks like this:
-err =3D getname_alien(&name);
-....
-err =3D other_prep();
-if (!err)
-    actual_work(delegate_alien_name(name));
-else
-    destroy_alien_name(name);
-
-the *other* thread which eventually works on the name:
-claim_alien_name(name);
-/* hard work goes here */
-destroy_alien_name(name);
-
-Sample buggy consumer which both delegated the free *and* decided free
-anyway is caught.
+[1] https://lore.kernel.org/kvm/20251010220403.987927-4-seanjc@google.com/
 
