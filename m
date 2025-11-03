@@ -1,162 +1,151 @@
-Return-Path: <linux-kernel+bounces-883147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0F0EC2C801
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:56:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20455C2C7F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:56:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC5CD3B8958
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:54:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91DF23A5F6D
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B00333469C;
-	Mon,  3 Nov 2025 14:53:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4219334396;
+	Mon,  3 Nov 2025 14:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ePqVIqG4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ZfCxeYZo"
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D689333745;
-	Mon,  3 Nov 2025 14:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC983101C9
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 14:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762181629; cv=none; b=iXAb7oHssuL1jAo4XkBmO7ccIEikdXMJiHFU+F4oBq/pxaLVV1btSHD7FBA357IZ+Mii7T9I4/XXN2ko2Ll4XCPYC9p2mN2WdmX10uvGXpW7NH8vRzt8C78tv6p52YKo8OvV6noL1dEs9CxUKCOYBrzG8KN5T8iMAfy0TwvvU0g=
+	t=1762181629; cv=none; b=fVPfBicrVZl86I4aRyVhm/GdDNhAs+PpGiqm2KypT0/pYs1RGrFQ7STeZXyIkSTXuHlX3t0UulPW6CIPOrW2Pv5OCsk3BlXh2x8y95JwHVbFWHW5U6215oG0b3iNcBuZ5uV3ijWhycnuDtNpTJrMSRHCJ/0Z/4szQHVHIzK4Wxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1762181629; c=relaxed/simple;
-	bh=Ri6OYBYHckwm0+mp0un6shuRJsNaNIpkth772AmzDvQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rz39s2adcdGPJFFZcGW2+nbAuwBmUDCSvKYN7lov+ThYtthjUqWtgqdt6PxQkJkPJN+18T6J6hRtH0GoepShwxJ/cy8xhOYV/WmYxSIfKkjZNMqJJ9X5TCYeeJ2WItSltPHS4Ef67RSP9d129nMXRUWEhd3SLKVZFVr7eJqV83Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ePqVIqG4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E10D9C4CEE7;
-	Mon,  3 Nov 2025 14:53:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762181626;
-	bh=Ri6OYBYHckwm0+mp0un6shuRJsNaNIpkth772AmzDvQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ePqVIqG4hgdozY8I2Dt8f9GBLcNVnwR0Jgb3e3j7tGtxsgJpAH8iLGHXZyk9mpAE2
-	 jH8KR23qmbyXMGzJG1SLbp3KTRDsxctPEu6L3NIFpuAcPkWBTlBCHA44h963/Zp9MY
-	 cVMe/ZnwEOW71v+qasSEqLSoboeasIJTn6N0ZNjv3h9e9Wq8wnThxxTQq7z5LVg7Yt
-	 FNHNeOAuFOhl1xoFkYg33SiMz9z8Lxyu1iChCLxLP8a3Zsr2IkEjjO65wX+iamxuVV
-	 c6iv3khLyHyPmgNaDWT5k4N3doojjX49b95YAjOQvyDZ7EJMDC5v3M1lyWS+apD6ql
-	 hqi0UoeJnpgGQ==
-Date: Mon, 3 Nov 2025 15:53:41 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-aio@kvack.org, 
-	linux-unionfs@vger.kernel.org, linux-erofs@lists.ozlabs.org, linux-nfs@vger.kernel.org, 
-	linux-cifs@vger.kernel.org, samba-technical@lists.samba.org, cgroups@vger.kernel.org, 
-	netdev@vger.kernel.org
-Subject: Re: [PATCH 00/16] credentials guards: the easy cases
-Message-ID: <20251103-studien-anwalt-1991078e7e12@brauner>
-References: <20251103-work-creds-guards-simple-v1-0-a3e156839e7f@kernel.org>
- <CAOQ4uxgr33rf1tzjqdJex_tzNYDqj45=qLzi3BkMUaezgbJqoQ@mail.gmail.com>
+	bh=ehgZ4ZdKsHFQmxa3sEld7o3zP6QkHPreEmxCnU/yFug=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p0LqluX90Eyk8oWiRuimM3bjXjX285Wt+XoB7TuWPDkEJt8mbn0TY4R6GjvLbsmKxWWRmxI04S8re0MRCj6WS8tcQu0NX/wk9t/+7OSOPe1U3FZmFE4JTAcr+L60i0m5sTNxup89sBvuNoo6CYecLKepJT9Lzp7adv33DdfHK70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ZfCxeYZo; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-3d3ed0c9f49so1359834fac.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 06:53:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1762181625; x=1762786425; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2oRhMrtETyf8iDJxvxWets9ZrKCJQU2U505W6uUmeok=;
+        b=ZfCxeYZoDItY2EIVbbo4sQ/Nb3PW88I90jpArNPXWD6CcSYkK1RoeNGFb1S084vABH
+         g9aHk5DvPVoQmqHIWdZW8NzfyeuCpfNnwzkZAPsgG1OO68EE2Fx42rRHd+1//9tmhV/N
+         mBjMNC1ZqhehkVbs2cm8th8ndl0KTSoCdsL7mbfBJkDx9qzb0kyKUSFIvET3vksQo/rK
+         sPciLPY3P1DGV2yh1N4/FtOKt9VNU95tYI34UOMbkgEK30xZ+v6Q6u85VEh7Cni+tTcV
+         adkPMwVSjkDKy9OBxtB9A8v6HtIHXaFifherVKFqcdGx8RY+q8jipJ4dnZV//TpL7wK/
+         Y5jA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762181625; x=1762786425;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2oRhMrtETyf8iDJxvxWets9ZrKCJQU2U505W6uUmeok=;
+        b=Zym1vnZypqY98K0IDKwX4IYDXkSU8pWQIlpu2l6a0icGQcVFEOG0YueuSu8peT5GdL
+         NvMBYbiPeHkJyARrS7u1NO9DSOUBHC3TsPWpWcke6YAvaPMjH/u/r+PFjE2XcSeWeBPd
+         U0UrMR5z/thj5YF+2rJqfYHB4UniJcTPzWYuqhGoindTVbcFZTJjQvDGHb0RjVZHxwOL
+         aSSAE6+N9Zb9nCOvQBlBnEzXZXQpQ+oAO+kBLp4RB3RPVHr2A4VUi/ZO8Sx3fVe60vls
+         mOoBl04DyEh5F43KJ2lSr1IL+P9M+EJm0Jt7aQmRVKG++doIfx8IjNhv1T/0aXnIsX2y
+         gTtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUIiuoFxBtY+99ikPAVRb2R7vyL4hg/w44f7gav3Ejn7ZBEDcuGu26kKwNQ7RkVxnptFibBV756c4dK2l8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywn3+mXQeFaWJQcJ7zKFEpoTd24Lfj6mDwtQ5YRpJ3WPDGaajvk
+	RGbPFjUrfspUggfWetl/x2dCy837wBlxnEbKttz6RQo/lB/e7osb3YIbCpF5GX1Ip/o=
+X-Gm-Gg: ASbGncsUjHzQVqnJLgPE9fQh0eGKw8Mnd73SKn8KuqFqamS99uHPQ/00G0jJBeTDh2x
+	Ryq5w6XfIhY7FpgcBwbhXZTVebAXKwU4yXc7yYNBVqo/aKWCYnTlbrXOlaEeuzJKWwt9yxo6sZ/
+	F97GEkGiPwmfaw7RMU7tGYaxS+ZJroVJqN4NOs3nrFHptSosdsCNd/nFSuCVl/ivRmTyZQfCwz9
+	V32zf5ciTrDdOZhDkEjxo6NBY0kKqzI1wXzfXyRnpBnyNDgRTqF2+JnBU2YrVceNlXB+ShtdB11
+	rI4mcpTjmHf2VN6PhP3scmPk5cJD+lZIjj2LV2yOuz7rN01K6h0/RA2eNJrPiBgul4/R/AtsoWn
+	7s0kUrracbq5hcuOtbFoqaAV2GQAZtR69Lrs9TWcoVuaojrFFVtGQzRGtkl6kqCg6C57fc1wxbG
+	e+Pzz9HM7at1QkATvMgTzpxlnYGBo7ojyBsU/X32pM+92UuHdXZhSr1dC9ENIf
+X-Google-Smtp-Source: AGHT+IEJo7rLgIuSX0Rig2sD9HKUnrO5Vlavhp/7cDNnxbSPaLQkc0oS3be+i0RSaCSC/XzS1N8XhQ==
+X-Received: by 2002:a05:6870:5d86:b0:3c9:810d:494b with SMTP id 586e51a60fabf-3daca101f52mr4992674fac.8.1762181625628;
+        Mon, 03 Nov 2025 06:53:45 -0800 (PST)
+Received: from ?IPV6:2600:8803:e7e4:500:37c9:fd3e:34ae:9253? ([2600:8803:e7e4:500:37c9:fd3e:34ae:9253])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-3dff5213959sm116338fac.10.2025.11.03.06.53.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Nov 2025 06:53:45 -0800 (PST)
+Message-ID: <798a41fa-eda6-4f27-955c-82fdb61c2083@baylibre.com>
+Date: Mon, 3 Nov 2025 08:53:44 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/9] iio: imu: st_lsm6dsx: remove event_threshold field
+ from hw struct
+To: Francesco Lavra <flavra@baylibre.com>,
+ Andy Shevchenko <andy.shevchenko@gmail.com>,
+ Jonathan Cameron <jic23@kernel.org>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>,
+ Lorenzo Bianconi <lorenzo@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20251030072752.349633-1-flavra@baylibre.com>
+ <20251030072752.349633-7-flavra@baylibre.com>
+ <aQMbb6BUBHQUXX9y@smile.fi.intel.com>
+ <32a7741bc568243c8a19d691b922d9a8c2cba429.camel@baylibre.com>
+ <aQNs8VVoStUJ6YHB@smile.fi.intel.com> <20251102112958.435688d5@jic23-huawei>
+ <CAHp75Ve2+eU2X30EvC8dOuhEo3XZBwFrUH60itEYdYdGM7HvOA@mail.gmail.com>
+ <25732d2be08156b4f55e97f5306d1fd080255ae7.camel@baylibre.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <25732d2be08156b4f55e97f5306d1fd080255ae7.camel@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxgr33rf1tzjqdJex_tzNYDqj45=qLzi3BkMUaezgbJqoQ@mail.gmail.com>
 
-On Mon, Nov 03, 2025 at 02:29:40PM +0100, Amir Goldstein wrote:
-> On Mon, Nov 3, 2025 at 12:28 PM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > This converts all users of override_creds() to rely on credentials
-> > guards. Leave all those that do the prepare_creds() + modify creds +
-> > override_creds() dance alone for now. Some of them qualify for their own
-> > variant.
+On 11/3/25 3:34 AM, Francesco Lavra wrote:
+> On Sun, 2025-11-02 at 15:45 +0200, Andy Shevchenko wrote:
+>> On Sun, Nov 2, 2025 at 1:30 PM Jonathan Cameron <jic23@kernel.org> wrote:
+>>> On Thu, 30 Oct 2025 15:49:37 +0200
+>>> Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
+>>>> On Thu, Oct 30, 2025 at 12:10:08PM +0100, Francesco Lavra wrote:
+>>>>> On Thu, 2025-10-30 at 10:01 +0200, Andy Shevchenko wrote:
+>>>>>> On Thu, Oct 30, 2025 at 08:27:49AM +0100, Francesco Lavra wrote:
+>>
+>> ...
+>>
+>>>>>>> +       *val = (data & reg->mask) >> __ffs(reg->mask);
+>>>>>>
+>>>>>> Seems like yet another candidate for field_get() macro.
+>>>>>
+>>>>> FIELD_GET() can only be used with compile-time constant masks.
+>>>>> And apparently this is the case with u8_get_bits() too, because you
+>>>>> get a
+>>>>> "bad bitfield mask" compiler error if you try to use u8_get_bits().
+>>>>
+>>>> We are talking about different things.
+>>>> Here are the pointers to what I'm talking:
+>>>>
+>>>> - git grep -n -w 'field_get'
+>>>> -
+>>>> https://lore.kernel.org/linux-gpio/cover.1761588465.git.geert+renesas@glider.be/
+>>>>
+>>> True that it will be a usecase for that, but given plan is to merge
+>>> that through
+>>> a different tree in next merge window, it's not available for us yet. 
+>>> Hence would
+>>> be a follow up patch next cycle.
+>>
+>> Yes, but we can still define them here. Dunno either with #under or
+>> under (namespaced) names, but still possible to use now.
 > 
-> Nice!
-> 
-> What about with_ovl_creator_cred()/scoped_with_ovl_creator_cred()?
-> Is there any reason not to do it as well?
+> OK, I will define an ST_LSM6DSX_FIELD_GET() macro.
 
-No, I don't think there is other than that the complexity of it warrants
-a separate patch series.
-
-When override_creds()/revert_creds() still was a reference count
-bonanza, we struggled with two issues related to overlayfs:
-
-(1) reference counting was sometimes very non-obvious
-    (think:
-    cred = get_cred(creator_cred);
-    old_cred = override_cred(cred);
-    put_cred(revert_creds(old_cred));
-    put_cred(cred); or worse )
-
-    and thus the credential override logic when creating files where you
-    change the fsuid and you essentially override credentials _twice_
-    lead to pretty twisted logic that wasn't necessarily clarified by
-    the scope-based semantics.
-
-    This problem is now resolved since my prior rework.
-
-(2) The scope based cleanup did struggle in switch() statements that
-    messed with the scope-based logic iirc. I don't have the details in
-    my head right now anymore but basically this is why we originally
-    punted on the original conversion so we wouldn't end up chasing bugs
-    in two semantic changes done at the same time.
-
-    I think we're ready to do (2) now.
-
-What I tried in this series is to reduce the amount of scope switching
-due to gotos and that's why I also moved some code around. It also helps
-to visually clarify the guards when the scope is reduced by moving large
-portions where work is done under a guard out to a helper. That's
-especially true when the guard overrides credentials imho. That's
-something I already aimed for during the first conversion.
-
-> 
-> I can try to clear some time for this cleanup.
-> 
-> For this series, feel free to add:
-> 
-> Reviewed-by: Amir Goldstein <amir73il@gmail.com>
-> 
-> Thanks,
-> Amir.
-> 
-> >
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> > Christian Brauner (16):
-> >       cred: add {scoped_}with_creds() guards
-> >       aio: use credential guards
-> >       backing-file: use credential guards for reads
-> >       backing-file: use credential guards for writes
-> >       backing-file: use credential guards for splice read
-> >       backing-file: use credential guards for splice write
-> >       backing-file: use credential guards for mmap
-> >       binfmt_misc: use credential guards
-> >       erofs: use credential guards
-> >       nfs: use credential guards in nfs_local_call_read()
-> >       nfs: use credential guards in nfs_local_call_write()
-> >       nfs: use credential guards in nfs_idmap_get_key()
-> >       smb: use credential guards in cifs_get_spnego_key()
-> >       act: use credential guards in acct_write_process()
-> >       cgroup: use credential guards in cgroup_attach_permissions()
-> >       net/dns_resolver: use credential guards in dns_query()
-> >
-> >  fs/aio.c                     |   6 +-
-> >  fs/backing-file.c            | 147 ++++++++++++++++++++++---------------------
-> >  fs/binfmt_misc.c             |   7 +--
-> >  fs/erofs/fileio.c            |   6 +-
-> >  fs/nfs/localio.c             |  59 +++++++++--------
-> >  fs/nfs/nfs4idmap.c           |   7 +--
-> >  fs/smb/client/cifs_spnego.c  |   6 +-
-> >  include/linux/cred.h         |  12 ++--
-> >  kernel/acct.c                |   6 +-
-> >  kernel/cgroup/cgroup.c       |  10 ++-
-> >  net/dns_resolver/dns_query.c |   6 +-
-> >  11 files changed, 133 insertions(+), 139 deletions(-)
-> > ---
-> > base-commit: fea79c89ff947a69a55fed5ce86a70840e6d719c
-> > change-id: 20251103-work-creds-guards-simple-619ef2200d22
-> >
-> >
+The macro should be named exactly `field_get()`, otherwise we will
+have to rename all of the callers later after the series adding it
+to linux/bitfield.h is merged. And it should have an
+`#undef field_get` just like the other patches that series. Then
+later, we only need to remove the #undef and #def lines and not
+change the rest of the code.
 
