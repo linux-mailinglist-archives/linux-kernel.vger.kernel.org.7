@@ -1,130 +1,107 @@
-Return-Path: <linux-kernel+bounces-883613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A273C2DE22
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 20:21:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74B05C2DE27
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 20:22:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 001B9422B43
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 19:19:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61AE6422E4C
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 19:19:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5634320386;
-	Mon,  3 Nov 2025 19:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A949C8BEC;
+	Mon,  3 Nov 2025 19:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cEeNuDTr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nqvN1Jp8"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F6231D74E;
-	Mon,  3 Nov 2025 19:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F63347C3
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 19:19:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762197473; cv=none; b=mcESlDDK8Z1uXxRZIhsA36G5GOAOuFQBZnXb+c2VPsguWw7ND8DGg3PtuQDkDzWXnBRR4ryCreRRyvsdtgmT3R1siq3dOEBLzy5+9pzuQ/i7r64zkhjHhLkE1mG9WMdgMYdFeoiJi6+adxn/p5WgTRsPWEmbr5NU4D5AsIkJass=
+	t=1762197542; cv=none; b=dUjreldGgtM1cc29ovkgDk3EwTs5B/RECW0xaZ9rykLUUWbl3aF10PqzLOrrFCfAa2accUn5j5UDZiv/1cN+vBOH37zfdQzdaPctIUb9Gxem8zdGhr2YwBXNIsyEKOIg6Ac3lx3rzV2PRvr7npc0SNKkYUWpYcXd5jJZKgiZrNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762197473; c=relaxed/simple;
-	bh=hXuE1VBaSY3RKRgphu5e9Wa0Cavk7sH93K8Brpnelhw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L4PcaMG6u1YBi1F6veBHotmNwZGN+51N96SrUWxIHKdUivyzpv5tK37rp1gXc/y9SFr+JDGrK1GMJlZhrpgItO7PcR0J6z1SsTwRmRqSIihWlMq0uatoOCi7Yam9mZMvifPwK/SfNcL/+3QcSgMr4ovPY6r61s3tIZds5tb66KI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cEeNuDTr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E071C4CEE7;
-	Mon,  3 Nov 2025 19:17:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762197471;
-	bh=hXuE1VBaSY3RKRgphu5e9Wa0Cavk7sH93K8Brpnelhw=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=cEeNuDTr1SboNVPsjO50nf9fbgya3TROP191it+xMY0GC6SUqqkeZSHuss3m/OFW1
-	 rWuRFnTf6Mtuv12qSlGbiD03Rq6E6Wl+7KYuRVNdmNBhzsiusb0GHv5PitEUvqhEez
-	 ZyprsnZuAHp8MVZ154qU3gCMzqvr7gHvnqhNMRTqvyO2zW2MynDG2+nuS2pdRtOaFv
-	 +Yrem4yAAvxN9aMqqfUjCl2+Dd0xypZgu6aGCE619PdS9s8BGK5GrR/jSfEJjwIm4f
-	 ACmB5v7t7iTvrEwgQYkzl+rek4TUUJ5lYi7WE+1NEjtwZ+t1rPIb8rmdj9HhuKs6MI
-	 BKre6jda/c4bw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 4330ACE0BB3; Mon,  3 Nov 2025 11:17:50 -0800 (PST)
-Date: Mon, 3 Nov 2025 11:17:50 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: rcu@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com,
-	rostedt@goodmis.org, Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
-Subject: Re: [PATCH 17/19] srcu: Optimize SRCU-fast-updown for arm64
-Message-ID: <8a33bf08-8ca4-4fc1-9481-fff2247e5518@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <082fb8ba-91b8-448e-a472-195eb7b282fd@paulmck-laptop>
- <20251102214436.3905633-17-paulmck@kernel.org>
- <b2fb5a99-8dc2-440b-bf52-1dbcf3d7d9a7@efficios.com>
- <f89a3a56-e48a-4975-b67b-9387fe2e48c6@paulmck-laptop>
- <7cdecba1-2b30-4296-9862-3dd7bcc013d8@efficios.com>
+	s=arc-20240116; t=1762197542; c=relaxed/simple;
+	bh=TiPAPKa/5E7lZ3VkDFPFN/ouI2YUhm4970Gu5hWK3LI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n2GwOy0cYvj0WCbok+FIuZrSD5zexGe7cvvPK6He27XjgrvIIlxZ1sNDOys7rVKVPrCbh/Ysr/xojl4TUlRUZMc8ep3HLHEYANBPxPpkidH7qWrU1zFylJUOo6ulstsOH0Fb3NFno6jGB2/qMbQZeWPB5Zu9PSiRlN+FJng2Y0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nqvN1Jp8; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-77f5d497692so6302789b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 11:19:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762197541; x=1762802341; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TiPAPKa/5E7lZ3VkDFPFN/ouI2YUhm4970Gu5hWK3LI=;
+        b=nqvN1Jp8S0D87zX1aiFPPz5J6yMMN6G3n97knd3SuRXhtI/NTH0NmhSQHJ7LztSZZn
+         P2LnmryfdZ4Ap5h2ouZDudjIBJhIEOe7Ac7akOVh4wkucKjMowZVeS9wVLpb1wNOBuJj
+         3pIbu39p6KYyTIeuWt6bHtTHZprEaeipSUDAVR1d0PKTlccqlqyn2v0sLT6HrOMAtYm1
+         IMQX1E/7uuttmG2nnySdFphb1cusZXibepX/KiPq1wf+9nXa+ORZ6Q5zYlelV8aCTWco
+         KKlH9ovHRtDHkBqljxCPlZgQGZK7WswkYO8zGL8lJ8SmXPFNo3xTORDXObLMBmOdsbXx
+         fq/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762197541; x=1762802341;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TiPAPKa/5E7lZ3VkDFPFN/ouI2YUhm4970Gu5hWK3LI=;
+        b=H6Mgo0mP57z0TRfSiUP17WoVKm76xFFsfmm8dX4ZWjaZk5xBaMByryCI3cJfvyr5yK
+         e5sLW88L54eadZDPjV0HoTgt1HAGHlVgPdY+24fqidWtlEorXOkhUg2EjW7VVIhylcGW
+         tpeN1ifGZ9v4AfuiNP6du4BCNjV0d65X+glPoFW4HbKS4vvag7Bwh3pE/SYkG5qDLCT1
+         lvcoc4H9aT4VlIbOgzYcYRZPuV+b1J0SwQZ7caE/+aHhsmg4kGddSslFR0d/zINNagd4
+         9BMGCDE8HfieVYeZSDPR+KJ6CszSDG5gUODhidjsJTBR1t7cMSbw3a4w7BXXUtYCRHCe
+         5QOA==
+X-Forwarded-Encrypted: i=1; AJvYcCWnR1822zuAXIli+QF71a7N5hPh20LcZ8p5aA8vrBVX6idVlOdp3DPuX9ZqhhK1VEtG9bg5XLWFeCbDfvc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzycUsXc/uUUY6qHXJt6bPjQh8kh9MXtDw8OM4c/yaIxFjcQtO
+	g2o9f3hMrtyNCmwX1uoYGRpQJ0RHBWkGjOMjJfNYuzxWNR/BNt5ZH9AxReO/QOuZ8Qo685Jkq35
+	s0PAokmT2sZGcs/9VYdhMhA1w1pkJSS0=
+X-Gm-Gg: ASbGnctMLJIw6rfj6BinMkfKKwAyajnWmM+RSwMfgNLWbNxdgVthek+g9aG9YspTUXz
+	iN8a2MkfIRvPp1WKVhTr749yF95lPY3TTakG6zOe5UuUQD1kShkCHcCEhHtNV51AfSuQNdH8nPu
+	3hjq9YvPoWZtlHhBoti5LkGDVwhIZtO0xOg7zWBCiwCAJNHF7e5EhEhXy02zRyEWlyt1l24pIOB
+	/ma/nIraxmdon43J+sHDqmnvk+vliGnyWjISVgxkRSn0fpkn7jQ5E7WHvwb
+X-Google-Smtp-Source: AGHT+IF0BSYD4ggbwG3GKDSXC0JY95fMZFQFVb8K4FHOBBwvNGu2REmpMK4jfQUnBSt+Oq262i2Kl3UblwRepxobDSg=
+X-Received: by 2002:a17:902:ea0e:b0:295:c1:95f7 with SMTP id
+ d9443c01a7336-2951a5271bbmr188667085ad.61.1762197540672; Mon, 03 Nov 2025
+ 11:19:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7cdecba1-2b30-4296-9862-3dd7bcc013d8@efficios.com>
+References: <20251103023619.1025622-1-hehuiwen@kylinos.cn>
+In-Reply-To: <20251103023619.1025622-1-hehuiwen@kylinos.cn>
+From: Xin Long <lucien.xin@gmail.com>
+Date: Mon, 3 Nov 2025 14:18:48 -0500
+X-Gm-Features: AWmQ_bmwicNW82tRVRkXxPbIo5gT61jNLe8lZ8bOYZiBYnm3rw60BaynqJTOX-U
+Message-ID: <CADvbK_cp=heq2sg0J2hEa3p4soBFmjdqvY2otSLtCkF0aF2FKQ@mail.gmail.com>
+Subject: Re: [PATCH v2] sctp: make sctp_transport_init() void
+To: Huiwen He <hehuiwen@kylinos.cn>
+Cc: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, "open list:SCTP PROTOCOL" <linux-sctp@vger.kernel.org>, 
+	"open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 03, 2025 at 01:16:23PM -0500, Mathieu Desnoyers wrote:
-> On 2025-11-03 12:08, Paul E. McKenney wrote:
-> > On Mon, Nov 03, 2025 at 08:34:10AM -0500, Mathieu Desnoyers wrote:
-> [...]
-> 
-> > > One example is the libside (user level) rcu implementation which uses
-> > > two counters per cpu [1]. One counter is the rseq fast path, and the
-> > > second counter is for atomics (as fallback).
-> > > 
-> > > If the typical scenario we want to optimize for is thread context, we
-> > > can probably remove the atomic from the fast path with just preempt off
-> > > by partitioning the per-cpu counters further, one possibility being:
-> > > 
-> > > struct percpu_srcu_fast_pair {
-> > > 	unsigned long lock, unlock;
-> > > };
-> > > 
-> > > struct percpu_srcu_fast {
-> > > 	struct percpu_srcu_fast_pair thread;
-> > > 	struct percpu_srcu_fast_pair irq;
-> > > };
-> > > 
-> > > And the grace period sums both thread and irq counters.
-> > > 
-> > > Thoughts ?
-> > 
-> > One complication here is that we need srcu_down_read() at task level
-> > and the matching srcu_up_read() at softirq and/or hardirq level.
-> > 
-> > Or am I missing a trick in your proposed implementation?
-> 
-> I think you are indeed missing the crux of the solution here.
-> 
-> Each of task level and soft/hard irq level increments will be
-> dispatched into different counters (thread vs irq). But the
-> grace period will sum, for each the the two periods one after the
-> next, the unlock counts and then the lock counts. It will consider
-> the period as quiescent if the delta between the two sums is zero,
-> e.g.
-> 
->   (count[period].irq.unlock + count[period].thread.unlock -
->    count[period].irq.lock - count[period].thread.lock) == 0
-> 
-> so the sum does not care how the counters were incremented
-> (it just does a load-relaxed), but each counter category
-> have its own way of dealing with concurrency (thread: percpu
-> ops, irq: atomics).
-> 
-> This is effectively a use of split-counters, but the split
-> is across concurrency handling mechanisms rather than across
-> CPUs.
-
-Ah, got it, thank you!  But we would need an additional softirq counter,
-correct?
-
-I will keep this in my back pocket in case Catalin's and Yicong's prefetch
-trick turns out to be problematic, and again, thank you!
-
-							Thanx, Paul
+On Sun, Nov 2, 2025 at 9:38=E2=80=AFPM Huiwen He <hehuiwen@kylinos.cn> wrot=
+e:
+>
+> sctp_transport_init() is static and never returns NULL. It is only
+> called by sctp_transport_new(), so change it to void and remove the
+> redundant return value check.
+>
+> Signed-off-by: Huiwen He <hehuiwen@kylinos.cn>
+> ---
+> Changes in v2:
+> - Remove the 'fail' label and its path as suggested by Xin Long.
+> - Link to v1: https://lore.kernel.org/all/20251101163656.585550-1-hehuiwe=
+n@kylinos.cn
+>
+Acked-by: Xin Long <lucien.xin@gmail.com>
 
