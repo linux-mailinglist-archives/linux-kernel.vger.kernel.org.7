@@ -1,135 +1,109 @@
-Return-Path: <linux-kernel+bounces-882420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 147BEC2A6B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:54:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E277AC2A713
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:57:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D2C104F0429
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:52:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55DB23B75A1
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780CB2BE64C;
-	Mon,  3 Nov 2025 07:52:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F39442C21F1;
+	Mon,  3 Nov 2025 07:53:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="rO9IiVFx"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D7C34D38A
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 07:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="YdmoOAiZ"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7813C2C0F8F
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 07:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762156338; cv=none; b=Rpsk196+EfhXOqtHBbD6AjONoo1OQNqS5Sr3RM9B5tl09Zryr2yBP90LA1lxZ+jITYjJyMORGvhs/LjHE1slyz1oAIkdNI3cUv9bnz3MhKqrFx3z2aTgoYIFpybxBlVRkQ2algQNH1xnGk6ycM2mQ8jExBq2NUrlhrLSJofKkcg=
+	t=1762156397; cv=none; b=QSzdU/c5FoP/RrJ+RuXEeMQdXie4l5KxakbWieMEiLN4WHsPu25sVZ9I2kOJqks9UdU9n83RQvUG9cWkohSOwEHEbrfS0zferGMDEsRcIuj23RuhrgyPcxNy2v+jv3CMhNiHE7KQJHzV25uLhKF6SQkEIPGbRolss4lP/WLnbDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762156338; c=relaxed/simple;
-	bh=xPw/EkaLjlYdn9ZRdoZnxkDOXDBERxtHMo4O7WD9kas=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X6PdvWivr3+u8h/s7nVWHgxfAkY7bg3ZHQ8KZzcCbdon3rGkDo/TS6PYmY/fPF9huDC4rSMYH5ii58mNdkyBIMcHK89+HssnUApbSuhTwaPKIlKx4a71X/Uz8jVREasWztmmCmkxn6cwVHzcu/3l4G3SLsZMNLenibQF2aWR+Ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=rO9IiVFx; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-78488cdc20aso51872007b3.1
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 23:52:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1762156336; x=1762761136; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PTPGXxwQZWvCNLJWtuoJDZzQORR3WU9efpFiIKez7WU=;
-        b=rO9IiVFxmaSjqsEn2pFNiGITE1/Zj5oaL/wZ2GWhQ2DTHLaM+MmUHcGKUgwZy3XY7S
-         jObW1RWJXBw9DbkIw9aGsGWs7G8iUkQ+6APstUadYfmfV8duAuykBpZBgIuc3fz+oic4
-         t6cSa9II69jiAsnBCQeHJOk3J5+vuOsFC+DqM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762156336; x=1762761136;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PTPGXxwQZWvCNLJWtuoJDZzQORR3WU9efpFiIKez7WU=;
-        b=ZvUUam/UJGop9smSO0xFa2fwnPhYx9fCmX+1w0kQIO5IRR9G0tjpluxNj4+I0+2GGA
-         XwuFoEDGAlWGcjV+8r0zSSsr46vJAFoWeBZck4OFaLEjQNthkFV5T+8sqkU8RBishdsw
-         rfQBLByKgJwq0I8oGsee7VRZ9DrXxCy4QFK84+gvSFsW6Wyn2T3L7M3VJuZK98GD99Qh
-         RT3IEmcTFzj1BHPcCo/TXO8M6zOaLIhw4WPZJWiae0VA6yCX3iO42fza26qrT/TuWgOe
-         j0ewf/3rKRVj+hOx3DdHtiacS6Uakvgp2JND2ks49H9797XVv9NexnKl6Ocasa+J2td0
-         yI6A==
-X-Forwarded-Encrypted: i=1; AJvYcCXb6vb7N5oaNirxPQ7igl96vMFY5jdeGJVZPD3CRe5Iu0Wdfe6jvDKCXriDT8llJzJz7LbEtstOhx7x244=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywj494gP09kSCkH9XUXKzDopJLWsc4iNFHNDyLbwApJLazFP2p0
-	o+tv0wqXQqQIRLD0rWPso4bha4LC9SqOxjKOUQcJUGI75z9QoJ3g3J6wl/OfgpmA8gbn41Guqeo
-	jaBNWxuxpJAIcWAdPyyheyhKqE3YYerkXJkVdIixzfFEwysy1szpkHhE=
-X-Gm-Gg: ASbGncvosID+seYhE+WTUhQwe40/7/P7m4a299NxoLNKHxQ+0vvStsPB+GW1ZrBueSD
-	7Nz6PKXzquw301jXemFz027zdqIu2aVQmlDfb7444VasyaEW9lPGOepWE8fhrTJUfo1BOrNRPSA
-	6XBQi2lap9vXLLPpBv16RalCeeZuzLTvu8WFBB6Zw+XBMp/gxUh9PBtvc+vVh0qA8/uyUltACT1
-	JG9jWrQnRi5Ai3SQmKh33ox1xDBetad8Cj1c07EvMwzaqAraZcg2EXf+HACbN8MOpa8Xw==
-X-Google-Smtp-Source: AGHT+IGAfPzDZnSjcBo5Myj2OK8PIIoNEoQ7eah85P2JO/xYi8s9Xp3EhC8UeEUW1VJ503f9rhh6wA8w2vjiPiymoIo=
-X-Received: by 2002:a05:690c:6009:b0:783:7143:d825 with SMTP id
- 00721157ae682-78648435e5amr116889117b3.25.1762156335783; Sun, 02 Nov 2025
- 23:52:15 -0800 (PST)
+	s=arc-20240116; t=1762156397; c=relaxed/simple;
+	bh=81khHww0RXrIGfByOluomSheMwJMiosI66q5KkdC/28=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mXKrqe7aSQb6D1ABjsD25UwPSt5ULAysysx/2krsDzDUZ7QdjaArwRX2I0skZd2bb33/B/p2fmcm7YBQJIBbu7eNJpjZvfoZZc0n3Lc2CPf9LyHS507jDN6Dnl4NFw5phPIgc8dD3c5x/6orvRV2seEhFMo/5ukF+GmcJaKH0lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=YdmoOAiZ; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 61F4714C2D3;
+	Mon,  3 Nov 2025 08:53:10 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1762156392;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=F9zWb1t8klcmQ6eGCLVDZoSM8kXy4Cpxwtf8zrpJYR4=;
+	b=YdmoOAiZueOIu8yhEDUC6gMjIxzLj32Jwdfd9/McKak8N+sUZgT1KOS2Dmxe0GopVIsKSR
+	IydtoIipg2uYcjUefEOH/A/22VDmp5vdKoVTSxmOo7s1ITdhBje18eaI5/3ncC9QBOYIhF
+	udlck+vX7QsAbtgf7nJL5gDxTwe+1sS8hhFx6m6Ka7fr9OZK6QgM2uX284XIRJP/ytUG7F
+	HvZRWYXZ2fioFmYxstR1SM03P6Gp0H0Oq8niTJEp3i4pCjSDlxtQyDohqUypR9PUp0yxaa
+	JHRWDHF6v0C+sIJ+ZwKNpWm805JQQSWK9Ei7kMQS/ZX3IWte4FnDV4L0TEfR6A==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 0b5c3878;
+	Mon, 3 Nov 2025 07:53:08 +0000 (UTC)
+Date: Mon, 3 Nov 2025 16:52:53 +0900
+From: asmadeus <asmadeus@codewreck.org>
+To: Pierre Barre <pierre@barre.sh>
+Cc: Christian Schoenebeck <linux_oss@crudebyte.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	v9fs@lists.linux.dev, ericvh@kernel.org, lucho@ionkov.net,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] 9p: Use kvmalloc for message buffers on supported
+ transports
+Message-ID: <aQhfVa_jdI_1kQwB@codewreck.org>
+References: <1fb9c439-73f3-4a00-8a8b-45eeb85883eb@app.fastmail.com>
+ <8602724.2ttRNpPraX@silver>
+ <7005d8d9-d42d-409f-b8e3-cd7207059eee@app.fastmail.com>
+ <5019358.GXAFRqVoOG@silver>
+ <d2017c29-11fb-44a5-bd0f-4204329bbefb@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251103074009.4708-1-chuguangqing@inspur.com>
-In-Reply-To: <20251103074009.4708-1-chuguangqing@inspur.com>
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Date: Mon, 3 Nov 2025 08:52:05 +0100
-X-Gm-Features: AWmQ_bkybyhH8oApHqkt8s9JknLUAj7abzsc0GKdxF_HV51l07GhZgwMyQ-_55Y
-Message-ID: <CABGWkvr0qA+xCLgfU37agbSS7O78u-GGpLjakcWjozR4QWYv=Q@mail.gmail.com>
-Subject: Re: [PATCH] can: bxcan: Fix a typo error for assign
-To: Chu Guangqing <chuguangqing@inspur.com>
-Cc: mkl@pengutronix.de, mailhol@kernel.org, linux-can@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <d2017c29-11fb-44a5-bd0f-4204329bbefb@app.fastmail.com>
 
-On Mon, Nov 3, 2025 at 8:42=E2=80=AFAM Chu Guangqing <chuguangqing@inspur.c=
-om> wrote:
->
-> Fix the spelling error of "assign".
->
-> Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
-> ---
->  drivers/net/can/bxcan.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/can/bxcan.c b/drivers/net/can/bxcan.c
-> index 0b579e7bb3b6..baf494d20bef 100644
-> --- a/drivers/net/can/bxcan.c
-> +++ b/drivers/net/can/bxcan.c
-> @@ -227,7 +227,7 @@ static void bxcan_enable_filters(struct bxcan_priv *p=
-riv, enum bxcan_cfg cfg)
->          * mask mode with 32 bits width.
->          */
->
-> -       /* Enter filter initialization mode and assing filters to CAN
-> +       /* Enter filter initialization mode and assign filters to CAN
->          * controllers.
->          */
->         regmap_update_bits(priv->gcan, BXCAN_FMR_REG,
-> --
-> 2.43.7
->
+Pierre Barre wrote on Thu, Oct 16, 2025 at 03:58:36PM +0200:
+> While developing a 9P server (https://github.com/Barre/ZeroFS) and
+> testing it under high-load, I was running into allocation failures.
+> The failures occur even with plenty of free memory available because
+> kmalloc requires contiguous physical memory.
+> 
+> This results in errors like:
+> ls: page allocation failure: order:7, mode:0x40c40(GFP_NOFS|__GFP_COMP)
+> 
+> This patch introduces a transport capability flag (supports_vmalloc)
+> that indicates whether a transport can work with vmalloc'd buffers
+> (non-physically contiguous memory). Transports requiring DMA should
+> leave this flag as false.
+> 
+> The fd-based transports (tcp, unix, fd) set this flag to true, and
+> p9_fcall_init will use kvmalloc instead of kmalloc for these
+> transports. This allows the allocator to fall back to vmalloc when
+> contiguous physical memory is not available.
+> 
+> Additionally, if kmem_cache_alloc fails, the code falls back to
+> kvmalloc for transports that support it.
+> 
+> Signed-off-by: Pierre Barre <pierre@barre.sh>
 
-Reviewed-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
---=20
+Thanks, it's now picked up and queued in -next -- will send to Linus in
+a couple of months.
 
-Dario Binacchi
+FWIW, I prefer (and I think it's the norm in the linux world) if patches
+new versions aren't sent as a reply to previous version, it confuses
+tools like b4 that fetch the patch thread for version operations.
+If you send patches again please just send later versions without
+using --in-reply-to :)
 
-Senior Embedded Linux Developer
-
-dario.binacchi@amarulasolutions.com
-
-__________________________________
-
-
-Amarula Solutions SRL
-
-Via Le Canevare 30, 31100 Treviso, Veneto, IT
-
-T. +39 042 243 5310
-info@amarulasolutions.com
-
-www.amarulasolutions.com
+Cheers,
+-- 
+Dominique Martinet | Asmadeus
 
