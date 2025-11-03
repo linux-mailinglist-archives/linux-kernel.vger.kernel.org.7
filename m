@@ -1,172 +1,132 @@
-Return-Path: <linux-kernel+bounces-883441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0534EC2D779
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:28:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57249C2D7A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:32:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E8D234E3020
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:28:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C28623B5581
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6958631B132;
-	Mon,  3 Nov 2025 17:28:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mwWnPAkG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8C2156678;
-	Mon,  3 Nov 2025 17:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1004531C567;
+	Mon,  3 Nov 2025 17:28:37 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4542431BCA6
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 17:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762190912; cv=none; b=kk5tGXidYCnNaYtU/TxljErpiYNix24lz6MchABblJ4Tnv4pYJzFGCc72Wx36ccA8nyXa5sPUW+dXgHjSKnNQ7ECZqZHkbCaTClSNfe8B82KkkTKMkSCNTWljlr5SWptHePFNqm+devFCKNJjZwTu9iupWGSmDBZigOc4DzuEXw=
+	t=1762190916; cv=none; b=BE8PG61lBG9y9m0LsxokdQ1J0bQocvPV/WFPfOGEw0RDOm3Y9JTC71rYVkTgeZx+DyE7LDc4wQgqoeK8FiEIwGy5p7E/x+7O3zFmeyVE1/khB7/OofPcClByqFG5jfdFtOvIvzzu/vPDeYHWIpLVIXK2VVyXaEH0GJYXtTBa8VQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762190912; c=relaxed/simple;
-	bh=xn8o05xUchR4VJZbvh3b7LrEVKldpcP244qArsTXXVI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=GS+3dseTTWJNAABZ21Dke7psqDD2iBSYEbXPyFY1UxL8964fN69ZjZ6vQlJuakgRicnJMZcmbNAlNdb6p6ctu7HGXXNPwrs1LOHmtOmI2o+y63TAeeOwJNhV0PyqL3wzIVX4j4LUZOUw18RVUHoH90fCNseqvowPtgZoAPjjK/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mwWnPAkG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0444BC4CEE7;
-	Mon,  3 Nov 2025 17:28:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762190912;
-	bh=xn8o05xUchR4VJZbvh3b7LrEVKldpcP244qArsTXXVI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=mwWnPAkGnsmPrgqlf8pyTOI5XUhmBZS5vXTg6IX9pJry4PPcJOfns8zSFy0SEufL+
-	 vsYNYNEmwmI8/2OhKWhXkkmisVla1c4lfW58fiYuX2j2gRktQTBVVtnE+VnsC4/kwi
-	 yKFzQhbeRX1MSlB2uXnpKiDv2iQi6TvBFEtrKnRpaS6Pm/LhteW3SEG7ouAQGV0ySR
-	 JeCYpgmuf81mrwKw8BEwLKRY5Zt4VN1PXUVxCAlK91G5m7t2gYYpdToke9K6TYq1Qi
-	 6t1Yqab9hRFg4QOlv4cUSnE18QfIUOkMGJOXmpE3M6NofJUkvFB8LWQ2RrnpQiLoDd
-	 InMlobK4o/Rtw==
-Date: Mon, 3 Nov 2025 11:28:30 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Yishai Hadas <yishaih@nvidia.com>
-Cc: Leon Romanovsky <leon@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Saeed Mahameed <saeedm@nvidia.com>,
-	Tariq Toukan <tariqt@nvidia.com>, Mark Bloch <mbloch@nvidia.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-	Edward Srouji <edwards@nvidia.com>
-Subject: Re: [PATCH mlx5-next 1/2] PCI/TPH: Expose pcie_tph_get_st_table_loc()
-Message-ID: <20251103172830.GA1811635@bhelgaas>
+	s=arc-20240116; t=1762190916; c=relaxed/simple;
+	bh=XJ3Joz1OS/b9of1XvQ75wTEjgPyHbknmik2lIvoZM9k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XWwJwtYCDapcGV+6jAMpD2k9Joiy+YiC5nmZZlniXRhb6TzltepzBzh3MSYJAeWJcZjp7skjchzrcZlzKH3UUg/F5cwJ4lguFQ7yJR4OsSw/NvqmcjQVmAhWxdGkoTDg5+auGkhpohryvBP93/Z11HdRbj9QtB54Y8gCEa5NyIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C9ED11D14;
+	Mon,  3 Nov 2025 09:28:26 -0800 (PST)
+Received: from [10.1.36.161] (XHFQ2J9959.cambridge.arm.com [10.1.36.161])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B00D83F66E;
+	Mon,  3 Nov 2025 09:28:32 -0800 (PST)
+Message-ID: <8df1d593-f176-422d-8b87-844986ac38a6@arm.com>
+Date: Mon, 3 Nov 2025 17:28:31 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c9cb13f6-570e-422f-b988-035a31e85330@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] arm64: mm: Don't sleep in split_kernel_leaf_mapping()
+ when in atomic context
+Content-Language: en-GB
+To: "David Hildenbrand (Red Hat)" <david@kernel.org>,
+ catalin.marinas@arm.com, will@kernel.org, yang@os.amperecomputing.com,
+ ardb@kernel.org, dev.jain@arm.com, scott@os.amperecomputing.com,
+ cl@gentwo.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Guenter Roeck <groeck@google.com>
+References: <20251103125738.3073566-1-ryan.roberts@arm.com>
+ <e5fee14a-4569-49c8-9f42-844839e51e85@kernel.org>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <e5fee14a-4569-49c8-9f42-844839e51e85@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Nov 03, 2025 at 06:23:26PM +0200, Yishai Hadas wrote:
-> On 03/11/2025 17:43, Bjorn Helgaas wrote:
-> > On Mon, Oct 27, 2025 at 11:34:01AM +0200, Leon Romanovsky wrote:
-> > > From: Yishai Hadas <yishaih@nvidia.com>
-> > > 
-> > > Expose pcie_tph_get_st_table_loc() to be used by drivers as will be done
-> > > in the next patch from the series.
-> > > 
-> > > Signed-off-by: Yishai Hadas <yishaih@nvidia.com>
-> > > Signed-off-by: Edward Srouji <edwards@nvidia.com>
-> > > Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
-> > > ---
-> > >   drivers/pci/tph.c       | 7 ++++---
-> > >   include/linux/pci-tph.h | 1 +
-> > >   2 files changed, 5 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/pci/tph.c b/drivers/pci/tph.c
-> > > index cc64f93709a4..8f8457ec9adb 100644
-> > > --- a/drivers/pci/tph.c
-> > > +++ b/drivers/pci/tph.c
-> > > @@ -155,7 +155,7 @@ static u8 get_st_modes(struct pci_dev *pdev)
-> > >   	return reg;
-> > >   }
-> > > -static u32 get_st_table_loc(struct pci_dev *pdev)
-> > > +u32 pcie_tph_get_st_table_loc(struct pci_dev *pdev)
-> > >   {
-> > >   	u32 reg;
-> > > @@ -163,6 +163,7 @@ static u32 get_st_table_loc(struct pci_dev *pdev)
-> > >   	return FIELD_GET(PCI_TPH_CAP_LOC_MASK, reg);
-> > >   }
-> > > +EXPORT_SYMBOL(pcie_tph_get_st_table_loc);
-> > 
-> > OK by me, but I think we should add kernel-doc for the return value.
-> > 
-> > With that doc added:
-> > 
-> > Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+On 03/11/2025 15:38, David Hildenbrand (Red Hat) wrote:
 > 
-> Thanks Bjorn.
+>>   }
+>>
+>> +static inline bool force_pte_mapping(void)
+>> +{
+>> +    bool bbml2 = system_capabilities_finalized() ?
+>> +        system_supports_bbml2_noabort() : cpu_supports_bbml2_noabort();
 > 
-> We may add the below hunk.
+> You are only moving this function. Still, there is some room for improvement I
+> want to point out :)
 > 
-> Can that work for you ?
+> bbml2 could be a const (or a helper function like bbml2_supported).
+> 
+>> +
+>> +    return (!bbml2 && (rodata_full || arm64_kfence_can_set_direct_map() ||
+>> +               is_realm_world())) ||
+>> +        debug_pagealloc_enabled();
+> 
+> 
+> I suspect this could be made a bit easier to read.
+> 
+>     if (debug_pagealloc_enabled())
+>         return true;
+>     if (bbml2)
+>         return false;
+>     return rodata_full || arm64_kfence_can_set_direct_map() || is_realm_world();
 
-No, because (a) it just restates the function name and doesn't say how
-to interpret the return value (you would need a PCIe spec to look it
-up) and (b) kernel-doc syntax would be "Return: " (see
-Documentation/doc-guide/kernel-doc.rst for examples).
+Yeah, I guess that's a bit nicer. I'd prefer to tidy it up in as separate commit
+though. (feel free ;-) )
 
-> diff --git a/drivers/pci/tph.c b/drivers/pci/tph.c
-> index 8f8457ec9adb..385307a9a328 100644
-> --- a/drivers/pci/tph.c
-> +++ b/drivers/pci/tph.c
-> @@ -155,6 +155,12 @@ static u8 get_st_modes(struct pci_dev *pdev)
->         return reg;
->  }
 > 
-> +/**
-> + * pcie_tph_get_st_table_loc - query the device for its ST table location
-> + * @pdev: PCI device to query
-> + *
-> + * Return the location of the ST table
-> + */
->  u32 pcie_tph_get_st_table_loc(struct pci_dev *pdev)
->  {
->         u32 reg;
 > 
-> Yishai
+>> +}
+>> +
+>>   static DEFINE_MUTEX(pgtable_split_lock);
+>>
+>>   int split_kernel_leaf_mapping(unsigned long start, unsigned long end)
+>> @@ -723,6 +733,16 @@ int split_kernel_leaf_mapping(unsigned long start,
+>> unsigned long end)
+>>       if (!system_supports_bbml2_noabort())
+>>           return 0;
+>>
+>> +    /*
+>> +     * If the region is within a pte-mapped area, there is no need to try to
+>> +     * split. Additionally, CONFIG_DEBUG_PAGEALLOC and CONFIG_KFENCE may
+>> +     * change permissions from softirq context so for those cases (which are
+>> +     * always pte-mapped), we must not go any further because taking the
+>> +     * mutex below may sleep.
+>> +     */
+>> +    if (force_pte_mapping() || is_kfence_address((void *)start))
+>> +        return 0;
+>> +
 > 
-> > 
-> > 
-> > >   /*
-> > >    * Return the size of ST table. If ST table is not in TPH Requester Extended
-> > > @@ -174,7 +175,7 @@ u16 pcie_tph_get_st_table_size(struct pci_dev *pdev)
-> > >   	u32 loc;
-> > >   	/* Check ST table location first */
-> > > -	loc = get_st_table_loc(pdev);
-> > > +	loc = pcie_tph_get_st_table_loc(pdev);
-> > >   	/* Convert loc to match with PCI_TPH_LOC_* defined in pci_regs.h */
-> > >   	loc = FIELD_PREP(PCI_TPH_CAP_LOC_MASK, loc);
-> > > @@ -299,7 +300,7 @@ int pcie_tph_set_st_entry(struct pci_dev *pdev, unsigned int index, u16 tag)
-> > >   	 */
-> > >   	set_ctrl_reg_req_en(pdev, PCI_TPH_REQ_DISABLE);
-> > > -	loc = get_st_table_loc(pdev);
-> > > +	loc = pcie_tph_get_st_table_loc(pdev);
-> > >   	/* Convert loc to match with PCI_TPH_LOC_* */
-> > >   	loc = FIELD_PREP(PCI_TPH_CAP_LOC_MASK, loc);
-> > > diff --git a/include/linux/pci-tph.h b/include/linux/pci-tph.h
-> > > index 9e4e331b1603..ba28140ce670 100644
-> > > --- a/include/linux/pci-tph.h
-> > > +++ b/include/linux/pci-tph.h
-> > > @@ -29,6 +29,7 @@ int pcie_tph_get_cpu_st(struct pci_dev *dev,
-> > >   void pcie_disable_tph(struct pci_dev *pdev);
-> > >   int pcie_enable_tph(struct pci_dev *pdev, int mode);
-> > >   u16 pcie_tph_get_st_table_size(struct pci_dev *pdev);
-> > > +u32 pcie_tph_get_st_table_loc(struct pci_dev *pdev);
-> > >   #else
-> > >   static inline int pcie_tph_set_st_entry(struct pci_dev *pdev,
-> > >   					unsigned int index, u16 tag)
-> > > 
-> > > -- 
-> > > 2.51.0
-> > > 
+> We're effectively performing two system_supports_bbml2_noabort() checks,
+> similarly in
+> arch_kfence_init_pool().
 > 
+> I wonder if there is a clean way to avoid that.
+
+I thought about this too. But system_supports_bbml2_noabort() is actually a
+magic alternatives patching thing; the code is updated so it's zero overhead. I
+decided this was the simplest and clearest way to do it. But I'm open to other
+ideas...
+
+> 
+> I'm not super up-to-date on that code. Nothing else jumped at me.
+
+Thanks for the review!
+
+> 
+
 
