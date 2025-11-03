@@ -1,253 +1,119 @@
-Return-Path: <linux-kernel+bounces-882964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BA93C2C10D
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 14:26:13 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16F1BC2C105
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 14:26:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE3CD3AFA9E
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 13:19:46 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 592C34F29C0
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 13:21:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 186B222ACEB;
-	Mon,  3 Nov 2025 13:19:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21FA124A046;
+	Mon,  3 Nov 2025 13:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KM5j5n0l"
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f/gC9tRV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31503229B12
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 13:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D1323EAB7;
+	Mon,  3 Nov 2025 13:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762175982; cv=none; b=In1EelnkZTSFbRi0ytchvR6dohmeZk845E9qlkeHlqNjz7nghGKKlAs0+d48cIbJV2w0sUN3bUNNHsCcenA5I2BzIj0kddf+ErKIyTQbIgRpqpYcUrN3pQ5+kMAvI2SNWVzf2e9nzVio35g6ucSV3uQ8jayVJyY7+NaxzUos+Mg=
+	t=1762176065; cv=none; b=Com/qNFr3wdxCf/HYGKHGDOwavIELbI2blial1LvP77Bz41gGJ5BW6+RR4JV2GmYoTKUAX2Iv+cC2z/iHwIhUe+l7mNS9sdY0J7EtBG2r/tT0yTp/bdBv7ns175LXAMqKMBAufmJVcOtiA08JfjYjiNj9OrPRbfblfEYrErDgkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762175982; c=relaxed/simple;
-	bh=bA8/Ajh6uh2bGBEg0MDAJdWIsZY3P3htNjZpMFVCD1c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OoDFrJm4ZM3pLkY/3XPkm0pejVDv5ltqqhHEpliwpYAe1t3KWE8OfUVGpSrrfgDVSly/2HgpLy3ppDQBFrGzWZ7mBxtQFemdrBMzhylTti3zB2jrdCWwjiCH0UDYUg2cthZ53lh/lcpCjr6/S4XYvv/bQmqL3utWtHBCPlSxCWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KM5j5n0l; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-429c7e0282dso1770308f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 05:19:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1762175978; x=1762780778; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=bA8/Ajh6uh2bGBEg0MDAJdWIsZY3P3htNjZpMFVCD1c=;
-        b=KM5j5n0l06OsD7xFEDo0xaqSe96T/+8cu9mPw8/ePSPCFVV2i3jMMUrYdKcJeYODRW
-         bogLRG2AP5T+d5AuIdnAKfoDZ3vX4qYYjzYEFAHAmFr5ww087bsRaK0yTgTnKjplHa1h
-         1HcXZ71jNILtkeypshyR/ZxyGM+ycxjSdkPnlivABN4MkFo8vYuhpckUmwKTZcJnfqQ8
-         b/hbL2M2BR/kEhpgGuPCoRbRLfvPjqmQkp5pmuf49LOqxW24LHJzG+gG7WL43Jcd2paM
-         Oc3kKp6Uh7Z+SYd47B+edDIaHZxVGWv76xEdKhmfTJlQeP3nNnhHpTkHY25tFCqd3lcC
-         YZfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762175978; x=1762780778;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bA8/Ajh6uh2bGBEg0MDAJdWIsZY3P3htNjZpMFVCD1c=;
-        b=ikg/1uY0sF3NkLZUPXhP7pM7AFvRVm0wPgxf5Z3jbzVusWbiSCz6FIKAbl5zscL6V0
-         KZixOGQN4WdN5Bml3NJSC139c7Ugu/pA2G2TxsfLHCPJB9P67h233e2+Trq+Ob0h71ot
-         G7UmUJqlLh718hHBY4wjVKicahYH9snJ3WmypJRrj6BNFkZ+04onvZ3RxyDnXyb1c38q
-         ykpfGHsANxFlttEFS1tuoXfxFnYpuewQyH6E62oUQQP8kCvQXvJUjeBFh6Uj//vA2HT4
-         3WSbK7xfk9cZIP2clZO9gounWRhVpgYAc7ffARiY8L4LkCe2ybUQm9Khi9kQ7KL8KkWP
-         dkUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUYynKQS5RBYsKjLT/4etiMZdjBPthrbjx1DWxd6j4tM9PbeuA4LOqfV9ShRDDIQjDlvArNPIquZQroYxU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyIYz+bbEus7bRvzXBdnIYhEBfx9FzyLE2rZpy0DDDhmM39O/B
-	MXJKjfTpwivzsMbACo89NR6M230X0uvTqJqvaHQ7PCUg/EwfR1Dlzo6GqZ1gJxo7GpI=
-X-Gm-Gg: ASbGncsiszT8dljV8WvTbUHTxfO+K/uKbJKbl8SvOeCDHQlfNX9OiytEi+DDkBdI0rb
-	Uyur1QA8JtLd/VQfP5XiYBSQAeiet6HzvndRCXQvt5ukyWFn57E113JW6D6yhsC1CJBsqlMqIf/
-	r0fRk1amC/GmgTyt4Cmc4qf/zX0U1rtlQPr2ZKkdLiPez88YAYtQODwnp6CFyytRVhXOAe9o8uf
-	PtIBATGJzJCvYlKypIED5w64YWHRvNbogq8JCxaVjTYXg7m5rZeMtYlV37XMJS29MkUf2DHGUpm
-	hryTYbgJAfdAUYaVvTa5dgfboZTlBLY24jk+Se74hiMQ0rMK4YH/jTnF5uFqhcjbZFyHnBFFlnd
-	HN3J9i7G6xUUHdKoD+exeZkzhSdocthAOe2t/OaQSjasVFfRsJsFxo7jxs62KcKcblcDz/DCxs1
-	LwPX+8sCB3djskes1dFzan/FMN2ON8nUSGy5wkloeSs9NGwXEkThiJaEwew6FwuMgLOZWrSOGLF
-	v8sjao0bDKDrGkTWKzkFnJkXrrN/a17sIB9qCb6ltEbtZpAqw==
-X-Google-Smtp-Source: AGHT+IGuau3eW5WC1R93VPLVN8+9E4SrZfXJSujtRWGSeFzlyOBkUt+8IC7TUpXakZNqQ8ep+AjxzA==
-X-Received: by 2002:a05:6000:250e:b0:429:cba7:f773 with SMTP id ffacd0b85a97d-429cba7f9cdmr5274216f8f.19.1762175978291;
-        Mon, 03 Nov 2025 05:19:38 -0800 (PST)
-Received: from ?IPV6:2003:e5:870e:1500:7795:3e8a:56c1:ae53? (p200300e5870e150077953e8a56c1ae53.dip0.t-ipconnect.de. [2003:e5:870e:1500:7795:3e8a:56c1:ae53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-429c13f1d4csm19950490f8f.39.2025.11.03.05.19.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Nov 2025 05:19:37 -0800 (PST)
-Message-ID: <209fa1c0-f6f2-4594-a2ae-7733ff651761@suse.com>
-Date: Mon, 3 Nov 2025 14:19:36 +0100
+	s=arc-20240116; t=1762176065; c=relaxed/simple;
+	bh=sRRgSfVb4QIf574NrhWX8DYiPXNTYRXkxo0qK3N9Hmc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J8ZV3LfVbE7d/0Z3zAdzBy/DM2tnkm2UQ8ogCkivJeQbwsxIliG2yAZWrEuJem4u4R9aqhafGS3WCZQi3CGaTAxdw4sRHvbL5Ves/IMyvnVjd78c8PCtg21OFXjsyFWy3luT6fbGtMbNlSW1/n545fRAJ4QgSjTqBRjXO3vyD/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f/gC9tRV; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1762176064; x=1793712064;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=sRRgSfVb4QIf574NrhWX8DYiPXNTYRXkxo0qK3N9Hmc=;
+  b=f/gC9tRVdUKfszLY0Im0U3bk7vyqYPlein3UCnMMiR8j9yGK1pKW3Gir
+   A55nv0V8BPT9mj60GDa0cLf5X8BzBT/DknOmWpfmM75XDvyc24lMC3ro3
+   1k0eNzWo4/JgE+xak3LxQeoS/iMRsIYhK3CXMzNbyhnlySMjpHpOYly6r
+   FmEQQ7FBfWwZLIW+aNU0vcf2jaRX2ZxoYNl+vtJ4E90TSugNAd5DDZ0Ux
+   VqwMHmglaQW5kVG3HYgL56dIiyu0s92iFu1OWFqmrd8kh/jbIuUflTH6f
+   Lhn3xKyxs5vh2yHozPbBVssJfVb+zQd/XG2TccKY1d2KVNq/ZmZSbzueP
+   A==;
+X-CSE-ConnectionGUID: rH018+7OTguKTrGCpLdUTA==
+X-CSE-MsgGUID: JneMCaYJTumn3dQJlg32RQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="74926503"
+X-IronPort-AV: E=Sophos;i="6.19,276,1754982000"; 
+   d="scan'208";a="74926503"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 05:21:03 -0800
+X-CSE-ConnectionGUID: Ve8s6nGrRYWIFeU9REdqkQ==
+X-CSE-MsgGUID: N1Bj9SScSDCyG6WvWEaihA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.19,276,1754982000"; 
+   d="scan'208";a="187322237"
+Received: from smoehrl-linux.amr.corp.intel.com (HELO ashevche-desk.local) ([10.124.220.216])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2025 05:20:58 -0800
+Received: from andy by ashevche-desk.local with local (Exim 4.98.2)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1vFuUP-000000059gw-0Jrh;
+	Mon, 03 Nov 2025 15:20:53 +0200
+Date: Mon, 3 Nov 2025 15:20:52 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: =?iso-8859-1?Q?Beno=EEt?= Monin <benoit.monin@bootlin.com>,
+	Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Jan Dabros <jsd@semihalf.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	Dmitry Guzman <dmitry.guzman@mobileye.com>,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH v2 5/5] i2c: designware: Support of controller with
+ IC_EMPTYFIFO_HOLD_MASTER disabled
+Message-ID: <aQisNF9Fk-FODLFB@smile.fi.intel.com>
+References: <20251031-i2c-dw-v2-0-90416874fcc0@bootlin.com>
+ <20251031-i2c-dw-v2-5-90416874fcc0@bootlin.com>
+ <20251103104330.GG2912318@black.igk.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] xen/netfront: Comment Correction: Fix Spelling Error and
- Description of Queue Quantity Rules
-To: Chu Guangqing <chuguangqing@inspur.com>, sstabellini@kernel.org,
- oleksandr_tyshchenko@epam.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc: xen-devel@lists.xenproject.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20251103032212.2462-1-chuguangqing@inspur.com>
-Content-Language: en-US
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Autocrypt: addr=jgross@suse.com; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
- CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
- mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
- G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
- kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
- Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
- RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
- vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
- sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
- aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
- w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
- auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
- 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
- fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
- HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
- QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
- ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
-In-Reply-To: <20251103032212.2462-1-chuguangqing@inspur.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------krGRhE0Upii4b9WMJ7Y2jJMT"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20251103104330.GG2912318@black.igk.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6
+ krs, Bertel Jungin Aukio 5, 02600 Espoo
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------krGRhE0Upii4b9WMJ7Y2jJMT
-Content-Type: multipart/mixed; boundary="------------naDhrqYeiAtCem5LDmy8CsV5";
- protected-headers="v1"
-From: =?UTF-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-To: Chu Guangqing <chuguangqing@inspur.com>, sstabellini@kernel.org,
- oleksandr_tyshchenko@epam.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc: xen-devel@lists.xenproject.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-ID: <209fa1c0-f6f2-4594-a2ae-7733ff651761@suse.com>
-Subject: Re: [PATCH] xen/netfront: Comment Correction: Fix Spelling Error and
- Description of Queue Quantity Rules
-References: <20251103032212.2462-1-chuguangqing@inspur.com>
-In-Reply-To: <20251103032212.2462-1-chuguangqing@inspur.com>
+On Mon, Nov 03, 2025 at 11:43:30AM +0100, Mika Westerberg wrote:
+> On Fri, Oct 31, 2025 at 03:35:43PM +0100, Benoît Monin wrote:
 
---------------naDhrqYeiAtCem5LDmy8CsV5
-Content-Type: multipart/mixed; boundary="------------511r0QUbJCNKJQeyEXdlbmGB"
+...
 
---------------511r0QUbJCNKJQeyEXdlbmGB
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+> > +	return (msgs[idx - 1].flags & I2C_M_RD) == (msgs[idx].flags & I2C_M_RD);
+> 
+> You don't need the outer parens.
 
-T24gMDMuMTEuMjUgMDQ6MjIsIENodSBHdWFuZ3Fpbmcgd3JvdGU6DQo+IFRoZSBvcmlnaW5h
-bCBjb21tZW50cyBjb250YWluZWQgc3BlbGxpbmcgZXJyb3JzIGFuZCBpbmNvbXBsZXRlIGxv
-Z2ljYWwNCj4gZGVzY3JpcHRpb25zLCB3aGljaCBjb3VsZCBlYXNpbHkgbGVhZCB0byBtaXN1
-bmRlcnN0YW5kaW5ncyBvZiB0aGUgY29kZQ0KPiBsb2dpYy4gVGhlIHNwZWNpZmljIG1vZGlm
-aWNhdGlvbnMgYXJlIGFzIGZvbGxvd3M6DQo+IA0KPiBDb3JyZWN0IHRoZSBzcGVsbGluZyBl
-cnJvciBieSBjaGFuZ2luZyAiaW51dCBtYXgiIHRvICJidXQgbm90IGV4Y2VlZCB0aGUNCj4g
-bWF4aW11bSBsaW1pdCI7DQo+IA0KPiBBZGQgdGhlIG5vdGUgIklmIHRoZSB1c2VyIGhhcyBu
-b3Qgc3BlY2lmaWVkIGEgdmFsdWUsIHRoZSBkZWZhdWx0IG1heGltdW0NCj4gbGltaXQgaXMg
-OCIgdG8gY2xhcmlmeSB0aGUgZGVmYXVsdCB2YWx1ZSBsb2dpYzsNCj4gDQo+IEltcHJvdmUg
-dGhlIGNvaGVyZW5jZSBvZiB0aGUgc3RhdGVtZW50IHRvIG1ha2UgdGhlIHF1ZXVlIHF1YW50
-aXR5IHJ1bGVzDQo+IGNsZWFyZXIuDQo+IA0KPiBBZnRlciB0aGUgbW9kaWZpY2F0aW9uLCB0
-aGUgY29tbWVudHMgY2FuIGFjY3VyYXRlbHkgcmVmbGVjdCB0aGUgY29kZQ0KPiBiZWhhdmlv
-ciBvZiAidGFraW5nIHRoZSBzbWFsbGVyIHZhbHVlIGJldHdlZW4gdGhlIG51bWJlciBvZiBD
-UFVzIGFuZCB0aGUNCj4gZGVmYXVsdCBtYXhpbXVtIGxpbWl0IG9mIDggZm9yIHRoZSBudW1i
-ZXIgb2YgcXVldWVzIiwgZW5oYW5jaW5nIGNvZGUNCj4gbWFpbnRhaW5hYmlsaXR5Lg0KPiAN
-Cj4gU2lnbmVkLW9mZi1ieTogQ2h1IEd1YW5ncWluZyA8Y2h1Z3VhbmdxaW5nQGluc3B1ci5j
-b20+DQoNClJldmlld2VkLWJ5OiBKdWVyZ2VuIEdyb3NzIDxqZ3Jvc3NAc3VzZS5jb20+DQoN
-Cg0KSnVlcmdlbg0K
---------------511r0QUbJCNKJQeyEXdlbmGB
-Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+Priority of == is 10, while & is 11.
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+-- 
+With Best Regards,
+Andy Shevchenko
 
-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
-kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
-=3DeeAB
------END PGP PUBLIC KEY BLOCK-----
 
---------------511r0QUbJCNKJQeyEXdlbmGB--
-
---------------naDhrqYeiAtCem5LDmy8CsV5--
-
---------------krGRhE0Upii4b9WMJ7Y2jJMT
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmkIq+gFAwAAAAAACgkQsN6d1ii/Ey8s
-eAgAkP4SIOJZjYUHdJZGVfcnpP2nPq9QC4Mmoc4h1n/QG7L4/XS5bNW2HMwSTg/aM3iK/vOxeala
-l2Gup8+fOMHcnEOHtIuTYHioM66qLsm764hr5ro0LY077J/GED9SgUveUlCuCJDGpt5ZG2bYHVbL
-Gh4GyoH30+yJTJGWi+YUUJb9EnRar7H24jUCC0xK9dRaHRaCnZJGYS+Kns3xgjbi8KQMrDCdyj+U
-z38TYJ+VT0UoL/G6PzUCBrw92gJNlwqs18XwPRKLWdrmLQ8W7UPnXFr6Jwk96YwEf/3MDqonIvPh
-R2DrVz9RXX7Imv2t1/+lFDb9fiMHvDgHnMnCntthyQ==
-=gdmH
------END PGP SIGNATURE-----
-
---------------krGRhE0Upii4b9WMJ7Y2jJMT--
 
