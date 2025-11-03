@@ -1,128 +1,157 @@
-Return-Path: <linux-kernel+bounces-883772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AE0EC2E62A
-	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:12:22 +0100 (CET)
+Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28D1BC2E630
+	for <lists+linux-kernel@lfdr.de>; Tue, 04 Nov 2025 00:16:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 92A544E18DE
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:12:19 +0000 (UTC)
+	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 33CED34BBF4
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 23:16:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF3F52FE04D;
-	Mon,  3 Nov 2025 23:12:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24B882D8395;
+	Mon,  3 Nov 2025 23:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="l8xhgtgL"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36C91279DAE;
-	Mon,  3 Nov 2025 23:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="auEBmJSJ"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F258218AA0
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 23:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762211533; cv=none; b=EOcy9a6s9t8lnr8w0pVqej7f/NyepdyR2xOlllQKSlwcctNtWidD0vC3hWxgZsDsw58jcuFnAlHWuN/JNB5nnAS9OpQLwwU8PFVqFxT4ERt9/3rEXoAxa0aTr8eTOGjBLsHXQWLfOpWt20dU9ukR4O+Kf2S1NKC6yYjxt1pxYsk=
+	t=1762211801; cv=none; b=R9N1+5Ddb4rGc1nWqMJrcrCpTxbM51INTk69LKF/Yle/w2i5CFk6HJVkJ0wmuEIQ/ifVF4djqLrq37i6Q1qBYL71rKXlNfPBl6MfMUkUjIi0tVXD0UCmBcI3W2tSc0b2s59lJ/77DbU4sREpwSkM6gB589PZ0xq30ZQNhOtzJbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762211533; c=relaxed/simple;
-	bh=rPPQ1+COE5EsbOp/m7/SyCPyrEzG+iuBBatmCgPvayQ=;
+	s=arc-20240116; t=1762211801; c=relaxed/simple;
+	bh=layV8a/eSfEJHAorhxoLXgjYYWppCbPhwTIpTKL2sbM=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eKILSAbBIQojnlieDzwNsZYMEHbwNpbBq/EI3pKbuUvONzDGcdgVFF7ZN7uq5n3JcPSgl8kjn9fkCQWudgQnMZLmtf9zHMA3w6vGqGbtv1oecP3B4WjWQDUFR1MAN027uKyworsXJ+BifhXJGXZBMDkbLEgMT+J6R1tKdJg61kA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=l8xhgtgL; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1762211521;
-	bh=XNRomfW0zgB/0q6mq82N3Pb1lEyE73NfoDam92XZBJw=;
+	 MIME-Version:Content-Type; b=qZqUDUb6xbcULvk5Gwmjchd0vZzlLc1W5FFP4+I43ao1QOzs3gaF2426TNiXQAb8hiy1wabxPoUKNHTUIDeBxGbb8XISNm3M2rZX4oNlIVP1SIcKsPgjIDsx0CEzJkNx5WocioBWePFGW2NhXkU+/g3rmK7fIlHcEPmidcfn1Kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=auEBmJSJ; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from localhost (unknown [20.236.11.102])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 5B1AE2012087;
+	Mon,  3 Nov 2025 15:16:32 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5B1AE2012087
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1762211792;
+	bh=Yo/btQCGKfEDVe5aBR9fTocjuGyxyeQcgsG9HlUVYWs=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=l8xhgtgLf/mSn/0cjZz9ESGrXdbbtl5Cgg7E5NZpDYcC47R+dg5klF57Au5twqOms
-	 p4+PNg4G8R9r9bqOL0EQnGnggzSJkAwqrVKDVWDXnI3M7M7mHIOchoo8XljOcEzEWT
-	 LNUwILCu0zL8/KedfOFiDmhmDq0ZiHii8HpBnUgu/RLXSHJ4mx9/PleOvG6FUikTKE
-	 6ZlTMJuCr4Z5Q4Nusiljk+tSjfypxNPPJcUQYTGfug0VhSN5zcjSv7FPOarTVKAi0C
-	 kLRDAD3K5m9XqiZ3siqZcbCU5SqCbwBgulljEUa30B2slCZXv9/uEBmhESwcW7/Jw9
-	 xRE7v4STOjOOw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange secp256r1 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4d0nR36VqKz4w2S;
-	Tue, 04 Nov 2025 10:11:59 +1100 (AEDT)
-Date: Tue, 4 Nov 2025 10:11:58 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jani Nikula <jani.nikula@intel.com>
-Cc: Simona Vetter <simona.vetter@ffwll.ch>, Intel Graphics
- <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Thomas Zimmermann
- <tzimmermann@suse.de>
-Subject: Re: linux-next: build failure after merge of the drm-misc tree
-Message-ID: <20251104101158.1cc9abcd@canb.auug.org.au>
-In-Reply-To: <b4faab8bee2b4430447ff7aeac0f2b3e9aac8ec8@intel.com>
-References: <20251103112418.031b3f8c@canb.auug.org.au>
-	<b4faab8bee2b4430447ff7aeac0f2b3e9aac8ec8@intel.com>
+	b=auEBmJSJ7MV4XjrDOfXAGCYoN9Wpug7JZcztqCUelMDTH/I3SxtbRYacmuHsheSUZ
+	 XK3hwfbaC1N2Hx1Y97BWsu6NaGwAFM7739MWoN/dAugQMte+YcJLpZ4upR4uURar9i
+	 m+k9cWD0VgDmMweDk2Y6jkBmsQJjKZudGuOFvXTQ=
+Date: Mon, 3 Nov 2025 15:16:31 -0800
+From: Jacob Pan <jacob.pan@linux.microsoft.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: <linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
+ <iommu@lists.linux.dev>, Will Deacon <will@kernel.org>, Joerg Roedel
+ <joro@8bytes.org>, Mostafa Saleh <smostafa@google.com>, Jason Gunthorpe
+ <jgg@nvidia.com>, Robin Murphy <robin.murphy@arm.com>, Zhang Yu
+ <zhangyu1@linux.microsoft.com>, Jean Philippe-Brucker
+ <jean-philippe@linaro.org>, Alexander Grest <Alexander.Grest@microsoft.com>
+Subject: Re: [PATCH v2 1/2] iommu/arm-smmu-v3: Fix CMDQ timeout warning
+Message-ID: <20251103151631.0000703a@linux.microsoft.com>
+In-Reply-To: <aQPptXsqzt6kJS7f@Asurada-Nvidia>
+References: <20251020224353.1408-1-jacob.pan@linux.microsoft.com>
+	<20251020224353.1408-2-jacob.pan@linux.microsoft.com>
+	<aQPptXsqzt6kJS7f@Asurada-Nvidia>
+Organization: LSG
+X-Mailer: Claws Mail 3.21.0 (GTK+ 2.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/YnC1+DebVg=JQxovUe.5+3v";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/YnC1+DebVg=JQxovUe.5+3v
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-Hi all,
+Hi Nicolin,
 
-On Mon, 03 Nov 2025 11:26:01 +0200 Jani Nikula <jani.nikula@intel.com> wrot=
-e:
->
-And now this:
+On Thu, 30 Oct 2025 15:41:57 -0700
+Nicolin Chen <nicolinc@nvidia.com> wrote:
 
-drivers/gpu/drm/hyperv/hyperv_drm_drv.c: In function 'hyperv_setup_vram':
-drivers/gpu/drm/hyperv/hyperv_drm_drv.c:80:17: error: implicit declaration =
-of function 'drm_err'; did you mean 'pr_err'? [-Wimplicit-function-declarat=
-ion]
-   80 |                 drm_err(dev, "Failed to allocate mmio\n");
-      |                 ^~~~~~~
-      |                 pr_err
-drivers/gpu/drm/hyperv/hyperv_drm_drv.c: In function 'hyperv_vmbus_probe':
-drivers/gpu/drm/hyperv/hyperv_drm_drv.c:140:17: error: implicit declaration=
- of function 'drm_warn'; did you mean 'dev_warn'? [-Wimplicit-function-decl=
-aration]
-  140 |                 drm_warn(dev, "Failed to update vram location.\n");
-      |                 ^~~~~~~~
-      |                 dev_warn
-drivers/gpu/drm/hyperv/hyperv_drm_modeset.c: In function 'hyperv_plane_atom=
-ic_check':
-drivers/gpu/drm/hyperv/hyperv_drm_modeset.c:161:17: error: implicit declara=
-tion of function 'drm_err'; did you mean 'pr_err'? [-Wimplicit-function-dec=
-laration]
-  161 |                 drm_err(&hv->dev, "fb size requested by %s for %dX%=
-d (pitch %d) greater than %ld\n",
-      |                 ^~~~~~~
-      |                 pr_err
+> On Mon, Oct 20, 2025 at 03:43:52PM -0700, Jacob Pan wrote:
+> > @@ -785,10 +748,33 @@ static int arm_smmu_cmdq_issue_cmdlist(struct
+> > arm_smmu_device *smmu, do {
+> >  		u64 old;
+> >  
+> > +		queue_poll_init(smmu, &qp);
+> >  		while (!queue_has_space(&llq, n + sync)) {
+> > +			unsigned long iflags;
+> > +
+> >  			local_irq_restore(flags);
+> > -			if
+> > (arm_smmu_cmdq_poll_until_not_full(smmu, cmdq, &llq))
+> > -				dev_err_ratelimited(smmu->dev,
+> > "CMDQ timeout\n");
+> > +			/*
+> > +			 * Try to update our copy of cons by
+> > grabbing exclusive cmdq access. If
+> > +			 * that fails, spin until somebody else
+> > updates it for us.
+> > +			 */
+> > +			if
+> > (arm_smmu_cmdq_exclusive_trylock_irqsave(cmdq, iflags)) {
+> > +				WRITE_ONCE(cmdq->q.llq.cons,
+> > readl_relaxed(cmdq->q.cons_reg));
+> > +
+> > arm_smmu_cmdq_exclusive_unlock_irqrestore(cmdq, iflags);
+> > +				llq.val =
+> > READ_ONCE(cmdq->q.llq.val);
+> > +				local_irq_save(flags);  
+> 
+> I don't quite get the reason why it moves queue_poll_init() and
+> add local_irq_save(). It's quite different than what the driver
+> has, so it's nicer to explain in the commit message at least.
 
-I have used the drm-misc tree from next-20251031 again.
---=20
-Cheers,
-Stephen Rothwell
+Let me add the following to the commit message.
 
---Sig_/YnC1+DebVg=JQxovUe.5+3v
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+The original code has three nested while loops,
+do {
+	while (!queue_has_space(&llq, n + sync)) {
+		// inside arm_smmu_cmdq_poll_until_not_full
+		queue_poll_init(smmu, &qp);
+		do {
+			if(!queue_full(llq))
+				break;
+			ret = queue_poll(&qp);
 
------BEGIN PGP SIGNATURE-----
+		}while (!ret);
+	}
+	check exit condition
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmkJNr4ACgkQAVBC80lX
-0Gz/wAf/Ytv/ek28tbaMISIf8+gVyIPkkFf2ciK+1tHr6rqODuafP+V+Uk+YNBkX
-Of9YMBdt3J9PysNXw/nJGyve3WPWVEDBZ8gCy358m3EmCmURkKOrFkIdsOeiZlKJ
-T5xf3/C3u+sUnDuumRUmI5sVf1rd4IuuG5Uyl7O0vpBaBqNaMEQJ9wwsAMmGvv1f
-UWBuUq5L6HzxiA3URyjq2TCoXr99O/njQAkg0iJUpGOIrdfBpRhhTuU4bAfakKuR
-+lD2Jc16LV4sG5MwSQAumnlQbNogDxPtNFEqoibYt0NYKx+xH3XZcI1RxtuYxzXD
-mua3AxRBWVSjN827b7kthUOpxaGG6Q==
-=Awl1
------END PGP SIGNATURE-----
+} while (1);
 
---Sig_/YnC1+DebVg=JQxovUe.5+3v--
+Now, with this patch we reduced to two nested while loops and
+calling queue_has_space() only without checking queue_full.
+
+do {
+	queue_poll_init(smmu, &qp);
+	while (!queue_has_space(&llq, n + sync)) {
+		ret = queue_poll(&qp);
+		if (ret == -ETIMEDOUT) {
+			dev_err();
+			queue_poll_init(smmu, &qp);
+		} 
+	}
+	check exit condition
+} while (1);
+
+An additional queue_poll_init is added outside inner while loop to arm
+the timer. We can merge the two queue_poll_init with a local bool
+variable to track whether init is needed, but IMHO it is not any better.
+
+Adding local_irq_save() just to make sure it pairs up with
+local_irq_restore(), no functional changes.
+
+> I still feel that we could just replace the _until_not_full()
+> with a _until_has_space()?
+Since the current code uses three nested while loops, replacing the
+inner _until_not_full() function means means retaining all three nested
+while loops and calling queue_has_space in two places - once in the
+middle while loop then again in this _until_has_space() function.
+
+I tried to extract the inner loop into a function but it requires
+passing in irqflags to restore. Not pretty.
+
 
