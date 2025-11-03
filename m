@@ -1,54 +1,47 @@
-Return-Path: <linux-kernel+bounces-882198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AEB1C29DC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 03:29:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB464C29DCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 03:32:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id ED4B04E28AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 02:29:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA9E2188C18B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 02:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25020283140;
-	Mon,  3 Nov 2025 02:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F196E17DFE7;
+	Mon,  3 Nov 2025 02:31:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="KJXbNtmb"
-Received: from canpmsgout03.his.huawei.com (canpmsgout03.his.huawei.com [113.46.200.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aopg8xA+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A732158DA3;
-	Mon,  3 Nov 2025 02:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=113.46.200.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54AAD79F2
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 02:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762136960; cv=none; b=A9GUmP5cG3lk2PCJCvLGhlEGZ7OlWL4DPS8AnY+BWrnlrwIbOjhiGbolON9gmJEMkwRBl0mAKAHSXaTI5IrP7QdZrkgw+YBsyS3DufJSqDPrMTEBAWbC7aQLqDMrheatAreMCNK9VWjPPKHp/M9YfWCfEQkpKf33WLZ4EkB5zG8=
+	t=1762137119; cv=none; b=aBNnWz9+ZDjBCmuvBv7L+nGl+RJiT51EY35iLr9HMXhxC37Ltw3Zp2nm5ZaJfr5j6KxB+MDmCnu4YIcogYjT8dkZJy72fc4fz8rQMP7wyggjD2Rmlwa2yDS9tglokweBVuaZXDpSEESbhXIy2fBiSWmNrHoVKPc2NIPPs0heWfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762136960; c=relaxed/simple;
-	bh=fJ2ruscm7I3Xohe37RN2AI4TRhVZHxRLydfYSkkz3u8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TFnPYZtoIBh3JLO43M/zCnutJF2dzXS6XyK4rBHGF4I2skQZVXSaitQ7JVctMyajJ2/6A5jmjjsZqWwbuP7gw9tqos8zcmZHlAWKKs7Hdv8aTcTASlANFA6QK34Ao3HDhTAjZ7SL/uUhT3/YtjbTqN8IhRsyYEPiAXskh2pgHz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=KJXbNtmb; arc=none smtp.client-ip=113.46.200.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=2FIFKl4Ynnc+iqkNHSte7fiKEcb41ATkE5hAwgWBU9A=;
-	b=KJXbNtmb56EtHFpnd5u341hyFmFf3AMfX8FWvhZ6DKQI4lkRoEhXy2iV+lVAvWlGTY7U1aC1K
-	OZQlloeezykOpQ7kvHK4JwWmEyFgK75WCaBtc0JscJhCECeI/Hpxk6eOpS4SPuyygqA/Yl9XPxo
-	LZ03V7dYAZem0Jfp59MqJ8s=
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by canpmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4d0FqR4X1WzpSt8;
-	Mon,  3 Nov 2025 10:27:47 +0800 (CST)
-Received: from kwepemr200004.china.huawei.com (unknown [7.202.195.241])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5D1FB180B62;
-	Mon,  3 Nov 2025 10:29:14 +0800 (CST)
-Received: from [10.67.121.62] (10.67.121.62) by kwepemr200004.china.huawei.com
- (7.202.195.241) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 3 Nov
- 2025 10:29:13 +0800
-Message-ID: <68936aeb-20d7-429c-af5a-590b765f7351@huawei.com>
-Date: Mon, 3 Nov 2025 10:29:13 +0800
+	s=arc-20240116; t=1762137119; c=relaxed/simple;
+	bh=Vtr8xLqE/U8u7psrPpr6WVoJmFLmnRdNWlMXS2Zn6BM=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=YJXbKWOdJGldfj8hiapVkwgwxwyzaeyjomb8C6/IUnk5vQddWeJcauu8qtW5unB0JKVRl6YePZ55qFpcb+L/N6ObfHGpD1qs+pwNBqsMlFrIQ0oAJAim+IGfPpweyI2g999oAaYCxjlhJaHSqP4crNzExezZnq/mvSiRMS69n2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aopg8xA+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF4ACC4CEF7;
+	Mon,  3 Nov 2025 02:31:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1762137118;
+	bh=Vtr8xLqE/U8u7psrPpr6WVoJmFLmnRdNWlMXS2Zn6BM=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=aopg8xA+aBmDFKS9tuPwvbfkEG8QXZU8N4aJlZ9TuR3BhrNwxZ9I9zVLSCRApFcBl
+	 B/5tjB0Ihh4N0S/03xt+g2U0Y38Zn1nfeSQfyQ4I6uj1uM+55vsmYkc9nhxoa/tZyV
+	 bJdrOZr7g2RICW79Nm2wnrK8Rys7/f29z07/0TpGO/gUs4jEFWGGvYqUcQfs063G0h
+	 6gbzdDflATO2oJjvN1rRuEu0VQUV7s7+jFgY9ntvPRiDP31RpGW44qy1NQdLCslXt1
+	 pWK/eFTMLQFh44C4H6nLEwKKkGkkUbZ3nbjAUMQp7n4Rr/GxM5vA56D2/zpfMvQTGO
+	 9n9NjG3Iv7gKg==
+Message-ID: <d52e6fc9-9285-4e49-addf-9d6b7eb1e6e1@kernel.org>
+Date: Mon, 3 Nov 2025 10:31:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,68 +49,24 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] PM / devfreq: use _visible attribute to replace
- create/remove_sysfs_files()
-To: Jonathan Cameron <jonathan.cameron@huawei.com>
-CC: <myungjoo.ham@samsung.com>, <kyungmin.park@samsung.com>,
-	<cw00.choi@samsung.com>, <linux-pm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <zhanjie9@hisilicon.com>,
-	<zhenglifeng1@huawei.com>, <lihuisong@huawei.com>, <yubowen8@huawei.com>,
-	<linhongye@h-partners.com>, <linuxarm@huawei.com>
-References: <20251028022458.2824872-1-zhangpengjie2@huawei.com>
- <20251031144157.00000e51@huawei.com>
-From: "zhangpengjie (A)" <zhangpengjie2@huawei.com>
-In-Reply-To: <20251031144157.00000e51@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemr200004.china.huawei.com (7.202.195.241)
+Cc: chao@kernel.org
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: add fadvise tracepoint
+To: Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
+References: <20251028195444.3181203-1-jaegeuk@kernel.org>
+ <aQUrtSAXWtHtLhtm@google.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <aQUrtSAXWtHtLhtm@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 10/31/2025 10:41 PM, Jonathan Cameron wrote:
-> On Tue, 28 Oct 2025 10:24:58 +0800
-> Pengjie Zhang <zhangpengjie2@huawei.com> wrote:
->
->>   static ssize_t polling_interval_store(struct device *dev,
->> @@ -1828,15 +1831,22 @@ static ssize_t polling_interval_store(struct device *dev,
->>   	unsigned int value;
->>   	int ret;
->>   
->> -	if (!df->governor)
->> +	mutex_lock(&devfreq_list_lock);
-> As below I'd use guard() to simplify this.  Applies in various other places in this
-> patch.
->>   
->> -/* Remove the specific sysfs files which depend on each governor. */
->> -static void remove_sysfs_files(struct devfreq *devfreq,
->> -				const struct devfreq_governor *gov)
->> +static bool gov_group_visible(struct kobject *kobj)
->>   {
->> -	if (IS_SUPPORTED_ATTR(gov->attrs, POLLING_INTERVAL))
->> -		sysfs_remove_file(&devfreq->dev.kobj,
->> -				&dev_attr_polling_interval.attr);
->> -	if (IS_SUPPORTED_ATTR(gov->attrs, TIMER))
->> -		sysfs_remove_file(&devfreq->dev.kobj, &dev_attr_timer.attr);
->> +	struct device *dev = kobj_to_dev(kobj);
->> +	struct devfreq *df;
->> +
->> +	if (!dev)
->> +		return false;
->> +
->> +	df = to_devfreq(dev);
->> +	if (!df)
->> +		return false;
-> Isn't to_devfreq() just a container_of() wrapper?
-> If that's the case it will always be there if dev is not NULL.
->
-> As such I not seeing how this group is likely to ever be
-> invisible.
->
-Thank you for your review and comments.  I will address all your feedback
+On 11/1/25 05:35, Jaegeuk Kim via Linux-f2fs-devel wrote:
+> This adds a tracepoint in the fadvise call path.
+> 
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-in the necessary revisions and submit the third version shortly.
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-Best regards,
-
-Pengjie Zhang
-
+Thanks,
 
