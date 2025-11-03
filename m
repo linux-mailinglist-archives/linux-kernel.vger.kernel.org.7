@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-883121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED609C2CBC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:30:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 711FDC2C916
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 16:07:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9ACE46121B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 15:03:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 030233BAEFC
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1945313E07;
-	Mon,  3 Nov 2025 14:47:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C982A31D387;
+	Mon,  3 Nov 2025 14:47:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uUInSPXM";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BN0Q418v"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MKqePlHt";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="n90xgaoK"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A20D31A7FF;
-	Mon,  3 Nov 2025 14:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37835314B74;
+	Mon,  3 Nov 2025 14:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762181272; cv=none; b=dxXGrnZQGxbzv0dpylShub3isaRERR9bJRvzUidckEtCHjYgo9r2foXiSD+yTXawM4Q5drDxC9UeZGLh3N2J8u+fD0S04GTOXqZcrw3kxbrEETDQgU9CTYl9KlZawS+dhksF94PmUvrFQyL5o24aJsStkgwgeY3t5dNu6bGdkE8=
+	t=1762181276; cv=none; b=WOm5d5X7Ug7IymLMchSktkRQuk5qnzISL3KE6HGw+WNdyVssRgaxsrco7SEUZouDqMyhaWSIcjaCTilpEejdR127mN0ERLU6/R5XAc7BlNtithrxwHLDuQ29gkczvPyWa12Zca2UxKicxVY+XcOB/mknaLl4h4uO1ep0O3BY/n4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762181272; c=relaxed/simple;
-	bh=VLRK7YJkuS0EIzuQUGg9r1TAlFjUm/P0ONdKjMUg/ik=;
+	s=arc-20240116; t=1762181276; c=relaxed/simple;
+	bh=ZfgNOOupDvsETDbZb83ps8urCv0edq0do9t0wg856Bs=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=GlMLSaElZe+lxzQzB/wn1FDls91frGMLhfI2AnMEcOdfwbuuiGcC97bSmoBqMkBw1Rg9DBPEy+JLHgwNzxglYRek9wJlwJsNGxY26Lze9LneE+qtpE9cLmK39zf+0vsudym2y7PemPrY4db21mpiTjMUyLDj7tMO3XTFXUlq7yA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uUInSPXM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BN0Q418v; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=IUh+KzbsVlxcJVkRUzHjdqiriG82e0HaetenauqZvZeBAUCxFsgnIvSIvH23k4hy7AfOHcvu7PkV1rpogQ1Ioy/GEDSP77FAUL0f28rlMjg1XvzulYmvgsxKsErVRNRYrg/QT9UoHtlVTN4ii4SjXUdglK6iVMYTYl6K7pWYcXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MKqePlHt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=n90xgaoK; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 03 Nov 2025 14:47:47 -0000
+Date: Mon, 03 Nov 2025 14:47:51 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1762181269;
+	s=2020; t=1762181272;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YxRd/KSQfXmDuDqN71YW+/ZnPq/fAkhIeTFdIExlQNU=;
-	b=uUInSPXMOizFa7lBYPGVqZdhrRTigqfaVuxfCtMTjaO5gDWWjcqz4iWZN6H4UkoLSAp6fA
-	bvkGUMMiqqX1Vtgz/gZBQo+hzRHE6MDJy4UmtTA94bG25WUNrrr0pYMNCjq7DAi7SATaDC
-	+PbLWo6h9NbzreZQJO7AUpoF1/kx3OgkJTi5kjmeqdGVQByPWhnNozBuleg7Vwzq68wWFJ
-	qwDmPWZsYidQI7oPLh2kSC1tQhbWesTPEMFC1UHwsIjbNI5gRIn28juSvDM5RuoHud95bV
-	VQ4rFEVXDirMbnKzGmnyideEJmn8x5M4i/T37K23M9xXtRQotajpWGZzV7kC+w==
+	bh=JEqYmvVd04VLJJk8O/WeWdERNH0O0y1sRKC96yICEkI=;
+	b=MKqePlHt5o6KR4bZhB0gRYsoauLHdowX/BGiPY+TRizzHuPFqM3oWxn168byMC4opkR69Y
+	IkGAxbxm0+VySbdAqyW0xlSgSF3NijwgEEGHboRFiRxKHzTg1D8q9cSVaA2A9mAqwx/Q2Y
+	IO2imf2m1Tu1LuZigR2FCes4OjyAqFH+mOWfNMzm+8m0whgQEIc6Jbf1BDphsyPIaRiTDm
+	4N8HVN3fYarm2XtT717xTFZz1WQJh1xgJE4TN+Yxf3HZrSL176GVq1nPeJqdy424EGdnou
+	hyULb8lpOurs4Wx62l30Q2Vnpvngv/S3mestLbip0lNuFEN15Xa/SG18jFdxcA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1762181269;
+	s=2020e; t=1762181272;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=YxRd/KSQfXmDuDqN71YW+/ZnPq/fAkhIeTFdIExlQNU=;
-	b=BN0Q418vspvkqkmhpSQrV7+jMgz5/LSBxZ8fDJh0y/w4O98BA7J/3M3pRiv4JdWSmEjiaX
-	lXuz6bino2jZWxBg==
+	bh=JEqYmvVd04VLJJk8O/WeWdERNH0O0y1sRKC96yICEkI=;
+	b=n90xgaoKJHgRyaSpfgZQ9jQCt1IiI5vAxFfkjz74hK6dXX+LFjUBtyulaGNgWUto/D5RZ9
+	CkVOvm65QVwCx1CQ==
 From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: core/rseq] rseq: Introduce struct rseq_data
+Subject: [tip: core/rseq] rseq: Simplify the event notification
 Cc: Thomas Gleixner <tglx@linutronix.de>,
  "Peter Zijlstra (Intel)" <peterz@infradead.org>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, x86@kernel.org,
  linux-kernel@vger.kernel.org
-In-Reply-To: <20251027084306.527086690@linutronix.de>
-References: <20251027084306.527086690@linutronix.de>
+In-Reply-To: <20251027084306.336978188@linutronix.de>
+References: <20251027084306.336978188@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <176218126755.2601451.12917371576674649203.tip-bot2@tip-bot2>
+Message-ID: <176218127131.2601451.9006389690703976242.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -82,480 +82,368 @@ Content-Transfer-Encoding: quoted-printable
 
 The following commit has been merged into the core/rseq branch of tip:
 
-Commit-ID:     45c4a917848e90a269d1e1839a9a5fad15333771
-Gitweb:        https://git.kernel.org/tip/45c4a917848e90a269d1e1839a9a5fad153=
-33771
+Commit-ID:     6f9a08b9988964d7e3fea0860c6e1c8f89a35269
+Gitweb:        https://git.kernel.org/tip/6f9a08b9988964d7e3fea0860c6e1c8f89a=
+35269
 Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Mon, 27 Oct 2025 09:44:33 +01:00
+AuthorDate:    Mon, 27 Oct 2025 09:44:26 +01:00
 Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Mon, 03 Nov 2025 15:26:15 +01:00
+CommitterDate: Mon, 03 Nov 2025 15:26:14 +01:00
 
-rseq: Introduce struct rseq_data
+rseq: Simplify the event notification
 
-In preparation for a major rewrite of this code, provide a data structure
-for rseq management.
+Since commit 0190e4198e47 ("rseq: Deprecate RSEQ_CS_FLAG_NO_RESTART_ON_*
+flags") the bits in task::rseq_event_mask are meaningless and just extra
+work in terms of setting them individually.
 
-Put all the rseq related data into it (except for the debug part), which
-allows to simplify fork/execve by using memset() and memcpy() instead of
-adding new fields to initialize over and over.
+Aside of that the only relevant point where an event has to be raised is
+context switch. Neither the CPU nor MM CID can change without going through
+a context switch.
 
-Create a storage struct for event management as well and put the
-sched_switch event and a indicator for RSEQ on a task into it as a
-start. That uses a union, which allows to mask and clear the whole lot
-efficiently.
-
-The indicators are explicitly not a bit field. Bit fields generate abysmal
-code.
-
-The boolean members are defined as u8 as that actually guarantees that it
-fits. There seem to be strange architecture ABIs which need more than 8
-bits for a boolean.
-
-The has_rseq member is redundant vs. task::rseq, but it turns out that
-boolean operations and quick checks on the union generate better code than
-fiddling with separate entities and data types.
-
-This struct will be extended over time to carry more information.
+Collapse them all into a single boolean which simplifies the code a lot and
+remove the pointless invocations which have been sprinkled all over the
+place for no value.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Link: https://patch.msgid.link/20251027084306.527086690@linutronix.de
+Link: https://patch.msgid.link/20251027084306.336978188@linutronix.de
 ---
- include/linux/rseq.h       | 48 ++++++++++++----------------
- include/linux/rseq_types.h | 51 ++++++++++++++++++++++++++++++-
- include/linux/sched.h      | 14 +-------
- kernel/ptrace.c            |  6 ++--
- kernel/rseq.c              | 63 ++++++++++++++++++-------------------
- 5 files changed, 110 insertions(+), 72 deletions(-)
- create mode 100644 include/linux/rseq_types.h
+ fs/exec.c                 |  2 +-
+ include/linux/rseq.h      | 66 +++++++-------------------------------
+ include/linux/sched.h     | 10 +++---
+ include/uapi/linux/rseq.h | 21 ++++--------
+ kernel/rseq.c             | 28 +++++++++-------
+ kernel/sched/core.c       |  5 +---
+ kernel/sched/membarrier.c |  8 ++---
+ 7 files changed, 48 insertions(+), 92 deletions(-)
 
+diff --git a/fs/exec.c b/fs/exec.c
+index 4298e7e..e45b298 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1775,7 +1775,7 @@ out:
+ 		force_fatal_sig(SIGSEGV);
+=20
+ 	sched_mm_cid_after_execve(current);
+-	rseq_set_notify_resume(current);
++	rseq_sched_switch_event(current);
+ 	current->in_execve =3D 0;
+=20
+ 	return retval;
 diff --git a/include/linux/rseq.h b/include/linux/rseq.h
-index c6267f7..ab91b1e 100644
+index d72ddf7..241067b 100644
 --- a/include/linux/rseq.h
 +++ b/include/linux/rseq.h
-@@ -9,22 +9,22 @@ void __rseq_handle_notify_resume(struct ksignal *sig, struc=
-t pt_regs *regs);
+@@ -3,38 +3,8 @@
+ #define _LINUX_RSEQ_H
+=20
+ #ifdef CONFIG_RSEQ
+-
+-#include <linux/preempt.h>
+ #include <linux/sched.h>
+=20
+-#ifdef CONFIG_MEMBARRIER
+-# define RSEQ_EVENT_GUARD	irq
+-#else
+-# define RSEQ_EVENT_GUARD	preempt
+-#endif
+-
+-/*
+- * Map the event mask on the user-space ABI enum rseq_cs_flags
+- * for direct mask checks.
+- */
+-enum rseq_event_mask_bits {
+-	RSEQ_EVENT_PREEMPT_BIT	=3D RSEQ_CS_FLAG_NO_RESTART_ON_PREEMPT_BIT,
+-	RSEQ_EVENT_SIGNAL_BIT	=3D RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL_BIT,
+-	RSEQ_EVENT_MIGRATE_BIT	=3D RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE_BIT,
+-};
+-
+-enum rseq_event_mask {
+-	RSEQ_EVENT_PREEMPT	=3D (1U << RSEQ_EVENT_PREEMPT_BIT),
+-	RSEQ_EVENT_SIGNAL	=3D (1U << RSEQ_EVENT_SIGNAL_BIT),
+-	RSEQ_EVENT_MIGRATE	=3D (1U << RSEQ_EVENT_MIGRATE_BIT),
+-};
+-
+-static inline void rseq_set_notify_resume(struct task_struct *t)
+-{
+-	if (t->rseq)
+-		set_tsk_thread_flag(t, TIF_NOTIFY_RESUME);
+-}
+-
+ void __rseq_handle_notify_resume(struct ksignal *sig, struct pt_regs *regs);
 =20
  static inline void rseq_handle_notify_resume(struct pt_regs *regs)
- {
--	if (current->rseq)
-+	if (current->rseq.event.has_rseq)
+@@ -43,35 +13,27 @@ static inline void rseq_handle_notify_resume(struct pt_re=
+gs *regs)
  		__rseq_handle_notify_resume(NULL, regs);
  }
 =20
- static inline void rseq_signal_deliver(struct ksignal *ksig, struct pt_regs =
+-static inline void rseq_signal_deliver(struct ksignal *ksig,
+-				       struct pt_regs *regs)
++static inline void rseq_signal_deliver(struct ksignal *ksig, struct pt_regs =
 *regs)
  {
--	if (current->rseq) {
--		current->rseq_event_pending =3D true;
-+	if (current->rseq.event.has_rseq) {
-+		current->rseq.event.sched_switch =3D true;
+ 	if (current->rseq) {
+-		scoped_guard(RSEQ_EVENT_GUARD)
+-			__set_bit(RSEQ_EVENT_SIGNAL_BIT, &current->rseq_event_mask);
++		current->rseq_event_pending =3D true;
  		__rseq_handle_notify_resume(ksig, regs);
  	}
  }
 =20
- static inline void rseq_sched_switch_event(struct task_struct *t)
+-/* rseq_preempt() requires preemption to be disabled. */
+-static inline void rseq_preempt(struct task_struct *t)
++static inline void rseq_sched_switch_event(struct task_struct *t)
  {
--	if (t->rseq) {
--		t->rseq_event_pending =3D true;
-+	if (t->rseq.event.has_rseq) {
-+		t->rseq.event.sched_switch =3D true;
- 		set_tsk_thread_flag(t, TIF_NOTIFY_RESUME);
- 	}
+-	__set_bit(RSEQ_EVENT_PREEMPT_BIT, &t->rseq_event_mask);
+-	rseq_set_notify_resume(t);
+-}
+-
+-/* rseq_migrate() requires preemption to be disabled. */
+-static inline void rseq_migrate(struct task_struct *t)
+-{
+-	__set_bit(RSEQ_EVENT_MIGRATE_BIT, &t->rseq_event_mask);
+-	rseq_set_notify_resume(t);
++	if (t->rseq) {
++		t->rseq_event_pending =3D true;
++		set_tsk_thread_flag(t, TIF_NOTIFY_RESUME);
++	}
  }
-@@ -32,8 +32,9 @@ static inline void rseq_sched_switch_event(struct task_stru=
-ct *t)
+=20
  static __always_inline void rseq_exit_to_user_mode(void)
  {
  	if (IS_ENABLED(CONFIG_DEBUG_RSEQ)) {
--		if (WARN_ON_ONCE(current->rseq && current->rseq_event_pending))
--			current->rseq_event_pending =3D false;
-+		if (WARN_ON_ONCE(current->rseq.event.has_rseq &&
-+				 current->rseq.event.events))
-+			current->rseq.event.events =3D 0;
+-		if (WARN_ON_ONCE(current->rseq && current->rseq_event_mask))
+-			current->rseq_event_mask =3D 0;
++		if (WARN_ON_ONCE(current->rseq && current->rseq_event_pending))
++			current->rseq_event_pending =3D false;
  	}
  }
 =20
-@@ -49,35 +50,30 @@ static __always_inline void rseq_exit_to_user_mode(void)
-  */
- static inline void rseq_virt_userspace_exit(void)
- {
--	if (current->rseq_event_pending)
-+	if (current->rseq.event.sched_switch)
- 		set_tsk_thread_flag(current, TIF_NOTIFY_RESUME);
+@@ -85,12 +47,12 @@ static inline void rseq_fork(struct task_struct *t, u64 c=
+lone_flags)
+ 		t->rseq =3D NULL;
+ 		t->rseq_len =3D 0;
+ 		t->rseq_sig =3D 0;
+-		t->rseq_event_mask =3D 0;
++		t->rseq_event_pending =3D false;
+ 	} else {
+ 		t->rseq =3D current->rseq;
+ 		t->rseq_len =3D current->rseq_len;
+ 		t->rseq_sig =3D current->rseq_sig;
+-		t->rseq_event_mask =3D current->rseq_event_mask;
++		t->rseq_event_pending =3D current->rseq_event_pending;
+ 	}
  }
 =20
-+static inline void rseq_reset(struct task_struct *t)
-+{
-+	memset(&t->rseq, 0, sizeof(t->rseq));
-+}
-+
-+static inline void rseq_execve(struct task_struct *t)
-+{
-+	rseq_reset(t);
-+}
-+
- /*
-  * If parent process has a registered restartable sequences area, the
-  * child inherits. Unregister rseq for a clone with CLONE_VM set.
-  */
- static inline void rseq_fork(struct task_struct *t, u64 clone_flags)
- {
--	if (clone_flags & CLONE_VM) {
--		t->rseq =3D NULL;
--		t->rseq_len =3D 0;
--		t->rseq_sig =3D 0;
--		t->rseq_event_pending =3D false;
--	} else {
-+	if (clone_flags & CLONE_VM)
-+		rseq_reset(t);
-+	else
- 		t->rseq =3D current->rseq;
--		t->rseq_len =3D current->rseq_len;
--		t->rseq_sig =3D current->rseq_sig;
--		t->rseq_event_pending =3D current->rseq_event_pending;
--	}
--}
--
--static inline void rseq_execve(struct task_struct *t)
--{
--	t->rseq =3D NULL;
--	t->rseq_len =3D 0;
--	t->rseq_sig =3D 0;
--	t->rseq_event_pending =3D false;
+@@ -99,15 +61,13 @@ static inline void rseq_execve(struct task_struct *t)
+ 	t->rseq =3D NULL;
+ 	t->rseq_len =3D 0;
+ 	t->rseq_sig =3D 0;
+-	t->rseq_event_mask =3D 0;
++	t->rseq_event_pending =3D false;
  }
 =20
  #else /* CONFIG_RSEQ */
-diff --git a/include/linux/rseq_types.h b/include/linux/rseq_types.h
-new file mode 100644
-index 0000000..f7a60c8
---- /dev/null
-+++ b/include/linux/rseq_types.h
-@@ -0,0 +1,51 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _LINUX_RSEQ_TYPES_H
-+#define _LINUX_RSEQ_TYPES_H
-+
-+#include <linux/types.h>
-+
-+#ifdef CONFIG_RSEQ
-+struct rseq;
-+
-+/**
-+ * struct rseq_event - Storage for rseq related event management
-+ * @all:		Compound to initialize and clear the data efficiently
-+ * @events:		Compound to access events with a single load/store
-+ * @sched_switch:	True if the task was scheduled out
-+ * @has_rseq:		True if the task has a rseq pointer installed
-+ */
-+struct rseq_event {
-+	union {
-+		u32				all;
-+		struct {
-+			union {
-+				u16		events;
-+				struct {
-+					u8	sched_switch;
-+				};
-+			};
-+
-+			u8			has_rseq;
-+		};
-+	};
-+};
-+
-+/**
-+ * struct rseq_data - Storage for all rseq related data
-+ * @usrptr:	Pointer to the registered user space RSEQ memory
-+ * @len:	Length of the RSEQ region
-+ * @sig:	Signature of critial section abort IPs
-+ * @event:	Storage for event management
-+ */
-+struct rseq_data {
-+	struct rseq __user		*usrptr;
-+	u32				len;
-+	u32				sig;
-+	struct rseq_event		event;
-+};
-+
-+#else /* CONFIG_RSEQ */
-+struct rseq_data { };
-+#endif /* !CONFIG_RSEQ */
-+
-+#endif
+-static inline void rseq_set_notify_resume(struct task_struct *t) { }
+ static inline void rseq_handle_notify_resume(struct pt_regs *regs) { }
+ static inline void rseq_signal_deliver(struct ksignal *ksig, struct pt_regs =
+*regs) { }
+-static inline void rseq_preempt(struct task_struct *t) { }
+-static inline void rseq_migrate(struct task_struct *t) { }
++static inline void rseq_sched_switch_event(struct task_struct *t) { }
+ static inline void rseq_fork(struct task_struct *t, u64 clone_flags) { }
+ static inline void rseq_execve(struct task_struct *t) { }
+ static inline void rseq_exit_to_user_mode(void) { }
 diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 6627c52..1562776 100644
+index b469878..6627c52 100644
 --- a/include/linux/sched.h
 +++ b/include/linux/sched.h
-@@ -41,6 +41,7 @@
- #include <linux/task_io_accounting.h>
- #include <linux/posix-timers_types.h>
- #include <linux/restart_block.h>
-+#include <linux/rseq_types.h>
- #include <uapi/linux/rseq.h>
- #include <linux/seqlock_types.h>
- #include <linux/kcsan.h>
-@@ -1406,16 +1407,8 @@ struct task_struct {
- 	unsigned long			numa_pages_migrated;
+@@ -1407,14 +1407,14 @@ struct task_struct {
  #endif /* CONFIG_NUMA_BALANCING */
 =20
--#ifdef CONFIG_RSEQ
--	struct rseq __user		*rseq;
--	u32				rseq_len;
--	u32				rseq_sig;
--	/*
--	 * RmW on rseq_event_pending must be performed atomically
--	 * with respect to preemption.
--	 */
--	bool				rseq_event_pending;
--# ifdef CONFIG_DEBUG_RSEQ
-+	struct rseq_data		rseq;
-+#ifdef CONFIG_DEBUG_RSEQ
+ #ifdef CONFIG_RSEQ
+-	struct rseq __user *rseq;
+-	u32 rseq_len;
+-	u32 rseq_sig;
++	struct rseq __user		*rseq;
++	u32				rseq_len;
++	u32				rseq_sig;
+ 	/*
+-	 * RmW on rseq_event_mask must be performed atomically
++	 * RmW on rseq_event_pending must be performed atomically
+ 	 * with respect to preemption.
+ 	 */
+-	unsigned long rseq_event_mask;
++	bool				rseq_event_pending;
+ # ifdef CONFIG_DEBUG_RSEQ
  	/*
  	 * This is a place holder to save a copy of the rseq fields for
- 	 * validation of read-only fields. The struct rseq has a
-@@ -1423,7 +1416,6 @@ struct task_struct {
- 	 * directly. Reserve a size large enough for the known fields.
+diff --git a/include/uapi/linux/rseq.h b/include/uapi/linux/rseq.h
+index c233aae..1b76d50 100644
+--- a/include/uapi/linux/rseq.h
++++ b/include/uapi/linux/rseq.h
+@@ -114,20 +114,13 @@ struct rseq {
+ 	/*
+ 	 * Restartable sequences flags field.
+ 	 *
+-	 * This field should only be updated by the thread which
+-	 * registered this data structure. Read by the kernel.
+-	 * Mainly used for single-stepping through rseq critical sections
+-	 * with debuggers.
+-	 *
+-	 * - RSEQ_CS_FLAG_NO_RESTART_ON_PREEMPT
+-	 *     Inhibit instruction sequence block restart on preemption
+-	 *     for this thread.
+-	 * - RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL
+-	 *     Inhibit instruction sequence block restart on signal
+-	 *     delivery for this thread.
+-	 * - RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE
+-	 *     Inhibit instruction sequence block restart on migration for
+-	 *     this thread.
++	 * This field was initially intended to allow event masking for
++	 * single-stepping through rseq critical sections with debuggers.
++	 * The kernel does not support this anymore and the relevant bits
++	 * are checked for being always false:
++	 *	- RSEQ_CS_FLAG_NO_RESTART_ON_PREEMPT
++	 *	- RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL
++	 *	- RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE
  	 */
- 	char				rseq_fields[sizeof(struct rseq)];
--# endif
- #endif
-=20
- #ifdef CONFIG_SCHED_MM_CID
-diff --git a/kernel/ptrace.c b/kernel/ptrace.c
-index 75a84ef..392ec2f 100644
---- a/kernel/ptrace.c
-+++ b/kernel/ptrace.c
-@@ -793,9 +793,9 @@ static long ptrace_get_rseq_configuration(struct task_str=
-uct *task,
- 					  unsigned long size, void __user *data)
- {
- 	struct ptrace_rseq_configuration conf =3D {
--		.rseq_abi_pointer =3D (u64)(uintptr_t)task->rseq,
--		.rseq_abi_size =3D task->rseq_len,
--		.signature =3D task->rseq_sig,
-+		.rseq_abi_pointer =3D (u64)(uintptr_t)task->rseq.usrptr,
-+		.rseq_abi_size =3D task->rseq.len,
-+		.signature =3D task->rseq.sig,
- 		.flags =3D 0,
- 	};
+ 	__u32 flags;
 =20
 diff --git a/kernel/rseq.c b/kernel/rseq.c
-index 81dddaf..aae6266 100644
+index 80af48a..59adc1a 100644
 --- a/kernel/rseq.c
 +++ b/kernel/rseq.c
-@@ -103,13 +103,13 @@ static int rseq_validate_ro_fields(struct task_struct *=
-t)
- 				      DEFAULT_RATELIMIT_INTERVAL,
- 				      DEFAULT_RATELIMIT_BURST);
- 	u32 cpu_id_start, cpu_id, node_id, mm_cid;
--	struct rseq __user *rseq =3D t->rseq;
-+	struct rseq __user *rseq =3D t->rseq.usrptr;
+@@ -78,6 +78,12 @@
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/rseq.h>
 =20
- 	/*
- 	 * Validate fields which are required to be read-only by
- 	 * user-space.
++#ifdef CONFIG_MEMBARRIER
++# define RSEQ_EVENT_GUARD	irq
++#else
++# define RSEQ_EVENT_GUARD	preempt
++#endif
++
+ /* The original rseq structure size (including padding) is 32 bytes. */
+ #define ORIG_RSEQ_SIZE		32
+=20
+@@ -430,11 +436,11 @@ void __rseq_handle_notify_resume(struct ksignal *ksig, =
+struct pt_regs *regs)
  	 */
--	if (!user_read_access_begin(rseq, t->rseq_len))
-+	if (!user_read_access_begin(rseq, t->rseq.len))
- 		goto efault;
- 	unsafe_get_user(cpu_id_start, &rseq->cpu_id_start, efault_end);
- 	unsafe_get_user(cpu_id, &rseq->cpu_id, efault_end);
-@@ -147,10 +147,10 @@ efault:
-  * Update an rseq field and its in-kernel copy in lock-step to keep a cohere=
-nt
-  * state.
-  */
--#define rseq_unsafe_put_user(t, value, field, error_label)		\
--	do {								\
--		unsafe_put_user(value, &t->rseq->field, error_label);	\
--		rseq_kernel_fields(t)->field =3D value;			\
-+#define rseq_unsafe_put_user(t, value, field, error_label)			\
-+	do {									\
-+		unsafe_put_user(value, &t->rseq.usrptr->field, error_label);	\
-+		rseq_kernel_fields(t)->field =3D value;				\
- 	} while (0)
-=20
- #else
-@@ -160,12 +160,12 @@ static int rseq_validate_ro_fields(struct task_struct *=
-t)
- }
-=20
- #define rseq_unsafe_put_user(t, value, field, error_label)		\
--	unsafe_put_user(value, &t->rseq->field, error_label)
-+	unsafe_put_user(value, &t->rseq.usrptr->field, error_label)
- #endif
-=20
- static int rseq_update_cpu_node_id(struct task_struct *t)
- {
--	struct rseq __user *rseq =3D t->rseq;
-+	struct rseq __user *rseq =3D t->rseq.usrptr;
- 	u32 cpu_id =3D raw_smp_processor_id();
- 	u32 node_id =3D cpu_to_node(cpu_id);
- 	u32 mm_cid =3D task_mm_cid(t);
-@@ -176,7 +176,7 @@ static int rseq_update_cpu_node_id(struct task_struct *t)
- 	if (rseq_validate_ro_fields(t))
- 		goto efault;
- 	WARN_ON_ONCE((int) mm_cid < 0);
--	if (!user_write_access_begin(rseq, t->rseq_len))
-+	if (!user_write_access_begin(rseq, t->rseq.len))
- 		goto efault;
-=20
- 	rseq_unsafe_put_user(t, cpu_id, cpu_id_start, efault_end);
-@@ -201,7 +201,7 @@ efault:
-=20
- static int rseq_reset_rseq_cpu_node_id(struct task_struct *t)
- {
--	struct rseq __user *rseq =3D t->rseq;
-+	struct rseq __user *rseq =3D t->rseq.usrptr;
- 	u32 cpu_id_start =3D 0, cpu_id =3D RSEQ_CPU_ID_UNINITIALIZED, node_id =3D 0,
- 	    mm_cid =3D 0;
-=20
-@@ -211,7 +211,7 @@ static int rseq_reset_rseq_cpu_node_id(struct task_struct=
- *t)
- 	if (rseq_validate_ro_fields(t))
- 		goto efault;
-=20
--	if (!user_write_access_begin(rseq, t->rseq_len))
-+	if (!user_write_access_begin(rseq, t->rseq.len))
- 		goto efault;
-=20
- 	/*
-@@ -272,7 +272,7 @@ static int rseq_get_rseq_cs(struct task_struct *t, struct=
- rseq_cs *rseq_cs)
- 	u32 sig;
- 	int ret;
-=20
--	ret =3D rseq_get_rseq_cs_ptr_val(t->rseq, &ptr);
-+	ret =3D rseq_get_rseq_cs_ptr_val(t->rseq.usrptr, &ptr);
- 	if (ret)
- 		return ret;
-=20
-@@ -305,10 +305,10 @@ static int rseq_get_rseq_cs(struct task_struct *t, stru=
-ct rseq_cs *rseq_cs)
- 	if (ret)
- 		return ret;
-=20
--	if (current->rseq_sig !=3D sig) {
-+	if (current->rseq.sig !=3D sig) {
- 		printk_ratelimited(KERN_WARNING
- 			"Possible attack attempt. Unexpected rseq signature 0x%x, expecting 0x%x =
-(pid=3D%d, addr=3D%p).\n",
--			sig, current->rseq_sig, current->pid, usig);
-+			sig, current->rseq.sig, current->pid, usig);
- 		return -EINVAL;
- 	}
- 	return 0;
-@@ -338,7 +338,7 @@ static int rseq_check_flags(struct task_struct *t, u32 cs=
-_flags)
- 		return -EINVAL;
-=20
- 	/* Get thread flags. */
--	ret =3D get_user(flags, &t->rseq->flags);
-+	ret =3D get_user(flags, &t->rseq.usrptr->flags);
- 	if (ret)
- 		return ret;
-=20
-@@ -392,13 +392,13 @@ static int rseq_ip_fixup(struct pt_regs *regs, bool abo=
-rt)
- 	 * Clear the rseq_cs pointer and return.
- 	 */
- 	if (!in_rseq_cs(ip, &rseq_cs))
--		return clear_rseq_cs(t->rseq);
-+		return clear_rseq_cs(t->rseq.usrptr);
- 	ret =3D rseq_check_flags(t, rseq_cs.flags);
- 	if (ret < 0)
- 		return ret;
- 	if (!abort)
- 		return 0;
--	ret =3D clear_rseq_cs(t->rseq);
-+	ret =3D clear_rseq_cs(t->rseq.usrptr);
- 	if (ret)
- 		return ret;
- 	trace_rseq_ip_fixup(ip, rseq_cs.start_ip, rseq_cs.post_commit_offset,
-@@ -460,8 +460,8 @@ void __rseq_handle_notify_resume(struct ksignal *ksig, st=
-ruct pt_regs *regs)
- 	 * inconsistencies.
- 	 */
- 	scoped_guard(RSEQ_EVENT_GUARD) {
--		event =3D t->rseq_event_pending;
--		t->rseq_event_pending =3D false;
-+		event =3D t->rseq.event.sched_switch;
-+		t->rseq.event.sched_switch =3D false;
- 	}
-=20
- 	if (!IS_ENABLED(CONFIG_DEBUG_RSEQ) && !event)
-@@ -492,7 +492,7 @@ void rseq_syscall(struct pt_regs *regs)
- 	struct task_struct *t =3D current;
- 	struct rseq_cs rseq_cs;
-=20
--	if (!t->rseq)
-+	if (!t->rseq.usrptr)
- 		return;
- 	if (rseq_get_rseq_cs(t, &rseq_cs) || in_rseq_cs(ip, &rseq_cs))
- 		force_sig(SIGSEGV);
-@@ -511,33 +511,31 @@ SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32, =
-rseq_len, int, flags, u32
- 		if (flags & ~RSEQ_FLAG_UNREGISTER)
- 			return -EINVAL;
- 		/* Unregister rseq for current thread. */
--		if (current->rseq !=3D rseq || !current->rseq)
-+		if (current->rseq.usrptr !=3D rseq || !current->rseq.usrptr)
- 			return -EINVAL;
--		if (rseq_len !=3D current->rseq_len)
-+		if (rseq_len !=3D current->rseq.len)
- 			return -EINVAL;
--		if (current->rseq_sig !=3D sig)
-+		if (current->rseq.sig !=3D sig)
- 			return -EPERM;
- 		ret =3D rseq_reset_rseq_cpu_node_id(current);
- 		if (ret)
- 			return ret;
--		current->rseq =3D NULL;
--		current->rseq_sig =3D 0;
--		current->rseq_len =3D 0;
-+		rseq_reset(current);
- 		return 0;
- 	}
-=20
- 	if (unlikely(flags))
- 		return -EINVAL;
-=20
--	if (current->rseq) {
-+	if (current->rseq.usrptr) {
+ 	if (regs) {
  		/*
- 		 * If rseq is already registered, check whether
- 		 * the provided address differs from the prior
- 		 * one.
+-		 * Read and clear the event mask first. If the task was not
+-		 * preempted or migrated or a signal is on the way, there
+-		 * is no point in doing any of the heavy lifting here on
+-		 * production kernels. In that case TIF_NOTIFY_RESUME was
+-		 * raised by some other functionality.
++		 * Read and clear the event pending bit first. If the task
++		 * was not preempted or migrated or a signal is on the way,
++		 * there is no point in doing any of the heavy lifting here
++		 * on production kernels. In that case TIF_NOTIFY_RESUME
++		 * was raised by some other functionality.
+ 		 *
+ 		 * This is correct because the read/clear operation is
+ 		 * guarded against scheduler preemption, which makes it CPU
+@@ -447,15 +453,15 @@ void __rseq_handle_notify_resume(struct ksignal *ksig, =
+struct pt_regs *regs)
+ 		 * with the result handed in to allow the detection of
+ 		 * inconsistencies.
  		 */
--		if (current->rseq !=3D rseq || rseq_len !=3D current->rseq_len)
-+		if (current->rseq.usrptr !=3D rseq || rseq_len !=3D current->rseq.len)
- 			return -EINVAL;
--		if (current->rseq_sig !=3D sig)
-+		if (current->rseq.sig !=3D sig)
- 			return -EPERM;
- 		/* Already registered. */
- 		return -EBUSY;
-@@ -586,15 +584,16 @@ SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32, =
-rseq_len, int, flags, u32
- 	 * Activate the registration by setting the rseq area address, length
- 	 * and signature in the task struct.
- 	 */
--	current->rseq =3D rseq;
--	current->rseq_len =3D rseq_len;
--	current->rseq_sig =3D sig;
-+	current->rseq.usrptr =3D rseq;
-+	current->rseq.len =3D rseq_len;
-+	current->rseq.sig =3D sig;
+-		u32 event_mask;
++		bool event;
 =20
- 	/*
- 	 * If rseq was previously inactive, and has just been
+ 		scoped_guard(RSEQ_EVENT_GUARD) {
+-			event_mask =3D t->rseq_event_mask;
+-			t->rseq_event_mask =3D 0;
++			event =3D t->rseq_event_pending;
++			t->rseq_event_pending =3D false;
+ 		}
+=20
+-		if (IS_ENABLED(CONFIG_DEBUG_RSEQ) || event_mask) {
+-			ret =3D rseq_ip_fixup(regs, !!event_mask);
++		if (IS_ENABLED(CONFIG_DEBUG_RSEQ) || event) {
++			ret =3D rseq_ip_fixup(regs, event);
+ 			if (unlikely(ret < 0))
+ 				goto error;
+ 		}
+@@ -584,7 +590,7 @@ SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32, rs=
+eq_len, int, flags, u32
  	 * registered, ensure the cpu_id_start and cpu_id fields
  	 * are updated before returning to user-space.
  	 */
-+	current->rseq.event.has_rseq =3D true;
- 	rseq_sched_switch_event(current);
+-	rseq_set_notify_resume(current);
++	rseq_sched_switch_event(current);
 =20
  	return 0;
+ }
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index f1ebf67..b75e8e1 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -3329,7 +3329,6 @@ void set_task_cpu(struct task_struct *p, unsigned int n=
+ew_cpu)
+ 		if (p->sched_class->migrate_task_rq)
+ 			p->sched_class->migrate_task_rq(p, new_cpu);
+ 		p->se.nr_migrations++;
+-		rseq_migrate(p);
+ 		sched_mm_cid_migrate_from(p);
+ 		perf_event_task_migrate(p);
+ 	}
+@@ -4763,7 +4762,6 @@ int sched_cgroup_fork(struct task_struct *p, struct ker=
+nel_clone_args *kargs)
+ 		p->sched_task_group =3D tg;
+ 	}
+ #endif
+-	rseq_migrate(p);
+ 	/*
+ 	 * We're setting the CPU for the first time, we don't migrate,
+ 	 * so use __set_task_cpu().
+@@ -4827,7 +4825,6 @@ void wake_up_new_task(struct task_struct *p)
+ 	 * as we're not fully set-up yet.
+ 	 */
+ 	p->recent_used_cpu =3D task_cpu(p);
+-	rseq_migrate(p);
+ 	__set_task_cpu(p, select_task_rq(p, task_cpu(p), &wake_flags));
+ 	rq =3D __task_rq_lock(p, &rf);
+ 	update_rq_clock(rq);
+@@ -5121,7 +5118,7 @@ prepare_task_switch(struct rq *rq, struct task_struct *=
+prev,
+ 	kcov_prepare_switch(prev);
+ 	sched_info_switch(rq, prev, next);
+ 	perf_event_task_sched_out(prev, next);
+-	rseq_preempt(prev);
++	rseq_sched_switch_event(prev);
+ 	fire_sched_out_preempt_notifiers(prev, next);
+ 	kmap_local_sched_out();
+ 	prepare_task(next);
+diff --git a/kernel/sched/membarrier.c b/kernel/sched/membarrier.c
+index 62fba83..6234456 100644
+--- a/kernel/sched/membarrier.c
++++ b/kernel/sched/membarrier.c
+@@ -199,7 +199,7 @@ static void ipi_rseq(void *info)
+ 	 * is negligible.
+ 	 */
+ 	smp_mb();
+-	rseq_preempt(current);
++	rseq_sched_switch_event(current);
+ }
+=20
+ static void ipi_sync_rq_state(void *info)
+@@ -407,9 +407,9 @@ static int membarrier_private_expedited(int flags, int cp=
+u_id)
+ 		 * membarrier, we will end up with some thread in the mm
+ 		 * running without a core sync.
+ 		 *
+-		 * For RSEQ, don't rseq_preempt() the caller.  User code
+-		 * is not supposed to issue syscalls at all from inside an
+-		 * rseq critical section.
++		 * For RSEQ, don't invoke rseq_sched_switch_event() on the
++		 * caller.  User code is not supposed to issue syscalls at
++		 * all from inside an rseq critical section.
+ 		 */
+ 		if (flags !=3D MEMBARRIER_FLAG_SYNC_CORE) {
+ 			preempt_disable();
 
