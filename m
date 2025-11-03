@@ -1,188 +1,271 @@
-Return-Path: <linux-kernel+bounces-882455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38641C2A826
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:13:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3EA5C2A7EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 09:09:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3B613BCCA4
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:06:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04C9E1890850
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 08:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B1C32D838C;
-	Mon,  3 Nov 2025 08:06:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD6D2D7803;
+	Mon,  3 Nov 2025 08:09:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zi8CXFTc";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TKVA5B8h";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="018BWjI4";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OUQNZkcn"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="A4qoqF55";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="x655JdzP";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="A4qoqF55";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="x655JdzP"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1436C2D7D41
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 08:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9FE27466D
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 08:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762157204; cv=none; b=YDARL4Yj+1N88v8giJCrNVXiDNdN2GS59Sn406zfvkhIfVpJzSqu2PWycGlzkzPt5GMjUp5p1eOBAvM1i3yit2DPbFKbNeZIYiT0hfwnE/vtx5WF9C+F/2BIXNRDW+ddrTwcFoNeBCncetJ6zLy2AovrV4rlICk1H66y69v2zeo=
+	t=1762157355; cv=none; b=o09PaGB/G+hJK1dSINb/qhpk3AP4woSAiUAVYwDolqVQ3B3oOpOG3QMRupIfBEHAyfPMSWXayUdbXBVolIuDBR7+lwZeEvVPje/d7q4c9t1FvNrO4d39IJNMxA91/DrE7ME0mX2Ip+dtSVq6rUtSpFP9W3VAEnnvffX+MAFKFms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762157204; c=relaxed/simple;
-	bh=orVO1CjzazfzcM1r2PIirkigYX7G72QMN2kLOC6NvoU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GDDrkW65lryajVgAAn28RlKOLo+NZn3+6DN4U1mc0fc2Y4jSNCkKlfoJCNTd7Awd8oMLyngMdAM0wmTR5M85uDPcB8JSpuwqSpp/PB8wLPoghWNwXdQm/mhzLy10BGR4M6Dyusi/P7iOzYyYmBuaIoqAC+raM++blpnsezUPidE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zi8CXFTc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TKVA5B8h; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=018BWjI4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OUQNZkcn; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	s=arc-20240116; t=1762157355; c=relaxed/simple;
+	bh=Vlhw73ppmfu1j9rxIsLj7KX+usgfj87ftnAJZlnjoRg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qC0Y4fZnYRaDmzgVUaBRI479Pbdv58aCM38dADxIfl2kUEVqi0s5Tj6+fmR//0w3tNhC7ZotixGg5f8ZKjbI9vp28ax6ZbCp26x5TpTTuRagx2bmSr6LyqHF5OwUtGvBIJf7+GpyzwPApO0cnNCPyMk8cSYNp5wY194628kRUec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=A4qoqF55; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=x655JdzP; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=A4qoqF55; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=x655JdzP; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E9E9E218E8;
-	Mon,  3 Nov 2025 08:06:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762157198; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 3B3031F766;
+	Mon,  3 Nov 2025 08:09:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1762157350; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zCkJf14wqV0F4XHGtpv6IsvGx/JTM7DNUNTENvxVbxU=;
-	b=zi8CXFTcQaBKBEpxv7jW3Umveo7VgqtbjbyACZo1GbTjQwPDcorm1dOoX2Fkzlq0Le8W7Z
-	btudHizqz5EvwlqXOQ/UDkPeQrzjIWq1c/nwBIaBQ3RAWu7RZYky7dzQmT0mOXdF3LVAKS
-	fboMrOzYBm+sRlW2IjQOuDoi3rtNtNI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762157198;
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VKEz7jF5B4ooGLr9O31wK/4JWQbfcbQTlr2Qtv1zupA=;
+	b=A4qoqF55edeej0Gi2mCQy3/MyLXpJnRpXzBSCVRKDz9OI0b+rqfqXi2ymsvSp4p3eV5dgu
+	D7x7iK+iQ2hW0bROGVTvATsRxYrtjgiOfPzmnJ5RbkMdZS5UBfW4+ixXlZYCc0OPl+4dBl
+	TaCbAcmDrXeb4qKOZtjX/9Ys6CbbME0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1762157350;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zCkJf14wqV0F4XHGtpv6IsvGx/JTM7DNUNTENvxVbxU=;
-	b=TKVA5B8hPFYXxiy/uI/8Rk5SdCozQnbaYE7+LwVfmJ06p/Xb+Lcc3AAxwO6+v525r62EHA
-	3xHAl02CyVW1tXAA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=018BWjI4;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=OUQNZkcn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1762157197; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VKEz7jF5B4ooGLr9O31wK/4JWQbfcbQTlr2Qtv1zupA=;
+	b=x655JdzPcyKGMWf2urKCw15dH1GR1dgZS4saUvE3dwPglx6bee1GwyPCZSdeAokY2H8Z/h
+	vsXtKt50tO69ZJAA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=A4qoqF55;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=x655JdzP
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1762157350; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zCkJf14wqV0F4XHGtpv6IsvGx/JTM7DNUNTENvxVbxU=;
-	b=018BWjI4UciYupwdOCuccVBXRZ2XDz4ea6ZHTB/DxoByTkfFiQn9aVNlepUhZZZVL3TB3C
-	hWx8qqKRjPqp/S72VAwSZxlLZF0Xp2V7sgAz3DYOkuw8nW7JorvnSi5rwKVh4mFeMylsPN
-	X1E37pTBeIXIrj963W1YYXZBYaLdK5A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1762157197;
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VKEz7jF5B4ooGLr9O31wK/4JWQbfcbQTlr2Qtv1zupA=;
+	b=A4qoqF55edeej0Gi2mCQy3/MyLXpJnRpXzBSCVRKDz9OI0b+rqfqXi2ymsvSp4p3eV5dgu
+	D7x7iK+iQ2hW0bROGVTvATsRxYrtjgiOfPzmnJ5RbkMdZS5UBfW4+ixXlZYCc0OPl+4dBl
+	TaCbAcmDrXeb4qKOZtjX/9Ys6CbbME0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1762157350;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zCkJf14wqV0F4XHGtpv6IsvGx/JTM7DNUNTENvxVbxU=;
-	b=OUQNZkcnZxVs3XQevIvUo8kEsC/6j+XzxjZ9NihmdZtp/sOAR2FXLvP18hvLA5VBsBmA4j
-	gutiWwhxOU80b7DQ==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VKEz7jF5B4ooGLr9O31wK/4JWQbfcbQTlr2Qtv1zupA=;
+	b=x655JdzPcyKGMWf2urKCw15dH1GR1dgZS4saUvE3dwPglx6bee1GwyPCZSdeAokY2H8Z/h
+	vsXtKt50tO69ZJAA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DA6F91364F;
-	Mon,  3 Nov 2025 08:06:37 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D29D91364F;
+	Mon,  3 Nov 2025 08:09:09 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 3gNSNY1iCGnNWQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 03 Nov 2025 08:06:37 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 58F69A2A61; Mon,  3 Nov 2025 09:06:33 +0100 (CET)
-Date: Mon, 3 Nov 2025 09:06:33 +0100
-From: Jan Kara <jack@suse.cz>
-To: libaokun@huaweicloud.com
-Cc: linux-ext4@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
-	jack@suse.cz, linux-kernel@vger.kernel.org, kernel@pankajraghav.com, 
-	mcgrof@kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	yi.zhang@huawei.com, yangerkun@huawei.com, chengzhihao1@huawei.com, 
-	libaokun1@huawei.com
-Subject: Re: [PATCH 05/25] ext4: enable DIOREAD_NOLOCK by default for BS > PS
- as well
-Message-ID: <q7podhkdz5bnjif6tm2ldwkdvzafwqc37u67eepajoreu4x2zx@3zypdbhvmouk>
-References: <20251025032221.2905818-1-libaokun@huaweicloud.com>
- <20251025032221.2905818-6-libaokun@huaweicloud.com>
+	id HJEGMSVjCGkQXAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Mon, 03 Nov 2025 08:09:09 +0000
+Message-ID: <5aa617b1-f6b8-49a3-9659-1b4d35c89d22@suse.de>
+Date: Mon, 3 Nov 2025 09:09:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20251025032221.2905818-6-libaokun@huaweicloud.com>
-X-Rspamd-Queue-Id: E9E9E218E8
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spam-Score: -0.21
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/msm: fix allocation of dumb buffers for non-RGB
+ formats
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov
+ <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>,
+ Jessica Zhang <jesszhan0024@gmail.com>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20251102-drm-msm-fix-nv12-v1-1-096dbcb4a51f@oss.qualcomm.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20251102-drm-msm-fix-nv12-v1-1-096dbcb4a51f@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 X-Spam-Level: 
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-0.21 / 50.00];
-	SEM_URIBL(3.50)[huaweicloud.com:email];
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 3B3031F766
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
 	MIME_GOOD(-0.10)[text/plain];
-	BAD_REP_POLICIES(0.10)[];
 	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[oss.qualcomm.com,kernel.org,linux.dev,gmail.com,poorly.run,somainline.org,ffwll.ch];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
 	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	R_DKIM_ALLOW(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_NONE(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
 	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,huaweicloud.com:email,huawei.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Spamd-Bar: /
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid,suse.de:email,suse.com:url]
+X-Spam-Score: -4.51
 
-On Sat 25-10-25 11:22:01, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> The dioread_nolock related processes already support large folio, so
-> dioread_nolock is enabled by default regardless of whether the blocksize
-> is less than, equal to, or greater than PAGE_SIZE.
-> 
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+Hi,
 
-Looks good. Feel free to add:
+thanks a lot for this bug fix.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
+Am 02.11.25 um 21:17 schrieb Dmitry Baryshkov:
+> Several users (including IGT kms_getfb tests) allocate DUMB buffers for
+> YUV data. Commit 538fa012cbdb ("drm/msm: Compute dumb-buffer sizes with
+> drm_mode_size_dumb()") broke that usecase, since in those cases
+> drm_driver_color_mode_format() returns DRM_FORMAT_INVALID.
+>
+> Handle the YUV usecase, aligning to 32-bit pixels.
+>
+> Fixes: 538fa012cbdb ("drm/msm: Compute dumb-buffer sizes with drm_mode_size_dumb()")
+> Closes: https://lore.kernel.org/all/vptw5tquup34e3jen62znnw26qe76f3pys4lpsal5g3czwev6y@2q724ibos7by/
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 > ---
->  fs/ext4/super.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index 894529f9b0cc..aa5aee4d1b63 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -4383,8 +4383,7 @@ static void ext4_set_def_opts(struct super_block *sb,
->  	    ((def_mount_opts & EXT4_DEFM_NODELALLOC) == 0))
->  		set_opt(sb, DELALLOC);
->  
-> -	if (sb->s_blocksize <= PAGE_SIZE)
-> -		set_opt(sb, DIOREAD_NOLOCK);
-> +	set_opt(sb, DIOREAD_NOLOCK);
->  }
->  
->  static int ext4_handle_clustersize(struct super_block *sb)
-> -- 
-> 2.46.1
-> 
+>   drivers/gpu/drm/msm/msm_gem.c | 17 ++++++++++-------
+>   1 file changed, 10 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/msm/msm_gem.c b/drivers/gpu/drm/msm/msm_gem.c
+> index 435c0067c2641786ca7b4a42cca0ae7e7dda3451..b9cfdb2ff33b63b92cff2568db491d0692bbe459 100644
+> --- a/drivers/gpu/drm/msm/msm_gem.c
+> +++ b/drivers/gpu/drm/msm/msm_gem.c
+> @@ -701,7 +701,6 @@ int msm_gem_dumb_create(struct drm_file *file, struct drm_device *dev,
+>   		struct drm_mode_create_dumb *args)
+>   {
+>   	u32 fourcc;
+> -	const struct drm_format_info *info;
+>   	u64 pitch_align;
+>   	int ret;
+>   
+> @@ -711,12 +710,16 @@ int msm_gem_dumb_create(struct drm_file *file, struct drm_device *dev,
+>   	 * Use the result as pitch alignment.
+>   	 */
+>   	fourcc = drm_driver_color_mode_format(dev, args->bpp);
+> -	if (fourcc == DRM_FORMAT_INVALID)
+> -		return -EINVAL;
+> -	info = drm_format_info(fourcc);
+> -	if (!info)
+> -		return -EINVAL;
+> -	pitch_align = drm_format_info_min_pitch(info, 0, SZ_32);
+> +	if (fourcc != DRM_FORMAT_INVALID) {
+> +		const struct drm_format_info *info;
+> +
+> +		info = drm_format_info(fourcc);
+> +		if (!info)
+> +			return -EINVAL;
+> +		pitch_align = drm_format_info_min_pitch(info, 0, SZ_32);
+> +	} else {
+> +		pitch_align = round_up(args->width, SZ_32) * DIV_ROUND_UP(args->bpp, SZ_8);
+
+Just a style issue: I know that the fixed patch uses SZ_32, but looking 
+at now, it seems preferable to use a plain 32 here. It's not a size 
+value in the common sense.
+
+The same problem happens in imx (see patch 10 of the dumb-buffer 
+series). I think we could use a helper for the code. Something like
+
+u64 drm_mode_dumb_pitch_align(const struct drm_mode_create_dumb *args, 
+unsigned int pitch_pixel_align)
+{
+     // do the fixed calculation here
+
+     // return 0 on error
+}
+
+
+But if you just want to get the bug fixed, feel free to add
+
+Reviewed-by: Thomas Zimmermann <tzimmermann@suse.de>
+
+to the current patch.
+
+Best regards
+Thomas
+
+> +	}
+>   	if (!pitch_align || pitch_align > U32_MAX)
+>   		return -EINVAL;
+>   	ret = drm_mode_size_dumb(dev, args, pitch_align, 0);
+>
+> ---
+> base-commit: 98bd8b16ae57e8f25c95d496fcde3dfdd8223d41
+> change-id: 20251102-drm-msm-fix-nv12-11f0e8c31b2e
+>
+> Best regards,
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstr. 146, 90461 Nürnberg, Germany, www.suse.com
+GF: Jochen Jaser, Andrew McDonald, Werner Knoblich, (HRB 36809, AG Nürnberg)
+
+
 
