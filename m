@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-882182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66D4AC29D45
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 02:53:48 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63AD8C29D54
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 02:54:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 1098D4EE660
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 01:52:12 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8F8074E65C9
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 01:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 184AA28750A;
-	Mon,  3 Nov 2025 01:51:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D7828C2BF;
+	Mon,  3 Nov 2025 01:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nFXOIs71"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gs5/sJeh"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D281A28312B
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 01:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10DCA28640B
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 01:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762134671; cv=none; b=fb8UuGhpA+mDRo36BuTdTRuXpulNNem27R4uc8oDJE9AX1bxBcB360r6rtm5uacryyCjy7Uit5CJOhHFoNkXUe30Ij3+H8dxSu9y87kdZC0Clqt1EicYq27BOJIL3bxM8/+5vHS/HY84SZgbSoDYBi0t4UCUmymrxeheJdMgoMk=
+	t=1762134672; cv=none; b=A2zEDlPibUqOxVuPoHlEV4c3kibFHTkR9ErD3wcPw3FTYzi9squ6pEtqEa9slBpIeXAANX+oFfA9P5GRhN1jBRaDzc0AfeOSiT4JtnVhE8UW34i7DQYpolFK8OUoQ/nm//V2BSvwaIsQm8ECtYLe8h9gs4vYs88VUXFhkFdbQ+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762134671; c=relaxed/simple;
-	bh=GTa5PMbqingrx9UUvDQwwryRQXi1hbUYeu/uDR+oix4=;
+	s=arc-20240116; t=1762134672; c=relaxed/simple;
+	bh=Ah+90vlkgOlUyyughdO7zNDVG97YW6CBrkKD+MNo5DQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gammYki1Cez2BNayi/MVfiWb7+zs07XHodZTS5fDF5G3o+MURDEMwugZBAdxX3O6ppRXPRJVX25aP+Ra0rG3icMTsgDiBltmXSDzgOXE177IcDOCQw7vuP6yw+V5IuqokIyvB5gc3CuqMaIUB4Ye16hm74CCODZJaaiaOekUYO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nFXOIs71; arc=none smtp.client-ip=209.85.214.171
+	 MIME-Version; b=J9KFl9bf6htcgyE+8n+MYI569c6ltFh4zVtKk8W1GSimDcioENug1xnE9Pen3KvtsoKshBX3V+NPG9bWh0ERRvvH/GnblKMYzBKy1vpfyQwpTgZT3SJQdctP1DH72kPgErq495FgkEqYxOUS+mUXzzCzgwA3o9kxF8gcMdHKdWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gs5/sJeh; arc=none smtp.client-ip=209.85.216.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-29470bc80ceso42631175ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 17:51:08 -0800 (PST)
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-340299fe579so4065723a91.2
+        for <linux-kernel@vger.kernel.org>; Sun, 02 Nov 2025 17:51:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1762134668; x=1762739468; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1762134670; x=1762739470; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PjjrDgD3WOpxSbQxw9z6dYOn0RSDkCVjfKdY81mup90=;
-        b=nFXOIs71tYVs80IsegIyIuR8MwOqHUs7hfY4XtEosGRZ7W8UrYAD2gpyCIFiG7/6eW
-         CxemSDABdC+VCsyVFq6rEpO09FeNlWscPy7MAn3MRyVvvOfTRsKXVwzGnRMG2RDq7Up/
-         oQBpa+xMjRZT3JPujzs0kgFNED/E0hb2oWjz3PultsQRUxVndQZTjoMGSB+j6/AJfGRP
-         +wEc0y6ZMtDa0Oo5FDU70wgzdhGtlGQrDiBB4A5hxI3QqpJjAUvrqDIPCeQJIj5hPbOy
-         cjFq/aNYvfHFl3Hc35ZnVcfuI9nWhYommisw2nyoc0GNKbjpqQbJUKuHCAK9lhkg8S9x
-         LhYw==
+        bh=hkKTspHYmfWOFM70ifYk5p3S0g4HpZnFTv7ED0DZ6vo=;
+        b=gs5/sJehjPczAUnPl5UQKi8WXsYjITxRso2HCFjwADgMp6z8WLd/+AZ/MAGDhpJdDg
+         x7fh1P1WchoR87r2ziDAuiGIj3emFPjeE6RldggqqyoyeMC8ZFC3BH/JNn9yNzbJTEjx
+         x3J9ryWtnL9g3fHGCl5dvH/vmJyqU9QaHen4V20yprCPVBZqoy7Rz/06zcJitVwMeAkB
+         DwLc4Oy950E9ZN/96RqtXEF2K2KJZQzqIpnJDHQ02aRQ13+qKFclNYI5J6evXvGR73Sv
+         Cq40ayyJunuOxwPLpfTDs4pfSo2mX/DMWUMiUBYfABaOtDtm1hEd61n98OVmrQo0E+ua
+         9XJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1762134668; x=1762739468;
+        d=1e100.net; s=20230601; t=1762134670; x=1762739470;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PjjrDgD3WOpxSbQxw9z6dYOn0RSDkCVjfKdY81mup90=;
-        b=aJHpWXtNbwDLCpV/K1hOfv/vbxqREhXIBd9YF19O/u2IjccCHKvmQpsDM8j9Wch8HP
-         x9kJgCpytj0UQBPhDwIPVqA1md44Nzd1QOIRH0ORgA/vuJjy2kfR4XUKveGcQzqMwTeT
-         Kkbbxy1Xd1HMSmUF8YbxRofcQzIxUOyRiOGYMqVYZ9ZAEJUawO03qJgc45Ren4jxBN0u
-         opPIkfg+Rvb5Vhefs55rK7CZcTS3mX4zM0VB7BtuWJCxH5stDhZE4wmTpPWvnTB21Jqk
-         nITc6ikK3egPiFIkTRaXMA2C57ETPj35rBJEdB8W4PN9pQUxYfhztAVIDHc7Aw+rEIrj
-         e9uw==
-X-Gm-Message-State: AOJu0YwQD7ZcFOgjWSRSRIJQjSu6EAMy/4m6eMV0qvxGjEadCzPK1scV
-	g/IVpUcN9PMo29fsSv5IsLrS+RqEO/sGtbsQXAJ4Sh0Knq3VCw3Mng745HEu9BHiink=
-X-Gm-Gg: ASbGncujYEYYCAug9XM1jsLTp8+FqRxOG3QBm/JYGK/nqZ9md5ADKSVMS5M7mEQzVl3
-	pbuTSE4WBrEPsCnZdkMpMuPZfnp1j1XC/F0nP2ZYp963fgD9b6bKxmJosJEpibdmu0aew10ILeX
-	MNvXLmB9i9zyWgMlP9ocM4rLtFJWr/S4ZvRUdvD6/ICI3Pnijn7c/aDnFNZMDmIF6mLckI7kU/r
-	WXizwfemlYP5MlWPAltmfNss9ZRti2sOP9tVCIuGhpo2Kk/1DXP3MUFwl8plTy1wNBqSvD3ir0u
-	pFGxquWr+FP17y3GTH2DW1JKc4YPy/VHVwUT0NGP2WiHqrIIeMyIdqe92/XILROUZGLjSjfivbW
-	PPa6VH7pIL3cMzZ3o58w5QtNT0fgblokUheblvz+fns/6lwfjZjyhwcBnPlPuljbs5wHT2EUVLh
-	BC8etLOtg12tw=
-X-Google-Smtp-Source: AGHT+IFyCErUd2LTMpCfiBKckFhfziU7rNdrc7hqKpWdpQrtJrl/PcLHkl+2t0Dv9Jq0LTgXu93AXQ==
-X-Received: by 2002:a17:902:d505:b0:290:b10f:9aec with SMTP id d9443c01a7336-294ed2c61c2mr160888385ad.26.1762134668001;
-        Sun, 02 Nov 2025 17:51:08 -0800 (PST)
+        bh=hkKTspHYmfWOFM70ifYk5p3S0g4HpZnFTv7ED0DZ6vo=;
+        b=C+SMj8hwgDsGPU8m4C7fcljcbihoXHTcLZkM8gJgdqU5hWEbB1whspdVbG9de7y/Pt
+         e3qHjU+WSNy4I0CNyv5fGQlknjLBua1ddbiO0niJ+1XyyeA/DtO6/BK0pWGVwCdJBmBu
+         LaUKBPOJvPota7lM9Bq4JnpRc7XCtlW+nlM7wYr5E4mnTUf+jE0VrKyuZfQhBXiyyPZl
+         JUlDjQVOmnYBtbhKA6yxPdPs9NwC4jf9u9d3chh/SlMJaY+BQlfvIbSb7aJ9gPCAM8RR
+         +G2l2oSq/2lk4icHL/eb6eJvFGB0nBEDAXHOeMjgjZUp6k1IHsUjbNVwYPV411aqKwY0
+         yaXw==
+X-Gm-Message-State: AOJu0YwEte0/aGGu3FXJQC4EFuPofUHTvqaoHzGusuhwDNe+4BiUwnyL
+	bEuXd7MVOCL3AukzNy89YclNe9H7KRkjyFJ+S6L+xz74q2IZCrwS1D/o
+X-Gm-Gg: ASbGnctu8+m3PgkK8wVlQ7VVr2oedTZkLCjmzvae5XJQgQ/tBPfQx2TlMIgYp2Q1Mbi
+	zhSDcYqgdPW+ba8Wl7vY+IkMTU2RiK5Fhi/Ehvce57DTHbBtE9CRFhWfwMC7JE28oUEkTYlNtT2
+	ASn7TDyUaVmSI3YMb8mjBR0BQW0HzLFns1mqB68/coQSBNibmbe7KYkgJEHBfMNuj4oZyKs75a+
+	O+wcIJYUCl8qitRIjn373/4XPJZSd3mdv4SkyTyMH5ZBQevWVplArqS3MGU0iVF8ZvqkccfAbPZ
+	xRx7veu0nrCySr5b0gIx4LnSOF1uhIDD6YxQnbYgcvs3ngdBHw2DKX9c5cseuMu5CE8uSUY5m8/
+	LMluh7lznUdVb3Bj02L7PL/hIFVQKbH3g7mCOq5g/n1d1EMvgrxle/Zqd1+BduUjK3VvLFs7gRZ
+	dMB3D8wO6VgbM=
+X-Google-Smtp-Source: AGHT+IFYqMxHMvi7lUWfNqiIwVN9ffiabVUjelb6YerJOXj6/2jPKUMtAkHCDHXwBoUur/VvjPugFw==
+X-Received: by 2002:a17:90b:4988:b0:33d:a0fd:257b with SMTP id 98e67ed59e1d1-3408309d2c8mr13142947a91.36.1762134670266;
+        Sun, 02 Nov 2025 17:51:10 -0800 (PST)
 Received: from archie.me ([210.87.74.117])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2955615d720sm66919025ad.65.2025.11.02.17.51.02
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3407f096a44sm5613194a91.2.2025.11.02.17.51.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Sun, 02 Nov 2025 17:51:05 -0800 (PST)
 Received: by archie.me (Postfix, from userid 1000)
-	id 1677C4264540; Mon, 03 Nov 2025 08:50:58 +0700 (WIB)
+	id 307594264564; Mon, 03 Nov 2025 08:50:58 +0700 (WIB)
 From: Bagas Sanjaya <bagasdotme@gmail.com>
 To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	Linux Documentation <linux-doc@vger.kernel.org>,
@@ -88,9 +88,9 @@ Cc: "David S. Miller" <davem@davemloft.net>,
 	Herbert Xu <herbert@gondor.apana.org.au>,
 	Bagas Sanjaya <bagasdotme@gmail.com>,
 	Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH net-next v3 4/9] Documentation: xfrm_sync: Properly reindent list text
-Date: Mon,  3 Nov 2025 08:50:25 +0700
-Message-ID: <20251103015029.17018-6-bagasdotme@gmail.com>
+Subject: [PATCH net-next v3 5/9] Documentation: xfrm_sync: Trim excess section heading characters
+Date: Mon,  3 Nov 2025 08:50:26 +0700
+Message-ID: <20251103015029.17018-7-bagasdotme@gmail.com>
 X-Mailer: git-send-email 2.51.2
 In-Reply-To: <20251103015029.17018-2-bagasdotme@gmail.com>
 References: <20251103015029.17018-2-bagasdotme@gmail.com>
@@ -100,144 +100,58 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5939; i=bagasdotme@gmail.com; h=from:subject; bh=GTa5PMbqingrx9UUvDQwwryRQXi1hbUYeu/uDR+oix4=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDJkcnJVtbMe6i2fllH6Q9Ln1ePVJz1Zd42qjyOd2lew/L j0sM3/QUcrCIMbFICumyDIpka/p9C4jkQvtax1h5rAygQxh4OIUgIlM0GT478PqcP7YFKNoUW+u c552OypmmG8vnXnuhehbpddTL79c84SR4dqdrftzet4b61XtkQrqDd0sGXLfo0/TiunqoedBuZ5 F7AA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1915; i=bagasdotme@gmail.com; h=from:subject; bh=Ah+90vlkgOlUyyughdO7zNDVG97YW6CBrkKD+MNo5DQ=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDJkcnJVHvmWefnGBd8VN1e3bu5JWGZapP8nNXGlrtbHL5 sv7d68UO0pZGMS4GGTFFFkmJfI1nd5lJHKhfa0jzBxWJpAhDFycAjCRk7cYGa5zpr1bm2BmGtXP VCEqIXdXuX3r9GWW/w3eeYvMWfXEfhvD/yhNplrRWYnf74VznTz9au3KA5O9dCetcV1rafOk8df GBnYA
 X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
 Content-Transfer-Encoding: 8bit
 
-List texts are currently aligned at the start of column, rather than
-after the list marker. Reindent them.
+The first section "Message Structure" has excess underline, while the
+second and third one ("TLVS reflect the different parameters" and
+"Default configurations for the parameters") have trailing colon. Trim
+them.
 
 Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
 Tested-by: Randy Dunlap <rdunlap@infradead.org>
+Suggested-by: Randy Dunlap <rdunlap@infradead.org>
 Signed-off-by: Bagas Sanjaya <bagasdotme@gmail.com>
 ---
- Documentation/networking/xfrm_sync.rst | 77 +++++++++++++-------------
- 1 file changed, 40 insertions(+), 37 deletions(-)
+ Documentation/networking/xfrm_sync.rst | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
 diff --git a/Documentation/networking/xfrm_sync.rst b/Documentation/networking/xfrm_sync.rst
-index 6246503ceab2d2..c811c3edfa571a 100644
+index c811c3edfa571a..de4da4707037ea 100644
 --- a/Documentation/networking/xfrm_sync.rst
 +++ b/Documentation/networking/xfrm_sync.rst
-@@ -88,23 +88,23 @@ to get notified of these events.
+@@ -36,7 +36,7 @@ is not driven by packet arrival.
+ - the replay sequence for both inbound and outbound
+ 
+ 1) Message Structure
+-----------------------
++--------------------
+ 
+ nlmsghdr:aevent_id:optional-TLVs.
+ 
+@@ -83,8 +83,8 @@ when going from kernel to user space)
+ A program needs to subscribe to multicast group XFRMNLGRP_AEVENTS
+ to get notified of these events.
+ 
+-2) TLVS reflect the different parameters:
+------------------------------------------
++2) TLVS reflect the different parameters
++----------------------------------------
  
  a) byte value (XFRMA_LTIME_VAL)
  
--This TLV carries the running/current counter for byte lifetime since
--last event.
-+   This TLV carries the running/current counter for byte lifetime since
-+   last event.
+@@ -106,8 +106,8 @@ d) expiry timer (XFRMA_ETIMER_THRESH)
+    This is a timer value in milliseconds which is used as the nagle
+    value to rate limit the events.
  
--b)replay value (XFRMA_REPLAY_VAL)
-+b) replay value (XFRMA_REPLAY_VAL)
+-3) Default configurations for the parameters:
+----------------------------------------------
++3) Default configurations for the parameters
++--------------------------------------------
  
--This TLV carries the running/current counter for replay sequence since
--last event.
-+   This TLV carries the running/current counter for replay sequence since
-+   last event.
- 
--c)replay threshold (XFRMA_REPLAY_THRESH)
-+c) replay threshold (XFRMA_REPLAY_THRESH)
- 
--This TLV carries the threshold being used by the kernel to trigger events
--when the replay sequence is exceeded.
-+   This TLV carries the threshold being used by the kernel to trigger events
-+   when the replay sequence is exceeded.
- 
- d) expiry timer (XFRMA_ETIMER_THRESH)
- 
--This is a timer value in milliseconds which is used as the nagle
--value to rate limit the events.
-+   This is a timer value in milliseconds which is used as the nagle
-+   value to rate limit the events.
- 
- 3) Default configurations for the parameters:
- ---------------------------------------------
-@@ -121,12 +121,14 @@ in case they are not specified.
- the two sysctls/proc entries are:
- 
- a) /proc/sys/net/core/sysctl_xfrm_aevent_etime
--used to provide default values for the XFRMA_ETIMER_THRESH in incremental
--units of time of 100ms. The default is 10 (1 second)
-+
-+   Used to provide default values for the XFRMA_ETIMER_THRESH in incremental
-+   units of time of 100ms. The default is 10 (1 second)
- 
- b) /proc/sys/net/core/sysctl_xfrm_aevent_rseqth
--used to provide default values for XFRMA_REPLAY_THRESH parameter
--in incremental packet count. The default is two packets.
-+
-+   Used to provide default values for XFRMA_REPLAY_THRESH parameter
-+   in incremental packet count. The default is two packets.
- 
- 4) Message types
- ----------------
-@@ -134,42 +136,43 @@ in incremental packet count. The default is two packets.
- a) XFRM_MSG_GETAE issued by user-->kernel.
-    XFRM_MSG_GETAE does not carry any TLVs.
- 
--The response is a XFRM_MSG_NEWAE which is formatted based on what
--XFRM_MSG_GETAE queried for.
-+   The response is a XFRM_MSG_NEWAE which is formatted based on what
-+   XFRM_MSG_GETAE queried for.
- 
--The response will always have XFRMA_LTIME_VAL and XFRMA_REPLAY_VAL TLVs.
--* if XFRM_AE_RTHR flag is set, then XFRMA_REPLAY_THRESH is also retrieved
--* if XFRM_AE_ETHR flag is set, then XFRMA_ETIMER_THRESH is also retrieved
-+   The response will always have XFRMA_LTIME_VAL and XFRMA_REPLAY_VAL TLVs.
-+
-+     * if XFRM_AE_RTHR flag is set, then XFRMA_REPLAY_THRESH is also retrieved
-+     * if XFRM_AE_ETHR flag is set, then XFRMA_ETIMER_THRESH is also retrieved
- 
- b) XFRM_MSG_NEWAE is issued by either user space to configure
-    or kernel to announce events or respond to a XFRM_MSG_GETAE.
- 
--i) user --> kernel to configure a specific SA.
-+   i) user --> kernel to configure a specific SA.
- 
--any of the values or threshold parameters can be updated by passing the
--appropriate TLV.
-+      any of the values or threshold parameters can be updated by passing the
-+      appropriate TLV.
- 
--A response is issued back to the sender in user space to indicate success
--or failure.
-+      A response is issued back to the sender in user space to indicate success
-+      or failure.
- 
--In the case of success, additionally an event with
--XFRM_MSG_NEWAE is also issued to any listeners as described in iii).
-+      In the case of success, additionally an event with
-+      XFRM_MSG_NEWAE is also issued to any listeners as described in iii).
- 
--ii) kernel->user direction as a response to XFRM_MSG_GETAE
-+   ii) kernel->user direction as a response to XFRM_MSG_GETAE
- 
--The response will always have XFRMA_LTIME_VAL and XFRMA_REPLAY_VAL TLVs.
-+       The response will always have XFRMA_LTIME_VAL and XFRMA_REPLAY_VAL TLVs.
- 
--The threshold TLVs will be included if explicitly requested in
--the XFRM_MSG_GETAE message.
-+       The threshold TLVs will be included if explicitly requested in
-+       the XFRM_MSG_GETAE message.
- 
--iii) kernel->user to report as event if someone sets any values or
--     thresholds for an SA using XFRM_MSG_NEWAE (as described in #i above).
--     In such a case XFRM_AE_CU flag is set to inform the user that
--     the change happened as a result of an update.
--     The message will always have XFRMA_LTIME_VAL and XFRMA_REPLAY_VAL TLVs.
-+   iii) kernel->user to report as event if someone sets any values or
-+        thresholds for an SA using XFRM_MSG_NEWAE (as described in #i above).
-+        In such a case XFRM_AE_CU flag is set to inform the user that
-+        the change happened as a result of an update.
-+        The message will always have XFRMA_LTIME_VAL and XFRMA_REPLAY_VAL TLVs.
- 
--iv) kernel->user to report event when replay threshold or a timeout
--    is exceeded.
-+   iv) kernel->user to report event when replay threshold or a timeout
-+       is exceeded.
- 
- In such a case either XFRM_AE_CR (replay exceeded) or XFRM_AE_CE (timeout
- happened) is set to inform the user what happened.
+ By default these events should be turned off unless there is
+ at least one listener registered to listen to the multicast
 -- 
 An old man doll... just what I always wanted! - Clara
 
