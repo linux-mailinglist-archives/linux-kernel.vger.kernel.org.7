@@ -1,85 +1,102 @@
-Return-Path: <linux-kernel+bounces-883449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [IPv6:2a01:60a::1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A398FC2D7B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:33:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0483C2D809
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 18:39:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 4918B34A38B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:33:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA4383B8C8A
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 17:35:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D112EDD71;
-	Mon,  3 Nov 2025 17:33:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107EA31B81B;
+	Mon,  3 Nov 2025 17:35:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l64bn1uh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pZPIoRgl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46393191D2
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 17:33:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62AEE21E0BB;
+	Mon,  3 Nov 2025 17:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762191212; cv=none; b=rYynBvXE14/9QoLrH3O1cJYm15TgURcS7vSUpqpgqcBjr2KjoGu0ch8/K0RDxCTRn7hhY3dK13c/Lciev0/Ifri4gLoDv1fJ2ki+aMOyjPHMFB3sJd4CZ8eYZVdEMisc4EglGIZmklkrU+De3USZkHxl4iz2sMn7/7NscLQH8e0=
+	t=1762191345; cv=none; b=iKzSqUebc0pcy/Aq2exGLGelXN60E8c5KhPqm0OAg9dDvHFCQnxMNG0rG6dSh50egiZvKz85B/vRCPpwZ/yFEqpTXXJRaGC6KYiz4yZvxPCqRoXEeFxlK0R6fSzrLKCt+mEJCGmUXqlIjoKG0CoUMW6yh2L7rtcPThlVUggrMhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762191212; c=relaxed/simple;
-	bh=+o5dV5iJcb6acg+vuRYXWjvoxYCIxuxArBBgYrKL5qg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XzKP+azfDlxo/jIq02RETbqU7frO3V9PAlNPke8/zFU8fEct54dk0jGwftPW6sP9CvN0+2m8w7e3I+SYhPhbIu1z0sSg6Cm24YCyeFMRfqm971TJvjAIVzlewIZn+f6rIF4FSzjWMiV02wVoIaWWWV4HuQ9B+mz/EUnGoDBXoNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l64bn1uh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73409C4CEFD
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 17:33:32 +0000 (UTC)
+	s=arc-20240116; t=1762191345; c=relaxed/simple;
+	bh=7SPiUWAHLoxBhCTDibws7Yl4LQL2kpjtzkmha3GEf84=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ot0fBKFhQebMyEG8UtVS86Vw+39PBKzb0SnFVtdTZxyYWy12+eulsRLAxOe4dRdfBX37gjxQdCc2HmqUuy3CPPWDn2cT+sFF/GSXGTxMx0TJgiajl+/RgSR2ExQolFW6iuEYtPeJ7VB6mTJpbZnMjTMZQMK3iGwtlz048zeS4iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pZPIoRgl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1F89C4CEE7;
+	Mon,  3 Nov 2025 17:35:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762191212;
-	bh=+o5dV5iJcb6acg+vuRYXWjvoxYCIxuxArBBgYrKL5qg=;
-	h=References:In-Reply-To:Reply-To:From:Date:Subject:To:Cc:From;
-	b=l64bn1uhzi4UXNLPwabx0bXjOyAkO9VVfL0LTdtFR/2gX7cNFuxjdk8tlJHEMHpyM
-	 owLu67ClCwCfmon160zMBZN1i+AStX68zSifyc49ftP6AKQnREwma9qBU5iB1lNU9V
-	 16vZhgTAVAA/uuZRiWm6J8hR8zpZEqyVMOUJfKLNMe+KK9VNvR+MyORJ3OnJrCl9QS
-	 P6P4/MfQvzG7x0E0bAAoNX5iHdEHDxx3wQiGF2s/bnV19PgVmeuSMHc5as3RajIj/l
-	 THOP74aC6hSLmKPl0TVEtuuJZN+Nyu95idQzisimIplPIKvPC/3rQoOMfciCDKHKzW
-	 Z8VQYd2IIwA2Q==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-592f22b1e49so4288376e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 09:33:32 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU++m2w95XbK4fmOTg0KLD5+piTIYAwD5B7pfqwy1UIKq1FrxibCeV7g0C9tGpXZ6/MjMU5sNszpJkPaF4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaSGxmqj9VdVYYPuAePj7L70/Es6QrtaAgrFkUxrDWRM86Vmkr
-	mDSFVCc/CpiGWBm3ou1HqvjwZg+HGHgTlFwBVeopK6Dpcf5sm+OQWaVU8cULI4aP7T2Nd0jFYUw
-	cvlQfXIUo5ocIRXpjEsGZ3xHhLxACrIk=
-X-Google-Smtp-Source: AGHT+IHeAV6gvUZakhroG+cdQ4cS//FtPIAPmnBlEfHgFaH6azoAUjYMPV9zLQGb7u1TcrlPCM1uYxkpaGVsOmKJEms=
-X-Received: by 2002:a05:6512:63cb:b0:594:253c:209a with SMTP id
- 2adb3069b0e04-594253c245fmr1658107e87.14.1762191210885; Mon, 03 Nov 2025
- 09:33:30 -0800 (PST)
+	s=k20201202; t=1762191345;
+	bh=7SPiUWAHLoxBhCTDibws7Yl4LQL2kpjtzkmha3GEf84=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pZPIoRglX4r3pT8cy8dscMTi86qawbrv3MJa+fb2vPFIqdcgbS1tLJRIY0AflmhIe
+	 Sy2Pm2FF/x/IZnPOn1bXPQyYe1k5v1BRw7F/W6dX++MljtAEo7lvhMs0vdVj2GV7po
+	 goOqZC/HJOxabG0vh3zp/lMH56AqB52EELzsh75JG/6QuusS1hV5KuhoiZcQdlZrOg
+	 j5tkVOnLbNgAT8YOfYuQqpqMk494FTnyzlKO5HyvjEQ3k7M5VzyTh2dbMv/cI5GiTO
+	 AoWVkPt5orwzPuPe+WabxZJ5IxTyMqQbzDeGHgmimWW8LJGZHfuybSjBahPPHkyHam
+	 OeLhW9nAhB8Kg==
+Date: Mon, 3 Nov 2025 09:34:04 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: David Howells <dhowells@redhat.com>, Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	Holger Dengler <dengler@linux.ibm.com>,
+	Harald Freudenberger <freude@linux.ibm.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	linux-arm-kernel@lists.infradead.org, linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/15] SHA-3 library
+Message-ID: <20251103173404.GE1735@sol>
+References: <20251026055032.1413733-1-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20251012192330.6903-1-jernej.skrabec@gmail.com> <20251012192330.6903-30-jernej.skrabec@gmail.com>
-In-Reply-To: <20251012192330.6903-30-jernej.skrabec@gmail.com>
-Reply-To: wens@kernel.org
-From: Chen-Yu Tsai <wens@kernel.org>
-Date: Tue, 4 Nov 2025 01:33:18 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66+oGwTnu_wtLwjcR4R6Owpb3PY5YTAoN0VUReB5+JePQ@mail.gmail.com>
-X-Gm-Features: AWmQ_bkzN1dsVffW7_6vHF-fIc5cl498aftDpvEUp2fdEJedEOeYbOYD0a_NxwI
-Message-ID: <CAGb2v66+oGwTnu_wtLwjcR4R6Owpb3PY5YTAoN0VUReB5+JePQ@mail.gmail.com>
-Subject: Re: [PATCH 29/30] drm/sun4i: vi_scaler: Find mixer from crtc
-To: Jernej Skrabec <jernej.skrabec@gmail.com>
-Cc: mripard@kernel.org, maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, samuel@sholland.org, 
-	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251026055032.1413733-1-ebiggers@kernel.org>
 
-On Mon, Oct 13, 2025 at 3:24=E2=80=AFAM Jernej Skrabec <jernej.skrabec@gmai=
-l.com> wrote:
->
-> With "floating" planes in DE33, mixer can't be stored in layer structure
-> anymore. Find mixer using currently bound crtc.
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+On Sat, Oct 25, 2025 at 10:50:17PM -0700, Eric Biggers wrote:
+> This series is targeting libcrypto-next.  It can also be retrieved from:
+> 
+>     git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git sha3-lib-v2
+> 
+> This series adds SHA-3 support to lib/crypto/.  This includes support
+> for the digest algorithms SHA3-224, SHA3-256, SHA3-384, and SHA3-512,
+> and also support for the extendable-output functions SHAKE128 and
+> SHAKE256.  The SHAKE128 and SHAKE256 support will be needed by ML-DSA.
+> 
+> The architecture-optimized SHA-3 code for arm64 and s390 is migrated
+> into lib/crypto/.  (The existing s390 code couldn't really be reused, so
+> really I rewrote it from scratch.)  This makes the SHA-3 library
+> functions be accelerated on these architectures.
+> 
+> Finally, the sha3-224, sha3-256, sha3-384, and sha3-512 crypto_shash
+> algorithms are reimplemented on top of the library API.
 
-Reviewed-by: Chen-Yu Tsai <wens@kernel.org>
+I've applied this series to
+https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=libcrypto-next,
+excluding the following 2 patches which are waiting on benchmark results
+from the s390 folks:
+
+    lib/crypto: sha3: Support arch overrides of one-shot digest functions
+    lib/crypto: s390/sha3: Add optimized one-shot SHA-3 digest functions
+
+I'd be glad to apply those too if they're shown to be worthwhile.
+
+Note: I also reordered the commits in libcrypto-next to put the new
+KUnit test suites (blake2b and sha3) last, and to put the AES-GCM
+improvements on a separate branch that's merged in.  This will allow
+making separate pull requests for the tests and the AES-GCM
+improvements, which I think aligns with what Linus had requested before
+(https://lore.kernel.org/linux-crypto/CAHk-=wi5d4K+sF2L=tuRW6AopVxO1DDXzstMQaECmU2QHN13KA@mail.gmail.com/).
+
+- Eric
 
