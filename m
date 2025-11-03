@@ -1,209 +1,314 @@
-Return-Path: <linux-kernel+bounces-883089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D26FC2C77B
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:49:25 +0100 (CET)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A2E9C2C74B
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 15:46:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 856CD3AFDCC
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:44:39 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 47F344E801E
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 14:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233A7280CE0;
-	Mon,  3 Nov 2025 14:44:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27488305E0D;
+	Mon,  3 Nov 2025 14:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="EhQ4iGmJ"
-Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11011011.outbound.protection.outlook.com [40.93.194.11])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WkqYM605"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D220026B742;
-	Mon,  3 Nov 2025 14:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762181074; cv=fail; b=Quugd9rINxjHKs23E3mQ+J19Wd04sspKa4ir/aupxysMpOIQTKOpD9nWzo1OYlHUaR0NsaNhF3lGDrWtQZxWmh7h5VKaFR63PUmZ+PsEqB1rqXEzoExnkTOKlJhElapTlbRPiEEzSRhnzGODxYlh+sPXJDjH17M4P+TuuoYg/gc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762181074; c=relaxed/simple;
-	bh=INJ6qVU4yFavU1lntD2caz2Ps+IonWeUIitqkukx/Qs=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=bxSfEjm8yWNE40aNSl8GIrqCaFWcteMfzVfVgJ7P5QaZwI7MKBOI5uPFnaIOptLlT7uCVnysZM4ujeMHgw+V5omJZE1Ukp7juPxCTOyXf+Zxh0TTzDwrzfkaZV4Vzr300vwzyzDWXPbSvpbzeSp//mVP+bZ7Jc0qBG2LnxMg8PA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=EhQ4iGmJ; arc=fail smtp.client-ip=40.93.194.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yEhcEi4d9Gy+06exYClQ2vFEzF0Nw3x4ivLjQX6LQmukUSTmZivIyweIbivCQSVeMLZeFBio/23MBYYcSavKmJP+U3iIeS4DC+nwRISMa+8u+UA/8aidZOVpWi8mV2JltzeQavHGnIw/4r1KEQfl8Db9uDAbB2iYHzQWRsScQ9olu4cLpF3qPziOu3MG3nCtTyNJyXlizR/8Cwu4fBqMd44B3zksqCF9Z2COHFfcNMq4NxCqVz6KslsRclJA8L/DPQj79S80eM8ta/lFQJjMqSWNIm75JBusyJc3SsXfANbJCjSmV5EIdbAu/WS3bqCyUwxdwtfw+1Cwsq6vZguFTw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aG3CAm6PbqOkm+LUHptd/Zm1h+8vm90VB3u0UI73tSo=;
- b=xHNQshD/BNdtNnjOy9fiiKeH2DOcE1z/g7ilT7nmV+l0QL1J9v3w3Y+lnie65C8mwpgm7jU5ftwo1XbUGvxTgvwo/a/brm3A5c9bgqVAHCiL89vmPSX2qVdgW0ru++/V7m1AxbQMTgNVSx2fXVlXo7arKrlsecUY6SwnNki3K7p3wiuqMKtuvzqlS1FP5ZMtX2NaHkmsXZYJ2Y2BrRttARvp6UlDJ2GyqGw2ILUuLrZ8nI0/9ZBvCnwkCtLeG7kBJzIvSx4trongGkcXETWfIZ29tj+PUlfyUosMqeQpgF3vsthMaaaxdrFJzodRVTijIipVjxDXWXrwTocqohiI5g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aG3CAm6PbqOkm+LUHptd/Zm1h+8vm90VB3u0UI73tSo=;
- b=EhQ4iGmJsBa5SMXZLQLgxKItzT07VLY05TnGVd25OFxH3m6ohLnzAjJFFnPbMzu9/noyVqvAZxHkc7LbwVIlXZiuV998+AdmYn5XMWKiyorfsz4orT0rtmCTj/tifGhqnrKxrVINz1uzD4j8XuaJEAfAgdYXXtvI8j2h4IEu2AXps9DQ1omNeUPTaj84CyIaZ6YOymnNiA6pfuHZxVOEqG1kcmHYqBsZhSWCDs5i1GP0+J7wBCM5csW93pmEQC2o/Nw6Rq1U8smLh4CI5C1DJCS1siqEjKU2hlBeL4/hd0JgLkZ3V4+7kExJwBNdaIMDMqXB9R7JmwkgSZjGgNL1dQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by DS7PR12MB5887.namprd12.prod.outlook.com (2603:10b6:8:7a::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9275.16; Mon, 3 Nov 2025 14:44:29 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::7de1:4fe5:8ead:5989%6]) with mapi id 15.20.9275.015; Mon, 3 Nov 2025
- 14:44:23 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 03 Nov 2025 23:44:20 +0900
-Message-Id: <DDZ51VBAJJ5X.2V6GT3H8O1MM@nvidia.com>
-Cc: "Alexandre Courbot" <acourbot@nvidia.com>, "Alice Ryhl"
- <aliceryhl@google.com>, "Danilo Krummrich" <dakr@kernel.org>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Joel Fernandes" <joelagnelf@nvidia.com>,
- "Jesung Yang" <y.j3ms.n@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>,
- "Gary Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Trevor Gross" <tmgross@umich.edu>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH 1/2] rust: add BitInt integer wrapping type
-From: "Alexandre Courbot" <acourbot@nvidia.com>
-To: "Yury Norov" <yury.norov@gmail.com>, "Miguel Ojeda"
- <miguel.ojeda.sandonis@gmail.com>
-X-Mailer: aerc 0.21.0-0-g5549850facc2
-References: <20251031-bounded_ints-v1-0-e2dbcd8fda71@nvidia.com>
- <20251031-bounded_ints-v1-1-e2dbcd8fda71@nvidia.com>
- <aQgQv6F0Ao4DH6U0@yury>
- <CANiq72mg-NntJLf_jbigz++0hK7G3WAxbvejRq1EzOc7GE+doA@mail.gmail.com>
- <aQi7e6VgFsqpq1Rn@yury>
-In-Reply-To: <aQi7e6VgFsqpq1Rn@yury>
-X-ClientProxiedBy: TYWP286CA0028.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:262::14) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EEBE284690
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 14:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1762181111; cv=none; b=DDsH5YDj+xH68OFDwdM/BQq0uXn2s3bEzbNx6wPPE0ukTMpvZQA/lUhGbVs57fMMDe8RYYjvexMEouQ3tpz0RjJ04XldolfAxybDmikW8VVxrLRgHzlOGD84KFQJtjTTZwX/yq1x4mX9TiwB/niWKc2BaHsb77M5sff2n53McFE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1762181111; c=relaxed/simple;
+	bh=tcHQ8+NP5XolVw/PMnhxsjzK3oDK2++3aoPUNdPMWl0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DizClw3JrRt2zdhpZ7VEV1oyxC2NEKhFhxp7WX7OQiFMqdAdJ/DHO1buusFNlPZuH0fB0P+Kfe55FPP+O1xd3yr20XenlREuXE4yirgV9DTX9y2/K6GwvqVfI3tKinZfJFKfKG33DTvulH5KrHvnJ247Lan59oMXIZmawpvQEmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WkqYM605; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1762181108;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RKe5T4XkgUNmc72tStyCh8sP7MNTXayWol7Zf/AYXFQ=;
+	b=WkqYM605LZ8ZG6B6dfuerVLCx5wkb3Q6pq6yyeOyg/znyG5zUH7mht7ejFZ9vo8nignlrx
+	P5CbMrOcUKB9iawGUR9KEJ8pYKrh89QMBNhxvvszL6v9h9cS1ncdIQ4uZDhmTkOrr5cg8v
+	VYibd9B2w8BnXZsptBzW6HJSq6Dcxmg=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-155-4aS0kB8bPqm4Ue7MfgfQFg-1; Mon,
+ 03 Nov 2025 09:45:04 -0500
+X-MC-Unique: 4aS0kB8bPqm4Ue7MfgfQFg-1
+X-Mimecast-MFC-AGG-ID: 4aS0kB8bPqm4Ue7MfgfQFg_1762181103
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CB9831956050;
+	Mon,  3 Nov 2025 14:45:02 +0000 (UTC)
+Received: from wcosta-thinkpadt14gen4.rmtbr.csb (unknown [10.22.88.143])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id DDA801800452;
+	Mon,  3 Nov 2025 14:44:58 +0000 (UTC)
+Date: Mon, 3 Nov 2025 11:44:56 -0300
+From: Wander Lairson Costa <wander@redhat.com>
+To: Tomas Glozar <tglozar@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, 
+	John Kacur <jkacur@redhat.com>, Luis Goncalves <lgoncalv@redhat.com>, 
+	Costa Shulyupin <costa.shul@redhat.com>, Crystal Wood <crwood@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>
+Subject: Re: [PATCH v3 2/7] rtla/timerlat: Add --bpf-action option
+Message-ID: <liouklnl72kulibowk33roalgtjor24u3h6hfbuzudlodasdvz@fhy2zeif43nk>
+References: <20251027153401.1039217-1-tglozar@redhat.com>
+ <20251027153401.1039217-3-tglozar@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|DS7PR12MB5887:EE_
-X-MS-Office365-Filtering-Correlation-Id: 93c03018-1b9f-4ea5-6e6a-08de1ae77aee
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|10070799003|1800799024|7416014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Yk55RGtWN3plMWZNL0JlTFJCbmg1RjVURitFL0hhVitCSkpIR1JBWmVlTWVF?=
- =?utf-8?B?aVdKckdMdTlEVVdpaDIyYm1ZOHFwVVlKdUhGSnd0TjlmOGpJSE8yZEdpdmFN?=
- =?utf-8?B?ZU9yZUo2RnVkSW85RXhKSDlLV2Q5NHdNdEhzKysvaFpSTTVxdnQ0OE92Y0Nm?=
- =?utf-8?B?SDJOdVBVOWxhOTYvc1U4cncwVnhaUm5NNU9iTEFTQWFIQTVvYmF0ZHQ5c0FO?=
- =?utf-8?B?eEp4VFF1cjU5SU1FTzBtVlpzV3l3Tkt6SlY3NzZITzhuaG5wVzVJbmM4WWhY?=
- =?utf-8?B?OG5UbWtQcnVSTklmaWJ2M1dDTmludVZLand0bGdiTHdFVWpFK0s1VWwrRlVC?=
- =?utf-8?B?WHZ3RVprUFBkWWRudndMNEhteUVQL2VnMXNCQXcvWnRhUGZjNHlQaUdBa3hh?=
- =?utf-8?B?bjdFQ25mVlRGSFVzUEJBWUQ2VDdXNGtuSGt4Y2dKejQrR0xxdEJmS3Q1UVFJ?=
- =?utf-8?B?NFo2c3gyb3FaOTkzRjAxcUZLYWttREFwRmw4eDhFeS83UFBQTm5oenZpYXdx?=
- =?utf-8?B?U3FMQ3pmV2sxL3BaMS9GWURMdG1CMTNTcjNqVWZCN3JJL0pZM3RMUThrR21x?=
- =?utf-8?B?Z3dtQUN3WmpRNHpkbGs3VXlYcHZITjNNSE9PS1ZocGZ5ZE5sNWl4c0JrdG9i?=
- =?utf-8?B?elA3aGhRak1WWG5xUDIwOEdCZmRCN0VMaG9kU29mVjcreE9GaDRmcTVSbGxv?=
- =?utf-8?B?OFFNQ05aa24ydTlPYkI1bjFXT0ZLbnhCMWlPUGxRby81VlFnU0NoVkNWR0lx?=
- =?utf-8?B?dUpVSDlWc1dTQVhiOVI0enhoK2x3eTdsTCtxMTA0Zmgram16S0thVEZIUHpI?=
- =?utf-8?B?TGFiSmNPVXpXMDlGc0VEZ1BpUGk0VnpZNFhNMVErOGI2QWNFVXdNenV5VEhP?=
- =?utf-8?B?RjVJTTZuZG81dEhqWXdRWVlpbWsxMXpJYk9jcDZIdG82NXlOUnlraXJXenY2?=
- =?utf-8?B?bGVMSEVuZStIdWU2cnVjMlo4VkFEcFNBNEc5ejlVVDcra1VUekpQYlVKNC9q?=
- =?utf-8?B?N1ErL0hVNGpPcEJLQjVwWm1CU1pIc0lwbEZTdnZtZmpGaEZrUU5aaDNYQlJB?=
- =?utf-8?B?ZmVvVkU0cFRVRUU0eXZLVVpnOHJocUNwd3VOR1FUSU5oUTVEcmh1Mmg5alhY?=
- =?utf-8?B?VkRzTGF2OHoyaTE0WXFhVEVsQnVrTkNXVi8xS3lXSmQ0bHFYQlhWYVpVWVRP?=
- =?utf-8?B?Z0lGek9TLzBxTHRydEJJUzFDTDBJUTNaNEY0YTZDRFJ1b1orT0JpZFhFY2w1?=
- =?utf-8?B?YThCWDVjQUxHUWlNZ3lOMDhheWkrWUNLdFRCQWxta3psYXhFQjRpVm1KeFhL?=
- =?utf-8?B?ZTQzMSttUHFrVEJWU1BhUTdnVTJtYVVxV3JITW9QekU2TWljdE1UcG9Qdk1X?=
- =?utf-8?B?R3ZwWnpROFZhVW8vWTZZWnNCSzk0ZkF4dktlVzh4WUlOd21UWVJaQjVVWUxS?=
- =?utf-8?B?QW1oRVNMNzFodHRZMWh3NWdBM0V5ckxVQVhXRmMyUlZLb2dIaUF0djRtbDdk?=
- =?utf-8?B?MjlYZXZJNFA0d3dtaHFTQjdzdlFQK0N5V1hnQmgydW9TamtROUVLMzZzNDg4?=
- =?utf-8?B?elpaQ2IwMlZhaEQ3ZnZzYXZMT0FKdHo2Y2FEMEZQQUpXVkhGb21PMkl3SDAv?=
- =?utf-8?B?WVZDTlRkNmhKcUMvSHFXSWZMVWROZm1BV1Nwb1o5aWlxVDRvblVKUzAzdzRF?=
- =?utf-8?B?clk0RDRaZENUWFloc0lqK2trdUhMZC91YVpSNmhXcndseThYRWxCT2xsTFF2?=
- =?utf-8?B?OFZRdDFPNWczWkFUTjdBako3Ykl2NlJxeXFORlpYb0xDUGhLS25WZ1VpcFIy?=
- =?utf-8?B?Y2VobW5MWExka2RweGo3RkZBQ2dsRUsyUyttYzQ0bFF0RGhralhFMnJwc0Fq?=
- =?utf-8?B?WWZkZjdScWV4bVdFMG9NelZzSCtIYmozRVBCNWYrMjQxYlkxVTRzSkwzODRD?=
- =?utf-8?Q?RVNf/jj0NAh4W2sHganXrg4cGwJ3ICBG?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(10070799003)(1800799024)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NkZvdFdTUU90MytmZUJzenVPb2pxREtLd2VEZS9hSW9zRTd6OVgyT3F6T2tw?=
- =?utf-8?B?bGsrbGRhM3JTQ0lSdW1jb2NuZmhUci8xdjBCK1RQUnc1a21uZlQybUJucHda?=
- =?utf-8?B?ZkI2b3RiQW5vNkxaNzVhWSs5NXJUNEEzakgxTkk0b3ZIcjI0NlRoRTdzQkZJ?=
- =?utf-8?B?a1lvbTEydGMvV0I0aWpJMDBBUm5VNEE4NW1TTEc3VklXMkRTQVFpZlZZbHRz?=
- =?utf-8?B?Z0JjYUUxWG9tSlRZUzBwcVdOZHNqRUtSN3Jza2pnV0ZQS3ROVG56ZHM1TTFp?=
- =?utf-8?B?M0JkMVpoUWYvRS9QU0wvYlltdW1VRjNucURwR2dhZmJHOFBtRzhVNkhpb0lj?=
- =?utf-8?B?VElJbDdqdGUvZEdBeEdvc0owM1p5dW9pa2UyenkybkxVYjUwWndCN01BZXdx?=
- =?utf-8?B?Y01wRC9Lcksvb0Y3WVpyZWRYR2hhTmNQODVBU2ZPODNMeVN5RExHcmFQcWVF?=
- =?utf-8?B?OTJRMkNEeTkyNnlraWRkSUdwL2M5dU53VXNIbitFZlJVWGtBNzdIclVWRGVV?=
- =?utf-8?B?TUdUS1ZSWjhocTh5dVpWTFUzWjNkZTM1TEdXSFVYMFAzWTB6cFVJTHF6WGo1?=
- =?utf-8?B?WlVyR1dzV3A0cjBTOEpzeUhqSElsQS9oaW42aitCQ0ZsWXRaZjNjcThXaUM0?=
- =?utf-8?B?eE5ERkRBTDR5elVKNm8zUTE4cW45eWt4cVZtZzVkUTZTdUN4czdUQXUrZjU2?=
- =?utf-8?B?OFBhK0V4OGpwQWlQcXR6bU9hRjNvVFliVXYrTHRnQ0Zva3Rodmd2TDZMZ3Vh?=
- =?utf-8?B?czN6cVJJaFpwZ243OXNmZG1tMVlPWVVIMzZrYXczdFBCZ1NVU2dNb1JBdnhi?=
- =?utf-8?B?eEZ5SWtSaER2SXFML3dCYmNST1BTSW9Za3J2TzJFSVRWS0tPZi9qOU0zN1pN?=
- =?utf-8?B?V1FSZHZjdmF6Z0xvK0UxdlIvOG1Xd3hFRnd6VlI3T25JV09pMHc3L0NYZGZF?=
- =?utf-8?B?emJ1S1BJNUp5K0hVOHBCVXVOMXJEOFhyNEptWFh5aFNsbmR1aEU4bFIxSWNB?=
- =?utf-8?B?cFEvb0orS0M3bEE1M2xGSXR4QTZHT1J4RkFuckRuUUtwbWxwbUUrNE9KcXNy?=
- =?utf-8?B?VEUyQlo0bFVxZHAxbHRGQmJRaWVHaGhnTFBGZzd3MVdJd3Vsd0tmcmJ6OXJV?=
- =?utf-8?B?ZERLcEJzdGhXMUE5WEdWem0vdmlKUzExdWNnejc0dzFvK3UwSGQ4U0U2RXAr?=
- =?utf-8?B?d1N3NkVwSEFxYm5IMnlOckNlenNPK2RHSC9tZVBoaFlEVGJEeTQ0MFRNUHBX?=
- =?utf-8?B?WThOeUVBSnk1Q0p1MDhKNmRkRXdjN2dXWUozOXZtQVU4RXRISy96dEtWZ2VT?=
- =?utf-8?B?d1ZZcEwvU3Jra3lyazFKazZUSVM1OUNzU05COXpyUzUzbnh2YmlYc3ovWFJ2?=
- =?utf-8?B?YmxCSVEwWFExUHhJZE1GV215VkJhNkFQSWE1NXNURDJBZXkycHZpUlJkOTRG?=
- =?utf-8?B?WnlxUnJtZ09ONU1reEJzRi9WQWNvWTdybjhDOUhuS1VXOVBXR3piS1pjT3NK?=
- =?utf-8?B?ZmJCMGNtSjQ5VVBRRzNzWTNNR2NGUDlTdE1UUE82Q0dCc3NjZjBqaEQ0ZkNv?=
- =?utf-8?B?UDdXQ3hTSGUyRE13MU9lTmw3Y3BpeTQvTGdKWGUvdFdpblJLVGwzTzBaeEk4?=
- =?utf-8?B?OS9MdVFrcDlKN00rb2N5ZXRqK2RZc3c4cVh5S1ExeGN0T2duQTkzRnM2RnVi?=
- =?utf-8?B?SmN2WWhZRDU5NVFJbW5qWURFSlhmOENGVjNtY0wrcnNuVGtyK3dUeWJPaERn?=
- =?utf-8?B?RE5heFo5SUk3dHlkbWhYM0ZhWnNZZXFOVnRsdjlaTnNmTTlyaEhEQXcwOTl2?=
- =?utf-8?B?V2NyVWVIYTd0MDJsTVhUTzhkYTl5bkEvVjB0QkRPb3A0WTRCUXY5YWF1MFNw?=
- =?utf-8?B?Y3NJUko1cXYwbzJocVlmbGtwSThKMDV3VTA5djdkek5QUlhPaFJTcURwNVNH?=
- =?utf-8?B?eDJBWnJJQ0ZsRHBudjZCa3I2eWcrcXh0OFYrRGZkKy9SSmp3d1h5Nm9UblhV?=
- =?utf-8?B?NklqcFphWFpmZThaOVZST2RNa3JkNkdCcVNXbmR4UHBVYW1XZ0pXREtDNThY?=
- =?utf-8?B?QnUvNEkxSmxLdnIrL2xJVktYcnAxVEt2eXQ5VE93NXgrcXdUWHA0UE1CUUhQ?=
- =?utf-8?B?MmQ3KzI3b084WnN5RUJCS2w5NEQvTGtMRG1BVUtoVUdzd0xQYkxBaVhRRW52?=
- =?utf-8?Q?zP0tPHezGb5UFJdthe3A7CztXlCHw78pamz50XXdN3El?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 93c03018-1b9f-4ea5-6e6a-08de1ae77aee
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Nov 2025 14:44:23.6940
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ff8LsOl2y1p0MjKPJTM1gvQP7l73zKj0LHOOg0b7xW4QBAOSCBaLWfp22tbiS5kOnqjjJep8e7CJ5hqrrj0QQQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5887
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20251027153401.1039217-3-tglozar@redhat.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Mon Nov 3, 2025 at 11:26 PM JST, Yury Norov wrote:
-> On Mon, Nov 03, 2025 at 03:10:01PM +0100, Miguel Ojeda wrote:
->> On Mon, Nov 3, 2025 at 3:17=E2=80=AFAM Yury Norov <yury.norov@gmail.com>=
- wrote:
->> >
->> > Rust _must_ do the same thing to at least be arithmetically
->> > compatible to the big brother.
->>=20
->> No, Rust doesn't need to do anything of the sort, sorry.
->>=20
->> The point here is not to copy what C does, but to improve on it.
->>=20
->> In particular, we definitely do not want to have anything like integer
->> promotions and arithmetic conversions from C.
->
-> This is exactly what the patch does:
->
->   +/// let v =3D BitInt::<u8, 4>::from_expr(15);
->   +///
->   +/// // Common operations are supported against the backing type.
->   +/// assert_eq!(v + 5, 20);
->   +/// assert_eq!(v / 3, 5);
+On Mon, Oct 27, 2025 at 04:33:56PM +0100, Tomas Glozar wrote:
+> Add option --bpf-action that allows the user to attach an external BPF
+> program that will be executed via BPF tail call on latency threshold
+> overflow.
+> 
+> Executing additional BPF code on latency threshold overflow allows doing
+> doing low-latency and in-kernel troubleshooting of the cause of the
 
-That's incorrect. `v` is backed by a u8, thus the RHS `5` is also a u8
-(and so is the result, `20`).
+typo: double "doing"
+
+> overflow.
+> 
+> The option takes an argument, which is a path to a BPF ELF file
+> expected to contain a function named "action_handler" in a section named
+> "tp/timerlat_action" (the section is necessary for libbpf to assign the
+> correct BPF program type to it).
+> 
+> Signed-off-by: Tomas Glozar <tglozar@redhat.com>
+> ---
+>  tools/tracing/rtla/src/timerlat.c      | 11 ++++++
+>  tools/tracing/rtla/src/timerlat.h      |  2 +-
+>  tools/tracing/rtla/src/timerlat_bpf.c  | 53 ++++++++++++++++++++++++++
+>  tools/tracing/rtla/src/timerlat_bpf.h  |  6 ++-
+>  tools/tracing/rtla/src/timerlat_hist.c |  5 +++
+>  tools/tracing/rtla/src/timerlat_top.c  |  5 +++
+>  6 files changed, 80 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/tracing/rtla/src/timerlat.c b/tools/tracing/rtla/src/timerlat.c
+> index b69212874127..6907a323f9ec 100644
+> --- a/tools/tracing/rtla/src/timerlat.c
+> +++ b/tools/tracing/rtla/src/timerlat.c
+> @@ -48,6 +48,17 @@ timerlat_apply_config(struct osnoise_tool *tool, struct timerlat_params *params)
+>  		}
+>  	}
+>  
+> +	/* Check if BPF action program is requested but BPF is not available */
+> +	if (params->bpf_action_program) {
+> +		if (params->mode == TRACING_MODE_TRACEFS) {
+> +			err_msg("BPF actions are not supported in tracefs-only mode\n");
+
+I would just emit a warning to the user and proceed ignoring the bpf action argument.
+
+> +			goto out_err;
+> +		}
+> +
+> +		if (timerlat_load_bpf_action_program(params->bpf_action_program))
+> +			goto out_err;
+> +	}
+> +
+>  	if (params->mode != TRACING_MODE_BPF) {
+>  		/*
+>  		 * In tracefs and mixed mode, timerlat tracer handles stopping
+> diff --git a/tools/tracing/rtla/src/timerlat.h b/tools/tracing/rtla/src/timerlat.h
+> index fd6065f48bb7..8dd5d134ce08 100644
+> --- a/tools/tracing/rtla/src/timerlat.h
+> +++ b/tools/tracing/rtla/src/timerlat.h
+> @@ -27,6 +27,7 @@ struct timerlat_params {
+>  	int			dump_tasks;
+>  	int			deepest_idle_state;
+>  	enum timerlat_tracing_mode mode;
+> +	const char		*bpf_action_program;
+>  };
+>  
+>  #define to_timerlat_params(ptr) container_of(ptr, struct timerlat_params, common)
+> @@ -36,4 +37,3 @@ int timerlat_main(int argc, char *argv[]);
+>  int timerlat_enable(struct osnoise_tool *tool);
+>  void timerlat_analyze(struct osnoise_tool *tool, bool stopped);
+>  void timerlat_free(struct osnoise_tool *tool);
+> -
+> diff --git a/tools/tracing/rtla/src/timerlat_bpf.c b/tools/tracing/rtla/src/timerlat_bpf.c
+> index 1d619e502c65..05adf18303df 100644
+> --- a/tools/tracing/rtla/src/timerlat_bpf.c
+> +++ b/tools/tracing/rtla/src/timerlat_bpf.c
+> @@ -7,6 +7,10 @@
+>  
+>  static struct timerlat_bpf *bpf;
+>  
+> +/* BPF object and program for action program */
+> +static struct bpf_object *obj;
+> +static struct bpf_program *prog;
+> +
+>  /*
+>   * timerlat_bpf_init - load and initialize BPF program to collect timerlat data
+>   */
+> @@ -96,6 +100,11 @@ void timerlat_bpf_detach(void)
+>  void timerlat_bpf_destroy(void)
+>  {
+>  	timerlat_bpf__destroy(bpf);
+> +	bpf = NULL;
+> +	if (obj)
+> +		bpf_object__close(obj);
+> +	obj = NULL;
+> +	prog = NULL;
+>  }
+>  
+>  static int handle_rb_event(void *ctx, void *data, size_t data_sz)
+> @@ -190,4 +199,48 @@ int timerlat_bpf_get_summary_value(enum summary_field key,
+>  			 bpf->maps.summary_user,
+>  			 key, value_irq, value_thread, value_user, cpus);
+>  }
+> +
+> +/*
+> + * timerlat_load_bpf_action_program - load and register a BPF action program
+> + */
+> +int timerlat_load_bpf_action_program(const char *program_path)
+> +{
+> +	int err;
+> +
+> +	obj = bpf_object__open_file(program_path, NULL);
+> +	if (!obj) {
+> +		err_msg("Failed to open BPF action program: %s\n", program_path);
+> +		goto out_err;
+> +	}
+> +
+> +	err = bpf_object__load(obj);
+> +	if (err) {
+> +		err_msg("Failed to load BPF action program: %s\n", program_path);
+> +		goto out_obj_err;
+> +	}
+> +
+> +	prog = bpf_object__find_program_by_name(obj, "action_handler");
+> +	if (!prog) {
+> +		err_msg("BPF action program must have 'action_handler' function: %s\n",
+> +			program_path);
+> +		goto out_obj_err;
+> +	}
+> +
+> +	err = timerlat_bpf_set_action(prog);
+> +	if (err) {
+> +		err_msg("Failed to register BPF action program: %s\n", program_path);
+> +		goto out_prog_err;
+> +	}
+> +
+> +	return 0;
+> +
+> +out_prog_err:
+> +	prog = NULL;
+> +out_obj_err:
+> +	bpf_object__close(obj);
+> +	obj = NULL;
+> +out_err:
+> +	return 1;
+> +}
+> +
+>  #endif /* HAVE_BPF_SKEL */
+> diff --git a/tools/tracing/rtla/src/timerlat_bpf.h b/tools/tracing/rtla/src/timerlat_bpf.h
+> index b5009092c7a3..169abeaf4363 100644
+> --- a/tools/tracing/rtla/src/timerlat_bpf.h
+> +++ b/tools/tracing/rtla/src/timerlat_bpf.h
+> @@ -30,7 +30,7 @@ int timerlat_bpf_get_summary_value(enum summary_field key,
+>  				   long long *value_thread,
+>  				   long long *value_user,
+>  				   int cpus);
+> -
+> +int timerlat_load_bpf_action_program(const char *program_path);
+>  static inline int have_libbpf_support(void) { return 1; }
+>  #else
+>  static inline int timerlat_bpf_init(struct timerlat_params *params)
+> @@ -58,6 +58,10 @@ static inline int timerlat_bpf_get_summary_value(enum summary_field key,
+>  {
+>  	return -1;
+>  }
+> +static inline int timerlat_load_bpf_action_program(const char *program_path)
+> +{
+> +	return -1;
+> +}
+>  static inline int have_libbpf_support(void) { return 0; }
+>  #endif /* HAVE_BPF_SKEL */
+>  #endif /* __bpf__ */
+> diff --git a/tools/tracing/rtla/src/timerlat_hist.c b/tools/tracing/rtla/src/timerlat_hist.c
+> index 606c1688057b..5e639cc34f64 100644
+> --- a/tools/tracing/rtla/src/timerlat_hist.c
+> +++ b/tools/tracing/rtla/src/timerlat_hist.c
+> @@ -763,6 +763,7 @@ static void timerlat_hist_usage(char *usage)
+>  		"	     --deepest-idle-state n: only go down to idle state n on cpus used by timerlat to reduce exit from idle latency",
+>  		"	     --on-threshold <action>: define action to be executed at latency threshold, multiple are allowed",
+>  		"	     --on-end <action>: define action to be executed at measurement end, multiple are allowed",
+> +		"	     --bpf-action <program>: load and execute BPF program when latency threshold is exceeded",
+>  		NULL,
+>  	};
+>  
+> @@ -853,6 +854,7 @@ static struct common_params
+>  			{"deepest-idle-state",	required_argument,	0, '\4'},
+>  			{"on-threshold",	required_argument,	0, '\5'},
+>  			{"on-end",		required_argument,	0, '\6'},
+> +			{"bpf-action",		required_argument,	0, '\7'},
+>  			{0, 0, 0, 0}
+>  		};
+>  
+> @@ -1062,6 +1064,9 @@ static struct common_params
+>  				exit(EXIT_FAILURE);
+>  			}
+>  			break;
+> +		case '\7':
+> +			params->bpf_action_program = optarg;
+> +			break;
+>  		default:
+>  			timerlat_hist_usage("Invalid option");
+>  		}
+> diff --git a/tools/tracing/rtla/src/timerlat_top.c b/tools/tracing/rtla/src/timerlat_top.c
+> index fc479a0dcb59..da5d5db1bc17 100644
+> --- a/tools/tracing/rtla/src/timerlat_top.c
+> +++ b/tools/tracing/rtla/src/timerlat_top.c
+> @@ -521,6 +521,7 @@ static void timerlat_top_usage(char *usage)
+>  		"	     --deepest-idle-state n: only go down to idle state n on cpus used by timerlat to reduce exit from idle latency",
+>  		"	     --on-threshold <action>: define action to be executed at latency threshold, multiple are allowed",
+>  		"	     --on-end: define action to be executed at measurement end, multiple are allowed",
+> +		"	     --bpf-action <program>: load and execute BPF program when latency threshold is exceeded",
+>  		NULL,
+>  	};
+>  
+> @@ -603,6 +604,7 @@ static struct common_params
+>  			{"deepest-idle-state",	required_argument,	0, '8'},
+>  			{"on-threshold",	required_argument,	0, '9'},
+>  			{"on-end",		required_argument,	0, '\1'},
+> +			{"bpf-action",		required_argument,	0, '\2'},
+>  			{0, 0, 0, 0}
+>  		};
+>  
+> @@ -798,6 +800,9 @@ static struct common_params
+>  				exit(EXIT_FAILURE);
+>  			}
+>  			break;
+> +		case '\2':
+> +			params->bpf_action_program = optarg;
+> +			break;
+>  		default:
+>  			timerlat_top_usage("Invalid option");
+>  		}
+> -- 
+> 2.51.0
+> 
+
 
