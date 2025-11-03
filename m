@@ -1,217 +1,317 @@
-Return-Path: <linux-kernel+bounces-882735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35FF9C2B478
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:19:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF61CC2B46E
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 12:19:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E4141893860
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:19:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 923043AFA97
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 11:18:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24DAE302CA5;
-	Mon,  3 Nov 2025 11:19:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36F12FF66D;
+	Mon,  3 Nov 2025 11:18:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="vNgT36HX";
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="gKncODgr";
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="M9Q6EN/h"
-Received: from mail1.bemta41.messagelabs.com (mail1.bemta41.messagelabs.com [195.245.230.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X6209kcr"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DFFF3019A7;
-	Mon,  3 Nov 2025 11:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.245.230.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D413232395
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 11:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762168743; cv=none; b=IuNAVFyCLavpVSEHzlT0ILKa9EqKlV6M867yu8CYZBZf+frCMggmQsrMAo05fc1TjShogmlzlr91JB3Cz8ZFXlFVKJrII/4tsCIPySXyDO6ij9nvLxfhczS4EHAvW048HlmE9uuD/blOC7EcE7o9Lsd/N3f8+9wEUgOSTmVNjmE=
+	t=1762168690; cv=none; b=O7PQUVd2SW/aQtCn3X07rhecJpveRzFsytDRUxz6Ds3KmTm5belihlwteeh4WH0ydhI5tx6dXXtBKslrS5+Cemh3r2Y27+c1jMEy7dY+ga2+xn2WBJfWMEWKqhirz/+I023X+9ppqM389/liq6x6vFnzE1URR5L2T9r/dcqiS0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762168743; c=relaxed/simple;
-	bh=O/a7IoG10D6HLlLciKIAfeG+yrgUWRtc1OljxapqmNI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XJyI9sWf9mKXQ38kpTUb1OK4gVcxuFMwUTWqIiHAKcF4lSBDnarinAv0PDu40Nqop6wCW7ZG5/dyep0EOaUTkgwe6uESRVEy12XdnFD/HNvcE1yw5xDVIWquz6lHF33ElG/hJ60c0mEXyHsBUQJnl/5aKhb/72H/25AzAa4kxtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=vNgT36HX; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=gKncODgr; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=M9Q6EN/h; arc=none smtp.client-ip=195.245.230.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
-	s=170520fj; t=1762168738; i=@fujitsu.com;
-	bh=lWTfQaYpm6VfJ/9xy4tbemZZIjRJl7XPms8i1uMtQrA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding;
-	b=vNgT36HXcahiUoOr+WTvCOk4n19fpHCC4ZY9+acbRHCd2P/ufjH2AUX/RSZovoYdQ
-	 WEJ1CmvmDL9cnU4qMGVJZK2wManAuWhXeJuxZaAqkUsJxvmq6JhMitDrxfBGKdQPh2
-	 PXqbOhXwonIC5OA1QAfLrH/dN7AD9ri3Mhf3MU+wF2BNFKvrfD99pFKOaY3eeVZb5Y
-	 BNYAaJD74/ZhNCY8cMXYRSEmiGMNnc/cR9ckbNEX5i7ErhAUaxsyrtN4uJKfYCGLyC
-	 soIJjcL/ckGK/wRyvTpx7+sg1xtsJN1Wv9x9TVamDn3Ewhy4EpzW30yeR1gBRySijG
-	 gNobxAN49CtnQ==
-X-Brightmail-Tracker: H4sIAAAAAAAAA1WSfUwTdxjH+d1djxMoOcqLP5mgdogLpmW4aH4
-  6cEyz7SRBlk2zxCWyUg56SWnrXWGwZBvlZVEZvqBdR0FAZKiIYQNGUCAwJPI6QAYKZWyOQdZB
-  BDbY7AJsu9Kh7r8nz+f7/T7fPx4Klw2RgRSbbmR5nUorJz2I/ZFUnaL0LMW9OMyjiZ8HSfTX0
-  jxA50v+xNDil3+TyGIeBKhrzESiG2PVAGVfqSHRQN0KiVqnfyFQkSUbQwWNIziqunyfRNaLLR
-  gasPYQqLmlm0Df3S4m0WJ+B0C5JY8AOjltxtB1x4oEnZzPxFFnfhuGLi2ZcfT9Z5UAWeyrElS
-  99BuOxrsGJMh27i6Glh3FZHQw8zj3DMHkDq2SzC3rhDuT0/FIwtRdC2OuNP+KMbVVp0im9VK1
-  O2OvKwRM28wqYMxFHzN9ZR3uzGJtMLNcdBe86X1MwukS9OnvSTTtn8xihnsB6V3dZpAJsn1PA
-  w9KRtcCWHBn0v002EARdCxsmmyWOAFBNxDQ1D8LnEBG52Kw7HrMumh44BTumkXRHy0hrqTPAZ
-  zNthNOQNLhcPRC8ZrZjw6GD2ry1lJx+h8J7LTPrQFf+ii8YL/63+ntsHiqYS1VSu+Htp8eYs4
-  Z0lvgzMU6iXPeQO+Cl5tKMFejCHhr1gZceh/YXTglHqbEAztgTYnMucZFa/bXRbgrJhSO9Nfi
-  54Cf9RmH9anD+oyjDOBVAAksn8byit3KBJ5L1hhTVJxWqfpAoVayqbzewCreZwVjhDJZbVCyg
-  qAUMlLU2kSljjXWAvG9PBa2nm8EpVM54e1gE4XJ/aUv6ShO5p2gT8zQqARNPJ+qZYV2sJmi5F
-  BqzxeZD88ms+lJnFZ80nUMKS+5nzQmRcRSwaBKEbhkF+oBCuqrH9pacBmh0+vYwI3SVz4VRbR
-  TpEnVPYlYf/UhEBToKwVubm4yLwPLp3DG//MZsJECcl9pjrOJF6czPrk0I5bAxBJ2zN1Zwqh6
-  igIzsdibWcPxaV5YVFEG2JzWy+1enezY9sarbnHR3HTnnoCVQ+9GR8UGhc035O8YHnu9TH+zt
-  Kdv4aNSU1zltdCkEX1BuQMG//hFaH+B5zd7TeNbiLiob/Ne8/WPPMFEtY8GJI1++HaIW2TFpm
-  TcQxHRKqseenDQm9h39r7nPvMZajB/QO2J/56XVL63bcwBD/bXx20v1PJdWYPHj0Bbz1zijWO
-  Wynq4c/r5O8v84ccxCYcPFNvmOip6bVd9vKbKFS1b+Ymm50bGyyez/ExvzZlePh5/IHd1+UTQ
-  gqFS/Y5DH9hYUd8bvss/1LAtLnJP7CF1xgvmvp0hXP/Rew5+Nh08vG05IicEjSoiDOcF1b8tN
-  b+NZQQAAA==
-X-Env-Sender: tomasz.wolski@fujitsu.com
-X-Msg-Ref: server-8.tower-858.messagelabs.com!1762168731!338533!1
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received:
-X-StarScan-Version: 9.119.0; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 23889 invoked from network); 3 Nov 2025 11:18:53 -0000
-Received: from unknown (HELO n03ukasimr04.n03.fujitsu.local) (62.60.8.179)
-  by server-8.tower-858.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 3 Nov 2025 11:18:53 -0000
-Received: from n03ukasimr04.n03.fujitsu.local (localhost [127.0.0.1])
-	by n03ukasimr04.n03.fujitsu.local (Postfix) with ESMTP id 0AC01151D;
-	Mon,  3 Nov 2025 11:18:51 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 n03ukasimr04.n03.fujitsu.local 0AC01151D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
-	s=dspueurope; t=1762168731;
-	bh=lWTfQaYpm6VfJ/9xy4tbemZZIjRJl7XPms8i1uMtQrA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gKncODgrZzwHl4PEYLXht0aC7IzMZ1z9L+eCdas5sX0gWQw2ci7M/QHv8lm17ksmv
-	 WKCtSHsbkGtqisHTIHRElitvmWdWsJvfEIHMqs9Vx9W57rBwPLBEp07kAT7Q0I2OVu
-	 6oXl1c07LH5rYH0K7TpYng+lUqBaTiZvqQgCPRZaiJTm240GVrcQE/ntTB0olUAWMe
-	 HqpZefvqeKGX1jBhoGcXB6ojjMz84YcKEV92lwuo2N/yqW5KImwvgnmR9yTUTxVpkM
-	 89KtLCtV7mAF/ggysSRhmDYOdI/NqJoySRuTta1UlECnDyIqjAwZcnNdwR9v+RcIi0
-	 OOL9UkqCFw8vA==
-Received: from ubuntudhcp (unknown [10.172.107.4])
-	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by n03ukasimr04.n03.fujitsu.local (Postfix) with ESMTPS id D97581536;
-	Mon,  3 Nov 2025 11:18:50 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 n03ukasimr04.n03.fujitsu.local D97581536
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
-	s=dspueurope; t=1762168730;
-	bh=lWTfQaYpm6VfJ/9xy4tbemZZIjRJl7XPms8i1uMtQrA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=M9Q6EN/h+42pxoTlI4UOVvRWaRiLvHO9CiLKwlEffXZJn6m1tyYwyMpy52NChaBNU
-	 kFTVz2K6ltS1k68OVkcyI1tjYdVSl8hMNWkTkyYtQNfIrq9+w1hAb836ckoxRG+UJP
-	 czLDEsBjFA/quhMV+RSuyTBq/8/5O5XFUqJop041tH0CH/TrSbNxbZGunxjcAaUdlc
-	 9y0xoh8MuFNaWYVoHPiuZAP7Lc83op5gVszxkpnuUQ49EPFJM2Xoo5/PuXfFkuvuR4
-	 gyeGGoDEurAKlN0TAX/pWpxy9tIp4N8F33hE1biKMToMkXfkibAsFMxZ8gkSmU16kx
-	 IPjyyosHmoEEQ==
-Received: from localhost.BIOS.GDCv6 (unknown [10.172.196.36])
-	by ubuntudhcp (Postfix) with ESMTP id 78A702202BC;
-	Mon,  3 Nov 2025 11:18:50 +0000 (UTC)
-From: Tomasz Wolski <tomasz.wolski@fujitsu.com>
-To: alison.schofield@intel.com
-Cc: Smita.KoralahalliChannabasappa@amd.com,
-	ardb@kernel.org,
-	benjamin.cheatham@amd.com,
-	bp@alien8.de,
-	dan.j.williams@intel.com,
-	dave.jiang@intel.com,
-	dave@stgolabs.net,
-	gregkh@linuxfoundation.org,
-	huang.ying.caritas@gmail.com,
-	ira.weiny@intel.com,
-	jack@suse.cz,
-	jeff.johnson@oss.qualcomm.com,
-	jonathan.cameron@huawei.com,
-	len.brown@intel.com,
-	linux-cxl@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	lizhijian@fujitsu.com,
-	ming.li@zohomail.com,
-	nathan.fontenot@amd.com,
-	nvdimm@lists.linux.dev,
-	pavel@kernel.org,
-	peterz@infradead.org,
-	rafael@kernel.org,
-	rrichter@amd.com,
-	skoralah@amd.com,
-	terry.bowman@amd.com,
-	vishal.l.verma@intel.com,
-	willy@infradead.org,
-	yaoxt.fnst@fujitsu.com
-Subject: Re: [PATCH v3 0/5] dax/hmem, cxl: Coordinate Soft Reserved handling with CXL
-Date: Mon,  3 Nov 2025 12:18:37 +0100
-Message-ID: <20251103111840.22057-1-tomasz.wolski@fujitsu.com>
-X-Mailer: git-send-email 2.51.0
-In-Reply-To: <aQAmhrS3Im21m_jw@aschofie-mobl2.lan>
-References: <aQAmhrS3Im21m_jw@aschofie-mobl2.lan>
+	s=arc-20240116; t=1762168690; c=relaxed/simple;
+	bh=60lDMBL2oNpdxDCfZ/zaAoqSFSwNxdJ9b1c9SZ6HPGc=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DCdZUztweUNuuvsGb8Ub3ZzQqZ6VhtbDFun5CzwKPTTbURGbPEXavATCbq2mb/ZGMWe2wQi4G5Y3ueg+PBDuXRhr00SbPAcRkqNfMEqdv/y2M6XE3G7M8MD9PcTcqTBUavgij8qfC0d42Z+eYRxJJOG3+vHqki6VoM+E+hTsx4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X6209kcr; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4710a1f9e4cso35555985e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 03:18:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1762168687; x=1762773487; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H6G1U+3shNA1F9Kl+gGDGcY4sTpab/foYa+z2DPImsw=;
+        b=X6209kcr5D55B9vEUyNCd+qG2YGOfxR7ZUdl+d9J6fsrtDNNpJw5vG+OophBv0kAvG
+         aKPBx4e2Oo0VkVbgGyS5SBIs/BdJ+143XkMpBdxyae2hKpmtcF2On0AFOv/L3QF09rMT
+         ROars0OFJIteG7kju2RZV3j0vXT8aAEDq6eX7NoPCLChBMcwFgCkvozgWGoKUxt8NYNc
+         xZ2Psiceu+kYfWUpKSXvI1aVNe27TwPXfBRscaxWzUGz6SUXQ8TJgSrUaNPWLOHTNXFM
+         UCKwzeIwvCescPx0s1bnJaJUinTEEO7XCZFfQpJ/oZarJqmiUjKCJgUdc0apRJIIOKtg
+         HBOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762168687; x=1762773487;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:to:from:subject:message-id:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=H6G1U+3shNA1F9Kl+gGDGcY4sTpab/foYa+z2DPImsw=;
+        b=pZyxp9PI/mLCdRy5j67i8OE+PVMvrUlfXqYmk0t6E1BHQgdaWNRp4MP8xac/0/zISV
+         MPz2SpfPWBJQuIQkhCZx6d6l0umFqV7vwuOSsLTzvsi/PPOhdGPnU0xyLOvAxYwuf3xr
+         KZP/rSohb3+DKhKCLGJ0a+8daVEDq7gS0iMzwFnMf6FHi2i1rErfis2i4pcuN4CDJH7M
+         obnXeGP8LH+vRycxgLeUsTbhygLAOyRGq4tN6g42XMyjTBgfrA+uO866uP/AuOQlnVSo
+         eeWgbfmWu11oOnmTA8O+j1whmfIFKkovj5gFDFJ2JHWdiwojQnqAMejgRi7zOdnG3vIT
+         rivg==
+X-Forwarded-Encrypted: i=1; AJvYcCUeOtTmMX4UxVB/LW3LK1JT63vCh11niir8dYx5cxfyeDwI7MuBM3BvCoibB2pgvUXKwW/velV3l1qkkVs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywq/PQyswv6D6xohUC77xcIUEkKZTW4bmY3raJqT015+bUV51W6
+	VcSnEyuOo0CdzCWmJqAv9xn7vta0WxYID578KcotsHHdoSjEAMSJzoec
+X-Gm-Gg: ASbGncucUA6jVVH8B6at4EJ51Qh1Ge9dEfb6ROAeYi8BqQP49zD2tOJ4FKpjFFbGuLw
+	ztvM53m6Jkq0vDePRT1uTFNp8g0IPM3iukHcYLXNtYSKyAuIkXNt0+XCUo0utA11KeQ6KQeJJ3T
+	9F4k3VZEwbSDtYBzIjeelmRj3EhIOMzjCIRLv4YJSDEII6df0ArRMxQ8r5sDGdx7SxXKRcVvUxq
+	C02OwvRQAoZ6VXi37AKOA1TXeaqPIP5Z4RQPN7G/+I+R5oeDclvCWJqFoxlEzkL1Mq0Flv1eqaA
+	ZKetxqTG2PkEAr5+sSOHfke3AOjD7cqNAOlZ/vvuXg2kHSdG3o4eYQ8q5D4xYRLU2ARMxi0VQO+
+	pn4x7jhC+9f9mM5AO+r/0tH7kgcTj50rPRO3dTw0ZXkilDfwU0onzN3SR+XTJ+5/xPbZwX2NGeW
+	X3P6iNEJzwl/oZXbAX5Po=
+X-Google-Smtp-Source: AGHT+IH6i0PkBRAZb8K1KRO55KHAWOtXj4yQJQGAO0NKO2FQdbsbSicqPiEU9u6kw13j3FaaQD7dzg==
+X-Received: by 2002:a05:600d:4393:b0:46e:32a5:bd8d with SMTP id 5b1f17b1804b1-477331db3ccmr69867085e9.3.1762168687127;
+        Mon, 03 Nov 2025 03:18:07 -0800 (PST)
+Received: from [192.168.1.187] ([161.230.67.253])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4773c583d91sm150548485e9.17.2025.11.03.03.18.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Nov 2025 03:18:06 -0800 (PST)
+Message-ID: <a1577c7ce81d039f47e189e130295b76447b05c2.camel@gmail.com>
+Subject: Re: [PATCH 2/2] gpio: adg1712: add driver support
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>, Linus Walleij	
+ <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Rob
+ Herring	 <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley	 <conor+dt@kernel.org>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, 	linux-kernel@vger.kernel.org
+Date: Mon, 03 Nov 2025 11:18:42 +0000
+In-Reply-To: <20251031160710.13343-3-antoniu.miclaus@analog.com>
+References: <20251031160710.13343-1-antoniu.miclaus@analog.com>
+	 <20251031160710.13343-3-antoniu.miclaus@analog.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.58.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
 
-Hi Alison and Smita,
+On Fri, 2025-10-31 at 16:07 +0000, Antoniu Miclaus wrote:
+> Add driver support for the ADG1712, which contains four independent
+> single-pole/single-throw (SPST) switches and operates with a
+> low-voltage single supply range from +1.08V to +5.5V or a low-voltage
+> dual supply range from =C2=B11.08V to =C2=B12.75V.
+>=20
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> ---
+> =C2=A0drivers/gpio/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=
+=A0=C2=A0 9 +++
+> =C2=A0drivers/gpio/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=
+=C2=A0 1 +
+> =C2=A0drivers/gpio/gpio-adg1712.c | 146 +++++++++++++++++++++++++++++++++=
++++
+> =C2=A03 files changed, 156 insertions(+)
+> =C2=A0create mode 100644 drivers/gpio/gpio-adg1712.c
+>=20
+> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+> index 7ee3afbc2b05..3fac05823eae 100644
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -157,6 +157,15 @@ config GPIO_74XX_MMIO
+> =C2=A0	=C2=A0=C2=A0=C2=A0 8 bits:	74244 (Input), 74273 (Output)
+> =C2=A0	=C2=A0=C2=A0=C2=A0 16 bits:	741624 (Input), 7416374 (Output)
+> =C2=A0
+> +config GPIO_ADG1712
+> +	tristate "Analog Devices ADG1712 quad SPST switch GPIO driver"
+> +	depends on GPIOLIB
+> +	help
+> +	=C2=A0 GPIO driver for Analog Devices ADG1712 quad single-pole,
+> +	=C2=A0 single-throw (SPST) switch. The driver provides a GPIO controlle=
+r
+> +	=C2=A0 interface where each GPIO line controls one of the four independ=
+ent
+> +	=C2=A0 analog switches on the ADG1712.
+> +
+> =C2=A0config GPIO_ALTERA
+> =C2=A0	tristate "Altera GPIO"
+> =C2=A0	select GPIOLIB_IRQCHIP
+> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+> index ec296fa14bfd..9043d2d07a15 100644
+> --- a/drivers/gpio/Makefile
+> +++ b/drivers/gpio/Makefile
+> @@ -28,6 +28,7 @@ obj-$(CONFIG_GPIO_104_IDI_48)		+=3D gpio-104-idi-48.o
+> =C2=A0obj-$(CONFIG_GPIO_104_IDIO_16)		+=3D gpio-104-idio-16.o
+> =C2=A0obj-$(CONFIG_GPIO_74X164)		+=3D gpio-74x164.o
+> =C2=A0obj-$(CONFIG_GPIO_74XX_MMIO)		+=3D gpio-74xx-mmio.o
+> +obj-$(CONFIG_GPIO_ADG1712)		+=3D gpio-adg1712.o
+> =C2=A0obj-$(CONFIG_GPIO_ADNP)			+=3D gpio-adnp.o
+> =C2=A0obj-$(CONFIG_GPIO_ADP5520)		+=3D gpio-adp5520.o
+> =C2=A0obj-$(CONFIG_GPIO_ADP5585)		+=3D gpio-adp5585.o
+> diff --git a/drivers/gpio/gpio-adg1712.c b/drivers/gpio/gpio-adg1712.c
+> new file mode 100644
+> index 000000000000..f8d3481ac9d0
+> --- /dev/null
+> +++ b/drivers/gpio/gpio-adg1712.c
+> @@ -0,0 +1,146 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Analog Devices ADG1712 quad SPST switch GPIO driver
+> + *
+> + * Copyright 2025 Analog Devices Inc.
+> + *
+> + * Author: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> + */
+> +
+> +#include <linux/err.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/gpio/driver.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/property.h>
+> +
+> +#define ADG1712_NUM_GPIOS	4
+> +
+> +struct adg1712 {
+> +	struct gpio_chip chip;
+> +	struct gpio_desc *switch_gpios[ADG1712_NUM_GPIOS];
+> +};
+> +
+> +static int adg1712_get_direction(struct gpio_chip *chip, unsigned int of=
+fset)
+> +{
+> +	return GPIO_LINE_DIRECTION_OUT;
+> +}
+> +
+> +static int adg1712_direction_input(struct gpio_chip *chip, unsigned int =
+offset)
+> +{
+> +	return -EINVAL;
+> +}
 
-I’ve been following your patch proposal and testing it on a few QEMU setups
+Did not checked gpiolib for this but do we need the above given that we alw=
+ays
+return GPIO_LINE_DIRECTION_OUT?
 
-> Will it work to search directly for the region above by using params
-> IORESOURCE_MEM, IORES_DESC_NONE. This way we only get region conflicts,
-> no empty windows to examine. I think that might replace cxl_region_exists()
-> work below.
+> +
+> +static int adg1712_direction_output(struct gpio_chip *chip, unsigned int=
+ offset,
+> +				=C2=A0=C2=A0=C2=A0 int value)
+> +{
+> +	struct adg1712 *adg1712 =3D gpiochip_get_data(chip);
+> +
+> +	if (offset >=3D ADG1712_NUM_GPIOS)
+> +		return -EINVAL;
 
-I see expected 'dropping CXL range' message (case when region covers full CXL window)
+I don't think above can happen.
 
-[   31.783945] hmem_platform hmem_platform.0: deferring range to CXL: [mem 0xa90000000-0xb8fffffff flags 0x80000200]
-[   31.784609] deferring range to CXL: [mem 0xa90000000-0xb8fffffff flags 0x80000200]
-[   31.790588] hmem_platform hmem_platform.0: dropping CXL range: [mem 0xa90000000-0xb8fffffff flags 0x80000200]
-[   31.791102] dropping CXL range: [mem 0xa90000000-0xb8fffffff flags 0x80000200]
+> +
+> +	gpiod_set_value_cansleep(adg1712->switch_gpios[offset], value);
 
-a90000000-b8fffffff : CXL Window 0
-  a90000000-b8fffffff : region0
-    a90000000-b8fffffff : dax0.0
-      a90000000-b8fffffff : System RAM (kmem)
+return gpiod_set_value_cansleep().
 
-[   31.384899] hmem_platform hmem_platform.0: deferring range to CXL: [mem 0xa90000000-0xc8fffffff flags 0x80000200]
-[   31.385586] deferring range to CXL: [mem 0xa90000000-0xc8fffffff flags 0x80000200]
-[   31.391107] hmem_platform hmem_platform.0: dropping CXL range: [mem 0xa90000000-0xc8fffffff flags 0x80000200]
-[   31.391676] dropping CXL range: [mem 0xa90000000-0xc8fffffff flags 0x80000200]
+> +	return 0;
+> +}
+> +
+> +static int adg1712_set(struct gpio_chip *chip, unsigned int offset, int =
+value)
+> +{
+> +	struct adg1712 *adg1712 =3D gpiochip_get_data(chip);
+> +
+> +	if (offset >=3D ADG1712_NUM_GPIOS)
+> +		return -EINVAL;
 
-a90000000-c8fffffff : CXL Window 0
-  a90000000-b8fffffff : region0
-    a90000000-b8fffffff : dax0.0
-      a90000000-b8fffffff : System RAM (kmem)
-  b90000000-c8fffffff : region1
-    b90000000-c8fffffff : dax1.0
-      b90000000-c8fffffff : System RAM (kmem)
-	  
-a90000000-b8fffffff : CXL Window 0
-  a90000000-b8fffffff : region0
-    a90000000-b8fffffff : dax0.0
-      a90000000-b8fffffff : System RAM (kmem)
-b90000000-c8fffffff : CXL Window 1
-  b90000000-c8fffffff : region1
-    b90000000-c8fffffff : dax1.0
-      b90000000-c8fffffff : System RAM (kmem)
+Ditto
 
-However, when testing version with cxl_region_exists() I didn't see expected 'registering CXL range' message
-when the CXL region does not fully occupy CXL window - please see below.
-I should mention that I’m still getting familiar with CXL internals, so maybe I might be missing some context :)
+> +
+> +	gpiod_set_value_cansleep(adg1712->switch_gpios[offset], value);
+> +	return 0;
+> +}
+> +
+> +static int adg1712_get(struct gpio_chip *chip, unsigned int offset)
+> +{
+> +	struct adg1712 *adg1712 =3D gpiochip_get_data(chip);
+> +
+> +	if (offset >=3D ADG1712_NUM_GPIOS)
+> +		return -EINVAL;
+> +
+> +	return gpiod_get_value_cansleep(adg1712->switch_gpios[offset]);
+> +}
+> +
+> +static int adg1712_set_multiple(struct gpio_chip *chip, unsigned long *m=
+ask,
+> +				 unsigned long *bits)
+> +{
+> +	struct adg1712 *adg1712 =3D gpiochip_get_data(chip);
+> +	int i;
+> +
+> +	for_each_set_bit(i, mask, ADG1712_NUM_GPIOS) {
+> +		gpiod_set_value_cansleep(adg1712->switch_gpios[i],
+> +					 test_bit(i, bits));
 
-a90000000-bcfffffff : CXL Window 0
-  a90000000-b8fffffff : region0
-    a90000000-b8fffffff : dax0.0
-      a90000000-b8fffffff : System RAM (kmem)
+Error handling.
 
-[   30.434385] hmem_platform hmem_platform.0: deferring range to CXL: [mem 0xa90000000-0xbcfffffff flags 0x80000200]
-[   30.435116] deferring range to CXL: [mem 0xa90000000-0xbcfffffff flags 0x80000200]
-[   30.436530] hmem_platform hmem_platform.0: dropping CXL range: [mem 0xa90000000-0xbcfffffff flags 0x80000200]
-[   30.437070] hmem_platform hmem_platform.0: dropping CXL range: [mem 0xa90000000-0xbcfffffff flags 0x80000200]
-[   30.437599] dropping CXL range: [mem 0xa90000000-0xbcfffffff flags 0x80000200]
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct gpio_chip adg1712_gpio_chip =3D {
+> +	.label			=3D "adg1712",
+> +	.owner			=3D THIS_MODULE,
+> +	.get_direction		=3D adg1712_get_direction,
+> +	.direction_input	=3D adg1712_direction_input,
+> +	.direction_output	=3D adg1712_direction_output,
+> +	.get			=3D adg1712_get,
+> +	.set			=3D adg1712_set,
+> +	.set_multiple		=3D adg1712_set_multiple,
+> +	.base			=3D -1,
+> +	.ngpio			=3D ADG1712_NUM_GPIOS,
+> +	.can_sleep		=3D true,
+> +};
+> +
+> +static int adg1712_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev =3D &pdev->dev;
+> +	struct adg1712 *adg1712;
+> +	int ret, i;
+> +	char gpio_name[16];
+> +
+> +	adg1712 =3D devm_kzalloc(dev, sizeof(*adg1712), GFP_KERNEL);
+> +	if (!adg1712)
+> +		return -ENOMEM;
+> +
+> +	adg1712->chip =3D adg1712_gpio_chip;
+> +	adg1712->chip.parent =3D dev;
+> +
+> +	for (i =3D 0; i < ADG1712_NUM_GPIOS; i++) {
+> +		snprintf(gpio_name, sizeof(gpio_name), "switch%d", i + 1);
 
-Thanks,
-Tomasz
+Just a suggestion. Instead of the snprintf(), you could have a const array =
+of
+strings and just go over it. Not a big deal to me though. You could also
+consider devm_gpiod_get_array()
+
+> +		adg1712->switch_gpios[i] =3D devm_gpiod_get(dev, gpio_name,
+> +							=C2=A0 GPIOD_OUT_LOW);
+
+Should we make assumptions on the initial value? Not sure if GPIO_ASIS woul=
+d
+make sense here.
+
+> +		if (IS_ERR(adg1712->switch_gpios[i]))
+> +			return dev_err_probe(dev, PTR_ERR(adg1712->switch_gpios[i]),
+> +					=C2=A0=C2=A0=C2=A0=C2=A0 "failed to get %s gpio\n", gpio_name);
+> +	}
+> +
+> +	ret =3D devm_gpiochip_add_data(dev, &adg1712->chip, adg1712);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "failed to add gpio chip\n");
+> +
+> +	dev_info(dev, "ADG1712 %u-GPIO expander registered\n",
+> +		 adg1712->chip.ngpio);
+
+Drop the above or turn it into dev_dbg()
+
+- Nuno S=C3=A1
+>=20
 
