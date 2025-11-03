@@ -1,177 +1,111 @@
-Return-Path: <linux-kernel+bounces-883014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ams.mirrors.kernel.org (ams.mirrors.kernel.org [213.196.21.55])
-	by mail.lfdr.de (Postfix) with ESMTPS id 805C3C2C411
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 14:52:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19A59C2C441
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 14:54:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ams.mirrors.kernel.org (Postfix) with ESMTPS id 2B45F34A480
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 13:52:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E94F188AA1B
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 13:54:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A197B274B42;
-	Mon,  3 Nov 2025 13:52:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1ED42750FE;
+	Mon,  3 Nov 2025 13:54:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N1evdoJB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iPqd5QE4"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04AE42737E1;
-	Mon,  3 Nov 2025 13:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7798526B75B
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 13:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762177952; cv=none; b=jtZhU3VDoIpXQWSn+cBKoKG726tsN1G24jMMrSXa0zc6gka0Q6Xr2qOf43SJliQIJ+uLL0gYMatoC4pT2iCLgzGWEKNtie4AFyPxU7z/at6ptBkvPmhQ5tdxrBOYzgkP6C4FTuaRyTe9ms0gO4APQVhEMqF69Ch/LpvBmmxNRCQ=
+	t=1762178041; cv=none; b=QQB5aDlUb7esvwKaNaoTBU63oD/drekreIG4BqWcGUIb/Ny0Jw0u2e9cTN9gorE6GFga8QEGY9mhfbk+nWdrMVJ7r49/nfNjGYK4dVNGpOWbNTRaoM2XUEKN7HwaPAm+lSW6gDYuDNmrF9tX/RPfslQOHpTgZ5PVnQSVQcQVmEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762177952; c=relaxed/simple;
-	bh=LnIXWhB4Cj25CtLtbkxdXBEJn5oy2Pmquj/q2xJaGeo=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Z+aObB7anfmqP1ndS6jswf8akQKsUytcMEHk8CUT0JV0rfueuHG94n+nLOmRf/eVwvO7zsqVBXknnPLnX25cEi7lxPSnf3FchEIO7XdqhKxY+v1Eze9Gm9PTwT5TCPipswwyks1iaaIMx++Vc9MxhB5d6AbP1+JXu9L+vpTYh58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N1evdoJB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A049BC4CEE7;
-	Mon,  3 Nov 2025 13:52:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762177951;
-	bh=LnIXWhB4Cj25CtLtbkxdXBEJn5oy2Pmquj/q2xJaGeo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=N1evdoJBP+xR1+ihgvW3cL4M+Y3RsyN60QP/c06iS/qtugdx74TT5UAaHwJd4nfv1
-	 bsAe25z7oj3H2G2M2lfXI2x9m5o4ZtCxURAPkQ6KdFs+UkbvP9pESRy8O67ls+x4vg
-	 TyfsyaxA2IiWcgJ8htc6uSpEmjad/l8dAKZWkXyfWhmv6aG9kys6wJmehTKDe7Wjhj
-	 IOYQU5zuxHM1UIK83qYLVvcGLX86j82UhxhSCgdMsyhbYdgl/9tvWO/jrzbilszPuM
-	 O7qePIubGKo34dTbn6FzjwFJ2/8KaNFZ/t3Sp/pKb9tE0EkV+EAAm/TMtzEaZGTIWJ
-	 o7IfKFZVF60Ew==
-Date: Mon, 3 Nov 2025 22:52:27 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: rostedt@goodmis.org, jolsa@kernel.org, mathieu.desnoyers@efficios.com,
- jiang.biao@linux.dev, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] tracing: fprobe: use ftrace if
- CONFIG_DYNAMIC_FTRACE_WITH_ARGS
-Message-Id: <20251103225227.b8a44e718ddd9515a9960e51@kernel.org>
-In-Reply-To: <20251103063434.47388-1-dongml2@chinatelecom.cn>
-References: <20251103063434.47388-1-dongml2@chinatelecom.cn>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1762178041; c=relaxed/simple;
+	bh=x724Nb6nEhXoOjmexUcOrQsHjcK7h+Y8uel8EraJB8g=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=pRMZExcatAkeFpLwkPTf153Tcpkamt7HjFLD5Ygh9+ZygEbbSLfElEAKO9/FRZN/0teuMoAU9//0SLQ9BMYwFT4WzylRnQ2oC9DwjaYy83W+6KpRzbFBnx5nXkDwcQICMvcKsp1J7EjwjuLLPDV9JbzZsCFKJ4EJPXH5G9DBSqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iPqd5QE4; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-b70b338426fso11858566b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Nov 2025 05:53:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1762178038; x=1762782838; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TRIRnwbdNF9ZjW9ua81MwxcmBt6wB2lb2Cyijxdbhus=;
+        b=iPqd5QE4mq14LJgY4v31xvAVDaF1T7r6KYZ77ifbKEB+j6lYWUziB6UmvwZ9IqjphH
+         M4YXl4Iit2TUMRnIxQLFYqXUHRUMAL+B+YqaMJX6kNaEO72eKAxfx/MDHv48GaQ6ByMr
+         /kHTTszrV4mwUb5/bljlztQ3tun3FOZxBELiJgR4VYLczcGpgU1ZdUyAlIsXl2iJLdId
+         fpuJUzXEZRrpULxx1Zgtuhaf1wbjeoUufxeLPxRSUNVBkpCx02mRcejGrw93AKL/PH9m
+         3QRXnMig2ngk5uRrAXkeQUlQSsR6J9EGWJQ6XT6qy82ATdj+ojJCD/gS5Jvv+5cptFm4
+         I2ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1762178038; x=1762782838;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TRIRnwbdNF9ZjW9ua81MwxcmBt6wB2lb2Cyijxdbhus=;
+        b=Cr/sq2WEOhDXlH9GdyvrNfoF+qzu9Hm8ugWmeBZ+SwwBpffWptVfgeAEMCe5Z21GwL
+         KU+BCKHWP5G5WDkL/GlaYx2Siv6v0OY+3+5x/ds3TSsAH/bTTqD2ONhb2ZFAi59aI1ko
+         OH4rC7wpvlg7EYHc3E5+zLP8WJuTrWdDe0N1U+6oY91ug6OoRmy5mwf6yvWpCZllBafb
+         nC5HOzGdMV0hE7pN6lbdXPKEjSDkuVsZltoQ6enXhxWiac0LEoPkGvAuLVdNiKF7/gm3
+         dz9c2A4kGm1PGZByUZx7FVXosW5t9LyE59NA/kZdstitsXikpHZY3k1wR046b+dDXBGz
+         6bsQ==
+X-Gm-Message-State: AOJu0YzKSxkzSKxB49ee60GBZvD5jAuXBDUwHPz3bdG6GLOB5j2SkMqo
+	Jf121aRLpMvruliHHZ7U50rQCUE0sWaBhsyVtBxab6lH30cSpg90kmmUr489vmiJ1Z0=
+X-Gm-Gg: ASbGncuK7IVxeq3/T52EXTEjCkgigJHeQ7GUW72NbilSHp1bmnAWZ74HMszIIC0qI5X
+	POTtQWvPeWrp2LKs16zmPH+41u3PuX/EYEfmd4bLUd6FRxWw3E/MqU1fl4kwbTatu7L6uZbacqI
+	uGBxreJ0m/v5XA47iAGZkYwZUts9TaMYvlRo5PAXe9zv5/lo96ASNhGnx/s5NAxxwJNqDBEProq
+	hL8/SwIE3WsecPBrijqvHn5gMJEy455GaVL53WX3P/GvP6AL1MGCc5AuWeT1TA6H9CcwjW68iRe
+	5r+GwhOrhNzQoBHJ3BbE6imGOkDiXMkJl+SmHtWu15sx2UsAjFfXT+ccHODAFyM/ytBZdQmxuIK
+	t1In90Kufw+hZaSv8NDVaOW6GWpORDFvDxGbiEf0y/qgkIfq6RD1Av1q18xJDNEDCRx1zxvSt9U
+	heg1oR0g50j5XOFEGh
+X-Google-Smtp-Source: AGHT+IGcohw3g6w8go43Dqq6WKUdsdhcXNK2fPK/3nXDm7ojzpory2cMU7iQJC5/TBRgrekfuFJPKw==
+X-Received: by 2002:a17:907:3e03:b0:b42:1324:797b with SMTP id a640c23a62f3a-b70708ea28bmr670598166b.9.1762178037820;
+        Mon, 03 Nov 2025 05:53:57 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.219.123])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-b70bb3f336csm392100966b.6.2025.11.03.05.53.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Nov 2025 05:53:56 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Thierry Reding <thierry.reding@gmail.com>, 
+ Jonathan Hunter <jonathanh@nvidia.com>, Aaron Kling <webgeek1234@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+In-Reply-To: <20251027-t210-actmon-p2-v6-1-1c4bd227d676@gmail.com>
+References: <20251027-t210-actmon-p2-v6-1-1c4bd227d676@gmail.com>
+Subject: Re: [PATCH v6] memory: tegra210: Support interconnect framework
+Message-Id: <176217803519.188953.12459486939589625513.b4-ty@linaro.org>
+Date: Mon, 03 Nov 2025 14:53:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-
-On Mon,  3 Nov 2025 14:34:34 +0800
-Menglong Dong <menglong8.dong@gmail.com> wrote:
-
-> For now, we will use ftrace for the fprobe if fp->exit_handler not exists
-> and CONFIG_DYNAMIC_FTRACE_WITH_REGS is enabled.
-> 
-> However, CONFIG_DYNAMIC_FTRACE_WITH_REGS is not supported by some arch,
-> such as arm. What we need in the fprobe is the function arguments, so we
-> can use ftrace for fprobe if CONFIG_DYNAMIC_FTRACE_WITH_ARGS is enabled.
-> 
-> Therefore, use ftrace if CONFIG_DYNAMIC_FTRACE_WITH_REGS or
-> CONFIG_DYNAMIC_FTRACE_WITH_ARGS enabled.
-> 
-
-Looks good to me. Thanks!
-
-> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-> ---
-> v3:
-> - fix the build warning when CONFIG_MODULES not enabled
-> 
-> v2:
-> - remove the definition of FPROBE_USE_FTRACE
-> ---
->  kernel/trace/fprobe.c | 32 ++++++++++++++++++++++----------
->  1 file changed, 22 insertions(+), 10 deletions(-)
-> 
-> diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
-> index ecd623eef68b..0b1ee8e585f2 100644
-> --- a/kernel/trace/fprobe.c
-> +++ b/kernel/trace/fprobe.c
-> @@ -44,6 +44,7 @@
->  static struct hlist_head fprobe_table[FPROBE_TABLE_SIZE];
->  static struct rhltable fprobe_ip_table;
->  static DEFINE_MUTEX(fprobe_mutex);
-> +static struct fgraph_ops fprobe_graph_ops;
->  
->  static u32 fprobe_node_hashfn(const void *data, u32 len, u32 seed)
->  {
-> @@ -254,7 +255,7 @@ static inline int __fprobe_kprobe_handler(unsigned long ip, unsigned long parent
->  	return ret;
->  }
->  
-> -#ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
-> +#if defined(CONFIG_DYNAMIC_FTRACE_WITH_ARGS) || defined(CONFIG_DYNAMIC_FTRACE_WITH_REGS)
->  /* ftrace_ops callback, this processes fprobes which have only entry_handler. */
->  static void fprobe_ftrace_entry(unsigned long ip, unsigned long parent_ip,
->  	struct ftrace_ops *ops, struct ftrace_regs *fregs)
-> @@ -295,7 +296,7 @@ NOKPROBE_SYMBOL(fprobe_ftrace_entry);
->  
->  static struct ftrace_ops fprobe_ftrace_ops = {
->  	.func	= fprobe_ftrace_entry,
-> -	.flags	= FTRACE_OPS_FL_SAVE_REGS,
-> +	.flags	= FTRACE_OPS_FL_SAVE_ARGS,
->  };
->  static int fprobe_ftrace_active;
->  
-> @@ -335,6 +336,15 @@ static bool fprobe_is_ftrace(struct fprobe *fp)
->  {
->  	return !fp->exit_handler;
->  }
-> +
-> +#ifdef CONFIG_MODULES
-> +static void fprobe_set_ips(unsigned long *ips, unsigned int cnt, int remove,
-> +			   int reset)
-> +{
-> +	ftrace_set_filter_ips(&fprobe_graph_ops.ops, ips, cnt, remove, reset);
-> +	ftrace_set_filter_ips(&fprobe_ftrace_ops, ips, cnt, remove, reset);
-> +}
-> +#endif
->  #else
->  static int fprobe_ftrace_add_ips(unsigned long *addrs, int num)
->  {
-> @@ -349,7 +359,15 @@ static bool fprobe_is_ftrace(struct fprobe *fp)
->  {
->  	return false;
->  }
-> +
-> +#ifdef CONFIG_MODULES
-> +static void fprobe_set_ips(unsigned long *ips, unsigned int cnt, int remove,
-> +			   int reset)
-> +{
-> +	ftrace_set_filter_ips(&fprobe_graph_ops.ops, ips, cnt, remove, reset);
-> +}
->  #endif
-> +#endif /* !CONFIG_DYNAMIC_FTRACE_WITH_ARGS && !CONFIG_DYNAMIC_FTRACE_WITH_REGS */
->  
->  /* fgraph_ops callback, this processes fprobes which have exit_handler. */
->  static int fprobe_fgraph_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
-> @@ -596,14 +614,8 @@ static int fprobe_module_callback(struct notifier_block *nb,
->  	} while (node == ERR_PTR(-EAGAIN));
->  	rhashtable_walk_exit(&iter);
->  
-> -	if (alist.index > 0) {
-> -		ftrace_set_filter_ips(&fprobe_graph_ops.ops,
-> -				      alist.addrs, alist.index, 1, 0);
-> -#ifdef CONFIG_DYNAMIC_FTRACE_WITH_REGS
-> -		ftrace_set_filter_ips(&fprobe_ftrace_ops,
-> -				      alist.addrs, alist.index, 1, 0);
-> -#endif
-> -	}
-> +	if (alist.index > 0)
-> +		fprobe_set_ips(alist.addrs, alist.index, 1, 0);
->  	mutex_unlock(&fprobe_mutex);
->  
->  	kfree(alist.addrs);
-> -- 
-> 2.51.2
-> 
+X-Mailer: b4 0.14.3
 
 
+On Mon, 27 Oct 2025 12:48:18 -0500, Aaron Kling wrote:
+> This makes mc and emc interconnect providers and allows for dynamic
+> memory clock scaling.
+> 
+> 
+
+Applied, thanks!
+
+[1/1] memory: tegra210: Support interconnect framework
+      https://git.kernel.org/krzk/linux-mem-ctrl/c/b33c93babeadd04a7b1d77c3e58243f413bf2948
+
+Best regards,
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
