@@ -1,168 +1,169 @@
-Return-Path: <linux-kernel+bounces-882314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03EFAC2A295
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 07:21:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC710C2A2B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 07:24:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id E8A684EC0CD
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 06:21:33 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 436CB4E8289
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 06:23:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C04528DEE9;
-	Mon,  3 Nov 2025 06:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E5E928E571;
+	Mon,  3 Nov 2025 06:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="J9TbzQkf"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gzUUfsj/"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB9E238C2A
-	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 06:21:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8890D154BE2
+	for <linux-kernel@vger.kernel.org>; Mon,  3 Nov 2025 06:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762150877; cv=none; b=OD7LUeqtvQdAEDlsuE+Tf9t6rJ7b5Uuhwoem05NOMZlEdnwDys24YrwtlGqURDaqdK7qvU6y4Q4zG+PvOh3Rm2tbbM3w9OfRlHD7aPysuTjrziZ/Jzus9lyLh8dymqcOlTWKF16yHM62MiPIUY1um7dKP16OOJOnhHGX7RsF4ls=
+	t=1762151035; cv=none; b=aDS3DeHxSe0HtnYP95JnD2O4tkoXHIdMeQDcNhXsEOSU8kX9K3EZcGScT8IZ3tou15BZQB9V2gp24qY4bEsHbe4w/NX0jzN5dOQTdxYlmpx6FpqmORpXJbYz7yp/jmQeJmEdJ8DRvOb0PLE8culjCNzLJNYLOCnBNciQJ3Y8I78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762150877; c=relaxed/simple;
-	bh=NdHOhxDB5X511h77TiK0y3+SbRf+3iHy43ELTPyc6yU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dhgs2+LpfeZKXclMlkunDdnqgIRU1wiAo/p7eRigvNHmvYsWbrsz4JaXYArPO4W0MrPs4Q9g5mFyVieJ0dAznztieiqMQbAQf9rxQAaHqaBpdxVAQcmS3qjf1gswg2Tl5hLe6BN9STSuxdrccOYdntY9ySH3YqVds/CxsiBeTig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=J9TbzQkf; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 4795708ab87d11f0ae1e63ff8927bad3-20251103
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=6KEPQoelIaSRZixu2FcCj8GjygNUojPP6SBnzoaIaQY=;
-	b=J9TbzQkf1RHiwoyYg21ABsKdPvvFSeDE8fysDSeEBh/wNpaZb0E8njL1q9N28N/m4RFHPNDKJYJ49yQ9FB9Dnf5y//6hgiFKO2UwXnT7aSoaR6U486oK4wphWeQ64lww3ablwnXiqqmA75Nvfyrbg3gXYnNb9xpg6808+w0zp6c=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.6,REQID:718f3b56-4151-4777-9baf-526e0e519b72,IP:0,UR
-	L:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-25
-X-CID-META: VersionHash:a9d874c,CLOUDID:31ee0fe0-3890-4bb9-a90e-2a6a4ecf6c66,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102|836|888|898,TC:-5,Content:0|15|5
-	0,EDM:-3,IP:nil,URL:0,File:130,RT:0,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OS
-	A:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 2,SSN|SDN
-X-CID-BAS: 2,SSN|SDN,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 4795708ab87d11f0ae1e63ff8927bad3-20251103
-Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw01.mediatek.com
-	(envelope-from <ot_zexin.wang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 282544113; Mon, 03 Nov 2025 14:21:05 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Mon, 3 Nov 2025 14:20:59 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1748.26 via Frontend Transport; Mon, 3 Nov 2025 14:20:58 +0800
-From: Zexin Wang <ot_zexin.wang@mediatek.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Zexin Wang
-	<ot_zexin.wang@mediatek.com>, Jack Hsu <jh.hsu@mediatek.com>
-Subject: [PATCH] reset-controller: ti: introduce a new reset handler
-Date: Mon, 3 Nov 2025 14:21:00 +0800
-Message-ID: <20251103062103.32697-1-ot_zexin.wang@mediatek.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1762151035; c=relaxed/simple;
+	bh=WTaKpLvTjt4nUuQt9UAtDrAjwa0SikWZXQFh6O2+IeA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QLWfnHsUAI/+vnmTEWvR0sa79CAjN2m74xYTUzf5d7q8ZBlTh+kmgKvgi2eL2BhBtMq/haaH/X5WxyUqkxYJOtrY9MiB2GnhlE9uh0WzjNUOFw3uDY1QXOXLq1/MPaFoxWtr/INcSRoKtPJnhGlfIqs1QEZYA/GTUlaQ2IbLsC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gzUUfsj/; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <7df70d3be4043296471f3cd3267898f953985d9a.camel@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1762151030;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WTaKpLvTjt4nUuQt9UAtDrAjwa0SikWZXQFh6O2+IeA=;
+	b=gzUUfsj/fpRCUVEd+stNrAlAIx6WukwkBKUN6cdU8BXB6bc5iuOFhYHd2iJ0E2E+NruhAe
+	ZDThNdUJApFoCyPPedqvzE1SEbk8PPwQvqz1P2damHKbAdK8Gcrxbee35ZUVzWQ4Z+KlIz
+	+RejTO0uHrTQvijeeFTlqEn2ld7zMfo=
+Subject: Re: [PATCH bpf-next v3 1/2] bpf: Skip bounds adjustment for
+ conditional jumps on same scalar register
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: KaFai Wan <kafai.wan@linux.dev>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>,  John Fastabend <john.fastabend@gmail.com>, Andrii
+ Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
+ Eduard <eddyz87@gmail.com>, Song Liu <song@kernel.org>,  Yonghong Song
+ <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, Stanislav
+ Fomichev <sdf@fomichev.me>,  Hao Luo <haoluo@google.com>, Jiri Olsa
+ <jolsa@kernel.org>, Shuah Khan <shuah@kernel.org>, Paul Chaignon
+ <paul.chaignon@gmail.com>, Matan Shachnai <m.shachnai@gmail.com>, Henriette
+ Herzog <henriette.herzog@rub.de>, Luis Gerhorst <luis.gerhorst@fau.de>,
+ Harishankar Vishwanathan <harishankar.vishwanathan@gmail.com>,
+ colin.i.king@gmail.com, bpf <bpf@vger.kernel.org>, LKML
+ <linux-kernel@vger.kernel.org>, "open list:KERNEL SELFTEST FRAMEWORK"
+ <linux-kselftest@vger.kernel.org>, Kaiyan Mei <M202472210@hust.edu.cn>, 
+ Yinhao Hu <dddddd@hust.edu.cn>
+Date: Mon, 03 Nov 2025 14:23:21 +0800
+In-Reply-To: <CAADnVQ+4QoCU4gYEfTR6Ok122zkfG32s8AxRx-irMcCA1jEhvQ@mail.gmail.com>
+References: <20251031154107.403054-1-kafai.wan@linux.dev>
+	 <20251031154107.403054-2-kafai.wan@linux.dev>
+	 <CAADnVQ+4QoCU4gYEfTR6Ok122zkfG32s8AxRx-irMcCA1jEhvQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-Migadu-Flow: FLOW_OUT
 
-Introduce ti_syscon_reset() to integrate assert and deassert together.
-If some modules need do serialized assert and deassert operations
-to reset itself, reset_control_reset can be called for convenience.
-
-Signed-off-by: Zexin Wang <ot_zexin.wang@mediatek.com>
----
- drivers/reset/reset-ti-syscon.c | 34 +++++++++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
-
-diff --git a/drivers/reset/reset-ti-syscon.c b/drivers/reset/reset-ti-syscon.c
-index 23f86ddb8668..f37685e32b0a 100644
---- a/drivers/reset/reset-ti-syscon.c
-+++ b/drivers/reset/reset-ti-syscon.c
-@@ -7,6 +7,7 @@
-  *	Suman Anna <afd@ti.com>
-  */
- 
-+#include <linux/delay.h>
- #include <linux/mfd/syscon.h>
- #include <linux/module.h>
- #include <linux/of.h>
-@@ -42,12 +43,14 @@ struct ti_syscon_reset_control {
-  * @regmap: regmap handle containing the memory-mapped reset registers
-  * @controls: array of reset controls
-  * @nr_controls: number of controls in control array
-+ * @reset_duration_us: time of controller assert reset
-  */
- struct ti_syscon_reset_data {
- 	struct reset_controller_dev rcdev;
- 	struct regmap *regmap;
- 	struct ti_syscon_reset_control *controls;
- 	unsigned int nr_controls;
-+	unsigned int reset_duration_us;
- };
- 
- #define to_ti_syscon_reset_data(_rcdev)	\
-@@ -150,9 +153,37 @@ static int ti_syscon_reset_status(struct reset_controller_dev *rcdev,
- 		!(control->flags & STATUS_SET);
- }
- 
-+/**
-+ * ti_syscon_reset() - perform a full reset cycle on a device
-+ * @rcdev: reset controller entity
-+ * @id: ID of the reset to be asserted and deasserted
-+ *
-+ * This function performs a full reset cycle by asserting and then
-+ * deasserting the reset signal for a device. It ensures the device
-+ * is properly reset and ready for operation.
-+ *
-+ * Return: 0 for successful request, else a corresponding error value
-+ */
-+static int ti_syscon_reset(struct reset_controller_dev *rcdev,
-+		   unsigned long id)
-+{
-+	struct ti_syscon_reset_data *data = to_ti_syscon_reset_data(rcdev);
-+	int ret;
-+
-+	ret = ti_syscon_reset_assert(rcdev, id);
-+	if (ret)
-+		return ret;
-+
-+	if (data->reset_duration_us)
-+		usleep_range(data->reset_duration_us, data->reset_duration_us * 2);
-+
-+	return ti_syscon_reset_deassert(rcdev, id);
-+}
-+
- static const struct reset_control_ops ti_syscon_reset_ops = {
- 	.assert		= ti_syscon_reset_assert,
- 	.deassert	= ti_syscon_reset_deassert,
-+	.reset		= ti_syscon_reset,
- 	.status		= ti_syscon_reset_status,
- };
- 
-@@ -196,6 +227,9 @@ static int ti_syscon_reset_probe(struct platform_device *pdev)
- 		controls[i].flags = be32_to_cpup(list++);
- 	}
- 
-+	of_property_read_u32(pdev->dev.of_node, "reset-duration-us",
-+			     &data->reset_duration_us);
-+
- 	data->rcdev.ops = &ti_syscon_reset_ops;
- 	data->rcdev.owner = THIS_MODULE;
- 	data->rcdev.of_node = np;
--- 
-2.45.2
+T24gRnJpLCAyMDI1LTEwLTMxIGF0IDA5OjM3IC0wNzAwLCBBbGV4ZWkgU3Rhcm92b2l0b3Ygd3Jv
+dGU6Cj4gT24gRnJpLCBPY3QgMzEsIDIwMjUgYXQgODo0NOKAr0FNIEthRmFpIFdhbiA8a2FmYWku
+d2FuQGxpbnV4LmRldj4gd3JvdGU6Cj4gPiAKPiA+IFdoZW4gY29uZGl0aW9uYWwganVtcHMgYXJl
+IHBlcmZvcm1lZCBvbiB0aGUgc2FtZSBzY2FsYXIgcmVnaXN0ZXIKPiA+IChlLmcuLCByMCA8PSBy
+MCwgcjAgPiByMCwgcjAgPCByMCksIHRoZSBCUEYgdmVyaWZpZXIgaW5jb3JyZWN0bHkKPiA+IGF0
+dGVtcHRzIHRvIGFkanVzdCB0aGUgcmVnaXN0ZXIncyBtaW4vbWF4IGJvdW5kcy4gVGhpcyBsZWFk
+cyB0bwo+ID4gaW52YWxpZCByYW5nZSBib3VuZHMgYW5kIHRyaWdnZXJzIGEgQlVHIHdhcm5pbmcu
+Cj4gPiAKPiA+IFRoZSBwcm9ibGVtYXRpYyBCUEYgcHJvZ3JhbToKPiA+IMKgwqAgMDogY2FsbCBi
+cGZfZ2V0X3ByYW5kb21fdTMyCj4gPiDCoMKgIDE6IHc4ID0gMHg4MDAwMDAwMAo+ID4gwqDCoCAy
+OiByMCAmPSByOAo+ID4gwqDCoCAzOiBpZiByMCA+IHIwIGdvdG8gPGV4aXQ+Cj4gPiAKPiA+IFRo
+ZSBpbnN0cnVjdGlvbiAzIHRyaWdnZXJzIGtlcm5lbCB3YXJuaW5nOgo+ID4gwqDCoCAzOiBpZiBy
+MCA+IHIwIGdvdG8gPGV4aXQ+Cj4gPiDCoMKgIHRydWVfcmVnMTogcmFuZ2UgYm91bmRzIHZpb2xh
+dGlvbiB1NjQ9WzB4MSwgMHgwXSBzNjQ9WzB4MSwgMHgwXSB1MzI9WzB4MSwgMHgwXSBzMzI9WzB4
+MSwgMHgwXQo+ID4gdmFyX29mZj0oMHgwLCAweDApCj4gPiDCoMKgIHRydWVfcmVnMjogY29uc3Qg
+dG51bSBvdXQgb2Ygc3luYyB3aXRoIHJhbmdlIGJvdW5kcyB1NjQ9WzB4MCwgMHhmZmZmZmZmZmZm
+ZmZmZmZmXQo+ID4gczY0PVsweDgwMDAwMDAwMDAwMDAwMDAsIDB4N2ZmZmZmZmZmZmZmZmZmZl0g
+dmFyX29mZj0oMHgwLCAweDApCj4gPiAKPiA+IENvbXBhcmluZyBhIHJlZ2lzdGVyIHdpdGggaXRz
+ZWxmIHNob3VsZCBub3QgY2hhbmdlIGl0cyBib3VuZHMgYW5kCj4gPiBmb3IgbW9zdCBjb21wYXJp
+c29uIG9wZXJhdGlvbnMsIGNvbXBhcmluZyBhIHJlZ2lzdGVyIHdpdGggaXRzZWxmIGhhcwo+ID4g
+YSBrbm93biByZXN1bHQgKGUuZy4sIHIwID09IHIwIGlzIGFsd2F5cyB0cnVlLCByMCA8IHIwIGlz
+IGFsd2F5cyBmYWxzZSkuCj4gPiAKPiA+IEZpeCB0aGlzIGJ5Ogo+ID4gMS4gRW5oYW5jZSBpc19z
+Y2FsYXJfYnJhbmNoX3Rha2VuKCkgdG8gcHJvcGVybHkgaGFuZGxlIGJyYW5jaCBkaXJlY3Rpb24K
+PiA+IMKgwqAgY29tcHV0YXRpb24gZm9yIHNhbWUgcmVnaXN0ZXIgY29tcGFyaXNvbnMgYWNyb3Nz
+IGFsbCBCUEYganVtcCBvcGVyYXRpb25zCj4gPiAyLiBBZGRzIGVhcmx5IHJldHVybiBpbiByZWdf
+c2V0X21pbl9tYXgoKSB0byBhdm9pZCBib3VuZHMgYWRqdXN0bWVudAo+ID4gwqDCoCBmb3IgdW5r
+bm93biBicmFuY2ggZGlyZWN0aW9ucyAoZS5nLiwgQlBGX0pTRVQpIG9uIHRoZSBzYW1lIHJlZ2lz
+dGVyCj4gPiAKPiA+IFRoZSBmaXggZW5zdXJlcyB0aGF0IHVubmVjZXNzYXJ5IGJvdW5kcyBhZGp1
+c3RtZW50cyBhcmUgc2tpcHBlZCwgcHJldmVudGluZwo+ID4gdGhlIHZlcmlmaWVyIGJ1ZyB3aGls
+ZSBtYWludGFpbmluZyBjb3JyZWN0IGJyYW5jaCBkaXJlY3Rpb24gYW5hbHlzaXMuCj4gPiAKPiA+
+IFJlcG9ydGVkLWJ5OiBLYWl5YW4gTWVpIDxNMjAyNDcyMjEwQGh1c3QuZWR1LmNuPgo+ID4gUmVw
+b3J0ZWQtYnk6IFlpbmhhbyBIdSA8ZGRkZGRkQGh1c3QuZWR1LmNuPgo+ID4gQ2xvc2VzOiBodHRw
+czovL2xvcmUua2VybmVsLm9yZy9hbGwvMTg4MWYwZjUuMzAwZGYuMTk5ZjI1NzZhMDEuQ29yZW1h
+aWwua2FpeWFubUBodXN0LmVkdS5jbi8KPiA+IFNpZ25lZC1vZmYtYnk6IEthRmFpIFdhbiA8a2Fm
+YWkud2FuQGxpbnV4LmRldj4KPiA+IC0tLQo+ID4gwqBrZXJuZWwvYnBmL3ZlcmlmaWVyLmMgfCAz
+MyArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysKPiA+IMKgMSBmaWxlIGNoYW5nZWQs
+IDMzIGluc2VydGlvbnMoKykKPiA+IAo+ID4gZGlmZiAtLWdpdCBhL2tlcm5lbC9icGYvdmVyaWZp
+ZXIuYyBiL2tlcm5lbC9icGYvdmVyaWZpZXIuYwo+ID4gaW5kZXggNTQyZTIzZmIxOWM3Li5hNTcx
+MjYzZjRlYmUgMTAwNjQ0Cj4gPiAtLS0gYS9rZXJuZWwvYnBmL3ZlcmlmaWVyLmMKPiA+ICsrKyBi
+L2tlcm5lbC9icGYvdmVyaWZpZXIuYwo+ID4gQEAgLTE1OTk1LDYgKzE1OTk1LDggQEAgc3RhdGlj
+IGludCBpc19zY2FsYXJfYnJhbmNoX3Rha2VuKHN0cnVjdCBicGZfcmVnX3N0YXRlICpyZWcxLCBz
+dHJ1Y3QKPiA+IGJwZl9yZWdfc3RhCj4gPiAKPiA+IMKgwqDCoMKgwqDCoMKgIHN3aXRjaCAob3Bj
+b2RlKSB7Cj4gPiDCoMKgwqDCoMKgwqDCoCBjYXNlIEJQRl9KRVE6Cj4gPiArwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCBpZiAocmVnMSA9PSByZWcyKQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJldHVybiAxOwo+ID4gwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIC8qIGNvbnN0YW50cywgdW1pbi91bWF4IGFuZCBzbWluL3NtYXggY2hl
+Y2tzIHdvdWxkIGJlCj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAqIHJlZHVu
+ZGFudCBpbiB0aGlzIGNhc2UgYmVjYXVzZSB0aGV5IGFsbCBzaG91bGQgbWF0Y2gKPiA+IMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgICovCj4gPiBAQCAtMTYwMjEsNiArMTYwMjMsOCBA
+QCBzdGF0aWMgaW50IGlzX3NjYWxhcl9icmFuY2hfdGFrZW4oc3RydWN0IGJwZl9yZWdfc3RhdGUg
+KnJlZzEsIHN0cnVjdAo+ID4gYnBmX3JlZ19zdGEKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCB9Cj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgYnJlYWs7Cj4gPiDC
+oMKgwqDCoMKgwqDCoCBjYXNlIEJQRl9KTkU6Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoCBpZiAocmVnMSA9PSByZWcyKQo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIHJldHVybiAwOwo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIC8qIGNvbnN0YW50cywgdW1pbi91bWF4IGFuZCBzbWluL3NtYXggY2hlY2tzIHdvdWxkIGJl
+Cj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAqIHJlZHVuZGFudCBpbiB0aGlz
+IGNhc2UgYmVjYXVzZSB0aGV5IGFsbCBzaG91bGQgbWF0Y2gKPiA+IMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgICovCj4gPiBAQCAtMTYwNDcsNiArMTYwNTEsMTIgQEAgc3RhdGljIGlu
+dCBpc19zY2FsYXJfYnJhbmNoX3Rha2VuKHN0cnVjdCBicGZfcmVnX3N0YXRlICpyZWcxLCBzdHJ1
+Y3QKPiA+IGJwZl9yZWdfc3RhCj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfQo+
+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGJyZWFrOwo+ID4gwqDCoMKgwqDCoMKg
+wqAgY2FzZSBCUEZfSlNFVDoKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGlmIChy
+ZWcxID09IHJlZzIpIHsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCBpZiAodG51bV9pc19jb25zdCh0MSkpCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJldHVybiB0MS52YWx1ZSAh
+PSAwOwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGVs
+c2UKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqAgcmV0dXJuIChzbWluMSA8PSAwICYmIHNtYXgxID49IDApID8gLTEgOiAxOwo+
+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfQo+ID4gwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIGlmICghaXNfcmVnX2NvbnN0KHJlZzIsIGlzX2ptcDMyKSkgewo+ID4gwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBzd2FwKHJlZzEsIHJl
+ZzIpOwo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBz
+d2FwKHQxLCB0Mik7Cj4gPiBAQCAtMTYwNTksNDggKzE2MDY5LDY0IEBAIHN0YXRpYyBpbnQgaXNf
+c2NhbGFyX2JyYW5jaF90YWtlbihzdHJ1Y3QgYnBmX3JlZ19zdGF0ZSAqcmVnMSwgc3RydWN0Cj4g
+PiBicGZfcmVnX3N0YQo+ID4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCByZXR1cm4gMDsKPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBicmVh
+azsKPiA+IMKgwqDCoMKgwqDCoMKgIGNhc2UgQlBGX0pHVDoKPiA+ICvCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIGlmIChyZWcxID09IHJlZzIpCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgcmV0dXJuIDA7Cj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqAgaWYgKHVtaW4xID4gdW1heDIpCj4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJldHVybiAxOwo+ID4gwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIGVsc2UgaWYgKHVtYXgxIDw9IHVtaW4yKQo+ID4gwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZXR1cm4gMDsKPiA+IMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCBicmVhazsKPiA+IMKgwqDCoMKgwqDCoMKgIGNhc2UgQlBGX0pT
+R1Q6Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBpZiAocmVnMSA9PSByZWcyKQo+
+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHJldHVybiAw
+Owo+IAo+IFRoaXMgaXMgdWdsaWVyIHRoYW4gdGhlIHByZXZpb3VzIHZlcnNpb24uCj4gcmVnMSA9
+PSByZWcyIGlzIGEgc3l6Ym90IHRlcnJpdG9yeS4KPiBXZSBzaG91bGRuJ3QgdWdsaWZ5IHRoZSBj
+b2RlIGV2ZXJ5d2hlcmUgYmVjYXVzZSBvZiBpdC4KPiAKb2ssIHdpbGwgdXBkYXRlIGluIHY0Lgo+
+IHB3LWJvdDogY3IKCi0tIApUaGFua3MsCkthRmFpCg==
 
 
