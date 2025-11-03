@@ -1,264 +1,111 @@
-Return-Path: <linux-kernel+bounces-882408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-882410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47440C2A647
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:47:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2459C2A635
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 08:45:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFB9B3B7484
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:43:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 877A31888602
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 07:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5C52C0F62;
-	Mon,  3 Nov 2025 07:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z3NvTwNG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72D72C027D;
+	Mon,  3 Nov 2025 07:44:31 +0000 (UTC)
+Received: from unicom146.biz-email.net (unicom146.biz-email.net [210.51.26.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67939298CCF;
-	Mon,  3 Nov 2025 07:43:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4603D2BE7B5;
+	Mon,  3 Nov 2025 07:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762155795; cv=none; b=klLRYUAowzexW7pNQie74NB5xDqzdXksxeGEg1ey+CmttL1ruYB4TgtWwa79TWcCB5h5WnG2UIEnQvJxgLEhthvDLplQB7vC+6PtlodLksip8AvFsN2R6YcU1/gwpUiM+DTBdxoMNlvICfSvXsV8mz0Plb5VAwsMR5HUY6zp1v8=
+	t=1762155871; cv=none; b=Cl68MwlRmTn/d5cBW3fGQ+Nw1PKTLfzwChno4NlHnJr+aFlAolUZlfbb19zWfbN/IZkMDOHh7fuD1+DLWupDEIZ8aFzv8SubvnZTxCnn8mZjLZEz/ecc3A2dwbpk2pDpHS2UwOa6e5EzkwwMBapxKb21jU1/SQl6jFAcNIkSPTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762155795; c=relaxed/simple;
-	bh=id3ERlimBjRZ4jOshniERH1qwi+KMdHLbhMZnBhGNaE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O6MVrHpLPtCmWgLh9HBgWHnkc5kUtF8LgbAdOeGDdQYbcKJuyy7UyB59g2JQnXdFXC14OKlsPCJrJjFIDuHMCgXRJF2ZWtg4rCrHpvZx3akb336oJ3Kkp31X8B/7GyrQJh9zfg8UzDEtY93Lt0pwZkiYE0mkZIof3IU/W6p3V6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z3NvTwNG; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1762155793; x=1793691793;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=id3ERlimBjRZ4jOshniERH1qwi+KMdHLbhMZnBhGNaE=;
-  b=Z3NvTwNGdkLJw8+MU/r1LwftCGFjcMWQ9OBQ0KSEwdNs1MP2HR66VPsx
-   jvzhl7BDxRdABvFcSiQnLqF/08JQVmxiJ5qoATaTS3mdct0KdyzRycoLG
-   uSErGPzs07PRvG6fsWHT0L2mrzcfs3AYFSOmFMX5nKtWN9CAai1E97HwA
-   K3/3xmQ36CbkUCwaDUj1YDeQCou4sGO3RBmMcB27LoT9M6dOKiUPhp+iJ
-   ajYz/kkpdH6MyMhsIb+11D+M8Mb+xxjek0QcamW0CKFw/qFrIXA7e30HX
-   D4/SKmX1QrVm1n+ysD6IZmXOHCO/9BZiZhQWrZQVWxBDfHPAubuEp+7j3
-   w==;
-X-CSE-ConnectionGUID: BdaZBDX+QSCMYup1XSlS3w==
-X-CSE-MsgGUID: TBttdrqSTqquyGjT57Qw3g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11601"; a="74828330"
-X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
-   d="scan'208";a="74828330"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2025 23:43:12 -0800
-X-CSE-ConnectionGUID: 780hYnG3RfywyumOrqr5Ww==
-X-CSE-MsgGUID: w9EifOB1QGuixG7+2s1Vwg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.19,275,1754982000"; 
-   d="scan'208";a="187525555"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.232.191]) ([10.124.232.191])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Nov 2025 23:43:10 -0800
-Message-ID: <a9a59960-bd6c-4a8e-b07c-b941853fecaf@intel.com>
-Date: Mon, 3 Nov 2025 15:42:54 +0800
+	s=arc-20240116; t=1762155871; c=relaxed/simple;
+	bh=mqtTEHnfdDj7ufOnIaA3taPobJloaDUr/In/jZdqmZQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=i1KqVCYzKoRl3nX5LzyTPZFOg3qsRJRwX6S10vjBX5eNyARkIuuZuSY6Jo51qqY/bje76OzuV16tlnDTvjbU5LhR366nNK0ZEHmQBAe+sOaY4MoR0xRid8pX4hFFyP6Yyp+mL8xwZNg4JX2skQYa54dyuxtpwsI6J7U7t85PDrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from Jtjnmail201614.home.langchao.com
+        by unicom146.biz-email.net ((D)) with ASMTP (SSL) id 202511031544212240;
+        Mon, 03 Nov 2025 15:44:21 +0800
+Received: from jtjnmailAR02.home.langchao.com (10.100.2.43) by
+ Jtjnmail201614.home.langchao.com (10.100.2.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.58; Mon, 3 Nov 2025 15:44:21 +0800
+Received: from inspur.com (10.100.2.107) by jtjnmailAR02.home.langchao.com
+ (10.100.2.43) with Microsoft SMTP Server id 15.1.2507.58 via Frontend
+ Transport; Mon, 3 Nov 2025 15:44:21 +0800
+Received: from localhost.localdomain.com (unknown [10.94.13.117])
+	by app3 (Coremail) with SMTP id awJkCsDw_vlUXQhp9sMJAA--.15676S4;
+	Mon, 03 Nov 2025 15:44:21 +0800 (CST)
+From: Chu Guangqing <chuguangqing@inspur.com>
+To: <mst@redhat.com>, <jasowang@redhat.com>, <xuanzhuo@linux.alibaba.com>,
+	<eperezma@redhat.com>, <andrew+netdev@lunn.ch>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>
+CC: <virtualization@lists.linux.dev>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Chu Guangqing <chuguangqing@inspur.com>
+Subject: [PATCH] virtio_net: Fix a typo error in virtio_net
+Date: Mon, 3 Nov 2025 15:43:05 +0800
+Message-ID: <20251103074305.4727-1-chuguangqing@inspur.com>
+X-Mailer: git-send-email 2.43.7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/4] KVM: TDX: Explicitly set user-return MSRs that
- *may* be clobbered by the TDX-Module
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>, "Kirill A. Shutemov" <kas@kernel.org>
-Cc: kvm@vger.kernel.org, x86@kernel.org, linux-coco@lists.linux.dev,
- linux-kernel@vger.kernel.org, Yan Zhao <yan.y.zhao@intel.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Hou Wenlong <houwenlong.hwl@antgroup.com>
-References: <20251030191528.3380553-1-seanjc@google.com>
- <20251030191528.3380553-2-seanjc@google.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20251030191528.3380553-2-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: awJkCsDw_vlUXQhp9sMJAA--.15676S4
+X-Coremail-Antispam: 1UD129KBjvdXoWrKw4DZw45uw1fAr48GryDWrg_yoWfurc_uw
+	1UZr43tws5Kr4Y9ay5Cw4rAFW5Ka1kWF4kGF9xK3ySkF98uF13WF9FvFyDGFZrX39Fyr1r
+	GFsxGFn8A34fZjkaLaAFLSUrUUUU1b8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbTkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_GcCE
+	3s1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s
+	1ln4kS14v26r1Y6r17M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02
+	F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4I
+	kC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4II
+	rI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMx
+	C20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAF
+	wI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20x
+	vE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v2
+	0xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxV
+	W8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0pRfcTQUUUUU=
+X-CM-SenderInfo: 5fkxw35dqj1xlqj6x0hvsx2hhfrp/
+X-CM-DELIVERINFO: =?B?aGgYCpRRTeOiUs3aOqHZ50hzsfHKF9Ds6CbXmDm38RucXu3DYXJR7Zlh9zE0nt/Iac
+	D+KRUjP8h4mBi1RxM9Ia5pGzwGWIFG12ndAMRSAp2L3HO3jalIbuAhB7ycZuhkKUFH9M9G
+	hF5mfmemBa/tI1nkgFQ=
+Content-Type: text/plain
+tUid: 202511031544215cf76b7d677404249b6809f204a42c80
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-On 10/31/2025 3:15 AM, Sean Christopherson wrote:
-> Set all user-return MSRs to their post-TD-exit value when preparing to run
-> a TDX vCPU to ensure the value that KVM expects to be loaded after running
-> the vCPU is indeed the value that's loaded in hardware.  If the TDX-Module
-> doesn't actually enter the guest, i.e. doesn't do VM-Enter, then it won't
-> "restore" VMM state, i.e. won't clobber user-return MSRs to their expected
-> post-run values, in which case simply updating KVM's "cached" value will
-> effectively corrupt the cache due to hardware still holding the original
-> value.
-> 
-> In theory, KVM could conditionally update the current user-return value if
-> and only if tdh_vp_enter() succeeds, but in practice "success" doesn't
-> guarantee the TDX-Module actually entered the guest, e.g. if the TDX-Module
-> synthesizes an EPT Violation because it suspects a zero-step attack.
-> 
-> Force-load the expected values instead of trying to decipher whether or
-> not the TDX-Module restored/clobbered MSRs, as the risk doesn't justify
-> the benefits.  Effectively avoiding four WRMSRs once per run loop (even if
-> the vCPU is scheduled out, user-return MSRs only need to be reloaded if
-> the CPU exits to userspace or runs a non-TDX vCPU) is likely in the noise
-> when amortized over all entries, given the cost of running a TDX vCPU.
-> E.g. the cost of the WRMSRs is somewhere between ~300 and ~500 cycles,
-> whereas the cost of a _single_ roundtrip to/from a TDX guest is thousands
-> of cycles.
-> 
-> Fixes: e0b4f31a3c65 ("KVM: TDX: restore user ret MSRs")
-> Cc: stable@vger.kernel.org
-> Cc: Yan Zhao <yan.y.zhao@intel.com>
-> Cc: Xiaoyao Li <xiaoyao.li@intel.com>
-> Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+Fix the spelling error of "separate".
 
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+Signed-off-by: Chu Guangqing <chuguangqing@inspur.com>
+---
+ drivers/net/virtio_net.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->   arch/x86/include/asm/kvm_host.h |  1 -
->   arch/x86/kvm/vmx/tdx.c          | 52 +++++++++++++++------------------
->   arch/x86/kvm/vmx/tdx.h          |  1 -
->   arch/x86/kvm/x86.c              |  9 ------
->   4 files changed, 23 insertions(+), 40 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 48598d017d6f..d158dfd1842e 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -2378,7 +2378,6 @@ int kvm_pv_send_ipi(struct kvm *kvm, unsigned long ipi_bitmap_low,
->   int kvm_add_user_return_msr(u32 msr);
->   int kvm_find_user_return_msr(u32 msr);
->   int kvm_set_user_return_msr(unsigned index, u64 val, u64 mask);
-> -void kvm_user_return_msr_update_cache(unsigned int index, u64 val);
->   u64 kvm_get_user_return_msr(unsigned int slot);
->   
->   static inline bool kvm_is_supported_user_return_msr(u32 msr)
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index 326db9b9c567..cde91a995076 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -763,25 +763,6 @@ static bool tdx_protected_apic_has_interrupt(struct kvm_vcpu *vcpu)
->   	return tdx_vcpu_state_details_intr_pending(vcpu_state_details);
->   }
->   
-> -/*
-> - * Compared to vmx_prepare_switch_to_guest(), there is not much to do
-> - * as SEAMCALL/SEAMRET calls take care of most of save and restore.
-> - */
-> -void tdx_prepare_switch_to_guest(struct kvm_vcpu *vcpu)
-> -{
-> -	struct vcpu_vt *vt = to_vt(vcpu);
-> -
-> -	if (vt->guest_state_loaded)
-> -		return;
-> -
-> -	if (likely(is_64bit_mm(current->mm)))
-> -		vt->msr_host_kernel_gs_base = current->thread.gsbase;
-> -	else
-> -		vt->msr_host_kernel_gs_base = read_msr(MSR_KERNEL_GS_BASE);
-> -
-> -	vt->guest_state_loaded = true;
-> -}
-> -
->   struct tdx_uret_msr {
->   	u32 msr;
->   	unsigned int slot;
-> @@ -795,19 +776,38 @@ static struct tdx_uret_msr tdx_uret_msrs[] = {
->   	{.msr = MSR_TSC_AUX,},
->   };
->   
-> -static void tdx_user_return_msr_update_cache(void)
-> +void tdx_prepare_switch_to_guest(struct kvm_vcpu *vcpu)
->   {
-> +	struct vcpu_vt *vt = to_vt(vcpu);
->   	int i;
->   
-> +	if (vt->guest_state_loaded)
-> +		return;
-> +
-> +	if (likely(is_64bit_mm(current->mm)))
-> +		vt->msr_host_kernel_gs_base = current->thread.gsbase;
-> +	else
-> +		vt->msr_host_kernel_gs_base = read_msr(MSR_KERNEL_GS_BASE);
-> +
-> +	vt->guest_state_loaded = true;
-> +
-> +	/*
-> +	 * Explicitly set user-return MSRs that are clobbered by the TDX-Module
-> +	 * if VP.ENTER succeeds, i.e. on TD-Exit, with the values that would be
-> +	 * written by the TDX-Module.  Don't rely on the TDX-Module to actually
-> +	 * clobber the MSRs, as the contract is poorly defined and not upheld.
-> +	 * E.g. the TDX-Module will synthesize an EPT Violation without doing
-> +	 * VM-Enter if it suspects a zero-step attack, and never "restore" VMM
-> +	 * state.
-> +	 */
->   	for (i = 0; i < ARRAY_SIZE(tdx_uret_msrs); i++)
-> -		kvm_user_return_msr_update_cache(tdx_uret_msrs[i].slot,
-> -						 tdx_uret_msrs[i].defval);
-> +		kvm_set_user_return_msr(tdx_uret_msrs[i].slot,
-> +					tdx_uret_msrs[i].defval, -1ull);
->   }
->   
->   static void tdx_prepare_switch_to_host(struct kvm_vcpu *vcpu)
->   {
->   	struct vcpu_vt *vt = to_vt(vcpu);
-> -	struct vcpu_tdx *tdx = to_tdx(vcpu);
->   
->   	if (!vt->guest_state_loaded)
->   		return;
-> @@ -815,11 +815,6 @@ static void tdx_prepare_switch_to_host(struct kvm_vcpu *vcpu)
->   	++vcpu->stat.host_state_reload;
->   	wrmsrl(MSR_KERNEL_GS_BASE, vt->msr_host_kernel_gs_base);
->   
-> -	if (tdx->guest_entered) {
-> -		tdx_user_return_msr_update_cache();
-> -		tdx->guest_entered = false;
-> -	}
-> -
->   	vt->guest_state_loaded = false;
->   }
->   
-> @@ -1059,7 +1054,6 @@ fastpath_t tdx_vcpu_run(struct kvm_vcpu *vcpu, u64 run_flags)
->   		update_debugctlmsr(vcpu->arch.host_debugctl);
->   
->   	tdx_load_host_xsave_state(vcpu);
-> -	tdx->guest_entered = true;
->   
->   	vcpu->arch.regs_avail &= TDX_REGS_AVAIL_SET;
->   
-> diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
-> index ca39a9391db1..7f258870dc41 100644
-> --- a/arch/x86/kvm/vmx/tdx.h
-> +++ b/arch/x86/kvm/vmx/tdx.h
-> @@ -67,7 +67,6 @@ struct vcpu_tdx {
->   	u64 vp_enter_ret;
->   
->   	enum vcpu_tdx_state state;
-> -	bool guest_entered;
->   
->   	u64 map_gpa_next;
->   	u64 map_gpa_end;
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index b4b5d2d09634..639589af7cbe 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -681,15 +681,6 @@ int kvm_set_user_return_msr(unsigned slot, u64 value, u64 mask)
->   }
->   EXPORT_SYMBOL_FOR_KVM_INTERNAL(kvm_set_user_return_msr);
->   
-> -void kvm_user_return_msr_update_cache(unsigned int slot, u64 value)
-> -{
-> -	struct kvm_user_return_msrs *msrs = this_cpu_ptr(user_return_msrs);
-> -
-> -	msrs->values[slot].curr = value;
-> -	kvm_user_return_register_notifier(msrs);
-> -}
-> -EXPORT_SYMBOL_FOR_KVM_INTERNAL(kvm_user_return_msr_update_cache);
-> -
->   u64 kvm_get_user_return_msr(unsigned int slot)
->   {
->   	return this_cpu_ptr(user_return_msrs)->values[slot].curr;
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index 8e8a179aaa49..1e6f5e650f11 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -3760,7 +3760,7 @@ static int virtnet_set_queues(struct virtnet_info *vi, u16 queue_pairs)
+ 	 * (2) no user configuration.
+ 	 *
+ 	 * During rss command processing, device updates queue_pairs using rss.max_tx_vq. That is,
+-	 * the device updates queue_pairs together with rss, so we can skip the sperate queue_pairs
++	 * the device updates queue_pairs together with rss, so we can skip the separate queue_pairs
+ 	 * update (VIRTIO_NET_CTRL_MQ_VQ_PAIRS_SET below) and return directly.
+ 	 */
+ 	if (vi->has_rss && !netif_is_rxfh_configured(dev)) {
+-- 
+2.43.7
 
 
