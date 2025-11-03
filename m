@@ -1,109 +1,142 @@
-Return-Path: <linux-kernel+bounces-883488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-883491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06F20C2D974
-	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:07:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC0A9C2D968
+	for <lists+linux-kernel@lfdr.de>; Mon, 03 Nov 2025 19:06:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id CE9744F414B
-	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:05:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C1323AEB83
+	for <lists+linux-kernel@lfdr.de>; Mon,  3 Nov 2025 18:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D272BE7C2;
-	Mon,  3 Nov 2025 18:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P0Q6iZmJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DB3719ABDE;
-	Mon,  3 Nov 2025 18:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1F4137C52;
+	Mon,  3 Nov 2025 18:06:37 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B25E441C72;
+	Mon,  3 Nov 2025 18:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1762193153; cv=none; b=YGRjNe3iKY8ZUBBoiPUJe7F/CeBWkD24tFWloTYJXxdC4pYzo/Sx7PNzuSpxucM1aT8JT+Otyk36hNQp5qwVS7ulrxnXyuEuXSY/jV46RfYtWCP7KRK9legk9aKodUMotI3pYUwfrg3Er5JluaD4eGaMBjnYMM1plApdcX7xmts=
+	t=1762193197; cv=none; b=qbvTZ//rKXu8P1ZmibuQ4mGBINJ5RcibspxdqSakWeEfPhIfcvANxAMIvTn91iYXNq41S1C/jMEzu1X6ll8a0FHmE2bpvvSDq3i96KgamLHnRXs7oxdVQTwPGss87Y8Vyd970zxsbMqQcAJkYmeTGBOU8UFeoP//9l/Mci4sDbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1762193153; c=relaxed/simple;
-	bh=+64iKrvV3aelQ+MDxd4Vv/MtBZ3N2qzpU9GTaRPio/U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=a9GdSf8OgvKX/d9gEBcAczchGMtTnl6qQW6d0QtQ+N7j8NX2jyzw7L2DlarwfeQrD53FZqYC8P94GlgJnkPjH5zTKB032z2DPdCoG9jfGHlREFA3GxVuEcePkkf7z1oi/G9umx6TBwuqVm1tOb3PVZ9Ni9CHr2Bp2RmWzQX/tGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P0Q6iZmJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AB36C4CEE7;
-	Mon,  3 Nov 2025 18:05:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1762193153;
-	bh=+64iKrvV3aelQ+MDxd4Vv/MtBZ3N2qzpU9GTaRPio/U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=P0Q6iZmJK/NA+gbfeQInwBVD+j/Mn4E1i/RYRGFSSkO9j48VXUBSt4qX7JDbU9/sh
-	 oQaUywp3A+5CnhS2iXAStJ0jiuKL+Iz79AezYdKAOdkZHlIlnXylhHGjX+X6iqj+IF
-	 n6QlkUu4/grO0RvSCHPixVuKjT1yJPWqvv9s+/q1qzlfKkH/iNA1Tqe55xboZrNhm1
-	 LKekEXOUMr07Yqs22nUM1noYOwUY6u3H1N1Zz1ZLfekCtPCeFvHjyRJJ3G2jxZ6raM
-	 Gsh6bOPS3mkh2oaFKdjmn7dcQlkMDUwbWf+FxdzN1FWZHRr4dNx82XokKVxrHSed4T
-	 0zF60vTlv8V8g==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc: akpm@linux-foundation.org,  brauner@kernel.org,  corbet@lwn.net,
-  graf@amazon.com,  jgg@ziepe.ca,  linux-kernel@vger.kernel.org,
-  linux-kselftest@vger.kernel.org,  linux-mm@kvack.org,
-  masahiroy@kernel.org,  ojeda@kernel.org,  pratyush@kernel.org,
-  rdunlap@infradead.org,  rppt@kernel.org,  tj@kernel.org,
-  yanjun.zhu@linux.dev
-Subject: Re: [PATCH v9 3/9] kho: add interfaces to unpreserve folios, page
- ranges, and vmalloc
-In-Reply-To: <20251101142325.1326536-4-pasha.tatashin@soleen.com> (Pasha
-	Tatashin's message of "Sat, 1 Nov 2025 10:23:19 -0400")
-References: <20251101142325.1326536-1-pasha.tatashin@soleen.com>
-	<20251101142325.1326536-4-pasha.tatashin@soleen.com>
-Date: Mon, 03 Nov 2025 19:05:49 +0100
-Message-ID: <mafs08qgnc7pe.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1762193197; c=relaxed/simple;
+	bh=eU7WK/1PqFlvzgHgAfgHxGbQJbuUHY5MaiGqpoJ3158=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iYxsihjemCm/blPZYdTM+XfSg9RehCfg2pIc1Kc15okHIXLh1bKYOUoJhdEi9QJCgMJvIKCXIORaBn/7tX0yhfbGi3S8ZOkESMsTzrjAWRrKS3NNh1Zqkb4omMWQmJsgXPwYkK+1OR0wQ0w7HTBcnt7M6S7Ta8g7PQeQpw+p47g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 183932A6B;
+	Mon,  3 Nov 2025 10:06:27 -0800 (PST)
+Received: from [10.1.30.16] (unknown [10.1.30.16])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 67BAA3F694;
+	Mon,  3 Nov 2025 10:06:27 -0800 (PST)
+Message-ID: <bcc78ea0-5eca-49e5-bafd-84a16e06ab98@arm.com>
+Date: Mon, 3 Nov 2025 18:06:24 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 02/12] x86/xen: simplify flush_lazy_mmu()
+To: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>, Borislav Petkov
+ <bp@alien8.de>, Catalin Marinas <catalin.marinas@arm.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ David Woodhouse <dwmw2@infradead.org>, "H. Peter Anvin" <hpa@zytor.com>,
+ Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+ Juergen Gross <jgross@suse.com>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Hocko <mhocko@suse.com>,
+ Mike Rapoport <rppt@kernel.org>, Nicholas Piggin <npiggin@gmail.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ryan Roberts <ryan.roberts@arm.com>,
+ Suren Baghdasaryan <surenb@google.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Vlastimil Babka <vbabka@suse.cz>,
+ Will Deacon <will@kernel.org>, Yeoreum Yun <yeoreum.yun@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+ sparclinux@vger.kernel.org, xen-devel@lists.xenproject.org, x86@kernel.org
+References: <20251029100909.3381140-1-kevin.brodsky@arm.com>
+ <20251029100909.3381140-3-kevin.brodsky@arm.com>
+ <5a3ccb7e-9d36-4ac8-9634-c8dec3d6a47c@redhat.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <5a3ccb7e-9d36-4ac8-9634-c8dec3d6a47c@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Pasha,
-
-On Sat, Nov 01 2025, Pasha Tatashin wrote:
-
-> Allow users of KHO to cancel the previous preservation by adding the
-> necessary interfaces to unpreserve folio, pages, and vmallocs.
+On 01/11/2025 12:14, David Hildenbrand wrote:
+> On 29.10.25 11:08, Kevin Brodsky wrote:
+>> arch_flush_lazy_mmu_mode() is called when outstanding batched
+>> pgtable operations must be completed immediately. There should
+>> however be no need to leave and re-enter lazy MMU completely. The
+>> only part of that sequence that we really need is xen_mc_flush();
+>> call it directly.
+>>
+>> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+>> ---
+>>   arch/x86/xen/mmu_pv.c | 6 ++----
+>>   1 file changed, 2 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
+>> index 2a4a8deaf612..7a35c3393df4 100644
+>> --- a/arch/x86/xen/mmu_pv.c
+>> +++ b/arch/x86/xen/mmu_pv.c
+>> @@ -2139,10 +2139,8 @@ static void xen_flush_lazy_mmu(void)
+>>   {
+>>       preempt_disable();
+>>   -    if (xen_get_lazy_mode() == XEN_LAZY_MMU) {
+>> -        arch_leave_lazy_mmu_mode();
+>> -        arch_enter_lazy_mmu_mode();
+>> -    }
+>> +    if (xen_get_lazy_mode() == XEN_LAZY_MMU)
+>> +        xen_mc_flush();
+>>         preempt_enable();
+>>   }
 >
-> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
-> Reviewed-by: Pratyush Yadav <pratyush@kernel.org>
-> Reviewed-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-[...]
-> +/**
-> + * kho_unpreserve_vmalloc - unpreserve memory allocated with vmalloc()
-> + * @preservation: preservation metadata returned by kho_preserve_vmalloc()
-> + *
-> + * Instructs KHO to unpreserve the area in vmalloc address space that was
-> + * previously preserved with kho_preserve_vmalloc().
-> + *
-> + * Return: 0 on success, error code on failure
-> + */
-> +int kho_unpreserve_vmalloc(struct kho_vmalloc *preservation)
-> +{
-> +	if (kho_out.finalized)
-> +		return -EBUSY;
-> +
-> +	kho_vmalloc_free_chunks(preservation);
+> Looks like that was moved to XEN code in
+>
+> commit a4a7644c15096f57f92252dd6e1046bf269c87d8
+> Author: Juergen Gross <jgross@suse.com>
+> Date:   Wed Sep 13 13:38:27 2023 +0200
+>
+>     x86/xen: move paravirt lazy code
+>
+>
+> And essentially the previous implementation lived in
+> arch/x86/kernel/paravirt.c:paravirt_flush_lazy_mmu(void) in an
+> implementation-agnostic way:
+>
+> void paravirt_flush_lazy_mmu(void)
+> {
+>        preempt_disable();
+>
+>        if (paravirt_get_lazy_mode() == PARAVIRT_LAZY_MMU) {
+>                arch_leave_lazy_mmu_mode();
+>                arch_enter_lazy_mmu_mode();
+>        }
+>
+>        preempt_enable();
+> }
 
-When reviewing this patch, I spotted that kho_vmalloc_free_chunks() is
-broken. Well it happens to work if all pages are 0-order, but breaks on
-higher-order allocations.
+Indeed, I saw that too. Calling the generic leave/enter functions made
+some sense at that point, but now that the implementation is
+Xen-specific we can directly call xen_mc_flush().
 
-I have sent a separate patch [0] to fix this on top of mm-stable. It
-doesn't have a conflict with this patch so it shouldn't cause trouble.
-And I **don't** think it should block this patch either. This is mostly
-a heads up.
+>
+> So indeed, I assume just doing the flush here is sufficient.
+>
+> Reviewed-by: David Hildenbrand <david@redhat.com> 
 
-[0] https://lore.kernel.org/linux-mm/20251103180235.71409-2-pratyush@kernel.org/T/#u
+Thanks for the review!
 
--- 
-Regards,
-Pratyush Yadav
+- Kevin
 
